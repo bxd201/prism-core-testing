@@ -1,0 +1,8 @@
+# System and SCM files
+.DS_Store
+
+# Node modules should be added by npm install and not included in source
+node_modules
+
+# Compiled assets
+dist

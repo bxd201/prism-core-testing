@@ -1,1 +1,1 @@
-# SW Prism
+# SWPrism
