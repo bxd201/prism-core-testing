@@ -1,0 +1,91 @@
+.color-list__wrapper.color-list__wrapper--suggestions {
+    max-height: 1000px;
+    overflow: hidden;
+}
+
+.color-list,
+.suggestion-list {
+    background-color: #fff;
+    display: grid;
+    flex: 1;
+    grid-gap: 0.15vw;
+    grid-template-columns: repeat( 3, 1fr );
+    padding: 0 1vmin 1vmin;
+    width: 100%;
+}
+
+.color-list__wrapper--families .color-list,
+.color-list__wrapper--favorites .color-list {
+    grid-template-columns: repeat( 4, 1fr );
+}
+
+.color-list__wrapper--value .color-list {
+    grid-template-columns: repeat( 5, 1fr );
+}
+
+.suggestion-list__button {
+    border-radius: var( --default-border-radius );
+    position: relative;
+}
+
+.suggestion-list__generate-button {
+    align-items: center;
+    border-radius: var( --default-border-radius );
+    display: flex;
+    justify-content: center;
+    margin: 0 0 1vmin 17%;
+    opacity: 0;
+    padding: 1vmin 0;
+    transition: opacity 1s;
+    width: 64%;
+}
+
+.state-primedForGeneration .suggestion-list__generate-button {
+    opacity: 1;
+}
+
+.generate-suggestions-icon {
+
+}
+
+.icon-heart-full {
+    fill: rgba(255, 255, 255, 0.7);
+    display: none;
+    height: 6vw;
+    left: 50%;
+    margin: -2.5vw 0 0 -2.5vw;
+    opacity: 0;
+    position: absolute;
+    transition: opacity 1s;
+    top: 50%;
+    width: 6vw;
+}
+
+.isFavorite .icon-heart-full {
+    opacity: 1;
+}
+
+.color-list__color,
+.suggestion-list__color {
+    border-radius: 1.1vmax;
+    display: inherit;
+    position: relative;
+}
+
+@media ( min-aspect-ratio: 1/1 ) {
+    .suggestion-list {
+        grid-template-columns: repeat( 4, 1fr );
+    }
+}
+
+@media ( min-aspect-ratio: 2/1 ) {
+    .suggestion-list {
+        grid-template-columns: repeat( 6, 1fr );
+    }
+}
+
+@media ( min-aspect-ratio: 7/2 ) {
+    .suggestion-list {
+        grid-template-columns: repeat( 7, 1fr );
+    }
+}

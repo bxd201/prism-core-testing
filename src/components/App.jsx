@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
+import ColorPath from './color-path.jsx';
 
 class App extends Component {
   render() {
     return (
-      <div>
-        <h1>Welcome to SWPrism</h1>
+      <div className="app-wrapper">
+        <ColorPath></ColorPath>
       </div>
     );
   }
