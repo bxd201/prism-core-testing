@@ -1,1 +1,1 @@
-# SWPrism
+# Prism Core
