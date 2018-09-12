@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import ColorPath from './color-path.jsx';
+import React, { Component, Fragment } from 'react';
+import ColorPath from './Color-Path/color-path.jsx';
 
 import Button from './Button/Button.jsx';
 
