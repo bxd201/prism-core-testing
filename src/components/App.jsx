@@ -6,7 +6,7 @@ import Button from './Button/Button.jsx';
 class App extends Component {
   render() {
     return (
-      <Fragment>
+      <React.Fragment>
         <div>
           <h1>Welcome to Prism</h1>
           <Button>This is a normal button</Button>
@@ -15,7 +15,7 @@ class App extends Component {
         <div className="app-wrapper">
           <ColorPath></ColorPath>
         </div>
-      </Fragment>
+      </React.Fragment>
     );
   }
 }
