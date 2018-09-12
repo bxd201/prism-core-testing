@@ -1,6 +1,17 @@
 import React, { PureComponent, Fragment } from 'react';
+import styled, { css } from 'styled-components'
 import { PropTypes } from 'prop-types';
-import ColorChip from './color-chip.jsx';
+import ColorChip from '../Chip/color-chip.jsx';
+
+const ListItem = styled.li`
+  border: 2px solid red;
+
+  ${props =>
+    props.primary &&
+    css`
+			border: 2px solid blue;
+    `};
+`
 
 class ColorChipList extends PureComponent {
   constructor( props ) {
@@ -14,11 +25,11 @@ class ColorChipList extends PureComponent {
   }
 
   renderChip(x,y,z) {
-		return <li className={this.colorListType + '-list__color'} key={y + "-" + z}><ColorChip bgColor={x} onClickMethod={()=>{this.onClickMethod(z)}} colorListType={this.colorListType} /></li>;
+		return <ListItem className={this.colorListType + '-list__color'} key={y + "-" + z}><ColorChip bgColor={x} onClickMethod={()=>{this.onClickMethod(z)}} colorListType={this.colorListType} /></ListItem>;
   }
 
   renderSuggestionChip(color, index) {
-		return <li className={this.colorListType + '-list__color' + (this.props.isFavorited ? ' isFavorite' : '') } key={color.H + "-" + index}><ColorChip colorName={color.colorName} colorNumber={color.colorNumber} coordColor1={color.coordOneIndex} coordColor2={color.coordTwoIndex} bgColor={color.HSL} onClickMethod={()=>{this.suggestionButtonMethod(color, index)}} colorListType={this.colorListType} /></li>;
+		return <ListItem primary className={this.colorListType + '-list__color' + (this.props.isFavorited ? ' isFavorite' : '') } key={color.H + "-" + index}><ColorChip colorName={color.colorName} colorNumber={color.colorNumber} coordColor1={color.coordOneIndex} coordColor2={color.coordTwoIndex} bgColor={color.HSL} onClickMethod={()=>{this.suggestionButtonMethod(color, index)}} colorListType={this.colorListType} /></ListItem>;
 	}
 
 	renderMoreSuggestionsButton() {	
