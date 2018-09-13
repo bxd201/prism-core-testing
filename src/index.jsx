@@ -2,11 +2,11 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { IntlProvider } from 'react-intl'
 
-import App from './components/App'
+import Prism from './components/Prism'
 
 // list all top level react components here
 const APPS = {
-  App
+  Prism
 }
 
 const renderAppInElement = (el) => {

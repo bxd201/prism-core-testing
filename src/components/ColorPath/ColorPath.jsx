@@ -1,10 +1,10 @@
 /* eslint-disable */
 import React, { PureComponent, Fragment } from 'react';
 import { PropTypes } from 'prop-types';
-import {colorDBIndices, colorsComplete} from '../common/processed-colors.js';
-import RoomScene from '../Tinter/scene.jsx';
-import ColorChipList from '../Chip-List/color-chip-list.jsx';
-import ColorPicker from '../common/color-picker.js';
+import {colorDBIndices, colorsComplete} from './common/processed-colors.js';
+import RoomScene from './Tinter/scene';
+import ColorChipList from './Chip-List/color-chip-list';
+import ColorPicker from './common/color-picker';
 
 class ColorPath extends PureComponent {
 	// state = {

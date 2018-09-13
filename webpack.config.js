@@ -21,9 +21,15 @@ module.exports = {
       }
     ]
   },
+  devServer: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000',
+        pathRewrite: {'^/api' : ''}
+      }
+    }
+  },
   plugins: [
-    new HtmlWebpackPlugin({
-      template: './src/index.html'
-    })
+    new HtmlWebpackPlugin({ template: './src/index.html' })
   ]
 };

@@ -1,9 +1,11 @@
 import { combineReducers } from 'redux'
 
-import { example } from './example'
+import { colors } from './colors'
+import { scenes } from './scenes'
 
 const rootReducer = combineReducers({
-  example
+  colors,
+  scenes
 })
 
 export default rootReducer
