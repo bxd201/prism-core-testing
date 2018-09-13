@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { Component, Fragment } from 'react';
 import ColorPath from './Color-Path/color-path.jsx';
 

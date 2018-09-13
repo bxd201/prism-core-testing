@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { PureComponent, Fragment } from 'react';
 import { PropTypes } from 'prop-types';
 import {colorDBIndices, colorsComplete} from '../common/processed-colors.js';

@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { PureComponent, Fragment } from 'react';
 
 class ColorChip extends PureComponent {
@@ -27,6 +28,3 @@ class ColorChip extends PureComponent {
 }
 
 export default ColorChip;
-
-
-

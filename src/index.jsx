@@ -1,51 +1,52 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { IntlProvider } from 'react-intl';
+import React from 'react'
+import ReactDOM from 'react-dom'
+import { IntlProvider } from 'react-intl'
 
-import App from './components/App.jsx';
+import App from './components/App'
 
 // list all top level react components here
 const APPS = {
-	App,
-};
+  App
+}
 
 const renderAppInElement = (el) => {
-	if(el.className.indexOf('__react-bound') > -1) {
-		return;
-	}
+  if (el.className.indexOf('__react-bound') > -1) {
+    return
+  }
 
-	const reactComponent = el.getAttribute('data-react-component');
-	// if no data attribute specifying the react component exists, let's get out.
-	// although if it doesn't have this data attribute, it shouldn't have a __react-root class...
-	if(!reactComponent) {
-		console.warn(el, ' does not have a data-react-component specified.');
-		return;
-	}
+  const reactComponent = el.getAttribute('data-react-component')
 
-	const App = APPS[reactComponent];
+  // if no data attribute specifying the react component exists, let's get out.
+  // although if it doesn't have this data attribute, it shouldn't have a __react-root class...
+  if (!reactComponent) {
+    console.warn(el, ' does not have a data-react-component specified.')
+    return
+  }
 
-	// if the component doesn't exist, let's get out too
-	if(!App) {
-		console.warn(`${reactComponent} does is not included. Please import this component into index.jsx.`);
-		return;
-	}
+  const App = APPS[reactComponent]
 
-	// get props from elements data attribute, like the post_id
-	const props = Object.assign({}, el.dataset);
+  // if the component doesn't exist, let's get out too
+  if (!App) {
+    console.warn(`${reactComponent} does is not included. Please import this component into index.jsx.`)
+    return
+  }
 
-	// remove the component declaration in the data attributes
-	delete props.reactComponent;
+  // get props from elements data attribute, like the post_id
+  const props = Object.assign({}, el.dataset)
 
-	ReactDOM.render(
-		<IntlProvider locale={navigator.language || navigator.languages[0] || 'en-US'}>
-			<App {...props} />
-		</IntlProvider>, el);
+  // remove the component declaration in the data attributes
+  delete props.reactComponent
 
-	el.classList.add('__react-bound');
-};
+  ReactDOM.render(
+    <IntlProvider locale={navigator.language || navigator.languages[0] || 'en-US'}>
+      <App {...props} />
+    </IntlProvider>, el)
+
+  el.classList.add('__react-bound')
+}
 
 const bindReactToDOM = () => {
-	document.querySelectorAll('.__react-root').forEach(renderAppInElement);
-};
+  document.querySelectorAll('.__react-root').forEach(renderAppInElement)
+}
 
-bindReactToDOM();
+bindReactToDOM()

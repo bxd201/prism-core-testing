@@ -1,3 +1,4 @@
+/* eslint-disable */
 import {colorsComplete, colorsByH, colorsByS, colorsByL} from './processed-colors';
 
 class ColorPicker {
