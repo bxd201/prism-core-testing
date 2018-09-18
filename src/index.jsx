@@ -1,12 +1,30 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { IntlProvider } from 'react-intl'
+import { IntlProvider, addLocaleData } from 'react-intl'
+import localeEN from 'react-intl/locale-data/en'
+import localeES from 'react-intl/locale-data/es'
+
+import en from './translations/en.json'
+import es from './translations/es.json'
 
 import Prism from './components/Prism'
+import ColorPath from './components/ColorPath/ColorPath'
+
+// list all supported languages & associate with their JSON
+const messages = {
+  'en': en,
+  'es': es
+}
+// add locale data when using react-intl to format numbers/times/ect..
+addLocaleData([
+  ...localeEN,
+  ...localeES
+])
 
 // list all top level react components here
 const APPS = {
-  Prism
+  Prism,
+  ColorPath
 }
 
 const renderAppInElement = (el) => {
@@ -37,8 +55,11 @@ const renderAppInElement = (el) => {
   // remove the component declaration in the data attributes
   delete props.reactComponent
 
+  // generate language without the country code
+  const language = navigator.language.split(/[-_]/)[0] || 'en'
+
   ReactDOM.render(
-    <IntlProvider locale={navigator.language || navigator.languages[0] || 'en-US'}>
+    <IntlProvider locale={language} messages={messages[language]}>
       <App {...props} />
     </IntlProvider>, el)
 

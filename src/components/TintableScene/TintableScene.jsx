@@ -15,7 +15,7 @@ class TintableScene extends PureComponent {
     let tintColor = this.tintColor
     if (this.props.color) {
       const { color } = this.props
-      tintColor = `rgb( ${color.red}, ${color.green}, ${color.blue} )`
+      tintColor = color.cssrgb
     }
 
     return (
