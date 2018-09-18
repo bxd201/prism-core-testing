@@ -4,15 +4,12 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 
 const RoomWrapper = styled.div`
-  height: 100%;
-  left: 0;
-  overflow: hidden;
-  position: absolute;
-  top: 0;
+  position: relative;
   width: 100%;
-  z-index: 1;
-  max-width: 900px;
-  max-height: 600px;
+  width: 900px;
+  height: 600px;
+  margin-top: 1em;
+  margin-bottom: 1em;
 `
 const SceneWrapper = styled.div`
   height: 100%;
@@ -40,7 +37,7 @@ const TintedScene = styled(BaseScene)`
 `
 const NaturalTintedScene = styled(BaseScene)`
   object-fit: cover;
-  -webkit-mask-image: url( '/src/images/room-mask.png' );
+  -webkit-mask-image: url( '${props => props.maskSrc}' );
   -webkit-mask-size: cover;
   -webkit-mask-position: 50% 50%;
   mask-size: cover;
@@ -53,23 +50,25 @@ class TintableScene extends PureComponent {
     return (
       <RoomWrapper>
         <SceneWrapper color={this.props.color}>
-          <TintedScene src='/src/images/room.jpg' alt='' />
+          <TintedScene src={`/src/images/scenes/${this.props.scene}.jpg`} alt='' />
         </SceneWrapper>
-        <NaturalTintedScene src='/src/images/room.jpg' alt='' />
+        <NaturalTintedScene src={`/src/images/scenes/${this.props.scene}.jpg`} maskSrc={`/src/images/scenes/${this.props.scene}-mask.png`} alt='' />
       </RoomWrapper>
     )
   }
 }
 
 TintableScene.propTypes = {
-  color: PropTypes.object
+  color: PropTypes.object,
+  scene: PropTypes.string
 }
 
 const mapStateToProps = (state, props) => {
-  const { selectedColor } = state.scenes
+  const { selectedColor, scene } = state.scenes
 
   return {
-    color: selectedColor || null
+    color: selectedColor || null,
+    scene: scene || 'room'
   }
 }
 

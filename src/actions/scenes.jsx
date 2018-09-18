@@ -5,3 +5,11 @@ export const selectColor = (colorObj) => {
     payload: { color: colorObj }
   }
 }
+
+export const SELECT_SCENE = 'SELECT_SCENE'
+export const selectScene = (scene) => {
+  return {
+    type: SELECT_SCENE,
+    payload: { scene }
+  }
+}

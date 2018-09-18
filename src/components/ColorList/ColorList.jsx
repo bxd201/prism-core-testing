@@ -19,7 +19,7 @@ class ColorList extends PureComponent {
     })
 
     return (
-      <div style={{ position: 'absolute', bottom: '0px', display: 'flex', overflow: 'scroll', width: '900px', height: '300px', flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', overflow: 'scroll', width: '900px', height: '300px', flexWrap: 'wrap' }}>
         {colorListMarkup}
       </div>
     )

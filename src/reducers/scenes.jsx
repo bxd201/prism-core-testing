@@ -5,6 +5,11 @@ export const scenes = (state = {}, action) => {
         selectedColor: action.payload.color
       })
 
+    case 'SELECT_SCENE':
+      return Object.assign({}, state, {
+        scene: action.payload.scene
+      })
+
     default:
       return state
   }
