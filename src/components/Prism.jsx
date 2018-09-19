@@ -1,22 +1,23 @@
 import React, { Component } from 'react'
-import { Provider } from 'react-redux'
+import { Route, Redirect } from 'react-router-dom'
 
-import store from '../store'
+import Main from './Facets/Main/Main'
+import ColorWall from './Facets/ColorWall/ColorWall'
 
-import TintableScene from './TintableScene/TintableScene'
-import ColorList from './ColorList/ColorList'
-import SceneList from './SceneList/SceneList'
+// barebones component to always take the user to active if they try to access root.
+// not sure if we need this but if we end up using this for TAG & want to retain bookmarks..
+const RootRedirect = () => {
+  return <Redirect to='/active' />
+}
 
 class Prism extends Component {
   render () {
     return (
-      <Provider store={store}>
-        <React.Fragment>
-          <SceneList />
-          <TintableScene />
-          <ColorList />
-        </React.Fragment>
-      </Provider>
+      <React.Fragment>
+        <Route path='/' exact component={RootRedirect} />
+        <Route path='/active' component={Main} />
+        <Route path='/active/color-wall' component={ColorWall} />
+      </React.Fragment>
     )
   }
 }

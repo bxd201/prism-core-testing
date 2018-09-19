@@ -1,11 +1,15 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import { Provider } from 'react-redux'
 import { IntlProvider, addLocaleData } from 'react-intl'
+import { HashRouter } from 'react-router-dom'
 import localeEN from 'react-intl/locale-data/en'
 import localeES from 'react-intl/locale-data/es'
 
 import en from './translations/en.json'
 import es from './translations/es.json'
+
+import store from './store'
 
 import Prism from './components/Prism'
 import ColorPath from './components/ColorPath/ColorPath'
@@ -60,7 +64,11 @@ const renderAppInElement = (el) => {
 
   ReactDOM.render(
     <IntlProvider locale={language} messages={messages[language]}>
-      <App {...props} />
+      <Provider store={store}>
+        <HashRouter>
+          <App {...props} />
+        </HashRouter>
+      </Provider>
     </IntlProvider>, el)
 
   el.classList.add('__react-bound')
