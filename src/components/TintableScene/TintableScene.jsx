@@ -6,7 +6,7 @@ import styled from 'styled-components'
 const RoomWrapper = styled.div`
   position: relative;
   width: 100%;
-  width: 900px;
+  width: 100%;
   height: 600px;
   margin-top: 1em;
   margin-bottom: 1em;
@@ -20,6 +20,8 @@ const SceneWrapper = styled.div`
   width: 100%;
   z-index: 1;
   background-color: ${props => props.color ? props.color.cssrgb : ''};
+  transition: 0.2s;
+  -webkit-transition: 0.2s;
 `
 const BaseScene = styled.img`
   height: 100%;
@@ -50,9 +52,9 @@ class TintableScene extends PureComponent {
     return (
       <RoomWrapper>
         <SceneWrapper color={this.props.color}>
-          <TintedScene src={`/src/images/scenes/${this.props.scene}.jpg`} alt='' />
+          <TintedScene src={`./images/scenes/${this.props.scene}.jpg`} alt='' />
         </SceneWrapper>
-        <NaturalTintedScene src={`/src/images/scenes/${this.props.scene}.jpg`} maskSrc={`/src/images/scenes/${this.props.scene}-mask.png`} alt='' />
+        <NaturalTintedScene src={`./images/scenes/${this.props.scene}.jpg`} maskSrc={`./images/scenes/${this.props.scene}-mask.png`} alt='' />
       </RoomWrapper>
     )
   }
@@ -66,6 +68,9 @@ TintableScene.propTypes = {
 const mapStateToProps = (state, props) => {
   const { selectedColor, scene } = state.scenes
 
+  // return {
+  //   color: selectedColor || null
+  // }
   return {
     color: selectedColor || null,
     scene: scene || 'room'

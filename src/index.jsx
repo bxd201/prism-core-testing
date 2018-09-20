@@ -13,6 +13,8 @@ import store from './store'
 
 import Prism from './components/Prism'
 import ColorPath from './components/ColorPath/ColorPath'
+import TintableScene from './components/TintableScene/TintableScene'
+import ColorWall from './components/Facets/ColorWall/ColorWall'
 
 import './scss/main.scss'
 
@@ -30,7 +32,9 @@ addLocaleData([
 // list all top level react components here
 const APPS = {
   Prism,
-  ColorPath
+  ColorPath,
+  TintableScene,
+  ColorWall
 }
 
 const renderAppInElement = (el) => {

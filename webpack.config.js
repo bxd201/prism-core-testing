@@ -1,5 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const sass = require('node-sass');
 const ScriptVars = require(__dirname + '/src/shared/themes/ScriptVars.js').ScriptVars;
@@ -62,9 +63,9 @@ module.exports = {
   },
   devServer: {
     proxy: {
-      '/api': {
-        target: 'http://localhost:3000',
-        pathRewrite: {'^/api' : ''}
+      'http://localhost:3000': {
+        // target: 'http://localhost:3000'
+        target: 'https://dev-prism-api.ebus.swaws'
       }
     }
   },
@@ -72,7 +73,19 @@ module.exports = {
     new HtmlWebpackPlugin({ template: './src/index.html' }),
     new MiniCssExtractPlugin({
       filename: '[name].css',
-    })
+    }),
+    new CopyWebpackPlugin([
+      { 
+        from: 'src/images/scenes/*', 
+        to: 'images/scenes',
+        flatten: true
+      },
+      { 
+        from: 'src/css/*', 
+        to: 'css',
+        flatten: true
+      }
+    ])
   ],
   resolve: {
     alias: {
