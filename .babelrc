@@ -1,10 +1,13 @@
 {
   "presets": [
-    "env",
-    "react"
+    "@babel/preset-env",
+    "@babel/preset-react",
+    "@babel/preset-flow"
   ],
   "plugins": [
-    "styled-components",
-    "transform-object-rest-spread"
+    "@babel/plugin-proposal-object-rest-spread",
+    "@babel/plugin-proposal-class-properties",
+    "@babel/plugin-transform-flow-strip-types",
+    "styled-components"
   ]
 }

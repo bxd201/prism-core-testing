@@ -1,11 +1,19 @@
+// @flow
 /* eslint-disable */
 import React, { PureComponent, Fragment } from 'react';
 
-class ColorChip extends PureComponent {
-  constructor( props ) {
+type Props = {
+  onClickMethod: Function,
+  colorListType: string,
+  bgColor: string
+}
+
+class ColorChip extends PureComponent<Props> {
+  colorListType: string;
+  
+  constructor( props:Props ) {
     super( props );
-    this.onClickMethod = this.props.onClickMethod.bind(this);
-    this.colorListType = this.props.colorListType && this.props.colorListType==="suggestion" ? "suggestion" : "color";
+    this.colorListType = this.props.colorListType && this.props.colorListType === "suggestion" ? "suggestion" : "color";
   }
 
   render() {
