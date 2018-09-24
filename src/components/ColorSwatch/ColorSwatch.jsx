@@ -1,10 +1,15 @@
+// @flow
 import React, { PureComponent, Fragment } from 'react'
 import { connect } from 'react-redux'
-import PropTypes from 'prop-types'
 
 import { selectColor } from '../../actions/scenes'
 
-class ColorSwatch extends PureComponent {
+type Props = {
+  selectColor: Function,
+  color: Object // TODO: Create Color type
+}
+
+class ColorSwatch extends PureComponent<Props> {
   constructor (props) {
     super(props)
 
@@ -21,17 +26,12 @@ class ColorSwatch extends PureComponent {
     )
   }
 
-  handleSwatchClick () {
+  handleSwatchClick: Function = () => {
     this.props.selectColor(this.props.color)
   }
 }
 
-ColorSwatch.propTypes = {
-  selectColor: PropTypes.func,
-  color: PropTypes.object.isRequired
-}
-
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps: Function = (dispatch) => {
   return {
     selectColor: (color) => {
       dispatch(selectColor(color))

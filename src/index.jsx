@@ -14,6 +14,8 @@ import store from './store'
 import Prism from './components/Prism'
 import ColorPath from './components/ColorPath/ColorPath'
 
+import './scss/main.scss'
+
 // list all supported languages & associate with their JSON
 const messages = {
   'en': en,
