@@ -1,5 +1,7 @@
 import axios from 'axios'
 
+import { SW_COLORS_BY_FAMILY_ENDPOINT } from '../constants/endpoints'
+
 export const REQUEST_COLORS = 'REQUEST_COLORS'
 const requestColors = () => {
   return {
@@ -20,7 +22,7 @@ export const loadColors = () => {
   return (dispatch) => {
     dispatch(requestColors())
 
-    return axios.get(`/api/v1/colors/sherwin`)
+    return axios.get(SW_COLORS_BY_FAMILY_ENDPOINT)
       .then(r => r.data)
       .then(data => {
         dispatch(receiveColors(data))
