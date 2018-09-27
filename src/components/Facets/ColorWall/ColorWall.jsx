@@ -4,19 +4,20 @@ import { withRouter } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import debounce from 'lodash/debounce'
 
-import { loadColors } from '../../../actions/loadColors'
 import { selectColor } from '../../../actions/scenes'
+
+import ColorDataWrapper from '../../../helpers/ColorDataWrapper'
 
 import ColorWallSwatch from './ColorWallSwatch'
 
 import './ColorWall.css'
 
 class ColorWall extends PureComponent {
-  constructor (props) {
-    super(props)
+  // constructor (props) {
+  //   super(props)
 
-    this.props.loadColors()
-  }
+  //   // this.props.loadColors()
+  // }
 
   previewColor = debounce((color) => {
     this.props.selectColor(color)
@@ -46,26 +47,16 @@ class ColorWall extends PureComponent {
 
 ColorWall.propTypes = {
   colors: PropTypes.object,
-  loadColors: PropTypes.func,
   match: PropTypes.object,
   selectColor: PropTypes.func
 }
 
-const mapStateToProps = (state, props) => {
-  return {
-    colors: state.colors.items || {}
-  }
-}
-
 const mapDispatchToProps = (dispatch) => {
   return {
-    loadColors: () => {
-      dispatch(loadColors())
-    },
     selectColor: (color) => {
       dispatch(selectColor(color))
     }
   }
 }
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ColorWall))
+export default ColorDataWrapper(withRouter(connect(null, mapDispatchToProps)(ColorWall)))

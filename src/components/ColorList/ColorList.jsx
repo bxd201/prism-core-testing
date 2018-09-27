@@ -1,20 +1,16 @@
 import React, { PureComponent } from 'react'
-import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 
-import { loadColors } from '../../actions/loadColors'
-
+import ColorDataWrapper from '../../helpers/ColorDataWrapper'
 import ColorSwatch from '../ColorSwatch/ColorSwatch'
 
+/**
+ * TODO: Very temporary component that demonstrates a simple color list that makes up an example
+ * overall visualizer.
+ */
 class ColorList extends PureComponent {
-  constructor (props) {
-    super(props)
-
-    this.props.loadColors()
-  }
-
   render () {
-    const colorListMarkup = this.props.colors.map(color => {
+    const colorListMarkup = this.props.colors['Red'].map(color => {
       return <ColorSwatch key={color.id} color={color} />
     })
 
@@ -27,22 +23,7 @@ class ColorList extends PureComponent {
 }
 
 ColorList.propTypes = {
-  colors: PropTypes.array,
-  loadColors: PropTypes.func
+  colors: PropTypes.object
 }
 
-const mapStateToProps = (state, props) => {
-  return {
-    colors: state.colors.items || []
-  }
-}
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    loadColors: () => {
-      dispatch(loadColors())
-    }
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(ColorList)
+export default ColorDataWrapper(ColorList)
