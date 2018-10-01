@@ -1,8 +1,16 @@
 # Prism Core
 
 ## Getting Started
+
+### Running Local Instance
 ```
 npm start
+```
+
+### Deploy
+```
+npm install
+npm run build
 ```
 
 ## Scripts and Styles Share Vars
