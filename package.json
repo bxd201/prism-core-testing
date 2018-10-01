@@ -8,6 +8,7 @@
     "test": "./node_modules/flow-bin/cli.js"
   },
   "dependencies": {
+    "@ctrl/tinycolor": "2.2.1",
     "axios": "0.18.0",
     "lodash": "4.17.11",
     "prop-types": "15.6.2",
