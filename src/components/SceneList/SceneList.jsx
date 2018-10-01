@@ -1,16 +1,10 @@
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
-import styled from 'styled-components'
+
+import CSSVariableApplicator from '../../helpers/CSSVariableApplicator'
 
 import { selectScene } from '../../actions/scenes'
-
-const Button = styled.button`
-  width: 150px;
-  height: 50px;
-  background-color: lightgray;
-  margin-right: 1em;
-`
 
 class SceneList extends PureComponent {
   constructor (props) {
@@ -20,11 +14,15 @@ class SceneList extends PureComponent {
   }
 
   render () {
+    const variables = {
+      '--scene-button-primary-color': '#8DC63F'
+    }
+
     return (
-      <React.Fragment>
-        <Button onClick={() => this.selectScene('room')}>Room</Button>
-        <Button onClick={() => this.selectScene('chair')}>Chair</Button>
-      </React.Fragment>
+      <CSSVariableApplicator variables={variables}>
+        <button className='scene-picker-btn' onClick={() => this.selectScene('room')}>Room</button>
+        <button className='scene-picker-btn' onClick={() => this.selectScene('chair')}>Chair</button>
+      </CSSVariableApplicator>
     )
   }
 

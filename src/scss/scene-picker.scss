@@ -1,0 +1,6 @@
+.scene-picker-btn {
+  @include variable(background-color, --scene-button-primary-color, lightgray);
+  width: 150px;
+  height: 50px;
+  margin-right: 1em;
+}
