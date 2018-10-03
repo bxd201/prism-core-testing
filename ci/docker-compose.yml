@@ -23,7 +23,7 @@ volumes:
     driver_opts:
       type: tmpfs
       device: tmpfs
-      o: "size=8m,noexec,nosuid,nodev"
+      o: "size=16m,noexec,nosuid,nodev"
 services:
   app:
     # 256M memory limit
