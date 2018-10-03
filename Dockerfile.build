@@ -1,8 +1,6 @@
 FROM node:8
 
 ENV NODE_ENV=production
-ENV CHOWN_GID=1000
-ENV CHOWN_UID=1000
 
 RUN apt-get update \
     && apt-get upgrade -y \
