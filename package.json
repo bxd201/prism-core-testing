@@ -5,7 +5,7 @@
   "scripts": {
     "start": "webpack-dev-server --mode development --open --hot --config webpack.dev.js",
     "build": "webpack --config webpack.prod.js",
-    "test": "./node_modules/flow-bin/cli.js"
+    "test": "./node_modules/flow-bin/cli.js && jest --coverage"
   },
   "dependencies": {
     "@ctrl/tinycolor": "2.2.1",
@@ -33,7 +33,9 @@
     "@babel/preset-flow": "7.0.0",
     "@babel/preset-react": "7.0.0",
     "autoprefixer": "9.1.5",
+    "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "10.0.1",
+    "babel-jest": "23.6.0",
     "babel-loader": "8.0.4",
     "babel-plugin-styled-components": "1.8.0",
     "copy-webpack-plugin": "4.5.2",
