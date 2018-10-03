@@ -34,6 +34,8 @@ services:
     - tmp:/tmp
     - docroot:/usr/share/nginx/html
     image: docker.cpartdc01.sherwin.com/ecomm/apps/prism-core:${IMAGE_TAG}
+    environment:
+    - API_URL=${API_URL}
     stdin_open: true
     tty: true
     read_only: true
