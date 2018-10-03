@@ -1,0 +1,49 @@
+version: '2'
+volumes:
+  var-run:
+    per_container: true
+    driver_opts:
+      type: tmpfs
+      device: tmpfs
+      o: "size=1m,noexec,nosuid,nodev"
+  var-cache-nginx:
+    per_container: true
+    driver_opts:
+      type: tmpfs
+      device: tmpfs
+      o: "size=8m,noexec,nosuid,nodev"
+  tmp:
+    per_container: true
+    driver_opts:
+      type: tmpfs
+      device: tmpfs
+      o: "size=8m,noexec,nosuid,nodev"
+  docroot:
+    per_container: true
+    driver_opts:
+      type: tmpfs
+      device: tmpfs
+      o: "size=8m,noexec,nosuid,nodev"
+services:
+  app:
+    # 256M memory limit
+    mem_limit: 268435456
+    volumes:
+    - var-run:/var/run
+    - var-cache-nginx:/var/cache/nginx
+    - tmp:/tmp
+    - docroot:/usr/share/nginx/html
+    image: docker.cpartdc01.sherwin.com/ecomm/apps/prism-core:${IMAGE_TAG}
+    stdin_open: true
+    tty: true
+    read_only: true
+    # Allow more connections
+    sysctls:
+      net.core.somaxconn: '512'
+    labels:
+      io.rancher.container.pull_image: always
+      sherwin.department: eBus
+      sherwin.division: A100
+      sherwin.project: undefined
+      sherwin.owner: devops
+      sherwin.application: prism-core

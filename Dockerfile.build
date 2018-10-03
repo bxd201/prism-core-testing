@@ -1,0 +1,22 @@
+FROM node:8
+
+ENV NODE_ENV=production
+ENV CHOWN_GID=1000
+ENV CHOWN_UID=1000
+
+RUN apt-get update \
+    && apt-get upgrade -y \
+    && apt-get install \
+       git bash python ca-certificates openssl make gcc g++  \
+    && apt-get clean \
+    && npm install node-sass sass-loader
+
+COPY . /app
+
+WORKDIR /app
+
+RUN rm -rf dist \
+    && mkdir -p dist \
+    && chmod +x ci/scripts/entrypoint.build.sh
+
+ENTRYPOINT ["/app/ci/scripts/entrypoint.build.sh"]
