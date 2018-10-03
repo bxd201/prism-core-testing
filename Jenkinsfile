@@ -11,19 +11,14 @@ pipeline {
   environment {
     IMAGE_NAME = "prism-core"
   }
-  triggers {
-    pollSCM('H/5 * * * *')
-  }
   stages {
     stage('builder') {
       steps {
         sh """
         #!/bin/bash
-        ### Builder Image
-        BUILDER_IMAGE_NAME="${IMAGE_NAME}-build"
 
         # Build the builder image
-        docker build --no-cache --pull -t ${BUILDER_IMAGE_NAME} -f Dockerfile.build .
+        docker build --no-cache --pull -t ${IMAGE_NAME}-build -f Dockerfile.build .
         """
 
         sh """
@@ -32,28 +27,17 @@ pipeline {
         # Clean up any old image archive files
         rm -rf dist
 
-        # If Jenkins is in docker...
-        if [ -f /.dockerenv ] ; then
-          # Figure out this container's id
-          container_id=`grep "memory:/" < /proc/self/cgroup | sed 's|.*/||'`
+        # Mount the volumes from Jenkins and run the deploy
+        docker run \
+          --name ${IMAGE_NAME}-build-${BUILD_NUMBER} \
+          ${IMAGE_NAME}-build:latest
 
-          # Mount the volumes from Jenkins and run the deploy
-          docker run \
-            --rm \
-            -e CHOWN_UID=${UID} \
-            -e CHOWN_GID=$(id -g) \
-            --volumes-from $container_id \
-            -w ${WORKSPACE} \
-            ${IMAGE_NAME}-build:latest
-        else
-          # Otherwise, just run the container as expected
-          docker run \
-            --rm \
-            -e CHOWN_UID=${UID} \
-            -e CHOWN_GID=$(id -g) \
-            -v ${WORKSPACE}/dist:/app/dist \
-            ${IMAGE_NAME}-build:latest
-        fi
+        docker cp ${IMAGE_NAME}-build-${BUILD_NUMBER}:/app/dist.tgz ./
+        tar zxf dist.tgz
+        rm dist.tgz
+
+        # Remove the build container
+        docker rm -f ${IMAGE_NAME}-build-${BUILD_NUMBER}
         """
         stash includes: 'dist/**/*', name: 'static'
       }
