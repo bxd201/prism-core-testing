@@ -66,7 +66,7 @@ pipeline {
           --name ${IMAGE_NAME}_artifact_${BUILD_NUMBER} \
           --entrypoint /bin/sh \
           -w /usr/share/nginx \
-          ${IMAGE_NAME}_${BUILD_NUMBER}
+          ${IMAGE_NAME}_${BUILD_NUMBER} \
           -c 'tar zcf /tmp/prism-core.tgz html'
 
         docker cp ${IMAGE_NAME}-artifact-${BUILD_NUMBER}:/tmp/prism-core.tgz ./
