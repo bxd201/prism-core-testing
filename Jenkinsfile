@@ -69,10 +69,10 @@ pipeline {
           ${IMAGE_NAME}_${BUILD_NUMBER} \
           -c 'tar zcf /tmp/prism-core.tgz html'
 
-        docker cp ${IMAGE_NAME}-artifact-${BUILD_NUMBER}:/tmp/prism-core.tgz ./
+        docker cp ${IMAGE_NAME}_artifact_${BUILD_NUMBER}:/tmp/prism-core.tgz ./
 
         # Remove the artifact container
-        docker rm -f ${IMAGE_NAME}-artifact-${BUILD_NUMBER}
+        docker rm -f ${IMAGE_NAME}_artifact_${BUILD_NUMBER}
         """
 
         archiveArtifacts artifacts: "${IMAGE_NAME}.docker.tar.gz", fingerprint: true
