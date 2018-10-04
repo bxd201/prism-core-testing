@@ -2,3 +2,74 @@
   #{$property}: $fallback;
   #{$property}: var($variable);
 }
+
+// --------------------------------------------------------------------------------
+// BEGIN VARIABLE PARSING METHODS
+// --------------------------------------------------------------------------------
+
+// splits a string based on a separating character
+@function str-split($string, $separator) {
+  // empty array/list
+  $split-arr: ();
+  // first index of separator in string
+  $index : str-index($string, $separator);
+  // loop through string
+  @while $index != null {
+      // get the substring from the first character to the separator
+      $item: str-slice($string, 1, $index - 1);
+      // push item to array
+      $split-arr: append($split-arr, $item);
+      // remove item and separator from string
+      $string: str-slice($string, $index + 1);
+      // find new index of separator
+      $index : str-index($string, $separator);
+  }
+  // add the remaining string to list (the last item)
+  $split-arr: append($split-arr, $string);
+
+  @return $split-arr;
+}
+
+// worker method; accepts a dot.separated.string to split as well as a function to call for fetching a set of external vars
+@function _getVarWorker( $values, $fn ) {
+  $split-values: str-split( $values, '.' );
+  $resolved: null;
+
+  @for $i from 1 through length( $split-values ) {
+    @if $i == 1 {
+      $resolved: call( get-function( $fn ), nth( $split-values, $i ) );
+    } @else {
+      $resolved: map-get( $resolved, nth( $split-values, $i ) );
+    }
+  }
+
+  @return $resolved;
+}
+
+// accepts dot.separated.string that resolves to a value within ScriptVars
+// ex: getVarName( "typography.font" ) will resolve to the value of ScriptVars.typography.font
+@function getVar( $values ) {
+  $resolved: _getVarWorker( $values, "_getVar" );
+
+  @if $resolved == null {
+    @error "\"#{ $values }\" cannot be resolved to an external variable";
+  }
+
+  @return $resolved;
+}
+
+// accepts dot.separated.string that resolves to a CSS Variable name within ScriptVarNames
+// ex: getVarName( "scenes.buttons.colors.primary" ) will resolve to the value of ScriptVarNames.scenes.buttons.colors.primary
+@function getVarName( $values ) {
+  $resolved: _getVarWorker( $values, "_getVarName" );
+
+  @if $resolved == null {
+    @error "\"#{ $values }\" cannot be resolved to an external variable name";
+  }
+
+  @return $resolved;
+}
+
+// --------------------------------------------------------------------------------
+// END VARIABLE PARSING METHODS
+// --------------------------------------------------------------------------------

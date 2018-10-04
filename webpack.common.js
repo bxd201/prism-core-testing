@@ -5,7 +5,30 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const sass = require('node-sass');
 const ScriptVars = require(__dirname + '/src/shared/themes/ScriptVars.js').ScriptVars;
+const ScriptVarNames = require(__dirname + '/src/shared/themes/ScriptVars.js').ScriptVarNames;
 const sassUtils = require('node-sass-utils')(sass);
+
+function getVarGenerator( values ) {
+  return function(keys) {
+    keys = keys.getValue().split('.');
+    var result = values;
+    var i;
+    for (i = 0; i < keys.length; i++) {
+      result = result[keys[i]];
+      // Convert to SassDimension if dimenssion
+      if (typeof result === 'string') {
+        result = convertStringToSassDimension(result);
+      } else if (typeof result === 'object') {
+        Object.keys(result).forEach(function(key) {
+          var value = result[key];
+          result[key] = convertStringToSassDimension(value);
+        });
+      }
+    }
+    result = sassUtils.castToSass(result);
+    return result;
+  }
+}
 
 const sassRules = [
   MiniCssExtractPlugin.loader,
@@ -16,25 +39,8 @@ const sassRules = [
     loader: 'sass-loader',
     options: {
       functions: {
-        'get($keys)': function(keys) {
-          keys = keys.getValue().split('.');
-          var result = ScriptVars;
-          var i;
-          for (i = 0; i < keys.length; i++) {
-            result = result[keys[i]];
-            // Convert to SassDimension if dimenssion
-            if (typeof result === 'string') {
-              result = convertStringToSassDimension(result);
-            } else if (typeof result === 'object') {
-              Object.keys(result).forEach(function(key) {
-                var value = result[key];
-                result[key] = convertStringToSassDimension(value);
-              });
-            }
-          }
-          result = sassUtils.castToSass(result);
-          return result;
-        }
+        '_getVar($keys)': getVarGenerator( ScriptVars ),
+        '_getVarName($keys)': getVarGenerator( ScriptVarNames )
       }
     }
   }

@@ -5,6 +5,7 @@ import PropTypes from 'prop-types'
 import CSSVariableApplicator from '../../helpers/CSSVariableApplicator'
 
 import { selectScene } from '../../actions/scenes'
+import { ScriptVars, ScriptVarNames } from '../../shared/themes/ScriptVars'
 
 class SceneList extends PureComponent {
   constructor (props) {
@@ -15,7 +16,8 @@ class SceneList extends PureComponent {
 
   render () {
     const variables = {
-      '--scene-button-primary-color': '#8DC63F'
+      [ ScriptVarNames.scenes.buttons.colors.default ]: ScriptVars.colors.warning,
+      [ ScriptVarNames.scenes.buttons.colors.active ]: ScriptVars.colors.danger
     }
 
     return (
