@@ -1,4 +1,4 @@
-module.exports.ScriptVars = {
+module.exports.varValues = {
   base: '16px',
   spacing: '1rem',
   corner: '2px',
@@ -23,7 +23,7 @@ module.exports.ScriptVars = {
   }
 }
 
-module.exports.ScriptVarNames = {
+module.exports.varNames = {
   globalCornerRadius: '--sw-global-corner-radius',
   globalSwatchSpacing: '--sw-global-swatch-spacing',
   typography: {

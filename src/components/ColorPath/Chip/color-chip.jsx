@@ -1,7 +1,6 @@
 // @flow
 /* eslint-disable */
 import React, { PureComponent, Fragment } from 'react';
-import { ScriptVars } from '../../../shared/themes/ScriptVars';
 
 type Props = {
   onClickMethod: Function,

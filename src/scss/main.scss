@@ -1,6 +1,7 @@
-@import 'mixins';
+@import 'mixins/mixins';
 
 // main styles
-@import 'StyleVars';
+@import 'variables';
 
-@import 'scene-picker';
+// @import 'scene-picker';
+// @import 'ColorSwatch/ColorSwatch';
