@@ -1,3 +1,4 @@
+const webpack = require('webpack');
 const path = require( 'path' );
 const _ = require( 'lodash' );
 const HtmlWebpackPlugin = require( 'html-webpack-plugin' );
@@ -13,7 +14,6 @@ const memoizee = require( 'memoizee' );
 
 const sassRules = [
   MiniCssExtractPlugin.loader,
-  // 'style-loader',
   'css-loader',
   'postcss-loader',
   {
@@ -49,14 +49,6 @@ module.exports = {
       }
     ]
   },
-  devServer: {
-    proxy: {
-      'http://localhost:3000': {
-        // target: 'http://localhost:3000'
-        target: 'https://dev-prism-api.ebus.swaws'
-      }
-    }
-  },
   plugins: [
     new HtmlWebpackPlugin( { template: './src/index.html' } ),
     new MiniCssExtractPlugin( {
@@ -73,7 +65,10 @@ module.exports = {
         to: 'css',
         flatten: true
       }
-    ] )
+    ]),
+    new webpack.DefinePlugin({
+      '$API_PATH': JSON.stringify(process.env.API_URL)
+    })
   ],
   resolve: {
     alias: {

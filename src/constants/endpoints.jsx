@@ -1,2 +1,3 @@
-export const SW_COLORS_ENDPOINT = 'http://localhost:3000/v1/colors/sherwin'
-export const SW_COLORS_BY_FAMILY_ENDPOINT = 'http://localhost:3000/v1/families/sherwin'
+/* eslint-disable no-undef */
+export const SW_COLORS_ENDPOINT = `${$API_PATH}/v1/colors/sherwin`
+export const SW_COLORS_BY_FAMILY_ENDPOINT = `${$API_PATH}/v1/families/sherwin`
