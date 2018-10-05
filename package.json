@@ -5,7 +5,8 @@
   "scripts": {
     "start": "webpack-dev-server --mode development --open --hot --config webpack.dev.js",
     "build": "webpack --config webpack.prod.js",
-    "test": "./node_modules/flow-bin/cli.js && jest --coverage"
+    "test": "./node_modules/flow-bin/cli.js && jest --coverage",
+    "postinstall": "./node_modules/flow-typed/dist/cli.js install"
   },
   "dependencies": {
     "@ctrl/tinycolor": "2.2.1",
