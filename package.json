@@ -5,8 +5,8 @@
   "scripts": {
     "start": "API_URL=https://dev-prism-api.ebus.swaws webpack-dev-server --mode development --open --hot --config webpack.dev.js",
     "build": "API_URL=http://localhost:3000 webpack --config webpack.prod.js",
-    "test": "./node_modules/flow-bin/cli.js && jest --coverage",
-    "postinstall": "./node_modules/flow-typed/dist/cli.js install"
+    "test": "flow check && jest --coverage",
+    "postinstall": "flow-typed install"
   },
   "dependencies": {
     "@ctrl/tinycolor": "2.2.1",
@@ -53,6 +53,7 @@
     "eslint-plugin-react": "7.11.1",
     "eslint-plugin-standard": "4.0.0",
     "file-loader": "2.0.0",
+    "flow": "0.2.3",
     "flow-bin": "0.81.0",
     "flow-typed": "2.5.1",
     "html-webpack-plugin": "3.2.0",
