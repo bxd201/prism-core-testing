@@ -9,3 +9,6 @@ dist
 
 # Test coverage
 coverage
+
+# installed flow types
+flow-typed/npm
