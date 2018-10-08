@@ -1,5 +1,5 @@
-import { colors } from '../src/reducers/colors'
-import { scenes } from '../src/reducers/scenes'
+import { colors } from '../../src/reducers/colors'
+import { scenes } from '../../src/reducers/scenes'
 
 test('colors reducer changes status', () => {
   const state = colors({ status: 'pending' }, { type: 'REQUEST_COLORS', payload: 'done' })
