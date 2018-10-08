@@ -100,6 +100,16 @@ const sassRules = [
         '_getVarName($keys)': getVarGenerator( varNames )
       }
     }
+  },
+  {
+    loader: 'sass-resources-loader',
+    options: {
+      // Or array of paths
+      resources: [
+        path.resolve( __dirname, 'src/scss/mixins/mixins.scss' ),
+        path.resolve( __dirname, 'src/scss/variables.scss' )
+      ]
+    }
   }
 ];
 
@@ -147,10 +157,5 @@ module.exports = {
     new webpack.DefinePlugin({
       '$API_PATH': JSON.stringify(process.env.API_URL)
     })
-  ],
-  resolve: {
-    alias: {
-      variables: path.resolve( __dirname, 'src/scss/variables.scss' ),
-    }
-  }
+  ]
 };
