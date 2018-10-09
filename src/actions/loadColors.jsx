@@ -1,6 +1,8 @@
+// @flow
 import axios from 'axios'
 
 import { SW_COLORS_BY_FAMILY_ENDPOINT } from '../constants/endpoints'
+import type { ColorPayload } from '../shared/types/Colors'
 
 export const REQUEST_COLORS = 'REQUEST_COLORS'
 const requestColors = () => {
@@ -11,15 +13,18 @@ const requestColors = () => {
 }
 
 export const RECEIVE_COLORS = 'RECEIVE_COLORS'
-const receiveColors = (colors) => {
+const receiveColors = (colors: ColorPayload) => {
   return {
     type: RECEIVE_COLORS,
-    payload: { loading: false, colors: colors }
+    payload: {
+      loading: false,
+      colors: colors
+    }
   }
 }
 
 export const loadColors = () => {
-  return (dispatch) => {
+  return (dispatch: Function) => {
     dispatch(requestColors())
 
     return axios.get(SW_COLORS_BY_FAMILY_ENDPOINT)

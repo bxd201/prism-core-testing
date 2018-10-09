@@ -1,15 +1,21 @@
+// @flow
 import React from 'react'
 import { connect } from 'react-redux'
-import PropTypes from 'prop-types'
 
 import { loadColors } from '../actions/loadColors'
+import type { ColorPayload } from '../shared/types/Colors'
+
+type Props = {
+  colors: ColorPayload,
+  loadColors: Function
+}
 
 /**
  * HOC for ensuring color data is loaded before rendering the component
  * @param {component} WrappedComponent
  */
-const ColorDataWrapper = WrappedComponent => {
-  class ColorData extends React.Component {
+const ColorDataWrapper = (WrappedComponent: any) => {
+  class ColorData extends React.Component<Props> {
     constructor (props) {
       super(props)
 
@@ -25,18 +31,13 @@ const ColorDataWrapper = WrappedComponent => {
     }
   }
 
-  ColorData.propTypes = {
-    colors: PropTypes.object,
-    loadColors: PropTypes.func
-  }
-
   const mapStateToProps = (state, props) => {
     return {
       colors: state.colors.items
     }
   }
 
-  const mapDispatchToProps = (dispatch) => {
+  const mapDispatchToProps = (dispatch: Function) => {
     return {
       loadColors: () => {
         dispatch(loadColors())
