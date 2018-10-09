@@ -6,6 +6,10 @@ import { HashRouter } from 'react-router-dom'
 import localeEN from 'react-intl/locale-data/en'
 import localeES from 'react-intl/locale-data/es'
 
+// fontawesome imports
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faPlus, faPlusCircle } from '@fortawesome/free-solid-svg-icons'
+
 import en from './translations/en.json'
 import es from './translations/es.json'
 
@@ -16,6 +20,7 @@ import ColorPath from './components/ColorPath/ColorPath'
 import TintableScene from './components/TintableScene/TintableScene'
 import ColorWall from './components/Facets/ColorWall/ColorWall'
 
+// global sass import
 import './scss/main.scss'
 
 // list all supported languages & associate with their JSON
@@ -28,6 +33,13 @@ addLocaleData([
   ...localeEN,
   ...localeES
 ])
+
+// populate with all the FontAwesome svg icons we want to use
+const faIcons = [
+  faPlus,
+  faPlusCircle
+]
+library.add(...faIcons)
 
 // list all top level react components here
 const APPS = {
