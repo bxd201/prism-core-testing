@@ -1,0 +1,114 @@
+/**
+	* BEGIN: Global live palette related constants. These are referenced directly as values for properties in other Sass files.
+	* They need to be prefixed with '$livePalette__'
+*/
+$livePalette__chip-side-margin: 1%;
+$livePalette__chip-side-margin-small: 0.5%;
+$livePalette__detail-palette-set-size: 7;
+$livePalette__palette-set-size: 8;
+$livePalette__even-chip-dimension: (100% - $livePalette__chip-side-margin * ($livePalette__palette-set-size - 1)) / $livePalette__palette-set-size;
+
+/**
+  * Since the following formula is so ridicuously long, I'm including a reference representation of the operations:
+  * Computed Values:		  ( (						0.5% 				   (				7				  )96.5%) - (((							0.5%			    (			 	  7			   )96.5%) /    			12%		  ) 24%)72%) / (      		7					)   */
+$livePalette__chip-dimension: ( (100% - $livePalette__chip-side-margin-small * ($livePalette__palette-set-size - 1)) - (((100% - $livePalette__chip-side-margin-small * ($livePalette__palette-set-size - 1)) / $livePalette__palette-set-size) * 2) ) / ($livePalette__palette-set-size - 1);
+
+$livePalette__palette-height-diff: 100% - (100% - $livePalette__chip-side-margin * ($livePalette__palette-set-size - 1)) / $livePalette__palette-set-size; // Percent of the total app container less the height of the live palette
+/**
+* END: Global live palette related constants
+*/
+
+@mixin chip-attributes (
+$chip-style: null,
+$distribution: uneven,
+$important-suffix: null,
+$margin-left: $livePalette__chip-side-margin,
+$reduce-width: false
+)
+{
+/**
+  * BEGIN: Local vars for the values the final property assignments will use. Mixing logic will determine correct values for these.
+*/
+  $this-active-chip-dimension: '';
+  $this-chip-dimension: '';
+  $this-margin-left: $margin-left;
+  $this-padding-bottom: '';
+/**
+  * END
+*/
+
+/**
+  * BEGIN: Local convenience vars, make some of the calculation more readable.
+*/
+  $available-space-small-margin: 100% - ($livePalette__chip-side-margin-small * ($livePalette__palette-set-size - 1));
+  $available-space-detail-chips: 100% - ($livePalette__chip-side-margin-small * ($livePalette__detail-palette-set-size - 1));
+  $even-chip-dimension-small-margin: $available-space-small-margin / $livePalette__palette-set-size;
+  $active-chip-dimension: $even-chip-dimension-small-margin * 2;
+  $active-chip-dimension-reduced: $active-chip-dimension * 0.9; // Prevents palette list wrapping when deleted chip animates out
+  $detail-chip-dimension: $available-space-detail-chips / $livePalette__detail-palette-set-size;
+  $active-detail-chip-dimension: $detail-chip-dimension * 3;
+  $detail-chip-dimension: ($available-space-detail-chips - $active-detail-chip-dimension) / ($livePalette__detail-palette-set-size - 1);
+  $shorter-chip-height: $livePalette__even-chip-dimension / 1.17; // Reduces the height of the Compare Colors chips
+/**
+  * END
+*/
+
+@if $chip-style == compare-colors {
+  /**
+    * This is the live palette compare colors.
+    */
+  $this-margin-left: $livePalette__chip-side-margin-small;
+  $this-chip-dimension: $even-chip-dimension-small-margin;
+  $this-active-chip-dimension: $even-chip-dimension-small-margin;
+  $this-padding-bottom: $this-chip-dimension / 1.17;
+
+} @else if $chip-style == color-detail {
+  /**
+    * This is used in places such as the color detail modal chip strip.
+    */
+  $this-chip-dimension: $detail-chip-dimension;
+  $this-active-chip-dimension: $active-detail-chip-dimension;
+  $this-margin-left: $livePalette__chip-side-margin-small;
+  $this-padding-bottom: $this-chip-dimension;
+
+} @else {
+  $this-padding-bottom: $livePalette__chip-dimension;
+
+  @if $distribution == even {
+    /**
+      * These are the standard chip implementations, 'even' are mobile styles,
+      * default are desktop styles.
+      */
+    $this-chip-dimension: $livePalette__even-chip-dimension;
+    $this-active-chip-dimension: $livePalette__even-chip-dimension;
+    $this-margin-left: $margin-left;
+  } @else {
+    $this-chip-dimension: $livePalette__chip-dimension;
+    $this-active-chip-dimension: $active-chip-dimension;
+    $this-margin-left: $margin-left;
+  }
+}
+
+@if $reduce-width {
+  /**
+    * This comes last so that it can supersede previous declarations.
+    */
+  $this-active-chip-dimension: $active-chip-dimension-reduced;
+}
+
+&.active {
+  width: $this-active-chip-dimension#{$important-suffix};
+}
+
+&.active:after {
+  height: $this-active-chip-dimension;
+  top: -($this-active-chip-dimension);
+}
+
+padding-bottom: $this-padding-bottom;
+width: $this-chip-dimension;
+
++ * {
+  margin-left: $this-margin-left;
+}
+}

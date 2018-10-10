@@ -1,0 +1,29 @@
+.prism-live-palette {
+  max-width: 990px;
+  overflow: hidden;
+  background-color: getVar( "colors.white" );
+  border: 1px solid getVar( "colors.grey" );
+
+  &__list {
+    display: flex;
+    flex-grow: 1;
+    margin: 0;
+  }
+
+  &__slot {
+    @include chip-attributes($distribution: even);
+    background-color: #ebebeb;
+    position: relative;
+    cursor: default;
+    transition: width .6s;
+    height: 0;
+
+    &--empty,
+    &--add {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+}

@@ -6,8 +6,14 @@ import rootReducer from './reducers/rootReducer'
 
 const loggerMiddleware = createLogger()
 
+// TODO: Hydrate the initialState from localStorage if it exists
+const initialState = {
+  lp: []
+}
+
 const store = createStore(
   rootReducer,
+  initialState,
   applyMiddleware(
     thunkMiddleware,
     loggerMiddleware
