@@ -8,7 +8,11 @@ import localeES from 'react-intl/locale-data/es'
 
 // fontawesome imports
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faPlus, faPlusCircle } from '@fortawesome/free-solid-svg-icons'
+import {
+  faPlus,
+  faPlusCircle,
+  faTrash
+} from '@fortawesome/free-solid-svg-icons'
 
 import en from './translations/en.json'
 import es from './translations/es.json'
@@ -37,7 +41,8 @@ addLocaleData([
 // populate with all the FontAwesome svg icons we want to use
 const faIcons = [
   faPlus,
-  faPlusCircle
+  faPlusCircle,
+  faTrash
 ]
 library.add(...faIcons)
 

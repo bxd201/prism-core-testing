@@ -5,9 +5,11 @@ import React, { PureComponent } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FormattedMessage } from 'react-intl'
 import { connect } from 'react-redux'
+import _ from 'lodash'
 
 // import { varValues, varNames } from '../../shared/variables'
 
+import EmptySlot from './EmptySlot'
 import LivePaletteSlot from './LivePaletteSlot'
 
 import './LivePalette.scss'
@@ -18,27 +20,31 @@ type Props = {
 
 class LivePalette extends PureComponent<Props> {
   render () {
-    const lpSlots = this.props.colors.map(color => {
-      return <LivePaletteSlot key={color.id} color={color} />
-    })
-    if (lpSlots.length < 7) {
-      const additionalSlots = 7 - lpSlots.length
-
-      for (let i = 0; i < additionalSlots; i++) {
-        lpSlots.push((<LivePaletteSlot key={i} />))
+    // calculate all the active slots
+    const activeSlots = this.props.colors.map((color, index) => {
+      if (color && index < 7) {
+        return <LivePaletteSlot key={color.id} color={color} />
       }
+    })
+
+    // after determining active slots, determine how many empty ones there should be
+    let disabledSlots = []
+    const additionalSlots = 7 - activeSlots.length
+    if (additionalSlots > 0) {
+      disabledSlots = _.times(additionalSlots, (index) => <EmptySlot key={index} />)
     }
 
     return (
       <div className='prism-live-palette'>
         <div className='prism-live-palette__list'>
+          {activeSlots}
           <button className='prism-live-palette__slot prism-live-palette__slot--add'>
             <FontAwesomeIcon icon='plus-circle' size='2x' color='#2c97de' />
             <span className='prism-live-palette__slot__copy'>
               <FormattedMessage id='ADD_A_COLOR' />
             </span>
           </button>
-          {lpSlots}
+          {disabledSlots}
         </div>
       </div>
     )

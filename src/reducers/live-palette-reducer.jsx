@@ -6,6 +6,12 @@ export const lp = (state = {}, action) => {
         action.payload.color
       ]
 
+    case 'REMOVE_LP_COLOR':
+      const colors = state.filter(color => (color.id !== action.payload.colorId))
+      return [
+        ...colors
+      ]
+
     default:
       return state
   }
