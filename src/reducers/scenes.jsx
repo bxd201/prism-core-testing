@@ -1,4 +1,8 @@
-export const scenes = (state = {}, action) => {
+const initialState = {
+  selectedColor: {}
+}
+
+export const scenes = (state = initialState, action) => {
   switch (action.type) {
     case 'COLOR_SELECTED':
       return Object.assign({}, state, {

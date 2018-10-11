@@ -23,6 +23,14 @@ const receiveColors = (colors: ColorPayload) => {
   }
 }
 
+export const FILTER_BY_FAMILY = 'FILTER_BY_FAMILY'
+export const filterByFamily = (family) => {
+  return {
+    type: FILTER_BY_FAMILY,
+    payload: { family }
+  }
+}
+
 export const loadColors = () => {
   return (dispatch: Function) => {
     dispatch(requestColors())

@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
+import kebabCase from 'lodash/kebabCase'
 
 import { selectColor } from '../../../actions/scenes'
 
@@ -32,7 +33,7 @@ const SwatchInner = styled.div`
   transition-property: left,top,width,height;
   transition-duration: .3s;
   transition-timing-function: ease-in;
-  width: 100%;  
+  width: 100%;
 `
 
 class ColorWallSwatch extends PureComponent {
@@ -49,21 +50,21 @@ class ColorWallSwatch extends PureComponent {
     const { color, active } = this.props
 
     const Outer = {
-      width: 'calc(99.9%/56)', 
-      cursor: 'pointer', 
-      display: 'inline-block', 
+      width: 'calc(99.9%/56)',
+      cursor: 'pointer',
+      display: 'inline-block',
       position: 'relative'
     }
-    const Placeholder = { 
-      height: 0, 
-      marginBottom: '100%', 
-      width: '100%' 
+    const Placeholder = {
+      height: 0,
+      marginBottom: '100%',
+      width: '100%'
     }
-    const Inner = { 
-      backgroundColor: color.hex, 
+    const Inner = {
+      backgroundColor: color.hex,
     }
     const ActiveInner = {
-      backgroundColor: color.hex, 
+      backgroundColor: color.hex,
       border: '1px solid #f2f2f2',
       position: 'absolute',
       overflow: 'hidden',
@@ -89,14 +90,15 @@ class ColorWallSwatch extends PureComponent {
   }
 
   handleSwatchClick (e) {
-    const { match, color } = this.props
+    const { match, color, family } = this.props
     const { params } = match
+    const familyRoute = kebabCase(family)
 
     if (params.colorNumber) {
-      window.location.hash = `/active/color-wall/`
+      window.location.hash = `/active/color-wall/${familyRoute}`
       return;
     }
-    window.location.hash = `/active/color-wall/${color.colorNumber}`
+    window.location.hash = `/active/color-wall/${familyRoute}/${color.colorNumber}`
   }
 
   handleSwatchHover (e) {
@@ -116,7 +118,8 @@ ColorWallSwatch.propTypes = {
   selectColor: PropTypes.func,
   previewColor: PropTypes.func,
   color: PropTypes.object.isRequired,
-  active: PropTypes.bool
+  active: PropTypes.bool,
+  family: PropTypes.string
 }
 
 const mapDispatchToProps = (dispatch) => {

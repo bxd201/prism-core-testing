@@ -1,6 +1,7 @@
 // @flow
 import React from 'react'
 import { connect } from 'react-redux'
+import isEmpty from 'lodash/isEmpty'
 
 import { loadColors } from '../actions/loadColors'
 import type { ColorPayload } from '../shared/types/Colors'
@@ -19,11 +20,13 @@ const ColorDataWrapper = (WrappedComponent: any) => {
     constructor (props) {
       super(props)
 
-      this.props.loadColors()
+      if (isEmpty(this.props.colors)) {
+        this.props.loadColors()
+      }
     }
 
     render () {
-      if (!this.props.colors) {
+      if (isEmpty(this.props.colors)) {
         return <p>Loading....</p>
       }
 
@@ -33,7 +36,8 @@ const ColorDataWrapper = (WrappedComponent: any) => {
 
   const mapStateToProps = (state, props) => {
     return {
-      colors: state.colors.items
+      colors: state.colors.items,
+      family: state.colors.family
     }
   }
 
