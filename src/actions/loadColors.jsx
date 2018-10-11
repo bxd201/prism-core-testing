@@ -24,7 +24,7 @@ const receiveColors = (colors: ColorPayload) => {
 }
 
 export const FILTER_BY_FAMILY = 'FILTER_BY_FAMILY'
-export const filterByFamily = (family) => {
+export const filterByFamily = (family: ColorPayload) => {
   return {
     type: FILTER_BY_FAMILY,
     payload: { family }
