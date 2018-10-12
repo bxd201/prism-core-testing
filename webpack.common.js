@@ -123,6 +123,11 @@ module.exports = {
     path: path.join( __dirname, '/dist' ),
     filename: '[name].js'
   },
+  resolve: {
+    alias: {
+      constants: path.resolve(__dirname, 'src/constants/')
+    }
+  },
   module: {
     rules: [
       {

@@ -9,6 +9,8 @@ import { FormattedMessage } from 'react-intl'
 import { connect } from 'react-redux'
 import _ from 'lodash'
 
+import { LP_MAX_COLORS_ALLOWED } from 'constants/configurations'
+
 import { activate } from '../../actions/live-palette'
 
 // import { varValues, varNames } from '../../shared/variables'
@@ -30,7 +32,7 @@ class LivePalette extends PureComponent<Props> {
     // TODO: abstract below into a class method
     // calculate all the active slots
     const activeSlots = colors.map((color, index) => {
-      if (color && index < 7) {
+      if (color && index < LP_MAX_COLORS_ALLOWED) {
         return <ActiveSlot key={color.id} color={color} onClick={this.activateColor} active={(activeColor.id === color.id)} />
       }
     })

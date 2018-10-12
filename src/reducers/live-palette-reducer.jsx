@@ -1,12 +1,17 @@
 import _ from 'lodash'
-/* eslint-disable no-debugger */
+
+import { LP_MAX_COLORS_ALLOWED } from 'constants/configurations'
+
 export const lp = (state = {}, action) => {
   switch (action.type) {
     case 'ADD_LP_COLOR':
+      // check if there are already 7 colors added and if the color exists already before adding
+      if (state.colors.length < LP_MAX_COLORS_ALLOWED && !_.filter(state.colors, color => color.id === action.payload.color.id).length) {
+        state.colors.push(action.payload.color)
+      }
       return Object.assign({}, state, {
         colors: [
-          ...state.colors,
-          action.payload.color
+          ...state.colors
         ],
         activeColor: action.payload.color // default newly added colors as the active color
       })
