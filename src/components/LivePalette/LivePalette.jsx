@@ -1,11 +1,15 @@
 /* eslint-disable react/self-closing-comp */
 
 // @flow
+import type { Color } from '../../shared/types/Colors'
+
 import React, { PureComponent } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FormattedMessage } from 'react-intl'
 import { connect } from 'react-redux'
 import _ from 'lodash'
+
+import { activate } from '../../actions/live-palette'
 
 // import { varValues, varNames } from '../../shared/variables'
 
@@ -15,25 +19,19 @@ import ActiveSlot from './ActiveSlot'
 import './LivePalette.scss'
 
 type Props = {
-  colors: Array
+  colors: Array<Color>,
+  activateColor: Function,
+  activeColor: Color
 }
 
 class LivePalette extends PureComponent<Props> {
-  state = {
-    activeColorId: null
-  }
-
-  constructor (props) {
-    super(props)
-
-    this.activateColor = this.activateColor.bind(this)
-  }
-
   render () {
+    const { colors, activeColor } = this.props
+    // TODO: abstract below into a class method
     // calculate all the active slots
-    const activeSlots = this.props.colors.map((color, index) => {
+    const activeSlots = colors.map((color, index) => {
       if (color && index < 7) {
-        return <ActiveSlot key={color.id} color={color} onClick={this.activateColor} active={this.state.activeColorId === color.id} />
+        return <ActiveSlot key={color.id} color={color} onClick={this.activateColor} active={(activeColor.id === color.id)} />
       }
     })
 
@@ -60,8 +58,8 @@ class LivePalette extends PureComponent<Props> {
     )
   }
 
-  activateColor (color) {
-    this.setState({ activeColorId: color.id })
+  activateColor = (color) => {
+    this.props.activateColor(color)
   }
 }
 
@@ -69,8 +67,17 @@ const mapStateToProps = (state, props) => {
   const { lp } = state
 
   return {
-    colors: lp
+    colors: lp.colors,
+    activeColor: lp.activeColor
   }
 }
 
-export default connect(mapStateToProps, null)(LivePalette)
+const mapDispatchToProps = (dispatch) => {
+  return {
+    activateColor: (color) => {
+      dispatch(activate(color))
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(LivePalette)

@@ -33,7 +33,12 @@ class LivePaletteSlot extends PureComponent<Props> {
   }
 
   onClick () {
-    this.props.onClick(this.props.color)
+    // only trigger the onClick and activating the swatch if it's not already active.
+    // this should prevent an additional re-render since clicking on the move icon also triggers the click
+    // on the swatch itself
+    if (!this.props.active) {
+      this.props.onClick(this.props.color)
+    }
   }
 }
 

@@ -14,7 +14,7 @@ describe('live-palette-reduer', () => {
       }
     }
 
-    expect(lp([], mock)).toEqual([{ id: 1 }])
+    expect(lp({ colors: [] }, mock)).toEqual({ colors: [{ id: 1 }], activeColor: { id: 1 } })
   })
 
   it('should handle REMOVE_LP_COLOR', () => {
@@ -25,6 +25,17 @@ describe('live-palette-reduer', () => {
       }
     }
 
-    expect(lp([], mock)).toEqual([])
+    expect(lp([], mock)).toEqual({ colors: [], activeColor: null })
+  })
+
+  it('should handle ACTIVATE_LP_COLOR', () => {
+    const mock = {
+      type: actions.ACTIVATE_LP_COLOR,
+      payload: {
+        color: { id: 1 }
+      }
+    }
+
+    expect(lp([], mock)).toEqual({ activeColor: { id: 1 } })
   })
 })

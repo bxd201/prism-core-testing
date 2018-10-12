@@ -16,3 +16,11 @@ export const remove = (colorId: Number) => {
     payload: { colorId: colorId }
   }
 }
+
+export const ACTIVATE_LP_COLOR: string = 'ACTIVATE_LP_COLOR'
+export const activate = (colorObj: Color) => {
+  return {
+    type: ACTIVATE_LP_COLOR,
+    payload: { color: colorObj }
+  }
+}

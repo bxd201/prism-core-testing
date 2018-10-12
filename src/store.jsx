@@ -8,7 +8,9 @@ const loggerMiddleware = createLogger()
 
 // TODO: Hydrate the initialState from localStorage if it exists
 const initialState = {
-  lp: []
+  lp: {
+    colors: []
+  }
 }
 
 const store = createStore(
