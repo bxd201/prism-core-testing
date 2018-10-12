@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import PropTypes from 'prop-types'
 import { remove } from '../../actions/live-palette'
 
-// import { varValues, varNames } from '../../shared/variables'
+// import { varValues, varNames } from 'variables'
 
 class LivePaletteSlot extends PureComponent<Props> {
   ACTIVE_CLASS = 'prism-live-palette__slot--active'

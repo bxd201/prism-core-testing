@@ -13,7 +13,7 @@ import { LP_MAX_COLORS_ALLOWED } from 'constants/configurations'
 
 import { activate } from '../../actions/live-palette'
 
-// import { varValues, varNames } from '../../shared/variables'
+// import { varValues, varNames } from 'variables'
 
 import EmptySlot from './EmptySlot'
 import ActiveSlot from './ActiveSlot'

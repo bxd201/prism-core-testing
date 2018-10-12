@@ -74,14 +74,14 @@ const getVarGenerator = ( function() {
       var _keys = keys.split( '.' ), returner, i;
 
       returner = Object.assign( {}, values );
-      
+
       for( i = 0; i < _keys.length; i++ ) {
         returner = returner[ _keys[ i ] ];
       }
 
       return sassUtils.castToSass( processVarData( returner ) );
     }, { primitive: true, length: 1 } );
-    
+
     return ( keys ) => getVarInternal_memoized( keys.getValue() );
   }
 } )();
@@ -125,7 +125,8 @@ module.exports = {
   },
   resolve: {
     alias: {
-      constants: path.resolve(__dirname, 'src/constants/')
+      constants: path.resolve(__dirname, 'src/constants/'),
+      variables: path.resolve(__dirname, 'src/shared/variables.js')
     }
   },
   module: {

@@ -5,7 +5,7 @@ import PropTypes from 'prop-types'
 import CSSVariableApplicator from '../../helpers/CSSVariableApplicator'
 
 import { selectScene } from '../../actions/scenes'
-import { varValues, varNames } from '../../shared/variables'
+import { varValues, varNames } from 'variables'
 
 class SceneList extends PureComponent {
   constructor (props) {
