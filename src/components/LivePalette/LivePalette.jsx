@@ -10,7 +10,7 @@ import _ from 'lodash'
 // import { varValues, varNames } from '../../shared/variables'
 
 import EmptySlot from './EmptySlot'
-import LivePaletteSlot from './LivePaletteSlot'
+import ActiveSlot from './ActiveSlot'
 
 import './LivePalette.scss'
 
@@ -19,11 +19,21 @@ type Props = {
 }
 
 class LivePalette extends PureComponent<Props> {
+  state = {
+    activeColorId: null
+  }
+
+  constructor (props) {
+    super(props)
+
+    this.activateColor = this.activateColor.bind(this)
+  }
+
   render () {
     // calculate all the active slots
     const activeSlots = this.props.colors.map((color, index) => {
       if (color && index < 7) {
-        return <LivePaletteSlot key={color.id} color={color} />
+        return <ActiveSlot key={color.id} color={color} onClick={this.activateColor} active={this.state.activeColorId === color.id} />
       }
     })
 
@@ -48,6 +58,10 @@ class LivePalette extends PureComponent<Props> {
         </div>
       </div>
     )
+  }
+
+  activateColor (color) {
+    this.setState({ activeColorId: color.id })
   }
 }
 

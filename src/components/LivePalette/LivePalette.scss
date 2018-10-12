@@ -18,12 +18,24 @@
     transition: width .6s;
     height: 0;
 
+    &__details {
+      display: none;
+    }
+
     &--empty,
     &--add {
       display: flex;
       flex-direction: row;
       align-items: center;
       justify-content: center;
+    }
+
+    &--active {
+      width: 25%; // TODO: calculate actual width
+      
+      .prism-live-palette__slot__details {
+        display: block;
+      }
     }
   }
 }

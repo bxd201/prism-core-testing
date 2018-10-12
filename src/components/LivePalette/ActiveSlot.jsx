@@ -8,32 +8,39 @@ import { remove } from '../../actions/live-palette'
 // import { varValues, varNames } from '../../shared/variables'
 
 class LivePaletteSlot extends PureComponent<Props> {
-  ACTIVE_CLASS = 'prism-live-palette--active'
+  ACTIVE_CLASS = 'prism-live-palette__slot--active'
 
   constructor (props) {
     super(props)
 
-    this.state = {
-      active: false
-    }
+    this.onClick = this.onClick.bind(this)
   }
 
   render () {
-    const { color } = this.props
+    const { color, active } = this.props
 
     return (
       <React.Fragment>
-        <div className='prism-live-palette__slot' style={{ backgroundColor: color.hex }}>
-          <button onClick={() => this.props.remove(color.id)}><FontAwesomeIcon icon='trash' size='lg' /></button>
+        <div className={`prism-live-palette__slot ${(active ? this.ACTIVE_CLASS : '')}`} style={{ backgroundColor: color.hex }} onClick={this.onClick}>
+          <div className='prism-live-palette__slot__details'>
+            <p>{ color.colorNumber }</p>
+            <strong>{ color.name }</strong>
+            <button onClick={() => this.props.remove(color.id)}><FontAwesomeIcon icon='trash' size='lg' /></button>
+          </div>
         </div>
       </React.Fragment>
     )
+  }
+
+  onClick () {
+    this.props.onClick(this.props.color)
   }
 }
 
 LivePaletteSlot.propTypes = {
   color: PropTypes.object,
-  remove: PropTypes.func
+  remove: PropTypes.func,
+  onClick: PropTypes.func
 }
 
 const mapDispatchToProps = (dispatch) => {

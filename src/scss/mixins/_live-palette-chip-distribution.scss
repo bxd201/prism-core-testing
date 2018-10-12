@@ -96,14 +96,14 @@ $reduce-width: false
   $this-active-chip-dimension: $active-chip-dimension-reduced;
 }
 
-&.active {
-  width: $this-active-chip-dimension#{$important-suffix};
-}
+// &.active {
+//   width: $this-active-chip-dimension#{$important-suffix};
+// }
 
-&.active:after {
-  height: $this-active-chip-dimension;
-  top: -($this-active-chip-dimension);
-}
+// &.active:after {
+//   height: $this-active-chip-dimension;
+//   top: -($this-active-chip-dimension);
+// }
 
 padding-bottom: $this-padding-bottom;
 width: $this-chip-dimension;

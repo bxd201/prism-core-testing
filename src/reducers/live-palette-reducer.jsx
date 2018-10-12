@@ -1,3 +1,5 @@
+import _ from 'lodash'
+
 export const lp = (state = {}, action) => {
   switch (action.type) {
     case 'ADD_LP_COLOR':
@@ -7,7 +9,7 @@ export const lp = (state = {}, action) => {
       ]
 
     case 'REMOVE_LP_COLOR':
-      const colors = state.filter(color => (color.id !== action.payload.colorId))
+      const colors = _.reject(state, (color) => (color.id === action.payload.colorId))
       return [
         ...colors
       ]
