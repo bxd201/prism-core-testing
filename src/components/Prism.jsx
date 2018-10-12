@@ -3,6 +3,7 @@ import { Route, Redirect } from 'react-router-dom'
 
 import Main from './Facets/Main/Main'
 import ColorWall from './Facets/ColorWall/ColorWall'
+import DnD from './POC/DnD/DnD'
 
 // barebones component to always take the user to active if they try to access root.
 // not sure if we need this but if we end up using this for TAG & want to retain bookmarks..
@@ -18,6 +19,7 @@ class Prism extends Component {
         <Route path='/active' exact component={Main} />
         <Route path='/active/color-wall/:family' exact component={ColorWall} />
         <Route path='/active/color-wall/:family/:colorNumber' exact component={ColorWall} />
+        <Route path='/dnd' exact component={DnD} />
       </React.Fragment>
     )
   }

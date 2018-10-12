@@ -1,0 +1,21 @@
+.prism-swatch {
+  cursor: pointer;
+  display: inline-block;
+  padding: 1em;
+  position: relative;
+  transition: filter .1s;
+  will-change: filter, transform;
+
+  &--dragging {
+    filter: contrast( 50% ) brightness( 1.5 );
+    transition-duration: 0s;
+  }
+
+  &--dark {
+    color: rgba( white, .8 );
+  }
+
+  &--light {
+    color: rgba( black, .8 );
+  }
+}
