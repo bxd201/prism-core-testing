@@ -74,7 +74,7 @@ const mapStateToProps = (state, props) => {
   }
 }
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = (dispatch: Function) => {
   return {
     activateColor: (color) => {
       dispatch(activate(color))

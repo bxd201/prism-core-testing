@@ -1,7 +1,7 @@
 /* eslint-disable */
 // @flow
 import React, { PureComponent } from 'react'
-import { ItemTypes } from '../Constants'
+import { DRAG_TYPES } from 'constants/globals'
 import { DragSource } from 'react-dnd'
 import tinycolor from '@ctrl/tinycolor'
 
@@ -45,7 +45,7 @@ class Swatch extends PureComponent<Props> {
     const { isDragging, colorValue, colorName, connectDragSource } = this.props
     const tc = tinycolor(colorValue)
 
-    return connectDragSource && connectDragSource( 
+    return connectDragSource && connectDragSource(
       <span style={{ background: colorValue }}
         className={Swatch.getClassName(isDragging, tc.isLight())}>
         <strong>{colorName}</strong> { colorValue }
@@ -54,4 +54,4 @@ class Swatch extends PureComponent<Props> {
   }
 }
 
-export default DragSource(ItemTypes.SWATCH, swatchSpec, collect)(Swatch)
+export default DragSource(DRAG_TYPES.SWATCH, swatchSpec, collect)(Swatch)

@@ -10,5 +10,9 @@
 [options]
 module.name_mapper.extension='css' -> '<PROJECT_ROOT>/src/shared/types/CSSFlowStub.js'
 module.name_mapper.extension='scss' -> '<PROJECT_ROOT>/src/shared/types/CSSFlowStub.js'
+module.name_mapper='^constants\/\(.*\)$' -> '<PROJECT_ROOT>/src/constants/\1'
+
+[ignore]
+.*/__tests__/.*
 
 [strict]

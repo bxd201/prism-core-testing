@@ -1,30 +1,30 @@
 // @flow
 export type Color = {
-  blue: Number,
-  brandCollectionIds: Array<Number>,
+  blue: number,
+  brandCollectionIds: Array<number>,
   brandCollectionNames: Array<String>,
   colorFamilyNames: Array<String>,
-  colorNumber: String,
+  colornumber: String,
   coordinatingColors: {
-    coord1ColorId: Number,
-    coord2ColorId: Number,
-    whiteColorId: Number
+    coord1ColorId: number,
+    coord2ColorId: number,
+    whiteColorId: number
   },
   csshsl: String,
   cssrgb: string,
   green: number,
   hex: String,
-  hue: Number,
-  id: Number,
+  hue: number,
+  id: number,
   isDark: Boolean,
   isExterior: Boolean,
   isInterior: Boolean,
-  lightness: Number,
+  lightness: number,
   name: String,
   opacity: String, // ex: "SW1234", whatever that means
-  red: Number,
-  rgb: Number,
-  saturation: Number,
+  red: number,
+  rgb: number,
+  saturation: number,
   smis: String
 }
 

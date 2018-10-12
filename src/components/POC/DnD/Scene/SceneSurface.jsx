@@ -1,6 +1,6 @@
 // @flow
 import React, { PureComponent } from 'react'
-import { ItemTypes } from '../Constants'
+import { DRAG_TYPES } from 'constants/globals'
 import { DropTarget } from 'react-dnd'
 
 import './Scene.scss'
@@ -50,4 +50,4 @@ class SceneSurface extends PureComponent<Props> {
   }
 }
 
-export default DropTarget(ItemTypes.SWATCH, sceneSurfaceSpec, collect)(SceneSurface)
+export default DropTarget(DRAG_TYPES.SWATCH, sceneSurfaceSpec, collect)(SceneSurface)
