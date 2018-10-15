@@ -9,6 +9,7 @@ export const lp = (state = {}, action) => {
       if (state.colors.length < LP_MAX_COLORS_ALLOWED && !_.filter(state.colors, color => color.id === action.payload.color.id).length) {
         state.colors.push(action.payload.color)
       }
+
       return Object.assign({}, state, {
         colors: [
           ...state.colors

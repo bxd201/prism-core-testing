@@ -8,6 +8,12 @@
     "test": "flow check && jest --coverage",
     "postinstall": "flow-typed install"
   },
+  "jest": {
+    "moduleNameMapper": {
+      "^constants(.*)$": "<rootDir>/src/constants$1",
+      "^variables(.*)$": "<rootDir>/shared/variables.js"
+    }
+  },
   "dependencies": {
     "@ctrl/tinycolor": "2.2.1",
     "@fortawesome/fontawesome-svg-core": "1.2.5",
