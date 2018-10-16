@@ -13,7 +13,7 @@ import { LP_MAX_COLORS_ALLOWED } from 'constants/configurations'
 
 import { activate } from '../../actions/live-palette'
 
-// import { varValues, varNames } from 'variables'
+import { varValues } from 'variables'
 
 import EmptySlot from './EmptySlot'
 import ActiveSlot from './ActiveSlot'
@@ -44,15 +44,18 @@ class LivePalette extends PureComponent<Props> {
       disabledSlots = _.times(additionalSlots, (index) => <EmptySlot key={index} />)
     }
 
+    const ADD_COLOR_TEXT = (colors.length) ? 'ADD_A_COLOR' : 'FIND_COLORS_IN_CW'
+    const COLOR_TRAY_CLASS_MODIFIERS = (colors.length) ? 'add' : 'add-empty'
+
     return (
       <div className='prism-live-palette'>
         <div className='prism-live-palette__list'>
           {activeSlots}
-          <button className='prism-live-palette__slot prism-live-palette__slot--add'>
-            <FontAwesomeIcon icon='plus-circle' size='2x' color='#2c97de' />
-            <span className='prism-live-palette__slot__copy'>
-              <FormattedMessage id='ADD_A_COLOR' />
-            </span>
+          <button className={`prism-live-palette__slot prism-live-palette__slot--${COLOR_TRAY_CLASS_MODIFIERS}`}>
+            <FontAwesomeIcon className='prism-live-palette__icon' icon='plus-circle' size='lg' color={varValues.colors.swBlue} />
+            <FormattedMessage id={ADD_COLOR_TEXT}>
+              {(msg) => <span className='prism-live-palette__slot__copy'>{msg}</span>}
+            </FormattedMessage>
           </button>
           {disabledSlots}
         </div>

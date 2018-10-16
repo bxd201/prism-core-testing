@@ -21,7 +21,8 @@ module.exports.varValues = {
     danger: '#e94b35',
     error: '#e94b35',
     grey: '#cccccc',
-    white: '#ffffff'
+    white: '#ffffff',
+    swBlue: '#2c97de'
   }
 }
 

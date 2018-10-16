@@ -18,13 +18,22 @@ export const lp = (state = {}, action) => {
       })
 
     case 'REMOVE_LP_COLOR':
-      const colors = _.reject(state.colors, (color) => (color.id === action.payload.colorId))
+      let activeColorIndex = 0
+      const colors = _.reject(state.colors, (color, index) => {
+        if ((color.id === action.payload.colorId)) {
+          if (index > 0) {
+            activeColorIndex = index - 1
+          }
+        }
+
+        return (color.id === action.payload.colorId)
+      })
 
       return Object.assign({}, state, {
         colors: [
           ...colors
         ],
-        activeColor: colors[0] || null // default to 1st color in list when one is removed, if it's the last color set to null
+        activeColor: colors[activeColorIndex] || null
       })
 
     case 'ACTIVATE_LP_COLOR':
