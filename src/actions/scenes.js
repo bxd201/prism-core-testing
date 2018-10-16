@@ -9,7 +9,7 @@ export const selectColor = (colorObj: Color) => {
   }
 }
 
-export const SELECT_SCENE = 'SELECT_SCENE'
+export const SELECT_SCENE: string = 'SELECT_SCENE'
 // TODO: Create type for scene
 export const selectScene = (scene: any) => {
   return {

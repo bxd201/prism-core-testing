@@ -4,7 +4,7 @@ import axios from 'axios'
 import { SW_COLORS_BY_FAMILY_ENDPOINT } from '../constants/endpoints'
 import type { ColorPayload } from '../shared/types/Colors'
 
-export const REQUEST_COLORS = 'REQUEST_COLORS'
+export const REQUEST_COLORS: string = 'REQUEST_COLORS'
 const requestColors = () => {
   return {
     type: REQUEST_COLORS,
@@ -12,7 +12,7 @@ const requestColors = () => {
   }
 }
 
-export const RECEIVE_COLORS = 'RECEIVE_COLORS'
+export const RECEIVE_COLORS: string = 'RECEIVE_COLORS'
 const receiveColors = (colors: ColorPayload) => {
   return {
     type: RECEIVE_COLORS,
@@ -23,7 +23,7 @@ const receiveColors = (colors: ColorPayload) => {
   }
 }
 
-export const FILTER_BY_FAMILY = 'FILTER_BY_FAMILY'
+export const FILTER_BY_FAMILY: string = 'FILTER_BY_FAMILY'
 export const filterByFamily = (family: ColorPayload) => {
   return {
     type: FILTER_BY_FAMILY,
