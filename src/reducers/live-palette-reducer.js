@@ -41,6 +41,13 @@ export const lp = (state = {}, action) => {
         activeColor: action.payload.color
       })
 
+    case 'REORDER_LP_COLORS':
+      return Object.assign({}, state, {
+        colors: [
+          ...action.payload.colors
+        ]
+      })
+
     default:
       return state
   }

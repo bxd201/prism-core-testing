@@ -24,3 +24,11 @@ export const activate = (colorObj: Color) => {
     payload: { color: colorObj }
   }
 }
+
+export const REORDER_LP_COLORS: string = 'REORDER_LP_COLORS'
+export const reorder = (colors: Array<Color>) => {
+  return {
+    type: REORDER_LP_COLORS,
+    payload: { colors }
+  }
+}
