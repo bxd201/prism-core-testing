@@ -8,6 +8,11 @@ const initialState = {
 
 export const colors = (state = initialState, action) => {
   switch (action.type) {
+    case 'COLOR_SELECTED':
+      return Object.assign({}, state, {
+        selectedColor: action.payload.color
+      })
+
     case 'REQUEST_COLORS':
       return Object.assign({}, state, {
         status: action.payload

@@ -1,0 +1,65 @@
+{
+  "count": 3,
+  "scenes": [
+    {
+      "image": "/images/scenes/2/scene.jpg",
+      "surfaces": [
+        {
+          "id": 1,
+          "shape": "/images/scenes/2/s1.png",
+          "path": "/images/scenes/2/m1.svg"
+        },
+        {
+          "id": 2,
+          "shape": "/images/scenes/2/s2.png",
+          "path": "/images/scenes/2/m2.svg"
+        },
+        {
+          "id": 3,
+          "shape": "/images/scenes/2/s3.png",
+          "path": "/images/scenes/2/m3.svg"
+        }
+      ]
+    },
+    {
+      "image": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom1?wid=1200}",
+      "surfaces": [
+        {
+          "id": 1,
+          "shape": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom1?wid=1200&req=object&opac=100&fmt=png-alpha&object=wall&color=FFFFFF}&fmt=png-alpha",
+          "path": ""
+        },
+        {
+          "id": 2,
+          "shape": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom1?wid=1200&req=object&opac=100&fmt=png-alpha&object=accent&color=FFFFFF}&fmt=png-alpha",
+          "path": ""
+        },
+        {
+          "id": 3,
+          "shape": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom1?wid=1200&req=object&opac=100&fmt=png-alpha&object=trim&color=FFFFFF}&fmt=png-alpha",
+          "path": ""
+        }
+      ]
+    },
+    {
+      "image": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom5?wid=1200}",
+      "surfaces": [
+        {
+          "id": 1,
+          "shape": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom5?wid=1200&req=object&opac=100&fmt=png-alpha&object=wall&color=FFFFFF}&fmt=png-alpha",
+          "path": ""
+        },
+        {
+          "id": 2,
+          "shape": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom5?wid=1200&req=object&opac=100&fmt=png-alpha&object=accent&color=FFFFFF}&fmt=png-alpha",
+          "path": ""
+        },
+        {
+          "id": 3,
+          "shape": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom5?wid=1200&req=object&opac=100&fmt=png-alpha&object=trim&color=FFFFFF}&fmt=png-alpha",
+          "path": ""
+        }
+      ]
+    }
+  ]
+}

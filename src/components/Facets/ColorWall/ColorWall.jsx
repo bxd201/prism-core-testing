@@ -4,7 +4,7 @@ import { withRouter } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import debounce from 'lodash/debounce'
 
-import { selectColor } from '../../../actions/scenes'
+import { selectColor } from '../../../actions/colors'
 import { filterByFamily } from '../../../actions/loadColors'
 
 import ColorDataWrapper from '../../../helpers/ColorDataWrapper'

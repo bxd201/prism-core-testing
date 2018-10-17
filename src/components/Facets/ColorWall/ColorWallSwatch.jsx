@@ -7,7 +7,7 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import kebabCase from 'lodash/kebabCase'
 
-import { selectColor } from '../../../actions/scenes'
+import { selectColor } from '../../../actions/colors'
 
 const SwatchOuter = styled.li`
   width: 16px;
