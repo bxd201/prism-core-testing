@@ -8,11 +8,3 @@ export const selectScene = (scene: any) => {
     payload: { scene }
   }
 }
-
-export const COLOR_SELECTED: string = 'COLOR_SELECTED'
-export const selectColor = (colorObj: any) => {
-  return {
-    type: COLOR_SELECTED,
-    payload: { color: colorObj }
-  }
-}

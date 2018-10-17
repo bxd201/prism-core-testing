@@ -6,8 +6,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FormattedMessage } from 'react-intl'
 import { connect } from 'react-redux'
 import _ from 'lodash'
-import HTML5Backend from 'react-dnd-html5-backend'
-import { DragDropContext } from 'react-dnd'
 import update from 'immutability-helper'
 import { Link } from 'react-router-dom'
 
@@ -136,4 +134,4 @@ const mapDispatchToProps = (dispatch: Function) => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(DragDropContext(HTML5Backend)(LivePalette))
+export default connect(mapStateToProps, mapDispatchToProps)(LivePalette)
