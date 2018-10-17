@@ -12,7 +12,7 @@ import ColorDataWrapper from '../../../helpers/ColorDataWrapper'
 import ColorWallSwatch from './ColorWallSwatch'
 import ColorWallButton from './ColorWallButton'
 
-import './ColorWall.css'
+import './ColorWall.scss'
 
 class ColorWall extends PureComponent {
   // constructor (props) {

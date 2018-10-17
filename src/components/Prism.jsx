@@ -18,6 +18,7 @@ class Prism extends Component {
       <React.Fragment>
         <Route path='/' exact component={RootRedirect} />
         <Route path='/active' exact component={Main} />
+        <Route path='/active/color-wall' exact component={ColorWall} />
         <Route path='/active/color-wall/:family' exact component={ColorWall} />
         <Route path='/active/color-wall/:family/:colorNumber' exact component={ColorWall} />
         <Route path='/dnd' exact component={DnD} />

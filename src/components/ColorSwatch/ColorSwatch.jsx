@@ -2,7 +2,7 @@
 import React, { PureComponent, Fragment } from 'react'
 import { connect } from 'react-redux'
 
-import { selectColor } from '../../actions/colors'
+import { selectColor } from '../../actions/scenes'
 import { add } from '../../actions/live-palette'
 
 type Props = {

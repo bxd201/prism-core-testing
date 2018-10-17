@@ -54,7 +54,7 @@ class LivePalette extends PureComponent<Props> {
           <button className={`prism-live-palette__slot prism-live-palette__slot--${COLOR_TRAY_CLASS_MODIFIERS}`}>
             <FontAwesomeIcon className='prism-live-palette__icon' icon='plus-circle' size='lg' color={varValues.colors.swBlue} />
             <FormattedMessage id={ADD_COLOR_TEXT}>
-              {(msg) => <span className='prism-live-palette__slot__copy'>{msg}</span>}
+              {(msg: string) => <span className='prism-live-palette__slot__copy'>{msg}</span>}
             </FormattedMessage>
           </button>
           {disabledSlots}
