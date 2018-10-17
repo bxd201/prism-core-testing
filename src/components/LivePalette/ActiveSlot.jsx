@@ -31,9 +31,9 @@ class ActiveSlot extends PureComponent<Props> {
 
     return connectDragSource && connectDropTarget && connectDragSource(
       connectDropTarget(
-        <div className={`prism-live-palette__slot ${(active ? this.ACTIVE_CLASS : '')} ${(isDeleting ? this.REMOVAL_CLASS : '')}`} style={{ backgroundColor: color.hex, opacity: opacity }} onClick={this.onClick}>
+        <div className={`prism-live-palette__slot ${(active ? this.ACTIVE_CLASS : '')} ${(isDeleting ? this.REMOVAL_CLASS : '')}`} style={{ backgroundColor: color.hex, opacity }} onClick={this.onClick}>
           <div className='prism-live-palette__color-details'>
-            <span className='prism-live-palette__color-number'>{ color.colorNumber } - { color.id }</span>
+            <span className='prism-live-palette__color-number'>{ color.colorNumber }</span>
             <span className='prism-live-palette__color-name'>{ color.name }</span>
             <button className='prism-live-palette__trash' onClick={this.remove}><FontAwesomeIcon icon='trash' size='1x' /></button>
           </div>
@@ -83,9 +83,10 @@ const swatchSource = {
 const swatchTarget = {
   hover (props, monitor) {
     const activelyDraggingColorId = monitor.getItem().color.id
+    const targetColorId = props.color.id
 
-    if (activelyDraggingColorId !== props.color.id) {
-      props.moveColor(activelyDraggingColorId, props.color.id)
+    if (activelyDraggingColorId !== targetColorId) {
+      props.moveColor(activelyDraggingColorId, targetColorId)
     }
   }
 }

@@ -10,6 +10,7 @@ import { connect } from 'react-redux'
 import _ from 'lodash'
 import HTML5Backend from 'react-dnd-html5-backend'
 import { DragDropContext } from 'react-dnd'
+import update from 'immutability-helper'
 
 import { LP_MAX_COLORS_ALLOWED } from 'constants/configurations'
 
@@ -30,6 +31,9 @@ type Props = {
 }
 
 class LivePalette extends PureComponent<Props> {
+  pendingUpdateFn: any
+  requestedFrame: number | undefined
+
   render () {
     const { colors, activeColor } = this.props
     // TODO: abstract below into a class method
@@ -76,23 +80,39 @@ class LivePalette extends PureComponent<Props> {
     this.props.activateColor(color)
   }
 
-  moveColor = (originColorId, destinationColorId) => {
-    const { colors } = this.props
-    const colorsByIndex = _.flatMap(colors, color => color.id) // creates an array of only all color ids
-    const originIndex = colorsByIndex.indexOf(originColorId)
-    const destIndex = colorsByIndex.indexOf(destinationColorId)
+  scheduleUpdate = (updateFn) => {
+    this.pendingUpdateFn = updateFn
 
+    if (!this.requestedFrame) {
+      this.requestedFrame = window.requestAnimationFrame(this.drawFrame)
+    }
+  }
+
+  drawFrame = () => {
+    const sortedColorsById = update([], this.pendingUpdateFn)
+
+    // trigger the reordering via redux
+    this.props.reorderColors(sortedColorsById)
+
+    this.pendingUpdateFn = undefined
+    this.requestedFrame = undefined
+  }
+
+  moveColor = (originColorId: Number, destinationColorId: Number) => {
+    const { colors } = this.props
+
+    const colorsByIndex = _.flatMap(colors, color => color.id) // creates an array of only all color ids
+    const originIndex = colorsByIndex.indexOf(originColorId) // get the index of the origin color
+    const destIndex = colorsByIndex.indexOf(destinationColorId) // get the index of the dest color
+
+    // shuffle the origin with the dest
     const from = colorsByIndex.splice(originIndex, 1)[0]
     colorsByIndex.splice(destIndex, 0, from)
 
-    // reconstruct the colors array object
-    const reconstructedColors = []
-    for (let id = 0; id < colorsByIndex.length; id++) {
-      const color = _.filter(colors, color => (color.id === colorsByIndex[id]))[0]
-      reconstructedColors.push(color)
-    }
-
-    this.props.reorderColors(reconstructedColors)
+    // schedule the rearrangement of a swatch with the browser
+    this.scheduleUpdate({
+      $push: colorsByIndex
+    })
   }
 }
 

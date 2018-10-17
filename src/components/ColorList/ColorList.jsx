@@ -10,7 +10,7 @@ import ColorSwatch from '../ColorSwatch/ColorSwatch'
  */
 class ColorList extends PureComponent {
   render () {
-    const colorListMarkup = this.props.colors['Red'].map(color => {
+    const colorListMarkup = this.props.colors['Green'].map(color => {
       return <ColorSwatch key={color.id} color={color} />
     })
 

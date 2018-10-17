@@ -18,7 +18,9 @@ export const lp = (state = {}, action) => {
       })
 
     case 'REMOVE_LP_COLOR':
-      let activeColorIndex = 0
+      let activeColorIndex = 0 // set a default color index to return
+
+      // remove payload color from the colors stored in state
       const colors = _.reject(state.colors, (color, index) => {
         if ((color.id === action.payload.colorId)) {
           if (index > 0) {
@@ -42,9 +44,18 @@ export const lp = (state = {}, action) => {
       })
 
     case 'REORDER_LP_COLORS':
+      const { colorsByIndex } = action.payload
+
+      // reconstruct the colors array given an array of their IDs
+      const reconstructedColors = []
+      for (let id = 0; id < colorsByIndex.length; id++) {
+        const color = _.filter(state.colors, color => (color.id === colorsByIndex[id]))[0]
+        reconstructedColors.push(color)
+      }
+
       return Object.assign({}, state, {
         colors: [
-          ...action.payload.colors
+          ...reconstructedColors
         ]
       })
 

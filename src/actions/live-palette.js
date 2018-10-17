@@ -26,9 +26,9 @@ export const activate = (colorObj: Color) => {
 }
 
 export const REORDER_LP_COLORS: string = 'REORDER_LP_COLORS'
-export const reorder = (colors: Array<Color>) => {
+export const reorder = (colors: Array<Number>) => {
   return {
     type: REORDER_LP_COLORS,
-    payload: { colors }
+    payload: { colorsByIndex: colors }
   }
 }
