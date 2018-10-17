@@ -8,10 +8,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FormattedMessage } from 'react-intl'
 import { connect } from 'react-redux'
 import _ from 'lodash'
+import HTML5Backend from 'react-dnd-html5-backend'
+import { DragDropContext } from 'react-dnd'
 
 import { LP_MAX_COLORS_ALLOWED } from 'constants/configurations'
 
-import { activate } from '../../actions/live-palette'
+import { activate, reorder } from '../../actions/live-palette'
 
 import { varValues } from 'variables'
 
@@ -23,6 +25,7 @@ import './LivePalette.scss'
 type Props = {
   colors: Array<Color>,
   activateColor: Function,
+  reorderColors: Function,
   activeColor: Color
 }
 
@@ -33,7 +36,13 @@ class LivePalette extends PureComponent<Props> {
     // calculate all the active slots
     const activeSlots = colors.map((color, index) => {
       if (color && index < LP_MAX_COLORS_ALLOWED) {
-        return <ActiveSlot key={color.id} color={color} onClick={this.activateColor} active={(activeColor.id === color.id)} />
+        return (<ActiveSlot
+          key={color.id}
+          color={color}
+          onClick={this.activateColor}
+          moveColor={this.moveColor}
+          active={(activeColor.id === color.id)}
+        />)
       }
     })
 
@@ -66,6 +75,25 @@ class LivePalette extends PureComponent<Props> {
   activateColor = (color) => {
     this.props.activateColor(color)
   }
+
+  moveColor = (originColorId, destinationColorId) => {
+    const { colors } = this.props
+    const colorsByIndex = _.flatMap(colors, color => color.id) // creates an array of only all color ids
+    const originIndex = colorsByIndex.indexOf(originColorId)
+    const destIndex = colorsByIndex.indexOf(destinationColorId)
+
+    const from = colorsByIndex.splice(originIndex, 1)[0]
+    colorsByIndex.splice(destIndex, 0, from)
+
+    // reconstruct the colors array object
+    const reconstructedColors = []
+    for (let id = 0; id < colorsByIndex.length; id++) {
+      const color = _.filter(colors, color => (color.id === colorsByIndex[id]))[0]
+      reconstructedColors.push(color)
+    }
+
+    this.props.reorderColors(reconstructedColors)
+  }
 }
 
 const mapStateToProps = (state, props) => {
@@ -81,8 +109,11 @@ const mapDispatchToProps = (dispatch: Function) => {
   return {
     activateColor: (color) => {
       dispatch(activate(color))
+    },
+    reorderColors: (colors) => {
+      dispatch(reorder(colors))
     }
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(LivePalette)
+export default connect(mapStateToProps, mapDispatchToProps)(DragDropContext(HTML5Backend)(LivePalette))

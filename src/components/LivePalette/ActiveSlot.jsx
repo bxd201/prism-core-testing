@@ -1,13 +1,15 @@
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-// import { FormattedMessage } from 'react-intl'
 import PropTypes from 'prop-types'
+import flow from 'lodash/flow'
+import { DragSource, DropTarget } from 'react-dnd'
+
 import { remove } from '../../actions/live-palette'
 
-// import { varValues, varNames } from 'variables'
+import { DRAG_TYPES } from 'constants/globals'
 
-class LivePaletteSlot extends PureComponent<Props> {
+class ActiveSlot extends PureComponent<Props> {
   ACTIVE_CLASS = 'prism-live-palette__slot--active'
   REMOVAL_CLASS = 'prism-live-palette__slot--removing'
 
@@ -23,19 +25,20 @@ class LivePaletteSlot extends PureComponent<Props> {
   }
 
   render () {
-    const { color, active } = this.props
+    const { color, active, connectDragSource, connectDropTarget, isDragging } = this.props
     const { isDeleting } = this.state
+    const opacity = isDragging ? 0 : 1
 
-    return (
-      <React.Fragment>
-        <div className={`prism-live-palette__slot ${(active ? this.ACTIVE_CLASS : '')} ${(isDeleting ? this.REMOVAL_CLASS : '')}`} style={{ backgroundColor: color.hex }} onClick={this.onClick}>
+    return connectDragSource && connectDropTarget && connectDragSource(
+      connectDropTarget(
+        <div className={`prism-live-palette__slot ${(active ? this.ACTIVE_CLASS : '')} ${(isDeleting ? this.REMOVAL_CLASS : '')}`} style={{ backgroundColor: color.hex, opacity: opacity }} onClick={this.onClick}>
           <div className='prism-live-palette__color-details'>
-            <span className='prism-live-palette__color-number'>{ color.colorNumber }</span>
+            <span className='prism-live-palette__color-number'>{ color.colorNumber } - { color.id }</span>
             <span className='prism-live-palette__color-name'>{ color.name }</span>
             <button className='prism-live-palette__trash' onClick={this.remove}><FontAwesomeIcon icon='trash' size='1x' /></button>
           </div>
         </div>
-      </React.Fragment>
+      )
     )
   }
 
@@ -59,10 +62,32 @@ class LivePaletteSlot extends PureComponent<Props> {
   }
 }
 
-LivePaletteSlot.propTypes = {
+ActiveSlot.propTypes = {
   color: PropTypes.object,
+  isDragging: PropTypes.bool,
   remove: PropTypes.func,
-  onClick: PropTypes.func
+  onClick: PropTypes.func,
+  moveColor: PropTypes.func,
+  connectDragSource: PropTypes.func,
+  connectDropTarget: PropTypes.func
+}
+
+const swatchSource = {
+  beginDrag (props) {
+    return {
+      color: props.color
+    }
+  }
+}
+
+const swatchTarget = {
+  hover (props, monitor) {
+    const activelyDraggingColorId = monitor.getItem().color.id
+
+    if (activelyDraggingColorId !== props.color.id) {
+      props.moveColor(activelyDraggingColorId, props.color.id)
+    }
+  }
 }
 
 const mapDispatchToProps = (dispatch) => {
@@ -73,4 +98,13 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-export default connect(null, mapDispatchToProps)(LivePaletteSlot)
+export default flow([
+  DropTarget(DRAG_TYPES.SWATCH, swatchTarget, connect => ({
+    connectDropTarget: connect.dropTarget()
+  })),
+  DragSource(DRAG_TYPES.SWATCH, swatchSource, (connect, monitor) => ({
+    connectDragSource: connect.dragSource(),
+    isDragging: monitor.isDragging()
+  })),
+  connect(null, mapDispatchToProps)
+])(ActiveSlot)
