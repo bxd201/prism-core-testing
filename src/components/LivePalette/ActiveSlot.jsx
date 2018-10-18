@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react'
+import { findDOMNode } from 'react-dom'
 import { connect } from 'react-redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import PropTypes from 'prop-types'
@@ -63,6 +64,7 @@ class ActiveSlot extends PureComponent<Props> {
 }
 
 ActiveSlot.propTypes = {
+  index: PropTypes.number,
   color: PropTypes.object,
   isDragging: PropTypes.bool,
   remove: PropTypes.func,
@@ -75,19 +77,52 @@ ActiveSlot.propTypes = {
 const swatchSource = {
   beginDrag (props) {
     return {
-      color: props.color
+      color: props.color,
+      index: props.index
     }
   }
 }
 
 const swatchTarget = {
-  hover (props, monitor) {
+  hover (props, monitor, component) {
     const activelyDraggingColorId = monitor.getItem().color.id
     const targetColorId = props.color.id
 
-    if (activelyDraggingColorId !== targetColorId) {
-      props.moveColor(activelyDraggingColorId, targetColorId)
+    const dragIndex = monitor.getItem().index
+    const hoverIndex = props.index
+
+    // don't replace swatches with themselves
+    if (dragIndex === hoverIndex) {
+      return
     }
+
+    // get target swatch
+    const hoverBoundingRect = findDOMNode(component).getBoundingClientRect()
+
+    // get horizontal middle
+    const hoverMiddleX = (hoverBoundingRect.right - hoverBoundingRect.left) / 2
+
+    // determine mouse position
+    const clientOffset = monitor.getClientOffset()
+
+    // get pixels to the left
+    const hoverClientX = clientOffset.x - hoverBoundingRect.left
+
+    // only perform the move when the mouse has crossed half of the items height
+    if (dragIndex < hoverIndex && hoverClientX < hoverMiddleX) {
+      return
+    }
+    if (dragIndex > hoverIndex && hoverClientX > hoverMiddleX) {
+      return
+    }
+
+    // perform the move action
+    props.moveColor(activelyDraggingColorId, targetColorId)
+
+    // mutating monitor.. not ideal but this is required for the above 50%
+    // logic to actually work. This is the recommended approach per the examples
+    // provided by DnD.
+    monitor.getItem().index = hoverIndex
   }
 }
 

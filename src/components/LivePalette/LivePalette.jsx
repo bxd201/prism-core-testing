@@ -1,5 +1,3 @@
-/* eslint-disable react/self-closing-comp */
-
 // @flow
 import type { Color } from '../../shared/types/Colors'
 
@@ -11,6 +9,7 @@ import _ from 'lodash'
 import HTML5Backend from 'react-dnd-html5-backend'
 import { DragDropContext } from 'react-dnd'
 import update from 'immutability-helper'
+import { Link } from 'react-router-dom'
 
 import { LP_MAX_COLORS_ALLOWED } from 'constants/configurations'
 
@@ -41,6 +40,7 @@ class LivePalette extends PureComponent<Props> {
     const activeSlots = colors.map((color, index) => {
       if (color && index < LP_MAX_COLORS_ALLOWED) {
         return (<ActiveSlot
+          index={index}
           key={color.id}
           color={color}
           onClick={this.activateColor}
@@ -64,12 +64,12 @@ class LivePalette extends PureComponent<Props> {
       <div className='prism-live-palette'>
         <div className='prism-live-palette__list'>
           {activeSlots}
-          <button className={`prism-live-palette__slot prism-live-palette__slot--${COLOR_TRAY_CLASS_MODIFIERS}`}>
+          {colors.length < LP_MAX_COLORS_ALLOWED && <Link to={`/active/color-wall`} className={`prism-live-palette__slot prism-live-palette__slot--${COLOR_TRAY_CLASS_MODIFIERS}`}>
             <FontAwesomeIcon className='prism-live-palette__icon' icon='plus-circle' size='lg' color={varValues.colors.swBlue} />
             <FormattedMessage id={ADD_COLOR_TEXT}>
               {(msg: string) => <span className='prism-live-palette__slot__copy'>{msg}</span>}
             </FormattedMessage>
-          </button>
+          </Link>}
           {disabledSlots}
         </div>
       </div>

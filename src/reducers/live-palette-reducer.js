@@ -44,6 +44,11 @@ export const lp = (state = {}, action) => {
       })
 
     case 'REORDER_LP_COLORS':
+      // no colors are in the LP, why are you calling reorder?
+      if (state.colors.length === 0) {
+        return state
+      }
+
       const { colorsByIndex } = action.payload
 
       // reconstruct the colors array given an array of their IDs

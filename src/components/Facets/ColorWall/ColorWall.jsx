@@ -2,9 +2,7 @@ import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import PropTypes from 'prop-types'
-import debounce from 'lodash/debounce'
 
-import { selectColor } from '../../../actions/colors'
 import { filterByFamily } from '../../../actions/loadColors'
 
 import ColorDataWrapper from '../../../helpers/ColorDataWrapper'
@@ -15,16 +13,6 @@ import ColorWallButton from './ColorWallButton'
 import './ColorWall.scss'
 
 class ColorWall extends PureComponent {
-  // constructor (props) {
-  //   super(props)
-
-  //   // this.props.loadColors()
-  // }
-
-  previewColor = debounce((color) => {
-    this.props.selectColor(color)
-  }, 250)
-
   colorFamilySwatch (family) {
     return this.props.colors[family].map(color => {
       return <ColorWallSwatch
@@ -69,16 +57,12 @@ class ColorWall extends PureComponent {
 ColorWall.propTypes = {
   colors: PropTypes.object,
   match: PropTypes.object,
-  selectColor: PropTypes.func,
   filterByFamily: PropTypes.func,
   family: PropTypes.string
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    selectColor: (color) => {
-      dispatch(selectColor(color))
-    },
     filterByFamily: (family) => {
       dispatch(filterByFamily(family))
     }

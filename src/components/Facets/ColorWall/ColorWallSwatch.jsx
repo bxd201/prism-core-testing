@@ -1,40 +1,10 @@
-/* eslint-disable */
-
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import PropTypes from 'prop-types'
-import styled from 'styled-components'
-import kebabCase from 'lodash/kebabCase'
+// import kebabCase from 'lodash/kebabCase'
 
-import { selectColor } from '../../../actions/colors'
-
-const SwatchOuter = styled.li`
-  width: 16px;
-  cursor: pointer;
-  display: inline-block;
-  list-style-type: none;
-  position: relative;
-`
-const SwatchPlaceholder = styled.div`
-  height: 0;
-  margin-bottom: 100%;
-  width: 100%;
-`
-const SwatchInner = styled.div`
-  background: ${props => props.color.cssrgb};
-  border: 1px solid #f2f2f2;
-  height: 100%;
-  left: 0;
-  overflow: hidden;
-  position: absolute;
-  top: 0;
-  transform: translateZ(0);
-  transition-property: left,top,width,height;
-  transition-duration: .3s;
-  transition-timing-function: ease-in;
-  width: 100%;
-`
+import { add } from '../../../actions/live-palette'
 
 class ColorWallSwatch extends PureComponent {
   constructor (props) {
@@ -43,7 +13,6 @@ class ColorWallSwatch extends PureComponent {
     this.swatchRef = React.createRef()
     this.handleSwatchClick = this.handleSwatchClick.bind(this)
     this.handleSwatchHover = this.handleSwatchHover.bind(this)
-    this.handleSwatchMouseOut = this.handleSwatchMouseOut.bind(this)
   }
 
   render () {
@@ -61,7 +30,7 @@ class ColorWallSwatch extends PureComponent {
       width: '100%'
     }
     const Inner = {
-      backgroundColor: color.hex,
+      backgroundColor: color.hex
     }
     const ActiveInner = {
       backgroundColor: color.hex,
@@ -83,49 +52,50 @@ class ColorWallSwatch extends PureComponent {
       <React.Fragment>
         <li ref={this.swatchRef} style={Outer} onClick={this.handleSwatchClick}>
           <div style={Placeholder} />
-          <div className="inner color-swatch-inner" style={(active) ? ActiveInner : Inner} onMouseEnter={this.handleSwatchHover} onMouseLeave={this.handleSwatchMouseOut} />
+          <div className='inner color-swatch-inner' style={(active) ? ActiveInner : Inner} onMouseEnter={this.handleSwatchHover} onMouseLeave={this.handleSwatchMouseOut} />
         </li>
       </React.Fragment>
     )
   }
 
-  handleSwatchClick (e) {
-    const { match, color, family } = this.props
-    const { params } = match
-    const familyRoute = kebabCase(family)
+  handleSwatchClick () {
+    // const { match, color, family, addToLivePalette } = this.props
+    // const { params } = match
+    // const familyRoute = kebabCase(family)
 
-    if (params.colorNumber) {
-      window.location.hash = `/active/color-wall/${familyRoute}`
-      return;
-    }
-    window.location.hash = `/active/color-wall/${familyRoute}/${color.colorNumber}`
+    // if (params.colorNumber) {
+    //   window.location.hash = `/active/color-wall/${familyRoute}`
+    //   return
+    // }
+    // window.location.hash = `/active/color-wall/${familyRoute}/${color.colorNumber}`
+
+    // TOOD: Remove after testing. Adding this so we can test the flow of adding a color to the LP from the CW
+    this.props.addToLivePalette(this.props.color)
   }
 
   handleSwatchHover (e) {
     const { match } = this.props
     const { params } = match
 
-    if (!params.colorNumber)
-      this.props.previewColor(this.props.color)
-  }
-
-  handleSwatchMouseOut (e) {
-    // this.setState({ hoverActive: false })
+    if (!params.colorNumber) {
+      // TODO: uncomment & re-implement if we want to move forward with the idea of a live-preview as the user hovers
+      // this.props.previewColor(this.props.color)
+    }
   }
 }
 
 ColorWallSwatch.propTypes = {
-  selectColor: PropTypes.func,
-  previewColor: PropTypes.func,
+  addToLivePalette: PropTypes.func,
   color: PropTypes.object.isRequired,
   active: PropTypes.bool,
-  family: PropTypes.string
+  // family: PropTypes.string,
+  match: PropTypes.object
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    selectColor: (color) => {
-      dispatch(selectColor(color))
+    addToLivePalette: (color) => {
+      dispatch(add(color))
     }
   }
 }

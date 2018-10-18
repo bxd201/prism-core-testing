@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Route, Redirect } from 'react-router-dom'
 
+import LivePalette from './LivePalette/LivePalette'
 import Main from './Facets/Main/Main'
 import ColorWall from './Facets/ColorWall/ColorWall'
 import DnD from './POC/DnD/DnD'
@@ -23,6 +24,8 @@ class Prism extends Component {
         <Route path='/active/color-wall/:family/:colorNumber' exact component={ColorWall} />
         <Route path='/dnd' exact component={DnD} />
         <Route path='/scene-builder' exact component={SceneBuilder} />
+
+        <LivePalette />
       </React.Fragment>
     )
   }
