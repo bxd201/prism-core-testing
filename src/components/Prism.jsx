@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 import { Route, Redirect } from 'react-router-dom'
+import { DragDropContext } from 'react-dnd'
+import HTML5Backend from 'react-dnd-html5-backend'
 
 import LivePalette from './LivePalette/LivePalette'
 import Main from './Facets/Main/Main'
@@ -31,4 +33,4 @@ class Prism extends Component {
   }
 }
 
-export default Prism
+export default DragDropContext(HTML5Backend)(Prism)

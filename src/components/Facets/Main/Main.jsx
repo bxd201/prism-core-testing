@@ -1,6 +1,4 @@
 import React, { Component } from 'react'
-import { DragDropContext } from 'react-dnd'
-import HTML5Backend from 'react-dnd-html5-backend'
 
 // import SceneList from '../../SceneList/SceneList'
 // import TintableScene from '../../TintableScene/TintableScene'
@@ -22,4 +20,4 @@ class Main extends Component {
   }
 }
 
-export default DragDropContext(HTML5Backend)(Main)
+export default Main
