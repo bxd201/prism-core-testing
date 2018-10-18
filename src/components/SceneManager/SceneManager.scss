@@ -1,9 +1,56 @@
 .prism-scene-manager {
-  display: flex;
-  flex-direction: row;
+  // display: flex;
+  // flex-direction: row;
+
+  &__btn {
+    $btn-active-color: rgba(#222, 1);
+    $btn-focus-color: rgba(#eee, 1);
+
+    display: inline-block;
+    border: .25em solid transparent;
+    max-width: 100px;
+    position: relative;
+    z-index: 1;
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    &:hover {
+      border-color: $btn-focus-color;
+
+      &::after {
+        border-top-color: $btn-focus-color;
+      }
+    }
+
+    &--active {
+      $arrow-size: .5em;
+
+      border-color: $btn-active-color !important;
+
+      &::after {
+        bottom: -#{$arrow-size + .25em};
+        content: '';
+        left: 50%;
+        position: absolute;
+        transform: translateX( -50% );
+        border-top: $arrow-size solid $btn-active-color !important;
+        border-left: $arrow-size solid transparent;
+        border-right: $arrow-size solid transparent;
+      }
+    }
+  }
 
   &__scene {
+    max-width: 100%;
     position: relative;
+
+    &--disabled {
+      filter: saturate(0) brightness(.5) contrast(.75);
+      pointer-events: none;
+    }
 
     &__svg-defs {
       height: 0;
@@ -44,7 +91,7 @@
     }
 
     &__hit-area {
-      z-index: 10;
+      // this is the hover/click color
       fill: chartreuse !important;
       pointer-events: none;
 
