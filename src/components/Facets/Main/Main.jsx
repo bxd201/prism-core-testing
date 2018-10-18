@@ -4,7 +4,7 @@ import React, { Component } from 'react'
 // import TintableScene from '../../TintableScene/TintableScene'
 // import LivePalette from '../../LivePalette/LivePalette'
 // import ColorList from '../../ColorList/ColorList'
-import SceneBuilder from '../../POC/SceneBuilder/SceneBuilder'
+import SceneManager from '../../SceneManager/SceneManager'
 
 class Main extends Component {
   render () {
@@ -12,7 +12,7 @@ class Main extends Component {
       <React.Fragment>
         {/* <SceneList />
         <TintableScene /> */}
-        <SceneBuilder />
+        <SceneManager />
         {/* <LivePalette />
         <ColorList /> */}
       </React.Fragment>

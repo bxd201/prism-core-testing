@@ -13,7 +13,7 @@ type Props = {
   svgSource: string
 }
 
-const DeadSimpleSceneSurfaceHitAreaSpec = {
+const TintableSceneHitAreaSpec = {
   drop (props: Props, monitor) {
     const droppedItem = monitor.getItem()
 
@@ -31,10 +31,10 @@ function collect (connect, monitor) {
   }
 }
 
-class DeadSimpleSceneSurfaceHitArea extends PureComponent<Props> {
+class TintableSceneHitArea extends PureComponent<Props> {
   static defaultProps = {}
-  static baseClass = 'SimpleScene__hit-area'
-  static baseClassMask = `${DeadSimpleSceneSurfaceHitArea.baseClass}__mask`
+  static baseClass = 'prism-scene-manager__scene__hit-area'
+  static baseClassMask = `${TintableSceneHitArea.baseClass}__mask`
 
   constructor (props) {
     super(props)
@@ -49,8 +49,8 @@ class DeadSimpleSceneSurfaceHitArea extends PureComponent<Props> {
   render () {
     const { connectDropTarget, isOver, color, svgSource } = this.props
     return connectDropTarget && connectDropTarget(
-      <svg className={DeadSimpleSceneSurfaceHitArea.baseClass} style={{ fill: color }}>
-        <use className={`${DeadSimpleSceneSurfaceHitArea.baseClassMask} ${isOver ? `${DeadSimpleSceneSurfaceHitArea.baseClassMask}--hover` : ''}`}
+      <svg className={TintableSceneHitArea.baseClass} style={{ fill: color }}>
+        <use className={`${TintableSceneHitArea.baseClassMask} ${isOver ? `${TintableSceneHitArea.baseClassMask}--hover` : ''}`}
           xlinkHref={`${svgSource}#mask`}
           onClick={this.handleClick} />
       </svg>
@@ -58,4 +58,4 @@ class DeadSimpleSceneSurfaceHitArea extends PureComponent<Props> {
   }
 }
 
-export default DropTarget(DRAG_TYPES.SWATCH, DeadSimpleSceneSurfaceHitAreaSpec, collect)(DeadSimpleSceneSurfaceHitArea)
+export default DropTarget(DRAG_TYPES.SWATCH, TintableSceneHitAreaSpec, collect)(TintableSceneHitArea)

@@ -1,9 +1,10 @@
 // @flow
 import React, { PureComponent } from 'react'
-import _ from 'lodash'
 import { connect } from 'react-redux'
-import { loadScenes } from '../../../actions/loadScenes'
-import DeadSimpleScene from './DeadSimpleScene'
+import { loadScenes } from '../../actions/loadScenes'
+import TintableScene from './TintableScene'
+
+import './SceneManager.scss'
 
 type Props = {
   scenes: any,
@@ -12,7 +13,9 @@ type Props = {
   activeColor: any // TODO: make color interface
 }
 
-class SceneBuilder extends PureComponent<Props> {
+class SceneManager extends PureComponent<Props> {
+  static baseClass = 'prism-scene-manager'
+
   componentDidMount () {
     this.props.loadScenes()
   }
@@ -30,16 +33,16 @@ class SceneBuilder extends PureComponent<Props> {
     }
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'row' }}>
+      <div className={SceneManager.baseClass}>
         {scenes.map((scene, index) => (
-          <DeadSimpleScene key={index}
+          <TintableScene key={index}
             background={scene.image}
             clickToPaintColor={clickToPaintColor}
             initSurfaces={scene.surfaces.map(surface => ({
               id: surface.id,
               mask: surface.mask,
               hitArea: surface.hitArea,
-              color: _.sample([ '#EDEAE0', '#FFFFFF', '#F0E0D0', '#ADA5A5', '#EEEEEE', '#666', '#333' ])
+              color: void (0)
             }))}
           />
         ))}
@@ -65,4 +68,4 @@ const mapDispatchToProps = (dispatch: Function) => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SceneBuilder)
+export default connect(mapStateToProps, mapDispatchToProps)(SceneManager)
