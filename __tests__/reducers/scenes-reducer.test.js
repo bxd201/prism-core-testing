@@ -1,9 +1,5 @@
 import * as actions from '../../src/actions/scenes'
-import { scenes } from '../../src/reducers/scenes'
-
-const initialState = {
-  scene: ''
-}
+import { scenes, initialState } from '../../src/reducers/scenes'
 
 describe('scenes-reducer', () => {
   test('changes scene', () => {

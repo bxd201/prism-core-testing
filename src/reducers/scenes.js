@@ -1,4 +1,4 @@
-const initialState = {
+export const initialState = {
   scenes: [],
   scene: void (0),
   numScenes: 0,

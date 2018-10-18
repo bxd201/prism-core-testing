@@ -2,7 +2,9 @@ import _ from 'lodash'
 
 import { LP_MAX_COLORS_ALLOWED } from 'constants/configurations'
 
-export const lp = (state = {}, action) => {
+export const initialState = {}
+
+export const lp = (state = initialState, action) => {
   switch (action.type) {
     case 'ADD_LP_COLOR':
       // check if there are already 7 colors added and if the color exists already before adding

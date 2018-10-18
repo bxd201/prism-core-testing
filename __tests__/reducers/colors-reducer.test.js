@@ -1,13 +1,5 @@
 import * as actions from '../../src/actions/loadColors'
-import { colors } from '../../src/reducers/colors'
-
-const initialState = {
-  status: {
-    loading: true
-  },
-  items: {},
-  family: 'All'
-}
+import { colors, initialState } from '../../src/reducers/colors'
 
 describe('colors-reducer', () => {
   test('changes status', () => {

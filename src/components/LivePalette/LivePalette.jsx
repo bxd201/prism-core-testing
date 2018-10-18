@@ -21,7 +21,7 @@ import ActiveSlot from './ActiveSlot'
 import './LivePalette.scss'
 
 type Props = {
-  colors: Array<Color>,
+  colors: Array<any>,
   activateColor: Function,
   reorderColors: Function,
   activeColor: Color
@@ -29,7 +29,7 @@ type Props = {
 
 class LivePalette extends PureComponent<Props> {
   pendingUpdateFn: any
-  requestedFrame: number | undefined
+  requestedFrame: number | void
 
   render () {
     const { colors, activeColor } = this.props
@@ -98,7 +98,7 @@ class LivePalette extends PureComponent<Props> {
 
   moveColor = (originColorId: Number, destinationColorId: Number) => {
     const { colors } = this.props
-
+    // $FlowIgnore - ignoring flow validation on this line because _.flatMap's flow-type is more strict than lodash's actual implementation
     const colorsByIndex = _.flatMap(colors, color => color.id) // creates an array of only all color ids
     const originIndex = colorsByIndex.indexOf(originColorId) // get the index of the origin color
     const destIndex = colorsByIndex.indexOf(destinationColorId) // get the index of the dest color
