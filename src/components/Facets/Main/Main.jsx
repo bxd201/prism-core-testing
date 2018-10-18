@@ -15,8 +15,8 @@ class Main extends Component {
         {/* <SceneList />
         <TintableScene /> */}
         <SceneBuilder />
-        /* <LivePalette />
-        <ColorList /> */
+        {/* <LivePalette />
+        <ColorList /> */}
       </React.Fragment>
     )
   }
