@@ -1,20 +1,40 @@
 // @flow
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
-import { loadScenes } from '../../actions/loadScenes'
+
+import { loadScenes, paintSceneSurface } from '../../actions/loadScenes'
 import TintableScene from './TintableScene'
 
 import './SceneManager.scss'
 
 type Props = {
-  scenes: any,
+  scenes: Array<any>,
   loadScenes: Function,
+  paintSceneSurface: Function,
   loadingScenes: boolean,
-  activeColor: any // TODO: make color interface
+  activeColor: string | void
 }
 
-class SceneManager extends PureComponent<Props> {
+type State = {
+  currentSceneIndex: number
+}
+
+class SceneManager extends PureComponent<Props, State> {
   static baseClass = 'prism-scene-manager'
+
+  state = {
+    currentSceneIndex: 0
+  }
+
+  constructor (props) {
+    super(props)
+
+    this.handleColorUpdate = this.handleColorUpdate.bind(this)
+  }
+
+  handleColorUpdate = function handleColorUpdate (sceneId, surfaceId, color) {
+    this.props.paintSceneSurface(sceneId, surfaceId, color)
+  }
 
   componentDidMount () {
     this.props.loadScenes()
@@ -22,11 +42,7 @@ class SceneManager extends PureComponent<Props> {
 
   render () {
     const { scenes, loadingScenes, activeColor } = this.props
-    let clickToPaintColor = void (0)
-
-    if (activeColor && activeColor.hex) {
-      clickToPaintColor = activeColor.hex
-    }
+    const { currentSceneIndex } = this.state
 
     if (loadingScenes) {
       return 'Loading...'
@@ -34,15 +50,40 @@ class SceneManager extends PureComponent<Props> {
 
     return (
       <div className={SceneManager.baseClass}>
+        {/* POC scene-switching buttons to demonstrate performance */}
         {scenes.map((scene, index) => (
-          <TintableScene key={index}
+          <button key={scene.id}
+            onClick={() => { this.setState({ currentSceneIndex: index }) }}
+            className={`${SceneManager.baseClass}__btn ${index === currentSceneIndex ? `${SceneManager.baseClass}__btn--active` : ''}`}
+            type='button'>
+
+            <TintableScene
+              sceneId={scene.id}
+              interactive={false}
+              background={scene.image}
+              clickToPaintColor={activeColor}
+              surfaces={scene.surfaces.map(surface => ({
+                id: surface.id,
+                mask: surface.mask,
+                hitArea: surface.hitArea,
+                color: surface.color || void (0)
+              }))}
+            />
+          </button>
+        ))}
+
+        {scenes.map((scene, index) => (
+          <TintableScene key={scene.id}
+            sceneId={scene.id}
+            render={currentSceneIndex === index}
             background={scene.image}
-            clickToPaintColor={clickToPaintColor}
-            initSurfaces={scene.surfaces.map(surface => ({
+            clickToPaintColor={activeColor}
+            onUpdateColor={this.handleColorUpdate}
+            surfaces={scene.surfaces.map(surface => ({
               id: surface.id,
               mask: surface.mask,
               hitArea: surface.hitArea,
-              color: void (0)
+              color: surface.color || void (0)
             }))}
           />
         ))}
@@ -52,11 +93,17 @@ class SceneManager extends PureComponent<Props> {
 }
 
 const mapStateToProps = (state, props) => {
+  let activeColor = void (0)
+
+  if (state.lp.activeColor && state.lp.activeColor.hex) {
+    activeColor = state.lp.activeColor.hex
+  }
+
   return {
     scenes: state.scenes.scenes,
     numScenes: state.scenes.numScenes,
     loadingScenes: state.scenes.loadingScenes,
-    activeColor: state.lp.activeColor
+    activeColor: activeColor
   }
 }
 
@@ -64,6 +111,9 @@ const mapDispatchToProps = (dispatch: Function) => {
   return {
     loadScenes: () => {
       dispatch(loadScenes())
+    },
+    paintSceneSurface: (sceneId, surfaceId, color) => {
+      dispatch(paintSceneSurface(sceneId, surfaceId, color))
     }
   }
 }
