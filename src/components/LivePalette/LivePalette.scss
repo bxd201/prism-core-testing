@@ -19,10 +19,6 @@
     transition: width .6s;
     height: 0;
 
-    &__details {
-      display: none;
-    }
-
     &--empty,
     &--add {
       display: flex;
@@ -86,6 +82,7 @@
     position: absolute;
     top: 0.5em;
     right: 0.5em;
+    color: inherit;
   }
 
   &__color-details {
@@ -93,16 +90,22 @@
     position: static;
     padding: 0.5em;
     display: none;
+
+    &--dark {
+      color: getVar( "colors.white" );
+    }
   }
 
   &__color-number {
     font-size: 0.8rem;
     display: block;
+    color: inherit;
   }
 
   &__color-name {
     font-size: 0.8rem;
     font-weight: bold;
     display: block;
+    color: inherit;
   }
 }
