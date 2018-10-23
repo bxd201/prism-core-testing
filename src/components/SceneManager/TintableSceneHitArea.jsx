@@ -9,7 +9,8 @@ type Props = {
   id: string, // eslint-disable-line
   onDrop: Function, // eslint-disable-line
   onClick: Function, // eslint-disable-line
-  color: string,
+  onOver: Function,
+  onOut: Function,
   svgSource: string
 }
 
@@ -26,8 +27,8 @@ const TintableSceneHitAreaSpec = {
 function collect (connect, monitor) {
   return {
     connectDropTarget: connect.dropTarget(),
-    isOver: monitor.isOver(),
-    canDrop: monitor.canDrop()
+    isOver: monitor.isOver()
+    // canDrop: monitor.canDrop(),
   }
 }
 
@@ -42,14 +43,25 @@ class TintableSceneHitArea extends PureComponent<Props> {
     this.handleClick = this.handleClick.bind(this)
   }
 
+  componentDidUpdate (prevProps, prevState) {
+    if (prevProps.isOver !== this.props.isOver) {
+      if (this.props.isOver) {
+        this.props.onOver(this.props.id)
+      } else {
+        this.props.onOut(this.props.id)
+      }
+    }
+  }
+
   handleClick = function handleClick (e: any) {
     this.props.onClick(this.props.id)
   }
 
   render () {
-    const { connectDropTarget, isOver, color, svgSource } = this.props
+    const { connectDropTarget, svgSource, isOver } = this.props
+
     return connectDropTarget && connectDropTarget(
-      <svg className={TintableSceneHitArea.baseClass} style={{ fill: color }}>
+      <svg className={TintableSceneHitArea.baseClass}>
         <use className={`${TintableSceneHitArea.baseClassMask} ${isOver ? `${TintableSceneHitArea.baseClassMask}--hover` : ''}`}
           xlinkHref={`${svgSource}#mask`}
           onClick={this.handleClick} />

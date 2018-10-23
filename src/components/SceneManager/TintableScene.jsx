@@ -1,5 +1,6 @@
 // @flow
-import React, { PureComponent } from 'react'
+import React, { PureComponent, Fragment } from 'react'
+import _ from 'lodash'
 
 import TintableSceneHitArea from './TintableSceneHitArea'
 import TintableSceneSurface from './TintableSceneSurface'
@@ -18,11 +19,16 @@ type Props = {
   render: boolean,
   interactive: boolean,
   sceneId: string | number,
+  previewColor?: string | void,
   clickToPaintColor?: string,
   onUpdateColor?: Function
 }
 
-class TintableScene extends PureComponent<Props> {
+type State = {
+  activePreviewSurfaces: Array<string | number>
+}
+
+class TintableScene extends PureComponent<Props, State> {
   static baseClass = 'prism-scene-manager__scene'
 
   static defaultProps = {
@@ -32,12 +38,16 @@ class TintableScene extends PureComponent<Props> {
     interactive: true
   }
 
-  static getFilterId (sceneId: string | number, surfaceId: string | number) {
-    return `scene${sceneId}__tinter-filter-${surfaceId}`
+  static getFilterId (sceneId: string | number, surfaceId: string | number, suffix?: string) {
+    return `scene${sceneId}_surface${surfaceId}_tinter-filter${suffix ? `_${suffix}` : ''}`
   }
 
-  static getMaskId (sceneId: string | number, surfaceId: string | number) {
-    return `scene${sceneId}__object-mask-${surfaceId}`
+  static getMaskId (sceneId: string | number, surfaceId: string | number, suffix?: string) {
+    return `scene${sceneId}_surface${surfaceId}_object-mask${suffix ? `_${suffix}` : ''}`
+  }
+
+  state = {
+    activePreviewSurfaces: []
   }
 
   constructor (props: Props) {
@@ -45,6 +55,8 @@ class TintableScene extends PureComponent<Props> {
 
     this.handleColorDrop = this.handleColorDrop.bind(this)
     this.handleClickSurface = this.handleClickSurface.bind(this)
+    this.handleOver = this.handleOver.bind(this)
+    this.handleOut = this.handleOut.bind(this)
   }
 
   handleClickSurface = function handleClickSurface (surfaceId: string) {
@@ -56,7 +68,31 @@ class TintableScene extends PureComponent<Props> {
   }
 
   handleColorDrop = function handleColorDrop (surfaceId: string, color: string) {
+    // clear out all active preview surfaces
+    this.setState({
+      activePreviewSurfaces: []
+    })
+
+    // update the specified surface of this scene to display the provided color
     this.updateSurfaceColor(surfaceId, color)
+  }
+
+  handleOver = function handleOver (surfaceId: string) {
+    const { activePreviewSurfaces } = this.state
+
+    // add the specified surface to activePreviewSurfaces -- this is an array since a one-for-one add/remove
+    // was adding/removing in the order that the surfaces exist in the scene data, not in the hovering in/out order
+    this.setState({
+      activePreviewSurfaces: _.uniq(_.concat(activePreviewSurfaces, surfaceId))
+    })
+  }
+
+  handleOut = function handleOut (surfaceId: string) {
+    const { activePreviewSurfaces } = this.state
+
+    this.setState({
+      activePreviewSurfaces: _.without(activePreviewSurfaces, surfaceId)
+    })
   }
 
   updateSurfaceColor (surfaceId: string, color: string) {
@@ -64,7 +100,8 @@ class TintableScene extends PureComponent<Props> {
   }
 
   render () {
-    const { surfaces, sceneId, background, width, height, render, interactive } = this.props
+    const { surfaces, sceneId, background, width, height, render, interactive, previewColor } = this.props
+    const { activePreviewSurfaces } = this.state
 
     if (!render) {
       return null
@@ -75,19 +112,26 @@ class TintableScene extends PureComponent<Props> {
         <div className={`${TintableScene.baseClass}__svg-defs`}>
           <svg x='0' y='0' width='0' height='0' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlnsXlink='http://www.w3.org/1999/xlink' viewBox={`0 0 ${width} ${height}`}>
             <defs>
-              {surfaces.map((surface, index) => {
-                if (surface && surface.color) {
-                  return (
+              {surfaces.map((surface, index) => (
+                <Fragment key={surface.id}>
+                  { (surface && surface.color) ? (
                     <TintableSceneSVGDefs
-                      key={surface.id}
                       filterId={TintableScene.getFilterId(sceneId, surface.id)}
                       filterColor={surface.color}
                       maskId={TintableScene.getMaskId(sceneId, surface.id)}
                       maskImage={surface.mask}
                     />
-                  )
-                }
-              })}
+                  ) : null }
+                  { (previewColor) ? (
+                    <TintableSceneSVGDefs
+                      filterId={TintableScene.getFilterId(sceneId, surface.id, 'preview')}
+                      filterColor={previewColor}
+                      maskId={TintableScene.getMaskId(sceneId, surface.id, 'preview')}
+                      maskImage={surface.mask}
+                    />
+                  ) : null }
+                </Fragment>
+              ))}
             </defs>
           </svg>
         </div>
@@ -105,12 +149,31 @@ class TintableScene extends PureComponent<Props> {
           ))}
         </div>
 
+        { (previewColor) ? (
+          <div className={`${TintableScene.baseClass}__preview-wrapper`}>
+            {surfaces.map((surface, index) => (
+              <div key={surface.id}
+                className={`${TintableScene.baseClass}__preview-wrapper__preview ${activePreviewSurfaces.indexOf(surface.id) > -1 ? `${TintableScene.baseClass}__preview-wrapper__preview--active` : ''}`}>
+                <TintableSceneSurface
+                  image={background}
+                  width={width}
+                  height={height}
+                  maskId={TintableScene.getMaskId(sceneId, surface.id, 'preview')}
+                  filterId={TintableScene.getFilterId(sceneId, surface.id, 'preview')}
+                />
+              </div>
+            ))}
+          </div>
+        ) : null }
+
         {interactive && (
           <div className={`${TintableScene.baseClass}__hit-wrapper`}>
             {surfaces.map((surface, index) => (
               <TintableSceneHitArea key={surface.id}
                 id={surface.id}
                 onDrop={this.handleColorDrop}
+                onOver={this.handleOver}
+                onOut={this.handleOut}
                 onClick={this.handleClickSurface}
                 color={surface.color}
                 svgSource={surface.hitArea} />

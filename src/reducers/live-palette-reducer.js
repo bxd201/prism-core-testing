@@ -45,6 +45,11 @@ export const lp = (state = initialState, action) => {
         activeColor: action.payload.color
       })
 
+    case 'ACTIVATE_LP_PREVIEW_COLOR':
+      return Object.assign({}, state, {
+        activePreviewColor: action.payload.color
+      })
+
     case 'REORDER_LP_COLORS':
       // no colors are in the LP, why are you calling reorder?
       if (state.colors.length === 0) {

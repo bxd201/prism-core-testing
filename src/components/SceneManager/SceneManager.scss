@@ -66,6 +66,7 @@
       width: auto;
     }
 
+    &__preview-wrapper,
     &__hit-wrapper {
       position: absolute;
       top: 0;
@@ -81,6 +82,21 @@
       height: auto;
     }
 
+    &__preview-wrapper {
+      pointer-events: none;
+
+      &__preview {
+        opacity: 0;
+        transition: opacity .3s ease-in .0s;
+        will-change: opacity;
+
+        &--active {
+          opacity: 1;
+          transition: opacity .1s ease-out;
+        }
+      }
+    }
+
     &__hit-area,
     &__surface {
       left: 0;
@@ -92,20 +108,23 @@
 
     &__hit-area {
       // this is the hover/click color
-      fill: chartreuse !important;
+      // fill: rgba(white,.1);
+      fill: transparent;
+      stroke: magenta;
+      stroke-width: 5px;
       pointer-events: none;
 
       &__mask {
         cursor: pointer;
         opacity: 0;
-        transition: opacity .3s ease-in .1s;
+        transition: opacity .3s ease-in .0s;
         // don't you dare remove this line.
         pointer-events: all;
         will-change: opacity;
 
         &--hover,
         &:hover {
-          opacity: .5;
+          opacity: 1;
           transition: opacity .1s ease-out;
         }
       }

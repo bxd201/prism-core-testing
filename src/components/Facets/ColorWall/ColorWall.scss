@@ -12,6 +12,11 @@
   transition-timing-function: 'ease-in';
 }
 
+.color-wall-swatches {
+  // remove whitespace around inline-block elements
+  font-size: 0;
+}
+
 .color-wall-swatches .color-swatch-inner:hover,
 .color-wall-swatches .color-swatch-inner:focus {
   height: 160%;

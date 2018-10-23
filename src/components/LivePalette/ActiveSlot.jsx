@@ -6,7 +6,7 @@ import PropTypes from 'prop-types'
 import flow from 'lodash/flow'
 import { DragSource, DropTarget } from 'react-dnd'
 
-import { remove } from '../../actions/live-palette'
+import { remove, activatePreview } from '../../actions/live-palette'
 
 import { DRAG_TYPES } from 'constants/globals'
 
@@ -77,6 +77,9 @@ ActiveSlot.propTypes = {
 
 const swatchSource = {
   beginDrag (props) {
+    // as soon as a swatch begins dragging, set it as the current surface preview color in redux
+    props.activatePreviewColor(props.color)
+
     return {
       color: props.color,
       index: props.index
@@ -131,6 +134,9 @@ const mapDispatchToProps = (dispatch) => {
   return {
     remove: (colorId) => {
       dispatch(remove(colorId))
+    },
+    activatePreviewColor: (color) => {
+      dispatch(activatePreview(color))
     }
   }
 }

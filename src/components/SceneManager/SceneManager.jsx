@@ -12,7 +12,8 @@ type Props = {
   loadScenes: Function,
   paintSceneSurface: Function,
   loadingScenes: boolean,
-  activeColor: string | void
+  activeColor: string | void,
+  previewColor: string | void
 }
 
 type State = {
@@ -41,7 +42,7 @@ class SceneManager extends PureComponent<Props, State> {
   }
 
   render () {
-    const { scenes, loadingScenes, activeColor } = this.props
+    const { scenes, loadingScenes, activeColor, previewColor } = this.props
     const { currentSceneIndex } = this.state
 
     if (loadingScenes) {
@@ -60,7 +61,7 @@ class SceneManager extends PureComponent<Props, State> {
             <TintableScene
               sceneId={scene.id}
               interactive={false}
-              background={scene.image}
+              background={scene.thumb}
               clickToPaintColor={activeColor}
               surfaces={scene.surfaces.map(surface => ({
                 id: surface.id,
@@ -79,6 +80,7 @@ class SceneManager extends PureComponent<Props, State> {
             background={scene.image}
             clickToPaintColor={activeColor}
             onUpdateColor={this.handleColorUpdate}
+            previewColor={previewColor}
             surfaces={scene.surfaces.map(surface => ({
               id: surface.id,
               mask: surface.mask,
@@ -94,16 +96,22 @@ class SceneManager extends PureComponent<Props, State> {
 
 const mapStateToProps = (state, props) => {
   let activeColor = void (0)
+  let previewColor = void (0)
 
   if (state.lp.activeColor && state.lp.activeColor.hex) {
     activeColor = state.lp.activeColor.hex
+  }
+
+  if (state.lp.activePreviewColor && state.lp.activePreviewColor.hex) {
+    previewColor = state.lp.activePreviewColor.hex
   }
 
   return {
     scenes: state.scenes.scenes,
     numScenes: state.scenes.numScenes,
     loadingScenes: state.scenes.loadingScenes,
-    activeColor: activeColor
+    activeColor: activeColor,
+    previewColor: previewColor
   }
 }
 
