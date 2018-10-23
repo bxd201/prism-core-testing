@@ -31,3 +31,5 @@ export type Color = {
 export type ColorPayload = {
   [ key: String ]: Array<Color>
 }
+
+export type ColorListPayload = Array<Color>

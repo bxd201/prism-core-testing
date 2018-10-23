@@ -8,6 +8,7 @@ import Main from './Facets/Main/Main'
 import ColorWall from './Facets/ColorWall/ColorWall'
 import DnD from './POC/DnD/DnD'
 import SceneManager from './SceneManager/SceneManager'
+import Search from './Search/Search'
 
 // barebones component to always take the user to active if they try to access root.
 // not sure if we need this but if we end up using this for TAG & want to retain bookmarks..
@@ -26,6 +27,7 @@ class Prism extends Component {
         <Route path='/active/color-wall/:family/:colorNumber' exact component={ColorWall} />
         <Route path='/dnd' exact component={DnD} />
         <Route path='/scene-builder' exact component={SceneManager} />
+        <Route path='/search' exact component={Search} />
 
         <LivePalette />
       </React.Fragment>
