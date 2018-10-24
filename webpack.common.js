@@ -118,6 +118,7 @@ const sassRules = [
 module.exports = {
   entry: {
     bundle: path.resolve( __dirname, './src/index.jsx' ),
+    author: path.resolve( __dirname, './src/author.js' ),
   },
   output: {
     path: path.join( __dirname, '/dist' ),

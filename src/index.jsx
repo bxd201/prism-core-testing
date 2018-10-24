@@ -19,10 +19,7 @@ import es from './translations/es.json'
 
 import store from './store'
 
-import Prism from './components/Prism'
-import ColorPath from './components/ColorPath/ColorPath'
-import TintableScene from './components/TintableScene/TintableScene'
-import ColorWall from './components/Facets/ColorWall/ColorWall'
+import APPS from './config/components'
 
 // global sass import
 import './scss/main.scss'
@@ -45,14 +42,6 @@ const faIcons = [
   faTrash
 ]
 library.add(...faIcons)
-
-// list all top level react components here
-const APPS = {
-  Prism,
-  ColorPath,
-  TintableScene,
-  ColorWall
-}
 
 const renderAppInElement = (el) => {
   if (el.className.indexOf('__react-bound') > -1) {
@@ -102,3 +91,5 @@ const bindReactToDOM = () => {
 }
 
 bindReactToDOM()
+
+export default bindReactToDOM

@@ -32,7 +32,7 @@ class ColorWall extends PureComponent {
   }
 
   render () {
-    const { colors, match: { params }, filterByFamily, family } = this.props
+    const { colors, match: { params }, filterByFamily, family, hideColorFamilySelector } = this.props
     const colorFamilyKeys = ['All', ...Object.keys(colors)]
 
     const ColorWallButtons = colorFamilyKeys.map(key => {
@@ -44,7 +44,8 @@ class ColorWall extends PureComponent {
     return (
       <React.Fragment>
         <div className='color-wall-buttons'>
-          {ColorWallButtons}
+          {/* TODO: Temporary string comparison logic until we have the configurations coming down as a service instead of through props. */}
+          {(hideColorFamilySelector !== 'true') && ColorWallButtons}
         </div>
         <div className={(params.colorNumber) ? '' : 'color-wall-swatches'} ref={this.cwRef} active={(params.colorNumber)}>
           {ColorWallSwatches.map(ColorFamily => ColorFamily)}
@@ -58,7 +59,8 @@ ColorWall.propTypes = {
   colors: PropTypes.object,
   match: PropTypes.object,
   filterByFamily: PropTypes.func,
-  family: PropTypes.string
+  family: PropTypes.string,
+  hideColorFamilySelector: PropTypes.string
 }
 
 const mapDispatchToProps = (dispatch) => {
