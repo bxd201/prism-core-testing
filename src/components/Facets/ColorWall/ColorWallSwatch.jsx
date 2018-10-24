@@ -18,41 +18,14 @@ class ColorWallSwatch extends PureComponent {
   render () {
     const { color, active } = this.props
 
-    const Outer = {
-      width: 'calc(99.9%/56)',
-      cursor: 'pointer',
-      display: 'inline-block',
-      position: 'relative'
-    }
-    const Placeholder = {
-      height: 0,
-      marginBottom: '100%',
-      width: '100%'
-    }
     const Inner = {
       backgroundColor: color.hex
-    }
-    const ActiveInner = {
-      backgroundColor: color.hex,
-      border: '1px solid #f2f2f2',
-      position: 'absolute',
-      overflow: 'hidden',
-      transform: 'translateZ(0)',
-      transitionProperty: 'left,top,width,height',
-      transitionDuration: '.3s',
-      transitionTimingFunction: 'ease-in',
-      height: '360%',
-      width: '360%',
-      left: '-125%',
-      top: '-125%',
-      zIndex: '216'
     }
 
     return (
       <React.Fragment>
-        <li ref={this.swatchRef} style={Outer} onClick={this.handleSwatchClick}>
-          <div style={Placeholder} />
-          <div className='inner color-swatch-inner' style={(active) ? ActiveInner : Inner} onMouseEnter={this.handleSwatchHover} onMouseLeave={this.handleSwatchMouseOut} />
+        <li className='color-wall-swatches__swatch' ref={this.swatchRef} onClick={this.handleSwatchClick}>
+          <div className={`inner color-swatch-inner ${active ? 'color-swatch-inner--active' : ''}`} style={Inner} onMouseEnter={this.handleSwatchHover} onMouseLeave={this.handleSwatchMouseOut} />
         </li>
       </React.Fragment>
     )

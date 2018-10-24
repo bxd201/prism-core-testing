@@ -1,5 +1,6 @@
 .color-swatch-inner {
   border: 1px solid #f2f2f2;
+  box-shadow: 0 0 0 -3px transparent;
   height: 100%;
   width: 100%;
   top: 0;
@@ -7,24 +8,55 @@
   position: absolute;
   overflow: hidden;
   transform: scale(1.0);
-  transition-property: 'transform';
-  transition-duration: '.3s';
-  transition-timing-function: 'ease-in';
+  transition-property: transform;
+  transition-duration: .2s;
+  transition-timing-function: ease-out;
+
+  &--active {
+    border: 1px solid #f2f2f2;
+    position: absolute;
+    overflow: hidden;
+    transform: translateZ(0) scale(1.5);
+    transition-property: left,top,width,height,transform;
+    transition-duration: .2s;
+    transition-timing-function: ease-out;
+    height: 350%;
+    width: 350%;
+    left: -125%;
+    top: -125%;
+    z-index: 216;
+  }
+
+  &:hover,
+  &:focus {
+    height: 150%;
+    width: 150%;
+    transform: translateZ(0) scale(1.5);
+    left: -25%;
+    top: -25%;
+    z-index: 216;
+    box-shadow: 0 0 9px -3px black;
+  }
 }
 
 .color-wall-swatches {
   // remove whitespace around inline-block elements
   font-size: 0;
-}
 
-.color-wall-swatches .color-swatch-inner:hover,
-.color-wall-swatches .color-swatch-inner:focus {
-  height: 160%;
-  width: 160%;
-  transform: scale(1.4);
-  left: -25%;
-  top: -25%;
-  z-index: 216;
+  &__swatch {
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+    width: percentage(.999/56);
+
+    &::before {
+      content: '';
+      display: block;
+      height: 0;
+      margin-bottom: 100%;
+      width: 100%;
+    }
+  }
 }
 
 .color-wall-buttons {

@@ -25,7 +25,8 @@ type Props = {
 }
 
 type State = {
-  activePreviewSurfaces: Array<string | number>
+  activePreviewSurfaces: Array<string | number>,
+  instanceId: string
 }
 
 class TintableScene extends PureComponent<Props, State> {
@@ -46,10 +47,6 @@ class TintableScene extends PureComponent<Props, State> {
     return `scene${sceneId}_surface${surfaceId}_object-mask${suffix ? `_${suffix}` : ''}`
   }
 
-  state = {
-    activePreviewSurfaces: []
-  }
-
   constructor (props: Props) {
     super(props)
 
@@ -57,6 +54,12 @@ class TintableScene extends PureComponent<Props, State> {
     this.handleClickSurface = this.handleClickSurface.bind(this)
     this.handleOver = this.handleOver.bind(this)
     this.handleOut = this.handleOut.bind(this)
+
+    this.state = {
+      activePreviewSurfaces: [],
+      // must be unique among ALL TintableScene instances so as not to cross-contaminate filter definition IDs
+      instanceId: _.uniqueId('TS')
+    }
   }
 
   handleClickSurface = function handleClickSurface (surfaceId: string) {
@@ -100,8 +103,8 @@ class TintableScene extends PureComponent<Props, State> {
   }
 
   render () {
-    const { surfaces, sceneId, background, width, height, render, interactive, previewColor } = this.props
-    const { activePreviewSurfaces } = this.state
+    const { surfaces, background, width, height, render, interactive, previewColor } = this.props
+    const { activePreviewSurfaces, instanceId } = this.state
 
     if (!render) {
       return null
@@ -112,26 +115,31 @@ class TintableScene extends PureComponent<Props, State> {
         <div className={`${TintableScene.baseClass}__svg-defs`}>
           <svg x='0' y='0' width='0' height='0' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlnsXlink='http://www.w3.org/1999/xlink' viewBox={`0 0 ${width} ${height}`}>
             <defs>
-              {surfaces.map((surface, index) => (
-                <Fragment key={surface.id}>
-                  { (surface && surface.color) ? (
-                    <TintableSceneSVGDefs
-                      filterId={TintableScene.getFilterId(sceneId, surface.id)}
-                      filterColor={surface.color}
-                      maskId={TintableScene.getMaskId(sceneId, surface.id)}
-                      maskImage={surface.mask}
-                    />
-                  ) : null }
-                  { (previewColor) ? (
-                    <TintableSceneSVGDefs
-                      filterId={TintableScene.getFilterId(sceneId, surface.id, 'preview')}
-                      filterColor={previewColor}
-                      maskId={TintableScene.getMaskId(sceneId, surface.id, 'preview')}
-                      maskImage={surface.mask}
-                    />
-                  ) : null }
-                </Fragment>
-              ))}
+              {surfaces.map((surface, index) => {
+                let tintColor = void (0)
+
+                if (activePreviewSurfaces.indexOf(surface.id) > -1) {
+                  tintColor = previewColor
+                } else if (surface && surface.color) {
+                  tintColor = surface.color
+                }
+
+                if (tintColor) {
+                  return (
+                    <Fragment
+                      key={surface.id}>
+                      <TintableSceneSVGDefs
+                        filterId={TintableScene.getFilterId(instanceId, surface.id)}
+                        filterColor={tintColor}
+                        maskId={TintableScene.getMaskId(instanceId, surface.id)}
+                        maskImage={surface.mask}
+                      />
+                    </Fragment>
+                  )
+                }
+
+                return null
+              })}
             </defs>
           </svg>
         </div>
@@ -143,28 +151,11 @@ class TintableScene extends PureComponent<Props, State> {
               image={background}
               width={width}
               height={height}
-              maskId={TintableScene.getMaskId(sceneId, surface.id)}
-              filterId={TintableScene.getFilterId(sceneId, surface.id)}
+              maskId={TintableScene.getMaskId(instanceId, surface.id)}
+              filterId={TintableScene.getFilterId(instanceId, surface.id)}
             />
           ))}
         </div>
-
-        { (previewColor) ? (
-          <div className={`${TintableScene.baseClass}__preview-wrapper`}>
-            {surfaces.map((surface, index) => (
-              <div key={surface.id}
-                className={`${TintableScene.baseClass}__preview-wrapper__preview ${activePreviewSurfaces.indexOf(surface.id) > -1 ? `${TintableScene.baseClass}__preview-wrapper__preview--active` : ''}`}>
-                <TintableSceneSurface
-                  image={background}
-                  width={width}
-                  height={height}
-                  maskId={TintableScene.getMaskId(sceneId, surface.id, 'preview')}
-                  filterId={TintableScene.getFilterId(sceneId, surface.id, 'preview')}
-                />
-              </div>
-            ))}
-          </div>
-        ) : null }
 
         {interactive && (
           <div className={`${TintableScene.baseClass}__hit-wrapper`}>
