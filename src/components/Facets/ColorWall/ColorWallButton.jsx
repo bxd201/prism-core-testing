@@ -1,9 +1,6 @@
 import React, { PureComponent } from 'react'
-import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import kebabCase from 'lodash/kebabCase'
-
-import { filterByFamily } from '../../../actions/loadColors'
 
 class ColorWallButton extends PureComponent {
   constructor (props) {
@@ -35,7 +32,7 @@ class ColorWallButton extends PureComponent {
   }
 
   handleClick () {
-    this.props.filterByFamily(this.props.family)
+    this.props.selectFamily(this.props.family)
 
     window.location.hash = `/active/color-wall/${kebabCase(this.props.family)}`
   }
@@ -44,16 +41,8 @@ class ColorWallButton extends PureComponent {
 ColorWallButton.propTypes = {
   family: PropTypes.string,
   current: PropTypes.string,
-  filterByFamily: PropTypes.func,
+  selectFamily: PropTypes.func,
   routeCurrent: PropTypes.string
 }
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    filterByFamily: (family) => {
-      dispatch(filterByFamily(family))
-    }
-  }
-}
-
-export default connect(null, mapDispatchToProps)(ColorWallButton)
+export default ColorWallButton

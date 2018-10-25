@@ -1,34 +1,39 @@
+// @flow
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
-import PropTypes from 'prop-types'
+import _ from 'lodash'
 
 import { filterByFamily } from '../../../actions/loadColors'
 
 import ColorDataWrapper from '../../../helpers/ColorDataWrapper'
 
-import ColorWallSwatch from './ColorWallSwatch'
+import ColorWallSwatchList from './ColorWallSwatchList'
 import ColorWallButton from './ColorWallButton'
 
 import './ColorWall.scss'
 
-class ColorWall extends PureComponent {
-  colorFamilySwatch (family) {
-    return this.props.colors[family].map(color => {
-      return <ColorWallSwatch
-        key={color.id}
-        color={color}
-        active={(color.colorNumber === this.props.match.params.colorNumber)}
-        previewColor={this.previewColor}
-        family={this.props.family}
-      />
-    })
+type Props = {
+  colors: Object,
+  match: Object,
+  filterByFamily: Function,
+  family: string,
+  hideColorFamilySelector: string
+}
+
+class ColorWall extends PureComponent<Props> {
+  previewColor = void (0)
+  cwRef = void (0)
+  allColors = void (0)
+
+  colorFamily (family) {
+    return this.props.colors[family]
   }
 
-  get colorFamilySwatches () {
-    return Object.keys(this.props.colors).map(family => {
-      return this.colorFamilySwatch(family)
-    })
+  get colorFamilies () {
+    return this.allColors || (this.allColors = _.flatten(Object.keys(this.props.colors).map(family => {
+      return this.colorFamily(family)
+    })))
   }
 
   render () {
@@ -39,7 +44,7 @@ class ColorWall extends PureComponent {
       return <ColorWallButton key={key} family={key} selectFamily={filterByFamily} current={family} routeCurrent={params.family} />
     })
 
-    const ColorWallSwatches = (family === 'All') ? this.colorFamilySwatches : this.colorFamilySwatch(family)
+    const ColorWallColors = (family === 'All') ? this.colorFamilies : this.colorFamily(family)
 
     return (
       <React.Fragment>
@@ -47,23 +52,15 @@ class ColorWall extends PureComponent {
           {/* TODO: Temporary string comparison logic until we have the configurations coming down as a service instead of through props. */}
           {(hideColorFamilySelector !== 'true') && ColorWallButtons}
         </div>
-        <div className={(params.colorNumber) ? '' : 'color-wall-swatches'} ref={this.cwRef} active={(params.colorNumber)}>
-          {ColorWallSwatches.map(ColorFamily => ColorFamily)}
+        <div className='color-wall-swatches' ref={this.cwRef}>
+          <ColorWallSwatchList colors={ColorWallColors} active={params.colorNumber} />
         </div>
       </React.Fragment>
     )
   }
 }
 
-ColorWall.propTypes = {
-  colors: PropTypes.object,
-  match: PropTypes.object,
-  filterByFamily: PropTypes.func,
-  family: PropTypes.string,
-  hideColorFamilySelector: PropTypes.string
-}
-
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = (dispatch: Function) => {
   return {
     filterByFamily: (family) => {
       dispatch(filterByFamily(family))
