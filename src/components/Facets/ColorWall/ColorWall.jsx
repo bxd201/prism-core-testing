@@ -13,11 +13,18 @@ import ColorWallButton from './ColorWallButton'
 
 import './ColorWall.scss'
 
+const DISPLAY_ORDER_DEFAULT = 'default'
+const DISPLAY_ORDER_LIGHTNESS = 'lightness'
+const DISPLAY_ORDER_BRIGHTNESS = 'brightness'
+const DISPLAY_ORDER_SATURATION = 'saturation'
+const DISPLAY_ORDER_COLOR = 'color'
+
 type Props = {
   colors: Object,
   match: Object,
   filterByFamily: Function,
   family: string,
+  displayOrder: string,
   hideColorFamilySelector: string
 }
 
@@ -25,6 +32,10 @@ class ColorWall extends PureComponent<Props> {
   previewColor = void (0)
   cwRef = void (0)
   allColors = void (0)
+
+  static defaultProps = {
+    displayOrder: DISPLAY_ORDER_BRIGHTNESS
+  }
 
   colorFamily (family) {
     return this.props.colors[family]
@@ -37,14 +48,37 @@ class ColorWall extends PureComponent<Props> {
   }
 
   render () {
-    const { colors, match: { params }, filterByFamily, family, hideColorFamilySelector } = this.props
+    const { colors, match: { params }, filterByFamily, family, displayOrder, hideColorFamilySelector } = this.props
     const colorFamilyKeys = ['All', ...Object.keys(colors)]
 
     const ColorWallButtons = colorFamilyKeys.map(key => {
       return <ColorWallButton key={key} family={key} selectFamily={filterByFamily} current={family} routeCurrent={params.family} />
     })
 
-    const ColorWallColors = (family === 'All') ? this.colorFamilies : this.colorFamily(family)
+    // get either a specific color family or all families
+    let ColorWallColors = (family === 'All') ? this.colorFamilies : this.colorFamily(family)
+
+    // sort colors based on displayOrder prop if provided
+    switch (displayOrder) {
+      case DISPLAY_ORDER_LIGHTNESS:
+        // $FlowIgnore
+        ColorWallColors = _.sortBy(ColorWallColors, 'lightness', 'hue', 'saturation')
+        break
+      case DISPLAY_ORDER_COLOR:
+        // $FlowIgnore
+        ColorWallColors = _.sortBy(ColorWallColors, 'hue', 'lightness', 'saturation')
+        break
+      case DISPLAY_ORDER_SATURATION:
+        // $FlowIgnore
+        ColorWallColors = _.sortBy(ColorWallColors, 'saturation', 'hue', 'lightness')
+        break
+      case DISPLAY_ORDER_BRIGHTNESS:
+        // $FlowIgnore
+        ColorWallColors = _.sortBy(ColorWallColors, color => (color.saturation * color.lightness), 'hue')
+        break
+      case DISPLAY_ORDER_DEFAULT:
+      default:
+    }
 
     return (
       <React.Fragment>
