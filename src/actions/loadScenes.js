@@ -1,18 +1,17 @@
 // @flow
-// import axios from 'axios'
+import axios from 'axios'
 import _ from 'lodash'
 
-// import { SW_SCENES } from '../constants/endpoints'
+import { SW_SCENES } from '../constants/endpoints'
 // import type { ColorPayload } from '../shared/types/Colors'
-import SW_SCENES from '../json/scenes.json'
 
-// export const REQUEST_SCENES = 'REQUEST_SCENES'
-// const requestScenes = () => {
-//   return {
-//     type: REQUEST_SCENES,
-//     payload: { loadingScenes: true }
-//   }
-// }
+export const REQUEST_SCENES = 'REQUEST_SCENES'
+const requestScenes = () => {
+  return {
+    type: REQUEST_SCENES,
+    payload: { loadingScenes: true }
+  }
+}
 
 export const RECEIVE_SCENES = 'RECEIVE_SCENES'
 const receiveScenes = (sceneResponse: any) => {
@@ -38,14 +37,13 @@ export const loadScenes = () => {
       return
     }
 
-    // dispatch(requestScenes())
+    dispatch(requestScenes())
 
-    // return axios.get(SW_SCENES)
-    //   .then(r => r.data)
-    //   .then(data => {
-    //     dispatch(receiveScenes(data))
-    //   })
-    dispatch(receiveScenes(SW_SCENES))
+    return axios.get(SW_SCENES)
+      .then(r => r.data)
+      .then(data => {
+        dispatch(receiveScenes(data))
+      })
   }
 }
 

@@ -34,7 +34,7 @@ class ColorWall extends PureComponent<Props> {
   allColors = void (0)
 
   static defaultProps = {
-    displayOrder: DISPLAY_ORDER_BRIGHTNESS
+    displayOrder: DISPLAY_ORDER_DEFAULT
   }
 
   colorFamily (family) {

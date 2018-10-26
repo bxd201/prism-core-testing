@@ -113,8 +113,6 @@ const sassRules = [
   }
 ];
 
-
-
 module.exports = {
   entry: {
     bundle: path.resolve( __dirname, './src/index.jsx' ),
@@ -156,7 +154,7 @@ module.exports = {
       },
       {
         from: 'src/json',
-        to: 'json'
+        to: 'prism/json'
       },
       {
         from: 'src/css/*',
@@ -167,5 +165,10 @@ module.exports = {
     new webpack.DefinePlugin({
       '$API_PATH': JSON.stringify(process.env.API_URL)
     })
-  ]
+  ],
+  devServer: {
+    headers: {
+      'Access-Control-Allow-Origin': '*'
+    }
+  }
 };
