@@ -97,10 +97,12 @@
       }
     }
 
+    &__hit-area-wrapper,
     &__hit-area,
     &__surface {
-      left: 0;
       height: 100%;
+      left: 0;
+      pointer-events: none;
       position: absolute;
       top: 0;
       width: 100%;
@@ -112,7 +114,14 @@
       fill: transparent;
       stroke: magenta;
       stroke-width: 5px;
-      pointer-events: none;
+
+      &__mask-loader {
+        height: 0;
+        position: absolute;
+        width: 0;
+        z-index: -1;
+        visibility: hidden;
+      }
 
       &__mask {
         cursor: pointer;

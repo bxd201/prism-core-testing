@@ -1,5 +1,8 @@
 // @flow
 import React, { PureComponent } from 'react'
+import _ from 'lodash'
+// $FlowIgnore
+import SVG from 'react-inlinesvg'
 import { DRAG_TYPES } from 'constants/globals'
 import { DropTarget } from 'react-dnd'
 
@@ -28,14 +31,18 @@ function collect (connect, monitor) {
   return {
     connectDropTarget: connect.dropTarget(),
     isOver: monitor.isOver()
-    // canDrop: monitor.canDrop(),
   }
 }
 
 class TintableSceneHitArea extends PureComponent<Props> {
   static defaultProps = {}
-  static baseClass = 'prism-scene-manager__scene__hit-area'
-  static baseClassMask = `${TintableSceneHitArea.baseClass}__mask`
+  static classNames = {
+    hitArea: 'prism-scene-manager__scene__hit-area',
+    hitAreaWrapper: 'prism-scene-manager__scene__hit-area-wrapper',
+    hitAreaMask: 'prism-scene-manager__scene__hit-area__mask',
+    hitAreaMaskLoader: 'prism-scene-manager__scene__hit-area__mask-loader'
+  }
+  static maskIdMap = _.memoize(path => _.uniqueId('TSHA'))
 
   constructor (props) {
     super(props)
@@ -60,12 +67,27 @@ class TintableSceneHitArea extends PureComponent<Props> {
   render () {
     const { connectDropTarget, svgSource, isOver } = this.props
 
+    const maskId = TintableSceneHitArea.maskIdMap(svgSource)
+
     return connectDropTarget && connectDropTarget(
-      <svg className={TintableSceneHitArea.baseClass}>
-        <use className={`${TintableSceneHitArea.baseClassMask} ${isOver ? `${TintableSceneHitArea.baseClassMask}--hover` : ''}`}
-          xlinkHref={`${svgSource}#mask`}
-          onClick={this.handleClick} />
-      </svg>
+      <div className={TintableSceneHitArea.classNames.hitAreaWrapper}>
+        <SVG
+          className={TintableSceneHitArea.classNames.hitAreaMaskLoader}
+          src={svgSource}
+          cacheGetRequests
+          uniqueHash={maskId}
+          // onLoad={(src) => {
+          // }}
+          onError={(err) => {
+            // failure
+            console.warn('TintableSceneHitArea failed to load SVG', err)
+          }} />
+        <svg className={TintableSceneHitArea.classNames.hitArea}>
+          <use className={`${TintableSceneHitArea.classNames.hitAreaMask} ${isOver ? `${TintableSceneHitArea.classNames.hitAreaMask}--hover` : ''}`}
+            xlinkHref={`#mask___${maskId}`}
+            onClick={this.handleClick} />
+        </svg>
+      </div>
     )
   }
 }
