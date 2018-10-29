@@ -1,7 +1,5 @@
 import React, { Component } from 'react'
 import { Route, Redirect } from 'react-router-dom'
-import { DragDropContext } from 'react-dnd'
-import HTML5Backend from 'react-dnd-html5-backend'
 
 import LivePalette from './LivePalette/LivePalette'
 import Main from './Facets/Main/Main'
@@ -9,6 +7,7 @@ import ColorWall from './Facets/ColorWall/ColorWall'
 import DnD from './POC/DnD/DnD'
 import SceneManager from './SceneManager/SceneManager'
 import Search from './Search/Search'
+import { withDragDropContext } from '../helpers/WithDragDropContext'
 
 // barebones component to always take the user to active if they try to access root.
 // not sure if we need this but if we end up using this for TAG & want to retain bookmarks..
@@ -35,4 +34,4 @@ class Prism extends Component {
   }
 }
 
-export default DragDropContext(HTML5Backend)(Prism)
+export default withDragDropContext(Prism)

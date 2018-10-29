@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
-import { DragDropContext } from 'react-dnd'
-import HTML5Backend from 'react-dnd-html5-backend'
 
 import LivePalette from '../../LivePalette/LivePalette'
 import SceneManager from '../../SceneManager/SceneManager'
+import { withDragDropContext } from '../../../helpers/WithDragDropContext'
 
 class Tinter extends Component {
   render () {
@@ -16,4 +15,4 @@ class Tinter extends Component {
   }
 }
 
-export default DragDropContext(HTML5Backend)(Tinter)
+export default withDragDropContext(Tinter)
