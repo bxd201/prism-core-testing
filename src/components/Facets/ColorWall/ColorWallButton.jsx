@@ -1,11 +1,6 @@
-/* eslint-disable */
-
 import React, { PureComponent } from 'react'
-import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
-import { kebabCase } from 'lodash'
-
-import { filterByFamily } from '../../../actions/loadColors'
+import kebabCase from 'lodash/kebabCase'
 
 class ColorWallButton extends PureComponent {
   constructor (props) {
@@ -21,40 +16,33 @@ class ColorWallButton extends PureComponent {
     return (
       <React.Fragment>
         <input
-          type="radio"
-          className="color-wall-button"
-          name="selectedFamily"
+          type='radio'
+          className='color-wall-button'
+          name='selectedFamily'
           id={`family-${family}`}
           onClick={this.handleClick}
           value={family}
           defaultChecked={isChecked}
         />
-        <label className="color-wall-label" htmlFor={`family-${family}`}>
+        <label className='color-wall-label' htmlFor={`family-${family}`}>
           {family}
         </label>
       </React.Fragment>
     )
   }
 
-  handleClick (e) {
-    this.props.filterByFamily(e.target.value)
+  handleClick () {
+    this.props.selectFamily(this.props.family)
 
-    window.location.hash = `/active/color-wall/${kebabCase(e.target.value)}`
+    window.location.hash = `/active/color-wall/${kebabCase(this.props.family)}`
   }
 }
 
 ColorWallButton.propTypes = {
   family: PropTypes.string,
   current: PropTypes.string,
-  filterByFamily: PropTypes.func
+  selectFamily: PropTypes.func,
+  routeCurrent: PropTypes.string
 }
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    filterByFamily: (family) => {
-      dispatch(filterByFamily(family))
-    }
-  }
-}
-
-export default connect(null, mapDispatchToProps)(ColorWallButton)
+export default ColorWallButton

@@ -1,84 +1,101 @@
+// @flow
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
-import PropTypes from 'prop-types'
-import debounce from 'lodash/debounce'
+import _ from 'lodash'
 
-import { selectColor } from '../../../actions/scenes'
 import { filterByFamily } from '../../../actions/loadColors'
 
 import ColorDataWrapper from '../../../helpers/ColorDataWrapper'
 
-import ColorWallSwatch from './ColorWallSwatch'
+import ColorWallSwatchList from './ColorWallSwatchList'
 import ColorWallButton from './ColorWallButton'
 
-import './ColorWall.css'
+import './ColorWall.scss'
 
-class ColorWall extends PureComponent {
-  // constructor (props) {
-  //   super(props)
+const DISPLAY_ORDER_DEFAULT = 'default'
+const DISPLAY_ORDER_LIGHTNESS = 'lightness'
+const DISPLAY_ORDER_BRIGHTNESS = 'brightness'
+const DISPLAY_ORDER_SATURATION = 'saturation'
+const DISPLAY_ORDER_COLOR = 'color'
 
-  //   // this.props.loadColors()
-  // }
+type Props = {
+  colors: Object,
+  match: Object,
+  filterByFamily: Function,
+  family: string,
+  displayOrder: string,
+  hideColorFamilySelector: string
+}
 
-  previewColor = debounce((color) => {
-    this.props.selectColor(color)
-  }, 250)
+class ColorWall extends PureComponent<Props> {
+  previewColor = void (0)
+  cwRef = void (0)
+  allColors = void (0)
 
-  colorFamilySwatch (family) {
-    return this.props.colors[family].map(color => {
-      return <ColorWallSwatch
-        key={color.id}
-        color={color}
-        active={(color.colorNumber === this.props.match.params.colorNumber)}
-        previewColor={this.previewColor}
-        family={this.props.family}
-      />
-    })
+  static defaultProps = {
+    displayOrder: DISPLAY_ORDER_DEFAULT
   }
 
-  get colorFamilySwatches () {
-    return Object.keys(this.props.colors).map(family => {
-      return this.colorFamilySwatch(family)
-    })
+  colorFamily (family) {
+    return this.props.colors[family]
+  }
+
+  get colorFamilies () {
+    return this.allColors || (this.allColors = _.flatten(Object.keys(this.props.colors).map(family => {
+      return this.colorFamily(family)
+    })))
   }
 
   render () {
-    const { colors, match: { params }, filterByFamily, family } = this.props
+    const { colors, match: { params }, filterByFamily, family, displayOrder, hideColorFamilySelector } = this.props
     const colorFamilyKeys = ['All', ...Object.keys(colors)]
 
     const ColorWallButtons = colorFamilyKeys.map(key => {
       return <ColorWallButton key={key} family={key} selectFamily={filterByFamily} current={family} routeCurrent={params.family} />
     })
 
-    const ColorWallSwatches = (family === 'All') ? this.colorFamilySwatches : this.colorFamilySwatch(family)
+    // get either a specific color family or all families
+    let ColorWallColors = (family === 'All') ? this.colorFamilies : this.colorFamily(family)
+
+    // sort colors based on displayOrder prop if provided
+    switch (displayOrder) {
+      case DISPLAY_ORDER_LIGHTNESS:
+        // $FlowIgnore
+        ColorWallColors = _.sortBy(ColorWallColors, 'lightness', 'hue', 'saturation')
+        break
+      case DISPLAY_ORDER_COLOR:
+        // $FlowIgnore
+        ColorWallColors = _.sortBy(ColorWallColors, 'hue', 'lightness', 'saturation')
+        break
+      case DISPLAY_ORDER_SATURATION:
+        // $FlowIgnore
+        ColorWallColors = _.sortBy(ColorWallColors, 'saturation', 'hue', 'lightness')
+        break
+      case DISPLAY_ORDER_BRIGHTNESS:
+        // $FlowIgnore
+        ColorWallColors = _.sortBy(ColorWallColors, color => (color.saturation * color.lightness), 'hue')
+        break
+      case DISPLAY_ORDER_DEFAULT:
+      default:
+    }
 
     return (
       <React.Fragment>
         <div className='color-wall-buttons'>
-          {ColorWallButtons}
+          {/* TODO: Temporary string comparison logic until we have the configurations coming down as a service instead of through props. */}
+          {(hideColorFamilySelector !== 'true') && ColorWallButtons}
         </div>
-        <div className={(params.colorNumber) ? '' : 'color-wall-swatches'} ref={this.cwRef} active={(params.colorNumber)}>
-          {ColorWallSwatches.map(ColorFamily => ColorFamily)}
+        <div className='color-wall-swatches' ref={this.cwRef}>
+          <ColorWallSwatchList colors={ColorWallColors} active={params.colorNumber} />
         </div>
       </React.Fragment>
     )
   }
 }
 
-ColorWall.propTypes = {
-  colors: PropTypes.object,
-  match: PropTypes.object,
-  selectColor: PropTypes.func,
-  filterByFamily: PropTypes.func,
-  family: PropTypes.string
-}
-
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = (dispatch: Function) => {
   return {
-    selectColor: (color) => {
-      dispatch(selectColor(color))
-    },
     filterByFamily: (family) => {
       dispatch(filterByFamily(family))
     }

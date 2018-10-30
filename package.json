@@ -3,15 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "API_URL=https://dev-prism-api.ebus.swaws webpack-dev-server --mode development --open --hot --config webpack.dev.js",
-    "build": "API_URL=http://localhost:3000 webpack --config webpack.prod.js",
+    "start": "cross-env API_URL=https://dev-prism-api.ebus.swaws webpack-dev-server --mode development --open --hot --config webpack.dev.js",
+    "build": "cross-env API_URL=http://localhost:3000 webpack --config webpack.prod.js",
     "test": "flow check && jest --coverage",
     "postinstall": "flow-typed install"
   },
   "jest": {
     "moduleNameMapper": {
       "^constants(.*)$": "<rootDir>/src/constants$1",
-      "^variables(.*)$": "<rootDir>/shared/variables.js"
+      "^variables(.*)$": "<rootDir>/shared/variables.js",
+      "\\.(css|less)$": "identity-obj-proxy"
+    },
+    "globals": {
+      "$API_PATH": "localhost"
     }
   },
   "dependencies": {
@@ -21,12 +25,14 @@
     "@fortawesome/react-fontawesome": "0.1.3",
     "axios": "0.18.0",
     "delta-e": "0.0.7",
+    "immutability-helper": "2.8.1",
     "lodash": "4.17.11",
     "prop-types": "15.6.2",
     "react": "16.5.2",
     "react-dnd": "5.0.0",
     "react-dnd-html5-backend": "5.0.1",
     "react-dom": "16.5.2",
+    "react-inlinesvg": "0.8.2",
     "react-intl": "2.7.0",
     "react-redux": "5.0.7",
     "react-router-dom": "4.3.1",
@@ -51,7 +57,9 @@
     "babel-jest": "23.6.0",
     "babel-loader": "8.0.4",
     "babel-plugin-styled-components": "1.8.0",
+    "clean-webpack-plugin": "0.1.19",
     "copy-webpack-plugin": "4.5.2",
+    "cross-env": "5.2.0",
     "css-loader": "1.0.0",
     "enzyme": "3.6.0",
     "eslint": "5.6.1",
@@ -67,9 +75,10 @@
     "file-loader": "2.0.0",
     "flow": "0.2.3",
     "flow-bin": "0.81.0",
-    "flow-interfaces": "^0.6.1",
+    "flow-interfaces": "0.6.1",
     "flow-typed": "2.5.1",
     "html-webpack-plugin": "3.2.0",
+    "identity-obj-proxy": "3.0.0",
     "jest": "23.6.0",
     "memoizee": "0.4.14",
     "mini-css-extract-plugin": "0.4.3",

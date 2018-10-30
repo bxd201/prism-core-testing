@@ -43,7 +43,7 @@ class SceneSurface extends PureComponent<Props> {
 
   render () {
     const { connectDropTarget, isOver, color } = this.props
-    return connectDropTarget(
+    return connectDropTarget && connectDropTarget(
       <div className={SceneSurface.getClassName(isOver)}
         style={{ backgroundColor: color }} />
     )

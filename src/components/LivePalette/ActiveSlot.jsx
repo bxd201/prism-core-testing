@@ -1,34 +1,46 @@
 import React, { PureComponent } from 'react'
+import { findDOMNode } from 'react-dom'
 import { connect } from 'react-redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-// import { FormattedMessage } from 'react-intl'
 import PropTypes from 'prop-types'
-import { remove } from '../../actions/live-palette'
+import flow from 'lodash/flow'
+import { DragSource, DropTarget } from 'react-dnd'
 
-// import { varValues, varNames } from 'variables'
+import { remove, activatePreview } from '../../actions/live-palette'
 
-class LivePaletteSlot extends PureComponent<Props> {
+import { DRAG_TYPES } from 'constants/globals'
+
+class ActiveSlot extends PureComponent<Props> {
   ACTIVE_CLASS = 'prism-live-palette__slot--active'
+  REMOVAL_CLASS = 'prism-live-palette__slot--removing'
+
+  state = {
+    isDeleting: false
+  }
 
   constructor (props) {
     super(props)
 
     this.onClick = this.onClick.bind(this)
+    this.remove = this.remove.bind(this)
   }
 
   render () {
-    const { color, active } = this.props
+    const { color, active, connectDragSource, connectDropTarget, isDragging } = this.props
+    const { isDeleting } = this.state
+    const opacity = isDragging ? 0 : 1
+    const LIGHT_DARK_CLASS = color.isDark ? 'prism-live-palette__color-details--dark' : 'prism-live-palette__color-details--light'
 
-    return (
-      <React.Fragment>
-        <div className={`prism-live-palette__slot ${(active ? this.ACTIVE_CLASS : '')}`} style={{ backgroundColor: color.hex }} onClick={this.onClick}>
-          <div className='prism-live-palette__slot__details'>
-            <p>{ color.colorNumber }</p>
-            <strong>{ color.name }</strong>
-            <button onClick={() => this.props.remove(color.id)}><FontAwesomeIcon icon='trash' size='lg' /></button>
+    return connectDragSource && connectDropTarget && connectDragSource(
+      connectDropTarget(
+        <div className={`prism-live-palette__slot ${(active ? this.ACTIVE_CLASS : '')} ${(isDeleting ? this.REMOVAL_CLASS : '')}`} style={{ backgroundColor: color.hex, opacity }} onClick={this.onClick}>
+          <div className={`prism-live-palette__color-details ${LIGHT_DARK_CLASS}`}>
+            <span className='prism-live-palette__color-number'>{ color.colorNumber }</span>
+            <span className='prism-live-palette__color-name'>{ color.name }</span>
+            <button className='prism-live-palette__trash' onClick={this.remove}><FontAwesomeIcon icon='trash' size='1x' /></button>
           </div>
         </div>
-      </React.Fragment>
+      )
     )
   }
 
@@ -40,20 +52,102 @@ class LivePaletteSlot extends PureComponent<Props> {
       this.props.onClick(this.props.color)
     }
   }
+
+  remove () {
+    const { color } = this.props
+
+    this.setState({ isDeleting: true })
+
+    setTimeout(() => {
+      this.props.remove(color.id)
+    }, 200)
+  }
 }
 
-LivePaletteSlot.propTypes = {
+ActiveSlot.propTypes = {
+  index: PropTypes.number,
   color: PropTypes.object,
+  isDragging: PropTypes.bool,
   remove: PropTypes.func,
-  onClick: PropTypes.func
+  onClick: PropTypes.func,
+  moveColor: PropTypes.func,
+  connectDragSource: PropTypes.func,
+  connectDropTarget: PropTypes.func
+}
+
+const swatchSource = {
+  beginDrag (props) {
+    // as soon as a swatch begins dragging, set it as the current surface preview color in redux
+    props.activatePreviewColor(props.color)
+
+    return {
+      color: props.color,
+      index: props.index
+    }
+  }
+}
+
+const swatchTarget = {
+  hover (props, monitor, component) {
+    const activelyDraggingColorId = monitor.getItem().color.id
+    const targetColorId = props.color.id
+
+    const dragIndex = monitor.getItem().index
+    const hoverIndex = props.index
+
+    // don't replace swatches with themselves
+    if (dragIndex === hoverIndex) {
+      return
+    }
+
+    // get target swatch
+    const hoverBoundingRect = findDOMNode(component).getBoundingClientRect()
+
+    // get horizontal middle
+    const hoverMiddleX = (hoverBoundingRect.right - hoverBoundingRect.left) / 2
+
+    // determine mouse position
+    const clientOffset = monitor.getClientOffset()
+
+    // get pixels to the left
+    const hoverClientX = clientOffset.x - hoverBoundingRect.left
+
+    // only perform the move when the mouse has crossed half of the items height
+    if (dragIndex < hoverIndex && hoverClientX < hoverMiddleX) {
+      return
+    }
+    if (dragIndex > hoverIndex && hoverClientX > hoverMiddleX) {
+      return
+    }
+
+    // perform the move action
+    props.moveColor(activelyDraggingColorId, targetColorId)
+
+    // mutating monitor.. not ideal but this is required for the above 50%
+    // logic to actually work. This is the recommended approach per the examples
+    // provided by DnD.
+    monitor.getItem().index = hoverIndex
+  }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
     remove: (colorId) => {
       dispatch(remove(colorId))
+    },
+    activatePreviewColor: (color) => {
+      dispatch(activatePreview(color))
     }
   }
 }
 
-export default connect(null, mapDispatchToProps)(LivePaletteSlot)
+export default flow([
+  DropTarget(DRAG_TYPES.SWATCH, swatchTarget, connect => ({
+    connectDropTarget: connect.dropTarget()
+  })),
+  DragSource(DRAG_TYPES.SWATCH, swatchSource, (connect, monitor) => ({
+    connectDragSource: connect.dragSource(),
+    isDragging: monitor.isDragging()
+  })),
+  connect(null, mapDispatchToProps)
+])(ActiveSlot)

@@ -2,7 +2,6 @@
 import React, { PureComponent, Fragment } from 'react'
 import { connect } from 'react-redux'
 
-import { selectColor } from '../../actions/scenes'
 import { add } from '../../actions/live-palette'
 
 type Props = {
@@ -35,7 +34,6 @@ class ColorSwatch extends PureComponent<Props> {
 const mapDispatchToProps: Function = (dispatch) => {
   return {
     selectColor: (color) => {
-      dispatch(selectColor(color))
       dispatch(add(color))
     }
   }

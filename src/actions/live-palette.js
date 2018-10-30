@@ -24,3 +24,19 @@ export const activate = (colorObj: Color) => {
     payload: { color: colorObj }
   }
 }
+
+export const ACTIVATE_LP_PREVIEW_COLOR: string = 'ACTIVATE_LP_PREVIEW_COLOR'
+export const activatePreview = (colorObj: Color) => {
+  return {
+    type: ACTIVATE_LP_PREVIEW_COLOR,
+    payload: { color: colorObj }
+  }
+}
+
+export const REORDER_LP_COLORS: string = 'REORDER_LP_COLORS'
+export const reorder = (colors: Array<Number>) => {
+  return {
+    type: REORDER_LP_COLORS,
+    payload: { colorsByIndex: colors }
+  }
+}

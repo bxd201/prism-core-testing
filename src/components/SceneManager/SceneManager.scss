@@ -1,0 +1,142 @@
+.prism-scene-manager {
+  // display: flex;
+  // flex-direction: row;
+
+  &__btn {
+    $btn-active-color: rgba(#222, 1);
+    $btn-focus-color: rgba(#eee, 1);
+
+    display: inline-block;
+    border: .25em solid transparent;
+    max-width: 100px;
+    position: relative;
+    z-index: 1;
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    &:hover {
+      border-color: $btn-focus-color;
+
+      &::after {
+        border-top-color: $btn-focus-color;
+      }
+    }
+
+    &--active {
+      $arrow-size: .5em;
+
+      border-color: $btn-active-color !important;
+
+      &::after {
+        bottom: -#{$arrow-size + .25em};
+        content: '';
+        left: 50%;
+        position: absolute;
+        transform: translateX( -50% );
+        border-top: $arrow-size solid $btn-active-color !important;
+        border-left: $arrow-size solid transparent;
+        border-right: $arrow-size solid transparent;
+      }
+    }
+  }
+
+  &__scene {
+    max-width: 100%;
+    position: relative;
+
+    &--disabled {
+      filter: saturate(0) brightness(.5) contrast(.75);
+      pointer-events: none;
+    }
+
+    &__svg-defs {
+      height: 0;
+      position: absolute;
+      width: 0;
+      z-index: -1;
+    }
+
+    &__tint-wrapper,
+    &__hit-wrapper {
+      max-width: 100%;
+      position: relative;
+      width: auto;
+    }
+
+    &__preview-wrapper,
+    &__hit-wrapper {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    &__natural {
+      display: block;
+      width: 100%;
+      position: relative;
+      height: auto;
+    }
+
+    &__preview-wrapper {
+      pointer-events: none;
+
+      &__preview {
+        opacity: 0;
+        transition: opacity .3s ease-in .0s;
+        will-change: opacity;
+
+        &--active {
+          opacity: 1;
+          transition: opacity .1s ease-out;
+        }
+      }
+    }
+
+    &__hit-area-wrapper,
+    &__hit-area,
+    &__surface {
+      height: 100%;
+      left: 0;
+      pointer-events: none;
+      position: absolute;
+      top: 0;
+      width: 100%;
+    }
+
+    &__hit-area {
+      // this is the hover/click color
+      // fill: rgba(white,.1);
+      fill: transparent;
+      stroke: magenta;
+      stroke-width: 5px;
+
+      &__mask-loader {
+        height: 0;
+        position: absolute;
+        width: 0;
+        z-index: -1;
+        visibility: hidden;
+      }
+
+      &__mask {
+        cursor: pointer;
+        opacity: 0;
+        transition: opacity .3s ease-in .0s;
+        // don't you dare remove this line.
+        pointer-events: all;
+        will-change: opacity;
+
+        &--hover,
+        &:hover {
+          opacity: 1;
+          transition: opacity .1s ease-out;
+        }
+      }
+    }
+  }
+}

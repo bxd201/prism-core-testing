@@ -1,10 +1,9 @@
 // @flow
 import React, { PureComponent, Fragment } from 'react'
-import HTML5Backend from 'react-dnd-html5-backend'
-import { DragDropContext } from 'react-dnd'
 
 import Swatch from './Swatch/Swatch'
 import Scene from './Scene/Scene'
+import { withDragDropContext } from '../../../helpers/WithDragDropContext'
 
 type Props = {}
 
@@ -82,4 +81,4 @@ class DnD extends PureComponent<Props, State> {
   }
 }
 
-export default DragDropContext(HTML5Backend)(DnD)
+export default withDragDropContext(DnD)

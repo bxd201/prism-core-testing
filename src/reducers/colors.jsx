@@ -1,8 +1,9 @@
-const initialState = {
+export const initialState = {
   status: {
     loading: true
   },
   items: {},
+  searchResults: [],
   family: 'All'
 }
 
@@ -24,6 +25,21 @@ export const colors = (state = initialState, action) => {
     case 'FILTER_BY_FAMILY':
       return Object.assign({}, state, {
         family: action.payload.family
+      })
+
+    case 'REQUEST_SEARCH_RESULTS':
+      return Object.assign({}, state, {
+        status: action.payload.status
+      })
+
+    case 'RECEIVE_SEARCH_RESULTS':
+      return ({
+        ...state,
+        searchResults: action.payload.results,
+        status: {
+          ...state.status,
+          loading: action.payload.loading
+        }
       })
 
     default:
