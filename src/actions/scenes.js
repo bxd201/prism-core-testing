@@ -34,7 +34,7 @@ const receiveScenes = (sceneResponse: any) => {
 }
 
 export const ACTIVATE_SCENE = 'ACTIVATE_SCENE'
-export const activateScene = (id: string | number) => {
+export const activateScene = (id: string | number | Array<string | number>) => {
   return {
     type: ACTIVATE_SCENE,
     payload: {
@@ -44,7 +44,7 @@ export const activateScene = (id: string | number) => {
 }
 
 export const DEACTIVATE_SCENE = 'DEACTIVATE_SCENE'
-export const deactivateScene = (id: string | number) => {
+export const deactivateScene = (id: string | number | Array<string | number>) => {
   return {
     type: DEACTIVATE_SCENE,
     payload: {
