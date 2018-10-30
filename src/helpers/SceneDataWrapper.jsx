@@ -3,7 +3,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import isEmpty from 'lodash/isEmpty'
 
-import { loadScenes } from '../actions/loadScenes'
+import { loadScenes } from '../actions/scenes'
 // import type { ColorPayload } from '../shared/types/Colors'
 
 type Props = {

@@ -1,13 +1,19 @@
 .prism-scene-manager {
-  // display: flex;
-  // flex-direction: row;
+  &__block {
+    display: flex;
+    flex-direction: row;
+  }
 
   &__btn {
     $btn-active-color: rgba(#222, 1);
-    $btn-focus-color: rgba(#eee, 1);
+    $btn-active-color-text: white;
+    $btn-focus-color: rgba(#39c, 1);
+    $btn-focus-color-text: rgba(white, 1);
+    $border-size: 2px;
 
     display: inline-block;
-    border: .25em solid transparent;
+    border: $border-size solid transparent;
+    float: left;
     max-width: 100px;
     position: relative;
     z-index: 1;
@@ -21,29 +27,42 @@
       border-color: $btn-focus-color;
 
       &::after {
-        border-top-color: $btn-focus-color;
+        background: $btn-focus-color;
+        border-color: $btn-focus-color;
+        color: $btn-focus-color-text;
       }
     }
 
     &--active {
-      $arrow-size: .5em;
+      $icon-size: 1em;
 
-      border-color: $btn-active-color !important;
+      border-color: $btn-active-color;
 
       &::after {
-        bottom: -#{$arrow-size + .25em};
-        content: '';
-        left: 50%;
+        bottom: 0;
+        border: $border-size solid $btn-active-color;
+        border-bottom: none;
+        border-right: none;
+        content: '\02714';
         position: absolute;
-        transform: translateX( -50% );
-        border-top: $arrow-size solid $btn-active-color !important;
-        border-left: $arrow-size solid transparent;
-        border-right: $arrow-size solid transparent;
+        width: $icon-size;
+        height: $icon-size;
+        line-height: $icon-size;
+        background: $btn-active-color;
+        color: $btn-active-color-text;
+        text-align: center;
+        font-size: $icon-size;
+        right: 0;
       }
+    }
+
+    &--disabled {
+      opacity: .2;
     }
   }
 
   &__scene {
+    clear: both;
     max-width: 100%;
     position: relative;
 
