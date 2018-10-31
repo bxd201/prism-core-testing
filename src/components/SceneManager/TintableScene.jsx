@@ -1,5 +1,5 @@
 // @flow
-import React, { PureComponent, Fragment } from 'react'
+import React, { PureComponent } from 'react'
 import _ from 'lodash'
 
 import TintableSceneHitArea from './TintableSceneHitArea'
@@ -8,11 +8,14 @@ import TintableSceneSVGDefs from './TintableSceneSVGDefs'
 
 type Props = {
   background: string,
+  type: string,
   surfaces: Array<{
     id: string,
     mask: string,
-    color?: string,
-    hitArea: string
+    hitArea: string,
+    shadows?: string,
+    highlights?: string,
+    color?: string
   }>,
   width: number,
   height: number,
@@ -33,8 +36,6 @@ class TintableScene extends PureComponent<Props, State> {
   static baseClass = 'prism-scene-manager__scene'
 
   static defaultProps = {
-    width: 1200,
-    height: 725,
     render: true,
     interactive: true
   }
@@ -103,7 +104,7 @@ class TintableScene extends PureComponent<Props, State> {
   }
 
   render () {
-    const { surfaces, background, width, height, render, interactive, previewColor } = this.props
+    const { surfaces, background, width, height, render, interactive, previewColor, type } = this.props
     const { activePreviewSurfaces, instanceId } = this.state
 
     if (!render) {
@@ -126,19 +127,18 @@ class TintableScene extends PureComponent<Props, State> {
 
                 if (tintColor) {
                   return (
-                    <Fragment
-                      key={surface.id}>
-                      <TintableSceneSVGDefs
-                        filterId={TintableScene.getFilterId(instanceId, surface.id)}
-                        filterColor={tintColor}
-                        maskId={TintableScene.getMaskId(instanceId, surface.id)}
-                        maskImage={surface.mask}
-                      />
-                    </Fragment>
+                    <TintableSceneSVGDefs
+                      key={surface.id}
+                      type={type}
+                      highlightMap={surface.highlights}
+                      shadowMap={surface.shadows}
+                      filterId={TintableScene.getFilterId(instanceId, surface.id)}
+                      filterColor={tintColor}
+                      maskId={TintableScene.getMaskId(instanceId, surface.id)}
+                      maskImage={surface.mask}
+                    />
                   )
                 }
-
-                return null
               })}
             </defs>
           </svg>
@@ -148,6 +148,7 @@ class TintableScene extends PureComponent<Props, State> {
           <img className={`${TintableScene.baseClass}__natural`} src={background} />
           {surfaces.map((surface, index) => (
             <TintableSceneSurface key={surface.id}
+              type={type}
               image={background}
               width={width}
               height={height}

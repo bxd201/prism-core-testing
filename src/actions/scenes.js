@@ -2,16 +2,8 @@
 import axios from 'axios'
 import _ from 'lodash'
 
-import { SW_SCENES } from '../constants/endpoints'
-
-export const SELECT_SCENE: string = 'SELECT_SCENE'
-// TODO: Create type for scene
-export const selectScene = (scene: any) => {
-  return {
-    type: SELECT_SCENE,
-    payload: { scene }
-  }
-}
+import { SCENE_TYPES } from 'constants/globals'
+import { SW_SCENES_AUTOMOTIVE, SW_SCENES_ROOMS } from 'constants/endpoints'
 
 export const REQUEST_SCENES = 'REQUEST_SCENES'
 const requestScenes = () => {
@@ -53,9 +45,10 @@ export const deactivateScene = (id: string | number | Array<string | number>) =>
   }
 }
 
-export const loadScenes = () => {
+export const loadScenes = (type: string) => {
   return (dispatch: Function, getState: Function) => {
     const { scenes } = getState().scenes
+    let scenesEndpoint = void (0)
 
     if (!_.isEmpty(scenes)) {
       dispatch(receiveScenes({
@@ -67,17 +60,31 @@ export const loadScenes = () => {
 
     dispatch(requestScenes())
 
-    return axios.get(SW_SCENES)
+    switch (type) {
+      case SCENE_TYPES.OBJECT:
+        scenesEndpoint = SW_SCENES_AUTOMOTIVE
+        break
+      case SCENE_TYPES.ROOM:
+        scenesEndpoint = SW_SCENES_ROOMS
+        break
+    }
+
+    if (!scenesEndpoint) {
+      // TODO: create a scene loading ERROR method and handle appropriately -- for now it will just show no scenes
+
+      console.error('No scene type defined. Unable to fetch scenes for unknown scene type.')
+
+      dispatch(receiveScenes({
+        scenes: [],
+        count: 0
+      }))
+      return
+    }
+
+    return axios.get(scenesEndpoint)
       .then(r => r.data)
       .then(data => {
         dispatch(receiveScenes(data))
-
-        // this assumes we always want to activate our first scene,
-        // but maybe this should be left up to the component displaying scenes?
-        // that might make more sense, keep the opinions out of actions
-        // if (data.scenes && data.scenes.length) {
-        //   dispatch(activateScene(data.scenes[0].id))
-        // }
       })
   }
 }

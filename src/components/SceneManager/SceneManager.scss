@@ -1,7 +1,18 @@
 .prism-scene-manager {
   &__block {
+    align-items: center;
     display: flex;
     flex-direction: row;
+
+    &--letterbox {
+      background: black;
+    }
+
+    // BEGIN TODO: REMOVE
+    & > * {
+      flex: 1 1;
+    }
+    // END TODO: REMOVE
   }
 
   &__btn {

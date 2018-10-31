@@ -3,6 +3,7 @@ import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
 import _ from 'lodash'
 
+import { SCENE_TYPES } from 'constants/globals'
 import { loadScenes, paintSceneSurface, activateScene, deactivateScene } from '../../actions/scenes'
 import TintableScene from './TintableScene'
 
@@ -10,6 +11,7 @@ import './SceneManager.scss'
 
 type Props = {
   scenes: Array<any>,
+  type: string,
   activeScenes: Array<number | string>,
   maxActiveScenes: number,
   loadScenes: Function,
@@ -29,7 +31,8 @@ class SceneManager extends PureComponent<Props, State> {
   static baseClass = 'prism-scene-manager'
 
   static defaultProps = {
-    maxActiveScenes: 2
+    maxActiveScenes: 2,
+    type: SCENE_TYPES.ROOM
   }
 
   state = {
@@ -44,7 +47,7 @@ class SceneManager extends PureComponent<Props, State> {
   }
 
   componentDidMount () {
-    this.props.loadScenes()
+    this.props.loadScenes(this.props.type)
   }
 
   componentDidUpdate (prevProps) {
@@ -97,7 +100,7 @@ class SceneManager extends PureComponent<Props, State> {
   }
 
   render () {
-    const { scenes, loadingScenes, activeColor, previewColor, activeScenes } = this.props
+    const { scenes, loadingScenes, activeColor, previewColor, activeScenes, type } = this.props
 
     if (loadingScenes) {
       return 'Loading...'
@@ -114,6 +117,9 @@ class SceneManager extends PureComponent<Props, State> {
               type='button'>
 
               <TintableScene
+                width={scene.width}
+                height={scene.height}
+                type={type}
                 sceneId={scene.id}
                 interactive={false}
                 background={scene.thumb}
@@ -122,14 +128,16 @@ class SceneManager extends PureComponent<Props, State> {
                   id: surface.id,
                   mask: surface.mask,
                   hitArea: surface.hitArea,
-                  color: surface.color || void (0)
+                  color: surface.color || void (0),
+                  shadows: surface.shadows || void (0),
+                  highlights: surface.highlights || void (0)
                 }))}
               />
             </button>
           ))}
         </div>
 
-        <div className={`${SceneManager.baseClass}__block`}>
+        <div className={`${SceneManager.baseClass}__block ${SceneManager.baseClass}__block--letterbox`}>
           {activeScenes.map((sceneId, index) => {
             const scene = _.find(scenes, { id: sceneId })
 
@@ -139,6 +147,9 @@ class SceneManager extends PureComponent<Props, State> {
 
             return (
               <TintableScene key={scene.id}
+                width={scene.width}
+                height={scene.height}
+                type={type}
                 sceneId={scene.id}
                 background={scene.image}
                 clickToPaintColor={activeColor}
@@ -148,7 +159,9 @@ class SceneManager extends PureComponent<Props, State> {
                   id: surface.id,
                   mask: surface.mask,
                   hitArea: surface.hitArea,
-                  color: surface.color || void (0)
+                  color: surface.color || void (0),
+                  shadows: surface.shadows || void (0),
+                  highlights: surface.highlights || void (0)
                 }))}
               />
             )
@@ -183,8 +196,8 @@ const mapStateToProps = (state, props) => {
 
 const mapDispatchToProps = (dispatch: Function) => {
   return {
-    loadScenes: () => {
-      dispatch(loadScenes())
+    loadScenes: (type: string) => {
+      dispatch(loadScenes(type))
     },
     paintSceneSurface: (sceneId, surfaceId, color) => {
       dispatch(paintSceneSurface(sceneId, surfaceId, color))

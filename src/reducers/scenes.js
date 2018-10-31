@@ -2,7 +2,6 @@
 import _ from 'lodash'
 
 import {
-  SELECT_SCENE,
   RECEIVE_SCENES,
   REQUEST_SCENES,
   ACTIVATE_SCENE,
@@ -19,11 +18,6 @@ export const initialState: Object = {
 
 export const scenes = (state: Object = initialState, action: { type: string, payload: Object }) => {
   switch (action.type) {
-    case SELECT_SCENE:
-      return Object.assign({}, state, {
-        scene: action.payload.scene
-      })
-
     case RECEIVE_SCENES:
       return Object.assign({}, state, {
         scenes: action.payload.scenes,

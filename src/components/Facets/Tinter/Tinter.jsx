@@ -6,9 +6,11 @@ import { withDragDropContext } from '../../../helpers/WithDragDropContext'
 
 class Tinter extends Component {
   render () {
+    const { sceneSet } = this.props
+
     return (
       <React.Fragment>
-        <SceneManager />
+        <SceneManager type={sceneSet} />
         <LivePalette />
       </React.Fragment>
     )
