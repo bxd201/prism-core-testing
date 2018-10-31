@@ -27,8 +27,8 @@
     },
     {
       "id": 2,
-      "image": "/images/scenes/2/scene.jpg",
-      "thumb": "/images/scenes/2/scene.jpg",
+      "image": "/images/scenes/living-rooms/2/scene.jpg",
+      "thumb": "/images/scenes/living-rooms/2/scene.jpg",
       "width": 1200,
       "height": 725,
       "surfaces": [
