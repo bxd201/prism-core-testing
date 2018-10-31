@@ -33,6 +33,7 @@ class LivePalette extends PureComponent<Props> {
 
   render () {
     const { colors, activeColor } = this.props
+
     // TODO: abstract below into a class method
     // calculate all the active slots
     const activeSlots = colors.map((color, index) => {

@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 
 import LivePalette from '../../LivePalette/LivePalette'
 import SceneManager from '../../SceneManager/SceneManager'
@@ -15,6 +16,10 @@ class Tinter extends Component {
       </React.Fragment>
     )
   }
+}
+
+Tinter.propTypes = {
+  sceneSet: PropTypes.string
 }
 
 export default withDragDropContext(Tinter)
