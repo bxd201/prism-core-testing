@@ -81,6 +81,7 @@ class LivePalette extends PureComponent<Props, State> {
 
   render () {
     const { colors, activeColor } = this.props
+
     const { spokenWord } = this.state
     // TODO: abstract below into a class method
     // calculate all the active slots
