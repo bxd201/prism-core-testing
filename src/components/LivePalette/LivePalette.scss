@@ -108,4 +108,13 @@
     display: block;
     color: inherit;
   }
+
+  &__color-description {
+    clip: rect(1px, 1px, 1px, 1px); // For screen readers only
+    font-size: 0.7em;
+    display: block;
+    position: absolute;
+    bottom: 0.5em;
+    color: inherit;
+  }
 }

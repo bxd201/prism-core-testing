@@ -37,6 +37,7 @@ class ActiveSlot extends PureComponent<Props> {
           <div className={`prism-live-palette__color-details ${LIGHT_DARK_CLASS}`}>
             <span className='prism-live-palette__color-number'>{ color.colorNumber }</span>
             <span className='prism-live-palette__color-name'>{ color.name }</span>
+            <span className='prism-live-palette__color-description'>{ color.description.join(', ') }</span>
             <button className='prism-live-palette__trash' onClick={this.remove}><FontAwesomeIcon icon='trash' size='1x' /></button>
           </div>
         </div>

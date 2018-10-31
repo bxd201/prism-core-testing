@@ -12,6 +12,7 @@ export type Color = {
   },
   csshsl: String,
   cssrgb: string,
+  description: Array<String>,
   green: number,
   hex: String,
   hue: number,
