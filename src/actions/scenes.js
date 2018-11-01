@@ -47,16 +47,19 @@ export const deactivateScene = (id: string | number | Array<string | number>) =>
 
 export const loadScenes = (type: string) => {
   return (dispatch: Function, getState: Function) => {
-    const { scenes } = getState().scenes
+    // TODO: The below items are commented out due to AEM authoring. Need to find a solution to retain tinted states
+    // and also make AEM authoring happy as well.
+
+    // const { scenes } = getState().scenes
     let scenesEndpoint = void (0)
 
-    if (!_.isEmpty(scenes)) {
-      dispatch(receiveScenes({
-        count: scenes.length,
-        scenes
-      }))
-      return
-    }
+    // if (!_.isEmpty(scenes)) {
+    //   dispatch(receiveScenes({
+    //     count: scenes.length,
+    //     scenes
+    //   }))
+    //   return
+    // }
 
     dispatch(requestScenes())
 
@@ -65,6 +68,9 @@ export const loadScenes = (type: string) => {
         scenesEndpoint = SW_SCENES_AUTOMOTIVE
         break
       case SCENE_TYPES.ROOM:
+        scenesEndpoint = SW_SCENES_ROOMS
+        break
+      default:
         scenesEndpoint = SW_SCENES_ROOMS
         break
     }

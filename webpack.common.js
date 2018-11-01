@@ -150,7 +150,7 @@ module.exports = {
     new CopyWebpackPlugin( [
       {
         from: 'src/images',
-        to: 'images'
+        to: 'prism/images'
       },
       {
         from: 'src/json',
