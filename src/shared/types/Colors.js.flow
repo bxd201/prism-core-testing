@@ -2,35 +2,35 @@
 export type Color = {
   blue: number,
   brandCollectionIds: Array<number>,
-  brandCollectionNames: Array<String>,
-  colorFamilyNames: Array<String>,
-  colornumber: String,
+  brandCollectionNames: Array<string>,
+  colorFamilyNames: Array<string>,
+  colornumber: string,
   coordinatingColors: {
     coord1ColorId: number,
     coord2ColorId: number,
     whiteColorId: number
   },
-  csshsl: String,
+  csshsl: string,
   cssrgb: string,
   description: Array<String>,
   green: number,
-  hex: String,
+  hex: string,
   hue: number,
   id: number,
   isDark: Boolean,
   isExterior: Boolean,
   isInterior: Boolean,
   lightness: number,
-  name: String,
-  opacity: String, // ex: "SW1234", whatever that means
+  name: string,
+  opacity: string, // ex: "SW1234", whatever that means
   red: number,
   rgb: number,
   saturation: number,
-  smis: String
+  smis: string
 }
 
 export type ColorPayload = {
-  [ key: String ]: Array<Color>
+  [ key: string ]: Array<Color>
 }
 
 export type ColorListPayload = Array<Color>

@@ -5,7 +5,7 @@ import ColorWallSwatch from './ColorWallSwatch'
 
 type Props = {
   colors: Array<any>,
-  active: string
+  active?: string
 }
 
 class ColorWallSwatchList extends PureComponent<Props> {
@@ -13,7 +13,7 @@ class ColorWallSwatchList extends PureComponent<Props> {
     const { colors, active } = this.props
 
     return (
-      <React.Fragment>
+      <ul className='color-wall-swatches'>
         {colors.map(color => {
           return (
             <ColorWallSwatch
@@ -23,7 +23,7 @@ class ColorWallSwatchList extends PureComponent<Props> {
             />
           )
         })}
-      </React.Fragment>
+      </ul>
     )
   }
 }

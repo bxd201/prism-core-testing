@@ -21,9 +21,8 @@ class ColorWallSwatch extends PureComponent {
 
     return (
       <React.Fragment>
-        <li className='color-wall-swatches__swatch'
-          onClick={this.handleSwatchClick}>
-          <div className={`inner color-swatch-inner ${active ? 'color-swatch-inner--active' : ''}`}
+        <li className='color-wall-swatches__swatch'>
+          <button onClick={this.handleSwatchClick} className={`inner color-swatch-inner ${active ? 'color-swatch-inner--active' : ''}`}
             style={Inner} />
         </li>
       </React.Fragment>

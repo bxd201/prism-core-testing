@@ -3,7 +3,7 @@ import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
 import { loadSearchResults } from '../../actions/loadSearchResults'
 import { debounce } from 'lodash'
-import ColorWallSwatch from '../Facets/ColorWall/ColorWallSwatch'
+import ColorWallSwatchList from '../Facets/ColorWall/ColorWallSwatchList'
 
 import './Search.scss'
 
@@ -41,12 +41,7 @@ class Search extends PureComponent<Props> {
 
         {!colors.length
           ? <p>'Enter a color name, number or family in the text field above.'</p>
-          : colors.map(color => (
-            <ColorWallSwatch
-              key={color.id}
-              color={color}
-            />
-          ))
+          : <ColorWallSwatchList colors={colors} />
         }
       </div>
     )

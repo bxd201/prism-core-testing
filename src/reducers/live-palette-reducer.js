@@ -8,7 +8,7 @@ export const lp = (state = initialState, action) => {
   switch (action.type) {
     case 'ADD_LP_COLOR':
       // check if there are already 7 colors added and if the color exists already before adding
-      if (state.colors.length < LP_MAX_COLORS_ALLOWED && !_.filter(state.colors, color => color.id === action.payload.color.id).length) {
+      if (state.colors && state.colors.length < LP_MAX_COLORS_ALLOWED && !_.filter(state.colors, color => color.id === action.payload.color.id).length) {
         state.colors.push(action.payload.color)
       }
 
@@ -16,7 +16,8 @@ export const lp = (state = initialState, action) => {
         colors: [
           ...state.colors
         ],
-        activeColor: action.payload.color // default newly added colors as the active color
+        activeColor: action.payload.color, // default newly added colors as the active color
+        previousActiveColor: state.activeColor
       })
 
     case 'REMOVE_LP_COLOR':
@@ -33,16 +34,21 @@ export const lp = (state = initialState, action) => {
         return (color.id === action.payload.colorId)
       })
 
+      let difference = _.difference(state.colors, colors)
+
       return Object.assign({}, state, {
         colors: [
           ...colors
         ],
-        activeColor: colors[activeColorIndex] || null
+        activeColor: colors[activeColorIndex] || null,
+        previousActiveColor: state.activeColor,
+        removedColor: difference.length ? difference[0] : void (0)
       })
 
     case 'ACTIVATE_LP_COLOR':
       return Object.assign({}, state, {
-        activeColor: action.payload.color
+        activeColor: action.payload.color,
+        previousActiveColor: state.activeColor
       })
 
     case 'ACTIVATE_LP_PREVIEW_COLOR':

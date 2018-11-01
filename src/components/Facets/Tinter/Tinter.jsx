@@ -1,3 +1,4 @@
+// @flow
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
@@ -5,7 +6,11 @@ import LivePalette from '../../LivePalette/LivePalette'
 import SceneManager from '../../SceneManager/SceneManager'
 import { withDragDropContext } from '../../../helpers/WithDragDropContext'
 
-class Tinter extends Component {
+type Props = {
+  sceneSet?: string
+}
+
+class Tinter extends Component<Props> {
   render () {
     const { sceneSet } = this.props
 

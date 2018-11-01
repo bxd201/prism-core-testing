@@ -21,19 +21,67 @@ import ActiveSlot from './ActiveSlot'
 import './LivePalette.scss'
 
 type Props = {
-  colors: Array<any>,
+  colors: Array<Color>,
   activateColor: Function,
   reorderColors: Function,
-  activeColor: Color
+  activeColor: Color,
+  removedColor: Color
 }
 
-class LivePalette extends PureComponent<Props> {
+type State = {
+  spokenWord: string
+}
+
+class LivePalette extends PureComponent<Props, State> {
+  state = {
+    spokenWord: ''
+  }
+
   pendingUpdateFn: any
   requestedFrame: number | void
 
+  componentDidUpdate (prevProps, prevState) {
+    let spokenWord: Array<string> = []
+    const prevColor = prevProps.activeColor
+    const curColor = this.props.activeColor
+
+    if (this.props.removedColor && prevProps.removedColor !== this.props.removedColor) {
+      spokenWord.push(`${this.props.removedColor.name} has been removed.`)
+    }
+
+    if (curColor && prevColor !== curColor) {
+      spokenWord.push(`${curColor.name} has been activated.`)
+
+      // POC AHEAD
+      // TODO: This depends on manual intervention to remove unhelpful color families. Type of color (red, yellow, etc) should be
+      // determined programmatically based on color values.
+      if (prevColor) {
+        let mainFam = _.without(_.intersection(prevColor.colorFamilyNames, curColor.colorFamilyNames), 'Timeless Color', 'Historic Color', 'White & Pastel')[0]
+
+        if (mainFam) {
+          let prevLightness = prevColor.lightness
+          let curLightness = curColor.lightness
+
+          let brightnessDifference = (curLightness > prevLightness ? 'lighter' : curLightness < prevLightness ? 'darker' : void (0))
+
+          if (brightnessDifference) {
+            spokenWord.push(`${curColor.name} is a ${brightnessDifference} ${mainFam} than ${prevColor.name}`)
+          }
+        }
+      }
+      // END POC
+    }
+
+    if (spokenWord.length) {
+      this.setState({ // eslint-disable-line react/no-did-update-set-state
+        spokenWord: spokenWord.join(' ')
+      })
+    }
+  }
+
   render () {
     const { colors, activeColor } = this.props
-
+    const { spokenWord } = this.state
     // TODO: abstract below into a class method
     // calculate all the active slots
     const activeSlots = colors.map((color, index) => {
@@ -51,7 +99,7 @@ class LivePalette extends PureComponent<Props> {
 
     // after determining active slots, determine how many empty ones there should be
     let disabledSlots = []
-    const additionalSlots = 7 - activeSlots.length
+    const additionalSlots = (LP_MAX_COLORS_ALLOWED - 1) - activeSlots.length
     if (additionalSlots > 0) {
       disabledSlots = _.times(additionalSlots, (index) => <EmptySlot key={index} />)
     }
@@ -71,6 +119,8 @@ class LivePalette extends PureComponent<Props> {
           </Link>}
           {disabledSlots}
         </div>
+        {/* This will speak the current and removed color, as well as some color-delta info. */}
+        <aside aria-live='assertive' className='prism-live-palette__color-description'>{spokenWord}</aside>
       </div>
     )
   }
@@ -117,10 +167,11 @@ class LivePalette extends PureComponent<Props> {
 
 const mapStateToProps = (state, props) => {
   const { lp } = state
-
   return {
     colors: lp.colors,
-    activeColor: lp.activeColor
+    activeColor: lp.activeColor,
+    // previousActiveColor: lp.previousActiveColor,
+    removedColor: lp.removedColor
   }
 }
 
