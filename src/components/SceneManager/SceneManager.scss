@@ -25,7 +25,8 @@
     display: inline-block;
     border: $border-size solid transparent;
     float: left;
-    max-width: 100px;
+    max-width: 120px;
+    padding: 0;
     position: relative;
     z-index: 1;
 
@@ -45,25 +46,26 @@
     }
 
     &--active {
-      $icon-size: 1em;
+      $icon-size: .9rem;
 
       border-color: $btn-active-color;
 
       &::after {
+        background: $btn-active-color;
         bottom: 0;
         border: $border-size solid $btn-active-color;
         border-bottom: none;
         border-right: none;
-        content: '\02714';
-        position: absolute;
-        width: $icon-size;
-        height: $icon-size;
-        line-height: $icon-size;
-        background: $btn-active-color;
         color: $btn-active-color-text;
-        text-align: center;
+        content: '\02714\fe0e'; // adding \fe0e to make mobile browsers respect this as text
         font-size: $icon-size;
+        line-height: 1.1;
+        min-width: $icon-size;
+        min-height: $icon-size;
+        padding: .1em;
+        position: absolute;
         right: 0;
+        text-align: center;
       }
     }
 
