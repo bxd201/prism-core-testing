@@ -23,6 +23,9 @@ module.exports.varValues = {
     grey: '#cccccc',
     white: '#ffffff',
     swBlue: '#2c97de'
+  },
+  scenes: {
+    hitAreaOutlineColor: '255, 0, 255' // RGB value of hit area outline (must be RGB, not hex)
   }
 }
 
@@ -33,6 +36,7 @@ module.exports.varNames = {
     globalFontSize: '--sw-global-font-size'
   },
   scenes: {
+    hitAreaOutlineColor: '--prism-hit-area-outline-color',
     buttons: {
       colors: {
         default: '--scene-button-default-color',

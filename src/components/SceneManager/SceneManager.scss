@@ -1,4 +1,35 @@
+:root {
+  #{ getVarName('scenes.hitAreaOutlineColor') }: getVar('scenes.hitAreaOutlineColor');
+}
+
 .prism-scene-manager {
+  $hit-area-outline-color: var(getVarName('scenes.hitAreaOutlineColor'));
+
+  @keyframes flashHitArea {
+    0% {
+      fill: rgba(white,0);
+    }
+
+    40% {
+      fill: rgba(white,.1);
+    }
+
+    100% {
+      fill: rgba(white,0);
+    }
+  }
+
+  @keyframes pulseHitAreaOutline {
+    0% {
+      stroke: rgba($hit-area-outline-color, .5)
+    }
+
+    90%, 100% {
+      stroke: rgba($hit-area-outline-color, 1)
+    }
+  }
+
+
   &__block {
     align-items: center;
     display: flex;
@@ -22,7 +53,6 @@
     $btn-focus-color-text: rgba(white, 1);
     $border-size: 2px;
 
-    display: inline-block;
     border: $border-size solid transparent;
     float: left;
     max-width: 120px;
@@ -141,12 +171,6 @@
     }
 
     &__hit-area {
-      // this is the hover/click color
-      // fill: rgba(white,.1);
-      fill: transparent;
-      stroke: magenta;
-      stroke-width: 5px;
-
       &__mask-loader {
         height: 0;
         position: absolute;
@@ -157,16 +181,25 @@
 
       &__mask {
         cursor: pointer;
+        fill: transparent;
         opacity: 0;
-        transition: opacity .3s ease-in .0s;
-        // don't you dare remove this line.
         pointer-events: all;
+        stroke: rgba($hit-area-outline-color, .5);
+        stroke-width: 5px;
+        transition: opacity .4s ease-out;
+        // don't you dare remove this line.
         will-change: opacity;
 
         &--hover,
         &:hover {
+          animation-delay: .2s, 0s;
+          animation-direction: normal, alternate;
+          animation-duration: .4s, .6s;
+          animation-iteration-count: 1, infinite;
+          animation-name: flashHitArea, pulseHitAreaOutline;
+          animation-timing-function: ease-in-out, ease-out;
           opacity: 1;
-          transition: opacity .1s ease-out;
+          transition: opacity .2s ease-in-out;
         }
       }
     }
