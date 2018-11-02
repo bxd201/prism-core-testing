@@ -6,11 +6,12 @@ import _ from 'lodash'
 import { SCENE_TYPES } from 'constants/globals'
 import { loadScenes, paintSceneSurface, activateScene, deactivateScene } from '../../actions/scenes'
 import TintableScene from './TintableScene'
+import type { Scene } from '../../shared/types/Scene'
 
 import './SceneManager.scss'
 
 type Props = {
-  scenes: Array<any>,
+  scenes: Array<Scene>,
   type: string,
   activeScenes: Array<number | string>,
   maxActiveScenes: number,
@@ -48,16 +49,6 @@ class SceneManager extends PureComponent<Props, State> {
 
   componentDidMount () {
     this.props.loadScenes(this.props.type)
-  }
-
-  componentDidUpdate (prevProps) {
-    const { activeScenes, scenes, activateScene } = this.props
-
-    // if we have ZERO active scenes, but we DO have scenes...
-    if (scenes && (!activeScenes || activeScenes.length === 0)) {
-      // ... activate the first available scene
-      activateScene(scenes[0].id)
-    }
   }
 
   handleColorUpdate = function handleColorUpdate (sceneId, surfaceId, color) {
@@ -185,7 +176,7 @@ const mapStateToProps = (state, props) => {
   }
 
   return {
-    scenes: state.scenes.scenes,
+    scenes: state.scenes.sceneCollection[state.scenes.type],
     numScenes: state.scenes.numScenes,
     activeScenes: state.scenes.activeScenes,
     loadingScenes: state.scenes.loadingScenes,

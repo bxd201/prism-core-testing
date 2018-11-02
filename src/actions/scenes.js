@@ -2,6 +2,7 @@
 import axios from 'axios'
 import _ from 'lodash'
 
+import type { ScenePayload } from '../shared/types/Scene'
 import { SCENE_TYPES } from 'constants/globals'
 import { SW_SCENES_AUTOMOTIVE, SW_SCENES_ROOMS } from 'constants/endpoints'
 
@@ -14,13 +15,24 @@ const requestScenes = () => {
 }
 
 export const RECEIVE_SCENES = 'RECEIVE_SCENES'
-const receiveScenes = (sceneResponse: any) => {
+const receiveScenes = (sceneResponse: ScenePayload) => {
   return {
     type: RECEIVE_SCENES,
     payload: {
       loadingScenes: false,
-      scenes: sceneResponse.scenes,
-      numScenes: sceneResponse.count
+      scenes: sceneResponse.scenes || [],
+      numScenes: sceneResponse.count || 0,
+      type: sceneResponse.type
+    }
+  }
+}
+
+export const ACTIVATE_ONLY_SCENE = 'ACTIVATE_ONLY_SCENE'
+export const activateOnlyScene = (id: string | number) => {
+  return {
+    type: ACTIVATE_ONLY_SCENE,
+    payload: {
+      id: id
     }
   }
 }
@@ -47,19 +59,22 @@ export const deactivateScene = (id: string | number | Array<string | number>) =>
 
 export const loadScenes = (type: string) => {
   return (dispatch: Function, getState: Function) => {
-    // TODO: The below items are commented out due to AEM authoring. Need to find a solution to retain tinted states
-    // and also make AEM authoring happy as well.
-
-    // const { scenes } = getState().scenes
+    const { sceneCollection, type: oldType } = getState().scenes
+    let scenes = !_.isEmpty(sceneCollection) && !_.isEmpty(sceneCollection[type]) && sceneCollection[type]
     let scenesEndpoint = void (0)
 
-    // if (!_.isEmpty(scenes)) {
-    //   dispatch(receiveScenes({
-    //     count: scenes.length,
-    //     scenes
-    //   }))
-    //   return
-    // }
+    if (scenes) {
+      if (type !== oldType) {
+        dispatch(activateOnlyScene(scenes[0].id))
+      }
+
+      dispatch(receiveScenes({
+        count: scenes.length,
+        scenes: scenes,
+        type
+      }))
+      return
+    }
 
     dispatch(requestScenes())
 
@@ -82,22 +97,33 @@ export const loadScenes = (type: string) => {
 
       dispatch(receiveScenes({
         scenes: [],
-        count: 0
+        count: 0,
+        type: type
       }))
+
       return
     }
 
     return axios.get(scenesEndpoint)
       .then(r => r.data)
       .then(data => {
-        dispatch(receiveScenes(data))
+        if (data.scenes && data.scenes.length) {
+          dispatch(activateOnlyScene(data.scenes[0].id))
+        }
+
+        dispatch(receiveScenes({
+          scenes: data.scenes,
+          count: data.count,
+          type: type
+        }))
       })
   }
 }
 
 export const paintSceneSurface = (sceneId: number, surfaceId: number, color: string) => {
   return (dispatch: Function, getState: Function) => {
-    const { scenes } = getState().scenes
+    const { sceneCollection, type } = getState().scenes
+    const scenes = sceneCollection[type]
 
     const sceneIndex = _.findIndex(scenes, scene => {
       return scene.id === sceneId
@@ -122,7 +148,8 @@ export const paintSceneSurface = (sceneId: number, surfaceId: number, color: str
 
     dispatch(receiveScenes({
       scenes: newScenes,
-      count: newScenes.length
+      count: newScenes.length,
+      type
     }))
   }
 }
