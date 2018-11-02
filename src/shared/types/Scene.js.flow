@@ -1,0 +1,23 @@
+export type Surface = {
+  id: string,
+  mask: string,
+  hitArea: string,
+  shadows?: string,
+  highlights?: string,
+  color?: string
+}
+
+export type Scene = {
+  id: string,
+  image: string,
+  thumb: string,
+  width: number,
+  height: number,
+  surfaces: Array<Surface>
+}
+
+export type ScenePayload = {
+  count: number,
+  scenes: Array<Scene>,
+  type: string
+}
