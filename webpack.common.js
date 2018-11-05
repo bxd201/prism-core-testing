@@ -143,7 +143,10 @@ module.exports = {
     ]
   },
   plugins: [
-    new HtmlWebpackPlugin( { template: './src/index.html' } ),
+    new HtmlWebpackPlugin({
+      inject: false,
+      template: './src/index.html'
+    }),
     new MiniCssExtractPlugin( {
       filename: '[name].css',
     } ),
