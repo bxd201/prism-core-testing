@@ -117,6 +117,7 @@ module.exports = {
   entry: {
     bundle: path.resolve( __dirname, './src/index.jsx' ),
     author: path.resolve( __dirname, './src/author.js' ),
+    embed: path.resolve( __dirname, './src/embed.js' )
   },
   output: {
     path: path.join( __dirname, '/dist' ),
@@ -146,6 +147,11 @@ module.exports = {
     new HtmlWebpackPlugin({
       inject: false,
       template: './src/index.html'
+    }),
+    new HtmlWebpackPlugin({
+      inject: false,
+      filename: 'embeddable.html',
+      template: './src/templates/embeddable.html'
     }),
     new MiniCssExtractPlugin( {
       filename: '[name].css',
