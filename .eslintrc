@@ -1,10 +1,13 @@
 {
   "extends": [
-    "standard", 
+    "standard",
     "standard-react",
     "plugin:flowtype/recommended"
   ],
   "plugins": [
     "flowtype"
-  ]
+  ],
+  "globals" : {
+    "Image": false
+  }
 }

@@ -14,6 +14,8 @@ type Props = {
   onClick: Function, // eslint-disable-line
   onOver: Function,
   onOut: Function,
+  onLoadingSuccess?: Function,
+  onLoadingError?: Function,
   svgSource: string
 }
 
@@ -65,7 +67,7 @@ class TintableSceneHitArea extends PureComponent<Props> {
   }
 
   render () {
-    const { connectDropTarget, svgSource, isOver } = this.props
+    const { connectDropTarget, svgSource, isOver, onLoadingError, onLoadingSuccess } = this.props
 
     const maskId = TintableSceneHitArea.maskIdMap(svgSource)
 
@@ -76,11 +78,17 @@ class TintableSceneHitArea extends PureComponent<Props> {
           src={svgSource}
           cacheGetRequests
           uniqueHash={maskId}
-          // onLoad={(src) => {
-          // }}
+          onLoad={(src) => {
+            if (typeof onLoadingSuccess === 'function') {
+              onLoadingSuccess()
+            }
+          }}
           onError={(err) => {
             // failure
             console.warn('TintableSceneHitArea failed to load SVG', err)
+            if (typeof onLoadingError === 'function') {
+              onLoadingError()
+            }
           }} />
         <svg className={TintableSceneHitArea.classNames.hitArea}>
           <use className={`${TintableSceneHitArea.classNames.hitAreaMask} ${isOver ? `${TintableSceneHitArea.classNames.hitAreaMask}--hover` : ''}`}

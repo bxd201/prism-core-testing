@@ -1,7 +1,9 @@
 /* ------------------ ############ RESETS ############ ------------------ */
+* {
+    box-sizing: border-box;
+}
+
 html, button, body, div, span, section, ul, li, h1, h2, h3, h4, h5, p {
-  box-sizing: border-box;
-  color: #111112;
   font-family: 'Raleway', sans-serif;
   font-size: 16px;
   font-weight: 400;
@@ -273,16 +275,16 @@ body {
     .scene__color-info-copy {
         font-size: 18px;
     }
-    
+
     .scene__color-info--name {
         font-size: 45px;
     }
-    
+
     .scene__color-info--coord1 .scene__color-info-copy,
     .scene__color-info--coord2 .scene__color-info-copy {
         font-size: 18px;
     }
-    
+
     .scene__color-info--coord1 .scene__color-info--name,
     .scene__color-info--coord2 .scene__color-info--name {
         font-size: 32px;

@@ -7,6 +7,7 @@ import { SCENE_TYPES } from 'constants/globals'
 import { loadScenes, paintSceneSurface, activateScene, deactivateScene } from '../../actions/scenes'
 import TintableScene from './TintableScene'
 import type { Scene } from '../../shared/types/Scene'
+import ImagePreloader from '../../helpers/ImagePreloader'
 
 import './SceneManager.scss'
 
@@ -107,37 +108,16 @@ class SceneManager extends PureComponent<Props, State> {
               className={`${SceneManager.baseClass}__btn ${activeScenes.indexOf(scene.id) > -1 ? `${SceneManager.baseClass}__btn--active` : ''}`}
               type='button'>
 
-              <TintableScene
-                width={scene.width}
-                height={scene.height}
-                type={type}
-                sceneId={scene.id}
+              <ImagePreloader key={scene.id}
+                el={TintableScene}
+                preload={[
+                  scene.image,
+                  scene.surfaces.map(surface => surface.mask),
+                  scene.surfaces.map(surface => surface.shadows),
+                  scene.surfaces.map(surface => surface.highlights)
+                ]}
+
                 interactive={false}
-                background={scene.thumb}
-                clickToPaintColor={activeColor}
-                surfaces={scene.surfaces.map(surface => ({
-                  id: surface.id,
-                  mask: surface.mask,
-                  hitArea: surface.hitArea,
-                  color: surface.color || void (0),
-                  shadows: surface.shadows || void (0),
-                  highlights: surface.highlights || void (0)
-                }))}
-              />
-            </button>
-          ))}
-        </div>
-
-        <div className={`${SceneManager.baseClass}__block ${SceneManager.baseClass}__block--letterbox`}>
-          {activeScenes.map((sceneId, index) => {
-            const scene = _.find(scenes, { id: sceneId })
-
-            if (!scene) {
-              return null
-            }
-
-            return (
-              <TintableScene key={scene.id}
                 width={scene.width}
                 height={scene.height}
                 type={type}
@@ -146,14 +126,39 @@ class SceneManager extends PureComponent<Props, State> {
                 clickToPaintColor={activeColor}
                 onUpdateColor={this.handleColorUpdate}
                 previewColor={previewColor}
-                surfaces={scene.surfaces.map(surface => ({
-                  id: surface.id,
-                  mask: surface.mask,
-                  hitArea: surface.hitArea,
-                  color: surface.color || void (0),
-                  shadows: surface.shadows || void (0),
-                  highlights: surface.highlights || void (0)
-                }))}
+                surfaces={scene.surfaces}
+              />
+            </button>
+          ))}
+        </div>
+
+        <div className={`${SceneManager.baseClass}__block`}>
+          {activeScenes.map((sceneId, index) => {
+            const scene = _.find(scenes, { id: sceneId })
+
+            if (!scene) {
+              return null
+            }
+
+            return (
+              <ImagePreloader key={scene.id}
+                el={TintableScene}
+                preload={[
+                  scene.image,
+                  scene.surfaces.map(surface => surface.mask),
+                  scene.surfaces.map(surface => surface.shadows),
+                  scene.surfaces.map(surface => surface.highlights)
+                ]}
+
+                width={scene.width}
+                height={scene.height}
+                type={type}
+                sceneId={scene.id}
+                background={scene.image}
+                clickToPaintColor={activeColor}
+                onUpdateColor={this.handleColorUpdate}
+                previewColor={previewColor}
+                surfaces={scene.surfaces}
               />
             )
           })}

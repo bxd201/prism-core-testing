@@ -1,11 +1,12 @@
 // @flow
-import React, { PureComponent } from 'react'
+import React, { PureComponent, Fragment } from 'react'
 import _ from 'lodash'
 
 import type { Surface } from '../../shared/types/Scene'
 import TintableSceneHitArea from './TintableSceneHitArea'
 import TintableSceneSurface from './TintableSceneSurface'
 import TintableSceneSVGDefs from './TintableSceneSVGDefs'
+import TintableSceneOverlay from './TintableSceneOverlay'
 
 type Props = {
   background: string,
@@ -18,24 +19,29 @@ type Props = {
   sceneId: string | number,
   previewColor?: string | void,
   clickToPaintColor?: string,
-  onUpdateColor?: Function
+  onUpdateColor?: Function,
+  loading?: boolean,
+  error?: boolean
 }
 
 type State = {
   activePreviewSurfaces: Array<string | number>,
   instanceId: string,
-  toPreload: Array<{
-    href: string,
-    as: string
-  }>
+  hitAreaLoaded: boolean,
+  hitAreaError: boolean
 }
 
 class TintableScene extends PureComponent<Props, State> {
-  static baseClass = 'prism-scene-manager__scene'
+  static classNames = {
+    base: 'prism-scene-manager__scene',
+    inner: 'prism-scene-manager__scene__inner'
+  }
 
   static defaultProps = {
     render: true,
-    interactive: true
+    interactive: true,
+    loading: false,
+    error: false
   }
 
   static getFilterId (sceneId: string | number, surfaceId: string | number, suffix?: string) {
@@ -46,64 +52,43 @@ class TintableScene extends PureComponent<Props, State> {
     return `scene${sceneId}_surface${surfaceId}_object-mask${suffix ? `_${suffix}` : ''}`
   }
 
+  hitAreaLoadingCount: number = 0
+
   constructor (props: Props) {
     super(props)
-
-    const { background, surfaces, interactive } = props
 
     this.handleColorDrop = this.handleColorDrop.bind(this)
     this.handleClickSurface = this.handleClickSurface.bind(this)
     this.handleOver = this.handleOver.bind(this)
     this.handleOut = this.handleOut.bind(this)
-
-    let toPreload = _.uniqBy(_.flattenDeep([
-      {
-        href: background,
-        as: 'image'
-      },
-      surfaces.map(surface => {
-        let assets = []
-
-        if (surface.mask) {
-          assets.push({
-            href: surface.mask,
-            as: 'image'
-          })
-        }
-
-        if (surface.shadows) {
-          assets.push({
-            href: surface.shadows,
-            as: 'image'
-          })
-        }
-
-        if (surface.highlights) {
-          assets.push({
-            href: surface.highlights,
-            as: 'image'
-          })
-        }
-
-        if (interactive) {
-          if (surface.hitArea) {
-            assets.push({
-              href: surface.hitArea,
-              as: 'image'
-            })
-          }
-        }
-
-        return assets
-      })
-    ]), 'href')
+    this.handleHitAreaLoadingSuccess = this.handleHitAreaLoadingSuccess.bind(this)
+    this.handleHitAreaLoadingError = this.handleHitAreaLoadingError.bind(this)
 
     this.state = {
       activePreviewSurfaces: [],
       // must be unique among ALL TintableScene instances so as not to cross-contaminate filter definition IDs
       instanceId: _.uniqueId('TS'),
-      toPreload
+      hitAreaError: false,
+      hitAreaLoaded: props.surfaces.length === 0
     }
+
+    // set non-state property of this instance for tracking how many hit areas have loaded -- we don't need to rerender as this changes
+    this.hitAreaLoadingCount = this.props.surfaces.length
+  }
+
+  handleHitAreaLoadingSuccess = function handleHitAreaLoadingSuccess () {
+    // one more hit area has loaded
+    this.hitAreaLoadingCount--
+
+    // if all have loaded...
+    if (this.hitAreaLoadingCount <= 0) {
+      // ... change state
+      this.setState({ hitAreaLoaded: true })
+    }
+  }
+
+  handleHitAreaLoadingError = function handleHitAreaLoadingError () {
+    this.setState({ hitAreaError: true })
   }
 
   handleClickSurface = function handleClickSurface (surfaceId: string) {
@@ -162,80 +147,99 @@ class TintableScene extends PureComponent<Props, State> {
   }
 
   render () {
-    const { surfaces, background, width, height, render, interactive, type } = this.props
-    const { instanceId, toPreload } = this.state
+    const { surfaces, background, width, height, render, interactive, type, loading, error } = this.props
+    const { instanceId, hitAreaError, hitAreaLoaded } = this.state
+
+    const ratio = height / width
+    let content = null
 
     if (!render) {
-      return null
+      content = null
+    }
+
+    if (error) {
+      content = <TintableSceneOverlay type={TintableSceneOverlay.TYPES.ERROR} message='Error loading scene' />
+    } else {
+      content = (
+        <Fragment>
+          {!loading && (
+            <Fragment>
+              <div className={`${TintableScene.classNames.base}__svg-defs`}>
+                <svg x='0' y='0' width='0' height='0' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlnsXlink='http://www.w3.org/1999/xlink' viewBox={`0 0 ${width} ${height}`}>
+                  <defs>
+                    {surfaces.map((surface, index) => {
+                      const tintColor = this.getTintColorBySurface(surface)
+                      if (tintColor) {
+                        return (
+                          <TintableSceneSVGDefs
+                            key={surface.id}
+                            type={type}
+                            highlightMap={surface.highlights}
+                            shadowMap={surface.shadows}
+                            filterId={TintableScene.getFilterId(instanceId, surface.id)}
+                            filterColor={tintColor}
+                            maskId={TintableScene.getMaskId(instanceId, surface.id)}
+                            maskImage={surface.mask}
+                          />
+                        )
+                      }
+                    })}
+                  </defs>
+                </svg>
+              </div>
+
+              <div className={`${TintableScene.classNames.base}__tint-wrapper`}>
+                <img className={`${TintableScene.classNames.base}__natural`} src={background} />
+                {surfaces.map((surface: Surface, index) => {
+                  const tintColor = this.getTintColorBySurface(surface)
+                  if (tintColor) {
+                    return (
+                      <TintableSceneSurface key={surface.id}
+                        type={type}
+                        image={background}
+                        width={width}
+                        height={height}
+                        maskId={TintableScene.getMaskId(instanceId, surface.id)}
+                        filterId={TintableScene.getFilterId(instanceId, surface.id)}
+                      />
+                    )
+                  }
+                })}
+              </div>
+            </Fragment>
+          )}
+
+          {interactive && (
+            <div className={`${TintableScene.classNames.base}__hit-wrapper`}>
+              {surfaces.map((surface, index) => (
+                <TintableSceneHitArea key={surface.id}
+                  id={surface.id}
+                  onDrop={this.handleColorDrop}
+                  onOver={this.handleOver}
+                  onOut={this.handleOut}
+                  onLoadingSuccess={this.handleHitAreaLoadingSuccess}
+                  onLoadingError={this.handleHitAreaLoadingError}
+                  onClick={this.handleClickSurface}
+                  color={surface.color}
+                  svgSource={surface.hitArea} />
+              ))}
+            </div>
+          )}
+
+          {hitAreaError ? (
+            <TintableSceneOverlay type={TintableSceneOverlay.TYPES.ERROR} message='Error loading paintable surfaces' />
+          ) : (loading || (interactive && !hitAreaLoaded)) ? (
+            <TintableSceneOverlay type={TintableSceneOverlay.TYPES.LOADING} />
+          ) : null}
+        </Fragment>
+      )
     }
 
     return (
-      <div className={TintableScene.baseClass}>
-        {toPreload.length
-          ? toPreload.map(link => {
-            if (link.href) {
-              return <link rel='preload' key={link.href} as={link.as} href={link.href} />
-            }
-            return null
-          })
-          : null}
-        <div className={`${TintableScene.baseClass}__svg-defs`}>
-          <svg x='0' y='0' width='0' height='0' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlnsXlink='http://www.w3.org/1999/xlink' viewBox={`0 0 ${width} ${height}`}>
-            <defs>
-              {surfaces.map((surface, index) => {
-                const tintColor = this.getTintColorBySurface(surface)
-                if (tintColor) {
-                  return (
-                    <TintableSceneSVGDefs
-                      key={surface.id}
-                      type={type}
-                      highlightMap={surface.highlights}
-                      shadowMap={surface.shadows}
-                      filterId={TintableScene.getFilterId(instanceId, surface.id)}
-                      filterColor={tintColor}
-                      maskId={TintableScene.getMaskId(instanceId, surface.id)}
-                      maskImage={surface.mask}
-                    />
-                  )
-                }
-              })}
-            </defs>
-          </svg>
+      <div className={TintableScene.classNames.base}>
+        <div className={TintableScene.classNames.inner} style={{ paddingTop: `${ratio * 100}%` }}>
+          {content}
         </div>
-
-        <div className={`${TintableScene.baseClass}__tint-wrapper`}>
-          <img className={`${TintableScene.baseClass}__natural`} src={background} />
-          {surfaces.map((surface: Surface, index) => {
-            const tintColor = this.getTintColorBySurface(surface)
-            if (tintColor) {
-              return (
-                <TintableSceneSurface key={surface.id}
-                  type={type}
-                  image={background}
-                  width={width}
-                  height={height}
-                  maskId={TintableScene.getMaskId(instanceId, surface.id)}
-                  filterId={TintableScene.getFilterId(instanceId, surface.id)}
-                />
-              )
-            }
-          })}
-        </div>
-
-        {interactive && (
-          <div className={`${TintableScene.baseClass}__hit-wrapper`}>
-            {surfaces.map((surface, index) => (
-              <TintableSceneHitArea key={surface.id}
-                id={surface.id}
-                onDrop={this.handleColorDrop}
-                onOver={this.handleOver}
-                onOut={this.handleOut}
-                onClick={this.handleClickSurface}
-                color={surface.color}
-                svgSource={surface.hitArea} />
-            ))}
-          </div>
-        )}
       </div>
     )
   }

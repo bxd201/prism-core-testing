@@ -21,23 +21,30 @@
 
   @keyframes pulseHitAreaOutline {
     0% {
-      stroke: rgba($hit-area-outline-color, .5)
+      stroke: rgba($hit-area-outline-color, .5);
+      stroke-width: 5px;
     }
 
     90%, 100% {
-      stroke: rgba($hit-area-outline-color, 1)
+      stroke: rgba($hit-area-outline-color, 1);
+      stroke-width: 10px;
     }
   }
 
+  @keyframes fadeIn {
+    0%, 25% {
+      opacity: 0;
+    }
+
+    100% {
+      opacity: 1;
+    }
+  }
 
   &__block {
     align-items: center;
     display: flex;
     flex-direction: row;
-
-    &--letterbox {
-      background: black;
-    }
 
     // BEGIN TODO: REMOVE
     & > * {
@@ -105,13 +112,22 @@
   }
 
   &__scene {
+    background: black;
     clear: both;
+    display: block;
     max-width: 100%;
-    position: relative;
+    width: 100%;
 
     &--disabled {
       filter: saturate(0) brightness(.5) contrast(.75);
       pointer-events: none;
+    }
+
+    &__inner {
+      height: 0;
+      padding: 0;
+      position: relative;
+      width: 100%;
     }
 
     &__svg-defs {
@@ -121,19 +137,14 @@
       z-index: -1;
     }
 
+    &__overlay,
     &__tint-wrapper,
-    &__hit-wrapper {
-      max-width: 100%;
-      position: relative;
-      width: auto;
-    }
-
     &__preview-wrapper,
     &__hit-wrapper {
+      height: 100%;
+      left: 0;
       position: absolute;
       top: 0;
-      left: 0;
-      height: 100%;
       width: 100%;
     }
 
@@ -201,6 +212,36 @@
           opacity: 1;
           transition: opacity .2s ease-in-out;
         }
+      }
+    }
+
+    &__overlay {
+      animation-name: fadeIn;
+      animation-duration: .5s;
+      animation-timing-function: ease-in-out;
+      align-items: center;
+      display: flex;
+      justify-content: center;
+      padding: .5em;
+
+      &__content {
+        color: white;
+        font-weight: bold;
+        font-size: .8em;
+        text-align: center;
+      }
+
+      &--loading {
+        background-color: rgba(black, .8);
+        color: white;
+      }
+
+      &--error {
+        background-color: rgba(#C00, .9);
+      }
+
+      &--message {
+        background-color: rgba(#369, .9);
       }
     }
   }
