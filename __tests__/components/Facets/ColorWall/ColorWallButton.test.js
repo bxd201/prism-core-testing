@@ -13,14 +13,14 @@ describe('<ColorWallButton />', () => {
       family: 'All'
     }
 
+    let broadcastedFamily = void (0)
+
     const component = renderer.create(
-      <ColorWallButton store={store} family={state.family} />
+      <ColorWallButton store={store} family={state.family} selectFamily={(selectedFamily) => {broadcastedFamily = selectedFamily}} />
     ).toJSON()
 
     component[0].props.onClick()
 
-    const actions = store.getActions()
-
-    expect(actions[0].payload.family).toEqual(state.family)
+    expect(broadcastedFamily).toEqual(state.family)
   })
 })
