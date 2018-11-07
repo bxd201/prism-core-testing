@@ -23,8 +23,8 @@ const TintableSceneHitAreaSpec = {
   drop (props: Props, monitor) {
     const droppedItem = monitor.getItem()
 
-    if (droppedItem && droppedItem.color && droppedItem.color.hex) {
-      props.onDrop(props.id, droppedItem.color.hex)
+    if (droppedItem && droppedItem.color) {
+      props.onDrop(props.id, droppedItem.color)
     }
   }
 }

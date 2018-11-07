@@ -6,6 +6,7 @@ import _ from 'lodash'
 import { SCENE_TYPES } from 'constants/globals'
 import { loadScenes, paintSceneSurface, activateScene, deactivateScene } from '../../actions/scenes'
 import TintableScene from './TintableScene'
+import type { Color } from '../../shared/types/Colors'
 import type { Scene } from '../../shared/types/Scene'
 import ImagePreloader from '../../helpers/ImagePreloader'
 
@@ -21,8 +22,8 @@ type Props = {
   deactivateScene: Function,
   paintSceneSurface: Function,
   loadingScenes: boolean,
-  activeColor: string | void,
-  previewColor: string | void
+  activeColor: Color | void,
+  previewColor: Color | void
 }
 
 type State = {
@@ -52,7 +53,7 @@ class SceneManager extends PureComponent<Props, State> {
     this.props.loadScenes(this.props.type)
   }
 
-  handleColorUpdate = function handleColorUpdate (sceneId, surfaceId, color) {
+  handleColorUpdate = function handleColorUpdate (sceneId, surfaceId, color: Color) {
     this.props.paintSceneSurface(sceneId, surfaceId, color)
   }
 
@@ -172,12 +173,12 @@ const mapStateToProps = (state, props) => {
   let activeColor = void (0)
   let previewColor = void (0)
 
-  if (state.lp.activeColor && state.lp.activeColor.hex) {
-    activeColor = state.lp.activeColor.hex
+  if (state.lp.activeColor) {
+    activeColor = state.lp.activeColor
   }
 
-  if (state.lp.activePreviewColor && state.lp.activePreviewColor.hex) {
-    previewColor = state.lp.activePreviewColor.hex
+  if (state.lp.activePreviewColor) {
+    previewColor = state.lp.activePreviewColor
   }
 
   return {

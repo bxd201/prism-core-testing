@@ -2,6 +2,7 @@
 import React, { PureComponent, Fragment } from 'react'
 import _ from 'lodash'
 
+import type { Color } from '../../shared/types/Colors'
 import type { Surface } from '../../shared/types/Scene'
 import TintableSceneHitArea from './TintableSceneHitArea'
 import TintableSceneSurface from './TintableSceneSurface'
@@ -17,8 +18,8 @@ type Props = {
   render: boolean,
   interactive: boolean,
   sceneId: string | number,
-  previewColor?: string | void,
-  clickToPaintColor?: string,
+  previewColor?: Color | void,
+  clickToPaintColor?: Color,
   onUpdateColor?: Function,
   loading?: boolean,
   error?: boolean
@@ -99,7 +100,7 @@ class TintableScene extends PureComponent<Props, State> {
     }
   }
 
-  handleColorDrop = function handleColorDrop (surfaceId: string, color: string) {
+  handleColorDrop = function handleColorDrop (surfaceId: string, color: Color) {
     // clear out all active preview surfaces
     this.setState({
       activePreviewSurfaces: []
@@ -127,11 +128,11 @@ class TintableScene extends PureComponent<Props, State> {
     })
   }
 
-  updateSurfaceColor (surfaceId: string, color: string) {
+  updateSurfaceColor (surfaceId: string, color: Color) {
     this.props.onUpdateColor && this.props.onUpdateColor(this.props.sceneId, surfaceId, color)
   }
 
-  getTintColorBySurface (surface: Surface) {
+  getTintColorBySurface (surface: Surface): ?Color {
     const { previewColor } = this.props
     const { activePreviewSurfaces } = this.state
 
@@ -168,7 +169,7 @@ class TintableScene extends PureComponent<Props, State> {
                 <svg x='0' y='0' width='0' height='0' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlnsXlink='http://www.w3.org/1999/xlink' viewBox={`0 0 ${width} ${height}`}>
                   <defs>
                     {surfaces.map((surface, index) => {
-                      const tintColor = this.getTintColorBySurface(surface)
+                      const tintColor: ?Color = this.getTintColorBySurface(surface)
                       if (tintColor) {
                         return (
                           <TintableSceneSVGDefs
@@ -177,7 +178,7 @@ class TintableScene extends PureComponent<Props, State> {
                             highlightMap={surface.highlights}
                             shadowMap={surface.shadows}
                             filterId={TintableScene.getFilterId(instanceId, surface.id)}
-                            filterColor={tintColor}
+                            filterColor={tintColor.hex}
                             maskId={TintableScene.getMaskId(instanceId, surface.id)}
                             maskImage={surface.mask}
                           />
@@ -191,7 +192,7 @@ class TintableScene extends PureComponent<Props, State> {
               <div className={`${TintableScene.classNames.base}__tint-wrapper`}>
                 <img className={`${TintableScene.classNames.base}__natural`} src={background} />
                 {surfaces.map((surface: Surface, index) => {
-                  const tintColor = this.getTintColorBySurface(surface)
+                  const tintColor: ?Color = this.getTintColorBySurface(surface)
                   if (tintColor) {
                     return (
                       <TintableSceneSurface key={surface.id}

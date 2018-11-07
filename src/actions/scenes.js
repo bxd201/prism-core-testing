@@ -3,6 +3,7 @@ import axios from 'axios'
 import _ from 'lodash'
 
 import type { ScenePayload } from '../shared/types/Scene'
+import type { Color } from '../shared/types/Colors'
 import { SCENE_TYPES } from 'constants/globals'
 import { SW_SCENES_AUTOMOTIVE, SW_SCENES_ROOMS } from 'constants/endpoints'
 
@@ -120,7 +121,7 @@ export const loadScenes = (type: string) => {
   }
 }
 
-export const paintSceneSurface = (sceneId: number, surfaceId: number, color: string) => {
+export const paintSceneSurface = (sceneId: number, surfaceId: number, color: Color) => {
   return (dispatch: Function, getState: Function) => {
     const { sceneCollection, type } = getState().scenes
     const scenes = sceneCollection[type]
@@ -144,7 +145,9 @@ export const paintSceneSurface = (sceneId: number, surfaceId: number, color: str
     const newScenes = _.clone(scenes).map(scene => _.clone(scene))
 
     // replace item in collection with new, updated instance of obj to avoid mutation complications
-    newScenes[ sceneIndex ].surfaces[ surfaceIndex ] = Object.assign({}, newScenes[ sceneIndex ].surfaces[ surfaceIndex ], { color: color })
+    newScenes[ sceneIndex ].surfaces[ surfaceIndex ] = Object.assign({}, newScenes[ sceneIndex ].surfaces[ surfaceIndex ], {
+      color: color
+    })
 
     dispatch(receiveScenes({
       scenes: newScenes,

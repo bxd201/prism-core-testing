@@ -1,10 +1,12 @@
+import type { Color } from './Colors'
+
 export type Surface = {
   id: string,
   mask: string,
   hitArea: string,
   shadows?: string,
   highlights?: string,
-  color?: string
+  color?: Color
 }
 
 export type Scene = {
