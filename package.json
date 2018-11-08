@@ -6,13 +6,14 @@
     "start": "cross-env API_URL=https://dev-prism-api.ebus.swaws webpack-dev-server --mode development --open --hot --config webpack.dev.js",
     "build": "cross-env API_URL=http://localhost:3000 webpack --config webpack.prod.js",
     "test": "flow check && jest --coverage",
+    "test-watch": "jest --watch",
     "postinstall": "flow-typed install"
   },
   "jest": {
     "moduleNameMapper": {
       "^constants(.*)$": "<rootDir>/src/constants$1",
-      "^variables(.*)$": "<rootDir>/shared/variables.js",
-      "\\.(css|less)$": "identity-obj-proxy"
+      "^variables$": "<rootDir>/src/shared/variables.js",
+      "\\.((s?css)|less)$": "identity-obj-proxy"
     },
     "globals": {
       "$API_PATH": "localhost"

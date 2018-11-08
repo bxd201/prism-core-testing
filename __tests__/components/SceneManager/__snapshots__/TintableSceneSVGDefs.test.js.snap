@@ -1,0 +1,44 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<TintableSceneSVGDefs /> rooms SVG filters and masks render 1`] = `
+Array [
+  <filter
+    colorInterpolationFilters="sRGB"
+    filterUnits="objectBoundingBox"
+    height="100%"
+    primitiveUnits="objectBoundingBox"
+    width="100%"
+    x="0"
+    y="0"
+  >
+    <feColorMatrix
+      in="SourceGraphic"
+      result="sourceImageInGrayscale"
+      type="matrix"
+      values="0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0 1 0 1 0"
+    />
+    <feFlood
+      result="tintHue"
+    />
+    <feBlend
+      in="sourceImageInGrayscale"
+      in2="tintHue"
+      mode="multiply"
+    />
+  </filter>,
+  <mask
+    height="100%"
+    maskUnits="objectBoundingBox"
+    width="100%"
+    x="0"
+    y="0"
+  >
+    <image
+      height="100%"
+      width="100%"
+      x="0"
+      y="0"
+    />
+  </mask>,
+]
+`;

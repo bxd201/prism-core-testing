@@ -16,11 +16,11 @@ describe('<ColorSwatch />', () => {
     const component = renderer.create(
       <ColorSwatch store={store} color={color} />
     ).toJSON()
-  
+
     component.props.onClick()
-  
+
     const actions = store.getActions()
-  
+
     expect(actions[0].payload.color).toEqual(color)
   })
 })

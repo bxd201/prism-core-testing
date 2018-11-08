@@ -42,7 +42,8 @@ class TintableScene extends PureComponent<Props, State> {
     render: true,
     interactive: true,
     loading: false,
-    error: false
+    error: false,
+    surfaces: []
   }
 
   static getFilterId (sceneId: string | number, surfaceId: string | number, suffix?: string) {
@@ -148,15 +149,20 @@ class TintableScene extends PureComponent<Props, State> {
   }
 
   render () {
-    const { surfaces, background, width, height, render, interactive, type, loading, error } = this.props
+    const { surfaces, background, width, height, render, interactive, type, loading, error, sceneId } = this.props
     const { instanceId, hitAreaError, hitAreaLoaded } = this.state
-
     const ratio = height / width
-    let content = null
 
     if (!render) {
-      content = null
+      return null
     }
+
+    if (isNaN(ratio) || !isFinite(ratio) || !type || !sceneId || !background) {
+      console.warn('TintableScene will not render without all required props.')
+      return null
+    }
+
+    let content = null
 
     if (error) {
       content = <TintableSceneOverlay type={TintableSceneOverlay.TYPES.ERROR} message='Error loading scene' />

@@ -1,0 +1,104 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<TintableScene /> matches snapshot of scene with colored surfaces 1`] = `
+<div
+  className="prism-scene-manager__scene"
+>
+  <div
+    className="prism-scene-manager__scene__inner"
+    style={
+      Object {
+        "paddingTop": "100%",
+      }
+    }
+  >
+    <div
+      className="prism-scene-manager__scene__svg-defs"
+    >
+      <svg
+        height="0"
+        version="1.1"
+        viewBox="0 0 100 100"
+        width="0"
+        x="0"
+        xmlns="http://www.w3.org/2000/svg"
+        xmlnsXlink="http://www.w3.org/1999/xlink"
+        y="0"
+      >
+        <defs />
+      </svg>
+    </div>
+    <div
+      className="prism-scene-manager__scene__tint-wrapper"
+    >
+      <img
+        className="prism-scene-manager__scene__natural"
+        src="someImageURL"
+      />
+      <svg
+        className="prism-scene-manager__scene__surface"
+        preserveAspectRatio="none"
+        version="1.1"
+        viewBox="0 0 100 100"
+        xmlns="http://www.w3.org/2000/svg"
+        xmlnsXlink="http://www.w3.org/1999/xlink"
+      />
+      <svg
+        className="prism-scene-manager__scene__surface"
+        preserveAspectRatio="none"
+        version="1.1"
+        viewBox="0 0 100 100"
+        xmlns="http://www.w3.org/2000/svg"
+        xmlnsXlink="http://www.w3.org/1999/xlink"
+      />
+      <svg
+        className="prism-scene-manager__scene__surface"
+        preserveAspectRatio="none"
+        version="1.1"
+        viewBox="0 0 100 100"
+        xmlns="http://www.w3.org/2000/svg"
+        xmlnsXlink="http://www.w3.org/1999/xlink"
+      />
+    </div>
+    <div
+      className="prism-scene-manager__scene__hit-wrapper"
+    />
+    <div
+      className="prism-scene-manager__scene__overlay prism-scene-manager__scene__overlay--loading"
+    >
+      <span
+        className="prism-scene-manager__scene__overlay__content"
+      >
+        <svg
+          className="prism-loader-circle"
+          preserveAspectRatio="xMidYMid"
+          viewBox="0 0 100 100"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle
+            cx="50"
+            cy="50"
+            fill="none"
+            r="35"
+            stroke="#FFF"
+            strokeDasharray="164.93361431346415 56.97787143782138"
+            strokeWidth="5"
+            transform="rotate(143.836 50 50)"
+          >
+            <animateTransform
+              attributeName="transform"
+              begin="0s"
+              calcMode="linear"
+              dur="1s"
+              keyTimes="0;1"
+              repeatCount="indefinite"
+              type="rotate"
+              values="0 50 50;360 50 50"
+            />
+          </circle>
+        </svg>
+      </span>
+    </div>
+  </div>
+</div>
+`;

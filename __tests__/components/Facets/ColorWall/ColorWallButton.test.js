@@ -13,14 +13,16 @@ describe('<ColorWallButton />', () => {
       family: 'All'
     }
 
-    let broadcastedFamily = void (0)
+    let clickFn = jest.fn()
 
     const component = renderer.create(
-      <ColorWallButton store={store} family={state.family} selectFamily={(selectedFamily) => {broadcastedFamily = selectedFamily}} />
+      <ColorWallButton store={store} family={state.family} selectFamily={clickFn} />
     ).toJSON()
+
+    expect(component).toMatchSnapshot()
 
     component[0].props.onClick()
 
-    expect(broadcastedFamily).toEqual(state.family)
+    expect(clickFn).toHaveBeenCalledWith(state.family)
   })
 })
