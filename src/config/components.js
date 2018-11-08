@@ -1,4 +1,4 @@
-import Prism from '../components/Prism'
+import Prism from '../components/Facets/Prism/Prism'
 import ColorWall from '../components/Facets/ColorWall/ColorWall'
 import Tinter from '../components/Facets/Tinter/Tinter'
 
