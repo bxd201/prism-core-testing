@@ -1,6 +1,6 @@
-import * as colorActions from '../../src/actions/loadColors'
-import * as searchActions from '../../src/actions/loadSearchResults'
-import { colors, initialState } from '../../src/reducers/colors'
+import * as colorActions from 'src/actions/loadColors'
+import * as searchActions from 'src/actions/loadSearchResults'
+import { colors, initialState } from 'src/reducers/colors'
 
 describe('colors-reducer', () => {
   test('changes status for colors request', () => {

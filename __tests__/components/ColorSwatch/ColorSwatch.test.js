@@ -2,7 +2,7 @@ import React from 'react'
 import renderer from 'react-test-renderer'
 import configureStore from 'redux-mock-store'
 
-import ColorSwatch from '../../../src/components/ColorSwatch/ColorSwatch'
+import ColorSwatch from 'src/components/ColorSwatch/ColorSwatch'
 
 const mockStore = configureStore();
 const store = mockStore({});

@@ -1,13 +1,9 @@
 import React from 'react'
 import renderer from 'react-test-renderer'
 
-import TintableSceneSVGDefs from '../../../src/components/SceneManager/TintableSceneSVGDefs'
+import TintableSceneSVGDefs from 'src/components/SceneManager/TintableSceneSVGDefs'
 import { SCENE_TYPES } from 'constants/globals'
-
-const tintColors = [
-  '#FF0000',
-  '#0000FF'
-]
+import * as Colors from '__mocks__/data/color/Colors'
 
 describe('<TintableSceneSVGDefs />', () => {
   test('render empty without provided type', () => {
@@ -46,12 +42,13 @@ describe('<TintableSceneSVGDefs />', () => {
     })
 
     test('feFlood is set to filterColor', () => {
+      const color = Colors.getColor()
       const component1 = renderer.create(
-        <TintableSceneSVGDefs type={SCENE_TYPES.ROOM} filterColor={tintColors[0]}  />
+        <TintableSceneSVGDefs type={SCENE_TYPES.ROOM} filterColor={color.hex}  />
       )
 
       const colorObject = component1.root.findAll((el) => {
-        return el.type === 'feFlood' && el.props.floodColor === tintColors[0]
+        return el.type === 'feFlood' && el.props.floodColor === color.hex
       })
 
       expect(colorObject).toHaveLength(1)
@@ -85,12 +82,13 @@ describe('<TintableSceneSVGDefs />', () => {
     })
 
     test('feFlood is set to filterColor', () => {
+      const color = Colors.getColor()
       const component1 = renderer.create(
-        <TintableSceneSVGDefs type={SCENE_TYPES.OBJECT} filterColor={tintColors[0]}  />
+        <TintableSceneSVGDefs type={SCENE_TYPES.OBJECT} filterColor={color.hex}  />
       )
 
       const colorObject = component1.root.findAll((el) => {
-        return el.type === 'feFlood' && el.props.floodColor === tintColors[0]
+        return el.type === 'feFlood' && el.props.floodColor === color.hex
       })
 
       expect(colorObject).toHaveLength(1)

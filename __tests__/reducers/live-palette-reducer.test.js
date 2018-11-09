@@ -1,5 +1,5 @@
-import * as actions from '../../src/actions/live-palette'
-import { lp, initialState } from '../../src/reducers/live-palette-reducer'
+import * as actions from 'src/actions/live-palette'
+import { lp, initialState } from 'src/reducers/live-palette-reducer'
 
 describe('live-palette-reduer', () => {
   it('should return the initial state', () => {

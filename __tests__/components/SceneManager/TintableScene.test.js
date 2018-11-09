@@ -1,11 +1,15 @@
 import React from 'react'
 import renderer from 'react-test-renderer'
+import _ from 'lodash'
 
-import TintableScene from '../../../src/components/SceneManager/TintableScene'
-import TintableSceneOverlay from '../../../src/components/SceneManager/TintableSceneOverlay'
-import TintableSceneHitArea from '../../../src/components/SceneManager/TintableSceneHitArea'
-import TintableSceneSurface from '../../../src/components/SceneManager/TintableSceneSurface'
+import TintableScene from 'src/components/SceneManager/TintableScene'
+import TintableSceneOverlay from 'src/components/SceneManager/TintableSceneOverlay'
+import TintableSceneHitArea from 'src/components/SceneManager/TintableSceneHitArea'
+import TintableSceneSurface from 'src/components/SceneManager/TintableSceneSurface'
 import { SCENE_TYPES } from 'constants/globals'
+
+import * as Colors from '__mocks__/data/color/Colors'
+import * as Scenes from '__mocks__/data/scene/Scenes'
 
 const getTintableScene = (props) => {
   let defaultProps = {
@@ -69,9 +73,8 @@ describe('<TintableScene />', () => {
   })
 
   test('renders hit areas only for interactive scenes', () => {
-    const surfaces = [
-      {id:1}, {id:2}, {id:3}
-    ]
+    const surfaces = Scenes.getSurfaces()
+
     // interactive: true
     const interactiveScene = renderer.create(
       getTintableScene({
@@ -94,9 +97,8 @@ describe('<TintableScene />', () => {
   })
 
   test('renders surfaces only when a surface has a color', () => {
-    const surfaces = [
-      {id:1}, {id:2}, {id:3}
-    ]
+    const surfaces = Scenes.getSurfaces()
+
     let scene = renderer.create(
       getTintableScene({
         surfaces: surfaces
@@ -108,7 +110,7 @@ describe('<TintableScene />', () => {
 
     // stub in a color of red for all surfaces and verify that the number of rendered TintableSceneSurfaces increases in a 1:1 ratio
     for (let i in surfaces) {
-      surfaces[i].color = '#F00'
+      surfaces[i].color = Colors.getColor()
 
       scene = renderer.create(
         getTintableScene({
@@ -121,9 +123,11 @@ describe('<TintableScene />', () => {
   })
 
   test('matches snapshot of scene with colored surfaces', () => {
-    const surfaces = [
-      {id: 1, color: '#f00'}, {id: 2, color: '#0f0'}, {id: 3, color: '#00f'}
-    ]
+    const surfaces = Scenes.getSurfaces().map( surface => {
+      surface.color = Colors.getColor()
+      return surface
+    })
+
     const scene = renderer.create(
       getTintableScene({
         surfaces: surfaces
@@ -131,5 +135,32 @@ describe('<TintableScene />', () => {
     ).toJSON()
 
     expect(scene).toMatchSnapshot()
+  })
+  test('renders for hovered surfaces when previewColor is active', () => {
+    const surfaces = Scenes.getSurfaces()
+
+    const scene = renderer.create(
+      getTintableScene({
+        surfaces: surfaces,
+        previewColor: {
+          hex: '#FFF'
+        }
+      })
+    )
+
+    // no TintableSceneSurfaces currently rendered
+    expect(scene.root.findAllByType(TintableSceneSurface)).toHaveLength(0)
+
+    // hover over first surface
+    scene.getInstance().handleOver(surfaces[0].id)
+
+    // one TintableSceneSurface should render
+    expect(scene.root.findAllByType(TintableSceneSurface)).toHaveLength(1)
+
+    // hover out first surface
+    scene.getInstance().handleOut(surfaces[0].id)
+
+    // zero TintableSceneSurfaces should render
+    expect(scene.root.findAllByType(TintableSceneSurface)).toHaveLength(0)
   })
 })

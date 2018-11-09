@@ -1,5 +1,5 @@
-import * as actions from '../../src/actions/scenes'
-import { scenes, initialState } from '../../src/reducers/scenes'
+import * as actions from 'src/actions/scenes'
+import { scenes, initialState } from 'src/reducers/scenes'
 
 describe('scenes-reducer', () => {
   test('handles default case', () => {

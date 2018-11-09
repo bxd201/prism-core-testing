@@ -2,7 +2,7 @@ import React from 'react'
 import renderer from 'react-test-renderer'
 import configureStore from 'redux-mock-store'
 
-import ColorWallButton from '../../../../src/components/Facets/ColorWall/ColorWallButton'
+import ColorWallButton from 'src/components/Facets/ColorWall/ColorWallButton'
 
 const mockStore = configureStore();
 const store = mockStore({});

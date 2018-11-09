@@ -1,10 +1,8 @@
 // @flow
 export type Color = {
   blue: number,
-  brandCollectionIds: Array<number>,
-  brandCollectionNames: Array<string>,
   colorFamilyNames: Array<string>,
-  colornumber: string,
+  colorNumber: string,
   coordinatingColors: {
     coord1ColorId: number,
     coord2ColorId: number,
@@ -12,21 +10,22 @@ export type Color = {
   },
   csshsl: string,
   cssrgb: string,
-  description: Array<String>,
+  description: Array<string>,
   green: number,
   hex: string,
   hue: number,
   id: number,
-  isDark: Boolean,
-  isExterior: Boolean,
-  isInterior: Boolean,
+  isDark: boolean,
+  isExterior: boolean,
+  isInterior: boolean,
   lightness: number,
   name: string,
   opacity: string, // ex: "SW1234", whatever that means
   red: number,
   rgb: number,
   saturation: number,
-  smis: string
+  smis: string,
+  storeStripLocator?: string
 }
 
 export type ColorPayload = {

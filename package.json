@@ -13,7 +13,9 @@
     "moduleNameMapper": {
       "^constants(.*)$": "<rootDir>/src/constants$1",
       "^variables$": "<rootDir>/src/shared/variables.js",
-      "\\.((s?css)|less)$": "identity-obj-proxy"
+      "\\.((s?css)|less)$": "identity-obj-proxy",
+      "^src/(.*)$": "<rootDir>/src/$1",
+      "^__mocks__/(.*)$": "<rootDir>/__mocks__/$1"
     },
     "globals": {
       "$API_PATH": "localhost"
