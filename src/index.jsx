@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
-import { IntlProvider, addLocaleData } from 'react-intl'
+import { IntlProvider } from 'react-intl'
 import { HashRouter } from 'react-router-dom'
 
 // fontawesome imports
@@ -12,13 +12,8 @@ import {
   faTrash
 } from '@fortawesome/free-solid-svg-icons'
 
-// import all supported languages
-import localeEN from 'react-intl/locale-data/en'
-import localeES from 'react-intl/locale-data/es'
-import localeFR from 'react-intl/locale-data/fr'
-import en from './translations/en.json'
-import es from './translations/es.json'
-import fr from './translations/fr.json'
+// all supported languages
+import languages from './translations/translations'
 
 // import the redux store
 import store from './store'
@@ -28,19 +23,6 @@ import APPS from './config/components'
 
 // global sass import
 import './scss/main.scss'
-
-// list all supported languages & associate with their JSON
-const messages = {
-  'en': en,
-  'es': es,
-  'fr': fr
-}
-// add locale data when using react-intl to format numbers/times/ect..
-addLocaleData([
-  ...localeEN,
-  ...localeES,
-  ...localeFR
-])
 
 // populate with all the FontAwesome svg icons we want to use
 const faIcons = [
@@ -82,7 +64,7 @@ const renderAppInElement = (el) => {
   const language = navigator.language.split(/[-_]/)[0] || 'en'
 
   ReactDOM.render(
-    <IntlProvider locale={language} messages={messages[language]}>
+    <IntlProvider locale={language} messages={languages[language]}>
       <Provider store={store}>
         <HashRouter>
           <App {...props} />
