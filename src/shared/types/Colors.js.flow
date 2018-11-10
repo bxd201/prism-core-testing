@@ -1,6 +1,7 @@
 // @flow
 export type Color = {
   blue: number,
+  brandKey: string,
   colorFamilyNames: Array<string>,
   colorNumber: string,
   coordinatingColors: {

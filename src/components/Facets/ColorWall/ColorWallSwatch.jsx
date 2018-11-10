@@ -1,62 +1,147 @@
-import React, { PureComponent } from 'react'
-import { connect } from 'react-redux'
-import { withRouter } from 'react-router-dom'
-import PropTypes from 'prop-types'
+/* eslint-disable */
+// @flow
+import React, { PureComponent, Fragment } from 'react'
 
-import { add } from '../../../actions/live-palette'
+import { type Color } from '../../../shared/types/Colors'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-class ColorWallSwatch extends PureComponent {
-  constructor (props) {
+type Props = {
+  color: Color,
+  onEngage: Function,
+  onAdd: Function,
+  level?: number,
+  offsetX?: number,
+  offsetY?: number,
+  active?: boolean
+}
+
+class ColorWallSwatch extends PureComponent<Props> {
+  ref: any = null
+
+  static getComputedValue (el: any, styleProp: string) {
+    if (window.getComputedStyle) {
+      return window.getComputedStyle(el, null).getPropertyValue(styleProp);
+    } else if (el.currentStyle) {
+      return el.currentStyle[styleProp];
+    }
+  }
+
+  constructor (props: Props) {
     super(props)
 
+    this.handleAddClick = this.handleAddClick.bind(this)
+    this.handleDetailClick = this.handleDetailClick.bind(this)
     this.handleSwatchClick = this.handleSwatchClick.bind(this)
   }
 
-  render () {
-    const { color, active } = this.props
+  getOuterClasses () {
+    const { level, offsetX, offsetY, color, active } = this.props
+    let classes = ['inner', 'color-swatch-inner']
 
-    const Inner = {
+    if (active) {
+      classes.push('color-swatch-inner--active')
+    }
+
+    if (level) {
+      classes.push('color-swatch-inner--bloom')
+      classes.push('color-swatch-inner--lvl-' + level.toString().replace(/\./g, '-'))
+    }
+
+    if (offsetX) {
+      let className = 'color-swatch-inner--offset-x-' + offsetX.toString().replace(/-/g, 'n')
+      classes.push(className)
+
+      if (!offsetY) {
+        classes.push(className + '--primary')
+      }
+    }
+
+    if (offsetY) {
+      let className = 'color-swatch-inner--offset-y-' + offsetY.toString().replace(/-/g, 'n')
+      classes.push(className)
+
+      if (!offsetX) {
+        classes.push(className + '--primary')
+      }
+    }
+
+    if (!offsetX && !offsetY && level) {
+      classes.push('color-swatch-inner--bloom-center')
+    }
+
+    if (color.isDark) {
+      classes.push('color-swatch-inner--dark-color')
+    }
+
+    return classes.join(' ')
+  }
+
+  getOuterStyles () {
+    let styleObj: {
+      zIndex?: number
+    } = {}
+
+    if (this.ref) {
+      styleObj.zIndex = ColorWallSwatch.getComputedValue(this.ref, 'z-index')
+    }
+
+    return styleObj
+  }
+
+  getInnerStyles () {
+    const { color } = this.props
+
+    let styleObj: {
+      backgroundColor: string
+    } = {
       backgroundColor: color.hex
     }
+
+    return styleObj
+  }
+
+  render () {
+    const { active, level, color } = this.props
 
     return (
       <React.Fragment>
         <li className='color-wall-swatches__swatch'>
-          <button onClick={this.handleSwatchClick} className={`inner color-swatch-inner ${active ? 'color-swatch-inner--active' : ''}`}
-            style={Inner} />
+          <div className={this.getOuterClasses()}
+            ref={(el) => this.ref = el}
+            style={this.getOuterStyles()}>
+            {level === 3 && (
+              <div className='color-swatch-inner__color-container' style={this.getInnerStyles()}>
+                <div className='color-swatch-inner__content'>
+                  <p>{`${color.brandKey ? color.brandKey + ' ' : ''} ${color.colorNumber}`}</p>
+                  <p><strong>{color.name}</strong></p>
+                  <button autoFocus onClick={this.handleAddClick} className='color-swatch-inner__content__add'><FontAwesomeIcon icon='plus' size='1x' /></button>
+                  <button onClick={this.handleDetailClick} className='color-swatch-inner__content__details'><FontAwesomeIcon icon='info' size='1x' /></button>
+                </div>
+              </div>
+            ) || (
+              <button onClick={this.handleSwatchClick}
+                className='color-swatch-inner__color-container'
+                style={this.getInnerStyles()}
+                />
+            )}
+          </div>
         </li>
       </React.Fragment>
     )
   }
 
-  handleSwatchClick () {
-    // const { match, color, family, addToLivePalette } = this.props
-    // const { params } = match
-    // const familyRoute = kebabCase(family)
+  handleSwatchClick = function handleSwatchClick () {
+    this.props.onEngage(this.props.color)
+  }
 
-    // if (params.colorNumber) {
-    //   window.location.hash = `/active/color-wall/${familyRoute}`
-    //   return
-    // }
-    // window.location.hash = `/active/color-wall/${familyRoute}/${color.colorNumber}`
+  handleAddClick = function handleAddClick() {
+    this.props.onAdd(this.props.color)
+  }
 
-    // TOOD: Remove after testing. Adding this so we can test the flow of adding a color to the LP from the CW
-    this.props.addToLivePalette(this.props.color)
+  handleDetailClick = function handleDetailClick() {
+    const { color } = this.props
+    alert(`Color details for ${color.name}`)
   }
 }
 
-ColorWallSwatch.propTypes = {
-  addToLivePalette: PropTypes.func,
-  color: PropTypes.object.isRequired,
-  active: PropTypes.bool
-}
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    addToLivePalette: (color) => {
-      dispatch(add(color))
-    }
-  }
-}
-
-export default withRouter(connect(null, mapDispatchToProps)(ColorWallSwatch))
+export default ColorWallSwatch

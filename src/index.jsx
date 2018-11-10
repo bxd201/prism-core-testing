@@ -9,7 +9,9 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import {
   faPlus,
   faPlusCircle,
-  faTrash
+  faTrash,
+  faInfoCircle,
+  faInfo
 } from '@fortawesome/free-solid-svg-icons'
 
 // all supported languages
@@ -28,7 +30,9 @@ import './scss/main.scss'
 const faIcons = [
   faPlus,
   faPlusCircle,
-  faTrash
+  faTrash,
+  faInfoCircle,
+  faInfo
 ]
 library.add(...faIcons)
 

@@ -94,7 +94,7 @@ class TintableScene extends PureComponent<Props, State> {
   }
 
   handleClickSurface = function handleClickSurface (surfaceId: string) {
-  const { clickToPaintColor } = this.props
+    const { clickToPaintColor } = this.props
 
     if (clickToPaintColor) {
       this.updateSurfaceColor(surfaceId, clickToPaintColor)
