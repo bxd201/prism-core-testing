@@ -2,6 +2,10 @@ import * as colorActions from 'src/actions/loadColors'
 import * as searchActions from 'src/actions/loadSearchResults'
 import { colors, initialState } from 'src/reducers/colors'
 
+import * as Colors from '__mocks__/data/color/Colors'
+
+const color = Colors.getColor()
+
 describe('colors-reducer', () => {
   test('changes status for colors request', () => {
     const state = colors(initialState, {
@@ -18,12 +22,12 @@ describe('colors-reducer', () => {
   test('updates items', () => {
     const state = colors(initialState, {
       type: colorActions.RECEIVE_COLORS,
-      payload: { colors: [{ test: true }], loading: false }
+      payload: { colors: [color], loading: false }
     })
 
     expect(state).toEqual({
       ...initialState,
-      items: [{ test: true }], status: { loading: false }
+      items: [color], status: { loading: false }
     })
   })
 
@@ -54,20 +58,20 @@ describe('colors-reducer', () => {
   test('updates results for search received', () => {
     const state = colors(initialState, {
       type: searchActions.RECEIVE_SEARCH_RESULTS,
-      payload: { loading: false, results: [{ test: true }] }
+      payload: { loading: false, results: [color] }
     })
 
     expect(state).toEqual({
       ...initialState,
       status: { loading: false },
-      searchResults: [{ test: true }]
+      searchResults: [color]
     })
   })
 
   test('default', () => {
     const state = colors(initialState, {
       type: 'TEST',
-      payload: { colors: [{ test: true }] }
+      payload: { colors: [color] }
     })
 
     expect(state).toEqual(initialState)

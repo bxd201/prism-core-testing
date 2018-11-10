@@ -1,5 +1,8 @@
 import * as actions from 'src/actions/live-palette'
 import { lp, initialState } from 'src/reducers/live-palette-reducer'
+import * as Colors from '__mocks__/data/color/Colors'
+
+const color = Colors.getColor()
 
 describe('live-palette-reduer', () => {
   it('should return the initial state', () => {
@@ -10,18 +13,18 @@ describe('live-palette-reduer', () => {
     const mock = {
       type: actions.ADD_LP_COLOR,
       payload: {
-        color: { id: 1 }
+        color: color
       }
     }
 
-    expect(lp({ colors: [] }, mock)).toEqual({ ...initialState, colors: [{ id: 1 }], activeColor: { id: 1 } })
+    expect(lp({ colors: [] }, mock)).toEqual({ ...initialState, colors: [color], activeColor: color })
   })
 
   it('should handle REMOVE_LP_COLOR', () => {
     const mock = {
       type: actions.REMOVE_LP_COLOR,
       payload: {
-        color: { id: 1 }
+        color: color
       }
     }
 
@@ -32,10 +35,10 @@ describe('live-palette-reduer', () => {
     const mock = {
       type: actions.ACTIVATE_LP_COLOR,
       payload: {
-        color: { id: 1 }
+        color: color
       }
     }
 
-    expect(lp([], mock)).toEqual({ ...initialState, activeColor: { id: 1 } })
+    expect(lp([], mock)).toEqual({ ...initialState, activeColor: color })
   })
 })

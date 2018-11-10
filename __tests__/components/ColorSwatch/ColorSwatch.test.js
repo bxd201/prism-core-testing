@@ -3,16 +3,14 @@ import renderer from 'react-test-renderer'
 import configureStore from 'redux-mock-store'
 
 import ColorSwatch from 'src/components/ColorSwatch/ColorSwatch'
+import * as Colors from '__mocks__/data/color/Colors'
 
 const mockStore = configureStore();
 const store = mockStore({});
 
 describe('<ColorSwatch />', () => {
   test('Color is selected when clicked', () => {
-    const color = {
-      hex: '#000',
-      name: 'Tricorn Black'
-    }
+    const color = Colors.getColor()
     const component = renderer.create(
       <ColorSwatch store={store} color={color} />
     ).toJSON()

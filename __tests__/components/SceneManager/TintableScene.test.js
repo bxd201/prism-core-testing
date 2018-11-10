@@ -72,6 +72,20 @@ describe('<TintableScene />', () => {
     expect(scene.root.findByType(TintableSceneOverlay).props.type).toEqual(TintableSceneOverlay.TYPES.ERROR)
   })
 
+  test('shows error overlay for hit area error', () => {
+    const scene = renderer.create(
+      getTintableScene()
+    )
+
+    // no error at first
+    expect(scene.root.findAllByType(TintableSceneOverlay)).toHaveLength(0)
+
+    scene.getInstance().handleHitAreaLoadingError()
+
+    // does it contain a TintableSceneOverlay and is it an ERROR type?
+    expect(scene.root.findAllByType(TintableSceneOverlay)[0].props.type).toEqual(TintableSceneOverlay.TYPES.ERROR)
+  })
+
   test('renders hit areas only for interactive scenes', () => {
     const surfaces = Scenes.getSurfaces()
 
@@ -96,30 +110,75 @@ describe('<TintableScene />', () => {
     expect(nonInteractiveScene.root.findAllByType(TintableSceneHitArea)).toHaveLength(0)
   })
 
-  test('renders surfaces only when a surface has a color', () => {
+  test('calls parent prop to update surface colors when a surface is clicked and clickToPaint has a color', () => {
     const surfaces = Scenes.getSurfaces()
-
-    let scene = renderer.create(
+    const clickToPaintColor = Colors.getColor()
+    const sceneId = 'testID'
+    const scene = renderer.create(
       getTintableScene({
-        surfaces: surfaces
+        surfaces: surfaces,
+        clickToPaintColor: clickToPaintColor,
+        sceneId: sceneId
       })
     )
+    const instance = scene.getInstance()
+
+    let spied = jest.spyOn(instance, 'updateSurfaceColor')
 
     // no TintableSceneSurfaces should render since none of the surface data contains color
     expect(scene.root.findAllByType(TintableSceneSurface)).toHaveLength(0)
 
-    // stub in a color of red for all surfaces and verify that the number of rendered TintableSceneSurfaces increases in a 1:1 ratio
     for (let i in surfaces) {
-      surfaces[i].color = Colors.getColor()
+      instance.handleClickSurface(surfaces[i].id)
 
-      scene = renderer.create(
-        getTintableScene({
-          surfaces: surfaces
-        })
-      )
-
-      expect(scene.root.findAllByType(TintableSceneSurface)).toHaveLength(surfaces.filter(surface => surface.color).length)
+      expect(spied).toHaveBeenCalledWith(surfaces[i].id, clickToPaintColor)
     }
+  })
+
+  test('calls parent prop to update surface colors when a color is dropped on a surface', () => {
+    const surfaces = Scenes.getSurfaces()
+    const sceneId = 'testID'
+    const scene = renderer.create(
+      getTintableScene({
+        surfaces: surfaces,
+        sceneId: sceneId
+      })
+    )
+    const instance = scene.getInstance()
+
+    let spied = jest.spyOn(instance, 'updateSurfaceColor')
+
+    // no TintableSceneSurfaces should render since none of the surface data contains color
+    expect(scene.root.findAllByType(TintableSceneSurface)).toHaveLength(0)
+
+    for (let i in surfaces) {
+      const droppedColor = Colors.getColor()
+
+      expect(instance.getTintColorBySurface(surfaces[i].id)).toBeUndefined()
+
+      instance.handleColorDrop(surfaces[i].id, droppedColor)
+
+      expect(spied).toHaveBeenCalledWith(surfaces[i].id, droppedColor)
+    }
+  })
+
+  test('calls parent prop to update surface colors internal updateSurfaceColors is hit', () => {
+    const onUpdateColor = jest.fn()
+    const surfaces = Scenes.getSurfaces()
+    const sceneId = 'testID'
+    const scene = renderer.create(
+      getTintableScene({
+        surfaces: surfaces,
+        onUpdateColor: onUpdateColor,
+        sceneId: sceneId
+      })
+    )
+    const instance = scene.getInstance()
+    const color = Colors.getColor()
+
+    instance.updateSurfaceColor(surfaces[0].id, color)
+
+    expect(onUpdateColor).toHaveBeenCalledWith(sceneId, surfaces[0].id, color)
   })
 
   test('matches snapshot of scene with colored surfaces', () => {
@@ -136,6 +195,7 @@ describe('<TintableScene />', () => {
 
     expect(scene).toMatchSnapshot()
   })
+
   test('renders for hovered surfaces when previewColor is active', () => {
     const surfaces = Scenes.getSurfaces()
 
