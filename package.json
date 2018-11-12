@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "cross-env API_URL=https://dev-prism-api.ebus.swaws webpack-dev-server --mode development --open --hot --config webpack.dev.js",
-    "build": "cross-env API_URL=http://localhost:3000 webpack --config webpack.prod.js",
+    "start": "webpack-dev-server --mode development --open --hot --config webpack.dev.js",
+    "build": "webpack --config webpack.prod.js",
     "test": "flow check && jest --coverage",
     "test-watch": "jest --watch",
     "postinstall": "flow-typed install"
@@ -62,7 +62,6 @@
     "babel-plugin-styled-components": "1.8.0",
     "clean-webpack-plugin": "0.1.19",
     "copy-webpack-plugin": "4.5.2",
-    "cross-env": "5.2.0",
     "css-loader": "1.0.0",
     "enzyme": "3.6.0",
     "eslint": "5.6.1",

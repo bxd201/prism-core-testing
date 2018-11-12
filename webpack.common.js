@@ -172,7 +172,8 @@ module.exports = {
       }
     ]),
     new webpack.DefinePlugin({
-      '$API_PATH': JSON.stringify(process.env.API_URL)
+      'API_PATH': (process.env.API_URL) ? JSON.stringify(process.env.API_URL) : JSON.stringify('https://dev-prism-api.ebus.swaws'),
+      'BASE_PATH': (process.env.WEB_URL) ? JSON.stringify(process.env.WEB_URL) : JSON.stringify('https://dev-prism-web.ebus.swaws')
     })
   ],
   devServer: {

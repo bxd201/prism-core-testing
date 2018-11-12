@@ -132,6 +132,7 @@ pipeline {
         RANCHER_STACK = "prism-web-dev"
         IMAGE_TAG = "dev"
         API_URL = "https://dev-prism-api.ebus.swaws"
+        WEB_URL = "https://dev-prism-web.ebus.swaws"
       }
       when {
         branch 'develop'
