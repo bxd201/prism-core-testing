@@ -2,7 +2,8 @@ FROM nginx:alpine
 
 LABEL maintainer="Jonathan Gnagy <jonathan.l.gnagy@sherwin.com>"
 
-ENV API_URL="http://localhost:3000/v1"
+ENV API_URL="$API_URL"
+ENV WEB_URL="$WEB_URL"
 
 COPY dist /usr/share/nginx/html
 COPY ci/nginx/docroot /usr/share/nginx/html
