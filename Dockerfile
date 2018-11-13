@@ -11,7 +11,8 @@ COPY ci/nginx/conf.d /etc/nginx/conf.d
 COPY ci/scripts/entrypoint.sh /entrypoint.sh
 
 RUN mv /usr/share/nginx/html/bundle.js /usr/share/nginx/html/bundle.js.template \
-    && mv /usr/share/nginx/html/bundle.js.map /usr/share/nginx/html/bundle.js.map.template \
+    && mv /usr/share/nginx/html/author.js /usr/share/nginx/html/author.js.template \
+    && mv /usr/share/nginx/html/embed.js /usr/share/nginx/html/embed.js.template \
     && chmod +x /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
