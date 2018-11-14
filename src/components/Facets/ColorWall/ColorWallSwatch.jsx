@@ -92,9 +92,9 @@ class ColorWallSwatch extends PureComponent<Props> {
     const { color } = this.props
 
     let styleObj: {
-      backgroundColor: string
+      background: string
     } = {
-      backgroundColor: color.hex
+      background: color.hex
     }
 
     return styleObj

@@ -92,6 +92,10 @@
     left: 0;
     position: absolute;
     overflow: hidden;
+    border: none;
+    padding: 0;
+    margin: 0;
+    border-radius: 0;
   }
 
   &__content {
@@ -102,11 +106,20 @@
     text-align: left;
     height: 100%;
 
+    p {
+      margin: 0;
+    }
+
     &__add,
     &__details {
       position: absolute;
       bottom: .5em;
       color: inherit;
+      background: none;
+      border: none;
+      padding: 0;
+      margin: 0;
+      box-shadow: none;
     }
 
     &__add {
@@ -223,6 +236,8 @@
     position: relative;
     width: percentage(.999/56);
     font-size: .175rem;
+    margin: 0;
+    padding: 0;
 
     &::before {
       content: '';

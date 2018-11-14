@@ -3,6 +3,7 @@ const path = require( 'path' );
 const HtmlWebpackPlugin = require( 'html-webpack-plugin' );
 const CopyWebpackPlugin = require( 'copy-webpack-plugin' )
 const MiniCssExtractPlugin = require( 'mini-css-extract-plugin' );
+const PostCssWrapper = require('postcss-wrapper-loader');
 const UglifyJsPlugin = require( 'uglifyjs-webpack-plugin' );
 const sass = require( 'node-sass' );
 const sassUtils = require( 'node-sass-utils' )( sass );
@@ -156,6 +157,7 @@ module.exports = {
     new MiniCssExtractPlugin( {
       filename: '[name].css',
     } ),
+    new PostCssWrapper('bundle.css', '.cleanslate.prism'),
     new CopyWebpackPlugin( [
       {
         from: 'src/images',

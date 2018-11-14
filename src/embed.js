@@ -1,12 +1,22 @@
 import bindReactToDOM from './index'
 
 (function () {
-  // add our CSS to the <head>
+  // create the link to our css
   const styleTag = document.createElement('link')
   styleTag.rel = 'stylesheet'
   styleTag.type = 'text/css'
-  styleTag.href = '//dev-prism-web.ebus.swaws/bundle.css' // TODO: Replace with environment specific URL
+  /* eslint-disable no-undef */ styleTag.href = `${BASE_PATH}/bundle.css`
   styleTag.media = 'all'
+
+  // create the link to the cleanslate css
+  const cleanslateTag = document.createElement('link')
+  cleanslateTag.rel = 'stylesheet'
+  cleanslateTag.type = 'text/css'
+  /* eslint-disable no-undef */ cleanslateTag.href = `${BASE_PATH}/css/cleanslate.css`
+  cleanslateTag.media = 'all'
+
+  // add our css to the <head>
+  document.getElementsByTagName('head')[0].appendChild(cleanslateTag)
   document.getElementsByTagName('head')[0].appendChild(styleTag)
 
   // attempt to grab the root div that we are goung to mount to
@@ -20,7 +30,7 @@ import bindReactToDOM from './index'
   const prismMount = document.createElement('div')
   const prismSettings = prismRoot.dataset
 
-  prismMount.className = '__react-root'
+  prismMount.className = '__react-root cleanslate prism'
   prismMount.dataset.reactComponent = 'Prism'
 
   // proxy all user settings into the react root

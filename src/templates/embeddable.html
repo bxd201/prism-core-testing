@@ -10,14 +10,14 @@
 
 <body>
 
-  <div id="prism-root" data-app-id="zillow" data-config1="config1" data-config2="config2"></div>
+  <div id="prism-root" data-react-component="ColorWall"></div>
 
   <script>
     (function(d, s, id) {
       var js, fjs = d.getElementsByTagName(s)[0];
       if (d.getElementById(id)) return;
       js = d.createElement(s); js.id = id;
-      js.src = "http://localhost:8080/embed.js";
+      js.src = "//localhost:8080/embed.js";
       fjs.parentNode.insertBefore(js, fjs);
     }(document, 'script', 'prism-widget'));
   </script>
