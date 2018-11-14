@@ -87,7 +87,7 @@ class ColorWall extends PureComponent<Props> {
           {(hideColorFamilySelector !== 'true') && ColorWallButtons}
         </div>
         <div ref={this.cwRef}>
-          <ColorWallSwatchList colors={ColorWallColors} active={params.colorNumber} />
+          <ColorWallSwatchList key={family} colors={ColorWallColors} active={params.colorNumber} />
         </div>
       </React.Fragment>
     )
