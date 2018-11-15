@@ -9,20 +9,20 @@
   $bloom-activate-duration: .2s;
 
   $bloom-activate-z-delay: 0s;
-  $bloom-activate-z-duration: 0s;
+  $bloom-activate-z-duration: max($bloom-activate-positioning-delay, $bloom-activate-sizing-delay) + $bloom-activate-duration;
 
   $bloom-deactivate-positioning-delay: .0s;
   $bloom-deactivate-sizing-delay: .0s;
   $bloom-deactivate-duration: .2s;
 
-  $bloom-deactivate-z-duration: $bloom-deactivate-duration;
-  $bloom-deactivate-z-delay: max($bloom-deactivate-positioning-delay, $bloom-deactivate-sizing-delay);
+  $bloom-deactivate-z-delay: 0s;
+  $bloom-deactivate-z-duration: max($bloom-deactivate-positioning-delay, $bloom-deactivate-sizing-delay) + $bloom-deactivate-duration;
 
   @mixin getRaise($scale, $amt, $z) {
     $this-scale: $amt * $scale;
     width: $this-scale;
     height: $this-scale;
-    margin: $this-scale / -2 + 50% 0 0 $this-scale / -2 + 50%;
+    margin: round($this-scale / -2 + 50%) 0 0 round($this-scale / -2 + 50%);
     font-size: $this-scale;
     z-index: $z;
   }
@@ -42,16 +42,35 @@
   top: 0;
   left: 0;
   position: absolute;
-  will-change: top, left, transform, width, height, margin, border, box-shadow, font-size, z-index;
+  will-change: top, left, transform, width, height, margin, box-shadow, font-size, z-index;
   /* autoprefixer: ignore next */
-  transition-property: top, left, transform, width, height, margin, z-index, border-width, box-shadow;
-  transition-delay: $bloom-deactivate-positioning-delay, $bloom-deactivate-positioning-delay, $bloom-deactivate-sizing-delay, $bloom-deactivate-sizing-delay, $bloom-deactivate-sizing-delay, $bloom-deactivate-sizing-delay, $bloom-deactivate-z-delay, $bloom-deactivate-sizing-delay, $bloom-deactivate-positioning-delay;
-  transition-duration: $bloom-deactivate-duration, $bloom-deactivate-duration, $bloom-deactivate-duration, $bloom-deactivate-duration, $bloom-deactivate-duration, $bloom-deactivate-duration, $bloom-deactivate-z-duration, $bloom-deactivate-duration, $bloom-deactivate-duration;
+  transition-property: top, left, transform, width, height, margin, z-index, box-shadow;
+
+  transition-delay:
+    $bloom-deactivate-positioning-delay,
+    $bloom-deactivate-positioning-delay,
+    $bloom-deactivate-sizing-delay,
+    $bloom-deactivate-sizing-delay,
+    $bloom-deactivate-sizing-delay,
+    $bloom-deactivate-sizing-delay,
+    $bloom-deactivate-z-delay,
+    $bloom-deactivate-positioning-delay;
+
+  transition-duration:
+    $bloom-deactivate-duration,
+    $bloom-deactivate-duration,
+    $bloom-deactivate-duration,
+    $bloom-deactivate-duration,
+    $bloom-deactivate-duration,
+    $bloom-deactivate-duration,
+    $bloom-deactivate-z-duration,
+    $bloom-deactivate-duration;
+
   transition-timing-function: ease-out;
   z-index: 1;
   color: rgba(black, .9);
   cursor: pointer;
-  box-shadow: 0 0 3px rgba(black, 0);
+  box-shadow: 0 0 0 1px white, 0 0 0px rgba(black, .25);
 
   &__color-container {
     height: 100%;
@@ -102,12 +121,30 @@
 
   &--bloom {
     /* autoprefixer: ignore next */
-    transition-property: top, left, transform, width, height, margin, z-index, border-width, box-shadow;
-    transition-delay: $bloom-activate-positioning-delay, $bloom-activate-positioning-delay, $bloom-activate-sizing-delay, $bloom-activate-sizing-delay, $bloom-activate-sizing-delay, $bloom-activate-sizing-delay, $bloom-activate-z-delay, $bloom-activate-sizing-delay, $bloom-activate-positioning-delay;
-    transition-duration: $bloom-activate-duration, $bloom-activate-duration, $bloom-activate-duration, $bloom-activate-duration, $bloom-activate-duration, $bloom-activate-duration, $bloom-activate-z-duration, $bloom-activate-duration, $bloom-activate-duration;
+    transition-property: top, left, transform, width, height, margin, z-index, box-shadow;
+
+    transition-delay:
+      $bloom-activate-positioning-delay,
+      $bloom-activate-positioning-delay,
+      $bloom-activate-sizing-delay,
+      $bloom-activate-sizing-delay,
+      $bloom-activate-sizing-delay,
+      $bloom-activate-sizing-delay,
+      $bloom-activate-z-delay,
+      $bloom-activate-positioning-delay;
+
+    transition-duration:
+      $bloom-activate-duration,
+      $bloom-activate-duration,
+      $bloom-activate-duration,
+      $bloom-activate-duration,
+      $bloom-activate-duration,
+      $bloom-activate-duration,
+      $bloom-activate-z-duration,
+      $bloom-activate-duration;
+
     margin: -50% 0 0 -50%;
-    border-width: 2px;
-    box-shadow: 0 0 3px rgba(black, .25);
+    box-shadow: 0 0 0 1px white, 0 0 4px rgba(black, .25);
   }
 
   &--dark-color {
