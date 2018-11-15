@@ -12,7 +12,7 @@ import bindReactToDOM from './index'
   const cleanslateTag = document.createElement('link')
   cleanslateTag.rel = 'stylesheet'
   cleanslateTag.type = 'text/css'
-  /* eslint-disable no-undef */ cleanslateTag.href = `${BASE_PATH}/css/cleanslate.css`
+  cleanslateTag.href = `${BASE_PATH}/css/cleanslate.css` // eslint-disable-line no-undef
   cleanslateTag.media = 'all'
 
   // add our css to the <head>
