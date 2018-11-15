@@ -16,16 +16,6 @@ type Props = {
 }
 
 class ColorWallSwatch extends PureComponent<Props> {
-  ref: any = null
-
-  static getComputedValue (el: any, styleProp: string) {
-    if (window.getComputedStyle) {
-      return window.getComputedStyle(el, null).getPropertyValue(styleProp);
-    } else if (el.currentStyle) {
-      return el.currentStyle[styleProp];
-    }
-  }
-
   constructor (props: Props) {
     super(props)
 
@@ -76,18 +66,6 @@ class ColorWallSwatch extends PureComponent<Props> {
     return classes.join(' ')
   }
 
-  getOuterStyles () {
-    let styleObj: {
-      zIndex?: number
-    } = {}
-
-    if (this.ref) {
-      styleObj.zIndex = ColorWallSwatch.getComputedValue(this.ref, 'z-index')
-    }
-
-    return styleObj
-  }
-
   getInnerStyles () {
     const { color } = this.props
 
@@ -106,9 +84,7 @@ class ColorWallSwatch extends PureComponent<Props> {
     return (
       <React.Fragment>
         <li className='color-wall-swatches__swatch'>
-          <div className={this.getOuterClasses()}
-            ref={(el) => this.ref = el}
-            style={this.getOuterStyles()}>
+          <div className={this.getOuterClasses()}>
             {level === 3 && (
               <div className='color-swatch-inner__color-container' style={this.getInnerStyles()}>
                 <div className='color-swatch-inner__content'>
@@ -121,8 +97,7 @@ class ColorWallSwatch extends PureComponent<Props> {
             ) || (
               <button onClick={this.handleSwatchClick}
                 className='color-swatch-inner__color-container'
-                style={this.getInnerStyles()}
-                />
+                style={this.getInnerStyles()} />
             )}
           </div>
         </li>
