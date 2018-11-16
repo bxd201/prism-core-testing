@@ -2,7 +2,7 @@
   "count": 2,
   "scenes": [
     {
-      "id": 1,
+          "id": 1,
       "image": "https://dev-prism-web.ebus.swaws/prism/images/scenes/objects/chair/adarondak.jpg",
       "thumb": "https://dev-prism-web.ebus.swaws/prism/images/scenes/objects/chair/adarondak.jpg",
       "width": 1120,
