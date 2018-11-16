@@ -1,9 +1,12 @@
 /* eslint-disable */
 // @flow
 import React, { PureComponent, Fragment } from 'react'
+import _ from 'lodash'
 
 import { type Color } from '../../../shared/types/Colors'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+
+import './ColorWallSwatch.scss'
 
 type Props = {
   color: Color,
@@ -15,7 +18,24 @@ type Props = {
   active?: boolean
 }
 
-class ColorWallSwatch extends PureComponent<Props> {
+class ColorWallSwatch extends PureComponent<Props, State> {
+  static CLASS_NAMES = {
+    BASE: 'color-swatch-inner',
+    BASE_ACTIVE: 'color-swatch-inner--active',
+    BASE_BLOOM: 'color-swatch-inner--bloom',
+    BASE_BLOOM_CENTER: 'color-swatch-inner--bloom-center',
+    BASE_BLOOM_LVL_: 'color-swatch-inner--bloom-lvl-',
+    BASE_OFFSET_X_: 'color-swatch-inner--offset-x-',
+    BASE_OFFSET_Y_: 'color-swatch-inner--offset-y-',
+    BASE_DARK: 'color-swatch-inner--dark-color',
+    CONTENT: 'color-swatch-inner__content',
+    CONTENT_NUMBER: 'color-swatch-inner__content__number',
+    CONTENT_NAME: 'color-swatch-inner__content__name',
+    CONTENT_ADD: 'color-swatch-inner__content__add',
+    CONTENT_DETAILS: 'color-swatch-inner__content__details',
+    SWATCH: 'color-wall-swatches__swatch'
+  }
+
   constructor (props: Props) {
     super(props)
 
@@ -24,49 +44,71 @@ class ColorWallSwatch extends PureComponent<Props> {
     this.handleSwatchClick = this.handleSwatchClick.bind(this)
   }
 
-  getOuterClasses () {
+  render () {
+    const { level } = this.props
+
+    return (
+      <Fragment>
+        <li className={ColorWallSwatch.CLASS_NAMES.SWATCH}>
+          {level === 0 ? (
+            this.getSwatchDetails()
+          ) : (
+            this.getSwatchFacade()
+          )}
+        </li>
+      </Fragment>
+    )
+  }
+
+  static numToString = _.memoize(function numToString (num: number) {
+    return num.toString().replace(/-/g, 'n').replace(/\./g, '-')
+  })
+
+  getClasses () {
     const { level, offsetX, offsetY, color, active } = this.props
-    let classes = ['inner', 'color-swatch-inner']
+    const levelDefined = !isNaN(level)
+    let classes = [ColorWallSwatch.CLASS_NAMES.BASE]
 
     if (active) {
-      classes.push('color-swatch-inner--active')
+      classes.push(ColorWallSwatch.CLASS_NAMES.BASE_ACTIVE)
     }
 
-    if (level) {
-      classes.push('color-swatch-inner--bloom')
-      classes.push('color-swatch-inner--lvl-' + level.toString().replace(/\./g, '-'))
+    if (levelDefined) {
+      classes.push(ColorWallSwatch.CLASS_NAMES.BASE_BLOOM)
+      // $FlowIgnore -- Flow doesn't understand that we can't get here unless level is a number
+      classes.push(ColorWallSwatch.CLASS_NAMES.BASE_BLOOM_LVL_ + ColorWallSwatch.numToString(level))
     }
 
     if (offsetX) {
-      let className = 'color-swatch-inner--offset-x-' + offsetX.toString().replace(/-/g, 'n')
+      let className = ColorWallSwatch.CLASS_NAMES.BASE_OFFSET_X_ + ColorWallSwatch.numToString(offsetX)
       classes.push(className)
 
-      if (!offsetY) {
+      if (offsetY === 0) {
         classes.push(className + '--primary')
       }
     }
 
     if (offsetY) {
-      let className = 'color-swatch-inner--offset-y-' + offsetY.toString().replace(/-/g, 'n')
+      let className = ColorWallSwatch.CLASS_NAMES.BASE_OFFSET_Y_ + ColorWallSwatch.numToString(offsetY)
       classes.push(className)
 
-      if (!offsetX) {
+      if (offsetX === 0) {
         classes.push(className + '--primary')
       }
     }
 
-    if (!offsetX && !offsetY && level) {
-      classes.push('color-swatch-inner--bloom-center')
+    if (!offsetX && !offsetY && levelDefined) {
+      classes.push(ColorWallSwatch.CLASS_NAMES.BASE_BLOOM_CENTER)
     }
 
     if (color.isDark) {
-      classes.push('color-swatch-inner--dark-color')
+      classes.push(ColorWallSwatch.CLASS_NAMES.BASE_DARK)
     }
 
     return classes.join(' ')
   }
 
-  getInnerStyles () {
+  getStyles () {
     const { color } = this.props
 
     let styleObj: {
@@ -78,30 +120,28 @@ class ColorWallSwatch extends PureComponent<Props> {
     return styleObj
   }
 
-  render () {
-    const { active, level, color } = this.props
+  getSwatchDetails = function getSwatchDetails () {
+    const { color } = this.props
 
     return (
-      <React.Fragment>
-        <li className='color-wall-swatches__swatch'>
-          <div className={this.getOuterClasses()}>
-            {level === 3 && (
-              <div className='color-swatch-inner__color-container' style={this.getInnerStyles()}>
-                <div className='color-swatch-inner__content'>
-                  <p>{`${color.brandKey ? color.brandKey + ' ' : ''} ${color.colorNumber}`}</p>
-                  <p><strong>{color.name}</strong></p>
-                  <button autoFocus onClick={this.handleAddClick} className='color-swatch-inner__content__add'><FontAwesomeIcon icon='plus' size='1x' /></button>
-                  <button onClick={this.handleDetailClick} className='color-swatch-inner__content__details'><FontAwesomeIcon icon='info' size='1x' /></button>
-                </div>
-              </div>
-            ) || (
-              <button onClick={this.handleSwatchClick}
-                className='color-swatch-inner__color-container'
-                style={this.getInnerStyles()} />
-            )}
-          </div>
-        </li>
-      </React.Fragment>
+      <div className={this.getClasses()} style={this.getStyles()}>
+        <div className={ColorWallSwatch.CLASS_NAMES.CONTENT}>
+          <p className={ColorWallSwatch.CLASS_NAMES.CONTENT_NUMBER}>{`${color.brandKey ? color.brandKey + ' ' : ''} ${color.colorNumber}`}</p>
+          <p className={ColorWallSwatch.CLASS_NAMES.CONTENT_NAME}>{color.name}</p>
+          <button autoFocus onClick={this.handleAddClick} className={ColorWallSwatch.CLASS_NAMES.CONTENT_ADD}>
+            <FontAwesomeIcon icon='plus' size='1x' />
+          </button>
+          <button onClick={this.handleDetailClick} className={ColorWallSwatch.CLASS_NAMES.CONTENT_DETAILS}>
+            <FontAwesomeIcon icon='info' size='1x' />
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  getSwatchFacade = function getSwatchFacade () {
+    return (
+      <button onClick={this.handleSwatchClick} className={this.getClasses()} style={this.getStyles()} />
     )
   }
 
@@ -109,13 +149,13 @@ class ColorWallSwatch extends PureComponent<Props> {
     this.props.onEngage(this.props.color)
   }
 
-  handleAddClick = function handleAddClick() {
+  handleAddClick = function handleAddClick () {
     this.props.onAdd(this.props.color)
   }
 
-  handleDetailClick = function handleDetailClick() {
+  handleDetailClick = function handleDetailClick () {
     const { color } = this.props
-    alert(`Color details for ${color.name}`)
+    alert(`Color details for ${color.name}`) // eslint-disable-line
   }
 }
 

@@ -24,6 +24,9 @@ module.exports.varValues = {
     white: '#ffffff',
     swBlue: '#2c97de'
   },
+  colorWall: {
+    swatchColumns: 56 // default SW color chunks
+  },
   scenes: {
     hitAreaOutlineColor: '255, 0, 255' // RGB value of hit area outline (must be RGB, not hex)
   }

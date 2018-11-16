@@ -1,4 +1,3 @@
-/* eslint-disable */
 // @flow
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
@@ -7,11 +6,6 @@ import _ from 'lodash'
 import ColorWallSwatch from './ColorWallSwatch'
 import { add } from '../../../actions/live-palette'
 import { type Color } from '../../../shared/types/Colors'
-
-type ColorProps = {
-  color: Color,
-  level?: number
-}
 
 type Props = {
   colors: Array<Color>, // eslint-disable-line react/no-unused-prop-types
@@ -59,9 +53,9 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     this.activateColor = this.activateColor.bind(this)
     this.addColor = this.addColor.bind(this)
 
-    let colorMap: ColorMap = [];
-    let colorHash: Object = {};
-    let componentHash: Object = {};
+    let colorMap: ColorMap = []
+    let colorHash: Object = {}
+    let componentHash: Object = {}
 
     colors.forEach((color: Color) => {
       colorHash[color.id] = color
@@ -95,7 +89,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     }
   }
 
-  static getColorWallSwatch (key: number, onEngage: Function, onAdd:Function, color: Color, level?: number, offsetX?: number, offsetY?: number) {
+  static getColorWallSwatch (key: number, onEngage: Function, onAdd: Function, color: Color, level?: number, offsetX?: number, offsetY?: number) {
     return <ColorWallSwatch key={key} onEngage={onEngage} onAdd={onAdd} color={color} level={level} offsetX={offsetX} offsetY={offsetY} />
   }
 
@@ -121,6 +115,47 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     addToLivePalette(newColor)
   }
 
+  static drawCircle (radius, centerX, centerY, chunkedColors) {
+    const angleRange = [22.5, 11.25]
+
+    chunkedColors[centerX][centerY] = Object.assign({}, chunkedColors[centerX][centerY], {
+      level: 0,
+      offsetX: 0,
+      offsetY: 0
+    })
+
+    while (radius > 0) {
+      let angle = 0
+
+      while (angle < 360) {
+        const position = ColorWallSwatchList.getAreaOfEffect(centerX, centerY, radius, angle)
+        if (chunkedColors[position.x] && chunkedColors[position.x][position.y]) {
+          let amt = 0 - radius
+
+          if (Math.round(position.distance) === position.distance) {
+            amt += 0.5
+          }
+
+          const curLevel = chunkedColors[position.x][position.y].level
+
+          if (typeof curLevel === 'undefined' || curLevel < amt) {
+            chunkedColors[position.x][position.y] = Object.assign({}, chunkedColors[position.x][position.y], {
+              level: amt,
+              offsetX: position.x - centerX,
+              offsetY: position.y - centerY
+            })
+          }
+        }
+
+        angle += (angleRange[radius - 1] || 1)
+      }
+
+      radius--
+    }
+
+    return chunkedColors
+  }
+
   activateColor = function activateColor (newColor: Color) {
     const activeSwatchId = newColor.id
     const { colorHash, componentHash, levelHash, originalColorMap } = this.state
@@ -132,50 +167,14 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
       if (!coords || !coords.length) {
         return
       }
-      // TODO: Refactor this whole thing; it's gross and bad
+
+      // TODO: Refactor this whole thing it's gross and bad
       // reference: https://stackoverflow.com/questions/24390773/how-do-i-make-a-radial-gradient-of-values-in-a-2d-array
       const centerX = coords[0]
       const centerY = coords[1]
-      const angleRange = [22.5, 11.25]
-      let radius = 2
-      const maxRadius = radius + 1
+      const radius = 2
 
-      chunkedColors[centerX][centerY] = Object.assign({}, chunkedColors[centerX][centerY], {
-        level: maxRadius,
-        offsetX: 0,
-        offsetY: 0
-      })
-
-      const drawCircle = (r) => {
-        let angle = 0
-        while (angle < 360) {
-          const position = ColorWallSwatchList.getAreaOfEffect(centerX, centerY, r, angle)
-          if (chunkedColors[position.x] && chunkedColors[position.x][position.y]) {
-            let amt = maxRadius - r
-
-            if (Math.round(position.distance) === position.distance) {
-              amt += 0.5
-            }
-
-            const curLevel = chunkedColors[position.x][position.y].level
-
-            if (!curLevel || curLevel < amt) {
-              chunkedColors[position.x][position.y] = Object.assign({}, chunkedColors[position.x][position.y], {
-                level: amt,
-                offsetX: position.x - centerX,
-                offsetY: position.y - centerY
-              })
-            }
-          }
-
-          angle += (angleRange[radius - 1] || 1)
-        }
-      }
-
-      while (radius > 0) {
-        drawCircle(radius)
-        radius--
-      }
+      chunkedColors = ColorWallSwatchList.drawCircle(radius, centerX, centerY, chunkedColors)
 
       const _colorMap = _.flatten(chunkedColors)
       const _levelHash = Object.assign({}, levelHash)
@@ -185,10 +184,10 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
         const oldLevel = levelHash[colorRef.id]
         const color = colorHash[colorRef.id]
 
-        // this swatch has previously been active in a different position; reset it to the new position
-        const needsUpdated: boolean = !!(oldLevel && (oldLevel.offsetX !== colorRef.offsetX || oldLevel.offsetY !== colorRef.offsetY))
+        // this swatch has previously been active in a different position reset it to the new position
+        const needsUpdated: boolean = !!(typeof oldLevel !== 'undefined' && (oldLevel.offsetX !== colorRef.offsetX || oldLevel.offsetY !== colorRef.offsetY))
         // this is a swatch which has NOT been active and needs to become active
-        const needsNew: boolean = !!(colorRef.offsetX || colorRef.offsetY || colorRef.level)
+        const needsNew: boolean = !!(colorRef.offsetX || colorRef.offsetY || typeof colorRef.level !== 'undefined')
 
         if (needsUpdated || needsNew) {
           _componentHash[colorRef.id] = ColorWallSwatchList.getColorWallSwatch(colorRef.id, this.activateColor, this.addColor, color, colorRef.level, colorRef.offsetX, colorRef.offsetY)
