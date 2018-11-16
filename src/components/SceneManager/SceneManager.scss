@@ -4,6 +4,8 @@
 
 .prism-scene-manager {
   $hit-area-outline-color: var(getVarName('scenes.hitAreaOutlineColor'));
+  // TODO: Remove this once :root var declarations can be fixed in this build
+  // hardcoding magenta as an outline color for now
   $hit-area-outline-color: magenta;
 
   @keyframes flashHitArea {
