@@ -35,7 +35,7 @@ class SceneManager extends PureComponent<Props, State> {
 
   static defaultProps = {
     maxActiveScenes: 2,
-    type: SCENE_TYPES.ROOM
+    type: SCENE_TYPES.AUTOMOTIVE
   }
 
   state = {

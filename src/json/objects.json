@@ -24,7 +24,7 @@
       "width": 1350,
       "height": 911,
       "surfaces": [
-        {
+{
           "id": 1,
           "shadows": "https://dev-prism-web.ebus.swaws/prism/images/scenes/objects/bike/bike-shadows.jpg",
           "highlights": "https://dev-prism-web.ebus.swaws/prism/images/scenes/objects/bike/bike-highlights.jpg",
