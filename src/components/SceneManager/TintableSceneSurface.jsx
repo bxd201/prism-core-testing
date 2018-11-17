@@ -22,6 +22,7 @@ class TintableSceneSurface extends PureComponent<Props> {
       case SCENE_TYPES.ROOM:
         return <image xlinkHref={image} width='100%' height='100%' mask={`url(#${maskId})`} filter={`url(#${filterId})`} />
       case SCENE_TYPES.OBJECT:
+      case SCENE_TYPES.AUTOMOTIVE:
         return <rect className='rect' x='0' y='0' width='100%' height='100%' mask={`url(#${maskId})`} filter={`url(#${filterId})`} />
     }
   }

@@ -38,6 +38,7 @@ class TintableSceneSurface extends PureComponent<Props> {
             </mask>
           </Fragment>
         )
+      case SCENE_TYPES.AUTOMOTIVE:
       case SCENE_TYPES.OBJECT:
         return (
           <Fragment>

@@ -5,7 +5,7 @@ import _ from 'lodash'
 import type { ScenePayload } from '../shared/types/Scene'
 import type { Color } from '../shared/types/Colors'
 import { SCENE_TYPES } from 'constants/globals'
-import { SW_SCENES_AUTOMOTIVE, SW_SCENES_ROOMS } from 'constants/endpoints'
+import { SW_SCENES_AUTOMOTIVE, SW_SCENES_ROOMS, SW_SCENES_OBJECTS } from 'constants/endpoints'
 
 export const REQUEST_SCENES = 'REQUEST_SCENES'
 const requestScenes = () => {
@@ -81,10 +81,13 @@ export const loadScenes = (type: string) => {
 
     switch (type) {
       case SCENE_TYPES.OBJECT:
-        scenesEndpoint = SW_SCENES_AUTOMOTIVE
+        scenesEndpoint = SW_SCENES_OBJECTS
         break
       case SCENE_TYPES.ROOM:
         scenesEndpoint = SW_SCENES_ROOMS
+        break
+      case SCENE_TYPES.AUTOMOTIVE:
+        scenesEndpoint = SW_SCENES_AUTOMOTIVE
         break
       default:
         scenesEndpoint = SW_SCENES_ROOMS

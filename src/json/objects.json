@@ -1,67 +1,35 @@
 {
-  "count": 4,
+  "count": 2,
   "scenes": [
     {
       "id": 1,
-      "image": "https://crowandsky.github.io/ColorPath/images/vette-front.jpg",
-      "thumb": "https://crowandsky.github.io/ColorPath/images/vette-front.jpg",
-      "width": 2700,
-      "height": 1800,
+      "image": "https://dev-prism-web.ebus.swaws/prism/images/scenes/objects/chair/adarondak.jpg",
+      "thumb": "https://dev-prism-web.ebus.swaws/prism/images/scenes/objects/chair/adarondak.jpg",
+      "width": 1120,
+      "height": 1120,
       "surfaces": [
         {
           "id": 1,
-          "shadows": "https://crowandsky.github.io/ColorPath/images/vette-front-shadows.jpg",
-          "highlights": "https://crowandsky.github.io/ColorPath/images/vette-front-highlights.jpg",
-          "mask": "https://crowandsky.github.io/ColorPath/images/vette-front-mask.png",
-          "hitArea": "https://dev-prism-web.ebus.swaws/prism/images/scenes/automotive/front/1.svg"
+          "shadows": "https://dev-prism-web.ebus.swaws/prism/images/scenes/objects/chair/adarondak-shadows.jpg",
+          "highlights": "https://dev-prism-web.ebus.swaws/prism/images/scenes/objects/chair/adarondak-highlights.jpg",
+          "mask": "https://dev-prism-web.ebus.swaws/prism/images/scenes/objects/chair/adarondak-mask.png",
+          "hitArea": "https://dev-prism-web.ebus.swaws/prism/images/scenes/objects/chair/hitArea.svg"
         }
       ]
     },
     {
       "id": 2,
-      "image": "https://crowandsky.github.io/ColorPath/images/vette-side.jpg",
-      "thumb": "https://crowandsky.github.io/ColorPath/images/vette-side.jpg",
-      "width": 2700,
-      "height": 1800,
+      "image": "https://dev-prism-web.ebus.swaws/prism/images/scenes/objects/bike/bike.jpg",
+      "thumb": "https://dev-prism-web.ebus.swaws/prism/images/scenes/objects/bike/bike.jpg",
+      "width": 1350,
+      "height": 911,
       "surfaces": [
         {
           "id": 1,
-          "shadows": "https://crowandsky.github.io/ColorPath/images/vette-side-shadows.jpg",
-          "highlights": "https://crowandsky.github.io/ColorPath/images/vette-side-highlights-lighter.jpg",
-          "mask": "https://crowandsky.github.io/ColorPath/images/vette-side-mask.png",
-          "hitArea": "https://dev-prism-web.ebus.swaws/prism/images/scenes/automotive/side/1.svg"
-        }
-      ]
-    },
-    {
-      "id": 3,
-      "image": "https://crowandsky.github.io/ColorPath/images/vette-wolf.jpg",
-      "thumb": "https://crowandsky.github.io/ColorPath/images/vette-wolf.jpg",
-      "width": 2700,
-      "height": 1800,
-      "surfaces": [
-        {
-          "id": 1,
-          "shadows": "https://crowandsky.github.io/ColorPath/images/vette-wolf-shadows.jpg",
-          "highlights": "https://crowandsky.github.io/ColorPath/images/vette-wolf-highlights.jpg",
-          "mask": "https://crowandsky.github.io/ColorPath/images/vette-wolf-mask.png",
-          "hitArea": "https://dev-prism-web.ebus.swaws/prism/images/scenes/automotive/wolf/1.svg"
-        }
-      ]
-    },
-    {
-      "id": 4,
-      "image": "https://crowandsky.github.io/ColorPath/images/vette-profile.jpg",
-      "thumb": "https://crowandsky.github.io/ColorPath/images/vette-profile.jpg",
-      "width": 2016,
-      "height": 1344,
-      "surfaces": [
-        {
-          "id": 1,
-          "shadows": "https://crowandsky.github.io/ColorPath/images/vette-profile-shadows.jpg",
-          "highlights": "https://crowandsky.github.io/ColorPath/images/vette-profile-highlights.jpg",
-          "mask": "https://crowandsky.github.io/ColorPath/images/vette-profile-mask.png",
-          "hitArea": "https://dev-prism-web.ebus.swaws/prism/images/scenes/automotive/profile/1.svg"
+          "shadows": "https://dev-prism-web.ebus.swaws/prism/images/scenes/objects/bike/bike-shadows.jpg",
+          "highlights": "https://dev-prism-web.ebus.swaws/prism/images/scenes/objects/bike/bike-highlights.jpg",
+          "mask": "https://dev-prism-web.ebus.swaws/prism/images/scenes/objects/bike/bike-mask.png",
+          "hitArea": "https://dev-prism-web.ebus.swaws/prism/images/scenes/objects/bike/hitArea.svg"
         }
       ]
     }

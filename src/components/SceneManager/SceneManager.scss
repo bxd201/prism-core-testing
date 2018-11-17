@@ -4,6 +4,7 @@
 
 .prism-scene-manager {
   $hit-area-outline-color: var(getVarName('scenes.hitAreaOutlineColor'));
+  $hit-area-outline-color: magenta;
 
   @keyframes flashHitArea {
     0% {
