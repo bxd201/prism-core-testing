@@ -40,10 +40,12 @@ class ImagePreloader extends PureComponent<Props, State> {
     }
 
     const newPromise = new Promise((resolve: Function, reject: Function) => {
-      let img = new Image()
-      img.onload = () => { resolve(path) }
-      img.onerror = (err: any) => { reject(err) }
-      img.src = path
+      // non-blocking request, unlike setting Image source
+      window.fetch(path, {
+        method: 'GET'
+      })
+        .then(response => { resolve(path) })
+        .catch((err: any) => { reject(err) })
     })
 
     ImagePreloader.promiseMap[path] = newPromise
