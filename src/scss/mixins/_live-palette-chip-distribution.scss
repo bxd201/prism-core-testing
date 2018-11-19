@@ -2,8 +2,8 @@
 	* BEGIN: Global live palette related constants. These are referenced directly as values for properties in other Sass files.
 	* They need to be prefixed with '$livePalette__'
 */
-$livePalette__chip-side-margin: 1%;
-$livePalette__chip-side-margin-small: 0.5%;
+$livePalette__chip-side-margin: 0.5%;
+$livePalette__chip-side-margin-small: 0.25%;
 $livePalette__detail-palette-set-size: 7;
 $livePalette__palette-set-size: 8;
 $livePalette__even-chip-dimension: (100% - $livePalette__chip-side-margin * ($livePalette__palette-set-size - 1)) / $livePalette__palette-set-size;

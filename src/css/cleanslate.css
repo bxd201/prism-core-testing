@@ -40,7 +40,7 @@
     color:inherit;
     counter-increment:none;
     counter-reset:none;
-    cursor:auto;
+    cursor:inherit;
     direction:inherit;
     display:inline;
     float:none;
@@ -161,6 +161,11 @@
     word-break: normal;
 }
 
+.cleanslate svg {
+    /* leaving this as cursor: auto from the above would block buttons containing SVGs from displaying the pointer */
+    cursor: inherit;
+}
+
 /* == BLOCK-LEVEL == */
 /* Actually, some of these should be inline-block and other values, but block works fine (TODO: rigorously verify this) */
 /* HTML 4.01 */
@@ -217,14 +222,14 @@
 /* == SPECIFIC ELEMENTS == */
 /* Some of these are browser defaults; some are just useful resets */
 .cleanslate ol, .cleanslate ul {
-    margin: 1em 0;
+    margin: 0;
 }
 .cleanslate ul li, .cleanslate ul ul li, .cleanslate ul ul ul li, .cleanslate ol li, .cleanslate ol ol li, .cleanslate ol ol ol li, .cleanslate ul ol ol li, .cleanslate ul ul ol li, .cleanslate ol ul ul li, .cleanslate ol ol ul li {
     list-style-position: inside;
-    margin-top: .08em;
+    margin-top: 0;
 }
 .cleanslate ol ol, .cleanslate ol ol ol, .cleanslate ul ul, .cleanslate ul ul ul, .cleanslate ol ul, .cleanslate ol ul ul, .cleanslate ol ol ul, .cleanslate ul ol, .cleanslate ul ol ol, .cleanslate ul ul ol {
-    padding-left: 40px;
+    padding-left: 0;
     margin: 0;
 }
 /* helper for general navigation */
@@ -249,7 +254,7 @@
     /* Fixes IE7 issue with positioning of nested bullets */
     min-height:auto;
     min-width:auto;
-    padding-left: 20px; /* replace -webkit-padding-start: 40px; */
+    padding-left: 0; /* replace -webkit-padding-start: 40px; */
 }
 .cleanslate strong {
     font-weight:bold;
@@ -261,54 +266,35 @@
   font-family:monospace;
 }
 .cleanslate a {
-    color: blue;
+    color: #39c;
     text-decoration: underline;
 }
 .cleanslate a:visited {
-    color: #529;
+    color: #369;
 }
 .cleanslate a, .cleanslate a *, .cleanslate input[type=submit], .cleanslate input[type=button], .cleanslate input[type=radio], .cleanslate input[type=checkbox], .cleanslate select, .cleanslate button {
     cursor:pointer;
 }
 .cleanslate button, .cleanslate input[type=submit] {
     text-align: center;
-    padding: 2px 6px 3px;
-    border-radius: 4px;
+    padding: 0;
+    border-radius: 0;
     text-decoration: none;
-    font-family: arial, helvetica, sans-serif;
+    font-family: sans-serif;
     font-size: small;
-    background: white;
-    -webkit-appearance: push-button;
+    background: none;
+    -webkit-appearance: none;
     color: buttontext;
-    border: 1px #a6a6a6 solid;
-    background: lightgrey; /* Old browsers */
-    background: rgb(255,255,255); /* Old browsers */
-    background: -moz-linear-gradient(top,  rgba(255,255,255,1) 0%, rgba(221,221,221,1) 100%, rgba(209,209,209,1) 100%, rgba(221,221,221,1) 100%); /* FF3.6+ */
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,255,255,1)), color-stop(100%,rgba(221,221,221,1)), color-stop(100%,rgba(209,209,209,1)), color-stop(100%,rgba(221,221,221,1))); /* Chrome,Safari4+ */
-    background: -webkit-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(221,221,221,1) 100%,rgba(209,209,209,1) 100%,rgba(221,221,221,1) 100%); /* Chrome10+,Safari5.1+ */
-    background: -o-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(221,221,221,1) 100%,rgba(209,209,209,1) 100%,rgba(221,221,221,1) 100%); /* Opera 11.10+ */
-    background: -ms-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(221,221,221,1) 100%,rgba(209,209,209,1) 100%,rgba(221,221,221,1) 100%); /* IE10+ */
-    background: linear-gradient(to bottom,  rgba(255,255,255,1) 0%,rgba(221,221,221,1) 100%,rgba(209,209,209,1) 100%,rgba(221,221,221,1) 100%); /* W3C */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#dddddd',GradientType=0 ); /* IE6-9 */
-    -webkit-box-shadow: 1px 1px 0px #eee;
-       -moz-box-shadow: 1px 1px 0px #eee;
-         -o-box-shadow: 1px 1px 0px #eee;
-            box-shadow: 1px 1px 0px #eee;
+    border: none;
+    filter: none; /* IE6-9 */
+    -webkit-box-shadow: none;
+       -moz-box-shadow: none;
+         -o-box-shadow: none;
+            box-shadow: none;
     outline: initial;
 }
 .cleanslate button:active, .cleanslate input[type=submit]:active, .cleanslate input[type=button]:active, .cleanslate button:active {
-	background: rgb(59,103,158); /* Old browsers */
-	background: -moz-linear-gradient(top, rgba(59,103,158,1) 0%, rgba(43,136,217,1) 50%, rgba(32,124,202,1) 51%, rgba(125,185,232,1) 100%); /* FF3.6+ */
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(59,103,158,1)), color-stop(50%,rgba(43,136,217,1)), color-stop(51%,rgba(32,124,202,1)), color-stop(100%,rgba(125,185,232,1))); /* Chrome,Safari4+ */
-	background: -webkit-linear-gradient(top, rgba(59,103,158,1) 0%,rgba(43,136,217,1) 50%,rgba(32,124,202,1) 51%,rgba(125,185,232,1) 100%); /* Chrome10+,Safari5.1+ */
-	background: -o-linear-gradient(top, rgba(59,103,158,1) 0%,rgba(43,136,217,1) 50%,rgba(32,124,202,1) 51%,rgba(125,185,232,1) 100%); /* Opera 11.10+ */
-	background: -ms-linear-gradient(top, rgba(59,103,158,1) 0%,rgba(43,136,217,1) 50%,rgba(32,124,202,1) 51%,rgba(125,185,232,1) 100%); /* IE10+ */
-	background: linear-gradient(to bottom, rgba(59,103,158,1) 0%,rgba(43,136,217,1) 50%,rgba(32,124,202,1) 51%,rgba(125,185,232,1) 100%); /* W3C */
-	border-color: #5259b0;
-}
-.cleanslate button {
-    padding: 1px 6px 2px 6px;
-    margin-right: 5px;
+	background: none; /* W3C */
 }
 .cleanslate input[type=hidden] {
     display:none;
@@ -318,11 +304,11 @@
     -webkit-appearance: textarea;
     background: white;
     padding: 2px;
-    margin-left: 4px;
+    margin-left: 0;
     word-wrap: break-word;
     white-space: pre-wrap;
     font-size: 11px;
-    font-family: arial, helvetica, sans-serif;
+    font-family: sans-serif;
     line-height: 13px;
     resize: both;
 }
@@ -331,7 +317,7 @@
 }
 .cleanslate select {
     font-size: 11px;
-    font-family: helvetica, arial, sans-serif;
+    font-family: sans-serif;
     display: inline-block;
 }
 .cleanslate textarea:focus, .cleanslate input:focus {
@@ -440,12 +426,13 @@
     direction:ltr;
     text-align: left; /* for IE, Opera */
     text-align: start; /* recommended W3C Spec */
-    font-family: "sans-serif"; /* Override this with whatever font-family is required */
+    font-family: sans-serif; /* Override this with whatever font-family is required */
     color: black;
     font-style:normal;
     font-weight:normal;
     text-decoration:none;
     list-style-type:disc;
+    cursor: auto;
 }
 
 .cleanslate pre {

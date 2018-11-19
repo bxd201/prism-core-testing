@@ -31,14 +31,19 @@ class Search extends PureComponent<Props> {
     }
   }
 
+  handleSubmit = e => {
+    e.preventDefault()
+  }
+
   render () {
     const { colors } = this.props
 
     return (
       <div className={Search.baseClass}>
-        <form>
+        <form onSubmit={this.handleSubmit}>
           <input
             type='search'
+            placeholder='Color name, number, or family'
             className={`${Search.baseClass}__input`}
             onInput={this.handleInput} />
         </form>

@@ -234,6 +234,7 @@
 .color-wall-swatches {
   // remove whitespace around inline-block elements
   font-size: 0;
+  margin: 2px 0;
 
   &__swatch {
     display: inline-block;
@@ -263,6 +264,7 @@
   text-align: center;
   height: 50px;
   line-height: 50px;
+  padding: 0 .5em;
   cursor: pointer;
   user-select: none;
   border-radius: 3px;
