@@ -36,7 +36,8 @@ const ColorDataWrapper = (WrappedComponent: any) => {
 
   const mapStateToProps = (state, props) => {
     return {
-      colors: state.colors.items,
+      colors: state.colors.items.colors,
+      brights: state.colors.items.brights,
       family: state.colors.family
     }
   }

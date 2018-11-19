@@ -1,7 +1,7 @@
 // @flow
 import axios from 'axios'
 
-import { SW_COLORS_BY_FAMILY_ENDPOINT } from '../constants/endpoints'
+import { SW_COLORS_BY_FAMILY_ENDPOINT, SW_BRIGHTS_ENDPOINT } from '../constants/endpoints'
 import type { ColorPayload } from '../shared/types/Colors'
 
 export const REQUEST_COLORS: string = 'REQUEST_COLORS'
@@ -13,12 +13,13 @@ const requestColors = () => {
 }
 
 export const RECEIVE_COLORS: string = 'RECEIVE_COLORS'
-const receiveColors = (colors: ColorPayload) => {
+const receiveColors = (colorData) => {
   return {
     type: RECEIVE_COLORS,
     payload: {
       loading: false,
-      colors: colors
+      colors: colorData.colors,
+      brights: colorData.brights
     }
   }
 }
@@ -35,10 +36,18 @@ export const loadColors = () => {
   return (dispatch: Function) => {
     dispatch(requestColors())
 
-    return axios.get(SW_COLORS_BY_FAMILY_ENDPOINT)
-      .then(r => r.data)
-      .then(data => {
-        dispatch(receiveColors(data))
+    return Promise
+      .all([axios.get(SW_COLORS_BY_FAMILY_ENDPOINT), axios.get(SW_BRIGHTS_ENDPOINT)])
+      .then(r => {
+        const colors = r[0].data
+        const brights = r[1].data
+
+        dispatch(receiveColors({ colors, brights }))
       })
+    // return axios.get(SW_COLORS_BY_FAMILY_ENDPOINT)
+    //   .then(r => r.data)
+    //   .then(data => {
+    //     dispatch(receiveColors(data))
+    //   })
   }
 }

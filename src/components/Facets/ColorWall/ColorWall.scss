@@ -54,6 +54,19 @@
   }
 }
 
+.sw-colorwall {
+.color-wall-swatches__swatch {
+width: calc(100%/7);
+}
+}
+
+.standard-colorwall {
+.color-wall-swatches__swatch {
+width: calc(100%/56);
+}
+}
+
+
 .color-wall-swatches {
   // remove whitespace around inline-block elements
   font-size: 0;
@@ -85,8 +98,8 @@
   position: relative;
 
   &::after {
-    content: '';
-    display: block;
+      content: '';
+      display: block;
     position: absolute;
     background: white;
 
@@ -94,12 +107,12 @@
     animation-duration: $transition-time;
     animation-timing-function: ease-out;
     animation-fill-mode: backwards;
-    height: 0;
+      height: 0;
     left: 0;
     top: 0;
     width: 0;
     z-index: -1;
-  }
+    }
 
   .ReactVirtualized__Grid__innerScrollContainer {
     overflow: visible !important;

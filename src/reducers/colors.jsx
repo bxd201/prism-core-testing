@@ -16,7 +16,7 @@ export const colors = (state = initialState, action) => {
 
     case 'RECEIVE_COLORS':
       return Object.assign({}, state, {
-        items: action.payload.colors,
+        items: { colors: action.payload.colors, brights: action.payload.brights },
         status: {
           loading: action.payload.loading
         }
