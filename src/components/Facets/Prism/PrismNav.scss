@@ -1,0 +1,19 @@
+.prism-nav-btn {
+  border: none;
+  background: #eee;
+  display: inline-block;
+  color: black;
+  padding: 1em;
+  border-radius: 3px;
+
+  &:hover, &:focus {
+    background: #ddd;
+  }
+
+  &--active {
+    &, &:focus {
+      background: #222;
+      color: white;
+    }
+  }
+}

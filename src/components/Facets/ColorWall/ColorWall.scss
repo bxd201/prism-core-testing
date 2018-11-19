@@ -265,12 +265,18 @@
   line-height: 50px;
   cursor: pointer;
   user-select: none;
+  border-radius: 3px;
 }
 
 .color-wall-button {
   display: none;
-}
 
-.color-wall-button:checked + .color-wall-label {
-  background: #eaeaea;
+  &:focus + .color-wall-label,
+  &:hover + .color-wall-label {
+    background: #eaeaea;
+  }
+  &:checked + .color-wall-label {
+    background: #222;
+    color: white;
+  }
 }
