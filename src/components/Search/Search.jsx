@@ -12,6 +12,10 @@ type Props = {
   loadSearchResults: Function
 }
 
+function keyById (colors) {
+  return colors.reduce((acc, { id }) => acc + id, '')
+}
+
 class Search extends PureComponent<Props> {
   static baseClass = 'prism-search'
 
@@ -41,7 +45,7 @@ class Search extends PureComponent<Props> {
 
         {!colors.length
           ? <p>'Enter a color name, number or family in the text field above.'</p>
-          : <ColorWallSwatchList colors={colors} />
+          : <ColorWallSwatchList key={keyById(colors)} colors={colors} />
         }
       </div>
     )
