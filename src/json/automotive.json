@@ -3,65 +3,65 @@
   "scenes": [
     {
       "id": 4,
-      "image": "https://crowandsky.github.io/ColorPath/images/vette-profile.jpg",
-      "thumb": "https://crowandsky.github.io/ColorPath/images/vette-profile.jpg",
+      "image": "http://localhost:8080/prism/images/scenes/automotive/profile/vette-profile.jpg",
+      "thumb": "http://localhost:8080/prism/images/scenes/automotive/profile/vette-profile.jpg",
       "width": 2016,
       "height": 1344,
       "surfaces": [
         {
           "id": 1,
-          "shadows": "https://crowandsky.github.io/ColorPath/images/vette-profile-shadows.jpg",
-          "highlights": "https://crowandsky.github.io/ColorPath/images/vette-profile-highlights.jpg",
-          "mask": "https://crowandsky.github.io/ColorPath/images/vette-profile-mask.png",
-          "hitArea": "https://dev-prism-web.ebus.swaws/prism/images/scenes/automotive/profile/1.svg"
+          "shadows": "http://localhost:8080/prism/images/scenes/automotive/profile/vette-profile-shadows.jpg",
+          "highlights": "http://localhost:8080/prism/images/scenes/automotive/profile/vette-profile-highlights.jpg",
+          "mask": "http://localhost:8080/prism/images/scenes/automotive/profile/vette-profile-mask.png",
+          "hitArea": "http://localhost:8080/prism/images/scenes/automotive/profile/1.svg"
         }
       ]
     },
     {
       "id": 2,
-      "image": "https://crowandsky.github.io/ColorPath/images/vette-side.jpg",
-      "thumb": "https://crowandsky.github.io/ColorPath/images/vette-side.jpg",
+      "image": "http://localhost:8080/prism/images/scenes/automotive/side/vette-side.jpg",
+      "thumb": "http://localhost:8080/prism/images/scenes/automotive/side/vette-side.jpg",
       "width": 2700,
       "height": 1800,
       "surfaces": [
         {
           "id": 1,
-          "shadows": "https://crowandsky.github.io/ColorPath/images/vette-side-shadows.jpg",
-          "highlights": "https://crowandsky.github.io/ColorPath/images/vette-side-highlights-lighter.jpg",
-          "mask": "https://crowandsky.github.io/ColorPath/images/vette-side-mask.png",
-          "hitArea": "https://dev-prism-web.ebus.swaws/prism/images/scenes/automotive/side/1.svg"
+          "shadows": "http://localhost:8080/prism/images/scenes/automotive/side/vette-side-shadows.jpg",
+          "highlights": "http://localhost:8080/prism/images/scenes/automotive/side/vette-side-highlights-lighter.jpg",
+          "mask": "http://localhost:8080/prism/images/scenes/automotive/side/vette-side-mask.png",
+          "hitArea": "http://localhost:8080/prism/images/scenes/automotive/side/1.svg"
         }
       ]
     },
     {
       "id": 3,
-      "image": "https://crowandsky.github.io/ColorPath/images/vette-wolf.jpg",
-      "thumb": "https://crowandsky.github.io/ColorPath/images/vette-wolf.jpg",
+      "image": "http://localhost:8080/prism/images/scenes/automotive/wolf/vette-wolf.jpg",
+      "thumb": "http://localhost:8080/prism/images/scenes/automotive/wolf/vette-wolf.jpg",
       "width": 2700,
       "height": 1800,
       "surfaces": [
         {
           "id": 1,
-          "shadows": "https://crowandsky.github.io/ColorPath/images/vette-wolf-shadows.jpg",
-          "highlights": "https://crowandsky.github.io/ColorPath/images/vette-wolf-highlights.jpg",
-          "mask": "https://crowandsky.github.io/ColorPath/images/vette-wolf-mask.png",
-          "hitArea": "https://dev-prism-web.ebus.swaws/prism/images/scenes/automotive/wolf/1.svg"
+          "shadows": "http://localhost:8080/prism/images/scenes/automotive/wolf/vette-wolf-shadows.jpg",
+          "highlights": "http://localhost:8080/prism/images/scenes/automotive/wolf/vette-wolf-highlights.jpg",
+          "mask": "http://localhost:8080/prism/images/scenes/automotive/wolf/vette-wolf-mask.png",
+          "hitArea": "http://localhost:8080/prism/images/scenes/automotive/wolf/1.svg"
         }
       ]
     },
     {
       "id": 1,
-      "image": "https://crowandsky.github.io/ColorPath/images/vette-front.jpg",
-      "thumb": "https://crowandsky.github.io/ColorPath/images/vette-front.jpg",
+      "image": "http://localhost:8080/prism/images/scenes/automotive/front/vette-front.jpg",
+      "thumb": "http://localhost:8080/prism/images/scenes/automotive/front/vette-front.jpg",
       "width": 2700,
       "height": 1800,
       "surfaces": [
         {
           "id": 1,
-          "shadows": "https://crowandsky.github.io/ColorPath/images/vette-front-shadows.jpg",
-          "highlights": "https://crowandsky.github.io/ColorPath/images/vette-front-highlights.jpg",
-          "mask": "https://crowandsky.github.io/ColorPath/images/vette-front-mask.png",
-          "hitArea": "https://dev-prism-web.ebus.swaws/prism/images/scenes/automotive/front/1.svg"
+          "shadows": "http://localhost:8080/prism/images/scenes/automotive/front/vette-front-shadows.jpg",
+          "highlights": "http://localhost:8080/prism/images/scenes/automotive/front/vette-front-highlights.jpg",
+          "mask": "http://localhost:8080/prism/images/scenes/automotive/front/vette-front-mask.png",
+          "hitArea": "http://localhost:8080/prism/images/scenes/automotive/front/1.svg"
         }
       ]
     }
