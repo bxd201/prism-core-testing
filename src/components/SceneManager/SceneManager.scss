@@ -99,6 +99,7 @@
         border-right: none;
         color: $btn-active-color-text;
         content: '\02714\fe0e'; // adding \fe0e to make mobile browsers respect this as text
+        display: block;
         font-size: $icon-size;
         line-height: 1.1;
         min-width: $icon-size;

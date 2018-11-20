@@ -243,7 +243,7 @@ class TintableScene extends PureComponent<Props, State> {
     }
 
     return (
-      <div className={TintableScene.classNames.base}>
+      <div className={TintableScene.classNames.base} style={{ maxWidth: `${Math.round(width / 2)}px` }}>
         <div className={TintableScene.classNames.inner} style={{ paddingTop: `${ratio * 100}%` }}>
           {content}
         </div>
