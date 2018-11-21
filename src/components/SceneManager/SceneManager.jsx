@@ -1,7 +1,6 @@
 // @flow
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
-import _ from 'lodash'
 
 import { SCENE_TYPES } from 'constants/globals'
 import { loadScenes, paintSceneSurface, activateScene, deactivateScene } from '../../actions/scenes'
@@ -135,7 +134,7 @@ class SceneManager extends PureComponent<Props, State> {
 
         <div className={`${SceneManager.baseClass}__block`}>
           {activeScenes.map((sceneId, index) => {
-            const scene = _.find(scenes, { id: sceneId })
+            const scene = scenes.filter(scene => (scene.id === sceneId))[0]
 
             if (!scene) {
               return null

@@ -1,7 +1,7 @@
 /* globals Image */
 // @flow
 import React, { PureComponent } from 'react'
-import _ from 'lodash'
+import { isEmpty, flattenDeep } from 'lodash'
 
 type Props = {
   // $FlowIgnore
@@ -58,8 +58,8 @@ class ImagePreloader extends PureComponent<Props, State> {
 
     const { preload } = this.props
 
-    if (!_.isEmpty(preload)) {
-      const flatPreload = _.flattenDeep(preload).filter(val => !!val)
+    if (!isEmpty(preload)) {
+      const flatPreload = flattenDeep(preload).filter(val => !!val)
 
       if (flatPreload.length) {
         Promise.all(flatPreload.map(src => ImagePreloader.makePromise(src))).then((response: any) => {

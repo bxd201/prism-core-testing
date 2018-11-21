@@ -1,6 +1,6 @@
 // @flow
 import React, { PureComponent, Fragment } from 'react'
-import _ from 'lodash'
+import { uniqueId, uniq, without, concat } from 'lodash'
 
 import type { Color } from '../../shared/types/Colors'
 import type { Surface } from '../../shared/types/Scene'
@@ -69,7 +69,7 @@ class TintableScene extends PureComponent<Props, State> {
     this.state = {
       activePreviewSurfaces: [],
       // must be unique among ALL TintableScene instances so as not to cross-contaminate filter definition IDs
-      instanceId: _.uniqueId('TS'),
+      instanceId: uniqueId('TS'),
       hitAreaError: false,
       hitAreaLoaded: props.surfaces.length === 0
     }
@@ -117,7 +117,7 @@ class TintableScene extends PureComponent<Props, State> {
     // add the specified surface to activePreviewSurfaces -- this is an array since a one-for-one add/remove
     // was adding/removing in the order that the surfaces exist in the scene data, not in the hovering in/out order
     this.setState({
-      activePreviewSurfaces: _.uniq(_.concat(activePreviewSurfaces, surfaceId))
+      activePreviewSurfaces: uniq(concat(activePreviewSurfaces, surfaceId))
     })
   }
 
@@ -125,7 +125,7 @@ class TintableScene extends PureComponent<Props, State> {
     const { activePreviewSurfaces } = this.state
 
     this.setState({
-      activePreviewSurfaces: _.without(activePreviewSurfaces, surfaceId)
+      activePreviewSurfaces: without(activePreviewSurfaces, surfaceId)
     })
   }
 

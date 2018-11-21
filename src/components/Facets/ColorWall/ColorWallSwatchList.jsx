@@ -1,7 +1,7 @@
 // @flow
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
-import _ from 'lodash'
+import { findIndex, chunk, flatten } from 'lodash'
 
 import ColorWallSwatch from './ColorWallSwatch'
 import { add } from '../../../actions/live-palette'
@@ -93,9 +93,9 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     return <ColorWallSwatch key={key} onEngage={onEngage} onAdd={onAdd} color={color} level={level} offsetX={offsetX} offsetY={offsetY} />
   }
 
-  static getColorCoords (id: number, chunkedColors: ColorMap[]) {
-    return _.map(chunkedColors, (colorRow: ColorMap, x: number) => {
-      const y = _.findIndex(colorRow, (colorProps: ColorReference) => {
+  static getColorCoords (id: number, chunkedColors: ColorMap[]): number[] | void {
+    return chunkedColors.map((colorRow: ColorMap, x: number) => {
+      const y = findIndex(colorRow, (colorProps: ColorReference) => {
         return colorProps.id === id
       })
 
@@ -161,7 +161,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     const { colorHash, componentHash, levelHash, originalColorMap } = this.state
 
     if (activeSwatchId) {
-      let chunkedColors = _.chunk(originalColorMap, 56)
+      let chunkedColors = chunk(originalColorMap, 56)
       const coords: number[] | void = ColorWallSwatchList.getColorCoords(activeSwatchId, chunkedColors)
 
       if (!coords || !coords.length) {
@@ -176,7 +176,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
 
       chunkedColors = ColorWallSwatchList.drawCircle(radius, centerX, centerY, chunkedColors)
 
-      const _colorMap = _.flatten(chunkedColors)
+      const _colorMap = flatten(chunkedColors)
       const _levelHash = Object.assign({}, levelHash)
       const _componentHash = Object.assign({}, componentHash)
 

@@ -5,7 +5,7 @@ import React, { PureComponent } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FormattedMessage } from 'react-intl'
 import { connect } from 'react-redux'
-import _ from 'lodash'
+import { without, times, flatMap, intersection } from 'lodash'
 import update from 'immutability-helper'
 import { Link } from 'react-router-dom'
 
@@ -56,7 +56,7 @@ class LivePalette extends PureComponent<Props, State> {
       // TODO: This depends on manual intervention to remove unhelpful color families. Type of color (red, yellow, etc) should be
       // determined programmatically based on color values.
       if (prevColor) {
-        let mainFam = _.without(_.intersection(prevColor.colorFamilyNames, curColor.colorFamilyNames), 'Timeless Color', 'Historic Color', 'White & Pastel')[0]
+        let mainFam = without(intersection(prevColor.colorFamilyNames, curColor.colorFamilyNames), 'Timeless Color', 'Historic Color', 'White & Pastel')[0]
 
         if (mainFam) {
           let prevLightness = prevColor.lightness
@@ -102,7 +102,7 @@ class LivePalette extends PureComponent<Props, State> {
     let disabledSlots = []
     const additionalSlots = (LP_MAX_COLORS_ALLOWED - 1) - activeSlots.length
     if (additionalSlots > 0) {
-      disabledSlots = _.times(additionalSlots, (index) => <EmptySlot key={index} />)
+      disabledSlots = times(additionalSlots, (index) => <EmptySlot key={index} />)
     }
 
     const ADD_COLOR_TEXT = (colors.length) ? 'ADD_A_COLOR' : 'FIND_COLORS_IN_CW'
@@ -150,8 +150,8 @@ class LivePalette extends PureComponent<Props, State> {
 
   moveColor = (originColorId: Number, destinationColorId: Number) => {
     const { colors } = this.props
-    // $FlowIgnore - ignoring flow validation on this line because _.flatMap's flow-type is more strict than lodash's actual implementation
-    const colorsByIndex = _.flatMap(colors, color => color.id) // creates an array of only all color ids
+    // $FlowIgnore - ignoring flow validation on this line because flatMap's flow-type is more strict than lodash's actual implementation
+    const colorsByIndex = flatMap(colors, color => color.id) // creates an array of only all color ids
     const originIndex = colorsByIndex.indexOf(originColorId) // get the index of the origin color
     const destIndex = colorsByIndex.indexOf(destinationColorId) // get the index of the dest color
 

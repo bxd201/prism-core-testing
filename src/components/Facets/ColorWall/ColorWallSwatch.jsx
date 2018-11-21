@@ -1,7 +1,6 @@
-/* eslint-disable */
 // @flow
 import React, { PureComponent, Fragment } from 'react'
-import _ from 'lodash'
+import { memoize } from 'lodash'
 
 import { type Color } from '../../../shared/types/Colors'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -18,7 +17,7 @@ type Props = {
   active?: boolean
 }
 
-class ColorWallSwatch extends PureComponent<Props, State> {
+class ColorWallSwatch extends PureComponent<Props> {
   static CLASS_NAMES = {
     BASE: 'color-swatch-inner',
     BASE_ACTIVE: 'color-swatch-inner--active',
@@ -60,7 +59,7 @@ class ColorWallSwatch extends PureComponent<Props, State> {
     )
   }
 
-  static numToString = _.memoize(function numToString (num: number) {
+  static numToString = memoize(function numToString (num: number) {
     return num.toString().replace(/-/g, 'n').replace(/\./g, '-')
   })
 

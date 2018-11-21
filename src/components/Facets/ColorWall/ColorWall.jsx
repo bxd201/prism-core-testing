@@ -2,7 +2,7 @@
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
-import _ from 'lodash'
+import { flatten, sortBy } from 'lodash'
 
 import { filterByFamily } from '../../../actions/loadColors'
 
@@ -42,7 +42,7 @@ class ColorWall extends PureComponent<Props> {
   }
 
   get colorFamilies () {
-    return this.allColors || (this.allColors = _.flatten(Object.keys(this.props.colors).map(family => {
+    return this.allColors || (this.allColors = flatten(Object.keys(this.props.colors).map(family => {
       return this.colorFamily(family)
     })))
   }
@@ -62,19 +62,19 @@ class ColorWall extends PureComponent<Props> {
     switch (displayOrder) {
       case DISPLAY_ORDER_LIGHTNESS:
         // $FlowIgnore
-        ColorWallColors = _.sortBy(ColorWallColors, 'lightness', 'hue', 'saturation')
+        ColorWallColors = sortBy(ColorWallColors, 'lightness', 'hue', 'saturation')
         break
       case DISPLAY_ORDER_COLOR:
         // $FlowIgnore
-        ColorWallColors = _.sortBy(ColorWallColors, 'hue', 'lightness', 'saturation')
+        ColorWallColors = sortBy(ColorWallColors, 'hue', 'lightness', 'saturation')
         break
       case DISPLAY_ORDER_SATURATION:
         // $FlowIgnore
-        ColorWallColors = _.sortBy(ColorWallColors, 'saturation', 'hue', 'lightness')
+        ColorWallColors = sortBy(ColorWallColors, 'saturation', 'hue', 'lightness')
         break
       case DISPLAY_ORDER_BRIGHTNESS:
         // $FlowIgnore
-        ColorWallColors = _.sortBy(ColorWallColors, color => (color.saturation * color.lightness), 'hue')
+        ColorWallColors = sortBy(ColorWallColors, color => (color.saturation * color.lightness), 'hue')
         break
       case DISPLAY_ORDER_DEFAULT:
       default:
