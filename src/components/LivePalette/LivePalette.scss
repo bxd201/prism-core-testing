@@ -16,7 +16,7 @@
     background-color: #ebebeb;
     position: relative;
     cursor: pointer;
-    transition: width .6s;
+    transition: width .6s ease-out, opacity .2s ease-out;
     height: 0;
     overflow: hidden;
 

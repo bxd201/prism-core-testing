@@ -28,7 +28,7 @@ class ActiveSlot extends PureComponent<Props> {
   render () {
     const { color, active, connectDragSource, connectDropTarget, isDragging } = this.props
     const { isDeleting } = this.state
-    const opacity = isDragging ? 0 : 1
+    const opacity = isDragging ? 0.33 : 1
     const LIGHT_DARK_CLASS = color.isDark ? 'prism-live-palette__color-details--dark' : 'prism-live-palette__color-details--light'
 
     return connectDragSource && connectDropTarget && connectDragSource(
