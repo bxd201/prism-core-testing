@@ -50,7 +50,7 @@ class Search extends PureComponent<Props> {
 
         {!colors.length
           ? <p>'Enter a color name, number or family in the text field above.'</p>
-          : <ColorWallSwatchList key={keyById(colors)} colors={colors} />
+          : <ColorWallSwatchList cellSize={50} key={keyById(colors)} colors={colors} />
         }
       </div>
     )

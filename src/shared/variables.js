@@ -3,9 +3,9 @@ module.exports.varValues = {
   spacing: '1rem',
   corner: '2px',
   breakpoints: {
-    xs: '0em' /* 0px */,
-    sm: '30em' /* 480px */,
-    md: '64em' /* 1024px */,
+    xs: '0em', /* 0px */
+    sm: '30em', /* 480px */
+    md: '64em', /* 1024px */
     lg: '75em' /* 1200px */
   },
   typography: {
@@ -25,7 +25,9 @@ module.exports.varValues = {
     swBlue: '#2c97de'
   },
   colorWall: {
-    swatchColumns: 56 // default SW color chunks
+    swatchColumns: 56, // default SW color chunks
+    exitTransitionMS: 500,
+    enterTransitionMS: 500
   },
   scenes: {
     hitAreaOutlineColor: '255, 0, 255' // RGB value of hit area outline (must be RGB, not hex)

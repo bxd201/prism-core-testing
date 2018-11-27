@@ -1,0 +1,26 @@
+@keyframes zoomIn {
+  100% {
+    transform: scale(1) translateX(0) translateY(0);
+    opacity: 1;
+  }
+}
+
+.zoom-transitioner {
+  $transition-time: _getVar('colorWall.exitTransitionMS') * 1ms;
+
+  position: absolute;
+  display: block;
+  background-color: rgba(white, 1);
+  opacity: 0;
+  z-index: 99999;
+  box-shadow: inset 0 0 0 5px white;
+  top: 0;
+  left: 0;
+
+  &--zoom-in {
+    animation-name: zoomIn;
+    animation-duration: $transition-time;
+    animation-fill-mode: forwards;
+    animation-timing-function: ease-in-out;
+  }
+}
