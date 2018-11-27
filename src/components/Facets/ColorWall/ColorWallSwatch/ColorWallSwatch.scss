@@ -234,7 +234,7 @@
 
   &--bloom {
     /* autoprefixer: ignore next */
-    transition-property: top, left, transform, width, height, margin, z-index, box-shadow !important;
+    transition-property: top, left, transform, width, height, margin, z-index, box-shadow;
 
     transition-delay: 0s !important;
 

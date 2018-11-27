@@ -5,7 +5,6 @@ import { CLASS_NAMES } from './shared'
 
 import { type Color } from '../../../../shared/types/Colors'
 import { arrayToSpacedString } from '../../../../shared/helpers/StringUtils'
-import { fullColorName } from '../../../../shared/helpers/ColorUtils'
 
 import './ColorWallSwatch.scss'
 
@@ -59,7 +58,6 @@ class ColorWallSwatchUI extends PureComponent<Props, State> {
       style: {
         background: color.hex
       },
-      title: fullColorName(color.brandKey, color.colorNumber, color.name),
       onClick: this.handleSwatchClick,
       onKeyDown: this.handleSwatchKeyPress,
       role: 'button',
