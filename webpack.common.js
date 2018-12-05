@@ -33,11 +33,18 @@ const getVarGenerator = ( function() {
 
   // look for anything starting with a whole number or decimal and ending in one of the above units
   const unitRegex = new RegExp( `^([0-9.]+)(${cssUnits.join('|')})$` );
+  const numberRegex = new RegExp( `^[0-9.]+$` );
 
-  const convertStringToSassDimension = memoizee( function convertStringToSassDimension( str ) {
+  const convertStringToSassDimension = memoizee(function convertStringToSassDimension( str ) {
     // Only attempt to convert strings
     if( typeof str !== 'string' ) {
       return str;
+    }
+
+    const pureNumber = numberRegex.exec( str );
+
+    if(pureNumber) {
+      return new sassUtils.SassDimension( parseFloat( pureNumber[0], 10 ) );
     }
 
     const result = unitRegex.exec( str );
@@ -50,14 +57,16 @@ const getVarGenerator = ( function() {
     }
 
     return str;
-  }, { primitive: true, length: 1 } );
+  }, {primitive: true, length: 1})
 
   function processVarData( data ) {
     var type = typeof data,
       returner;
 
     // Convert to SassDimension if dimenssion
-    if( type === 'string' ) {
+    if( type === 'number' ) {
+      returner = new sassUtils.SassDimension( parseFloat( data, 10 ) );
+    } else if( type === 'string' ) {
       returner = convertStringToSassDimension( data );
     } else if( type === 'object' ) {
       // if it's an object, we'll need to recursively iterate through it
@@ -71,7 +80,7 @@ const getVarGenerator = ( function() {
   }
 
   return function getVarGenerator( values ) {
-    const getVarInternal_memoized = memoizee( function getVarInternal( keys ) {
+    const getVarInternal_memoized = memoizee(function getVarInternal( keys ) {
       var _keys = keys.split( '.' ), returner, i;
 
       returner = Object.assign( {}, values );
@@ -81,7 +90,7 @@ const getVarGenerator = ( function() {
       }
 
       return sassUtils.castToSass( processVarData( returner ) );
-    }, { primitive: true, length: 1 } );
+    }, {primitive: true, length: 1})
 
     return ( keys ) => getVarInternal_memoized( keys.getValue() );
   }
