@@ -2,6 +2,7 @@
 import React, { PureComponent } from 'react'
 import { once } from 'lodash'
 import memoizee from 'memoizee'
+import { withRouter } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import { type Color } from '../../../../shared/types/Colors'
@@ -203,8 +204,8 @@ class ColorWallSwatch extends PureComponent<Props> {
 
   handleDetailClick = function handleDetailClick () {
     const { color } = this.props
-    alert(`Color details for ${color.name}`) // eslint-disable-line
+    this.props.history.push(`/active/color-wall/color-details/${color.colorNumber}`)
   }
 }
 
-export default ColorWallSwatch
+export default withRouter(ColorWallSwatch)

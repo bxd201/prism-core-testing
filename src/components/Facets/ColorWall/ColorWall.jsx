@@ -1,7 +1,7 @@
 // @flow
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
-import { withRouter } from 'react-router-dom'
+import { withRouter, Route } from 'react-router-dom'
 import { flatten, sortBy } from 'lodash'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
@@ -10,6 +10,7 @@ import { add } from '../../../actions/live-palette'
 
 import ColorDataWrapper from '../../../helpers/ColorDataWrapper'
 
+import ColorDetails from '../../ColorDetails/ColorDetails'
 import ColorWallSwatchList from './ColorWallSwatchList'
 import ColorWallButton from './ColorWallButton'
 
@@ -54,8 +55,6 @@ class ColorWall extends PureComponent<Props, State> {
 
     this.filterByFamily = this.filterByFamily.bind(this)
     this.handleActivateColor = this.handleActivateColor.bind(this)
-    this.zoomOut = this.zoomOut.bind(this)
-  }
 
   render () {
     const { colors, match: { params }, addToLivePalette, family, displayOrder, hideColorFamilySelector } = this.props
@@ -124,6 +123,7 @@ class ColorWall extends PureComponent<Props, State> {
             </div>
           )}
         </div>
+        <Route path='/active/color-wall/color-details/:colorNumber' exact render={this.renderColorDetails} />
       </React.Fragment>
     )
   }
