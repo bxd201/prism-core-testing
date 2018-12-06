@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import { type Color } from '../../../../shared/types/Colors'
 import { numToAlphaString, arrayToSpacedString } from '../../../../shared/helpers/StringUtils'
+import { fullColorName, fullColorNumber } from '../../../../shared/helpers/ColorUtils'
 import { CLASS_NAMES } from './shared'
 
 import './ColorWallSwatch.scss'
@@ -48,7 +49,7 @@ class ColorWallSwatch extends PureComponent<Props> {
     if (level === 0) {
       contents = (
         <div className={CLASS_NAMES.CONTENT}>
-          <p className={CLASS_NAMES.CONTENT_NUMBER}>{`${color.brandKey ? color.brandKey + ' ' : ''} ${color.colorNumber}`}</p>
+          <p className={CLASS_NAMES.CONTENT_NUMBER}>{`${fullColorNumber(color.brandKey, color.colorNumber)}`}</p>
           <p className={CLASS_NAMES.CONTENT_NAME}>{color.name}</p>
           <button /* autoFocus */ onClick={this.handleAddClick} className={CLASS_NAMES.CONTENT_ADD}>
             <FontAwesomeIcon icon='plus' size='1x' />
@@ -60,6 +61,7 @@ class ColorWallSwatch extends PureComponent<Props> {
       )
     } else {
       props = Object.assign({}, props, {
+        title: fullColorName(color.brandKey, color.colorNumber, color.name),
         onClick: this.handleSwatchClick,
         onKeyDown: this.handleSwatchKeyPress,
         role: 'button',
@@ -78,24 +80,10 @@ class ColorWallSwatch extends PureComponent<Props> {
   }
 
   static getStyles = memoizee(function getStyles (color: string, compensateX: number, compensateY: number): Object {
-    let transform = ''
-
-    // if (compensateX) {
-    //   transform += `translateX(${compensateX * 33 / 2}%)`
-    // }
-
-    // if (compensateY) {
-    //   transform += ` translateY(${compensateY * 33 / 2}%)`
-    // }
-
     let styleObj: {
       [key: string]: string
     } = {
       background: color
-    }
-
-    if (transform) {
-      styleObj.transform = transform
     }
 
     return styleObj
