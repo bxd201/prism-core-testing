@@ -1,14 +1,14 @@
 // @flow
 import { findIndex, concat } from 'lodash'
-import { ZOOMED_VIEW_GRID_PADDING } from './ColorWallProps'
+import { ZOOMED_VIEW_GRID_PADDING } from '../../../constants/globals'
+import type { ColorIdGrid, ColorIdLine } from '../../../shared/types/Colors'
 import { euclideanDistance } from '../../../shared/helpers/GeometryUtils'
 
-export function getColorCoords (id: number, chunkedColorIds: number[][]): number[] | void {
-  return chunkedColorIds.map((colorRow: number[], y: number) => {
-    const x = findIndex(colorRow, (colorId: number) => {
+export function getColorCoords (id: string, chunkedColorIds: ColorIdGrid): number[] | void {
+  return chunkedColorIds.map((colorRow: ColorIdLine, y: number) => {
+    const x = findIndex(colorRow, (colorId: string) => {
       return colorId === id
     })
-
     if (x >= 0) {
       return [x, y]
     }
@@ -19,11 +19,59 @@ export function getColorCoords (id: number, chunkedColorIds: number[][]): number
   })
 }
 
-export function drawCircle (radius: number, centerX: number, centerY: number, chunkedColorIds: number[][]) {
+export function drawCircle (radius: number, centerX: number, centerY: number, chunkedColorIds: ColorIdGrid) {
   const TL = { x: ZOOMED_VIEW_GRID_PADDING, y: ZOOMED_VIEW_GRID_PADDING }
   const BR = { x: chunkedColorIds[0].length - 1 - ZOOMED_VIEW_GRID_PADDING, y: chunkedColorIds.length - 1 - ZOOMED_VIEW_GRID_PADDING }
-  const subsetCoordTL = { x: centerX - radius, y: centerY - radius }
-  const subsetCoordBR = { x: centerX + radius, y: centerY + radius }
+  let subsetCoordTL = { x: centerX, y: centerY }
+  let subsetCoordBR = { x: centerX, y: centerY }
+
+  // BREAK CIRCLE UPON REACHING CHUNK EDGE
+  // Somehow I cannot think of a graceful way to turn these four separate but nearly identical loops
+  // into a single function. Please feel free to improve this.
+  for (let i = radius; i >= 0; i--) {
+    const newY = Math.max(TL.y, subsetCoordTL.y - 1)
+
+    if (chunkedColorIds[newY] && chunkedColorIds[newY][subsetCoordTL.x]) {
+      subsetCoordTL.y = newY
+      continue
+    }
+
+    break
+  }
+
+  for (let i = radius; i >= 0; i--) {
+    const newX = Math.max(TL.x, subsetCoordTL.x - 1)
+
+    if (chunkedColorIds[subsetCoordTL.y] && chunkedColorIds[subsetCoordTL.y][newX]) {
+      subsetCoordTL.x = newX
+      continue
+    }
+
+    break
+  }
+
+  for (let i = radius; i >= 0; i--) {
+    const newY = Math.min(BR.y, subsetCoordBR.y + 1)
+
+    if (chunkedColorIds[newY] && chunkedColorIds[newY][subsetCoordBR.x]) {
+      subsetCoordBR.y = newY
+      continue
+    }
+
+    break
+  }
+
+  for (let i = radius; i >= 0; i--) {
+    const newX = Math.min(BR.x, subsetCoordBR.x + 1)
+
+    if (chunkedColorIds[subsetCoordBR.y] && chunkedColorIds[subsetCoordBR.y][newX]) {
+      subsetCoordBR.x = newX
+      continue
+    }
+
+    break
+  }
+  // END BREAK CIRCLE
 
   let compensateX = 0
   let compensateY = 0
@@ -55,20 +103,16 @@ export function drawCircle (radius: number, centerX: number, centerY: number, ch
     return last
   })
 
-  if (subsetCoordTL.x < TL.x) subsetCoordTL.x = TL.x
-  if (subsetCoordTL.y < TL.y) subsetCoordTL.y = TL.y
-  if (subsetCoordBR.x > BR.x) subsetCoordBR.x = BR.x
-  if (subsetCoordBR.y > BR.y) subsetCoordBR.y = BR.y
-
-  let levelHash = {}
+  let levelMap = {}
 
   for (let x = subsetCoordTL.x; x <= subsetCoordBR.x; x++) {
     for (let y = subsetCoordTL.y; y <= subsetCoordBR.y; y++) {
       let dist = Math.round(euclideanDistance({ x: x, y: y }, { x: centerX, y: centerY }))
       const offsetX = x - centerX
       const offsetY = y - centerY
+      const tgtColorId = chunkedColorIds[y][x]
 
-      if (dist > radius) {
+      if (dist > radius || !tgtColorId) {
         continue
       }
 
@@ -89,17 +133,15 @@ export function drawCircle (radius: number, centerX: number, centerY: number, ch
         compensateY = _compensateY
       }
 
-      levelHash[chunkedColorIds[y][x]] = {
+      levelMap[tgtColorId] = {
         level: dist,
-        offsetX: offsetX,
-        offsetY: offsetY,
         compensateX: getCompensateX,
         compensateY: getCompensateY
       }
     }
   }
 
-  return levelHash
+  return levelMap
 }
 
 export function getCoordsObjectFromPairs (pairs: number[][]) {

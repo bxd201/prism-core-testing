@@ -2,7 +2,7 @@
 import axios from 'axios'
 
 import { SW_COLORS_BY_FAMILY_ENDPOINT, SW_BRIGHTS_ENDPOINT } from '../constants/endpoints'
-import type { ColorPayload } from '../shared/types/Colors'
+import type { Color } from '../shared/types/Colors'
 
 export const REQUEST_COLORS: string = 'REQUEST_COLORS'
 const requestColors = () => {
@@ -19,20 +19,38 @@ const receiveColors = (colorData) => {
     payload: {
       loading: false,
       colors: colorData.colors,
-      brights: colorData.brights
+      brights: colorData.brights,
+      families: colorData.families,
+      defaultFamily: colorData.defaultFamily
     }
   }
 }
 
 export const FILTER_BY_FAMILY: string = 'FILTER_BY_FAMILY'
-export const filterByFamily = (family: ColorPayload) => {
+export const filterByFamily = (family: string) => {
   return {
     type: FILTER_BY_FAMILY,
     payload: { family }
   }
 }
 
-export const loadColors = () => {
+export const RESET_ACTIVE_COLOR: string = 'RESET_ACTIVE_COLOR'
+export const resetActiveColor = () => {
+  return {
+    type: RESET_ACTIVE_COLOR
+  }
+}
+
+export const MAKE_ACTIVE_COLOR: string = 'MAKE_ACTIVE_COLOR'
+export const makeActiveColor = (color: Color) => {
+  return {
+    type: MAKE_ACTIVE_COLOR,
+    payload: { color }
+  }
+}
+
+// TODO: Make this method configurable via options on call so specific color wall implementations can reuse it to load their colors
+export const loadColors = (options?: any) => {
   return (dispatch: Function) => {
     dispatch(requestColors())
 
@@ -41,13 +59,27 @@ export const loadColors = () => {
       .then(r => {
         const colors = r[0].data
         const brights = r[1].data
+        // TODO: populate families with a new API call eventually
+        const families = [
+          'All',
+          'Red',
+          'Orange',
+          'Yellow',
+          'Green',
+          'Blue',
+          'Purple',
+          'Neutral',
+          'White & Pastel'
+        ]
+        // TODO: select default family based on families data or some part of the families API response
+        const defaultFamily = 'All'
 
-        dispatch(receiveColors({ colors, brights }))
+        dispatch(receiveColors({
+          colors,
+          brights,
+          families,
+          defaultFamily
+        }))
       })
-    // return axios.get(SW_COLORS_BY_FAMILY_ENDPOINT)
-    //   .then(r => r.data)
-    //   .then(data => {
-    //     dispatch(receiveColors(data))
-    //   })
   }
 }

@@ -4,11 +4,15 @@ import { connect } from 'react-redux'
 import isEmpty from 'lodash/isEmpty'
 
 import { loadColors } from '../actions/loadColors'
-import type { ColorPayload } from '../shared/types/Colors'
+import type { ColorFamilyPayload, ColorMap } from '../shared/types/Colors'
 
 type Props = {
-  colors: ColorPayload,
-  loadColors: Function
+  colors: ColorFamilyPayload,
+  brights: ColorFamilyPayload,
+  colorMap: ColorMap,
+  loadColors: Function,
+  family?: string,
+  families?: string[]
 }
 
 /**
@@ -36,9 +40,12 @@ const ColorDataWrapper = (WrappedComponent: any) => {
 
   const mapStateToProps = (state, props) => {
     return {
+      colorMap: state.colors.colorMap,
       colors: state.colors.items.colors,
       brights: state.colors.items.brights,
-      family: state.colors.family
+      colorWallActive: state.colors.colorWallActive,
+      family: state.colors.family,
+      families: state.colors.families
     }
   }
 

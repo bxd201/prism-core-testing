@@ -17,6 +17,7 @@ const getTintableScene = (props) => {
     height: 100,
     type: 'someType',
     sceneId: 1,
+    type: SCENE_TYPES.ROOM,
     background: 'someImageURL'
   }
 

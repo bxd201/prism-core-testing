@@ -1,9 +1,13 @@
+/* eslint-disable */
 // @flow
 import React, { PureComponent } from 'react'
+import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import { flatten, sortBy } from 'lodash'
 
 import ColorWallSwatchList from './ColorWallSwatchList'
+
+import { type Color } from '../../../shared/types/Colors'
 
 const DISPLAY_ORDER_DEFAULT = 'default'
 const DISPLAY_ORDER_LIGHTNESS = 'lightness'
@@ -12,7 +16,7 @@ const DISPLAY_ORDER_SATURATION = 'saturation'
 const DISPLAY_ORDER_COLOR = 'color'
 
 type Props = {
-  colors: Array,
+  colors: Object,
   match: Object,
   family: string,
   displayOrder: string
@@ -20,7 +24,6 @@ type Props = {
 
 class StandardColorWall extends PureComponent<Props> {
   previewColor = void (0)
-  cwRef = void (0)
   allColors = void (0)
 
   static defaultProps = {
@@ -29,6 +32,12 @@ class StandardColorWall extends PureComponent<Props> {
 
   colorFamily (family) {
     return this.props.colors[family]
+  }
+
+  handleActivateColor = function handleActivateColor (color: Color) {
+    this.setState({
+      activeColor: color
+    })
   }
 
   get colorFamilies () {
@@ -68,8 +77,26 @@ class StandardColorWall extends PureComponent<Props> {
 
     return (
       <React.Fragment>
-        <div ref={this.cwRef}>
-          <ColorWallSwatchList key={'all'} colors={ColorWallColors} active={params.colorNumber} />
+        <h1>standard</h1>
+        <div className='color-wall-wall'>
+          {/* {activeColor ? (
+            <ColorWallSwatchList
+              bloomRadius={2}
+              onAddColor={addToLivePalette}
+              cellSize={50}
+              key={family}
+              colors={ColorWallColors}
+              initialActiveColor={activeColor} />
+          ) : (
+            <ColorWallSwatchList
+              showAll
+              immediateSelectionOnActivation
+              cellSize={50}
+              key={`${family}-showAll`}
+              colors={ColorWallColors}
+              active={params.colorNumber}
+              onActivateColor={this.handleActivateColor} />
+          )} */}
         </div>
       </React.Fragment>
     )

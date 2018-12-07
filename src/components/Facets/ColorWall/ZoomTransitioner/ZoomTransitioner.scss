@@ -6,7 +6,7 @@
 }
 
 .zoom-transitioner {
-  $transition-time: _getVar('colorWall.exitTransitionMS') * 1ms;
+  $transition-time: getVar('colorWall.exitTransitionMS') * 1ms;
 
   position: absolute;
   display: block;

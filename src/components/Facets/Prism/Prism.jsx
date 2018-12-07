@@ -4,7 +4,7 @@ import { Route, Redirect } from 'react-router-dom'
 import { withDragDropContext } from '../../../helpers/WithDragDropContext'
 
 import LivePalette from '../../LivePalette/LivePalette'
-import ColorWall from '../ColorWall/ColorWall'
+import ColorWallLocationBuffer from '../ColorWall/ColorWallLocationBuffer'
 import SceneManager from '../../SceneManager/SceneManager'
 import Search from '../../Search/Search'
 import ColorsFromImage from '../../ColorsFromImage/ColorsFromImage'
@@ -24,9 +24,9 @@ class Prism extends Component {
         <hr />
         <Route path='/' exact component={RootRedirect} />
         <Route path='/active' exact component={SceneManager} />
-        <Route path='/active/color-wall' exact component={ColorWall} />
-        <Route path='/active/color-wall/:family' exact component={ColorWall} />
-        <Route path='/active/color-wall/:family/:colorNumber' exact component={ColorWall} />
+        <Route path='/active/color-wall' exact component={ColorWallLocationBuffer} />
+        <Route path='/active/color-wall/:family' exact component={ColorWallLocationBuffer} />
+        <Route path='/active/color-wall/:family/:colorNumber' exact component={ColorWallLocationBuffer} />
         <Route path='/active/colors-from-image' exact component={ColorsFromImage} />
         <Route path='/search' exact component={Search} />
 

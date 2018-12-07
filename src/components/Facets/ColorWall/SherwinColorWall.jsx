@@ -1,116 +1,115 @@
 // @flow
 import React, { PureComponent } from 'react'
-import { connect } from 'react-redux'
-import { withRouter } from 'react-router-dom'
 
-import { filterByFamily } from '../../../actions/loadColors'
+import { BLANK_SWATCH, SW_CHUNK_SIZE } from 'constants/globals'
 
-import ColorDataWrapper from '../../../helpers/ColorDataWrapper'
+import { convertFamiliesToGrid } from '../../../shared/helpers/ColorDataUtils'
+import { compareKebabs } from '../../../shared/helpers/StringUtils'
+
+import type { ColorFamilyPayload, ColorMap, Color, ColorGrid } from '../../../shared/types/Colors'
 
 import ColorWallSwatchList from './ColorWallSwatchList'
 import ColorWallButton from './ColorWallButton'
+import { memoize } from 'lodash'
 
 type Props = {
-  colors: Object,
-  brights: Object,
-  match: Object,
-  filterByFamily: Function,
-  family: string
+  colors: ColorFamilyPayload,
+  brights: ColorFamilyPayload,
+  colorMap: ColorMap,
+  onActivateColor: Function,
+  onSelectFamily: Function,
+  addToLivePalette?: Function,
+  family: string,
+  families: string[],
+  activeColor: Color
 }
 
 class SherwinColorWall extends PureComponent<Props> {
-  static COLOR_FAMILIES = [
-    'All',
-    'Red',
-    'Orange',
-    'Yellow',
-    'Green',
-    'Blue',
-    'Purple',
-    'Neutral',
-    'White & Pastel'
-  ]
-
   previewColor = void (0)
   cwRef = void (0)
   allColors = void (0)
 
-  constructor (props) {
+  constructor (props: Props) {
     super(props)
 
     this.colorFamily = this.colorFamily.bind(this)
+    this.handleActivateColor = this.handleActivateColor.bind(this)
+    this.getColorGrid = this.getColorGrid.bind(this)
   }
 
-  colorFamily () {
-    const { match: { params }, family, colors, brights } = this.props
+  handleActivateColor = function handleActivateColor (color: Color) {
+    this.props.onActivateColor(color)
+  }
 
-    switch (family) {
-      case 'All':
-        return (
-          <React.Fragment>
-            {SherwinColorWall.COLOR_FAMILIES.map((colorFamily, colorFamilyIndex) => {
-              if (colorFamily === 'All') {
-                return null
-              }
-              return (
-                <div key={colorFamily} style={{ width: 'calc(100%/8)' }}>
-                  { brights[colorFamily][0] && (
-                    // TODO: Of course, we need to fix keys here
-                    <div key={`${colorFamily}${colorFamilyIndex}${colorFamilyIndex}`}>
-                      <ColorWallSwatchList key={`${colorFamily}${colorFamilyIndex}`} colors={brights[colorFamily][0]} active={params.colorNumber} />
-                    </div>
-                  )}
-                  <hr />
-                  {this.props.colors[colorFamily].map((colorChunk, index) => {
-                    return (
-                      <div key={`${colorFamily}${index}`}>
-                        <ColorWallSwatchList key={`${colorFamily}`} colors={colorChunk} active={params.colorNumber} />
-                      </div>
-                    )
-                  })}
-                </div>
-              )
-            })}
-          </React.Fragment>
-        )
+  getColorGrid = memoize(function getColorGrid (targetFamily: string): ColorGrid | void {
+    const { colors, brights, families } = this.props
 
-      default:
-        return (
-          <div key={family} style={{ width: 'calc(100%/8)' }}>
-            {colors[family].map((colorChunk, index) => {
-              return (
-                <React.Fragment>
-                  { brights[family][0] && (
-                    // TODO: Of course, we need to fix keys here
-                    <div key={`${family}${index}${index}`}>
-                      <ColorWallSwatchList key={`${family}${index}`} colors={brights[family][0]} active={params.colorNumber} />
-                    </div>
-                  )}
-                  <hr />
-                  <div key={`${family}${index}`}>
-                    <ColorWallSwatchList key={`${family}`} colors={colorChunk} active={params.colorNumber} />
-                  </div>
-                </React.Fragment>
-              )
-            })}
-          </div>
-        )
+    let filteredFamilies = families.filter((fam: string) => {
+      const iFam = fam.toLowerCase()
+      const tgtFam = targetFamily && targetFamily.toLowerCase()
+
+      if (tgtFam === 'all') {
+        return iFam !== 'all'
+      }
+
+      return compareKebabs(iFam, tgtFam)
+    })
+
+    if (filteredFamilies.length) {
+      return convertFamiliesToGrid(filteredFamilies, colors, brights, BLANK_SWATCH, SW_CHUNK_SIZE)
     }
+
+    return void (0)
+  })
+
+  colorFamily = function colorFamily () {
+    const { family, activeColor, colorMap, addToLivePalette } = this.props
+
+    const colorsGrid = this.getColorGrid(family)
+
+    if (!colorsGrid) {
+      return null
+    }
+
+    return (
+      <React.Fragment>
+        {activeColor ? (
+          <ColorWallSwatchList
+            bloomRadius={2}
+            onAddColor={addToLivePalette}
+            colorMap={colorMap}
+            cellSize={50}
+            key={family}
+            colors={colorsGrid}
+            initialActiveColor={activeColor}
+            activeColor={activeColor} />
+        ) : (
+          <ColorWallSwatchList
+            showAll
+            immediateSelectionOnActivation
+            colorMap={colorMap}
+            cellSize={50}
+            key={`${family}-showAll`}
+            colors={colorsGrid}
+            onActivateColor={this.handleActivateColor} />
+        )}
+      </React.Fragment>
+    )
   }
 
   render () {
-    const { filterByFamily, family } = this.props
+    const { onSelectFamily, family, families } = this.props
 
-    const ColorWallButtons = SherwinColorWall.COLOR_FAMILIES.map(key => {
-      return <ColorWallButton key={key} family={key} selectFamily={filterByFamily} current={family} routeCurrent={family} />
-    })
+    const ColorWallButtons = families ? families.map(thisFamily => {
+      return <ColorWallButton key={thisFamily} selectFamily={onSelectFamily} family={thisFamily} checked={compareKebabs(thisFamily, family)} />
+    }) : null
 
     return (
       <React.Fragment>
         <div className='color-wall-buttons'>
           {ColorWallButtons}
         </div>
-        <div style={{ display: 'flex' }}>
+        <div className='color-wall-wall'>
           { this.colorFamily() }
         </div>
       </React.Fragment>
@@ -118,12 +117,4 @@ class SherwinColorWall extends PureComponent<Props> {
   }
 }
 
-const mapDispatchToProps = (dispatch: Function) => {
-  return {
-    filterByFamily: (family) => {
-      dispatch(filterByFamily(family))
-    }
-  }
-}
-
-export default ColorDataWrapper(withRouter(connect(null, mapDispatchToProps)(SherwinColorWall)))
+export default SherwinColorWall

@@ -10,7 +10,6 @@
     "@babel/plugin-transform-flow-strip-types",
     "@babel/plugin-syntax-export-default-from",
     "@babel/plugin-transform-object-assign",
-    "transform-es2015-template-literals",
-    "styled-components"
+    "transform-es2015-template-literals"
   ]
 }

@@ -1,4 +1,8 @@
 // @flow
+export type ColorId = string
+
+export type BlankColor = void
+
 export type Color = {
   blue: number,
   brandKey: string,
@@ -9,28 +13,37 @@ export type Color = {
     coord2ColorId: number,
     whiteColorId: number
   },
-  csshsl: string,
   cssrgb: string,
   description: Array<string>,
   green: number,
   hex: string,
   hue: number,
-  id: number,
+  id: ColorId,
   isDark: boolean,
   isExterior: boolean,
   isInterior: boolean,
   lightness: number,
   name: string,
-  opacity: string, // ex: "SW1234", whatever that means
   red: number,
   rgb: number,
   saturation: number,
-  smis: string,
   storeStripLocator?: string
 }
 
-export type ColorPayload = {
-  [ key: string ]: Array<Color>
+export type ProbablyColor = Color | BlankColor
+
+export type ColorLine = ProbablyColor[]
+export type ColorGrid = ColorLine[]
+
+export type ColorIdLine = (ColorId | BlankColor)[]
+export type ColorIdGrid = ColorIdLine[]
+
+export type ColorFamilyPayload = {
+  [ key: string ]: ColorGrid
 }
 
-export type ColorListPayload = Array<Color>
+export type ColorListPayload = Color[]
+
+export type ColorMap = {
+  [key: ColorId]: Color
+}
