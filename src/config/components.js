@@ -1,14 +1,14 @@
 import Prism from '../components/Facets/Prism/Prism'
 import ColorWall from '../components/Facets/ColorWall/ColorWall'
 import Tinter from '../components/Facets/Tinter/Tinter'
-import ColorDetail from '../components/Facets/ColorDetail/ColorDetail'
+import ColorDetails from '../components/Facets/ColorDetails/ColorDetails'
 
 // list out all components that can be mounted
 const components = {
   Prism,
   ColorWall,
   Tinter,
-  ColorDetail
+  ColorDetails
 }
 
 export default components
