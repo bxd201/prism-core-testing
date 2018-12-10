@@ -82,12 +82,12 @@ pipeline {
     stage('image-testing') {
       agent {
         docker {
-          image 'ruby:2.4'
+          image 'docker.cpartdc01.sherwin.com/ecomm/utils/docker_rspec'
           args '-u root'
+          reuseNode true
         }
       }
       steps {
-        unstash 'static'
         sh """
         cp ci/Gemfile ./
         bundle install
