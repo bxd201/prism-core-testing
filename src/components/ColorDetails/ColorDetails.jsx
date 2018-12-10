@@ -7,6 +7,7 @@ import { flatten, filter } from 'lodash'
 import ColorViewer from './ColorViewer/ColorViewer'
 import ColorStrip from './ColorStrip/ColorStrip'
 import CoordinatingColors from './CoordinatingColors/CoordinatingColors'
+import SimilarColors from './SimilarColors/SimilarColors'
 import SceneManager from '../SceneManager/SceneManager'
 
 class ColorDetails extends PureComponent<Props> {
@@ -22,6 +23,7 @@ class ColorDetails extends PureComponent<Props> {
         <ColorViewer color={activeColor} />
         <ColorStrip key={activeColor.id} colors={colors} color={activeColor} />
         <CoordinatingColors colors={colors} color={activeColor} />
+        <SimilarColors colors={colors} color={activeColor} />
         <SceneManager />
       </Fragment>
     )
