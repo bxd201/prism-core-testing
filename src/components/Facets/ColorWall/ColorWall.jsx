@@ -53,13 +53,10 @@ class ColorWall extends PureComponent<Props, State> {
   constructor (props: Props) {
     super(props)
 
+    this.zoomOut = this.zoomOut.bind(this)
     this.filterByFamily = this.filterByFamily.bind(this)
     this.handleActivateColor = this.handleActivateColor.bind(this)
-<<<<<<< HEAD
-=======
-    this.zoomOut = this.zoomOut.bind(this)
   }
->>>>>>> Adding a zoom out button for the color-wall and adding a temporary fix for clicking a swatch and making it active in the color wall on initial click
 
   render () {
     const { colors, match: { params }, addToLivePalette, family, displayOrder, hideColorFamilySelector } = this.props
@@ -159,14 +156,10 @@ class ColorWall extends PureComponent<Props, State> {
   }
 
   renderColorDetails (props) {
-    // return <ColorDetails {...props} />
+    return <ColorDetails {...props} />
   }
 
   zoomOut = function zoomOut () {
-    this.setState({ activeColor: void (0) })
-  }
-
-  zoomOut () {
     this.setState({ activeColor: void (0) })
   }
 }
