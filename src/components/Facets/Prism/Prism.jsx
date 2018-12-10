@@ -24,9 +24,7 @@ class Prism extends Component {
         <hr />
         <Route path='/' exact component={RootRedirect} />
         <Route path='/active' exact component={SceneManager} />
-        <Route path='/active/color-wall' exact component={ColorWall} />
-        <Route path='/active/color-wall/:family' exact component={ColorWall} />
-        <Route path='/active/color-wall/:family/:colorNumber' exact component={ColorWall} />
+        <Route path='/active/color-wall' component={ColorWall} />
         <Route path='/active/colors-from-image' exact component={ColorsFromImage} />
         <Route path='/search' exact component={Search} />
 
