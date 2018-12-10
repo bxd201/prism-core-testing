@@ -11,7 +11,8 @@ import {
   faPlusCircle,
   faTrash,
   faInfoCircle,
-  faInfo
+  faInfo,
+  faSearchMinus
 } from '@fortawesome/free-solid-svg-icons'
 
 // all supported languages
@@ -32,7 +33,8 @@ const faIcons = [
   faPlusCircle,
   faTrash,
   faInfoCircle,
-  faInfo
+  faInfo,
+  faSearchMinus
 ]
 library.add(...faIcons)
 

@@ -3,6 +3,7 @@ import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import { flatten, sortBy } from 'lodash'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import { filterByFamily } from '../../../actions/loadColors'
 import { add } from '../../../actions/live-palette'
@@ -93,8 +94,6 @@ class ColorWall extends PureComponent<Props, State> {
 
     return (
       <React.Fragment>
-        {/* TODO: Adding in a zoom out button temporarily */}
-        {activeColor && <p><button onClick={this.zoomOut}>Zoom Out</button></p>}
         <div className='color-wall-buttons'>
           {/* TODO: Temporary string comparison logic until we have the configurations coming down as a service instead of through props. */}
           {(hideColorFamilySelector !== 'true') && ColorWallButtons}
@@ -117,6 +116,13 @@ class ColorWall extends PureComponent<Props, State> {
               colors={ColorWallColors}
               active={params.colorNumber}
               onActivateColor={this.handleActivateColor} />
+          )}
+          {activeColor && (
+            <div className='color-wall-wall__btns'>
+              <button title='Zoom Out' type='button' className='color-wall-wall__btns__btn' onClick={this.zoomOut}>
+                <FontAwesomeIcon icon='search-minus' />
+              </button>
+            </div>
           )}
         </div>
       </React.Fragment>
