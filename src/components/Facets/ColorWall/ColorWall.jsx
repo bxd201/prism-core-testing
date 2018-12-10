@@ -53,29 +53,7 @@ class ColorWall extends PureComponent<Props, State> {
 
     this.filterByFamily = this.filterByFamily.bind(this)
     this.handleActivateColor = this.handleActivateColor.bind(this)
-  }
-
-  filterByFamily = function filterByFamily (family) {
-    this.props.filterByFamily(family)
-    this.setState({
-      activeColor: void (0)
-    })
-  }
-
-  colorFamily (family) {
-    return this.props.colors[family]
-  }
-
-  handleActivateColor = function handleActivateColor (color: Color) {
-    this.setState({
-      activeColor: color
-    })
-  }
-
-  get colorFamilies () {
-    return this.allColors || (this.allColors = flatten(Object.keys(this.props.colors).map(family => {
-      return this.colorFamily(family)
-    })))
+    this.zoomOut = this.zoomOut.bind(this)
   }
 
   render () {
@@ -115,6 +93,8 @@ class ColorWall extends PureComponent<Props, State> {
 
     return (
       <React.Fragment>
+        {/* TODO: Adding in a zoom out button temporarily */}
+        {activeColor && <p><button onClick={this.zoomOut}>Zoom Out</button></p>}
         <div className='color-wall-buttons'>
           {/* TODO: Temporary string comparison logic until we have the configurations coming down as a service instead of through props. */}
           {(hideColorFamilySelector !== 'true') && ColorWallButtons}
@@ -141,6 +121,37 @@ class ColorWall extends PureComponent<Props, State> {
         </div>
       </React.Fragment>
     )
+  }
+
+  filterByFamily = function filterByFamily (family) {
+    this.props.filterByFamily(family)
+    this.setState({
+      activeColor: void (0)
+    })
+  }
+
+  colorFamily (family) {
+    return this.props.colors[family]
+  }
+
+  handleActivateColor = function handleActivateColor (color: Color) {
+    this.setState({
+      activeColor: color
+    })
+  }
+
+  get colorFamilies () {
+    return this.allColors || (this.allColors = flatten(Object.keys(this.props.colors).map(family => {
+      return this.colorFamily(family)
+    })))
+  }
+
+  renderColorDetails (props) {
+    return <ColorDetails {...props} />
+  }
+
+  zoomOut () {
+    this.setState({ activeColor: void (0) })
   }
 }
 

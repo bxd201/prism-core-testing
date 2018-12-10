@@ -455,6 +455,14 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
       transitioner = <ZoomTransitioner position={zoomerInitProps} mode={TransitionModes.ZOOM_IN} />
     }
 
+    // TODO: kind of janky, but temporarily fixing the bug where on initial click there is no active color selected
+    if (this._initialActiveColor) {
+      this.activateColor(this._initialActiveColor)
+      this._initialActiveColor = void (0)
+
+      return null
+    }
+
     return (
       <div className={`color-wall-swatch-list ${!showAll ? 'color-wall-swatch-list--zoomed' : 'color-wall-swatch-list--show-all'}`}
         onKeyDown={this.handleKeyDown}
