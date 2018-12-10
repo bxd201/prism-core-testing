@@ -102,6 +102,18 @@ export function drawCircle (radius: number, centerX: number, centerY: number, ch
   return levelHash
 }
 
+export function getCoordsObjectFromPairs (pairs: number[][]) {
+  const len = pairs.length
+  for (let i = 0; i < len; i++) {
+    if (pairs[i] && pairs[i].length === 2) {
+      return {
+        x: pairs[i][0],
+        y: pairs[i][1]
+      }
+    }
+  }
+}
+
 function calculateEdgeCompensation (targetAxis, edgeAxis, radius) {
   const dist = edgeAxis - targetAxis
   let compensation = radius

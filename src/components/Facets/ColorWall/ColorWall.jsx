@@ -8,8 +8,6 @@ import ColorDataWrapper from '../../../helpers/ColorDataWrapper'
 import StandardColorWall from './StandardColorWall'
 import SherwinColorWall from './SherwinColorWall'
 
-import { type Color } from '../../../shared/types/Colors'
-
 import './ColorWall.scss'
 
 type Props = {

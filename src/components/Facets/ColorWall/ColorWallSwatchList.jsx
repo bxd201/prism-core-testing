@@ -10,7 +10,7 @@ import ColorWallSwatch from './ColorWallSwatch/ColorWallSwatch'
 import ColorWallSwatchUI from './ColorWallSwatch/ColorWallSwatchUI'
 import ColorWallSwatchRenderer from './ColorWallSwatch/ColorWallSwatchRenderer'
 import { type Color } from '../../../shared/types/Colors'
-import { getColorCoords, drawCircle } from './ColorWallUtils'
+import { getColorCoords, drawCircle, getCoordsObjectFromPairs } from './ColorWallUtils'
 import { ZOOMED_VIEW_GRID_PADDING } from './ColorWallProps'
 
 type Props = {
@@ -404,28 +404,17 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
       return
     }
 
-    let oldX = 0
-    let oldY = 0
-    let newX = 0
-    let newY = 0
+    let oldCoords: ?{x: number, y: number} = getCoordsObjectFromPairs([
+      focusCoords,
+      activeCoords
+    ])
 
-    if (focusCoords.length) {
-      newX = focusCoords[0]
-      newY = focusCoords[1]
-    } else if (activeCoords.length) {
-      newX = activeCoords[0]
-      newY = activeCoords[1]
-    }
+    let newCoords: ?{x: number, y: number} = getCoordsObjectFromPairs([
+      oldFocusCoords,
+      oldActiveCoords
+    ])
 
-    if (oldFocusCoords.length) {
-      oldX = oldFocusCoords[0]
-      oldY = oldFocusCoords[1]
-    } else if (oldActiveCoords.length) {
-      oldX = oldActiveCoords[0]
-      oldY = oldActiveCoords[1]
-    }
-
-    if (this._DOMNode && (oldX !== newX || oldY !== newY)) {
+    if (this._DOMNode && (newCoords && oldCoords && (oldCoords.x !== newCoords.x || oldCoords.y !== newCoords.y))) {
       const gridEl = this._DOMNode.querySelector('.ReactVirtualized__Grid')
 
       if (gridEl) {
@@ -433,8 +422,8 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
         this._scrollTimeout = setTimeout(() => {
           // $FlowIgnore -- flow doesn't think this exists, but it is mistaken
           gridEl.scrollTo({
-            left: newX * cellSize - (this._gridWidth - cellSize) / 2,
-            top: newY * cellSize - (this._gridHeight - cellSize) / 2,
+            left: newCoords.x * cellSize - (this._gridWidth - cellSize) / 2,
+            top: newCoords.y * cellSize - (this._gridHeight - cellSize) / 2,
             behavior: 'smooth'
           })
         }, 200)
