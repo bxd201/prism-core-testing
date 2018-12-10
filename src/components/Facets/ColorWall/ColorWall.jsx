@@ -147,10 +147,10 @@ class ColorWall extends PureComponent<Props, State> {
   }
 
   renderColorDetails (props) {
-    return <ColorDetails {...props} />
+    // return <ColorDetails {...props} />
   }
 
-  zoomOut () {
+  zoomOut = function zoomOut () {
     this.setState({ activeColor: void (0) })
   }
 }

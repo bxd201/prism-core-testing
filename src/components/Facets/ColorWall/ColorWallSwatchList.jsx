@@ -1,6 +1,6 @@
 // @flow
 import React, { PureComponent } from 'react'
-import { findIndex, chunk, fill, concat } from 'lodash'
+import { chunk, fill } from 'lodash'
 // $FlowIgnore
 import { Grid, AutoSizer } from 'react-virtualized'
 
@@ -10,7 +10,8 @@ import ColorWallSwatch from './ColorWallSwatch/ColorWallSwatch'
 import ColorWallSwatchUI from './ColorWallSwatch/ColorWallSwatchUI'
 import ColorWallSwatchRenderer from './ColorWallSwatch/ColorWallSwatchRenderer'
 import { type Color } from '../../../shared/types/Colors'
-import { euclideanDistance } from '../../../shared/helpers/GeometryUtils'
+import { getColorCoords, drawCircle } from './ColorWallUtils'
+import { ZOOMED_VIEW_GRID_PADDING } from './ColorWallProps'
 
 type Props = {
   colors: Array<Color>, // eslint-disable-line react/no-unused-prop-types
@@ -47,15 +48,10 @@ type State = {
   zoomerInitProps?: ZoomPositionerProps
 }
 
-// this defines the space around the grid when zoomed in
-const ZOOMED_VIEW_GRID_PADDING: number = 1
-
 class ColorWallSwatchList extends PureComponent<Props, State> {
   _DOMNode = void (0)
-  _scroller = void (0)
   _scrollTimeout = void (0)
   _initialFocusCoords = void (0)
-  _initialActiveColor = void (0)
   _gridWidth: number = 0
   _gridHeight: number = 0
 
@@ -110,43 +106,50 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     this.state.colorHash = colorHash
 
     if (initialActiveColor) {
-      this._initialFocusCoords = ColorWallSwatchList.getColorCoords(initialActiveColor.id, colorIdGrid)
-      this._initialActiveColor = initialActiveColor
+      const moreState = this.updateActiveColor(initialActiveColor, true)
+
+      if (moreState) {
+        Object.assign(this.state, moreState)
+
+        this._initialFocusCoords = moreState.focusCoords
+      }
     }
   }
 
-  static getAreaOfEffect (x: number, y: number, r: number, angle: number): {
-    x: number,
-    y: number,
-    distance: number
-  } {
-    const endX = Math.round(x + r * Math.cos(angle))
-    const endY = Math.round(y + r * Math.sin(angle))
-    const xes = endX - x
-    const yes = endY - y
-    const distance = Math.sqrt((xes * xes) + (yes * yes))
+  updateActiveColor (color?: Color, calculateLevels?: boolean) {
+    const { bloomRadius } = this.props
+    const { colorIdGrid } = this.state
 
-    return {
-      x: endX,
-      y: endY,
-      distance: distance
+    if (!color) {
+      return
     }
-  }
 
-  static getColorCoords (id: number, chunkedColorIds: number[][]): number[] | void {
-    return chunkedColorIds.map((colorRow: number[], y: number) => {
-      const x = findIndex(colorRow, (colorId: number) => {
-        return colorId === id
-      })
+    let stateChanges: {
+      activeColor: Color,
+      activeCoords: number[],
+      focusCoords: number[],
+      levelHash?: {
+        [ key: number]: ColorReference
+      }
+    }
+    const coords = getColorCoords(color.id, colorIdGrid)
 
-      if (x >= 0) {
-        return [x, y]
+    if (coords) {
+      const centerX = coords[0]
+      const centerY = coords[1]
+
+      stateChanges = {
+        activeColor: color,
+        activeCoords: [ centerX, centerY ],
+        focusCoords: [ centerX, centerY ]
       }
 
-      return void (0)
-    }).filter(val => !!val).reduce((total, current) => {
-      return current || total
-    })
+      if (calculateLevels) {
+        stateChanges.levelHash = drawCircle(bloomRadius, centerX, centerY, colorIdGrid)
+      }
+
+      return stateChanges
+    }
   }
 
   addColor = function addColor (newColor: Color) {
@@ -157,124 +160,23 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     }
   }
 
-  static drawCircle (radius: number, centerX: number, centerY: number, chunkedColorIds: number[][]) {
-    const TL = { x: ZOOMED_VIEW_GRID_PADDING, y: ZOOMED_VIEW_GRID_PADDING }
-    const BR = { x: chunkedColorIds[0].length - 1 - ZOOMED_VIEW_GRID_PADDING, y: chunkedColorIds.length - 1 - ZOOMED_VIEW_GRID_PADDING }
-    const subsetCoordTL = { x: centerX - radius, y: centerY - radius }
-    const subsetCoordBR = { x: centerX + radius, y: centerY + radius }
-
-    let compensateX = 0
-    let compensateY = 0
-
-    function getCompensateX () {
-      return compensateX
-    }
-
-    function getCompensateY () {
-      return compensateY
-    }
-
-    let possibleCorners = [
-      TL,
-      { x: BR.x, y: TL.y }
-    ]
-
-    if ((radius * 2 + 1) < chunkedColorIds.length) {
-      possibleCorners = concat(possibleCorners, BR, { x: TL.x, y: BR.y })
-    }
-
-    const nearestCorner = possibleCorners.reduce((last, current) => {
-      const lastDist = euclideanDistance({ x: centerX, y: centerY }, last)
-      const currDist = euclideanDistance({ x: centerX, y: centerY }, current)
-
-      if (currDist < lastDist) {
-        return current
-      }
-      return last
-    })
-
-    if (subsetCoordTL.x < TL.x) subsetCoordTL.x = TL.x
-    if (subsetCoordTL.y < TL.y) subsetCoordTL.y = TL.y
-    if (subsetCoordBR.x > BR.x) subsetCoordBR.x = BR.x
-    if (subsetCoordBR.y > BR.y) subsetCoordBR.y = BR.y
-
-    let levelHash = {}
-
-    for (let x = subsetCoordTL.x; x <= subsetCoordBR.x; x++) {
-      for (let y = subsetCoordTL.y; y <= subsetCoordBR.y; y++) {
-        let dist = Math.round(euclideanDistance({ x: x, y: y }, { x: centerX, y: centerY }))
-        const offsetX = x - centerX
-        const offsetY = y - centerY
-
-        if (dist > radius) {
-          continue
-        }
-
-        if (offsetX === 0 || offsetY === 0) {
-          dist -= 0.5
-        }
-
-        dist = Math.min(dist * -1, 0)
-
-        const _compensateX = calculateEdgeCompensation(x - ZOOMED_VIEW_GRID_PADDING, nearestCorner.x - ZOOMED_VIEW_GRID_PADDING, radius)
-        const _compensateY = calculateEdgeCompensation(y - ZOOMED_VIEW_GRID_PADDING, nearestCorner.y - ZOOMED_VIEW_GRID_PADDING, radius)
-
-        if (Math.abs(_compensateX) > Math.abs(compensateX)) {
-          compensateX = _compensateX
-        }
-
-        if (Math.abs(_compensateY) > Math.abs(compensateY)) {
-          compensateY = _compensateY
-        }
-
-        levelHash[chunkedColorIds[y][x]] = {
-          level: dist,
-          offsetX: offsetX,
-          offsetY: offsetY,
-          compensateX: getCompensateX,
-          compensateY: getCompensateY
-        }
-      }
-    }
-
-    return levelHash
-  }
-
   activateColor = function activateColor (newColor: Color) {
     const activeSwatchId = newColor.id
-    const { onActivateColor, immediateSelectionOnActivation, bloomRadius } = this.props
-    const { colorIdGrid, activeColor } = this.state
+    const { onActivateColor, immediateSelectionOnActivation } = this.props
+    const { activeColor } = this.state
 
     if (activeSwatchId) {
-      const coords: number[] | void = ColorWallSwatchList.getColorCoords(activeSwatchId, colorIdGrid)
-
-      if (!coords || !coords.length) {
-        return
-      }
-
-      const centerX = coords[0]
-      const centerY = coords[1]
+      const newState = this.updateActiveColor(newColor, !immediateSelectionOnActivation)
 
       if (!immediateSelectionOnActivation) {
-        const newLevelHash = ColorWallSwatchList.drawCircle(bloomRadius, centerX, centerY, colorIdGrid)
-
-        this.setState({
-          levelHash: newLevelHash,
-          activeColor: newColor,
-          activeCoords: [ centerX, centerY ],
-          focusCoords: [ centerX, centerY ]
-        }, () => {
+        this.setState(newState, () => {
           if (onActivateColor) {
             /// ... call it now
             onActivateColor(activeColor)
           }
         })
       } else {
-        this.setState({
-          activeColor: newColor,
-          activeCoords: [ centerX, centerY ],
-          focusCoords: [ centerX, centerY ]
-        }, this.zoomInActivate)
+        this.setState(newState, this.zoomInActivate)
       }
     }
   }
@@ -455,14 +357,6 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
       transitioner = <ZoomTransitioner position={zoomerInitProps} mode={TransitionModes.ZOOM_IN} />
     }
 
-    // TODO: kind of janky, but temporarily fixing the bug where on initial click there is no active color selected
-    if (this._initialActiveColor) {
-      this.activateColor(this._initialActiveColor)
-      this._initialActiveColor = void (0)
-
-      return null
-    }
-
     return (
       <div className={`color-wall-swatch-list ${!showAll ? 'color-wall-swatch-list--zoomed' : 'color-wall-swatch-list--show-all'}`}
         onKeyDown={this.handleKeyDown}
@@ -565,25 +459,6 @@ function overscanIndicesGetter ({
     overscanStartIndex: overscanStartIndex,
     overscanStopIndex: overscanStopIndex
   }
-}
-
-function calculateEdgeCompensation (targetAxis, edgeAxis, radius) {
-  const dist = edgeAxis - targetAxis
-  let compensation = radius
-
-  if (edgeAxis > targetAxis) {
-    // positive value or zero
-    compensation = Math.max((radius - dist), 0)
-  } else if (edgeAxis < targetAxis) {
-    // negative value or zero
-    compensation = Math.max((radius + dist), 0)
-  }
-
-  if (edgeAxis > 0) {
-    compensation *= -1
-  }
-
-  return compensation
 }
 
 export default ColorWallSwatchList
