@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import PropTypes from 'prop-types'
 import flow from 'lodash/flow'
 import { DragSource, DropTarget } from 'react-dnd'
+import { fullColorNumber } from '../../shared/helpers/ColorUtils'
 
 import { remove, activatePreview } from '../../actions/live-palette'
 
@@ -35,7 +36,7 @@ class ActiveSlot extends PureComponent<Props> {
       connectDropTarget(
         <div className={`prism-live-palette__slot ${(active ? this.ACTIVE_CLASS : '')} ${(isDeleting ? this.REMOVAL_CLASS : '')}`} style={{ backgroundColor: color.hex, opacity }} onClick={this.onClick}>
           <div className={`prism-live-palette__color-details ${LIGHT_DARK_CLASS}`}>
-            <span className='prism-live-palette__color-number'>{ color.colorNumber }</span>
+            <span className='prism-live-palette__color-number'>{fullColorNumber(color.brandKey, color.colorNumber)}</span>
             <span className='prism-live-palette__color-name'>{ color.name }</span>
             <span className='prism-live-palette__color-description'>{ color.description.join(', ') }</span>
             <button className='prism-live-palette__trash' onClick={this.remove}><FontAwesomeIcon icon='trash' size='1x' /></button>

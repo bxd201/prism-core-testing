@@ -114,7 +114,6 @@ class ColorWall extends PureComponent<Props, State> {
               cellSize={50}
               key={`${family}-showAll`}
               colors={ColorWallColors}
-              active={params.colorNumber}
               onActivateColor={this.handleActivateColor} />
           )}
           {activeColor && (

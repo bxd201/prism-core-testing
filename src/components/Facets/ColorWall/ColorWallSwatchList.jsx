@@ -369,7 +369,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
             let size = cellSize
 
             if (showAll) {
-              size = width / columnCount
+              size = Math.min(width / columnCount, cellSize)
             }
 
             return (
