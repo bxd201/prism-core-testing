@@ -49,7 +49,7 @@ pipeline {
         # Clean up any old image archive files
         rm -rf ${IMAGE_NAME}.docker.tar.gz
         docker build --pull \
-          -t ${IMAGE_NAME}_${BUILD_NUMBER} \
+          -t ${IMAGE_NAME}:${BUILD_NUMBER} \
           --label "jenkins.build=${BUILD_NUMBER}" \
           --label "jenkins.job_url=${JOB_URL}" \
           --label "jenkins.build_url=${JOB_URL}${BUILD_NUMBER}/" \
