@@ -1,6 +1,7 @@
 // @flow
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
+import { FormattedMessage } from 'react-intl'
 import { find } from 'lodash'
 
 import { paintAllSceneSurfaces } from '../../../../actions/scenes'
@@ -19,7 +20,7 @@ class CoordinatingColors extends PureComponent<Props> {
 
     return (
       <React.Fragment>
-        <h5 className='visually-hidden'>Coordinating Colors</h5>
+        <h5 className='visually-hidden'><FormattedMessage id='COORDINATING_COLORS' /></h5>
         <ul className={`${CoordinatingColors.baseClass}__coord-colors`}>
           <li className={`${CoordinatingColors.baseClass}__coord-color`} onClick={() => this.selectColor(coordinatingColors.coord1Color)} style={{ backgroundColor: coordinatingColors.coord1Color.hex }}>
             <p className={`${CoordinatingColors.baseClass}__coord-color-number`}>

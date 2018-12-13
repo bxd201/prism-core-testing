@@ -2,6 +2,7 @@
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
 import { find } from 'lodash'
+import { FormattedMessage } from 'react-intl'
 
 import { paintAllSceneSurfaces } from '../../../../actions/scenes'
 
@@ -19,7 +20,7 @@ class SimilarColors extends PureComponent<Props> {
 
     return (
       <React.Fragment>
-        <h5 className='visually-hidden'>Similar Colors</h5>
+        <h5 className='visually-hidden'><FormattedMessage id='SIMILAR_COLORS' /></h5>
         <ul className={`${SimilarColors.baseClass}__similar-colors`}>
           {similarColors.map(color => {
             return (

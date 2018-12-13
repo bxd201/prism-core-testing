@@ -1,5 +1,6 @@
 // @flow
 import React, { PureComponent } from 'react'
+import { FormattedMessage } from 'react-intl'
 
 import { fullColorNumber } from '../../../../shared/helpers/ColorUtils'
 
@@ -25,7 +26,7 @@ class ColorViewer extends PureComponent<Props> {
           {(color.isExterior) ? 'Exterior' : ''}
         </h2>
         <h3 className={`${ColorViewer.baseClass}__rack-location`}>
-          Location Number: {color.storeStripLocator}
+          <FormattedMessage id='LOCATION_NUMBER' />: {color.storeStripLocator}
         </h3>
       </React.Fragment>
     )
