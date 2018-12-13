@@ -56,7 +56,7 @@ pipeline {
           --label "git.commit=${GIT_COMMIT}" \
           --label "git.repo=${GIT_URL}" \
           .
-        docker save -o ${IMAGE_NAME}.docker.tar ${IMAGE_NAME}_${BUILD_NUMBER}
+        docker save -o ${IMAGE_NAME}.docker.tar ${IMAGE_NAME}:${BUILD_NUMBER}
         gzip ${IMAGE_NAME}.docker.tar
         """
 
