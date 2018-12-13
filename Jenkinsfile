@@ -97,14 +97,35 @@ pipeline {
     }
     stage('publish') {
       when {
-        branch 'develop'
+        expression { BRANCH_NAME ==~ /^(develop|hotfix|qa|release)$/ }
       }
       steps {
         withDockerRegistry([credentialsId: 'artifactory_credentials', url: 'https://docker.cpartdc01.sherwin.com/v2']) {
-          sh "docker tag ${IMAGE_NAME}_${BUILD_NUMBER} docker.cpartdc01.sherwin.com/ecomm/apps/${IMAGE_NAME}"
-          sh "docker tag ${IMAGE_NAME}_${BUILD_NUMBER} docker.cpartdc01.sherwin.com/ecomm/apps/${IMAGE_NAME}:dev"
-          sh "docker push docker.cpartdc01.sherwin.com/ecomm/apps/${IMAGE_NAME}"
-          sh "docker push docker.cpartdc01.sherwin.com/ecomm/apps/${IMAGE_NAME}:dev"
+          sh """
+          if [ "${BRANCH_NAME}" = "develop" ]; then
+            docker tag ${IMAGE_NAME}:${BUILD_NUMBER} docker.cpartdc01.sherwin.com/ecomm/apps/${IMAGE_NAME}:${BRANCH_NAME}
+          elif [ "${BRANCH_NAME}" = "hotfix" ]; then
+            docker tag ${IMAGE_NAME}:${BUILD_NUMBER} docker.cpartdc01.sherwin.com/ecomm/apps/${IMAGE_NAME}:${BRANCH_NAME}
+          elif [ "${BRANCH_NAME}" = "qa" ]; then
+            docker pull docker.cpartdc01.sherwin.com/ecomm/apps/${IMAGE_NAME}:develop
+            docker tag docker.cpartdc01.sherwin.com/ecomm/apps/${IMAGE_NAME}:develop docker.cpartdc01.sherwin.com/ecomm/apps/${IMAGE_NAME}:${BRANCH_NAME}
+          elif [ "${BRANCH_NAME}" = "release" ]; then
+            docker pull docker.cpartdc01.sherwin.com/ecomm/apps/${IMAGE_NAME}:qa
+            docker tag docker.cpartdc01.sherwin.com/ecomm/apps/${IMAGE_NAME}:qa docker.cpartdc01.sherwin.com/ecomm/apps/${IMAGE_NAME}:${BRANCH_NAME}
+          fi
+          """
+          sh "docker push docker.cpartdc01.sherwin.com/ecomm/apps/${IMAGE_NAME}:${BRANCH_NAME}"
+        }
+      }
+    }
+    stage('publish latest') {
+      when {
+        branch 'release'
+      }
+      steps {
+        withDockerRegistry([credentialsId: 'artifactory_credentials', url: 'https://docker.cpartdc01.sherwin.com/v2']) {
+          sh "docker tag docker.cpartdc01.sherwin.com/ecomm/apps/${IMAGE_NAME}:${BRANCH_NAME} docker.cpartdc01.sherwin.com/ecomm/apps/${IMAGE_NAME}:latest"
+          sh "docker push docker.cpartdc01.sherwin.com/ecomm/apps/${IMAGE_NAME}:latest"
         }
       }
     }
@@ -136,6 +157,40 @@ pipeline {
       }
       when {
         branch 'develop'
+      }
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'ebus-nonprod-rancher', usernameVariable: 'RANCHER_ACCESS_KEY', passwordVariable: 'RANCHER_SECRET_KEY')]) {
+          sh """
+          #!/bin/bash -x
+          cd ci
+          # Use Rancher to Deploy the stack
+          rancher \
+            --url "http://rancher.${VPC}.swaws/v2-beta/projects/${RANCHER_PROJ}" \
+            --environment ${RANCHER_ENV} \
+            --access-key "${RANCHER_ACCESS_KEY}" \
+            --secret-key "${RANCHER_SECRET_KEY}" \
+            up \
+              -d \
+              -u --force-upgrade \
+              --confirm-upgrade \
+              --stack ${RANCHER_STACK}
+          """
+        }
+      }
+    }
+
+    stage('QA deploy') {
+      environment {
+        VPC = "ebus"
+        RANCHER_ENV = "nonprod"
+        RANCHER_PROJ = "1a33"
+        RANCHER_STACK = "prism-web-qa"
+        IMAGE_TAG = "qa"
+        API_URL = "https://qa-prism-api.ebus.swaws"
+        WEB_URL = "https://qa-prism-web.ebus.swaws"
+      }
+      when {
+        branch 'qa'
       }
       steps {
         withCredentials([usernamePassword(credentialsId: 'ebus-nonprod-rancher', usernameVariable: 'RANCHER_ACCESS_KEY', passwordVariable: 'RANCHER_SECRET_KEY')]) {
