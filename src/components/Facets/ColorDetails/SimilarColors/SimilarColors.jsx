@@ -21,36 +21,13 @@ class SimilarColors extends PureComponent<Props> {
       <React.Fragment>
         <h5 className='visually-hidden'>Similar Colors</h5>
         <ul className={`${SimilarColors.baseClass}__similar-colors`}>
-          <li className={`${SimilarColors.baseClass}__similar-color`}>
-            <p className={`${SimilarColors.baseClass}__similar-color-name`}>SW 2307 - Positive Red</p>
-          </li>
-          <li className={`${SimilarColors.baseClass}__similar-color`}>
-            <p className={`${SimilarColors.baseClass}__similar-color-name`}>SW 2307 - Positive Red</p>
-          </li>
-          <li className={`${SimilarColors.baseClass}__similar-color`}>
-            <p className={`${SimilarColors.baseClass}__similar-color-name`}>SW 2307 - Positive Red</p>
-          </li>
-          <li className={`${SimilarColors.baseClass}__similar-color`}>
-            <p className={`${SimilarColors.baseClass}__similar-color-name`}>SW 2307 - Positive Red</p>
-          </li>
-          <li className={`${SimilarColors.baseClass}__similar-color`}>
-            <p className={`${SimilarColors.baseClass}__similar-color-name`}>SW 2307 - Positive Red</p>
-          </li>
-          <li className={`${SimilarColors.baseClass}__similar-color`}>
-            <p className={`${SimilarColors.baseClass}__similar-color-name`}>SW 2307 - Positive Red</p>
-          </li>
-          <li className={`${SimilarColors.baseClass}__similar-color`}>
-            <p className={`${SimilarColors.baseClass}__similar-color-name`}>SW 2307 - Positive Red</p>
-          </li>
-          <li className={`${SimilarColors.baseClass}__similar-color`}>
-            <p className={`${SimilarColors.baseClass}__similar-color-name`}>SW 2307 - Positive Red</p>
-          </li>
-        </ul>
-        <hr />
-        <ul>
           {similarColors.map(color => {
             return (
-              <li key={color.id}><button onClick={() => this.selectColor(color)}>{color.name}</button></li>
+              <li key={color.id} onClick={() => this.selectColor(color)} className={`${SimilarColors.baseClass}__similar-color`} style={{ backgroundColor: color.hex }}>
+                <p className={`${SimilarColors.baseClass}__similar-color-name`}>
+                  {color.brandKey} {color.colorNumber} - {color.name}
+                </p>
+              </li>
             )
           })}
         </ul>
@@ -63,7 +40,14 @@ class SimilarColors extends PureComponent<Props> {
     const { colors, color } = this.props
     const similarColorIds = color.similarColors || []
 
-    const similarColors = similarColorIds.map(similarColorId => find(colors, color => color.id === similarColorId))
+    // return empty array if no similar colors exist
+    if (!similarColorIds.length) {
+      return similarColorIds
+    }
+
+    const similarColors = similarColorIds.map(similarColorId => {
+      return find(colors, color => color.id === similarColorId)
+    })
 
     return similarColors
   }

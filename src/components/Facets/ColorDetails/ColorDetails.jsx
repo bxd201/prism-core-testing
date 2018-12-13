@@ -31,7 +31,7 @@ class ColorDetails extends PureComponent<Props> {
   render () {
     const { match: { params }, colors } = this.props
     const { sceneIsDisplayed, sceneIsMaximized } = this.state
-    console.log(this.state)
+
     // grab the color by color number from the URL
     const activeColor = this.getColorByColorNumber(params.colorNumber)
 
