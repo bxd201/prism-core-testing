@@ -32,10 +32,9 @@ class ColorStrip extends PureComponent<Props> {
           {stripColors.map(color => {
             return (
               <li key={color.id} className={`${ColorStrip.baseClass}__strip-color`} style={{ backgroundColor: color.hex }} onClick={() => this.selectColor(color)}>
-                <span className={`${ColorStrip.baseClass}__strip-color-name`}>{color.name}</span>
-                {/* <button onClick={() => this.selectColor(color)}>
-                  {color.name}{(color.id === this.activeColor.id) ? ' - ACTIVE' : ''}
-                </button> */}
+                <button className={`${ColorStrip.baseClass}__strip-color-info ${color.id === this.activeColor.id ? ` ${ColorStrip.baseClass}__strip-color-info--active` : ''}`}>
+                  <span className={`${ColorStrip.baseClass}__strip-color-name`} >{color.name}</span>
+                </button>
               </li>
             )
           })}

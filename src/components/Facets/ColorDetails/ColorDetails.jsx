@@ -18,14 +18,14 @@ class ColorDetails extends PureComponent<Props> {
 
   state = {
     sceneIsDisplayed: true,
-    sceneIsMaximized: false
+    chipIsMaximized: false
   }
 
   constructor (props) {
     super(props)
 
     this.toggleSceneDisplay = this.toggleSceneDisplay.bind(this)
-    this.toggleSceneMaximized = this.toggleSceneMaximized.bind(this)
+    this.toggleChipMaximized = this.toggleChipMaximized.bind(this)
   }
 
   render () {
@@ -37,21 +37,25 @@ class ColorDetails extends PureComponent<Props> {
 
     return (
       <div className='color-detail-view'>
-        <div className={`color-detail__scene-wrapper ${sceneIsDisplayed ? ` color-detail__scene-wrapper--displayed` : ''}  ${sceneIsMaximized ? ` color-detail__scene-wrapper--maximized` : ''}`}>
+        <div className={`${ColorDetails.baseClass}__max-chip ${chipIsMaximized ? ` ${ColorDetails.baseClass}__max-chip--maximized` : ''}`} style={{ backgroundColor: activeColor.hex }} />
+
+        <div className={`${ColorDetails.baseClass}__display-toggles-wrapper ${chipIsMaximized ? ` ${ColorDetails.baseClass}__display-toggles-wrapper--chip--maxed` : ''}`}>
+          {/* TODO: Temporary buttons to toggle scene painter display/maximizing - copy values should be coming from the current state, not be static */}
+          <button className={`${ColorDetails.baseClass}__max-chip-toggle color-info__max-chip-toggle`} onClick={this.toggleChipMaximized}>
+            <div className={`${ColorDetails.baseClass}__scene-toggle-copy`}>Toggle Chip Maximize</div>
+          </button>
+          <button className={`${ColorDetails.baseClass}__scene-display-toggle`} onClick={this.toggleSceneDisplay}>
+            <div className={`${ColorDetails.baseClass}__scene-toggle-copy`}>Toggle Scene Painter Display</div>
+          </button>
+        </div>
+
+        <div className={`color-detail__scene-wrapper ${sceneIsDisplayed ? ` color-detail__scene-wrapper--displayed` : ''}`}>
           <SceneManager />
         </div>
         <div className='color-detail__info-wrapper'>
           <div className={`${ColorDetails.baseClass}__main-info`} style={{ backgroundColor: activeColor.hex }}>
-            <ColorViewer color={activeColor} />
+            <ColorViewer color={activeColor} chipMaximizeHandler={this.toggleChipMaximized} sceneDisplayHandler={this.toggleSceneDisplay} />
             <ColorStrip key={activeColor.id} colors={colors} color={activeColor} />
-
-            {/* TODO: Temporary buttons to toggle scene painter display/maximizing */}
-            <button className={`${ColorDetails.baseClass}__scene-display-toggle color-info__scene-painter-toggle`} onClick={this.toggleSceneDisplay}>
-              <div className={`${ColorDetails.baseClass}__scene-toggle-copy`}>Toggle Scene Painter Display</div>
-            </button>
-            <button className={`${ColorDetails.baseClass}__scene-maximize-toggle color-info__scene-painter-toggle`} onClick={this.toggleSceneMaximized}>
-              <div className={`${ColorDetails.baseClass}__scene-toggle-copy`}>Toggle Scene Painter Maximize</div>
-            </button>
           </div>
           <div className={`${ColorDetails.baseClass}__additional-info`}>
             <Tabs>
@@ -67,38 +71,40 @@ class ColorDetails extends PureComponent<Props> {
                 <SimilarColors colors={colors} color={activeColor} />
               </TabPanel>
               <TabPanel className={`${ColorDetails.baseClass}__tab-panel color-info__tab-panel-details`}>
-                <h5 className='visually-hidden'>Details</h5>
-                {/* <a className={`${ColorDetails.baseClass}__family-link`} href=''>View All Orange Paint Colors </a> */}
-                <ul className={`${ColorDetails.baseClass}__visual-specifications`}>
-                  <li className={`${ColorDetails.baseClass}__visual-specification`}>
+                <div className={`${ColorDetails.baseClass}__details-tab-wrapper`}>
+                  <h5 className='visually-hidden'>Details</h5>
+                  {/* <a className={`${ColorDetails.baseClass}__family-link`} href=''>View All Orange Paint Colors </a> */}
+                  <ul className={`${ColorDetails.baseClass}__visual-specifications`}>
+                    <li className={`${ColorDetails.baseClass}__visual-specification`}>
+                      <dl>
+                        <dt className={`${ColorDetails.baseClass}__description-term`}>R: </dt>
+                        <dd className={`${ColorDetails.baseClass}__description-definition`}>{activeColor.red}</dd>
+                        <dt className={`${ColorDetails.baseClass}__description-term`}>G: </dt>
+                        <dd className={`${ColorDetails.baseClass}__description-definition`}>{activeColor.green}</dd>
+                        <dt className={`${ColorDetails.baseClass}__description-term`}>B: </dt>
+                        <dd className={`${ColorDetails.baseClass}__description-definition`}>{activeColor.blue}</dd>
+                      </dl>
+                    </li>
+                    <li className={`${ColorDetails.baseClass}__visual-specification`}>
+                      <dl>
+                        <dt className={`${ColorDetails.baseClass}__description-term`}>Hex Value: </dt>
+                        <dd className={`${ColorDetails.baseClass}__description-definition`}>{activeColor.hex}</dd>
+                      </dl>
+                    </li>
+                    <li className={`${ColorDetails.baseClass}__visual-specification`}>
+                      <dl>
+                        <dt className={`${ColorDetails.baseClass}__description-term`}>LRV: </dt>
+                        <dd className={`${ColorDetails.baseClass}__description-definition`}>{Math.round(activeColor.lrv)}</dd>
+                      </dl>
+                    </li>
+                  </ul>
+                  {activeColor.brandedCollectionNames && (
                     <dl>
-                      <dt className={`${ColorDetails.baseClass}__description-term`}>R: </dt>
-                      <dd className={`${ColorDetails.baseClass}__description-definition`}>{activeColor.red}</dd>
-                      <dt className={`${ColorDetails.baseClass}__description-term`}>G: </dt>
-                      <dd className={`${ColorDetails.baseClass}__description-definition`}>{activeColor.green}</dd>
-                      <dt className={`${ColorDetails.baseClass}__description-term`}>B: </dt>
-                      <dd className={`${ColorDetails.baseClass}__description-definition`}>{activeColor.blue}</dd>
+                      <dt className={`${ColorDetails.baseClass}__description-term`}>Color Collections: </dt>
+                      <dd className={`${ColorDetails.baseClass}__description-definition`}>{activeColor.brandedCollectionNames.join(', ')}</dd>
                     </dl>
-                  </li>
-                  <li className={`${ColorDetails.baseClass}__visual-specification`}>
-                    <dl>
-                      <dt className={`${ColorDetails.baseClass}__description-term`}>Hex Value: </dt>
-                      <dd className={`${ColorDetails.baseClass}__description-definition`}>{activeColor.hex}</dd>
-                    </dl>
-                  </li>
-                  <li className={`${ColorDetails.baseClass}__visual-specification`}>
-                    <dl>
-                      <dt className={`${ColorDetails.baseClass}__description-term`}>LRV: </dt>
-                      <dd className={`${ColorDetails.baseClass}__description-definition`}>{Math.round(activeColor.lrv)}</dd>
-                    </dl>
-                  </li>
-                </ul>
-                {activeColor.brandedCollectionNames && (
-                  <dl>
-                    <dt className={`${ColorDetails.baseClass}__description-term`}>Color Collections: </dt>
-                    <dd className={`${ColorDetails.baseClass}__description-definition`}>{activeColor.brandedCollectionNames.join(', ')}</dd>
-                  </dl>
-                )}
+                  )}
+                </div>
               </TabPanel>
             </Tabs>
           </div>
@@ -122,8 +128,8 @@ class ColorDetails extends PureComponent<Props> {
     this.setState({ sceneIsDisplayed: !this.state.sceneIsDisplayed })
   }
 
-  toggleSceneMaximized () {
-    this.setState({ sceneIsMaximized: !this.state.sceneIsMaximized })
+  toggleChipMaximized () {
+    this.setState({ chipIsMaximized: !this.state.chipIsMaximized })
   }
 }
 
