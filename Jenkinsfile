@@ -13,6 +13,9 @@ pipeline {
   }
   stages {
     stage('builder') {
+      when {
+        branch 'develop'
+      }
       steps {
         sh """
         #!/bin/bash
@@ -43,6 +46,9 @@ pipeline {
       }
     }
     stage('build') {
+      when {
+        branch 'develop'
+      }
       steps {
         unstash 'static'
         sh """
@@ -80,6 +86,9 @@ pipeline {
       }
     }
     stage('image-testing') {
+      when {
+        branch 'develop'
+      }
       agent {
         docker {
           image 'docker.cpartdc01.sherwin.com/ecomm/utils/docker_rspec'
