@@ -62,7 +62,7 @@ class ColorDetails extends PureComponent<Props> {
           </button>
         </div>
         <div className={`color-detail__scene-wrapper ${sceneIsDisplayed ? ` color-detail__scene-wrapper--displayed` : ''}`}>
-          <SceneManager />
+          <SceneManager maxActiveScenes={1} />
         </div>
         <div className='color-detail__info-wrapper'>
           <div className={`${ColorDetails.baseClass}__main-info`} style={{ backgroundColor: activeColor.hex }}>
