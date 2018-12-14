@@ -1,15 +1,13 @@
 // @flow
 import React, { PureComponent } from 'react'
-import { connect } from 'react-redux'
 import { FormattedMessage } from 'react-intl'
 import { find } from 'lodash'
 
-import { paintAllSceneSurfaces } from '../../../../actions/scenes'
+import CoordinatingColorSwatch from './CoordinatingColorSwatch'
 
 type Props = {
   colors: Array,
   color: Object,
-  paintAllSceneSurfaces: Function
 }
 
 class CoordinatingColors extends PureComponent<Props> {
@@ -22,24 +20,9 @@ class CoordinatingColors extends PureComponent<Props> {
       <React.Fragment>
         <h5 className='visually-hidden'><FormattedMessage id='COORDINATING_COLORS' /></h5>
         <ul className={`${CoordinatingColors.baseClass}__coord-colors`}>
-          <li className={`${CoordinatingColors.baseClass}__coord-color`} onClick={() => this.selectColor(coordinatingColors.coord1Color)} style={{ backgroundColor: coordinatingColors.coord1Color.hex }}>
-            <p className={`${CoordinatingColors.baseClass}__coord-color-number`}>
-              {`${coordinatingColors.coord1Color.brandKey} ${coordinatingColors.coord1Color.colorNumber}`}
-            </p>
-            <p className={`${CoordinatingColors.baseClass}__coord-color-name`}>{coordinatingColors.coord1Color.name}</p>
-          </li>
-          <li className={`${CoordinatingColors.baseClass}__coord-color`} onClick={() => this.selectColor(coordinatingColors.coord2Color)} style={{ backgroundColor: coordinatingColors.coord2Color.hex }}>
-            <p className={`${CoordinatingColors.baseClass}__coord-color-number`}>
-              {`${coordinatingColors.coord2Color.brandKey} ${coordinatingColors.coord2Color.colorNumber}`}
-            </p>
-            <p className={`${CoordinatingColors.baseClass}__coord-color-name`}>{coordinatingColors.coord2Color.name}</p>
-          </li>
-          <li className={`${CoordinatingColors.baseClass}__coord-color`} onClick={() => this.selectColor(coordinatingColors.whiteColor)} style={{ backgroundColor: coordinatingColors.whiteColor.hex }}>
-            <p className={`${CoordinatingColors.baseClass}__coord-color-number`}>
-              {`${coordinatingColors.whiteColor.brandKey} ${coordinatingColors.whiteColor.colorNumber}`}
-            </p>
-            <p className={`${CoordinatingColors.baseClass}__coord-color-name`}>{coordinatingColors.whiteColor.name}</p>
-          </li>
+          <CoordinatingColorSwatch color={coordinatingColors.coord1Color} />
+          <CoordinatingColorSwatch color={coordinatingColors.coord2Color} />
+          <CoordinatingColorSwatch color={coordinatingColors.whiteColor} />
         </ul>
       </React.Fragment>
     )
@@ -51,9 +34,9 @@ class CoordinatingColors extends PureComponent<Props> {
     const coord2ColorId = color.coordinatingColors.coord2ColorId
     const whiteColorId = color.coordinatingColors.whiteColorId
 
-    const coord1Color = find(colors, color => color.id == coord1ColorId) // eslint-disable-line
-    const coord2Color = find(colors, color => color.id == coord2ColorId) // eslint-disable-line
-    const whiteColor = find(colors, color => color.id == whiteColorId) // eslint-disable-line
+    const coord1Color = find(colors, color => color.id === coord1ColorId)
+    const coord2Color = find(colors, color => color.id === coord2ColorId)
+    const whiteColor = find(colors, color => color.id === whiteColorId)
 
     const coordinatingColors = {
       coord1Color,
@@ -63,18 +46,6 @@ class CoordinatingColors extends PureComponent<Props> {
 
     return coordinatingColors
   }
-
-  selectColor (color) {
-    this.props.paintAllSceneSurfaces(color)
-  }
 }
 
-const mapDispatchToProps = (dispatch: Function) => {
-  return {
-    paintAllSceneSurfaces: (color) => {
-      dispatch(paintAllSceneSurfaces(color))
-    }
-  }
-}
-
-export default connect(null, mapDispatchToProps)(CoordinatingColors)
+export default CoordinatingColors

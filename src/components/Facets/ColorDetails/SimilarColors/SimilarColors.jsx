@@ -1,15 +1,13 @@
 // @flow
 import React, { PureComponent } from 'react'
-import { connect } from 'react-redux'
 import { find } from 'lodash'
 import { FormattedMessage } from 'react-intl'
 
-import { paintAllSceneSurfaces } from '../../../../actions/scenes'
+import SimilarColorSwatch from './SimilarColorSwatch'
 
 type Props = {
   colors: Array,
-  color: Object,
-  paintAllSceneSurfaces: Function
+  color: Object
 }
 
 class SimilarColors extends PureComponent<Props> {
@@ -22,15 +20,7 @@ class SimilarColors extends PureComponent<Props> {
       <React.Fragment>
         <h5 className='visually-hidden'><FormattedMessage id='SIMILAR_COLORS' /></h5>
         <ul className={`${SimilarColors.baseClass}__similar-colors`}>
-          {similarColors.map(color => {
-            return (
-              <li key={color.id} onClick={() => this.selectColor(color)} className={`${SimilarColors.baseClass}__similar-color`} style={{ backgroundColor: color.hex }}>
-                <p className={`${SimilarColors.baseClass}__similar-color-name`}>
-                  {color.brandKey} {color.colorNumber} - {color.name}
-                </p>
-              </li>
-            )
-          })}
+          {similarColors.map(color => <SimilarColorSwatch key={color.id} color={color} />)}
         </ul>
         <hr />
       </React.Fragment>
@@ -52,18 +42,6 @@ class SimilarColors extends PureComponent<Props> {
 
     return similarColors
   }
-
-  selectColor (color) {
-    this.props.paintAllSceneSurfaces(color)
-  }
 }
 
-const mapDispatchToProps = (dispatch: Function) => {
-  return {
-    paintAllSceneSurfaces: (color) => {
-      dispatch(paintAllSceneSurfaces(color))
-    }
-  }
-}
-
-export default connect(null, mapDispatchToProps)(SimilarColors)
+export default SimilarColors

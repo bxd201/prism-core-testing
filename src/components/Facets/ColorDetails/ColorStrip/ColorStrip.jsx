@@ -1,25 +1,27 @@
 // @flow
 import React, { PureComponent } from 'react'
-import { connect } from 'react-redux'
 import { filter, split } from 'lodash'
 
-import { paintAllSceneSurfaces } from '../../../../actions/scenes'
+import ColorStripSwatch from './ColorStripSwatch'
 
 type Props = {
   colors: Array,
-  color: Object,
-  paintAllSceneSurfaces: Function
+  color: Object
 }
 
 class ColorStrip extends PureComponent<Props> {
   static baseClass = 'color-info'
 
-  activeColor: Color
+  state: State = {
+    activeColor: void (0)
+  }
 
   constructor (props) {
     super(props)
 
-    this.activeColor = props.color
+    this.state = { activeColor: props.color }
+
+    this.activateColor = this.activateColor.bind(this)
   }
 
   render () {
@@ -28,15 +30,11 @@ class ColorStrip extends PureComponent<Props> {
     return (
       <React.Fragment>
         <ul className={`${ColorStrip.baseClass}__strip`}>
-          <li className={`${ColorStrip.baseClass}__strip-location`}><span className={`${ColorStrip.baseClass}__strip-location-name`}>{this.colorStripLocation()}</span></li>
+          <li className={`${ColorStrip.baseClass}__strip-location`}>
+            <span className={`${ColorStrip.baseClass}__strip-location-name`}>{this.colorStripLocation()}</span>
+          </li>
           {stripColors.map(color => {
-            return (
-              <li key={color.id} className={`${ColorStrip.baseClass}__strip-color`} style={{ backgroundColor: color.hex }} onClick={() => this.selectColor(color)}>
-                <button className={`${ColorStrip.baseClass}__strip-color-info ${color.id === this.activeColor.id ? ` ${ColorStrip.baseClass}__strip-color-info--active` : ''}`}>
-                  <span className={`${ColorStrip.baseClass}__strip-color-name`} >{color.name}</span>
-                </button>
-              </li>
-            )
+            return <ColorStripSwatch key={color.id} color={color} activateColor={this.activateColor} active={(this.state.activeColor.id === color.id)} />
           })}
         </ul>
       </React.Fragment>
@@ -58,21 +56,9 @@ class ColorStrip extends PureComponent<Props> {
     return filter(colors, c => split(c.storeStripLocator, '-')[0] === stripLocation)
   }
 
-  selectColor (color) {
-    // track the active color within the color strip
-    this.activeColor = color
-
-    // paint all the scenes & secen surfaces
-    this.props.paintAllSceneSurfaces(color)
+  activateColor (color) {
+    this.setState({ activeColor: color })
   }
 }
 
-const mapDispatchToProps = (dispatch: Function) => {
-  return {
-    paintAllSceneSurfaces: (color) => {
-      dispatch(paintAllSceneSurfaces(color))
-    }
-  }
-}
-
-export default connect(null, mapDispatchToProps)(ColorStrip)
+export default ColorStrip
