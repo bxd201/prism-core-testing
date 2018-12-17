@@ -55,7 +55,8 @@
 
   &__main-info {
     padding: $width-medium;
-    // position: relative;
+    position: relative;
+    z-index: 2;
   }
 
   &__expanded-title {
@@ -135,7 +136,7 @@
     color: $color-black;
     font-size: 0.9rem;
   }
-  
+
   &__max-chip {
     height: 100%;
     left: 0;
