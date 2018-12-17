@@ -4,8 +4,7 @@ import _ from 'lodash'
 
 import type { ScenePayload } from '../shared/types/Scene'
 import type { Color } from '../shared/types/Colors'
-import { SCENE_TYPES } from 'constants/globals'
-import { SW_SCENES_AUTOMOTIVE, SW_SCENES_ROOMS, SW_SCENES_OBJECTS } from 'constants/endpoints'
+import { SW_SCENES_ENDPOINT } from 'constants/endpoints'
 
 export const REQUEST_SCENES = 'REQUEST_SCENES'
 const requestScenes = () => {
@@ -62,7 +61,7 @@ export const loadScenes = (type: string) => {
   return (dispatch: Function, getState: Function) => {
     const { sceneCollection, type: oldType } = getState().scenes
     let scenes = !_.isEmpty(sceneCollection) && !_.isEmpty(sceneCollection[type]) && sceneCollection[type]
-    let scenesEndpoint = void (0)
+    // let scenesEndpoint = void (0)
 
     if (scenes) {
       if (type !== oldType) {
@@ -79,45 +78,30 @@ export const loadScenes = (type: string) => {
 
     dispatch(requestScenes())
 
-    switch (type) {
-      case SCENE_TYPES.OBJECT:
-        scenesEndpoint = SW_SCENES_OBJECTS
-        break
-      case SCENE_TYPES.ROOM:
-        scenesEndpoint = SW_SCENES_ROOMS
-        break
-      case SCENE_TYPES.AUTOMOTIVE:
-        scenesEndpoint = SW_SCENES_AUTOMOTIVE
-        break
-      default:
-        scenesEndpoint = SW_SCENES_ROOMS
-        break
-    }
-
-    if (!scenesEndpoint) {
-      // TODO: create a scene loading ERROR method and handle appropriately -- for now it will just show no scenes
-
-      console.error('No scene type defined. Unable to fetch scenes for unknown scene type.')
-
-      dispatch(receiveScenes({
-        scenes: [],
-        count: 0,
-        type: type
-      }))
-
-      return
-    }
-
-    return axios.get(scenesEndpoint)
+    return axios.get(SW_SCENES_ENDPOINT)
       .then(r => r.data)
       .then(data => {
-        if (data.scenes && data.scenes.length) {
-          dispatch(activateOnlyScene(data.scenes[0].id))
+        if (!data[type]) {
+          // TODO: create a scene loading ERROR method and handle appropriately -- for now it will just show no scenes
+
+          console.error('No scene type defined. Unable to fetch scenes for unknown scene type.')
+
+          dispatch(receiveScenes({
+            scenes: [],
+            count: 0,
+            type: type
+          }))
+
+          return
+        }
+
+        if (data[type].scenes && data[type].scenes.length) {
+          dispatch(activateOnlyScene(data[type].scenes[0].id))
         }
 
         dispatch(receiveScenes({
-          scenes: data.scenes,
-          count: data.count,
+          scenes: data[type].scenes,
+          count: data[type].count,
           type: type
         }))
       })

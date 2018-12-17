@@ -5,7 +5,7 @@ export const DRAG_TYPES = {
 }
 
 export const SCENE_TYPES = {
-  OBJECT: 'object',
+  OBJECT: 'objects',
   ROOM: 'rooms',
   AUTOMOTIVE: 'automotive'
 }
