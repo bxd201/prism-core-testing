@@ -4,10 +4,9 @@ exports[`<ColorWallButton /> testing true 1`] = `
 Array [
   <input
     className="color-wall-button"
-    defaultChecked={false}
     id="family-All"
     name="selectedFamily"
-    onClick={[Function]}
+    onChange={[Function]}
     type="radio"
     value="All"
   />,

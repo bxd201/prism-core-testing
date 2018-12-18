@@ -3,6 +3,11 @@
 exports[`<TintableScene /> matches snapshot of scene with colored surfaces 1`] = `
 <div
   className="prism-scene-manager__scene"
+  style={
+    Object {
+      "maxWidth": "50px",
+    }
+  }
 >
   <div
     className="prism-scene-manager__scene__inner"
@@ -25,7 +30,134 @@ exports[`<TintableScene /> matches snapshot of scene with colored surfaces 1`] =
         xmlnsXlink="http://www.w3.org/1999/xlink"
         y="0"
       >
-        <defs />
+        <defs>
+          <filter
+            colorInterpolationFilters="sRGB"
+            filterUnits="objectBoundingBox"
+            height="100%"
+            id="sceneTS14_surface1_tinter-filter"
+            primitiveUnits="objectBoundingBox"
+            width="100%"
+            x="0"
+            y="0"
+          >
+            <feColorMatrix
+              in="SourceGraphic"
+              result="sourceImageInGrayscale"
+              type="matrix"
+              values="0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0 1 0 1 0"
+            />
+            <feFlood
+              floodColor="#edd5dd"
+              result="tintHue"
+            />
+            <feBlend
+              in="sourceImageInGrayscale"
+              in2="tintHue"
+              mode="multiply"
+            />
+          </filter>
+          <mask
+            height="100%"
+            id="sceneTS14_surface1_object-mask"
+            maskUnits="objectBoundingBox"
+            width="100%"
+            x="0"
+            y="0"
+          >
+            <image
+              height="100%"
+              width="100%"
+              x="0"
+              xlinkHref="https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom5?wid=1200&req=object&opac=100&fmt=png-alpha&object=wall&color=FFFFFF}&fmt=png-alpha"
+              y="0"
+            />
+          </mask>
+          <filter
+            colorInterpolationFilters="sRGB"
+            filterUnits="objectBoundingBox"
+            height="100%"
+            id="sceneTS14_surface2_tinter-filter"
+            primitiveUnits="objectBoundingBox"
+            width="100%"
+            x="0"
+            y="0"
+          >
+            <feColorMatrix
+              in="SourceGraphic"
+              result="sourceImageInGrayscale"
+              type="matrix"
+              values="0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0 1 0 1 0"
+            />
+            <feFlood
+              floodColor="#ebd1db"
+              result="tintHue"
+            />
+            <feBlend
+              in="sourceImageInGrayscale"
+              in2="tintHue"
+              mode="multiply"
+            />
+          </filter>
+          <mask
+            height="100%"
+            id="sceneTS14_surface2_object-mask"
+            maskUnits="objectBoundingBox"
+            width="100%"
+            x="0"
+            y="0"
+          >
+            <image
+              height="100%"
+              width="100%"
+              x="0"
+              xlinkHref="https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom5?wid=1200&req=object&opac=100&fmt=png-alpha&object=accent&color=FFFFFF}&fmt=png-alpha"
+              y="0"
+            />
+          </mask>
+          <filter
+            colorInterpolationFilters="sRGB"
+            filterUnits="objectBoundingBox"
+            height="100%"
+            id="sceneTS14_surface3_tinter-filter"
+            primitiveUnits="objectBoundingBox"
+            width="100%"
+            x="0"
+            y="0"
+          >
+            <feColorMatrix
+              in="SourceGraphic"
+              result="sourceImageInGrayscale"
+              type="matrix"
+              values="0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0 1 0 1 0"
+            />
+            <feFlood
+              floodColor="#edd5dd"
+              result="tintHue"
+            />
+            <feBlend
+              in="sourceImageInGrayscale"
+              in2="tintHue"
+              mode="multiply"
+            />
+          </filter>
+          <mask
+            height="100%"
+            id="sceneTS14_surface3_object-mask"
+            maskUnits="objectBoundingBox"
+            width="100%"
+            x="0"
+            y="0"
+          >
+            <image
+              height="100%"
+              width="100%"
+              x="0"
+              xlinkHref="https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom5?wid=1200&req=object&opac=100&fmt=png-alpha&object=trim&color=FFFFFF}&fmt=png-alpha"
+              y="0"
+            />
+          </mask>
+        </defs>
       </svg>
     </div>
     <div
@@ -42,7 +174,15 @@ exports[`<TintableScene /> matches snapshot of scene with colored surfaces 1`] =
         viewBox="0 0 100 100"
         xmlns="http://www.w3.org/2000/svg"
         xmlnsXlink="http://www.w3.org/1999/xlink"
-      />
+      >
+        <image
+          filter="url(#sceneTS14_surface1_tinter-filter)"
+          height="100%"
+          mask="url(#sceneTS14_surface1_object-mask)"
+          width="100%"
+          xlinkHref="someImageURL"
+        />
+      </svg>
       <svg
         className="prism-scene-manager__scene__surface"
         preserveAspectRatio="none"
@@ -50,7 +190,15 @@ exports[`<TintableScene /> matches snapshot of scene with colored surfaces 1`] =
         viewBox="0 0 100 100"
         xmlns="http://www.w3.org/2000/svg"
         xmlnsXlink="http://www.w3.org/1999/xlink"
-      />
+      >
+        <image
+          filter="url(#sceneTS14_surface2_tinter-filter)"
+          height="100%"
+          mask="url(#sceneTS14_surface2_object-mask)"
+          width="100%"
+          xlinkHref="someImageURL"
+        />
+      </svg>
       <svg
         className="prism-scene-manager__scene__surface"
         preserveAspectRatio="none"
@@ -58,7 +206,15 @@ exports[`<TintableScene /> matches snapshot of scene with colored surfaces 1`] =
         viewBox="0 0 100 100"
         xmlns="http://www.w3.org/2000/svg"
         xmlnsXlink="http://www.w3.org/1999/xlink"
-      />
+      >
+        <image
+          filter="url(#sceneTS14_surface3_tinter-filter)"
+          height="100%"
+          mask="url(#sceneTS14_surface3_object-mask)"
+          width="100%"
+          xlinkHref="someImageURL"
+        />
+      </svg>
     </div>
     <div
       className="prism-scene-manager__scene__hit-wrapper"

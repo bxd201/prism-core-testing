@@ -4,12 +4,12 @@
   $flower-size-scale: 1.5;
   $flower-distance-scale: .15;
 
-  $bloom-activate-delay: 0s;
-  $bloom-activate-duration: .2s;
+  $bloom-activate-delay: getVar('colorWall.swatchActivateDelayMS') * 1ms;
+  $bloom-activate-duration: getVar('colorWall.swatchActivateDurationMS') * 1ms;
   $bloom-activate-z-duration: $bloom-activate-delay + $bloom-activate-duration;
 
-  $bloom-deactivate-delay: .0s;
-  $bloom-deactivate-duration: .2s;
+  $bloom-deactivate-delay: getVar('colorWall.swatchDeactivateDelayMS') * 1ms;
+  $bloom-deactivate-duration: getVar('colorWall.swatchDeactivateDurationMS') * 1ms;
   $bloom-deactivate-z-duration: $bloom-deactivate-delay + $bloom-deactivate-duration;
 
   $swatch-scale-amt: 1.25;
@@ -234,7 +234,7 @@
 
   &--bloom {
     /* autoprefixer: ignore next */
-    transition-property: top, left, transform, width, height, margin, z-index, box-shadow !important;
+    transition-property: top, left, transform, width, height, margin, z-index, box-shadow;
 
     transition-delay: 0s !important;
 
@@ -280,60 +280,4 @@
       @include getEdgeCompensation($flower-size-scale, 130%, !important);
     }
   }
-
-  // &--offset {
-  //   &-y {
-  //     &-n2 {
-  //       top: -150% * $flower-distance-scale;
-  //       &--primary {
-  //         top: -166% * $flower-distance-scale;
-  //       }
-  //     }
-  //     &-n1 {
-  //       top: -100% * $flower-distance-scale;
-  //       &--primary {
-  //         top: -125% * $flower-distance-scale;
-  //       }
-  //     }
-  //     &-1 {
-  //       top: 100% * $flower-distance-scale;
-  //       &--primary {
-  //         top: 125% * $flower-distance-scale;
-  //       }
-  //     }
-  //     &-2 {
-  //       top: 150% * $flower-distance-scale;
-  //       &--primary {
-  //         top: 166% * $flower-distance-scale;
-  //       }
-  //     }
-  //   }
-
-  //   &-x {
-  //     &-n2 {
-  //       left: -150% * $flower-distance-scale;
-  //       &--primary {
-  //         left: -166% * $flower-distance-scale;
-  //       }
-  //     }
-  //     &-n1 {
-  //       left: -100% * $flower-distance-scale;
-  //       &--primary {
-  //         left: -125% * $flower-distance-scale;
-  //       }
-  //     }
-  //     &-1 {
-  //       left: 100% * $flower-distance-scale;
-  //       &--primary {
-  //         left: 125% * $flower-distance-scale;
-  //       }
-  //     }
-  //     &-2 {
-  //       left: 150% * $flower-distance-scale;
-  //       &--primary {
-  //         left: 166% * $flower-distance-scale;
-  //       }
-  //     }
-  //   }
-  // }
 }

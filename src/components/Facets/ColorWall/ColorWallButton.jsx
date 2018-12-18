@@ -1,17 +1,21 @@
+// @flow
 import React, { PureComponent } from 'react'
-import PropTypes from 'prop-types'
-import kebabCase from 'lodash/kebabCase'
 
-class ColorWallButton extends PureComponent {
-  constructor (props) {
+type Props = {
+  family: string,
+  checked: boolean,
+  selectFamily: Function
+}
+
+class ColorWallButton extends PureComponent<Props> {
+  constructor (props: Props) {
     super(props)
 
-    this.handleClick = this.handleClick.bind(this)
+    this.handleChange = this.handleChange.bind(this)
   }
 
   render () {
-    const { family, current, routeCurrent } = this.props
-    const isChecked = (kebabCase(family) === routeCurrent || family === current)
+    const { family, checked } = this.props
 
     return (
       <React.Fragment>
@@ -20,9 +24,9 @@ class ColorWallButton extends PureComponent {
           className='color-wall-button'
           name='selectedFamily'
           id={`family-${family}`}
-          onClick={this.handleClick}
+          onChange={this.handleChange}
           value={family}
-          defaultChecked={isChecked}
+          checked={checked}
         />
         <label className='color-wall-label' htmlFor={`family-${family}`}>
           {family}
@@ -31,18 +35,11 @@ class ColorWallButton extends PureComponent {
     )
   }
 
-  handleClick () {
-    this.props.selectFamily(this.props.family)
+  handleChange = function handleChange () {
+    const { selectFamily, family } = this.props
 
-    window.location.hash = `/active/color-wall/${kebabCase(this.props.family)}`
+    selectFamily(family)
   }
-}
-
-ColorWallButton.propTypes = {
-  family: PropTypes.string,
-  current: PropTypes.string,
-  selectFamily: PropTypes.func,
-  routeCurrent: PropTypes.string
 }
 
 export default ColorWallButton
