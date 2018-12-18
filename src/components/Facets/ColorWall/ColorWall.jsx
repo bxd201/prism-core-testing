@@ -3,7 +3,7 @@ import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
 import { kebabCase } from 'lodash'
 
-import { loadColors, makeActiveColor } from '../../../actions/loadColors'
+import { loadColors, makeActiveColor, resetActiveColor } from '../../../actions/loadColors'
 import { add } from '../../../actions/live-palette'
 import type { ColorFamilyPayload, ColorMap, Color } from '../../../shared/types/Colors'
 
@@ -20,6 +20,7 @@ type Props = {
   loadColors: Function,
   addToLivePalette: Function,
   makeActiveColor: Function,
+  resetActiveColor: Function,
   loading: boolean,
   family: string,
   defaultFamily: string,
@@ -42,7 +43,7 @@ class ColorWall extends PureComponent<Props> {
   }
 
   render () {
-    const { colors, families, family, defaultFamily, brights, colorMap, makeActiveColor, colorWallActive, loading, addToLivePalette } = this.props
+    const { colors, families, family, defaultFamily, brights, colorMap, makeActiveColor, resetActiveColor, colorWallActive, loading, addToLivePalette } = this.props
 
     let colorFamily = family || defaultFamily
 
@@ -59,6 +60,7 @@ class ColorWall extends PureComponent<Props> {
         <div className='sw-colorwall'>
           <SherwinColorWall
             onActivateColor={makeActiveColor}
+            onRemoveActiveColor={resetActiveColor}
             onSelectFamily={this.navigateToNewFamily}
             family={colorFamily}
             families={families}
@@ -103,6 +105,9 @@ const mapDispatchToProps = (dispatch: Function) => {
     },
     makeActiveColor: (color: Color) => {
       dispatch(makeActiveColor(color))
+    },
+    resetActiveColor: () => {
+      dispatch(resetActiveColor())
     },
     addToLivePalette: (color: Color) => {
       dispatch(add(color))
