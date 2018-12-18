@@ -4,17 +4,6 @@ import { Provider } from 'react-redux'
 import { IntlProvider } from 'react-intl'
 import { HashRouter } from 'react-router-dom'
 
-// fontawesome imports
-import { library } from '@fortawesome/fontawesome-svg-core'
-import {
-  faPlus,
-  faPlusCircle,
-  faTrash,
-  faInfoCircle,
-  faInfo,
-  faSearchMinus
-} from '@fortawesome/free-solid-svg-icons'
-
 // all supported languages
 import languages from './translations/translations'
 
@@ -24,19 +13,11 @@ import store from './store'
 // import all mountable components
 import APPS from './config/components'
 
+// load all fontawesome fonts we are using
+import './config/fontawesome'
+
 // global sass import
 import './scss/main.scss'
-
-// populate with all the FontAwesome svg icons we want to use
-const faIcons = [
-  faPlus,
-  faPlusCircle,
-  faTrash,
-  faInfoCircle,
-  faInfo,
-  faSearchMinus
-]
-library.add(...faIcons)
 
 const renderAppInElement = (el) => {
   if (el.className.indexOf('__react-bound') > -1) {
