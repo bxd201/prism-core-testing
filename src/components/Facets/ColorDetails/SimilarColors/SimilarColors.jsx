@@ -1,6 +1,6 @@
 // @flow
 import React, { PureComponent } from 'react'
-import { find } from 'lodash'
+import { has } from 'lodash'
 import { FormattedMessage } from 'react-intl'
 
 import SimilarColorSwatch from './SimilarColorSwatch'
@@ -30,14 +30,17 @@ class SimilarColors extends PureComponent<Props> {
   similarColors () {
     const { colors, color } = this.props
     const similarColorIds = color.similarColors || []
+    const similarColors = []
 
     // return empty array if no similar colors exist
     if (!similarColorIds.length) {
       return similarColorIds
     }
 
-    const similarColors = similarColorIds.map(similarColorId => {
-      return find(colors, color => color.id === similarColorId)
+    similarColorIds.map(similarColorId => {
+      if (has(colors, similarColorId)) {
+        similarColors.push(colors[similarColorId])
+      }
     })
 
     return similarColors
