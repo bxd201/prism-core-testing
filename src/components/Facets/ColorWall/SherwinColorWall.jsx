@@ -97,7 +97,8 @@ class SherwinColorWall extends PureComponent<Props> {
             bloomRadius={2}
             onAddColor={addToLivePalette}
             colorMap={colorMap}
-            cellSize={50}
+            minCellSize={50}
+            maxCellSize={50}
             key={family}
             colors={colorsGrid}
             initialActiveColor={activeColor}
@@ -107,7 +108,8 @@ class SherwinColorWall extends PureComponent<Props> {
             showAll
             immediateSelectionOnActivation
             colorMap={colorMap}
-            cellSize={50}
+            minCellSize={15}
+            maxCellSize={25}
             key={`${family}-showAll`}
             colors={colorsGrid}
             onActivateColor={this.handleActivateColor} />

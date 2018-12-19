@@ -13,7 +13,8 @@ import { getColorCoords, drawCircle, getCoordsObjectFromPairs } from './ColorWal
 
 type Props = {
   colors: ColorGrid, // eslint-disable-line react/no-unused-prop-types
-  cellSize: number,
+  minCellSize: number,
+  maxCellSize: number,
   bloomRadius: number,
   colorMap: ColorMap,
   activeColor?: Color, // eslint-disable-line react/no-unused-prop-types
@@ -45,8 +46,11 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
   _DOMNode = void (0)
   _scrollTimeout = void (0)
   _initialFocusCoords = void (0)
+  // internal tracking of current grid size
   _gridWidth: number = 0
   _gridHeight: number = 0
+  // internal tracking of current cell size, varying between min and maxCellSize props
+  _cellSize: number
 
   state: State = {
     activeCoords: [],
@@ -58,7 +62,9 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
   }
 
   static defaultProps = {
-    bloomRadius: 0
+    bloomRadius: 0,
+    minCellSize: 50,
+    maxCellSize: 50
   }
 
   constructor (props: Props) {
@@ -156,18 +162,11 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
   }
 
   zoomInActivate (newColor: Color) {
-    const { onActivateColor, cellSize } = this.props
-    const { activeCoords, colorIdGrid } = this.state
+    const { onActivateColor } = this.props
+    const { activeCoords } = this.state
 
-    const numRows = colorIdGrid.length
-    const numCols = colorIdGrid[0].length
-    const cellSizeShowAll = this._gridWidth / numCols
-    const cellSizeRatio = cellSizeShowAll / cellSize
-    const cellsTotalH = numRows * cellSizeShowAll
-    const cellsTotalW = numCols * cellSizeShowAll
-    const zoomerW = this._gridWidth * cellSizeRatio
-    const zoomerH = this._gridHeight * cellSizeRatio
-    const scale = zoomerW / this._gridWidth
+    const cellSizeShowAll = this._cellSize
+    const scale = Math.max(this._cellSize / this._gridWidth, 0.3)
 
     const activePos = [
       activeCoords[0] * cellSizeShowAll,
@@ -185,8 +184,8 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
       }
     }
 
-    let zoomerX = Math.max(zoomerW / 2, Math.min(activePos[0], cellsTotalW - (zoomerW / 2))) - (this._gridWidth / 2)
-    let zoomerY = Math.max(zoomerH / 2, Math.min(activePos[1], cellsTotalH - (zoomerH / 2))) - (this._gridHeight / 2)
+    let zoomerX = (this._gridWidth / -2) + activePos[0] + (cellSizeShowAll / 2)
+    let zoomerY = (this._gridHeight / -2) + activePos[1] + (cellSizeShowAll / 2)
 
     zoomerX /= scale
     zoomerY /= scale
@@ -203,7 +202,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     }, () => {
       setTimeout(() => {
         if (onActivateColor) {
-          /// ... call it now
+          // ... call it now
           onActivateColor(newColor)
         }
       }, varValues.colorWall.exitTransitionMS)
@@ -313,7 +312,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
   }
 
   render () {
-    const { cellSize, showAll } = this.props
+    const { minCellSize, maxCellSize, showAll } = this.props
     const { colorIdGrid, levelMap, zoomingIn, zoomerInitProps } = this.state
     const rowCount = colorIdGrid.length
     const columnCount = colorIdGrid[0].length
@@ -330,14 +329,6 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
       transitioner = <ZoomTransitioner position={zoomerInitProps} mode={TransitionModes.ZOOM_IN} />
     }
 
-    // TODO: kind of janky, but temporarily fixing the bug where on initial click there is no active color selected
-    if (this._initialActiveColor) {
-      this.activateColor(this._initialActiveColor)
-      this._initialActiveColor = void (0)
-
-      return null
-    }
-
     return (
       <div className={`color-wall-swatch-list ${!showAll ? 'color-wall-swatch-list--zoomed' : 'color-wall-swatch-list--show-all'}`}
         onKeyDown={this.handleKeyDown}
@@ -347,11 +338,14 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
 
         <AutoSizer onResize={this.handleGridResize}>
           {({ height, width }) => {
-            let size = cellSize
+            let size = maxCellSize
 
             if (showAll) {
-              size = Math.min(width / columnCount, cellSize)
+              size = Math.max(Math.min(width / columnCount, maxCellSize), minCellSize)
             }
+
+            // keep tabs on our current size since it can very between min/maxCellSize
+            this._cellSize = size
 
             return (
               <Grid
@@ -377,7 +371,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
   }
 
   componentDidUpdate (prevProps: Props, prevState: State) {
-    const { cellSize, showAll } = this.props
+    const { showAll } = this.props
     const { activeCoords, focusCoords } = this.state
     const { activeCoords: oldActiveCoords, focusCoords: oldFocusCoords } = prevState
 
@@ -403,8 +397,8 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
         this._scrollTimeout = setTimeout(() => {
           // $FlowIgnore -- flow doesn't think this exists, but it is mistaken
           gridEl.scrollTo({
-            left: newCoords.x * cellSize - (this._gridWidth - cellSize) / 2,
-            top: newCoords.y * cellSize - (this._gridHeight - cellSize) / 2,
+            left: newCoords.x * this._cellSize - (this._gridWidth - this._cellSize) / 2,
+            top: newCoords.y * this._cellSize - (this._gridHeight - this._cellSize) / 2,
             behavior: 'smooth'
           })
         }, varValues.colorWall.swatchActivateDelayMS + varValues.colorWall.swatchActivateDurationMS)

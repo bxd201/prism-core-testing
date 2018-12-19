@@ -26,7 +26,7 @@ module.exports.varValues = {
   },
   colorWall: {
     swatchColumns: 56, // default SW color chunks
-    exitTransitionMS: 300,
+    exitTransitionMS: 200,
     enterTransitionMS: 300,
     swatchActivateDurationMS: 200,
     swatchActivateDelayMS: 0,
