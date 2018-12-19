@@ -21,6 +21,11 @@ class CoordinatingColorSwatch extends PureComponent<Props> {
   render () {
     const { color } = this.props
 
+    // not all colors have all coordinating colors
+    if (!color) {
+      return null
+    }
+
     return (
       <li className={`${CoordinatingColorSwatch.baseClass}__coord-color`} onClick={this.selectColor} style={{ backgroundColor: color.hex }}>
         <p className={`${CoordinatingColorSwatch.baseClass}__coord-color-number`}>

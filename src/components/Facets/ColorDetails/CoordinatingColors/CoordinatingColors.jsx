@@ -15,14 +15,15 @@ class CoordinatingColors extends PureComponent<Props> {
 
   render () {
     const coordinatingColors = this.coordinatingColors()
+    const { coord1Color, coord2Color, whiteColor } = coordinatingColors
 
     return (
       <React.Fragment>
         <h5 className='visually-hidden'><FormattedMessage id='COORDINATING_COLORS' /></h5>
         <ul className={`${CoordinatingColors.baseClass}__coord-colors`}>
-          <CoordinatingColorSwatch color={coordinatingColors.coord1Color} />
-          <CoordinatingColorSwatch color={coordinatingColors.coord2Color} />
-          <CoordinatingColorSwatch color={coordinatingColors.whiteColor} />
+          <CoordinatingColorSwatch color={coord1Color} />
+          <CoordinatingColorSwatch color={coord2Color} />
+          <CoordinatingColorSwatch color={whiteColor} />
         </ul>
       </React.Fragment>
     )
