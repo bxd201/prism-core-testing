@@ -1,6 +1,6 @@
 // @flow
 import React, { PureComponent } from 'react'
-import { withRouter, Route } from 'react-router-dom'
+import { memoize } from 'lodash'
 
 import { BLANK_SWATCH, SW_CHUNK_SIZE } from 'constants/globals'
 
@@ -9,10 +9,8 @@ import { compareKebabs } from '../../../shared/helpers/StringUtils'
 
 import type { ColorFamilyPayload, ColorMap, Color, ColorGrid } from '../../../shared/types/Colors'
 
-import ColorDetails from '../ColorDetails/ColorDetails'
 import ColorWallSwatchList from './ColorWallSwatchList'
 import ColorWallButton from './ColorWallButton'
-import { memoize } from 'lodash'
 
 type Props = {
   colors: ColorFamilyPayload,
@@ -41,7 +39,6 @@ class SherwinColorWall extends PureComponent<Props> {
 
   render () {
     const { onSelectFamily, family, families } = this.props
-    console.log('sherwin color wall rendered ')
     const ColorWallButtons = families ? families.map(thisFamily => {
       return <ColorWallButton key={thisFamily} selectFamily={onSelectFamily} family={thisFamily} checked={compareKebabs(thisFamily, family)} />
     }) : null
@@ -54,8 +51,6 @@ class SherwinColorWall extends PureComponent<Props> {
         <div className='color-wall-wall'>
           { this.colorFamily() }
         </div>
-        <hr />
-        <Route path='/active/color-wall/color/:colorId' exact render={this.renderColorDetails} />
       </React.Fragment>
     )
   }
@@ -119,10 +114,6 @@ class SherwinColorWall extends PureComponent<Props> {
       </React.Fragment>
     )
   }
-
-  renderColorDetails (props) {
-    return <ColorDetails {...props} />
-  }
 }
 
-export default withRouter(SherwinColorWall)
+export default SherwinColorWall

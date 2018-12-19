@@ -160,7 +160,7 @@ pipeline {
         RANCHER_ENV = "nonprod"
         RANCHER_PROJ = "1a33"
         RANCHER_STACK = "prism-web-dev"
-        IMAGE_TAG = "dev"
+        IMAGE_TAG = "develop"
         API_URL = "https://dev-prism-api.ebus.swaws"
         WEB_URL = "https://dev-prism-web.ebus.swaws"
       }

@@ -34,6 +34,11 @@ class ColorDetails extends PureComponent<Props> {
     const { match: { params }, colors } = this.props
     const { sceneIsDisplayed, chipIsMaximized } = this.state
 
+    // TODO: Color Details won't be a top level component, so this may not be valid so temporarily not rendering until it has colors
+    if (!colors) {
+      return null
+    }
+
     // grab the color by color number from the URL
     const activeColor = this.getColorById(params.colorId)
 
@@ -50,51 +55,54 @@ class ColorDetails extends PureComponent<Props> {
     }
 
     return (
-      <div className='color-detail-view'>
-        <div className={SWATCH_CLASSES.join(' ')} style={{ backgroundColor: activeColor.hex }} />
-        <div className={DISPLAY_TOGGLES_WRAPPER.join(' ')}>
-          {/* TODO: Temporary buttons to toggle scene painter display/maximizing - copy values should be coming from the current state, not be static */}
-          <button className={`${ColorDetails.baseClass}__max-chip-toggle color-info__max-chip-toggle`} onClick={this.toggleChipMaximized}>
-            <div className={`${ColorDetails.baseClass}__scene-toggle-copy`}>Toggle Chip Maximize</div>
-          </button>
-          <button className={`${ColorDetails.baseClass}__scene-display-toggle`} onClick={this.toggleSceneDisplay}>
-            <div className={`${ColorDetails.baseClass}__scene-toggle-copy`}>Toggle Scene Painter Display</div>
-          </button>
-        </div>
-        <div className={`color-detail__scene-wrapper ${sceneIsDisplayed ? ` color-detail__scene-wrapper--displayed` : ''}`}>
-          <SceneManager maxActiveScenes={1} />
-        </div>
-        <div className='color-detail__info-wrapper'>
-          <div className={`${ColorDetails.baseClass}__main-info`} style={{ backgroundColor: activeColor.hex }}>
-            <ColorViewer color={activeColor} />
-            <ColorStrip key={activeColor.id} colors={colors} color={activeColor} />
+      <React.Fragment>
+        <hr />
+        <div className='color-detail-view'>
+          <div className={SWATCH_CLASSES.join(' ')} style={{ backgroundColor: activeColor.hex }} />
+          <div className={DISPLAY_TOGGLES_WRAPPER.join(' ')}>
+            {/* TODO: Temporary buttons to toggle scene painter display/maximizing - copy values should be coming from the current state, not be static */}
+            <button className={`${ColorDetails.baseClass}__max-chip-toggle color-info__max-chip-toggle`} onClick={this.toggleChipMaximized}>
+              <div className={`${ColorDetails.baseClass}__scene-toggle-copy`}>Toggle Chip Maximize</div>
+            </button>
+            <button className={`${ColorDetails.baseClass}__scene-display-toggle`} onClick={this.toggleSceneDisplay}>
+              <div className={`${ColorDetails.baseClass}__scene-toggle-copy`}>Toggle Scene Painter Display</div>
+            </button>
           </div>
-          <div className={`${ColorDetails.baseClass}__additional-info`}>
-            <Tabs>
-              <TabList className={`${ColorDetails.baseClass}__tab-list`} style={{ backgroundColor: activeColor.hex }}>
-                <Tab className={`${ColorDetails.baseClass}__tab`}>
-                  <div className={`${ColorDetails.baseClass}__tab-copy`}><FormattedMessage id='COORDINATING_COLORS' /></div>
-                </Tab>
-                <Tab className={`${ColorDetails.baseClass}__tab`}>
-                  <div className={`${ColorDetails.baseClass}__tab-copy`}><FormattedMessage id='SIMILAR_COLORS' /></div>
-                </Tab>
-                <Tab className={`${ColorDetails.baseClass}__tab`}>
-                  <div className={`${ColorDetails.baseClass}__tab-copy`}><FormattedMessage id='DETAILS' /></div>
-                </Tab>
-              </TabList>
-              <TabPanel className={`${ColorDetails.baseClass}__tab-panel`}>
-                <CoordinatingColors colors={colors} color={activeColor} />
-              </TabPanel>
-              <TabPanel className={`${ColorDetails.baseClass}__tab-panel`}>
-                <SimilarColors colors={colors} color={activeColor} />
-              </TabPanel>
-              <TabPanel className={`${ColorDetails.baseClass}__tab-panel color-info__tab-panel-details`}>
-                <ColorInfo color={activeColor} />
-              </TabPanel>
-            </Tabs>
+          <div className={`color-detail__scene-wrapper ${sceneIsDisplayed ? ` color-detail__scene-wrapper--displayed` : ''}`}>
+            <SceneManager maxActiveScenes={1} />
+          </div>
+          <div className='color-detail__info-wrapper'>
+            <div className={`${ColorDetails.baseClass}__main-info`} style={{ backgroundColor: activeColor.hex }}>
+              <ColorViewer color={activeColor} />
+              <ColorStrip key={activeColor.id} colors={colors} color={activeColor} />
+            </div>
+            <div className={`${ColorDetails.baseClass}__additional-info`}>
+              <Tabs>
+                <TabList className={`${ColorDetails.baseClass}__tab-list`} style={{ backgroundColor: activeColor.hex }}>
+                  <Tab className={`${ColorDetails.baseClass}__tab`}>
+                    <div className={`${ColorDetails.baseClass}__tab-copy`}><FormattedMessage id='COORDINATING_COLORS' /></div>
+                  </Tab>
+                  <Tab className={`${ColorDetails.baseClass}__tab`}>
+                    <div className={`${ColorDetails.baseClass}__tab-copy`}><FormattedMessage id='SIMILAR_COLORS' /></div>
+                  </Tab>
+                  <Tab className={`${ColorDetails.baseClass}__tab`}>
+                    <div className={`${ColorDetails.baseClass}__tab-copy`}><FormattedMessage id='DETAILS' /></div>
+                  </Tab>
+                </TabList>
+                <TabPanel className={`${ColorDetails.baseClass}__tab-panel`}>
+                  <CoordinatingColors colors={colors} color={activeColor} />
+                </TabPanel>
+                <TabPanel className={`${ColorDetails.baseClass}__tab-panel`}>
+                  <SimilarColors colors={colors} color={activeColor} />
+                </TabPanel>
+                <TabPanel className={`${ColorDetails.baseClass}__tab-panel color-info__tab-panel-details`}>
+                  <ColorInfo color={activeColor} />
+                </TabPanel>
+              </Tabs>
+            </div>
           </div>
         </div>
-      </div>
+      </React.Fragment>
     )
   }
 
