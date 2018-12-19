@@ -1,5 +1,6 @@
 // @flow
 import React, { PureComponent } from 'react'
+import { memoize } from 'lodash'
 
 import { BLANK_SWATCH, SW_CHUNK_SIZE } from 'constants/globals'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -10,7 +11,6 @@ import type { ColorFamilyPayload, ColorMap, Color, ColorGrid } from '../../../sh
 
 import ColorWallSwatchList from './ColorWallSwatchList'
 import ColorWallButton from './ColorWallButton'
-import { memoize } from 'lodash'
 
 type Props = {
   colors: ColorFamilyPayload,
@@ -36,6 +36,24 @@ class SherwinColorWall extends PureComponent<Props> {
     this.colorFamily = this.colorFamily.bind(this)
     this.handleActivateColor = this.handleActivateColor.bind(this)
     this.getColorGrid = this.getColorGrid.bind(this)
+  }
+
+  render () {
+    const { onSelectFamily, family, families } = this.props
+    const ColorWallButtons = families ? families.map(thisFamily => {
+      return <ColorWallButton key={thisFamily} selectFamily={onSelectFamily} family={thisFamily} checked={compareKebabs(thisFamily, family)} />
+    }) : null
+
+    return (
+      <React.Fragment>
+        <div className='color-wall-buttons'>
+          {ColorWallButtons}
+        </div>
+        <div className='color-wall-wall'>
+          { this.colorFamily() }
+        </div>
+      </React.Fragment>
+    )
   }
 
   handleActivateColor = function handleActivateColor (color: Color) {
@@ -101,25 +119,6 @@ class SherwinColorWall extends PureComponent<Props> {
             </button>
           </div>
         )}
-      </React.Fragment>
-    )
-  }
-
-  render () {
-    const { onSelectFamily, family, families } = this.props
-
-    const ColorWallButtons = families ? families.map(thisFamily => {
-      return <ColorWallButton key={thisFamily} selectFamily={onSelectFamily} family={thisFamily} checked={compareKebabs(thisFamily, family)} />
-    }) : null
-
-    return (
-      <React.Fragment>
-        <div className='color-wall-buttons'>
-          {ColorWallButtons}
-        </div>
-        <div className='color-wall-wall'>
-          { this.colorFamily() }
-        </div>
       </React.Fragment>
     )
   }

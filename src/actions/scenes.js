@@ -143,3 +143,26 @@ export const paintSceneSurface = (sceneId: number, surfaceId: number, color: Col
     }))
   }
 }
+
+export const paintAllSceneSurfaces = (color: Color) => {
+  return (dispatch: Function, getState: Function) => {
+    const { sceneCollection, type } = getState().scenes
+    const scenes = sceneCollection[type]
+
+    const newScenes = _.clone(scenes).map(scene => _.clone(scene))
+
+    scenes.map((scene, sceneIndex) => {
+      scene.surfaces.map((surface, surfaceIndex) => {
+        newScenes[ sceneIndex ].surfaces[ surfaceIndex ] = Object.assign({}, newScenes[ sceneIndex ].surfaces[ surfaceIndex ], {
+          color: color
+        })
+      })
+    })
+
+    dispatch(receiveScenes({
+      scenes: newScenes,
+      count: newScenes.length,
+      type
+    }))
+  }
+}
