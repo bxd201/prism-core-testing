@@ -2,7 +2,7 @@
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
-import { flatten, filter } from 'lodash'
+import { has } from 'lodash'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import { FormattedMessage } from 'react-intl'
 
@@ -35,7 +35,7 @@ class ColorDetails extends PureComponent<Props> {
     const { sceneIsDisplayed, chipIsMaximized } = this.state
 
     // grab the color by color number from the URL
-    const activeColor = this.getColorByColorNumber(params.colorNumber)
+    const activeColor = this.getColorById(params.colorId)
 
     // perform some css class logic & scaffolding instead of within the DOM itself
     let SWATCH_CLASSES = [
@@ -98,15 +98,14 @@ class ColorDetails extends PureComponent<Props> {
     )
   }
 
-  getColorByColorNumber (colorNumber) {
+  getColorById (colorId) {
     const { colors } = this.props
-    const color = filter(colors, color => color.colorNumber === colorNumber)[0]
 
-    if (!color) {
+    if (!has(colors, colorId)) {
       return null
     }
 
-    return color
+    return colors[colorId]
   }
 
   toggleSceneDisplay () {
@@ -121,11 +120,8 @@ class ColorDetails extends PureComponent<Props> {
 const mapStateToProps = (state, props) => {
   const { colors } = state
 
-  // TODO: WhooWhee, don't keep this. Need this here to be able to easily grab a color byId.
-  const colours = flatten(Object.keys(colors.items).map(fam => colors.items[fam]))
-
   return {
-    colors: colours
+    colors: colors.items.colorMap
   }
 }
 

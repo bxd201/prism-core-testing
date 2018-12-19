@@ -1,5 +1,6 @@
 // @flow
 import React, { PureComponent } from 'react'
+import { withRouter, Route } from 'react-router-dom'
 
 import { BLANK_SWATCH, SW_CHUNK_SIZE } from 'constants/globals'
 
@@ -8,6 +9,7 @@ import { compareKebabs } from '../../../shared/helpers/StringUtils'
 
 import type { ColorFamilyPayload, ColorMap, Color, ColorGrid } from '../../../shared/types/Colors'
 
+import ColorDetails from '../ColorDetails/ColorDetails'
 import ColorWallSwatchList from './ColorWallSwatchList'
 import ColorWallButton from './ColorWallButton'
 import { memoize } from 'lodash'
@@ -35,6 +37,27 @@ class SherwinColorWall extends PureComponent<Props> {
     this.colorFamily = this.colorFamily.bind(this)
     this.handleActivateColor = this.handleActivateColor.bind(this)
     this.getColorGrid = this.getColorGrid.bind(this)
+  }
+
+  render () {
+    const { onSelectFamily, family, families } = this.props
+    console.log('sherwin color wall rendered ')
+    const ColorWallButtons = families ? families.map(thisFamily => {
+      return <ColorWallButton key={thisFamily} selectFamily={onSelectFamily} family={thisFamily} checked={compareKebabs(thisFamily, family)} />
+    }) : null
+
+    return (
+      <React.Fragment>
+        <div className='color-wall-buttons'>
+          {ColorWallButtons}
+        </div>
+        <div className='color-wall-wall'>
+          { this.colorFamily() }
+        </div>
+        <hr />
+        <Route path='/active/color-wall/color/:colorId' exact render={this.renderColorDetails} />
+      </React.Fragment>
+    )
   }
 
   handleActivateColor = function handleActivateColor (color: Color) {
@@ -97,24 +120,9 @@ class SherwinColorWall extends PureComponent<Props> {
     )
   }
 
-  render () {
-    const { onSelectFamily, family, families } = this.props
-
-    const ColorWallButtons = families ? families.map(thisFamily => {
-      return <ColorWallButton key={thisFamily} selectFamily={onSelectFamily} family={thisFamily} checked={compareKebabs(thisFamily, family)} />
-    }) : null
-
-    return (
-      <React.Fragment>
-        <div className='color-wall-buttons'>
-          {ColorWallButtons}
-        </div>
-        <div className='color-wall-wall'>
-          { this.colorFamily() }
-        </div>
-      </React.Fragment>
-    )
+  renderColorDetails (props) {
+    return <ColorDetails {...props} />
   }
 }
 
-export default SherwinColorWall
+export default withRouter(SherwinColorWall)

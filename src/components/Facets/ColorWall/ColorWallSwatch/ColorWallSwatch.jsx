@@ -184,7 +184,8 @@ class ColorWallSwatch extends PureComponent<Props> {
 
   handleDetailClick = function handleDetailClick () {
     const { color } = this.props
-    this.props.history.push(`/active/color-wall/color-details/${color.colorNumber}`)
+
+    this.props.history.push(`/active/color-wall/color/${color.id}`)
   }
 }
 

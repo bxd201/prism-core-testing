@@ -56,19 +56,21 @@ class ColorWall extends PureComponent<Props> {
     // const isSherwinColorWall = isPlainObject(colors)
     if (families) {
       return (
-        <div className='sw-colorwall'>
-          <SherwinColorWall
-            onActivateColor={makeActiveColor}
-            onSelectFamily={this.navigateToNewFamily}
-            family={colorFamily}
-            families={families}
-            colors={colors}
-            brights={brights}
-            colorMap={colorMap}
-            activeColor={colorWallActive}
-            addToLivePalette={addToLivePalette}
-          />
-        </div>
+        <React.Fragment>
+          <div className='sw-colorwall'>
+            <SherwinColorWall
+              onActivateColor={makeActiveColor}
+              onSelectFamily={this.navigateToNewFamily}
+              family={colorFamily}
+              families={families}
+              colors={colors}
+              brights={brights}
+              colorMap={colorMap}
+              activeColor={colorWallActive}
+              addToLivePalette={addToLivePalette}
+            />
+          </div>
+        </React.Fragment>
       )
     }
 
