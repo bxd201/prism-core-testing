@@ -41,6 +41,10 @@ class ColorDetails extends PureComponent<Props> {
 
     // grab the color by color number from the URL
     const activeColor = this.getColorById(params.colorId)
+    if (!activeColor) {
+      console.info(`ColorDetails: ${params.colorId} is not a valid color ID`)
+      return null
+    }
 
     // perform some css class logic & scaffolding instead of within the DOM itself
     let SWATCH_CLASSES = [

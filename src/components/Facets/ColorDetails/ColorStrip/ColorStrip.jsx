@@ -27,6 +27,10 @@ class ColorStrip extends PureComponent<Props> {
   render () {
     const stripColors = this.colorStripColors()
 
+    if (!stripColors) {
+      return null
+    }
+
     return (
       <React.Fragment>
         <ul className={`${ColorStrip.baseClass}__strip`}>
@@ -51,6 +55,10 @@ class ColorStrip extends PureComponent<Props> {
   colorStripColors () {
     const { colors } = this.props
     const stripLocation = this.colorStripLocation()
+
+    if (!stripLocation) {
+      return null
+    }
 
     // grab all colors with the locationId
     return filter(colors, c => split(c.storeStripLocator, '-')[0] === stripLocation)

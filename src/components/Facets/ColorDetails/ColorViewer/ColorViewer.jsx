@@ -26,9 +26,11 @@ class ColorViewer extends PureComponent<Props> {
             {(color.isInterior && color.isExterior) ? ' / ' : ''}
             {(color.isExterior) ? 'Exterior' : ''}
           </h2>
-          <h3 className={`${ColorViewer.baseClass}__rack-location`}>
-            <FormattedMessage id='LOCATION_NUMBER' />: {color.storeStripLocator}
-          </h3>
+          {color.storeStripLocator && (
+            <h3 className={`${ColorViewer.baseClass}__rack-location`}>
+              <FormattedMessage id='LOCATION_NUMBER' />: {color.storeStripLocator}
+            </h3>
+          )}
         </div>
       </React.Fragment>
     )
