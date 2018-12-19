@@ -1,5 +1,5 @@
 // @flow
-import _ from 'lodash'
+import { concat, uniq, isUndefined, isNull, without } from 'lodash'
 
 import {
   RECEIVE_SCENES,
@@ -46,15 +46,15 @@ export const scenes = (state: Object = initialState, action: { type: string, pay
     case ACTIVATE_SCENE:
       return Object.assign({}, state, {
         // combines activeScenes[] with one or more additional scene IDs, removes dupes, removes null/undefined
-        activeScenes: _.uniq(_.concat(state.activeScenes, action.payload.id))
-          .filter(val => (!_.isNull(val) && !_.isUndefined(val)))
+        activeScenes: uniq(concat(state.activeScenes, action.payload.id))
+          .filter(val => (!isNull(val) && !isUndefined(val)))
       })
 
     case DEACTIVATE_SCENE:
       return Object.assign({}, state, {
         // removes one or more scene IDs from activeScenes[], removes dupes, removes null/undefined
-        activeScenes: _.uniq(_.without.apply(null, _.concat([state.activeScenes], action.payload.id)))
-          .filter(val => (!_.isNull(val) && !_.isUndefined(val)))
+        activeScenes: uniq(without.apply(null, concat([state.activeScenes], action.payload.id)))
+          .filter(val => (!isNull(val) && !isUndefined(val)))
       })
 
     default:

@@ -38,7 +38,7 @@ export const colors = (state: ColorsState = initialState, action: ReduxAction) =
         items: {
           colors: action.payload.colors,
           brights: action.payload.brights,
-          colorMap: Object.assign(convertToColorMap(action.payload.colors), convertToColorMap(action.payload.brights))
+          colorMap: Object.assign({}, convertToColorMap(action.payload.colors), convertToColorMap(action.payload.brights))
         },
         defaultFamily: action.payload.defaultFamily,
         families: action.payload.families,

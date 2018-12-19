@@ -1,14 +1,21 @@
 // @flow
-import { fill, flatten, flattenDeep, keys, union } from 'lodash'
+import { fill, flatten, flattenDeep, keys, union, concat } from 'lodash'
+import memoizee from 'memoizee'
 import { compareKebabs } from './StringUtils'
 import { ZOOMED_VIEW_GRID_PADDING } from '../../constants/globals'
+import { getTotalWidthOf2dArray } from './DataUtils'
 import type { ColorFamilyPayload, ProbablyColor, ColorGrid, ColorLine, BlankColor } from '../types/Colors'
 
-export function convertFamiliesToGrid (families: string[] = [], colors: ColorFamilyPayload, brights: ColorFamilyPayload, BLANK: BlankColor, chunkWidth: number): ColorGrid {
+// -------------------------------------------------------
+// BEGIN ConvertFamiliesToGrid
+// -------------------------------------------------------
+
+function ConvertFamiliesToGrid (families: string[] = [], colors: ColorFamilyPayload, brights: ColorFamilyPayload, BLANK: BlankColor, chunkWidth: number): ColorGrid {
   const padH = ZOOMED_VIEW_GRID_PADDING
   const padV = ZOOMED_VIEW_GRID_PADDING
   let output: ColorGrid = [] // this will be a 2D array of numbers
   let brightOutput = []
+  let singleFamily = false
 
   let _families = families
 
@@ -22,67 +29,85 @@ export function convertFamiliesToGrid (families: string[] = [], colors: ColorFam
     }
   }
 
+  if (_families.length === 1) {
+    singleFamily = true
+  }
+
   // BEGIN GRIDIFYING BRIGHTS
   if (brights) {
     _families.forEach((family: string) => {
       let famBrights: ProbablyColor[] = flatten(brights[family])
 
       if (famBrights && famBrights.length) {
-        const len = famBrights.length
-
-        if (len < chunkWidth) {
-          brightOutput.push(famBrights.concat(getArrayOfPads(chunkWidth - len, BLANK)))
-        }
-        brightOutput.push(famBrights)
+        brightOutput.push(ConvertFamiliesToGrid.extractSegment(0, chunkWidth, famBrights, BLANK))
       }
     })
 
     if (brightOutput.length) {
-      const flatBrights = flatten(insertColumnCellsBetweenAndAfter(brightOutput, padH, BLANK))
+      const flatBrights = flatten(ConvertFamiliesToGrid.insertColumnCellsBetweenAndAfter(brightOutput, padH, BLANK))
+
       if (flatBrights && flatBrights.length) {
         output.push(flatBrights)
-        output.push(getArrayOfPads(flatBrights.length, BLANK))
+        output.push(ConvertFamiliesToGrid.getArrayOfPads(flatBrights.length, BLANK))
       }
     }
   }
   // END GRIDIFYING BRIGHTS
 
   const firstFamily = colors[_families[0]]
+  const iterations = Math.ceil(getTotalWidthOf2dArray(firstFamily) / chunkWidth)
 
-  firstFamily.forEach((__zz, chunkY) => {
-    const iterations = Math.ceil(firstFamily[chunkY].length / chunkWidth)
-
-    for (let chunkX = 0; chunkX < iterations; chunkX++) {
-      // this is a grid that will be flattened into a single line
+  if (singleFamily) {
+    for (let chunkY = 0; chunkY < iterations; chunkY++) {
       let xAxis: (ColorLine | void)[] = []
 
-      _families.forEach((__xx, family) => {
-        const initial = chunkX * chunkWidth
-        const end = initial + chunkWidth
-        let next = colors[_families[family]][chunkY].slice(initial, end)
-        const nl = next.length
-
-        if (nl < chunkWidth) {
-          next = next.concat(getArrayOfPads(chunkWidth - nl, BLANK))
-        }
-
-        xAxis.push(next)
+      firstFamily.forEach((chunkColors) => {
+        xAxis.push(ConvertFamiliesToGrid.extractSegment(chunkY, chunkWidth, chunkColors, BLANK))
       })
 
-      xAxis = insertColumnCellsBetweenAndAfter(xAxis, padH, BLANK)
-
+      xAxis = ConvertFamiliesToGrid.insertColumnCellsBetweenAndAfter(xAxis, padH, BLANK)
       output.push(flatten(xAxis))
     }
-    output = insertRowAfter(output, padV, BLANK)
-  })
 
-  output = insertRowBefore(output, padV, BLANK)
-  output = insertColumnBefore(output, padH, BLANK)
+    output = ConvertFamiliesToGrid.insertRowAfter(output, padV, BLANK)
+  } else {
+    firstFamily.forEach((__, chunkY) => {
+      for (let chunkX = 0; chunkX < iterations; chunkX++) {
+        // this is a grid that will be flattened into a single line
+        let xAxis: (ColorLine | void)[] = []
+
+        _families.forEach((familyName) => {
+          xAxis.push(ConvertFamiliesToGrid.extractSegment(chunkX, chunkWidth, colors[familyName][chunkY], BLANK))
+        })
+
+        xAxis = ConvertFamiliesToGrid.insertColumnCellsBetweenAndAfter(xAxis, padH, BLANK)
+        output.push(flatten(xAxis))
+      }
+
+      output = ConvertFamiliesToGrid.insertRowAfter(output, padV, BLANK)
+    })
+  }
+
+  output = ConvertFamiliesToGrid.insertRowBefore(output, padV, BLANK)
+  output = ConvertFamiliesToGrid.insertColumnBefore(output, padH, BLANK)
 
   return output
 }
 
-function insertColumnCellsBetweenAndAfter (toPad: (ColorLine | BlankColor)[], amt: number, padWith: BlankColor): (ColorLine | BlankColor)[] {
+ConvertFamiliesToGrid.extractSegment = function extractSegment (index: number, segSize: number, whole: ColorLine, BLANK: BlankColor) {
+  const start = index * segSize
+  const end = start + segSize
+  let next = whole.slice(start, end)
+  const nl = next.length
+
+  if (nl < segSize) {
+    return concat(next, ConvertFamiliesToGrid.getArrayOfPads(segSize - nl, BLANK))
+  }
+
+  return next
+}
+
+ConvertFamiliesToGrid.insertColumnCellsBetweenAndAfter = function insertColumnCellsBetweenAndAfter (toPad: (ColorLine | BlankColor)[], amt: number, padWith: BlankColor): (ColorLine | BlankColor)[] {
   if (amt && toPad) {
     let returner: (ColorLine | BlankColor)[] = []
     toPad.forEach((__yy, i) => {
@@ -100,51 +125,63 @@ function insertColumnCellsBetweenAndAfter (toPad: (ColorLine | BlankColor)[], am
   return toPad
 }
 
-function insertColumnBefore (toPad: ColorGrid, amt: number, padWith: BlankColor): ColorGrid {
+ConvertFamiliesToGrid.insertColumnBefore = function insertColumnBefore (toPad: ColorGrid, amt: number, padWith: BlankColor): ColorGrid {
   if (amt && toPad) {
     return toPad.map(el => {
       let _amt = amt
+      let _new = el
+
       while (_amt--) {
-        el.unshift(padWith)
+        _new = concat(padWith, _new)
       }
-      return el
+      return _new
     })
   }
 
   return toPad
 }
 
-function insertRowBefore (toPad: ColorGrid, amt: number, padWith: BlankColor): ColorGrid {
+ConvertFamiliesToGrid.insertRowBefore = function insertRowBefore (toPad: ColorGrid, amt: number, padWith: BlankColor): ColorGrid {
+  let _new = toPad
+
+  if (amt && _new) {
+    const len = _new[0].length
+
+    if (len) {
+      while (amt--) {
+        _new = concat([ConvertFamiliesToGrid.getArrayOfPads(len, padWith)], _new)
+      }
+    }
+  }
+
+  return _new
+}
+
+ConvertFamiliesToGrid.insertRowAfter = function insertRowAfter (toPad: ColorGrid, amt: number, padWith: BlankColor): ColorGrid {
+  let _new = toPad
+
   if (amt && toPad) {
     const len = toPad[0].length
 
     if (len) {
       while (amt--) {
-        toPad.unshift(getArrayOfPads(len, padWith))
+        _new = concat(_new, [ConvertFamiliesToGrid.getArrayOfPads(len, padWith)])
       }
     }
   }
 
-  return toPad
+  return _new
 }
 
-function insertRowAfter (toPad: ColorGrid, amt: number, padWith: BlankColor): ColorGrid {
-  if (amt && toPad) {
-    const len = toPad[0].length
-
-    if (len) {
-      while (amt--) {
-        toPad.push(getArrayOfPads(len, padWith))
-      }
-    }
-  }
-
-  return toPad
-}
-
-function getArrayOfPads (length: number, padWith: BlankColor): ColorLine {
+ConvertFamiliesToGrid.getArrayOfPads = memoizee(function getArrayOfPads (length: number, padWith: BlankColor): ColorLine {
   return fill(new Array(length), padWith)
-}
+}, { primitive: true, length: 2 })
+
+export const convertFamiliesToGrid = ConvertFamiliesToGrid
+
+// -------------------------------------------------------
+// END ConvertFamiliesToGrid
+// -------------------------------------------------------
 
 export function convertToColorMap (colorData: ColorFamilyPayload) {
   let colorMap = {}

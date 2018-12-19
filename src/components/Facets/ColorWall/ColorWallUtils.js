@@ -3,6 +3,7 @@ import { findIndex, concat } from 'lodash'
 import { ZOOMED_VIEW_GRID_PADDING } from '../../../constants/globals'
 import type { ColorIdGrid, ColorIdLine } from '../../../shared/types/Colors'
 import { euclideanDistance } from '../../../shared/helpers/GeometryUtils'
+import { getTotalWidthOf2dArray } from '../../../shared/helpers/DataUtils'
 
 export function getColorCoords (id: string, chunkedColorIds: ColorIdGrid): number[] | void {
   return chunkedColorIds.map((colorRow: ColorIdLine, y: number) => {
@@ -21,7 +22,7 @@ export function getColorCoords (id: string, chunkedColorIds: ColorIdGrid): numbe
 
 export function drawCircle (radius: number, centerX: number, centerY: number, chunkedColorIds: ColorIdGrid) {
   const TL = { x: ZOOMED_VIEW_GRID_PADDING, y: ZOOMED_VIEW_GRID_PADDING }
-  const BR = { x: chunkedColorIds[0].length - 1 - ZOOMED_VIEW_GRID_PADDING, y: chunkedColorIds.length - 1 - ZOOMED_VIEW_GRID_PADDING }
+  const BR = { x: getTotalWidthOf2dArray(chunkedColorIds) - 1 - ZOOMED_VIEW_GRID_PADDING, y: chunkedColorIds.length - 1 - ZOOMED_VIEW_GRID_PADDING }
   let subsetCoordTL = { x: centerX, y: centerY }
   let subsetCoordBR = { x: centerX, y: centerY }
 

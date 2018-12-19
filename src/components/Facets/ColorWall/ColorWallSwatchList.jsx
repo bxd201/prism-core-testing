@@ -10,6 +10,7 @@ import ColorWallSwatchUI from './ColorWallSwatch/ColorWallSwatchUI'
 import ColorWallSwatchRenderer from './ColorWallSwatch/ColorWallSwatchRenderer'
 import type { ColorMap, Color, ColorGrid, ColorIdGrid, ProbablyColor } from '../../../shared/types/Colors'
 import { getColorCoords, drawCircle, getCoordsObjectFromPairs } from './ColorWallUtils'
+import { getTotalWidthOf2dArray } from '../../../shared/helpers/DataUtils'
 
 type Props = {
   colors: ColorGrid, // eslint-disable-line react/no-unused-prop-types
@@ -222,7 +223,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     const { colorMap, immediateSelectionOnActivation, onAddColor } = this.props
 
     const rowCount = colorIdGrid.length
-    const columnCount = colorIdGrid[0].length
+    const columnCount = getTotalWidthOf2dArray(colorIdGrid)
     const colorId = colorIdGrid[rowIndex][columnIndex]
 
     if (!colorId) {
@@ -279,7 +280,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
   handleKeyDown = function handleKeyDown (e: KeyboardEvent) {
     const { colorIdGrid, focusCoords } = this.state
     const rowCount = colorIdGrid.length
-    const columnCount = colorIdGrid[0].length
+    const columnCount = getTotalWidthOf2dArray(colorIdGrid)
 
     let x = focusCoords[0]
     let y = focusCoords[1]
@@ -315,7 +316,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     const { minCellSize, maxCellSize, showAll } = this.props
     const { colorIdGrid, levelMap, zoomingIn, zoomerInitProps } = this.state
     const rowCount = colorIdGrid.length
-    const columnCount = colorIdGrid[0].length
+    const columnCount = getTotalWidthOf2dArray(colorIdGrid)
     let addlGridProps = {}
     let transitioner = null
 
