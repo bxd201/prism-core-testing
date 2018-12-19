@@ -3,7 +3,7 @@ import React, { PureComponent } from 'react'
 import { memoize } from 'lodash'
 
 import { BLANK_SWATCH, SW_CHUNK_SIZE } from 'constants/globals'
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { convertFamiliesToGrid } from '../../../shared/helpers/ColorDataUtils'
 import { compareKebabs } from '../../../shared/helpers/StringUtils'
 
@@ -16,6 +16,7 @@ type Props = {
   colors: ColorFamilyPayload,
   brights: ColorFamilyPayload,
   colorMap: ColorMap,
+  onRemoveActiveColor: Function,
   onActivateColor: Function,
   onSelectFamily: Function,
   addToLivePalette?: Function,
@@ -81,7 +82,7 @@ class SherwinColorWall extends PureComponent<Props> {
   })
 
   colorFamily = function colorFamily () {
-    const { family, activeColor, colorMap, addToLivePalette } = this.props
+    const { family, activeColor, colorMap, addToLivePalette, onRemoveActiveColor } = this.props
 
     const colorsGrid = this.getColorGrid(family)
 
@@ -110,6 +111,13 @@ class SherwinColorWall extends PureComponent<Props> {
             key={`${family}-showAll`}
             colors={colorsGrid}
             onActivateColor={this.handleActivateColor} />
+        )}
+        {activeColor && (
+          <div className='color-wall-wall__btns'>
+            <button title='Zoom Out' type='button' className='color-wall-wall__btns__btn' onClick={onRemoveActiveColor}>
+              <FontAwesomeIcon icon='search-minus' />
+            </button>
+          </div>
         )}
       </React.Fragment>
     )
