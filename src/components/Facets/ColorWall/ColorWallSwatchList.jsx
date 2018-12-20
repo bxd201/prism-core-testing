@@ -2,6 +2,8 @@
 import React, { PureComponent } from 'react'
 // $FlowIgnore -- no defs for react-virtualized
 import { Grid, AutoSizer } from 'react-virtualized'
+// $FlowIgnore -- no defs for react-virtualized
+import { Scroll } from 'scroll-utility'
 
 import { varValues } from 'variables'
 import ZoomTransitioner, { type ZoomPositionerProps, TransitionModes } from './ZoomTransitioner/ZoomTransitioner'
@@ -46,6 +48,7 @@ type State = {
 class ColorWallSwatchList extends PureComponent<Props, State> {
   _DOMNode = void (0)
   _scrollTimeout = void (0)
+  _scrollManager = void (0)
   _initialFocusCoords = void (0)
   // internal tracking of current grid size
   _gridWidth: number = 0
@@ -394,14 +397,32 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
       const gridEl = this._DOMNode.querySelector('.ReactVirtualized__Grid')
 
       if (gridEl) {
+        if (!this._scrollManager) {
+          this._scrollManager = new Scroll(gridEl)
+        }
+
         clearTimeout(this._scrollTimeout)
+
         this._scrollTimeout = setTimeout(() => {
-          // $FlowIgnore -- flow doesn't think this exists, but it is mistaken
-          gridEl.scrollTo({
-            left: newCoords.x * this._cellSize - (this._gridWidth - this._cellSize) / 2,
-            top: newCoords.y * this._cellSize - (this._gridHeight - this._cellSize) / 2,
-            behavior: 'smooth'
-          })
+          const scrollSpeed = 300
+          const scrollToX = newCoords.x * this._cellSize - (this._gridWidth - this._cellSize) / 2
+          const scrollToY = newCoords.y * this._cellSize - (this._gridHeight - this._cellSize) / 2
+
+          if (this._scrollManager) {
+            // stop any other currently-running scroll animations on this element
+            this._scrollManager.stopAllAnimations()
+
+            // scroll X and Y axes separately (can't do both at once, but the animations stack)
+            this._scrollManager.scrollTo('value', scrollToX, {
+              duration: scrollSpeed,
+              horizontal: true
+            })
+
+            this._scrollManager.scrollTo('value', scrollToY, {
+              duration: scrollSpeed,
+              horizontal: false
+            })
+          }
         }, varValues.colorWall.swatchActivateDelayMS + varValues.colorWall.swatchActivateDurationMS)
       }
     }

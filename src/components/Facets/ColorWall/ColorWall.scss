@@ -102,8 +102,12 @@
     z-index: -1;
   }
 
-  .ReactVirtualized__Grid__innerScrollContainer {
-    overflow: visible !important;
+  .ReactVirtualized__Grid {
+    overscroll-behavior: none;
+
+    &__innerScrollContainer {
+      overflow: visible !important;
+    }
   }
 }
 
