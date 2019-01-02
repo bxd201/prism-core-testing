@@ -51,11 +51,15 @@ export const makeActiveColor = (color: Color) => {
 
 // TODO: Make this method configurable via options on call so specific color wall implementations can reuse it to load their colors
 export const loadColors = (options?: any) => {
+  // conditionally add the lng parameter if a manual language has been passed in
+  const COLOR_FAMILY_ENDPOINT = (options && options.language) ? `${SW_COLORS_BY_FAMILY_ENDPOINT}?lng=${options.language}` : SW_COLORS_BY_FAMILY_ENDPOINT
+  const BRIGHTS_ENDPOINT = (options && options.language) ? `${SW_BRIGHTS_ENDPOINT}?lng=${options.language}` : SW_BRIGHTS_ENDPOINT
+
   return (dispatch: Function) => {
     dispatch(requestColors())
 
     return Promise
-      .all([axios.get(SW_COLORS_BY_FAMILY_ENDPOINT), axios.get(SW_BRIGHTS_ENDPOINT)])
+      .all([axios.get(COLOR_FAMILY_ENDPOINT), axios.get(BRIGHTS_ENDPOINT)])
       .then(r => {
         const colors = r[0].data
         const brights = r[1].data

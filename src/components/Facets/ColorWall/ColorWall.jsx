@@ -2,6 +2,7 @@
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
 import { kebabCase } from 'lodash'
+import { injectIntl } from 'react-intl'
 
 import { loadColors, makeActiveColor, resetActiveColor } from '../../../actions/loadColors'
 import { add } from '../../../actions/live-palette'
@@ -24,7 +25,8 @@ type Props = {
   loading: boolean,
   family: string,
   defaultFamily: string,
-  families?: string[]
+  families?: string[],
+  intl: intlShape
 }
 
 class ColorWall extends PureComponent<Props> {
@@ -35,7 +37,12 @@ class ColorWall extends PureComponent<Props> {
   }
 
   componentDidMount () {
-    this.props.loadColors()
+    // pass in the selected language to the loadColors method so we can set the
+    // lng parameter in the colors request
+    const options = {
+      language: this.props.intl.locale
+    }
+    this.props.loadColors(options)
   }
 
   navigateToNewFamily = function navigateToNewFamily (family) {
@@ -115,4 +122,4 @@ const mapDispatchToProps = (dispatch: Function) => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ColorWall)
+export default connect(mapStateToProps, mapDispatchToProps)(injectIntl(ColorWall))
