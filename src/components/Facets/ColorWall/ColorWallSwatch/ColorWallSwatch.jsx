@@ -21,11 +21,7 @@ type Props = {
   level?: number,
   compensateX?: number,
   compensateY?: number,
-  active?: boolean,
-  topRow?: boolean,
-  bottomRow?: boolean,
-  leftCol?: boolean,
-  rightCol?: boolean
+  active?: boolean
 }
 
 class ColorWallSwatch extends PureComponent<Props> {
@@ -103,24 +99,10 @@ class ColorWallSwatch extends PureComponent<Props> {
   })
 
   getBaseClasses = once(function getBaseClasses (): string {
-    const { color, topRow, bottomRow, leftCol, rightCol } = this.props
+    const { color } = this.props
     let classes = [
       CLASS_NAMES.BASE,
-      CLASS_NAMES.BASE_DYNAMIC,
-      `${topRow && leftCol
-        ? CLASS_NAMES.BASE_POS_TL
-        : topRow && rightCol
-          ? CLASS_NAMES.BASE_POS_TR
-          : bottomRow && rightCol
-            ? CLASS_NAMES.BASE_POS_BR
-            : bottomRow && leftCol
-              ? CLASS_NAMES.BASE_POS_BL
-              : topRow ? CLASS_NAMES.BASE_POS_T
-                : leftCol ? CLASS_NAMES.BASE_POS_L
-                  : rightCol ? CLASS_NAMES.BASE_POS_R
-                    : bottomRow ? CLASS_NAMES.BASE_POS_B
-                      : ''
-      }`
+      CLASS_NAMES.BASE_DYNAMIC
     ]
 
     if (color.isDark) {
