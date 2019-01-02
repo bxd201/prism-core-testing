@@ -47,8 +47,8 @@ const renderAppInElement = (el) => {
   // remove the component declaration in the data attributes
   delete props.reactComponent
 
-  // generate language without the country code
-  const language = props.language || navigator.language.split(/[-_]/)[0] || 'en-US'
+  // set the language
+  const language = props.language || navigator.language || 'en-US'
 
   ReactDOM.render(
     <IntlProvider locale={language} messages={languages[language]}>
