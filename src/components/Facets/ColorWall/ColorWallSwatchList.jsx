@@ -413,11 +413,16 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
             this._scrollManager.stopAllAnimations()
 
             // scroll X and Y axes separately (can't do both at once, but the animations stack)
+
+            // TODO: create flowtype skeleton for instances of Scroll
+            // $FlowIgnore -- Flow doesn't know what instance methods exist on Scroll
             this._scrollManager.scrollTo('value', scrollToX, {
               duration: scrollSpeed,
               horizontal: true
             })
 
+            // TODO: create flowtype skeleton for instances of Scroll
+            // $FlowIgnore -- Flow doesn't know what instance methods exist on Scroll
             this._scrollManager.scrollTo('value', scrollToY, {
               duration: scrollSpeed,
               horizontal: false

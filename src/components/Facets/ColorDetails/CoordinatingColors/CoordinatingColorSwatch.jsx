@@ -36,7 +36,7 @@ class CoordinatingColorSwatch extends PureComponent<Props> {
     )
   }
 
-  selectColor () {
+  selectColor = function selectColor () {
     this.props.paintAllSceneSurfaces(this.props.color)
   }
 }

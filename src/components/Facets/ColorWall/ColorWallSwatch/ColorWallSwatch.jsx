@@ -14,6 +14,7 @@ import './ColorWallSwatch.scss'
 
 type Props = {
   color: Color,
+  history: any, // from withRouter HOC
   showContents?: boolean,
   onEngage?: Function,
   onAdd?: Function,

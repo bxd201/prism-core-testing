@@ -27,6 +27,7 @@ export type Color = {
   red: number,
   rgb: number,
   saturation: number,
+  similarColors: string[],
   storeStripLocator?: string
 }
 

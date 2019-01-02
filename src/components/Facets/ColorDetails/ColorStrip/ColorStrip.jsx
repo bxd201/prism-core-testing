@@ -1,22 +1,23 @@
 // @flow
 import React, { PureComponent } from 'react'
 import { filter, split } from 'lodash'
+import type { Color, ColorMap } from '../../../../shared/types/Colors'
 
 import ColorStripSwatch from './ColorStripSwatch'
 
 type Props = {
-  colors: Array,
-  color: Object
+  colors: ColorMap,
+  color: Color
 }
 
-class ColorStrip extends PureComponent<Props> {
+type State = {
+  activeColor: Color
+}
+
+class ColorStrip extends PureComponent<Props, State> {
   static baseClass = 'color-info'
 
-  state: State = {
-    activeColor: void (0)
-  }
-
-  constructor (props) {
+  constructor (props: Props) {
     super(props)
 
     this.state = { activeColor: props.color }
@@ -64,7 +65,7 @@ class ColorStrip extends PureComponent<Props> {
     return filter(colors, c => split(c.storeStripLocator, '-')[0] === stripLocation)
   }
 
-  activateColor (color) {
+  activateColor = function activateColor (color: Color) {
     this.setState({ activeColor: color })
   }
 }

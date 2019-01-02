@@ -1,11 +1,12 @@
 // @flow
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
+import type { Color } from '../../../../shared/types/Colors'
 
 import { paintAllSceneSurfaces } from '../../../../actions/scenes'
 
 type Props = {
-  color: Object,
+  color: Color,
   active: Boolean,
   activateColor: Function,
   paintAllSceneSurfaces: Function
@@ -39,7 +40,7 @@ class ColorStripSwatch extends PureComponent<Props> {
     )
   }
 
-  selectColor () {
+  selectColor = function selectColor () {
     this.props.activateColor(this.props.color)
     this.props.paintAllSceneSurfaces(this.props.color)
   }

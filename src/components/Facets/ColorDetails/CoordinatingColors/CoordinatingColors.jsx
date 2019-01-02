@@ -4,10 +4,11 @@ import { FormattedMessage } from 'react-intl'
 import { find } from 'lodash'
 
 import CoordinatingColorSwatch from './CoordinatingColorSwatch'
+import type { Color, ColorMap } from '../../../../shared/types/Colors'
 
 type Props = {
-  colors: Array,
-  color: Object,
+  colors: ColorMap,
+  color: Color,
 }
 
 class CoordinatingColors extends PureComponent<Props> {
@@ -31,6 +32,7 @@ class CoordinatingColors extends PureComponent<Props> {
 
   coordinatingColors () {
     const { colors, color } = this.props
+
     const coord1ColorId = color.coordinatingColors.coord1ColorId
     const coord2ColorId = color.coordinatingColors.coord2ColorId
     const whiteColorId = color.coordinatingColors.whiteColorId

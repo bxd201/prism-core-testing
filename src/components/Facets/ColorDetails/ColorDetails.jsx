@@ -15,10 +15,20 @@ import SceneManager from '../../SceneManager/SceneManager'
 
 import './ColorDetails.scss'
 
-class ColorDetails extends PureComponent<Props> {
+type Props = {
+  match: any,
+  colors: any
+}
+
+type State = {
+  sceneIsDisplayed: boolean,
+  chipIsMaximized: boolean
+}
+
+class ColorDetails extends PureComponent<Props, State> {
   static baseClass = 'color-info'
 
-  state = {
+  state: State = {
     sceneIsDisplayed: true,
     chipIsMaximized: false
   }
@@ -120,11 +130,11 @@ class ColorDetails extends PureComponent<Props> {
     return colors[colorId]
   }
 
-  toggleSceneDisplay () {
+  toggleSceneDisplay = function toggleSceneDisplay () {
     this.setState({ sceneIsDisplayed: !this.state.sceneIsDisplayed })
   }
 
-  toggleChipMaximized () {
+  toggleChipMaximized = function toggleChipMaximized () {
     this.setState({ chipIsMaximized: !this.state.chipIsMaximized })
   }
 }
