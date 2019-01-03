@@ -12,3 +12,7 @@ export function getTotalWidthOf2dArray (arr: any[][]): number {
   }, arr[0].length)
   return num
 }
+
+export function ensureFullyQualifiedAssetUrl (url: string) {
+  return (url.indexOf('scene7') > -1) ? url : `${BASE_PATH}${url}` // eslint-disable-line no-undef
+}

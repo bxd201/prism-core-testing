@@ -6,6 +6,8 @@ import SVG from 'react-inlinesvg'
 import { DRAG_TYPES } from 'constants/globals'
 import { DropTarget } from 'react-dnd'
 
+import { ensureFullyQualifiedAssetUrl } from '../../shared/helpers/DataUtils'
+
 type Props = {
   connectDropTarget: Function,
   isOver: Boolean,
@@ -69,13 +71,13 @@ class TintableSceneHitArea extends PureComponent<Props> {
   render () {
     const { connectDropTarget, svgSource, isOver, onLoadingError, onLoadingSuccess } = this.props
 
-    const maskId = TintableSceneHitArea.maskIdMap(svgSource)
+    const maskId = TintableSceneHitArea.maskIdMap(ensureFullyQualifiedAssetUrl(svgSource))
 
     return connectDropTarget && connectDropTarget(
       <div className={TintableSceneHitArea.classNames.hitAreaWrapper}>
         <SVG
           className={TintableSceneHitArea.classNames.hitAreaMaskLoader}
-          src={svgSource}
+          src={ensureFullyQualifiedAssetUrl(svgSource)}
           cacheGetRequests
           uniqueHash={maskId}
           onLoad={(src) => {

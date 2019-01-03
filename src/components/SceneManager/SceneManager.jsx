@@ -8,6 +8,7 @@ import TintableScene from './TintableScene'
 import type { Color } from '../../shared/types/Colors'
 import type { Scene } from '../../shared/types/Scene'
 import ImagePreloader from '../../helpers/ImagePreloader'
+import { ensureFullyQualifiedAssetUrl } from '../../shared/helpers/DataUtils'
 
 import './SceneManager.scss'
 
@@ -114,15 +115,15 @@ class SceneManager extends PureComponent<Props, State> {
                   scene.image,
                   scene.surfaces.map(surface => surface.mask),
                   scene.surfaces.map(surface => surface.shadows),
+                  scene.surfaces.map(surface => surface.hitArea),
                   scene.surfaces.map(surface => surface.highlights)
                 ]}
-
                 interactive={false}
                 width={scene.width}
                 height={scene.height}
                 type={type}
                 sceneId={scene.id}
-                background={scene.image}
+                background={ensureFullyQualifiedAssetUrl(scene.image)}
                 clickToPaintColor={activeColor}
                 onUpdateColor={this.handleColorUpdate}
                 previewColor={previewColor}
@@ -147,14 +148,14 @@ class SceneManager extends PureComponent<Props, State> {
                   scene.image,
                   scene.surfaces.map(surface => surface.mask),
                   scene.surfaces.map(surface => surface.shadows),
+                  scene.surfaces.map(surface => surface.hitArea),
                   scene.surfaces.map(surface => surface.highlights)
                 ]}
-
                 width={scene.width}
                 height={scene.height}
                 type={type}
                 sceneId={scene.id}
-                background={scene.image}
+                background={ensureFullyQualifiedAssetUrl(scene.image)}
                 clickToPaintColor={activeColor}
                 onUpdateColor={this.handleColorUpdate}
                 previewColor={previewColor}

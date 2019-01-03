@@ -3,6 +3,8 @@
 import React, { PureComponent } from 'react'
 import { isEmpty, flattenDeep } from 'lodash'
 
+import { ensureFullyQualifiedAssetUrl } from '../shared/helpers/DataUtils'
+
 type Props = {
   // $FlowIgnore
   el: React$ElementClass,
@@ -33,7 +35,7 @@ class ImagePreloader extends PureComponent<Props, State> {
   }
 
   static makePromise = function (path: string): Promise<any> {
-    const existingPromise = ImagePreloader.getPromise(path)
+    const existingPromise = ImagePreloader.getPromise(ensureFullyQualifiedAssetUrl(path))
 
     if (existingPromise) {
       return existingPromise
@@ -41,10 +43,10 @@ class ImagePreloader extends PureComponent<Props, State> {
 
     const newPromise = new Promise((resolve: Function, reject: Function) => {
       // non-blocking request, unlike setting Image source
-      window.fetch(path, {
+      window.fetch(ensureFullyQualifiedAssetUrl(path), {
         method: 'GET'
       })
-        .then(response => { resolve(path) })
+        .then(response => { resolve(ensureFullyQualifiedAssetUrl(path)) })
         .catch((err: any) => { reject(err) })
     })
 
