@@ -5,6 +5,7 @@
 [include]
 
 [libs]
+src/shared/types/lib
 
 [lints]
 
