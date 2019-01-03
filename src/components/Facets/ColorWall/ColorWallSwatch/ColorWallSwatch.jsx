@@ -2,7 +2,7 @@
 import React, { PureComponent } from 'react'
 import { once } from 'lodash'
 import memoizee from 'memoizee'
-import { withRouter } from 'react-router-dom'
+import { withRouter, Link } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import { type Color } from '../../../../shared/types/Colors'
@@ -47,6 +47,14 @@ class ColorWallSwatch extends PureComponent<Props> {
     }
     let contents = null
 
+    const temporaryViewDetailStyles = {
+      position: 'absolute',
+      bottom: '1.25em',
+      left: '2em',
+      color: (color.isDark) ? 'white' : 'black',
+      textDecoration: 'none'
+    }
+
     if (showContents) {
       contents = (
         <div className={CLASS_NAMES.CONTENT}>
@@ -58,6 +66,7 @@ class ColorWallSwatch extends PureComponent<Props> {
             </button>
             : null
           }
+          <Link to={`/active/color/${color.id}`} style={temporaryViewDetailStyles}>View Details</Link>
           <button onClick={this.handleDetailClick} className={CLASS_NAMES.CONTENT_DETAILS}>
             <FontAwesomeIcon icon='info' size='1x' />
           </button>

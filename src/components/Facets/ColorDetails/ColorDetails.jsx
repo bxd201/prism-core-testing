@@ -70,7 +70,6 @@ class ColorDetails extends PureComponent<Props, State> {
 
     return (
       <React.Fragment>
-        <hr />
         <div className='color-detail-view'>
           <div className={SWATCH_CLASSES.join(' ')} style={{ backgroundColor: activeColor.hex }} />
           <div className={DISPLAY_TOGGLES_WRAPPER.join(' ')}>
