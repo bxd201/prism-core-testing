@@ -2,7 +2,7 @@
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
 import { kebabCase } from 'lodash'
-import { injectIntl } from 'react-intl'
+import { injectIntl, type intlShape } from 'react-intl'
 
 import { loadColors, makeActiveColor, resetActiveColor } from '../../../actions/loadColors'
 import { add } from '../../../actions/live-palette'
