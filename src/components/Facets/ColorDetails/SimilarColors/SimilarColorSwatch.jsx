@@ -6,7 +6,9 @@ import { paintAllSceneSurfaces } from '../../../../actions/scenes'
 
 type Props = {
   color: Object,
-  paintAllSceneSurfaces: Function
+  paintAllSceneSurfaces: Function,
+  setActiveColor: Function,
+  activeColorID: Number
 }
 
 class SimilarColorSwatch extends PureComponent<Props> {
@@ -19,19 +21,23 @@ class SimilarColorSwatch extends PureComponent<Props> {
   }
 
   render () {
-    const { color } = this.props
+    const { color, activeColorID } = this.props
 
     return (
       <li onClick={this.selectColor} className={`${SimilarColorSwatch.baseClass}__similar-color`} style={{ backgroundColor: color.hex }}>
-        <p className={`${SimilarColorSwatch.baseClass}__similar-color-name`}>
-          {color.brandKey} {color.colorNumber} - {color.name}
-        </p>
+        <button className={`${SimilarColorSwatch.baseClass}__similar-color-info ${activeColorID && color.id === activeColorID ? ` ${SimilarColorSwatch.baseClass}__similar-color-info--active` : ''}`} style={{ backgroundColor: color.hex }}>
+          <div className={`${SimilarColorSwatch.baseClass}__similar-color-info-wrapper`}>
+            <span className={`${SimilarColorSwatch.baseClass}__similar-color-brand-key`} >{color.brandKey}</span> <span className={`${SimilarColorSwatch.baseClass}__similar-color-number`} >{color.colorNumber}</span>
+            <p className={`${SimilarColorSwatch.baseClass}__similar-color-name`} >{color.name}</p>
+          </div>
+        </button>
       </li>
     )
   }
 
   selectColor = function selectColor () {
     this.props.paintAllSceneSurfaces(this.props.color)
+    this.props.setActiveColor(this.props.color.id)
   }
 }
 
