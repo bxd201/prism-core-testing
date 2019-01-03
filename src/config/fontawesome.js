@@ -7,11 +7,15 @@ import {
   faTrash,
   faInfoCircle,
   faInfo,
-  faSearchMinus
+  faSearchMinus,
+  faHome
 } from '@fortawesome/pro-solid-svg-icons'
 
 // lights
 import {
+  faArrowLeft,
+  faArrowRight,
+  faHome as falHome,
   faPlusCircle
 } from '@fortawesome/pro-light-svg-icons'
 
@@ -22,6 +26,10 @@ import {
 
 // populate with all the FontAwesome svg icons we want to use
 const faIcons = [
+  faArrowLeft,
+  faArrowRight,
+  faHome,
+  falHome,
   faPlus,
   faPlusCircle,
   faTrash,
