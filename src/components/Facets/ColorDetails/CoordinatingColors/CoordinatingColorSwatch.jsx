@@ -1,11 +1,12 @@
 // @flow
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
+import type { Color } from '../../../../shared/types/Colors'
 
 import { paintAllSceneSurfaces } from '../../../../actions/scenes'
 
 type Props = {
-  color: Object,
+  color: Color,
   paintAllSceneSurfaces: Function
 }
 
@@ -27,7 +28,9 @@ class CoordinatingColorSwatch extends PureComponent<Props> {
     }
 
     return (
-      <li className={`${CoordinatingColorSwatch.baseClass}__coord-color`} onClick={this.selectColor} style={{ backgroundColor: color.hex }}>
+      <li className={`${CoordinatingColorSwatch.baseClass}__coord-color ${color.isDark ? `${CoordinatingColorSwatch.baseClass}__coord-color--dark-color` : ''}`}
+        onClick={this.selectColor}
+        style={{ backgroundColor: color.hex }}>
         <p className={`${CoordinatingColorSwatch.baseClass}__coord-color-number`}>
           {`${color.brandKey} ${color.colorNumber}`}
         </p>

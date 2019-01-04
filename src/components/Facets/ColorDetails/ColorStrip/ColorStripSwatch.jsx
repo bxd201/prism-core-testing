@@ -34,7 +34,7 @@ class ColorStripSwatch extends PureComponent<Props> {
     return (
       <li className={`${ColorStripSwatch.baseClass}__strip-color`} style={{ backgroundColor: color.hex }} onClick={this.selectColor}>
         <button className={BUTTON_CLASSES.join(' ')}>
-          <span className={`${ColorStripSwatch.baseClass}__strip-color-name ${color.isDark ? `${ColorStripSwatch.baseClass}__strip-color-name--light` : ''}`} >{color.name}</span>
+          <span className={`${ColorStripSwatch.baseClass}__strip-color-name ${color.isDark ? `${ColorStripSwatch.baseClass}__strip-color-name--dark-color` : ''}`} >{color.name}</span>
         </button>
       </li>
     )

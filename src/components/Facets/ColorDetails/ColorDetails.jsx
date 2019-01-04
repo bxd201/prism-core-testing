@@ -144,13 +144,13 @@ class ColorDetails extends PureComponent<Props, State> {
             <div className={`${ColorDetails.baseClass}__additional-info`}>
               <Tabs>
                 <TabList className={`${ColorDetails.baseClass}__tab-list`} style={{ backgroundColor: activeColor.hex }}>
-                  <Tab className={`${ColorDetails.baseClass}__tab`}>
+                  <Tab className={`${ColorDetails.baseClass}__tab ${activeColor.isDark ? `${ColorDetails.baseClass}__tab--dark-color` : ''}`}>
                     <div className={`${ColorDetails.baseClass}__tab-copy`}><FormattedMessage id='COORDINATING_COLORS' /></div>
                   </Tab>
-                  <Tab className={`${ColorDetails.baseClass}__tab`}>
+                  <Tab className={`${ColorDetails.baseClass}__tab ${activeColor.isDark ? `${ColorDetails.baseClass}__tab--dark-color` : ''}`}>
                     <div className={`${ColorDetails.baseClass}__tab-copy`}><FormattedMessage id='SIMILAR_COLORS' /></div>
                   </Tab>
-                  <Tab className={`${ColorDetails.baseClass}__tab`}>
+                  <Tab className={`${ColorDetails.baseClass}__tab ${activeColor.isDark ? `${ColorDetails.baseClass}__tab--dark-color` : ''}`}>
                     <div className={`${ColorDetails.baseClass}__tab-copy`}><FormattedMessage id='DETAILS' /></div>
                   </Tab>
                 </TabList>

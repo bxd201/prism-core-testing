@@ -53,6 +53,7 @@ $top-level-class-string: '.color-info';
 
 #{$top-level-class-string} {
   $neutral-background-color: #fff;
+  $neutral-foreground-color: $color-near-black;
   $strip-chip-size: 2rem;
   $strip-chip-margin: $strip-chip-size * 0.1;
   $width-thin: 0.125rem;
@@ -63,6 +64,7 @@ $top-level-class-string: '.color-info';
 
   &__main-info {
     padding: 2rem $width-medium;
+    color: $color-black;
 
     &--dark-color {
       color: $color-white;
@@ -87,7 +89,7 @@ $top-level-class-string: '.color-info';
     display: block;
     font-weight: 400;
     text-transform: uppercase;
-    opacity: .8;
+    opacity: $color-near-opacity;
   }
 
   &__name {
@@ -96,17 +98,19 @@ $top-level-class-string: '.color-info';
   }
 
   &__type {
-    padding: 0;
-    margin: .25em 0 0 0;
     font-size: .8em;
     font-weight: 400;
+    margin: .25em 0 0 0;
+    opacity: $color-near-opacity;
+    padding: 0;
   }
 
   &__rack-location {
-    padding: 0;
-    margin: .25em 0 0 0;
     font-size: .8em;
     font-weight: 400;
+    margin: .25em 0 0 0;
+    opacity: $color-near-opacity;
+    padding: 0;
   }
 
   &__strip {
@@ -154,13 +158,13 @@ $top-level-class-string: '.color-info';
 
     &:not(#{$top-level-class-string}__strip-color-info--active) {
       .color-info__strip-color-name {
-        @extend .visually-hidden;
-      }
+      @extend .visually-hidden;
     }
+  }
   }
 
   &__strip-color-name {
-    &--light {
+    &--dark-color {
       color: white;
     }
   }
@@ -223,9 +227,9 @@ $top-level-class-string: '.color-info';
     width: 40%;
 
     &--scene {
-      height: 100%;
-      width: 100%;
-    }
+    height: 100%;
+    width: 100%;
+  }
   }
 
   &__display-toggle-button {
@@ -279,6 +283,8 @@ $top-level-class-string: '.color-info';
 
   &__tab {
     border-right: $width-thin solid $neutral-background-color;
+    color: $color-near-black;
+    cursor: pointer;
     flex-grow: 1;
     font-size: 0.85rem;
     padding: $tab-set-padding;
@@ -289,10 +295,15 @@ $top-level-class-string: '.color-info';
       border-right: none;
     }
 
+    &--dark-color {
+      color: white;
+    }
+
     &.react-tabs__tab--selected {
       background-color: $neutral-background-color;
       border-color: $neutral-background-color;
       border-radius: 0;
+      color: $neutral-foreground-color;
     }
   }
 
@@ -318,6 +329,7 @@ $top-level-class-string: '.color-info';
   &__coord-color {
     background: #bbc;
     border-bottom: $width-thin solid $neutral-background-color;
+    color: $color-black;
     display: flex;
     flex-direction: column;
     flex-grow: 1;
@@ -325,6 +337,10 @@ $top-level-class-string: '.color-info';
     justify-content: center;
     line-height: 1.3;
     padding: 0 $width-medium;
+
+    &--dark-color {
+      color: $color-white;
+    }
 
     &:last-child {
       margin-bottom: 0;
@@ -334,7 +350,7 @@ $top-level-class-string: '.color-info';
 
   &__coord-color-number {
     font-weight: 400;
-    opacity: .8;
+    opacity: $color-near-opacity;
     text-transform: uppercase;
     margin: 0;
   }
@@ -374,13 +390,13 @@ $top-level-class-string: '.color-info';
     border-width: $width-thin;
     height: 100%;
     position: relative;
-    transition: transform 0.3s;
+    transition: transform 0.3s, z-index .3s;
     width: 100%;
     z-index: 1;
 
     &--active {
       transform: scale(1.25);
-      z-index: 2;
+      z-index: 200;
 
       .color-info__similar-color-info-wrapper {
         opacity: 1;

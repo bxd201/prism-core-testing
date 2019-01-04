@@ -3,5 +3,8 @@ $spacing: getVar("spacing") !default;
 $breakpoints: getVar("breakpoints") !default;
 $colors: getVar("colors") !default;
 
-$color-near-black: #2e2e2e;
-$color-white: #ffffff; 
+$color-near-opacity: 0.8;
+$color-near-black: rgba(0, 0, 0, $color-near-opacity);
+$color-black: #000;
+$color-near-white: rgba(255, 255, 255, $color-near-opacity);
+$color-white: #ffffff;
