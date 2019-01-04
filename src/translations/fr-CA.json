@@ -1,8 +1,12 @@
 {
-  "ADD_A_COLOR": "ADD A COLOR",
-  "COORDINATING_COLORS": "Coordinating Colors",
-  "DETAILS": "Details",
-  "FIND_COLORS_IN_CW": "FIND COLORS IN THE DIGITAL COLOR WALL",
-  "LOCATION_NUMBER": "Location Number",
-  "SIMILAR_COLORS": "Similar Colors"
+  "ADD_A_COLOR": "Ajouter une couleur",
+  "COORDINATING_COLORS": "Couleurs de coordination",
+  "DETAILS": "Détails",
+  "DISPLAY_SCENE_PAINTER": "Afficher le peintre de la scène",
+  "FIND_COLORS_IN_CW": "TROUVER DES COULEURS DANS LE MUR DE COULEUR NUMÉRIQUE",
+  "HIDE_SCENE_PAINTER": "Cache le peintre de la scène",
+  "LOCATION_NUMBER": "Numéro d'emplacement",
+  "MAXIMIZE_COLOR_SWATCH": "Maximiser l'échantillon de couleur",
+  "RESTORE_COLOR_SWATCH_TO_DEFAULT_SIZE": "Restaurer la nuance de couleur à la taille par défaut",
+  "SIMILAR_COLORS": "Couleurs similaires"
 }

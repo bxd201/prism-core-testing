@@ -2,7 +2,11 @@
   "ADD_A_COLOR": "ADD A COLOUR",
   "COORDINATING_COLORS": "Coordinating Colours",
   "DETAILS": "Details",
-  "FIND_COLORS_IN_CW": "FIND COLORS IN THE DIGITAL COLOUR WALL",
+  "DISPLAY_SCENE_PAINTER": "Display the Scene Painter",
+  "FIND_COLORS_IN_CW": "FIND COLOURS IN THE DIGITAL COLOR WALL",
+  "HIDE_SCENE_PAINTER": "Hide the Scene Painter",
   "LOCATION_NUMBER": "Location Number",
+  "MAXIMIZE_COLOR_SWATCH": "Maximize the Colour Swatch",
+  "RESTORE_COLOR_SWATCH_TO_DEFAULT_SIZE": "Restore the Colour Swatch to default size",
   "SIMILAR_COLORS": "Similar Colours"
 }
