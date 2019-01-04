@@ -14,6 +14,7 @@
 }
 
 .color-wall-wall {
+  background: #eee;
   display: block;
   flex: 1 1 auto;
   height: 400px; // TODO: change this
@@ -107,6 +108,7 @@
     overscroll-behavior: none;
 
     &__innerScrollContainer {
+      margin: auto auto;
       overflow: visible !important;
     }
   }
