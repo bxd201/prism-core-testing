@@ -121,7 +121,7 @@ class ColorDetails extends PureComponent<Props, State> {
             </button>
           </div>
           <div className={`color-detail__scene-wrapper ${sceneIsDisplayed ? ` color-detail__scene-wrapper--displayed` : ''}`}>
-            <SceneManager maxActiveScenes={1} />
+            <SceneManager maxActiveScenes={1} interactive={false} />
           </div>
           <div className='color-detail__info-wrapper'>
             <button className={SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.join(' ')} onClick={this.toggleSceneDisplay}>
