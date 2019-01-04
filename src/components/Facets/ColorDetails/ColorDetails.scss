@@ -58,7 +58,7 @@ $top-level-class-string: '.color-info';
   $strip-chip-margin: $strip-chip-size * 0.1;
   $width-thin: 0.125rem;
   $width-medium: 1rem;
-  $tab-set-padding: 0.3rem 0.5rem;
+  $tab-set-padding: 0.5rem 0.25rem;
 
   background-color: $neutral-background-color;
 
@@ -289,7 +289,6 @@ $top-level-class-string: '.color-info';
     font-size: 0.85rem;
     padding: $tab-set-padding;
     text-align: center;
-    text-transform: uppercase;
 
     &:last-child {
       border-right: none;
@@ -305,6 +304,12 @@ $top-level-class-string: '.color-info';
       border-radius: 0;
       color: $neutral-foreground-color;
     }
+  }
+
+  &__tab-copy {
+    font-size: .8em;
+    font-weight: 600;
+    text-transform: uppercase;
   }
 
   &__tab-panel {

@@ -117,11 +117,23 @@ class ColorDetails extends PureComponent<Props, State> {
           <div className={SWATCH_SIZE_WRAPPER_CLASSES.join(' ')}>
             <button className={SWATCH_SIZE_TOGGLE_BUTTON_CLASSES.join(' ')} onClick={this.toggleChipMaximized}>
               <FontAwesomeIcon className={`${ColorDetails.baseClass}__display-toggles-icon`} icon={['fal', 'arrow-left']} color={contrastingTextColor} /><FontAwesomeIcon className={`${ColorDetails.baseClass}__display-toggles-icon`} icon={['fal', 'arrow-right']} color={contrastingTextColor} />
-              <div className={`${ColorDetails.baseClass}__scene-toggle-copy`}><FormattedMessage id='MAXIMIZE_COLOR_SWATCH' /></div>
+              <div className={`${ColorDetails.baseClass}__scene-toggle-copy`}>
+                <FormattedMessage id='MAXIMIZE_COLOR_SWATCH'>
+                  {(txt: string) => (
+                    <React.Fragment>{txt}</React.Fragment>
+                  )}
+                </FormattedMessage>
+              </div>
             </button>
             <button className={ALT_SWATCH_SIZE_TOGGLE_BUTTON_CLASSES.join(' ')} onClick={this.toggleChipMaximized}>
               <FontAwesomeIcon className={`${ColorDetails.baseClass}__display-toggles-icon`} icon={['fal', 'arrow-right']} color={contrastingTextColor} /><FontAwesomeIcon className={`${ColorDetails.baseClass}__display-toggles-icon`} icon={['fal', 'arrow-left']} color={contrastingTextColor} />
-              <div className={`${ColorDetails.baseClass}__scene-toggle-copy`}><FormattedMessage id='RESTORE_COLOR_SWATCH_TO_DEFAULT_SIZE' /></div>
+              <div className={`${ColorDetails.baseClass}__scene-toggle-copy`}>
+                <FormattedMessage id='RESTORE_COLOR_SWATCH_TO_DEFAULT_SIZE'>
+                  {(txt: string) => (
+                    <React.Fragment>{txt}</React.Fragment>
+                  )}
+                </FormattedMessage>
+              </div>
             </button>
           </div>
           <div className={`color-detail__scene-wrapper ${sceneIsDisplayed ? ` color-detail__scene-wrapper--displayed` : ''}`}>
@@ -130,11 +142,23 @@ class ColorDetails extends PureComponent<Props, State> {
           <div className='color-detail__info-wrapper'>
             <button className={SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.join(' ')} onClick={this.toggleSceneDisplay}>
               <FontAwesomeIcon className={`${ColorDetails.baseClass}__display-toggles-icon ${ColorDetails.baseClass}__display-toggles-icon--scene`} icon={['fal', 'home']} color={contrastingTextColor} />
-              <div className={`${ColorDetails.baseClass}__scene-toggle-copy`}><FormattedMessage id='DISPLAY_SCENE_PAINTER' /></div>
+              <div className={`${ColorDetails.baseClass}__scene-toggle-copy`}>
+                <FormattedMessage id='DISPLAY_SCENE_PAINTER'>
+                  {(txt: string) => (
+                    <React.Fragment>{txt}</React.Fragment>
+                  )}
+                </FormattedMessage>
+              </div>
             </button>
             <button className={ALT_SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.join(' ')} onClick={this.toggleSceneDisplay}>
               <FontAwesomeIcon className={`${ColorDetails.baseClass}__display-toggles-icon ${ColorDetails.baseClass}__display-toggles-icon--scene`} icon={['fas', 'home']} color={contrastingTextColor} />
-              <div className={`${ColorDetails.baseClass}__scene-toggle-copy`}><FormattedMessage id='HIDE_SCENE_PAINTER' /></div>
+              <div className={`${ColorDetails.baseClass}__scene-toggle-copy`}>
+                <FormattedMessage id='HIDE_SCENE_PAINTER'>
+                  {(txt: string) => (
+                    <React.Fragment>{txt}</React.Fragment>
+                  )}
+                </FormattedMessage>
+              </div>
             </button>
 
             <div className={MAIN_INFO_CLASSES.join(' ')} style={{ backgroundColor: activeColor.hex }}>
@@ -145,13 +169,31 @@ class ColorDetails extends PureComponent<Props, State> {
               <Tabs>
                 <TabList className={`${ColorDetails.baseClass}__tab-list`} style={{ backgroundColor: activeColor.hex }}>
                   <Tab className={`${ColorDetails.baseClass}__tab ${activeColor.isDark ? `${ColorDetails.baseClass}__tab--dark-color` : ''}`}>
-                    <div className={`${ColorDetails.baseClass}__tab-copy`}><FormattedMessage id='COORDINATING_COLORS' /></div>
+                    <div className={`${ColorDetails.baseClass}__tab-copy`}>
+                      <FormattedMessage id='COORDINATING_COLORS'>
+                        {(txt: string) => (
+                          <React.Fragment>{txt}</React.Fragment>
+                        )}
+                      </FormattedMessage>
+                    </div>
                   </Tab>
                   <Tab className={`${ColorDetails.baseClass}__tab ${activeColor.isDark ? `${ColorDetails.baseClass}__tab--dark-color` : ''}`}>
-                    <div className={`${ColorDetails.baseClass}__tab-copy`}><FormattedMessage id='SIMILAR_COLORS' /></div>
+                    <div className={`${ColorDetails.baseClass}__tab-copy`}>
+                      <FormattedMessage id='SIMILAR_COLORS'>
+                        {(txt: string) => (
+                          <React.Fragment>{txt}</React.Fragment>
+                        )}
+                      </FormattedMessage>
+                    </div>
                   </Tab>
                   <Tab className={`${ColorDetails.baseClass}__tab ${activeColor.isDark ? `${ColorDetails.baseClass}__tab--dark-color` : ''}`}>
-                    <div className={`${ColorDetails.baseClass}__tab-copy`}><FormattedMessage id='DETAILS' /></div>
+                    <div className={`${ColorDetails.baseClass}__tab-copy`}>
+                      <FormattedMessage id='DETAILS'>
+                        {(txt: string) => (
+                          <React.Fragment>{txt}</React.Fragment>
+                        )}
+                      </FormattedMessage>
+                    </div>
                   </Tab>
                 </TabList>
                 <TabPanel className={`${ColorDetails.baseClass}__tab-panel`}>
