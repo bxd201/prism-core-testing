@@ -103,7 +103,7 @@ class SceneManager extends PureComponent<Props, State> {
 
     return (
       <div className={SceneManager.baseClass}>
-        <div className={`${SceneManager.baseClass}__block`}>
+        <div className={`${SceneManager.baseClass}__block ${SceneManager.baseClass}__block--tabs`}>
           {/* POC scene-switching buttons to demonstrate performance */}
           {scenes.map((scene, index) => (
             <button key={scene.id}
@@ -135,7 +135,7 @@ class SceneManager extends PureComponent<Props, State> {
           ))}
         </div>
 
-        <div className={`${SceneManager.baseClass}__block`}>
+        <div className={`${SceneManager.baseClass}__block ${SceneManager.baseClass}__block--scenes`}>
           {activeScenes.map((sceneId, index) => {
             const scene = scenes.filter(scene => (scene.id === sceneId))[0]
 

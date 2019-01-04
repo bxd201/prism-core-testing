@@ -15,8 +15,10 @@
   }
 
   &__scene-wrapper {
+    background: #eee;
     display: none;
     height: auto;
+    position: relative;
 
     &--displayed {
       display: block;
@@ -144,7 +146,7 @@ $top-level-class-string: '.color-info';
     color: $color-near-black;
     font-size: 0.9rem;
   }
-  
+
   &__max-chip {
     display: none;
     height: 100%;
@@ -384,7 +386,7 @@ $top-level-class-string: '.color-info';
     &__display-toggles-wrapper--chip-maximized {
       right: 2rem;
     }
-    
+
     &__strip {
       display: inline-flex;
     }
