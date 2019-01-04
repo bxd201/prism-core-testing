@@ -1,6 +1,6 @@
-/* globals Image */
 // @flow
 import React, { PureComponent } from 'react'
+import axios from 'axios'
 import { isEmpty, flattenDeep } from 'lodash'
 
 import { ensureFullyQualifiedAssetUrl } from '../shared/helpers/DataUtils'
@@ -42,11 +42,10 @@ class ImagePreloader extends PureComponent<Props, State> {
     }
 
     const newPromise = new Promise((resolve: Function, reject: Function) => {
+      const fullPath = ensureFullyQualifiedAssetUrl(path)
       // non-blocking request, unlike setting Image source
-      window.fetch(ensureFullyQualifiedAssetUrl(path), {
-        method: 'GET'
-      })
-        .then(response => { resolve(ensureFullyQualifiedAssetUrl(path)) })
+      axios.get(fullPath)
+        .then(response => { resolve(fullPath) })
         .catch((err: any) => { reject(err) })
     })
 

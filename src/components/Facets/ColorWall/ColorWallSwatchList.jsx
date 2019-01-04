@@ -113,7 +113,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
       activeCoords: number[],
       focusCoords: number[],
       levelMap?: {
-        [ key: string]: ColorReference
+        [key: string]: ColorReference
       }
     }
     const coords = getColorCoords(color.id, colorIdGrid)
@@ -225,8 +225,6 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     const { levelMap, colorIdGrid } = this.state
     const { colorMap, immediateSelectionOnActivation, onAddColor } = this.props
 
-    const rowCount = colorIdGrid.length
-    const columnCount = getTotalWidthOf2dArray(colorIdGrid)
     const colorId = colorIdGrid[rowIndex][columnIndex]
 
     if (!colorId) {
@@ -237,22 +235,6 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     const thisLevel: ColorReference = levelMap[colorId]
 
     let edgeProps = {}
-
-    if (columnIndex === 0) {
-      edgeProps.leftCol = true
-    }
-
-    if (rowIndex === 0) {
-      edgeProps.topRow = true
-    }
-
-    if (columnIndex === columnCount - 1) {
-      edgeProps.rightCol = true
-    }
-
-    if (rowIndex === rowCount - 1) {
-      edgeProps.bottomRow = true
-    }
 
     if (thisLevel) {
       if (thisLevel.compensateX) {
@@ -288,7 +270,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     let x = focusCoords[0]
     let y = focusCoords[1]
 
-    switch (e.charCode) {
+    switch (e.keyCode) {
       case 37: // left
         if (x > 0) x--
         break
@@ -307,6 +289,8 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
       this.setState({
         focusCoords: [x, y]
       })
+    } else {
+      e.preventDefault()
     }
   }
 

@@ -1,13 +1,5 @@
 export const CLASS_NAMES = {
   BASE: 'color-swatch-inner',
-  BASE_POS_T: 'color-swatch-inner--pos-t',
-  BASE_POS_TL: 'color-swatch-inner--pos-tl',
-  BASE_POS_TR: 'color-swatch-inner--pos-tr',
-  BASE_POS_L: 'color-swatch-inner--pos-l',
-  BASE_POS_R: 'color-swatch-inner--pos-r',
-  BASE_POS_B: 'color-swatch-inner--pos-b',
-  BASE_POS_BL: 'color-swatch-inner--pos-bl',
-  BASE_POS_BR: 'color-swatch-inner--pos-br',
   BASE_DYNAMIC: 'color-swatch-inner--dynamic',
   BASE_CLICKABLE: 'color-swatch-inner--clickable',
   BASE_ACTIVE: 'color-swatch-inner--active',
