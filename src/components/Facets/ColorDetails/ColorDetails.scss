@@ -146,6 +146,12 @@ $top-level-class-string: '.color-info';
     }
   }
 
+  &__strip-color-name {
+    &--light {
+      color: white;
+    }
+  }
+
   &__strip-location {
     align-items: center;
     background: #fff;
