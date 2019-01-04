@@ -23,7 +23,8 @@ type Props = {
   paintSceneSurface: Function,
   loadingScenes: boolean,
   activeColor: Color | void,
-  previewColor: Color | void
+  previewColor: Color | void,
+  interactive: boolean
 }
 
 type State = {
@@ -35,7 +36,8 @@ class SceneManager extends PureComponent<Props, State> {
 
   static defaultProps = {
     maxActiveScenes: 2,
-    type: SCENE_TYPES.ROOM
+    type: SCENE_TYPES.ROOM,
+    interactive: true
   }
 
   state = {
@@ -93,7 +95,7 @@ class SceneManager extends PureComponent<Props, State> {
   }
 
   render () {
-    const { scenes, loadingScenes, activeColor, previewColor, activeScenes, type } = this.props
+    const { scenes, loadingScenes, activeColor, previewColor, activeScenes, type, interactive } = this.props
 
     if (loadingScenes) {
       return 'Loading...'
@@ -153,6 +155,7 @@ class SceneManager extends PureComponent<Props, State> {
                 ]}
                 width={scene.width}
                 height={scene.height}
+                interactive={interactive}
                 type={type}
                 sceneId={scene.id}
                 background={ensureFullyQualifiedAssetUrl(scene.image)}
