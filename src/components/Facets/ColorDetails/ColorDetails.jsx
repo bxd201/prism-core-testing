@@ -69,6 +69,10 @@ class ColorDetails extends PureComponent<Props, State> {
     let DISPLAY_TOGGLES_WRAPPER = [
       `${ColorDetails.baseClass}__display-toggles-wrapper`
     ]
+
+    let SWATCH_SIZE_WRAPPER_CLASSES = DISPLAY_TOGGLES_WRAPPER.slice()
+    SWATCH_SIZE_WRAPPER_CLASSES.push(`${ColorDetails.baseClass}__display-toggles-wrapper--swatch-size`)
+
     let MAIN_INFO_CLASSES = [
       `${ColorDetails.baseClass}__main-info`
     ]
@@ -89,7 +93,7 @@ class ColorDetails extends PureComponent<Props, State> {
 
     if (chipIsMaximized) {
       SWATCH_CLASSES.push(`${ColorDetails.baseClass}__max-chip--maximized`)
-      DISPLAY_TOGGLES_WRAPPER.push(`${ColorDetails.baseClass}__display-toggles-wrapper--chip-maximized`)
+      SWATCH_SIZE_WRAPPER_CLASSES.push(`${ColorDetails.baseClass}__display-toggles-wrapper--chip-maximized`)
       SWATCH_SIZE_TOGGLE_BUTTON_CLASSES.push(`${ColorDetails.baseClass}__display-toggle-button--active`)
       ALT_SWATCH_SIZE_TOGGLE_BUTTON_CLASSES.push(`${ColorDetails.baseClass}__display-toggle-button--active`)
     }
@@ -110,13 +114,13 @@ class ColorDetails extends PureComponent<Props, State> {
       <React.Fragment>
         <div className='color-detail-view'>
           <div className={SWATCH_CLASSES.join(' ')} style={{ backgroundColor: activeColor.hex }} />
-          <div className={DISPLAY_TOGGLES_WRAPPER.join(' ')}>
+          <div className={SWATCH_SIZE_WRAPPER_CLASSES.join(' ')}>
             <button className={SWATCH_SIZE_TOGGLE_BUTTON_CLASSES.join(' ')} onClick={this.toggleChipMaximized}>
-              <FontAwesomeIcon className={`${ColorDetails.baseClass}__display-toggles-icon`} icon={['fal', 'arrow-left']} color={contrastingTextColor} /><FontAwesomeIcon icon={['fal', 'arrow-right']} color={contrastingTextColor} />
+              <FontAwesomeIcon className={`${ColorDetails.baseClass}__display-toggles-icon`} icon={['fal', 'arrow-left']} color={contrastingTextColor} /><FontAwesomeIcon className={`${ColorDetails.baseClass}__display-toggles-icon`} icon={['fal', 'arrow-right']} color={contrastingTextColor} />
               <div className={`${ColorDetails.baseClass}__scene-toggle-copy`}><FormattedMessage id='MAXIMIZE_COLOR_SWATCH' /></div>
             </button>
             <button className={ALT_SWATCH_SIZE_TOGGLE_BUTTON_CLASSES.join(' ')} onClick={this.toggleChipMaximized}>
-              <FontAwesomeIcon className={`${ColorDetails.baseClass}__display-toggles-icon`} icon={['fal', 'arrow-right']} color={contrastingTextColor} /><FontAwesomeIcon icon={['fal', 'arrow-left']} size='lg' color={contrastingTextColor} />
+              <FontAwesomeIcon className={`${ColorDetails.baseClass}__display-toggles-icon`} icon={['fal', 'arrow-right']} color={contrastingTextColor} /><FontAwesomeIcon className={`${ColorDetails.baseClass}__display-toggles-icon`} icon={['fal', 'arrow-left']} color={contrastingTextColor} />
               <div className={`${ColorDetails.baseClass}__scene-toggle-copy`}><FormattedMessage id='RESTORE_COLOR_SWATCH_TO_DEFAULT_SIZE' /></div>
             </button>
           </div>
@@ -125,11 +129,11 @@ class ColorDetails extends PureComponent<Props, State> {
           </div>
           <div className='color-detail__info-wrapper'>
             <button className={SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.join(' ')} onClick={this.toggleSceneDisplay}>
-              <FontAwesomeIcon className={`${ColorDetails.baseClass}__display-toggles-icon`} icon={['fal', 'home']} color={contrastingTextColor} />
+              <FontAwesomeIcon className={`${ColorDetails.baseClass}__display-toggles-icon ${ColorDetails.baseClass}__display-toggles-icon--scene`} icon={['fal', 'home']} color={contrastingTextColor} />
               <div className={`${ColorDetails.baseClass}__scene-toggle-copy`}><FormattedMessage id='DISPLAY_SCENE_PAINTER' /></div>
             </button>
             <button className={ALT_SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.join(' ')} onClick={this.toggleSceneDisplay}>
-              <FontAwesomeIcon className={`${ColorDetails.baseClass}__display-toggles-icon`} icon={['fas', 'home']} color={contrastingTextColor} />
+              <FontAwesomeIcon className={`${ColorDetails.baseClass}__display-toggles-icon ${ColorDetails.baseClass}__display-toggles-icon--scene`} icon={['fas', 'home']} color={contrastingTextColor} />
               <div className={`${ColorDetails.baseClass}__scene-toggle-copy`}><FormattedMessage id='HIDE_SCENE_PAINTER' /></div>
             </button>
 
