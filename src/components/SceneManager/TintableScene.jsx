@@ -12,7 +12,7 @@ import TintableSceneOverlay from './TintableSceneOverlay'
 type Props = {
   background: string,
   type: string,
-  surfaces: Array<Surface>,
+  surfaces: Surface[],
   width: number,
   height: number,
   render: boolean,

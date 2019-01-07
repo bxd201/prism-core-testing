@@ -173,10 +173,6 @@ module.exports = {
         to: 'prism/images'
       },
       {
-        from: 'src/json',
-        to: 'prism/json'
-      },
-      {
         from: 'src/css/*',
         to: 'css',
         flatten: true

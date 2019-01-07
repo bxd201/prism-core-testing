@@ -2,6 +2,7 @@
 import React, { PureComponent } from 'react'
 import { once } from 'lodash'
 import memoizee from 'memoizee'
+import { withRouter, Link } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import { type Color } from '../../../../shared/types/Colors'
@@ -13,18 +14,14 @@ import './ColorWallSwatch.scss'
 
 type Props = {
   color: Color,
+  history: any, // from withRouter HOC
+  showContents?: boolean,
   onEngage?: Function,
   onAdd?: Function,
   level?: number,
-  offsetX?: number,
-  offsetY?: number,
   compensateX?: number,
   compensateY?: number,
-  active?: boolean,
-  topRow?: boolean,
-  bottomRow?: boolean,
-  leftCol?: boolean,
-  rightCol?: boolean
+  active?: boolean
 }
 
 class ColorWallSwatch extends PureComponent<Props> {
@@ -38,22 +35,34 @@ class ColorWallSwatch extends PureComponent<Props> {
   }
 
   render () {
-    const { level, color, compensateX, compensateY } = this.props
+    const { showContents, color, onAdd } = this.props
 
     let props = {
       className: `${this.getBaseClasses()} ${this.getClasses()}`,
-      style: ColorWallSwatch.getStyles(color.hex, compensateX, compensateY)
+      style: ColorWallSwatch.getStyles(color.hex)
     }
     let contents = null
 
-    if (level === 0) {
+    const temporaryViewDetailStyles = {
+      position: 'absolute',
+      bottom: '1.25em',
+      left: '2em',
+      color: (color.isDark) ? 'white' : 'black',
+      textDecoration: 'none'
+    }
+
+    if (showContents) {
       contents = (
         <div className={CLASS_NAMES.CONTENT}>
           <p className={CLASS_NAMES.CONTENT_NUMBER}>{`${fullColorNumber(color.brandKey, color.colorNumber)}`}</p>
           <p className={CLASS_NAMES.CONTENT_NAME}>{color.name}</p>
-          <button /* autoFocus */ onClick={this.handleAddClick} className={CLASS_NAMES.CONTENT_ADD}>
-            <FontAwesomeIcon icon='plus' size='1x' />
-          </button>
+          { onAdd
+            ? <button /* autoFocus */ onClick={this.handleAddClick} className={CLASS_NAMES.CONTENT_ADD}>
+              <FontAwesomeIcon icon='plus' size='1x' />
+            </button>
+            : null
+          }
+          <Link to={`/active/color/${color.id}`} style={temporaryViewDetailStyles}>View Details</Link>
           <button onClick={this.handleDetailClick} className={CLASS_NAMES.CONTENT_DETAILS}>
             <FontAwesomeIcon icon='info' size='1x' />
           </button>
@@ -79,7 +88,7 @@ class ColorWallSwatch extends PureComponent<Props> {
     )
   }
 
-  static getStyles = memoizee(function getStyles (color: string, compensateX: number, compensateY: number): Object {
+  static getStyles = memoizee(function getStyles (color: string): Object {
     let styleObj: {
       [key: string]: string
     } = {
@@ -90,24 +99,10 @@ class ColorWallSwatch extends PureComponent<Props> {
   })
 
   getBaseClasses = once(function getBaseClasses (): string {
-    const { color, topRow, bottomRow, leftCol, rightCol } = this.props
+    const { color } = this.props
     let classes = [
       CLASS_NAMES.BASE,
-      CLASS_NAMES.BASE_DYNAMIC,
-      `${topRow && leftCol
-        ? CLASS_NAMES.BASE_POS_TL
-        : topRow && rightCol
-          ? CLASS_NAMES.BASE_POS_TR
-          : bottomRow && rightCol
-            ? CLASS_NAMES.BASE_POS_BR
-            : bottomRow && leftCol
-              ? CLASS_NAMES.BASE_POS_BL
-              : topRow ? CLASS_NAMES.BASE_POS_T
-                : leftCol ? CLASS_NAMES.BASE_POS_L
-                  : rightCol ? CLASS_NAMES.BASE_POS_R
-                    : bottomRow ? CLASS_NAMES.BASE_POS_B
-                      : ''
-      }`
+      CLASS_NAMES.BASE_DYNAMIC
     ]
 
     if (color.isDark) {
@@ -118,7 +113,7 @@ class ColorWallSwatch extends PureComponent<Props> {
   })
 
   getClasses (): string {
-    const { level, offsetX, offsetY, active, onEngage, compensateX, compensateY } = this.props
+    const { level, active, onEngage, compensateX, compensateY } = this.props
     const levelDefined = !isNaN(level)
     let classes = []
 
@@ -134,28 +129,6 @@ class ColorWallSwatch extends PureComponent<Props> {
       classes.push(CLASS_NAMES.BASE_BLOOM)
       // $FlowIgnore -- Flow doesn't understand that we can't get here unless level is a number
       classes.push(CLASS_NAMES.BASE_BLOOM_LVL_ + numToAlphaString(level))
-
-      if (offsetX) {
-        let className = CLASS_NAMES.BASE_OFFSET_X_ + numToAlphaString(offsetX)
-        classes.push(className)
-
-        if (offsetY === 0) {
-          classes.push(className + '--primary')
-        }
-      }
-
-      if (offsetY) {
-        let className = CLASS_NAMES.BASE_OFFSET_Y_ + numToAlphaString(offsetY)
-        classes.push(className)
-
-        if (offsetX === 0) {
-          classes.push(className + '--primary')
-        }
-      }
-
-      if (!offsetX && !offsetY) {
-        classes.push(CLASS_NAMES.BASE_BLOOM_CENTER)
-      }
 
       if (compensateX) {
         classes.push(CLASS_NAMES.BASE_COMPENSATE_X_ + numToAlphaString(compensateX))
@@ -203,8 +176,9 @@ class ColorWallSwatch extends PureComponent<Props> {
 
   handleDetailClick = function handleDetailClick () {
     const { color } = this.props
-    alert(`Color details for ${color.name}`) // eslint-disable-line
+
+    this.props.history.push(`/active/color-wall/color/${color.id}`)
   }
 }
 
-export default ColorWallSwatch
+export default withRouter(ColorWallSwatch)

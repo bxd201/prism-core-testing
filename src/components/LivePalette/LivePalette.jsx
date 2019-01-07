@@ -114,7 +114,7 @@ class LivePalette extends PureComponent<Props, State> {
         <div className='prism-live-palette__list'>
           {activeSlots}
           {colors.length < LP_MAX_COLORS_ALLOWED && <Link to={`/active/color-wall`} className={`prism-live-palette__slot prism-live-palette__slot--${COLOR_TRAY_CLASS_MODIFIERS}`}>
-            <FontAwesomeIcon className='prism-live-palette__icon' icon='plus-circle' size='lg' color={varValues.colors.swBlue} />
+            <FontAwesomeIcon className='prism-live-palette__icon' icon={['fal', 'plus-circle']} size='5x' color={varValues.colors.swBlue} />
             <FormattedMessage id={ADD_COLOR_TEXT}>
               {(msg: string) => <span className='prism-live-palette__slot__copy'>{msg}</span>}
             </FormattedMessage>

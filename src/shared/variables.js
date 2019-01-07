@@ -21,13 +21,19 @@ module.exports.varValues = {
     danger: '#e94b35',
     error: '#e94b35',
     grey: '#cccccc',
+    nearBlack: '#2e2e2e',
+    black: '#000000',
     white: '#ffffff',
     swBlue: '#2c97de'
   },
   colorWall: {
     swatchColumns: 56, // default SW color chunks
-    exitTransitionMS: 500,
-    enterTransitionMS: 500
+    exitTransitionMS: 200,
+    enterTransitionMS: 300,
+    swatchActivateDurationMS: 200,
+    swatchActivateDelayMS: 0,
+    swatchDeactivateDurationMS: 200,
+    swatchDeactivateDelayMS: 0
   },
   scenes: {
     hitAreaOutlineColor: '255, 0, 255' // RGB value of hit area outline (must be RGB, not hex)

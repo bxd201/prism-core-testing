@@ -8,6 +8,7 @@ import TintableScene from './TintableScene'
 import type { Color } from '../../shared/types/Colors'
 import type { Scene } from '../../shared/types/Scene'
 import ImagePreloader from '../../helpers/ImagePreloader'
+import { ensureFullyQualifiedAssetUrl } from '../../shared/helpers/DataUtils'
 
 import './SceneManager.scss'
 
@@ -22,7 +23,8 @@ type Props = {
   paintSceneSurface: Function,
   loadingScenes: boolean,
   activeColor: Color | void,
-  previewColor: Color | void
+  previewColor: Color | void,
+  interactive: boolean
 }
 
 type State = {
@@ -34,7 +36,8 @@ class SceneManager extends PureComponent<Props, State> {
 
   static defaultProps = {
     maxActiveScenes: 2,
-    type: SCENE_TYPES.ROOM
+    type: SCENE_TYPES.ROOM,
+    interactive: true
   }
 
   state = {
@@ -92,7 +95,7 @@ class SceneManager extends PureComponent<Props, State> {
   }
 
   render () {
-    const { scenes, loadingScenes, activeColor, previewColor, activeScenes, type } = this.props
+    const { scenes, loadingScenes, activeColor, previewColor, activeScenes, type, interactive } = this.props
 
     if (loadingScenes) {
       return 'Loading...'
@@ -100,7 +103,7 @@ class SceneManager extends PureComponent<Props, State> {
 
     return (
       <div className={SceneManager.baseClass}>
-        <div className={`${SceneManager.baseClass}__block`}>
+        <div className={`${SceneManager.baseClass}__block ${SceneManager.baseClass}__block--tabs`}>
           {/* POC scene-switching buttons to demonstrate performance */}
           {scenes.map((scene, index) => (
             <button key={scene.id}
@@ -114,15 +117,15 @@ class SceneManager extends PureComponent<Props, State> {
                   scene.image,
                   scene.surfaces.map(surface => surface.mask),
                   scene.surfaces.map(surface => surface.shadows),
+                  scene.surfaces.map(surface => surface.hitArea),
                   scene.surfaces.map(surface => surface.highlights)
                 ]}
-
                 interactive={false}
                 width={scene.width}
                 height={scene.height}
                 type={type}
                 sceneId={scene.id}
-                background={scene.image}
+                background={ensureFullyQualifiedAssetUrl(scene.image)}
                 clickToPaintColor={activeColor}
                 onUpdateColor={this.handleColorUpdate}
                 previewColor={previewColor}
@@ -132,7 +135,7 @@ class SceneManager extends PureComponent<Props, State> {
           ))}
         </div>
 
-        <div className={`${SceneManager.baseClass}__block`}>
+        <div className={`${SceneManager.baseClass}__block ${SceneManager.baseClass}__block--scenes`}>
           {activeScenes.map((sceneId, index) => {
             const scene = scenes.filter(scene => (scene.id === sceneId))[0]
 
@@ -147,14 +150,15 @@ class SceneManager extends PureComponent<Props, State> {
                   scene.image,
                   scene.surfaces.map(surface => surface.mask),
                   scene.surfaces.map(surface => surface.shadows),
+                  scene.surfaces.map(surface => surface.hitArea),
                   scene.surfaces.map(surface => surface.highlights)
                 ]}
-
                 width={scene.width}
                 height={scene.height}
+                interactive={interactive}
                 type={type}
                 sceneId={scene.id}
-                background={scene.image}
+                background={ensureFullyQualifiedAssetUrl(scene.image)}
                 clickToPaintColor={activeColor}
                 onUpdateColor={this.handleColorUpdate}
                 previewColor={previewColor}

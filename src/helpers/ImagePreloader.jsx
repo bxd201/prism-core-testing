@@ -1,7 +1,9 @@
-/* globals Image */
 // @flow
 import React, { PureComponent } from 'react'
+import axios from 'axios'
 import { isEmpty, flattenDeep } from 'lodash'
+
+import { ensureFullyQualifiedAssetUrl } from '../shared/helpers/DataUtils'
 
 type Props = {
   // $FlowIgnore
@@ -33,18 +35,17 @@ class ImagePreloader extends PureComponent<Props, State> {
   }
 
   static makePromise = function (path: string): Promise<any> {
-    const existingPromise = ImagePreloader.getPromise(path)
+    const existingPromise = ImagePreloader.getPromise(ensureFullyQualifiedAssetUrl(path))
 
     if (existingPromise) {
       return existingPromise
     }
 
     const newPromise = new Promise((resolve: Function, reject: Function) => {
+      const fullPath = ensureFullyQualifiedAssetUrl(path)
       // non-blocking request, unlike setting Image source
-      window.fetch(path, {
-        method: 'GET'
-      })
-        .then(response => { resolve(path) })
+      axios.get(fullPath)
+        .then(response => { resolve(fullPath) })
         .catch((err: any) => { reject(err) })
     })
 

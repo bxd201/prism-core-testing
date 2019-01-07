@@ -1,33 +1,34 @@
 // @flow
 import React, { PureComponent } from 'react'
-import { chunk, fill } from 'lodash'
-// $FlowIgnore
+// $FlowIgnore -- no defs for react-virtualized
 import { Grid, AutoSizer } from 'react-virtualized'
+// $FlowIgnore -- no defs for react-virtualized
+import { Scroll } from 'scroll-utility'
 
 import { varValues } from 'variables'
 import ZoomTransitioner, { type ZoomPositionerProps, TransitionModes } from './ZoomTransitioner/ZoomTransitioner'
 import ColorWallSwatch from './ColorWallSwatch/ColorWallSwatch'
 import ColorWallSwatchUI from './ColorWallSwatch/ColorWallSwatchUI'
 import ColorWallSwatchRenderer from './ColorWallSwatch/ColorWallSwatchRenderer'
-import { type Color } from '../../../shared/types/Colors'
-import { getColorCoords, drawCircle } from './ColorWallUtils'
-import { ZOOMED_VIEW_GRID_PADDING } from './ColorWallProps'
+import type { ColorMap, Color, ColorGrid, ColorIdGrid, ProbablyColor } from '../../../shared/types/Colors'
+import { getColorCoords, drawCircle, getCoordsObjectFromPairs } from './ColorWallUtils'
+import { getTotalWidthOf2dArray } from '../../../shared/helpers/DataUtils'
 
 type Props = {
-  colors: Array<Color>, // eslint-disable-line react/no-unused-prop-types
-  cellSize: number,
+  colors: ColorGrid, // eslint-disable-line react/no-unused-prop-types
+  minCellSize: number,
+  maxCellSize: number,
   bloomRadius: number,
+  colorMap: ColorMap,
+  activeColor?: Color, // eslint-disable-line react/no-unused-prop-types
   showAll?: boolean,
   immediateSelectionOnActivation?: boolean,
   onAddColor?: Function,
-  onActivateColor?: Function,
-  initialActiveColor?: Color // eslint-disable-line react/no-unused-prop-types
+  onActivateColor?: Function
 }
 
 type ColorReference = {
   level: number,
-  offsetX?: number,
-  offsetY?: number,
   compensateX?: Function,
   compensateY?: Function
 }
@@ -35,45 +36,45 @@ type ColorReference = {
 type State = {
   activeCoords: number[],
   focusCoords: number[],
-  colorHash: {
-    [ key: number ]: Color
+  levelMap: {
+    [ key: string ]: ColorReference
   },
-  levelHash: {
-    [ key: number ]: ColorReference
-  },
-  colorIdGrid: number[][],
+  colorIdGrid: ColorIdGrid,
   zoomingIn: boolean,
   zoomingOut: boolean,
-  activeColor?: Color,
   zoomerInitProps?: ZoomPositionerProps
 }
 
 class ColorWallSwatchList extends PureComponent<Props, State> {
   _DOMNode = void (0)
   _scrollTimeout = void (0)
+  _scrollManager = void (0)
   _initialFocusCoords = void (0)
+  // internal tracking of current grid size
   _gridWidth: number = 0
   _gridHeight: number = 0
+  // internal tracking of current cell size, varying between min and maxCellSize props
+  _cellSize: number
 
   state: State = {
     activeCoords: [],
-    activeColor: void (0),
     focusCoords: [],
-    colorHash: {},
-    levelHash: {},
+    levelMap: {},
     colorIdGrid: [[]],
     zoomingIn: false,
     zoomingOut: false
   }
 
   static defaultProps = {
-    bloomRadius: 0
+    bloomRadius: 0,
+    minCellSize: 50,
+    maxCellSize: 50
   }
 
   constructor (props: Props) {
     super(props)
 
-    const { colors, initialActiveColor, showAll } = props
+    const { colors, activeColor } = props
 
     this.activateColor = this.activateColor.bind(this)
     this.addColor = this.addColor.bind(this)
@@ -81,32 +82,16 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     this.handleKeyDown = this.handleKeyDown.bind(this)
     this.handleGridResize = this.handleGridResize.bind(this)
 
-    let colorHash: Object = {}
-    colors.forEach((color: Color) => {
-      colorHash[color.id] = color
+    this.state.colorIdGrid = colors.map((moreColors: ProbablyColor[]) => {
+      return moreColors.map((color: any) => {
+        if (color && color.hasOwnProperty('id')) {
+          return color.id
+        }
+      })
     })
 
-    let colorIdGrid: number[][] = chunk(colors.map(color => color.id), varValues.colorWall.swatchColumns)
-
-    if (!showAll) {
-      const colCount = colorIdGrid[0].length
-
-      for (let i = ZOOMED_VIEW_GRID_PADDING; i > 0; i--) {
-        colorIdGrid.unshift(fill(new Array(colCount), 0))
-        colorIdGrid.push(fill(new Array(colCount), 0))
-        colorIdGrid = colorIdGrid.map(col => {
-          col.unshift(0)
-          col.push(0)
-          return col
-        })
-      }
-    }
-
-    this.state.colorIdGrid = colorIdGrid
-    this.state.colorHash = colorHash
-
-    if (initialActiveColor) {
-      const moreState = this.updateActiveColor(initialActiveColor, true)
+    if (activeColor) {
+      const moreState = this.updateActiveColor(activeColor, true)
 
       if (moreState) {
         Object.assign(this.state, moreState)
@@ -125,11 +110,10 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     }
 
     let stateChanges: {
-      activeColor: Color,
       activeCoords: number[],
       focusCoords: number[],
-      levelHash?: {
-        [ key: number]: ColorReference
+      levelMap?: {
+        [key: string]: ColorReference
       }
     }
     const coords = getColorCoords(color.id, colorIdGrid)
@@ -139,13 +123,12 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
       const centerY = coords[1]
 
       stateChanges = {
-        activeColor: color,
         activeCoords: [ centerX, centerY ],
         focusCoords: [ centerX, centerY ]
       }
 
       if (calculateLevels) {
-        stateChanges.levelHash = drawCircle(bloomRadius, centerX, centerY, colorIdGrid)
+        stateChanges.levelMap = drawCircle(bloomRadius, centerX, centerY, colorIdGrid)
       }
 
       return stateChanges
@@ -163,7 +146,6 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
   activateColor = function activateColor (newColor: Color) {
     const activeSwatchId = newColor.id
     const { onActivateColor, immediateSelectionOnActivation } = this.props
-    const { activeColor } = this.state
 
     if (activeSwatchId) {
       const newState = this.updateActiveColor(newColor, !immediateSelectionOnActivation)
@@ -172,28 +154,23 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
         this.setState(newState, () => {
           if (onActivateColor) {
             /// ... call it now
-            onActivateColor(activeColor)
+            onActivateColor(newColor)
           }
         })
       } else {
-        this.setState(newState, this.zoomInActivate)
+        this.setState(newState, () => {
+          this.zoomInActivate(newColor)
+        })
       }
     }
   }
 
-  zoomInActivate () {
-    const { onActivateColor, cellSize } = this.props
-    const { activeCoords, colorIdGrid, activeColor } = this.state
+  zoomInActivate (newColor: Color) {
+    const { onActivateColor } = this.props
+    const { activeCoords } = this.state
 
-    const numRows = colorIdGrid.length
-    const numCols = colorIdGrid[0].length
-    const cellSizeShowAll = this._gridWidth / numCols
-    const cellSizeRatio = cellSizeShowAll / cellSize
-    const cellsTotalH = numRows * cellSizeShowAll
-    const cellsTotalW = numCols * cellSizeShowAll
-    const zoomerW = this._gridWidth * cellSizeRatio
-    const zoomerH = this._gridHeight * cellSizeRatio
-    const scale = zoomerW / this._gridWidth
+    const cellSizeShowAll = this._cellSize
+    const scale = Math.max(this._cellSize / this._gridWidth, 0.3)
 
     const activePos = [
       activeCoords[0] * cellSizeShowAll,
@@ -211,8 +188,8 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
       }
     }
 
-    let zoomerX = Math.max(zoomerW / 2, Math.min(activePos[0], cellsTotalW - (zoomerW / 2))) - (this._gridWidth / 2)
-    let zoomerY = Math.max(zoomerH / 2, Math.min(activePos[1], cellsTotalH - (zoomerH / 2))) - (this._gridHeight / 2)
+    let zoomerX = (this._gridWidth / -2) + activePos[0] + (cellSizeShowAll / 2)
+    let zoomerY = (this._gridHeight / -2) + activePos[1] + (cellSizeShowAll / 2)
 
     zoomerX /= scale
     zoomerY /= scale
@@ -229,8 +206,8 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     }, () => {
       setTimeout(() => {
         if (onActivateColor) {
-          /// ... call it now
-          onActivateColor(activeColor)
+          // ... call it now
+          onActivateColor(newColor)
         }
       }, varValues.colorWall.exitTransitionMS)
     })
@@ -245,37 +222,19 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     rowIndex, // Vertical (row) index of cell
     style // Style object to be applied to cell (to position it)
   }: Object) {
-    const { colorHash, levelHash, colorIdGrid } = this.state
-    const { immediateSelectionOnActivation } = this.props
+    const { levelMap, colorIdGrid } = this.state
+    const { colorMap, immediateSelectionOnActivation, onAddColor } = this.props
 
-    const rowCount = colorIdGrid.length
-    const columnCount = colorIdGrid[0].length
     const colorId = colorIdGrid[rowIndex][columnIndex]
 
     if (!colorId) {
       return null
     }
 
-    const color: Color = colorHash[colorId]
-    const thisLevel: ColorReference = levelHash[colorId]
+    const color: Color = colorMap[colorId]
+    const thisLevel: ColorReference = levelMap[colorId]
 
     let edgeProps = {}
-
-    if (columnIndex === 0) {
-      edgeProps.leftCol = true
-    }
-
-    if (rowIndex === 0) {
-      edgeProps.topRow = true
-    }
-
-    if (columnIndex === columnCount - 1) {
-      edgeProps.rightCol = true
-    }
-
-    if (rowIndex === rowCount - 1) {
-      edgeProps.bottomRow = true
-    }
 
     if (thisLevel) {
       if (thisLevel.compensateX) {
@@ -290,8 +249,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     return (
       <div key={key} style={style}>
         {thisLevel ? ( // a bloomed swatch
-          <ColorWallSwatch onEngage={this.activateColor} onAdd={this.addColor} color={color} level={thisLevel.level}
-            offsetX={thisLevel.offsetX} offsetY={thisLevel.offsetY}
+          <ColorWallSwatch showContents={thisLevel.level === 0} onEngage={this.activateColor} onAdd={onAddColor ? this.addColor : void (0)} color={color} level={thisLevel.level}
             {...edgeProps} />
         ) : isScrolling ? ( // all non-bloomed swatches when scrolling, the least complicated swatch option
           <ColorWallSwatchRenderer aria-colindex={columnIndex} aria-rowindex={rowIndex} color={color.hex} />
@@ -307,12 +265,12 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
   handleKeyDown = function handleKeyDown (e: KeyboardEvent) {
     const { colorIdGrid, focusCoords } = this.state
     const rowCount = colorIdGrid.length
-    const columnCount = colorIdGrid[0].length
+    const columnCount = getTotalWidthOf2dArray(colorIdGrid)
 
     let x = focusCoords[0]
     let y = focusCoords[1]
 
-    switch (e.charCode) {
+    switch (e.keyCode) {
       case 37: // left
         if (x > 0) x--
         break
@@ -331,6 +289,8 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
       this.setState({
         focusCoords: [x, y]
       })
+    } else {
+      e.preventDefault()
     }
   }
 
@@ -340,10 +300,10 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
   }
 
   render () {
-    const { cellSize, showAll } = this.props
-    const { colorIdGrid, levelHash, zoomingIn, zoomerInitProps } = this.state
+    const { minCellSize, maxCellSize, showAll } = this.props
+    const { colorIdGrid, levelMap, zoomingIn, zoomerInitProps } = this.state
     const rowCount = colorIdGrid.length
-    const columnCount = colorIdGrid[0].length
+    const columnCount = getTotalWidthOf2dArray(colorIdGrid)
     let addlGridProps = {}
     let transitioner = null
 
@@ -366,15 +326,18 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
 
         <AutoSizer onResize={this.handleGridResize}>
           {({ height, width }) => {
-            let size = cellSize
+            let size = maxCellSize
 
             if (showAll) {
-              size = Math.min(width / columnCount, cellSize)
+              size = Math.max(Math.min(width / columnCount, maxCellSize), minCellSize)
             }
+
+            // keep tabs on our current size since it can very between min/maxCellSize
+            this._cellSize = size
 
             return (
               <Grid
-                _forceUpdateProp={levelHash}
+                _forceUpdateProp={levelMap}
                 scrollToAlignment='center'
                 cellRenderer={this.cellRenderer}
                 columnWidth={size}
@@ -396,7 +359,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
   }
 
   componentDidUpdate (prevProps: Props, prevState: State) {
-    const { cellSize, showAll } = this.props
+    const { showAll } = this.props
     const { activeCoords, focusCoords } = this.state
     const { activeCoords: oldActiveCoords, focusCoords: oldFocusCoords } = prevState
 
@@ -404,40 +367,52 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
       return
     }
 
-    let oldX = 0
-    let oldY = 0
-    let newX = 0
-    let newY = 0
+    let newCoords: ?{x: number, y: number} = getCoordsObjectFromPairs([
+      focusCoords,
+      activeCoords
+    ])
 
-    if (focusCoords.length) {
-      newX = focusCoords[0]
-      newY = focusCoords[1]
-    } else if (activeCoords.length) {
-      newX = activeCoords[0]
-      newY = activeCoords[1]
-    }
+    let oldCoords: ?{x: number, y: number} = getCoordsObjectFromPairs([
+      oldFocusCoords,
+      oldActiveCoords
+    ])
 
-    if (oldFocusCoords.length) {
-      oldX = oldFocusCoords[0]
-      oldY = oldFocusCoords[1]
-    } else if (oldActiveCoords.length) {
-      oldX = oldActiveCoords[0]
-      oldY = oldActiveCoords[1]
-    }
-
-    if (this._DOMNode && (oldX !== newX || oldY !== newY)) {
+    if (this._DOMNode && (newCoords && oldCoords && (oldCoords.x !== newCoords.x || oldCoords.y !== newCoords.y))) {
       const gridEl = this._DOMNode.querySelector('.ReactVirtualized__Grid')
 
       if (gridEl) {
+        if (!this._scrollManager) {
+          this._scrollManager = new Scroll(gridEl)
+        }
+
         clearTimeout(this._scrollTimeout)
+
         this._scrollTimeout = setTimeout(() => {
-          // $FlowIgnore -- flow doesn't think this exists, but it is mistaken
-          gridEl.scrollTo({
-            left: newX * cellSize - (this._gridWidth - cellSize) / 2,
-            top: newY * cellSize - (this._gridHeight - cellSize) / 2,
-            behavior: 'smooth'
-          })
-        }, 200)
+          const scrollSpeed = 300
+          const scrollToX = newCoords.x * this._cellSize - (this._gridWidth - this._cellSize) / 2
+          const scrollToY = newCoords.y * this._cellSize - (this._gridHeight - this._cellSize) / 2
+
+          if (this._scrollManager) {
+            // stop any other currently-running scroll animations on this element
+            this._scrollManager.stopAllAnimations()
+
+            // scroll X and Y axes separately (can't do both at once, but the animations stack)
+
+            // TODO: create flowtype skeleton for instances of Scroll
+            // $FlowIgnore -- Flow doesn't know what instance methods exist on Scroll
+            this._scrollManager.scrollTo('value', scrollToX, {
+              duration: scrollSpeed,
+              horizontal: true
+            })
+
+            // TODO: create flowtype skeleton for instances of Scroll
+            // $FlowIgnore -- Flow doesn't know what instance methods exist on Scroll
+            this._scrollManager.scrollTo('value', scrollToY, {
+              duration: scrollSpeed,
+              horizontal: false
+            })
+          }
+        }, varValues.colorWall.swatchActivateDelayMS + varValues.colorWall.swatchActivateDurationMS)
       }
     }
   }

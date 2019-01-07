@@ -1,0 +1,22 @@
+// @flow
+import type { Color, ColorFamilyPayload, ColorListPayload, ColorMap } from './Colors'
+
+export type ReduxAction = {
+  type: string,
+  payload: any
+}
+
+export type ColorsState = {
+  status: {
+    loading: boolean
+  },
+  items: {
+    colors: ColorFamilyPayload,
+    brights: ColorFamilyPayload,
+    colorMap: ColorMap
+  } | Object,
+  searchResults: ColorListPayload,
+  family?: string,
+  families?: string[],
+  colorWallActive?: Color
+}
