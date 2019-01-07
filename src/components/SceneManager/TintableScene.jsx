@@ -19,6 +19,7 @@ type Props = {
   interactive: boolean,
   sceneId: string | number,
   previewColor?: Color | void,
+  mainColor?: Color | void, // eslint-disable-line
   clickToPaintColor?: Color,
   onUpdateColor?: Function,
   loading?: boolean,

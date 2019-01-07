@@ -23,6 +23,7 @@ type Props = {
   paintSceneSurface: Function,
   loadingScenes: boolean,
   activeColor: Color | void,
+  mainColor: Color | void,
   previewColor: Color | void,
   interactive: boolean
 }
@@ -95,7 +96,7 @@ class SceneManager extends PureComponent<Props, State> {
   }
 
   render () {
-    const { scenes, loadingScenes, activeColor, previewColor, activeScenes, type, interactive } = this.props
+    const { scenes, loadingScenes, activeColor, previewColor, mainColor, activeScenes, type, interactive } = this.props
 
     if (loadingScenes) {
       return 'Loading...'
@@ -110,7 +111,6 @@ class SceneManager extends PureComponent<Props, State> {
               onClick={() => this.handleClickSceneToggle(scene.id)}
               className={`${SceneManager.baseClass}__btn ${activeScenes.indexOf(scene.id) > -1 ? `${SceneManager.baseClass}__btn--active` : ''}`}
               type='button'>
-
               <ImagePreloader key={scene.id}
                 el={TintableScene}
                 preload={[
@@ -129,6 +129,7 @@ class SceneManager extends PureComponent<Props, State> {
                 clickToPaintColor={activeColor}
                 onUpdateColor={this.handleColorUpdate}
                 previewColor={previewColor}
+                mainColor={mainColor}
                 surfaces={scene.surfaces}
               />
             </button>
@@ -162,6 +163,7 @@ class SceneManager extends PureComponent<Props, State> {
                 clickToPaintColor={activeColor}
                 onUpdateColor={this.handleColorUpdate}
                 previewColor={previewColor}
+                mainColor={mainColor}
                 surfaces={scene.surfaces}
               />
             )
