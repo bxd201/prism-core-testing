@@ -4,6 +4,8 @@ import { Provider } from 'react-redux'
 import { IntlProvider } from 'react-intl'
 import { HashRouter } from 'react-router-dom'
 
+import { DEFAULT_CONFIGURATIONS, ConfigurationContextProvider } from './contexts/ConfigurationContext'
+
 // all supported languages
 import languages from './translations/translations'
 
@@ -54,7 +56,9 @@ const renderAppInElement = (el) => {
     <IntlProvider locale={language} messages={languages[language]}>
       <Provider store={store}>
         <HashRouter>
-          <App {...props} />
+          <ConfigurationContextProvider value={DEFAULT_CONFIGURATIONS}>
+            <App {...props} />
+          </ConfigurationContextProvider>
         </HashRouter>
       </Provider>
     </IntlProvider>, el)
