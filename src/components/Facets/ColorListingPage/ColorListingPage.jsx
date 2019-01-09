@@ -4,7 +4,7 @@ import { Route, Redirect } from 'react-router-dom'
 import ColorWallLocationBuffer from '../ColorWall/ColorWallLocationBuffer'
 import ColorDetails from '../ColorDetails/ColorDetails'
 import ColorDataWrapper from '../../../helpers/ColorDataWrapper'
-import { ConfigurationContextProvider } from '../../../contexts/ConfigurationContext'
+import { DEFAULT_CONFIGURATIONS, ConfigurationContextProvider } from '../../../contexts/ConfigurationContext'
 
 // barebones component to always take the user to active if they try to access root.
 // not sure if we need this but if we end up using this for TAG & want to retain bookmarks..
@@ -20,6 +20,7 @@ const ColorWallConfigurations = {
     displayViewDetails: true
   }
 }
+const Configurations = Object.assign({}, DEFAULT_CONFIGURATIONS, ColorWallConfigurations)
 
 // since the CDP component won't have any color information if we go to it directly, we need to wrap it
 // in the ColorDataWrapper HOC to ensure it has color data prior to rendering it.
@@ -31,7 +32,7 @@ const ColorDetailsComponent = (props) => {
 // overriding the default configuration with updated CW ones to hide the info and add buttons on the swatch
 const ColorWallComponent = (props) => {
   return (
-    <ConfigurationContextProvider value={ColorWallConfigurations}>
+    <ConfigurationContextProvider value={Configurations}>
       <ColorWallLocationBuffer {...props} />
     </ConfigurationContextProvider>
   )
