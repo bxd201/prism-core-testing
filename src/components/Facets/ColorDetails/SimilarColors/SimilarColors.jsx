@@ -11,13 +11,17 @@ type Props = {
   color: Color
 }
 
-class SimilarColors extends PureComponent<Props> {
+type State = {
+  activeColorID: number | void
+}
+
+class SimilarColors extends PureComponent<Props, State> {
   static baseClass = 'color-info'
 
-  constructor (props) {
+  constructor (props: Props) {
     super(props)
 
-    this.state = { activeColorID: null }
+    this.state = { activeColorID: void (0) }
   }
 
   render () {
