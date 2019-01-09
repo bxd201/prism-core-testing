@@ -34,3 +34,10 @@ export const fullColorNumber = memoizee(function fullColorNumber (brandKey: stri
 export const fullColorName = memoizee(function fullColorName (brandKey: string | void, colorNumber: string | void, name: string): string {
   return `${fullColorNumber(brandKey, colorNumber)}${name}`
 }, { primitive: true, length: 3 })
+
+export function generateColorDetailsPageUrl (color): string {
+  const colorNumber = `${(color.brandKey) ? color.brandKey : ''}${color.colorNumber}`
+  const colorName = color.name.toLowerCase().replace(' ', '-')
+
+  return `/active/color/${color.id}/${colorNumber}-${colorName}`
+}

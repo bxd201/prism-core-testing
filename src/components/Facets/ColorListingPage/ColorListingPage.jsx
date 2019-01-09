@@ -26,7 +26,7 @@ const Configurations = Object.assign({}, DEFAULT_CONFIGURATIONS, ColorWallConfig
 // in the ColorDataWrapper HOC to ensure it has color data prior to rendering it.
 const ColorDetailsWithData = ColorDataWrapper(ColorDetails)
 const ColorDetailsComponent = (props) => {
-  return <ColorDetailsWithData />
+  return <ColorDetailsWithData {...props} />
 }
 
 // overriding the default configuration with updated CW ones to hide the info and add buttons on the swatch
@@ -46,7 +46,7 @@ class ColorListingPage extends Component {
         <Route path='/active/color-wall' exact component={ColorWallComponent} />
         <Route path='/active/color-wall/:family' exact component={ColorWallComponent} />
         <Route path='/active/color-wall/:family/:colorNumber' exact component={ColorWallComponent} />
-        <Route path='/active/color/:colorId' exact render={ColorDetailsComponent} />
+        <Route path='/active/color/:colorId/:colorSEO' exact render={ColorDetailsComponent} />
       </React.Fragment>
     )
   }

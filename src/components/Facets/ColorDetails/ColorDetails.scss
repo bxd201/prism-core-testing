@@ -393,6 +393,7 @@ $top-level-class-string: '.color-info';
     border-color: $neutral-background-color;
     border-style: solid;
     border-width: $width-thin;
+    display: block;
     height: 100%;
     position: relative;
     transition: transform 0.3s, z-index .3s;
@@ -510,6 +511,13 @@ $top-level-class-string: '.color-info';
 
     &__display-toggle-button--alt {
       display: none;
+    }
+
+    // TODO: not sure if we want all a tags within the `color-info` namespace,
+    // but maybe we do? since we shouldn't need the default a tag styles within color swatches.
+    &__color-swatch-link {
+      text-decoration: none;
+      color: inherit;
     }
   }
 

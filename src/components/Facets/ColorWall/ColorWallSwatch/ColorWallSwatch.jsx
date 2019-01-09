@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import { type Color } from '../../../../shared/types/Colors'
 import { numToAlphaString, arrayToSpacedString } from '../../../../shared/helpers/StringUtils'
-import { fullColorName, fullColorNumber } from '../../../../shared/helpers/ColorUtils'
+import { fullColorName, fullColorNumber, generateColorDetailsPageUrl } from '../../../../shared/helpers/ColorUtils'
 import { ConfigurationContext } from '../../../../contexts/ConfigurationContext'
 import { CLASS_NAMES } from './shared'
 
@@ -66,7 +66,7 @@ class ColorWallSwatch extends Component<Props> {
             </button>
           )}
 
-          {config.displayViewDetails && <Link to={`/active/color/${color.id}`} style={temporaryViewDetailStyles}>View Details</Link>}
+          {config.displayViewDetails && <Link to={generateColorDetailsPageUrl(color)} style={temporaryViewDetailStyles}>View Details</Link>}
 
           {config.displayAddButton && (
             <button onClick={this.handleDetailClick} className={CLASS_NAMES.CONTENT_DETAILS}>
