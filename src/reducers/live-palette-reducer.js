@@ -1,12 +1,19 @@
 import _ from 'lodash'
 
 import { LP_MAX_COLORS_ALLOWED } from 'constants/configurations'
+import {
+  ADD_LP_COLOR,
+  REMOVE_LP_COLOR,
+  ACTIVATE_LP_COLOR,
+  ACTIVATE_LP_PREVIEW_COLOR,
+  REORDER_LP_COLORS
+} from '../actions/live-palette'
 
 export const initialState = {}
 
 export const lp = (state = initialState, action) => {
   switch (action.type) {
-    case 'ADD_LP_COLOR':
+    case ADD_LP_COLOR:
       // check if there are already 7 colors added and if the color exists already before adding
       if (state.colors && state.colors.length < LP_MAX_COLORS_ALLOWED && !_.filter(state.colors, color => color.id === action.payload.color.id).length) {
         state.colors.push(action.payload.color)
@@ -20,7 +27,7 @@ export const lp = (state = initialState, action) => {
         previousActiveColor: state.activeColor
       })
 
-    case 'REMOVE_LP_COLOR':
+    case REMOVE_LP_COLOR:
       let activeColorIndex = 0 // set a default color index to return
 
       // remove payload color from the colors stored in state
@@ -45,18 +52,18 @@ export const lp = (state = initialState, action) => {
         removedColor: difference.length ? difference[0] : void (0)
       })
 
-    case 'ACTIVATE_LP_COLOR':
+    case ACTIVATE_LP_COLOR:
       return Object.assign({}, state, {
         activeColor: action.payload.color,
         previousActiveColor: state.activeColor
       })
 
-    case 'ACTIVATE_LP_PREVIEW_COLOR':
+    case ACTIVATE_LP_PREVIEW_COLOR:
       return Object.assign({}, state, {
         activePreviewColor: action.payload.color
       })
 
-    case 'REORDER_LP_COLORS':
+    case REORDER_LP_COLORS:
       // no colors are in the LP, why are you calling reorder?
       if (state.colors.length === 0) {
         return state

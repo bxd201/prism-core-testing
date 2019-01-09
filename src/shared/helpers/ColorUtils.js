@@ -2,6 +2,8 @@
 import tinycolor from '@ctrl/tinycolor'
 import memoizee from 'memoizee'
 
+import type { Color } from '../types/Colors'
+
 /**
  * @param {*} colorValue String, hex, or tinycolor-compatible rgb(a)/hsl(a)/hsv(a) object
  * @param {number} newLuminosity number between 0 and 100
@@ -35,9 +37,9 @@ export const fullColorName = memoizee(function fullColorName (brandKey: string |
   return `${fullColorNumber(brandKey, colorNumber)}${name}`
 }, { primitive: true, length: 3 })
 
-export function generateColorDetailsPageUrl (color): string {
-  const colorNumber = `${(color.brandKey) ? color.brandKey : ''}${color.colorNumber}`
+export const generateColorDetailsPageUrl = memoizee(function generateColorDetailsPageUrl (color: Color): string {
+  const colorNumber = fullColorNumber(color.brandKey, color.colorNumber).replace(' ', '')
   const colorName = color.name.toLowerCase().replace(' ', '-')
 
   return `/active/color/${color.id}/${colorNumber}-${colorName}`
-}
+})

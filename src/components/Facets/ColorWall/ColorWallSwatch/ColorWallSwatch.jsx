@@ -103,7 +103,7 @@ class ColorWallSwatch extends Component<Props> {
     }
 
     return styleObj
-  })
+  }, { primitive: true, length: 1 })
 
   getBaseClasses = once(function getBaseClasses (): string {
     const { color } = this.props

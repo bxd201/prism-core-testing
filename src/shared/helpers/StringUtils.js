@@ -1,14 +1,15 @@
 // @flow
-import { memoize, kebabCase } from 'lodash'
+import { kebabCase } from 'lodash'
+import memoizee from 'memoizee'
 
-export const arrayToSpacedString = memoize(function arrayToSpacedString (arr: string[]) {
+export const arrayToSpacedString = memoizee(function arrayToSpacedString (arr: string[]): string {
   return arr.join(' ')
-})
+}, { primitive: true, length: 1 })
 
-export const numToAlphaString = memoize(function numToAlphaString (num: number) {
+export const numToAlphaString = memoizee(function numToAlphaString (num: number): string {
   return num.toString().replace(/-/g, 'n').replace(/\./g, '-')
-})
+}, { primitive: true, length: 1 })
 
-export const compareKebabs = memoize(function compareKebabs (str1: string, str2: string): boolean {
+export const compareKebabs = memoizee(function compareKebabs (str1: string, str2: string): boolean {
   return kebabCase(str1) === kebabCase(str2)
-}, function () { return `${arguments[0]}|${arguments[1]}` })
+}, { primitive: true, length: 2 })

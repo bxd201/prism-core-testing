@@ -20,3 +20,11 @@
 
   @return $split-arr;
 }
+
+@function strip-units($n) {
+  @return $n / ($n * 0 + 1);
+}
+
+@function em($value) {
+  @return strip-units($value) * 1em;
+}

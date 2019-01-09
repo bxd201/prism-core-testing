@@ -1,19 +1,23 @@
 // @flow
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
+import { find } from 'lodash'
+import memoizee from 'memoizee'
 
-import { SCENE_TYPES } from 'constants/globals'
-import { loadScenes, paintSceneSurface, activateScene, deactivateScene } from '../../actions/scenes'
+import { SCENE_TYPES, SCENE_VARIANTS } from 'constants/globals'
+import { loadScenes, paintSceneSurface, activateScene, deactivateScene, changeSceneVariant } from '../../actions/scenes'
 import TintableScene from './TintableScene'
+import SceneVariantSwitch from './SceneVariantSwitch'
 import type { Color } from '../../shared/types/Colors'
-import type { Scene } from '../../shared/types/Scene'
+import type { Scene, SceneStatus, Surface } from '../../shared/types/Scene'
 import ImagePreloader from '../../helpers/ImagePreloader'
 import { ensureFullyQualifiedAssetUrl } from '../../shared/helpers/DataUtils'
 
 import './SceneManager.scss'
 
 type Props = {
-  scenes: Array<Scene>,
+  scenes: Scene[],
+  sceneStatus: SceneStatus[],
   type: string,
   activeScenes: Array<number | string>,
   maxActiveScenes: number,
@@ -21,6 +25,7 @@ type Props = {
   activateScene: Function,
   deactivateScene: Function,
   paintSceneSurface: Function,
+  changeSceneVariant: Function,
   loadingScenes: boolean,
   activeColor: Color | void,
   mainColor: Color | void,
@@ -50,6 +55,7 @@ class SceneManager extends PureComponent<Props, State> {
 
     this.handleColorUpdate = this.handleColorUpdate.bind(this)
     this.handleClickSceneToggle = this.handleClickSceneToggle.bind(this)
+    this.changeVariant = this.changeVariant.bind(this)
   }
 
   componentDidMount () {
@@ -95,8 +101,16 @@ class SceneManager extends PureComponent<Props, State> {
     deactivateScene(id)
   }
 
+  changeVariant = memoizee(function changeVariant (sceneId: number) {
+    const { changeSceneVariant } = this.props
+
+    return function _changeVariant (variant: string) {
+      changeSceneVariant(sceneId, variant)
+    }
+  }, { primitive: true, length: 1 })
+
   render () {
-    const { scenes, loadingScenes, activeColor, previewColor, mainColor, activeScenes, type, interactive } = this.props
+    const { scenes, sceneStatus, loadingScenes, activeColor, previewColor, mainColor, activeScenes, type, interactive } = this.props
 
     if (loadingScenes) {
       return 'Loading...'
@@ -106,34 +120,43 @@ class SceneManager extends PureComponent<Props, State> {
       <div className={SceneManager.baseClass}>
         <div className={`${SceneManager.baseClass}__block ${SceneManager.baseClass}__block--tabs`}>
           {/* POC scene-switching buttons to demonstrate performance */}
-          {scenes.map((scene, index) => (
-            <button key={scene.id}
-              onClick={() => this.handleClickSceneToggle(scene.id)}
-              className={`${SceneManager.baseClass}__btn ${activeScenes.indexOf(scene.id) > -1 ? `${SceneManager.baseClass}__btn--active` : ''}`}
-              type='button'>
-              <ImagePreloader key={scene.id}
-                el={TintableScene}
-                preload={[
-                  scene.image,
-                  scene.surfaces.map(surface => surface.mask),
-                  scene.surfaces.map(surface => surface.shadows),
-                  scene.surfaces.map(surface => surface.hitArea),
-                  scene.surfaces.map(surface => surface.highlights)
-                ]}
-                interactive={false}
-                width={scene.width}
-                height={scene.height}
-                type={type}
-                sceneId={scene.id}
-                background={ensureFullyQualifiedAssetUrl(scene.image)}
-                clickToPaintColor={activeColor}
-                onUpdateColor={this.handleColorUpdate}
-                previewColor={previewColor}
-                mainColor={mainColor}
-                surfaces={scene.surfaces}
-              />
-            </button>
-          ))}
+          {scenes.map((scene, index) => {
+            const sceneId = scene.id
+
+            const status: SceneStatus = find(sceneStatus, { 'id': sceneId })
+            const sceneVariant: Scene = find(scene.variants, { 'variant_name': status.variant })
+            const surfaces: Surface[] = sceneVariant.surfaces
+
+            return (
+              <button key={sceneId}
+                onClick={() => this.handleClickSceneToggle(scene.id)}
+                className={`${SceneManager.baseClass}__btn ${activeScenes.indexOf(scene.id) > -1 ? `${SceneManager.baseClass}__btn--active` : ''}`}
+                type='button'>
+                <ImagePreloader
+                  el={TintableScene}
+                  preload={[
+                    sceneVariant.image,
+                    surfaces.map(surface => surface.shadows),
+                    surfaces.map(surface => surface.mask),
+                    surfaces.map(surface => surface.hitArea),
+                    surfaces.map(surface => surface.highlights)
+                  ]}
+                  interactive={false}
+                  width={scene.width}
+                  height={scene.height}
+                  type={type}
+                  sceneId={sceneId}
+                  background={ensureFullyQualifiedAssetUrl(sceneVariant.image)}
+                  clickToPaintColor={activeColor}
+                  onUpdateColor={this.handleColorUpdate}
+                  previewColor={previewColor}
+                  mainColor={mainColor}
+                  surfaceStatus={status.surfaces}
+                  surfaces={surfaces}
+                />
+              </button>
+            )
+          })}
         </div>
 
         <div className={`${SceneManager.baseClass}__block ${SceneManager.baseClass}__block--scenes`}>
@@ -144,28 +167,47 @@ class SceneManager extends PureComponent<Props, State> {
               return null
             }
 
+            const status: SceneStatus = find(sceneStatus, { 'id': sceneId })
+            const sceneVariant: Scene = find(scene.variants, { 'variant_name': status.variant })
+            const surfaces: Surface[] = sceneVariant.surfaces
+
+            let variantSwitch = null
+
+            // if we have more than one variant for this scene...
+            if (scene.variant_names.length > 1) {
+              // if we have day and night variants...
+              if (SceneVariantSwitch.DayNight.isCompatible(scene.variant_names)) {
+                // ... then create a day/night variant switch
+                variantSwitch = <SceneVariantSwitch.DayNight currentVariant={status.variant} variants={[SCENE_VARIANTS.DAY, SCENE_VARIANTS.NIGHT]} onChange={this.changeVariant(sceneId)} />
+              }
+            }
+
             return (
-              <ImagePreloader key={scene.id}
-                el={TintableScene}
-                preload={[
-                  scene.image,
-                  scene.surfaces.map(surface => surface.mask),
-                  scene.surfaces.map(surface => surface.shadows),
-                  scene.surfaces.map(surface => surface.hitArea),
-                  scene.surfaces.map(surface => surface.highlights)
-                ]}
-                width={scene.width}
-                height={scene.height}
-                interactive={interactive}
-                type={type}
-                sceneId={scene.id}
-                background={ensureFullyQualifiedAssetUrl(scene.image)}
-                clickToPaintColor={activeColor}
-                onUpdateColor={this.handleColorUpdate}
-                previewColor={previewColor}
-                mainColor={mainColor}
-                surfaces={scene.surfaces}
-              />
+              <div className={`${SceneManager.baseClass}__scene-wrapper`} key={sceneId}>
+                <ImagePreloader
+                  el={TintableScene}
+                  preload={[
+                    sceneVariant.image,
+                    surfaces.map(surface => surface.mask),
+                    surfaces.map(surface => surface.shadows),
+                    surfaces.map(surface => surface.hitArea),
+                    surfaces.map(surface => surface.highlights)
+                  ]}
+                  width={scene.width}
+                  height={scene.height}
+                  interactive={interactive}
+                  type={type}
+                  sceneId={sceneId}
+                  background={ensureFullyQualifiedAssetUrl(sceneVariant.image)}
+                  clickToPaintColor={activeColor}
+                  onUpdateColor={this.handleColorUpdate}
+                  previewColor={previewColor}
+                  mainColor={mainColor}
+                  surfaceStatus={status.surfaces}
+                  surfaces={surfaces}
+                />
+                {variantSwitch}
+              </div>
             )
           })}
         </div>
@@ -188,11 +230,16 @@ const mapStateToProps = (state, props) => {
 
   return {
     scenes: state.scenes.sceneCollection[state.scenes.type],
+    sceneStatus: state.scenes.sceneStatus[state.scenes.type],
     numScenes: state.scenes.numScenes,
     activeScenes: state.scenes.activeScenes,
     loadingScenes: state.scenes.loadingScenes,
     activeColor: activeColor,
     previewColor: previewColor
+    // NOTE: uncommenting this will sync scene type with redux data
+    // we may not want that in case there are multiple instances with different scene collections running at once
+    // leaving here for posterity
+    // type: state.scenes.type
   }
 }
 
@@ -209,6 +256,9 @@ const mapDispatchToProps = (dispatch: Function) => {
     },
     deactivateScene: (sceneId) => {
       dispatch(deactivateScene(sceneId))
+    },
+    changeSceneVariant: (sceneId: number, variant: string) => {
+      dispatch(changeSceneVariant(sceneId, variant))
     }
   }
 }

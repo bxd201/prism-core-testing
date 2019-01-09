@@ -3,13 +3,13 @@ import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
 import type { Color } from '../../../../shared/types/Colors'
 
-import { paintAllSceneSurfaces } from '../../../../actions/scenes'
+import { paintAllMainSurfaces } from '../../../../actions/scenes'
 
 type Props = {
   color: Color,
   active: Boolean,
   activateColor: Function,
-  paintAllSceneSurfaces: Function
+  paintAllMainSurfaces: Function
 }
 
 class ColorStripSwatch extends PureComponent<Props> {
@@ -42,14 +42,14 @@ class ColorStripSwatch extends PureComponent<Props> {
 
   selectColor = function selectColor () {
     this.props.activateColor(this.props.color)
-    this.props.paintAllSceneSurfaces(this.props.color)
+    this.props.paintAllMainSurfaces(this.props.color)
   }
 }
 
 const mapDispatchToProps = (dispatch: Function) => {
   return {
-    paintAllSceneSurfaces: (color) => {
-      dispatch(paintAllSceneSurfaces(color))
+    paintAllMainSurfaces: (color) => {
+      dispatch(paintAllMainSurfaces(color))
     }
   }
 }

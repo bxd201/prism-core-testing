@@ -1,7 +1,7 @@
 // @flow
 import React, { PureComponent } from 'react'
 import { memoize, uniqueId } from 'lodash'
-// $FlowIgnore
+
 import SVG from 'react-inlinesvg'
 import { DRAG_TYPES } from 'constants/globals'
 import { DropTarget } from 'react-dnd'
@@ -11,9 +11,9 @@ import { ensureFullyQualifiedAssetUrl } from '../../shared/helpers/DataUtils'
 type Props = {
   connectDropTarget: Function,
   isOver: Boolean,
-  id: string, // eslint-disable-line
+  id: string,
   onDrop: Function, // eslint-disable-line
-  onClick: Function, // eslint-disable-line
+  onClick: Function,
   onOver: Function,
   onOut: Function,
   onLoadingSuccess?: Function,

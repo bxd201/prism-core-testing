@@ -1,9 +1,9 @@
 // @flow
 import React, { PureComponent, Fragment } from 'react'
-import { uniqueId, uniq, without, concat } from 'lodash'
+import { uniqueId, uniq, without, concat, find } from 'lodash'
 
 import type { Color } from '../../shared/types/Colors'
-import type { Surface } from '../../shared/types/Scene'
+import type { Surface, SurfaceStatus } from '../../shared/types/Scene'
 import TintableSceneHitArea from './TintableSceneHitArea'
 import TintableSceneSurface from './TintableSceneSurface'
 import TintableSceneSVGDefs from './TintableSceneSVGDefs'
@@ -13,6 +13,7 @@ type Props = {
   background: string,
   type: string,
   surfaces: Surface[],
+  surfaceStatus: SurfaceStatus[],
   width: number,
   height: number,
   render: boolean,
@@ -135,15 +136,22 @@ class TintableScene extends PureComponent<Props, State> {
   }
 
   getTintColorBySurface (surface: Surface): ?Color {
-    const { previewColor } = this.props
+    const { previewColor, surfaceStatus } = this.props
     const { activePreviewSurfaces } = this.state
 
     let tintColor = void (0)
+    // get the SurfaceStatus object associated with the provided Surface
+    const status: ?SurfaceStatus = surface ? find(surfaceStatus, { 'id': surface.id }) : void (0)
+    // if available, extract the color set for this surface from SurfaceStatus
+    const surfaceColor: ?Color = status ? status.color : void (0)
 
+    // if this surface is one of the active preview surfaces...
     if (activePreviewSurfaces.indexOf(surface.id) > -1) {
+      // ... use the previewColor prop for this surface's color
       tintColor = previewColor
-    } else if (surface && surface.color) {
-      tintColor = surface.color
+    } else if (surfaceColor) {
+      // ... if surfaceColor has been defined and there's no preview color, tint our surface with it
+      tintColor = surfaceColor
     }
 
     return tintColor
@@ -244,7 +252,7 @@ class TintableScene extends PureComponent<Props, State> {
     }
 
     return (
-      <div className={TintableScene.classNames.base} style={{ maxWidth: `${Math.round(width / 2)}px` }}>
+      <div className={TintableScene.classNames.base}>
         <div className={TintableScene.classNames.inner} style={{ paddingTop: `${ratio * 100}%` }}>
           {content}
         </div>
