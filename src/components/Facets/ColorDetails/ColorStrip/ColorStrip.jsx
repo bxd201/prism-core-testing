@@ -1,13 +1,17 @@
 // @flow
 import React, { PureComponent } from 'react'
+import { withRouter } from 'react-router-dom'
 import { filter, split } from 'lodash'
 import type { Color, ColorMap } from '../../../../shared/types/Colors'
+
+import { generateColorDetailsPageUrl } from '../../../../shared/helpers/ColorUtils'
 
 import ColorStripSwatch from './ColorStripSwatch'
 
 type Props = {
   colors: ColorMap,
-  color: Color
+  color: Color,
+  history: RouterHistory
 }
 
 type State = {
@@ -67,7 +71,10 @@ class ColorStrip extends PureComponent<Props, State> {
 
   activateColor = function activateColor (color: Color) {
     this.setState({ activeColor: color })
+
+    // navigate to the color's page
+    this.props.history.push(generateColorDetailsPageUrl(color))
   }
 }
 
-export default ColorStrip
+export default withRouter(ColorStrip)

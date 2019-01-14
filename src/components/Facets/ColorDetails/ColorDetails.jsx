@@ -14,12 +14,15 @@ import CoordinatingColors from './CoordinatingColors/CoordinatingColors'
 import SimilarColors from './SimilarColors/SimilarColors'
 import SceneManager from '../../SceneManager/SceneManager'
 
+import { paintAllMainSurfaces } from '../../../actions/scenes'
 import { varValues } from 'variables'
 import './ColorDetails.scss'
 
 type Props = {
   match: any,
-  colors: any
+  colors: ColorMap,
+  scenesLoaded: boolean,
+  paintAllMainSurfaces: Function
 }
 
 type State = {
@@ -213,6 +216,16 @@ class ColorDetails extends PureComponent<Props, State> {
     )
   }
 
+  componentDidUpdate () {
+    const { match: { params }, scenesLoaded } = this.props
+
+    // paint all the main surfaces on load of the CDP
+    const color = this.getColorById(params.colorId)
+    if (scenesLoaded && color) {
+      this.props.paintAllMainSurfaces(color)
+    }
+  }
+
   getColorById (colorId) {
     const { colors } = this.props
 
@@ -233,11 +246,20 @@ class ColorDetails extends PureComponent<Props, State> {
 }
 
 const mapStateToProps = (state, props) => {
-  const { colors } = state
+  const { colors, scenes } = state
 
   return {
-    colors: colors.items.colorMap
+    colors: colors.items.colorMap,
+    scenesLoaded: !scenes.loadingScenes
   }
 }
 
-export default withRouter(connect(mapStateToProps, null)(ColorDetails))
+const mapDispatchToProps = (dispatch: Function) => {
+  return {
+    paintAllMainSurfaces: (color: Color) => {
+      dispatch(paintAllMainSurfaces(color))
+    }
+  }
+}
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ColorDetails))
