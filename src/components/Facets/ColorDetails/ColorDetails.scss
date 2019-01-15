@@ -142,6 +142,7 @@ $top-level-class-string: '.color-info';
 
   &__strip-color {
     border-right: $width-thin solid $neutral-background-color;
+    position: relative;
     // margin-right: $width-thin;
     // min-width: $strip-chip-size;
     // width: auto;
@@ -150,8 +151,11 @@ $top-level-class-string: '.color-info';
   &__strip-color-info {
     // height: 100%;
     // width: 100%;
+    position: absolute;
+    padding: 0.75rem 1rem;
 
     &--active {
+      position: relative;
       // width: 10rem;
       padding: 0 0.5rem;
     }
