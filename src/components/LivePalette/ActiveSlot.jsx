@@ -34,7 +34,7 @@ class ActiveSlot extends PureComponent<Props> {
 
     return connectDragSource && connectDropTarget && connectDragSource(
       connectDropTarget(
-        <div className={`prism-live-palette__slot ${(active ? this.ACTIVE_CLASS : '')} ${(isDeleting ? this.REMOVAL_CLASS : '')}`} style={{ backgroundColor: color.hex, opacity }} onClick={this.onClick}>
+        <div className={`prism-live-palette__slot ${(active ? this.ACTIVE_CLASS : '')} ${(isDeleting ? this.REMOVAL_CLASS : '')}`} style={{ backgroundColor: color.hex, opacity }} onClick={this.onClick} onKeyDown={this.onClick} role='button' tabIndex='-1'>
           <div className={`prism-live-palette__color-details ${LIGHT_DARK_CLASS}`}>
             <span className='prism-live-palette__color-number'>{fullColorNumber(color.brandKey, color.colorNumber)}</span>
             <span className='prism-live-palette__color-name'>{ color.name }</span>

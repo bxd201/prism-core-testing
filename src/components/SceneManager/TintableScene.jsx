@@ -205,7 +205,7 @@ class TintableScene extends PureComponent<Props, State> {
               </div>
 
               <div className={`${TintableScene.classNames.base}__tint-wrapper`}>
-                <img className={`${TintableScene.classNames.base}__natural`} src={background} />
+                <img className={`${TintableScene.classNames.base}__natural`} src={background} alt='TODO: Need img description from data' />
                 {surfaces.map((surface: Surface, index) => {
                   const tintColor: ?Color = this.getTintColorBySurface(surface)
                   if (tintColor) {
