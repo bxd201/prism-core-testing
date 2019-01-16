@@ -160,7 +160,7 @@ pipeline {
         RANCHER_ENV = "nonprod"
         RANCHER_PROJ = "1a33"
         RANCHER_STACK = "prism-web-dev"
-        IMAGE_TAG = "develop"
+        IMAGE_TAG="${BRANCH_NAME}"
         API_URL = "https://dev-prism-api.ebus.swaws"
         WEB_URL = "https://dev-prism-web.ebus.swaws"
       }
@@ -169,21 +169,39 @@ pipeline {
       }
       steps {
         withCredentials([usernamePassword(credentialsId: 'ebus-nonprod-rancher', usernameVariable: 'RANCHER_ACCESS_KEY', passwordVariable: 'RANCHER_SECRET_KEY')]) {
-          sh """
-          #!/bin/bash -x
-          cd ci
-          # Use Rancher to Deploy the stack
-          rancher \
-            --url "http://rancher.${VPC}.swaws/v2-beta/projects/${RANCHER_PROJ}" \
-            --environment ${RANCHER_ENV} \
-            --access-key "${RANCHER_ACCESS_KEY}" \
-            --secret-key "${RANCHER_SECRET_KEY}" \
-            up \
-              -d \
-              -u --force-upgrade \
-              --confirm-upgrade \
-              --stack ${RANCHER_STACK}
-          """
+         sh """
+         #!/bin/bash -x
+         cd ci
+         # Use Rancher to Deploy the stack
+         rancher \
+           --url "http://rancher.${VPC}.swaws/v2-beta/projects/${RANCHER_PROJ}" \
+           --environment ${RANCHER_ENV} \
+           --access-key "${RANCHER_ACCESS_KEY}" \
+           --secret-key "${RANCHER_SECRET_KEY}" \
+           up \
+             -d \
+             -u --force-upgrade \
+             -f docker-compose.yml \
+             --batch-size 1 \
+             --stack ${RANCHER_STACK}
+
+         # Wait or the upgrade to complete
+         RANCHER_PROJ=${RANCHER_PROJ} \
+         wait_for_rancher ${RANCHER_STACK}
+
+         # Use Rancher to Deploy the stack
+         rancher \
+           --url "http://rancher.${VPC}.swaws/v2-beta/projects/${RANCHER_PROJ}" \
+           --environment ${RANCHER_ENV} \
+           --access-key "${RANCHER_ACCESS_KEY}" \
+           --secret-key "${RANCHER_SECRET_KEY}" \
+           up \
+             -d \
+             -f docker-compose.yml \
+             --batch-size 1 \
+             --confirm-upgrade \
+             --stack ${RANCHER_STACK}
+         """
         }
       }
     }
@@ -194,7 +212,7 @@ pipeline {
         RANCHER_ENV = "nonprod"
         RANCHER_PROJ = "1a33"
         RANCHER_STACK = "prism-web-qa"
-        IMAGE_TAG = "qa"
+        IMAGE_TAG="${BRANCH_NAME}"
         API_URL = "https://qa-prism-api.ebus.swaws"
         WEB_URL = "https://qa-prism-web.ebus.swaws"
       }
@@ -203,6 +221,59 @@ pipeline {
       }
       steps {
         withCredentials([usernamePassword(credentialsId: 'ebus-nonprod-rancher', usernameVariable: 'RANCHER_ACCESS_KEY', passwordVariable: 'RANCHER_SECRET_KEY')]) {
+         sh """
+         #!/bin/bash -x
+         cd ci
+         # Use Rancher to Deploy the stack
+         rancher \
+           --url "http://rancher.${VPC}.swaws/v2-beta/projects/${RANCHER_PROJ}" \
+           --environment ${RANCHER_ENV} \
+           --access-key "${RANCHER_ACCESS_KEY}" \
+           --secret-key "${RANCHER_SECRET_KEY}" \
+           up \
+             -d \
+             -u --force-upgrade \
+             -f docker-compose.yml \
+             --batch-size 1 \
+             --stack ${RANCHER_STACK}
+
+         # Wait or the upgrade to complete
+         RANCHER_PROJ=${RANCHER_PROJ} \
+         wait_for_rancher ${RANCHER_STACK}
+
+         # Use Rancher to Deploy the stack
+         rancher \
+           --url "http://rancher.${VPC}.swaws/v2-beta/projects/${RANCHER_PROJ}" \
+           --environment ${RANCHER_ENV} \
+           --access-key "${RANCHER_ACCESS_KEY}" \
+           --secret-key "${RANCHER_SECRET_KEY}" \
+           up \
+             -d \
+             -f docker-compose.yml \
+             --batch-size 1 \
+             --confirm-upgrade \
+             --stack ${RANCHER_STACK}
+         """
+        }
+      }
+    }
+
+    stage('Prod deploy') {
+      environment {
+        VPC = "ebus"
+        IMAGE_TAG="${BRANCH_NAME}"
+        RANCHER_ENV = "prod"
+        RANCHER_PROJ = "1a199"
+        RANCHER_STACK = "prism-web-prod"
+        API_URL = "https://prism-api.ebus.swaws"
+        WEB_URL = "https://prism-web.ebus.swaws"
+        ELB_NAME="placeholder"
+      }
+      when {
+        branch 'release'
+      }
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'ebus-prod-rancher', usernameVariable: 'RANCHER_ACCESS_KEY', passwordVariable: 'RANCHER_SECRET_KEY')]) {
           sh """
           #!/bin/bash -x
           cd ci
@@ -215,12 +286,33 @@ pipeline {
             up \
               -d \
               -u --force-upgrade \
+              -f docker-compose.yml \
+              --batch-size 1 \
+              --rancher-file rancher-compose-prod.yml \
+              --stack ${RANCHER_STACK}
+
+          # Wait or the upgrade to complete
+          RANCHER_PROJ=${RANCHER_PROJ} \
+          wait_for_rancher ${RANCHER_STACK}
+
+          # Use Rancher to Deploy the stack
+          rancher \
+            --url "http://rancher.${VPC}.swaws/v2-beta/projects/${RANCHER_PROJ}" \
+            --environment ${RANCHER_ENV} \
+            --access-key "${RANCHER_ACCESS_KEY}" \
+            --secret-key "${RANCHER_SECRET_KEY}" \
+            up \
+              -d \
+              -f docker-compose.yml \
+              --batch-size 1 \
+              --rancher-file rancher-compose-prod.yml \
               --confirm-upgrade \
               --stack ${RANCHER_STACK}
           """
         }
       }
     }
+
   }
   post {
     always {

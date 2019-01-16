@@ -129,6 +129,11 @@
     }
   }
 
+  &__scene-wrapper {
+    position: relative;
+    overflow: hidden;
+  }
+
   &__scene {
     background: black;
     clear: both;

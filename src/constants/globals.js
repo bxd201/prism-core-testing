@@ -13,6 +13,12 @@ export const SCENE_TYPES = Object.freeze({
   AUTOMOTIVE: 'automotive'
 })
 
+export const SCENE_VARIANTS = Object.freeze({
+  DAY: 'day',
+  NIGHT: 'night',
+  MAIN: 'main'
+})
+
 export const BLANK_SWATCH: BlankColor = void (0)
 
 // this defines the space around the grid when zoomed in

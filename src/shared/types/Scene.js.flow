@@ -2,24 +2,42 @@ import type { Color } from './Colors'
 
 export type Surface = {
   id: string,
+  role: string,
+  thumb: string,
   mask: string,
   hitArea: string,
   shadows?: string,
-  highlights?: string,
-  color?: Color
+  highlights?: string
+}
+
+export type Variant = {
+  image: string,
+  thumb: string,
+  variant_name: string,
+  surfaces: Surface[]
 }
 
 export type Scene = {
   id: string,
-  image: string,
-  thumb: string,
   width: number,
   height: number,
-  surfaces: Array<Surface>
+  variant_names: string[],
+  variants: Variant[]
 }
 
 export type ScenePayload = {
   count: number,
-  scenes: Array<Scene>,
+  scenes: Scene[],
   type: string
+}
+
+export type SurfaceStatus = {
+  id: number,
+  color: Color
+}
+
+export type SceneStatus = {
+  id: number,
+  variant: string,
+  surfaces: SurfaceStatus[]
 }

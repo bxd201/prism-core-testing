@@ -2,7 +2,9 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
 import { IntlProvider } from 'react-intl'
-import { HashRouter } from 'react-router-dom'
+import { BrowserRouter, HashRouter } from 'react-router-dom'
+
+import { DEFAULT_CONFIGURATIONS, ConfigurationContextProvider } from './contexts/ConfigurationContext'
 
 // all supported languages
 import languages from './translations/translations'
@@ -50,12 +52,31 @@ const renderAppInElement = (el) => {
   // set the language
   const language = props.language || navigator.language || 'en-US'
 
+  // set the page root if it exists
+  const pageRoot = props.pageRoot || '/'
+
+  const routeType = props.routeType || 'hash'
+
+  const BrowserRouterRender = (
+    <BrowserRouter basename={pageRoot}>
+      <ConfigurationContextProvider value={DEFAULT_CONFIGURATIONS}>
+        <App {...props} />
+      </ConfigurationContextProvider>
+    </BrowserRouter>
+  )
+  const HashRouterRender = (
+    <HashRouter>
+      <ConfigurationContextProvider value={DEFAULT_CONFIGURATIONS}>
+        <App {...props} />
+      </ConfigurationContextProvider>
+    </HashRouter>
+  )
+  const RouterRender = (routeType === 'browser') ? BrowserRouterRender : HashRouterRender
+
   ReactDOM.render(
     <IntlProvider locale={language} messages={languages[language]}>
       <Provider store={store}>
-        <HashRouter>
-          <App {...props} />
-        </HashRouter>
+        { RouterRender }
       </Provider>
     </IntlProvider>, el)
 

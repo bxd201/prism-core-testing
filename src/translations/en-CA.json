@@ -8,5 +8,7 @@
   "LOCATION_NUMBER": "Location Number",
   "MAXIMIZE_COLOR_SWATCH": "Maximize the Colour Swatch",
   "RESTORE_COLOR_SWATCH_TO_DEFAULT_SIZE": "Restore the Colour Swatch to default size",
-  "SIMILAR_COLORS": "Similar Colours"
+  "SIMILAR_COLORS": "Similar Colours",
+  "TO_NIGHT_VIEW" : "Switch to night view",
+  "TO_DAY_VIEW" : "Switch to day view"
 }

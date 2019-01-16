@@ -47,6 +47,17 @@ export const activateScene = (id: string | number | Array<string | number>) => {
   }
 }
 
+export const CHANGE_SCENE_VARIANT = 'CHANGE_SCENE_VARIANT'
+export const changeSceneVariant = (sceneId: number, variant: string) => {
+  return {
+    type: CHANGE_SCENE_VARIANT,
+    payload: {
+      id: sceneId,
+      variant
+    }
+  }
+}
+
 export const DEACTIVATE_SCENE = 'DEACTIVATE_SCENE'
 export const deactivateScene = (id: string | number | Array<string | number>) => {
   return {
@@ -57,22 +68,70 @@ export const deactivateScene = (id: string | number | Array<string | number>) =>
   }
 }
 
+export const PAINT_SCENE_SURFACE = 'PAINT_SCENE_SURFACE'
+export const paintSceneSurface = (sceneId: number, surfaceId: number, color: Color) => {
+  return {
+    type: PAINT_SCENE_SURFACE,
+    payload: {
+      sceneId,
+      surfaceId,
+      color
+    }
+  }
+}
+
+export const PAINT_SCENE_MAIN_SURFACE = 'PAINT_SCENE_MAIN_SURFACE'
+export const paintSceneMainSurfaces = (sceneId: number, color: Color) => {
+  return {
+    type: PAINT_SCENE_MAIN_SURFACE,
+    payload: {
+      id: sceneId,
+      color
+    }
+  }
+}
+
+export const PAINT_ALL_MAIN_SURFACES = 'PAINT_ALL_MAIN_SURFACES'
+export const paintAllMainSurfaces = (color: Color) => {
+  return {
+    type: PAINT_ALL_MAIN_SURFACES,
+    payload: {
+      color
+    }
+  }
+}
+
+export const PAINT_ALL_SCENE_SURFACES = 'PAINT_ALL_SCENE_SURFACES'
+export const paintAllSceneSurfaces = (color: Color) => {
+  return {
+    type: PAINT_ALL_SCENE_SURFACES,
+    payload: {
+      color
+    }
+  }
+}
+
 export const loadScenes = (type: string) => {
   return (dispatch: Function, getState: Function) => {
     const { sceneCollection, type: oldType } = getState().scenes
     let scenes = !_.isEmpty(sceneCollection) && !_.isEmpty(sceneCollection[type]) && sceneCollection[type]
-    // let scenesEndpoint = void (0)
 
+    // if we already have scene data...
     if (scenes) {
+      // ... and if our type has changed...
       if (type !== oldType) {
+        // ... then dispatch an update for our received scenes
+        dispatch(receiveScenes({
+          count: scenes.length,
+          scenes: scenes,
+          type
+        }))
+
+        // ... then activate the first scene of this new set of scene data
         dispatch(activateOnlyScene(scenes[0].id))
       }
 
-      dispatch(receiveScenes({
-        count: scenes.length,
-        scenes: scenes,
-        type
-      }))
+      // ... otherwise just get out of here; we already have all the scene data we need
       return
     }
 
@@ -105,64 +164,5 @@ export const loadScenes = (type: string) => {
           type: type
         }))
       })
-  }
-}
-
-export const paintSceneSurface = (sceneId: number, surfaceId: number, color: Color) => {
-  return (dispatch: Function, getState: Function) => {
-    const { sceneCollection, type } = getState().scenes
-    const scenes = sceneCollection[type]
-
-    const sceneIndex = _.findIndex(scenes, scene => {
-      return scene.id === sceneId
-    })
-
-    if (sceneIndex < 0) {
-      return
-    }
-
-    const surfaceIndex = _.findIndex(scenes[sceneIndex].surfaces, surface => {
-      return surface.id === surfaceId
-    })
-
-    if (surfaceIndex < 0) {
-      return
-    }
-
-    const newScenes = _.clone(scenes).map(scene => _.clone(scene))
-
-    // replace item in collection with new, updated instance of obj to avoid mutation complications
-    newScenes[ sceneIndex ].surfaces[ surfaceIndex ] = Object.assign({}, newScenes[ sceneIndex ].surfaces[ surfaceIndex ], {
-      color: color
-    })
-
-    dispatch(receiveScenes({
-      scenes: newScenes,
-      count: newScenes.length,
-      type
-    }))
-  }
-}
-
-export const paintAllSceneSurfaces = (color: Color) => {
-  return (dispatch: Function, getState: Function) => {
-    const { sceneCollection, type } = getState().scenes
-    const scenes = sceneCollection[type]
-
-    const newScenes = _.clone(scenes).map(scene => _.clone(scene))
-
-    scenes.map((scene, sceneIndex) => {
-      scene.surfaces.map((surface, surfaceIndex) => {
-        newScenes[ sceneIndex ].surfaces[ surfaceIndex ] = Object.assign({}, newScenes[ sceneIndex ].surfaces[ surfaceIndex ], {
-          color: color
-        })
-      })
-    })
-
-    dispatch(receiveScenes({
-      scenes: newScenes,
-      count: newScenes.length,
-      type
-    }))
   }
 }

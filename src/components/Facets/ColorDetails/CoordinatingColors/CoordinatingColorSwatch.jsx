@@ -1,23 +1,16 @@
 // @flow
 import React, { PureComponent } from 'react'
-import { connect } from 'react-redux'
+import { Link } from 'react-router-dom'
 import type { Color } from '../../../../shared/types/Colors'
 
-import { paintAllSceneSurfaces } from '../../../../actions/scenes'
+import { generateColorDetailsPageUrl } from '../../../../shared/helpers/ColorUtils'
 
 type Props = {
-  color: Color,
-  paintAllSceneSurfaces: Function
+  color: Color
 }
 
 class CoordinatingColorSwatch extends PureComponent<Props> {
   static baseClass = 'color-info'
-
-  constructor (props) {
-    super(props)
-
-    this.selectColor = this.selectColor.bind(this)
-  }
 
   render () {
     const { color } = this.props
@@ -29,27 +22,16 @@ class CoordinatingColorSwatch extends PureComponent<Props> {
 
     return (
       <li className={`${CoordinatingColorSwatch.baseClass}__coord-color ${color.isDark ? `${CoordinatingColorSwatch.baseClass}__coord-color--dark-color` : ''}`}
-        onClick={this.selectColor}
         style={{ backgroundColor: color.hex }}>
-        <p className={`${CoordinatingColorSwatch.baseClass}__coord-color-number`}>
-          {`${color.brandKey} ${color.colorNumber}`}
-        </p>
-        <p className={`${CoordinatingColorSwatch.baseClass}__coord-color-name`}>{color.name}</p>
+        <Link to={generateColorDetailsPageUrl(color)} className={`${CoordinatingColorSwatch.baseClass}__color-swatch-link`}>
+          <p className={`${CoordinatingColorSwatch.baseClass}__coord-color-number`}>
+            {`${color.brandKey} ${color.colorNumber}`}
+          </p>
+          <p className={`${CoordinatingColorSwatch.baseClass}__coord-color-name`}>{color.name}</p>
+        </Link>
       </li>
     )
   }
-
-  selectColor = function selectColor () {
-    this.props.paintAllSceneSurfaces(this.props.color)
-  }
 }
 
-const mapDispatchToProps = (dispatch: Function) => {
-  return {
-    paintAllSceneSurfaces: (color) => {
-      dispatch(paintAllSceneSurfaces(color))
-    }
-  }
-}
-
-export default connect(null, mapDispatchToProps)(CoordinatingColorSwatch)
+export default CoordinatingColorSwatch

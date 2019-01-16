@@ -11,20 +11,22 @@ type Props = {
   color: Color
 }
 
-class SimilarColors extends PureComponent<Props> {
+type State = {
+  activeColorID: number | void
+}
+
+class SimilarColors extends PureComponent<Props, State> {
   static baseClass = 'color-info'
 
-  constructor (props) {
+  constructor (props: Props) {
     super(props)
 
-    this.state = { activeColorID: null }
-    this.setActiveColor = this.setActiveColor.bind(this)
+    this.state = { activeColorID: void (0) }
   }
 
   render () {
     const { colors, color } = this.props
     const similarColors = color.similarColors
-    const { activeColorID } = this.state
 
     return (
       <React.Fragment>
@@ -32,19 +34,14 @@ class SimilarColors extends PureComponent<Props> {
         <ul className={`${SimilarColors.baseClass}__similar-colors`}>
           {similarColors.map((colorId: string) => {
             const color = colors[colorId]
-
             if (color) {
-              return <SimilarColorSwatch activeColorID={activeColorID} setActiveColor={this.setActiveColor} key={colorId} color={color} />
+              return <SimilarColorSwatch key={colorId} color={color} />
             }
           }).filter(color => !!color)}
         </ul>
         <hr />
       </React.Fragment>
     )
-  }
-
-  setActiveColor (selectedColorID) {
-    this.setState({ activeColorID: selectedColorID })
   }
 }
 

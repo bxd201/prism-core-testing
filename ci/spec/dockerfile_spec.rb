@@ -21,6 +21,18 @@ RSpec.describe 'Dockerfile' do
           it 'responds as "nginx" server' do
             expect(response.headers['server']).to match(/nginx/i)
           end
+
+          it 'provides expected Frameguard header' do
+            expect(response.headers['X-Frame-Options']).to eq('SAMEORIGIN')
+          end
+
+          it 'provides expected XSS header' do
+            expect(response.headers['X-XSS-Protection']).to eq('1; mode=block')
+          end
+
+          it 'provides expected MIME type headers' do
+            expect(response.headers['X-Content-Type-Options']).to eq('nosniff')
+          end
         end
       end
     end

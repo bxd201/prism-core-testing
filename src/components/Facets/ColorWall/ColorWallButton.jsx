@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/label-has-for */
+
 // @flow
 import React, { PureComponent } from 'react'
 

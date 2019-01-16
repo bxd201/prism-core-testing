@@ -1,5 +1,5 @@
 // @flow
-import React, { PureComponent } from 'react'
+import React, { Component } from 'react'
 import { once } from 'lodash'
 import memoizee from 'memoizee'
 import { withRouter, Link } from 'react-router-dom'
@@ -7,14 +7,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import { type Color } from '../../../../shared/types/Colors'
 import { numToAlphaString, arrayToSpacedString } from '../../../../shared/helpers/StringUtils'
-import { fullColorName, fullColorNumber } from '../../../../shared/helpers/ColorUtils'
+import { fullColorName, fullColorNumber, generateColorDetailsPageUrl } from '../../../../shared/helpers/ColorUtils'
+import { ConfigurationContext } from '../../../../contexts/ConfigurationContext'
 import { CLASS_NAMES } from './shared'
 
 import './ColorWallSwatch.scss'
 
 type Props = {
   color: Color,
-  history: any, // from withRouter HOC
+  history: RouterHistory,
   showContents?: boolean,
   onEngage?: Function,
   onAdd?: Function,
@@ -24,7 +25,9 @@ type Props = {
   active?: boolean
 }
 
-class ColorWallSwatch extends PureComponent<Props> {
+class ColorWallSwatch extends Component<Props> {
+  static contextType = ConfigurationContext
+
   constructor (props: Props) {
     super(props)
 
@@ -36,6 +39,7 @@ class ColorWallSwatch extends PureComponent<Props> {
 
   render () {
     const { showContents, color, onAdd } = this.props
+    const config = this.context.ColorWall
 
     let props = {
       className: `${this.getBaseClasses()} ${this.getClasses()}`,
@@ -45,8 +49,8 @@ class ColorWallSwatch extends PureComponent<Props> {
 
     const temporaryViewDetailStyles = {
       position: 'absolute',
-      bottom: '1.25em',
-      left: '2em',
+      bottom: '1em',
+      left: '.75em',
       color: (color.isDark) ? 'white' : 'black',
       textDecoration: 'none'
     }
@@ -56,16 +60,19 @@ class ColorWallSwatch extends PureComponent<Props> {
         <div className={CLASS_NAMES.CONTENT}>
           <p className={CLASS_NAMES.CONTENT_NUMBER}>{`${fullColorNumber(color.brandKey, color.colorNumber)}`}</p>
           <p className={CLASS_NAMES.CONTENT_NAME}>{color.name}</p>
-          { onAdd
-            ? <button /* autoFocus */ onClick={this.handleAddClick} className={CLASS_NAMES.CONTENT_ADD}>
+          {(onAdd && config.displayAddButton) && (
+            <button /* autoFocus */ onClick={this.handleAddClick} className={CLASS_NAMES.CONTENT_ADD}>
               <FontAwesomeIcon icon='plus' size='1x' />
             </button>
-            : null
-          }
-          <Link to={`/active/color/${color.id}`} style={temporaryViewDetailStyles}>View Details</Link>
-          <button onClick={this.handleDetailClick} className={CLASS_NAMES.CONTENT_DETAILS}>
-            <FontAwesomeIcon icon='info' size='1x' />
-          </button>
+          )}
+
+          {config.displayViewDetails && <Link to={generateColorDetailsPageUrl(color)} style={temporaryViewDetailStyles}>View Details</Link>}
+
+          {config.displayAddButton && (
+            <button onClick={this.handleDetailClick} className={CLASS_NAMES.CONTENT_DETAILS}>
+              <FontAwesomeIcon icon='info' size='1x' />
+            </button>
+          )}
         </div>
       )
     } else {
@@ -96,7 +103,7 @@ class ColorWallSwatch extends PureComponent<Props> {
     }
 
     return styleObj
-  })
+  }, { primitive: true, length: 1 })
 
   getBaseClasses = once(function getBaseClasses (): string {
     const { color } = this.props

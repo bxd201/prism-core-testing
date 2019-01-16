@@ -142,6 +142,7 @@ $top-level-class-string: '.color-info';
 
   &__strip-color {
     border-right: $width-thin solid $neutral-background-color;
+    position: relative;
     // margin-right: $width-thin;
     // min-width: $strip-chip-size;
     // width: auto;
@@ -150,8 +151,11 @@ $top-level-class-string: '.color-info';
   &__strip-color-info {
     // height: 100%;
     // width: 100%;
+    position: absolute;
+    padding: 0.75rem 1rem;
 
     &--active {
+      position: relative;
       // width: 10rem;
       padding: 0 0.5rem;
     }
@@ -393,6 +397,7 @@ $top-level-class-string: '.color-info';
     border-color: $neutral-background-color;
     border-style: solid;
     border-width: $width-thin;
+    display: block;
     height: 100%;
     position: relative;
     transition: transform 0.3s, z-index .3s;
@@ -510,6 +515,13 @@ $top-level-class-string: '.color-info';
 
     &__display-toggle-button--alt {
       display: none;
+    }
+
+    // TODO: not sure if we want all a tags within the `color-info` namespace,
+    // but maybe we do? since we shouldn't need the default a tag styles within color swatches.
+    &__color-swatch-link {
+      text-decoration: none;
+      color: inherit;
     }
   }
 

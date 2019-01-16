@@ -2,6 +2,8 @@
 import tinycolor from '@ctrl/tinycolor'
 import memoizee from 'memoizee'
 
+import type { Color } from '../types/Colors'
+
 /**
  * @param {*} colorValue String, hex, or tinycolor-compatible rgb(a)/hsl(a)/hsv(a) object
  * @param {number} newLuminosity number between 0 and 100
@@ -34,3 +36,11 @@ export const fullColorNumber = memoizee(function fullColorNumber (brandKey: stri
 export const fullColorName = memoizee(function fullColorName (brandKey: string | void, colorNumber: string | void, name: string): string {
   return `${fullColorNumber(brandKey, colorNumber)}${name}`
 }, { primitive: true, length: 3 })
+
+// creates a CDP URL, this is used anywhere a CDP URL is needed so we're able to change the path of it in one location
+export const generateColorDetailsPageUrl = memoizee(function generateColorDetailsPageUrl (color: Color): string {
+  const colorNumber = fullColorNumber(color.brandKey, color.colorNumber).replace(/\s/g, '')
+  const colorName = color.name.toLowerCase().replace(/\s/g, '-')
+
+  return `/active/color/${color.id}/${colorNumber}-${colorName}`
+})

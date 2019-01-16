@@ -1,15 +1,11 @@
 // @flow
 import React, { PureComponent } from 'react'
-import { connect } from 'react-redux'
 import type { Color } from '../../../../shared/types/Colors'
-
-import { paintAllSceneSurfaces } from '../../../../actions/scenes'
 
 type Props = {
   color: Color,
   active: Boolean,
   activateColor: Function,
-  paintAllSceneSurfaces: Function
 }
 
 class ColorStripSwatch extends PureComponent<Props> {
@@ -32,8 +28,8 @@ class ColorStripSwatch extends PureComponent<Props> {
     }
 
     return (
-      <li className={`${ColorStripSwatch.baseClass}__strip-color`} style={{ backgroundColor: color.hex }} onClick={this.selectColor}>
-        <button className={BUTTON_CLASSES.join(' ')}>
+      <li className={`${ColorStripSwatch.baseClass}__strip-color`} style={{ backgroundColor: color.hex }}>
+        <button className={BUTTON_CLASSES.join(' ')} onClick={this.selectColor}>
           <span className={`${ColorStripSwatch.baseClass}__strip-color-name ${color.isDark ? `${ColorStripSwatch.baseClass}__strip-color-name--dark-color` : ''}`} >{color.name}</span>
         </button>
       </li>
@@ -42,16 +38,7 @@ class ColorStripSwatch extends PureComponent<Props> {
 
   selectColor = function selectColor () {
     this.props.activateColor(this.props.color)
-    this.props.paintAllSceneSurfaces(this.props.color)
   }
 }
 
-const mapDispatchToProps = (dispatch: Function) => {
-  return {
-    paintAllSceneSurfaces: (color) => {
-      dispatch(paintAllSceneSurfaces(color))
-    }
-  }
-}
-
-export default connect(null, mapDispatchToProps)(ColorStripSwatch)
+export default ColorStripSwatch

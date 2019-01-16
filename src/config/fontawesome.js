@@ -8,7 +8,9 @@ import {
   faInfoCircle,
   faInfo,
   faSearchMinus,
-  faHome
+  faHome,
+  faSun,
+  faMoon
 } from '@fortawesome/pro-solid-svg-icons'
 
 // lights
@@ -16,7 +18,9 @@ import {
   faArrowLeft,
   faArrowRight,
   faHome as falHome,
-  faPlusCircle
+  faPlusCircle,
+  faSun as falSun,
+  faMoon as falMoon
 } from '@fortawesome/pro-light-svg-icons'
 
 // regulars
@@ -28,14 +32,18 @@ import {
 const faIcons = [
   faArrowLeft,
   faArrowRight,
+  faBatteryThreeQuarters,
   faHome,
   falHome,
+  faMoon,
+  falMoon,
   faPlus,
   faPlusCircle,
   faTrash,
   faInfoCircle,
   faInfo,
   faSearchMinus,
-  faBatteryThreeQuarters
+  faSun,
+  falSun
 ]
 library.add(...faIcons)

@@ -32,13 +32,32 @@ services:
     - WEB_URL=${WEB_URL}
     stdin_open: true
     tty: true
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "2"
     # Allow more connections
     sysctls:
       net.core.somaxconn: '512'
     labels:
       io.rancher.container.pull_image: always
+      io.rancher.scheduler.affinity:container_label_soft_ne: io.rancher.stack_service.name=$${stack_name}/$${service_name}
       sherwin.department: eBus
       sherwin.division: A100
-      sherwin.project: undefined
+      sherwin.project: Prism
       sherwin.owner: devops
       sherwin.application: prism-core
+      sherwin.meta.ci.vendor_image: false
+      sherwin.meta.ci.smoke_test: false
+      sherwin.meta.ci.dockerspec: true
+      sherwin.meta.ci.zero_downtime: true
+      sherwin.meta.ci.notifications: true
+      sherwin.meta.ci.qualys: false
+      sherwin.meta.ci.veracode: true
+      sherwin.meta.ci.rancher_validation: false
+      sherwin.meta.ci.tagging: true
+      sherwin.meta.ci.qa_regression: false
+      sherwin.meta.ci.auto_db: n/a
+      sherwin.meta.ci.monitoring: false
+      sherwin.meta.ci.jenkinsfile: true

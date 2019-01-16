@@ -320,7 +320,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     return (
       <div className={`color-wall-swatch-list ${!showAll ? 'color-wall-swatch-list--zoomed' : 'color-wall-swatch-list--show-all'}`}
         onKeyDown={this.handleKeyDown}
-        ref={el => { this._DOMNode = el }}>
+        ref={el => { this._DOMNode = el }} role='presentation'>
 
         {transitioner}
 
