@@ -262,6 +262,7 @@ pipeline {
       environment {
         VPC = "ebus"
         IMAGE_TAG="${BRANCH_NAME}"
+        RANCHER_ENV = "prod"
         RANCHER_PROJ = "1a199"
         RANCHER_STACK = "prism-web-prod"
         API_URL = "https://prism-api.ebus.swaws"
