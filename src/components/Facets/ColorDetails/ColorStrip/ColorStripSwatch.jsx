@@ -1,5 +1,6 @@
 // @flow
 import React, { PureComponent } from 'react'
+import ReactGA from 'react-ga'
 import type { Color } from '../../../../shared/types/Colors'
 
 type Props = {
@@ -37,6 +38,12 @@ class ColorStripSwatch extends PureComponent<Props> {
   }
 
   selectColor = function selectColor () {
+    ReactGA.event({
+      category: 'Color Detail / Swatch Chip List',
+      action: 'View Swatch Chip Color',
+      label: this.props.color.name
+    })
+
     this.props.activateColor(this.props.color)
   }
 }
