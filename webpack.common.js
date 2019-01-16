@@ -115,6 +115,7 @@ const sassRules = [
       resources: [
         path.resolve(__dirname, 'src/scss/mixins/mixins.scss'),
         path.resolve(__dirname, 'src/scss/functions/functions.scss'),
+        path.resolve(__dirname, 'src/scss/convenience/convenience.scss'),
         path.resolve(__dirname, 'src/scss/variables.scss')
       ]
     }

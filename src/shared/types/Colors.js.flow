@@ -39,7 +39,7 @@ export type ColorGrid = ColorLine[]
 export type ColorIdLine = (ColorId | BlankColor)[]
 export type ColorIdGrid = ColorIdLine[]
 
-export type ColorFamilyPayload = {
+export type ColorSetPayload = {
   [ key: string ]: ColorGrid
 }
 
@@ -48,3 +48,8 @@ export type ColorListPayload = Color[]
 export type ColorMap = {
   [key: ColorId]: Color
 }
+
+export type FamilyStructure = {
+  name: string,
+  families: string[]
+}[]

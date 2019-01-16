@@ -2,7 +2,6 @@
 import React, { PureComponent } from 'react'
 // $FlowIgnore -- no defs for react-virtualized
 import { Grid, AutoSizer } from 'react-virtualized'
-// $FlowIgnore -- no defs for react-virtualized
 import { Scroll } from 'scroll-utility'
 
 import { varValues } from 'variables'
@@ -20,6 +19,8 @@ type Props = {
   maxCellSize: number,
   bloomRadius: number,
   colorMap: ColorMap,
+  swatchLinkGenerator: Function,
+  swatchDetailsLinkGenerator: Function,
   activeColor?: Color, // eslint-disable-line react/no-unused-prop-types
   showAll?: boolean,
   immediateSelectionOnActivation?: boolean,
@@ -33,12 +34,15 @@ type ColorReference = {
   compensateY?: Function
 }
 
-type State = {
+type DerivedStateFromProps = {
+  needsInitialFocus: boolean,
   activeCoords: number[],
   focusCoords: number[],
   levelMap: {
     [ key: string ]: ColorReference
-  },
+  }
+}
+type State = DerivedStateFromProps & {
   colorIdGrid: ColorIdGrid,
   zoomingIn: boolean,
   zoomingOut: boolean,
@@ -49,7 +53,6 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
   _DOMNode = void (0)
   _scrollTimeout = void (0)
   _scrollManager = void (0)
-  _initialFocusCoords = void (0)
   // internal tracking of current grid size
   _gridWidth: number = 0
   _gridHeight: number = 0
@@ -57,6 +60,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
   _cellSize: number
 
   state: State = {
+    needsInitialFocus: true,
     activeCoords: [],
     focusCoords: [],
     levelMap: {},
@@ -74,9 +78,8 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
   constructor (props: Props) {
     super(props)
 
-    const { colors, activeColor } = props
+    const { colors } = props
 
-    this.activateColor = this.activateColor.bind(this)
     this.addColor = this.addColor.bind(this)
     this.cellRenderer = this.cellRenderer.bind(this)
     this.handleKeyDown = this.handleKeyDown.bind(this)
@@ -89,50 +92,38 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
         }
       })
     })
-
-    if (activeColor) {
-      const moreState = this.updateActiveColor(activeColor, true)
-
-      if (moreState) {
-        Object.assign(this.state, moreState)
-
-        this._initialFocusCoords = moreState.focusCoords
-      }
-    }
   }
 
-  updateActiveColor (color?: Color, calculateLevels?: boolean) {
-    const { bloomRadius } = this.props
-    const { colorIdGrid } = this.state
+  static getDerivedStateFromProps (props: Props, state: State) {
+    const { bloomRadius, activeColor } = props
+    const { colorIdGrid, focusCoords, needsInitialFocus } = state
 
-    if (!color) {
-      return
+    let stateChanges = Object.assign({}, state)
+
+    // if the needsInitialFocus is still set AND focusCoords have been set...
+    if (needsInitialFocus && focusCoords && focusCoords.length) {
+      // ... it implies that we have already performed our initial focus, so we should set the flag to false
+      Object.assign(stateChanges, { needsInitialFocus: false })
     }
 
-    let stateChanges: {
-      activeCoords: number[],
-      focusCoords: number[],
-      levelMap?: {
-        [key: string]: ColorReference
-      }
+    if (!activeColor) {
+      return stateChanges
     }
-    const coords = getColorCoords(color.id, colorIdGrid)
+
+    const coords = getColorCoords(activeColor.id, colorIdGrid)
 
     if (coords) {
       const centerX = coords[0]
       const centerY = coords[1]
 
-      stateChanges = {
+      Object.assign(stateChanges, {
         activeCoords: [ centerX, centerY ],
-        focusCoords: [ centerX, centerY ]
-      }
-
-      if (calculateLevels) {
-        stateChanges.levelMap = drawCircle(bloomRadius, centerX, centerY, colorIdGrid)
-      }
-
-      return stateChanges
+        focusCoords: [ centerX, centerY ],
+        levelMap: drawCircle(bloomRadius, centerX, centerY, colorIdGrid)
+      })
     }
+
+    return stateChanges
   }
 
   addColor = function addColor (newColor: Color) {
@@ -140,28 +131,6 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
 
     if (onAddColor) {
       onAddColor(newColor)
-    }
-  }
-
-  activateColor = function activateColor (newColor: Color) {
-    const activeSwatchId = newColor.id
-    const { onActivateColor, immediateSelectionOnActivation } = this.props
-
-    if (activeSwatchId) {
-      const newState = this.updateActiveColor(newColor, !immediateSelectionOnActivation)
-
-      if (!immediateSelectionOnActivation) {
-        this.setState(newState, () => {
-          if (onActivateColor) {
-            /// ... call it now
-            onActivateColor(newColor)
-          }
-        })
-      } else {
-        this.setState(newState, () => {
-          this.zoomInActivate(newColor)
-        })
-      }
     }
   }
 
@@ -223,7 +192,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     style // Style object to be applied to cell (to position it)
   }: Object) {
     const { levelMap, colorIdGrid } = this.state
-    const { colorMap, immediateSelectionOnActivation, onAddColor } = this.props
+    const { colorMap, immediateSelectionOnActivation, onAddColor, swatchLinkGenerator, swatchDetailsLinkGenerator } = this.props
 
     const colorId = colorIdGrid[rowIndex][columnIndex]
 
@@ -233,6 +202,8 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
 
     const color: Color = colorMap[colorId]
     const thisLevel: ColorReference = levelMap[colorId]
+    const linkToSwatch: string = swatchLinkGenerator(color)
+    const linkToDetails: string = swatchDetailsLinkGenerator(color)
 
     let edgeProps = {}
 
@@ -249,14 +220,14 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     return (
       <div key={key} style={style}>
         {thisLevel ? ( // a bloomed swatch
-          <ColorWallSwatch showContents={thisLevel.level === 0} onEngage={this.activateColor} onAdd={onAddColor ? this.addColor : void (0)} color={color} level={thisLevel.level}
+          <ColorWallSwatch showContents={thisLevel.level === 0} thisLink={linkToSwatch} detailsLink={linkToDetails} onAdd={onAddColor ? this.addColor : void (0)} color={color} level={thisLevel.level}
             {...edgeProps} />
         ) : isScrolling ? ( // all non-bloomed swatches when scrolling, the least complicated swatch option
           <ColorWallSwatchRenderer aria-colindex={columnIndex} aria-rowindex={rowIndex} color={color.hex} />
         ) : immediateSelectionOnActivation ? ( // a color swatch that behaves as a button and that's it
-          <ColorWallSwatchUI color={color} onEngage={this.activateColor} {...edgeProps} />
+          <ColorWallSwatchUI color={color} thisLink={linkToSwatch} {...edgeProps} />
         ) : ( // a normal color swatch that behaves as a button and also is able to be visually activated (not just behave like a button)... a bloomable swatch, basically
-          <ColorWallSwatch onEngage={this.activateColor} color={color} {...edgeProps} />
+          <ColorWallSwatch thisLink={linkToSwatch} detailsLink={linkToDetails} color={color} {...edgeProps} />
         )}
       </div>
     )
@@ -300,17 +271,16 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
   }
 
   render () {
-    const { minCellSize, maxCellSize, showAll } = this.props
-    const { colorIdGrid, levelMap, zoomingIn, zoomerInitProps } = this.state
+    const { minCellSize, maxCellSize, showAll, activeColor } = this.props
+    const { colorIdGrid, zoomingIn, zoomerInitProps, focusCoords, needsInitialFocus } = this.state
     const rowCount = colorIdGrid.length
     const columnCount = getTotalWidthOf2dArray(colorIdGrid)
     let addlGridProps = {}
     let transitioner = null
 
-    if (this._initialFocusCoords) {
-      addlGridProps.scrollToColumn = this._initialFocusCoords[0]
-      addlGridProps.scrollToRow = this._initialFocusCoords[1]
-      this._initialFocusCoords = void (0)
+    if (focusCoords && focusCoords.length && needsInitialFocus) {
+      addlGridProps.scrollToColumn = focusCoords[0]
+      addlGridProps.scrollToRow = focusCoords[1]
     }
 
     if (zoomingIn && zoomerInitProps) {
@@ -337,7 +307,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
 
             return (
               <Grid
-                _forceUpdateProp={levelMap}
+                _forceUpdateProp={activeColor}
                 scrollToAlignment='center'
                 cellRenderer={this.cellRenderer}
                 columnWidth={size}

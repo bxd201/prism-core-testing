@@ -1,7 +1,7 @@
 // @flow
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
-import { find } from 'lodash'
+import { find, includes } from 'lodash'
 import memoizee from 'memoizee'
 import ReactGA from 'react-ga'
 
@@ -71,7 +71,7 @@ class SceneManager extends PureComponent<Props, State> {
     const { activeScenes } = this.props
 
     // if this scene is active...
-    if (activeScenes.indexOf(id) > -1) {
+    if (includes(activeScenes, id)) {
       this.deactivateScene(id)
     } else {
       // ... otherwise activate this scene
@@ -136,7 +136,7 @@ class SceneManager extends PureComponent<Props, State> {
             return (
               <button key={sceneId}
                 onClick={() => this.handleClickSceneToggle(scene.id)}
-                className={`${SceneManager.baseClass}__btn ${activeScenes.indexOf(scene.id) > -1 ? `${SceneManager.baseClass}__btn--active` : ''}`}
+                className={`${SceneManager.baseClass}__btn ${includes(activeScenes, scene.id) ? `${SceneManager.baseClass}__btn--active` : ''}`}
                 type='button'>
                 <ImagePreloader
                   el={TintableScene}

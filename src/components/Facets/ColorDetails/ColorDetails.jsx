@@ -14,6 +14,8 @@ import ColorStrip from './ColorStrip/ColorStrip'
 import CoordinatingColors from './CoordinatingColors/CoordinatingColors'
 import SimilarColors from './SimilarColors/SimilarColors'
 import SceneManager from '../../SceneManager/SceneManager'
+import type { ColorMap, Color } from '../../../shared/types/Colors'
+import { ROUTE_PARAM_NAMES } from 'constants/globals'
 
 import { paintAllMainSurfaces } from '../../../actions/scenes'
 import { varValues } from 'variables'
@@ -58,9 +60,9 @@ class ColorDetails extends PureComponent<Props, State> {
     }
 
     // grab the color by color number from the URL
-    const activeColor = this.getColorById(params.colorId)
+    const activeColor = this.getColorById(params[ROUTE_PARAM_NAMES.COLOR_ID])
     if (!activeColor) {
-      console.info(`ColorDetails: ${params.colorId} is not a valid color ID`)
+      console.info(`ColorDetails: ${params[ROUTE_PARAM_NAMES.COLOR_ID]} is not a valid color ID`)
       return null
     }
 
@@ -233,7 +235,7 @@ class ColorDetails extends PureComponent<Props, State> {
     const { match: { params }, scenesLoaded } = this.props
 
     // paint all the main surfaces on load of the CDP
-    const color = this.getColorById(params.colorId)
+    const color = this.getColorById(params[ROUTE_PARAM_NAMES.COLOR_ID])
     if (scenesLoaded && color) {
       this.props.paintAllMainSurfaces(color)
     }

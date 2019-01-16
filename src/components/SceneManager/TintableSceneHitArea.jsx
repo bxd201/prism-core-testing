@@ -1,6 +1,7 @@
 // @flow
 import React, { PureComponent } from 'react'
-import { memoize, uniqueId } from 'lodash'
+import memoizee from 'memoizee'
+import { uniqueId } from 'lodash'
 
 import SVG from 'react-inlinesvg'
 import { DRAG_TYPES } from 'constants/globals'
@@ -46,7 +47,7 @@ class TintableSceneHitArea extends PureComponent<Props> {
     hitAreaMask: 'prism-scene-manager__scene__hit-area__mask',
     hitAreaMaskLoader: 'prism-scene-manager__scene__hit-area__mask-loader'
   }
-  static maskIdMap = memoize(path => uniqueId('TSHA'))
+  static maskIdMap = memoizee(path => uniqueId('TSHA'), { length: 1, primitive: true })
 
   constructor (props) {
     super(props)

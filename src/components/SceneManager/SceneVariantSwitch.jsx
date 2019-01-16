@@ -3,6 +3,7 @@ import React, { PureComponent } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FormattedMessage } from 'react-intl'
 import ReactGA from 'react-ga'
+import { includes } from 'lodash'
 
 import { SCENE_VARIANTS } from 'constants/globals'
 
@@ -24,7 +25,7 @@ SceneVariantSwitch.DayNight = class DayNight extends PureComponent<SwitchProps> 
     NIGHT: 'scene-variant-switch-day-night__night'
   }
   static isCompatible (variants: string[]): boolean {
-    return variants.indexOf(SCENE_VARIANTS.DAY) > -1 && variants.indexOf(SCENE_VARIANTS.NIGHT) > -1
+    return includes(variants, SCENE_VARIANTS.DAY) && includes(variants, SCENE_VARIANTS.NIGHT)
   }
 
   constructor (props: SwitchProps) {

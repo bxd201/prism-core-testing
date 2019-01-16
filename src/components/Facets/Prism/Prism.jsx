@@ -10,6 +10,7 @@ import Search from '../../Search/Search'
 import ColorsFromImage from '../../ColorsFromImage/ColorsFromImage'
 import ColorDetails from '../ColorDetails/ColorDetails'
 import PrismNav from './PrismNav'
+import { assembleColorWallPageUrl } from '../../../shared/helpers/ColorUtils'
 
 // barebones component to always take the user to active if they try to access root.
 // not sure if we need this but if we end up using this for TAG & want to retain bookmarks..
@@ -25,9 +26,10 @@ class Prism extends Component {
         <hr />
         <Route path='/' exact component={RootRedirect} />
         <Route path='/active' exact component={SceneManager} />
-        <Route path='/active/color-wall' exact component={ColorWallLocationBuffer} />
-        <Route path='/active/color-wall/:family' exact component={ColorWallLocationBuffer} />
-        <Route path='/active/color-wall/:family/:colorNumber' exact component={ColorWallLocationBuffer} />
+        <Route path={assembleColorWallPageUrl()} exact component={ColorWallLocationBuffer} />
+        <Route path={assembleColorWallPageUrl(':section')} exact component={ColorWallLocationBuffer} />
+        <Route path={assembleColorWallPageUrl(':section', ':family')} exact component={ColorWallLocationBuffer} />
+        <Route path={assembleColorWallPageUrl(':section', ':family', ':colorNumber')} exact component={ColorWallLocationBuffer} />
         <Route path='/active/color-wall/color/:colorId' exact component={ColorDetails} />
         <Route path='/active/colors-from-image' exact component={ColorsFromImage} />
         <Route path='/search' exact component={Search} />

@@ -450,3 +450,7 @@
 .cleanslate pre {
     white-space:pre;
 }
+
+.cleanslate button[disabled], input[disabled], select[disabled] {
+    cursor: auto;
+}

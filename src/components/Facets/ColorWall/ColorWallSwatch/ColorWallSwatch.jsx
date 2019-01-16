@@ -2,12 +2,12 @@
 import React, { PureComponent } from 'react'
 import { once } from 'lodash'
 import memoizee from 'memoizee'
-import { withRouter, Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import { type Color } from '../../../../shared/types/Colors'
 import { numToAlphaString, arrayToSpacedString } from '../../../../shared/helpers/StringUtils'
-import { fullColorName, fullColorNumber, generateColorDetailsPageUrl } from '../../../../shared/helpers/ColorUtils'
+import { fullColorName, fullColorNumber } from '../../../../shared/helpers/ColorUtils'
 import { ConfigurationContextConsumer } from '../../../../contexts/ConfigurationContext'
 import { CLASS_NAMES } from './shared'
 
@@ -15,9 +15,9 @@ import './ColorWallSwatch.scss'
 
 type Props = {
   color: Color,
-  history: RouterHistory,
+  thisLink?: string,
+  detailsLink?: string,
   showContents?: boolean,
-  onEngage?: Function,
   onAdd?: Function,
   level?: number,
   compensateX?: number,
@@ -30,17 +30,15 @@ class ColorWallSwatch extends PureComponent<Props> {
     super(props)
 
     this.handleAddClick = this.handleAddClick.bind(this)
-    this.handleDetailClick = this.handleDetailClick.bind(this)
-    this.handleSwatchClick = this.handleSwatchClick.bind(this)
-    this.handleSwatchKeyPress = this.handleSwatchKeyPress.bind(this)
   }
 
   render () {
-    const { showContents, color, onAdd } = this.props
+    const { showContents, color, onAdd, thisLink, detailsLink } = this.props
 
     let props = {
       className: `${this.getBaseClasses()} ${this.getClasses()}`,
-      style: ColorWallSwatch.getStyles(color.hex)
+      style: ColorWallSwatch.getStyles(color.hex),
+      key: color.id
     }
     let contents = null
 
@@ -56,44 +54,45 @@ class ColorWallSwatch extends PureComponent<Props> {
       contents = (
         <ConfigurationContextConsumer>
           {config => (
-            <div className={CLASS_NAMES.CONTENT}>
-              <p className={CLASS_NAMES.CONTENT_NUMBER}>{`${fullColorNumber(color.brandKey, color.colorNumber)}`}</p>
-              <p className={CLASS_NAMES.CONTENT_NAME}>{color.name}</p>
-              {(onAdd && config.ColorWall.displayAddButton) && (
-                <button /* autoFocus */ onClick={this.handleAddClick} className={CLASS_NAMES.CONTENT_ADD}>
-                  <FontAwesomeIcon icon='plus' size='1x' />
-                </button>
-              )}
+            <div {...props}>
+              <div className={CLASS_NAMES.CONTENT}>
+                <p className={CLASS_NAMES.CONTENT_NUMBER}>{`${fullColorNumber(color.brandKey, color.colorNumber)}`}</p>
+                <p className={CLASS_NAMES.CONTENT_NAME}>{color.name}</p>
+                {(onAdd && config.ColorWall.displayAddButton) && (
+                  <button /* autoFocus */ onClick={this.handleAddClick} className={CLASS_NAMES.CONTENT_ADD}>
+                    <FontAwesomeIcon icon='plus' size='1x' />
+                  </button>
+                )}
 
-              {config.ColorWall.displayViewDetails && (
-                <Link to={generateColorDetailsPageUrl(color)} style={temporaryViewDetailStyles}>View Details</Link>
-              )}
+                {config.ColorWall.displayViewDetails && detailsLink && (
+                  <Link to={detailsLink} style={temporaryViewDetailStyles}>View Details</Link>
+                )}
 
-              {config.ColorWall.displayAddButton && (
-                <button onClick={this.handleDetailClick} className={CLASS_NAMES.CONTENT_DETAILS}>
-                  <FontAwesomeIcon icon='info' size='1x' />
-                </button>
-              )}
+                {config.ColorWall.displayAddButton && (
+                  <button type='button' onClick={onAdd} className={CLASS_NAMES.CONTENT_DETAILS}>
+                    <FontAwesomeIcon icon='info' size='1x' />
+                  </button>
+                )}
+              </div>
             </div>
           )}
         </ConfigurationContextConsumer>
       )
+    } else if (thisLink) {
+      contents = (
+        <div {...props}>
+          <Link to={thisLink} title={fullColorName(color.brandKey, color.colorNumber, color.name)} className={CLASS_NAMES.ENGAGE_LINK} />
+        </div>
+      )
     } else {
-      props = Object.assign({}, props, {
-        title: fullColorName(color.brandKey, color.colorNumber, color.name),
-        onClick: this.handleSwatchClick,
-        onKeyDown: this.handleSwatchKeyPress,
-        role: 'button',
-        tabIndex: 0,
-        focusable: true
-      })
+      contents = (
+        <div title={fullColorName(color.brandKey, color.colorNumber, color.name)} {...props} />
+      )
     }
 
     return (
       <div className={CLASS_NAMES.SWATCH}>
-        <div {...props}>
-          {contents}
-        </div>
+        {contents}
       </div>
     )
   }
@@ -123,7 +122,7 @@ class ColorWallSwatch extends PureComponent<Props> {
   })
 
   getClasses (): string {
-    const { level, active, onEngage, compensateX, compensateY } = this.props
+    const { level, active, thisLink, compensateX, compensateY } = this.props
     const levelDefined = !isNaN(level)
     let classes = []
 
@@ -131,7 +130,9 @@ class ColorWallSwatch extends PureComponent<Props> {
       classes.push(CLASS_NAMES.BASE_ACTIVE)
     }
 
-    if (onEngage) {
+    // if we have a link to this swatch's active URL...
+    if (thisLink) {
+      // ... assume it's a clickable swatch
       classes.push(CLASS_NAMES.BASE_CLICKABLE)
     }
 
@@ -152,30 +153,6 @@ class ColorWallSwatch extends PureComponent<Props> {
     return arrayToSpacedString(classes)
   }
 
-  handleSwatchKeyPress = function handleSwatchKeyPress (e: KeyboardEvent) {
-    const { onEngage, color } = this.props
-
-    switch (e.keyCode) {
-      case 13:
-      case 32:
-        if (onEngage) {
-          onEngage(color)
-        }
-        e.preventDefault()
-        break
-    }
-  }
-
-  handleSwatchClick = function handleSwatchClick (e: MouseEvent) {
-    const { onEngage, color } = this.props
-
-    if (onEngage) {
-      onEngage(color)
-    }
-
-    e.preventDefault()
-  }
-
   handleAddClick = function handleAddClick () {
     const { onAdd, color } = this.props
 
@@ -183,12 +160,6 @@ class ColorWallSwatch extends PureComponent<Props> {
       onAdd(color)
     }
   }
-
-  handleDetailClick = function handleDetailClick () {
-    const { color } = this.props
-
-    this.props.history.push(`/active/color-wall/color/${color.id}`)
-  }
 }
 
-export default withRouter(ColorWallSwatch)
+export default ColorWallSwatch

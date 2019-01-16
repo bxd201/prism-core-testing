@@ -1,7 +1,9 @@
 // @flow
 import tinycolor from '@ctrl/tinycolor'
 import memoizee from 'memoizee'
+import { kebabCase, compact } from 'lodash'
 
+import { ROUTE_PARAMS } from 'constants/globals'
 import type { Color } from '../types/Colors'
 
 /**
@@ -39,8 +41,51 @@ export const fullColorName = memoizee(function fullColorName (brandKey: string |
 
 // creates a CDP URL, this is used anywhere a CDP URL is needed so we're able to change the path of it in one location
 export const generateColorDetailsPageUrl = memoizee(function generateColorDetailsPageUrl (color: Color): string {
-  const colorNumber = fullColorNumber(color.brandKey, color.colorNumber).replace(/\s/g, '')
-  const colorName = color.name.toLowerCase().replace(/\s/g, '-')
+  const colorNumber = kebabCase(fullColorNumber(color.brandKey, color.colorNumber))
+  const colorName = kebabCase(color.name)
 
-  return `/active/color/${color.id}/${colorNumber}-${colorName}`
+  return '/' + compact([
+    ROUTE_PARAMS.ACTIVE,
+    ROUTE_PARAMS.COLOR_DETAIL,
+    color.id,
+    `${colorNumber}-${colorName}`
+  ]).join('/')
 })
+
+export const assembleColorWallPageUrl = memoizee(function assembleColorWallPageUrl (sectionName: string | void, familyName: string | void, colorId: string | void, colorSEO: string | void): string {
+  const url = '/' + compact([
+    ROUTE_PARAMS.ACTIVE,
+    ROUTE_PARAMS.COLOR_WALL,
+    sectionName ? `${ROUTE_PARAMS.SECTION}/${sectionName}` : null,
+    familyName ? `${ROUTE_PARAMS.FAMILY}/${familyName}` : null,
+    colorId ? `${ROUTE_PARAMS.COLOR}/${colorId}` : null,
+    colorSEO ? `${colorSEO}` : null
+  ]).join('/')
+
+  if (url.slice(-1) === '/') {
+    return url.slice(0, -1)
+  }
+
+  return url
+}, { primitive: true, length: 3 })
+
+export const generateColorWallPageUrl = memoizee(function generateColorWallPageUrl (sectionName: string | void, familyName: string | void, colorId: string | void, colorSEO: string | void): string {
+  if (sectionName) {
+    sectionName = kebabCase(sectionName)
+
+    if (familyName) {
+      familyName = kebabCase(familyName)
+    } else {
+      familyName = ''
+    }
+
+    if (colorId) {
+      colorId = kebabCase(colorId)
+      colorSEO = kebabCase(colorSEO)
+    }
+  } else {
+    sectionName = familyName = colorId = colorSEO = ''
+  }
+
+  return assembleColorWallPageUrl(sectionName, familyName, colorId, colorSEO)
+}, { primitive: true, length: 3 })

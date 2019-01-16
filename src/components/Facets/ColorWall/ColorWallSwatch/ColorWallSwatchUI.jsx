@@ -1,5 +1,6 @@
 // @flow
 import React, { PureComponent } from 'react'
+import { Link } from 'react-router-dom'
 
 import { CLASS_NAMES } from './shared'
 
@@ -11,7 +12,7 @@ import './ColorWallSwatch.scss'
 
 type Props = {
   color: Color,
-  onEngage: Function,
+  thisLink: string,
   topRow?: boolean,
   bottomRow?: boolean,
   leftCol?: boolean,
@@ -32,12 +33,10 @@ class ColorWallSwatchUI extends PureComponent<Props, State> {
   constructor (props: Props) {
     super(props)
 
-    const { topRow, bottomRow, leftCol, rightCol, color } = props
-
-    this.handleSwatchClick = this.handleSwatchClick.bind(this)
-    this.handleSwatchKeyPress = this.handleSwatchKeyPress.bind(this)
+    const { topRow, bottomRow, leftCol, rightCol, color, thisLink } = props
 
     this.state.swatchProps = {
+      to: thisLink,
       className: arrayToSpacedString([
         CLASS_NAMES.BASE,
         CLASS_NAMES.BASE_CLICKABLE,
@@ -59,12 +58,7 @@ class ColorWallSwatchUI extends PureComponent<Props, State> {
       style: {
         background: color.hex
       },
-      title: fullColorName(color.brandKey, color.colorNumber, color.name),
-      onClick: this.handleSwatchClick,
-      onKeyDown: this.handleSwatchKeyPress,
-      role: 'button',
-      tabIndex: 0,
-      focusable: true
+      title: fullColorName(color.brandKey, color.colorNumber, color.name)
     }
   }
 
@@ -73,33 +67,9 @@ class ColorWallSwatchUI extends PureComponent<Props, State> {
 
     return (
       <div className={CLASS_NAMES.SWATCH}>
-        <div {...swatchProps} />
+        <Link {...swatchProps} />
       </div>
     )
-  }
-
-  handleSwatchKeyPress = function handleSwatchKeyPress (e: KeyboardEvent) {
-    const { onEngage, color } = this.props
-
-    switch (e.keyCode) {
-      case 13:
-      case 32:
-        if (onEngage) {
-          onEngage(color)
-        }
-        e.preventDefault()
-        break
-    }
-  }
-
-  handleSwatchClick = function handleSwatchClick (e: MouseEvent) {
-    const { onEngage, color } = this.props
-
-    if (onEngage) {
-      onEngage(color)
-    }
-
-    e.preventDefault()
   }
 }
 
