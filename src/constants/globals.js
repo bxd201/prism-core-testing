@@ -25,3 +25,5 @@ export const BLANK_SWATCH: BlankColor = void (0)
 export const ZOOMED_VIEW_GRID_PADDING: number = 1
 
 export const SW_CHUNK_SIZE: number = 7
+
+export const GOOGLE_ANALYTICS_UID = 'UA-130955316-1'

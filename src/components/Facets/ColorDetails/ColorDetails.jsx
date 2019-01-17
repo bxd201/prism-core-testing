@@ -223,8 +223,9 @@ class ColorDetails extends PureComponent<Props, State> {
     const { match: { params } } = this.props
     const color = this.getColorById(params.colorId)
 
-    ReactGA.initialize('UA-130955316-1', {})
-    ReactGA.pageview(`color-detail/${color.brandKey} ${color.colorNumber} - ${color.name}`)
+    if (color) {
+      ReactGA.pageview(`color-detail/${color.brandKey} ${color.colorNumber} - ${color.name}`)
+    }
   }
 
   componentDidUpdate () {
