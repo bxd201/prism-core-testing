@@ -1,6 +1,7 @@
 // @flow
 import React, { PureComponent } from 'react'
 import { Link } from 'react-router-dom'
+import ReactGA from 'react-ga'
 import type { Color } from '../../../../shared/types/Colors'
 
 import { generateColorDetailsPageUrl } from '../../../../shared/helpers/ColorUtils'
@@ -11,6 +12,20 @@ type Props = {
 
 class CoordinatingColorSwatch extends PureComponent<Props> {
   static baseClass = 'color-info'
+
+  constructor (props) {
+    super(props)
+
+    this.handleClick = this.handleClick.bind(this)
+  }
+
+  handleClick () {
+    ReactGA.event({
+      category: 'Color Detail / Coordinating Color',
+      action: 'View Coord Color',
+      label: this.props.color.name
+    })
+  }
 
   render () {
     const { color } = this.props
@@ -23,7 +38,7 @@ class CoordinatingColorSwatch extends PureComponent<Props> {
     return (
       <li className={`${CoordinatingColorSwatch.baseClass}__coord-color ${color.isDark ? `${CoordinatingColorSwatch.baseClass}__coord-color--dark-color` : ''}`}
         style={{ backgroundColor: color.hex }}>
-        <Link to={generateColorDetailsPageUrl(color)} className={`${CoordinatingColorSwatch.baseClass}__color-swatch-link`}>
+        <Link to={generateColorDetailsPageUrl(color)} onClick={this.handleClick} className={`${CoordinatingColorSwatch.baseClass}__color-swatch-link`}>
           <p className={`${CoordinatingColorSwatch.baseClass}__coord-color-number`}>
             {`${color.brandKey} ${color.colorNumber}`}
           </p>
