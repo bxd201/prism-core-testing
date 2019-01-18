@@ -2,6 +2,6 @@ version: '2'
 services:
   app:
     ports:
-    - 9985:80/tcp
+    - 9290:80/tcp
     labels:
       io.rancher.service.external_lb.endpoint: ${ELB_NAME}
