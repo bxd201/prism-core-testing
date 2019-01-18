@@ -1,5 +1,5 @@
 // fontawesome imports
-import { library } from '@fortawesome/fontawesome-svg-core'
+import { library, config } from '@fortawesome/fontawesome-svg-core'
 
 // solids
 import {
@@ -47,3 +47,7 @@ const faIcons = [
   falSun
 ]
 library.add(...faIcons)
+
+// don't automatically inject the CSS into the DOM because we're importing ALL of it into our own bundle
+// this is done so we can prefix all selectors with .cleanslate.prism
+config.autoAddCss = false
