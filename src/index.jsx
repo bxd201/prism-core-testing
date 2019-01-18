@@ -3,6 +3,9 @@ import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
 import { IntlProvider } from 'react-intl'
 import { BrowserRouter, HashRouter } from 'react-router-dom'
+import ReactGA from 'react-ga'
+
+import { GOOGLE_ANALYTICS_UID } from './constants/globals'
 
 import { DEFAULT_CONFIGURATIONS, ConfigurationContextProvider } from './contexts/ConfigurationContext'
 
@@ -20,6 +23,9 @@ import './config/fontawesome'
 
 // global sass import
 import './scss/main.scss'
+
+// initialize Google Analytics
+ReactGA.initialize(GOOGLE_ANALYTICS_UID, {})
 
 const renderAppInElement = (el) => {
   if (el.className.indexOf('__react-bound') > -1) {

@@ -6,6 +6,7 @@ import { withRouter } from 'react-router-dom'
 import { has } from 'lodash'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import { FormattedMessage } from 'react-intl'
+import ReactGA from 'react-ga'
 
 import ColorInfo from './ColorInfo/ColorInfo'
 import ColorViewer from './ColorViewer/ColorViewer'
@@ -32,6 +33,7 @@ type State = {
 
 class ColorDetails extends PureComponent<Props, State> {
   static baseClass = 'color-info'
+  static tabNamesForGA = ['View Coord Color Section', 'View Similar Color Section', 'View Color Info Section']
 
   state: State = {
     sceneIsDisplayed: true,
@@ -43,6 +45,7 @@ class ColorDetails extends PureComponent<Props, State> {
 
     this.toggleSceneDisplay = this.toggleSceneDisplay.bind(this)
     this.toggleChipMaximized = this.toggleChipMaximized.bind(this)
+    this.reportTabSwitchToGA = this.reportTabSwitchToGA.bind(this)
   }
 
   render () {
@@ -169,7 +172,7 @@ class ColorDetails extends PureComponent<Props, State> {
               <ColorStrip key={activeColor.id} colors={colors} color={activeColor} />
             </div>
             <div className={`${ColorDetails.baseClass}__additional-info`}>
-              <Tabs>
+              <Tabs onSelect={this.reportTabSwitchToGA}>
                 <TabList className={`${ColorDetails.baseClass}__tab-list`} style={{ backgroundColor: activeColor.hex }}>
                   <Tab className={`${ColorDetails.baseClass}__tab ${activeColor.isDark ? `${ColorDetails.baseClass}__tab--dark-color` : ''}`}>
                     <div className={`${ColorDetails.baseClass}__tab-copy`}>
@@ -216,6 +219,15 @@ class ColorDetails extends PureComponent<Props, State> {
     )
   }
 
+  componentDidMount () {
+    const { match: { params } } = this.props
+    const color = this.getColorById(params.colorId)
+
+    if (color) {
+      ReactGA.pageview(`color-detail/${color.brandKey} ${color.colorNumber} - ${color.name}`)
+    }
+  }
+
   componentDidUpdate () {
     const { match: { params }, scenesLoaded } = this.props
 
@@ -241,7 +253,25 @@ class ColorDetails extends PureComponent<Props, State> {
   }
 
   toggleChipMaximized = function toggleChipMaximized () {
+    if (!this.state.chipIsMaximized) {
+      ReactGA.event({
+        category: 'Color Detail',
+        action: 'Maximize Swatch',
+        label: 'Maximize Swatch'
+      })
+    }
+
     this.setState({ chipIsMaximized: !this.state.chipIsMaximized })
+  }
+
+  reportTabSwitchToGA (index) {
+    const tabReportingName = ColorDetails.tabNamesForGA[index]
+
+    ReactGA.event({
+      category: 'Color Detail',
+      action: tabReportingName,
+      label: tabReportingName
+    })
   }
 }
 

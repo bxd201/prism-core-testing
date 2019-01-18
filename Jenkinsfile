@@ -267,7 +267,7 @@ pipeline {
         RANCHER_STACK = "prism-web-prod"
         API_URL = "https://prism-api.ebus.swaws"
         WEB_URL = "https://prism-web.ebus.swaws"
-        ELB_NAME="placeholder"
+        ELB_NAME= "prism-she-SimpleEL-QG3H7DKM2U0P"
       }
       when {
         branch 'release'
@@ -287,6 +287,7 @@ pipeline {
               -d \
               -u --force-upgrade \
               -f docker-compose.yml \
+              -f docker-compose-prod.yml \
               --batch-size 1 \
               --rancher-file rancher-compose-prod.yml \
               --stack ${RANCHER_STACK}
