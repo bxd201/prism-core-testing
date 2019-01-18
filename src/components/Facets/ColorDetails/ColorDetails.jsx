@@ -114,6 +114,7 @@ class ColorDetails extends PureComponent<Props, State> {
       ALT_SWATCH_SIZE_TOGGLE_BUTTON_CLASSES.push(`${ColorDetails.baseClass}__display-toggle-button--dark-color`)
       ALT_SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.push(`${ColorDetails.baseClass}__display-toggle-button--dark-color`)
       MAIN_INFO_CLASSES.push(`${ColorDetails.baseClass}__main-info--dark-color`)
+      SWATCH_SIZE_WRAPPER_CLASSES.push(`${ColorDetails.baseClass}__display-toggles-wrapper--dark-color`)
     }
 
     return (

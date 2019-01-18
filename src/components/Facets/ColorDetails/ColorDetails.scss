@@ -116,13 +116,11 @@ $top-level-class-string: '.color-info';
   &__strip {
     border-bottom: $width-thin solid $neutral-background-color;
     border-top: $width-thin solid $neutral-background-color;
-    // background: $neutral-background-color;
     display: none;
     height: 2rem;
     list-style: none;
     max-width: 26rem;
     margin: 4rem 0 0.5rem;
-    // padding: $width-thin 0 $width-thin $width-thin;
   }
 
   &__strip-color,
@@ -131,32 +129,19 @@ $top-level-class-string: '.color-info';
     flex: 1 1 auto;
     justify-content: center;
     align-items: center;
-    // display: inline-block;
-    // height: $strip-chip-size;
-    // margin-right: $width-thin;
-  }
-
-  &__strip-location {
-    // width: $strip-chip-size;
   }
 
   &__strip-color {
     border-right: $width-thin solid $neutral-background-color;
     position: relative;
-    // margin-right: $width-thin;
-    // min-width: $strip-chip-size;
-    // width: auto;
   }
 
   &__strip-color-info {
-    // height: 100%;
-    // width: 100%;
     position: absolute;
     padding: 0.75rem 1rem;
 
     &--active {
       position: relative;
-      // width: 10rem;
       padding: 0 0.5rem;
     }
 
@@ -216,13 +201,14 @@ $top-level-class-string: '.color-info';
     }
 
     &--swatch-size {
-      // align-items: center;
-      border: 1px solid #fff;
-      // display: flex;
-      // justify-content: center;
+      border: 1px solid #000;
       height: auto;
-      // padding: 3px;
       width: auto;
+
+      &#{$top-level-class-string}__display-toggles-wrapper--dark-color {
+        border: 1px solid #fff;
+        color: white;
+      }
     }
   }
 
@@ -242,6 +228,20 @@ $top-level-class-string: '.color-info';
 
     &--dark-color {
       color: white;
+    }
+  }
+
+  &__color-swatch-link {
+    color: inherit;
+
+    &:active,
+    &:focus,
+    &:hover {
+      text-decoration: underline;
+
+      span {
+        text-decoration: underline;
+      }
     }
   }
 
@@ -307,6 +307,12 @@ $top-level-class-string: '.color-info';
       border-color: $neutral-background-color;
       border-radius: 0;
       color: $neutral-foreground-color;
+    }
+
+    &:active,
+    &:focus,
+    &:hover {
+      text-decoration: underline;
     }
   }
 
@@ -476,23 +482,6 @@ $top-level-class-string: '.color-info';
       display: flex;
     }
 
-    // &__strip-color,
-    // &__strip-location {
-    //   height: #{$strip-chip-size} * 0.9;
-    // }
-
-    // &__strip-color {
-    //   min-width: #{$strip-chip-size} * 0.9;
-    // }
-
-    // &__strip-location {
-    //   width: #{$strip-chip-size} * 0.9;
-    // }
-
-    // &__strip-color-info--active {
-    //   width: 9rem * 0.8;
-    // }
-
     &__swatch-size-toggle-button {
       display: flex;
 
@@ -516,39 +505,9 @@ $top-level-class-string: '.color-info';
     &__display-toggle-button--alt {
       display: none;
     }
-
-    // TODO: not sure if we want all a tags within the `color-info` namespace,
-    // but maybe we do? since we shouldn't need the default a tag styles within color swatches.
-    &__color-swatch-link {
-      text-decoration: none;
-      color: inherit;
-    }
   }
 
   @include respond-above(md) {
-    // &__strip {
-    //   display: flex;
-    // }
-    // &__strip-color,
-    // &__strip-location {
-    //   height: $strip-chip-size;
-    // }
-    // &__strip-color-info--active {
-    //   padding: 0 1rem;
-    // }
-
-    // &__strip-color {
-    //   min-width: $strip-chip-size;
-    // }
-
-    // &__strip-location {
-    //   width: $strip-chip-size;
-    // }
-
-    // &__strip-color-info--active {
-    //   width: 9rem;
-    // }
-
     &__display-toggles-wrapper {
       right: calc(60% + 1rem);
 
@@ -562,10 +521,7 @@ $top-level-class-string: '.color-info';
     &__strip {
       max-width: 28rem;
     }
-    // &__strip-color,
-    // &__strip-location {
-    //   height: $strip-chip-size;
-    // }
+
     &__strip-color-info--active {
       padding: 0 1rem;
     }
