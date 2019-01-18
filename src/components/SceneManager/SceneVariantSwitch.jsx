@@ -2,6 +2,7 @@
 import React, { PureComponent } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FormattedMessage } from 'react-intl'
+import ReactGA from 'react-ga'
 
 import { SCENE_VARIANTS } from 'constants/globals'
 
@@ -59,8 +60,16 @@ SceneVariantSwitch.DayNight = class DayNight extends PureComponent<SwitchProps> 
   }
 
   handleChange = function handleChange () {
-    const changeTo = this.props.currentVariant === SCENE_VARIANTS.DAY ? SCENE_VARIANTS.NIGHT : SCENE_VARIANTS.DAY
-    this.props.onChange(changeTo)
+    if (this.props.currentVariant === SCENE_VARIANTS.DAY) {
+      this.props.onChange(SCENE_VARIANTS.NIGHT)
+      ReactGA.event({
+        category: 'Scene Manager',
+        action: 'View Night Scene',
+        label: 'View Night Scene'
+      })
+    } else {
+      this.props.onChange(SCENE_VARIANTS.DAY)
+    }
   }
 
   handleKeyDown = function handleKeyDown (e: KeyboardEvent) {

@@ -3,6 +3,7 @@ import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
 import { find } from 'lodash'
 import memoizee from 'memoizee'
+import ReactGA from 'react-ga'
 
 import { SCENE_TYPES, SCENE_VARIANTS } from 'constants/globals'
 import { loadScenes, paintSceneSurface, activateScene, deactivateScene, changeSceneVariant } from '../../actions/scenes'
@@ -75,6 +76,11 @@ class SceneManager extends PureComponent<Props, State> {
     } else {
       // ... otherwise activate this scene
       this.activateScene(id)
+      ReactGA.event({
+        category: 'Scene Manager',
+        action: 'Toggle Active Scene',
+        label: 'Toggle Active Scene'
+      })
     }
   }
 
