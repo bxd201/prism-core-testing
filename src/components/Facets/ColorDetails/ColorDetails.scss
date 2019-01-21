@@ -119,8 +119,8 @@ $top-level-class-string: '.color-info';
     display: none;
     height: 2rem;
     list-style: none;
+    margin: 0 0 1rem;
     max-width: 26rem;
-    margin: 4rem 0 0.5rem;
   }
 
   &__strip-color,
@@ -216,7 +216,7 @@ $top-level-class-string: '.color-info';
     height: 80%;
     width: 40%;
 
-    &--scene {
+    &--scene#{$top-level-class-string}__display-toggles-icon.svg-inline--fa {
     height: 100%;
     width: 100%;
   }
@@ -282,20 +282,28 @@ $top-level-class-string: '.color-info';
     align-items: center;
     border-top: $width-thin solid $neutral-background-color;
     display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
     list-style: none;
   }
 
   &__tab {
-    border-right: $width-thin solid $neutral-background-color;
+    border-bottom: $width-thin solid $neutral-background-color;
     color: $color-near-black;
     cursor: pointer;
     flex-grow: 1;
     font-size: 0.85rem;
+    overflow: hidden;
     padding: $tab-set-padding;
     text-align: center;
+    width: 100%;
 
     &:last-child {
-      border-right: none;
+      border-bottom: none;
+
+      &.react-tabs__tab--selected {
+        border-bottom: $width-thin solid $neutral-foreground-color;
+      }
     }
 
     &--dark-color {
@@ -328,7 +336,7 @@ $top-level-class-string: '.color-info';
 
     &.react-tabs__tab-panel--selected {
       height: 10rem;
-      min-height: 10rem;
+      min-height: 10rem;  
     }
   }
 
@@ -379,24 +387,17 @@ $top-level-class-string: '.color-info';
     align-items: center;
     display: flex;
     flex-wrap: wrap;
+    height: 100%;
     justify-content: flex-start;
     list-style: none;
+    overflow: hidden;
+    padding: $width-thin;
   }
 
   &__similar-color {
-    height: calc(5rem - #{$width-thin} * 1.5);
-    height: 5rem;
-    width: calc(16.66666667% - #{$width-thin} * 0.83333334);
-    width: 16.5%;
-
-    &:nth-child(-n + 6) {
-      margin-bottom: $width-thin;
-    }
-
-    &:nth-child(6),
-    &:nth-child(12) {
-      margin-right: 0;
-    }
+    display: block;
+    height: calc(50% - #{$width-thin});
+    width: calc(16.66666666% - (#{$width-thin} * 0.333333333334));
   }
 
   &__similar-color-info {
@@ -465,9 +466,46 @@ $top-level-class-string: '.color-info';
     margin-right: 0.3rem;
   }
 
+  @include respond-above(xs) {
+    &__tab-list {
+      flex-direction: row;
+    }
+  
+    &__tab {
+      border-bottom: none;
+      border-right: $width-thin solid $neutral-background-color;
+      width: auto;
+
+      &:last-child.react-tabs__tab--selected {
+        border-bottom: none;
+      }
+    }
+  }
+
   @include respond-above(sm) {
     &__main-info {
+      display: flex;
+      flex-direction: column;
+      height: 60%;
+      justify-content: space-between;
       padding: $width-medium;
+    }
+
+    &__additional-info {
+      height: 40%;
+
+      .react-tabs {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
+    }
+
+    &__tab-panel {
+      &.react-tabs__tab-panel--selected {
+        height: inherit;
+        min-height: inherit;
+      }
     }
 
     &__max-chip {
@@ -490,7 +528,7 @@ $top-level-class-string: '.color-info';
       }
 
       &#{$top-level-class-string}__display-toggle-button--alt#{$top-level-class-string}__display-toggle-button--active {
-        display: block;
+        display: flex;
       }
     }
 
