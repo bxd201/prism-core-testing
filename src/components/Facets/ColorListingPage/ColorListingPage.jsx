@@ -4,6 +4,7 @@ import { Route, Redirect } from 'react-router-dom'
 import ColorWallLocationBuffer from '../ColorWall/ColorWallLocationBuffer'
 import ColorDetails from '../ColorDetails/ColorDetails'
 import ColorDataWrapper from '../../../helpers/ColorDataWrapper'
+import BackToColorWall from './BackToColorWall'
 import { DEFAULT_CONFIGURATIONS, ConfigurationContextProvider } from '../../../contexts/ConfigurationContext'
 
 // barebones component to always take the user to active if they try to access root.
@@ -46,6 +47,7 @@ class ColorListingPage extends Component {
         <Route path='/active/color-wall' exact component={ColorWallComponent} />
         <Route path='/active/color-wall/:family' exact component={ColorWallComponent} />
         <Route path='/active/color-wall/:family/:colorNumber' exact component={ColorWallComponent} />
+        <Route path='/active/color/:colorId/:colorSEO' exact render={BackToColorWall} />
         <Route path='/active/color/:colorId/:colorSEO' exact render={ColorDetailsComponent} />
       </React.Fragment>
     )
