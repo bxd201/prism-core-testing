@@ -115,6 +115,7 @@ const sassRules = [
       resources: [
         path.resolve(__dirname, 'src/scss/mixins/mixins.scss'),
         path.resolve(__dirname, 'src/scss/functions/functions.scss'),
+        path.resolve(__dirname, 'src/scss/convenience/convenience.scss'),
         path.resolve(__dirname, 'src/scss/variables.scss')
       ]
     }
@@ -140,14 +141,14 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.(sc|sa|c)ss$/,
+        use: sassRules
+      },
+      {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
         use: [ 'babel-loader', 'eslint-loader' ],
         resolve: { extensions: [ '.js', '.jsx' ] }
-      },
-      {
-        test: /\.(sc|sa|c)ss$/,
-        use: sassRules
       }
     ]
   },

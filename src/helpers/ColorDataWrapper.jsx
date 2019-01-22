@@ -4,11 +4,11 @@ import { connect } from 'react-redux'
 import isEmpty from 'lodash/isEmpty'
 
 import { loadColors } from '../actions/loadColors'
-import type { ColorFamilyPayload, ColorMap } from '../shared/types/Colors'
+import type { ColorSetPayload, ColorMap } from '../shared/types/Colors'
 
 type Props = {
-  colors: ColorFamilyPayload,
-  brights: ColorFamilyPayload,
+  colors: ColorSetPayload,
+  brights: ColorSetPayload,
   colorMap: ColorMap,
   loadColors: Function,
   family?: string,

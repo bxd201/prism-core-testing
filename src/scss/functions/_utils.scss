@@ -28,3 +28,25 @@
 @function em($value) {
   @return strip-units($value) * 1em;
 }
+
+@function ifLight($color, $yes, $no) {
+  // @return $yes;
+  @if (lightness($color) > 50) {
+    @return $yes;
+  } @else {
+    @return $no;
+  }
+}
+
+@function ifDark($color, $yes, $no) {
+  // @return $yes;
+  @if (lightness($color) <= 50) {
+    @return $yes;
+  } @else {
+    @return $no;
+  }
+}
+
+@function em($targetPx, $relativeTo: $base) {
+  @return strip-units($targetPx) / strip-units($relativeTo) * 1em;
+}

@@ -1,5 +1,5 @@
 // @flow
-import { concat, uniq, isUndefined, isNull, without, find } from 'lodash'
+import { concat, uniq, isUndefined, isNull, without, find, includes } from 'lodash'
 
 import type { Scene, SceneStatus, SurfaceStatus, Surface, Variant } from '../shared/types/Scene'
 
@@ -175,7 +175,7 @@ export const scenes = (state: Object = initialState, action: { type: string, pay
                 return Object.assign({}, _scene, {
                   surfaces: _scene.surfaces.map((_surface: SurfaceStatus) => {
                     // set color for all "main" surfaces
-                    if (mainSurfaceIds.indexOf(_surface.id) > -1) {
+                    if (includes(mainSurfaceIds, _surface.id)) {
                       return Object.assign({}, _surface, {
                         color: action.payload.color
                       })

@@ -1,17 +1,17 @@
-@keyframes fadeOut {
-  0% {
-    opacity: 1;
-    z-index: 999999;
-    width: 100%;
-    height: 100%;
-  }
-  100% {
-    opacity: 0;
-    z-index: 999999;
-    width: 100%;
-    height: 100%;
-  }
-}
+// @keyframes fadeOut {
+//   0% {
+//     opacity: 1;
+//     z-index: 999999;
+//     width: 100%;
+//     height: 100%;
+//   }
+//   100% {
+//     opacity: 0;
+//     z-index: 999999;
+//     width: 100%;
+//     height: 100%;
+//   }
+// }
 
 .color-wall-wall {
   background: #eee;
@@ -86,22 +86,22 @@
   overflow: hidden;
   position: relative;
 
-  &::after {
-    content: '';
-    display: block;
-    position: absolute;
-    background: white;
+  // &::after {
+  //   content: '';
+  //   display: block;
+  //   position: absolute;
+  //   background: white;
 
-    animation-name: fadeOut;
-    animation-duration: $transition-time;
-    animation-timing-function: ease-out;
-    animation-fill-mode: backwards;
-    height: 0;
-    left: 0;
-    top: 0;
-    width: 0;
-    z-index: -1;
-  }
+  //   animation-name: fadeOut;
+  //   animation-duration: $transition-time;
+  //   animation-timing-function: ease-out;
+  //   animation-fill-mode: backwards;
+  //   height: 0;
+  //   left: 0;
+  //   top: 0;
+  //   width: 0;
+  //   z-index: -1;
+  // }
 
   // React Virtualized Grid classes
   .ReactVirtualized__Grid {
@@ -140,5 +140,126 @@
   &:checked + .color-wall-label {
     background: #222;
     color: white;
+  }
+}
+
+%color-wall-mode-btns-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid getVar("colors.primary");
+  background: ifDark(getVar("colors.primary"), white, black);
+  font-size: 1em;
+  padding: .5em .75em;
+  color: getVar("colors.primary");
+  text-decoration: none;
+  text-align: center;
+  border-radius: .2em;
+  font-weight: bold;
+  font-size: em(10);
+  text-transform: uppercase;
+  overflow: hidden;
+
+  @include respond-above(xs) {
+    font-size: em(11);
+  }
+
+  @include respond-above(md) {
+    font-size: em(12);
+  }
+
+  &[disabled] {
+    opacity: .5;
+  }
+
+  &:focus {
+    box-shadow: inset 0 0 0 1px getVar("colors.primary");
+  }
+}
+
+%color-wall-mode-btns-btn--active {
+  background: getVar("colors.primary");
+  color: ifDark(getVar("colors.primary"), $color-near-white, $color-near-black);
+}
+
+.color-wall-mode-btns {
+  font-size: $base;
+  margin: 0 0 .5em;
+
+  &__btn {
+    @extend %color-wall-mode-btns-btn;
+
+    &--active {
+      @extend %color-wall-mode-btns-btn--active;
+    }
+  }
+
+  &__group {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__options {
+    flex-direction: row;
+    display: flex;
+    justify-content: flex-start;
+    align-items: stretch;
+    list-style: none;
+    border: 1px solid getVar("colors.primary");
+    border-radius: .2em;
+    overflow-x: auto;
+    margin: 0 1em;
+
+    &:first-child {
+      margin-left: 0;
+    }
+
+    &:last-child {
+      margin-right: 0;
+    }
+
+    &__option {
+      display: flex;
+      align-content: center;
+      justify-content: center;
+      padding: 0;
+      margin: 0;
+      border-left: 1px solid getVar("colors.primary");
+
+      &:first-child {
+        border-left: none;
+        border-radius: .2em 0 0 .2em;
+      }
+
+      &:last-child {
+        border-radius: 0 .2em .2em 0;
+      }
+
+      &__btn {
+        @extend %color-wall-mode-btns-btn;
+        border: none;
+        border-radius: 0;
+
+        &--active {
+          @extend %color-wall-mode-btns-btn--active;
+        }
+
+      }
+    }
+  }
+
+  &__sm {
+    @include respond-above(md) {
+      display: none;
+    }
+  }
+
+  &__lg {
+    @include respond-below(md) {
+      display: none;
+    }
   }
 }

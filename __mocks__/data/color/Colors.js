@@ -1,9 +1,9 @@
 // @flow
 import _ from 'lodash'
 
-import type { ColorFamilyPayload, Color } from '../../../src/shared/types/Colors'
+import type { ColorSetPayload, Color } from '../../../src/shared/types/Colors'
 
-export const Colors: ColorFamilyPayload = {
+export const Colors: ColorSetPayload = {
   "Red": [
     [
       {
@@ -110,7 +110,7 @@ export const Colors: ColorFamilyPayload = {
   ]
 }
 
-export function getColors (): ColorFamilyPayload {
+export function getColors (): ColorSetPayload {
   return _.cloneDeep(Colors)
 }
 
