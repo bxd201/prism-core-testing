@@ -76,7 +76,7 @@ const ColorListingPage = () => {
     <React.Fragment>
       <Route path='/' exact component={RootRedirect} />
       <Route path={colorWallUrlPattern} component={ColorWallComponent} />
-      <Route path={`/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`} exact render={BackToColorWall} />
+      <Route path={`/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`} exact component={BackToColorWall} />
       <Route path={`/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`} exact render={ColorDetailsComponent} />
     </React.Fragment>
   )

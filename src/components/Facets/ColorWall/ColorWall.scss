@@ -41,7 +41,9 @@
       height: 2.5em;
       text-align: center;
       line-height: 0;
-
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
       &:hover, &:focus {
         background: #eaeaea;
@@ -143,22 +145,29 @@
   }
 }
 
+$btn-bg: white;
+$btn-spacing: $base / 2;
+$btn-radius: $base / 4;
+$btn-height: 30px;
+
 %color-wall-mode-btns-btn {
   display: flex;
   align-items: center;
   justify-content: space-between;
   border: 1px solid getVar("colors.primary");
-  background: ifDark(getVar("colors.primary"), white, black);
+  background: $btn-bg;
   font-size: 1em;
-  padding: .5em .75em;
-  color: getVar("colors.primary");
+  padding: .25em .75em;
+  color: pick-text-color($btn-bg);
   text-decoration: none;
   text-align: center;
-  border-radius: .2em;
+  border-radius: $btn-radius;
   font-weight: bold;
   font-size: em(10);
   text-transform: uppercase;
   overflow: hidden;
+  min-height: $btn-height;
+  white-space: nowrap;
 
   @include respond-above(xs) {
     font-size: em(11);
@@ -169,22 +178,53 @@
   }
 
   &[disabled] {
-    opacity: .5;
+    opacity: .3;
   }
 
   &:focus {
     box-shadow: inset 0 0 0 1px getVar("colors.primary");
   }
+
+  &:hover {
+    $hover-bg: mix($btn-bg, getVar("colors.primary"), 90%);
+    background: $hover-bg;
+    color: pick-text-color($hover-bg);
+  }
 }
 
 %color-wall-mode-btns-btn--active {
-  background: getVar("colors.primary");
-  color: ifDark(getVar("colors.primary"), $color-near-white, $color-near-black);
+  background: getVar("colors.primary") !important;
+  color: pick-text-color(getVar("colors.primary")) !important;
 }
 
 .color-wall-mode-btns {
   font-size: $base;
-  margin: 0 0 .5em;
+
+  &__col {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 0 $btn-spacing / -2;
+    max-width: 100%;
+
+    @include respond-above(sm) {
+      align-items: center;
+      flex-direction: row;
+      max-width: unset;
+    }
+
+  }
+
+  &__cell {
+    margin-right: $btn-spacing / 2;
+    margin-left: $btn-spacing / 2;
+    margin-bottom: $btn-spacing;
+    max-width: 100%;
+
+    @include respond-above(sm) {
+      max-width: unset;
+    }
+  }
 
   &__btn {
     @extend %color-wall-mode-btns-btn;
@@ -194,12 +234,9 @@
     }
   }
 
-  &__group {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    justify-content: space-between;
-    align-items: center;
+  &__option-container {
+    border: 1px solid getVar("colors.primary");
+    border-radius: $btn-radius;
   }
 
   &__options {
@@ -207,19 +244,7 @@
     display: flex;
     justify-content: flex-start;
     align-items: stretch;
-    list-style: none;
-    border: 1px solid getVar("colors.primary");
-    border-radius: .2em;
-    overflow-x: auto;
-    margin: 0 1em;
-
-    &:first-child {
-      margin-left: 0;
-    }
-
-    &:last-child {
-      margin-right: 0;
-    }
+    flex-shrink: 1;
 
     &__option {
       display: flex;
@@ -231,11 +256,11 @@
 
       &:first-child {
         border-left: none;
-        border-radius: .2em 0 0 .2em;
+        border-radius: $btn-radius 0 0 $btn-radius;
       }
 
       &:last-child {
-        border-radius: 0 .2em .2em 0;
+        border-radius: 0 $btn-radius $btn-radius 0;
       }
 
       &__btn {
@@ -251,15 +276,9 @@
     }
   }
 
-  &__sm {
-    @include respond-above(md) {
-      display: none;
-    }
-  }
-
-  &__lg {
-    @include respond-below(md) {
-      display: none;
+  &__right {
+    @include respond-above(sm) {
+      margin-left: auto;
     }
   }
 }

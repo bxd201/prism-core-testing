@@ -104,12 +104,14 @@ export const loadColors = (options?: any) => {
         const sections: FamilyStructure = [
           {
             name: 'Historic Colors',
+            default: false,
             families: [
               'Historic Color'
             ]
           },
           {
             name: 'Sherwin-Williams Colors',
+            default: true,
             families: [
               'Red',
               'Orange',
@@ -123,6 +125,7 @@ export const loadColors = (options?: any) => {
           },
           {
             name: 'Timeless Colors',
+            default: false,
             families: [
               'Timeless Color'
             ]

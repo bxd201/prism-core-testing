@@ -21,7 +21,7 @@ type DispatchProps = {
 }
 
 type OwnProps = {
-  match: Object,
+  match: any
 }
 
 type Props = StateProps & DispatchProps & OwnProps
