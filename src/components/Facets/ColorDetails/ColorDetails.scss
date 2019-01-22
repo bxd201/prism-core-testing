@@ -333,6 +333,7 @@ $top-level-class-string: '.color-info';
   &__tab-panel {
     background-color: $neutral-background-color;
     box-sizing: border-box;
+    overflow: hidden;
 
     &.react-tabs__tab-panel--selected {
       height: 10rem;
@@ -385,25 +386,24 @@ $top-level-class-string: '.color-info';
 
   &__similar-colors {
     align-items: center;
+    background-color: $neutral-background-color;
     display: flex;
     flex-wrap: wrap;
     height: 100%;
     justify-content: flex-start;
     list-style: none;
     overflow: hidden;
-    padding: $width-thin;
+    padding: $width-thin / 2;
   }
 
   &__similar-color {
     display: block;
-    height: calc(50% - #{$width-thin});
-    width: calc(16.66666666% - (#{$width-thin} * 0.333333333334));
+    height: calc(50% - #{$width-thin * 1.5});
+    margin: $width-thin / 2;
+    width: calc(16.666666665% - (#{$width-thin} * 1.66666666));
   }
 
   &__similar-color-info {
-    border-color: $neutral-background-color;
-    border-style: solid;
-    border-width: $width-thin;
     display: block;
     height: 100%;
     position: relative;
