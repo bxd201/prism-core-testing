@@ -337,7 +337,7 @@ $top-level-class-string: '.color-info';
 
     &.react-tabs__tab-panel--selected {
       height: 10rem;
-      min-height: 10rem;  
+      min-height: 10rem;
     }
   }
 
@@ -470,7 +470,7 @@ $top-level-class-string: '.color-info';
     &__tab-list {
       flex-direction: row;
     }
-  
+
     &__tab {
       border-bottom: none;
       border-right: $width-thin solid $neutral-background-color;
@@ -492,7 +492,7 @@ $top-level-class-string: '.color-info';
     }
 
     &__additional-info {
-      height: 40%;
+      height: 39.5%;
 
       .react-tabs {
         display: flex;
