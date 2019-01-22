@@ -9,6 +9,9 @@ import { GOOGLE_ANALYTICS_UID } from './constants/globals'
 
 import { DEFAULT_CONFIGURATIONS, ConfigurationContextProvider } from './contexts/ConfigurationContext'
 
+// global sass import -- keep this BEFORE the APPS import to maintain compiled CSS order
+import './scss/main.scss'
+
 // all supported languages
 import languages from './translations/translations'
 
@@ -20,9 +23,6 @@ import APPS from './config/components'
 
 // load all fontawesome fonts we are using
 import './config/fontawesome'
-
-// global sass import
-import './scss/main.scss'
 
 // initialize Google Analytics
 ReactGA.initialize(GOOGLE_ANALYTICS_UID, {})

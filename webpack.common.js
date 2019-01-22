@@ -141,14 +141,14 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.(sc|sa|c)ss$/,
+        use: sassRules
+      },
+      {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
         use: [ 'babel-loader', 'eslint-loader' ],
         resolve: { extensions: [ '.js', '.jsx' ] }
-      },
-      {
-        test: /\.(sc|sa|c)ss$/,
-        use: sassRules
       }
     ]
   },
