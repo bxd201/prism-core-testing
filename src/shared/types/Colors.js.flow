@@ -51,5 +51,6 @@ export type ColorMap = {
 
 export type FamilyStructure = {
   name: string,
+  default: boolean,
   families: string[]
 }[]

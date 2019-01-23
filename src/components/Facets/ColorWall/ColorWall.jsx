@@ -80,47 +80,59 @@ class ColorWall extends PureComponent<Props, State> {
 
     if (!_showColorFamilies && hasSections) {
       sectionButtons = (
-        <div className={MODE_CLASS_NAMES.GROUP}>
-          <button className={MODE_CLASS_NAMES.BUTTON} disabled={!families || families.length <= 1} onClick={this.toggleViewFamilies}>
-            <FontAwesomeIcon className={MODE_CLASS_NAMES.LG} icon={['fa', 'palette']} pull='left' />
-            <span className={MODE_CLASS_NAMES.DESC}>Color Families</span>
-          </button>
-          <ul className={MODE_CLASS_NAMES.OPTIONS}>
-            { // $FlowIgnore -- flow doesn't realize that sections must be defined at this point
-              sections.map((sectionName: string, i: number) => (
-                <li className={MODE_CLASS_NAMES.OPTION} key={sectionName}>
-                  <NavLink className={MODE_CLASS_NAMES.OPTION_BUTTON} activeClassName={MODE_CLASS_NAMES.OPTION_BUTTON_ACTIVE} to={generateColorWallPageUrl(sectionName)}>
-                    <span className={MODE_CLASS_NAMES.DESC}>{sectionName}</span>
-                  </NavLink>
-                </li>
-              ))
-            }
-          </ul>
+        <div className={MODE_CLASS_NAMES.COL}>
+          <div className={MODE_CLASS_NAMES.CELL}>
+            <div className={MODE_CLASS_NAMES.OPTION_CONTAINER}>
+              <ul className={MODE_CLASS_NAMES.OPTIONS}>
+                { // $FlowIgnore -- flow doesn't realize that sections must be defined at this point
+                  sections.map((sectionName: string, i: number) => (
+                    <li className={MODE_CLASS_NAMES.OPTION} key={sectionName}>
+                      <NavLink className={MODE_CLASS_NAMES.OPTION_BUTTON} activeClassName={MODE_CLASS_NAMES.OPTION_BUTTON_ACTIVE} to={generateColorWallPageUrl(sectionName)}>
+                        <span className={MODE_CLASS_NAMES.DESC}>{sectionName}</span>
+                      </NavLink>
+                    </li>
+                  ))
+                }
+              </ul>
+            </div>
+          </div>
+          <div className={`${MODE_CLASS_NAMES.CELL} ${MODE_CLASS_NAMES.RIGHT}`}>
+            <button className={MODE_CLASS_NAMES.BUTTON} disabled={!families || families.length <= 1} onClick={this.toggleViewFamilies}>
+              <FontAwesomeIcon icon={['fa', 'palette']} pull='left' />
+              <span className={MODE_CLASS_NAMES.DESC}>Color Families</span>
+            </button>
+          </div>
         </div>
       )
     }
 
     if (_showColorFamilies && families && families.length > 1) {
       familyButtons = (
-        <div className={MODE_CLASS_NAMES.GROUP}>
-          <FontAwesomeIcon className={MODE_CLASS_NAMES.LG} icon={['fa', 'palette']} pull='left' size='lg' />
-
-          <ul className={MODE_CLASS_NAMES.OPTIONS}>
-            {families.map((thisFamily: string) => {
-              return (
-                <li className={MODE_CLASS_NAMES.OPTION} key={thisFamily}>
-                  <NavLink className={MODE_CLASS_NAMES.OPTION_BUTTON} activeClassName={MODE_CLASS_NAMES.OPTION_BUTTON_ACTIVE} to={generateColorWallPageUrl(section, thisFamily)}>
-                    <span className={MODE_CLASS_NAMES.DESC}>{thisFamily}</span>
-                  </NavLink>
-                </li>
-              )
-            })}
-          </ul>
+        <div className={MODE_CLASS_NAMES.COL}>
+          <div className={MODE_CLASS_NAMES.CELL}>
+            {/* <FontAwesomeIcon className={`${MODE_CLASS_NAMES.LG} ${MODE_CLASS_NAMES.LEFT}`} icon={['fa', 'palette']} pull='left' size='lg' /> */}
+            <div className={MODE_CLASS_NAMES.OPTION_CONTAINER}>
+              <ul className={MODE_CLASS_NAMES.OPTIONS}>
+                {families.map((thisFamily: string) => {
+                  return (
+                    <li className={MODE_CLASS_NAMES.OPTION} key={thisFamily}>
+                      <NavLink className={MODE_CLASS_NAMES.OPTION_BUTTON} activeClassName={MODE_CLASS_NAMES.OPTION_BUTTON_ACTIVE} to={generateColorWallPageUrl(section, thisFamily)}>
+                        <span className={MODE_CLASS_NAMES.DESC}>{thisFamily}</span>
+                      </NavLink>
+                    </li>
+                  )
+                })}
+              </ul>
+            </div>
+          </div>
 
           {hasSections ? (
-            <Link className={MODE_CLASS_NAMES.BUTTON} to={generateColorWallPageUrl(section)} onClick={() => this.toggleViewFamilies(false)}>
-              <span className={MODE_CLASS_NAMES.DESC}>Cancel</span>
-            </Link>
+            <div className={`${MODE_CLASS_NAMES.CELL} ${MODE_CLASS_NAMES.RIGHT}`}>
+              <Link className={MODE_CLASS_NAMES.BUTTON} to={generateColorWallPageUrl(section)} onClick={() => this.toggleViewFamilies(false)}>
+                <FontAwesomeIcon icon={['fa', 'times']} pull='left' />
+                <span className={MODE_CLASS_NAMES.DESC}>Cancel</span>
+              </Link>
+            </div>
           ) : null}
         </div>
       )

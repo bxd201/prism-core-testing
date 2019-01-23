@@ -99,10 +99,12 @@ export const colors = (state: ColorsState = initialState, action: ReduxAction) =
           structure: action.payload.sections
         })
 
-        if (newState.family.seekingSection) {
+        const defaultSection = find(newState.family.structure, { default: true })
+
+        if (newState.family.seekingSection || defaultSection) {
           const foundSection = find(newState.family.structure, (section: Section) => {
             return compareKebabs(section.name, newState.family.seekingSection)
-          })
+          }) || defaultSection
 
           // if we actually have a section match...
           if (foundSection) {

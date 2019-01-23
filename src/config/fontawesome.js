@@ -9,6 +9,7 @@ import {
   faInfo,
   faPalette,
   faSearchMinus,
+  faTimes,
   faHome,
   faSun,
   faMoon
@@ -21,6 +22,7 @@ import {
   faHome as falHome,
   faPlusCircle,
   faSun as falSun,
+  faThLarge,
   faMoon as falMoon
 } from '@fortawesome/pro-light-svg-icons'
 
@@ -41,7 +43,9 @@ const faIcons = [
   faPalette,
   faPlus,
   faPlusCircle,
+  faTimes,
   faTrash,
+  faThLarge,
   faInfoCircle,
   faInfo,
   faSearchMinus,
