@@ -1,6 +1,5 @@
 // @flow
 import React from 'react'
-import PropTypes from 'prop-types'
 import { Route, Redirect, withRouter, Switch } from 'react-router-dom'
 import { TransitionGroup, CSSTransition } from 'react-transition-group'
 
@@ -8,8 +7,11 @@ import ColorWallLocationBuffer from '../ColorWall/ColorWallLocationBuffer'
 import ColorDetails from '../ColorDetails/ColorDetails'
 import ColorDataWrapper from '../../../helpers/ColorDataWrapper'
 import BackToColorWall from './BackToColorWall'
+import { varValues } from 'variables'
 import { DEFAULT_CONFIGURATIONS, ConfigurationContextProvider } from '../../../contexts/ConfigurationContext'
 import { ROUTE_PARAMS, ROUTE_PARAM_NAMES } from 'constants/globals'
+
+import './ColorListingPage.scss'
 
 const colorWallBaseUrl = `/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_WALL}`
 
@@ -37,11 +39,12 @@ const Configurations = Object.assign({}, DEFAULT_CONFIGURATIONS, ColorWallConfig
 // in the ColorDataWrapper HOC to ensure it has color data prior to rendering it.
 const ColorDetailsWithData = ColorDataWrapper(ColorDetails)
 const ColorDetailsComponent = (props) => {
+  // need a wrapping element that isn't a Fragment in order to get the transition classes applied to the group
   return (
-    <React.Fragment>
+    <div>
       <BackToColorWall />
       <ColorDetailsWithData {...props} />
-    </React.Fragment>
+    </div>
   )
 }
 
@@ -78,11 +81,20 @@ const ColorWallComponent = (props) => {
   )
 }
 
-const ColorListingPage = ({ location }) => {
+type ColorListingPageProps = {
+  location: Object
+}
+
+const ColorListingPage = (props: ColorListingPageProps) => {
+  const { location } = props
+  // grabbing the first half of the path to use as a key so we only actually trigger
+  // a CSS transition when /active/color-wall/ changes to /active/color/ and vice-versa
+  const key = location.pathname.split('/').slice(2, 3).join()
+
   return (
-    <React.Fragment>
+    <div className='color-wall-transitioner'>
       <TransitionGroup>
-        <CSSTransition key={location.key} classNames='fade' timeout={1000}>
+        <CSSTransition key={key} classNames='color-wall-transitioner__slide color-wall-transitioner__slide-' timeout={varValues.colorWall.transitionTime}>
           <Switch location={location}>
             <Route path='/' exact component={RootRedirect} />
             <Route path={colorWallUrlPattern} component={ColorWallComponent} />
@@ -90,13 +102,8 @@ const ColorListingPage = ({ location }) => {
           </Switch>
         </CSSTransition>
       </TransitionGroup>
-    </React.Fragment>
+    </div>
   )
-}
-
-// TODO: replace with flow
-ColorListingPage.propTypes = {
-  location: PropTypes.object
 }
 
 export default withRouter(ColorListingPage)

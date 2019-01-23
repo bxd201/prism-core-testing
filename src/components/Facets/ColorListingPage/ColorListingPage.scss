@@ -1,9 +1,39 @@
-.fade-enter {
-  opacity: 0;
-  z-index: 1;
-}
+.color-wall-transitioner {
+  overflow: hidden;
+  position: relative;
 
-.fade-enter.fade-enter-active {
-  opacity: 1;
-  transition: opacity 250ms ease-in;
+  &__slide {
+    &--enter {
+      background: white;
+      backface-visibility: hidden;
+      position: relative;
+      transform: translate3d(100%, 0, 0);
+      z-index: 1;
+    }
+
+    &--enter-active,
+    &--enter-done {
+      transform: translate3d(0%, 0, 0);
+      transition: transform #{getVar('colorWall.transitionTime') * .6}ms ease-out;
+    }
+
+    &--exit {
+      backface-visibility: hidden;
+      opacity: 1;
+      position: absolute;
+      top: 0;
+      width: 100%;
+      z-index: 0;
+    }
+
+    &--exit-active,
+    &--exit-done {
+      opacity: 0;
+      transition: opacity #{getVar('colorWall.transitionTime')}ms ease-in;
+    }
+
+    &--exit-done {
+      display: none;
+    }
+  }
 }

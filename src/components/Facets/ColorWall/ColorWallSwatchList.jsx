@@ -3,15 +3,18 @@ import React, { PureComponent } from 'react'
 // $FlowIgnore -- no defs for react-virtualized
 import { Grid, AutoSizer } from 'react-virtualized'
 import { Scroll } from 'scroll-utility'
+import { isEqual, isEmpty } from 'lodash'
 
 import { varValues } from 'variables'
-import ZoomTransitioner, { type ZoomPositionerProps, TransitionModes } from './ZoomTransitioner/ZoomTransitioner'
+// import ZoomTransitioner, { type ZoomPositionerProps, TransitionModes } from './ZoomTransitioner/ZoomTransitioner'
 import ColorWallSwatch from './ColorWallSwatch/ColorWallSwatch'
 import ColorWallSwatchUI from './ColorWallSwatch/ColorWallSwatchUI'
 import ColorWallSwatchRenderer from './ColorWallSwatch/ColorWallSwatchRenderer'
 import type { ColorMap, Color, ColorGrid, ColorIdGrid, ProbablyColor } from '../../../shared/types/Colors'
 import { getColorCoords, drawCircle, getCoordsObjectFromPairs } from './ColorWallUtils'
 import { getTotalWidthOf2dArray } from '../../../shared/helpers/DataUtils'
+
+const GRID_AUTOSCROLL_SPEED: number = 300
 
 type Props = {
   colors: ColorGrid, // eslint-disable-line react/no-unused-prop-types
@@ -35,18 +38,18 @@ type ColorReference = {
 }
 
 type DerivedStateFromProps = {
-  needsInitialFocus: boolean,
   activeCoords: number[],
   focusCoords: number[],
   levelMap: {
     [ key: string ]: ColorReference
-  }
+  },
+  needsInitialFocus: boolean
 }
 type State = DerivedStateFromProps & {
-  colorIdGrid: ColorIdGrid,
-  zoomingIn: boolean,
-  zoomingOut: boolean,
-  zoomerInitProps?: ZoomPositionerProps
+  colorIdGrid: ColorIdGrid
+  // zoomingIn: boolean,
+  // zoomingOut: boolean,
+  // zoomerInitProps?: ZoomPositionerProps
 }
 
 class ColorWallSwatchList extends PureComponent<Props, State> {
@@ -64,9 +67,9 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     activeCoords: [],
     focusCoords: [],
     levelMap: {},
-    colorIdGrid: [[]],
-    zoomingIn: false,
-    zoomingOut: false
+    colorIdGrid: [[]]
+    // zoomingIn: false,
+    // zoomingOut: false
   }
 
   static defaultProps = {
@@ -96,15 +99,9 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
 
   static getDerivedStateFromProps (props: Props, state: State) {
     const { bloomRadius, activeColor } = props
-    const { colorIdGrid, focusCoords, needsInitialFocus } = state
+    const { colorIdGrid, focusCoords } = state
 
     let stateChanges = Object.assign({}, state)
-
-    // if the needsInitialFocus is still set AND focusCoords have been set...
-    if (needsInitialFocus && focusCoords && focusCoords.length) {
-      // ... it implies that we have already performed our initial focus, so we should set the flag to false
-      Object.assign(stateChanges, { needsInitialFocus: false })
-    }
 
     if (!activeColor) {
       return stateChanges
@@ -112,14 +109,15 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
 
     const coords = getColorCoords(activeColor.id, colorIdGrid)
 
-    if (coords) {
-      const centerX = coords[0]
-      const centerY = coords[1]
+    if (!isEmpty(focusCoords) && !isEqual(coords, focusCoords)) {
+      Object.assign(stateChanges, { needsInitialFocus: false })
+    }
 
+    if (coords) {
       Object.assign(stateChanges, {
-        activeCoords: [ centerX, centerY ],
-        focusCoords: [ centerX, centerY ],
-        levelMap: drawCircle(bloomRadius, centerX, centerY, colorIdGrid)
+        activeCoords: coords,
+        focusCoords: coords,
+        levelMap: drawCircle(bloomRadius, coords[0], coords[1], colorIdGrid)
       })
     }
 
@@ -134,53 +132,53 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     }
   }
 
-  zoomInActivate (newColor: Color) {
-    const { onActivateColor } = this.props
-    const { activeCoords } = this.state
+  // zoomInActivate (newColor: Color) {
+  //   const { onActivateColor } = this.props
+  //   const { activeCoords } = this.state
 
-    const cellSizeShowAll = this._cellSize
-    const scale = Math.max(this._cellSize / this._gridWidth, 0.3)
+  //   const cellSizeShowAll = this._cellSize
+  //   const scale = Math.max(this._cellSize / this._gridWidth, 0.3)
 
-    const activePos = [
-      activeCoords[0] * cellSizeShowAll,
-      activeCoords[1] * cellSizeShowAll
-    ]
+  //   const activePos = [
+  //     activeCoords[0] * cellSizeShowAll,
+  //     activeCoords[1] * cellSizeShowAll
+  //   ]
 
-    let scrollOffsetL = 0
-    let scrollOffsetT = 0
+  //   let scrollOffsetL = 0
+  //   let scrollOffsetT = 0
 
-    if (this._DOMNode) {
-      const gridEl = this._DOMNode.querySelector('.ReactVirtualized__Grid')
-      if (gridEl) {
-        scrollOffsetL = -gridEl.scrollLeft / scale
-        scrollOffsetT = -gridEl.scrollTop / scale
-      }
-    }
+  //   if (this._DOMNode) {
+  //     const gridEl = this._DOMNode.querySelector('.ReactVirtualized__Grid')
+  //     if (gridEl) {
+  //       scrollOffsetL = -gridEl.scrollLeft / scale
+  //       scrollOffsetT = -gridEl.scrollTop / scale
+  //     }
+  //   }
 
-    let zoomerX = (this._gridWidth / -2) + activePos[0] + (cellSizeShowAll / 2)
-    let zoomerY = (this._gridHeight / -2) + activePos[1] + (cellSizeShowAll / 2)
+  //   let zoomerX = (this._gridWidth / -2) + activePos[0] + (cellSizeShowAll / 2)
+  //   let zoomerY = (this._gridHeight / -2) + activePos[1] + (cellSizeShowAll / 2)
 
-    zoomerX /= scale
-    zoomerY /= scale
+  //   zoomerX /= scale
+  //   zoomerY /= scale
 
-    this.setState({
-      zoomerInitProps: {
-        width: this._gridWidth,
-        height: this._gridHeight,
-        scale: scale,
-        translateX: zoomerX + scrollOffsetL,
-        translateY: zoomerY + scrollOffsetT
-      },
-      zoomingIn: true
-    }, () => {
-      setTimeout(() => {
-        if (onActivateColor) {
-          // ... call it now
-          onActivateColor(newColor)
-        }
-      }, varValues.colorWall.exitTransitionMS)
-    })
-  }
+  //   this.setState({
+  //     zoomerInitProps: {
+  //       width: this._gridWidth,
+  //       height: this._gridHeight,
+  //       scale: scale,
+  //       translateX: zoomerX + scrollOffsetL,
+  //       translateY: zoomerY + scrollOffsetT
+  //     },
+  //     zoomingIn: true
+  //   }, () => {
+  //     setTimeout(() => {
+  //       if (onActivateColor) {
+  //         // ... call it now
+  //         onActivateColor(newColor)
+  //       }
+  //     }, varValues.colorWall.exitTransitionMS)
+  //   })
+  // }
 
   cellRenderer = function cellRenderer ({
     columnIndex, // Horizontal (column) index of cell
@@ -272,7 +270,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
 
   render () {
     const { minCellSize, maxCellSize, showAll, activeColor } = this.props
-    const { colorIdGrid, zoomingIn, zoomerInitProps, focusCoords, needsInitialFocus } = this.state
+    const { colorIdGrid, focusCoords, needsInitialFocus } = this.state
     const rowCount = colorIdGrid.length
     const columnCount = getTotalWidthOf2dArray(colorIdGrid)
     let addlGridProps = {}
@@ -283,9 +281,9 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
       addlGridProps.scrollToRow = focusCoords[1]
     }
 
-    if (zoomingIn && zoomerInitProps) {
-      transitioner = <ZoomTransitioner position={zoomerInitProps} mode={TransitionModes.ZOOM_IN} />
-    }
+    // if (zoomingIn && zoomerInitProps) {
+    //   transitioner = <ZoomTransitioner position={zoomerInitProps} mode={TransitionModes.ZOOM_IN} />
+    // }
 
     return (
       <div className={`color-wall-swatch-list ${!showAll ? 'color-wall-swatch-list--zoomed' : 'color-wall-swatch-list--show-all'}`}
@@ -347,7 +345,9 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
       oldActiveCoords
     ])
 
-    if (this._DOMNode && (newCoords && oldCoords && (oldCoords.x !== newCoords.x || oldCoords.y !== newCoords.y))) {
+    // if the grid's DOM node exists, AND oldCoords and newCoords both exist, AND they have different values...
+    if (this._DOMNode && (newCoords && oldCoords && !isEqual(oldCoords, newCoords))) {
+      // ... then we can assume at this point that we need to visually scroll the grid to the new focal point
       const gridEl = this._DOMNode.querySelector('.ReactVirtualized__Grid')
 
       if (gridEl) {
@@ -358,7 +358,6 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
         clearTimeout(this._scrollTimeout)
 
         this._scrollTimeout = setTimeout(() => {
-          const scrollSpeed = 300
           const scrollToX = newCoords.x * this._cellSize - (this._gridWidth - this._cellSize) / 2
           const scrollToY = newCoords.y * this._cellSize - (this._gridHeight - this._cellSize) / 2
 
@@ -371,14 +370,14 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
             // TODO: create flowtype skeleton for instances of Scroll
             // $FlowIgnore -- Flow doesn't know what instance methods exist on Scroll
             this._scrollManager.scrollTo('value', scrollToX, {
-              duration: scrollSpeed,
+              duration: GRID_AUTOSCROLL_SPEED,
               horizontal: true
             })
 
             // TODO: create flowtype skeleton for instances of Scroll
             // $FlowIgnore -- Flow doesn't know what instance methods exist on Scroll
             this._scrollManager.scrollTo('value', scrollToY, {
-              duration: scrollSpeed,
+              duration: GRID_AUTOSCROLL_SPEED,
               horizontal: false
             })
           }
