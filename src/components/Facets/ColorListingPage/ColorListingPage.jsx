@@ -1,6 +1,8 @@
 // @flow
 import React from 'react'
-import { Route, Redirect } from 'react-router-dom'
+import PropTypes from 'prop-types'
+import { Route, Redirect, withRouter, Switch } from 'react-router-dom'
+import { TransitionGroup, CSSTransition } from 'react-transition-group'
 
 import ColorWallLocationBuffer from '../ColorWall/ColorWallLocationBuffer'
 import ColorDetails from '../ColorDetails/ColorDetails'
@@ -35,7 +37,12 @@ const Configurations = Object.assign({}, DEFAULT_CONFIGURATIONS, ColorWallConfig
 // in the ColorDataWrapper HOC to ensure it has color data prior to rendering it.
 const ColorDetailsWithData = ColorDataWrapper(ColorDetails)
 const ColorDetailsComponent = (props) => {
-  return <ColorDetailsWithData {...props} />
+  return (
+    <React.Fragment>
+      <BackToColorWall />
+      <ColorDetailsWithData {...props} />
+    </React.Fragment>
+  )
 }
 
 // overriding the default configuration with updated CW ones to hide the info and add buttons on the swatch
@@ -71,15 +78,25 @@ const ColorWallComponent = (props) => {
   )
 }
 
-const ColorListingPage = () => {
+const ColorListingPage = ({ location }) => {
   return (
     <React.Fragment>
-      <Route path='/' exact component={RootRedirect} />
-      <Route path={colorWallUrlPattern} component={ColorWallComponent} />
-      <Route path={`/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`} exact component={BackToColorWall} />
-      <Route path={`/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`} exact render={ColorDetailsComponent} />
+      <TransitionGroup>
+        <CSSTransition key={location.key} classNames='fade' timeout={1000}>
+          <Switch location={location}>
+            <Route path='/' exact component={RootRedirect} />
+            <Route path={colorWallUrlPattern} component={ColorWallComponent} />
+            <Route path={`/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`} exact render={ColorDetailsComponent} />
+          </Switch>
+        </CSSTransition>
+      </TransitionGroup>
     </React.Fragment>
   )
 }
 
-export default ColorListingPage
+// TODO: replace with flow
+ColorListingPage.propTypes = {
+  location: PropTypes.object
+}
+
+export default withRouter(ColorListingPage)
