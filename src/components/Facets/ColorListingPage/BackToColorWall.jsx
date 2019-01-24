@@ -5,9 +5,11 @@ import { FormattedMessage } from 'react-intl'
 import { connect } from 'react-redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-import { generateColorWallPageUrl } from '../../../shared/helpers/ColorUtils'
+import { generateColorWallPageUrl, fullColorName } from '../../../shared/helpers/ColorUtils'
+import type { Color } from '../../../shared/types/Colors'
 
 type StateProps = {
+  color?: Color,
   family?: string,
   section?: string
 }
@@ -16,13 +18,14 @@ type OwnProps = {}
 
 type Props = StateProps & OwnProps
 
-// TODO: Needs styling
 class BackToColorWall extends PureComponent<Props> {
   render () {
-    const { section, family } = this.props
+    const { section, family, color } = this.props
 
-    // this will degrade gracefully if section and/or family do(es) not exist in redux down to the root color wall URL
-    const colorWallUrl = generateColorWallPageUrl(section, family)
+    // this will degrade gracefully if section and/or family and or color do(es) not exist in redux down to the root color wall URL
+    const colorWallUrl = color
+      ? generateColorWallPageUrl(section, family, color.id, fullColorName(color.brandKey, color.colorNumber, color.name))
+      : generateColorWallPageUrl(section, family)
 
     return (
       <div className='color-wall-mode-btns'>
@@ -46,7 +49,8 @@ class BackToColorWall extends PureComponent<Props> {
 const mapStateToProps = (state, props) => {
   return {
     family: state.colors.family.family,
-    section: state.colors.family.section
+    section: state.colors.family.section,
+    color: state.colors.colorWallActive
   }
 }
 
