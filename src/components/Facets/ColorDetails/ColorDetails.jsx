@@ -35,7 +35,6 @@ type State = {
 
 class ColorDetails extends PureComponent<Props, State> {
   static baseClass = 'color-info'
-  static tabNamesForGA = ['View Coord Color Section', 'View Similar Color Section', 'View Color Info Section']
 
   state: State = {
     sceneIsDisplayed: true,
@@ -66,37 +65,35 @@ class ColorDetails extends PureComponent<Props, State> {
       return null
     }
 
-    const activeColorIsDark = activeColor.isDark
-
     // perform some css class logic & scaffolding instead of within the DOM itself
     let contrastingTextColor = varValues.colors.black
 
-    let SWATCH_CLASSES = [
+    const SWATCH_CLASSES = [
       `${ColorDetails.baseClass}__max-chip`
     ]
-    let DISPLAY_TOGGLES_WRAPPER = [
+    const DISPLAY_TOGGLES_WRAPPER = [
       `${ColorDetails.baseClass}__display-toggles-wrapper`
     ]
 
-    let SWATCH_SIZE_WRAPPER_CLASSES = DISPLAY_TOGGLES_WRAPPER.slice()
+    const SWATCH_SIZE_WRAPPER_CLASSES = DISPLAY_TOGGLES_WRAPPER.slice()
     SWATCH_SIZE_WRAPPER_CLASSES.push(`${ColorDetails.baseClass}__display-toggles-wrapper--swatch-size`)
 
-    let MAIN_INFO_CLASSES = [
+    const MAIN_INFO_CLASSES = [
       `${ColorDetails.baseClass}__main-info`
     ]
 
-    let SWATCH_SIZE_TOGGLE_BUTTON_CLASSES = [
+    const SWATCH_SIZE_TOGGLE_BUTTON_CLASSES = [
       `${ColorDetails.baseClass}__display-toggle-button`,
       `${ColorDetails.baseClass}__swatch-size-toggle-button`
     ]
-    let ALT_SWATCH_SIZE_TOGGLE_BUTTON_CLASSES = SWATCH_SIZE_TOGGLE_BUTTON_CLASSES.slice()
+    const ALT_SWATCH_SIZE_TOGGLE_BUTTON_CLASSES = SWATCH_SIZE_TOGGLE_BUTTON_CLASSES.slice()
     ALT_SWATCH_SIZE_TOGGLE_BUTTON_CLASSES.push(`${ColorDetails.baseClass}__display-toggle-button--alt`)
 
-    let SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES = [
+    const SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES = [
       `${ColorDetails.baseClass}__display-toggle-button`,
       `${ColorDetails.baseClass}__scene-display-toggle-button`
     ]
-    let ALT_SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES = SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.slice()
+    const ALT_SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES = SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.slice()
     ALT_SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.push(`${ColorDetails.baseClass}__scene-display-toggle-button--alt`)
 
     if (chipIsMaximized) {
@@ -109,7 +106,7 @@ class ColorDetails extends PureComponent<Props, State> {
       SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.push(`${ColorDetails.baseClass}__display-toggle-button--active`)
       ALT_SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.push(`${ColorDetails.baseClass}__display-toggle-button--active`)
     }
-    if (activeColorIsDark) {
+    if (activeColor.isDark) {
       contrastingTextColor = varValues.colors.white
       SWATCH_SIZE_TOGGLE_BUTTON_CLASSES.push(`${ColorDetails.baseClass}__display-toggle-button--dark-color`)
       SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.push(`${ColorDetails.baseClass}__display-toggle-button--dark-color`)
@@ -169,7 +166,6 @@ class ColorDetails extends PureComponent<Props, State> {
                 </FormattedMessage>
               </div>
             </button>
-
             <div className={MAIN_INFO_CLASSES.join(' ')} style={{ backgroundColor: activeColor.hex }}>
               <ColorViewer color={activeColor} />
               <ColorStrip key={activeColor.id} colors={colors} color={activeColor} />
@@ -222,15 +218,6 @@ class ColorDetails extends PureComponent<Props, State> {
     )
   }
 
-  componentDidMount () {
-    const { match: { params } } = this.props
-    const color = this.getColorById(params.colorId)
-
-    if (color) {
-      ReactGA.pageview(`color-detail/${color.brandKey} ${color.colorNumber} - ${color.name}`)
-    }
-  }
-
   componentDidUpdate () {
     const { match: { params }, scenesLoaded } = this.props
 
@@ -238,16 +225,19 @@ class ColorDetails extends PureComponent<Props, State> {
     const color = this.getColorById(params[ROUTE_PARAM_NAMES.COLOR_ID])
     if (scenesLoaded && color) {
       this.props.paintAllMainSurfaces(color)
+
+      // log GA event
+      ReactGA.pageview(`color-detail/${color.brandKey} ${color.colorNumber} - ${color.name}`)
     }
   }
 
   getColorById (colorId) {
     const { colors } = this.props
 
+    // check if the colors object has the id
     if (!has(colors, colorId)) {
       return null
     }
-
     return colors[colorId]
   }
 
@@ -268,7 +258,8 @@ class ColorDetails extends PureComponent<Props, State> {
   }
 
   reportTabSwitchToGA (index) {
-    const tabReportingName = ColorDetails.tabNamesForGA[index]
+    const tabNames = ['View Coord Color Section', 'View Similar Color Section', 'View Color Info Section']
+    const tabReportingName = tabNames[index]
 
     ReactGA.event({
       category: 'Color Detail',

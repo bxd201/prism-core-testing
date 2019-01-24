@@ -3,13 +3,16 @@ import React, { PureComponent } from 'react'
 import { once } from 'lodash'
 import memoizee from 'memoizee'
 import { Link } from 'react-router-dom'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import { type Color } from '../../../../shared/types/Colors'
 import { numToAlphaString, arrayToSpacedString } from '../../../../shared/helpers/StringUtils'
 import { fullColorName, fullColorNumber } from '../../../../shared/helpers/ColorUtils'
 import { ConfigurationContextConsumer } from '../../../../contexts/ConfigurationContext'
 import { CLASS_NAMES } from './shared'
+
+import AddButton from './ColorWallSwatchButtons/AddButton'
+import DetailsLink from './ColorWallSwatchButtons/DetailsLink'
+import InfoButton from './ColorWallSwatchButtons/InfoButton'
 
 import './ColorWallSwatch.scss'
 
@@ -58,21 +61,10 @@ class ColorWallSwatch extends PureComponent<Props> {
               <div className={CLASS_NAMES.CONTENT}>
                 <p className={CLASS_NAMES.CONTENT_NUMBER}>{`${fullColorNumber(color.brandKey, color.colorNumber)}`}</p>
                 <p className={CLASS_NAMES.CONTENT_NAME}>{color.name}</p>
-                {(onAdd && config.ColorWall.displayAddButton) && (
-                  <button /* autoFocus */ onClick={this.handleAddClick} className={CLASS_NAMES.CONTENT_ADD}>
-                    <FontAwesomeIcon icon='plus' size='1x' />
-                  </button>
-                )}
-
-                {config.ColorWall.displayViewDetails && detailsLink && (
-                  <Link to={detailsLink} style={temporaryViewDetailStyles}>View Details</Link>
-                )}
-
-                {config.ColorWall.displayAddButton && (
-                  <button type='button' onClick={onAdd} className={CLASS_NAMES.CONTENT_DETAILS}>
-                    <FontAwesomeIcon icon='info' size='1x' />
-                  </button>
-                )}
+                {/* Stateless components to handle whether to display the add, details, and info buttons */}
+                <AddButton config={config} onAdd={(onAdd)} onClick={this.handleAddClick} />
+                <DetailsLink config={config} detailsLink={detailsLink} styles={temporaryViewDetailStyles} />
+                <InfoButton config={config} onClick={onAdd} />
               </div>
             </div>
           )}
