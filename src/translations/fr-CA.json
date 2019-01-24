@@ -11,5 +11,6 @@
   "RESTORE_COLOR_SWATCH_TO_DEFAULT_SIZE": "Restaurer la nuance de couleur à la taille par défaut",
   "SIMILAR_COLORS": "Couleurs similaires",
   "TO_NIGHT_VIEW" : "Changer en vue de nuit",
-  "TO_DAY_VIEW" : "Changer en vue du jour"
+  "TO_DAY_VIEW" : "Changer en vue du jour",
+  "VIEW_DETAILS": "Voir Les Détails"
 }
