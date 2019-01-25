@@ -2,8 +2,9 @@
 import React, { PureComponent } from 'react'
 // $FlowIgnore -- no defs for react-virtualized
 import { Grid, AutoSizer } from 'react-virtualized'
-import { Scroll } from 'scroll-utility'
 import { isEqual, isEmpty } from 'lodash'
+// $FlowIgnore -- no defs for scroll
+import * as scroll from 'scroll'
 
 import { varValues } from 'variables'
 // import ZoomTransitioner, { type ZoomPositionerProps, TransitionModes } from './ZoomTransitioner/ZoomTransitioner'
@@ -55,7 +56,7 @@ type State = DerivedStateFromProps & {
 class ColorWallSwatchList extends PureComponent<Props, State> {
   _DOMNode = void (0)
   _scrollTimeout = void (0)
-  _scrollManager = void (0)
+  _scrollInstances = [] // contains references to active scrolls so we can canel them if need be
   // internal tracking of current grid size
   _gridWidth: number = 0
   _gridHeight: number = 0
@@ -351,36 +352,20 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
       const gridEl = this._DOMNode.querySelector('.ReactVirtualized__Grid')
 
       if (gridEl) {
-        if (!this._scrollManager) {
-          this._scrollManager = new Scroll(gridEl)
-        }
-
         clearTimeout(this._scrollTimeout)
 
         this._scrollTimeout = setTimeout(() => {
           const scrollToX = newCoords.x * this._cellSize - (this._gridWidth - this._cellSize) / 2
           const scrollToY = newCoords.y * this._cellSize - (this._gridHeight - this._cellSize) / 2
 
-          if (this._scrollManager) {
-            // stop any other currently-running scroll animations on this element
-            this._scrollManager.stopAllAnimations()
-
-            // scroll X and Y axes separately (can't do both at once, but the animations stack)
-
-            // TODO: create flowtype skeleton for instances of Scroll
-            // $FlowIgnore -- Flow doesn't know what instance methods exist on Scroll
-            this._scrollManager.scrollTo('value', scrollToX, {
-              duration: GRID_AUTOSCROLL_SPEED,
-              horizontal: true
-            })
-
-            // TODO: create flowtype skeleton for instances of Scroll
-            // $FlowIgnore -- Flow doesn't know what instance methods exist on Scroll
-            this._scrollManager.scrollTo('value', scrollToY, {
-              duration: GRID_AUTOSCROLL_SPEED,
-              horizontal: false
-            })
+          while (this._scrollInstances.length) {
+            this._scrollInstances.pop().call()
           }
+
+          this._scrollInstances = [
+            scroll.left(gridEl, scrollToX, { duration: GRID_AUTOSCROLL_SPEED }),
+            scroll.top(gridEl, scrollToY, { duration: GRID_AUTOSCROLL_SPEED })
+          ]
         }, varValues.colorWall.swatchActivateDelayMS + varValues.colorWall.swatchActivateDurationMS)
       }
     }
