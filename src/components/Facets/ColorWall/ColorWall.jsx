@@ -1,7 +1,7 @@
 // @flow
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
-import { injectIntl, type intlShape } from 'react-intl'
+import { injectIntl, type intlShape, FormattedMessage } from 'react-intl'
 import { Link, NavLink } from 'react-router-dom'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -99,7 +99,7 @@ class ColorWall extends PureComponent<Props, State> {
           <div className={`${MODE_CLASS_NAMES.CELL} ${MODE_CLASS_NAMES.RIGHT}`}>
             <button className={MODE_CLASS_NAMES.BUTTON} disabled={!families || families.length <= 1} onClick={this.toggleViewFamilies}>
               <FontAwesomeIcon icon={['fa', 'palette']} pull='left' />
-              <span className={MODE_CLASS_NAMES.DESC}>Color Families</span>
+              <span className={MODE_CLASS_NAMES.DESC}><FormattedMessage id='COLOR_FAMILIES' /></span>
             </button>
           </div>
         </div>
@@ -130,7 +130,7 @@ class ColorWall extends PureComponent<Props, State> {
             <div className={`${MODE_CLASS_NAMES.CELL} ${MODE_CLASS_NAMES.RIGHT}`}>
               <Link className={MODE_CLASS_NAMES.BUTTON} to={generateColorWallPageUrl(section)} onClick={() => this.toggleViewFamilies(false)}>
                 <FontAwesomeIcon icon={['fa', 'times']} pull='left' />
-                <span className={MODE_CLASS_NAMES.DESC}>Cancel</span>
+                <span className={MODE_CLASS_NAMES.DESC}><FormattedMessage id='CANCEL' /></span>
               </Link>
             </div>
           ) : null}

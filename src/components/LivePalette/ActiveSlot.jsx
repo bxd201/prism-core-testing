@@ -67,12 +67,12 @@ class ActiveSlot extends PureComponent<Props> {
 }
 
 ActiveSlot.propTypes = {
-  index: PropTypes.number,
+  index: PropTypes.number, // eslint-disable-line
   color: PropTypes.object,
   isDragging: PropTypes.bool,
   remove: PropTypes.func,
   onClick: PropTypes.func,
-  moveColor: PropTypes.func,
+  moveColor: PropTypes.func, // eslint-disable-line
   connectDragSource: PropTypes.func,
   connectDropTarget: PropTypes.func
 }
