@@ -64,7 +64,7 @@ class ColorWallSwatch extends PureComponent<Props> {
                 {/* Stateless components to handle whether to display the add, details, and info buttons */}
                 <AddButton config={config} onAdd={(onAdd)} onClick={this.handleAddClick} />
                 <DetailsLink config={config} detailsLink={detailsLink} styles={temporaryViewDetailStyles} />
-                <InfoButton config={config} onClick={onAdd} />
+                <InfoButton config={config} detailsLink={detailsLink} />
               </div>
             </div>
           )}
