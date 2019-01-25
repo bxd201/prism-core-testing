@@ -50,7 +50,7 @@
     "redux": "4.0.1",
     "redux-logger": "3.0.6",
     "redux-thunk": "2.3.0",
-    "scroll-utility": "2.0.3"
+    "scroll": "2.0.3"
   },
   "devDependencies": {
     "@babel/cli": "7.1.2",
