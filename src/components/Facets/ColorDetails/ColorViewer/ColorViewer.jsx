@@ -22,9 +22,9 @@ class ColorViewer extends PureComponent<Props> {
             <span className={`${ColorViewer.baseClass}__name`}>{color.name}</span>
           </h1>
           <h2 className={`${ColorViewer.baseClass}__type`}>
-            {(color.isInterior) ? 'Interior' : ''}
+            {(color.isInterior) ? <FormattedMessage id='INTERIOR' /> : ''}
             {(color.isInterior && color.isExterior) ? ' / ' : ''}
-            {(color.isExterior) ? 'Exterior' : ''}
+            {(color.isExterior) ? <FormattedMessage id='EXTERIOR' /> : ''}
           </h2>
           {color.storeStripLocator && (
             <h3 className={`${ColorViewer.baseClass}__rack-location`}>
