@@ -1,9 +1,12 @@
+import '@babel/polyfill'
+
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
 import { IntlProvider } from 'react-intl'
 import { BrowserRouter, HashRouter } from 'react-router-dom'
 import ReactGA from 'react-ga'
+import { toArray } from 'lodash'
 
 import { GOOGLE_ANALYTICS_UID } from './constants/globals'
 
@@ -90,7 +93,7 @@ const renderAppInElement = (el) => {
 }
 
 const bindReactToDOM = () => {
-  document.querySelectorAll('.__react-root').forEach(renderAppInElement)
+  toArray(document.querySelectorAll('.__react-root')).forEach(renderAppInElement)
 }
 
 bindReactToDOM()

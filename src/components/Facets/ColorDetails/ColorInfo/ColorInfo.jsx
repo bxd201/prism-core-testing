@@ -1,12 +1,12 @@
+// @flow
 import React from 'react'
-import PropTypes from 'prop-types'
 import { FormattedMessage } from 'react-intl'
 
-const ColorInfo = ({ color }) => {
+const ColorInfo = ({ color }: Object) => {
   return (
     <div className='color-info__details-tab-wrapper'>
       <h5 className='visually-hidden'><FormattedMessage id='DETAILS' /></h5>
-      {/* <a className='color-info__family-link' href=''>View All Orange Paint Colors </a> */}
+      {/* <a className='color-info__family-link' href='/color'>View All Orange Paint Colors </a> */}
       <ul className='color-info__visual-specifications'>
         <li className='color-info__visual-specification'>
           <dl>
@@ -39,10 +39,6 @@ const ColorInfo = ({ color }) => {
       )}
     </div>
   )
-}
-
-ColorInfo.propTypes = {
-  color: PropTypes.object
 }
 
 export default ColorInfo
