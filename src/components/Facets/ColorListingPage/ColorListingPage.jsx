@@ -50,7 +50,7 @@ const ColorDetailsComponent = (props) => {
 
 // overriding the default configuration with updated CW ones to hide the info and add buttons on the swatch
 // also performing manual route matching here
-const ColorWallComponent = (props) => {
+const ColorWallComponent = (props: Object) => {
   const { match, ...other } = props
   const captured = match.params[0]
 
