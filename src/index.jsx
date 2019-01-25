@@ -83,7 +83,7 @@ const renderAppInElement = (el) => {
   const RouterRender = (routeType === 'browser') ? BrowserRouterRender : HashRouterRender
 
   ReactDOM.render(
-    <IntlProvider locale={language} messages={languages[language]}>
+    <IntlProvider locale={language} messages={languages[language]} textComponent={React.Fragment}>
       <Provider store={store}>
         { RouterRender }
       </Provider>
