@@ -45,14 +45,6 @@ class ColorWallSwatch extends PureComponent<Props> {
     }
     let contents = null
 
-    const temporaryViewDetailStyles = {
-      position: 'absolute',
-      bottom: '1em',
-      left: '.75em',
-      color: (color.isDark) ? 'white' : 'black',
-      textDecoration: 'none'
-    }
-
     if (showContents) {
       contents = (
         <ConfigurationContextConsumer>
@@ -62,9 +54,9 @@ class ColorWallSwatch extends PureComponent<Props> {
                 <p className={CLASS_NAMES.CONTENT_NUMBER}>{`${fullColorNumber(color.brandKey, color.colorNumber)}`}</p>
                 <p className={CLASS_NAMES.CONTENT_NAME}>{color.name}</p>
                 {/* Stateless components to handle whether to display the add, details, and info buttons */}
-                <AddButton config={config} onAdd={(onAdd)} onClick={this.handleAddClick} />
-                <DetailsLink config={config} detailsLink={detailsLink} styles={temporaryViewDetailStyles} />
-                <InfoButton config={config} detailsLink={detailsLink} />
+                <AddButton config={config} onAdd={(onAdd)} onClick={this.handleAddClick} className={CLASS_NAMES.CONTENT_ADD} />
+                <InfoButton config={config} detailsLink={detailsLink} className={CLASS_NAMES.CONTENT_INFO} />
+                <DetailsLink config={config} detailsLink={detailsLink} className={CLASS_NAMES.CONTENT_DETAILS} />
               </div>
             </div>
           )}

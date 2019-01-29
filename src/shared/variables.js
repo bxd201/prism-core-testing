@@ -14,7 +14,7 @@ module.exports.varValues = {
     title: '2rem'
   },
   colors: {
-    primary: '#004b84',
+    primary: '#0069af',
     secondary: '#4f5967',
     warning: '#f2c500',
     success: '#1fce6d',
@@ -24,7 +24,7 @@ module.exports.varValues = {
     nearBlack: '#2e2e2e',
     black: '#000000',
     white: '#ffffff',
-    swBlue: '#2c97de'
+    swBlue: '#0069af'
   },
   colorWall: {
     swatchColumns: 56, // default SW color chunks

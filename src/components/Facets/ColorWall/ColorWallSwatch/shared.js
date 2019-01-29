@@ -13,6 +13,7 @@ export const CLASS_NAMES = {
   CONTENT_NAME: 'color-swatch-inner__content__name',
   CONTENT_ADD: 'color-swatch-inner__content__add',
   CONTENT_DETAILS: 'color-swatch-inner__content__details',
+  CONTENT_INFO: 'color-swatch-inner__content__info',
   SWATCH: 'color-wall-swatches__swatch',
   ENGAGE_LINK: 'color-swatch-inner__engage-link'
 }
