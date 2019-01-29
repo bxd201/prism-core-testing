@@ -1,35 +1,151 @@
+// ------------------------------------------------------------------
+// BEGIN COLOR WALL <-> COLOR DETAILS TRANSITION
+
+@keyframes slideDetailsIn {
+  0% {
+    transform: translate3d(100%, 0, 0);
+  }
+  100% {
+    transform: translate3d(0%, 0, 0);
+  }
+}
+
+@keyframes slideWallIn {
+  0% {
+    transform: translate3d(-100%, 0, 0);
+  }
+  100% {
+    transform: translate3d(0%, 0, 0);
+  }
+}
+
 .color-wall-transitioner {
   overflow: hidden;
   position: relative;
 
-  &__slide {
-    &--enter {
+  .cdp-slide {
+    &-enter,
+    &-enter-active,
+    &-enter-done {
+      // keep duration significatnly less than the transitionTime that JS is using
+      // to reduce jumpy transitions and background flashing in Chrome
+      animation-duration: #{getVar('colorWall.transitionTime')}ms;
+      animation-fill-mode: both;
+      animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      backface-visibility: hidden;
       background: white;
+      position: relative;
+      z-index: 100;
+
+      &.cdp-slide-to-wall {
+        animation-name: slideWallIn;
+      }
+
+      &.cdp-slide-to-details {
+        animation-name: slideDetailsIn;
+      }
+    }
+
+    &-enter-done {
+      transform: translate3d(0%, 0, 0);
+    }
+
+    &-exit,
+    &-exit-active,
+    &-exit-done {
+      left: 0;
+      position: absolute;
+      top: 0;
+      transform: unset;
+      transition: filter #{getVar('colorWall.transitionTime')}ms ease-out;
+      width: 100%;
+      z-index: 0;
+    }
+
+    &-exit {
+      filter: brightness(1);
+      will-change: filter;
+    }
+
+    &-exit-active,
+    &-exit-done {
+      filter: brightness(.5);
+    }
+
+    &-exit-done {
+      display: none;
+    }
+  }
+}
+
+// END COLOR WALL <-> COLOR DETAILS TRANSITION
+// ------------------------------------------------------------------
+
+// ------------------------------------------------------------------
+// BEGIN COLOR WALL <-> COLOR SWATCH ACTIVE TRANSITION
+
+.color-wall-zoom-transitioner {
+  $zoom-out-amt: .9;
+  $zoom-in-amt: 1;
+
+  overflow: hidden;
+  position: relative;
+
+  &__zoom-in {
+    &--enter {
       backface-visibility: hidden;
       position: relative;
-      transform: translate3d(100%, 0, 0);
+      opacity: 0;
+      transform: scale($zoom-out-amt);
       z-index: 1;
     }
 
     &--enter-active,
     &--enter-done {
-      transform: translate3d(0%, 0, 0);
-      transition: transform #{getVar('colorWall.transitionTime') * .6}ms ease-out;
+      opacity: 1;
+      transform: scale($zoom-in-amt);
+      transition: all #{getVar('colorWall.transitionTime') * .6}ms ease-out;
     }
 
     &--exit {
       backface-visibility: hidden;
-      opacity: 1;
       position: absolute;
       top: 0;
       width: 100%;
       z-index: 0;
+      transform: scale($zoom-in-amt);
     }
 
     &--exit-active,
     &--exit-done {
+      transform: scale($zoom-out-amt);
+      transition: all #{getVar('colorWall.transitionTime')}ms ease-out;
+    }
+
+    &--exit-done {
+      display: none;
+    }
+  }
+
+  &__zoom-out {
+    &--enter {
+      backface-visibility: hidden;
+      position: relative;
       opacity: 0;
-      transition: opacity #{getVar('colorWall.transitionTime')}ms ease-in;
+      z-index: 1;
+    }
+
+    &--enter-active,
+    &--enter-done {
+      opacity: 1;
+      transition: all #{getVar('colorWall.transitionTime') * .6}ms ease-out;
+    }
+
+    &--exit {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      z-index: 0;
     }
 
     &--exit-done {
@@ -37,3 +153,6 @@
     }
   }
 }
+
+// END COLOR WALL <-> COLOR SWATCH ACTIVE TRANSITION
+// ------------------------------------------------------------------

@@ -1,3 +1,4 @@
+/* eslint-disable */
 // @flow
 import React, { PureComponent } from 'react'
 import memoizee from 'memoizee'
@@ -40,11 +41,9 @@ class SherwinColorWall extends PureComponent<Props> {
 
   render () {
     return (
-      <React.Fragment>
-        <div className='color-wall-wall'>
-          { this.colorFamily() }
-        </div>
-      </React.Fragment>
+      <div className='color-wall-wall'>
+        { this.colorFamily() }
+      </div>
     )
   }
 
@@ -114,6 +113,7 @@ class SherwinColorWall extends PureComponent<Props> {
             key={`${key}-showAll`}
             colors={colorsGrid} />
         )}
+
         {activeColor && (
           <div className='color-wall-wall__btns'>
             <Link to={generateColorWallPageUrl(section, family)} title='Zoom Out' className='color-wall-wall__btns__btn'>

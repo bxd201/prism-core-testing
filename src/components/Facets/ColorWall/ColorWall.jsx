@@ -3,11 +3,13 @@ import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
 import { injectIntl, type intlShape } from 'react-intl'
 import { Link, NavLink } from 'react-router-dom'
+import { TransitionGroup, CSSTransition } from 'react-transition-group'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { loadColors } from '../../../actions/loadColors'
 import { add } from '../../../actions/live-palette'
 import { generateColorWallPageUrl } from '../../../shared/helpers/ColorUtils'
+import { varValues } from 'variables'
 import type { ColorSetPayload, ColorMap, Color } from '../../../shared/types/Colors'
 
 import { MODE_CLASS_NAMES } from './shared'
@@ -70,7 +72,9 @@ class ColorWall extends PureComponent<Props, State> {
     const { colors, family, sections, families, section, brights, colorMap, colorWallActive, loading, addToLivePalette } = this.props
 
     const hasSections = !!(sections && sections.length)
-    const _showColorFamilies = family || showColorFamilies
+    const hasFamilies = !!(families && families.length > 1)
+    const _showColorFamilies = hasFamilies && (family || showColorFamilies)
+    const transKey = colorWallActive ? 'active' : ''
     let sectionButtons = void (0)
     let familyButtons = void (0)
 
@@ -106,13 +110,14 @@ class ColorWall extends PureComponent<Props, State> {
       )
     }
 
-    if (_showColorFamilies && families && families.length > 1) {
+    if (_showColorFamilies) {
       familyButtons = (
         <div className={MODE_CLASS_NAMES.COL}>
           <div className={MODE_CLASS_NAMES.CELL}>
             {/* <FontAwesomeIcon className={`${MODE_CLASS_NAMES.LG} ${MODE_CLASS_NAMES.LEFT}`} icon={['fa', 'palette']} pull='left' size='lg' /> */}
             <div className={MODE_CLASS_NAMES.OPTION_CONTAINER}>
               <ul className={MODE_CLASS_NAMES.OPTIONS}>
+                {/* $FlowIgnore -- Flow doesn't realize families must be defined and be iterable to get here */}
                 {families.map((thisFamily: string) => {
                   return (
                     <li className={MODE_CLASS_NAMES.OPTION} key={thisFamily}>
@@ -148,19 +153,25 @@ class ColorWall extends PureComponent<Props, State> {
           {sectionButtons}
           {familyButtons}
         </div>
-        <div className='sw-colorwall'>
-          <SherwinColorWall
-            family={family}
-            families={families}
-            // sections={sections}
-            section={section}
-            colors={colors}
-            brights={brights}
-            colorMap={colorMap}
-            activeColor={colorWallActive}
-            addToLivePalette={addToLivePalette}
-          />
-        </div>
+        <TransitionGroup className='sw-colorwall color-wall-zoom-transitioner'>
+          <CSSTransition
+            key={transKey}
+            timeout={varValues.colorWall.transitionTime}
+            unmountOnExit
+            mountOnEnter
+            classNames={transKey ? 'color-wall-zoom-transitioner__zoom-in color-wall-zoom-transitioner__zoom-in-' : 'color-wall-zoom-transitioner__zoom-out color-wall-zoom-transitioner__zoom-out-'}>
+            <SherwinColorWall
+              family={family}
+              families={families}
+              section={section}
+              colors={colors}
+              brights={brights}
+              colorMap={colorMap}
+              activeColor={colorWallActive}
+              addToLivePalette={addToLivePalette}
+            />
+          </CSSTransition>
+        </TransitionGroup>
       </div>
     )
 
