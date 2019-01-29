@@ -96,6 +96,8 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
         }
       })
     })
+
+    this._DOMNode = React.createRef()
   }
 
   static getDerivedStateFromProps (props: Props, state: State) {
@@ -289,7 +291,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     return (
       <div className={`color-wall-swatch-list ${!showAll ? 'color-wall-swatch-list--zoomed' : 'color-wall-swatch-list--show-all'}`}
         onKeyDown={this.handleKeyDown}
-        ref={el => { this._DOMNode = el }} role='presentation'>
+        ref={this._DOMNode} role='presentation'>
 
         {transitioner}
 
@@ -311,12 +313,12 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
                 cellRenderer={this.cellRenderer}
                 columnWidth={size}
                 columnCount={columnCount}
-                height={height}
                 overscanColumnCount={6}
                 overscanRowCount={6}
                 rowHeight={size}
                 rowCount={rowCount}
                 width={width}
+                height={height}
                 overscanIndicesGetter={overscanIndicesGetter}
                 {...addlGridProps}
               />
@@ -347,9 +349,9 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     ])
 
     // if the grid's DOM node exists, AND oldCoords and newCoords both exist, AND they have different values...
-    if (this._DOMNode && (newCoords && oldCoords && !isEqual(oldCoords, newCoords))) {
+    if (this._DOMNode.current && (newCoords && oldCoords && !isEqual(oldCoords, newCoords))) {
       // ... then we can assume at this point that we need to visually scroll the grid to the new focal point
-      const gridEl = this._DOMNode.querySelector('.ReactVirtualized__Grid')
+      const gridEl = this._DOMNode.current.querySelector('.ReactVirtualized__Grid')
 
       if (gridEl) {
         clearTimeout(this._scrollTimeout)
