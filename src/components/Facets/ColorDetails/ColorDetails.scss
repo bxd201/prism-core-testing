@@ -57,6 +57,7 @@ $top-level-class-string: '.color-info';
   $strip-chip-size: 2rem;
   $strip-chip-margin: $strip-chip-size * 0.1;
   $width-thin: 0.125rem;
+  $width-small: 0.250rem;
   $width-medium: 1rem;
   $tab-set-padding: 0.5rem 0.25rem;
 
@@ -281,15 +282,14 @@ $top-level-class-string: '.color-info';
 
   &__tab-list {
     align-items: center;
-    border-top: $width-thin solid $neutral-background-color;
+    border-right: $width-small solid $neutral-background-color;
+    border-top: $width-small solid $neutral-background-color;
     display: flex;
-    flex-direction: column;
     flex-shrink: 0;
     list-style: none;
   }
 
   &__tab {
-    border-bottom: $width-thin solid $neutral-background-color;
     color: $color-near-black;
     cursor: pointer;
     flex-grow: 1;
@@ -333,6 +333,7 @@ $top-level-class-string: '.color-info';
 
   &__tab-panel {
     background-color: $neutral-background-color;
+    border-top: $width-thin solid $neutral-background-color;
     box-sizing: border-box;
     overflow: hidden;
 
@@ -347,13 +348,13 @@ $top-level-class-string: '.color-info';
     flex-direction: column;
     height: 100%;
     justify-content: stretch;
-    margin: $width-thin 0;
+    margin: $width-thin $width-small $width-thin 0;
     list-style: none;
   }
 
   &__coord-color {
     background: #bbc;
-    border-bottom: $width-thin solid $neutral-background-color;
+    border-bottom: $width-small solid $neutral-background-color;
     color: $color-black;
     display: flex;
     flex-direction: column;
@@ -386,22 +387,20 @@ $top-level-class-string: '.color-info';
   }
 
   &__similar-colors {
-    align-items: center;
     background-color: $neutral-background-color;
     display: flex;
     flex-wrap: wrap;
     height: 100%;
-    justify-content: flex-start;
     list-style: none;
-    overflow: hidden;
     padding: $width-thin / 2;
   }
 
   &__similar-color {
+    border-right: $width-small solid $neutral-background-color;
+    border-bottom: $width-small solid $neutral-background-color;
     display: block;
-    height: calc(50% - #{$width-thin * 1.5});
-    margin: $width-thin / 2;
-    width: calc(16.666666665% - (#{$width-thin} * 1.66666666));
+    height: 50%;
+    width: 16.666666665%;
   }
 
   &__similar-color-info {
@@ -474,7 +473,6 @@ $top-level-class-string: '.color-info';
 
     &__tab {
       border-bottom: none;
-      border-right: $width-thin solid $neutral-background-color;
       width: auto;
 
       &:last-child.react-tabs__tab--selected {
