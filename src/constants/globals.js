@@ -29,7 +29,7 @@ export const SW_CHUNK_SIZE: number = 7
 // TODO: include with translations?
 export const ROUTE_PARAMS = Object.freeze({
   ACTIVE: 'active',
-  COLOR_DETAIL: 'color',
+  COLOR_DETAIL: 'color-detail',
   COLOR_WALL: 'color-wall',
   SECTION: 'section',
   FAMILY: 'family',

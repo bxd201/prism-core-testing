@@ -34,7 +34,7 @@ module.exports.varValues = {
     swatchActivateDelayMS: 0,
     swatchDeactivateDurationMS: 200,
     swatchDeactivateDelayMS: 0,
-    transitionTime: 500
+    transitionTime: 300
   },
   scenes: {
     hitAreaOutlineColor: '255, 0, 255' // RGB value of hit area outline (must be RGB, not hex)
