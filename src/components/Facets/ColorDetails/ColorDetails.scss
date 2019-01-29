@@ -249,8 +249,9 @@ $top-level-class-string: '.color-info';
     align-items: center;
     display: none;
     justify-content: space-around;
-    height: 1.2rem;
-    width: 2.4rem
+    height: 1.5rem;
+    width: 2rem;
+    transform: rotate(90deg);
   }
 
   &__scene-display-toggle-button {

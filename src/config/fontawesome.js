@@ -1,3 +1,5 @@
+// https://fontawesome.com/icons/search
+
 // fontawesome imports
 import { library, config } from '@fortawesome/fontawesome-svg-core'
 
@@ -17,25 +19,22 @@ import {
 
 // lights
 import {
-  faArrowLeft,
-  faArrowRight,
   faHome as falHome,
   faPlusCircle,
   faSun as falSun,
   faThLarge,
-  faMoon as falMoon
+  faMoon as falMoon,
+  faExpandAlt
 } from '@fortawesome/pro-light-svg-icons'
 
 // regulars
-import {
-  faBatteryThreeQuarters
-} from '@fortawesome/pro-regular-svg-icons'
+// import {
+//   faExpandAlt
+// } from '@fortawesome/pro-regular-svg-icons'
 
 // populate with all the FontAwesome svg icons we want to use
 const faIcons = [
-  faArrowLeft,
-  faArrowRight,
-  faBatteryThreeQuarters,
+  faExpandAlt,
   faHome,
   falHome,
   faMoon,
