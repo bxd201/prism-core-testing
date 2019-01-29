@@ -277,24 +277,14 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     const rowCount = colorIdGrid.length
     const columnCount = getTotalWidthOf2dArray(colorIdGrid)
     let addlGridProps = {}
-    let transitioner = null
 
     if (focusCoords && focusCoords.length && needsInitialFocus) {
       addlGridProps.scrollToColumn = focusCoords[0]
       addlGridProps.scrollToRow = focusCoords[1]
     }
 
-    // if (zoomingIn && zoomerInitProps) {
-    //   transitioner = <ZoomTransitioner position={zoomerInitProps} mode={TransitionModes.ZOOM_IN} />
-    // }
-
     return (
-      <div className={`color-wall-swatch-list ${!showAll ? 'color-wall-swatch-list--zoomed' : 'color-wall-swatch-list--show-all'}`}
-        onKeyDown={this.handleKeyDown}
-        ref={this._DOMNode} role='presentation'>
-
-        {transitioner}
-
+      <div className={`color-wall-swatch-list ${!showAll ? 'color-wall-swatch-list--zoomed' : 'color-wall-swatch-list--show-all'}`} ref={this._DOMNode}>
         <AutoSizer onResize={this.handleGridResize}>
           {({ height, width }) => {
             let size = maxCellSize
