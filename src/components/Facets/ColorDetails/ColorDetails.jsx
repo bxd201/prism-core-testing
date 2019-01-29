@@ -122,13 +122,13 @@ class ColorDetails extends PureComponent<Props, State> {
           <div className={SWATCH_CLASSES.join(' ')} style={{ backgroundColor: activeColor.hex }} />
           <div className={SWATCH_SIZE_WRAPPER_CLASSES.join(' ')}>
             <button className={SWATCH_SIZE_TOGGLE_BUTTON_CLASSES.join(' ')} onClick={this.toggleChipMaximized}>
-              <FontAwesomeIcon className={`${ColorDetails.baseClass}__display-toggles-icon`} icon={['fal', 'arrow-left']} color={contrastingTextColor} /><FontAwesomeIcon className={`${ColorDetails.baseClass}__display-toggles-icon`} icon={['fal', 'arrow-right']} color={contrastingTextColor} />
+              <FontAwesomeIcon className={`${ColorDetails.baseClass}__display-toggles-icon`} icon={['fal', 'expand-alt']} color={contrastingTextColor} size={'2x'} />
               <div className={`${ColorDetails.baseClass}__scene-toggle-copy`}>
                 <FormattedMessage id='MAXIMIZE_COLOR_SWATCH' />
               </div>
             </button>
             <button className={ALT_SWATCH_SIZE_TOGGLE_BUTTON_CLASSES.join(' ')} onClick={this.toggleChipMaximized}>
-              <FontAwesomeIcon className={`${ColorDetails.baseClass}__display-toggles-icon`} icon={['fal', 'arrow-right']} color={contrastingTextColor} /><FontAwesomeIcon className={`${ColorDetails.baseClass}__display-toggles-icon`} icon={['fal', 'arrow-left']} color={contrastingTextColor} />
+              <FontAwesomeIcon className={`${ColorDetails.baseClass}__display-toggles-icon`} icon={['fal', 'expand-alt']} color={contrastingTextColor} size={'2x'} />
               <div className={`${ColorDetails.baseClass}__scene-toggle-copy`}>
                 <FormattedMessage id='RESTORE_COLOR_SWATCH_TO_DEFAULT_SIZE' />
               </div>

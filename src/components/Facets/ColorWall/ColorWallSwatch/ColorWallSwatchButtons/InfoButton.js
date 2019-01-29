@@ -1,15 +1,16 @@
 // @flow
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Link } from 'react-router-dom'
 
 import { CLASS_NAMES } from '../shared'
 
-const InfoButton = ({ config, onClick }: Object) => {
+const InfoButton = ({ config, detailsLink }: Object) => {
   if (config.ColorWall.displayAddButton) {
     return (
-      <button type='button' onClick={onClick} className={CLASS_NAMES.CONTENT_DETAILS}>
+      <Link to={detailsLink} className={CLASS_NAMES.CONTENT_DETAILS}>
         <FontAwesomeIcon icon='info' size='1x' />
-      </button>
+      </Link>
     )
   }
   return null
