@@ -14,3 +14,7 @@
     white-space: inherit;
   }
 }
+
+.cleanslate a {
+  color: getVar('colors.primary');
+}

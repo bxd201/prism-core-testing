@@ -1,3 +1,9 @@
+$btn-bg: white;
+$btn-spacing: $base / 2;
+$btn-radius: $base / 4;
+$btn-height: 30px;
+$btn-border-thickness: 1px;
+
 .color-wall-wall {
   background: #eee;
   display: block;
@@ -116,16 +122,11 @@
   }
 }
 
-$btn-bg: white;
-$btn-spacing: $base / 2;
-$btn-radius: $base / 4;
-$btn-height: 30px;
-
 %color-wall-mode-btns-btn {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border: 1px solid getVar("colors.primary");
+  border: $btn-border-thickness solid getVar("colors.primary");
   background: $btn-bg;
   font-size: 1em;
   padding: .25em .75em;
@@ -153,7 +154,7 @@ $btn-height: 30px;
   }
 
   &:focus {
-    box-shadow: inset 0 0 0 1px getVar("colors.primary");
+    box-shadow: inset 0 0 0 $btn-border-thickness getVar("colors.primary");
   }
 
   &:hover {
@@ -206,8 +207,9 @@ $btn-height: 30px;
   }
 
   &__option-container {
-    border: 1px solid getVar("colors.primary");
+    border: $btn-border-thickness solid getVar("colors.primary");
     border-radius: $btn-radius;
+    height: $btn-height;
   }
 
   &__options {
@@ -223,7 +225,7 @@ $btn-height: 30px;
       justify-content: center;
       padding: 0;
       margin: 0;
-      border-left: 1px solid getVar("colors.primary");
+      border-left: $btn-border-thickness solid getVar("colors.primary");
 
       &:first-child {
         border-left: none;
@@ -236,6 +238,7 @@ $btn-height: 30px;
 
       &__btn {
         @extend %color-wall-mode-btns-btn;
+        min-height: $btn-height - ($btn-border-thickness * 2);
         border: none;
         border-radius: 0;
 
