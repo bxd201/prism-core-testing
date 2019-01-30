@@ -2,19 +2,23 @@
 // BEGIN COLOR WALL <-> COLOR DETAILS TRANSITION
 
 @keyframes slideDetailsIn {
-  0% {
-    transform: translate3d(100%, 0, 0);
+  0%, 50% {
+    opacity: 0;
+    transform: translate3d(50%, 0, 0);
   }
   100% {
+    opacity: 1;
     transform: translate3d(0%, 0, 0);
   }
 }
 
 @keyframes slideWallIn {
-  0% {
-    transform: translate3d(-100%, 0, 0);
+  0%, 50% {
+    opacity: 0;
+    transform: translate3d(-50%, 0, 0);
   }
   100% {
+    opacity: 1;
     transform: translate3d(0%, 0, 0);
   }
 }
@@ -36,6 +40,7 @@
       background: white;
       position: relative;
       z-index: 100;
+      will-change: transform opacity;
 
       &.cdp-slide-to-wall {
         animation-name: slideWallIn;
@@ -47,7 +52,8 @@
     }
 
     &-enter-done {
-      transform: translate3d(0%, 0, 0);
+      animation: none;
+      transform: unset;
     }
 
     &-exit,
@@ -57,14 +63,14 @@
       position: absolute;
       top: 0;
       transform: unset;
-      transition: filter #{getVar('colorWall.transitionTime')}ms ease-out;
+      transition: filter #{getVar('colorWall.transitionTime') / 2}ms ease-out #{getVar('colorWall.transitionTime') / 2}ms;
       width: 100%;
       z-index: 0;
+      will-change: filter;
     }
 
     &-exit {
       filter: brightness(1);
-      will-change: filter;
     }
 
     &-exit-active,
@@ -84,42 +90,74 @@
 // ------------------------------------------------------------------
 // BEGIN COLOR WALL <-> COLOR SWATCH ACTIVE TRANSITION
 
-.color-wall-zoom-transitioner {
-  $zoom-out-amt: .9;
-  $zoom-in-amt: 1;
+$zoom-out-amt: .9;
+$zoom-out-opacity: 0;
+$zoom-in-amt: 1;
+$zoom-in-opacity: 1;
 
+@keyframes zoomSwatchIn {
+  0%, 50% {
+    transform: scale($zoom-out-amt);
+    opacity: $zoom-out-opacity;
+  }
+  100% {
+    transform: scale($zoom-in-amt);
+    opacity: $zoom-in-opacity;
+  }
+}
+
+@keyframes zoomSwatchOut {
+  0%, 50% {
+    transform: scale($zoom-in-amt);
+    opacity: $zoom-in-opacity;
+  }
+  100% {
+    transform: scale($zoom-out-amt);
+    opacity: $zoom-out-opacity;
+  }
+}
+
+.color-wall-zoom-transitioner {
   overflow: hidden;
   position: relative;
 
   &__zoom-in {
-    &--enter {
-      backface-visibility: hidden;
-      position: relative;
-      opacity: 0;
-      transform: scale($zoom-out-amt);
-      z-index: 1;
-    }
-
+    &--enter,
     &--enter-active,
     &--enter-done {
-      opacity: 1;
-      transform: scale($zoom-in-amt);
-      transition: all #{getVar('colorWall.transitionTime') * .6}ms ease-out;
+      // zoomed color wall appearing
+      backface-visibility: hidden;
+      position: relative;
+      z-index: 1;
+      will-change: transform;
+
+      animation-name: zoomSwatchIn;
+      animation-fill-mode: both;
+      animation-duration: #{getVar('colorWall.transitionTime')}ms;
+      animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
 
-    &--exit {
+    &-enter-done {
+      backface-visibility: unset;
+      animation: none;
+      transform: unset;
+    }
+
+    &--exit,
+    &--exit-active,
+    &--exit-done {
+      // zoomed color wall disappearing
       backface-visibility: hidden;
       position: absolute;
       top: 0;
       width: 100%;
-      z-index: 0;
-      transform: scale($zoom-in-amt);
-    }
+      z-index: 1;
+      will-change: transform;
 
-    &--exit-active,
-    &--exit-done {
-      transform: scale($zoom-out-amt);
-      transition: all #{getVar('colorWall.transitionTime')}ms ease-out;
+      animation-name: zoomSwatchOut;
+      animation-fill-mode: both;
+      animation-duration: #{getVar('colorWall.transitionTime')}ms;
+      animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
 
     &--exit-done {
@@ -128,20 +166,18 @@
   }
 
   &__zoom-out {
-    &--enter {
-      backface-visibility: hidden;
-      position: relative;
-      opacity: 0;
-      z-index: 1;
-    }
-
+    &--enter,
     &--enter-active,
     &--enter-done {
-      opacity: 1;
-      transition: all #{getVar('colorWall.transitionTime') * .6}ms ease-out;
+      // full wall appearing
+      position: relative;
+      z-index: 0;
     }
 
-    &--exit {
+    &--exit,
+    &--exit-active,
+    &--exit-done {
+      // full wall disappearing
       position: absolute;
       top: 0;
       width: 100%;
