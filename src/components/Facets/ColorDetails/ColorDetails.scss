@@ -189,26 +189,31 @@ $top-level-class-string: '.color-info';
   }
 
   &__display-toggles-wrapper {
-    height: 1.5rem;
-    position: absolute;
-    right: calc(50% + 1rem);
-    transition: right 0.35s;
-    top: 1rem;
-    width: 1.5rem;
-    z-index: 9 ;
+    display: none;
 
-    &--chip-maximized {
-      right: 1rem;
-    }
+    @include respond-above(sm) {
+      display: block;
+      height: 1.5rem;
+      position: absolute;
+      right: calc(50% + 1rem);
+      transition: right 0.35s;
+      top: 1rem;
+      width: 1.5rem;
+      z-index: 9;
 
-    &--swatch-size {
-      border: 1px solid #000;
-      height: auto;
-      width: auto;
+      &--chip-maximized {
+        right: 1rem;
+      }
 
-      &#{$top-level-class-string}__display-toggles-wrapper--dark-color {
-        border: 1px solid #fff;
-        color: white;
+      &--swatch-size {
+        border: 1px solid #000;
+        height: auto;
+        width: auto;
+
+        &#{$top-level-class-string}__display-toggles-wrapper--dark-color {
+          border: 1px solid #fff;
+          color: white;
+        }
       }
     }
   }
@@ -282,11 +287,14 @@ $top-level-class-string: '.color-info';
 
   &__tab-list {
     align-items: center;
-    border-right: $width-small solid $neutral-background-color;
     border-top: $width-small solid $neutral-background-color;
     display: flex;
     flex-shrink: 0;
     list-style: none;
+
+    @include respond-above(sm) {
+      border-right: $width-small solid $neutral-background-color;
+    }
   }
 
   &__tab {
@@ -348,8 +356,12 @@ $top-level-class-string: '.color-info';
     flex-direction: column;
     height: 100%;
     justify-content: stretch;
-    margin: $width-thin $width-small $width-thin 0;
+    margin: $width-thin 0 $width-thin 0;
     list-style: none;
+
+    @include respond-above(sm) {
+      margin-right: $width-small;
+    }
   }
 
   &__coord-color {

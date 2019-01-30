@@ -88,7 +88,7 @@ export const loadColors = (options?: any) => {
   // conditionally add the lng parameter if a manual language has been passed in
   const COLOR_FAMILY_ENDPOINT = (options && options.language) ? `${SW_COLORS_BY_FAMILY_ENDPOINT}?lng=${options.language}` : SW_COLORS_BY_FAMILY_ENDPOINT
   const BRIGHTS_ENDPOINT = (options && options.language) ? `${SW_BRIGHTS_ENDPOINT}?lng=${options.language}` : SW_BRIGHTS_ENDPOINT
-  const FAMILY_NAMES_ENDPOINT = (options && options.language) ? `${SW_FAMILY_NAMES_ENDPOINT}?lng=${options.language}` : SW_BRIGHTS_ENDPOINT
+  const FAMILY_NAMES_ENDPOINT = (options && options.language) ? `${SW_FAMILY_NAMES_ENDPOINT}?lng=${options.language}` : SW_FAMILY_NAMES_ENDPOINT
 
   return (dispatch: Function, getState: Function) => {
     const { items: { colors }, status: { activeRequest } } = getState().colors
