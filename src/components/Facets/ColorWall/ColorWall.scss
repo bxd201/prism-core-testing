@@ -1,25 +1,19 @@
-@keyframes fadeOut {
-  0% {
-    opacity: 1;
-    z-index: 999999;
-    width: 100%;
-    height: 100%;
-  }
-  100% {
-    opacity: 0;
-    z-index: 999999;
-    width: 100%;
-    height: 100%;
-  }
-}
+$btn-bg: white;
+$btn-spacing: $base / 2;
+$btn-radius: $base / 4;
+$btn-height: 30px;
+$btn-border-thickness: 1px;
 
 .color-wall-wall {
   background: #eee;
   display: block;
   flex: 1 1 auto;
-  height: 400px; // TODO: change this
   position: relative;
   width: 100%;
+  padding-bottom: 100%; // 1:1
+  @include respond-above(xs) {
+    padding-bottom: (9 / 16) * 100%; // 16:9
+  }
 
   &__btns {
     position: absolute;
@@ -41,7 +35,9 @@
       height: 2.5em;
       text-align: center;
       line-height: 0;
-
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
       &:hover, &:focus {
         background: #eaeaea;
@@ -52,6 +48,21 @@
         color: white;
       }
     }
+  }
+
+  &__loader {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    color: getVar('colors.primary');
+  }
+
+  &__message {
+    position: absolute;
+    width: 100%;
+    top: 50%;
+    transform: translateY(-50%);
   }
 }
 
@@ -84,24 +95,7 @@
   width: 100%;
   height: 100%;
   overflow: hidden;
-  position: relative;
-
-  &::after {
-    content: '';
-    display: block;
-    position: absolute;
-    background: white;
-
-    animation-name: fadeOut;
-    animation-duration: $transition-time;
-    animation-timing-function: ease-out;
-    animation-fill-mode: backwards;
-    height: 0;
-    left: 0;
-    top: 0;
-    width: 0;
-    z-index: -1;
-  }
+  position: absolute;
 
   // React Virtualized Grid classes
   .ReactVirtualized__Grid {
@@ -140,5 +134,140 @@
   &:checked + .color-wall-label {
     background: #222;
     color: white;
+  }
+}
+
+%color-wall-mode-btns-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: $btn-border-thickness solid getVar("colors.primary");
+  background: $btn-bg;
+  font-size: 1em;
+  padding: .25em .75em;
+  color: pick-text-color($btn-bg);
+  text-decoration: none;
+  text-align: center;
+  border-radius: $btn-radius;
+  font-weight: bold;
+  font-size: em(10);
+  text-transform: uppercase;
+  overflow: hidden;
+  min-height: $btn-height;
+  white-space: nowrap;
+
+  @include respond-above(xs) {
+    font-size: em(11);
+  }
+
+  @include respond-above(md) {
+    font-size: em(12);
+  }
+
+  &[disabled] {
+    opacity: .3;
+  }
+
+  &:focus {
+    box-shadow: inset 0 0 0 $btn-border-thickness getVar("colors.primary");
+  }
+
+  &:hover {
+    $hover-bg: mix($btn-bg, getVar("colors.primary"), 90%);
+    background: $hover-bg;
+    color: pick-text-color($hover-bg);
+  }
+}
+
+%color-wall-mode-btns-btn--active {
+  background: getVar("colors.primary") !important;
+  color: pick-text-color(getVar("colors.primary")) !important;
+}
+
+.color-wall-mode-btns {
+  font-size: $base;
+
+  &__col {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 0 $btn-spacing / -2;
+    max-width: 100%;
+
+    @include respond-above(sm) {
+      align-items: center;
+      flex-direction: row;
+      max-width: unset;
+    }
+
+  }
+
+  &__cell {
+    margin-right: $btn-spacing / 2;
+    margin-left: $btn-spacing / 2;
+    margin-bottom: $btn-spacing;
+    max-width: 100%;
+
+    @include respond-above(sm) {
+      max-width: unset;
+    }
+  }
+
+  &__btn {
+    @extend %color-wall-mode-btns-btn;
+
+    &--active {
+      @extend %color-wall-mode-btns-btn--active;
+    }
+  }
+
+  &__option-container {
+    border: $btn-border-thickness solid getVar("colors.primary");
+    border-radius: $btn-radius;
+    height: $btn-height;
+  }
+
+  &__options {
+    flex-direction: row;
+    display: flex;
+    justify-content: flex-start;
+    align-items: stretch;
+    flex-shrink: 1;
+
+    &__option {
+      display: flex;
+      align-content: center;
+      justify-content: center;
+      padding: 0;
+      margin: 0;
+      border-left: $btn-border-thickness solid getVar("colors.primary");
+
+      &:first-child {
+        border-left: none;
+        border-radius: $btn-radius 0 0 $btn-radius;
+      }
+
+      &:last-child {
+        border-radius: 0 $btn-radius $btn-radius 0;
+      }
+
+      &__btn {
+        @extend %color-wall-mode-btns-btn;
+        min-height: $btn-height - ($btn-border-thickness * 2);
+        border: none;
+        border-radius: 0;
+
+        &--active {
+          @extend %color-wall-mode-btns-btn--active;
+        }
+
+      }
+    }
+  }
+
+  &__right {
+    @include respond-above(sm) {
+      margin-left: auto;
+    }
   }
 }

@@ -1,39 +1,60 @@
 // @flow
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
-import { kebabCase } from 'lodash'
-import { injectIntl, type intlShape } from 'react-intl'
+import { injectIntl, type intlShape, FormattedMessage } from 'react-intl'
+import { Link, NavLink } from 'react-router-dom'
+import { TransitionGroup, CSSTransition } from 'react-transition-group'
 
-import { loadColors, makeActiveColor, resetActiveColor } from '../../../actions/loadColors'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { loadColors } from '../../../actions/loadColors'
 import { add } from '../../../actions/live-palette'
-import type { ColorFamilyPayload, ColorMap, Color } from '../../../shared/types/Colors'
+import { generateColorWallPageUrl } from '../../../shared/helpers/ColorUtils'
+import { varValues } from 'variables'
+import type { ColorSetPayload, ColorMap, Color } from '../../../shared/types/Colors'
 
+import { MODE_CLASS_NAMES } from './shared'
 // import StandardColorWall from './StandardColorWall'
 import SherwinColorWall from './SherwinColorWall'
 
 import './ColorWall.scss'
 
-type Props = {
-  colors: ColorFamilyPayload,
-  brights: ColorFamilyPayload,
+type StateProps = {
+  colors: ColorSetPayload,
   colorMap: ColorMap,
+  brights: ColorSetPayload,
   colorWallActive: Color,
-  loadColors: Function,
-  addToLivePalette: Function,
-  makeActiveColor: Function,
-  resetActiveColor: Function,
-  loading: boolean,
   family: string,
-  defaultFamily: string,
   families?: string[],
+  loading: boolean,
+  error: boolean,
+  section: string,
+  sections?: string[]
+}
+
+type DispatchProps = {
+  loadColors: Function,
+  addToLivePalette: Function
+}
+
+type ComponentProps = {
   intl: intlShape
 }
 
-class ColorWall extends PureComponent<Props> {
-  constructor (props) {
+type Props = StateProps & DispatchProps & ComponentProps
+
+type State = {
+  showColorFamilies: boolean
+}
+
+class ColorWall extends PureComponent<Props, State> {
+  state: State = {
+    showColorFamilies: false
+  }
+
+  constructor (props: Props) {
     super(props)
 
-    this.navigateToNewFamily = this.navigateToNewFamily.bind(this)
+    this.toggleViewFamilies = this.toggleViewFamilies.bind(this)
   }
 
   componentDidMount () {
@@ -42,46 +63,114 @@ class ColorWall extends PureComponent<Props> {
     const options = {
       language: this.props.intl.locale
     }
+
+    // try to load colors with options; this will do nothing if colors are currently or already have been loaded
     this.props.loadColors(options)
   }
 
-  navigateToNewFamily = function navigateToNewFamily (family) {
-    window.location.hash = `/active/color-wall/${kebabCase(family)}`
-  }
-
   render () {
-    const { colors, families, family, defaultFamily, brights, colorMap, makeActiveColor, resetActiveColor, colorWallActive, loading, addToLivePalette } = this.props
+    const { showColorFamilies } = this.state
+    const { colors, family, sections, families, section, brights, colorMap, colorWallActive, loading, error, addToLivePalette } = this.props
 
-    let colorFamily = family || defaultFamily
+    const hasSections = !!(sections && sections.length)
+    const hasFamilies = !!(families && families.length > 1)
+    const _showColorFamilies = hasFamilies && (family || showColorFamilies)
+    const transKey = colorWallActive ? 'active' : ''
+    let sectionButtons = void (0)
+    let familyButtons = void (0)
 
-    if (loading) {
-      return <p>Loading...</p>
+    if (!_showColorFamilies && hasSections) {
+      sectionButtons = (
+        <div className={MODE_CLASS_NAMES.COL}>
+          <div className={MODE_CLASS_NAMES.CELL}>
+            <div className={MODE_CLASS_NAMES.OPTION_CONTAINER}>
+              <ul className={MODE_CLASS_NAMES.OPTIONS}>
+                { // $FlowIgnore -- flow doesn't realize that sections must be defined at this point
+                  sections.map((sectionName: string, i: number) => (
+                    <li className={MODE_CLASS_NAMES.OPTION} key={sectionName}>
+                      <NavLink className={MODE_CLASS_NAMES.OPTION_BUTTON} activeClassName={MODE_CLASS_NAMES.OPTION_BUTTON_ACTIVE} to={generateColorWallPageUrl(sectionName)}>
+                        <span className={MODE_CLASS_NAMES.DESC}>{sectionName}</span>
+                      </NavLink>
+                    </li>
+                  ))
+                }
+              </ul>
+            </div>
+          </div>
+          <div className={`${MODE_CLASS_NAMES.CELL} ${MODE_CLASS_NAMES.RIGHT}`}>
+            <button className={MODE_CLASS_NAMES.BUTTON} disabled={!families || families.length <= 1} onClick={this.toggleViewFamilies}>
+              <FontAwesomeIcon icon={['fa', 'palette']} pull='left' />
+              <span className={MODE_CLASS_NAMES.DESC}><FormattedMessage id='COLOR_FAMILIES' /></span>
+            </button>
+          </div>
+        </div>
+      )
+    }
+
+    if (_showColorFamilies) {
+      familyButtons = (
+        <div className={MODE_CLASS_NAMES.COL}>
+          <div className={MODE_CLASS_NAMES.CELL}>
+            <div className={MODE_CLASS_NAMES.OPTION_CONTAINER}>
+              <ul className={MODE_CLASS_NAMES.OPTIONS}>
+                {/* $FlowIgnore -- Flow doesn't realize families must be defined and be iterable to get here */}
+                {families.map((thisFamily: string) => {
+                  return (
+                    <li className={MODE_CLASS_NAMES.OPTION} key={thisFamily}>
+                      <NavLink className={MODE_CLASS_NAMES.OPTION_BUTTON} activeClassName={MODE_CLASS_NAMES.OPTION_BUTTON_ACTIVE} to={generateColorWallPageUrl(section, thisFamily)}>
+                        <span className={MODE_CLASS_NAMES.DESC}>{thisFamily}</span>
+                      </NavLink>
+                    </li>
+                  )
+                })}
+              </ul>
+            </div>
+          </div>
+
+          {hasSections ? (
+            <div className={`${MODE_CLASS_NAMES.CELL} ${MODE_CLASS_NAMES.RIGHT}`}>
+              <Link className={MODE_CLASS_NAMES.BUTTON} to={generateColorWallPageUrl(section)} onClick={() => this.toggleViewFamilies(false)}>
+                <FontAwesomeIcon icon={['fa', 'times']} pull='left' />
+                <span className={MODE_CLASS_NAMES.DESC}><FormattedMessage id='CANCEL' /></span>
+              </Link>
+            </div>
+          ) : null}
+        </div>
+      )
     }
 
     // not sure if this is a great way to test if this is a sherwin colorset, but non-sw colors should come in as a flat array
     // but, sherwin colors will come in broken out by color families. If so, we'll just return the sherwin color family component
     // for now until we determine a better solution for handling that.
     // const isSherwinColorWall = isPlainObject(colors)
-    if (families) {
-      return (
-        <div className='sw-colorwall'>
-          <SherwinColorWall
-            onActivateColor={makeActiveColor}
-            onRemoveActiveColor={resetActiveColor}
-            onSelectFamily={this.navigateToNewFamily}
-            family={colorFamily}
-            families={families}
-            colors={colors}
-            brights={brights}
-            colorMap={colorMap}
-            activeColor={colorWallActive}
-            addToLivePalette={addToLivePalette}
-          />
+    return (
+      <div>
+        <div className={MODE_CLASS_NAMES.BASE}>
+          {sectionButtons}
+          {familyButtons}
         </div>
-      )
-    }
-
-    return null
+        <TransitionGroup className='sw-colorwall color-wall-zoom-transitioner'>
+          <CSSTransition
+            key={transKey}
+            timeout={varValues.colorWall.transitionTime}
+            unmountOnExit
+            mountOnEnter
+            classNames={transKey ? 'color-wall-zoom-transitioner__zoom-in color-wall-zoom-transitioner__zoom-in-' : 'color-wall-zoom-transitioner__zoom-out color-wall-zoom-transitioner__zoom-out-'}>
+            <SherwinColorWall
+              family={family}
+              families={families}
+              section={section}
+              colors={colors}
+              brights={brights}
+              colorMap={colorMap}
+              activeColor={colorWallActive}
+              addToLivePalette={addToLivePalette}
+              loading={loading}
+              error={error} />
+          </CSSTransition>
+        </TransitionGroup>
+      </div>
+    )
 
     // TODO: Add standard (non-chunked) color functionality back into ColorWall
     // return (
@@ -89,6 +178,15 @@ class ColorWall extends PureComponent<Props> {
     //     <StandardColorWall family={'all'} colors={colors} />
     //   </div>
     // )
+  }
+
+  toggleViewFamilies = function toggleViewFamilies (setTo?: boolean) {
+    const { showColorFamilies } = this.state
+    const newValue: boolean = (typeof setTo === 'boolean' ? setTo : !showColorFamilies)
+
+    this.setState({
+      showColorFamilies: newValue
+    })
   }
 }
 
@@ -98,10 +196,12 @@ const mapStateToProps = (state, props) => {
     colors: state.colors.items.colors,
     brights: state.colors.items.brights,
     colorWallActive: state.colors.colorWallActive,
-    families: state.colors.families,
-    family: state.colors.family,
-    defaultFamily: state.colors.defaultFamily,
-    loading: state.colors.status.loading
+    families: state.colors.family.families,
+    family: state.colors.family.family,
+    sections: state.colors.family.sections,
+    section: state.colors.family.section,
+    loading: state.colors.status.loading,
+    error: state.colors.status.error
   }
 }
 
@@ -109,12 +209,6 @@ const mapDispatchToProps = (dispatch: Function) => {
   return {
     loadColors: (options: any) => {
       dispatch(loadColors(options))
-    },
-    makeActiveColor: (color: Color) => {
-      dispatch(makeActiveColor(color))
-    },
-    resetActiveColor: () => {
-      dispatch(resetActiveColor())
     },
     addToLivePalette: (color: Color) => {
       dispatch(add(color))

@@ -1,17 +1,19 @@
 // @flow
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
-import { find } from 'lodash'
+import { find, includes } from 'lodash'
 import memoizee from 'memoizee'
+import ReactGA from 'react-ga'
 
 import { SCENE_TYPES, SCENE_VARIANTS } from 'constants/globals'
 import { loadScenes, paintSceneSurface, activateScene, deactivateScene, changeSceneVariant } from '../../actions/scenes'
 import TintableScene from './TintableScene'
 import SceneVariantSwitch from './SceneVariantSwitch'
-import type { Color } from '../../shared/types/Colors'
-import type { Scene, SceneStatus, Surface } from '../../shared/types/Scene'
 import ImagePreloader from '../../helpers/ImagePreloader'
 import { ensureFullyQualifiedAssetUrl } from '../../shared/helpers/DataUtils'
+import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
+import type { Color } from '../../shared/types/Colors'
+import type { Scene, SceneStatus, Surface } from '../../shared/types/Scene'
 
 import './SceneManager.scss'
 
@@ -70,11 +72,16 @@ class SceneManager extends PureComponent<Props, State> {
     const { activeScenes } = this.props
 
     // if this scene is active...
-    if (activeScenes.indexOf(id) > -1) {
+    if (includes(activeScenes, id)) {
       this.deactivateScene(id)
     } else {
       // ... otherwise activate this scene
       this.activateScene(id)
+      ReactGA.event({
+        category: 'Scene Manager',
+        action: 'Toggle Active Scene',
+        label: 'Toggle Active Scene'
+      })
     }
   }
 
@@ -113,7 +120,7 @@ class SceneManager extends PureComponent<Props, State> {
     const { scenes, sceneStatus, loadingScenes, activeColor, previewColor, mainColor, activeScenes, type, interactive } = this.props
 
     if (loadingScenes) {
-      return 'Loading...'
+      return <CircleLoader className={`${SceneManager.baseClass}__loader`} />
     }
 
     return (
@@ -130,7 +137,7 @@ class SceneManager extends PureComponent<Props, State> {
             return (
               <button key={sceneId}
                 onClick={() => this.handleClickSceneToggle(scene.id)}
-                className={`${SceneManager.baseClass}__btn ${activeScenes.indexOf(scene.id) > -1 ? `${SceneManager.baseClass}__btn--active` : ''}`}
+                className={`${SceneManager.baseClass}__btn ${includes(activeScenes, scene.id) ? `${SceneManager.baseClass}__btn--active` : ''}`}
                 type='button'>
                 <ImagePreloader
                   el={TintableScene}

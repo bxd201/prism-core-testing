@@ -130,6 +130,7 @@
   top: 0;
   left: 0;
   position: absolute;
+  font-size: $base;
   z-index: 1;
 
   &--clickable {
@@ -173,17 +174,12 @@
 
   &__content {
     position: relative;
-    font-size: .7rem;
     padding: .5em;
     animation: fadeIn $bloom-activate-duration ease-in-out ($bloom-activate-duration + $bloom-activate-delay) * 1.25 both;
     text-align: left;
     height: 100%;
     line-height: 1;
     overflow: hidden;
-
-    @media (min-width: 1400px) {
-      font-size: .9rem;
-    }
 
     &__number,
     &__name {
@@ -201,7 +197,8 @@
     }
 
     &__add,
-    &__details {
+    &__details,
+    &__info {
       position: absolute;
       bottom: 1em;
       color: inherit;
@@ -219,11 +216,12 @@
       }
     }
 
-    &__add {
+    &__add,
+    &__details {
       left: .5em;
     }
 
-    &__details {
+    &__info {
       right: .5em;
     }
   }
@@ -279,5 +277,13 @@
       @include getRaise($flower-size-scale, 130%, 600, !important);
       @include getEdgeCompensation($flower-size-scale, 130%, !important);
     }
+  }
+
+  &__engage-link {
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
   }
 }

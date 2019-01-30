@@ -24,3 +24,8 @@ Jenkins Build - https://jenkins.ebus.swaws/job/TAG%20Ecomm/job/Prism/
 - SVGs must NOT specify any fill or stroke on any node
 - SVGs can be converted from alpha PNG files in a number of ways, but I've been using [SVG Creator](https://svgcreator.com/). It has given the best results in terms of the output SVG file. For input I've used the Scene7 mask PNGs used in the existing CVT with 000000 specified as the value for the color param (needs to be black; only black areas are converted to SVG shapes with this tool).
 - Scene mask PNGs must be white over transparent, which differs from the SVG creator tool mentioned above.
+
+## Websites Using PRISM
+| Website | Facet |
+| --- | ----------- |
+| sherwin-williams.ca | ColorListingPage |

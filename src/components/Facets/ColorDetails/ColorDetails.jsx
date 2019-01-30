@@ -6,6 +6,7 @@ import { withRouter } from 'react-router-dom'
 import { has } from 'lodash'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import { FormattedMessage } from 'react-intl'
+import ReactGA from 'react-ga'
 
 import ColorInfo from './ColorInfo/ColorInfo'
 import ColorViewer from './ColorViewer/ColorViewer'
@@ -13,6 +14,8 @@ import ColorStrip from './ColorStrip/ColorStrip'
 import CoordinatingColors from './CoordinatingColors/CoordinatingColors'
 import SimilarColors from './SimilarColors/SimilarColors'
 import SceneManager from '../../SceneManager/SceneManager'
+import type { ColorMap, Color } from '../../../shared/types/Colors'
+import { ROUTE_PARAM_NAMES } from 'constants/globals'
 
 import { paintAllMainSurfaces } from '../../../actions/scenes'
 import { varValues } from 'variables'
@@ -43,6 +46,7 @@ class ColorDetails extends PureComponent<Props, State> {
 
     this.toggleSceneDisplay = this.toggleSceneDisplay.bind(this)
     this.toggleChipMaximized = this.toggleChipMaximized.bind(this)
+    this.reportTabSwitchToGA = this.reportTabSwitchToGA.bind(this)
   }
 
   render () {
@@ -55,43 +59,41 @@ class ColorDetails extends PureComponent<Props, State> {
     }
 
     // grab the color by color number from the URL
-    const activeColor = this.getColorById(params.colorId)
+    const activeColor = this.getColorById(params[ROUTE_PARAM_NAMES.COLOR_ID])
     if (!activeColor) {
-      console.info(`ColorDetails: ${params.colorId} is not a valid color ID`)
+      console.info(`ColorDetails: ${params[ROUTE_PARAM_NAMES.COLOR_ID]} is not a valid color ID`)
       return null
     }
-
-    const activeColorIsDark = activeColor.isDark
 
     // perform some css class logic & scaffolding instead of within the DOM itself
     let contrastingTextColor = varValues.colors.black
 
-    let SWATCH_CLASSES = [
+    const SWATCH_CLASSES = [
       `${ColorDetails.baseClass}__max-chip`
     ]
-    let DISPLAY_TOGGLES_WRAPPER = [
+    const DISPLAY_TOGGLES_WRAPPER = [
       `${ColorDetails.baseClass}__display-toggles-wrapper`
     ]
 
-    let SWATCH_SIZE_WRAPPER_CLASSES = DISPLAY_TOGGLES_WRAPPER.slice()
+    const SWATCH_SIZE_WRAPPER_CLASSES = DISPLAY_TOGGLES_WRAPPER.slice()
     SWATCH_SIZE_WRAPPER_CLASSES.push(`${ColorDetails.baseClass}__display-toggles-wrapper--swatch-size`)
 
-    let MAIN_INFO_CLASSES = [
+    const MAIN_INFO_CLASSES = [
       `${ColorDetails.baseClass}__main-info`
     ]
 
-    let SWATCH_SIZE_TOGGLE_BUTTON_CLASSES = [
+    const SWATCH_SIZE_TOGGLE_BUTTON_CLASSES = [
       `${ColorDetails.baseClass}__display-toggle-button`,
       `${ColorDetails.baseClass}__swatch-size-toggle-button`
     ]
-    let ALT_SWATCH_SIZE_TOGGLE_BUTTON_CLASSES = SWATCH_SIZE_TOGGLE_BUTTON_CLASSES.slice()
+    const ALT_SWATCH_SIZE_TOGGLE_BUTTON_CLASSES = SWATCH_SIZE_TOGGLE_BUTTON_CLASSES.slice()
     ALT_SWATCH_SIZE_TOGGLE_BUTTON_CLASSES.push(`${ColorDetails.baseClass}__display-toggle-button--alt`)
 
-    let SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES = [
+    const SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES = [
       `${ColorDetails.baseClass}__display-toggle-button`,
       `${ColorDetails.baseClass}__scene-display-toggle-button`
     ]
-    let ALT_SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES = SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.slice()
+    const ALT_SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES = SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.slice()
     ALT_SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.push(`${ColorDetails.baseClass}__scene-display-toggle-button--alt`)
 
     if (chipIsMaximized) {
@@ -104,13 +106,14 @@ class ColorDetails extends PureComponent<Props, State> {
       SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.push(`${ColorDetails.baseClass}__display-toggle-button--active`)
       ALT_SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.push(`${ColorDetails.baseClass}__display-toggle-button--active`)
     }
-    if (activeColorIsDark) {
+    if (activeColor.isDark) {
       contrastingTextColor = varValues.colors.white
       SWATCH_SIZE_TOGGLE_BUTTON_CLASSES.push(`${ColorDetails.baseClass}__display-toggle-button--dark-color`)
       SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.push(`${ColorDetails.baseClass}__display-toggle-button--dark-color`)
       ALT_SWATCH_SIZE_TOGGLE_BUTTON_CLASSES.push(`${ColorDetails.baseClass}__display-toggle-button--dark-color`)
       ALT_SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.push(`${ColorDetails.baseClass}__display-toggle-button--dark-color`)
       MAIN_INFO_CLASSES.push(`${ColorDetails.baseClass}__main-info--dark-color`)
+      SWATCH_SIZE_WRAPPER_CLASSES.push(`${ColorDetails.baseClass}__display-toggles-wrapper--dark-color`)
     }
 
     return (
@@ -119,23 +122,15 @@ class ColorDetails extends PureComponent<Props, State> {
           <div className={SWATCH_CLASSES.join(' ')} style={{ backgroundColor: activeColor.hex }} />
           <div className={SWATCH_SIZE_WRAPPER_CLASSES.join(' ')}>
             <button className={SWATCH_SIZE_TOGGLE_BUTTON_CLASSES.join(' ')} onClick={this.toggleChipMaximized}>
-              <FontAwesomeIcon className={`${ColorDetails.baseClass}__display-toggles-icon`} icon={['fal', 'arrow-left']} color={contrastingTextColor} /><FontAwesomeIcon className={`${ColorDetails.baseClass}__display-toggles-icon`} icon={['fal', 'arrow-right']} color={contrastingTextColor} />
+              <FontAwesomeIcon className={`${ColorDetails.baseClass}__display-toggles-icon`} icon={['fal', 'expand-alt']} color={contrastingTextColor} size={'2x'} />
               <div className={`${ColorDetails.baseClass}__scene-toggle-copy`}>
-                <FormattedMessage id='MAXIMIZE_COLOR_SWATCH'>
-                  {(txt: string) => (
-                    <React.Fragment>{txt}</React.Fragment>
-                  )}
-                </FormattedMessage>
+                <FormattedMessage id='MAXIMIZE_COLOR_SWATCH' />
               </div>
             </button>
             <button className={ALT_SWATCH_SIZE_TOGGLE_BUTTON_CLASSES.join(' ')} onClick={this.toggleChipMaximized}>
-              <FontAwesomeIcon className={`${ColorDetails.baseClass}__display-toggles-icon`} icon={['fal', 'arrow-right']} color={contrastingTextColor} /><FontAwesomeIcon className={`${ColorDetails.baseClass}__display-toggles-icon`} icon={['fal', 'arrow-left']} color={contrastingTextColor} />
+              <FontAwesomeIcon className={`${ColorDetails.baseClass}__display-toggles-icon`} icon={['fal', 'expand-alt']} color={contrastingTextColor} size={'2x'} />
               <div className={`${ColorDetails.baseClass}__scene-toggle-copy`}>
-                <FormattedMessage id='RESTORE_COLOR_SWATCH_TO_DEFAULT_SIZE'>
-                  {(txt: string) => (
-                    <React.Fragment>{txt}</React.Fragment>
-                  )}
-                </FormattedMessage>
+                <FormattedMessage id='RESTORE_COLOR_SWATCH_TO_DEFAULT_SIZE' />
               </div>
             </button>
           </div>
@@ -146,56 +141,35 @@ class ColorDetails extends PureComponent<Props, State> {
             <button className={SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.join(' ')} onClick={this.toggleSceneDisplay}>
               <FontAwesomeIcon className={`${ColorDetails.baseClass}__display-toggles-icon ${ColorDetails.baseClass}__display-toggles-icon--scene`} icon={['fal', 'home']} color={contrastingTextColor} />
               <div className={`${ColorDetails.baseClass}__scene-toggle-copy`}>
-                <FormattedMessage id='DISPLAY_SCENE_PAINTER'>
-                  {(txt: string) => (
-                    <React.Fragment>{txt}</React.Fragment>
-                  )}
-                </FormattedMessage>
+                <FormattedMessage id='DISPLAY_SCENE_PAINTER' />
               </div>
             </button>
             <button className={ALT_SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.join(' ')} onClick={this.toggleSceneDisplay}>
               <FontAwesomeIcon className={`${ColorDetails.baseClass}__display-toggles-icon ${ColorDetails.baseClass}__display-toggles-icon--scene`} icon={['fas', 'home']} color={contrastingTextColor} />
               <div className={`${ColorDetails.baseClass}__scene-toggle-copy`}>
-                <FormattedMessage id='HIDE_SCENE_PAINTER'>
-                  {(txt: string) => (
-                    <React.Fragment>{txt}</React.Fragment>
-                  )}
-                </FormattedMessage>
+                <FormattedMessage id='HIDE_SCENE_PAINTER' />
               </div>
             </button>
-
             <div className={MAIN_INFO_CLASSES.join(' ')} style={{ backgroundColor: activeColor.hex }}>
               <ColorViewer color={activeColor} />
               <ColorStrip key={activeColor.id} colors={colors} color={activeColor} />
             </div>
             <div className={`${ColorDetails.baseClass}__additional-info`}>
-              <Tabs>
+              <Tabs onSelect={this.reportTabSwitchToGA}>
                 <TabList className={`${ColorDetails.baseClass}__tab-list`} style={{ backgroundColor: activeColor.hex }}>
                   <Tab className={`${ColorDetails.baseClass}__tab ${activeColor.isDark ? `${ColorDetails.baseClass}__tab--dark-color` : ''}`}>
                     <div className={`${ColorDetails.baseClass}__tab-copy`}>
-                      <FormattedMessage id='COORDINATING_COLORS'>
-                        {(txt: string) => (
-                          <React.Fragment>{txt}</React.Fragment>
-                        )}
-                      </FormattedMessage>
+                      <FormattedMessage id='COORDINATING_COLORS' />
                     </div>
                   </Tab>
                   <Tab className={`${ColorDetails.baseClass}__tab ${activeColor.isDark ? `${ColorDetails.baseClass}__tab--dark-color` : ''}`}>
                     <div className={`${ColorDetails.baseClass}__tab-copy`}>
-                      <FormattedMessage id='SIMILAR_COLORS'>
-                        {(txt: string) => (
-                          <React.Fragment>{txt}</React.Fragment>
-                        )}
-                      </FormattedMessage>
+                      <FormattedMessage id='SIMILAR_COLORS' />
                     </div>
                   </Tab>
                   <Tab className={`${ColorDetails.baseClass}__tab ${activeColor.isDark ? `${ColorDetails.baseClass}__tab--dark-color` : ''}`}>
                     <div className={`${ColorDetails.baseClass}__tab-copy`}>
-                      <FormattedMessage id='DETAILS'>
-                        {(txt: string) => (
-                          <React.Fragment>{txt}</React.Fragment>
-                        )}
-                      </FormattedMessage>
+                      <FormattedMessage id='DETAILS' />
                     </div>
                   </Tab>
                 </TabList>
@@ -220,19 +194,22 @@ class ColorDetails extends PureComponent<Props, State> {
     const { match: { params }, scenesLoaded } = this.props
 
     // paint all the main surfaces on load of the CDP
-    const color = this.getColorById(params.colorId)
+    const color = this.getColorById(params[ROUTE_PARAM_NAMES.COLOR_ID])
     if (scenesLoaded && color) {
       this.props.paintAllMainSurfaces(color)
+
+      // log GA event
+      ReactGA.pageview(`color-detail/${color.brandKey} ${color.colorNumber} - ${color.name}`)
     }
   }
 
   getColorById (colorId) {
     const { colors } = this.props
 
+    // check if the colors object has the id
     if (!has(colors, colorId)) {
       return null
     }
-
     return colors[colorId]
   }
 
@@ -241,7 +218,26 @@ class ColorDetails extends PureComponent<Props, State> {
   }
 
   toggleChipMaximized = function toggleChipMaximized () {
+    if (!this.state.chipIsMaximized) {
+      ReactGA.event({
+        category: 'Color Detail',
+        action: 'Maximize Swatch',
+        label: 'Maximize Swatch'
+      })
+    }
+
     this.setState({ chipIsMaximized: !this.state.chipIsMaximized })
+  }
+
+  reportTabSwitchToGA (index) {
+    const tabNames = ['View Coord Color Section', 'View Similar Color Section', 'View Color Info Section']
+    const tabReportingName = tabNames[index]
+
+    ReactGA.event({
+      category: 'Color Detail',
+      action: tabReportingName,
+      label: tabReportingName
+    })
   }
 }
 

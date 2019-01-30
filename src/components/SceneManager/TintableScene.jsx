@@ -1,6 +1,6 @@
 // @flow
 import React, { PureComponent, Fragment } from 'react'
-import { uniqueId, uniq, without, concat, find } from 'lodash'
+import { includes, uniqueId, uniq, without, concat, find } from 'lodash'
 
 import type { Color } from '../../shared/types/Colors'
 import type { Surface, SurfaceStatus } from '../../shared/types/Scene'
@@ -146,7 +146,7 @@ class TintableScene extends PureComponent<Props, State> {
     const surfaceColor: ?Color = status ? status.color : void (0)
 
     // if this surface is one of the active preview surfaces...
-    if (activePreviewSurfaces.indexOf(surface.id) > -1) {
+    if (includes(activePreviewSurfaces, surface.id)) {
       // ... use the previewColor prop for this surface's color
       tintColor = previewColor
     } else if (surfaceColor) {

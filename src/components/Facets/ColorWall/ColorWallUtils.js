@@ -10,6 +10,7 @@ export function getColorCoords (id: string, chunkedColorIds: ColorIdGrid): numbe
     const x = findIndex(colorRow, (colorId: string) => {
       return colorId === id
     })
+
     if (x >= 0) {
       return [x, y]
     }
@@ -17,7 +18,7 @@ export function getColorCoords (id: string, chunkedColorIds: ColorIdGrid): numbe
     return void (0)
   }).filter(val => !!val).reduce((total, current) => {
     return current || total
-  })
+  }, void (0))
 }
 
 export function drawCircle (radius: number, centerX: number, centerY: number, chunkedColorIds: ColorIdGrid) {

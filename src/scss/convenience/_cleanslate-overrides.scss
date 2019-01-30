@@ -1,0 +1,20 @@
+/**
+ * Cleanslate applies a lot of reset styles to elements, this is known.
+ * It can get in the way of using elements like spans in structural settings, such as in a flexbox layout
+ * when you need to wrap some text. These convenience classes can be used to overcome some of those issues
+ * with a little less pain.
+ */
+
+.inherit {
+  &-font {
+    font-family: inherit;
+    font-size: inherit;
+    letter-spacing: inherit;
+    text-transform: inherit;
+    white-space: inherit;
+  }
+}
+
+.cleanslate a {
+  color: getVar('colors.primary');
+}

@@ -57,6 +57,7 @@ $top-level-class-string: '.color-info';
   $strip-chip-size: 2rem;
   $strip-chip-margin: $strip-chip-size * 0.1;
   $width-thin: 0.125rem;
+  $width-small: 0.250rem;
   $width-medium: 1rem;
   $tab-set-padding: 0.5rem 0.25rem;
 
@@ -116,13 +117,11 @@ $top-level-class-string: '.color-info';
   &__strip {
     border-bottom: $width-thin solid $neutral-background-color;
     border-top: $width-thin solid $neutral-background-color;
-    // background: $neutral-background-color;
     display: none;
     height: 2rem;
     list-style: none;
+    margin: 0 0 1rem;
     max-width: 26rem;
-    margin: 4rem 0 0.5rem;
-    // padding: $width-thin 0 $width-thin $width-thin;
   }
 
   &__strip-color,
@@ -131,32 +130,19 @@ $top-level-class-string: '.color-info';
     flex: 1 1 auto;
     justify-content: center;
     align-items: center;
-    // display: inline-block;
-    // height: $strip-chip-size;
-    // margin-right: $width-thin;
-  }
-
-  &__strip-location {
-    // width: $strip-chip-size;
   }
 
   &__strip-color {
     border-right: $width-thin solid $neutral-background-color;
     position: relative;
-    // margin-right: $width-thin;
-    // min-width: $strip-chip-size;
-    // width: auto;
   }
 
   &__strip-color-info {
-    // height: 100%;
-    // width: 100%;
     position: absolute;
     padding: 0.75rem 1rem;
 
     &--active {
       position: relative;
-      // width: 10rem;
       padding: 0 0.5rem;
     }
 
@@ -203,26 +189,32 @@ $top-level-class-string: '.color-info';
   }
 
   &__display-toggles-wrapper {
-    height: 1.5rem;
-    position: absolute;
-    right: calc(50% + 1rem);
-    transition: right 0.35s;
-    top: 1rem;
-    width: 1.5rem;
-    z-index: 9 ;
+    display: none;
 
-    &--chip-maximized {
-      right: 1rem;
-    }
+    @include respond-above(sm) {
+      display: block;
+      height: 1.5rem;
+      position: absolute;
+      right: calc(50% + 1rem);
+      transition: right 0.35s;
+      top: 1rem;
+      width: 1.5rem;
+      z-index: 9;
 
-    &--swatch-size {
-      // align-items: center;
-      border: 1px solid #fff;
-      // display: flex;
-      // justify-content: center;
-      height: auto;
-      // padding: 3px;
-      width: auto;
+      &--chip-maximized {
+        right: 1rem;
+      }
+
+      &--swatch-size {
+        border: 1px solid #000;
+        height: auto;
+        width: auto;
+
+        &#{$top-level-class-string}__display-toggles-wrapper--dark-color {
+          border: 1px solid #fff;
+          color: white;
+        }
+      }
     }
   }
 
@@ -230,7 +222,7 @@ $top-level-class-string: '.color-info';
     height: 80%;
     width: 40%;
 
-    &--scene {
+    &--scene#{$top-level-class-string}__display-toggles-icon.svg-inline--fa {
     height: 100%;
     width: 100%;
   }
@@ -245,12 +237,27 @@ $top-level-class-string: '.color-info';
     }
   }
 
+  &__color-swatch-link {
+    color: inherit;
+
+    &:active,
+    &:focus,
+    &:hover {
+      text-decoration: underline;
+
+      span {
+        text-decoration: underline;
+      }
+    }
+  }
+
   &__swatch-size-toggle-button {
     align-items: center;
     display: none;
     justify-content: space-around;
-    height: 1.2rem;
-    width: 2.4rem
+    height: 1.5rem;
+    width: 2rem;
+    transform: rotate(90deg);
   }
 
   &__scene-display-toggle-button {
@@ -280,22 +287,32 @@ $top-level-class-string: '.color-info';
 
   &__tab-list {
     align-items: center;
-    border-top: $width-thin solid $neutral-background-color;
+    border-top: $width-small solid $neutral-background-color;
     display: flex;
+    flex-shrink: 0;
     list-style: none;
+
+    @include respond-above(sm) {
+      border-right: $width-small solid $neutral-background-color;
+    }
   }
 
   &__tab {
-    border-right: $width-thin solid $neutral-background-color;
     color: $color-near-black;
     cursor: pointer;
     flex-grow: 1;
     font-size: 0.85rem;
+    overflow: hidden;
     padding: $tab-set-padding;
     text-align: center;
+    width: 100%;
 
     &:last-child {
-      border-right: none;
+      border-bottom: none;
+
+      &.react-tabs__tab--selected {
+        border-bottom: $width-thin solid $neutral-foreground-color;
+      }
     }
 
     &--dark-color {
@@ -308,6 +325,12 @@ $top-level-class-string: '.color-info';
       border-radius: 0;
       color: $neutral-foreground-color;
     }
+
+    &:active,
+    &:focus,
+    &:hover {
+      text-decoration: underline;
+    }
   }
 
   &__tab-copy {
@@ -319,8 +342,10 @@ $top-level-class-string: '.color-info';
   &__tab-panel {
     background-color: $neutral-background-color;
     box-sizing: border-box;
+    overflow: hidden;
 
     &.react-tabs__tab-panel--selected {
+      border-top: $width-thin solid $neutral-background-color;
       height: 10rem;
       min-height: 10rem;
     }
@@ -331,13 +356,17 @@ $top-level-class-string: '.color-info';
     flex-direction: column;
     height: 100%;
     justify-content: stretch;
-    margin: $width-thin 0;
+    margin: $width-thin 0 $width-thin 0;
     list-style: none;
+
+    @include respond-above(sm) {
+      margin-right: $width-small;
+    }
   }
 
   &__coord-color {
     background: #bbc;
-    border-bottom: $width-thin solid $neutral-background-color;
+    border-bottom: $width-small solid $neutral-background-color;
     color: $color-black;
     display: flex;
     flex-direction: column;
@@ -370,33 +399,23 @@ $top-level-class-string: '.color-info';
   }
 
   &__similar-colors {
-    align-items: center;
+    background-color: $neutral-background-color;
     display: flex;
     flex-wrap: wrap;
-    justify-content: flex-start;
+    height: 100%;
     list-style: none;
+    padding: $width-thin / 2;
   }
 
   &__similar-color {
-    height: calc(5rem - #{$width-thin} * 1.5);
-    height: 5rem;
-    width: calc(16.66666667% - #{$width-thin} * 0.83333334);
-    width: 16.5%;
-
-    &:nth-child(-n + 6) {
-      margin-bottom: $width-thin;
-    }
-
-    &:nth-child(6),
-    &:nth-child(12) {
-      margin-right: 0;
-    }
+    border-right: $width-small solid $neutral-background-color;
+    border-bottom: $width-small solid $neutral-background-color;
+    display: block;
+    height: 50%;
+    width: 16.666666665%;
   }
 
   &__similar-color-info {
-    border-color: $neutral-background-color;
-    border-style: solid;
-    border-width: $width-thin;
     display: block;
     height: 100%;
     position: relative;
@@ -459,9 +478,45 @@ $top-level-class-string: '.color-info';
     margin-right: 0.3rem;
   }
 
+  @include respond-above(xs) {
+    &__tab-list {
+      flex-direction: row;
+    }
+
+    &__tab {
+      border-bottom: none;
+      width: auto;
+
+      &:last-child.react-tabs__tab--selected {
+        border-bottom: none;
+      }
+    }
+  }
+
   @include respond-above(sm) {
     &__main-info {
+      display: flex;
+      flex-direction: column;
+      height: 60%;
+      justify-content: space-between;
       padding: $width-medium;
+    }
+
+    &__additional-info {
+      height: 40%;
+
+      .react-tabs {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
+    }
+
+    &__tab-panel {
+      &.react-tabs__tab-panel--selected {
+        height: inherit;
+        min-height: inherit;
+      }
     }
 
     &__max-chip {
@@ -476,23 +531,6 @@ $top-level-class-string: '.color-info';
       display: flex;
     }
 
-    // &__strip-color,
-    // &__strip-location {
-    //   height: #{$strip-chip-size} * 0.9;
-    // }
-
-    // &__strip-color {
-    //   min-width: #{$strip-chip-size} * 0.9;
-    // }
-
-    // &__strip-location {
-    //   width: #{$strip-chip-size} * 0.9;
-    // }
-
-    // &__strip-color-info--active {
-    //   width: 9rem * 0.8;
-    // }
-
     &__swatch-size-toggle-button {
       display: flex;
 
@@ -501,7 +539,7 @@ $top-level-class-string: '.color-info';
       }
 
       &#{$top-level-class-string}__display-toggle-button--alt#{$top-level-class-string}__display-toggle-button--active {
-        display: block;
+        display: flex;
       }
     }
 
@@ -516,39 +554,9 @@ $top-level-class-string: '.color-info';
     &__display-toggle-button--alt {
       display: none;
     }
-
-    // TODO: not sure if we want all a tags within the `color-info` namespace,
-    // but maybe we do? since we shouldn't need the default a tag styles within color swatches.
-    &__color-swatch-link {
-      text-decoration: none;
-      color: inherit;
-    }
   }
 
   @include respond-above(md) {
-    // &__strip {
-    //   display: flex;
-    // }
-    // &__strip-color,
-    // &__strip-location {
-    //   height: $strip-chip-size;
-    // }
-    // &__strip-color-info--active {
-    //   padding: 0 1rem;
-    // }
-
-    // &__strip-color {
-    //   min-width: $strip-chip-size;
-    // }
-
-    // &__strip-location {
-    //   width: $strip-chip-size;
-    // }
-
-    // &__strip-color-info--active {
-    //   width: 9rem;
-    // }
-
     &__display-toggles-wrapper {
       right: calc(60% + 1rem);
 
@@ -562,10 +570,7 @@ $top-level-class-string: '.color-info';
     &__strip {
       max-width: 28rem;
     }
-    // &__strip-color,
-    // &__strip-location {
-    //   height: $strip-chip-size;
-    // }
+
     &__strip-color-info--active {
       padding: 0 1rem;
     }

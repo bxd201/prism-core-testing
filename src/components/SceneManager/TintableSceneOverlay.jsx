@@ -30,10 +30,6 @@ class TintableSceneOverlay extends PureComponent<Props> {
     }
   }
 
-  static defaultProps = {
-    color: '#FFF'
-  }
-
   render () {
     const { type, message } = this.props
     let { color } = this.props

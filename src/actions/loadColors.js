@@ -1,28 +1,39 @@
 // @flow
 import axios from 'axios'
 
-import { SW_COLORS_BY_FAMILY_ENDPOINT, SW_BRIGHTS_ENDPOINT } from '../constants/endpoints'
-import type { Color } from '../shared/types/Colors'
+import { SW_COLORS_BY_FAMILY_ENDPOINT, SW_BRIGHTS_ENDPOINT, SW_FAMILY_NAMES_ENDPOINT } from '../constants/endpoints'
+import type { Color, FamilyStructure } from '../shared/types/Colors'
 
 export const REQUEST_COLORS: string = 'REQUEST_COLORS'
 const requestColors = () => {
   return {
     type: REQUEST_COLORS,
-    payload: { loading: true }
+    payload: {
+      loading: true,
+      activeRequest: true
+    }
   }
 }
 
 export const RECEIVE_COLORS: string = 'RECEIVE_COLORS'
-const receiveColors = (colorData) => {
+const receiveColors = (colorData: any) => {
   return {
     type: RECEIVE_COLORS,
     payload: {
       loading: false,
+      activeRequest: false,
       colors: colorData.colors,
       brights: colorData.brights,
-      families: colorData.families,
+      sections: colorData.sections,
       defaultFamily: colorData.defaultFamily
     }
+  }
+}
+
+export const LOAD_ERROR: string = 'LOAD_ERROR'
+const loadError = () => {
+  return {
+    type: LOAD_ERROR
   }
 }
 
@@ -31,6 +42,21 @@ export const filterByFamily = (family: string) => {
   return {
     type: FILTER_BY_FAMILY,
     payload: { family }
+  }
+}
+
+export const FILTER_BY_SECTION: string = 'FILTER_BY_SECTION'
+export const filterBySection = (section: string) => {
+  return {
+    type: FILTER_BY_SECTION,
+    payload: { section }
+  }
+}
+
+export const REMOVE_COLOR_FILTERS: string = 'REMOVE_COLOR_FILTERS'
+export const removeColorFilters = () => {
+  return {
+    type: REMOVE_COLOR_FILTERS
   }
 }
 
@@ -49,41 +75,51 @@ export const makeActiveColor = (color: Color) => {
   }
 }
 
+export const MAKE_ACTIVE_COLOR_BY_ID: string = 'MAKE_ACTIVE_COLOR_BY_ID'
+export const makeActiveColorById = (id: string) => {
+  return {
+    type: MAKE_ACTIVE_COLOR_BY_ID,
+    payload: { id }
+  }
+}
+
 // TODO: Make this method configurable via options on call so specific color wall implementations can reuse it to load their colors
 export const loadColors = (options?: any) => {
   // conditionally add the lng parameter if a manual language has been passed in
   const COLOR_FAMILY_ENDPOINT = (options && options.language) ? `${SW_COLORS_BY_FAMILY_ENDPOINT}?lng=${options.language}` : SW_COLORS_BY_FAMILY_ENDPOINT
   const BRIGHTS_ENDPOINT = (options && options.language) ? `${SW_BRIGHTS_ENDPOINT}?lng=${options.language}` : SW_BRIGHTS_ENDPOINT
+  const FAMILY_NAMES_ENDPOINT = (options && options.language) ? `${SW_FAMILY_NAMES_ENDPOINT}?lng=${options.language}` : SW_FAMILY_NAMES_ENDPOINT
 
-  return (dispatch: Function) => {
+  return (dispatch: Function, getState: Function) => {
+    const { items: { colors }, status: { activeRequest } } = getState().colors
+
+    // if a request to load is active OR we already have colors loaded...
+    if (activeRequest || colors) {
+      // ... return out of here, do not load anything else
+      return
+    }
+
     dispatch(requestColors())
 
     return Promise
-      .all([axios.get(COLOR_FAMILY_ENDPOINT), axios.get(BRIGHTS_ENDPOINT)])
+      .all([
+        axios.get(COLOR_FAMILY_ENDPOINT),
+        axios.get(BRIGHTS_ENDPOINT),
+        axios.get(FAMILY_NAMES_ENDPOINT)
+      ])
       .then(r => {
         const colors = r[0].data
         const brights = r[1].data
-        // TODO: populate families with a new API call eventually
-        const families = [
-          'All',
-          'Red',
-          'Orange',
-          'Yellow',
-          'Green',
-          'Blue',
-          'Purple',
-          'Neutral',
-          'White & Pastel'
-        ]
-        // TODO: select default family based on families data or some part of the families API response
-        const defaultFamily = 'All'
+        const sections: FamilyStructure = r[2].data
 
         dispatch(receiveColors({
           colors,
           brights,
-          families,
-          defaultFamily
+          sections
         }))
+      })
+      .catch(r => {
+        dispatch(loadError())
       })
   }
 }

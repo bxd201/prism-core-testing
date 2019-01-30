@@ -39,7 +39,6 @@ class SimilarColors extends PureComponent<Props, State> {
             }
           }).filter(color => !!color)}
         </ul>
-        <hr />
       </React.Fragment>
     )
   }

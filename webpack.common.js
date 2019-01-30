@@ -140,14 +140,14 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.(sc|sa|c)ss$/,
+        use: sassRules
+      },
+      {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
         use: [ 'babel-loader', 'eslint-loader' ],
         resolve: { extensions: [ '.js', '.jsx' ] }
-      },
-      {
-        test: /\.(sc|sa|c)ss$/,
-        use: sassRules
       }
     ]
   },
@@ -182,6 +182,7 @@ module.exports = {
     })
   ],
   devServer: {
+    host: '0.0.0.0', // allows for hitting this from ouside the host machine
     historyApiFallback: {
       rewrites: [
         { from: /^\/$/, to: '/index.html' },

@@ -1,10 +1,19 @@
+import '@babel/polyfill'
+
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
 import { IntlProvider } from 'react-intl'
 import { BrowserRouter, HashRouter } from 'react-router-dom'
+import ReactGA from 'react-ga'
+import { toArray } from 'lodash'
+
+import { GOOGLE_ANALYTICS_UID } from './constants/globals'
 
 import { DEFAULT_CONFIGURATIONS, ConfigurationContextProvider } from './contexts/ConfigurationContext'
+
+// global sass import -- keep this BEFORE the APPS import to maintain compiled CSS order
+import './scss/main.scss'
 
 // all supported languages
 import languages from './translations/translations'
@@ -18,8 +27,8 @@ import APPS from './config/components'
 // load all fontawesome fonts we are using
 import './config/fontawesome'
 
-// global sass import
-import './scss/main.scss'
+// initialize Google Analytics
+ReactGA.initialize(GOOGLE_ANALYTICS_UID, {})
 
 const renderAppInElement = (el) => {
   if (el.className.indexOf('__react-bound') > -1) {
@@ -74,7 +83,7 @@ const renderAppInElement = (el) => {
   const RouterRender = (routeType === 'browser') ? BrowserRouterRender : HashRouterRender
 
   ReactDOM.render(
-    <IntlProvider locale={language} messages={languages[language]}>
+    <IntlProvider locale={language} messages={languages[language]} textComponent={React.Fragment}>
       <Provider store={store}>
         { RouterRender }
       </Provider>
@@ -84,7 +93,7 @@ const renderAppInElement = (el) => {
 }
 
 const bindReactToDOM = () => {
-  document.querySelectorAll('.__react-root').forEach(renderAppInElement)
+  toArray(document.querySelectorAll('.__react-root')).forEach(renderAppInElement)
 }
 
 bindReactToDOM()

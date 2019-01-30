@@ -1,93 +1,105 @@
 // @flow
 import React, { PureComponent } from 'react'
-import { memoize } from 'lodash'
+import memoizee from 'memoizee'
+import { Link } from 'react-router-dom'
 
 import { BLANK_SWATCH, SW_CHUNK_SIZE } from 'constants/globals'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { convertFamiliesToGrid } from '../../../shared/helpers/ColorDataUtils'
+import { convertColorSetsToGrid } from '../../../shared/helpers/ColorDataUtils'
+import { generateColorWallPageUrl, generateColorDetailsPageUrl, fullColorName } from '../../../shared/helpers/ColorUtils'
 import { compareKebabs } from '../../../shared/helpers/StringUtils'
+import { FormattedMessage } from 'react-intl'
 
-import type { ColorFamilyPayload, ColorMap, Color, ColorGrid } from '../../../shared/types/Colors'
-
+import CircleLoader from '../../Loaders/CircleLoader/CircleLoader'
 import ColorWallSwatchList from './ColorWallSwatchList'
-import ColorWallButton from './ColorWallButton'
+import GenericMessage from '../../Messages/GenericMessage'
+
+import type { ColorSetPayload, ColorMap, Color, ColorGrid } from '../../../shared/types/Colors'
 
 type Props = {
-  colors: ColorFamilyPayload,
-  brights: ColorFamilyPayload,
+  colors: ColorSetPayload,
+  brights: ColorSetPayload,
   colorMap: ColorMap,
-  onRemoveActiveColor: Function,
-  onActivateColor: Function,
-  onSelectFamily: Function,
   addToLivePalette?: Function,
-  family: string,
-  families: string[],
-  activeColor: Color
+  activeColor: Color,
+  loading: boolean,
+  error: boolean,
+  family?: string,
+  section?: string,
+  families?: string[]
 }
 
 class SherwinColorWall extends PureComponent<Props> {
-  previewColor = void (0)
-  cwRef = void (0)
-  allColors = void (0)
-
   constructor (props: Props) {
     super(props)
 
     this.colorFamily = this.colorFamily.bind(this)
-    this.handleActivateColor = this.handleActivateColor.bind(this)
     this.getColorGrid = this.getColorGrid.bind(this)
+    this.buildSwatchLink = this.buildSwatchLink.bind(this)
+    this.buildSwatchDetailsLink = this.buildSwatchDetailsLink.bind(this)
   }
 
   render () {
-    const { onSelectFamily, family, families } = this.props
-    const ColorWallButtons = families ? families.map(thisFamily => {
-      return <ColorWallButton key={thisFamily} selectFamily={onSelectFamily} family={thisFamily} checked={compareKebabs(thisFamily, family)} />
-    }) : null
-
     return (
-      <React.Fragment>
-        <div className='color-wall-buttons'>
-          {ColorWallButtons}
-        </div>
-        <div className='color-wall-wall'>
-          { this.colorFamily() }
-        </div>
-      </React.Fragment>
+      <div className='color-wall-wall'>
+        { this.colorFamily() }
+      </div>
     )
   }
 
-  handleActivateColor = function handleActivateColor (color: Color) {
-    this.props.onActivateColor(color)
-  }
+  getColorGrid = memoizee(function getColorGrid (targetFamily: string | void, families: string[] | void): ColorGrid | void {
+    const { colors, brights } = this.props
 
-  getColorGrid = memoize(function getColorGrid (targetFamily: string): ColorGrid | void {
-    const { colors, brights, families } = this.props
+    if (!families || families.length === 0) {
+      return void (0)
+    }
 
-    let filteredFamilies = families.filter((fam: string) => {
-      const iFam = fam.toLowerCase()
-      const tgtFam = targetFamily && targetFamily.toLowerCase()
-
-      if (tgtFam === 'all') {
-        return iFam !== 'all'
+    let filteredColorSets = families.filter((familyName: string) => {
+      if (!targetFamily) {
+        return true
       }
 
-      return compareKebabs(iFam, tgtFam)
+      return compareKebabs(familyName, targetFamily)
     })
 
-    if (filteredFamilies.length) {
-      return convertFamiliesToGrid(filteredFamilies, colors, brights, BLANK_SWATCH, SW_CHUNK_SIZE)
+    if (filteredColorSets.length) {
+      return convertColorSetsToGrid(filteredColorSets, colors, brights, BLANK_SWATCH, SW_CHUNK_SIZE)
     }
 
     return void (0)
-  })
+  }, { primitive: true, length: 2 })
+
+  buildSwatchDetailsLink = function buildSwatchDetailsLink (color: Color): string {
+    return generateColorDetailsPageUrl(color)
+  }
+
+  buildSwatchLink = function buildSwatchLink (color: Color): string {
+    return generateColorWallPageUrl(this.props.section, this.props.family, color.id, fullColorName(color.brandKey, color.colorNumber, color.name))
+  }
 
   colorFamily = function colorFamily () {
-    const { family, activeColor, colorMap, addToLivePalette, onRemoveActiveColor } = this.props
+    const { family, families, section, activeColor, colorMap, addToLivePalette, loading, error } = this.props
+    const colorsGrid = this.getColorGrid(family, families)
+    const key = `${section || ''}_${family || ''}`
 
-    const colorsGrid = this.getColorGrid(family)
+    if (loading) {
+      return <CircleLoader className='color-wall-wall__loader' />
+    }
+
+    if (error) {
+      return (
+        <GenericMessage type={GenericMessage.TYPES.ERROR} className='color-wall-wall__message'>
+          <FormattedMessage id='ERROR_LOADING_COLORS' />
+        </GenericMessage>
+      )
+    }
 
     if (!colorsGrid) {
-      return null
+      return (
+        <GenericMessage type={GenericMessage.TYPES.WARNING} className='color-wall-wall__message'>
+          <FormattedMessage id='NO_COLORS_AVAILABLE' />
+        </GenericMessage>
+      )
     }
 
     return (
@@ -97,9 +109,11 @@ class SherwinColorWall extends PureComponent<Props> {
             bloomRadius={2}
             onAddColor={addToLivePalette}
             colorMap={colorMap}
+            swatchLinkGenerator={this.buildSwatchLink}
+            swatchDetailsLinkGenerator={this.buildSwatchDetailsLink}
             minCellSize={50}
             maxCellSize={50}
-            key={family}
+            key={key}
             colors={colorsGrid}
             initialActiveColor={activeColor}
             activeColor={activeColor} />
@@ -108,17 +122,19 @@ class SherwinColorWall extends PureComponent<Props> {
             showAll
             immediateSelectionOnActivation
             colorMap={colorMap}
+            swatchLinkGenerator={this.buildSwatchLink}
+            swatchDetailsLinkGenerator={this.buildSwatchDetailsLink}
             minCellSize={15}
             maxCellSize={25}
-            key={`${family}-showAll`}
-            colors={colorsGrid}
-            onActivateColor={this.handleActivateColor} />
+            key={`${key}-showAll`}
+            colors={colorsGrid} />
         )}
+
         {activeColor && (
           <div className='color-wall-wall__btns'>
-            <button title='Zoom Out' type='button' className='color-wall-wall__btns__btn' onClick={onRemoveActiveColor}>
-              <FontAwesomeIcon icon='search-minus' />
-            </button>
+            <Link to={generateColorWallPageUrl(section, family)} title='Zoom Out' className='color-wall-wall__btns__btn'>
+              <FontAwesomeIcon icon='search-minus' size='lg' />
+            </Link>
           </div>
         )}
       </React.Fragment>

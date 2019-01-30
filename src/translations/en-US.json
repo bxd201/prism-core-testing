@@ -1,14 +1,22 @@
 {
   "ADD_A_COLOR": "ADD A COLOR",
+  "BACK_TO_COLOR_WALL": "Back to Color Wall",
+  "CANCEL": "Cancel",
+  "COLOR_FAMILIES": "Color Families",
   "COORDINATING_COLORS": "Coordinating Colors",
   "DETAILS": "Details",
   "DISPLAY_SCENE_PAINTER": "Display the Scene Painter",
+  "EXTERIOR": "Exterior",
   "FIND_COLORS_IN_CW": "FIND COLORS IN THE DIGITAL COLOR WALL",
   "HIDE_SCENE_PAINTER": "Hide the Scene Painter",
+  "INTERIOR": "Interior",
   "LOCATION_NUMBER": "Location Number",
   "MAXIMIZE_COLOR_SWATCH": "Maximize the Color Swatch",
   "RESTORE_COLOR_SWATCH_TO_DEFAULT_SIZE": "Restore the Color Swatch to default size",
   "SIMILAR_COLORS": "Similar Colors",
   "TO_NIGHT_VIEW" : "Switch to night view",
-  "TO_DAY_VIEW" : "Switch to day view"
+  "TO_DAY_VIEW" : "Switch to day view",
+  "VIEW_DETAILS": "View Details",
+  "ERROR_LOADING_COLORS": "We're unable to load colors right now.",
+  "NO_COLORS_AVAILABLE": "No colors available."
 }
