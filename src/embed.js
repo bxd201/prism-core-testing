@@ -1,6 +1,12 @@
 import bindReactToDOM from './index'
 
 (function () {
+  // add styles that need to be immediately applied before our CSS finishes loading
+  const immediateStyleTag = document.createElement('style')
+  immediateStyleTag.type = 'text/css'
+  document.body.appendChild(immediateStyleTag)
+  immediateStyleTag.innerHTML = '.cleanslate.prism { display: none }'
+
   // create the link to our css
   const styleTag = document.createElement('link')
   styleTag.rel = 'stylesheet'
@@ -16,8 +22,8 @@ import bindReactToDOM from './index'
   cleanslateTag.media = 'all'
 
   // add our css to the <head>
-  document.getElementsByTagName('head')[0].appendChild(cleanslateTag)
-  document.getElementsByTagName('head')[0].appendChild(styleTag)
+  document.body.appendChild(cleanslateTag)
+  document.body.appendChild(styleTag)
 
   // attempt to grab the root div that we are goung to mount to
   const prismRoot = document.querySelector('#prism-root')

@@ -9,10 +9,11 @@ import { SCENE_TYPES, SCENE_VARIANTS } from 'constants/globals'
 import { loadScenes, paintSceneSurface, activateScene, deactivateScene, changeSceneVariant } from '../../actions/scenes'
 import TintableScene from './TintableScene'
 import SceneVariantSwitch from './SceneVariantSwitch'
-import type { Color } from '../../shared/types/Colors'
-import type { Scene, SceneStatus, Surface } from '../../shared/types/Scene'
 import ImagePreloader from '../../helpers/ImagePreloader'
 import { ensureFullyQualifiedAssetUrl } from '../../shared/helpers/DataUtils'
+import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
+import type { Color } from '../../shared/types/Colors'
+import type { Scene, SceneStatus, Surface } from '../../shared/types/Scene'
 
 import './SceneManager.scss'
 
@@ -119,7 +120,7 @@ class SceneManager extends PureComponent<Props, State> {
     const { scenes, sceneStatus, loadingScenes, activeColor, previewColor, mainColor, activeScenes, type, interactive } = this.props
 
     if (loadingScenes) {
-      return 'Loading...'
+      return <CircleLoader className={`${SceneManager.baseClass}__loader`} />
     }
 
     return (

@@ -26,6 +26,7 @@ type StateProps = {
   family: string,
   families?: string[],
   loading: boolean,
+  error: boolean,
   section: string,
   sections?: string[]
 }
@@ -69,7 +70,7 @@ class ColorWall extends PureComponent<Props, State> {
 
   render () {
     const { showColorFamilies } = this.state
-    const { colors, family, sections, families, section, brights, colorMap, colorWallActive, loading, addToLivePalette } = this.props
+    const { colors, family, sections, families, section, brights, colorMap, colorWallActive, loading, error, addToLivePalette } = this.props
 
     const hasSections = !!(sections && sections.length)
     const hasFamilies = !!(families && families.length > 1)
@@ -77,10 +78,6 @@ class ColorWall extends PureComponent<Props, State> {
     const transKey = colorWallActive ? 'active' : ''
     let sectionButtons = void (0)
     let familyButtons = void (0)
-
-    if (loading) {
-      return <p>Loading...</p>
-    }
 
     if (!_showColorFamilies && hasSections) {
       sectionButtons = (
@@ -114,7 +111,6 @@ class ColorWall extends PureComponent<Props, State> {
       familyButtons = (
         <div className={MODE_CLASS_NAMES.COL}>
           <div className={MODE_CLASS_NAMES.CELL}>
-            {/* <FontAwesomeIcon className={`${MODE_CLASS_NAMES.LG} ${MODE_CLASS_NAMES.LEFT}`} icon={['fa', 'palette']} pull='left' size='lg' /> */}
             <div className={MODE_CLASS_NAMES.OPTION_CONTAINER}>
               <ul className={MODE_CLASS_NAMES.OPTIONS}>
                 {/* $FlowIgnore -- Flow doesn't realize families must be defined and be iterable to get here */}
@@ -169,7 +165,8 @@ class ColorWall extends PureComponent<Props, State> {
               colorMap={colorMap}
               activeColor={colorWallActive}
               addToLivePalette={addToLivePalette}
-            />
+              loading={loading}
+              error={error} />
           </CSSTransition>
         </TransitionGroup>
       </div>
@@ -203,8 +200,8 @@ const mapStateToProps = (state, props) => {
     family: state.colors.family.family,
     sections: state.colors.family.sections,
     section: state.colors.family.section,
-    // defaultFamily: state.colors.defaultFamily,
-    loading: state.colors.status.loading
+    loading: state.colors.status.loading,
+    error: state.colors.status.error
   }
 }
 
