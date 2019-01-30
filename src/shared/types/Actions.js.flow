@@ -16,6 +16,7 @@ export type SectionCollection = Section[]
 export type ColorsState = {
   status: {
     loading: boolean,
+    error: boolean,
     activeRequest: boolean
   },
   items: {

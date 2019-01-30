@@ -30,6 +30,13 @@ const receiveColors = (colorData: any) => {
   }
 }
 
+export const LOAD_ERROR: string = 'LOAD_ERROR'
+const loadError = () => {
+  return {
+    type: LOAD_ERROR
+  }
+}
+
 export const FILTER_BY_FAMILY: string = 'FILTER_BY_FAMILY'
 export const filterByFamily = (family: string) => {
   return {
@@ -110,6 +117,9 @@ export const loadColors = (options?: any) => {
           brights,
           sections
         }))
+      })
+      .catch(r => {
+        dispatch(loadError())
       })
   }
 }

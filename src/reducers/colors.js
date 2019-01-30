@@ -1,7 +1,7 @@
 // @flow
 import { find, kebabCase, includes } from 'lodash'
 
-import { REQUEST_COLORS, RECEIVE_COLORS, FILTER_BY_FAMILY, MAKE_ACTIVE_COLOR, RESET_ACTIVE_COLOR, FILTER_BY_SECTION, REMOVE_COLOR_FILTERS, MAKE_ACTIVE_COLOR_BY_ID } from '../actions/loadColors'
+import { REQUEST_COLORS, RECEIVE_COLORS, FILTER_BY_FAMILY, MAKE_ACTIVE_COLOR, RESET_ACTIVE_COLOR, FILTER_BY_SECTION, REMOVE_COLOR_FILTERS, MAKE_ACTIVE_COLOR_BY_ID, LOAD_ERROR } from '../actions/loadColors'
 import { REQUEST_SEARCH_RESULTS, RECEIVE_SEARCH_RESULTS } from '../actions/loadSearchResults'
 import { convertToColorMap } from '../shared/helpers/ColorDataUtils'
 import { compareKebabs } from '../shared/helpers/StringUtils'
@@ -10,6 +10,7 @@ import type { ReduxAction, ColorsState, Section } from '../shared/types/Actions'
 export const initialState: ColorsState = {
   status: {
     loading: true,
+    error: false,
     activeRequest: false
   },
   items: {},
@@ -21,6 +22,15 @@ export const initialState: ColorsState = {
 
 export const colors = (state: ColorsState = initialState, action: ReduxAction) => {
   switch (action.type) {
+    case LOAD_ERROR:
+      return Object.assign({}, state, {
+        status: {
+          loading: false,
+          error: true,
+          activeRequest: false
+        }
+      })
+
     case RESET_ACTIVE_COLOR:
       return Object.assign({}, state, {
         colorWallActive: initialState.colorWallActive,
@@ -85,10 +95,10 @@ export const colors = (state: ColorsState = initialState, action: ReduxAction) =
           brights: action.payload.brights,
           colorMap: Object.assign({}, convertToColorMap(action.payload.colors), convertToColorMap(action.payload.brights))
         },
-        status: {
+        status: Object.assign(state.status, {
           loading: action.payload.loading,
           activeRequest: action.payload.activeRequest
-        }
+        })
       })
 
       if (action.payload.sections && action.payload.sections.length) {

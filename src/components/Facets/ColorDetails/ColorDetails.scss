@@ -333,11 +333,11 @@ $top-level-class-string: '.color-info';
 
   &__tab-panel {
     background-color: $neutral-background-color;
-    border-top: $width-thin solid $neutral-background-color;
     box-sizing: border-box;
     overflow: hidden;
 
     &.react-tabs__tab-panel--selected {
+      border-top: $width-thin solid $neutral-background-color;
       height: 10rem;
       min-height: 10rem;
     }

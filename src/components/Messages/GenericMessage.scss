@@ -1,0 +1,25 @@
+.generic-message {
+  font-size: inherit;
+  padding: 1em;
+  text-align: center;
+
+  &__inner {
+    font-weight: bold;
+    background: rgba(pick-visible-color($color-near-black, $color-black, $color-white), $color-near-opacity);
+    border-radius: .25em;
+    color: $color-near-black;
+    text-align: center;
+    display: inline-block;
+    padding: 1em;
+
+    &--error {
+      background: rgba(getVar('colors.error'), $color-near-opacity);
+      color: pick-visible-color(getVar('colors.error'), $color-black, $color-white);
+    }
+
+    &--warning {
+      background: rgba(getVar('colors.warning'), $color-near-opacity);
+      color: pick-visible-color(getVar('colors.warning'), $color-black, $color-white);
+    }
+  }
+}

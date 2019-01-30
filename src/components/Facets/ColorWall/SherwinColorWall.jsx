@@ -1,4 +1,3 @@
-/* eslint-disable */
 // @flow
 import React, { PureComponent } from 'react'
 import memoizee from 'memoizee'
@@ -9,10 +8,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { convertColorSetsToGrid } from '../../../shared/helpers/ColorDataUtils'
 import { generateColorWallPageUrl, generateColorDetailsPageUrl, fullColorName } from '../../../shared/helpers/ColorUtils'
 import { compareKebabs } from '../../../shared/helpers/StringUtils'
+import { FormattedMessage } from 'react-intl'
+
+import CircleLoader from '../../Loaders/CircleLoader/CircleLoader'
+import ColorWallSwatchList from './ColorWallSwatchList'
+import GenericMessage from '../../Messages/GenericMessage'
 
 import type { ColorSetPayload, ColorMap, Color, ColorGrid } from '../../../shared/types/Colors'
-
-import ColorWallSwatchList from './ColorWallSwatchList'
 
 type Props = {
   colors: ColorSetPayload,
@@ -20,16 +22,14 @@ type Props = {
   colorMap: ColorMap,
   addToLivePalette?: Function,
   activeColor: Color,
+  loading: boolean,
+  error: boolean,
   family?: string,
   section?: string,
   families?: string[]
 }
 
 class SherwinColorWall extends PureComponent<Props> {
-  previewColor = void (0)
-  cwRef = void (0)
-  allColors = void (0)
-
   constructor (props: Props) {
     super(props)
 
@@ -78,12 +78,28 @@ class SherwinColorWall extends PureComponent<Props> {
   }
 
   colorFamily = function colorFamily () {
-    const { family, families, section, activeColor, colorMap, addToLivePalette } = this.props
+    const { family, families, section, activeColor, colorMap, addToLivePalette, loading, error } = this.props
     const colorsGrid = this.getColorGrid(family, families)
     const key = `${section || ''}_${family || ''}`
 
+    if (loading) {
+      return <CircleLoader className='color-wall-wall__loader' />
+    }
+
+    if (error) {
+      return (
+        <GenericMessage type={GenericMessage.TYPES.ERROR} className='color-wall-wall__message'>
+          <FormattedMessage id='ERROR_LOADING_COLORS' />
+        </GenericMessage>
+      )
+    }
+
     if (!colorsGrid) {
-      return null
+      return (
+        <GenericMessage type={GenericMessage.TYPES.WARNING} className='color-wall-wall__message'>
+          <FormattedMessage id='NO_COLORS_AVAILABLE' />
+        </GenericMessage>
+      )
     }
 
     return (
