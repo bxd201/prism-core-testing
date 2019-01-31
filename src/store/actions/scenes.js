@@ -2,8 +2,8 @@
 import axios from 'axios'
 import _ from 'lodash'
 
-import type { ScenePayload } from '../shared/types/Scene'
-import type { Color } from '../shared/types/Colors'
+import type { ScenePayload } from '../../shared/types/Scene'
+import type { Color } from '../../shared/types/Colors'
 import { SW_SCENES_ENDPOINT } from 'constants/endpoints'
 
 export const REQUEST_SCENES = 'REQUEST_SCENES'

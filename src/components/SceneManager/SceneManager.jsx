@@ -6,7 +6,7 @@ import memoizee from 'memoizee'
 import ReactGA from 'react-ga'
 
 import { SCENE_TYPES, SCENE_VARIANTS } from 'constants/globals'
-import { loadScenes, paintSceneSurface, activateScene, deactivateScene, changeSceneVariant } from '../../actions/scenes'
+import { loadScenes, paintSceneSurface, activateScene, deactivateScene, changeSceneVariant } from '../../store/actions/scenes'
 import TintableScene from './TintableScene'
 import SceneVariantSwitch from './SceneVariantSwitch'
 import ImagePreloader from '../../helpers/ImagePreloader'

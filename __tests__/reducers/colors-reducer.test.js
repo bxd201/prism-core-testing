@@ -1,6 +1,6 @@
-import * as colorActions from 'src/actions/loadColors'
-import * as searchActions from 'src/actions/loadSearchResults'
-import { colors, initialState } from 'src/reducers/colors'
+import * as colorActions from 'src/store/actions/loadColors'
+import * as searchActions from 'src/store/actions/loadSearchResults'
+import { colors, initialState } from 'src/store/reducers/colors'
 
 import * as Colors from '__mocks__/data/color/Colors'
 

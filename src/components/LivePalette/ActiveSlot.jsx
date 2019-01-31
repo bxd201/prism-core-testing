@@ -7,7 +7,7 @@ import flow from 'lodash/flow'
 import { DragSource, DropTarget } from 'react-dnd'
 import { fullColorNumber } from '../../shared/helpers/ColorUtils'
 
-import { remove, activatePreview } from '../../actions/live-palette'
+import { remove, activatePreview } from '../../store/actions/live-palette'
 
 import { DRAG_TYPES } from 'constants/globals'
 

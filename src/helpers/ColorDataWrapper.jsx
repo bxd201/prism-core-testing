@@ -5,7 +5,7 @@ import isEmpty from 'lodash/isEmpty'
 
 import { type ColorSetPayload, type ColorMap } from '../shared/types/Colors'
 import CircleLoader from '../components/Loaders/CircleLoader/CircleLoader'
-import { loadColors } from '../actions/loadColors'
+import { loadColors } from '../store/actions/loadColors'
 import { varValues } from 'variables'
 
 type Props = {
