@@ -47,6 +47,10 @@ class ColorDetails extends PureComponent<Props, State> {
     this.toggleSceneDisplay = this.toggleSceneDisplay.bind(this)
     this.toggleChipMaximized = this.toggleChipMaximized.bind(this)
     this.reportTabSwitchToGA = this.reportTabSwitchToGA.bind(this)
+    this.toggleChipMax = React.createRef()
+    this.toggleChipMin = React.createRef()
+    this.toggleSceneDisplayScene = React.createRef()
+    this.toggleSceneHideScene = React.createRef()
   }
 
   render () {
@@ -121,14 +125,14 @@ class ColorDetails extends PureComponent<Props, State> {
         <div className='color-detail-view'>
           <div className={SWATCH_CLASSES.join(' ')} style={{ backgroundColor: activeColor.hex }} />
           <div className={SWATCH_SIZE_WRAPPER_CLASSES.join(' ')}>
-            <button className={SWATCH_SIZE_TOGGLE_BUTTON_CLASSES.join(' ')} onClick={this.toggleChipMaximized}>
+            <button className={SWATCH_SIZE_TOGGLE_BUTTON_CLASSES.join(' ')} onClick={this.toggleChipMaximized} ref={this.toggleChipMax}>
               <FontAwesomeIcon className={`${ColorDetails.baseClass}__display-toggles-icon`} icon={['fal', 'expand-alt']} color={contrastingTextColor} size={'2x'} />
               <div className={`${ColorDetails.baseClass}__scene-toggle-copy`}>
                 <FormattedMessage id='MAXIMIZE_COLOR_SWATCH' />
               </div>
             </button>
-            <button className={ALT_SWATCH_SIZE_TOGGLE_BUTTON_CLASSES.join(' ')} onClick={this.toggleChipMaximized}>
-              <FontAwesomeIcon className={`${ColorDetails.baseClass}__display-toggles-icon`} icon={['fal', 'expand-alt']} color={contrastingTextColor} size={'2x'} />
+            <button className={ALT_SWATCH_SIZE_TOGGLE_BUTTON_CLASSES.join(' ')} onClick={this.toggleChipMaximized} ref={this.toggleChipMin}>
+              <FontAwesomeIcon className={`${ColorDetails.baseClass}__display-toggles-icon`} icon={['fal', 'compress-alt']} color={contrastingTextColor} size={'2x'} />
               <div className={`${ColorDetails.baseClass}__scene-toggle-copy`}>
                 <FormattedMessage id='RESTORE_COLOR_SWATCH_TO_DEFAULT_SIZE' />
               </div>
@@ -138,13 +142,13 @@ class ColorDetails extends PureComponent<Props, State> {
             <SceneManager maxActiveScenes={1} interactive={false} mainColor={activeColor} />
           </div>
           <div className='color-detail__info-wrapper'>
-            <button className={SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.join(' ')} onClick={this.toggleSceneDisplay}>
+            <button className={SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.join(' ')} onClick={this.toggleSceneDisplay} ref={this.toggleSceneDisplayScene}>
               <FontAwesomeIcon className={`${ColorDetails.baseClass}__display-toggles-icon ${ColorDetails.baseClass}__display-toggles-icon--scene`} icon={['fal', 'home']} color={contrastingTextColor} />
               <div className={`${ColorDetails.baseClass}__scene-toggle-copy`}>
                 <FormattedMessage id='DISPLAY_SCENE_PAINTER' />
               </div>
             </button>
-            <button className={ALT_SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.join(' ')} onClick={this.toggleSceneDisplay}>
+            <button className={ALT_SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.join(' ')} onClick={this.toggleSceneDisplay} ref={this.toggleSceneHideScene}>
               <FontAwesomeIcon className={`${ColorDetails.baseClass}__display-toggles-icon ${ColorDetails.baseClass}__display-toggles-icon--scene`} icon={['fas', 'home']} color={contrastingTextColor} />
               <div className={`${ColorDetails.baseClass}__scene-toggle-copy`}>
                 <FormattedMessage id='HIDE_SCENE_PAINTER' />
@@ -213,20 +217,34 @@ class ColorDetails extends PureComponent<Props, State> {
     return colors[colorId]
   }
 
-  toggleSceneDisplay = function toggleSceneDisplay () {
-    this.setState({ sceneIsDisplayed: !this.state.sceneIsDisplayed })
+  toggleSceneDisplay () {
+    if (this.state.sceneIsDisplayed) {
+      this.setState({ sceneIsDisplayed: false },
+        () => { if (this.toggleSceneDisplayScene) this.toggleSceneDisplayScene.current.focus() }
+      )
+    } else {
+      this.setState({ sceneIsDisplayed: true },
+        () => { if (this.toggleSceneHideScene) this.toggleSceneHideScene.current.focus() }
+      )
+    }
   }
 
-  toggleChipMaximized = function toggleChipMaximized () {
-    if (!this.state.chipIsMaximized) {
+  toggleChipMaximized () {
+    if (this.state.chipIsMaximized) {
+      this.setState({ chipIsMaximized: false },
+        () => { if (this.toggleChipMax) this.toggleChipMax.current.focus() }
+      )
+    } else {
       ReactGA.event({
         category: 'Color Detail',
         action: 'Maximize Swatch',
         label: 'Maximize Swatch'
       })
-    }
 
-    this.setState({ chipIsMaximized: !this.state.chipIsMaximized })
+      this.setState({ chipIsMaximized: true },
+        () => { if (this.toggleChipMin) this.toggleChipMin.current.focus() }
+      )
+    }
   }
 
   reportTabSwitchToGA (index) {
