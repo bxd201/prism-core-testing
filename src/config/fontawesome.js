@@ -24,7 +24,8 @@ import {
   faSun as falSun,
   faThLarge,
   faMoon as falMoon,
-  faExpandAlt
+  faExpandAlt,
+  faCompressAlt
 } from '@fortawesome/pro-light-svg-icons'
 
 // regulars
@@ -35,6 +36,7 @@ import {
 // populate with all the FontAwesome svg icons we want to use
 const faIcons = [
   faExpandAlt,
+  faCompressAlt,
   faHome,
   falHome,
   faMoon,
