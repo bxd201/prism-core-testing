@@ -11,7 +11,7 @@ import { Link } from 'react-router-dom'
 
 import { LP_MAX_COLORS_ALLOWED } from 'constants/configurations'
 
-import { activate, reorder } from '../../actions/live-palette'
+import { activate, reorder } from '../../store/actions/live-palette'
 import { arrayToSpacedString } from '../../shared/helpers/StringUtils'
 
 import { varValues } from 'variables'

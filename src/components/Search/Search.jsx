@@ -5,8 +5,8 @@ import { connect } from 'react-redux'
 import { Grid, AutoSizer } from 'react-virtualized'
 import { debounce } from 'lodash'
 
-import { loadSearchResults } from '../../actions/loadSearchResults'
-import { add } from '../../actions/live-palette'
+import { loadSearchResults } from '../../store/actions/loadSearchResults'
+import { add } from '../../store/actions/live-palette'
 import ColorWallSwatch from '../Facets/ColorWall/ColorWallSwatch/ColorWallSwatch'
 import { type Color } from '../../shared/types/Colors'
 

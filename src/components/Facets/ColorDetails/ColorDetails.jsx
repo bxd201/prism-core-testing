@@ -17,7 +17,7 @@ import SceneManager from '../../SceneManager/SceneManager'
 import type { ColorMap, Color } from '../../../shared/types/Colors'
 import { ROUTE_PARAM_NAMES } from 'constants/globals'
 
-import { paintAllMainSurfaces } from '../../../actions/scenes'
+import { paintAllMainSurfaces } from '../../../store/actions/scenes'
 import { varValues } from 'variables'
 import './ColorDetails.scss'
 

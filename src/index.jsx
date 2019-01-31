@@ -19,7 +19,7 @@ import './scss/main.scss'
 import languages from './translations/translations'
 
 // import the redux store
-import store from './store'
+import store from './store/store'
 
 // import all mountable components
 import APPS from './config/components'
