@@ -1,8 +1,8 @@
 // @flow
 import axios from 'axios'
 
-import { SW_COLORS_BY_FAMILY_ENDPOINT, SW_BRIGHTS_ENDPOINT, SW_FAMILY_NAMES_ENDPOINT } from '../constants/endpoints'
-import type { Color, FamilyStructure } from '../shared/types/Colors'
+import { SW_COLORS_BY_FAMILY_ENDPOINT, SW_BRIGHTS_ENDPOINT, SW_FAMILY_NAMES_ENDPOINT } from '../../constants/endpoints'
+import type { Color, FamilyStructure } from '../../shared/types/Colors'
 
 export const REQUEST_COLORS: string = 'REQUEST_COLORS'
 const requestColors = () => {

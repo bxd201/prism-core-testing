@@ -1,5 +1,5 @@
-import * as actions from 'src/actions/scenes'
-import { scenes, initialState } from 'src/reducers/scenes'
+import * as actions from 'src/store/actions/scenes'
+import { scenes, initialState } from 'src/store/reducers/scenes'
 
 import * as Scenes from '__mocks__/data/scene/Scenes'
 

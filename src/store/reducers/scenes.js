@@ -1,7 +1,7 @@
 // @flow
 import { concat, uniq, isUndefined, isNull, without, find, includes } from 'lodash'
 
-import type { Scene, SceneStatus, SurfaceStatus, Surface, Variant } from '../shared/types/Scene'
+import type { Scene, SceneStatus, SurfaceStatus, Surface, Variant } from '../../shared/types/Scene'
 
 import {
   RECEIVE_SCENES,

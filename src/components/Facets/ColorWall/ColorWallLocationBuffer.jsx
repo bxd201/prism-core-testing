@@ -1,7 +1,7 @@
 // @flow
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { filterByFamily, filterBySection, makeActiveColorById, resetActiveColor } from '../../../actions/loadColors'
+import { filterByFamily, filterBySection, makeActiveColorById, resetActiveColor } from '../../../store/actions/loadColors'
 import { compareKebabs } from '../../../shared/helpers/StringUtils'
 import type { Color } from '../../../shared/types/Colors'
 import { ROUTE_PARAM_NAMES } from 'constants/globals'

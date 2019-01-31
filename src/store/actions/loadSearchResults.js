@@ -1,8 +1,8 @@
 // @flow
 import axios from 'axios'
 
-import { SW_COLORS_SEARCH_ENDPOINT } from '../constants/endpoints'
-import type { ColorListPayload } from '../shared/types/Colors'
+import { SW_COLORS_SEARCH_ENDPOINT } from '../../constants/endpoints'
+import type { ColorListPayload } from '../../shared/types/Colors'
 
 export const REQUEST_SEARCH_RESULTS: string = 'REQUEST_SEARCH_RESULTS'
 const requestSearchResults = () => {
