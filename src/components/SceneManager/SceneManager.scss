@@ -8,11 +8,16 @@
   // hardcoding magenta as an outline color for now
   $hit-area-outline-color: magenta;
 
-  $btn-active-color: rgba(#222, 1);
-  $btn-active-color-text: white;
-  $btn-focus-color: rgba(#39c, 1);
-  $btn-focus-color-text: rgba(white, 1);
-  $btn-border-size: 1px;
+  $btn-active-color: $color-near-black;
+  $btn-active-color-text: $color-white;
+  $btn-focus-color: getVar('colors.primary');
+  $btn-focus-color-text: $color-near-white;
+  $btn-border-size: 2px;
+
+  $icon-size: round($base * .7);
+  $icon-spacing: round($base * .125);
+
+  $self: &;
 
   @keyframes flashHitArea {
     0% {
@@ -52,6 +57,7 @@
 
   display: flex;
   flex-direction: column;
+  font-size: $base;
   width: 100%;
   height: 100%;
 
@@ -80,57 +86,76 @@
     }
 
     &--tabs {
-      display: flex;
-      padding: $btn-border-size;
+      padding: $btn-border-size 0 0;
+      justify-content: flex-start;
     }
   }
 
+  &__flag {
+    color: inherit;
+    fill: currentColor;
+    position: absolute;
+    font-size: $icon-size;
+    top: $icon-spacing;
+    left: $icon-spacing;
+    z-index: 1;
+  }
+
   &__btn {
-    border: $btn-border-size solid transparent;
     float: left;
-    margin: 0;
+    margin: 0 0 0 $btn-border-size;
     max-width: 110px;
     padding: 0;
     position: relative;
     z-index: 1;
+    color: $btn-active-color-text;
+
+    &:first-child {
+      margin-left: 0;
+    }
+
+    &::before {
+      content: '';
+      position: absolute;
+      display: block;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    &:hover, &:focus {
+      color: $btn-focus-color-text;
+
+      &::after {
+        border-top-color: $btn-focus-color;
+        border-left-color: $btn-focus-color;
+      }
+
+      &::before {
+        box-shadow: inset 0 0 0 $btn-border-size $btn-focus-color;
+      }
+    }
 
     img {
       display: block;
       max-width: 100%;
     }
 
-    &:hover {
-      border-color: $btn-focus-color;
-
-      &::after {
-        background: $btn-focus-color;
-        border-color: $btn-focus-color;
-        color: $btn-focus-color-text;
-      }
-    }
-
     &--active {
-      $icon-size: .9rem;
-
-      border-color: $btn-active-color;
-
       &::after {
-        background: $btn-active-color;
-        bottom: 0;
-        border: $btn-border-size solid $btn-active-color;
-        border-bottom: none;
-        border-right: none;
-        color: $btn-active-color-text;
-        content: '\02714\fe0e'; // adding \fe0e to make mobile browsers respect this as text
+        content: '';
+        top: 0;
         display: block;
-        font-size: $icon-size;
-        line-height: 1.1;
-        min-width: $icon-size;
-        min-height: $icon-size;
-        padding: .1em;
+        width: 0;
+        height: 0;
         position: absolute;
-        right: 0;
-        text-align: center;
+        left: 0;
+        border-top: $icon-size solid $btn-active-color;
+        border-left: $icon-size solid $btn-active-color;
+        border-bottom: $icon-size solid transparent;
+        border-right: $icon-size solid transparent;
       }
     }
 
