@@ -12,6 +12,7 @@ import SceneVariantSwitch from './SceneVariantSwitch'
 import ImagePreloader from '../../helpers/ImagePreloader'
 import { ensureFullyQualifiedAssetUrl } from '../../shared/helpers/DataUtils'
 import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import type { Color } from '../../shared/types/Colors'
 import type { Scene, SceneStatus, Surface } from '../../shared/types/Scene'
 
@@ -133,12 +134,16 @@ class SceneManager extends PureComponent<Props, State> {
             const status: SceneStatus = find(sceneStatus, { 'id': sceneId })
             const sceneVariant: Scene = find(scene.variants, { 'variant_name': status.variant })
             const surfaces: Surface[] = sceneVariant.surfaces
+            const activeMarker = includes(activeScenes, scene.id)
+              ? <FontAwesomeIcon icon={['fa', 'check']} className={`${SceneManager.baseClass}__flag`} />
+              : null
 
             return (
               <button key={sceneId}
                 onClick={() => this.handleClickSceneToggle(scene.id)}
                 className={`${SceneManager.baseClass}__btn ${includes(activeScenes, scene.id) ? `${SceneManager.baseClass}__btn--active` : ''}`}
                 type='button'>
+
                 <ImagePreloader
                   el={TintableScene}
                   preload={[
@@ -161,6 +166,8 @@ class SceneManager extends PureComponent<Props, State> {
                   surfaceStatus={status.surfaces}
                   surfaces={surfaces}
                 />
+
+                {activeMarker}
               </button>
             )
           })}
