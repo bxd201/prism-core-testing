@@ -194,6 +194,14 @@ class ColorDetails extends PureComponent<Props, State> {
     )
   }
 
+  componentDidMount () {
+    const { match: { params } } = this.props
+    const color = this.getColorById(params[ROUTE_PARAM_NAMES.COLOR_ID])
+
+    ReactGA.set({ dimension1: 'sherwinWilliamsCA_mainSite' })
+    ReactGA.pageview(`color-detail/${color.brandKey} ${color.colorNumber} - ${color.name}`)
+  }
+
   componentDidUpdate () {
     const { match: { params }, scenesLoaded } = this.props
 
@@ -201,9 +209,6 @@ class ColorDetails extends PureComponent<Props, State> {
     const color = this.getColorById(params[ROUTE_PARAM_NAMES.COLOR_ID])
     if (scenesLoaded && color) {
       this.props.paintAllMainSurfaces(color)
-
-      // log GA event
-      ReactGA.pageview(`color-detail/${color.brandKey} ${color.colorNumber} - ${color.name}`)
     }
   }
 
