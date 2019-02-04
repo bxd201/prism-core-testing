@@ -51,9 +51,13 @@ SceneVariantSwitch.DayNight = class DayNight extends PureComponent<SwitchProps> 
             htmlFor={DayNight.name}
             tabIndex='0'>
             <input className={SceneVariantSwitch.DayNight.classes.CHECKBOX} type='checkbox' checked={!isDay} name={DayNight.name} id={DayNight.name} onChange={this.handleChange} />
-            <FontAwesomeIcon className={`${SceneVariantSwitch.DayNight.classes.DAY} ${isDay ? `${SceneVariantSwitch.DayNight.classes.DAY}--active` : ''}`} icon={[isDay ? 'fas' : 'fal', 'sun']} />
+            {/* <FontAwesomeIcon className={`${SceneVariantSwitch.DayNight.classes.DAY} ${isDay ? `${SceneVariantSwitch.DayNight.classes.DAY}--active` : ''}`} icon={[isDay ? 'fas' : 'fal', 'sun']} /> */}
+            <FontAwesomeIcon className={`${SceneVariantSwitch.DayNight.classes.NIGHT} ${!isDay ? `${SceneVariantSwitch.DayNight.classes.NIGHT}--active` : ''}`} icon={['fal', 'moon']} />
+            {/* <FontAwesomeIcon className={`${SceneVariantSwitch.DayNight.classes.DAY} ${isDay ? `${SceneVariantSwitch.DayNight.classes.DAY}--active` : ''}`} icon={['fal', 'sun']} /> */}
             <div className={`${SceneVariantSwitch.DayNight.classes.SWITCH} ${!isDay ? `${SceneVariantSwitch.DayNight.classes.SWITCH}--on` : ''}`} />
-            <FontAwesomeIcon className={`${SceneVariantSwitch.DayNight.classes.NIGHT} ${!isDay ? `${SceneVariantSwitch.DayNight.classes.NIGHT}--active` : ''}`} icon={[isDay ? 'fal' : 'fas', 'moon']} />
+            <FontAwesomeIcon className={`${SceneVariantSwitch.DayNight.classes.DAY} ${isDay ? `${SceneVariantSwitch.DayNight.classes.DAY}--active` : ''}`} icon={['fal', 'sun']} />
+            {/* <FontAwesomeIcon className={`${SceneVariantSwitch.DayNight.classes.NIGHT} ${!isDay ? `${SceneVariantSwitch.DayNight.classes.NIGHT}--active` : ''}`} icon={[isDay ? 'fal' : 'fas', 'moon']} /> */}
+            {/* <FontAwesomeIcon className={`${SceneVariantSwitch.DayNight.classes.NIGHT} ${!isDay ? `${SceneVariantSwitch.DayNight.classes.NIGHT}--active` : ''}`} icon={['fal', 'moon']} /> */}
           </label>
         )}
       </FormattedMessage>
