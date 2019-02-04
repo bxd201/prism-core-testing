@@ -7,6 +7,7 @@ import { IntlProvider } from 'react-intl'
 import { BrowserRouter, HashRouter } from 'react-router-dom'
 import ReactGA from 'react-ga'
 import { toArray } from 'lodash'
+import { LiveAnnouncer } from 'react-aria-live'
 
 import { GOOGLE_ANALYTICS_UID } from './constants/globals'
 
@@ -85,7 +86,9 @@ const renderAppInElement = (el) => {
   ReactDOM.render(
     <IntlProvider locale={language} messages={languages[language]} textComponent={React.Fragment}>
       <Provider store={store}>
-        { RouterRender }
+        <LiveAnnouncer>
+          { RouterRender }
+        </LiveAnnouncer>
       </Provider>
     </IntlProvider>, el)
 

@@ -1,6 +1,7 @@
 // @flow
 import React, { PureComponent, Fragment } from 'react'
 import { includes, uniqueId, uniq, without, concat, find } from 'lodash'
+import { LiveMessage } from 'react-aria-live'
 
 import type { Color } from '../../shared/types/Colors'
 import type { Surface, SurfaceStatus } from '../../shared/types/Scene'
@@ -24,7 +25,8 @@ type Props = {
   clickToPaintColor?: Color,
   onUpdateColor?: Function,
   loading?: boolean,
-  error?: boolean
+  error?: boolean,
+  sceneName: string
 }
 
 type State = {
@@ -158,7 +160,7 @@ class TintableScene extends PureComponent<Props, State> {
   }
 
   render () {
-    const { surfaces, background, width, height, render, interactive, type, loading, error, sceneId } = this.props
+    const { surfaces, sceneName, background, width, height, render, interactive, type, loading, error, sceneId } = this.props
     const { instanceId, hitAreaError, hitAreaLoaded } = this.state
     const ratio = height / width
 
@@ -205,7 +207,7 @@ class TintableScene extends PureComponent<Props, State> {
               </div>
 
               <div className={`${TintableScene.classNames.base}__tint-wrapper`}>
-                <img className={`${TintableScene.classNames.base}__natural`} src={background} alt='TODO: Need img description from data' />
+                <img className={`${TintableScene.classNames.base}__natural`} src={background} alt={sceneName} />
                 {surfaces.map((surface: Surface, index) => {
                   const tintColor: ?Color = this.getTintColorBySurface(surface)
                   if (tintColor) {
@@ -222,6 +224,8 @@ class TintableScene extends PureComponent<Props, State> {
                   }
                 })}
               </div>
+
+              <LiveMessage message={`${sceneName} scene has been loaded`} aria-live='polite' />
             </Fragment>
           )}
 
