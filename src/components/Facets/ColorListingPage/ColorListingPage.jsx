@@ -5,7 +5,7 @@ import { Route, Redirect, withRouter, Switch } from 'react-router-dom'
 import { TransitionGroup, CSSTransition } from 'react-transition-group'
 import { includes } from 'lodash'
 
-import ColorWallLocationBuffer from '../ColorWall/ColorWallLocationBuffer'
+import ColorWallRouteComponent from '../ColorWall/ColorWallRouteComponent'
 import ColorDetails from '../ColorDetails/ColorDetails'
 import ColorDataWrapper from '../../../helpers/ColorDataWrapper'
 import BackToColorWall from './BackToColorWall'
@@ -36,7 +36,10 @@ const ColorWallConfigurations = {
     displayViewDetails: true
   }
 }
-const Configurations = Object.assign({}, DEFAULT_CONFIGURATIONS, ColorWallConfigurations)
+const Configurations = {
+  ...DEFAULT_CONFIGURATIONS,
+  ...ColorWallConfigurations
+}
 
 // since the CDP component won't have any color information if we go to it directly, we need to wrap it
 // in the ColorDataWrapper HOC to ensure it has color data prior to rendering it.
@@ -54,32 +57,9 @@ const ColorDetailsComponent = (props) => {
 // overriding the default configuration with updated CW ones to hide the info and add buttons on the swatch
 // also performing manual route matching here
 const ColorWallComponent = (props: Object) => {
-  const { match, ...other } = props
-  const captured = match.params[0]
-
-  // we may be manually overriding the match prop if we've matched ANYTHING after the base color wall URL, so let's clone it
-  let newMatch = Object.assign({}, match)
-
-  // if we have a match for our first param (assuming the match pattern continues to be .*)
-  if (captured) {
-    // ... then define section, family, and color props to populate a new params object with; the old one is useless to us
-    const section = new RegExp(`/${ROUTE_PARAMS.SECTION}/([^/]*)`).exec(captured)
-    const family = new RegExp(`/${ROUTE_PARAMS.FAMILY}/([^/]*)`).exec(captured)
-    const color = new RegExp(`/${ROUTE_PARAMS.COLOR}/([^/]*)/([^/]*)`).exec(captured)
-
-    Object.assign(newMatch, {
-      params: {
-        [ROUTE_PARAM_NAMES.SECTION]: section ? section[1] : void (0),
-        [ROUTE_PARAM_NAMES.FAMILY]: family ? family[1] : void (0),
-        [ROUTE_PARAM_NAMES.COLOR_ID]: color ? color[1] : void (0),
-        [ROUTE_PARAM_NAMES.COLOR_SEO]: color ? color[2] : void (0)
-      }
-    })
-  }
-
   return (
     <ConfigurationContextProvider value={Configurations}>
-      <ColorWallLocationBuffer match={newMatch} {...other} />
+      <ColorWallRouteComponent {...props} />
     </ConfigurationContextProvider>
   )
 }
