@@ -2,15 +2,18 @@
   $base-font-size: $base; // 16px
   $switch-size: 1.5em; // 24px
   $switch-min-width: $switch-size * 1.5;
-  $toggle-size: 1em;
+  $toggle-size: 1.28em;
   $icon-size: $switch-size * .6666666;
   $spacing: $switch-size *.2;
 
   align-items: center;
-  background: $color-near-white;
-  bottom: 0;
-  box-shadow: 0 0 0 1px rgba(black, .1);
-  color: $color-black;
+  background: $color-light-grey;
+  border-radius: $switch-size / 2;
+  // background: $color-near-white;
+  // bottom: 0;
+  // box-shadow: 0 0 0 1px rgba(black, .1);
+  // color: $color-black;
+  // color: rgba(0, 0, 0, 0.35);
   cursor: pointer;
   display: flex;
   float: right;
@@ -19,34 +22,51 @@
   max-width: 100%;
   padding: $spacing $spacing * 2;
   position: absolute;
-  right: 0;
+  // right: 0;
+  right: 1rem;
+  top: 1rem;
   transition: color .2s, background .2s;
   z-index: 1;
 
   &--night {
-    background: $color-near-black;
-    box-shadow: none;
-    color: $color-white;
+    // background: $color-near-black;
+    // box-shadow: none;
+    // color: $color-white;
   }
 
   &__day,
   &__night {
-    opacity: .5;
+    color: $color-near-black;
+    // margin-left: -1 * (( $switch-size - $toggle-size ) / 4);
+    // opacity: .5;
 
-    &--active {
-      opacity: 1;
-    }
+    // &--active {
+    //   opacity: 1;
+    // }
+  }
+
+  &__day {
+    margin-left: $switch-size - $toggle-size;
+    margin-right: -1 * ( $switch-size - $toggle-size );
+    
+  }
+
+  &__night {
+    margin-left: -1 * ( $switch-size - $toggle-size );
   }
 
   &__switch {
-    background: lighten($color-near-black, 40%);
-    border-radius: $switch-size / 2;
+    // background: lighten($color-near-black, 30%);
+    // background: rgba(0, 0, 0, 0.35);
+    // border-radius: $switch-size / 2;
     display: block;
     height: $switch-size;
-    margin: 0 $spacing;
+    // margin: 0 $spacing;
     min-width: $switch-min-width;
     overflow: hidden;
-    position: relative;
+    // position: relative;
+    position: absolute;
+    width: 100%;
 
     &::before {
       content: '';
@@ -55,17 +75,19 @@
       box-shadow: 0 0 ( $switch-size - $toggle-size ) / 2 0 rgba(black, .2);
       display: block;
       height: $toggle-size;
+      // margin: ( $switch-size - $toggle-size ) / 2 $switch-size - $toggle-size;
       margin: ( $switch-size - $toggle-size ) / 2;
       position: absolute;
       top: 0;
       transition: left .2s ease-out;
       left: 0;
       width: $toggle-size;
+      z-index: 99999;
     }
 
     &--on {
-      background: map-get( $colors, primary );
-      box-shadow: inset 0 0 0 1px rgba(white, .1);
+      // background: map-get( $colors, primary );
+      // box-shadow: inset 0 0 0 1px rgba(white, .1);
 
       &::before {
         left: calc(100% - #{$switch-size});
