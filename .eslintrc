@@ -7,9 +7,13 @@
   ],
   "plugins": [
     "flowtype",
-    "jsx-a11y"
+    "jsx-a11y",
+    "react-hooks"
   ],
   "globals" : {
     "Image": false
+  },
+  "rules": {
+    "react-hooks/rules-of-hooks": "error"
   }
 }
