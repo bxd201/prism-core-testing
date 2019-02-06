@@ -15,6 +15,7 @@ import {
   faHome,
   faSun,
   faMoon,
+  faMoonStars,
   faCheck
 } from '@fortawesome/pro-solid-svg-icons'
 
@@ -42,6 +43,7 @@ const faIcons = [
   falHome,
   faMoon,
   falMoon,
+  faMoonStars,
   faPalette,
   faPlus,
   faPlusCircle,
