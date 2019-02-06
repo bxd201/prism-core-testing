@@ -1,75 +1,60 @@
 .scene-variant-switch-day-night {
   $base-font-size: $base; // 16px
-  $switch-size: 1.5em; // 24px
-  $switch-min-width: $switch-size * 1.5;
-  $toggle-size: 1em;
-  $icon-size: $switch-size * .6666666;
-  $spacing: $switch-size *.2;
+  $icon-size: 1em;
 
   align-items: center;
-  background: $color-near-white;
-  bottom: 0;
-  box-shadow: 0 0 0 1px rgba(black, .1);
-  color: $color-black;
   cursor: pointer;
   display: flex;
   float: right;
   font-size: $base-font-size;
   justify-content: center;
   max-width: 100%;
-  padding: $spacing $spacing * 2;
   position: absolute;
-  right: 0;
-  transition: color .2s, background .2s;
+  right: 1rem;
+  top: 1rem;
   z-index: 1;
 
-  &--night {
-    background: $color-near-black;
-    box-shadow: none;
-    color: $color-white;
-  }
-
-  &__day,
-  &__night {
-    opacity: .5;
+  &__wrapper {
+    align-items: center;
+    background: rgba(41, 70, 147, 0.5);
+    border-radius: 50%; 
+    color: rgb(250, 232, 186);
+    display: flex;
+    filter: grayscale(100);
+    height: $icon-size * 1.5;
+    justify-content: center;
+    opacity: 0.6;
+    transform: scale(1);
+    transition: filter 0.6s, opacity 0.6s, transform 0.6s;
+    width: $icon-size * 1.5;
+    will-change: opacity transform;
 
     &--active {
+      background: rgba(41, 70, 147, 1);
+      filter: grayscale(0);
       opacity: 1;
+      transform: scale(1.35);
+    }
+
+    &--night {
+      background: rgba(28, 28, 29, 0.9);
+      color: rgb(208, 237, 255);
+      margin-left: $icon-size * 0.5;
+
+      &--active {
+        background: rgba(28, 28, 29, 0.9);
+      }
     }
   }
 
-  &__switch {
-    background: lighten($color-near-black, 40%);
-    border-radius: $switch-size / 2;
-    display: block;
-    height: $switch-size;
-    margin: 0 $spacing;
-    min-width: $switch-min-width;
-    overflow: hidden;
-    position: relative;
+  &__day {
+    height: $icon-size;
+    width: $icon-size; 
+  }
 
-    &::before {
-      content: '';
-      background: white;
-      border-radius: $toggle-size / 2;
-      box-shadow: 0 0 ( $switch-size - $toggle-size ) / 2 0 rgba(black, .2);
-      display: block;
-      height: $toggle-size;
-      margin: ( $switch-size - $toggle-size ) / 2;
-      position: absolute;
-      top: 0;
-      transition: left .2s ease-out;
-      left: 0;
-      width: $toggle-size;
-    }
-
-    &--on {
-      background: map-get( $colors, primary );
-      box-shadow: inset 0 0 0 1px rgba(white, .1);
-
-      &::before {
-        left: calc(100% - #{$switch-size});
-      }
-    }
+  &__night {
+    height: $icon-size * 0.9;
+    margin: 0 0 $icon-size * 0.1 $icon-size * 0.1;
+    width: $icon-size * 0.9;
   }
 }
