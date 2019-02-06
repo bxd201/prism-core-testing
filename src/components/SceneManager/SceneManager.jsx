@@ -219,6 +219,7 @@ class SceneManager extends PureComponent<Props, State> {
                   mainColor={mainColor}
                   surfaceStatus={status.surfaces}
                   surfaces={surfaces}
+                  sceneName={sceneVariant.name}
                 />
                 {variantSwitch}
               </div>

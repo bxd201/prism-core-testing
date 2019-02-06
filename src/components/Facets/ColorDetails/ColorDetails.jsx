@@ -7,6 +7,7 @@ import { has } from 'lodash'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import { FormattedMessage } from 'react-intl'
 import ReactGA from 'react-ga'
+import { LiveMessage } from 'react-aria-live'
 
 import ColorInfo from './ColorInfo/ColorInfo'
 import ColorViewer from './ColorViewer/ColorViewer'
@@ -30,7 +31,8 @@ type Props = {
 
 type State = {
   sceneIsDisplayed: boolean,
-  chipIsMaximized: boolean
+  chipIsMaximized: boolean,
+  a11yMessage: string
 }
 
 class ColorDetails extends PureComponent<Props, State> {
@@ -38,7 +40,8 @@ class ColorDetails extends PureComponent<Props, State> {
 
   state: State = {
     sceneIsDisplayed: true,
-    chipIsMaximized: false
+    chipIsMaximized: false,
+    a11yMessage: ''
   }
 
   constructor (props) {
@@ -55,7 +58,7 @@ class ColorDetails extends PureComponent<Props, State> {
 
   render () {
     const { match: { params }, colors } = this.props
-    const { sceneIsDisplayed, chipIsMaximized } = this.state
+    const { sceneIsDisplayed, chipIsMaximized, a11yMessage } = this.state
 
     // TODO: Color Details won't be a top level component, so this may not be valid so temporarily not rendering until it has colors
     if (!colors) {
@@ -190,6 +193,9 @@ class ColorDetails extends PureComponent<Props, State> {
             </div>
           </div>
         </div>
+        {/* All screen reader live region messaging goes here */}
+        <LiveMessage message={`You are now on the ${activeColor.name} color detail page.`} aria-live='polite' />
+        <LiveMessage message={a11yMessage} aria-live='polite' clearOnUnmount='true' />
       </React.Fragment>
     )
   }
@@ -224,11 +230,11 @@ class ColorDetails extends PureComponent<Props, State> {
 
   toggleSceneDisplay () {
     if (this.state.sceneIsDisplayed) {
-      this.setState({ sceneIsDisplayed: false },
+      this.setState({ sceneIsDisplayed: false, a11yMessage: 'Scene is hidden' },
         () => { if (this.toggleSceneDisplayScene) this.toggleSceneDisplayScene.current.focus() }
       )
     } else {
-      this.setState({ sceneIsDisplayed: true },
+      this.setState({ sceneIsDisplayed: true, a11yMessage: 'Scene is displayed' },
         () => { if (this.toggleSceneHideScene) this.toggleSceneHideScene.current.focus() }
       )
     }
@@ -236,7 +242,7 @@ class ColorDetails extends PureComponent<Props, State> {
 
   toggleChipMaximized () {
     if (this.state.chipIsMaximized) {
-      this.setState({ chipIsMaximized: false },
+      this.setState({ chipIsMaximized: false, a11yMessage: 'Color chip has been minimized' },
         () => { if (this.toggleChipMax) this.toggleChipMax.current.focus() }
       )
     } else {
@@ -245,8 +251,7 @@ class ColorDetails extends PureComponent<Props, State> {
         action: 'Maximize Swatch',
         label: 'Maximize Swatch'
       })
-
-      this.setState({ chipIsMaximized: true },
+      this.setState({ chipIsMaximized: true, a11yMessage: 'Color chip has been maximized' },
         () => { if (this.toggleChipMin) this.toggleChipMin.current.focus() }
       )
     }
