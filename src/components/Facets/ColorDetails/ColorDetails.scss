@@ -306,9 +306,11 @@ $top-level-class-string: '.color-info';
     padding: $tab-set-padding;
     text-align: center;
     width: 100%;
+    border-right: $width-thin solid #FFF;
 
     &:last-child {
       border-bottom: none;
+      border-right: none;
 
       &.react-tabs__tab--selected {
         border-bottom: $width-thin solid $neutral-foreground-color;
