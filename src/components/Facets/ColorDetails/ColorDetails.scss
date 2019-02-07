@@ -407,11 +407,11 @@ $top-level-class-string: '.color-info';
     height: 100%;
     list-style: none;
     padding: $width-thin / 2;
+    margin: -($width-small / 2);
   }
 
   &__similar-color {
-    border-right: $width-small solid $neutral-background-color;
-    border-bottom: $width-small solid $neutral-background-color;
+    border: ($width-small / 2) solid $neutral-background-color;
     display: block;
     height: 50%;
     width: 16.666666665%;
