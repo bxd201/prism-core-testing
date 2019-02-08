@@ -30,8 +30,14 @@ class TintableSceneSurface extends PureComponent<Props> {
                         0.33 0.33 0.33 0 0
                         0.33 0.33 0.33 0 0
                         0 1 0 1 0' />
+              <feComponentTransfer in='sourceImageInGrayscale' result='adjustedHistogram'>
+                <feFuncR type='table' tableValues='0 0.15 0.5 0.7 0.9 1' />
+                <feFuncG type='table' tableValues='0 0.15 0.5 0.7 0.9 1' />
+                <feFuncB type='table' tableValues='0 0.15 0.5 0.7 0.9 1' />
+              </feComponentTransfer>
+
               <feFlood floodColor={filterColor} result='tintHue' />
-              <feBlend mode='multiply' in2='tintHue' in='sourceImageInGrayscale' />
+              <feBlend mode='multiply' in2='tintHue' in='adjustedHistogram' />
             </filter>
             <mask id={maskId} x='0' y='0' width='100%' height='100%' maskUnits='objectBoundingBox'>
               <image x='0' y='0' width='100%' height='100%' xlinkHref={maskImage} />
