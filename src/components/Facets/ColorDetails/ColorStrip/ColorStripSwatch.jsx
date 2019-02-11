@@ -1,51 +1,44 @@
 // @flow
-import React, { PureComponent } from 'react'
+import React from 'react'
 import ReactGA from 'react-ga'
+import { withRouter } from 'react-router-dom'
+
 import type { Color } from '../../../../shared/types/Colors'
+
+import { generateColorDetailsPageUrl } from '../../../../shared/helpers/ColorUtils'
 
 type Props = {
   color: Color,
   active: Boolean,
-  activateColor: Function,
+  history: RouterHistory,
 }
 
-class ColorStripSwatch extends PureComponent<Props> {
-  static baseClass = 'color-info'
-
-  constructor (props) {
-    super(props)
-
-    this.selectColor = this.selectColor.bind(this)
-  }
-
-  render () {
-    const { color, active } = this.props
-
-    let BUTTON_CLASSES = [
-      `${ColorStripSwatch.baseClass}__strip-color-info`
-    ]
-    if (active) {
-      BUTTON_CLASSES.push(`${ColorStripSwatch.baseClass}__strip-color-info--active`)
-    }
-
-    return (
-      <li className={`${ColorStripSwatch.baseClass}__strip-color`} style={{ backgroundColor: color.hex }}>
-        <button className={BUTTON_CLASSES.join(' ')} onClick={this.selectColor}>
-          <span className={`${ColorStripSwatch.baseClass}__strip-color-name ${color.isDark ? `${ColorStripSwatch.baseClass}__strip-color-name--dark-color` : ''}`} >{color.name}</span>
-        </button>
-      </li>
-    )
-  }
-
-  selectColor = function selectColor () {
+function ColorStripSwatch ({ color, active, history }: Props) {
+  const selectColor = () => {
     ReactGA.event({
       category: 'Color Detail / Swatch Chip List',
       action: 'View Swatch Chip Color',
-      label: this.props.color.name
+      label: color.name
     })
-
-    this.props.activateColor(this.props.color)
+    history.push(generateColorDetailsPageUrl(color))
   }
+
+  const BASE_CLASS = 'color-info'
+
+  let BUTTON_CLASSES = [
+    `${BASE_CLASS}__strip-color-info`
+  ]
+  if (active) {
+    BUTTON_CLASSES.push(`${BASE_CLASS}__strip-color-info--active`)
+  }
+
+  return (
+    <li className={`${BASE_CLASS}__strip-color`} style={{ backgroundColor: color.hex }}>
+      <button className={BUTTON_CLASSES.join(' ')} onClick={selectColor}>
+        <span className={`${BASE_CLASS}__strip-color-name ${color.isDark ? `${BASE_CLASS}__strip-color-name--dark-color` : ''}`} >{color.name}</span>
+      </button>
+    </li>
+  )
 }
 
-export default ColorStripSwatch
+export default withRouter(ColorStripSwatch)
