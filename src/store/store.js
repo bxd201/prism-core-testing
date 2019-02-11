@@ -1,10 +1,14 @@
-import { createStore, applyMiddleware } from 'redux'
+import { createStore, applyMiddleware, compose } from 'redux'
 import thunkMiddleware from 'redux-thunk'
-import { createLogger } from 'redux-logger'
 
 import rootReducer from './reducers/rootReducer'
 
-const loggerMiddleware = createLogger()
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
+const enhancers = composeEnhancers(
+  applyMiddleware(
+    thunkMiddleware
+  )
+)
 
 // TODO: Hydrate the initialState from localStorage if it exists
 const initialState = {
@@ -16,10 +20,7 @@ const initialState = {
 const store = createStore(
   rootReducer,
   initialState,
-  applyMiddleware(
-    thunkMiddleware,
-    loggerMiddleware
-  )
+  enhancers
 )
 
 export default store
