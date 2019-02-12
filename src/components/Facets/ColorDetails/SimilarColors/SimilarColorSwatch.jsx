@@ -3,10 +3,12 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import ReactGA from 'react-ga'
 
+import type { Color } from '../../../../shared/types/Colors'
+
 import { generateColorDetailsPageUrl } from '../../../../shared/helpers/ColorUtils'
 
 type Props = {
-  color: Object
+  color: Color
 }
 
 function SimilarColorSwatch ({ color }: Props) {

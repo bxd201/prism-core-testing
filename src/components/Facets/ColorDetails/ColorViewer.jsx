@@ -2,10 +2,12 @@
 import React from 'react'
 import { FormattedMessage } from 'react-intl'
 
+import type { Color } from '../../../shared/types/Colors'
+
 import { fullColorNumber } from '../../../shared/helpers/ColorUtils'
 
 type Props = {
-  color: Object
+  color: Color
 }
 
 function ColorViewer ({ color }: Props) {
