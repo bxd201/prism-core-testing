@@ -1,5 +1,5 @@
 // @flow
-import React, { PureComponent } from 'react'
+import React from 'react'
 import { Route, Redirect, withRouter, Switch } from 'react-router-dom'
 
 import { ROUTE_PARAMS } from 'constants/globals'
@@ -16,17 +16,12 @@ type ColorWallFacetProps = {
   location: Location
 }
 
-class ColorWallFacet extends PureComponent<ColorWallFacetProps> {
-  render () {
-    const { location } = this.props
-
-    return (
-      <Switch location={location}>
-        <Route path='/' exact render={() => <Redirect to={colorWallBaseUrl} />} />
-        <Route path={colorWallUrlPattern} component={ColorWallRouteComponent} />
-      </Switch>
-    )
-  }
+function ColorWallFacet ({ location }: ColorWallFacetProps) {
+  return (
+    <Switch location={location}>
+      <Route path='/' exact render={() => <Redirect to={colorWallBaseUrl} />} />
+      <Route path={colorWallUrlPattern} component={ColorWallRouteComponent} />
+    </Switch>
+  )
 }
-
 export default withRouter(ColorWallFacet)

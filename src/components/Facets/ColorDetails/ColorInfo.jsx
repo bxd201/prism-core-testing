@@ -2,7 +2,13 @@
 import React from 'react'
 import { FormattedMessage } from 'react-intl'
 
-const ColorInfo = ({ color }: Object) => {
+import type { Color } from '../../../shared/types/Colors'
+
+type Props = {
+  color: Color
+}
+
+function ColorInfo ({ color }: Props) {
   return (
     <div className='color-info__details-tab-wrapper'>
       <h5 className='visually-hidden'><FormattedMessage id='DETAILS' /></h5>
