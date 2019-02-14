@@ -14,7 +14,8 @@ export type Variant = {
   image: string,
   thumb: string,
   variant_name: string,
-  surfaces: Surface[]
+  surfaces: Surface[],
+  normalizedImageValueCurve: string
 }
 
 export type Scene = {
