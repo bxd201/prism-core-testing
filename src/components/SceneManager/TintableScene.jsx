@@ -26,7 +26,8 @@ type Props = {
   onUpdateColor?: Function,
   loading?: boolean,
   error?: boolean,
-  sceneName: string
+  sceneName: string,
+  imageValueCurve: string
 }
 
 type State = {
@@ -160,7 +161,7 @@ class TintableScene extends PureComponent<Props, State> {
   }
 
   render () {
-    const { surfaces, sceneName, background, width, height, render, interactive, type, loading, error, sceneId } = this.props
+    const { surfaces, sceneName, background, width, height, render, interactive, type, loading, error, sceneId, imageValueCurve } = this.props
     const { instanceId, hitAreaError, hitAreaLoaded } = this.state
     const ratio = height / width
 
@@ -196,6 +197,7 @@ class TintableScene extends PureComponent<Props, State> {
                             shadowMap={surface.shadows}
                             filterId={TintableScene.getFilterId(instanceId, surface.id)}
                             filterColor={tintColor.hex}
+                            filterImageValueCurve={imageValueCurve}
                             maskId={TintableScene.getMaskId(instanceId, surface.id)}
                             maskImage={surface.mask}
                           />
