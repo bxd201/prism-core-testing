@@ -41,6 +41,12 @@ class LivePalette extends PureComponent<Props, State> {
   pendingUpdateFn: any
   requestedFrame: number | void
 
+  constructor (props) {
+    super(props)
+
+    this.activeSlotRef = React.createRef()
+  }
+
   componentDidUpdate (prevProps, prevState) {
     let spokenWord: Array<string> = []
     const prevColor = prevProps.activeColor
@@ -89,6 +95,8 @@ class LivePalette extends PureComponent<Props, State> {
     const activeSlots = colors.map((color, index) => {
       if (color && index < LP_MAX_COLORS_ALLOWED) {
         return (<ActiveSlot
+          ref={this.activeSlotRef}
+          node={this.activeSlotRef} // passing the ref down as a prop so DnD has access to the DOM element
           index={index}
           key={color.id}
           color={color}
