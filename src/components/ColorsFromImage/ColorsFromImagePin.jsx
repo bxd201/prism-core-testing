@@ -1,7 +1,18 @@
+// @flow
 import React, { PureComponent, Fragment } from 'react'
-import { PropTypes } from 'prop-types'
 
-class ColorsFromImagePin extends PureComponent {
+type Props = {
+  pinType: string,
+  onClickMethod: Function,
+  activePinIndex: number,
+  isActiveFlag: boolean,
+  transformValue: string,
+  RGBstring: string,
+  previewColorName: string,
+  previewColorNumber: string
+}
+
+class ColorsFromImagePin extends PureComponent<Props> {
   state = {}
 
   constructor (props) {
@@ -42,17 +53,6 @@ class ColorsFromImagePin extends PureComponent {
       </Fragment>
     )
   }
-}
-
-ColorsFromImagePin.propTypes = {
-  pinType: PropTypes.string,
-  onClickMethod: PropTypes.func,
-  activePinIndex: PropTypes.number,
-  isActiveFlag: PropTypes.bool,
-  transformValue: PropTypes.string,
-  RGBstring: PropTypes.string,
-  previewColorName: PropTypes.string,
-  previewColorNumber: PropTypes.string
 }
 
 export default ColorsFromImagePin

@@ -219,6 +219,7 @@ class SceneManager extends PureComponent<Props, State> {
                   mainColor={mainColor}
                   surfaceStatus={status.surfaces}
                   surfaces={surfaces}
+                  imageValueCurve={sceneVariant.normalizedImageValueCurve}
                   sceneName={sceneVariant.name}
                 />
                 {variantSwitch}
