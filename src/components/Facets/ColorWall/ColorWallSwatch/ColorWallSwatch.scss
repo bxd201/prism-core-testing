@@ -1,3 +1,16 @@
+$focus-z: 100;
+$hover-z: 101;
+
+@mixin swatch-focus() {
+  outline: $cw-focus-outline;
+  transition: none;
+  z-index: $focus-z;
+
+  &:hover {
+    outline-width: .1px;
+  }
+}
+
 .color-swatch-inner {
   $_self: &;
 
@@ -62,56 +75,8 @@
   }
 
   @mixin getFocusScaling($scale) {
-    &:hover, &:focus {
+    &:hover {
       transform: scale($scale);
-    }
-
-    &#{$_self}--pos-t {
-      &:hover, &:focus {
-        transform: scale($scale) translateY(percentage(($scale - 1) / $scale / 2));
-      }
-    }
-
-    &#{$_self}--pos-tl {
-      &:hover, &:focus {
-        transform: scale($scale) translateY(percentage(($scale - 1) / $scale / 2)) translateX(percentage(($scale - 1) / $scale / 2));
-      }
-    }
-
-    &#{$_self}--pos-tr {
-      &:hover, &:focus {
-        transform: scale($scale) translateY(percentage(($scale - 1) / $scale / 2)) translateX(percentage((1 - $scale) / $scale / 2));
-      }
-    }
-
-    &#{$_self}--pos-b {
-      &:hover, &:focus {
-        transform: scale($scale) translateY(percentage((1 - $scale) / $scale / 2));
-      }
-    }
-
-    &#{$_self}--pos-bl {
-      &:hover, &:focus {
-        transform: scale($scale) translateY(percentage((1 - $scale) / $scale / 2)) translateX(percentage(($scale - 1) / $scale / 2));
-      }
-    }
-
-    &#{$_self}--pos-br {
-      &:hover, &:focus {
-        transform: scale($scale) translateY(percentage((1 - $scale) / $scale / 2)) translateX(percentage((1 - $scale) / $scale / 2));
-      }
-    }
-
-    &#{$_self}--pos-l {
-      &:hover, &:focus {
-        transform: scale($scale) translateX(percentage(($scale - 1) / $scale / 2));
-      }
-    }
-
-    &#{$_self}--pos-r {
-      &:hover, &:focus {
-        transform: scale($scale) translateX(percentage((1 - $scale) / $scale / 2));
-      }
     }
   }
 
@@ -136,9 +101,13 @@
   &--clickable {
     cursor: pointer;
 
-    &:hover, &:focus {
-      z-index: 100;
+    &:focus {
+      @include swatch-focus()
+    }
+
+    &:hover {
       transition: none;
+      z-index: $hover-z;
     }
 
     .color-wall-swatch-list--show-all & {
@@ -148,6 +117,11 @@
     .color-wall-swatch-list--zoomed & {
       @include getFocusScaling($swatch-scale-amt--zoomed-in);
     }
+  }
+
+  &--focus {
+    @include swatch-focus()
+
   }
 
   &--dynamic {
@@ -196,9 +170,7 @@
       margin-bottom: .4em;
     }
 
-    &__add,
-    &__details,
-    &__info {
+    &__cta {
       position: absolute;
       bottom: 1em;
       color: inherit;
@@ -211,17 +183,22 @@
       transition: all .2s;
       text-align: center;
 
-      &:hover, &:focus {
+      &:hover, &:focus, &--focus {
         opacity: 1;
       }
-    }
 
-    &__details {
-      left: .5em;
-    }
+      &--focus,
+      &:focus {
+        outline: $cw-focus-outline;
+      }
 
-    &__info {
-      right: .5em;
+      &--l {
+        left: .5em;
+      }
+
+      &--r {
+        right: .5em;
+      }
     }
   }
 
@@ -247,6 +224,10 @@
 
     &:hover, &:focus {
       transform: unset !important;
+    }
+
+    &:focus {
+      outline-width: $cw-focus-outline-size;
     }
   }
 

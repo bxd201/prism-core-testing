@@ -9,3 +9,8 @@ $color-black: #000;
 $color-near-white: rgba(255, 255, 255, $color-near-opacity);
 $color-white: #ffffff;
 $color-light-grey: #dddddd;
+
+// COLOR WALL
+$cw-chunk-outline-offset: 6px;
+$cw-focus-outline-size: 2px;
+$cw-focus-outline: $cw-focus-outline-size solid getVar('colors.primary');

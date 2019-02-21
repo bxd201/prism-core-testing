@@ -18,5 +18,7 @@
   "TO_DAY_VIEW" : "Switch to day view",
   "VIEW_DETAILS": "View Details",
   "ERROR_LOADING_COLORS": "We're unable to load colours right now.",
-  "NO_COLORS_AVAILABLE": "No colours available."
+  "NO_COLORS_AVAILABLE": "No colours available.",
+  "SWATCH_ACTIVATED_DETAILS": "{color} is selected. Press Enter to view details.",
+  "SWATCH_FOCUS": "{color}. Press Enter to select."
 }
