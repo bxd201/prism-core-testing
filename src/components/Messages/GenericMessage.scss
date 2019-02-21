@@ -1,7 +1,11 @@
 .generic-message {
   font-size: inherit;
-  padding: 1em;
+  padding: .5em;
   text-align: center;
+
+  @include respond-above(sm) {
+    padding: 1em;
+  }
 
   &__inner {
     font-weight: bold;
@@ -10,7 +14,11 @@
     color: $color-near-black;
     text-align: center;
     display: inline-block;
-    padding: 1em;
+    padding: .5em;
+
+    @include respond-above(sm) {
+      padding: 1em;
+    }
 
     &--error {
       background: rgba(getVar('colors.error'), $color-near-opacity);
