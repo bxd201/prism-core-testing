@@ -88,7 +88,6 @@ class ImagePreloader extends PureComponent<Props, State> {
     const { el, ...other } = this.props
     const { error, loading } = this.state
 
-    // $FlowIgnore
     return React.createElement(el, Object.assign({}, other, { error: error, loading: loading }))
   }
 }
