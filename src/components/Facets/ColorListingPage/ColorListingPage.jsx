@@ -123,8 +123,6 @@ class ColorListingPage extends PureComponent<ColorListingPageProps, ColorListing
 
       if (includes(newPropsPathname, colorDetailsBaseUrl) && includes(prevPathname, colorWallBaseUrl)) {
         // going TO color details FROM color wall; slide in from right
-        // transitionClassNames = 'zong-slide-in'
-        // thingy = 'going TO color details'
         newProps = Object.assign({}, newProps, {
           toDetails: true,
           toWall: false
@@ -132,8 +130,6 @@ class ColorListingPage extends PureComponent<ColorListingPageProps, ColorListing
         // transitionClassNames = ''
       } else if (includes(newPropsPathname, colorWallBaseUrl) && includes(prevPathname, colorDetailsBaseUrl)) {
         // going TO color wall FROM color details; slide in from left
-        // transitionClassNames = 'zong-slide-out'
-        // thingy = 'going TO color wall'
         newProps = Object.assign({}, newProps, {
           toDetails: false,
           toWall: true

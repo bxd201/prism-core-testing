@@ -131,8 +131,8 @@ class SceneManager extends PureComponent<Props, State> {
           {scenes.map((scene, index) => {
             const sceneId = scene.id
 
-            const status: SceneStatus = find(sceneStatus, { 'id': sceneId })
-            const sceneVariant: Scene = find(scene.variants, { 'variant_name': status.variant })
+            const status: ?SceneStatus = find(sceneStatus, { 'id': sceneId })
+            const sceneVariant: ?Scene = find(scene.variants, { 'variant_name': status.variant })
             const surfaces: Surface[] = sceneVariant.surfaces
             const activeMarker = includes(activeScenes, scene.id)
               ? <FontAwesomeIcon icon={['fa', 'check']} className={`${SceneManager.baseClass}__flag`} />

@@ -80,7 +80,6 @@ class SherwinColorWall extends PureComponent<Props> {
   colorFamily = function colorFamily () {
     const { family, families, section, activeColor, colorMap, addToLivePalette, loading, error } = this.props
     const colorsGrid = this.getColorGrid(family, families)
-    const key = `${section || ''}_${family || ''}`
 
     if (loading) {
       return <CircleLoader className='color-wall-wall__loader' />
@@ -104,31 +103,22 @@ class SherwinColorWall extends PureComponent<Props> {
 
     return (
       <React.Fragment>
-        {activeColor ? (
-          <ColorWallSwatchList
-            bloomRadius={2}
-            onAddColor={addToLivePalette}
-            colorMap={colorMap}
-            swatchLinkGenerator={this.buildSwatchLink}
-            swatchDetailsLinkGenerator={this.buildSwatchDetailsLink}
-            minCellSize={50}
-            maxCellSize={50}
-            key={key}
-            colors={colorsGrid}
-            initialActiveColor={activeColor}
-            activeColor={activeColor} />
-        ) : (
-          <ColorWallSwatchList
-            showAll
-            immediateSelectionOnActivation
-            colorMap={colorMap}
-            swatchLinkGenerator={this.buildSwatchLink}
-            swatchDetailsLinkGenerator={this.buildSwatchDetailsLink}
-            minCellSize={15}
-            maxCellSize={25}
-            key={`${key}-showAll`}
-            colors={colorsGrid} />
-        )}
+        <ColorWallSwatchList
+          showAll={!activeColor}
+          immediateSelectionOnActivation={!activeColor}
+          activeColor={activeColor}
+          section={section}
+          family={family}
+          bloomRadius={2}
+          onAddColor={addToLivePalette}
+          colorMap={colorMap}
+          swatchLinkGenerator={this.buildSwatchLink}
+          swatchDetailsLinkGenerator={this.buildSwatchDetailsLink}
+          minCellSize={activeColor ? 50 : 15}
+          maxCellSize={activeColor ? 50 : 25}
+          colors={colorsGrid}
+          // colorGrid is being used as a key here so the whole component reinitializes when color set changes
+          key={colorsGrid} />
 
         {activeColor && (
           <div className='color-wall-wall__btns'>

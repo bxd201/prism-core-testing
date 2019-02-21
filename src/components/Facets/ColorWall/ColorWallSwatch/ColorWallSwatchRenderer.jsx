@@ -6,15 +6,17 @@ import { CLASS_NAMES } from './shared'
 import './ColorWallSwatch.scss'
 
 type Props = {
-  color: string
+  color: string,
+  focus?: boolean
 }
 
-export default function ColorWallSwatchRenderer (props: Props) {
-  const { color, ...other } = props
-
+export default function ColorWallSwatchRenderer ({ color, focus }: Props) {
   return (
-    <div className={CLASS_NAMES.SWATCH} {...other}>
-      <div className={CLASS_NAMES.BASE} style={{ background: color }} />
+    <div className={CLASS_NAMES.SWATCH}
+      role='presentation'>
+      <div
+        className={`${CLASS_NAMES.BASE} ${focus ? CLASS_NAMES.BASE_FOCUS : ''}`}
+        style={{ background: color }} />
     </div>
   )
 }
