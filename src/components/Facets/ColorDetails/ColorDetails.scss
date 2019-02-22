@@ -286,11 +286,12 @@ $top-level-class-string: '.color-info';
   }
 
   &__tab-list {
-    align-items: center;
     border-top: $width-small solid $neutral-background-color;
     display: flex;
+    flex-direction: row;
     flex-shrink: 0;
     list-style: none;
+    text-align: center;
 
     @include respond-above(sm) {
       border-right: $width-small solid $neutral-background-color;
@@ -298,23 +299,26 @@ $top-level-class-string: '.color-info';
   }
 
   &__tab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     color: $color-near-black;
     cursor: pointer;
-    flex-grow: 1;
     font-size: 0.85rem;
     overflow: hidden;
     padding: $tab-set-padding;
     text-align: center;
-    width: 100%;
     border-right: $width-thin solid #FFF;
+    width: percentage(3/1);
+    border-bottom: none;
+
+    @include respond-above(sm) {
+      width: auto;
+      flex: auto;
+    }
 
     &:last-child {
-      border-bottom: none;
       border-right: none;
-
-      &.react-tabs__tab--selected {
-        border-bottom: $width-thin solid $neutral-foreground-color;
-      }
     }
 
     &--dark-color {
@@ -478,21 +482,6 @@ $top-level-class-string: '.color-info';
   &__description-definition {
     display: inline;
     margin-right: 0.3rem;
-  }
-
-  @include respond-above(xs) {
-    &__tab-list {
-      flex-direction: row;
-    }
-
-    &__tab {
-      border-bottom: none;
-      width: auto;
-
-      &:last-child.react-tabs__tab--selected {
-        border-bottom: none;
-      }
-    }
   }
 
   @include respond-above(sm) {
