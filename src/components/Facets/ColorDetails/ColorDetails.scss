@@ -1,3 +1,13 @@
+$top-level-class-string: '.color-info';
+$neutral-background-color: #fff;
+$neutral-foreground-color: $color-near-black;
+$strip-chip-size: 2rem;
+$strip-chip-margin: $strip-chip-size * 0.1;
+$width-thin: 0.125rem;
+$width-small: 0.250rem;
+$width-medium: 1rem;
+$tab-set-padding: 0.5rem 0.25rem;
+
 .color-detail-view {
   display: flex;
   flex-direction: column;
@@ -10,6 +20,7 @@
 
 .color-detail {
   &__info-wrapper {
+    margin-bottom: $width-small;
     position: relative;
     width: 100%;
   }
@@ -18,6 +29,7 @@
     background: #eee;
     display: none;
     height: auto;
+    margin-bottom: $width-small;
     position: relative;
 
     &--displayed {
@@ -49,18 +61,7 @@
   }
 }
 
-$top-level-class-string: '.color-info';
-
 #{$top-level-class-string} {
-  $neutral-background-color: #fff;
-  $neutral-foreground-color: $color-near-black;
-  $strip-chip-size: 2rem;
-  $strip-chip-margin: $strip-chip-size * 0.1;
-  $width-thin: 0.125rem;
-  $width-small: 0.250rem;
-  $width-medium: 1rem;
-  $tab-set-padding: 0.5rem 0.25rem;
-
   background-color: $neutral-background-color;
 
   &__main-info {
@@ -115,6 +116,10 @@ $top-level-class-string: '.color-info';
     list-style: none;
     margin: 0 0 1rem;
     max-width: 26rem;
+
+    @include respond-between(sm, md) {
+      margin: 0;
+    }
   }
 
   &__strip-color,
@@ -232,6 +237,7 @@ $top-level-class-string: '.color-info';
 
   &__color-swatch-link {
     color: inherit;
+    width: 100%;
 
     &:active,
     &:focus,
@@ -298,7 +304,6 @@ $top-level-class-string: '.color-info';
     color: $color-near-black;
     cursor: pointer;
     font-size: 0.85rem;
-    height: 40px;
     overflow: hidden;
     padding: $tab-set-padding;
     text-align: center;
@@ -334,15 +339,10 @@ $top-level-class-string: '.color-info';
   }
 
   &__tab-copy {
-    align-items: center;
-    display: flex;
     font-size: .8em;
     font-weight: 600;
-    height: 100%;
-    justify-content: center;
-    padding: $tab-set-padding;
+    line-height: 1.1;
     text-transform: uppercase;
-    width: 100%;
   }
 
   &__tab-panel {
@@ -352,21 +352,35 @@ $top-level-class-string: '.color-info';
 
     &.react-tabs__tab-panel--selected {
       border-top: $width-thin solid $neutral-background-color;
-      height: 10rem;
-      min-height: 10rem;
+
+      @include respond-above(sm) {
+        height: 10rem;
+        min-height: 10rem;
+      }
     }
   }
 
   &__coord-colors {
     display: flex;
     flex-direction: column;
-    height: 100%;
     justify-content: stretch;
-    margin: $width-thin 0 $width-thin 0;
+    margin: 0;
     list-style: none;
+    height: auto;
+    padding-top: $width-thin;
 
     @include respond-above(sm) {
+      height: 100%;
+    }
+
+    @include respond-between(sm, md) {
+      flex-direction: row;
+      padding-right: $width-thin / 2;
+    }
+
+    @include respond-above(md) {
       margin-right: $width-small;
+      flex-direction: column;
     }
   }
 
@@ -380,7 +394,20 @@ $top-level-class-string: '.color-info';
     font-size: .8rem;
     justify-content: center;
     line-height: 1.3;
-    padding: 0 $width-medium;
+    padding: $width-medium;
+
+    @include respond-between(sm, md) {
+      margin: 0 $width-thin 0 0;
+      border: none;
+      width: percentage(1/3);
+      justify-content: flex-start;
+      align-items: flex-start;
+      padding: $width-medium / 2;
+    }
+
+    @include respond-above(md) {
+      padding: 0 $width-medium;
+    }
 
     &--dark-color {
       color: $color-white;
@@ -410,24 +437,45 @@ $top-level-class-string: '.color-info';
     flex-wrap: wrap;
     height: 100%;
     list-style: none;
-    padding: $width-thin / 2;
-    margin: -($width-small / 2);
+    padding: 0;
+    margin: 0 ($width-thin / -2);
+
+    @include respond-above(sm) {
+      margin: 0 ($width-thin * 1.5) 0 ($width-thin / -2);
+    }
   }
 
   &__similar-color {
-    border: ($width-small / 2) solid $neutral-background-color;
+    border: ($width-thin / 2) solid $neutral-background-color;
+    border-top-width: $width-thin;
+    border-bottom-width: 0;
     display: block;
     height: 50%;
-    width: 16.666666665%;
+    width: percentage(1/6);
+    position: relative;
+
+    &::before {
+      content: '';
+      display: block;
+      padding-top: 100%;
+      width: 1px;
+      height: 0;
+
+      @include respond-above(sm) {
+        display: none;
+      }
+    }
   }
 
   &__similar-color-info {
     display: block;
     height: 100%;
-    position: relative;
     transition: transform 0.3s, z-index .3s;
     width: 100%;
     z-index: 1;
+    position: absolute;
+    top: 0;
+    left: 0;
 
     &--active {
       transform: scale(1.25);
@@ -446,6 +494,10 @@ $top-level-class-string: '.color-info';
     opacity: 0;
     transition: transform 0.3s, opacity 0.5s;
     width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden;
   }
 
   &__similar-color-name {
