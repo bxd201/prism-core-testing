@@ -40,37 +40,38 @@ $hover-z: 101;
 
   @mixin getEdgeCompensation($scale, $amt, $i: '') {
     $this-scale: $amt * $scale;
+    $compensation-amt: 10; // higher numbers = less offset
 
     &#{$_self}--compensate-x-n2 {
-      left: $this-scale / -3 unquote($i);
+      left: $this-scale / -($compensation-amt / 2) unquote($i);
     }
 
     &#{$_self}--compensate-x-n1 {
-      left: $this-scale / -6 unquote($i);
+      left: $this-scale / -($compensation-amt) unquote($i);
     }
 
     &#{$_self}--compensate-x-1 {
-      left: $this-scale / 6 unquote($i);
+      left: $this-scale / ($compensation-amt) unquote($i);
     }
 
     &#{$_self}--compensate-x-2 {
-      left: $this-scale / 3 unquote($i);
+      left: $this-scale / ($compensation-amt / 2) unquote($i);
     }
 
     &#{$_self}--compensate-y-n2 {
-      top: $this-scale / -3 unquote($i);
+      top: $this-scale / -($compensation-amt / 2) unquote($i);
     }
 
     &#{$_self}--compensate-y-n1 {
-      top: $this-scale / -6 unquote($i);
+      top: $this-scale / -($compensation-amt) unquote($i);
     }
 
     &#{$_self}--compensate-y-1 {
-      top: $this-scale / 6 unquote($i);
+      top: $this-scale / ($compensation-amt) unquote($i);
     }
 
     &#{$_self}--compensate-y-2 {
-      top: $this-scale / 3 unquote($i);
+      top: $this-scale / ($compensation-amt / 2) unquote($i);
     }
   }
 
