@@ -12,7 +12,7 @@ $btn-border-thickness: 1px;
   padding-bottom: 100%; // 1:1
 
   @include respond-above(xs) {
-    padding-bottom: (9 / 16) * 100%; // 16:9
+    padding-bottom: percentage(500/1202); // ratio specific to SW color wall
   }
 
   &__btns {
