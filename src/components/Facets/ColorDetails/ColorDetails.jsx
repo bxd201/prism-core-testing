@@ -9,6 +9,7 @@ import { injectIntl, FormattedMessage } from 'react-intl'
 import ReactGA from 'react-ga'
 import { LiveMessage } from 'react-aria-live'
 
+import ColorChipMaximizer from './ColorChipMaximizer'
 import ColorInfo from './ColorInfo'
 import ColorViewer from './ColorViewer'
 import ColorStrip from './ColorStrip/ColorStrip'
@@ -56,17 +57,14 @@ class ColorDetails extends PureComponent<Props, State> {
     super(props)
 
     this.toggleSceneDisplay = this.toggleSceneDisplay.bind(this)
-    this.toggleChipMaximized = this.toggleChipMaximized.bind(this)
     this.reportTabSwitchToGA = this.reportTabSwitchToGA.bind(this)
-    this.toggleChipMax = React.createRef()
-    this.toggleChipMin = React.createRef()
     this.toggleSceneDisplayScene = React.createRef()
     this.toggleSceneHideScene = React.createRef()
   }
 
   render () {
     const { match: { params }, colors } = this.props
-    const { sceneIsDisplayed, chipIsMaximized, a11yMessage, a11yAssertMessage } = this.state
+    const { sceneIsDisplayed, a11yMessage, a11yAssertMessage } = this.state
 
     // TODO: Color Details won't be a top level component, so this may not be valid so temporarily not rendering until it has colors
     if (!colors) {
@@ -83,27 +81,9 @@ class ColorDetails extends PureComponent<Props, State> {
     // perform some css class logic & scaffolding instead of within the DOM itself
     let contrastingTextColor = varValues.colors.black
 
-    const SWATCH_CLASSES = [
-      `${ColorDetails.baseClass}__max-chip`
-    ]
-    const DISPLAY_TOGGLES_WRAPPER = [
-      `${ColorDetails.baseClass}__display-toggles-wrapper`
-    ]
-
-    const SWATCH_SIZE_WRAPPER_CLASSES = DISPLAY_TOGGLES_WRAPPER.slice()
-    SWATCH_SIZE_WRAPPER_CLASSES.push(`${ColorDetails.baseClass}__display-toggles-wrapper--swatch-size`)
-
     const MAIN_INFO_CLASSES = [
       `${ColorDetails.baseClass}__main-info`
     ]
-
-    const SWATCH_SIZE_TOGGLE_BUTTON_CLASSES = [
-      `${ColorDetails.baseClass}__display-toggle-button`,
-      `${ColorDetails.baseClass}__swatch-size-toggle-button`
-    ]
-    const ALT_SWATCH_SIZE_TOGGLE_BUTTON_CLASSES = SWATCH_SIZE_TOGGLE_BUTTON_CLASSES.slice()
-    ALT_SWATCH_SIZE_TOGGLE_BUTTON_CLASSES.push(`${ColorDetails.baseClass}__display-toggle-button--alt`)
-
     const SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES = [
       `${ColorDetails.baseClass}__display-toggle-button`,
       `${ColorDetails.baseClass}__scene-display-toggle-button`
@@ -111,44 +91,21 @@ class ColorDetails extends PureComponent<Props, State> {
     const ALT_SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES = SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.slice()
     ALT_SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.push(`${ColorDetails.baseClass}__scene-display-toggle-button--alt`)
 
-    if (chipIsMaximized) {
-      SWATCH_CLASSES.push(`${ColorDetails.baseClass}__max-chip--maximized`)
-      SWATCH_SIZE_WRAPPER_CLASSES.push(`${ColorDetails.baseClass}__display-toggles-wrapper--chip-maximized`)
-      SWATCH_SIZE_TOGGLE_BUTTON_CLASSES.push(`${ColorDetails.baseClass}__display-toggle-button--active`)
-      ALT_SWATCH_SIZE_TOGGLE_BUTTON_CLASSES.push(`${ColorDetails.baseClass}__display-toggle-button--active`)
-    }
     if (sceneIsDisplayed) {
       SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.push(`${ColorDetails.baseClass}__display-toggle-button--active`)
       ALT_SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.push(`${ColorDetails.baseClass}__display-toggle-button--active`)
     }
     if (activeColor.isDark) {
       contrastingTextColor = varValues.colors.white
-      SWATCH_SIZE_TOGGLE_BUTTON_CLASSES.push(`${ColorDetails.baseClass}__display-toggle-button--dark-color`)
       SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.push(`${ColorDetails.baseClass}__display-toggle-button--dark-color`)
-      ALT_SWATCH_SIZE_TOGGLE_BUTTON_CLASSES.push(`${ColorDetails.baseClass}__display-toggle-button--dark-color`)
       ALT_SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.push(`${ColorDetails.baseClass}__display-toggle-button--dark-color`)
       MAIN_INFO_CLASSES.push(`${ColorDetails.baseClass}__main-info--dark-color`)
-      SWATCH_SIZE_WRAPPER_CLASSES.push(`${ColorDetails.baseClass}__display-toggles-wrapper--dark-color`)
     }
 
     return (
       <React.Fragment>
         <div className='color-detail-view'>
-          <div className={SWATCH_CLASSES.join(' ')} style={{ backgroundColor: activeColor.hex }} />
-          <div className={SWATCH_SIZE_WRAPPER_CLASSES.join(' ')}>
-            <button className={SWATCH_SIZE_TOGGLE_BUTTON_CLASSES.join(' ')} onClick={this.toggleChipMaximized} ref={this.toggleChipMax}>
-              <FontAwesomeIcon className={`${ColorDetails.baseClass}__display-toggles-icon`} icon={['fal', 'expand-alt']} color={contrastingTextColor} size={'2x'} />
-              <div className={`${ColorDetails.baseClass}__scene-toggle-copy`}>
-                <FormattedMessage id='MAXIMIZE_COLOR_SWATCH' />
-              </div>
-            </button>
-            <button className={ALT_SWATCH_SIZE_TOGGLE_BUTTON_CLASSES.join(' ')} onClick={this.toggleChipMaximized} ref={this.toggleChipMin}>
-              <FontAwesomeIcon className={`${ColorDetails.baseClass}__display-toggles-icon`} icon={['fal', 'compress-alt']} color={contrastingTextColor} size={'2x'} />
-              <div className={`${ColorDetails.baseClass}__scene-toggle-copy`}>
-                <FormattedMessage id='RESTORE_COLOR_SWATCH_TO_DEFAULT_SIZE' />
-              </div>
-            </button>
-          </div>
+          <ColorChipMaximizer color={activeColor} />
           <div className={`color-detail__scene-wrapper ${sceneIsDisplayed ? ` color-detail__scene-wrapper--displayed` : ''}`}>
             <SceneManager maxActiveScenes={1} interactive={false} mainColor={activeColor} />
           </div>
@@ -258,38 +215,6 @@ class ColorDetails extends PureComponent<Props, State> {
 
           setTimeout(() => {
             this.setState({ a11yAssertMessage: translatedMessages.SCENE_DISPLAYED })
-          }, 500)
-        }
-      )
-    }
-  }
-
-  toggleChipMaximized () {
-    const translatedMessages = this.props.intl.messages
-
-    if (this.state.chipIsMaximized) {
-      this.setState({ chipIsMaximized: false, a11yAssertMessage: '' },
-        () => {
-          if (this.toggleChipMax) this.toggleChipMax.current.focus()
-
-          setTimeout(() => {
-            this.setState({ a11yAssertMessage: translatedMessages.CHIP_MINIMIZED })
-          }, 300)
-        }
-      )
-    } else {
-      ReactGA.event({
-        category: 'Color Detail',
-        action: 'Maximize Swatch',
-        label: 'Maximize Swatch'
-      })
-
-      this.setState({ chipIsMaximized: true, a11yAssertMessage: '' },
-        () => {
-          if (this.toggleChipMin) this.toggleChipMin.current.focus()
-
-          setTimeout(() => {
-            this.setState({ a11yAssertMessage: translatedMessages.CHIP_MAXIMIZED })
           }, 500)
         }
       )
