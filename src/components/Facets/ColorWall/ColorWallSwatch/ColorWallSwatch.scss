@@ -234,29 +234,29 @@ $hover-z: 101;
 
   &--bloom-lvl {
     &-0 {
-      @include getRaise($flower-size-scale, 200%, 900, !important);
-      @include getEdgeCompensation($flower-size-scale, 200%, !important);
+      @include getRaise($flower-size-scale, 190%, 900, !important);
+      @include getEdgeCompensation($flower-size-scale, 190%, !important);
       cursor: default;
     }
 
     &-n0-5 {
-      @include getRaise($flower-size-scale, 180%, 750, !important);
-      @include getEdgeCompensation($flower-size-scale, 180%, !important);
-    }
-
-    &-n1 {
-      @include getRaise($flower-size-scale, 165%, 700, !important);
+      @include getRaise($flower-size-scale, 165%, 750, !important);
       @include getEdgeCompensation($flower-size-scale, 165%, !important);
     }
 
+    &-n1 {
+      @include getRaise($flower-size-scale, 150%, 700, !important);
+      @include getEdgeCompensation($flower-size-scale, 150%, !important);
+    }
+
     &-n1-5 {
-      @include getRaise($flower-size-scale, 160%, 650, !important);
-      @include getEdgeCompensation($flower-size-scale, 160%, !important);
+      @include getRaise($flower-size-scale, 120%, 650, !important);
+      @include getEdgeCompensation($flower-size-scale, 120%, !important);
     }
 
     &-n2 {
-      @include getRaise($flower-size-scale, 130%, 600, !important);
-      @include getEdgeCompensation($flower-size-scale, 130%, !important);
+      @include getRaise($flower-size-scale, 100%, 600, !important);
+      @include getEdgeCompensation($flower-size-scale, 100%, !important);
     }
   }
 
