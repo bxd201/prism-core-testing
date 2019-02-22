@@ -98,15 +98,8 @@ $top-level-class-string: '.color-info';
     font-weight: 600;
   }
 
+  &__rack-location,
   &__type {
-    font-size: .8em;
-    font-weight: 400;
-    margin: .25em 0 0 0;
-    opacity: $color-near-opacity;
-    padding: 0;
-  }
-
-  &__rack-location {
     font-size: .8em;
     font-weight: 400;
     margin: .25em 0 0 0;
@@ -305,6 +298,7 @@ $top-level-class-string: '.color-info';
     color: $color-near-black;
     cursor: pointer;
     font-size: 0.85rem;
+    height: 40px;
     overflow: hidden;
     padding: $tab-set-padding;
     text-align: center;
@@ -340,9 +334,15 @@ $top-level-class-string: '.color-info';
   }
 
   &__tab-copy {
+    align-items: center;
+    display: flex;
     font-size: .8em;
     font-weight: 600;
+    height: 100%;
+    justify-content: center;
+    padding: $tab-set-padding;
     text-transform: uppercase;
+    width: 100%;
   }
 
   &__tab-panel {
@@ -501,6 +501,10 @@ $top-level-class-string: '.color-info';
         flex-direction: column;
         height: 100%;
       }
+    }
+
+    &__tab {
+      height: initial;
     }
 
     &__tab-panel {
