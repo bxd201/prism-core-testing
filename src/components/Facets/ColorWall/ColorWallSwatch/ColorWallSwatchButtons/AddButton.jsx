@@ -7,7 +7,7 @@ const AddButton = (props: Object) => {
 
   if (onAdd && config.ColorWall.displayAddButton) {
     return (
-      <button /* autoFocus */ onClick={onClick} {...other}>
+      <button onClick={onClick} {...other}>
         <FontAwesomeIcon icon='plus' size='1x' />
       </button>
     )

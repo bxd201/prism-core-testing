@@ -1,3 +1,13 @@
+$top-level-class-string: '.color-info';
+$neutral-background-color: #fff;
+$neutral-foreground-color: $color-near-black;
+$strip-chip-size: 2rem;
+$strip-chip-margin: $strip-chip-size * 0.1;
+$width-thin: 0.125rem;
+$width-small: 0.250rem;
+$width-medium: 1rem;
+$tab-set-padding: 0.5rem 0.25rem;
+
 .color-detail-view {
   display: flex;
   flex-direction: column;
@@ -10,6 +20,7 @@
 
 .color-detail {
   &__info-wrapper {
+    margin-bottom: $width-small;
     position: relative;
     width: 100%;
   }
@@ -18,6 +29,7 @@
     background: #eee;
     display: none;
     height: auto;
+    margin-bottom: $width-small;
     position: relative;
 
     &--displayed {
@@ -49,18 +61,7 @@
   }
 }
 
-$top-level-class-string: '.color-info';
-
 #{$top-level-class-string} {
-  $neutral-background-color: #fff;
-  $neutral-foreground-color: $color-near-black;
-  $strip-chip-size: 2rem;
-  $strip-chip-margin: $strip-chip-size * 0.1;
-  $width-thin: 0.125rem;
-  $width-small: 0.250rem;
-  $width-medium: 1rem;
-  $tab-set-padding: 0.5rem 0.25rem;
-
   background-color: $neutral-background-color;
 
   &__main-info {
@@ -98,15 +99,8 @@ $top-level-class-string: '.color-info';
     font-weight: 600;
   }
 
+  &__rack-location,
   &__type {
-    font-size: .8em;
-    font-weight: 400;
-    margin: .25em 0 0 0;
-    opacity: $color-near-opacity;
-    padding: 0;
-  }
-
-  &__rack-location {
     font-size: .8em;
     font-weight: 400;
     margin: .25em 0 0 0;
@@ -122,6 +116,10 @@ $top-level-class-string: '.color-info';
     list-style: none;
     margin: 0 0 1rem;
     max-width: 26rem;
+
+    @include respond-between(sm, md) {
+      margin: 0;
+    }
   }
 
   &__strip-color,
@@ -239,6 +237,7 @@ $top-level-class-string: '.color-info';
 
   &__color-swatch-link {
     color: inherit;
+    width: 100%;
 
     &:active,
     &:focus,
@@ -286,11 +285,12 @@ $top-level-class-string: '.color-info';
   }
 
   &__tab-list {
-    align-items: center;
     border-top: $width-small solid $neutral-background-color;
     display: flex;
+    flex-direction: row;
     flex-shrink: 0;
     list-style: none;
+    text-align: center;
 
     @include respond-above(sm) {
       border-right: $width-small solid $neutral-background-color;
@@ -298,23 +298,26 @@ $top-level-class-string: '.color-info';
   }
 
   &__tab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     color: $color-near-black;
     cursor: pointer;
-    flex-grow: 1;
     font-size: 0.85rem;
     overflow: hidden;
     padding: $tab-set-padding;
     text-align: center;
-    width: 100%;
     border-right: $width-thin solid #FFF;
+    width: percentage(3/1);
+    border-bottom: none;
+
+    @include respond-above(sm) {
+      width: auto;
+      flex: auto;
+    }
 
     &:last-child {
-      border-bottom: none;
       border-right: none;
-
-      &.react-tabs__tab--selected {
-        border-bottom: $width-thin solid $neutral-foreground-color;
-      }
     }
 
     &--dark-color {
@@ -338,6 +341,7 @@ $top-level-class-string: '.color-info';
   &__tab-copy {
     font-size: .8em;
     font-weight: 600;
+    line-height: 1.1;
     text-transform: uppercase;
   }
 
@@ -348,21 +352,35 @@ $top-level-class-string: '.color-info';
 
     &.react-tabs__tab-panel--selected {
       border-top: $width-thin solid $neutral-background-color;
-      height: 10rem;
-      min-height: 10rem;
+
+      @include respond-above(sm) {
+        height: 10rem;
+        min-height: 10rem;
+      }
     }
   }
 
   &__coord-colors {
     display: flex;
     flex-direction: column;
-    height: 100%;
     justify-content: stretch;
-    margin: $width-thin 0 $width-thin 0;
+    margin: 0;
     list-style: none;
+    height: auto;
+    padding-top: $width-thin;
 
     @include respond-above(sm) {
+      height: 100%;
+    }
+
+    @include respond-between(sm, md) {
+      flex-direction: row;
+      padding-right: $width-thin / 2;
+    }
+
+    @include respond-above(md) {
       margin-right: $width-small;
+      flex-direction: column;
     }
   }
 
@@ -376,7 +394,20 @@ $top-level-class-string: '.color-info';
     font-size: .8rem;
     justify-content: center;
     line-height: 1.3;
-    padding: 0 $width-medium;
+    padding: $width-medium;
+
+    @include respond-between(sm, md) {
+      margin: 0 $width-thin 0 0;
+      border: none;
+      width: percentage(1/3);
+      justify-content: flex-start;
+      align-items: flex-start;
+      padding: $width-medium / 2;
+    }
+
+    @include respond-above(md) {
+      padding: 0 $width-medium;
+    }
 
     &--dark-color {
       color: $color-white;
@@ -406,24 +437,45 @@ $top-level-class-string: '.color-info';
     flex-wrap: wrap;
     height: 100%;
     list-style: none;
-    padding: $width-thin / 2;
-    margin: -($width-small / 2);
+    padding: 0;
+    margin: 0 ($width-thin / -2);
+
+    @include respond-above(sm) {
+      margin: 0 ($width-thin * 1.5) 0 ($width-thin / -2);
+    }
   }
 
   &__similar-color {
-    border: ($width-small / 2) solid $neutral-background-color;
+    border: ($width-thin / 2) solid $neutral-background-color;
+    border-top-width: $width-thin;
+    border-bottom-width: 0;
     display: block;
     height: 50%;
-    width: 16.666666665%;
+    width: percentage(1/6);
+    position: relative;
+
+    &::before {
+      content: '';
+      display: block;
+      padding-top: 100%;
+      width: 1px;
+      height: 0;
+
+      @include respond-above(sm) {
+        display: none;
+      }
+    }
   }
 
   &__similar-color-info {
     display: block;
     height: 100%;
-    position: relative;
     transition: transform 0.3s, z-index .3s;
     width: 100%;
     z-index: 1;
+    position: absolute;
+    top: 0;
+    left: 0;
 
     &--active {
       transform: scale(1.25);
@@ -442,6 +494,10 @@ $top-level-class-string: '.color-info';
     opacity: 0;
     transition: transform 0.3s, opacity 0.5s;
     width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden;
   }
 
   &__similar-color-name {
@@ -480,21 +536,6 @@ $top-level-class-string: '.color-info';
     margin-right: 0.3rem;
   }
 
-  @include respond-above(xs) {
-    &__tab-list {
-      flex-direction: row;
-    }
-
-    &__tab {
-      border-bottom: none;
-      width: auto;
-
-      &:last-child.react-tabs__tab--selected {
-        border-bottom: none;
-      }
-    }
-  }
-
   @include respond-above(sm) {
     &__main-info {
       display: flex;
@@ -512,6 +553,10 @@ $top-level-class-string: '.color-info';
         flex-direction: column;
         height: 100%;
       }
+    }
+
+    &__tab {
+      height: initial;
     }
 
     &__tab-panel {

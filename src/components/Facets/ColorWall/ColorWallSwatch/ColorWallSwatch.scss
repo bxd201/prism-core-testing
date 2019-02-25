@@ -1,3 +1,16 @@
+$focus-z: 100;
+$hover-z: 101;
+
+@mixin swatch-focus() {
+  outline: $cw-focus-outline;
+  transition: none;
+  z-index: $focus-z;
+
+  &:hover {
+    outline-width: .1px;
+  }
+}
+
 .color-swatch-inner {
   $_self: &;
 
@@ -27,91 +40,44 @@
 
   @mixin getEdgeCompensation($scale, $amt, $i: '') {
     $this-scale: $amt * $scale;
+    $compensation-amt: 10; // higher numbers = less offset
 
     &#{$_self}--compensate-x-n2 {
-      left: $this-scale / -3 unquote($i);
+      left: $this-scale / -($compensation-amt / 2) unquote($i);
     }
 
     &#{$_self}--compensate-x-n1 {
-      left: $this-scale / -6 unquote($i);
+      left: $this-scale / -($compensation-amt) unquote($i);
     }
 
     &#{$_self}--compensate-x-1 {
-      left: $this-scale / 6 unquote($i);
+      left: $this-scale / ($compensation-amt) unquote($i);
     }
 
     &#{$_self}--compensate-x-2 {
-      left: $this-scale / 3 unquote($i);
+      left: $this-scale / ($compensation-amt / 2) unquote($i);
     }
 
     &#{$_self}--compensate-y-n2 {
-      top: $this-scale / -3 unquote($i);
+      top: $this-scale / -($compensation-amt / 2) unquote($i);
     }
 
     &#{$_self}--compensate-y-n1 {
-      top: $this-scale / -6 unquote($i);
+      top: $this-scale / -($compensation-amt) unquote($i);
     }
 
     &#{$_self}--compensate-y-1 {
-      top: $this-scale / 6 unquote($i);
+      top: $this-scale / ($compensation-amt) unquote($i);
     }
 
     &#{$_self}--compensate-y-2 {
-      top: $this-scale / 3 unquote($i);
+      top: $this-scale / ($compensation-amt / 2) unquote($i);
     }
   }
 
   @mixin getFocusScaling($scale) {
-    &:hover, &:focus {
+    &:hover {
       transform: scale($scale);
-    }
-
-    &#{$_self}--pos-t {
-      &:hover, &:focus {
-        transform: scale($scale) translateY(percentage(($scale - 1) / $scale / 2));
-      }
-    }
-
-    &#{$_self}--pos-tl {
-      &:hover, &:focus {
-        transform: scale($scale) translateY(percentage(($scale - 1) / $scale / 2)) translateX(percentage(($scale - 1) / $scale / 2));
-      }
-    }
-
-    &#{$_self}--pos-tr {
-      &:hover, &:focus {
-        transform: scale($scale) translateY(percentage(($scale - 1) / $scale / 2)) translateX(percentage((1 - $scale) / $scale / 2));
-      }
-    }
-
-    &#{$_self}--pos-b {
-      &:hover, &:focus {
-        transform: scale($scale) translateY(percentage((1 - $scale) / $scale / 2));
-      }
-    }
-
-    &#{$_self}--pos-bl {
-      &:hover, &:focus {
-        transform: scale($scale) translateY(percentage((1 - $scale) / $scale / 2)) translateX(percentage(($scale - 1) / $scale / 2));
-      }
-    }
-
-    &#{$_self}--pos-br {
-      &:hover, &:focus {
-        transform: scale($scale) translateY(percentage((1 - $scale) / $scale / 2)) translateX(percentage((1 - $scale) / $scale / 2));
-      }
-    }
-
-    &#{$_self}--pos-l {
-      &:hover, &:focus {
-        transform: scale($scale) translateX(percentage(($scale - 1) / $scale / 2));
-      }
-    }
-
-    &#{$_self}--pos-r {
-      &:hover, &:focus {
-        transform: scale($scale) translateX(percentage((1 - $scale) / $scale / 2));
-      }
     }
   }
 
@@ -136,9 +102,13 @@
   &--clickable {
     cursor: pointer;
 
-    &:hover, &:focus {
-      z-index: 100;
+    &:focus {
+      @include swatch-focus()
+    }
+
+    &:hover {
       transition: none;
+      z-index: $hover-z;
     }
 
     .color-wall-swatch-list--show-all & {
@@ -148,6 +118,11 @@
     .color-wall-swatch-list--zoomed & {
       @include getFocusScaling($swatch-scale-amt--zoomed-in);
     }
+  }
+
+  &--focus {
+    @include swatch-focus()
+
   }
 
   &--dynamic {
@@ -196,9 +171,7 @@
       margin-bottom: .4em;
     }
 
-    &__add,
-    &__details,
-    &__info {
+    &__cta {
       position: absolute;
       bottom: 1em;
       color: inherit;
@@ -211,17 +184,22 @@
       transition: all .2s;
       text-align: center;
 
-      &:hover, &:focus {
+      &:hover, &:focus, &--focus {
         opacity: 1;
       }
-    }
 
-    &__details {
-      left: .5em;
-    }
+      &--focus,
+      &:focus {
+        outline: $cw-focus-outline;
+      }
 
-    &__info {
-      right: .5em;
+      &--l {
+        left: .5em;
+      }
+
+      &--r {
+        right: .5em;
+      }
     }
   }
 
@@ -248,33 +226,37 @@
     &:hover, &:focus {
       transform: unset !important;
     }
+
+    &:focus {
+      outline-width: $cw-focus-outline-size;
+    }
   }
 
   &--bloom-lvl {
     &-0 {
-      @include getRaise($flower-size-scale, 200%, 900, !important);
-      @include getEdgeCompensation($flower-size-scale, 200%, !important);
+      @include getRaise($flower-size-scale, 190%, 900, !important);
+      @include getEdgeCompensation($flower-size-scale, 190%, !important);
       cursor: default;
     }
 
     &-n0-5 {
-      @include getRaise($flower-size-scale, 180%, 750, !important);
-      @include getEdgeCompensation($flower-size-scale, 180%, !important);
-    }
-
-    &-n1 {
-      @include getRaise($flower-size-scale, 165%, 700, !important);
+      @include getRaise($flower-size-scale, 165%, 750, !important);
       @include getEdgeCompensation($flower-size-scale, 165%, !important);
     }
 
+    &-n1 {
+      @include getRaise($flower-size-scale, 150%, 700, !important);
+      @include getEdgeCompensation($flower-size-scale, 150%, !important);
+    }
+
     &-n1-5 {
-      @include getRaise($flower-size-scale, 160%, 650, !important);
-      @include getEdgeCompensation($flower-size-scale, 160%, !important);
+      @include getRaise($flower-size-scale, 120%, 650, !important);
+      @include getEdgeCompensation($flower-size-scale, 120%, !important);
     }
 
     &-n2 {
-      @include getRaise($flower-size-scale, 130%, 600, !important);
-      @include getEdgeCompensation($flower-size-scale, 130%, !important);
+      @include getRaise($flower-size-scale, 100%, 600, !important);
+      @include getEdgeCompensation($flower-size-scale, 100%, !important);
     }
   }
 

@@ -4,3 +4,4 @@
 
 declare var BASE_PATH: string
 declare var API_PATH: string
+declare type RefObject = { current: any }

@@ -34,6 +34,30 @@ class ImagePreloader extends PureComponent<Props, State> {
     return void (0)
   }
 
+  static performDownload (path: string, resolve: {
+    using: Function,
+    with?: any
+  }, reject: {
+    using: Function
+  }, final: boolean = false) {
+    axios.get(path)
+      .then(response => {
+        resolve.using(resolve.with)
+      })
+      .catch((err: any) => {
+        if (final) {
+          console.info(`Failed to download ${path}. No more retries available. Error reference:`, err)
+          reject.using(err)
+          return false
+        }
+
+        console.info(`Failed to download ${path}. Retrying download. Error reference:`, err)
+        setTimeout(() => {
+          ImagePreloader.performDownload(path, resolve, reject, true)
+        }, 2000)
+      })
+  }
+
   static makePromise = function (path: string): Promise<any> {
     const existingPromise = ImagePreloader.getPromise(ensureFullyQualifiedAssetUrl(path))
 
@@ -44,9 +68,15 @@ class ImagePreloader extends PureComponent<Props, State> {
     const newPromise = new Promise((resolve: Function, reject: Function) => {
       const fullPath = ensureFullyQualifiedAssetUrl(path)
       // non-blocking request, unlike setting Image source
-      axios.get(fullPath)
-        .then(response => { resolve(fullPath) })
-        .catch((err: any) => { reject(err) })
+      ImagePreloader.performDownload(
+        fullPath,
+        {
+          using: resolve,
+          with: fullPath
+        }, {
+          using: reject
+        }
+      )
     })
 
     ImagePreloader.promiseMap[path] = newPromise
@@ -88,7 +118,6 @@ class ImagePreloader extends PureComponent<Props, State> {
     const { el, ...other } = this.props
     const { error, loading } = this.state
 
-    // $FlowIgnore
     return React.createElement(el, Object.assign({}, other, { error: error, loading: loading }))
   }
 }

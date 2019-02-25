@@ -1,5 +1,5 @@
 // @flow
-import { fill, flatten, flattenDeep, keys, union, concat } from 'lodash'
+import { fill, flatten, flattenDeep, keys, union, concat, uniq, max } from 'lodash'
 import memoizee from 'memoizee'
 import { compareKebabs } from './StringUtils'
 import { ZOOMED_VIEW_GRID_PADDING } from '../../constants/globals'
@@ -87,6 +87,7 @@ function ConvertColorSetsToGrid (colorSets: string[] = [], colors: ColorSetPaylo
     })
   }
 
+  output = ConvertColorSetsToGrid.fillGrid(output, BLANK)
   output = ConvertColorSetsToGrid.insertRowBefore(output, padV, BLANK)
   output = ConvertColorSetsToGrid.insertColumnBefore(output, padH, BLANK)
 
@@ -170,6 +171,25 @@ ConvertColorSetsToGrid.insertRowAfter = function insertRowAfter (toPad: ColorGri
   }
 
   return _new
+}
+
+ConvertColorSetsToGrid.fillGrid = function fillGrid (toPad: ColorGrid, padWith: BlankColor): ColorGrid {
+  const rowWidths = uniq(toPad.map((row) => row.length))
+
+  // if we only have one unique row width...
+  if (rowWidths.length === 1) {
+    // then we're already square! return our grid
+    return toPad
+  }
+
+  const maxWidth = max(rowWidths)
+  return toPad.map(row => {
+    const thisWidth = row.length
+    if (thisWidth < maxWidth) {
+      return concat(row, fill(new Array(maxWidth - thisWidth), padWith))
+    }
+    return row
+  })
 }
 
 ConvertColorSetsToGrid.getArrayOfPads = memoizee(function getArrayOfPads (length: number, padWith: BlankColor): ColorLine {

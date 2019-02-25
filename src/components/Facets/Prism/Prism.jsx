@@ -25,7 +25,9 @@ const RootRedirect = () => {
   return <Redirect to='/active' />
 }
 
-class Prism extends Component {
+type Props = {}
+
+class Prism extends Component<Props> {
   render () {
     return (
       <React.Fragment>
