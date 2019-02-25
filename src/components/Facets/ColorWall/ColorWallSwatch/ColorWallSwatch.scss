@@ -40,37 +40,38 @@ $hover-z: 101;
 
   @mixin getEdgeCompensation($scale, $amt, $i: '') {
     $this-scale: $amt * $scale;
+    $compensation-amt: 10; // higher numbers = less offset
 
     &#{$_self}--compensate-x-n2 {
-      left: $this-scale / -3 unquote($i);
+      left: $this-scale / -($compensation-amt / 2) unquote($i);
     }
 
     &#{$_self}--compensate-x-n1 {
-      left: $this-scale / -6 unquote($i);
+      left: $this-scale / -($compensation-amt) unquote($i);
     }
 
     &#{$_self}--compensate-x-1 {
-      left: $this-scale / 6 unquote($i);
+      left: $this-scale / ($compensation-amt) unquote($i);
     }
 
     &#{$_self}--compensate-x-2 {
-      left: $this-scale / 3 unquote($i);
+      left: $this-scale / ($compensation-amt / 2) unquote($i);
     }
 
     &#{$_self}--compensate-y-n2 {
-      top: $this-scale / -3 unquote($i);
+      top: $this-scale / -($compensation-amt / 2) unquote($i);
     }
 
     &#{$_self}--compensate-y-n1 {
-      top: $this-scale / -6 unquote($i);
+      top: $this-scale / -($compensation-amt) unquote($i);
     }
 
     &#{$_self}--compensate-y-1 {
-      top: $this-scale / 6 unquote($i);
+      top: $this-scale / ($compensation-amt) unquote($i);
     }
 
     &#{$_self}--compensate-y-2 {
-      top: $this-scale / 3 unquote($i);
+      top: $this-scale / ($compensation-amt / 2) unquote($i);
     }
   }
 
@@ -233,29 +234,29 @@ $hover-z: 101;
 
   &--bloom-lvl {
     &-0 {
-      @include getRaise($flower-size-scale, 200%, 900, !important);
-      @include getEdgeCompensation($flower-size-scale, 200%, !important);
+      @include getRaise($flower-size-scale, 190%, 900, !important);
+      @include getEdgeCompensation($flower-size-scale, 190%, !important);
       cursor: default;
     }
 
     &-n0-5 {
-      @include getRaise($flower-size-scale, 180%, 750, !important);
-      @include getEdgeCompensation($flower-size-scale, 180%, !important);
-    }
-
-    &-n1 {
-      @include getRaise($flower-size-scale, 165%, 700, !important);
+      @include getRaise($flower-size-scale, 165%, 750, !important);
       @include getEdgeCompensation($flower-size-scale, 165%, !important);
     }
 
+    &-n1 {
+      @include getRaise($flower-size-scale, 150%, 700, !important);
+      @include getEdgeCompensation($flower-size-scale, 150%, !important);
+    }
+
     &-n1-5 {
-      @include getRaise($flower-size-scale, 160%, 650, !important);
-      @include getEdgeCompensation($flower-size-scale, 160%, !important);
+      @include getRaise($flower-size-scale, 120%, 650, !important);
+      @include getEdgeCompensation($flower-size-scale, 120%, !important);
     }
 
     &-n2 {
-      @include getRaise($flower-size-scale, 130%, 600, !important);
-      @include getEdgeCompensation($flower-size-scale, 130%, !important);
+      @include getRaise($flower-size-scale, 100%, 600, !important);
+      @include getEdgeCompensation($flower-size-scale, 100%, !important);
     }
   }
 
