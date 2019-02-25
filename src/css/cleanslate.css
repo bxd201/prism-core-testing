@@ -289,6 +289,7 @@
 .cleanslate a:active
 .cleanslate a:focus,
 .cleanslate a:hover {
+    outline: initial;
     text-decoration: underline;
 }
 .cleanslate a:visited {
