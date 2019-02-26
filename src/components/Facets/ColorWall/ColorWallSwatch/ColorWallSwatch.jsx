@@ -185,7 +185,7 @@ class ColorWallSwatch extends PureComponent<Props> {
     const { onClick } = this.props
 
     if (typeof onClick === 'function') {
-      onClick()
+      onClick(e)
     }
   }
 }
