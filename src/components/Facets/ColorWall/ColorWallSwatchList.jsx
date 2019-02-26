@@ -3,7 +3,7 @@ import React, { PureComponent } from 'react'
 // $FlowIgnore -- no defs for react-virtualized
 import { Grid, AutoSizer } from 'react-virtualized'
 import memoizee from 'memoizee'
-import { isEqual, isEmpty, isArray, isFunction, clone } from 'lodash'
+import { isEqual, isEmpty, isArray, isFunction, clone, memoize } from 'lodash'
 // $FlowIgnore -- no defs for scroll
 import * as scroll from 'scroll'
 import { withRouter } from 'react-router-dom'
@@ -123,6 +123,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     this.handleBodyMouseDown = this.handleBodyMouseDown.bind(this)
     this.handleBodyKeyDown = this.handleBodyKeyDown.bind(this)
     this.handleBodyTouchStart = this.handleBodyTouchStart.bind(this)
+    this.generateHandleSwatchClick = this.generateHandleSwatchClick.bind(this)
     this.returnFocusToThisComponent = this.returnFocusToThisComponent.bind(this)
     this.getAudioMessaging = this.getAudioMessaging.bind(this)
 
@@ -257,23 +258,46 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
   }
 
   componentDidMount () {
-    const { location: { state } } = this.props
+    const { location: { state }, colors } = this.props
 
+    const maintainFocus = state && state.maintainFocus
+    const fromKeyboard = state && state.fromKeyboard
+    const cell = state && state.a11yFocusCell
+
+    let chunk = state && state.a11yFocusChunk
     let stateChanges = {}
 
-    // if state has been provided via react router and it contains a11yFocus values...
-    if (state && state.a11yFocusCell && state.a11yFocusChunk) {
-      // ... then we know that we got here via keyboard navigation (like hitting escape to zoom out) and should maintain focus
+    // if cell is present in our location's state but chunk is NOT...
+    if (cell && !chunk) {
+      // ... then gather our color grid and attempt to locate a containing chunk
+      const colorIdGrid = getColorIdGrid(colors)
+      chunk = findContainingChunk(colorIdGrid, cell[0], cell[1])
+    }
 
-      // compare the current grid wrapper ref against the currently-focused element; if they are different...
-      if (this.returnFocusToThisComponent()) {
-        if (state.fromKeyboard) {
-          stateChanges = {
-            ...stateChanges,
-            renderFocusOutline: true
-          }
+    // if we have a cell and chunk by this point...
+    if (cell && chunk) {
+      // ... then we should persist those into our state changes
+      stateChanges = {
+        ...stateChanges,
+        a11yFocusCell: cell,
+        a11yFocusChunk: chunk
+      }
+
+      if (fromKeyboard) {
+        // update state changes to include renderFocusOutline flag since we're assuming we're in the midst of keyboard navigation
+        stateChanges = {
+          ...stateChanges,
+          renderFocusOutline: true
         }
       }
+    }
+
+    // if we've been provided a maintainFocus flag in location state...
+    if (maintainFocus) {
+      // ... then we can assume we got here via keyboard.
+
+      // attempt to return focus to this component (void if it's already focused)
+      this.returnFocusToThisComponent()
     }
 
     // Attach listeners to document for keypress and click
@@ -458,7 +482,8 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
             push(targetedSwatchEl.getThisLink(targetedSwatchEl), {
               a11yFocusChunk,
               a11yFocusCell,
-              fromKeyboard: true
+              fromKeyboard: true,
+              maintainFocus: true
             })
           } else if (targetedSwatchEl && isFunction(targetedSwatchEl.performClickAction)) {
             targetedSwatchEl.performClickAction(targetedSwatchEl)
@@ -485,7 +510,8 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
           push(generateColorWallPageUrl(section, family), {
             a11yFocusChunk,
             a11yFocusCell,
-            fromKeyboard: true
+            fromKeyboard: true,
+            maintainFocus: true
           })
 
           e.stopPropagation()
@@ -658,6 +684,26 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     }
   }
 
+  generateHandleSwatchClick = memoize(function handleSwatchClick (color: Color) {
+    return (e: any) => {
+      const { history: { push }, colors, swatchLinkGenerator } = this.props
+      const link: string = swatchLinkGenerator(color)
+      const colorIdGrid = getColorIdGrid(colors)
+      const coords = getColorCoords(color.id, colorIdGrid)
+
+      if (e && isFunction(e.preventDefault)) {
+        e.preventDefault()
+      }
+
+      this.returnFocusToThisComponent()
+
+      push(link, {
+        a11yFocusCell: coords,
+        maintainFocus: true
+      })
+    }
+  }, (color: Color) => color.id)
+
   // END HANDLERS
   // -----------------------------------------------
 
@@ -732,6 +778,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
         <ColorWallSwatchUI
           color={color}
           thisLink={linkToSwatch}
+          onClick={this.generateHandleSwatchClick(color)}
           ref={this.generateMakeSwatchRef(colorId)}
           focus={focus} />
       )
@@ -742,7 +789,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
         <ColorWallSwatch
           thisLink={linkToSwatch}
           color={color}
-          onClick={this.returnFocusToThisComponent}
+          onClick={this.generateHandleSwatchClick(color)}
           ref={this.generateMakeSwatchRef(colorId)}
           focus={focus} />
       )

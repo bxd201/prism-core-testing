@@ -14,7 +14,8 @@ import './ColorWallSwatch.scss'
 type Props = {
   color: Color,
   thisLink: string,
-  focus?: boolean
+  focus?: boolean,
+  onClick?: Function
 }
 
 const _classes = arrayToSpacedString([
@@ -37,6 +38,7 @@ class ColorWallSwatchUI extends PureComponent<Props> {
     super(props)
 
     this.getThisLink = this.getThisLink.bind(this)
+    this.handleClick = this.handleClick.bind(this)
   }
 
   render () {
@@ -46,6 +48,7 @@ class ColorWallSwatchUI extends PureComponent<Props> {
       <div className={CLASS_NAMES.SWATCH}>
         <Link {...generateLinkProps(color, thisLink)}
           className={`${_classes} ${focus ? CLASS_NAMES.BASE_FOCUS : ''}`}
+          onClick={this.handleClick}
           tabIndex={-1} />
       </div>
     )
@@ -59,6 +62,14 @@ class ColorWallSwatchUI extends PureComponent<Props> {
     }
 
     return void (0)
+  }
+
+  handleClick = function handleClick (e: any) {
+    const { onClick } = this.props
+
+    if (typeof onClick === 'function') {
+      onClick(e)
+    }
   }
 }
 
