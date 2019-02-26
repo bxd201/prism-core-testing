@@ -54,7 +54,7 @@ class ImagePreloader extends PureComponent<Props, State> {
         console.info(`Failed to download ${path}. Retrying download. Error reference:`, err)
         setTimeout(() => {
           ImagePreloader.performDownload(path, resolve, reject, true)
-        }, 2000)
+        }, 10000)
       })
   }
 
