@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { convertColorSetsToGrid } from '../../../shared/helpers/ColorDataUtils'
 import { generateColorWallPageUrl, generateColorDetailsPageUrl, fullColorName } from '../../../shared/helpers/ColorUtils'
 import { compareKebabs } from '../../../shared/helpers/StringUtils'
-import { FormattedMessage } from 'react-intl'
+import { injectIntl, FormattedMessage } from 'react-intl'
 
 import CircleLoader from '../../Loaders/CircleLoader/CircleLoader'
 import ColorWallSwatchList from './ColorWallSwatchList'
@@ -23,6 +23,7 @@ type Props = {
   addToLivePalette?: Function,
   activeColor: Color,
   loading: boolean,
+  intl: intlShape,
   error: boolean,
   family?: string,
   section?: string,
@@ -78,8 +79,9 @@ class SherwinColorWall extends PureComponent<Props> {
   }
 
   colorFamily = function colorFamily () {
-    const { family, families, section, activeColor, colorMap, addToLivePalette, loading, error } = this.props
+    const { family, families, section, activeColor, colorMap, addToLivePalette, loading, error, intl } = this.props
     const colorsGrid = this.getColorGrid(family, families)
+    const translatedMessages = intl.messages
 
     if (loading) {
       return <CircleLoader className='color-wall-wall__loader' />
@@ -122,8 +124,9 @@ class SherwinColorWall extends PureComponent<Props> {
 
         {activeColor && (
           <div className='color-wall-wall__btns'>
-            <Link to={generateColorWallPageUrl(section, family)} title='Zoom Out' className='color-wall-wall__btns__btn'>
+            <Link to={generateColorWallPageUrl(section, family)} className='color-wall-wall__btns__btn' title={translatedMessages.ZOOM_OUT}>
               <FontAwesomeIcon icon='search-minus' size='lg' />
+              <span className='visually-hidden'><FormattedMessage id='ZOOM_OUT' /></span>
             </Link>
           </div>
         )}
@@ -132,4 +135,4 @@ class SherwinColorWall extends PureComponent<Props> {
   }
 }
 
-export default SherwinColorWall
+export default injectIntl(SherwinColorWall)
