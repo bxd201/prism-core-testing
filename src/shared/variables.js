@@ -3,10 +3,10 @@ module.exports.varValues = {
   spacing: '1rem',
   corner: '2px',
   breakpoints: {
-    xs: '36em', /* 576px */
-    sm: '48em', /* 768px */
-    md: '62em', /* 992px */
-    lg: '75em' /* 1200px */
+    xs: '576px', /* 576px */
+    sm: '768px', /* 768px */
+    md: '992px', /* 992px */
+    lg: '1200px' /* 1200px */
   },
   typography: {
     font: '\'Open Sans\', sans-serif',
