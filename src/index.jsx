@@ -28,6 +28,11 @@ import APPS from './config/components'
 // load all fontawesome fonts we are using
 import './config/fontawesome'
 
+// publically exposed variables for validations
+window.PRISM = {
+  version: APP_VERSION // eslint-disable-line no-undef
+}
+
 // initialize Google Analytics
 ReactGA.initialize(GOOGLE_ANALYTICS_UID, {})
 
