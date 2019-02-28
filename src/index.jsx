@@ -6,7 +6,7 @@ import { Provider } from 'react-redux'
 import { IntlProvider } from 'react-intl'
 import { BrowserRouter, HashRouter } from 'react-router-dom'
 import ReactGA from 'react-ga'
-import { toArray } from 'lodash'
+import toArray from 'lodash/toArray'
 import { LiveAnnouncer } from 'react-aria-live'
 
 import { GOOGLE_ANALYTICS_UID } from './constants/globals'

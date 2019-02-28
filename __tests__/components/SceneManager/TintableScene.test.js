@@ -1,6 +1,5 @@
 import React from 'react'
 import renderer from 'react-test-renderer'
-import _ from 'lodash'
 
 import TintableScene from 'src/components/SceneManager/TintableScene'
 import TintableSceneOverlay from 'src/components/SceneManager/TintableSceneOverlay'

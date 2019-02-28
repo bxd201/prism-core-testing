@@ -1,7 +1,8 @@
 // @flow
 import React, { PureComponent } from 'react'
 import axios from 'axios'
-import { isEmpty, flattenDeep } from 'lodash'
+import isEmpty from 'lodash/isEmpty'
+import flattenDeep from 'lodash/flattenDeep'
 
 import { ensureFullyQualifiedAssetUrl } from '../shared/helpers/DataUtils'
 

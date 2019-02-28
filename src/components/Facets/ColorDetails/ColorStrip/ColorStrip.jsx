@@ -1,6 +1,7 @@
 // @flow
 import React from 'react'
-import { filter, split } from 'lodash'
+import filter from 'lodash/filter'
+import split from 'lodash/split'
 import type { Color, ColorMap } from '../../../../shared/types/Colors'
 
 import ColorStripSwatch from './ColorStripSwatch'

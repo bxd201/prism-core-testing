@@ -3,7 +3,7 @@ import React, { PureComponent } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FormattedMessage } from 'react-intl'
 import ReactGA from 'react-ga'
-import { includes } from 'lodash'
+import includes from 'lodash/includes'
 
 import { SCENE_VARIANTS } from 'constants/globals'
 

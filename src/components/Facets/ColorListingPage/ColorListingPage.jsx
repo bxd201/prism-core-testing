@@ -3,7 +3,7 @@
 import React, { PureComponent } from 'react'
 import { Route, Redirect, withRouter, Switch } from 'react-router-dom'
 import { TransitionGroup, CSSTransition } from 'react-transition-group'
-import { includes } from 'lodash'
+import includes from 'lodash/includes'
 
 import ColorWallRouteComponent from '../ColorWall/ColorWallRouteComponent'
 import ColorDetails from '../ColorDetails/ColorDetails'

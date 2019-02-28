@@ -1,6 +1,6 @@
 // @flow
 import React, { PureComponent } from 'react'
-import { once } from 'lodash'
+import once from 'lodash/once'
 import memoizee from 'memoizee'
 import { Link } from 'react-router-dom'
 

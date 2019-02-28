@@ -3,7 +3,11 @@ import React, { PureComponent } from 'react'
 // $FlowIgnore -- no defs for react-virtualized
 import { Grid, AutoSizer } from 'react-virtualized'
 import memoizee from 'memoizee'
-import { isEqual, isEmpty, isArray, isFunction, clone, memoize } from 'lodash'
+import isEqual from 'lodash/isEqual'
+import isEmpty from 'lodash/isEmpty'
+import isArray from 'lodash/isArray'
+import isFunction from 'lodash/isFunction'
+import clone from 'lodash/clone'
 // $FlowIgnore -- no defs for scroll
 import * as scroll from 'scroll'
 import { withRouter } from 'react-router-dom'
@@ -684,7 +688,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     }
   }
 
-  generateHandleSwatchClick = memoize(function handleSwatchClick (color: Color) {
+  generateHandleSwatchClick = memoizee(function handleSwatchClick (color: Color) {
     return (e: any) => {
       const { history: { push }, colors, swatchLinkGenerator } = this.props
       const link: string = swatchLinkGenerator(color)
@@ -702,7 +706,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
         maintainFocus: true
       })
     }
-  }, (color: Color) => color.id)
+  }, { primitive: true, length: 1 })
 
   // END HANDLERS
   // -----------------------------------------------
