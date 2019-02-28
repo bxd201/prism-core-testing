@@ -1,5 +1,8 @@
 $focus-z: 100;
 $hover-z: 101;
+$switchover: sm;
+$swatch-font-size: $base;
+$swatch-font-size--small: $base * .8;
 
 @mixin swatch-focus() {
   outline: $cw-focus-outline;
@@ -14,8 +17,7 @@ $hover-z: 101;
 .color-swatch-inner {
   $_self: &;
 
-  $flower-size-scale: 1.5;
-  $flower-distance-scale: .15;
+  $flower-size-scale: 1.6;
 
   $bloom-activate-delay: getVar('colorWall.swatchActivateDelayMS') * 1ms;
   $bloom-activate-duration: getVar('colorWall.swatchActivateDurationMS') * 1ms;
@@ -40,7 +42,7 @@ $hover-z: 101;
 
   @mixin getEdgeCompensation($scale, $amt, $i: '') {
     $this-scale: $amt * $scale;
-    $compensation-amt: 10; // higher numbers = less offset
+    $compensation-amt: 15; // higher numbers = less offset
 
     &#{$_self}--compensate-x-n2 {
       left: $this-scale / -($compensation-amt / 2) unquote($i);
@@ -96,8 +98,12 @@ $hover-z: 101;
   top: 0;
   left: 0;
   position: absolute;
-  font-size: $base;
+  font-size: $swatch-font-size--small;
   z-index: 1;
+
+  @include respond-above($switchover) {
+    font-size: $swatch-font-size;
+  }
 
   &--clickable {
     cursor: pointer;
@@ -126,7 +132,7 @@ $hover-z: 101;
   }
 
   &--dynamic {
-    will-change: top, left, transform, width, height, margin, box-shadow, font-size, z-index;
+    will-change: top, left, transform, width, height, margin, box-shadow, z-index;
     /* autoprefixer: ignore next */
     transition-property: top, left, transform, width, height, margin, z-index, box-shadow;
 
@@ -167,7 +173,7 @@ $hover-z: 101;
 
     &__number {
       opacity: $color-near-opacity;
-      font-size: .8em;
+      font-size: $swatch-font-size--small;
       margin-bottom: .4em;
     }
 
@@ -230,33 +236,50 @@ $hover-z: 101;
     &:focus {
       outline-width: $cw-focus-outline-size;
     }
+
+    @include getEdgeCompensation($flower-size-scale, 100%, !important);
   }
 
   &--bloom-lvl {
     &-0 {
-      @include getRaise($flower-size-scale, 190%, 900, !important);
-      @include getEdgeCompensation($flower-size-scale, 190%, !important);
+      @include getRaise($flower-size-scale, 170%, 900, !important);
+
+      @include respond-above($switchover) {
+        @include getRaise($flower-size-scale, 180%, 900, !important);
+      }
       cursor: default;
     }
 
     &-n0-5 {
-      @include getRaise($flower-size-scale, 165%, 750, !important);
-      @include getEdgeCompensation($flower-size-scale, 165%, !important);
+      @include getRaise($flower-size-scale, 130%, 750, !important);
+
+      @include respond-above($switchover) {
+        @include getRaise($flower-size-scale, 160%, 750, !important);
+      }
     }
 
     &-n1 {
-      @include getRaise($flower-size-scale, 150%, 700, !important);
-      @include getEdgeCompensation($flower-size-scale, 150%, !important);
+      @include getRaise($flower-size-scale, 130%, 700, !important);
+
+      @include respond-above($switchover) {
+        @include getRaise($flower-size-scale, 130%, 700, !important);
+      }
     }
 
     &-n1-5 {
-      @include getRaise($flower-size-scale, 120%, 650, !important);
-      @include getEdgeCompensation($flower-size-scale, 120%, !important);
+      @include getRaise($flower-size-scale, 90%, 650, !important);
+
+      @include respond-above($switchover) {
+        @include getRaise($flower-size-scale, 120%, 650, !important);
+      }
     }
 
     &-n2 {
-      @include getRaise($flower-size-scale, 100%, 600, !important);
-      @include getEdgeCompensation($flower-size-scale, 100%, !important);
+      @include getRaise($flower-size-scale, 90%, 600, !important);
+
+      @include respond-above($switchover) {
+        @include getRaise($flower-size-scale, 90%, 600, !important);
+      }
     }
   }
 

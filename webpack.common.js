@@ -10,6 +10,10 @@ const varValues = Object.freeze(require(__dirname + '/src/shared/variables.js').
 const varNames = Object.freeze(require(__dirname + '/src/shared/variables.js').varNames)
 const memoizee = require('memoizee')
 
+// create constants that correlate to environment variables to be injected
+const APP_VERSION = process.env.npm_package_version
+const APP_NAME = process.env.npm_package_name
+
 const getVarGenerator = (function () {
   const cssUnits = [
     'rem',
@@ -60,8 +64,7 @@ const getVarGenerator = (function () {
   function processVarData (data) {
     var type = typeof data
 
-
-var returner
+    var returner
 
     // Convert to SassDimension if dimenssion
     if (type === 'number') {
@@ -178,7 +181,8 @@ module.exports = {
     ]),
     new webpack.DefinePlugin({
       'API_PATH': (process.env.API_URL) ? JSON.stringify(process.env.API_URL) : JSON.stringify('$API_URL'),
-      'BASE_PATH': (process.env.WEB_URL) ? JSON.stringify(process.env.WEB_URL) : JSON.stringify('$WEB_URL')
+      'BASE_PATH': (process.env.WEB_URL) ? JSON.stringify(process.env.WEB_URL) : JSON.stringify('$WEB_URL'),
+      'APP_VERSION': JSON.stringify(APP_VERSION)
     })
   ],
   devServer: {
