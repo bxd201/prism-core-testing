@@ -1,7 +1,7 @@
 // @flow
 import React, { PureComponent } from 'react'
 import memoizee from 'memoizee'
-import { uniqueId } from 'lodash'
+import uniqueId from 'lodash/uniqueId'
 
 import SVG from 'react-inlinesvg'
 import { DRAG_TYPES } from 'constants/globals'

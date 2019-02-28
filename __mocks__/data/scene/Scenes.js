@@ -1,5 +1,6 @@
 // @flow
-import _ from 'lodash'
+import cloneDeep from 'lodash/cloneDeep'
+import sample from 'lodash/sample'
 
 import { type Scene, type Surface } from '../../../src/shared/types/Scene'
 
@@ -79,11 +80,11 @@ export const Scenes: Array<Scene> = [
 ]
 
 export function getScenes (): Array<Scene> {
-  return _.cloneDeep(Scenes)
+  return cloneDeep(Scenes)
 }
 
 export function getScene (): Scene {
-  return _.sample(getScenes())
+  return sample(getScenes())
 }
 
 export function getSurfaces (): Array<Surface> {
@@ -91,5 +92,5 @@ export function getSurfaces (): Array<Surface> {
 }
 
 export function getSurface (): Surface {
-  return _.sample(getSurfaces())
+  return sample(getSurfaces())
 }

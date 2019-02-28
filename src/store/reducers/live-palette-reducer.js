@@ -1,4 +1,7 @@
-import _ from 'lodash'
+// @flow
+import reject from 'lodash/reject'
+import filter from 'lodash/filter'
+import difference from 'lodash/difference'
 
 import { LP_MAX_COLORS_ALLOWED } from 'constants/configurations'
 import {
@@ -11,11 +14,11 @@ import {
 
 export const initialState = {}
 
-export const lp = (state = initialState, action) => {
+export const lp = (state: any = initialState, action: any) => {
   switch (action.type) {
     case ADD_LP_COLOR:
       // check if there are already 7 colors added and if the color exists already before adding
-      if (state.colors && state.colors.length < LP_MAX_COLORS_ALLOWED && !_.filter(state.colors, color => color.id === action.payload.color.id).length) {
+      if (state.colors && state.colors.length < LP_MAX_COLORS_ALLOWED && !filter(state.colors, color => color.id === action.payload.color.id).length) {
         state.colors.push(action.payload.color)
       }
 
@@ -31,7 +34,7 @@ export const lp = (state = initialState, action) => {
       let activeColorIndex = 0 // set a default color index to return
 
       // remove payload color from the colors stored in state
-      const colors = _.reject(state.colors, (color, index) => {
+      const colors = reject(state.colors, (color, index: number) => {
         if ((color.id === action.payload.colorId)) {
           if (index > 0) {
             activeColorIndex = index - 1
@@ -41,7 +44,7 @@ export const lp = (state = initialState, action) => {
         return (color.id === action.payload.colorId)
       })
 
-      let difference = _.difference(state.colors, colors)
+      let diff = difference(state.colors, colors)
 
       return Object.assign({}, state, {
         colors: [
@@ -49,7 +52,7 @@ export const lp = (state = initialState, action) => {
         ],
         activeColor: colors[activeColorIndex] || null,
         previousActiveColor: state.activeColor,
-        removedColor: difference.length ? difference[0] : void (0)
+        removedColor: diff.length ? diff[0] : void (0)
       })
 
     case ACTIVATE_LP_COLOR:
@@ -74,7 +77,7 @@ export const lp = (state = initialState, action) => {
       // reconstruct the colors array given an array of their IDs
       const reconstructedColors = []
       for (let id = 0; id < colorsByIndex.length; id++) {
-        const color = _.filter(state.colors, color => (color.id === colorsByIndex[id]))[0]
+        const color = filter(state.colors, color => (color.id === colorsByIndex[id]))[0]
         reconstructedColors.push(color)
       }
 

@@ -1,5 +1,11 @@
 // @flow
-import { concat, uniq, isUndefined, isNull, without, find, includes } from 'lodash'
+import concat from 'lodash/concat'
+import uniq from 'lodash/uniq'
+import isUndefined from 'lodash/isUndefined'
+import isNull from 'lodash/isNull'
+import without from 'lodash/without'
+import find from 'lodash/find'
+import includes from 'lodash/includes'
 
 import type { Scene, SceneStatus, SurfaceStatus, Surface, Variant } from '../../shared/types/Scene'
 

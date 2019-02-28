@@ -1,6 +1,6 @@
 // @flow
 import axios from 'axios'
-import _ from 'lodash'
+import isEmpty from 'lodash/isEmpty'
 
 import type { ScenePayload } from '../../shared/types/Scene'
 import type { Color } from '../../shared/types/Colors'
@@ -114,7 +114,7 @@ export const paintAllSceneSurfaces = (color: Color) => {
 export const loadScenes = (type: string) => {
   return (dispatch: Function, getState: Function) => {
     const { sceneCollection, type: oldType } = getState().scenes
-    let scenes = !_.isEmpty(sceneCollection) && !_.isEmpty(sceneCollection[type]) && sceneCollection[type]
+    let scenes = !isEmpty(sceneCollection) && !isEmpty(sceneCollection[type]) && sceneCollection[type]
 
     // if we already have scene data...
     if (scenes) {

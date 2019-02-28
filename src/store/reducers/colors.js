@@ -1,5 +1,7 @@
 // @flow
-import { find, kebabCase, includes } from 'lodash'
+import find from 'lodash/find'
+import kebabCase from 'lodash/kebabCase'
+import includes from 'lodash/includes'
 
 import { REQUEST_COLORS, RECEIVE_COLORS, FILTER_BY_FAMILY, MAKE_ACTIVE_COLOR, RESET_ACTIVE_COLOR, FILTER_BY_SECTION, REMOVE_COLOR_FILTERS, MAKE_ACTIVE_COLOR_BY_ID, LOAD_ERROR } from '../actions/loadColors'
 import { REQUEST_SEARCH_RESULTS, RECEIVE_SEARCH_RESULTS } from '../actions/loadSearchResults'
