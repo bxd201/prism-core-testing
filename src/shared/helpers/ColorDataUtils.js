@@ -210,13 +210,31 @@ export const convertColorSetsToGrid = ConvertColorSetsToGrid
 // END ConvertColorSetsToGrid
 // -------------------------------------------------------
 
+function Color (color: object): Color {
+  for (let i in color) {
+    this[i] = color[i]
+  }
+}
+
+Color.prototype.toString = function (): string {
+  return this.id
+}
+
+export function convertChunkedColorsToClasses (colorData: ColorSetPayload) {
+  return mapValues(colorData, (obj: Object) => {
+    return obj.map((row: Color[]) => {
+      return row.map((color: Color) => new Color(color))
+    })
+  })
+}
+
 export function convertToColorMap (colorData: ColorSetPayload) {
   let colorMap = {}
   const data = keys(colorData).map(key => {
     return colorData[key]
   })
 
-  flattenDeep(data).forEach(color => {
+  flattenDeep(data).forEach((color: ProbablyColor) => {
     if (color) {
       colorMap[color.id] = color
     }

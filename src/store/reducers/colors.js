@@ -5,7 +5,7 @@ import includes from 'lodash/includes'
 
 import { REQUEST_COLORS, RECEIVE_COLORS, FILTER_BY_FAMILY, MAKE_ACTIVE_COLOR, RESET_ACTIVE_COLOR, FILTER_BY_SECTION, REMOVE_COLOR_FILTERS, MAKE_ACTIVE_COLOR_BY_ID, LOAD_ERROR } from '../actions/loadColors'
 import { REQUEST_SEARCH_RESULTS, RECEIVE_SEARCH_RESULTS } from '../actions/loadSearchResults'
-import { convertToColorMap } from '../../shared/helpers/ColorDataUtils'
+import { convertToColorMap, convertChunkedColorsToClasses } from '../../shared/helpers/ColorDataUtils'
 import { compareKebabs } from '../../shared/helpers/StringUtils'
 import type { ReduxAction, ColorsState, Section } from '../../shared/types/Actions'
 
@@ -25,19 +25,21 @@ export const initialState: ColorsState = {
 export const colors = (state: ColorsState = initialState, action: ReduxAction) => {
   switch (action.type) {
     case LOAD_ERROR:
-      return Object.assign({}, state, {
+      return {
+        ...state,
         status: {
           loading: false,
           error: true,
           activeRequest: false
         }
-      })
+      }
 
     case RESET_ACTIVE_COLOR:
-      return Object.assign({}, state, {
+      return {
+        ...state,
         colorWallActive: initialState.colorWallActive,
         seekingColorWallActive: initialState.seekingColorWallActive
-      })
+      }
 
     case MAKE_ACTIVE_COLOR:
       const { color } = action.payload
@@ -45,19 +47,21 @@ export const colors = (state: ColorsState = initialState, action: ReduxAction) =
       // if we're still loading but somehow we have a color object with an ID...
       if (state.status.loading && color && color.id) {
         // ... set it as a seeking color value
-        return Object.assign({}, state, {
+        return {
+          ...state,
           seekingColorWallActive: color.id
-        })
+        }
       }
 
       if (color && color.id) {
         // if we have a selected family AND this color exists in that family, OR we have NO selected family...
         if ((state.family.family && includes(color.colorFamilyNames, state.family.family)) || !state.family.family) {
           // ... then activate this color
-          return Object.assign({}, state, {
+          return {
+            ...state,
             colorWallActive: action.payload.color,
             seekingColorWallActive: initialState.seekingColorWallActive
-          })
+          }
         }
       }
 
@@ -65,9 +69,10 @@ export const colors = (state: ColorsState = initialState, action: ReduxAction) =
 
     case MAKE_ACTIVE_COLOR_BY_ID:
       if (state.status.loading) {
-        return Object.assign({}, state, {
+        return {
+          ...state,
           seekingColorWallActive: action.payload.id
-        })
+        }
       } else if (state.items.colorMap) {
         const foundColor = state.items.colorMap[action.payload.id]
 
@@ -75,10 +80,11 @@ export const colors = (state: ColorsState = initialState, action: ReduxAction) =
           // if we have a selected family AND this color exists in that family, OR we have NO selected family...
           if ((state.family.family && includes(foundColor.colorFamilyNames, state.family.family)) || !state.family.family) {
             // ... then activate this color
-            return Object.assign({}, state, {
+            return {
+              ...state,
               colorWallActive: foundColor,
               seekingColorWallActive: initialState.seekingColorWallActive
-            })
+            }
           }
         }
       }
@@ -86,30 +92,38 @@ export const colors = (state: ColorsState = initialState, action: ReduxAction) =
       break
 
     case REQUEST_COLORS:
-      return Object.assign({}, state, {
+      return {
+        ...state,
         status: action.payload
-      })
+      }
 
     case RECEIVE_COLORS:
-      let newState: ColorsState = Object.assign({}, state, {
+      // adding toString methods to all Color objects
+      const payloadColors = convertChunkedColorsToClasses(action.payload.colors)
+      const payloadBrights = convertChunkedColorsToClasses(action.payload.brights)
+
+      let newState: ColorsState = {
+        ...state,
         items: {
-          colors: action.payload.colors,
-          brights: action.payload.brights,
-          colorMap: Object.assign({}, convertToColorMap(action.payload.colors), convertToColorMap(action.payload.brights))
+          colors: payloadColors,
+          brights: payloadBrights,
+          colorMap: { ...convertToColorMap(payloadColors), ...convertToColorMap(payloadBrights) }
         },
-        status: Object.assign(state.status, {
+        status: {
+          ...state.status,
           loading: action.payload.loading,
           activeRequest: action.payload.activeRequest
-        })
-      })
+        }
+      }
 
       if (action.payload.sections && action.payload.sections.length) {
-        newState.family = Object.assign({}, state.family, {
+        newState.family = {
+          ...state.family,
           sections: action.payload.sections.map((section: Section) => {
             return section.name
           }),
           structure: action.payload.sections
-        })
+        }
 
         const defaultSection = find(newState.family.structure, { default: true })
 
@@ -120,10 +134,11 @@ export const colors = (state: ColorsState = initialState, action: ReduxAction) =
 
           // if we actually have a section match...
           if (foundSection) {
-            Object.assign(newState.family, {
+            newState.family = {
+              ...newState.family,
               families: foundSection.families,
               section: foundSection.name
-            })
+            }
 
             if (newState.family.seekingFamily) {
               const foundFamily = find(newState.family.families, (family: string) => {
@@ -131,9 +146,10 @@ export const colors = (state: ColorsState = initialState, action: ReduxAction) =
               })
 
               if (foundFamily) {
-                Object.assign(newState.family, {
+                newState.family = {
+                  ...newState.family,
                   family: foundFamily
-                })
+                }
 
                 if (newState.seekingColorWallActive && newState.items.colorMap) {
                   const foundColor = newState.items.colorMap[newState.seekingColorWallActive]
@@ -141,10 +157,11 @@ export const colors = (state: ColorsState = initialState, action: ReduxAction) =
                   // if we found a color match AT ALL and its associated color family names include our foundFamily...
                   if (foundColor && foundColor.colorFamilyNames && includes(foundColor.colorFamilyNames, foundFamily)) {
                     // ... then this color is a match
-                    Object.assign(newState, {
+                    newState = {
+                      ...newState,
                       colorWallActive: foundColor,
                       seekingColorWallActive: initialState.seekingColorWallActive
-                    })
+                    }
                   } else {
                     delete newState.seekingColorWallActive
                     delete newState.colorWallActive
@@ -162,10 +179,11 @@ export const colors = (state: ColorsState = initialState, action: ReduxAction) =
               // if we found a color match AT ALL and its associated color family names include our foundFamily...
               if (foundColor) {
                 // ... then this color is a match
-                Object.assign(newState, {
+                newState = {
+                  ...newState,
                   colorWallActive: foundColor,
                   seekingColorWallActive: initialState.seekingColorWallActive
-                })
+                }
               } else {
                 delete newState.seekingColorWallActive
                 delete newState.colorWallActive
@@ -186,37 +204,43 @@ export const colors = (state: ColorsState = initialState, action: ReduxAction) =
       return newState
 
     case REMOVE_COLOR_FILTERS:
-      return Object.assign({}, state, {
-        family: Object.assign({}, state.family, {
+      return {
+        ...state,
+        family: {
+          ...state.family,
           family: void (0),
           families: void (0),
           section: void (0)
-        }),
+        },
         colorWallActive: initialState.colorWallActive
-      })
+      }
 
     case FILTER_BY_FAMILY:
       const payloadFamily = action.payload.family
 
       if (state.status.loading) {
-        return Object.assign({}, state, {
-          family: Object.assign({}, state.family, {
+        return {
+          ...state,
+          family: {
+            ...state.family,
             seekingFamily: kebabCase(payloadFamily)
-          })
-        })
+          }
+        }
       }
 
       if (!compareKebabs(state.family.family, payloadFamily)) {
         // TODO: Going to need to store filtered family and section temporarily in the event that we have not yet loaded colors...
-        return Object.assign({}, state, {
-          family: Object.assign({}, state.family, {
+        return {
+          ...state,
+          family: {
+            ...state.family,
             family: find(state.family.families, (familyName: string) => {
               return compareKebabs(payloadFamily, familyName)
             }),
             seekingFamily: initialState.family.seekingFamily
-          }),
+          },
           colorWallActive: initialState.colorWallActive
-        })
+        }
       }
 
       break
@@ -225,11 +249,13 @@ export const colors = (state: ColorsState = initialState, action: ReduxAction) =
       const payloadSection = action.payload.section
 
       if (state.status.loading) {
-        return Object.assign({}, state, {
-          family: Object.assign({}, state.family, {
+        return {
+          ...state,
+          family: {
+            ...state.family,
             seekingSection: kebabCase(payloadSection)
-          })
-        })
+          }
+        }
       }
 
       if (!compareKebabs(state.family.section, payloadSection)) {
@@ -239,24 +265,27 @@ export const colors = (state: ColorsState = initialState, action: ReduxAction) =
         })
 
         if (targetedSection && targetedSection.families) {
-          return Object.assign({}, state, {
-            family: Object.assign({}, state.family, {
+          return {
+            ...state,
+            family: {
+              ...state.family,
               family: void (0), // reset family when section changes
               families: targetedSection.families,
               section: targetedSection.name,
               seekingSection: initialState.family.seekingSection
-            }),
+            },
             colorWallActive: initialState.colorWallActive
-          })
+          }
         }
       }
 
       break
 
     case REQUEST_SEARCH_RESULTS:
-      return Object.assign({}, state, {
+      return {
+        ...state,
         status: action.payload.status
-      })
+      }
 
     case RECEIVE_SEARCH_RESULTS:
       return ({
