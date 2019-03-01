@@ -6,6 +6,7 @@ import flattenDeep from 'lodash/flattenDeep'
 import includes from 'lodash/includes'
 import memoizee from 'memoizee'
 import ReactGA from 'react-ga'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import { SCENE_TYPES, SCENE_VARIANTS } from 'constants/globals'
 import { loadScenes, paintSceneSurface, activateScene, deactivateScene, changeSceneVariant } from '../../store/actions/scenes'
@@ -13,7 +14,8 @@ import TintableScene from './TintableScene'
 import SceneVariantSwitch from './SceneVariantSwitch'
 import ImagePreloader from '../../helpers/ImagePreloader'
 import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import ConfigurationContext from '../../contexts/ConfigurationContext'
+
 import type { Color } from '../../shared/types/Colors'
 import type { Scene, SceneStatus, Surface, Variant } from '../../shared/types/Scene'
 
@@ -67,7 +69,7 @@ type State = {
 
 export class SceneManager extends PureComponent<Props, State> {
   static baseClass = 'prism-scene-manager'
-
+  static contextType = ConfigurationContext
   static defaultProps = {
     maxActiveScenes: 2,
     type: SCENE_TYPES.ROOM,
@@ -152,7 +154,6 @@ export class SceneManager extends PureComponent<Props, State> {
     return (
       <div className={SceneManager.baseClass}>
         <div className={`${SceneManager.baseClass}__block ${SceneManager.baseClass}__block--tabs`}>
-          {/* POC scene-switching buttons to demonstrate performance */}
           {scenes.map((scene, index) => {
             const sceneInfo = getSceneInfoById(scene, sceneStatus, scene.id)
             if (!sceneInfo) {
@@ -223,6 +224,7 @@ export class SceneManager extends PureComponent<Props, State> {
             // if we have more than one variant for this scene...
             if (scene.variant_names.length > 1) {
               // if we have day and night variants...
+              // TODO: Remove this dayNightToggle check, this is for demonstration purposes
               if (SceneVariantSwitch.DayNight.isCompatible(scene.variant_names)) {
                 // ... then create a day/night variant switch
                 variantSwitch = <SceneVariantSwitch.DayNight currentVariant={status.variant} variants={[SCENE_VARIANTS.DAY, SCENE_VARIANTS.NIGHT]} onChange={this.changeVariant(sceneId)} sceneId={scene.id} />

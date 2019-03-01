@@ -3,16 +3,13 @@ import React from 'react'
 import { shallow } from 'enzyme'
 import InfoButton from 'src/components/Facets/ColorWall/ColorWallSwatch/ColorWallSwatchButtons/InfoButton'
 import { Link } from 'react-router-dom'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 const detailsLinkString = '/test'
 
 const getInfoButton = (props) => {
   let defaultProps = {
     config: {
-      ColorWall: {
-        displayAddButton: true
-      }
+      displayInfoButton: true
     },
     detailsLink: detailsLinkString
   }
@@ -56,9 +53,5 @@ describe('InfoButton', () => {
 
   it('should render Link component with to prop defined as detailsLinkString constant', () => {
     expect(infoButton.find(Link).prop('to')).toEqual(detailsLinkString)
-  })
-
-  it('should render FontAwesomeIcon', () => {
-    expect(infoButton.find(FontAwesomeIcon).exists()).toBeTruthy()
   })
 })

@@ -147,7 +147,7 @@ $tab-set-padding: 0.5rem 0.25rem;
 
   &__strip-color-name {
     &--dark-color {
-      color: white;
+      color: var(getVarName('theme.colors.white'));
     }
   }
 

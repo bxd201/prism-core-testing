@@ -1,8 +1,11 @@
 // @flow
 import axios from 'axios'
 
-import { SW_COLORS_BY_FAMILY_ENDPOINT, SW_BRIGHTS_ENDPOINT, SW_FAMILY_NAMES_ENDPOINT } from '../../constants/endpoints'
-import { type Color, type FamilyStructure } from '../../shared/types/Colors'
+import { COLOR_CHUNKS_ENDPOINT, COLOR_BRIGHTS_ENDPOINT, COLOR_FAMILY_NAMES_ENDPOINT } from '../../constants/endpoints'
+
+import { generateBrandedEndpoint } from '../../shared/helpers/DataUtils'
+
+import type { Color, FamilyStructure } from '../../shared/types/Colors'
 
 export const REQUEST_COLORS: string = 'REQUEST_COLORS'
 const requestColors = () => {
@@ -84,12 +87,12 @@ export const makeActiveColorById = (id: string) => {
 
 // TODO: Make this method configurable via options on call so specific color wall implementations can reuse it to load their colors
 export const loadColors = (options?: any) => {
-  // conditionally add the lng parameter if a manual language has been passed in
-  const COLOR_FAMILY_ENDPOINT = (options && options.language) ? `${SW_COLORS_BY_FAMILY_ENDPOINT}?lng=${options.language}` : SW_COLORS_BY_FAMILY_ENDPOINT
-  const BRIGHTS_ENDPOINT = (options && options.language) ? `${SW_BRIGHTS_ENDPOINT}?lng=${options.language}` : SW_BRIGHTS_ENDPOINT
-  const FAMILY_NAMES_ENDPOINT = (options && options.language) ? `${SW_FAMILY_NAMES_ENDPOINT}?lng=${options.language}` : SW_FAMILY_NAMES_ENDPOINT
-
   return (dispatch: Function, getState: Function) => {
+    // const { brandId } = getState().configurations
+    const COLOR_CHUNKS = generateBrandedEndpoint(COLOR_CHUNKS_ENDPOINT, 'sherwin', options)
+    const BRIGHTS_ENDPOINT = generateBrandedEndpoint(COLOR_BRIGHTS_ENDPOINT, 'sherwin', options)
+    const FAMILY_NAMES_ENDPOINT = generateBrandedEndpoint(COLOR_FAMILY_NAMES_ENDPOINT, 'sherwin', options)
+
     const { items: { colors }, status: { activeRequest } } = getState().colors
 
     // if a request to load is active OR we already have colors loaded...
@@ -102,7 +105,7 @@ export const loadColors = (options?: any) => {
 
     return Promise
       .all([
-        axios.get(COLOR_FAMILY_ENDPOINT),
+        axios.get(COLOR_CHUNKS),
         axios.get(BRIGHTS_ENDPOINT),
         axios.get(FAMILY_NAMES_ENDPOINT)
       ])

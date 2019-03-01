@@ -1,14 +1,6 @@
+// @flow
 import React from 'react'
 
-export const DEFAULT_CONFIGURATIONS = {
-  ColorWall: {
-    displayAddButton: true,
-    displayInfoButton: true,
-    displayViewDetails: false
-  }
-}
+const ConfigurationContext = React.createContext()
 
-export const ConfigurationContext = React.createContext()
-
-export const ConfigurationContextProvider = ConfigurationContext.Provider
-export const ConfigurationContextConsumer = ConfigurationContext.Consumer
+export default ConfigurationContext

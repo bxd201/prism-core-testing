@@ -2,17 +2,18 @@
 import React, { PureComponent } from 'react'
 import memoizee from 'memoizee'
 import { Link } from 'react-router-dom'
+import { injectIntl, FormattedMessage, type intlShape } from 'react-intl'
 
 import { BLANK_SWATCH, SW_CHUNK_SIZE } from 'constants/globals'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { convertColorSetsToGrid } from '../../../shared/helpers/ColorDataUtils'
 import { generateColorWallPageUrl, generateColorDetailsPageUrl, fullColorName } from '../../../shared/helpers/ColorUtils'
 import { compareKebabs } from '../../../shared/helpers/StringUtils'
-import { injectIntl, FormattedMessage, type intlShape } from 'react-intl'
 
 import CircleLoader from '../../Loaders/CircleLoader/CircleLoader'
 import ColorWallSwatchList from './ColorWallSwatchList'
 import GenericMessage from '../../Messages/GenericMessage'
+import ConfigurationContext from '../../../contexts/ConfigurationContext'
 
 import type { ColorSetPayload, ColorMap, Color, ColorGrid } from '../../../shared/types/Colors'
 
@@ -102,33 +103,37 @@ class SherwinColorWall extends PureComponent<Props> {
     }
 
     return (
-      <React.Fragment>
-        <ColorWallSwatchList
-          showAll={!activeColor}
-          immediateSelectionOnActivation={!activeColor}
-          activeColor={activeColor}
-          section={section}
-          family={family}
-          bloomRadius={2}
-          onAddColor={addToLivePalette}
-          colorMap={colorMap}
-          swatchLinkGenerator={this.buildSwatchLink}
-          swatchDetailsLinkGenerator={this.buildSwatchDetailsLink}
-          minCellSize={activeColor ? 50 : 15}
-          maxCellSize={activeColor ? 50 : 25}
-          colors={colorsGrid}
-          // colorGrid is being used as a key here so the whole component reinitializes when color set changes
-          key={colorsGrid} />
+      <ConfigurationContext.Consumer>
+        {config => (
+          <React.Fragment>
+            <ColorWallSwatchList
+              showAll={!activeColor}
+              immediateSelectionOnActivation={!activeColor}
+              activeColor={activeColor}
+              section={section}
+              family={family}
+              bloomRadius={config.colorWall.bloomRadius} // TODO: demo purposes, maybe we want to change this
+              onAddColor={addToLivePalette}
+              colorMap={colorMap}
+              swatchLinkGenerator={this.buildSwatchLink}
+              swatchDetailsLinkGenerator={this.buildSwatchDetailsLink}
+              minCellSize={activeColor ? 50 : 15}
+              maxCellSize={activeColor ? 50 : 25}
+              colors={colorsGrid}
+              // colorGrid is being used as a key here so the whole component reinitializes when color set changes
+              key={colorsGrid} />
 
-        {activeColor && (
-          <div className='color-wall-wall__btns'>
-            <Link to={generateColorWallPageUrl(section, family)} className='color-wall-wall__btns__btn' title={translatedMessages.ZOOM_OUT}>
-              <FontAwesomeIcon icon='search-minus' size='lg' />
-              <span className='visually-hidden'><FormattedMessage id='ZOOM_OUT' /></span>
-            </Link>
-          </div>
+            {activeColor && (
+              <div className='color-wall-wall__btns'>
+                <Link to={generateColorWallPageUrl(section, family)} className='color-wall-wall__btns__btn' title={translatedMessages.ZOOM_OUT}>
+                  <FontAwesomeIcon icon='search-minus' size='lg' />
+                  <span className='visually-hidden'><FormattedMessage id='ZOOM_OUT' /></span>
+                </Link>
+              </div>
+            )}
+          </React.Fragment>
         )}
-      </React.Fragment>
+      </ConfigurationContext.Consumer>
     )
   }
 }

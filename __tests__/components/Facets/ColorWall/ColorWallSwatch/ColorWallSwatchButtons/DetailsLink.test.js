@@ -11,9 +11,7 @@ const detailsLinkString = '/test'
 const getDetailsLink = (props) => {
   let defaultProps = {
     config: {
-      ColorWall: {
-        displayViewDetails: true
-      }
+      displayDetailsLink: true
     },
     detailsLink: detailsLinkString
   }

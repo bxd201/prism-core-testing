@@ -24,3 +24,13 @@ export function getTotalWidthOf2dArray (arr: any[][]): number {
 export const ensureFullyQualifiedAssetUrl = memoizee(function ensureFullyQualifiedAssetUrl (url: string): string {
   return includes(url, 'scene7') ? url : `${BASE_PATH}${url}` // eslint-disable-line no-undef
 })
+
+export const generateBrandedEndpoint = memoizee((basePath, brand, options) => {
+  let url = `${basePath}/${brand}`
+
+  if (options && options.language) {
+    url += `?lng=${options.language}`
+  }
+
+  return url
+})

@@ -1,7 +1,10 @@
 // @flow
 import axios from 'axios'
 
-import { SW_COLORS_SEARCH_ENDPOINT } from '../../constants/endpoints'
+import { COLORS_SEARCH_ENDPOINT } from '../../constants/endpoints'
+
+import { generateBrandedEndpoint } from '../../shared/helpers/DataUtils'
+
 import type { ColorListPayload } from '../../shared/types/Colors'
 
 export const REQUEST_SEARCH_RESULTS: string = 'REQUEST_SEARCH_RESULTS'
@@ -27,7 +30,10 @@ export const loadSearchResults = (term: string) => {
   return (dispatch: Function) => {
     dispatch(requestSearchResults())
 
-    return axios.get(SW_COLORS_SEARCH_ENDPOINT, {
+    // const { brandId } = getState().configurations
+    const SEARCH_URL = generateBrandedEndpoint(COLORS_SEARCH_ENDPOINT, 'sherwin')
+
+    return axios.get(SEARCH_URL, {
       params: {
         query: term
       }

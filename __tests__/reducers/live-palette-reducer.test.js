@@ -1,5 +1,5 @@
 import * as actions from 'src/store/actions/live-palette'
-import { lp, initialState } from 'src/store/reducers/live-palette-reducer'
+import { lp, initialState } from 'src/store/reducers/live-palette'
 import * as Colors from '__mocks__/data/color/Colors'
 import shuffle from 'lodash/shuffle'
 import filter from 'lodash/filter'
