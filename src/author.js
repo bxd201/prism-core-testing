@@ -1,6 +1,6 @@
 import bindReactToDOM from './index'
 import ReactDOM from 'react-dom'
-import { flatten } from 'lodash'
+import flatten from 'lodash/flatten'
 
 const gatherReactRoots = (nodes) => {
   if (!nodes || !nodes.length) {

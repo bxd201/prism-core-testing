@@ -28,7 +28,8 @@ export type Color = {
   rgb: number,
   saturation: number,
   similarColors: string[],
-  storeStripLocator?: string
+  storeStripLocator?: string,
+  toString: Function<string>
 }
 
 export type ProbablyColor = Color | BlankColor

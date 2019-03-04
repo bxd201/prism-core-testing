@@ -242,8 +242,8 @@ $tab-set-padding: 0.5rem 0.25rem;
     &:active,
     &:focus,
     &:hover {
+      outline: solid $color-swBlue 2px;
       outline: -webkit-focus-ring-color auto 5px;
-      outline: solid #{$color-swBlue} 2px;
       text-decoration: underline;
 
       span {

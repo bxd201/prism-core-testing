@@ -1,5 +1,9 @@
 // @flow
-import { findIndex, concat, isEmpty, compact, isNumber } from 'lodash'
+import findIndex from 'lodash/findIndex'
+import concat from 'lodash/concat'
+import isEmpty from 'lodash/isEmpty'
+import compact from 'lodash/compact'
+import isNumber from 'lodash/isNumber'
 import memoizee from 'memoizee'
 import { ZOOMED_VIEW_GRID_PADDING } from '../../../constants/globals'
 import { type ColorIdGrid, type ColorIdLine, type ProbablyColor, type ColorGrid } from '../../../shared/types/Colors'

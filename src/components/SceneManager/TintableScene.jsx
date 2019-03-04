@@ -1,6 +1,11 @@
 // @flow
 import React, { PureComponent, Fragment } from 'react'
-import { includes, uniqueId, uniq, without, concat, find } from 'lodash'
+import includes from 'lodash/includes'
+import uniqueId from 'lodash/uniqueId'
+import uniq from 'lodash/uniq'
+import without from 'lodash/without'
+import concat from 'lodash/concat'
+import find from 'lodash/find'
 import { LiveMessage } from 'react-aria-live'
 
 import type { Color } from '../../shared/types/Colors'

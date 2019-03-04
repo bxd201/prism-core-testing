@@ -1,7 +1,7 @@
 // @flow
 import React from 'react'
 import { FormattedMessage } from 'react-intl'
-import { find } from 'lodash'
+import find from 'lodash/find'
 
 import type { Color, ColorMap } from '../../../../shared/types/Colors'
 

@@ -1,7 +1,8 @@
 // @flow
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
-import { find, includes } from 'lodash'
+import find from 'lodash/find'
+import includes from 'lodash/includes'
 import memoizee from 'memoizee'
 import ReactGA from 'react-ga'
 

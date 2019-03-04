@@ -3,7 +3,8 @@
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
-import { flatten, sortBy } from 'lodash'
+import flatten from 'lodash/flatten'
+import sortBy from 'lodash/sortBy'
 
 import ColorWallSwatchList from './ColorWallSwatchList'
 
