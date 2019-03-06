@@ -18,7 +18,7 @@ function SimilarColorSwatch ({ color }: Props) {
       category: 'Color Detail / Similar Color',
       action: 'View Similar Color',
       label: color.name
-    })
+    }, ['GAtrackerPRISM'])
   }
 
   return (

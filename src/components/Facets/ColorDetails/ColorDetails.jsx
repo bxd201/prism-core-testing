@@ -170,8 +170,8 @@ class ColorDetails extends PureComponent<Props, State> {
     const { match: { params } } = this.props
     const color = this.getColorById(params[ROUTE_PARAM_NAMES.COLOR_ID])
 
-    ReactGA.set({ dimension1: 'sherwinWilliamsCAmainSite' })
-    ReactGA.pageview(`color-detail/${color.brandKey} ${color.colorNumber} - ${color.name}`)
+    ReactGA.set({ dimension1: 'sherwinWilliamsCAmainSite' }, ['GAtrackerPRISM'])
+    ReactGA.pageview(`color-detail/${color.brandKey} ${color.colorNumber} - ${color.name}`, ['GAtrackerPRISM'])
   }
 
   componentDidUpdate () {
@@ -229,7 +229,7 @@ class ColorDetails extends PureComponent<Props, State> {
       category: 'Color Detail',
       action: tabReportingName,
       label: tabReportingName
-    })
+    }, ['GAtrackerPRISM'])
   }
 }
 

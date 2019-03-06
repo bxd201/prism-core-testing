@@ -83,7 +83,7 @@ class SceneManager extends PureComponent<Props, State> {
         category: 'Scene Manager',
         action: 'Toggle Active Scene',
         label: 'Toggle Active Scene'
-      })
+      }, ['GAtrackerPRISM'])
     }
   }
 

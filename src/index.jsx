@@ -34,7 +34,12 @@ window.PRISM = {
 }
 
 // initialize Google Analytics
-ReactGA.initialize(GOOGLE_ANALYTICS_UID, {})
+ReactGA.initialize([{
+  trackingId: GOOGLE_ANALYTICS_UID,
+  gaOptions: {
+    name: 'GAtrackerPRISM'
+  }
+}], { alwaysSendToDefaultTracker: false })
 
 const renderAppInElement = (el) => {
   if (el.className.indexOf('__react-bound') > -1) {

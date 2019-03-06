@@ -68,13 +68,13 @@ function ColorChipMaximizer ({ color, intl }: Props) {
       setTimeout(() => {
         setLiveRegionMessage(intl.messages.CHIP_MAXIMIZED)
       }, 500)
-    }
-    if (isMaximized === false) {
       ReactGA.event({
         category: 'Color Detail',
         action: 'Maximize Swatch',
         label: 'Maximize Swatch'
-      })
+      }, ['GAtrackerPRISM'])
+    }
+    if (isMaximized === false) {
       maximizeChipBtn.current.focus()
       setTimeout(() => {
         setLiveRegionMessage(intl.messages.CHIP_MINIMIZED)
