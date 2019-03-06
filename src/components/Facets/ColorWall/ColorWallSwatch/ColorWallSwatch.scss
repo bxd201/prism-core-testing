@@ -17,8 +17,6 @@ $swatch-font-size--small: $base * .8;
 .color-swatch-inner {
   $_self: &;
 
-  $flower-size-scale: 1.6;
-
   $bloom-activate-delay: getVar('colorWall.swatchActivateDelayMS') * 1ms;
   $bloom-activate-duration: getVar('colorWall.swatchActivateDurationMS') * 1ms;
   $bloom-activate-z-duration: $bloom-activate-delay + $bloom-activate-duration;
@@ -30,60 +28,67 @@ $swatch-font-size--small: $base * .8;
   $swatch-scale-amt: 1.25;
   $swatch-scale-amt--zoomed-in: 1.1;
 
-  @mixin getRaise($scale, $amt, $z, $i: '') {
-    $this-scale: $amt * $scale;
+  $bloom-center-size-lg: 275%;
+  $bloom-center-size-sm: 250%;
 
-    width: $this-scale unquote($i);
-    height: $this-scale unquote($i);
-    margin: round($this-scale / -2 + 50%) 0 0 round($this-scale / -2 + 50%) unquote($i);
+  @function getBloomFalloff($reference, $lvl: 1) {
+    $step: 30;
+    $falloff-rate: 1.3;
+
+    @return $reference - ( ( $step * poly-pow( $falloff-rate, $lvl ) ) * $lvl );
+  }
+
+  @mixin getSwatchRaise($amt, $z, $i: '') {
+    width: $amt unquote($i);
+    height: $amt unquote($i);
+    margin: round($amt / -2 + 50%) 0 0 round($amt / -2 + 50%) unquote($i);
     z-index: $z unquote($i);
     box-shadow: 0 0 0 1px white, 0 0 10px rgba(black, .25) !important;
   }
 
-  @mixin getEdgeCompensation($scale, $amt, $i: '') {
-    $this-scale: $amt * $scale;
+  @mixin getSwatchEdgeCompensation($amt, $i: '') {
     $compensation-amt: 15; // higher numbers = less offset
 
     &#{$_self}--compensate-x-n2 {
-      left: $this-scale / -($compensation-amt / 2) unquote($i);
+      left: $amt / -($compensation-amt / 2) unquote($i);
     }
 
     &#{$_self}--compensate-x-n1 {
-      left: $this-scale / -($compensation-amt) unquote($i);
+      left: $amt / -($compensation-amt) unquote($i);
     }
 
     &#{$_self}--compensate-x-1 {
-      left: $this-scale / ($compensation-amt) unquote($i);
+      left: $amt / ($compensation-amt) unquote($i);
     }
 
     &#{$_self}--compensate-x-2 {
-      left: $this-scale / ($compensation-amt / 2) unquote($i);
+      left: $amt / ($compensation-amt / 2) unquote($i);
     }
 
     &#{$_self}--compensate-y-n2 {
-      top: $this-scale / -($compensation-amt / 2) unquote($i);
+      top: $amt / -($compensation-amt / 2) unquote($i);
     }
 
     &#{$_self}--compensate-y-n1 {
-      top: $this-scale / -($compensation-amt) unquote($i);
+      top: $amt / -($compensation-amt) unquote($i);
     }
 
     &#{$_self}--compensate-y-1 {
-      top: $this-scale / ($compensation-amt) unquote($i);
+      top: $amt / ($compensation-amt) unquote($i);
     }
 
     &#{$_self}--compensate-y-2 {
-      top: $this-scale / ($compensation-amt / 2) unquote($i);
+      top: $amt / ($compensation-amt / 2) unquote($i);
     }
   }
 
-  @mixin getFocusScaling($scale) {
+  @mixin getSwatchFocusScaling($scale) {
     &:hover {
       transform: scale($scale);
     }
   }
 
-  @keyframes fadeIn {
+  @keyframes bloomedSwatchContentFadeIn {
     0% {
       opacity: 0;
     }
@@ -118,11 +123,11 @@ $swatch-font-size--small: $base * .8;
     }
 
     .color-wall-swatch-list--show-all & {
-      @include getFocusScaling($swatch-scale-amt);
+      @include getSwatchFocusScaling($swatch-scale-amt);
     }
 
     .color-wall-swatch-list--zoomed & {
-      @include getFocusScaling($swatch-scale-amt--zoomed-in);
+      @include getSwatchFocusScaling($swatch-scale-amt--zoomed-in);
     }
   }
 
@@ -156,7 +161,8 @@ $swatch-font-size--small: $base * .8;
   &__content {
     position: relative;
     padding: .5em;
-    animation: fadeIn $bloom-activate-duration ease-in-out ($bloom-activate-duration + $bloom-activate-delay) * 1.25 both;
+    // fade in is used so we don't see the text get mangled as a swatch is activated
+    animation: bloomedSwatchContentFadeIn $bloom-activate-duration ease-in-out ($bloom-activate-duration + $bloom-activate-delay) * 1.25 both;
     text-align: left;
     height: 100%;
     line-height: 1;
@@ -237,48 +243,48 @@ $swatch-font-size--small: $base * .8;
       outline-width: $cw-focus-outline-size;
     }
 
-    @include getEdgeCompensation($flower-size-scale, 100%, !important);
+    @include getSwatchEdgeCompensation(100%, !important);
   }
 
   &--bloom-lvl {
     &-0 {
-      @include getRaise($flower-size-scale, 170%, 900, !important);
+      @include getSwatchRaise($bloom-center-size-sm, 900, !important);
 
       @include respond-above($switchover) {
-        @include getRaise($flower-size-scale, 180%, 900, !important);
+        @include getSwatchRaise($bloom-center-size-lg, 900, !important);
       }
       cursor: default;
     }
 
     &-n0-5 {
-      @include getRaise($flower-size-scale, 130%, 750, !important);
+      @include getSwatchRaise(getBloomFalloff($bloom-center-size-sm, 1.2), 750, !important);
 
       @include respond-above($switchover) {
-        @include getRaise($flower-size-scale, 160%, 750, !important);
+        @include getSwatchRaise(getBloomFalloff($bloom-center-size-lg, 1), 750, !important);
       }
     }
 
     &-n1 {
-      @include getRaise($flower-size-scale, 130%, 700, !important);
+      @include getSwatchRaise(getBloomFalloff($bloom-center-size-sm, 1.2), 700, !important);
 
       @include respond-above($switchover) {
-        @include getRaise($flower-size-scale, 130%, 700, !important);
+        @include getSwatchRaise(getBloomFalloff($bloom-center-size-lg, 1.5), 700, !important);
       }
     }
 
     &-n1-5 {
-      @include getRaise($flower-size-scale, 90%, 650, !important);
+      @include getSwatchRaise(getBloomFalloff($bloom-center-size-sm, 2.1), 650, !important);
 
       @include respond-above($switchover) {
-        @include getRaise($flower-size-scale, 120%, 650, !important);
+        @include getSwatchRaise(getBloomFalloff($bloom-center-size-lg, 2), 650, !important);
       }
     }
 
     &-n2 {
-      @include getRaise($flower-size-scale, 90%, 600, !important);
+      @include getSwatchRaise(getBloomFalloff($bloom-center-size-sm, 2.1), 600, !important);
 
       @include respond-above($switchover) {
-        @include getRaise($flower-size-scale, 90%, 600, !important);
+        @include getSwatchRaise(getBloomFalloff($bloom-center-size-lg, 2.5), 600, !important);
       }
     }
   }

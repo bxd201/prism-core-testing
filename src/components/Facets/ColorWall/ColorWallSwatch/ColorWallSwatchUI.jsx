@@ -28,8 +28,7 @@ const generateLinkProps = memoizee(function generateLinkProps (color: Color, lin
     to: link,
     style: {
       background: color.hex
-    },
-    title: fullColorName(color.brandKey, color.colorNumber, color.name)
+    }
   }
 })
 
@@ -49,7 +48,11 @@ class ColorWallSwatchUI extends PureComponent<Props> {
         <Link {...generateLinkProps(color, thisLink)}
           className={`${_classes} ${focus ? CLASS_NAMES.BASE_FOCUS : ''}`}
           onClick={this.handleClick}
-          tabIndex={-1} />
+          tabIndex={-1}>
+          <span className='visually-hidden'>
+            {fullColorName(color.brandKey, color.colorNumber, color.name)}
+          </span>
+        </Link>
       </div>
     )
   }

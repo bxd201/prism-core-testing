@@ -76,15 +76,19 @@ class ColorWallSwatch extends PureComponent<Props> {
         <Link to={thisLink}
           className={CLASS_NAMES.ENGAGE_LINK}
           onClick={this.handleClick}
-          title={fullColorName(color.brandKey, color.colorNumber, color.name)}
-          tabIndex={-1} />
+          tabIndex={-1}>
+          <span className='visually-hidden'>
+            {fullColorName(color.brandKey, color.colorNumber, color.name)}
+          </span>
+        </Link>
       )
     } else {
       // if not showing contents or does not have thisLink, augment container's props to contain color title
-      containerProps = {
-        ...containerProps,
-        title: fullColorName(color.brandKey, color.colorNumber, color.name)
-      }
+      contents = (
+        <span className='visually-hidden'>
+          {fullColorName(color.brandKey, color.colorNumber, color.name)}
+        </span>
+      )
     }
 
     return (
