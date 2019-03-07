@@ -71,7 +71,7 @@ SceneVariantSwitch.DayNight = class DayNight extends PureComponent<SwitchProps> 
         category: 'Scene Manager',
         action: 'View Night Scene',
         label: 'View Night Scene'
-      })
+      }, ['GAtrackerPRISM'])
     } else {
       this.props.onChange(SCENE_VARIANTS.DAY)
     }

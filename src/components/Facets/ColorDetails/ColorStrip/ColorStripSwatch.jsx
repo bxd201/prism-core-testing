@@ -19,7 +19,7 @@ function ColorStripSwatch ({ color, active, history }: Props) {
       category: 'Color Detail / Swatch Chip List',
       action: 'View Swatch Chip Color',
       label: color.name
-    })
+    }, ['GAtrackerPRISM'])
     history.push(generateColorDetailsPageUrl(color))
   }
 
