@@ -15,7 +15,7 @@ import { ensureFullyQualifiedAssetUrl } from '../../shared/helpers/DataUtils'
 import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import type { Color } from '../../shared/types/Colors'
-import type { Scene, SceneStatus, Surface } from '../../shared/types/Scene'
+import type { Scene, SceneStatus, Surface, Variant } from '../../shared/types/Scene'
 
 import './SceneManager.scss'
 
@@ -83,7 +83,7 @@ class SceneManager extends PureComponent<Props, State> {
         category: 'Scene Manager',
         action: 'Toggle Active Scene',
         label: 'Toggle Active Scene'
-      })
+      }, ['GAtrackerPRISM'])
     }
   }
 
@@ -132,42 +132,45 @@ class SceneManager extends PureComponent<Props, State> {
           {scenes.map((scene, index) => {
             const sceneId = scene.id
 
-            const status: ?SceneStatus = find(sceneStatus, { 'id': sceneId })
-            const sceneVariant: ?Scene = find(scene.variants, { 'variant_name': status.variant })
+            const status: SceneStatus = find(sceneStatus, { 'id': sceneId })
+            const sceneVariant: Variant = find(scene.variants, { 'variant_name': status.variant })
             const surfaces: Surface[] = sceneVariant.surfaces
             const activeMarker = includes(activeScenes, scene.id)
               ? <FontAwesomeIcon icon={['fa', 'check']} className={`${SceneManager.baseClass}__flag`} />
               : null
 
             return (
+              // TODO: Convert these to labels around checkboxes since that's how they're being used
               <button key={sceneId}
                 onClick={() => this.handleClickSceneToggle(scene.id)}
                 className={`${SceneManager.baseClass}__btn ${includes(activeScenes, scene.id) ? `${SceneManager.baseClass}__btn--active` : ''}`}
                 type='button'>
 
-                <ImagePreloader
-                  el={TintableScene}
-                  preload={[
-                    sceneVariant.image,
-                    surfaces.map(surface => surface.shadows),
-                    surfaces.map(surface => surface.mask),
-                    surfaces.map(surface => surface.hitArea),
-                    surfaces.map(surface => surface.highlights)
-                  ]}
-                  interactive={false}
-                  width={scene.width}
-                  height={scene.height}
-                  type={type}
-                  sceneId={sceneId}
-                  background={ensureFullyQualifiedAssetUrl(sceneVariant.image)}
-                  clickToPaintColor={activeColor}
-                  onUpdateColor={this.handleColorUpdate}
-                  previewColor={previewColor}
-                  mainColor={mainColor}
-                  surfaceStatus={status.surfaces}
-                  surfaces={surfaces}
-                />
-
+                <span className='visually-hidden'>{sceneVariant.name}</span>
+                <div role='presentation'>
+                  <ImagePreloader
+                    el={TintableScene}
+                    preload={[
+                      sceneVariant.thumb,
+                      surfaces.map(surface => surface.shadows),
+                      surfaces.map(surface => surface.mask),
+                      surfaces.map(surface => surface.hitArea),
+                      surfaces.map(surface => surface.highlights)
+                    ]}
+                    interactive={false}
+                    width={scene.width}
+                    height={scene.height}
+                    type={type}
+                    sceneId={sceneId}
+                    background={ensureFullyQualifiedAssetUrl(sceneVariant.thumb)}
+                    clickToPaintColor={activeColor}
+                    onUpdateColor={this.handleColorUpdate}
+                    previewColor={previewColor}
+                    mainColor={mainColor}
+                    surfaceStatus={status.surfaces}
+                    surfaces={surfaces}
+                  />
+                </div>
                 {activeMarker}
               </button>
             )
@@ -176,14 +179,14 @@ class SceneManager extends PureComponent<Props, State> {
 
         <div className={`${SceneManager.baseClass}__block ${SceneManager.baseClass}__block--scenes`}>
           {activeScenes.map((sceneId, index) => {
-            const scene = scenes.filter(scene => (scene.id === sceneId))[0]
+            const scene: Scene = scenes.filter(scene => (scene.id === sceneId))[0]
 
             if (!scene) {
               return null
             }
 
             const status: SceneStatus = find(sceneStatus, { 'id': sceneId })
-            const sceneVariant: Scene = find(scene.variants, { 'variant_name': status.variant })
+            const sceneVariant: Variant = find(scene.variants, { 'variant_name': status.variant })
             const surfaces: Surface[] = sceneVariant.surfaces
 
             let variantSwitch = null
@@ -202,7 +205,8 @@ class SceneManager extends PureComponent<Props, State> {
                 <ImagePreloader
                   el={TintableScene}
                   preload={[
-                    sceneVariant.image,
+                    scene.variants.map((v: Variant) => v.thumb),
+                    scene.variants.map((v: Variant) => v.image),
                     surfaces.map(surface => surface.mask),
                     surfaces.map(surface => surface.shadows),
                     surfaces.map(surface => surface.hitArea),

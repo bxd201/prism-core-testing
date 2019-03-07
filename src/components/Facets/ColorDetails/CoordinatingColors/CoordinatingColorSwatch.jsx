@@ -22,7 +22,7 @@ function CoordinatingColorSwatch ({ color }: Props) {
       category: 'Color Detail / Coordinating Color',
       action: 'View Coord Color',
       label: color.name
-    })
+    }, ['GAtrackerPRISM'])
   }
   return (
     <li className={`${BASE_CLASS}__coord-color ${color.isDark ? `${BASE_CLASS}__coord-color--dark-color` : ''}`}
