@@ -151,7 +151,7 @@ class SceneManager extends PureComponent<Props, State> {
                   <ImagePreloader
                     el={TintableScene}
                     preload={[
-                      sceneVariant.image,
+                      sceneVariant.thumb,
                       surfaces.map(surface => surface.shadows),
                       surfaces.map(surface => surface.mask),
                       surfaces.map(surface => surface.hitArea),
@@ -162,7 +162,7 @@ class SceneManager extends PureComponent<Props, State> {
                     height={scene.height}
                     type={type}
                     sceneId={sceneId}
-                    background={ensureFullyQualifiedAssetUrl(sceneVariant.image)}
+                    background={ensureFullyQualifiedAssetUrl(sceneVariant.thumb)}
                     clickToPaintColor={activeColor}
                     onUpdateColor={this.handleColorUpdate}
                     previewColor={previewColor}
@@ -205,7 +205,8 @@ class SceneManager extends PureComponent<Props, State> {
                 <ImagePreloader
                   el={TintableScene}
                   preload={[
-                    sceneVariant.image,
+                    scene.variants.map((v: Variant) => v.thumb),
+                    scene.variants.map((v: Variant) => v.image),
                     surfaces.map(surface => surface.mask),
                     surfaces.map(surface => surface.shadows),
                     surfaces.map(surface => surface.hitArea),
