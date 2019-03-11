@@ -5,11 +5,11 @@ $colors: getVar("colors") !default;
 
 $color-near-opacity: 0.9;
 $color-near-black: rgba(0, 0, 0, $color-near-opacity);
-$color-black: #000;
+$color-black: getVar( "colors.black" );
 $color-near-white: rgba(255, 255, 255, $color-near-opacity);
-$color-white: #ffffff;
-$color-light-grey: #dddddd;
-$color-swBlue: #0069af;
+$color-white: getVar( "colors.white" );
+$color-light-grey: getVar( "colors.lightGrey" );
+$color-swBlue: getVar( "colors.swBlue" );
 
 // COLOR WALL
 $cw-chunk-outline-offset: 6px;
