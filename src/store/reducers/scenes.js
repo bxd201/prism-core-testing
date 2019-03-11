@@ -57,15 +57,19 @@ export const scenes = (state: Object = initialState, action: { type: string, pay
       const _sceneStatus = state.sceneStatus.hasOwnProperty(sceneType) ? state.sceneStatus : Object.assign({}, state.sceneStatus, {
         [sceneType]: _sceneCollection[sceneType].map((scene: Scene) => {
           const variantName = scene.variant_names[0]
-          const variant: Variant = find(scene.variants, { 'variant_name': variantName })
+          const variant: Variant | void = find(scene.variants, { 'variant_name': variantName })
+
+          if (!variant) {
+            return void (0)
+          }
 
           const sceneStatus: SceneStatus = {
             id: scene.id,
             variant: variantName,
             surfaces: variant.surfaces.map((surface: Surface) => {
               const surfaceStatus: SurfaceStatus = {
-                id: surface.id,
-                color: void (0)
+                // optional color prop will not yet be defined
+                id: surface.id
               }
 
               return surfaceStatus

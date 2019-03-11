@@ -1,10 +1,11 @@
 // @flow
 import React, { useState, useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { FormattedMessage, injectIntl } from 'react-intl'
+import { FormattedMessage, injectIntl, type intlShape } from 'react-intl'
 import { LiveMessage } from 'react-aria-live'
 import ReactGA from 'react-ga'
 
+import { type Color } from '../../../shared/types/Colors'
 import { varValues } from 'variables'
 
 const BASE_CLASS = 'color-info'
@@ -64,7 +65,7 @@ function ColorChipMaximizer ({ color, intl }: Props) {
 
   useEffect(() => {
     if (isMaximized === true) {
-      minimizeChipBtn.current.focus()
+      minimizeChipBtn.current && minimizeChipBtn.current.focus()
       setTimeout(() => {
         setLiveRegionMessage(intl.messages.CHIP_MAXIMIZED)
       }, 500)
@@ -75,7 +76,7 @@ function ColorChipMaximizer ({ color, intl }: Props) {
       }, ['GAtrackerPRISM'])
     }
     if (isMaximized === false) {
-      maximizeChipBtn.current.focus()
+      maximizeChipBtn.current && maximizeChipBtn.current.focus()
       setTimeout(() => {
         setLiveRegionMessage(intl.messages.CHIP_MINIMIZED)
       }, 500)

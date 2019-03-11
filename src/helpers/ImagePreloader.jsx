@@ -5,11 +5,12 @@ import isEmpty from 'lodash/isEmpty'
 import flattenDeep from 'lodash/flattenDeep'
 
 import { ensureFullyQualifiedAssetUrl } from '../shared/helpers/DataUtils'
+import { type NestedArray } from '../shared/types/Common'
 
 type Props = {
   // $FlowIgnore
   el: React$ElementClass,
-  preload: Array<string | Array<string | Array<string>>>
+  preload: NestedArray<string | void>
 }
 
 type State = {

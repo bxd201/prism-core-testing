@@ -1,7 +1,7 @@
 // @flow
 import React from 'react'
 import ReactGA from 'react-ga'
-import { withRouter } from 'react-router-dom'
+import { withRouter, type RouterHistory } from 'react-router-dom'
 
 import type { Color } from '../../../../shared/types/Colors'
 
@@ -9,7 +9,7 @@ import { generateColorDetailsPageUrl } from '../../../../shared/helpers/ColorUti
 
 type Props = {
   color: Color,
-  active: Boolean,
+  active: boolean,
   history: RouterHistory,
 }
 

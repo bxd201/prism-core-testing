@@ -43,6 +43,7 @@ class LivePalette extends PureComponent<Props, State> {
 
   pendingUpdateFn: any
   requestedFrame: number | void
+  activeSlotRef: ?RefObject = void (0)
 
   constructor (props) {
     super(props)
@@ -162,7 +163,6 @@ class LivePalette extends PureComponent<Props, State> {
 
   moveColor = (originColorId: Number, destinationColorId: Number) => {
     const { colors } = this.props
-    // $FlowIgnore - ignoring flow validation on this line because flatMap's flow-type is more strict than lodash's actual implementation
     const colorsByIndex = flatMap(colors, color => color.id) // creates an array of only all color ids
     const originIndex = colorsByIndex.indexOf(originColorId) // get the index of the origin color
     const destIndex = colorsByIndex.indexOf(destinationColorId) // get the index of the dest color
