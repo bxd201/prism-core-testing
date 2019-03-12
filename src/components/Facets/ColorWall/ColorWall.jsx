@@ -107,22 +107,23 @@ class ColorWall extends PureComponent<Props, State> {
       )
     }
 
-    if (_showColorFamilies) {
+    if (_showColorFamilies && hasFamilies) {
       familyButtons = (
         <div className={MODE_CLASS_NAMES.COL}>
           <div className={MODE_CLASS_NAMES.CELL}>
             <div className={MODE_CLASS_NAMES.OPTION_CONTAINER}>
               <ul className={MODE_CLASS_NAMES.OPTIONS}>
-                {/* $FlowIgnore -- Flow doesn't realize families must be defined and be iterable to get here */}
-                {families.map((thisFamily: string) => {
-                  return (
-                    <li className={MODE_CLASS_NAMES.OPTION} key={thisFamily}>
-                      <NavLink className={MODE_CLASS_NAMES.OPTION_BUTTON} activeClassName={MODE_CLASS_NAMES.OPTION_BUTTON_ACTIVE} to={generateColorWallPageUrl(section, thisFamily)}>
-                        <span className={MODE_CLASS_NAMES.DESC}>{thisFamily}</span>
-                      </NavLink>
-                    </li>
-                  )
-                })}
+                { // $FlowIgnore -- Flow doesn't realize families must be defined and be iterable to get here
+                  families.map((thisFamily: string) => {
+                    return (
+                      <li className={MODE_CLASS_NAMES.OPTION} key={thisFamily}>
+                        <NavLink className={MODE_CLASS_NAMES.OPTION_BUTTON} activeClassName={MODE_CLASS_NAMES.OPTION_BUTTON_ACTIVE} to={generateColorWallPageUrl(section, thisFamily)}>
+                          <span className={MODE_CLASS_NAMES.DESC}>{thisFamily}</span>
+                        </NavLink>
+                      </li>
+                    )
+                  })
+                }
               </ul>
             </div>
           </div>

@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import has from 'lodash/has'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
-import { injectIntl, FormattedMessage } from 'react-intl'
+import { injectIntl, FormattedMessage, type intlShape } from 'react-intl'
 import ReactGA from 'react-ga'
 import { LiveMessage } from 'react-aria-live'
 
@@ -45,6 +45,9 @@ type Props = StateProps & ComponentProps
 
 class ColorDetails extends PureComponent<Props, State> {
   static baseClass = 'color-info'
+
+  toggleSceneDisplayScene: ?RefObject = void (0)
+  toggleSceneHideScene: ?RefObject = void (0)
 
   state: State = {
     sceneIsDisplayed: true,
@@ -170,8 +173,10 @@ class ColorDetails extends PureComponent<Props, State> {
     const { match: { params } } = this.props
     const color = this.getColorById(params[ROUTE_PARAM_NAMES.COLOR_ID])
 
-    ReactGA.set({ dimension1: 'sherwinWilliamsCAmainSite' }, ['GAtrackerPRISM'])
-    ReactGA.pageview(`color-detail/${color.brandKey} ${color.colorNumber} - ${color.name}`, ['GAtrackerPRISM'])
+    if (color) {
+      ReactGA.set({ dimension1: 'sherwinWilliamsCAmainSite' }, ['GAtrackerPRISM'])
+      ReactGA.pageview(`color-detail/${color.brandKey} ${color.colorNumber} - ${color.name}`, ['GAtrackerPRISM'])
+    }
   }
 
   componentDidUpdate () {
@@ -184,7 +189,7 @@ class ColorDetails extends PureComponent<Props, State> {
     }
   }
 
-  getColorById (colorId) {
+  getColorById = function getColorById (colorId) {
     const { colors } = this.props
 
     // check if the colors object has the id
@@ -194,7 +199,7 @@ class ColorDetails extends PureComponent<Props, State> {
     return colors[colorId]
   }
 
-  toggleSceneDisplay () {
+  toggleSceneDisplay = function toggleSceneDisplay () {
     const translatedMessages = this.props.intl.messages
 
     // Testing different combinations of ara-assertive messages, timeouts, and intially clearing state.a11yMessage indicated that all three measures were need in order for th SR to consistently announce events. I'm not happy either.
@@ -221,7 +226,7 @@ class ColorDetails extends PureComponent<Props, State> {
     }
   }
 
-  reportTabSwitchToGA (index) {
+  reportTabSwitchToGA = function reportTabSwitchToGA (index) {
     const tabNames = ['View Coord Color Section', 'View Similar Color Section', 'View Color Info Section']
     const tabReportingName = tabNames[index]
 

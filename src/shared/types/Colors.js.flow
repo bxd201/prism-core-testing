@@ -3,7 +3,7 @@ export type ColorId = string
 
 export type BlankColor = void
 
-export type Color = {
+export type Color = Object & {
   blue: number,
   brandKey: string,
   colorFamilyNames: Array<string>,
@@ -28,8 +28,7 @@ export type Color = {
   rgb: number,
   saturation: number,
   similarColors: string[],
-  storeStripLocator?: string,
-  toString: Function<string>
+  storeStripLocator?: string
 }
 
 export type ProbablyColor = Color | BlankColor

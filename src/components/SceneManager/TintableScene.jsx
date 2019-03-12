@@ -247,7 +247,6 @@ class TintableScene extends PureComponent<Props, State> {
                   onLoadingSuccess={this.handleHitAreaLoadingSuccess}
                   onLoadingError={this.handleHitAreaLoadingError}
                   onClick={this.handleClickSurface}
-                  color={surface.color}
                   svgSource={surface.hitArea} />
               ))}
             </div>

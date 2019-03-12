@@ -2,7 +2,7 @@
 import type { Color } from './Colors'
 
 export type Surface = {
-  id: string,
+  id: number,
   role: string,
   thumb: string,
   mask: string,
@@ -21,7 +21,7 @@ export type Variant = {
 }
 
 export type Scene = {
-  id: string,
+  id: number,
   width: number,
   height: number,
   variant_names: string[],
@@ -36,7 +36,7 @@ export type ScenePayload = {
 
 export type SurfaceStatus = {
   id: number,
-  color: Color
+  color?: Color
 }
 
 export type SceneStatus = {

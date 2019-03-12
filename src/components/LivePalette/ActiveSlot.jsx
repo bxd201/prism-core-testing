@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import flow from 'lodash/flow'
 import { DragSource, DropTarget } from 'react-dnd'
 import { fullColorNumber } from '../../shared/helpers/ColorUtils'
+import { type Color } from '../../shared/types/Colors'
 
 import { remove, activatePreview } from '../../store/actions/live-palette'
 
@@ -87,7 +88,14 @@ const swatchTarget = {
     }
 
     // get target swatch
-    const hoverBoundingRect = findDOMNode(props.node.current).getBoundingClientRect()
+    const tgtSwatch = findDOMNode(props.node.current)
+
+    if (!tgtSwatch || typeof tgtSwatch.getBoundingClientRect !== 'function') {
+      return
+    }
+
+    // $FlowIgnore -- Flow isn't aware of getBoundingClientRect so it doesn't know what to make of it
+    const hoverBoundingRect = tgtSwatch.getBoundingClientRect()
 
     // get horizontal middle
     const hoverMiddleX = (hoverBoundingRect.right - hoverBoundingRect.left) / 2

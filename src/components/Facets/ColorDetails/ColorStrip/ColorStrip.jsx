@@ -3,13 +3,17 @@ import React from 'react'
 import filter from 'lodash/filter'
 import split from 'lodash/split'
 import type { Color, ColorMap } from '../../../../shared/types/Colors'
+import { withRouter, type RouterHistory } from 'react-router-dom'
 
 import ColorStripSwatch from './ColorStripSwatch'
 
-type Props = {
-  colors: ColorMap,
-  color: Color,
+type RouterProps = {
   history: RouterHistory
+}
+
+type Props = RouterProps & {
+  colors: ColorMap,
+  color: Color
 }
 
 function ColorStrip ({ colors, color, history }: Props) {
@@ -39,4 +43,4 @@ function ColorStrip ({ colors, color, history }: Props) {
   )
 }
 
-export default ColorStrip
+export default withRouter(ColorStrip)
