@@ -12,7 +12,6 @@ function ColorInfo ({ color }: Props) {
   return (
     <div className='color-info__details-tab-wrapper'>
       <h5 className='visually-hidden'><FormattedMessage id='DETAILS' /></h5>
-      {/* <a className='color-info__family-link' href='/color'>View All Orange Paint Colors </a> */}
       <ul className='color-info__visual-specifications'>
         <li className='color-info__visual-specification'>
           <dl>
@@ -39,7 +38,7 @@ function ColorInfo ({ color }: Props) {
       </ul>
       {color.brandedCollectionNames && (
         <dl>
-          <dt className='color-info__description-term'>Color Collections: </dt>
+          <dt className='color-info__description-term'><FormattedMessage id='COLOR_COLLECTIONS' />: </dt>
           <dd className='color-info__description-definition'>{color.brandedCollectionNames.join(', ')}</dd>
         </dl>
       )}
