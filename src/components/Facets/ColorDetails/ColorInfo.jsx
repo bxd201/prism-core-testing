@@ -29,12 +29,13 @@ function ColorInfo ({ color }: Props) {
             <dd className='color-info__description-definition'>{color.hex}</dd>
           </dl>
         </li>
-        <li className='color-info__visual-specification'>
-          <dl>
-            <dt className='color-info__description-term'>LRV: </dt>
-            <dd className='color-info__description-definition'>{Math.round(color.lrv)}</dd>
-          </dl>
-        </li>
+        {color.lrv && 
+          <li className='color-info__visual-specification'>
+            <dl>
+              <dt className='color-info__description-term'>LRV: </dt>
+              <dd className='color-info__description-definition'>{Math.round(color.lrv)}</dd>
+            </dl>
+        </li>}
       </ul>
       {color.brandedCollectionNames && (color.brandedCollectionNames.length > 0) && (
         <dl>
