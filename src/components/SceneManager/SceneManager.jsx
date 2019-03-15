@@ -130,18 +130,23 @@ class SceneManager extends PureComponent<Props, State> {
         <div className={`${SceneManager.baseClass}__block ${SceneManager.baseClass}__block--tabs`}>
           {/* POC scene-switching buttons to demonstrate performance */}
           {scenes.map((scene, index) => {
-            const sceneId = scene.id
+            const sceneInfo = getSceneInfoById(scene, sceneStatus, scene.id)
 
-            const status: SceneStatus = find(sceneStatus, { 'id': sceneId })
-            const sceneVariant: Variant = find(scene.variants, { 'variant_name': status.variant })
-            const surfaces: Surface[] = sceneVariant.surfaces
+            if (!sceneInfo) {
+              console.warn(`Cannot find scene variant based on id ${scene.id}`)
+              return void (0)
+            }
+
+            const status: SceneStatus = sceneInfo.status
+            const sceneVariant: Variant = sceneInfo.variant
+            const surfaces: Surface[] = sceneInfo.surfaces
             const activeMarker = includes(activeScenes, scene.id)
               ? <FontAwesomeIcon icon={['fa', 'check']} className={`${SceneManager.baseClass}__flag`} />
               : null
 
             return (
               // TODO: Convert these to labels around checkboxes since that's how they're being used
-              <button key={sceneId}
+              <button key={scene.id}
                 onClick={() => this.handleClickSceneToggle(scene.id)}
                 className={`${SceneManager.baseClass}__btn ${includes(activeScenes, scene.id) ? `${SceneManager.baseClass}__btn--active` : ''}`}
                 type='button'>
@@ -161,7 +166,7 @@ class SceneManager extends PureComponent<Props, State> {
                     width={scene.width}
                     height={scene.height}
                     type={type}
-                    sceneId={sceneId}
+                    sceneId={scene.id}
                     background={ensureFullyQualifiedAssetUrl(sceneVariant.thumb)}
                     clickToPaintColor={activeColor}
                     onUpdateColor={this.handleColorUpdate}
@@ -185,9 +190,16 @@ class SceneManager extends PureComponent<Props, State> {
               return null
             }
 
-            const status: SceneStatus = find(sceneStatus, { 'id': sceneId })
-            const sceneVariant: Variant = find(scene.variants, { 'variant_name': status.variant })
-            const surfaces: Surface[] = sceneVariant.surfaces
+            const sceneInfo = getSceneInfoById(scene, sceneStatus, scene.id)
+
+            if (!sceneInfo) {
+              console.warn(`Cannot find scene variant based on id ${scene.id}`)
+              return void (0)
+            }
+
+            const status: SceneStatus = sceneInfo.status
+            const sceneVariant: Variant = sceneInfo.variant
+            const surfaces: Surface[] = sceneInfo.surfaces
 
             let variantSwitch = null
 
@@ -282,6 +294,28 @@ const mapDispatchToProps = (dispatch: Function) => {
       dispatch(changeSceneVariant(sceneId, variant))
     }
   }
+}
+
+function getSceneInfoById (scene: Scene, sceneStatus: SceneStatus[], id: number): {
+  status: SceneStatus,
+  variant: Variant,
+  surfaces: Surface[]
+} | void {
+  const status: SceneStatus | void = find(sceneStatus, { 'id': id })
+
+  if (typeof status !== 'undefined') {
+    const sceneVariant: Variant | void = find(scene.variants, { 'variant_name': status.variant })
+
+    if (typeof sceneVariant !== 'undefined' && sceneVariant.surfaces) {
+      return {
+        status: status,
+        variant: sceneVariant,
+        surfaces: sceneVariant.surfaces
+      }
+    }
+  }
+
+  return void (0)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(SceneManager)

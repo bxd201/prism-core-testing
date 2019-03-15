@@ -1,3 +1,4 @@
+// @flow
 /**
  * Anything available globally that Flow needs to know about can be declared here.
  */

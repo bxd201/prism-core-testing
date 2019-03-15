@@ -8,7 +8,6 @@ import isEmpty from 'lodash/isEmpty'
 import isArray from 'lodash/isArray'
 import isFunction from 'lodash/isFunction'
 import clone from 'lodash/clone'
-// $FlowIgnore -- no defs for scroll
 import * as scroll from 'scroll'
 import { withRouter } from 'react-router-dom'
 import { LiveMessage } from 'react-aria-live'
@@ -858,4 +857,5 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
   // -----------------------------------------------
 }
 
-export default injectIntl(withRouter(ColorWallSwatchList))
+// $FlowIgnore -- Flow is expecting optional argument to be populated, some issue w/ withRouter + injectIntl
+export default withRouter(injectIntl(ColorWallSwatchList))

@@ -12,7 +12,7 @@ import memoizee from 'memoizee'
 import { compareKebabs } from './StringUtils'
 import { ZOOMED_VIEW_GRID_PADDING } from '../../constants/globals'
 import { getTotalWidthOf2dArray } from './DataUtils'
-import type { ColorSetPayload, ProbablyColor, ColorGrid, ColorLine, BlankColor } from '../types/Colors'
+import type { ColorSetPayload, ProbablyColor, ColorGrid, ColorLine, BlankColor, Color } from '../types/Colors'
 
 // -------------------------------------------------------
 // BEGIN ConvertColorSetsToGrid
@@ -210,20 +210,21 @@ export const convertColorSetsToGrid = ConvertColorSetsToGrid
 // END ConvertColorSetsToGrid
 // -------------------------------------------------------
 
-function Color (color: object): Color {
+function ColorInstance (color: Object) {
   for (let i in color) {
     this[i] = color[i]
   }
 }
 
-Color.prototype.toString = function (): string {
+// $FlowIgnore -- flow doesn't want us overriding toString, but we don't care what it wants
+ColorInstance.prototype.toString = function (): string {
   return this.id
 }
 
 export function convertChunkedColorsToClasses (colorData: ColorSetPayload) {
   return mapValues(colorData, (obj: Object) => {
     return obj.map((row: Color[]) => {
-      return row.map((color: Color) => new Color(color))
+      return row.map((color: Color) => new ColorInstance(color))
     })
   })
 }
