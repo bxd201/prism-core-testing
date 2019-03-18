@@ -208,7 +208,7 @@ class SceneManager extends PureComponent<Props, State> {
               // if we have day and night variants...
               if (SceneVariantSwitch.DayNight.isCompatible(scene.variant_names)) {
                 // ... then create a day/night variant switch
-                variantSwitch = <SceneVariantSwitch.DayNight currentVariant={status.variant} variants={[SCENE_VARIANTS.DAY, SCENE_VARIANTS.NIGHT]} onChange={this.changeVariant(sceneId)} sceneId={sceneId} />
+                variantSwitch = <SceneVariantSwitch.DayNight currentVariant={status.variant} variants={[SCENE_VARIANTS.DAY, SCENE_VARIANTS.NIGHT]} onChange={this.changeVariant(sceneId)} sceneId={scene.id} />
               }
             }
 
