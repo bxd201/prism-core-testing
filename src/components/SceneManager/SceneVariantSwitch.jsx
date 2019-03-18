@@ -10,7 +10,8 @@ import { SCENE_VARIANTS } from 'constants/globals'
 import './SceneVariantSwitch.scss'
 type SwitchProps = {
   onChange: Function,
-  currentVariant: string
+  currentVariant: string,
+  sceneId: number
 }
 
 function SceneVariantSwitch () {}
@@ -37,8 +38,8 @@ SceneVariantSwitch.DayNight = class DayNight extends PureComponent<SwitchProps> 
   }
 
   render () {
-    const { currentVariant } = this.props
-
+    const { currentVariant, sceneId } = this.props
+    const checkboxName = `${DayNight.name}${sceneId}`
     const isDay = currentVariant === SCENE_VARIANTS.DAY
 
     return (
@@ -49,9 +50,9 @@ SceneVariantSwitch.DayNight = class DayNight extends PureComponent<SwitchProps> 
             role='button'
             title={txt}
             aria-label={txt}
-            htmlFor={DayNight.name}
+            htmlFor={checkboxName}
             tabIndex='0'>
-            <input className={SceneVariantSwitch.DayNight.classes.CHECKBOX} type='checkbox' checked={!isDay} name={DayNight.name} id={DayNight.name} onChange={this.handleChange} />
+            <input className={SceneVariantSwitch.DayNight.classes.CHECKBOX} type='checkbox' checked={!isDay} name={checkboxName} id={checkboxName} onChange={this.handleChange} />
             <div className={`${SceneVariantSwitch.DayNight.classes.WRAPPER} ${isDay ? `${SceneVariantSwitch.DayNight.classes.WRAPPER}--active` : ''}`}>
               <FontAwesomeIcon className={`${SceneVariantSwitch.DayNight.classes.DAY} ${!isDay ? `${SceneVariantSwitch.DayNight.classes.DAY}--active` : ''}`} icon={['fa', 'sun']} />
             </div>
