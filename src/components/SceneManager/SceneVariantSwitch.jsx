@@ -1,5 +1,5 @@
 // @flow
-import React, { PureComponent } from 'react'
+import React, { Component } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FormattedMessage } from 'react-intl'
 import ReactGA from 'react-ga'
@@ -16,7 +16,7 @@ type SwitchProps = {
 
 function SceneVariantSwitch () {}
 
-SceneVariantSwitch.DayNight = class DayNight extends PureComponent<SwitchProps> {
+SceneVariantSwitch.DayNight = class DayNight extends Component<SwitchProps> {
   static name = 'day-night-toggle'
   static classes = {
     BASE: 'scene-variant-switch-day-night',
@@ -35,6 +35,10 @@ SceneVariantSwitch.DayNight = class DayNight extends PureComponent<SwitchProps> 
 
     this.handleChange = this.handleChange.bind(this)
     this.handleKeyDown = this.handleKeyDown.bind(this)
+  }
+
+  shouldComponentUpdate (nextProps, nextState) {
+    return this.props.currentVariant !== nextProps.currentVariant
   }
 
   render () {
