@@ -36,7 +36,7 @@ function ColorInfo ({ color }: Props) {
           </dl>
         </li>
       </ul>
-      {color.brandedCollectionNames && (
+      {color.brandedCollectionNames && color.brandedCollectionNames.length && (
         <dl>
           <dt className='color-info__description-term'><FormattedMessage id='COLOR_COLLECTIONS' />: </dt>
           <dd className='color-info__description-definition'>{color.brandedCollectionNames.join(', ')}</dd>
