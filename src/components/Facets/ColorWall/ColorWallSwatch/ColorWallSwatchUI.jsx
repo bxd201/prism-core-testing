@@ -1,5 +1,7 @@
 // @flow
 import React, { PureComponent } from 'react'
+import { Link } from 'react-router-dom'
+import memoizee from 'memoizee'
 
 import { CLASS_NAMES } from './shared'
 
@@ -11,95 +13,66 @@ import './ColorWallSwatch.scss'
 
 type Props = {
   color: Color,
-  onEngage: Function,
-  topRow?: boolean,
-  bottomRow?: boolean,
-  leftCol?: boolean,
-  rightCol?: boolean
+  thisLink: string,
+  focus?: boolean,
+  onClick?: Function
 }
 
-type State = {
-  swatchProps: {
-    [key: string]: any
-  }
-}
+const _classes = arrayToSpacedString([
+  CLASS_NAMES.BASE,
+  CLASS_NAMES.BASE_CLICKABLE
+])
 
-class ColorWallSwatchUI extends PureComponent<Props, State> {
-  state: State = {
-    swatchProps: {}
+const generateLinkProps = memoizee(function generateLinkProps (color: Color, link: string): Object {
+  return {
+    to: link,
+    style: {
+      background: color.hex
+    }
   }
+})
 
+class ColorWallSwatchUI extends PureComponent<Props> {
   constructor (props: Props) {
     super(props)
 
-    const { topRow, bottomRow, leftCol, rightCol, color } = props
-
-    this.handleSwatchClick = this.handleSwatchClick.bind(this)
-    this.handleSwatchKeyPress = this.handleSwatchKeyPress.bind(this)
-
-    this.state.swatchProps = {
-      className: arrayToSpacedString([
-        CLASS_NAMES.BASE,
-        CLASS_NAMES.BASE_CLICKABLE,
-        `${topRow && leftCol
-          ? CLASS_NAMES.BASE_POS_TL
-          : topRow && rightCol
-            ? CLASS_NAMES.BASE_POS_TR
-            : bottomRow && rightCol
-              ? CLASS_NAMES.BASE_POS_BR
-              : bottomRow && leftCol
-                ? CLASS_NAMES.BASE_POS_BL
-                : topRow ? CLASS_NAMES.BASE_POS_T
-                  : leftCol ? CLASS_NAMES.BASE_POS_L
-                    : rightCol ? CLASS_NAMES.BASE_POS_R
-                      : bottomRow ? CLASS_NAMES.BASE_POS_B
-                        : ''
-        }`
-      ]),
-      style: {
-        background: color.hex
-      },
-      title: fullColorName(color.brandKey, color.colorNumber, color.name),
-      onClick: this.handleSwatchClick,
-      onKeyDown: this.handleSwatchKeyPress,
-      role: 'button',
-      tabIndex: 0,
-      focusable: true
-    }
+    this.getThisLink = this.getThisLink.bind(this)
+    this.handleClick = this.handleClick.bind(this)
   }
 
   render () {
-    const { swatchProps } = this.state
+    const { focus, color, thisLink } = this.props
 
     return (
       <div className={CLASS_NAMES.SWATCH}>
-        <div {...swatchProps} />
+        <Link {...generateLinkProps(color, thisLink)}
+          className={`${_classes} ${focus ? CLASS_NAMES.BASE_FOCUS : ''}`}
+          onClick={this.handleClick}
+          tabIndex={-1}>
+          <span className='visually-hidden'>
+            {fullColorName(color.brandKey, color.colorNumber, color.name)}
+          </span>
+        </Link>
       </div>
     )
   }
 
-  handleSwatchKeyPress = function handleSwatchKeyPress (e: KeyboardEvent) {
-    const { onEngage, color } = this.props
+  getThisLink = function getThisLink (): string | void {
+    const { thisLink } = this.props
 
-    switch (e.keyCode) {
-      case 13:
-      case 32:
-        if (onEngage) {
-          onEngage(color)
-        }
-        e.preventDefault()
-        break
+    if (thisLink) {
+      return thisLink
     }
+
+    return void (0)
   }
 
-  handleSwatchClick = function handleSwatchClick (e: MouseEvent) {
-    const { onEngage, color } = this.props
+  handleClick = function handleClick (e: any) {
+    const { onClick } = this.props
 
-    if (onEngage) {
-      onEngage(color)
+    if (typeof onClick === 'function') {
+      onClick(e)
     }
-
-    e.preventDefault()
   }
 }
 

@@ -1,5 +1,5 @@
-import * as actions from 'src/actions/live-palette'
-import { lp, initialState } from 'src/reducers/live-palette-reducer'
+import * as actions from 'src/store/actions/live-palette'
+import { lp, initialState } from 'src/store/reducers/live-palette-reducer'
 import * as Colors from '__mocks__/data/color/Colors'
 
 const color = Colors.getColor()

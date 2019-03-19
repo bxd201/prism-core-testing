@@ -3,10 +3,10 @@ import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
 // $FlowIgnore -- no defs for react-virtualized
 import { Grid, AutoSizer } from 'react-virtualized'
-import { debounce } from 'lodash'
+import debounce from 'lodash/debounce'
 
-import { loadSearchResults } from '../../actions/loadSearchResults'
-import { add } from '../../actions/live-palette'
+import { loadSearchResults } from '../../store/actions/loadSearchResults'
+import { add } from '../../store/actions/live-palette'
 import ColorWallSwatch from '../Facets/ColorWall/ColorWallSwatch/ColorWallSwatch'
 import { type Color } from '../../shared/types/Colors'
 

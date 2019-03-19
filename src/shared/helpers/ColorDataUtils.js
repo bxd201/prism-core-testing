@@ -1,113 +1,121 @@
 // @flow
-import { fill, flatten, flattenDeep, keys, union, concat } from 'lodash'
+import fill from 'lodash/fill'
+import flatten from 'lodash/flatten'
+import flattenDeep from 'lodash/flattenDeep'
+import keys from 'lodash/keys'
+import concat from 'lodash/concat'
+import uniq from 'lodash/uniq'
+import max from 'lodash/max'
+import mapValues from 'lodash/mapValues'
+import union from 'lodash/union'
 import memoizee from 'memoizee'
 import { compareKebabs } from './StringUtils'
 import { ZOOMED_VIEW_GRID_PADDING } from '../../constants/globals'
 import { getTotalWidthOf2dArray } from './DataUtils'
-import type { ColorFamilyPayload, ProbablyColor, ColorGrid, ColorLine, BlankColor } from '../types/Colors'
+import type { ColorSetPayload, ProbablyColor, ColorGrid, ColorLine, BlankColor, Color } from '../types/Colors'
 
 // -------------------------------------------------------
-// BEGIN ConvertFamiliesToGrid
+// BEGIN ConvertColorSetsToGrid
 // -------------------------------------------------------
 
-function ConvertFamiliesToGrid (families: string[] = [], colors: ColorFamilyPayload, brights: ColorFamilyPayload, BLANK: BlankColor, chunkWidth: number): ColorGrid {
+function ConvertColorSetsToGrid (colorSets: string[] = [], colors: ColorSetPayload, brights: ColorSetPayload, BLANK: BlankColor, chunkWidth: number): ColorGrid {
   const padH = ZOOMED_VIEW_GRID_PADDING
   const padV = ZOOMED_VIEW_GRID_PADDING
   let output: ColorGrid = [] // this will be a 2D array of numbers
   let brightOutput = []
-  let singleFamily = false
+  let singleColorSet = false
 
-  let _families = families
+  let _colorSets = colorSets
 
-  // if we are not provided any families...
-  if (_families.length === 0) {
-    // ... then effectively display "all" by merging all families from both brights and colors
-    _families = Object.keys(colors)
+  // if we are not provided any colorSets...
+  if (_colorSets.length === 0) {
+    // ... then effectively display "all" by merging all colorSets from both brights and colors
+    _colorSets = Object.keys(colors)
 
     if (brights) {
-      _families = union(_families, Object.keys(brights))
+      _colorSets = union(_colorSets, Object.keys(brights))
     }
   }
 
-  if (_families.length === 1) {
-    singleFamily = true
+  if (_colorSets.length === 1) {
+    singleColorSet = true
   }
 
   // BEGIN GRIDIFYING BRIGHTS
   if (brights) {
-    _families.forEach((family: string) => {
-      let famBrights: ProbablyColor[] = flatten(brights[family])
+    _colorSets.forEach((colorSet: string) => {
+      let famBrights: ProbablyColor[] = flatten(brights[colorSet])
 
       if (famBrights && famBrights.length) {
-        brightOutput.push(ConvertFamiliesToGrid.extractSegment(0, chunkWidth, famBrights, BLANK))
+        brightOutput.push(ConvertColorSetsToGrid.extractSegment(0, chunkWidth, famBrights, BLANK))
       }
     })
 
     if (brightOutput.length) {
-      const flatBrights = flatten(ConvertFamiliesToGrid.insertColumnCellsBetweenAndAfter(brightOutput, padH, BLANK))
+      const flatBrights = flatten(ConvertColorSetsToGrid.insertColumnCellsBetweenAndAfter(brightOutput, padH, BLANK))
 
       if (flatBrights && flatBrights.length) {
         output.push(flatBrights)
-        output.push(ConvertFamiliesToGrid.getArrayOfPads(flatBrights.length, BLANK))
+        output.push(ConvertColorSetsToGrid.getArrayOfPads(flatBrights.length, BLANK))
       }
     }
   }
   // END GRIDIFYING BRIGHTS
+  const firstColorSet = colors[_colorSets[0]]
+  const iterations = Math.ceil(getTotalWidthOf2dArray(firstColorSet) / chunkWidth)
 
-  const firstFamily = colors[_families[0]]
-  const iterations = Math.ceil(getTotalWidthOf2dArray(firstFamily) / chunkWidth)
-
-  if (singleFamily) {
+  if (singleColorSet) {
     for (let chunkY = 0; chunkY < iterations; chunkY++) {
       let xAxis: (ColorLine | void)[] = []
 
-      firstFamily.forEach((chunkColors) => {
-        xAxis.push(ConvertFamiliesToGrid.extractSegment(chunkY, chunkWidth, chunkColors, BLANK))
+      firstColorSet.forEach((chunkColors) => {
+        xAxis.push(ConvertColorSetsToGrid.extractSegment(chunkY, chunkWidth, chunkColors, BLANK))
       })
 
-      xAxis = ConvertFamiliesToGrid.insertColumnCellsBetweenAndAfter(xAxis, padH, BLANK)
+      xAxis = ConvertColorSetsToGrid.insertColumnCellsBetweenAndAfter(xAxis, padH, BLANK)
       output.push(flatten(xAxis))
     }
 
-    output = ConvertFamiliesToGrid.insertRowAfter(output, padV, BLANK)
+    output = ConvertColorSetsToGrid.insertRowAfter(output, padV, BLANK)
   } else {
-    firstFamily.forEach((__, chunkY) => {
+    firstColorSet.forEach((__, chunkY) => {
       for (let chunkX = 0; chunkX < iterations; chunkX++) {
         // this is a grid that will be flattened into a single line
         let xAxis: (ColorLine | void)[] = []
 
-        _families.forEach((familyName) => {
-          xAxis.push(ConvertFamiliesToGrid.extractSegment(chunkX, chunkWidth, colors[familyName][chunkY], BLANK))
+        _colorSets.forEach((colorSetName) => {
+          xAxis.push(ConvertColorSetsToGrid.extractSegment(chunkX, chunkWidth, colors[colorSetName][chunkY], BLANK))
         })
 
-        xAxis = ConvertFamiliesToGrid.insertColumnCellsBetweenAndAfter(xAxis, padH, BLANK)
+        xAxis = ConvertColorSetsToGrid.insertColumnCellsBetweenAndAfter(xAxis, padH, BLANK)
         output.push(flatten(xAxis))
       }
 
-      output = ConvertFamiliesToGrid.insertRowAfter(output, padV, BLANK)
+      output = ConvertColorSetsToGrid.insertRowAfter(output, padV, BLANK)
     })
   }
 
-  output = ConvertFamiliesToGrid.insertRowBefore(output, padV, BLANK)
-  output = ConvertFamiliesToGrid.insertColumnBefore(output, padH, BLANK)
+  output = ConvertColorSetsToGrid.fillGrid(output, BLANK)
+  output = ConvertColorSetsToGrid.insertRowBefore(output, padV, BLANK)
+  output = ConvertColorSetsToGrid.insertColumnBefore(output, padH, BLANK)
 
   return output
 }
 
-ConvertFamiliesToGrid.extractSegment = function extractSegment (index: number, segSize: number, whole: ColorLine, BLANK: BlankColor) {
+ConvertColorSetsToGrid.extractSegment = function extractSegment (index: number, segSize: number, whole: ColorLine, BLANK: BlankColor) {
   const start = index * segSize
   const end = start + segSize
   let next = whole.slice(start, end)
   const nl = next.length
 
   if (nl < segSize) {
-    return concat(next, ConvertFamiliesToGrid.getArrayOfPads(segSize - nl, BLANK))
+    return concat(next, ConvertColorSetsToGrid.getArrayOfPads(segSize - nl, BLANK))
   }
 
   return next
 }
 
-ConvertFamiliesToGrid.insertColumnCellsBetweenAndAfter = function insertColumnCellsBetweenAndAfter (toPad: (ColorLine | BlankColor)[], amt: number, padWith: BlankColor): (ColorLine | BlankColor)[] {
+ConvertColorSetsToGrid.insertColumnCellsBetweenAndAfter = function insertColumnCellsBetweenAndAfter (toPad: (ColorLine | BlankColor)[], amt: number, padWith: BlankColor): (ColorLine | BlankColor)[] {
   if (amt && toPad) {
     let returner: (ColorLine | BlankColor)[] = []
     toPad.forEach((__yy, i) => {
@@ -125,7 +133,7 @@ ConvertFamiliesToGrid.insertColumnCellsBetweenAndAfter = function insertColumnCe
   return toPad
 }
 
-ConvertFamiliesToGrid.insertColumnBefore = function insertColumnBefore (toPad: ColorGrid, amt: number, padWith: BlankColor): ColorGrid {
+ConvertColorSetsToGrid.insertColumnBefore = function insertColumnBefore (toPad: ColorGrid, amt: number, padWith: BlankColor): ColorGrid {
   if (amt && toPad) {
     return toPad.map(el => {
       let _amt = amt
@@ -141,7 +149,7 @@ ConvertFamiliesToGrid.insertColumnBefore = function insertColumnBefore (toPad: C
   return toPad
 }
 
-ConvertFamiliesToGrid.insertRowBefore = function insertRowBefore (toPad: ColorGrid, amt: number, padWith: BlankColor): ColorGrid {
+ConvertColorSetsToGrid.insertRowBefore = function insertRowBefore (toPad: ColorGrid, amt: number, padWith: BlankColor): ColorGrid {
   let _new = toPad
 
   if (amt && _new) {
@@ -149,7 +157,7 @@ ConvertFamiliesToGrid.insertRowBefore = function insertRowBefore (toPad: ColorGr
 
     if (len) {
       while (amt--) {
-        _new = concat([ConvertFamiliesToGrid.getArrayOfPads(len, padWith)], _new)
+        _new = concat([ConvertColorSetsToGrid.getArrayOfPads(len, padWith)], _new)
       }
     }
   }
@@ -157,7 +165,7 @@ ConvertFamiliesToGrid.insertRowBefore = function insertRowBefore (toPad: ColorGr
   return _new
 }
 
-ConvertFamiliesToGrid.insertRowAfter = function insertRowAfter (toPad: ColorGrid, amt: number, padWith: BlankColor): ColorGrid {
+ConvertColorSetsToGrid.insertRowAfter = function insertRowAfter (toPad: ColorGrid, amt: number, padWith: BlankColor): ColorGrid {
   let _new = toPad
 
   if (amt && toPad) {
@@ -165,7 +173,7 @@ ConvertFamiliesToGrid.insertRowAfter = function insertRowAfter (toPad: ColorGrid
 
     if (len) {
       while (amt--) {
-        _new = concat(_new, [ConvertFamiliesToGrid.getArrayOfPads(len, padWith)])
+        _new = concat(_new, [ConvertColorSetsToGrid.getArrayOfPads(len, padWith)])
       }
     }
   }
@@ -173,24 +181,61 @@ ConvertFamiliesToGrid.insertRowAfter = function insertRowAfter (toPad: ColorGrid
   return _new
 }
 
-ConvertFamiliesToGrid.getArrayOfPads = memoizee(function getArrayOfPads (length: number, padWith: BlankColor): ColorLine {
+ConvertColorSetsToGrid.fillGrid = function fillGrid (toPad: ColorGrid, padWith: BlankColor): ColorGrid {
+  const rowWidths = uniq(toPad.map((row) => row.length))
+
+  // if we only have one unique row width...
+  if (rowWidths.length === 1) {
+    // then we're already square! return our grid
+    return toPad
+  }
+
+  const maxWidth = max(rowWidths)
+  return toPad.map(row => {
+    const thisWidth = row.length
+    if (thisWidth < maxWidth) {
+      return concat(row, fill(new Array(maxWidth - thisWidth), padWith))
+    }
+    return row
+  })
+}
+
+ConvertColorSetsToGrid.getArrayOfPads = memoizee(function getArrayOfPads (length: number, padWith: BlankColor): ColorLine {
   return fill(new Array(length), padWith)
 }, { primitive: true, length: 2 })
 
-export const convertFamiliesToGrid = ConvertFamiliesToGrid
+export const convertColorSetsToGrid = ConvertColorSetsToGrid
 
 // -------------------------------------------------------
-// END ConvertFamiliesToGrid
+// END ConvertColorSetsToGrid
 // -------------------------------------------------------
 
-export function convertToColorMap (colorData: ColorFamilyPayload) {
+function ColorInstance (color: Object) {
+  for (let i in color) {
+    this[i] = color[i]
+  }
+}
+
+// $FlowIgnore -- flow doesn't want us overriding toString, but we don't care what it wants
+ColorInstance.prototype.toString = function (): string {
+  return this.id
+}
+
+export function convertChunkedColorsToClasses (colorData: ColorSetPayload) {
+  return mapValues(colorData, (obj: Object) => {
+    return obj.map((row: Color[]) => {
+      return row.map((color: Color) => new ColorInstance(color))
+    })
+  })
+}
+
+export function convertToColorMap (colorData: ColorSetPayload) {
   let colorMap = {}
-  // $FlowIgnore -- flow doesn't realize keys can be used with ANY iterable object, array or otherwise
   const data = keys(colorData).map(key => {
     return colorData[key]
   })
 
-  flattenDeep(data).forEach(color => {
+  flattenDeep(data).forEach((color: ProbablyColor) => {
     if (color) {
       colorMap[color.id] = color
     }
@@ -199,8 +244,8 @@ export function convertToColorMap (colorData: ColorFamilyPayload) {
   return colorMap
 }
 
-export function isColorFamily (value: string = '', families: string[] = []): boolean {
-  return families.filter((family: string) => {
-    return compareKebabs(family, value)
+export function isColorFamily (value: string = '', colorSets: string[] = []): boolean {
+  return colorSets.filter((colorSet: string) => {
+    return compareKebabs(colorSet, value)
   }).length > 0
 }

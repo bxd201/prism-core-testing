@@ -1,38 +1,42 @@
+// @flow
 import React, { PureComponent, Fragment } from 'react'
-import { PropTypes } from 'prop-types'
 
-class ColorsFromImagePin extends PureComponent {
-  state = {}
+type Props = {
+  pinType: string,
+  onClickMethod: Function,
+  // activePinIndex: number,
+  isActiveFlag: boolean,
+  transformValue: string,
+  RGBstring: string,
+  previewColorName: string,
+  previewColorNumber: string
+}
 
-  constructor (props) {
-    super(props)
-
-    this.onClickMethod = this.props.onClickMethod
-
-    if (this.props.pinType && this.props.pinType === 'preview') {
-      this.isPreviewPin = true
-      this.additionalPinClass = 'pin--preview__wrapper'
-    } else {
-      this.isPreviewPin = false
-      this.additionalPinClass = ''
-    }
-  }
-
+class ColorsFromImagePin extends PureComponent<Props> {
   render () {
+    // eslint-disable-next-line one-var
+    const { previewColorName, previewColorNumber, transformValue, RGBstring, onClickMethod, isActiveFlag, pinType } = this.props
+
+    let isPreviewPin = false
+    let additionalPinClass = ''
     let isActiveClass = ''
 
-    // eslint-disable-next-line one-var
-    const { previewColorName, previewColorNumber, transformValue, RGBstring } = this.props
+    if (pinType === 'preview') {
+      isPreviewPin = true
+      additionalPinClass = 'pin--preview__wrapper'
+    }
 
-    if (this.isPreviewPin) {
-      if (this.props.isActiveFlag) isActiveClass = 'pin--active__wrapper'
+    if (isPreviewPin) {
+      if (isActiveFlag) isActiveClass = 'pin--active__wrapper'
     } else {
-      if (this.props.activePinIndex === this.key) isActiveClass = 'pin--active__wrapper'
+      // TODO: fix this functionality
+      // is `this.key` supposed to be a reference to the key prop? is it supposed to be internally tracked?
+      // if (activePinIndex === this.key) isActiveClass = 'pin--active__wrapper'
     }
 
     return (
       <Fragment>
-        <button onClick={this.onClickMethod} style={{ transform: transformValue }} className={this.additionalPinClass + ' pin__wrapper ' + isActiveClass}>
+        <button onClick={onClickMethod} style={{ transform: transformValue }} className={additionalPinClass + ' pin__wrapper ' + isActiveClass}>
           <span className='pin__chip' style={{ background: RGBstring }} />
           <div className='pin__name-wrapper'>
             <span className='pin__copy pin__name'>{previewColorName}</span>
@@ -42,17 +46,6 @@ class ColorsFromImagePin extends PureComponent {
       </Fragment>
     )
   }
-}
-
-ColorsFromImagePin.propTypes = {
-  pinType: PropTypes.string,
-  onClickMethod: PropTypes.func,
-  activePinIndex: PropTypes.number,
-  isActiveFlag: PropTypes.bool,
-  transformValue: PropTypes.string,
-  RGBstring: PropTypes.string,
-  previewColorName: PropTypes.string,
-  previewColorNumber: PropTypes.string
 }
 
 export default ColorsFromImagePin

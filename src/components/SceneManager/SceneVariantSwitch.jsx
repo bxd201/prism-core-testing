@@ -2,6 +2,8 @@
 import React, { PureComponent } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FormattedMessage } from 'react-intl'
+import ReactGA from 'react-ga'
+import includes from 'lodash/includes'
 
 import { SCENE_VARIANTS } from 'constants/globals'
 
@@ -18,12 +20,13 @@ SceneVariantSwitch.DayNight = class DayNight extends PureComponent<SwitchProps> 
   static classes = {
     BASE: 'scene-variant-switch-day-night',
     CHECKBOX: 'visually-hidden',
+    WRAPPER: 'scene-variant-switch-day-night__wrapper',
     DAY: 'scene-variant-switch-day-night__day',
     SWITCH: 'scene-variant-switch-day-night__switch',
     NIGHT: 'scene-variant-switch-day-night__night'
   }
   static isCompatible (variants: string[]): boolean {
-    return variants.indexOf(SCENE_VARIANTS.DAY) > -1 && variants.indexOf(SCENE_VARIANTS.NIGHT) > -1
+    return includes(variants, SCENE_VARIANTS.DAY) && includes(variants, SCENE_VARIANTS.NIGHT)
   }
 
   constructor (props: SwitchProps) {
@@ -49,9 +52,12 @@ SceneVariantSwitch.DayNight = class DayNight extends PureComponent<SwitchProps> 
             htmlFor={DayNight.name}
             tabIndex='0'>
             <input className={SceneVariantSwitch.DayNight.classes.CHECKBOX} type='checkbox' checked={!isDay} name={DayNight.name} id={DayNight.name} onChange={this.handleChange} />
-            <FontAwesomeIcon className={`${SceneVariantSwitch.DayNight.classes.DAY} ${isDay ? `${SceneVariantSwitch.DayNight.classes.DAY}--active` : ''}`} icon={[isDay ? 'fas' : 'fal', 'sun']} />
-            <div className={`${SceneVariantSwitch.DayNight.classes.SWITCH} ${!isDay ? `${SceneVariantSwitch.DayNight.classes.SWITCH}--on` : ''}`} />
-            <FontAwesomeIcon className={`${SceneVariantSwitch.DayNight.classes.NIGHT} ${!isDay ? `${SceneVariantSwitch.DayNight.classes.NIGHT}--active` : ''}`} icon={[isDay ? 'fal' : 'fas', 'moon']} />
+            <div className={`${SceneVariantSwitch.DayNight.classes.WRAPPER} ${isDay ? `${SceneVariantSwitch.DayNight.classes.WRAPPER}--active` : ''}`}>
+              <FontAwesomeIcon className={`${SceneVariantSwitch.DayNight.classes.DAY} ${!isDay ? `${SceneVariantSwitch.DayNight.classes.DAY}--active` : ''}`} icon={['fa', 'sun']} />
+            </div>
+            <div className={`${SceneVariantSwitch.DayNight.classes.WRAPPER} ${SceneVariantSwitch.DayNight.classes.WRAPPER}--night ${!isDay ? `${SceneVariantSwitch.DayNight.classes.WRAPPER}--active` : ''}`}>
+              <FontAwesomeIcon className={`${SceneVariantSwitch.DayNight.classes.NIGHT} ${!isDay ? `${SceneVariantSwitch.DayNight.classes.NIGHT}--active` : ''}`} icon={['fa', 'moon-stars']} />
+            </div>
           </label>
         )}
       </FormattedMessage>
@@ -59,8 +65,16 @@ SceneVariantSwitch.DayNight = class DayNight extends PureComponent<SwitchProps> 
   }
 
   handleChange = function handleChange () {
-    const changeTo = this.props.currentVariant === SCENE_VARIANTS.DAY ? SCENE_VARIANTS.NIGHT : SCENE_VARIANTS.DAY
-    this.props.onChange(changeTo)
+    if (this.props.currentVariant === SCENE_VARIANTS.DAY) {
+      this.props.onChange(SCENE_VARIANTS.NIGHT)
+      ReactGA.event({
+        category: 'Scene Manager',
+        action: 'View Night Scene',
+        label: 'View Night Scene'
+      }, ['GAtrackerPRISM'])
+    } else {
+      this.props.onChange(SCENE_VARIANTS.DAY)
+    }
   }
 
   handleKeyDown = function handleKeyDown (e: KeyboardEvent) {

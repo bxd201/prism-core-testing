@@ -5,7 +5,7 @@ import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 type Props = {
   type: 'LOADING' | 'ERROR' | 'MESSAGE',
   message?: string,
-  color: string
+  loaderColor?: string
 }
 
 class TintableSceneOverlay extends PureComponent<Props> {
@@ -30,19 +30,15 @@ class TintableSceneOverlay extends PureComponent<Props> {
     }
   }
 
-  static defaultProps = {
-    color: '#FFF'
-  }
-
   render () {
     const { type, message } = this.props
-    let { color } = this.props
+    let { loaderColor } = this.props
 
     return (
       <div className={TintableSceneOverlay.CLASS_NAMES[type].BASE}>
         <span className={TintableSceneOverlay.CLASS_NAMES[type].CONTENT}>
           {(type === TintableSceneOverlay.TYPES.LOADING) && (
-            <CircleLoader color={color} />
+            <CircleLoader color={loaderColor} />
           )}
           {!!message && message}
         </span>

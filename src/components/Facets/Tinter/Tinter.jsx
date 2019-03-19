@@ -1,30 +1,22 @@
 // @flow
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
+import React from 'react'
 
 import LivePalette from '../../LivePalette/LivePalette'
 import SceneManager from '../../SceneManager/SceneManager'
+
 import { withDragDropContext } from '../../../helpers/WithDragDropContext'
 
 type Props = {
   sceneSet?: string
 }
 
-class Tinter extends Component<Props> {
-  render () {
-    const { sceneSet } = this.props
-
-    return (
-      <React.Fragment>
-        <SceneManager type={sceneSet} />
-        <LivePalette />
-      </React.Fragment>
-    )
-  }
-}
-
-Tinter.propTypes = {
-  sceneSet: PropTypes.string
+function Tinter ({ sceneSet }: Props) {
+  return (
+    <React.Fragment>
+      <SceneManager type={sceneSet} />
+      <LivePalette />
+    </React.Fragment>
+  )
 }
 
 export default withDragDropContext(Tinter)

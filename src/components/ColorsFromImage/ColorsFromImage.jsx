@@ -154,7 +154,14 @@ class ColorsFromImage extends PureComponent {
         <div onMouseMove={this.wrapperMouseMove} className={'CFIwrapper ' + CIFwrapperClass} ref={this.CFIWrapper}>
           <canvas className='CFIcanvas' ref={this.CFICanvas} />
           <img className='CFIimage' ref={this.CFIImage} onLoad={this.handleImageLoaded} onError={this.handleImageErrored} src='/prism/images/colors-from-image/frog.png' alt='' />
-          <ColorsFromImagePin key='1' isActiveFlag={previewPinIsActive} pinType='preview' previewColorName={previewColorName} previewColorNumber={previewColorNumber} RGBstring={currentPixelRGBstring} transformValue={transformValue} onClickMethod={this.addPin} />
+          <ColorsFromImagePin key='1'
+            isActiveFlag={previewPinIsActive}
+            pinType='preview'
+            previewColorName={previewColorName}
+            previewColorNumber={previewColorNumber}
+            RGBstring={currentPixelRGBstring}
+            transformValue={transformValue}
+            onClickMethod={this.addPin} />
         </div>
       </Fragment>
     )

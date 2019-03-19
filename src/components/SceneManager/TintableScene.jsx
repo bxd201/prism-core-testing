@@ -1,6 +1,12 @@
 // @flow
 import React, { PureComponent, Fragment } from 'react'
-import { uniqueId, uniq, without, concat, find } from 'lodash'
+import includes from 'lodash/includes'
+import uniqueId from 'lodash/uniqueId'
+import uniq from 'lodash/uniq'
+import without from 'lodash/without'
+import concat from 'lodash/concat'
+import find from 'lodash/find'
+import { LiveMessage } from 'react-aria-live'
 
 import type { Color } from '../../shared/types/Colors'
 import type { Surface, SurfaceStatus } from '../../shared/types/Scene'
@@ -24,7 +30,9 @@ type Props = {
   clickToPaintColor?: Color,
   onUpdateColor?: Function,
   loading?: boolean,
-  error?: boolean
+  error?: boolean,
+  sceneName: string,
+  imageValueCurve: string
 }
 
 type State = {
@@ -146,7 +154,7 @@ class TintableScene extends PureComponent<Props, State> {
     const surfaceColor: ?Color = status ? status.color : void (0)
 
     // if this surface is one of the active preview surfaces...
-    if (activePreviewSurfaces.indexOf(surface.id) > -1) {
+    if (includes(activePreviewSurfaces, surface.id)) {
       // ... use the previewColor prop for this surface's color
       tintColor = previewColor
     } else if (surfaceColor) {
@@ -158,7 +166,7 @@ class TintableScene extends PureComponent<Props, State> {
   }
 
   render () {
-    const { surfaces, background, width, height, render, interactive, type, loading, error, sceneId } = this.props
+    const { surfaces, sceneName, background, width, height, render, interactive, type, loading, error, sceneId, imageValueCurve } = this.props
     const { instanceId, hitAreaError, hitAreaLoaded } = this.state
     const ratio = height / width
 
@@ -194,6 +202,7 @@ class TintableScene extends PureComponent<Props, State> {
                             shadowMap={surface.shadows}
                             filterId={TintableScene.getFilterId(instanceId, surface.id)}
                             filterColor={tintColor.hex}
+                            filterImageValueCurve={imageValueCurve}
                             maskId={TintableScene.getMaskId(instanceId, surface.id)}
                             maskImage={surface.mask}
                           />
@@ -205,7 +214,7 @@ class TintableScene extends PureComponent<Props, State> {
               </div>
 
               <div className={`${TintableScene.classNames.base}__tint-wrapper`}>
-                <img className={`${TintableScene.classNames.base}__natural`} src={background} alt='TODO: Need img description from data' />
+                <img className={`${TintableScene.classNames.base}__natural`} src={background} alt={sceneName} />
                 {surfaces.map((surface: Surface, index) => {
                   const tintColor: ?Color = this.getTintColorBySurface(surface)
                   if (tintColor) {
@@ -222,6 +231,8 @@ class TintableScene extends PureComponent<Props, State> {
                   }
                 })}
               </div>
+
+              <LiveMessage message={`${sceneName} scene has been loaded`} aria-live='polite' />
             </Fragment>
           )}
 
@@ -236,7 +247,6 @@ class TintableScene extends PureComponent<Props, State> {
                   onLoadingSuccess={this.handleHitAreaLoadingSuccess}
                   onLoadingError={this.handleHitAreaLoadingError}
                   onClick={this.handleClickSurface}
-                  color={surface.color}
                   svgSource={surface.hitArea} />
               ))}
             </div>

@@ -3,10 +3,10 @@ module.exports.varValues = {
   spacing: '1rem',
   corner: '2px',
   breakpoints: {
-    xs: '0em', /* 0px */
-    sm: '30em', /* 480px */
-    md: '64em', /* 1024px */
-    lg: '75em' /* 1200px */
+    xs: '576px', /* 576px */
+    sm: '768px', /* 768px */
+    md: '992px', /* 992px */
+    lg: '1200px' /* 1200px */
   },
   typography: {
     font: '\'Open Sans\', sans-serif',
@@ -14,17 +14,18 @@ module.exports.varValues = {
     title: '2rem'
   },
   colors: {
-    primary: '#2c97de',
-    secondary: '#7F8FA4',
+    primary: '#0069af',
+    secondary: '#4f5967',
     warning: '#f2c500',
     success: '#1fce6d',
     danger: '#e94b35',
     error: '#e94b35',
     grey: '#cccccc',
+    lightGrey: '#dddddd',
     nearBlack: '#2e2e2e',
     black: '#000000',
     white: '#ffffff',
-    swBlue: '#2c97de'
+    swBlue: '#0069af'
   },
   colorWall: {
     swatchColumns: 56, // default SW color chunks
@@ -33,7 +34,8 @@ module.exports.varValues = {
     swatchActivateDurationMS: 200,
     swatchActivateDelayMS: 0,
     swatchDeactivateDurationMS: 200,
-    swatchDeactivateDelayMS: 0
+    swatchDeactivateDelayMS: 0,
+    transitionTime: 700 // this value is halved in CSS to reduce initial judder caused by component rendering
   },
   scenes: {
     hitAreaOutlineColor: '255, 0, 255' // RGB value of hit area outline (must be RGB, not hex)

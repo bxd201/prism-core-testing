@@ -1,5 +1,7 @@
+// https://fontawesome.com/icons/search
+
 // fontawesome imports
-import { library } from '@fortawesome/fontawesome-svg-core'
+import { library, config } from '@fortawesome/fontawesome-svg-core'
 
 // solids
 import {
@@ -7,43 +9,56 @@ import {
   faTrash,
   faInfoCircle,
   faInfo,
+  faPalette,
   faSearchMinus,
+  faTimes,
   faHome,
   faSun,
-  faMoon
+  faMoon,
+  faMoonStars,
+  faCheck
 } from '@fortawesome/pro-solid-svg-icons'
 
 // lights
 import {
-  faArrowLeft,
-  faArrowRight,
   faHome as falHome,
   faPlusCircle,
   faSun as falSun,
-  faMoon as falMoon
+  faThLarge,
+  faMoon as falMoon,
+  faExpandAlt,
+  faCompressAlt
 } from '@fortawesome/pro-light-svg-icons'
 
 // regulars
-import {
-  faBatteryThreeQuarters
-} from '@fortawesome/pro-regular-svg-icons'
+// import {
+//   faExpandAlt
+// } from '@fortawesome/pro-regular-svg-icons'
 
 // populate with all the FontAwesome svg icons we want to use
 const faIcons = [
-  faArrowLeft,
-  faArrowRight,
-  faBatteryThreeQuarters,
+  faExpandAlt,
+  faCompressAlt,
   faHome,
   falHome,
   faMoon,
   falMoon,
+  faMoonStars,
+  faPalette,
   faPlus,
   faPlusCircle,
+  faTimes,
   faTrash,
+  faThLarge,
   faInfoCircle,
   faInfo,
   faSearchMinus,
   faSun,
-  falSun
+  falSun,
+  faCheck
 ]
 library.add(...faIcons)
+
+// don't automatically inject the CSS into the DOM because we're importing ALL of it into our own bundle
+// this is done so we can prefix all selectors with .cleanslate.prism
+config.autoAddCss = false

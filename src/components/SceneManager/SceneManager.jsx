@@ -1,17 +1,21 @@
 // @flow
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
-import { find } from 'lodash'
+import find from 'lodash/find'
+import includes from 'lodash/includes'
 import memoizee from 'memoizee'
+import ReactGA from 'react-ga'
 
 import { SCENE_TYPES, SCENE_VARIANTS } from 'constants/globals'
-import { loadScenes, paintSceneSurface, activateScene, deactivateScene, changeSceneVariant } from '../../actions/scenes'
+import { loadScenes, paintSceneSurface, activateScene, deactivateScene, changeSceneVariant } from '../../store/actions/scenes'
 import TintableScene from './TintableScene'
 import SceneVariantSwitch from './SceneVariantSwitch'
-import type { Color } from '../../shared/types/Colors'
-import type { Scene, SceneStatus, Surface } from '../../shared/types/Scene'
 import ImagePreloader from '../../helpers/ImagePreloader'
 import { ensureFullyQualifiedAssetUrl } from '../../shared/helpers/DataUtils'
+import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import type { Color } from '../../shared/types/Colors'
+import type { Scene, SceneStatus, Surface, Variant } from '../../shared/types/Scene'
 
 import './SceneManager.scss'
 
@@ -70,11 +74,16 @@ class SceneManager extends PureComponent<Props, State> {
     const { activeScenes } = this.props
 
     // if this scene is active...
-    if (activeScenes.indexOf(id) > -1) {
+    if (includes(activeScenes, id)) {
       this.deactivateScene(id)
     } else {
       // ... otherwise activate this scene
       this.activateScene(id)
+      ReactGA.event({
+        category: 'Scene Manager',
+        action: 'Toggle Active Scene',
+        label: 'Toggle Active Scene'
+      }, ['GAtrackerPRISM'])
     }
   }
 
@@ -113,7 +122,7 @@ class SceneManager extends PureComponent<Props, State> {
     const { scenes, sceneStatus, loadingScenes, activeColor, previewColor, mainColor, activeScenes, type, interactive } = this.props
 
     if (loadingScenes) {
-      return 'Loading...'
+      return <CircleLoader className={`${SceneManager.baseClass}__loader`} />
     }
 
     return (
@@ -121,39 +130,53 @@ class SceneManager extends PureComponent<Props, State> {
         <div className={`${SceneManager.baseClass}__block ${SceneManager.baseClass}__block--tabs`}>
           {/* POC scene-switching buttons to demonstrate performance */}
           {scenes.map((scene, index) => {
-            const sceneId = scene.id
+            const sceneInfo = getSceneInfoById(scene, sceneStatus, scene.id)
 
-            const status: SceneStatus = find(sceneStatus, { 'id': sceneId })
-            const sceneVariant: Scene = find(scene.variants, { 'variant_name': status.variant })
-            const surfaces: Surface[] = sceneVariant.surfaces
+            if (!sceneInfo) {
+              console.warn(`Cannot find scene variant based on id ${scene.id}`)
+              return void (0)
+            }
+
+            const status: SceneStatus = sceneInfo.status
+            const sceneVariant: Variant = sceneInfo.variant
+            const surfaces: Surface[] = sceneInfo.surfaces
+            const activeMarker = includes(activeScenes, scene.id)
+              ? <FontAwesomeIcon icon={['fa', 'check']} className={`${SceneManager.baseClass}__flag`} />
+              : null
 
             return (
-              <button key={sceneId}
+              // TODO: Convert these to labels around checkboxes since that's how they're being used
+              <button key={scene.id}
                 onClick={() => this.handleClickSceneToggle(scene.id)}
-                className={`${SceneManager.baseClass}__btn ${activeScenes.indexOf(scene.id) > -1 ? `${SceneManager.baseClass}__btn--active` : ''}`}
+                className={`${SceneManager.baseClass}__btn ${includes(activeScenes, scene.id) ? `${SceneManager.baseClass}__btn--active` : ''}`}
                 type='button'>
-                <ImagePreloader
-                  el={TintableScene}
-                  preload={[
-                    sceneVariant.image,
-                    surfaces.map(surface => surface.shadows),
-                    surfaces.map(surface => surface.mask),
-                    surfaces.map(surface => surface.hitArea),
-                    surfaces.map(surface => surface.highlights)
-                  ]}
-                  interactive={false}
-                  width={scene.width}
-                  height={scene.height}
-                  type={type}
-                  sceneId={sceneId}
-                  background={ensureFullyQualifiedAssetUrl(sceneVariant.image)}
-                  clickToPaintColor={activeColor}
-                  onUpdateColor={this.handleColorUpdate}
-                  previewColor={previewColor}
-                  mainColor={mainColor}
-                  surfaceStatus={status.surfaces}
-                  surfaces={surfaces}
-                />
+
+                <span className='visually-hidden'>{sceneVariant.name}</span>
+                <div role='presentation'>
+                  <ImagePreloader
+                    el={TintableScene}
+                    preload={[
+                      sceneVariant.thumb,
+                      surfaces.map(surface => surface.shadows),
+                      surfaces.map(surface => surface.mask),
+                      surfaces.map(surface => surface.hitArea),
+                      surfaces.map(surface => surface.highlights)
+                    ]}
+                    interactive={false}
+                    width={scene.width}
+                    height={scene.height}
+                    type={type}
+                    sceneId={scene.id}
+                    background={ensureFullyQualifiedAssetUrl(sceneVariant.thumb)}
+                    clickToPaintColor={activeColor}
+                    onUpdateColor={this.handleColorUpdate}
+                    previewColor={previewColor}
+                    mainColor={mainColor}
+                    surfaceStatus={status.surfaces}
+                    surfaces={surfaces}
+                  />
+                </div>
+                {activeMarker}
               </button>
             )
           })}
@@ -161,15 +184,22 @@ class SceneManager extends PureComponent<Props, State> {
 
         <div className={`${SceneManager.baseClass}__block ${SceneManager.baseClass}__block--scenes`}>
           {activeScenes.map((sceneId, index) => {
-            const scene = scenes.filter(scene => (scene.id === sceneId))[0]
+            const scene: Scene = scenes.filter(scene => (scene.id === sceneId))[0]
 
             if (!scene) {
               return null
             }
 
-            const status: SceneStatus = find(sceneStatus, { 'id': sceneId })
-            const sceneVariant: Scene = find(scene.variants, { 'variant_name': status.variant })
-            const surfaces: Surface[] = sceneVariant.surfaces
+            const sceneInfo = getSceneInfoById(scene, sceneStatus, scene.id)
+
+            if (!sceneInfo) {
+              console.warn(`Cannot find scene variant based on id ${scene.id}`)
+              return void (0)
+            }
+
+            const status: SceneStatus = sceneInfo.status
+            const sceneVariant: Variant = sceneInfo.variant
+            const surfaces: Surface[] = sceneInfo.surfaces
 
             let variantSwitch = null
 
@@ -187,7 +217,8 @@ class SceneManager extends PureComponent<Props, State> {
                 <ImagePreloader
                   el={TintableScene}
                   preload={[
-                    sceneVariant.image,
+                    scene.variants.map((v: Variant) => v.thumb),
+                    scene.variants.map((v: Variant) => v.image),
                     surfaces.map(surface => surface.mask),
                     surfaces.map(surface => surface.shadows),
                     surfaces.map(surface => surface.hitArea),
@@ -205,6 +236,8 @@ class SceneManager extends PureComponent<Props, State> {
                   mainColor={mainColor}
                   surfaceStatus={status.surfaces}
                   surfaces={surfaces}
+                  imageValueCurve={sceneVariant.normalizedImageValueCurve}
+                  sceneName={sceneVariant.name}
                 />
                 {variantSwitch}
               </div>
@@ -261,6 +294,28 @@ const mapDispatchToProps = (dispatch: Function) => {
       dispatch(changeSceneVariant(sceneId, variant))
     }
   }
+}
+
+function getSceneInfoById (scene: Scene, sceneStatus: SceneStatus[], id: number): {
+  status: SceneStatus,
+  variant: Variant,
+  surfaces: Surface[]
+} | void {
+  const status: SceneStatus | void = find(sceneStatus, { 'id': id })
+
+  if (typeof status !== 'undefined') {
+    const sceneVariant: Variant | void = find(scene.variants, { 'variant_name': status.variant })
+
+    if (typeof sceneVariant !== 'undefined' && sceneVariant.surfaces) {
+      return {
+        status: status,
+        variant: sceneVariant,
+        surfaces: sceneVariant.surfaces
+      }
+    }
+  }
+
+  return void (0)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(SceneManager)

@@ -26,4 +26,21 @@ export const ZOOMED_VIEW_GRID_PADDING: number = 1
 
 export const SW_CHUNK_SIZE: number = 7
 
+// TODO: include with translations?
+export const ROUTE_PARAMS = Object.freeze({
+  ACTIVE: 'active',
+  COLOR_DETAIL: 'color-detail',
+  COLOR_WALL: 'color-wall',
+  SECTION: 'section',
+  FAMILY: 'family',
+  COLOR: 'color'
+})
+
+export const ROUTE_PARAM_NAMES = Object.freeze({
+  SECTION: 'section',
+  FAMILY: 'family',
+  COLOR_ID: 'colorId',
+  COLOR_SEO: 'colorSEO'
+})
+
 export const GOOGLE_ANALYTICS_UID = 'UA-130955316-1'

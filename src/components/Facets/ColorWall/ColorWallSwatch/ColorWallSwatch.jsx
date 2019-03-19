@@ -1,94 +1,99 @@
 // @flow
-import React, { Component } from 'react'
-import { once } from 'lodash'
+import React, { PureComponent } from 'react'
+import once from 'lodash/once'
 import memoizee from 'memoizee'
-import { withRouter, Link } from 'react-router-dom'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Link } from 'react-router-dom'
 
 import { type Color } from '../../../../shared/types/Colors'
 import { numToAlphaString, arrayToSpacedString } from '../../../../shared/helpers/StringUtils'
-import { fullColorName, fullColorNumber, generateColorDetailsPageUrl } from '../../../../shared/helpers/ColorUtils'
-import { ConfigurationContext } from '../../../../contexts/ConfigurationContext'
+import { fullColorName, fullColorNumber } from '../../../../shared/helpers/ColorUtils'
+import { ConfigurationContextConsumer } from '../../../../contexts/ConfigurationContext'
 import { CLASS_NAMES } from './shared'
+
+import AddButton from './ColorWallSwatchButtons/AddButton'
+import DetailsLink from './ColorWallSwatchButtons/DetailsLink'
+import InfoButton from './ColorWallSwatchButtons/InfoButton'
 
 import './ColorWallSwatch.scss'
 
 type Props = {
   color: Color,
-  history: RouterHistory,
+  focus?: boolean,
+  thisLink?: string,
+  detailsLink?: string,
   showContents?: boolean,
-  onEngage?: Function,
   onAdd?: Function,
+  onClick?: Function,
   level?: number,
   compensateX?: number,
   compensateY?: number,
   active?: boolean
 }
 
-class ColorWallSwatch extends Component<Props> {
-  static contextType = ConfigurationContext
-
+class ColorWallSwatch extends PureComponent<Props> {
   constructor (props: Props) {
     super(props)
 
     this.handleAddClick = this.handleAddClick.bind(this)
-    this.handleDetailClick = this.handleDetailClick.bind(this)
-    this.handleSwatchClick = this.handleSwatchClick.bind(this)
-    this.handleSwatchKeyPress = this.handleSwatchKeyPress.bind(this)
+    this.performClickAction = this.performClickAction.bind(this)
+    this.getThisLink = this.getThisLink.bind(this)
+    this.handleClick = this.handleClick.bind(this)
   }
 
   render () {
-    const { showContents, color, onAdd } = this.props
-    const config = this.context.ColorWall
+    const { showContents, color, onAdd, thisLink, detailsLink, focus } = this.props
 
-    let props = {
+    let containerProps = {
       className: `${this.getBaseClasses()} ${this.getClasses()}`,
       style: ColorWallSwatch.getStyles(color.hex)
     }
-    let contents = null
 
-    const temporaryViewDetailStyles = {
-      position: 'absolute',
-      bottom: '1em',
-      left: '.75em',
-      color: (color.isDark) ? 'white' : 'black',
-      textDecoration: 'none'
-    }
+    let contents = null
 
     if (showContents) {
       contents = (
-        <div className={CLASS_NAMES.CONTENT}>
+        <section className={CLASS_NAMES.CONTENT}>
           <p className={CLASS_NAMES.CONTENT_NUMBER}>{`${fullColorNumber(color.brandKey, color.colorNumber)}`}</p>
           <p className={CLASS_NAMES.CONTENT_NAME}>{color.name}</p>
-          {(onAdd && config.displayAddButton) && (
-            <button /* autoFocus */ onClick={this.handleAddClick} className={CLASS_NAMES.CONTENT_ADD}>
-              <FontAwesomeIcon icon='plus' size='1x' />
-            </button>
-          )}
+          <ConfigurationContextConsumer>
+            {config => (
+              <React.Fragment>
+                {/* Stateless components to handle whether to display the add, details, and info buttons */}
+                <InfoButton config={config} detailsLink={detailsLink} className={`${CLASS_NAMES.CONTENT_CTA} ${CLASS_NAMES.CONTENT_CTA_R}`} tabIndex={-1} />
+                <AddButton config={config} onAdd={(onAdd)} onClick={this.handleAddClick} className={`${CLASS_NAMES.CONTENT_CTA} ${CLASS_NAMES.CONTENT_CTA_L}`} tabIndex={-1} />
 
-          {config.displayViewDetails && <Link to={generateColorDetailsPageUrl(color)} style={temporaryViewDetailStyles}>View Details</Link>}
-
-          {config.displayAddButton && (
-            <button onClick={this.handleDetailClick} className={CLASS_NAMES.CONTENT_DETAILS}>
-              <FontAwesomeIcon icon='info' size='1x' />
-            </button>
-          )}
-        </div>
+                <DetailsLink config={config}
+                  detailsLink={detailsLink}
+                  className={`${CLASS_NAMES.CONTENT_CTA} ${CLASS_NAMES.CONTENT_CTA_L} ${focus ? CLASS_NAMES.CONTENT_CTA_FOCUS : ''}`}
+                  tabIndex={-1} />
+              </React.Fragment>
+            )}
+          </ConfigurationContextConsumer>
+        </section>
+      )
+    } else if (thisLink) {
+      contents = (
+        <Link to={thisLink}
+          className={CLASS_NAMES.ENGAGE_LINK}
+          onClick={this.handleClick}
+          tabIndex={-1}>
+          <span className='visually-hidden'>
+            {fullColorName(color.brandKey, color.colorNumber, color.name)}
+          </span>
+        </Link>
       )
     } else {
-      props = Object.assign({}, props, {
-        title: fullColorName(color.brandKey, color.colorNumber, color.name),
-        onClick: this.handleSwatchClick,
-        onKeyDown: this.handleSwatchKeyPress,
-        role: 'button',
-        tabIndex: 0,
-        focusable: true
-      })
+      // if not showing contents or does not have thisLink, augment container's props to contain color title
+      contents = (
+        <span className='visually-hidden'>
+          {fullColorName(color.brandKey, color.colorNumber, color.name)}
+        </span>
+      )
     }
 
     return (
       <div className={CLASS_NAMES.SWATCH}>
-        <div {...props}>
+        <div {...containerProps}>
           {contents}
         </div>
       </div>
@@ -120,7 +125,7 @@ class ColorWallSwatch extends Component<Props> {
   })
 
   getClasses (): string {
-    const { level, active, onEngage, compensateX, compensateY } = this.props
+    const { level, active, thisLink, compensateX, compensateY, focus } = this.props
     const levelDefined = !isNaN(level)
     let classes = []
 
@@ -128,13 +133,14 @@ class ColorWallSwatch extends Component<Props> {
       classes.push(CLASS_NAMES.BASE_ACTIVE)
     }
 
-    if (onEngage) {
+    // if we have a link to this swatch's active URL...
+    if (thisLink) {
+      // ... assume it's a clickable swatch
       classes.push(CLASS_NAMES.BASE_CLICKABLE)
     }
 
     if (levelDefined) {
       classes.push(CLASS_NAMES.BASE_BLOOM)
-      // $FlowIgnore -- Flow doesn't understand that we can't get here unless level is a number
       classes.push(CLASS_NAMES.BASE_BLOOM_LVL_ + numToAlphaString(level))
 
       if (compensateX) {
@@ -146,46 +152,46 @@ class ColorWallSwatch extends Component<Props> {
       }
     }
 
+    if (focus) {
+      classes.push(CLASS_NAMES.BASE_FOCUS)
+    }
+
     return arrayToSpacedString(classes)
   }
 
-  handleSwatchKeyPress = function handleSwatchKeyPress (e: KeyboardEvent) {
-    const { onEngage, color } = this.props
-
-    switch (e.keyCode) {
-      case 13:
-      case 32:
-        if (onEngage) {
-          onEngage(color)
-        }
-        e.preventDefault()
-        break
-    }
+  performClickAction = function performClickAction (): void {
+    console.warn('ATTEMPTING TO PERFORM CLICK ACTION IN ColorWallSwatch, BUT NO ACTION IS DEFINED')
+    // TODO: Implement multi-element focus control and an externally-triggerable click action.
+    // This is for instances when more than just the details link is present on this swatch
   }
 
-  handleSwatchClick = function handleSwatchClick (e: MouseEvent) {
-    const { onEngage, color } = this.props
+  getThisLink = function getThisLink (): string | void {
+    const { thisLink, detailsLink, showContents } = this.props
 
-    if (onEngage) {
-      onEngage(color)
+    if (showContents && detailsLink) {
+      return detailsLink
+    } else if (thisLink) {
+      return thisLink
     }
 
-    e.preventDefault()
+    return void (0)
   }
 
   handleAddClick = function handleAddClick () {
     const { onAdd, color } = this.props
 
-    if (onAdd) {
+    if (typeof onAdd === 'function') {
       onAdd(color)
     }
   }
 
-  handleDetailClick = function handleDetailClick () {
-    const { color } = this.props
+  handleClick = function handleClick (e: any) {
+    const { onClick } = this.props
 
-    this.props.history.push(`/active/color-wall/color/${color.id}`)
+    if (typeof onClick === 'function') {
+      onClick(e)
+    }
   }
 }
 
-export default withRouter(ColorWallSwatch)
+export default ColorWallSwatch

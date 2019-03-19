@@ -62,7 +62,7 @@
     min-height:0;
     min-width:0;
     opacity:1;
-    outline:invert none medium;
+    /* outline:invert none medium;  appears to kill :focus outline in desktop Chrome */
     overflow:visible;
     padding:0;
     position:static;
@@ -161,6 +161,17 @@
     word-break: normal;
 }
 
+.cleanslate.prism {
+    display: block;
+}
+
+.cleanslate svg {
+    width: 1em;
+    height: 1em;
+    color: currentColor;
+    /* default fill or stroke to currentColor? */
+}
+
 .cleanslate::before, .cleanslate h1::before, .cleanslate h2::before, .cleanslate h3::before, .cleanslate h4::before, .cleanslate h5::before, .cleanslate h6::before, .cleanslate p::before, .cleanslate td::before, .cleanslate dl::before, .cleanslate tr::before, .cleanslate dt::before, .cleanslate ol::before, .cleanslate form::before, .cleanslate select::before, .cleanslate option::before, .cleanslate pre::before, .cleanslate div::before, .cleanslate table::before,  .cleanslate th::before, .cleanslate tbody::before, .cleanslate tfoot::before, .cleanslate caption::before, .cleanslate thead::before, .cleanslate ul::before, .cleanslate li::before, .cleanslate address::before, .cleanslate blockquote::before, .cleanslate dd::before, .cleanslate fieldset::before, .cleanslate li::before, .cleanslate iframe::before, .cleanslate strong::before, .cleanslate legend::before, .cleanslate em::before, .cleanslate summary::before, .cleanslate cite::before, .cleanslate span::before, .cleanslate input::before, .cleanslate sup::before, .cleanslate label::before, .cleanslate dfn::before, .cleanslate object::before, .cleanslate big::before, .cleanslate q::before, .cleanslate samp::before, .cleanslate acronym::before, .cleanslate small::before, .cleanslate img::before, .cleanslate strike::before, .cleanslate code::before, .cleanslate sub::before, .cleanslate ins::before, .cleanslate textarea::before, .cleanslate button::before, .cleanslate var::before, .cleanslate a::before, .cleanslate abbr::before, .cleanslate applet::before, .cleanslate del::before, .cleanslate kbd::before, .cleanslate tt::before, .cleanslate b::before, .cleanslate i::before, .cleanslate hr::before,
 .cleanslate article::before, .cleanslate aside::before, .cleanslate figure::before, .cleanslate figcaption::before, .cleanslate footer::before, .cleanslate header::before, .cleanslate menu::before, .cleanslate nav::before, .cleanslate section::before, .cleanslate time::before, .cleanslate mark::before, .cleanslate audio::before, .cleanslate video::before, .cleanslate abbr::before, .cleanslate address::before, .cleanslate area::before, .cleanslate blockquote::before, .cleanslate canvas::before, .cleanslate caption::before, .cleanslate cite::before, .cleanslate code::before, .cleanslate colgroup::before, .cleanslate col::before, .cleanslate datalist::before, .cleanslate fieldset::before, .cleanslate main::before, .cleanslate map::before, .cleanslate meta::before, .cleanslate optgroup::before, .cleanslate output::before, .cleanslate progress::before,
 .cleanslate::after, .cleanslate h1::after, .cleanslate h2::after, .cleanslate h3::after, .cleanslate h4::after, .cleanslate h5::after, .cleanslate h6::after, .cleanslate p::after, .cleanslate td::after, .cleanslate dl::after, .cleanslate tr::after, .cleanslate dt::after, .cleanslate ol::after, .cleanslate form::after, .cleanslate select::after, .cleanslate option::after, .cleanslate pre::after, .cleanslate div::after, .cleanslate table::after,  .cleanslate th::after, .cleanslate tbody::after, .cleanslate tfoot::after, .cleanslate caption::after, .cleanslate thead::after, .cleanslate ul::after, .cleanslate li::after, .cleanslate address::after, .cleanslate blockquote::after, .cleanslate dd::after, .cleanslate fieldset::after, .cleanslate li::after, .cleanslate iframe::after, .cleanslate strong::after, .cleanslate legend::after, .cleanslate em::after, .cleanslate summary::after, .cleanslate cite::after, .cleanslate span::after, .cleanslate input::after, .cleanslate sup::after, .cleanslate label::after, .cleanslate dfn::after, .cleanslate object::after, .cleanslate big::after, .cleanslate q::after, .cleanslate samp::after, .cleanslate acronym::after, .cleanslate small::after, .cleanslate img::after, .cleanslate strike::after, .cleanslate code::after, .cleanslate sub::after, .cleanslate ins::after, .cleanslate textarea::after, .cleanslate button::after, .cleanslate var::after, .cleanslate a::after, .cleanslate abbr::after, .cleanslate applet::after, .cleanslate del::after, .cleanslate kbd::after, .cleanslate tt::after, .cleanslate b::after, .cleanslate i::after, .cleanslate hr::after,
@@ -204,7 +215,7 @@
     font-size: .83em;
 }
 .cleanslate p {
-    margin: 1em 0;
+    margin: 0;
 }
 .cleanslate table {
     display: table;
@@ -273,7 +284,12 @@
   font-family:monospace;
 }
 .cleanslate a {
-    color: #39c;
+    color: #0069af;
+}
+.cleanslate a:active
+.cleanslate a:focus,
+.cleanslate a:hover {
+    outline: initial;
     text-decoration: underline;
 }
 .cleanslate a:visited {
@@ -298,7 +314,7 @@
        -moz-box-shadow: none;
          -o-box-shadow: none;
             box-shadow: none;
-    outline: initial;
+    /* outline: initial; appears to kill :focus outline in desktop Chrome */
 }
 .cleanslate button:active, .cleanslate input[type=submit]:active, .cleanslate input[type=button]:active, .cleanslate button:active {
 	background: none; /* W3C */
@@ -328,8 +344,8 @@
     display: inline-block;
 }
 .cleanslate textarea:focus, .cleanslate input:focus {
-    outline: auto 5px -webkit-focus-ring-color;
-    outline: initial;
+    /* outline: auto 5px -webkit-focus-ring-color; */
+    /* outline: initial; appears to kill :focus outline in desktop Chrome */
 }
 .cleanslate input[type=text] {
     background: white;
@@ -341,9 +357,9 @@
     border: 1px #2b2b2b solid;
     border-radius: 4px;
 }
-.cleanslate input[type=checkbox], .cleanslate input[type=radio] {
-    outline: initial;
-}
+/* .cleanslate input[type=checkbox], .cleanslate input[type=radio] {
+    outline: initial; appears to kill :focus outline in desktop Chrome
+} */
 .cleanslate input[type=radio] {
     margin: 2px 2px 3px 2px;
 }
@@ -445,4 +461,8 @@
 
 .cleanslate pre {
     white-space:pre;
+}
+
+.cleanslate button[disabled], input[disabled], select[disabled] {
+    cursor: auto;
 }

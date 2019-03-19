@@ -1,13 +1,13 @@
 import bindReactToDOM from './index'
 import ReactDOM from 'react-dom'
-import _ from 'lodash'
+import flatten from 'lodash/flatten'
 
 const gatherReactRoots = (nodes) => {
   if (!nodes || !nodes.length) {
     return []
   }
 
-  return _.flatten(Array.from(nodes).map(node => {
+  return flatten(Array.from(nodes).map(node => {
     if (typeof node.className === 'string' && node.className.indexOf('__react-root') > -1) {
       return node
     } else if (typeof node.getElementsByClassName === 'function' && node.getElementsByClassName('__react-root').length) {

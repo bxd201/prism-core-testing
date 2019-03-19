@@ -1,5 +1,5 @@
 // @flow
-import { kebabCase } from 'lodash'
+import kebabCase from 'lodash/kebabCase'
 import memoizee from 'memoizee'
 
 export const arrayToSpacedString = memoizee(function arrayToSpacedString (arr: string[]): string {

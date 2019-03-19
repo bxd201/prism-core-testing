@@ -5,13 +5,16 @@ import React, { PureComponent } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FormattedMessage } from 'react-intl'
 import { connect } from 'react-redux'
-import { without, times, flatMap, intersection } from 'lodash'
+import without from 'lodash/without'
+import times from 'lodash/times'
+import flatMap from 'lodash/flatMap'
+import intersection from 'lodash/intersection'
 import update from 'immutability-helper'
 import { Link } from 'react-router-dom'
 
 import { LP_MAX_COLORS_ALLOWED } from 'constants/configurations'
 
-import { activate, reorder } from '../../actions/live-palette'
+import { activate, reorder } from '../../store/actions/live-palette'
 import { arrayToSpacedString } from '../../shared/helpers/StringUtils'
 
 import { varValues } from 'variables'
@@ -40,6 +43,13 @@ class LivePalette extends PureComponent<Props, State> {
 
   pendingUpdateFn: any
   requestedFrame: number | void
+  activeSlotRef: ?RefObject = void (0)
+
+  constructor (props) {
+    super(props)
+
+    this.activeSlotRef = React.createRef()
+  }
 
   componentDidUpdate (prevProps, prevState) {
     let spokenWord: Array<string> = []
@@ -89,6 +99,8 @@ class LivePalette extends PureComponent<Props, State> {
     const activeSlots = colors.map((color, index) => {
       if (color && index < LP_MAX_COLORS_ALLOWED) {
         return (<ActiveSlot
+          ref={this.activeSlotRef}
+          node={this.activeSlotRef} // passing the ref down as a prop so DnD has access to the DOM element
           index={index}
           key={color.id}
           color={color}
@@ -114,7 +126,7 @@ class LivePalette extends PureComponent<Props, State> {
         <div className='prism-live-palette__list'>
           {activeSlots}
           {colors.length < LP_MAX_COLORS_ALLOWED && <Link to={`/active/color-wall`} className={`prism-live-palette__slot prism-live-palette__slot--${COLOR_TRAY_CLASS_MODIFIERS}`}>
-            <FontAwesomeIcon className='prism-live-palette__icon' icon={['fal', 'plus-circle']} size='5x' color={varValues.colors.swBlue} />
+            <FontAwesomeIcon className='prism-live-palette__icon' icon={['fal', 'plus-circle']} size='2x' color={varValues.colors.swBlue} />
             <FormattedMessage id={ADD_COLOR_TEXT}>
               {(msg: string) => <span className='prism-live-palette__slot__copy'>{msg}</span>}
             </FormattedMessage>
@@ -151,7 +163,6 @@ class LivePalette extends PureComponent<Props, State> {
 
   moveColor = (originColorId: Number, destinationColorId: Number) => {
     const { colors } = this.props
-    // $FlowIgnore - ignoring flow validation on this line because flatMap's flow-type is more strict than lodash's actual implementation
     const colorsByIndex = flatMap(colors, color => color.id) // creates an array of only all color ids
     const originIndex = colorsByIndex.indexOf(originColorId) // get the index of the origin color
     const destIndex = colorsByIndex.indexOf(destinationColorId) // get the index of the dest color

@@ -3,12 +3,14 @@ import React from 'react'
 import { connect } from 'react-redux'
 import isEmpty from 'lodash/isEmpty'
 
-import { loadColors } from '../actions/loadColors'
-import type { ColorFamilyPayload, ColorMap } from '../shared/types/Colors'
+import { type ColorSetPayload, type ColorMap } from '../shared/types/Colors'
+import CircleLoader from '../components/Loaders/CircleLoader/CircleLoader'
+import { loadColors } from '../store/actions/loadColors'
+import { varValues } from 'variables'
 
 type Props = {
-  colors: ColorFamilyPayload,
-  brights: ColorFamilyPayload,
+  colors: ColorSetPayload,
+  brights: ColorSetPayload,
   colorMap: ColorMap,
   loadColors: Function,
   family?: string,
@@ -31,7 +33,7 @@ const ColorDataWrapper = (WrappedComponent: any) => {
 
     render () {
       if (isEmpty(this.props.colors)) {
-        return <p>Loading....</p>
+        return <CircleLoader color={varValues.colors.primary} />
       }
 
       return <WrappedComponent {...this.props} />

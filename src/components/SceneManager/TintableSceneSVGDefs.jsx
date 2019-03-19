@@ -10,12 +10,13 @@ type Props = {
   type: string,
   filterColor?: string,
   highlightMap?: string,
-  shadowMap?: string
+  shadowMap?: string,
+  filterImageValueCurve: string
 }
 
 class TintableSceneSurface extends PureComponent<Props> {
   render () {
-    const { filterId, maskId, maskImage, filterColor, type, highlightMap, shadowMap } = this.props
+    const { filterId, maskId, maskImage, filterColor, type, highlightMap, shadowMap, filterImageValueCurve } = this.props
 
     switch (type) {
       case SCENE_TYPES.ROOM:
@@ -30,8 +31,14 @@ class TintableSceneSurface extends PureComponent<Props> {
                         0.33 0.33 0.33 0 0
                         0.33 0.33 0.33 0 0
                         0 1 0 1 0' />
+              <feComponentTransfer in='sourceImageInGrayscale' result='adjustedHistogram'>
+                <feFuncR type='table' tableValues={filterImageValueCurve} />
+                <feFuncG type='table' tableValues={filterImageValueCurve} />
+                <feFuncB type='table' tableValues={filterImageValueCurve} />
+              </feComponentTransfer>
+
               <feFlood floodColor={filterColor} result='tintHue' />
-              <feBlend mode='multiply' in2='tintHue' in='sourceImageInGrayscale' />
+              <feBlend mode='multiply' in2='tintHue' in='adjustedHistogram' />
             </filter>
             <mask id={maskId} x='0' y='0' width='100%' height='100%' maskUnits='objectBoundingBox'>
               <image x='0' y='0' width='100%' height='100%' xlinkHref={maskImage} />
