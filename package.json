@@ -13,7 +13,9 @@
     "setupFilesAfterEnv": [
       "<rootDir>__tests__/setup/setupEnzyme.js"
     ],
-    "snapshotSerializers": ["enzyme-to-json/serializer"],
+    "snapshotSerializers": [
+      "enzyme-to-json/serializer"
+    ],
     "moduleNameMapper": {
       "^constants(.*)$": "<rootDir>/src/constants$1",
       "^variables$": "<rootDir>/src/shared/variables.js",
@@ -84,6 +86,7 @@
     "eslint-loader": "2.1.2",
     "eslint-plugin-flowtype": "3.4.1",
     "eslint-plugin-import": "2.16.0",
+    "eslint-plugin-jest": "22.4.1",
     "eslint-plugin-jsx-a11y": "6.2.1",
     "eslint-plugin-node": "8.0.1",
     "eslint-plugin-promise": "4.0.1",
