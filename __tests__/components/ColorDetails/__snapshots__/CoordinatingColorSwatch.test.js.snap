@@ -2,7 +2,7 @@
 
 exports[`Coordinary Color Swatch component will pass props correctly snapshot testing 1`] = `
 <li
-  className="color-info__similar-color"
+  className="color-info__coord-color "
   style={
     Object {
       "backgroundColor": "#ebd1db",
@@ -10,43 +10,28 @@ exports[`Coordinary Color Swatch component will pass props correctly snapshot te
   }
 >
   <Link
-    className="color-info__similar-color-info"
+    className="color-info__color-swatch-link"
     onClick={[Function]}
     replace={false}
-    style={
-      Object {
-        "backgroundColor": "#ebd1db",
-      }
-    }
     to="/active/color-detail/2248/sw-6561-teaberry"
   >
-    <div
-      className="color-info__similar-color-info-wrapper"
+    <p
+      className="color-info__coord-color-number"
     >
-      <span
-        className="color-info__similar-color-brand-key"
-      >
-        SW
-      </span>
-       
-      <span
-        className="color-info__similar-color-number"
-      >
-        6561
-      </span>
-      <p
-        className="color-info__similar-color-name"
-      >
-        Teaberry
-      </p>
-    </div>
+      SW 6561
+    </p>
+    <p
+      className="color-info__coord-color-name"
+    >
+      Teaberry
+    </p>
   </Link>
 </li>
 `;
 
 exports[`Coordinary Color Swatch component with props as empty array snapshot testing 1`] = `
 <li
-  className="color-info__similar-color"
+  className="color-info__coord-color "
   style={
     Object {
       "backgroundColor": undefined,
@@ -54,30 +39,19 @@ exports[`Coordinary Color Swatch component with props as empty array snapshot te
   }
 >
   <Link
-    className="color-info__similar-color-info"
+    className="color-info__color-swatch-link"
     onClick={[Function]}
     replace={false}
-    style={
-      Object {
-        "backgroundColor": undefined,
-      }
-    }
     to="/active/color-detail/-"
   >
-    <div
-      className="color-info__similar-color-info-wrapper"
+    <p
+      className="color-info__coord-color-number"
     >
-      <span
-        className="color-info__similar-color-brand-key"
-      />
-       
-      <span
-        className="color-info__similar-color-number"
-      />
-      <p
-        className="color-info__similar-color-name"
-      />
-    </div>
+      undefined undefined
+    </p>
+    <p
+      className="color-info__coord-color-name"
+    />
   </Link>
 </li>
 `;

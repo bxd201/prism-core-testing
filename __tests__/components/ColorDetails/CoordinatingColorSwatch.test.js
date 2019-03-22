@@ -1,6 +1,6 @@
 import React from 'react'
 import { shallow } from 'enzyme'
-import CoordinatingColorSwatch from 'src/components/Facets/ColorDetails/SimilarColors/SimilarColorSwatch'
+import CoordinatingColorSwatch from 'src/components/Facets/ColorDetails/CoordinatingColors/CoordinatingColorSwatch'
 import * as Colors from '__mocks__/data/color/Colors'
 import ReactGA from 'react-ga'
 

@@ -13,7 +13,7 @@ type Props = {
   history: RouterHistory,
 }
 
-function ColorStripSwatch ({ color, active, history }: Props) {
+export function ColorStripSwatch ({ color, active, history }: Props) {
   const selectColor = () => {
     ReactGA.event({
       category: 'Color Detail / Swatch Chip List',

@@ -5,7 +5,7 @@ exports[`Color Swatch component will pass props correctly snapshot testing 1`] =
   className="color-info__similar-color"
   style={
     Object {
-      "backgroundColor": "#edd5dd",
+      "backgroundColor": "#ebd1db",
     }
   }
 >
@@ -15,10 +15,10 @@ exports[`Color Swatch component will pass props correctly snapshot testing 1`] =
     replace={false}
     style={
       Object {
-        "backgroundColor": "#edd5dd",
+        "backgroundColor": "#ebd1db",
       }
     }
-    to="/active/color-detail/2255/sw-6568-lighthearted-pink"
+    to="/active/color-detail/2248/sw-6561-teaberry"
   >
     <div
       className="color-info__similar-color-info-wrapper"
@@ -32,12 +32,12 @@ exports[`Color Swatch component will pass props correctly snapshot testing 1`] =
       <span
         className="color-info__similar-color-number"
       >
-        6568
+        6561
       </span>
       <p
         className="color-info__similar-color-name"
       >
-        Lighthearted Pink
+        Teaberry
       </p>
     </div>
   </Link>
