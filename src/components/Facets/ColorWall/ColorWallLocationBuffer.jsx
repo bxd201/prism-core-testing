@@ -86,8 +86,8 @@ class ColorWallLocationBuffer extends Component<Props> {
 const mapStateToProps = (state, props) => {
   return {
     color: state.colors.colorWallActive,
-    family: state.colors.family.family,
-    section: state.colors.family.section
+    family: state.colors.family,
+    section: state.colors.section
   }
 }
 

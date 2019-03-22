@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux'
 
-import { colors } from './colors'
+import { colors } from './colors/index'
 import { scenes } from './scenes'
 import { lp } from './live-palette-reducer'
 

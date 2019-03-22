@@ -24,8 +24,7 @@ const receiveColors = (colorData: any) => {
       activeRequest: false,
       colors: colorData.colors,
       brights: colorData.brights,
-      sections: colorData.sections,
-      defaultFamily: colorData.defaultFamily
+      sections: colorData.sections
     }
   }
 }

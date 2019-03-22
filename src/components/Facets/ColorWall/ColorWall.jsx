@@ -197,10 +197,10 @@ const mapStateToProps = (state, props) => {
     colors: state.colors.items.colors,
     brights: state.colors.items.brights,
     colorWallActive: state.colors.colorWallActive,
-    families: state.colors.family.families,
-    family: state.colors.family.family,
-    sections: state.colors.family.sections,
-    section: state.colors.family.section,
+    families: state.colors.families,
+    family: state.colors.family,
+    sections: state.colors.sections,
+    section: state.colors.section,
     loading: state.colors.status.loading,
     error: state.colors.status.error
   }
