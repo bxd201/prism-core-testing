@@ -10,6 +10,10 @@
     "postinstall": "flow-typed install"
   },
   "jest": {
+    "setupFilesAfterEnv": [
+      "<rootDir>__tests__/setup/setupEnzyme.js"
+    ],
+    "snapshotSerializers": ["enzyme-to-json/serializer"],
     "moduleNameMapper": {
       "^constants(.*)$": "<rootDir>/src/constants$1",
       "^variables$": "<rootDir>/src/shared/variables.js",
@@ -72,6 +76,8 @@
     "cross-env": "5.2.0",
     "css-loader": "2.1.0",
     "enzyme": "3.8.0",
+    "enzyme-adapter-react-16": "^1.11.2",
+    "enzyme-to-json": "^3.3.5",
     "eslint": "5.13.0",
     "eslint-config-standard": "12.0.0",
     "eslint-config-standard-react": "7.0.2",
