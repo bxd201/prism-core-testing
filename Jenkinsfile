@@ -265,8 +265,8 @@ pipeline {
         RANCHER_ENV = "prod"
         RANCHER_PROJ = "1a199"
         RANCHER_STACK = "prism-web-prod"
-        API_URL = "https://prism-api.ebus.swaws"
-        WEB_URL = "https://prism-web.ebus.swaws"
+        API_URL = "https://prism-api.sherwin-williams.com"
+        WEB_URL = "https://prism.sherwin-williams.com"
         ELB_NAME= "prism-she-SimpleEL-QG3H7DKM2U0P"
       }
       when {
