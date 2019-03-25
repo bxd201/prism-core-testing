@@ -1,5 +1,69 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`<TintableSceneSVGDefs /> objects SVG filters and masks render 1`] = `
+Array [
+  <filter
+    colorInterpolationFilters="sRGB"
+    filterUnits="objectBoundingBox"
+    height="100%"
+    primitiveUnits="objectBoundingBox"
+    width="100%"
+    x="0"
+    y="0"
+  >
+    <feFlood
+      result="tintHue"
+    />
+    <feImage
+      height="100%"
+      result="highlight-map"
+      width="100%"
+      x="0"
+      y="0"
+    />
+    <feImage
+      height="100%"
+      result="shadow-map"
+      width="100%"
+      x="0"
+      y="0"
+    />
+    <feBlend
+      in="tintHue"
+      in2="highlight-map"
+      mode="screen"
+      result="tint-highlight-blend"
+    />
+    <feBlend
+      in="shadow-map"
+      in2="tint-highlight-blend"
+      mode="multiply"
+      result="finished-tint"
+    />
+    <feBlend
+      in="finished-tint"
+      in2="tintHue"
+      mode="luminosity"
+      result="finished-filter"
+    />
+  </filter>,
+  <mask
+    height="100%"
+    maskUnits="objectBoundingBox"
+    width="100%"
+    x="0"
+    y="0"
+  >
+    <image
+      height="100%"
+      width="100%"
+      x="0"
+      y="0"
+    />
+  </mask>,
+]
+`;
+
 exports[`<TintableSceneSVGDefs /> rooms SVG filters and masks render 1`] = `
 Array [
   <filter
@@ -17,11 +81,25 @@ Array [
       type="matrix"
       values="0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0 1 0 1 0"
     />
+    <feComponentTransfer
+      in="sourceImageInGrayscale"
+      result="adjustedHistogram"
+    >
+      <feFuncR
+        type="table"
+      />
+      <feFuncG
+        type="table"
+      />
+      <feFuncB
+        type="table"
+      />
+    </feComponentTransfer>
     <feFlood
       result="tintHue"
     />
     <feBlend
-      in="sourceImageInGrayscale"
+      in="adjustedHistogram"
       in2="tintHue"
       mode="multiply"
     />

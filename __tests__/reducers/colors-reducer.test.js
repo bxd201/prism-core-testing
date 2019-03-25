@@ -19,28 +19,14 @@ describe('colors-reducer', () => {
     })
   })
 
-  // TODO: Fix this so it accounts for brights, families, etc.
-  // test('updates items', () => {
-  //   const state = colors(initialState, {
-  //     type: colorActions.RECEIVE_COLORS,
-  //     payload: { colors: [color], loading: false }
-  //   })
-
-  //   expect(state).toEqual({
-  //     ...initialState,
-  //     items: [color], status: { loading: false }
-  //   })
-  // })
-
   test('filters by family', () => {
     const state = colors(initialState, {
       type: colorActions.FILTER_BY_FAMILY,
-      payload: { family: 'Green' }
+      payload: { family: 'green' }
     })
-
     expect(state).toEqual({
       ...initialState,
-      family: 'Green'
+      family: { seekingFamily: 'green' }
     })
   })
 
@@ -64,7 +50,10 @@ describe('colors-reducer', () => {
 
     expect(state).toEqual({
       ...initialState,
-      status: { loading: false },
+      status: {
+        activeRequest: false,
+        error: false,
+        loading: false },
       searchResults: [color]
     })
   })
