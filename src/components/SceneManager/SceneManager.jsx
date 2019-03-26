@@ -2,6 +2,7 @@
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
 import find from 'lodash/find'
+import flattenDeep from 'lodash/flattenDeep'
 import includes from 'lodash/includes'
 import memoizee from 'memoizee'
 import ReactGA from 'react-ga'
@@ -18,6 +19,30 @@ import type { Color } from '../../shared/types/Colors'
 import type { Scene, SceneStatus, Surface, Variant } from '../../shared/types/Scene'
 
 import './SceneManager.scss'
+
+const getThumbnailAssetArrayByScene = memoizee((sceneVariant: Variant, surfaces: Surface[]): string[] => {
+  return flattenDeep([
+    sceneVariant.thumb,
+    surfaces.map(surface => surface.shadows),
+    surfaces.map(surface => surface.mask),
+    surfaces.map(surface => surface.highlights)
+  ])
+})
+
+const getFullSizeAssetArrayByScene = memoizee((scene: Scene): string[] => {
+  return flattenDeep([
+    scene.variants.map((v: Variant) => [
+      v.image,
+      v.thumb,
+      v.surfaces.map((s: Surface) => [
+        s.mask,
+        s.hitArea,
+        s.shadows,
+        s.highlights
+      ])
+    ])
+  ])
+})
 
 type Props = {
   scenes: Scene[],
@@ -155,13 +180,7 @@ class SceneManager extends PureComponent<Props, State> {
                 <div role='presentation'>
                   <ImagePreloader
                     el={TintableScene}
-                    preload={[
-                      sceneVariant.thumb,
-                      surfaces.map(surface => surface.shadows),
-                      surfaces.map(surface => surface.mask),
-                      surfaces.map(surface => surface.hitArea),
-                      surfaces.map(surface => surface.highlights)
-                    ]}
+                    preload={getThumbnailAssetArrayByScene(sceneVariant, surfaces)}
                     interactive={false}
                     width={scene.width}
                     height={scene.height}
@@ -216,14 +235,7 @@ class SceneManager extends PureComponent<Props, State> {
               <div className={`${SceneManager.baseClass}__scene-wrapper`} key={sceneId}>
                 <ImagePreloader
                   el={TintableScene}
-                  preload={[
-                    scene.variants.map((v: Variant) => v.thumb),
-                    scene.variants.map((v: Variant) => v.image),
-                    surfaces.map(surface => surface.mask),
-                    surfaces.map(surface => surface.shadows),
-                    surfaces.map(surface => surface.hitArea),
-                    surfaces.map(surface => surface.highlights)
-                  ]}
+                  preload={getFullSizeAssetArrayByScene(scene)}
                   width={scene.width}
                   height={scene.height}
                   interactive={interactive}
