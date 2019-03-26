@@ -43,7 +43,7 @@ type ComponentProps = {
 
 type Props = StateProps & ComponentProps
 
-class ColorDetails extends PureComponent<Props, State> {
+export class ColorDetails extends PureComponent<Props, State> {
   static baseClass = 'color-info'
 
   toggleSceneDisplayScene: ?RefObject = void (0)
@@ -189,7 +189,7 @@ class ColorDetails extends PureComponent<Props, State> {
     }
   }
 
-  getColorById = function getColorById (colorId) {
+  getColorById = function getColorById (colorId: string) {
     const { colors } = this.props
 
     // check if the colors object has the id
@@ -226,7 +226,7 @@ class ColorDetails extends PureComponent<Props, State> {
     }
   }
 
-  reportTabSwitchToGA = function reportTabSwitchToGA (index) {
+  reportTabSwitchToGA = function reportTabSwitchToGA (index: number) {
     const tabNames = ['View Coord Color Section', 'View Similar Color Section', 'View Color Info Section']
     const tabReportingName = tabNames[index]
 

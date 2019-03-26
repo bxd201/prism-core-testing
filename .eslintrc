@@ -24,6 +24,5 @@
   },
   "env": {
     "jest/globals": true
-  }  
+  }
 }
-
