@@ -105,7 +105,7 @@ class ColorListingPage extends PureComponent<ColorListingPageProps, ColorListing
           <Switch location={location}>
             <Route path='/' exact component={RootRedirect} />
             <Route path={colorWallUrlPattern} component={ColorWallComponent} />
-            <Route path={`${colorDetailsBaseUrl}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`} exact render={ColorDetailsComponent} />
+            <Route path={`${colorDetailsBaseUrl}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`} exact component={ColorDetailsComponent} />
           </Switch>
         </CSSTransition>
       </TransitionGroup>
