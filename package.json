@@ -11,7 +11,7 @@
   },
   "jest": {
     "setupFilesAfterEnv": [
-      "<rootDir>__tests__/setup/setupEnzyme.js"
+      "<rootDir>/setup/setupEnzyme.js"
     ],
     "snapshotSerializers": [
       "enzyme-to-json/serializer"

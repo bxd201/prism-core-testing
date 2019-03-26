@@ -25,15 +25,15 @@ describe('<TintableSceneSVGDefs />', () => {
 
     test('does not respond to shadow and highlight maps', () => {
       const component1 = renderer.create(
-        <TintableSceneSVGDefs type={SCENE_TYPES.ROOM} shadowMap={'shadows'} highlightMap={'highlights'}  />
+        <TintableSceneSVGDefs type={SCENE_TYPES.ROOM} shadowMap={'shadows'} highlightMap={'highlights'} />
       ).toJSON()
 
       const component2 = renderer.create(
-        <TintableSceneSVGDefs type={SCENE_TYPES.ROOM} shadowMap={'other shadows'} highlightMap={'highlights'}  />
+        <TintableSceneSVGDefs type={SCENE_TYPES.ROOM} shadowMap={'other shadows'} highlightMap={'highlights'} />
       ).toJSON()
 
       const component3 = renderer.create(
-        <TintableSceneSVGDefs type={SCENE_TYPES.ROOM} shadowMap={'other shadows'} highlightMap={'other highlights'}  />
+        <TintableSceneSVGDefs type={SCENE_TYPES.ROOM} shadowMap={'other shadows'} highlightMap={'other highlights'} />
       ).toJSON()
 
       expect(component1).toEqual(component2)
@@ -44,7 +44,7 @@ describe('<TintableSceneSVGDefs />', () => {
     test('feFlood is set to filterColor', () => {
       const color = Colors.getColor()
       const component1 = renderer.create(
-        <TintableSceneSVGDefs type={SCENE_TYPES.ROOM} filterColor={color.hex}  />
+        <TintableSceneSVGDefs type={SCENE_TYPES.ROOM} filterColor={color.hex} />
       )
 
       const colorObject = component1.root.findAll((el) => {
@@ -58,22 +58,22 @@ describe('<TintableSceneSVGDefs />', () => {
   describe(`${SCENE_TYPES.OBJECT} SVG filters and masks`, () => {
     test('render', () => {
       const component = renderer.create(
-        <TintableSceneSVGDefs type={SCENE_TYPES.OBJECT}  />
+        <TintableSceneSVGDefs type={SCENE_TYPES.OBJECT} />
       ).toJSON()
-
+      expect(component).toMatchSnapshot()
     })
 
     test('responds to shadow and highlight maps', () => {
       const component1 = renderer.create(
-        <TintableSceneSVGDefs type={SCENE_TYPES.OBJECT} shadowMap={'shadows'} highlightMap={'highlights'}  />
+        <TintableSceneSVGDefs type={SCENE_TYPES.OBJECT} shadowMap={'shadows'} highlightMap={'highlights'} />
       ).toJSON()
 
       const component2 = renderer.create(
-        <TintableSceneSVGDefs type={SCENE_TYPES.OBJECT} shadowMap={'other shadows'} highlightMap={'highlights'}  />
+        <TintableSceneSVGDefs type={SCENE_TYPES.OBJECT} shadowMap={'other shadows'} highlightMap={'highlights'} />
       ).toJSON()
 
       const component3 = renderer.create(
-        <TintableSceneSVGDefs type={SCENE_TYPES.OBJECT} shadowMap={'other shadows'} highlightMap={'other highlights'}  />
+        <TintableSceneSVGDefs type={SCENE_TYPES.OBJECT} shadowMap={'other shadows'} highlightMap={'other highlights'} />
       ).toJSON()
 
       expect(component1).not.toEqual(component2)
@@ -84,7 +84,7 @@ describe('<TintableSceneSVGDefs />', () => {
     test('feFlood is set to filterColor', () => {
       const color = Colors.getColor()
       const component1 = renderer.create(
-        <TintableSceneSVGDefs type={SCENE_TYPES.OBJECT} filterColor={color.hex}  />
+        <TintableSceneSVGDefs type={SCENE_TYPES.OBJECT} filterColor={color.hex} />
       )
 
       const colorObject = component1.root.findAll((el) => {
