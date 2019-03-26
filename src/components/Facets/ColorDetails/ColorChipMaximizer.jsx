@@ -15,7 +15,7 @@ type Props = {
   intl: intlShape
 }
 
-function ColorChipMaximizer ({ color, intl }: Props) {
+export function ColorChipMaximizer ({ color, intl }: Props) {
   const [isMaximized, setMaximized] = useState(null)
   const [liveRegionMessage, setLiveRegionMessage] = useState('')
 

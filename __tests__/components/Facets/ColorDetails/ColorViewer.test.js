@@ -68,6 +68,6 @@ describe('ColorViewer component with data', () => {
 
   it('ColorViewer is rendering rack location', () => {
     const rackLocationHeader = `div.${BASE_CLASS}__expanded-title h3`
-    expect(colorViewer.find(rackLocationHeader).contains(color.storeStripLocator))
+    expect(colorViewer.find(rackLocationHeader).contains(color.storeStripLocator)).toBeTruthy()
   })
 })

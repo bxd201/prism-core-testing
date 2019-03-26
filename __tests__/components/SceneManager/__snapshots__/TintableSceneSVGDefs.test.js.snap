@@ -75,14 +75,8 @@ Array [
     x="0"
     y="0"
   >
-    <feColorMatrix
-      in="SourceGraphic"
-      result="sourceImageInGrayscale"
-      type="matrix"
-      values="0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0 1 0 1 0"
-    />
     <feComponentTransfer
-      in="sourceImageInGrayscale"
+      in="SourceGraphic"
       result="adjustedHistogram"
     >
       <feFuncR
