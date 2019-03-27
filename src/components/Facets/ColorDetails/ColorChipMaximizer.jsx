@@ -89,13 +89,13 @@ function ColorChipMaximizer ({ color, intl }: Props) {
       <div className={SWATCH_SIZE_WRAPPER_CLASSES.join(' ')}>
         <button className={SWATCH_SIZE_TOGGLE_BUTTON_CLASSES.join(' ')} onClick={maximizeChip} ref={maximizeChipBtn}>
           <FontAwesomeIcon className={`${BASE_CLASS}__display-toggles-icon`} icon={['fal', 'expand-alt']} color={contrastingTextColor} size={'2x'} />
-          <div className={`${BASE_CLASS}__scene-toggle-copy`}>
+          <div className={`${BASE_CLASS}__scene-toggle-copy visually-hidden`}>
             <FormattedMessage id='MAXIMIZE_COLOR_SWATCH' />
           </div>
         </button>
         <button className={ALT_SWATCH_SIZE_TOGGLE_BUTTON_CLASSES.join(' ')} onClick={minimizeChip} ref={minimizeChipBtn}>
           <FontAwesomeIcon className={`${BASE_CLASS}__display-toggles-icon`} icon={['fal', 'compress-alt']} color={contrastingTextColor} size={'2x'} />
-          <div className={`${BASE_CLASS}__scene-toggle-copy`}>
+          <div className={`${BASE_CLASS}__scene-toggle-copy visually-hidden`}>
             <FormattedMessage id='RESTORE_COLOR_SWATCH_TO_DEFAULT_SIZE' />
           </div>
         </button>
