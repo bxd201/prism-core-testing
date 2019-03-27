@@ -66,7 +66,7 @@ type State = {
   currentSceneIndex: number
 }
 
-class SceneManager extends PureComponent<Props, State> {
+export class SceneManager extends PureComponent<Props, State> {
   static baseClass = 'prism-scene-manager'
 
   static defaultProps = {
@@ -79,7 +79,7 @@ class SceneManager extends PureComponent<Props, State> {
     currentSceneIndex: 0
   }
 
-  constructor (props) {
+  constructor (props: Props) {
     super(props)
 
     this.handleColorUpdate = this.handleColorUpdate.bind(this)
@@ -91,11 +91,11 @@ class SceneManager extends PureComponent<Props, State> {
     this.props.loadScenes(this.props.type)
   }
 
-  handleColorUpdate = function handleColorUpdate (sceneId, surfaceId, color: Color) {
+  handleColorUpdate = function handleColorUpdate (sceneId: string, surfaceId: string, color: Color) {
     this.props.paintSceneSurface(sceneId, surfaceId, color)
   }
 
-  handleClickSceneToggle = function handleClickSceneToggle (id) {
+  handleClickSceneToggle = function handleClickSceneToggle (id: number) {
     const { activeScenes } = this.props
 
     // if this scene is active...
@@ -112,7 +112,7 @@ class SceneManager extends PureComponent<Props, State> {
     }
   }
 
-  activateScene (id) {
+  activateScene (id: string) {
     const { activeScenes, maxActiveScenes, activateScene, deactivateScene } = this.props
 
     // if active scenes exceed or match max active scenes...
@@ -124,7 +124,7 @@ class SceneManager extends PureComponent<Props, State> {
     activateScene(id)
   }
 
-  deactivateScene (id) {
+  deactivateScene (id: string) {
     const { activeScenes, deactivateScene } = this.props
 
     if (activeScenes.length === 1) {
@@ -156,7 +156,6 @@ class SceneManager extends PureComponent<Props, State> {
           {/* POC scene-switching buttons to demonstrate performance */}
           {scenes.map((scene, index) => {
             const sceneInfo = getSceneInfoById(scene, sceneStatus, scene.id)
-
             if (!sceneInfo) {
               console.warn(`Cannot find scene variant based on id ${scene.id}`)
               return void (0)

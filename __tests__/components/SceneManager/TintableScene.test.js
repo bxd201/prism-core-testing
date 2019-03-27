@@ -8,7 +8,7 @@ import TintableSceneSurface from 'src/components/SceneManager/TintableSceneSurfa
 import { SCENE_TYPES } from 'constants/globals'
 import { shallow } from 'enzyme'
 import * as Colors from '__mocks__/data/color/Colors'
-import { Scenes as surfaces } from '__mocks__/data/scene/Scenes'
+import { surfaces } from '__mocks__/data/scene/Scenes'
 
 const getTintableScene = (props) => {
   let defaultProps = {

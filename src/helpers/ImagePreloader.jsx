@@ -60,6 +60,7 @@ class ImagePreloader extends PureComponent<Props, State> {
       }, 10000)
     }
     // never check if asset is newer -- always based on unique path
+    // $FlowIgnore
     img.validate = 'never'
     // set the source
     img.src = path
