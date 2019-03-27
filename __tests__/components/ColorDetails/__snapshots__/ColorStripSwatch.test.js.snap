@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Coordinary Color Swatch component will pass props correctly snapshot testing 1`] = `
+<li
+  className="color-info__strip-color"
+  style={
+    Object {
+      "backgroundColor": "#ebd1db",
+    }
+  }
+>
+  <button
+    className="color-info__strip-color-info color-info__strip-color-info--active"
+    onClick={[Function]}
+  >
+    <span
+      className="color-info__strip-color-name "
+    >
+      Teaberry
+    </span>
+  </button>
+</li>
+`;
