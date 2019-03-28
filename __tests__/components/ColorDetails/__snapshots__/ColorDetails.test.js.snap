@@ -49,7 +49,7 @@ exports[`Color Details Container Component should rendering correctly it should 
           transform={null}
         />
         <div
-          className="color-info__scene-toggle-copy"
+          className="color-info__scene-toggle-copy visually-hidden"
         >
           <FormattedMessage
             id="DISPLAY_SCENE_PAINTER"
@@ -86,7 +86,7 @@ exports[`Color Details Container Component should rendering correctly it should 
           transform={null}
         />
         <div
-          className="color-info__scene-toggle-copy"
+          className="color-info__scene-toggle-copy visually-hidden"
         >
           <FormattedMessage
             id="HIDE_SCENE_PAINTER"
