@@ -283,9 +283,9 @@ class TintableScene extends PureComponent<Props, State> {
 export default TintableScene
 
 function getFilterId (sceneId: string | number, surfaceId: string | number, suffix?: string) {
-  return `scene${kebabCase(sceneId)}_surface${kebabCase(surfaceId)}_tinter-filter${suffix ? `_${kebabCase(suffix)}` : ''}`
+  return kebabCase(`scene${sceneId}_surface${surfaceId}_tinter-filter${suffix ? `_${suffix}` : ''}`)
 }
 
 function getMaskId (sceneId: string | number, surfaceId: string | number, suffix?: string) {
-  return `scene${kebabCase(sceneId)}_surface${kebabCase(surfaceId)}_object-mask${suffix ? `_${kebabCase(suffix)}` : ''}`
+  return kebabCase(`scene${sceneId}_surface${surfaceId}_object-mask${suffix ? `_${suffix}` : ''}`)
 }

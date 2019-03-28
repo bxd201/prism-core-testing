@@ -14,7 +14,7 @@ exports[`Coordinary Color Swatch component will pass props correctly snapshot te
     onClick={[Function]}
   >
     <span
-      className="color-info__strip-color-name "
+      className="color-info__strip-color-name  "
     >
       Teaberry
     </span>

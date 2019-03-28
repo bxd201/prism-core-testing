@@ -1,5 +1,6 @@
 import React from 'react'
 import renderer from 'react-test-renderer'
+import { shallow } from 'enzyme'
 
 import TintableSceneSVGDefs from 'src/components/SceneManager/TintableSceneSVGDefs'
 import { SCENE_TYPES } from 'constants/globals'
@@ -7,11 +8,8 @@ import * as Colors from '__mocks__/data/color/Colors'
 
 describe('<TintableSceneSVGDefs />', () => {
   test('render empty without provided type', () => {
-    const component = renderer.create(
-      <TintableSceneSVGDefs />
-    ).toJSON()
-
-    expect(component).toEqual(null)
+    const wrapper = shallow(<TintableSceneSVGDefs />)
+    expect(wrapper.find('defs').text()).toBe('')
   })
 
   describe(`${SCENE_TYPES.ROOM} SVG filters and masks`, () => {

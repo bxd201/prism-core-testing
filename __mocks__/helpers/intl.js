@@ -8,11 +8,6 @@
 import React from 'react'
 import { IntlProvider, intlShape } from 'react-intl'
 import { shallow, mount } from 'enzyme'
-import {
-  render
-  //   fireEvent,
-  //   getByTestId
-} from 'react-testing-library'
 
 const messages = require('src/translations/en-US.json') // en.json
 const intlProvider = new IntlProvider({ locale: 'en', messages }, {})
@@ -31,20 +26,9 @@ export const shallowWithIntl = node => {
 
 export default shallowWithIntl
 
-// const renderWithIntl = node => {
-//   return render(nodeWithIntlProp(node), {
-//     context: { intl },
-//     childContextTypes: { intl: intlShape }
-//   })
-//   // return render.create(<IntlProvider locale='en' messages={messages}>{node}</IntlProvider>)
-// }
-
-// export default renderWithIntl
-
 export const mountWithIntl = node => {
-    return mount(nodeWithIntlProp(node), {
-      context: { intl },
-      childContextTypes: { intl: intlShape }
-    })
+  return mount(nodeWithIntlProp(node), {
+    context: { intl },
+    childContextTypes: { intl: intlShape }
+  })
 }
-

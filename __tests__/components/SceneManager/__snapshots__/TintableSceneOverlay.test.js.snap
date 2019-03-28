@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Snapshot Testing component should match snapshot 1`] = `
+<div
+  className="prism-scene-manager__scene__overlay prism-scene-manager__scene__overlay--message"
+>
+  <span
+    className="prism-scene-manager__scene__overlay__content"
+  />
+</div>
+`;
