@@ -38,7 +38,8 @@ module.exports.varValues = {
     transitionTime: 700 // this value is halved in CSS to reduce initial judder caused by component rendering
   },
   scenes: {
-    hitAreaOutlineColor: '255, 0, 255' // RGB value of hit area outline (must be RGB, not hex)
+    hitAreaOutlineColor: '255, 0, 255', // RGB value of hit area outline (must be RGB, not hex)
+    tintTransitionTime: 250
   }
 }
 

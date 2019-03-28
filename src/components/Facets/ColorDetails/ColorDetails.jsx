@@ -115,13 +115,13 @@ export class ColorDetails extends PureComponent<Props, State> {
           <div className='color-detail__info-wrapper'>
             <button className={SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.join(' ')} onClick={this.toggleSceneDisplay} ref={this.toggleSceneDisplayScene}>
               <FontAwesomeIcon className={`${ColorDetails.baseClass}__display-toggles-icon ${ColorDetails.baseClass}__display-toggles-icon--scene`} icon={['fal', 'home']} color={contrastingTextColor} />
-              <div className={`${ColorDetails.baseClass}__scene-toggle-copy`}>
+              <div className={`${ColorDetails.baseClass}__scene-toggle-copy visually-hidden`}>
                 <FormattedMessage id='DISPLAY_SCENE_PAINTER' />
               </div>
             </button>
             <button className={ALT_SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.join(' ')} onClick={this.toggleSceneDisplay} ref={this.toggleSceneHideScene}>
               <FontAwesomeIcon className={`${ColorDetails.baseClass}__display-toggles-icon ${ColorDetails.baseClass}__display-toggles-icon--scene`} icon={['fas', 'home']} color={contrastingTextColor} />
-              <div className={`${ColorDetails.baseClass}__scene-toggle-copy`}>
+              <div className={`${ColorDetails.baseClass}__scene-toggle-copy visually-hidden`}>
                 <FormattedMessage id='HIDE_SCENE_PAINTER' />
               </div>
             </button>

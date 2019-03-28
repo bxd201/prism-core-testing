@@ -63,19 +63,19 @@
       position: absolute;
       top: 0;
       transform: unset;
-      transition: filter #{getVar('colorWall.transitionTime') / 2}ms ease-out #{getVar('colorWall.transitionTime') / 2}ms;
+      transition: opacity #{getVar('colorWall.transitionTime') / 2}ms ease-out #{getVar('colorWall.transitionTime') / 2}ms;
       width: 100%;
       z-index: 0;
-      will-change: filter;
+      will-change: opacity;
     }
 
     &-exit {
-      filter: brightness(1);
+      opacity: 1;
     }
 
     &-exit-active,
     &-exit-done {
-      filter: brightness(.5);
+      opacity: 0;
     }
 
     &-exit-done {

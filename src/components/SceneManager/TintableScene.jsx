@@ -6,7 +6,10 @@ import uniq from 'lodash/uniq'
 import without from 'lodash/without'
 import concat from 'lodash/concat'
 import find from 'lodash/find'
+import kebabCase from 'lodash/kebabCase'
 import { LiveMessage } from 'react-aria-live'
+import { varValues } from 'variables'
+import { TransitionGroup, CSSTransition } from 'react-transition-group'
 
 import type { Color } from '../../shared/types/Colors'
 import type { Surface, SurfaceStatus } from '../../shared/types/Scene'
@@ -45,7 +48,8 @@ type State = {
 class TintableScene extends PureComponent<Props, State> {
   static classNames = {
     base: 'prism-scene-manager__scene',
-    inner: 'prism-scene-manager__scene__inner'
+    inner: 'prism-scene-manager__scene__inner',
+    transition: 'prism-scene-manager__transition'
   }
 
   static defaultProps = {
@@ -54,14 +58,6 @@ class TintableScene extends PureComponent<Props, State> {
     loading: false,
     error: false,
     surfaces: []
-  }
-
-  static getFilterId (sceneId: string | number, surfaceId: string | number, suffix?: string) {
-    return `scene${sceneId}_surface${surfaceId}_tinter-filter${suffix ? `_${suffix}` : ''}`
-  }
-
-  static getMaskId (sceneId: string | number, surfaceId: string | number, suffix?: string) {
-    return `scene${sceneId}_surface${surfaceId}_object-mask${suffix ? `_${suffix}` : ''}`
   }
 
   hitAreaLoadingCount: number = 0
@@ -189,47 +185,60 @@ class TintableScene extends PureComponent<Props, State> {
           {!loading && (
             <Fragment>
               <div className={`${TintableScene.classNames.base}__svg-defs`}>
-                <svg x='0' y='0' width='0' height='0' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlnsXlink='http://www.w3.org/1999/xlink' viewBox={`0 0 ${width} ${height}`}>
-                  <defs>
-                    {surfaces.map((surface, index) => {
-                      const tintColor: ?Color = this.getTintColorBySurface(surface)
-                      if (tintColor) {
-                        return (
+                <TransitionGroup className={`${TintableScene.classNames.transition}__svg-defs`}>
+                  {surfaces.map((surface, index) => {
+                    const tintColor: ?Color = this.getTintColorBySurface(surface)
+                    if (tintColor) {
+                      return (
+                        <CSSTransition
+                          key={`${surface.id}_${tintColor}`}
+                          timeout={varValues.scenes.tintTransitionTime}
+                          mountOnEnter
+                          classNames={`${TintableScene.classNames.transition}__svg-defs__def-`}>
                           <TintableSceneSVGDefs
-                            key={surface.id}
                             type={type}
+                            width={width}
+                            height={height}
                             highlightMap={surface.highlights}
                             shadowMap={surface.shadows}
-                            filterId={TintableScene.getFilterId(instanceId, surface.id)}
+                            filterId={getFilterId(instanceId, surface.id, tintColor.hex)}
                             filterColor={tintColor.hex}
                             filterImageValueCurve={imageValueCurve}
-                            maskId={TintableScene.getMaskId(instanceId, surface.id)}
+                            maskId={getMaskId(instanceId, surface.id, tintColor.hex)}
                             maskImage={surface.mask}
                           />
-                        )
-                      }
-                    })}
-                  </defs>
-                </svg>
+                        </CSSTransition>
+                      )
+                    }
+                  })}
+                </TransitionGroup>
               </div>
 
               <div className={`${TintableScene.classNames.base}__tint-wrapper`}>
                 <img className={`${TintableScene.classNames.base}__natural`} src={background} alt={sceneName} />
-                {surfaces.map((surface: Surface, index) => {
-                  const tintColor: ?Color = this.getTintColorBySurface(surface)
-                  if (tintColor) {
-                    return (
-                      <TintableSceneSurface key={surface.id}
-                        type={type}
-                        image={background}
-                        width={width}
-                        height={height}
-                        maskId={TintableScene.getMaskId(instanceId, surface.id)}
-                        filterId={TintableScene.getFilterId(instanceId, surface.id)}
-                      />
-                    )
-                  }
-                })}
+                <TransitionGroup className={`${TintableScene.classNames.transition}__colors`}>
+                  {surfaces.map((surface: Surface, index) => {
+                    const tintColor: ?Color = this.getTintColorBySurface(surface)
+                    if (tintColor) {
+                      return (
+                        <CSSTransition
+                          key={`${surface.id}_${tintColor}`}
+                          timeout={varValues.scenes.tintTransitionTime}
+                          mountOnEnter
+                          classNames={`${TintableScene.classNames.transition}__colors__color-`}>
+                          <TintableSceneSurface
+                            type={type}
+                            image={background}
+                            width={width}
+                            height={height}
+                            maskId={getMaskId(instanceId, surface.id, tintColor.hex)}
+                            filterId={getFilterId(instanceId, surface.id, tintColor.hex)}
+                          />
+                        </CSSTransition>
+                      )
+                    }
+                  })}
+                </TransitionGroup>
               </div>
 
               <LiveMessage message={`${sceneName} scene has been loaded`} aria-live='polite' />
@@ -272,3 +281,11 @@ class TintableScene extends PureComponent<Props, State> {
 }
 
 export default TintableScene
+
+function getFilterId (sceneId: string | number, surfaceId: string | number, suffix?: string) {
+  return `scene${kebabCase(sceneId)}_surface${kebabCase(surfaceId)}_tinter-filter${suffix ? `_${kebabCase(suffix)}` : ''}`
+}
+
+function getMaskId (sceneId: string | number, surfaceId: string | number, suffix?: string) {
+  return `scene${kebabCase(sceneId)}_surface${kebabCase(surfaceId)}_object-mask${suffix ? `_${kebabCase(suffix)}` : ''}`
+}
