@@ -24,20 +24,20 @@ type State = {
 
 const SEARCH_DELAY = 500
 
-class Search extends PureComponent<Props, State> {
+export class Search extends PureComponent<Props, State> {
   static baseClass = 'prism-search'
 
   state = {
     resultSwatchSize: 175
   }
 
-  constructor (props) {
+  constructor (props: Props) {
     super(props)
 
     this.cellRenderer = this.cellRenderer.bind(this)
   }
 
-  performSearch = debounce(value => {
+  performSearch = debounce((value: string) => {
     this.props.loadSearchResults(value)
   }, SEARCH_DELAY)
 
@@ -45,7 +45,7 @@ class Search extends PureComponent<Props, State> {
     this.performSearch(value)
   }
 
-  handleInput = e => {
+  handleInput = (e: SyntheticInputEvent<HTMLInputElement>) => {
     e.persist()
 
     if (e.target.value.length) {
@@ -53,7 +53,7 @@ class Search extends PureComponent<Props, State> {
     }
   }
 
-  handleSubmit = e => {
+  handleSubmit = (e: SyntheticInputEvent<HTMLInputElement>) => {
     e.preventDefault()
   }
 
