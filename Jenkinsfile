@@ -29,6 +29,7 @@ pipeline {
 
         # Clean up any old image archive files
         rm -rf dist
+        rm -rf flow-typed/npm
 
         # Mount the volumes from Jenkins and run the deploy
         docker run \
