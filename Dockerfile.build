@@ -14,7 +14,6 @@ COPY . /app
 WORKDIR /app
 
 RUN rm -rf dist \
-    && rm -rf flow-typed/npm \
     && mkdir -p dist \
     && chmod +x ci/scripts/entrypoint.build.sh
 
