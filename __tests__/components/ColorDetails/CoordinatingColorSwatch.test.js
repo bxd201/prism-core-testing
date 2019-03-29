@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import { shallow } from 'enzyme'
 import CoordinatingColorSwatch from 'src/components/Facets/ColorDetails/CoordinatingColors/CoordinatingColorSwatch'
 import * as Colors from '__mocks__/data/color/Colors'
@@ -58,7 +59,7 @@ describe(('click event test of color swatch component'), () => {
   it('component should call handclick function', () => {
     const handleClickMock = jest.fn()
     ReactGA.event = handleClickMock
-    wrapper.find('Link').simulate('click')
+    wrapper.find(Link).simulate('click')
     expect(ReactGA.event).toHaveBeenCalled()
   })
 })
