@@ -9,7 +9,7 @@ npm start
 
 ### Deploy
 ```
-npm install
+npm ci
 npm run build
 ```
 Jenkins Build - https://jenkins.ebus.swaws/job/TAG%20Ecomm/job/Prism/

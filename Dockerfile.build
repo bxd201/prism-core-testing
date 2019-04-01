@@ -6,8 +6,7 @@ RUN apt-get update \
     && apt-get upgrade -y \
     && apt-get install \
        git bash python ca-certificates openssl make gcc g++  \
-    && apt-get clean \
-    && npm install node-sass sass-loader
+    && apt-get clean
 
 COPY . /app
 
