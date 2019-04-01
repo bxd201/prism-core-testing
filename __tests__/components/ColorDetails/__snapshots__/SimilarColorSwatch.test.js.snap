@@ -12,6 +12,7 @@ exports[`Color Swatch component will pass props correctly snapshot testing 1`] =
   <Link
     className="color-info__similar-color-info"
     onClick={[Function]}
+    replace={false}
     style={
       Object {
         "backgroundColor": "#ebd1db",
@@ -55,6 +56,7 @@ exports[`Color Swatch component with props as empty array snapshot testing 1`] =
   <Link
     className="color-info__similar-color-info"
     onClick={[Function]}
+    replace={false}
     style={
       Object {
         "backgroundColor": undefined,
