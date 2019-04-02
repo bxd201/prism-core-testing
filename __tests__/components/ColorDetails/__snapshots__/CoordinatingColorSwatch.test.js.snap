@@ -12,6 +12,7 @@ exports[`Coordinary Color Swatch component will pass props correctly snapshot te
   <Link
     className="color-info__color-swatch-link"
     onClick={[Function]}
+    replace={false}
     to="/active/color-detail/2248/sw-6561-teaberry"
   >
     <p
@@ -40,6 +41,7 @@ exports[`Coordinary Color Swatch component with props as empty array snapshot te
   <Link
     className="color-info__color-swatch-link"
     onClick={[Function]}
+    replace={false}
     to="/active/color-detail/-"
   >
     <p
