@@ -5,7 +5,8 @@
   "scripts": {
     "start": "cross-env API_URL=https://dev-prism-api.ebus.swaws WEB_URL=http://localhost:8080 webpack-dev-server --mode development --open --hot --config webpack.dev.js",
     "build": "webpack --config webpack.prod.js",
-    "test": "jest --coverage",
+    "test": "jest --coverage --updateSnapshot",
+    "test:ci": "jest --ci",
     "flow-check": "flow check",
     "test-watch": "jest --watch",
     "postinstall": "flow-typed install"
