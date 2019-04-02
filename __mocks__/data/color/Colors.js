@@ -77913,3 +77913,10 @@ export function getAllColors () {
     }
   }
 }
+
+export function getlpColors () {
+  let lp = {}
+  lp.colors = [getAllColors()['1544'], getAllColors()['2446']]
+  lp.activeColor = [getAllColors()['1544']]
+  return lp
+}

@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`snapshot testing for emptyslot component  emptySlot component should match snapshot 1`] = `
+<div
+  className="prism-live-palette__slot prism-live-palette__slot--empty"
+>
+  <FontAwesomeIcon
+    border={false}
+    className="prism-live-palette__icon"
+    fixedWidth={false}
+    flip={null}
+    icon={
+      Array [
+        "fal",
+        "plus-circle",
+      ]
+    }
+    inverse={false}
+    listItem={false}
+    mask={null}
+    pull={null}
+    pulse={false}
+    rotation={null}
+    size="2x"
+    spin={false}
+    symbol={false}
+    title=""
+    transform={null}
+  />
+</div>
+`;
