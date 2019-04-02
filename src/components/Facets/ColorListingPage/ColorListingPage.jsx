@@ -24,7 +24,7 @@ const colorWallUrlPattern = `${colorWallBaseUrl}(/.*)?`
 
 // barebones component to always take the user to active if they try to access root.
 // not sure if we need this but if we end up using this for TAG & want to retain bookmarks..
-const RootRedirect = () => {
+export const RootRedirect = () => {
   return <Redirect to={colorWallBaseUrl} />
 }
 
@@ -44,7 +44,7 @@ const Configurations = {
 // since the CDP component won't have any color information if we go to it directly, we need to wrap it
 // in the ColorDataWrapper HOC to ensure it has color data prior to rendering it.
 const ColorDetailsWithData = ColorDataWrapper(ColorDetails)
-const ColorDetailsComponent = (props) => {
+export const ColorDetailsComponent = (props) => {
   // need a wrapping element that isn't a Fragment in order to get the transition classes applied to the group
   return (
     <div>
@@ -56,7 +56,7 @@ const ColorDetailsComponent = (props) => {
 
 // overriding the default configuration with updated CW ones to hide the info and add buttons on the swatch
 // also performing manual route matching here
-const ColorWallComponent = (props: Object) => {
+export const ColorWallComponent = (props: Object) => {
   return (
     <ConfigurationContextProvider value={Configurations}>
       <ColorWallRouteComponent {...props} />
@@ -74,7 +74,7 @@ type ColorListingPageState = {
   toWall: boolean
 }
 
-class ColorListingPage extends PureComponent<ColorListingPageProps, ColorListingPageState> {
+export class ColorListingPage extends PureComponent<ColorListingPageProps, ColorListingPageState> {
   state: ColorListingPageState = {
     prevPathname: void (0),
     toDetails: false,
