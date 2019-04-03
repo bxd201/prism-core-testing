@@ -3,6 +3,8 @@ import cloneDeep from 'lodash/cloneDeep'
 
 import type { ColorSetPayload, Color } from '../../../src/shared/types/Colors'
 
+import sampleSize from 'lodash/sampleSize'
+
 export const Colors: ColorSetPayload = {
   'Red': [
     [
@@ -77918,5 +77920,12 @@ export function getlpColors () {
   let lp = {}
   lp.colors = [getAllColors()['1544'], getAllColors()['2446']]
   lp.activeColor = [getAllColors()['1544']]
+  return lp
+}
+
+export function getlpColorsByCount (count = 2) {
+  let lp = {}
+  lp.colors = sampleSize(getAllColors(), count)
+  lp.activeColor = [lp.colors[0]]
   return lp
 }
