@@ -18,28 +18,6 @@ Object.keys(color).filter((el) => {
   }
 })
 
-// rendering test
-describe('Color Swatch component with props as empty array', () => {
-  const wrapper = similarColorSwatch([])
-
-  it('snapshot testing', () => {
-    expect(wrapper).toMatchSnapshot()
-  })
-
-  it('component will be rendering', () => {
-    const colorSwatchExist = wrapper.exists()
-    expect(colorSwatchExist).toEqual(true)
-  })
-
-  it('component will not rendering color data inside of component', () => {
-    wrapper.find('span').forEach((el) => {
-      const colorExist = colors.includes(el.text())
-      expect(colorExist).toEqual(false)
-    })
-    expect(colors.includes(wrapper.find('p').text())).toEqual(false)
-  })
-})
-
 describe('Color Swatch component will pass props correctly', () => {
   const wrapper = similarColorSwatch(color)
 
