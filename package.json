@@ -12,7 +12,9 @@
     "postinstall": "flow-typed install"
   },
   "jest": {
-    "setupFiles": ["jest-canvas-mock"],
+    "setupFiles": [
+      "jest-canvas-mock"
+    ],
     "setupFilesAfterEnv": [
       "<rootDir>/setup/setupEnzyme.js"
     ],
@@ -44,18 +46,18 @@
     "enzyme-adapter-react-16": "1.11.2",
     "immutability-helper": "3.0.0",
     "lodash": "4.17.11",
-    "react": "16.8.5",
+    "react": "16.8.6",
     "react-aria-live": "2.0.4",
-    "react-dnd": "7.4.3",
-    "react-dnd-html5-backend": "7.4.0",
-    "react-dom": "16.8.5",
+    "react-dnd": "7.4.5",
+    "react-dnd-html5-backend": "7.4.4",
+    "react-dom": "16.8.6",
     "react-ga": "2.5.7",
     "react-inlinesvg": "0.8.4",
     "react-intl": "2.8.0",
     "react-redux": "6.0.1",
     "react-router-dom": "5.0.0",
     "react-tabs": "3.0.0",
-    "react-transition-group": "2.7.1",
+    "react-transition-group": "2.8.0",
     "react-virtualized": "9.21.0",
     "redux": "4.0.1",
     "redux-thunk": "2.3.0",
@@ -112,9 +114,9 @@
     "node-sass-utils": "1.1.2",
     "postcss-loader": "3.0.0",
     "postcss-wrapper-loader": "1.0.0",
-    "react-hooks-testing-library": "0.3.7",
-    "react-test-renderer": "16.8.1",
-    "react-testing-library": "6.0.1",
+    "react-hooks-testing-library": "0.4.0",
+    "react-test-renderer": "16.8.6",
+    "react-testing-library": "6.0.4",
     "redux-mock-store": "1.5.3",
     "sass-loader": "7.1.0",
     "sass-math-pow": "0.1.5",
