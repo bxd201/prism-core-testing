@@ -11,6 +11,7 @@ import { LiveMessage } from 'react-aria-live'
 import { varValues } from 'variables'
 import { TransitionGroup, CSSTransition } from 'react-transition-group'
 
+import { ensureFullyQualifiedAssetUrl } from '../../shared/helpers/DataUtils'
 import type { Color } from '../../shared/types/Colors'
 import type { Surface, SurfaceStatus } from '../../shared/types/Scene'
 import TintableSceneHitArea from './TintableSceneHitArea'
@@ -180,6 +181,9 @@ class TintableScene extends PureComponent<Props, State> {
     if (error) {
       content = <TintableSceneOverlay type={TintableSceneOverlay.TYPES.ERROR} message='Error loading scene' />
     } else {
+      // run our background image through here to eliminate relative references
+      const _background = ensureFullyQualifiedAssetUrl(background)
+
       content = (
         <Fragment>
           {!loading && (
@@ -199,13 +203,13 @@ class TintableScene extends PureComponent<Props, State> {
                             type={type}
                             width={width}
                             height={height}
-                            highlightMap={surface.highlights}
-                            shadowMap={surface.shadows}
+                            highlightMap={ensureFullyQualifiedAssetUrl(surface.highlights)}
+                            shadowMap={ensureFullyQualifiedAssetUrl(surface.shadows)}
                             filterId={getFilterId(instanceId, surface.id, tintColor.hex)}
                             filterColor={tintColor.hex}
                             filterImageValueCurve={imageValueCurve}
                             maskId={getMaskId(instanceId, surface.id, tintColor.hex)}
-                            maskImage={surface.mask}
+                            maskImage={ensureFullyQualifiedAssetUrl(surface.mask)}
                           />
                         </CSSTransition>
                       )
@@ -215,7 +219,7 @@ class TintableScene extends PureComponent<Props, State> {
               </div>
 
               <div className={`${TintableScene.classNames.base}__tint-wrapper`}>
-                <img className={`${TintableScene.classNames.base}__natural`} src={background} alt={sceneName} />
+                <img className={`${TintableScene.classNames.base}__natural`} src={_background} alt={sceneName} />
                 <TransitionGroup className={`${TintableScene.classNames.transition}__colors`}>
                   {surfaces.map((surface: Surface, index) => {
                     const tintColor: ?Color = this.getTintColorBySurface(surface)
@@ -228,7 +232,7 @@ class TintableScene extends PureComponent<Props, State> {
                           classNames={`${TintableScene.classNames.transition}__colors__color-`}>
                           <TintableSceneSurface
                             type={type}
-                            image={background}
+                            image={_background}
                             width={width}
                             height={height}
                             maskId={getMaskId(instanceId, surface.id, tintColor.hex)}

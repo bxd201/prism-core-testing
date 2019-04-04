@@ -12,7 +12,6 @@ import { loadScenes, paintSceneSurface, activateScene, deactivateScene, changeSc
 import TintableScene from './TintableScene'
 import SceneVariantSwitch from './SceneVariantSwitch'
 import ImagePreloader from '../../helpers/ImagePreloader'
-import { ensureFullyQualifiedAssetUrl } from '../../shared/helpers/DataUtils'
 import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import type { Color } from '../../shared/types/Colors'
@@ -185,7 +184,7 @@ export class SceneManager extends PureComponent<Props, State> {
                     height={scene.height}
                     type={type}
                     sceneId={scene.id}
-                    background={ensureFullyQualifiedAssetUrl(sceneVariant.thumb)}
+                    background={sceneVariant.thumb}
                     clickToPaintColor={activeColor}
                     onUpdateColor={this.handleColorUpdate}
                     previewColor={previewColor}
@@ -240,7 +239,7 @@ export class SceneManager extends PureComponent<Props, State> {
                   interactive={interactive}
                   type={type}
                   sceneId={sceneId}
-                  background={ensureFullyQualifiedAssetUrl(sceneVariant.image)}
+                  background={sceneVariant.image}
                   clickToPaintColor={activeColor}
                   onUpdateColor={this.handleColorUpdate}
                   previewColor={previewColor}
