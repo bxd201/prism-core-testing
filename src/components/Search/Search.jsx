@@ -7,7 +7,9 @@ import debounce from 'lodash/debounce'
 
 import { loadSearchResults } from '../../store/actions/loadSearchResults'
 import { add } from '../../store/actions/live-palette'
+
 import ColorWallSwatch from '../Facets/ColorWall/ColorWallSwatch/ColorWallSwatch'
+
 import { type Color } from '../../shared/types/Colors'
 
 import './Search.scss'
@@ -78,7 +80,11 @@ export class Search extends PureComponent<Props, State> {
 
     return (
       <div key={key} style={style}>
-        <ColorWallSwatch showContents onAdd={addToLivePalette} color={thisColor} />
+        <ColorWallSwatch
+          showContents
+          color={thisColor}
+          onAdd={addToLivePalette}
+        />
       </div>
     )
   }
@@ -100,27 +106,27 @@ export class Search extends PureComponent<Props, State> {
         {!colors.length
           ? <p>'Enter a color name, number or family in the text field above.'</p>
           : <div className='color-wall-wall'>
-
-            <AutoSizer>
-              {({ height, width }) => {
-                const columnCount = Math.round(width / resultSwatchSize)
-                const rowCount = Math.ceil(colors.length / columnCount)
-                const newSize = width / columnCount
-
-                return (
-                  <Grid
-                    _forceUpdateProp={colors}
-                    cellRenderer={this.cellRenderer}
-                    columnWidth={newSize}
-                    columnCount={columnCount}
-                    height={height}
-                    rowHeight={newSize}
-                    rowCount={rowCount}
-                    width={width}
-                  />
-                )
-              }}
-            </AutoSizer>
+            <section className='color-wall-swatch-list color-wall-swatch-list--show-all'>
+              <AutoSizer>
+                {({ height, width }) => {
+                  const columnCount = Math.round(width / resultSwatchSize)
+                  const rowCount = Math.ceil(colors.length / columnCount)
+                  const newSize = width / columnCount
+                  return (
+                    <Grid
+                      colors={colors}
+                      cellRenderer={this.cellRenderer}
+                      columnWidth={newSize}
+                      columnCount={columnCount}
+                      height={height}
+                      rowHeight={newSize}
+                      rowCount={rowCount}
+                      width={width}
+                    />
+                  )
+                }}
+              </AutoSizer>
+            </section>
           </div>
         }
       </div>
