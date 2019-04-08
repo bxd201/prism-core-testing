@@ -257,10 +257,10 @@ export function doMakeActiveColorById (state: ColorsState, action: ReduxAction) 
           }
         }
       }
-    } else {
-      return getErrorState(state)
     }
   }
+
+  return getErrorState(state)
 }
 
 export function doFilterByFamily (state: ColorsState, action: ReduxAction) {

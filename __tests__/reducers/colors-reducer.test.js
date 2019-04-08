@@ -1,6 +1,7 @@
 import * as colorActions from 'src/store/actions/loadColors'
 import * as searchActions from 'src/store/actions/loadSearchResults'
-import { colors, initialState } from 'src/store/reducers/colors'
+import { initialState } from 'src/store/reducers/colors/colorReducerMethods'
+import { colors } from 'src/store/reducers/colors'
 import * as Colors from '__mocks__/data/color/Colors'
 import kebabCase from 'lodash/kebabCase'
 
@@ -70,7 +71,10 @@ describe('colors-reducer', () => {
 
     expect(state).toEqual({
       ...initialStateWithLoading,
-      seekingColorWallActive: colorId
+      initializeWith: {
+        ...initialStateWithLoading.initializeWith,
+        colorWallActive: colorId
+      }
     })
   })
 
@@ -108,12 +112,17 @@ describe('colors-reducer', () => {
         loading: false
       }
     }
-
     const state = colors(initialStateWithLoadingFalse, {
       type: colorActions.MAKE_ACTIVE_COLOR_BY_ID
     })
 
-    expect(state).toEqual(initialStateWithLoadingFalse)
+    expect(state).toEqual({
+      ...initialStateWithLoadingFalse,
+      status: {
+        ...initialStateWithLoadingFalse.status,
+        error: true
+      }
+    })
   })
 
   test('resets active color', () => {
@@ -150,7 +159,10 @@ describe('colors-reducer', () => {
 
     expect(state).toEqual({
       ...initialState,
-      family: { seekingFamily: 'green' }
+      initializeWith: {
+        ...initialState.initializeWith,
+        family: 'green'
+      }
     })
   })
 
@@ -161,10 +173,7 @@ describe('colors-reducer', () => {
         ...initialState.status,
         loading: false
       },
-      family: {
-        ...initialState.family,
-        families: families
-      }
+      families: families
     }
 
     const state = colors(initialStateWithLoadingFalse, {
@@ -174,11 +183,11 @@ describe('colors-reducer', () => {
 
     const expectedState = {
       ...initialState,
-      family: {
-        ...initialState.family,
-        family: family,
-        families: families,
-        seekingFamily: initialState.family.seekingFamily
+      family: family,
+      families: families,
+      initializeWith: {
+        ...initialState.initializeWith,
+        family: initialState.initializeWith.family
       },
       status: {
         ...initialState.status,
@@ -197,9 +206,9 @@ describe('colors-reducer', () => {
 
     const expectedState = {
       ...initialState,
-      family: {
-        ...initialState.family,
-        seekingSection: kebabCase(section)
+      initializeWith: {
+        ...initialState.initializeWith,
+        section: kebabCase(section)
       }
     }
     expect(state).toEqual(expectedState)
@@ -212,10 +221,7 @@ describe('colors-reducer', () => {
         ...initialState.status,
         loading: false
       },
-      family: {
-        ...initialState.family,
-        structure: structure
-      }
+      structure: structure
     }
 
     const state = colors(initialStateWithLoadingFalse, {
@@ -225,12 +231,9 @@ describe('colors-reducer', () => {
 
     const expectedState = {
       ...initialStateWithLoadingFalse,
-      family: {
-        ...initialStateWithLoadingFalse.family,
-        family: void (0),
-        families: initialStateWithLoadingFalse.family.structure.find(el => el.name === section).families,
-        section: initialStateWithLoadingFalse.family.structure.find(el => el.name === section).name
-      }
+      family: void (0),
+      families: initialStateWithLoadingFalse.structure.find(el => el.name === section).families,
+      section: initialStateWithLoadingFalse.structure.find(el => el.name === section).name
     }
 
     expect(state).toEqual(expectedState)
@@ -244,7 +247,10 @@ describe('colors-reducer', () => {
 
     expect(state).toEqual({
       ...initialState,
-      status: { loading: true }
+      status: {
+        ...initialState.status,
+        loading: true
+      }
     })
   })
 

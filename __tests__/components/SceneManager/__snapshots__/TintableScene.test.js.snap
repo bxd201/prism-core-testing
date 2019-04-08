@@ -26,7 +26,7 @@ exports[`<TintableScene /> matches snapshot of scene with colored surfaces 1`] =
     >
       <img
         className="prism-scene-manager__scene__natural"
-        src="someImageURL"
+        src="https://sherwin.scene7.com/is/image/sw?src=ir{swRender/TEST_SCENE?wid=1311}"
       />
       <TransitionGroup
         childFactory={[Function]}

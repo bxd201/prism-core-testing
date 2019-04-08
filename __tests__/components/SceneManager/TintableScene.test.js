@@ -16,7 +16,7 @@ const getTintableScene = (props) => {
     height: 100,
     sceneId: 1,
     type: SCENE_TYPES.ROOM,
-    background: 'someImageURL'
+    background: 'https://sherwin.scene7.com/is/image/sw?src=ir{swRender/TEST_SCENE?wid=1311}' // fully-qualified image so our snapshots don't change based on env vars
   }
 
   let newProps = Object.assign({}, defaultProps, props)
