@@ -35,7 +35,6 @@ class SherwinColorWall extends PureComponent<Props> {
     super(props)
 
     this.colorFamily = this.colorFamily.bind(this)
-    this.getColorGrid = this.getColorGrid.bind(this)
     this.buildSwatchLink = this.buildSwatchLink.bind(this)
     this.buildSwatchDetailsLink = this.buildSwatchDetailsLink.bind(this)
   }
@@ -48,9 +47,8 @@ class SherwinColorWall extends PureComponent<Props> {
     )
   }
 
-  getColorGrid = memoizee(function getColorGrid (targetFamily: string | void, families: string[] | void): ColorGrid | void {
-    const { colors, brights } = this.props
-
+  // Making this a static method in order to share memoized results among separate instances (especially since new instances are created whenever the user zooms in/out with the same dataset)
+  static getColorGrid = memoizee(function getColorGrid (colors: ColorSetPayload, brights: ColorSetPayload, targetFamily: string | void, families: string[] | void): ColorGrid | void {
     if (!families || families.length === 0) {
       return void (0)
     }
@@ -68,7 +66,7 @@ class SherwinColorWall extends PureComponent<Props> {
     }
 
     return void (0)
-  }, { primitive: true, length: 2 })
+  }, { length: 4 })
 
   buildSwatchDetailsLink = function buildSwatchDetailsLink (color: Color): string {
     return generateColorDetailsPageUrl(color)
@@ -79,8 +77,8 @@ class SherwinColorWall extends PureComponent<Props> {
   }
 
   colorFamily = function colorFamily () {
-    const { family, families, section, activeColor, colorMap, addToLivePalette, loading, error, intl } = this.props
-    const colorsGrid = this.getColorGrid(family, families)
+    const { colors, brights, family, families, section, activeColor, colorMap, addToLivePalette, loading, error, intl } = this.props
+    const colorsGrid = SherwinColorWall.getColorGrid(colors, brights, family, families)
     const translatedMessages = intl.messages
 
     if (loading) {
