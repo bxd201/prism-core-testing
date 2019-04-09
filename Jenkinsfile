@@ -205,7 +205,22 @@ pipeline {
         }
       }
     }
-
+    stage('DEV: QualysScan') {
+      when {
+        branch 'develop'
+      }
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'Qualys_scan_password', usernameVariable: 'QUALYS_SCAN_USER', passwordVariable: 'QUALYS_SCAN_PASS')]) {
+          sh """
+          #!/bin/bash
+          #set -x
+          now=\$(date +"%T")
+          sed -i 's|DEV - prism-core|'"DEV - prism-core \${now}"'|g' ./ci/qualys/QualysPostData_DEV.xml
+          curl -k -u "${QUALYS_SCAN_USER}:${QUALYS_SCAN_PASS}" -H "content-type: text/xml" -X "POST" --data-binary @./ci/qualys/QualysPostData_DEV.xml "https://qualysapi.qualys.com/qps/rest/3.0/launch/was/wasscan"
+          """
+        }
+      }
+    }
     stage('QA deploy') {
       environment {
         VPC = "ebus"
@@ -257,7 +272,22 @@ pipeline {
         }
       }
     }
-
+    stage('QA: QualysScan') {
+      when {
+        branch 'qa'
+      }
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'Qualys_scan_password', usernameVariable: 'QUALYS_SCAN_USER', passwordVariable: 'QUALYS_SCAN_PASS')]) {
+          sh """
+          #!/bin/bash
+          #set -x
+          now=\$(date +"%T")
+          sed -i 's|QA - prism-core|'"QA - prism-core \${now}"'|g' ./ci/qualys/QualysPostData_QA.xml
+          curl -k -u "${QUALYS_SCAN_USER}:${QUALYS_SCAN_PASS}" -H "content-type: text/xml" -X "POST" --data-binary @./ci/qualys/QualysPostData_QA.xml "https://qualysapi.qualys.com/qps/rest/3.0/launch/was/wasscan"
+          """
+        }
+      }
+    }
     stage('Prod deploy') {
       environment {
         VPC = "ebus"
