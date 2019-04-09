@@ -12,7 +12,10 @@
     "jest"
   ],
   "globals" : {
-    "Image": false
+    "Image": "readonly",
+    "Blob": "readonly",
+    "Worker": "readonly",
+    "URL": "readonly"
   },
   "rules": {
     "react-hooks/rules-of-hooks": "error",
