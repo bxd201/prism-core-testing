@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`SimilarColors component with props SimilarColors Snapshot with props 1`] = `
+exports[`snapshot test ColorWallSwatchRenderer should match the Snapshot 1`] = `
 <div
   className="color-wall-swatches__swatch"
   role="presentation"
