@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`snapshot test ColorWallSwatchUI should match the Snapshot 1`] = `
+<div
+  className="color-wall-swatches__swatch"
+>
+  <Link
+    className="color-swatch-inner color-swatch-inner--clickable color-swatch-inner--focus"
+    onClick={[Function]}
+    style={
+      Object {
+        "background": "#ebd1db",
+      }
+    }
+    tabIndex={-1}
+    to=""
+  >
+    <span
+      className="visually-hidden"
+    >
+      SW 6561 Teaberry
+    </span>
+  </Link>
+</div>
+`;
