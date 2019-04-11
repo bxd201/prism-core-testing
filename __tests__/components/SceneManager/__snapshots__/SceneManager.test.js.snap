@@ -492,7 +492,7 @@ exports[`snapshot testing should get correct snapshot 1`] = `
         type="rooms"
         width={1311}
       />
-      <day-night-toggle
+      <DayNight
         currentVariant="day"
         onChange={[Function]}
         sceneId={1}

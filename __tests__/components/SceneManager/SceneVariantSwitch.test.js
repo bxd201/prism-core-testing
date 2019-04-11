@@ -2,9 +2,9 @@
 import React from 'react'
 // import { shallow } from 'enzyme'
 import { mountWithIntl } from '__mocks__/helpers/intl'
-import SceneVariantSwitch from 'src/components/SceneManager/SceneVariantSwitch'
+import SceneVariantSwitch, { CLASSES } from 'src/components/SceneManager/SceneVariantSwitch'
 
-const BASE = 'scene-variant-switch-day-night'
+const BASE = CLASSES.BASE
 const NIGHT = `${BASE}--night`
 const labelSelect = `label.${BASE}`
 const inputSelect = `${labelSelect} input`
@@ -43,7 +43,7 @@ describe('SceneVariantSwitch component with props', () => {
   })
 
   it('should render label with class name scene-variant-switch-day-night--night if currentVariant is night', () => {
-    if (sceneVariantSwitch.find('day-night-toggle').prop('currentVariant') === 'night') { expect(sceneVariantSwitch.find(labelNightSelect).exists()).toBe(true) }
+    if (sceneVariantSwitch.find('DayNight').prop('currentVariant') === 'night') { expect(sceneVariantSwitch.find(labelNightSelect).exists()).toBe(true) }
   })
 
   it('should render checkbox', () => {
@@ -55,7 +55,7 @@ describe('SceneVariantSwitch component with props', () => {
   })
 
   it('should render night div with FontAwesomeIcon with class name scene-variant-switch-day-night__wrapper--active', () => {
-    if (sceneVariantSwitch.find('day-night-toggle').prop('currentVariant') === 'night') { expect(sceneVariantSwitch.find(wrapperNightDiv).hasClass(fontAwesomeIconDivActive)).toBe(true) }
+    if (sceneVariantSwitch.find('DayNight').prop('currentVariant') !== 'night') { expect(sceneVariantSwitch.find(wrapperNightDiv).hasClass(fontAwesomeIconDivActive)).toBe(true) }
   })
 })
 

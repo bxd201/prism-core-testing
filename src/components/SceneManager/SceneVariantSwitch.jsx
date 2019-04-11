@@ -15,8 +15,8 @@ type SwitchProps = {
   sceneId: number
 }
 
-const NAME = 'day-night-toggle'
-const CLASSES = {
+export const NAME = 'day-night-toggle'
+export const CLASSES = {
   BASE: 'scene-variant-switch-day-night',
   CHECKBOX: 'visually-hidden',
   WRAPPER: 'scene-variant-switch-day-night__wrapper',
