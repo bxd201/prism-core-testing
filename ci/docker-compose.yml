@@ -59,6 +59,7 @@ services:
       sherwin.meta.ci.rancher_validation: false
       sherwin.meta.ci.tagging: true
       sherwin.meta.ci.qa_regression: false
+      sherwin.meta.ci.shepherd: true
       sherwin.meta.ci.auto_db: n/a
       sherwin.meta.ci.monitoring: false
       sherwin.meta.ci.jenkinsfile: true

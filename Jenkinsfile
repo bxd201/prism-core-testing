@@ -343,6 +343,53 @@ pipeline {
         }
       }
     }
+    stage('Shepherd') {
+      when {  
+        expression { BRANCH_NAME ==~ /^(develop|qa|release)$/ }
+      }
+      agent {
+        docker {
+          image 'docker.cpartdc01.sherwin.com/ecomm/utils/shepherd:latest'
+          args '-u root'
+          reuseNode true
+          alwaysPull true
+        }
+      }
+      environment {
+        DEVELOP_DOMAIN = "https://dev-prism-web.ebus.swaws"
+        QA_DOMAIN = "https://qa-prism-web.ebus.swaws"
+        RELEASE_DOMAIN = "https://prism.sherwin-williams.com"
+
+        LINKS_FILE = "ci/shepherd/links"
+        TRUST_CERT = "true"
+      }
+      steps {
+        sh """
+    
+        if [ "${BRANCH_NAME}" = "develop" ]; then
+            export DOMAIN="${DEVELOP_DOMAIN}"
+        elif [ "${BRANCH_NAME}" = "qa" ]; then
+            export DOMAIN="${QA_DOMAIN}"
+        elif [ "${BRANCH_NAME}" = "release" ]; then
+            export TRUST_CERT='false'
+            export DOMAIN="${RELEASE_DOMAIN}"
+        fi
+
+        shepherd
+        """
+
+        archiveArtifacts artifacts: "report.*", fingerprint: true
+
+        publishHTML([
+            reportDir: "./",
+            reportName: 'Shepherd Report',
+            reportFiles: 'report.html', 
+            allowMissing: false, 
+            alwaysLinkToLastBuild: true, 
+            keepAll: true
+        ])
+      }
+    }
 
   }
   post {
