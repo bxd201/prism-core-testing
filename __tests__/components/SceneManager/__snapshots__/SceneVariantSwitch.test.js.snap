@@ -94,7 +94,7 @@ exports[`SceneVariantSwitch component with props should match snapshot 1`] = `
     }
   }
 >
-  <day-night-toggle
+  <DayNight
     currentVariant="night"
     onChange={[MockFunction]}
     sceneId={1}
@@ -176,6 +176,6 @@ exports[`SceneVariantSwitch component with props should match snapshot 1`] = `
         </div>
       </label>
     </FormattedMessage>
-  </day-night-toggle>
+  </DayNight>
 </IntlProvider>
 `;
