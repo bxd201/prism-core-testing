@@ -378,10 +378,10 @@ pipeline {
         shepherd
         """
 
-        archiveArtifacts artifacts: "report.*", fingerprint: true
+        archiveArtifacts artifacts: "report/report.*", fingerprint: true
 
         publishHTML([
-            reportDir: "./",
+            reportDir: "report",
             reportName: 'Shepherd Report',
             reportFiles: 'report.html', 
             allowMissing: false, 
