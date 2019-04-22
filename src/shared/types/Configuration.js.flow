@@ -1,0 +1,19 @@
+// @flow
+export type Configuration = {
+  colorWall: {
+    bloomRadius: number
+  },
+  theme: {
+    primary: string,
+    secondary: string,
+    warning: string,
+    success: string,
+    danger: string,
+    error: string,
+    grey: string,
+    lightGrey: string,
+    nearBlack: string,
+    black: string,
+    white: string
+  }
+}

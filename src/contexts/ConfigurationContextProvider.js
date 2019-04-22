@@ -1,37 +1,31 @@
 // @flow
-import React, { useState, useEffect } from 'react'
-import axios from 'axios'
+import React, { useEffect } from 'react'
+import { connect } from 'react-redux'
 
-import { CONFIG_ENDPOINT } from 'constants/endpoints'
+import { loadConfiguration } from '../store/actions/configurations'
 
 import CSSVariableApplicator from '../helpers/CSSVariableApplicator'
 
 import ConfigurationContext from './ConfigurationContext'
 
+import type { Configuration } from '../shared/types/Configuration'
+
 type Props = {
   children: any,
-  brand?: string
+  brand?: string,
+  loadConfiguration: Function,
+  configurations: Configuration
 }
 
-function ConfigurationContextProvider ({ children, brand }: Props) {
-  const [configurations, setConfigurations] = useState({ loading: true })
-
+function ConfigurationContextProvider ({ children, brand, loadConfiguration, configurations }: Props) {
   useEffect(() => {
-    axios
-      .get(`${CONFIG_ENDPOINT}/${brand.toLowerCase()}`) // TODO: remove this toLowecase() concat as well, maybe.
-      .then(r => r.data)
-      .then(config => {
-        setConfigurations(config)
-      })
-      .catch(err => {
-        console.log(`There was an error loading the configuration for ${brand}.`, err)
-      })
+    loadConfiguration(brand)
   }, [])
 
   // TODO: if we want, we can render a loader here or something
-  if (configurations.loading) {
-    return null
-  }
+  // if (configurations.loadingConfiguration) {
+  //   return null
+  // }
 
   // construct the theme object with expliciteness
   const theme = {
@@ -57,4 +51,20 @@ function ConfigurationContextProvider ({ children, brand }: Props) {
   )
 }
 
-export default ConfigurationContextProvider
+const mapStateToProps = (state, props) => {
+  const { configurations } = state
+
+  return {
+    configurations
+  }
+}
+
+const mapDispatchToProps = (dispatch: Function) => {
+  return {
+    loadConfiguration: (brandId) => {
+      dispatch(loadConfiguration(brandId))
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ConfigurationContextProvider)
