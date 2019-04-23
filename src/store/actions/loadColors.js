@@ -86,12 +86,11 @@ export const makeActiveColorById = (id: string) => {
 }
 
 // TODO: Make this method configurable via options on call so specific color wall implementations can reuse it to load their colors
-export const loadColors = (options?: any) => {
+export const loadColors = (brandId: string, options?: any) => {
   return (dispatch: Function, getState: Function) => {
-    // const { brandId } = getState().configurations
-    const COLOR_CHUNKS = generateBrandedEndpoint(COLOR_CHUNKS_ENDPOINT, 'sherwin', options)
-    const BRIGHTS_ENDPOINT = generateBrandedEndpoint(COLOR_BRIGHTS_ENDPOINT, 'sherwin', options)
-    const FAMILY_NAMES_ENDPOINT = generateBrandedEndpoint(COLOR_FAMILY_NAMES_ENDPOINT, 'sherwin', options)
+    const COLOR_CHUNKS = generateBrandedEndpoint(COLOR_CHUNKS_ENDPOINT, brandId, options)
+    const BRIGHTS_ENDPOINT = generateBrandedEndpoint(COLOR_BRIGHTS_ENDPOINT, brandId, options)
+    const FAMILY_NAMES_ENDPOINT = generateBrandedEndpoint(COLOR_FAMILY_NAMES_ENDPOINT, brandId, options)
 
     const { items: { colors }, status: { activeRequest } } = getState().colors
 

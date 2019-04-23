@@ -14,7 +14,7 @@ import TintableScene from './TintableScene'
 import SceneVariantSwitch from './SceneVariantSwitch'
 import ImagePreloader from '../../helpers/ImagePreloader'
 import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
-import ConfigurationContext from '../../contexts/ConfigurationContext'
+import ConfigurationContext from '../../contexts/ConfigurationContext/ConfigurationContext'
 
 import type { Color } from '../../shared/types/Colors'
 import type { Scene, SceneStatus, Surface, Variant } from '../../shared/types/Scene'

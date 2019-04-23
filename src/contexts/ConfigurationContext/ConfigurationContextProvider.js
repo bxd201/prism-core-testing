@@ -1,18 +1,19 @@
 // @flow
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
+import toLower from 'lodash/toLower'
 
-import { loadConfiguration } from '../store/actions/configurations'
+import { loadConfiguration } from '../../store/actions/configurations'
 
-import CSSVariableApplicator from '../helpers/CSSVariableApplicator'
+import CSSVariableApplicator from '../../helpers/CSSVariableApplicator'
 
 import ConfigurationContext from './ConfigurationContext'
 
-import type { Configuration } from '../shared/types/Configuration'
+import type { Configuration } from '../../shared/types/Configuration'
 
 type Props = {
   children: any,
-  brand?: string,
+  brand: string,
   loadConfiguration: Function,
   configurations: Configuration
 }
@@ -42,8 +43,16 @@ function ConfigurationContextProvider ({ children, brand, loadConfiguration, con
     'prism-color-white': configurations.theme.white
   }
 
+  // add brand to the configuration object
+  // TODO: remove this when we have moved the data around in the database to be returned by the brandId
+  const brandId = (toLower(brand) === 'sw-ca') ? 'sherwin' : toLower(brand)
+  const config = {
+    brandId,
+    ...configurations
+  }
+
   return (
-    <ConfigurationContext.Provider value={configurations}>
+    <ConfigurationContext.Provider value={config}>
       <CSSVariableApplicator variables={theme}>
         {children}
       </CSSVariableApplicator>

@@ -13,9 +13,10 @@ import { compareKebabs } from '../../../shared/helpers/StringUtils'
 import CircleLoader from '../../Loaders/CircleLoader/CircleLoader'
 import ColorWallSwatchList from './ColorWallSwatchList'
 import GenericMessage from '../../Messages/GenericMessage'
-import ConfigurationContext from '../../../contexts/ConfigurationContext'
+import WithConfigurationContext from '../../../contexts/ConfigurationContext/WithConfigurationContext'
 
 import type { ColorSetPayload, ColorMap, Color, ColorGrid } from '../../../shared/types/Colors'
+import type { Configuration } from '../../../shared/types/Configuration'
 
 type Props = {
   colors: ColorSetPayload,
@@ -28,7 +29,8 @@ type Props = {
   error: boolean,
   family?: string,
   section?: string,
-  families?: string[]
+  families?: string[],
+  config: Configuration
 }
 
 class SherwinColorWall extends PureComponent<Props> {
@@ -78,7 +80,7 @@ class SherwinColorWall extends PureComponent<Props> {
   }
 
   colorFamily = function colorFamily () {
-    const { colors, brights, family, families, section, activeColor, colorMap, addToLivePalette, loading, error, intl } = this.props
+    const { colors, brights, family, families, section, activeColor, colorMap, addToLivePalette, loading, error, intl, config } = this.props
     const colorsGrid = SherwinColorWall.getColorGrid(colors, brights, family, families)
     const translatedMessages = intl.messages
 
@@ -103,39 +105,35 @@ class SherwinColorWall extends PureComponent<Props> {
     }
 
     return (
-      <ConfigurationContext.Consumer>
-        {config => (
-          <React.Fragment>
-            <ColorWallSwatchList
-              showAll={!activeColor}
-              immediateSelectionOnActivation={!activeColor}
-              activeColor={activeColor}
-              section={section}
-              family={family}
-              bloomRadius={config.colorWall.bloomRadius} // TODO: demo purposes, maybe we want to change this
-              onAddColor={addToLivePalette}
-              colorMap={colorMap}
-              swatchLinkGenerator={this.buildSwatchLink}
-              swatchDetailsLinkGenerator={this.buildSwatchDetailsLink}
-              minCellSize={activeColor ? 50 : 15}
-              maxCellSize={activeColor ? 50 : 25}
-              colors={colorsGrid}
-              // colorGrid is being used as a key here so the whole component reinitializes when color set changes
-              key={colorsGrid} />
+      <React.Fragment>
+        <ColorWallSwatchList
+          showAll={!activeColor}
+          immediateSelectionOnActivation={!activeColor}
+          activeColor={activeColor}
+          section={section}
+          family={family}
+          bloomRadius={config.colorWall.bloomRadius} // TODO: demo purposes, maybe we want to change this
+          onAddColor={addToLivePalette}
+          colorMap={colorMap}
+          swatchLinkGenerator={this.buildSwatchLink}
+          swatchDetailsLinkGenerator={this.buildSwatchDetailsLink}
+          minCellSize={activeColor ? 50 : 15}
+          maxCellSize={activeColor ? 50 : 25}
+          colors={colorsGrid}
+          // colorGrid is being used as a key here so the whole component reinitializes when color set changes
+          key={colorsGrid} />
 
-            {activeColor && (
-              <div className='color-wall-wall__btns'>
-                <Link to={generateColorWallPageUrl(section, family)} className='color-wall-wall__btns__btn' title={translatedMessages.ZOOM_OUT}>
-                  <FontAwesomeIcon icon='search-minus' size='lg' />
-                  <span className='visually-hidden'><FormattedMessage id='ZOOM_OUT' /></span>
-                </Link>
-              </div>
-            )}
-          </React.Fragment>
+        {activeColor && (
+          <div className='color-wall-wall__btns'>
+            <Link to={generateColorWallPageUrl(section, family)} className='color-wall-wall__btns__btn' title={translatedMessages.ZOOM_OUT}>
+              <FontAwesomeIcon icon='search-minus' size='lg' />
+              <span className='visually-hidden'><FormattedMessage id='ZOOM_OUT' /></span>
+            </Link>
+          </div>
         )}
-      </ConfigurationContext.Consumer>
+      </React.Fragment>
     )
   }
 }
 
-export default injectIntl(SherwinColorWall)
+export default injectIntl(WithConfigurationContext(SherwinColorWall))

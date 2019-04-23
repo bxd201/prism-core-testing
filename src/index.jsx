@@ -11,7 +11,7 @@ import { LiveAnnouncer } from 'react-aria-live'
 
 import { GOOGLE_ANALYTICS_UID } from './constants/globals'
 
-import ConfigurationContextProvider from './contexts/ConfigurationContextProvider'
+import ConfigurationContextProvider from './contexts/ConfigurationContext/ConfigurationContextProvider'
 
 // global sass import -- keep this BEFORE the APPS import to maintain compiled CSS order
 import './scss/main.scss'
