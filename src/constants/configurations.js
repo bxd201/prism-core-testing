@@ -5,6 +5,7 @@ export const LP_MAX_COLORS_ALLOWED = 8
 
 // default configuration object if no configuration is loaded or if the network is slow
 export const DEFAULT_CONFIGURATION = {
+  ga_dimension_id: 'defaultPrismWebsite',
   colorWall: {
     bloomRadius: 2
   },
