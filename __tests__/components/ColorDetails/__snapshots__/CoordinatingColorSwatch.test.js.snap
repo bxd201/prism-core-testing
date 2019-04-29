@@ -12,7 +12,6 @@ exports[`Coordinary Color Swatch component will pass props correctly snapshot te
   <Link
     className="color-info__color-swatch-link"
     onClick={[Function]}
-    replace={false}
     to="/active/color-detail/2248/sw-6561-teaberry"
   >
     <p
@@ -25,33 +24,6 @@ exports[`Coordinary Color Swatch component will pass props correctly snapshot te
     >
       Teaberry
     </p>
-  </Link>
-</li>
-`;
-
-exports[`Coordinary Color Swatch component with props as empty array snapshot testing 1`] = `
-<li
-  className="color-info__coord-color "
-  style={
-    Object {
-      "backgroundColor": undefined,
-    }
-  }
->
-  <Link
-    className="color-info__color-swatch-link"
-    onClick={[Function]}
-    replace={false}
-    to="/active/color-detail/-"
-  >
-    <p
-      className="color-info__coord-color-number"
-    >
-      undefined undefined
-    </p>
-    <p
-      className="color-info__coord-color-name"
-    />
   </Link>
 </li>
 `;

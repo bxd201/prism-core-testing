@@ -15,25 +15,23 @@ exports[`<TintableScene /> matches snapshot of scene with colored surfaces 1`] =
     <div
       className="prism-scene-manager__scene__svg-defs"
     >
-      <svg
-        height="0"
-        version="1.1"
-        viewBox="0 0 100 100"
-        width="0"
-        x="0"
-        xmlns="http://www.w3.org/2000/svg"
-        xmlnsXlink="http://www.w3.org/1999/xlink"
-        y="0"
-      >
-        <defs />
-      </svg>
+      <TransitionGroup
+        childFactory={[Function]}
+        className="prism-scene-manager__transition__svg-defs"
+        component="div"
+      />
     </div>
     <div
       className="prism-scene-manager__scene__tint-wrapper"
     >
       <img
         className="prism-scene-manager__scene__natural"
-        src="someImageURL"
+        src="https://sherwin.scene7.com/is/image/sw?src=ir{swRender/TEST_SCENE?wid=1311}"
+      />
+      <TransitionGroup
+        childFactory={[Function]}
+        className="prism-scene-manager__transition__colors"
+        component="div"
       />
     </div>
     <LiveMessage

@@ -10,12 +10,12 @@ exports[`ColorViewer component with data ColorViewer Snapshot with data 1`] = `
     <span
       className="color-info__number"
     >
-      SW 6568 
+      SW 6561 
     </span>
     <span
       className="color-info__name"
     >
-      Lighthearted Pink
+      Teaberry
     </span>
   </h1>
   <h2
@@ -39,7 +39,7 @@ exports[`ColorViewer component with data ColorViewer Snapshot with data 1`] = `
       values={Object {}}
     />
     : 
-    103-C1
+    102-C1
   </h3>
 </div>
 `;

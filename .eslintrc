@@ -12,7 +12,10 @@
     "jest"
   ],
   "globals" : {
-    "Image": false
+    "Image": "readonly",
+    "Blob": "readonly",
+    "Worker": "readonly",
+    "URL": "readonly"
   },
   "rules": {
     "react-hooks/rules-of-hooks": "error",
@@ -20,7 +23,8 @@
     "jest/no-focused-tests": "error",
     "jest/no-identical-title": "error",
     "jest/prefer-to-have-length": "warn",
-    "jest/valid-expect": "error"
+    "jest/valid-expect": "error",
+    "no-fallthrough": "off"
   },
   "env": {
     "jest/globals": true

@@ -12,7 +12,6 @@ exports[`Color Swatch component will pass props correctly snapshot testing 1`] =
   <Link
     className="color-info__similar-color-info"
     onClick={[Function]}
-    replace={false}
     style={
       Object {
         "backgroundColor": "#ebd1db",
@@ -39,44 +38,6 @@ exports[`Color Swatch component will pass props correctly snapshot testing 1`] =
       >
         Teaberry
       </p>
-    </div>
-  </Link>
-</li>
-`;
-
-exports[`Color Swatch component with props as empty array snapshot testing 1`] = `
-<li
-  className="color-info__similar-color"
-  style={
-    Object {
-      "backgroundColor": undefined,
-    }
-  }
->
-  <Link
-    className="color-info__similar-color-info"
-    onClick={[Function]}
-    replace={false}
-    style={
-      Object {
-        "backgroundColor": undefined,
-      }
-    }
-    to="/active/color-detail/-"
-  >
-    <div
-      className="color-info__similar-color-info-wrapper"
-    >
-      <span
-        className="color-info__similar-color-brand-key"
-      />
-       
-      <span
-        className="color-info__similar-color-number"
-      />
-      <p
-        className="color-info__similar-color-name"
-      />
     </div>
   </Link>
 </li>

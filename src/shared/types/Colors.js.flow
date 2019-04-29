@@ -14,6 +14,7 @@ export type Color = Object & {
     whiteColorId: number
   },
   cssrgb: string,
+  storeStripLocator: string,
   description: Array<string>,
   green: number,
   hex: string,

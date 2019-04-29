@@ -1,0 +1,38 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ColorListingPage should match snapshot 1`] = `
+<TransitionGroup
+  childFactory={[Function]}
+  className="color-wall-transitioner"
+  component="div"
+>
+  <CSSTransition
+    classNames="cdp-slide"
+    key=""
+    timeout={840}
+  >
+    <Switch
+      location={
+        Object {
+          "pathname": "/",
+        }
+      }
+    >
+      <Route
+        component={[Function]}
+        exact={true}
+        path="/"
+      />
+      <Route
+        component={[Function]}
+        path="/active/color-wall(/.*)?"
+      />
+      <Route
+        component={[Function]}
+        exact={true}
+        path="/active/color-detail/:colorId/:colorSEO"
+      />
+    </Switch>
+  </CSSTransition>
+</TransitionGroup>
+`;

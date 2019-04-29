@@ -1,17 +1,23 @@
 // @flow
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import isUndefined from 'lodash/isUndefined'
+
 import { filterByFamily, filterBySection, makeActiveColorById, resetActiveColor } from '../../../store/actions/loadColors'
 import { compareKebabs } from '../../../shared/helpers/StringUtils'
 import type { Color } from '../../../shared/types/Colors'
 import { ROUTE_PARAM_NAMES } from 'constants/globals'
 
 import ColorWall from './ColorWall'
+import ColorWallContext from './ColorWallContext'
 
 type StateProps = {
   family?: string,
   section?: string,
-  color?: Color
+  color?: Color,
+  displayDetailsLink?: boolean,
+  displayInfoButton?: boolean,
+  displayAddButton?: boolean
 }
 
 type DispatchProps = {
@@ -28,7 +34,20 @@ type Props = StateProps & DispatchProps & OwnProps
 
 class ColorWallLocationBuffer extends Component<Props> {
   render () {
-    return <ColorWall />
+    // scaffolding out some ColorWall specific provider values that can be overwritten as need be by any
+    // component using the <ColorWallRouteComponent /> via props
+    const { displayAddButton, displayDetailsLink, displayInfoButton } = this.props
+    const cwProviderValues = {
+      displayDetailsLink: (!isUndefined(displayDetailsLink)) ? displayDetailsLink : false,
+      displayInfoButton: (!isUndefined(displayInfoButton)) ? displayInfoButton : true,
+      displayAddButton: (!isUndefined(displayAddButton)) ? displayAddButton : true
+    }
+
+    return (
+      <ColorWallContext.Provider value={cwProviderValues}>
+        <ColorWall />
+      </ColorWallContext.Provider>
+    )
   }
 
   componentDidMount () {
@@ -86,8 +105,8 @@ class ColorWallLocationBuffer extends Component<Props> {
 const mapStateToProps = (state, props) => {
   return {
     color: state.colors.colorWallActive,
-    family: state.colors.family.family,
-    section: state.colors.family.section
+    family: state.colors.family,
+    section: state.colors.section
   }
 }
 

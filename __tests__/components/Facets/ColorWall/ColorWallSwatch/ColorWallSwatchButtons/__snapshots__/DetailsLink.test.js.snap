@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DetailsLink should match snapshot 1`] = `
+<Link
+  to="/test"
+>
+  <FormattedMessage
+    id="VIEW_DETAILS"
+    values={Object {}}
+  />
+</Link>
+`;
+
+exports[`DetailsLink with config.ColorWall.displayViewDetails undefined should match snapshot 1`] = `""`;

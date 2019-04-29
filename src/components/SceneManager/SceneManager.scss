@@ -306,4 +306,54 @@
       }
     }
   }
+
+  &__transition {
+    &__colors {
+      &__color {
+        $tintFadeTime: getVar('scenes.tintTransitionTime');
+        $tintFadeInDuration: $tintFadeTime / 5 * 3;
+        $tintFadeOutDuration: $tintFadeTime - $tintFadeInDuration;
+        $tintFadeOutDelay: $tintFadeInDuration;
+
+        &--enter {
+          opacity: 0;
+        }
+        &--enter,
+        &--enter-active,
+        &--enter-done {
+          backface-visibility: hidden;
+          z-index: 1;
+
+          animation-name: fadeOpacityIn;
+          animation-fill-mode: both;
+          animation-duration: #{$tintFadeInDuration}ms;
+          animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        &-enter-done {
+          backface-visibility: unset;
+          animation: none;
+        }
+
+        &--exit {
+          z-index: 0;
+        }
+
+        &--exit,
+        &--exit-active,
+        &--exit-done {
+          backface-visibility: hidden;
+
+          animation-name: fadeOpacityOut;
+          animation-fill-mode: both;
+          animation-duration: #{$tintFadeOutDuration}ms;
+          animation-delay: #{$tintFadeOutDelay}ms;
+        }
+
+        &--exit-done {
+          display: none;
+        }
+      }
+    }
+  }
 }

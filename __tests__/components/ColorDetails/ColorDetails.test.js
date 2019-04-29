@@ -6,8 +6,9 @@ import * as Colors from '__mocks__/data/color/Colors'
 // init props of Compoennt
 const color = Colors.getColor()
 const match = { params: { colorId: 'id', router: jest.fn() } }
+const config = { ga_dimension_id: 'sherwinWilliamsDefault' }
 
-const wrapper = shallow(<ColorDetails match={match} colors={color} />)
+const wrapper = shallow(<ColorDetails match={match} colors={color} config={config} />)
 
 // Snapshot testing
 describe('Color Details Container Component should rendering correctly', () => {

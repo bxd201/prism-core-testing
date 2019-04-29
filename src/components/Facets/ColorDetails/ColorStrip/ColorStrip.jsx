@@ -16,7 +16,7 @@ type Props = RouterProps & {
   color: Color
 }
 
-function ColorStrip ({ colors, color, history }: Props) {
+export function ColorStrip ({ colors, color, history }: Props) {
   const BASE_CLASS = 'color-info'
   const stripLocation = split(color.storeStripLocator, '-')[0]
 

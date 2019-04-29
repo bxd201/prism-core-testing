@@ -8,7 +8,7 @@ import TintableSceneSurface from 'src/components/SceneManager/TintableSceneSurfa
 import { SCENE_TYPES } from 'constants/globals'
 import { shallow } from 'enzyme'
 import * as Colors from '__mocks__/data/color/Colors'
-import { Scenes as surfaces } from '__mocks__/data/scene/Scenes'
+import { surfaces } from '__mocks__/data/scene/Scenes'
 
 const getTintableScene = (props) => {
   let defaultProps = {
@@ -16,7 +16,7 @@ const getTintableScene = (props) => {
     height: 100,
     sceneId: 1,
     type: SCENE_TYPES.ROOM,
-    background: 'someImageURL'
+    background: 'https://sherwin.scene7.com/is/image/sw?src=ir{swRender/TEST_SCENE?wid=1311}' // fully-qualified image so our snapshots don't change based on env vars
   }
 
   let newProps = Object.assign({}, defaultProps, props)

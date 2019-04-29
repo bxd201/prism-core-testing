@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import { shallow } from 'enzyme'
 import CoordinatingColorSwatch from 'src/components/Facets/ColorDetails/CoordinatingColors/CoordinatingColorSwatch'
 import * as Colors from '__mocks__/data/color/Colors'
@@ -10,27 +11,6 @@ let colors = [color.name, `${color.brandKey} ${color.colorNumber}`]
 const coordinatingColorSwatch = (color) => {
   return shallow(<CoordinatingColorSwatch color={color} />)
 }
-
-// rendering test
-describe('Coordinary Color Swatch component with props as empty array', () => {
-  const wrapper = coordinatingColorSwatch([])
-
-  it('snapshot testing', () => {
-    expect(wrapper).toMatchSnapshot()
-  })
-
-  it('component will be rendering', () => {
-    const colorSwatchExist = wrapper.exists()
-    expect(colorSwatchExist).toEqual(true)
-  })
-
-  it('component will not rendering color data inside of component', () => {
-    wrapper.find('p').forEach((el) => {
-      const colorExist = colors.includes(el.text())
-      expect(colorExist).toEqual(false)
-    })
-  })
-})
 
 describe('Coordinary Color Swatch component will pass props correctly', () => {
   const wrapper = coordinatingColorSwatch(color)
@@ -58,7 +38,7 @@ describe(('click event test of color swatch component'), () => {
   it('component should call handclick function', () => {
     const handleClickMock = jest.fn()
     ReactGA.event = handleClickMock
-    wrapper.find('Link').simulate('click')
+    wrapper.find(Link).simulate('click')
     expect(ReactGA.event).toHaveBeenCalled()
   })
 })

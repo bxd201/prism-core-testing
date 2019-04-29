@@ -16,18 +16,23 @@ import ColorStrip from './ColorStrip/ColorStrip'
 import CoordinatingColors from './CoordinatingColors/CoordinatingColors'
 import SimilarColors from './SimilarColors/SimilarColors'
 import SceneManager from '../../SceneManager/SceneManager'
-import type { ColorMap, Color } from '../../../shared/types/Colors'
+import WithConfigurationContext from '../../../contexts/ConfigurationContext/WithConfigurationContext'
 import { ROUTE_PARAM_NAMES } from 'constants/globals'
 
 import { paintAllMainSurfaces } from '../../../store/actions/scenes'
 import { varValues } from 'variables'
+
+import type { ColorMap, Color } from '../../../shared/types/Colors'
+import type { Configuration } from '../../../shared/types/Configuration'
+
 import './ColorDetails.scss'
 
 type StateProps = {
   match: any,
   colors: ColorMap,
   scenesLoaded: boolean,
-  paintAllMainSurfaces: Function
+  paintAllMainSurfaces: Function,
+  config: Configuration
 }
 
 type State = {
@@ -115,13 +120,13 @@ export class ColorDetails extends PureComponent<Props, State> {
           <div className='color-detail__info-wrapper'>
             <button className={SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.join(' ')} onClick={this.toggleSceneDisplay} ref={this.toggleSceneDisplayScene}>
               <FontAwesomeIcon className={`${ColorDetails.baseClass}__display-toggles-icon ${ColorDetails.baseClass}__display-toggles-icon--scene`} icon={['fal', 'home']} color={contrastingTextColor} />
-              <div className={`${ColorDetails.baseClass}__scene-toggle-copy`}>
+              <div className={`${ColorDetails.baseClass}__scene-toggle-copy visually-hidden`}>
                 <FormattedMessage id='DISPLAY_SCENE_PAINTER' />
               </div>
             </button>
             <button className={ALT_SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.join(' ')} onClick={this.toggleSceneDisplay} ref={this.toggleSceneHideScene}>
               <FontAwesomeIcon className={`${ColorDetails.baseClass}__display-toggles-icon ${ColorDetails.baseClass}__display-toggles-icon--scene`} icon={['fas', 'home']} color={contrastingTextColor} />
-              <div className={`${ColorDetails.baseClass}__scene-toggle-copy`}>
+              <div className={`${ColorDetails.baseClass}__scene-toggle-copy visually-hidden`}>
                 <FormattedMessage id='HIDE_SCENE_PAINTER' />
               </div>
             </button>
@@ -170,11 +175,11 @@ export class ColorDetails extends PureComponent<Props, State> {
   }
 
   componentDidMount () {
-    const { match: { params } } = this.props
+    const { match: { params }, config } = this.props
     const color = this.getColorById(params[ROUTE_PARAM_NAMES.COLOR_ID])
 
     if (color) {
-      ReactGA.set({ dimension1: 'sherwinWilliamsCAmainSite' }, ['GAtrackerPRISM'])
+      ReactGA.set({ dimension1: config.ga_dimension_id }, ['GAtrackerPRISM'])
       ReactGA.pageview(`color-detail/${color.brandKey} ${color.colorNumber} - ${color.name}`, ['GAtrackerPRISM'])
     }
   }
@@ -255,4 +260,4 @@ const mapDispatchToProps = (dispatch: Function) => {
   }
 }
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(injectIntl(ColorDetails)))
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(injectIntl(WithConfigurationContext(ColorDetails))))
