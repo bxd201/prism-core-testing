@@ -6,7 +6,7 @@ import compact from 'lodash/compact'
 import isNumber from 'lodash/isNumber'
 import memoizee from 'memoizee'
 import { ZOOMED_VIEW_GRID_PADDING } from '../../../constants/globals'
-import { type ColorIdGrid, type ColorIdLine, type ProbablyColor, type ColorGrid } from '../../../shared/types/Colors'
+import { type ColorIdGrid, type ColorIdLine } from '../../../shared/types/Colors'
 import { type GridBounds } from './ColorWall.flow'
 import { euclideanDistance } from '../../../shared/helpers/GeometryUtils'
 import { getTotalWidthOf2dArray } from '../../../shared/helpers/DataUtils'
@@ -337,21 +337,6 @@ export function overscanIndicesGetter ({
     overscanStopIndex: overscanStopIndex
   }
 }
-
-/**
- * getColorIdGrid
- * @param {ColorGrid} colors - a color grid to convert to a grid of color IDs and blanks
- * @returns {ColorIdGrid}
- */
-export const getColorIdGrid = memoizee(function getColorIdGrid (colors: ColorGrid): ColorIdGrid {
-  return colors.map((moreColors: ProbablyColor[]) => {
-    return moreColors.map((color: any) => {
-      if (color && color.hasOwnProperty('id')) {
-        return color.id
-      }
-    })
-  })
-})
 
 // END EXPORTED FUNCTIONS
 // ---------------------------------------------

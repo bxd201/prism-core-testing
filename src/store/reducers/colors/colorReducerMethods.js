@@ -3,10 +3,11 @@ import find from 'lodash/find'
 import kebabCase from 'lodash/kebabCase'
 import intersection from 'lodash/intersection'
 
-import { convertToColorMap, convertChunkedColorsToClasses } from '../../../shared/helpers/ColorDataUtils'
+import { convertCategorizedColorsToColorMap, convertUnorderedColorsToColorMap, convertUnorderedColorsToClasses, convertCategorizedColorsToClasses, convertCategorizedColorsToIds } from '../../../shared/helpers/ColorDataUtils'
 import { compareKebabs } from '../../../shared/helpers/StringUtils'
 
 import { type ColorsState, type ReduxAction, type Section } from '../../../shared/types/Actions'
+import type { Color } from '../../../shared/types/Colors'
 
 export const initialState: ColorsState = {
   status: {
@@ -46,12 +47,20 @@ export function getErrorState (state: ColorsState) {
 
 export function doReceiveColors (state: ColorsState, action: ReduxAction) {
   // adding toString methods to all Color objects
-  const payloadColors = convertChunkedColorsToClasses(action.payload.colors)
-  const payloadBrights = convertChunkedColorsToClasses(action.payload.brights)
-  const colorMap = { ...convertToColorMap(payloadColors), ...convertToColorMap(payloadBrights) }
+  const payloadColors = convertCategorizedColorsToIds(action.payload.colors)
+  const payloadBrights = convertCategorizedColorsToIds(action.payload.brights)
+  const payloadUnorderedColors = action.payload.unorderedColors.map((c: Color) => c.id)
   const initSection = state.initializeWith.section
   const initFam = state.initializeWith.family
   const initColor = state.initializeWith.colorWallActive
+  // TODO: clean this up? we need to pull ALL the colors in (basically normals + brights, because brights have arbitrarily different IDs)
+  // in order to match all colors back to colorMap, but it's SO ugly and SO redundant.
+  // What is a better solution?
+  const colorMap = {
+    ...convertUnorderedColorsToColorMap(convertUnorderedColorsToClasses(action.payload.unorderedColors)),
+    ...convertCategorizedColorsToColorMap(convertCategorizedColorsToClasses(action.payload.brights)),
+    ...convertCategorizedColorsToColorMap(convertCategorizedColorsToClasses(action.payload.colors))
+  }
 
   const structure = action.payload.sections
   const hasSections = structure && structure.length
@@ -68,6 +77,7 @@ export function doReceiveColors (state: ColorsState, action: ReduxAction) {
     items: {
       colors: payloadColors,
       brights: payloadBrights,
+      unorderedColors: payloadUnorderedColors,
       colorMap
     },
     status: {

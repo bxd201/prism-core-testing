@@ -8,12 +8,12 @@ import { loadColors } from '../store/actions/loadColors'
 import { varValues } from 'variables'
 import WithConfigurationContext from '../contexts/ConfigurationContext/WithConfigurationContext'
 
-import { type ColorSetPayload, type ColorMap } from '../shared/types/Colors'
+import { type CategorizedColorGrid, type ColorMap } from '../shared/types/Colors'
 import type { Configuration } from '../shared/types/Configuration'
 
 type Props = {
-  colors: ColorSetPayload,
-  brights: ColorSetPayload,
+  colors: CategorizedColorGrid,
+  brights: CategorizedColorGrid,
   colorMap: ColorMap,
   loadColors: Function,
   family?: string,

@@ -1,11 +1,11 @@
 // @flow
 import axios from 'axios'
 
-import { COLOR_CHUNKS_ENDPOINT, COLOR_BRIGHTS_ENDPOINT, COLOR_FAMILY_NAMES_ENDPOINT } from '../../constants/endpoints'
+import { COLOR_CHUNKS_ENDPOINT, COLOR_BRIGHTS_ENDPOINT, COLOR_FAMILY_NAMES_ENDPOINT, COLORS_ENDPOINT } from '../../constants/endpoints'
 
 import { generateBrandedEndpoint } from '../../shared/helpers/DataUtils'
 
-import type { Color, FamilyStructure } from '../../shared/types/Colors'
+import { type Color, type FamilyStructure } from '../../shared/types/Colors'
 
 export const REQUEST_COLORS: string = 'REQUEST_COLORS'
 const requestColors = () => {
@@ -25,6 +25,7 @@ const receiveColors = (colorData: any) => {
     payload: {
       loading: false,
       activeRequest: false,
+      unorderedColors: colorData.unorderedColors,
       colors: colorData.colors,
       brights: colorData.brights,
       sections: colorData.sections
@@ -91,6 +92,7 @@ export const loadColors = (brandId: string, options?: any) => {
     const COLOR_CHUNKS = generateBrandedEndpoint(COLOR_CHUNKS_ENDPOINT, brandId, options)
     const BRIGHTS_ENDPOINT = generateBrandedEndpoint(COLOR_BRIGHTS_ENDPOINT, brandId, options)
     const FAMILY_NAMES_ENDPOINT = generateBrandedEndpoint(COLOR_FAMILY_NAMES_ENDPOINT, brandId, options)
+    const ALL_COLORS_ENDPOINT = generateBrandedEndpoint(COLORS_ENDPOINT, brandId, options)
 
     const { items: { colors }, status: { activeRequest } } = getState().colors
 
@@ -106,17 +108,20 @@ export const loadColors = (brandId: string, options?: any) => {
       .all([
         axios.get(COLOR_CHUNKS),
         axios.get(BRIGHTS_ENDPOINT),
-        axios.get(FAMILY_NAMES_ENDPOINT)
+        axios.get(FAMILY_NAMES_ENDPOINT),
+        axios.get(ALL_COLORS_ENDPOINT)
       ])
       .then(r => {
         const colors = r[0].data
         const brights = r[1].data
         const sections: FamilyStructure = r[2].data
+        const unorderedColors = r[3].data
 
         dispatch(receiveColors({
           colors,
           brights,
-          sections
+          sections,
+          unorderedColors
         }))
       })
       .catch(r => {

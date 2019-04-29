@@ -33,21 +33,27 @@ export type Color = Object & {
 }
 
 export type ProbablyColor = Color | BlankColor
-
 export type ColorLine = ProbablyColor[]
 export type ColorGrid = ColorLine[]
 
-export type ColorIdLine = (ColorId | BlankColor)[]
-export type ColorIdGrid = ColorIdLine[]
-
-export type ColorSetPayload = {
+export type CategorizedColorGrid = {
   [ key: string ]: ColorGrid
 }
 
-export type ColorListPayload = Color[]
+export type ColorList = Color[]
+
+export type ProbablyColorId = ColorId | BlankColor
+export type ColorIdLine = ProbablyColorId[]
+export type ColorIdGrid = ColorIdLine[]
+
+export type ColorIdList = ColorId[]
+
+export type CategorizedColorIdGrid = {
+  [ key: string ]: ColorIdGrid
+}
 
 export type ColorMap = {
-  [key: ColorId]: Color
+  [ key: ColorId ]: Color
 }
 
 export type FamilyStructure = {

@@ -1,11 +1,11 @@
 // @flow
 import cloneDeep from 'lodash/cloneDeep'
 
-import type { ColorSetPayload, Color } from '../../../src/shared/types/Colors'
+import type { CategorizedColorGrid, Color } from '../../../src/shared/types/Colors'
 
 import sampleSize from 'lodash/sampleSize'
 
-export const Colors: ColorSetPayload = {
+export const Colors: CategorizedColorGrid = {
   'Red': [
     [
       {
@@ -112,7 +112,7 @@ export const Colors: ColorSetPayload = {
   ]
 }
 
-export function getColors (): ColorSetPayload {
+export function getColors (): CategorizedColorGrid {
   return cloneDeep(Colors)
 }
 

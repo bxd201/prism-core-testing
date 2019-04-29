@@ -1,6 +1,6 @@
 // @flow
 import React from 'react'
 
-const ConfigurationContext = React.createContext()
+const ConfigurationContext: any = React.createContext()
 
 export default ConfigurationContext

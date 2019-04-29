@@ -12,25 +12,27 @@ import { generateColorWallPageUrl } from '../../../shared/helpers/ColorUtils'
 
 import { varValues } from 'variables'
 
-import type { ColorSetPayload, ColorMap, Color } from '../../../shared/types/Colors'
+import type { CategorizedColorGrid, ColorMap, Color } from '../../../shared/types/Colors'
 import type { Configuration } from '../../../shared/types/Configuration'
 
 import { MODE_CLASS_NAMES } from './shared'
-
 import WithConfigurationContext from '../../../contexts/ConfigurationContext/WithConfigurationContext'
-// import StandardColorWall from './StandardColorWall'
+import StandardColorWall from './StandardColorWall'
 import SherwinColorWall from './SherwinColorWall'
+import GenericMessage from '../../Messages/GenericMessage'
+import CircleLoader from '../../Loaders/CircleLoader/CircleLoader'
 
 import './ColorWall.scss'
 
 type StateProps = {
-  colors: ColorSetPayload,
+  colors?: CategorizedColorGrid,
   colorMap: ColorMap,
-  brights: ColorSetPayload,
+  brights?: CategorizedColorGrid,
+  unorderedColors?: string[],
   colorWallActive: Color,
   family: string,
   families?: string[],
-  loading: boolean,
+  loading?: boolean,
   error: boolean,
   section: string,
   sections?: string[]
@@ -76,14 +78,22 @@ class ColorWall extends PureComponent<Props, State> {
 
   render () {
     const { showColorFamilies } = this.state
-    const { colors, family, sections, families, section, brights, colorMap, colorWallActive, loading, error, addToLivePalette } = this.props
+    const { colors, family, sections, families, section, brights, colorMap, colorWallActive, loading, error, addToLivePalette, unorderedColors } = this.props
 
     const hasSections = !!(sections && sections.length)
     const hasFamilies = !!(families && families.length > 1)
     const _showColorFamilies = hasFamilies && (family || showColorFamilies)
     const transKey = colorWallActive ? 'active' : ''
+    // if we have values in colors AND we DO NOT have values in unorderedColors, consider this a categorized color wall
+    const isCategorizedColorWall = (colors && Object.keys(colors).length) && (unorderedColors && unorderedColors.length)
+    const isUnorderedColorWall = (!colors || !Object.keys(colors).length) && (unorderedColors && unorderedColors.length)
+
     let sectionButtons = void (0)
     let familyButtons = void (0)
+
+    if (loading) {
+      return <CircleLoader />
+    }
 
     if (!_showColorFamilies && hasSections) {
       sectionButtons = (
@@ -146,10 +156,6 @@ class ColorWall extends PureComponent<Props, State> {
       )
     }
 
-    // not sure if this is a great way to test if this is a sherwin colorset, but non-sw colors should come in as a flat array
-    // but, sherwin colors will come in broken out by color families. If so, we'll just return the sherwin color family component
-    // for now until we determine a better solution for handling that.
-    // const isSherwinColorWall = isPlainObject(colors)
     return (
       <div>
         <div className={MODE_CLASS_NAMES.BASE}>
@@ -163,28 +169,41 @@ class ColorWall extends PureComponent<Props, State> {
             unmountOnExit
             mountOnEnter
             classNames={transKey ? 'color-wall-zoom-transitioner__zoom-in color-wall-zoom-transitioner__zoom-in-' : 'color-wall-zoom-transitioner__zoom-out color-wall-zoom-transitioner__zoom-out-'}>
-            <SherwinColorWall
-              family={family}
-              families={families}
-              section={section}
-              colors={colors}
-              brights={brights}
-              colorMap={colorMap}
-              activeColor={colorWallActive}
-              addToLivePalette={addToLivePalette}
-              loading={loading}
-              error={error} />
+            {() => {
+              if (isCategorizedColorWall) {
+                return <SherwinColorWall
+                  family={family}
+                  families={families}
+                  section={section}
+                  colors={colors}
+                  brights={brights}
+                  colorMap={colorMap}
+                  activeColor={colorWallActive}
+                  addToLivePalette={addToLivePalette}
+                  loading={loading}
+                  error={error} />
+              } else if (isUnorderedColorWall) {
+                return <StandardColorWall
+                  family={family}
+                  families={families}
+                  section={section}
+                  // $FlowIgnore -- flow doesn't realize unorderedColors IS defined at this point due to our check conditions
+                  colors={unorderedColors}
+                  colorMap={colorMap}
+                  activeColor={colorWallActive}
+                  addToLivePalette={addToLivePalette}
+                  loading={loading}
+                  error={error} />
+              }
+
+              return <GenericMessage type={GenericMessage.TYPES.ERROR}>
+                <FormattedMessage id='NO_COLORS_AVAILABLE' />
+              </GenericMessage>
+            }}
           </CSSTransition>
         </TransitionGroup>
       </div>
     )
-
-    // TODO: Add standard (non-chunked) color functionality back into ColorWall
-    // return (
-    //   <div className='standard-colorwall'>
-    //     <StandardColorWall family={'all'} colors={colors} />
-    //   </div>
-    // )
   }
 
   toggleViewFamilies = function toggleViewFamilies (setTo?: boolean) {
@@ -202,6 +221,7 @@ const mapStateToProps = (state, props) => {
     colorMap: state.colors.items.colorMap,
     colors: state.colors.items.colors,
     brights: state.colors.items.brights,
+    unorderedColors: state.colors.items.unorderedColors,
     colorWallActive: state.colors.colorWallActive,
     families: state.colors.families,
     family: state.colors.family,
