@@ -1,0 +1,22 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`snapshot test ColorWallSwatch should match the Snapshot 1`] = `
+<div
+  className="color-wall-swatches__swatch"
+>
+  <div
+    className="color-swatch-inner color-swatch-inner--dynamic "
+    style={
+      Object {
+        "background": "#ebd1db",
+      }
+    }
+  >
+    <span
+      className="visually-hidden"
+    >
+      SW 6561 Teaberry
+    </span>
+  </div>
+</div>
+`;
