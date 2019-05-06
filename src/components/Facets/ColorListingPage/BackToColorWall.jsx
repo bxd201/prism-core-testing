@@ -18,7 +18,7 @@ type OwnProps = {}
 
 type Props = StateProps & OwnProps
 
-export function BackToColorWall ({ color, family, section }: Props) {
+function BackToColorWall ({ color, family, section }: Props) {
   // this will degrade gracefully if section and/or family and or color do(es) not exist in redux down to the root color wall URL
   const colorWallUrl = color
     ? generateColorWallPageUrl(section, family, color.id, fullColorName(color.brandKey, color.colorNumber, color.name))
@@ -44,8 +44,8 @@ export function BackToColorWall ({ color, family, section }: Props) {
 
 const mapStateToProps = (state, props) => {
   return {
-    family: state.colors.family,
-    section: state.colors.section,
+    family: state.colors.family.family,
+    section: state.colors.family.section,
     color: state.colors.colorWallActive
   }
 }

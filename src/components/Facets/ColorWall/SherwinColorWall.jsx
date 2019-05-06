@@ -2,21 +2,19 @@
 import React, { PureComponent } from 'react'
 import memoizee from 'memoizee'
 import { Link } from 'react-router-dom'
-import { injectIntl, FormattedMessage, type intlShape } from 'react-intl'
 
 import { BLANK_SWATCH, SW_CHUNK_SIZE } from 'constants/globals'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { convertColorSetsToGrid } from '../../../shared/helpers/ColorDataUtils'
 import { generateColorWallPageUrl, generateColorDetailsPageUrl, fullColorName } from '../../../shared/helpers/ColorUtils'
 import { compareKebabs } from '../../../shared/helpers/StringUtils'
+import { injectIntl, FormattedMessage, type intlShape } from 'react-intl'
 
 import CircleLoader from '../../Loaders/CircleLoader/CircleLoader'
 import ColorWallSwatchList from './ColorWallSwatchList'
 import GenericMessage from '../../Messages/GenericMessage'
-import WithConfigurationContext from '../../../contexts/ConfigurationContext/WithConfigurationContext'
 
 import type { ColorSetPayload, ColorMap, Color, ColorGrid } from '../../../shared/types/Colors'
-import type { Configuration } from '../../../shared/types/Configuration'
 
 type Props = {
   colors: ColorSetPayload,
@@ -29,8 +27,7 @@ type Props = {
   error: boolean,
   family?: string,
   section?: string,
-  families?: string[],
-  config: Configuration
+  families?: string[]
 }
 
 class SherwinColorWall extends PureComponent<Props> {
@@ -38,6 +35,7 @@ class SherwinColorWall extends PureComponent<Props> {
     super(props)
 
     this.colorFamily = this.colorFamily.bind(this)
+    this.getColorGrid = this.getColorGrid.bind(this)
     this.buildSwatchLink = this.buildSwatchLink.bind(this)
     this.buildSwatchDetailsLink = this.buildSwatchDetailsLink.bind(this)
   }
@@ -50,8 +48,9 @@ class SherwinColorWall extends PureComponent<Props> {
     )
   }
 
-  // Making this a static method in order to share memoized results among separate instances (especially since new instances are created whenever the user zooms in/out with the same dataset)
-  static getColorGrid = memoizee(function getColorGrid (colors: ColorSetPayload, brights: ColorSetPayload, targetFamily: string | void, families: string[] | void): ColorGrid | void {
+  getColorGrid = memoizee(function getColorGrid (targetFamily: string | void, families: string[] | void): ColorGrid | void {
+    const { colors, brights } = this.props
+
     if (!families || families.length === 0) {
       return void (0)
     }
@@ -69,7 +68,7 @@ class SherwinColorWall extends PureComponent<Props> {
     }
 
     return void (0)
-  }, { length: 4 })
+  }, { primitive: true, length: 2 })
 
   buildSwatchDetailsLink = function buildSwatchDetailsLink (color: Color): string {
     return generateColorDetailsPageUrl(color)
@@ -80,8 +79,8 @@ class SherwinColorWall extends PureComponent<Props> {
   }
 
   colorFamily = function colorFamily () {
-    const { colors, brights, family, families, section, activeColor, colorMap, addToLivePalette, loading, error, intl, config } = this.props
-    const colorsGrid = SherwinColorWall.getColorGrid(colors, brights, family, families)
+    const { family, families, section, activeColor, colorMap, addToLivePalette, loading, error, intl } = this.props
+    const colorsGrid = this.getColorGrid(family, families)
     const translatedMessages = intl.messages
 
     if (loading) {
@@ -112,7 +111,7 @@ class SherwinColorWall extends PureComponent<Props> {
           activeColor={activeColor}
           section={section}
           family={family}
-          bloomRadius={config.colorWall.bloomRadius} // TODO: demo purposes, maybe we want to change this
+          bloomRadius={2}
           onAddColor={addToLivePalette}
           colorMap={colorMap}
           swatchLinkGenerator={this.buildSwatchLink}
@@ -136,4 +135,4 @@ class SherwinColorWall extends PureComponent<Props> {
   }
 }
 
-export default injectIntl(WithConfigurationContext(SherwinColorWall))
+export default injectIntl(SherwinColorWall)

@@ -4,7 +4,7 @@ import { withRouter } from 'react-router-dom'
 
 import './PrismNav.scss'
 
-export class PrismNav extends PureComponent {
+class PrismNav extends PureComponent {
   constructor (props) {
     super(props)
   }

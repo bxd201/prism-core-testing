@@ -36,7 +36,7 @@ type State = {
   spokenWord: string
 }
 
-export class LivePalette extends PureComponent<Props, State> {
+class LivePalette extends PureComponent<Props, State> {
   state = {
     spokenWord: ''
   }
@@ -45,12 +45,12 @@ export class LivePalette extends PureComponent<Props, State> {
   requestedFrame: number | void
   activeSlotRef: ?RefObject = void (0)
 
-  constructor (props: Props) {
+  constructor (props) {
     super(props)
 
     this.activeSlotRef = React.createRef()
   }
-  // $FlowIgnore
+
   componentDidUpdate (prevProps, prevState) {
     let spokenWord: Array<string> = []
     const prevColor = prevProps.activeColor
@@ -139,11 +139,11 @@ export class LivePalette extends PureComponent<Props, State> {
     )
   }
 
-  activateColor = (color: Color) => {
+  activateColor = (color) => {
     this.props.activateColor(color)
   }
 
-  scheduleUpdate = (updateFn: Function) => {
+  scheduleUpdate = (updateFn) => {
     this.pendingUpdateFn = updateFn
 
     if (!this.requestedFrame) {

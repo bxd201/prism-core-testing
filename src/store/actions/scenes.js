@@ -4,10 +4,7 @@ import isEmpty from 'lodash/isEmpty'
 
 import type { ScenePayload } from '../../shared/types/Scene'
 import type { Color } from '../../shared/types/Colors'
-
-import { generateBrandedEndpoint } from '../../shared/helpers/DataUtils'
-
-import { SCENES_ENDPOINT } from 'constants/endpoints'
+import { SW_SCENES_ENDPOINT } from 'constants/endpoints'
 
 export const REQUEST_SCENES = 'REQUEST_SCENES'
 const requestScenes = () => {
@@ -117,9 +114,6 @@ export const paintAllSceneSurfaces = (color: Color) => {
 export const loadScenes = (type: string) => {
   return (dispatch: Function, getState: Function) => {
     const { sceneCollection, type: oldType } = getState().scenes
-    // const { brandId } = getState().configurations
-    const SCENES_URL = generateBrandedEndpoint(SCENES_ENDPOINT, 'sherwin')
-
     let scenes = !isEmpty(sceneCollection) && !isEmpty(sceneCollection[type]) && sceneCollection[type]
 
     // if we already have scene data...
@@ -143,7 +137,7 @@ export const loadScenes = (type: string) => {
 
     dispatch(requestScenes())
 
-    return axios.get(SCENES_URL)
+    return axios.get(SW_SCENES_ENDPOINT)
       .then(r => r.data)
       .then(data => {
         if (!data[type]) {

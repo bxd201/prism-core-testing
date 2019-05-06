@@ -39,7 +39,7 @@ function collect (connect, monitor) {
   }
 }
 
-export class TintableSceneHitArea extends PureComponent<Props> {
+class TintableSceneHitArea extends PureComponent<Props> {
   static defaultProps = {}
   static classNames = {
     hitArea: 'prism-scene-manager__scene__hit-area',
@@ -48,13 +48,13 @@ export class TintableSceneHitArea extends PureComponent<Props> {
     hitAreaMaskLoader: 'prism-scene-manager__scene__hit-area__mask-loader'
   }
   static maskIdMap = memoizee(path => uniqueId('TSHA'), { length: 1, primitive: true })
-  // $FlowIgnore
+
   constructor (props) {
     super(props)
 
     this.handleClick = this.handleClick.bind(this)
   }
-  // $FlowIgnore
+
   componentDidUpdate (prevProps, prevState) {
     if (prevProps.isOver !== this.props.isOver) {
       if (this.props.isOver) {

@@ -106,9 +106,6 @@ $btn-border-thickness: 1px;
 
   // React Virtualized Grid classes
   .ReactVirtualized__Grid {
-    // override component-injected styles to fix iOS problem =\
-    -webkit-overflow-scrolling: auto !important;
-
     &__innerScrollContainer {
       margin: auto auto;
       overflow: visible !important;

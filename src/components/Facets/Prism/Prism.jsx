@@ -21,13 +21,13 @@ const colorWallUrlPattern = `${colorWallBaseUrl}(/.*)?`
 
 // barebones component to always take the user to active if they try to access root.
 // not sure if we need this but if we end up using this for TAG & want to retain bookmarks..
-export const RootRedirect = () => {
+const RootRedirect = () => {
   return <Redirect to='/active' />
 }
 
 type Props = {}
 
-export class Prism extends Component<Props> {
+class Prism extends Component<Props> {
   render () {
     return (
       <React.Fragment>

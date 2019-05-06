@@ -10,7 +10,7 @@ type Props = {
   sceneSet?: string
 }
 
-export function Tinter ({ sceneSet }: Props) {
+function Tinter ({ sceneSet }: Props) {
   return (
     <React.Fragment>
       <SceneManager type={sceneSet} />

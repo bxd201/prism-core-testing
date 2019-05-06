@@ -6,6 +6,3 @@
 declare var BASE_PATH: string
 declare var API_PATH: string
 declare type RefObject = { current: any }
-declare var postMessage: Function
-declare var self: any
-declare var Worker: Function

@@ -1,5 +1,6 @@
 // @flow
 import React, { PureComponent } from 'react'
+import axios from 'axios'
 import isEmpty from 'lodash/isEmpty'
 import flattenDeep from 'lodash/flattenDeep'
 
@@ -41,29 +42,22 @@ class ImagePreloader extends PureComponent<Props, State> {
   }, reject: {
     using: Function
   }, final: boolean = false) {
-    var img = new Image()
+    axios.get(path)
+      .then(response => {
+        resolve.using(resolve.with)
+      })
+      .catch((err: any) => {
+        if (final) {
+          console.info(`Failed to download ${path}. No more retries available. Error reference:`, err)
+          reject.using(err)
+          return false
+        }
 
-    img.onload = () => {
-      resolve.using(resolve.with)
-    }
-
-    img.onerror = (err) => {
-      if (final) {
-        console.info(`Failed to download ${path}. No more retries available. Error reference:`, err)
-        reject.using(err)
-        return false
-      }
-
-      console.info(`Failed to download ${path}. Retrying download. Error reference:`, err)
-      setTimeout(() => {
-        ImagePreloader.performDownload(path, resolve, reject, true)
-      }, 10000)
-    }
-    // never check if asset is newer -- always based on unique path
-    // $FlowIgnore
-    img.validate = 'never'
-    // set the source
-    img.src = path
+        console.info(`Failed to download ${path}. Retrying download. Error reference:`, err)
+        setTimeout(() => {
+          ImagePreloader.performDownload(path, resolve, reject, true)
+        }, 10000)
+      })
   }
 
   static makePromise = function (path: string): Promise<any> {

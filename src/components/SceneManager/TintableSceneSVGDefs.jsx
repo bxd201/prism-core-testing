@@ -8,8 +8,6 @@ type Props = {
   maskId: string,
   filterId: string,
   type: string,
-  width: number,
-  height: number,
   filterColor?: string,
   highlightMap?: string,
   shadowMap?: string,
@@ -18,15 +16,22 @@ type Props = {
 
 class TintableSceneSurface extends PureComponent<Props> {
   render () {
-    const { width, height, filterId, maskId, maskImage, filterColor, type, highlightMap, shadowMap, filterImageValueCurve } = this.props
-    let content = void (0)
+    const { filterId, maskId, maskImage, filterColor, type, highlightMap, shadowMap, filterImageValueCurve } = this.props
 
     switch (type) {
-      case SCENE_TYPES.ROOM: {
-        content = (
+      case SCENE_TYPES.ROOM:
+        return (
           <Fragment>
             <filter id={filterId} x='0' y='0' width='100%' height='100%' filterUnits='objectBoundingBox' primitiveUnits='objectBoundingBox' colorInterpolationFilters='sRGB'>
-              <feComponentTransfer in='SourceGraphic' result='adjustedHistogram'>
+              <feColorMatrix
+                in='SourceGraphic'
+                result='sourceImageInGrayscale'
+                type='matrix'
+                values='0.33 0.33 0.33 0 0
+                        0.33 0.33 0.33 0 0
+                        0.33 0.33 0.33 0 0
+                        0 1 0 1 0' />
+              <feComponentTransfer in='sourceImageInGrayscale' result='adjustedHistogram'>
                 <feFuncR type='table' tableValues={filterImageValueCurve} />
                 <feFuncG type='table' tableValues={filterImageValueCurve} />
                 <feFuncB type='table' tableValues={filterImageValueCurve} />
@@ -40,11 +45,9 @@ class TintableSceneSurface extends PureComponent<Props> {
             </mask>
           </Fragment>
         )
-        break
-      }
       case SCENE_TYPES.AUTOMOTIVE:
-      case SCENE_TYPES.OBJECT: {
-        content = (
+      case SCENE_TYPES.OBJECT:
+        return (
           <Fragment>
             <filter id={filterId} x='0' y='0' width='100%' height='100%' filterUnits='objectBoundingBox' primitiveUnits='objectBoundingBox' colorInterpolationFilters='sRGB'>
               <feFlood floodColor={filterColor} result='tintHue' />
@@ -59,17 +62,9 @@ class TintableSceneSurface extends PureComponent<Props> {
             </mask>
           </Fragment>
         )
-        break
-      }
     }
 
-    return (
-      <svg x='0' y='0' width='0' height='0' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlnsXlink='http://www.w3.org/1999/xlink' viewBox={`0 0 ${width} ${height}`}>
-        <defs>
-          {content}
-        </defs>
-      </svg>
-    )
+    return null
   }
 }
 

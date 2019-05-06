@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 
 const InfoButton = (props: Object) => {
   const { config, detailsLink, ...other } = props
-  if (config.displayInfoButton && detailsLink) {
+  if (config.ColorWall.displayAddButton) {
     return (
       <Link to={detailsLink} {...other}>
         <FontAwesomeIcon icon='info' size='1x' />

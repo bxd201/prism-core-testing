@@ -13,7 +13,7 @@ type Props = {
   history: RouterHistory,
 }
 
-export function ColorStripSwatch ({ color, active, history }: Props) {
+function ColorStripSwatch ({ color, active, history }: Props) {
   const selectColor = () => {
     ReactGA.event({
       category: 'Color Detail / Swatch Chip List',
@@ -26,20 +26,16 @@ export function ColorStripSwatch ({ color, active, history }: Props) {
   const BASE_CLASS = 'color-info'
 
   let BUTTON_CLASSES = [
-    `${BASE_CLASS}__strip-color-info`,
-    (active ? `${BASE_CLASS}__strip-color-info--active` : '')
-  ].join(' ')
-
-  const TEXT_CLASSES = [
-    `${BASE_CLASS}__strip-color-name`,
-    (color.isDark ? `${BASE_CLASS}__strip-color-name--dark-color` : ''),
-    (!active ? 'visually-hidden' : '')
-  ].join(' ')
+    `${BASE_CLASS}__strip-color-info`
+  ]
+  if (active) {
+    BUTTON_CLASSES.push(`${BASE_CLASS}__strip-color-info--active`)
+  }
 
   return (
     <li className={`${BASE_CLASS}__strip-color`} style={{ backgroundColor: color.hex }}>
-      <button className={BUTTON_CLASSES} onClick={selectColor}>
-        <span className={TEXT_CLASSES} >{color.name}</span>
+      <button className={BUTTON_CLASSES.join(' ')} onClick={selectColor}>
+        <span className={`${BASE_CLASS}__strip-color-name ${color.isDark ? `${BASE_CLASS}__strip-color-name--dark-color` : ''}`} >{color.name}</span>
       </button>
     </li>
   )

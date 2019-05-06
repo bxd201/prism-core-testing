@@ -3,13 +3,10 @@ import React from 'react'
 import { connect } from 'react-redux'
 import isEmpty from 'lodash/isEmpty'
 
+import { type ColorSetPayload, type ColorMap } from '../shared/types/Colors'
 import CircleLoader from '../components/Loaders/CircleLoader/CircleLoader'
 import { loadColors } from '../store/actions/loadColors'
 import { varValues } from 'variables'
-import WithConfigurationContext from '../contexts/ConfigurationContext/WithConfigurationContext'
-
-import { type ColorSetPayload, type ColorMap } from '../shared/types/Colors'
-import type { Configuration } from '../shared/types/Configuration'
 
 type Props = {
   colors: ColorSetPayload,
@@ -17,8 +14,7 @@ type Props = {
   colorMap: ColorMap,
   loadColors: Function,
   family?: string,
-  families?: string[],
-  config: Configuration
+  families?: string[]
 }
 
 /**
@@ -31,7 +27,7 @@ const ColorDataWrapper = (WrappedComponent: any) => {
       super(props)
 
       if (isEmpty(this.props.colors)) {
-        this.props.loadColors(this.props.config.brandId)
+        this.props.loadColors()
       }
     }
 
@@ -57,13 +53,13 @@ const ColorDataWrapper = (WrappedComponent: any) => {
 
   const mapDispatchToProps = (dispatch: Function) => {
     return {
-      loadColors: (brandId) => {
-        dispatch(loadColors(brandId))
+      loadColors: () => {
+        dispatch(loadColors())
       }
     }
   }
 
-  return connect(mapStateToProps, mapDispatchToProps)(WithConfigurationContext(ColorData))
+  return connect(mapStateToProps, mapDispatchToProps)(ColorData)
 }
 
 export default ColorDataWrapper
