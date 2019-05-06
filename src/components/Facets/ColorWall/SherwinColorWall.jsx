@@ -33,7 +33,7 @@ type Props = {
   config: Configuration
 }
 
-class SherwinColorWall extends PureComponent<Props> {
+export class SherwinColorWall extends PureComponent<Props> {
   constructor (props: Props) {
     super(props)
 
