@@ -72,7 +72,8 @@ describe('ColorListingPage routes', () => {
   })
 
   it('should render Switch component with location prop defined as locationProp constant', () => {
-    expect(colorListingPage.find(Switch).prop('location')).toEqual(locationProp)
+    // there are two Switches on the page, so we need to specify one of them to test against -- either is fine for this test
+    expect(colorListingPage.find(Switch).get(0).props.location).toEqual(locationProp)
   })
 
   it('should have 3 Route components', () => {
