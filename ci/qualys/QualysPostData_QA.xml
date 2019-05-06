@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ServiceRequest>
+   <data>
+      <WasScan>
+        <name>QA - prism-core</name>
+        <type>VULNERABILITY</type>
+        <target>
+          <webApp>
+            <id>217789674</id>
+          </webApp>
+          <scannerAppliance>
+            <type>INTERNAL</type>
+            <friendlyName>Scanner1</friendlyName>
+          </scannerAppliance>
+        </target>
+        <profile>
+          <id>249932</id>
+        </profile>
+      </WasScan>
+    </data>
+  </ServiceRequest>

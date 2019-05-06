@@ -1,8 +1,12 @@
 import * as actions from 'src/store/actions/live-palette'
-import { lp, initialState } from 'src/store/reducers/live-palette-reducer'
+import { lp, initialState } from 'src/store/reducers/live-palette'
 import * as Colors from '__mocks__/data/color/Colors'
+import shuffle from 'lodash/shuffle'
+import filter from 'lodash/filter'
 
 const color = Colors.getColor()
+const colors = Colors.getlpColorsByCount(4)
+const colorIds = colors.colors.map(color => color.id)
 
 describe('live-palette-reduer', () => {
   it('should return the initial state', () => {
@@ -40,5 +44,35 @@ describe('live-palette-reduer', () => {
     }
 
     expect(lp([], mock)).toEqual({ ...initialState, activeColor: color })
+  })
+
+  it('should handle ACTIVATE_LP_PREVIEW_COLOR', () => {
+    const mock = {
+      type: actions.ACTIVATE_LP_PREVIEW_COLOR,
+      payload: {
+        color: color
+      }
+    }
+
+    expect(lp([], mock)).toEqual({ ...initialState, activePreviewColor: color })
+  })
+
+  it('should handle REORDER_LP_COLORS', () => {
+    const colorsByIndex = shuffle(colorIds)
+    const mock = {
+      type: actions.REORDER_LP_COLORS,
+      payload: {
+        colorsByIndex: colorsByIndex
+      }
+    }
+
+    const reconstructedColors = []
+    for (let id = 0; id < colorsByIndex.length; id++) {
+      const color = filter(colors.colors, color => (color.id === colorsByIndex[id]))[0]
+      reconstructedColors.push(color)
+    }
+
+    const lpReturn = lp({ colors: colors.colors }, mock)
+    expect(lpReturn).toEqual({ ...initialState, colors: reconstructedColors })
   })
 })

@@ -163,6 +163,9 @@
 
 .cleanslate.prism {
     display: block;
+    position: relative;
+    z-index: 0;
+    overflow: hidden;
 }
 
 .cleanslate svg {

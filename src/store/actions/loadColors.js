@@ -1,7 +1,10 @@
 // @flow
 import axios from 'axios'
 
-import { SW_COLORS_BY_FAMILY_ENDPOINT, SW_BRIGHTS_ENDPOINT, SW_FAMILY_NAMES_ENDPOINT } from '../../constants/endpoints'
+import { COLOR_CHUNKS_ENDPOINT, COLOR_BRIGHTS_ENDPOINT, COLOR_FAMILY_NAMES_ENDPOINT } from '../../constants/endpoints'
+
+import { generateBrandedEndpoint } from '../../shared/helpers/DataUtils'
+
 import type { Color, FamilyStructure } from '../../shared/types/Colors'
 
 export const REQUEST_COLORS: string = 'REQUEST_COLORS'
@@ -24,8 +27,7 @@ const receiveColors = (colorData: any) => {
       activeRequest: false,
       colors: colorData.colors,
       brights: colorData.brights,
-      sections: colorData.sections,
-      defaultFamily: colorData.defaultFamily
+      sections: colorData.sections
     }
   }
 }
@@ -84,13 +86,12 @@ export const makeActiveColorById = (id: string) => {
 }
 
 // TODO: Make this method configurable via options on call so specific color wall implementations can reuse it to load their colors
-export const loadColors = (options?: any) => {
-  // conditionally add the lng parameter if a manual language has been passed in
-  const COLOR_FAMILY_ENDPOINT = (options && options.language) ? `${SW_COLORS_BY_FAMILY_ENDPOINT}?lng=${options.language}` : SW_COLORS_BY_FAMILY_ENDPOINT
-  const BRIGHTS_ENDPOINT = (options && options.language) ? `${SW_BRIGHTS_ENDPOINT}?lng=${options.language}` : SW_BRIGHTS_ENDPOINT
-  const FAMILY_NAMES_ENDPOINT = (options && options.language) ? `${SW_FAMILY_NAMES_ENDPOINT}?lng=${options.language}` : SW_FAMILY_NAMES_ENDPOINT
-
+export const loadColors = (brandId: string, options?: any) => {
   return (dispatch: Function, getState: Function) => {
+    const COLOR_CHUNKS = generateBrandedEndpoint(COLOR_CHUNKS_ENDPOINT, brandId, options)
+    const BRIGHTS_ENDPOINT = generateBrandedEndpoint(COLOR_BRIGHTS_ENDPOINT, brandId, options)
+    const FAMILY_NAMES_ENDPOINT = generateBrandedEndpoint(COLOR_FAMILY_NAMES_ENDPOINT, brandId, options)
+
     const { items: { colors }, status: { activeRequest } } = getState().colors
 
     // if a request to load is active OR we already have colors loaded...
@@ -103,7 +104,7 @@ export const loadColors = (options?: any) => {
 
     return Promise
       .all([
-        axios.get(COLOR_FAMILY_ENDPOINT),
+        axios.get(COLOR_CHUNKS),
         axios.get(BRIGHTS_ENDPOINT),
         axios.get(FAMILY_NAMES_ENDPOINT)
       ])

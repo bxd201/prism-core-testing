@@ -1,0 +1,22 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`snapshot match testing should match snapshot 1`] = `
+<div
+  className="color-wall-mode-btns"
+>
+  <div
+    className="color-wall-mode-btns__col"
+  >
+    <div
+      className="color-wall-mode-btns__cell"
+    >
+      <FormattedMessage
+        id="BACK_TO_COLOR_WALL"
+        values={Object {}}
+      >
+        <Component />
+      </FormattedMessage>
+    </div>
+  </div>
+</div>
+`;

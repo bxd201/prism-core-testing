@@ -1,4 +1,3 @@
-/* eslint-disable */
 // @flow
 import React, { PureComponent } from 'react'
 import { Route, Redirect, withRouter, Switch } from 'react-router-dom'
@@ -9,8 +8,9 @@ import ColorWallRouteComponent from '../ColorWall/ColorWallRouteComponent'
 import ColorDetails from '../ColorDetails/ColorDetails'
 import ColorDataWrapper from '../../../helpers/ColorDataWrapper'
 import BackToColorWall from './BackToColorWall'
+
 import { varValues } from 'variables'
-import { DEFAULT_CONFIGURATIONS, ConfigurationContextProvider } from '../../../contexts/ConfigurationContext'
+
 import { ROUTE_PARAMS, ROUTE_PARAM_NAMES } from 'constants/globals'
 
 import './ColorListingPage.scss'
@@ -24,27 +24,14 @@ const colorWallUrlPattern = `${colorWallBaseUrl}(/.*)?`
 
 // barebones component to always take the user to active if they try to access root.
 // not sure if we need this but if we end up using this for TAG & want to retain bookmarks..
-const RootRedirect = () => {
+export const RootRedirect = () => {
   return <Redirect to={colorWallBaseUrl} />
-}
-
-// customizing the ColorWall config with ColorListingPage's specific settings
-const ColorWallConfigurations = {
-  ColorWall: {
-    displayAddButton: false,
-    displayInfoButton: false,
-    displayViewDetails: true
-  }
-}
-const Configurations = {
-  ...DEFAULT_CONFIGURATIONS,
-  ...ColorWallConfigurations
 }
 
 // since the CDP component won't have any color information if we go to it directly, we need to wrap it
 // in the ColorDataWrapper HOC to ensure it has color data prior to rendering it.
 const ColorDetailsWithData = ColorDataWrapper(ColorDetails)
-const ColorDetailsComponent = (props) => {
+export const ColorDetailsComponent = props => {
   // need a wrapping element that isn't a Fragment in order to get the transition classes applied to the group
   return (
     <div>
@@ -54,14 +41,8 @@ const ColorDetailsComponent = (props) => {
   )
 }
 
-// overriding the default configuration with updated CW ones to hide the info and add buttons on the swatch
-// also performing manual route matching here
-const ColorWallComponent = (props: Object) => {
-  return (
-    <ConfigurationContextProvider value={Configurations}>
-      <ColorWallRouteComponent {...props} />
-    </ConfigurationContextProvider>
-  )
+export const ColorWallComponent = props => {
+  return <ColorWallRouteComponent displayDetailsLink displayInfoButton={false} displayAddButton={false} {...props} />
 }
 
 type ColorListingPageProps = {
@@ -74,7 +55,7 @@ type ColorListingPageState = {
   toWall: boolean
 }
 
-class ColorListingPage extends PureComponent<ColorListingPageProps, ColorListingPageState> {
+export class ColorListingPage extends PureComponent<ColorListingPageProps, ColorListingPageState> {
   state: ColorListingPageState = {
     prevPathname: void (0),
     toDetails: false,
@@ -83,8 +64,7 @@ class ColorListingPage extends PureComponent<ColorListingPageProps, ColorListing
 
   render () {
     const { location } = this.props
-    const { prevPathname, toWall, toDetails } = this.state
-    const pathname = location.pathname
+    const { toWall, toDetails } = this.state
     let transitionClassNames = 'cdp-slide'
 
     if (toWall) {
@@ -105,7 +85,7 @@ class ColorListingPage extends PureComponent<ColorListingPageProps, ColorListing
           <Switch location={location}>
             <Route path='/' exact component={RootRedirect} />
             <Route path={colorWallUrlPattern} component={ColorWallComponent} />
-            <Route path={`${colorDetailsBaseUrl}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`} exact render={ColorDetailsComponent} />
+            <Route path={`${colorDetailsBaseUrl}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`} exact component={ColorDetailsComponent} />
           </Switch>
         </CSSTransition>
       </TransitionGroup>
@@ -137,7 +117,6 @@ class ColorListingPage extends PureComponent<ColorListingPageProps, ColorListing
       }
 
       return newProps
-
     }
 
     return null

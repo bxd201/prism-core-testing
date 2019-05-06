@@ -3,11 +3,6 @@
 exports[`<TintableScene /> matches snapshot of scene with colored surfaces 1`] = `
 <div
   className="prism-scene-manager__scene"
-  style={
-    Object {
-      "maxWidth": "50px",
-    }
-  }
 >
   <div
     className="prism-scene-manager__scene__inner"
@@ -20,241 +15,86 @@ exports[`<TintableScene /> matches snapshot of scene with colored surfaces 1`] =
     <div
       className="prism-scene-manager__scene__svg-defs"
     >
-      <svg
-        height="0"
-        version="1.1"
-        viewBox="0 0 100 100"
-        width="0"
-        x="0"
-        xmlns="http://www.w3.org/2000/svg"
-        xmlnsXlink="http://www.w3.org/1999/xlink"
-        y="0"
-      >
-        <defs>
-          <filter
-            colorInterpolationFilters="sRGB"
-            filterUnits="objectBoundingBox"
-            height="100%"
-            id="sceneTS14_surface1_tinter-filter"
-            primitiveUnits="objectBoundingBox"
-            width="100%"
-            x="0"
-            y="0"
-          >
-            <feColorMatrix
-              in="SourceGraphic"
-              result="sourceImageInGrayscale"
-              type="matrix"
-              values="0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0 1 0 1 0"
-            />
-            <feFlood
-              floodColor="#edd5dd"
-              result="tintHue"
-            />
-            <feBlend
-              in="sourceImageInGrayscale"
-              in2="tintHue"
-              mode="multiply"
-            />
-          </filter>
-          <mask
-            height="100%"
-            id="sceneTS14_surface1_object-mask"
-            maskUnits="objectBoundingBox"
-            width="100%"
-            x="0"
-            y="0"
-          >
-            <image
-              height="100%"
-              width="100%"
-              x="0"
-              xlinkHref="https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom5?wid=1200&req=object&opac=100&fmt=png-alpha&object=wall&color=FFFFFF}&fmt=png-alpha"
-              y="0"
-            />
-          </mask>
-          <filter
-            colorInterpolationFilters="sRGB"
-            filterUnits="objectBoundingBox"
-            height="100%"
-            id="sceneTS14_surface2_tinter-filter"
-            primitiveUnits="objectBoundingBox"
-            width="100%"
-            x="0"
-            y="0"
-          >
-            <feColorMatrix
-              in="SourceGraphic"
-              result="sourceImageInGrayscale"
-              type="matrix"
-              values="0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0 1 0 1 0"
-            />
-            <feFlood
-              floodColor="#ebd1db"
-              result="tintHue"
-            />
-            <feBlend
-              in="sourceImageInGrayscale"
-              in2="tintHue"
-              mode="multiply"
-            />
-          </filter>
-          <mask
-            height="100%"
-            id="sceneTS14_surface2_object-mask"
-            maskUnits="objectBoundingBox"
-            width="100%"
-            x="0"
-            y="0"
-          >
-            <image
-              height="100%"
-              width="100%"
-              x="0"
-              xlinkHref="https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom5?wid=1200&req=object&opac=100&fmt=png-alpha&object=accent&color=FFFFFF}&fmt=png-alpha"
-              y="0"
-            />
-          </mask>
-          <filter
-            colorInterpolationFilters="sRGB"
-            filterUnits="objectBoundingBox"
-            height="100%"
-            id="sceneTS14_surface3_tinter-filter"
-            primitiveUnits="objectBoundingBox"
-            width="100%"
-            x="0"
-            y="0"
-          >
-            <feColorMatrix
-              in="SourceGraphic"
-              result="sourceImageInGrayscale"
-              type="matrix"
-              values="0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0 1 0 1 0"
-            />
-            <feFlood
-              floodColor="#edd5dd"
-              result="tintHue"
-            />
-            <feBlend
-              in="sourceImageInGrayscale"
-              in2="tintHue"
-              mode="multiply"
-            />
-          </filter>
-          <mask
-            height="100%"
-            id="sceneTS14_surface3_object-mask"
-            maskUnits="objectBoundingBox"
-            width="100%"
-            x="0"
-            y="0"
-          >
-            <image
-              height="100%"
-              width="100%"
-              x="0"
-              xlinkHref="https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom5?wid=1200&req=object&opac=100&fmt=png-alpha&object=trim&color=FFFFFF}&fmt=png-alpha"
-              y="0"
-            />
-          </mask>
-        </defs>
-      </svg>
+      <TransitionGroup
+        childFactory={[Function]}
+        className="prism-scene-manager__transition__svg-defs"
+        component="div"
+      />
     </div>
     <div
       className="prism-scene-manager__scene__tint-wrapper"
     >
       <img
         className="prism-scene-manager__scene__natural"
-        src="someImageURL"
+        src="https://sherwin.scene7.com/is/image/sw?src=ir{swRender/TEST_SCENE?wid=1311}"
       />
-      <svg
-        className="prism-scene-manager__scene__surface"
-        preserveAspectRatio="none"
-        version="1.1"
-        viewBox="0 0 100 100"
-        xmlns="http://www.w3.org/2000/svg"
-        xmlnsXlink="http://www.w3.org/1999/xlink"
-      >
-        <image
-          filter="url(#sceneTS14_surface1_tinter-filter)"
-          height="100%"
-          mask="url(#sceneTS14_surface1_object-mask)"
-          width="100%"
-          xlinkHref="someImageURL"
-        />
-      </svg>
-      <svg
-        className="prism-scene-manager__scene__surface"
-        preserveAspectRatio="none"
-        version="1.1"
-        viewBox="0 0 100 100"
-        xmlns="http://www.w3.org/2000/svg"
-        xmlnsXlink="http://www.w3.org/1999/xlink"
-      >
-        <image
-          filter="url(#sceneTS14_surface2_tinter-filter)"
-          height="100%"
-          mask="url(#sceneTS14_surface2_object-mask)"
-          width="100%"
-          xlinkHref="someImageURL"
-        />
-      </svg>
-      <svg
-        className="prism-scene-manager__scene__surface"
-        preserveAspectRatio="none"
-        version="1.1"
-        viewBox="0 0 100 100"
-        xmlns="http://www.w3.org/2000/svg"
-        xmlnsXlink="http://www.w3.org/1999/xlink"
-      >
-        <image
-          filter="url(#sceneTS14_surface3_tinter-filter)"
-          height="100%"
-          mask="url(#sceneTS14_surface3_object-mask)"
-          width="100%"
-          xlinkHref="someImageURL"
-        />
-      </svg>
+      <TransitionGroup
+        childFactory={[Function]}
+        className="prism-scene-manager__transition__colors"
+        component="div"
+      />
     </div>
-    <div
-      className="prism-scene-manager__scene__hit-wrapper"
+    <LiveMessage
+      aria-live="polite"
+      message="undefined scene has been loaded"
     />
     <div
-      className="prism-scene-manager__scene__overlay prism-scene-manager__scene__overlay--loading"
+      className="prism-scene-manager__scene__hit-wrapper"
     >
-      <span
-        className="prism-scene-manager__scene__overlay__content"
-      >
-        <svg
-          className="prism-loader-circle"
-          preserveAspectRatio="xMidYMid"
-          viewBox="0 0 100 100"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <circle
-            cx="50"
-            cy="50"
-            fill="none"
-            r="35"
-            stroke="#FFF"
-            strokeDasharray="164.93361431346415 56.97787143782138"
-            strokeWidth="5"
-            transform="rotate(143.836 50 50)"
-          >
-            <animateTransform
-              attributeName="transform"
-              begin="0s"
-              calcMode="linear"
-              dur="1s"
-              keyTimes="0;1"
-              repeatCount="indefinite"
-              type="rotate"
-              values="0 50 50;360 50 50"
-            />
-          </circle>
-        </svg>
-      </span>
+      <DropTarget(TintableSceneHitArea)
+        id={1}
+        key="1"
+        onClick={[Function]}
+        onDrop={[Function]}
+        onLoadingError={[Function]}
+        onLoadingSuccess={[Function]}
+        onOut={[Function]}
+        onOver={[Function]}
+      />
+      <DropTarget(TintableSceneHitArea)
+        id={2}
+        key="2"
+        onClick={[Function]}
+        onDrop={[Function]}
+        onLoadingError={[Function]}
+        onLoadingSuccess={[Function]}
+        onOut={[Function]}
+        onOver={[Function]}
+      />
+      <DropTarget(TintableSceneHitArea)
+        id={3}
+        key="3"
+        onClick={[Function]}
+        onDrop={[Function]}
+        onLoadingError={[Function]}
+        onLoadingSuccess={[Function]}
+        onOut={[Function]}
+        onOver={[Function]}
+      />
+      <DropTarget(TintableSceneHitArea)
+        id={4}
+        key="4"
+        onClick={[Function]}
+        onDrop={[Function]}
+        onLoadingError={[Function]}
+        onLoadingSuccess={[Function]}
+        onOut={[Function]}
+        onOver={[Function]}
+      />
+      <DropTarget(TintableSceneHitArea)
+        id={5}
+        key="5"
+        onClick={[Function]}
+        onDrop={[Function]}
+        onLoadingError={[Function]}
+        onLoadingSuccess={[Function]}
+        onOut={[Function]}
+        onOver={[Function]}
+      />
     </div>
+    <TintableSceneOverlay
+      type="LOADING"
+    />
   </div>
 </div>
 `;

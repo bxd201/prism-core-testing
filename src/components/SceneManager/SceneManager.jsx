@@ -2,22 +2,48 @@
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
 import find from 'lodash/find'
+import flattenDeep from 'lodash/flattenDeep'
 import includes from 'lodash/includes'
 import memoizee from 'memoizee'
 import ReactGA from 'react-ga'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import { SCENE_TYPES, SCENE_VARIANTS } from 'constants/globals'
 import { loadScenes, paintSceneSurface, activateScene, deactivateScene, changeSceneVariant } from '../../store/actions/scenes'
 import TintableScene from './TintableScene'
 import SceneVariantSwitch from './SceneVariantSwitch'
 import ImagePreloader from '../../helpers/ImagePreloader'
-import { ensureFullyQualifiedAssetUrl } from '../../shared/helpers/DataUtils'
 import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import ConfigurationContext from '../../contexts/ConfigurationContext/ConfigurationContext'
+
 import type { Color } from '../../shared/types/Colors'
 import type { Scene, SceneStatus, Surface, Variant } from '../../shared/types/Scene'
 
 import './SceneManager.scss'
+
+const getThumbnailAssetArrayByScene = memoizee((sceneVariant: Variant, surfaces: Surface[]): string[] => {
+  return flattenDeep([
+    sceneVariant.thumb,
+    surfaces.map(surface => surface.shadows),
+    surfaces.map(surface => surface.mask),
+    surfaces.map(surface => surface.highlights)
+  ])
+})
+
+const getFullSizeAssetArrayByScene = memoizee((scene: Scene): string[] => {
+  return flattenDeep([
+    scene.variants.map((v: Variant) => [
+      v.image,
+      v.thumb,
+      v.surfaces.map((s: Surface) => [
+        s.mask,
+        s.hitArea,
+        s.shadows,
+        s.highlights
+      ])
+    ])
+  ])
+})
 
 type Props = {
   scenes: Scene[],
@@ -41,9 +67,9 @@ type State = {
   currentSceneIndex: number
 }
 
-class SceneManager extends PureComponent<Props, State> {
+export class SceneManager extends PureComponent<Props, State> {
   static baseClass = 'prism-scene-manager'
-
+  static contextType = ConfigurationContext
   static defaultProps = {
     maxActiveScenes: 2,
     type: SCENE_TYPES.ROOM,
@@ -54,7 +80,7 @@ class SceneManager extends PureComponent<Props, State> {
     currentSceneIndex: 0
   }
 
-  constructor (props) {
+  constructor (props: Props) {
     super(props)
 
     this.handleColorUpdate = this.handleColorUpdate.bind(this)
@@ -66,11 +92,11 @@ class SceneManager extends PureComponent<Props, State> {
     this.props.loadScenes(this.props.type)
   }
 
-  handleColorUpdate = function handleColorUpdate (sceneId, surfaceId, color: Color) {
+  handleColorUpdate = function handleColorUpdate (sceneId: string, surfaceId: string, color: Color) {
     this.props.paintSceneSurface(sceneId, surfaceId, color)
   }
 
-  handleClickSceneToggle = function handleClickSceneToggle (id) {
+  handleClickSceneToggle = function handleClickSceneToggle (id: number) {
     const { activeScenes } = this.props
 
     // if this scene is active...
@@ -87,7 +113,7 @@ class SceneManager extends PureComponent<Props, State> {
     }
   }
 
-  activateScene (id) {
+  activateScene (id: string) {
     const { activeScenes, maxActiveScenes, activateScene, deactivateScene } = this.props
 
     // if active scenes exceed or match max active scenes...
@@ -99,7 +125,7 @@ class SceneManager extends PureComponent<Props, State> {
     activateScene(id)
   }
 
-  deactivateScene (id) {
+  deactivateScene (id: string) {
     const { activeScenes, deactivateScene } = this.props
 
     if (activeScenes.length === 1) {
@@ -128,10 +154,8 @@ class SceneManager extends PureComponent<Props, State> {
     return (
       <div className={SceneManager.baseClass}>
         <div className={`${SceneManager.baseClass}__block ${SceneManager.baseClass}__block--tabs`}>
-          {/* POC scene-switching buttons to demonstrate performance */}
           {scenes.map((scene, index) => {
             const sceneInfo = getSceneInfoById(scene, sceneStatus, scene.id)
-
             if (!sceneInfo) {
               console.warn(`Cannot find scene variant based on id ${scene.id}`)
               return void (0)
@@ -155,19 +179,13 @@ class SceneManager extends PureComponent<Props, State> {
                 <div role='presentation'>
                   <ImagePreloader
                     el={TintableScene}
-                    preload={[
-                      sceneVariant.thumb,
-                      surfaces.map(surface => surface.shadows),
-                      surfaces.map(surface => surface.mask),
-                      surfaces.map(surface => surface.hitArea),
-                      surfaces.map(surface => surface.highlights)
-                    ]}
+                    preload={getThumbnailAssetArrayByScene(sceneVariant, surfaces)}
                     interactive={false}
                     width={scene.width}
                     height={scene.height}
                     type={type}
                     sceneId={scene.id}
-                    background={ensureFullyQualifiedAssetUrl(sceneVariant.thumb)}
+                    background={sceneVariant.thumb}
                     clickToPaintColor={activeColor}
                     onUpdateColor={this.handleColorUpdate}
                     previewColor={previewColor}
@@ -206,9 +224,10 @@ class SceneManager extends PureComponent<Props, State> {
             // if we have more than one variant for this scene...
             if (scene.variant_names.length > 1) {
               // if we have day and night variants...
+              // TODO: Remove this dayNightToggle check, this is for demonstration purposes
               if (SceneVariantSwitch.DayNight.isCompatible(scene.variant_names)) {
                 // ... then create a day/night variant switch
-                variantSwitch = <SceneVariantSwitch.DayNight currentVariant={status.variant} variants={[SCENE_VARIANTS.DAY, SCENE_VARIANTS.NIGHT]} onChange={this.changeVariant(sceneId)} />
+                variantSwitch = <SceneVariantSwitch.DayNight currentVariant={status.variant} variants={[SCENE_VARIANTS.DAY, SCENE_VARIANTS.NIGHT]} onChange={this.changeVariant(sceneId)} sceneId={scene.id} />
               }
             }
 
@@ -216,20 +235,13 @@ class SceneManager extends PureComponent<Props, State> {
               <div className={`${SceneManager.baseClass}__scene-wrapper`} key={sceneId}>
                 <ImagePreloader
                   el={TintableScene}
-                  preload={[
-                    scene.variants.map((v: Variant) => v.thumb),
-                    scene.variants.map((v: Variant) => v.image),
-                    surfaces.map(surface => surface.mask),
-                    surfaces.map(surface => surface.shadows),
-                    surfaces.map(surface => surface.hitArea),
-                    surfaces.map(surface => surface.highlights)
-                  ]}
+                  preload={getFullSizeAssetArrayByScene(scene)}
                   width={scene.width}
                   height={scene.height}
                   interactive={interactive}
                   type={type}
                   sceneId={sceneId}
-                  background={ensureFullyQualifiedAssetUrl(sceneVariant.image)}
+                  background={sceneVariant.image}
                   clickToPaintColor={activeColor}
                   onUpdateColor={this.handleColorUpdate}
                   previewColor={previewColor}
