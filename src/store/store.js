@@ -17,10 +17,12 @@ const initialState = {
   }
 }
 
-const store = createStore(
-  rootReducer,
-  initialState,
-  enhancers
-)
+const initializeStore = () => {
+  return createStore(
+    rootReducer,
+    initialState,
+    enhancers
+  )
+}
 
-export default store
+export default initializeStore

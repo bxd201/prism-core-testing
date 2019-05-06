@@ -14,6 +14,9 @@ const memoizee = require('memoizee')
 const APP_VERSION = process.env.npm_package_version
 const APP_NAME = process.env.npm_package_name
 
+const API_PATH = (process.env.API_URL) ? process.env.API_URL : '$API_URL'
+const BASE_PATH = (process.env.WEB_URL) ? process.env.WEB_URL : '$WEB_URL'
+
 const getVarGenerator = (function () {
   const cssUnits = [
     'rem',
@@ -132,7 +135,8 @@ module.exports = {
   },
   output: {
     path: path.join(__dirname, '/dist'),
-    filename: '[name].js'
+    filename: '[name].js',
+    globalObject: 'self'
   },
   resolve: {
     alias: {
@@ -180,8 +184,8 @@ module.exports = {
       }
     ]),
     new webpack.DefinePlugin({
-      'API_PATH': (process.env.API_URL) ? JSON.stringify(process.env.API_URL) : JSON.stringify('$API_URL'),
-      'BASE_PATH': (process.env.WEB_URL) ? JSON.stringify(process.env.WEB_URL) : JSON.stringify('$WEB_URL'),
+      'API_PATH': JSON.stringify(API_PATH),
+      'BASE_PATH': JSON.stringify(BASE_PATH),
       'APP_VERSION': JSON.stringify(APP_VERSION)
     })
   ],

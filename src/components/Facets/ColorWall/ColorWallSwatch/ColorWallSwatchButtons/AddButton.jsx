@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 const AddButton = (props: Object) => {
   const { config, onAdd, onClick, ...other } = props
 
-  if (onAdd && config.ColorWall.displayAddButton) {
+  if (onAdd && config.displayAddButton) {
     return (
       <button onClick={onClick} {...other}>
         <FontAwesomeIcon icon='plus' size='1x' />

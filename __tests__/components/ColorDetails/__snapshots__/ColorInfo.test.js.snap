@@ -1,0 +1,151 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Color Info component with props as empty array snapshot testing 1`] = `
+<div
+  className="color-info__details-tab-wrapper"
+>
+  <h5
+    className="visually-hidden"
+  >
+    <FormattedMessage
+      id="DETAILS"
+      values={Object {}}
+    />
+  </h5>
+  <ul
+    className="color-info__visual-specifications"
+  >
+    <li
+      className="color-info__visual-specification"
+    >
+      <dl>
+        <dt
+          className="color-info__description-term"
+        >
+          R: 
+        </dt>
+        <dd
+          className="color-info__description-definition"
+        />
+        <dt
+          className="color-info__description-term"
+        >
+          G: 
+        </dt>
+        <dd
+          className="color-info__description-definition"
+        />
+        <dt
+          className="color-info__description-term"
+        >
+          B: 
+        </dt>
+        <dd
+          className="color-info__description-definition"
+        />
+      </dl>
+    </li>
+    <li
+      className="color-info__visual-specification"
+    >
+      <dl>
+        <dt
+          className="color-info__description-term"
+        >
+          Hex Value: 
+        </dt>
+        <dd
+          className="color-info__description-definition"
+        />
+      </dl>
+    </li>
+  </ul>
+</div>
+`;
+
+exports[`Color Info component with props of colors snapshot testing 1`] = `
+<div
+  className="color-info__details-tab-wrapper"
+>
+  <h5
+    className="visually-hidden"
+  >
+    <FormattedMessage
+      id="DETAILS"
+      values={Object {}}
+    />
+  </h5>
+  <ul
+    className="color-info__visual-specifications"
+  >
+    <li
+      className="color-info__visual-specification"
+    >
+      <dl>
+        <dt
+          className="color-info__description-term"
+        >
+          R: 
+        </dt>
+        <dd
+          className="color-info__description-definition"
+        >
+          235
+        </dd>
+        <dt
+          className="color-info__description-term"
+        >
+          G: 
+        </dt>
+        <dd
+          className="color-info__description-definition"
+        >
+          209
+        </dd>
+        <dt
+          className="color-info__description-term"
+        >
+          B: 
+        </dt>
+        <dd
+          className="color-info__description-definition"
+        >
+          219
+        </dd>
+      </dl>
+    </li>
+    <li
+      className="color-info__visual-specification"
+    >
+      <dl>
+        <dt
+          className="color-info__description-term"
+        >
+          Hex Value: 
+        </dt>
+        <dd
+          className="color-info__description-definition"
+        >
+          #ebd1db
+        </dd>
+      </dl>
+    </li>
+    <li
+      className="color-info__visual-specification"
+    >
+      <dl>
+        <dt
+          className="color-info__description-term"
+        >
+          LRV: 
+        </dt>
+        <dd
+          className="color-info__description-definition"
+        >
+          69
+        </dd>
+      </dl>
+    </li>
+  </ul>
+</div>
+`;

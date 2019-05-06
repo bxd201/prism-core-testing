@@ -1,0 +1,44 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Color Swatch component will pass props correctly snapshot testing 1`] = `
+<li
+  className="color-info__similar-color"
+  style={
+    Object {
+      "backgroundColor": "#ebd1db",
+    }
+  }
+>
+  <Link
+    className="color-info__similar-color-info"
+    onClick={[Function]}
+    style={
+      Object {
+        "backgroundColor": "#ebd1db",
+      }
+    }
+    to="/active/color-detail/2248/sw-6561-teaberry"
+  >
+    <div
+      className="color-info__similar-color-info-wrapper"
+    >
+      <span
+        className="color-info__similar-color-brand-key"
+      >
+        SW
+      </span>
+       
+      <span
+        className="color-info__similar-color-number"
+      >
+        6561
+      </span>
+      <p
+        className="color-info__similar-color-name"
+      >
+        Teaberry
+      </p>
+    </div>
+  </Link>
+</li>
+`;

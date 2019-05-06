@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Tinter with props should match snapshot 1`] = `
+<Fragment>
+  <Connect(SceneManager)
+    type="rooms"
+  />
+  <Connect(LivePalette) />
+</Fragment>
+`;
+
+exports[`Tinter without props should match snapshot 1`] = `
+<Fragment>
+  <Connect(SceneManager)
+    type=""
+  />
+  <Connect(LivePalette) />
+</Fragment>
+`;

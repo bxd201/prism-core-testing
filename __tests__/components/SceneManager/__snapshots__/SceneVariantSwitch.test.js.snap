@@ -1,0 +1,181 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SceneVariantSwitch component with props should match snapshot 1`] = `
+<IntlProvider
+  intl={
+    Object {
+      "defaultFormats": Object {},
+      "defaultLocale": "en",
+      "formatDate": [Function],
+      "formatHTMLMessage": [Function],
+      "formatMessage": [Function],
+      "formatNumber": [Function],
+      "formatPlural": [Function],
+      "formatRelative": [Function],
+      "formatTime": [Function],
+      "formats": Object {},
+      "formatters": Object {
+        "getDateTimeFormat": [Function],
+        "getMessageFormat": [Function],
+        "getNumberFormat": [Function],
+        "getPluralFormat": [Function],
+        "getRelativeFormat": [Function],
+      },
+      "locale": "en",
+      "messages": Object {
+        "ADD_A_COLOR": "ADD A COLOR",
+        "BACK_TO_COLOR_WALL": "Back to Color Wall",
+        "CANCEL": "Cancel",
+        "CHIP_MAXIMIZED": "Color Chip has been maximized",
+        "CHIP_MINIMIZED": "Color Chip has been minimized",
+        "COLOR_COLLECTIONS": "Color Collections",
+        "COLOR_FAMILIES": "Color Families",
+        "COORDINATING_COLORS": "Coordinating Colors",
+        "DETAILS": "Details",
+        "DISPLAY_SCENE_PAINTER": "Display the Scene Painter",
+        "ERROR_LOADING_COLORS": "We're unable to load colors right now.",
+        "EXTERIOR": "Exterior",
+        "FIND_COLORS_IN_CW": "FIND COLORS IN THE DIGITAL COLOR WALL",
+        "HIDE_SCENE_PAINTER": "Hide the Scene Painter",
+        "INTERIOR": "Interior",
+        "LOCATION_NUMBER": "Location Number",
+        "MAXIMIZE_COLOR_SWATCH": "Maximize the Color Swatch",
+        "NO_COLORS_AVAILABLE": "No colors available.",
+        "RESTORE_COLOR_SWATCH_TO_DEFAULT_SIZE": "Restore the Color Swatch to default size",
+        "SCENE_DISPLAYED": "Scene is displayed",
+        "SCENE_HIDDEN": "Scene is hidden",
+        "SIMILAR_COLORS": "Similar Colors",
+        "SWATCH_ACTIVATED_DETAILS": "{color} is selected. Press Enter to view details.",
+        "SWATCH_FOCUS": "{color}. Press Enter to select.",
+        "TO_DAY_VIEW": "Switch to day view",
+        "TO_NIGHT_VIEW": "Switch to night view",
+        "VIEW_DETAILS": "View Details",
+        "ZOOM_IN": "Zoom in",
+        "ZOOM_OUT": "Zoom out",
+      },
+      "now": [Function],
+      "onError": [Function],
+      "textComponent": "span",
+      "timeZone": null,
+    }
+  }
+  locale="en"
+  messages={
+    Object {
+      "ADD_A_COLOR": "ADD A COLOR",
+      "BACK_TO_COLOR_WALL": "Back to Color Wall",
+      "CANCEL": "Cancel",
+      "CHIP_MAXIMIZED": "Color Chip has been maximized",
+      "CHIP_MINIMIZED": "Color Chip has been minimized",
+      "COLOR_COLLECTIONS": "Color Collections",
+      "COLOR_FAMILIES": "Color Families",
+      "COORDINATING_COLORS": "Coordinating Colors",
+      "DETAILS": "Details",
+      "DISPLAY_SCENE_PAINTER": "Display the Scene Painter",
+      "ERROR_LOADING_COLORS": "We're unable to load colors right now.",
+      "EXTERIOR": "Exterior",
+      "FIND_COLORS_IN_CW": "FIND COLORS IN THE DIGITAL COLOR WALL",
+      "HIDE_SCENE_PAINTER": "Hide the Scene Painter",
+      "INTERIOR": "Interior",
+      "LOCATION_NUMBER": "Location Number",
+      "MAXIMIZE_COLOR_SWATCH": "Maximize the Color Swatch",
+      "NO_COLORS_AVAILABLE": "No colors available.",
+      "RESTORE_COLOR_SWATCH_TO_DEFAULT_SIZE": "Restore the Color Swatch to default size",
+      "SCENE_DISPLAYED": "Scene is displayed",
+      "SCENE_HIDDEN": "Scene is hidden",
+      "SIMILAR_COLORS": "Similar Colors",
+      "SWATCH_ACTIVATED_DETAILS": "{color} is selected. Press Enter to view details.",
+      "SWATCH_FOCUS": "{color}. Press Enter to select.",
+      "TO_DAY_VIEW": "Switch to day view",
+      "TO_NIGHT_VIEW": "Switch to night view",
+      "VIEW_DETAILS": "View Details",
+      "ZOOM_IN": "Zoom in",
+      "ZOOM_OUT": "Zoom out",
+    }
+  }
+>
+  <DayNight
+    currentVariant="night"
+    onChange={[MockFunction]}
+    sceneId={1}
+  >
+    <FormattedMessage
+      id="TO_DAY_VIEW"
+      values={Object {}}
+    >
+      <label
+        aria-label="Switch to day view"
+        className="scene-variant-switch-day-night scene-variant-switch-day-night--night"
+        htmlFor="day-night-toggle1"
+        onKeyDown={[Function]}
+        role="button"
+        tabIndex="0"
+        title="Switch to day view"
+      >
+        <input
+          checked={true}
+          className="visually-hidden"
+          id="day-night-toggle1"
+          name="day-night-toggle1"
+          onChange={[Function]}
+          type="checkbox"
+        />
+        <div
+          className="scene-variant-switch-day-night__wrapper "
+        >
+          <FontAwesomeIcon
+            border={false}
+            className="scene-variant-switch-day-night__day scene-variant-switch-day-night__day--active"
+            fixedWidth={false}
+            flip={null}
+            icon={
+              Array [
+                "fa",
+                "sun",
+              ]
+            }
+            inverse={false}
+            listItem={false}
+            mask={null}
+            pull={null}
+            pulse={false}
+            rotation={null}
+            size={null}
+            spin={false}
+            symbol={false}
+            title=""
+            transform={null}
+          />
+        </div>
+        <div
+          className="scene-variant-switch-day-night__wrapper scene-variant-switch-day-night__wrapper--night scene-variant-switch-day-night__wrapper--active"
+        >
+          <FontAwesomeIcon
+            border={false}
+            className="scene-variant-switch-day-night__night scene-variant-switch-day-night__night--active"
+            fixedWidth={false}
+            flip={null}
+            icon={
+              Array [
+                "fa",
+                "moon-stars",
+              ]
+            }
+            inverse={false}
+            listItem={false}
+            mask={null}
+            pull={null}
+            pulse={false}
+            rotation={null}
+            size={null}
+            spin={false}
+            symbol={false}
+            title=""
+            transform={null}
+          />
+        </div>
+      </label>
+    </FormattedMessage>
+  </DayNight>
+</IntlProvider>
+`;

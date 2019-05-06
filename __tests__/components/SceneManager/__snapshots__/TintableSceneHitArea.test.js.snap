@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Snapshot Testing component should match snapshot 1`] = `
+<div
+  className="prism-scene-manager__scene__hit-area-wrapper"
+>
+  <InlineSVG
+    baseURL=""
+    cacheGetRequests={true}
+    className="prism-scene-manager__scene__hit-area__mask-loader"
+    onError={[Function]}
+    onLoad={[Function]}
+    src="localhostundefined"
+    supportTest={[Function]}
+    uniqueHash="TSHA1"
+    uniquifyIDs={true}
+    wrapper={[Function]}
+  />
+  <svg
+    className="prism-scene-manager__scene__hit-area"
+  >
+    <use
+      className="prism-scene-manager__scene__hit-area__mask "
+      onClick={[Function]}
+      xlinkHref="#mask___TSHA1"
+    />
+  </svg>
+</div>
+`;

@@ -38,11 +38,27 @@ module.exports.varValues = {
     transitionTime: 700 // this value is halved in CSS to reduce initial judder caused by component rendering
   },
   scenes: {
-    hitAreaOutlineColor: '255, 0, 255' // RGB value of hit area outline (must be RGB, not hex)
+    hitAreaOutlineColor: '255, 0, 255', // RGB value of hit area outline (must be RGB, not hex)
+    tintTransitionTime: 250
   }
 }
 
 module.exports.varNames = {
+  theme: {
+    colors: {
+      primary: '--prism-color-primary',
+      secondary: '--prism-color-secondary',
+      warning: '--prism-color-warning',
+      success: '--prism-color-success',
+      danger: '--prism-color-danger',
+      error: '--prism-color-error',
+      grey: '--prism-color-grey',
+      lightGrey: '--prism-color-lightGrey',
+      nearBlack: '--prism-color-nearBlack',
+      black: '--prism-color-black',
+      white: '--prism-color-white'
+    }
+  },
   globalCornerRadius: '--sw-global-corner-radius',
   globalSwatchSpacing: '--sw-global-swatch-spacing',
   typography: {

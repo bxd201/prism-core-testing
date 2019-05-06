@@ -8,12 +8,25 @@
   "plugins": [
     "flowtype",
     "jsx-a11y",
-    "react-hooks"
+    "react-hooks",
+    "jest"
   ],
   "globals" : {
-    "Image": false
+    "Image": "readonly",
+    "Blob": "readonly",
+    "Worker": "readonly",
+    "URL": "readonly"
   },
   "rules": {
-    "react-hooks/rules-of-hooks": "error"
+    "react-hooks/rules-of-hooks": "error",
+    "jest/no-disabled-tests": "warn",
+    "jest/no-focused-tests": "error",
+    "jest/no-identical-title": "error",
+    "jest/prefer-to-have-length": "warn",
+    "jest/valid-expect": "error",
+    "no-fallthrough": "off"
+  },
+  "env": {
+    "jest/globals": true
   }
 }
