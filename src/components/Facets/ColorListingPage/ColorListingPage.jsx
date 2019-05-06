@@ -78,17 +78,22 @@ export class ColorListingPage extends PureComponent<ColorListingPageProps, Color
     const key = location.pathname.split('/').slice(2, 3).join()
 
     return (
-      <TransitionGroup className='color-wall-transitioner'>
-        <CSSTransition key={key}
-          classNames={transitionClassNames}
-          timeout={varValues.colorWall.transitionTime * 1.2}>
-          <Switch location={location}>
-            <Route path='/' exact component={RootRedirect} />
-            <Route path={colorWallUrlPattern} component={ColorWallComponent} />
-            <Route path={`${colorDetailsBaseUrl}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`} exact component={ColorDetailsComponent} />
-          </Switch>
-        </CSSTransition>
-      </TransitionGroup>
+      <React.Fragment>
+        {/* Keeping this Route outside of TransitionGroup in order to avoid introducing MaximumUpdateDepth errors upon initial redirect */}
+        <Switch location={location}>
+          <Route path='/' exact component={RootRedirect} />
+        </Switch>
+        <TransitionGroup className='color-wall-transitioner'>
+          <CSSTransition key={key}
+            classNames={transitionClassNames}
+            timeout={varValues.colorWall.transitionTime * 1.2}>
+            <Switch location={location}>
+              <Route path={colorWallUrlPattern} component={ColorWallComponent} />
+              <Route path={`${colorDetailsBaseUrl}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`} exact component={ColorDetailsComponent} />
+            </Switch>
+          </CSSTransition>
+        </TransitionGroup>
+      </React.Fragment>
     )
   }
 
