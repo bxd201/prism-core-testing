@@ -7,9 +7,8 @@ import { Link } from 'react-router-dom'
 import { type Color } from '../../../../shared/types/Colors'
 import { numToAlphaString, arrayToSpacedString } from '../../../../shared/helpers/StringUtils'
 import { fullColorName, fullColorNumber } from '../../../../shared/helpers/ColorUtils'
+import { ConfigurationContextConsumer } from '../../../../contexts/ConfigurationContext'
 import { CLASS_NAMES } from './shared'
-
-import ColorWallContext from '../ColorWallContext'
 
 import AddButton from './ColorWallSwatchButtons/AddButton'
 import DetailsLink from './ColorWallSwatchButtons/DetailsLink'
@@ -56,32 +55,20 @@ class ColorWallSwatch extends PureComponent<Props> {
         <section className={CLASS_NAMES.CONTENT}>
           <p className={CLASS_NAMES.CONTENT_NUMBER}>{`${fullColorNumber(color.brandKey, color.colorNumber)}`}</p>
           <p className={CLASS_NAMES.CONTENT_NAME}>{color.name}</p>
-          <ColorWallContext.Consumer>
+          <ConfigurationContextConsumer>
             {config => (
               <React.Fragment>
                 {/* Stateless components to handle whether to display the add, details, and info buttons */}
-                <InfoButton
-                  config={config}
-                  detailsLink={detailsLink}
-                  className={`${CLASS_NAMES.CONTENT_CTA} ${CLASS_NAMES.CONTENT_CTA_R}`}
-                  tabIndex={-1}
-                />
-                <AddButton
-                  config={config}
-                  onAdd={(onAdd)}
-                  onClick={this.handleAddClick}
-                  className={`${CLASS_NAMES.CONTENT_CTA} ${CLASS_NAMES.CONTENT_CTA_L}`}
-                  tabIndex={-1}
-                />
-                <DetailsLink
-                  config={config}
+                <InfoButton config={config} detailsLink={detailsLink} className={`${CLASS_NAMES.CONTENT_CTA} ${CLASS_NAMES.CONTENT_CTA_R}`} tabIndex={-1} />
+                <AddButton config={config} onAdd={(onAdd)} onClick={this.handleAddClick} className={`${CLASS_NAMES.CONTENT_CTA} ${CLASS_NAMES.CONTENT_CTA_L}`} tabIndex={-1} />
+
+                <DetailsLink config={config}
                   detailsLink={detailsLink}
                   className={`${CLASS_NAMES.CONTENT_CTA} ${CLASS_NAMES.CONTENT_CTA_L} ${focus ? CLASS_NAMES.CONTENT_CTA_FOCUS : ''}`}
-                  tabIndex={-1}
-                />
+                  tabIndex={-1} />
               </React.Fragment>
             )}
-          </ColorWallContext.Consumer>
+          </ConfigurationContextConsumer>
         </section>
       )
     } else if (thisLink) {

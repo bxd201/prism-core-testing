@@ -8,7 +8,6 @@ export type ReduxAction = {
 
 export type Section = {
   name: string,
-  default: boolean,
   families: string[]
 }
 
@@ -25,19 +24,16 @@ export type ColorsState = {
     brights?: ColorSetPayload,
     colorMap?: ColorMap
   },
-
-  structure?: FamilyStructure,
-  sections?: string[],
-  section?: string,
-  families?: string[],
-  family?: string,
-  colorWallActive?: Color,
-
-  searchResults: ColorListPayload,
-
-  initializeWith: {
+  family: {
+    structure?: FamilyStructure,
+    sections?: string,
     section?: string,
+    seekingSection?: string,
+    families?: string[],
     family?: string,
-    colorWallActive?: string
-  }
+    seekingFamily?: string,
+  },
+  searchResults: ColorListPayload,
+  colorWallActive?: Color,
+  seekingColorWallActive?: string
 }

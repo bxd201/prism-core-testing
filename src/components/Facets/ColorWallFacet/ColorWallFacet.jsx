@@ -12,18 +12,14 @@ const colorWallBaseUrl = `/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_WALL}`
 // we're handling the URL-parsing logic manually in ColorWallComponent below
 const colorWallUrlPattern = `${colorWallBaseUrl}(/.*)?`
 
-export const RootRedirectColorWall = () => {
-  return <Redirect to={colorWallBaseUrl} />
-}
-
 type ColorWallFacetProps = {
   location: Location
 }
 
-export function ColorWallFacet ({ location }: ColorWallFacetProps) {
+function ColorWallFacet ({ location }: ColorWallFacetProps) {
   return (
     <Switch location={location}>
-      <Route path='/' exact component={RootRedirectColorWall} />
+      <Route path='/' exact render={() => <Redirect to={colorWallBaseUrl} />} />
       <Route path={colorWallUrlPattern} component={ColorWallRouteComponent} />
     </Switch>
   )

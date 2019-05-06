@@ -22,7 +22,7 @@ type Props = {
   connectDropTarget: Function
 }
 
-export function ActiveSlot (props: Props) {
+function ActiveSlot (props: Props) {
   const ACTIVE_CLASS = 'prism-live-palette__slot--active'
   const REMOVAL_CLASS = 'prism-live-palette__slot--removing'
 

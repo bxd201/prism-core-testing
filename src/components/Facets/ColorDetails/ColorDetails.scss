@@ -143,11 +143,17 @@ $tab-set-padding: 0.5rem 0.25rem;
       position: relative;
       padding: 0 0.5rem;
     }
+
+    &:not(#{$top-level-class-string}__strip-color-info--active) {
+      .color-info__strip-color-name {
+      @extend .visually-hidden;
+    }
+  }
   }
 
   &__strip-color-name {
     &--dark-color {
-      color: var(getVarName('theme.colors.white'));
+      color: white;
     }
   }
 
@@ -274,6 +280,10 @@ $tab-set-padding: 0.5rem 0.25rem;
     &#{$top-level-class-string}__scene-display-toggle-button--alt#{$top-level-class-string}__display-toggle-button--active {
       display: block;
     }
+  }
+
+  &__scene-toggle-copy {
+    @extend .visually-hidden;
   }
 
   &__tab-list {
