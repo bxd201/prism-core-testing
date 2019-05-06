@@ -4,15 +4,20 @@ import { connect } from 'react-redux'
 import { injectIntl, type intlShape, FormattedMessage } from 'react-intl'
 import { Link, NavLink } from 'react-router-dom'
 import { TransitionGroup, CSSTransition } from 'react-transition-group'
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+
 import { loadColors } from '../../../store/actions/loadColors'
 import { add } from '../../../store/actions/live-palette'
 import { generateColorWallPageUrl } from '../../../shared/helpers/ColorUtils'
+
 import { varValues } from 'variables'
+
 import type { ColorSetPayload, ColorMap, Color } from '../../../shared/types/Colors'
+import type { Configuration } from '../../../shared/types/Configuration'
 
 import { MODE_CLASS_NAMES } from './shared'
+
+import WithConfigurationContext from '../../../contexts/ConfigurationContext/WithConfigurationContext'
 // import StandardColorWall from './StandardColorWall'
 import SherwinColorWall from './SherwinColorWall'
 
@@ -37,7 +42,8 @@ type DispatchProps = {
 }
 
 type ComponentProps = {
-  intl: intlShape
+  intl: intlShape,
+  config: Configuration
 }
 
 type Props = StateProps & DispatchProps & ComponentProps
@@ -65,7 +71,7 @@ class ColorWall extends PureComponent<Props, State> {
     }
 
     // try to load colors with options; this will do nothing if colors are currently or already have been loaded
-    this.props.loadColors(options)
+    this.props.loadColors(this.props.config.brandId, options)
   }
 
   render () {
@@ -197,10 +203,10 @@ const mapStateToProps = (state, props) => {
     colors: state.colors.items.colors,
     brights: state.colors.items.brights,
     colorWallActive: state.colors.colorWallActive,
-    families: state.colors.family.families,
-    family: state.colors.family.family,
-    sections: state.colors.family.sections,
-    section: state.colors.family.section,
+    families: state.colors.families,
+    family: state.colors.family,
+    sections: state.colors.sections,
+    section: state.colors.section,
     loading: state.colors.status.loading,
     error: state.colors.status.error
   }
@@ -208,8 +214,8 @@ const mapStateToProps = (state, props) => {
 
 const mapDispatchToProps = (dispatch: Function) => {
   return {
-    loadColors: (options: any) => {
-      dispatch(loadColors(options))
+    loadColors: (brandId: string, options: any) => {
+      dispatch(loadColors(brandId, options))
     },
     addToLivePalette: (color: Color) => {
       dispatch(add(color))
@@ -217,4 +223,4 @@ const mapDispatchToProps = (dispatch: Function) => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(injectIntl(ColorWall))
+export default connect(mapStateToProps, mapDispatchToProps)(injectIntl(WithConfigurationContext(ColorWall)))

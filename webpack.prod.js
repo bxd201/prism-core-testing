@@ -10,7 +10,7 @@ module.exports = merge(
     mode: 'production',
     devtool: 'source-map',
     plugins: [
-      new CleanWebpackPlugin('dist', {}),
+      new CleanWebpackPlugin(),
       new WebpackCleanPlugin([
         'dist/index.html',
         'dist/embeddable.html'

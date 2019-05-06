@@ -88,15 +88,6 @@ $swatch-font-size--small: $base * .8;
     }
   }
 
-  @keyframes bloomedSwatchContentFadeIn {
-    0% {
-      opacity: 0;
-    }
-    100% {
-      opacity: 1;
-    }
-  }
-
   border: 1px solid #fff;
   height: 100%;
   width: 100%;
@@ -162,7 +153,7 @@ $swatch-font-size--small: $base * .8;
     position: relative;
     padding: .5em;
     // fade in is used so we don't see the text get mangled as a swatch is activated
-    animation: bloomedSwatchContentFadeIn $bloom-activate-duration ease-in-out ($bloom-activate-duration + $bloom-activate-delay) * 1.25 both;
+    animation: fadeOpacityIn $bloom-activate-duration ease-in-out ($bloom-activate-duration + $bloom-activate-delay) * 1.25 both;
     text-align: left;
     height: 100%;
     line-height: 1;

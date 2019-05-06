@@ -1,13 +1,15 @@
 import { combineReducers } from 'redux'
 
-import { colors } from './colors'
+import { colors } from './colors/index'
 import { scenes } from './scenes'
-import { lp } from './live-palette-reducer'
+import { lp } from './live-palette'
+import { configurations } from './configurations'
 
 const rootReducer = combineReducers({
   colors,
+  lp,
   scenes,
-  lp
+  configurations
 })
 
 export default rootReducer

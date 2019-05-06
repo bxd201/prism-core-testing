@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`InfoButton should match snapshot 1`] = `
+<Link
+  to="/test"
+>
+  <FontAwesomeIcon
+    border={false}
+    className=""
+    fixedWidth={false}
+    flip={null}
+    icon="info"
+    inverse={false}
+    listItem={false}
+    mask={null}
+    pull={null}
+    pulse={false}
+    rotation={null}
+    size="1x"
+    spin={false}
+    symbol={false}
+    title=""
+    transform={null}
+  />
+</Link>
+`;
+
+exports[`InfoButton with config.ColorWall.displayAddButton undefined should match snapshot 1`] = `""`;

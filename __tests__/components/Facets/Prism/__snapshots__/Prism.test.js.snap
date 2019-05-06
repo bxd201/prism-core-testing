@@ -1,0 +1,38 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Prism routes should match snapshot 1`] = `
+<Fragment>
+  <withRouter(PrismNav) />
+  <hr />
+  <Route
+    component={[Function]}
+    exact={true}
+    path="/"
+  />
+  <Route
+    component={[Function]}
+    exact={true}
+    path="/active"
+  />
+  <Route
+    component={[Function]}
+    path="/active/color-wall(/.*)?"
+  />
+  <Route
+    component={[Function]}
+    exact={true}
+    path="/active/color/:colorId/:colorSEO"
+  />
+  <Route
+    component={[Function]}
+    exact={true}
+    path="/active/colors-from-image"
+  />
+  <Route
+    component={[Function]}
+    exact={true}
+    path="/search"
+  />
+  <Connect(LivePalette) />
+</Fragment>
+`;

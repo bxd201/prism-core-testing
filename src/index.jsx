@@ -1,7 +1,7 @@
 import '@babel/polyfill'
 
 import React from 'react'
-import ReactDOM from 'react-dom'
+import { render } from 'react-dom'
 import { Provider } from 'react-redux'
 import { IntlProvider } from 'react-intl'
 import { BrowserRouter, HashRouter } from 'react-router-dom'
@@ -11,7 +11,7 @@ import { LiveAnnouncer } from 'react-aria-live'
 
 import { GOOGLE_ANALYTICS_UID } from './constants/globals'
 
-import { DEFAULT_CONFIGURATIONS, ConfigurationContextProvider } from './contexts/ConfigurationContext'
+import ConfigurationContextProvider from './contexts/ConfigurationContext/ConfigurationContextProvider'
 
 // global sass import -- keep this BEFORE the APPS import to maintain compiled CSS order
 import './scss/main.scss'
@@ -20,7 +20,7 @@ import './scss/main.scss'
 import languages from './translations/translations'
 
 // import the redux store
-import store from './store/store'
+import initializeStore from './store/store'
 
 // import all mountable components
 import APPS from './config/components'
@@ -75,30 +75,34 @@ const renderAppInElement = (el) => {
   // set the page root if it exists
   const pageRoot = props.pageRoot || '/'
 
+  // checks if a default routing type is set, if not we'll use hash routing
   const routeType = props.routeType || 'hash'
+
+  // checks the brand, if no brand is provided we'll give the user a default experience
+  const brand = props.brand || 'sherwin'
+
+  const store = initializeStore()
 
   const BrowserRouterRender = (
     <BrowserRouter basename={pageRoot}>
-      <ConfigurationContextProvider value={DEFAULT_CONFIGURATIONS}>
-        <App {...props} />
-      </ConfigurationContextProvider>
+      <App {...props} />
     </BrowserRouter>
   )
   const HashRouterRender = (
     <HashRouter>
-      <ConfigurationContextProvider value={DEFAULT_CONFIGURATIONS}>
-        <App {...props} />
-      </ConfigurationContextProvider>
+      <App {...props} />
     </HashRouter>
   )
   const RouterRender = (routeType === 'browser') ? BrowserRouterRender : HashRouterRender
 
-  ReactDOM.render(
+  render(
     <IntlProvider locale={language} messages={languages[language]} textComponent={React.Fragment}>
       <Provider store={store}>
-        <LiveAnnouncer>
-          { RouterRender }
-        </LiveAnnouncer>
+        <ConfigurationContextProvider brand={brand}>
+          <LiveAnnouncer>
+            { RouterRender }
+          </LiveAnnouncer>
+        </ConfigurationContextProvider>
       </Provider>
     </IntlProvider>, el)
 

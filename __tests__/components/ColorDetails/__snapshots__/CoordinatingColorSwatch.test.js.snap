@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Coordinary Color Swatch component will pass props correctly snapshot testing 1`] = `
+<li
+  className="color-info__coord-color "
+  style={
+    Object {
+      "backgroundColor": "#ebd1db",
+    }
+  }
+>
+  <Link
+    className="color-info__color-swatch-link"
+    onClick={[Function]}
+    to="/active/color-detail/2248/sw-6561-teaberry"
+  >
+    <p
+      className="color-info__coord-color-number"
+    >
+      SW 6561
+    </p>
+    <p
+      className="color-info__coord-color-name"
+    >
+      Teaberry
+    </p>
+  </Link>
+</li>
+`;

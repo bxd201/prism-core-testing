@@ -1,4 +1,4 @@
-FROM nginx:alpine
+FROM nginx:stable
 
 LABEL maintainer="Jonathan Gnagy <jonathan.l.gnagy@sherwin.com>"
 
