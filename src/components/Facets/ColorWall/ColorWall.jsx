@@ -105,7 +105,7 @@ class ColorWall extends PureComponent<Props, State> {
           </div>
           <div className={`${MODE_CLASS_NAMES.CELL} ${MODE_CLASS_NAMES.RIGHT}`}>
             <button className={MODE_CLASS_NAMES.BUTTON} disabled={!families || families.length <= 1} onClick={this.toggleViewFamilies}>
-              <FontAwesomeIcon icon={['fa', 'palette']} pull='left' />
+              <FontAwesomeIcon className='color-families-svg' icon={['fa', 'palette']} pull='left' />
               <span className={MODE_CLASS_NAMES.DESC}><FormattedMessage id='COLOR_FAMILIES' /></span>
             </button>
           </div>
@@ -137,7 +137,7 @@ class ColorWall extends PureComponent<Props, State> {
           {hasSections ? (
             <div className={`${MODE_CLASS_NAMES.CELL} ${MODE_CLASS_NAMES.RIGHT}`}>
               <Link className={MODE_CLASS_NAMES.BUTTON} to={generateColorWallPageUrl(section)} onClick={() => this.toggleViewFamilies(false)}>
-                <FontAwesomeIcon icon={['fa', 'times']} pull='left' />
+                <FontAwesomeIcon className='close-icon-svg' icon={['fa', 'times']} pull='left' />
                 <span className={MODE_CLASS_NAMES.DESC}><FormattedMessage id='CANCEL' /></span>
               </Link>
             </div>
