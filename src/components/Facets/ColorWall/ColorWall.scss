@@ -148,6 +148,7 @@ $btn-border-thickness: 1px;
 svg {
   &.svg-inline--fa.fa-pull-left.color-families-svg,
   &.svg-inline--fa.fa-pull-left.close-icon-svg {
+    width: 1em;
     width: initial;
   }
 }
