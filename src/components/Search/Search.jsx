@@ -9,6 +9,7 @@ import { loadSearchResults } from '../../store/actions/loadSearchResults'
 import { add } from '../../store/actions/live-palette'
 
 import ColorWallSwatch from '../Facets/ColorWall/ColorWallSwatch/ColorWallSwatch'
+import SeachBar from './searchBar'
 
 import { type Color } from '../../shared/types/Colors'
 
@@ -27,6 +28,11 @@ type State = {
 }
 
 const SEARCH_DELAY = 500
+const cwProviderValues = {
+  displayDetailsLink: false,
+  displayInfoButton: true,
+  displayAddButton: true
+}
 
 export class Search extends PureComponent<Props, State> {
   static baseClass = 'prism-search'
@@ -44,25 +50,6 @@ export class Search extends PureComponent<Props, State> {
   performSearch = debounce((value: string) => {
     this.props.loadSearchResults(value)
   }, SEARCH_DELAY)
-
-  handleSearchInput (value: string) {
-    this.performSearch(value)
-  }
-
-  handleInput = (e: SyntheticInputEvent<HTMLInputElement>) => {
-    e.persist()
-
-    if (e.target.value.length && e.target.value.length > 2) {
-      this.setState({
-        resultSwatchSize: 175
-      })
-      this.handleSearchInput(e.target.value)
-    } else {
-      this.setState({
-        resultSwatchSize: 176
-      })
-    }
-  }
 
   handleSubmit = (e: SyntheticInputEvent<HTMLInputElement>) => {
     e.preventDefault()
@@ -87,12 +74,6 @@ export class Search extends PureComponent<Props, State> {
       return null
     }
 
-    const cwProviderValues = {
-      displayDetailsLink: false,
-      displayInfoButton: true,
-      displayAddButton: true
-    }
-
     return (
       <div key={key} style={style}>
         <ColorWallContext.Provider value={cwProviderValues}>
@@ -113,11 +94,7 @@ export class Search extends PureComponent<Props, State> {
     return (
       <div className={Search.baseClass}>
         <form onSubmit={this.handleSubmit}>
-          <input
-            type='search'
-            placeholder='Color name, number, or family'
-            className={`${Search.baseClass}__input`}
-            onInput={this.handleInput} />
+          <SeachBar handleSearchInput={this.performSearch} />
         </form>
 
         {!colors.length || resultSwatchSize !== 175
@@ -153,7 +130,8 @@ export class Search extends PureComponent<Props, State> {
 
 const mapStateToProps = (state, props) => {
   return {
-    colors: state.colors.searchResults
+    colors: state.colors.searchResults,
+    loading: state.colors.status.loading
   }
 }
 

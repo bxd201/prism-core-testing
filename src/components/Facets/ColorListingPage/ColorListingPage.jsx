@@ -8,6 +8,7 @@ import ColorWallRouteComponent from '../ColorWall/ColorWallRouteComponent'
 import ColorDetails from '../ColorDetails/ColorDetails'
 import ColorDataWrapper from '../../../helpers/ColorDataWrapper'
 import BackToColorWall from './BackToColorWall'
+import Search from '../../Search/Search'
 
 import { varValues } from 'variables'
 
@@ -90,6 +91,7 @@ export class ColorListingPage extends PureComponent<ColorListingPageProps, Color
             <Switch location={location}>
               <Route path={colorWallUrlPattern} component={ColorWallComponent} />
               <Route path={`${colorDetailsBaseUrl}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`} exact component={ColorDetailsComponent} />
+              <Route path='/search' exact component={Search} />
             </Switch>
           </CSSTransition>
         </TransitionGroup>

@@ -110,6 +110,11 @@ class ColorWall extends PureComponent<Props, State> {
                     </li>
                   ))
                 }
+                <li className={MODE_CLASS_NAMES.OPTION}>
+                  <NavLink className={MODE_CLASS_NAMES.OPTION_BUTTON} activeClassName={MODE_CLASS_NAMES.OPTION_BUTTON_ACTIVE} to='/search'>
+                    <span className={MODE_CLASS_NAMES.DESC}>Search</span>
+                  </NavLink>
+                </li>
               </ul>
             </div>
           </div>

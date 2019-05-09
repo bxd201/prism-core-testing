@@ -1,10 +1,49 @@
-.prism-search {
-  &__input {
-    border-radius: 3px;
-    padding: .25em;
-    max-width: 100%;
-    width: 400px;
+
+.search-bar-wrapper{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .search-icon{
+    margin-right: 0.5em
   }
+}
+.prism-search {
+  &__search-bar {
+      position: relative;
+      max-width: 100%;
+      width:calc(100% - 2em);
+      padding: 5px;
+      &__without__outline {
+        border: 1px solid #e1e1e1;
+      }
+      &__with__outline {
+        border: 2px solid #2cabe2;
+      }
+      &__input {
+        max-width: 100%;
+        width: 100%;
+        outline: none;
+        border: none;
+        font-size: 1.5em;
+        height: 1.5em;
+        font-weight: 400;
+      }
+      &__loader {
+        position: absolute;
+        top: 50%;
+        right:0;
+        transform: translateY(-50%);
+        max-height: 1.5em;
+      }
+      &__clean {
+        position: absolute;
+        top: 50%;
+        right:12px;
+        transform: translateY(-50%);
+        font-size: 1.5em;
+      }
+  }
+  
   &__search-text {
     height: 20em;
     line-height: 20em;
