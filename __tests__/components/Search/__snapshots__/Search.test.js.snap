@@ -14,9 +14,11 @@ exports[`Search with colors prop should match snapshot 1`] = `
       type="search"
     />
   </form>
-  <p>
+  <div
+    className="prism-search__search-text"
+  >
     'Enter a color name, number or family in the text field above.'
-  </p>
+  </div>
 </div>
 `;
 
@@ -34,8 +36,10 @@ exports[`Search with empty colors prop should match snapshot 1`] = `
       type="search"
     />
   </form>
-  <p>
+  <div
+    className="prism-search__search-text"
+  >
     'Enter a color name, number or family in the text field above.'
-  </p>
+  </div>
 </div>
 `;

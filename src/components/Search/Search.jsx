@@ -14,6 +14,8 @@ import { type Color } from '../../shared/types/Colors'
 
 import './Search.scss'
 
+import ColorWallContext from '../Facets/ColorWall/ColorWallContext'
+
 type Props = {
   colors: Array<any>,
   loadSearchResults: Function,
@@ -50,8 +52,15 @@ export class Search extends PureComponent<Props, State> {
   handleInput = (e: SyntheticInputEvent<HTMLInputElement>) => {
     e.persist()
 
-    if (e.target.value.length) {
+    if (e.target.value.length && e.target.value.length > 2) {
+      this.setState({
+        resultSwatchSize: 175
+      })
       this.handleSearchInput(e.target.value)
+    } else {
+      this.setState({
+        resultSwatchSize: 176
+      })
     }
   }
 
@@ -78,13 +87,21 @@ export class Search extends PureComponent<Props, State> {
       return null
     }
 
+    const cwProviderValues = {
+      displayDetailsLink: false,
+      displayInfoButton: true,
+      displayAddButton: true
+    }
+
     return (
       <div key={key} style={style}>
-        <ColorWallSwatch
-          showContents
-          color={thisColor}
-          onAdd={addToLivePalette}
-        />
+        <ColorWallContext.Provider value={cwProviderValues}>
+          <ColorWallSwatch
+            showContents
+            color={thisColor}
+            onAdd={addToLivePalette}
+          />
+        </ColorWallContext.Provider>
       </div>
     )
   }
@@ -103,8 +120,8 @@ export class Search extends PureComponent<Props, State> {
             onInput={this.handleInput} />
         </form>
 
-        {!colors.length
-          ? <p>'Enter a color name, number or family in the text field above.'</p>
+        {!colors.length || resultSwatchSize !== 175
+          ? <div className={`${Search.baseClass}__search-text`}>'Enter a color name, number or family in the text field above.'</div>
           : <div className='color-wall-wall'>
             <section className='color-wall-swatch-list color-wall-swatch-list--show-all'>
               <AutoSizer>
