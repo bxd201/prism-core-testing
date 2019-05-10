@@ -828,7 +828,6 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     }
 
     const focusedColorId: ProbablyColorId = colors[_cell[1]][_cell[0]]
-    console.log('zong', focusedColorId)
 
     if (focusedColorId) {
       const focusedColor: Color = colorMap[focusedColorId]
