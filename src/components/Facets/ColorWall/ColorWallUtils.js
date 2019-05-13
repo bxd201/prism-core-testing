@@ -4,9 +4,10 @@ import concat from 'lodash/concat'
 import isEmpty from 'lodash/isEmpty'
 import compact from 'lodash/compact'
 import isNumber from 'lodash/isNumber'
+import isUndefined from 'lodash/isUndefined'
 import memoizee from 'memoizee'
 import { ZOOMED_VIEW_GRID_PADDING } from '../../../constants/globals'
-import { type ColorIdGrid, type ColorIdLine } from '../../../shared/types/Colors'
+import { type ColorIdGrid, type ColorIdLine, type ProbablyColorId } from '../../../shared/types/Colors'
 import { type GridBounds } from './ColorWall.flow'
 import { euclideanDistance } from '../../../shared/helpers/GeometryUtils'
 import { getTotalWidthOf2dArray } from '../../../shared/helpers/DataUtils'
@@ -41,8 +42,8 @@ const calculateEdgeCompensation = memoizee(function calculateEdgeCompensation (t
 
 export const getColorCoords = memoizee(function getColorCoords (id: string, chunkedColorIds: ColorIdGrid): number[] | void {
   return chunkedColorIds.map((colorRow: ColorIdLine, y: number) => {
-    const x = findIndex(colorRow, (colorId: string) => {
-      return colorId === id
+    const x = findIndex(colorRow, (colorId: string | number) => {
+      return `${colorId}` === id
     })
 
     if (x >= 0) {
@@ -53,7 +54,7 @@ export const getColorCoords = memoizee(function getColorCoords (id: string, chun
   }).filter(val => !!val).reduce((total, current) => {
     return current || total
   }, void (0))
-})
+}, { length: 2 })
 
 export const drawCircle = memoizee(function drawCircle (radius: number, centerX: number, centerY: number, chunkedColorIds: ColorIdGrid) {
   const TL = { x: ZOOMED_VIEW_GRID_PADDING, y: ZOOMED_VIEW_GRID_PADDING }
@@ -220,8 +221,7 @@ export function findChunkFromCorner (grid: ColorIdGrid, Ox: number = 0, Oy: numb
   // after that point, continue to loop until you encounter an empty; the previous index is your Y2
   for (let y = Oy; (forward ? y < numRows : y >= 0); (forward ? y++ : y--)) {
     // start inspecting this row at 0x if going forward, otherwise start at 0 and end at Ox
-    const row = grid[y] && (forward ? grid[y].slice(Ox, searchPathWidth ? Ox + searchPathWidth : void (0)) : grid[y].slice(searchPathWidth ? Ox - searchPathWidth : 0, Ox))
-    // const row = grid[y] && (forward ? grid[y].slice(Ox) : grid[y].slice(0, Ox))
+    const row: ColorIdLine = grid[y] && (forward ? grid[y].slice(Ox, searchPathWidth ? Ox + searchPathWidth : void (0)) : grid[y].slice(searchPathWidth ? Ox - searchPathWidth : 0, Ox))
 
     // if this row is not empty and we have not set Y1 yet...
     if (!isEmpty(compact(row)) && !isNumber(Y1)) {
@@ -248,17 +248,17 @@ export function findChunkFromCorner (grid: ColorIdGrid, Ox: number = 0, Oy: numb
   // if Y values have been set by this point...
   if (isNumber(Y1) && isNumber(Y2)) {
     // ... then let's try to set X values
-    const row = grid[Y1]
+    const row: ColorIdLine = grid[Y1]
     const numCols = row.length
 
     // loop over each col
     for (let x = Ox; (forward ? x < numCols : x >= 0); (forward ? x++ : x--)) {
-      const col = row[x]
+      const col: ProbablyColorId = row[x]
 
       // first non-empty column while X1 is empty...
-      if (!isEmpty(col) && !isNumber(X1)) {
+      if (!isUndefined(col) && !isNumber(X1)) {
         X1 = x
-      } else if (isEmpty(col) && isNumber(X1)) {
+      } else if (isUndefined(col) && isNumber(X1)) {
         // if we encounter an empty col and X1 has been set...
         // then set X2 with the previous index
         X2 = (forward ? x - 1 : x + 1)
