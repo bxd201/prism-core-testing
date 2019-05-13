@@ -24,8 +24,8 @@
   "VIEW_DETAILS": "Voir les détails",
   "ERROR_LOADING_COLORS": "Erreur lors du chargement des couleurs.",
   "NO_COLORS_AVAILABLE": "Aucune couleur disponible.",
-  "SWATCH_ACTIVATED_DETAILS": "{color} is selected. Press Enter to view details.",
-  "SWATCH_FOCUS": "{color}. Press Enter to select.",
+  "SWATCH_ACTIVATED_DETAILS": "{color} a été sélectionné. Appuyez sur Entrée pour voir les détails.",
+  "SWATCH_FOCUS": "{color}. Appuyez sur Entrée pour le sélectionner.",
   "ZOOM_IN": "Zoomer",
   "ZOOM_OUT": "Dézoomer"
 }
