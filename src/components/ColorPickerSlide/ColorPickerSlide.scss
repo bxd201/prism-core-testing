@@ -1,0 +1,123 @@
+.prism-color-picker {
+  &__wrapper {
+    background-color: #ffffff;
+    color: rgba(0, 0, 0, 0.7);
+    font-size: 0.85rem;
+    font-weight: 600;
+    height: auto;
+    position: absolute;
+    top: 3.5em;
+    transition: all ease 0.3s;
+    z-index: 1000;
+    &__border {
+      padding: 0.15rem 0.15rem 0.15rem 0.3rem;
+    }
+    &--show {
+      right: 1em;
+      width: 175px;
+    }
+    &--hide {
+      right: -0.1em;
+    }
+  }
+}
+
+.slide-palette-header {
+  display: flex;
+  &--show {
+    padding: 0.74rem;
+  }
+  &--hide {
+    padding: 0.74rem 0px;
+  }
+  &__arrow-button {
+    font-size: 1.2em;
+    margin: -5px auto;
+    outline: none;
+    &:hover {
+      color: #2cabe2;
+    }
+  }
+}
+
+.prism-color-palette-suggester {
+  &__container {
+    display: flex;
+    padding: 0.15rem 0;
+    width: 100%;
+    &__button {
+      outline: none;
+    }
+    &__color-display-area {
+      align-items: center;
+      display: flex;
+      height: 50px;
+      justify-content: center;
+      transition: all ease 0.3s;
+      &--active {
+        cursor: default;
+      }
+      &--unactive {
+        cursor: pointer;
+      }
+      &--show {
+        width: 50px;
+      }
+      &--hide {
+        cursor: pointer;
+        width: 30px;
+      }
+    }
+    &__color-display-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin: 10px;
+      &__color-number {
+        font-weight: 400;
+      }
+    }
+    &__toggle-check-icons {
+      font-size: 1rem;
+    }
+  }
+}
+
+.prism-color-more-detail {
+  &__wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+  &__header {
+    border-top: 1px solid rgba(0, 0, 0, 0.13);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.13);
+    display: flex;
+    flex-direction: column;
+    font-weight: 400;
+    max-width: 100%;
+    padding: 0.7em;
+    text-align: left;
+    &__link {
+      color: #2cabe2;
+      font-size: 0.7rem;
+      font-weight: 600;
+      margin: 0.7em 0 0 0;
+      outline: none;
+      text-align: left;
+    }
+  }
+  &__collapse__button {
+    outline: none;
+    padding: 0.7em 0;
+    position: relative;
+    border-top: 1px solid rgba(0, 0, 0, 0.13);
+    &--open {
+      border: none;
+    }
+  }
+  &__toggle-carets {
+    position: absolute;
+    right: 0.7em;
+  }
+}
