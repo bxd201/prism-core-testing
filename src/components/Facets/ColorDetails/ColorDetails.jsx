@@ -51,8 +51,8 @@ type Props = StateProps & ComponentProps
 export class ColorDetails extends PureComponent<Props, State> {
   static baseClass = 'color-info'
 
-  toggleSceneDisplayScene: ?RefObject = void (0)
-  toggleSceneHideScene: ?RefObject = void (0)
+  toggleSceneDisplayScene: RefObject
+  toggleSceneHideScene: RefObject
 
   state: State = {
     sceneIsDisplayed: true,

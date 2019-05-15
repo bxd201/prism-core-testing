@@ -3,57 +3,90 @@ import React, { PureComponent } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch } from '@fortawesome/pro-light-svg-icons'
 
+import './SearchBar.scss'
+
+type Props = {
+  onSearchInput: Function,
+  onClearSearch?: Function
+}
+
 type State = {
-    type: boolean,
-    cleanVisible: boolean,
-    text: String
-  }
+  focus: boolean,
+  cleanVisible: boolean,
+  text: string
+}
+
+const baseClass = 'SearchBar'
+
 export default class SearchBar extends PureComponent<Props, State> {
-    static baseClass = 'prism-search'
-    state: State = {
-      focus: false,
-      text: '',
-      cleanVisible: false
-    }
-    handleInput = (e: SyntheticInputEvent<HTMLInputElement>) => {
-      const { handleSearchInput } = this.props
-      e.persist()
-      this.setState({ text: e.target.value })
-      if (e.target.value.length > 0) {
-        this.setState({ focus: true, cleanVisible: true })
-        if (e.target.value.length > 2) {
-          handleSearchInput(e.target.value)
-        }
-      } else {
-        this.setState({ focus: false, cleanVisible: false })
-      }
-    }
-    cleanInput = () => {
-      const { handleSearchInput } = this.props
-      this.setState({ focus: false, text: '', cleanVisible: false }, () => {
-        handleSearchInput(this.state.text)
-      })
-    }
-    render () {
-      const { focus, text, cleanVisible } = this.state
-      const outline = focus ? 'with__outline' : 'without__outline'
-      return (
-        <div className={`search-bar-wrapper`}>
-          <FontAwesomeIcon className='search-icon' icon={faSearch} size='lg' />
-          <div className={`${SearchBar.baseClass}__search-bar ${SearchBar.baseClass}__search-bar__${outline}`}>
-            <input
-              focus='text'
-              value={text}
-              className={`${SearchBar.baseClass}__search-bar__input`}
-              onChange={this.handleInput} />
-            {
-              cleanVisible &&
-              <button onClick={this.cleanInput}>
-                <FontAwesomeIcon className={`${SearchBar.baseClass}__search-bar__clean`} icon={['fas', 'times']} />
-              </button>
-            }
-          </div>
+  // these are method names of SearchBar class instances exposed via its ref
+  static API = {
+    focus: 'doFocus'
+  }
+
+  state: State = {
+    focus: false,
+    text: '',
+    cleanVisible: false
+  }
+
+  searchInput: RefObject
+
+  constructor (props: Props) {
+    super(props)
+
+    this.searchInput = React.createRef()
+    this.doFocus = this.doFocus.bind(this)
+  }
+
+  render () {
+    const { focus, text, cleanVisible } = this.state
+    const outline = focus ? 'with-outline' : 'without-outline'
+
+    return (
+      <div className={`${baseClass}`}>
+        <FontAwesomeIcon className='search-icon' icon={faSearch} size='lg' />
+        <div className={`${baseClass}__wrapper ${baseClass}__wrapper--${outline}`}>
+          <input
+            value={text}
+            ref={this.searchInput}
+            className={`${baseClass}__input`}
+            onChange={this.handleInput} />
+          {
+            cleanVisible &&
+            <button type='button' onClick={this.cleanInput} className={`${baseClass}__clean`}>
+              <FontAwesomeIcon icon={['fas', 'times']} />
+            </button>
+          }
         </div>
-      )
+      </div>
+    )
+  }
+
+  handleInput = (e: SyntheticInputEvent<HTMLInputElement>) => {
+    const { onSearchInput } = this.props
+    e.persist()
+    this.setState({ text: e.target.value })
+    if (e.target.value.length > 0) {
+      this.setState({ focus: true, cleanVisible: true })
+      if (e.target.value.length > 2) {
+        onSearchInput(e.target.value)
+      }
+    } else {
+      this.setState({ focus: false, cleanVisible: false })
     }
+  }
+
+  cleanInput = () => {
+    const { onClearSearch } = this.props
+    this.setState({ focus: false, text: '', cleanVisible: false }, () => {
+      if (onClearSearch) {
+        onClearSearch()
+      }
+    })
+  }
+
+  doFocus = () => {
+    this.searchInput.current.focus()
+  }
 }

@@ -11,6 +11,7 @@ import {
   faInfo,
   faPalette,
   faSearchMinus,
+  faSearch,
   faTimes,
   faHome,
   faSun,
@@ -53,6 +54,7 @@ const faIcons = [
   faInfoCircle,
   faInfo,
   faSearchMinus,
+  faSearch,
   faSun,
   falSun,
   faCheck

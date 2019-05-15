@@ -1,0 +1,118 @@
+$btn-bg: white;
+$btn-radius: $ui-radius;
+$btn-height: $ui-height-min;
+$btn-height--mobile: $ui-height-min--mobile;
+$btn-border-thickness: 1px;
+
+%color-wall-mode-btns-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: $btn-border-thickness solid getVar("colors.primary");
+  background: $btn-bg;
+  font-size: 1em;
+  padding: .25em .75em;
+  color: pick-text-color($btn-bg);
+  text-decoration: none;
+  text-align: center;
+  border-radius: $btn-radius;
+  font-weight: bold;
+  font-size: em(10);
+  text-transform: uppercase;
+  overflow: hidden;
+  min-height: $btn-height--mobile;
+  white-space: nowrap;
+
+  @include respond-above(xs) {
+    font-size: em(11);
+    min-height: $btn-height;
+  }
+
+  @include respond-above(md) {
+    font-size: em(12);
+  }
+
+  &[disabled] {
+    opacity: .3;
+  }
+
+  &:focus {
+    box-shadow: inset 0 0 0 $btn-border-thickness getVar("colors.primary");
+  }
+
+  &:hover {
+    $hover-bg: mix($btn-bg, getVar("colors.primary"), 90%);
+    background: $hover-bg;
+    color: pick-text-color($hover-bg);
+  }
+}
+
+%color-wall-mode-btns-btn--active {
+  background: getVar("colors.primary") !important;
+  color: pick-text-color(getVar("colors.primary")) !important;
+
+  &:focus {
+    box-shadow: inset 0 0 0 $btn-border-thickness pick-text-color(getVar("colors.primary")) !important;
+  }
+}
+
+.button-bar {
+  &__btn {
+    @extend %color-wall-mode-btns-btn;
+
+    &--active {
+      @extend %color-wall-mode-btns-btn--active;
+    }
+  }
+
+  &__option-container {
+    border: $btn-border-thickness solid getVar("colors.primary");
+    border-radius: $btn-radius;
+    height: $btn-height--mobile;
+
+    @include respond-above(xs) {
+      height: $btn-height;
+    }
+  }
+
+  &__options {
+    flex-direction: row;
+    display: flex;
+    justify-content: flex-start;
+    align-items: stretch;
+    flex-shrink: 1;
+
+    &__option {
+      display: flex;
+      align-content: center;
+      justify-content: center;
+      padding: 0;
+      margin: 0;
+      border-left: $btn-border-thickness solid getVar("colors.primary");
+
+      &:first-child {
+        border-left: none;
+        border-radius: $btn-radius 0 0 $btn-radius;
+      }
+
+      &:last-child {
+        border-radius: 0 $btn-radius $btn-radius 0;
+      }
+
+      &__btn {
+        @extend %color-wall-mode-btns-btn;
+        min-height: $btn-height--mobile - ($btn-border-thickness * 2);
+        border: none;
+        border-radius: 0;
+
+        @include respond-above(xs) {
+          min-height: $btn-height - ($btn-border-thickness * 2);
+        }
+
+        &--active {
+          @extend %color-wall-mode-btns-btn--active;
+        }
+      }
+    }
+  }
+}

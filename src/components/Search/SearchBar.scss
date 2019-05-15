@@ -1,0 +1,64 @@
+.SearchBar {
+  $input-bg: white;
+  $input-padding: .5em;
+  $clear-size: 1em;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+
+  &__wrapper {
+    background: $input-bg;
+    position: relative;
+    margin: 0 $ui-spacing;
+    flex: 1;
+    height: $ui-height-min--mobile;
+    border-radius: $ui-radius;
+
+    @include respond-above(xs) {
+      height: $ui-height-min;
+    }
+
+    &--without-outline {
+      border: 1px solid getVar('colors.lightGrey');
+    }
+
+    &--with-outline {
+      border: 1px solid getVar('colors.primary');
+      box-shadow: inset 0 0 0 1px getVar('colors.primary');
+    }
+  }
+
+  &__input {
+    outline: none;
+    border: none;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    line-height: $ui-height-min--mobile;
+    text-indent: $input-padding;
+    padding: 0 $clear-size + (2 * $input-padding) 0 0;
+
+    @include respond-above(xs) {
+      line-height: $ui-height-min;
+    }
+  }
+
+  &__clean {
+    position: absolute;
+    right: ($clear-size / 2) + $input-padding;
+    top: 50%;
+    transform: translateY(-50%) translateX(50%);
+    font-size: $clear-size;
+    width: $clear-size * 1.5;
+    height: $clear-size * 1.5;
+    border-radius: 50%;
+
+    &:hover, &:focus {
+      $hover-bg: mix($input-bg, getVar('colors.primary'), 90%);
+      background: $hover-bg;
+      color: pick-text-color($hover-bg);
+    }
+  }
+}

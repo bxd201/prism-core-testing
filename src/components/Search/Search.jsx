@@ -5,22 +5,29 @@ import { connect } from 'react-redux'
 import { Grid, AutoSizer } from 'react-virtualized'
 import debounce from 'lodash/debounce'
 
-import { loadSearchResults } from '../../store/actions/loadSearchResults'
+import { loadSearchResults, clearSearch } from '../../store/actions/loadSearchResults'
 import { add } from '../../store/actions/live-palette'
 
+import { FormattedMessage } from 'react-intl'
+
 import ColorWallSwatch from '../Facets/ColorWall/ColorWallSwatch/ColorWallSwatch'
-import SeachBar from './searchBar'
+import SearchBar from './SearchBar'
+import ColorWallContext from '../Facets/ColorWall/ColorWallContext'
+import ButtonBar from '../ButtonBar/ButtonBar'
+import GenericMessage from '../Messages/GenericMessage'
+import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 
 import { type Color } from '../../shared/types/Colors'
 
 import './Search.scss'
 
-import ColorWallContext from '../Facets/ColorWall/ColorWallContext'
-
 type Props = {
-  colors: Array<any>,
+  colors: void | any[],
+  loading: Boolean,
   loadSearchResults: Function,
-  addToLivePalette: Function
+  clearSearch: Function,
+  addToLivePalette: Function,
+  onCancel: Function
 }
 
 type State = {
@@ -33,73 +40,49 @@ const cwProviderValues = {
   displayInfoButton: true,
   displayAddButton: true
 }
+const baseClass = 'Search'
 
 export class Search extends PureComponent<Props, State> {
-  static baseClass = 'prism-search'
-
   state = {
     resultSwatchSize: 175
   }
 
+  searchComponent: RefObject
+
   constructor (props: Props) {
     super(props)
 
+    this.searchComponent = React.createRef()
+    this.doClearSearch = this.doClearSearch.bind(this)
     this.cellRenderer = this.cellRenderer.bind(this)
   }
 
-  performSearch = debounce((value: string) => {
-    this.props.loadSearchResults(value)
-  }, SEARCH_DELAY)
-
-  handleSubmit = (e: SyntheticInputEvent<HTMLInputElement>) => {
-    e.preventDefault()
-  }
-
-  cellRenderer = function cellRenderer ({
-    columnIndex, // Horizontal (column) index of cell
-    isScrolling, // The Grid is currently being scrolled
-    isVisible, // This cell is visible within the grid (eg it is not an overscanned cell)
-    key, // Unique key within array of cells
-    parent, // Reference to the parent Grid (instance)
-    rowIndex, // Vertical (row) index of cell
-    style // Style object to be applied to cell (to position it)
-  }: Object) {
-    const { colors, addToLivePalette } = this.props
-    const { props: { columnCount } } = parent
-
-    const index = columnIndex + (rowIndex * columnCount)
-    const thisColor: Color = colors[index]
-
-    if (!thisColor) {
-      return null
-    }
-
-    return (
-      <div key={key} style={style}>
-        <ColorWallContext.Provider value={cwProviderValues}>
-          <ColorWallSwatch
-            showContents
-            color={thisColor}
-            onAdd={addToLivePalette}
-          />
-        </ColorWallContext.Provider>
-      </div>
-    )
-  }
-
   render () {
-    const { colors } = this.props
+    const { colors, onCancel, loading } = this.props
     const { resultSwatchSize } = this.state
 
     return (
-      <div className={Search.baseClass}>
-        <form onSubmit={this.handleSubmit}>
-          <SeachBar handleSearchInput={this.performSearch} />
+      <div className={baseClass}>
+        <form onSubmit={this.handleSubmit} className={`${baseClass}__search-form`}>
+          <SearchBar onSearchInput={this.performSearch} onClearSearch={this.doClearSearch} ref={this.searchComponent} />
+          <ButtonBar.Bar>
+            <ButtonBar.Button onClick={onCancel}>
+              <FormattedMessage id='Cancel' />
+            </ButtonBar.Button>
+          </ButtonBar.Bar>
         </form>
-
-        {!colors.length || resultSwatchSize !== 175
-          ? <div className={`${Search.baseClass}__search-text`}>'Enter a color name, number or family in the text field above.'</div>
-          : <div className='color-wall-wall'>
+        <div className={`${baseClass}__results-pane`}>
+          { loading ? (
+            <CircleLoader />
+          ) : !colors ? (
+            <GenericMessage type={GenericMessage.TYPES.NORMAL}>
+              <FormattedMessage id='SEARCH_PROMPT' />
+            </GenericMessage>
+          ) : !colors.length ? (
+            <GenericMessage type={GenericMessage.TYPES.WARNING}>
+              <FormattedMessage id='SEARCH_NO_RESULTS' />
+            </GenericMessage>
+          ) : (
             <section className='color-wall-swatch-list color-wall-swatch-list--show-all'>
               <AutoSizer>
                 {({ height, width }) => {
@@ -121,22 +104,82 @@ export class Search extends PureComponent<Props, State> {
                 }}
               </AutoSizer>
             </section>
-          </div>
-        }
+          ) }
+        </div>
       </div>
     )
+  }
+
+  componentDidMount () {
+    // clear search results whenever this component mounts -- this is how we control our initial "enter a color name" state
+    this.props.clearSearch()
+  }
+
+  performSearch = debounce((value: string) => {
+    this.props.loadSearchResults(value)
+  }, SEARCH_DELAY)
+
+  handleSubmit = (e: SyntheticInputEvent<HTMLInputElement>) => {
+    e.preventDefault()
+  }
+
+  doClearSearch = () => {
+    this.props.clearSearch()
+
+    // if our search component has a focus method per its exposed API...
+    if (typeof this.searchComponent.current[SearchBar.API.focus] === 'function') {
+      // ... call it after clearing search
+      this.searchComponent.current[SearchBar.API.focus]()
+    }
+  }
+
+  cellRenderer = function cellRenderer ({
+    columnIndex, // Horizontal (column) index of cell
+    isScrolling, // The Grid is currently being scrolled
+    isVisible, // This cell is visible within the grid (eg it is not an overscanned cell)
+    key, // Unique key within array of cells
+    parent, // Reference to the parent Grid (instance)
+    rowIndex, // Vertical (row) index of cell
+    style // Style object to be applied to cell (to position it)
+  }: Object) {
+    const { colors, addToLivePalette } = this.props
+    const { props: { columnCount } } = parent
+
+    const index = columnIndex + (rowIndex * columnCount)
+
+    if (colors && colors[index]) {
+      const thisColor: Color = colors[index]
+
+      return (
+        <div key={key} style={style}>
+          <ColorWallContext.Provider value={cwProviderValues}>
+            <ColorWallSwatch
+              key={thisColor.hex}
+              showContents
+              color={thisColor}
+              onAdd={addToLivePalette}
+            />
+          </ColorWallContext.Provider>
+        </div>
+      )
+    }
+
+    return null
   }
 }
 
 const mapStateToProps = (state, props) => {
   return {
-    colors: state.colors.searchResults,
-    loading: state.colors.status.loading
+    colors: state.colors.search.results,
+    loading: state.colors.search.loading
   }
 }
 
 const mapDispatchToProps = (dispatch: Function) => {
   return {
+    clearSearch: () => {
+      dispatch(clearSearch())
+    },
     loadSearchResults: (family) => {
       dispatch(loadSearchResults(family))
     },

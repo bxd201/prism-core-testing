@@ -247,8 +247,8 @@ describe('colors-reducer', () => {
 
     expect(state).toEqual({
       ...initialState,
-      status: {
-        ...initialState.status,
+      search: {
+        ...initialState.search,
         loading: true
       }
     })
@@ -257,16 +257,15 @@ describe('colors-reducer', () => {
   test('updates results for search received', () => {
     const state = colors(initialState, {
       type: searchActions.RECEIVE_SEARCH_RESULTS,
-      payload: { loading: false, results: [color] }
+      payload: { results: [color] }
     })
 
     expect(state).toEqual({
       ...initialState,
-      status: {
-        activeRequest: false,
-        error: false,
-        loading: false },
-      searchResults: [color]
+      search: {
+        loading: false,
+        results: [color]
+      }
     })
   })
 

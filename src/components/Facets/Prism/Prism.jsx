@@ -7,7 +7,6 @@ import { withDragDropContext } from '../../../helpers/WithDragDropContext'
 import LivePalette from '../../LivePalette/LivePalette'
 import ColorWallRouteComponent from '../ColorWall/ColorWallRouteComponent'
 import SceneManager from '../../SceneManager/SceneManager'
-import Search from '../../Search/Search'
 import ColorsFromImage from '../../ColorsFromImage/ColorsFromImage'
 import ColorDetails from '../ColorDetails/ColorDetails'
 import PrismNav from './PrismNav'
@@ -38,7 +37,6 @@ export class Prism extends Component<Props> {
         <Route path={colorWallUrlPattern} component={ColorWallRouteComponent} />
         <Route path={`/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`} exact component={ColorDetails} />
         <Route path='/active/colors-from-image' exact component={ColorsFromImage} />
-        <Route path='/search' exact component={Search} />
         <LivePalette />
       </React.Fragment>
     )

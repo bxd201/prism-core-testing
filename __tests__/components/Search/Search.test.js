@@ -1,4 +1,6 @@
+/* eslint-disable jest/no-disabled-tests */
 /* eslint-env jest */
+
 import React from 'react'
 import { shallow } from 'enzyme'
 import { Search } from 'src/components/Search/Search'
@@ -10,14 +12,15 @@ const mockFnLoadSearchResults = jest.fn()
 const mockAddToLivePalette = jest.fn()
 const mockPreventDefault = jest.fn()
 const mockHandleSubmit = jest.fn()
-const mockHandleSearchInput = jest.fn()
-const mockPersist = jest.fn()
+const mockClearSearch = jest.fn()
 
 const getSearch = (props) => {
   let defaultProps = {
     colors: [],
     loadSearchResults: mockFnLoadSearchResults,
-    addToLivePalette: mockAddToLivePalette
+    addToLivePalette: mockAddToLivePalette,
+    clearSearch: mockClearSearch,
+    loading: false
   }
 
   let newProps = Object.assign({}, defaultProps, props)
@@ -40,8 +43,8 @@ describe('Search with empty colors prop', () => {
     expect(search.find('form').exists()).toBe(true)
   })
 
-  it('should render input', () => {
-    expect(search.find('input').exists()).toBe(true)
+  it('should render SearchBar component', () => {
+    expect(search.find('SearchBar').exists()).toBe(true)
   })
 
   it('should have state resultSwatchSize to equal 175', () => {
@@ -68,13 +71,6 @@ describe('Search with events', () => {
     if (!search) {
       search = getSearch()
     }
-  })
-
-  it('should call handleInput on input change', () => {
-    search.instance().handleSearchInput = mockHandleSearchInput
-    search.instance().forceUpdate()
-    search.find('input').simulate('input', { target: { value: 'xyz' }, persist: mockPersist })
-    expect(mockHandleSearchInput).toHaveBeenCalledWith('xyz')
   })
 
   it('should call handleSubmit on form submit', () => {

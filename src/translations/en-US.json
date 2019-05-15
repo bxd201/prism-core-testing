@@ -27,5 +27,8 @@
   "SWATCH_ACTIVATED_DETAILS": "{color} is selected. Press Enter to view details.",
   "SWATCH_FOCUS": "{color}. Press Enter to select.",
   "ZOOM_IN": "Zoom in",
-  "ZOOM_OUT": "Zoom out"
+  "ZOOM_OUT": "Zoom out",
+  "SEARCH": "Search",
+  "SEARCH_PROMPT": "Enter a color name, number or family in the text field above.",
+  "SEARCH_NO_RESULTS": "Sorry, no color matches found. Try entering a different color name or number."
 }

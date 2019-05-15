@@ -32,7 +32,10 @@ export type ColorsState = {
   families?: string[],
   family?: string,
   colorWallActive?: Color,
-  searchResults: ColorList,
+  search: {
+    results?: ColorList,
+    loading: boolean
+  },
   initializeWith: {
     section?: string,
     family?: string,

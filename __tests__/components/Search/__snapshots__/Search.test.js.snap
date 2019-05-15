@@ -2,44 +2,72 @@
 
 exports[`Search with colors prop should match snapshot 1`] = `
 <div
-  className="prism-search"
+  className="Search"
 >
   <form
+    className="Search__search-form"
     onSubmit={[Function]}
   >
-    <input
-      className="prism-search__input"
-      onInput={[Function]}
-      placeholder="Color name, number, or family"
-      type="search"
+    <SearchBar
+      onClearSearch={[Function]}
+      onSearchInput={[Function]}
     />
+    <Bar>
+      <Button>
+        <FormattedMessage
+          id="Cancel"
+          values={Object {}}
+        />
+      </Button>
+    </Bar>
   </form>
   <div
-    className="prism-search__search-text"
+    className="Search__results-pane"
   >
-    'Enter a color name, number or family in the text field above.'
+    <GenericMessage
+      type="WARNING"
+    >
+      <FormattedMessage
+        id="SEARCH_NO_RESULTS"
+        values={Object {}}
+      />
+    </GenericMessage>
   </div>
 </div>
 `;
 
 exports[`Search with empty colors prop should match snapshot 1`] = `
 <div
-  className="prism-search"
+  className="Search"
 >
   <form
+    className="Search__search-form"
     onSubmit={[Function]}
   >
-    <input
-      className="prism-search__input"
-      onInput={[Function]}
-      placeholder="Color name, number, or family"
-      type="search"
+    <SearchBar
+      onClearSearch={[Function]}
+      onSearchInput={[Function]}
     />
+    <Bar>
+      <Button>
+        <FormattedMessage
+          id="Cancel"
+          values={Object {}}
+        />
+      </Button>
+    </Bar>
   </form>
   <div
-    className="prism-search__search-text"
+    className="Search__results-pane"
   >
-    'Enter a color name, number or family in the text field above.'
+    <GenericMessage
+      type="WARNING"
+    >
+      <FormattedMessage
+        id="SEARCH_NO_RESULTS"
+        values={Object {}}
+      />
+    </GenericMessage>
   </div>
 </div>
 `;

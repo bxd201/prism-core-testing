@@ -23,7 +23,11 @@ export const initialState: ColorsState = {
   families: [],
   family: void (0),
 
-  searchResults: [],
+  search: {
+    results: void (0),
+    loading: false
+  },
+
   colorWallActive: void (0),
 
   initializeWith: {

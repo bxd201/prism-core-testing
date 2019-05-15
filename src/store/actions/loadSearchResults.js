@@ -7,11 +7,17 @@ import { generateBrandedEndpoint } from '../../shared/helpers/DataUtils'
 
 import type { ColorList } from '../../shared/types/Colors'
 
+export const CLEAR_SEARCH: string = 'CLEAR_SEARCH'
+export const clearSearch = () => {
+  return {
+    type: CLEAR_SEARCH
+  }
+}
+
 export const REQUEST_SEARCH_RESULTS: string = 'REQUEST_SEARCH_RESULTS'
 const requestSearchResults = () => {
   return {
-    type: REQUEST_SEARCH_RESULTS,
-    payload: { loading: true }
+    type: REQUEST_SEARCH_RESULTS
   }
 }
 
@@ -20,7 +26,6 @@ const receiveSearchResults = (results: ColorList) => {
   return {
     type: RECEIVE_SEARCH_RESULTS,
     payload: {
-      loading: false,
       results: results
     }
   }

@@ -1,0 +1,22 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ButtonBar.Bar should match snapshot 1`] = `
+<div
+  className="button-bar__option-container auto-scroll"
+>
+  <ul
+    className="button-bar__options no-list"
+  />
+</div>
+`;
+
+exports[`ButtonBar.Button should match snapshot 1`] = `
+<li
+  className="button-bar__options__option"
+>
+  <button
+    className="button-bar__options__option__btn "
+    type="button"
+  />
+</li>
+`;

@@ -2,7 +2,6 @@
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
 import { injectIntl, type intlShape, FormattedMessage } from 'react-intl'
-import { Link, NavLink } from 'react-router-dom'
 import { TransitionGroup, CSSTransition } from 'react-transition-group'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
@@ -21,6 +20,8 @@ import StandardColorWall from './StandardColorWall'
 import SherwinColorWall from './SherwinColorWall'
 import GenericMessage from '../../Messages/GenericMessage'
 import CircleLoader from '../../Loaders/CircleLoader/CircleLoader'
+import Search from '../../Search/Search'
+import ButtonBar from '../../ButtonBar/ButtonBar'
 
 import './ColorWall.scss'
 
@@ -51,18 +52,22 @@ type ComponentProps = {
 type Props = StateProps & DispatchProps & ComponentProps
 
 type State = {
-  showColorFamilies: boolean
+  showColorFamilies: boolean,
+  showSearch: boolean
 }
 
 class ColorWall extends PureComponent<Props, State> {
   state: State = {
-    showColorFamilies: false
+    showColorFamilies: false,
+    showSearch: false
   }
 
   constructor (props: Props) {
     super(props)
 
     this.toggleViewFamilies = this.toggleViewFamilies.bind(this)
+    this.stopViewFamilies = this.stopViewFamilies.bind(this)
+    this.toggleViewSearch = this.toggleViewSearch.bind(this)
   }
 
   componentDidMount () {
@@ -77,7 +82,7 @@ class ColorWall extends PureComponent<Props, State> {
   }
 
   render () {
-    const { showColorFamilies } = this.state
+    const { showColorFamilies, showSearch } = this.state
     const { colors, family, sections, families, section, brights, colorMap, colorWallActive, loading, error, addToLivePalette, unorderedColors } = this.props
 
     const hasSections = !!(sections && sections.length)
@@ -95,34 +100,35 @@ class ColorWall extends PureComponent<Props, State> {
       return <CircleLoader />
     }
 
+    if (showSearch) {
+      return <Search onCancel={this.toggleViewSearch} />
+    }
+
     if (!_showColorFamilies && hasSections) {
       sectionButtons = (
         <div className={MODE_CLASS_NAMES.COL}>
           <div className={MODE_CLASS_NAMES.CELL}>
-            <div className={MODE_CLASS_NAMES.OPTION_CONTAINER}>
-              <ul className={MODE_CLASS_NAMES.OPTIONS}>
-                { // $FlowIgnore -- flow doesn't realize that sections must be defined at this point
-                  sections.map((sectionName: string, i: number) => (
-                    <li className={MODE_CLASS_NAMES.OPTION} key={sectionName}>
-                      <NavLink className={MODE_CLASS_NAMES.OPTION_BUTTON} activeClassName={MODE_CLASS_NAMES.OPTION_BUTTON_ACTIVE} to={generateColorWallPageUrl(sectionName)}>
-                        <span className={MODE_CLASS_NAMES.DESC}>{sectionName}</span>
-                      </NavLink>
-                    </li>
-                  ))
-                }
-                <li className={MODE_CLASS_NAMES.OPTION}>
-                  <NavLink className={MODE_CLASS_NAMES.OPTION_BUTTON} activeClassName={MODE_CLASS_NAMES.OPTION_BUTTON_ACTIVE} to='/search'>
-                    <span className={MODE_CLASS_NAMES.DESC}>Search</span>
-                  </NavLink>
-                </li>
-              </ul>
-            </div>
+            <ButtonBar.Bar>
+              { // $FlowIgnore -- flow doesn't realize that sections must be defined at this point
+                sections.map((sectionName: string, i: number) => (
+                  <ButtonBar.Button key={sectionName} to={generateColorWallPageUrl(sectionName)}>
+                    <span className={MODE_CLASS_NAMES.DESC}>{sectionName}</span>
+                  </ButtonBar.Button>
+                ))
+              }
+            </ButtonBar.Bar>
           </div>
           <div className={`${MODE_CLASS_NAMES.CELL} ${MODE_CLASS_NAMES.RIGHT}`}>
-            <button className={MODE_CLASS_NAMES.BUTTON} disabled={!families || families.length <= 1} onClick={this.toggleViewFamilies}>
-              <FontAwesomeIcon className='color-families-svg' icon={['fa', 'palette']} pull='left' />
-              <span className={MODE_CLASS_NAMES.DESC}><FormattedMessage id='COLOR_FAMILIES' /></span>
-            </button>
+            <ButtonBar.Bar>
+              <ButtonBar.Button disabled={!families || families.length <= 1} onClick={this.toggleViewFamilies}>
+                <FontAwesomeIcon className='color-families-svg' icon={['fa', 'palette']} pull='left' />
+                <span className={MODE_CLASS_NAMES.DESC}><FormattedMessage id='COLOR_FAMILIES' /></span>
+              </ButtonBar.Button>
+              <ButtonBar.Button onClick={this.toggleViewSearch}>
+                <FontAwesomeIcon className='color-families-svg' icon={['fa', 'search']} pull='left' />
+                <span className={MODE_CLASS_NAMES.DESC}><FormattedMessage id='SEARCH' /></span>
+              </ButtonBar.Button>
+            </ButtonBar.Bar>
           </div>
         </div>
       )
@@ -132,29 +138,27 @@ class ColorWall extends PureComponent<Props, State> {
       familyButtons = (
         <div className={MODE_CLASS_NAMES.COL}>
           <div className={MODE_CLASS_NAMES.CELL}>
-            <div className={MODE_CLASS_NAMES.OPTION_CONTAINER}>
-              <ul className={MODE_CLASS_NAMES.OPTIONS}>
-                { // $FlowIgnore -- Flow doesn't realize families must be defined and be iterable to get here
-                  families.map((thisFamily: string) => {
-                    return (
-                      <li className={MODE_CLASS_NAMES.OPTION} key={thisFamily}>
-                        <NavLink className={MODE_CLASS_NAMES.OPTION_BUTTON} activeClassName={MODE_CLASS_NAMES.OPTION_BUTTON_ACTIVE} to={generateColorWallPageUrl(section, thisFamily)}>
-                          <span className={MODE_CLASS_NAMES.DESC}>{thisFamily}</span>
-                        </NavLink>
-                      </li>
-                    )
-                  })
-                }
-              </ul>
-            </div>
+            <ButtonBar.Bar>
+              { // $FlowIgnore -- Flow doesn't realize families must be defined and be iterable to get here
+                families.map((thisFamily: string) => {
+                  return (
+                    <ButtonBar.Button key={thisFamily} to={generateColorWallPageUrl(section, thisFamily)}>
+                      <span className={MODE_CLASS_NAMES.DESC}>{thisFamily}</span>
+                    </ButtonBar.Button>
+                  )
+                })
+              }
+            </ButtonBar.Bar>
           </div>
 
           {hasSections ? (
             <div className={`${MODE_CLASS_NAMES.CELL} ${MODE_CLASS_NAMES.RIGHT}`}>
-              <Link className={MODE_CLASS_NAMES.BUTTON} to={generateColorWallPageUrl(section)} onClick={() => this.toggleViewFamilies(false)}>
-                <FontAwesomeIcon className='close-icon-svg' icon={['fa', 'times']} pull='left' />
-                <span className={MODE_CLASS_NAMES.DESC}><FormattedMessage id='CANCEL' /></span>
-              </Link>
+              <ButtonBar.Bar>
+                <ButtonBar.Button to={generateColorWallPageUrl(section)} onClick={this.stopViewFamilies}>
+                  <FontAwesomeIcon className='close-icon-svg' icon={['fa', 'times']} pull='left' />
+                  <span className={MODE_CLASS_NAMES.DESC}><FormattedMessage id='CANCEL' /></span>
+                </ButtonBar.Button>
+              </ButtonBar.Bar>
             </div>
           ) : null}
         </div>
@@ -217,6 +221,19 @@ class ColorWall extends PureComponent<Props, State> {
 
     this.setState({
       showColorFamilies: newValue
+    })
+  }
+
+  stopViewFamilies = function stopViewFamilies () {
+    this.toggleViewFamilies(false)
+  }
+
+  toggleViewSearch = function toggleViewSearch (setTo?: boolean) {
+    const { showSearch } = this.state
+    const newValue: boolean = (typeof setTo === 'boolean' ? setTo : !showSearch)
+
+    this.setState({
+      showSearch: newValue
     })
   }
 }
