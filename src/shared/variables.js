@@ -25,7 +25,8 @@ module.exports.varValues = {
     nearBlack: '#2e2e2e',
     black: '#000000',
     white: '#ffffff',
-    swBlue: '#0069af'
+    swBlue: '#0069af',
+    summerSkyBlue: '#2cabe2'
   },
   colorWall: {
     swatchColumns: 56, // default SW color chunks
@@ -56,7 +57,8 @@ module.exports.varNames = {
       lightGrey: '--prism-color-lightGrey',
       nearBlack: '--prism-color-nearBlack',
       black: '--prism-color-black',
-      white: '--prism-color-white'
+      white: '--prism-color-white',
+      summerSkyBlue: '--prism-color-summerSkyBlue'
     }
   },
   globalCornerRadius: '--sw-global-corner-radius',

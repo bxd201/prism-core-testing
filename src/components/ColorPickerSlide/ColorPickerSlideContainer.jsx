@@ -2,29 +2,29 @@
 import React from 'react'
 import type { Color } from '../../../src/shared/types/Colors'
 import { fullColorNumber } from '../../../src/shared/helpers/ColorUtils'
-import { ExpertColor } from './ExpertColor'
 import { connect } from 'react-redux'
 import { add } from '../../store/actions/live-palette'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCheckCircle, faPlusCircle } from '@fortawesome/pro-solid-svg-icons'
 import some from 'lodash/some'
 
 const baseClass = 'prism-color-palette-suggester'
 
 type Props = {
     isShowSlider: boolean,
-    addColors: Color
+    addColors: Color,
+    expertColor: Color[]
 }
 
 export function PaletteSuggester (props: Props) {
-  const { isShowSlider, addColors } = props
+  const { isShowSlider, addColors, expertColor } = props
   const displayArea = 'container__color-display-area'
   const content = 'container__color-display-content'
   const icons = 'container__toggle-check-icons'
 
   return (
     <div className={`${baseClass}__wrapper`}>
-      { ExpertColor.map((color, id) => {
+      <div className={`${baseClass}__header`}>Expert Color Picks</div>
+      { expertColor.map((color, id) => {
         const isColorAdded = some(addColors, color)
         return (
           <div className={`${baseClass}__container`} key={id}>
@@ -33,20 +33,18 @@ export function PaletteSuggester (props: Props) {
                   ${isColorAdded ? `${baseClass}__${displayArea}--active` : `${baseClass}__${displayArea}--unactive`}
                   ${isShowSlider ? `${baseClass}__${displayArea}--show` : `${baseClass}__${displayArea}--hide`}`
               } style={{ backgroundColor: color.hex }}>
-                { isColorAdded && isShowSlider && <FontAwesomeIcon className={`${baseClass}__${icons}`} icon={faCheckCircle} /> }
-                { !isColorAdded && isShowSlider && <FontAwesomeIcon className={`${baseClass}__${icons}`} icon={faPlusCircle} /> }
+                { isColorAdded && <FontAwesomeIcon className={`${baseClass}__${icons} ${isShowSlider ? `${baseClass}__${icons}--show` : `${baseClass}__${icons}--hide`}`} icon={['fa', 'check-circle']} size='2x' /> }
+                { !isColorAdded && <FontAwesomeIcon className={`${baseClass}__${icons} ${isShowSlider ? `${baseClass}__${icons}--show` : `${baseClass}__${icons}--hide`}`} icon={['fal', 'plus-circle']} size='2x' onClick={() => handleClick(isColorAdded, 1, color, props)} /> }
               </div>
             </button>
-            { isShowSlider &&
-              <div className={`${baseClass}__${content}`}>
-                <div className={`${baseClass}__${content}__color-number`} >
-                  {fullColorNumber(color.brandKey, color.colorNumber)}
-                </div>
-                <div className={`${baseClass}__${content}__color-name`}>
-                  {color.name}
-                </div>
+            <div className={`${baseClass}__${content}`}>
+              <div className={`${baseClass}__${content}__color-number`} >
+                {fullColorNumber(color.brandKey, color.colorNumber)}
               </div>
-            }
+              <div className={`${baseClass}__${content}__color-name`}>
+                {color.name}
+              </div>
+            </div>
           </div>
         )
       })
