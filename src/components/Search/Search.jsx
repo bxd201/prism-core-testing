@@ -10,9 +10,10 @@ import { add } from '../../store/actions/live-palette'
 
 import { FormattedMessage } from 'react-intl'
 
+import { generateColorDetailsPageUrl } from '../../shared/helpers/ColorUtils'
+
 import ColorWallSwatch from '../Facets/ColorWall/ColorWallSwatch/ColorWallSwatch'
 import SearchBar from './SearchBar'
-import ColorWallContext from '../Facets/ColorWall/ColorWallContext'
 import ButtonBar from '../ButtonBar/ButtonBar'
 import GenericMessage from '../Messages/GenericMessage'
 import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
@@ -35,11 +36,6 @@ type State = {
 }
 
 const SEARCH_DELAY = 500
-const cwProviderValues = {
-  displayDetailsLink: false,
-  displayInfoButton: true,
-  displayAddButton: true
-}
 const baseClass = 'Search'
 
 export class Search extends PureComponent<Props, State> {
@@ -67,7 +63,7 @@ export class Search extends PureComponent<Props, State> {
           <SearchBar onSearchInput={this.performSearch} onClearSearch={this.doClearSearch} ref={this.searchComponent} />
           <ButtonBar.Bar>
             <ButtonBar.Button onClick={onCancel}>
-              <FormattedMessage id='Cancel' />
+              <FormattedMessage id='CANCEL' />
             </ButtonBar.Button>
           </ButtonBar.Bar>
         </form>
@@ -149,17 +145,17 @@ export class Search extends PureComponent<Props, State> {
 
     if (colors && colors[index]) {
       const thisColor: Color = colors[index]
+      const linkToDetails: string = generateColorDetailsPageUrl(thisColor)
 
       return (
         <div key={key} style={style}>
-          <ColorWallContext.Provider value={cwProviderValues}>
-            <ColorWallSwatch
-              key={thisColor.hex}
-              showContents
-              color={thisColor}
-              onAdd={addToLivePalette}
-            />
-          </ColorWallContext.Provider>
+          <ColorWallSwatch
+            key={thisColor.hex}
+            showContents
+            color={thisColor}
+            onAdd={addToLivePalette}
+            detailsLink={linkToDetails}
+          />
         </div>
       )
     }
