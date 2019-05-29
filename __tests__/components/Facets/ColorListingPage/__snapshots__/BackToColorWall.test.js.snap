@@ -10,12 +10,39 @@ exports[`snapshot match testing should match snapshot 1`] = `
     <div
       className="color-wall-mode-btns__cell"
     >
-      <FormattedMessage
-        id="BACK_TO_COLOR_WALL"
-        values={Object {}}
-      >
-        <Component />
-      </FormattedMessage>
+      <Bar>
+        <Button
+          to="/active/color-wall"
+        >
+          <FontAwesomeIcon
+            border={false}
+            className=""
+            fixedWidth={true}
+            flip={null}
+            icon={
+              Array [
+                "fal",
+                "th-large",
+              ]
+            }
+            inverse={false}
+            listItem={false}
+            mask={null}
+            pull="left"
+            pulse={false}
+            rotation={null}
+            size={null}
+            spin={false}
+            symbol={false}
+            title=""
+            transform={null}
+          />
+          <FormattedMessage
+            id="BACK_TO_COLOR_WALL"
+            values={Object {}}
+          />
+        </Button>
+      </Bar>
     </div>
   </div>
 </div>
