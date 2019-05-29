@@ -5,6 +5,8 @@ import ColorDetails from '../components/Facets/ColorDetails/ColorDetails'
 import ColorListingPage from '../components/Facets/ColorListingPage/ColorListingPage'
 import ColorWallFacet from '../components/Facets/ColorWallFacet/ColorWallFacet'
 
+import FastMask from '../components/FastMask/FastMask'
+
 // list out all components that can be mounted
 const components = {
   Prism,
@@ -12,7 +14,8 @@ const components = {
   Tinter,
   ColorDetails,
   ColorListingPage,
-  ColorWallFacet
+  ColorWallFacet,
+  FastMask
 }
 
 export default components
