@@ -24,7 +24,7 @@ export function ColorStrip ({ colors, color, history }: Props) {
   let stripColors = []
   if (stripLocation) {
     // TODO: Perhaps we need to find a better resolution to the data so we aren't having to do this bright test in multiple places
-    stripColors = filter(colors, c => (c.id.indexOf('bright') === -1 && split(c.storeStripLocator, '-')[0] === stripLocation))
+    stripColors = filter(colors, c => (!c.ignore && split(c.storeStripLocator, '-')[0] === stripLocation))
   }
 
   // don't display the strip if there are no color strip colors
