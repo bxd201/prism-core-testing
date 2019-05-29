@@ -9,6 +9,7 @@ import ColorWallRouteComponent from '../ColorWall/ColorWallRouteComponent'
 import InspiredScene from '../../InspirationPhotos/InspiredSceneNavigator'
 import SceneManager from '../../SceneManager/SceneManager'
 import ColorDetails from '../ColorDetails/ColorDetails'
+import FastMask from '../../FastMask/FastMask'
 import PrismNav from './PrismNav'
 import ColorCollection from '../../ColorCollections/ColorCollections'
 import CompareColor from '../../CompareColor/CompareColor'
@@ -46,6 +47,7 @@ export class Prism extends Component<Props> {
               <Route path='/expert-colors' component={() => <ColorCollection isExpertColor />} />
               <Route path='/match-photo' component={MatchPhoto} />
               <Route path={`/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`} exact component={ColorDetails} />
+              <Route path='/fast-mask' exact component={FastMask} />
             </div>
           }
           {toggleCompareColor && <CompareColor />}

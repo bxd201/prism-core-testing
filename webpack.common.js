@@ -151,6 +151,10 @@ module.exports = {
         use: sassRules
       },
       {
+        test: /\.worker\.js$/,
+        use: [ 'babel-loader', 'worker-loader' ]
+      },
+      {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
         use: [ 'babel-loader', 'eslint-loader' ],
