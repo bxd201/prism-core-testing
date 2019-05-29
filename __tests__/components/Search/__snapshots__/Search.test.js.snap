@@ -15,7 +15,7 @@ exports[`Search with colors prop should match snapshot 1`] = `
     <Bar>
       <Button>
         <FormattedMessage
-          id="Cancel"
+          id="CANCEL"
           values={Object {}}
         />
       </Button>
@@ -51,7 +51,7 @@ exports[`Search with empty colors prop should match snapshot 1`] = `
     <Bar>
       <Button>
         <FormattedMessage
-          id="Cancel"
+          id="CANCEL"
           values={Object {}}
         />
       </Button>
