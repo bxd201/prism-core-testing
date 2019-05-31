@@ -3,10 +3,11 @@ import find from 'lodash/find'
 import kebabCase from 'lodash/kebabCase'
 import intersection from 'lodash/intersection'
 
-import { convertToColorMap, convertChunkedColorsToClasses } from '../../../shared/helpers/ColorDataUtils'
+import { convertUnorderedColorsToColorMap, convertUnorderedColorsToClasses } from '../../../shared/helpers/ColorDataUtils'
 import { compareKebabs } from '../../../shared/helpers/StringUtils'
 
 import { type ColorsState, type ReduxAction, type Section } from '../../../shared/types/Actions'
+import type { Color } from '../../../shared/types/Colors'
 
 export const initialState: ColorsState = {
   status: {
@@ -22,7 +23,11 @@ export const initialState: ColorsState = {
   families: [],
   family: void (0),
 
-  searchResults: [],
+  search: {
+    results: void (0),
+    loading: false
+  },
+
   colorWallActive: void (0),
 
   initializeWith: {
@@ -46,13 +51,11 @@ export function getErrorState (state: ColorsState) {
 
 export function doReceiveColors (state: ColorsState, action: ReduxAction) {
   // adding toString methods to all Color objects
-  const payloadColors = convertChunkedColorsToClasses(action.payload.colors)
-  const payloadBrights = convertChunkedColorsToClasses(action.payload.brights)
-  const colorMap = { ...convertToColorMap(payloadColors), ...convertToColorMap(payloadBrights) }
   const initSection = state.initializeWith.section
   const initFam = state.initializeWith.family
   const initColor = state.initializeWith.colorWallActive
-
+  const colorMap = convertUnorderedColorsToColorMap(convertUnorderedColorsToClasses(action.payload.unorderedColors))
+  const unorderedColorList = action.payload.unorderedColors.map((c: Color) => c.id)
   const structure = action.payload.sections
   const hasSections = structure && structure.length
   const sectionNames = hasSections && structure.map((section: Section) => {
@@ -66,8 +69,9 @@ export function doReceiveColors (state: ColorsState, action: ReduxAction) {
   let newState = {
     ...state,
     items: {
-      colors: payloadColors,
-      brights: payloadBrights,
+      colors: action.payload.colors,
+      brights: action.payload.brights,
+      unorderedColors: unorderedColorList,
       colorMap
     },
     status: {

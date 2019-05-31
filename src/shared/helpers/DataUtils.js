@@ -34,3 +34,71 @@ export const generateBrandedEndpoint = memoizee((basePath, brand, options) => {
 
   return url
 })
+
+export type GridShape = {
+  cols: number,
+  rows: number,
+  ar: number
+}
+
+export const formToGridWithAspectRatio = (() => {
+  const MAX_ALLOWABLE_PASSES = 10000
+  const getSquare = memoizee(function getSquare (items: number): GridShape {
+    const sqCols = Math.ceil(Math.sqrt(items))
+    const sqRows = Math.ceil(items / sqCols)
+    const sqAspectRatio = sqRows / sqCols
+
+    return {
+      cols: sqCols,
+      rows: sqRows,
+      ar: sqAspectRatio
+    }
+  }, { primitive: true, length: 1 })
+
+  function formToAspectRatio (items: number, targetAr: number, narrower: boolean = true): GridShape {
+    const sqData = getSquare(items)
+    let pass = MAX_ALLOWABLE_PASSES
+    let lastValues = { ...sqData }
+    let lastDiff = Math.abs(sqData.ar - targetAr)
+
+    // TODO: we can reduce the number of passes this needs to make by...
+    // 1) making a single pass and seeing how far from the target we are
+    // 2) making additional passes with larger differences, meaning we add or remove 2/5/10 columns per pass
+    // 3) falling back to single changes as we get closer to our target value
+    while (pass--) {
+      const newCols = lastValues.cols + (narrower ? -1 : 1)
+      const newRows = Math.ceil(items / newCols)
+      const newAspectRatio = newRows / newCols
+      const newDiff = Math.abs(newAspectRatio - targetAr)
+
+      if (newDiff > lastDiff) {
+        return lastValues
+      } else {
+        lastDiff = newDiff
+        lastValues = {
+          cols: newCols,
+          rows: newRows,
+          ar: newAspectRatio
+        }
+      }
+    }
+
+    throw Error(`Exceeded maximum allowable number of passes to find aspect ratio of ${targetAr} from ${items} items`)
+  }
+
+  return function formToGridWithAspectRatio (totalItems: number, desiredAspectRatio: number): GridShape {
+    const sqData = getSquare(totalItems)
+    const diff = sqData.ar - desiredAspectRatio
+
+    if (diff > 0) {
+      // get shorter -- more cols, fewer rows
+      return formToAspectRatio(totalItems, desiredAspectRatio, false)
+    } else if (diff < 0) {
+      // get taller -- more rows, fewer cols
+      return formToAspectRatio(totalItems, desiredAspectRatio, true)
+    } else {
+      // it's actually perfect, so just return as-is
+      return sqData
+    }
+  }
+})()

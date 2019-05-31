@@ -18,8 +18,8 @@ import ColorWallSwatch from './ColorWallSwatch/ColorWallSwatch'
 import ColorWallSwatchUI from './ColorWallSwatch/ColorWallSwatchUI'
 import ColorWallSwatchRenderer from './ColorWallSwatch/ColorWallSwatchRenderer'
 import ChunkBoundary from './ChunkBoundary'
-import type { ColorMap, Color, ColorGrid, ProbablyColor } from '../../../shared/types/Colors'
-import { getColorCoords, drawCircle, getCoordsObjectFromPairs, findContainingChunk, findChunkFromCorner, overscanIndicesGetter, getColorIdGrid } from './ColorWallUtils'
+import { type ColorMap, type Color, type ProbablyColorId, type ColorIdGrid } from '../../../shared/types/Colors'
+import { getColorCoords, drawCircle, getCoordsObjectFromPairs, findContainingChunk, findChunkFromCorner, overscanIndicesGetter } from './ColorWallUtils'
 import { getTotalWidthOf2dArray } from '../../../shared/helpers/DataUtils'
 import { generateColorWallPageUrl, fullColorName } from '../../../shared/helpers/ColorUtils'
 import { type GridBounds, type ColorReference } from './ColorWall.flow'
@@ -40,7 +40,7 @@ type RouterProps = {
 }
 
 type Props = IntlProps & RouterProps & {
-  colors: ColorGrid, // eslint-disable-line react/no-unused-prop-types
+  colors: ColorIdGrid, // eslint-disable-line react/no-unused-prop-types
   minCellSize: number,
   maxCellSize: number,
   bloomRadius: number,
@@ -140,7 +140,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
   render () {
     const { minCellSize, maxCellSize, showAll, activeColor, colors } = this.props
     const { focusCoords, needsInitialFocus, a11yFocusChunk, a11yFocusCell, renderFocusOutline } = this.state
-    const colorIdGrid = getColorIdGrid(colors)
+    const colorIdGrid = colors
     const rowCount = colorIdGrid.length
     const columnCount = getTotalWidthOf2dArray(colorIdGrid)
     const focusMessaging = this.getAudioMessaging()
@@ -236,8 +236,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
       return stateChanges
     }
 
-    const colorIdGrid = getColorIdGrid(colors)
-    const coords = getColorCoords(activeColor.id, colorIdGrid)
+    const coords = getColorCoords(activeColor.id, colors)
 
     if (!isEmpty(focusCoords) && !isEqual(coords, focusCoords)) {
       stateChanges = {
@@ -253,7 +252,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
         ...stateChanges,
         activeColorCoords: coords,
         focusCoords: coords,
-        levelMap: drawCircle(bloomRadius, coords[0], coords[1], colorIdGrid)
+        levelMap: drawCircle(bloomRadius, coords[0], coords[1], colors)
       }
     }
 
@@ -273,8 +272,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     // if cell is present in our location's state but chunk is NOT...
     if (cell && !chunk) {
       // ... then gather our color grid and attempt to locate a containing chunk
-      const colorIdGrid = getColorIdGrid(colors)
-      chunk = findContainingChunk(colorIdGrid, cell[0], cell[1])
+      chunk = findContainingChunk(colors, cell[0], cell[1])
     }
 
     // if we have a cell and chunk by this point...
@@ -339,10 +337,8 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
       if (!isEqual(activeColorCoords, a11yFocusCell)) {
         // ... we'll need to update the a11yFocus values to match it
 
-        // generate a color ID grid
-        const colorIdGrid = getColorIdGrid(colors)
         // find the containing chunk around the active color's coordinates
-        const containingChunk = findContainingChunk(colorIdGrid, activeColorCoords[0], activeColorCoords[1])
+        const containingChunk = findContainingChunk(colors, activeColorCoords[0], activeColorCoords[1])
 
         // if we have successfully located a containing chunk...
         if (containingChunk) {
@@ -451,7 +447,6 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     const { colors, history: { push }, section, family, showAll } = this.props
     const { activeColorCoords, a11yFocusChunk, a11yFocusCell } = this.state
     const { shiftKey } = e
-    const colorIdGrid = getColorIdGrid(colors)
 
     let newA11yFocusChunk
     let newA11yFocusCell
@@ -478,7 +473,12 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
           break
         case 13: // enter
         case 32: // space? do we need this?
-          const colorId = colorIdGrid[y][x]
+          const colorId = colors[y][x]
+
+          if (!colorId) {
+            return
+          }
+
           const targetedSwatchEl = this._swatchRefs[colorId]
 
           if (targetedSwatchEl && isFunction(targetedSwatchEl.getThisLink)) {
@@ -526,7 +526,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
           // go up a column
           if (isEmpty(a11yFocusChunk)) {
             // ... try to select the first chunk
-            const lastChunk = findChunkFromCorner(colorIdGrid, -1, -1, false)
+            const lastChunk = findChunkFromCorner(colors, -1, -1, false)
 
             if (lastChunk) {
               newA11yFocusChunk = lastChunk
@@ -543,13 +543,13 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
           } else {
             // ... otherwise work with our existing focused chunk
             const searchWidth = Math.abs(a11yFocusChunk.BR[0] - a11yFocusChunk.TL[0]) + 1
-            const nextChunkUp = findChunkFromCorner(colorIdGrid, a11yFocusChunk.BR[0], a11yFocusChunk.TL[1] - 1, false, searchWidth)
+            const nextChunkUp = findChunkFromCorner(colors, a11yFocusChunk.BR[0], a11yFocusChunk.TL[1] - 1, false, searchWidth)
 
             if (nextChunkUp) {
               newA11yFocusChunk = nextChunkUp
               newA11yFocusCell = [nextChunkUp.TL[0], nextChunkUp.TL[1]]
             } else {
-              const nextChunkBack = findChunkFromCorner(colorIdGrid, a11yFocusChunk.TL[0] - 1, -1, false)
+              const nextChunkBack = findChunkFromCorner(colors, a11yFocusChunk.TL[0] - 1, -1, false)
 
               if (nextChunkBack) {
                 newA11yFocusChunk = nextChunkBack
@@ -571,7 +571,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
           // if we have no current chunk...
           if (isEmpty(a11yFocusChunk)) {
             // ... try to select the first chunk
-            const firstChunk = findChunkFromCorner(colorIdGrid, 0, 0)
+            const firstChunk = findChunkFromCorner(colors, 0, 0)
 
             if (firstChunk) {
               newA11yFocusChunk = firstChunk
@@ -587,13 +587,13 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
             }
           } else {
             // ... otherwise work with our existing focused chunk
-            const nextChunkDown = findChunkFromCorner(colorIdGrid, a11yFocusChunk.TL[0], a11yFocusChunk.BR[1] + 1)
+            const nextChunkDown = findChunkFromCorner(colors, a11yFocusChunk.TL[0], a11yFocusChunk.BR[1] + 1)
 
             if (nextChunkDown) {
               newA11yFocusChunk = nextChunkDown
               newA11yFocusCell = [nextChunkDown.TL[0], nextChunkDown.TL[1]]
             } else {
-              const nextChunkOver = findChunkFromCorner(colorIdGrid, a11yFocusChunk.BR[0] + 1, 0)
+              const nextChunkOver = findChunkFromCorner(colors, a11yFocusChunk.BR[0] + 1, 0)
 
               if (nextChunkOver) {
                 newA11yFocusChunk = nextChunkOver
@@ -615,7 +615,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
         // we only want to run this on a tab action so that we don't override up/down/left/right actions
         if (newA11yFocusChunk &&
           activeColorCoords.length &&
-          isEqual(findContainingChunk(colorIdGrid, activeColorCoords[0], activeColorCoords[1]), newA11yFocusChunk)) {
+          isEqual(findContainingChunk(colors, activeColorCoords[0], activeColorCoords[1]), newA11yFocusChunk)) {
           newA11yFocusCell = activeColorCoords
         }
     }
@@ -648,17 +648,16 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     }
 
     if (isEmpty(a11yFocusCell)) {
-      const colorIdGrid = getColorIdGrid(colors)
       let cell, chunk
 
       if (activeColor) {
-        cell = getColorCoords(activeColor.id, colorIdGrid)
+        cell = getColorCoords(activeColor.id, colors)
 
         if (cell) {
-          chunk = findContainingChunk(colorIdGrid, cell[0], cell[1])
+          chunk = findContainingChunk(colors, cell[0], cell[1])
         }
       } else {
-        chunk = findChunkFromCorner(colorIdGrid, 0, 0)
+        chunk = findChunkFromCorner(colors, 0, 0)
 
         if (chunk) {
           cell = chunk.TL
@@ -691,8 +690,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     return (e: any) => {
       const { history: { push }, colors, swatchLinkGenerator } = this.props
       const link: string = swatchLinkGenerator(color)
-      const colorIdGrid = getColorIdGrid(colors)
-      const coords = getColorCoords(color.id, colorIdGrid)
+      const coords = getColorCoords(color.id, colors)
 
       if (e && isFunction(e.preventDefault)) {
         e.preventDefault()
@@ -730,8 +728,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
   }: Object) {
     const { colors, colorMap, immediateSelectionOnActivation, onAddColor, swatchLinkGenerator, swatchDetailsLinkGenerator } = this.props
     const { levelMap, a11yFocusChunk, a11yFocusCell, renderFocusOutline } = this.state
-    const colorIdGrid = getColorIdGrid(colors)
-    const colorId = colorIdGrid[rowIndex][columnIndex]
+    const colorId = colors[rowIndex][columnIndex]
 
     if (!colorId) {
       return null
@@ -822,7 +819,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
   }
 
   getAudioMessaging = function getAudioMessaging (cell?: number[]): string | void {
-    const { colors, intl } = this.props
+    const { colors, colorMap, intl } = this.props
     const { a11yFocusCell, levelMap } = this.state
     const _cell = cell || a11yFocusCell
 
@@ -830,10 +827,11 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
       return void (0)
     }
 
-    const focusedColor: ProbablyColor = colors[_cell[1]][_cell[0]]
+    const focusedColorId: ProbablyColorId = colors[_cell[1]][_cell[0]]
 
-    if (focusedColor) {
-      const thisLevel: ColorReference = levelMap[focusedColor.id]
+    if (focusedColorId) {
+      const focusedColor: Color = colorMap[focusedColorId]
+      const thisLevel: ColorReference = levelMap[focusedColorId]
 
       if (thisLevel && thisLevel.level === 0) {
         return intl.formatMessage({

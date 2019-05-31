@@ -1,8 +1,26 @@
-.prism-search {
-  &__input {
-    border-radius: 3px;
-    padding: .25em;
-    max-width: 100%;
-    width: 400px;
+.Search {
+  &__search-form {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding-bottom: $ui-spacing;
+  }
+
+  &__results-pane {
+    background: #eee;
+    min-height: 60vh;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+
+    @include respond-above(sm) {
+      min-height: 60vw;
+    }
+
+    @include respond-above(md) {
+      min-height: 50vw;
+    }
   }
 }

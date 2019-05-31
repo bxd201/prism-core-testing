@@ -2,7 +2,6 @@
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
 import { injectIntl, type intlShape, FormattedMessage } from 'react-intl'
-import { Link, NavLink } from 'react-router-dom'
 import { TransitionGroup, CSSTransition } from 'react-transition-group'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
@@ -12,25 +11,29 @@ import { generateColorWallPageUrl } from '../../../shared/helpers/ColorUtils'
 
 import { varValues } from 'variables'
 
-import type { ColorSetPayload, ColorMap, Color } from '../../../shared/types/Colors'
+import type { CategorizedColorGrid, ColorMap, Color } from '../../../shared/types/Colors'
 import type { Configuration } from '../../../shared/types/Configuration'
 
 import { MODE_CLASS_NAMES } from './shared'
-
 import WithConfigurationContext from '../../../contexts/ConfigurationContext/WithConfigurationContext'
-// import StandardColorWall from './StandardColorWall'
+import StandardColorWall from './StandardColorWall'
 import SherwinColorWall from './SherwinColorWall'
+import GenericMessage from '../../Messages/GenericMessage'
+import CircleLoader from '../../Loaders/CircleLoader/CircleLoader'
+import Search from '../../Search/Search'
+import ButtonBar from '../../ButtonBar/ButtonBar'
 
 import './ColorWall.scss'
 
 type StateProps = {
-  colors: ColorSetPayload,
+  colors?: CategorizedColorGrid,
   colorMap: ColorMap,
-  brights: ColorSetPayload,
+  brights?: CategorizedColorGrid,
+  unorderedColors?: string[],
   colorWallActive: Color,
   family: string,
   families?: string[],
-  loading: boolean,
+  loading?: boolean,
   error: boolean,
   section: string,
   sections?: string[]
@@ -49,18 +52,22 @@ type ComponentProps = {
 type Props = StateProps & DispatchProps & ComponentProps
 
 type State = {
-  showColorFamilies: boolean
+  showColorFamilies: boolean,
+  showSearch: boolean
 }
 
 class ColorWall extends PureComponent<Props, State> {
   state: State = {
-    showColorFamilies: false
+    showColorFamilies: false,
+    showSearch: false
   }
 
   constructor (props: Props) {
     super(props)
 
     this.toggleViewFamilies = this.toggleViewFamilies.bind(this)
+    this.stopViewFamilies = this.stopViewFamilies.bind(this)
+    this.toggleViewSearch = this.toggleViewSearch.bind(this)
   }
 
   componentDidMount () {
@@ -75,39 +82,53 @@ class ColorWall extends PureComponent<Props, State> {
   }
 
   render () {
-    const { showColorFamilies } = this.state
-    const { colors, family, sections, families, section, brights, colorMap, colorWallActive, loading, error, addToLivePalette } = this.props
+    const { showColorFamilies, showSearch } = this.state
+    const { colors, family, sections, families, section, brights, colorMap, colorWallActive, loading, error, addToLivePalette, unorderedColors } = this.props
 
     const hasSections = !!(sections && sections.length)
     const hasFamilies = !!(families && families.length > 1)
     const _showColorFamilies = hasFamilies && (family || showColorFamilies)
     const transKey = colorWallActive ? 'active' : ''
+    // if we have values in colors AND we DO NOT have values in unorderedColors, consider this a categorized color wall
+    const isCategorizedColorWall = (colors && Object.keys(colors).length) && (unorderedColors && unorderedColors.length)
+    const isUnorderedColorWall = (!colors || !Object.keys(colors).length) && (unorderedColors && unorderedColors.length)
+
     let sectionButtons = void (0)
     let familyButtons = void (0)
+
+    if (loading) {
+      return <CircleLoader />
+    }
+
+    if (showSearch) {
+      return <Search onCancel={this.toggleViewSearch} />
+    }
 
     if (!_showColorFamilies && hasSections) {
       sectionButtons = (
         <div className={MODE_CLASS_NAMES.COL}>
           <div className={MODE_CLASS_NAMES.CELL}>
-            <div className={MODE_CLASS_NAMES.OPTION_CONTAINER}>
-              <ul className={MODE_CLASS_NAMES.OPTIONS}>
-                { // $FlowIgnore -- flow doesn't realize that sections must be defined at this point
-                  sections.map((sectionName: string, i: number) => (
-                    <li className={MODE_CLASS_NAMES.OPTION} key={sectionName}>
-                      <NavLink className={MODE_CLASS_NAMES.OPTION_BUTTON} activeClassName={MODE_CLASS_NAMES.OPTION_BUTTON_ACTIVE} to={generateColorWallPageUrl(sectionName)}>
-                        <span className={MODE_CLASS_NAMES.DESC}>{sectionName}</span>
-                      </NavLink>
-                    </li>
-                  ))
-                }
-              </ul>
-            </div>
+            <ButtonBar.Bar>
+              { // $FlowIgnore -- flow doesn't realize that sections must be defined at this point
+                sections.map((sectionName: string, i: number) => (
+                  <ButtonBar.Button key={sectionName} to={generateColorWallPageUrl(sectionName)}>
+                    <span className={MODE_CLASS_NAMES.DESC}>{sectionName}</span>
+                  </ButtonBar.Button>
+                ))
+              }
+            </ButtonBar.Bar>
           </div>
           <div className={`${MODE_CLASS_NAMES.CELL} ${MODE_CLASS_NAMES.RIGHT}`}>
-            <button className={MODE_CLASS_NAMES.BUTTON} disabled={!families || families.length <= 1} onClick={this.toggleViewFamilies}>
-              <FontAwesomeIcon icon={['fa', 'palette']} pull='left' />
-              <span className={MODE_CLASS_NAMES.DESC}><FormattedMessage id='COLOR_FAMILIES' /></span>
-            </button>
+            <ButtonBar.Bar>
+              <ButtonBar.Button disabled={!families || families.length <= 1} onClick={this.toggleViewFamilies}>
+                <FontAwesomeIcon className='color-families-svg' icon={['fa', 'palette']} pull='left' />
+                <span className={MODE_CLASS_NAMES.DESC}><FormattedMessage id='COLOR_FAMILIES' /></span>
+              </ButtonBar.Button>
+              <ButtonBar.Button onClick={this.toggleViewSearch}>
+                <FontAwesomeIcon className='color-families-svg' icon={['fa', 'search']} pull='left' />
+                <span className={MODE_CLASS_NAMES.DESC}><FormattedMessage id='SEARCH' /></span>
+              </ButtonBar.Button>
+            </ButtonBar.Bar>
           </div>
         </div>
       )
@@ -117,39 +138,33 @@ class ColorWall extends PureComponent<Props, State> {
       familyButtons = (
         <div className={MODE_CLASS_NAMES.COL}>
           <div className={MODE_CLASS_NAMES.CELL}>
-            <div className={MODE_CLASS_NAMES.OPTION_CONTAINER}>
-              <ul className={MODE_CLASS_NAMES.OPTIONS}>
-                { // $FlowIgnore -- Flow doesn't realize families must be defined and be iterable to get here
-                  families.map((thisFamily: string) => {
-                    return (
-                      <li className={MODE_CLASS_NAMES.OPTION} key={thisFamily}>
-                        <NavLink className={MODE_CLASS_NAMES.OPTION_BUTTON} activeClassName={MODE_CLASS_NAMES.OPTION_BUTTON_ACTIVE} to={generateColorWallPageUrl(section, thisFamily)}>
-                          <span className={MODE_CLASS_NAMES.DESC}>{thisFamily}</span>
-                        </NavLink>
-                      </li>
-                    )
-                  })
-                }
-              </ul>
-            </div>
+            <ButtonBar.Bar>
+              { // $FlowIgnore -- Flow doesn't realize families must be defined and be iterable to get here
+                families.map((thisFamily: string) => {
+                  return (
+                    <ButtonBar.Button key={thisFamily} to={generateColorWallPageUrl(section, thisFamily)}>
+                      <span className={MODE_CLASS_NAMES.DESC}>{thisFamily}</span>
+                    </ButtonBar.Button>
+                  )
+                })
+              }
+            </ButtonBar.Bar>
           </div>
 
           {hasSections ? (
             <div className={`${MODE_CLASS_NAMES.CELL} ${MODE_CLASS_NAMES.RIGHT}`}>
-              <Link className={MODE_CLASS_NAMES.BUTTON} to={generateColorWallPageUrl(section)} onClick={() => this.toggleViewFamilies(false)}>
-                <FontAwesomeIcon icon={['fa', 'times']} pull='left' />
-                <span className={MODE_CLASS_NAMES.DESC}><FormattedMessage id='CANCEL' /></span>
-              </Link>
+              <ButtonBar.Bar>
+                <ButtonBar.Button to={generateColorWallPageUrl(section)} onClick={this.stopViewFamilies}>
+                  <FontAwesomeIcon className='close-icon-svg' icon={['fa', 'times']} pull='left' />
+                  <span className={MODE_CLASS_NAMES.DESC}><FormattedMessage id='CANCEL' /></span>
+                </ButtonBar.Button>
+              </ButtonBar.Bar>
             </div>
           ) : null}
         </div>
       )
     }
 
-    // not sure if this is a great way to test if this is a sherwin colorset, but non-sw colors should come in as a flat array
-    // but, sherwin colors will come in broken out by color families. If so, we'll just return the sherwin color family component
-    // for now until we determine a better solution for handling that.
-    // const isSherwinColorWall = isPlainObject(colors)
     return (
       <div>
         <div className={MODE_CLASS_NAMES.BASE}>
@@ -163,28 +178,41 @@ class ColorWall extends PureComponent<Props, State> {
             unmountOnExit
             mountOnEnter
             classNames={transKey ? 'color-wall-zoom-transitioner__zoom-in color-wall-zoom-transitioner__zoom-in-' : 'color-wall-zoom-transitioner__zoom-out color-wall-zoom-transitioner__zoom-out-'}>
-            <SherwinColorWall
-              family={family}
-              families={families}
-              section={section}
-              colors={colors}
-              brights={brights}
-              colorMap={colorMap}
-              activeColor={colorWallActive}
-              addToLivePalette={addToLivePalette}
-              loading={loading}
-              error={error} />
+            {() => {
+              if (isCategorizedColorWall) {
+                return <SherwinColorWall
+                  family={family}
+                  families={families}
+                  section={section}
+                  colors={colors}
+                  brights={brights}
+                  colorMap={colorMap}
+                  activeColor={colorWallActive}
+                  addToLivePalette={addToLivePalette}
+                  loading={loading}
+                  error={error} />
+              } else if (isUnorderedColorWall) {
+                return <StandardColorWall
+                  family={family}
+                  families={families}
+                  section={section}
+                  // $FlowIgnore -- flow doesn't realize unorderedColors IS defined at this point due to our check conditions
+                  colors={unorderedColors}
+                  colorMap={colorMap}
+                  activeColor={colorWallActive}
+                  addToLivePalette={addToLivePalette}
+                  loading={loading}
+                  error={error} />
+              }
+
+              return <GenericMessage type={GenericMessage.TYPES.ERROR}>
+                <FormattedMessage id='NO_COLORS_AVAILABLE' />
+              </GenericMessage>
+            }}
           </CSSTransition>
         </TransitionGroup>
       </div>
     )
-
-    // TODO: Add standard (non-chunked) color functionality back into ColorWall
-    // return (
-    //   <div className='standard-colorwall'>
-    //     <StandardColorWall family={'all'} colors={colors} />
-    //   </div>
-    // )
   }
 
   toggleViewFamilies = function toggleViewFamilies (setTo?: boolean) {
@@ -195,6 +223,19 @@ class ColorWall extends PureComponent<Props, State> {
       showColorFamilies: newValue
     })
   }
+
+  stopViewFamilies = function stopViewFamilies () {
+    this.toggleViewFamilies(false)
+  }
+
+  toggleViewSearch = function toggleViewSearch (setTo?: boolean) {
+    const { showSearch } = this.state
+    const newValue: boolean = (typeof setTo === 'boolean' ? setTo : !showSearch)
+
+    this.setState({
+      showSearch: newValue
+    })
+  }
 }
 
 const mapStateToProps = (state, props) => {
@@ -202,6 +243,7 @@ const mapStateToProps = (state, props) => {
     colorMap: state.colors.items.colorMap,
     colors: state.colors.items.colors,
     brights: state.colors.items.brights,
+    unorderedColors: state.colors.items.unorderedColors,
     colorWallActive: state.colors.colorWallActive,
     families: state.colors.families,
     family: state.colors.family,

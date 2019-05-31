@@ -1,12 +1,14 @@
 // @flow
 import React from 'react'
-import { Link } from 'react-router-dom'
 import { FormattedMessage } from 'react-intl'
 import { connect } from 'react-redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
+import ButtonBar from '../../ButtonBar/ButtonBar'
+
 import { generateColorWallPageUrl, fullColorName } from '../../../shared/helpers/ColorUtils'
-import type { Color } from '../../../shared/types/Colors'
+import { MODE_CLASS_NAMES } from '../ColorWall/shared'
+import { type Color } from '../../../shared/types/Colors'
 
 type StateProps = {
   color?: Color,
@@ -25,17 +27,15 @@ export function BackToColorWall ({ color, family, section }: Props) {
     : generateColorWallPageUrl(section, family)
 
   return (
-    <div className='color-wall-mode-btns'>
-      <div className='color-wall-mode-btns__col'>
-        <div className='color-wall-mode-btns__cell'>
-          <FormattedMessage id='BACK_TO_COLOR_WALL'>
-            {(msg: string) => (
-              <Link to={colorWallUrl} className='color-wall-mode-btns__btn'>
-                <FontAwesomeIcon icon={['fal', 'th-large']} pull='left' fixedWidth />
-                {msg}
-              </Link>
-            )}
-          </FormattedMessage>
+    <div className={MODE_CLASS_NAMES.BASE}>
+      <div className={MODE_CLASS_NAMES.COL}>
+        <div className={MODE_CLASS_NAMES.CELL}>
+          <ButtonBar.Bar>
+            <ButtonBar.Button to={colorWallUrl}>
+              <FontAwesomeIcon icon={['fal', 'th-large']} pull='left' fixedWidth />
+              <FormattedMessage id='BACK_TO_COLOR_WALL' />
+            </ButtonBar.Button>
+          </ButtonBar.Bar>
         </div>
       </div>
     </div>

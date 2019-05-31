@@ -24,8 +24,11 @@
   "VIEW_DETAILS": "Voir les détails",
   "ERROR_LOADING_COLORS": "Erreur lors du chargement des couleurs.",
   "NO_COLORS_AVAILABLE": "Aucune couleur disponible.",
-  "SWATCH_ACTIVATED_DETAILS": "TODO: Translate. {color} is selected. Press Enter to view details.",
-  "SWATCH_FOCUS": "TODO: Translate. {color}. Press Enter to select.",
+  "SWATCH_ACTIVATED_DETAILS": "{color} a été sélectionné. Appuyez sur Entrée pour voir les détails.",
+  "SWATCH_FOCUS": "{color}. Appuyez sur Entrée pour le sélectionner.",
   "ZOOM_IN": "Zoomer",
-  "ZOOM_OUT": "Dézoomer"
+  "ZOOM_OUT": "Dézoomer",
+  "SEARCH": "Chercher",
+  "SEARCH_PROMPT": "Entrez un nom de couleur, un numéro ou une famille dans le champ ci-dessus.",
+  "SEARCH_NO_RESULTS": "Désolé, aucune correspondance de couleurs trouvée. Essayez d'entrer un nom ou un numéro de couleur différent."
 }

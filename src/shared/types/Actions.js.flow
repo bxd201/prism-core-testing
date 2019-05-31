@@ -1,5 +1,5 @@
 // @flow
-import type { Color, ColorSetPayload, ColorListPayload, ColorMap, FamilyStructure } from './Colors'
+import type { Color, CategorizedColorIdGrid, ColorList, ColorIdList, ColorMap, FamilyStructure } from './Colors'
 
 export type ReduxAction = {
   type: string,
@@ -21,20 +21,21 @@ export type ColorsState = {
     activeRequest: boolean
   },
   items: {
-    colors?: ColorSetPayload,
-    brights?: ColorSetPayload,
-    colorMap?: ColorMap
+    colors?: CategorizedColorIdGrid,
+    brights?: CategorizedColorIdGrid,
+    colorMap?: ColorMap,
+    unorderedColors?: ColorIdList
   },
-
   structure?: FamilyStructure,
   sections?: string[],
   section?: string,
   families?: string[],
   family?: string,
   colorWallActive?: Color,
-
-  searchResults: ColorListPayload,
-
+  search: {
+    results?: ColorList,
+    loading: boolean
+  },
   initializeWith: {
     section?: string,
     family?: string,

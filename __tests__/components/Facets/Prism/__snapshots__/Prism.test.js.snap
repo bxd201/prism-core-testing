@@ -28,11 +28,6 @@ exports[`Prism routes should match snapshot 1`] = `
     exact={true}
     path="/active/colors-from-image"
   />
-  <Route
-    component={[Function]}
-    exact={true}
-    path="/search"
-  />
   <Connect(LivePalette) />
 </Fragment>
 `;

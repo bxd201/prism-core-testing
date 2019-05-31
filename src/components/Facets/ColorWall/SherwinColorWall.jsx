@@ -6,7 +6,7 @@ import { injectIntl, FormattedMessage, type intlShape } from 'react-intl'
 
 import { BLANK_SWATCH, SW_CHUNK_SIZE } from 'constants/globals'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { convertColorSetsToGrid } from '../../../shared/helpers/ColorDataUtils'
+import { convertCategorizedColorsToGrid } from '../../../shared/helpers/ColorDataUtils'
 import { generateColorWallPageUrl, generateColorDetailsPageUrl, fullColorName } from '../../../shared/helpers/ColorUtils'
 import { compareKebabs } from '../../../shared/helpers/StringUtils'
 
@@ -15,16 +15,16 @@ import ColorWallSwatchList from './ColorWallSwatchList'
 import GenericMessage from '../../Messages/GenericMessage'
 import WithConfigurationContext from '../../../contexts/ConfigurationContext/WithConfigurationContext'
 
-import type { ColorSetPayload, ColorMap, Color, ColorGrid } from '../../../shared/types/Colors'
+import type { CategorizedColorIdGrid, ColorMap, Color, ColorIdGrid } from '../../../shared/types/Colors'
 import type { Configuration } from '../../../shared/types/Configuration'
 
 type Props = {
-  colors: ColorSetPayload,
-  brights: ColorSetPayload,
+  colors: CategorizedColorIdGrid,
+  brights: CategorizedColorIdGrid,
   colorMap: ColorMap,
   addToLivePalette?: Function,
   activeColor: Color,
-  loading: boolean,
+  loading?: boolean,
   intl: intlShape,
   error: boolean,
   family?: string,
@@ -51,7 +51,7 @@ export class SherwinColorWall extends PureComponent<Props> {
   }
 
   // Making this a static method in order to share memoized results among separate instances (especially since new instances are created whenever the user zooms in/out with the same dataset)
-  static getColorGrid = memoizee(function getColorGrid (colors: ColorSetPayload, brights: ColorSetPayload, targetFamily: string | void, families: string[] | void): ColorGrid | void {
+  static getColorGrid = memoizee(function getColorGrid (colors: CategorizedColorIdGrid, brights: CategorizedColorIdGrid, targetFamily: string | void, families: string[] | void, colorMap: ColorMap): ColorIdGrid | void {
     if (!families || families.length === 0) {
       return void (0)
     }
@@ -65,11 +65,11 @@ export class SherwinColorWall extends PureComponent<Props> {
     })
 
     if (filteredColorSets.length) {
-      return convertColorSetsToGrid(filteredColorSets, colors, brights, BLANK_SWATCH, SW_CHUNK_SIZE)
+      return convertCategorizedColorsToGrid(filteredColorSets, colors, brights, colorMap, BLANK_SWATCH, SW_CHUNK_SIZE)
     }
 
     return void (0)
-  }, { length: 4 })
+  }, { length: 5 })
 
   buildSwatchDetailsLink = function buildSwatchDetailsLink (color: Color): string {
     return generateColorDetailsPageUrl(color)
@@ -81,7 +81,7 @@ export class SherwinColorWall extends PureComponent<Props> {
 
   colorFamily = function colorFamily () {
     const { colors, brights, family, families, section, activeColor, colorMap, addToLivePalette, loading, error, intl, config } = this.props
-    const colorsGrid = SherwinColorWall.getColorGrid(colors, brights, family, families)
+    const colorsGrid = SherwinColorWall.getColorGrid(colors, brights, family, families, colorMap)
     const translatedMessages = intl.messages
 
     if (loading) {

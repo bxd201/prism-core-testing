@@ -1,107 +1,135 @@
-/* eslint-disable */
 // @flow
 import React, { PureComponent } from 'react'
-import { connect } from 'react-redux'
-import { withRouter } from 'react-router-dom'
-import flatten from 'lodash/flatten'
-import sortBy from 'lodash/sortBy'
+import memoizee from 'memoizee'
+import { Link } from 'react-router-dom'
 
+import { BLANK_SWATCH } from 'constants/globals'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { convertUnorderedColorsToGrid } from '../../../shared/helpers/ColorDataUtils'
+import { generateColorWallPageUrl, generateColorDetailsPageUrl, fullColorName } from '../../../shared/helpers/ColorUtils'
+import { compareKebabs } from '../../../shared/helpers/StringUtils'
+import { injectIntl, FormattedMessage, type intlShape } from 'react-intl'
+
+import CircleLoader from '../../Loaders/CircleLoader/CircleLoader'
 import ColorWallSwatchList from './ColorWallSwatchList'
+import GenericMessage from '../../Messages/GenericMessage'
 
-import { type Color } from '../../../shared/types/Colors'
-
-const DISPLAY_ORDER_DEFAULT = 'default'
-const DISPLAY_ORDER_LIGHTNESS = 'lightness'
-const DISPLAY_ORDER_BRIGHTNESS = 'brightness'
-const DISPLAY_ORDER_SATURATION = 'saturation'
-const DISPLAY_ORDER_COLOR = 'color'
+import { type ColorIdList, type ColorMap, type Color, type ColorIdGrid } from '../../../shared/types/Colors'
 
 type Props = {
-  colors: Object,
-  match: Object,
-  family: string,
-  displayOrder: string
+  colors: ColorIdList,
+  colorMap: ColorMap,
+  addToLivePalette?: Function,
+  activeColor: Color,
+  loading?: boolean,
+  intl: intlShape,
+  error: boolean,
+  family?: string,
+  section?: string,
+  families?: string[]
 }
 
 class StandardColorWall extends PureComponent<Props> {
-  previewColor = void (0)
-  allColors = void (0)
+  constructor (props: Props) {
+    super(props)
 
-  static defaultProps = {
-    displayOrder: DISPLAY_ORDER_DEFAULT
-  }
-
-  colorFamily (family) {
-    return this.props.colors[family]
-  }
-
-  handleActivateColor = function handleActivateColor (color: Color) {
-    this.setState({
-      activeColor: color
-    })
-  }
-
-  get colorFamilies () {
-    return this.allColors || (this.allColors = flatten(Object.keys(this.props.colors).map(family => {
-      return this.colorFamily(family)
-    })))
+    this.colorFamily = this.colorFamily.bind(this)
+    this.buildSwatchLink = this.buildSwatchLink.bind(this)
+    this.buildSwatchDetailsLink = this.buildSwatchDetailsLink.bind(this)
   }
 
   render () {
-    const { match: { params }, family, displayOrder, colors } = this.props // eslint-disable-line
+    return (
+      <div className='color-wall-wall'>
+        { this.colorFamily() }
+      </div>
+    )
+  }
 
-    // get either a specific color family or all families
-    // let ColorWallColors = (family === 'All') ? this.colorFamilies : this.colorFamily(family)
-    let ColorWallColors = colors
+  // Making this a static method in order to share memoized results among separate instances (especially since new instances are created whenever the user zooms in/out with the same dataset)
+  static getColorGrid = memoizee(function getColorGrid (colors: ColorIdList, targetFamily: string | void, families: string[] | void, colorMap: ColorMap): ColorIdGrid | void {
+    if (!families || families.length === 0) {
+      return void (0)
+    }
 
-    // sort colors based on displayOrder prop if provided
-    switch (displayOrder) {
-      case DISPLAY_ORDER_LIGHTNESS:
-        // $FlowIgnore
-        ColorWallColors = sortBy(ColorWallColors, 'lightness', 'hue', 'saturation')
-        break
-      case DISPLAY_ORDER_COLOR:
-        // $FlowIgnore
-        ColorWallColors = sortBy(ColorWallColors, 'hue', 'lightness', 'saturation')
-        break
-      case DISPLAY_ORDER_SATURATION:
-        // $FlowIgnore
-        ColorWallColors = sortBy(ColorWallColors, 'saturation', 'hue', 'lightness')
-        break
-      case DISPLAY_ORDER_BRIGHTNESS:
-        // $FlowIgnore
-        ColorWallColors = sortBy(ColorWallColors, color => (color.saturation * color.lightness), 'hue')
-        break
-      case DISPLAY_ORDER_DEFAULT:
-      default:
+    let filteredColorSets = families.filter((familyName: string) => {
+      if (!targetFamily) {
+        return true
+      }
+
+      return compareKebabs(familyName, targetFamily)
+    })
+
+    if (filteredColorSets.length) {
+      return convertUnorderedColorsToGrid(filteredColorSets, colors, colorMap, (460 / 1106), BLANK_SWATCH)
+    }
+
+    return void (0)
+  }, { length: 4 })
+
+  buildSwatchDetailsLink = function buildSwatchDetailsLink (color: Color): string {
+    return generateColorDetailsPageUrl(color)
+  }
+
+  buildSwatchLink = function buildSwatchLink (color: Color): string {
+    return generateColorWallPageUrl(this.props.section, this.props.family, color.id, fullColorName(color.brandKey, color.colorNumber, color.name))
+  }
+
+  colorFamily = function colorFamily () {
+    const { colors, family, families, section, activeColor, colorMap, addToLivePalette, loading, error, intl } = this.props
+    const colorsGrid = StandardColorWall.getColorGrid(colors, family, families, colorMap)
+    const translatedMessages = intl.messages
+
+    if (loading) {
+      return <CircleLoader className='color-wall-wall__loader' />
+    }
+
+    if (error) {
+      return (
+        <GenericMessage type={GenericMessage.TYPES.ERROR} className='color-wall-wall__message'>
+          <FormattedMessage id='ERROR_LOADING_COLORS' />
+        </GenericMessage>
+      )
+    }
+
+    if (!colorsGrid) {
+      return (
+        <GenericMessage type={GenericMessage.TYPES.WARNING} className='color-wall-wall__message'>
+          <FormattedMessage id='NO_COLORS_AVAILABLE' />
+        </GenericMessage>
+      )
     }
 
     return (
       <React.Fragment>
-        <h1>standard</h1>
-        <div className='color-wall-wall'>
-          {/* {activeColor ? (
-            <ColorWallSwatchList
-              bloomRadius={2}
-              onAddColor={addToLivePalette}
-              cellSize={50}
-              key={family}
-              colors={ColorWallColors}
-              initialActiveColor={activeColor} />
-          ) : (
-            <ColorWallSwatchList
-              showAll
-              immediateSelectionOnActivation
-              cellSize={50}
-              key={`${family}-showAll`}
-              colors={ColorWallColors}
-              active={params.colorNumber}
-              onActivateColor={this.handleActivateColor} />
-          )} */}
-        </div>
+        <ColorWallSwatchList
+          showAll={!activeColor}
+          immediateSelectionOnActivation={!activeColor}
+          activeColor={activeColor}
+          section={section}
+          family={family}
+          bloomRadius={2}
+          onAddColor={addToLivePalette}
+          colorMap={colorMap}
+          swatchLinkGenerator={this.buildSwatchLink}
+          swatchDetailsLinkGenerator={this.buildSwatchDetailsLink}
+          minCellSize={activeColor ? 50 : 15}
+          maxCellSize={activeColor ? 50 : 25}
+          colors={colorsGrid}
+          // colorGrid is being used as a key here so the whole component reinitializes when color set changes
+          key={colorsGrid} />
+
+        {activeColor && (
+          <div className='color-wall-wall__btns'>
+            <Link to={generateColorWallPageUrl(section, family)} className='color-wall-wall__btns__btn' title={translatedMessages.ZOOM_OUT}>
+              <FontAwesomeIcon icon='search-minus' size='lg' />
+              <span className='visually-hidden'><FormattedMessage id='ZOOM_OUT' /></span>
+            </Link>
+          </div>
+        )}
       </React.Fragment>
     )
   }
 }
 
-export default withRouter(StandardColorWall)
+export default injectIntl(StandardColorWall)

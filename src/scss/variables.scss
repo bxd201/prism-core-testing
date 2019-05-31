@@ -15,3 +15,9 @@ $color-swBlue: getVar( "colors.swBlue" );
 $cw-chunk-outline-offset: 6px;
 $cw-focus-outline-size: 2px;
 $cw-focus-outline: $cw-focus-outline-size solid getVar('colors.primary');
+
+// UI
+$ui-height-min: 38px;
+$ui-height-min--mobile: 44px;
+$ui-spacing: $base / 2;
+$ui-radius: $base / 4;

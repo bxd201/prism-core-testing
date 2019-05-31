@@ -31,7 +31,7 @@ export const RootRedirect = () => {
 // since the CDP component won't have any color information if we go to it directly, we need to wrap it
 // in the ColorDataWrapper HOC to ensure it has color data prior to rendering it.
 const ColorDetailsWithData = ColorDataWrapper(ColorDetails)
-export const ColorDetailsComponent = props => {
+export const ColorDetailsComponent = (props: any) => {
   // need a wrapping element that isn't a Fragment in order to get the transition classes applied to the group
   return (
     <div>
@@ -41,7 +41,7 @@ export const ColorDetailsComponent = props => {
   )
 }
 
-export const ColorWallComponent = props => {
+export const ColorWallComponent = (props: any) => {
   return <ColorWallRouteComponent displayDetailsLink displayInfoButton={false} displayAddButton={false} {...props} />
 }
 

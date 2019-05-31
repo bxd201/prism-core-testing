@@ -8,12 +8,10 @@ import ColorWallRouteComponent from 'src/components/Facets/ColorWall/ColorWallRo
 import { ROUTE_PARAMS, ROUTE_PARAM_NAMES } from 'constants/globals'
 import ColorDetails from 'src/components/Facets/ColorDetails/ColorDetails'
 import ColorsFromImage from 'src/components/ColorsFromImage/ColorsFromImage'
-import { Search } from 'src/components/Search/Search'
 
 const homeRoute = '/'
 const activeRoute = '/active'
 const activeColorsFromImageRoute = '/active/colors-from-image'
-const searchRoute = '/search'
 const prismNavWithRouterSelect = 'withRouter(PrismNav)'
 const livePaletteConnectSelect = 'Connect(LivePalette)'
 
@@ -49,8 +47,8 @@ describe('Prism routes', () => {
     expect(prism).toMatchSnapshot()
   })
 
-  it('should have 6 Route components', () => {
-    expect(prism.find(Route)).toHaveLength(6)
+  it('should have 5 Route components', () => {
+    expect(prism.find(Route)).toHaveLength(5)
   })
 
   it('should show RootRedirect component for route defined as homeRoute constant', () => {
@@ -71,10 +69,6 @@ describe('Prism routes', () => {
 
   it('should show ColorsFromImage component for route defined as activeColorsFromImageRoute constant', () => {
     expect(pathMap[activeColorsFromImageRoute]).toBe(ColorsFromImage)
-  })
-
-  it('should show Search component for route defined as searchRoute constant', () => {
-    expect(pathMap[searchRoute].WrappedComponent).toBe(Search)
   })
 
   it('should show component defined as prismNavWithRouterSelect constant', () => {
