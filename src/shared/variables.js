@@ -25,7 +25,8 @@ module.exports.varValues = {
     nearBlack: '#2e2e2e',
     black: '#000000',
     white: '#ffffff',
-    swBlue: '#0069af'
+    swBlue: '#0069af',
+    summerSkyBlue: '#2cabe2'
   },
   colorWall: {
     swatchColumns: 56, // default SW color chunks
@@ -36,6 +37,13 @@ module.exports.varValues = {
     swatchDeactivateDurationMS: 200,
     swatchDeactivateDelayMS: 0,
     transitionTime: 700 // this value is halved in CSS to reduce initial judder caused by component rendering
+  },
+  slick: {
+    mobile: 576,
+    tablet: 768,
+    xs: 1,
+    sm: 4,
+    lg: 8
   },
   scenes: {
     hitAreaOutlineColor: '255, 0, 255', // RGB value of hit area outline (must be RGB, not hex)
@@ -56,7 +64,8 @@ module.exports.varNames = {
       lightGrey: '--prism-color-lightGrey',
       nearBlack: '--prism-color-nearBlack',
       black: '--prism-color-black',
-      white: '--prism-color-white'
+      white: '--prism-color-white',
+      summerSkyBlue: '--prism-color-summerSkyBlue'
     }
   },
   globalCornerRadius: '--sw-global-corner-radius',

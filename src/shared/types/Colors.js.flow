@@ -61,3 +61,10 @@ export type FamilyStructure = {
   default: boolean,
   families: string[]
 }[]
+
+export type ColorCollectionDetail = {
+  name: string,
+  description: string,
+  img: string,
+  collections: Color[]
+}

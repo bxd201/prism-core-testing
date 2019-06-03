@@ -6,52 +6,107 @@
     font-weight: 600;
     height: auto;
     position: absolute;
-    top: 3.5em;
+    top: 4.1em;
+    right: 2.9em;
+    width: 100%;
     transition: all ease 0.3s;
     z-index: 1000;
     &__border {
       padding: 0.15rem 0.15rem 0.15rem 0.3rem;
+      float: right;
+      @include respond-above(sm) {
+        float: none;
+      }
     }
-    &--show {
-      right: 1em;
-      width: 175px;
-    }
-    &--hide {
-      right: -0.1em;
+    @include respond-above(sm) {
+      top: 9.5em;
+      width: auto;
+      &--show {
+        right: 1em;
+        width: 175px;
+      }
+      &--hide {
+        right: -8.1em;
+      }
     }
   }
 }
 
 .slide-palette-header {
-  display: flex;
-  &--show {
-    padding: 0.74rem;
-  }
+  display: none;
   &--hide {
     padding: 0.74rem 0px;
   }
   &__arrow-button {
     font-size: 1.2em;
-    margin: -5px auto;
+    margin: -0.313em auto;
     outline: none;
     &:hover {
-      color: #2cabe2;
+      color: getVar("colors.summerSkyBlue");
+    }
+  }
+  &__mobile-toggle-arrow {
+    content: '';
+    width: 0;
+    height: 0;
+    border: .5em solid transparent;
+    border-top-color: getVar("colors.summerSkyBlue");
+    border-top-style: solid;
+    display: block;
+    position: absolute;
+    right: -2.05em;
+    top: calc(50% - 0.25em);
+    &--up {
+      border-bottom-color: getVar("colors.summerSkyBlue");
+      border-bottom-style: solid;
+      border-top: 0;
+    }
+    @include respond-above(sm) {
+      display: none;
+    }
+  }
+  @include respond-above(sm) {
+    display: block;
+    margin: 0 0.4em;
+  }
+  &--show {
+    display: none;
+    padding: 0.74rem;
+    margin: 0 -0.2em;
+    @include respond-above(sm) {
+      display: flex;
     }
   }
 }
 
 .prism-color-palette-suggester {
+  &__wrapper {
+    display: flex;
+    flex-direction: row;
+    @include respond-above(sm) {
+      flex-direction: column;
+    }
+    &__details {
+      position: absolute;
+      z-index: 10;
+      width: 100%;
+      bottom: 13em;
+      border-top: 1px solid gray;
+      /* padding: 0.2em; */
+    }
+  }
   &__container {
     display: flex;
-    padding: 0.15rem 0;
-    width: 100%;
+    padding: 0.15rem 0.1rem;
+    // width: 100%;
     &__button {
       outline: none;
     }
     &__color-display-area {
       align-items: center;
       display: flex;
-      height: 50px;
+      width: 3.3em;
+      height: 3.3em;
       justify-content: center;
       transition: all ease 0.3s;
       &--active {
@@ -65,29 +120,69 @@
       }
       &--hide {
         cursor: pointer;
-        width: 30px;
+        width: 50px;
+      }
+      @include respond-above(sm) {
+        height: 50px;
+        &--hide {
+          cursor: pointer;
+          width: 30px;
+        }
       }
     }
     &__color-display-content {
-      display: flex;
+      display: none;
       flex-direction: column;
       justify-content: center;
       margin: 10px;
       &__color-number {
         font-weight: 400;
       }
+      @include respond-above(sm) {
+        display: flex;
+      }
     }
     &__toggle-check-icons {
       font-size: 1rem;
+      display: block;
+      @include respond-above(sm) {
+        display: none;
+        &--show {
+          display: block;
+        }
+        &--hide {
+          display: none;
+        }
+      }
+    }
+    @include respond-above(sm) {
+      padding: 0.15rem 0;
+    }
+  }
+  &__header {
+    display: block;
+    padding: 1.5em 0.2em;
+    text-align: left;
+    position: absolute;
+    left: 3.375em;
+    top: -0.25em;
+    width: 40%;
+    @include respond-above(sm) {
+      display: none;
     }
   }
 }
 
 .prism-color-more-detail {
   &__wrapper {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
+    display: none;
+    @include respond-above(sm) {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      border-top: 1px solid rgba(0, 0, 0, 0.13);
+      box-shadow: inset 0 0 5px 0 rgba(0,0,0,.13);
+    }
   }
   &__header {
     border-top: 1px solid rgba(0, 0, 0, 0.13);
@@ -99,7 +194,7 @@
     padding: 0.7em;
     text-align: left;
     &__link {
-      color: #2cabe2;
+      color: getVar("colors.summerSkyBlue");
       font-size: 0.7rem;
       font-weight: 600;
       margin: 0.7em 0 0 0;
@@ -111,7 +206,7 @@
     outline: none;
     padding: 0.7em 0;
     position: relative;
-    border-top: 1px solid rgba(0, 0, 0, 0.13);
+    cursor: pointer;
     &--open {
       border: none;
     }
@@ -119,5 +214,42 @@
   &__toggle-carets {
     position: absolute;
     right: 0.7em;
+  }
+}
+
+.slide-palette-details {
+  &__wrapper {
+    display: block;
+    position: absolute;
+    z-index: 2;
+    margin-top: 2.2em;
+    padding: 1em;
+    background: rgba(255,255,255,.9);
+    border-top: 1px solid #ccc;
+    width: 100%;
+    &__left {
+      float: left;
+      width: 60%;
+    }
+    &__right {
+      float: right;
+      width: 40%;
+    }
+    @include respond-above(sm) {
+      display: none;
+    }
+  }
+  &__container {
+    &__color {
+      float: left;
+      height: 50px;
+      width: 50px;
+    }
+    &__color-details {
+      padding: 0em 0.6em;
+      vertical-align: middle;
+      height: 50px;
+      display: table-cell;
+    }
   }
 }
