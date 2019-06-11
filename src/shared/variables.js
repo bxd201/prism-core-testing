@@ -38,6 +38,13 @@ module.exports.varValues = {
     swatchDeactivateDelayMS: 0,
     transitionTime: 700 // this value is halved in CSS to reduce initial judder caused by component rendering
   },
+  slick: {
+    mobile: 576,
+    tablet: 768,
+    xs: 1,
+    sm: 4,
+    lg: 8
+  },
   scenes: {
     hitAreaOutlineColor: '255, 0, 255', // RGB value of hit area outline (must be RGB, not hex)
     tintTransitionTime: 250

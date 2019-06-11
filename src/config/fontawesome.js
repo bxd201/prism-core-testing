@@ -18,6 +18,10 @@ import {
   faMoon,
   faMoonStars,
   faCheck,
+  faChevronUp,
+  faAngleLeft,
+  faAngleUp,
+  faAngleDown,
   faCheckCircle
 } from '@fortawesome/pro-solid-svg-icons'
 
@@ -59,6 +63,10 @@ const faIcons = [
   faSun,
   falSun,
   faCheck,
+  faChevronUp,
+  faAngleLeft,
+  faAngleUp,
+  faAngleDown,
   faCheckCircle
 ]
 library.add(...faIcons)

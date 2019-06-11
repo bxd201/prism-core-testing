@@ -90,3 +90,8 @@ export const generateColorWallPageUrl = memoizee(function generateColorWallPageU
 
   return assembleColorWallPageUrl(sectionName, familyName, colorId, colorSEO)
 }, { primitive: true, length: 3 })
+
+export const getContrastYIQ = memoizee((hexcolor: string) => {
+  const color = hexcolor.substring(1)
+  return parseInt(`0x${color}`, 16) > parseInt('0xffffff', 16) / 2 ? '#000' : '#fff'
+}, { primitive: true, length: 1 })
