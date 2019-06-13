@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 // $FlowIgnore -- no defs for react-virtualized
 import { Grid, AutoSizer } from 'react-virtualized'
 import debounce from 'lodash/debounce'
+import memoizee from 'memoizee'
 
 import { loadSearchResults, clearSearch } from '../../store/actions/loadSearchResults'
 import { add } from '../../store/actions/live-palette'
@@ -25,7 +26,10 @@ import './Search.scss'
 
 type Props = {
   colors: void | any[],
-  loading: Boolean,
+  count: number,
+  suggestions: void | string[],
+  loading: boolean,
+  error: boolean,
   loadSearchResults: Function,
   clearSearch: Function,
   addToLivePalette: Function,
@@ -52,10 +56,11 @@ export class Search extends PureComponent<Props, State> {
     this.searchComponent = React.createRef()
     this.doClearSearch = this.doClearSearch.bind(this)
     this.cellRenderer = this.cellRenderer.bind(this)
+    this.reRunSearchWith = this.reRunSearchWith.bind(this)
   }
 
   render () {
-    const { colors, onCancel, loading } = this.props
+    const { colors, onCancel, loading, count, suggestions, error } = this.props
     const { resultSwatchSize } = this.state
 
     return (
@@ -71,13 +76,27 @@ export class Search extends PureComponent<Props, State> {
         <div className={`${baseClass}__results-pane`}>
           { loading ? (
             <CircleLoader />
+          ) : error ? (
+            <GenericMessage type={GenericMessage.TYPES.ERROR}>
+              <FormattedMessage id='SEARCH.ERROR.HEADLINE' />
+              <FormattedMessage id='SEARCH.ERROR.GENERIC' />
+            </GenericMessage>
           ) : !colors ? (
             <GenericMessage type={GenericMessage.TYPES.NORMAL}>
-              <FormattedMessage id='SEARCH_PROMPT' />
+              <FormattedMessage id='SEARCH.PROMPT' />
             </GenericMessage>
-          ) : !colors.length ? (
+          ) : !count ? (
             <GenericMessage type={GenericMessage.TYPES.WARNING}>
-              <FormattedMessage id='SEARCH_NO_RESULTS' />
+              <FormattedMessage id='SEARCH.NO_RESULTS' />
+              {suggestions && suggestions.length ? (
+                <FormattedMessage id='SEARCH.SUGGESTIONS' values={{ suggestions: (() => <React.Fragment>
+                  {suggestions.map((suggestion, i, arr) => <React.Fragment key={i}>
+                    <TextButton onClick={this.reRunSearchWith(suggestion)}>{suggestion}</TextButton>
+                    {i < arr.length - 1 ? ', ' : null}
+                  </React.Fragment>
+                  )}
+                </React.Fragment>)() }} />
+              ) : null }
             </GenericMessage>
           ) : (
             <section className='color-wall-swatch-list color-wall-swatch-list--show-all'>
@@ -130,6 +149,12 @@ export class Search extends PureComponent<Props, State> {
     }
   }
 
+  reRunSearchWith = memoizee((newInput: string) => () => {
+    const search = this.searchComponent.current
+    search[SearchBar.API.setValue](newInput, true)
+    search[SearchBar.API.focus]()
+  })
+
   cellRenderer = function cellRenderer ({
     columnIndex, // Horizontal (column) index of cell
     isScrolling, // The Grid is currently being scrolled
@@ -168,7 +193,10 @@ export class Search extends PureComponent<Props, State> {
 const mapStateToProps = (state, props) => {
   return {
     colors: state.colors.search.results,
-    loading: state.colors.search.loading
+    count: state.colors.search.count,
+    suggestions: state.colors.search.suggestions,
+    loading: state.colors.search.loading,
+    error: state.colors.search.error
   }
 }
 

@@ -126,7 +126,7 @@ class ColorWall extends PureComponent<Props, State> {
               </ButtonBar.Button>
               <ButtonBar.Button onClick={this.toggleViewSearch}>
                 <FontAwesomeIcon className='color-families-svg' icon={['fa', 'search']} pull='left' />
-                <span className={MODE_CLASS_NAMES.DESC}><FormattedMessage id='SEARCH' /></span>
+                <span className={MODE_CLASS_NAMES.DESC}><FormattedMessage id='SEARCH.SEARCH' /></span>
               </ButtonBar.Button>
             </ButtonBar.Bar>
           </div>

@@ -1,5 +1,9 @@
 .generic-message {
-  font-size: inherit;
+  $self: &;
+
+  font-size: 1em;
+  line-height: 1.2;
+  font-weight: 300;
   padding: .5em;
   text-align: center;
 
@@ -7,12 +11,14 @@
     padding: 1em;
   }
 
+  &--multi-line {
+    text-align: left;
+  }
+
   &__inner {
-    font-weight: bold;
     background: rgba(pick-visible-color($color-near-black, $color-black, $color-white), $color-near-opacity);
     border-radius: .25em;
     color: $color-near-black;
-    text-align: center;
     display: inline-block;
     padding: .5em;
 
@@ -28,6 +34,21 @@
     &--warning {
       background: rgba(getVar('colors.warning'), $color-near-opacity);
       color: pick-visible-color(getVar('colors.warning'), $color-black, $color-white);
+    }
+  }
+
+  &__line {
+    &--headline {
+      font-weight: bold;
+      font-size: 1.1em;
+
+      @include respond-above(sm) {
+        font-size: 1.2em;
+      }
+    }
+
+    & + #{$self}__line {
+      margin-top: .5em;
     }
   }
 }

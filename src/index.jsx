@@ -12,6 +12,7 @@ import { LiveAnnouncer } from 'react-aria-live'
 import { GOOGLE_ANALYTICS_UID } from './constants/globals'
 
 import ConfigurationContextProvider from './contexts/ConfigurationContext/ConfigurationContextProvider'
+import { flattenNestedObject } from './shared/helpers/DataUtils'
 
 // global sass import -- keep this BEFORE the APPS import to maintain compiled CSS order
 import './scss/main.scss'
@@ -94,9 +95,10 @@ const renderAppInElement = (el) => {
     </HashRouter>
   )
   const RouterRender = (routeType === 'browser') ? BrowserRouterRender : HashRouterRender
+  const flatLanguages = flattenNestedObject(languages[language])
 
   render(
-    <IntlProvider locale={language} messages={languages[language]} textComponent={React.Fragment}>
+    <IntlProvider locale={language} messages={flatLanguages} textComponent={React.Fragment}>
       <Provider store={store}>
         <ConfigurationContextProvider brand={brand}>
           <LiveAnnouncer>

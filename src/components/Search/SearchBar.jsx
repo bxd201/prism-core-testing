@@ -17,11 +17,13 @@ type State = {
 }
 
 const baseClass = 'SearchBar'
+const MIN_CHARS_RUN_SEARCH = 3
 
 export default class SearchBar extends PureComponent<Props, State> {
   // these are method names of SearchBar class instances exposed via its ref
   static API = {
-    focus: 'doFocus'
+    focus: 'doFocus',
+    setValue: 'setValue'
   }
 
   state: State = {
@@ -37,6 +39,7 @@ export default class SearchBar extends PureComponent<Props, State> {
 
     this.searchInput = React.createRef()
     this.doFocus = this.doFocus.bind(this)
+    this.setValue = this.setValue.bind(this)
   }
 
   render () {
@@ -65,16 +68,21 @@ export default class SearchBar extends PureComponent<Props, State> {
 
   handleInput = (e: SyntheticInputEvent<HTMLInputElement>) => {
     const { onSearchInput } = this.props
-    e.persist()
-    this.setState({ text: e.target.value })
-    if (e.target.value.length > 0) {
-      this.setState({ focus: true, cleanVisible: true })
-      if (e.target.value.length > 2) {
-        onSearchInput(e.target.value)
-      }
-    } else {
-      this.setState({ focus: false, cleanVisible: false })
+    const value = e.target.value
+    const hasAnyInput = value.length > 0
+    const newState = {
+      text: value,
+      focus: hasAnyInput,
+      cleanVisible: hasAnyInput
     }
+
+    e.persist()
+
+    this.setState(newState, () => {
+      if (value.length >= MIN_CHARS_RUN_SEARCH) {
+        onSearchInput(value)
+      }
+    })
   }
 
   cleanInput = () => {
@@ -88,5 +96,19 @@ export default class SearchBar extends PureComponent<Props, State> {
 
   doFocus = () => {
     this.searchInput.current.focus()
+  }
+
+  setValue = (text: string, searchAfterUpdate: boolean) => {
+    const { onSearchInput } = this.props
+
+    this.setState({
+      focus: true,
+      text,
+      cleanVisible: true
+    }, () => {
+      if (searchAfterUpdate && text.length >= MIN_CHARS_RUN_SEARCH) {
+        onSearchInput(text)
+      }
+    })
   }
 }

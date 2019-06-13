@@ -21,13 +21,28 @@ const requestSearchResults = () => {
   }
 }
 
+type SearchResults = {
+  count: Number,
+  suggestions: String[],
+  results: ColorList
+}
+
 export const RECEIVE_SEARCH_RESULTS: string = 'RECEIVE_SEARCH_RESULTS'
-const receiveSearchResults = (results: ColorList) => {
+const receiveSearchResults = ({ count, suggestions, results }: SearchResults) => {
   return {
     type: RECEIVE_SEARCH_RESULTS,
     payload: {
-      results: results
+      results,
+      count,
+      suggestions
     }
+  }
+}
+
+export const SEARCH_RESULTS_ERROR: string = 'SEARCH_RESULTS_ERROR'
+const searchResultsError = () => {
+  return {
+    type: SEARCH_RESULTS_ERROR
   }
 }
 
@@ -44,6 +59,8 @@ export const loadSearchResults = (term: string) => {
       }
     }).then(({ data }) => {
       dispatch(receiveSearchResults(data))
+    }).catch(data => {
+      dispatch(searchResultsError())
     })
   }
 }

@@ -19,8 +19,8 @@
   "SCENE_HIDDEN": "Scene is hidden",
   "SCENE_DISPLAYED": "Scene is displayed",
   "SIMILAR_COLORS": "Similar Colors",
-  "TO_NIGHT_VIEW" : "Switch to night view",
-  "TO_DAY_VIEW" : "Switch to day view",
+  "TO_NIGHT_VIEW": "Switch to night view",
+  "TO_DAY_VIEW": "Switch to day view",
   "VIEW_DETAILS": "View Details",
   "ERROR_LOADING_COLORS": "We're unable to load colors right now.",
   "NO_COLORS_AVAILABLE": "No colors available.",
@@ -28,7 +28,14 @@
   "SWATCH_FOCUS": "{color}. Press Enter to select.",
   "ZOOM_IN": "Zoom in",
   "ZOOM_OUT": "Zoom out",
-  "SEARCH": "Search",
-  "SEARCH_PROMPT": "Enter a color name, number or family in the text field above.",
-  "SEARCH_NO_RESULTS": "Sorry, no color matches found. Try entering a different color name or number."
+  "SEARCH": {
+    "SEARCH": "Search",
+    "PROMPT": "Enter a color name, number, or family in the text field above.",
+    "NO_RESULTS": "Sorry, no color matches found.",
+    "SUGGESTIONS": "Some examples of things you can search for are {suggestions}",
+    "ERROR": {
+      "HEADLINE": "Something went wrong.",
+      "GENERIC": "We were unable to perform your search."
+    }
+  }
 }
