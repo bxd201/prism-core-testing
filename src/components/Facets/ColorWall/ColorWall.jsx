@@ -21,7 +21,7 @@ import SherwinColorWall from './SherwinColorWall'
 import GenericMessage from '../../Messages/GenericMessage'
 import CircleLoader from '../../Loaders/CircleLoader/CircleLoader'
 import Search from '../../Search/Search'
-import ButtonBar from '../../ButtonBar/ButtonBar'
+import ButtonBar from '../../GeneralButtons/ButtonBar/ButtonBar'
 
 import './ColorWall.scss'
 

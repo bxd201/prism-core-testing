@@ -14,9 +14,10 @@ import { generateColorDetailsPageUrl } from '../../shared/helpers/ColorUtils'
 
 import ColorWallSwatch from '../Facets/ColorWall/ColorWallSwatch/ColorWallSwatch'
 import SearchBar from './SearchBar'
-import ButtonBar from '../ButtonBar/ButtonBar'
+import ButtonBar from '../GeneralButtons/ButtonBar/ButtonBar'
 import GenericMessage from '../Messages/GenericMessage'
 import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
+import TextButton from '../GeneralButtons/TextButton/TextButton'
 
 import { type Color } from '../../shared/types/Colors'
 

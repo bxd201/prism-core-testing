@@ -4,7 +4,7 @@ import { FormattedMessage } from 'react-intl'
 import { connect } from 'react-redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-import ButtonBar from '../../ButtonBar/ButtonBar'
+import ButtonBar from '../../GeneralButtons/ButtonBar/ButtonBar'
 
 import { generateColorWallPageUrl, fullColorName } from '../../../shared/helpers/ColorUtils'
 import { MODE_CLASS_NAMES } from '../ColorWall/shared'
