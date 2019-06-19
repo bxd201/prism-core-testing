@@ -20,7 +20,6 @@ type ComponentState = {
 const baseClass = 'prism-slick-carousel'
 const contentWrapper = `${baseClass}__wrapper__content`
 const indicators = `${baseClass}__wrapper__indicators`
-
 const ListWithCarousel = (BaseComponent: any) => {
   class EnhanceComponent extends React.Component<ComponentProps, ComponentState> {
     constructor (props) {
@@ -180,5 +179,5 @@ const ListWithCarousel = (BaseComponent: any) => {
   }
   return EnhanceComponent
 }
-
+export default ListWithCarousel
 export const ColorListWithCarousel = ListWithCarousel(CollectionSummary)
