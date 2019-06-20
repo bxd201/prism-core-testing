@@ -140,6 +140,12 @@ export const getColorCollectionsData = (colors: Color, allCollectionsData: any, 
   let collection = allCollectionsData.find((data) => {
     return data.tabId === tabId
   })
+  // temporarily added, following if condition should be removed once all collections data is available
+  if (!collection) {
+    collection = allCollectionsData.find((data) => {
+      return data.tabId === 'tab1'
+    })
+  }
   collection && collection.collections.forEach((data) => {
     let tmp = {
       name: data.name,
@@ -159,3 +165,13 @@ export const getColorCollectionsData = (colors: Color, allCollectionsData: any, 
 
 export const colorCollectionsData = getColorCollectionsData(colors, allCollectionsData, 'tab1')
 export const expertColorsData = getExpertColors(colors, colorList)
+export const collectionTabs = [
+  { id: 'tab1', tabName: 'Most Popular' },
+  { id: 'tab2', tabName: 'Color ID' },
+  { id: 'tab3', tabName: 'Our Finest Whites' },
+  { id: 'tab4', tabName: 'Color Forecast' },
+  { id: 'tab5', tabName: 'Pottery Barn' },
+  { id: 'tab6', tabName: 'West Elm' },
+  { id: 'tab7', tabName: 'Lifestyle' },
+  { id: 'tab8', tabName: `Kids' Colors` }
+]

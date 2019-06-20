@@ -4,7 +4,7 @@ import CollectionsHeaderWrapper from '../CollectionsHeaderWrapper/CollectionsHea
 import CollectionDetail from './CollectionDetail'
 import ColorCollectionsTab from './ColorCollectionsTab'
 import { ColorListWithCarousel } from '../Carousel/Carousel'
-import { getColorCollectionsData, allCollectionsData, expertColorsData } from '../Carousel/data'
+import { getColorCollectionsData, allCollectionsData, expertColorsData, collectionTabs } from '../Carousel/data'
 import * as Colors from '../../../__mocks__/data/color/Colors'
 import './ColorCollections.scss'
 import ExpertColorDetails from '../Carousel/ExpertColorDetails'
@@ -17,9 +17,11 @@ type Props = {
 }
 
 const baseClass = 'color-collections'
+const wrapper = `${baseClass}__wrapper`
+export const collectionsList = `${baseClass}__collections-list`
 const colors = Colors.getAllColors()
 
-function ColorCollections (props: Props) {
+export function ColorCollections (props: Props) {
   const { isShowBack, showBack, setHeader, isExpertColor } = props
   const [tabIdShow, showTab] = useState('tab1')
   const [collectionDataDetails, updateCollectionDataDetails] = useState({})
@@ -44,20 +46,10 @@ function ColorCollections (props: Props) {
     updateCollectionDataDetails(collectionSummaryData)
   }
 
-  const collectionTabs = [
-    { id: 'tab1', tabName: 'Most Popular' },
-    { id: 'tab2', tabName: 'Color ID' },
-    { id: 'tab3', tabName: 'Our Finest Whites' },
-    { id: 'tab4', tabName: 'Color Forecast' },
-    { id: 'tab5', tabName: 'Pottery Barn' },
-    { id: 'tab6', tabName: 'West Elm' },
-    { id: 'tab7', tabName: 'Lifestyle' },
-    { id: 'tab8', tabName: `Kids' Colors` }
-  ]
   return (
-    <div className={`${baseClass}__wrapper`}>
-      {(isExpertColor) ? '' : <ColorCollectionsTab collectionTabs={collectionTabs} showTab={showTab} tabIdShow={tabIdShow} />}
-      <div className={`${baseClass}__collections-list`}>
+    <div className={`${wrapper}`}>
+      {(!isExpertColor) && <ColorCollectionsTab collectionTabs={collectionTabs} showTab={showTab} tabIdShow={tabIdShow} />}
+      <div className={`${collectionsList}`}>
         <ColorListWithCarousel key={collectionData} data={collectionData} getSummaryData={onClickHandler} isExpertColor={isExpertColor} />
       </div>
     </div>
