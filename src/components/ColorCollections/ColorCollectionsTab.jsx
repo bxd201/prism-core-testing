@@ -9,6 +9,14 @@ type Props = {
 }
 
 const baseClass = 'color-collections'
+export const tabListSelect = `${baseClass}__tab-list-select`
+export const tabListHeading = `${baseClass}__tab-list-heading`
+export const tabListDropdownMobile = `${baseClass}__tab-list-dropdown-mobile`
+export const tabList = `${baseClass}__tab-list`
+export const tabListActive = `${baseClass}__tab-list--active`
+export const tabListInactive = `${baseClass}__tab-list--inactive`
+export const tabListItem = `${baseClass}__tab-list-item`
+export const tabListItemActive = `${baseClass}__tab-list-item--active`
 
 function ColorCollectionsTab (props: Props) {
   const { collectionTabs, showTab, tabIdShow } = props
@@ -17,13 +25,13 @@ function ColorCollectionsTab (props: Props) {
   const tabShowName = (tabActive !== undefined) ? tabActive : 'Choose collection'
 
   return (
-    <div className={`${baseClass}__tab-list-select`}>
-      <span className={`${baseClass}__tab-list-heading`}>Choose a Collection</span>
-      <span className={`${baseClass}__tab-list-dropdown-mobile`} tabIndex='-1' role='button' onKeyDown={() => {}} onClick={() => showTabListMobile(!tabListMobileShow)}>{tabShowName}</span>
-      <ul className={`${baseClass}__tab-list ${(tabListMobileShow) ? `${baseClass}__tab-list--active` : `${baseClass}__tab-list--inactive`}`}>
+    <div className={`${tabListSelect}`}>
+      <span className={`${tabListHeading}`}>Choose a Collection</span>
+      <span className={`${tabListDropdownMobile}`} tabIndex='-1' role='button' onKeyDown={() => {}} onClick={() => showTabListMobile(!tabListMobileShow)}>{tabShowName}</span>
+      <ul className={`${tabList} ${(tabListMobileShow) ? `${tabListActive}` : `${tabListInactive}`}`}>
         {collectionTabs.map((tab, id) => {
           return (
-            <li role='presentation' onKeyDown={() => {}} className={`${baseClass}__tab-list-item ${(tab.id === tabIdShow) ? `${baseClass}__tab-list-item--active` : ``} `} key={tab.id} onClick={() => {
+            <li data-testid={`${tab.id}`} role='presentation' onKeyDown={() => {}} className={`${tabListItem} ${(tab.id === tabIdShow) ? `${tabListItemActive}` : ``}`} key={tab.id} onClick={() => {
               if (tab.id !== tabIdShow) {
                 showTab(tab.id)
               }

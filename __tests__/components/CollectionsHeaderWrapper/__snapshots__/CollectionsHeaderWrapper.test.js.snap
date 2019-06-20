@@ -1,0 +1,90 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CollectionsHeaderWrapper should match snapshot 1`] = `
+<div
+  className="collections-header__wrapper"
+>
+  <div
+    className="collections-header__header"
+  >
+    <div
+      className="collections-header__heading"
+    />
+    <Link
+      to="/active"
+    >
+      <button
+        className="collections-header__button collections-header__button--right"
+      >
+        <div
+          className="collections-header__close"
+        >
+          <span>
+            CLOSE
+          </span>
+           
+          <FontAwesomeIcon
+            border={false}
+            className=""
+            fixedWidth={false}
+            flip={null}
+            icon={
+              Array [
+                "fa",
+                "chevron-up",
+              ]
+            }
+            inverse={false}
+            listItem={false}
+            mask={null}
+            pull={null}
+            pulse={false}
+            rotation={null}
+            size={null}
+            spin={false}
+            symbol={false}
+            title=""
+            transform={null}
+          />
+        </div>
+        <div
+          className="collections-header__cancel"
+        >
+          <FontAwesomeIcon
+            border={false}
+            className=""
+            fixedWidth={false}
+            flip={null}
+            icon={
+              Array [
+                "fa",
+                "times",
+              ]
+            }
+            inverse={false}
+            listItem={false}
+            mask={null}
+            pull={null}
+            pulse={false}
+            rotation={null}
+            size={null}
+            spin={false}
+            symbol={false}
+            title=""
+            transform={null}
+          />
+        </div>
+      </button>
+    </Link>
+  </div>
+  <div
+    className="collections-header__content"
+  >
+    <ColorCollections
+      isShowBack={false}
+      setHeader={[Function]}
+      showBack={[Function]}
+    />
+  </div>
+</div>
+`;

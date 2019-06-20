@@ -24,6 +24,17 @@ const cwProviderValues = {
 }
 
 const baseClass = 'collection-detail'
+const wrapper = `${baseClass}__wrapper`
+const collectionInfo = `${baseClass}__info`
+export const collectionCover = `${baseClass}__cover`
+export const collectionDescription = `${baseClass}__description`
+const collectionLearnMore = `${baseClass}__learn-more`
+const collectionColorList = `${baseClass}__color-list`
+const collectionColorListVertical = `${baseClass}__color-list-vertical`
+const collectionVerticalControls = `${baseClass}__vertical-controls`
+const verticalControlsTrigger = `${baseClass}__trigger`
+export const triggerPrevious = `${baseClass}__previous-trigger`
+export const triggerNext = `${baseClass}__next-trigger`
 
 function cellRenderer ({
   columnIndex, // Horizontal (column) index of cell
@@ -63,20 +74,20 @@ function handleGridResize ({ width, height }) {
   _gridHeight = height
 }
 
-const CollectionDetail = (props: Props) => {
+export const CollectionDetail = (props: Props) => {
   const resultSwatchSize = 175
   const { addToLivePalette, collectionDetailData } = props
   const _gridWrapperRef = useRef(null)
 
   return (
-    <div className={`${baseClass}__wrapper`}>
-      <div className={`${baseClass}__info`}>
-        <img className={`${baseClass}__cover`} alt='' src={`${collectionDetailData.img}`} />
-        <div className={`${baseClass}__description`}>{collectionDetailData.name}</div>
-        <a href='https://' className={`${baseClass}__learn-more`}>LEARN MORE ABOUT THIS COLLECTION</a>
+    <div className={`${wrapper}`}>
+      <div className={`${collectionInfo}`}>
+        <img className={`${collectionCover}`} alt='' src={`${collectionDetailData.img}`} />
+        <div className={`${collectionDescription}`}>{collectionDetailData.name}</div>
+        <a href='https://' className={`${collectionLearnMore}`}>LEARN MORE ABOUT THIS COLLECTION</a>
       </div>
-      <div className={`${baseClass}__color-list`}>
-        <div ref={_gridWrapperRef} className={`${baseClass}__color-list-vertical`}>
+      <div className={`${collectionColorList}`}>
+        <div ref={_gridWrapperRef} className={`${collectionColorListVertical}`}>
           <AutoSizer onResize={handleGridResize}>
             {({ height, width }) => {
               const columnCount = Math.round(width / resultSwatchSize)
@@ -93,18 +104,17 @@ const CollectionDetail = (props: Props) => {
                   rowHeight={newSize}
                   rowCount={rowCount}
                   width={width}
-                  id={`container`}
                   addToLivePalette={addToLivePalette}
                 />
               )
             }}
           </AutoSizer>
         </div>
-        <div className={`${baseClass}__vertical-controls`}>
-          <div role='presentation' onClick={() => verticalScroll(_gridWrapperRef, 'top', _gridHeight, _cellSize)} className={`${baseClass}__trigger ${baseClass}__previous-trigger`}>
+        <div className={`${collectionVerticalControls}`}>
+          <div role='presentation' onClick={() => verticalScroll(_gridWrapperRef, 'top', _gridHeight, _cellSize)} className={`${verticalControlsTrigger} ${triggerPrevious}`}>
             <FontAwesomeIcon className={``} icon={['fa', 'angle-up']} />
           </div>
-          <div role='presentation' onClick={() => verticalScroll(_gridWrapperRef, 'bottom', _gridHeight, _cellSize)} className={`${baseClass}__trigger ${baseClass}__next-trigger`}>
+          <div role='presentation' onClick={() => verticalScroll(_gridWrapperRef, 'bottom', _gridHeight, _cellSize)} className={`${verticalControlsTrigger} ${triggerNext}`}>
             <FontAwesomeIcon className={``} icon={['fa', 'angle-down']} />
           </div>
         </div>
