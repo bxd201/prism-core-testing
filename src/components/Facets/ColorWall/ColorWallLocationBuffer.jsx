@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import isUndefined from 'lodash/isUndefined'
 
 import { filterByFamily, filterBySection, makeActiveColorById, resetActiveColor } from '../../../store/actions/loadColors'
+import { updateSearchQuery, toggleSearchMode } from '../../../store/actions/loadSearchResults'
 import { compareKebabs } from '../../../shared/helpers/StringUtils'
 import type { Color } from '../../../shared/types/Colors'
 import { ROUTE_PARAM_NAMES } from 'constants/globals'
@@ -15,6 +16,7 @@ type StateProps = {
   family?: string,
   section?: string,
   color?: Color,
+  query?: String,
   displayDetailsLink?: boolean,
   displayInfoButton?: boolean,
   displayAddButton?: boolean
@@ -23,11 +25,15 @@ type StateProps = {
 type DispatchProps = {
   filterByFamily: Function,
   filterBySection: Function,
-  makeActiveColorById: Function
+  makeActiveColorById: Function,
+  updateSearchQuery: Function,
+  toggleSearchActive: Function
 }
 
 type OwnProps = {
-  match: any
+  match: {
+    [key: string]: any
+  }
 }
 
 type Props = StateProps & DispatchProps & OwnProps
@@ -51,10 +57,15 @@ class ColorWallLocationBuffer extends Component<Props> {
   }
 
   componentDidMount () {
-    const { match: { params }, section: reduxSection, family: reduxFamily, color: reduxColor } = this.props
+    const { match: { params }, section: reduxSection, family: reduxFamily, color: reduxColor, query: reduxQuery } = this.props
     const section = params[ROUTE_PARAM_NAMES.SECTION]
     const family = params[ROUTE_PARAM_NAMES.FAMILY]
     const colorId = params[ROUTE_PARAM_NAMES.COLOR_ID]
+    const query = params[ROUTE_PARAM_NAMES.SEARCH]
+
+    if (!compareKebabs(query, reduxQuery)) {
+      this.props.updateSearchQuery(query)
+    }
 
     if (!compareKebabs(section, reduxSection)) {
       this.props.filterBySection(section)
@@ -78,10 +89,23 @@ class ColorWallLocationBuffer extends Component<Props> {
     const section = params[ROUTE_PARAM_NAMES.SECTION]
     const family = params[ROUTE_PARAM_NAMES.FAMILY]
     const colorId = params[ROUTE_PARAM_NAMES.COLOR_ID]
+    const search = params[ROUTE_PARAM_NAMES.SEARCH]
 
     const nextSection = nextParams[ROUTE_PARAM_NAMES.SECTION]
     const nextFamily = nextParams[ROUTE_PARAM_NAMES.FAMILY]
     const nextColorId = nextParams[ROUTE_PARAM_NAMES.COLOR_ID]
+    const nextSearch = nextParams[ROUTE_PARAM_NAMES.SEARCH]
+
+    if (nextSearch !== search) {
+      // if our intercepted new search param has a value...
+      if (nextSearch) {
+        // ... update it w/in Redux
+        this.props.updateSearchQuery(nextSearch)
+      } else {
+        // ... otherwise, we can assume the search term has been REMOVED, therefore we need to toggle search to false w/in redux
+        this.props.toggleSearchActive(false)
+      }
+    }
 
     if (nextSection !== section) {
       this.props.filterBySection(nextSection)
@@ -106,7 +130,8 @@ const mapStateToProps = (state, props) => {
   return {
     color: state.colors.colorWallActive,
     family: state.colors.family,
-    section: state.colors.section
+    section: state.colors.section,
+    query: state.colors.search.query
   }
 }
 
@@ -124,6 +149,12 @@ const mapDispatchToProps = (dispatch: Function) => {
       } else {
         dispatch(resetActiveColor())
       }
+    },
+    updateSearchQuery: (query: string) => {
+      dispatch(updateSearchQuery(query))
+    },
+    toggleSearchActive: (on?: boolean) => {
+      dispatch(toggleSearchMode(!!on))
     }
   }
 }

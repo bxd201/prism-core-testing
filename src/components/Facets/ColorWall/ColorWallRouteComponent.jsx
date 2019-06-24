@@ -1,7 +1,8 @@
 // @flow
 import React from 'react'
-import { ROUTE_PARAMS, ROUTE_PARAM_NAMES } from 'constants/globals'
 
+import { ROUTE_PARAMS, ROUTE_PARAM_NAMES } from 'constants/globals'
+import { urlWorker } from '../../../shared/helpers/URLUtils'
 import ColorWallLocationBuffer from './ColorWallLocationBuffer'
 
 /**
@@ -19,15 +20,12 @@ const ColorWallRouteComponent = (props: Object) => {
   // if we have a match for our first param (assuming the match pattern continues to be .*)
   if (captured) {
     // ... then define section, family, and color props to populate a new params object with; the old one is useless to us
-    const section = new RegExp(`/${ROUTE_PARAMS.SECTION}/([^/]*)`).exec(captured)
-    const family = new RegExp(`/${ROUTE_PARAMS.FAMILY}/([^/]*)`).exec(captured)
-    const color = new RegExp(`/${ROUTE_PARAMS.COLOR}/([^/]*)/([^/]*)`).exec(captured)
-
     newMatch.params = {
-      [ROUTE_PARAM_NAMES.SECTION]: section ? section[1] : void (0),
-      [ROUTE_PARAM_NAMES.FAMILY]: family ? family[1] : void (0),
-      [ROUTE_PARAM_NAMES.COLOR_ID]: color ? color[1] : void (0),
-      [ROUTE_PARAM_NAMES.COLOR_SEO]: color ? color[2] : void (0)
+      [ROUTE_PARAM_NAMES.SECTION]: urlWorker.get(ROUTE_PARAMS.SECTION).from(captured)[ROUTE_PARAM_NAMES.SECTION],
+      [ROUTE_PARAM_NAMES.FAMILY]: urlWorker.get(ROUTE_PARAMS.FAMILY).from(captured)[ROUTE_PARAM_NAMES.FAMILY],
+      [ROUTE_PARAM_NAMES.COLOR_ID]: urlWorker.get(ROUTE_PARAMS.COLOR).from(captured)[ROUTE_PARAM_NAMES.COLOR_ID],
+      [ROUTE_PARAM_NAMES.COLOR_SEO]: urlWorker.get(ROUTE_PARAMS.COLOR).from(captured)[ROUTE_PARAM_NAMES.COLOR_SEO],
+      [ROUTE_PARAM_NAMES.SEARCH]: urlWorker.get(ROUTE_PARAMS.SEARCH).from(captured)[ROUTE_PARAM_NAMES.SEARCH]
     }
   }
 

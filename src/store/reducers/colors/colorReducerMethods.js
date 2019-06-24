@@ -28,7 +28,9 @@ export const initialState: ColorsState = {
     loading: false,
     error: false,
     count: void (0),
-    suggestions: void (0)
+    suggestions: void (0),
+    query: '',
+    active: false
   },
 
   colorWallActive: void (0),

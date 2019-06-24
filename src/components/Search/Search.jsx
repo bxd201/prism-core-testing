@@ -6,7 +6,7 @@ import { Grid, AutoSizer } from 'react-virtualized'
 import debounce from 'lodash/debounce'
 import memoizee from 'memoizee'
 
-import { loadSearchResults, clearSearch } from '../../store/actions/loadSearchResults'
+import { loadSearchResults, clearSearch, updateSearchQuery } from '../../store/actions/loadSearchResults'
 import { add } from '../../store/actions/live-palette'
 
 import { FormattedMessage } from 'react-intl'
@@ -31,9 +31,11 @@ type Props = {
   loading: boolean,
   error: boolean,
   loadSearchResults: Function,
+  updateSearchQuery: Function,
   clearSearch: Function,
   addToLivePalette: Function,
-  onCancel: Function
+  onCancel: Function,
+  query: string
 }
 
 type State = {
@@ -54,21 +56,23 @@ export class Search extends PureComponent<Props, State> {
     super(props)
 
     this.searchComponent = React.createRef()
-    this.doClearSearch = this.doClearSearch.bind(this)
+    // this.doClearSearch = this.doClearSearch.bind(this)
     this.cellRenderer = this.cellRenderer.bind(this)
     this.reRunSearchWith = this.reRunSearchWith.bind(this)
+    this.handleUpdateSearchQuery = this.handleUpdateSearchQuery.bind(this)
+    this.handleCancel = this.handleCancel.bind(this)
   }
 
   render () {
-    const { colors, onCancel, loading, count, suggestions, error } = this.props
+    const { colors, loading, count, suggestions, error, query } = this.props
     const { resultSwatchSize } = this.state
 
     return (
       <div className={baseClass}>
         <form onSubmit={this.handleSubmit} className={`${baseClass}__search-form`}>
-          <SearchBar onSearchInput={this.performSearch} onClearSearch={this.doClearSearch} ref={this.searchComponent} />
+          <SearchBar onSearchInput={this.handleUpdateSearchQuery} value={query} onClearSearch={this.doClearSearch} ref={this.searchComponent} />
           <ButtonBar.Bar>
-            <ButtonBar.Button onClick={onCancel}>
+            <ButtonBar.Button onClick={this.handleCancel}>
               <FormattedMessage id='CANCEL' />
             </ButtonBar.Button>
           </ButtonBar.Bar>
@@ -126,12 +130,26 @@ export class Search extends PureComponent<Props, State> {
     )
   }
 
-  componentDidMount () {
-    // clear search results whenever this component mounts -- this is how we control our initial "enter a color name" state
-    this.props.clearSearch()
+  componentDidMount = () => {
+    const { loadSearchResults, query } = this.props
+    // if we have a search term when the component mounts, go ahead and re-run the search
+    // this SHOULD be cached so it shouldn't really be a big deal
+    // it ensures that we can actually get search results upon navigating straight to the page
+    if (query) {
+      loadSearchResults(query)
+    }
   }
 
-  performSearch = debounce((value: string) => {
+  handleCancel = (e: SyntheticInputEvent<HTMLInputElement>) => {
+    this.props.onCancel()
+  }
+
+  handleUpdateSearchQuery = (query: string) => {
+    this.props.updateSearchQuery(query)
+    this.performSearch(query)
+  }
+
+  performSearch = debounce((value?: string) => {
     this.props.loadSearchResults(value)
   }, SEARCH_DELAY)
 
@@ -151,7 +169,7 @@ export class Search extends PureComponent<Props, State> {
 
   reRunSearchWith = memoizee((newInput: string) => () => {
     const search = this.searchComponent.current
-    search[SearchBar.API.setValue](newInput, true)
+    this.props.loadSearchResults(newInput)
     search[SearchBar.API.focus]()
   })
 
@@ -196,7 +214,8 @@ const mapStateToProps = (state, props) => {
     count: state.colors.search.count,
     suggestions: state.colors.search.suggestions,
     loading: state.colors.search.loading,
-    error: state.colors.search.error
+    error: state.colors.search.error,
+    query: state.colors.search.query
   }
 }
 
@@ -205,11 +224,14 @@ const mapDispatchToProps = (dispatch: Function) => {
     clearSearch: () => {
       dispatch(clearSearch())
     },
-    loadSearchResults: (family) => {
-      dispatch(loadSearchResults(family))
+    loadSearchResults: (query: string, family?: string) => {
+      dispatch(loadSearchResults(query))
     },
     addToLivePalette: (color) => {
       dispatch(add(color))
+    },
+    updateSearchQuery: (query) => {
+      dispatch(updateSearchQuery(query))
     }
   }
 }
