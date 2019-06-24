@@ -36,13 +36,13 @@ const lineClasses = {
 
 const GenericMessage = (props: Props) => {
   const { className, children, type, ...other } = props
-  const multiChildren = Children.count(children) > 1
+  const multiChildren = Children.toArray(children).length > 1
   const mainClasses = `${outerClasses[type]} ${typeof className === 'string' ? className : ''} ${multiChildren ? `${baseClass}--multi-line` : ''}`
 
   return (
     <div className={mainClasses} {...other}>
       <div className={innerClasses[type]}>
-        {Children.map(children, (child, i) => (
+        {Children.toArray(children).map((child, i) => (
           <div key={i} className={`${lineClasses.BASE} ${i === 0 ? lineClasses.FIRST_LINE : ''}`}>{child}</div>
         ))}
       </div>
