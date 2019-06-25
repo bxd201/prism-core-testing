@@ -1,6 +1,6 @@
 // @flow
 import React from 'react'
-import { NavLink, Link } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 
 import './ButtonBar.scss'
 
@@ -27,7 +27,12 @@ function Bar (props: BarProps) {
 }
 
 type ButtonProps = {
-  to?: Function,
+  to?: string | {
+    pathname?: string,
+    search?: string,
+    hash?: string,
+    state?: Object
+  },
   onClick?: Function,
   activeClassName?: string,
   className?: string,
@@ -44,15 +49,9 @@ function Button (props: ButtonProps) {
     <li className={CLASS_NAMES.OPTION}>
       {
         props.to ? (
-          props.activeClassName ? (
-            <NavLink className={_className} activeClassName={_activeClassName} to={to} onClick={onClick || null} {...other}>
-              {props.children}
-            </NavLink>
-          ) : (
-            <Link className={_className} to={to} onClick={onClick || null} {...other}>
-              {props.children}
-            </Link>
-          )
+          <NavLink exact className={_className} activeClassName={_activeClassName} to={to} onClick={onClick || null} {...other}>
+            {props.children}
+          </NavLink>
         ) : (
           <button type='button' className={_className} onClick={onClick} {...other}>
             {props.children}

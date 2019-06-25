@@ -102,3 +102,27 @@ export const formToGridWithAspectRatio = (() => {
     }
   }
 })()
+
+/**
+ * This will take any nested array or object and flatten it into an object with dot-separated keys
+ * @param {object | array} tgt any iterable object or array
+ * @param {string} prefix string value to place before all keys
+ */
+export function flattenNestedObject (tgt: any, prefix: string = '') {
+  if (!tgt) {
+    return {}
+  }
+
+  return Object.keys(tgt).reduce((messages, key) => {
+    const value = tgt[key]
+    const prefixedKey = prefix ? `${prefix}.${key}` : key
+
+    if (typeof value === 'object' && Object.keys(value).length) {
+      Object.assign(messages, flattenNestedObject(value, prefixedKey))
+    } else {
+      Object.assign(messages, { [prefixedKey]: value })
+    }
+
+    return messages
+  }, {})
+}

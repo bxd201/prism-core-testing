@@ -34,7 +34,12 @@ export type ColorsState = {
   colorWallActive?: Color,
   search: {
     results?: ColorList,
-    loading: boolean
+    suggestions?: string[],
+    count?: number,
+    query: string,
+    loading: boolean,
+    error: boolean,
+    active: boolean
   },
   initializeWith: {
     section?: string,

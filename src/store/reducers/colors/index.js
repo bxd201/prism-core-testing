@@ -1,6 +1,6 @@
 // @flow
 import { REQUEST_COLORS, RECEIVE_COLORS, FILTER_BY_FAMILY, MAKE_ACTIVE_COLOR, RESET_ACTIVE_COLOR, FILTER_BY_SECTION, REMOVE_COLOR_FILTERS, MAKE_ACTIVE_COLOR_BY_ID, LOAD_ERROR } from '../../actions/loadColors'
-import { REQUEST_SEARCH_RESULTS, RECEIVE_SEARCH_RESULTS, CLEAR_SEARCH } from '../../actions/loadSearchResults'
+import { REQUEST_SEARCH_RESULTS, RECEIVE_SEARCH_RESULTS, CLEAR_SEARCH, SEARCH_RESULTS_ERROR, UPDATE_SEARCH_QUERY, TOGGLE_SEARCH_MODE } from '../../actions/loadSearchResults'
 
 import { type ReduxAction, type ColorsState } from '../../../shared/types/Actions'
 import { initialState, doReceiveColors, doFilterByFamily, doFilterBySection, doMakeActiveColor, doMakeActiveColorById, getErrorState } from './colorReducerMethods'
@@ -83,7 +83,18 @@ export const colors = (state: ColorsState = initialState, action: ReduxAction) =
       return {
         ...state,
         search: {
-          ...initialState.search
+          ...initialState.search,
+          active: state.search.active
+        }
+      }
+    }
+
+    case UPDATE_SEARCH_QUERY: {
+      return {
+        ...state,
+        search: {
+          ...state.search,
+          query: action.payload || ''
         }
       }
     }
@@ -93,7 +104,8 @@ export const colors = (state: ColorsState = initialState, action: ReduxAction) =
         ...state,
         search: {
           ...state.search,
-          loading: true
+          loading: true,
+          error: false
         }
       }
     }
@@ -104,7 +116,31 @@ export const colors = (state: ColorsState = initialState, action: ReduxAction) =
         search: {
           ...state.search,
           loading: false,
-          results: action.payload.results
+          error: false,
+          results: action.payload.results,
+          suggestions: action.payload.suggestions,
+          count: action.payload.count
+        }
+      })
+    }
+
+    case SEARCH_RESULTS_ERROR: {
+      return ({
+        ...state,
+        search: {
+          ...initialState.search,
+          loading: false,
+          error: true
+        }
+      })
+    }
+
+    case TOGGLE_SEARCH_MODE: {
+      return ({
+        ...state,
+        search: {
+          ...state.search,
+          active: action.payload
         }
       })
     }

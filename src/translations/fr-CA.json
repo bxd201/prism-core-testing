@@ -28,7 +28,14 @@
   "SWATCH_FOCUS": "{color}. Appuyez sur Entrée pour le sélectionner.",
   "ZOOM_IN": "Zoomer",
   "ZOOM_OUT": "Dézoomer",
-  "SEARCH": "Chercher",
-  "SEARCH_PROMPT": "Entrez un nom de couleur, un numéro ou une famille dans le champ ci-dessus.",
-  "SEARCH_NO_RESULTS": "Désolé, aucune correspondance de couleurs trouvée. Essayez d'entrer un nom ou un numéro de couleur différent."
+  "SEARCH": {
+    "SEARCH": "Chercher",
+    "PROMPT": "EEntrez un nom de couleur, un numéro ou une famille dans le champ ci-dessus.",
+    "NO_RESULTS": "Désolé, aucune correspondance de couleur trouvée.",
+    "SUGGESTIONS": "Quelques exemples de choses que vous pouvez rechercher sont {suggestions}",
+    "ERROR": {
+      "HEADLINE": "Quelque chose s'est mal passé.",
+      "GENERIC": "Nous n'avons pas pu effectuer votre recherche."
+    }
+  }
 }

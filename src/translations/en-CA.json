@@ -28,7 +28,14 @@
   "SWATCH_FOCUS": "{color}. Press Enter to select.",
   "ZOOM_IN": "Zoom in",
   "ZOOM_OUT": "Zoom out",
-  "SEARCH": "Search",
-  "SEARCH_PROMPT": "Enter a colour name, number or family in the text field above.",
-  "SEARCH_NO_RESULTS": "Sorry, no colour matches found. Try entering a different colour name or number."
+  "SEARCH": {
+    "SEARCH": "Search",
+    "PROMPT": "Enter a color name, number, or family in the text field above.",
+    "NO_RESULTS": "Sorry, no color matches found.",
+    "SUGGESTIONS": "Some examples of things you can search for are {suggestions}",
+    "ERROR": {
+      "HEADLINE": "Something went wrong.",
+      "GENERIC": "We were unable to perform your search."
+    }
+  }
 }

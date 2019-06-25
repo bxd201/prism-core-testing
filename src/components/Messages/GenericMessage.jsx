@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import React, { Children } from 'react'
 
 import './GenericMessage.scss'
 
@@ -15,25 +15,36 @@ const types = {
   NORMAL: 'NORMAL'
 }
 
+const baseClass = 'generic-message'
+
 const outerClasses = {
-  [types.NORMAL]: 'generic-message',
-  [types.WARNING]: 'generic-message generic-message--warning',
-  [types.ERROR]: 'generic-message generic-message--error'
+  [types.NORMAL]: `${baseClass}`,
+  [types.WARNING]: `${baseClass} generic-message--warning`,
+  [types.ERROR]: `${baseClass} generic-message--error`
 }
 
 const innerClasses = {
-  [types.NORMAL]: 'generic-message__inner',
-  [types.WARNING]: 'generic-message__inner generic-message__inner--warning',
-  [types.ERROR]: 'generic-message__inner generic-message__inner--error'
+  [types.NORMAL]: `${baseClass}__inner`,
+  [types.WARNING]: `${baseClass}__inner ${baseClass}__inner--warning`,
+  [types.ERROR]: `${baseClass}__inner ${baseClass}__inner--error`
+}
+
+const lineClasses = {
+  BASE: `${baseClass}__line`,
+  FIRST_LINE: `${baseClass}__line--headline`
 }
 
 const GenericMessage = (props: Props) => {
   const { className, children, type, ...other } = props
+  const multiChildren = Children.toArray(children).length > 1
+  const mainClasses = `${outerClasses[type]} ${typeof className === 'string' ? className : ''} ${multiChildren ? `${baseClass}--multi-line` : ''}`
 
   return (
-    <div className={`${outerClasses[type]} ${typeof className === 'string' ? className : ''}`} {...other}>
+    <div className={mainClasses} {...other}>
       <div className={innerClasses[type]}>
-        {children}
+        {Children.toArray(children).map((child, i) => (
+          <div key={i} className={`${lineClasses.BASE} ${i === 0 ? lineClasses.FIRST_LINE : ''}`}>{child}</div>
+        ))}
       </div>
     </div>
   )

@@ -25,7 +25,12 @@ export const initialState: ColorsState = {
 
   search: {
     results: void (0),
-    loading: false
+    loading: false,
+    error: false,
+    count: void (0),
+    suggestions: void (0),
+    query: '',
+    active: false
   },
 
   colorWallActive: void (0),

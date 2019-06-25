@@ -7,7 +7,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import { loadColors } from '../../../store/actions/loadColors'
 import { add } from '../../../store/actions/live-palette'
+import { toggleSearchMode } from '../../../store/actions/loadSearchResults'
 import { generateColorWallPageUrl } from '../../../shared/helpers/ColorUtils'
+import { urlWorker } from '../../../shared/helpers/URLUtils'
+import { withRouter, type RouterHistory } from 'react-router-dom'
+import { ROUTE_PARAMS, ROUTE_PARAM_NAMES } from 'constants/globals'
 
 import { varValues } from 'variables'
 
@@ -21,7 +25,7 @@ import SherwinColorWall from './SherwinColorWall'
 import GenericMessage from '../../Messages/GenericMessage'
 import CircleLoader from '../../Loaders/CircleLoader/CircleLoader'
 import Search from '../../Search/Search'
-import ButtonBar from '../../ButtonBar/ButtonBar'
+import ButtonBar from '../../GeneralButtons/ButtonBar/ButtonBar'
 
 import './ColorWall.scss'
 
@@ -36,12 +40,20 @@ type StateProps = {
   loading?: boolean,
   error: boolean,
   section: string,
-  sections?: string[]
+  sections?: string[],
+  searchActive: boolean,
+  searchLoading: boolean,
+  searchQuery: string
+}
+
+type RouterProps = {
+  history: RouterHistory
 }
 
 type DispatchProps = {
   loadColors: Function,
-  addToLivePalette: Function
+  addToLivePalette: Function,
+  toggleSearch: Function
 }
 
 type ComponentProps = {
@@ -49,17 +61,15 @@ type ComponentProps = {
   config: Configuration
 }
 
-type Props = StateProps & DispatchProps & ComponentProps
+type Props = StateProps & DispatchProps & ComponentProps & RouterProps
 
 type State = {
-  showColorFamilies: boolean,
-  showSearch: boolean
+  showColorFamilies: boolean
 }
 
 class ColorWall extends PureComponent<Props, State> {
   state: State = {
-    showColorFamilies: false,
-    showSearch: false
+    showColorFamilies: false
   }
 
   constructor (props: Props) {
@@ -82,8 +92,8 @@ class ColorWall extends PureComponent<Props, State> {
   }
 
   render () {
-    const { showColorFamilies, showSearch } = this.state
-    const { colors, family, sections, families, section, brights, colorMap, colorWallActive, loading, error, addToLivePalette, unorderedColors } = this.props
+    const { showColorFamilies } = this.state
+    const { colors, family, sections, families, section, brights, colorMap, colorWallActive, loading, error, addToLivePalette, unorderedColors, searchActive } = this.props
 
     const hasSections = !!(sections && sections.length)
     const hasFamilies = !!(families && families.length > 1)
@@ -100,7 +110,7 @@ class ColorWall extends PureComponent<Props, State> {
       return <CircleLoader />
     }
 
-    if (showSearch) {
+    if (searchActive) {
       return <Search onCancel={this.toggleViewSearch} />
     }
 
@@ -126,7 +136,7 @@ class ColorWall extends PureComponent<Props, State> {
               </ButtonBar.Button>
               <ButtonBar.Button onClick={this.toggleViewSearch}>
                 <FontAwesomeIcon className='color-families-svg' icon={['fa', 'search']} pull='left' />
-                <span className={MODE_CLASS_NAMES.DESC}><FormattedMessage id='SEARCH' /></span>
+                <span className={MODE_CLASS_NAMES.DESC}><FormattedMessage id='SEARCH.SEARCH' /></span>
               </ButtonBar.Button>
             </ButtonBar.Bar>
           </div>
@@ -229,12 +239,36 @@ class ColorWall extends PureComponent<Props, State> {
   }
 
   toggleViewSearch = function toggleViewSearch (setTo?: boolean) {
-    const { showSearch } = this.state
-    const newValue: boolean = (typeof setTo === 'boolean' ? setTo : !showSearch)
+    const { searchActive, toggleSearch, history } = this.props
+    const newSearchState = typeof setTo === 'boolean' ? setTo : !searchActive
 
-    this.setState({
-      showSearch: newValue
-    })
+    toggleSearch(newSearchState)
+
+    if (!newSearchState) {
+      history.push(urlWorker.remove(ROUTE_PARAMS.SEARCH, 1).from(history.location.pathname))
+    }
+  }
+
+  componentDidUpdate (prevProps: Props) {
+    // TODO: check configuration first to see if we're in "use URL mode" or not
+    const { searchLoading: prevSearchLoading } = prevProps
+    const { searchLoading, searchQuery, history } = this.props
+
+    if (searchLoading && searchLoading !== prevSearchLoading) {
+      // get current search term from URL
+      const curValue = urlWorker.get(ROUTE_PARAMS.SEARCH).from(history.location.pathname)[ROUTE_PARAM_NAMES.SEARCH]
+      // determine new URL with updated search term
+      const newUrl = urlWorker.set(ROUTE_PARAMS.SEARCH, searchQuery).in(history.location.pathname)
+
+      // if there's already a search term...
+      if (curValue) {
+        // ... replace the current URL
+        history.replace(newUrl)
+      } else {
+        // ... otherwise push a new one
+        history.push(newUrl)
+      }
+    }
   }
 }
 
@@ -250,7 +284,11 @@ const mapStateToProps = (state, props) => {
     sections: state.colors.sections,
     section: state.colors.section,
     loading: state.colors.status.loading,
-    error: state.colors.status.error
+    error: state.colors.status.error,
+    // SEARCH STUFF
+    searchActive: state.colors.search.active,
+    searchLoading: state.colors.search.loading,
+    searchQuery: state.colors.search.query
   }
 }
 
@@ -261,8 +299,11 @@ const mapDispatchToProps = (dispatch: Function) => {
     },
     addToLivePalette: (color: Color) => {
       dispatch(add(color))
+    },
+    toggleSearch: (on: boolean) => {
+      dispatch(toggleSearchMode(on))
     }
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(injectIntl(WithConfigurationContext(ColorWall)))
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(injectIntl(WithConfigurationContext(ColorWall))))
