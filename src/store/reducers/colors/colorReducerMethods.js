@@ -182,6 +182,12 @@ export function doFilterBySection (state: ColorsState, action: ReduxAction) {
     }
   }
 
+  // if we have no payload section...
+  if (!payloadSection) {
+    // ... just get out and maintain state as-is
+    return state
+  }
+
   if (!compareKebabs(state.section, payloadSection)) {
     const targetedSection = getSectionByName(state.structure, payloadSection)
 
