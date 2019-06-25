@@ -13,7 +13,9 @@ exports[`Search with colors prop should match snapshot 1`] = `
       onSearchInput={[Function]}
     />
     <Bar>
-      <Button>
+      <Button
+        onClick={[Function]}
+      >
         <FormattedMessage
           id="CANCEL"
           values={Object {}}
@@ -28,7 +30,7 @@ exports[`Search with colors prop should match snapshot 1`] = `
       type="WARNING"
     >
       <FormattedMessage
-        id="SEARCH_NO_RESULTS"
+        id="SEARCH.NO_RESULTS"
         values={Object {}}
       />
     </GenericMessage>
@@ -49,7 +51,9 @@ exports[`Search with empty colors prop should match snapshot 1`] = `
       onSearchInput={[Function]}
     />
     <Bar>
-      <Button>
+      <Button
+        onClick={[Function]}
+      >
         <FormattedMessage
           id="CANCEL"
           values={Object {}}
@@ -64,7 +68,7 @@ exports[`Search with empty colors prop should match snapshot 1`] = `
       type="WARNING"
     >
       <FormattedMessage
-        id="SEARCH_NO_RESULTS"
+        id="SEARCH.NO_RESULTS"
         values={Object {}}
       />
     </GenericMessage>

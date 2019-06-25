@@ -199,6 +199,7 @@ module.exports = {
     },
     headers: {
       'Access-Control-Allow-Origin': '*'
-    }
+    },
+    compress: true
   }
 }
