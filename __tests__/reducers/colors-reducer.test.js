@@ -257,14 +257,19 @@ describe('colors-reducer', () => {
   test('updates results for search received', () => {
     const state = colors(initialState, {
       type: searchActions.RECEIVE_SEARCH_RESULTS,
-      payload: { results: [color] }
+      payload: {
+        results: [color],
+        count: 1
+      }
     })
 
     expect(state).toEqual({
       ...initialState,
       search: {
+        ...initialState.search,
         loading: false,
-        results: [color]
+        results: [color],
+        count: 1
       }
     })
   })

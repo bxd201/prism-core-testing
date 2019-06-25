@@ -37,7 +37,7 @@ const lineClasses = {
 const GenericMessage = (props: Props) => {
   const { className, children, type, ...other } = props
   const multiChildren = Children.toArray(children).length > 1
-  const mainClasses = `${outerClasses[type]} ${typeof className === 'string' ? className : ''} ${multiChildren ? `${baseClass}--multi-line` : ''}`
+  const mainClasses = `${outerClasses[type]} ${typeof className === 'string' ? className : ''} ${multiChildren ? `${baseClass}--multi-line` : ''}`.trim()
 
   return (
     <div className={mainClasses} {...other}>

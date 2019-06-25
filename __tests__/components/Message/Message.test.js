@@ -1,9 +1,9 @@
 import React from 'react'
 import { shallow } from 'enzyme'
-import Messages from 'src/components/Messages/GenericMessage'
+import GenericMessage from 'src/components/Messages/GenericMessage'
 
-const createMessage = (props = {}) => {
-  return shallow(<Messages {...props} />)
+const createMessage = (props = {}, content = void (0)) => {
+  return shallow(<GenericMessage {...props}>{content}</GenericMessage>)
 }
 
 const dummyComponent = () => {
@@ -13,13 +13,13 @@ const dummyComponent = () => {
 // rendering and snapshot test
 describe('Coordinary Color Swatch component will pass props correctly', () => {
   it('snapshot testing', () => {
-    const wrapper = createMessage()
+    const wrapper = createMessage({}, dummyComponent())
     expect(wrapper).toMatchSnapshot()
   })
 
   it('child component will be rendering', () => {
-    const wrapper = createMessage({ children: dummyComponent })
-    const childWrapper = shallow(wrapper.props().children.props.children())
-    expect(childWrapper.find('div').text()).toEqual('TEST')
+    const inner = dummyComponent()
+    const wrapper = createMessage({}, inner)
+    expect(wrapper.html().indexOf(shallow(inner).html())).toBeGreaterThan(-1)
   })
 })

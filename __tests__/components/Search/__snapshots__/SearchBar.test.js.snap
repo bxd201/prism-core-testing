@@ -40,7 +40,6 @@ exports[`SearchBar should match snapshot 1`] = `
     <input
       className="SearchBar__input"
       onChange={[Function]}
-      value=""
     />
   </div>
 </div>

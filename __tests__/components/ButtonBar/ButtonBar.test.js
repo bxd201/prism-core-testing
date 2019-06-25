@@ -2,7 +2,7 @@
 /* eslint-env jest */
 import React from 'react'
 import { shallow } from 'enzyme'
-import ButtonBar from 'src/components/ButtonBar/ButtonBar'
+import ButtonBar from 'src/components/GeneralButtons/ButtonBar/ButtonBar'
 
 const getButtonBar = (children, props = {}) => {
   return shallow(<ButtonBar.Bar {...props}>{children}</ButtonBar.Bar>)
