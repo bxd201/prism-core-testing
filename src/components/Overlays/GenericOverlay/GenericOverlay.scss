@@ -1,0 +1,45 @@
+.prism-generic-overlay {
+  animation-name: delayedFadeIn;
+  animation-duration: .5s;
+  animation-timing-function: ease-in-out;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: .5em;
+  background: pick-visible-color(getVar('colors.primary'), $color-black, $color-white);
+  color: rgba(getVar('colors.primary'), $color-near-opacity);
+  z-index: 2;
+
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+
+  &__content {
+    color: inherit;
+    font-weight: bold;
+    font-size: .8em;
+    text-align: center;
+    margin: 2px 0; // something truly small, just so things aren't touching
+  }
+
+  &--loading {
+    // same as default
+  }
+
+  &--error {
+    background: rgba(getVar('colors.error'), $color-near-opacity);
+    color: pick-visible-color(getVar('colors.error'), $color-black, $color-white);
+  }
+
+  &--message {
+    background: rgba(getVar('colors.primary'), $color-near-opacity);
+    color: pick-visible-color(getVar('colors.primary'), $color-black, $color-white);
+  }
+
+  &--semitrans {
+    background: rgba(pick-visible-color(getVar('colors.primary'), $color-black, $color-white), .8);
+  }
+}

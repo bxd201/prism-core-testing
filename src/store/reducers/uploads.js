@@ -1,7 +1,11 @@
 // @flow
 import { UPLOAD_COMPLETE, CLEAR_UPLOADS, START_UPLOADING, STOP_UPLOADING } from '../actions/user-uploads'
 
-export const uploads = (state: Object = null, action: { type: string, payload: Object }) => {
+const initialState: Object = {
+  uploading: false
+}
+
+export const uploads = (state: Object = initialState, action: { type: string, payload: Object }) => {
   switch (action.type) {
     case START_UPLOADING:
     case STOP_UPLOADING:

@@ -1,5 +1,10 @@
 .fm-wrapper {
   position: relative;
+  margin: 0 0 .5em;
+
+  img {
+    display: block;
+  }
 }
 
 .svg-defs-wrapper {
@@ -7,6 +12,15 @@
   position: absolute;
   width: 0;
   z-index: -1;
+}
+
+#zong {
+  z-index: 100;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .image-tinted {
@@ -26,4 +40,21 @@
   top: 0;
   width: 100%;
   z-index: 1;
+}
+
+.inline-content-wrapper {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: row;
+  flex-wrap: nowrap;
+
+  &__piece {
+    padding-right: 1em;
+    flex: 0 1;
+
+    &--main {
+      flex: 0 0;
+    }
+  }
 }

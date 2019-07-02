@@ -1,0 +1,31 @@
+.prism-file-input {
+  $_self: &;
+  position: relative;
+
+  &__label {
+    border: 1px solid grey;
+    border-radius: $ui-radius;
+    padding: 1em;
+    display: inline-block;
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+
+    &:hover,
+    #{$_self}__file:focus ~ & {
+      border: 1px solid getVar("colors.primary");;
+    }
+
+    #{$_self}__file[disabled] ~ & {
+      cursor: default;
+      opacity: .5;
+    }
+  }
+
+  &__label-text {
+    font-weight: bold;
+    display: block;
+    white-space: nowrap;
+
+  }
+}
