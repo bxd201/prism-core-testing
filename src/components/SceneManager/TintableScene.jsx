@@ -17,7 +17,7 @@ import type { Surface, SurfaceStatus } from '../../shared/types/Scene'
 import TintableSceneHitArea from './TintableSceneHitArea'
 import TintableSceneSurface from './TintableSceneSurface'
 import TintableSceneSVGDefs from './TintableSceneSVGDefs'
-import TintableSceneOverlay from './TintableSceneOverlay'
+import GenericOverlay from '../Overlays/GenericOverlay/GenericOverlay'
 
 type Props = {
   background: string,
@@ -179,7 +179,7 @@ class TintableScene extends PureComponent<Props, State> {
     let content = null
 
     if (error) {
-      content = <TintableSceneOverlay type={TintableSceneOverlay.TYPES.ERROR} message='Error loading scene' />
+      content = <GenericOverlay type={GenericOverlay.TYPES.ERROR} message='Error loading scene' />
     } else {
       // run our background image through here to eliminate relative references
       const _background = ensureFullyQualifiedAssetUrl(background)
@@ -266,9 +266,9 @@ class TintableScene extends PureComponent<Props, State> {
           )}
 
           {hitAreaError ? (
-            <TintableSceneOverlay type={TintableSceneOverlay.TYPES.ERROR} message='Error loading paintable surfaces' />
+            <GenericOverlay type={GenericOverlay.TYPES.ERROR} message='Error loading paintable surfaces' />
           ) : (loading || (interactive && !hitAreaLoaded)) ? (
-            <TintableSceneOverlay type={TintableSceneOverlay.TYPES.LOADING} />
+            <GenericOverlay type={GenericOverlay.TYPES.LOADING} />
           ) : null}
         </Fragment>
       )
