@@ -61,7 +61,7 @@ export const uploadImage = (file: File) => {
     dispatch(startUploading())
 
     axios
-      .post('http://localhost/pipeline/', uploadForm, {})
+      .post('http://localhost:800/pipeline/', uploadForm, {})
       .then(res => {
         const { payload } = res.data
         const images = {
@@ -70,7 +70,7 @@ export const uploadImage = (file: File) => {
             // payload.full_wall_mask
             // payload.wall_view1,
             // payload.wall_view2
-            `http://localhost/static/files/${payload.full_wall_mask}`
+            `http://localhost:800/static/files/${payload.full_wall_mask}`
             // `http://localhost/static/files/${payload.wall_view1}`,
             // `http://localhost/static/files/${payload.wall_view2}`
           ]

@@ -45,16 +45,6 @@
     }
   }
 
-  @keyframes fadeIn {
-    0%, 25% {
-      opacity: 0;
-    }
-
-    100% {
-      opacity: 1;
-    }
-  }
-
   display: flex;
   flex-direction: column;
   font-size: $base;
@@ -195,7 +185,6 @@
       z-index: -1;
     }
 
-    &__overlay,
     &__tint-wrapper,
     &__preview-wrapper,
     &__hit-wrapper {
@@ -270,39 +259,6 @@
           opacity: 1;
           transition: opacity .2s ease-in-out;
         }
-      }
-    }
-
-    &__overlay {
-      animation-name: fadeIn;
-      animation-duration: .5s;
-      animation-timing-function: ease-in-out;
-      align-items: center;
-      display: flex;
-      justify-content: center;
-      padding: .5em;
-      background: pick-visible-color(getVar('colors.primary'), $color-black, $color-white);
-      color: rgba(getVar('colors.primary'), $color-near-opacity);
-
-      &__content {
-        color: inherit;
-        font-weight: bold;
-        font-size: .8em;
-        text-align: center;
-      }
-
-      &--loading {
-        // same as default
-      }
-
-      &--error {
-        background: rgba(getVar('colors.error'), $color-near-opacity);
-        color: pick-visible-color(getVar('colors.error'), $color-black, $color-white);
-      }
-
-      &--message {
-        background: rgba(getVar('colors.primary'), $color-near-opacity);
-        color: pick-visible-color(getVar('colors.primary'), $color-black, $color-white);
       }
     }
   }
