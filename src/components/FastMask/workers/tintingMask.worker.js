@@ -3,7 +3,8 @@ import tinycolor from '@ctrl/tinycolor'
 import groupBy from 'lodash/groupBy'
 import _ from 'lodash'
 
-/* global self, postMessage */
+/* postMessage */
+declare var self: DedicatedWorkerGlobalScope;
 
 const ALPHA_THRESHOLD = 50
 
@@ -16,7 +17,7 @@ const BRIGHTNESS_BRACKET_SIZE = 5
 const LUMINANCE_MIN_VALUE = Math.round(255 * 0.15)
 const LUMINANCE_MAX_VALUE = Math.round(255 * 0.75)
 
-self.addEventListener('message', (e) => {
+self.addEventListener('message', (e: Object) => {
   const { imageRGBAdata, imageMaskRgbaData } = e.data
   const len = imageMaskRgbaData.length
 
@@ -105,7 +106,7 @@ self.addEventListener('message', (e) => {
     }
   })
 
-  postMessage({
+  self.postMessage({
     highlightMask: highlightData,
     brightnessLevel: overallBrightnessLevel,
     overallBrightnessLevel: overallBrightnessLevel
