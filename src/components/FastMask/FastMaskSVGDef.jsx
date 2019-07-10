@@ -50,6 +50,7 @@ function FastMaskSVGDef (props: Props) {
 
       const pixelCount = (width * height) * 4
 
+      // $FlowIgnore - flow can't understand how the worker is being used since it's not exporting anything
       const hueLuminosityWorker = new HueLuminosityWorker()
 
       if (onStartProcessing) {
