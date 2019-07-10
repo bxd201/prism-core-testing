@@ -2,8 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import isNull from 'lodash/isNull'
 
-import { getImageRgbaData, createCanvasElementWithData } from './FastMaskUtils'
-import HueLuminosityWorker from './workers/tintingMask.worker'
+import { createCanvasElementWithData } from './FastMaskUtils'
 
 import { type Color } from '../../shared/types/Colors'
 
@@ -19,7 +18,7 @@ type Props = {
   source: Image,
   isLight: boolean,
   hasHighlight: boolean,
-  onStartProcessing?: Function,
+  highlightMap?: ArrayBuffer,
   onFinishProcessing?: Function
 }
 
@@ -32,49 +31,31 @@ function FastMaskSVGDef (props: Props) {
     color,
     mask,
     source,
-    onStartProcessing,
     onFinishProcessing,
     hasHighlight,
+    highlightMap,
     isLight
   } = props
-  const [highlightMap, setHighlightMap] = useState('')
+  const [highlightMask, setHighlightMask] = useState('')
   const [svgFilter, setSvgFilter] = useState(null)
 
   useEffect(() => {
-    if (!isNull(source) && !isNull(mask)) {
-      const maskImageData = getImageRgbaData(mask, width, height)
-      const userImageData = getImageRgbaData(source, width, height)
+    if (highlightMap && hasHighlight) {
+      const highlightMapView = new Uint8ClampedArray(highlightMap)
+      const highlightImage = new ImageData(highlightMapView, width, height)
 
-      const maskImageBinaryData = maskImageData.data
-      const userImageBinaryData = userImageData.data
+      // retreive the canvas element that contains the user's image with highlights & shadows applied
+      const highlightCanvas = createCanvasElementWithData(highlightImage, width, height)
 
-      const pixelCount = (width * height) * 4
-
-      // $FlowIgnore - flow can't understand how the worker is being used since it's not exporting anything
-      const hueLuminosityWorker = new HueLuminosityWorker()
-
-      if (onStartProcessing) {
-        onStartProcessing()
-      }
-
-      hueLuminosityWorker.postMessage({ imageRGBAdata: userImageBinaryData, imageMaskRgbaData: maskImageBinaryData, pixelCount })
-
-      hueLuminosityWorker.onmessage = (e) => {
-        const { highlightMask } = e.data
-        const highlightImage = new ImageData(highlightMask, width, height)
-
-        // retreive the canvas element that contains the user's image with highlights & shadows applied
-        const highlightCanvas = createCanvasElementWithData(highlightImage, width, height)
-
-        // apply user image with highlghts & shadows to SVG filter
-        setHighlightMap(highlightCanvas.toDataURL())
-
-        if (onFinishProcessing) {
-          onFinishProcessing()
-        }
-      }
+      // apply user image with highlghts & shadows to SVG filter
+      setHighlightMask(highlightCanvas.toDataURL())
+    } else {
+      setHighlightMask(void (0))
     }
-  }, [mask, source])
+    if (onFinishProcessing) {
+      onFinishProcessing()
+    }
+  }, [highlightMap, hasHighlight])
 
   useEffect(() => {
     let i = 0
@@ -93,7 +74,7 @@ function FastMaskSVGDef (props: Props) {
     ]
 
     if (hasHighlight) {
-      filterArr.push(<feImage key={i++} xlinkHref={highlightMap} x='0' y='0' width='100%' height='100%' result='highlightMap' />)
+      filterArr.push(<feImage key={i++} xlinkHref={highlightMask} x='0' y='0' width='100%' height='100%' result='highlightMap' />)
       filterArr.push(<feBlend key={i++} mode='lighten' in='floodColor' in2='roomImage' result='highlightedImage' />)
       filterArr.push(<feComposite key={i++} in='highlightedImage' in2='highlightMap' operator='in' x='0%' y='0%' width='100%' height='100%' result='roomHighlights' />)
       filterArr.push(<feColorMatrix key={i++} in='roomImage' result='roomImage-desat' type='saturate' values='0' />)
@@ -101,13 +82,12 @@ function FastMaskSVGDef (props: Props) {
       filterArr.push(<feComposite key={i++} in='shadowedImage' in2='highlightMap' operator='out' x='0%' y='0%' width='100%' height='100%' result='roomShadows' />)
       filterArr.push(<feComposite key={i++} in='roomHighlights' in2='roomShadows' operator='over' x='0%' y='0%' width='100%' height='100%' />)
     } else {
-      // filterArr.push(<feImage xlinkHref={highlightMap} x='0' y='0' width='100%' height='100%' result='highlightMap' />)
       filterArr.push(<feColorMatrix key={i++} in='roomImage' result='roomImage-desat' type='saturate' values='0' />)
       filterArr.push(<feBlend key={i++} mode='multiply' in='floodColor' in2='roomImage-desat' result='shadowedImage' />)
     }
 
     setSvgFilter(filterArr)
-  }, [hasHighlight, isLight, color && color.hex, source && source.src, highlightMap])
+  }, [hasHighlight, isLight, color && color.hex, source && source.src, highlightMask])
 
   if (isNull(mask)) {
     return null
