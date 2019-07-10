@@ -27,13 +27,12 @@ type Props = {
 export function FastMask ({ color, uploadImage, uploads }: Props) {
   const { masks: maskSources, source, uploading } = uploads
 
-  const [userImage, setUserImage] = useState<any | void>()
-  const [masks, setMasks] = useState<any[]>([])
-  const [maskHunches, setMaskHunches] = useState<any[]>([])
-  const [isProcessing, setIsProcessing] = useState<boolean>(false)
-  const [hasDoneAnything, setHasDoneAnything] = useState<boolean>(false)
+  const [userImage, setUserImage] = useState()
+  const [masks, setMasks] = useState([])
+  const [maskHunches, setMaskHunches] = useState([])
+  const [isProcessing, setIsProcessing] = useState(false)
+  const [hasDoneAnything, setHasDoneAnything] = useState(false)
   const wrapperRef = useRef(null)
-  const hasImage = !!userImage
   const hasMasks = masks && masks.length > 0
   const hasHunches = maskHunches && maskHunches.length > 0
   const isUploading = uploading
@@ -70,6 +69,7 @@ export function FastMask ({ color, uploadImage, uploads }: Props) {
         const mainImage = images[0]
         const masks = images.slice(1)
 
+        // $FlowIgnore - flow can't understand how the worker is being used since it's not exporting anything
         const totalImageWorker = new TotalImageWorker()
         const userImageData = getImageRgbaData(mainImage, mainImage.naturalWidth, mainImage.naturalHeight)
         const userImageBinaryData = userImageData.data
@@ -95,14 +95,14 @@ export function FastMask ({ color, uploadImage, uploads }: Props) {
 
   return (
     <React.Fragment>
-      <FileInput onChange={handleChange} id={FILE_UPLOAD_ID} disabled={isUploading || isProcessing} placeholder={hasImage ? 'Select new image' : 'Select an image'} />
+      <FileInput onChange={handleChange} id={FILE_UPLOAD_ID} disabled={isUploading || isProcessing} placeholder={userImage ? 'Select new image' : 'Select an image'} />
 
       {!hasDoneAnything ? (
         <hr />
       ) : (
         <div className='fm-wrapper' style={{ maxWidth: 1000, minHeight: 200 }}>
 
-          {hasImage && hasMasks && hasHunches ? (
+          {userImage && hasMasks && hasHunches ? (
             <div className='fm-wrapper' ref={wrapperRef} style={{ maxWidth: 1000, minHeight: 200 }}>
               {color ? masks.map((mask, maskIndex) => (
                 <FastMaskSVGDef

@@ -6,11 +6,11 @@ import _ from 'lodash'
 
 import { significantFigures } from '../../../shared/helpers/DataUtils'
 
-/* global self, postMessage */
+declare var self: DedicatedWorkerGlobalScope;
 
 const ALPHA_THRESHOLD = 50
 
-self.addEventListener('message', (e) => {
+self.addEventListener('message', (e: Object) => {
   const { image: img, masks } = e.data
 
   let pixelData = []
@@ -113,7 +113,7 @@ self.addEventListener('message', (e) => {
     })
   })
 
-  postMessage({
+  self.postMessage({
     pixelData,
     meanLuminance,
     medianLuminance,

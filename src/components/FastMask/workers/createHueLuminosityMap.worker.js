@@ -1,6 +1,6 @@
-import tinycolor from '@ctrl/tinycolor'
+/* global self */
 
-/* global self, postMessage */
+import tinycolor from '@ctrl/tinycolor'
 
 // -------------------------------------------------
 // Save the luminosity values of the pixels from the natural image to an array.
@@ -144,7 +144,7 @@ self.addEventListener('message', (e) => {
   const { imageHueMap: imageHueMap2, imageSaturationMap: imageSaturationMap2, imageLuminMap: imageLuminMap2 } = compileDistances(imageAlphaMap, imageHueMap, tintPlaneHueValues, imageSaturationMap, tintPlaneSaturationValues, imageLuminMap, tintPlaneLuminosityValues)
   const imageRgbaWithShadows = drawShadowsHighlights(imageAlphaMap, imageRGBAdata, imageHueMap2, imageSaturationMap2, imageLuminMap2)
 
-  postMessage({
+  self.postMessage({
     imageData: imageRgbaWithShadows
   })
 })
