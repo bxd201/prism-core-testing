@@ -10,6 +10,7 @@ import mapValues from 'lodash/mapValues'
 import union from 'lodash/union'
 import intersection from 'lodash/intersection'
 import memoizee from 'memoizee'
+import { tinycolor as tc } from '@ctrl/tinycolor'
 import { compareKebabs } from './StringUtils'
 import { ZOOMED_VIEW_GRID_PADDING } from '../../constants/globals'
 import { getTotalWidthOf2dArray, formToGridWithAspectRatio, type GridShape } from './DataUtils'
@@ -324,3 +325,5 @@ export function isColorFamily (value: string = '', colorSets: string[] = []): bo
     return compareKebabs(colorSet, value)
   }).length > 0
 }
+
+export const tinycolor = memoizee((color: string) => tc(color), { primitive: true, length: 1 })

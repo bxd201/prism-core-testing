@@ -131,7 +131,7 @@ export function getEveryNthValue (arr: any[], index: number): any[] {
   return arr.filter((v: any, i: number) => (i + 1) % index === 0)
 }
 
-export function significantFigures (num: number, digits: number): number {
+export const significantFigures = memoizee((num: number, digits: number): number => {
   const pow = Math.pow(10, digits)
   return Math.round(num * pow) / pow
-}
+}, { primitive: true, length: 2 })

@@ -8,6 +8,7 @@ const startUploading = () => {
   return {
     type: START_UPLOADING,
     payload: {
+      error: false,
       uploading: true
     }
   }
@@ -18,6 +19,18 @@ const stopUploading = () => {
   return {
     type: STOP_UPLOADING,
     payload: {
+      error: false,
+      uploading: false
+    }
+  }
+}
+
+export const ERROR_UPLOADING = 'ERROR_UPLOADING'
+const errorUploading = () => {
+  return {
+    type: ERROR_UPLOADING,
+    payload: {
+      error: true,
       uploading: false
     }
   }
@@ -27,7 +40,10 @@ export const UPLOAD_COMPLETE = 'UPLOAD_COMPLETE'
 const loadLocalImageUrl = (images) => {
   return {
     type: UPLOAD_COMPLETE,
-    payload: images
+    payload: {
+      ...images,
+      error: false
+    }
   }
 }
 
@@ -35,7 +51,9 @@ export const CLEAR_UPLOADS = 'CLEAR_UPLOADS'
 const clearUploads = () => {
   return {
     type: CLEAR_UPLOADS,
-    payload: {}
+    payload: {
+      error: false
+    }
   }
 }
 
@@ -80,7 +98,7 @@ export const uploadImage = (file: File) => {
       })
       .catch(err => {
         console.error('issue with segmentation: ', err)
-        dispatch(stopUploading())
+        dispatch(errorUploading())
       })
   }
 }

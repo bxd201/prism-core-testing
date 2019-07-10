@@ -1,5 +1,5 @@
 // @flow
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux'
 
 import FastMaskSVGDef from './FastMaskSVGDef'
@@ -25,35 +25,37 @@ type Props = {
 }
 
 export function FastMask ({ color, uploadImage, uploads }: Props) {
-  const { masks: maskSources, source, uploading } = uploads
+  const { masks: maskSources, source, uploading, error } = uploads
 
   const [userImage, setUserImage] = useState()
   const [masks, setMasks] = useState([])
+  const [pctComplete, setPctComplete] = useState(0)
   const [maskHunches, setMaskHunches] = useState([])
   const [isProcessing, setIsProcessing] = useState(false)
-  const [hasDoneAnything, setHasDoneAnything] = useState(false)
-  const wrapperRef = useRef(null)
   const hasMasks = masks && masks.length > 0
   const hasHunches = maskHunches && maskHunches.length > 0
   const isUploading = uploading
+  const hasDoneAnything = isUploading || isProcessing || hasMasks || hasHunches
 
   function handleChange (e) {
     const { target } = e
 
     if (target && target.files && target.files[0]) {
-      setHasDoneAnything(true)
       setUserImage()
       setMasks([])
       setMaskHunches([])
+      setPctComplete(0)
       uploadImage(e.target.files[0])
     }
   }
 
   function handleStartProcessing () {
+    debugger // eslint-disable-line
     setIsProcessing(true)
   }
 
   function handleFinishProcessing () {
+    debugger // eslint-disable-line
     setIsProcessing(false)
   }
 
@@ -69,23 +71,35 @@ export function FastMask ({ color, uploadImage, uploads }: Props) {
         const mainImage = images[0]
         const masks = images.slice(1)
 
+        setMasks(masks)
+
         // $FlowIgnore - flow can't understand how the worker is being used since it's not exporting anything
         const totalImageWorker = new TotalImageWorker()
         const userImageData = getImageRgbaData(mainImage, mainImage.naturalWidth, mainImage.naturalHeight)
-        const userImageBinaryData = userImageData.data
+        const maskData = masks.map(mask => {
+          const maskImageData = getImageRgbaData(mask, mask.naturalWidth, mask.naturalHeight)
+          return maskImageData.data
+        })
 
-        totalImageWorker.onmessage = ({ data }) => {
-          console.info('Total Image Analysis Results', data)
+        totalImageWorker.addEventListener('message', ({ data }) => {
+          const { type, payload } = data
 
-          setMaskHunches(data.maskBrightnessData)
-          setMasks(masks)
-        }
+          switch (type) {
+            case 'STATUS': {
+              setPctComplete(payload.pct)
+              break
+            }
+            case 'COMPLETE': {
+              console.info('Image analysis data:', payload)
+              setMaskHunches(payload.maskBrightnessData)
+              totalImageWorker.terminate()
+              break
+            }
+          }
+        })
 
-        totalImageWorker.postMessage({ image: userImageBinaryData,
-          masks: masks.map(mask => {
-            const maskImageData = getImageRgbaData(mask, mask.naturalWidth, mask.naturalHeight)
-            return maskImageData.data
-          })
+        totalImageWorker.postMessage({ image: userImageData.data,
+          masks: maskData
         })
 
         setUserImage(mainImage)
@@ -102,35 +116,39 @@ export function FastMask ({ color, uploadImage, uploads }: Props) {
       ) : (
         <div className='fm-wrapper' style={{ maxWidth: 1000, minHeight: 200 }}>
 
-          {userImage && hasMasks && hasHunches ? (
-            <div className='fm-wrapper' ref={wrapperRef} style={{ maxWidth: 1000, minHeight: 200 }}>
-              {color ? masks.map((mask, maskIndex) => (
-                <FastMaskSVGDef
-                  key={mask.src}
-                  isLight={maskHunches[maskIndex].hunches.isLight}
-                  hasHighlight={maskHunches[maskIndex].hunches.hasHighlight}
-                  width={userImage.naturalWidth}
-                  height={userImage.naturalHeight}
-                  color={color}
-                  maskId={`mask_${maskIndex}`}
-                  filterId={`filter_${maskIndex}`}
-                  source={userImage}
-                  mask={mask}
-                  onFinishProcessing={handleFinishProcessing}
-                  onStartProcessing={handleStartProcessing}
-                />
-              )) : null}
+          {userImage ? (
+            <React.Fragment>
               <img className='image-natural' src={userImage.src} alt='' />
-              {color ? masks.map((mask, maskIndex) => (
-                <svg key={mask.src} className='image-tinted' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlnsXlink='http://www.w3.org/1999/xlink' viewBox={`0 0 ${userImage.naturalWidth * 2} ${userImage.naturalHeight * 2}`} preserveAspectRatio='none'>
-                  <rect fill='rgba(0,0,0,0)' x='0' y='0' width='100%' height='100%' mask={`url(#mask_${maskIndex})`} filter={`url(#filter_${maskIndex})`} />
-                </svg>
+
+              {hasMasks && hasHunches && color ? masks.map((mask, maskIndex) => (
+                <React.Fragment key={mask.src}>
+                  <FastMaskSVGDef
+                    isLight={maskHunches[maskIndex].hunches.isLight}
+                    hasHighlight={maskHunches[maskIndex].hunches.hasHighlight}
+                    highlightMap={maskHunches[maskIndex].highlightMap}
+                    width={userImage.naturalWidth}
+                    height={userImage.naturalHeight}
+                    color={color}
+                    maskId={`mask_${maskIndex}`}
+                    filterId={`filter_${maskIndex}`}
+                    source={userImage}
+                    mask={mask}
+                    onFinishProcessing={handleFinishProcessing}
+                  />
+                  <svg className='image-tinted' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlnsXlink='http://www.w3.org/1999/xlink' viewBox={`0 0 ${userImage.naturalWidth * 2} ${userImage.naturalHeight * 2}`} preserveAspectRatio='none'>
+                    <rect fill='rgba(0,0,0,0)' x='0' y='0' width='100%' height='100%' mask={`url(#mask_${maskIndex})`} filter={`url(#filter_${maskIndex})`} />
+                  </svg>
+                </React.Fragment>
               )) : null}
-            </div>
+            </React.Fragment>
           ) : null}
 
           {isProcessing || isUploading ? (
-            <GenericOverlay type={GenericOverlay.TYPES.LOADING} message={isUploading ? 'Loading...' : 'Processing, slowly...'} semitransparent />
+            <GenericOverlay type={GenericOverlay.TYPES.LOADING} message={isUploading ? 'Loading...' : `Processing ${parseInt(pctComplete * 100, 10)}%`} semitransparent />
+          ) : null}
+
+          {error ? (
+            <GenericOverlay type={GenericOverlay.TYPES.ERROR} message={'We encountered an error.'} semitransparent />
           ) : null}
         </div>
       )}
