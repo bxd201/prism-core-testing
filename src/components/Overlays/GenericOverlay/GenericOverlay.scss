@@ -1,4 +1,7 @@
 .prism-generic-overlay {
+  $self: &;
+  $semitrans-bg-opacity: .75;
+
   animation-name: delayedFadeIn;
   animation-duration: .5s;
   animation-timing-function: ease-in-out;
@@ -25,6 +28,10 @@
     margin: 2px 0; // something truly small, just so things aren't touching
   }
 
+  &--semitrans {
+    background: rgba(pick-visible-color(getVar('colors.primary'), $color-black, $color-white), $semitrans-bg-opacity);
+  }
+
   &--loading {
     // same as default
   }
@@ -32,14 +39,18 @@
   &--error {
     background: rgba(getVar('colors.error'), $color-near-opacity);
     color: pick-visible-color(getVar('colors.error'), $color-black, $color-white);
+
+    &#{$self}--semitrans {
+      background: rgba(getVar('colors.error'), $semitrans-bg-opacity);
+    }
   }
 
   &--message {
     background: rgba(getVar('colors.primary'), $color-near-opacity);
     color: pick-visible-color(getVar('colors.primary'), $color-black, $color-white);
-  }
 
-  &--semitrans {
-    background: rgba(pick-visible-color(getVar('colors.primary'), $color-black, $color-white), .8);
+    &#{$self}--semitrans {
+      background: rgba(getVar('colors.primary'), $semitrans-bg-opacity);
+    }
   }
 }
