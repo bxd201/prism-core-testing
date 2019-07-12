@@ -32,6 +32,7 @@ export function FastMask ({ color, uploadImage, uploads }: Props) {
   const [pctComplete, setPctComplete] = useState(0)
   const [maskHunches, setMaskHunches] = useState([])
   const [isProcessing, setIsProcessing] = useState(false)
+
   const hasMasks = masks && masks.length > 0
   const hasHunches = maskHunches && maskHunches.length > 0
   const isUploading = uploading
