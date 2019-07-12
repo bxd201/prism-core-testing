@@ -91,7 +91,9 @@ export function FastMask ({ color, uploadImage, uploads }: Props) {
               break
             }
             case 'COMPLETE': {
+              const { luminanceThreshold, medianLuminance, meanLuminance, avgExtremeLuminance: { mostCommon } } = payload.maskBrightnessData[0]
               console.info('Image analysis data:', payload)
+              console.info('Mask luminance comparison:', luminanceThreshold, medianLuminance, meanLuminance, mostCommon)
               setMaskHunches(payload.maskBrightnessData)
               totalImageWorker.terminate()
               break
@@ -124,9 +126,11 @@ export function FastMask ({ color, uploadImage, uploads }: Props) {
               {hasMasks && hasHunches && color ? masks.map((mask, maskIndex) => (
                 <React.Fragment key={mask.src}>
                   <FastMaskSVGDef
+                    debug
                     isLight={maskHunches[maskIndex].hunches.isLight}
                     hasHighlight={maskHunches[maskIndex].hunches.hasHighlight}
                     highlightMap={maskHunches[maskIndex].highlightMap}
+                    hueMap={maskHunches[maskIndex].hueMap}
                     width={userImage.naturalWidth}
                     height={userImage.naturalHeight}
                     color={color}

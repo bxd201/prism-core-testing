@@ -1,6 +1,8 @@
+/* eslint-disable */
 // @flow
 import React, { useEffect, useState } from 'react'
 import isNull from 'lodash/isNull'
+import flattenDeep from 'lodash/flattenDeep'
 
 import { createCanvasElementWithData } from './FastMaskUtils'
 
@@ -18,7 +20,9 @@ type Props = {
   source: Image,
   isLight: boolean,
   hasHighlight: boolean,
+  debug?: boolean,
   highlightMap?: ArrayBuffer,
+  hueMap?: ArrayBuffer,
   onFinishProcessing?: Function
 }
 
@@ -34,9 +38,12 @@ function FastMaskSVGDef (props: Props) {
     onFinishProcessing,
     hasHighlight,
     highlightMap,
-    isLight
+    hueMap,
+    isLight,
+    debug
   } = props
   const [highlightMask, setHighlightMask] = useState('')
+  const [hueMask, setHueMask] = useState('')
   const [svgFilter, setSvgFilter] = useState(null)
 
   useEffect(() => {
@@ -58,6 +65,24 @@ function FastMaskSVGDef (props: Props) {
   }, [highlightMap, hasHighlight])
 
   useEffect(() => {
+    if (hueMap) {
+      const hueMapView = new Uint8ClampedArray(hueMap)
+      const hueImage = new ImageData(hueMapView, width, height)
+
+      // retreive the canvas element that contains the user's image with highlights & shadows applied
+      const hueCanvas = createCanvasElementWithData(hueImage, width, height)
+
+      // apply user image with highlghts & shadows to SVG filter
+      setHueMask(hueCanvas.toDataURL())
+    } else {
+      setHueMask(void (0))
+    }
+    if (onFinishProcessing) {
+      onFinishProcessing()
+    }
+  }, [hueMap])
+
+  useEffect(() => {
     let i = 0
 
     if (!color || !color.hex) {
@@ -69,25 +94,71 @@ function FastMaskSVGDef (props: Props) {
     }
 
     const filterArr = [
-      <feFlood key={i++} floodColor={color.hex} result='floodColor' />,
-      <feImage key={i++} xlinkHref={source.src} x='0' y='0' width='100%' height='100%' result='roomImage' />
+      <feFlood key={i++} floodColor={debug ? 'magenta' : color.hex} result='surfaceColor' />,
+
+      <feImage key={i++} xlinkHref={source.src} x='0' y='0' width='100%' height='100%' result='roomImageZero' />,
+      // this is just to get a "working" copy of roomImage, preserving roomImageZero as the pristine version
+      <feComposite key={i++} in='roomImageZero' in2='roomImageZero' operator='over' x='0%' y='0%' width='100%' height='100%' result='roomImage' />,
+      <feImage key={i++} xlinkHref={hueMask} x='0' y='0' width='100%' height='100%' result='desaturationMask' />,
+      hasHighlight ? [
+        <feImage key={i++} xlinkHref={highlightMask} x='0' y='0' width='100%' height='100%' result='highlightMask' />
+      ] : void (0),
+
+      // =========================================================================
+      // BEGIN DESATURATION
+      debug ? [
+        <feFlood key={i++} floodColor={'chartreuse'} result='desatMaskColor' />,
+        <feComposite key={i++} in='desatMaskColor' in2='desaturationMask' operator='in' x='0%' y='0%' width='100%' height='100%' result='desatRoomParts' />,
+        <feComponentTransfer key={i++} in='desatRoomParts' result='desatRoomParts'>
+          <feFuncA type='linear' slope='0.5' />
+        </feComponentTransfer>,
+        <feComposite key={i++} in='desatRoomParts' in2='roomImageZero' operator='over' x='0%' y='0%' width='100%' height='100%' result='roomImage' />
+      ] : [
+        <feColorMatrix key={i++} in='roomImageZero' type='saturate' values='0' result='roomImage' />,
+        <feComposite key={i++} in='roomImage' in2='desaturationMask' operator='in' x='0%' y='0%' width='100%' height='100%' result='desatRoomParts' />,
+        hasHighlight ? [
+          <feComposite key={i++} in='desatRoomParts' in2='highlightMask' operator='out' x='0%' y='0%' width='100%' height='100%' result='desatRoomParts' />,
+        ] : void (0),
+        <feComposite key={i++} in='desatRoomParts' in2='roomImageZero' operator='over' x='0%' y='0%' width='100%' height='100%' result='roomImage' />
+      ]
     ]
+    // END DESATURATION
+    // =========================================================================
 
     if (hasHighlight) {
-      filterArr.push(<feImage key={i++} xlinkHref={highlightMask} x='0' y='0' width='100%' height='100%' result='highlightMap' />)
-      filterArr.push(<feBlend key={i++} mode='lighten' in='floodColor' in2='roomImage' result='highlightedImage' />)
-      filterArr.push(<feComposite key={i++} in='highlightedImage' in2='highlightMap' operator='in' x='0%' y='0%' width='100%' height='100%' result='roomHighlights' />)
-      filterArr.push(<feColorMatrix key={i++} in='roomImage' result='roomImage-desat' type='saturate' values='0' />)
-      filterArr.push(<feBlend key={i++} mode='multiply' in='floodColor' in2='roomImage-desat' result='shadowedImage' />)
-      filterArr.push(<feComposite key={i++} in='shadowedImage' in2='highlightMap' operator='out' x='0%' y='0%' width='100%' height='100%' result='roomShadows' />)
-      filterArr.push(<feComposite key={i++} in='roomHighlights' in2='roomShadows' operator='over' x='0%' y='0%' width='100%' height='100%' />)
+      if (debug) {
+        // just draw highlights on top of room scene
+        filterArr.push(<feComposite key={i++} in='surfaceColor' in2='highlightMask' operator='in' x='0%' y='0%' width='100%' height='100%' result='highlightRoomParts' />)
+        filterArr.push(<feComponentTransfer key={i++} in='highlightRoomParts' result='highlightRoomParts'>
+          <feFuncA type='linear' slope='0.5' />
+        </feComponentTransfer>)
+        filterArr.push(<feComposite key={i++} in='highlightRoomParts' in2='roomImage' operator='over' x='0%' y='0%' width='100%' height='100%' result='roomImage' />)
+      } else {
+        // =========================================================================
+        // BEGIN LIGHTENING
+        // QUESTION: do you want to lighten the original room image, or the hue-map-desaturated one? right now it's original
+        filterArr.push(<feBlend key={i++} mode='lighten' in='surfaceColor' in2='roomImageZero' result='highlightedImage' />)
+        filterArr.push(<feComposite key={i++} in='highlightedImage' in2='highlightMask' operator='in' x='0%' y='0%' width='100%' height='100%' result='highlightRoomParts' />)
+        // END LIGHTENING
+        // =========================================================================
+        // BEGIN DARKENING
+        filterArr.push(<feBlend key={i++} mode='multiply' in='surfaceColor' in2='roomImage' result='roomImage' />)
+        filterArr.push(<feComposite key={i++} in='roomImage' in2='highlightMask' operator='out' x='0%' y='0%' width='100%' height='100%' result='roomImage' />)
+        filterArr.push(<feComposite key={i++} in='roomImage' in2='roomImageZero' operator='over' x='0%' y='0%' width='100%' height='100%' result='roomImage' />)
+        filterArr.push(<feComposite key={i++} in='highlightRoomParts' in2='roomImage' operator='over' x='0%' y='0%' width='100%' height='100%' result='roomImage' />)
+        // END DARKENING
+        // =========================================================================
+      }
     } else {
-      filterArr.push(<feColorMatrix key={i++} in='roomImage' result='roomImage-desat' type='saturate' values='0' />)
-      filterArr.push(<feBlend key={i++} mode='multiply' in='floodColor' in2='roomImage-desat' result='shadowedImage' />)
+      if (debug) {
+        // don't need to do nothin' special here
+      } else {
+        filterArr.push(<feBlend key={i++} mode='multiply' in='surfaceColor' in2='roomImage' result='roomImage' />)
+      }
     }
 
-    setSvgFilter(filterArr)
-  }, [hasHighlight, isLight, color && color.hex, source && source.src, highlightMask])
+    setSvgFilter(flattenDeep(filterArr).filter(v => v))
+  }, [hasHighlight, isLight, color && color.hex, source && source.src, highlightMask, hueMask, debug])
 
   if (isNull(mask)) {
     return null
