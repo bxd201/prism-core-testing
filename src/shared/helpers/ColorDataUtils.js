@@ -334,7 +334,15 @@ export const tinycolor = memoizee((color: string) => tc(color), { primitive: tru
 // this is useful for making more general color groups
 export const getHueRangeNumber = memoizee((hue: number, steps: number = 12) => {
   const degreeOffset = 360 / steps / 2
+
   let n = hue + degreeOffset
   n = (n >= 360 ? n - 360 : n)
   return Math.floor(n * steps / 360)
+}, { primitive: true, length: 2 })
+
+// returns shortest distance between two degrees in degrees
+export const getDegreeDistance = memoizee((h1, h2) => {
+  const diff = h2 > h1 ? h2 - h1 : h1 - h2
+  const diff2 = diff > 180 ? 360 - diff : diff
+  return diff2
 }, { primitive: true, length: 2 })
