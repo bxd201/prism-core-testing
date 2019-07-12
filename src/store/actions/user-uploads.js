@@ -3,6 +3,8 @@
 // eslint-disable-next-line no-unused-vars
 import axios from 'axios'
 
+import { ML_PIPELINE_ENDPOINT } from '../../constants/endpoints'
+
 export const START_UPLOADING = 'START_UPLOADING'
 const startUploading = () => {
   return {
@@ -67,19 +69,10 @@ export const uploadImage = (file: File) => {
 
     uploadForm.append('image', file)
 
-    // const mock = {
-    //   source: imageUrl,
-    //   masks: [
-    //     // 'http://localhost/static/files/0a615a1a-98d8-11e9-bdfa-acde48001122_full_wall_mask.png'
-    //     'http://localhost/static/files/c198334c-98d9-11e9-9eb0-acde48001122_trimmed_and_filled_full_wall_mask.png'
-    //   ]
-    // }
-    // dispatch(loadLocalImageUrl(mock))
-
     dispatch(startUploading())
 
     axios
-      .post('http://localhost:800/pipeline/', uploadForm, {})
+      .post(ML_PIPELINE_ENDPOINT, uploadForm, {})
       .then(res => {
         const { payload } = res.data
         const images = {
@@ -88,9 +81,9 @@ export const uploadImage = (file: File) => {
             // payload.full_wall_mask
             // payload.wall_view1,
             // payload.wall_view2
-            `http://localhost:800/static/files/${payload.full_wall_mask}`
-            // `http://localhost/static/files/${payload.wall_view1}`,
-            // `http://localhost/static/files/${payload.wall_view2}`
+            payload.full_wall_mask_local
+            // payload.wall_view1_local,
+            // payload.wall_view2_local`
           ]
         }
         dispatch(loadLocalImageUrl(images))
