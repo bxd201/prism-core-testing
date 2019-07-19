@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux'
 
 import FastMaskSVGDef from './FastMaskSVGDef'
-import TotalImageWorker from './workers/totalImage.worker'
+import TotalImageWorker from './workers/TotalImage/totalImage.worker'
 
 import { loadImage, getImageRgbaData } from './FastMaskUtils'
 
@@ -89,11 +89,10 @@ export function FastMask ({ color, uploadImage, uploads }: Props) {
               break
             }
             case 'COMPLETE': {
-              const { luminanceThreshold, medianLuminance, meanLuminance, avgExtremeLuminance: { mostCommon } } = payload.maskBrightnessData[0]
               console.info('Image analysis data:', payload)
-              console.info('Mask luminance comparison:', luminanceThreshold, medianLuminance, meanLuminance, mostCommon)
               setMaskHunches(payload.maskBrightnessData)
               totalImageWorker.terminate()
+              setTimeout(handleFinishProcessing, 500)
               break
             }
           }
@@ -124,11 +123,12 @@ export function FastMask ({ color, uploadImage, uploads }: Props) {
               {hasMasks && hasHunches && color ? masks.map((mask, maskIndex) => (
                 <React.Fragment key={mask.src}>
                   <FastMaskSVGDef
-                    debug={false}
+                    // debug
                     isLight={maskHunches[maskIndex].hunches.isLight}
                     hasHighlight={maskHunches[maskIndex].hunches.hasHighlight}
                     highlightMap={maskHunches[maskIndex].highlightMap}
                     hueMap={maskHunches[maskIndex].hueMap}
+                    surfaceLighteningData={maskHunches[maskIndex].surfaceLighteningData}
                     width={userImage.naturalWidth}
                     height={userImage.naturalHeight}
                     color={color}
@@ -136,7 +136,6 @@ export function FastMask ({ color, uploadImage, uploads }: Props) {
                     filterId={`filter_${maskIndex}`}
                     source={userImage}
                     mask={mask}
-                    onFinishProcessing={handleFinishProcessing}
                   />
                   <svg className='image-tinted' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlnsXlink='http://www.w3.org/1999/xlink' viewBox={`0 0 ${userImage.naturalWidth * 2} ${userImage.naturalHeight * 2}`} preserveAspectRatio='none'>
                     <rect fill='rgba(0,0,0,0)' x='0' y='0' width='100%' height='100%' mask={`url(#mask_${maskIndex})`} filter={`url(#filter_${maskIndex})`} />
@@ -163,7 +162,7 @@ const mapStateToProps = (state, props) => {
   const { uploads, lp } = state
 
   return {
-    color: lp.activeColor || { hex: '#aeaeae' },
+    color: lp.activeColor,
     uploads
   }
 }

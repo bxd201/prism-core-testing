@@ -106,7 +106,7 @@ export class LivePalette extends PureComponent<Props, State> {
           color={color}
           onClick={this.activateColor}
           moveColor={this.moveColor}
-          active={(activeColor.id === color.id)}
+          active={(activeColor && activeColor.id === color.id)}
         />)
       }
     })
