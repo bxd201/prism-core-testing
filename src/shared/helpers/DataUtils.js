@@ -135,3 +135,61 @@ export const significantFigures = memoizee((num: number, digits: number): number
   const pow = Math.pow(10, digits)
   return Math.round(num * pow) / pow
 }, { primitive: true, length: 2 })
+
+export function geometricMean (nums: number[], allowZero: boolean = false): number {
+  const len = nums.length
+
+  // more than one number is required
+  if (len === 1) {
+    return NaN
+  }
+
+  for (let i = nums.length - 1; i >= 0; i--) {
+    const num = nums[i]
+
+    if (allowZero && num === 0) {
+      // if there is any zero at all in this dataset (and it is allowed), skip the legwork and return 0
+      return 0
+    }
+
+    // otherwise return NaN if any values <= 0 are present
+    if (num <= 0) {
+      return NaN
+    }
+  }
+
+  return nums.map(num => Math.pow(num, 1 / len)).reduce((n0, n1) => !n0 ? n1 : n0 * n1, 0)
+}
+
+/**
+ * Compresses values greater than a particular threshold based on a ratio (larger numbers)
+ * @param {number} value input value, any kind of number; once it's larger than threshold it will be compressed
+ * @param {number} threshold minimum value at which the compression will begin taking place
+ * @param {number} ratio ratio of compression/expansion; values > 1 compresses, 0 > values < 1 expands
+ * @param {number} max defaults to Infinity; maximum output value of this function
+ */
+export function compress (value: number, threshold: number, ratio: number = 1, max: number = Infinity): number {
+  const toLimit = value > threshold ? threshold + (value - threshold) / ratio : value
+  return Math.min(toLimit, max)
+}
+
+export function expand (value: number, threshold: number, ratio: number = 1, min: number = -Infinity): number {
+  const toLimit = value > threshold ? threshold + (value - threshold) / ratio : value
+  return Math.max(toLimit, min)
+}
+
+/**
+ * If given value X, will return associated Y value found along a bell curve
+ * @param {number} xRef input X to convert to value Y along bell curve
+ * @param {number} xMax top X value to set scale for xRef input; defaults to 1
+ * @param {number} yMax top Y value to set scale for output Y; defaults to 1
+ * @description https://www.desmos.com/calculator/w9jrdpvsmk
+ */
+export function mapAlongSine (xRef: number, xMax: number = 1, yMax: number = 1): number {
+  const x = Math.min(xMax, xRef) / xMax * Math.PI
+  const h = 0.25 * Math.PI
+  const b = 0.5
+  const k = 0.5
+  const a = 0.5
+  return (a * Math.sin((x - h) / b) + k) * yMax
+}
