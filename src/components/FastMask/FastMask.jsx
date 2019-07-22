@@ -51,12 +51,10 @@ export function FastMask ({ color, uploadImage, uploads }: Props) {
   }
 
   function handleStartProcessing () {
-    debugger // eslint-disable-line
     setIsProcessing(true)
   }
 
   function handleFinishProcessing () {
-    debugger // eslint-disable-line
     setIsProcessing(false)
   }
 
@@ -126,7 +124,7 @@ export function FastMask ({ color, uploadImage, uploads }: Props) {
               {hasMasks && hasHunches && color ? masks.map((mask, maskIndex) => (
                 <React.Fragment key={mask.src}>
                   <FastMaskSVGDef
-                    debug
+                    debug={false}
                     isLight={maskHunches[maskIndex].hunches.isLight}
                     hasHighlight={maskHunches[maskIndex].hunches.hasHighlight}
                     highlightMap={maskHunches[maskIndex].highlightMap}
