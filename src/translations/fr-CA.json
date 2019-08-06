@@ -30,7 +30,7 @@
   "ZOOM_OUT": "Dézoomer",
   "SEARCH": {
     "SEARCH": "Chercher",
-    "PROMPT": "EEntrez un nom de couleur, un numéro ou une famille dans le champ ci-dessus.",
+    "PROMPT": "Entrez un nom de couleur, un numéro ou une famille dans le champ ci-dessus.",
     "NO_RESULTS": "Désolé, aucune correspondance de couleur trouvée.",
     "SUGGESTIONS": "Quelques exemples de choses que vous pouvez rechercher sont {suggestions}",
     "ERROR": {
