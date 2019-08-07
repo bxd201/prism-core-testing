@@ -34,7 +34,7 @@ export function PaletteSuggester (props: Props) {
                   ${isShowSlider ? `${baseClass}__${displayArea}--show` : `${baseClass}__${displayArea}--hide`}`
               } style={{ backgroundColor: color.hex }}>
                 { isColorAdded && <FontAwesomeIcon className={`${baseClass}__${icons} ${isShowSlider ? `${baseClass}__${icons}--show` : `${baseClass}__${icons}--hide`}`} icon={['fa', 'check-circle']} size='2x' /> }
-                { !isColorAdded && <FontAwesomeIcon className={`${baseClass}__${icons} ${isShowSlider ? `${baseClass}__${icons}--show` : `${baseClass}__${icons}--hide`}`} icon={['fal', 'plus-circle']} size='2x' onClick={() => handleClick(isColorAdded, 1, color, props)} /> }
+                { !isColorAdded && <FontAwesomeIcon className={`${baseClass}__${icons} ${isShowSlider ? `${baseClass}__${icons}--show` : `${baseClass}__${icons}--hide`}`} icon={['fal', 'plus-circle']} size='2x' onClick={() => handleClick(isColorAdded, true, color, props)} /> }
               </div>
             </button>
             <div className={`${baseClass}__${content}`}>
@@ -53,7 +53,7 @@ export function PaletteSuggester (props: Props) {
   )
 }
 
-const handleClick = (isColorAdded: boolean, isShowSlider: boolean, color: Color, props: object) => {
+const handleClick = (isColorAdded: boolean, isShowSlider: boolean, color: Color, props: Object) => {
   const { addToLivePalette, handleSlideShow } = props
   if (!isColorAdded && isShowSlider) {
     addToLivePalette(color)

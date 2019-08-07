@@ -1,7 +1,7 @@
 // @flow
 import React from 'react'
 import { fullColorNumber, getContrastYIQ } from '../../../src/shared/helpers/ColorUtils'
-import type { Color } from '../../src/shared/types/Colors'
+import type { Color } from '../../shared/types/Colors'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheckCircle } from '@fortawesome/pro-solid-svg-icons'
 import { faPlusCircle } from '@fortawesome/pro-light-svg-icons'
@@ -69,7 +69,7 @@ export function ExpertColorDetails (props: Props) {
   )
 }
 
-const handleClick = (color: Color, props: object) => {
+const handleClick = (color: Color, props: Object) => {
   const { addToLivePalette } = props
   addToLivePalette(color)
 }

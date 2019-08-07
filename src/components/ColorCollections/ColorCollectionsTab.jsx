@@ -1,9 +1,10 @@
 // @flow
 import React, { useState } from 'react'
 import './ColorCollections.scss'
+import type { ColorCollectionsTabs } from '../../shared/types/Colors'
 
 type Props = {
-  collectionTabs: Array,
+  collectionTabs: ColorCollectionsTabs,
   showTab: Function,
   tabIdShow: string
 }
@@ -21,7 +22,8 @@ export const tabListItemActive = `${baseClass}__tab-list-item--active`
 function ColorCollectionsTab (props: Props) {
   const { collectionTabs, showTab, tabIdShow } = props
   const [tabListMobileShow, showTabListMobile] = useState(false)
-  const tabActive = collectionTabs.find(tab => tab.id === tabIdShow).tabName
+  const tabFind = collectionTabs.find(tab => tab.id === tabIdShow)
+  const tabActive = (tabFind) ? tabFind.tabName : undefined
   const tabShowName = (tabActive !== undefined) ? tabActive : 'Choose collection'
 
   return (
@@ -33,7 +35,7 @@ function ColorCollectionsTab (props: Props) {
           return (
             <li data-testid={`${tab.id}`} role='presentation' onKeyDown={() => {}} className={`${tabListItem} ${(tab.id === tabIdShow) ? `${tabListItemActive}` : ``}`} key={tab.id} onClick={() => {
               if (tab.id !== tabIdShow) {
-                showTab(tab.id)
+                showTab(tab.id, true)
               }
               showTabListMobile(!tabListMobileShow)
             }}>

@@ -24,7 +24,7 @@ export default function MoreDetailsCollapse (props: Props) {
           </button>
         </div>
       }
-      <button className={`${baseClass}__collapse__button ${!close && `${baseClass}__collapse__button--open`}`} onClick={() => handleCollapse(!close)}>
+      <button className={`${baseClass}__collapse__button ${!close ? `${baseClass}__collapse__button--open` : ''}`} onClick={() => handleCollapse(!close)}>
         {!close && <span>CLOSE</span>}
         {close && <span>DETAILS</span>}
         {!close && <FontAwesomeIcon className={`${baseClass}__toggle-carets`} icon={faCaretUp} />}

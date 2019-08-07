@@ -44,12 +44,11 @@ function Button (props: ButtonProps) {
 
   const _className = `${CLASS_NAMES.OPTION_BUTTON} ${className || ''}`
   const _activeClassName = `${CLASS_NAMES.OPTION_BUTTON_ACTIVE} ${activeClassName || ''}`
-
   return (
     <li className={CLASS_NAMES.OPTION}>
       {
         props.to ? (
-          <NavLink exact className={_className} activeClassName={_activeClassName} to={to} onClick={onClick || null} {...other}>
+          <NavLink exact className={_className} activeClassName={_activeClassName} to={props.to} onClick={onClick || null} {...other}>
             {props.children}
           </NavLink>
         ) : (

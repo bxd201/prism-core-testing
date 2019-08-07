@@ -68,3 +68,53 @@ export type ColorCollectionDetail = {
   img: string,
   collections: Color[]
 }
+
+export type ColorDetails = Object & {
+  colorNumber: string,
+  coordinatingColors: {
+    coord2ColorId?: string,
+    coord1ColorId?: string
+  },
+  description: Array<string>,
+  id: string,
+  isExterior: boolean,
+  isInterior: boolean,
+  name: string,
+  lrv: number,
+  brandedCollectionNames?: Array<string>,
+  colorFamilyNames: Array<string>,
+  brandKey: string,
+  red: number,
+  green: number,
+  blue: number,
+  hue: number,
+  saturation: number,
+  lightness: number,
+  hex: string,
+  isDark: boolean,
+  storeStripLocator?: string,
+  similarColors: Array<string>
+}
+
+export type CategorizedColorById = {
+  [ key: string ]: ColorDetails
+}
+
+export type ColorCollectionsTab = Object & {
+  id: string,
+  tabName: string
+}
+
+export type ColorCollectionsTabs = ColorCollectionsTab[]
+
+export type CollectionsTab = Object & {
+  id: string,
+  tabId: string,
+  collections: Array<Object>
+}
+
+export type CollectionsSummary = Object & {
+  img: string,
+  collectionName: string,
+  collections: Array<Object>
+}
