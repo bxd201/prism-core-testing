@@ -26,7 +26,7 @@ const wrapperContent = `${baseClass}__content`
 
 const CollectionsHeaderWrapper = (WrappedComponent: any) => {
   class CollectionsHeader extends React.Component<Props, State> {
-    constructor (props) {
+    constructor (props: Props) {
       super(props)
       this.state = {
         isShowBack: false,
@@ -36,20 +36,22 @@ const CollectionsHeaderWrapper = (WrappedComponent: any) => {
       this.backHandler = this.backHandler.bind(this)
       this.setHeader = this.setHeader.bind(this)
     }
-
-    showBack () {
+    /*:: showBack: () => void */
+    showBack (): void {
       this.setState({
         isShowBack: true
       })
     }
 
-    backHandler () {
+    /*:: backHandler: () => void */
+    backHandler (): void {
       this.setState({
         isShowBack: false
       })
     }
 
-    setHeader (header) {
+    /*:: setHeader: () => void */
+    setHeader (header: string): void {
       this.setState({
         header
       })

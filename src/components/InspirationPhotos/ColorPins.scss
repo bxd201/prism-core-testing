@@ -1,0 +1,118 @@
+.pin__wrapper {
+  align-items: center;
+  background: none;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  left: 0;
+  line-height: 0.85em;
+  overflow: hidden;
+  outline: 0;
+  position: absolute;
+  top: 0;
+  width: auto;
+  z-index: 1;
+  &--active {
+    z-index: 100;
+  }
+  &__pin-add {
+    align-items: center;
+    border: 2px solid white;
+    box-sizing: border-box;
+    display: none;
+    height: 3em;
+    justify-content: center;
+    width: 4.75em;
+    order: 2;
+    &--active {
+      display: flex;
+      z-index: 101;
+    }
+    &--left {
+      order: unset;
+    }
+  }
+  &__pin-add-icon {
+    margin: 0 1em 0 0;
+    &--left {
+      margin: 0 0 0 1em;
+    }
+  }
+  &__pin-add-button {
+    outline: none;
+    &:focus {
+      outline-style: solid;
+      outline-width: 2px;
+      outline-color: #2cabe2;
+    }
+  }
+}
+
+.pin__chip {
+  align-items: center;
+  border: 2px solid white;
+  border-radius: 2em;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: flex;
+  height: 2em;
+  justify-content: center;
+  line-height: 2em;
+  order: 3;
+  text-align: center;
+  width: 2em;
+  outline: none;
+  &:focus {
+    outline: none;
+  }
+  &--active {
+    height: 3em;
+    width: 3em;
+    z-index: 2;
+  }
+}
+
+.pin__name {
+  display: block;
+  font-weight: bold;
+  line-height: 1em;
+  &__wrapper {
+    background-color: white;
+    border: 1px solid white;
+    box-sizing: border-box;
+    color: #333333;
+    display: none;
+    font-size: 0.95em;
+    line-height: 0.98;
+    order: 1;
+    opacity: 1;
+    padding: 0.5em 0.9em;
+    white-space: nowrap;
+    width: auto;
+    z-index: 100;
+    &--active {
+      display: block;
+    }
+    &--inactive {
+      display: none;
+      width: 0;
+    }
+  }
+}
+
+.pin__content {
+  display: flex;
+  position: absolute;
+  right: 50%;
+  top: 0;
+  width: max-content;
+  z-index: -1;
+  &--left {
+    left: 50%;
+  }
+  &__wrapper {
+    height: 0;
+    margin-left: 360px;
+    position: relative;
+  }
+}

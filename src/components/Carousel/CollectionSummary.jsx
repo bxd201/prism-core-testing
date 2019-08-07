@@ -1,12 +1,13 @@
 // @flow
 import React, { PureComponent } from 'react'
 import { fullColorNumber, getContrastYIQ } from '../../../src/shared/helpers/ColorUtils'
+import type { CollectionsSummary } from '../../shared/types/Colors'
 import cloneDeep from 'lodash/cloneDeep'
 import './CollectionSummary.scss'
 const baseClass = 'collection__summary'
 
 type Props = {
-  data: Array,
+  data: CollectionsSummary,
   getSummaryData: Function,
   isExpertColor: boolean
 }
@@ -18,7 +19,7 @@ class CollectionSummary extends PureComponent<Props> {
   }
   render () {
     const { data, isExpertColor } = this.props
-    let color
+    let color = { hex: '', name: '', brandKey: '', colorNumber: '' }
     let img
     let collectionName
     let bottomColorList

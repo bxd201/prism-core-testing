@@ -20,7 +20,7 @@ function TextButton (props: ButtonProps) {
 
   return (
     props.to ? (
-      <Link className={_className} to={to} onClick={onClick || null} {...other}>
+      <Link className={_className} to={props.to} onClick={onClick || null} {...other}>
         {props.children}
       </Link>
     ) : (

@@ -30,6 +30,7 @@
         outline: none;
         padding: 1em;
         visibility: visible;
+        background-color:#ffffff;
         &--visible {
           visibility: hidden;
         }
@@ -42,6 +43,12 @@
         padding: 3em 0;
         width: 100%;
         overflow: hidden;
+        &--loop{
+          padding: 0;
+          @include respond-above(sm) {
+            padding: 1em 5em 0em 5em;
+          }
+        }
       }
     }
     &__indicators {
@@ -73,7 +80,10 @@
   }
   &__container{
     white-space: nowrap;
-    transition-duration: 1000ms;
+    transition-duration: 300ms;
     transition-timing-function: ease-in-out;
+    &--non-transition{
+      transition-duration: 0ms;
+    }
   }
 }

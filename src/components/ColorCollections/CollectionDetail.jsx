@@ -9,6 +9,7 @@ import { add } from '../../store/actions/live-palette'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as scroll from 'scroll'
 import './CollectionDetail.scss'
+import type { ColorCollectionDetail, Color } from '../../shared/types/Colors'
 
 const GRID_AUTOSCROLL_SPEED: number = 300
 
@@ -16,6 +17,8 @@ type Props = {
   collectionDetailData: ColorCollectionDetail,
   addToLivePalette: Function
 }
+
+type Ref = RefObject
 
 const cwProviderValues = {
   displayDetailsLink: false,
@@ -77,7 +80,7 @@ function handleGridResize ({ width, height }) {
 export const CollectionDetail = (props: Props) => {
   const resultSwatchSize = 175
   const { addToLivePalette, collectionDetailData } = props
-  const _gridWrapperRef = useRef(null)
+  const _gridWrapperRef: ?Ref = useRef(null)
 
   return (
     <div className={`${wrapper}`}>
@@ -124,16 +127,21 @@ export const CollectionDetail = (props: Props) => {
 }
 
 function verticalScroll (_gridWrapperRef, direction, _gridHeight, _cellSize) {
-  const gridEl = _gridWrapperRef.current.querySelector('.ReactVirtualized__Grid')
+  if (_gridWrapperRef && _gridWrapperRef.current) {
+    const gridEl = _gridWrapperRef.current.querySelector('.ReactVirtualized__Grid')
 
-  let scrollToY = gridEl.scrollTop
+    let scrollToY = 0
+    if (gridEl && gridEl.scrollTop) {
+      scrollToY = gridEl.scrollTop
+    }
 
-  if (direction === 'bottom') {
-    scrollToY += _cellSize
-  } else {
-    scrollToY -= _cellSize
+    if (direction === 'bottom') {
+      scrollToY += _cellSize
+    } else {
+      scrollToY -= _cellSize
+    }
+    scroll.top(gridEl, scrollToY, { duration: GRID_AUTOSCROLL_SPEED })
   }
-  scroll.top(gridEl, scrollToY, { duration: GRID_AUTOSCROLL_SPEED })
 }
 
 const mapDispatchToProps = (dispatch: Function) => {

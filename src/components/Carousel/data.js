@@ -1,15 +1,18 @@
 // This is temporary use for mock carousel data from api
 // @flow
-import type { Color } from '../types/Colors'
+import type { ColorCollectionsTabs, CategorizedColorById } from '../../shared/types/Colors'
 import * as Colors from '../../../__mocks__/data/color/Colors'
 const colors = Colors.getAllColors()
-const getExpertColors = (colors: Color, colorList: array) => {
+const getExpertColors = (colors: CategorizedColorById, colorList: string[]) => {
   let data = []
   for (var i = 0; i < colorList.length; i = i + 3) {
     let tmp = []
     let j = 0
     while (j !== 3) {
-      const color = Object.values(colors).find((color) => {
+      // Object.values function has no way to know that the argument passed to,
+      // like in case Object.values({foo: 4, bar: "str"}).
+      // so flow would complain error like Array<mixed> incompatible with Color.
+      const color = Object.values(colors).find((color: Object) => {
         return (colorList[i + j] === color.colorNumber)
       })
       tmp.push(color)
@@ -135,7 +138,8 @@ export const allCollectionsData = [
     ]
   }
 ]
-export const getColorCollectionsData = (colors: Color, allCollectionsData: any, tabId: string) => {
+
+export const getColorCollectionsData = (colors: CategorizedColorById, allCollectionsData: any, tabId: string) => {
   let result = []
   let collection = allCollectionsData.find((data) => {
     return data.tabId === tabId
@@ -153,7 +157,7 @@ export const getColorCollectionsData = (colors: Color, allCollectionsData: any, 
       collections: []
     }
     for (let i = 0; i < data.colorCollections.length; i++) {
-      const tmpColor = Object.values(colors).find((color) => {
+      const tmpColor = Object.values(colors).find((color: Object) => {
         return color.colorNumber === data.colorCollections[i]
       })
       tmp.collections.push(tmpColor)
@@ -165,7 +169,7 @@ export const getColorCollectionsData = (colors: Color, allCollectionsData: any, 
 
 export const colorCollectionsData = getColorCollectionsData(colors, allCollectionsData, 'tab1')
 export const expertColorsData = getExpertColors(colors, colorList)
-export const collectionTabs = [
+export const collectionTabs: ColorCollectionsTabs = [
   { id: 'tab1', tabName: 'Most Popular' },
   { id: 'tab2', tabName: 'Color ID' },
   { id: 'tab3', tabName: 'Our Finest Whites' },

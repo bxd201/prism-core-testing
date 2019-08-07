@@ -50,7 +50,7 @@ export function ColorCollections (props: Props) {
     <div className={`${wrapper}`}>
       {(!isExpertColor) && <ColorCollectionsTab collectionTabs={collectionTabs} showTab={showTab} tabIdShow={tabIdShow} />}
       <div className={`${collectionsList}`}>
-        <ColorListWithCarousel key={collectionData} data={collectionData} getSummaryData={onClickHandler} isExpertColor={isExpertColor} />
+        <ColorListWithCarousel defaultItemsPerView={8} isInfinity={false} key={JSON.stringify(collectionData)} data={collectionData} getSummaryData={onClickHandler} isExpertColor={isExpertColor} />
       </div>
     </div>
   )
