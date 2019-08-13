@@ -9,13 +9,22 @@ import {
   REMOVE_LP_COLOR,
   ACTIVATE_LP_COLOR,
   ACTIVATE_LP_PREVIEW_COLOR,
-  REORDER_LP_COLORS
+  REORDER_LP_COLORS,
+  TOGGLE_LP_COMPARE_COLOR,
+  EDIT_LP_COMPARE_COLOR
 } from '../actions/live-palette'
 
-export const initialState = {}
+export const initialState = {
+  toggleCompareColor: false
+}
 
 export const lp = (state: any = initialState, action: any) => {
   switch (action.type) {
+    case TOGGLE_LP_COMPARE_COLOR:
+      return Object.assign({}, state, {
+        toggleCompareColor: !state.toggleCompareColor,
+        compareColorsId: []
+      })
     case ADD_LP_COLOR:
       // check if there are already 7 colors added and if the color exists already before adding
       if (state.colors && state.colors.length < LP_MAX_COLORS_ALLOWED && !filter(state.colors, color => color.id === action.payload.color.id).length) {
@@ -85,6 +94,22 @@ export const lp = (state: any = initialState, action: any) => {
         colors: [
           ...reconstructedColors
         ]
+      })
+
+    case EDIT_LP_COMPARE_COLOR:
+      const originCompareId = state.colors.map((colors) => colors.id)
+      let compareColorsId = state.compareColorsId ? state.compareColorsId : originCompareId
+      const editId = action.payload.colorId
+      let removedCompareColors = [...compareColorsId]
+      const idx = removedCompareColors.indexOf(editId)
+      if (idx !== -1) {
+        removedCompareColors.splice(idx, 1)
+      } else {
+        const insertIdx = originCompareId.indexOf(editId)
+        removedCompareColors.splice(insertIdx, 0, editId)
+      }
+      return Object.assign({}, state, {
+        compareColorsId: removedCompareColors
       })
 
     default:

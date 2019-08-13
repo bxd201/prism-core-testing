@@ -9,6 +9,13 @@ export const add = (colorObj: Color) => {
   }
 }
 
+export const TOGGLE_LP_COMPARE_COLOR: string = 'TOGGLE_LP_COMPARE_COLOR'
+export const toggleCompareColor = () => {
+  return {
+    type: TOGGLE_LP_COMPARE_COLOR
+  }
+}
+
 export const REMOVE_LP_COLOR: string = 'REMOVE_LP_COLOR'
 export const remove = (colorId: Number) => {
   return {
@@ -30,6 +37,14 @@ export const activatePreview = (colorObj: Color) => {
   return {
     type: ACTIVATE_LP_PREVIEW_COLOR,
     payload: { color: colorObj }
+  }
+}
+
+export const EDIT_LP_COMPARE_COLOR: string = 'EDIT_LP_COLOR'
+export const editCompareColor = (colorId: Number) => {
+  return {
+    type: EDIT_LP_COMPARE_COLOR,
+    payload: { colorId: colorId }
   }
 }
 

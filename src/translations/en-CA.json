@@ -28,6 +28,7 @@
   "SWATCH_FOCUS": "{color}. Press Enter to select.",
   "ZOOM_IN": "Zoom in",
   "ZOOM_OUT": "Zoom out",
+  "PALETTE_TITLE": "My Color Palette",
   "SEARCH": {
     "SEARCH": "Search",
     "PROMPT": "Enter a color name, number, or family in the text field above.",

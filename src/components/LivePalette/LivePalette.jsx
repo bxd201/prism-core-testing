@@ -12,9 +12,9 @@ import intersection from 'lodash/intersection'
 import update from 'immutability-helper'
 import { Link } from 'react-router-dom'
 
-import { LP_MAX_COLORS_ALLOWED } from 'constants/configurations'
+import { LP_MAX_COLORS_ALLOWED, MIN_COMPARE_COLORS_ALLOWED } from 'constants/configurations'
 
-import { activate, reorder } from '../../store/actions/live-palette'
+import { activate, reorder, toggleCompareColor } from '../../store/actions/live-palette'
 import { arrayToSpacedString } from '../../shared/helpers/StringUtils'
 
 import { varValues } from 'variables'
@@ -28,17 +28,20 @@ type Props = {
   colors: Array<Color>,
   activateColor: Function,
   reorderColors: Function,
+  toggleCompareColor: Function,
   activeColor: Color,
   removedColor: Color
 }
 
 type State = {
-  spokenWord: string
+  spokenWord: string,
+  isCompareColor: boolean
 }
 
 export class LivePalette extends PureComponent<Props, State> {
   state = {
-    spokenWord: ''
+    spokenWord: '',
+    isCompareColor: false
   }
 
   pendingUpdateFn: any
@@ -90,10 +93,15 @@ export class LivePalette extends PureComponent<Props, State> {
     }
   }
 
+  toggleCompareColor = () => {
+    this.setState({ isCompareColor: !this.state.isCompareColor })
+    this.props.toggleCompareColor()
+  }
+
   render () {
     const { colors, activeColor } = this.props
 
-    const { spokenWord } = this.state
+    const { spokenWord, isCompareColor } = this.state
     // TODO: abstract below into a class method
     // calculate all the active slots
     const activeSlots = colors.map((color, index) => {
@@ -107,6 +115,7 @@ export class LivePalette extends PureComponent<Props, State> {
           onClick={this.activateColor}
           moveColor={this.moveColor}
           active={(activeColor.id === color.id)}
+          isCompareColor={isCompareColor}
         />)
       }
     })
@@ -123,6 +132,10 @@ export class LivePalette extends PureComponent<Props, State> {
 
     return (
       <div className='prism-live-palette'>
+        <div className='prism-live-palette__header'>
+          <span className='prism-live-palette__header__name'><FormattedMessage id='PALETTE_TITLE' /></span>
+          {colors.length >= MIN_COMPARE_COLORS_ALLOWED && <button className='prism-live-palette__header__compare-button' onClick={this.toggleCompareColor}>Compare Color</button>}
+        </div>
         <div className='prism-live-palette__list'>
           {activeSlots}
           {colors.length < LP_MAX_COLORS_ALLOWED && <Link to={`/active/color-wall`} className={`prism-live-palette__slot prism-live-palette__slot--${COLOR_TRAY_CLASS_MODIFIERS}`}>
@@ -190,6 +203,9 @@ const mapStateToProps = (state, props) => {
 
 const mapDispatchToProps = (dispatch: Function) => {
   return {
+    toggleCompareColor: () => {
+      dispatch(toggleCompareColor())
+    },
     activateColor: (color) => {
       dispatch(activate(color))
     },

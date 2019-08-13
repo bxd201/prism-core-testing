@@ -5,10 +5,9 @@ import { connect } from 'react-redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import flow from 'lodash/flow'
 import { DragSource, DropTarget } from 'react-dnd'
-import { fullColorNumber } from '../../shared/helpers/ColorUtils'
+import { fullColorNumber, getContrastYIQ } from '../../shared/helpers/ColorUtils'
 import { type Color } from '../../shared/types/Colors'
-
-import { remove, activatePreview } from '../../store/actions/live-palette'
+import { remove, activatePreview, editCompareColor } from '../../store/actions/live-palette'
 
 import { DRAG_TYPES } from 'constants/globals'
 
@@ -19,15 +18,21 @@ type Props = {
   remove: Function,
   onClick: Function,
   connectDragSource: Function,
-  connectDropTarget: Function
+  connectDropTarget: Function,
+  toggleCompareColor: boolean,
+  handleCompareColor: Function
 }
+const baseClass = 'prism-live-palette__slot'
 
 export function ActiveSlot (props: Props) {
   const ACTIVE_CLASS = 'prism-live-palette__slot--active'
   const REMOVAL_CLASS = 'prism-live-palette__slot--removing'
-
+  const displayArea = 'container__color-display-area'
+  const icons = 'container__toggle-check-icons'
   const { color, active, connectDragSource, connectDropTarget, isDragging } = props
   const [isDeleting, setDeletingStatus] = useState(false)
+  const [isColorAdded, setToggleAddedColor] = useState(true)
+  const [isToggleCompareColor, setPrevToggle] = useState(null)
 
   const opacity = isDragging ? 0.33 : 1
   const LIGHT_DARK_CLASS = color.isDark ? 'prism-live-palette__color-details--dark' : 'prism-live-palette__color-details--dark-color'
@@ -41,22 +46,36 @@ export function ActiveSlot (props: Props) {
     }
   }
 
+  const hanleToggle = () => {
+    setToggleAddedColor(!isColorAdded)
+    props.handleCompareColor(color.id)
+  }
   const remove = () => {
     setDeletingStatus(true)
     setTimeout(() => {
       props.remove(color.id)
     }, 200)
   }
-
+  const { toggleCompareColor } = props
+  if (toggleCompareColor !== isToggleCompareColor) {
+    setToggleAddedColor(true)
+    setPrevToggle(toggleCompareColor)
+  }
   return connectDragSource && connectDropTarget && connectDragSource(
     connectDropTarget(
       <div className={`prism-live-palette__slot ${(active ? ACTIVE_CLASS : '')} ${(isDeleting ? REMOVAL_CLASS : '')}`} style={{ backgroundColor: color.hex, opacity }} onClick={activateSlot} onKeyDown={activateSlot} role='button' tabIndex='-1'>
-        <div className={`prism-live-palette__color-details ${LIGHT_DARK_CLASS}`}>
+        {!toggleCompareColor && <div className={`prism-live-palette__color-details ${LIGHT_DARK_CLASS}`}>
           <span className='prism-live-palette__color-number'>{fullColorNumber(color.brandKey, color.colorNumber)}</span>
           <span className='prism-live-palette__color-name'>{ color.name }</span>
           <span className='prism-live-palette__color-description'>{ color.description.join(', ') }</span>
           <button className='prism-live-palette__trash' onClick={remove}><FontAwesomeIcon icon='trash' size='1x' /></button>
-        </div>
+        </div>}
+        {toggleCompareColor && <button style={{ color: getContrastYIQ(color.hex) }} className={`${baseClass}__button`} onClick={() => hanleToggle()}>
+          <div className={`${baseClass}__${displayArea}`} style={{ backgroundColor: color.hex }}>
+            { isColorAdded && <FontAwesomeIcon className={`${baseClass}__${icons} ${toggleCompareColor ? `${baseClass}__${icons}--show` : `${baseClass}__${icons}--hide`}`} icon={['fa', 'check-circle']} size='2x' /> }
+            { !isColorAdded && <FontAwesomeIcon className={`${baseClass}__${icons} ${toggleCompareColor ? `${baseClass}__${icons}--show` : `${baseClass}__${icons}--hide`}`} icon={['fal', 'plus-circle']} size='2x' /> }
+          </div>
+        </button>}
       </div>
     )
   )
@@ -124,6 +143,12 @@ const swatchTarget = {
   }
 }
 
+const mapStateToProps = (state, props) => {
+  return {
+    toggleCompareColor: state.lp.toggleCompareColor
+  }
+}
+
 const mapDispatchToProps = (dispatch) => {
   return {
     remove: (colorId) => {
@@ -131,6 +156,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     activatePreviewColor: (color) => {
       dispatch(activatePreview(color))
+    },
+    handleCompareColor: (colorId) => {
+      dispatch(editCompareColor(colorId))
     }
   }
 }
@@ -143,5 +171,5 @@ export default flow([
     connectDragSource: connect.dragSource(),
     isDragging: monitor.isDragging()
   })),
-  connect(null, mapDispatchToProps)
+  connect(mapStateToProps, mapDispatchToProps)
 ])(ActiveSlot)

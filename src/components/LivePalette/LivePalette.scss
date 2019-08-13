@@ -1,9 +1,32 @@
 .prism-live-palette {
   max-width: 990px;
+  display: flex;
   overflow: hidden;
   background-color: getVar( "colors.white" );
   border: 1px solid getVar( "colors.grey" );
   padding: $livePalette__chip-side-margin;
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    &__name{
+      margin: 1em;
+    }
+    &__compare-button{
+      padding: 0.5em 1em;
+      margin-right: 5px;
+      border-top: 1px solid #ebebeb;
+      font-weight: 600;
+      font-size: 16px;
+      outline:none;
+      &:hover{
+        background-color: #2cabe2;
+        color: #fff;
+        cursor: pointer;
+      }
+    }
+  }
 
   &__list {
     display: flex;
@@ -73,6 +96,14 @@
       bottom: 0.75em;
       font-size: 0.7rem;
       text-decoration: none;
+    }
+
+    &__button{
+      position: absolute;
+      top:50%;
+      left:50%;
+      transform: translate(-50%, -50%);
+      outline:none;
     }
   }
 

@@ -28,6 +28,7 @@
   "SWATCH_FOCUS": "{color}. Appuyez sur Entrée pour le sélectionner.",
   "ZOOM_IN": "Zoomer",
   "ZOOM_OUT": "Dézoomer",
+  "PALETTE_TITLE": "My Color Palette",
   "SEARCH": {
     "SEARCH": "Chercher",
     "PROMPT": "Entrez un nom de couleur, un numéro ou une famille dans le champ ci-dessus.",
