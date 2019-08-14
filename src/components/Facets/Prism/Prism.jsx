@@ -6,9 +6,11 @@ import { withDragDropContext } from '../../../helpers/WithDragDropContext'
 
 import LivePalette from '../../LivePalette/LivePalette'
 import ColorWallRouteComponent from '../ColorWall/ColorWallRouteComponent'
+import InspiredScene from '../../InspirationPhotos/InspiredSceneNavigator'
 import SceneManager from '../../SceneManager/SceneManager'
 import ColorDetails from '../ColorDetails/ColorDetails'
 import PrismNav from './PrismNav'
+import ColorCollection from '../../ColorCollections/ColorCollections'
 import CompareColor from '../../CompareColor/CompareColor'
 import { ROUTE_PARAMS, ROUTE_PARAM_NAMES } from 'constants/globals'
 const colorWallBaseUrl = `/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_WALL}`
@@ -30,19 +32,23 @@ export class Prism extends Component<Props> {
     const { toggleCompareColor } = this.props
     return (
       <React.Fragment>
-        <PrismNav />
-        <hr />
-        {!toggleCompareColor &&
-          <div className='prism__root-wrapper'>
-            <Route path='/' exact component={RootRedirect} />
-            <Route path='/active' exact component={SceneManager} />
-            <Route path={colorWallUrlPattern} component={ColorWallRouteComponent} />
-            <Route path={`/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`} exact component={ColorDetails} />
-          </div>
-        }
-        {toggleCompareColor && <CompareColor />}
-
-        <LivePalette />
+        <div className='prism__root-container'>
+          <PrismNav />
+          <hr />
+          {!toggleCompareColor &&
+            <div className='prism__root-wrapper'>
+              <Route path='/' exact component={RootRedirect} />
+              <Route path='/active' exact component={SceneManager} />
+              <Route path={colorWallUrlPattern} component={ColorWallRouteComponent} />
+              <Route path='/color-from-image' component={InspiredScene} />
+              <Route path='/color-collections' component={ColorCollection} />
+              <Route path='/expert-colors' component={() => <ColorCollection isExpertColor />} />
+              <Route path={`/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`} exact component={ColorDetails} />
+            </div>
+          }
+          {toggleCompareColor && <CompareColor />}
+          <LivePalette />
+        </div>
       </React.Fragment>
     )
   }

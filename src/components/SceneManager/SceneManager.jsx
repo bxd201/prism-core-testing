@@ -15,7 +15,7 @@ import SceneVariantSwitch from './SceneVariantSwitch'
 import ImagePreloader from '../../helpers/ImagePreloader'
 import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 import ConfigurationContext from '../../contexts/ConfigurationContext/ConfigurationContext'
-
+import ColorPickerSlide from '../ColorPickerSlide/ColorPickerSlide'
 import type { Color } from '../../shared/types/Colors'
 import type { Scene, SceneStatus, Surface, Variant } from '../../shared/types/Scene'
 
@@ -153,6 +153,7 @@ export class SceneManager extends PureComponent<Props, State> {
 
     return (
       <div className={SceneManager.baseClass}>
+        <ColorPickerSlide />
         <div className={`${SceneManager.baseClass}__block ${SceneManager.baseClass}__block--tabs`}>
           {scenes.map((scene, index) => {
             const sceneInfo = getSceneInfoById(scene, sceneStatus, scene.id)

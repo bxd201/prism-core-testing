@@ -4,6 +4,7 @@
     justify-content: space-between;
     font-size: 1.35rem;
     padding: 1em 0;
+    position: relative;
     & > span {
       margin: 0 auto;
       align-self: center;
@@ -14,9 +15,11 @@
       text-transform: uppercase;
       fill: #000;
       padding: 0.75em 1.75em;
-      font-size: 0.8em;
-      font-weight: 600;
       outline: none;
+      position: absolute;
+      top:50%;
+      right:0;
+      transform: translateY(-50%);
       &:hover {
         border: 1px solid #2cabe2;
         color: #2cabe2;
