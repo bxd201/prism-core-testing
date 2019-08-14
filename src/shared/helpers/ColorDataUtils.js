@@ -14,6 +14,7 @@ import { compareKebabs } from './StringUtils'
 import { ZOOMED_VIEW_GRID_PADDING } from '../../constants/globals'
 import { getTotalWidthOf2dArray, formToGridWithAspectRatio, type GridShape } from './DataUtils'
 import type { CategorizedColorIdGrid, CategorizedColorGrid, ProbablyColorId, ProbablyColor, ColorIdGrid, ColorIdLine, BlankColor, Color, ColorMap, ColorIdList, ColorList } from '../types/Colors'
+import { tinycolor as tc } from '@ctrl/tinycolor'
 
 function ColorInstance (color: Object | Color) {
   for (let prop in color) {
@@ -324,3 +325,14 @@ export function isColorFamily (value: string = '', colorSets: string[] = []): bo
     return compareKebabs(colorSet, value)
   }).length > 0
 }
+
+// memoizee not working for tinycolor, need to test
+export const tinycolor = (color: any) => tc(color)
+// lower step values produce broader hue categories
+// this is useful for making more general color groups
+export const getHueRangeNumber = memoizee((hue: number, steps: number = 12) => {
+  const degreeOffset = 360 / steps / 2
+  let n = hue + degreeOffset
+  n = (n >= 360 ? n - 360 : n)
+  return Math.floor(n * steps / 360)
+}, { primitive: true, length: 2 })

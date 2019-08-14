@@ -13,6 +13,7 @@ import PrismNav from './PrismNav'
 import ColorCollection from '../../ColorCollections/ColorCollections'
 import CompareColor from '../../CompareColor/CompareColor'
 import { ROUTE_PARAMS, ROUTE_PARAM_NAMES } from 'constants/globals'
+import MatchPhoto from '../../MatchPhoto/MatchPhoto'
 const colorWallBaseUrl = `/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_WALL}`
 
 // this is very vague because react-router doesn't have the ability to match /section/x/family/y/color/z and /section/x/color/z with the same route
@@ -43,6 +44,7 @@ export class Prism extends Component<Props> {
               <Route path='/color-from-image' component={InspiredScene} />
               <Route path='/color-collections' component={ColorCollection} />
               <Route path='/expert-colors' component={() => <ColorCollection isExpertColor />} />
+              <Route path='/match-photo' component={MatchPhoto} />
               <Route path={`/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`} exact component={ColorDetails} />
             </div>
           }

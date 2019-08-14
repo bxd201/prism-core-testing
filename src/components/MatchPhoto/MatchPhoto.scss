@@ -1,0 +1,221 @@
+.match-photo {
+  &__wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    height: 100%;
+    margin: 0 auto;
+    max-width: 1050px;
+    overflow: hidden;
+    padding: 3em 0;
+    @include respond-above(sm) {
+      padding: 0em;
+    }
+  }
+  &__header {
+    display: block;
+    position: relative;
+  }
+  &__button {
+    background: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+    display: inline-block;
+    fill: #000;
+    outline: none;
+    padding: 0;
+    position: absolute;
+    text-align: center;
+    text-transform: uppercase;
+    top: .875rem;
+    width: auto;
+    z-index: 1000;
+    &:hover {
+      background: #fff;
+      border-color: #2cabe2;
+      cursor: pointer;
+      color: #2cabe2;
+    }
+    &--left {
+      left: .875rem;
+    }
+    &--right {
+      right: .875rem;
+    }
+    @include respond-above(sm) {
+      border: 1px solid #f2f2f2;
+      padding: .75em 1.75em;
+    }
+  }
+  &__button-left-text {
+    display: none;
+    @include respond-above(sm) {
+      display: inline-block;
+    }
+  }
+  &__close {
+    display: none;
+    @include respond-above(sm) {
+      display: block;
+    }
+  }
+  &__cancel {
+    display: block;
+    @include respond-above(sm) {
+      display: none;
+    }
+  }
+  &__canvas{
+    min-height: 266px;
+    width:100%;
+    @include respond-above(xs) {
+        min-height:366px;
+    }
+    @include respond-above(md){
+        min-height:540px;
+    }
+  }
+  &__image{
+    height: 0;
+    width: 100%;
+  }
+  &__container {
+    display: block;
+    min-height: 100%;
+    position: relative;
+    width: 100%;
+  }
+  &__image-rotate-terms-modal-wrapper {
+    align-content: center;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    left: 50%;
+    margin-left: -9.5rem;
+    position: absolute;
+    right: 0;
+    text-align: center;
+    top: 0;
+    width: 19rem;
+    &__container {
+      background: #f0f0f0;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2em;
+      margin-top: 6px;
+    }
+    &__tools {
+      margin-top: 6px;
+      &__message {
+        background: #f0f0f0;
+        color: black;
+        margin-bottom: 6px;
+        padding: .75em;
+      }
+      &__rotate-arrow {
+        background: white;
+        border: 1px solid transparent;
+        display: inline-block;
+        font-size: 3em;
+        height: 48px;
+        margin-right: 10px;
+        outline: none;
+        padding: 0;
+        width: 48px;
+      }
+    }
+    &__agree-terms {
+      height: 4em;
+      padding: 1em;
+      text-align: center;
+      vertical-align: middle;
+      &__text {
+        background: #f0f0f0;
+        border: none;
+        flex: 1 0 auto;
+        width: 62%;
+      }
+      &__accept {
+        background: white;
+        border: 1px solid #e1e1e1;
+        color: #e1e1e1;
+        cursor: default;
+        display: inline-block;
+        flex: 1 0 auto;
+        line-height: 1.25em;
+        margin: -1em auto 1.75em;
+        outline: none;
+        padding: .75em 1.75em;
+        text-align: center;
+        width: auto;
+        &--active {
+          border: 1px solid #2cabe2;
+          color: #2cabe2;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}
+.confirmation-modal {
+  &__wrapper {
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.7);
+    bottom: 0;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    left: 0;
+    overflow-y: scroll;
+    position: absolute;
+    right: 0;
+    top: 2px;
+    z-index: 10000;
+    &--active {
+      display: flex;
+    }
+    @include respond-above(md){
+      overflow: visible;
+    }
+  }
+  &__container {
+    background-color: #d40000;
+    box-sizing: border-box;
+    color: white;
+    font-size: 1em;
+    font-weight: bold;
+    height: auto;
+    line-height: 21.6px;
+    margin: 0;
+    padding: 10px;
+    position: relative;
+    text-align: center;
+    width: 90%;
+    @include respond-above(md){
+      max-width: 480px;
+      overflow: visible;
+    }
+  }
+  &__content {
+    margin: .5em 0;
+  }
+  &__button {
+    background: transparent;
+    border: 1px solid #f2f2f2;
+    color: white;
+    display: inline-block;
+    margin: 0 2px;
+    outline: none;
+    padding: .75em 1.75em;
+    text-align: center;
+    text-transform: uppercase;
+    width: auto;
+    &:hover {
+      background: rgba(255, 255, 255, 0.8);
+      border-color: white;
+      color: #d40000;
+    }
+  }
+}

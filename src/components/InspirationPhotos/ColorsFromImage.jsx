@@ -6,6 +6,7 @@ import { renderingPins, findBrandColor, throttleDragTime, activedPinsHalfWidth }
 import './InspiredScene.scss'
 import { brandColors } from './sw-colors-in-LAB.js'
 import throttle from 'lodash/throttle'
+import includes from 'lodash/includes'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 type ComponentProps = {
@@ -119,7 +120,20 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
     this.canvasOffsetHeight = parseInt(this.canvasOffset.height, 10)
     this.CFICanvas.current.height = this.canvasOffsetHeight
     this.CFICanvas.current.width = this.canvasOffsetWidth
-    this.CFICanvasContext.drawImage(this.CFIImage.current, 0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
+    if (this.props.data.imageRotationAngle) {
+      this.CFICanvasContext.clearRect(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
+      this.CFICanvasContext.save()
+      this.CFICanvasContext.translate(this.canvasOffsetWidth / 2, this.canvasOffsetHeight / 2)
+      this.CFICanvasContext.rotate(this.props.data.imageRotationAngle * Math.PI / 180)
+      if (includes([90, -90, 270, -270], this.props.data.imageRotationAngle)) {
+        this.CFICanvasContext.drawImage(this.CFIImage.current, -this.canvasOffsetWidth / 2, -this.canvasOffsetHeight, this.canvasOffsetWidth, this.canvasOffsetHeight * 2)
+      } else {
+        this.CFICanvasContext.drawImage(this.CFIImage.current, -this.canvasOffsetWidth / 2, -this.canvasOffsetHeight / 2, this.canvasOffsetWidth, this.canvasOffsetHeight)
+      }
+      this.CFICanvasContext.restore()
+    } else {
+      this.CFICanvasContext.drawImage(this.CFIImage.current, 0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
+    }
     const imageData = this.CFICanvasContext.getImageData(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
     this.imageDataData = imageData.data
     this.setState({ pinnedColors: renderingPins(this.props.data.initPins, this.canvasOffsetWidth, this.canvasOffsetHeight) })
@@ -302,14 +316,14 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
     if (cursorX < this.canvasOffsetWidth / 2) {
       isContentLeft = true
     }
-    if (cursorX < activedPinsHalfWidth) {
-      cursorX = activedPinsHalfWidth
+    if (cursorX < pinsHalfWidthWithBorder) {
+      cursorX = pinsHalfWidthWithBorder
     } else if (cursorX > this.canvasOffsetWidth - pinsHalfWidthWithBorder) {
       cursorX = this.canvasOffsetWidth - pinsHalfWidthWithBorder
     }
 
-    if (cursorY < activedPinsHalfWidth) {
-      cursorY = activedPinsHalfWidth
+    if (cursorY < pinsHalfWidthWithBorder) {
+      cursorY = pinsHalfWidthWithBorder
     } else if (cursorY > this.canvasOffsetHeight - pinsHalfWidthWithBorder) {
       cursorY = this.canvasOffsetHeight - pinsHalfWidthWithBorder
     }

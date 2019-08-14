@@ -33,6 +33,10 @@ export class PrismNav extends PureComponent {
     return /^\/expert-colors/.test(pathname)
   }
 
+  isMatchPhoto(pathname) {
+    return /^\/match-photo/.test(pathname)
+  }
+
   render() {
     const { history, location: { pathname }, match } = this.props
 
@@ -43,6 +47,7 @@ export class PrismNav extends PureComponent {
         <button onClick={() => { this.props.history.push('/color-from-image') }} className={`prism-nav-btn ${this.isColorFromImage(pathname) ? 'prism-nav-btn--active' : ''}`}>Color From Image</button>
         <button onClick={() => { this.props.history.push('/color-collections') }} className={`prism-nav-btn ${this.isColorCollections(pathname) ? 'prism-nav-btn--active' : ''}`}>Color Collections</button>
         <button onClick={() => { this.props.history.push('/expert-colors') }} className={`prism-nav-btn ${this.isExpertColor(pathname) ? 'prism-nav-btn--active' : ''}`}>Expert Colors</button>
+        <button onClick={() => { this.props.history.push('/match-photo') }} className={`prism-nav-btn ${this.isMatchPhoto(pathname) ? 'prism-nav-btn--active' : ''}`}>Match Photo</button>
         <button onClick={() => { this.props.history.push('/search') }} className={`prism-nav-btn ${this.isSearch(pathname) ? 'prism-nav-btn--active' : ''}`}>Search</button>
       </React.Fragment>
     )

@@ -33,7 +33,10 @@ import {
   faThLarge,
   faMoon as falMoon,
   faExpandAlt,
-  faCompressAlt
+  faCompressAlt,
+  faRedo as falRedo,
+  faUndo as falUndo,
+  faCircle as falCircle
 } from '@fortawesome/pro-light-svg-icons'
 
 // regulars
@@ -67,7 +70,10 @@ const faIcons = [
   faAngleLeft,
   faAngleUp,
   faAngleDown,
-  faCheckCircle
+  faCheckCircle,
+  falRedo,
+  falUndo,
+  falCircle
 ]
 library.add(...faIcons)
 
