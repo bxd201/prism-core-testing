@@ -344,13 +344,12 @@ pipeline {
       }
     }
     stage('Shepherd') {
-      when {  
+      when {
         expression { BRANCH_NAME ==~ /^(develop|qa|release)$/ }
       }
       agent {
         docker {
           image 'docker.cpartdc01.sherwin.com/ecomm/utils/shepherd:latest'
-          args '-u root'
           reuseNode true
           alwaysPull true
         }
@@ -365,7 +364,7 @@ pipeline {
       }
       steps {
         sh """
-    
+
         if [ "${BRANCH_NAME}" = "develop" ]; then
             export DOMAIN="${DEVELOP_DOMAIN}"
         elif [ "${BRANCH_NAME}" = "qa" ]; then
@@ -383,9 +382,9 @@ pipeline {
         publishHTML([
             reportDir: "report",
             reportName: 'Shepherd Report',
-            reportFiles: 'report.html', 
-            allowMissing: false, 
-            alwaysLinkToLastBuild: true, 
+            reportFiles: 'report.html',
+            allowMissing: false,
+            alwaysLinkToLastBuild: true,
             keepAll: true
         ])
       }
