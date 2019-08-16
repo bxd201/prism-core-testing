@@ -17,10 +17,6 @@ export class PrismNav extends PureComponent {
     return /^\/active\/color-wall/.test(pathname)
   }
 
-  isSearch(pathname) {
-    return /^\/search\/?$/.test(pathname)
-  }
-
   isFastMask (pathname) {
     return /^\/fast-mask\/?$/.test(pathname)
   }
@@ -52,7 +48,6 @@ export class PrismNav extends PureComponent {
         <button onClick={() => { this.props.history.push('/color-collections') }} className={`prism-nav-btn ${this.isColorCollections(pathname) ? 'prism-nav-btn--active' : ''}`}>Color Collections</button>
         <button onClick={() => { this.props.history.push('/expert-colors') }} className={`prism-nav-btn ${this.isExpertColor(pathname) ? 'prism-nav-btn--active' : ''}`}>Expert Colors</button>
         <button onClick={() => { this.props.history.push('/match-photo') }} className={`prism-nav-btn ${this.isMatchPhoto(pathname) ? 'prism-nav-btn--active' : ''}`}>Match Photo</button>
-        <button onClick={() => { this.props.history.push('/search') }} className={`prism-nav-btn ${this.isSearch(pathname) ? 'prism-nav-btn--active' : ''}`}>Search</button>
       	<button onClick={() => {this.props.history.push('/fast-mask')}} className={`prism-nav-btn ${this.isFastMask(pathname) ? 'prism-nav-btn--active' : ''}`}>Fast Mask</button>
       </React.Fragment>
     )

@@ -15,7 +15,6 @@ import { compareKebabs } from './StringUtils'
 import { ZOOMED_VIEW_GRID_PADDING } from '../../constants/globals'
 import { getTotalWidthOf2dArray, formToGridWithAspectRatio, type GridShape } from './DataUtils'
 import type { CategorizedColorIdGrid, CategorizedColorGrid, ProbablyColorId, ProbablyColor, ColorIdGrid, ColorIdLine, BlankColor, Color, ColorMap, ColorIdList, ColorList } from '../types/Colors'
-import { tinycolor as tc } from '@ctrl/tinycolor'
 
 function ColorInstance (color: Object | Color) {
   for (let prop in color) {
