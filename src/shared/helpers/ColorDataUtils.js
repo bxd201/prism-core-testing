@@ -326,7 +326,6 @@ export function isColorFamily (value: string = '', colorSets: string[] = []): bo
   }).length > 0
 }
 
-// memoizee not working for tinycolor, need to test
 export const tinycolor = memoizee((color: string) => tc(color), { primitive: true, length: 1 })
 
 // lower step values produce broader hue categories

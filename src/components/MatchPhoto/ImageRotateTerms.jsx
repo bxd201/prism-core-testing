@@ -7,29 +7,79 @@ type Props = {
   createColorPins: Function,
   imageData: Object
 }
+
+const KEY_CODE_ENTER = 13
+const KEY_CODE_SPACE = 32
+
 const ImageRotateTerms = ({ rotateImage, createColorPins, imageData }: Props) => {
   const [accetTerms, setAcceptTerms] = useState(false)
+  let mouseDown = false
+
   function handleChange () {
     setAcceptTerms(!accetTerms)
   }
+
+  function mouseDownHandler () {
+    mouseDown = true
+  }
+
+  function mouseUpHandler () {
+    setTimeout(() => {
+      mouseDown = false
+    }, 200)
+  }
+
+  function focusHandler (e: Object) {
+    if (mouseDown) {
+      e.target.blur()
+    }
+  }
+
+  function keyDownHandler (e: KeyboardEvent) {
+    if (e.keyCode && (e.keyCode === KEY_CODE_ENTER || e.keyCode === KEY_CODE_SPACE)) {
+      e.preventDefault()
+      handleChange()
+    }
+  }
+
   return (
-    <div className={`match-photo__image-rotate-terms-modal-wrapper`}>
-      <div className={`match-photo__image-rotate-terms-modal-wrapper__container`}>
-        <div className={`match-photo__image-rotate-terms-modal-wrapper__tools`}>
-          <div className={`match-photo__image-rotate-terms-modal-wrapper__tools__message`}>
+    <div className={`image-rotate-terms-modal__wrapper`}>
+      <div className={`image-rotate-terms-modal__wrapper__container`}>
+        <div className={`image-rotate-terms-modal__wrapper__tools`}>
+          <div className={`image-rotate-terms-modal__wrapper__tools__message`}>
             Use these arrows to rotate your image.
           </div>
-          <button className={`match-photo__image-rotate-terms-modal-wrapper__tools__rotate-arrow`} onClick={() => rotateImage(false)}><FontAwesomeIcon icon={['fal', 'undo']} size='xs' /></button>
-          <button className={`match-photo__image-rotate-terms-modal-wrapper__tools__rotate-arrow`} onClick={() => rotateImage(true)}><FontAwesomeIcon icon={['fal', 'redo']} size='xs' /></button>
+          <button
+            onMouseDown={mouseDownHandler}
+            onMouseUp={mouseUpHandler}
+            onFocus={focusHandler}
+            className={`image-rotate-terms-modal__wrapper__tools__rotate-arrow`} onClick={() => rotateImage(false)}><FontAwesomeIcon icon={['fal', 'undo']} size='xs' /></button>
+          <button
+            onMouseDown={mouseDownHandler}
+            onMouseUp={mouseUpHandler}
+            onFocus={focusHandler}
+            className={`image-rotate-terms-modal__wrapper__tools__rotate-arrow`} onClick={() => rotateImage(true)}><FontAwesomeIcon icon={['fal', 'redo']} size='xs' /></button>
         </div>
-        <div className={`match-photo__image-rotate-terms-modal-wrapper__agree-terms`}>
+        <div className={`image-rotate-terms-modal__wrapper__agree-terms`}>
           <div>
             <span>
-              <input type='checkbox' value='terms' checked={accetTerms} onChange={handleChange} /></span> <span className={`match-photo__image-rotate-terms-modal-wrapper__agree-terms__text`}>I accept Terms of Use</span>
+              <label
+                onMouseDown={mouseDownHandler}
+                onMouseUp={mouseUpHandler}
+                onFocus={focusHandler}
+                onKeyDown={keyDownHandler}
+                tabIndex='0' className={`image-rotate-terms-modal__wrapper__agree-terms__checkbox-label`}>
+                {
+                  (accetTerms) ? <FontAwesomeIcon icon={['fa', 'dot-circle']} style={{ color: '#2cabe1' }} size='lg' />
+                    : <FontAwesomeIcon icon={['fa', 'dot-circle']} style={{ color: '#e5e5e5' }} size='lg' />
+                }
+                <input tabIndex='-1' className='visually-hidden' type='checkbox' value='terms' checked={accetTerms} onChange={handleChange} />
+              </label>
+            </span> <span className={`image-rotate-terms-modal__wrapper__agree-terms__text`}>I accept Terms of Use</span>
           </div>
         </div>
         <button
-          className={`match-photo__image-rotate-terms-modal-wrapper__agree-terms__accept ${accetTerms ? `match-photo__image-rotate-terms-modal-wrapper__agree-terms__accept--active` : ``}`}
+          className={`image-rotate-terms-modal__wrapper__agree-terms__accept ${accetTerms ? `image-rotate-terms-modal__wrapper__agree-terms__accept--active` : ``}`}
           onClick={() => (accetTerms) ? createColorPins(imageData) : {}}>DONE</button>
       </div>
     </div>

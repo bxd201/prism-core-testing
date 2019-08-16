@@ -1,5 +1,5 @@
 // @flow
-import React, { useState, useEffect, createRef } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import FileInput from '../FileInput/FileInput'
 import ColorsFromImage from '../InspirationPhotos/ColorsFromImage'
 import { loadImage, createColorTallies, getPixelPosition } from './MatchPhotoUtils'
@@ -19,8 +19,8 @@ import ConfirmationModal from './ConfirmationModal'
 let canvasContext: any
 
 export function MatchPhoto () {
-  const canvasRef: RefObject = createRef()
-  const imageRef: RefObject = createRef()
+  const canvasRef: RefObject = useRef()
+  const imageRef: RefObject = useRef()
   const [imageUrl, setImageUrl] = useState()
   const [pins, generatepins] = useState([])
   const [imageData, setImageData] = useState([])

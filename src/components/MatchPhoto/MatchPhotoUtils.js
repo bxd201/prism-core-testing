@@ -30,7 +30,7 @@ export function createColorTallies (imageData: any, imageWidth: number, imageHei
       tallies[tallyIndex].byteIndices.push(i)
     } else {
       tallyIndexMap[key] = tallies.length
-      const hsl = tinycolor(color).toHsl()
+      const hsl = tinycolor(`"rgb(${color.r}, ${color.g}, ${color.b})"`).toHsl()
       const hueNumber = getHueRangeNumber(hsl.h)
       hueRangeNumberArray.push(hueNumber)
       tallies.push({
