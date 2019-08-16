@@ -12,7 +12,9 @@ import {
   REORDER_LP_COLORS
 } from '../actions/live-palette'
 
-export const initialState = {}
+export const initialState = {
+  colors: []
+}
 
 export const lp = (state: any = initialState, action: any) => {
   switch (action.type) {

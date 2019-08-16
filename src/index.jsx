@@ -21,7 +21,7 @@ import './scss/main.scss'
 import languages from './translations/translations'
 
 // import the redux store
-import initializeStore from './store/store'
+import store from './store/store'
 
 // import all mountable components
 import APPS from './config/components'
@@ -81,8 +81,6 @@ const renderAppInElement = (el) => {
 
   // checks the brand, if no brand is provided we'll give the user a default experience
   const brand = props.brand || 'sherwin'
-
-  const store = initializeStore()
 
   const BrowserRouterRender = (
     <BrowserRouter basename={pageRoot}>
