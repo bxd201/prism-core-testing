@@ -36,7 +36,6 @@ export class Prism extends Component<Props> {
         <Route path='/active' exact component={SceneManager} />
         <Route path={colorWallUrlPattern} component={ColorWallRouteComponent} />
         <Route path={`/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`} exact component={ColorDetails} />
-        <Route path='/active/colors-from-image' exact component={ColorsFromImage} />
         <Route path='/fast-mask' exact component={FastMask} />
         <LivePalette />
       </React.Fragment>
