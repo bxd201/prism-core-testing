@@ -11,7 +11,7 @@ import flatMap from 'lodash/flatMap'
 import intersection from 'lodash/intersection'
 import update from 'immutability-helper'
 import { Link } from 'react-router-dom'
-
+import store from '../../store/store'
 import { LP_MAX_COLORS_ALLOWED, MIN_COMPARE_COLORS_ALLOWED } from 'constants/configurations'
 
 import { activate, reorder, toggleCompareColor } from '../../store/actions/live-palette'
@@ -52,6 +52,13 @@ export class LivePalette extends PureComponent<Props, State> {
     super(props)
 
     this.activeSlotRef = React.createRef()
+  }
+
+  componentDidMount () {
+    store.subscribe(() => {
+      const { lp } = store.getState()
+      window.localStorage.setItem('lp', JSON.stringify(lp))
+    })
   }
   // $FlowIgnore
   componentDidUpdate (prevProps, prevState) {

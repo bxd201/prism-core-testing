@@ -2,7 +2,7 @@
 import reject from 'lodash/reject'
 import filter from 'lodash/filter'
 import difference from 'lodash/difference'
-
+import type { Color } from '../../shared/types/Colors'
 import { LP_MAX_COLORS_ALLOWED } from 'constants/configurations'
 import {
   ADD_LP_COLOR,
@@ -14,14 +14,29 @@ import {
   EDIT_LP_COMPARE_COLOR
 } from '../actions/live-palette'
 
-export const initialState = {
-  toggleCompareColor: false,
-  colors: []
+type State = {
+  colors: Color[],
+  activeColor: Color,
+  toggleCompareColor: boolean
+}
+
+const lpFromLocalStorage = JSON.parse(window.localStorage.getItem('lp'))
+const initialLpState = { colors: [], activeColor: {} }
+const { colors, activeColor } = lpFromLocalStorage || initialLpState
+export const initialState: State = {
+  colors: colors,
+  activeColor: activeColor,
+  toggleCompareColor: false
 }
 
 export const lp = (state: any = initialState, action: any) => {
   switch (action.type) {
     case TOGGLE_LP_COMPARE_COLOR:
+      if (action.payload) {
+        return Object.assign({}, state, {
+          toggleCompareColor: false
+        })
+      }
       return Object.assign({}, state, {
         toggleCompareColor: !state.toggleCompareColor,
         compareColorsId: []

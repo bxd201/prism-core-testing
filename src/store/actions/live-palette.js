@@ -10,9 +10,10 @@ export const add = (colorObj: Color) => {
 }
 
 export const TOGGLE_LP_COMPARE_COLOR: string = 'TOGGLE_LP_COMPARE_COLOR'
-export const toggleCompareColor = () => {
+export const toggleCompareColor = (isClose: boolean = false) => {
   return {
-    type: TOGGLE_LP_COMPARE_COLOR
+    type: TOGGLE_LP_COMPARE_COLOR,
+    payload: isClose
   }
 }
 

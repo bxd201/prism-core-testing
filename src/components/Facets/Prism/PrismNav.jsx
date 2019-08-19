@@ -1,12 +1,19 @@
 /* eslint-disable */
 import React, { PureComponent } from 'react'
 import { withRouter } from 'react-router-dom'
-
+import { connect } from 'react-redux'
+import { toggleCompareColor } from '../../../store/actions/live-palette'
 import './PrismNav.scss'
 
 export class PrismNav extends PureComponent {
   constructor(props) {
     super(props)
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.location !== prevProps.location) {
+      this.onRouteChanged();
+    }
   }
 
   isScene(pathname) {
@@ -37,6 +44,10 @@ export class PrismNav extends PureComponent {
     return /^\/match-photo/.test(pathname)
   }
 
+  onRouteChanged() {
+    this.props.toggleCompareColor(true)
+  }
+
   render() {
     const { history, location: { pathname }, match } = this.props
 
@@ -54,4 +65,12 @@ export class PrismNav extends PureComponent {
   }
 }
 
-export default withRouter(PrismNav)
+const mapDispatchToProps = (dispatch: Function) => {
+  return {
+    toggleCompareColor: (isClose) => {
+      dispatch(toggleCompareColor(isClose))
+    }
+  }
+}
+
+export default connect(null, mapDispatchToProps)(withRouter(PrismNav))
