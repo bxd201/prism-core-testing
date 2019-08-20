@@ -21,7 +21,7 @@ describe('live-palette-reduer', () => {
       }
     }
 
-    expect(lp({ colors: [] }, mock)).toEqual({ ...initialState, colors: [color], activeColor: color })
+    expect(lp({ colors: [] }, mock)).toEqual({ colors: [color], activeColor: color })
   })
 
   it('should handle REMOVE_LP_COLOR', () => {
@@ -32,7 +32,7 @@ describe('live-palette-reduer', () => {
       }
     }
 
-    expect(lp([], mock)).toEqual({ ...initialState, colors: [], activeColor: null })
+    expect(lp([], mock)).toEqual({ colors: [], activeColor: null })
   })
 
   it('should handle ACTIVATE_LP_COLOR', () => {
@@ -43,7 +43,7 @@ describe('live-palette-reduer', () => {
       }
     }
 
-    expect(lp([], mock)).toEqual({ ...initialState, activeColor: color })
+    expect(lp([], mock)).toEqual({ activeColor: color })
   })
 
   it('should handle ACTIVATE_LP_PREVIEW_COLOR', () => {
@@ -54,7 +54,7 @@ describe('live-palette-reduer', () => {
       }
     }
 
-    expect(lp([], mock)).toEqual({ ...initialState, activePreviewColor: color })
+    expect(lp([], mock)).toEqual({ activePreviewColor: color })
   })
 
   it('should handle REORDER_LP_COLORS', () => {
@@ -73,6 +73,6 @@ describe('live-palette-reduer', () => {
     }
 
     const lpReturn = lp({ colors: colors.colors }, mock)
-    expect(lpReturn).toEqual({ ...initialState, colors: reconstructedColors })
+    expect(lpReturn).toEqual({ colors: reconstructedColors })
   })
 })

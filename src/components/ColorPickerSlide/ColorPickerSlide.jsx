@@ -12,7 +12,7 @@ const baseClass = 'prism-color-picker'
 const slideHeader = 'slide-palette-header'
 const paletteSuggesterDetails = 'slide-palette-details'
 
-export function ColorPickerSlide () {
+function ColorPickerSlide () {
   const [isShowSlider, handleSlideShow] = useState(false)
 
   return (
@@ -65,4 +65,7 @@ export function ColorPickerSlide () {
   )
 }
 
+export {
+  ColorPickerSlide
+}
 export default ColorPickerSlide

@@ -10,14 +10,14 @@ type Props = {
 }
 
 const baseClass = 'color-collections'
-export const tabListSelect = `${baseClass}__tab-list-select`
-export const tabListHeading = `${baseClass}__tab-list-heading`
-export const tabListDropdownMobile = `${baseClass}__tab-list-dropdown-mobile`
-export const tabList = `${baseClass}__tab-list`
-export const tabListActive = `${baseClass}__tab-list--active`
-export const tabListInactive = `${baseClass}__tab-list--inactive`
-export const tabListItem = `${baseClass}__tab-list-item`
-export const tabListItemActive = `${baseClass}__tab-list-item--active`
+const tabListSelect = `${baseClass}__tab-list-select`
+const tabListHeading = `${baseClass}__tab-list-heading`
+const tabListDropdownMobile = `${baseClass}__tab-list-dropdown-mobile`
+const tabList = `${baseClass}__tab-list`
+const tabListActive = `${baseClass}__tab-list--active`
+const tabListInactive = `${baseClass}__tab-list--inactive`
+const tabListItem = `${baseClass}__tab-list-item`
+const tabListItemActive = `${baseClass}__tab-list-item--active`
 
 function ColorCollectionsTab (props: Props) {
   const { collectionTabs, showTab, tabIdShow } = props
@@ -48,4 +48,14 @@ function ColorCollectionsTab (props: Props) {
   )
 }
 
+export {
+  tabListSelect,
+  tabListHeading,
+  tabListDropdownMobile,
+  tabList,
+  tabListActive,
+  tabListInactive,
+  tabListItem,
+  tabListItemActive
+}
 export default ColorCollectionsTab

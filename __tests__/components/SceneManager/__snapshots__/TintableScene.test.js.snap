@@ -92,7 +92,7 @@ exports[`<TintableScene /> matches snapshot of scene with colored surfaces 1`] =
         onOver={[Function]}
       />
     </div>
-    <TintableSceneOverlay
+    <GenericOverlay
       type="LOADING"
     />
   </div>

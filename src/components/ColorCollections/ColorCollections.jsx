@@ -18,10 +18,10 @@ type Props = {
 
 const baseClass = 'color-collections'
 const wrapper = `${baseClass}__wrapper`
-export const collectionsList = `${baseClass}__collections-list`
+const collectionsList = `${baseClass}__collections-list`
 const colors = Colors.getAllColors()
 
-export function ColorCollections (props: Props) {
+function ColorCollections (props: Props) {
   const { isShowBack, showBack, setHeader, isExpertColor } = props
   const [tabIdShow, showTab] = useState('tab1')
   const [collectionDataDetails, updateCollectionDataDetails] = useState({})
@@ -56,4 +56,8 @@ export function ColorCollections (props: Props) {
   )
 }
 
+export {
+  collectionsList,
+  ColorCollections
+}
 export default CollectionsHeaderWrapper(ColorCollections)
