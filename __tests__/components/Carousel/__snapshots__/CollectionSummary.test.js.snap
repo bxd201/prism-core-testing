@@ -47,10 +47,10 @@ exports[` 1`] = `
       </button>
     </div>
     <div
-      className="prism-slick-carousel__wrapper__content__list__wrapper"
+      className="prism-slick-carousel__wrapper__content__list__wrapper "
     >
       <div
-        className="collection-list__container"
+        className="collection-list__container  "
         style={
           Object {
             "transform": "translateX(-0%)",
@@ -210,7 +210,9 @@ exports[` 1`] = `
               ]
             }
             getSummaryData={[MockFunction]}
+            isActivedPage={true}
             isExpertColor={true}
+            isRenderingPage={true}
             key="0"
           />
           <CollectionSummary
@@ -360,7 +362,9 @@ exports[` 1`] = `
               ]
             }
             getSummaryData={[MockFunction]}
+            isActivedPage={true}
             isExpertColor={true}
+            isRenderingPage={true}
             key="1"
           />
           <CollectionSummary
@@ -515,7 +519,9 @@ exports[` 1`] = `
               ]
             }
             getSummaryData={[MockFunction]}
+            isActivedPage={true}
             isExpertColor={true}
+            isRenderingPage={true}
             key="2"
           />
           <CollectionSummary
@@ -664,7 +670,9 @@ exports[` 1`] = `
               ]
             }
             getSummaryData={[MockFunction]}
+            isActivedPage={true}
             isExpertColor={true}
+            isRenderingPage={true}
             key="3"
           />
           <CollectionSummary
@@ -817,7 +825,9 @@ exports[` 1`] = `
               ]
             }
             getSummaryData={[MockFunction]}
+            isActivedPage={true}
             isExpertColor={true}
+            isRenderingPage={true}
             key="4"
           />
           <CollectionSummary
@@ -971,7 +981,9 @@ exports[` 1`] = `
               ]
             }
             getSummaryData={[MockFunction]}
+            isActivedPage={true}
             isExpertColor={true}
+            isRenderingPage={true}
             key="5"
           />
           <CollectionSummary
@@ -1118,7 +1130,9 @@ exports[` 1`] = `
               ]
             }
             getSummaryData={[MockFunction]}
+            isActivedPage={true}
             isExpertColor={true}
+            isRenderingPage={true}
             key="6"
           />
           <CollectionSummary
@@ -1271,7 +1285,9 @@ exports[` 1`] = `
               ]
             }
             getSummaryData={[MockFunction]}
+            isActivedPage={true}
             isExpertColor={true}
+            isRenderingPage={true}
             key="7"
           />
         </div>
@@ -1422,7 +1438,9 @@ exports[` 1`] = `
               ]
             }
             getSummaryData={[MockFunction]}
+            isActivedPage={false}
             isExpertColor={true}
+            isRenderingPage={true}
             key="0"
           />
           <CollectionSummary
@@ -1573,7 +1591,9 @@ exports[` 1`] = `
               ]
             }
             getSummaryData={[MockFunction]}
+            isActivedPage={false}
             isExpertColor={true}
+            isRenderingPage={true}
             key="1"
           />
           <CollectionSummary
@@ -1722,7 +1742,9 @@ exports[` 1`] = `
               ]
             }
             getSummaryData={[MockFunction]}
+            isActivedPage={false}
             isExpertColor={true}
+            isRenderingPage={true}
             key="2"
           />
           <CollectionSummary
@@ -1869,7 +1891,9 @@ exports[` 1`] = `
               ]
             }
             getSummaryData={[MockFunction]}
+            isActivedPage={false}
             isExpertColor={true}
+            isRenderingPage={true}
             key="3"
           />
           <CollectionSummary
@@ -2020,7 +2044,9 @@ exports[` 1`] = `
               ]
             }
             getSummaryData={[MockFunction]}
+            isActivedPage={false}
             isExpertColor={true}
+            isRenderingPage={true}
             key="4"
           />
           <CollectionSummary
@@ -2172,7 +2198,9 @@ exports[` 1`] = `
               ]
             }
             getSummaryData={[MockFunction]}
+            isActivedPage={false}
             isExpertColor={true}
+            isRenderingPage={true}
             key="5"
           />
           <CollectionSummary
@@ -2324,7 +2352,9 @@ exports[` 1`] = `
               ]
             }
             getSummaryData={[MockFunction]}
+            isActivedPage={false}
             isExpertColor={true}
+            isRenderingPage={true}
             key="6"
           />
           <CollectionSummary
@@ -2477,7 +2507,9 @@ exports[` 1`] = `
               ]
             }
             getSummaryData={[MockFunction]}
+            isActivedPage={false}
             isExpertColor={true}
+            isRenderingPage={true}
             key="7"
           />
         </div>
@@ -2636,7 +2668,9 @@ exports[` 1`] = `
               ]
             }
             getSummaryData={[MockFunction]}
+            isActivedPage={false}
             isExpertColor={true}
+            isRenderingPage={false}
             key="0"
           />
           <CollectionSummary
@@ -2786,7 +2820,9 @@ exports[` 1`] = `
               ]
             }
             getSummaryData={[MockFunction]}
+            isActivedPage={false}
             isExpertColor={true}
+            isRenderingPage={false}
             key="1"
           />
           <CollectionSummary
@@ -2930,7 +2966,9 @@ exports[` 1`] = `
               ]
             }
             getSummaryData={[MockFunction]}
+            isActivedPage={false}
             isExpertColor={true}
+            isRenderingPage={false}
             key="2"
           />
           <CollectionSummary
@@ -3078,7 +3116,9 @@ exports[` 1`] = `
               ]
             }
             getSummaryData={[MockFunction]}
+            isActivedPage={false}
             isExpertColor={true}
+            isRenderingPage={false}
             key="3"
           />
           <CollectionSummary
@@ -3225,7 +3265,9 @@ exports[` 1`] = `
               ]
             }
             getSummaryData={[MockFunction]}
+            isActivedPage={false}
             isExpertColor={true}
+            isRenderingPage={false}
             key="4"
           />
           <CollectionSummary
@@ -3373,7 +3415,9 @@ exports[` 1`] = `
               ]
             }
             getSummaryData={[MockFunction]}
+            isActivedPage={false}
             isExpertColor={true}
+            isRenderingPage={false}
             key="5"
           />
           <CollectionSummary
@@ -3523,7 +3567,9 @@ exports[` 1`] = `
               ]
             }
             getSummaryData={[MockFunction]}
+            isActivedPage={false}
             isExpertColor={true}
+            isRenderingPage={false}
             key="6"
           />
           <CollectionSummary
@@ -3672,7 +3718,9 @@ exports[` 1`] = `
               ]
             }
             getSummaryData={[MockFunction]}
+            isActivedPage={false}
             isExpertColor={true}
+            isRenderingPage={false}
             key="7"
           />
         </div>
@@ -3828,7 +3876,9 @@ exports[` 1`] = `
               ]
             }
             getSummaryData={[MockFunction]}
+            isActivedPage={false}
             isExpertColor={true}
+            isRenderingPage={false}
             key="0"
           />
           <CollectionSummary
@@ -3977,7 +4027,9 @@ exports[` 1`] = `
               ]
             }
             getSummaryData={[MockFunction]}
+            isActivedPage={false}
             isExpertColor={true}
+            isRenderingPage={false}
             key="1"
           />
           <CollectionSummary
@@ -4126,7 +4178,9 @@ exports[` 1`] = `
               ]
             }
             getSummaryData={[MockFunction]}
+            isActivedPage={false}
             isExpertColor={true}
+            isRenderingPage={false}
             key="2"
           />
           <CollectionSummary
@@ -4276,7 +4330,9 @@ exports[` 1`] = `
               ]
             }
             getSummaryData={[MockFunction]}
+            isActivedPage={false}
             isExpertColor={true}
+            isRenderingPage={false}
             key="3"
           />
           <CollectionSummary
@@ -4424,7 +4480,9 @@ exports[` 1`] = `
               ]
             }
             getSummaryData={[MockFunction]}
+            isActivedPage={false}
             isExpertColor={true}
+            isRenderingPage={false}
             key="4"
           />
           <CollectionSummary
@@ -4572,7 +4630,9 @@ exports[` 1`] = `
               ]
             }
             getSummaryData={[MockFunction]}
+            isActivedPage={false}
             isExpertColor={true}
+            isRenderingPage={false}
             key="5"
           />
           <CollectionSummary
@@ -4723,7 +4783,9 @@ exports[` 1`] = `
               ]
             }
             getSummaryData={[MockFunction]}
+            isActivedPage={false}
             isExpertColor={true}
+            isRenderingPage={false}
             key="6"
           />
           <CollectionSummary
@@ -4874,7 +4936,9 @@ exports[` 1`] = `
               ]
             }
             getSummaryData={[MockFunction]}
+            isActivedPage={false}
             isExpertColor={true}
+            isRenderingPage={false}
             key="7"
           />
         </div>
@@ -5035,7 +5099,9 @@ exports[` 1`] = `
               ]
             }
             getSummaryData={[MockFunction]}
+            isActivedPage={false}
             isExpertColor={true}
+            isRenderingPage={false}
             key="0"
           />
           <CollectionSummary
@@ -5186,7 +5252,9 @@ exports[` 1`] = `
               ]
             }
             getSummaryData={[MockFunction]}
+            isActivedPage={false}
             isExpertColor={true}
+            isRenderingPage={false}
             key="1"
           />
           <CollectionSummary
@@ -5335,7 +5403,9 @@ exports[` 1`] = `
               ]
             }
             getSummaryData={[MockFunction]}
+            isActivedPage={false}
             isExpertColor={true}
+            isRenderingPage={false}
             key="2"
           />
           <CollectionSummary
@@ -5484,7 +5554,9 @@ exports[` 1`] = `
               ]
             }
             getSummaryData={[MockFunction]}
+            isActivedPage={false}
             isExpertColor={true}
+            isRenderingPage={false}
             key="3"
           />
           <CollectionSummary
@@ -5638,7 +5710,9 @@ exports[` 1`] = `
               ]
             }
             getSummaryData={[MockFunction]}
+            isActivedPage={false}
             isExpertColor={true}
+            isRenderingPage={false}
             key="4"
           />
           <CollectionSummary
@@ -5786,7 +5860,9 @@ exports[` 1`] = `
               ]
             }
             getSummaryData={[MockFunction]}
+            isActivedPage={false}
             isExpertColor={true}
+            isRenderingPage={false}
             key="5"
           />
           <CollectionSummary
@@ -5935,7 +6011,9 @@ exports[` 1`] = `
               ]
             }
             getSummaryData={[MockFunction]}
+            isActivedPage={false}
             isExpertColor={true}
+            isRenderingPage={false}
             key="6"
           />
           <CollectionSummary
@@ -6081,7 +6159,9 @@ exports[` 1`] = `
               ]
             }
             getSummaryData={[MockFunction]}
+            isActivedPage={false}
             isExpertColor={true}
+            isRenderingPage={false}
             key="7"
           />
         </div>
@@ -6237,7 +6317,9 @@ exports[` 1`] = `
               ]
             }
             getSummaryData={[MockFunction]}
+            isActivedPage={false}
             isExpertColor={true}
+            isRenderingPage={false}
             key="0"
           />
           <CollectionSummary
@@ -6385,7 +6467,9 @@ exports[` 1`] = `
               ]
             }
             getSummaryData={[MockFunction]}
+            isActivedPage={false}
             isExpertColor={true}
+            isRenderingPage={false}
             key="1"
           />
           <CollectionSummary
@@ -6531,7 +6615,9 @@ exports[` 1`] = `
               ]
             }
             getSummaryData={[MockFunction]}
+            isActivedPage={false}
             isExpertColor={true}
+            isRenderingPage={false}
             key="2"
           />
           <CollectionSummary
@@ -6675,7 +6761,9 @@ exports[` 1`] = `
               ]
             }
             getSummaryData={[MockFunction]}
+            isActivedPage={false}
             isExpertColor={true}
+            isRenderingPage={false}
             key="3"
           />
           <CollectionSummary
@@ -6824,7 +6912,9 @@ exports[` 1`] = `
               ]
             }
             getSummaryData={[MockFunction]}
+            isActivedPage={false}
             isExpertColor={true}
+            isRenderingPage={false}
             key="4"
           />
           <CollectionSummary
@@ -6971,7 +7061,9 @@ exports[` 1`] = `
               ]
             }
             getSummaryData={[MockFunction]}
+            isActivedPage={false}
             isExpertColor={true}
+            isRenderingPage={false}
             key="5"
           />
         </div>
@@ -6981,7 +7073,7 @@ exports[` 1`] = `
       className="prism-slick-carousel__wrapper__content__next-btn__wrapper"
     >
       <button
-        className="prism-slick-carousel__wrapper__content__buttons false"
+        className="prism-slick-carousel__wrapper__content__buttons "
         onClick={[Function]}
       >
         <FontAwesomeIcon
@@ -7019,193 +7111,6 @@ exports[` 1`] = `
   </div>
   <div
     className="prism-slick-carousel__wrapper__indicators"
-  >
-    <FontAwesomeIcon
-      border={false}
-      className="prism-slick-carousel__wrapper__indicators__icons prism-slick-carousel__wrapper__indicators__icons--active"
-      fixedWidth={false}
-      flip={null}
-      icon={
-        Object {
-          "icon": Array [
-            512,
-            512,
-            Array [],
-            "f111",
-            "M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8z",
-          ],
-          "iconName": "circle",
-          "prefix": "fas",
-        }
-      }
-      inverse={false}
-      key="0"
-      listItem={false}
-      mask={null}
-      pull={null}
-      pulse={false}
-      rotation={null}
-      size={null}
-      spin={false}
-      symbol={false}
-      title=""
-      transform={null}
-    />
-    <FontAwesomeIcon
-      border={false}
-      className="prism-slick-carousel__wrapper__indicators__icons prism-slick-carousel__wrapper__indicators__icons--unactive"
-      fixedWidth={false}
-      flip={null}
-      icon={
-        Object {
-          "icon": Array [
-            512,
-            512,
-            Array [],
-            "f111",
-            "M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8z",
-          ],
-          "iconName": "circle",
-          "prefix": "fas",
-        }
-      }
-      inverse={false}
-      key="1"
-      listItem={false}
-      mask={null}
-      pull={null}
-      pulse={false}
-      rotation={null}
-      size={null}
-      spin={false}
-      symbol={false}
-      title=""
-      transform={null}
-    />
-    <FontAwesomeIcon
-      border={false}
-      className="prism-slick-carousel__wrapper__indicators__icons prism-slick-carousel__wrapper__indicators__icons--unactive"
-      fixedWidth={false}
-      flip={null}
-      icon={
-        Object {
-          "icon": Array [
-            512,
-            512,
-            Array [],
-            "f111",
-            "M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8z",
-          ],
-          "iconName": "circle",
-          "prefix": "fas",
-        }
-      }
-      inverse={false}
-      key="2"
-      listItem={false}
-      mask={null}
-      pull={null}
-      pulse={false}
-      rotation={null}
-      size={null}
-      spin={false}
-      symbol={false}
-      title=""
-      transform={null}
-    />
-    <FontAwesomeIcon
-      border={false}
-      className="prism-slick-carousel__wrapper__indicators__icons prism-slick-carousel__wrapper__indicators__icons--unactive"
-      fixedWidth={false}
-      flip={null}
-      icon={
-        Object {
-          "icon": Array [
-            512,
-            512,
-            Array [],
-            "f111",
-            "M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8z",
-          ],
-          "iconName": "circle",
-          "prefix": "fas",
-        }
-      }
-      inverse={false}
-      key="3"
-      listItem={false}
-      mask={null}
-      pull={null}
-      pulse={false}
-      rotation={null}
-      size={null}
-      spin={false}
-      symbol={false}
-      title=""
-      transform={null}
-    />
-    <FontAwesomeIcon
-      border={false}
-      className="prism-slick-carousel__wrapper__indicators__icons prism-slick-carousel__wrapper__indicators__icons--unactive"
-      fixedWidth={false}
-      flip={null}
-      icon={
-        Object {
-          "icon": Array [
-            512,
-            512,
-            Array [],
-            "f111",
-            "M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8z",
-          ],
-          "iconName": "circle",
-          "prefix": "fas",
-        }
-      }
-      inverse={false}
-      key="4"
-      listItem={false}
-      mask={null}
-      pull={null}
-      pulse={false}
-      rotation={null}
-      size={null}
-      spin={false}
-      symbol={false}
-      title=""
-      transform={null}
-    />
-    <FontAwesomeIcon
-      border={false}
-      className="prism-slick-carousel__wrapper__indicators__icons prism-slick-carousel__wrapper__indicators__icons--unactive"
-      fixedWidth={false}
-      flip={null}
-      icon={
-        Object {
-          "icon": Array [
-            512,
-            512,
-            Array [],
-            "f111",
-            "M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8z",
-          ],
-          "iconName": "circle",
-          "prefix": "fas",
-        }
-      }
-      inverse={false}
-      key="5"
-      listItem={false}
-      mask={null}
-      pull={null}
-      pulse={false}
-      rotation={null}
-      size={null}
-      spin={false}
-      symbol={false}
-      title=""
-      transform={null}
-    />
-  </div>
+  />
 </div>
 `;

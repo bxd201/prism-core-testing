@@ -15,7 +15,7 @@ type Props = {
     expertColor: Color[]
 }
 
-export function PaletteSuggester (props: Props) {
+function PaletteSuggester (props: Props) {
   const { isShowSlider, addColors, expertColor } = props
   const displayArea = 'container__color-display-area'
   const content = 'container__color-display-content'
@@ -77,4 +77,7 @@ const mapDispatchToProps = (dispatch: Function) => {
   }
 }
 
+export {
+  PaletteSuggester
+}
 export default connect(mapStateToProps, mapDispatchToProps)(PaletteSuggester)

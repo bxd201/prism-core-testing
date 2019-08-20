@@ -30,7 +30,8 @@
     },
     "globals": {
       "API_PATH": "localhost",
-      "BASE_PATH": "localhost"
+      "BASE_PATH": "localhost",
+      "ML_API_URL": "localhost"
     }
   },
   "dependencies": {

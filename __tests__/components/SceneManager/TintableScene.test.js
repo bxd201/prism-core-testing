@@ -2,7 +2,6 @@ import React from 'react'
 import renderer from 'react-test-renderer'
 
 import TintableScene from 'src/components/SceneManager/TintableScene'
-import TintableSceneOverlay from 'src/components/SceneManager/TintableSceneOverlay'
 import TintableSceneHitArea from 'src/components/SceneManager/TintableSceneHitArea'
 import TintableSceneSurface from 'src/components/SceneManager/TintableSceneSurface'
 import { SCENE_TYPES } from 'constants/globals'
@@ -50,41 +49,41 @@ describe('<TintableScene />', () => {
     ).toJSON()).toEqual(null)
   })
 
-  test('shows loading', () => {
-    const scene = renderer.create(
-      getTintableScene({
-        loading: true
-      })
-    )
+  // test('shows loading', () => {
+  //   const scene = renderer.create(
+  //     getTintableScene({
+  //       loading: true
+  //     })
+  //   )
 
-    // does it contain a TintableSceneOverlay and is it a LOADING type?
-    expect(scene.root.findByType(TintableSceneOverlay).props.type).toEqual(TintableSceneOverlay.TYPES.LOADING)
-  })
+  //   // does it contain a TintableSceneOverlay and is it a LOADING type?
+  //   expect(scene.root.findByType(TintableSceneOverlay).props.type).toEqual(TintableSceneOverlay.TYPES.LOADING)
+  // })
 
-  test('shows error', () => {
-    const scene = renderer.create(
-      getTintableScene({
-        error: true
-      })
-    )
+  // test('shows error', () => {
+  //   const scene = renderer.create(
+  //     getTintableScene({
+  //       error: true
+  //     })
+  //   )
 
-    // does it contain a TintableSceneOverlay and is it an ERROR type?
-    expect(scene.root.findByType(TintableSceneOverlay).props.type).toEqual(TintableSceneOverlay.TYPES.ERROR)
-  })
+  //   // does it contain a TintableSceneOverlay and is it an ERROR type?
+  //   expect(scene.root.findByType(TintableSceneOverlay).props.type).toEqual(TintableSceneOverlay.TYPES.ERROR)
+  // })
 
-  test('shows error overlay for hit area error', () => {
-    const scene = shallow(
-      getTintableScene({
-        surfaces: surfaces,
-        hitAreaError: false
-      }))
+  // test('shows error overlay for hit area error', () => {
+  //   const scene = shallow(
+  //     getTintableScene({
+  //       surfaces: surfaces,
+  //       hitAreaError: false
+  //     }))
 
-    // no error at first
-    expect(scene.find(TintableSceneOverlay).exists()).toBe(true)
-    scene.instance().handleHitAreaLoadingError()
-    // does it contain a TintableSceneOverlay and is it an ERROR type?
-    expect(scene.instance().state.hitAreaError).toBe(true)
-  })
+  //   // no error at first
+  //   expect(scene.find(TintableSceneOverlay).exists()).toBe(true)
+  //   scene.instance().handleHitAreaLoadingError()
+  //   // does it contain a TintableSceneOverlay and is it an ERROR type?
+  //   expect(scene.instance().state.hitAreaError).toBe(true)
+  // })
 
   test('renders hit areas only for interactive scenes', () => {
     // interactive: true
