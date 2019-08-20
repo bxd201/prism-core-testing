@@ -5,10 +5,8 @@ import { PrismNav } from 'src/components/Facets/Prism/PrismNav'
 
 const paramActive = '/active'
 const paramActiveColorWall = '/active/color-wall'
-const paramSearch = '/search'
 const firstButtonText = 'Scenes'
 const secondButtonText = 'Color Wall'
-const thirdButtonText = 'Search'
 const prismNavBtnActiveClass = 'prism-nav-btn--active'
 
 const pushMock = jest.fn()
@@ -51,10 +49,6 @@ describe('PrismNav component with props', () => {
     expect(prismNav.find('button.prism-nav-btn').at(1).text()).toEqual(secondButtonText)
   })
 
-  it(`should have third button with text defined as ${thirdButtonText} constant`, () => {
-    expect(prismNav.find('button.prism-nav-btn').at(2).text()).toEqual(thirdButtonText)
-  })
-
   it(`should have first button with class name defined as ${prismNavBtnActiveClass} constant when pathname is ${paramActive}`, () => {
     expect(prismNav.find('button.prism-nav-btn').at(0).hasClass(prismNavBtnActiveClass)).toBe(true)
   })
@@ -62,11 +56,6 @@ describe('PrismNav component with props', () => {
   it(`should have second button with class name defined as ${prismNavBtnActiveClass} constant when pathname is ${paramActiveColorWall}`, () => {
     prismNav.setProps({ location: { pathname: paramActiveColorWall } })
     expect(prismNav.find('button.prism-nav-btn').at(1).hasClass(prismNavBtnActiveClass)).toBe(true)
-  })
-
-  it(`should have thrid button with class name defined as ${prismNavBtnActiveClass} constant when pathname is ${paramSearch}`, () => {
-    prismNav.setProps({ location: { pathname: paramSearch } })
-    expect(prismNav.find('button.prism-nav-btn').at(2).hasClass(prismNavBtnActiveClass)).toBe(true)
   })
 })
 
@@ -87,12 +76,6 @@ describe('PrismNav component with events', () => {
   it(`should call pushMock with param defined as ${paramActiveColorWall} constant when second button is clicked`, () => {
     prismNav.find('button.prism-nav-btn').at(1).simulate('click')
     expect(pushMock).toHaveBeenCalledWith(paramActiveColorWall)
-    pushMock.mockClear()
-  })
-
-  it(`should call pushMock with param defined as ${paramSearch} constant when last button is clicked`, () => {
-    prismNav.find('button.prism-nav-btn:last-child').simulate('click')
-    expect(pushMock).toHaveBeenCalledWith(paramSearch)
     pushMock.mockClear()
   })
 })

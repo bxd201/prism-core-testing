@@ -18,7 +18,7 @@ exports[`PrismNav component with props should match snapshot 1`] = `
     className="prism-nav-btn "
     onClick={[Function]}
   >
-    Search
+    Fast Mask
   </button>
 </Fragment>
 `;
