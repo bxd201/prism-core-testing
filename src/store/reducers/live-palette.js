@@ -15,7 +15,8 @@ import {
 } from '../actions/live-palette'
 
 export const initialState = {
-  toggleCompareColor: false
+  toggleCompareColor: false,
+  colors: []
 }
 
 export const lp = (state: any = initialState, action: any) => {

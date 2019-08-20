@@ -29,15 +29,15 @@ const cwProviderValues = {
 const baseClass = 'collection-detail'
 const wrapper = `${baseClass}__wrapper`
 const collectionInfo = `${baseClass}__info`
-export const collectionCover = `${baseClass}__cover`
-export const collectionDescription = `${baseClass}__description`
+const collectionCover = `${baseClass}__cover`
+const collectionDescription = `${baseClass}__description`
 const collectionLearnMore = `${baseClass}__learn-more`
 const collectionColorList = `${baseClass}__color-list`
 const collectionColorListVertical = `${baseClass}__color-list-vertical`
 const collectionVerticalControls = `${baseClass}__vertical-controls`
 const verticalControlsTrigger = `${baseClass}__trigger`
-export const triggerPrevious = `${baseClass}__previous-trigger`
-export const triggerNext = `${baseClass}__next-trigger`
+const triggerPrevious = `${baseClass}__previous-trigger`
+const triggerNext = `${baseClass}__next-trigger`
 
 function cellRenderer ({
   columnIndex, // Horizontal (column) index of cell
@@ -152,4 +152,10 @@ const mapDispatchToProps = (dispatch: Function) => {
   }
 }
 
+export {
+  collectionCover,
+  collectionDescription,
+  triggerPrevious,
+  triggerNext
+}
 export default connect(null, mapDispatchToProps)(CollectionDetail)

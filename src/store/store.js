@@ -10,19 +10,9 @@ const enhancers = composeEnhancers(
   )
 )
 
-// TODO: Hydrate the initialState from localStorage if it exists
-const initialState = {
-  lp: {
-    colors: []
-  }
-}
+const store = createStore(
+  rootReducer,
+  enhancers
+)
 
-const initializeStore = () => {
-  return createStore(
-    rootReducer,
-    initialState,
-    enhancers
-  )
-}
-
-export default initializeStore
+export default store
