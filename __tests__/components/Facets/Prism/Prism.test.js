@@ -7,7 +7,6 @@ import { SceneManager } from 'src/components/SceneManager/SceneManager'
 import ColorWallRouteComponent from 'src/components/Facets/ColorWall/ColorWallRouteComponent'
 import { ROUTE_PARAMS, ROUTE_PARAM_NAMES } from 'constants/globals'
 import ColorDetails from 'src/components/Facets/ColorDetails/ColorDetails'
-import ColorsFromImage from 'src/components/ColorsFromImage/ColorsFromImage'
 
 const homeRoute = '/'
 const activeRoute = '/active'
@@ -65,10 +64,6 @@ describe('Prism routes', () => {
 
   it('should show ColorDetails component for route defined as activeColorIdSeoUrlPattern constant', () => {
     expect(pathMap[activeColorIdSeoUrlPattern]).toBe(ColorDetails)
-  })
-
-  it('should show ColorsFromImage component for route defined as activeColorsFromImageRoute constant', () => {
-    expect(pathMap[activeColorsFromImageRoute]).toBe(ColorsFromImage)
   })
 
   it('should show component defined as prismNavWithRouterSelect constant', () => {
