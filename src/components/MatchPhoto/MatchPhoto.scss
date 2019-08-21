@@ -109,6 +109,15 @@
       flex-direction: column;
       line-height: 1.2em;
       margin-top: 6px;
+      &--inactive {
+        display: none;
+      }
+    }
+    &__loader {
+      color: #2cabe1;
+      display: block;
+      line-height: 1.2em;
+      margin-top: 6px;
     }
     &__tools {
       margin-top: 6px;
@@ -190,7 +199,7 @@
     overflow-y: scroll;
     position: absolute;
     right: 0;
-    top: 2px;
+    top: 0;
     z-index: 10000;
     &--active {
       display: flex;

@@ -2,23 +2,23 @@
 import React, { useState, useEffect, useRef } from 'react'
 import FileInput from '../FileInput/FileInput'
 import ColorsFromImage from '../InspirationPhotos/ColorsFromImage'
-import { loadImage, createColorTallies, getPixelPosition } from './MatchPhotoUtils'
+import { loadImage } from './MatchPhotoUtils'
 import './MatchPhoto.scss'
 import ImageRotateTerms from './ImageRotateTerms.jsx'
-import { Link } from 'react-router-dom'
+import { Link, withRouter, type RouterHistory } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import includes from 'lodash/includes'
-import random from 'lodash/random'
-import sampleSize from 'lodash/sampleSize'
-import groupBy from 'lodash/groupBy'
-import toArray from 'lodash/toArray'
-import { findBrandColor } from '../InspirationPhotos/data'
-import { brandColors } from '../InspirationPhotos/sw-colors-in-LAB.js'
 import ConfirmationModal from './ConfirmationModal'
+import ColorPinsGenerationByHue from './workers/colorPinsGenerationByHue.worker'
 
 let canvasContext: any
+let colorPinsGenerationByHueWorker: Object
 
-export function MatchPhoto () {
+type Props = {
+  history: RouterHistory
+}
+
+export function MatchPhoto ({ history }: Props) {
   const canvasRef: RefObject = useRef()
   const imageRef: RefObject = useRef()
   const [imageUrl, setImageUrl] = useState()
@@ -45,6 +45,24 @@ export function MatchPhoto () {
       setImageData(imageData)
     }
   }, [imageRotationAngle])
+
+  useEffect(() => {
+    window.addEventListener('resize', resizeHandler)
+
+    return function cleanup () {
+      window.removeEventListener('resize', resizeHandler)
+      if (colorPinsGenerationByHueWorker) {
+        colorPinsGenerationByHueWorker.removeEventListener('message', messageHandler)
+        colorPinsGenerationByHueWorker.terminate()
+      }
+    }
+  }, [])
+
+  function resizeHandler () {
+    if (canvasRef.current) {
+      initCanvas()
+    }
+  }
 
   function handleChange (e: Object) {
     const { target } = e
@@ -77,47 +95,19 @@ export function MatchPhoto () {
   }
 
   function createColorPins (imageData: Object) {
-    const colorTally = createColorTallies(imageData.data, imageDimensions.width, imageDimensions.height)
-    const colorTallyGroupByHue = toArray(groupBy(colorTally, (color) => color.hueRangeNumber))
+    // $FlowIgnore - flow can't understand how the worker is being used since it's not exporting anything
+    colorPinsGenerationByHueWorker = new ColorPinsGenerationByHue()
+    colorPinsGenerationByHueWorker.addEventListener('message', messageHandler)
+    colorPinsGenerationByHueWorker.postMessage({ imageData: imageData, imageDimensions: imageDimensions })
+  }
 
-    const colorTallyRandomEachHue = colorTallyGroupByHue.map((colorTally) => {
-      let sampleSizeCount = 10
-      if (colorTally.length < 10) {
-        sampleSizeCount = colorTally.length
-      }
-      return sampleSize(colorTally, sampleSizeCount)
-    })
-
-    const colorMap = {}
-    const pinsArrayByHue = colorTallyRandomEachHue.map((colors, index) => {
-      const pinsArray = colors.map(color => {
-        const randomByteIndex = random(0, color.byteIndices.length - 1)
-        const pixelPosition = getPixelPosition(color.byteIndices[randomByteIndex], imageDimensions.width, imageDimensions.height)
-        const r = color.value.r
-        const g = color.value.g
-        const b = color.value.b
-        const arrayIndex = findBrandColor([r, g, b])
-        const sherwinRgb = `rgb(${brandColors[arrayIndex + 2]})`
-
-        const key = sherwinRgb
-        if (!colorMap.hasOwnProperty(key) && pixelPosition.x >= 0.15 && pixelPosition.y >= 0.15 && pixelPosition.x <= 0.85 && pixelPosition.y <= 0.85) {
-          colorMap[key] = [index]
-          return {
-            r: r,
-            g: g,
-            b: b,
-            x: pixelPosition.x,
-            y: pixelPosition.y
-          }
-        }
-      })
-      return pinsArray.filter(pin => pin !== undefined)
-    })
-
-    const pins = pinsArrayByHue.map(pin => (pin.length > 0) && pin[random(0, pin.length - 1)])
-    const pinsReduced = pins.filter(pin => pin !== undefined && pin !== false)
-    const pinsRandom = sampleSize(pinsReduced, 8)
+  function messageHandler (e: Object) {
+    const { pinsRandom } = e.data
     generatepins(pinsRandom)
+    if (colorPinsGenerationByHueWorker) {
+      colorPinsGenerationByHueWorker.removeEventListener('message', messageHandler)
+      colorPinsGenerationByHueWorker.terminate()
+    }
   }
 
   function rotateImage (isRightRotation: boolean) {
@@ -149,10 +139,9 @@ export function MatchPhoto () {
           <FileInput onChange={handleChange} id={'photoInput'} disabled={false} placeholder={'Select image'} />
           }
           <div className={`match-photo__header`}>
-            {(imageUrl && pins.length === 0) ? <Link to={`/active`}>
-              <button className={`match-photo__button match-photo__button--left`} onClick={() => {}}>
-                <div><FontAwesomeIcon className={``} icon={['fa', 'angle-left']} />&nbsp;<span className={`match-photo__button-left-text`}>BACK</span></div>
-              </button></Link> : ''}
+            {(imageUrl && pins.length === 0) ? <button className={`match-photo__button match-photo__button--left`} onClick={() => history.goBack()}>
+              <div><FontAwesomeIcon className={``} icon={['fa', 'angle-left']} />&nbsp;<span className={`match-photo__button-left-text`}>BACK</span></div>
+            </button> : ''}
             {
               (imageUrl && pins.length === 0) ? <Link to={`/active`}>
                 {closeButton}
@@ -178,8 +167,9 @@ export function MatchPhoto () {
           }
         </div>
       </div>
+      <hr />
     </React.Fragment>
   )
 }
 
-export default MatchPhoto
+export default withRouter(MatchPhoto)

@@ -38,7 +38,7 @@ function ColorCollections (props: Props) {
     return (isExpertColor) ? <ExpertColorDetails expertColors={collectionDataDetails} /> : <CollectionDetail collectionDetailData={collectionDataDetails} />
   }
 
-  const onClickHandler = (collectionSummaryData) => {
+  const onClickHandler = (collectionSummaryData: Object) => {
     showBack()
     if (!isExpertColor) {
       setHeader(collectionSummaryData.name)
@@ -46,9 +46,13 @@ function ColorCollections (props: Props) {
     updateCollectionDataDetails(collectionSummaryData)
   }
 
+  const showTabHandler = (tabId: string, isClickTab: boolean) => {
+    showTab(tabId)
+  }
+
   return (
     <div className={`${wrapper}`}>
-      {(!isExpertColor) && <ColorCollectionsTab collectionTabs={collectionTabs} showTab={showTab} tabIdShow={tabIdShow} />}
+      {(!isExpertColor) && <ColorCollectionsTab collectionTabs={collectionTabs} showTab={showTabHandler} tabIdShow={tabIdShow} />}
       <div className={`${collectionsList}`}>
         <ColorListWithCarousel defaultItemsPerView={8} isInfinity={false} key={JSON.stringify(collectionData)} data={collectionData} getSummaryData={onClickHandler} isExpertColor={isExpertColor} />
       </div>

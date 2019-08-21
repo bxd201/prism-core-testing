@@ -1,6 +1,7 @@
 // @flow
 import React, { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 
 type Props = {
   rotateImage: Function,
@@ -13,6 +14,7 @@ const KEY_CODE_SPACE = 32
 
 const ImageRotateTerms = ({ rotateImage, createColorPins, imageData }: Props) => {
   const [accetTerms, setAcceptTerms] = useState(false)
+  const [hideModal, setHideModal] = useState(false)
   let mouseDown = false
 
   function handleChange () {
@@ -42,9 +44,14 @@ const ImageRotateTerms = ({ rotateImage, createColorPins, imageData }: Props) =>
     }
   }
 
+  function clickHandler () {
+    setHideModal(true)
+    createColorPins(imageData)
+  }
+
   return (
     <div className={`image-rotate-terms-modal__wrapper`}>
-      <div className={`image-rotate-terms-modal__wrapper__container`}>
+      <div className={`image-rotate-terms-modal__wrapper__container ${hideModal ? `image-rotate-terms-modal__wrapper__container--inactive` : ``}`}>
         <div className={`image-rotate-terms-modal__wrapper__tools`}>
           <div className={`image-rotate-terms-modal__wrapper__tools__message`}>
             Use these arrows to rotate your image.
@@ -80,8 +87,9 @@ const ImageRotateTerms = ({ rotateImage, createColorPins, imageData }: Props) =>
         </div>
         <button
           className={`image-rotate-terms-modal__wrapper__agree-terms__accept ${accetTerms ? `image-rotate-terms-modal__wrapper__agree-terms__accept--active` : ``}`}
-          onClick={() => (accetTerms) ? createColorPins(imageData) : {}}>DONE</button>
+          onClick={() => (accetTerms) ? clickHandler() : {}}>DONE</button>
       </div>
+      { hideModal && <div className={`image-rotate-terms-modal__wrapper__loader`}><CircleLoader /></div> }
     </div>
   )
 }
