@@ -11,10 +11,11 @@ import flatMap from 'lodash/flatMap'
 import intersection from 'lodash/intersection'
 import update from 'immutability-helper'
 import { Link } from 'react-router-dom'
+import LivePaletteModal from './LivePaletteModal'
 import store from '../../store/store'
 import { LP_MAX_COLORS_ALLOWED, MIN_COMPARE_COLORS_ALLOWED } from 'constants/configurations'
 
-import { activate, reorder, toggleCompareColor } from '../../store/actions/live-palette'
+import { activate, reorder, toggleCompareColor, cancel, empty } from '../../store/actions/live-palette'
 import { arrayToSpacedString } from '../../shared/helpers/StringUtils'
 
 import { varValues } from 'variables'
@@ -30,7 +31,9 @@ type Props = {
   reorderColors: Function,
   toggleCompareColor: Function,
   activeColor: Color,
-  removedColor: Color
+  removedColor: Color,
+  cancel: Function,
+  empty: Function
 }
 
 type State = {
@@ -106,7 +109,7 @@ export class LivePalette extends PureComponent<Props, State> {
   }
 
   render () {
-    const { colors, activeColor } = this.props
+    const { colors, activeColor, cancel, empty } = this.props
 
     const { spokenWord, isCompareColor } = this.state
     // TODO: abstract below into a class method
@@ -136,9 +139,9 @@ export class LivePalette extends PureComponent<Props, State> {
 
     const ADD_COLOR_TEXT = (colors.length) ? 'ADD_A_COLOR' : 'FIND_COLORS_IN_CW'
     const COLOR_TRAY_CLASS_MODIFIERS = (colors.length) ? 'add' : 'add-empty'
-
     return (
       <div className='prism-live-palette'>
+        <LivePaletteModal cancel={cancel} empty={empty} isActive={colors.length > LP_MAX_COLORS_ALLOWED} />
         <div className='prism-live-palette__header'>
           <span className='prism-live-palette__header__name'><FormattedMessage id='PALETTE_TITLE' /></span>
           {colors.length >= MIN_COMPARE_COLORS_ALLOWED && <button className='prism-live-palette__header__compare-button' onClick={this.toggleCompareColor}>Compare Color</button>}
@@ -218,6 +221,12 @@ const mapDispatchToProps = (dispatch: Function) => {
     },
     reorderColors: (colors) => {
       dispatch(reorder(colors))
+    },
+    cancel: () => {
+      dispatch(cancel())
+    },
+    empty: () => {
+      dispatch(empty())
     }
   }
 }

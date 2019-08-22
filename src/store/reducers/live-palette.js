@@ -11,7 +11,9 @@ import {
   ACTIVATE_LP_PREVIEW_COLOR,
   REORDER_LP_COLORS,
   TOGGLE_LP_COMPARE_COLOR,
-  EDIT_LP_COMPARE_COLOR
+  EDIT_LP_COMPARE_COLOR,
+  CANCEL_ADD_COLOR,
+  EMPTY_LP_COLOR
 } from '../actions/live-palette'
 
 type State = {
@@ -31,6 +33,17 @@ export const initialState: State = {
 
 export const lp = (state: any = initialState, action: any) => {
   switch (action.type) {
+    case CANCEL_ADD_COLOR:
+      const removeElement = (arr, i) => [...arr.slice(0, i), ...arr.slice(i + 1)]
+      return Object.assign({}, state, {
+        colors: removeElement(state.colors, state.colors.length - 1)
+      })
+    case EMPTY_LP_COLOR:
+      const newPallette = []
+      return Object.assign({}, state, {
+        colors: [...newPallette, state.activeColor]
+      })
+
     case TOGGLE_LP_COMPARE_COLOR:
       if (action.payload) {
         return Object.assign({}, state, {
@@ -43,7 +56,7 @@ export const lp = (state: any = initialState, action: any) => {
       })
     case ADD_LP_COLOR:
       // check if there are already 7 colors added and if the color exists already before adding
-      if (state.colors && state.colors.length < LP_MAX_COLORS_ALLOWED && !filter(state.colors, color => color.id === action.payload.color.id).length) {
+      if (state.colors && state.colors.length <= LP_MAX_COLORS_ALLOWED && !filter(state.colors, color => color.id === action.payload.color.id).length) {
         state.colors.push(action.payload.color)
       }
 

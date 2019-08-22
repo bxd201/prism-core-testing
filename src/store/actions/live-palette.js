@@ -17,6 +17,20 @@ export const toggleCompareColor = (isClose: boolean = false) => {
   }
 }
 
+export const CANCEL_ADD_COLOR: string = 'CANCEL_ADD_COLOR'
+export const cancel = () => {
+  return {
+    type: CANCEL_ADD_COLOR
+  }
+}
+
+export const EMPTY_LP_COLOR: string = 'EMPTY_LP_COLOR'
+export const empty = () => {
+  return {
+    type: EMPTY_LP_COLOR
+  }
+}
+
 export const REMOVE_LP_COLOR: string = 'REMOVE_LP_COLOR'
 export const remove = (colorId: Number) => {
   return {

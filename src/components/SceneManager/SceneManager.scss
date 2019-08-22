@@ -52,6 +52,10 @@
   height: 100%;
   position: relative;
   overflow: hidden;
+  padding-top:3em;
+  @include respond-above(sm) {
+    padding-top:0em;
+  }
   &__loader {
     color: getVar('colors.primary');
     left: 50%;
