@@ -10,7 +10,15 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    &__name{
+    display: none;
+    @include respond-above(sm) {
+      display: flex;
+    }
+    &__name {
+      display: none;
+      @include respond-above(md) {
+        display: block;
+      }
       margin: 1em;
     }
     &__compare-button{
@@ -20,6 +28,10 @@
       font-weight: 600;
       font-size: 16px;
       outline:none;
+      border-top: none;
+      @include respond-above(md) {
+        border-top: 1px solid #ebebeb;
+      }
       &:hover{
         background-color: #2cabe2;
         color: #fff;

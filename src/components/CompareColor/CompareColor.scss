@@ -27,7 +27,7 @@
     }
   }
   &__wrapper {
-    height: 725px;
+    max-height: 725px;
     display: flex;
     white-space: nowrap;
     overflow: hidden;
