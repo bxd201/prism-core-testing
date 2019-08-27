@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import includes from 'lodash/includes'
 import ConfirmationModal from './ConfirmationModal'
 import ColorPinsGenerationByHue from './workers/colorPinsGenerationByHue.worker'
+import useEffectAfterMount from '../../shared/hooks/useEffectAfterMount'
 import PaintScene from '../PaintScene/PaintScene'
 
 const baseClass = 'match-photo'
@@ -36,28 +37,26 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
   const canvasRef: RefObject = useRef()
   const imageRef: RefObject = useRef()
   const [imageUrl, setImageUrl] = React.useState()
-  const [pins, generatepins] = useState([])
+  const [pins, generatePins] = useState([])
   const [imageData, setImageData] = useState([])
   const [imageRotationAngle, setImageRotationAngle] = useState(0)
   const [isConfirmationModalActive, setConfirmationModalActive] = useState(false)
   const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 })
 
-  useEffect(() => {
-    if (canvasContext && imageUrl) {
-      canvasContext.clearRect(0, 0, imageDimensions.width, imageDimensions.height)
-      canvasContext.save()
-      canvasContext.translate(imageDimensions.width / 2, imageDimensions.height / 2)
-      canvasContext.rotate(imageRotationAngle * Math.PI / 180)
-      const drawWidth = imageDimensions.width / 2
-      if (includes([90, -90, 270, -270], imageRotationAngle)) {
-        canvasContext.drawImage(imageRef.current, -drawWidth, -imageDimensions.height, imageDimensions.width, imageDimensions.height * 2)
-      } else {
-        canvasContext.drawImage(imageRef.current, -drawWidth, -imageDimensions.height / 2, imageDimensions.width, imageDimensions.height)
-      }
-      canvasContext.restore()
-      const imageData = canvasContext.getImageData(0, 0, imageDimensions.width, imageDimensions.height)
-      setImageData(imageData)
+  useEffectAfterMount(() => {
+    canvasContext.clearRect(0, 0, imageDimensions.width, imageDimensions.height)
+    canvasContext.save()
+    canvasContext.translate(imageDimensions.width / 2, imageDimensions.height / 2)
+    canvasContext.rotate(imageRotationAngle * Math.PI / 180)
+    const drawWidth = imageDimensions.width / 2
+    if (includes([90, -90, 270, -270], imageRotationAngle)) {
+      canvasContext.drawImage(imageRef.current, -drawWidth, -imageDimensions.height, imageDimensions.width, imageDimensions.height * 2)
+    } else {
+      canvasContext.drawImage(imageRef.current, -drawWidth, -imageDimensions.height / 2, imageDimensions.width, imageDimensions.height)
     }
+    canvasContext.restore()
+    const imageData = canvasContext.getImageData(0, 0, imageDimensions.width, imageDimensions.height)
+    setImageData(imageData)
   }, [imageRotationAngle])
 
   useEffect(() => {
@@ -106,7 +105,7 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
 
   function createColorPins (imageData: Object) {
     if (isPaintScene) {
-      generatepins([{ isPaintScene: isPaintScene }])
+      generatePins([{ isPaintScene: isPaintScene }])
     } else {
       // $FlowIgnore - flow can't understand how the worker is being used since it's not exporting anything
       colorPinsGenerationByHueWorker = new ColorPinsGenerationByHue()
@@ -117,7 +116,7 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
 
   function messageHandler (e: Object) {
     const { pinsRandom } = e.data
-    generatepins(pinsRandom)
+    generatePins(pinsRandom)
     if (colorPinsGenerationByHueWorker) {
       colorPinsGenerationByHueWorker.removeEventListener('message', messageHandler)
       colorPinsGenerationByHueWorker.terminate()
