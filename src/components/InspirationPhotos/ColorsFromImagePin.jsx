@@ -51,7 +51,7 @@ const KEY_CODE_ARROW_DOWN = 40
 const PIN_MOVEMENT_INTERVAL = 10
 const PIN_MOVEMENT_SHIFT_KEY_INTERVAL = 1
 
-class ColorsFromImagePin extends PureComponent<Props, State> {
+export class ColorsFromImagePin extends PureComponent<Props, State> {
   colorDivRef: RefObject
   constructor (props) {
     super(props)

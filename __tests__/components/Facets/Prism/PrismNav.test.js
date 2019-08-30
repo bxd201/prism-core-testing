@@ -38,6 +38,10 @@ describe('PrismNav component with props', () => {
     expect(prismNav).toMatchSnapshot()
   })
 
+  it('should have buttons', () => {
+    expect(prismNav.find('button.prism-nav-btn').exists()).toBe(true)
+  })
+
   it(`should have first button with text defined as ${firstButtonText} constant`, () => {
     expect(prismNav.find('button.prism-nav-btn').at(0).text()).toEqual(firstButtonText)
   })

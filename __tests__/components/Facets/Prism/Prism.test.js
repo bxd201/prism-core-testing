@@ -10,7 +10,6 @@ import ColorDetails from 'src/components/Facets/ColorDetails/ColorDetails'
 
 const homeRoute = '/'
 const activeRoute = '/active'
-const prismNavWithRouterSelect = 'withRouter(PrismNav)'
 const livePaletteConnectSelect = 'Connect(LivePalette)'
 
 const colorWallBaseUrl = `/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_WALL}`

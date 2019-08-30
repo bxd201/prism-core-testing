@@ -17,7 +17,7 @@ type ComponentState = {
   isClickTab: boolean
 }
 
-class InspiredSceneNavigator extends React.Component<ComponentProps, ComponentState> {
+export class InspiredSceneNavigator extends React.Component<ComponentProps, ComponentState> {
   key: string
   currTab: Array<Object>
   tabMap: Object
