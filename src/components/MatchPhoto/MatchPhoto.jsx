@@ -2,7 +2,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import FileInput from '../FileInput/FileInput'
 import ColorsFromImage from '../InspirationPhotos/ColorsFromImage'
-import { loadImage } from './MatchPhotoUtils'
 import './MatchPhoto.scss'
 import ImageRotateTerms from './ImageRotateTerms.jsx'
 import { Link, withRouter, type RouterHistory } from 'react-router-dom'
@@ -11,6 +10,19 @@ import includes from 'lodash/includes'
 import ConfirmationModal from './ConfirmationModal'
 import ColorPinsGenerationByHue from './workers/colorPinsGenerationByHue.worker'
 import PaintScene from '../PaintScene/PaintScene'
+
+const baseClass = 'match-photo'
+const wrapperClass = `${baseClass}__wrapper`
+const containerClass = `${baseClass}__container`
+const headerClass = `${baseClass}__header`
+const buttonClass = `${baseClass}__button`
+const buttonLeftClass = `${buttonClass}--left`
+const buttonLeftTextClass = `${buttonClass}-left-text`
+const canvasClass = `${baseClass}__canvas`
+const imageClass = `${baseClass}__image`
+const buttonRightClass = `${buttonClass}--right`
+const closeClass = `${baseClass}__close`
+const cancelClass = `${baseClass}__cancel`
 
 let canvasContext: any
 let colorPinsGenerationByHueWorker: Object
@@ -23,7 +35,7 @@ type Props = {
 export function MatchPhoto ({ history, isPaintScene }: Props) {
   const canvasRef: RefObject = useRef()
   const imageRef: RefObject = useRef()
-  const [imageUrl, setImageUrl] = useState()
+  const [imageUrl, setImageUrl] = React.useState()
   const [pins, generatepins] = useState([])
   const [imageData, setImageData] = useState([])
   const [imageRotationAngle, setImageRotationAngle] = useState(0)
@@ -68,11 +80,7 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
 
   function handleChange (e: Object) {
     const { target } = e
-    Promise.all([
-      loadImage(URL.createObjectURL(target.files[0]))
-    ]).then(images => {
-      setImageUrl(URL.createObjectURL(target.files[0]))
-    })
+    setImageUrl(URL.createObjectURL(target.files[0]))
   }
 
   function handleImageLoaded () {
@@ -132,21 +140,21 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
     }
   }
 
-  const closeButton = <button onClick={() => (imageUrl && pins.length > 0) && setConfirmationModalActive(!isConfirmationModalActive)} className={`match-photo__button match-photo__button--right`}>
-    <div className={`match-photo__close`}><span>CLOSE</span>&nbsp;<FontAwesomeIcon className={``} icon={['fa', 'chevron-up']} /></div>
-    <div className={`match-photo__cancel`}><FontAwesomeIcon className={``} icon={['fa', 'times']} /></div>
+  const closeButton = <button onClick={() => (imageUrl && pins.length > 0) && setConfirmationModalActive(!isConfirmationModalActive)} className={`${buttonClass} ${buttonRightClass}`}>
+    <div className={`${closeClass}`}><span>CLOSE</span>&nbsp;<FontAwesomeIcon className={``} icon={['fa', 'chevron-up']} /></div>
+    <div className={`${cancelClass}`}><FontAwesomeIcon className={``} icon={['fa', 'times']} /></div>
   </button>
 
   return (
     <React.Fragment>
-      <div className={`match-photo__wrapper`}>
-        <div className={`match-photo__container`}>
+      <div className={`${wrapperClass}`}>
+        <div className={`${containerClass}`}>
           { (!imageUrl) &&
           <FileInput onChange={handleChange} id={'photoInput'} disabled={false} placeholder={'Select image'} />
           }
-          <div className={`match-photo__header`}>
-            {(imageUrl && pins.length === 0) ? <button className={`match-photo__button match-photo__button--left`} onClick={() => history.goBack()}>
-              <div><FontAwesomeIcon className={``} icon={['fa', 'angle-left']} />&nbsp;<span className={`match-photo__button-left-text`}>BACK</span></div>
+          <div className={`${headerClass}`}>
+            {(imageUrl && pins.length === 0) ? <button className={`${buttonClass} ${buttonLeftClass}`} onClick={() => history.goBack()}>
+              <div><FontAwesomeIcon className={``} icon={['fa', 'angle-left']} />&nbsp;<span className={`${buttonLeftTextClass}`}>BACK</span></div>
             </button> : ''}
             {
               (imageUrl && pins.length === 0) ? <Link to={`/active`}>
@@ -165,8 +173,8 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
           {
             (imageUrl && pins.length === 0)
               ? (<React.Fragment>
-                <canvas className='match-photo__canvas' name='canvas' ref={canvasRef} />
-                <img className='match-photo__image' ref={imageRef} onLoad={handleImageLoaded} onError={handleImageErrored} src={imageUrl} alt='' />
+                <canvas className={`${canvasClass}`} name='canvas' ref={canvasRef} />
+                <img className={`${imageClass}`} ref={imageRef} onLoad={handleImageLoaded} onError={handleImageErrored} src={imageUrl} alt='' />
                 <ImageRotateTerms rotateImage={rotateImage} createColorPins={createColorPins} imageData={imageData} />
               </React.Fragment>)
               : ''

@@ -11,6 +11,20 @@ import { StaticTintScene } from './TintableScene'
 import { Scene } from './data'
 
 const baseClass = 'color__comparison'
+const containerClass = `${baseClass}__container`
+const containerHeaderClass = `${baseClass}__container__header`
+const containerHeaderButtonClass = `${baseClass}__container__header__button`
+const wrapperClass = `${baseClass}__wrapper`
+const prevBtnWrapperClass = `${baseClass}__prev-btn__wrapper`
+const buttonsClass = `${baseClass}__buttons`
+const buttonsVisibleClass = `${baseClass}__buttons--visible`
+const nextBtnWrapperClass = `${baseClass}__next-btn__wrapper`
+const backgroundColorClass = `${baseClass}__background__color`
+const queueWrapperClass = `${baseClass}__queue__wrapper`
+const colorInfoClass = `${baseClass}__color__info`
+const colorInfoNumberClass = `${baseClass}__color__info__number`
+const colorInfoNameClass = `${baseClass}__color__info__name`
+
 const defaultViewItem = 3
 const offset = 1
 
@@ -81,15 +95,15 @@ export class CompareColor extends React.Component<CompareColorProps, CompareColo
       })
       return renderColors && renderColors.map<Object>((color, key) => {
         return (
-          <div key={key} style={{ backgroundColor: color.hex, transform: `translateX(-${curr * 100}%)` }} className={`${baseClass}__queue__wrapper`}>
-            <div className={`${baseClass}__background__color`} />
+          <div key={key} style={{ backgroundColor: color.hex, transform: `translateX(-${curr * 100}%)` }} className={`${queueWrapperClass}`}>
+            <div className={`${backgroundColorClass}`} />
             <StaticTintScene
               color={color}
               scene={Scene}
             />
-            <div style={{ color: getContrastYIQ(color.hex) }} className={`${baseClass}__color__info`} >
-              <span className={`${baseClass}__color__info__number`}>{fullColorNumber(color.brandKey, color.colorNumber)}</span>
-              <span className={`${baseClass}__color__info__name`}>{color.name}</span>
+            <div style={{ color: getContrastYIQ(color.hex) }} className={`${colorInfoClass}`} >
+              <span className={`${colorInfoNumberClass}`}>{fullColorNumber(color.brandKey, color.colorNumber)}</span>
+              <span className={`${colorInfoNameClass}`}>{color.name}</span>
             </div>
           </div>
         )
@@ -147,22 +161,22 @@ export class CompareColor extends React.Component<CompareColorProps, CompareColo
       const content = this.renderContent()
       const { isHidePrevButton, isHideNextButton } = this.isShowSlideButton()
       return (
-        <div className={`${baseClass}__container`}>
-          <div className={`${baseClass}__container__header`}>
+        <div className={`${containerClass}`}>
+          <div className={`${containerHeaderClass}`}>
             <span>Compare Colors</span>
-            <button className={`${baseClass}__container__header__button`} onClick={this.props.toggleCompareColor}>close &nbsp;<FontAwesomeIcon className={``} icon={['fa', 'chevron-up']} /></button>
+            <button className={`${containerHeaderButtonClass}`} onClick={this.props.toggleCompareColor}>close &nbsp;<FontAwesomeIcon className={``} icon={['fa', 'chevron-up']} /></button>
           </div>
-          <div className={`${baseClass}__wrapper`} >
-            <div className={`${baseClass}__prev-btn__wrapper`}>
+          <div className={`${wrapperClass}`} >
+            <div className={`${prevBtnWrapperClass}`}>
               {
-                <button className={`${baseClass}__buttons ${isHidePrevButton ? `${baseClass}__buttons--visible` : ''}`} onClick={this.handlePrev}>
+                <button className={`${buttonsClass} ${isHidePrevButton ? `${buttonsVisibleClass}` : ''}`} onClick={this.handlePrev}>
                   <FontAwesomeIcon icon={faChevronLeft} />
                 </button>}
             </div>
             {content}
-            <div className={`${baseClass}__next-btn__wrapper`}>
+            <div className={`${nextBtnWrapperClass}`}>
               {
-                <button className={`${baseClass}__buttons ${isHideNextButton ? `${baseClass}__buttons--visible` : ''}`} onClick={this.handleNext}>
+                <button className={`${buttonsClass} ${isHideNextButton ? `${buttonsVisibleClass}` : ''}`} onClick={this.handleNext}>
                   <FontAwesomeIcon icon={faChevronRight} />
                 </button>
               }
@@ -186,6 +200,22 @@ const mapStateToProps = (state: Object, props: Object) => {
     colors: lp.colors,
     colorsId: lp.compareColorsId
   }
+}
+
+export {
+  containerClass,
+  containerHeaderClass,
+  containerHeaderButtonClass,
+  wrapperClass,
+  prevBtnWrapperClass,
+  buttonsClass,
+  buttonsVisibleClass,
+  nextBtnWrapperClass,
+  backgroundColorClass,
+  queueWrapperClass,
+  colorInfoClass,
+  colorInfoNumberClass,
+  colorInfoNameClass
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(CompareColor)

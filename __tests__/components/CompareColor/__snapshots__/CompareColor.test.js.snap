@@ -1,0 +1,1316 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CompareColor with props should match snapshot with props 1`] = `
+<div
+  className="color__comparison__container"
+>
+  <div
+    className="color__comparison__container__header"
+  >
+    <span>
+      Compare Colors
+    </span>
+    <button
+      className="color__comparison__container__header__button"
+      onClick={[MockFunction]}
+    >
+      close  
+      <FontAwesomeIcon
+        border={false}
+        className=""
+        fixedWidth={false}
+        flip={null}
+        icon={
+          Array [
+            "fa",
+            "chevron-up",
+          ]
+        }
+        inverse={false}
+        listItem={false}
+        mask={null}
+        pull={null}
+        pulse={false}
+        rotation={null}
+        size={null}
+        spin={false}
+        symbol={false}
+        title=""
+        transform={null}
+      />
+    </button>
+  </div>
+  <div
+    className="color__comparison__wrapper"
+  >
+    <div
+      className="color__comparison__prev-btn__wrapper"
+    >
+      <button
+        className="color__comparison__buttons color__comparison__buttons--visible"
+        onClick={[Function]}
+      >
+        <FontAwesomeIcon
+          border={false}
+          className=""
+          fixedWidth={false}
+          flip={null}
+          icon={
+            Object {
+              "icon": Array [
+                320,
+                512,
+                Array [],
+                "f053",
+                "M34.52 239.03L228.87 44.69c9.37-9.37 24.57-9.37 33.94 0l22.67 22.67c9.36 9.36 9.37 24.52.04 33.9L131.49 256l154.02 154.75c9.34 9.38 9.32 24.54-.04 33.9l-22.67 22.67c-9.37 9.37-24.57 9.37-33.94 0L34.52 272.97c-9.37-9.37-9.37-24.57 0-33.94z",
+              ],
+              "iconName": "chevron-left",
+              "prefix": "fas",
+            }
+          }
+          inverse={false}
+          listItem={false}
+          mask={null}
+          pull={null}
+          pulse={false}
+          rotation={null}
+          size={null}
+          spin={false}
+          symbol={false}
+          title=""
+          transform={null}
+        />
+      </button>
+    </div>
+    <div
+      className="color__comparison__queue__wrapper"
+      key="0"
+      style={
+        Object {
+          "backgroundColor": "#94766c",
+          "transform": "translateX(-0%)",
+        }
+      }
+    >
+      <div
+        className="color__comparison__background__color"
+      />
+      <StaticTintScene
+        color={
+          Object {
+            "blue": 108,
+            "brandKey": "SW",
+            "brandedCollectionNames": Array [
+              "Interior Historic Collection",
+            ],
+            "colorFamilyNames": Array [
+              "Historic Color",
+            ],
+            "colorNumber": "0001",
+            "coordinatingColors": Object {
+              "coord1ColorId": "11290",
+              "coord2ColorId": "11296",
+            },
+            "description": Array [
+              "Dull",
+              "Fairly Bright",
+            ],
+            "green": 118,
+            "hex": "#94766c",
+            "hue": 0.041666666666666685,
+            "id": "1544",
+            "isDark": false,
+            "isExterior": true,
+            "isInterior": true,
+            "lightness": 0.5019607843137255,
+            "lrv": 20.427,
+            "name": "Mulberry Silk",
+            "red": 148,
+            "saturation": 0.15748031496062997,
+            "similarColors": Array [
+              "1733",
+              "1719",
+              "1747",
+              "1754",
+              "1712",
+              "1775",
+              "1740",
+              "2831",
+              "1768",
+              "11269",
+            ],
+          }
+        }
+        scene={
+          Object {
+            "height": 792,
+            "id": 1,
+            "variant_names": Array [
+              "day",
+              "night",
+            ],
+            "variants": Array [
+              Object {
+                "image": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1311}&qlt=92",
+                "name": "Living Room Day",
+                "normalizedImageValueCurve": "0 0.1 0.15 0.25 0.4 0.5 0.6 0.7 0.84 0.955 1",
+                "surfaces": Array [
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m1.svg",
+                    "id": 1,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=wall&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "main",
+                  },
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m2.svg",
+                    "id": 2,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=accent&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "main",
+                  },
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m3.svg",
+                    "id": 3,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=trim&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "trim",
+                  },
+                ],
+                "thumb": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=300}&qlt=80",
+                "variant_name": "day",
+              },
+              Object {
+                "image": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=1311}&qlt=92",
+                "name": "Living Room Night",
+                "normalizedImageValueCurve": "0 0.1 0.22 0.32 0.42 0.51 0.6 0.7 0.84 0.955 1",
+                "surfaces": Array [
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m1.svg",
+                    "id": 1,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=1280&req=object&opac=100&fmt=png8&object=wall&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "main",
+                  },
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m2.svg",
+                    "id": 2,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=1280&req=object&opac=100&fmt=png8&object=accent&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "main",
+                  },
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m3.svg",
+                    "id": 3,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=1280&req=object&opac=100&fmt=png8&object=trim&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "trim",
+                  },
+                ],
+                "thumb": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=300}&qlt=80",
+                "variant_name": "night",
+              },
+            ],
+            "width": 1311,
+          }
+        }
+      />
+      <div
+        className="color__comparison__color__info"
+        style={
+          Object {
+            "color": "#000",
+          }
+        }
+      >
+        <span
+          className="color__comparison__color__info__number"
+        >
+          SW 0001 
+        </span>
+        <span
+          className="color__comparison__color__info__name"
+        >
+          Mulberry Silk
+        </span>
+      </div>
+    </div>
+    <div
+      className="color__comparison__queue__wrapper"
+      key="1"
+      style={
+        Object {
+          "backgroundColor": "#ac7559",
+          "transform": "translateX(-0%)",
+        }
+      }
+    >
+      <div
+        className="color__comparison__background__color"
+      />
+      <StaticTintScene
+        color={
+          Object {
+            "blue": 89,
+            "brandKey": "SW",
+            "brandedCollectionNames": Array [
+              "Color Forecast",
+              "Interior Historic Collection",
+            ],
+            "colorFamilyNames": Array [
+              "Historic Color",
+            ],
+            "colorNumber": "0007",
+            "coordinatingColors": Object {
+              "coord1ColorId": "11345",
+              "coord2ColorId": "11352",
+            },
+            "description": Array [
+              "Subdued",
+              "Muted",
+              "Fairly Bright",
+            ],
+            "green": 117,
+            "hex": "#ac7559",
+            "hue": 0.05622489959839356,
+            "id": "1550",
+            "isDark": false,
+            "isExterior": true,
+            "isInterior": true,
+            "lightness": 0.5117647058823529,
+            "lrv": 22.143,
+            "name": "Decorous Amber",
+            "red": 172,
+            "saturation": 0.33333333333333337,
+            "similarColors": Array [
+              "3008",
+              "3016",
+              "3007",
+              "1676",
+              "1804",
+              "2026",
+              "2041",
+              "2034",
+              "2033",
+              "3011",
+            ],
+          }
+        }
+        scene={
+          Object {
+            "height": 792,
+            "id": 1,
+            "variant_names": Array [
+              "day",
+              "night",
+            ],
+            "variants": Array [
+              Object {
+                "image": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1311}&qlt=92",
+                "name": "Living Room Day",
+                "normalizedImageValueCurve": "0 0.1 0.15 0.25 0.4 0.5 0.6 0.7 0.84 0.955 1",
+                "surfaces": Array [
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m1.svg",
+                    "id": 1,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=wall&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "main",
+                  },
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m2.svg",
+                    "id": 2,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=accent&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "main",
+                  },
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m3.svg",
+                    "id": 3,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=trim&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "trim",
+                  },
+                ],
+                "thumb": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=300}&qlt=80",
+                "variant_name": "day",
+              },
+              Object {
+                "image": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=1311}&qlt=92",
+                "name": "Living Room Night",
+                "normalizedImageValueCurve": "0 0.1 0.22 0.32 0.42 0.51 0.6 0.7 0.84 0.955 1",
+                "surfaces": Array [
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m1.svg",
+                    "id": 1,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=1280&req=object&opac=100&fmt=png8&object=wall&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "main",
+                  },
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m2.svg",
+                    "id": 2,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=1280&req=object&opac=100&fmt=png8&object=accent&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "main",
+                  },
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m3.svg",
+                    "id": 3,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=1280&req=object&opac=100&fmt=png8&object=trim&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "trim",
+                  },
+                ],
+                "thumb": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=300}&qlt=80",
+                "variant_name": "night",
+              },
+            ],
+            "width": 1311,
+          }
+        }
+      />
+      <div
+        className="color__comparison__color__info"
+        style={
+          Object {
+            "color": "#000",
+          }
+        }
+      >
+        <span
+          className="color__comparison__color__info__number"
+        >
+          SW 0007 
+        </span>
+        <span
+          className="color__comparison__color__info__name"
+        >
+          Decorous Amber
+        </span>
+      </div>
+    </div>
+    <div
+      className="color__comparison__queue__wrapper"
+      key="2"
+      style={
+        Object {
+          "backgroundColor": "#c19f6e",
+          "transform": "translateX(-0%)",
+        }
+      }
+    >
+      <div
+        className="color__comparison__background__color"
+      />
+      <StaticTintScene
+        color={
+          Object {
+            "blue": 110,
+            "brandKey": "SW",
+            "brandedCollectionNames": Array [
+              "Lifestyle",
+              "Interior Historic Collection",
+            ],
+            "colorFamilyNames": Array [
+              "Historic Color",
+            ],
+            "colorNumber": "0012",
+            "coordinatingColors": Object {
+              "coord1ColorId": "2881",
+              "coord2ColorId": "11238",
+            },
+            "description": Array [
+              "Fairly Colorful",
+              "Moderately Colorful",
+              "Fairly Bright",
+            ],
+            "green": 159,
+            "hex": "#c19f6e",
+            "hue": 0.09839357429718876,
+            "id": "1555",
+            "isDark": false,
+            "isExterior": false,
+            "isInterior": true,
+            "lightness": 0.5941176470588235,
+            "lrv": 37.174,
+            "name": "Empire Gold",
+            "red": 193,
+            "saturation": 0.4009661835748792,
+            "similarColors": Array [
+              "3005",
+              "11204",
+              "11205",
+              "1817",
+              "2999",
+              "3001",
+              "1636",
+              "11284",
+              "2986",
+              "11208",
+            ],
+          }
+        }
+        scene={
+          Object {
+            "height": 792,
+            "id": 1,
+            "variant_names": Array [
+              "day",
+              "night",
+            ],
+            "variants": Array [
+              Object {
+                "image": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1311}&qlt=92",
+                "name": "Living Room Day",
+                "normalizedImageValueCurve": "0 0.1 0.15 0.25 0.4 0.5 0.6 0.7 0.84 0.955 1",
+                "surfaces": Array [
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m1.svg",
+                    "id": 1,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=wall&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "main",
+                  },
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m2.svg",
+                    "id": 2,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=accent&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "main",
+                  },
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m3.svg",
+                    "id": 3,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=trim&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "trim",
+                  },
+                ],
+                "thumb": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=300}&qlt=80",
+                "variant_name": "day",
+              },
+              Object {
+                "image": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=1311}&qlt=92",
+                "name": "Living Room Night",
+                "normalizedImageValueCurve": "0 0.1 0.22 0.32 0.42 0.51 0.6 0.7 0.84 0.955 1",
+                "surfaces": Array [
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m1.svg",
+                    "id": 1,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=1280&req=object&opac=100&fmt=png8&object=wall&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "main",
+                  },
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m2.svg",
+                    "id": 2,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=1280&req=object&opac=100&fmt=png8&object=accent&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "main",
+                  },
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m3.svg",
+                    "id": 3,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=1280&req=object&opac=100&fmt=png8&object=trim&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "trim",
+                  },
+                ],
+                "thumb": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=300}&qlt=80",
+                "variant_name": "night",
+              },
+            ],
+            "width": 1311,
+          }
+        }
+      />
+      <div
+        className="color__comparison__color__info"
+        style={
+          Object {
+            "color": "#000",
+          }
+        }
+      >
+        <span
+          className="color__comparison__color__info__number"
+        >
+          SW 0012 
+        </span>
+        <span
+          className="color__comparison__color__info__name"
+        >
+          Empire Gold
+        </span>
+      </div>
+    </div>
+    <div
+      className="color__comparison__queue__wrapper"
+      key="3"
+      style={
+        Object {
+          "backgroundColor": "#8ca49c",
+          "transform": "translateX(-0%)",
+        }
+      }
+    >
+      <div
+        className="color__comparison__background__color"
+      />
+      <StaticTintScene
+        color={
+          Object {
+            "blue": 156,
+            "brandKey": "SW",
+            "brandedCollectionNames": Array [
+              "Acute Care Color Collection",
+              "Interior Historic Collection",
+            ],
+            "colorFamilyNames": Array [
+              "Historic Color",
+            ],
+            "colorNumber": "0017",
+            "coordinatingColors": Object {
+              "coord1ColorId": "1806",
+              "coord2ColorId": "2926",
+            },
+            "description": Array [
+              "Dull",
+              "Fairly Bright",
+            ],
+            "green": 164,
+            "hex": "#8ca49c",
+            "hue": 0.4444444444444444,
+            "id": "1560",
+            "isDark": false,
+            "isExterior": true,
+            "isInterior": true,
+            "lightness": 0.5960784313725491,
+            "lrv": 34.492,
+            "name": "Calico",
+            "red": 140,
+            "saturation": 0.11650485436893207,
+            "similarColors": Array [
+              "11313",
+              "2158",
+              "1900",
+              "2165",
+              "11230",
+              "11222",
+              "11314",
+              "2144",
+              "1684",
+              "1574",
+            ],
+          }
+        }
+        scene={
+          Object {
+            "height": 792,
+            "id": 1,
+            "variant_names": Array [
+              "day",
+              "night",
+            ],
+            "variants": Array [
+              Object {
+                "image": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1311}&qlt=92",
+                "name": "Living Room Day",
+                "normalizedImageValueCurve": "0 0.1 0.15 0.25 0.4 0.5 0.6 0.7 0.84 0.955 1",
+                "surfaces": Array [
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m1.svg",
+                    "id": 1,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=wall&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "main",
+                  },
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m2.svg",
+                    "id": 2,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=accent&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "main",
+                  },
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m3.svg",
+                    "id": 3,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=trim&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "trim",
+                  },
+                ],
+                "thumb": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=300}&qlt=80",
+                "variant_name": "day",
+              },
+              Object {
+                "image": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=1311}&qlt=92",
+                "name": "Living Room Night",
+                "normalizedImageValueCurve": "0 0.1 0.22 0.32 0.42 0.51 0.6 0.7 0.84 0.955 1",
+                "surfaces": Array [
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m1.svg",
+                    "id": 1,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=1280&req=object&opac=100&fmt=png8&object=wall&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "main",
+                  },
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m2.svg",
+                    "id": 2,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=1280&req=object&opac=100&fmt=png8&object=accent&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "main",
+                  },
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m3.svg",
+                    "id": 3,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=1280&req=object&opac=100&fmt=png8&object=trim&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "trim",
+                  },
+                ],
+                "thumb": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=300}&qlt=80",
+                "variant_name": "night",
+              },
+            ],
+            "width": 1311,
+          }
+        }
+      />
+      <div
+        className="color__comparison__color__info"
+        style={
+          Object {
+            "color": "#000",
+          }
+        }
+      >
+        <span
+          className="color__comparison__color__info__number"
+        >
+          SW 0017 
+        </span>
+        <span
+          className="color__comparison__color__info__name"
+        >
+          Calico
+        </span>
+      </div>
+    </div>
+    <div
+      className="color__comparison__queue__wrapper"
+      key="4"
+      style={
+        Object {
+          "backgroundColor": "#75b9ae",
+          "transform": "translateX(-0%)",
+        }
+      }
+    >
+      <div
+        className="color__comparison__background__color"
+      />
+      <StaticTintScene
+        color={
+          Object {
+            "blue": 174,
+            "brandKey": "SW",
+            "brandedCollectionNames": Array [
+              "Lifestyle",
+              "HGTV Home™ by Sherwin-Williams",
+            ],
+            "colorFamilyNames": Array [
+              "Blue",
+            ],
+            "colorNumber": "6759",
+            "coordinatingColors": Object {
+              "coord1ColorId": "2689",
+              "coord2ColorId": "11355",
+              "whiteColorId": "2436",
+            },
+            "description": Array [
+              "Subdued",
+              "Muted",
+              "Fairly Bright",
+            ],
+            "green": 185,
+            "hex": "#75b9ae",
+            "hue": 0.47303921568627455,
+            "id": "2446",
+            "isDark": false,
+            "isExterior": true,
+            "isInterior": true,
+            "lightness": 0.592156862745098,
+            "lrv": 41.426,
+            "name": "Cooled Blue",
+            "red": 117,
+            "saturation": 0.3269230769230769,
+            "similarColors": Array [
+              "2439",
+              "11224",
+              "11223",
+              "1618",
+              "2447",
+              "2453",
+              "2173",
+              "2624",
+              "11232",
+              "2151",
+            ],
+            "storeStripLocator": "163-C4",
+          }
+        }
+        scene={
+          Object {
+            "height": 792,
+            "id": 1,
+            "variant_names": Array [
+              "day",
+              "night",
+            ],
+            "variants": Array [
+              Object {
+                "image": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1311}&qlt=92",
+                "name": "Living Room Day",
+                "normalizedImageValueCurve": "0 0.1 0.15 0.25 0.4 0.5 0.6 0.7 0.84 0.955 1",
+                "surfaces": Array [
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m1.svg",
+                    "id": 1,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=wall&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "main",
+                  },
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m2.svg",
+                    "id": 2,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=accent&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "main",
+                  },
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m3.svg",
+                    "id": 3,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=trim&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "trim",
+                  },
+                ],
+                "thumb": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=300}&qlt=80",
+                "variant_name": "day",
+              },
+              Object {
+                "image": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=1311}&qlt=92",
+                "name": "Living Room Night",
+                "normalizedImageValueCurve": "0 0.1 0.22 0.32 0.42 0.51 0.6 0.7 0.84 0.955 1",
+                "surfaces": Array [
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m1.svg",
+                    "id": 1,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=1280&req=object&opac=100&fmt=png8&object=wall&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "main",
+                  },
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m2.svg",
+                    "id": 2,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=1280&req=object&opac=100&fmt=png8&object=accent&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "main",
+                  },
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m3.svg",
+                    "id": 3,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=1280&req=object&opac=100&fmt=png8&object=trim&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "trim",
+                  },
+                ],
+                "thumb": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=300}&qlt=80",
+                "variant_name": "night",
+              },
+            ],
+            "width": 1311,
+          }
+        }
+      />
+      <div
+        className="color__comparison__color__info"
+        style={
+          Object {
+            "color": "#fff",
+          }
+        }
+      >
+        <span
+          className="color__comparison__color__info__number"
+        >
+          SW 6759 
+        </span>
+        <span
+          className="color__comparison__color__info__name"
+        >
+          Cooled Blue
+        </span>
+      </div>
+    </div>
+    <div
+      className="color__comparison__queue__wrapper"
+      key="5"
+      style={
+        Object {
+          "backgroundColor": "#d5eae8",
+          "transform": "translateX(-0%)",
+        }
+      }
+    >
+      <div
+        className="color__comparison__background__color"
+      />
+      <StaticTintScene
+        color={
+          Object {
+            "blue": 232,
+            "brandKey": "SW",
+            "colorFamilyNames": Array [
+              "SW6763_COLOR_FAMILY_NAME",
+            ],
+            "colorNumber": "6763",
+            "coordinatingColors": Object {
+              "coord1ColorId": "2872",
+              "coord2ColorId": "1844",
+            },
+            "description": Array [
+              "Subdued",
+              "Muted",
+              "Brilliant",
+              "Radiant",
+            ],
+            "green": 234,
+            "hex": "#d5eae8",
+            "hue": 0.4841269841269842,
+            "id": "2450",
+            "isDark": false,
+            "isExterior": true,
+            "isInterior": true,
+            "lightness": 0.8764705882352941,
+            "lrv": 78.757,
+            "name": "Retiring Blue",
+            "red": 213,
+            "saturation": 0.33333333333333304,
+            "similarColors": Array [
+              "2797",
+              "2169",
+              "2457",
+              "2471",
+              "2443",
+              "2184",
+              "2178",
+              "2795",
+              "2478",
+              "2436",
+            ],
+          }
+        }
+        scene={
+          Object {
+            "height": 792,
+            "id": 1,
+            "variant_names": Array [
+              "day",
+              "night",
+            ],
+            "variants": Array [
+              Object {
+                "image": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1311}&qlt=92",
+                "name": "Living Room Day",
+                "normalizedImageValueCurve": "0 0.1 0.15 0.25 0.4 0.5 0.6 0.7 0.84 0.955 1",
+                "surfaces": Array [
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m1.svg",
+                    "id": 1,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=wall&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "main",
+                  },
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m2.svg",
+                    "id": 2,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=accent&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "main",
+                  },
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m3.svg",
+                    "id": 3,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=trim&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "trim",
+                  },
+                ],
+                "thumb": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=300}&qlt=80",
+                "variant_name": "day",
+              },
+              Object {
+                "image": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=1311}&qlt=92",
+                "name": "Living Room Night",
+                "normalizedImageValueCurve": "0 0.1 0.22 0.32 0.42 0.51 0.6 0.7 0.84 0.955 1",
+                "surfaces": Array [
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m1.svg",
+                    "id": 1,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=1280&req=object&opac=100&fmt=png8&object=wall&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "main",
+                  },
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m2.svg",
+                    "id": 2,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=1280&req=object&opac=100&fmt=png8&object=accent&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "main",
+                  },
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m3.svg",
+                    "id": 3,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=1280&req=object&opac=100&fmt=png8&object=trim&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "trim",
+                  },
+                ],
+                "thumb": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=300}&qlt=80",
+                "variant_name": "night",
+              },
+            ],
+            "width": 1311,
+          }
+        }
+      />
+      <div
+        className="color__comparison__color__info"
+        style={
+          Object {
+            "color": "#000",
+          }
+        }
+      >
+        <span
+          className="color__comparison__color__info__number"
+        >
+          SW 6763 
+        </span>
+        <span
+          className="color__comparison__color__info__name"
+        >
+          Retiring Blue
+        </span>
+      </div>
+    </div>
+    <div
+      className="color__comparison__queue__wrapper"
+      key="6"
+      style={
+        Object {
+          "backgroundColor": "#3aa9ae",
+          "transform": "translateX(-0%)",
+        }
+      }
+    >
+      <div
+        className="color__comparison__background__color"
+      />
+      <StaticTintScene
+        color={
+          Object {
+            "blue": 174,
+            "brandKey": "SW",
+            "brandedCollectionNames": Array [
+              "Kids' Colors",
+            ],
+            "colorFamilyNames": Array [
+              "Blue",
+            ],
+            "colorNumber": "6767",
+            "coordinatingColors": Object {
+              "coord1ColorId": "2689",
+              "coord2ColorId": "11359",
+              "whiteColorId": "2162",
+            },
+            "description": Array [
+              "Soft",
+              "Moderately Bright",
+            ],
+            "green": 169,
+            "hex": "#3aa9ae",
+            "hue": 0.507183908045977,
+            "id": "2454",
+            "isDark": false,
+            "isExterior": true,
+            "isInterior": true,
+            "lightness": 0.4549019607843137,
+            "lrv": 32.458,
+            "name": "Aquarium",
+            "red": 58,
+            "saturation": 0.5000000000000001,
+            "similarColors": Array [
+              "2636",
+              "2632",
+              "2461",
+              "2626",
+              "2468",
+              "2447",
+              "2475",
+              "2174",
+              "2173",
+              "2474",
+            ],
+            "storeStripLocator": "164-C5",
+          }
+        }
+        scene={
+          Object {
+            "height": 792,
+            "id": 1,
+            "variant_names": Array [
+              "day",
+              "night",
+            ],
+            "variants": Array [
+              Object {
+                "image": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1311}&qlt=92",
+                "name": "Living Room Day",
+                "normalizedImageValueCurve": "0 0.1 0.15 0.25 0.4 0.5 0.6 0.7 0.84 0.955 1",
+                "surfaces": Array [
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m1.svg",
+                    "id": 1,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=wall&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "main",
+                  },
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m2.svg",
+                    "id": 2,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=accent&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "main",
+                  },
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m3.svg",
+                    "id": 3,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=trim&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "trim",
+                  },
+                ],
+                "thumb": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=300}&qlt=80",
+                "variant_name": "day",
+              },
+              Object {
+                "image": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=1311}&qlt=92",
+                "name": "Living Room Night",
+                "normalizedImageValueCurve": "0 0.1 0.22 0.32 0.42 0.51 0.6 0.7 0.84 0.955 1",
+                "surfaces": Array [
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m1.svg",
+                    "id": 1,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=1280&req=object&opac=100&fmt=png8&object=wall&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "main",
+                  },
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m2.svg",
+                    "id": 2,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=1280&req=object&opac=100&fmt=png8&object=accent&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "main",
+                  },
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m3.svg",
+                    "id": 3,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=1280&req=object&opac=100&fmt=png8&object=trim&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "trim",
+                  },
+                ],
+                "thumb": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=300}&qlt=80",
+                "variant_name": "night",
+              },
+            ],
+            "width": 1311,
+          }
+        }
+      />
+      <div
+        className="color__comparison__color__info"
+        style={
+          Object {
+            "color": "#fff",
+          }
+        }
+      >
+        <span
+          className="color__comparison__color__info__number"
+        >
+          SW 6767 
+        </span>
+        <span
+          className="color__comparison__color__info__name"
+        >
+          Aquarium
+        </span>
+      </div>
+    </div>
+    <div
+      className="color__comparison__queue__wrapper"
+      key="7"
+      style={
+        Object {
+          "backgroundColor": "#c2e0e3",
+          "transform": "translateX(-0%)",
+        }
+      }
+    >
+      <div
+        className="color__comparison__background__color"
+      />
+      <StaticTintScene
+        color={
+          Object {
+            "blue": 227,
+            "brandKey": "SW",
+            "brandedCollectionNames": Array [
+              "Lifestyle",
+            ],
+            "colorFamilyNames": Array [
+              "Blue",
+            ],
+            "colorNumber": "6771",
+            "coordinatingColors": Object {
+              "coord1ColorId": "11236",
+              "coord2ColorId": "11284",
+              "whiteColorId": "2184",
+            },
+            "description": Array [
+              "Subdued",
+              "Muted",
+              "Brilliant",
+              "Radiant",
+            ],
+            "green": 224,
+            "hex": "#c2e0e3",
+            "hue": 0.5151515151515151,
+            "id": "2458",
+            "isDark": false,
+            "isExterior": true,
+            "isInterior": true,
+            "lightness": 0.8254901960784313,
+            "lrv": 70.619,
+            "name": "Bathe Blue",
+            "red": 194,
+            "saturation": 0.37078651685393244,
+            "similarColors": Array [
+              "2465",
+              "2178",
+              "2451",
+              "2185",
+              "2457",
+              "2192",
+              "2170",
+              "2486",
+              "2479",
+              "2472",
+            ],
+            "storeStripLocator": "165-C1",
+          }
+        }
+        scene={
+          Object {
+            "height": 792,
+            "id": 1,
+            "variant_names": Array [
+              "day",
+              "night",
+            ],
+            "variants": Array [
+              Object {
+                "image": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1311}&qlt=92",
+                "name": "Living Room Day",
+                "normalizedImageValueCurve": "0 0.1 0.15 0.25 0.4 0.5 0.6 0.7 0.84 0.955 1",
+                "surfaces": Array [
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m1.svg",
+                    "id": 1,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=wall&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "main",
+                  },
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m2.svg",
+                    "id": 2,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=accent&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "main",
+                  },
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m3.svg",
+                    "id": 3,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=trim&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "trim",
+                  },
+                ],
+                "thumb": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=300}&qlt=80",
+                "variant_name": "day",
+              },
+              Object {
+                "image": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=1311}&qlt=92",
+                "name": "Living Room Night",
+                "normalizedImageValueCurve": "0 0.1 0.22 0.32 0.42 0.51 0.6 0.7 0.84 0.955 1",
+                "surfaces": Array [
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m1.svg",
+                    "id": 1,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=1280&req=object&opac=100&fmt=png8&object=wall&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "main",
+                  },
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m2.svg",
+                    "id": 2,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=1280&req=object&opac=100&fmt=png8&object=accent&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "main",
+                  },
+                  Object {
+                    "hitArea": "/prism/images/scenes/rooms/2/m3.svg",
+                    "id": 3,
+                    "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=1280&req=object&opac=100&fmt=png8&object=trim&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                    "role": "trim",
+                  },
+                ],
+                "thumb": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=300}&qlt=80",
+                "variant_name": "night",
+              },
+            ],
+            "width": 1311,
+          }
+        }
+      />
+      <div
+        className="color__comparison__color__info"
+        style={
+          Object {
+            "color": "#000",
+          }
+        }
+      >
+        <span
+          className="color__comparison__color__info__number"
+        >
+          SW 6771 
+        </span>
+        <span
+          className="color__comparison__color__info__name"
+        >
+          Bathe Blue
+        </span>
+      </div>
+    </div>
+    <div
+      className="color__comparison__next-btn__wrapper"
+    >
+      <button
+        className="color__comparison__buttons "
+        onClick={[Function]}
+      >
+        <FontAwesomeIcon
+          border={false}
+          className=""
+          fixedWidth={false}
+          flip={null}
+          icon={
+            Object {
+              "icon": Array [
+                320,
+                512,
+                Array [],
+                "f054",
+                "M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z",
+              ],
+              "iconName": "chevron-right",
+              "prefix": "fas",
+            }
+          }
+          inverse={false}
+          listItem={false}
+          mask={null}
+          pull={null}
+          pulse={false}
+          rotation={null}
+          size={null}
+          spin={false}
+          symbol={false}
+          title=""
+          transform={null}
+        />
+      </button>
+    </div>
+  </div>
+</div>
+`;

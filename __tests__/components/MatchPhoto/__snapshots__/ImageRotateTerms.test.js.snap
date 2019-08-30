@@ -1,0 +1,148 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ImageRotateTerms with props should match snapshot with props 1`] = `
+<div
+  className="image-rotate-terms-modal__wrapper"
+>
+  <div
+    className="image-rotate-terms-modal__wrapper__container "
+  >
+    <div
+      className="image-rotate-terms-modal__wrapper__tools"
+    >
+      <div
+        className="image-rotate-terms-modal__wrapper__tools__message"
+      >
+        Use these arrows to rotate your image.
+      </div>
+      <button
+        className="image-rotate-terms-modal__wrapper__tools__rotate-arrow"
+        onClick={[Function]}
+        onFocus={[Function]}
+        onMouseDown={[Function]}
+        onMouseUp={[Function]}
+      >
+        <FontAwesomeIcon
+          border={false}
+          className=""
+          fixedWidth={false}
+          flip={null}
+          icon={
+            Array [
+              "fal",
+              "undo",
+            ]
+          }
+          inverse={false}
+          listItem={false}
+          mask={null}
+          pull={null}
+          pulse={false}
+          rotation={null}
+          size="xs"
+          spin={false}
+          symbol={false}
+          title=""
+          transform={null}
+        />
+      </button>
+      <button
+        className="image-rotate-terms-modal__wrapper__tools__rotate-arrow"
+        onClick={[Function]}
+        onFocus={[Function]}
+        onMouseDown={[Function]}
+        onMouseUp={[Function]}
+      >
+        <FontAwesomeIcon
+          border={false}
+          className=""
+          fixedWidth={false}
+          flip={null}
+          icon={
+            Array [
+              "fal",
+              "redo",
+            ]
+          }
+          inverse={false}
+          listItem={false}
+          mask={null}
+          pull={null}
+          pulse={false}
+          rotation={null}
+          size="xs"
+          spin={false}
+          symbol={false}
+          title=""
+          transform={null}
+        />
+      </button>
+    </div>
+    <div
+      className="image-rotate-terms-modal__wrapper__agree-terms"
+    >
+      <div>
+        <span>
+          <label
+            className="image-rotate-terms-modal__wrapper__agree-terms__checkbox-label"
+            onFocus={[Function]}
+            onKeyDown={[Function]}
+            onMouseDown={[Function]}
+            onMouseUp={[Function]}
+            tabIndex="0"
+          >
+            <FontAwesomeIcon
+              border={false}
+              className=""
+              fixedWidth={false}
+              flip={null}
+              icon={
+                Array [
+                  "fa",
+                  "dot-circle",
+                ]
+              }
+              inverse={false}
+              listItem={false}
+              mask={null}
+              pull={null}
+              pulse={false}
+              rotation={null}
+              size="lg"
+              spin={false}
+              style={
+                Object {
+                  "color": "#e5e5e5",
+                }
+              }
+              symbol={false}
+              title=""
+              transform={null}
+            />
+            <input
+              checked={false}
+              className="visually-hidden"
+              onChange={[Function]}
+              tabIndex="-1"
+              type="checkbox"
+              value="terms"
+            />
+          </label>
+        </span>
+         
+        <span
+          className="image-rotate-terms-modal__wrapper__agree-terms__text"
+        >
+          I accept Terms of Use
+        </span>
+      </div>
+    </div>
+    <button
+      className="image-rotate-terms-modal__wrapper__agree-terms__accept "
+      onClick={[Function]}
+    >
+      DONE
+    </button>
+  </div>
+</div>
+`;

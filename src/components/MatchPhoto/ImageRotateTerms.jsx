@@ -3,6 +3,20 @@ import React, { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 
+const baseClass = 'image-rotate-terms-modal'
+const wrapperClass = `${baseClass}__wrapper`
+const wrapperContainerClass = `${wrapperClass}__container`
+const wrapperContainerInactiveClass = `${wrapperContainerClass}--inactive`
+const wrapperToolsClass = `${wrapperClass}__tools`
+const wrapperToolsMessageClass = `${wrapperToolsClass}__message`
+const wrapperToolsRotateArrowClass = `${wrapperToolsClass}__rotate-arrow`
+const wrapperAgreeTermsClass = `${wrapperClass}__agree-terms`
+const wrapperAgreeTermsCheckboxLabelClass = `${wrapperAgreeTermsClass}__checkbox-label`
+const wrapperAgreeTermsTextClass = `${wrapperAgreeTermsClass}__text`
+const wrapperAgreeTermsAcceptClass = `${wrapperAgreeTermsClass}__accept`
+const wrapperAgreeTermsAcceptActiveClass = `${wrapperAgreeTermsAcceptClass}--active`
+const wrapperLoaderClass = `${wrapperClass}__loader`
+
 type Props = {
   rotateImage: Function,
   createColorPins: Function,
@@ -50,24 +64,24 @@ const ImageRotateTerms = ({ rotateImage, createColorPins, imageData }: Props) =>
   }
 
   return (
-    <div className={`image-rotate-terms-modal__wrapper`}>
-      <div className={`image-rotate-terms-modal__wrapper__container ${hideModal ? `image-rotate-terms-modal__wrapper__container--inactive` : ``}`}>
-        <div className={`image-rotate-terms-modal__wrapper__tools`}>
-          <div className={`image-rotate-terms-modal__wrapper__tools__message`}>
+    <div className={`${wrapperClass}`}>
+      <div className={`${wrapperContainerClass} ${hideModal ? `${wrapperContainerInactiveClass}` : ``}`}>
+        <div className={`${wrapperToolsClass}`}>
+          <div className={`${wrapperToolsMessageClass}`}>
             Use these arrows to rotate your image.
           </div>
           <button
             onMouseDown={mouseDownHandler}
             onMouseUp={mouseUpHandler}
             onFocus={focusHandler}
-            className={`image-rotate-terms-modal__wrapper__tools__rotate-arrow`} onClick={() => rotateImage(false)}><FontAwesomeIcon icon={['fal', 'undo']} size='xs' /></button>
+            className={`${wrapperToolsRotateArrowClass}`} onClick={() => rotateImage(false)}><FontAwesomeIcon icon={['fal', 'undo']} size='xs' /></button>
           <button
             onMouseDown={mouseDownHandler}
             onMouseUp={mouseUpHandler}
             onFocus={focusHandler}
-            className={`image-rotate-terms-modal__wrapper__tools__rotate-arrow`} onClick={() => rotateImage(true)}><FontAwesomeIcon icon={['fal', 'redo']} size='xs' /></button>
+            className={`${wrapperToolsRotateArrowClass}`} onClick={() => rotateImage(true)}><FontAwesomeIcon icon={['fal', 'redo']} size='xs' /></button>
         </div>
-        <div className={`image-rotate-terms-modal__wrapper__agree-terms`}>
+        <div className={`${wrapperAgreeTermsClass}`}>
           <div>
             <span>
               <label
@@ -75,23 +89,31 @@ const ImageRotateTerms = ({ rotateImage, createColorPins, imageData }: Props) =>
                 onMouseUp={mouseUpHandler}
                 onFocus={focusHandler}
                 onKeyDown={keyDownHandler}
-                tabIndex='0' className={`image-rotate-terms-modal__wrapper__agree-terms__checkbox-label`}>
+                tabIndex='0' className={`${wrapperAgreeTermsCheckboxLabelClass}`}>
                 {
                   (accetTerms) ? <FontAwesomeIcon icon={['fa', 'dot-circle']} style={{ color: '#2cabe1' }} size='lg' />
                     : <FontAwesomeIcon icon={['fa', 'dot-circle']} style={{ color: '#e5e5e5' }} size='lg' />
                 }
                 <input tabIndex='-1' className='visually-hidden' type='checkbox' value='terms' checked={accetTerms} onChange={handleChange} />
               </label>
-            </span> <span className={`image-rotate-terms-modal__wrapper__agree-terms__text`}>I accept Terms of Use</span>
+            </span> <span className={`${wrapperAgreeTermsTextClass}`}>I accept Terms of Use</span>
           </div>
         </div>
         <button
-          className={`image-rotate-terms-modal__wrapper__agree-terms__accept ${accetTerms ? `image-rotate-terms-modal__wrapper__agree-terms__accept--active` : ``}`}
+          className={`${wrapperAgreeTermsAcceptClass} ${accetTerms ? `${wrapperAgreeTermsAcceptActiveClass}` : ``}`}
           onClick={() => (accetTerms) ? clickHandler() : {}}>DONE</button>
       </div>
-      { hideModal && <div className={`image-rotate-terms-modal__wrapper__loader`}><CircleLoader /></div> }
+      { hideModal && <div className={`${wrapperLoaderClass}`}><CircleLoader /></div> }
     </div>
   )
 }
 
+export {
+  wrapperToolsMessageClass,
+  wrapperToolsRotateArrowClass,
+  wrapperAgreeTermsAcceptClass,
+  wrapperAgreeTermsCheckboxLabelClass,
+  wrapperAgreeTermsTextClass,
+  wrapperAgreeTermsAcceptActiveClass
+}
 export default ImageRotateTerms

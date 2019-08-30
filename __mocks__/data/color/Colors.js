@@ -77947,3 +77947,10 @@ export function getlpColorByNumber (colorNumber: string): Object {
   const lpColor = lp.colors[colorIndex][1]
   return lpColor
 }
+
+export function getlpColorsPredefined () {
+  let lp = {}
+  lp.colors = [allColors['1544'], allColors['1550'], allColors['1555'], allColors['1560'], allColors['2446'], allColors['2450'], allColors['2454'], allColors['2458']]
+  lp.activeColor = [allColors['1544']]
+  return lp
+}
