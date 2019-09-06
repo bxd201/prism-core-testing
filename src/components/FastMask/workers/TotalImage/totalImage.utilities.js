@@ -5,7 +5,7 @@ import mean from 'lodash/mean'
 
 import { significantFigures, geometricMean } from '../../../../shared/helpers/DataUtils'
 
-import { type NumericArray } from './totalImage.type'
+import { type NumericArray } from '../../../../shared/types/Common'
 
 import { OUTLIER_PCT, TGT_QUINTILE } from './totalImage.constants'
 
@@ -17,8 +17,8 @@ export function avgCommonFrom (arr: NumericArray, sampleReductionFactor: number 
     .groupBy()
     .mapValues(a => a.length)
     .thru(obj => Object.keys(obj).map(p => ({
-        value: p,
-        count: obj[p]
+      value: p,
+      count: obj[p]
     })))
     .sortBy('count')
     .map(p => toNumber(p.value))
