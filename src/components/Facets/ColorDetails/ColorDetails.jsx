@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import has from 'lodash/has'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
-import { injectIntl, FormattedMessage, type intlShape } from 'react-intl'
+import { injectIntl, FormattedMessage } from 'react-intl'
 import ReactGA from 'react-ga'
 import { LiveMessage } from 'react-aria-live'
 
@@ -43,7 +43,7 @@ type State = {
 }
 
 type ComponentProps = {
-  intl: intlShape
+  intl: any
 }
 
 type Props = StateProps & ComponentProps

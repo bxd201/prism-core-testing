@@ -9,7 +9,8 @@ import { loadImage, getImageRgbaData } from './FastMaskUtils'
 
 import { uploadImage } from '../../store/actions/user-uploads'
 
-import type { Color } from '../../shared/types/Colors'
+import { type WorkerMessage } from './workers/TotalImage/totalImage.types.js.flow'
+import { type Color } from '../../shared/types/Colors'
 
 import './FastMask.scss'
 import FileInput from '../FileInput/FileInput'
@@ -80,16 +81,19 @@ export function FastMask ({ color, uploadImage, uploads }: Props) {
           return maskImageData.data
         })
 
-        totalImageWorker.addEventListener('message', ({ data }) => {
+        totalImageWorker.addEventListener('message', (msg: WorkerMessage) => {
+          const { data } = msg
           const { type, payload } = data
 
           switch (type) {
             case 'STATUS': {
+              // $FlowIgnore - for some reason flow is choking on payload potentially having different types
               setPctComplete(payload.pct)
               break
             }
             case 'COMPLETE': {
               console.info('Image analysis data:', payload)
+              // $FlowIgnore - for some reason flow is choking on payload potentially having different types
               setMaskHunches(payload.maskBrightnessData)
               totalImageWorker.terminate()
               setTimeout(handleFinishProcessing, 500)
@@ -98,7 +102,8 @@ export function FastMask ({ color, uploadImage, uploads }: Props) {
           }
         })
 
-        totalImageWorker.postMessage({ image: userImageData.data,
+        totalImageWorker.postMessage({
+          image: userImageData.data,
           masks: maskData
         })
 

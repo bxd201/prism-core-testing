@@ -3,6 +3,7 @@ import clamp from 'lodash/clamp'
 import sortBy from 'lodash/sortBy'
 
 import { meanFrom, avgCommonFrom, medianFrom, sliceMeanFrom, runPerImagePixel } from './totalImage.utilities'
+import { type MaskData, type CompletePayload, type StatusPayload } from './totalImage.types.js.flow'
 import { significantFigures, geometricMean, mapAlongSine, compress } from '../../../../shared/helpers/DataUtils'
 import { tinycolor, getHueRangeNumber, getDegreeDistance } from '../../../../shared/helpers/ColorDataUtils'
 
@@ -22,7 +23,9 @@ import {
 declare var self: DedicatedWorkerGlobalScope;
 
 self.addEventListener('message', (e: Object) => {
-  const { image: img, masks } = e.data
+  const img: Uint8ClampedArray = e.data.image
+  const masks: Uint8ClampedArray[] = e.data.masks
+
   console.time('worker time elapsed')
 
   const surfaceCount = masks.length
@@ -40,7 +43,7 @@ self.addEventListener('message', (e: Object) => {
   let medianLightness = 0
   let avgCommonLightness = 0
   let lightRatio = 0
-  const maskBrightnessData: any[] = []
+  const maskBrightnessData: MaskData[] = []
 
   let brightnessMap: Uint8Array = new Uint8Array(numPixels) // ints
   let luminanceMap: Float32Array = new Float32Array(numPixels) // floats
@@ -338,50 +341,23 @@ self.addEventListener('message', (e: Object) => {
     setStatus(2 + i)
   })
 
-  // masks.forEach((mask, i) => {
-  //   const d = maskBrightnessData[i]
-
-  //   toExcel([
-  //     i,
-  //     d.meanBrightness,
-  //     ,
-  //     d.meanLightness,
-  //     ,
-  //     d.meanLuminance,
-  //     ,
-  //     d.sliceMeanBrightness.upper,
-  //     d.sliceMeanBrightness.middle,
-  //     d.sliceMeanBrightness.lower,
-  //     d.sliceMeanLightness.upper,
-  //     d.sliceMeanLightness.middle,
-  //     d.sliceMeanLightness.lower,
-  //     d.sliceMeanLuminance.upper,
-  //     d.sliceMeanLuminance.middle,
-  //     d.sliceMeanLuminance.lower,
-  //     d.avgCommonBrightness.mostCommon,
-  //     ,
-  //     ,
-  //     d.avgCommonBrightness.hiMid,
-  //     d.avgCommonBrightness.loMid,
-  //     d.avgCommonBrightness.leastCommon
-  //   ])
-  // })
+  const payload: CompletePayload = {
+    meanLuminance,
+    medianLuminance,
+    avgCommonLuminance,
+    meanBrightness,
+    medianBrightness,
+    avgCommonBrightness,
+    meanLightness,
+    medianLightness,
+    avgCommonLightness,
+    lightRatio,
+    maskBrightnessData
+  }
 
   self.postMessage({
     type: 'COMPLETE',
-    payload: {
-      meanLuminance,
-      medianLuminance,
-      avgCommonLuminance,
-      meanBrightness,
-      medianBrightness,
-      avgCommonBrightness,
-      meanLightness,
-      medianLightness,
-      avgCommonLightness,
-      lightRatio,
-      maskBrightnessData
-    }
+    payload
   }, maskBrightnessData.map(v => v.highlightMap).filter(v => v))
 
   console.timeEnd('worker time elapsed')
@@ -389,11 +365,13 @@ self.addEventListener('message', (e: Object) => {
 
 function getStatusMessage (total) {
   return (howMany) => {
+    const payload: StatusPayload = {
+      pct: significantFigures(howMany / total, 2)
+    }
+
     self.postMessage({
       type: 'STATUS',
-      payload: {
-        pct: significantFigures(howMany / total, 2)
-      }
+      payload
     })
   }
 }

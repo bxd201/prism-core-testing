@@ -3,7 +3,7 @@ import React, { useEffect } from 'react'
 
 type Props = {
   variables: Object,
-  children: Node
+  children: any
 }
 
 function CSSVariableApplicator ({ variables, children }: Props) {
