@@ -4,6 +4,27 @@ exports[`snapshot testing for LivePalette component  LivePalette component shoul
 <div
   className="prism-live-palette"
 >
+  <LivePalletteModal
+    isActive={false}
+  />
+  <div
+    className="prism-live-palette__header"
+  >
+    <span
+      className="prism-live-palette__header__name"
+    >
+      <FormattedMessage
+        id="PALETTE_TITLE"
+        values={Object {}}
+      />
+    </span>
+    <button
+      className="prism-live-palette__header__compare-button"
+      onClick={[Function]}
+    >
+      Compare Color
+    </button>
+  </div>
   <div
     className="prism-live-palette__list"
   >
@@ -55,6 +76,7 @@ exports[`snapshot testing for LivePalette component  LivePalette component shoul
         }
       }
       index={0}
+      isCompareColor={false}
       key="1544"
       moveColor={[Function]}
       node={
@@ -116,6 +138,7 @@ exports[`snapshot testing for LivePalette component  LivePalette component shoul
         }
       }
       index={1}
+      isCompareColor={false}
       key="2446"
       moveColor={[Function]}
       node={

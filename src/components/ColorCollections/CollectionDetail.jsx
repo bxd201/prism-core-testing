@@ -86,7 +86,7 @@ export const CollectionDetail = (props: Props) => {
     <div className={`${wrapper}`}>
       <div className={`${collectionInfo}`}>
         <img className={`${collectionCover}`} alt='' src={`${collectionDetailData.img}`} />
-        <div className={`${collectionDescription}`}>{collectionDetailData.name}</div>
+        <div className={`${collectionDescription}`}>{collectionDetailData.description}</div>
         <a href='https://' className={`${collectionLearnMore}`}>LEARN MORE ABOUT THIS COLLECTION</a>
       </div>
       <div className={`${collectionColorList}`}>

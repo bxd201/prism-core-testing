@@ -1,32 +1,139 @@
 // @flow
-import React, { useState, useEffect } from 'react'
-import CollectionsHeaderWrapper from '../CollectionsHeaderWrapper/CollectionsHeaderWrapper'
 import CollectionDetail from './CollectionDetail'
+import CollectionsHeaderWrapper from '../CollectionsHeaderWrapper/CollectionsHeaderWrapper'
 import ColorCollectionsTab from './ColorCollectionsTab'
-import { ColorListWithCarousel } from '../Carousel/Carousel'
-import { getColorCollectionsData, allCollectionsData, expertColorsData, collectionTabs } from '../Carousel/data'
-import * as Colors from '../../../__mocks__/data/color/Colors'
-import './ColorCollections.scss'
 import ExpertColorDetails from '../Carousel/ExpertColorDetails'
+import React, { useState, useEffect } from 'react'
+import WithConfigurationContext from '../../contexts/ConfigurationContext/WithConfigurationContext'
+
+import { ColorListWithCarousel } from '../Carousel/Carousel'
+import { connect } from 'react-redux'
+import { expertColorsData } from '../Carousel/data'
+import { injectIntl } from 'react-intl'
+import { loadCollectionSummaries as loadCS } from '../../store/actions/collectionSummaries'
+import { loadColors } from '../../store/actions/loadColors'
+
+import './ColorCollections.scss'
 
 type Props = {
-  showBack: Function,
+  categories: Object,
+  colorMap: Object,
+  config: Object,
+  intl: Object,
+  isExpertColor: boolean,
   isShowBack: boolean,
+  loadColors: Function,
+  loadCS: Function,
   setHeader: Function,
-  isExpertColor: boolean
+  showBack: Function,
+
 }
 
 const baseClass = 'color-collections'
 const wrapper = `${baseClass}__wrapper`
-const collectionsList = `${baseClass}__collections-list`
-const colors = Colors.getAllColors()
+export const collectionsList = `${baseClass}__collections-list`
 
-function ColorCollections (props: Props) {
+ColorCollections.collectionData = []
+
+ColorCollections.getSummary = function getSummary (id, props) {
+  const {
+    name,
+    thumbUrl: img,
+    description,
+    colorNumbers
+    // ...rest // has a bunch of stuff
+
+  } = props.summaries.data[props.summaries.idToIndexHash[id]]
+
+  return {
+    collections: colorNumbers
+      .map(colorNumber => props
+        .colorMap[props.colorNumberToIdHash[colorNumber]]
+      ).filter(collection => collection),
+    description,
+    img,
+    name
+  }
+}
+
+ColorCollections.getSummariesForTab = function getSummariesForTab (
+  tabId, props
+) {
+  const category = props
+    .categories
+    .data[props.categories.idToIndexHash[tabId]]
+
+  if (category) {
+    return category.summaryIds.reduce(
+      (summaries, summaryId) => {
+        summaries.push(ColorCollections.getSummary(summaryId, props))
+        return summaries
+      },
+      []
+    )
+  }
+
+  return []
+}
+
+ColorCollections.updateCollectionData = function updateCollectionData ({
+  data = expertColorsData,
+  props = {},
+  tabId
+}) {
+  ColorCollections.collectionData = (props.isExpertColor)
+    ? data
+    : ColorCollections.getSummariesForTab(tabId, props)
+}
+
+export function ColorCollections (props: Props) {
+  const [hasColors, setHasColors] = useState(!!Object.keys(props.colorMap).length)
+
+  // TODO:noah.hall
+  // wtf do we show while loading?
+  // check with cody for loading screen
+  const [csLoaded, setCsLoaded] = useState(false)
+  useEffect(() => {
+    if (!csLoaded) {
+      setCsLoaded(true)
+      props.loadCS()
+    }
+  })
+
+  const [colorsRequested, setColorsRequested] = useState(false)
+  // load colors if dont exist
+  if (!colorsRequested && !hasColors) {
+    props.loadColors(props.config.brandId, { language: props.intl.locale })
+    setColorsRequested(true)
+  }
+
   const { isShowBack, showBack, setHeader, isExpertColor } = props
-  const [tabIdShow, showTab] = useState('tab1')
+  const [tabIdShow, showTab] = useState('')
   const [collectionDataDetails, updateCollectionDataDetails] = useState({})
-  const collectionData = (isExpertColor) ? expertColorsData : getColorCollectionsData(colors, allCollectionsData, tabIdShow)
-  const headerContent = (isExpertColor) ? 'Expert Color Picks' : 'Color Collections'
+
+  const showTabHandler = (tabId: string, isClickTab: boolean) => {
+    showTab((prevTab) => {
+      if (prevTab !== tabId) ColorCollections.updateCollectionData({ tabId, props })
+
+      return tabId
+    })
+  }
+
+  // initial render, selected tab unknown
+  // set selected tab
+  if (!tabIdShow && props.categories.data.length) {
+    showTabHandler(props.categories.data[0].id)
+  }
+  // subsequent renders, tab known
+  // once colors exist, update collection only once
+  if (tabIdShow && !hasColors && Object.keys(props.colorMap).length) {
+    setHasColors(true)
+    ColorCollections.updateCollectionData({ tabId: tabIdShow, props })
+  }
+
+  const headerContent = (isExpertColor)
+    ? 'Expert Color Picks'
+    : 'Color Collections'
 
   useEffect(() => {
     if (!isShowBack) {
@@ -35,7 +142,9 @@ function ColorCollections (props: Props) {
   }, [isShowBack])
 
   if (isShowBack === true) {
-    return (isExpertColor) ? <ExpertColorDetails expertColors={collectionDataDetails} /> : <CollectionDetail collectionDetailData={collectionDataDetails} />
+    return (isExpertColor)
+      ? <ExpertColorDetails expertColors={collectionDataDetails} />
+      : <CollectionDetail collectionDetailData={collectionDataDetails} />
   }
 
   const onClickHandler = (collectionSummaryData: Object) => {
@@ -46,22 +155,68 @@ function ColorCollections (props: Props) {
     updateCollectionDataDetails(collectionSummaryData)
   }
 
-  const showTabHandler = (tabId: string, isClickTab: boolean) => {
-    showTab(tabId)
-  }
-
   return (
     <div className={`${wrapper}`}>
-      {(!isExpertColor) && <ColorCollectionsTab collectionTabs={collectionTabs} showTab={showTabHandler} tabIdShow={tabIdShow} />}
-      <div className={`${collectionsList}`}>
-        <ColorListWithCarousel defaultItemsPerView={8} isInfinity={false} key={JSON.stringify(collectionData)} data={collectionData} getSummaryData={onClickHandler} isExpertColor={isExpertColor} />
-      </div>
+      {
+        (!isExpertColor) &&
+          <ColorCollectionsTab
+            collectionTabs={props.categories.data}
+            showTab={showTabHandler}
+            tabIdShow={tabIdShow}
+          />
+      }
+      {
+        <div className={`${collectionsList}`}>
+          <ColorListWithCarousel
+            defaultItemsPerView={8}
+            isInfinity={false}
+            key={tabIdShow}
+            data={ColorCollections.collectionData}
+            getSummaryData={onClickHandler}
+            isExpertColor={isExpertColor}
+          />
+        </div>
+      }
     </div>
   )
 }
 
-export {
-  collectionsList,
-  ColorCollections
+const mapStateToProps = (state) => {
+  const {
+    collectionSummaries: {
+      categories,
+      summaries
+    },
+    colors: {
+      items: {
+        colorMap = {}
+      }
+    }
+  } = state
+
+  const colorNumberToIdHash = Object.entries(colorMap).reduce(
+    (hash, [key, value]) => {
+      hash[value.colorNumber] = key
+      return hash
+    },
+    {}
+  )
+
+  return {
+    categories,
+    summaries,
+    colorMap,
+    colorNumberToIdHash
+  }
 }
-export default CollectionsHeaderWrapper(ColorCollections)
+
+const mapDispatchToProps = (dispatch: Function) => {
+  return {
+    loadCS () { dispatch(loadCS()) },
+    loadColors (brandId, opts) { dispatch(loadColors(brandId, opts)) }
+  }
+}
+export default CollectionsHeaderWrapper(connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(injectIntl(WithConfigurationContext(ColorCollections))))

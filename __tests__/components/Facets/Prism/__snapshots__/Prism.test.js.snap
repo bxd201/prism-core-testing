@@ -2,32 +2,56 @@
 
 exports[`Prism routes should match snapshot 1`] = `
 <Fragment>
-  <withRouter(PrismNav) />
-  <hr />
-  <Route
-    component={[Function]}
-    exact={true}
-    path="/"
-  />
-  <Route
-    component={[Function]}
-    exact={true}
-    path="/active"
-  />
-  <Route
-    component={[Function]}
-    path="/active/color-wall(/.*)?"
-  />
-  <Route
-    component={[Function]}
-    exact={true}
-    path="/active/color/:colorId/:colorSEO"
-  />
-  <Route
-    component={[Function]}
-    exact={true}
-    path="/fast-mask"
-  />
-  <Connect(LivePalette) />
+  <div
+    className="prism__root-container"
+  >
+    <Connect(withRouter(PrismNav)) />
+    <hr />
+    <div
+      className="prism__root-wrapper"
+    >
+      <Route
+        component={[Function]}
+        exact={true}
+        path="/"
+      />
+      <Route
+        component={[Function]}
+        exact={true}
+        path="/active"
+      />
+      <Route
+        component={[Function]}
+        path="/active/color-wall(/.*)?"
+      />
+      <Route
+        component={[Function]}
+        path="/color-from-image"
+      />
+      <Route
+        component={[Function]}
+        path="/color-collections"
+      />
+      <Route
+        component={[Function]}
+        path="/expert-colors"
+      />
+      <Route
+        component={[Function]}
+        path="/match-photo"
+      />
+      <Route
+        component={[Function]}
+        exact={true}
+        path="/active/color/:colorId/:colorSEO"
+      />
+      <Route
+        component={[Function]}
+        exact={true}
+        path="/fast-mask"
+      />
+    </div>
+    <Connect(LivePalette) />
+  </div>
 </Fragment>
 `;

@@ -18,6 +18,30 @@ exports[`PrismNav component with props should match snapshot 1`] = `
     className="prism-nav-btn "
     onClick={[Function]}
   >
+    Color From Image
+  </button>
+  <button
+    className="prism-nav-btn "
+    onClick={[Function]}
+  >
+    Color Collections
+  </button>
+  <button
+    className="prism-nav-btn "
+    onClick={[Function]}
+  >
+    Expert Colors
+  </button>
+  <button
+    className="prism-nav-btn "
+    onClick={[Function]}
+  >
+    Match Photo
+  </button>
+  <button
+    className="prism-nav-btn "
+    onClick={[Function]}
+  >
     Fast Mask
   </button>
 </Fragment>

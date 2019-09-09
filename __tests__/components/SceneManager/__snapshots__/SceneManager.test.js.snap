@@ -4,6 +4,7 @@ exports[`snapshot testing should get correct snapshot 1`] = `
 <div
   className="prism-scene-manager"
 >
+  <ColorPickerSlide />
   <div
     className="prism-scene-manager__block prism-scene-manager__block--tabs"
   >

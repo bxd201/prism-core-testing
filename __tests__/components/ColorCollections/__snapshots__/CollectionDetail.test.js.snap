@@ -14,9 +14,7 @@ exports[`CollectionDetail should match snapshot 1`] = `
     />
     <div
       className="collection-detail__description"
-    >
-      2019 Aficionado
-    </div>
+    />
     <a
       className="collection-detail__learn-more"
       href="https://"

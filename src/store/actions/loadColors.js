@@ -1,11 +1,14 @@
 // @flow
 import axios from 'axios'
 
-import { COLOR_CHUNKS_ENDPOINT, COLOR_BRIGHTS_ENDPOINT, COLOR_FAMILY_NAMES_ENDPOINT, COLORS_ENDPOINT } from '../../constants/endpoints'
-
 import { generateBrandedEndpoint } from '../../shared/helpers/DataUtils'
-
 import { type Color, type FamilyStructure } from '../../shared/types/Colors'
+import {
+  COLOR_BRIGHTS_ENDPOINT,
+  COLOR_CHUNKS_ENDPOINT,
+  COLOR_FAMILY_NAMES_ENDPOINT,
+  COLORS_ENDPOINT
+} from '../../constants/endpoints'
 
 export const REQUEST_COLORS: string = 'REQUEST_COLORS'
 const requestColors = () => {

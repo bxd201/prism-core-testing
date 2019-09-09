@@ -1,7 +1,9 @@
 // @flow
+//
 import React, { useState } from 'react'
-import './ColorCollections.scss'
 import type { ColorCollectionsTabs } from '../../shared/types/Colors'
+
+import './ColorCollections.scss'
 
 type Props = {
   collectionTabs: ColorCollectionsTabs,
@@ -29,20 +31,44 @@ function ColorCollectionsTab (props: Props) {
   return (
     <div className={`${tabListSelect}`}>
       <span className={`${tabListHeading}`}>Choose a Collection</span>
-      <span className={`${tabListDropdownMobile}`} tabIndex='-1' role='button' onKeyDown={() => {}} onClick={() => showTabListMobile(!tabListMobileShow)}>{tabShowName}</span>
-      <ul className={`${tabList} ${(tabListMobileShow) ? `${tabListActive}` : `${tabListInactive}`}`}>
-        {collectionTabs.map((tab, id) => {
-          return (
-            <li data-testid={`${tab.id}`} role='presentation' onKeyDown={() => {}} className={`${tabListItem} ${(tab.id === tabIdShow) ? `${tabListItemActive}` : ``}`} key={tab.id} onClick={() => {
-              if (tab.id !== tabIdShow) {
-                showTab(tab.id, true)
-              }
-              showTabListMobile(!tabListMobileShow)
-            }}>
-              {tab.tabName}
-            </li>
-          )
-        })}
+
+      <span
+        className={`${tabListDropdownMobile}`}
+        tabIndex='-1'
+        role='button'
+        onKeyDown={() => {}}
+        onClick={() => showTabListMobile(!tabListMobileShow)}>{tabShowName}
+      </span>
+
+      <ul
+        className={`${tabList} ${(tabListMobileShow)
+          ? `${tabListActive}`
+          : `${tabListInactive}`}`}
+      >
+        {
+          collectionTabs.map((tab, id) => {
+            return (
+              <li
+                data-testid={`${tab.id}`}
+                role='presentation'
+                onKeyDown={() => {}}
+                className={`${tabListItem} ${(tab.id === tabIdShow)
+                  ? `${tabListItemActive}`
+                  : ''}`
+                }
+                key={tab.id}
+                onClick={() => {
+                  if (tab.id !== tabIdShow) {
+                    showTab(tab.id, true)
+                  }
+                  showTabListMobile(!tabListMobileShow)
+                }}
+              >
+                {tab.tabName}
+              </li>
+            )
+          })
+        }
       </ul>
     </div>
   )

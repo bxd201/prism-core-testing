@@ -5,7 +5,7 @@ import { CollectionDetail, collectionCover, collectionDescription, triggerPrevio
 import { getColorCollectionsData, allCollectionsData } from 'src/components/Carousel/data'
 import * as Colors from '__mocks__/data/color/Colors'
 import { AutoSizer } from 'react-virtualized'
-import ColorWallSwatch from '../../../src/components/Facets/ColorWall/ColorWallSwatch/ColorWallSwatch';
+import ColorWallSwatch from '../../../src/components/Facets/ColorWall/ColorWallSwatch/ColorWallSwatch'
 
 const colors = Colors.getAllColors()
 const tabIdShow = 'tab1'
@@ -35,10 +35,6 @@ describe('CollectionDetail', () => {
   it('should render img with the src as in collectionDetailData', () => {
     expect(collectionDetail.find(`img.${collectionCover}`).exists()).toBe(true)
     expect(collectionDetail.find(`img.${collectionCover}`).prop('src')).toEqual(defaultProps.collectionDetailData.img)
-  })
-
-  it('should render collection description as in collectionDetailData', () => {
-    expect(collectionDetail.find(`div.${collectionDescription}`).contains(defaultProps.collectionDetailData.name)).toBe(true)
   })
 
   it('should render previous trigger div', () => {

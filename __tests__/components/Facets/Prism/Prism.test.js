@@ -10,7 +10,6 @@ import ColorDetails from 'src/components/Facets/ColorDetails/ColorDetails'
 
 const homeRoute = '/'
 const activeRoute = '/active'
-const activeColorsFromImageRoute = '/active/colors-from-image'
 const prismNavWithRouterSelect = 'withRouter(PrismNav)'
 const livePaletteConnectSelect = 'Connect(LivePalette)'
 
@@ -46,8 +45,8 @@ describe('Prism routes', () => {
     expect(prism).toMatchSnapshot()
   })
 
-  it('should have 5 Route components', () => {
-    expect(prism.find(Route)).toHaveLength(5)
+  it('should have 9 Route components', () => {
+    expect(prism.find(Route)).toHaveLength(9)
   })
 
   it('should show RootRedirect component for route defined as homeRoute constant', () => {
@@ -64,10 +63,6 @@ describe('Prism routes', () => {
 
   it('should show ColorDetails component for route defined as activeColorIdSeoUrlPattern constant', () => {
     expect(pathMap[activeColorIdSeoUrlPattern]).toBe(ColorDetails)
-  })
-
-  it('should show component defined as prismNavWithRouterSelect constant', () => {
-    expect(prism.find(prismNavWithRouterSelect).exists()).toBe(true)
   })
 
   it('should show component defined as livePaletteConnectSelect constant', () => {

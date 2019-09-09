@@ -305,4 +305,7 @@ const mapDispatchToProps = (dispatch: Function) => {
   }
 }
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(injectIntl(WithConfigurationContext(ColorWall))))
+export default withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(injectIntl(
+    WithConfigurationContext(ColorWall)
+  )))

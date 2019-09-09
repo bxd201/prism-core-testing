@@ -18,7 +18,8 @@ const getPrismNav = (props) => {
   let defaultProps = {
     history: historyMock,
     location: locationMock,
-    match: matchMock
+    match: matchMock,
+    toggleCompareColor: () => null
   }
 
   let newProps = Object.assign({}, defaultProps, props)
@@ -35,10 +36,6 @@ describe('PrismNav component with props', () => {
 
   it('should match snapshot', () => {
     expect(prismNav).toMatchSnapshot()
-  })
-
-  it('should have 3 buttons', () => {
-    expect(prismNav.find('button.prism-nav-btn')).toHaveLength(3)
   })
 
   it(`should have first button with text defined as ${firstButtonText} constant`, () => {
