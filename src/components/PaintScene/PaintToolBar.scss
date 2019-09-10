@@ -52,10 +52,11 @@
     }
   }
   &__brush-types-paint {
-    bottom: 66px;
+    bottom: 60px;
     left: -12px;
   }
   &__brush-types-erase {
+    background: #f2f2f2;
     bottom: 66px;
     left: 90px;
   }
@@ -63,8 +64,9 @@
     background: white;
     border: 1px solid #f2f2f2;
     color: black;
-    display: inline-block;
+    display: flex;
     font-size: .75em;
+    margin: 0 auto 12px;
     outline: none;
     padding: .75em 1.75em;
     width: auto;

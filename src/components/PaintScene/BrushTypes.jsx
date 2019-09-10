@@ -15,9 +15,12 @@ const brushButtonTinyClass = `${brushButtonClass}--tiny`
 const brushButtonActiveClass = `${brushButtonClass}--active`
 
 const largeSize = 38
-const mediumSize = 34
-const smallSize = 30
-const tinySize = 26
+const mediumSize = 30
+const smallSize = 22
+const tinySize = 14
+
+const roundShape = 'round'
+const squareShape = 'square'
 
 type Props = {
   activeWidth: number,
@@ -29,16 +32,16 @@ export function BrushTypes ({ activeWidth, activeShape, setBrushShapeSize }: Pro
   return (
     <div className={`${wrapperClass}`}>
       <div className={`${circleShapesContainerClass}`}>
-        <button className={`${brushButtonClass} ${brushButtonCircleClass} ${brushButtonLargeClass} ${(activeWidth === largeSize && activeShape === 'round') ? brushButtonActiveClass : ``}`} onClick={() => setBrushShapeSize('round', largeSize)} />
-        <button className={`${brushButtonClass} ${brushButtonCircleClass} ${brushButtonMediumClass} ${(activeWidth === mediumSize && activeShape === 'round') ? brushButtonActiveClass : ``}`} onClick={() => setBrushShapeSize('round', mediumSize)} />
-        <button className={`${brushButtonClass} ${brushButtonCircleClass} ${brushButtonSmallClass} ${(activeWidth === smallSize && activeShape === 'round') ? brushButtonActiveClass : ``}`} onClick={() => setBrushShapeSize('round', smallSize)} />
-        <button className={`${brushButtonClass} ${brushButtonCircleClass} ${brushButtonTinyClass} ${(activeWidth === tinySize && activeShape === 'round') ? brushButtonActiveClass : ``}`} onClick={() => setBrushShapeSize('round', tinySize)} />
+        <button className={`${brushButtonClass} ${brushButtonCircleClass} ${brushButtonLargeClass} ${(activeWidth === largeSize && activeShape === roundShape) ? brushButtonActiveClass : ``}`} onClick={() => setBrushShapeSize(roundShape, largeSize)} />
+        <button className={`${brushButtonClass} ${brushButtonCircleClass} ${brushButtonMediumClass} ${(activeWidth === mediumSize && activeShape === roundShape) ? brushButtonActiveClass : ``}`} onClick={() => setBrushShapeSize(roundShape, mediumSize)} />
+        <button className={`${brushButtonClass} ${brushButtonCircleClass} ${brushButtonSmallClass} ${(activeWidth === smallSize && activeShape === roundShape) ? brushButtonActiveClass : ``}`} onClick={() => setBrushShapeSize(roundShape, smallSize)} />
+        <button className={`${brushButtonClass} ${brushButtonCircleClass} ${brushButtonTinyClass} ${(activeWidth === tinySize && activeShape === roundShape) ? brushButtonActiveClass : ``}`} onClick={() => setBrushShapeSize(roundShape, tinySize)} />
       </div>
       <div className={`${squareShapesContainerClass}`}>
-        <button className={`${brushButtonClass} ${brushButtonLargeClass} ${(activeWidth === largeSize && activeShape === 'square') ? brushButtonActiveClass : ``}`} onClick={() => setBrushShapeSize('square', largeSize)} />
-        <button className={`${brushButtonClass} ${brushButtonMediumClass} ${(activeWidth === mediumSize && activeShape === 'square') ? brushButtonActiveClass : ``}`} onClick={() => setBrushShapeSize('square', mediumSize)} />
-        <button className={`${brushButtonClass} ${brushButtonSmallClass} ${(activeWidth === smallSize && activeShape === 'square') ? brushButtonActiveClass : ``}`} onClick={() => setBrushShapeSize('square', smallSize)} />
-        <button className={`${brushButtonClass} ${brushButtonTinyClass} ${(activeWidth === tinySize && activeShape === 'square') ? brushButtonActiveClass : ``}`} onClick={() => setBrushShapeSize('square', tinySize)} />
+        <button className={`${brushButtonClass} ${brushButtonLargeClass} ${(activeWidth === largeSize && activeShape === squareShape) ? brushButtonActiveClass : ``}`} onClick={() => setBrushShapeSize(squareShape, largeSize)} />
+        <button className={`${brushButtonClass} ${brushButtonMediumClass} ${(activeWidth === mediumSize && activeShape === squareShape) ? brushButtonActiveClass : ``}`} onClick={() => setBrushShapeSize(squareShape, mediumSize)} />
+        <button className={`${brushButtonClass} ${brushButtonSmallClass} ${(activeWidth === smallSize && activeShape === squareShape) ? brushButtonActiveClass : ``}`} onClick={() => setBrushShapeSize(squareShape, smallSize)} />
+        <button className={`${brushButtonClass} ${brushButtonTinyClass} ${(activeWidth === tinySize && activeShape === squareShape) ? brushButtonActiveClass : ``}`} onClick={() => setBrushShapeSize(squareShape, tinySize)} />
       </div>
     </div>
   )

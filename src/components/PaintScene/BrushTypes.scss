@@ -8,6 +8,18 @@
     text-align: center;
     transition: opacity 0.3s ease-in-out;
     width: auto;
+    &:after {
+      border: 4px solid transparent;
+      border-top-color: #f2f2f2;
+      border-top-style: solid;
+      bottom: -8px;
+      content: '';
+      display: inline-block;
+      left: 50%;
+      margin-left: -4px;
+      position: absolute;
+      transition: border-color 0.3s;
+    }
   }
   &__circle-shapes-container {
     align-items: center;

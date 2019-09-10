@@ -42,15 +42,35 @@
   &__paint-brush {
     border: 1px solid #c8c8c8;
     cursor: none;
-    height: 2.5em;
     position: absolute;
-    width: 2.5em;
     z-index: 1000;
-    &--circle {
+    &--large {
+      height: 2.5em;
+      width: 2.5em;
+    }
+    &--medium {
+      height: 2em;
+      width: 2em;
+    }
+    &--small {
+      height: 1.5em;
+      width: 1.5em;
+    }
+    &--tiny {
+      height: 1em;
+      width: 1em;
+    }
+    &--large-circle {
       border-radius: 2.5em;
     }
-    &--square {
-      border-radius: 0;
+    &--medium-circle {
+      border-radius: 2em;
+    }
+    &--small-circle {
+      border-radius: 1.5em;
+    }
+    &--tiny-circle {
+      border-radius: 1em;
     }
   }
 }

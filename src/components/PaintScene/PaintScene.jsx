@@ -14,8 +14,26 @@ const canvasSecondClass = `${baseClass}__canvas-second`
 const imageClass = `${baseClass}__image`
 const paintToolsClass = `${baseClass}__paint-tools`
 const paintBrushClass = `${baseClass}__paint-brush`
-const paintBrushCircleClass = `${paintBrushClass}--circle`
-const paintBrushSquareClass = `${paintBrushClass}--square`
+const paintBrushLargeClass = `${paintBrushClass}--large`
+const paintBrushMediumClass = `${paintBrushClass}--medium`
+const paintBrushSmallClass = `${paintBrushClass}--small`
+const paintBrushTinyClass = `${paintBrushClass}--tiny`
+const paintBrushLargeCircleClass = `${paintBrushClass}--large-circle`
+const paintBrushMediumCircleClass = `${paintBrushClass}--medium-circle`
+const paintBrushSmallCircleClass = `${paintBrushClass}--small-circle`
+const paintBrushTinyCircleClass = `${paintBrushClass}--tiny-circle`
+
+const brushLargeWidth = 38
+const brushMediumWidth = 30
+const brushSmallWidth = 22
+const brushTinyWidth = 14
+
+const brushRoundShape = 'round'
+const brushSquareShape = 'square'
+
+const paintAreaTool = 'paintArea'
+const paintBrushTool = 'paintBrush'
+const eraseTool = 'erase'
 
 type ComponentProps = {
   imageUrl: string,
@@ -52,15 +70,15 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
   state = {
     imageStatus: 'loading',
-    activeTool: 'paintArea',
+    activeTool: paintAreaTool,
     position: { left: 0, top: 0 },
-    paintBrushWidth: 38,
+    paintBrushWidth: brushLargeWidth,
     isDragging: false,
     paintBrushPathCoordinates: [],
-    paintBrushShape: 'round',
+    paintBrushShape: brushRoundShape,
     paintedRegions: [],
-    eraseBrushShape: 'round',
-    eraseBrushWidth: 38
+    eraseBrushShape: brushRoundShape,
+    eraseBrushWidth: brushLargeWidth
   }
 
   constructor (props: ComponentProps) {
@@ -157,13 +175,13 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   mouseMoveHandler = (e: Object) => {
     e.stopPropagation()
     const { clientX, clientY } = e
-    const { activeTool, paintBrushWidth, isDragging, paintBrushPathCoordinates } = this.state
+    const { activeTool, paintBrushWidth, isDragging, paintBrushPathCoordinates, eraseBrushWidth } = this.state
     const canvasOffset = this.getCanvasOffset()
 
-    if (activeTool === 'paintBrush' || activeTool === 'erase') {
-      const paintBrushCircleHalfWidth = paintBrushWidth / 2
-      const leftOffset = clientX - canvasOffset.x - paintBrushCircleHalfWidth
-      const topOffset = clientY - canvasOffset.y - paintBrushCircleHalfWidth
+    if (activeTool === paintBrushTool || activeTool === eraseTool) {
+      const paintBrushHalfWidth = (activeTool === paintBrushTool) ? paintBrushWidth / 2 : eraseBrushWidth / 2
+      const leftOffset = clientX - canvasOffset.x - paintBrushHalfWidth
+      const topOffset = clientY - canvasOffset.y - paintBrushHalfWidth
       const position = { left: leftOffset, top: topOffset }
       this.setState({ position })
 
@@ -201,14 +219,14 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     e.stopPropagation()
     const { clientX, clientY } = e
     const canvasOffset = this.getCanvasOffset()
-    const { isDragging, paintBrushWidth, paintedRegions, paintBrushPathCoordinates } = this.state
+    const { isDragging, paintBrushWidth, paintedRegions, paintBrushPathCoordinates, eraseBrushWidth, activeTool } = this.state
 
     if (isDragging) {
       this.setState({ isDragging: false })
     } else {
-      const paintBrushCircleHalfWidth = paintBrushWidth / 2
-      const leftOffset = clientX - canvasOffset.x - paintBrushCircleHalfWidth
-      const topOffset = clientY - canvasOffset.y - paintBrushCircleHalfWidth
+      const paintBrushHalfWidth = (activeTool === paintBrushTool) ? paintBrushWidth / 2 : eraseBrushWidth / 2
+      const leftOffset = clientX - canvasOffset.x - paintBrushHalfWidth
+      const topOffset = clientY - canvasOffset.y - paintBrushHalfWidth
       const position = { left: leftOffset, top: topOffset }
       this.setState({ position })
     }
@@ -221,27 +239,27 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   }
 
   drawPaintBrushPoint = (point: Object, lastPoint: Object) => {
-    const { paintBrushWidth, activeTool } = this.state
+    const { paintBrushWidth, activeTool, eraseBrushWidth, paintBrushShape, eraseBrushShape } = this.state
     const previousPoint = lastPoint || point
 
-    if (activeTool === 'erase') {
-      this.drawPaintBrushPath(this.CFICanvasContext2, point, previousPoint, paintBrushWidth, 'destination-out')
+    if (activeTool === eraseTool) {
+      this.drawPaintBrushPath(this.CFICanvasContext2, point, previousPoint, eraseBrushWidth, eraseBrushShape, 'destination-out')
     } else {
-      this.drawPaintBrushPath(this.CFICanvasContext2, point, previousPoint, paintBrushWidth, 'source-over')
+      this.drawPaintBrushPath(this.CFICanvasContext2, point, previousPoint, paintBrushWidth, paintBrushShape, 'source-over')
     }
   }
 
-  drawPaintBrushPath = (context: Object, to: Object, from: Object, width: number, operation: string) => {
+  drawPaintBrushPath = (context: Object, to: Object, from: Object, width: number, brushShape: string, operation: string) => {
     const { lpActiveColor } = this.props
-    const { paintBrushShape, activeTool } = this.state
+    const { activeTool } = this.state
     const lpActiveColorRGB = `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})`
     context.globalCompositeOperation = operation
-    context.fillStyle = (activeTool === 'erase') ? `rgba(255, 255, 255, 1)` : lpActiveColorRGB
+    context.fillStyle = (activeTool === eraseTool) ? `rgba(255, 255, 255, 1)` : lpActiveColorRGB
     const radius = Math.round(0.5 * width)
 
     this.CFICanvasContext2.beginPath()
     drawAcrossLine(this.CFICanvasContext2, to, from, (ctx, x, y) => {
-      if (paintBrushShape === 'square') {
+      if (brushShape === brushSquareShape) {
         ctx.rect(x - radius, y - radius, width, width)
       } else {
         ctx.arc(x, y, radius, 0, 2 * Math.PI)
@@ -256,12 +274,12 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
   setBrushShapeSize = (brushShape: string, brushWidth: number) => {
     const { activeTool } = this.state
-    if (activeTool === 'paintBrush') {
+    if (activeTool === paintBrushTool) {
       this.setState({
         paintBrushShape: brushShape,
         paintBrushWidth: brushWidth
       })
-    } else if (activeTool === 'erase') {
+    } else if (activeTool === eraseTool) {
       this.setState({
         eraseBrushShape: brushShape,
         eraseBrushWidth: brushWidth
@@ -273,7 +291,39 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     const { imageUrl, lpActiveColor } = this.props
     const { activeTool, position, paintBrushShape, paintBrushWidth, eraseBrushShape, eraseBrushWidth } = this.state
     const lpActiveColorRGB = `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})`
-    const backgroundColorBrush = (activeTool === 'erase') ? `rgba(255, 255, 255, 0.7)` : lpActiveColorRGB
+    const backgroundColorBrush = (activeTool === eraseTool) ? `rgba(255, 255, 255, 0.7)` : lpActiveColorRGB
+    let paintBrushActiveClass = ''
+    let paintBrushCircleActiveClass = ''
+    let eraseBrushActiveClass = ''
+    let eraseBrushCircleActiveClass = ''
+
+    if (paintBrushWidth === brushLargeWidth) {
+      paintBrushActiveClass = paintBrushLargeClass
+      if (paintBrushShape === brushRoundShape) paintBrushCircleActiveClass = paintBrushLargeCircleClass
+    } else if (paintBrushWidth === brushMediumWidth) {
+      paintBrushActiveClass = paintBrushMediumClass
+      if (paintBrushShape === brushRoundShape) paintBrushCircleActiveClass = paintBrushMediumCircleClass
+    } else if (paintBrushWidth === brushSmallWidth) {
+      paintBrushActiveClass = paintBrushSmallClass
+      if (paintBrushShape === brushRoundShape) paintBrushCircleActiveClass = paintBrushSmallCircleClass
+    } else if (paintBrushWidth === brushTinyWidth) {
+      paintBrushActiveClass = paintBrushTinyClass
+      if (paintBrushShape === brushRoundShape) paintBrushCircleActiveClass = paintBrushTinyCircleClass
+    }
+
+    if (eraseBrushWidth === brushLargeWidth) {
+      eraseBrushActiveClass = paintBrushLargeClass
+      if (eraseBrushShape === brushRoundShape) eraseBrushCircleActiveClass = paintBrushLargeCircleClass
+    } else if (eraseBrushWidth === brushMediumWidth) {
+      eraseBrushActiveClass = paintBrushMediumClass
+      if (eraseBrushShape === brushRoundShape) eraseBrushCircleActiveClass = paintBrushMediumCircleClass
+    } else if (eraseBrushWidth === brushSmallWidth) {
+      eraseBrushActiveClass = paintBrushSmallClass
+      if (eraseBrushShape === brushRoundShape) eraseBrushCircleActiveClass = paintBrushSmallCircleClass
+    } else if (eraseBrushWidth === brushTinyWidth) {
+      eraseBrushActiveClass = paintBrushTinyClass
+      if (eraseBrushShape === brushRoundShape) eraseBrushCircleActiveClass = paintBrushTinyCircleClass
+    }
 
     return (
       <div role='presentation' className={`${baseClass}`} onMouseMove={this.mouseMoveHandler} ref={this.CFIWrapper}>
@@ -292,15 +342,16 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
             setBrushShapeSize={this.setBrushShapeSize}
           />
         </div>
-        {((activeTool === 'paintBrush' || activeTool === 'erase') && (position.left > 0 || position.top > 0)) ? <div className={`${paintBrushClass} ${(paintBrushShape === 'square') ? paintBrushSquareClass : paintBrushCircleClass}`}
-          role='presentation'
-          draggable
-          onMouseUp={this.mouseUpHandler} onMouseDown={this.mouseDownHandler} onDragStart={this.dragStartHandler}
-          style={{
-            backgroundColor: backgroundColorBrush,
-            top: position.top,
-            left: position.left
-          }} /> : ''}
+        {
+          ((activeTool === paintBrushTool || activeTool === eraseTool) && (position.left > 0 || position.top > 0))
+            ? <div
+              className={`${paintBrushClass} ${activeTool === paintBrushTool ? `${paintBrushActiveClass} ${paintBrushCircleActiveClass}` : activeTool === eraseTool ? `${eraseBrushActiveClass} ${eraseBrushCircleActiveClass}` : ``}`}
+              role='presentation'
+              draggable
+              onMouseUp={this.mouseUpHandler} onMouseDown={this.mouseDownHandler} onDragStart={this.dragStartHandler}
+              style={{ backgroundColor: backgroundColorBrush, top: position.top, left: position.left }}
+            /> : ''
+        }
       </div>
     )
   }
