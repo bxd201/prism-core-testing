@@ -10,15 +10,17 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import includes from 'lodash/includes'
 import ConfirmationModal from './ConfirmationModal'
 import ColorPinsGenerationByHue from './workers/colorPinsGenerationByHue.worker'
+import PaintScene from '../PaintScene/PaintScene'
 
 let canvasContext: any
 let colorPinsGenerationByHueWorker: Object
 
 type Props = {
-  history: RouterHistory
+  history: RouterHistory,
+  isPaintScene: boolean
 }
 
-export function MatchPhoto ({ history }: Props) {
+export function MatchPhoto ({ history, isPaintScene }: Props) {
   const canvasRef: RefObject = useRef()
   const imageRef: RefObject = useRef()
   const [imageUrl, setImageUrl] = useState()
@@ -95,10 +97,14 @@ export function MatchPhoto ({ history }: Props) {
   }
 
   function createColorPins (imageData: Object) {
-    // $FlowIgnore - flow can't understand how the worker is being used since it's not exporting anything
-    colorPinsGenerationByHueWorker = new ColorPinsGenerationByHue()
-    colorPinsGenerationByHueWorker.addEventListener('message', messageHandler)
-    colorPinsGenerationByHueWorker.postMessage({ imageData: imageData, imageDimensions: imageDimensions })
+    if (isPaintScene) {
+      generatepins([{ isPaintScene: isPaintScene }])
+    } else {
+      // $FlowIgnore - flow can't understand how the worker is being used since it's not exporting anything
+      colorPinsGenerationByHueWorker = new ColorPinsGenerationByHue()
+      colorPinsGenerationByHueWorker.addEventListener('message', messageHandler)
+      colorPinsGenerationByHueWorker.postMessage({ imageData: imageData, imageDimensions: imageDimensions })
+    }
   }
 
   function messageHandler (e: Object) {
@@ -145,11 +151,11 @@ export function MatchPhoto ({ history }: Props) {
             {
               (imageUrl && pins.length === 0) ? <Link to={`/active`}>
                 {closeButton}
-              </Link> : closeButton
+              </Link> : (imageUrl && pins.length > 0 && !isPaintScene) ? closeButton : ''
             }
           </div>
           {
-            (imageUrl && pins.length > 0)
+            (imageUrl && pins.length > 0 && !isPaintScene)
               ? (<React.Fragment>
                 <ColorsFromImage data={{ initPins: pins, img: imageUrl, imageRotationAngle: imageRotationAngle }} isActivedPage />
                 <ConfirmationModal isActive={isConfirmationModalActive} onClickNo={() => setConfirmationModalActive(!isConfirmationModalActive)} />
@@ -162,6 +168,13 @@ export function MatchPhoto ({ history }: Props) {
                 <canvas className='match-photo__canvas' name='canvas' ref={canvasRef} />
                 <img className='match-photo__image' ref={imageRef} onLoad={handleImageLoaded} onError={handleImageErrored} src={imageUrl} alt='' />
                 <ImageRotateTerms rotateImage={rotateImage} createColorPins={createColorPins} imageData={imageData} />
+              </React.Fragment>)
+              : ''
+          }
+          {
+            (imageUrl && isPaintScene && pins.length > 0)
+              ? (<React.Fragment>
+                <PaintScene imageUrl={imageUrl} imageRotationAngle={imageRotationAngle} />
               </React.Fragment>)
               : ''
           }

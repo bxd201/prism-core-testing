@@ -46,6 +46,7 @@ export class Prism extends Component<Props> {
               <Route path='/color-collections' component={ColorCollection} />
               <Route path='/expert-colors' component={() => <ColorCollection isExpertColor />} />
               <Route path='/match-photo' component={MatchPhoto} />
+              <Route path='/paint-scene' render={() => <MatchPhoto isPaintScene />} />
               <Route path={`/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`} exact component={ColorDetails} />
               <Route path='/fast-mask' exact component={FastMask} />
             </div>

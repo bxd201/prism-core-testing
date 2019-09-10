@@ -44,6 +44,10 @@ export class PrismNav extends PureComponent {
     return /^\/match-photo/.test(pathname)
   }
 
+  isPaintScene(pathname) {
+    return /^\/paint-scene/.test(pathname)
+  }
+
   onRouteChanged() {
     this.props.toggleCompareColor(true)
   }
@@ -59,6 +63,7 @@ export class PrismNav extends PureComponent {
         <button onClick={() => { this.props.history.push('/color-collections') }} className={`prism-nav-btn ${this.isColorCollections(pathname) ? 'prism-nav-btn--active' : ''}`}>Color Collections</button>
         <button onClick={() => { this.props.history.push('/expert-colors') }} className={`prism-nav-btn ${this.isExpertColor(pathname) ? 'prism-nav-btn--active' : ''}`}>Expert Colors</button>
         <button onClick={() => { this.props.history.push('/match-photo') }} className={`prism-nav-btn ${this.isMatchPhoto(pathname) ? 'prism-nav-btn--active' : ''}`}>Match Photo</button>
+        <button onClick={() => { this.props.history.push('/paint-scene') }} className={`prism-nav-btn ${this.isPaintScene(pathname) ? 'prism-nav-btn--active' : ''}`}>Paint a Scene</button>
       	<button onClick={() => {this.props.history.push('/fast-mask')}} className={`prism-nav-btn ${this.isFastMask(pathname) ? 'prism-nav-btn--active' : ''}`}>Fast Mask</button>
       </React.Fragment>
     )
