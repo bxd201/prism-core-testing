@@ -7,7 +7,7 @@ import without from 'lodash/without'
 import find from 'lodash/find'
 import includes from 'lodash/includes'
 
-import type { Scene, SceneStatus, SurfaceStatus, Surface, Variant } from '../../shared/types/Scene'
+import type { Scene, SceneStatus, SurfaceStatus, Surface, Variant, SceneWorkspace } from '../../shared/types/Scene'
 
 import {
   RECEIVE_SCENES,
@@ -19,7 +19,8 @@ import {
   PAINT_SCENE_SURFACE,
   PAINT_ALL_SCENE_SURFACES,
   PAINT_SCENE_MAIN_SURFACE,
-  PAINT_ALL_MAIN_SURFACES
+  PAINT_ALL_MAIN_SURFACES,
+  ADD_NEW_MASK, UPDATE_CURRENT_SCENE
 } from '../actions/scenes'
 
 type State = {
@@ -205,4 +206,55 @@ export const scenes = (state: Object = initialState, action: { type: string, pay
     default:
       return state
   }
+}
+
+export const sceneWorkspaces = (state: SceneWorkspace[] = [], action: {type: string, payload: SceneWorkspace}) => {
+  if (action.type === ADD_NEW_MASK) {
+    const newSceneWorkspace = action.payload
+    const filteredState = state.filter(workspace => {
+      return workspace.surfaceId !== action.payload.surfaceId &&
+         workspace.sceneId !== action.payload.sceneId
+    })
+    return [newSceneWorkspace, ...filteredState]
+  }
+
+  return state
+}
+
+export const currentVariant = (state: string | null = null, action: {type: string, payload: string | null}) => {
+  // @todo make sure this is set to the default variant when ever a new scene is selected
+  if (action.type === CHANGE_SCENE_VARIANT) {
+    return action.payload
+  }
+  // @todo review if this is a safe approach
+  if (action.type === RECEIVE_SCENES) {
+    if (action.payload.scenes && action.payload.scenes.length) {
+      const defaultScene = action.payload.scenes[0]
+      if (defaultScene.variant_names && defaultScene.variant_names.length) {
+        return action.payload.scenes[0]
+      }
+    }
+
+    return null
+  }
+
+  return state
+}
+
+export const currentSurfaceId = (state: number | null = null, action: {type: string, payload: Object}) => {
+  // @todo Only set via action triggered from within tintable scene, haven't found a better deterministic way to know user intent
+  if (action.type === UPDATE_CURRENT_SCENE) {
+    return action.payload.surfaceId
+  }
+
+  return state
+}
+
+export const currentActiveSceneId = (state: number | null = null, action: {type: string, payload: Object}) => {
+  // @todo Only set via action triggered from within tintable scene, haven't found a better deterministic way to know user intent
+  if (action.type === UPDATE_CURRENT_SCENE) {
+    return action.payload.sceneId
+  }
+
+  return state
 }

@@ -13,7 +13,7 @@ import { TransitionGroup, CSSTransition } from 'react-transition-group'
 
 import { ensureFullyQualifiedAssetUrl } from '../../shared/helpers/DataUtils'
 import type { Color } from '../../shared/types/Colors'
-import type { Surface, SurfaceStatus } from '../../shared/types/Scene'
+import type { SceneWorkspace, Surface, SurfaceStatus } from '../../shared/types/Scene'
 import TintableSceneHitArea from './TintableSceneHitArea'
 import TintableSceneSurface from './TintableSceneSurface'
 import TintableSceneSVGDefs from './TintableSceneSVGDefs'
@@ -28,7 +28,7 @@ type Props = {
   height: number,
   render: boolean,
   interactive: boolean,
-  sceneId: string | number,
+  sceneId: number,
   previewColor?: Color | void,
   mainColor?: Color | void, // eslint-disable-line
   clickToPaintColor?: Color,
@@ -36,14 +36,19 @@ type Props = {
   loading?: boolean,
   error?: boolean,
   sceneName: string,
-  imageValueCurve: string
+  imageValueCurve: string,
+  // eslint-disable-next-line react/no-unused-prop-types
+  sceneWorkspaces?: SceneWorkspace[],
+  updateCurrentSceneInfo?: Function,
+  isEditMode: boolean
 }
 
 type State = {
   activePreviewSurfaces: Array<string | number>,
   instanceId: string,
   hitAreaLoaded: boolean,
-  hitAreaError: boolean
+  hitAreaError: boolean,
+  currentSurface: number | null
 }
 
 class TintableScene extends PureComponent<Props, State> {
@@ -72,13 +77,16 @@ class TintableScene extends PureComponent<Props, State> {
     this.handleOut = this.handleOut.bind(this)
     this.handleHitAreaLoadingSuccess = this.handleHitAreaLoadingSuccess.bind(this)
     this.handleHitAreaLoadingError = this.handleHitAreaLoadingError.bind(this)
+    this.setCurrentSurface = this.setCurrentSurface.bind(this)
+    this.getMaskImage = this.getMaskImage.bind(this)
 
     this.state = {
       activePreviewSurfaces: [],
       // must be unique among ALL TintableScene instances so as not to cross-contaminate filter definition IDs
       instanceId: uniqueId('TS'),
       hitAreaError: false,
-      hitAreaLoaded: props.surfaces.length === 0
+      hitAreaLoaded: props.surfaces.length === 0,
+      currentSurface: null
     }
 
     // set non-state property of this instance for tracking how many hit areas have loaded -- we don't need to rerender as this changes
@@ -102,6 +110,12 @@ class TintableScene extends PureComponent<Props, State> {
 
   handleClickSurface = function handleClickSurface (surfaceId: string) {
     const { clickToPaintColor } = this.props
+
+    if (this.props.updateCurrentSceneInfo && this.props.isEditMode) {
+      this.props.updateCurrentSceneInfo(this.props.sceneId, surfaceId)
+      // @todo I need a flag to determine if this is in paint or edit mask mode. If in edit mode then we do not enter into block below
+      return
+    }
 
     if (clickToPaintColor) {
       this.updateSurfaceColor(surfaceId, clickToPaintColor)
@@ -162,6 +176,22 @@ class TintableScene extends PureComponent<Props, State> {
     return tintColor
   }
 
+  setCurrentSurface (surfaceId: number) {
+    this.setState({ currentSurface: surfaceId })
+  }
+
+  getMaskImage (surface: Surface) {
+    if (this.props.sceneWorkspaces && this.props.sceneWorkspaces.length) {
+      const sceneWorkspaces = find(this.props.sceneWorkspaces, { surfaceId: surface.id })
+
+      if (sceneWorkspaces) {
+        return sceneWorkspaces.imageData
+      }
+    }
+
+    return ensureFullyQualifiedAssetUrl(surface.mask)
+  }
+
   render () {
     const { surfaces, sceneName, background, width, height, render, interactive, type, loading, error, sceneId, imageValueCurve } = this.props
     const { instanceId, hitAreaError, hitAreaLoaded } = this.state
@@ -209,7 +239,7 @@ class TintableScene extends PureComponent<Props, State> {
                             filterColor={tintColor.hex}
                             filterImageValueCurve={imageValueCurve}
                             maskId={getMaskId(instanceId, surface.id, tintColor.hex)}
-                            maskImage={ensureFullyQualifiedAssetUrl(surface.mask)}
+                            maskImage={this.getMaskImage(surface)}
                           />
                         </CSSTransition>
                       )
@@ -259,6 +289,7 @@ class TintableScene extends PureComponent<Props, State> {
                   onOut={this.handleOut}
                   onLoadingSuccess={this.handleHitAreaLoadingSuccess}
                   onLoadingError={this.handleHitAreaLoadingError}
+                  setActiveSurface={this.setActiveSurface}
                   onClick={this.handleClickSurface}
                   svgSource={surface.hitArea} />
               ))}
@@ -286,10 +317,10 @@ class TintableScene extends PureComponent<Props, State> {
 
 export default TintableScene
 
-function getFilterId (sceneId: string | number, surfaceId: string | number, suffix?: string) {
+function getFilterId (sceneId: number, surfaceId: string | number, suffix?: string) {
   return kebabCase(`scene${sceneId}_surface${surfaceId}_tinter-filter${suffix ? `_${suffix}` : ''}`)
 }
 
-function getMaskId (sceneId: string | number, surfaceId: string | number, suffix?: string) {
+function getMaskId (sceneId: number, surfaceId: string | number, suffix?: string) {
   return kebabCase(`scene${sceneId}_surface${surfaceId}_object-mask${suffix ? `_${suffix}` : ''}`)
 }

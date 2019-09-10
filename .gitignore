@@ -12,3 +12,6 @@ coverage
 
 # installed flow types
 flow-typed/npm
+
+# ignore jetbrains ide meta data
+.idea/

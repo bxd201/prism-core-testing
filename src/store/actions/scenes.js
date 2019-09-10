@@ -172,3 +172,28 @@ export const loadScenes = (type: string) => {
       })
   }
 }
+
+export const ADD_NEW_MASK = 'ADD_NEW_MASK'
+
+export const addNewMask = (sceneId: number, surfaceId: number, imageData: string) => {
+  // Workspace is an array of images to be passed to a tintable scene
+  return {
+    type: ADD_NEW_MASK,
+    payload: {
+      sceneId,
+      surfaceId,
+      imageData
+    }
+  }
+}
+
+export const UPDATE_CURRENT_SCENE = 'UPDATE_CURRENT_SCENE'
+export const updateCurrentSceneInfo = (sceneId: number, surfaceId: number) => {
+  return {
+    action: UPDATE_CURRENT_SCENE,
+    payload: {
+      sceneId,
+      surfaceId
+    }
+  }
+}

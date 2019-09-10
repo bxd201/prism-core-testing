@@ -9,7 +9,7 @@ import ReactGA from 'react-ga'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import { SCENE_TYPES, SCENE_VARIANTS } from 'constants/globals'
-import { loadScenes, paintSceneSurface, activateScene, deactivateScene, changeSceneVariant } from '../../store/actions/scenes'
+import { loadScenes, paintSceneSurface, activateScene, deactivateScene, changeSceneVariant, addNewMask } from '../../store/actions/scenes'
 import TintableScene from './TintableScene'
 import SceneVariantSwitch from './SceneVariantSwitch'
 import ImagePreloader from '../../helpers/ImagePreloader'
@@ -17,7 +17,7 @@ import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 import ConfigurationContext from '../../contexts/ConfigurationContext/ConfigurationContext'
 import ColorPickerSlide from '../ColorPickerSlide/ColorPickerSlide'
 import type { Color } from '../../shared/types/Colors'
-import type { Scene, SceneStatus, Surface, Variant } from '../../shared/types/Scene'
+import type { Scene, SceneStatus, SceneWorkspace, Surface, Variant } from '../../shared/types/Scene'
 
 import './SceneManager.scss'
 
@@ -60,7 +60,8 @@ type Props = {
   activeColor: Color | void,
   mainColor: Color | void,
   previewColor: Color | void,
-  interactive: boolean
+  interactive: boolean,
+  sceneWorkspaces: SceneWorkspace[]
 }
 
 type State = {
@@ -85,11 +86,15 @@ export class SceneManager extends PureComponent<Props, State> {
 
     this.handleColorUpdate = this.handleColorUpdate.bind(this)
     this.handleClickSceneToggle = this.handleClickSceneToggle.bind(this)
+    // @todo fix this
     this.changeVariant = this.changeVariant.bind(this)
+    this.updateCurrentSceneInfo = this.updateCurrentSceneInfo.bind(this)
   }
 
   componentDidMount () {
     this.props.loadScenes(this.props.type)
+    // @todo uncomment below to add custom mask data for manual test.
+    // this.props.addNewMask(1, 2, window.localStorage.getItem('sampleMask'))
   }
 
   handleColorUpdate = function handleColorUpdate (sceneId: string, surfaceId: string, color: Color) {
@@ -136,6 +141,10 @@ export class SceneManager extends PureComponent<Props, State> {
     deactivateScene(id)
   }
 
+  updateCurrentSceneInfo (sceneId: number, surfaceId: number) {
+    console.log('scene summary: ', arguments)
+  }
+
   changeVariant = memoizee(function changeVariant (sceneId: number) {
     const { changeSceneVariant } = this.props
 
@@ -145,7 +154,8 @@ export class SceneManager extends PureComponent<Props, State> {
   }, { primitive: true, length: 1 })
 
   render () {
-    const { scenes, sceneStatus, loadingScenes, activeColor, previewColor, mainColor, activeScenes, type, interactive } = this.props
+    // eslint-disable-next-line no-unused-vars
+    const { scenes, sceneStatus, loadingScenes, activeColor, previewColor, mainColor, activeScenes, type, interactive, sceneWorkspaces } = this.props
 
     if (loadingScenes) {
       return <CircleLoader className={`${SceneManager.baseClass}__loader`} />
@@ -193,6 +203,7 @@ export class SceneManager extends PureComponent<Props, State> {
                     mainColor={mainColor}
                     surfaceStatus={status.surfaces}
                     surfaces={surfaces}
+                    sceneWorkspaces={sceneWorkspaces}
                   />
                 </div>
                 {activeMarker}
@@ -232,6 +243,8 @@ export class SceneManager extends PureComponent<Props, State> {
               }
             }
 
+            const sceneWorkspaces = this.props.sceneWorkspaces.filter(workspace => workspace.sceneId === sceneId)
+            console.log(sceneWorkspaces)
             return (
               <div className={`${SceneManager.baseClass}__scene-wrapper`} key={sceneId}>
                 <ImagePreloader
@@ -251,6 +264,9 @@ export class SceneManager extends PureComponent<Props, State> {
                   surfaces={surfaces}
                   imageValueCurve={sceneVariant.normalizedImageValueCurve}
                   sceneName={sceneVariant.name}
+                  /* eslint-disable-next-line no-undef */
+                  // sceneWorkspaces={sceneWorkspaces}
+                  updateCurrentSceneInfo={this.updateCurrentSceneInfo}
                 />
                 {variantSwitch}
               </div>
@@ -281,7 +297,10 @@ const mapStateToProps = (state, props) => {
     activeScenes: state.scenes.activeScenes,
     loadingScenes: state.scenes.loadingScenes,
     activeColor: activeColor,
-    previewColor: previewColor
+    previewColor: previewColor,
+    currentVariant: state.currentVariant,
+    // @todo - the idea is the scene workspace is the data object created by the mask editor.
+    sceneWorkspaces: state.sceneWorkspaces
     // NOTE: uncommenting this will sync scene type with redux data
     // we may not want that in case there are multiple instances with different scene collections running at once
     // leaving here for posterity
@@ -305,6 +324,9 @@ const mapDispatchToProps = (dispatch: Function) => {
     },
     changeSceneVariant: (sceneId: number, variant: string) => {
       dispatch(changeSceneVariant(sceneId, variant))
+    },
+    addNewMask: (sceneId: number, surfaceId: number, imageData: string) => {
+      dispatch(addNewMask(sceneId, surfaceId, imageData))
     }
   }
 }
