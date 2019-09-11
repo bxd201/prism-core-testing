@@ -88,6 +88,7 @@ export class SceneManager extends PureComponent<Props, State> {
     this.handleClickSceneToggle = this.handleClickSceneToggle.bind(this)
     // @todo fix this
     this.changeVariant = this.changeVariant.bind(this)
+    this.changeVariant = memoizee(this.changeVariant, { primitive: true, length: 1 })
     this.updateCurrentSceneInfo = this.updateCurrentSceneInfo.bind(this)
   }
 
@@ -145,13 +146,13 @@ export class SceneManager extends PureComponent<Props, State> {
     console.log('scene summary: ', arguments)
   }
 
-  changeVariant = memoizee(function changeVariant (sceneId: number) {
+  changeVariant (sceneId: number) {
     const { changeSceneVariant } = this.props
 
     return function _changeVariant (variant: string) {
       changeSceneVariant(sceneId, variant)
     }
-  }, { primitive: true, length: 1 })
+  }
 
   render () {
     // eslint-disable-next-line no-unused-vars
