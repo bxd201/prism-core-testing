@@ -42,6 +42,7 @@ exports[`snapshot testing should get correct snapshot 1`] = `
             ]
           }
           sceneId={1}
+          sceneWorkspaces={Array []}
           surfaceStatus={
             Array [
               Object {
@@ -140,6 +141,7 @@ exports[`snapshot testing should get correct snapshot 1`] = `
             ]
           }
           sceneId={2}
+          sceneWorkspaces={Array []}
           surfaceStatus={
             Array [
               Object {
@@ -215,6 +217,7 @@ exports[`snapshot testing should get correct snapshot 1`] = `
             ]
           }
           sceneId={3}
+          sceneWorkspaces={Array []}
           surfaceStatus={
             Array [
               Object {
@@ -290,6 +293,7 @@ exports[`snapshot testing should get correct snapshot 1`] = `
             ]
           }
           sceneId={4}
+          sceneWorkspaces={Array []}
           surfaceStatus={
             Array [
               Object {
@@ -365,6 +369,7 @@ exports[`snapshot testing should get correct snapshot 1`] = `
             ]
           }
           sceneId={5}
+          sceneWorkspaces={Array []}
           surfaceStatus={
             Array [
               Object {
@@ -454,6 +459,7 @@ exports[`snapshot testing should get correct snapshot 1`] = `
         }
         sceneId={1}
         sceneName="Living Room Day"
+        sceneWorkspaces={Array []}
         surfaceStatus={
           Array [
             Object {
@@ -490,6 +496,7 @@ exports[`snapshot testing should get correct snapshot 1`] = `
           ]
         }
         type="rooms"
+        updateCurrentSceneInfo={[Function]}
         width={1311}
       />
       <DayNight

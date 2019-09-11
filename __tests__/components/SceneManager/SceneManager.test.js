@@ -17,7 +17,8 @@ const defaultProps = {
   paintSceneSurface: jest.fn(),
   changeSceneVariant: jest.fn(),
   interactive: true,
-  loadingScenes: false
+  loadingScenes: false,
+  sceneWorkspaces: []
 }
 
 const sample = (arr) => {

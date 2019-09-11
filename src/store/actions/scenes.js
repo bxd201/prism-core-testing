@@ -197,3 +197,11 @@ export const updateCurrentSceneInfo = (sceneId: number, surfaceId: number) => {
     }
   }
 }
+
+export const TOGGLE_EDIT_MODE = 'TOGGLE_EDIT_MODE'
+export const toggleEditMode = (currentEditMode: boolean) => {
+  return {
+    type: TOGGLE_EDIT_MODE,
+    payload: !currentEditMode
+  }
+}

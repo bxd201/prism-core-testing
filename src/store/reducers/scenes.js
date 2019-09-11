@@ -20,7 +20,9 @@ import {
   PAINT_ALL_SCENE_SURFACES,
   PAINT_SCENE_MAIN_SURFACE,
   PAINT_ALL_MAIN_SURFACES,
-  ADD_NEW_MASK, UPDATE_CURRENT_SCENE
+  ADD_NEW_MASK,
+  UPDATE_CURRENT_SCENE,
+  TOGGLE_EDIT_MODE
 } from '../actions/scenes'
 
 type State = {
@@ -254,6 +256,14 @@ export const currentActiveSceneId = (state: number | null = null, action: {type:
   // @todo Only set via action triggered from within tintable scene, haven't found a better deterministic way to know user intent
   if (action.type === UPDATE_CURRENT_SCENE) {
     return action.payload.sceneId
+  }
+
+  return state
+}
+
+export const isEditMode = (state: boolean = false, action: {type: string, payload: boolean}) => {
+  if (action.type === TOGGLE_EDIT_MODE) {
+    return action.payload
   }
 
   return state

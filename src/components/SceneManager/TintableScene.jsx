@@ -110,10 +110,9 @@ class TintableScene extends PureComponent<Props, State> {
 
   handleClickSurface = function handleClickSurface (surfaceId: string) {
     const { clickToPaintColor } = this.props
-
     if (this.props.updateCurrentSceneInfo && this.props.isEditMode) {
       this.props.updateCurrentSceneInfo(this.props.sceneId, surfaceId)
-      // @todo I need a flag to determine if this is in paint or edit mask mode. If in edit mode then we do not enter into block below
+
       return
     }
 
