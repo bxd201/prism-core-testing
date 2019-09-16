@@ -1,5 +1,5 @@
 const merge = require('webpack-merge')
-const CleanWebpackPlugin = require('clean-webpack-plugin')
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const WebpackCleanPlugin = require('webpack-clean')
 
 const common = require('./webpack.common.js')
