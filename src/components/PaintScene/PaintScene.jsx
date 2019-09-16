@@ -47,11 +47,12 @@ type ComponentState = {
   position: Object,
   paintBrushWidth: number,
   isDragging: boolean,
-  paintBrushPathCoordinates: Array<Object>,
+  drawCoordinates: Array<Object>,
   paintBrushShape: string,
-  paintedRegions: Array<Object>,
   eraseBrushShape: string,
-  eraseBrushWidth: number
+  eraseBrushWidth: number,
+  drawHistory: Array<Array<Object>>,
+  drawCoordinates: Array<Object>
 }
 
 export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
@@ -74,11 +75,12 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     position: { left: 0, top: 0 },
     paintBrushWidth: brushLargeWidth,
     isDragging: false,
-    paintBrushPathCoordinates: [],
+    drawCoordinates: [],
     paintBrushShape: brushRoundShape,
-    paintedRegions: [],
     eraseBrushShape: brushRoundShape,
-    eraseBrushWidth: brushLargeWidth
+    eraseBrushWidth: brushLargeWidth,
+    drawHistory: [],
+    redoHistory: []
   }
 
   constructor (props: ComponentProps) {
@@ -167,15 +169,52 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   }
 
   setActiveTool = (activeTool: string) => {
-    this.setState({
-      activeTool
-    })
+    if (activeTool === this.state.activeTool) {
+      return
+    }
+
+    this.pushToHistory({ activeTool })
+  }
+
+  pushToHistory (newState: Object) {
+    const newHistory = this.state.drawCoordinates.length ? [...this.state.drawHistory, [...this.state.drawCoordinates]] : this.state.drawHistory
+
+    let _state = {
+      drawHistory: newHistory,
+      drawCoordinates: []
+    }
+
+    if (newState) {
+      _state = Object.assign(_state, newState)
+    }
+    console.log(_state)
+    this.setState(_state)
+  }
+
+  popToRedoHistory (newState: Object) {
+    if (this.state.drawHistory.length) {
+      const newRedoHistory = this.state.drawHistory.slice(-1)
+      const newHistory = this.state.drawHistory.slice(0, this.state.drawHistory.length - 1)
+
+      const redoHistory = this.state.redoHistory.length ? [...this.state.redoHistory.length, newRedoHistory] : [newRedoHistory]
+
+      let _state = {
+        drawHistory: newHistory,
+        redoHistory
+      }
+
+      if (newState) {
+        _state = Object.assign(_state, newState)
+      }
+
+      this.setState(_state)
+    }
   }
 
   mouseMoveHandler = (e: Object) => {
     e.stopPropagation()
     const { clientX, clientY } = e
-    const { activeTool, paintBrushWidth, isDragging, paintBrushPathCoordinates, eraseBrushWidth } = this.state
+    const { activeTool, paintBrushWidth, isDragging, drawCoordinates, eraseBrushWidth } = this.state
     const canvasOffset = this.getCanvasOffset()
 
     if (activeTool === paintBrushTool || activeTool === eraseTool) {
@@ -187,11 +226,11 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
       if (isDragging) {
         const currentPoint = { x: clientX - canvasOffset.x, y: clientY - canvasOffset.y }
-        const paintBrushPathCoordinatesCloned = cloneDeep(paintBrushPathCoordinates)
-        paintBrushPathCoordinatesCloned.push(currentPoint)
-        const paintBrushPathCoordinatesLength = paintBrushPathCoordinates.length
-        this.drawPaintBrushPoint(currentPoint, paintBrushPathCoordinates[paintBrushPathCoordinatesLength - 1])
-        this.setState({ paintBrushPathCoordinates: paintBrushPathCoordinatesCloned })
+        const drawCoordinatesCloned = cloneDeep(drawCoordinates)
+        drawCoordinatesCloned.push(currentPoint)
+        const drawCoordinatesLength = drawCoordinates.length
+        this.drawPaintBrushPoint(currentPoint, drawCoordinates[drawCoordinatesLength - 1])
+        this.setState({ drawCoordinates: drawCoordinatesCloned })
       }
     }
   }
@@ -200,13 +239,13 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     const { isDragging } = this.state
     const { clientX, clientY } = e
     const canvasOffset = this.getCanvasOffset()
-    const paintBrushPathCoordinates = []
+    const drawCoordinates = []
     const currentPoint = { x: clientX - canvasOffset.x, y: clientY - canvasOffset.y }
-    paintBrushPathCoordinates.push(currentPoint)
+    drawCoordinates.push(currentPoint)
     if (isDragging === false) {
       this.drawPaintBrushPoint(currentPoint)
     }
-    this.setState({ paintBrushPathCoordinates })
+    this.setState({ drawCoordinates })
   }
 
   dragStartHandler = (e: Object) => {
@@ -219,7 +258,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     e.stopPropagation()
     const { clientX, clientY } = e
     const canvasOffset = this.getCanvasOffset()
-    const { isDragging, paintBrushWidth, paintedRegions, paintBrushPathCoordinates, eraseBrushWidth, activeTool } = this.state
+    const { isDragging, paintBrushWidth, eraseBrushWidth, activeTool } = this.state
 
     if (isDragging) {
       this.setState({ isDragging: false })
@@ -230,12 +269,8 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       const position = { left: leftOffset, top: topOffset }
       this.setState({ position })
     }
-    const paintedRegionsCloned = cloneDeep(paintedRegions)
-    paintedRegionsCloned.push(paintBrushPathCoordinates)
-    this.setState({
-      paintBrushPathCoordinates: [],
-      paintedRegions: paintedRegionsCloned
-    })
+
+    this.pushToHistory()
   }
 
   drawPaintBrushPoint = (point: Object, lastPoint: Object) => {
