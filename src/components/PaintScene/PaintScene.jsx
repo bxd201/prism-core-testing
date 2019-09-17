@@ -351,6 +351,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       this.drawPaintBrushPoint(currentPoint)
     }
     this.setState({ drawCoordinates })
+    window.addEventListener('mouseup', this.mouseUpHandler)
   }
 
   dragStartHandler = (e: Object) => {
@@ -361,7 +362,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
   mouseUpHandler = (e: Object) => {
     const { drawCoordinates, paintBrushShape, paintBrushWidth, imagePathList, activeTool } = this.state
-    if (activeTool === paintBrushTool && drawCoordinates.length > 1) {
+    if (activeTool === paintBrushTool && drawCoordinates.length > 0) {
       this.clearCanvas()
       this.repaintBrushPathByCorrdinates(drawCoordinates, paintBrushWidth, paintBrushShape)
       const newImagePathList = getPaintAreaPath(imagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight, this.props.lpActiveColor)
@@ -374,11 +375,19 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       })
       this.pushToHistory()
     }
+    if (activeTool === eraseTool) {
+      this.setState({
+        isDragging: false
+      })
+    }
+    window.removeEventListener('mouseup', this.mouseUpHandler)
   }
 
   repaintBrushPathByCorrdinates = (drawCoordinates, paintBrushWidth, paintBrushShape) => {
-    for (let i = 1; i < drawCoordinates.length; i++) {
-      this.drawPaintBrushPath(this.CFICanvasContext2, drawCoordinates[i], drawCoordinates[i - 1], paintBrushWidth, paintBrushShape, 'source-over')
+    for (let i = 0; i < drawCoordinates.length; i++) {
+      const currentPoint = drawCoordinates[i]
+      const lastPoint = (i === 0) ? drawCoordinates[i] : drawCoordinates[i - 1]
+      this.drawPaintBrushPath(this.CFICanvasContext2, currentPoint, lastPoint, paintBrushWidth, paintBrushShape, 'source-over')
     }
   }
 
@@ -644,7 +653,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
               className={`${paintBrushClass} ${activeTool === paintBrushTool ? `${paintBrushActiveClass} ${paintBrushCircleActiveClass}` : activeTool === eraseTool ? `${eraseBrushActiveClass} ${eraseBrushCircleActiveClass}` : ``}`}
               role='presentation'
               draggable
-              onMouseUp={this.mouseUpHandler} onMouseDown={this.mouseDownHandler} onDragStart={this.dragStartHandler}
+              onMouseDown={this.mouseDownHandler} onDragStart={this.dragStartHandler}
               style={{ backgroundColor: backgroundColorBrush, top: position.top, left: position.left }}
             /> : ''
         }

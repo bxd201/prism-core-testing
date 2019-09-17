@@ -43,6 +43,9 @@
     line-height: 0;
     outline: none;
     vertical-align: middle;
+    &:hover {
+      border-color: #2cabe2;
+    }
     &--circle {
       border-radius: 50%;
     }

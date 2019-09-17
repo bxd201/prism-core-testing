@@ -1,0 +1,118 @@
+.paint-tooltip {
+  &__wrapper {
+    display: flex;
+    width: 310px;
+  }
+  &__container {
+    background: #2cabe2;
+    color: #fff;
+    font-weight: normal;
+    line-height: 21.6px;
+    padding: 0.5em 1.5em 0.5em 1.5em;
+    width: 100%;
+  }
+  &__close-button {
+    background: white;
+    cursor: pointer;
+    fill: black;
+    height: 1.5em;
+    outline: none;
+    padding: 0.1em;
+    position: absolute;
+    right: -1.5em;
+    text-align: center;
+    top: 0;
+    width: 1.5em;
+  }
+  &__header {
+    font-size: 0.8em;
+  }
+  &__tool-name {
+    font-size: 0.7em;
+    padding: 0.4em 0em;
+  }
+  &__tooltip-content {
+    font-size: 0.7em;
+    text-align: left;
+  }
+  &__footer {
+    display: flex;
+    font-size: 0.6em;
+    justify-content: space-between;
+    padding: 0.7em 0em;
+  }
+  &__button {
+    color: #fff;
+    cursor: pointer;
+    font-size: 0.6em;
+    font-weight: 600;
+    outline: none;
+    position: relative;
+    &--show {
+      opacity: 1;
+    }
+    &--hide {
+      cursor: default;
+      opacity: 0;
+    }
+  }
+  &__button-left {
+    left: 0px;
+    & > span {
+      &:hover {
+        transition: none;
+      }
+    }
+    &:hover {
+      left: -3px;
+      transition: left 0.3s ease;
+    }
+  }
+  &__button-right {
+    right: 0px;
+    & > span {
+      &:hover {
+        transition: none;
+      }
+    }
+    &:hover {
+      right: -3px;
+      transition: right 0.3s ease;
+    }
+  }
+  &__tool-number {
+    font-size: 0.6em;
+  }
+  &__down-pointer {
+    border: 6px solid transparent;
+    border-top-color: #2cabe2;
+    border-top-style: solid;
+    bottom: -11px;
+    height: 0;
+    left: 48%;
+    position: absolute;
+    width: 0;
+    &--hide-paint {
+      left: 64%;
+    }
+    &--hints {
+      left: 80%;
+    }
+  }
+  &__select-group {
+    background: #2cabe2;
+    bottom: calc(100% + 0.4rem);
+    // color: #333;
+    color: #fff;
+    display: block;
+    font-size: 18px;
+    left: calc(100% + -9.7rem);
+    line-height: 21.6px;
+    padding: 0.5em 1.5em 0.5em 1.5em;
+    position: absolute;
+    width: 200px;
+    // bottom: calc(100% + -9rem);
+    // transform: translate(-150%);
+    // left: calc(0% - 26.9rem);
+  }
+}

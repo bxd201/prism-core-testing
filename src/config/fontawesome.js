@@ -24,7 +24,8 @@ import {
   faAngleUp,
   faAngleDown,
   faCheckCircle,
-  faDotCircle
+  faDotCircle,
+  faPaintBrush
 } from '@fortawesome/pro-solid-svg-icons'
 
 // lights
@@ -77,7 +78,8 @@ const faIcons = [
   falRedo,
   falUndo,
   falCircle,
-  faDotCircle
+  faDotCircle,
+  faPaintBrush
 ]
 library.add(...faIcons)
 

@@ -4,9 +4,9 @@
   }
   &__tools-container {
     display: flex;
-    position: absolute;
-    right: 2.3em;
-    transition: right 0.5s ease-in-out;
+    position: relative;
+    right: 1em;
+    transition: right 0.5s ease-in-out 0.3s;
     z-index: 10000;
     &--hide {
       right: -40em;
@@ -23,12 +23,81 @@
     position: relative;
     text-align: center;
     width: 4em;
+    &:hover {
+      border-color: #2cabe2;
+      color: #2cabe2;
+      cursor: pointer;
+      fill: #2cabe2;
+    }
+    &:before {
+      background: #2cabe2;
+      content: '';
+      display: inline-block;
+      height: 0;
+      position: absolute;
+      top: 50%;
+      transition: all .3s;
+      width: 0;
+      z-index: 10;
+    }
     &--active {
-      outline: 1px solid
+      border-width: 0;
+      cursor: default;
+      fill: white;
+      overflow: visible;
+      outline: none;
+      &:hover {
+        color: #f2f2f2;
+        cursor: default;
+        fill: none;
+      }
+      &:before {
+        display: inline-block;
+        height: 4.5em;
+        left: -.5em;
+        top: -.25em;
+        transition: all .3s;
+        width: 5em;
+      }
+    }
+    &--disabled {
+      border-color: #fff;
+      color: #e1e1e1;
+      cursor: default;
+      fill: #e1e1e1;
+      &:before {
+        display: none;
+      }
+      &:hover {
+        border-color: #fff;
+        color: #e1e1e1;
+        cursor: default;
+        fill: #e1e1e1;
+      }
+    }
+  }
+  &__tool-name {
+    bottom: .75em;
+    color: rgba(255, 255, 255, 0);
+    font-size: .5em;
+    left: -.75em;
+    line-height: 1;
+    pointer-events: none;
+    position: absolute;
+    transition: color .7s;
+    width: 125%;
+    z-index: 10;
+    &--active {
+      color: white;
+      transition: color .7s;
+    }
+    &--disabled {
+      color: #e1e1e1;
     }
   }
   &__toolbar-toggle {
     display: flex;
+    position: relative;
   }
   &__toolbar-toggle-button {
     background: white;
@@ -38,8 +107,55 @@
     fill: black;
     height: 4em;
     outline: none;
-    text-align: center;
     z-index: 10000;
+    &:hover {
+      border-color: #2cabe2;
+      color: #2cabe2;
+      cursor: pointer;
+      fill: #2cabe2;
+    }
+    &:before {
+      border: 6px solid transparent;
+      border-left-color: #333333;
+      border-left-style: solid;
+      content: '';
+      display: inline-block;
+      height: 0;
+      margin-left: .5em;
+      opacity: 0;
+      position: absolute;
+      top: 1.5em;
+      width: 0;
+    }
+    &:after {
+      border: 6px solid transparent;
+      border-right-color: #333333;
+      border-right-style: solid;
+      content: '';
+      display: inline-block;
+      height: 0;
+      margin-right: .5em;
+      opacity: 0;
+      width: 0;
+    }
+    &--toolbar-shown {
+      &:before {
+        opacity: 1;
+        transition: opacity 0.5s;
+      }
+      &:after {
+        opacity: 0;
+      }
+    }
+    &--toolbar-hidden {
+      &:before {
+        opacity: 0;
+      }
+      &:after {
+        opacity: 1;
+        transition: opacity 0.5s;
+      }
+    }
   }
   &__brush-types {
     display: none;
@@ -50,6 +166,14 @@
     &--hide {
       display: none;
     }
+    &--show-by-opacity {
+      opacity: 1;
+      transition: opacity 0.3s ease-in-out 0.7s;
+    }
+    &--hide-by-opacity {
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+    }
   }
   &__brush-types-paint {
     bottom: 60px;
@@ -57,7 +181,7 @@
   }
   &__brush-types-erase {
     background: #f2f2f2;
-    bottom: 66px;
+    bottom: 60px;
     left: 90px;
   }
   &__clear-all {
@@ -68,7 +192,42 @@
     font-size: .75em;
     margin: 0 auto 12px;
     outline: none;
-    padding: .75em 1.75em;
+    padding: 0.3em 1.2em;
     width: auto;
+    &:hover {
+      border-color: #2cabe2;
+      color: #2cabe2;
+    }
+  }
+  &__tool-icon {
+    position: absolute;
+    z-index: 10;
+    top: 16px;
+    right: 20px;
+  }
+  &__paint-tooltip {
+    bottom: calc(100% + 0.5rem);
+    // TODO: remove following comments after adding tooltip for Color Wall
+    // bottom: calc(100% + 22rem);
+    // right: calc(100% + 8rem);
+    display: none;
+    position: absolute;
+    &--active {
+      display: flex;
+    }
+  }
+  &__group-tool {
+    display: flex;
+    left: -12em;
+    position: relative;
+    z-index: 100;
+    &--show {
+      left: 1.5em;
+      transition: left 0.3s ease-in-out 0.3s;
+    }
+    &--hide {
+      left: -12em;
+      transition: left 0.3s ease-in-out 0.3s;
+    }
   }
 }
