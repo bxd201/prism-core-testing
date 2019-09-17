@@ -1,11 +1,12 @@
 // @flow
-import type { Color } from './Colors'
+import { type Color } from './Colors'
+import MaskObj from '../../store/masks/MaskObj'
 
 export type Surface = {
   id: number,
   role: string,
   thumb: string,
-  mask: string,
+  mask: MaskObj,
   hitArea: string,
   shadows?: string,
   highlights?: string
