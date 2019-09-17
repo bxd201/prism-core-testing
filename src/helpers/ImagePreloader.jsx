@@ -5,11 +5,12 @@ import flattenDeep from 'lodash/flattenDeep'
 
 import { ensureFullyQualifiedAssetUrl } from '../shared/helpers/DataUtils'
 import { type NestedArray } from '../shared/types/Common'
+import MaskObj from '../store/masks/MaskObj'
 
 type Props = {
   // $FlowIgnore
   el: React$ElementClass,
-  preload: NestedArray<string | void>
+  preload: NestedArray<string | MaskObj | void>
 }
 
 type State = {
@@ -27,12 +28,8 @@ class ImagePreloader extends PureComponent<Props, State> {
     [ key: string ]: Promise<any>
   } = {}
 
-  static getPromise = function (path: string): ?Promise<any> {
-    if (ImagePreloader.promiseMap[path]) {
-      return ImagePreloader.promiseMap[path]
-    }
-
-    return void (0)
+  static getPromise = function (key: string): ?Promise<any> {
+    return ImagePreloader.promiseMap[key]
   }
 
   static performDownload (path: string, resolve: {
@@ -59,37 +56,45 @@ class ImagePreloader extends PureComponent<Props, State> {
         ImagePreloader.performDownload(path, resolve, reject, true)
       }, 10000)
     }
-    // never check if asset is newer -- always based on unique path
-    // $FlowIgnore
-    img.validate = 'never'
+
     // set the source
     img.src = path
   }
 
-  static makePromise = function (path: string): Promise<any> {
-    const existingPromise = ImagePreloader.getPromise(ensureFullyQualifiedAssetUrl(path))
+  static makePromise = function (tgt: string | MaskObj): Promise<any> | typeof undefined {
+    let existingPromise
+
+    if (tgt instanceof MaskObj) {
+      existingPromise = ImagePreloader.getPromise(tgt.id)
+    } else if (typeof tgt === 'string') {
+      existingPromise = ImagePreloader.getPromise(ensureFullyQualifiedAssetUrl(tgt))
+    }
 
     if (existingPromise) {
       return existingPromise
     }
 
-    const newPromise = new Promise((resolve: Function, reject: Function) => {
-      const fullPath = ensureFullyQualifiedAssetUrl(path)
-      // non-blocking request, unlike setting Image source
-      ImagePreloader.performDownload(
-        fullPath,
-        {
-          using: resolve,
-          with: fullPath
-        }, {
-          using: reject
-        }
-      )
-    })
+    if (tgt instanceof MaskObj) {
+      ImagePreloader.promiseMap[tgt.id] = tgt.loading
+    } else if (typeof tgt === 'string') {
+      const newPromise = new Promise((resolve: Function, reject: Function) => {
+        const fullPath = ensureFullyQualifiedAssetUrl(tgt)
+        // non-blocking request, unlike setting Image source
+        ImagePreloader.performDownload(
+          fullPath,
+          {
+            using: resolve,
+            with: fullPath
+          }, {
+            using: reject
+          }
+        )
+      })
 
-    ImagePreloader.promiseMap[path] = newPromise
+      ImagePreloader.promiseMap[tgt] = newPromise
 
-    return newPromise
+      return newPromise
+    }
   }
 
   constructor (props: Props) {
@@ -101,7 +106,7 @@ class ImagePreloader extends PureComponent<Props, State> {
       const flatPreload = flattenDeep(preload).filter(val => !!val)
 
       if (flatPreload.length) {
-        Promise.all(flatPreload.map(src => ImagePreloader.makePromise(src))).then((response: any) => {
+        Promise.all(flatPreload.map(tgt => ImagePreloader.makePromise(tgt))).then((response: any) => {
           this.setState({
             error: false,
             loading: false

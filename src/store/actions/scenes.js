@@ -2,8 +2,9 @@
 import axios from 'axios'
 import isEmpty from 'lodash/isEmpty'
 
-import type { ScenePayload } from '../../shared/types/Scene'
-import type { Color } from '../../shared/types/Colors'
+import { type ScenePayload } from '../../shared/types/Scene'
+import { type Color } from '../../shared/types/Colors'
+import MaskObj from '../masks/MaskObj'
 
 import { generateBrandedEndpoint } from '../../shared/helpers/DataUtils'
 
@@ -170,5 +171,16 @@ export const loadScenes = (type: string) => {
           type: type
         }))
       })
+  }
+}
+
+export const UPDATE_MASK = 'UPDATE_MASK'
+export const updateMask = (mask: MaskObj, data: Blob) => {
+  return {
+    type: UPDATE_MASK,
+    payload: {
+      mask,
+      data
+    }
   }
 }

@@ -58,7 +58,7 @@ export function sliceMeanFrom (arr: NumericArray, quint: number = TGT_QUINTILE, 
       .value()
 
     if (isNaN(v)) {
-      // TODO: handle non-numeric case; remove debugger
+      // FIXME: handle non-numeric case; remove debugger
       // we should always have numeric values for these, so this needs to be handled
       debugger // eslint-disable-line
     }

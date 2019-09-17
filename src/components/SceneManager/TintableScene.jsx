@@ -209,7 +209,7 @@ class TintableScene extends PureComponent<Props, State> {
                             filterColor={tintColor.hex}
                             filterImageValueCurve={imageValueCurve}
                             maskId={getMaskId(instanceId, surface.id, tintColor.hex)}
-                            maskImage={ensureFullyQualifiedAssetUrl(surface.mask)}
+                            maskImage={surface.mask.path}
                           />
                         </CSSTransition>
                       )
