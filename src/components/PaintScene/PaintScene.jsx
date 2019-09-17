@@ -52,7 +52,17 @@ type ComponentState = {
   eraseBrushShape: string,
   eraseBrushWidth: number,
   drawHistory: Array<Array<Object>>,
-  drawCoordinates: Array<Object>
+  drawCoordinates: Array<Object>,
+  pixelDataHistory: Array<Object>,
+  pixelDataRedoHistory: Array<Object>,
+  undoIsEnabled: boolean,
+  redoIsEnabled: boolean
+
+}
+
+type DrawOperation = {
+  colors: number[],
+  data: number[],
 }
 
 export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
@@ -80,20 +90,33 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     eraseBrushShape: brushRoundShape,
     eraseBrushWidth: brushLargeWidth,
     drawHistory: [],
-    redoHistory: []
+    redoHistory: [],
+    pixelDataHistory: [],
+    pixelDataRedoHistory: [],
+    undoIsEnabled: false,
+    redoIsEnabled: false
   }
 
   constructor (props: ComponentProps) {
     super(props)
+
     this.CFICanvas = React.createRef()
     this.CFICanvas2 = React.createRef()
     this.CFIWrapper = React.createRef()
     this.CFIImage = React.createRef()
     this.canvasOffsetWidth = 0
     this.canvasOffsetHeight = 0
+
+    this.pushToHistory = this.pushToHistory.bind(this)
+    this.popFromHistoryToRedoHistory = this.popFromHistoryToRedoHistory.bind(this)
+    this.undo = this.undo.bind(this)
+    this.redo = this.redo.bind(this)
+    this.redrawFromOperation = this.redrawFromOperation.bind(this)
+    this.getImageCoordinatesByPixel = this.getImageCoordinatesByPixel.bind(this)
+    this.popFromRedoHistoryToHistory = this.popFromRedoHistoryToHistory.bind(this)
   }
 
-  handleImageLoaded =() => {
+  handleImageLoaded = () => {
     this.initCanvas()
   }
 
@@ -172,43 +195,104 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     if (activeTool === this.state.activeTool) {
       return
     }
-
-    this.pushToHistory({ activeTool })
+    this.setState({ activeTool })
   }
 
-  pushToHistory (newState: Object) {
-    const newHistory = this.state.drawCoordinates.length ? [...this.state.drawHistory, [...this.state.drawCoordinates]] : this.state.drawHistory
+  /*:: pushToHistory: (redoOperation: Object) => void */
+  pushToHistory (redoOperation: Object) {
+    const shouldPushFlag = this.state.drawCoordinates.length > 0 || redoOperation
+    const itemForHistory = redoOperation || this.getImageCoordinatesByPixel()
+    const newPixelDataHistory = shouldPushFlag ? [...this.state.pixelDataHistory, itemForHistory] : this.state.pixelDataHistory
 
-    let _state = {
-      drawHistory: newHistory,
-      drawCoordinates: []
+    let newState = {
+      pixelDataHistory: newPixelDataHistory,
+      pixelDataRedoHistory: [],
+      undoIsEnabled: true,
+      redoIsEnabled: false
     }
 
-    if (newState) {
-      _state = Object.assign(_state, newState)
-    }
-    console.log(_state)
-    this.setState(_state)
+    this.setState(newState)
   }
 
-  popToRedoHistory (newState: Object) {
-    if (this.state.drawHistory.length) {
-      const newRedoHistory = this.state.drawHistory.slice(-1)
-      const newHistory = this.state.drawHistory.slice(0, this.state.drawHistory.length - 1)
+  /*:: popFromRedoHistoryToHistory: () => void */
+  popFromRedoHistoryToHistory () {
+    if (this.state.pixelDataRedoHistory.length) {
+      const operationToAddToHistory = this.state.pixelDataRedoHistory.slice(-1)
+      const newPixelDataRedoHistory = this.state.pixelDataHistory.slice(0, this.state.pixelDataRedoHistory.length - 1)
+      const newPixelDataHistory = this.state.pixelDataHistory.length ? [...this.state.pixelDataHistory, operationToAddToHistory] : [operationToAddToHistory]
 
-      const redoHistory = this.state.redoHistory.length ? [...this.state.redoHistory.length, newRedoHistory] : [newRedoHistory]
-
-      let _state = {
-        drawHistory: newHistory,
-        redoHistory
+      let newState = {
+        pixelDataHistory: newPixelDataHistory,
+        pixelDataRedoHistory: newPixelDataRedoHistory,
+        undoIsEnabled: newPixelDataHistory.length > 0,
+        redoIsEnabled: newPixelDataRedoHistory.length > 0
       }
 
-      if (newState) {
-        _state = Object.assign(_state, newState)
-      }
-
-      this.setState(_state)
+      this.setState(newState)
     }
+  }
+
+  /*:: popFromHistoryToRedoHistory: () => void */
+  popFromHistoryToRedoHistory () {
+    if (this.state.pixelDataHistory.length) {
+      // Pixel redo
+      const newPixelRedoHistory = this.state.pixelDataHistory.slice(-1)
+      const pixelDataHistory = this.state.pixelDataHistory.slice(0, this.state.pixelDataHistory.length - 1)
+      const pixelDataRedoHistory = this.state.pixelDataRedoHistory.length ? [...this.state.pixelDataRedoHistory, newPixelRedoHistory] : [newPixelRedoHistory]
+
+      let newState = {
+        pixelDataHistory,
+        pixelDataRedoHistory,
+        drawCoordinates: [],
+        undoIsEnabled: pixelDataHistory.length > 0,
+        redoIsEnabled: pixelDataRedoHistory.length > 0
+      }
+
+      this.setState(newState)
+    }
+  }
+
+  // @todo set activetool based on action
+  /*:: undo: () => void */
+  undo () {
+    // @todo finish implementation
+    if (this.state.pixelDataHistory.length > 1) {
+      const redrawOperation = this.state.pixelDataHistory.slice(-2, -1)[0]
+      this.redrawFromOperation(redrawOperation)
+      this.popFromHistoryToRedoHistory()
+    } else if (this.state.pixelDataHistory.length === 1) {
+      this.clearCanvas()
+      this.popFromHistoryToRedoHistory()
+    }
+  }
+
+  /*:: redo: () => void */
+  redo () {
+    // @todo finish implementation...add back to undo stack and what ever else
+    if (this.state.pixelDataRedoHistory.length) {
+      const redoOperation = this.state.pixelDataRedoHistory.slice(-1)[0]
+      this.redrawFromOperation(redoOperation)
+      this.pushToHistory(redoOperation)
+    }
+  }
+
+  /*:: redrawFromOperation: (historicOperation: DrawOperation) => void */
+  redrawFromOperation (historicOperation: DrawOperation) {
+    // @todo finish implementation
+    // Clear canvas and draw from history sequences
+    console.log(historicOperation)
+    this.clearCanvas()
+  }
+
+  /*:: getImageCoordinatesByPixel: () => DrawOperation */
+  getImageCoordinatesByPixel (): DrawOperation {
+    // @todo implement,  this will wrap @jialai's lib
+    const operation = {
+      colors: [],
+      data: []
+    }
+
+    return operation
   }
 
   mouseMoveHandler = (e: Object) => {
@@ -324,7 +408,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
   render () {
     const { imageUrl, lpActiveColor } = this.props
-    const { activeTool, position, paintBrushShape, paintBrushWidth, eraseBrushShape, eraseBrushWidth } = this.state
+    const { activeTool, position, paintBrushShape, paintBrushWidth, eraseBrushShape, eraseBrushWidth, undoIsEnabled, redoIsEnabled } = this.state
     const lpActiveColorRGB = `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})`
     const backgroundColorBrush = (activeTool === eraseTool) ? `rgba(255, 255, 255, 0.7)` : lpActiveColorRGB
     let paintBrushActiveClass = ''
@@ -375,6 +459,10 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
             eraseBrushShape={eraseBrushShape}
             eraseBrushWidth={eraseBrushWidth}
             setBrushShapeSize={this.setBrushShapeSize}
+            performRedo={this.redo}
+            performUndo={this.undo}
+            undoIsEnabled={undoIsEnabled}
+            redoIsEnabled={redoIsEnabled}
           />
         </div>
         {
@@ -399,4 +487,5 @@ const mapStateToProps = (state: Object, props: Object) => {
   }
 }
 
+// $FlowIgnore
 export default connect(mapStateToProps, null)(PaintScene)

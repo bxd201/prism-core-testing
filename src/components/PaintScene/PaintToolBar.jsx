@@ -10,6 +10,7 @@ const containerClass = `${baseClass}__tools-container`
 const containerHideClass = `${containerClass}--hide`
 const toolbarButtonClass = `${baseClass}__toolbar-button`
 const toolbarButtonActiveClass = `${toolbarButtonClass}--active`
+const toolbarButtonDisabledClass = `${toolbarButtonClass}--disabled`
 const toolbarToggleClass = `${baseClass}__toolbar-toggle`
 const toolbarToggleButtonClass = `${baseClass}__toolbar-toggle-button`
 const brushTypesClass = `${baseClass}__brush-types`
@@ -19,8 +20,16 @@ const brushTypesPaintClass = `${baseClass}__brush-types-paint`
 const brushTypesEraseClass = `${baseClass}__brush-types-erase`
 const clearAllButtonClass = `${baseClass}__clear-all`
 
-const paintBrushTool = 'paintBrush'
-const eraseTool = 'erase'
+const getToolNames = (toolbarData) => {
+  const nameDict = {}
+  toolbarData.forEach((item) => {
+    nameDict[item.name.toUpperCase()] = item.name
+  })
+
+  return nameDict
+}
+
+const toolNames = getToolNames(toolBarButtons)
 
 type ComponentProps = {
   activeTool: string,
@@ -30,7 +39,11 @@ type ComponentProps = {
   paintBrushWidth: number,
   eraseBrushShape: string,
   eraseBrushWidth: number,
-  setBrushShapeSize: Function
+  setBrushShapeSize: Function,
+  performUndo: Function,
+  performRedo: Function,
+  undoIsEnabled: boolean,
+  redoIsEnabled: boolean
 }
 
 type ComponentState = {
@@ -40,10 +53,32 @@ type ComponentState = {
 }
 
 export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> {
-  state = {
-    showToolBar: true,
-    showPaintBrushTypes: false,
-    showEraseBrushTypes: false
+  constructor (props: ComponentProps) {
+    super(props)
+
+    this.state = {
+      showToolBar: true,
+      showPaintBrushTypes: false,
+      showEraseBrushTypes: false
+    }
+
+    this.getToolBarItemClassName = this.getToolBarItemClassName.bind(this)
+    this.generateTools = this.generateTools.bind(this)
+  }
+
+  /*:: getToolBarItemClassName: (tool: Object) => string */
+  getToolBarItemClassName (tool: Object): string {
+    let itemClassName = `${toolbarButtonClass} ${(this.props.activeTool === tool.name) ? `${toolbarButtonActiveClass}` : ``}`
+
+    if (tool.name === toolNames.UNDO && !this.props.undoIsEnabled) {
+      itemClassName += ` ${toolbarButtonDisabledClass}`
+    }
+
+    if (tool.name === toolNames.REDO && !this.props.redoIsEnabled) {
+      itemClassName += ` ${toolbarButtonDisabledClass}`
+    }
+
+    return itemClassName
   }
 
   toggleButtonClickHandler = (e: Object) => {
@@ -56,24 +91,55 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
     e.preventDefault()
     e.stopPropagation()
     const { setActiveTool, activeTool } = this.props
-    if (activeTool === paintBrushTool) {
+    if (activeTool === toolNames.PAINTBRUSHTOOL) {
       this.setState((prevState, props) => ({
         showPaintBrushTypes: !prevState.showPaintBrushTypes,
         showEraseBrushTypes: false
       }))
     }
-    if (activeTool === eraseTool) {
+    if (activeTool === toolNames.ERASETOOL) {
       this.setState((prevState, props) => ({
         showEraseBrushTypes: !prevState.showEraseBrushTypes,
         showPaintBrushTypes: false
       }))
     }
+
+    if (toolName === toolNames.UNDO) {
+      if (this.props.undoIsEnabled) {
+        this.props.performUndo()
+      }
+      return
+    }
+
+    if (toolName === toolNames.REDO) {
+      if (this.props.redoIsEnabled) {
+        this.props.performRedo()
+      }
+      return
+    }
+
     setActiveTool(toolName)
   }
 
   clearAllClickHandler = () => {
     const { clearCanvas } = this.props
     clearCanvas()
+  }
+
+  /*:: generateTools: () => Array<any> */
+  generateTools (): Array<any> {
+    const tools = toolBarButtons.map((tool: Object, index: number) => {
+      return <button
+        key={tool.id}
+        name={tool.name}
+        className={this.getToolBarItemClassName(tool)}
+        onClick={(e) => this.buttonClickHandler(e, tool.name)}
+      >
+        {tool.id}
+      </button>
+    })
+    console.log('TOOLS', tools)
+    return tools
   }
 
   render () {
@@ -83,28 +149,17 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
     return (
       <div className={`${wrapperClass}`}>
         <div className={`${containerClass} ${(!showToolBar) ? `${containerHideClass}` : ``}`}>
-          {
-            toolBarButtons.map((tool: Object, index: number) => {
-              return <button
-                key={tool.id}
-                name={tool.name}
-                className={`${toolbarButtonClass} ${(activeTool === tool.name) ? `${toolbarButtonActiveClass}` : ``}`}
-                onClick={(e) => this.buttonClickHandler(e, tool.name)}
-              >
-                {tool.id}
-              </button>
-            })
-          }
+          { this.generateTools() }
           <div
-            className={`${brushTypesClass} ${((activeTool === paintBrushTool) && showPaintBrushTypes) ? `${brushTypesShowClass}` : `${brushTypesHideClass}`} ${brushTypesPaintClass}`}
+            className={`${brushTypesClass} ${((activeTool === toolNames.PAINTBRUSHTOOL) && showPaintBrushTypes) ? `${brushTypesShowClass}` : `${brushTypesHideClass}`} ${brushTypesPaintClass}`}
           >
             <BrushTypes activeWidth={paintBrushWidth} activeShape={paintBrushShape} setBrushShapeSize={setBrushShapeSize} />
           </div>
           <div
-            className={`${brushTypesClass} ${((activeTool === eraseTool) && showEraseBrushTypes) ? `${brushTypesShowClass}` : `${brushTypesHideClass}`} ${brushTypesEraseClass}`}
+            className={`${brushTypesClass} ${((activeTool === toolNames.ERASETOOL) && showEraseBrushTypes) ? `${brushTypesShowClass}` : `${brushTypesHideClass}`} ${brushTypesEraseClass}`}
           >
             <BrushTypes activeWidth={eraseBrushWidth} activeShape={eraseBrushShape} setBrushShapeSize={setBrushShapeSize} />
-            {(activeTool === eraseTool) && <button className={`${clearAllButtonClass}`} onClick={this.clearAllClickHandler}>CLEAR ALL</button>}
+            {(activeTool === toolNames.ERASETOOL) && <button className={`${clearAllButtonClass}`} onClick={this.clearAllClickHandler}>CLEAR ALL</button>}
           </div>
         </div>
         <div className={`${toolbarToggleClass}`}>

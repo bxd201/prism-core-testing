@@ -2,7 +2,7 @@
 import axios from 'axios'
 import isEmpty from 'lodash/isEmpty'
 
-import type { ScenePayload } from '../../shared/types/Scene'
+import type { ScenePayload, SceneWorkspace } from '../../shared/types/Scene'
 import type { Color } from '../../shared/types/Colors'
 
 import { generateBrandedEndpoint } from '../../shared/helpers/DataUtils'
@@ -203,5 +203,13 @@ export const toggleEditMode = (currentEditMode: boolean) => {
   return {
     type: TOGGLE_EDIT_MODE,
     payload: !currentEditMode
+  }
+}
+
+export const EDIT_MASK = 'EDIT_MASK'
+export const editMask = (sceneWorkspace: SceneWorkspace) => {
+  return {
+    type: EDIT_MASK,
+    payload: sceneWorkspace
   }
 }

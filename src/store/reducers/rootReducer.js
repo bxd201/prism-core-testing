@@ -8,7 +8,8 @@ import {
   currentSurfaceId,
   currentVariant,
   isEditMode,
-  sceneWorkspaces
+  sceneWorkspaces,
+  currentWorkspace
 } from './scenes'
 import { uploads } from './uploads'
 import collectionSummaries from './collectionSummaries'
@@ -24,5 +25,6 @@ export default combineReducers({
   lp,
   scenes,
   sceneWorkspaces,
-  uploads
+  uploads,
+  currentWorkspace
 })

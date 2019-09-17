@@ -22,7 +22,7 @@ import {
   PAINT_ALL_MAIN_SURFACES,
   ADD_NEW_MASK,
   UPDATE_CURRENT_SCENE,
-  TOGGLE_EDIT_MODE
+  TOGGLE_EDIT_MODE, EDIT_MASK
 } from '../actions/scenes'
 
 type State = {
@@ -223,7 +223,7 @@ export const sceneWorkspaces = (state: SceneWorkspace[] = [], action: {type: str
   return state
 }
 
-export const currentVariant = (state: string | null = null, action: {type: string, payload: string | null}) => {
+export const currentVariant = (state: any = null, action: {type: string, payload: any}) => {
   // @todo make sure this is set to the default variant when ever a new scene is selected
   if (action.type === CHANGE_SCENE_VARIANT) {
     return action.payload
@@ -263,6 +263,14 @@ export const currentActiveSceneId = (state: number | null = null, action: {type:
 
 export const isEditMode = (state: boolean = false, action: {type: string, payload: boolean}) => {
   if (action.type === TOGGLE_EDIT_MODE) {
+    return action.payload
+  }
+
+  return state
+}
+
+export const currentWorkspace = (state: SceneWorkspace | null = null, action: { type: string, payload: SceneWorkspace}) => {
+  if (action.type === EDIT_MASK) {
     return action.payload
   }
 
