@@ -61,7 +61,7 @@ export function PaintToolTip ({ tooltipToolActiveName, closeTooltip, backButtonC
               <FontAwesomeIcon icon={faChevronLeft} />&nbsp;<span>BACK</span>
             </button>
             <span className={`${toolNumberClass}`}>{tooltipToolActiveNumber} of {toolsCount}</span>
-            <button className={`${buttonClass} ${buttonRightClass}`} onClick={() => nextButtonClickHandler()}>
+            <button className={`${buttonClass} ${buttonRightClass} ${tooltipToolActiveNumber < toolsCount ? `${buttonShowClass}` : `${buttonHideClass}`}`} onClick={() => nextButtonClickHandler()}>
               <span>NEXT</span>&nbsp;<FontAwesomeIcon icon={faChevronRight} />
             </button>
           </div>

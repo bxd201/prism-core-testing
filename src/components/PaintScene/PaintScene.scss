@@ -15,6 +15,7 @@
     border-right: 2px solid #fff;
     /*min-height: 266px;*/
     position: absolute;
+    z-index: 10;
     /* width: 100%; */
     /*@include respond-above(xs) {
       min-height:366px;
@@ -25,9 +26,12 @@
     &--portrait {
       left: 26%;
     }
-  }
-  &__canvas-first{
-    z-index: 10;
+    &--show-by-zindex {
+      z-index: 100;
+    }
+    &--hide-by-zindex {
+      z-index: 10;
+    }
   }
   &__canvas-second{
     z-index: 20;
