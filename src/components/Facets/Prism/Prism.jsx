@@ -2,8 +2,6 @@
 import React, { Component } from 'react'
 import { Route, Redirect } from 'react-router-dom'
 
-import { withDragDropContext } from '../../../helpers/WithDragDropContext'
-
 import LivePalette from '../../LivePalette/LivePalette'
 import ColorWallRouteComponent from '../ColorWall/ColorWallRouteComponent'
 import SceneManager from '../../SceneManager/SceneManager'
@@ -43,4 +41,4 @@ export class Prism extends Component<Props> {
   }
 }
 
-export default withDragDropContext(Prism)
+export default Prism
