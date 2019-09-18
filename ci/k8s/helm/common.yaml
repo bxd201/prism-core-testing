@@ -1,0 +1,33 @@
+image:
+  name: docker.cpartdc01.sherwin.com/ecomm/apps/prism-core
+
+ingress:
+  enabled: true
+  secret: ebus
+
+extraEmptyDir:
+  app-config:
+    sizeLimit: "5M"
+    mountPath: /app/config
+
+podAnnotations:
+  sherwin.department: "eBus"
+  sherwin.division: "A100"
+  sherwin.costcenter: "80U677"
+  sherwin.project: "Prism"
+  sherwin.owner: "devops"
+  sherwin.application: "prism-core"
+  sherwin.meta.ci.vendor_image: "false"
+  sherwin.meta.ci.smoke_test: "false"
+  sherwin.meta.ci.dockerspec: "true"
+  sherwin.meta.ci.zero_downtime: "true"
+  sherwin.meta.ci.notifications: "true"
+  sherwin.meta.ci.qualys: "true"
+  sherwin.meta.ci.veracode: "true"
+  sherwin.meta.ci.rancher_validation: "false"
+  sherwin.meta.ci.tagging: "true"
+  sherwin.meta.ci.qa_regression: "false"
+  sherwin.meta.ci.shepherd: "true"
+  sherwin.meta.ci.auto_db: "n/a"
+  sherwin.meta.ci.monitoring: "false"
+  sherwin.meta.ci.jenkinsfile: "true"
