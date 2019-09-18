@@ -21,7 +21,7 @@ pipeline {
         #!/bin/bash
 
         # Build the builder image
-        docker build --no-cache --pull -t ${IMAGE_NAME}-build -f Dockerfile.build .
+        docker build --no-cache --pull -t ${IMAGE_NAME}-build -f ci/Dockerfile.build .
         """
 
         sh """
