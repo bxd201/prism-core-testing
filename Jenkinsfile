@@ -87,7 +87,9 @@ pipeline {
     }
     stage('image-testing') {
       when {
-        branch 'develop'
+        not {
+          expression { BRANCH_NAME ==~ /^(qa|release)$/ }
+        }
       }
       agent {
         docker {
@@ -105,36 +107,57 @@ pipeline {
       }
     }
     stage('publish') {
-      when {
-        expression { BRANCH_NAME ==~ /^(develop|hotfix|qa|release)$/ }
+      agent {
+        docker {
+          image 'docker.cpartdc01.sherwin.com/ecomm/utils/barge'
+          args "-u barge"
+          alwaysPull true
+          reuseNode true
+        }
       }
       steps {
-        withDockerRegistry([credentialsId: 'artifactory_credentials', url: 'https://docker.cpartdc01.sherwin.com/v2']) {
-          sh """
-          if [ "${BRANCH_NAME}" = "develop" ]; then
-            docker tag ${IMAGE_NAME}:${BUILD_NUMBER} docker.cpartdc01.sherwin.com/ecomm/apps/${IMAGE_NAME}:${BRANCH_NAME}
-          elif [ "${BRANCH_NAME}" = "hotfix" ]; then
-            docker tag ${IMAGE_NAME}:${BUILD_NUMBER} docker.cpartdc01.sherwin.com/ecomm/apps/${IMAGE_NAME}:${BRANCH_NAME}
-          elif [ "${BRANCH_NAME}" = "qa" ]; then
-            docker pull docker.cpartdc01.sherwin.com/ecomm/apps/${IMAGE_NAME}:develop
-            docker tag docker.cpartdc01.sherwin.com/ecomm/apps/${IMAGE_NAME}:develop docker.cpartdc01.sherwin.com/ecomm/apps/${IMAGE_NAME}:${BRANCH_NAME}
-          elif [ "${BRANCH_NAME}" = "release" ]; then
-            docker pull docker.cpartdc01.sherwin.com/ecomm/apps/${IMAGE_NAME}:qa
-            docker tag docker.cpartdc01.sherwin.com/ecomm/apps/${IMAGE_NAME}:qa docker.cpartdc01.sherwin.com/ecomm/apps/${IMAGE_NAME}:${BRANCH_NAME}
-          fi
-          """
-          sh "docker push docker.cpartdc01.sherwin.com/ecomm/apps/${IMAGE_NAME}:${BRANCH_NAME}"
+        withCredentials([usernamePassword(credentialsId: 'artifactory_credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+          sh "barge in"
         }
       }
     }
-    stage('publish latest') {
+    stage('Deploy') {
       when {
-        branch 'release'
+        expression { BRANCH_NAME ==~ /^(develop|hotfix|qa|release)$/ }
+      }
+      agent {
+        docker {
+            image 'docker.cpartdc01.sherwin.com/ecomm/utils/buoy:latest'
+            reuseNode true
+            alwaysPull true
+        }
+      }
+      environment {
+        RANCHER_PROD_CLUSTER = "prod"
+        RANCHER_NONPROD_CLUSTER = "nonprod"
+        RANCHER_PROJECT = "TAG"
+
+        VERIFY_SECRETS="ebus"
+
+        CHART = "nginx-custom-chart"
+        CHART_REPO = "helm-virtual"
+
+        CHART_VERSION="1.x.x"
+
+        IS_IMAGE_UNIQUE_TAG="true"
+
+        ENVSUBST_VARIABLES='$BRANCH_NAME:$IMAGE_NAME:$IMAGE_UNIQUE_TAG'
+
+        IS_ROLLBACK_ENABLED="true"
       }
       steps {
-        withDockerRegistry([credentialsId: 'artifactory_credentials', url: 'https://docker.cpartdc01.sherwin.com/v2']) {
-          sh "docker tag docker.cpartdc01.sherwin.com/ecomm/apps/${IMAGE_NAME}:${BRANCH_NAME} docker.cpartdc01.sherwin.com/ecomm/apps/${IMAGE_NAME}:latest"
-          sh "docker push docker.cpartdc01.sherwin.com/ecomm/apps/${IMAGE_NAME}:latest"
+        withCredentials([
+          string(credentialsId: 'jenkins_rancher2_bearerToken', variable: 'RANCHER_TOKEN'),
+          usernameColonPassword(credentialsId: 'artifactory_credentials', variable: 'ARTIFACTORY_CREDENTIALS'),
+        ]) {
+          sh "/buoy/float.sh"
+
+          archiveArtifacts artifacts: "deploy.tgz", fingerprint: true
         }
       }
     }
@@ -154,124 +177,6 @@ pipeline {
               wait: false
       }
     }
-    stage('Dev deploy') {
-      environment {
-        VPC = "ebus"
-        RANCHER_ENV = "nonprod"
-        RANCHER_PROJ = "1a33"
-        RANCHER_STACK = "prism-web-dev"
-        IMAGE_TAG="${BRANCH_NAME}"
-        API_URL = "https://dev-prism-api.ebus.swaws"
-        WEB_URL = "https://dev-prism-web.ebus.swaws"
-      }
-      when {
-        branch 'develop'
-      }
-      steps {
-        withCredentials([usernamePassword(credentialsId: 'ebus-nonprod-rancher', usernameVariable: 'RANCHER_ACCESS_KEY', passwordVariable: 'RANCHER_SECRET_KEY')]) {
-         sh """
-         #!/bin/bash -x
-         cd ci
-         # Use Rancher to Deploy the stack
-         rancher \
-           --url "http://rancher.${VPC}.swaws/v2-beta/projects/${RANCHER_PROJ}" \
-           --environment ${RANCHER_ENV} \
-           --access-key "${RANCHER_ACCESS_KEY}" \
-           --secret-key "${RANCHER_SECRET_KEY}" \
-           up \
-             -d \
-             -u --force-upgrade \
-             -f docker-compose.yml \
-             --batch-size 1 \
-             --stack ${RANCHER_STACK}
-
-         # Wait or the upgrade to complete
-         RANCHER_PROJ=${RANCHER_PROJ} \
-         wait_for_rancher ${RANCHER_STACK}
-
-         # Use Rancher to Deploy the stack
-         rancher \
-           --url "http://rancher.${VPC}.swaws/v2-beta/projects/${RANCHER_PROJ}" \
-           --environment ${RANCHER_ENV} \
-           --access-key "${RANCHER_ACCESS_KEY}" \
-           --secret-key "${RANCHER_SECRET_KEY}" \
-           up \
-             -d \
-             -f docker-compose.yml \
-             --batch-size 1 \
-             --confirm-upgrade \
-             --stack ${RANCHER_STACK}
-         """
-        }
-      }
-    }
-    stage('DEV: QualysScan') {
-      when {
-        branch 'develop'
-      }
-      steps {
-        withCredentials([usernamePassword(credentialsId: 'Qualys_scan_password', usernameVariable: 'QUALYS_SCAN_USER', passwordVariable: 'QUALYS_SCAN_PASS')]) {
-          sh """
-          #!/bin/bash
-          #set -x
-          now=\$(date +"%T")
-          sed -i 's|DEV - prism-core|'"DEV - prism-core \${now}"'|g' ./ci/qualys/QualysPostData_DEV.xml
-          curl -k -u "${QUALYS_SCAN_USER}:${QUALYS_SCAN_PASS}" -H "content-type: text/xml" -X "POST" --data-binary @./ci/qualys/QualysPostData_DEV.xml "https://qualysapi.qualys.com/qps/rest/3.0/launch/was/wasscan"
-          """
-        }
-      }
-    }
-    stage('QA deploy') {
-      environment {
-        VPC = "ebus"
-        RANCHER_ENV = "nonprod"
-        RANCHER_PROJ = "1a33"
-        RANCHER_STACK = "prism-web-qa"
-        IMAGE_TAG="${BRANCH_NAME}"
-        API_URL = "https://qa-prism-api.ebus.swaws"
-        WEB_URL = "https://qa-prism-web.ebus.swaws"
-      }
-      when {
-        branch 'qa'
-      }
-      steps {
-        withCredentials([usernamePassword(credentialsId: 'ebus-nonprod-rancher', usernameVariable: 'RANCHER_ACCESS_KEY', passwordVariable: 'RANCHER_SECRET_KEY')]) {
-         sh """
-         #!/bin/bash -x
-         cd ci
-         # Use Rancher to Deploy the stack
-         rancher \
-           --url "http://rancher.${VPC}.swaws/v2-beta/projects/${RANCHER_PROJ}" \
-           --environment ${RANCHER_ENV} \
-           --access-key "${RANCHER_ACCESS_KEY}" \
-           --secret-key "${RANCHER_SECRET_KEY}" \
-           up \
-             -d \
-             -u --force-upgrade \
-             -f docker-compose.yml \
-             --batch-size 1 \
-             --stack ${RANCHER_STACK}
-
-         # Wait or the upgrade to complete
-         RANCHER_PROJ=${RANCHER_PROJ} \
-         wait_for_rancher ${RANCHER_STACK}
-
-         # Use Rancher to Deploy the stack
-         rancher \
-           --url "http://rancher.${VPC}.swaws/v2-beta/projects/${RANCHER_PROJ}" \
-           --environment ${RANCHER_ENV} \
-           --access-key "${RANCHER_ACCESS_KEY}" \
-           --secret-key "${RANCHER_SECRET_KEY}" \
-           up \
-             -d \
-             -f docker-compose.yml \
-             --batch-size 1 \
-             --confirm-upgrade \
-             --stack ${RANCHER_STACK}
-         """
-        }
-      }
-    }
     stage('QA: QualysScan') {
       when {
         branch 'qa'
@@ -288,61 +193,6 @@ pipeline {
         }
       }
     }
-    stage('Prod deploy') {
-      environment {
-        VPC = "ebus"
-        IMAGE_TAG="${BRANCH_NAME}"
-        RANCHER_ENV = "prod"
-        RANCHER_PROJ = "1a199"
-        RANCHER_STACK = "prism-web-prod"
-        API_URL = "https://prism-api.ebus.swaws"
-        WEB_URL = "https://prism-web.ebus.swaws"
-        ELB_NAME= "prism-she-SimpleEL-QG3H7DKM2U0P"
-      }
-      when {
-        branch 'release'
-      }
-      steps {
-        withCredentials([usernamePassword(credentialsId: 'ebus-prod-rancher', usernameVariable: 'RANCHER_ACCESS_KEY', passwordVariable: 'RANCHER_SECRET_KEY')]) {
-          sh """
-          #!/bin/bash -x
-          cd ci
-          # Use Rancher to Deploy the stack
-          rancher \
-            --url "http://rancher.${VPC}.swaws/v2-beta/projects/${RANCHER_PROJ}" \
-            --environment ${RANCHER_ENV} \
-            --access-key "${RANCHER_ACCESS_KEY}" \
-            --secret-key "${RANCHER_SECRET_KEY}" \
-            up \
-              -d \
-              -u --force-upgrade \
-              -f docker-compose.yml \
-              -f docker-compose-prod.yml \
-              --batch-size 1 \
-              --rancher-file rancher-compose-prod.yml \
-              --stack ${RANCHER_STACK}
-
-          # Wait or the upgrade to complete
-          RANCHER_PROJ=${RANCHER_PROJ} \
-          wait_for_rancher ${RANCHER_STACK}
-
-          # Use Rancher to Deploy the stack
-          rancher \
-            --url "http://rancher.${VPC}.swaws/v2-beta/projects/${RANCHER_PROJ}" \
-            --environment ${RANCHER_ENV} \
-            --access-key "${RANCHER_ACCESS_KEY}" \
-            --secret-key "${RANCHER_SECRET_KEY}" \
-            up \
-              -d \
-              -f docker-compose.yml \
-              --batch-size 1 \
-              --rancher-file rancher-compose-prod.yml \
-              --confirm-upgrade \
-              --stack ${RANCHER_STACK}
-          """
-        }
-      }
-    }
     stage('Shepherd') {
       when {
         expression { BRANCH_NAME ==~ /^(develop|qa|release)$/ }
@@ -355,7 +205,7 @@ pipeline {
         }
       }
       environment {
-        DEVELOP_DOMAIN = "https://dev-prism-web.ebus.swaws"
+        DEVELOP_DOMAIN = "https://develop-prism-web.ebus.swaws"
         QA_DOMAIN = "https://qa-prism-web.ebus.swaws"
         RELEASE_DOMAIN = "https://prism.sherwin-williams.com"
 
