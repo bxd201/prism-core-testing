@@ -40,15 +40,15 @@ ColorCollections.getSummary = function getSummary (id, props) {
     name,
     thumbUrl: img,
     description,
-    colorNumbers
+    colorIds
     // ...rest // has a bunch of stuff
 
   } = props.summaries.data[props.summaries.idToIndexHash[id]]
 
   return {
-    collections: colorNumbers
-      .map(colorNumber => props
-        .colorMap[props.colorNumberToIdHash[colorNumber]]
+    collections: colorIds
+      .map(id => props
+        .colorMap[id]
       ).filter(collection => collection),
     description,
     img,
@@ -194,19 +194,10 @@ const mapStateToProps = (state) => {
     }
   } = state
 
-  const colorNumberToIdHash = Object.entries(colorMap).reduce(
-    (hash, [key, value]) => {
-      hash[value.colorNumber] = key
-      return hash
-    },
-    {}
-  )
-
   return {
     categories,
     summaries,
-    colorMap,
-    colorNumberToIdHash
+    colorMap
   }
 }
 

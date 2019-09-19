@@ -41,6 +41,10 @@ exports[`Prism routes should match snapshot 1`] = `
         path="/match-photo"
       />
       <Route
+        path="/paint-scene"
+        render={[Function]}
+      />
+      <Route
         component={[Function]}
         exact={true}
         path="/active/color/:colorId/:colorSEO"
