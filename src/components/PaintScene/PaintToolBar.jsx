@@ -80,13 +80,13 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
     e.preventDefault()
     e.stopPropagation()
     const { setActiveTool, activeTool } = this.props
-    if (activeTool === toolNames.PAINTBRUSHTOOL) {
+    if (activeTool === toolNames.PAINTBRUSH) {
       this.setState((prevState, props) => ({
         showPaintBrushTypes: !prevState.showPaintBrushTypes,
         showEraseBrushTypes: false
       }))
     }
-    if (activeTool === toolNames.ERASETOOL) {
+    if (activeTool === toolNames.ERASE) {
       this.setState((prevState, props) => ({
         showEraseBrushTypes: !prevState.showEraseBrushTypes,
         showPaintBrushTypes: false
@@ -127,7 +127,7 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
         {tool.id}
       </button>
     })
-    console.log('TOOLS', tools)
+
     return tools
   }
 
@@ -140,15 +140,15 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
         <div className={`${containerClass} ${(!showToolBar) ? `${containerHideClass}` : ``}`}>
           { this.generateTools() }
           <div
-            className={`${brushTypesClass} ${((activeTool === toolNames.PAINTBRUSHTOOL) && showPaintBrushTypes) ? `${brushTypesShowClass}` : `${brushTypesHideClass}`} ${brushTypesPaintClass}`}
+            className={`${brushTypesClass} ${((activeTool === toolNames.PAINTBRUSH) && showPaintBrushTypes) ? `${brushTypesShowClass}` : `${brushTypesHideClass}`} ${brushTypesPaintClass}`}
           >
             <BrushTypes activeWidth={paintBrushWidth} activeShape={paintBrushShape} setBrushShapeSize={setBrushShapeSize} />
           </div>
           <div
-            className={`${brushTypesClass} ${((activeTool === toolNames.ERASETOOL) && showEraseBrushTypes) ? `${brushTypesShowClass}` : `${brushTypesHideClass}`} ${brushTypesEraseClass}`}
+            className={`${brushTypesClass} ${((activeTool === toolNames.ERASE) && showEraseBrushTypes) ? `${brushTypesShowClass}` : `${brushTypesHideClass}`} ${brushTypesEraseClass}`}
           >
             <BrushTypes activeWidth={eraseBrushWidth} activeShape={eraseBrushShape} setBrushShapeSize={setBrushShapeSize} />
-            {(activeTool === toolNames.ERASETOOL) && <button className={`${clearAllButtonClass}`} onClick={this.clearAllClickHandler}>CLEAR ALL</button>}
+            {(activeTool === toolNames.ERASE) && <button className={`${clearAllButtonClass}`} onClick={this.clearAllClickHandler}>CLEAR ALL</button>}
           </div>
         </div>
         <div className={`${toolbarToggleClass}`}>
