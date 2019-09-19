@@ -13,7 +13,6 @@ import SceneManager from '../../SceneManager/SceneManager'
 
 import { connect } from 'react-redux'
 import { Route, Redirect } from 'react-router-dom'
-import { withDragDropContext } from '../../../helpers/WithDragDropContext'
 
 import { ROUTE_PARAMS, ROUTE_PARAM_NAMES } from 'constants/globals'
 import MatchPhoto from '../../MatchPhoto/MatchPhoto'
@@ -67,4 +66,4 @@ const mapStateToProps = (state, props) => {
   }
 }
 
-export default connect(mapStateToProps, null)(withDragDropContext(Prism))
+export default connect(mapStateToProps, null)(Prism)

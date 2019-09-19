@@ -1,7 +1,7 @@
 // @flow
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
-import { injectIntl, type intlShape, FormattedMessage } from 'react-intl'
+import { injectIntl, FormattedMessage } from 'react-intl'
 import { TransitionGroup, CSSTransition } from 'react-transition-group'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
@@ -56,7 +56,7 @@ type DispatchProps = {
 }
 
 type ComponentProps = {
-  intl: intlShape,
+  intl: any,
   config: Configuration
 }
 

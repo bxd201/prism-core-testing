@@ -79,7 +79,7 @@ export class TintableSceneHitArea extends PureComponent<Props> {
         <SVG
           className={TintableSceneHitArea.classNames.hitAreaMaskLoader}
           src={ensureFullyQualifiedAssetUrl(svgSource)}
-          cacheGetRequests
+          cacheRequests
           uniqueHash={maskId}
           onLoad={(src) => {
             if (typeof onLoadingSuccess === 'function') {

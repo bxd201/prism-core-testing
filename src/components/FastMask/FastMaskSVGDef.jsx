@@ -1,4 +1,3 @@
-/* eslint-disable */
 // @flow
 import React, { useEffect, useState } from 'react'
 import isNull from 'lodash/isNull'
@@ -23,7 +22,7 @@ type Props = {
   debug?: boolean,
   highlightMap?: ArrayBuffer,
   hueMap?: ArrayBuffer,
-  onFinishProcessing?: Function
+  surfaceLighteningData?: ArrayBuffer
 }
 
 function FastMaskSVGDef (props: Props) {
@@ -35,15 +34,16 @@ function FastMaskSVGDef (props: Props) {
     color,
     mask,
     source,
-    onFinishProcessing,
     hasHighlight,
     highlightMap,
     hueMap,
+    surfaceLighteningData,
     isLight,
     debug
   } = props
   const [highlightMask, setHighlightMask] = useState('')
   const [hueMask, setHueMask] = useState('')
+  const [lightenedImage, setLightenedImage] = useState('')
   const [svgFilter, setSvgFilter] = useState(null)
 
   useEffect(() => {
@@ -59,10 +59,22 @@ function FastMaskSVGDef (props: Props) {
     } else {
       setHighlightMask(void (0))
     }
-    if (onFinishProcessing) {
-      onFinishProcessing()
-    }
   }, [highlightMap, hasHighlight])
+
+  useEffect(() => {
+    if (surfaceLighteningData) {
+      const surfaceLighteningDataView = new Uint8ClampedArray(surfaceLighteningData)
+      const lightenedImage = new ImageData(surfaceLighteningDataView, width, height)
+
+      // retreive the canvas element that contains the user's image with highlights & shadows applied
+      const lightenedCanvas = createCanvasElementWithData(lightenedImage, width, height)
+
+      // apply user image with highlghts & shadows to SVG filter
+      setLightenedImage(lightenedCanvas.toDataURL())
+    } else {
+      setLightenedImage(void (0))
+    }
+  }, [surfaceLighteningData])
 
   useEffect(() => {
     if (hueMap) {
@@ -77,10 +89,7 @@ function FastMaskSVGDef (props: Props) {
     } else {
       setHueMask(void (0))
     }
-    if (onFinishProcessing) {
-      onFinishProcessing()
-    }
-  }, [hueMap])
+  }, [hueMap, hasHighlight])
 
   useEffect(() => {
     let i = 0
@@ -95,9 +104,10 @@ function FastMaskSVGDef (props: Props) {
 
     const filterArr = [
       <feFlood key={i++} floodColor={debug ? 'magenta' : color.hex} result='surfaceColor' />,
-
+      <feImage key={i++} xlinkHref={lightenedImage} x='0' y='0' width='100%' height='100%' result='lightenedImage' />,
       <feImage key={i++} xlinkHref={source.src} x='0' y='0' width='100%' height='100%' result='roomImageZero' />,
       // this is just to get a "working" copy of roomImage, preserving roomImageZero as the pristine version
+      <feComposite key={i++} in='lightenedImage' in2='roomImageZero' operator='over' x='0%' y='0%' width='100%' height='100%' result='roomImageZero' />,
       <feComposite key={i++} in='roomImageZero' in2='roomImageZero' operator='over' x='0%' y='0%' width='100%' height='100%' result='roomImage' />,
       <feImage key={i++} xlinkHref={hueMask} x='0' y='0' width='100%' height='100%' result='desaturationMask' />,
       hasHighlight ? [
@@ -117,7 +127,7 @@ function FastMaskSVGDef (props: Props) {
         <feColorMatrix key={i++} in='roomImageZero' type='saturate' values='0' result='roomImage' />,
         <feComposite key={i++} in='roomImage' in2='desaturationMask' operator='in' x='0%' y='0%' width='100%' height='100%' result='desatRoomParts' />,
         hasHighlight ? [
-          <feComposite key={i++} in='desatRoomParts' in2='highlightMask' operator='out' x='0%' y='0%' width='100%' height='100%' result='desatRoomParts' />,
+          <feComposite key={i++} in='desatRoomParts' in2='highlightMask' operator='out' x='0%' y='0%' width='100%' height='100%' result='desatRoomParts' />
         ] : void (0),
         <feComposite key={i++} in='desatRoomParts' in2='roomImageZero' operator='over' x='0%' y='0%' width='100%' height='100%' result='roomImage' />
       ]
@@ -158,7 +168,7 @@ function FastMaskSVGDef (props: Props) {
     }
 
     setSvgFilter(flattenDeep(filterArr).filter(v => v))
-  }, [hasHighlight, isLight, color && color.hex, source && source.src, highlightMask, hueMask, debug])
+  }, [hasHighlight, isLight, color && color.hex, source && source.src, highlightMask, hueMask, lightenedImage, debug])
 
   if (isNull(mask)) {
     return null

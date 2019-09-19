@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { convertUnorderedColorsToGrid } from '../../../shared/helpers/ColorDataUtils'
 import { generateColorWallPageUrl, generateColorDetailsPageUrl, fullColorName } from '../../../shared/helpers/ColorUtils'
 import { compareKebabs } from '../../../shared/helpers/StringUtils'
-import { injectIntl, FormattedMessage, type intlShape } from 'react-intl'
+import { injectIntl, FormattedMessage } from 'react-intl'
 
 import CircleLoader from '../../Loaders/CircleLoader/CircleLoader'
 import ColorWallSwatchList from './ColorWallSwatchList'
@@ -22,7 +22,7 @@ type Props = {
   addToLivePalette?: Function,
   activeColor: Color,
   loading?: boolean,
-  intl: intlShape,
+  intl: any,
   error: boolean,
   family?: string,
   section?: string,

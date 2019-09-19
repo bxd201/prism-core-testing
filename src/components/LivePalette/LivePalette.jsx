@@ -1,6 +1,4 @@
 // @flow
-import type { Color } from '../../shared/types/Colors'
-
 import React, { PureComponent } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FormattedMessage } from 'react-intl'
@@ -14,6 +12,8 @@ import { Link } from 'react-router-dom'
 import LivePaletteModal from './LivePaletteModal'
 import store from '../../store/store'
 import { LP_MAX_COLORS_ALLOWED, MIN_COMPARE_COLORS_ALLOWED } from 'constants/configurations'
+import { DndProvider } from 'react-dnd'
+import HTML5Backend from 'react-dnd-html5-backend'
 
 import { activate, reorder, toggleCompareColor, cancel, empty } from '../../store/actions/live-palette'
 import { arrayToSpacedString } from '../../shared/helpers/StringUtils'
@@ -22,6 +22,8 @@ import { varValues } from 'variables'
 
 import EmptySlot from './EmptySlot'
 import ActiveSlot from './ActiveSlot'
+
+import type { Color } from '../../shared/types/Colors'
 
 import './LivePalette.scss'
 
@@ -50,12 +52,6 @@ export class LivePalette extends PureComponent<Props, State> {
   pendingUpdateFn: any
   requestedFrame: number | void
   activeSlotRef: ?RefObject = void (0)
-
-  constructor (props: Props) {
-    super(props)
-
-    this.activeSlotRef = React.createRef()
-  }
 
   componentDidMount () {
     store.subscribe(() => {
@@ -117,8 +113,6 @@ export class LivePalette extends PureComponent<Props, State> {
     const activeSlots = colors.map((color, index) => {
       if (color && index < LP_MAX_COLORS_ALLOWED) {
         return (<ActiveSlot
-          ref={this.activeSlotRef}
-          node={this.activeSlotRef} // passing the ref down as a prop so DnD has access to the DOM element
           index={index}
           key={color.id}
           color={color}
@@ -140,25 +134,27 @@ export class LivePalette extends PureComponent<Props, State> {
     const ADD_COLOR_TEXT = (colors.length) ? 'ADD_A_COLOR' : 'FIND_COLORS_IN_CW'
     const COLOR_TRAY_CLASS_MODIFIERS = (colors.length) ? 'add' : 'add-empty'
     return (
-      <div className='prism-live-palette'>
-        <LivePaletteModal cancel={cancel} empty={empty} isActive={colors.length > LP_MAX_COLORS_ALLOWED} />
-        <div className='prism-live-palette__header'>
-          <span className='prism-live-palette__header__name'><FormattedMessage id='PALETTE_TITLE' /></span>
-          {colors.length >= MIN_COMPARE_COLORS_ALLOWED && <button className='prism-live-palette__header__compare-button' onClick={this.toggleCompareColor}>Compare Color</button>}
+      <DndProvider backend={HTML5Backend}>
+        <div className='prism-live-palette'>
+          <LivePaletteModal cancel={cancel} empty={empty} isActive={colors.length > LP_MAX_COLORS_ALLOWED} />
+          <div className='prism-live-palette__header'>
+            <span className='prism-live-palette__header__name'><FormattedMessage id='PALETTE_TITLE' /></span>
+            {colors.length >= MIN_COMPARE_COLORS_ALLOWED && <button className='prism-live-palette__header__compare-button' onClick={this.toggleCompareColor}>Compare Color</button>}
+          </div>
+          <div className='prism-live-palette__list'>
+            {activeSlots}
+            {colors.length < LP_MAX_COLORS_ALLOWED && <Link to={`/active/color-wall`} className={`prism-live-palette__slot prism-live-palette__slot--${COLOR_TRAY_CLASS_MODIFIERS}`}>
+              <FontAwesomeIcon className='prism-live-palette__icon' icon={['fal', 'plus-circle']} size='2x' color={varValues.colors.swBlue} />
+              <FormattedMessage id={ADD_COLOR_TEXT}>
+                {(msg: string) => <span className='prism-live-palette__slot__copy'>{msg}</span>}
+              </FormattedMessage>
+            </Link>}
+            {disabledSlots}
+          </div>
+          {/* This will speak the current and removed color, as well as some color-delta info. */}
+          <aside aria-live='assertive' className='prism-live-palette__color-description'>{spokenWord}</aside>
         </div>
-        <div className='prism-live-palette__list'>
-          {activeSlots}
-          {colors.length < LP_MAX_COLORS_ALLOWED && <Link to={`/active/color-wall`} className={`prism-live-palette__slot prism-live-palette__slot--${COLOR_TRAY_CLASS_MODIFIERS}`}>
-            <FontAwesomeIcon className='prism-live-palette__icon' icon={['fal', 'plus-circle']} size='2x' color={varValues.colors.swBlue} />
-            <FormattedMessage id={ADD_COLOR_TEXT}>
-              {(msg: string) => <span className='prism-live-palette__slot__copy'>{msg}</span>}
-            </FormattedMessage>
-          </Link>}
-          {disabledSlots}
-        </div>
-        {/* This will speak the current and removed color, as well as some color-delta info. */}
-        <aside aria-live='assertive' className='prism-live-palette__color-description'>{spokenWord}</aside>
-      </div>
+      </DndProvider>
     )
   }
 
@@ -166,38 +162,18 @@ export class LivePalette extends PureComponent<Props, State> {
     this.props.activateColor(color)
   }
 
-  scheduleUpdate = (updateFn: Function) => {
-    this.pendingUpdateFn = updateFn
+  moveColor = (dragIndex: Number, hoverIndex: Number) => {
+    const { colors, reorderColors } = this.props
+    const dragColor = colors[dragIndex]
 
-    if (!this.requestedFrame) {
-      this.requestedFrame = window.requestAnimationFrame(this.drawFrame)
-    }
-  }
-
-  drawFrame = () => {
-    const sortedColorsById = update([], this.pendingUpdateFn)
-
-    // trigger the reordering via redux
-    this.props.reorderColors(sortedColorsById)
-
-    this.pendingUpdateFn = undefined
-    this.requestedFrame = undefined
-  }
-
-  moveColor = (originColorId: Number, destinationColorId: Number) => {
-    const { colors } = this.props
-    const colorsByIndex = flatMap(colors, color => color.id) // creates an array of only all color ids
-    const originIndex = colorsByIndex.indexOf(originColorId) // get the index of the origin color
-    const destIndex = colorsByIndex.indexOf(destinationColorId) // get the index of the dest color
-
-    // shuffle the origin with the dest
-    const from = colorsByIndex.splice(originIndex, 1)[0]
-    colorsByIndex.splice(destIndex, 0, from)
-
-    // schedule the rearrangement of a swatch with the browser
-    this.scheduleUpdate({
-      $push: colorsByIndex
+    const sortedColors = update(colors, {
+      $splice: [[dragIndex, 1], [hoverIndex, 0, dragColor]]
     })
+
+    // flatten the colors so it's an array of just the color IDs
+    const sortedColorsByIndex = flatMap(sortedColors, color => color.id)
+
+    reorderColors(sortedColorsByIndex)
   }
 }
 
