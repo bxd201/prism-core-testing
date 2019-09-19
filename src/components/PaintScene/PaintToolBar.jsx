@@ -1,7 +1,7 @@
 // @flow
 import React, { PureComponent } from 'react'
 import './PaintToolBar.scss'
-import { toolBarButtons } from './data'
+import { toolBarButtons, toolNames } from './data'
 import BrushTypes from './BrushTypes'
 
 const baseClass = 'paint-tool-bar'
@@ -19,17 +19,6 @@ const brushTypesHideClass = `${brushTypesClass}--hide`
 const brushTypesPaintClass = `${baseClass}__brush-types-paint`
 const brushTypesEraseClass = `${baseClass}__brush-types-erase`
 const clearAllButtonClass = `${baseClass}__clear-all`
-
-const getToolNames = (toolbarData) => {
-  const nameDict = {}
-  toolbarData.forEach((item) => {
-    nameDict[item.name.toUpperCase()] = item.name
-  })
-
-  return nameDict
-}
-
-const toolNames = getToolNames(toolBarButtons)
 
 type ComponentProps = {
   activeTool: string,
