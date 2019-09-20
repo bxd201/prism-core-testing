@@ -1,0 +1,35 @@
+.scene__image__wrapper{
+    min-height: 100%;
+    outline: none;
+    position: relative;
+    width: 100%;
+    &__canvas{
+        border-left:2px solid #fff;
+        border-right:2px solid #fff;
+        min-height: 266px;
+        width:100%;
+        @include respond-above(xs) {
+            min-height:366px;
+        }
+        @include respond-above(md){
+            min-height:540px;
+        }
+    }
+    &__canvas__paint{
+        position: absolute;
+        border-left:2px solid #fff;
+        border-right:2px solid #fff;
+        min-height: 266px;
+        width:100%;
+        @include respond-above(xs) {
+            min-height:366px;
+        }
+        @include respond-above(md){
+            min-height:540px;
+        }
+    }
+    &__image{
+        height:0;
+        width:100%;
+    }
+}
