@@ -22,8 +22,11 @@ import {
   PAINT_ALL_MAIN_SURFACES,
   ADD_NEW_MASK,
   UPDATE_CURRENT_SCENE,
-  TOGGLE_EDIT_MODE, EDIT_MASK
+  TOGGLE_EDIT_MODE,
+  EDIT_MASK,
+  UPDATE_MASK
 } from '../actions/scenes'
+import { registerMask, updateMask } from '../masks/store'
 
 type State = {
   sceneCollection: {
@@ -53,7 +56,23 @@ export const scenes = (state: Object = initialState, action: { type: string, pay
       const sceneType = action.payload.type
 
       const _sceneCollection = state.sceneCollection.hasOwnProperty(sceneType) ? state.sceneCollection : Object.assign({}, state.sceneCollection, {
-        [sceneType]: Object.freeze(action.payload.scenes)
+        [sceneType]: action.payload.scenes.map(scene => {
+          return {
+            ...scene,
+            variants: scene.variants.map(variant => {
+              return {
+                ...variant,
+                surfaces: variant.surfaces.map(surface => {
+                  const { mask, ...other } = surface
+                  return {
+                    ...other,
+                    mask: registerMask(mask)
+                  }
+                })
+              }
+            })
+          }
+        })
       })
 
       // initialize sceneStatus to track scene variant and scene surface color
@@ -204,7 +223,39 @@ export const scenes = (state: Object = initialState, action: { type: string, pay
           })
         })
       })
+    case UPDATE_MASK: {
+      const { type } = state
+      const { mask, data } = action.payload
 
+      return {
+        ...state,
+        sceneCollection: {
+          ...state.sceneCollection,
+          [type]: state.sceneCollection[type].map(scene => {
+            return {
+              ...scene,
+              variants: scene.variants.map(variant => {
+                return {
+                  ...variant,
+                  surfaces: variant.surfaces.map(surface => {
+                    const { mask: thisMask, ...other } = surface
+
+                    if (thisMask !== mask) {
+                      return surface
+                    }
+
+                    return {
+                      ...other,
+                      mask: updateMask(thisMask, data)
+                    }
+                  })
+                }
+              })
+            }
+          })
+        }
+      }
+    }
     default:
       return state
   }

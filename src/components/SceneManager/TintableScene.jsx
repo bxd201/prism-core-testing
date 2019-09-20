@@ -188,7 +188,7 @@ class TintableScene extends PureComponent<Props, State> {
       }
     }
 
-    return ensureFullyQualifiedAssetUrl(surface.mask)
+    return surface.mask.path
   }
 
   render () {
