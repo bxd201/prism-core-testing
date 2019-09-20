@@ -33,28 +33,28 @@ exports[`Color Collections component ColorCollections with prop isExpertColor as
                 "michaeljackson": 1,
               },
             },
+            "colorIds": Array [
+              4,
+              5,
+              6,
+              7,
+            ],
             "colorMap": Object {
-              "color4": "color 4 config",
-              "color5": "color 5 config",
-              "color6": "color 6 config",
-              "color7": undefined,
+              "4": "color 4 config",
+              "5": "color 5 config",
+              "6": "color 6 config",
+              "7": undefined,
             },
             "colorNumberToIdHash": Object {
               "4": "color4",
               "5": "color5",
               "6": "color6",
             },
-            "colorNumbers": Array [
-              4,
-              5,
-              6,
-              7,
-            ],
             "isExpertColor": false,
             "summaries": Object {
               "data": Object {
                 "birthdaycake": Object {
-                  "colorNumbers": Array [
+                  "colorIds": Array [
                     4,
                     5,
                     6,
@@ -110,28 +110,28 @@ exports[`Color Collections component ColorCollections with prop isExpertColor as
                 "michaeljackson": 1,
               },
             },
+            "colorIds": Array [
+              4,
+              5,
+              6,
+              7,
+            ],
             "colorMap": Object {
-              "color4": "color 4 config",
-              "color5": "color 5 config",
-              "color6": "color 6 config",
-              "color7": undefined,
+              "4": "color 4 config",
+              "5": "color 5 config",
+              "6": "color 6 config",
+              "7": undefined,
             },
             "colorNumberToIdHash": Object {
               "4": "color4",
               "5": "color5",
               "6": "color6",
             },
-            "colorNumbers": Array [
-              4,
-              5,
-              6,
-              7,
-            ],
             "isExpertColor": false,
             "summaries": Object {
               "data": Object {
                 "birthdaycake": Object {
-                  "colorNumbers": Array [
+                  "colorIds": Array [
                     4,
                     5,
                     6,

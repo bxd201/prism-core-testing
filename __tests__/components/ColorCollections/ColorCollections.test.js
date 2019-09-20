@@ -36,7 +36,7 @@ function getStubs () {
   }
 
   const vals = {
-    colorNumbers: [4, 5, 6, 7],
+    colorIds: [4, 5, 6, 7],
     isExpertColor: false,
     description: 'undescribable',
     summaryId: 'birthdaycake',
@@ -46,10 +46,10 @@ function getStubs () {
   }
 
   const colorMap = {
-    color4: 'color 4 config',
-    color5: 'color 5 config',
-    color6: 'color 6 config',
-    color7: undefined
+    4: 'color 4 config',
+    5: 'color 5 config',
+    6: 'color 6 config',
+    7: undefined
   }
 
   const colorNumberToIdHash = {
@@ -64,7 +64,7 @@ function getStubs () {
         name: vals.summaryName,
         thumbUrl: vals.thumbUrl,
         description: vals.description,
-        colorNumbers: vals.colorNumbers
+        colorIds: vals.colorIds
       }
     },
     idToIndexHash: {
@@ -77,7 +77,7 @@ function getStubs () {
     colorMap,
     colorNumberToIdHash,
     isExpertColor: vals.isExpertColor,
-    colorNumbers: vals.colorNumbers,
+    colorIds: vals.colorIds,
     categories: {
       data: [
         null,
@@ -154,7 +154,8 @@ describe('Color Collections component', () => {
       })
 
       it('should remove all falsy values from collections', () => {
-        expect(ColorCollections.getSummary(stub.tabId, stub.props).collections).toHaveLength(stub.colorNumbers.length - 1)
+        expect(ColorCollections.getSummary(stub.tabId, stub.props).collections)
+          .toHaveLength(stub.colorIds.length - 1)
       })
     })
 
