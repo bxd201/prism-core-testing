@@ -15,7 +15,7 @@ export const requestCollectionSummaries = () => {
   }
 }
 
-export const receivedCollectionSummaries = (collectionSummaries) => {
+export const receivedCollectionSummaries = (collectionSummaries: any) => {
   return {
     type: RECEIVED_CS,
     payload: {
@@ -31,8 +31,11 @@ export const loadError = () => {
   }
 }
 
-export function handleGetCollectionSummaries (collectionSummaries) {
-  const categories = { idToIndexHash: {} }
+export function handleGetCollectionSummaries (collectionSummaries: any) {
+  const categories: {
+    idToIndexHash: Object,
+    data?: any[]
+  } = { idToIndexHash: {} }
 
   categories.data = collectionSummaries.categories.map(({
     id,

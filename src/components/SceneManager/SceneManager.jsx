@@ -60,7 +60,7 @@ type Props = {
   scenes: Scene[],
   sceneStatus: SceneStatus[],
   type: string,
-  activeScenes: Array<number | string>,
+  activeScenes: Array<number>,
   maxActiveScenes: number,
   loadScenes: Function,
   activateScene: Function,
@@ -160,11 +160,11 @@ export class SceneManager extends PureComponent<Props, State> {
     deactivateScene(id)
   }
 
-  updateCurrentSceneInfo (sceneId: number, surfaceId: number) {
+  updateCurrentSceneInfo = (sceneId: number, surfaceId: number) => {
     this.props.updateCurrentSceneInfo(sceneId, surfaceId)
   }
 
-  changeVariant (sceneId: number) {
+  changeVariant = (sceneId: number) => {
     const { changeSceneVariant } = this.props
 
     return function _changeVariant (variant: string) {
