@@ -291,7 +291,6 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   redrawFromOperation (historicOperation: DrawOperation) {
     // @todo finish implementation
     // Clear canvas and draw from history sequences
-    console.log(historicOperation)
     this.clearCanvas()
   }
 

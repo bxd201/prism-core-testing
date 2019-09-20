@@ -14,6 +14,7 @@ const brushButtonSmallClass = `${brushButtonClass}--small`
 const brushButtonTinyClass = `${brushButtonClass}--tiny`
 const brushButtonActiveClass = `${brushButtonClass}--active`
 
+// @todo should these values go in a const file? See also PaintScene file too
 const largeSize = 38
 const mediumSize = 30
 const smallSize = 22
