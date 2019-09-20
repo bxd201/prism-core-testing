@@ -162,7 +162,7 @@ export class LivePalette extends PureComponent<Props, State> {
     this.props.activateColor(color)
   }
 
-  moveColor = (dragIndex: Number, hoverIndex: Number) => {
+  moveColor = (dragIndex: number, hoverIndex: number) => {
     const { colors, reorderColors } = this.props
     const dragColor = colors[dragIndex]
 

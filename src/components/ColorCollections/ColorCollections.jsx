@@ -15,7 +15,7 @@ import { loadColors } from '../../store/actions/loadColors'
 
 import './ColorCollections.scss'
 
-type Props = {
+type SummaryProps = {
   categories: Object,
   colorMap: Object,
   config: Object,
@@ -26,7 +26,16 @@ type Props = {
   loadCS: Function,
   setHeader: Function,
   showBack: Function,
+  summaries: {
+    data: any[],
+    idToIndexHash: any[]
+  }
+}
 
+type CollectionDataInput = {
+  data?: any,
+  props: Object,
+  tabId: string,
 }
 
 const baseClass = 'color-collections'
@@ -35,7 +44,7 @@ export const collectionsList = `${baseClass}__collections-list`
 
 ColorCollections.collectionData = []
 
-ColorCollections.getSummary = function getSummary (id, props) {
+ColorCollections.getSummary = function getSummary (id, props: SummaryProps) {
   const {
     name,
     thumbUrl: img,
@@ -80,13 +89,13 @@ ColorCollections.updateCollectionData = function updateCollectionData ({
   data = expertColorsData,
   props = {},
   tabId
-}) {
+}: CollectionDataInput) {
   ColorCollections.collectionData = (props.isExpertColor)
     ? data
     : ColorCollections.getSummariesForTab(tabId, props)
 }
 
-export function ColorCollections (props: Props) {
+export function ColorCollections (props: SummaryProps) {
   const [hasColors, setHasColors] = useState(!!Object.keys(props.colorMap).length)
 
   // TODO:noah.hall

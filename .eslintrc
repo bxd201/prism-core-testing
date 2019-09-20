@@ -15,7 +15,8 @@
     "Image": "readonly",
     "Blob": "readonly",
     "Worker": "readonly",
-    "URL": "readonly"
+    "URL": "readonly",
+    "FileReader": "readonly"
   },
   "rules": {
     "react-hooks/rules-of-hooks": "error",
