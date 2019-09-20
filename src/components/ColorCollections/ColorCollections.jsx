@@ -111,7 +111,7 @@ export function ColorCollections (props: Props) {
   const [tabIdShow, showTab] = useState('')
   const [collectionDataDetails, updateCollectionDataDetails] = useState({})
 
-  const showTabHandler = (tabId: string, isClickTab: boolean) => {
+  const showTabHandler = (tabId: string) => {
     showTab((prevTab) => {
       if (prevTab !== tabId) ColorCollections.updateCollectionData({ tabId, props })
 
@@ -142,9 +142,7 @@ export function ColorCollections (props: Props) {
   }, [isShowBack])
 
   if (isShowBack === true) {
-    return (isExpertColor)
-      ? <ExpertColorDetails expertColors={collectionDataDetails} />
-      : <CollectionDetail collectionDetailData={collectionDataDetails} />
+    return (isExpertColor) ? <ExpertColorDetails expertColors={collectionDataDetails} /> : <CollectionDetail collectionDetailData={collectionDataDetails} />
   }
 
   const onClickHandler = (collectionSummaryData: Object) => {

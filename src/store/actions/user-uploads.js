@@ -74,17 +74,35 @@ export const uploadImage = (file: File) => {
     axios
       .post(ML_PIPELINE_ENDPOINT, uploadForm, {})
       .then(res => {
+        // const base = 'pool'
+        // let masks = [
+        //   `http://localhost:800/static/${base}/left.png`,
+        //   `http://localhost:800/static/${base}/right.png`
+        // ]
+
+        // -------------- FAKE ABOVE / REAL BELOW ---------------//
+
         const { payload } = res.data
+        // let maskI = 1
+        let masks = []
+
+        // this will get all the individual masks; comment out one or the other
+        // while (maskI) {
+        //   const mask = payload[`wall_view${maskI}_local`]
+        //   if (mask) {
+        //     masks.push(mask)
+        //     maskI++
+        //     continue
+        //   }
+        //   break
+        // }
+
+        // this will get the monolithic mask; comment out one or the other
+        masks.push(payload.full_wall_mask_local)
+
         const images = {
           source: imageUrl,
-          masks: [
-            // payload.full_wall_mask
-            // payload.wall_view1,
-            // payload.wall_view2
-            payload.full_wall_mask_local
-            // payload.wall_view1_local,
-            // payload.wall_view2_local`
-          ]
+          masks
         }
         dispatch(loadLocalImageUrl(images))
         dispatch(stopUploading())

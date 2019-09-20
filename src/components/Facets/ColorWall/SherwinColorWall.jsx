@@ -2,7 +2,7 @@
 import React, { PureComponent } from 'react'
 import memoizee from 'memoizee'
 import { Link } from 'react-router-dom'
-import { injectIntl, FormattedMessage, type intlShape } from 'react-intl'
+import { injectIntl, FormattedMessage } from 'react-intl'
 
 import { BLANK_SWATCH, SW_CHUNK_SIZE } from 'constants/globals'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -25,7 +25,7 @@ type Props = {
   addToLivePalette?: Function,
   activeColor: Color,
   loading?: boolean,
-  intl: intlShape,
+  intl: any,
   error: boolean,
   family?: string,
   section?: string,

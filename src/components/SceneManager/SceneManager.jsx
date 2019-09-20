@@ -7,6 +7,8 @@ import includes from 'lodash/includes'
 import memoizee from 'memoizee'
 import ReactGA from 'react-ga'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { DndProvider } from 'react-dnd'
+import HTML5Backend from 'react-dnd-html5-backend'
 
 import { SCENE_TYPES, SCENE_VARIANTS } from 'constants/globals'
 import {
@@ -179,120 +181,122 @@ export class SceneManager extends PureComponent<Props, State> {
     }
 
     return (
-      <div className={SceneManager.baseClass}>
-        <ColorPickerSlide />
-        <div className={`${SceneManager.baseClass}__block ${SceneManager.baseClass}__block--tabs`}>
-          {scenes.map((scene, index) => {
-            const sceneInfo = getSceneInfoById(scene, sceneStatus, scene.id)
-            const sceneWorkspaces = this.props.sceneWorkspaces.filter(workspace => workspace.sceneId === scene.id)
+      <DndProvider backend={HTML5Backend}>
+        <div className={SceneManager.baseClass}>
+          <ColorPickerSlide />
+          <div className={`${SceneManager.baseClass}__block ${SceneManager.baseClass}__block--tabs`}>
+            {scenes.map((scene, index) => {
+              const sceneInfo = getSceneInfoById(scene, sceneStatus, scene.id)
+              const sceneWorkspaces = this.props.sceneWorkspaces.filter(workspace => workspace.sceneId === scene.id)
 
-            if (!sceneInfo) {
-              console.warn(`Cannot find scene variant based on id ${scene.id}`)
-              return void (0)
-            }
+              if (!sceneInfo) {
+                console.warn(`Cannot find scene variant based on id ${scene.id}`)
+                return void (0)
+              }
 
-            const status: SceneStatus = sceneInfo.status
-            const sceneVariant: Variant = sceneInfo.variant
-            const surfaces: Surface[] = sceneInfo.surfaces
-            const activeMarker = includes(activeScenes, scene.id)
-              ? <FontAwesomeIcon icon={['fa', 'check']} className={`${SceneManager.baseClass}__flag`} />
-              : null
+              const status: SceneStatus = sceneInfo.status
+              const sceneVariant: Variant = sceneInfo.variant
+              const surfaces: Surface[] = sceneInfo.surfaces
+              const activeMarker = includes(activeScenes, scene.id)
+                ? <FontAwesomeIcon icon={['fa', 'check']} className={`${SceneManager.baseClass}__flag`} />
+                : null
 
-            return (
+              return (
               // TODO: Convert these to labels around checkboxes since that's how they're being used
-              <button key={scene.id}
-                onClick={() => this.handleClickSceneToggle(scene.id)}
-                className={`${SceneManager.baseClass}__btn ${includes(activeScenes, scene.id) ? `${SceneManager.baseClass}__btn--active` : ''}`}
-                type='button'>
+                <button key={scene.id}
+                  onClick={() => this.handleClickSceneToggle(scene.id)}
+                  className={`${SceneManager.baseClass}__btn ${includes(activeScenes, scene.id) ? `${SceneManager.baseClass}__btn--active` : ''}`}
+                  type='button'>
 
-                <span className='visually-hidden'>{sceneVariant.name}</span>
-                <div role='presentation'>
+                  <span className='visually-hidden'>{sceneVariant.name}</span>
+                  <div role='presentation'>
+                    <ImagePreloader
+                      el={TintableScene}
+                      preload={getThumbnailAssetArrayByScene(sceneVariant, surfaces)}
+                      interactive={false}
+                      width={scene.width}
+                      height={scene.height}
+                      type={type}
+                      sceneId={scene.id}
+                      background={sceneVariant.thumb}
+                      clickToPaintColor={activeColor}
+                      onUpdateColor={this.handleColorUpdate}
+                      previewColor={previewColor}
+                      mainColor={mainColor}
+                      surfaceStatus={status.surfaces}
+                      surfaces={surfaces}
+                      sceneWorkspaces={sceneWorkspaces}
+                      isEditMode={this.props.isEditMode}
+                    />
+                  </div>
+                  {activeMarker}
+                </button>
+              )
+            })}
+          </div>
+
+          <div className={`${SceneManager.baseClass}__block ${SceneManager.baseClass}__block--scenes`}>
+            {activeScenes.map((sceneId, index) => {
+              const scene: Scene = scenes.filter(scene => (scene.id === sceneId))[0]
+
+              if (!scene) {
+                return null
+              }
+
+              const sceneInfo = getSceneInfoById(scene, sceneStatus, scene.id)
+
+              if (!sceneInfo) {
+                console.warn(`Cannot find scene variant based on id ${scene.id}`)
+                return void (0)
+              }
+
+              const status: SceneStatus = sceneInfo.status
+              const sceneVariant: Variant = sceneInfo.variant
+              const surfaces: Surface[] = sceneInfo.surfaces
+
+              let variantSwitch = null
+
+              // if we have more than one variant for this scene...
+              if (scene.variant_names.length > 1) {
+              // if we have day and night variants...
+              // TODO: Remove this dayNightToggle check, this is for demonstration purposes
+                if (SceneVariantSwitch.DayNight.isCompatible(scene.variant_names)) {
+                // ... then create a day/night variant switch
+                  variantSwitch = <SceneVariantSwitch.DayNight currentVariant={status.variant} variants={[SCENE_VARIANTS.DAY, SCENE_VARIANTS.NIGHT]} onChange={this.changeVariant(sceneId)} sceneId={scene.id} />
+                }
+              }
+
+              return (
+                <div className={`${SceneManager.baseClass}__scene-wrapper`} key={sceneId}>
                   <ImagePreloader
                     el={TintableScene}
-                    preload={getThumbnailAssetArrayByScene(sceneVariant, surfaces)}
-                    interactive={false}
+                    preload={getFullSizeAssetArrayByScene(scene)}
                     width={scene.width}
                     height={scene.height}
+                    interactive={interactive}
                     type={type}
-                    sceneId={scene.id}
-                    background={sceneVariant.thumb}
+                    sceneId={sceneId}
+                    background={sceneVariant.image}
                     clickToPaintColor={activeColor}
                     onUpdateColor={this.handleColorUpdate}
                     previewColor={previewColor}
                     mainColor={mainColor}
                     surfaceStatus={status.surfaces}
                     surfaces={surfaces}
+                    imageValueCurve={sceneVariant.normalizedImageValueCurve}
+                    sceneName={sceneVariant.name}
+                    /* eslint-disable-next-line no-undef */
                     sceneWorkspaces={sceneWorkspaces}
+                    updateCurrentSceneInfo={this.updateCurrentSceneInfo}
                     isEditMode={this.props.isEditMode}
                   />
+                  {variantSwitch}
                 </div>
-                {activeMarker}
-              </button>
-            )
-          })}
+              )
+            })}
+          </div>
         </div>
-
-        <div className={`${SceneManager.baseClass}__block ${SceneManager.baseClass}__block--scenes`}>
-          {activeScenes.map((sceneId, index) => {
-            const scene: Scene = scenes.filter(scene => (scene.id === sceneId))[0]
-
-            if (!scene) {
-              return null
-            }
-
-            const sceneInfo = getSceneInfoById(scene, sceneStatus, scene.id)
-
-            if (!sceneInfo) {
-              console.warn(`Cannot find scene variant based on id ${scene.id}`)
-              return void (0)
-            }
-
-            const status: SceneStatus = sceneInfo.status
-            const sceneVariant: Variant = sceneInfo.variant
-            const surfaces: Surface[] = sceneInfo.surfaces
-
-            let variantSwitch = null
-
-            // if we have more than one variant for this scene...
-            if (scene.variant_names.length > 1) {
-              // if we have day and night variants...
-              // TODO: Remove this dayNightToggle check, this is for demonstration purposes
-              if (SceneVariantSwitch.DayNight.isCompatible(scene.variant_names)) {
-                // ... then create a day/night variant switch
-                variantSwitch = <SceneVariantSwitch.DayNight currentVariant={status.variant} variants={[SCENE_VARIANTS.DAY, SCENE_VARIANTS.NIGHT]} onChange={this.changeVariant(sceneId)} sceneId={scene.id} />
-              }
-            }
-
-            return (
-              <div className={`${SceneManager.baseClass}__scene-wrapper`} key={sceneId}>
-                <ImagePreloader
-                  el={TintableScene}
-                  preload={getFullSizeAssetArrayByScene(scene)}
-                  width={scene.width}
-                  height={scene.height}
-                  interactive={interactive}
-                  type={type}
-                  sceneId={sceneId}
-                  background={sceneVariant.image}
-                  clickToPaintColor={activeColor}
-                  onUpdateColor={this.handleColorUpdate}
-                  previewColor={previewColor}
-                  mainColor={mainColor}
-                  surfaceStatus={status.surfaces}
-                  surfaces={surfaces}
-                  imageValueCurve={sceneVariant.normalizedImageValueCurve}
-                  sceneName={sceneVariant.name}
-                  /* eslint-disable-next-line no-undef */
-                  sceneWorkspaces={sceneWorkspaces}
-                  updateCurrentSceneInfo={this.updateCurrentSceneInfo}
-                  isEditMode={this.props.isEditMode}
-                />
-                {variantSwitch}
-              </div>
-            )
-          })}
-        </div>
-      </div>
+      </DndProvider>
     )
   }
 }

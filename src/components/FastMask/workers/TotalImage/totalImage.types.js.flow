@@ -1,0 +1,67 @@
+// @flow
+export type AvgCommon = {
+  mostCommon: number,
+  hiMid: number,
+  loMid: number,
+  leastCommon: number
+}
+
+export type SliceMean = {
+  upper: number,
+  middle: number,
+  lower: number
+}
+
+export type MaskData = {
+  meanLuminance: number,
+  meanBrightness: number,
+  meanLightness: number,
+  meanHue: number,
+  avgCommonLuminance: AvgCommon,
+  avgCommonBrightness: AvgCommon,
+  avgCommonLightness: AvgCommon,
+  avgCommonHue: AvgCommon,
+  medianLuminance: number,
+  medianBrightness: number,
+  medianLightness: number,
+  medianHue: number,
+  sliceMeanBrightness: SliceMean,
+  sliceMeanLightness: SliceMean,
+  sliceMeanLuminance: SliceMean,
+  luminanceThreshold: number,
+  highlightMap: ArrayBuffer,
+  hueMap: ArrayBuffer,
+  surfaceLighteningData?: ArrayBuffer,
+  hunches: {
+    hasHighlight: boolean,
+    isLight: boolean
+  }
+}
+
+export type CompletePayload = {
+  meanLuminance: number,
+  medianLuminance: number,
+  avgCommonLuminance: AvgCommon,
+  meanBrightness: number,
+  medianBrightness: number,
+  avgCommonBrightness: AvgCommon,
+  meanLightness: number,
+  medianLightness: number,
+  avgCommonLightness: AvgCommon,
+  lightRatio: number,
+  maskBrightnessData: MaskData[]
+}
+
+export type StatusPayload = {
+  pct: number
+}
+
+export type WorkerMessage = {
+  data: {
+    type: 'STATUS',
+    payload: StatusPayload
+  } | {
+    type: 'COMPLETE',
+    payload: CompletePayload
+  }
+}

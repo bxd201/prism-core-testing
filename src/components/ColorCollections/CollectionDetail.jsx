@@ -31,7 +31,6 @@ const wrapper = `${baseClass}__wrapper`
 const collectionInfo = `${baseClass}__info`
 const collectionCover = `${baseClass}__cover`
 const collectionDescription = `${baseClass}__description`
-const collectionLearnMore = `${baseClass}__learn-more`
 const collectionColorList = `${baseClass}__color-list`
 const collectionColorListVertical = `${baseClass}__color-list-vertical`
 const collectionVerticalControls = `${baseClass}__vertical-controls`
@@ -87,16 +86,17 @@ export const CollectionDetail = (props: Props) => {
       <div className={`${collectionInfo}`}>
         <img className={`${collectionCover}`} alt='' src={`${collectionDetailData.img}`} />
         <div className={`${collectionDescription}`}>{collectionDetailData.description}</div>
-        <a href='https://' className={`${collectionLearnMore}`}>LEARN MORE ABOUT THIS COLLECTION</a>
       </div>
       <div className={`${collectionColorList}`}>
         <div ref={_gridWrapperRef} className={`${collectionColorListVertical}`}>
           <AutoSizer onResize={handleGridResize}>
             {({ height, width }) => {
-              const columnCount = Math.round(width / resultSwatchSize)
-              const rowCount = Math.ceil(collectionDetailData.collections.length / columnCount)
+              const collectionSize = collectionDetailData.collections.length
+              const columnCount = Math.max(1, Math.round(width / resultSwatchSize))
+              const rowCount = Math.ceil(collectionSize / columnCount)
               const newSize = width / columnCount
               _cellSize = newSize
+
               return (
                 <Grid
                   colors={collectionDetailData.collections}

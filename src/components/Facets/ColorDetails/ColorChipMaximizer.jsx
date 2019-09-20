@@ -1,7 +1,7 @@
 // @flow
 import React, { useState, useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { FormattedMessage, injectIntl, type intlShape } from 'react-intl'
+import { FormattedMessage, injectIntl } from 'react-intl'
 import { LiveMessage } from 'react-aria-live'
 import ReactGA from 'react-ga'
 
@@ -12,7 +12,7 @@ const BASE_CLASS = 'color-info'
 
 type Props = {
   color: Color,
-  intl: intlShape
+  intl: any
 }
 
 export function ColorChipMaximizer ({ color, intl }: Props) {
