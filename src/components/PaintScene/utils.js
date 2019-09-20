@@ -6,12 +6,12 @@ export const getPaintAreaPath = (imagePathList, canvas, width, height, color) =>
    * intersection, then we say their index are same.
    * So now The whole question we can convert it to how to merge array inside a 2D array which has intersection,
    * so there are some possible cases as list below.
-   * 1.paint areas dont have intersection no matter there color are same or not. we dont do anything
+   * 1.paint areas dont have intersection no matter their color are same or not. we dont need to do anything
    * 2.paint areas have same color and have intersection, then we merge the area
-   * current imageList "[[1, 2, 3], [4, 5]" comming image path "[5, 6]", then we get "[[1, 2, 3],[4, 5, 6]]"
+   * for example, current imageList "[[1, 2, 3], [4, 5]" comming image path "[5, 6]", then we get "[[1, 2, 3],[4, 5, 6]]"
    * current imageList "[[1, 2, 3], [4, 5], [7, 8]]" comming image path "[3, 4, 6]", then we get "[[1, 2, 3, 4, 5, 6],[7, 8]]"
    * 3.paint areas hava different color and have intersection, then we need take out intersection area path from covered image,
-   * if whole intersection beem took out, and remain nothing in covered image then we can say the old image be full cover, then
+   * if whole intersection been took out, and remain nothing in covered image then we can say the old image be full cover, then
    * we remove it from the pathlist.
   */
   const RGB = getActiveColorRGB(color)
@@ -81,6 +81,56 @@ export const getActiveColorRGB = (color) => {
   return [red, green, blue, 255]
 }
 
+export const drawCircle = (ctx, x, y) => {
+  ctx.save()
+  ctx.beginPath()
+  ctx.strokeStyle = '#fff'
+  ctx.arc(x, y, 10, 0, Math.PI * 2, false)
+  ctx.closePath()
+  ctx.stroke()
+}
+export const pointInsideCircle = (x, y, circle, r) => {
+  let dx = circle[0] - x
+  let dy = circle[1] - y
+  return dx * dx + dy * dy <= r * r
+}
+
+export const alterRGBByPixel = (canvas, color, width, height) => {
+  const ctx = canvas.current.getContext('2d')
+  let imageData = ctx.getImageData(0, 0, width, height)
+  let data = imageData.data
+  for (let i = 0; i < data.length; i += 4) {
+    data[i] = color[0]
+    data[i + 1] = color[1]
+    data[i + 2] = color[2]
+  }
+  ctx.putImageData(imageData, 0, 0)
+}
+
+export const drawLine = (ctx, lineStart, end, isDash) => {
+  ctx.save()
+  ctx.beginPath()
+  ctx.strokeStyle = '#fff'
+  ctx.lineWidth = 1.5
+  isDash && ctx.setLineDash([5, 15])
+  ctx.moveTo(lineStart[0], lineStart[1])
+  ctx.lineTo(end[0], end[1])
+  ctx.stroke()
+  ctx.setLineDash([])
+  ctx.closePath()
+  ctx.restore()
+}
+
+export const createPolygon = (polyList = [[ 0, 0 ]], ctx, color) => {
+  ctx.fillStyle = color
+  ctx.beginPath()
+  ctx.moveTo(polyList[0][0], polyList[0][1])
+  for (let i = 1; i < polyList.length; i++) {
+    ctx.lineTo(polyList[i][0], polyList[i][1])
+  }
+  ctx.closePath()
+  ctx.fill()
+}
 export const checkIntersection = (areaA, areaB) => {
   const setA = new Set(areaA)
   const setB = new Set(areaB)
