@@ -10,3 +10,4 @@ declare type RefObject = { current: any }
 declare var postMessage: Function
 declare var self: any
 declare var Worker: Function
+declare var FileReader: Function

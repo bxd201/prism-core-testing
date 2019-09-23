@@ -13,3 +13,14 @@ export const toolBarButtons = [
   { id: 10, name: 'hidePaint' },
   { id: 11, name: 'info' }
 ]
+
+const getToolNames = (toolbarData) => {
+  const nameDict = {}
+  toolbarData.forEach((item) => {
+    nameDict[item.name.toUpperCase()] = item.name
+  })
+
+  return nameDict
+}
+
+export const toolNames = getToolNames(toolBarButtons)

@@ -2,8 +2,9 @@
 import axios from 'axios'
 import isEmpty from 'lodash/isEmpty'
 
-import type { ScenePayload, SceneWorkspace } from '../../shared/types/Scene'
-import type { Color } from '../../shared/types/Colors'
+import { type ScenePayload, type SceneWorkspace } from '../../shared/types/Scene'
+import { type Color } from '../../shared/types/Colors'
+import MaskObj from '../masks/MaskObj'
 
 import { generateBrandedEndpoint } from '../../shared/helpers/DataUtils'
 
@@ -173,8 +174,18 @@ export const loadScenes = (type: string) => {
   }
 }
 
-export const ADD_NEW_MASK = 'ADD_NEW_MASK'
+export const UPDATE_MASK = 'UPDATE_MASK'
+export const updateMask = (mask: MaskObj, data: Blob) => {
+  return {
+    type: UPDATE_MASK,
+    payload: {
+      mask,
+      data
+    }
+  }
+}
 
+export const ADD_NEW_MASK = 'ADD_NEW_MASK'
 export const addNewMask = (sceneId: number, surfaceId: number, imageData: string) => {
   // Workspace is an array of images to be passed to a tintable scene
   return {

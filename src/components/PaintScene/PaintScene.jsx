@@ -9,6 +9,7 @@ import { drawAcrossLine } from './PaintSceneUtils'
 import { getPaintAreaPath, repaintImageByPath,
   createPolygon, drawLine, drawCircle,
   edgeDetect, pointInsideCircle, alterRGBByPixel } from './utils'
+import { toolNames } from './data'
 
 const baseClass = 'paint__scene__wrapper'
 const canvasClass = `${baseClass}__canvas`
@@ -209,6 +210,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.setState({ activeTool })
   }
 
+  // Should only be used to on user even to push
   /*:: pushToHistory: (redoOperation: Object) => void */
   pushToHistory (redoOperation: Object) {
     const shouldPushFlag = this.state.drawCoordinates.length > 0 || redoOperation
@@ -225,11 +227,11 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.setState(newState)
   }
 
-  /*:: popFromRedoHistoryToHistory: () => void */
-  popFromRedoHistoryToHistory () {
+  /*:: popFromRedoHistoryToHistory: (stateFragment: Object) => void */
+  popFromRedoHistoryToHistory (stateFragment: Object) {
     if (this.state.pixelDataRedoHistory.length) {
-      const operationToAddToHistory = this.state.pixelDataRedoHistory.slice(-1)
-      const newPixelDataRedoHistory = this.state.pixelDataHistory.slice(0, this.state.pixelDataRedoHistory.length - 1)
+      const operationToAddToHistory = this.state.pixelDataRedoHistory.slice(-1)[0]
+      const newPixelDataRedoHistory = this.state.pixelDataRedoHistory.slice(0, this.state.pixelDataRedoHistory.length - 1)
       const newPixelDataHistory = this.state.pixelDataHistory.length ? [...this.state.pixelDataHistory, operationToAddToHistory] : [operationToAddToHistory]
 
       let newState = {
@@ -239,15 +241,19 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
         redoIsEnabled: newPixelDataRedoHistory.length > 0
       }
 
+      if (stateFragment) {
+        newState = Object.assign(newState, stateFragment)
+      }
+
       this.setState(newState)
     }
   }
 
-  /*:: popFromHistoryToRedoHistory: () => void */
-  popFromHistoryToRedoHistory () {
+  /*:: popFromHistoryToRedoHistory: (statefragment: Object) => void */
+  popFromHistoryToRedoHistory (stateFragment: Object) {
     if (this.state.pixelDataHistory.length) {
       // Pixel redo
-      const newPixelRedoHistory = this.state.pixelDataHistory.slice(-1)
+      const newPixelRedoHistory = this.state.pixelDataHistory.slice(-1)[0]
       const pixelDataHistory = this.state.pixelDataHistory.slice(0, this.state.pixelDataHistory.length - 1)
       const pixelDataRedoHistory = this.state.pixelDataRedoHistory.length ? [...this.state.pixelDataRedoHistory, newPixelRedoHistory] : [newPixelRedoHistory]
 
@@ -259,6 +265,10 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
         redoIsEnabled: pixelDataRedoHistory.length > 0
       }
 
+      if (stateFragment) {
+        newState = Object.assign(newState, stateFragment)
+      }
+
       this.setState(newState)
     }
   }
@@ -267,23 +277,24 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   /*:: undo: () => void */
   undo () {
     // @todo finish implementation
+    const stateFragment = { activeTool: toolNames.UNDO }
     if (this.state.pixelDataHistory.length > 1) {
       const redrawOperation = this.state.pixelDataHistory.slice(-2, -1)[0]
       this.redrawFromOperation(redrawOperation)
-      this.popFromHistoryToRedoHistory()
+      this.popFromHistoryToRedoHistory(stateFragment)
     } else if (this.state.pixelDataHistory.length === 1) {
       this.clearCanvas()
-      this.popFromHistoryToRedoHistory()
+      this.popFromHistoryToRedoHistory(stateFragment)
     }
   }
 
   /*:: redo: () => void */
   redo () {
-    // @todo finish implementation...add back to undo stack and what ever else
+    // @todo finish implementation...add back to undo stack and what ever else...handle multiple redo operatiosn belwo only covers a single redo cycle
     if (this.state.pixelDataRedoHistory.length) {
       const redoOperation = this.state.pixelDataRedoHistory.slice(-1)[0]
       this.redrawFromOperation(redoOperation)
-      this.pushToHistory(redoOperation)
+      this.popFromRedoHistoryToHistory({ activeTool: toolNames.REDO })
     }
   }
 
@@ -291,7 +302,6 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   redrawFromOperation (historicOperation: DrawOperation) {
     // @todo finish implementation
     // Clear canvas and draw from history sequences
-    console.log(historicOperation)
     this.clearCanvas()
   }
 
