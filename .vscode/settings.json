@@ -2,5 +2,53 @@
   "javascript.validate.enable": false,
   "typescript.validate.enable": false,
   "flow.useNPMPackagedFlow": true,
-  "files.trimTrailingWhitespace": true
+  "files.trimTrailingWhitespace": true,
+  "todo-tree.general.tags": ["TODO", "FIXME", "HACK", "@todo", "@fixme", "@hack"],
+  "todo-tree.highlights.defaultHighlight": {
+    "foreground": "black",
+    "background": "green",
+    "iconColour": "green"
+  },
+  "todo-tree.highlights.customHighlight": {
+    "TODO": {
+      "icon": "check",
+      "iconColour": "green",
+      "background": "green",
+      "foreground": "black",
+      "opacity": ".75"
+    },
+    "@todo": {
+      "icon": "check",
+      "iconColour": "green",
+      "background": "green",
+      "foreground": "black",
+      "opacity": ".75"
+    },
+    "FIXME": {
+      "icon": "stop",
+      "iconColour": "red",
+      "background": "red",
+      "foreground": "white",
+      "opacity": ".75"
+    },
+    "@fixme": {
+      "icon": "stop",
+      "iconColour": "red",
+      "background": "red",
+      "foreground": "white",
+      "opacity": ".75"
+    },
+    "HACK": {
+      "icon": "issue-opened",
+      "iconColour": "#FFAA00",
+      "background": "#FFAA00",
+      "foreground": "black"
+    },
+    "@hack": {
+      "icon": "issue-opened",
+      "iconColour": "#FFAA00",
+      "background": "#FFAA00",
+      "foreground": "black"
+    },
+  }
 }
