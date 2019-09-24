@@ -1,7 +1,7 @@
 // @flow
 import React from 'react'
 import CollectionsHeaderWrapper from '../CollectionsHeaderWrapper/CollectionsHeaderWrapper'
-import ColorCollectionsTab from '../ColorCollections/ColorCollectionsTab'
+import ColorCollectionsTab from '../shared/ColorCollectionsTab'
 import { getImagesCollectionsData, collectionTabs } from './data'
 import '../ColorCollections/ColorCollections.scss'
 import ImageScenesWithCarousel from './InspiredScene'

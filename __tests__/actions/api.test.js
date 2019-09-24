@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import nock from 'nock'
 import * as api from '../../src/store/actions/api/collectionSummaries'
 import * as endpoints from '../../src/constants/endpoints'

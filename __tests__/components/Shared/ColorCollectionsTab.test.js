@@ -9,7 +9,7 @@ import ColorCollectionsTab, {
   tabListDropdownMobile,
   tabListActive,
   tabListInactive
-} from 'src/components/ColorCollections/ColorCollectionsTab'
+} from 'src/components/Shared/ColorCollectionsTab'
 import { collectionTabs } from 'src/components/Carousel/data'
 
 let defaultProps = {

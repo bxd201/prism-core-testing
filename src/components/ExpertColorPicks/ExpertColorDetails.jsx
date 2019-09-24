@@ -1,6 +1,14 @@
 // @flow
+/**
+ * expert color details component
+ * loads when you click on the expert color swatch
+ */
+
 import React from 'react'
-import { fullColorNumber, getContrastYIQ } from '../../../src/shared/helpers/ColorUtils'
+import {
+  fullColorNumber,
+  getContrastYIQ
+} from '../../../src/shared/helpers/ColorUtils'
 import type { Color } from '../../shared/types/Colors'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheckCircle } from '@fortawesome/pro-solid-svg-icons'
@@ -19,13 +27,20 @@ const icons = 'toggle-check-icons'
 
 export function ExpertColorDetails (props: Props) {
   const { expertColors, addColors } = props
-  const topSectionColor = expertColors[0]
-  const bottomCollor = expertColors.slice(1)
+  const topSectionColor = expertColors.colorDefs[0]
+  const bottomCollor = expertColors.colorDefs.slice(1)
   const renderColorWall = (color, props, key) => {
     const isColorAdded = some(addColors, color)
     return (
-      <div key={key} className={`${baseClass}__content__wrapper`} style={{ backgroundColor: color.hex, color: getContrastYIQ(color.hex) }}>
-        <div className={`${baseClass}__content__wrapper__color-number`} >
+      <div
+        className={`${baseClass}__content__wrapper`}
+        key={key}
+        style={{
+          backgroundColor: color.hex,
+          color: getContrastYIQ(color.hex)
+        }}
+      >
+        <div className={`${baseClass}__content__wrapper__color-number`}>
           {fullColorNumber(color.brandKey, color.colorNumber)}
         </div>
         <div className={`${baseClass}__content__wrapper__color-name`}>
@@ -34,13 +49,21 @@ export function ExpertColorDetails (props: Props) {
         {
           isColorAdded &&
           <button onClick={() => handleClick(color, props)}>
-            <FontAwesomeIcon style={{ color: getContrastYIQ(color.hex) }} className={`${baseClass}__content__wrapper__${icons}`} icon={faCheckCircle} />
+            <FontAwesomeIcon
+              style={{ color: getContrastYIQ(color.hex) }}
+              className={`${baseClass}__content__wrapper__${icons}`}
+              icon={faCheckCircle}
+            />
           </button>
         }
         {
           !isColorAdded &&
             <button onClick={() => handleClick(color, props)}>
-              <FontAwesomeIcon style={{ color: getContrastYIQ(color.hex) }} className={`${baseClass}__content__wrapper__${icons}`} icon={faPlusCircle} />
+              <FontAwesomeIcon
+                style={{ color: getContrastYIQ(color.hex) }}
+                className={`${baseClass}__content__wrapper__${icons}`}
+                icon={faPlusCircle}
+              />
             </button>
         }
       </div>)
@@ -48,10 +71,16 @@ export function ExpertColorDetails (props: Props) {
   return (
     <div className={`${baseClass}`}>
       <div className={`${baseClass}__header`}>
-        <div className={`${baseClass}__header__title`}>Seleted from Lifestyle - Chrysalls</div>
-        <button className={`${baseClass}__header__link`}>
-          VIEW FULL COLLECTION
-        </button>
+        <div className={`${baseClass}__header__title`}>
+          Seleted from {expertColors.name}
+        </div>
+        {/*
+            <button className={`${baseClass}__header__link`}>
+                TODO:noah.hall
+                requires each collection summary to have a URI
+              VIEW FULL COLLECTION
+            </button>
+        */}
       </div>
       <div className={`${baseClass}__top__section`}>
         {

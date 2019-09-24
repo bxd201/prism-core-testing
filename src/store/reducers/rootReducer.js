@@ -13,6 +13,7 @@ import {
 } from './scenes'
 import { uploads } from './uploads'
 import collectionSummaries from './collectionSummaries'
+import expertColorPicks from './expertColorPicks'
 
 export default combineReducers({
   collectionSummaries,
@@ -21,10 +22,11 @@ export default combineReducers({
   currentActiveSceneId,
   currentSurfaceId,
   currentVariant,
+  currentWorkspace,
+  expertColorPicks,
   isEditMode,
   lp,
   scenes,
   sceneWorkspaces,
-  uploads,
-  currentWorkspace
+  uploads
 })

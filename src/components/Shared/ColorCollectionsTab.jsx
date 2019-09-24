@@ -3,8 +3,6 @@
 import React, { useState } from 'react'
 import type { ColorCollectionsTabs } from '../../shared/types/Colors'
 
-import './ColorCollections.scss'
-
 type Props = {
   collectionTabs: ColorCollectionsTabs,
   showTab: Function,

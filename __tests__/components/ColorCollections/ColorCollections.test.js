@@ -1,11 +1,11 @@
 /* eslint-env jest */
 import React from 'react'
 import { shallow, mount } from 'enzyme'
-import { ColorCollections, collectionsList } from 'src/components/ColorCollections/ColorCollections'
-import ColorCollectionsTab from 'src/components/ColorCollections/ColorCollectionsTab'
-import CollectionDetail from 'src/components/ColorCollections/CollectionDetail'
+import { ColorCollections } from 'src/components/ColorCollections/ColorCollections'
 import mocks from '../../../__mocks__/helpers/MockUtility'
 
+// create reusable mocks
+// available as mocks.fn.MOCK_NAME
 mocks.create([
   'getSummary',
   'loadColors',
@@ -18,7 +18,6 @@ const defaultProps = {
   colorNumberToIdHash: {},
   config: {},
   intl: {},
-  isExpertColor: false,
   isShowBack: false,
   setHeader: () => null,
   showBack: () => null,
@@ -37,7 +36,6 @@ function getStubs () {
 
   const vals = {
     colorIds: [4, 5, 6, 7],
-    isExpertColor: false,
     description: 'undescribable',
     summaryId: 'birthdaycake',
     summaryName: 'jack casino',
@@ -76,7 +74,6 @@ function getStubs () {
     summaries,
     colorMap,
     colorNumberToIdHash,
-    isExpertColor: vals.isExpertColor,
     colorIds: vals.colorIds,
     categories: {
       data: [
@@ -99,8 +96,6 @@ function getStubs () {
     intl
   }
 }
-
-const tabIdShow = ''
 
 const getColorCollections = (overrides = {}, mountIt = false) => {
   return (mountIt ? mount : shallow)(
@@ -196,22 +191,6 @@ describe('Color Collections component', () => {
         stub = getStubs()
       })
 
-      it('should set collectionData to data prop', () => {
-        const data = 'omg becky, look at her...'
-
-        mocks.set(ColorCollections, 'getSummariesForTab')
-        ColorCollections.collectionData = 'jack daniels'
-
-        ColorCollections.updateCollectionData({
-          data,
-          props: { ...stub.props, isExpertColor: true },
-          tabId: stub.tabId
-        })
-        expect(ColorCollections.collectionData).toBe(data)
-
-        expect(mocks.fn.getSummariesForTab.mock.calls).toHaveLength(0)
-      })
-
       it('should set collection data to the tab summaries if expert color is falsy', () => {
         mocks.set(ColorCollections, 'getSummariesForTab')
         ColorCollections.collectionData = 'this little piggy'
@@ -233,50 +212,6 @@ describe('Color Collections component', () => {
     })
   })
 
-  describe('ColorCollections with prop isExpertColor as false', () => {
-    let colorCollections
-    beforeEach(() => {
-      colorCollections = getColorCollections()
-    })
-
-    it('should match snapshot', () => {
-      expect(colorCollections).toMatchSnapshot()
-    })
-
-    it('should render ColorCollectionsTab if isExpertColor is not defined or false', () => {
-      if (!defaultProps.isExpertColor) {
-        expect(colorCollections.find(ColorCollectionsTab).exists()).toBe(true)
-      }
-    })
-
-    it('should update ColorCollectionsTab prop tabIdShow to tabIdShow value when showTab is called', () => {
-      colorCollections.find(ColorCollectionsTab).prop('showTab')(tabIdShow)
-      expect(colorCollections.find(ColorCollectionsTab).prop('tabIdShow')).toEqual(tabIdShow)
-    })
-
-    it('should render collectionsList div', () => {
-      expect(colorCollections.find(`div.${collectionsList}`).exists()).toBe(true)
-    })
-  })
-
-  describe('ColorCollections with prop isExpertColor as true', () => {
-    let colorCollections
-    let newProps = { isExpertColor: true }
-    beforeAll(() => {
-      if (!colorCollections) {
-        colorCollections = getColorCollections(newProps)
-      }
-    })
-
-    it('should match snapshot', () => {
-      expect(colorCollections).toMatchSnapshot()
-    })
-
-    it('should render collectionsList div', () => {
-      expect(colorCollections.find(`div.${collectionsList}`).exists()).toBe(true)
-    })
-  })
-
   describe('ColorCollections with prop isShowBack as true', () => {
     let colorCollections
     let newProps = { isShowBack: true }
@@ -284,13 +219,9 @@ describe('Color Collections component', () => {
       colorCollections = getColorCollections(newProps)
     })
 
-    it('should match snapshot', () => {
-      expect(colorCollections).toMatchSnapshot()
-    })
-
     it('should render CollectionDetail if isShowBack is true', () => {
       if (newProps.isShowBack) {
-        expect(colorCollections.find(CollectionDetail).exists()).toBe(true)
+        expect(colorCollections.type().displayName).toEqual('Connect(CollectionDetail)')
       }
     })
   })

@@ -1,6 +1,5 @@
 import React from 'react'
 import { shallow } from 'enzyme'
-import { expertColorsData } from 'src/components//Carousel/data'
 import ListWithCarousel from 'src/components/Carousel/Carousel'
 import CollectionSummary from 'src/components/Carousel/CollectionSummary'
 
@@ -8,11 +7,11 @@ const baseClass = 'collection__summary'
 
 const createCollectionSummary = (props = {}) => {
   const CollectionSummaryWrapper = ListWithCarousel(CollectionSummary)
-  return shallow(<CollectionSummaryWrapper {...props} data={expertColorsData} />)
+  return shallow(<CollectionSummaryWrapper {...props} />)
 }
 
-const wrapper = createCollectionSummary({ isExpertColor: true, getSummaryData: jest.fn() })
-const collectionWrapper = createCollectionSummary({ isExpertColor: false, getSummaryData: jest.fn() })
+const wrapper = createCollectionSummary({ isExpertColor: true, getSummaryData: jest.fn(), data: [] })
+const collectionWrapper = createCollectionSummary({ isExpertColor: false, getSummaryData: jest.fn(), data: [] })
 
 describe('snapshot match testing', () => {
   expect(wrapper).toMatchSnapshot()

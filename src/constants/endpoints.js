@@ -15,5 +15,6 @@ export const COLOR_FAMILY_NAMES_ENDPOINT = endpoint`families`
 export const COLORS_ENDPOINT = endpoint`colors`
 export const COLORS_SEARCH_ENDPOINT = endpoint`search`
 export const CONFIG_ENDPOINT = endpoint`configurations`
+export const EXPERT_COLOR_PICKS_ENDPOINT = endpoint`expertcolorpicks/sherwin`
 export const ML_PIPELINE_ENDPOINT = endpoint`${ML_API_URL}pipeline/`
 export const SCENES_ENDPOINT = endpoint`scenes`
