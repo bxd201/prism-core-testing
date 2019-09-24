@@ -21,7 +21,7 @@ RUN mkdir -p /app/config \
 
 RUN ln -s /app/config/bundle.js /usr/share/nginx/html/bundle.js \
     && ln -s /app/config/author.js /usr/share/nginx/html/author.js \
-    && ln -s /app/config/author.js /usr/share/nginx/html/embed.js
+    && ln -s /app/config/embed.js /usr/share/nginx/html/embed.js
 
 ENTRYPOINT ["/entrypoint.sh"]
 
