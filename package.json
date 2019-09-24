@@ -14,7 +14,8 @@
   },
   "jest": {
     "setupFiles": [
-      "jest-canvas-mock"
+      "jest-canvas-mock",
+      "<rootDir>/setup/setupFile.js"
     ],
     "setupFilesAfterEnv": [
       "<rootDir>/setup/setupEnzyme.js"
