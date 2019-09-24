@@ -4,7 +4,7 @@ exports[`SherwinColorWall with props should match snapshot 1`] = `
 <div
   className="color-wall-wall"
 >
-  <withRouter(InjectIntl(ColorWallSwatchList))
+  <withRouter(injectIntl(ColorWallSwatchList))
     bloomRadius={2}
     colorMap={
       Object {

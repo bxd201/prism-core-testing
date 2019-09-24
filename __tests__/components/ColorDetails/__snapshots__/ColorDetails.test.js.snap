@@ -5,7 +5,7 @@ exports[`Color Details Container Component should rendering correctly it should 
   <div
     className="color-detail-view"
   >
-    <InjectIntl(ColorChipMaximizer)
+    <injectIntl(ColorChipMaximizer)
       color="2248"
     />
     <div
