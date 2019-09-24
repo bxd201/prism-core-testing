@@ -11,6 +11,7 @@ import ConfirmationModal from './ConfirmationModal'
 import ColorPinsGenerationByHue from './workers/colorPinsGenerationByHue.worker'
 import useEffectAfterMount from '../../shared/hooks/useEffectAfterMount'
 import PaintScene from '../PaintScene/PaintScene'
+import { loadImage } from '../../shared/helpers/ImageUtils'
 
 const baseClass = 'match-photo'
 const wrapperClass = `${baseClass}__wrapper`
@@ -78,8 +79,14 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
   }
 
   function handleChange (e: Object) {
-    const { target } = e
-    setImageUrl(URL.createObjectURL(target.files[0]))
+    // eslint-disable-next-line no-unused-vars
+    // const { target } = e
+    // setImageUrl(URL.createObjectURL(target.files[0]))
+
+    const imgUrl = URL.createObjectURL(e.target.files[0])
+    loadImage(imgUrl).then((image) => {
+
+    })
   }
 
   function handleImageLoaded () {
