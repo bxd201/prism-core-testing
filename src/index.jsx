@@ -79,9 +79,6 @@ const renderAppInElement = (el) => {
   // checks if a default routing type is set, if not we'll use hash routing
   const routeType = props.routeType || 'hash'
 
-  // checks the brand, if no brand is provided we'll give the user a default experience
-  const brand = props.brand || 'sherwin'
-
   const BrowserRouterRender = (
     <BrowserRouter basename={pageRoot}>
       <App {...props} />
@@ -98,7 +95,7 @@ const renderAppInElement = (el) => {
   render(
     <IntlProvider locale={language} messages={flatLanguages} textComponent={React.Fragment}>
       <Provider store={store}>
-        <ConfigurationContextProvider brand={brand}>
+        <ConfigurationContextProvider {...props}>
           <LiveAnnouncer>
             { RouterRender }
           </LiveAnnouncer>
