@@ -74,6 +74,7 @@ class ColorWallSwatch extends PureComponent<Props> {
                   tabIndex={-1}
                 />
                 <DetailsLink
+                  color={color}
                   config={config}
                   detailsLink={detailsLink}
                   className={`${CLASS_NAMES.CONTENT_CTA} ${CLASS_NAMES.CONTENT_CTA_L} ${focus ? CLASS_NAMES.CONTENT_CTA_FOCUS : ''}`}

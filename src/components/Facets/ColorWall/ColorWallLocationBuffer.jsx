@@ -7,10 +7,12 @@ import { filterByFamily, filterBySection, makeActiveColorById, resetActiveColor 
 import { updateSearchQuery, toggleSearchMode } from '../../../store/actions/loadSearchResults'
 import { compareKebabs } from '../../../shared/helpers/StringUtils'
 import type { Color } from '../../../shared/types/Colors'
+import type { Configuration } from '../../../shared/types/Configuration'
 import { ROUTE_PARAM_NAMES } from 'constants/globals'
 
 import ColorWall from './ColorWall'
 import ColorWallContext from './ColorWallContext'
+import withConfigurationContext from '../../../contexts/ConfigurationContext/WithConfigurationContext'
 
 type StateProps = {
   family?: string,
@@ -19,7 +21,8 @@ type StateProps = {
   query?: String,
   displayDetailsLink?: boolean,
   displayInfoButton?: boolean,
-  displayAddButton?: boolean
+  displayAddButton?: boolean,
+  config: Configuration
 }
 
 type DispatchProps = {
@@ -42,11 +45,14 @@ class ColorWallLocationBuffer extends Component<Props> {
   render () {
     // scaffolding out some ColorWall specific provider values that can be overwritten as need be by any
     // component using the <ColorWallRouteComponent /> via props
-    const { displayAddButton, displayDetailsLink, displayInfoButton } = this.props
+    const { displayAddButton, displayDetailsLink, displayInfoButton, config } = this.props
     const cwProviderValues = {
       displayDetailsLink: (!isUndefined(displayDetailsLink)) ? displayDetailsLink : false,
       displayInfoButton: (!isUndefined(displayInfoButton)) ? displayInfoButton : true,
-      displayAddButton: (!isUndefined(displayAddButton)) ? displayAddButton : true
+      displayAddButton: (!isUndefined(displayAddButton)) ? displayAddButton : true,
+      // TODO: Future scope, the below shouldn't be driven by a data attribute, but should come in from the config as a eval capable string that
+      // a utility method perhaps can handle per brand.
+      colorDetailPageRoot: (!isUndefined(config.colorDetailPageRoot)) ? config.colorDetailPageRoot : null
     }
 
     return (
@@ -159,4 +165,4 @@ const mapDispatchToProps = (dispatch: Function) => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ColorWallLocationBuffer)
+export default connect(mapStateToProps, mapDispatchToProps)(withConfigurationContext(ColorWallLocationBuffer))
