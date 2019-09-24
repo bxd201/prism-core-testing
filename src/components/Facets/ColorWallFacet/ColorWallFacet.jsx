@@ -16,15 +16,20 @@ export const RootRedirectColorWall = () => {
   return <Redirect to={colorWallBaseUrl} />
 }
 
+export const ColorWallComponent = (props: any) => {
+  return <ColorWallRouteComponent displayDetailsLink displayInfoButton={false} displayAddButton={false} {...props} />
+}
+
 type ColorWallFacetProps = {
   location: Location
 }
 
-export function ColorWallFacet ({ location }: ColorWallFacetProps) {
+export function ColorWallFacet (props: ColorWallFacetProps) {
+  const { location } = props
   return (
     <Switch location={location}>
       <Route path='/' exact component={RootRedirectColorWall} />
-      <Route path={colorWallUrlPattern} component={ColorWallRouteComponent} />
+      <Route path={colorWallUrlPattern} component={ColorWallComponent} />
     </Switch>
   )
 }
