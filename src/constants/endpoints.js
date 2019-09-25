@@ -16,5 +16,6 @@ export const COLORS_ENDPOINT = endpoint`colors`
 export const COLORS_SEARCH_ENDPOINT = endpoint`search`
 export const CONFIG_ENDPOINT = endpoint`configurations`
 export const EXPERT_COLOR_PICKS_ENDPOINT = endpoint`expertcolorpicks/sherwin`
+export const INSPIRATIONAL_PHOTOS_ENDPOINT = endpoint`inspirationalphotos/sherwin`
 export const ML_PIPELINE_ENDPOINT = endpoint`${ML_API_URL}pipeline/`
 export const SCENES_ENDPOINT = endpoint`scenes`

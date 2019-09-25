@@ -4,7 +4,12 @@ import { InspiredSceneNavigator } from 'src/components/InspirationPhotos/Inspire
 import ImageScenesWithCarousel from 'src/components/InspirationPhotos/InspiredScene'
 
 let defaultProps = {
-  setHeader: jest.fn()
+  collectionTabs: [],
+  flatData: [],
+  loadData: () => null,
+  setHeader: jest.fn(),
+  tabMap: {}
+
 }
 
 const createInspiredSceneNavigator = (props) => {
@@ -23,10 +28,9 @@ describe('snapshot match testing', () => {
 describe('Testing state for InspiredSceneNavigator component', () => {
   it('State should initialize correctly', () => {
     const initialState = wrapper.instance().state
-    expect(initialState).toEqual({
-      tabId: 'tab1',
-      isClickTab: false
-    })
+    expect(initialState).toEqual(expect.objectContaining({
+      tabId: 'tab0'
+    }))
   })
 })
 

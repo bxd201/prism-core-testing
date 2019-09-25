@@ -44,8 +44,8 @@ describe('MatchPhoto events', () => {
   })
 
   // TODO:noah.hall
-  // failure: cannot assign to read only property 'createObjectURL'
-  // of function 'function URL(url
+  // failure: TypeError: Cannot assign to read only property
+  // 'createObjectURL' of function 'function URL(url) {
   // it('should call mocked useState on input click', () => {
   //   let blob = new Blob(['(image-data)'], { type: 'image/png' })
   //   blob['lastModifiedDate'] = new Date()
