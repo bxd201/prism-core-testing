@@ -1,19 +1,6 @@
 import cloneDeep from 'lodash/cloneDeep'
 
 export const getPaintAreaPath = (imagePathList, canvas, width, height, color) => {
-  /** This function is to create merged paint area path based on given imageList
-   * Because we using index to stand for image path, and each index is unique in the canvas. so if any of image has
-   * intersection, then we say their index are same.
-   * So now The whole question we can convert it to how to merge array inside a 2D array which has intersection,
-   * so there are some possible cases as list below.
-   * 1.paint areas dont have intersection no matter their color are same or not. we dont need to do anything
-   * 2.paint areas have same color and have intersection, then we merge the area
-   * for example, current imageList "[[1, 2, 3], [4, 5]" comming image path "[5, 6]", then we get "[[1, 2, 3],[4, 5, 6]]"
-   * current imageList "[[1, 2, 3], [4, 5], [7, 8]]" comming image path "[3, 4, 6]", then we get "[[1, 2, 3, 4, 5, 6],[7, 8]]"
-   * 3.paint areas hava different color and have intersection, then we need take out intersection area path from covered image,
-   * if whole intersection been took out, and remain nothing in covered image then we can say the old image be full cover, then
-   * we remove it from the pathlist.
-  */
   const RGB = getActiveColorRGB(color)
   const array = getImageCordinateByPixel(canvas, RGB, width, height)
   const newArea = {
@@ -21,41 +8,7 @@ export const getPaintAreaPath = (imagePathList, canvas, width, height, color) =>
     data: array
   }
   const copyImagePathList = cloneDeep(imagePathList)
-  if (copyImagePathList.length === 0) {
-    copyImagePathList.push(newArea)
-  } else {
-    let mergeArea = cloneDeep(newArea)
-    for (let i = 0; i < copyImagePathList.length; i++) {
-      const hasSameColor = checkColorRGBEqual(copyImagePathList[i].color, mergeArea.color)
-      const intersection = checkIntersection(copyImagePathList[i].data, mergeArea.data)
-      if (intersection.length > 0) {
-        if (hasSameColor) {
-          const newMergeArea = {
-            color: mergeArea.color,
-            data: [...new Set([...mergeArea.data, ...copyImagePathList[i].data])]
-          }
-          copyImagePathList.splice(i, 1)
-          i--
-          mergeArea = cloneDeep(newMergeArea)
-        } else {
-          const remainArea = new Set([...copyImagePathList[i].data])
-          for (let i = 0; i < intersection.length; i++) {
-            remainArea.delete(intersection[i])
-          }
-          copyImagePathList[i].data = [...remainArea]
-        }
-      } else {
-        copyImagePathList.push(mergeArea)
-      }
-    }
-    for (let i = 0; i < copyImagePathList.length; i++) {
-      if (copyImagePathList[i].data.length === 0) {
-        copyImagePathList.splice(i, 1)
-        i--
-      }
-    }
-    copyImagePathList.push(mergeArea)
-  }
+  copyImagePathList.push(newArea)
   return copyImagePathList
 }
 
@@ -121,15 +74,21 @@ export const drawLine = (ctx, lineStart, end, isDash) => {
   ctx.restore()
 }
 
-export const createPolygon = (polyList = [[ 0, 0 ]], ctx, color) => {
+export const createPolygon = (polyList = [[0, 0]], canvas, width, height, color, operation) => {
+  const ctx = canvas.current.getContext('2d')
   ctx.fillStyle = color
-  ctx.beginPath()
-  ctx.moveTo(polyList[0][0], polyList[0][1])
-  for (let i = 1; i < polyList.length; i++) {
-    ctx.lineTo(polyList[i][0], polyList[i][1])
+  ctx.globalCompositeOperation = operation
+  if (polyList.length > 2) {
+    ctx.beginPath()
+    ctx.moveTo(polyList[0][0], polyList[0][1])
+    for (let i = 1; i < polyList.length; i++) {
+      ctx.lineTo(polyList[i][0], polyList[i][1])
+    }
+    ctx.closePath()
+    ctx.fill()
+  } else {
+    clearCanvas(canvas, width, height)
   }
-  ctx.closePath()
-  ctx.fill()
 }
 export const checkIntersection = (areaA, areaB) => {
   const setA = new Set(areaA)
@@ -215,4 +174,111 @@ export const edgeDetect = (canvas, targetImagePath, targetImageColor, width, hei
   }
   drawImagePixelByPath(originCtx, width, height, [255, 255, 255, 255], edge)
   return edge
+}
+
+export const eraseIntersection = (imagePathList, erasePath, canvas, width, height) => {
+  const originImagePathList = cloneDeep(imagePathList)
+  for (let i = 0; i < originImagePathList.length; i++) {
+    const intersection = checkIntersection(originImagePathList[i].data, erasePath)
+    if (intersection.length > 0) {
+      const remainArea = new Set([...originImagePathList[i].data])
+      for (let i = 0; i < intersection.length; i++) {
+        remainArea.delete(intersection[i])
+      }
+      originImagePathList[i].data = [...remainArea]
+    }
+  }
+  return originImagePathList
+}
+
+export const getSelectArea = (imageData, newColor, x, y) => {
+  let resultArr = []
+  const { width, height } = imageData
+  const stack = []
+  const baseColor = getColorAtPixel(imageData, x, y)
+  let operator = { x, y }
+
+  // Check if base color and new color are the same
+  if (colorMatch(baseColor, newColor)) {
+    return
+  }
+
+  // Add the clicked location to stack
+  stack.push({ x: operator.x, y: operator.y })
+
+  while (stack.length) {
+    operator = stack.pop()
+    let contiguousDown = true // Vertical is assumed to be true
+    let contiguousUp = true // Vertical is assumed to be true
+    let contiguousLeft = false
+    let contiguousRight = false
+
+    // Move to top most contiguousDown pixel
+    while (contiguousUp && operator.y >= 0) {
+      operator.y--
+      contiguousUp = colorMatch(getColorAtPixel(imageData, operator.x, operator.y), baseColor)
+    }
+
+    // Move downward
+    while (contiguousDown && operator.y < height) {
+      setColorAtPixel(imageData, newColor, operator.x, operator.y)
+      const index = width * operator.y * 4 + operator.x * 4
+      resultArr.push(index)
+      // Check left
+      if (operator.x - 1 >= 0 && colorMatch(getColorAtPixel(imageData, operator.x - 1, operator.y), baseColor)) {
+        if (!contiguousLeft) {
+          contiguousLeft = true
+          stack.push({ x: operator.x - 1, y: operator.y })
+        }
+      } else {
+        contiguousLeft = false
+      }
+
+      // Check right
+      if (operator.x + 1 < width && colorMatch(getColorAtPixel(imageData, operator.x + 1, operator.y), baseColor)) {
+        if (!contiguousRight) {
+          stack.push({ x: operator.x + 1, y: operator.y })
+          contiguousRight = true
+        }
+      } else {
+        contiguousRight = false
+      }
+
+      operator.y++
+      contiguousDown = colorMatch(getColorAtPixel(imageData, operator.x, operator.y), baseColor)
+    }
+  }
+  return resultArr
+}
+
+export const colorMatch = (a, b) => {
+  return a.r === b.r && a.g === b.g && a.b === b.b && a.a === b.a
+}
+
+export const getColorAtPixel = (imageData, x, y) => {
+  const { width, data } = imageData
+
+  return {
+    r: data[4 * (width * y + x) + 0],
+    g: data[4 * (width * y + x) + 1],
+    b: data[4 * (width * y + x) + 2],
+    a: data[4 * (width * y + x) + 3]
+  }
+}
+
+export const setColorAtPixel = (imageData, color, x, y) => {
+  const { width, data } = imageData
+
+  data[4 * (width * y + x) + 0] = color.r & 0xff
+  data[4 * (width * y + x) + 1] = color.g & 0xff
+  data[4 * (width * y + x) + 2] = color.b & 0xff
+  data[4 * (width * y + x) + 3] = color.a & 0xff
+}
+
+export const hexToRGB = (hex) => {
+  hex = hex.replace('#', '')
+  const r = parseInt(hex.substring(0, hex.length / 3), 16)
+  const g = parseInt(hex.substring(hex.length / 3, 2 * hex.length / 3), 16)
+  const b = parseInt(hex.substring(2 * hex.length / 3, 3 * hex.length / 3), 16)
+  return { red: r, green: g, blue: b }
 }
