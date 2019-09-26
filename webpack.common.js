@@ -197,6 +197,7 @@ module.exports = {
   ],
   devServer: {
     host: '0.0.0.0', // allows for hitting this from ouside the host machine
+    https: true,
     historyApiFallback: {
       rewrites: [
         { from: /^\/$/, to: '/index.html' },
