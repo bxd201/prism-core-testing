@@ -14,7 +14,9 @@ pipeline {
   stages {
     stage('builder') {
       when {
-        branch 'develop'
+        not {
+          expression { BRANCH_NAME ==~ /^(qa|release)$/ }
+        }
       }
       steps {
         sh """
