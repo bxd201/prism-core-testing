@@ -1,5 +1,5 @@
 // @flow
-import CollectionDetail from '../shared/CollectionDetail'
+import CollectionDetail from '../Shared/CollectionDetail'
 import CollectionsHeaderWrapper from '../CollectionsHeaderWrapper/CollectionsHeaderWrapper'
 import ColorCollectionsTab from '../Shared/ColorCollectionsTab'
 import React, { useState, useEffect } from 'react'
