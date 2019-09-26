@@ -1,6 +1,6 @@
 // @flow
 import CollectionsHeaderWrapper from '../CollectionsHeaderWrapper/CollectionsHeaderWrapper'
-import ColorCollectionsTab from '../shared/ColorCollectionsTab'
+import ColorCollectionsTab from '../Shared/ColorCollectionsTab'
 import ImageScenesWithCarousel from './InspiredScene'
 import React from 'react'
 

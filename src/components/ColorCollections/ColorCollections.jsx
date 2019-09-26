@@ -1,7 +1,7 @@
 // @flow
 import CollectionDetail from '../shared/CollectionDetail'
 import CollectionsHeaderWrapper from '../CollectionsHeaderWrapper/CollectionsHeaderWrapper'
-import ColorCollectionsTab from '../shared/ColorCollectionsTab'
+import ColorCollectionsTab from '../Shared/ColorCollectionsTab'
 import React, { useState, useEffect } from 'react'
 import WithConfigurationContext from '../../contexts/ConfigurationContext/WithConfigurationContext'
 
