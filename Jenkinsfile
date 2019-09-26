@@ -49,7 +49,9 @@ pipeline {
     }
     stage('build') {
       when {
-        branch 'develop'
+        not {
+          expression { BRANCH_NAME ==~ /^(qa|release)$/ }
+        }
       }
       steps {
         unstash 'static'
