@@ -223,7 +223,7 @@ class TintableScene extends PureComponent<Props, State> {
                     if (tintColor) {
                       return (
                         <CSSTransition
-                          key={`${surface.id}_${tintColor}`}
+                          key={`${surface.id}_${tintColor.hex}`}
                           timeout={varValues.scenes.tintTransitionTime}
                           mountOnEnter
                           classNames={`${TintableScene.classNames.transition}__svg-defs__def-`}>
@@ -254,7 +254,7 @@ class TintableScene extends PureComponent<Props, State> {
                     if (tintColor) {
                       return (
                         <CSSTransition
-                          key={`${surface.id}_${tintColor}`}
+                          key={`${surface.id}_${tintColor.hex}`}
                           timeout={varValues.scenes.tintTransitionTime}
                           mountOnEnter
                           classNames={`${TintableScene.classNames.transition}__colors__color-`}>
