@@ -12,7 +12,7 @@ import {
   colorInfoNumberClass,
   colorInfoNameClass
 } from 'src/components/CompareColor/CompareColor'
-import { StaticTintScene } from 'src/components/CompareColor/TintableScene'
+import { StaticTintScene } from 'src/components/CompareColor/StaticTintScene'
 import * as Colors from '__mocks__/data/color/Colors'
 import { fullColorNumber } from 'src/shared/helpers/ColorUtils'
 

@@ -10,8 +10,8 @@ import { IntlProvider, intlShape } from 'react-intl'
 import { shallow, mount } from 'enzyme'
 
 const messages = require('src/translations/en-US.json') // en.json
-const intlProvider = new IntlProvider({ locale: 'en', messages }, {})
-const { intl } = intlProvider.getChildContext()
+const intl = new IntlProvider({ locale: 'en', messages }, {})
+// const { intl } = intlProvider.getChildContext()
 
 /**
  * When using React-Intl `injectIntl` on components, props.intl is required.

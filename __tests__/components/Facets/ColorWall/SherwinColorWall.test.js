@@ -1,4 +1,5 @@
 /* eslint-env jest */
+
 import React from 'react'
 import { shallow } from 'enzyme'
 import { SherwinColorWall } from 'src/components/Facets/ColorWall/SherwinColorWall'
@@ -17,8 +18,7 @@ const families = ['Red', 'Orange', 'Yellow', 'Green', 'Blue', 'Purple', 'Neutral
 const configContext = { 'theme': { 'primary': '#0069af', 'secondary': '#4f5967', 'warning': '#f2c500', 'success': '#1fce6d', 'danger': '#e94b35', 'error': '#e94b35', 'grey': '#cccccc', 'lightGrey': '#dddddd', 'nearBlack': '#2e2e2e', 'black': '#000000', 'white': '#ffffff' }, 'colorWall': { 'bloomRadius': 2 }, 'displayInfoButton': true }
 
 const messages = require('src/translations/en-US.json') // en.json
-const intlProvider = new IntlProvider({ locale: 'en', messages }, {})
-const { intl } = intlProvider.getChildContext()
+const intl = new IntlProvider({ locale: 'en', messages }, {})
 
 const getSherwinColorWall = (props) => {
   let defaultProps = {

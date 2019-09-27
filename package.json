@@ -3,7 +3,7 @@
   "version": "1.1.2",
   "private": true,
   "scripts": {
-    "start": "cross-env API_URL=https://dev-prism-api.ebus.swaws WEB_URL=http://localhost:8080 ML_API_URL=http://localhost webpack-dev-server --mode development --open --hot --config webpack.dev.js",
+    "start": "cross-env API_URL=https://develop-prism-api.ebus.swaws WEB_URL=http://localhost:8080 ML_API_URL=http://localhost webpack-dev-server --mode development --open --hot --config webpack.dev.js",
     "build": "webpack --config webpack.prod.js",
     "test": "jest --coverage --updateSnapshot",
     "test:ci": "jest --ci",
@@ -14,7 +14,8 @@
   },
   "jest": {
     "setupFiles": [
-      "jest-canvas-mock"
+      "jest-canvas-mock",
+      "<rootDir>/setup/setupFile.js"
     ],
     "setupFilesAfterEnv": [
       "<rootDir>/setup/setupEnzyme.js"
@@ -23,6 +24,12 @@
       "enzyme-to-json/serializer"
     ],
     "moduleNameMapper": {
+      "^dnd-core$": "dnd-core/dist/cjs",
+      "^react-dnd$": "react-dnd/dist/cjs",
+      "^react-dnd-html5-backend$": "react-dnd-html5-backend/dist/cjs",
+      "^react-dnd-touch-backend$": "react-dnd-touch-backend/dist/cjs",
+      "^react-dnd-test-backend$": "react-dnd-test-backend/dist/cjs",
+      "^react-dnd-test-utils$": "react-dnd-test-utils/dist/cjs",
       "^constants(.*)$": "<rootDir>/src/constants$1",
       "^variables$": "<rootDir>/src/shared/variables.js",
       "\\.((s?css)|less)$": "identity-obj-proxy",
@@ -76,6 +83,8 @@
     "@babel/preset-env": "7.6.0",
     "@babel/preset-flow": "7.0.0",
     "@babel/preset-react": "7.0.0",
+    "@formatjs/intl-relativetimeformat": "4.1.0",
+    "@testing-library/react": "9.1.4",
     "autoprefixer": "9.6.1",
     "babel-eslint": "10.0.3",
     "babel-jest": "24.9.0",
@@ -117,7 +126,6 @@
     "postcss-wrapper-loader": "1.0.2",
     "react-hooks-testing-library": "0.6.0",
     "react-test-renderer": "16.9.0",
-    "react-testing-library": "8.0.1",
     "redux-mock-store": "1.5.3",
     "sass-loader": "7.3.1",
     "sass-math-pow": "0.1.5",

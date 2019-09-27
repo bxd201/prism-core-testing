@@ -16,7 +16,16 @@ exports[`Prism routes should match snapshot 1`] = `
         path="/"
       />
       <Route
-        component={[Function]}
+        component={
+          Object {
+            "$$typeof": Symbol(react.memo),
+            "WrappedComponent": [Function],
+            "baseClass": "prism-scene-manager",
+            "compare": null,
+            "displayName": "Connect(SceneManager)",
+            "type": [Function],
+          }
+        }
         exact={true}
         path="/active"
       />
@@ -50,7 +59,15 @@ exports[`Prism routes should match snapshot 1`] = `
         path="/active/color/:colorId/:colorSEO"
       />
       <Route
-        component={[Function]}
+        component={
+          Object {
+            "$$typeof": Symbol(react.memo),
+            "WrappedComponent": [Function],
+            "compare": null,
+            "displayName": "Connect(FastMask)",
+            "type": [Function],
+          }
+        }
         exact={true}
         path="/fast-mask"
       />

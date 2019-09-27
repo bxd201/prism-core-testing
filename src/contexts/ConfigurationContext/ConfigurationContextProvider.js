@@ -14,13 +14,18 @@ import type { Configuration } from '../../shared/types/Configuration'
 type Props = {
   children: any,
   brand: string,
+  pageRoot: string,
   loadConfiguration: Function,
-  configurations: Configuration
+  configurations: Configuration,
+  colorDetailPageRoot: string
 }
 
-function ConfigurationContextProvider ({ children, brand, loadConfiguration, configurations }: Props) {
+function ConfigurationContextProvider ({ children, brand, pageRoot, loadConfiguration, configurations, colorDetailPageRoot }: Props) {
+  // checks the brand, if no brand is provided we'll give the user a default experience
+  const userBrand = brand || 'sherwin'
+
   useEffect(() => {
-    loadConfiguration(brand)
+    loadConfiguration(userBrand)
   }, [])
 
   // TODO: if we want, we can render a loader here or something
@@ -45,10 +50,15 @@ function ConfigurationContextProvider ({ children, brand, loadConfiguration, con
 
   // add brand to the configuration object
   // TODO: remove this when we have moved the data around in the database to be returned by the brandId
-  const brandId = (toLower(brand) === 'sw-ca') ? 'sherwin' : toLower(brand)
+  const brandId = (toLower(userBrand) === 'sw-ca') ? 'sherwin' : toLower(userBrand)
   const config = {
     brandId,
     ...configurations
+  }
+
+  // TODO: should this be apart of the overall global config? is there a better way to get this data down to stuff?
+  if (colorDetailPageRoot) {
+    config.colorDetailPageRoot = colorDetailPageRoot
   }
 
   return (

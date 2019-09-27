@@ -15,12 +15,6 @@ exports[`CollectionDetail should match snapshot 1`] = `
     <div
       className="collection-detail__description"
     />
-    <a
-      className="collection-detail__learn-more"
-      href="https://"
-    >
-      LEARN MORE ABOUT THIS COLLECTION
-    </a>
   </div>
   <div
     className="collection-detail__color-list"

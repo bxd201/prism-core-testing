@@ -1,3 +1,5 @@
+import MaskObj from '../../store/masks/MaskObj'
+
 export const Scene = {
   'id': 1,
   'width': 1311,
@@ -16,19 +18,28 @@ export const Scene = {
       'surfaces': [
         {
           'id': 1,
-          'mask': 'https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=wall&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1',
+          'mask': new MaskObj({
+            'id': '1a',
+            'load': 'https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=wall&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1'
+          }),
           'hitArea': '/prism/images/scenes/rooms/2/m1.svg',
           'role': 'main'
         },
         {
           'id': 2,
-          'mask': 'https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=accent&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1',
+          'mask': new MaskObj({
+            'id': '2a',
+            'load': 'https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=accent&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1'
+          }),
           'hitArea': '/prism/images/scenes/rooms/2/m2.svg',
           'role': 'main'
         },
         {
           'id': 3,
-          'mask': 'https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=trim&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1',
+          'mask': new MaskObj({
+            'id': '3a',
+            'load': 'https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=trim&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1'
+          }),
           'hitArea': '/prism/images/scenes/rooms/2/m3.svg',
           'role': 'trim'
         }
@@ -43,19 +54,28 @@ export const Scene = {
       'surfaces': [
         {
           'id': 1,
-          'mask': 'https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=1280&req=object&opac=100&fmt=png8&object=wall&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1',
+          'mask': new MaskObj({
+            'id': '1b',
+            'load': 'https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=1280&req=object&opac=100&fmt=png8&object=wall&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1'
+          }),
           'hitArea': '/prism/images/scenes/rooms/2/m1.svg',
           'role': 'main'
         },
         {
           'id': 2,
-          'mask': 'https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=1280&req=object&opac=100&fmt=png8&object=accent&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1',
+          'mask': new MaskObj({
+            'id': '2b',
+            'load': 'https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=1280&req=object&opac=100&fmt=png8&object=accent&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1'
+          }),
           'hitArea': '/prism/images/scenes/rooms/2/m2.svg',
           'role': 'main'
         },
         {
           'id': 3,
-          'mask': 'https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=1280&req=object&opac=100&fmt=png8&object=trim&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1',
+          'mask': new MaskObj({
+            'id': '3b',
+            'load': 'https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=1280&req=object&opac=100&fmt=png8&object=trim&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1'
+          }),
           'hitArea': '/prism/images/scenes/rooms/2/m3.svg',
           'role': 'trim'
         }

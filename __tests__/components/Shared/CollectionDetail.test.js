@@ -1,7 +1,7 @@
 /* eslint-env jest */
 import React from 'react'
 import { shallow, mount } from 'enzyme'
-import { CollectionDetail, collectionCover, collectionDescription, triggerPrevious, triggerNext } from 'src/components/ColorCollections/CollectionDetail'
+import { CollectionDetail, collectionCover, triggerPrevious, triggerNext } from 'src/components/Shared/CollectionDetail'
 import { getColorCollectionsData, allCollectionsData } from 'src/components/Carousel/data'
 import * as Colors from '__mocks__/data/color/Colors'
 import { AutoSizer } from 'react-virtualized'

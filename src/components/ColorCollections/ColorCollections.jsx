@@ -1,14 +1,12 @@
 // @flow
-import CollectionDetail from './CollectionDetail'
+import CollectionDetail from '../Shared/CollectionDetail'
 import CollectionsHeaderWrapper from '../CollectionsHeaderWrapper/CollectionsHeaderWrapper'
-import ColorCollectionsTab from './ColorCollectionsTab'
-import ExpertColorDetails from '../Carousel/ExpertColorDetails'
+import ColorCollectionsTab from '../Shared/ColorCollectionsTab'
 import React, { useState, useEffect } from 'react'
 import WithConfigurationContext from '../../contexts/ConfigurationContext/WithConfigurationContext'
 
 import { ColorListWithCarousel } from '../Carousel/Carousel'
 import { connect } from 'react-redux'
-import { expertColorsData } from '../Carousel/data'
 import { injectIntl } from 'react-intl'
 import { loadCollectionSummaries as loadCS } from '../../store/actions/collectionSummaries'
 import { loadColors } from '../../store/actions/loadColors'
@@ -20,7 +18,6 @@ type SummaryProps = {
   colorMap: Object,
   config: Object,
   intl: Object,
-  isExpertColor: boolean,
   isShowBack: boolean,
   loadColors: Function,
   loadCS: Function,
@@ -86,13 +83,10 @@ ColorCollections.getSummariesForTab = function getSummariesForTab (
 }
 
 ColorCollections.updateCollectionData = function updateCollectionData ({
-  data = expertColorsData,
   props = {},
   tabId
 }: CollectionDataInput) {
-  ColorCollections.collectionData = (props.isExpertColor)
-    ? data
-    : ColorCollections.getSummariesForTab(tabId, props)
+  ColorCollections.collectionData = ColorCollections.getSummariesForTab(tabId, props)
 }
 
 export function ColorCollections (props: SummaryProps) {
@@ -116,7 +110,7 @@ export function ColorCollections (props: SummaryProps) {
     setColorsRequested(true)
   }
 
-  const { isShowBack, showBack, setHeader, isExpertColor } = props
+  const { isShowBack, showBack, setHeader } = props
   const [tabIdShow, showTab] = useState('')
   const [collectionDataDetails, updateCollectionDataDetails] = useState({})
 
@@ -140,9 +134,7 @@ export function ColorCollections (props: SummaryProps) {
     ColorCollections.updateCollectionData({ tabId: tabIdShow, props })
   }
 
-  const headerContent = (isExpertColor)
-    ? 'Expert Color Picks'
-    : 'Color Collections'
+  const headerContent = 'Color Collections'
 
   useEffect(() => {
     if (!isShowBack) {
@@ -151,39 +143,32 @@ export function ColorCollections (props: SummaryProps) {
   }, [isShowBack])
 
   if (isShowBack === true) {
-    return (isExpertColor) ? <ExpertColorDetails expertColors={collectionDataDetails} /> : <CollectionDetail collectionDetailData={collectionDataDetails} />
+    return <CollectionDetail collectionDetailData={collectionDataDetails} />
   }
 
   const onClickHandler = (collectionSummaryData: Object) => {
     showBack()
-    if (!isExpertColor) {
-      setHeader(collectionSummaryData.name)
-    }
+    setHeader(collectionSummaryData.name)
     updateCollectionDataDetails(collectionSummaryData)
   }
 
   return (
     <div className={`${wrapper}`}>
-      {
-        (!isExpertColor) &&
-          <ColorCollectionsTab
-            collectionTabs={props.categories.data}
-            showTab={showTabHandler}
-            tabIdShow={tabIdShow}
-          />
-      }
-      {
-        <div className={`${collectionsList}`}>
-          <ColorListWithCarousel
-            defaultItemsPerView={8}
-            isInfinity={false}
-            key={tabIdShow}
-            data={ColorCollections.collectionData}
-            getSummaryData={onClickHandler}
-            isExpertColor={isExpertColor}
-          />
-        </div>
-      }
+      <ColorCollectionsTab
+        collectionTabs={props.categories.data}
+        showTab={showTabHandler}
+        tabIdShow={tabIdShow}
+      />
+      <div className={`${collectionsList}`}>
+        <ColorListWithCarousel
+          defaultItemsPerView={8}
+          isInfinity={false}
+          key={tabIdShow}
+          data={ColorCollections.collectionData}
+          getSummaryData={onClickHandler}
+          isExpertColor={false}
+        />
+      </div>
     </div>
   )
 }

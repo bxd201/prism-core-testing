@@ -1,0 +1,9 @@
+image:
+  tag: develop
+
+ingress:
+  host: replatform-prism-web.ebus.swaws
+
+env:
+  API_URL: "https://develop-prism-api.ebus.swaws"
+  WEB_URL: "https://replatform-prism-web.ebus.swaws"

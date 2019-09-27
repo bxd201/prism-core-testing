@@ -2,14 +2,14 @@
 import React from 'react'
 import { shallow } from 'enzyme'
 // import { renderHook, act } from 'react-hooks-testing-library'
-import { render, fireEvent, getByTestId } from 'react-testing-library'
+import { render, fireEvent, getByTestId } from '@testing-library/react'
 import ColorCollectionsTab, {
   tabListSelect,
   tabList, tabListItem,
   tabListDropdownMobile,
   tabListActive,
   tabListInactive
-} from 'src/components/ColorCollections/ColorCollectionsTab'
+} from 'src/components/Shared/ColorCollectionsTab'
 import { collectionTabs } from 'src/components/Carousel/data'
 
 let defaultProps = {

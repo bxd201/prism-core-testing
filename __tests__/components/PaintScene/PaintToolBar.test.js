@@ -22,6 +22,12 @@ const createPaintToolBarComponent = (props) => {
   return shallow(<PaintToolBar {...defaultProps} {...props} />)
 }
 
+describe('PaintToolBar', () => {
+  it('does not have any tests defined', () => {
+    expect(true).toBe(true)
+  })
+})
+
 /* @todo review these tests, I think more nuance is needed.
 describe('PaintToolBar render testing', () => {
   it('Component should show brush palette when paint brush tool is selected and clicked', () => {

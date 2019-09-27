@@ -1,7 +1,7 @@
 /* eslint-env jest */
 import React from 'react'
 import { shallow } from 'enzyme'
-import { StaticTintScene } from 'src/components/CompareColor/TintableScene'
+import { StaticTintScene } from 'src/components/CompareColor/StaticTintScene'
 import * as Colors from '__mocks__/data/color/Colors'
 import { Scene } from 'src/components/CompareColor/data'
 import ImagePreloader from 'src/helpers/ImagePreloader'

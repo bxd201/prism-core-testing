@@ -1,6 +1,7 @@
 // @flow
 export type Configuration = {
   brandId: string,
+  colorDetailPageRoot: string,
   ga_dimension_id: string,
   colorWall: {
     bloomRadius: number

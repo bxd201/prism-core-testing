@@ -1,6 +1,7 @@
 // @flow
 
 import ColorCollection from '../../ColorCollections/ColorCollections'
+import ExpertColorPicks from '../../ExpertColorPicks/ExpertColorPicks'
 import ColorDetails from '../ColorDetails/ColorDetails'
 import ColorWallRouteComponent from '../ColorWall/ColorWallRouteComponent'
 import CompareColor from '../../CompareColor/CompareColor'
@@ -45,7 +46,7 @@ export class Prism extends Component<Props> {
               <Route path={colorWallUrlPattern} component={ColorWallRouteComponent} />
               <Route path='/color-from-image' component={InspiredScene} />
               <Route path='/color-collections' component={() => <ColorCollection isExpertColor={false} />} />
-              <Route path='/expert-colors' component={() => <ColorCollection isExpertColor />} />
+              <Route path='/expert-colors' component={() => <ExpertColorPicks isExpertColor />} />
               <Route path='/match-photo' component={MatchPhoto} />
               <Route path='/paint-scene' render={() => <MatchPhoto isPaintScene />} />
               <Route path={`/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`} exact component={ColorDetails} />

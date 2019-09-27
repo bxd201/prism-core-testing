@@ -5,10 +5,10 @@ import { fullColorNumber, getContrastYIQ } from '../../../src/shared/helpers/Col
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronLeft, faChevronRight } from '@fortawesome/pro-solid-svg-icons'
 import type { Color } from '../../shared/types/Colors'
+import type { Scene } from '../../shared/types/Scene'
 import { toggleCompareColor } from '../../store/actions/live-palette'
 import './CompareColor.scss'
-import { StaticTintScene } from './TintableScene'
-import { Scene } from './data'
+import { StaticTintScene } from './StaticTintScene'
 
 const baseClass = 'color__comparison'
 const containerClass = `${baseClass}__container`
@@ -31,7 +31,8 @@ const offset = 1
 type CompareColorProps = {
   colors: Color[],
   toggleCompareColor: Function,
-  colorsId: string[]
+  colorsId: string[],
+  scene: Scene | undefined
 }
 
 type CompareColorState = {
@@ -90,6 +91,7 @@ export class CompareColor extends React.Component<CompareColorProps, CompareColo
 
     renderContent = () => {
       const { curr, colors } = this.state
+      const { scene } = this.props
       const renderColors = colors.filter((color: Color) => {
         return !this.props.colorsId.includes(color.id)
       })
@@ -99,7 +101,7 @@ export class CompareColor extends React.Component<CompareColorProps, CompareColo
             <div className={`${backgroundColorClass}`} />
             <StaticTintScene
               color={color}
-              scene={Scene}
+              scene={scene}
             />
             <div style={{ color: getContrastYIQ(color.hex) }} className={`${colorInfoClass}`} >
               <span className={`${colorInfoNumberClass}`}>{fullColorNumber(color.brandKey, color.colorNumber)}</span>
@@ -195,10 +197,13 @@ const mapDispatchToProps = (dispatch: Function) => {
   }
 }
 const mapStateToProps = (state: Object, props: Object) => {
-  const { lp } = state
+  const { lp, scenes } = state
+  const sceneType = scenes ? scenes.type : undefined
+
   return {
     colors: lp.colors,
-    colorsId: lp.compareColorsId
+    colorsId: lp.compareColorsId,
+    scene: sceneType ? scenes.sceneCollection[sceneType][0] : undefined
   }
 }
 
