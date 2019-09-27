@@ -12,7 +12,7 @@ export const loadImage = (imgUrl) => {
 }
 
 export const getScaledSide = (imageWidth, imageHeight) => {
-  return (side) => side * (imageHeight/imageWidth)
+  return (side) => side * (imageHeight / imageWidth)
 }
 
 export const scaleImage = (img, canvasWidth) => {
@@ -28,13 +28,14 @@ export const scaleImage = (img, canvasWidth) => {
 
     const payload = {
       dataUrl: null,
-      width: canvasWidth,
-      height: canvasHeight
+      width: Math.ceil(canvasWidth),
+      height: Math.ceil(canvasHeight),
+      isPortrait: canvasHeight > canvasWidth
     }
 
     try {
       // payload.data = ctx.getImageData(0, 0, canvasWidth, canvasHeight)
-      payload.dataUrl = ctx.toDataURL()
+      payload.dataUrl = canvas.toDataURL()
     } catch (e) {
       reject(e)
     } finally {
