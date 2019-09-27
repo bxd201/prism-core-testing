@@ -7,7 +7,7 @@ ingress:
 
 extraEmptyDir:
   app-config:
-    sizeLimit: "5M"
+    sizeLimit: "10M"
     mountPath: /app/config
 
 podAnnotations:
