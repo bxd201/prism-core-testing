@@ -56,6 +56,6 @@ describe('ColorWallFacet routes', () => {
   })
 
   it('should show ColorWallRouteComponent component for route defined as colorWallUrlPattern constant', () => {
-    expect(pathMap[colorWallUrlPattern]).toBe(ColorWallRouteComponent)
+    expect(pathMap[colorWallUrlPattern].name).toBe('ColorWallComponent')
   })
 })
