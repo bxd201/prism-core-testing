@@ -93,7 +93,7 @@ export const CollectionDetail = (props: Props) => {
         <div ref={_gridWrapperRef} className={`${collectionColorListVertical}`}>
           <AutoSizer onResize={handleGridResize}>
             {({ height, width }) => {
-              const columnCount = Math.round(width / resultSwatchSize)
+              const columnCount = Math.max(1, Math.round(width / resultSwatchSize))
               const rowCount = Math.ceil(collectionDetailData.collections.length / columnCount)
               const newSize = width / columnCount
               _cellSize = newSize

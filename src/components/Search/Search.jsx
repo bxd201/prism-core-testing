@@ -106,9 +106,10 @@ export class Search extends PureComponent<Props, State> {
             <section className='color-wall-swatch-list color-wall-swatch-list--show-all'>
               <AutoSizer>
                 {({ height, width }) => {
-                  const columnCount = Math.round(width / resultSwatchSize)
+                  const columnCount = Math.max(1, Math.round(width / resultSwatchSize))
                   const rowCount = Math.ceil(colors.length / columnCount)
                   const newSize = width / columnCount
+
                   return (
                     <Grid
                       colors={colors}
