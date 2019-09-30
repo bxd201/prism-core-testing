@@ -5,7 +5,7 @@ ingress:
   host: prism-web.ebus.swaws
 
 env:
-  API_URL: "https://develop-prism-api.ebus.swaws"
+  API_URL: "https://prism-api.ebus.swaws"
   WEB_URL: "https://prism-web.ebus.swaws"
 
 service:

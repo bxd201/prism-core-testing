@@ -2,8 +2,8 @@ image:
   tag: qa
 
 ingress:
-  host: https://qa-prism-web.ebus.swaws
+  host: qa-prism-web.ebus.swaws
 
 env:
-  API_URL: "https://develop-prism-api.ebus.swaws"
+  API_URL: "https://qa-prism-api.ebus.swaws"
   WEB_URL: "https://qa-prism-web.ebus.swaws"
