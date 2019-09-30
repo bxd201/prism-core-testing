@@ -2,8 +2,6 @@
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
 import './PaintScene.scss'
-// eslint-disable-next-line no-unused-vars
-import includes from 'lodash/includes'
 import PaintToolBar from './PaintToolBar'
 import cloneDeep from 'lodash/cloneDeep'
 import { drawAcrossLine } from './PaintSceneUtils'
@@ -191,7 +189,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.setState({ wrapperHeight: canvasHeight })
   }
 
-  /*:: setDependentPositions() => coid */
+  /*:: setDependentPositions() => void */
   setDependentPositions () {
     // These are used by the drawing cursor to paint the canvas
     this.canvasDimensions = this.CFICanvas.current.getBoundingClientRect()
@@ -254,40 +252,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.canvasOffsetHeight = parseInt(this.canvasOffset.height, 10)
     this.canvasClientX = parseInt(this.canvasOffset.left, 10)
     this.canvasClientY = parseInt(this.canvasOffset.top, 10)
-  };
-
-  // @todo mark for removal
-  // initCanvas = () => {
-  //   this.setCanvasOffset()
-  //   this.CFICanvasContext = this.CFICanvas.current.getContext('2d')
-  //   this.CFICanvasContext2 = this.CFICanvas2.current.getContext('2d')
-  //   this.canvasOffset = this.CFICanvas.current.getBoundingClientRect()
-  //   this.canvasOffsetWidth = parseInt(this.canvasOffset.width, 10)
-  //   this.canvasOffsetHeight = parseInt(this.canvasOffset.height, 10)
-  //   this.CFICanvas.current.height = this.canvasOffsetHeight
-  //   this.CFICanvas.current.width = this.canvasOffsetWidth
-  //   this.CFICanvas2.current.height = this.canvasOffsetHeight
-  //   this.CFICanvas2.current.width = this.canvasOffsetWidth
-  //   const { imageRotationAngle } = this.props
-  //   if (imageRotationAngle) {
-  //     this.CFICanvasContext.clearRect(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
-  //     this.CFICanvasContext.save()
-  //     this.CFICanvasContext.translate(this.canvasOffsetWidth / 2, this.canvasOffsetHeight / 2)
-  //     this.CFICanvasContext.rotate(imageRotationAngle * Math.PI / 180)
-  //     if (includes([90, -90, 270, -270], imageRotationAngle)) {
-  //       this.CFICanvasContext.drawImage(this.CFIImage.current, -this.canvasOffsetWidth / 2, -this.canvasOffsetHeight, this.canvasOffsetWidth, this.canvasOffsetHeight * 2)
-  //     } else {
-  //       this.CFICanvasContext.drawImage(this.CFIImage.current, -this.canvasOffsetWidth / 2, -this.canvasOffsetHeight / 2, this.canvasOffsetWidth, this.canvasOffsetHeight)
-  //     }
-  //     this.CFICanvasContext.restore()
-  //   } else {
-  //     this.CFICanvasContext.drawImage(this.CFIImage.current, 0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
-  //     this.CFICanvasContext2.clearRect(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
-  //     this.CFICanvasContext2.drawImage(this.CFIImage.current, 0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
-  //   }
-  //   const imageData = this.CFICanvasContext.getImageData(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
-  //   this.imageDataData = imageData.data
-  // }
+  }
 
   setActiveTool = (activeTool: string) => {
     if (activeTool === this.state.activeTool) {
@@ -296,7 +261,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.setState({ activeTool })
   }
 
-  // Should only be used to on user even to push
+  // Should only be used on user even to push
   /*:: pushToHistory: (redoOperation: Object) => void */
   pushToHistory (redoOperation: Object) {
     const shouldPushFlag = this.state.drawCoordinates.length > 0 || redoOperation
@@ -335,7 +300,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     }
   }
 
-  /*:: popFromHistoryToRedoHistory: (statefragment: Object) => void */
+  /*:: popFromHistoryToRedoHistory: (stateFragment: Object) => void */
   popFromHistoryToRedoHistory (stateFragment: Object) {
     if (this.state.pixelDataHistory.length) {
       // Pixel redo

@@ -7,7 +7,7 @@
     margin: 0 auto;
     max-width: 1050px;
     overflow: hidden;
-    padding: 3em 0;
+    /*padding: 3em 0;*/
     @include respond-above(sm) {
       padding: 0em;
     }
