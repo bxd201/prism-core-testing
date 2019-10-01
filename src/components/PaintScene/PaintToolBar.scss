@@ -230,4 +230,21 @@
       transition: left 0.3s ease-in-out 0.3s;
     }
   }
+  &__zoom-tool {
+    background: #f2f2f2;
+    bottom: 60px;
+    display: flex;
+    right: 0;
+    padding: 1.5em 1em;
+    position: absolute;
+    width: 34.5em;
+    &--show-by-opacity {
+      opacity: 1;
+      transition: opacity 0.3s ease-in-out 0.7s;
+    }
+    &--hide-by-opacity {
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+    }
+  }
 }
