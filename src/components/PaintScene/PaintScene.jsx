@@ -136,7 +136,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       polyList: [],
       imagePathList: [],
       selectAreaList: [],
-      selectedArea: [{ edgeList: [], selectPath: [] }]
+      selectedArea: [{ edgeList: [], selectPath: [] }],
       edgeList: [],
       isSelect: true,
       wrapperHeight: this.props.referenceDimensions.imageHeight
