@@ -15,3 +15,6 @@ flow-typed/npm
 
 # ignore jetbrains ide meta data
 .idea/
+
+# webpack cache
+.cache

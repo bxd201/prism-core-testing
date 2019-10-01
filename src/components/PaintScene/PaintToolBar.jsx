@@ -46,8 +46,6 @@ type ComponentProps = {
   setBrushShapeSize: Function,
   performUndo: Function,
   performRedo: Function,
-  defineArea: Function,
-  selectArea: Function,
   undoIsEnabled: boolean,
   redoIsEnabled: boolean
 }
@@ -164,17 +162,6 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
           showEraseBrushTypes: true,
           showPaintBrushTypes: false
         }))
-      }
-      if (toolName === toolNames.DEFINEAREA) {
-        if (this.props.defineArea) {
-          this.props.defineArea()
-        }
-      }
-
-      if (toolName === toolNames.SELECTAREA) {
-        if (this.props.selectArea) {
-          this.props.selectArea()
-        }
       }
       setActiveTool(toolName)
     }
