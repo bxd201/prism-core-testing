@@ -20,6 +20,7 @@ const buttonClass = `${baseClass}__button`
 const buttonLeftClass = `${buttonClass}--left`
 const buttonLeftTextClass = `${buttonClass}-left-text`
 const canvasClass = `${baseClass}__canvas`
+const portraitOrientation = `${canvasClass}--portrait`
 const imageClass = `${baseClass}__image`
 const buttonRightClass = `${buttonClass}--right`
 const closeClass = `${baseClass}__close`
@@ -45,6 +46,8 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
   const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 })
   // eslint-disable-next-line no-unused-vars
   const [imageDims, setImageDims] = useState({ width: 0, height: 0 })
+  // default to landscape until image is loaded or rotated
+  const [isPortrait, setIsPortrait] = useState(false)
 
   useEffectAfterMount(() => {
     canvasContext.clearRect(0, 0, imageDims.imageWidth, imageDims.imageHeight)
@@ -98,7 +101,7 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
           imageHeight: imageData.height,
           isPortrait: imageData.isPortrait
         }
-
+        setIsPortrait(isPortrait)
         setImageDims(imageDims)
         setImageUrl(imageData.dataUrl)
         updateCanvas(image, imageDims)
@@ -206,7 +209,7 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
           {
             (imageUrl && pins.length === 0)
               ? (<React.Fragment>
-                <canvas className={`${canvasClass}`} name='canvas' ref={canvasRef} width={imageDims.imageWidth} height={imageDims.imageHeight} />
+                <canvas className={`${isPortrait ? portraitOrientation : canvasClass}`} name='canvas' ref={canvasRef} width={imageDims.imageWidth} height={imageDims.imageHeight} />
                 <img className={`${imageClass}`} ref={imageRef} src={imageUrl} alt='' />
                 <ImageRotateTerms rotateImage={rotateImage} createColorPins={createColorPins} imageData={imageData} />
               </React.Fragment>)

@@ -67,6 +67,8 @@
     }
   }
   &__canvas{
+    margin: 0 auto;
+    text-align: center;
     /*min-height: 266px;
     width:100%;
     @include respond-above(xs) {
@@ -76,7 +78,8 @@
         min-height:540px;
     }*/
     &--portrait {
-      left: 26%;
+      margin: 0 25%;
+      text-align: center;
     }
   }
   &__image{
