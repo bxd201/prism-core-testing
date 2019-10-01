@@ -1,7 +1,7 @@
 // @flow
 import React, { PureComponent } from 'react'
 import './PaintToolBar.scss'
-import { toolBarButtons, selectGroupButtons, selectGroupTooltipData, toolNames, toolNumbers } from './data'
+import { toolBarButtons, selectGroupButtons, selectGroupTooltipData, toolNames, toolNumbers, groupToolNames } from './data'
 import BrushTypes from './BrushTypes'
 import PaintToolTip from './PaintToolTip'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -48,13 +48,17 @@ type ComponentProps = {
   eraseBrushShape: string,
   eraseBrushWidth: number,
   setBrushShapeSize: Function,
+  groupHandler: Function,
   performUndo: Function,
   performRedo: Function,
   undoIsEnabled: boolean,
   redoIsEnabled: boolean,
   hidePaint: Function,
   applyZoom: Function,
-  zoomRange: number
+  zoomRange: number,
+  isUngroup: boolean,
+  isAddGroup: boolean,
+  isDeleteGroup: boolean
 }
 
 type ComponentState = {
@@ -231,6 +235,12 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
     }
   }
 
+  groupClickHandler = (e: Object, toolName: string) => {
+    e.preventDefault()
+    e.stopPropagation()
+    this.props.groupHandler(toolName)
+  }
+
   nextButtonClickHandler = () => {
     const { tooltipToolActiveNumber } = this.state
     if (tooltipToolActiveNumber < toolBarButtons.length) {
@@ -238,6 +248,12 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
     }
   }
 
+  checkButtonIfDisable = (tool: Object) => {
+    const { isUngroup, isAddGroup, isDeleteGroup } = this.props
+    if (tool.name === groupToolNames.DELETEGROUP && isDeleteGroup) { return true }
+    if (tool.name === groupToolNames.GROUP && isAddGroup) { return true }
+    if (tool.name === groupToolNames.UNGROUP && isUngroup) { return true }
+  }
   /*:: generateSelectGroupTools: () => Array<any> */
   generateSelectGroupTools (): Array<any> {
     const { tooltipToolActiveNumber } = this.state
@@ -246,11 +262,11 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
       return <button
         key={tool.id}
         name={tool.name}
-        className={`${toolbarButtonClass} ${toolbarButtonDisabledClass}`}
-        onClick={(e) => {}}
+        className={`${toolbarButtonClass}`}
+        onClick={(e) => this.groupClickHandler(e, tool.name)}
       >
         <FontAwesomeIcon className={`${toolIconClass}`} icon={['fa', 'paint-brush']} size='1x' />
-        <span className={`${toolNameClass} ${toolNameDisabledClass} ${activeTool === toolNames.SELECTAREA || tooltipToolActiveNumber === toolNumbers.SELECTAREA ? `${toolNameActiveClass}` : ``}`}>{tool.displayName}</span>
+        <span className={`${toolNameClass} ${this.checkButtonIfDisable(tool) ? '' : toolNameDisabledClass} ${activeTool === toolNames.SELECTAREA || tooltipToolActiveNumber === toolNumbers.SELECTAREA ? `${toolNameActiveClass}` : ``}`}>{tool.displayName}</span>
       </button>
     })
     return groupTools

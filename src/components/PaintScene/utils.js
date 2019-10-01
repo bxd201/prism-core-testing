@@ -1,5 +1,3 @@
-import cloneDeep from 'lodash/cloneDeep'
-
 export const getPaintAreaPath = (imagePathList, canvas, width, height, color) => {
   const RGB = getActiveColorRGB(color)
   const array = getImageCordinateByPixel(canvas, RGB, width, height)
@@ -7,7 +5,7 @@ export const getPaintAreaPath = (imagePathList, canvas, width, height, color) =>
     color: RGB,
     data: array
   }
-  const copyImagePathList = cloneDeep(imagePathList)
+  const copyImagePathList = copyImageList(imagePathList)
   copyImagePathList.push(newArea)
   return copyImagePathList
 }
@@ -42,6 +40,7 @@ export const drawCircle = (ctx, x, y) => {
   ctx.closePath()
   ctx.stroke()
 }
+
 export const pointInsideCircle = (x, y, circle, r) => {
   let dx = circle[0] - x
   let dy = circle[1] - y
@@ -90,6 +89,7 @@ export const createPolygon = (polyList = [[0, 0]], canvas, width, height, color,
     clearCanvas(canvas, width, height)
   }
 }
+
 export const checkIntersection = (areaA, areaB) => {
   const setA = new Set(areaA)
   const setB = new Set(areaB)
@@ -176,8 +176,8 @@ export const edgeDetect = (canvas, targetImagePath, targetImageColor, width, hei
   return edge
 }
 
-export const eraseIntersection = (imagePathList, erasePath, canvas, width, height) => {
-  const originImagePathList = cloneDeep(imagePathList)
+export const eraseIntersection = (imagePathList, erasePath) => {
+  const originImagePathList = copyImageList(imagePathList)
   for (let i = 0; i < originImagePathList.length; i++) {
     const intersection = checkIntersection(originImagePathList[i].data, erasePath)
     if (intersection.length > 0) {
@@ -281,4 +281,17 @@ export const hexToRGB = (hex) => {
   const g = parseInt(hex.substring(hex.length / 3, 2 * hex.length / 3), 16)
   const b = parseInt(hex.substring(2 * hex.length / 3, 3 * hex.length / 3), 16)
   return { red: r, green: g, blue: b }
+}
+
+export const copyImageList = (arr) => {
+  var out = []
+  for (var i = 0, len = arr.length; i < len; i++) {
+    var item = arr[i]
+    var obj = {}
+    for (var k in item) {
+      obj[k] = item[k]
+    }
+    out.push(obj)
+  }
+  return out
 }
