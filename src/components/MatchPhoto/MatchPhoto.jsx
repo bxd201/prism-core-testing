@@ -6,7 +6,6 @@ import './MatchPhoto.scss'
 import ImageRotateTerms from './ImageRotateTerms.jsx'
 import { Link, withRouter, type RouterHistory } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import includes from 'lodash/includes'
 import ConfirmationModal from './ConfirmationModal'
 import ColorPinsGenerationByHue from './workers/colorPinsGenerationByHue.worker'
 import useEffectAfterMount from '../../shared/hooks/useEffectAfterMount'
@@ -48,16 +47,13 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
   const [imageDims, setImageDims] = useState({ width: 0, height: 0 })
 
   useEffectAfterMount(() => {
-    canvasContext.clearRect(0, 0, imageDimensions.width, imageDimensions.height)
+    canvasContext.clearRect(0, 0, imageDims.imageWidth, imageDims.imageHeight)
     canvasContext.save()
-    canvasContext.translate(imageDimensions.width / 2, imageDimensions.height / 2)
+    canvasContext.translate(imageDims.imageWidth / 2, imageDims.imageHeight / 2)
     canvasContext.rotate(imageRotationAngle * Math.PI / 180)
-    const drawWidth = imageDimensions.width / 2
-    if (includes([90, -90, 270, -270], imageRotationAngle)) {
-      canvasContext.drawImage(imageRef.current, -drawWidth, -imageDimensions.height, imageDimensions.width, imageDimensions.height * 2)
-    } else {
-      canvasContext.drawImage(imageRef.current, -drawWidth, -imageDimensions.height / 2, imageDimensions.width, imageDimensions.height)
-    }
+
+    canvasContext.drawImage(0, 0, imageDims.width, imageDims.height)
+
     canvasContext.restore()
     const imageData = canvasContext.getImageData(0, 0, imageDimensions.width, imageDimensions.height)
     setImageData(imageData)
@@ -77,21 +73,24 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
 
   function resizeHandler () {
     if (canvasRef.current) {
-      initCanvas()
+      // @todo Revisit -RS
+      // initCanvas()
     }
   }
 
   function handleChange (e: Object) {
-    // eslint-disable-next-line no-unused-vars
-    // const { target } = e
-    // setImageUrl(URL.createObjectURL(target.files[0]))
-
     const imgUrl = URL.createObjectURL(e.target.files[0])
-    loadImage(imgUrl).then((image) => {
+    const imagePromise = loadImage(imgUrl)
+    imagePromise.then((imageEvent) => {
+      const image = imageEvent.target
+      image.removeEventListener('load', imagePromise, false)
       const wrapperSize = wrapperRef.current.getBoundingClientRect()
       console.log(`wrapper width: ${wrapperSize.width} | height: ${wrapperSize.height}`)
-      // @todo remember that if rotated update isPortrait!!!
-      scaleImage(image, wrapperSize.width / 2).then((imageData) => {
+
+      const isPortrait = image.height > image.width
+      const width = isPortrait ? Math.floor(wrapperSize.width / 2) : wrapperSize.width
+      // @todo remember that if rotated update isPortrait!!! -RS
+      scaleImage(image, width).then((imageData) => {
         const imageDims = {
           originalImageWidth: image.width,
           originalImageHeight: image.height,
@@ -102,18 +101,29 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
 
         setImageDims(imageDims)
         setImageUrl(imageData.dataUrl)
+        updateCanvas(image, imageDims)
       }, err => console.log(err))
     }, err => console.log(err))
   }
 
-  function handleImageLoaded () {
-    initCanvas()
+  const updateCanvas = (image, dimensions) => {
+    canvasRef.current.width = dimensions.imageWidth
+    canvasRef.current.height = dimensions.imageHeight
+    const ctx = canvasRef.current.getContext('2d')
+    ctx.drawImage(image, 0, 0, dimensions.imageWidth, dimensions.imageHeight)
   }
 
-  function handleImageErrored () {
-    setImageUrl()
-  }
+  // function handleImageLoaded () {
+  //   // @todo revisit
+  //   console.log('handleImageLoaded()', imageDims)
+  //   // initCanvas()
+  // }
+  //
+  // function handleImageErrored () {
+  //   setImageUrl()
+  // }
 
+  // eslint-disable-next-line no-unused-vars
   function initCanvas () {
     canvasContext = canvasRef.current.getContext('2d')
     const canvasOffset = canvasRef.current.getBoundingClientRect()
@@ -196,8 +206,8 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
           {
             (imageUrl && pins.length === 0)
               ? (<React.Fragment>
-                <canvas className={`${canvasClass}`} name='canvas' ref={canvasRef} />
-                <img className={`${imageClass}`} ref={imageRef} onLoad={handleImageLoaded} onError={handleImageErrored} src={imageUrl} alt='' />
+                <canvas className={`${canvasClass}`} name='canvas' ref={canvasRef} width={imageDims.imageWidth} height={imageDims.imageHeight} />
+                <img className={`${imageClass}`} ref={imageRef} src={imageUrl} alt='' />
                 <ImageRotateTerms rotateImage={rotateImage} createColorPins={createColorPins} imageData={imageData} />
               </React.Fragment>)
               : ''

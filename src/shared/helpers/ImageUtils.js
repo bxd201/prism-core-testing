@@ -1,9 +1,7 @@
 export const loadImage = (imgUrl) => {
   const imagePromise = new Promise((resolve, reject) => {
     const img = new Image()
-    img.addEventListener('load', (e) => {
-      resolve(e.target)
-    }, false)
+    img.addEventListener('load', resolve, false)
 
     img.src = imgUrl
   })
