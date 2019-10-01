@@ -2,7 +2,6 @@
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
 import './PaintScene.scss'
-import includes from 'lodash/includes'
 import PaintToolBar from './PaintToolBar'
 import cloneDeep from 'lodash/cloneDeep'
 import { drawAcrossLine } from './PaintSceneUtils'
@@ -12,11 +11,14 @@ import { getPaintAreaPath, repaintImageByPath,
   getImageCordinateByPixel, eraseIntersection,
   getActiveColorRGB, getSelectArea, hexToRGB } from './utils'
 import { toolNames } from './data'
+import ResizeObserver from 'resize-observer-polyfill'
+import { getScaledSide } from '../../shared/helpers/ImageUtils'
 
 const baseClass = 'paint__scene__wrapper'
 const canvasClass = `${baseClass}__canvas`
 const canvasFirstClass = `${baseClass}__canvas-first`
 const canvasSecondClass = `${baseClass}__canvas-second`
+const portraitOrientation = `${canvasClass}--portrait`
 const imageClass = `${baseClass}__image`
 const paintToolsClass = `${baseClass}__paint-tools`
 const paintBrushClass = `${baseClass}__paint-brush`
@@ -46,8 +48,10 @@ const removeArea = 'removeArea'
 
 type ComponentProps = {
   imageUrl: string,
+  // eslint-disable-next-line react/no-unused-prop-types
   imageRotationAngle: number,
-  lpActiveColor: Object
+  lpActiveColor: Object,
+  referenceDimensions: Object
 }
 
 type ComponentState = {
@@ -65,8 +69,8 @@ type ComponentState = {
   pixelDataHistory: Array<Object>,
   pixelDataRedoHistory: Array<Object>,
   undoIsEnabled: boolean,
-  redoIsEnabled: boolean
-
+  redoIsEnabled: boolean,
+  wrapperHeight: number
 }
 
 type DrawOperation = {
@@ -87,31 +91,12 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   CFICanvas2: RefObject
   CFIWrapper: RefObject
   CFIImage: RefObject
-
-  state = {
-    imageStatus: 'loading',
-    activeTool: paintAreaTool,
-    position: { left: 0, top: 0 },
-    paintBrushWidth: brushLargeWidth,
-    isDragging: false,
-    drawCoordinates: [],
-    paintBrushShape: brushRoundShape,
-    eraseBrushShape: brushRoundShape,
-    eraseBrushWidth: brushLargeWidth,
-    drawHistory: [],
-    redoHistory: [],
-    pixelDataHistory: [],
-    pixelDataRedoHistory: [],
-    undoIsEnabled: false,
-    redoIsEnabled: false,
-    lineStart: [],
-    BeginPointList: [],
-    polyList: [],
-    imagePathList: [],
-    selectAreaList: [],
-    selectedArea: [{ edgeList: [], selectPath: [] }],
-    isSelect: true
-  }
+  wrapperDimensions: Object | null
+  canvasDimensions: Object | null
+  backgroundImageWidth: number
+  backgroundImageHeight: number
+  isPortrait: boolean
+  resizeObserver: Object
 
   constructor (props: ComponentProps) {
     super(props)
@@ -120,8 +105,42 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.CFICanvas2 = React.createRef()
     this.CFIWrapper = React.createRef()
     this.CFIImage = React.createRef()
-    this.canvasOffsetWidth = 0
-    this.canvasOffsetHeight = 0
+    // @todo - marked for review -RS
+    // this.canvasOffsetWidth = 0
+    // this.canvasOffsetHeight = 0
+    this.resizeObserver = null
+    this.wrapperDimensions = null
+    this.canvasDimensions = null
+    this.backgroundImageWidth = props.referenceDimensions.imageWidth
+    this.backgroundImageHeight = props.referenceDimensions.imageHeight
+    this.isPortrait = props.referenceDimensions.isPortrait
+
+    this.state = {
+      imageStatus: 'loading',
+      activeTool: paintAreaTool,
+      position: { left: 0, top: 0 },
+      paintBrushWidth: brushLargeWidth,
+      isDragging: false,
+      drawCoordinates: [],
+      paintBrushShape: brushRoundShape,
+      eraseBrushShape: brushRoundShape,
+      eraseBrushWidth: brushLargeWidth,
+      drawHistory: [],
+      redoHistory: [],
+      pixelDataHistory: [],
+      pixelDataRedoHistory: [],
+      undoIsEnabled: false,
+      redoIsEnabled: false,
+      lineStart: [],
+      BeginPointList: [],
+      polyList: [],
+      imagePathList: [],
+      selectAreaList: [],
+      selectedArea: [{ edgeList: [], selectPath: [] }]
+      edgeList: [],
+      isSelect: true,
+      wrapperHeight: this.props.referenceDimensions.imageHeight
+    }
 
     this.pushToHistory = this.pushToHistory.bind(this)
     this.popFromHistoryToRedoHistory = this.popFromHistoryToRedoHistory.bind(this)
@@ -130,10 +149,56 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.redrawFromOperation = this.redrawFromOperation.bind(this)
     this.getImageCoordinatesByPixel = this.getImageCoordinatesByPixel.bind(this)
     this.popFromRedoHistoryToHistory = this.popFromRedoHistoryToHistory.bind(this)
+    this.initCanvas = this.initCanvas.bind(this)
+    this.updateCanvasWithNewDimensions = this.updateCanvasWithNewDimensions.bind(this)
+  }
+  /*:: initCanvas: () => void */
+  initCanvas () {
+    this.CFICanvasContext = this.CFICanvas.current.getContext('2d')
+    this.CFICanvasContext2 = this.CFICanvas2.current.getContext('2d')
+    this.canvasOffsetWidth = parseInt(this.wrapperDimensions.width, 10)
+    this.canvasOffsetHeight = parseInt(this.wrapperDimensions.height, 10)
+
+    this.updateCanvasWithNewDimensions()
   }
 
-  handleImageLoaded = () => {
-    this.initCanvas()
+  /*:: updateCanvasWithNewDimensions: () => void */
+  updateCanvasWithNewDimensions () {
+    let canvasWidth = 0
+
+    if (this.isPortrait) {
+      canvasWidth = this.wrapperDimensions.width / 2
+    } else {
+      // Landscape
+      canvasWidth = this.wrapperDimensions.width
+    }
+
+    canvasWidth = Math.floor(canvasWidth)
+
+    const canvasHeight = Math.floor(getScaledSide(this.backgroundImageWidth, this.backgroundImageHeight)(canvasWidth))
+
+    this.CFICanvas.current.width = canvasWidth
+    this.CFICanvas.current.height = canvasHeight
+    this.CFICanvas2.current.width = canvasWidth
+    this.CFICanvas2.current.height = canvasHeight
+
+    this.setBackgroundImage(canvasWidth, canvasHeight)
+  }
+
+  /*:: setBackgroundImage: (canvasWidth: number, canvasHeight: number) => void */
+  setBackgroundImage (canvasWidth, canvasHeight) {
+    this.CFICanvasContext.drawImage(this.CFIImage.current, 0, 0, canvasWidth, canvasHeight)
+    this.CFICanvasContext2.clearRect(0, 0, canvasWidth, canvasHeight)
+    this.CFICanvasContext2.drawImage(this.CFIImage.current, 0, 0, canvasWidth, canvasHeight)
+
+    this.setState({ wrapperHeight: canvasHeight })
+  }
+
+  /*:: setDependentPositions() => void */
+  setDependentPositions () {
+    // These are used by the drawing cursor to paint the canvas
+    this.canvasDimensions = this.CFICanvas.current.getBoundingClientRect()
+    this.wrapperDimensions = this.CFIWrapper.current.getBoundingClientRect()
   }
 
   handleImageErrored = () => {
@@ -150,6 +215,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     }
   }
 
+  // @todo - We will need to redo the calculations using the offset caused by the margin added to the canvas when isPortrait -RS
   getCanvasOffset = () => {
     const canvasOffset = window.sessionStorage.getItem('canvasOffsetPaintScene')
     return JSON.parse(canvasOffset)
@@ -157,13 +223,31 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
   componentDidMount () {
     this.updateWindowDimensions()
-    window.addEventListener('resize', this.updateWindowDimensions)
-    window.addEventListener('scroll', this.setCanvasOffset)
+    // @todo Review -RS
+    // window.addEventListener('resize', this.updateWindowDimensions)
+    // window.addEventListener('scroll', this.setCanvasOffset)
+    this.resizeObserver = new ResizeObserver((entries, observer) => {
+      if (entries.length) {
+        this.setDependentPositions()
+        this.updateCanvasWithNewDimensions()
+      } else {
+        console.log('Scene Container does not exist.')
+      }
+      console.log(entries, observer)
+    })
+
+    this.resizeObserver.observe(this.CFIWrapper.current)
+    this.setDependentPositions()
+    this.initCanvas()
   }
 
   componentWillUnmount () {
-    window.removeEventListener('resize', this.updateWindowDimensions)
-    window.removeEventListener('scroll', this.setCanvasOffset)
+    // @todo - Review -RS
+    // window.removeEventListener('resize', this.updateWindowDimensions)
+    // window.removeEventListener('scroll', this.setCanvasOffset)
+    if (this.resizeObserver) {
+      this.resizeObserver.unobserve(this.CFIWrapper.current)
+    }
   }
 
   updateWindowDimensions = () => {
@@ -173,38 +257,6 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.canvasOffsetHeight = parseInt(this.canvasOffset.height, 10)
     this.canvasClientX = parseInt(this.canvasOffset.left, 10)
     this.canvasClientY = parseInt(this.canvasOffset.top, 10)
-  };
-
-  initCanvas = () => {
-    this.setCanvasOffset()
-    this.CFICanvasContext = this.CFICanvas.current.getContext('2d')
-    this.CFICanvasContext2 = this.CFICanvas2.current.getContext('2d')
-    this.canvasOffset = this.CFICanvas.current.getBoundingClientRect()
-    this.canvasOffsetWidth = parseInt(this.canvasOffset.width, 10)
-    this.canvasOffsetHeight = parseInt(this.canvasOffset.height, 10)
-    this.CFICanvas.current.height = this.canvasOffsetHeight
-    this.CFICanvas.current.width = this.canvasOffsetWidth
-    this.CFICanvas2.current.height = this.canvasOffsetHeight
-    this.CFICanvas2.current.width = this.canvasOffsetWidth
-    const { imageRotationAngle } = this.props
-    if (imageRotationAngle) {
-      this.CFICanvasContext.clearRect(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
-      this.CFICanvasContext.save()
-      this.CFICanvasContext.translate(this.canvasOffsetWidth / 2, this.canvasOffsetHeight / 2)
-      this.CFICanvasContext.rotate(imageRotationAngle * Math.PI / 180)
-      if (includes([90, -90, 270, -270], imageRotationAngle)) {
-        this.CFICanvasContext.drawImage(this.CFIImage.current, -this.canvasOffsetWidth / 2, -this.canvasOffsetHeight, this.canvasOffsetWidth, this.canvasOffsetHeight * 2)
-      } else {
-        this.CFICanvasContext.drawImage(this.CFIImage.current, -this.canvasOffsetWidth / 2, -this.canvasOffsetHeight / 2, this.canvasOffsetWidth, this.canvasOffsetHeight)
-      }
-      this.CFICanvasContext.restore()
-    } else {
-      this.CFICanvasContext.drawImage(this.CFIImage.current, 0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
-      this.CFICanvasContext2.clearRect(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
-      this.CFICanvasContext2.drawImage(this.CFIImage.current, 0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
-    }
-    const imageData = this.CFICanvasContext.getImageData(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
-    this.imageDataData = imageData.data
   }
 
   setActiveTool = (activeTool: string) => {
@@ -217,7 +269,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.setState({ activeTool, selectedArea: [{ edgeList: [], selectPath: [] }] })
   }
 
-  // Should only be used to on user even to push
+  // Should only be used on user even to push
   /*:: pushToHistory: (redoOperation: Object) => void */
   pushToHistory (redoOperation: Object) {
     const shouldPushFlag = this.state.drawCoordinates.length > 0 || redoOperation
@@ -256,7 +308,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     }
   }
 
-  /*:: popFromHistoryToRedoHistory: (statefragment: Object) => void */
+  /*:: popFromHistoryToRedoHistory: (stateFragment: Object) => void */
   popFromHistoryToRedoHistory (stateFragment: Object) {
     if (this.state.pixelDataHistory.length) {
       // Pixel redo
@@ -656,10 +708,10 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     }
 
     return (
-      <div role='presentation' className={`${baseClass}`} onClick={this.handleClick} onMouseMove={this.mouseMoveHandler} ref={this.CFIWrapper}>
-        <canvas className={`${canvasClass} ${canvasFirstClass}`} name='paint-scene-canvas-first' ref={this.CFICanvas} />
-        <canvas style={{ opacity: 0.8 }} className={`${canvasClass} ${canvasSecondClass}`} name='paint-scene-canvas-second' ref={this.CFICanvas2} />
-        <img className={`${imageClass}`} ref={this.CFIImage} onLoad={this.handleImageLoaded} onError={this.handleImageErrored} src={imageUrl} alt='' />
+      <div role='presentation' className={`${baseClass}`} onClick={this.handleClick} onMouseMove={this.mouseMoveHandler} ref={this.CFIWrapper} style={{ height: this.state.wrapperHeight }}>
+        <canvas className={`${canvasClass} ${canvasFirstClass} ${this.isPortrait ? portraitOrientation : ''}`} name='paint-scene-canvas-first' ref={this.CFICanvas} />
+        <canvas style={{ opacity: 0.8 }} className={`${canvasClass} ${canvasSecondClass} ${this.isPortrait ? portraitOrientation : ''}`} name='paint-scene-canvas-second' ref={this.CFICanvas2} />
+        <img className={`${imageClass}`} ref={this.CFIImage} onLoad={this.initCanvas} onError={this.handleImageErrored} src={imageUrl} alt='' />
         <div className={`${paintToolsClass}`}>
           <PaintToolBar
             activeTool={activeTool}

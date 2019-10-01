@@ -11,6 +11,7 @@ import ConfirmationModal from './ConfirmationModal'
 import ColorPinsGenerationByHue from './workers/colorPinsGenerationByHue.worker'
 import useEffectAfterMount from '../../shared/hooks/useEffectAfterMount'
 import PaintScene from '../PaintScene/PaintScene'
+import { loadImage, scaleImage } from '../../shared/helpers/ImageUtils'
 
 const baseClass = 'match-photo'
 const wrapperClass = `${baseClass}__wrapper`
@@ -36,12 +37,15 @@ type Props = {
 export function MatchPhoto ({ history, isPaintScene }: Props) {
   const canvasRef: RefObject = useRef()
   const imageRef: RefObject = useRef()
-  const [imageUrl, setImageUrl] = React.useState()
+  const wrapperRef: RefObject = useRef()
+  const [imageUrl, setImageUrl] = useState()
   const [pins, generatePins] = useState([])
   const [imageData, setImageData] = useState([])
   const [imageRotationAngle, setImageRotationAngle] = useState(0)
   const [isConfirmationModalActive, setConfirmationModalActive] = useState(false)
   const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 })
+  // eslint-disable-next-line no-unused-vars
+  const [imageDims, setImageDims] = useState({ width: 0, height: 0 })
 
   useEffectAfterMount(() => {
     canvasContext.clearRect(0, 0, imageDimensions.width, imageDimensions.height)
@@ -78,8 +82,28 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
   }
 
   function handleChange (e: Object) {
-    const { target } = e
-    setImageUrl(URL.createObjectURL(target.files[0]))
+    // eslint-disable-next-line no-unused-vars
+    // const { target } = e
+    // setImageUrl(URL.createObjectURL(target.files[0]))
+
+    const imgUrl = URL.createObjectURL(e.target.files[0])
+    loadImage(imgUrl).then((image) => {
+      const wrapperSize = wrapperRef.current.getBoundingClientRect()
+      console.log(`wrapper width: ${wrapperSize.width} | height: ${wrapperSize.height}`)
+      // @todo remember that if rotated update isPortrait!!!
+      scaleImage(image, wrapperSize.width / 2).then((imageData) => {
+        const imageDims = {
+          originalImageWidth: image.width,
+          originalImageHeight: image.height,
+          imageWidth: imageData.width,
+          imageHeight: imageData.height,
+          isPortrait: imageData.isPortrait
+        }
+
+        setImageDims(imageDims)
+        setImageUrl(imageData.dataUrl)
+      }, err => console.log(err))
+    }, err => console.log(err))
   }
 
   function handleImageLoaded () {
@@ -146,7 +170,7 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
 
   return (
     <React.Fragment>
-      <div className={`${wrapperClass}`}>
+      <div className={`${wrapperClass}`} ref={wrapperRef}>
         <div className={`${containerClass}`}>
           { (!imageUrl) &&
           <FileInput onChange={handleChange} id={'photoInput'} disabled={false} placeholder={'Select image'} />
@@ -181,7 +205,7 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
           {
             (imageUrl && isPaintScene && pins.length > 0)
               ? (<React.Fragment>
-                <PaintScene imageUrl={imageUrl} imageRotationAngle={imageRotationAngle} />
+                <PaintScene imageUrl={imageUrl} imageRotationAngle={imageRotationAngle} referenceDimensions={imageDims} />
               </React.Fragment>)
               : ''
           }
