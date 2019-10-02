@@ -9,13 +9,17 @@ export const loadImage = (imgUrl) => {
   return imagePromise
 }
 
-export const getScaledSide = (imageWidth, imageHeight) => {
-  return (side) => side * (imageHeight / imageWidth)
+export const getScaledPortraitHeight = (imageWidth, imageHeight) => {
+  return (width) => width * (imageHeight / imageWidth)
+}
+
+export const getScaledLandscapeHeight = (imageWidth, imageHeight) => {
+  return (width) => width * (imageWidth / imageHeight)
 }
 
 export const scaleImage = (img, canvasWidth) => {
   const resizePromise = new Promise((resolve, reject) => {
-    const canvasHeight = getScaledSide(img.width, img.height)(canvasWidth)
+    const canvasHeight = getScaledPortraitHeight(img.width, img.height)(canvasWidth)
     let canvas = document.createElement('canvas')
     let ctx = canvas.getContext('2d')
 

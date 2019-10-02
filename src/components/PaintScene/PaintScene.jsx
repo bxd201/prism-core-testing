@@ -12,7 +12,7 @@ import { getPaintAreaPath, repaintImageByPath,
   getActiveColorRGB, getSelectArea, hexToRGB } from './utils'
 import { toolNames } from './data'
 import ResizeObserver from 'resize-observer-polyfill'
-import { getScaledSide } from '../../shared/helpers/ImageUtils'
+import { getScaledPortraitHeight } from '../../shared/helpers/ImageUtils'
 import throttle from 'lodash/throttle'
 
 const baseClass = 'paint__scene__wrapper'
@@ -188,7 +188,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
     canvasWidth = Math.floor(canvasWidth)
 
-    const canvasHeight = Math.floor(getScaledSide(this.backgroundImageWidth, this.backgroundImageHeight)(canvasWidth))
+    const canvasHeight = Math.floor(getScaledPortraitHeight(this.backgroundImageWidth, this.backgroundImageHeight)(canvasWidth))
 
     this.CFICanvas.current.width = canvasWidth
     this.CFICanvas.current.height = canvasHeight
