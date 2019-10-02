@@ -5,8 +5,8 @@ ingress:
   host: prism-web.ebus.swaws
 
 env:
-  API_URL: "https://prism-api.ebus.swaws"
-  WEB_URL: "https://prism-web.ebus.swaws"
+  API_URL: "https://prism-api.sherwin-williams.com"
+  WEB_URL: "https://prism.sherwin-williams.com"
 
 service:
   type: LoadBalancer
