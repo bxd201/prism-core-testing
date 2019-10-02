@@ -29,6 +29,9 @@ const ColorWallRouteComponent = (props: Object) => {
     }
   }
 
+  const searchParams = new URLSearchParams(props.location.search)
+  if (searchParams.get('q')) props.history.push('/active/color-wall/search/' + searchParams.get('q'))
+
   return <ColorWallLocationBuffer match={newMatch} {...other} />
 }
 
