@@ -61,7 +61,8 @@
     "react-virtualized": "9.21.1",
     "redux": "4.0.4",
     "redux-thunk": "2.3.0",
-    "scroll": "3.0.1"
+    "scroll": "3.0.1",
+    "url-search-params-polyfill": "7.0.0"
   },
   "devDependencies": {
     "@babel/cli": "7.6.0",
