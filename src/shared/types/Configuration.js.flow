@@ -18,5 +18,6 @@ export type Configuration = {
     nearBlack: string,
     black: string,
     white: string
-  }
+  },
+  searchQueryParameterName: string
 }

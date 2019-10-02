@@ -12,3 +12,6 @@ coverage
 
 # installed flow types
 flow-typed/npm
+
+# webpack cache
+.cache
