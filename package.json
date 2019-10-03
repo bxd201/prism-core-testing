@@ -37,6 +37,7 @@
   "dependencies": {
     "@babel/polyfill": "7.6.0",
     "@ctrl/tinycolor": "2.5.3",
+    "@formatjs/intl-relativetimeformat": "^4.2.0",
     "@fortawesome/fontawesome-svg-core": "1.2.22",
     "@fortawesome/pro-light-svg-icons": "5.10.2",
     "@fortawesome/pro-regular-svg-icons": "5.10.2",
