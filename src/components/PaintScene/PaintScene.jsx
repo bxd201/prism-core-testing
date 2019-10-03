@@ -13,7 +13,6 @@ import { getPaintAreaPath, repaintImageByPath,
   getActiveColorRGB, getSelectArea, hexToRGB,
   checkIntersection, drawImagePixelByPath, copyImageList } from './utils'
 import { toolNames } from './data'
-import ResizeObserver from 'resize-observer-polyfill'
 import { getScaledPortraitHeight } from '../../shared/helpers/ImageUtils'
 import throttle from 'lodash/throttle'
 
@@ -109,7 +108,6 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   backgroundImageWidth: number
   backgroundImageHeight: number
   isPortrait: boolean
-  resizeObserver: Object
   _canvasPanStart: Object
 
   constructor (props: ComponentProps) {
@@ -122,7 +120,6 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     // @todo - marked for review -RS
     // this.canvasOffsetWidth = 0
     // this.canvasOffsetHeight = 0
-    this.resizeObserver = null
     this.wrapperDimensions = null
     this.canvasDimensions = null
     this.backgroundImageWidth = props.referenceDimensions.imageWidth
@@ -297,17 +294,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     // @todo Review -RS
     // window.addEventListener('resize', this.updateWindowDimensions)
     // window.addEventListener('scroll', this.setCanvasOffset)
-    this.resizeObserver = new ResizeObserver((entries, observer) => {
-      if (entries.length) {
-        this.setDependentPositions()
-        this.updateCanvasWithNewDimensions()
-      } else {
-        console.log('Scene Container does not exist.')
-      }
-      console.log(entries, observer)
-    })
 
-    this.resizeObserver.observe(this.CFIWrapper.current)
     this.setDependentPositions()
     this.initCanvas()
   }
@@ -316,9 +303,6 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     // @todo - Review -RS
     // window.removeEventListener('resize', this.updateWindowDimensions)
     // window.removeEventListener('scroll', this.setCanvasOffset)
-    if (this.resizeObserver) {
-      this.resizeObserver.unobserve(this.CFIWrapper.current)
-    }
   }
 
   updateWindowDimensions = () => {

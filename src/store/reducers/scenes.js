@@ -274,6 +274,7 @@ export const sceneWorkspaces = (state: SceneWorkspace[] = [], action: {type: str
   return state
 }
 
+// This value is unknown at runtime since scene data must be loaded
 export const currentVariant = (state: any = null, action: {type: string, payload: any}) => {
   // @todo make sure this is set to the default variant when ever a new scene is selected
   if (action.type === CHANGE_SCENE_VARIANT) {
