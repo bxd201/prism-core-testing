@@ -67,13 +67,19 @@
     }
   }
   &__canvas{
-    min-height: 266px;
+    margin: 0 auto;
+    text-align: center;
+    /*min-height: 266px;
     width:100%;
     @include respond-above(xs) {
         min-height:366px;
     }
     @include respond-above(md){
         min-height:540px;
+    }*/
+    &--portrait {
+      margin: 0 25%;
+      text-align: center;
     }
   }
   &__image{
