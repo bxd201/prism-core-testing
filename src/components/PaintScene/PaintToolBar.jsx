@@ -85,6 +85,17 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
 
     this.getToolBarItemClassName = this.getToolBarItemClassName.bind(this)
     this.generateTools = this.generateTools.bind(this)
+    this.hidePaintBrushTypes = this.hidePaintBrushTypes.bind(this)
+    this.hideEraseBrushTypes = this.hideEraseBrushTypes.bind(this)
+  }
+
+  componentDidUpdate (prevProps, prevState) {
+    if (prevProps.paintBrushShape !== this.props.paintBrushShape || prevProps.paintBrushWidth !== this.props.paintBrushWidth) {
+      this.hidePaintBrushTypes()
+    }
+    if (prevProps.eraseBrushShape !== this.props.eraseBrushShape || prevProps.eraseBrushWidth !== this.props.eraseBrushWidth) {
+      this.hideEraseBrushTypes()
+    }
   }
 
   /*:: getToolBarItemClassName: (tool: Object) => string */
@@ -272,6 +283,14 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
     return groupTools
   }
 
+  hidePaintBrushTypes () {
+    this.setState({ showPaintBrushTypes: false })
+  }
+
+  hideEraseBrushTypes () {
+    this.setState({ showEraseBrushTypes: false })
+  }
+
   render () {
     const { showToolBar, showPaintBrushTypes, showEraseBrushTypes, showTooltip, tooltipToolActiveNumber } = this.state
     const { activeTool, paintBrushShape, paintBrushWidth, eraseBrushShape, eraseBrushWidth, setBrushShapeSize, applyZoom, zoomRange } = this.props
@@ -295,14 +314,16 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
           <div className={`${containerClass} ${(!showToolBar) ? `${containerHideClass}` : ``}`}>
             { this.generateTools() }
             <div
+              onMouseLeave={this.hidePaintBrushTypes}
               className={`${brushTypesClass} ${(!showTooltip && (activeTool === toolNames.PAINTBRUSH && showPaintBrushTypes)) ? `${brushTypesShowClass}` : `${brushTypesHideClass}`} ${brushTypesPaintClass} ${showToolBar ? `${brushTypesShowByOpacityClass}` : `${brushTypesHideByOpacityClass}`} `}
             >
-              <BrushTypes activeWidth={paintBrushWidth} activeShape={paintBrushShape} setBrushShapeSize={setBrushShapeSize} />
+              <BrushTypes hidePaintBrushTypes={this.hidePaintBrushTypes} activeWidth={paintBrushWidth} activeShape={paintBrushShape} setBrushShapeSize={setBrushShapeSize} />
             </div>
             <div
+              onMouseLeave={this.hideEraseBrushTypes}
               className={`${brushTypesClass} ${(!showTooltip && (activeTool === toolNames.ERASE && showEraseBrushTypes)) ? `${brushTypesShowClass}` : `${brushTypesHideClass}`} ${brushTypesEraseClass} ${showToolBar ? `${brushTypesShowByOpacityClass}` : `${brushTypesHideByOpacityClass}`} `}
             >
-              <BrushTypes activeWidth={eraseBrushWidth} activeShape={eraseBrushShape} setBrushShapeSize={setBrushShapeSize} />
+              <BrushTypes hideEraseBrushTypes={this.hideEraseBrushTypes} activeWidth={eraseBrushWidth} activeShape={eraseBrushShape} setBrushShapeSize={setBrushShapeSize} />
               {(activeTool === toolNames.ERASE) && <button className={`${clearAllButtonClass}`} onClick={this.clearAllClickHandler}>CLEAR ALL</button>}
             </div>
             {showTooltip && <div className={`${paintTooltipClass} ${paintTooltipActiveClass}`}>
