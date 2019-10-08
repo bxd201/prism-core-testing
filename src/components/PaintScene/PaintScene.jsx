@@ -13,7 +13,7 @@ import { getPaintAreaPath, repaintImageByPath,
   getActiveColorRGB, getSelectArea, hexToRGB,
   checkIntersection, drawImagePixelByPath, copyImageList } from './utils'
 import { toolNames } from './data'
-import { getScaledPortraitHeight } from '../../shared/helpers/ImageUtils'
+import { getScaledPortraitHeight, getScaledLandscapeHeight } from '../../shared/helpers/ImageUtils'
 import throttle from 'lodash/throttle'
 
 const baseClass = 'paint__scene__wrapper'
@@ -57,7 +57,9 @@ type ComponentProps = {
   // eslint-disable-next-line react/no-unused-prop-types
   imageRotationAngle: number,
   lpActiveColor: Object,
-  referenceDimensions: Object
+  referenceDimensions: Object,
+  // eslint-disable-next-line react/no-unused-prop-types
+  width: number
 }
 
 type ComponentState = {
@@ -243,7 +245,13 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
     canvasWidth = Math.floor(canvasWidth)
 
-    const canvasHeight = Math.floor(getScaledPortraitHeight(this.backgroundImageWidth, this.backgroundImageHeight)(canvasWidth))
+    let canvasHeight = 0
+
+    if (this.isPortrait) {
+      canvasHeight = Math.floor(getScaledPortraitHeight(this.backgroundImageWidth, this.backgroundImageHeight)(canvasWidth))
+    } else {
+      canvasHeight = Math.floor(getScaledLandscapeHeight(this.backgroundImageWidth, this.backgroundImageHeight)(canvasWidth))
+    }
 
     this.CFICanvas.current.width = canvasWidth
     this.CFICanvas.current.height = canvasHeight

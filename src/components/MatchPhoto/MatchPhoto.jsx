@@ -77,7 +77,10 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
   })
 
   useEffectAfterMount(() => {
-    const { portraitWidth, portraitHeight, landscapeWidth, landscapeHeight, originalIsPortrait } = prevOrientationRef.current
+    if (!canvasRef.current) {
+      return
+    }
+    const { portraitWidth, portraitHeight, landscapeWidth, landscapeHeight, originalIsPortrait, originalImageWidth, originalImageHeight } = prevOrientationRef.current
     const oldWidth = isPortrait ? landscapeWidth : portraitWidth
     const oldHeight = isPortrait ? landscapeHeight : portraitHeight
     const newWidth = isPortrait ? portraitWidth : landscapeWidth
@@ -149,6 +152,19 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
     ctx.rotate(rotation)
     ctx.drawImage(backingImage, 0, 0, canvasWidth, canvasHeight)
     ctx.restore()
+    // set to pass to PaintScene
+    const imageDims = {
+      originalImageWidth: originalImageWidth,
+      originalImageHeight: originalImageHeight,
+      imageWidth: canvasWidth,
+      imageHeight: canvasHeight,
+      // This object's API context (PaintScene) is different than the similar one used here in MatchPhoto
+      isPortrait: isPortrait,
+      originalIsPortrait
+    }
+
+    setImageDims(imageDims)
+    setImageUrl(canvasRef.current.toDataURL())
     // @todo - is this still needed?
     // setImageData(imageData)
   }, [resized, imageRotationAngle])
@@ -349,7 +365,7 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
             (imageUrl && pins.length === 0)
               ? (<React.Fragment>
                 <canvas className={`${isPortrait ? portraitOrientation : canvasClass}`} name='canvas' ref={canvasRef} width={imageWidth} height={imageHeight} />
-                <ImageRotateTerms rotateImage={rotateImage} createColorPins={createColorPins} imageData={imageData} />
+                <ImageRotateTerms rotateImage={rotateImage} createColorPins={createColorPins} imageData={imageData} width={imageWidth} />
               </React.Fragment>)
               : ''
           }
