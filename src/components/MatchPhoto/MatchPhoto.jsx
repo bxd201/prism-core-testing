@@ -239,7 +239,8 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
         originalImageHeight: dimensions.originalImageHeight,
         imageWidth: width,
         imageHeight: height,
-        isPortrait: dimensions.originalIsPortrait
+        isPortrait: dimensions.originalIsPortrait,
+        originalIsPortrait: dimensions.originalIsPortrait
       }
 
       setBackingImage(image)

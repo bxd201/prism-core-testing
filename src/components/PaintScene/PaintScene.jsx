@@ -111,6 +111,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   backgroundImageHeight: number
   isPortrait: boolean
   _canvasPanStart: Object
+  originalIsPortrait: boolean
 
   constructor (props: ComponentProps) {
     super(props)
@@ -127,6 +128,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.backgroundImageWidth = props.referenceDimensions.imageWidth
     this.backgroundImageHeight = props.referenceDimensions.imageHeight
     this.isPortrait = props.referenceDimensions.isPortrait
+    this.originalIsPortrait = props.referenceDimensions.originalIsPortrait
     this._canvasPanStart = { x: 0, y: 0 }
 
     this.state = {
@@ -248,9 +250,18 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     let canvasHeight = 0
 
     if (this.isPortrait) {
-      canvasHeight = Math.floor(getScaledPortraitHeight(this.backgroundImageWidth, this.backgroundImageHeight)(canvasWidth))
+      if (this.originalIsPortrait) {
+        canvasHeight = Math.floor(getScaledPortraitHeight(this.backgroundImageWidth, this.backgroundImageHeight)(canvasWidth))
+      } else {
+        canvasHeight = Math.floor(getScaledPortraitHeight(this.backgroundImageHeight, this.backgroundImageWidth)(canvasWidth))
+      }
     } else {
-      canvasHeight = Math.floor(getScaledLandscapeHeight(this.backgroundImageWidth, this.backgroundImageHeight)(canvasWidth))
+      if (this.originalIsPortrait) {
+        canvasHeight = Math.floor(getScaledLandscapeHeight(this.backgroundImageWidth, this.backgroundImageHeight)(canvasWidth))
+      } else {
+        // Swap width and height for photos that are originally landscape
+        canvasHeight = Math.floor(getScaledLandscapeHeight(this.backgroundImageHeight, this.backgroundImageWidth)(canvasWidth))
+      }
     }
 
     this.CFICanvas.current.width = canvasWidth
