@@ -15,7 +15,7 @@ export const toolBarButtons = [
 ]
 
 export const selectGroupButtons = [
-  { id: 1, name: 'delete', displayName: 'DELETE' },
+  { id: 1, name: 'deleteGroup', displayName: 'DELETE' },
   { id: 2, name: 'group', displayName: 'GROUP' },
   { id: 3, name: 'ungroup', displayName: 'UNGROUP' }
 ]
@@ -40,5 +40,6 @@ const getToolNamesOrNumbers = (toolbarData, valueBy = 'name') => {
   return nameDict
 }
 
+export const groupToolNames = getToolNamesOrNumbers(selectGroupButtons, 'name')
 export const toolNames = getToolNamesOrNumbers(toolBarButtons, 'name')
 export const toolNumbers = getToolNamesOrNumbers(toolBarButtons, 'number')

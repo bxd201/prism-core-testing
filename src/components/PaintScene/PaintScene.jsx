@@ -2,14 +2,16 @@
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
 import './PaintScene.scss'
+import uniqueId from 'lodash/uniqueId'
 import PaintToolBar from './PaintToolBar'
-import cloneDeep from 'lodash/cloneDeep'
+import difference from 'lodash/difference'
 import { drawAcrossLine } from './PaintSceneUtils'
 import { getPaintAreaPath, repaintImageByPath,
   createPolygon, drawLine, drawCircle,
   edgeDetect, pointInsideCircle, alterRGBByPixel,
   getImageCordinateByPixel, eraseIntersection,
-  getActiveColorRGB, getSelectArea, hexToRGB } from './utils'
+  getActiveColorRGB, getSelectArea, hexToRGB,
+  checkIntersection, drawImagePixelByPath, copyImageList } from './utils'
 import { toolNames } from './data'
 import ResizeObserver from 'resize-observer-polyfill'
 import { getScaledPortraitHeight } from '../../shared/helpers/ImageUtils'
@@ -47,6 +49,9 @@ const paintBrushTool = 'paintBrush'
 const eraseTool = 'erase'
 const paintArea = 'paintArea'
 const removeArea = 'removeArea'
+const deleteGroup = 'deleteGroup'
+const group = 'group'
+const ungroup = 'ungroup'
 
 type ComponentProps = {
   imageUrl: string,
@@ -145,14 +150,19 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       BeginPointList: [],
       polyList: [],
       imagePathList: [],
-      selectedArea: [{ edgeList: [], selectPath: [] }],
-      wrapperHeight: this.props.referenceDimensions.imageHeight,
       showOriginalCanvas: false,
       canvasZoom: 1,
       _sx: 0,
       _sy: 0,
       _canvasMouseDown: false,
-      zoomRange: 0
+      zoomRange: 0,
+      selectedArea: [],
+      groupAreaList: [],
+      groupSelectList: [],
+      wrapperHeight: this.props.referenceDimensions.imageHeight,
+      isUngroup: false,
+      isAddGroup: false,
+      isDeleteGroup: false
     }
 
     this.pushToHistory = this.pushToHistory.bind(this)
@@ -165,6 +175,54 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.initCanvas = this.initCanvas.bind(this)
     this.updateCanvasWithNewDimensions = this.updateCanvasWithNewDimensions.bind(this)
   }
+
+  componentDidUpdate (prevProps, prevState) {
+    const { imagePathList, groupSelectList, selectedArea } = this.state
+    let edgeListToRender = []
+    let copyImagePathList = copyImageList(imagePathList)
+    if (prevProps.lpActiveColor.hex !== this.props.lpActiveColor.hex) {
+      const ctx = this.CFICanvas2.current.getContext('2d')
+      const RGB = getActiveColorRGB(hexToRGB(this.props.lpActiveColor.hex))
+      for (let i = 0; i < this.state.groupSelectList.length; i++) {
+        this.clearCanvas()
+        drawImagePixelByPath(ctx, this.canvasOffsetWidth, this.canvasOffsetHeight, RGB, this.state.groupSelectList[i].selectPath)
+        const erasePath = getImageCordinateByPixel(this.CFICanvas2, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight)
+        copyImagePathList = eraseIntersection(copyImagePathList, erasePath)
+        copyImagePathList.push({ color: RGB, data: erasePath })
+        this.clearCanvas()
+      }
+      for (let i = 0; i < this.state.selectedArea.length; i++) {
+        this.clearCanvas()
+        drawImagePixelByPath(ctx, this.canvasOffsetWidth, this.canvasOffsetHeight, RGB, this.state.selectedArea[i].selectPath)
+        const erasePath = getImageCordinateByPixel(this.CFICanvas2, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight)
+        copyImagePathList = eraseIntersection(copyImagePathList, erasePath)
+        copyImagePathList.push({ color: RGB, data: erasePath })
+        this.clearCanvas()
+      }
+
+      for (let groupSelect of groupSelectList) {
+        edgeListToRender.push({
+          color: [255, 255, 255, 255],
+          data: groupSelect.edgeList
+        })
+      }
+
+      for (let select of selectedArea) {
+        edgeListToRender.push({
+          color: [255, 255, 255, 255],
+          data: select.edgeList
+        })
+      }
+      repaintImageByPath(copyImagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
+      if (edgeListToRender.length > 0) {
+        repaintImageByPath(edgeListToRender, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
+      }
+
+      // eslint-disable-next-line
+      this.setState({ imagePathList: copyImagePathList })
+    }
+  }
+
   /*:: initCanvas: () => void */
   initCanvas () {
     this.CFICanvasContext = this.CFICanvas.current.getContext('2d')
@@ -279,7 +337,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     }
     this.clearCanvas()
     repaintImageByPath(imagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
-    this.setState({ activeTool, selectedArea: [{ edgeList: [], selectPath: [] }] })
+    this.setState({ activeTool, selectedArea: [] })
   }
 
   // Should only be used on user even to push
@@ -411,7 +469,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
       if (isDragging) {
         const currentPoint = { x: clientX - canvasOffset.x + window.scrollX, y: clientY - canvasOffset.y + window.scrollY }
-        const drawCoordinatesCloned = cloneDeep(drawCoordinates)
+        const drawCoordinatesCloned = copyImageList(drawCoordinates)
         drawCoordinatesCloned.push(currentPoint)
         const drawCoordinatesLength = drawCoordinates.length
         // this.drawPaintBrushPoint(currentPoint, drawCoordinates[drawCoordinatesLength - 1])
@@ -461,7 +519,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   }
 
   mouseUpHandler = (e: Object) => {
-    const { drawCoordinates, paintBrushShape, paintBrushWidth, imagePathList, activeTool, eraseBrushShape, eraseBrushWidth } = this.state
+    const { drawCoordinates, paintBrushShape, paintBrushWidth, imagePathList, activeTool, eraseBrushShape, eraseBrushWidth, groupAreaList, groupSelectList } = this.state
     const { lpActiveColor } = this.props
     if (lpActiveColor && activeTool === paintBrushTool && drawCoordinates.length > 0) {
       this.clearCanvas()
@@ -479,10 +537,25 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       this.repaintBrushPathByCorrdinates(drawCoordinates, eraseBrushWidth, eraseBrushShape, false)
       const RGB = getActiveColorRGB({ red: 255, blue: 255, green: 255 })
       const erasePath = getImageCordinateByPixel(this.CFICanvas2, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight)
-      const newImagePathList = eraseIntersection(imagePathList, erasePath, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
+      const newImagePathList = eraseIntersection(imagePathList, erasePath)
+      let idsToUngroup = []
+      let newGroupSelectList = []
+      for (let i = 0; i < groupAreaList.length; i++) {
+        const intersect = checkIntersection(groupAreaList[i].selectPath, erasePath)
+        if (intersect.length > 0) {
+          idsToUngroup.push(groupAreaList[i].id)
+          groupAreaList.splice(i, 1)
+          i--
+        }
+      }
+      if (idsToUngroup.length !== 0) {
+        newGroupSelectList = groupSelectList.filter(item => {
+          return (idsToUngroup.indexOf(item.id) === -1)
+        })
+      }
       this.clearCanvas()
       repaintImageByPath(newImagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
-      this.setState({ isDragging: false, imagePathList: newImagePathList })
+      this.setState({ isDragging: false, imagePathList: newImagePathList, groupAreaList, groupSelectList: newGroupSelectList })
       this.pushToHistory()
     }
     window.removeEventListener('mouseup', this.mouseUpHandler)
@@ -572,7 +645,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
      * The main idea is maintain selectAreaList, whenever user click area, we repaint canvas based on update
      * selectAreaList and imagePathList
     */
-    const { imagePathList, selectedArea } = this.state
+    const { imagePathList, selectedArea, groupAreaList, groupSelectList } = this.state
     const cursorX = e.nativeEvent.offsetX
     const cursorY = e.nativeEvent.offsetY
     const imageData = this.CFICanvasContext2.getImageData(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
@@ -580,6 +653,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     const index = (cursorX + cursorY * this.canvasOffsetWidth) * 4
     let edgeListToRender = []
     let isClickInsideImage = false
+    let isClickGroupArea = false
     for (let i = 0; i < imagePathList.length; i++) {
       if (imagePathList[i].data.includes(index)) {
         isClickInsideImage = true
@@ -588,46 +662,102 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     }
 
     if (isClickInsideImage) {
-      if (selectedArea.length > 0) {
+      let tmpEdgeArea
+      let tmpSelectPath
+      let tmpId
+      for (let i = 0; i < groupAreaList.length; i++) {
+        if (groupAreaList[i].selectPath.includes(index)) {
+          tmpSelectPath = groupAreaList[i].selectPath
+          tmpEdgeArea = groupAreaList[i].edgeList
+          tmpId = groupAreaList[i].id
+          isClickGroupArea = true
+          break
+        }
+      }
+      if (isClickGroupArea) {
         let hasAdd = false
-        for (let i = 0; i < selectedArea.length; i++) {
-          if (selectedArea[i].selectPath.includes(index)) {
-            selectedArea.splice(i, 1)
+        for (let i = 0; i < groupSelectList.length; i++) {
+          if (groupSelectList[i].selectPath.includes(index)) {
+            groupSelectList.splice(i, 1)
+            tmpSelectPath = null
+            tmpEdgeArea = null
             hasAdd = true
             break
           }
         }
         if (!hasAdd) {
+          groupSelectList.push({
+            selectPath: tmpSelectPath,
+            edgeList: tmpEdgeArea,
+            id: tmpId
+          })
+        }
+        this.setState({ groupSelectList })
+      }
+
+      if (!isClickGroupArea) {
+        if (selectedArea.length > 0) {
+          let hasAdd = false
+          for (let i = 0; i < selectedArea.length; i++) {
+            if (selectedArea[i].selectPath.includes(index)) {
+              selectedArea.splice(i, 1)
+              hasAdd = true
+              break
+            }
+          }
+          if (!hasAdd) {
+            const imagePath = getSelectArea(imageData, { r: 255, g: 0, b: 0 }, cursorX, cursorY)
+            const edge = edgeDetect(this.CFICanvas2, imagePath, [255, 0, 0, 255], this.canvasOffsetWidth, this.canvasOffsetWidth)
+            selectedArea.push({
+              edgeList: edge,
+              selectPath: imagePath
+            })
+          }
+          this.setState({ selectedArea })
+        } else {
           const imagePath = getSelectArea(imageData, { r: 255, g: 0, b: 0 }, cursorX, cursorY)
           const edge = edgeDetect(this.CFICanvas2, imagePath, [255, 0, 0, 255], this.canvasOffsetWidth, this.canvasOffsetWidth)
           selectedArea.push({
             edgeList: edge,
             selectPath: imagePath
           })
+          this.setState({ selectedArea })
         }
-        this.setState({ selectedArea })
-      } else {
-        const imagePath = getSelectArea(imageData, { r: 255, g: 0, b: 0 }, cursorX, cursorY)
-        const edge = edgeDetect(this.CFICanvas2, imagePath, [255, 0, 0, 255], this.canvasOffsetWidth, this.canvasOffsetWidth)
-        selectedArea.push({
-          edgeList: edge,
-          selectPath: imagePath
-        })
-        this.setState({ selectedArea })
       }
     }
 
     this.clearCanvas()
+
+    for (let groupSelect of groupSelectList) {
+      edgeListToRender.push({
+        color: [255, 255, 255, 255],
+        data: groupSelect.edgeList
+      })
+    }
+
     for (let select of selectedArea) {
       edgeListToRender.push({
         color: [255, 255, 255, 255],
         data: select.edgeList
       })
     }
+
     repaintImageByPath(imagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
     if (edgeListToRender.length > 0) {
       repaintImageByPath(edgeListToRender, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
     }
+    this.setActiveGroupTool()
+  }
+
+  setActiveGroupTool = () => {
+    const { selectedArea, groupSelectList } = this.state
+    let isDeleteGroup = false
+    let isAddGroup = false
+    let isUngroup = false
+    if (selectedArea.length > 0 || groupSelectList.length > 0) { isDeleteGroup = true }
+    if (selectedArea.length > 1 || (selectedArea.length > 0 && groupSelectList.length > 0) || (groupSelectList.length > 1)) { isAddGroup = true }
+    if (groupSelectList.length > 0) { isUngroup = true }
+    this.setState({ isDeleteGroup: isDeleteGroup, isAddGroup: isAddGroup, isUngroup: isUngroup })
   }
 
   handlePolygonDefine = (e, isAddArea) => {
@@ -648,7 +778,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       if (!isAddArea) {
         const RGB = getActiveColorRGB(hexToRGB(this.props.lpActiveColor.hex))
         const erasePath = getImageCordinateByPixel(this.CFICanvas2, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight)
-        newImagePathList = eraseIntersection(imagePathList, erasePath, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
+        newImagePathList = eraseIntersection(imagePathList, erasePath)
       } else {
         newImagePathList = getPaintAreaPath(imagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight, this.props.lpActiveColor)
       }
@@ -846,39 +976,146 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     return { paintBrushActiveClass: paintBrushActiveClass, paintBrushCircleActiveClass: paintBrushCircleActiveClass }
   }
 
-  getEraseBrushActiveClass = () => {
-    const { eraseBrushWidth, eraseBrushShape } = this.state
-    let eraseBrushActiveClass = ''
-    let eraseBrushCircleActiveClass = ''
-    if (eraseBrushWidth === brushLargeWidth) {
-      eraseBrushActiveClass = paintBrushLargeClass
-      if (eraseBrushShape === brushRoundShape) eraseBrushCircleActiveClass = paintBrushLargeCircleClass
-    } else if (eraseBrushWidth === brushMediumWidth) {
-      eraseBrushActiveClass = paintBrushMediumClass
-      if (eraseBrushShape === brushRoundShape) eraseBrushCircleActiveClass = paintBrushMediumCircleClass
-    } else if (eraseBrushWidth === brushSmallWidth) {
-      eraseBrushActiveClass = paintBrushSmallClass
-      if (eraseBrushShape === brushRoundShape) eraseBrushCircleActiveClass = paintBrushSmallCircleClass
-    } else if (eraseBrushWidth === brushTinyWidth) {
-      eraseBrushActiveClass = paintBrushTinyClass
-      if (eraseBrushShape === brushRoundShape) eraseBrushCircleActiveClass = paintBrushTinyCircleClass
+getEraseBrushActiveClass = () => {
+  const { eraseBrushWidth, eraseBrushShape } = this.state
+  let eraseBrushActiveClass = ''
+  let eraseBrushCircleActiveClass = ''
+  if (eraseBrushWidth === brushLargeWidth) {
+    eraseBrushActiveClass = paintBrushLargeClass
+    if (eraseBrushShape === brushRoundShape) eraseBrushCircleActiveClass = paintBrushLargeCircleClass
+  } else if (eraseBrushWidth === brushMediumWidth) {
+    eraseBrushActiveClass = paintBrushMediumClass
+    if (eraseBrushShape === brushRoundShape) eraseBrushCircleActiveClass = paintBrushMediumCircleClass
+  } else if (eraseBrushWidth === brushSmallWidth) {
+    eraseBrushActiveClass = paintBrushSmallClass
+    if (eraseBrushShape === brushRoundShape) eraseBrushCircleActiveClass = paintBrushSmallCircleClass
+  } else if (eraseBrushWidth === brushTinyWidth) {
+    eraseBrushActiveClass = paintBrushTinyClass
+    if (eraseBrushShape === brushRoundShape) eraseBrushCircleActiveClass = paintBrushTinyCircleClass
+  }
+  return { eraseBrushActiveClass: eraseBrushActiveClass, eraseBrushCircleActiveClass: eraseBrushCircleActiveClass }
+}
+
+getCanvasWrapperOffset = () => {
+  let canvasWrapperOffset = {}
+  if (this.CFIWrapper.current) {
+    const wrapperClientOffset = this.CFIWrapper.current.getBoundingClientRect()
+    canvasWrapperOffset.x = parseInt(wrapperClientOffset.left, 10)
+    canvasWrapperOffset.y = parseInt(wrapperClientOffset.top, 10)
+  }
+  return canvasWrapperOffset
+}
+
+  group = () => {
+    let newGroupSelectList = []
+    let isNewGroupArea = true
+    const { selectedArea, groupSelectList, groupAreaList } = this.state
+    let newGroupAreaList = [...groupAreaList]
+    let groupAreaPath = []
+    let groupEdgeList = []
+    for (let i = 0; i < selectedArea.length; i++) {
+      const targetPath = selectedArea[i].selectPath
+      const edgeList = selectedArea[i].edgeList
+      groupAreaPath = [...targetPath, ...groupAreaPath]
+      groupEdgeList = [...edgeList, ...groupEdgeList]
     }
-    return { eraseBrushActiveClass: eraseBrushActiveClass, eraseBrushCircleActiveClass: eraseBrushCircleActiveClass }
+    for (let j = 0; j < groupSelectList.length; j++) {
+      isNewGroupArea = false
+      const targetPath = groupSelectList[j].selectPath
+      const edgeList = groupSelectList[j].edgeList
+      groupAreaPath = [...targetPath, ...groupAreaPath]
+      groupEdgeList = [...edgeList, ...groupEdgeList]
+    }
+
+    if (groupAreaPath.length > 0) {
+      const id = uniqueId()
+      if (isNewGroupArea) {
+        newGroupAreaList.push({
+          edgeList: groupEdgeList,
+          selectPath: groupAreaPath,
+          id: id
+        })
+      } else {
+        newGroupAreaList = [{
+          edgeList: groupEdgeList,
+          selectPath: groupAreaPath,
+          id: id
+        }]
+      }
+      newGroupSelectList.push({
+        edgeList: groupEdgeList,
+        selectPath: groupAreaPath,
+        id: id
+      })
+    }
+    this.setState({
+      groupAreaList: newGroupAreaList,
+      groupSelectList: newGroupSelectList,
+      selectedArea: [],
+      isUngroup: true
+    })
   }
 
-  getCanvasWrapperOffset = () => {
-    let canvasWrapperOffset = {}
-    if (this.CFIWrapper.current) {
-      const wrapperClientOffset = this.CFIWrapper.current.getBoundingClientRect()
-      canvasWrapperOffset.x = parseInt(wrapperClientOffset.left, 10)
-      canvasWrapperOffset.y = parseInt(wrapperClientOffset.top, 10)
+  ungroup = () => {
+    const { groupSelectList, groupAreaList } = this.state
+    const idsToUngroup = groupSelectList.map((item) => {
+      return item.id
+    })
+    const newGroupAreaList = groupAreaList.filter(item => {
+      return (idsToUngroup.indexOf(item.id) === -1)
+    })
+    this.setState({ groupAreaList: newGroupAreaList, groupSelectList: [], isUngroup: false })
+  }
+
+  deleteGroup = () => {
+    const { imagePathList, groupSelectList, selectedArea, groupAreaList } = this.state
+    for (let i = 0; i < groupSelectList.length; i++) {
+      for (let j = 0; j < imagePathList.length; j++) {
+        const intersect = checkIntersection(imagePathList[j].data, groupSelectList[i].selectPath)
+        if (intersect.length > 0) {
+          imagePathList[j].data = difference(imagePathList[j].data, intersect)
+        }
+      }
     }
-    return canvasWrapperOffset
+
+    for (let i = 0; i < selectedArea.length; i++) {
+      for (let j = 0; j < imagePathList.length; j++) {
+        const intersect = checkIntersection(imagePathList[j].data, selectedArea[i].selectPath)
+        if (intersect.length > 0) {
+          imagePathList[j].data = difference(imagePathList[j].data, intersect)
+        }
+      }
+    }
+    const idsToUngroup = groupSelectList.map((item) => {
+      return item.id
+    })
+
+    const newGroupAreaList = groupAreaList.filter(item => {
+      return (idsToUngroup.indexOf(item.id) === -1)
+    })
+
+    this.clearCanvas()
+    repaintImageByPath(imagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
+    this.setState({ imagePathList, groupSelectList: [], selectedArea: [], groupAreaList: newGroupAreaList, isAddGroup: false, isUngroup: false })
+  }
+
+  groupHandler = (groupName) => {
+    switch (groupName) {
+      case deleteGroup:
+        this.deleteGroup()
+        break
+      case group:
+        this.group()
+        break
+      case ungroup:
+        this.ungroup()
+        break
+    }
   }
 
   render () {
     const { imageUrl, lpActiveColor } = this.props
-    const { activeTool, position, paintBrushShape, paintBrushWidth, eraseBrushShape, eraseBrushWidth, undoIsEnabled, redoIsEnabled, showOriginalCanvas, zoomRange } = this.state
+    const { activeTool, position, paintBrushShape, paintBrushWidth, eraseBrushShape, eraseBrushWidth, undoIsEnabled, redoIsEnabled, showOriginalCanvas, zoomRange, isAddGroup, isDeleteGroup, isUngroup } = this.state
     const lpActiveColorRGB = (lpActiveColor) ? `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})` : ``
     const backgroundColorBrush = (activeTool === eraseTool) ? `rgba(255, 255, 255, 0.7)` : lpActiveColorRGB
     const { paintBrushActiveClass, paintBrushCircleActiveClass } = this.getPaintBrushActiveClass()
@@ -906,6 +1143,10 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
             hidePaint={this.hidePaint}
             applyZoom={this.applyZoom}
             zoomRange={zoomRange}
+            groupHandler={this.groupHandler}
+            isAddGroup={isAddGroup}
+            isDeleteGroup={isDeleteGroup}
+            isUngroup={isUngroup}
           />
         </div>
         {
