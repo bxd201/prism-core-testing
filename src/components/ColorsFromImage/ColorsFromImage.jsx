@@ -5,37 +5,45 @@ import { brandColors } from './sw-colors-in-LAB.js'
 import { getDeltaE00 } from 'delta-e'
 import ColorsFromImagePin from './ColorsFromImagePin'
 
-class ColorsFromImage extends PureComponent {
-  state = {
-    previewPinIsUpdating: false,
-    previewPinIsActive: false,
-    previewColorName: '',
-    previewColorNumber: '',
-    cursorIsPaused: false,
-    cursorX: 0,
-    cursorY: 0,
-    previewPinX: 0,
-    previewPinY: 0,
-    mappedCanvasIndex: 0,
-    currentPixelRGB: [0, 0, 0],
-    currentPixelRGBstring: 'rgb(0,0,0)',
-    currentBrandColorIndex: null,
-    pinnedColors: [],
-    activePinIndex: -1,
-    currentPinIndex: -1,
-    imageStatus: 'loading'
-  }
+import './ColorsFromImage.scss'
 
+const baseClass = 'match-photo-picker'
+const wrapperClass = `${baseClass}__wrapper`
+const canvasClass = `${baseClass}__canvas`
+const portraitOrientation = `${canvasClass}--portrait`
+
+class ColorsFromImage extends PureComponent {
   constructor (props) {
     super(props)
+
+    this.state = {
+      previewPinIsUpdating: false,
+      previewPinIsActive: false,
+      previewColorName: '',
+      previewColorNumber: '',
+      cursorIsPaused: false,
+      cursorX: 0,
+      cursorY: 0,
+      previewPinX: 0,
+      previewPinY: 0,
+      mappedCanvasIndex: 0,
+      currentPixelRGB: [0, 0, 0],
+      currentPixelRGBstring: 'rgb(0,0,0)',
+      currentBrandColorIndex: null,
+      pinnedColors: [],
+      activePinIndex: -1,
+      currentPinIndex: -1,
+      imageStatus: 'loading',
+      // eslint-disable-next-line react/prop-types
+      canvasWidth: this.props.data.imageData.width,
+      // eslint-disable-next-line react/prop-types
+      canvasHeight: this.props.data.imageData.height
+    }
 
     this.findBrandColorTimeout = null
     this.brandColorsLength = brandColors.length
     this.CFICanvas = React.createRef()
     this.CFIWrapper = React.createRef()
-    this.CFIImage = React.createRef()
-    this.canvasHeight = 487 // 974 / 2 frog
-    this.canvasWidth = 898 // 1796 / 2  frog
     this.handleImageLoaded = this.handleImageLoaded.bind(this)
     this.handleImageErrored = this.handleImageErrored.bind(this)
     this.initCanvas = this.initCanvas.bind(this)
@@ -77,20 +85,19 @@ class ColorsFromImage extends PureComponent {
   }
 
   initCanvas () {
-    this.CFICanvas.current.height = this.canvasHeight
-    this.CFICanvas.current.width = this.canvasWidth
     this.CFICanvasContext = this.CFICanvas.current.getContext('2d')
-    this.CFICanvasContext.drawImage(this.CFIImage.current, 0, 0, this.canvasWidth, this.canvasHeight)
-    this.imageData = this.CFICanvasContext.getImageData(0, 0, this.canvasWidth, this.canvasHeight) // imageObj.width
-    this.imageDataData = this.imageData.data
-
-    this.imageWrapperOffset = this.CFIWrapper.current.getBoundingClientRect()
-    this.imageWrapperOffsetTop = this.imageWrapperOffset.top
-    this.imageWrapperOffsetLeft = this.imageWrapperOffset.left
+    this.handleResize()
   }
 
   addPin () {
     console.log('Adding pin')
+  }
+
+  handleResize () {
+    // eslint-disable-next-line react/prop-types
+    this.CFICanvasContext.putImageData(this.props.data.imageData, 0, 0)
+    this.canvasOffset = this.CFICanvas.current.getBoundingClientRect()
+    this.wrapperOffset = this.CFIWrapper.current.getBoundingClientRect()
   }
 
   findBrandColor () {
@@ -120,15 +127,20 @@ class ColorsFromImage extends PureComponent {
     this.findBrandColorTimeout = window.setTimeout(this.findBrandColor, 700)
   }
 
+  // @todo - fix coords -RS
   wrapperMouseMove (e) {
     if (!this.state.previewPinIsUpdating) {
-      const cursorX = e.clientX - this.imageWrapperOffsetLeft // can also try screenX or pageX
-      const cursorY = e.clientY - this.imageWrapperOffsetTop
-      const mappedCanvasIndex = (cursorY * this.canvasWidth + cursorX) * 4
+      const cursorX = e.clientX - this.wrapperOffset.left // can also try screenX or pageX
+      const cursorY = e.clientY - this.wrapperOffset.top
+      // const mappedCanvasIndex = (cursorY * this.state.canvasWidth + cursorX) * 4
+      // Using a bitwise or to trunc here since it is much faster than something like Math.trunc()
+      const mappedCanvasIndex = (((e.clientY - this.canvasOffset.top) * this.state.canvasWidth) + (e.clientX - this.canvasOffset.left | 0)) * 4
+      // eslint-disable-next-line react/prop-types
+      const imageData = this.props.data.imageData.data
 
       this.setState({
-        currentPixelRGB: [this.imageDataData[mappedCanvasIndex], this.imageDataData[mappedCanvasIndex + 1], this.imageDataData[mappedCanvasIndex + 2]],
-        currentPixelRGBstring: 'rgb(' + this.imageDataData[mappedCanvasIndex] + ',' + this.imageDataData[mappedCanvasIndex + 1] + ',' + this.imageDataData[mappedCanvasIndex + 2] + ')',
+        currentPixelRGB: [imageData[mappedCanvasIndex], imageData[mappedCanvasIndex + 1], imageData[mappedCanvasIndex + 2]],
+        currentPixelRGBstring: 'rgb(' + imageData[mappedCanvasIndex] + ',' + imageData[mappedCanvasIndex + 1] + ',' + imageData[mappedCanvasIndex + 2] + ')',
         mappedCanvasIndex: mappedCanvasIndex,
         previewPinIsUpdating: true,
         previewPinIsActive: false,
@@ -144,16 +156,15 @@ class ColorsFromImage extends PureComponent {
   }
 
   render () {
-    // eslint-disable-next-line one-var
-    const { previewPinIsActive, previewPinX, previewPinY, previewColorName, previewColorNumber, currentPixelRGBstring } = this.state
+    // eslint-disable-next-line react/prop-types
+    const isPortrait = this.props.data.isPortrait
+    const { previewPinIsActive, previewPinX, previewPinY, previewColorName, previewColorNumber, currentPixelRGBstring, canvasWidth, canvasHeight } = this.state
     const transformValue = `translate(${previewPinX}px, ${previewPinY}px)`
-    const CIFwrapperClass = ''
 
     return (
       <Fragment>
-        <div onMouseMove={this.wrapperMouseMove} className={'CFIwrapper ' + CIFwrapperClass} ref={this.CFIWrapper}>
-          <canvas className='CFIcanvas' ref={this.CFICanvas} />
-          <img className='CFIimage' ref={this.CFIImage} onLoad={this.handleImageLoaded} onError={this.handleImageErrored} src='/prism/images/colors-from-image/frog.png' alt='' />
+        <div onMouseMove={this.wrapperMouseMove} className={wrapperClass} ref={this.CFIWrapper}>
+          <canvas className={isPortrait ? portraitOrientation : canvasClass} ref={this.CFICanvas} width={canvasWidth} height={canvasHeight} />
           <ColorsFromImagePin key='1'
             isActiveFlag={previewPinIsActive}
             pinType='preview'

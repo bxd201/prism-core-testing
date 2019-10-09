@@ -349,7 +349,7 @@ const mapDispatchToProps = (dispatch: Function) => {
     changeSceneVariant: (sceneId: number, variant: string) => {
       dispatch(changeSceneVariant(sceneId, variant))
     },
-    addNewMask: (sceneId: number, surfaceId: number, imageData: string) => {
+    addNewMask: (sceneId: number, surfaceId: number, variant: string, imageData: string) => {
       dispatch(addNewMask(sceneId, surfaceId, imageData))
     },
     toggleEditMode: (currentEditMode: boolean) => {

@@ -186,13 +186,14 @@ export const updateMask = (mask: MaskObj, data: Blob) => {
 }
 
 export const ADD_NEW_MASK = 'ADD_NEW_MASK'
-export const addNewMask = (sceneId: number, surfaceId: number, imageData: string) => {
+export const addNewMask = (sceneId: number, surfaceId: number, variant: string, imageData: string) => {
   // Workspace is an array of images to be passed to a tintable scene
   return {
     type: ADD_NEW_MASK,
     payload: {
       sceneId,
       surfaceId,
+      variant,
       imageData
     }
   }

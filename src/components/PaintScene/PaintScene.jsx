@@ -13,8 +13,7 @@ import { getPaintAreaPath, repaintImageByPath,
   getActiveColorRGB, getSelectArea, hexToRGB,
   checkIntersection, drawImagePixelByPath, copyImageList } from './utils'
 import { toolNames } from './data'
-import ResizeObserver from 'resize-observer-polyfill'
-import { getScaledPortraitHeight } from '../../shared/helpers/ImageUtils'
+import { getScaledPortraitHeight, getScaledLandscapeHeight } from '../../shared/helpers/ImageUtils'
 import throttle from 'lodash/throttle'
 
 const baseClass = 'paint__scene__wrapper'
@@ -58,7 +57,9 @@ type ComponentProps = {
   // eslint-disable-next-line react/no-unused-prop-types
   imageRotationAngle: number,
   lpActiveColor: Object,
-  referenceDimensions: Object
+  referenceDimensions: Object,
+  // eslint-disable-next-line react/no-unused-prop-types
+  width: number
 }
 
 type ComponentState = {
@@ -109,8 +110,8 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   backgroundImageWidth: number
   backgroundImageHeight: number
   isPortrait: boolean
-  resizeObserver: Object
   _canvasPanStart: Object
+  originalIsPortrait: boolean
 
   constructor (props: ComponentProps) {
     super(props)
@@ -122,12 +123,12 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     // @todo - marked for review -RS
     // this.canvasOffsetWidth = 0
     // this.canvasOffsetHeight = 0
-    this.resizeObserver = null
     this.wrapperDimensions = null
     this.canvasDimensions = null
     this.backgroundImageWidth = props.referenceDimensions.imageWidth
     this.backgroundImageHeight = props.referenceDimensions.imageHeight
     this.isPortrait = props.referenceDimensions.isPortrait
+    this.originalIsPortrait = props.referenceDimensions.originalIsPortrait
     this._canvasPanStart = { x: 0, y: 0 }
 
     this.state = {
@@ -246,7 +247,22 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
     canvasWidth = Math.floor(canvasWidth)
 
-    const canvasHeight = Math.floor(getScaledPortraitHeight(this.backgroundImageWidth, this.backgroundImageHeight)(canvasWidth))
+    let canvasHeight = 0
+
+    if (this.isPortrait) {
+      if (this.originalIsPortrait) {
+        canvasHeight = Math.floor(getScaledPortraitHeight(this.backgroundImageWidth, this.backgroundImageHeight)(canvasWidth))
+      } else {
+        canvasHeight = Math.floor(getScaledPortraitHeight(this.backgroundImageHeight, this.backgroundImageWidth)(canvasWidth))
+      }
+    } else {
+      if (this.originalIsPortrait) {
+        canvasHeight = Math.floor(getScaledLandscapeHeight(this.backgroundImageWidth, this.backgroundImageHeight)(canvasWidth))
+      } else {
+        // Swap width and height for photos that are originally landscape
+        canvasHeight = Math.floor(getScaledLandscapeHeight(this.backgroundImageHeight, this.backgroundImageWidth)(canvasWidth))
+      }
+    }
 
     this.CFICanvas.current.width = canvasWidth
     this.CFICanvas.current.height = canvasHeight
@@ -297,17 +313,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     // @todo Review -RS
     // window.addEventListener('resize', this.updateWindowDimensions)
     // window.addEventListener('scroll', this.setCanvasOffset)
-    this.resizeObserver = new ResizeObserver((entries, observer) => {
-      if (entries.length) {
-        this.setDependentPositions()
-        this.updateCanvasWithNewDimensions()
-      } else {
-        console.log('Scene Container does not exist.')
-      }
-      console.log(entries, observer)
-    })
 
-    this.resizeObserver.observe(this.CFIWrapper.current)
     this.setDependentPositions()
     this.initCanvas()
   }
@@ -316,9 +322,6 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     // @todo - Review -RS
     // window.removeEventListener('resize', this.updateWindowDimensions)
     // window.removeEventListener('scroll', this.setCanvasOffset)
-    if (this.resizeObserver) {
-      this.resizeObserver.unobserve(this.CFIWrapper.current)
-    }
   }
 
   updateWindowDimensions = () => {
