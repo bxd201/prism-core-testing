@@ -1,6 +1,6 @@
 'use strict'
 
-import React, { PureComponent, Fragment } from 'react'
+import React, { PureComponent, Fragment, createRef } from 'react'
 import { brandColors } from './sw-colors-in-LAB.js'
 import { getDeltaE00 } from 'delta-e'
 import ColorsFromImagePin from './ColorsFromImagePin'
@@ -10,6 +10,7 @@ import './ColorsFromImage.scss'
 const baseClass = 'match-photo-picker'
 const wrapperClass = `${baseClass}__wrapper`
 const canvasClass = `${baseClass}__canvas`
+const hiddenImageClass = `${baseClass}__hidden-image`
 const portraitOrientation = `${canvasClass}--portrait`
 
 class ColorsFromImage extends PureComponent {
@@ -33,17 +34,14 @@ class ColorsFromImage extends PureComponent {
       pinnedColors: [],
       activePinIndex: -1,
       currentPinIndex: -1,
-      imageStatus: 'loading',
-      // eslint-disable-next-line react/prop-types
-      canvasWidth: this.props.data.imageData.width,
-      // eslint-disable-next-line react/prop-types
-      canvasHeight: this.props.data.imageData.height
+      imageStatus: 'loading'
     }
 
     this.findBrandColorTimeout = null
     this.brandColorsLength = brandColors.length
-    this.CFICanvas = React.createRef()
-    this.CFIWrapper = React.createRef()
+    this.CFICanvas = createRef()
+    this.CFIWrapper = createRef()
+    this.imageRef = createRef()
     this.handleImageLoaded = this.handleImageLoaded.bind(this)
     this.handleImageErrored = this.handleImageErrored.bind(this)
     this.initCanvas = this.initCanvas.bind(this)
@@ -86,16 +84,20 @@ class ColorsFromImage extends PureComponent {
 
   initCanvas () {
     this.CFICanvasContext = this.CFICanvas.current.getContext('2d')
-    this.handleResize()
+    // eslint-disable-next-line react/prop-types
+    this.handleResize(this.props.width, this.props.height)
   }
 
   addPin () {
     console.log('Adding pin')
   }
 
-  handleResize () {
+  handleResize (width, height) {
+    // @todo - determine if I need to set/get the pixeldata
+    this.CFICanvasContext.clearRect(0, 0, width, height)
     // eslint-disable-next-line react/prop-types
-    this.CFICanvasContext.putImageData(this.props.data.imageData, 0, 0)
+    this.CFICanvasContext.drawImage(this.imageRef.current, 0, 0, width, height)
+
     this.canvasOffset = this.CFICanvas.current.getBoundingClientRect()
     this.wrapperOffset = this.CFIWrapper.current.getBoundingClientRect()
   }
@@ -155,16 +157,27 @@ class ColorsFromImage extends PureComponent {
     this.initCanvas()
   }
 
+  componentDidUpdate (prevProps, prevState) {
+    // eslint-disable-next-line react/prop-types
+    if (prevProps.width !== this.props.width) {
+      // eslint-disable-next-line react/prop-types
+      this.handleResize(prevProps.width, prevProps.height)
+    }
+  }
+
   render () {
     // eslint-disable-next-line react/prop-types
-    const isPortrait = this.props.data.isPortrait
-    const { previewPinIsActive, previewPinX, previewPinY, previewColorName, previewColorNumber, currentPixelRGBstring, canvasWidth, canvasHeight } = this.state
+    const { isPortrait, img } = this.props.data
+
+    const { previewPinIsActive, previewPinX, previewPinY, previewColorName, previewColorNumber, currentPixelRGBstring } = this.state
     const transformValue = `translate(${previewPinX}px, ${previewPinY}px)`
 
     return (
       <Fragment>
+        <img ref={this.imageRef} className={hiddenImageClass} src={img} onLoad={this.handleImageLoaded} alt='hidden' />
         <div onMouseMove={this.wrapperMouseMove} className={wrapperClass} ref={this.CFIWrapper}>
-          <canvas className={isPortrait ? portraitOrientation : canvasClass} ref={this.CFICanvas} width={canvasWidth} height={canvasHeight} />
+          {/* eslint-disable-next-line react/prop-types */}
+          <canvas className={isPortrait ? portraitOrientation : canvasClass} ref={this.CFICanvas} width={this.props.width} height={this.props.height} />
           <ColorsFromImagePin key='1'
             isActiveFlag={previewPinIsActive}
             pinType='preview'

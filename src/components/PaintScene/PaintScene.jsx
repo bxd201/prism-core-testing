@@ -176,9 +176,23 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.popFromRedoHistoryToHistory = this.popFromRedoHistoryToHistory.bind(this)
     this.initCanvas = this.initCanvas.bind(this)
     this.updateCanvasWithNewDimensions = this.updateCanvasWithNewDimensions.bind(this)
+    this.shouldCanvasResize = this.shouldCanvasResize.bind(this)
+  }
+
+  shouldCanvasResize (prevWidth: number, newWidth: number) {
+    if (newWidth !== prevWidth) {
+      return newWidth
+    }
+
+    return 0
   }
 
   componentDidUpdate (prevProps, prevState) {
+    const newWidth = this.shouldCanvasResize(prevProps.width, this.props.width)
+    if (newWidth) {
+      this.updateCanvasWithNewDimensions(newWidth)
+    }
+
     const { imagePathList, groupSelectList, selectedArea } = this.state
     let edgeListToRender = []
     let copyImagePathList = copyImageList(imagePathList)
@@ -233,18 +247,19 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.updateCanvasWithNewDimensions()
   }
 
-  /*:: updateCanvasWithNewDimensions: () => void */
-  updateCanvasWithNewDimensions () {
+  /*:: updateCanvasWithNewDimensions: (newWidth: number) => void */
+  updateCanvasWithNewDimensions (newWidth: number) {
     let canvasWidth = 0
+    const wrapperWidth = newWidth || this.wrapperDimensions.width
 
     if (this.isPortrait) {
-      canvasWidth = this.wrapperDimensions.width / 2
+      canvasWidth = wrapperWidth / 2
     } else {
       // Landscape
-      canvasWidth = this.wrapperDimensions.width
+      canvasWidth = wrapperWidth
     }
-
-    canvasWidth = Math.floor(canvasWidth)
+    // Rounding via bitwise or since this could be called A LOT
+    canvasWidth = canvasWidth | 1
 
     let canvasHeight = 0
 
@@ -309,18 +324,8 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
   componentDidMount () {
     this.updateWindowDimensions()
-    // @todo Review -RS
-    // window.addEventListener('resize', this.updateWindowDimensions)
-    // window.addEventListener('scroll', this.setCanvasOffset)
-
     this.setDependentPositions()
     this.initCanvas()
-  }
-
-  componentWillUnmount () {
-    // @todo - Review -RS
-    // window.removeEventListener('resize', this.updateWindowDimensions)
-    // window.removeEventListener('scroll', this.setCanvasOffset)
   }
 
   updateWindowDimensions = () => {
