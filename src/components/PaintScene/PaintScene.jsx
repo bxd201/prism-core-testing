@@ -11,7 +11,8 @@ import { getPaintAreaPath, repaintImageByPath,
   edgeDetect, pointInsideCircle, alterRGBByPixel,
   getImageCordinateByPixel, eraseIntersection,
   getActiveColorRGB, getSelectArea, hexToRGB,
-  checkIntersection, drawImagePixelByPath, copyImageList } from './utils'
+  checkIntersection, drawImagePixelByPath,
+  copyImageList, getColorAtPixel, colorMatch } from './utils'
 import { toolNames } from './data'
 import { getScaledPortraitHeight, getScaledLandscapeHeight } from '../../shared/helpers/ImageUtils'
 import throttle from 'lodash/throttle'
@@ -815,6 +816,41 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   }
 
   handlePaintArea = (e) => {
+    const { imagePathList } = this.state
+    let imagePath = []
+    const cursorX = e.nativeEvent.offsetX
+    const cursorY = e.nativeEvent.offsetY
+    const imageData = this.CFICanvasContext2.getImageData(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
+    const imageDataOrigin = this.CFICanvasContext.getImageData(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
+    let copyImagePathList = copyImageList(imagePathList)
+    const RGB = getActiveColorRGB(hexToRGB(this.props.lpActiveColor.hex))
+    const ctx = this.CFICanvas2.current.getContext('2d')
+    const index = (cursorX + cursorY * this.canvasOffsetWidth) * 4
+    let isClickInsideImage = false
+    const isPaint = colorMatch(getColorAtPixel(imageData, cursorX, cursorY), { r: RGB[0], g: RGB[1], b: RGB[2], a: RGB[3] })
+
+    if (!isPaint) {
+      for (let i = 0; i < imagePathList.length; i++) {
+        if (imagePathList[i].data.includes(index)) {
+          isClickInsideImage = true
+          break
+        }
+      }
+
+      if (isClickInsideImage) {
+        imagePath = getSelectArea(imageData, RGB, cursorX, cursorY, 100)
+      } else {
+        imagePath = getSelectArea(imageDataOrigin, RGB, cursorX, cursorY, 94)
+      }
+      this.clearCanvas()
+      drawImagePixelByPath(ctx, this.canvasOffsetWidth, this.canvasOffsetHeight, RGB, imagePath)
+      const erasePath = getImageCordinateByPixel(this.CFICanvas2, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight)
+      copyImagePathList = eraseIntersection(copyImagePathList, erasePath)
+      copyImagePathList.push({ color: RGB, data: erasePath })
+      this.clearCanvas()
+      repaintImageByPath(copyImagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
+      this.setState({ imagePathList: copyImagePathList })
+    }
   }
 
   save = () => {
