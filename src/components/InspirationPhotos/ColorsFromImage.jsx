@@ -110,7 +110,7 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
     this.canvasClientX = parseInt(this.canvasOffset.left, 10)
     this.canvasClientY = parseInt(this.canvasOffset.top, 10)
     this.setState({ pinnedColors: renderingPins(this.props.data.initPins, this.canvasOffsetWidth, this.canvasOffsetHeight) })
-  };
+  }
 
   initCanvas = () => {
     this.setCanvasOffset()
@@ -139,7 +139,7 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
     this.setState({ pinnedColors: renderingPins(this.props.data.initPins, this.canvasOffsetWidth, this.canvasOffsetHeight) })
   }
 
-  activedPins = (pinNumber: number) => {
+  activatePin = (pinNumber: number) => {
     const pinnedColorClicked = this.state.pinnedColors.findIndex((colors) => {
       return colors.pinNumber === parseInt(pinNumber)
     })
@@ -421,7 +421,7 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
               handleDrag={this.handleDrag}
               deleteCurrentPin={this.deleteCurrentPin}
               handleDragStop={this.handleDragStop}
-              activedPins={this.activedPins} />)
+              activatePin={this.activatePin} />)
           })
         }
         {isActivedPage && isDragging &&
