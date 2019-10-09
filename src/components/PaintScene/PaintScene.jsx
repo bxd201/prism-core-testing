@@ -82,9 +82,7 @@ type ComponentState = {
   wrapperHeight: number,
   showOriginalCanvas: boolean,
   canvasZoom: number,
-  _sx: number,
-  _sy: number,
-  _canvasMouseDown: boolean,
+  canvasMouseDown: boolean,
   zoomRange: number
 }
 
@@ -111,8 +109,9 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   backgroundImageWidth: number
   backgroundImageHeight: number
   isPortrait: boolean
-  _canvasPanStart: Object
   originalIsPortrait: boolean
+  canvasPanStart: Object
+  lastPanPoint: Object
 
   constructor (props: ComponentProps) {
     super(props)
@@ -130,7 +129,8 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.backgroundImageHeight = props.referenceDimensions.imageHeight
     this.isPortrait = props.referenceDimensions.isPortrait
     this.originalIsPortrait = props.referenceDimensions.originalIsPortrait
-    this._canvasPanStart = { x: 0, y: 0 }
+    this.canvasPanStart = { x: 0.5, y: 0.5 }
+    this.lastPanPoint = { x: 0, y: 0 }
 
     this.state = {
       imageStatus: 'loading',
@@ -154,9 +154,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       imagePathList: [],
       showOriginalCanvas: false,
       canvasZoom: 1,
-      _sx: 0,
-      _sy: 0,
-      _canvasMouseDown: false,
+      canvasMouseDown: false,
       zoomRange: 0,
       selectedArea: [],
       groupAreaList: [],
@@ -231,7 +229,6 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.CFICanvasContext2 = this.CFICanvas2.current.getContext('2d')
     this.canvasOffsetWidth = parseInt(this.wrapperDimensions.width, 10)
     this.canvasOffsetHeight = parseInt(this.wrapperDimensions.height, 10)
-
     this.updateCanvasWithNewDimensions()
   }
 
@@ -269,7 +266,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.CFICanvas.current.height = canvasHeight
     this.CFICanvas2.current.width = canvasWidth
     this.CFICanvas2.current.height = canvasHeight
-
+    this.canvasOriginalDimensions = { width: canvasWidth, height: canvasHeight }
     this.setBackgroundImage(canvasWidth, canvasHeight)
   }
 
@@ -341,7 +338,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     }
     this.clearCanvas()
     repaintImageByPath(imagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
-    this.setState({ activeTool, selectedArea: [] })
+    this.setState({ activeTool, selectedArea: [{ edgeList: [], selectPath: [] }] })
   }
 
   // Should only be used on user even to push
@@ -453,15 +450,20 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   mouseMoveHandler = (e: Object) => {
     e.stopPropagation()
     e.persist()
+    const { activeTool, canvasMouseDown } = this.state
+    if (activeTool === toolNames.ZOOM && canvasMouseDown) {
+      this.onPanMove(e)
+      return
+    }
     this.throttledMouseMove(e)
   }
 
   throttledMouseMove = throttle((e: Object) => {
     const { clientX, clientY } = e
-    const { activeTool, paintBrushWidth, isDragging, drawCoordinates, eraseBrushWidth, paintBrushShape } = this.state
+    const { activeTool, paintBrushWidth, isDragging, drawCoordinates, eraseBrushWidth, paintBrushShape, canvasZoom } = this.state
     const { lpActiveColor } = this.props
     const lpActiveColorRGB = (activeTool === eraseTool) ? `rgba(255, 255, 255, 1)` : `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})`
-    const canvasOffset = this.getCanvasOffset()
+    const canvasClientOffset = this.CFICanvas2.current.getBoundingClientRect()
     const canvasWrapperOffset = this.getCanvasWrapperOffset()
 
     if ((lpActiveColor && activeTool === paintBrushTool) || activeTool === eraseTool) {
@@ -472,11 +474,13 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       this.setState({ position })
 
       if (isDragging) {
-        const currentPoint = { x: clientX - canvasOffset.x + window.scrollX, y: clientY - canvasOffset.y + window.scrollY }
+        const currentPoint = {
+          x: (clientX - canvasClientOffset.left) / (canvasClientOffset.right - canvasClientOffset.left) * canvasClientOffset.width / canvasZoom,
+          y: (clientY - canvasClientOffset.top) / (canvasClientOffset.bottom - canvasClientOffset.top) * canvasClientOffset.height / canvasZoom
+        }
         const drawCoordinatesCloned = copyImageList(drawCoordinates)
         drawCoordinatesCloned.push(currentPoint)
         const drawCoordinatesLength = drawCoordinates.length
-        // this.drawPaintBrushPoint(currentPoint, drawCoordinates[drawCoordinatesLength - 1])
         const lastPoint = { x: drawCoordinates[drawCoordinatesLength - 1].x, y: drawCoordinates[drawCoordinatesLength - 1].y }
         if ((activeTool === paintBrushTool && paintBrushShape === brushSquareShape) || (activeTool === eraseTool)) {
           this.drawPaintBrushPoint(currentPoint, drawCoordinates[drawCoordinatesLength - 1])
@@ -489,17 +493,20 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
         this.setState({ drawCoordinates: drawCoordinatesCloned })
       }
     }
-  }, 5)
+  }, 10)
 
   mouseDownHandler = (e: Object) => {
-    const { isDragging, paintBrushWidth, paintBrushShape, activeTool } = this.state
+    const { isDragging, paintBrushWidth, paintBrushShape, activeTool, canvasZoom } = this.state
     const { lpActiveColor } = this.props
     const lpActiveColorRGB = (activeTool === eraseTool) ? `rgba(255, 255, 255, 1)` : `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})`
     if (!lpActiveColor) return
     const { clientX, clientY } = e
-    const canvasOffset = this.getCanvasOffset()
+    const canvasClientOffset = this.CFICanvas2.current.getBoundingClientRect()
     const drawCoordinates = []
-    const currentPoint = { x: clientX - canvasOffset.x + window.scrollX, y: clientY - canvasOffset.y + window.scrollY }
+    const currentPoint = {
+      x: (clientX - canvasClientOffset.left) / (canvasClientOffset.right - canvasClientOffset.left) * canvasClientOffset.width / canvasZoom,
+      y: (clientY - canvasClientOffset.top) / (canvasClientOffset.bottom - canvasClientOffset.top) * canvasClientOffset.height / canvasZoom
+    }
     const lastPoint = { x: currentPoint.x - 1, y: currentPoint.y }
     drawCoordinates.push(currentPoint)
     if (isDragging === false) {
@@ -597,15 +604,16 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     const { activeTool } = this.state
     const lpActiveColorRGB = `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})`
     context.fillStyle = (activeTool === eraseTool) ? `rgba(255, 255, 255, 1)` : lpActiveColorRGB
-    const radius = Math.round(0.5 * width)
+    const canvasClientOffset = this.CFICanvas2.current.getBoundingClientRect()
+    const scale = this.canvasOriginalDimensions.width / canvasClientOffset.width
+    const radius = Math.round(0.5 * width * scale)
 
-    this.CFICanvasContext2.beginPath()
     if (clip) {
       context.save()
       context.beginPath()
       drawAcrossLine(this.CFICanvasContext2, to, from, (ctx, x, y) => {
         if (brushShape === brushSquareShape) {
-          ctx.rect(x - radius, y - radius, width, width)
+          ctx.rect(x - radius, y - radius, width * scale, width * scale)
         } else {
           ctx.arc(x, y, radius, 0, 2 * Math.PI)
         }
@@ -614,9 +622,10 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       context.clearRect(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
       context.restore()
     } else {
+      this.CFICanvasContext2.beginPath()
       drawAcrossLine(this.CFICanvasContext2, to, from, (ctx, x, y) => {
         if (brushShape === brushSquareShape) {
-          ctx.rect(x - radius, y - radius, width, width)
+          ctx.rect(x - radius, y - radius, width * scale, width * scale)
         } else {
           ctx.arc(x, y, radius, 0, 2 * Math.PI)
         }
@@ -649,9 +658,11 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
      * The main idea is maintain selectAreaList, whenever user click area, we repaint canvas based on update
      * selectAreaList and imagePathList
     */
-    const { imagePathList, selectedArea, groupAreaList, groupSelectList } = this.state
-    const cursorX = e.nativeEvent.offsetX
-    const cursorY = e.nativeEvent.offsetY
+    const { imagePathList, selectedArea, groupAreaList, groupSelectList, canvasZoom } = this.state
+    const canvasClientOffset = this.CFICanvas2.current.getBoundingClientRect()
+    const { clientX, clientY } = e
+    const cursorX = parseInt((clientX - canvasClientOffset.left) / (canvasClientOffset.right - canvasClientOffset.left) * canvasClientOffset.width / canvasZoom)
+    const cursorY = parseInt((clientY - canvasClientOffset.top) / (canvasClientOffset.bottom - canvasClientOffset.top) * canvasClientOffset.height / canvasZoom)
     const imageData = this.CFICanvasContext2.getImageData(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
 
     const index = (cursorX + cursorY * this.canvasOffsetWidth) * 4
@@ -766,8 +777,11 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
   handlePolygonDefine = (e, isAddArea) => {
     const ctx = this.CFICanvas2.current
-    const cursorX = e.nativeEvent.offsetX
-    const cursorY = e.nativeEvent.offsetY
+    const { clientX, clientY } = e
+    const { canvasZoom } = this.state
+    const canvasClientOffset = this.CFICanvas2.current.getBoundingClientRect()
+    const cursorX = (clientX - canvasClientOffset.left) / (canvasClientOffset.right - canvasClientOffset.left) * canvasClientOffset.width / canvasZoom
+    const cursorY = (clientY - canvasClientOffset.top) / (canvasClientOffset.bottom - canvasClientOffset.top) * canvasClientOffset.height / canvasZoom
     if (!ctx.getContext) return
     let ctxDraw = ctx.getContext('2d')
     const { BeginPointList, polyList, lineStart, imagePathList } = this.state
@@ -799,12 +813,14 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       )
       return
     } else {
-      drawCircle(ctxDraw, cursorX, cursorY)
+      const canvasClientOffset = this.CFICanvas2.current.getBoundingClientRect()
+      const scale = this.canvasOriginalDimensions.width / canvasClientOffset.width
+      drawCircle(ctxDraw, cursorX, cursorY, scale)
       // toDo: Animation of StartPoint
       if (lineStart.length > 0) {
         ctxDraw.beginPath()
         const end = [cursorX, cursorY]
-        drawLine(ctxDraw, lineStart, end, true)
+        drawLine(ctxDraw, lineStart, end, true, scale)
       } else {
         this.setState({ BeginPointList: [cursorX, cursorY] })
       }
@@ -898,82 +914,69 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
   applyZoom = (zoomNumber: number) => {
     const { canvasZoom, zoomRange } = this.state
-    const zoomScale = (zoomNumber > zoomRange) ? 1 : -1
-    const zoom = Number.parseFloat(canvasZoom - zoomScale * 0.1).toPrecision(1)
-    if (zoom > 1 || zoom < 0.1) return
-    this.setState({ canvasZoom: zoom, zoomRange: zoomNumber }, () => { this.redrawImage(zoom) })
-  }
+    let zoom = (zoomNumber > zoomRange) ? canvasZoom / 0.8 : canvasZoom * 0.8
+    if (zoom < 1 || zoom >= 8) zoom = canvasZoom
 
-  redrawImage = (zoomFactor: number) => {
-    const sWidth = this.backgroundImageWidth * zoomFactor
-    const sHeight = this.backgroundImageHeight * zoomFactor
-    this.realignImage(sWidth, sHeight)
-  }
-
-  realignImage = (sWidth: number, sHeight: number) => {
-    const { _sx, _sy } = this.state
-    let _sxUpdated = _sx
-    let _syUpdated = _sy
-    if (_sx + sWidth > this.backgroundImageWidth || _sy + sHeight > this.backgroundImageHeight || _sx < 0 || _sy < 0) {
-      if (_sx + sWidth > this.backgroundImageWidth) {
-        _sxUpdated = this.backgroundImageWidth - sWidth
-      }
-      if (_sy + sHeight > this.backgroundImageHeight) {
-        _syUpdated = this.backgroundImageHeight - sHeight
-      }
-      if (_sxUpdated < 0) {
-        _sxUpdated = 0
-      }
-      if (_syUpdated < 0) {
-        _syUpdated = 0
-      }
+    const wrapperClientOffset = this.getCanvasWrapperOffset()
+    const options = {
+      containerWidth: wrapperClientOffset.width,
+      containerHeight: wrapperClientOffset.height,
+      canvasWidth: this.canvasOriginalDimensions.width,
+      canvasHeight: this.canvasOriginalDimensions.height,
+      zoom: zoom,
+      panX: this.canvasPanStart.x,
+      panY: this.canvasPanStart.y
     }
-    this.setState({
-      _sx: _sxUpdated,
-      _sy: _syUpdated
-    }, () => {
-      this.CFICanvasContext.clearRect(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
-      this.CFICanvasContext.drawImage(this.CFIImage.current, this.state._sx, this.state._sy, sWidth, sHeight, 0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
-    })
+    const factors = this.canvasDimensionFactors(options)
+    this.applyDimensionFactorsToCanvas(factors)
+    this.setState({ canvasZoom: zoom, zoomRange: zoomNumber })
   }
 
   onPanStart = (event: Object) => {
+    event.stopPropagation()
+    event.preventDefault()
+    const { activeTool } = this.state
+    if (activeTool !== toolNames.ZOOM) return
     window.removeEventListener('mousemove', this.mouseMoveHandler)
+    window.removeEventListener('click', this.handleClick)
     window.addEventListener('mousemove', this.onPanMove)
     window.addEventListener('mouseup', this.onPanEnd)
     this.setState({
-      _canvasMouseDown: true
+      canvasMouseDown: true
     })
-    const sWidth = this.backgroundImageWidth * this.state.canvasZoom
-    const sHeight = this.backgroundImageHeight * this.state.canvasZoom
-    const x = event.clientX / (this.canvasOffsetWidth / sWidth) + this.state._sx
-    const y = event.clientY / (this.canvasOffsetHeight / sHeight) + this.state._sy
-    this._canvasPanStart = { x: x, y: y }
+    this.lastPanPoint = { x: event.pageX, y: event.pageY }
   }
 
-  onPanMove = (event: Object) => {
-    const { _canvasMouseDown, _sx, _sy } = this.state
-    let _sxUpdated = _sx
-    let _syUpdated = _sy
-    if (!_canvasMouseDown) return
-    const sWidth = this.backgroundImageWidth * this.state.canvasZoom
-    const sHeight = this.backgroundImageHeight * this.state.canvasZoom
-    if (this.state.canvasZoom >= 1) return
-    const x = event.clientX / (this.canvasOffsetWidth / sWidth) + _sxUpdated
-    const y = event.clientY / (this.canvasOffsetHeight / sHeight) + _syUpdated
-    _sxUpdated += (this._canvasPanStart.x - x)
-    _syUpdated += (this._canvasPanStart.y - y)
-    this.setState({
-      _sx: _sxUpdated,
-      _sy: _syUpdated
-    }, () => {
-      this.redrawImage(this.state.canvasZoom)
-    })
-  }
+  onPanMove = throttle((event: Object) => {
+    const { canvasZoom, canvasMouseDown } = this.state
+    if (canvasZoom <= 1 && canvasZoom >= 8) return
+    if (!canvasMouseDown) return
+    const MIN_PAN = -0.1
+    const MAX_PAN = 1.1
+    const dx = (event.pageX - this.lastPanPoint.x) / document.body.clientWidth
+    const dy = (event.pageY - this.lastPanPoint.y) / document.body.clientHeight
+    const panX = this.canvasPanStart.x - dx
+    const panY = this.canvasPanStart.y - dy
+    this.canvasPanStart = { x: Math.max(MIN_PAN, Math.min(MAX_PAN, panX)), y: Math.max(MIN_PAN, Math.min(MAX_PAN, panY)) }
+    this.lastPanPoint = { x: event.pageX, y: event.pageY }
 
-  onPanEnd = (event: Object) => {
+    const wrapperClientOffset = this.getCanvasWrapperOffset()
+    const options = {
+      containerWidth: wrapperClientOffset.width,
+      containerHeight: wrapperClientOffset.height,
+      canvasWidth: this.canvasOriginalDimensions.width,
+      canvasHeight: this.canvasOriginalDimensions.height,
+      zoom: canvasZoom,
+      panX: this.canvasPanStart.x,
+      panY: this.canvasPanStart.y
+    }
+    const factors = this.canvasDimensionFactors(options)
+    this.applyDimensionFactorsToCanvas(factors)
+  }, 10)
+
+  onPanEnd = () => {
     this.setState({
-      _canvasMouseDown: false
+      canvasMouseDown: false
     })
   }
 
@@ -983,7 +986,9 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       ctx.lineCap = 'round'
       ctx.lineJoin = 'round'
     }
-    ctx.lineWidth = paintBrushWidth
+    const canvasClientOffset = this.CFICanvas2.current.getBoundingClientRect()
+    const scale = this.canvasOriginalDimensions.width / canvasClientOffset.width
+    ctx.lineWidth = paintBrushWidth * scale
     ctx.strokeStyle = color
     ctx.moveTo(lastPoint.x, lastPoint.y)
     ctx.lineTo(currentPoint.x, currentPoint.y)
@@ -1015,35 +1020,37 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     return { paintBrushActiveClass: paintBrushActiveClass, paintBrushCircleActiveClass: paintBrushCircleActiveClass }
   }
 
-getEraseBrushActiveClass = () => {
-  const { eraseBrushWidth, eraseBrushShape } = this.state
-  let eraseBrushActiveClass = ''
-  let eraseBrushCircleActiveClass = ''
-  if (eraseBrushWidth === brushLargeWidth) {
-    eraseBrushActiveClass = paintBrushLargeClass
-    if (eraseBrushShape === brushRoundShape) eraseBrushCircleActiveClass = paintBrushLargeCircleClass
-  } else if (eraseBrushWidth === brushMediumWidth) {
-    eraseBrushActiveClass = paintBrushMediumClass
-    if (eraseBrushShape === brushRoundShape) eraseBrushCircleActiveClass = paintBrushMediumCircleClass
-  } else if (eraseBrushWidth === brushSmallWidth) {
-    eraseBrushActiveClass = paintBrushSmallClass
-    if (eraseBrushShape === brushRoundShape) eraseBrushCircleActiveClass = paintBrushSmallCircleClass
-  } else if (eraseBrushWidth === brushTinyWidth) {
-    eraseBrushActiveClass = paintBrushTinyClass
-    if (eraseBrushShape === brushRoundShape) eraseBrushCircleActiveClass = paintBrushTinyCircleClass
+  getEraseBrushActiveClass = () => {
+    const { eraseBrushWidth, eraseBrushShape } = this.state
+    let eraseBrushActiveClass = ''
+    let eraseBrushCircleActiveClass = ''
+    if (eraseBrushWidth === brushLargeWidth) {
+      eraseBrushActiveClass = paintBrushLargeClass
+      if (eraseBrushShape === brushRoundShape) eraseBrushCircleActiveClass = paintBrushLargeCircleClass
+    } else if (eraseBrushWidth === brushMediumWidth) {
+      eraseBrushActiveClass = paintBrushMediumClass
+      if (eraseBrushShape === brushRoundShape) eraseBrushCircleActiveClass = paintBrushMediumCircleClass
+    } else if (eraseBrushWidth === brushSmallWidth) {
+      eraseBrushActiveClass = paintBrushSmallClass
+      if (eraseBrushShape === brushRoundShape) eraseBrushCircleActiveClass = paintBrushSmallCircleClass
+    } else if (eraseBrushWidth === brushTinyWidth) {
+      eraseBrushActiveClass = paintBrushTinyClass
+      if (eraseBrushShape === brushRoundShape) eraseBrushCircleActiveClass = paintBrushTinyCircleClass
+    }
+    return { eraseBrushActiveClass: eraseBrushActiveClass, eraseBrushCircleActiveClass: eraseBrushCircleActiveClass }
   }
-  return { eraseBrushActiveClass: eraseBrushActiveClass, eraseBrushCircleActiveClass: eraseBrushCircleActiveClass }
-}
 
-getCanvasWrapperOffset = () => {
-  let canvasWrapperOffset = {}
-  if (this.CFIWrapper.current) {
-    const wrapperClientOffset = this.CFIWrapper.current.getBoundingClientRect()
-    canvasWrapperOffset.x = parseInt(wrapperClientOffset.left, 10)
-    canvasWrapperOffset.y = parseInt(wrapperClientOffset.top, 10)
+  getCanvasWrapperOffset = () => {
+    let canvasWrapperOffset = {}
+    if (this.CFIWrapper.current) {
+      const wrapperClientOffset = this.CFIWrapper.current.getBoundingClientRect()
+      canvasWrapperOffset.x = parseInt(wrapperClientOffset.left, 10)
+      canvasWrapperOffset.y = parseInt(wrapperClientOffset.top, 10)
+      canvasWrapperOffset.width = parseInt(wrapperClientOffset.width, 10)
+      canvasWrapperOffset.height = parseInt(wrapperClientOffset.height, 10)
+    }
+    return canvasWrapperOffset
   }
-  return canvasWrapperOffset
-}
 
   group = () => {
     let newGroupSelectList = []
@@ -1152,6 +1159,54 @@ getCanvasWrapperOffset = () => {
     }
   }
 
+  canvasDimensionFactors = (options: Object) => {
+    const { canvasWidth, canvasHeight, containerWidth, containerHeight, panX, panY, zoom } = options
+    let canvasScaleX = canvasWidth / containerWidth
+    let canvasScaleY = canvasHeight / containerHeight
+    let shouldFitWidth = false
+    let shouldFitHeight = false
+    let width
+    let height
+
+    if (canvasScaleX > canvasScaleY) {
+      // image is wider than it is tall
+      shouldFitWidth = true
+    } else {
+      // image is taller than it is wide
+      shouldFitHeight = true
+    }
+
+    if (shouldFitWidth) {
+      width = containerWidth * zoom
+      height = width * canvasHeight / canvasWidth
+    } else if (shouldFitHeight) {
+      height = containerHeight * zoom
+      width = height * canvasWidth / canvasHeight
+    }
+
+    const widthFactor = width / containerWidth
+    const heightFactor = height / containerHeight
+    const clampedPanX = (widthFactor < 1) ? 0.5 : panX
+    const clampedPanY = (heightFactor < 1) ? 0.5 : panY
+    const xFactor = clampedPanX * (1 - widthFactor)
+    const yFactor = clampedPanY * (1 - heightFactor)
+
+    return {
+      widthFactor, heightFactor, xFactor, yFactor
+    }
+  }
+
+  applyDimensionFactorsToCanvas = (factors: Object) => {
+    this.CFICanvas.current.style.width = `${Math.floor(factors.widthFactor * 100)}%`
+    this.CFICanvas.current.style.height = `${Math.floor(factors.heightFactor * 100)}%`
+    this.CFICanvas.current.style.left = `${Math.floor(factors.xFactor * 100)}%`
+    this.CFICanvas.current.style.top = `${Math.floor(factors.yFactor * 100)}%`
+    this.CFICanvas2.current.style.width = `${Math.floor(factors.widthFactor * 100)}%`
+    this.CFICanvas2.current.style.height = `${Math.floor(factors.heightFactor * 100)}%`
+    this.CFICanvas2.current.style.left = `${Math.floor(factors.xFactor * 100)}%`
+    this.CFICanvas2.current.style.top = `${Math.floor(factors.yFactor * 100)}%`
+  }
+
   render () {
     const { imageUrl, lpActiveColor } = this.props
     const { activeTool, position, paintBrushShape, paintBrushWidth, eraseBrushShape, eraseBrushWidth, undoIsEnabled, redoIsEnabled, showOriginalCanvas, zoomRange, isAddGroup, isDeleteGroup, isUngroup } = this.state
@@ -1162,8 +1217,8 @@ getCanvasWrapperOffset = () => {
 
     return (
       <div role='presentation' className={`${baseClass}`} onClick={this.handleClick} onMouseMove={this.mouseMoveHandler} ref={this.CFIWrapper} style={{ height: this.state.wrapperHeight }}>
-        <canvas onMouseDown={this.onPanStart} className={`${canvasClass} ${showOriginalCanvas ? `${canvasShowByZindex}` : `${canvasHideByZindex}`} ${this.isPortrait ? portraitOrientation : ''}`} name='paint-scene-canvas-first' ref={this.CFICanvas} />
-        <canvas style={{ opacity: 0.8 }} className={`${canvasClass} ${canvasSecondClass} ${this.isPortrait ? portraitOrientation : ''}`} name='paint-scene-canvas-second' ref={this.CFICanvas2} />
+        <canvas className={`${canvasClass} ${showOriginalCanvas ? `${canvasShowByZindex}` : `${canvasHideByZindex}`} ${this.isPortrait ? portraitOrientation : ''}`} name='paint-scene-canvas-first' ref={this.CFICanvas} />
+        <canvas onMouseDown={this.onPanStart} style={{ opacity: 0.8 }} className={`${canvasClass} ${canvasSecondClass} ${this.isPortrait ? portraitOrientation : ''}`} name='paint-scene-canvas-second' ref={this.CFICanvas2} />
         <img className={`${imageClass}`} ref={this.CFIImage} onLoad={this.initCanvas} onError={this.handleImageErrored} src={imageUrl} alt='' />
         <div className={`${paintToolsClass}`}>
           <PaintToolBar

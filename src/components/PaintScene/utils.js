@@ -33,11 +33,11 @@ export const getActiveColorRGB = (color) => {
   return [red, green, blue, 255]
 }
 
-export const drawCircle = (ctx, x, y) => {
+export const drawCircle = (ctx, x, y, scale = 1) => {
   ctx.save()
   ctx.beginPath()
   ctx.strokeStyle = '#fff'
-  ctx.arc(x, y, 10, 0, Math.PI * 2, false)
+  ctx.arc(x, y, 10 * scale, 0, Math.PI * 2, false)
   ctx.closePath()
   ctx.stroke()
 }
@@ -60,11 +60,11 @@ export const alterRGBByPixel = (canvas, color, width, height) => {
   ctx.putImageData(imageData, 0, 0)
 }
 
-export const drawLine = (ctx, lineStart, end, isDash) => {
+export const drawLine = (ctx, lineStart, end, isDash, scale = 1) => {
   ctx.save()
   ctx.beginPath()
   ctx.strokeStyle = '#fff'
-  ctx.lineWidth = 1.5
+  ctx.lineWidth = 1.5 * scale
   isDash && ctx.setLineDash([5, 15])
   ctx.moveTo(lineStart[0], lineStart[1])
   ctx.lineTo(end[0], end[1])

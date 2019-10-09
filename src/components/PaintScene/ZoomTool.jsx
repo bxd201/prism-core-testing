@@ -4,6 +4,7 @@ import './ZoomTool.scss'
 
 const baseClass = 'zoom-tool'
 const wrapperClass = `${baseClass}__wrapper`
+const inputRangeClass = `${baseClass}__input-range`
 
 type Props = {
   applyZoom: Function,
@@ -20,7 +21,7 @@ export function ZoomTool ({ applyZoom, zoomRange }: Props) {
 
   return (
     <div className={`${wrapperClass}`}>
-      <input type='range' value={zoomFactor} min='0' max='9' onChange={changeHandler} />
+      <input className={`${inputRangeClass}`} type='range' value={zoomFactor} min='0' max='9' step='1' onChange={changeHandler} />
     </div>
   )
 }
