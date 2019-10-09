@@ -1,8 +1,12 @@
 // @flow
 import React from 'react'
+import 'url-search-params-polyfill' // TODO: remove when dropping IE11 support
 
 import { ROUTE_PARAMS, ROUTE_PARAM_NAMES } from 'constants/globals'
+
 import { urlWorker } from '../../../shared/helpers/URLUtils'
+import WithConfigurationContext from '../../../contexts/ConfigurationContext/WithConfigurationContext'
+
 import ColorWallLocationBuffer from './ColorWallLocationBuffer'
 
 /**
@@ -11,7 +15,7 @@ import ColorWallLocationBuffer from './ColorWallLocationBuffer'
  * @param {*} props
  */
 const ColorWallRouteComponent = (props: Object) => {
-  const { match, ...other } = props
+  const { match, config, location, ...other } = props
   const captured = match.params[0]
 
   // we may be manually overriding the match prop if we've matched ANYTHING after the base color wall URL, so let's clone it
@@ -29,7 +33,15 @@ const ColorWallRouteComponent = (props: Object) => {
     }
   }
 
+  // check if there is a search parameter in the URL, if so, transform into our existing search url format
+  const searchParams = new URLSearchParams(window.location.search)
+  const paramName = config.searchQueryParameterName
+  if (location.pathname.indexOf(ROUTE_PARAMS.SEARCH) === -1 && searchParams.has(paramName)) {
+    props.history.push(`/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_WALL}/${ROUTE_PARAMS.SEARCH}/${searchParams.get(paramName)}`)
+    searchParams.delete(paramName)
+  }
+
   return <ColorWallLocationBuffer match={newMatch} {...other} />
 }
 
-export default ColorWallRouteComponent
+export default WithConfigurationContext(ColorWallRouteComponent)
