@@ -32,10 +32,15 @@
     &--hide-by-zindex {
       z-index: 10;
     }
+    &--paintArea{
+      cursor: pointer
+    }
   }
+
   &__canvas-second{
     z-index: 20;
   }
+
   &__canvas-third{
     z-index: 30;
   }

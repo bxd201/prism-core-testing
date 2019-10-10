@@ -162,7 +162,8 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       wrapperHeight: this.props.referenceDimensions.imageHeight,
       isUngroup: false,
       isAddGroup: false,
-      isDeleteGroup: false
+      isDeleteGroup: false,
+      paintCursor: `${canvasClass}--${paintArea}`
     }
 
     this.pushToHistory = this.pushToHistory.bind(this)
@@ -338,7 +339,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     }
     this.clearCanvas()
     repaintImageByPath(imagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
-    this.setState({ activeTool, selectedArea: [{ edgeList: [], selectPath: [] }] })
+    this.setState({ activeTool, selectedArea: [], paintCursor: `${canvasClass}--${activeTool}` })
   }
 
   // Should only be used on user even to push
@@ -831,7 +832,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.setState({ lineStart: [cursorX, cursorY], polyList: poly })
   }
 
-  handlePaintArea = (e) => {
+  handlePaintArea = throttle((e) => {
     const { imagePathList } = this.state
     let imagePath = []
     const cursorX = e.nativeEvent.offsetX
@@ -843,7 +844,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     const ctx = this.CFICanvas2.current.getContext('2d')
     const index = (cursorX + cursorY * this.canvasOffsetWidth) * 4
     let isClickInsideImage = false
-    const isPaint = colorMatch(getColorAtPixel(imageData, cursorX, cursorY), { r: RGB[0], g: RGB[1], b: RGB[2], a: RGB[3] })
+    const isPaint = colorMatch(getColorAtPixel(imageData, cursorX, cursorY), { r: RGB[0], g: RGB[1], b: RGB[2], a: RGB[3] }, 100)
 
     if (!isPaint) {
       for (let i = 0; i < imagePathList.length; i++) {
@@ -867,7 +868,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       repaintImageByPath(copyImagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
       this.setState({ imagePathList: copyImagePathList })
     }
-  }
+  }, 10)
 
   save = () => {
     /** This function will create mask */
@@ -1209,7 +1210,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
   render () {
     const { imageUrl, lpActiveColor } = this.props
-    const { activeTool, position, paintBrushShape, paintBrushWidth, eraseBrushShape, eraseBrushWidth, undoIsEnabled, redoIsEnabled, showOriginalCanvas, zoomRange, isAddGroup, isDeleteGroup, isUngroup } = this.state
+    const { activeTool, position, paintBrushShape, paintBrushWidth, eraseBrushShape, eraseBrushWidth, undoIsEnabled, redoIsEnabled, showOriginalCanvas, zoomRange, isAddGroup, isDeleteGroup, isUngroup, paintCursor } = this.state
     const lpActiveColorRGB = (lpActiveColor) ? `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})` : ``
     const backgroundColorBrush = (activeTool === eraseTool) ? `rgba(255, 255, 255, 0.7)` : lpActiveColorRGB
     const { paintBrushActiveClass, paintBrushCircleActiveClass } = this.getPaintBrushActiveClass()
@@ -1218,7 +1219,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     return (
       <div role='presentation' className={`${baseClass}`} onClick={this.handleClick} onMouseMove={this.mouseMoveHandler} ref={this.CFIWrapper} style={{ height: this.state.wrapperHeight }}>
         <canvas className={`${canvasClass} ${showOriginalCanvas ? `${canvasShowByZindex}` : `${canvasHideByZindex}`} ${this.isPortrait ? portraitOrientation : ''}`} name='paint-scene-canvas-first' ref={this.CFICanvas} />
-        <canvas onMouseDown={this.onPanStart} style={{ opacity: 0.8 }} className={`${canvasClass} ${canvasSecondClass} ${this.isPortrait ? portraitOrientation : ''}`} name='paint-scene-canvas-second' ref={this.CFICanvas2} />
+        <canvas onMouseDown={this.onPanStart} style={{ opacity: 0.8 }} className={`${canvasClass} ${paintCursor} ${canvasSecondClass} ${this.isPortrait ? portraitOrientation : ''}`} name='paint-scene-canvas-second' ref={this.CFICanvas2} />
         <img className={`${imageClass}`} ref={this.CFIImage} onLoad={this.initCanvas} onError={this.handleImageErrored} src={imageUrl} alt='' />
         <div className={`${paintToolsClass}`}>
           <PaintToolBar

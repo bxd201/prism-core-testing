@@ -1,4 +1,5 @@
 import { getDeltaE00 } from 'delta-e'
+const MAX_STACK_SIZE = 200
 export const getPaintAreaPath = (imagePathList, canvas, width, height, color) => {
   const RGB = getActiveColorRGB(color)
   const array = getImageCordinateByPixel(canvas, RGB, width, height)
@@ -192,15 +193,20 @@ export const eraseIntersection = (imagePathList, erasePath) => {
   return originImagePathList
 }
 
+/** using flood fill algorithm to get specific area and fill color to image
+ * similar is value refer to distance between two color you would set.
+ * it is set as 100 by default which you want to paint on the same color.*
+*/
 export const getSelectArea = (imageData, newColor, x, y, similar = 100) => {
   let resultArr = []
   const { width, height } = imageData
   const stack = []
   const baseColor = getColorAtPixel(imageData, x, y)
+  const colorForMatch = { r: newColor[0], g: newColor[1], b: newColor[2], a: newColor[3] }
   let operator = { x, y }
 
-  // Check if base color and new color are the same
-  if (colorMatch(baseColor, newColor)) {
+  // Check if base color and new color are the same or similar
+  if (colorMatch(baseColor, colorForMatch, similar)) {
     return
   }
 
@@ -208,6 +214,11 @@ export const getSelectArea = (imageData, newColor, x, y, similar = 100) => {
   stack.push({ x: operator.x, y: operator.y })
 
   while (stack.length) {
+    if (stack.length > MAX_STACK_SIZE) {
+      /* * when doing Paint Area, colorMatch function would check color if is similar,
+      to reduce space complex and avoid stackoverflow, so we set max_stack_size */
+      return resultArr
+    }
     operator = stack.pop()
     let contiguousDown = true // Vertical is assumed to be true
     let contiguousUp = true // Vertical is assumed to be true
