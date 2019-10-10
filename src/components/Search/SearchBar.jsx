@@ -5,32 +5,23 @@ import { faSearch } from '@fortawesome/pro-light-svg-icons'
 
 import './SearchBar.scss'
 
-type Props = {
+type OwnProps = {
   onSearchInput: Function,
   onClearSearch: Function,
   value: string | void
 }
 
+type Ref = {
+  forwardedRef?: RefObject
+}
+
+type Props = OwnProps & Ref
+
 const baseClass = 'SearchBar'
 
-export default class SearchBar extends PureComponent<Props> {
-  // these are method names of SearchBar class instances exposed via its ref
-  static API = {
-    focus: 'doFocus',
-    setValue: 'setValue'
-  }
-
-  searchInput: RefObject
-
-  constructor (props: Props) {
-    super(props)
-
-    this.searchInput = React.createRef()
-    this.doFocus = this.doFocus.bind(this)
-  }
-
+class SearchBar extends PureComponent<Props> {
   render () {
-    const { value, onClearSearch } = this.props
+    const { value, onClearSearch, forwardedRef } = this.props
     const _value = typeof value === 'string' ? value : ''
     const hasInput = !!_value
     const outline = hasInput ? 'with-outline' : 'without-outline'
@@ -41,7 +32,7 @@ export default class SearchBar extends PureComponent<Props> {
         <div className={`${baseClass}__wrapper ${baseClass}__wrapper--${outline}`}>
           <input
             value={value}
-            ref={this.searchInput}
+            ref={forwardedRef}
             className={`${baseClass}__input`}
             onChange={this.handleInput} />
           {
@@ -63,8 +54,9 @@ export default class SearchBar extends PureComponent<Props> {
 
     onSearchInput(value)
   }
-
-  doFocus = () => {
-    this.searchInput.current.focus()
-  }
 }
+
+// $FlowIgnore -- flow's mad about this ref for some reason.
+const WrappedSearchBar = React.forwardRef<OwnProps, SearchBar>((props, ref) => <SearchBar {...props} forwardedRef={ref} />)
+
+export default WrappedSearchBar
