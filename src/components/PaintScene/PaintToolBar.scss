@@ -47,7 +47,7 @@
       overflow: visible;
       outline: none;
       &:hover {
-        color: #f2f2f2;
+        color: #000;
         cursor: default;
         fill: none;
       }
@@ -85,7 +85,7 @@
     pointer-events: none;
     position: absolute;
     transition: color .7s;
-    width: 125%;
+    width: 127%;
     z-index: 10;
     &--active {
       color: #000;
@@ -203,7 +203,7 @@
     position: absolute;
     z-index: 10;
     top: 16px;
-    right: 20px;
+    right: 18px;
   }
   &__paint-tooltip {
     bottom: calc(100% + 0.5rem);
@@ -214,6 +214,7 @@
     position: absolute;
     &--active {
       display: flex;
+      z-index: 100;
     }
   }
   &__group-tool {
@@ -235,9 +236,25 @@
     bottom: 60px;
     display: flex;
     right: 0;
+    opacity: 0;
     padding: 1.5em 1em;
     position: absolute;
     width: 34.5em;
+    &:after {
+      border: 4px solid transparent;
+      border-top-color: #f2f2f2;
+      border-top-style: solid;
+      content: '';
+      display: inline-block;
+      height: 0;
+      left: 53%;
+      margin-left: -2px;
+      opacity: 1;
+      position: absolute;
+      top: 66px;
+      transition: opacity 0.3s ease-in-out;
+      width: 0;
+    }
     &--show-by-opacity {
       opacity: 1;
       transition: opacity 0.3s ease-in-out 0.7s;
@@ -245,6 +262,14 @@
     &--hide-by-opacity {
       opacity: 0;
       transition: opacity 0.3s ease-in-out;
+    }
+    &--show {
+      display: flex;
+      opacity: 1;
+    }
+    &--hide {
+      display: none;
+      opacity: 0;
     }
   }
 }

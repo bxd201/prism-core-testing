@@ -47,10 +47,10 @@ export function PaintToolTip ({ tooltipToolActiveName, closeTooltip, backButtonC
       {!isSelectGroup && <div className={`${wrapperClass}`} style={{ transform: `translate(${divTranslateValue}px)` }}>
         <div className={`${containerClass}`}>
           <button className={`${closeButtonClass}`} onClick={() => closeTooltip()}>
-            <FontAwesomeIcon className={``} icon={['fa', 'times']} size='1x' />
+            <FontAwesomeIcon className={``} icon={['fal', 'times']} size='lg' />
           </button>
           <div className={`${headerClass}`}>
-            <FontAwesomeIcon className={``} icon={['fa', 'info-circle']} size='1x' />&nbsp;TOOL TIPS
+            <FontAwesomeIcon className={``} icon={['fal', 'info-circle']} size='1x' />&nbsp;TOOL TIPS
           </div>
           <div className={`${toolNameClass}`}>{tooltipToolActiveName}</div>
           <div className={`${tooltipContentClass}`}>
@@ -70,10 +70,10 @@ export function PaintToolTip ({ tooltipToolActiveName, closeTooltip, backButtonC
       </div>}
       {isSelectGroup && <div className={`${wrapperClass} ${selectGroup}`}>
         <button className={`${closeButtonClass}`} onClick={() => closeTooltip()}>
-          <FontAwesomeIcon className={``} icon={['fa', 'times']} size='1x' />
+          <FontAwesomeIcon className={``} icon={['fal', 'times']} size='lg' />
         </button>
         <div className={`${headerClass}`}>
-          <FontAwesomeIcon className={``} icon={['fa', 'info-circle']} size='1x' />&nbsp;TOOL TIPS
+          <FontAwesomeIcon className={``} icon={['fal', 'info-circle']} size='1x' />&nbsp;TOOL TIPS
         </div>
         <div className={`${toolNameClass}`}>{tooltipToolActiveName}</div>
         <div className={`${tooltipContentClass}`}>

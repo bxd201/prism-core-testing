@@ -38,6 +38,8 @@ const groupToolHideClass = `${groupToolClass}--hide`
 const zoomToolClass = `${baseClass}__zoom-tool`
 const zoomToolShowByOpacityClass = `${zoomToolClass}--show-by-opacity`
 const zoomToolHideByOpacityClass = `${zoomToolClass}--hide-by-opacity`
+const zoomToolShowClass = `${zoomToolClass}--show`
+const zoomToolHideClass = `${zoomToolClass}--hide`
 
 type ComponentProps = {
   activeTool: string,
@@ -55,7 +57,6 @@ type ComponentProps = {
   redoIsEnabled: boolean,
   hidePaint: Function,
   applyZoom: Function,
-  zoomRange: number,
   isUngroup: boolean,
   isAddGroup: boolean,
   isDeleteGroup: boolean
@@ -67,7 +68,8 @@ type ComponentState = {
   showEraseBrushTypes: boolean,
   showTooltip: boolean,
   tooltipToolActiveNumber: number,
-  isHidePaint: boolean
+  isHidePaint: boolean,
+  zoomSliderHide: number
 }
 
 export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> {
@@ -80,7 +82,8 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
       showEraseBrushTypes: false,
       showTooltip: false,
       tooltipToolActiveNumber: 0,
-      isHidePaint: false
+      isHidePaint: false,
+      zoomSliderHide: -1
     }
 
     this.getToolBarItemClassName = this.getToolBarItemClassName.bind(this)
@@ -119,10 +122,19 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
     e.preventDefault()
     e.stopPropagation()
     const { showTooltip } = this.state
+    const { activeTool } = this.props
     if (showTooltip) {
       return
     }
-    this.setState((prevState, props) => ({ showToolBar: !prevState.showToolBar }))
+    this.setState((prevState, props) => ({ showToolBar: !prevState.showToolBar }), () => {
+      if (activeTool === toolNames.ZOOM) {
+        if (this.state.showToolBar) {
+          this.setState((prevState) => ({ zoomSliderHide: 0 }))
+        } else {
+          this.setState((prevState) => ({ zoomSliderHide: 1 }))
+        }
+      }
+    })
   }
 
   buttonClickHandler = (e: Object, toolName: string) => {
@@ -134,6 +146,12 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
     if (showTooltip) {
       return
     }
+
+    if (toolName === toolNames.INFO) {
+      setActiveTool(toolName)
+    }
+
+    this.setState({ zoomSliderHide: -1 })
 
     if (toolName === toolNames.UNDO) {
       if (this.props.undoIsEnabled) {
@@ -193,11 +211,11 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
 
   clearAllClickHandler = () => {
     const { clearCanvas } = this.props
-    clearCanvas()
+    clearCanvas(true)
   }
 
   toolButtonMouseDownHandler = (e: Object, toolName) => {
-    if (toolName === toolNames.HIDEPAINT) {
+    if (toolName === toolNames.HIDEPAINT && !this.state.showTooltip) {
       this.setState({ isHidePaint: true })
       e.preventDefault()
       const { hidePaint } = this.props
@@ -220,6 +238,10 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
     const { tooltipToolActiveNumber, isHidePaint, showTooltip } = this.state
     const { activeTool } = this.props
     const tools = toolBarButtons.map((tool: Object, index: number) => {
+      const iconProps = {}
+      if (tool.fontAwesomeIcon.flip) {
+        iconProps.flip = tool.fontAwesomeIcon.flip
+      }
       return <button
         key={tool.id}
         name={tool.name}
@@ -227,8 +249,10 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
         onClick={(e) => this.buttonClickHandler(e, tool.name)}
         onMouseDown={(e) => this.toolButtonMouseDownHandler(e, tool.name)}
       >
-        <FontAwesomeIcon className={`${toolIconClass}`} icon={['fa', 'paint-brush']} size='1x' />
-        <span className={`${toolNameClass} ${activeTool === tool.name || (showTooltip && tooltipToolActiveNumber === tool.id) || (isHidePaint && tool.name === toolNames.HIDEPAINT) ? `${toolNameActiveClass}` : ``}`}>{tool.displayName}</span>
+        <FontAwesomeIcon className={`${toolIconClass}`} icon={[tool.fontAwesomeIcon.variant, tool.fontAwesomeIcon.icon]} size='lg' transform={{ rotate: tool.fontAwesomeIcon.rotate }} {...iconProps} />
+        {tool.name === toolNames.DEFINEAREA && <FontAwesomeIcon className={`${toolIconClass}`} icon={['fal', 'plus']} size='xs' style={{ right: '12px', top: '21px' }} />}
+        {tool.name === toolNames.REMOVEAREA && <FontAwesomeIcon className={`${toolIconClass}`} icon={['fal', 'minus']} size='xs' style={{ right: '12px', top: '21px' }} />}
+        <span className={`${toolNameClass} ${(activeTool === tool.name && !showTooltip) || (showTooltip && tooltipToolActiveNumber === tool.id) || (isHidePaint && tool.name === toolNames.HIDEPAINT) ? `${toolNameActiveClass}` : ``}`}>{tool.displayName}</span>
       </button>
     })
 
@@ -237,6 +261,7 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
 
   closeTooltip = () => {
     this.setState({ showTooltip: false })
+    this.props.setActiveTool('')
   }
 
   backButtonClickHandler = () => {
@@ -249,6 +274,7 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
   groupClickHandler = (e: Object, toolName: string) => {
     e.preventDefault()
     e.stopPropagation()
+    if (this.state.showTooltip) return
     this.props.groupHandler(toolName)
   }
 
@@ -261,6 +287,7 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
 
   checkButtonIfDisable = (tool: Object) => {
     const { isUngroup, isAddGroup, isDeleteGroup } = this.props
+    if (this.state.showTooltip) return false
     if (tool.name === groupToolNames.DELETEGROUP && isDeleteGroup) { return true }
     if (tool.name === groupToolNames.GROUP && isAddGroup) { return true }
     if (tool.name === groupToolNames.UNGROUP && isUngroup) { return true }
@@ -276,7 +303,7 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
         className={`${toolbarButtonClass}`}
         onClick={(e) => this.groupClickHandler(e, tool.name)}
       >
-        <FontAwesomeIcon className={`${toolIconClass}`} icon={['fa', 'paint-brush']} size='1x' />
+        <FontAwesomeIcon className={`${toolIconClass}`} icon={[tool.fontAwesomeIcon.variant, tool.fontAwesomeIcon.icon]} size='lg' transform={{ rotate: tool.fontAwesomeIcon.rotate }} />
         <span className={`${toolNameClass} ${this.checkButtonIfDisable(tool) ? '' : toolNameDisabledClass} ${activeTool === toolNames.SELECTAREA || tooltipToolActiveNumber === toolNumbers.SELECTAREA ? `${toolNameActiveClass}` : ``}`}>{tool.displayName}</span>
       </button>
     })
@@ -292,8 +319,8 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
   }
 
   render () {
-    const { showToolBar, showPaintBrushTypes, showEraseBrushTypes, showTooltip, tooltipToolActiveNumber } = this.state
-    const { activeTool, paintBrushShape, paintBrushWidth, eraseBrushShape, eraseBrushWidth, setBrushShapeSize, applyZoom, zoomRange } = this.props
+    const { showToolBar, showPaintBrushTypes, showEraseBrushTypes, showTooltip, tooltipToolActiveNumber, zoomSliderHide } = this.state
+    const { activeTool, paintBrushShape, paintBrushWidth, eraseBrushShape, eraseBrushWidth, setBrushShapeSize, applyZoom } = this.props
 
     return (
       <React.Fragment>
@@ -336,10 +363,9 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
                 backButtonClickHandler={this.backButtonClickHandler}
                 nextButtonClickHandler={this.nextButtonClickHandler} />
             </div>}
-            {activeTool === toolNames.ZOOM && !showTooltip &&
-            <div className={`${zoomToolClass} ${showToolBar ? `${zoomToolShowByOpacityClass}` : `${zoomToolHideByOpacityClass}`}`}>
-              <ZoomTool applyZoom={applyZoom} zoomRange={zoomRange} />
-            </div>}
+            <div className={`${zoomToolClass} ${activeTool === toolNames.ZOOM && !showTooltip && zoomSliderHide === -1 ? `${zoomToolShowClass}` : activeTool !== toolNames.ZOOM ? `${zoomToolHideClass}` : ``} ${activeTool === toolNames.ZOOM && zoomSliderHide === 0 && !showTooltip ? `${zoomToolShowByOpacityClass}` : activeTool === toolNames.ZOOM && zoomSliderHide === 1 && !showTooltip ? `${zoomToolHideByOpacityClass}` : ``}`}>
+              <ZoomTool applyZoom={applyZoom} />
+            </div>
           </div>
           <div className={`${toolbarToggleClass}`}>
             <button onClick={this.toggleButtonClickHandler} className={`${toolbarToggleButtonClass} ${showToolBar ? `${toolbarToggleButtonToolbarShownClass}` : `${toolbarToggleButtonToolbarHiddenClass}`}`} />
