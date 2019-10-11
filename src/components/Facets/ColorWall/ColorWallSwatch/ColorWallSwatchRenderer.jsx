@@ -10,7 +10,7 @@ type Props = {
   focus?: boolean
 }
 
-export default function ColorWallSwatchRenderer ({ color, focus }: Props) {
+const ColorWallSwatchRenderer = ({ color, focus }: Props) => {
   return (
     <div className={CLASS_NAMES.SWATCH}
       role='presentation'>
@@ -20,3 +20,5 @@ export default function ColorWallSwatchRenderer ({ color, focus }: Props) {
     </div>
   )
 }
+
+export default React.memo<Props>(ColorWallSwatchRenderer)

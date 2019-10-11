@@ -3,8 +3,15 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { FormattedMessage } from 'react-intl'
 import kebabCase from 'lodash/kebabCase'
+import { type Color } from '../../../../../../src/shared/types/Colors'
 
-const DetailsLink = (props: Object) => {
+type Props = {
+  config: Object,
+  detailsLink?: string,
+  color: Color
+}
+
+const DetailsLink = (props: Props) => {
   const { config, detailsLink, color, ...other } = props
 
   // TODO: Future scope, the below shouldn't be driven by a data attribute, but should come in from the config as a eval capable string that
@@ -28,4 +35,4 @@ const DetailsLink = (props: Object) => {
   return null
 }
 
-export default DetailsLink
+export default React.memo<Props>(DetailsLink)

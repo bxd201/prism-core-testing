@@ -31,4 +31,4 @@ function TextButton (props: ButtonProps) {
   )
 }
 
-export default TextButton
+export default React.memo<ButtonProps>(TextButton)
