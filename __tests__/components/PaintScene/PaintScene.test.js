@@ -52,6 +52,10 @@ const defaultProps = {
       '2071',
       '1593'
     ]
+  },
+  referenceDimensions: {
+    imageHeight: 1046,
+    imageWidth: 1046
   }
 }
 

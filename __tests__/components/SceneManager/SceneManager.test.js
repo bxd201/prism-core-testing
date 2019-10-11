@@ -7,7 +7,20 @@ import { SCENE_TYPES } from 'constants/globals'
 import * as Colors from '__mocks__/data/color/Colors'
 
 const defaultProps = {
-  scenes: [],
+  scenes: [{
+    id: 1,
+    variant_names: ['day'],
+    variants: [{
+      variant_name: 'day',
+      associatedColorCollection: 31738,
+      expertColorPicks: [2761, 2043, 2689],
+      surfaces: []
+    }]
+  }],
+  sceneStatus: [{
+    id: 1,
+    variant: 'day',
+  }],
   maxActiveScenes: 2,
   activeScenes: [1],
   type: SCENE_TYPES.ROOM,

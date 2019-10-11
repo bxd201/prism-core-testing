@@ -15,7 +15,7 @@ const baseClass = 'prism-color-picker'
 const slideHeader = 'slide-palette-header'
 
 type SummaryProps = {
-  colors: number[],
+  expertColorPicks: number[],
   associatedColorCollection: Object,
   colorMap: Object,
   config: Object,
@@ -25,7 +25,7 @@ type SummaryProps = {
 }
 
 function ColorPickerSlide (props: SummaryProps) {
-  const { loadColors, loadCollectionSummaries, colors, associatedColorCollection, colorMap, config, intl } = props
+  const { loadColors, loadCollectionSummaries, expertColorPicks, associatedColorCollection, colorMap, config, intl } = props
   const [isShowSlider, handleSlideShow] = useState(false)
 
   const [dataLoaded, setDataLoaded] = useState(false)
@@ -49,7 +49,12 @@ function ColorPickerSlide (props: SummaryProps) {
             </button>
           </div>
           <div className='slide-palette-content'>
-            {!!Object.keys(colorMap).length && <PaletteSuggester expertColor={colors.map(id => colorMap[id])} isShowSlider={isShowSlider} handleSlideShow={() => { handleSlideShow(!isShowSlider) }} />}
+            {!!Object.keys(colorMap).length &&
+              <PaletteSuggester
+                expertColor={expertColorPicks.map(id => colorMap[id])}
+                isShowSlider={isShowSlider}
+                handleSlideShow={() => { handleSlideShow(!isShowSlider) }}
+              />}
           </div>
           <button className={`${slideHeader}__mobile-toggle-arrow ${isShowSlider ? `${slideHeader}__mobile-toggle-arrow--up` : ``}`} onClick={() => { handleSlideShow(!isShowSlider) }} />
         </div>

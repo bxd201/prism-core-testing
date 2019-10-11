@@ -180,12 +180,10 @@ export class SceneManager extends PureComponent<Props, State> {
       return <CircleLoader className={`${SceneManager.baseClass}__loader`} />
     }
 
-    const { expertColorPicks, associatedColorCollection } = getSceneInfoById(find(scenes, { 'id': activeScenes[0] }), sceneStatus).variant
-
     return (
       <DndProvider backend={HTML5Backend}>
         <div className={SceneManager.baseClass}>
-          {activeScenes.length === 1 && <ColorPickerSlide colors={expertColorPicks} associatedColorCollection={associatedColorCollection} />}
+          {activeScenes.length === 1 && <ColorPickerSlide {...getSceneInfoById(find(scenes, { 'id': activeScenes[0] }), sceneStatus).variant} />}
           <div className={`${SceneManager.baseClass}__block ${SceneManager.baseClass}__block--tabs`}>
             {scenes.map((scene, index) => {
               const sceneInfo = getSceneInfoById(scene, sceneStatus)
