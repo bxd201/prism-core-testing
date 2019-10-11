@@ -2,6 +2,7 @@
 import React from 'react'
 import { shallow, mount } from 'enzyme'
 import { ColorCollections } from 'src/components/ColorCollections/ColorCollections'
+import CollectionDetail from 'src/components/Shared/CollectionDetail'
 import mocks from '../../../__mocks__/helpers/MockUtility'
 
 // create reusable mocks
