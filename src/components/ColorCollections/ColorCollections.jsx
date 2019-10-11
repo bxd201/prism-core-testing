@@ -26,7 +26,8 @@ type SummaryProps = {
   summaries: {
     data: any[],
     idToIndexHash: any[]
-  }
+  },
+  collectionSummary?: Object
 }
 
 type CollectionDataInput = {
@@ -90,6 +91,7 @@ ColorCollections.updateCollectionData = function updateCollectionData ({
 }
 
 export function ColorCollections (props: SummaryProps) {
+  const { isShowBack, showBack, setHeader, collectionSummary, categories } = props
   const [hasColors, setHasColors] = useState(!!Object.keys(props.colorMap).length)
 
   // TODO:noah.hall
@@ -110,9 +112,13 @@ export function ColorCollections (props: SummaryProps) {
     setColorsRequested(true)
   }
 
-  const { isShowBack, showBack, setHeader } = props
   const [tabIdShow, showTab] = useState('')
-  const [collectionDataDetails, updateCollectionDataDetails] = useState({})
+  const [collectionDataDetails, updateCollectionDataDetails] = useState(collectionSummary === undefined ? {} : {
+    collections: collectionSummary.colorIds.map(id => props.colorMap[id]),
+    description: collectionSummary.description,
+    img: collectionSummary.thumbUrl,
+    name: collectionSummary.name
+  })
 
   const showTabHandler = (tabId: string) => {
     showTab((prevTab) => {
@@ -122,13 +128,15 @@ export function ColorCollections (props: SummaryProps) {
     })
   }
 
-  // initial render, selected tab unknown
-  // set selected tab
-  if (!tabIdShow && props.categories.data.length) {
-    showTabHandler(props.categories.data[0].id)
+  // initial render, selected tab unknown set selected tab
+  if (!tabIdShow && categories.data.length) {
+    if (collectionSummary !== undefined) {
+      showTabHandler(categories.data.find(category => category.summaryIds.indexOf(collectionSummary.id) !== -1).id)
+    } else {
+      showTabHandler(categories.data[0].id)
+    }
   }
-  // subsequent renders, tab known
-  // once colors exist, update collection only once
+  // subsequent renders, tab known once colors exist, update collection only once
   if (tabIdShow && !hasColors && Object.keys(props.colorMap).length) {
     setHasColors(true)
     ColorCollections.updateCollectionData({ tabId: tabIdShow, props })
@@ -146,10 +154,10 @@ export function ColorCollections (props: SummaryProps) {
     return <CollectionDetail collectionDetailData={collectionDataDetails} />
   }
 
-  const onClickHandler = (collectionSummaryData: Object) => {
+  const showSpecificCollection = (collectionSummaryData: Object) => {
+    updateCollectionDataDetails(collectionSummaryData)
     showBack()
     setHeader(collectionSummaryData.name)
-    updateCollectionDataDetails(collectionSummaryData)
   }
 
   return (
@@ -165,7 +173,7 @@ export function ColorCollections (props: SummaryProps) {
           isInfinity={false}
           key={tabIdShow}
           data={ColorCollections.collectionData}
-          getSummaryData={onClickHandler}
+          getSummaryData={showSpecificCollection}
           isExpertColor={false}
         />
       </div>
