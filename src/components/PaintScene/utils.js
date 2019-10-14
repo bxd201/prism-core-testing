@@ -1,5 +1,8 @@
 import { getDeltaE00 } from 'delta-e'
+import difference from 'lodash/difference'
+
 const MAX_STACK_SIZE = 200
+
 export const getPaintAreaPath = (imagePathList, canvas, width, height, color) => {
   const RGB = getActiveColorRGB(color)
   const array = getImageCordinateByPixel(canvas, RGB, width, height)
@@ -101,19 +104,33 @@ export const checkIntersection = (areaA, areaB) => {
 
 export const repaintImageByPath = (imagePathList, canvas, width, height) => {
   const ctx = canvas.current.getContext('2d')
+  let imageData = ctx.getImageData(0, 0, width, height)
+  let data = imageData.data
   for (let i = 0; i < imagePathList.length; i++) {
-    drawImagePixelByPath(ctx, width, height, imagePathList[i].color, imagePathList[i].data)
+    let path = imagePathList[i].data
+    let color = imagePathList[i].color
+    if (path) {
+      for (let j = 0; j < path.length; j++) {
+        data[path[j]] = color[0]
+        data[path[j] + 1] = color[1]
+        data[path[j] + 2] = color[2]
+        data[path[j] + 3] = color[3]
+      }
+    }
   }
+  ctx.putImageData(imageData, 0, 0)
 }
 
 export const drawImagePixelByPath = (ctx, width, height, color, path) => {
   let imageData = ctx.getImageData(0, 0, width, height)
   let data = imageData.data
-  for (let i = 0; i < path.length; i++) {
-    data[path[i]] = color[0]
-    data[path[i] + 1] = color[1]
-    data[path[i] + 2] = color[2]
-    data[path[i] + 3] = color[3]
+  if (path) {
+    for (let i = 0; i < path.length; i++) {
+      data[path[i]] = color[0]
+      data[path[i] + 1] = color[1]
+      data[path[i] + 2] = color[2]
+      data[path[i] + 3] = color[3]
+    }
   }
   ctx.putImageData(imageData, 0, 0)
 }
@@ -181,14 +198,7 @@ export const edgeDetect = (canvas, targetImagePath, targetImageColor, width, hei
 export const eraseIntersection = (imagePathList, erasePath) => {
   const originImagePathList = copyImageList(imagePathList)
   for (let i = 0; i < originImagePathList.length; i++) {
-    const intersection = checkIntersection(originImagePathList[i].data, erasePath)
-    if (intersection.length > 0) {
-      const remainArea = new Set([...originImagePathList[i].data])
-      for (let i = 0; i < intersection.length; i++) {
-        remainArea.delete(intersection[i])
-      }
-      originImagePathList[i].data = [...remainArea]
-    }
+    originImagePathList[i].data = difference(originImagePathList[i].data, erasePath)
   }
   return originImagePathList
 }
