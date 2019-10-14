@@ -19,7 +19,7 @@ type Props = OwnProps & Ref
 
 const baseClass = 'SearchBar'
 
-class SearchBar extends PureComponent<Props> {
+export class SearchBar extends PureComponent<Props> {
   render () {
     const { value, onClearSearch, forwardedRef } = this.props
     const _value = typeof value === 'string' ? value : ''

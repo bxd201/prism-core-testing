@@ -8,20 +8,20 @@ exports[`Search with colors prop should match snapshot 1`] = `
     className="Search__search-form"
     onSubmit={[Function]}
   >
-    <SearchBar
+    <ForwardRef
       onClearSearch={[Function]}
       onSearchInput={[Function]}
     />
-    <Bar>
-      <Button
+    <Memo(Bar)>
+      <Memo(Button)
         onClick={[Function]}
       >
         <FormattedMessage
           id="CANCEL"
           values={Object {}}
         />
-      </Button>
-    </Bar>
+      </Memo(Button)>
+    </Memo(Bar)>
   </form>
   <div
     className="Search__results-pane"
@@ -46,20 +46,20 @@ exports[`Search with empty colors prop should match snapshot 1`] = `
     className="Search__search-form"
     onSubmit={[Function]}
   >
-    <SearchBar
+    <ForwardRef
       onClearSearch={[Function]}
       onSearchInput={[Function]}
     />
-    <Bar>
-      <Button
+    <Memo(Bar)>
+      <Memo(Button)
         onClick={[Function]}
       >
         <FormattedMessage
           id="CANCEL"
           values={Object {}}
         />
-      </Button>
-    </Bar>
+      </Memo(Button)>
+    </Memo(Bar)>
   </form>
   <div
     className="Search__results-pane"

@@ -2,8 +2,7 @@
 import React from 'react'
 import { shallow } from 'enzyme'
 import { Route, Switch } from 'react-router-dom'
-import { ColorWallFacet, RootRedirectColorWall } from 'src/components/Facets/ColorWallFacet/ColorWallFacet'
-import ColorWallRouteComponent from 'src/components/Facets/ColorWall/ColorWallRouteComponent'
+import { ColorWallFacet, RootRedirectColorWall, ColorWallComponent } from 'src/components/Facets/ColorWallFacet/ColorWallFacet'
 import { ROUTE_PARAMS } from 'constants/globals'
 
 const homeRoute = '/'
@@ -55,7 +54,7 @@ describe('ColorWallFacet routes', () => {
     expect(pathMap[homeRoute]).toBe(RootRedirectColorWall)
   })
 
-  it('should show ColorWallRouteComponent component for route defined as colorWallUrlPattern constant', () => {
-    expect(pathMap[colorWallUrlPattern]).toBe(ColorWallRouteComponent)
+  it('should show ColorWallComponent component for route defined as colorWallUrlPattern constant', () => {
+    expect(pathMap[colorWallUrlPattern]).toBe(ColorWallComponent)
   })
 })

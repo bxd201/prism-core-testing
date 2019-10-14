@@ -2,7 +2,7 @@
 import React from 'react'
 import { shallow } from 'enzyme'
 // import { renderHook, act } from 'react-hooks-testing-library'
-import { render, fireEvent, getByTestId } from 'react-testing-library'
+import { render, fireEvent, getByTestId } from '@testing-library/react'
 import ColorCollectionsTab, {
   tabListSelect,
   tabList, tabListItem,
@@ -68,7 +68,7 @@ describe('ColorCollectionsTab', () => {
   })
 })
 
-describe('ColorCollectionsTab with react-testing-library', () => {
+describe('ColorCollectionsTab with @testing-library/react', () => {
   let colorCollectionsTab
   beforeAll(() => {
     if (!colorCollectionsTab) {

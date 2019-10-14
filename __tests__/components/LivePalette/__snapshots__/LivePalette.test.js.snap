@@ -1,184 +1,178 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`snapshot testing for LivePalette component  LivePalette component should match snapshot 1`] = `
-<div
-  className="prism-live-palette"
+<Memo()
+  backend={[Function]}
 >
   <div
-    className="prism-live-palette__list"
+    className="prism-live-palette"
   >
-    <Connect(DragSource(DropTarget(ActiveSlot)))
-      active={false}
-      color={
-        Object {
-          "blue": 108,
-          "brandKey": "SW",
-          "brandedCollectionNames": Array [
-            "Interior Historic Collection",
-          ],
-          "colorFamilyNames": Array [
-            "Historic Color",
-          ],
-          "colorNumber": "0001",
-          "coordinatingColors": Object {
-            "coord1ColorId": "11290",
-            "coord2ColorId": "11296",
-          },
-          "description": Array [
-            "Dull",
-            "Fairly Bright",
-          ],
-          "green": 118,
-          "hex": "#94766c",
-          "hue": 0.041666666666666685,
-          "id": "1544",
-          "isDark": false,
-          "isExterior": true,
-          "isInterior": true,
-          "lightness": 0.5019607843137255,
-          "lrv": 20.427,
-          "name": "Mulberry Silk",
-          "red": 148,
-          "saturation": 0.15748031496062997,
-          "similarColors": Array [
-            "1733",
-            "1719",
-            "1747",
-            "1754",
-            "1712",
-            "1775",
-            "1740",
-            "2831",
-            "1768",
-            "11269",
-          ],
-        }
-      }
-      index={0}
-      key="1544"
-      moveColor={[Function]}
-      node={
-        Object {
-          "current": null,
-        }
-      }
-      onClick={[Function]}
-    />
-    <Connect(DragSource(DropTarget(ActiveSlot)))
-      active={false}
-      color={
-        Object {
-          "blue": 174,
-          "brandKey": "SW",
-          "brandedCollectionNames": Array [
-            "Lifestyle",
-            "HGTV Home™ by Sherwin-Williams",
-          ],
-          "colorFamilyNames": Array [
-            "Blue",
-          ],
-          "colorNumber": "6759",
-          "coordinatingColors": Object {
-            "coord1ColorId": "2689",
-            "coord2ColorId": "11355",
-            "whiteColorId": "2436",
-          },
-          "description": Array [
-            "Subdued",
-            "Muted",
-            "Fairly Bright",
-          ],
-          "green": 185,
-          "hex": "#75b9ae",
-          "hue": 0.47303921568627455,
-          "id": "2446",
-          "isDark": false,
-          "isExterior": true,
-          "isInterior": true,
-          "lightness": 0.592156862745098,
-          "lrv": 41.426,
-          "name": "Cooled Blue",
-          "red": 117,
-          "saturation": 0.3269230769230769,
-          "similarColors": Array [
-            "2439",
-            "11224",
-            "11223",
-            "1618",
-            "2447",
-            "2453",
-            "2173",
-            "2624",
-            "11232",
-            "2151",
-          ],
-          "storeStripLocator": "163-C4",
-        }
-      }
-      index={1}
-      key="2446"
-      moveColor={[Function]}
-      node={
-        Object {
-          "current": null,
-        }
-      }
-      onClick={[Function]}
-    />
-    <Link
-      className="prism-live-palette__slot prism-live-palette__slot--add"
-      to="/active/color-wall"
+    <div
+      className="prism-live-palette__list"
     >
-      <FontAwesomeIcon
-        border={false}
-        className="prism-live-palette__icon"
-        color="#0069af"
-        fixedWidth={false}
-        flip={null}
-        icon={
-          Array [
-            "fal",
-            "plus-circle",
-          ]
+      <Connect(ActiveSlot)
+        active={false}
+        color={
+          Object {
+            "blue": 108,
+            "brandKey": "SW",
+            "brandedCollectionNames": Array [
+              "Interior Historic Collection",
+            ],
+            "colorFamilyNames": Array [
+              "Historic Color",
+            ],
+            "colorNumber": "0001",
+            "coordinatingColors": Object {
+              "coord1ColorId": "11290",
+              "coord2ColorId": "11296",
+            },
+            "description": Array [
+              "Dull",
+              "Fairly Bright",
+            ],
+            "green": 118,
+            "hex": "#94766c",
+            "hue": 0.041666666666666685,
+            "id": "1544",
+            "isDark": false,
+            "isExterior": true,
+            "isInterior": true,
+            "lightness": 0.5019607843137255,
+            "lrv": 20.427,
+            "name": "Mulberry Silk",
+            "red": 148,
+            "saturation": 0.15748031496062997,
+            "similarColors": Array [
+              "1733",
+              "1719",
+              "1747",
+              "1754",
+              "1712",
+              "1775",
+              "1740",
+              "2831",
+              "1768",
+              "11269",
+            ],
+          }
         }
-        inverse={false}
-        listItem={false}
-        mask={null}
-        pull={null}
-        pulse={false}
-        rotation={null}
-        size="2x"
-        spin={false}
-        symbol={false}
-        title=""
-        transform={null}
+        index={0}
+        key="1544"
+        moveColor={[Function]}
+        onClick={[Function]}
       />
-      <FormattedMessage
-        id="ADD_A_COLOR"
-        values={Object {}}
+      <Connect(ActiveSlot)
+        active={false}
+        color={
+          Object {
+            "blue": 174,
+            "brandKey": "SW",
+            "brandedCollectionNames": Array [
+              "Lifestyle",
+              "HGTV Home™ by Sherwin-Williams",
+            ],
+            "colorFamilyNames": Array [
+              "Blue",
+            ],
+            "colorNumber": "6759",
+            "coordinatingColors": Object {
+              "coord1ColorId": "2689",
+              "coord2ColorId": "11355",
+              "whiteColorId": "2436",
+            },
+            "description": Array [
+              "Subdued",
+              "Muted",
+              "Fairly Bright",
+            ],
+            "green": 185,
+            "hex": "#75b9ae",
+            "hue": 0.47303921568627455,
+            "id": "2446",
+            "isDark": false,
+            "isExterior": true,
+            "isInterior": true,
+            "lightness": 0.592156862745098,
+            "lrv": 41.426,
+            "name": "Cooled Blue",
+            "red": 117,
+            "saturation": 0.3269230769230769,
+            "similarColors": Array [
+              "2439",
+              "11224",
+              "11223",
+              "1618",
+              "2447",
+              "2453",
+              "2173",
+              "2624",
+              "11232",
+              "2151",
+            ],
+            "storeStripLocator": "163-C4",
+          }
+        }
+        index={1}
+        key="2446"
+        moveColor={[Function]}
+        onClick={[Function]}
+      />
+      <Link
+        className="prism-live-palette__slot prism-live-palette__slot--add"
+        to="/active/color-wall"
       >
-        <Component />
-      </FormattedMessage>
-    </Link>
-    <EmptySlot
-      key="0"
-    />
-    <EmptySlot
-      key="1"
-    />
-    <EmptySlot
-      key="2"
-    />
-    <EmptySlot
-      key="3"
-    />
-    <EmptySlot
-      key="4"
+        <FontAwesomeIcon
+          border={false}
+          className="prism-live-palette__icon"
+          color="#0069af"
+          fixedWidth={false}
+          flip={null}
+          icon={
+            Array [
+              "fal",
+              "plus-circle",
+            ]
+          }
+          inverse={false}
+          listItem={false}
+          mask={null}
+          pull={null}
+          pulse={false}
+          rotation={null}
+          size="2x"
+          spin={false}
+          symbol={false}
+          title=""
+          transform={null}
+        />
+        <FormattedMessage
+          id="ADD_A_COLOR"
+          values={Object {}}
+        >
+          <Component />
+        </FormattedMessage>
+      </Link>
+      <EmptySlot
+        key="0"
+      />
+      <EmptySlot
+        key="1"
+      />
+      <EmptySlot
+        key="2"
+      />
+      <EmptySlot
+        key="3"
+      />
+      <EmptySlot
+        key="4"
+      />
+    </div>
+    <aside
+      aria-live="assertive"
+      className="prism-live-palette__color-description"
     />
   </div>
-  <aside
-    aria-live="assertive"
-    className="prism-live-palette__color-description"
-  />
-</div>
+</Memo()>
 `;

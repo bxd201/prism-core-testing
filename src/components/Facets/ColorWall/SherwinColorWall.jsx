@@ -82,7 +82,7 @@ export class SherwinColorWall extends PureComponent<Props> {
   colorFamily = function colorFamily () {
     const { colors, brights, family, families, section, activeColor, colorMap, addToLivePalette, loading, error, intl, config } = this.props
     const colorsGrid = SherwinColorWall.getColorGrid(colors, brights, family, families, colorMap)
-    const translatedMessages = intl.messages
+    const translatedMessages = intl ? intl.messages : {}
 
     if (loading) {
       return <CircleLoader className='color-wall-wall__loader' />
@@ -136,4 +136,5 @@ export class SherwinColorWall extends PureComponent<Props> {
   }
 }
 
-export default injectIntl(WithConfigurationContext(SherwinColorWall))
+export const SherwinColorWallWithConfig = WithConfigurationContext(SherwinColorWall)
+export default injectIntl(SherwinColorWallWithConfig)
