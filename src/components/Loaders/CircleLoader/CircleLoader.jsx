@@ -26,4 +26,4 @@ function CircleLoader (props: Props) {
   )
 }
 
-export default CircleLoader
+export default React.memo<Props>(CircleLoader)

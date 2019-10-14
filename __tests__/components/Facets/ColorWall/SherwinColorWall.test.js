@@ -3,10 +3,11 @@ import React from 'react'
 import { shallow } from 'enzyme'
 import { SherwinColorWall } from 'src/components/Facets/ColorWall/SherwinColorWall'
 import * as Colors from '__mocks__/data/color/Colors'
-import { IntlProvider, FormattedMessage } from 'react-intl'
+import { FormattedMessage } from 'react-intl'
 import CircleLoader from 'src/components/Loaders/CircleLoader/CircleLoader'
 import GenericMessage from 'src/components/Messages/GenericMessage'
 import ColorWallSwatchList from 'src/components/Facets/ColorWall/ColorWallSwatchList'
+import { shallowWithIntl } from '__mocks__/helpers/intl'
 
 const color = Colors.getColor()
 const brights = Colors.getBrights()
@@ -15,10 +16,6 @@ const colorMap = Colors.getAllColors()
 const family = 'Red'
 const families = ['Red', 'Orange', 'Yellow', 'Green', 'Blue', 'Purple', 'Neutral', 'White & Pastel']
 const configContext = { 'theme': { 'primary': '#0069af', 'secondary': '#4f5967', 'warning': '#f2c500', 'success': '#1fce6d', 'danger': '#e94b35', 'error': '#e94b35', 'grey': '#cccccc', 'lightGrey': '#dddddd', 'nearBlack': '#2e2e2e', 'black': '#000000', 'white': '#ffffff' }, 'colorWall': { 'bloomRadius': 2 }, 'displayInfoButton': true }
-
-const messages = require('src/translations/en-US.json') // en.json
-const intlProvider = new IntlProvider({ locale: 'en', messages }, {})
-const { intl } = intlProvider.getChildContext()
 
 const getSherwinColorWall = (props) => {
   let defaultProps = {
@@ -30,13 +27,12 @@ const getSherwinColorWall = (props) => {
     colorMap: colorMap,
     family: family,
     families: families,
-    intl: intl,
     addToLivePalette: jest.fn(),
     config: configContext
   }
 
   let newProps = Object.assign({}, defaultProps, props)
-  return shallow(<SherwinColorWall {...newProps} />)
+  return shallowWithIntl(<SherwinColorWall {...newProps} />)
 }
 
 describe('SherwinColorWall with props', () => {

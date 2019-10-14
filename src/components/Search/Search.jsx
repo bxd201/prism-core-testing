@@ -162,16 +162,17 @@ export class Search extends PureComponent<Props, State> {
     this.props.clearSearch()
 
     // if our search component has a focus method per its exposed API...
-    if (typeof this.searchComponent.current[SearchBar.API.focus] === 'function') {
+    if (this.searchComponent.current) {
       // ... call it after clearing search
-      this.searchComponent.current[SearchBar.API.focus]()
+      this.searchComponent.current.focus()
     }
   }
 
   reRunSearchWith = memoizee((newInput: string) => () => {
-    const search = this.searchComponent.current
     this.props.loadSearchResults(newInput)
-    search[SearchBar.API.focus]()
+    if (this.searchComponent.current) {
+      this.searchComponent.current.focus()
+    }
   })
 
   cellRenderer = function cellRenderer ({

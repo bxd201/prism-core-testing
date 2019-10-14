@@ -1,47 +1,786 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`snapshot testing should get correct snapshot 1`] = `
-<div
-  className="prism-scene-manager"
+<Memo()
+  backend={[Function]}
 >
   <div
-    className="prism-scene-manager__block prism-scene-manager__block--tabs"
+    className="prism-scene-manager"
   >
-    <button
-      className="prism-scene-manager__btn prism-scene-manager__btn--active"
-      key="1"
-      onClick={[Function]}
-      type="button"
+    <div
+      className="prism-scene-manager__block prism-scene-manager__block--tabs"
     >
-      <span
-        className="visually-hidden"
+      <button
+        className="prism-scene-manager__btn prism-scene-manager__btn--active"
+        key="1"
+        onClick={[Function]}
+        type="button"
       >
-        Living Room Day
-      </span>
+        <span
+          className="visually-hidden"
+        >
+          Living Room Day
+        </span>
+        <div
+          role="presentation"
+        >
+          <ImagePreloader
+            background="https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=300}&qlt=80"
+            el={[Function]}
+            height={792}
+            interactive={false}
+            onUpdateColor={[Function]}
+            preload={
+              Array [
+                "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=300}&qlt=80",
+                undefined,
+                undefined,
+                undefined,
+                MaskObj {
+                  "_blob": undefined,
+                  "_height": undefined,
+                  "_id": "msk1",
+                  "_isLoading": false,
+                  "_loadingPromise": Promise {},
+                  "_objectURL": undefined,
+                  "_path": undefined,
+                  "_width": undefined,
+                },
+                MaskObj {
+                  "_blob": undefined,
+                  "_height": undefined,
+                  "_id": "msk2",
+                  "_isLoading": false,
+                  "_loadingPromise": Promise {},
+                  "_objectURL": undefined,
+                  "_path": undefined,
+                  "_width": undefined,
+                },
+                MaskObj {
+                  "_blob": undefined,
+                  "_height": undefined,
+                  "_id": "msk3",
+                  "_isLoading": false,
+                  "_loadingPromise": Promise {},
+                  "_objectURL": undefined,
+                  "_path": undefined,
+                  "_width": undefined,
+                },
+                undefined,
+                undefined,
+                undefined,
+              ]
+            }
+            sceneId={1}
+            surfaceStatus={
+              Array [
+                Object {
+                  "id": 1,
+                },
+                Object {
+                  "id": 2,
+                },
+                Object {
+                  "id": 3,
+                },
+              ]
+            }
+            surfaces={
+              Array [
+                Object {
+                  "hitArea": "/prism/images/scenes/rooms/2/m1.svg",
+                  "id": 1,
+                  "mask": MaskObj {
+                    "_blob": undefined,
+                    "_height": undefined,
+                    "_id": "msk1",
+                    "_isLoading": false,
+                    "_loadingPromise": Promise {},
+                    "_objectURL": undefined,
+                    "_path": undefined,
+                    "_width": undefined,
+                  },
+                  "role": "main",
+                },
+                Object {
+                  "hitArea": "/prism/images/scenes/rooms/2/m2.svg",
+                  "id": 2,
+                  "mask": MaskObj {
+                    "_blob": undefined,
+                    "_height": undefined,
+                    "_id": "msk2",
+                    "_isLoading": false,
+                    "_loadingPromise": Promise {},
+                    "_objectURL": undefined,
+                    "_path": undefined,
+                    "_width": undefined,
+                  },
+                  "role": "main",
+                },
+                Object {
+                  "hitArea": "/prism/images/scenes/rooms/2/m3.svg",
+                  "id": 3,
+                  "mask": MaskObj {
+                    "_blob": undefined,
+                    "_height": undefined,
+                    "_id": "msk3",
+                    "_isLoading": false,
+                    "_loadingPromise": Promise {},
+                    "_objectURL": undefined,
+                    "_path": undefined,
+                    "_width": undefined,
+                  },
+                  "role": "trim",
+                },
+              ]
+            }
+            type="rooms"
+            width={1311}
+          />
+        </div>
+        <FontAwesomeIcon
+          border={false}
+          className="prism-scene-manager__flag"
+          fixedWidth={false}
+          flip={null}
+          icon={
+            Array [
+              "fa",
+              "check",
+            ]
+          }
+          inverse={false}
+          listItem={false}
+          mask={null}
+          pull={null}
+          pulse={false}
+          rotation={null}
+          size={null}
+          spin={false}
+          symbol={false}
+          title=""
+          transform={null}
+        />
+      </button>
+      <button
+        className="prism-scene-manager__btn "
+        key="2"
+        onClick={[Function]}
+        type="button"
+      >
+        <span
+          className="visually-hidden"
+        >
+          Kitchen Day
+        </span>
+        <div
+          role="presentation"
+        >
+          <ImagePreloader
+            background="https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_kitchen6_day?wid=300}&qlt=80"
+            el={[Function]}
+            height={792}
+            interactive={false}
+            onUpdateColor={[Function]}
+            preload={
+              Array [
+                "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_kitchen6_day?wid=300}&qlt=80",
+                undefined,
+                undefined,
+                undefined,
+                MaskObj {
+                  "_blob": undefined,
+                  "_height": undefined,
+                  "_id": "msk7",
+                  "_isLoading": false,
+                  "_loadingPromise": Promise {},
+                  "_objectURL": undefined,
+                  "_path": undefined,
+                  "_width": undefined,
+                },
+                MaskObj {
+                  "_blob": undefined,
+                  "_height": undefined,
+                  "_id": "msk8",
+                  "_isLoading": false,
+                  "_loadingPromise": Promise {},
+                  "_objectURL": undefined,
+                  "_path": undefined,
+                  "_width": undefined,
+                },
+                MaskObj {
+                  "_blob": undefined,
+                  "_height": undefined,
+                  "_id": "msk9",
+                  "_isLoading": false,
+                  "_loadingPromise": Promise {},
+                  "_objectURL": undefined,
+                  "_path": undefined,
+                  "_width": undefined,
+                },
+                undefined,
+                undefined,
+                undefined,
+              ]
+            }
+            sceneId={2}
+            surfaceStatus={
+              Array [
+                Object {
+                  "id": 1,
+                },
+                Object {
+                  "id": 2,
+                },
+                Object {
+                  "id": 3,
+                },
+              ]
+            }
+            surfaces={
+              Array [
+                Object {
+                  "hitArea": "/prism/images/scenes/rooms/4/1.svg",
+                  "id": 1,
+                  "mask": MaskObj {
+                    "_blob": undefined,
+                    "_height": undefined,
+                    "_id": "msk7",
+                    "_isLoading": false,
+                    "_loadingPromise": Promise {},
+                    "_objectURL": undefined,
+                    "_path": undefined,
+                    "_width": undefined,
+                  },
+                  "role": "main",
+                },
+                Object {
+                  "hitArea": "/prism/images/scenes/rooms/4/2.svg",
+                  "id": 2,
+                  "mask": MaskObj {
+                    "_blob": undefined,
+                    "_height": undefined,
+                    "_id": "msk8",
+                    "_isLoading": false,
+                    "_loadingPromise": Promise {},
+                    "_objectURL": undefined,
+                    "_path": undefined,
+                    "_width": undefined,
+                  },
+                  "role": "accent",
+                },
+                Object {
+                  "hitArea": "/prism/images/scenes/rooms/4/3.svg",
+                  "id": 3,
+                  "mask": MaskObj {
+                    "_blob": undefined,
+                    "_height": undefined,
+                    "_id": "msk9",
+                    "_isLoading": false,
+                    "_loadingPromise": Promise {},
+                    "_objectURL": undefined,
+                    "_path": undefined,
+                    "_width": undefined,
+                  },
+                  "role": "trim",
+                },
+              ]
+            }
+            type="rooms"
+            width={1311}
+          />
+        </div>
+      </button>
+      <button
+        className="prism-scene-manager__btn "
+        key="3"
+        onClick={[Function]}
+        type="button"
+      >
+        <span
+          className="visually-hidden"
+        >
+          Bedroom Day
+        </span>
+        <div
+          role="presentation"
+        >
+          <ImagePreloader
+            background="https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_bedroom6_day?wid=300}&qlt=80"
+            el={[Function]}
+            height={792}
+            interactive={false}
+            onUpdateColor={[Function]}
+            preload={
+              Array [
+                "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_bedroom6_day?wid=300}&qlt=80",
+                undefined,
+                undefined,
+                undefined,
+                MaskObj {
+                  "_blob": undefined,
+                  "_height": undefined,
+                  "_id": "msk13",
+                  "_isLoading": false,
+                  "_loadingPromise": Promise {},
+                  "_objectURL": undefined,
+                  "_path": undefined,
+                  "_width": undefined,
+                },
+                MaskObj {
+                  "_blob": undefined,
+                  "_height": undefined,
+                  "_id": "msk14",
+                  "_isLoading": false,
+                  "_loadingPromise": Promise {},
+                  "_objectURL": undefined,
+                  "_path": undefined,
+                  "_width": undefined,
+                },
+                MaskObj {
+                  "_blob": undefined,
+                  "_height": undefined,
+                  "_id": "msk15",
+                  "_isLoading": false,
+                  "_loadingPromise": Promise {},
+                  "_objectURL": undefined,
+                  "_path": undefined,
+                  "_width": undefined,
+                },
+                undefined,
+                undefined,
+                undefined,
+              ]
+            }
+            sceneId={3}
+            surfaceStatus={
+              Array [
+                Object {
+                  "id": 1,
+                },
+                Object {
+                  "id": 2,
+                },
+                Object {
+                  "id": 3,
+                },
+              ]
+            }
+            surfaces={
+              Array [
+                Object {
+                  "hitArea": "/prism/images/scenes/rooms/bedroom1/main.svg",
+                  "id": 1,
+                  "mask": MaskObj {
+                    "_blob": undefined,
+                    "_height": undefined,
+                    "_id": "msk13",
+                    "_isLoading": false,
+                    "_loadingPromise": Promise {},
+                    "_objectURL": undefined,
+                    "_path": undefined,
+                    "_width": undefined,
+                  },
+                  "role": "main",
+                },
+                Object {
+                  "hitArea": "/prism/images/scenes/rooms/bedroom1/accent.svg",
+                  "id": 2,
+                  "mask": MaskObj {
+                    "_blob": undefined,
+                    "_height": undefined,
+                    "_id": "msk14",
+                    "_isLoading": false,
+                    "_loadingPromise": Promise {},
+                    "_objectURL": undefined,
+                    "_path": undefined,
+                    "_width": undefined,
+                  },
+                  "role": "main",
+                },
+                Object {
+                  "hitArea": "/prism/images/scenes/rooms/bedroom1/trim.svg",
+                  "id": 3,
+                  "mask": MaskObj {
+                    "_blob": undefined,
+                    "_height": undefined,
+                    "_id": "msk15",
+                    "_isLoading": false,
+                    "_loadingPromise": Promise {},
+                    "_objectURL": undefined,
+                    "_path": undefined,
+                    "_width": undefined,
+                  },
+                  "role": "trim",
+                },
+              ]
+            }
+            type="rooms"
+            width={1311}
+          />
+        </div>
+      </button>
+      <button
+        className="prism-scene-manager__btn "
+        key="4"
+        onClick={[Function]}
+        type="button"
+      >
+        <span
+          className="visually-hidden"
+        >
+          Bathroom Day
+        </span>
+        <div
+          role="presentation"
+        >
+          <ImagePreloader
+            background="https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_bathroom6_day?wid=300}&qlt=80"
+            el={[Function]}
+            height={792}
+            interactive={false}
+            onUpdateColor={[Function]}
+            preload={
+              Array [
+                "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_bathroom6_day?wid=300}&qlt=80",
+                undefined,
+                undefined,
+                undefined,
+                MaskObj {
+                  "_blob": undefined,
+                  "_height": undefined,
+                  "_id": "msk19",
+                  "_isLoading": false,
+                  "_loadingPromise": Promise {},
+                  "_objectURL": undefined,
+                  "_path": undefined,
+                  "_width": undefined,
+                },
+                MaskObj {
+                  "_blob": undefined,
+                  "_height": undefined,
+                  "_id": "msk20",
+                  "_isLoading": false,
+                  "_loadingPromise": Promise {},
+                  "_objectURL": undefined,
+                  "_path": undefined,
+                  "_width": undefined,
+                },
+                MaskObj {
+                  "_blob": undefined,
+                  "_height": undefined,
+                  "_id": "msk21",
+                  "_isLoading": false,
+                  "_loadingPromise": Promise {},
+                  "_objectURL": undefined,
+                  "_path": undefined,
+                  "_width": undefined,
+                },
+                undefined,
+                undefined,
+                undefined,
+              ]
+            }
+            sceneId={4}
+            surfaceStatus={
+              Array [
+                Object {
+                  "id": 1,
+                },
+                Object {
+                  "id": 2,
+                },
+                Object {
+                  "id": 3,
+                },
+              ]
+            }
+            surfaces={
+              Array [
+                Object {
+                  "hitArea": "/prism/images/scenes/rooms/bathroom1/main.svg",
+                  "id": 1,
+                  "mask": MaskObj {
+                    "_blob": undefined,
+                    "_height": undefined,
+                    "_id": "msk19",
+                    "_isLoading": false,
+                    "_loadingPromise": Promise {},
+                    "_objectURL": undefined,
+                    "_path": undefined,
+                    "_width": undefined,
+                  },
+                  "role": "main",
+                },
+                Object {
+                  "hitArea": "/prism/images/scenes/rooms/bathroom1/accent.svg",
+                  "id": 2,
+                  "mask": MaskObj {
+                    "_blob": undefined,
+                    "_height": undefined,
+                    "_id": "msk20",
+                    "_isLoading": false,
+                    "_loadingPromise": Promise {},
+                    "_objectURL": undefined,
+                    "_path": undefined,
+                    "_width": undefined,
+                  },
+                  "role": "main",
+                },
+                Object {
+                  "hitArea": "/prism/images/scenes/rooms/bathroom1/trim.svg",
+                  "id": 3,
+                  "mask": MaskObj {
+                    "_blob": undefined,
+                    "_height": undefined,
+                    "_id": "msk21",
+                    "_isLoading": false,
+                    "_loadingPromise": Promise {},
+                    "_objectURL": undefined,
+                    "_path": undefined,
+                    "_width": undefined,
+                  },
+                  "role": "trim",
+                },
+              ]
+            }
+            type="rooms"
+            width={1311}
+          />
+        </div>
+      </button>
+      <button
+        className="prism-scene-manager__btn "
+        key="5"
+        onClick={[Function]}
+        type="button"
+      >
+        <span
+          className="visually-hidden"
+        >
+          Exterior House Day
+        </span>
+        <div
+          role="presentation"
+        >
+          <ImagePreloader
+            background="https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_exterior6_day?wid=300}&qlt=80"
+            el={[Function]}
+            height={792}
+            interactive={false}
+            onUpdateColor={[Function]}
+            preload={
+              Array [
+                "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_exterior6_day?wid=300}&qlt=80",
+                undefined,
+                undefined,
+                undefined,
+                MaskObj {
+                  "_blob": undefined,
+                  "_height": undefined,
+                  "_id": "msk25",
+                  "_isLoading": false,
+                  "_loadingPromise": Promise {},
+                  "_objectURL": undefined,
+                  "_path": undefined,
+                  "_width": undefined,
+                },
+                MaskObj {
+                  "_blob": undefined,
+                  "_height": undefined,
+                  "_id": "msk26",
+                  "_isLoading": false,
+                  "_loadingPromise": Promise {},
+                  "_objectURL": undefined,
+                  "_path": undefined,
+                  "_width": undefined,
+                },
+                MaskObj {
+                  "_blob": undefined,
+                  "_height": undefined,
+                  "_id": "msk27",
+                  "_isLoading": false,
+                  "_loadingPromise": Promise {},
+                  "_objectURL": undefined,
+                  "_path": undefined,
+                  "_width": undefined,
+                },
+                undefined,
+                undefined,
+                undefined,
+              ]
+            }
+            sceneId={5}
+            surfaceStatus={
+              Array [
+                Object {
+                  "id": 1,
+                },
+                Object {
+                  "id": 2,
+                },
+                Object {
+                  "id": 3,
+                },
+              ]
+            }
+            surfaces={
+              Array [
+                Object {
+                  "hitArea": "/prism/images/scenes/rooms/exterior1/main.svg",
+                  "id": 1,
+                  "mask": MaskObj {
+                    "_blob": undefined,
+                    "_height": undefined,
+                    "_id": "msk25",
+                    "_isLoading": false,
+                    "_loadingPromise": Promise {},
+                    "_objectURL": undefined,
+                    "_path": undefined,
+                    "_width": undefined,
+                  },
+                  "role": "main",
+                },
+                Object {
+                  "hitArea": "/prism/images/scenes/rooms/exterior1/accent.svg",
+                  "id": 2,
+                  "mask": MaskObj {
+                    "_blob": undefined,
+                    "_height": undefined,
+                    "_id": "msk26",
+                    "_isLoading": false,
+                    "_loadingPromise": Promise {},
+                    "_objectURL": undefined,
+                    "_path": undefined,
+                    "_width": undefined,
+                  },
+                  "role": "accent",
+                },
+                Object {
+                  "hitArea": "/prism/images/scenes/rooms/exterior1/trim.svg",
+                  "id": 3,
+                  "mask": MaskObj {
+                    "_blob": undefined,
+                    "_height": undefined,
+                    "_id": "msk27",
+                    "_isLoading": false,
+                    "_loadingPromise": Promise {},
+                    "_objectURL": undefined,
+                    "_path": undefined,
+                    "_width": undefined,
+                  },
+                  "role": "trim",
+                },
+              ]
+            }
+            type="rooms"
+            width={1311}
+          />
+        </div>
+      </button>
+    </div>
+    <div
+      className="prism-scene-manager__block prism-scene-manager__block--scenes"
+    >
       <div
-        role="presentation"
+        className="prism-scene-manager__scene-wrapper"
+        key="1"
       >
         <ImagePreloader
-          background="https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=300}&qlt=80"
+          background="https: //sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1311}&qlt=92"
           el={[Function]}
           height={792}
-          interactive={false}
+          imageValueCurve="0 0.1 0.15 0.25 0.4 0.5 0.6 0.7 0.84 0.955 1"
+          interactive={true}
           onUpdateColor={[Function]}
           preload={
             Array [
+              "https: //sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1311}&qlt=92",
               "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=300}&qlt=80",
+              MaskObj {
+                "_blob": undefined,
+                "_height": undefined,
+                "_id": "msk1",
+                "_isLoading": false,
+                "_loadingPromise": Promise {},
+                "_objectURL": undefined,
+                "_path": undefined,
+                "_width": undefined,
+              },
+              "/prism/images/scenes/rooms/2/m1.svg",
               undefined,
               undefined,
+              MaskObj {
+                "_blob": undefined,
+                "_height": undefined,
+                "_id": "msk2",
+                "_isLoading": false,
+                "_loadingPromise": Promise {},
+                "_objectURL": undefined,
+                "_path": undefined,
+                "_width": undefined,
+              },
+              "/prism/images/scenes/rooms/2/m2.svg",
               undefined,
-              "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=wall&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
-              "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=accent&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
-              "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=trim&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
               undefined,
+              MaskObj {
+                "_blob": undefined,
+                "_height": undefined,
+                "_id": "msk3",
+                "_isLoading": false,
+                "_loadingPromise": Promise {},
+                "_objectURL": undefined,
+                "_path": undefined,
+                "_width": undefined,
+              },
+              "/prism/images/scenes/rooms/2/m3.svg",
+              undefined,
+              undefined,
+              "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=1311}&qlt=92",
+              "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=300}&qlt=80",
+              MaskObj {
+                "_blob": undefined,
+                "_height": undefined,
+                "_id": "msk4",
+                "_isLoading": false,
+                "_loadingPromise": Promise {},
+                "_objectURL": undefined,
+                "_path": undefined,
+                "_width": undefined,
+              },
+              "/prism/images/scenes/rooms/2/m1.svg",
+              undefined,
+              undefined,
+              MaskObj {
+                "_blob": undefined,
+                "_height": undefined,
+                "_id": "msk5",
+                "_isLoading": false,
+                "_loadingPromise": Promise {},
+                "_objectURL": undefined,
+                "_path": undefined,
+                "_width": undefined,
+              },
+              "/prism/images/scenes/rooms/2/m2.svg",
+              undefined,
+              undefined,
+              MaskObj {
+                "_blob": undefined,
+                "_height": undefined,
+                "_id": "msk6",
+                "_isLoading": false,
+                "_loadingPromise": Promise {},
+                "_objectURL": undefined,
+                "_path": undefined,
+                "_width": undefined,
+              },
+              "/prism/images/scenes/rooms/2/m3.svg",
               undefined,
               undefined,
             ]
           }
           sceneId={1}
+          sceneName="Living Room Day"
           surfaceStatus={
             Array [
               Object {
@@ -60,19 +799,46 @@ exports[`snapshot testing should get correct snapshot 1`] = `
               Object {
                 "hitArea": "/prism/images/scenes/rooms/2/m1.svg",
                 "id": 1,
-                "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=wall&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                "mask": MaskObj {
+                  "_blob": undefined,
+                  "_height": undefined,
+                  "_id": "msk1",
+                  "_isLoading": false,
+                  "_loadingPromise": Promise {},
+                  "_objectURL": undefined,
+                  "_path": undefined,
+                  "_width": undefined,
+                },
                 "role": "main",
               },
               Object {
                 "hitArea": "/prism/images/scenes/rooms/2/m2.svg",
                 "id": 2,
-                "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=accent&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                "mask": MaskObj {
+                  "_blob": undefined,
+                  "_height": undefined,
+                  "_id": "msk2",
+                  "_isLoading": false,
+                  "_loadingPromise": Promise {},
+                  "_objectURL": undefined,
+                  "_path": undefined,
+                  "_width": undefined,
+                },
                 "role": "main",
               },
               Object {
                 "hitArea": "/prism/images/scenes/rooms/2/m3.svg",
                 "id": 3,
-                "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=trim&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
+                "mask": MaskObj {
+                  "_blob": undefined,
+                  "_height": undefined,
+                  "_id": "msk3",
+                  "_isLoading": false,
+                  "_loadingPromise": Promise {},
+                  "_objectURL": undefined,
+                  "_path": undefined,
+                  "_width": undefined,
+                },
                 "role": "trim",
               },
             ]
@@ -80,430 +846,19 @@ exports[`snapshot testing should get correct snapshot 1`] = `
           type="rooms"
           width={1311}
         />
-      </div>
-      <FontAwesomeIcon
-        border={false}
-        className="prism-scene-manager__flag"
-        fixedWidth={false}
-        flip={null}
-        icon={
-          Array [
-            "fa",
-            "check",
-          ]
-        }
-        inverse={false}
-        listItem={false}
-        mask={null}
-        pull={null}
-        pulse={false}
-        rotation={null}
-        size={null}
-        spin={false}
-        symbol={false}
-        title=""
-        transform={null}
-      />
-    </button>
-    <button
-      className="prism-scene-manager__btn "
-      key="2"
-      onClick={[Function]}
-      type="button"
-    >
-      <span
-        className="visually-hidden"
-      >
-        Kitchen Day
-      </span>
-      <div
-        role="presentation"
-      >
-        <ImagePreloader
-          background="https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_kitchen6_day?wid=300}&qlt=80"
-          el={[Function]}
-          height={792}
-          interactive={false}
-          onUpdateColor={[Function]}
-          preload={
+        <DayNight
+          currentVariant="day"
+          onChange={[Function]}
+          sceneId={1}
+          variants={
             Array [
-              "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_kitchen6_day?wid=300}&qlt=80",
-              undefined,
-              undefined,
-              undefined,
-              "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_kitchen6_day?wid=1280&req=object&opac=100&fmt=png8&object=wall&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
-              "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_kitchen6_day?wid=1280&req=object&opac=100&fmt=png8&object=accent&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
-              "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_kitchen6_day?wid=1280&req=object&opac=100&fmt=png8&object=trim&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
-              undefined,
-              undefined,
-              undefined,
+              "day",
+              "night",
             ]
           }
-          sceneId={2}
-          surfaceStatus={
-            Array [
-              Object {
-                "id": 1,
-              },
-              Object {
-                "id": 2,
-              },
-              Object {
-                "id": 3,
-              },
-            ]
-          }
-          surfaces={
-            Array [
-              Object {
-                "hitArea": "/prism/images/scenes/rooms/4/1.svg",
-                "id": 1,
-                "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_kitchen6_day?wid=1280&req=object&opac=100&fmt=png8&object=wall&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
-                "role": "main",
-              },
-              Object {
-                "hitArea": "/prism/images/scenes/rooms/4/2.svg",
-                "id": 2,
-                "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_kitchen6_day?wid=1280&req=object&opac=100&fmt=png8&object=accent&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
-                "role": "accent",
-              },
-              Object {
-                "hitArea": "/prism/images/scenes/rooms/4/3.svg",
-                "id": 3,
-                "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_kitchen6_day?wid=1280&req=object&opac=100&fmt=png8&object=trim&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
-                "role": "trim",
-              },
-            ]
-          }
-          type="rooms"
-          width={1311}
         />
       </div>
-    </button>
-    <button
-      className="prism-scene-manager__btn "
-      key="3"
-      onClick={[Function]}
-      type="button"
-    >
-      <span
-        className="visually-hidden"
-      >
-        Bedroom Day
-      </span>
-      <div
-        role="presentation"
-      >
-        <ImagePreloader
-          background="https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_bedroom6_day?wid=300}&qlt=80"
-          el={[Function]}
-          height={792}
-          interactive={false}
-          onUpdateColor={[Function]}
-          preload={
-            Array [
-              "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_bedroom6_day?wid=300}&qlt=80",
-              undefined,
-              undefined,
-              undefined,
-              "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_bedroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=wall&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
-              "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_bedroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=accent&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
-              "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_bedroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=trim&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
-              undefined,
-              undefined,
-              undefined,
-            ]
-          }
-          sceneId={3}
-          surfaceStatus={
-            Array [
-              Object {
-                "id": 1,
-              },
-              Object {
-                "id": 2,
-              },
-              Object {
-                "id": 3,
-              },
-            ]
-          }
-          surfaces={
-            Array [
-              Object {
-                "hitArea": "/prism/images/scenes/rooms/bedroom1/main.svg",
-                "id": 1,
-                "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_bedroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=wall&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
-                "role": "main",
-              },
-              Object {
-                "hitArea": "/prism/images/scenes/rooms/bedroom1/accent.svg",
-                "id": 2,
-                "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_bedroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=accent&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
-                "role": "main",
-              },
-              Object {
-                "hitArea": "/prism/images/scenes/rooms/bedroom1/trim.svg",
-                "id": 3,
-                "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_bedroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=trim&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
-                "role": "trim",
-              },
-            ]
-          }
-          type="rooms"
-          width={1311}
-        />
-      </div>
-    </button>
-    <button
-      className="prism-scene-manager__btn "
-      key="4"
-      onClick={[Function]}
-      type="button"
-    >
-      <span
-        className="visually-hidden"
-      >
-        Bathroom Day
-      </span>
-      <div
-        role="presentation"
-      >
-        <ImagePreloader
-          background="https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_bathroom6_day?wid=300}&qlt=80"
-          el={[Function]}
-          height={792}
-          interactive={false}
-          onUpdateColor={[Function]}
-          preload={
-            Array [
-              "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_bathroom6_day?wid=300}&qlt=80",
-              undefined,
-              undefined,
-              undefined,
-              "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_bathroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=wall&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
-              "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_bathroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=accent&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
-              "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_bathroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=trim&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
-              undefined,
-              undefined,
-              undefined,
-            ]
-          }
-          sceneId={4}
-          surfaceStatus={
-            Array [
-              Object {
-                "id": 1,
-              },
-              Object {
-                "id": 2,
-              },
-              Object {
-                "id": 3,
-              },
-            ]
-          }
-          surfaces={
-            Array [
-              Object {
-                "hitArea": "/prism/images/scenes/rooms/bathroom1/main.svg",
-                "id": 1,
-                "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_bathroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=wall&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
-                "role": "main",
-              },
-              Object {
-                "hitArea": "/prism/images/scenes/rooms/bathroom1/accent.svg",
-                "id": 2,
-                "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_bathroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=accent&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
-                "role": "main",
-              },
-              Object {
-                "hitArea": "/prism/images/scenes/rooms/bathroom1/trim.svg",
-                "id": 3,
-                "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_bathroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=trim&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
-                "role": "trim",
-              },
-            ]
-          }
-          type="rooms"
-          width={1311}
-        />
-      </div>
-    </button>
-    <button
-      className="prism-scene-manager__btn "
-      key="5"
-      onClick={[Function]}
-      type="button"
-    >
-      <span
-        className="visually-hidden"
-      >
-        Exterior House Day
-      </span>
-      <div
-        role="presentation"
-      >
-        <ImagePreloader
-          background="https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_exterior6_day?wid=300}&qlt=80"
-          el={[Function]}
-          height={792}
-          interactive={false}
-          onUpdateColor={[Function]}
-          preload={
-            Array [
-              "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_exterior6_day?wid=300}&qlt=80",
-              undefined,
-              undefined,
-              undefined,
-              "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_exterior6_day?wid=1280&req=object&opac=100&fmt=png8&object=wall&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
-              "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_exterior6_day?wid=1280&req=object&opac=100&fmt=png8&object=accent&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
-              "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_exterior6_day?wid=1280&req=object&opac=100&fmt=png8&object=trim&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
-              undefined,
-              undefined,
-              undefined,
-            ]
-          }
-          sceneId={5}
-          surfaceStatus={
-            Array [
-              Object {
-                "id": 1,
-              },
-              Object {
-                "id": 2,
-              },
-              Object {
-                "id": 3,
-              },
-            ]
-          }
-          surfaces={
-            Array [
-              Object {
-                "hitArea": "/prism/images/scenes/rooms/exterior1/main.svg",
-                "id": 1,
-                "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_exterior6_day?wid=1280&req=object&opac=100&fmt=png8&object=wall&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
-                "role": "main",
-              },
-              Object {
-                "hitArea": "/prism/images/scenes/rooms/exterior1/accent.svg",
-                "id": 2,
-                "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_exterior6_day?wid=1280&req=object&opac=100&fmt=png8&object=accent&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
-                "role": "accent",
-              },
-              Object {
-                "hitArea": "/prism/images/scenes/rooms/exterior1/trim.svg",
-                "id": 3,
-                "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_exterior6_day?wid=1280&req=object&opac=100&fmt=png8&object=trim&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
-                "role": "trim",
-              },
-            ]
-          }
-          type="rooms"
-          width={1311}
-        />
-      </div>
-    </button>
-  </div>
-  <div
-    className="prism-scene-manager__block prism-scene-manager__block--scenes"
-  >
-    <div
-      className="prism-scene-manager__scene-wrapper"
-      key="1"
-    >
-      <ImagePreloader
-        background="https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1311}&qlt=92"
-        el={[Function]}
-        height={792}
-        imageValueCurve="0 0.1 0.15 0.25 0.4 0.5 0.6 0.7 0.84 0.955 1"
-        interactive={true}
-        onUpdateColor={[Function]}
-        preload={
-          Array [
-            "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1311}&qlt=92",
-            "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=300}&qlt=80",
-            "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=wall&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
-            "/prism/images/scenes/rooms/2/m1.svg",
-            undefined,
-            undefined,
-            "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=accent&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
-            "/prism/images/scenes/rooms/2/m2.svg",
-            undefined,
-            undefined,
-            "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=trim&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
-            "/prism/images/scenes/rooms/2/m3.svg",
-            undefined,
-            undefined,
-            "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=1311}&qlt=92",
-            "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=300}&qlt=80",
-            "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=1280&req=object&opac=100&fmt=png8&object=wall&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
-            "/prism/images/scenes/rooms/2/m1.svg",
-            undefined,
-            undefined,
-            "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=1280&req=object&opac=100&fmt=png8&object=accent&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
-            "/prism/images/scenes/rooms/2/m2.svg",
-            undefined,
-            undefined,
-            "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_night?wid=1280&req=object&opac=100&fmt=png8&object=trim&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
-            "/prism/images/scenes/rooms/2/m3.svg",
-            undefined,
-            undefined,
-          ]
-        }
-        sceneId={1}
-        sceneName="Living Room Day"
-        surfaceStatus={
-          Array [
-            Object {
-              "id": 1,
-            },
-            Object {
-              "id": 2,
-            },
-            Object {
-              "id": 3,
-            },
-          ]
-        }
-        surfaces={
-          Array [
-            Object {
-              "hitArea": "/prism/images/scenes/rooms/2/m1.svg",
-              "id": 1,
-              "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=wall&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
-              "role": "main",
-            },
-            Object {
-              "hitArea": "/prism/images/scenes/rooms/2/m2.svg",
-              "id": 2,
-              "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=accent&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
-              "role": "main",
-            },
-            Object {
-              "hitArea": "/prism/images/scenes/rooms/2/m3.svg",
-              "id": 3,
-              "mask": "https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1280&req=object&opac=100&fmt=png8&object=trim&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1",
-              "role": "trim",
-            },
-          ]
-        }
-        type="rooms"
-        width={1311}
-      />
-      <DayNight
-        currentVariant="day"
-        onChange={[Function]}
-        sceneId={1}
-        variants={
-          Array [
-            "day",
-            "night",
-          ]
-        }
-      />
     </div>
   </div>
-</div>
+</Memo()>
 `;

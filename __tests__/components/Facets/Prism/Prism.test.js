@@ -7,11 +7,11 @@ import { SceneManager } from 'src/components/SceneManager/SceneManager'
 import ColorWallRouteComponent from 'src/components/Facets/ColorWall/ColorWallRouteComponent'
 import { ROUTE_PARAMS, ROUTE_PARAM_NAMES } from 'constants/globals'
 import ColorDetails from 'src/components/Facets/ColorDetails/ColorDetails'
+import { PrismNav } from '../../../../src/components/Facets/Prism/PrismNav'
 
 const homeRoute = '/'
 const activeRoute = '/active'
 const activeColorsFromImageRoute = '/active/colors-from-image'
-const prismNavWithRouterSelect = 'withRouter(PrismNav)'
 const livePaletteConnectSelect = 'Connect(LivePalette)'
 
 const colorWallBaseUrl = `/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_WALL}`
@@ -66,8 +66,8 @@ describe('Prism routes', () => {
     expect(pathMap[activeColorIdSeoUrlPattern]).toBe(ColorDetails)
   })
 
-  it('should show component defined as prismNavWithRouterSelect constant', () => {
-    expect(prism.find(prismNavWithRouterSelect).exists()).toBe(true)
+  xit('should show component defined as PrismNav component', () => {
+    expect(prism.find(PrismNav).exists()).toBe(true)
   })
 
   it('should show component defined as livePaletteConnectSelect constant', () => {
