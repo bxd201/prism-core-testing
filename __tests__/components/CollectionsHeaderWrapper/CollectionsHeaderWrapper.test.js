@@ -1,7 +1,8 @@
 /* eslint-env jest */
 import React from 'react'
-import { shallow } from 'enzyme'
+import { shallow, mount } from 'enzyme'
 import CollectionsHeaderWrapper, { buttonLeft, heading, buttonRight } from 'src/components/CollectionsHeaderWrapper/CollectionsHeaderWrapper'
+import CollectionDetail from 'src/components/Shared/CollectionDetail'
 import { ColorCollections } from 'src/components/ColorCollections/ColorCollections'
 import { Link } from 'react-router-dom'
 
@@ -73,4 +74,10 @@ describe('CollectionsHeaderWrapper states & events', () => {
     collectionsHeaderWrapper.find(`button.${buttonLeft}`).simulate('click')
     expect(collectionsHeaderWrapper.find(`button.${buttonLeft}`).exists()).toBe(false)
   })
+})
+
+it('renders back button and header when initialized with collectionSummary as a property', () => {
+    const collectionsHeaderWrapper = getCollectionsHeaderWrapper({ collectionSummary: { name: '2016 Pura Vida' } })
+    expect(collectionsHeaderWrapper.find(`button.${buttonLeft}`).exists()).toBe(true)
+    expect(collectionsHeaderWrapper.find(`div.${heading}`).contains('2016 Pura Vida')).toBe(true)
 })

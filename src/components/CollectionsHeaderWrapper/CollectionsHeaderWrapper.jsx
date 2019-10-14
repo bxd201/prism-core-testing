@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Link } from 'react-router-dom'
 
 type Props = {
+  collectionSummary?: Object
 }
 
 type State = {
@@ -29,8 +30,8 @@ const CollectionsHeaderWrapper = (WrappedComponent: any) => {
     constructor (props: Props) {
       super(props)
       this.state = {
-        isShowBack: false,
-        header: ''
+        isShowBack: props.collectionSummary !== undefined,
+        header: props.collectionSummary !== undefined ? props.collectionSummary.name : ''
       }
       this.showBack = this.showBack.bind(this)
       this.backHandler = this.backHandler.bind(this)

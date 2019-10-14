@@ -45,7 +45,7 @@ export class Prism extends Component<Props> {
               <Route path='/active' exact component={SceneManager} />
               <Route path={colorWallUrlPattern} component={ColorWallRouteComponent} />
               <Route path='/color-from-image' component={InspiredScene} />
-              <Route path='/color-collections' component={() => <ColorCollection isExpertColor={false} />} />
+              <Route path='/color-collections' component={(props) => (<ColorCollection isExpertColor={false} {...props.location.state} />)} />
               <Route path='/expert-colors' component={() => <ExpertColorPicks isExpertColor />} />
               <Route path='/match-photo' component={MatchPhoto} />
               <Route path='/paint-scene' render={() => <MatchPhoto isPaintScene />} />

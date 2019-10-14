@@ -2,12 +2,26 @@ import React from 'react'
 import { shallow } from 'enzyme'
 import { SceneManager } from 'src/components/SceneManager/SceneManager'
 import SceneVariantSwitch from 'src/components/SceneManager/SceneVariantSwitch'
+import ColorPickerSlide from 'src/components/ColorPickerSlide/ColorPickerSlide'
 import { surfaces, sceneStatus } from '__mocks__/data/scene/Scenes'
 import { SCENE_TYPES } from 'constants/globals'
 import * as Colors from '__mocks__/data/color/Colors'
 
 const defaultProps = {
-  scenes: [],
+  scenes: [{
+    id: 1,
+    variant_names: ['day'],
+    variants: [{
+      variant_name: 'day',
+      associatedColorCollection: 31738,
+      expertColorPicks: [2761, 2043, 2689],
+      surfaces: []
+    }]
+  }],
+  sceneStatus: [{
+    id: 1,
+    variant: 'day',
+  }],
   maxActiveScenes: 2,
   activeScenes: [1],
   type: SCENE_TYPES.ROOM,
@@ -65,6 +79,16 @@ describe('Scene Manager Rendering Testing', () => {
     } else {
       expect(wrapper.find(SceneVariantSwitch.DayNight).exists()).toBe(false)
     }
+  })
+
+  it('ColorPickerSlide component is present when one scene is visible', () => {
+    const wrapper = createSceneManager()
+    expect(wrapper.find(ColorPickerSlide).exists()).toBe(true)
+  })
+
+  it('ColorPickerSlide component is not present when two scenes are visible', () => {
+    const wrapper = createSceneManager({ activeScenes: [1, 2] })
+    expect(wrapper.find(ColorPickerSlide).exists()).toBe(false)
   })
 })
 

@@ -183,10 +183,10 @@ export class SceneManager extends PureComponent<Props, State> {
     return (
       <DndProvider backend={HTML5Backend}>
         <div className={SceneManager.baseClass}>
-          <ColorPickerSlide />
+          {activeScenes.length === 1 && <ColorPickerSlide {...getSceneInfoById(find(scenes, { 'id': activeScenes[0] }), sceneStatus).variant} />}
           <div className={`${SceneManager.baseClass}__block ${SceneManager.baseClass}__block--tabs`}>
             {scenes.map((scene, index) => {
-              const sceneInfo = getSceneInfoById(scene, sceneStatus, scene.id)
+              const sceneInfo = getSceneInfoById(scene, sceneStatus)
               const sceneWorkspaces = this.props.sceneWorkspaces.filter(workspace => workspace.sceneId === scene.id)
 
               if (!sceneInfo) {
@@ -243,7 +243,7 @@ export class SceneManager extends PureComponent<Props, State> {
                 return null
               }
 
-              const sceneInfo = getSceneInfoById(scene, sceneStatus, scene.id)
+              const sceneInfo = getSceneInfoById(scene, sceneStatus)
 
               if (!sceneInfo) {
                 console.warn(`Cannot find scene variant based on id ${scene.id}`)
@@ -361,12 +361,12 @@ const mapDispatchToProps = (dispatch: Function) => {
   }
 }
 
-function getSceneInfoById (scene: Scene, sceneStatus: SceneStatus[], id: number): {
+function getSceneInfoById (scene: Scene, sceneStatus: SceneStatus[]): {
   status: SceneStatus,
   variant: Variant,
   surfaces: Surface[]
 } | void {
-  const status: SceneStatus | void = find(sceneStatus, { 'id': id })
+  const status: SceneStatus | void = find(sceneStatus, { 'id': scene.id })
 
   if (typeof status !== 'undefined') {
     const sceneVariant: Variant | void = find(scene.variants, { 'variant_name': status.variant })
