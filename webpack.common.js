@@ -37,7 +37,8 @@ module.exports = {
   context: flags.rootPath,
   mode: flags.mode,
   entry: {
-    bundle: flags.appIndexPath
+    bundle: flags.appIndexPath,
+    embed: flags.embedPath
   },
   output: {
     path: flags.distPath,
