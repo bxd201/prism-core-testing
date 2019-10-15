@@ -7,11 +7,139 @@ exports[`snapshot testing for LivePalette component  LivePalette component shoul
   <div
     className="prism-live-palette"
   >
-
+    <LivePalletteModal
+      isActive={false}
+    />
+    <div
+      className="prism-live-palette__header"
     >
-
+      <span
+        className="prism-live-palette__header__name"
+      >
+        <FormattedMessage
+          id="PALETTE_TITLE"
+          values={Object {}}
+        />
+      </span>
+      <button
+        className="prism-live-palette__header__compare-button"
+        onClick={[Function]}
+      >
+        Compare Color
+      </button>
+    </div>
+    <div
+      className="prism-live-palette__list"
+    >
+      <Connect(ActiveSlot)
+        active={false}
+        color={
+          Object {
+            "blue": 108,
+            "brandKey": "SW",
+            "brandedCollectionNames": Array [
+              "Interior Historic Collection",
+            ],
+            "colorFamilyNames": Array [
+              "Historic Color",
+            ],
+            "colorNumber": "0001",
+            "coordinatingColors": Object {
+              "coord1ColorId": "11290",
+              "coord2ColorId": "11296",
+            },
+            "description": Array [
+              "Dull",
+              "Fairly Bright",
+            ],
+            "green": 118,
+            "hex": "#94766c",
+            "hue": 0.041666666666666685,
+            "id": "1544",
+            "isDark": false,
+            "isExterior": true,
+            "isInterior": true,
+            "lightness": 0.5019607843137255,
+            "lrv": 20.427,
+            "name": "Mulberry Silk",
+            "red": 148,
+            "saturation": 0.15748031496062997,
+            "similarColors": Array [
+              "1733",
+              "1719",
+              "1747",
+              "1754",
+              "1712",
+              "1775",
+              "1740",
+              "2831",
+              "1768",
+              "11269",
+            ],
+          }
         }
-
+        index={0}
+        isCompareColor={false}
+        key="1544"
+        moveColor={[Function]}
+        onClick={[Function]}
+      />
+      <Connect(ActiveSlot)
+        active={false}
+        color={
+          Object {
+            "blue": 174,
+            "brandKey": "SW",
+            "brandedCollectionNames": Array [
+              "Lifestyle",
+              "HGTV Home™ by Sherwin-Williams",
+            ],
+            "colorFamilyNames": Array [
+              "Blue",
+            ],
+            "colorNumber": "6759",
+            "coordinatingColors": Object {
+              "coord1ColorId": "2689",
+              "coord2ColorId": "11355",
+              "whiteColorId": "2436",
+            },
+            "description": Array [
+              "Subdued",
+              "Muted",
+              "Fairly Bright",
+            ],
+            "green": 185,
+            "hex": "#75b9ae",
+            "hue": 0.47303921568627455,
+            "id": "2446",
+            "isDark": false,
+            "isExterior": true,
+            "isInterior": true,
+            "lightness": 0.592156862745098,
+            "lrv": 41.426,
+            "name": "Cooled Blue",
+            "red": 117,
+            "saturation": 0.3269230769230769,
+            "similarColors": Array [
+              "2439",
+              "11224",
+              "11223",
+              "1618",
+              "2447",
+              "2453",
+              "2173",
+              "2624",
+              "11232",
+              "2151",
+            ],
+            "storeStripLocator": "163-C4",
+          }
+        }
+        index={1}
+        isCompareColor={false}
+        key="2446"
+        moveColor={[Function]}
+        onClick={[Function]}
       />
       <Link
         className="prism-live-palette__slot prism-live-palette__slot--add"

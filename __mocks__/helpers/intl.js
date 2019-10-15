@@ -6,28 +6,28 @@
  */
 
 import React from 'react'
-import { intlShape, IntlProvider } from 'react-intl'
+import { IntlProvider } from 'react-intl'
 import { shallow, mount } from 'enzyme'
-
-import '@formatjs/intl-relativetimeformat/polyfill'
-import '@formatjs/intl-relativetimeformat/polyfill-locales'
 
 const messages = require('src/translations/en-US.json') // en.json
 const defaultLocale = 'en'
 
-// Create IntlProvider to retrieve React Intl context
 const wrappingComponentProps = {
   defaultLocale,
   locale: defaultLocale,
   messages
 }
 
+const mountOptions = {
+  wrappingComponent: IntlProvider,
+  wrappingComponentProps
+}
+
 export function mountWithIntl(node: React.ReactElement, options = {}) {
   const _options = options ? options : {}
 
   return mount(node, {
-    wrappingComponent: IntlProvider,
-    wrappingComponentProps,
+    ...mountOptions,
     ..._options
   })
 }
@@ -36,8 +36,7 @@ export function shallowWithIntl(node: React.ReactElement, options = {}) {
   const _options = options ? options : {}
 
   return shallow(node, {
-    wrappingComponent: IntlProvider,
-    wrappingComponentProps,
+    ...mountOptions,
     ..._options
   })
 }
