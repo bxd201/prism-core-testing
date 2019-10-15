@@ -2,77 +2,49 @@
 
 exports[`Prism routes should match snapshot 1`] = `
 <Fragment>
-  <div
-    className="prism__root-container"
-  >
-    <Connect(withRouter(PrismNav)) />
-    <hr />
-    <div
-      className="prism__root-wrapper"
-    >
-      <Route
-        component={[Function]}
-        exact={true}
-        path="/"
-      />
-      <Route
-        component={
-          Object {
-            "$$typeof": Symbol(react.memo),
-            "WrappedComponent": [Function],
-            "baseClass": "prism-scene-manager",
-            "compare": null,
-            "displayName": "Connect(SceneManager)",
-            "type": [Function],
-          }
-        }
-        exact={true}
-        path="/active"
-      />
-      <Route
-        component={[Function]}
-        path="/active/color-wall(/.*)?"
-      />
-      <Route
-        component={[Function]}
-        path="/color-from-image"
-      />
-      <Route
-        component={[Function]}
-        path="/color-collections"
-      />
-      <Route
-        component={[Function]}
-        path="/expert-colors"
-      />
-      <Route
-        component={[Function]}
-        path="/match-photo"
-      />
-      <Route
-        path="/paint-scene"
-        render={[Function]}
-      />
-      <Route
-        component={[Function]}
-        exact={true}
-        path="/active/color/:colorId/:colorSEO"
-      />
-      <Route
-        component={
-          Object {
-            "$$typeof": Symbol(react.memo),
-            "WrappedComponent": [Function],
-            "compare": null,
-            "displayName": "Connect(FastMask)",
-            "type": [Function],
-          }
-        }
-        exact={true}
-        path="/fast-mask"
-      />
-    </div>
-    <Connect(LivePalette) />
-  </div>
+  <withRouter(undefined) />
+  <hr />
+  <Route
+    component={[Function]}
+    exact={true}
+    path="/"
+  />
+  <Route
+    component={
+      Object {
+        "$$typeof": Symbol(react.memo),
+        "WrappedComponent": [Function],
+        "baseClass": "prism-scene-manager",
+        "compare": null,
+        "displayName": "Connect(SceneManager)",
+        "type": [Function],
+      }
+    }
+    exact={true}
+    path="/active"
+  />
+  <Route
+    component={[Function]}
+    path="/active/color-wall(/.*)?"
+  />
+  <Route
+    component={[Function]}
+    exact={true}
+    path="/active/color/:colorId/:colorSEO"
+  />
+  <Route
+    component={
+      Object {
+        "$$typeof": Symbol(react.memo),
+        "WrappedComponent": [Function],
+        "compare": null,
+        "displayName": "Connect(FastMask)",
+        "type": [Function],
+      }
+    }
+    exact={true}
+    path="/fast-mask"
+  />
+  <Connect(LivePalette) />
 </Fragment>
 `;

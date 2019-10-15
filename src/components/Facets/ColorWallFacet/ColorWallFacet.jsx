@@ -33,4 +33,4 @@ export function ColorWallFacet (props: ColorWallFacetProps) {
     </Switch>
   )
 }
-export default withRouter(ColorWallFacet)
+export default withRouter(React.memo<ColorWallFacetProps>(ColorWallFacet))

@@ -1,6 +1,7 @@
+/* eslint-disable */
 /* eslint-env jest */
 import React from 'react'
-import { shallow } from 'enzyme'
+import { mount } from 'enzyme'
 import SearchBar from 'src/components/Search/SearchBar'
 
 const mockFnOnSearchInput = jest.fn()
@@ -14,7 +15,7 @@ const getSearch = (props) => {
     onClearSearch: mockFnOnClearSearch
   }
   const newProps = Object.assign({}, defaultProps, props)
-  return shallow(<SearchBar {...newProps} />)
+  return mount(<SearchBar {...newProps} />)
 }
 
 describe('SearchBar', () => {

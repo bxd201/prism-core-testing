@@ -3,7 +3,12 @@ import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Link } from 'react-router-dom'
 
-const InfoButton = (props: Object) => {
+type Props = {
+  config: Object,
+  detailsLink?: string
+}
+
+const InfoButton = (props: Props) => {
   const { config, detailsLink, ...other } = props
   if (config.displayInfoButton && detailsLink) {
     return (
@@ -15,4 +20,4 @@ const InfoButton = (props: Object) => {
   return null
 }
 
-export default InfoButton
+export default React.memo<Props>(InfoButton)

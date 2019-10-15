@@ -6,29 +6,40 @@
  */
 
 import React from 'react'
-import { IntlProvider, intlShape } from 'react-intl'
+import { intlShape, IntlProvider } from 'react-intl'
 import { shallow, mount } from 'enzyme'
 
-const messages = require('src/translations/en-US.json') // en.json
-const intl = new IntlProvider({ locale: 'en', messages }, {})
-// const { intl } = intlProvider.getChildContext()
+import '@formatjs/intl-relativetimeformat/polyfill'
+import '@formatjs/intl-relativetimeformat/polyfill-locales'
 
-/**
- * When using React-Intl `injectIntl` on components, props.intl is required.
- */
-const nodeWithIntlProp = node => {
-  return React.cloneElement(<IntlProvider locale='en' messages={messages}>{node}</IntlProvider>, { intl })
+const messages = require('src/translations/en-US.json') // en.json
+const defaultLocale = 'en'
+
+// Create IntlProvider to retrieve React Intl context
+const wrappingComponentProps = {
+  defaultLocale,
+  locale: defaultLocale,
+  messages
 }
 
-export const shallowWithIntl = node => {
-  return shallow(nodeWithIntlProp(node), { context: { intl } })
+export function mountWithIntl(node: React.ReactElement, options = {}) {
+  const _options = options ? options : {}
+
+  return mount(node, {
+    wrappingComponent: IntlProvider,
+    wrappingComponentProps,
+    ..._options
+  })
+}
+
+export function shallowWithIntl(node: React.ReactElement, options = {}) {
+  const _options = options ? options : {}
+
+  return shallow(node, {
+    wrappingComponent: IntlProvider,
+    wrappingComponentProps,
+    ..._options
+  })
 }
 
 export default shallowWithIntl
-
-export const mountWithIntl = node => {
-  return mount(nodeWithIntlProp(node), {
-    context: { intl },
-    childContextTypes: { intl: intlShape }
-  })
-}

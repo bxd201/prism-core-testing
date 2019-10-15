@@ -219,11 +219,12 @@ class TintableScene extends PureComponent<Props, State> {
               <div className={`${TintableScene.classNames.base}__svg-defs`}>
                 <TransitionGroup className={`${TintableScene.classNames.transition}__svg-defs`}>
                   {surfaces.map((surface, index) => {
+                    const { mask, highlights, shadows, id } = surface
                     const tintColor: ?Color = this.getTintColorBySurface(surface)
-                    if (tintColor) {
+                    if (tintColor && mask) {
                       return (
                         <CSSTransition
-                          key={`${surface.id}_${tintColor.hex}`}
+                          key={`${id}_${tintColor.hex}`}
                           timeout={varValues.scenes.tintTransitionTime}
                           mountOnEnter
                           classNames={`${TintableScene.classNames.transition}__svg-defs__def-`}>
@@ -231,12 +232,12 @@ class TintableScene extends PureComponent<Props, State> {
                             type={type}
                             width={width}
                             height={height}
-                            highlightMap={ensureFullyQualifiedAssetUrl(surface.highlights)}
-                            shadowMap={ensureFullyQualifiedAssetUrl(surface.shadows)}
-                            filterId={getFilterId(instanceId, surface.id, tintColor.hex)}
+                            highlightMap={ensureFullyQualifiedAssetUrl(highlights)}
+                            shadowMap={ensureFullyQualifiedAssetUrl(shadows)}
+                            filterId={getFilterId(instanceId, id, tintColor.hex)}
                             filterColor={tintColor.hex}
                             filterImageValueCurve={imageValueCurve}
-                            maskId={getMaskId(instanceId, surface.id, tintColor.hex)}
+                            maskId={getMaskId(instanceId, id, tintColor.hex)}
                             maskImage={this.getMaskImage(surface)}
                           />
                         </CSSTransition>

@@ -68,7 +68,7 @@ describe('ColorCollectionsTab', () => {
   })
 })
 
-describe('ColorCollectionsTab with react-testing-library', () => {
+describe('ColorCollectionsTab with @testing-library/react', () => {
   let colorCollectionsTab
   beforeAll(() => {
     if (!colorCollectionsTab) {

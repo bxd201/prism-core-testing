@@ -81,7 +81,7 @@ export function ActiveSlot (props: Props) {
     // only trigger the onClick and activating the swatch if it's not already active.
     // this should prevent an additional re-render since clicking on the move icon also triggers the click
     // on the swatch itself
-    if (!props.active) {
+    if (!props.active && props.onClick) {
       props.onClick(color)
     }
   }
@@ -118,7 +118,7 @@ export function ActiveSlot (props: Props) {
         <span className='prism-live-palette__color-number'>{fullColorNumber(color.brandKey, color.colorNumber)}</span>
         <span className='prism-live-palette__color-name'>{ color.name }</span>
         <span className='prism-live-palette__color-description'>{ color.description.join(', ') }</span>
-        <button className='prism-live-palette__trash' onClick={remove}><FontAwesomeIcon icon='trash' size='1x' /></button>
+        <button className='prism-live-palette__trash' onClick={remove}><FontAwesomeIcon icon={['fa', 'trash']} size='1x' /></button>
       </div>}
       {toggleCompareColor && <button style={{ color: getContrastYIQ(color.hex) }} className={`${baseClass}__button`} onClick={() => hanleToggle()}>
         <div className={`${baseClass}__${displayArea}`} style={{ backgroundColor: color.hex }}>

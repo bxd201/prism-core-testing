@@ -24,9 +24,9 @@ export class PrismNav extends PureComponent {
     return /^\/active\/color-wall/.test(pathname)
   }
 
-  isFastMask (pathname) {
-    return /^\/fast-mask\/?$/.test(pathname)
-  }
+const isColorWall = function (pathname) {
+  return /^\/active\/color-wall/.test(pathname)
+}
 
   isColorFromImage(pathname) {
     return /^\/color-from-image/.test(pathname)

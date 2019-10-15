@@ -49,4 +49,4 @@ FileInput.defaultProps = {
   placeholder: 'Select your image...'
 }
 
-export default FileInput
+export default React.memo<Props>(FileInput)

@@ -5,6 +5,7 @@ import React from 'react'
 import { shallow } from 'enzyme'
 import { Search } from 'src/components/Search/Search'
 import * as Colors from '__mocks__/data/color/Colors'
+import WrappedSearchBar from '../../../src/components/Search/SearchBar'
 
 const colors = Colors.getAllColors()
 
@@ -44,7 +45,7 @@ describe('Search with empty colors prop', () => {
   })
 
   it('should render SearchBar component', () => {
-    expect(search.find('SearchBar').exists()).toBe(true)
+    expect(search.find(WrappedSearchBar).exists()).toBe(true)
   })
 
   it('should have state resultSwatchSize to equal 175', () => {

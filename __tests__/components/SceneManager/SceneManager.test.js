@@ -6,6 +6,8 @@ import ColorPickerSlide from 'src/components/ColorPickerSlide/ColorPickerSlide'
 import { surfaces, sceneStatus } from '__mocks__/data/scene/Scenes'
 import { SCENE_TYPES } from 'constants/globals'
 import * as Colors from '__mocks__/data/color/Colors'
+import CircleLoader from '../../../src/components/Loaders/CircleLoader/CircleLoader'
+import ImagePreloader from '../../../src/helpers/ImagePreloader'
 
 const defaultProps = {
   scenes: [{
@@ -52,12 +54,12 @@ describe('snapshot testing', () => {
 describe('Scene Manager Rendering Testing', () => {
   it('Component should rendering loading icon correctly when loading scene set to true', () => {
     const wrapper = createSceneManager({ loadingScenes: true })
-    expect(wrapper.find('CircleLoader').exists()).toBe(true)
+    expect(wrapper.find(CircleLoader).exists()).toBe(true)
   })
 
   it('Component should rendering prism scene manager correctly when loading scene set to false', () => {
     const wrapper = createSceneManager()
-    expect(wrapper.find('CircleLoader').exists()).toBe(false)
+    expect(wrapper.find(CircleLoader).exists()).toBe(false)
     expect(wrapper.find('.prism-scene-manager').exists()).toBe(true)
   })
 
@@ -68,7 +70,7 @@ describe('Scene Manager Rendering Testing', () => {
 
   it('Component should rendering image loader component correctly', () => {
     const wrapper = createSceneManager({ scenes: surfaces, sceneStatus: sceneStatus })
-    expect(wrapper.find('ImagePreloader').length).toBeGreaterThan(0)
+    expect(wrapper.find(ImagePreloader).length).toBeGreaterThan(0)
   })
 
   it('Component should rendering SceneVariantSwitch if scene has variant_names', () => {
