@@ -10,7 +10,8 @@ import ConfirmationModal from './ConfirmationModal'
 import ColorPinsGenerationByHue from './workers/colorPinsGenerationByHue.worker'
 import useEffectAfterMount from '../../shared/hooks/useEffectAfterMount'
 import PaintScene from '../PaintScene/PaintScene'
-import { loadImage, scaleImage, getScaledPortraitHeight, getScaledLandscapeHeight } from '../../shared/helpers/ImageUtils'
+import { getScaledPortraitHeight, getScaledLandscapeHeight } from '../../shared/helpers/ImageUtils'
+import PrismImage from '../PrismImage/PrismImage'
 
 const baseClass = 'match-photo'
 const wrapperClass = `${baseClass}__wrapper`
@@ -46,14 +47,11 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
   const wrapperRef: RefObject = useRef()
   const [imageUrl, setImageUrl] = useState()
   const [pins, generatePins] = useState([])
-  // eslint-disable-next-line no-unused-vars
   const [imageData, setImageData] = useState([])
   const [imageRotationAngle, setImageRotationAngle] = useState(0)
   const [isConfirmationModalActive, setConfirmationModalActive] = useState(false)
   const [imageDims, setImageDims] = useState({ width: 0, height: 0 })
   const [isPortrait, setIsPortrait] = useState(false)
-  // @todo - clean up backing image -RS
-  const [backingImage, setBackingImage] = useState(null)
   const [imageWidth, setImageWidth] = useState(0)
   const [imageHeight, setImageHeight] = useState(0)
   const [orientationDimensions, setOrientationDimensions] = useState({
@@ -64,16 +62,28 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
     originalImageWidth: 0,
     originalImageHeight: 0
   })
+  const [blobUrl, setBlobUrl] = useState(null)
 
   const [resized, setResized] = useState(0)
+  // @todo - refactor to use this instead of imageWidth and imageHeight individually -RS
+  const [imageWidthAndHeight, setImageWidthAndHeight] = useState({ width: 0, height: 0 })
   // Create ref to dimensions so that resize can use them
   const prevOrientationRef = useRef()
   const prevRotationRef = useRef()
   const previousIsPortraitRef = useRef()
+  const imageRef = useRef()
+  const prevBlobUrlRef = useRef()
+  const [scalingWidth, setScalingWidth] = useState(0)
+  const [wrapperWidth, setWrapperWidth] = useState(0)
+  // eslint-disable-next-line
+  const [hasLoaded, setHasLoaded] = useState(false)
+  const hasLoadedRef = useRef()
   useEffect(() => {
     prevOrientationRef.current = orientationDimensions
     prevRotationRef.current = imageRotationAngle
     previousIsPortraitRef.current = isPortrait
+    prevBlobUrlRef.current = blobUrl
+    hasLoadedRef.current = hasLoaded
   })
 
   useEffectAfterMount(() => {
@@ -81,10 +91,17 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
       return
     }
     const { portraitWidth, portraitHeight, landscapeWidth, landscapeHeight, originalIsPortrait, originalImageWidth, originalImageHeight } = prevOrientationRef.current
+    const newOrientationDims = calcOrientationDimensions(originalImageWidth, originalImageHeight, originalIsPortrait)
+
     const oldWidth = isPortrait ? landscapeWidth : portraitWidth
     const oldHeight = isPortrait ? landscapeHeight : portraitHeight
-    const newWidth = isPortrait ? portraitWidth : landscapeWidth
-    const newHeight = isPortrait ? portraitHeight : landscapeHeight
+    let newWidth = isPortrait ? portraitWidth : landscapeWidth
+    let newHeight = isPortrait ? portraitHeight : landscapeHeight
+
+    if (newOrientationDims.landscapeWidth !== landscapeWidth) {
+      newWidth = isPortrait ? newOrientationDims.portraitWidth : newOrientationDims.landscapeWidth
+      newHeight = isPortrait ? newOrientationDims.portraitHeight : newOrientationDims.landscapeHeight
+    }
 
     const TAU = 2 * Math.PI
     let rotation = (imageRotationAngle * TAU) / 360
@@ -128,48 +145,38 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
 
     const ctx = canvasRef.current.getContext('2d')
 
-    if (originalIsPortrait) {
-      if (isPortrait) {
-        canvasRef.current.width = canvasWidth
-        canvasRef.current.height = canvasHeight
-      } else {
-        canvasRef.current.width = canvasHeight
-        canvasRef.current.height = canvasWidth
-      }
-    } else {
-      if (isPortrait) {
-        canvasRef.current.width = canvasHeight
-        canvasRef.current.height = canvasWidth
-      } else {
-        canvasRef.current.width = canvasWidth
-        canvasRef.current.height = canvasHeight
-      }
-    }
+    const [relWidth, relHeight] = swapWidthAndHeight(canvasWidth, canvasHeight, originalIsPortrait, isPortrait)
+
+    canvasRef.current.width = relWidth
+    canvasRef.current.height = relHeight
 
     ctx.clearRect(0, 0, oldWidth, oldHeight)
     ctx.save()
     ctx.setTransform(hScale, vSkew, hSkew, vScale, hTrans, vTrans)
     ctx.rotate(rotation)
-    ctx.drawImage(backingImage, 0, 0, canvasWidth, canvasHeight)
+    ctx.drawImage(imageRef.current, 0, 0, canvasWidth, canvasHeight)
     ctx.restore()
+
     // set to pass to PaintScene
     const imageDims = {
       originalImageWidth: originalImageWidth,
       originalImageHeight: originalImageHeight,
       imageWidth: canvasWidth,
       imageHeight: canvasHeight,
-      // This object's API context (PaintScene) is different than the similar one used here in MatchPhoto
-      isPortrait: isPortrait,
+      isPortrait,
       originalIsPortrait
     }
 
     setImageDims(imageDims)
     setImageUrl(canvasRef.current.toDataURL())
-    // @todo - is this still needed?
-    // setImageData(imageData)
+    // Set the image data used by the match color component
+    const newImageData = ctx.getImageData(0, 0, canvasWidth, canvasHeight)
+    setImageData(newImageData)
   }, [resized, imageRotationAngle])
 
   useEffect(() => {
+    const wrapperWidth = wrapperRef.current.getBoundingClientRect().width
+    setScalingWidth(wrapperWidth)
     window.addEventListener('resize', resizeHandler)
 
     return function cleanup () {
@@ -181,26 +188,38 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
     }
   }, [])
 
-  const resizeHandler = (e: Event) => {
-    const wrapper = wrapperRef.current
-    const wrapperDims = wrapper.getBoundingClientRect()
-    const orientationDims = prevOrientationRef.current
-    const width = orientationDims.originalImageWidth
-    const height = orientationDims.originalImageHeight
-    const imgWidth = isPortrait ? Math.floor(wrapperDims.width / 2) : wrapperDims.width
-    const imgHeight = isPortrait ? Math.floor(getScaledPortraitHeight(width, height)(imgWidth)) : Math.floor(getScaledLandscapeHeight(width, height)(imgWidth))
-    const newOrientationDims = calcOrientationDimensions(orientationDims.originalImageWidth, orientationDims.originalImageHeight)
-    setOrientationDimensions(newOrientationDims)
-    setImageWidth(imgWidth)
-    setImageHeight(imgHeight)
-    setResized(Date.now())
+  const swapWidthAndHeight = (width, height, originalImageIsPortrait, currentlyIsPortrait) => {
+    let relWidth = width
+    let relHeight = height
+
+    if (originalImageIsPortrait) {
+      if (isPortrait) {
+        relWidth = width
+        relHeight = height
+      } else {
+        relWidth = height
+        relHeight = width
+      }
+    } else {
+      if (currentlyIsPortrait) {
+        relWidth = height
+        relHeight = width
+      } else {
+        relWidth = width
+        relHeight = height
+      }
+    }
+
+    return [relWidth, relHeight]
   }
 
-  const calcOrientationDimensions = (width: number, height: number): OrientationDimension => {
+  const resizeHandler = (e: Event) => {
+    setResized(Date.now())
+    setWrapperWidth(wrapperRef.current.getBoundingClientRect().width)
+  }
+
+  const calcOrientationDimensions = (width: number, height: number, orientationIsPortrait: boolean): OrientationDimension => {
     const wrapperWidth = wrapperRef.current.getBoundingClientRect().width
-
-    const orientationIsPortrait = height > width
-
     const dimensions = {}
 
     if (orientationIsPortrait) {
@@ -226,42 +245,10 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
 
   function handleChange (e: Event) {
     const imgUrl = URL.createObjectURL(e.target.files[0])
-    const imagePromise = loadImage(imgUrl)
-    imagePromise.then((imageEvent) => {
-      const image = imageEvent.target
-      const wrapperSize = wrapperRef.current.getBoundingClientRect()
-      const dimensions = calcOrientationDimensions(image.width, image.height)
-      const width = dimensions.originalIsPortrait ? dimensions.portraitWidth : dimensions.landscapeWidth
-      const height = dimensions.originalIsPortrait ? dimensions.portraitHeight : dimensions.landscapeHeight
-
-      const imageDims = {
-        originalImageWidth: dimensions.originalImageWidth,
-        originalImageHeight: dimensions.originalImageHeight,
-        imageWidth: width,
-        imageHeight: height,
-        isPortrait: dimensions.originalIsPortrait,
-        originalIsPortrait: dimensions.originalIsPortrait
-      }
-
-      setBackingImage(image)
-      setOrientationDimensions(dimensions)
-      setIsPortrait(dimensions.originalIsPortrait)
-      setImageDims(imageDims)
-
-      // This will scale the image data to no more that 2x the width
-      const scalingWidth = width >= wrapperSize * 2 ? 2 * wrapperSize : width
-      scaleImage(image, scalingWidth).then(imageData => {
-        // This is a canvas render dependency
-        setImageUrl(imageData.dataUrl)
-        setImageWidth(width)
-        setImageHeight(height)
-        setIsPortrait(height > width)
-        initCanvas(image, dimensions, dimensions.originalIsPortrait)
-      })
-
-      // @todo - this image might be a good candidate for putting in redux.
-      // @todo - We may not need the imageURL, and may just be able to reference it from the backing image... -RS
-    }, err => console.log(err))
+    // Used by Prism image to establish image reference
+    setBlobUrl(imgUrl)
+    // Used by matchphoto as the image source
+    setImageUrl(imgUrl)
   }
 
   const initCanvas = (image: Object, dimensions: Object, orientationIsPortrait: booelan) => {
@@ -269,12 +256,24 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
     const width = orientationIsPortrait ? portraitWidth : landscapeWidth
     const height = orientationIsPortrait ? portraitHeight : landscapeHeight
 
+    drawToCanvas(image, width, height)
+  }
+
+  const drawToCanvas = (image, width, height) => {
+    if (!canvasRef.current) {
+      return
+    }
+
+    console.log(width, height)
     canvasRef.current.width = width
     canvasRef.current.height = height
     const ctx = canvasRef.current.getContext('2d')
     ctx.drawImage(image, 0, 0, width, height)
+    const newImageData = ctx.getImageData(0, 0, width, height)
+    setImageData(newImageData)
   }
 
+  // @todo - the imageData passed in is a done in render with the current state's imageData; either remove or use instead of fetching from the context -RS
   function createColorPins (imageData: Object) {
     if (isPaintScene) {
       generatePins([{ isPaintScene: isPaintScene }])
@@ -297,17 +296,6 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
     }
   }
 
-  const getCurrentImageData = () => {
-    if (canvasRef.current) {
-      const ctx = canvasRef.current.getContext('2d')
-      if (ctx) {
-        return ctx.getImageData(0, 0, imageWidth, imageHeight)
-      }
-    }
-
-    return null
-  }
-
   function rotateImage (isRightRotation: boolean) {
     const orientation = !isPortrait
     const { portraitWidth, portraitHeight, landscapeWidth, landscapeHeight } = orientationDimensions
@@ -316,6 +304,7 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
     setIsPortrait(orientation)
     setImageHeight(height)
     setImageWidth(width)
+    setImageWidthAndHeight({ width, height })
 
     if (isRightRotation) {
       if (imageRotationAngle === 270) {
@@ -332,6 +321,33 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
     }
   }
 
+  const handleImageLoaded = (payload) => {
+    const image = imageRef.current
+    const dimensions = calcOrientationDimensions(image.width, image.height, payload.isPortrait)
+    const width = dimensions.originalIsPortrait ? dimensions.portraitWidth : dimensions.landscapeWidth
+    const height = dimensions.originalIsPortrait ? dimensions.portraitHeight : dimensions.landscapeHeight
+
+    const imageDims = {
+      originalImageWidth: dimensions.originalImageWidth,
+      originalImageHeight: dimensions.originalImageHeight,
+      imageWidth: width,
+      imageHeight: height,
+      isPortrait: dimensions.originalIsPortrait,
+      originalIsPortrait: dimensions.originalIsPortrait
+    }
+    // This hasLoaded flag stops the prismimage comp from continually resampling the image
+    setHasLoaded(true)
+    setOrientationDimensions(dimensions)
+    setIsPortrait(dimensions.originalIsPortrait)
+    setImageDims(imageDims)
+
+    setImageWidth(width)
+    setImageHeight(height)
+    setIsPortrait(height > width)
+    setImageWidthAndHeight({ width, height })
+    initCanvas(image, dimensions, dimensions.originalIsPortrait)
+  }
+
   const closeButton = <button onClick={() => (imageUrl && pins.length > 0) && setConfirmationModalActive(!isConfirmationModalActive)} className={`${buttonClass} ${buttonRightClass}`}>
     <div className={`${closeClass}`}><span>CLOSE</span>&nbsp;<FontAwesomeIcon className={``} icon={['fa', 'chevron-up']} /></div>
     <div className={`${cancelClass}`}><FontAwesomeIcon className={``} icon={['fa', 'times']} /></div>
@@ -339,6 +355,7 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
 
   return (
     <React.Fragment>
+      <PrismImage ref={imageRef} source={blobUrl} loadedCallback={handleImageLoaded} shouldResample={hasLoaded} scalingWidth={scalingWidth} />
       <div className={`${wrapperClass}`} ref={wrapperRef}>
         <div className={`${containerClass}`}>
           { (!imageUrl) &&
@@ -357,7 +374,7 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
           {
             (imageUrl && pins.length > 0 && !isPaintScene)
               ? (<React.Fragment>
-                <ColorsFromImage data={{ initPins: pins, imageData: getCurrentImageData(), img: imageUrl, isPortrait: isPortrait }} isActivedPage />
+                <ColorsFromImage data={{ initPins: pins, imageData, img: imageUrl, isPortrait: isPortrait }} width={imageWidthAndHeight.width} height={imageWidthAndHeight.height} referenceDimensions={imageDims} isActivedPage />
                 <ConfirmationModal isActive={isConfirmationModalActive} onClickNo={() => setConfirmationModalActive(!isConfirmationModalActive)} />
               </React.Fragment>)
               : ''
@@ -365,15 +382,15 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
           {
             (imageUrl && pins.length === 0)
               ? (<React.Fragment>
-                <canvas className={`${isPortrait ? portraitOrientation : canvasClass}`} name='canvas' ref={canvasRef} width={imageWidth} height={imageHeight} />
-                <ImageRotateTerms rotateImage={rotateImage} createColorPins={createColorPins} imageData={imageData} width={imageWidth} />
+                <canvas className={`${isPortrait ? portraitOrientation : canvasClass}`} name='canvas' ref={canvasRef} />
+                <ImageRotateTerms rotateImage={rotateImage} createColorPins={createColorPins} imageData={imageData} />
               </React.Fragment>)
               : ''
           }
           {
             (imageUrl && isPaintScene && pins.length > 0)
               ? (<React.Fragment>
-                <PaintScene imageUrl={imageUrl} imageRotationAngle={imageRotationAngle} referenceDimensions={imageDims} />
+                <PaintScene imageUrl={imageUrl} imageRotationAngle={imageRotationAngle} referenceDimensions={imageDims} width={wrapperWidth} />
               </React.Fragment>)
               : ''
           }
