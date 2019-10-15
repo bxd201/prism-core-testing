@@ -32,7 +32,10 @@ describe('actions api', () => {
       return api.getCollectionSummaries()
         .then(response => {
           expect(response.data).toEqual(expect.objectContaining(data))
-      })
+        })
+        .catch(err => {
+          console.warn('API test error', err)
+        })
     })
 
     it('should return return error for any non 200 responses', () => {
@@ -40,17 +43,20 @@ describe('actions api', () => {
         data: 'welcome to las vegas baby'
       }
       const route = removeDomain(endpoints.COLLECTION_SUMMARIES_ENDPOINT);
-      const errorMessage = 'hell no'
+      const errorMessage = 'nope'
 
       nock(API_PATH)
         .get(route)
         // TODO:noah.hall confirm with API contract what to expect
-        .reply(201, 'hella no')
+        .reply(201, 'definitely not')
 
       return api.getCollectionSummaries()
         .then(response => {
           expect(response.data).toBeTruthy()
-      })
+        })
+        .catch(err => {
+          console.warn('API test error', err)
+        })
     })
   })
 })

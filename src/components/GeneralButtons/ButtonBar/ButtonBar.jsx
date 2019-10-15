@@ -62,6 +62,6 @@ function Button (props: ButtonProps) {
 }
 
 export default Object.freeze({
-  Bar: Bar,
-  Button: Button
+  Bar: React.memo<BarProps>(Bar),
+  Button: React.memo<ButtonProps>(Button)
 })
