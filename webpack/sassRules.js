@@ -96,9 +96,13 @@ const sassRules = [
   {
     loader: 'sass-loader',
     options: {
-      functions: {
-        '_getVar($keys)': getVarGenerator(varValues),
-        '_getVarName($keys)': getVarGenerator(varNames)
+      sassOptions: (loaderContext) => {
+        return {
+          functions: {
+            '_getVar($keys)': getVarGenerator(varValues),
+            '_getVarName($keys)': getVarGenerator(varNames)
+          }
+        }
       }
     }
   },
