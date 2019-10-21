@@ -1,7 +1,7 @@
 // @flow
 import React, { useState, useEffect, useRef } from 'react'
 import FileInput from '../FileInput/FileInput'
-import ColorsFromImage from '../ColorsFromImage/ColorsFromImage'
+import ColorsFromImage from '../InspirationPhotos/ColorsFromImage'
 import './MatchPhoto.scss'
 import ImageRotateTerms from './ImageRotateTerms.jsx'
 import { Link, withRouter, type RouterHistory } from 'react-router-dom'

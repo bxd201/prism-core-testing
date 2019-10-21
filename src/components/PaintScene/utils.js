@@ -3,9 +3,9 @@ import difference from 'lodash/difference'
 
 const MAX_STACK_SIZE = 200
 
-export const getPaintAreaPath = (imagePathList, canvas, width, height, color) => {
+export const getPaintAreaPath = (imagePathList, canvas, width, height, color, isPaintBrush = false) => {
   const RGB = getActiveColorRGB(color)
-  const array = getImageCordinateByPixel(canvas, RGB, width, height)
+  const array = (isPaintBrush) ? getImageCordinateByPixelPaintBrush(canvas, RGB, width, height) : getImageCordinateByPixel(canvas, RGB, width, height)
   const newArea = {
     color: RGB,
     data: array
@@ -22,6 +22,19 @@ export const getImageCordinateByPixel = (canvas, color, width, height) => {
   let pixelArray = []
   for (let index = 0; index < data.length; index += 4) {
     if (data[index] === color[0] && data[index + 1] === color[1] && data[index + 2] === color[2]) {
+      pixelArray.push(index)
+    }
+  }
+  return pixelArray
+}
+
+export const getImageCordinateByPixelPaintBrush = (canvas, color, width, height) => {
+  const ctx = canvas.current.getContext('2d')
+  let imageData = ctx.getImageData(0, 0, width, height)
+  let data = imageData.data
+  let pixelArray = []
+  for (let index = 0; index < data.length; index += 4) {
+    if (data[index] !== 0 && data[index + 1] !== 0 && data[index + 2] !== 0) {
       pixelArray.push(index)
     }
   }

@@ -25,7 +25,13 @@ import {
   faAngleDown,
   faCheckCircle,
   faDotCircle,
-  faPaintBrush
+  faBrush,
+  faFillDrip,
+  faMousePointer,
+  faEraser,
+  faUndoAlt,
+  faRedoAlt,
+  faEye
 } from '@fortawesome/pro-solid-svg-icons'
 
 // lights
@@ -39,7 +45,16 @@ import {
   faCompressAlt,
   faRedo as falRedo,
   faUndo as falUndo,
-  faCircle as falCircle
+  faCircle as falCircle,
+  faSearchPlus as falSearchPlus,
+  faInfoCircle as falInfoCircle,
+  faDrawPolygon as falDrawPolygon,
+  faTrashAlt as falTrashAlt,
+  faObjectGroup as falObjectGroup,
+  faObjectUngroup as falObjectUngroup,
+  faPlus as falPlus,
+  faMinus as falMinus,
+  faTimes as falTimes
 } from '@fortawesome/pro-light-svg-icons'
 
 // regulars
@@ -79,7 +94,22 @@ const faIcons = [
   falUndo,
   falCircle,
   faDotCircle,
-  faPaintBrush
+  faBrush,
+  faFillDrip,
+  faMousePointer,
+  faEraser,
+  falSearchPlus,
+  faUndoAlt,
+  faRedoAlt,
+  faEye,
+  falInfoCircle,
+  falDrawPolygon,
+  falTrashAlt,
+  falObjectGroup,
+  falObjectUngroup,
+  falPlus,
+  falMinus,
+  falTimes
 ]
 library.add(...faIcons)
 
