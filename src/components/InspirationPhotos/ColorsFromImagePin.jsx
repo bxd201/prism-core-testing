@@ -12,7 +12,7 @@ import { activedPinsHalfWidth } from './data'
 import { getContrastYIQ } from '../../../src/shared/helpers/ColorUtils'
 
 type Props = {
-  activedPins: Function,
+  activatePin: Function,
   isActiveFlag: boolean,
   isContentLeft: boolean,
   translateX: number,
@@ -73,7 +73,7 @@ export class ColorsFromImagePin extends PureComponent<Props, State> {
   onClickHandlerLabel = (e: Object) => {
     e.preventDefault()
     e.stopPropagation()
-    this.props.activedPins(this.props.pinNumber)
+    this.props.activatePin(this.props.pinNumber)
   }
 
   onKeyDownHandlerDiv = (e: Object) => {
@@ -87,7 +87,7 @@ export class ColorsFromImagePin extends PureComponent<Props, State> {
     if (isColorDivFocused && (e.keyCode === KEY_CODE_ENTER || e.keyCode === KEY_CODE_SPACE)) {
       e.stopPropagation()
       e.preventDefault()
-      this.props.activedPins(this.props.pinNumber)
+      this.props.activatePin(this.props.pinNumber)
       this.focusHandler()
     } else if (isColorDivFocused &&
       this.props.isActiveFlag && (
@@ -174,7 +174,7 @@ export class ColorsFromImagePin extends PureComponent<Props, State> {
   }
 
   onChangeHandlerInput = (e: Object) => {
-    this.props.activedPins(this.props.pinNumber)
+    this.props.activatePin(this.props.pinNumber)
   }
 
   handleMouseMove = (e) => {
@@ -199,6 +199,7 @@ export class ColorsFromImagePin extends PureComponent<Props, State> {
     window.removeEventListener('mouseup', this.handleDragStop)
   }
 
+  // 360 is subtracted to set the displayed pin to the labels origin. Despite the perfectness of the number its actually coincidental.
   render () {
     const { previewColorName, previewColorNumber, translateX, translateY, RGBstring, isActiveFlag, pinNumber, addColors, isContentLeft, hide } = this.props
     const { isColorDivFocused } = this.state

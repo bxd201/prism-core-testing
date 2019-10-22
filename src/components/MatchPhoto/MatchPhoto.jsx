@@ -1,7 +1,7 @@
 // @flow
 import React, { useState, useEffect, useRef } from 'react'
 import FileInput from '../FileInput/FileInput'
-import ColorsFromImage from '../InspirationPhotos/ColorsFromImage'
+
 import './MatchPhoto.scss'
 import ImageRotateTerms from './ImageRotateTerms.jsx'
 import { Link, withRouter, type RouterHistory } from 'react-router-dom'
@@ -12,6 +12,7 @@ import useEffectAfterMount from '../../shared/hooks/useEffectAfterMount'
 import PaintScene from '../PaintScene/PaintScene'
 import { getScaledPortraitHeight, getScaledLandscapeHeight } from '../../shared/helpers/ImageUtils'
 import PrismImage from '../PrismImage/PrismImage'
+import DynamicColorFromImage from '../InspirationPhotos/DynamicColorFromImage'
 
 const baseClass = 'match-photo'
 const wrapperClass = `${baseClass}__wrapper`
@@ -63,9 +64,8 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
     originalImageHeight: 0
   })
   const [blobUrl, setBlobUrl] = useState(null)
-
   const [resized, setResized] = useState(0)
-  // @todo - refactor to use this instead of imageWidth and imageHeight individually -RS
+  // eslint-disable-next-line no-unused-vars
   const [imageWidthAndHeight, setImageWidthAndHeight] = useState({ width: 0, height: 0 })
   // Create ref to dimensions so that resize can use them
   const prevOrientationRef = useRef()
@@ -78,6 +78,7 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
   // eslint-disable-next-line
   const [hasLoaded, setHasLoaded] = useState(false)
   const hasLoadedRef = useRef()
+
   useEffect(() => {
     prevOrientationRef.current = orientationDimensions
     prevRotationRef.current = imageRotationAngle
@@ -264,7 +265,6 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
       return
     }
 
-    console.log(width, height)
     canvasRef.current.width = width
     canvasRef.current.height = height
     const ctx = canvasRef.current.getContext('2d')
@@ -273,7 +273,6 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
     setImageData(newImageData)
   }
 
-  // @todo - the imageData passed in is a done in render with the current state's imageData; either remove or use instead of fetching from the context -RS
   function createColorPins (imageData: Object) {
     if (isPaintScene) {
       generatePins([{ isPaintScene: isPaintScene }])
@@ -341,6 +340,7 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
     setIsPortrait(dimensions.originalIsPortrait)
     setImageDims(imageDims)
 
+    setWrapperWidth(dimensions.landscapeWidth)
     setImageWidth(width)
     setImageHeight(height)
     setIsPortrait(height > width)
@@ -374,7 +374,16 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
           {
             (imageUrl && pins.length > 0 && !isPaintScene)
               ? (<React.Fragment>
-                <ColorsFromImage data={{ initPins: pins, imageData, img: imageUrl, isPortrait: isPortrait }} width={imageWidthAndHeight.width} height={imageWidthAndHeight.height} referenceDimensions={imageDims} isActivedPage />
+                <DynamicColorFromImage
+                  originalImageWidth={imageDims.originalImageWidth}
+                  originalImageHeight={imageDims.originalImageHeight}
+                  originalIsPortrait={imageDims.originalIsPortrait}
+                  imageUrl={imageUrl}
+                  width={wrapperWidth}
+                  isPortrait={isPortrait}
+                  pins={pins}
+                  createColorPins={createColorPins}
+                  isActive />
                 <ConfirmationModal isActive={isConfirmationModalActive} onClickNo={() => setConfirmationModalActive(!isConfirmationModalActive)} />
               </React.Fragment>)
               : ''
