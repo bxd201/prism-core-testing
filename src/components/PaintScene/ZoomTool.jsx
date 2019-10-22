@@ -21,7 +21,7 @@ export class ZoomTool extends PureComponent<ComponentProps, ComponentState> {
   zoomSliderCircle: RefObject
   zoomSliderCircleMouseX: number
 
-  constructor (props) {
+  constructor (props: ComponentProps) {
     super(props)
     this.state = {
       leftPosition: 0,
@@ -36,19 +36,20 @@ export class ZoomTool extends PureComponent<ComponentProps, ComponentState> {
     this.handleDragStop = this.handleDragStop.bind(this)
   }
 
+  /*:: mouseDownHandler: (e: Object) => void */
   mouseDownHandler (e: Object) {
     const sliderCircleClientOffset = this.zoomSliderCircle.current.getBoundingClientRect()
     this.zoomSliderCircleMouseX = e.clientX - sliderCircleClientOffset.left
     this.setState({ isMouseDown: true })
   }
-
+  /*:: dragStartHandler: (e: Object) => void */
   dragStartHandler (e: Object) {
     e.stopPropagation()
     e.preventDefault()
     window.addEventListener('mousemove', this.handleMouseMove)
     window.addEventListener('mouseup', this.handleDragStop)
   }
-
+  /*:: handleMouseMove: (e: Object) => void */
   handleMouseMove (e: Object) {
     this.setLeftPosition(e)
   }
@@ -70,7 +71,7 @@ export class ZoomTool extends PureComponent<ComponentProps, ComponentState> {
       leftPosition: leftPosition
     })
   }, 10)
-
+  /*:: handleDragStop: (e: Object) => void */
   handleDragStop (e: Object) {
     this.setState({ isMouseDown: false })
     window.removeEventListener('mousemove', this.handleMouseMove)
