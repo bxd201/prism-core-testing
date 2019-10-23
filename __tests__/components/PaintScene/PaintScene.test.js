@@ -54,8 +54,10 @@ const defaultProps = {
     ]
   },
   referenceDimensions: {
-    imageHeight: 1046,
-    imageWidth: 1046
+    imageWidth: 0,
+    imageHeight: 0,
+    isPortrait: false,
+    originalIsPortrait: false
   }
 }
 
