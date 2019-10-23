@@ -14,13 +14,14 @@ import { getPaintAreaPath, repaintImageByPath,
   getActiveColorRGB, getSelectArea, hexToRGB,
   checkIntersection, drawImagePixelByPath,
   copyImageList, getColorAtPixel, colorMatch } from './utils'
-import { toolNames } from './data'
+import { toolNames, groupToolNames } from './data'
 import { getScaledPortraitHeight, getScaledLandscapeHeight } from '../../shared/helpers/ImageUtils'
 import throttle from 'lodash/throttle'
 
 const baseClass = 'paint__scene__wrapper'
 const canvasClass = `${baseClass}__canvas`
 const canvasSecondClass = `${baseClass}__canvas-second`
+const canvasThirdClass = `${baseClass}__canvas-third`
 const portraitOrientation = `${canvasClass}--portrait`
 const imageClass = `${baseClass}__image`
 const paintToolsClass = `${baseClass}__paint-tools`
@@ -35,6 +36,8 @@ const paintBrushSmallCircleClass = `${paintBrushClass}--small-circle`
 const paintBrushTinyCircleClass = `${paintBrushClass}--tiny-circle`
 const canvasShowByZindex = `${canvasClass}--show-by-zindex`
 const canvasHideByZindex = `${canvasClass}--hide-by-zindex`
+const canvasVisibleByVisibility = `${canvasClass}--visible-by-visibility`
+const canvasHiddenByVisibility = `${canvasClass}--hidden-by-visibility`
 
 const brushLargeWidth = 38
 const brushMediumWidth = 30
@@ -43,16 +46,6 @@ const brushTinyWidth = 14
 
 const brushRoundShape = 'round'
 const brushSquareShape = 'square'
-const defineArea = 'defineArea'
-const selectArea = 'selectArea'
-const paintAreaTool = 'paintArea'
-const paintBrushTool = 'paintBrush'
-const eraseTool = 'erase'
-const paintArea = 'paintArea'
-const removeArea = 'removeArea'
-const deleteGroup = 'deleteGroup'
-const group = 'group'
-const ungroup = 'ungroup'
 
 type ComponentProps = {
   imageUrl: string,
@@ -97,12 +90,14 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   imageDataData: any
   CFICanvasContext: any
   CFICanvasContext2: any
+  CFICanvasContextPaint: any
   canvasOffsetWidth: number
   canvasOffsetHeight: number
   canvasClientX: number
   canvasClientY: number
   CFICanvas: RefObject
   CFICanvas2: RefObject
+  CFICanvasPaint: RefObject
   CFIWrapper: RefObject
   CFIImage: RefObject
   wrapperDimensions: Object | null
@@ -121,6 +116,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
     this.CFICanvas = React.createRef()
     this.CFICanvas2 = React.createRef()
+    this.CFICanvasPaint = React.createRef()
     this.CFIWrapper = React.createRef()
     this.CFIImage = React.createRef()
     // @todo - marked for review -RS
@@ -139,8 +135,8 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
     this.state = {
       imageStatus: 'loading',
-      activeTool: paintAreaTool,
-      position: { left: 0, top: 0 },
+      activeTool: toolNames.PAINTAREA,
+      position: { left: 0, top: 0, isHidden: false },
       paintBrushWidth: brushLargeWidth,
       isDragging: false,
       drawCoordinates: [],
@@ -167,7 +163,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       isUngroup: false,
       isAddGroup: false,
       isDeleteGroup: false,
-      paintCursor: `${canvasClass}--${paintArea}`,
+      paintCursor: `${canvasClass}--${toolNames.PAINTAREA}`,
       isInfoToolActive: false
     }
 
@@ -200,7 +196,9 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     const { imagePathList, groupSelectList, selectedArea } = this.state
     let edgeListToRender = []
     let copyImagePathList = copyImageList(imagePathList)
-    if (prevProps.lpActiveColor.hex !== this.props.lpActiveColor.hex) {
+    const islpActiveColorAvailable = (prevProps.hasOwnProperty('lpActiveColor') && this.props.hasOwnProperty('lpActiveColor')) && this.props.lpActiveColor !== null
+    const islpActiveColorHexAvailable = (islpActiveColorAvailable) && prevProps.lpActiveColor.hasOwnProperty('hex') && this.props.lpActiveColor.hasOwnProperty('hex')
+    if (islpActiveColorHexAvailable && prevProps.lpActiveColor.hex !== this.props.lpActiveColor.hex) {
       const ctx = this.CFICanvas2.current.getContext('2d')
       const RGB = getActiveColorRGB(hexToRGB(this.props.lpActiveColor.hex))
       for (let i = 0; i < this.state.groupSelectList.length; i++) {
@@ -246,6 +244,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   initCanvas () {
     this.CFICanvasContext = this.CFICanvas.current.getContext('2d')
     this.CFICanvasContext2 = this.CFICanvas2.current.getContext('2d')
+    this.CFICanvasContextPaint = this.CFICanvasPaint.current.getContext('2d')
     this.canvasOffsetWidth = parseInt(this.wrapperDimensions.width, 10)
     this.canvasOffsetHeight = parseInt(this.wrapperDimensions.height, 10)
     this.updateCanvasWithNewDimensions()
@@ -286,6 +285,8 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.CFICanvas.current.height = canvasHeight
     this.CFICanvas2.current.width = canvasWidth
     this.CFICanvas2.current.height = canvasHeight
+    this.CFICanvasPaint.current.width = canvasWidth
+    this.CFICanvasPaint.current.height = canvasHeight
     this.canvasOffsetWidth = canvasWidth
     this.canvasOffsetHeight = canvasHeight
     this.canvasOriginalDimensions = { width: canvasWidth, height: canvasHeight }
@@ -298,7 +299,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.CFICanvasContext.drawImage(this.CFIImage.current, 0, 0, canvasWidth, canvasHeight)
     this.CFICanvasContext2.clearRect(0, 0, canvasWidth, canvasHeight)
     this.CFICanvasContext2.drawImage(this.CFIImage.current, 0, 0, canvasWidth, canvasHeight)
-
+    this.CFICanvasContextPaint.clearRect(0, 0, canvasWidth, canvasHeight)
     this.setState({ wrapperHeight: canvasHeight })
   }
 
@@ -475,9 +476,9 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   }
 
   mouseMoveHandler = (e: Object) => {
-    // e.stopPropagation()
     e.persist()
     const { activeTool, canvasMouseDown } = this.state
+    if (activeTool !== toolNames.PAINTBRUSH && activeTool !== toolNames.ERASE && activeTool !== toolNames.ZOOM) return
     if (activeTool === toolNames.ZOOM && canvasMouseDown) {
       this.onPanMove(e)
       return
@@ -487,34 +488,35 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
   throttledMouseMove = throttle((e: Object) => {
     const { clientX, clientY } = e
-    const { activeTool, paintBrushWidth, isDragging, drawCoordinates, eraseBrushWidth, paintBrushShape, canvasZoom } = this.state
+    const { activeTool, paintBrushWidth, isDragging, drawCoordinates, eraseBrushWidth, paintBrushShape } = this.state
     const { lpActiveColor } = this.props
-    const lpActiveColorRGB = (activeTool === eraseTool) ? `rgba(255, 255, 255, 1)` : `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})`
     const canvasClientOffset = this.CFICanvas2.current.getBoundingClientRect()
     const canvasWrapperOffset = this.getCanvasWrapperOffset()
+    const paintBrushHalfWidth = (activeTool === toolNames.PAINTBRUSH) ? paintBrushWidth / 2 : eraseBrushWidth / 2
+    const leftOffset = clientX - canvasWrapperOffset.x - paintBrushHalfWidth
+    const topOffset = clientY - canvasWrapperOffset.y - paintBrushHalfWidth
+    const position = { left: leftOffset, top: topOffset, isHidden: this.state.position.isHidden }
+    this.setState({ position })
 
-    if ((lpActiveColor && activeTool === paintBrushTool) || activeTool === eraseTool) {
-      const paintBrushHalfWidth = (activeTool === paintBrushTool) ? paintBrushWidth / 2 : eraseBrushWidth / 2
-      const leftOffset = clientX - canvasWrapperOffset.x - paintBrushHalfWidth
-      const topOffset = clientY - canvasWrapperOffset.y - paintBrushHalfWidth
-      const position = { left: leftOffset, top: topOffset }
-      this.setState({ position })
+    if ((lpActiveColor && activeTool === toolNames.PAINTBRUSH) || activeTool === toolNames.ERASE) {
+      const lpActiveColorRGB = (activeTool === toolNames.ERASE) ? `rgba(255, 255, 255, 1)` : `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})`
 
+      const scale = this.canvasOriginalDimensions.width / canvasClientOffset.width
       if (isDragging) {
         const currentPoint = {
-          x: (clientX - canvasClientOffset.left) / canvasZoom,
-          y: (clientY - canvasClientOffset.top) / canvasZoom
+          x: (clientX - canvasClientOffset.left) * scale,
+          y: (clientY - canvasClientOffset.top) * scale
         }
         const drawCoordinatesCloned = copyImageList(drawCoordinates)
         drawCoordinatesCloned.push(currentPoint)
         const drawCoordinatesLength = drawCoordinates.length
         const lastPoint = { x: drawCoordinates[drawCoordinatesLength - 1].x, y: drawCoordinates[drawCoordinatesLength - 1].y }
-        if ((activeTool === paintBrushTool && paintBrushShape === brushSquareShape) || (activeTool === eraseTool)) {
+        if ((activeTool === toolNames.PAINTBRUSH) || (activeTool === toolNames.ERASE)) {
           this.drawPaintBrushPoint(currentPoint, drawCoordinates[drawCoordinatesLength - 1])
         } else {
-          this.CFICanvasContext2.beginPath()
-          if (activeTool === paintBrushTool) {
-            this.drawPaintBrushPathUsingLine(this.CFICanvasContext2, currentPoint, lastPoint, paintBrushWidth, paintBrushShape, false, lpActiveColorRGB)
+          this.CFICanvasContextPaint.beginPath()
+          if (activeTool === toolNames.PAINTBRUSH) {
+            this.drawPaintBrushPathUsingLine(this.CFICanvasContextPaint, currentPoint, lastPoint, paintBrushWidth, paintBrushShape, false, lpActiveColorRGB)
           }
         }
         this.setState({ drawCoordinates: drawCoordinatesCloned })
@@ -523,31 +525,32 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   }, 10)
 
   mouseDownHandler = (e: Object) => {
-    const { isDragging, paintBrushWidth, paintBrushShape, activeTool, canvasZoom } = this.state
+    window.addEventListener('mouseup', this.mouseUpHandler)
+    const { isDragging, paintBrushWidth, paintBrushShape, activeTool } = this.state
     const { lpActiveColor } = this.props
-    const lpActiveColorRGB = (activeTool === eraseTool) ? `rgba(255, 255, 255, 1)` : `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})`
-    if (!lpActiveColor) return
+    if (!lpActiveColor && activeTool === toolNames.PAINTBRUSH) return
+    const lpActiveColorRGB = (activeTool === toolNames.ERASE) ? `rgba(255, 255, 255, 1)` : `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})`
     const { clientX, clientY } = e
     const canvasClientOffset = this.CFICanvas2.current.getBoundingClientRect()
     const drawCoordinates = []
+    const scale = this.canvasOriginalDimensions.width / canvasClientOffset.width
     const currentPoint = {
-      x: (clientX - canvasClientOffset.left) / canvasZoom,
-      y: (clientY - canvasClientOffset.top) / canvasZoom
+      x: (clientX - canvasClientOffset.left) * scale,
+      y: (clientY - canvasClientOffset.top) * scale
     }
     const lastPoint = { x: currentPoint.x - 1, y: currentPoint.y }
     drawCoordinates.push(currentPoint)
-    this.CFICanvasContext2.beginPath()
+    this.CFICanvasContextPaint.beginPath()
     if (isDragging === false) {
-      if ((activeTool === paintBrushTool && paintBrushShape === brushSquareShape) || (activeTool === eraseTool)) {
+      if ((activeTool === toolNames.PAINTBRUSH) || (activeTool === toolNames.ERASE)) {
         this.drawPaintBrushPoint(currentPoint)
       } else {
-        if (activeTool === paintBrushTool) {
-          this.drawPaintBrushPathUsingLine(this.CFICanvasContext2, currentPoint, lastPoint, paintBrushWidth, paintBrushShape, false, lpActiveColorRGB)
+        if (activeTool === toolNames.PAINTBRUSH) {
+          this.drawPaintBrushPathUsingLine(this.CFICanvasContextPaint, currentPoint, lastPoint, paintBrushWidth, paintBrushShape, false, lpActiveColorRGB)
         }
       }
     }
     this.setState({ drawCoordinates })
-    window.addEventListener('mouseup', this.mouseUpHandler)
   }
 
   dragStartHandler = (e: Object) => {
@@ -557,12 +560,16 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   }
 
   mouseUpHandler = (e: Object) => {
-    const { drawCoordinates, paintBrushShape, paintBrushWidth, imagePathList, activeTool, eraseBrushShape, eraseBrushWidth, groupAreaList, groupSelectList } = this.state
+    const { drawCoordinates, imagePathList, activeTool, groupAreaList, groupSelectList } = this.state
     const { lpActiveColor } = this.props
-    if (lpActiveColor && activeTool === paintBrushTool && drawCoordinates.length > 0) {
-      this.clearCanvas()
-      this.repaintBrushPathByCorrdinates(drawCoordinates, paintBrushWidth, paintBrushShape, false)
-      const newImagePathList = getPaintAreaPath(imagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight, this.props.lpActiveColor)
+    if (!lpActiveColor) {
+      this.setState({
+        isDragging: false
+      })
+    }
+    if (lpActiveColor && activeTool === toolNames.PAINTBRUSH && drawCoordinates.length > 0) {
+      const newImagePathList = getPaintAreaPath(imagePathList, this.CFICanvasPaint, this.canvasOffsetWidth, this.canvasOffsetHeight, this.props.lpActiveColor, true)
+      this.CFICanvasContextPaint.clearRect(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
       this.clearCanvas()
       repaintImageByPath(newImagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
       this.setState({ isDragging: false,
@@ -571,10 +578,10 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       this.pushToHistory()
     }
 
-    if (activeTool === eraseTool && drawCoordinates.length > 0) {
-      this.repaintBrushPathByCorrdinates(drawCoordinates, eraseBrushWidth, eraseBrushShape, false)
+    if (activeTool === toolNames.ERASE && drawCoordinates.length > 0) {
       const RGB = getActiveColorRGB({ red: 255, blue: 255, green: 255 })
-      const erasePath = getImageCordinateByPixel(this.CFICanvas2, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight)
+      const erasePath = getImageCordinateByPixel(this.CFICanvasPaint, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight)
+      this.CFICanvasContextPaint.clearRect(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
       const tmpImagePathList = eraseIntersection(imagePathList, erasePath)
       let idsToUngroup = []
       let newGroupSelectList = []
@@ -605,15 +612,15 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   repaintBrushPathByCorrdinates = (drawCoordinates, paintBrushWidth, paintBrushShape, clip) => {
     const { lpActiveColor } = this.props
     const { activeTool } = this.state
-    const lpActiveColorRGB = `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})`
+    const lpActiveColorRGB = (activeTool === toolNames.ERASE) ? `rgba(255, 255, 255, 1)` : `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})`
     this.CFICanvasContext2.beginPath()
     for (let i = 0; i < drawCoordinates.length; i++) {
       const currentPoint = drawCoordinates[i]
       const lastPoint = (i === 0) ? drawCoordinates[i] : drawCoordinates[i - 1]
-      if ((activeTool === paintBrushTool && paintBrushShape === brushSquareShape) || (activeTool === eraseTool)) {
+      if ((activeTool === toolNames.PAINTBRUSH) || (activeTool === toolNames.ERASE)) {
         this.drawPaintBrushPath(this.CFICanvasContext2, currentPoint, lastPoint, paintBrushWidth, paintBrushShape, clip)
       } else {
-        if (activeTool === paintBrushTool) {
+        if (activeTool === toolNames.PAINTBRUSH) {
           this.drawPaintBrushPathUsingLine(this.CFICanvasContext2, currentPoint, lastPoint, paintBrushWidth, paintBrushShape, clip, lpActiveColorRGB)
         }
       }
@@ -624,23 +631,25 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     const { paintBrushWidth, activeTool, eraseBrushWidth, paintBrushShape, eraseBrushShape } = this.state
     const previousPoint = lastPoint || point
 
-    if (activeTool === eraseTool) {
+    if (activeTool === toolNames.ERASE) {
       this.drawPaintBrushPath(this.CFICanvasContext2, point, previousPoint, eraseBrushWidth, eraseBrushShape, true)
+      this.drawPaintBrushPath(this.CFICanvasContextPaint, point, previousPoint, eraseBrushWidth, eraseBrushShape, false)
     } else {
-      this.drawPaintBrushPath(this.CFICanvasContext2, point, previousPoint, paintBrushWidth, paintBrushShape, false)
+      this.drawPaintBrushPath(this.CFICanvasContextPaint, point, previousPoint, paintBrushWidth, paintBrushShape, false)
     }
   }
 
   drawPaintBrushPath = (context: Object, to: Object, from: Object, width: number, brushShape: string, clip: string) => {
     const { lpActiveColor } = this.props
     const { activeTool } = this.state
-    const lpActiveColorRGB = `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})`
-    context.fillStyle = (activeTool === eraseTool) ? `rgba(255, 255, 255, 1)` : lpActiveColorRGB
+    const lpActiveColorRGB = (activeTool === toolNames.ERASE) ? `rgba(255, 255, 255, 1)` : `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})`
+    context.fillStyle = lpActiveColorRGB
     const canvasClientOffset = this.CFICanvas2.current.getBoundingClientRect()
     const scale = this.canvasOriginalDimensions.width / canvasClientOffset.width
     const radius = Math.round(0.5 * width * scale)
     if (clip) {
       context.save()
+      context.globalCompositeOperation = 'destination-out'
       context.beginPath()
       drawAcrossLine(context, to, from, (ctx, x, y) => {
         if (brushShape === brushSquareShape) {
@@ -649,19 +658,22 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
           ctx.arc(x, y, radius, 0, 2 * Math.PI)
         }
       })
-      context.clip()
-      context.clearRect(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
+      context.fill()
+      // context.clearRect(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
       context.restore()
     } else {
-      if (activeTool === eraseTool) context.beginPath()
+      context.save()
+      context.beginPath()
       drawAcrossLine(context, to, from, (ctx, x, y) => {
         if (brushShape === brushSquareShape) {
           ctx.rect(x - radius, y - radius, width * scale, width * scale)
         } else {
           ctx.arc(x, y, radius, 0, 2 * Math.PI)
+          ctx.closePath()
         }
       })
       context.fill()
+      context.restore()
     }
   }
 
@@ -677,12 +689,12 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
   setBrushShapeSize = (brushShape: string, brushWidth: number) => {
     const { activeTool } = this.state
-    if (activeTool === paintBrushTool) {
+    if (activeTool === toolNames.PAINTBRUSH) {
       this.setState({
         paintBrushShape: brushShape,
         paintBrushWidth: brushWidth
       })
-    } else if (activeTool === eraseTool) {
+    } else if (activeTool === toolNames.ERASE) {
       this.setState({
         eraseBrushShape: brushShape,
         eraseBrushWidth: brushWidth
@@ -695,11 +707,12 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
      * The main idea is maintain selectAreaList, whenever user click area, we repaint canvas based on update
      * selectAreaList and imagePathList
     */
-    const { imagePathList, selectedArea, groupAreaList, groupSelectList, canvasZoom } = this.state
+    const { imagePathList, selectedArea, groupAreaList, groupSelectList } = this.state
     const canvasClientOffset = this.CFICanvas2.current.getBoundingClientRect()
+    const scale = this.canvasOriginalDimensions.width / canvasClientOffset.width
     const { clientX, clientY } = e
-    const cursorX = parseInt((clientX - canvasClientOffset.left) / canvasZoom)
-    const cursorY = parseInt((clientY - canvasClientOffset.top) / canvasZoom)
+    const cursorX = parseInt((clientX - canvasClientOffset.left) * scale)
+    const cursorY = parseInt((clientY - canvasClientOffset.top) * scale)
     const imageData = this.CFICanvasContext2.getImageData(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
 
     const index = (cursorX + cursorY * this.canvasOffsetWidth) * 4
@@ -813,12 +826,14 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   }
 
   handlePolygonDefine = (e, isAddArea) => {
+    if (!this.props.lpActiveColor) return
     const ctx = this.CFICanvas2.current
     const { clientX, clientY } = e
-    const { canvasZoom } = this.state
+    // const { canvasZoom } = this.state
     const canvasClientOffset = this.CFICanvas2.current.getBoundingClientRect()
-    const cursorX = (clientX - canvasClientOffset.left) / canvasZoom
-    const cursorY = (clientY - canvasClientOffset.top) / canvasZoom
+    const scale = this.canvasOriginalDimensions.width / canvasClientOffset.width
+    const cursorX = (clientX - canvasClientOffset.left) * scale
+    const cursorY = (clientY - canvasClientOffset.top) * scale
     if (!ctx.getContext) return
     let ctxDraw = ctx.getContext('2d')
     const { BeginPointList, polyList, lineStart, imagePathList } = this.state
@@ -874,9 +889,13 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
   handlePaintArea = throttle((e) => {
     const { imagePathList } = this.state
+    if (!this.props.lpActiveColor) return
     let imagePath = []
-    const cursorX = e.nativeEvent.offsetX
-    const cursorY = e.nativeEvent.offsetY
+    const { clientX, clientY } = e
+    const canvasClientOffset = this.CFICanvas2.current.getBoundingClientRect()
+    const scale = this.canvasOriginalDimensions.width / canvasClientOffset.width
+    const cursorX = Math.round((clientX - canvasClientOffset.left) * scale)
+    const cursorY = Math.round((clientY - canvasClientOffset.top) * scale)
     const imageData = this.CFICanvasContext2.getImageData(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
     const imageDataOrigin = this.CFICanvasContext.getImageData(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
     let copyImagePathList = copyImageList(imagePathList)
@@ -930,16 +949,16 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     const { activeTool, isInfoToolActive } = this.state
     if (isInfoToolActive) return
     switch (activeTool) {
-      case defineArea:
+      case toolNames.DEFINEAREA:
         this.handlePolygonDefine(e, true)
         break
-      case selectArea:
+      case toolNames.SELECTAREA:
         this.handleSelectArea(e)
         break
-      case paintArea:
+      case toolNames.PAINTAREA:
         this.handlePaintArea(e)
         break
-      case removeArea:
+      case toolNames.REMOVEAREA:
         this.handlePolygonDefine(e, false)
         break
     }
@@ -954,7 +973,6 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   }
 
   applyZoom = (zoomNumber: number) => {
-    // const wrapperClientOffset = this.getCanvasWrapperOffset()
     const options = {
       containerWidth: this.wrapperOriginalDimensions.width,
       containerHeight: this.wrapperOriginalDimensions.height,
@@ -1187,13 +1205,13 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
   groupHandler = (groupName) => {
     switch (groupName) {
-      case deleteGroup:
+      case groupToolNames.DELETEGROUP:
         this.deleteGroup()
         break
-      case group:
+      case groupToolNames.GROUP:
         this.group()
         break
-      case ungroup:
+      case groupToolNames.UNGROUP:
         this.ungroup()
         break
     }
@@ -1237,27 +1255,40 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   }
 
   applyDimensionFactorsToCanvas = (factors: Object) => {
-    this.CFICanvas.current.style.width = `${Math.floor(factors.widthFactor * 100)}%`
-    this.CFICanvas.current.style.height = `${Math.floor(factors.heightFactor * 100)}%`
-    this.CFICanvas.current.style.left = `${Math.floor(factors.xFactor * 100)}%`
-    this.CFICanvas.current.style.top = `${Math.floor(factors.yFactor * 100)}%`
-    this.CFICanvas2.current.style.width = `${Math.floor(factors.widthFactor * 100)}%`
-    this.CFICanvas2.current.style.height = `${Math.floor(factors.heightFactor * 100)}%`
-    this.CFICanvas2.current.style.left = `${Math.floor(factors.xFactor * 100)}%`
-    this.CFICanvas2.current.style.top = `${Math.floor(factors.yFactor * 100)}%`
+    this.applyDimensionFactorsByCanvas(factors, this.CFICanvas)
+    this.applyDimensionFactorsByCanvas(factors, this.CFICanvas2)
+    this.applyDimensionFactorsByCanvas(factors, this.CFICanvasPaint)
+  }
+
+  applyDimensionFactorsByCanvas = (factors: Object, canvas: Ref) => {
+    canvas.current.style.width = `${Math.floor(factors.widthFactor * 100)}%`
+    canvas.current.style.height = `${Math.floor(factors.heightFactor * 100)}%`
+    canvas.current.style.left = `${Math.floor(factors.xFactor * 100)}%`
+    canvas.current.style.top = `${Math.floor(factors.yFactor * 100)}%`
+  }
+
+  mouseLeaveHandler = () => {
+    const { position } = this.state
+    this.setState({ position: { ...position, isHidden: true } })
+  }
+
+  mouseEnterHandler = () => {
+    const { position } = this.state
+    this.setState({ position: { ...position, isHidden: false } })
   }
 
   render () {
     const { imageUrl, lpActiveColor } = this.props
     const { activeTool, position, paintBrushShape, paintBrushWidth, eraseBrushShape, eraseBrushWidth, undoIsEnabled, redoIsEnabled, showOriginalCanvas, isAddGroup, isDeleteGroup, isUngroup, paintCursor, isInfoToolActive } = this.state
     const lpActiveColorRGB = (lpActiveColor) ? `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})` : ``
-    const backgroundColorBrush = (activeTool === eraseTool) ? `rgba(255, 255, 255, 0.7)` : lpActiveColorRGB
+    const backgroundColorBrush = (activeTool === toolNames.ERASE) ? `rgba(255, 255, 255, 0.7)` : lpActiveColorRGB
     const { paintBrushActiveClass, paintBrushCircleActiveClass } = this.getPaintBrushActiveClass()
     const { eraseBrushActiveClass, eraseBrushCircleActiveClass } = this.getEraseBrushActiveClass()
     return (
-      <div role='presentation' className={`${baseClass}`} onClick={this.handleClick} onMouseMove={this.mouseMoveHandler} ref={this.CFIWrapper} style={{ height: this.state.wrapperHeight }}>
+      <div role='presentation' className={`${baseClass}`} onClick={this.handleClick} onMouseMove={this.mouseMoveHandler} ref={this.CFIWrapper} style={{ height: this.state.wrapperHeight }} onMouseLeave={this.mouseLeaveHandler} onMouseEnter={this.mouseEnterHandler}>
         <canvas className={`${canvasClass} ${showOriginalCanvas ? `${canvasShowByZindex}` : `${canvasHideByZindex}`} ${this.isPortrait ? portraitOrientation : ''}`} name='paint-scene-canvas-first' ref={this.CFICanvas} />
-        <canvas onMouseDown={this.onPanStart} style={{ opacity: showOriginalCanvas ? 1 : 0.8 }} className={`${canvasClass} ${paintCursor} ${canvasSecondClass} ${this.isPortrait ? portraitOrientation : ''}`} name='paint-scene-canvas-second' ref={this.CFICanvas2} />
+        <canvas style={{ opacity: showOriginalCanvas ? 1 : 0.8 }} className={`${canvasClass} ${paintCursor} ${canvasSecondClass} ${this.isPortrait ? portraitOrientation : ''}`} name='paint-scene-canvas-second' ref={this.CFICanvas2} />
+        <canvas onMouseDown={this.onPanStart} style={{ opacity: 1 }} className={`${canvasClass} ${paintCursor} ${(activeTool === toolNames.PAINTBRUSH ? canvasSecondClass : canvasThirdClass)} ${(activeTool === toolNames.ERASE) ? canvasHiddenByVisibility : canvasVisibleByVisibility} ${this.isPortrait ? portraitOrientation : ''}`} name='paint-scene-canvas-paint' ref={this.CFICanvasPaint} />
         <img className={`${imageClass}`} ref={this.CFIImage} onLoad={this.initCanvas} onError={this.handleImageErrored} src={imageUrl} alt='' />
         <div className={`${paintToolsClass}`}>
           <PaintToolBar
@@ -1282,9 +1313,9 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
           />
         </div>
         {
-          ((activeTool === paintBrushTool || activeTool === eraseTool) && (position.left > 0 || position.top > 0) && !isInfoToolActive)
+          ((activeTool === toolNames.PAINTBRUSH || activeTool === toolNames.ERASE) && (position.isHidden === false) && !isInfoToolActive)
             ? <div
-              className={`${paintBrushClass} ${activeTool === paintBrushTool ? `${paintBrushActiveClass} ${paintBrushCircleActiveClass}` : activeTool === eraseTool ? `${eraseBrushActiveClass} ${eraseBrushCircleActiveClass}` : ``}`}
+              className={`${paintBrushClass} ${activeTool === toolNames.PAINTBRUSH ? `${paintBrushActiveClass} ${paintBrushCircleActiveClass}` : activeTool === toolNames.ERASE ? `${eraseBrushActiveClass} ${eraseBrushCircleActiveClass}` : ``}`}
               role='presentation'
               draggable
               onMouseDown={this.mouseDownHandler} onDragStart={this.dragStartHandler}
