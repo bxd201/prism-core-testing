@@ -6,6 +6,7 @@ import toLower from 'lodash/toLower'
 import { loadConfiguration } from '../../store/actions/configurations'
 
 import CSSVariableApplicator from '../../helpers/CSSVariableApplicator'
+import { varNames } from 'variables'
 
 import ConfigurationContext from './ConfigurationContext'
 
@@ -35,17 +36,17 @@ function ConfigurationContextProvider ({ children, brand, pageRoot, loadConfigur
 
   // construct the theme object with expliciteness
   const theme = {
-    'prism-color-primary': configurations.theme.primary,
-    'prism-color-secondary': configurations.theme.secondary,
-    'prism-color-warning': configurations.theme.warning,
-    'prism-color-success': configurations.theme.success,
-    'prism-color-danger': configurations.theme.danger,
-    'prism-color-error': configurations.theme.error,
-    'prism-color-grey': configurations.theme.grey,
-    'prism-color-lightGrey': configurations.theme.lightGrey,
-    'prism-color-nearBlack': configurations.theme.nearBlack,
-    'prism-color-black': configurations.theme.black,
-    'prism-color-white': configurations.theme.white
+    [varNames.theme.colors.primary]: configurations.theme.primary,
+    [varNames.theme.colors.secondary]: configurations.theme.secondary,
+    [varNames.theme.colors.warning]: configurations.theme.warning,
+    [varNames.theme.colors.success]: configurations.theme.success,
+    [varNames.theme.colors.danger]: configurations.theme.danger,
+    [varNames.theme.colors.error]: configurations.theme.error,
+    [varNames.theme.colors.grey]: configurations.theme.grey,
+    [varNames.theme.colors.lightGrey]: configurations.theme.lightGrey,
+    [varNames.theme.colors.nearBlack]: configurations.theme.nearBlack,
+    [varNames.theme.colors.blackv]: configurations.theme.black,
+    [varNames.theme.colors.white]: configurations.theme.white
   }
 
   // add brand to the configuration object
