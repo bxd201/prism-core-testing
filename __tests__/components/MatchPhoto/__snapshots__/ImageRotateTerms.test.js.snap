@@ -41,6 +41,7 @@ exports[`ImageRotateTerms with props should match snapshot with props 1`] = `
           rotation={null}
           size="xs"
           spin={false}
+          swapOpacity={false}
           symbol={false}
           title=""
           transform={null}
@@ -72,6 +73,7 @@ exports[`ImageRotateTerms with props should match snapshot with props 1`] = `
           rotation={null}
           size="xs"
           spin={false}
+          swapOpacity={false}
           symbol={false}
           title=""
           transform={null}
@@ -115,6 +117,7 @@ exports[`ImageRotateTerms with props should match snapshot with props 1`] = `
                   "color": "#e5e5e5",
                 }
               }
+              swapOpacity={false}
               symbol={false}
               title=""
               transform={null}

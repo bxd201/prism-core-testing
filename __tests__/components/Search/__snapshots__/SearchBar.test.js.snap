@@ -39,6 +39,7 @@ exports[`SearchBar should match snapshot 1`] = `
         rotation={null}
         size="lg"
         spin={false}
+        swapOpacity={false}
         symbol={false}
         title=""
         transform={null}

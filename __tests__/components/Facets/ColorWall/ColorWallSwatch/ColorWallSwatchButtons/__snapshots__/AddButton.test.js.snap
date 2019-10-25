@@ -18,6 +18,7 @@ exports[`AddButton should match snapshot 1`] = `
     rotation={null}
     size="1x"
     spin={false}
+    swapOpacity={false}
     symbol={false}
     title=""
     transform={null}

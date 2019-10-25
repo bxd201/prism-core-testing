@@ -1,62 +1,83 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`CircleLoader with empty props should match snapshot 1`] = `
-<svg
-  className="prism-loader-circle "
-  preserveAspectRatio="xMidYMid"
-  viewBox="0 0 100 100"
-  xmlns="http://www.w3.org/2000/svg"
+<CircleLoader
+  className="color-wall-wall__loader"
+  color="red"
 >
-  <circle
-    cx="50"
-    cy="50"
-    fill="none"
-    r="35"
-    strokeDasharray="164.93361431346415 56.97787143782138"
-    strokeWidth="5"
-    transform="rotate(143.836 50 50)"
+  <Memo(CSSVariableApplicator)
+    variables={
+      Object {
+        "--prism-circle-loader-begin-dash": 209.9114857512855,
+        "--prism-circle-loader-begin-gap": 10,
+        "--prism-circle-loader-color-1": "#ff0000",
+        "--prism-circle-loader-color-2": "#ffcccc",
+        "--prism-circle-loader-color-3": "#ff0000",
+        "--prism-circle-loader-color-4": "#ff6666",
+        "--prism-circle-loader-color-5": "#ffcccc",
+        "--prism-circle-loader-end-dash": 109.95574287564276,
+        "--prism-circle-loader-end-gap": 109.95574287564276,
+      }
+    }
   >
-    <animateTransform
-      attributeName="transform"
-      begin="0s"
-      calcMode="linear"
-      dur="1s"
-      keyTimes="0;1"
-      repeatCount="indefinite"
-      type="rotate"
-      values="0 50 50;360 50 50"
-    />
-  </circle>
-</svg>
+    <svg
+      className="prism-loader-circle color-wall-wall__loader"
+      preserveAspectRatio="xMidYMid"
+      viewBox="0 0 100 100"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle
+        className="prism-loader-circle__circle"
+        cx="50"
+        cy="50"
+        fill="none"
+        r={35}
+        strokeDasharray="164.93361431346415 56.97787143782138"
+        strokeWidth={5}
+        transform="rotate(143.836 50 50)"
+      />
+    </svg>
+  </Memo(CSSVariableApplicator)>
+</CircleLoader>
 `;
 
 exports[`CircleLoader with props should match snapshot 1`] = `
-<svg
-  className="prism-loader-circle color-wall-wall__loader"
-  preserveAspectRatio="xMidYMid"
-  viewBox="0 0 100 100"
-  xmlns="http://www.w3.org/2000/svg"
+<CircleLoader
+  className="color-wall-wall__loader"
+  color="red"
 >
-  <circle
-    cx="50"
-    cy="50"
-    fill="none"
-    r="35"
-    stroke="red"
-    strokeDasharray="164.93361431346415 56.97787143782138"
-    strokeWidth="5"
-    transform="rotate(143.836 50 50)"
+  <Memo(CSSVariableApplicator)
+    variables={
+      Object {
+        "--prism-circle-loader-begin-dash": 209.9114857512855,
+        "--prism-circle-loader-begin-gap": 10,
+        "--prism-circle-loader-color-1": "#ff0000",
+        "--prism-circle-loader-color-2": "#ffcccc",
+        "--prism-circle-loader-color-3": "#ff0000",
+        "--prism-circle-loader-color-4": "#ff6666",
+        "--prism-circle-loader-color-5": "#ffcccc",
+        "--prism-circle-loader-end-dash": 109.95574287564276,
+        "--prism-circle-loader-end-gap": 109.95574287564276,
+      }
+    }
   >
-    <animateTransform
-      attributeName="transform"
-      begin="0s"
-      calcMode="linear"
-      dur="1s"
-      keyTimes="0;1"
-      repeatCount="indefinite"
-      type="rotate"
-      values="0 50 50;360 50 50"
-    />
-  </circle>
-</svg>
+    <svg
+      className="prism-loader-circle color-wall-wall__loader"
+      preserveAspectRatio="xMidYMid"
+      viewBox="0 0 100 100"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle
+        className="prism-loader-circle__circle"
+        cx="50"
+        cy="50"
+        fill="none"
+        r={35}
+        strokeDasharray="164.93361431346415 56.97787143782138"
+        strokeWidth={5}
+        transform="rotate(143.836 50 50)"
+      />
+    </svg>
+  </Memo(CSSVariableApplicator)>
+</CircleLoader>
 `;
