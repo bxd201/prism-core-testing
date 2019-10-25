@@ -51,6 +51,10 @@ module.exports.varValues = {
   }
 }
 
+/**
+ * All values in varNames MUST be in kebab case with 2 leading dashes.
+ * @example 'myVarName2000' would become '--my-var-name-2000'
+ */
 module.exports.varNames = {
   theme: {
     colors: {
@@ -61,11 +65,11 @@ module.exports.varNames = {
       danger: '--prism-color-danger',
       error: '--prism-color-error',
       grey: '--prism-color-grey',
-      lightGrey: '--prism-color-lightGrey',
-      nearBlack: '--prism-color-nearBlack',
+      lightGrey: '--prism-color-light-grey',
+      nearBlack: '--prism-color-near-black',
       black: '--prism-color-black',
       white: '--prism-color-white',
-      summerSkyBlue: '--prism-color-summerSkyBlue'
+      summerSkyBlue: '--prism-color-summer-sky-blue'
     }
   },
   globalCornerRadius: '--sw-global-corner-radius',

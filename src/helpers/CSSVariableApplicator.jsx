@@ -1,5 +1,7 @@
 // @flow
 import React, { useEffect } from 'react'
+import normalizeCssPropName from '../shared/utils/normalizeCssPropName.util'
+import at from 'lodash/at'
 
 type Props = {
   variables: Object,
@@ -7,10 +9,15 @@ type Props = {
 }
 
 function CSSVariableApplicator ({ variables, children }: Props) {
+  const setProperty = at(document, 'documentElement.style.setProperty')[0]
+
   useEffect(() => {
+    if (typeof setProperty !== 'function') {
+      return
+    }
+
     for (let prop in variables) {
-      // $FlowIgnore -- flow doesn't know of the style attribute within documentElement
-      document.documentElement.style.setProperty(`--${prop}`, variables[prop])
+      setProperty(normalizeCssPropName(prop), variables[prop])
     }
   }, [variables])
 
@@ -21,4 +28,4 @@ function CSSVariableApplicator ({ variables, children }: Props) {
   )
 }
 
-export default CSSVariableApplicator
+export default React.memo<Props>(CSSVariableApplicator)
