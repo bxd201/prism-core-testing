@@ -17,12 +17,12 @@ import ColorWallSwatch from '../Facets/ColorWall/ColorWallSwatch/ColorWallSwatch
 import SearchBar from './SearchBar'
 import ButtonBar from '../GeneralButtons/ButtonBar/ButtonBar'
 import GenericMessage from '../Messages/GenericMessage'
-import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 import TextButton from '../GeneralButtons/TextButton/TextButton'
 
 import { type Color } from '../../shared/types/Colors'
 
 import './Search.scss'
+import HeroLoader from '../Loaders/HeroLoader/HeroLoader'
 
 type Props = {
   colors: void | any[],
@@ -79,7 +79,7 @@ export class Search extends PureComponent<Props, State> {
         </form>
         <div className={`${baseClass}__results-pane`}>
           { loading ? (
-            <CircleLoader />
+            <HeroLoader />
           ) : error ? (
             <GenericMessage type={GenericMessage.TYPES.ERROR}>
               <FormattedMessage id='SEARCH.ERROR.HEADLINE' />

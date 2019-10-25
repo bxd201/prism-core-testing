@@ -6,7 +6,7 @@ import includes from 'lodash/includes'
 
 import ColorWallRouteComponent from '../ColorWall/ColorWallRouteComponent'
 import ColorDetails from '../ColorDetails/ColorDetails'
-import ColorDataWrapper from '../../../helpers/ColorDataWrapper'
+import ColorDataWrapper from '../../../helpers/ColorDataWrapper/ColorDataWrapper'
 import BackToColorWall from './BackToColorWall'
 
 import { varValues } from 'variables'

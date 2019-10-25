@@ -8,16 +8,17 @@ type Props = {
   children: any
 }
 
-function CSSVariableApplicator ({ variables, children }: Props) {
-  const setProperty = at(document, 'documentElement.style.setProperty')[0]
+const setProperty = at(document, 'documentElement.style.setProperty')[0]
 
+function CSSVariableApplicator ({ variables, children }: Props) {
   useEffect(() => {
     if (typeof setProperty !== 'function') {
       return
     }
 
     for (let prop in variables) {
-      setProperty(normalizeCssPropName(prop), variables[prop])
+      // $FlowIgnore -- flow doesn't recognize the style prop of documentElement
+      document.documentElement.style.setProperty(normalizeCssPropName(prop), variables[prop])
     }
   }, [variables])
 

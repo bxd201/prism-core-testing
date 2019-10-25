@@ -3,13 +3,14 @@ import React from 'react'
 import { connect } from 'react-redux'
 import isEmpty from 'lodash/isEmpty'
 
-import CircleLoader from '../components/Loaders/CircleLoader/CircleLoader'
-import { loadColors } from '../store/actions/loadColors'
-import { varValues } from 'variables'
-import WithConfigurationContext from '../contexts/ConfigurationContext/WithConfigurationContext'
+import HeroLoader from '../../components/Loaders/HeroLoader/HeroLoader'
+import { loadColors } from '../../store/actions/loadColors'
+import WithConfigurationContext from '../../contexts/ConfigurationContext/WithConfigurationContext'
 
-import { type CategorizedColorGrid, type ColorMap } from '../shared/types/Colors'
-import type { Configuration } from '../shared/types/Configuration'
+import { type CategorizedColorGrid, type ColorMap } from '../../shared/types/Colors'
+import { type Configuration } from '../../shared/types/Configuration'
+
+import './ColorDataWrapper.scss'
 
 type Props = {
   colors: CategorizedColorGrid,
@@ -37,7 +38,7 @@ const ColorDataWrapper = (WrappedComponent: any) => {
 
     render () {
       if (isEmpty(this.props.colors)) {
-        return <CircleLoader color={varValues.colors.primary} />
+        return <HeroLoader />
       }
 
       return <WrappedComponent {...this.props} />

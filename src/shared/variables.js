@@ -85,5 +85,25 @@ module.exports.varNames = {
         active: '--scene-button-active-color'
       }
     }
+  },
+  loaders: {
+    circle: {
+      color1: '--prism-circle-loader-color-1',
+      color2: '--prism-circle-loader-color-2',
+      color3: '--prism-circle-loader-color-3',
+      color4: '--prism-circle-loader-color-4',
+      color5: '--prism-circle-loader-color-5',
+      beginDash: '--prism-circle-loader-begin-dash',
+      beginGap: '--prism-circle-loader-begin-gap',
+      endDash: '--prism-circle-loader-end-dash',
+      endGap: '--prism-circle-loader-end-gap'
+    },
+    hero: {
+      color1: '--prism-hero-loader-color-1',
+      color2: '--prism-hero-loader-color-2',
+      color3: '--prism-hero-loader-color-3',
+      color4: '--prism-hero-loader-color-4',
+      color5: '--prism-hero-loader-color-5'
+    }
   }
 }

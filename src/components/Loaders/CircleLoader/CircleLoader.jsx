@@ -1,29 +1,65 @@
 // @flow
 import React from 'react'
+import CSSVariableApplicator from '../../../helpers/CSSVariableApplicator'
+import memoizee from 'memoizee'
+
+import { getColors } from '../functions'
+import { varNames } from 'variables'
 
 import './CircleLoader.scss'
 
+const R = 35
+const PERIMETER = R * 2 * Math.PI
+const STROKE_WIDTH = 5
+
+const getCssVars = memoizee((color?: string): Object => {
+  let colors = getColors(color, 20)
+
+  // if a color has been provided...
+  if (color) {
+    // ... let's create some more obvious stepping so the transitions are more apparent
+    colors = [
+      colors[0],
+      colors[4],
+      colors[0],
+      colors[2],
+      colors[4]
+    ]
+  }
+
+  return {
+    [varNames.loaders.circle.color1]: colors[0],
+    [varNames.loaders.circle.color2]: colors[1],
+    [varNames.loaders.circle.color3]: colors[2],
+    [varNames.loaders.circle.color4]: colors[3],
+    [varNames.loaders.circle.color5]: colors[4],
+    [varNames.loaders.circle.beginDash]: PERIMETER - (STROKE_WIDTH * 2),
+    [varNames.loaders.circle.beginGap]: (STROKE_WIDTH * 2),
+    [varNames.loaders.circle.endDash]: PERIMETER / 2,
+    [varNames.loaders.circle.endGap]: PERIMETER / 2
+  }
+}, { primitive: true, length: 1 })
+
 type Props = {
-  color?: string,
-  className?: string
+  circleProps?: Object,
+  className?: string,
+  color?: string
 }
 
 function CircleLoader (props: Props) {
-  const { color, className, ...other } = props
-
-  let circleProps = {}
-
-  if (color) {
-    circleProps = Object.assign({}, { stroke: color })
-  }
+  const { color, className, circleProps, ...other } = props
 
   return (
-    <svg className={`prism-loader-circle ${typeof className === 'string' ? className : ''}`} {...other} xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='xMidYMid'>
-      <circle cx='50' cy='50' {...circleProps} fill='none' strokeWidth='5' r='35' strokeDasharray='164.93361431346415 56.97787143782138' transform='rotate(143.836 50 50)'>
-        <animateTransform attributeName='transform' type='rotate' calcMode='linear' values='0 50 50;360 50 50' keyTimes='0;1' dur='1s' begin='0s' repeatCount='indefinite' />
-      </circle>
-    </svg>
+    <CSSVariableApplicator variables={getCssVars(color)}>
+      <svg className={`prism-loader-circle ${typeof className === 'string' ? className : ''}`} {...other} xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='xMidYMid'>
+        <circle className='prism-loader-circle__circle' cx='50' cy='50' {...circleProps} fill='none' strokeWidth={STROKE_WIDTH} r={R} strokeDasharray='164.93361431346415 56.97787143782138' transform='rotate(143.836 50 50)' />
+      </svg>
+    </CSSVariableApplicator>
   )
+}
+
+CircleLoader.defaultProps = {
+  circleProps: {}
 }
 
 export default React.memo<Props>(CircleLoader)
