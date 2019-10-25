@@ -10,7 +10,7 @@ import mapValues from 'lodash/mapValues'
 import union from 'lodash/union'
 import intersection from 'lodash/intersection'
 import memoizee from 'memoizee'
-import { tinycolor as tc } from '@ctrl/tinycolor'
+import { tinycolor as tc, type tinycolor as TinyColor } from '@ctrl/tinycolor'
 import { compareKebabs } from './StringUtils'
 import { ZOOMED_VIEW_GRID_PADDING } from '../../constants/globals'
 import { getTotalWidthOf2dArray, formToGridWithAspectRatio, type GridShape } from './DataUtils'
@@ -326,7 +326,7 @@ export function isColorFamily (value: string = '', colorSets: string[] = []): bo
   }).length > 0
 }
 
-export const tinycolor = memoizee((color: string) => tc(color), { primitive: true, length: 1 })
+export const tinycolor = memoizee((color: string): TinyColor => tc(color), { primitive: true, length: 1 })
 
 // lower step values produce broader hue categories
 // this is useful for making more general color groups
