@@ -102,6 +102,7 @@ exports[`snapshot match testing snapshot testing 1`] = `
                     "color": "#000",
                   }
                 }
+                swapOpacity={false}
                 symbol={false}
                 tabIndex="-1"
                 title=""

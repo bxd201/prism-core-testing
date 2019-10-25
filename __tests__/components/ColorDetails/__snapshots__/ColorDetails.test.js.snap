@@ -44,6 +44,7 @@ exports[`Color Details Container Component should rendering correctly it should 
           rotation={null}
           size={null}
           spin={false}
+          swapOpacity={false}
           symbol={false}
           title=""
           transform={null}
@@ -81,6 +82,7 @@ exports[`Color Details Container Component should rendering correctly it should 
           rotation={null}
           size={null}
           spin={false}
+          swapOpacity={false}
           symbol={false}
           title=""
           transform={null}

@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`snapshot testing for LivePalette component  LivePalette component should match snapshot 1`] = `
-<Memo()
+<DndProvider
   backend={[Function]}
 >
   <div
@@ -165,6 +165,7 @@ exports[`snapshot testing for LivePalette component  LivePalette component shoul
           rotation={null}
           size="2x"
           spin={false}
+          swapOpacity={false}
           symbol={false}
           title=""
           transform={null}
@@ -197,5 +198,5 @@ exports[`snapshot testing for LivePalette component  LivePalette component shoul
       className="prism-live-palette__color-description"
     />
   </div>
-</Memo()>
+</DndProvider>
 `;
