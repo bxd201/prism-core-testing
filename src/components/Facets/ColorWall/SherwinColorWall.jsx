@@ -3,6 +3,7 @@ import React, { PureComponent } from 'react'
 import memoizee from 'memoizee'
 import { Link } from 'react-router-dom'
 import { injectIntl, FormattedMessage } from 'react-intl'
+import at from 'lodash/at'
 
 import { BLANK_SWATCH, SW_CHUNK_SIZE } from 'constants/globals'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -10,13 +11,13 @@ import { convertCategorizedColorsToGrid } from '../../../shared/helpers/ColorDat
 import { generateColorWallPageUrl, generateColorDetailsPageUrl, fullColorName } from '../../../shared/helpers/ColorUtils'
 import { compareKebabs } from '../../../shared/helpers/StringUtils'
 
-import CircleLoader from '../../Loaders/CircleLoader/CircleLoader'
+import HeroLoader from '../../Loaders/HeroLoader/HeroLoader'
 import ColorWallSwatchList from './ColorWallSwatchList'
 import GenericMessage from '../../Messages/GenericMessage'
 import WithConfigurationContext from '../../../contexts/ConfigurationContext/WithConfigurationContext'
 
-import type { CategorizedColorIdGrid, ColorMap, Color, ColorIdGrid } from '../../../shared/types/Colors'
-import type { Configuration } from '../../../shared/types/Configuration'
+import { type CategorizedColorIdGrid, type ColorMap, type Color, type ColorIdGrid } from '../../../shared/types/Colors'
+import { type Configuration } from '../../../shared/types/Configuration'
 
 type Props = {
   colors: CategorizedColorIdGrid,
@@ -85,7 +86,7 @@ export class SherwinColorWall extends PureComponent<Props> {
     const translatedMessages = intl ? intl.messages : {}
 
     if (loading) {
-      return <CircleLoader className='color-wall-wall__loader' />
+      return <HeroLoader className='color-wall-wall__loader' color={at(config, 'theme.primary')[0]} />
     }
 
     if (error) {

@@ -1,0 +1,192 @@
+.hero-loader {
+  $size: 40px;
+  $size--lg: 80px;
+  $size--sm: 20px;
+  $border-size: 6px;
+  $barSize: 20%;
+  $duration: .4s;
+  $rotation: 360deg / 5;
+  $partRotation: $rotation / 2;
+  $times: 5;
+  $pulseDuration: .5s;
+  $pulseScaleMin: 1;
+  $pulseScaleMax: 1.5;
+  $introDelay: .5s;
+
+  @keyframes spin {
+    0%, 33% {
+      transform: rotate(180deg);
+    }
+
+    70%, 100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes bar1 {
+    0%, 5% {
+      transform: translateY(100%);
+    }
+    25%, 100% {
+      transform: translateY(0%);
+    }
+  }
+
+  @keyframes bar2 {
+    0%, 20% {
+      transform: translateY(100%);
+    }
+    40%, 100% {
+      transform: translateY(0% + $barSize);
+    }
+  }
+
+  @keyframes bar3 {
+    0%, 35% {
+      transform: translateY(100%);
+    }
+    55%, 100% {
+      transform: translateY(0% + $barSize * 2);
+    }
+  }
+
+  @keyframes bar4 {
+    0%, 50% {
+      transform: translateY(100%);
+    }
+    70%, 100% {
+      transform: translateY(0% + $barSize * 3);
+    }
+  }
+
+  @keyframes bar5 {
+    0%, 65% {
+      transform: translateY(100%);
+    }
+    85%, 100% {
+      transform: translateY(0% + $barSize * 4);
+    }
+  }
+
+  @keyframes throb {
+    from {
+      transform: scale($pulseScaleMax);
+    }
+
+    to {
+      transform: scale($pulseScaleMin);
+    }
+  }
+
+  @keyframes pulse {
+    0% {
+      background: black;
+      opacity: 0.05;
+    }
+    50% {
+      opacity: 0;
+      background: transparent;
+    }
+    100% {
+      background: white;
+      opacity: 0.3;
+    }
+  }
+
+  align-items: center;
+  animation-duration: $introDelay;
+  animation-fill-mode: both;
+  animation-name: fadeOpacityIn;
+  animation-timing-function: ease-in-out;
+  display: flex;
+  justify-content: center;
+  padding: 1em * ( $pulseScaleMax - 1);
+
+  &, & * {
+    font-size: $size;
+  }
+
+  &--sm {
+    &, & * {
+      font-size: $size--sm;
+    }
+  }
+
+  &--lg {
+    &, & * {
+      font-size: $size--lg;
+    }
+  }
+
+  &__wrapper,
+  &__wrapper::before,
+  &__bar-spinner {
+    border-radius: 1em * .5;
+    height: 1em;
+    overflow: hidden;
+    position: relative;
+    width: 1em;
+  }
+
+  &__wrapper {
+    overflow: visible;
+
+    &::before {
+      animation-direction: normal, alternate;
+      animation-duration: $pulseDuration * 2, $pulseDuration * 2;
+      animation-delay: 0s, $pulseDuration;
+      animation-fill-mode: both, both;
+      animation-iteration-count: infinite, infinite;
+      animation-name: throb, pulse;
+      animation-timing-function: ease-in, ease-in-out;
+      content: '';
+      display: block;
+      left: 0;
+      position: absolute;
+      top: 0;
+    }
+  }
+
+  &__bar-spinner {
+    animation-duration: $times * $duration * 2;
+    animation-fill-mode: both;
+    animation-iteration-count: infinite;
+    animation-name: spin;
+    animation-timing-function: cubic-bezier(0.975, -0.045, 0.405, 1.130);
+  }
+
+  &__bar {
+    animation-direction: alternate;
+    animation-duration: $times * $duration;
+    animation-fill-mode: both;
+    animation-iteration-count: infinite;
+    animation-timing-function: cubic-bezier(0.400, 1.555, 0.320, 0.920);
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+
+    &--1 {
+      animation-name: bar1;
+      background: var(getVarName('loaders.hero.color1'));
+      border-radius: 1em * .5;
+    }
+    &--2 {
+      animation-name: bar2;
+      background: var(getVarName('loaders.hero.color2'));
+    }
+    &--3 {
+      animation-name: bar3;
+      background: var(getVarName('loaders.hero.color3'));
+    }
+    &--4 {
+      animation-name: bar4;
+      background: var(getVarName('loaders.hero.color4'));
+    }
+    &--5 {
+      animation-name: bar5;
+      background: var(getVarName('loaders.hero.color5'));
+    }
+  }
+}

@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { injectIntl, FormattedMessage } from 'react-intl'
 import { TransitionGroup, CSSTransition } from 'react-transition-group'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import at from 'lodash/at'
 
 import { loadColors } from '../../../store/actions/loadColors'
 import { add } from '../../../store/actions/live-palette'
@@ -23,9 +24,9 @@ import WithConfigurationContext from '../../../contexts/ConfigurationContext/Wit
 import StandardColorWall from './StandardColorWall'
 import SherwinColorWall from './SherwinColorWall'
 import GenericMessage from '../../Messages/GenericMessage'
-import CircleLoader from '../../Loaders/CircleLoader/CircleLoader'
 import Search from '../../Search/Search'
 import ButtonBar from '../../GeneralButtons/ButtonBar/ButtonBar'
+import HeroLoader from '../../Loaders/HeroLoader/HeroLoader'
 import './ColorWall.scss'
 
 type StateProps = {
@@ -66,6 +67,12 @@ type State = {
   showColorFamilies: boolean
 }
 
+const getWallWrap = (el) => {
+  return (
+    <div className='color-wall-wrap'>{el}</div>
+  )
+}
+
 class ColorWall extends PureComponent<Props, State> {
   state: State = {
     showColorFamilies: false
@@ -92,7 +99,7 @@ class ColorWall extends PureComponent<Props, State> {
 
   render () {
     const { showColorFamilies } = this.state
-    const { colors, family, sections, families, section, brights, colorMap, colorWallActive, loading, error, addToLivePalette, unorderedColors, searchActive } = this.props
+    const { colors, family, sections, families, section, brights, colorMap, colorWallActive, loading, error, addToLivePalette, unorderedColors, searchActive, config } = this.props
 
     const hasSections = !!(sections && sections.length)
     const hasFamilies = !!(families && families.length > 1)
@@ -106,11 +113,11 @@ class ColorWall extends PureComponent<Props, State> {
     let familyButtons = void (0)
 
     if (loading) {
-      return <CircleLoader />
+      return getWallWrap(<HeroLoader color={at(config, 'theme.primary')[0]} />)
     }
 
     if (searchActive) {
-      return <Search onCancel={this.toggleViewSearch} />
+      return getWallWrap(<Search onCancel={this.toggleViewSearch} />)
     }
 
     if (!_showColorFamilies && hasSections) {
@@ -174,8 +181,8 @@ class ColorWall extends PureComponent<Props, State> {
       )
     }
 
-    return (
-      <div>
+    return getWallWrap(
+      <React.Fragment>
         <div className={MODE_CLASS_NAMES.BASE}>
           {sectionButtons}
           {familyButtons}
@@ -220,7 +227,7 @@ class ColorWall extends PureComponent<Props, State> {
             }}
           </CSSTransition>
         </TransitionGroup>
-      </div>
+      </React.Fragment>
     )
   }
 
