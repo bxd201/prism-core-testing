@@ -1,0 +1,686 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PaintToolBar render testing should match snapshot 1`] = `
+<Fragment>
+  <div
+    className="paint-tool-bar__group-tool paint-tool-bar__group-tool--hide"
+  >
+    <button
+      className="paint-tool-bar__toolbar-button"
+      key="1"
+      name="deleteGroup"
+      onClick={[Function]}
+    >
+      <FontAwesomeIcon
+        border={false}
+        className="paint-tool-bar__tool-icon"
+        fixedWidth={false}
+        flip={null}
+        icon={
+          Array [
+            "fal",
+            "trash-alt",
+          ]
+        }
+        inverse={false}
+        listItem={false}
+        mask={null}
+        pull={null}
+        pulse={false}
+        rotation={null}
+        size="lg"
+        spin={false}
+        swapOpacity={false}
+        symbol={false}
+        title=""
+        transform={
+          Object {
+            "rotate": 0,
+          }
+        }
+      />
+      <span
+        className="paint-tool-bar__tool-name paint-tool-bar__tool-name--disabled "
+      >
+        DELETE
+      </span>
+    </button>
+    <button
+      className="paint-tool-bar__toolbar-button"
+      key="2"
+      name="group"
+      onClick={[Function]}
+    >
+      <FontAwesomeIcon
+        border={false}
+        className="paint-tool-bar__tool-icon"
+        fixedWidth={false}
+        flip={null}
+        icon={
+          Array [
+            "fal",
+            "object-group",
+          ]
+        }
+        inverse={false}
+        listItem={false}
+        mask={null}
+        pull={null}
+        pulse={false}
+        rotation={null}
+        size="lg"
+        spin={false}
+        swapOpacity={false}
+        symbol={false}
+        title=""
+        transform={
+          Object {
+            "rotate": 0,
+          }
+        }
+      />
+      <span
+        className="paint-tool-bar__tool-name paint-tool-bar__tool-name--disabled "
+      >
+        GROUP
+      </span>
+    </button>
+    <button
+      className="paint-tool-bar__toolbar-button"
+      key="3"
+      name="ungroup"
+      onClick={[Function]}
+    >
+      <FontAwesomeIcon
+        border={false}
+        className="paint-tool-bar__tool-icon"
+        fixedWidth={false}
+        flip={null}
+        icon={
+          Array [
+            "fal",
+            "object-ungroup",
+          ]
+        }
+        inverse={false}
+        listItem={false}
+        mask={null}
+        pull={null}
+        pulse={false}
+        rotation={null}
+        size="lg"
+        spin={false}
+        swapOpacity={false}
+        symbol={false}
+        title=""
+        transform={
+          Object {
+            "rotate": 0,
+          }
+        }
+      />
+      <span
+        className="paint-tool-bar__tool-name paint-tool-bar__tool-name--disabled "
+      >
+        UNGROUP
+      </span>
+    </button>
+  </div>
+  <div
+    className="paint-tool-bar__wrapper"
+  >
+    <div
+      className="paint-tool-bar__tools-container "
+    >
+      <button
+        className="paint-tool-bar__toolbar-button paint-tool-bar__toolbar-button--active"
+        key="1"
+        name="paintArea"
+        onClick={[Function]}
+        onMouseDown={[Function]}
+      >
+        <FontAwesomeIcon
+          border={false}
+          className="paint-tool-bar__tool-icon"
+          fixedWidth={false}
+          flip="horizontal"
+          icon={
+            Array [
+              "fa",
+              "fill-drip",
+            ]
+          }
+          inverse={false}
+          listItem={false}
+          mask={null}
+          pull={null}
+          pulse={false}
+          rotation={null}
+          size="lg"
+          spin={false}
+          swapOpacity={false}
+          symbol={false}
+          title=""
+          transform={
+            Object {
+              "rotate": 0,
+            }
+          }
+        />
+        <span
+          className="paint-tool-bar__tool-name paint-tool-bar__tool-name--active"
+        >
+          PAINT AREA
+        </span>
+      </button>
+      <button
+        className="paint-tool-bar__toolbar-button "
+        key="2"
+        name="paintBrush"
+        onClick={[Function]}
+        onMouseDown={[Function]}
+      >
+        <FontAwesomeIcon
+          border={false}
+          className="paint-tool-bar__tool-icon"
+          fixedWidth={false}
+          flip={null}
+          icon={
+            Array [
+              "fa",
+              "brush",
+            ]
+          }
+          inverse={false}
+          listItem={false}
+          mask={null}
+          pull={null}
+          pulse={false}
+          rotation={null}
+          size="lg"
+          spin={false}
+          swapOpacity={false}
+          symbol={false}
+          title=""
+          transform={
+            Object {
+              "rotate": 45,
+            }
+          }
+        />
+        <span
+          className="paint-tool-bar__tool-name "
+        >
+          PAINTBRUSH
+        </span>
+      </button>
+      <button
+        className="paint-tool-bar__toolbar-button "
+        key="3"
+        name="selectArea"
+        onClick={[Function]}
+        onMouseDown={[Function]}
+      >
+        <FontAwesomeIcon
+          border={false}
+          className="paint-tool-bar__tool-icon"
+          fixedWidth={false}
+          flip="horizontal"
+          icon={
+            Array [
+              "fa",
+              "mouse-pointer",
+            ]
+          }
+          inverse={false}
+          listItem={false}
+          mask={null}
+          pull={null}
+          pulse={false}
+          rotation={null}
+          size="lg"
+          spin={false}
+          swapOpacity={false}
+          symbol={false}
+          title=""
+          transform={
+            Object {
+              "rotate": -20,
+            }
+          }
+        />
+        <span
+          className="paint-tool-bar__tool-name "
+        >
+          SELECT
+        </span>
+      </button>
+      <button
+        className="paint-tool-bar__toolbar-button "
+        key="4"
+        name="erase"
+        onClick={[Function]}
+        onMouseDown={[Function]}
+      >
+        <FontAwesomeIcon
+          border={false}
+          className="paint-tool-bar__tool-icon"
+          fixedWidth={false}
+          flip={null}
+          icon={
+            Array [
+              "fa",
+              "eraser",
+            ]
+          }
+          inverse={false}
+          listItem={false}
+          mask={null}
+          pull={null}
+          pulse={false}
+          rotation={null}
+          size="lg"
+          spin={false}
+          swapOpacity={false}
+          symbol={false}
+          title=""
+          transform={
+            Object {
+              "rotate": 0,
+            }
+          }
+        />
+        <span
+          className="paint-tool-bar__tool-name "
+        >
+          ERASE
+        </span>
+      </button>
+      <button
+        className="paint-tool-bar__toolbar-button "
+        key="5"
+        name="defineArea"
+        onClick={[Function]}
+        onMouseDown={[Function]}
+      >
+        <FontAwesomeIcon
+          border={false}
+          className="paint-tool-bar__tool-icon"
+          fixedWidth={false}
+          flip={null}
+          icon={
+            Array [
+              "fal",
+              "draw-polygon",
+            ]
+          }
+          inverse={false}
+          listItem={false}
+          mask={null}
+          pull={null}
+          pulse={false}
+          rotation={null}
+          size="lg"
+          spin={false}
+          swapOpacity={false}
+          symbol={false}
+          title=""
+          transform={
+            Object {
+              "rotate": 10,
+            }
+          }
+        />
+        <FontAwesomeIcon
+          border={false}
+          className="paint-tool-bar__tool-icon"
+          fixedWidth={false}
+          flip={null}
+          icon={
+            Array [
+              "fal",
+              "plus",
+            ]
+          }
+          inverse={false}
+          listItem={false}
+          mask={null}
+          pull={null}
+          pulse={false}
+          rotation={null}
+          size="xs"
+          spin={false}
+          style={
+            Object {
+              "right": "12px",
+              "top": "21px",
+            }
+          }
+          swapOpacity={false}
+          symbol={false}
+          title=""
+          transform={null}
+        />
+        <span
+          className="paint-tool-bar__tool-name "
+        >
+          DEFINE AREA
+        </span>
+      </button>
+      <button
+        className="paint-tool-bar__toolbar-button "
+        key="6"
+        name="removeArea"
+        onClick={[Function]}
+        onMouseDown={[Function]}
+      >
+        <FontAwesomeIcon
+          border={false}
+          className="paint-tool-bar__tool-icon"
+          fixedWidth={false}
+          flip={null}
+          icon={
+            Array [
+              "fal",
+              "draw-polygon",
+            ]
+          }
+          inverse={false}
+          listItem={false}
+          mask={null}
+          pull={null}
+          pulse={false}
+          rotation={null}
+          size="lg"
+          spin={false}
+          swapOpacity={false}
+          symbol={false}
+          title=""
+          transform={
+            Object {
+              "rotate": 10,
+            }
+          }
+        />
+        <FontAwesomeIcon
+          border={false}
+          className="paint-tool-bar__tool-icon"
+          fixedWidth={false}
+          flip={null}
+          icon={
+            Array [
+              "fal",
+              "minus",
+            ]
+          }
+          inverse={false}
+          listItem={false}
+          mask={null}
+          pull={null}
+          pulse={false}
+          rotation={null}
+          size="xs"
+          spin={false}
+          style={
+            Object {
+              "right": "12px",
+              "top": "21px",
+            }
+          }
+          swapOpacity={false}
+          symbol={false}
+          title=""
+          transform={null}
+        />
+        <span
+          className="paint-tool-bar__tool-name "
+        >
+          REMOVE AREA
+        </span>
+      </button>
+      <button
+        className="paint-tool-bar__toolbar-button "
+        key="7"
+        name="zoom"
+        onClick={[Function]}
+        onMouseDown={[Function]}
+      >
+        <FontAwesomeIcon
+          border={false}
+          className="paint-tool-bar__tool-icon"
+          fixedWidth={false}
+          flip={null}
+          icon={
+            Array [
+              "fal",
+              "search-plus",
+            ]
+          }
+          inverse={false}
+          listItem={false}
+          mask={null}
+          pull={null}
+          pulse={false}
+          rotation={null}
+          size="lg"
+          spin={false}
+          swapOpacity={false}
+          symbol={false}
+          title=""
+          transform={
+            Object {
+              "rotate": 0,
+            }
+          }
+        />
+        <span
+          className="paint-tool-bar__tool-name "
+        >
+          ZOOM
+        </span>
+      </button>
+      <button
+        className="paint-tool-bar__toolbar-button "
+        key="8"
+        name="undo"
+        onClick={[Function]}
+        onMouseDown={[Function]}
+      >
+        <FontAwesomeIcon
+          border={false}
+          className="paint-tool-bar__tool-icon"
+          fixedWidth={false}
+          flip={null}
+          icon={
+            Array [
+              "fa",
+              "undo-alt",
+            ]
+          }
+          inverse={false}
+          listItem={false}
+          mask={null}
+          pull={null}
+          pulse={false}
+          rotation={null}
+          size="lg"
+          spin={false}
+          swapOpacity={false}
+          symbol={false}
+          title=""
+          transform={
+            Object {
+              "rotate": 0,
+            }
+          }
+        />
+        <span
+          className="paint-tool-bar__tool-name "
+        >
+          UNDO
+        </span>
+      </button>
+      <button
+        className="paint-tool-bar__toolbar-button "
+        key="9"
+        name="redo"
+        onClick={[Function]}
+        onMouseDown={[Function]}
+      >
+        <FontAwesomeIcon
+          border={false}
+          className="paint-tool-bar__tool-icon"
+          fixedWidth={false}
+          flip={null}
+          icon={
+            Array [
+              "fa",
+              "redo-alt",
+            ]
+          }
+          inverse={false}
+          listItem={false}
+          mask={null}
+          pull={null}
+          pulse={false}
+          rotation={null}
+          size="lg"
+          spin={false}
+          swapOpacity={false}
+          symbol={false}
+          title=""
+          transform={
+            Object {
+              "rotate": 0,
+            }
+          }
+        />
+        <span
+          className="paint-tool-bar__tool-name "
+        >
+          REDO
+        </span>
+      </button>
+      <button
+        className="paint-tool-bar__toolbar-button "
+        key="10"
+        name="hidePaint"
+        onClick={[Function]}
+        onMouseDown={[Function]}
+      >
+        <FontAwesomeIcon
+          border={false}
+          className="paint-tool-bar__tool-icon"
+          fixedWidth={false}
+          flip="horizontal"
+          icon={
+            Array [
+              "fa",
+              "eye",
+            ]
+          }
+          inverse={false}
+          listItem={false}
+          mask={null}
+          pull={null}
+          pulse={false}
+          rotation={null}
+          size="lg"
+          spin={false}
+          swapOpacity={false}
+          symbol={false}
+          title=""
+          transform={
+            Object {
+              "rotate": 0,
+            }
+          }
+        />
+        <span
+          className="paint-tool-bar__tool-name "
+        >
+          HIDE PAINT
+        </span>
+      </button>
+      <button
+        className="paint-tool-bar__toolbar-button "
+        key="11"
+        name="info"
+        onClick={[Function]}
+        onMouseDown={[Function]}
+      >
+        <FontAwesomeIcon
+          border={false}
+          className="paint-tool-bar__tool-icon"
+          fixedWidth={false}
+          flip={null}
+          icon={
+            Array [
+              "fal",
+              "info-circle",
+            ]
+          }
+          inverse={false}
+          listItem={false}
+          mask={null}
+          pull={null}
+          pulse={false}
+          rotation={null}
+          size="lg"
+          spin={false}
+          swapOpacity={false}
+          symbol={false}
+          title=""
+          transform={
+            Object {
+              "rotate": 0,
+            }
+          }
+        />
+        <span
+          className="paint-tool-bar__tool-name "
+        >
+          HINTS
+        </span>
+      </button>
+      <div
+        className="paint-tool-bar__brush-types paint-tool-bar__brush-types--hide paint-tool-bar__brush-types-paint paint-tool-bar__brush-types--show-by-opacity "
+        onMouseLeave={[Function]}
+      >
+        <BrushTypes
+          activeShape="round"
+          activeWidth={38}
+          hidePaintBrushTypes={[Function]}
+          setBrushShapeSize={[MockFunction]}
+        />
+      </div>
+      <div
+        className="paint-tool-bar__brush-types paint-tool-bar__brush-types--hide paint-tool-bar__brush-types-erase paint-tool-bar__brush-types--show-by-opacity "
+        onMouseLeave={[Function]}
+      >
+        <BrushTypes
+          activeShape="round"
+          activeWidth={38}
+          hideEraseBrushTypes={[Function]}
+          setBrushShapeSize={[MockFunction]}
+        />
+      </div>
+      <div
+        className="paint-tool-bar__zoom-tool paint-tool-bar__zoom-tool--hide "
+      >
+        <ZoomTool
+          applyZoom={[MockFunction]}
+        />
+      </div>
+    </div>
+    <div
+      className="paint-tool-bar__toolbar-toggle"
+    >
+      <button
+        className="paint-tool-bar__toolbar-toggle-button paint-tool-bar__toolbar-toggle-button--toolbar-shown"
+        onClick={[Function]}
+      />
+    </div>
+  </div>
+</Fragment>
+`;

@@ -77,7 +77,18 @@ type ComponentState = {
   showOriginalCanvas: boolean,
   canvasZoom: number,
   canvasMouseDown: boolean,
-  isInfoToolActive: boolean
+  isInfoToolActive: boolean,
+  imagePathList: Array<Object>,
+  groupSelectList: Array<Object>,
+  selectedArea: Array<Object>,
+  paintCursor: string,
+  isUngroup: boolean,
+  isAddGroup: boolean,
+  isDeleteGroup: boolean,
+  groupAreaList: Array<Object>,
+  lineStart: Array<number>,
+  polyList: Array<Array<number>>,
+  BeginPointList: Array<number>
 }
 
 type DrawOperation = {
@@ -100,16 +111,16 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   CFICanvasPaint: RefObject
   CFIWrapper: RefObject
   CFIImage: RefObject
-  wrapperDimensions: Object | null
-  canvasDimensions: Object | null
+  wrapperDimensions: Object
+  canvasDimensions: Object
   backgroundImageWidth: number
   backgroundImageHeight: number
   isPortrait: boolean
   originalIsPortrait: boolean
   canvasPanStart: Object
   lastPanPoint: Object
-  canvasOriginalDimensions: Object | null
-  wrapperOriginalDimensions: Object | null
+  canvasOriginalDimensions: Object
+  wrapperOriginalDimensions: Object
 
   constructor (props: ComponentProps) {
     super(props)
@@ -122,10 +133,10 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     // @todo - marked for review -RS
     // this.canvasOffsetWidth = 0
     // this.canvasOffsetHeight = 0
-    this.wrapperDimensions = null
-    this.canvasDimensions = null
-    this.canvasOriginalDimensions = null
-    this.wrapperOriginalDimensions = null
+    this.wrapperDimensions = {}
+    this.canvasDimensions = {}
+    this.canvasOriginalDimensions = {}
+    this.wrapperOriginalDimensions = {}
     this.backgroundImageWidth = props.referenceDimensions.imageWidth
     this.backgroundImageHeight = props.referenceDimensions.imageHeight
     this.isPortrait = props.referenceDimensions.isPortrait
@@ -179,6 +190,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.shouldCanvasResize = this.shouldCanvasResize.bind(this)
   }
 
+  /*:: shouldCanvasResize: (prevWidth: number, newWidth: number) => number */
   shouldCanvasResize (prevWidth: number, newWidth: number) {
     if (newWidth !== prevWidth) {
       return newWidth
@@ -187,7 +199,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     return 0
   }
 
-  componentDidUpdate (prevProps, prevState) {
+  componentDidUpdate (prevProps: Object, prevState: Object) {
     const newWidth = this.shouldCanvasResize(prevProps.width, this.props.width)
     if (newWidth) {
       this.updateCanvasWithNewDimensions(newWidth)
@@ -250,8 +262,8 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.updateCanvasWithNewDimensions()
   }
 
-  /*:: updateCanvasWithNewDimensions: (newWidth: number) => void */
-  updateCanvasWithNewDimensions (newWidth: number) {
+  /*:: updateCanvasWithNewDimensions: (newWidth?: number) => void */
+  updateCanvasWithNewDimensions (newWidth?: number) {
     let canvasWidth = 0
     const wrapperWidth = newWidth || this.wrapperDimensions.width
 
@@ -295,7 +307,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   }
 
   /*:: setBackgroundImage: (canvasWidth: number, canvasHeight: number) => void */
-  setBackgroundImage (canvasWidth, canvasHeight) {
+  setBackgroundImage (canvasWidth: number, canvasHeight: number) {
     this.CFICanvasContext.drawImage(this.CFIImage.current, 0, 0, canvasWidth, canvasHeight)
     this.CFICanvasContext2.clearRect(0, 0, canvasWidth, canvasHeight)
     this.CFICanvasContext2.drawImage(this.CFIImage.current, 0, 0, canvasWidth, canvasHeight)
@@ -303,7 +315,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.setState({ wrapperHeight: canvasHeight })
   }
 
-  /*:: setDependentPositions() => void */
+  /*:: setDependentPositions: () => void */
   setDependentPositions () {
     // These are used by the drawing cursor to paint the canvas
     this.canvasDimensions = this.CFICanvas.current.getBoundingClientRect()
@@ -609,7 +621,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     window.removeEventListener('mouseup', this.mouseUpHandler)
   }
 
-  repaintBrushPathByCorrdinates = (drawCoordinates, paintBrushWidth, paintBrushShape, clip) => {
+  repaintBrushPathByCorrdinates = (drawCoordinates: Array<Object>, paintBrushWidth: number, paintBrushShape: string, clip: boolean) => {
     const { lpActiveColor } = this.props
     const { activeTool } = this.state
     const lpActiveColorRGB = (activeTool === toolNames.ERASE) ? `rgba(255, 255, 255, 1)` : `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})`
@@ -639,7 +651,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     }
   }
 
-  drawPaintBrushPath = (context: Object, to: Object, from: Object, width: number, brushShape: string, clip: string) => {
+  drawPaintBrushPath = (context: Object, to: Object, from: Object, width: number, brushShape: string, clip: boolean) => {
     const { lpActiveColor } = this.props
     const { activeTool } = this.state
     const lpActiveColorRGB = (activeTool === toolNames.ERASE) ? `rgba(255, 255, 255, 1)` : `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})`
@@ -702,7 +714,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     }
   }
 
-  handleSelectArea = (e) => {
+  handleSelectArea = (e: Object) => {
     /** This method is for user select or unselect specific area and highlight or dehighlight the paint area border
      * The main idea is maintain selectAreaList, whenever user click area, we repaint canvas based on update
      * selectAreaList and imagePathList
@@ -825,7 +837,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.setState({ isDeleteGroup: isDeleteGroup, isAddGroup: isAddGroup, isUngroup: isUngroup })
   }
 
-  handlePolygonDefine = (e, isAddArea) => {
+  handlePolygonDefine = (e: Object, isAddArea: boolean) => {
     if (!this.props.lpActiveColor) return
     const ctx = this.CFICanvas2.current
     const { clientX, clientY } = e
@@ -887,7 +899,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.setState({ lineStart: [cursorX, cursorY], polyList: poly })
   }
 
-  handlePaintArea = throttle((e) => {
+  handlePaintArea = throttle((e: Object) => {
     const { imagePathList } = this.state
     if (!this.props.lpActiveColor) return
     let imagePath = []
@@ -1008,8 +1020,10 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     if (!canvasMouseDown) return
     const MIN_PAN = -0.1
     const MAX_PAN = 1.1
-    const dx = (event.pageX - this.lastPanPoint.x) / document.body.clientWidth
-    const dy = (event.pageY - this.lastPanPoint.y) / document.body.clientHeight
+    const { body }: Object = document
+    const { clientWidth, clientHeight } = body
+    const dx = (event.pageX - this.lastPanPoint.x) / clientWidth
+    const dy = (event.pageY - this.lastPanPoint.y) / clientHeight
     const panX = this.canvasPanStart.x - dx
     const panY = this.canvasPanStart.y - dy
     this.canvasPanStart = { x: Math.max(MIN_PAN, Math.min(MAX_PAN, panX)), y: Math.max(MIN_PAN, Math.min(MAX_PAN, panY)) }
@@ -1034,7 +1048,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     })
   }
 
-  drawPaintBrushPathUsingLine = (ctx: Object, currentPoint: Object, lastPoint: Object, paintBrushWidth: number, paintBrushShape: number, clip: boolean, color: string) => {
+  drawPaintBrushPathUsingLine = (ctx: Object, currentPoint: Object, lastPoint: Object, paintBrushWidth: number, paintBrushShape: string, clip: boolean, color: string) => {
     ctx.save()
     if (paintBrushShape === brushRoundShape) {
       ctx.lineCap = 'round'
@@ -1203,7 +1217,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     }, 0)
   }
 
-  groupHandler = (groupName) => {
+  groupHandler = (groupName: string) => {
     switch (groupName) {
       case groupToolNames.DELETEGROUP:
         this.deleteGroup()
@@ -1223,8 +1237,8 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     let canvasScaleY = canvasHeight / containerHeight
     let shouldFitWidth = false
     let shouldFitHeight = false
-    let width
-    let height
+    let width = 0
+    let height = 0
 
     if (canvasScaleX > canvasScaleY) {
       // image is wider than it is tall
@@ -1260,7 +1274,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.applyDimensionFactorsByCanvas(factors, this.CFICanvasPaint)
   }
 
-  applyDimensionFactorsByCanvas = (factors: Object, canvas: Ref) => {
+  applyDimensionFactorsByCanvas = (factors: Object, canvas: RefObject) => {
     canvas.current.style.width = `${Math.floor(factors.widthFactor * 100)}%`
     canvas.current.style.height = `${Math.floor(factors.heightFactor * 100)}%`
     canvas.current.style.left = `${Math.floor(factors.xFactor * 100)}%`

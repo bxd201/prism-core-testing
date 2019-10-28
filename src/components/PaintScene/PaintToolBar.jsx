@@ -92,7 +92,7 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
     this.hideEraseBrushTypes = this.hideEraseBrushTypes.bind(this)
   }
 
-  componentDidUpdate (prevProps, prevState) {
+  componentDidUpdate (prevProps: Object, prevState: Object) {
     if (prevProps.paintBrushShape !== this.props.paintBrushShape || prevProps.paintBrushWidth !== this.props.paintBrushWidth) {
       this.hidePaintBrushTypes()
     }
@@ -214,7 +214,7 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
     clearCanvas(true)
   }
 
-  toolButtonMouseDownHandler = (e: Object, toolName) => {
+  toolButtonMouseDownHandler = (e: Object, toolName: string) => {
     if (toolName === toolNames.HIDEPAINT && !this.state.showTooltip) {
       this.setState({ isHidePaint: true })
       e.preventDefault()
@@ -310,10 +310,12 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
     return groupTools
   }
 
+  /*:: hidePaintBrushTypes: () => void */
   hidePaintBrushTypes () {
     this.setState({ showPaintBrushTypes: false })
   }
 
+  /*:: hideEraseBrushTypes: () => void */
   hideEraseBrushTypes () {
     this.setState({ showEraseBrushTypes: false })
   }
@@ -376,4 +378,7 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
   }
 }
 
+export {
+  toolbarButtonClass, toolbarToggleButtonClass, brushTypesClass
+}
 export default PaintToolBar
