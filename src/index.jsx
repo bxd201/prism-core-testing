@@ -1,3 +1,4 @@
+// @flow
 import '@babel/polyfill'
 import '@formatjs/intl-relativetimeformat/polyfill'
 import '@formatjs/intl-relativetimeformat/dist/locale-data/en'
@@ -10,9 +11,10 @@ import React from 'react'
 import { render } from 'react-dom'
 import { Provider } from 'react-redux'
 import { IntlProvider } from 'react-intl'
-import { BrowserRouter, HashRouter } from 'react-router-dom'
+import { BrowserRouter, HashRouter, MemoryRouter } from 'react-router-dom'
 import ReactGA from 'react-ga'
 import toArray from 'lodash/toArray'
+import mapValues from 'lodash/mapValues'
 import { LiveAnnouncer } from 'react-aria-live'
 
 import { GOOGLE_ANALYTICS_UID } from './constants/globals'
@@ -53,7 +55,10 @@ const renderAppInElement = (el) => {
     return
   }
 
-  const reactComponent = el.getAttribute('data-react-component')
+  // get props from elements data attribute, like the post_id
+  const allProps = mapValues(Object.assign({}, el.dataset), v => v === '' ? true : v)
+  const { reactComponent, ...other } = allProps
+  const props: EmbeddedConfiguration = other // just doing this for the typing
 
   // if no data attribute specifying the react component exists, let's get out.
   // although if it doesn't have this data attribute, it shouldn't have a __react-root class...
@@ -69,12 +74,6 @@ const renderAppInElement = (el) => {
     console.warn(`${reactComponent} does is not included. Please import this component into index.jsx.`)
     return
   }
-
-  // get props from elements data attribute, like the post_id
-  const props = Object.assign({}, el.dataset)
-
-  // remove the component declaration in the data attributes
-  delete props.reactComponent
 
   // set the language
   const language = props.language || navigator.language || 'en-US'
@@ -95,7 +94,23 @@ const renderAppInElement = (el) => {
       <App {...props} />
     </HashRouter>
   )
-  const RouterRender = (routeType === 'browser') ? BrowserRouterRender : HashRouterRender
+  const MemoryRouterRender = (
+    <MemoryRouter>
+      <App {...props} />
+    </MemoryRouter>
+  )
+  const RouterRender = (route => {
+    switch (route) {
+      case 'browser':
+        return BrowserRouterRender
+      case 'hash':
+        return HashRouterRender
+      case 'memory':
+      default:
+        return MemoryRouterRender
+    }
+  })(routeType)
+
   const flatLanguages = flattenNestedObject(languages[language])
 
   render(

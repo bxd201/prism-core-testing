@@ -6,6 +6,7 @@ import LivePalette from '../../LivePalette/LivePalette'
 import ColorWallRouteComponent from '../ColorWall/ColorWallRouteComponent'
 import SceneManager from '../../SceneManager/SceneManager'
 import ColorDetails from '../ColorDetails/ColorDetails'
+import EnvAdapter from '../../EnvAdapter/EnvAdapter'
 import FastMask from '../../FastMask/FastMask'
 import PrismNav from './PrismNav'
 import { ROUTE_PARAMS, ROUTE_PARAM_NAMES } from 'constants/globals'
@@ -22,6 +23,10 @@ export const RootRedirect = () => {
   return <Redirect to='/active' />
 }
 
+export const ColorWallComponent = (props: any) => {
+  return <ColorWallRouteComponent displayDetailsLink {...props} />
+}
+
 type Props = {}
 
 export class Prism extends Component<Props> {
@@ -29,10 +34,11 @@ export class Prism extends Component<Props> {
     return (
       <React.Fragment>
         <PrismNav />
+        <EnvAdapter />
         <hr />
         <Route path='/' exact component={RootRedirect} />
         <Route path='/active' exact component={SceneManager} />
-        <Route path={colorWallUrlPattern} component={ColorWallRouteComponent} />
+        <Route path={colorWallUrlPattern} component={ColorWallComponent} />
         <Route path={`/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`} exact component={ColorDetails} />
         <Route path='/fast-mask' exact component={FastMask} />
         <LivePalette />

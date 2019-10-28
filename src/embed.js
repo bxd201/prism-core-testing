@@ -1,6 +1,40 @@
 import bindReactToDOM from './index'
 
-(function () {
+function swPrismEmbed () {
+  // attempt to grab the root div that we are goung to mount to
+  const prismRoot = document.querySelector('#prism-root')
+  if (prismRoot === null) {
+    console.warn('Missing PRISM root mounting element. Please add a container with id="prism-root" and try again.')
+    return
+  }
+
+  const prismUserSettings = prismRoot.dataset
+  const prismDefaultSettings = {
+    reactComponent: 'Prism'
+  }
+  const prismSettings = Object.assign({},
+    prismDefaultSettings,
+    prismUserSettings
+  )
+
+  // create PRISM element and populate its classes & data attributes
+  const prismMount = document.createElement('div')
+  prismMount.className = '__react-root cleanslate prism'
+
+  // proxy all user settings into the react root
+  for (const attr in prismSettings) {
+    if (prismSettings.hasOwnProperty(attr)) {
+      prismMount.dataset[attr] = prismSettings[attr]
+    }
+  }
+
+  // add to prism root
+  prismRoot.appendChild(prismMount)
+
+  bindReactToDOM()
+}
+
+function swPrismStyles () {
   // add styles that need to be immediately applied before our CSS finishes loading
   const immediateStyleTag = document.createElement('style')
   immediateStyleTag.type = 'text/css'
@@ -24,30 +58,12 @@ import bindReactToDOM from './index'
   // add our css to the <head>
   document.body.appendChild(cleanslateTag)
   document.body.appendChild(styleTag)
+}
 
-  // attempt to grab the root div that we are goung to mount to
-  const prismRoot = document.querySelector('#prism-root')
-  if (prismRoot === null) {
-    console.warn('Missing PRISM root mounting element. Please add a container with id="prism-root" and try again.')
-    return
-  }
-
-  // create PRISM element and populate it's classes & data attributes
-  const prismMount = document.createElement('div')
-  const prismSettings = prismRoot.dataset
-
-  prismMount.className = '__react-root cleanslate prism'
-  prismMount.dataset.reactComponent = 'Prism'
-
-  // proxy all user settings into the react root
-  for (const attr in prismSettings) {
-    if (prismSettings.hasOwnProperty(attr)) {
-      prismMount.dataset[attr] = prismSettings[attr]
-    }
-  }
-
-  // add to prism root
-  prismRoot.appendChild(prismMount)
-
-  bindReactToDOM()
+(function () {
+  swPrismStyles()
+  swPrismEmbed()
 })()
+
+window['swPrismStyles'] = swPrismStyles
+window['swPrismEmbed'] = swPrismEmbed

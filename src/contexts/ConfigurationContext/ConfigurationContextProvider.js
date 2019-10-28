@@ -10,18 +10,30 @@ import { varNames } from 'variables'
 
 import ConfigurationContext from './ConfigurationContext'
 
-import type { Configuration } from '../../shared/types/Configuration'
+import { type Configuration, type EmbeddedConfiguration } from '../../shared/types/Configuration'
 
-type Props = {
-  children: any,
-  brand: string,
-  pageRoot: string,
-  loadConfiguration: Function,
-  configurations: Configuration,
-  colorDetailPageRoot: string
+type ReduxStateProps = {
+  fetchedConfig: Configuration
 }
 
-function ConfigurationContextProvider ({ children, brand, pageRoot, loadConfiguration, configurations, colorDetailPageRoot }: Props) {
+type ReduxDispatchProps = {
+  loadConfiguration: Function
+}
+
+type Props = ReduxStateProps & ReduxDispatchProps & EmbeddedConfiguration & {
+  children: any
+}
+
+function ConfigurationContextProvider (props: Props) {
+  const {
+    brand,
+    children,
+    fetchedConfig,
+    loadConfiguration,
+    ...otherEmbeddedConfig
+    // colorDetailPageRoot
+  } = props
+
   // checks the brand, if no brand is provided we'll give the user a default experience
   const userBrand = brand || 'sherwin'
 
@@ -30,23 +42,23 @@ function ConfigurationContextProvider ({ children, brand, pageRoot, loadConfigur
   }, [])
 
   // TODO: if we want, we can render a loader here or something
-  // if (configurations.loadingConfiguration) {
+  // if (fetchedConfig.loadingConfiguration) {
   //   return null
   // }
 
   // construct the theme object with expliciteness
   const theme = {
-    [varNames.theme.colors.primary]: configurations.theme.primary,
-    [varNames.theme.colors.secondary]: configurations.theme.secondary,
-    [varNames.theme.colors.warning]: configurations.theme.warning,
-    [varNames.theme.colors.success]: configurations.theme.success,
-    [varNames.theme.colors.danger]: configurations.theme.danger,
-    [varNames.theme.colors.error]: configurations.theme.error,
-    [varNames.theme.colors.grey]: configurations.theme.grey,
-    [varNames.theme.colors.lightGrey]: configurations.theme.lightGrey,
-    [varNames.theme.colors.nearBlack]: configurations.theme.nearBlack,
-    [varNames.theme.colors.blackv]: configurations.theme.black,
-    [varNames.theme.colors.white]: configurations.theme.white
+    [varNames.theme.colors.primary]: fetchedConfig.theme.primary,
+    [varNames.theme.colors.secondary]: fetchedConfig.theme.secondary,
+    [varNames.theme.colors.warning]: fetchedConfig.theme.warning,
+    [varNames.theme.colors.success]: fetchedConfig.theme.success,
+    [varNames.theme.colors.danger]: fetchedConfig.theme.danger,
+    [varNames.theme.colors.error]: fetchedConfig.theme.error,
+    [varNames.theme.colors.grey]: fetchedConfig.theme.grey,
+    [varNames.theme.colors.lightGrey]: fetchedConfig.theme.lightGrey,
+    [varNames.theme.colors.nearBlack]: fetchedConfig.theme.nearBlack,
+    [varNames.theme.colors.blackv]: fetchedConfig.theme.black,
+    [varNames.theme.colors.white]: fetchedConfig.theme.white
   }
 
   // add brand to the configuration object
@@ -54,12 +66,8 @@ function ConfigurationContextProvider ({ children, brand, pageRoot, loadConfigur
   const brandId = (toLower(userBrand) === 'sw-ca') ? 'sherwin' : toLower(userBrand)
   const config = {
     brandId,
-    ...configurations
-  }
-
-  // TODO: should this be apart of the overall global config? is there a better way to get this data down to stuff?
-  if (colorDetailPageRoot) {
-    config.colorDetailPageRoot = colorDetailPageRoot
+    ...otherEmbeddedConfig,
+    ...fetchedConfig
   }
 
   return (
@@ -75,7 +83,7 @@ const mapStateToProps = (state, props) => {
   const { configurations } = state
 
   return {
-    configurations
+    fetchedConfig: configurations
   }
 }
 
@@ -87,4 +95,4 @@ const mapDispatchToProps = (dispatch: Function) => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ConfigurationContextProvider)
+export default connect(mapStateToProps, mapDispatchToProps)(React.memo<Props>(ConfigurationContextProvider))
