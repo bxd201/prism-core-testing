@@ -6,7 +6,7 @@ import { TransitionGroup, CSSTransition } from 'react-transition-group'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import at from 'lodash/at'
 
-import { loadColors } from '../../../store/actions/loadColors'
+import { loadColors, emitColor } from '../../../store/actions/loadColors'
 import { add } from '../../../store/actions/live-palette'
 import { toggleSearchMode } from '../../../store/actions/loadSearchResults'
 import { generateColorWallPageUrl } from '../../../shared/helpers/ColorUtils'
@@ -16,8 +16,8 @@ import { ROUTE_PARAMS, ROUTE_PARAM_NAMES } from 'constants/globals'
 
 import { varValues } from 'variables'
 
-import type { CategorizedColorGrid, ColorMap, Color } from '../../../shared/types/Colors'
-import type { Configuration } from '../../../shared/types/Configuration'
+import { type CategorizedColorGrid, type ColorMap, type Color } from '../../../shared/types/Colors'
+import { type Configuration } from '../../../shared/types/Configuration'
 
 import { MODE_CLASS_NAMES } from './shared'
 import WithConfigurationContext from '../../../contexts/ConfigurationContext/WithConfigurationContext'
@@ -52,7 +52,7 @@ type RouterProps = {
 
 type DispatchProps = {
   loadColors: Function,
-  addToLivePalette: Function,
+  addColor: Function,
   toggleSearch: Function
 }
 
@@ -81,6 +81,7 @@ class ColorWall extends PureComponent<Props, State> {
   constructor (props: Props) {
     super(props)
 
+    this.handleAddColor = this.handleAddColor.bind(this)
     this.toggleViewFamilies = this.toggleViewFamilies.bind(this)
     this.stopViewFamilies = this.stopViewFamilies.bind(this)
     this.toggleViewSearch = this.toggleViewSearch.bind(this)
@@ -99,7 +100,7 @@ class ColorWall extends PureComponent<Props, State> {
 
   render () {
     const { showColorFamilies } = this.state
-    const { colors, family, sections, families, section, brights, colorMap, colorWallActive, loading, error, addToLivePalette, unorderedColors, searchActive, config } = this.props
+    const { colors, family, sections, families, section, brights, colorMap, colorWallActive, loading, error, unorderedColors, searchActive, config } = this.props
 
     const hasSections = !!(sections && sections.length)
     const hasFamilies = !!(families && families.length > 1)
@@ -204,7 +205,7 @@ class ColorWall extends PureComponent<Props, State> {
                   brights={brights}
                   colorMap={colorMap}
                   activeColor={colorWallActive}
-                  addToLivePalette={addToLivePalette}
+                  onAddColor={this.handleAddColor}
                   loading={loading}
                   error={error} />
               } else if (isUnorderedColorWall) {
@@ -216,7 +217,7 @@ class ColorWall extends PureComponent<Props, State> {
                   colors={unorderedColors}
                   colorMap={colorMap}
                   activeColor={colorWallActive}
-                  addToLivePalette={addToLivePalette}
+                  onAddColor={this.handleAddColor}
                   loading={loading}
                   error={error} />
               }
@@ -229,6 +230,12 @@ class ColorWall extends PureComponent<Props, State> {
         </TransitionGroup>
       </React.Fragment>
     )
+  }
+
+  handleAddColor = function handleAddColor (color: Color) {
+    const { addColor, config: { swatchShouldEmit } } = this.props
+
+    addColor(color, swatchShouldEmit)
   }
 
   toggleViewFamilies = function toggleViewFamilies (setTo?: boolean) {
@@ -303,8 +310,12 @@ const mapDispatchToProps = (dispatch: Function) => {
     loadColors: (brandId: string, options: any) => {
       dispatch(loadColors(brandId, options))
     },
-    addToLivePalette: (color: Color) => {
-      dispatch(add(color))
+    addColor: (color: Color, shouldEmitColor: boolean = false) => {
+      if (shouldEmitColor) {
+        dispatch(emitColor(color))
+      } else {
+        dispatch(add(color))
+      }
     },
     toggleSearch: (on: boolean) => {
       dispatch(toggleSearchMode(on))

@@ -1,5 +1,5 @@
 // @flow
-import { REQUEST_COLORS, RECEIVE_COLORS, FILTER_BY_FAMILY, MAKE_ACTIVE_COLOR, RESET_ACTIVE_COLOR, FILTER_BY_SECTION, REMOVE_COLOR_FILTERS, MAKE_ACTIVE_COLOR_BY_ID, LOAD_ERROR } from '../../actions/loadColors'
+import { REQUEST_COLORS, RECEIVE_COLORS, FILTER_BY_FAMILY, MAKE_ACTIVE_COLOR, RESET_ACTIVE_COLOR, FILTER_BY_SECTION, REMOVE_COLOR_FILTERS, MAKE_ACTIVE_COLOR_BY_ID, LOAD_ERROR, EMIT_COLOR } from '../../actions/loadColors'
 import { REQUEST_SEARCH_RESULTS, RECEIVE_SEARCH_RESULTS, CLEAR_SEARCH, SEARCH_RESULTS_ERROR, UPDATE_SEARCH_QUERY, TOGGLE_SEARCH_MODE } from '../../actions/loadSearchResults'
 
 import { type ReduxAction, type ColorsState } from '../../../shared/types/Actions'
@@ -141,6 +141,16 @@ export const colors = (state: ColorsState = initialState, action: ReduxAction) =
         search: {
           ...state.search,
           active: action.payload
+        }
+      })
+    }
+
+    case EMIT_COLOR: {
+      return ({
+        ...state,
+        emitColor: {
+          color: action.payload,
+          timestamp: Date.now()
         }
       })
     }

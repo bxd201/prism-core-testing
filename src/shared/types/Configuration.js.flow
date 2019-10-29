@@ -2,10 +2,14 @@
 export type Configuration = {
   brandId: string,
   colorDetailPageRoot: string,
+  displayAddButton?: boolean,
+  displayDetailsLink?: boolean,
+  displayInfoButton?: boolean,
   ga_dimension_id: string,
   colorWall: {
     bloomRadius: number
   },
+  swatchShouldEmit: boolean,
   theme: {
     primary: string,
     secondary: string,
@@ -20,4 +24,19 @@ export type Configuration = {
     white: string
   },
   searchQueryParameterName: string
+}
+
+/**
+ * @description These are the embeddable properties that can be transferred to configuration values
+ */
+export type EmbeddedConfiguration = {
+  brand?: string,
+  colorDetailPageRoot?: string,
+  displayAddButton?: boolean,
+  displayDetailsLink?: boolean,
+  displayInfoButton?: boolean,
+  language?: string,
+  pageRoot?: string,
+  routeType?: string,
+  swatchShouldEmit?: boolean
 }

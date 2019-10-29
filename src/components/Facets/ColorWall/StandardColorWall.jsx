@@ -19,7 +19,7 @@ import { type ColorIdList, type ColorMap, type Color, type ColorIdGrid } from '.
 type Props = {
   colors: ColorIdList,
   colorMap: ColorMap,
-  addToLivePalette?: Function,
+  onAddColor?: Function,
   activeColor: Color,
   loading?: boolean,
   intl: any,
@@ -76,7 +76,7 @@ class StandardColorWall extends PureComponent<Props> {
   }
 
   colorFamily = function colorFamily () {
-    const { colors, family, families, section, activeColor, colorMap, addToLivePalette, loading, error, intl } = this.props
+    const { colors, family, families, section, activeColor, colorMap, onAddColor, loading, error, intl } = this.props
     const colorsGrid = StandardColorWall.getColorGrid(colors, family, families, colorMap)
     const translatedMessages = intl.messages
 
@@ -109,7 +109,7 @@ class StandardColorWall extends PureComponent<Props> {
           section={section}
           family={family}
           bloomRadius={2}
-          onAddColor={addToLivePalette}
+          onAddColor={onAddColor}
           colorMap={colorMap}
           swatchLinkGenerator={this.buildSwatchLink}
           swatchDetailsLinkGenerator={this.buildSwatchDetailsLink}

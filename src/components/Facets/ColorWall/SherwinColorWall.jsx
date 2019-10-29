@@ -23,7 +23,7 @@ type Props = {
   colors: CategorizedColorIdGrid,
   brights: CategorizedColorIdGrid,
   colorMap: ColorMap,
-  addToLivePalette?: Function,
+  onAddColor?: Function,
   activeColor: Color,
   loading?: boolean,
   intl: any,
@@ -81,7 +81,7 @@ export class SherwinColorWall extends PureComponent<Props> {
   }
 
   colorFamily = function colorFamily () {
-    const { colors, brights, family, families, section, activeColor, colorMap, addToLivePalette, loading, error, intl, config } = this.props
+    const { colors, brights, family, families, section, activeColor, colorMap, onAddColor, loading, error, intl, config } = this.props
     const colorsGrid = SherwinColorWall.getColorGrid(colors, brights, family, families, colorMap)
     const translatedMessages = intl ? intl.messages : {}
 
@@ -114,7 +114,7 @@ export class SherwinColorWall extends PureComponent<Props> {
           section={section}
           family={family}
           bloomRadius={config.colorWall.bloomRadius} // TODO: demo purposes, maybe we want to change this
-          onAddColor={addToLivePalette}
+          onAddColor={onAddColor}
           colorMap={colorMap}
           swatchLinkGenerator={this.buildSwatchLink}
           swatchDetailsLinkGenerator={this.buildSwatchDetailsLink}
