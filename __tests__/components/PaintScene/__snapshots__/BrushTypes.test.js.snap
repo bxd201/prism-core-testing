@@ -1,0 +1,56 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`BrushTypes render & event testing should match snapshot 1`] = `
+<div
+  className="brush-types__wrapper"
+>
+  <div
+    className="brush-types__circle-shapes-container"
+  >
+    <button
+      className="brush-types__brush-button brush-types__brush-button--circle brush-types__brush-button--large brush-types__brush-button--active"
+      key="round-38"
+      onClick={[Function]}
+    />
+    <button
+      className="brush-types__brush-button brush-types__brush-button--circle brush-types__brush-button--medium"
+      key="round-30"
+      onClick={[Function]}
+    />
+    <button
+      className="brush-types__brush-button brush-types__brush-button--circle brush-types__brush-button--small"
+      key="round-22"
+      onClick={[Function]}
+    />
+    <button
+      className="brush-types__brush-button brush-types__brush-button--circle brush-types__brush-button--tiny"
+      key="round-14"
+      onClick={[Function]}
+    />
+  </div>
+  <div
+    className="brush-types__square-shapes-container"
+  >
+    <button
+      className="brush-types__brush-button brush-types__brush-button--large"
+      key="square-38"
+      onClick={[Function]}
+    />
+    <button
+      className="brush-types__brush-button brush-types__brush-button--medium"
+      key="square-30"
+      onClick={[Function]}
+    />
+    <button
+      className="brush-types__brush-button brush-types__brush-button--small"
+      key="square-22"
+      onClick={[Function]}
+    />
+    <button
+      className="brush-types__brush-button brush-types__brush-button--tiny"
+      key="square-14"
+      onClick={[Function]}
+    />
+  </div>
+</div>
+`;

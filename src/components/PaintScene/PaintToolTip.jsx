@@ -50,7 +50,7 @@ export function PaintToolTip ({ tooltipToolActiveName, closeTooltip, backButtonC
             <FontAwesomeIcon className={``} icon={['fal', 'times']} size='lg' />
           </button>
           <div className={`${headerClass}`}>
-            <FontAwesomeIcon className={``} icon={['fal', 'info-circle']} size='1x' />&nbsp;TOOL TIPS
+            <FontAwesomeIcon className={``} icon={['fal', 'info-circle']} size='1x' />&nbsp;<span>TOOL TIPS</span>
           </div>
           <div className={`${toolNameClass}`}>{tooltipToolActiveName}</div>
           <div className={`${tooltipContentClass}`}>
@@ -85,4 +85,7 @@ export function PaintToolTip ({ tooltipToolActiveName, closeTooltip, backButtonC
   )
 }
 
+export {
+  toolNameClass, tooltipContentClass, toolNumberClass, headerClass
+}
 export default PaintToolTip

@@ -1,6 +1,7 @@
 // @flow
 import React from 'react'
 import './BrushTypes.scss'
+import { brushLargeSize, brushMediumSize, brushSmallSize, brushTinySize, brushRoundShape, brushSquareShape, brushTypes } from './data'
 
 const baseClass = 'brush-types'
 const wrapperClass = `${baseClass}__wrapper`
@@ -14,15 +15,6 @@ const brushButtonSmallClass = `${brushButtonClass}--small`
 const brushButtonTinyClass = `${brushButtonClass}--tiny`
 const brushButtonActiveClass = `${brushButtonClass}--active`
 
-// @todo should these values go in a const file? See also PaintScene file too
-const largeSize = 38
-const mediumSize = 30
-const smallSize = 22
-const tinySize = 14
-
-const roundShape = 'round'
-const squareShape = 'square'
-
 type Props = {
   activeWidth: number,
   activeShape: string,
@@ -30,19 +22,41 @@ type Props = {
 }
 
 export function BrushTypes ({ activeWidth, activeShape, setBrushShapeSize }: Props) {
+  const getBrushTypes = (brushShape: string, activeWidth: number, activeShape: string) => {
+    return (
+      brushTypes.map((brushType: number) => {
+        let brushClass = `${brushButtonClass}`
+
+        if (brushShape === brushRoundShape) {
+          brushClass += ` ${brushButtonCircleClass}`
+        }
+
+        if (brushType === brushLargeSize) {
+          brushClass += ` ${brushButtonLargeClass}`
+        } else if (brushType === brushMediumSize) {
+          brushClass += ` ${brushButtonMediumClass}`
+        } else if (brushType === brushSmallSize) {
+          brushClass += ` ${brushButtonSmallClass}`
+        } else if (brushType === brushTinySize) {
+          brushClass += ` ${brushButtonTinyClass}`
+        }
+
+        if ((activeWidth === brushType && activeShape === brushShape)) {
+          brushClass += ` ${brushButtonActiveClass}`
+        }
+
+        return <button key={`${brushShape}-${brushType}`} className={`${brushClass}`} onClick={() => setBrushShapeSize(brushShape, brushType)} />
+      })
+    )
+  }
+
   return (
     <div className={`${wrapperClass}`}>
       <div className={`${circleShapesContainerClass}`}>
-        <button className={`${brushButtonClass} ${brushButtonCircleClass} ${brushButtonLargeClass} ${(activeWidth === largeSize && activeShape === roundShape) ? brushButtonActiveClass : ``}`} onClick={() => setBrushShapeSize(roundShape, largeSize)} />
-        <button className={`${brushButtonClass} ${brushButtonCircleClass} ${brushButtonMediumClass} ${(activeWidth === mediumSize && activeShape === roundShape) ? brushButtonActiveClass : ``}`} onClick={() => setBrushShapeSize(roundShape, mediumSize)} />
-        <button className={`${brushButtonClass} ${brushButtonCircleClass} ${brushButtonSmallClass} ${(activeWidth === smallSize && activeShape === roundShape) ? brushButtonActiveClass : ``}`} onClick={() => setBrushShapeSize(roundShape, smallSize)} />
-        <button className={`${brushButtonClass} ${brushButtonCircleClass} ${brushButtonTinyClass} ${(activeWidth === tinySize && activeShape === roundShape) ? brushButtonActiveClass : ``}`} onClick={() => setBrushShapeSize(roundShape, tinySize)} />
+        {getBrushTypes(brushRoundShape, activeWidth, activeShape)}
       </div>
       <div className={`${squareShapesContainerClass}`}>
-        <button className={`${brushButtonClass} ${brushButtonLargeClass} ${(activeWidth === largeSize && activeShape === squareShape) ? brushButtonActiveClass : ``}`} onClick={() => setBrushShapeSize(squareShape, largeSize)} />
-        <button className={`${brushButtonClass} ${brushButtonMediumClass} ${(activeWidth === mediumSize && activeShape === squareShape) ? brushButtonActiveClass : ``}`} onClick={() => setBrushShapeSize(squareShape, mediumSize)} />
-        <button className={`${brushButtonClass} ${brushButtonSmallClass} ${(activeWidth === smallSize && activeShape === squareShape) ? brushButtonActiveClass : ``}`} onClick={() => setBrushShapeSize(squareShape, smallSize)} />
-        <button className={`${brushButtonClass} ${brushButtonTinyClass} ${(activeWidth === tinySize && activeShape === squareShape) ? brushButtonActiveClass : ``}`} onClick={() => setBrushShapeSize(squareShape, tinySize)} />
+        {getBrushTypes(brushSquareShape, activeWidth, activeShape)}
       </div>
     </div>
   )

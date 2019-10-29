@@ -93,4 +93,7 @@ export class ZoomTool extends PureComponent<ComponentProps, ComponentState> {
   }
 }
 
+export {
+  wrapperClass, zoomSliderClass
+}
 export default ZoomTool
