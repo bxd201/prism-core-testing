@@ -15,6 +15,10 @@ export type Section = {
 export type SectionCollection = Section[]
 
 export type ColorsState = {
+  emitColor?: {
+    color: Color,
+    timestamp: number
+  },
   status: {
     loading: boolean,
     error: boolean,

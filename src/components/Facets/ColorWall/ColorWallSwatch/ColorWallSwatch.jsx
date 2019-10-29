@@ -9,7 +9,7 @@ import { numToAlphaString, arrayToSpacedString } from '../../../../shared/helper
 import { fullColorName, fullColorNumber } from '../../../../shared/helpers/ColorUtils'
 import { CLASS_NAMES } from './shared'
 
-import ColorWallContext from '../ColorWallContext'
+import ColorWallContext, { type ColorWallContextProps } from '../ColorWallContext'
 
 import AddButton from './ColorWallSwatchButtons/AddButton'
 import DetailsLink from './ColorWallSwatchButtons/DetailsLink'
@@ -42,7 +42,7 @@ class ColorWallSwatch extends PureComponent<Props> {
   }
 
   render () {
-    const { showContents, color, onAdd, thisLink, detailsLink, focus } = this.props
+    const { showContents, color, thisLink, detailsLink, focus } = this.props
 
     let containerProps = {
       className: `${this.getBaseClasses()} ${this.getClasses()}`,
@@ -57,7 +57,7 @@ class ColorWallSwatch extends PureComponent<Props> {
           <p className={CLASS_NAMES.CONTENT_NUMBER}>{`${fullColorNumber(color.brandKey, color.colorNumber)}`}</p>
           <p className={CLASS_NAMES.CONTENT_NAME}>{color.name}</p>
           <ColorWallContext.Consumer>
-            {config => (
+            {(config: ColorWallContextProps) => (
               <React.Fragment>
                 {/* Stateless components to handle whether to display the add, details, and info buttons */}
                 <InfoButton
@@ -68,7 +68,6 @@ class ColorWallSwatch extends PureComponent<Props> {
                 />
                 <AddButton
                   config={config}
-                  onAdd={(onAdd)}
                   onClick={this.handleAddClick}
                   className={`${CLASS_NAMES.CONTENT_CTA} ${CLASS_NAMES.CONTENT_CTA_L}`}
                   tabIndex={-1}
@@ -173,6 +172,8 @@ class ColorWallSwatch extends PureComponent<Props> {
     return arrayToSpacedString(classes)
   }
 
+  // TODO: This is absolute nonsense. Replace this whole idea with forward refs down into the swatches that hook into their buttons. This will
+  // let us trigger JS click events on those and not have to build this whole other dumb thing. @cody.richmond
   performClickAction = function performClickAction (): void {
     console.warn('ATTEMPTING TO PERFORM CLICK ACTION IN ColorWallSwatch, BUT NO ACTION IS DEFINED')
     // TODO: Implement multi-element focus control and an externally-triggerable click action.

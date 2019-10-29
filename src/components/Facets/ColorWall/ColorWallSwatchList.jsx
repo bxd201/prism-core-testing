@@ -756,7 +756,8 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
           showContents={thisLevel.level === 0}
           thisLink={linkToSwatch}
           detailsLink={linkToDetails}
-          onAdd={onAddColor ? this.addColor : void (0)} color={color}
+          onAdd={onAddColor ? this.addColor : void (0)}
+          color={color}
           level={thisLevel.level}
           ref={this.generateMakeSwatchRef(colorId)}
           compensateX={isFunction(thisLevel.compensateX) ? thisLevel.compensateX() : 0}

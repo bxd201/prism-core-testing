@@ -1,7 +1,6 @@
 // @flow
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import isUndefined from 'lodash/isUndefined'
 
 import { filterByFamily, filterBySection, makeActiveColorById, resetActiveColor } from '../../../store/actions/loadColors'
 import { updateSearchQuery, toggleSearchMode } from '../../../store/actions/loadSearchResults'
@@ -11,21 +10,22 @@ import type { Configuration } from '../../../shared/types/Configuration'
 import { ROUTE_PARAM_NAMES } from 'constants/globals'
 
 import ColorWall from './ColorWall'
-import ColorWallContext from './ColorWallContext'
+import ColorWallContext, { type ColorWallContextProps } from './ColorWallContext'
 import withConfigurationContext from '../../../contexts/ConfigurationContext/WithConfigurationContext'
+import { getFirstDefined } from '../../../shared/helpers/MiscUtils'
 
-type StateProps = {
-  family?: string,
-  section?: string,
-  color?: Color,
-  query?: String,
-  displayDetailsLink?: boolean,
-  displayInfoButton?: boolean,
-  displayAddButton?: boolean,
+type ConfigProps = {
   config: Configuration
 }
 
-type DispatchProps = {
+type ReduxStateProps = {
+  family?: string,
+  section?: string,
+  color?: Color,
+  query?: String
+}
+
+type ReduxDispatchProps = {
   filterByFamily: Function,
   filterBySection: Function,
   makeActiveColorById: Function,
@@ -34,25 +34,35 @@ type DispatchProps = {
 }
 
 type OwnProps = {
+  displayAddButton?: boolean,
+  displayDetailsLink?: boolean,
+  displayInfoButton?: boolean,
   match: {
     [key: string]: any
   }
 }
 
-type Props = StateProps & DispatchProps & OwnProps
+type Props = ConfigProps & ReduxStateProps & ReduxDispatchProps & OwnProps
 
 class ColorWallLocationBuffer extends Component<Props> {
   render () {
     // scaffolding out some ColorWall specific provider values that can be overwritten as need be by any
     // component using the <ColorWallRouteComponent /> via props
-    const { displayAddButton, displayDetailsLink, displayInfoButton, config } = this.props
-    const cwProviderValues = {
-      displayDetailsLink: (!isUndefined(displayDetailsLink)) ? displayDetailsLink : false,
-      displayInfoButton: (!isUndefined(displayInfoButton)) ? displayInfoButton : true,
-      displayAddButton: (!isUndefined(displayAddButton)) ? displayAddButton : true,
+
+    const { displayAddButton, displayDetailsLink, displayInfoButton, config: {
+      displayAddButton: confDisplayAddButton,
+      displayInfoButton: confDisplayInfoButton,
+      displayDetailsLink: confDisplayDetailsLink,
+      colorDetailPageRoot
+    } } = this.props
+
+    const cwProviderValues: ColorWallContextProps = {
+      displayDetailsLink: getFirstDefined(displayDetailsLink, confDisplayDetailsLink),
+      displayInfoButton: getFirstDefined(displayInfoButton, confDisplayInfoButton),
+      displayAddButton: getFirstDefined(displayAddButton, confDisplayAddButton),
       // TODO: Future scope, the below shouldn't be driven by a data attribute, but should come in from the config as a eval capable string that
       // a utility method perhaps can handle per brand.
-      colorDetailPageRoot: (!isUndefined(config.colorDetailPageRoot)) ? config.colorDetailPageRoot : null
+      colorDetailPageRoot: getFirstDefined(colorDetailPageRoot, null)
     }
 
     return (
