@@ -132,3 +132,9 @@ export const loadColors = (brandId: string, options?: any) => {
       })
   }
 }
+
+export const EMIT_COLOR: string = 'EMIT_COLOR'
+export const emitColor = (color: Color) => ({
+  type: EMIT_COLOR,
+  payload: color
+})

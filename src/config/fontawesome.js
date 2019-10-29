@@ -6,6 +6,7 @@ import { library, config } from '@fortawesome/fontawesome-svg-core'
 // solids
 import {
   faPlus,
+  faPlusCircle,
   faTrash,
   faImage,
   faInfoCircle,
@@ -37,10 +38,10 @@ import {
 // lights
 import {
   faHome as falHome,
-  faPlusCircle,
   faSun as falSun,
   faThLarge,
   faMoon as falMoon,
+  faPlusCircle as falPlusCircle,
   faExpandAlt,
   faCompressAlt,
   faRedo as falRedo,
@@ -74,6 +75,7 @@ const faIcons = [
   faPalette,
   faPlus,
   faPlusCircle,
+  falPlusCircle,
   faTimes,
   faTrash,
   faThLarge,

@@ -5,6 +5,7 @@ import ExpertColorPicks from '../../ExpertColorPicks/ExpertColorPicks'
 import ColorDetails from '../ColorDetails/ColorDetails'
 import ColorWallRouteComponent from '../ColorWall/ColorWallRouteComponent'
 import CompareColor from '../../CompareColor/CompareColor'
+import EnvAdapter from '../../EnvAdapter/EnvAdapter'
 import FastMask from '../../FastMask/FastMask'
 import InspiredScene from '../../InspirationPhotos/InspiredSceneNavigator'
 import LivePalette from '../../LivePalette/LivePalette'
@@ -29,6 +30,10 @@ export const RootRedirect = () => {
   return <Redirect to='/active' />
 }
 
+export const ColorWallComponent = (props: any) => {
+  return <ColorWallRouteComponent displayDetailsLink {...props} />
+}
+
 type Props = {toggleCompareColor: boolean}
 
 export class Prism extends Component<Props> {
@@ -38,6 +43,7 @@ export class Prism extends Component<Props> {
       <React.Fragment>
         <div className='prism__root-container'>
           <PrismNav />
+          <EnvAdapter />
           <hr />
           {!toggleCompareColor &&
             <div className='prism__root-wrapper'>

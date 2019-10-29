@@ -5,6 +5,7 @@ import { Route, Redirect, withRouter, Switch } from 'react-router-dom'
 import { ROUTE_PARAMS } from 'constants/globals'
 
 import ColorWallRouteComponent from '../ColorWall/ColorWallRouteComponent'
+import EnvAdapter from '../../EnvAdapter/EnvAdapter'
 
 const colorWallBaseUrl = `/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_WALL}`
 
@@ -16,10 +17,6 @@ export const RootRedirectColorWall = () => {
   return <Redirect to={colorWallBaseUrl} />
 }
 
-export const ColorWallComponent = (props: any) => {
-  return <ColorWallRouteComponent displayDetailsLink displayInfoButton={false} displayAddButton={false} {...props} />
-}
-
 type ColorWallFacetProps = {
   location: Location
 }
@@ -27,10 +24,13 @@ type ColorWallFacetProps = {
 export function ColorWallFacet (props: ColorWallFacetProps) {
   const { location } = props
   return (
-    <Switch location={location}>
-      <Route path='/' exact component={RootRedirectColorWall} />
-      <Route path={colorWallUrlPattern} component={ColorWallComponent} />
-    </Switch>
+    <React.Fragment>
+      <EnvAdapter />
+      <Switch location={location}>
+        <Route path='/' exact component={RootRedirectColorWall} />
+        <Route path={colorWallUrlPattern} component={ColorWallRouteComponent} />
+      </Switch>
+    </React.Fragment>
   )
 }
 export default withRouter(React.memo<ColorWallFacetProps>(ColorWallFacet))

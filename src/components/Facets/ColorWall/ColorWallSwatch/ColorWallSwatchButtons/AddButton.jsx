@@ -2,17 +2,27 @@
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-const AddButton = (props: Object) => {
-  const { config, onAdd, onClick, ...other } = props
+type Props = {
+  config: Object,
+  onClick: Function
+}
 
-  if (onAdd && config.displayAddButton) {
+const AddButton = (props: Props) => {
+  const {
+    config,
+    onClick,
+    ...other
+  } = props
+
+  if (config.displayAddButton) {
     return (
       <button onClick={onClick} {...other}>
-        <FontAwesomeIcon icon='plus' size='1x' />
+        <FontAwesomeIcon icon={['fa', 'plus']} size='1x' />
       </button>
     )
   }
+
   return null
 }
 
-export default AddButton
+export default React.memo<Props>(AddButton)
