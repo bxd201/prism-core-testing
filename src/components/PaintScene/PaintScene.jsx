@@ -17,6 +17,7 @@ import { getPaintAreaPath, repaintImageByPath,
 import { toolNames, groupToolNames } from './data'
 import { getScaledPortraitHeight, getScaledLandscapeHeight } from '../../shared/helpers/ImageUtils'
 import throttle from 'lodash/throttle'
+import { redo, undo } from './UndoRedoUtil'
 
 const baseClass = 'paint__scene__wrapper'
 const canvasClass = `${baseClass}__canvas`
@@ -69,8 +70,7 @@ type ComponentState = {
   eraseBrushWidth: number,
   drawHistory: Array<Array<Object>>,
   drawCoordinates: Array<Object>,
-  pixelDataHistory: Array<Object>,
-  pixelDataRedoHistory: Array<Object>,
+  redoPathList: Array<Object>,
   undoIsEnabled: boolean,
   redoIsEnabled: boolean,
   wrapperHeight: number,
@@ -164,6 +164,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       BeginPointList: [],
       polyList: [],
       imagePathList: [],
+      redoPathList: [],
       showOriginalCanvas: false,
       canvasZoom: 1,
       canvasMouseDown: false,
@@ -178,13 +179,10 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       isInfoToolActive: false
     }
 
-    this.pushToHistory = this.pushToHistory.bind(this)
-    this.popFromHistoryToRedoHistory = this.popFromHistoryToRedoHistory.bind(this)
     this.undo = this.undo.bind(this)
     this.redo = this.redo.bind(this)
-    this.redrawFromOperation = this.redrawFromOperation.bind(this)
+    this.redrawCanvas = this.redrawCanvas.bind(this)
     this.getImageCoordinatesByPixel = this.getImageCoordinatesByPixel.bind(this)
-    this.popFromRedoHistoryToHistory = this.popFromRedoHistoryToHistory.bind(this)
     this.initCanvas = this.initCanvas.bind(this)
     this.updateCanvasWithNewDimensions = this.updateCanvasWithNewDimensions.bind(this)
     this.shouldCanvasResize = this.shouldCanvasResize.bind(this)
@@ -381,99 +379,26 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.setState({ activeTool, selectedArea: [] })
   }
 
-  // Should only be used on user even to push
-  /*:: pushToHistory: (redoOperation: Object) => void */
-  pushToHistory (redoOperation: Object) {
-    const shouldPushFlag = this.state.drawCoordinates.length > 0 || redoOperation
-    const itemForHistory = redoOperation || this.getImageCoordinatesByPixel()
-    const newPixelDataHistory = shouldPushFlag ? [...this.state.pixelDataHistory, itemForHistory] : this.state.pixelDataHistory
-
-    let newState = {
-      pixelDataHistory: newPixelDataHistory,
-      pixelDataRedoHistory: [],
-      undoIsEnabled: true,
-      redoIsEnabled: false
-    }
-
-    this.setState(newState)
-  }
-
-  /*:: popFromRedoHistoryToHistory: (stateFragment: Object) => void */
-  popFromRedoHistoryToHistory (stateFragment: Object) {
-    if (this.state.pixelDataRedoHistory.length) {
-      const operationToAddToHistory = this.state.pixelDataRedoHistory.slice(-1)[0]
-      const newPixelDataRedoHistory = this.state.pixelDataRedoHistory.slice(0, this.state.pixelDataRedoHistory.length - 1)
-      const newPixelDataHistory = this.state.pixelDataHistory.length ? [...this.state.pixelDataHistory, operationToAddToHistory] : [operationToAddToHistory]
-
-      let newState = {
-        pixelDataHistory: newPixelDataHistory,
-        pixelDataRedoHistory: newPixelDataRedoHistory,
-        undoIsEnabled: newPixelDataHistory.length > 0,
-        redoIsEnabled: newPixelDataRedoHistory.length > 0
-      }
-
-      if (stateFragment) {
-        newState = Object.assign(newState, stateFragment)
-      }
-
-      this.setState(newState)
-    }
-  }
-
-  /*:: popFromHistoryToRedoHistory: (stateFragment: Object) => void */
-  popFromHistoryToRedoHistory (stateFragment: Object) {
-    if (this.state.pixelDataHistory.length) {
-      // Pixel redo
-      const newPixelRedoHistory = this.state.pixelDataHistory.slice(-1)[0]
-      const pixelDataHistory = this.state.pixelDataHistory.slice(0, this.state.pixelDataHistory.length - 1)
-      const pixelDataRedoHistory = this.state.pixelDataRedoHistory.length ? [...this.state.pixelDataRedoHistory, newPixelRedoHistory] : [newPixelRedoHistory]
-
-      let newState = {
-        pixelDataHistory,
-        pixelDataRedoHistory,
-        drawCoordinates: [],
-        undoIsEnabled: pixelDataHistory.length > 0,
-        redoIsEnabled: pixelDataRedoHistory.length > 0
-      }
-
-      if (stateFragment) {
-        newState = Object.assign(newState, stateFragment)
-      }
-
-      this.setState(newState)
-    }
-  }
-
-  // @todo set activetool based on action
   /*:: undo: () => void */
   undo () {
-    // @todo finish implementation
-    const stateFragment = { activeTool: toolNames.UNDO }
-    if (this.state.pixelDataHistory.length > 1) {
-      const redrawOperation = this.state.pixelDataHistory.slice(-2, -1)[0]
-      this.redrawFromOperation(redrawOperation)
-      this.popFromHistoryToRedoHistory(stateFragment)
-    } else if (this.state.pixelDataHistory.length === 1) {
-      this.clearCanvas()
-      this.popFromHistoryToRedoHistory(stateFragment)
-    }
+    const stateFragment = undo(this.state)
+    this.setState(stateFragment, () => {
+      this.redrawCanvas(stateFragment.imagePathList)
+    })
   }
 
   /*:: redo: () => void */
   redo () {
-    // @todo finish implementation...add back to undo stack and what ever else...handle multiple redo operatiosn belwo only covers a single redo cycle
-    if (this.state.pixelDataRedoHistory.length) {
-      const redoOperation = this.state.pixelDataRedoHistory.slice(-1)[0]
-      this.redrawFromOperation(redoOperation)
-      this.popFromRedoHistoryToHistory({ activeTool: toolNames.REDO })
-    }
+    const stateFragment = redo(this.state)
+    this.setState(stateFragment, () => {
+      this.redrawCanvas(stateFragment.imagePathList)
+    })
   }
 
-  /*:: redrawFromOperation: (historicOperation: DrawOperation) => void */
-  redrawFromOperation (historicOperation: DrawOperation) {
-    // @todo finish implementation
-    // Clear canvas and draw from history sequences
+  /*:: redrawFromOperation: (imagePathList: Object[]) => void */
+  redrawCanvas (imagePathList: Object[]) {
     this.clearCanvas()
+    repaintImageByPath(imagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
   }
 
   /*:: getImageCoordinatesByPixel: () => DrawOperation */
@@ -584,10 +509,13 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       this.CFICanvasContextPaint.clearRect(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
       this.clearCanvas()
       repaintImageByPath(newImagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
+      // Must empty redo when new instructions added
       this.setState({ isDragging: false,
-        imagePathList: newImagePathList
+        imagePathList: newImagePathList,
+        redoPathList: [],
+        undoIsEnabled: newImagePathList.length > 0,
+        redoIsEnabled: false
       })
-      this.pushToHistory()
     }
 
     if (activeTool === toolNames.ERASE && drawCoordinates.length > 0) {
@@ -615,8 +543,15 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
         return currImagePath.data.length !== 0
       })
       repaintImageByPath(newImagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
-      this.setState({ isDragging: false, imagePathList: newImagePathList, groupAreaList, groupSelectList: newGroupSelectList })
-      this.pushToHistory()
+      this.setState({
+        isDragging: false,
+        imagePathList: newImagePathList,
+        groupAreaList,
+        groupSelectList: newGroupSelectList,
+        redoPathList: [],
+        undoIsEnabled: newImagePathList.length > 0,
+        redoIsEnabled: false
+      })
     }
     window.removeEventListener('mouseup', this.mouseUpHandler)
   }
