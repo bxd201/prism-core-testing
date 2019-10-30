@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import PaletteSuggester from './ColorPickerSlideContainer'
 import MoreDetailsCollapse from './MoreDetails'
-import { faLongArrowRight, faLongArrowLeft } from '@fortawesome/pro-light-svg-icons'
 import './ColorPickerSlide.scss'
 import { connect } from 'react-redux'
 import { injectIntl } from 'react-intl'
@@ -44,8 +43,8 @@ function ColorPickerSlide (props: SummaryProps) {
           <div className={`${slideHeader} ${isShowSlider ? `${slideHeader}--show` : `${slideHeader}--hide`}`}>
             {isShowSlider && <span>Expert Color Picks</span>}
             <button className={`${slideHeader}__arrow-button`} onClick={() => { handleSlideShow(!isShowSlider) }}>
-              {isShowSlider && <FontAwesomeIcon className={`${baseClass}__toggle-arrow`} icon={faLongArrowRight} />}
-              {!isShowSlider && <FontAwesomeIcon className={`${baseClass}__toggle-arrow`} icon={faLongArrowLeft} />}
+              {isShowSlider && <FontAwesomeIcon className={`${baseClass}__toggle-arrow`} icon={['fal', 'long-arrow-right']} />}
+              {!isShowSlider && <FontAwesomeIcon className={`${baseClass}__toggle-arrow`} icon={['fal', 'long-arrow-left']} />}
             </button>
           </div>
           <div className='slide-palette-content'>

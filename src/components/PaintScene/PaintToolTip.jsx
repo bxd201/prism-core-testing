@@ -2,7 +2,6 @@
 import React from 'react'
 import './PaintToolTip.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChevronLeft, faChevronRight } from '@fortawesome/pro-solid-svg-icons'
 
 type Props = {
   tooltipToolActiveName: string,
@@ -58,11 +57,11 @@ export function PaintToolTip ({ tooltipToolActiveName, closeTooltip, backButtonC
           </div>
           <div className={`${footerClass}`}>
             <button className={`${buttonClass} ${buttonLeftClass} ${tooltipToolActiveNumber === 1 ? `${buttonHideClass}` : `${buttonShowClass}`}`} onClick={() => backButtonClickHandler()}>
-              <FontAwesomeIcon icon={faChevronLeft} />&nbsp;<span>BACK</span>
+              <FontAwesomeIcon icon={['fa', 'chevron-left']} />&nbsp;<span>BACK</span>
             </button>
             <span className={`${toolNumberClass}`}>{tooltipToolActiveNumber} of {toolsCount}</span>
             <button className={`${buttonClass} ${buttonRightClass} ${tooltipToolActiveNumber < toolsCount ? `${buttonShowClass}` : `${buttonHideClass}`}`} onClick={() => nextButtonClickHandler()}>
-              <span>NEXT</span>&nbsp;<FontAwesomeIcon icon={faChevronRight} />
+              <span>NEXT</span>&nbsp;<FontAwesomeIcon icon={['fa', 'chevron-right']} />
             </button>
           </div>
         </div>
