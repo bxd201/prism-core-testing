@@ -1,7 +1,6 @@
 // @flow
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCircle, faChevronLeft, faChevronRight } from '@fortawesome/pro-solid-svg-icons'
 import CollectionSummary from './CollectionSummary'
 import { varValues } from 'variables'
 import './Carousel.scss'
@@ -147,9 +146,9 @@ const ListWithCarousel = (BaseComponent: any) => {
       let activedView = Math.floor(curr / itemsPerView)
       for (let i = 0; i < this.dotsNumbers; i++) {
         if (activedView === i) {
-          el.push(<FontAwesomeIcon key={i} className={`${indicators}__icons ${indicators}__icons--active`} icon={faCircle} />)
+          el.push(<FontAwesomeIcon key={i} className={`${indicators}__icons ${indicators}__icons--active`} icon={['fa', 'circle']} />)
         } else {
-          el.push(<FontAwesomeIcon key={i} className={`${indicators}__icons ${indicators}__icons--unactive`} icon={faCircle} />)
+          el.push(<FontAwesomeIcon key={i} className={`${indicators}__icons ${indicators}__icons--unactive`} icon={['fa', 'circle']} />)
         }
       }
       return el
@@ -187,7 +186,7 @@ const ListWithCarousel = (BaseComponent: any) => {
             <div className={`${contentWrapper}__prev-btn__wrapper`}>
               {
                 <button className={`${contentWrapper}__buttons ${!isHidePrevButton ? `${contentWrapper}__buttons--visible` : ''}`} onClick={this.handlePrev}>
-                  <FontAwesomeIcon icon={faChevronLeft} />
+                  <FontAwesomeIcon icon={['fa', 'chevron-left']} />
                 </button>}
             </div>
             <div className={`${contentWrapper}__list__wrapper ${isInfinity ? `${contentWrapper}__list__wrapper--loop` : ''}`}>
@@ -210,7 +209,7 @@ const ListWithCarousel = (BaseComponent: any) => {
             <div className={`${contentWrapper}__next-btn__wrapper`}>
               {
                 <button className={`${contentWrapper}__buttons ${!isHideNextButton ? `${contentWrapper}__buttons--visible` : ''}`} onClick={this.handleNext}>
-                  <FontAwesomeIcon icon={faChevronRight} />
+                  <FontAwesomeIcon icon={['fa', 'chevron-right']} />
                 </button>
               }
             </div>

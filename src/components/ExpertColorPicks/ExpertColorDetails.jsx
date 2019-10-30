@@ -8,8 +8,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import { fullColorNumber, getContrastYIQ } from '../../../src/shared/helpers/ColorUtils'
 import type { Color } from '../../shared/types/Colors'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCheckCircle } from '@fortawesome/pro-solid-svg-icons'
-import { faPlusCircle } from '@fortawesome/pro-light-svg-icons'
 import { add } from '../../store/actions/live-palette'
 import some from 'lodash/some'
 import './ExpertColorDetails.scss'
@@ -38,7 +36,7 @@ export default function ExpertColorDetails ({ expertColors }: Props) {
           <FontAwesomeIcon
             style={{ color: getContrastYIQ(color.hex) }}
             className={`${baseClass}__content__wrapper__toggle-check-icons`}
-            icon={some(colorsCurrentlyInLivePalette, color) ? faCheckCircle : faPlusCircle}
+            icon={some(colorsCurrentlyInLivePalette, color) ? ['fa', 'check-circle'] : ['fal', 'plus-circle']}
           />
         </button>
       </div>)

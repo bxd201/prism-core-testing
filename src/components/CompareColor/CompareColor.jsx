@@ -3,7 +3,6 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { fullColorNumber, getContrastYIQ } from '../../../src/shared/helpers/ColorUtils'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChevronLeft, faChevronRight } from '@fortawesome/pro-solid-svg-icons'
 import type { Color } from '../../shared/types/Colors'
 import type { Scene } from '../../shared/types/Scene'
 import { toggleCompareColor } from '../../store/actions/live-palette'
@@ -172,14 +171,14 @@ export class CompareColor extends React.Component<CompareColorProps, CompareColo
             <div className={`${prevBtnWrapperClass}`}>
               {
                 <button className={`${buttonsClass} ${isHidePrevButton ? `${buttonsVisibleClass}` : ''}`} onClick={this.handlePrev}>
-                  <FontAwesomeIcon icon={faChevronLeft} />
+                  <FontAwesomeIcon icon={['fa', 'chevron-left']} />
                 </button>}
             </div>
             {content}
             <div className={`${nextBtnWrapperClass}`}>
               {
                 <button className={`${buttonsClass} ${isHideNextButton ? `${buttonsVisibleClass}` : ''}`} onClick={this.handleNext}>
-                  <FontAwesomeIcon icon={faChevronRight} />
+                  <FontAwesomeIcon icon={['fa', 'chevron-right']} />
                 </button>
               }
             </div>
