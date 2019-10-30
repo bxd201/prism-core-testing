@@ -2,7 +2,7 @@ import React from 'react'
 import { shallow, mount } from 'enzyme'
 import PaintToolBar,
 { toolbarToggleButtonClass, toolbarButtonClass, brushTypesClass } from 'src/components/PaintScene/PaintToolBar'
-import { toolNames } from 'src/components/PaintScene/data'
+import { toolNames, brushLargeSize, brushRoundShape } from 'src/components/PaintScene/data'
 import BrushTypes from 'src/components/PaintScene/BrushTypes'
 import ZoomTool from 'src/components/PaintScene/ZoomTool'
 import PaintToolTip from 'src/components/PaintScene/PaintToolTip'
@@ -22,10 +22,10 @@ const defaultProps = {
   activeTool: toolNames.PAINTAREA,
   setActiveTool: setActiveToolMockFn,
   clearCanvas: clearCanvasMockFn,
-  paintBrushShape: 'round',
-  paintBrushWidth: 38,
-  eraseBrushShape: 'round',
-  eraseBrushWidth: 38,
+  paintBrushShape: brushRoundShape,
+  paintBrushWidth: brushLargeSize,
+  eraseBrushShape: brushRoundShape,
+  eraseBrushWidth: brushLargeSize,
   setBrushShapeSize: setBrushShapeSizeMockFn,
   groupHandler: groupHandlerMockFn,
   performUndo: performUndoMockFn,

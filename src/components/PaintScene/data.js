@@ -43,3 +43,13 @@ const getToolNamesOrNumbers = (toolbarData, valueBy = 'name') => {
 export const groupToolNames = getToolNamesOrNumbers(selectGroupButtons, 'name')
 export const toolNames = getToolNamesOrNumbers(toolBarButtons, 'name')
 export const toolNumbers = getToolNamesOrNumbers(toolBarButtons, 'number')
+
+export const brushLargeSize = 38
+export const brushMediumSize = 30
+export const brushSmallSize = 22
+export const brushTinySize = 14
+export const brushRoundShape = 'round'
+export const brushSquareShape = 'square'
+export const brushTypes = [
+  brushLargeSize, brushMediumSize, brushSmallSize, brushTinySize
+]
