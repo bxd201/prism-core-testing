@@ -9,6 +9,29 @@
   @include respond-above(md){
     min-height:540px;
   }*/
+
+  @keyframes loading {
+      0% { transform: translateX(0);  }
+      25% { transform: translateX(50%);  }
+      75% {transform: translateX(-50%);}
+      100% {transform: translateX(0); }
+  }
+
+  &--animation{
+    &::before{
+      display:none;
+      content: '';
+      border-bottom: solid 3px #2cabe2;
+      animation: loading 2s linear infinite;
+    }
+    &--load{
+      &::before{
+        display:block
+      }
+    }
+  }
+
+
   &__canvas{
     background: transparent;
     border-left: 2px solid #fff;
