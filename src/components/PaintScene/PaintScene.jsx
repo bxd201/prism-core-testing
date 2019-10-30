@@ -13,11 +13,13 @@ import { getPaintAreaPath, repaintImageByPath,
   getImageCordinateByPixel, eraseIntersection,
   getActiveColorRGB, getSelectArea, hexToRGB,
   checkIntersection, drawImagePixelByPath,
-  copyImageList, getColorAtPixel, colorMatch } from './utils'
+  copyImageList, getColorAtPixel, colorMatch,
+  getImageCordinateByPixelPaintBrush } from './utils'
 import { toolNames, groupToolNames } from './data'
 import { getScaledPortraitHeight, getScaledLandscapeHeight } from '../../shared/helpers/ImageUtils'
 import throttle from 'lodash/throttle'
 import { redo, undo } from './UndoRedoUtil'
+import WebWorker from './workers/paintScene.worker'
 
 const baseClass = 'paint__scene__wrapper'
 const canvasClass = `${baseClass}__canvas`
@@ -39,7 +41,7 @@ const canvasShowByZindex = `${canvasClass}--show-by-zindex`
 const canvasHideByZindex = `${canvasClass}--hide-by-zindex`
 const canvasVisibleByVisibility = `${canvasClass}--visible-by-visibility`
 const canvasHiddenByVisibility = `${canvasClass}--hidden-by-visibility`
-
+const animationLoader = `${baseClass}--animation`
 const brushLargeWidth = 38
 const brushMediumWidth = 30
 const brushSmallWidth = 22
@@ -496,63 +498,59 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.setState({ isDragging: true })
   }
 
+  breakGroupIfhasIntersection = () => {
+    const { groupAreaList, groupSelectList } = this.state
+    let idsToUngroup = []
+    let newGroupSelectList = []
+    const drawPath = getImageCordinateByPixelPaintBrush(this.CFICanvasPaint, this.canvasOffsetWidth, this.canvasOffsetHeight)
+    for (let i = 0; i < groupAreaList.length; i++) {
+      const intersect = checkIntersection(groupAreaList[i].selectPath, drawPath)
+      if (intersect.length > 0) {
+        groupAreaList.splice(i, 1)
+        i--
+      }
+    }
+    if (idsToUngroup.length !== 0) {
+      newGroupSelectList = groupSelectList.filter(item => {
+        return (idsToUngroup.indexOf(item.id) === -1)
+      })
+    }
+    return { newGroupSelectList: newGroupSelectList, newGroupAreaList: groupAreaList }
+  }
+
   mouseUpHandler = (e: Object) => {
-    const { drawCoordinates, imagePathList, activeTool, groupAreaList, groupSelectList } = this.state
+    const { drawCoordinates, imagePathList, activeTool } = this.state
     const { lpActiveColor } = this.props
     if (!lpActiveColor) {
       this.setState({
         isDragging: false
       })
     }
+    let newImagePathList
+    const { newGroupSelectList, newGroupAreaList } = this.breakGroupIfhasIntersection()
     if (lpActiveColor && activeTool === toolNames.PAINTBRUSH && drawCoordinates.length > 0) {
-      const newImagePathList = getPaintAreaPath(imagePathList, this.CFICanvasPaint, this.canvasOffsetWidth, this.canvasOffsetHeight, this.props.lpActiveColor, true)
-      this.CFICanvasContextPaint.clearRect(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
-      this.clearCanvas()
-      repaintImageByPath(newImagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
-      // Must empty redo when new instructions added
-      this.setState({ isDragging: false,
-        imagePathList: newImagePathList,
-        redoPathList: [],
-        undoIsEnabled: newImagePathList.length > 0,
-        redoIsEnabled: false
-      })
+      newImagePathList = getPaintAreaPath(imagePathList, this.CFICanvasPaint, this.canvasOffsetWidth, this.canvasOffsetHeight, this.props.lpActiveColor, true)
     }
 
     if (activeTool === toolNames.ERASE && drawCoordinates.length > 0) {
       const RGB = getActiveColorRGB({ red: 255, blue: 255, green: 255 })
       const erasePath = getImageCordinateByPixel(this.CFICanvasPaint, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight)
-      this.CFICanvasContextPaint.clearRect(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
       const tmpImagePathList = eraseIntersection(imagePathList, erasePath)
-      let idsToUngroup = []
-      let newGroupSelectList = []
-      for (let i = 0; i < groupAreaList.length; i++) {
-        const intersect = checkIntersection(groupAreaList[i].selectPath, erasePath)
-        if (intersect.length > 0) {
-          idsToUngroup.push(groupAreaList[i].id)
-          groupAreaList.splice(i, 1)
-          i--
-        }
-      }
-      if (idsToUngroup.length !== 0) {
-        newGroupSelectList = groupSelectList.filter(item => {
-          return (idsToUngroup.indexOf(item.id) === -1)
-        })
-      }
-      this.clearCanvas()
-      const newImagePathList = remove(tmpImagePathList, (currImagePath) => {
+      newImagePathList = remove(tmpImagePathList, (currImagePath) => {
         return currImagePath.data.length !== 0
       })
-      repaintImageByPath(newImagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
-      this.setState({
-        isDragging: false,
-        imagePathList: newImagePathList,
-        groupAreaList,
-        groupSelectList: newGroupSelectList,
-        redoPathList: [],
-        undoIsEnabled: newImagePathList.length > 0,
-        redoIsEnabled: false
-      })
     }
+    this.CFICanvasContextPaint.clearRect(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
+    this.clearCanvas()
+    repaintImageByPath(newImagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
+    this.setState({ isDragging: false,
+      imagePathList: newImagePathList,
+      groupAreaList: newGroupAreaList,
+      groupSelectList: newGroupSelectList,
+      redoPathList: [],
+      undoIsEnabled: newImagePathList.length > 0,
+      redoIsEnabled: false
+    })
     window.removeEventListener('mouseup', this.mouseUpHandler)
   }
 
@@ -1121,6 +1119,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     let groupAreaPath = []
     let selectedAreaPath = []
     const ctx = this.CFICanvas2.current.getContext('2d')
+    this.setState({ loading: true })
     for (let i = 0; i < groupSelectList.length; i++) {
       drawImagePixelByPath(ctx, this.canvasOffsetWidth, this.canvasOffsetHeight, [255, 255, 255, 0], groupSelectList[i].selectPath)
       drawImagePixelByPath(ctx, this.canvasOffsetWidth, this.canvasOffsetHeight, [255, 255, 255, 0], groupSelectList[i].edgeList)
@@ -1133,23 +1132,17 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       selectedAreaPath = [...selectedAreaPath, ...selectedArea[i].selectPath]
     }
 
-    setTimeout(() => {
-      const newImageList = eraseIntersection(imagePathList, groupAreaPath)
-      const updatePathList = eraseIntersection(newImageList, selectedAreaPath)
-
-      const idsToUngroup = groupSelectList.map((item) => {
-        return item.id
-      })
-
-      const newGroupAreaList = groupAreaList.filter(item => {
-        return (idsToUngroup.indexOf(item.id) === -1)
-      })
-
-      const newImagePathList = remove(updatePathList, (currImagePath) => {
-        return currImagePath.length !== 0
-      })
-      this.setState({ imagePathList: newImagePathList, groupSelectList: [], selectedArea: [], groupAreaList: newGroupAreaList, isAddGroup: false, isUngroup: false })
-    }, 0)
+    const worker = new WebWorker()
+    worker.addEventListener('message', (e) => {
+      const { newGroupAreaList, newImagePathList } = e.data
+      this.setState({ imagePathList: newImagePathList, groupSelectList: [], selectedArea: [], groupAreaList: newGroupAreaList, isAddGroup: false, isUngroup: false, loading: false })
+    })
+    worker.postMessage({ imagePathList: imagePathList,
+      groupSelectList: groupSelectList,
+      groupAreaList: groupAreaList,
+      groupAreaPath: groupAreaPath,
+      selectedAreaPath: selectedAreaPath
+    })
   }
 
   groupHandler = (groupName: string) => {
@@ -1228,13 +1221,15 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
   render () {
     const { imageUrl, lpActiveColor } = this.props
-    const { activeTool, position, paintBrushShape, paintBrushWidth, eraseBrushShape, eraseBrushWidth, undoIsEnabled, redoIsEnabled, showOriginalCanvas, isAddGroup, isDeleteGroup, isUngroup, paintCursor, isInfoToolActive } = this.state
+    const { activeTool, position, paintBrushShape, paintBrushWidth, eraseBrushShape, eraseBrushWidth, undoIsEnabled, redoIsEnabled, showOriginalCanvas, isAddGroup, isDeleteGroup, isUngroup, paintCursor, isInfoToolActive, loading } = this.state
     const lpActiveColorRGB = (lpActiveColor) ? `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})` : ``
     const backgroundColorBrush = (activeTool === toolNames.ERASE) ? `rgba(255, 255, 255, 0.7)` : lpActiveColorRGB
     const { paintBrushActiveClass, paintBrushCircleActiveClass } = this.getPaintBrushActiveClass()
     const { eraseBrushActiveClass, eraseBrushCircleActiveClass } = this.getEraseBrushActiveClass()
+
     return (
-      <div role='presentation' className={`${baseClass}`} onClick={this.handleClick} onMouseMove={this.mouseMoveHandler} ref={this.CFIWrapper} style={{ height: this.state.wrapperHeight }} onMouseLeave={this.mouseLeaveHandler} onMouseEnter={this.mouseEnterHandler}>
+      <div role='presentation' className={baseClass} onClick={this.handleClick} onMouseMove={this.mouseMoveHandler} ref={this.CFIWrapper} style={{ height: this.state.wrapperHeight }} onMouseLeave={this.mouseLeaveHandler} onMouseEnter={this.mouseEnterHandler}>
+        <div className={`${animationLoader} ${loading ? `${animationLoader}--load` : ''}`} />
         <canvas className={`${canvasClass} ${showOriginalCanvas ? `${canvasShowByZindex}` : `${canvasHideByZindex}`} ${this.isPortrait ? portraitOrientation : ''}`} name='paint-scene-canvas-first' ref={this.CFICanvas} />
         <canvas style={{ opacity: showOriginalCanvas ? 1 : 0.8 }} className={`${canvasClass} ${paintCursor} ${canvasSecondClass} ${this.isPortrait ? portraitOrientation : ''}`} name='paint-scene-canvas-second' ref={this.CFICanvas2} />
         <canvas onMouseDown={this.onPanStart} style={{ opacity: 1 }} className={`${canvasClass} ${paintCursor} ${(activeTool === toolNames.PAINTBRUSH ? canvasSecondClass : canvasThirdClass)} ${(activeTool === toolNames.ERASE) ? canvasHiddenByVisibility : canvasVisibleByVisibility} ${this.isPortrait ? portraitOrientation : ''}`} name='paint-scene-canvas-paint' ref={this.CFICanvasPaint} />

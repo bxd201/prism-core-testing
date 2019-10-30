@@ -5,7 +5,7 @@ const MAX_STACK_SIZE = 200
 
 export const getPaintAreaPath = (imagePathList, canvas, width, height, color, isPaintBrush = false) => {
   const RGB = getActiveColorRGB(color)
-  const array = (isPaintBrush) ? getImageCordinateByPixelPaintBrush(canvas, RGB, width, height) : getImageCordinateByPixel(canvas, RGB, width, height)
+  const array = (isPaintBrush) ? getImageCordinateByPixelPaintBrush(canvas, width, height) : getImageCordinateByPixel(canvas, RGB, width, height)
   const newArea = {
     color: RGB,
     data: array
@@ -28,7 +28,7 @@ export const getImageCordinateByPixel = (canvas, color, width, height) => {
   return pixelArray
 }
 
-export const getImageCordinateByPixelPaintBrush = (canvas, color, width, height) => {
+export const getImageCordinateByPixelPaintBrush = (canvas, width, height) => {
   const ctx = canvas.current.getContext('2d')
   let imageData = ctx.getImageData(0, 0, width, height)
   let data = imageData.data
