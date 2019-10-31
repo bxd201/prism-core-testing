@@ -110,7 +110,7 @@ describe('PaintToolBar state & event testing using mount', () => {
   })
 
   it('should show/hide Paint BrushTypes when PaintBrush button is clicked', () => {
-    paintToolBar.setProps({ activeTool: 'paintBrush' })
+    paintToolBar.setProps({ activeTool: toolNames.PAINTBRUSH })
     paintToolBar.find(`button.${toolbarButtonClass}`).at(4).simulate('click')
     expect(!initialState.showPaintBrushTypes).toEqual(paintToolBar.instance().state.showPaintBrushTypes)
     paintToolBar.find(`button.${toolbarButtonClass}`).at(4).simulate('click')
@@ -118,14 +118,14 @@ describe('PaintToolBar state & event testing using mount', () => {
   })
 
   it('should hide Paint BrushTypes when mouseleave event occurs on Paint BrushTypes div', () => {
-    paintToolBar.setProps({ activeTool: 'paintBrush' })
+    paintToolBar.setProps({ activeTool: toolNames.PAINTBRUSH })
     paintToolBar.find(`button.${toolbarButtonClass}`).at(4).simulate('click')
     paintToolBar.find(`div.${brushTypesClass}`).at(0).simulate('mouseleave')
     expect(initialState.showPaintBrushTypes).toEqual(paintToolBar.instance().state.showPaintBrushTypes)
   })
 
   it('should show/hide Erase BrushTypes when Erase button is clicked', () => {
-    paintToolBar.setProps({ activeTool: 'erase' })
+    paintToolBar.setProps({ activeTool: toolNames.ERASE })
     paintToolBar.find(`button.${toolbarButtonClass}`).at(6).simulate('click')
     expect(!initialState.showEraseBrushTypes).toEqual(paintToolBar.instance().state.showEraseBrushTypes)
     paintToolBar.find(`button.${toolbarButtonClass}`).at(6).simulate('click')
@@ -133,14 +133,14 @@ describe('PaintToolBar state & event testing using mount', () => {
   })
 
   it('should hide Erase BrushTypes when mouseleave event occurs on Erase BrushTypes div', () => {
-    paintToolBar.setProps({ activeTool: 'erase' })
+    paintToolBar.setProps({ activeTool: toolNames.ERASE })
     paintToolBar.find(`button.${toolbarButtonClass}`).at(6).simulate('click')
     paintToolBar.find(`div.${brushTypesClass}`).at(1).simulate('mouseleave')
     expect(initialState.showEraseBrushTypes).toEqual(paintToolBar.instance().state.showEraseBrushTypes)
   })
 
   it('should hide/show Zoom slider when Zoom tool is active and Toggle button is clicked', () => {
-    paintToolBar.setProps({ activeTool: 'zoom' })
+    paintToolBar.setProps({ activeTool: toolNames.ZOOM })
     paintToolBar.find(`button.${toolbarToggleButtonClass}`).simulate('click')
     expect(paintToolBar.instance().state.zoomSliderHide).toEqual(1)
     paintToolBar.find(`button.${toolbarToggleButtonClass}`).simulate('click')
