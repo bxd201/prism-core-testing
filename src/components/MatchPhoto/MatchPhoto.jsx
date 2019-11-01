@@ -16,6 +16,7 @@ import DynamicColorFromImage from '../InspirationPhotos/DynamicColorFromImage'
 
 const baseClass = 'match-photo'
 const wrapperClass = `${baseClass}__wrapper`
+const previewClass = `${wrapperClass}--preview`
 const containerClass = `${baseClass}__container`
 const headerClass = `${baseClass}__header`
 const buttonClass = `${baseClass}__button`
@@ -26,6 +27,8 @@ const portraitOrientation = `${canvasClass}--portrait`
 const buttonRightClass = `${buttonClass}--right`
 const closeClass = `${baseClass}__close`
 const cancelClass = `${baseClass}__cancel`
+
+const getWrapperClassName = (imageUrl, pins) => imageUrl && pins.length === 0 ? previewClass : wrapperClass
 
 let colorPinsGenerationByHueWorker: Object
 
@@ -356,7 +359,7 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
   return (
     <React.Fragment>
       <PrismImage ref={imageRef} source={blobUrl} loadedCallback={handleImageLoaded} shouldResample={hasLoaded} scalingWidth={scalingWidth} />
-      <div className={`${wrapperClass}`} ref={wrapperRef}>
+      <div className={`${getWrapperClassName(imageUrl, pins)}`} ref={wrapperRef}>
         <div className={`${containerClass}`}>
           { (!imageUrl) &&
           <FileInput onChange={handleChange} id={'photoInput'} disabled={false} placeholder={'Select image'} />

@@ -11,6 +11,21 @@
     @include respond-above(sm) {
       padding: 0em;
     }
+    &--preview {
+      background: #c8c8c8;
+      /* This prevents extra space to the bottom of the wrapper without it. */
+      line-height: 0px;
+      &::before {
+        display: block;
+        content: url('/prism/images/ghost-gradient.svg');
+        position: absolute;
+        left: 0;
+        right: 0;
+        width: 100%;
+        height: auto;
+        z-index: 2;
+      }
+    }
   }
   &__header {
     display: block;
@@ -88,7 +103,6 @@
   }
   &__container {
     display: block;
-    line-height: 19px;
     min-height: 100%;
     position: relative;
     width: 100%;
