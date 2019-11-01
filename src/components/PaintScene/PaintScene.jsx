@@ -217,7 +217,12 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
         this.clearCanvas()
         drawImagePixelByPath(ctx, this.canvasOffsetWidth, this.canvasOffsetHeight, RGB, this.state.groupSelectList[i].selectPath)
         const newPath = getImageCordinateByPixel(this.CFICanvas2, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight)
-        copyImagePathList.push({ color: RGB, data: newPath })
+        copyImagePathList.push({
+          color: RGB,
+          data: newPath,
+          isEnabled: true,
+          linkedOperation: null,
+          siblingOperations: null })
         this.clearCanvas()
       }
 
@@ -225,21 +230,32 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
         this.clearCanvas()
         drawImagePixelByPath(ctx, this.canvasOffsetWidth, this.canvasOffsetHeight, RGB, this.state.selectedArea[i].selectPath)
         const newPath = getImageCordinateByPixel(this.CFICanvas2, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight)
-        copyImagePathList.push({ color: RGB, data: newPath })
+        copyImagePathList.push({
+          color: RGB,
+          data: newPath,
+          isEnabled: true,
+          linkedOperation: null,
+          siblingOperations: null })
         this.clearCanvas()
       }
 
       for (let groupSelect of groupSelectList) {
         edgeListToRender.push({
           color: [255, 255, 255, 255],
-          data: groupSelect.edgeList
+          data: groupSelect.edgeList,
+          isEnabled: true,
+          linkedOperation: null,
+          siblingOperations: null
         })
       }
 
       for (let select of selectedArea) {
         edgeListToRender.push({
           color: [255, 255, 255, 255],
-          data: select.edgeList
+          data: select.edgeList,
+          isEnabled: true,
+          linkedOperation: null,
+          siblingOperations: null
         })
       }
       repaintImageByPath(copyImagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
@@ -741,14 +757,20 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     for (let groupSelect of groupSelectList) {
       edgeListToRender.push({
         color: [255, 255, 255, 255],
-        data: groupSelect.edgeList
+        data: groupSelect.edgeList,
+        isEnabled: true,
+        linkedOperation: null,
+        siblingOperations: null
       })
     }
 
     for (let select of selectedArea) {
       edgeListToRender.push({
         color: [255, 255, 255, 255],
-        data: select.edgeList
+        data: select.edgeList,
+        isEnabled: true,
+        linkedOperation: null,
+        siblingOperations: null
       })
     }
 
@@ -866,10 +888,18 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       this.clearCanvas()
       drawImagePixelByPath(ctx, this.canvasOffsetWidth, this.canvasOffsetHeight, RGB, imagePath)
       const newPath = getImageCordinateByPixel(this.CFICanvas2, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight)
-      copyImagePathList.push({ color: RGB, data: newPath })
+      copyImagePathList.push({
+        id: uniqueId(),
+        color: RGB,
+        data: newPath,
+        isEnabled: true,
+        linkedOperation: null,
+        siblingOperations: null })
       this.clearCanvas()
       repaintImageByPath(copyImagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
-      this.setState({ imagePathList: copyImagePathList })
+      this.setState({ imagePathList: copyImagePathList,
+        undoIsEnabled: copyImagePathList.length > 0,
+        redoIsEnabled: false })
     }
   }, 10)
 
