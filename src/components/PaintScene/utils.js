@@ -1,6 +1,5 @@
 import { getDeltaE00 } from 'delta-e'
 import difference from 'lodash/difference'
-import uniqueId from 'lodash/uniqueId'
 
 const MAX_STACK_SIZE = 200
 
@@ -8,12 +7,8 @@ export const getPaintAreaPath = (imagePathList, canvas, width, height, color, is
   const RGB = getActiveColorRGB(color)
   const array = (isPaintBrush) ? getImageCordinateByPixelPaintBrush(canvas, width, height) : getImageCordinateByPixel(canvas, RGB, width, height)
   const newArea = {
-    id: uniqueId(),
     color: RGB,
-    data: array,
-    isEnabled: true,
-    linkedOperation: null,
-    siblingOperations: null
+    data: array
   }
   const copyImagePathList = copyImageList(imagePathList)
   copyImagePathList.push(newArea)
@@ -125,10 +120,9 @@ export const repaintImageByPath = (imagePathList, canvas, width, height) => {
   let imageData = ctx.getImageData(0, 0, width, height)
   let data = imageData.data
   for (let i = 0; i < imagePathList.length; i++) {
-    const path = imagePathList[i].data
-    const color = imagePathList[i].color
-    const isEnabled = imagePathList[i].isEnabled
-    if (path && isEnabled) {
+    let path = imagePathList[i].data
+    let color = imagePathList[i].color
+    if (path) {
       for (let j = 0; j < path.length; j++) {
         data[path[j]] = color[0]
         data[path[j] + 1] = color[1]
@@ -216,36 +210,9 @@ export const edgeDetect = (canvas, targetImagePath, targetImageColor, width, hei
 
 export const eraseIntersection = (imagePathList, erasePath) => {
   const originImagePathList = copyImageList(imagePathList)
-  let siblingList = []
   for (let i = 0; i < originImagePathList.length; i++) {
-    const data = originImagePathList[i].data
-    const isEnabled = originImagePathList[i].isEnabled
-    const color = originImagePathList[i].color
-    const linkId = originImagePathList[i].id
-    const intersection = checkIntersection(data, erasePath)
-    if (intersection.length > 0 && isEnabled) {
-      originImagePathList[i].isEnabled = false
-      const remainAreaPath = difference(data, erasePath)
-      const newId = uniqueId()
-      originImagePathList.push({
-        id: newId,
-        color: color,
-        data: remainAreaPath,
-        isEnabled: true,
-        linkedOperation: linkId,
-        siblingOperations: null
-      })
-      siblingList.push(newId)
-    }
+    originImagePathList[i].data = difference(originImagePathList[i].data, erasePath)
   }
-
-  originImagePathList.forEach((imagePathElement) => {
-    if (siblingList.includes(imagePathElement.id)) {
-      imagePathElement.siblingOperations = siblingList.filter((id) => {
-        return id !== imagePathElement.id
-      })
-    }
-  })
   return originImagePathList
 }
 
