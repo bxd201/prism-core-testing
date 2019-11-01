@@ -1,0 +1,1310 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PaintScene render, state & event testing should match snapshot 1`] = `
+<PaintScene
+  imageRotationAngle={0}
+  imageUrl="https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1311}&qlt=92"
+  lpActiveColor={
+    Object {
+      "blue": 224,
+      "brandKey": "SW",
+      "brandedCollectionNames": Array [
+        "Color Forecast",
+        "Senior Living Color Collection",
+        "Pottery Barn Fall/Winter 2018",
+        "Pottery Barn Fall/Winter 2018",
+      ],
+      "colorFamilyNames": Array [
+        "White & Pastel",
+      ],
+      "colorNumber": "7008",
+      "coordinatingColors": Object {
+        "coord1ColorId": "2996",
+        "coord2ColorId": "11203",
+      },
+      "description": Array [
+        "Diluted",
+        "Wan",
+        "Dazzling",
+      ],
+      "green": 234,
+      "hex": "#edeae0",
+      "hue": 0.128205128205128,
+      "id": "bright-2689",
+      "isDark": false,
+      "isExterior": true,
+      "isInterior": true,
+      "lightness": 0.903921568627451,
+      "lrv": 82.215,
+      "name": "Alabaster",
+      "red": 237,
+      "saturation": 0.26530612244897983,
+      "similarColors": Array [
+        "2857",
+        "11364",
+        "2682",
+        "2872",
+        "2768",
+        "2767",
+        "2690",
+        "2686",
+        "2071",
+        "1593",
+      ],
+      "storeStripLocator": "255-C2",
+    }
+  }
+  referenceDimensions={
+    Object {
+      "imageHeight": 768,
+      "imageWidth": 1024,
+      "isPortrait": false,
+      "originalIsPortrait": false,
+    }
+  }
+>
+  <div
+    className="paint__scene__wrapper"
+    onClick={[Function]}
+    onMouseEnter={[Function]}
+    onMouseLeave={[Function]}
+    onMouseMove={[Function]}
+    role="presentation"
+    style={
+      Object {
+        "height": 0,
+      }
+    }
+  >
+    <div
+      className="paint__scene__wrapper--animation "
+    />
+    <canvas
+      className="paint__scene__wrapper__canvas paint__scene__wrapper__canvas--hide-by-zindex "
+      name="paint-scene-canvas-first"
+    />
+    <canvas
+      className="paint__scene__wrapper__canvas paint__scene__wrapper__canvas--paintArea paint__scene__wrapper__canvas-second "
+      name="paint-scene-canvas-second"
+      style={
+        Object {
+          "opacity": 0.8,
+        }
+      }
+    />
+    <canvas
+      className="paint__scene__wrapper__canvas paint__scene__wrapper__canvas--paintArea paint__scene__wrapper__canvas-third paint__scene__wrapper__canvas--visible-by-visibility "
+      name="paint-scene-canvas-paint"
+      onMouseDown={[Function]}
+      style={
+        Object {
+          "opacity": 1,
+        }
+      }
+    />
+    <img
+      alt=""
+      className="paint__scene__wrapper__image"
+      onError={[Function]}
+      onLoad={[Function]}
+      src="https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1311}&qlt=92"
+    />
+    <div
+      className="paint__scene__wrapper__paint-tools"
+    >
+      <PaintToolBar
+        activeTool="paintArea"
+        applyZoom={[Function]}
+        clearCanvas={[Function]}
+        eraseBrushShape="round"
+        eraseBrushWidth={38}
+        groupHandler={[Function]}
+        hidePaint={[Function]}
+        isAddGroup={false}
+        isDeleteGroup={false}
+        isUngroup={false}
+        paintBrushShape="round"
+        paintBrushWidth={38}
+        performRedo={[Function]}
+        performUndo={[Function]}
+        redoIsEnabled={false}
+        setActiveTool={[Function]}
+        setBrushShapeSize={[Function]}
+        undoIsEnabled={false}
+      >
+        <div
+          className="paint-tool-bar__group-tool paint-tool-bar__group-tool--hide"
+        >
+          <button
+            className="paint-tool-bar__toolbar-button"
+            key="1"
+            name="deleteGroup"
+            onClick={[Function]}
+          >
+            <FontAwesomeIcon
+              border={false}
+              className="paint-tool-bar__tool-icon"
+              fixedWidth={false}
+              flip={null}
+              icon={
+                Array [
+                  "fal",
+                  "trash-alt",
+                ]
+              }
+              inverse={false}
+              listItem={false}
+              mask={null}
+              pull={null}
+              pulse={false}
+              rotation={null}
+              size="lg"
+              spin={false}
+              swapOpacity={false}
+              symbol={false}
+              title=""
+              transform={
+                Object {
+                  "rotate": 0,
+                }
+              }
+            >
+              <svg
+                aria-hidden="true"
+                className="svg-inline--fa fa-trash-alt fa-w-14 fa-lg paint-tool-bar__tool-icon"
+                data-icon="trash-alt"
+                data-prefix="fal"
+                focusable="false"
+                role="img"
+                style={Object {}}
+                viewBox="0 0 448 512"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M296 432h16a8 8 0 0 0 8-8V152a8 8 0 0 0-8-8h-16a8 8 0 0 0-8 8v272a8 8 0 0 0 8 8zm-160 0h16a8 8 0 0 0 8-8V152a8 8 0 0 0-8-8h-16a8 8 0 0 0-8 8v272a8 8 0 0 0 8 8zM440 64H336l-33.6-44.8A48 48 0 0 0 264 0h-80a48 48 0 0 0-38.4 19.2L112 64H8a8 8 0 0 0-8 8v16a8 8 0 0 0 8 8h24v368a48 48 0 0 0 48 48h288a48 48 0 0 0 48-48V96h24a8 8 0 0 0 8-8V72a8 8 0 0 0-8-8zM171.2 38.4A16.1 16.1 0 0 1 184 32h80a16.1 16.1 0 0 1 12.8 6.4L296 64H152zM384 464a16 16 0 0 1-16 16H80a16 16 0 0 1-16-16V96h320zm-168-32h16a8 8 0 0 0 8-8V152a8 8 0 0 0-8-8h-16a8 8 0 0 0-8 8v272a8 8 0 0 0 8 8z"
+                  fill="currentColor"
+                  style={Object {}}
+                />
+              </svg>
+            </FontAwesomeIcon>
+            <span
+              className="paint-tool-bar__tool-name paint-tool-bar__tool-name--disabled "
+            >
+              DELETE
+            </span>
+          </button>
+          <button
+            className="paint-tool-bar__toolbar-button"
+            key="2"
+            name="group"
+            onClick={[Function]}
+          >
+            <FontAwesomeIcon
+              border={false}
+              className="paint-tool-bar__tool-icon"
+              fixedWidth={false}
+              flip={null}
+              icon={
+                Array [
+                  "fal",
+                  "object-group",
+                ]
+              }
+              inverse={false}
+              listItem={false}
+              mask={null}
+              pull={null}
+              pulse={false}
+              rotation={null}
+              size="lg"
+              spin={false}
+              swapOpacity={false}
+              symbol={false}
+              title=""
+              transform={
+                Object {
+                  "rotate": 0,
+                }
+              }
+            >
+              <svg
+                aria-hidden="true"
+                className="svg-inline--fa fa-object-group fa-w-16 fa-lg paint-tool-bar__tool-icon"
+                data-icon="object-group"
+                data-prefix="fal"
+                focusable="false"
+                role="img"
+                style={Object {}}
+                viewBox="0 0 512 512"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M404 192h-84v-52c0-6.6-5.4-12-12-12H108c-6.6 0-12 5.4-12 12v168c0 6.6 5.4 12 12 12h84v52c0 6.6 5.4 12 12 12h200c6.6 0 12-5.4 12-12V204c0-6.6-5.4-12-12-12zm-276 96V160h160v128zm256 64H224v-32h84c6.6 0 12-5.4 12-12v-84h64zm116-224c6.6 0 12-5.4 12-12V44c0-6.6-5.4-12-12-12h-72c-6.6 0-12 5.4-12 12v20H96V44c0-6.6-5.4-12-12-12H12C5.4 32 0 37.4 0 44v72c0 6.6 5.4 12 12 12h20v256H12c-6.6 0-12 5.4-12 12v72c0 6.6 5.4 12 12 12h72c6.6 0 12-5.4 12-12v-20h320v20c0 6.6 5.4 12 12 12h72c6.6 0 12-5.4 12-12v-72c0-6.6-5.4-12-12-12h-20V128zM32 64h32v32H32zm32 384H32v-32h32zm352-52v20H96v-20c0-6.6-5.4-12-12-12H64V128h20c6.6 0 12-5.4 12-12V96h320v20c0 6.6 5.4 12 12 12h20v256h-20c-6.6 0-12 5.4-12 12zm64 52h-32v-32h32zM448 96V64h32v32z"
+                  fill="currentColor"
+                  style={Object {}}
+                />
+              </svg>
+            </FontAwesomeIcon>
+            <span
+              className="paint-tool-bar__tool-name paint-tool-bar__tool-name--disabled "
+            >
+              GROUP
+            </span>
+          </button>
+          <button
+            className="paint-tool-bar__toolbar-button"
+            key="3"
+            name="ungroup"
+            onClick={[Function]}
+          >
+            <FontAwesomeIcon
+              border={false}
+              className="paint-tool-bar__tool-icon"
+              fixedWidth={false}
+              flip={null}
+              icon={
+                Array [
+                  "fal",
+                  "object-ungroup",
+                ]
+              }
+              inverse={false}
+              listItem={false}
+              mask={null}
+              pull={null}
+              pulse={false}
+              rotation={null}
+              size="lg"
+              spin={false}
+              swapOpacity={false}
+              symbol={false}
+              title=""
+              transform={
+                Object {
+                  "rotate": 0,
+                }
+              }
+            >
+              <svg
+                aria-hidden="true"
+                className="svg-inline--fa fa-object-ungroup fa-w-18 fa-lg paint-tool-bar__tool-icon"
+                data-icon="object-ungroup"
+                data-prefix="fal"
+                focusable="false"
+                role="img"
+                style={Object {}}
+                viewBox="0 0 576 512"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M564 224c6.627 0 12-5.373 12-12v-72c0-6.627-5.373-12-12-12h-72c-6.627 0-12 5.373-12 12v20h-96v-32h20c6.627 0 12-5.373 12-12V44c0-6.627-5.373-12-12-12h-72c-6.627 0-12 5.373-12 12v20H96V44c0-6.627-5.373-12-12-12H12C5.373 32 0 37.373 0 44v72c0 6.627 5.373 12 12 12h20v160H12c-6.627 0-12 5.373-12 12v72c0 6.627 5.373 12 12 12h72c6.627 0 12-5.373 12-12v-20h96v32h-20c-6.627 0-12 5.373-12 12v72c0 6.627 5.373 12 12 12h72c6.627 0 12-5.373 12-12v-20h224v20c0 6.627 5.373 12 12 12h72c6.627 0 12-5.373 12-12v-72c0-6.627-5.373-12-12-12h-20V224h20zm-180 96v32h-32v-32h32zM352 64h32v32h-32V64zM32 64h32v32H32V64zm32 288H32v-32h32v32zm20-64H64V128h20c6.627 0 12-5.373 12-12V96h224v20c0 6.627 5.373 12 12 12h20v160h-20c-6.627 0-12 5.373-12 12v20H96v-20c0-6.627-5.373-12-12-12zm140 160h-32v-32h32v32zm256-52v20H256v-20c0-6.627-5.373-12-12-12h-20v-32h96v20c0 6.627 5.373 12 12 12h72c6.627 0 12-5.373 12-12v-72c0-6.627-5.373-12-12-12h-20v-96h96v20c0 6.627 5.373 12 12 12h20v160h-20c-6.627 0-12 5.373-12 12zm64 52h-32v-32h32v32zm-32-256v-32h32v32h-32z"
+                  fill="currentColor"
+                  style={Object {}}
+                />
+              </svg>
+            </FontAwesomeIcon>
+            <span
+              className="paint-tool-bar__tool-name paint-tool-bar__tool-name--disabled "
+            >
+              UNGROUP
+            </span>
+          </button>
+        </div>
+        <div
+          className="paint-tool-bar__wrapper"
+        >
+          <div
+            className="paint-tool-bar__tools-container "
+          >
+            <button
+              className="paint-tool-bar__toolbar-button paint-tool-bar__toolbar-button--active"
+              key="1"
+              name="paintArea"
+              onClick={[Function]}
+              onMouseDown={[Function]}
+            >
+              <FontAwesomeIcon
+                border={false}
+                className="paint-tool-bar__tool-icon"
+                fixedWidth={false}
+                flip="horizontal"
+                icon={
+                  Array [
+                    "fa",
+                    "fill-drip",
+                  ]
+                }
+                inverse={false}
+                listItem={false}
+                mask={null}
+                pull={null}
+                pulse={false}
+                rotation={null}
+                size="lg"
+                spin={false}
+                swapOpacity={false}
+                symbol={false}
+                title=""
+                transform={
+                  Object {
+                    "rotate": 0,
+                  }
+                }
+              >
+                <svg
+                  aria-hidden="true"
+                  className="svg-inline--fa fa-fill-drip fa-w-18 fa-flip-horizontal fa-lg paint-tool-bar__tool-icon"
+                  data-icon="fill-drip"
+                  data-prefix="fa"
+                  focusable="false"
+                  role="img"
+                  style={Object {}}
+                  viewBox="0 0 576 512"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M512 320s-64 92.65-64 128c0 35.35 28.66 64 64 64s64-28.65 64-64-64-128-64-128zm-9.37-102.94L294.94 9.37C288.69 3.12 280.5 0 272.31 0s-16.38 3.12-22.62 9.37l-81.58 81.58L81.93 4.76c-6.25-6.25-16.38-6.25-22.62 0L36.69 27.38c-6.24 6.25-6.24 16.38 0 22.62l86.19 86.18-94.76 94.76c-37.49 37.48-37.49 98.26 0 135.75l117.19 117.19c18.74 18.74 43.31 28.12 67.87 28.12 24.57 0 49.13-9.37 67.87-28.12l221.57-221.57c12.5-12.5 12.5-32.75.01-45.25zm-116.22 70.97H65.93c1.36-3.84 3.57-7.98 7.43-11.83l13.15-13.15 81.61-81.61 58.6 58.6c12.49 12.49 32.75 12.49 45.24 0s12.49-32.75 0-45.24l-58.6-58.6 58.95-58.95 162.44 162.44-48.34 48.34z"
+                    fill="currentColor"
+                    style={Object {}}
+                  />
+                </svg>
+              </FontAwesomeIcon>
+              <span
+                className="paint-tool-bar__tool-name paint-tool-bar__tool-name--active"
+              >
+                PAINT AREA
+              </span>
+            </button>
+            <button
+              className="paint-tool-bar__toolbar-button "
+              key="2"
+              name="paintBrush"
+              onClick={[Function]}
+              onMouseDown={[Function]}
+            >
+              <FontAwesomeIcon
+                border={false}
+                className="paint-tool-bar__tool-icon"
+                fixedWidth={false}
+                flip={null}
+                icon={
+                  Array [
+                    "fa",
+                    "brush",
+                  ]
+                }
+                inverse={false}
+                listItem={false}
+                mask={null}
+                pull={null}
+                pulse={false}
+                rotation={null}
+                size="lg"
+                spin={false}
+                swapOpacity={false}
+                symbol={false}
+                title=""
+                transform={
+                  Object {
+                    "rotate": 45,
+                  }
+                }
+              >
+                <svg
+                  aria-hidden="true"
+                  className="svg-inline--fa fa-brush fa-w-12 fa-lg paint-tool-bar__tool-icon"
+                  data-icon="brush"
+                  data-prefix="fa"
+                  focusable="false"
+                  role="img"
+                  style={
+                    Object {
+                      "transformOrigin": "0.375em 0.5em",
+                    }
+                  }
+                  viewBox="0 0 384 512"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g
+                    style={Object {}}
+                    transform="translate(192 256)"
+                  >
+                    <g
+                      style={Object {}}
+                      transform="translate(0, 0)  scale(1, 1)  rotate(45 0 0)"
+                    >
+                      <path
+                        d="M352 0H32C14.33 0 0 14.33 0 32v224h384V32c0-17.67-14.33-32-32-32zM0 320c0 35.35 28.66 64 64 64h64v64c0 35.35 28.66 64 64 64s64-28.65 64-64v-64h64c35.34 0 64-28.65 64-64v-32H0v32zm192 104c13.25 0 24 10.74 24 24 0 13.25-10.75 24-24 24s-24-10.75-24-24c0-13.26 10.75-24 24-24z"
+                        fill="currentColor"
+                        style={Object {}}
+                        transform="translate(-192 -256)"
+                      />
+                    </g>
+                  </g>
+                </svg>
+              </FontAwesomeIcon>
+              <span
+                className="paint-tool-bar__tool-name "
+              >
+                PAINTBRUSH
+              </span>
+            </button>
+            <button
+              className="paint-tool-bar__toolbar-button "
+              key="3"
+              name="selectArea"
+              onClick={[Function]}
+              onMouseDown={[Function]}
+            >
+              <FontAwesomeIcon
+                border={false}
+                className="paint-tool-bar__tool-icon"
+                fixedWidth={false}
+                flip="horizontal"
+                icon={
+                  Array [
+                    "fa",
+                    "mouse-pointer",
+                  ]
+                }
+                inverse={false}
+                listItem={false}
+                mask={null}
+                pull={null}
+                pulse={false}
+                rotation={null}
+                size="lg"
+                spin={false}
+                swapOpacity={false}
+                symbol={false}
+                title=""
+                transform={
+                  Object {
+                    "rotate": -20,
+                  }
+                }
+              >
+                <svg
+                  aria-hidden="true"
+                  className="svg-inline--fa fa-mouse-pointer fa-w-10 fa-flip-horizontal fa-lg paint-tool-bar__tool-icon"
+                  data-icon="mouse-pointer"
+                  data-prefix="fa"
+                  focusable="false"
+                  role="img"
+                  style={
+                    Object {
+                      "transformOrigin": "0.3125em 0.5em",
+                    }
+                  }
+                  viewBox="0 0 320 512"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g
+                    style={Object {}}
+                    transform="translate(160 256)"
+                  >
+                    <g
+                      style={Object {}}
+                      transform="translate(0, 0)  scale(1, 1)  rotate(-20 0 0)"
+                    >
+                      <path
+                        d="M302.189 329.126H196.105l55.831 135.993c3.889 9.428-.555 19.999-9.444 23.999l-49.165 21.427c-9.165 4-19.443-.571-23.332-9.714l-53.053-129.136-86.664 89.138C18.729 472.71 0 463.554 0 447.977V18.299C0 1.899 19.921-6.096 30.277 5.443l284.412 292.542c11.472 11.179 3.007 31.141-12.5 31.141z"
+                        fill="currentColor"
+                        style={Object {}}
+                        transform="translate(-160 -256)"
+                      />
+                    </g>
+                  </g>
+                </svg>
+              </FontAwesomeIcon>
+              <span
+                className="paint-tool-bar__tool-name "
+              >
+                SELECT
+              </span>
+            </button>
+            <button
+              className="paint-tool-bar__toolbar-button "
+              key="4"
+              name="erase"
+              onClick={[Function]}
+              onMouseDown={[Function]}
+            >
+              <FontAwesomeIcon
+                border={false}
+                className="paint-tool-bar__tool-icon"
+                fixedWidth={false}
+                flip={null}
+                icon={
+                  Array [
+                    "fa",
+                    "eraser",
+                  ]
+                }
+                inverse={false}
+                listItem={false}
+                mask={null}
+                pull={null}
+                pulse={false}
+                rotation={null}
+                size="lg"
+                spin={false}
+                swapOpacity={false}
+                symbol={false}
+                title=""
+                transform={
+                  Object {
+                    "rotate": 0,
+                  }
+                }
+              >
+                <svg
+                  aria-hidden="true"
+                  className="svg-inline--fa fa-eraser fa-w-16 fa-lg paint-tool-bar__tool-icon"
+                  data-icon="eraser"
+                  data-prefix="fa"
+                  focusable="false"
+                  role="img"
+                  style={Object {}}
+                  viewBox="0 0 512 512"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M497.941 273.941c18.745-18.745 18.745-49.137 0-67.882l-160-160c-18.745-18.745-49.136-18.746-67.883 0l-256 256c-18.745 18.745-18.745 49.137 0 67.882l96 96A48.004 48.004 0 0 0 144 480h356c6.627 0 12-5.373 12-12v-40c0-6.627-5.373-12-12-12H355.883l142.058-142.059zm-302.627-62.627l137.373 137.373L265.373 416H150.628l-80-80 124.686-124.686z"
+                    fill="currentColor"
+                    style={Object {}}
+                  />
+                </svg>
+              </FontAwesomeIcon>
+              <span
+                className="paint-tool-bar__tool-name "
+              >
+                ERASE
+              </span>
+            </button>
+            <button
+              className="paint-tool-bar__toolbar-button "
+              key="5"
+              name="defineArea"
+              onClick={[Function]}
+              onMouseDown={[Function]}
+            >
+              <FontAwesomeIcon
+                border={false}
+                className="paint-tool-bar__tool-icon"
+                fixedWidth={false}
+                flip={null}
+                icon={
+                  Array [
+                    "fal",
+                    "draw-polygon",
+                  ]
+                }
+                inverse={false}
+                listItem={false}
+                mask={null}
+                pull={null}
+                pulse={false}
+                rotation={null}
+                size="lg"
+                spin={false}
+                swapOpacity={false}
+                symbol={false}
+                title=""
+                transform={
+                  Object {
+                    "rotate": 10,
+                  }
+                }
+              >
+                <svg
+                  aria-hidden="true"
+                  className="svg-inline--fa fa-draw-polygon fa-w-14 fa-lg paint-tool-bar__tool-icon"
+                  data-icon="draw-polygon"
+                  data-prefix="fal"
+                  focusable="false"
+                  role="img"
+                  style={
+                    Object {
+                      "transformOrigin": "0.4375em 0.5em",
+                    }
+                  }
+                  viewBox="0 0 448 512"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g
+                    style={Object {}}
+                    transform="translate(224 256)"
+                  >
+                    <g
+                      style={Object {}}
+                      transform="translate(0, 0)  scale(1, 1)  rotate(10 0 0)"
+                    >
+                      <path
+                        d="M384 352c-6.3 0-12.26 1.19-18.01 2.89l-32.42-54.02C344.95 289.31 352 273.49 352 256s-7.05-33.31-18.42-44.87L366 157.11c5.75 1.7 11.71 2.89 18.01 2.89 35.35 0 64-28.65 64-64s-28.65-64-64-64c-29.79 0-54.6 20.45-61.74 48H125.74C118.6 52.45 93.79 32 64 32 28.65 32 0 60.65 0 96c0 29.79 20.44 54.6 48 61.74v196.53C20.44 361.4 0 386.21 0 416c0 35.35 28.65 64 64 64 29.79 0 54.6-20.44 61.74-48h196.53c7.14 27.56 31.95 48 61.74 48 35.35 0 64-28.65 64-64-.01-35.35-28.66-64-64.01-64zm-304 2.26V157.74c22.41-5.8 39.93-23.32 45.74-45.74h196.53c2.86 11.04 8.4 20.99 16.16 28.87l-32.42 54.02c-5.75-1.7-11.71-2.89-18.01-2.89-35.35 0-64 28.65-64 64s28.65 64 64 64c6.3 0 12.26-1.19 18.01-2.89l32.42 54.02c-7.76 7.88-13.3 17.83-16.16 28.87H125.74A63.814 63.814 0 0 0 80 354.26zM288 288c-17.64 0-32-14.36-32-32s14.36-32 32-32 32 14.36 32 32-14.36 32-32 32zm96-224c17.64 0 32 14.36 32 32s-14.36 32-32 32-32-14.36-32-32 14.36-32 32-32zM32 96c0-17.64 14.36-32 32-32s32 14.36 32 32-14.36 32-32 32-32-14.36-32-32zm32 352c-17.64 0-32-14.36-32-32s14.36-32 32-32 32 14.36 32 32-14.36 32-32 32zm320 0c-17.64 0-32-14.36-32-32s14.36-32 32-32 32 14.36 32 32-14.36 32-32 32z"
+                        fill="currentColor"
+                        style={Object {}}
+                        transform="translate(-224 -256)"
+                      />
+                    </g>
+                  </g>
+                </svg>
+              </FontAwesomeIcon>
+              <FontAwesomeIcon
+                border={false}
+                className="paint-tool-bar__tool-icon"
+                fixedWidth={false}
+                flip={null}
+                icon={
+                  Array [
+                    "fal",
+                    "plus",
+                  ]
+                }
+                inverse={false}
+                listItem={false}
+                mask={null}
+                pull={null}
+                pulse={false}
+                rotation={null}
+                size="xs"
+                spin={false}
+                style={
+                  Object {
+                    "right": "12px",
+                    "top": "21px",
+                  }
+                }
+                swapOpacity={false}
+                symbol={false}
+                title=""
+                transform={null}
+              >
+                <svg
+                  aria-hidden="true"
+                  className="svg-inline--fa fa-plus fa-w-12 fa-xs paint-tool-bar__tool-icon"
+                  data-icon="plus"
+                  data-prefix="fal"
+                  focusable="false"
+                  role="img"
+                  style={
+                    Object {
+                      "right": "12px",
+                      "top": "21px",
+                    }
+                  }
+                  viewBox="0 0 384 512"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M376 232H216V72c0-4.42-3.58-8-8-8h-32c-4.42 0-8 3.58-8 8v160H8c-4.42 0-8 3.58-8 8v32c0 4.42 3.58 8 8 8h160v160c0 4.42 3.58 8 8 8h32c4.42 0 8-3.58 8-8V280h160c4.42 0 8-3.58 8-8v-32c0-4.42-3.58-8-8-8z"
+                    fill="currentColor"
+                    style={Object {}}
+                  />
+                </svg>
+              </FontAwesomeIcon>
+              <span
+                className="paint-tool-bar__tool-name "
+              >
+                DEFINE AREA
+              </span>
+            </button>
+            <button
+              className="paint-tool-bar__toolbar-button "
+              key="6"
+              name="removeArea"
+              onClick={[Function]}
+              onMouseDown={[Function]}
+            >
+              <FontAwesomeIcon
+                border={false}
+                className="paint-tool-bar__tool-icon"
+                fixedWidth={false}
+                flip={null}
+                icon={
+                  Array [
+                    "fal",
+                    "draw-polygon",
+                  ]
+                }
+                inverse={false}
+                listItem={false}
+                mask={null}
+                pull={null}
+                pulse={false}
+                rotation={null}
+                size="lg"
+                spin={false}
+                swapOpacity={false}
+                symbol={false}
+                title=""
+                transform={
+                  Object {
+                    "rotate": 10,
+                  }
+                }
+              >
+                <svg
+                  aria-hidden="true"
+                  className="svg-inline--fa fa-draw-polygon fa-w-14 fa-lg paint-tool-bar__tool-icon"
+                  data-icon="draw-polygon"
+                  data-prefix="fal"
+                  focusable="false"
+                  role="img"
+                  style={
+                    Object {
+                      "transformOrigin": "0.4375em 0.5em",
+                    }
+                  }
+                  viewBox="0 0 448 512"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g
+                    style={Object {}}
+                    transform="translate(224 256)"
+                  >
+                    <g
+                      style={Object {}}
+                      transform="translate(0, 0)  scale(1, 1)  rotate(10 0 0)"
+                    >
+                      <path
+                        d="M384 352c-6.3 0-12.26 1.19-18.01 2.89l-32.42-54.02C344.95 289.31 352 273.49 352 256s-7.05-33.31-18.42-44.87L366 157.11c5.75 1.7 11.71 2.89 18.01 2.89 35.35 0 64-28.65 64-64s-28.65-64-64-64c-29.79 0-54.6 20.45-61.74 48H125.74C118.6 52.45 93.79 32 64 32 28.65 32 0 60.65 0 96c0 29.79 20.44 54.6 48 61.74v196.53C20.44 361.4 0 386.21 0 416c0 35.35 28.65 64 64 64 29.79 0 54.6-20.44 61.74-48h196.53c7.14 27.56 31.95 48 61.74 48 35.35 0 64-28.65 64-64-.01-35.35-28.66-64-64.01-64zm-304 2.26V157.74c22.41-5.8 39.93-23.32 45.74-45.74h196.53c2.86 11.04 8.4 20.99 16.16 28.87l-32.42 54.02c-5.75-1.7-11.71-2.89-18.01-2.89-35.35 0-64 28.65-64 64s28.65 64 64 64c6.3 0 12.26-1.19 18.01-2.89l32.42 54.02c-7.76 7.88-13.3 17.83-16.16 28.87H125.74A63.814 63.814 0 0 0 80 354.26zM288 288c-17.64 0-32-14.36-32-32s14.36-32 32-32 32 14.36 32 32-14.36 32-32 32zm96-224c17.64 0 32 14.36 32 32s-14.36 32-32 32-32-14.36-32-32 14.36-32 32-32zM32 96c0-17.64 14.36-32 32-32s32 14.36 32 32-14.36 32-32 32-32-14.36-32-32zm32 352c-17.64 0-32-14.36-32-32s14.36-32 32-32 32 14.36 32 32-14.36 32-32 32zm320 0c-17.64 0-32-14.36-32-32s14.36-32 32-32 32 14.36 32 32-14.36 32-32 32z"
+                        fill="currentColor"
+                        style={Object {}}
+                        transform="translate(-224 -256)"
+                      />
+                    </g>
+                  </g>
+                </svg>
+              </FontAwesomeIcon>
+              <FontAwesomeIcon
+                border={false}
+                className="paint-tool-bar__tool-icon"
+                fixedWidth={false}
+                flip={null}
+                icon={
+                  Array [
+                    "fal",
+                    "minus",
+                  ]
+                }
+                inverse={false}
+                listItem={false}
+                mask={null}
+                pull={null}
+                pulse={false}
+                rotation={null}
+                size="xs"
+                spin={false}
+                style={
+                  Object {
+                    "right": "12px",
+                    "top": "21px",
+                  }
+                }
+                swapOpacity={false}
+                symbol={false}
+                title=""
+                transform={null}
+              >
+                <svg
+                  aria-hidden="true"
+                  className="svg-inline--fa fa-minus fa-w-12 fa-xs paint-tool-bar__tool-icon"
+                  data-icon="minus"
+                  data-prefix="fal"
+                  focusable="false"
+                  role="img"
+                  style={
+                    Object {
+                      "right": "12px",
+                      "top": "21px",
+                    }
+                  }
+                  viewBox="0 0 384 512"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M376 232H8c-4.42 0-8 3.58-8 8v32c0 4.42 3.58 8 8 8h368c4.42 0 8-3.58 8-8v-32c0-4.42-3.58-8-8-8z"
+                    fill="currentColor"
+                    style={Object {}}
+                  />
+                </svg>
+              </FontAwesomeIcon>
+              <span
+                className="paint-tool-bar__tool-name "
+              >
+                REMOVE AREA
+              </span>
+            </button>
+            <button
+              className="paint-tool-bar__toolbar-button "
+              key="7"
+              name="zoom"
+              onClick={[Function]}
+              onMouseDown={[Function]}
+            >
+              <FontAwesomeIcon
+                border={false}
+                className="paint-tool-bar__tool-icon"
+                fixedWidth={false}
+                flip={null}
+                icon={
+                  Array [
+                    "fal",
+                    "search-plus",
+                  ]
+                }
+                inverse={false}
+                listItem={false}
+                mask={null}
+                pull={null}
+                pulse={false}
+                rotation={null}
+                size="lg"
+                spin={false}
+                swapOpacity={false}
+                symbol={false}
+                title=""
+                transform={
+                  Object {
+                    "rotate": 0,
+                  }
+                }
+              >
+                <svg
+                  aria-hidden="true"
+                  className="svg-inline--fa fa-search-plus fa-w-16 fa-lg paint-tool-bar__tool-icon"
+                  data-icon="search-plus"
+                  data-prefix="fal"
+                  focusable="false"
+                  role="img"
+                  style={Object {}}
+                  viewBox="0 0 512 512"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M319.8 204v8c0 6.6-5.4 12-12 12h-84v84c0 6.6-5.4 12-12 12h-8c-6.6 0-12-5.4-12-12v-84h-84c-6.6 0-12-5.4-12-12v-8c0-6.6 5.4-12 12-12h84v-84c0-6.6 5.4-12 12-12h8c6.6 0 12 5.4 12 12v84h84c6.6 0 12 5.4 12 12zm188.5 293L497 508.3c-4.7 4.7-12.3 4.7-17 0l-129-129c-2.3-2.3-3.5-5.3-3.5-8.5v-8.5C310.6 395.7 261.7 416 208 416 93.8 416 1.5 324.9 0 210.7-1.5 93.7 93.7-1.5 210.7 0 324.9 1.5 416 93.8 416 208c0 53.7-20.3 102.6-53.7 139.5h8.5c3.2 0 6.2 1.3 8.5 3.5l129 129c4.7 4.7 4.7 12.3 0 17zM384 208c0-97.3-78.7-176-176-176S32 110.7 32 208s78.7 176 176 176 176-78.7 176-176z"
+                    fill="currentColor"
+                    style={Object {}}
+                  />
+                </svg>
+              </FontAwesomeIcon>
+              <span
+                className="paint-tool-bar__tool-name "
+              >
+                ZOOM
+              </span>
+            </button>
+            <button
+              className="paint-tool-bar__toolbar-button  paint-tool-bar__toolbar-button--disabled"
+              key="8"
+              name="undo"
+              onClick={[Function]}
+              onMouseDown={[Function]}
+            >
+              <FontAwesomeIcon
+                border={false}
+                className="paint-tool-bar__tool-icon"
+                fixedWidth={false}
+                flip={null}
+                icon={
+                  Array [
+                    "fa",
+                    "undo-alt",
+                  ]
+                }
+                inverse={false}
+                listItem={false}
+                mask={null}
+                pull={null}
+                pulse={false}
+                rotation={null}
+                size="lg"
+                spin={false}
+                swapOpacity={false}
+                symbol={false}
+                title=""
+                transform={
+                  Object {
+                    "rotate": 0,
+                  }
+                }
+              >
+                <svg
+                  aria-hidden="true"
+                  className="svg-inline--fa fa-undo-alt fa-w-16 fa-lg paint-tool-bar__tool-icon"
+                  data-icon="undo-alt"
+                  data-prefix="fa"
+                  focusable="false"
+                  role="img"
+                  style={Object {}}
+                  viewBox="0 0 512 512"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M255.545 8c-66.269.119-126.438 26.233-170.86 68.685L48.971 40.971C33.851 25.851 8 36.559 8 57.941V192c0 13.255 10.745 24 24 24h134.059c21.382 0 32.09-25.851 16.971-40.971l-41.75-41.75c30.864-28.899 70.801-44.907 113.23-45.273 92.398-.798 170.283 73.977 169.484 169.442C423.236 348.009 349.816 424 256 424c-41.127 0-79.997-14.678-110.63-41.556-4.743-4.161-11.906-3.908-16.368.553L89.34 422.659c-4.872 4.872-4.631 12.815.482 17.433C133.798 479.813 192.074 504 256 504c136.966 0 247.999-111.033 248-247.998C504.001 119.193 392.354 7.755 255.545 8z"
+                    fill="currentColor"
+                    style={Object {}}
+                  />
+                </svg>
+              </FontAwesomeIcon>
+              <span
+                className="paint-tool-bar__tool-name "
+              >
+                UNDO
+              </span>
+            </button>
+            <button
+              className="paint-tool-bar__toolbar-button  paint-tool-bar__toolbar-button--disabled"
+              key="9"
+              name="redo"
+              onClick={[Function]}
+              onMouseDown={[Function]}
+            >
+              <FontAwesomeIcon
+                border={false}
+                className="paint-tool-bar__tool-icon"
+                fixedWidth={false}
+                flip={null}
+                icon={
+                  Array [
+                    "fa",
+                    "redo-alt",
+                  ]
+                }
+                inverse={false}
+                listItem={false}
+                mask={null}
+                pull={null}
+                pulse={false}
+                rotation={null}
+                size="lg"
+                spin={false}
+                swapOpacity={false}
+                symbol={false}
+                title=""
+                transform={
+                  Object {
+                    "rotate": 0,
+                  }
+                }
+              >
+                <svg
+                  aria-hidden="true"
+                  className="svg-inline--fa fa-redo-alt fa-w-16 fa-lg paint-tool-bar__tool-icon"
+                  data-icon="redo-alt"
+                  data-prefix="fa"
+                  focusable="false"
+                  role="img"
+                  style={Object {}}
+                  viewBox="0 0 512 512"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M256.455 8c66.269.119 126.437 26.233 170.859 68.685l35.715-35.715C478.149 25.851 504 36.559 504 57.941V192c0 13.255-10.745 24-24 24H345.941c-21.382 0-32.09-25.851-16.971-40.971l41.75-41.75c-30.864-28.899-70.801-44.907-113.23-45.273-92.398-.798-170.283 73.977-169.484 169.442C88.764 348.009 162.184 424 256 424c41.127 0 79.997-14.678 110.629-41.556 4.743-4.161 11.906-3.908 16.368.553l39.662 39.662c4.872 4.872 4.631 12.815-.482 17.433C378.202 479.813 319.926 504 256 504 119.034 504 8.001 392.967 8 256.002 7.999 119.193 119.646 7.755 256.455 8z"
+                    fill="currentColor"
+                    style={Object {}}
+                  />
+                </svg>
+              </FontAwesomeIcon>
+              <span
+                className="paint-tool-bar__tool-name "
+              >
+                REDO
+              </span>
+            </button>
+            <button
+              className="paint-tool-bar__toolbar-button "
+              key="10"
+              name="hidePaint"
+              onClick={[Function]}
+              onMouseDown={[Function]}
+            >
+              <FontAwesomeIcon
+                border={false}
+                className="paint-tool-bar__tool-icon"
+                fixedWidth={false}
+                flip="horizontal"
+                icon={
+                  Array [
+                    "fa",
+                    "eye",
+                  ]
+                }
+                inverse={false}
+                listItem={false}
+                mask={null}
+                pull={null}
+                pulse={false}
+                rotation={null}
+                size="lg"
+                spin={false}
+                swapOpacity={false}
+                symbol={false}
+                title=""
+                transform={
+                  Object {
+                    "rotate": 0,
+                  }
+                }
+              >
+                <svg
+                  aria-hidden="true"
+                  className="svg-inline--fa fa-eye fa-w-18 fa-flip-horizontal fa-lg paint-tool-bar__tool-icon"
+                  data-icon="eye"
+                  data-prefix="fa"
+                  focusable="false"
+                  role="img"
+                  style={Object {}}
+                  viewBox="0 0 576 512"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M572.52 241.4C518.29 135.59 410.93 64 288 64S57.68 135.64 3.48 241.41a32.35 32.35 0 0 0 0 29.19C57.71 376.41 165.07 448 288 448s230.32-71.64 284.52-177.41a32.35 32.35 0 0 0 0-29.19zM288 400a144 144 0 1 1 144-144 143.93 143.93 0 0 1-144 144zm0-240a95.31 95.31 0 0 0-25.31 3.79 47.85 47.85 0 0 1-66.9 66.9A95.78 95.78 0 1 0 288 160z"
+                    fill="currentColor"
+                    style={Object {}}
+                  />
+                </svg>
+              </FontAwesomeIcon>
+              <span
+                className="paint-tool-bar__tool-name "
+              >
+                HIDE PAINT
+              </span>
+            </button>
+            <button
+              className="paint-tool-bar__toolbar-button "
+              key="11"
+              name="info"
+              onClick={[Function]}
+              onMouseDown={[Function]}
+            >
+              <FontAwesomeIcon
+                border={false}
+                className="paint-tool-bar__tool-icon"
+                fixedWidth={false}
+                flip={null}
+                icon={
+                  Array [
+                    "fal",
+                    "info-circle",
+                  ]
+                }
+                inverse={false}
+                listItem={false}
+                mask={null}
+                pull={null}
+                pulse={false}
+                rotation={null}
+                size="lg"
+                spin={false}
+                swapOpacity={false}
+                symbol={false}
+                title=""
+                transform={
+                  Object {
+                    "rotate": 0,
+                  }
+                }
+              >
+                <svg
+                  aria-hidden="true"
+                  className="svg-inline--fa fa-info-circle fa-w-16 fa-lg paint-tool-bar__tool-icon"
+                  data-icon="info-circle"
+                  data-prefix="fal"
+                  focusable="false"
+                  role="img"
+                  style={Object {}}
+                  viewBox="0 0 512 512"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M256 40c118.621 0 216 96.075 216 216 0 119.291-96.61 216-216 216-119.244 0-216-96.562-216-216 0-119.203 96.602-216 216-216m0-32C119.043 8 8 119.083 8 256c0 136.997 111.043 248 248 248s248-111.003 248-248C504 119.083 392.957 8 256 8zm-36 344h12V232h-12c-6.627 0-12-5.373-12-12v-8c0-6.627 5.373-12 12-12h48c6.627 0 12 5.373 12 12v140h12c6.627 0 12 5.373 12 12v8c0 6.627-5.373 12-12 12h-72c-6.627 0-12-5.373-12-12v-8c0-6.627 5.373-12 12-12zm36-240c-17.673 0-32 14.327-32 32s14.327 32 32 32 32-14.327 32-32-14.327-32-32-32z"
+                    fill="currentColor"
+                    style={Object {}}
+                  />
+                </svg>
+              </FontAwesomeIcon>
+              <span
+                className="paint-tool-bar__tool-name "
+              >
+                HINTS
+              </span>
+            </button>
+            <div
+              className="paint-tool-bar__brush-types paint-tool-bar__brush-types--hide paint-tool-bar__brush-types-paint paint-tool-bar__brush-types--show-by-opacity "
+              onMouseLeave={[Function]}
+            >
+              <BrushTypes
+                activeShape="round"
+                activeWidth={38}
+                hidePaintBrushTypes={[Function]}
+                setBrushShapeSize={[Function]}
+              >
+                <div
+                  className="brush-types__wrapper"
+                >
+                  <div
+                    className="brush-types__circle-shapes-container"
+                  >
+                    <button
+                      className="brush-types__brush-button brush-types__brush-button--circle brush-types__brush-button--large brush-types__brush-button--active"
+                      key="round-38"
+                      onClick={[Function]}
+                    />
+                    <button
+                      className="brush-types__brush-button brush-types__brush-button--circle brush-types__brush-button--medium"
+                      key="round-30"
+                      onClick={[Function]}
+                    />
+                    <button
+                      className="brush-types__brush-button brush-types__brush-button--circle brush-types__brush-button--small"
+                      key="round-22"
+                      onClick={[Function]}
+                    />
+                    <button
+                      className="brush-types__brush-button brush-types__brush-button--circle brush-types__brush-button--tiny"
+                      key="round-14"
+                      onClick={[Function]}
+                    />
+                  </div>
+                  <div
+                    className="brush-types__square-shapes-container"
+                  >
+                    <button
+                      className="brush-types__brush-button brush-types__brush-button--large"
+                      key="square-38"
+                      onClick={[Function]}
+                    />
+                    <button
+                      className="brush-types__brush-button brush-types__brush-button--medium"
+                      key="square-30"
+                      onClick={[Function]}
+                    />
+                    <button
+                      className="brush-types__brush-button brush-types__brush-button--small"
+                      key="square-22"
+                      onClick={[Function]}
+                    />
+                    <button
+                      className="brush-types__brush-button brush-types__brush-button--tiny"
+                      key="square-14"
+                      onClick={[Function]}
+                    />
+                  </div>
+                </div>
+              </BrushTypes>
+            </div>
+            <div
+              className="paint-tool-bar__brush-types paint-tool-bar__brush-types--hide paint-tool-bar__brush-types-erase paint-tool-bar__brush-types--show-by-opacity "
+              onMouseLeave={[Function]}
+            >
+              <BrushTypes
+                activeShape="round"
+                activeWidth={38}
+                hideEraseBrushTypes={[Function]}
+                setBrushShapeSize={[Function]}
+              >
+                <div
+                  className="brush-types__wrapper"
+                >
+                  <div
+                    className="brush-types__circle-shapes-container"
+                  >
+                    <button
+                      className="brush-types__brush-button brush-types__brush-button--circle brush-types__brush-button--large brush-types__brush-button--active"
+                      key="round-38"
+                      onClick={[Function]}
+                    />
+                    <button
+                      className="brush-types__brush-button brush-types__brush-button--circle brush-types__brush-button--medium"
+                      key="round-30"
+                      onClick={[Function]}
+                    />
+                    <button
+                      className="brush-types__brush-button brush-types__brush-button--circle brush-types__brush-button--small"
+                      key="round-22"
+                      onClick={[Function]}
+                    />
+                    <button
+                      className="brush-types__brush-button brush-types__brush-button--circle brush-types__brush-button--tiny"
+                      key="round-14"
+                      onClick={[Function]}
+                    />
+                  </div>
+                  <div
+                    className="brush-types__square-shapes-container"
+                  >
+                    <button
+                      className="brush-types__brush-button brush-types__brush-button--large"
+                      key="square-38"
+                      onClick={[Function]}
+                    />
+                    <button
+                      className="brush-types__brush-button brush-types__brush-button--medium"
+                      key="square-30"
+                      onClick={[Function]}
+                    />
+                    <button
+                      className="brush-types__brush-button brush-types__brush-button--small"
+                      key="square-22"
+                      onClick={[Function]}
+                    />
+                    <button
+                      className="brush-types__brush-button brush-types__brush-button--tiny"
+                      key="square-14"
+                      onClick={[Function]}
+                    />
+                  </div>
+                </div>
+              </BrushTypes>
+            </div>
+            <div
+              className="paint-tool-bar__zoom-tool paint-tool-bar__zoom-tool--hide "
+            >
+              <ZoomTool
+                applyZoom={[Function]}
+              >
+                <div
+                  className="zoom-tool__wrapper"
+                >
+                  <span>
+                    ZOOM OUT
+                  </span>
+                  <div
+                    className="zoom-tool__zoom-slider"
+                  >
+                    <div
+                      className="zoom-tool__zoom-slider-circle"
+                      draggable={true}
+                      onDragStart={[Function]}
+                      onMouseDown={[Function]}
+                      role="presentation"
+                      style={
+                        Object {
+                          "left": "0px",
+                        }
+                      }
+                    />
+                  </div>
+                  <span>
+                    ZOOM IN
+                  </span>
+                </div>
+              </ZoomTool>
+            </div>
+          </div>
+          <div
+            className="paint-tool-bar__toolbar-toggle"
+          >
+            <button
+              className="paint-tool-bar__toolbar-toggle-button paint-tool-bar__toolbar-toggle-button--toolbar-shown"
+              onClick={[Function]}
+            />
+          </div>
+        </div>
+      </PaintToolBar>
+    </div>
+  </div>
+</PaintScene>
+`;

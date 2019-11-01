@@ -1277,5 +1277,7 @@ const mapStateToProps = (state: Object, props: Object) => {
     lpActiveColor: lp.activeColor
   }
 }
-
+export {
+  baseClass, paintBrushClass, canvasClass
+}
 export default connect(mapStateToProps, null)(PaintScene)
