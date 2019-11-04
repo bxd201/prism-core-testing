@@ -1,7 +1,5 @@
 // @flow
 import React from 'react'
-// $FlowIgnore -- flow can't resolve this
-import 'url-search-params-polyfill' // TODO: remove when dropping IE11 support
 
 import { ROUTE_PARAMS, ROUTE_PARAM_NAMES } from 'constants/globals'
 
@@ -47,15 +45,6 @@ const ColorWallRouteComponent = (props: Props) => {
       [ROUTE_PARAM_NAMES.COLOR_SEO]: urlWorker.get(ROUTE_PARAMS.COLOR).from(captured)[ROUTE_PARAM_NAMES.COLOR_SEO],
       [ROUTE_PARAM_NAMES.SEARCH]: urlWorker.get(ROUTE_PARAMS.SEARCH).from(captured)[ROUTE_PARAM_NAMES.SEARCH]
     }
-  }
-
-  // check if there is a search parameter in the URL, if so, transform into our existing search url format
-  const searchParams = new URLSearchParams(window.location.search)
-  const paramName = config.searchQueryParameterName
-  const searchValue = searchParams.has(paramName) && searchParams.get(paramName)
-  if (location.pathname.indexOf(ROUTE_PARAMS.SEARCH) === -1 && searchValue) {
-    history.push(`/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_WALL}/${ROUTE_PARAMS.SEARCH}/${searchValue}`)
-    searchParams.delete(paramName)
   }
 
   return <ColorWallLocationBuffer match={newMatch} {...other} />
