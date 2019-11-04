@@ -21,6 +21,5 @@ export const DEFAULT_CONFIGURATION = {
     success: varValues.colors.success,
     warning: varValues.colors.warning,
     white: varValues.colors.white
-  },
-  searchQueryParameterName: 'q'
+  }
 }
