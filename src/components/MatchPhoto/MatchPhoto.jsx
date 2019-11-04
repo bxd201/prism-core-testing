@@ -23,7 +23,6 @@ const buttonClass = `${baseClass}__button`
 const buttonLeftClass = `${buttonClass}--left`
 const buttonLeftTextClass = `${buttonClass}-left-text`
 const canvasClass = `${baseClass}__canvas`
-const portraitOrientation = `${canvasClass}--portrait`
 const buttonRightClass = `${buttonClass}--right`
 const closeClass = `${baseClass}__close`
 const cancelClass = `${baseClass}__cancel`
@@ -223,21 +222,26 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
   }
 
   const calcOrientationDimensions = (width: number, height: number, orientationIsPortrait: boolean): OrientationDimension => {
-    const wrapperWidth = wrapperRef.current.getBoundingClientRect().width
+    const currentWrapperDims = wrapperRef.current.getBoundingClientRect()
+    const wrapperWidth = currentWrapperDims.width
     const dimensions = {}
+    let fixedHeight = 0
 
     if (orientationIsPortrait) {
+      // Height should not change on rotate, so use the portrait height as the fixed height
+      fixedHeight = Math.round(getScaledPortraitHeight(width, height)(wrapperWidth / 2))
       dimensions.portraitWidth = Math.round(wrapperWidth / 2)
-      dimensions.portraitHeight = Math.round(getScaledPortraitHeight(width, height)(wrapperWidth / 2))
+      dimensions.portraitHeight = fixedHeight
 
-      dimensions.landscapeWidth = wrapperWidth
-      dimensions.landscapeHeight = Math.round(getScaledLandscapeHeight(width, height)(wrapperWidth))
+      dimensions.landscapeWidth = Math.round(height / width * fixedHeight)
+      dimensions.landscapeHeight = fixedHeight
     } else {
-      dimensions.landscapeWidth = wrapperWidth
-      dimensions.landscapeHeight = Math.round(getScaledPortraitHeight(width, height)(wrapperWidth))
-
+      fixedHeight = Math.round(getScaledLandscapeHeight(width, height)(wrapperWidth / 2))
       dimensions.portraitWidth = Math.round(wrapperWidth / 2)
-      dimensions.portraitHeight = Math.round(getScaledLandscapeHeight(width, height)(wrapperWidth / 2))
+      dimensions.portraitHeight = fixedHeight
+
+      dimensions.landscapeWidth = Math.round(width / height * fixedHeight)
+      dimensions.landscapeHeight = fixedHeight
     }
 
     dimensions.originalImageWidth = width
@@ -394,7 +398,7 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
           {
             (imageUrl && pins.length === 0)
               ? (<React.Fragment>
-                <canvas className={`${isPortrait ? portraitOrientation : canvasClass}`} name='canvas' ref={canvasRef} />
+                <canvas className={canvasClass} name='canvas' ref={canvasRef} />
                 <ImageRotateTerms rotateImage={rotateImage} createColorPins={createColorPins} imageData={imageData} />
               </React.Fragment>)
               : ''
