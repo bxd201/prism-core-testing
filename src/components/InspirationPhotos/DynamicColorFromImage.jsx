@@ -43,16 +43,6 @@ type ColorFromImageProps = {
   pins: Object[]
 }
 
-const getCanvasClassName = (isPortrait) => {
-  const base = 'scene__image__wrapper__canvas'
-
-  if (isPortrait) {
-    return base + '--portrait'
-  }
-
-  return base
-}
-
 const shouldShowDelete = (pins) => {
   let shouldShow = false
   if (!pins) {
@@ -151,8 +141,8 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
       const position = this.borderChecking(e.clientX, e.clientY)
       const pinX = position.x - offsetLeft + activedPinsHalfWidth
       const pinY = position.y + activedPinsHalfWidth
-      let offsetX = e.clientX - canvasDims.x | 1
-      let offsetY = e.clientY - canvasDims.y | 1
+      let offsetX = Math.floor(e.clientX - canvasDims.x)
+      let offsetY = Math.floor(e.clientY - canvasDims.y)
 
       if (offsetX < 0) {
         offsetX = 0
@@ -185,7 +175,7 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
       canvasWidth = wrapperWidth
     }
     // Rounding via bitwise or since this could be called A LOT
-    canvasWidth = canvasWidth | 1
+    canvasWidth = canvasWidth | 0
 
     let canvasHeight = 0
 
@@ -500,9 +490,21 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
   handleDrag (x: number, y: number) {
     const position = this.borderChecking(x, y)
     const canvasDims = this.canvasRef.current.getBoundingClientRect()
-    // Bitwise rounding
-    const offsetX = x - canvasDims.x | 1
-    const offsetY = y - canvasDims.y | 1
+    // Bitwise rounding, since this happens pretty often
+    let offsetX = x - canvasDims.x | 0
+    if (offsetX < 0) {
+      offsetX = 0
+    }
+    if (offsetX > canvasDims.width - 1) {
+      offsetX = canvasDims.width - 1
+    }
+    let offsetY = y - canvasDims.y | 0
+    if (offsetY < 0) {
+      offsetY = 0
+    }
+    if (offsetY > canvasDims.height - 1) {
+      offsetY = canvasDims.height - 1
+    }
     const mappedCanvasIndex = (offsetY * this.state.imageData.width + offsetX) * 4
     const currentPixelRGBstring = `rgb(${this.state.imageData.data[mappedCanvasIndex]},${this.state.imageData.data[mappedCanvasIndex + 1]},${this.state.imageData.data[mappedCanvasIndex + 2]})`
     this.setState({
@@ -522,8 +524,21 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
       const position = this.borderChecking(e.clientX, e.clientY)
       const pinX = position.x - offsetLeft + activedPinsHalfWidth
       const pinY = position.y + activedPinsHalfWidth
-      const offsetX = e.clientX - canvasDims.x | 1
-      const offsetY = e.clientY - canvasDims.y | 1
+      // Bitwise rounding, since this happens pretty often
+      let offsetX = e.clientX - canvasDims.x | 0
+      if (offsetX < 0) {
+        offsetX = 0
+      }
+      if (offsetX > canvasDims.width - 1) {
+        offsetX = canvasDims.width - 1
+      }
+      let offsetY = e.clientY - canvasDims.y | 0
+      if (offsetY < 0) {
+        offsetY = 0
+      }
+      if (offsetY > canvasDims.height - 1) {
+        offsetY = canvasDims.height - 1
+      }
       const mappedCanvasIndex = (offsetY * this.state.imageData.width + offsetX) * 4
 
       this.setState({
@@ -539,13 +554,13 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
   render () {
     return (
       <>
-        <div role='presentation' className='scene__image__wrapper' ref={this.wrapperRef}>
+        <div role='presentation' className='colorfrom__image__wrapper' ref={this.wrapperRef}>
           <canvas
-            className={getCanvasClassName(this.props.isPortrait)}
+            className='colorfrom__image__wrapper__canvas'
             ref={this.canvasRef}
             onClick={this.handleClick} />
           <img
-            className='scene__image__wrapper__image--hidden'
+            className='colorfrom__image__wrapper__image--hidden'
             ref={this.imageRef}
             onLoad={this.handleImageLoaded}
             onError={this.handleImageLoadError}
