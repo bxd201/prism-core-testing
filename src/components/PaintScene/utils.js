@@ -120,14 +120,37 @@ export const checkIntersection = (areaA, areaB) => {
   return Array.from(intersection)
 }
 
-export const repaintImageByPath = (imagePathList, canvas, width, height) => {
+export const repaintImageByPath = (imagePathList, canvas, width, height, isEraseRepaint = false) => {
   const ctx = canvas.current.getContext('2d')
   let imageData = ctx.getImageData(0, 0, width, height)
   let data = imageData.data
   for (let i = 0; i < imagePathList.length; i++) {
-    const path = imagePathList[i].data
-    const color = imagePathList[i].color
-    const isEnabled = imagePathList[i].isEnabled
+    if (!isEraseRepaint && !imagePathList[i].hasOwnProperty('drawOrder')) {
+      imagePathList[i].drawOrder = i
+    }
+  }
+
+  const redrawByOrder = imagePathList.map((item, i) => {
+    return {
+      drawOrder: item.drawOrder,
+      historyIndex: i
+    }
+  }).sort((a, b) => {
+    if (a.drawOrder < b.drawOrder) {
+      return -1
+    }
+    if (a.drawOrder > b.drawOrder) {
+      return 1
+    }
+    return 0
+  })
+
+  redrawByOrder.forEach(item => {
+    const selectedItem = imagePathList[item.historyIndex]
+    const path = selectedItem.data
+    const color = selectedItem.color
+    const isEnabled = selectedItem.isEnabled
+
     if (path && isEnabled) {
       for (let j = 0; j < path.length; j++) {
         data[path[j]] = color[0]
@@ -136,7 +159,8 @@ export const repaintImageByPath = (imagePathList, canvas, width, height) => {
         data[path[j] + 3] = color[3]
       }
     }
-  }
+  })
+
   ctx.putImageData(imageData, 0, 0)
 }
 
@@ -222,6 +246,7 @@ export const eraseIntersection = (imagePathList, erasePath) => {
     const isEnabled = originImagePathList[i].isEnabled
     const color = originImagePathList[i].color
     const linkId = originImagePathList[i].id
+    const drawOrder = originImagePathList[i].drawOrder
     const intersection = checkIntersection(data, erasePath)
     if (intersection.length > 0 && isEnabled) {
       originImagePathList[i].isEnabled = false
@@ -233,7 +258,8 @@ export const eraseIntersection = (imagePathList, erasePath) => {
         data: remainAreaPath,
         isEnabled: true,
         linkedOperation: linkId,
-        siblingOperations: null
+        siblingOperations: null,
+        drawOrder: drawOrder
       })
       siblingList.push(newId)
     }

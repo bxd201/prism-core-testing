@@ -20,28 +20,29 @@ export const undo = (state: Object) => {
   }
 }
 
-const handleUndo = (itemId, redos, imagePathList, isRecursive) => {
+const handleUndo = (itemId, redos, imagePathList) => {
   let history = copyImageList(imagePathList)
-  const helper = (itemId, redos, isRecursive) => {
+  let redoList = copyImageList(redos)
+  const helper = (itemId) => {
     const item = history.filter(historyItem => historyItem.id === itemId)[0]
     if (!item) {
       return
     }
-    redos.push(item)
+    redoList.push(item)
     history = history.filter(historyItem => historyItem.id !== itemId)
     const linkedItems = item.linkedOperation
     if (linkedItems) {
       toggleLinkedItems(linkedItems, history)
     }
 
-    if (item.siblingOperations && isRecursive) {
+    if (item.siblingOperations) {
       for (let i = 0; i < item.siblingOperations.length; i++) {
-        helper(item.siblingOperations[i], redos, false)
+        helper(item.siblingOperations[i])
       }
     }
-    return { undoOperations: history, redos: redos }
+    return { undoOperations: history, redos: redoList }
   }
-  return helper(itemId, redos, isRecursive)
+  return helper(itemId)
 }
 
 const toggleLinkedItems = (linkedItems, history) => {

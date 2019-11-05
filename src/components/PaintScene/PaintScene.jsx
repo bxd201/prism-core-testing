@@ -541,8 +541,10 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     }
     let newImagePathList
     const { newGroupSelectList, newGroupAreaList } = this.breakGroupIfhasIntersection()
+    this.clearCanvas()
     if (lpActiveColor && activeTool === toolNames.PAINTBRUSH && drawCoordinates.length > 0) {
       newImagePathList = getPaintAreaPath(imagePathList, this.CFICanvasPaint, this.canvasOffsetWidth, this.canvasOffsetHeight, this.props.lpActiveColor, true)
+      repaintImageByPath(newImagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight, false)
     }
 
     if (activeTool === toolNames.ERASE && drawCoordinates.length > 0) {
@@ -552,10 +554,10 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       newImagePathList = remove(tmpImagePathList, (currImagePath) => {
         return currImagePath.data.length !== 0
       })
+      repaintImageByPath(newImagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight, true)
     }
     this.CFICanvasContextPaint.clearRect(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
-    this.clearCanvas()
-    repaintImageByPath(newImagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
+
     this.setState({ isDragging: false,
       imagePathList: newImagePathList,
       groupAreaList: newGroupAreaList,
