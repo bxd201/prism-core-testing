@@ -233,7 +233,9 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
   /*:: generatePins: (pins: Object[]) => void */
   generatePins (pins: Object[]) {
     return pins.map((pinnedColor, index) => {
-      const translateX = pinnedColor.translateX + this.canvasRef.current.offsetLeft
+      // Bitwise rounding since this can be called alot...every little BIT helps
+      const translateX = (pinnedColor.translateX * this.state.canvasWidth / this.state.initialWidth + this.canvasRef.current.offsetLeft) | 0
+      const translateY = (pinnedColor.translateY * this.state.canvasHeight / this.state.initialHeight) | 0
 
       return (<ColorsFromImagePin key={`push${index}`}
         isActiveFlag={pinnedColor.isActiveFlag}
@@ -242,7 +244,7 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
         previewColorNumber={`${pinnedColor.colorNumber}`}
         RGBstring={`${pinnedColor.rgbValue}`}
         translateX={`${translateX}`}
-        translateY={`${pinnedColor.translateY}`}
+        translateY={`${translateY}`}
         pinNumber={`${pinnedColor.pinNumber}`}
         handlePinMoveByKeyboard={this.handlePinMoveByKeyboard}
         handleKeyUpAfterPinMove={this.handleKeyUpAfterPinMove}
@@ -312,8 +314,11 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
           colorName: brandColors[arrayIndex],
           colorNumber: brandColors[arrayIndex + 1],
           rgbValue: 'rgb(' + brandColors[arrayIndex + 2] + ')',
-          translateX: cursorX - activedPinsHalfWidth,
-          translateY: cursorY - activedPinsHalfWidth,
+          // The translated values are calculated this way due to resize.
+          // To keep the logic simpler the pin generator always calcs the scale factor and the new pins translate values are always in reference to the initial canvas size.
+          // When there is no resize, scale should be 1 here and in the pin generator. the scales for user added pins is the inverse of the pin generators scale.
+          translateX: (cursorX - activedPinsHalfWidth) * this.state.initialWidth / this.state.canvasWidth,
+          translateY: (cursorY - activedPinsHalfWidth) * this.state.initialHeight / this.state.canvasHeight,
           pinNumber: newPins.length,
           isActiveFlag: true,
           isContentLeft: isContentLeft
