@@ -121,6 +121,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   lastPanPoint: Object
   canvasOriginalDimensions: Object
   wrapperOriginalDimensions: Object
+  worker: Object
 
   constructor (props: ComponentProps) {
     super(props)
@@ -143,6 +144,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.originalIsPortrait = props.referenceDimensions.originalIsPortrait
     this.canvasPanStart = { x: 0.5, y: 0.5 }
     this.lastPanPoint = { x: 0, y: 0 }
+    this.worker = null
 
     this.state = {
       imageStatus: 'loading',
@@ -732,7 +734,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
           }
           if (!hasAdd) {
             const imagePath = getSelectArea(imageData, { r: 255, g: 0, b: 0 }, cursorX, cursorY)
-            const edge = edgeDetect(this.CFICanvas2, imagePath, [255, 0, 0, 255], this.canvasOffsetWidth, this.canvasOffsetWidth)
+            const edge = edgeDetect(this.CFICanvas2, imagePath, [255, 0, 0, 255], this.canvasOffsetWidth, this.canvasOffsetHeight)
             selectedArea.push({
               edgeList: edge,
               selectPath: imagePath
@@ -741,7 +743,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
           this.setState({ selectedArea })
         } else {
           const imagePath = getSelectArea(imageData, { r: 255, g: 0, b: 0 }, cursorX, cursorY)
-          const edge = edgeDetect(this.CFICanvas2, imagePath, [255, 0, 0, 255], this.canvasOffsetWidth, this.canvasOffsetWidth)
+          const edge = edgeDetect(this.CFICanvas2, imagePath, [255, 0, 0, 255], this.canvasOffsetWidth, this.canvasOffsetHeight)
           selectedArea.push({
             edgeList: edge,
             selectPath: imagePath
@@ -1161,17 +1163,21 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       selectedAreaPath = [...selectedAreaPath, ...selectedArea[i].selectPath]
     }
 
-    const worker = new WebWorker()
-    worker.addEventListener('message', (e) => {
-      const { newGroupAreaList, newImagePathList } = e.data
-      this.setState({ imagePathList: newImagePathList, groupSelectList: [], selectedArea: [], groupAreaList: newGroupAreaList, isAddGroup: false, isUngroup: false, loading: false })
-    })
-    worker.postMessage({ imagePathList: imagePathList,
+    this.worker = new WebWorker()
+    this.worker.addEventListener('message', this.workerMessageHandler)
+    this.worker.postMessage({ imagePathList: imagePathList,
       groupSelectList: groupSelectList,
       groupAreaList: groupAreaList,
       groupAreaPath: groupAreaPath,
       selectedAreaPath: selectedAreaPath
     })
+  }
+
+  workerMessageHandler = (e: Object) => {
+    const { newGroupAreaList, newImagePathList } = e.data
+    this.worker.removeEventListener('message', this.workerMessageHandler)
+    this.worker.terminate()
+    this.setState({ imagePathList: newImagePathList, groupSelectList: [], selectedArea: [], groupAreaList: newGroupAreaList, isAddGroup: false, isUngroup: false, loading: false })
   }
 
   groupHandler = (groupName: string) => {
