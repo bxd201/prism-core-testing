@@ -88,7 +88,9 @@ type ComponentState = {
   groupAreaList: Array<Object>,
   lineStart: Array<number>,
   polyList: Array<Array<number>>,
-  BeginPointList: Array<number>
+  BeginPointList: Array<number>,
+  initialCanvasWidth: number,
+  initialCanvasHeight: number
 }
 
 type DrawOperation = {
@@ -177,7 +179,9 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       isAddGroup: false,
       isDeleteGroup: false,
       paintCursor: `${canvasClass}--${toolNames.PAINTAREA}`,
-      isInfoToolActive: false
+      isInfoToolActive: false,
+      initialCanvasWidth: 0,
+      initialCanvasHeight: 0
     }
 
     this.undo = this.undo.bind(this)
@@ -185,8 +189,10 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.redrawCanvas = this.redrawCanvas.bind(this)
     this.getImageCoordinatesByPixel = this.getImageCoordinatesByPixel.bind(this)
     this.initCanvas = this.initCanvas.bind(this)
-    this.updateCanvasWithNewDimensions = this.updateCanvasWithNewDimensions.bind(this)
+    this.initCanvasWithDimensions = this.initCanvasWithDimensions.bind(this)
     this.shouldCanvasResize = this.shouldCanvasResize.bind(this)
+    this.calcCanvasNewDimensions = this.calcCanvasNewDimensions.bind(this)
+    this.scaleCanvases = this.scaleCanvases.bind(this)
   }
 
   /*:: shouldCanvasResize: (prevWidth: number, newWidth: number) => number */
@@ -201,7 +207,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   componentDidUpdate (prevProps: Object, prevState: Object) {
     const newWidth = this.shouldCanvasResize(prevProps.width, this.props.width)
     if (newWidth) {
-      this.updateCanvasWithNewDimensions(newWidth)
+      this.scaleCanvases(newWidth)
     }
 
     const { imagePathList, groupSelectList, selectedArea } = this.state
@@ -274,11 +280,10 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.CFICanvasContextPaint = this.CFICanvasPaint.current.getContext('2d')
     this.canvasOffsetWidth = parseInt(this.wrapperDimensions.width, 10)
     this.canvasOffsetHeight = parseInt(this.wrapperDimensions.height, 10)
-    this.updateCanvasWithNewDimensions()
+    this.initCanvasWithDimensions()
   }
-
-  /*:: updateCanvasWithNewDimensions: (newWidth?: number) => void */
-  updateCanvasWithNewDimensions (newWidth?: number) {
+  /*:: calcCanvasNewDimensions(newWidth: number) => Object */
+  calcCanvasNewDimensions (newWidth: number) {
     let canvasWidth = 0
     const wrapperWidth = newWidth || this.wrapperDimensions.width
 
@@ -307,6 +312,16 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
         canvasHeight = Math.floor(getScaledLandscapeHeight(this.backgroundImageHeight, this.backgroundImageWidth)(canvasWidth))
       }
     }
+    // @todo - Think about adding scale factors here in return payload
+    return {
+      canvasWidth,
+      canvasHeight
+    }
+  }
+
+  /*:: initCanvasWithNewDimensions: (newWidth?: number) => void */
+  initCanvasWithDimensions (newWidth?: number) {
+    const { canvasWidth, canvasHeight } = this.calcCanvasNewDimensions(newWidth)
 
     this.CFICanvas.current.width = canvasWidth
     this.CFICanvas.current.height = canvasHeight
@@ -319,6 +334,20 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.canvasOriginalDimensions = { width: canvasWidth, height: canvasHeight }
     this.wrapperOriginalDimensions = { width: this.CFIWrapper.current.getBoundingClientRect().width, height: canvasHeight }
     this.setBackgroundImage(canvasWidth, canvasHeight)
+  }
+
+  /*:: scaleCanvases: (newWidth: number) => void */
+  scaleCanvases (newWidth: number) {
+    const { canvasWidth, canvasHeight } = this.calcCanvasNewDimensions(newWidth)
+
+    this.CFICanvas.current.style.width = `${canvasWidth}px`
+    this.CFICanvas.current.style.height = `${canvasHeight}px`
+    this.CFICanvas2.current.style.width = `${canvasWidth}px`
+    this.CFICanvas2.current.style.height = `${canvasHeight}px`
+    this.CFICanvasPaint.current.style.width = `${canvasWidth}px`
+    this.CFICanvasPaint.current.style.height = `${canvasHeight}px`
+
+    this.CFIWrapper.current.style.height = `${canvasHeight}px`
   }
 
   /*:: setBackgroundImage: (canvasWidth: number, canvasHeight: number) => void */
