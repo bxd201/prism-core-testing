@@ -55,13 +55,56 @@ export const getActiveColorRGB = (color) => {
   return [red, green, blue, 255]
 }
 
-export const drawCircle = (ctx, x, y, scale = 1) => {
+export const drawCircle = (circleObj) => {
+  var ctx = circleObj.ctx
   ctx.save()
   ctx.beginPath()
-  ctx.strokeStyle = '#fff'
-  ctx.arc(x, y, 10 * scale, 0, Math.PI * 2, false)
-  ctx.closePath()
+  ctx.globalCompositeOperation = circleObj.type
+  ctx.arc(circleObj.x, circleObj.y, circleObj.radius, circleObj.startAngle, circleObj.endAngle, false)
+  ctx.lineWidth = circleObj.lineWidth
+  ctx.strokeStyle = circleObj.color
+  ctx.lineCap = 'round'
+  ctx.fillStyle = circleObj.fillStyle
+  ctx.fill()
   ctx.stroke()
+  ctx.closePath()
+  ctx.restore()
+}
+
+export const Circle = (ctx, x, y, radius, scale, fillStyle, type = 'source-over', alpha = 255) => {
+  let circleObj = {
+    ctx: ctx,
+    x: x,
+    y: y,
+    radius: radius * scale,
+    lineWidth: 2,
+    type: type
+  }
+  circleObj.startAngle = 0
+  circleObj.endAngle = Math.PI * 2
+  circleObj.color = `rgba(255, 255, 255, ${alpha})`
+  circleObj.fillStyle = fillStyle
+  drawCircle(circleObj)
+  return circleObj
+}
+
+export const drawHollowCircle = (ctxDraw, cursorX, cursorY, scale, color, alpha) => {
+  Circle(ctxDraw, cursorX, cursorY, 10, scale, color, 'source-over', alpha)
+  Circle(ctxDraw, cursorX, cursorY, 4, scale, 'rgba(255, 255, 255, 0)', 'source-over', alpha)
+  Circle(ctxDraw, cursorX, cursorY, 2, scale, 'rgba(255, 255, 255, 255)', 'destination-out')
+}
+
+export const repaintCircleLine = (ctx, start, list, scale) => {
+  ctx.beginPath()
+  for (let i = 0; i < list.length; i++) {
+    Circle(ctx, list[i][0], list[i][1], 6, scale, 'rgba(255, 255, 255, 0)')
+    if (i === 0) {
+      drawLine(ctx, start, list[i], true, scale)
+    } else {
+      drawLine(ctx, list[i - 1], list[i], true, scale)
+    }
+  }
+  ctx.closePath()
 }
 
 export const pointInsideCircle = (x, y, circle, r) => {
