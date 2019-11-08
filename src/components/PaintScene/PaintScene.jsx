@@ -8,13 +8,13 @@ import remove from 'lodash/remove'
 
 import { drawAcrossLine } from './PaintSceneUtils'
 import { getPaintAreaPath, repaintImageByPath,
-  createPolygon, drawLine, drawCircle,
+  createPolygon, drawLine, drawHollowCircle,
   edgeDetect, pointInsideCircle, alterRGBByPixel,
   getImageCordinateByPixel, eraseIntersection,
   getActiveColorRGB, getSelectArea, hexToRGB,
   checkIntersection, drawImagePixelByPath,
   copyImageList, getColorAtPixel, colorMatch,
-  getImageCordinateByPixelPaintBrush } from './utils'
+  repaintCircleLine, getImageCordinateByPixelPaintBrush } from './utils'
 import { toolNames, groupToolNames } from './data'
 import { getScaledPortraitHeight, getScaledLandscapeHeight } from '../../shared/helpers/ImageUtils'
 import throttle from 'lodash/throttle'
@@ -824,6 +824,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
   handlePolygonDefine = (e: Object, isAddArea: boolean) => {
     if (!this.props.lpActiveColor) return
+    const { BeginPointList, polyList, lineStart, imagePathList } = this.state
     const ctx = this.CFICanvas2.current
     const { clientX, clientY } = e
     // const { canvasZoom } = this.state
@@ -831,9 +832,10 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     const scale = this.canvasOriginalDimensions.width / canvasClientOffset.width
     const cursorX = (clientX - canvasClientOffset.left) * scale
     const cursorY = (clientY - canvasClientOffset.top) * scale
+    const poly = [...polyList]
+    poly.push([cursorX, cursorY])
     if (!ctx.getContext) return
-    let ctxDraw = ctx.getContext('2d')
-    const { BeginPointList, polyList, lineStart, imagePathList } = this.state
+    let ctxDraw = this.CFICanvasPaint.current.getContext('2d')
     let isBackToStart = false
     if (BeginPointList.length > 0) {
       isBackToStart = pointInsideCircle(cursorX, cursorY, BeginPointList, 10)
@@ -842,6 +844,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       this.clearCanvas()
       let tmpImagePathList
       let newImagePathList
+      this.CFICanvasContextPaint.clearRect(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
       createPolygon(polyList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight, this.props.lpActiveColor.hex, 'source-over')
       if (!isAddArea) {
         const RGB = getActiveColorRGB(hexToRGB(this.props.lpActiveColor.hex))
@@ -868,8 +871,11 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     } else {
       const canvasClientOffset = this.CFICanvas2.current.getBoundingClientRect()
       const scale = this.canvasOriginalDimensions.width / canvasClientOffset.width
-      drawCircle(ctxDraw, cursorX, cursorY, scale)
       // toDo: Animation of StartPoint
+      this.CFICanvasContextPaint.clearRect(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
+      drawHollowCircle(ctxDraw, BeginPointList[0], BeginPointList[1], scale, '#28A745', 255)
+      poly.length > 2 && repaintCircleLine(ctxDraw, BeginPointList, poly.slice(1, -1), scale)
+      drawHollowCircle(ctxDraw, cursorX, cursorY, scale, '#2cabe2')
       if (lineStart.length > 0) {
         ctxDraw.beginPath()
         const end = [cursorX, cursorY]
@@ -879,8 +885,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       }
       ctxDraw.restore()
     }
-    const poly = [...polyList]
-    poly.push([cursorX, cursorY])
+    repaintImageByPath(imagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
     this.setState({ lineStart: [cursorX, cursorY], polyList: poly })
   }
 
