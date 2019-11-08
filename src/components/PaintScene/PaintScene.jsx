@@ -5,6 +5,7 @@ import './PaintScene.scss'
 import uniqueId from 'lodash/uniqueId'
 import PaintToolBar from './PaintToolBar'
 import remove from 'lodash/remove'
+import { injectIntl } from 'react-intl'
 
 import { drawAcrossLine } from './PaintSceneUtils'
 import { getPaintAreaPath, repaintImageByPath,
@@ -57,7 +58,8 @@ type ComponentProps = {
   lpActiveColor: Object,
   referenceDimensions: Object,
   // eslint-disable-next-line react/no-unused-prop-types
-  width: number
+  width: number,
+  intl: any
 }
 
 type ComponentState = {
@@ -1289,7 +1291,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   }
 
   render () {
-    const { imageUrl, lpActiveColor } = this.props
+    const { imageUrl, lpActiveColor, intl } = this.props
     const { activeTool, position, paintBrushShape, paintBrushWidth, eraseBrushShape, eraseBrushWidth, undoIsEnabled, redoIsEnabled, showOriginalCanvas, isAddGroup, isDeleteGroup, isUngroup, paintCursor, isInfoToolActive, loading } = this.state
     const lpActiveColorRGB = (lpActiveColor) ? `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})` : ``
     const backgroundColorBrush = (activeTool === toolNames.ERASE) ? `rgba(255, 255, 255, 0.7)` : lpActiveColorRGB
@@ -1299,10 +1301,19 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     return (
       <div role='presentation' className={baseClass} onClick={this.handleClick} onMouseMove={this.mouseMoveHandler} ref={this.CFIWrapper} style={{ height: this.state.wrapperHeight }} onMouseLeave={this.mouseLeaveHandler} onMouseEnter={this.mouseEnterHandler}>
         <div className={`${animationLoader} ${loading ? `${animationLoader}--load` : ''}`} />
-        <canvas className={`${canvasClass} ${showOriginalCanvas ? `${canvasShowByZindex}` : `${canvasHideByZindex}`} ${this.isPortrait ? portraitOrientation : ''}`} name='paint-scene-canvas-first' ref={this.CFICanvas} />
-        <canvas style={{ opacity: showOriginalCanvas ? 1 : 0.8 }} className={`${canvasClass} ${paintCursor} ${canvasSecondClass} ${this.isPortrait ? portraitOrientation : ''}`} name='paint-scene-canvas-second' ref={this.CFICanvas2} />
-        <canvas onMouseDown={this.onPanStart} style={{ opacity: 1 }} className={`${canvasClass} ${paintCursor} ${(activeTool === toolNames.PAINTBRUSH ? canvasSecondClass : canvasThirdClass)} ${(activeTool === toolNames.ERASE) ? canvasHiddenByVisibility : canvasVisibleByVisibility} ${this.isPortrait ? portraitOrientation : ''}`} name='paint-scene-canvas-paint' ref={this.CFICanvasPaint} />
-        <img className={`${imageClass}`} ref={this.CFIImage} onLoad={this.initCanvas} onError={this.handleImageErrored} src={imageUrl} alt='' />
+        <canvas className={`${canvasClass} ${showOriginalCanvas ? `${canvasShowByZindex}` : `${canvasHideByZindex}`} ${this.isPortrait ? portraitOrientation : ''}`} name='paint-scene-canvas-first' ref={this.CFICanvas}>{intl.messages.CANVAS_UNSUPPORTED}</canvas>
+        <canvas style={{ opacity: showOriginalCanvas ? 1 : 0.8 }} className={`${canvasClass} ${paintCursor} ${canvasSecondClass} ${this.isPortrait ? portraitOrientation : ''}`} name='paint-scene-canvas-second' ref={this.CFICanvas2}>{intl.messages.CANVAS_UNSUPPORTED}</canvas>
+        <canvas
+          onMouseDown={this.onPanStart}
+          style={{ opacity: 1 }}
+          className={`${canvasClass} ${paintCursor} ${(activeTool === toolNames.PAINTBRUSH
+            ? canvasSecondClass : canvasThirdClass)} ${(activeTool === toolNames.ERASE)
+            ? canvasHiddenByVisibility : canvasVisibleByVisibility} ${this.isPortrait ? portraitOrientation : ''}`}
+          name='paint-scene-canvas-paint'
+          ref={this.CFICanvasPaint}>
+          {intl.messages.CANVAS_UNSUPPORTED}
+        </canvas>
+        <img className={`${imageClass}`} ref={this.CFIImage} onLoad={this.initCanvas} onError={this.handleImageErrored} src={imageUrl} alt={intl.messages.IMAGE_INVISIBLE} />
         <div className={`${paintToolsClass}`}>
           <PaintToolBar
             activeTool={activeTool}
@@ -1349,4 +1360,4 @@ const mapStateToProps = (state: Object, props: Object) => {
 export {
   baseClass, paintBrushClass, canvasClass
 }
-export default connect(mapStateToProps, null)(PaintScene)
+export default connect(mapStateToProps, null)(injectIntl(PaintScene))

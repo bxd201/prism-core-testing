@@ -127,8 +127,7 @@ export class SherwinColorWall extends PureComponent<Props> {
         {activeColor && (
           <div className='color-wall-wall__btns'>
             <Link to={generateColorWallPageUrl(section, family)} className='color-wall-wall__btns__btn' title={translatedMessages.ZOOM_OUT}>
-              <FontAwesomeIcon icon='search-minus' size='lg' />
-              <span className='visually-hidden'><FormattedMessage id='ZOOM_OUT' /></span>
+              <FontAwesomeIcon title={this.props.intl.messages.ZOOM_OUT} icon='search-minus' size='lg' />
             </Link>
           </div>
         )}

@@ -6,6 +6,7 @@ import BrushTypes from './BrushTypes'
 import PaintToolTip from './PaintToolTip'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import ZoomTool from './ZoomTool'
+import { injectIntl } from 'react-intl'
 
 const baseClass = 'paint-tool-bar'
 const wrapperClass = `${baseClass}__wrapper`
@@ -59,7 +60,8 @@ type ComponentProps = {
   applyZoom: Function,
   isUngroup: boolean,
   isAddGroup: boolean,
-  isDeleteGroup: boolean
+  isDeleteGroup: boolean,
+  intl: any
 }
 
 type ComponentState = {
@@ -236,12 +238,13 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
   /*:: generateTools: () => Array<any> */
   generateTools (): Array<any> {
     const { tooltipToolActiveNumber, isHidePaint, showTooltip } = this.state
-    const { activeTool } = this.props
+    const { activeTool, intl } = this.props
     const tools = toolBarButtons.map((tool: Object, index: number) => {
       const iconProps = {}
       if (tool.fontAwesomeIcon.flip) {
         iconProps.flip = tool.fontAwesomeIcon.flip
       }
+
       return <button
         key={tool.id}
         name={tool.name}
@@ -249,7 +252,7 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
         onClick={(e) => this.buttonClickHandler(e, tool.name)}
         onMouseDown={(e) => this.toolButtonMouseDownHandler(e, tool.name)}
       >
-        <FontAwesomeIcon className={`${toolIconClass}`} icon={[tool.fontAwesomeIcon.variant, tool.fontAwesomeIcon.icon]} size='lg' transform={{ rotate: tool.fontAwesomeIcon.rotate }} {...iconProps} />
+        <FontAwesomeIcon title={intl.messages[`PAINT_TOOLS.${tool.name.toUpperCase()}`]} className={`${toolIconClass}`} icon={[tool.fontAwesomeIcon.variant, tool.fontAwesomeIcon.icon]} size='lg' transform={{ rotate: tool.fontAwesomeIcon.rotate }} {...iconProps} />
         {tool.name === toolNames.DEFINEAREA && <FontAwesomeIcon className={`${toolIconClass}`} icon={['fal', 'plus']} size='xs' style={{ right: '12px', top: '21px' }} />}
         {tool.name === toolNames.REMOVEAREA && <FontAwesomeIcon className={`${toolIconClass}`} icon={['fal', 'minus']} size='xs' style={{ right: '12px', top: '21px' }} />}
         <span className={`${toolNameClass} ${(activeTool === tool.name && !showTooltip) || (showTooltip && tooltipToolActiveNumber === tool.id) || (isHidePaint && tool.name === toolNames.HIDEPAINT) ? `${toolNameActiveClass}` : ``}`}>{tool.displayName}</span>
@@ -292,10 +295,11 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
     if (tool.name === groupToolNames.GROUP && isAddGroup) { return true }
     if (tool.name === groupToolNames.UNGROUP && isUngroup) { return true }
   }
+
   /*:: generateSelectGroupTools: () => Array<any> */
   generateSelectGroupTools (): Array<any> {
     const { tooltipToolActiveNumber } = this.state
-    const { activeTool } = this.props
+    const { activeTool, intl } = this.props
     const groupTools = selectGroupButtons.map((tool: Object, index: number) => {
       return <button
         key={tool.id}
@@ -303,7 +307,7 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
         className={`${toolbarButtonClass}`}
         onClick={(e) => this.groupClickHandler(e, tool.name)}
       >
-        <FontAwesomeIcon className={`${toolIconClass}`} icon={[tool.fontAwesomeIcon.variant, tool.fontAwesomeIcon.icon]} size='lg' transform={{ rotate: tool.fontAwesomeIcon.rotate }} />
+        <FontAwesomeIcon title={intl.messages[`PAINT_TOOLS.${tool.name.toUpperCase()}`]} className={`${toolIconClass}`} icon={[tool.fontAwesomeIcon.variant, tool.fontAwesomeIcon.icon]} size='lg' transform={{ rotate: tool.fontAwesomeIcon.rotate }} />
         <span className={`${toolNameClass} ${this.checkButtonIfDisable(tool) ? '' : toolNameDisabledClass} ${activeTool === toolNames.SELECTAREA || tooltipToolActiveNumber === toolNumbers.SELECTAREA ? `${toolNameActiveClass}` : ``}`}>{tool.displayName}</span>
       </button>
     })
@@ -322,7 +326,7 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
 
   render () {
     const { showToolBar, showPaintBrushTypes, showEraseBrushTypes, showTooltip, tooltipToolActiveNumber, zoomSliderHide } = this.state
-    const { activeTool, paintBrushShape, paintBrushWidth, eraseBrushShape, eraseBrushWidth, setBrushShapeSize, applyZoom } = this.props
+    const { activeTool, paintBrushShape, paintBrushWidth, eraseBrushShape, eraseBrushWidth, setBrushShapeSize, applyZoom, intl } = this.props
 
     return (
       <React.Fragment>
@@ -332,7 +336,7 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
             isSelectGroup
             tooltipToolActiveName={selectGroupTooltipData[0].displayName}
             tooltipToolActiveNumber={toolNumbers.SELECTAREA}
-            tooltipContent={selectGroupTooltipData[0].tooltipContent}
+            tooltipContent={intl.messages['PAINT_TOOLS.TOOLTIPS.SELECTGROUP']}
             toolsCount={toolBarButtons.length}
             closeTooltip={this.closeTooltip}
             backButtonClickHandler={this.backButtonClickHandler}
@@ -359,7 +363,7 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
               <PaintToolTip
                 tooltipToolActiveName={toolBarButtons[tooltipToolActiveNumber - 1].displayName}
                 tooltipToolActiveNumber={tooltipToolActiveNumber}
-                tooltipContent={toolBarButtons[tooltipToolActiveNumber - 1].tooltipContent}
+                tooltipContent={intl.messages[`PAINT_TOOLS.TOOLTIPS.${toolBarButtons[tooltipToolActiveNumber - 1].name.toUpperCase()}`]}
                 toolsCount={toolBarButtons.length}
                 closeTooltip={this.closeTooltip}
                 backButtonClickHandler={this.backButtonClickHandler}
@@ -381,4 +385,4 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
 export {
   toolbarButtonClass, toolbarToggleButtonClass, brushTypesClass
 }
-export default PaintToolBar
+export default injectIntl(PaintToolBar)
