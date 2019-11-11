@@ -7,6 +7,12 @@
 npm start
 ```
 
+or, to build one or more specific facets instead of all of them:
+```
+# this will build prism.js, css/prism.css, colorWall.js, and css/colorWall.css
+ENTRY=prism,colorWall npm start
+```
+
 ### Deploy
 ```
 npm ci

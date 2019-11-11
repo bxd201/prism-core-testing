@@ -18,6 +18,7 @@ import SimilarColors from './SimilarColors/SimilarColors'
 import SceneManager from '../../SceneManager/SceneManager'
 import WithConfigurationContext from '../../../contexts/ConfigurationContext/WithConfigurationContext'
 import { ROUTE_PARAM_NAMES } from 'constants/globals'
+import facetBinder from 'src/facetBinder'
 
 import { paintAllMainSurfaces } from '../../../store/actions/scenes'
 import { varValues } from 'variables'
@@ -260,4 +261,12 @@ const mapDispatchToProps = (dispatch: Function) => {
   }
 }
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(injectIntl(WithConfigurationContext(ColorDetails))))
+export default withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(
+    injectIntl(
+      WithConfigurationContext(
+        facetBinder(ColorDetails, 'ColorDetails')
+      )
+    )
+  )
+)

@@ -5,6 +5,7 @@ const sassUtils = require('node-sass-utils')(sass)
 const varNames = Object.freeze(require('../src/shared/variables.js').varNames)
 const varValues = Object.freeze(require('../src/shared/variables.js').varValues)
 const path = require('path')
+const flags = require('./constants')
 const getVarGenerator = (function () {
   const cssUnits = [
     'rem',
@@ -89,6 +90,7 @@ const getVarGenerator = (function () {
     return (keys) => getVarInternal_memoized(keys.getValue())
   }
 })()
+
 const sassRules = [
   MiniCssExtractPlugin.loader,
   'css-loader',
@@ -96,6 +98,7 @@ const sassRules = [
   {
     loader: 'sass-loader',
     options: {
+      prependData: '$env: ' + flags.mode + ';',
       sassOptions: (loaderContext) => {
         return {
           functions: {

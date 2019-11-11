@@ -27,6 +27,7 @@ import GenericMessage from '../../Messages/GenericMessage'
 import Search from '../../Search/Search'
 import ButtonBar from '../../GeneralButtons/ButtonBar/ButtonBar'
 import HeroLoader from '../../Loaders/HeroLoader/HeroLoader'
+import facetBinder from 'src/facetBinder'
 import './ColorWall.scss'
 
 type StateProps = {
@@ -323,7 +324,7 @@ const mapDispatchToProps = (dispatch: Function) => {
   }
 }
 
-export default withRouter(
+export default facetBinder(withRouter(
   connect(mapStateToProps, mapDispatchToProps)(injectIntl(
     WithConfigurationContext(ColorWall)
-  )))
+  ))), 'ColorWall')

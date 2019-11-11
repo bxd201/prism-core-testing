@@ -8,6 +8,7 @@ import ColorWallRouteComponent from '../ColorWall/ColorWallRouteComponent'
 import ColorDetails from '../ColorDetails/ColorDetails'
 import ColorDataWrapper from '../../../helpers/ColorDataWrapper/ColorDataWrapper'
 import BackToColorWall from './BackToColorWall'
+import facetBinder from 'src/facetBinder'
 
 import { varValues } from 'variables'
 
@@ -128,4 +129,4 @@ export class ColorListingPage extends PureComponent<ColorListingPageProps, Color
   }
 }
 
-export default withRouter(ColorListingPage)
+export default facetBinder(withRouter(ColorListingPage), 'ColorListingPage')

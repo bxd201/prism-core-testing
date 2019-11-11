@@ -12,6 +12,7 @@ import LivePalette from '../../LivePalette/LivePalette'
 import PrismNav from './PrismNav'
 import React, { Component } from 'react'
 import SceneManager from '../../SceneManager/SceneManager'
+import facetBinder from 'src/facetBinder'
 
 import { connect } from 'react-redux'
 import { Route, Redirect } from 'react-router-dom'
@@ -73,4 +74,4 @@ const mapStateToProps = (state, props) => {
   }
 }
 
-export default connect(mapStateToProps, null)(Prism)
+export default facetBinder(connect(mapStateToProps, null)(Prism), 'Prism')
