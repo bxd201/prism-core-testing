@@ -9,7 +9,7 @@ export const undo = (state: Object) => {
 
   const lastItem = imagePathList[imagePathList.length - 1]
   let relatedRedoOps = []
-  const { undoOperations, redos } = handleUndo(lastItem.id, relatedRedoOps, imagePathList, true)
+  const { undoOperations, redos } = handleUndo(lastItem.id, relatedRedoOps, imagePathList)
   redos.forEach(redoItem => redoPathList.push(redoItem))
   const redoOperations = [...redoPathList]
   return {
