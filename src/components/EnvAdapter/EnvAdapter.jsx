@@ -6,12 +6,12 @@ import at from 'lodash/at'
 
 export const getStoreValues = (store: Object): Object => {
   return {
-    chosenColor: at(store, 'colors.chosenColor'),
-    colorWallActive: at(store, 'colors.colorWallActive'),
-    emitColor: at(store, 'colors.emitColor'),
-    family: at(store, 'colors.family'),
-    query: at(store, 'colors.search.query'),
-    section: at(store, 'colors.section')
+    chosenColor: at(store, 'colors.chosenColor')[0],
+    colorWallActive: at(store, 'colors.colorWallActive')[0],
+    emitColor: at(store, 'colors.emitColor')[0],
+    family: at(store, 'colors.family')[0],
+    query: at(store, 'colors.search.query')[0],
+    section: at(store, 'colors.section')[0]
   }
 }
 
