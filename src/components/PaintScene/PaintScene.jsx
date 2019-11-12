@@ -16,7 +16,7 @@ import { getPaintAreaPath, repaintImageByPath,
   checkIntersection, drawImagePixelByPath,
   copyImageList, getColorAtPixel, colorMatch,
   repaintCircleLine, getImageCordinateByPixelPaintBrush } from './utils'
-import { toolNames, groupToolNames } from './data'
+import { toolNames, groupToolNames, brushLargeSize, brushMediumSize, brushSmallSize, brushTinySize, brushRoundShape, brushSquareShape } from './data'
 import { getScaledPortraitHeight, getScaledLandscapeHeight } from '../../shared/helpers/ImageUtils'
 import throttle from 'lodash/throttle'
 import { redo, undo } from './UndoRedoUtil'
@@ -43,13 +43,6 @@ const canvasHideByZindex = `${canvasClass}--hide-by-zindex`
 const canvasVisibleByVisibility = `${canvasClass}--visible-by-visibility`
 const canvasHiddenByVisibility = `${canvasClass}--hidden-by-visibility`
 const animationLoader = `${baseClass}--animation`
-const brushLargeWidth = 38
-const brushMediumWidth = 30
-const brushSmallWidth = 22
-const brushTinyWidth = 14
-
-const brushRoundShape = 'round'
-const brushSquareShape = 'square'
 
 type ComponentProps = {
   imageUrl: string,
@@ -155,12 +148,12 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       imageStatus: 'loading',
       activeTool: toolNames.PAINTAREA,
       position: { left: 0, top: 0, isHidden: false },
-      paintBrushWidth: brushLargeWidth,
+      paintBrushWidth: brushLargeSize,
       isDragging: false,
       drawCoordinates: [],
       paintBrushShape: brushRoundShape,
       eraseBrushShape: brushRoundShape,
-      eraseBrushWidth: brushLargeWidth,
+      eraseBrushWidth: brushLargeSize,
       redoHistory: [],
       pixelDataHistory: [],
       pixelDataRedoHistory: [],
@@ -357,7 +350,6 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   setBackgroundImage (canvasWidth: number, canvasHeight: number) {
     this.CFICanvasContext.drawImage(this.CFIImage.current, 0, 0, canvasWidth, canvasHeight)
     this.CFICanvasContext2.clearRect(0, 0, canvasWidth, canvasHeight)
-    this.CFICanvasContext2.drawImage(this.CFIImage.current, 0, 0, canvasWidth, canvasHeight)
     this.CFICanvasContextPaint.clearRect(0, 0, canvasWidth, canvasHeight)
     this.setState({ wrapperHeight: canvasHeight })
   }
@@ -714,7 +706,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     let isClickInsideImage = false
     let isClickGroupArea = false
     for (let i = 0; i < imagePathList.length; i++) {
-      if (imagePathList[i].data.includes(index)) {
+      if (imagePathList[i].isEnabled && imagePathList[i].data.includes(index)) {
         isClickInsideImage = true
         break
       }
@@ -1086,16 +1078,16 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     const { paintBrushWidth, paintBrushShape } = this.state
     let paintBrushActiveClass = ''
     let paintBrushCircleActiveClass = ''
-    if (paintBrushWidth === brushLargeWidth) {
+    if (paintBrushWidth === brushLargeSize) {
       paintBrushActiveClass = paintBrushLargeClass
       if (paintBrushShape === brushRoundShape) paintBrushCircleActiveClass = paintBrushLargeCircleClass
-    } else if (paintBrushWidth === brushMediumWidth) {
+    } else if (paintBrushWidth === brushMediumSize) {
       paintBrushActiveClass = paintBrushMediumClass
       if (paintBrushShape === brushRoundShape) paintBrushCircleActiveClass = paintBrushMediumCircleClass
-    } else if (paintBrushWidth === brushSmallWidth) {
+    } else if (paintBrushWidth === brushSmallSize) {
       paintBrushActiveClass = paintBrushSmallClass
       if (paintBrushShape === brushRoundShape) paintBrushCircleActiveClass = paintBrushSmallCircleClass
-    } else if (paintBrushWidth === brushTinyWidth) {
+    } else if (paintBrushWidth === brushTinySize) {
       paintBrushActiveClass = paintBrushTinyClass
       if (paintBrushShape === brushRoundShape) paintBrushCircleActiveClass = paintBrushTinyCircleClass
     }
@@ -1106,16 +1098,16 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     const { eraseBrushWidth, eraseBrushShape } = this.state
     let eraseBrushActiveClass = ''
     let eraseBrushCircleActiveClass = ''
-    if (eraseBrushWidth === brushLargeWidth) {
+    if (eraseBrushWidth === brushLargeSize) {
       eraseBrushActiveClass = paintBrushLargeClass
       if (eraseBrushShape === brushRoundShape) eraseBrushCircleActiveClass = paintBrushLargeCircleClass
-    } else if (eraseBrushWidth === brushMediumWidth) {
+    } else if (eraseBrushWidth === brushMediumSize) {
       eraseBrushActiveClass = paintBrushMediumClass
       if (eraseBrushShape === brushRoundShape) eraseBrushCircleActiveClass = paintBrushMediumCircleClass
-    } else if (eraseBrushWidth === brushSmallWidth) {
+    } else if (eraseBrushWidth === brushSmallSize) {
       eraseBrushActiveClass = paintBrushSmallClass
       if (eraseBrushShape === brushRoundShape) eraseBrushCircleActiveClass = paintBrushSmallCircleClass
-    } else if (eraseBrushWidth === brushTinyWidth) {
+    } else if (eraseBrushWidth === brushTinySize) {
       eraseBrushActiveClass = paintBrushTinyClass
       if (eraseBrushShape === brushRoundShape) eraseBrushCircleActiveClass = paintBrushTinyCircleClass
     }
