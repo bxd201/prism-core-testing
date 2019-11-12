@@ -146,6 +146,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.originalIsPortrait = props.referenceDimensions.originalIsPortrait
     this.canvasPanStart = { x: 0.5, y: 0.5 }
     this.lastPanPoint = { x: 0, y: 0 }
+    this.pause = false
     this.worker = null
 
     this.state = {
@@ -823,6 +824,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   }
 
   handlePolygonDefine = (e: Object, isAddArea: boolean) => {
+    this.pause = false
     if (!this.props.lpActiveColor) return
     const { BeginPointList, polyList, lineStart, imagePathList } = this.state
     const ctx = this.CFICanvas2.current
@@ -838,9 +840,10 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     let ctxDraw = this.CFICanvasPaint.current.getContext('2d')
     let isBackToStart = false
     if (BeginPointList.length > 0) {
-      isBackToStart = pointInsideCircle(cursorX, cursorY, BeginPointList, 10)
+      isBackToStart = pointInsideCircle(cursorX, cursorY, BeginPointList, 10, scale)
     }
     if (isBackToStart) {
+      this.pause = true
       this.clearCanvas()
       let tmpImagePathList
       let newImagePathList
@@ -871,9 +874,10 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     } else {
       const canvasClientOffset = this.CFICanvas2.current.getBoundingClientRect()
       const scale = this.canvasOriginalDimensions.width / canvasClientOffset.width
-      // toDo: Animation of StartPoint
       this.CFICanvasContextPaint.clearRect(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
-      drawHollowCircle(ctxDraw, BeginPointList[0], BeginPointList[1], scale, '#28A745', 255)
+      if (BeginPointList.length > 0) {
+        this.circleAnimate(this.circleAnimate, 0, ctxDraw, BeginPointList[0], BeginPointList[1], scale, '#28A745')
+      }
       poly.length > 2 && repaintCircleLine(ctxDraw, BeginPointList, poly.slice(1, -1), scale)
       drawHollowCircle(ctxDraw, cursorX, cursorY, scale, '#2cabe2')
       if (lineStart.length > 0) {
@@ -937,6 +941,16 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
         redoIsEnabled: false })
     }
   }, 10)
+
+  circleAnimate = (fn, t, ...arg) => {
+    const helper = (fn, t, ...arg) => {
+      if (this.pause) { return }
+      let y = Math.sin(t * Math.PI / 180)
+      drawHollowCircle(...arg, y)
+      window.requestAnimationFrame((t) => helper(fn, t, ...arg))
+    }
+    helper(fn, t, ...arg)
+  }
 
   save = () => {
     /** This function will create mask */
