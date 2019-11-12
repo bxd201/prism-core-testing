@@ -2,6 +2,7 @@
 import React from 'react'
 import './PaintToolTip.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { injectIntl } from 'react-intl'
 
 type Props = {
   tooltipToolActiveName: string,
@@ -11,7 +12,8 @@ type Props = {
   closeTooltip: Function,
   backButtonClickHandler: Function,
   nextButtonClickHandler: Function,
-  isSelectGroup?: boolean
+  isSelectGroup?: boolean,
+  intl: any
 }
 
 const baseClass = 'paint-tooltip'
@@ -35,7 +37,7 @@ const selectGroup = `${baseClass}__select-group`
 
 const divTranslateFactor = -152
 
-export function PaintToolTip ({ tooltipToolActiveName, closeTooltip, backButtonClickHandler, nextButtonClickHandler, tooltipContent, tooltipToolActiveNumber, toolsCount, isSelectGroup }: Props) {
+export function PaintToolTip ({ tooltipToolActiveName, closeTooltip, backButtonClickHandler, nextButtonClickHandler, tooltipContent, tooltipToolActiveNumber, toolsCount, isSelectGroup, intl }: Props) {
   let divTranslateValue = 0
   if (!isSelectGroup) {
     divTranslateValue = divTranslateFactor + (tooltipToolActiveNumber <= 8 ? tooltipToolActiveNumber - 1 : 8) * 52
@@ -46,7 +48,7 @@ export function PaintToolTip ({ tooltipToolActiveName, closeTooltip, backButtonC
       {!isSelectGroup && <div className={`${wrapperClass}`} style={{ transform: `translate(${divTranslateValue}px)` }}>
         <div className={`${containerClass}`}>
           <button className={`${closeButtonClass}`} onClick={() => closeTooltip()}>
-            <FontAwesomeIcon className={``} icon={['fal', 'times']} size='lg' />
+            <FontAwesomeIcon title={intl.messages['PAINT_TOOLS.CLOSE']} className={``} icon={['fal', 'times']} size='lg' />
           </button>
           <div className={`${headerClass}`}>
             <FontAwesomeIcon className={``} icon={['fal', 'info-circle']} size='1x' />&nbsp;<span>TOOL TIPS</span>
@@ -57,11 +59,11 @@ export function PaintToolTip ({ tooltipToolActiveName, closeTooltip, backButtonC
           </div>
           <div className={`${footerClass}`}>
             <button className={`${buttonClass} ${buttonLeftClass} ${tooltipToolActiveNumber === 1 ? `${buttonHideClass}` : `${buttonShowClass}`}`} onClick={() => backButtonClickHandler()}>
-              <FontAwesomeIcon icon={['fa', 'chevron-left']} />&nbsp;<span>BACK</span>
+              <FontAwesomeIcon title={intl.messages['PAINT_TOOLS.BACK']} icon={['fa', 'chevron-left']} />&nbsp;<span>BACK</span>
             </button>
             <span className={`${toolNumberClass}`}>{tooltipToolActiveNumber} of {toolsCount}</span>
             <button className={`${buttonClass} ${buttonRightClass} ${tooltipToolActiveNumber < toolsCount ? `${buttonShowClass}` : `${buttonHideClass}`}`} onClick={() => nextButtonClickHandler()}>
-              <span>NEXT</span>&nbsp;<FontAwesomeIcon icon={['fa', 'chevron-right']} />
+              <span>NEXT</span>&nbsp;<FontAwesomeIcon title={intl.messages['PAINT_TOOLS.FORWARD']} icon={['fa', 'chevron-right']} />
             </button>
           </div>
         </div>
@@ -69,10 +71,10 @@ export function PaintToolTip ({ tooltipToolActiveName, closeTooltip, backButtonC
       </div>}
       {isSelectGroup && <div className={`${wrapperClass} ${selectGroup}`}>
         <button className={`${closeButtonClass}`} onClick={() => closeTooltip()}>
-          <FontAwesomeIcon className={``} icon={['fal', 'times']} size='lg' />
+          <FontAwesomeIcon title={intl.messages['PAINT_TOOLS.CLOSE']} className={``} icon={['fal', 'times']} size='lg' />
         </button>
         <div className={`${headerClass}`}>
-          <FontAwesomeIcon className={``} icon={['fal', 'info-circle']} size='1x' />&nbsp;TOOL TIPS
+          <FontAwesomeIcon title={intl.messages['PAINT_TOOLS.INFO']} className={``} icon={['fal', 'info-circle']} size='1x' />&nbsp;TOOL TIPS
         </div>
         <div className={`${toolNameClass}`}>{tooltipToolActiveName}</div>
         <div className={`${tooltipContentClass}`}>
@@ -87,4 +89,4 @@ export function PaintToolTip ({ tooltipToolActiveName, closeTooltip, backButtonC
 export {
   toolNameClass, tooltipContentClass, toolNumberClass, headerClass
 }
-export default PaintToolTip
+export default injectIntl(PaintToolTip)
