@@ -217,7 +217,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       for (let i = 0; i < this.state.groupSelectList.length; i++) {
         this.clearCanvas()
         drawImagePixelByPath(ctx, this.canvasOffsetWidth, this.canvasOffsetHeight, RGB, this.state.groupSelectList[i].selectPath)
-        const newPath = getImageCordinateByPixel(this.CFICanvas2, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight)
+        const newPath = getImageCordinateByPixel(this.CFICanvas2, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight, false)
         copyImagePathList.push({
           color: RGB,
           data: newPath,
@@ -230,7 +230,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       for (let i = 0; i < this.state.selectedArea.length; i++) {
         this.clearCanvas()
         drawImagePixelByPath(ctx, this.canvasOffsetWidth, this.canvasOffsetHeight, RGB, this.state.selectedArea[i].selectPath)
-        const newPath = getImageCordinateByPixel(this.CFICanvas2, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight)
+        const newPath = getImageCordinateByPixel(this.CFICanvas2, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight, false)
         copyImagePathList.push({
           color: RGB,
           data: newPath,
@@ -385,6 +385,15 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.updateWindowDimensions()
     this.setDependentPositions()
     this.initCanvas()
+    window.addEventListener('resize', this.resizeHandler)
+  }
+
+  componentWillUnmount () {
+    window.removeEventListener('resize', this.resizeHandler)
+  }
+
+  resizeHandler = () => {
+    this.applyZoom(this.state.canvasZoom)
   }
 
   updateWindowDimensions = () => {
@@ -541,7 +550,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     const { groupAreaList, groupSelectList } = this.state
     let idsToUngroup = []
     let newGroupSelectList = []
-    const drawPath = getImageCordinateByPixelPaintBrush(this.CFICanvasPaint, this.canvasOffsetWidth, this.canvasOffsetHeight)
+    const drawPath = getImageCordinateByPixelPaintBrush(this.CFICanvasPaint, this.canvasOffsetWidth, this.canvasOffsetHeight, false)
     for (let i = 0; i < groupAreaList.length; i++) {
       const intersect = checkIntersection(groupAreaList[i].selectPath, drawPath)
       if (intersect.length > 0) {
@@ -569,13 +578,13 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     const { newGroupSelectList, newGroupAreaList } = this.breakGroupIfhasIntersection()
     this.clearCanvas()
     if (lpActiveColor && activeTool === toolNames.PAINTBRUSH && drawCoordinates.length > 0) {
-      newImagePathList = getPaintAreaPath(imagePathList, this.CFICanvasPaint, this.canvasOffsetWidth, this.canvasOffsetHeight, this.props.lpActiveColor, true)
+      newImagePathList = getPaintAreaPath(imagePathList, this.CFICanvasPaint, this.canvasOffsetWidth, this.canvasOffsetHeight, this.props.lpActiveColor)
       repaintImageByPath(newImagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight, false)
     }
 
     if (activeTool === toolNames.ERASE && drawCoordinates.length > 0) {
       const RGB = getActiveColorRGB({ red: 255, blue: 255, green: 255 })
-      const erasePath = getImageCordinateByPixel(this.CFICanvasPaint, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight)
+      const erasePath = getImageCordinateByPixel(this.CFICanvasPaint, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight, false)
       const tmpImagePathList = eraseIntersection(imagePathList, erasePath)
       newImagePathList = remove(tmpImagePathList, (currImagePath) => {
         return currImagePath.data.length !== 0
@@ -842,16 +851,18 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       let tmpImagePathList
       let newImagePathList
       this.CFICanvasContextPaint.clearRect(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
-      createPolygon(polyList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight, this.props.lpActiveColor.hex, 'source-over')
+      createPolygon(polyList, this.CFICanvasPaint, this.canvasOffsetWidth, this.canvasOffsetHeight, this.props.lpActiveColor.hex, 'source-over')
       if (!isAddArea) {
         const RGB = getActiveColorRGB(hexToRGB(this.props.lpActiveColor.hex))
-        const erasePath = getImageCordinateByPixel(this.CFICanvas2, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight)
+        const erasePath = getImageCordinateByPixel(this.CFICanvasPaint, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight, false)
+        this.CFICanvasContextPaint.clearRect(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
         tmpImagePathList = eraseIntersection(imagePathList, erasePath)
         newImagePathList = remove(tmpImagePathList, (currImagePath) => {
           return currImagePath.data.length !== 0
         })
       } else {
-        newImagePathList = getPaintAreaPath(imagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight, this.props.lpActiveColor)
+        newImagePathList = getPaintAreaPath(imagePathList, this.CFICanvasPaint, this.canvasOffsetWidth, this.canvasOffsetHeight, this.props.lpActiveColor)
+        this.CFICanvasContextPaint.clearRect(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
       }
       this.clearCanvas()
       repaintImageByPath(newImagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
@@ -883,7 +894,6 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       }
       ctxDraw.restore()
     }
-    repaintImageByPath(imagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
     this.setState({ lineStart: [cursorX, cursorY], polyList: poly })
   }
 
@@ -920,7 +930,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       }
       this.clearCanvas()
       drawImagePixelByPath(ctx, this.canvasOffsetWidth, this.canvasOffsetHeight, RGB, imagePath)
-      const newPath = getImageCordinateByPixel(this.CFICanvas2, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight)
+      const newPath = getImageCordinateByPixel(this.CFICanvas2, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight, false)
       copyImagePathList.push({
         id: uniqueId(),
         color: RGB,

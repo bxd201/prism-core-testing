@@ -4,13 +4,14 @@ import uniqueId from 'lodash/uniqueId'
 
 const MAX_STACK_SIZE = 200
 
-export const getPaintAreaPath = (imagePathList, canvas, width, height, color, isPaintBrush = false) => {
+export const getPaintAreaPath = (imagePathList, canvas, width, height, color) => {
   const RGB = getActiveColorRGB(color)
-  const array = (isPaintBrush) ? getImageCordinateByPixelPaintBrush(canvas, width, height) : getImageCordinateByPixel(canvas, RGB, width, height)
+  const [array, alphaArray] = getImageCordinateByPixelPaintBrush(canvas, width, height, true)
   const newArea = {
     id: uniqueId(),
     color: RGB,
     data: array,
+    alphaArray: alphaArray,
     isEnabled: true,
     linkedOperation: null,
     siblingOperations: null
@@ -20,30 +21,42 @@ export const getPaintAreaPath = (imagePathList, canvas, width, height, color, is
   return copyImagePathList
 }
 
-export const getImageCordinateByPixel = (canvas, color, width, height) => {
+export const getImageCordinateByPixel = (canvas, color, width, height, returnAlphaArray = true) => {
   const ctx = canvas.current.getContext('2d')
   let imageData = ctx.getImageData(0, 0, width, height)
   let data = imageData.data
   let pixelArray = []
+  let alphaArray = []
   for (let index = 0; index < data.length; index += 4) {
     if (data[index] === color[0] && data[index + 1] === color[1] && data[index + 2] === color[2]) {
       pixelArray.push(index)
+      if (returnAlphaArray) alphaArray.push(data[index + 3])
     }
   }
-  return pixelArray
+  if (returnAlphaArray) {
+    return [pixelArray, alphaArray]
+  } else {
+    return pixelArray
+  }
 }
 
-export const getImageCordinateByPixelPaintBrush = (canvas, width, height) => {
+export const getImageCordinateByPixelPaintBrush = (canvas, width, height, returnAlphaArray = true) => {
   const ctx = canvas.current.getContext('2d')
   let imageData = ctx.getImageData(0, 0, width, height)
   let data = imageData.data
   let pixelArray = []
+  let alphaArray = []
   for (let index = 0; index < data.length; index += 4) {
     if (data[index] !== 0 && data[index + 1] !== 0 && data[index + 2] !== 0) {
       pixelArray.push(index)
+      if (returnAlphaArray) alphaArray.push(data[index + 3])
     }
   }
-  return pixelArray
+  if (returnAlphaArray) {
+    return [pixelArray, alphaArray]
+  } else {
+    return pixelArray
+  }
 }
 
 export const checkColorRGBEqual = (rgb, newRgb) => {
@@ -194,14 +207,22 @@ export const repaintImageByPath = (imagePathList, canvas, width, height, isErase
     const selectedItem = imagePathList[item.historyIndex]
     const path = selectedItem.data
     const color = selectedItem.color
+    const alphaArray = selectedItem.alphaArray
     const isEnabled = selectedItem.isEnabled
-
     if (path && isEnabled) {
       for (let j = 0; j < path.length; j++) {
         data[path[j]] = color[0]
         data[path[j] + 1] = color[1]
         data[path[j] + 2] = color[2]
-        data[path[j] + 3] = color[3]
+        if (data[path[j] + 3]) {
+          data[path[j] + 3] = 255
+        } else {
+          if (alphaArray !== undefined && alphaArray.length > 0) {
+            data[path[j] + 3] = alphaArray[j]
+          } else {
+            data[path[j] + 3] = 255
+          }
+        }
       }
     }
   })
