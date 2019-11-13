@@ -1,0 +1,13 @@
+.babelrc
+/__mocks__
+/__tests__
+/masks
+/ci
+/setup
+/webpack
+/flow-typed
+/src
+webpack*
+Dockerfile
+Jenkinsfile
+README.md
