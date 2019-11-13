@@ -3,6 +3,7 @@
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { injectIntl } from 'react-intl'
+import 'src/providers/fontawesome/fontawesome'
 
 type ColorFromImageDeleteButtonProps = {
   isVisible: boolean,

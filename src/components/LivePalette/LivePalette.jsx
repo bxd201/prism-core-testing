@@ -1,6 +1,7 @@
 // @flow
 import React, { PureComponent } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import 'src/providers/fontawesome/fontawesome'
 import { FormattedMessage } from 'react-intl'
 import { connect } from 'react-redux'
 import without from 'lodash/without'

@@ -16,6 +16,7 @@ import DetailsLink from './ColorWallSwatchButtons/DetailsLink'
 import InfoButton from './ColorWallSwatchButtons/InfoButton'
 
 import './ColorWallSwatch.scss'
+import 'src/scss/convenience/visually-hidden.scss'
 
 type Props = {
   color: Color,

@@ -8,6 +8,7 @@ import { brandColors } from './sw-colors-in-LAB.js'
 import throttle from 'lodash/throttle'
 import includes from 'lodash/includes'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import 'src/providers/fontawesome/fontawesome'
 
 type ComponentProps = {
   data: any,

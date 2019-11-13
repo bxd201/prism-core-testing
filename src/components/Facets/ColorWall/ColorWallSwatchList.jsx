@@ -24,6 +24,8 @@ import { getTotalWidthOf2dArray } from '../../../shared/helpers/DataUtils'
 import { generateColorWallPageUrl, fullColorName } from '../../../shared/helpers/ColorUtils'
 import { type GridBounds, type ColorReference } from './ColorWall.flow'
 
+import 'src/scss/externalComponentSupport/AutoSizer.scss'
+
 const GRID_AUTOSCROLL_SPEED: number = 300
 
 // ----------------------------------------

@@ -7,6 +7,7 @@ import at from 'lodash/at'
 
 import { BLANK_SWATCH, SW_CHUNK_SIZE } from 'constants/globals'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import 'src/providers/fontawesome/fontawesome'
 import { convertCategorizedColorsToGrid } from '../../../shared/helpers/ColorDataUtils'
 import { generateColorWallPageUrl, generateColorDetailsPageUrl, fullColorName } from '../../../shared/helpers/ColorUtils'
 import { compareKebabs } from '../../../shared/helpers/StringUtils'
@@ -18,6 +19,7 @@ import WithConfigurationContext from '../../../contexts/ConfigurationContext/Wit
 
 import { type CategorizedColorIdGrid, type ColorMap, type Color, type ColorIdGrid } from '../../../shared/types/Colors'
 import { type Configuration } from '../../../shared/types/Configuration'
+import 'src/scss/convenience/visually-hidden.scss'
 
 type Props = {
   colors: CategorizedColorIdGrid,

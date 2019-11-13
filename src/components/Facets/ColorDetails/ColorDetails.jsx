@@ -1,6 +1,7 @@
 // @flow
 import React, { PureComponent } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import 'src/providers/fontawesome/fontawesome'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import has from 'lodash/has'
@@ -26,6 +27,7 @@ import { varValues } from 'variables'
 import type { ColorMap, Color } from '../../../shared/types/Colors'
 import type { Configuration } from '../../../shared/types/Configuration'
 
+import 'src/scss/convenience/visually-hidden.scss'
 import './ColorDetails.scss'
 
 type StateProps = {

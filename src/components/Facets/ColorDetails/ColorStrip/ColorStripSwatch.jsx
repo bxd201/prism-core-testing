@@ -7,6 +7,8 @@ import type { Color } from '../../../../shared/types/Colors'
 
 import { generateColorDetailsPageUrl } from '../../../../shared/helpers/ColorUtils'
 
+import 'src/scss/convenience/visually-hidden.scss'
+
 type Props = {
   color: Color,
   active: boolean,

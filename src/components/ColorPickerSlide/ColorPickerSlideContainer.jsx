@@ -5,6 +5,7 @@ import { fullColorNumber } from '../../../src/shared/helpers/ColorUtils'
 import { connect } from 'react-redux'
 import { add } from '../../store/actions/live-palette'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import 'src/providers/fontawesome/fontawesome'
 import some from 'lodash/some'
 
 const baseClass = 'prism-color-palette-suggester'

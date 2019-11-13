@@ -5,6 +5,7 @@ import { toolBarButtons, selectGroupButtons, selectGroupTooltipData, toolNames, 
 import BrushTypes from './BrushTypes'
 import PaintToolTip from './PaintToolTip'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import 'src/providers/fontawesome/fontawesome'
 import ZoomTool from './ZoomTool'
 import { injectIntl } from 'react-intl'
 

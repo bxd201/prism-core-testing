@@ -1,0 +1,16 @@
+.unstyled-button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  line-height: normal;
+  width: auto;
+  overflow: visible;
+  -moz-osx-font-smoothing: inherit;
+  -webkit-font-smoothing: inherit;
+  -webkit-appearance: none;
+
+  &::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+  }
+}

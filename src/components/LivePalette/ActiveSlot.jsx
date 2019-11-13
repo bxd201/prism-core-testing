@@ -2,6 +2,7 @@
 import React, { useState, useRef } from 'react'
 import { connect } from 'react-redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import 'src/providers/fontawesome/fontawesome'
 import { useDrag, useDrop } from 'react-dnd'
 import { fullColorNumber, getContrastYIQ } from '../../shared/helpers/ColorUtils'
 import { type Color } from '../../shared/types/Colors'

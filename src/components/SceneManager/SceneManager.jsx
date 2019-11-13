@@ -7,6 +7,7 @@ import includes from 'lodash/includes'
 import memoizee from 'memoizee'
 import ReactGA from 'react-ga'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import 'src/providers/fontawesome/fontawesome'
 import { DndProvider } from 'react-dnd'
 import HTML5Backend from 'react-dnd-html5-backend'
 
@@ -31,6 +32,7 @@ import type { Color } from '../../shared/types/Colors'
 import type { Scene, SceneStatus, SceneWorkspace, Surface, Variant } from '../../shared/types/Scene'
 
 import './SceneManager.scss'
+import 'src/scss/convenience/visually-hidden.scss'
 
 const getThumbnailAssetArrayByScene = memoizee((sceneVariant: Variant, surfaces: Surface[]): string[] => {
   return flattenDeep([
