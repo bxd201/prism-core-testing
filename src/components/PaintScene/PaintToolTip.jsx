@@ -3,6 +3,7 @@ import React from 'react'
 import './PaintToolTip.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { injectIntl } from 'react-intl'
+import 'src/providers/fontawesome/fontawesome'
 
 type Props = {
   tooltipToolActiveName: string,

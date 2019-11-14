@@ -6,6 +6,8 @@ import type { Color, ColorMap } from '../../../../shared/types/Colors'
 
 import SimilarColorSwatch from './SimilarColorSwatch'
 
+import 'src/scss/convenience/visually-hidden.scss'
+
 type Props = {
   colors: ColorMap,
   color: Color

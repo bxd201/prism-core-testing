@@ -1,15 +1,18 @@
 // @flow
 import React, { PureComponent, Fragment } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import 'src/providers/fontawesome/fontawesome'
 import { connect } from 'react-redux'
 import { add } from '../../store/actions/live-palette'
 import { getlpColorByNumber } from '../../../__mocks__/data/color/Colors'
 import type { Color } from '../../../src/shared/types/Colors'
 import some from 'lodash/some'
 import { LiveMessage } from 'react-aria-live'
-import './ColorPins.scss'
 import { activedPinsHalfWidth } from './data'
 import { getContrastYIQ } from '../../../src/shared/helpers/ColorUtils'
+
+import './ColorPins.scss'
+import 'src/scss/convenience/visually-hidden.scss'
 
 type Props = {
   activatePin: Function,

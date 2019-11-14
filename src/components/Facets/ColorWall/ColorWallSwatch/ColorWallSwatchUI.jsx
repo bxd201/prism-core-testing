@@ -10,6 +10,7 @@ import { arrayToSpacedString } from '../../../../shared/helpers/StringUtils'
 import { fullColorName } from '../../../../shared/helpers/ColorUtils'
 
 import './ColorWallSwatch.scss'
+import 'src/scss/convenience/visually-hidden.scss'
 
 type Props = {
   color: Color,

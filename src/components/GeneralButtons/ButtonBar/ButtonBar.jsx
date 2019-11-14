@@ -3,6 +3,8 @@ import React from 'react'
 import { NavLink } from 'react-router-dom'
 
 import './ButtonBar.scss'
+import 'src/scss/convenience/auto-scroll.scss'
+import 'src/scss/convenience/no-list.scss'
 
 export const CLASS_NAMES = {
   OPTION_CONTAINER: 'button-bar__option-container auto-scroll',

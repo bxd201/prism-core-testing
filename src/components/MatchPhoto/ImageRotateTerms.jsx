@@ -1,7 +1,10 @@
 // @flow
 import React, { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import 'src/providers/fontawesome/fontawesome'
 import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
+
+import 'src/scss/convenience/visually-hidden.scss'
 
 const baseClass = 'image-rotate-terms-modal'
 const wrapperClass = `${baseClass}__wrapper`

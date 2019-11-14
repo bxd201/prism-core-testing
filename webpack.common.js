@@ -2,11 +2,13 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const path = require('path')
-const PostCssWrapper = require('postcss-wrapper-loader')
+const PostCssWrapper = require('postcss-wrapper-loader-w-exclude')
 const { sassRules } = require('./webpack/sassRules')
 const webpack = require('webpack')
-const WebpackBar = require('webpackbar');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const isEmpty = require('lodash/isEmpty')
+const pick = require('lodash/pick')
+const WebpackBar = require('webpackbar')
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 const flags = require('./webpack/constants')
 const HardSourceWebpackPlugin = require('hard-source-webpack-plugin')
 
@@ -17,6 +19,27 @@ const APP_NAME = process.env.npm_package_name
 const API_PATH = (process.env.API_URL) ? process.env.API_URL : '$API_URL'
 const ML_API_URL = (process.env.ML_API_URL) ? process.env.ML_API_URL : '$ML_API_URL'
 const BASE_PATH = (process.env.WEB_URL) ? process.env.WEB_URL : '$WEB_URL'
+
+let allEntryPoints = {
+  ...flags.mainEntryPoints,
+  ...flags.facetEntryPoints
+}
+
+// if an ENTRY value has been passed...
+if (process.env.ENTRY) {
+  // ... split it by comma
+  const entries = process.env.ENTRY.split(',')
+  // keep only entry points specified by ENTRY
+  allEntryPoints = pick(allEntryPoints, entries)
+}
+
+// if we do not have any valid entry points...
+if (isEmpty(allEntryPoints)) {
+  // ... error out of the build
+  throw new Error('No valid entry points specified.')
+} else {
+  console.info('You are attempting to build the following entry points:', Object.keys(allEntryPoints))
+}
 
 module.exports = {
   stats: {
@@ -37,8 +60,8 @@ module.exports = {
   context: flags.rootPath,
   mode: flags.mode,
   entry: {
-    bundle: flags.appIndexPath,
-    embed: flags.embedPath
+    ...allEntryPoints,
+    cleanslate: flags.cleanslatePath
   },
   output: {
     path: flags.distPath,
@@ -50,6 +73,9 @@ module.exports = {
 
     alias: {
       constants: path.resolve(__dirname, 'src/constants/'),
+      config: path.resolve(__dirname, 'src/config/'),
+      src: path.resolve(__dirname, 'src/'),
+      __mocks__: path.resolve(__dirname, '__mocks__/'),
       variables: path.resolve(__dirname, 'src/shared/variables.js')
     }
   },
@@ -114,18 +140,16 @@ module.exports = {
       template: './src/templates/embeddable.html'
     }),
     new MiniCssExtractPlugin({
-      filename: '[name].css'
+      filename: 'css/[name].css'
     }),
-    new PostCssWrapper('bundle.css', '.cleanslate.prism'),
+    ...Object.keys(allEntryPoints).map(key => {
+      // wrap each entry's associated CSS file with .cleanslate.prism, excluding :root rules
+      return new PostCssWrapper(`css/${key}.css`, '.cleanslate.prism', /^:root/)
+    }),
     new CopyWebpackPlugin([
       {
         from: 'src/images',
         to: 'prism/images'
-      },
-      {
-        from: 'src/css/*',
-        to: 'css',
-        flatten: true
       }
     ]),
     new webpack.DefinePlugin({

@@ -20,9 +20,10 @@ import GenericMessage from '../Messages/GenericMessage'
 import TextButton from '../GeneralButtons/TextButton/TextButton'
 
 import { type Color } from '../../shared/types/Colors'
+import HeroLoader from '../Loaders/HeroLoader/HeroLoader'
 
 import './Search.scss'
-import HeroLoader from '../Loaders/HeroLoader/HeroLoader'
+import 'src/scss/externalComponentSupport/AutoSizer.scss'
 
 type Props = {
   colors: void | any[],

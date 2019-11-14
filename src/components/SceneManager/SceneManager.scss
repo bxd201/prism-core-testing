@@ -1,3 +1,5 @@
+@import 'src/scss/convenience/_keyframe-animations.scss';
+
 :root {
   #{ getVarName('scenes.hitAreaOutlineColor') }: getVar('scenes.hitAreaOutlineColor');
 }

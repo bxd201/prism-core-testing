@@ -2,6 +2,7 @@
 import React, { useState } from 'react'
 import './CollectionsHeaderWrapper.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import 'src/providers/fontawesome/fontawesome'
 import { Link } from 'react-router-dom'
 
 const baseClass = 'collections-header'

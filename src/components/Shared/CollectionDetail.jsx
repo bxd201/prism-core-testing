@@ -7,8 +7,10 @@ import ColorWallSwatch from '../Facets/ColorWall/ColorWallSwatch/ColorWallSwatch
 import ColorWallContext from '../Facets/ColorWall/ColorWallContext'
 import { add } from '../../store/actions/live-palette'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import 'src/providers/fontawesome/fontawesome'
 import * as scroll from 'scroll'
 import './CollectionDetail.scss'
+import 'src/scss/externalComponentSupport/AutoSizer.scss'
 import type { ColorCollectionDetail, Color } from '../../shared/types/Colors'
 
 const GRID_AUTOSCROLL_SPEED: number = 300

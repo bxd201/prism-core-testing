@@ -5,16 +5,6 @@
  * with a little less pain.
  */
 
-.inherit {
-  &-font {
-    font-family: inherit;
-    font-size: inherit;
-    letter-spacing: inherit;
-    text-transform: inherit;
-    white-space: inherit;
-  }
-}
-
 .cleanslate a {
   color: getVar('colors.primary');
 }

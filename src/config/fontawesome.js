@@ -1,4 +1,3 @@
-/* eslint-disable */
 // https://fontawesome.com/icons/search
 
 // fontawesome imports

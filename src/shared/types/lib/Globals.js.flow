@@ -11,3 +11,4 @@ declare var postMessage: Function
 declare var self: any
 declare var Worker: Function
 declare var FileReader: Function
+declare var APP_VERSION: string
