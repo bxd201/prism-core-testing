@@ -49,8 +49,8 @@ export class Prism extends Component<Props> {
           {!toggleCompareColor &&
             <div className='prism__root-wrapper'>
               <Route path='/' exact component={RootRedirect} />
-              <Route path='/active' exact component={SceneManager} />
-              <Route path={colorWallUrlPattern} component={ColorWallRouteComponent} />
+              <Route path='/active' exact component={() => <SceneManager expertColorPicks />} />
+              <Route path={colorWallUrlPattern} component={ColorWallComponent} />
               <Route path='/color-from-image' component={InspiredScene} />
               <Route path='/color-collections' component={(props) => (<ColorCollection isExpertColor={false} {...props.location.state} />)} />
               <Route path='/expert-colors' component={() => <ExpertColorPicks isExpertColor />} />

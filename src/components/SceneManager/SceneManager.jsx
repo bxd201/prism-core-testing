@@ -59,27 +59,28 @@ const getFullSizeAssetArrayByScene = memoizee((scene: Scene): string[] => {
 })
 
 type Props = {
-  scenes: Scene[],
-  sceneStatus: SceneStatus[],
-  type: string,
-  activeScenes: Array<number>,
-  maxActiveScenes: number,
-  loadScenes: Function,
   activateScene: Function,
-  deactivateScene: Function,
-  paintSceneSurface: Function,
-  changeSceneVariant: Function,
-  loadingScenes: boolean,
   activeColor: Color | void,
-  mainColor: Color | void,
-  previewColor: Color | void,
-  interactive: boolean,
-  sceneWorkspaces: SceneWorkspace[],
+  activeScenes: Array<number>,
   // eslint-disable-next-line react/no-unused-prop-types
   addNewMask: Function,
+  changeSceneVariant: Function,
+  deactivateScene: Function,
+  expertColorPicks: boolean,
+  interactive: boolean,
+  isEditMode: boolean,
+  loadingScenes: boolean,
+  loadScenes: Function,
+  mainColor: Color | void,
+  maxActiveScenes: number,
+  paintSceneSurface: Function,
+  previewColor: Color | void,
+  scenes: Scene[],
+  sceneStatus: SceneStatus[],
+  sceneWorkspaces: SceneWorkspace[],
   // eslint-disable-next-line react/no-unused-prop-types
   toggleEditMode: Function,
-  isEditMode: boolean,
+  type: string,
   updateCurrentSceneInfo: Function
 }
 
@@ -91,9 +92,10 @@ export class SceneManager extends PureComponent<Props, State> {
   static baseClass = 'prism-scene-manager'
   static contextType = ConfigurationContext
   static defaultProps = {
+    expertColorPicks: false,
+    interactive: true,
     maxActiveScenes: 2,
-    type: SCENE_TYPES.ROOM,
-    interactive: true
+    type: SCENE_TYPES.ROOM
   }
 
   state = {
@@ -176,7 +178,7 @@ export class SceneManager extends PureComponent<Props, State> {
 
   render () {
     // eslint-disable-next-line no-unused-vars
-    const { scenes, sceneStatus, loadingScenes, activeColor, previewColor, mainColor, activeScenes, type, interactive, sceneWorkspaces } = this.props
+    const { scenes, sceneStatus, loadingScenes, activeColor, previewColor, mainColor, activeScenes, type, interactive, sceneWorkspaces, expertColorPicks } = this.props
 
     if (loadingScenes) {
       return <CircleLoader className={`${SceneManager.baseClass}__loader`} />
@@ -185,7 +187,7 @@ export class SceneManager extends PureComponent<Props, State> {
     return (
       <DndProvider backend={HTML5Backend}>
         <div className={SceneManager.baseClass}>
-          {activeScenes.length === 1 && <ColorPickerSlide {...getSceneInfoById(find(scenes, { 'id': activeScenes[0] }), sceneStatus).variant} />}
+          {activeScenes.length === 1 && expertColorPicks ? <ColorPickerSlide {...getSceneInfoById(find(scenes, { 'id': activeScenes[0] }), sceneStatus).variant} /> : null}
           <div className={`${SceneManager.baseClass}__block ${SceneManager.baseClass}__block--tabs`}>
             {scenes.map((scene, index) => {
               const sceneInfo = getSceneInfoById(scene, sceneStatus)
