@@ -4,14 +4,17 @@
 
 ### Running Local Instance
 ```
+# will generate assets for ALL entrypoints
 npm start
 ```
 
-or, to build one or more specific facets instead of all of them:
+or, to build one or more specific entrypoint assets instead of all of them, pass the desired entrypoints to the `ENTRY` var as a comma-delimited list:
 ```
-# this will build prism.js, css/prism.css, colorWall.js, and css/colorWall.css
-ENTRY=prism,colorWall npm start
+# this will build bundle.js, css/bundle.css, and css/cleanslate.css
+ENTRY=bundle npm start
 ```
+
+Refer to `webpack/constants.js` for all available entrypoint names in the `facetEntryPoints` and `mainEntryPoints` exports.
 
 ### Deploy
 ```
