@@ -3,6 +3,7 @@
 
 # Node modules should be added by npm install and not included in source
 node_modules
+package-lock.json
 
 # Compiled assets
 dist
@@ -12,6 +13,9 @@ coverage
 
 # installed flow types
 flow-typed/npm
+
+# ignore jetbrains ide meta data
+.idea/
 
 # webpack cache
 .cache

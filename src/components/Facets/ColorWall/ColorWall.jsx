@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { injectIntl, FormattedMessage } from 'react-intl'
 import { TransitionGroup, CSSTransition } from 'react-transition-group'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import 'src/providers/fontawesome/fontawesome'
 import at from 'lodash/at'
 
 import { loadColors, emitColor } from '../../../store/actions/loadColors'
@@ -27,6 +28,7 @@ import GenericMessage from '../../Messages/GenericMessage'
 import Search from '../../Search/Search'
 import ButtonBar from '../../GeneralButtons/ButtonBar/ButtonBar'
 import HeroLoader from '../../Loaders/HeroLoader/HeroLoader'
+import facetBinder from 'src/facetBinder'
 import './ColorWall.scss'
 
 type StateProps = {
@@ -323,4 +325,7 @@ const mapDispatchToProps = (dispatch: Function) => {
   }
 }
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(injectIntl(WithConfigurationContext(ColorWall))))
+export default facetBinder(withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(injectIntl(
+    WithConfigurationContext(ColorWall)
+  ))), 'ColorWall')

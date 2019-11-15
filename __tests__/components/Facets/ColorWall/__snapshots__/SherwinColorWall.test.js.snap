@@ -2251,7 +2251,7 @@ exports[`SherwinColorWall with props should match snapshot 1`] = `
           "isInterior": true,
           "lightness": 0.6372549019607843,
           "lrv": 46.185,
-          "name": "Surfin'",
+          "name": "Surfin",
           "red": 115,
           "saturation": 0.5135135135135134,
           "similarColors": Array [
@@ -2774,7 +2774,7 @@ exports[`SherwinColorWall with props should match snapshot 1`] = `
           "isInterior": true,
           "lightness": 0.2568627450980392,
           "lrv": 8.636,
-          "name": "Connor's Lakefront",
+          "name": "Connor's Lakefront ",
           "red": 23,
           "saturation": 0.648854961832061,
           "similarColors": Array [
@@ -3248,7 +3248,7 @@ exports[`SherwinColorWall with props should match snapshot 1`] = `
           "isInterior": true,
           "lightness": 0.5862745098039216,
           "lrv": 30.19,
-          "name": "Dyer's Woad",
+          "name": "Dyer's Woad ",
           "red": 123,
           "saturation": 0.25118483412322273,
           "similarColors": Array [
@@ -5325,7 +5325,7 @@ exports[`SherwinColorWall with props should match snapshot 1`] = `
           "isInterior": true,
           "lightness": 0.707843137254902,
           "lrv": 51.208,
-          "name": "Tumblin' Tumbleweed",
+          "name": "Tumblin'Tumbleweed ",
           "red": 205,
           "saturation": 0.3288590604026846,
           "similarColors": Array [

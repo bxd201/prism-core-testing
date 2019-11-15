@@ -1,4 +1,5 @@
 /* eslint-env jest */
+
 import React from 'react'
 // import { shallow } from 'enzyme'
 import { mountWithIntl } from '__mocks__/helpers/intl'
@@ -68,7 +69,7 @@ describe('SceneVariantSwitch events', () => {
   })
 
   it('should call onchange on keydown event with keycode 32 for label', () => {
-    sceneVariantSwitch.find(labelSelect).simulate('keyDown', { keyCode: 13 })
+    sceneVariantSwitch.find(labelSelect).simulate('keyDown', { keyCode: 32 })
     expect(mockFn).toHaveBeenCalled()
   })
 

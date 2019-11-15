@@ -1,20 +1,50 @@
-const merge = require('webpack-merge')
+// TODO: brendan.do
+// Uncomment the clean plugin when we merge back into develop since we don't want the HTML files
+// going out onto production. But it needs to exist during the replatform testing.
+
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
-const WebpackCleanPlugin = require('webpack-clean')
-
 const common = require('./webpack.common.js')
+const flags = require('./webpack/constants')
+const merge = require('webpack-merge')
+const TerserPlugin = require('terser-webpack-plugin')
+const webpack = require('webpack')
 
-module.exports = merge(
+module.exports = merge.smart(
   common,
   {
-    mode: 'production',
-    devtool: 'source-map',
+    entry: {
+      author: flags.authorPath,
+      embed: flags.embedPath
+    },
+    mode: flags.mode,
+    devtool: 'cheap-source-map',
     plugins: [
       new CleanWebpackPlugin(),
-      new WebpackCleanPlugin([
-        'dist/index.html',
-        'dist/embeddable.html'
-      ])
-    ]
+      new webpack.HashedModuleIdsPlugin()
+    ],
+    optimization: {
+      minimizer: [
+        new TerserPlugin({
+          cache: true,
+          parallel: true,
+          extractComments: true,
+          sourceMap: true, // Must be set to true if using source-maps in production
+          terserOptions: {
+            warnings: false,
+            parse: {},
+            compress: {},
+            mangle: false, // Note `mangle.properties` is `false` by default.
+            module: false,
+            output: null,
+            toplevel: false,
+            nameCache: null,
+            ie8: false,
+            keep_classnames: true,
+            keep_fnames: false,
+            safari10: false
+          }
+        })
+      ]
+    }
   }
 )

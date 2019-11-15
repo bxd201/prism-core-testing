@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`snapshot match testing snapshot testing 1`] = `
+<div
+  className="color-collections__wrapper"
+>
+  <ColorCollectionsTab
+    collectionTabs={Array []}
+    showTab={[Function]}
+    tabIdShow="tab0"
+  />
+  <div
+    className="color-collections__collections-list"
+  >
+    <EnhanceComponent
+      data={Array []}
+      defaultItemsPerView={1}
+      isInfinity={true}
+      key="tab01571148421378"
+      showTab={[Function]}
+      tabMap={Object {}}
+    />
+  </div>
+</div>
+`;

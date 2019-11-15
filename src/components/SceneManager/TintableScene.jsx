@@ -13,7 +13,7 @@ import { TransitionGroup, CSSTransition } from 'react-transition-group'
 
 import { ensureFullyQualifiedAssetUrl } from '../../shared/helpers/DataUtils'
 import type { Color } from '../../shared/types/Colors'
-import type { Surface, SurfaceStatus } from '../../shared/types/Scene'
+import type { SceneWorkspace, Surface, SurfaceStatus } from '../../shared/types/Scene'
 import TintableSceneHitArea from './TintableSceneHitArea'
 import TintableSceneSurface from './TintableSceneSurface'
 import TintableSceneSVGDefs from './TintableSceneSVGDefs'
@@ -21,29 +21,33 @@ import GenericOverlay from '../Overlays/GenericOverlay/GenericOverlay'
 
 type Props = {
   background: string,
-  type: string,
-  surfaces: Surface[],
-  surfaceStatus: SurfaceStatus[],
-  width: number,
-  height: number,
-  render: boolean,
-  interactive: boolean,
-  sceneId: string | number,
-  previewColor?: Color | void,
-  mainColor?: Color | void, // eslint-disable-line
   clickToPaintColor?: Color,
-  onUpdateColor?: Function,
-  loading?: boolean,
   error?: boolean,
+  height: number,
+  imageValueCurve: string,
+  interactive: boolean,
+  isEditMode: boolean,
+  loading?: boolean,
+  mainColor?: Color | void, // eslint-disable-line
+  onUpdateColor?: Function,
+  previewColor?: Color | void,
+  render: boolean,
+  sceneId: number,
   sceneName: string,
-  imageValueCurve: string
+  sceneWorkspaces?: SceneWorkspace[],
+  surfaceStatus: SurfaceStatus[],
+  surfaces: Surface[],
+  type: string,
+  updateCurrentSceneInfo?: Function,
+  width: number,
 }
 
 type State = {
   activePreviewSurfaces: Array<string | number>,
   instanceId: string,
   hitAreaLoaded: boolean,
-  hitAreaError: boolean
+  hitAreaError: boolean,
+  currentSurface: number | null
 }
 
 class TintableScene extends PureComponent<Props, State> {
@@ -72,13 +76,16 @@ class TintableScene extends PureComponent<Props, State> {
     this.handleOut = this.handleOut.bind(this)
     this.handleHitAreaLoadingSuccess = this.handleHitAreaLoadingSuccess.bind(this)
     this.handleHitAreaLoadingError = this.handleHitAreaLoadingError.bind(this)
+    this.setCurrentSurface = this.setCurrentSurface.bind(this)
+    this.getMaskImage = this.getMaskImage.bind(this)
 
     this.state = {
       activePreviewSurfaces: [],
       // must be unique among ALL TintableScene instances so as not to cross-contaminate filter definition IDs
       instanceId: uniqueId('TS'),
       hitAreaError: false,
-      hitAreaLoaded: props.surfaces.length === 0
+      hitAreaLoaded: props.surfaces.length === 0,
+      currentSurface: null
     }
 
     // set non-state property of this instance for tracking how many hit areas have loaded -- we don't need to rerender as this changes
@@ -102,6 +109,11 @@ class TintableScene extends PureComponent<Props, State> {
 
   handleClickSurface = function handleClickSurface (surfaceId: string) {
     const { clickToPaintColor } = this.props
+    if (this.props.updateCurrentSceneInfo && this.props.isEditMode) {
+      this.props.updateCurrentSceneInfo(this.props.sceneId, surfaceId)
+
+      return
+    }
 
     if (clickToPaintColor) {
       this.updateSurfaceColor(surfaceId, clickToPaintColor)
@@ -136,11 +148,11 @@ class TintableScene extends PureComponent<Props, State> {
     })
   }
 
-  updateSurfaceColor (surfaceId: string, color: Color) {
+  updateSurfaceColor = function updateSurfaceColor (surfaceId: string, color: Color) {
     this.props.onUpdateColor && this.props.onUpdateColor(this.props.sceneId, surfaceId, color)
   }
 
-  getTintColorBySurface (surface: Surface): ?Color {
+  getTintColorBySurface = function getTintColorBySurface (surface: Surface): ?Color {
     const { previewColor, surfaceStatus } = this.props
     const { activePreviewSurfaces } = this.state
 
@@ -160,6 +172,22 @@ class TintableScene extends PureComponent<Props, State> {
     }
 
     return tintColor
+  }
+
+  setCurrentSurface = function setCurrentSurface (surfaceId: number) {
+    this.setState({ currentSurface: surfaceId })
+  }
+
+  getMaskImage = function getMaskImage (surface: Surface) {
+    if (this.props.sceneWorkspaces && this.props.sceneWorkspaces.length) {
+      const sceneWorkspaces = find(this.props.sceneWorkspaces, { surfaceId: surface.id })
+
+      if (sceneWorkspaces) {
+        return sceneWorkspaces.imageData
+      }
+    }
+
+    return surface.mask.path
   }
 
   render () {
@@ -196,7 +224,7 @@ class TintableScene extends PureComponent<Props, State> {
                     if (tintColor && mask) {
                       return (
                         <CSSTransition
-                          key={`${id}_${tintColor}`}
+                          key={`${id}_${tintColor.hex}`}
                           timeout={varValues.scenes.tintTransitionTime}
                           mountOnEnter
                           classNames={`${TintableScene.classNames.transition}__svg-defs__def-`}>
@@ -210,7 +238,7 @@ class TintableScene extends PureComponent<Props, State> {
                             filterColor={tintColor.hex}
                             filterImageValueCurve={imageValueCurve}
                             maskId={getMaskId(instanceId, id, tintColor.hex)}
-                            maskImage={mask.path}
+                            maskImage={this.getMaskImage(surface)}
                           />
                         </CSSTransition>
                       )
@@ -227,7 +255,7 @@ class TintableScene extends PureComponent<Props, State> {
                     if (tintColor) {
                       return (
                         <CSSTransition
-                          key={`${surface.id}_${tintColor}`}
+                          key={`${surface.id}_${tintColor.hex}`}
                           timeout={varValues.scenes.tintTransitionTime}
                           mountOnEnter
                           classNames={`${TintableScene.classNames.transition}__colors__color-`}>
@@ -287,10 +315,10 @@ class TintableScene extends PureComponent<Props, State> {
 
 export default TintableScene
 
-function getFilterId (sceneId: string | number, surfaceId: string | number, suffix?: string) {
+function getFilterId (sceneId: string, surfaceId: string | number, suffix?: string) {
   return kebabCase(`scene${sceneId}_surface${surfaceId}_tinter-filter${suffix ? `_${suffix}` : ''}`)
 }
 
-function getMaskId (sceneId: string | number, surfaceId: string | number, suffix?: string) {
+function getMaskId (sceneId: string, surfaceId: string | number, suffix?: string) {
   return kebabCase(`scene${sceneId}_surface${surfaceId}_object-mask${suffix ? `_${suffix}` : ''}`)
 }

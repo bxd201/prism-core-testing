@@ -1,9 +1,44 @@
 .prism-live-palette {
-  max-width: 990px;
+  max-width: 100%;
+  display: flex;
   overflow: hidden;
   background-color: getVar( "colors.white" );
   border: 1px solid getVar( "colors.grey" );
   padding: $livePalette__chip-side-margin;
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    display: none;
+    @include respond-above(sm) {
+      display: flex;
+    }
+    &__name {
+      display: none;
+      @include respond-above(md) {
+        display: block;
+      }
+      margin: 1em;
+    }
+    &__compare-button{
+      padding: 0.5em 1em;
+      margin-right: 5px;
+      border-top: 1px solid #ebebeb;
+      font-weight: 600;
+      font-size: 16px;
+      outline:none;
+      border-top: none;
+      @include respond-above(md) {
+        border-top: 1px solid #ebebeb;
+      }
+      &:hover{
+        background-color: #2cabe2;
+        color: #fff;
+        cursor: pointer;
+      }
+    }
+  }
 
   &__list {
     display: flex;
@@ -74,6 +109,14 @@
       font-size: 0.7rem;
       text-decoration: none;
     }
+
+    &__button{
+      position: absolute;
+      top:50%;
+      left:50%;
+      transform: translate(-50%, -50%);
+      outline:none;
+    }
   }
 
   &__icon {
@@ -124,5 +167,68 @@
     position: absolute;
     bottom: 0.5em;
     color: inherit;
+  }
+}
+
+.live-palette-modal {
+  &__wrapper {
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.7);
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    left: 0;
+    overflow-y: scroll;
+    position: absolute;
+    right: 0;
+    top: 2px;
+    z-index: 1000;
+    &--active {
+      display: flex;
+    }
+    @include respond-above(md) {
+      overflow: visible;
+    }
+  }
+  &__container {
+    background-color: #f0f0f0;
+    box-sizing: border-box;
+    color: #333;
+    font-size: 1em;
+    font-weight: bold;
+    height: auto;
+    line-height: 21.6px;
+    margin: 0;
+    padding: 14px;
+    position: relative;
+    text-align: center;
+    width: 90%;
+    @include respond-above(md) {
+      max-width: 480px;
+      overflow: visible;
+    }
+  }
+  &__content {
+    &__title {
+      font-size: 125%;
+    }
+    margin: 0.5em 0;
+  }
+  &__button {
+    background: #fff;
+    border: 1px solid #f2f2f2;
+    color: #333;
+    display: inline-block;
+    margin: 1em 0px 0px 1em;
+    outline: none;
+    padding: 0.75em 1.75em;
+    text-align: center;
+    text-transform: uppercase;
+    min-width: 140px;
+    &:hover {
+      border-color: getVar("colors.summerSkyBlue");
+      color: getVar("colors.summerSkyBlue");
+    }
   }
 }

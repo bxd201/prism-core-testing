@@ -1,14 +1,16 @@
-const webpack = require('webpack')
-const path = require('path')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const PostCssWrapper = require('postcss-wrapper-loader')
-const sass = require('node-sass')
-const sassUtils = require('node-sass-utils')(sass)
-const varValues = Object.freeze(require(__dirname + '/src/shared/variables.js').varValues)
-const varNames = Object.freeze(require(__dirname + '/src/shared/variables.js').varNames)
-const memoizee = require('memoizee')
+const path = require('path')
+const PostCssWrapper = require('postcss-wrapper-loader-w-exclude')
+const { sassRules } = require('./webpack/sassRules')
+const webpack = require('webpack')
+const isEmpty = require('lodash/isEmpty')
+const pick = require('lodash/pick')
+const WebpackBar = require('webpackbar')
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+const flags = require('./webpack/constants')
+const HardSourceWebpackPlugin = require('hard-source-webpack-plugin')
 
 // create constants that correlate to environment variables to be injected
 const APP_VERSION = process.env.npm_package_version
@@ -18,141 +20,85 @@ const API_PATH = (process.env.API_URL) ? process.env.API_URL : '$API_URL'
 const ML_API_URL = (process.env.ML_API_URL) ? process.env.ML_API_URL : '$ML_API_URL'
 const BASE_PATH = (process.env.WEB_URL) ? process.env.WEB_URL : '$WEB_URL'
 
-const getVarGenerator = (function () {
-  const cssUnits = [
-    'rem',
-    'em',
-    'vh',
-    'vw',
-    'vmin',
-    'vmax',
-    'ex',
-    '%',
-    'px',
-    'cm',
-    'mm',
-    'in',
-    'pt',
-    'pc',
-    'ch'
-  ]
+let allEntryPoints = {
+  ...flags.mainEntryPoints,
+  ...flags.facetEntryPoints
+}
 
-  // look for anything starting with a whole number or decimal and ending in one of the above units
-  const unitRegex = new RegExp(`^([0-9.]+)(${cssUnits.join('|')})$`)
-  const numberRegex = new RegExp(`^[0-9.]+$`)
+// if an ENTRY value has been passed...
+if (process.env.ENTRY) {
+  // ... split it by comma
+  const entries = process.env.ENTRY.split(',')
+  // keep only entry points specified by ENTRY
+  allEntryPoints = pick(allEntryPoints, entries)
+}
 
-  const convertStringToSassDimension = memoizee(function convertStringToSassDimension (str) {
-    // Only attempt to convert strings
-    if (typeof str !== 'string') {
-      return str
-    }
+allEntryPoints = {
+  ...allEntryPoints,
+  // adding back in everything necessary after ENTRY filtering has been considered
+  ...flags.fixedEntryPoints
+}
 
-    const pureNumber = numberRegex.exec(str)
-
-    if (pureNumber) {
-      return new sassUtils.SassDimension(parseFloat(pureNumber[0], 10))
-    }
-
-    const result = unitRegex.exec(str)
-
-    if (result) {
-      const value = result[ 1 ]
-      const unit = result[ 2 ]
-
-      return new sassUtils.SassDimension(parseFloat(value, 10), unit)
-    }
-
-    return str
-  }, { primitive: true, length: 1 })
-
-  function processVarData (data) {
-    var type = typeof data
-
-    var returner
-
-    // Convert to SassDimension if dimenssion
-    if (type === 'number') {
-      returner = new sassUtils.SassDimension(parseFloat(data, 10))
-    } else if (type === 'string') {
-      returner = convertStringToSassDimension(data)
-    } else if (type === 'object') {
-      // if it's an object, we'll need to recursively iterate through it
-      returner = {}
-      Object.keys(data).forEach(function (key) {
-        returner[ key ] = processVarData(data[ key ])
-      })
-    }
-
-    return returner
-  }
-
-  return function getVarGenerator (values) {
-    const getVarInternal_memoized = memoizee(function getVarInternal (keys) {
-      var _keys = keys.split('.'); var returner; var i
-
-      returner = Object.assign({}, values)
-
-      for (i = 0; i < _keys.length; i++) {
-        returner = returner[ _keys[ i ] ]
-      }
-
-      return sassUtils.castToSass(processVarData(returner))
-    }, { primitive: true, length: 1 })
-
-    return (keys) => getVarInternal_memoized(keys.getValue())
-  }
-})()
-
-const sassRules = [
-  MiniCssExtractPlugin.loader,
-  'css-loader',
-  'postcss-loader',
-  {
-    loader: 'sass-loader',
-    options: {
-      functions: {
-        '_getVar($keys)': getVarGenerator(varValues),
-        '_getVarName($keys)': getVarGenerator(varNames)
-      }
-    }
-  },
-  {
-    loader: 'sass-resources-loader',
-    options: {
-      resources: [
-        path.resolve(__dirname, 'src/scss/mixins/mixins.scss'),
-        path.resolve(__dirname, 'src/scss/functions/functions.scss'),
-        path.resolve(__dirname, 'src/scss/variables.scss')
-      ]
-    }
-  }
-]
+// if we do not have any valid entry points...
+if (isEmpty(allEntryPoints)) {
+  // ... error out of the build
+  throw new Error('No valid entry points specified.')
+} else {
+  console.info('You are attempting to build the following entry points:', Object.keys(allEntryPoints))
+}
 
 module.exports = {
-  entry: {
-    bundle: path.resolve(__dirname, './src/index.jsx'),
-    author: path.resolve(__dirname, './src/author.js'),
-    embed: path.resolve(__dirname, './src/embed.js')
+  stats: {
+    colors: true,
+    hash: true,
+    timings: true,
+    assets: true,
+    chunks: true,
+    chunkModules: true,
+    modules: true,
+    children: false,
+    errors: true
   },
+  target: 'web',
+  watch: false,
+  cache: !flags.production,
+  devtool: false,
+  context: flags.rootPath,
+  mode: flags.mode,
+  entry: allEntryPoints,
   output: {
-    path: path.join(__dirname, '/dist'),
+    path: flags.distPath,
     filename: '[name].js',
     globalObject: 'self'
   },
   resolve: {
+    symlinks: false,
+
     alias: {
       constants: path.resolve(__dirname, 'src/constants/'),
+      config: path.resolve(__dirname, 'src/config/'),
+      src: path.resolve(__dirname, 'src/'),
+      __mocks__: path.resolve(__dirname, '__mocks__/'),
       variables: path.resolve(__dirname, 'src/shared/variables.js')
     }
   },
   module: {
+    strictExportPresence: true,
     rules: [
       {
+        test: flags.nodeModulesPath,
+        resolve: {
+          mainFields: ['module', 'jsnext:main', 'browser', 'main']
+        }
+      },
+      {
         test: /\.(sc|sa|c)ss$/,
+        include: flags.srcPath,
         use: sassRules
       },
       {
         test: /\.worker\.js$/,
+        include: flags.srcPath,
         use: [ 'babel-loader', 'worker-loader' ]
       },
       {
@@ -163,7 +109,30 @@ module.exports = {
       }
     ]
   },
+  optimization: {
+    minimize: flags.production,
+    concatenateModules: flags.production,
+    flagIncludedChunks: flags.production,
+    checkWasmTypes: flags.production,
+    mangleWasmImports: false,
+    mergeDuplicateChunks: true,
+    moduleIds: flags.production ? 'hashed' : 'named',
+    namedChunks: !flags.production,
+    namedModules: !flags.production,
+    nodeEnv: flags.mode,
+    noEmitOnErrors: flags.production,
+    occurrenceOrder: flags.production,
+    portableRecords: false,
+    providedExports: true,
+    removeAvailableModules: true,
+    removeEmptyChunks: true,
+    sideEffects: flags.production,
+    usedExports: flags.production
+  },
   plugins: [
+    new WebpackBar(),
+    flags.dev && new BundleAnalyzerPlugin(),
+
     new HtmlWebpackPlugin({
       inject: false,
       template: './src/index.html'
@@ -174,27 +143,58 @@ module.exports = {
       template: './src/templates/embeddable.html'
     }),
     new MiniCssExtractPlugin({
-      filename: '[name].css'
+      filename: 'css/[name].css'
     }),
-    new PostCssWrapper('bundle.css', '.cleanslate.prism'),
+    ...Object.keys(allEntryPoints).map(key => {
+      // wrap each entry's associated CSS file with .cleanslate.prism, excluding :root rules
+      // excluding cleanslate CSS
+      if (key !== flags.cleanslateEntryPointName) {
+        return new PostCssWrapper(`css/${key}.css`, '.cleanslate.prism', /^:root/)
+      }
+    }),
     new CopyWebpackPlugin([
       {
         from: 'src/images',
         to: 'prism/images'
-      },
-      {
-        from: 'src/css/*',
-        to: 'css',
-        flatten: true
       }
     ]),
     new webpack.DefinePlugin({
       'API_PATH': JSON.stringify(API_PATH),
+      'APP_NAME': JSON.stringify(APP_NAME),
+      'APP_VERSION': JSON.stringify(APP_VERSION),
       'BASE_PATH': JSON.stringify(BASE_PATH),
-      'ML_API_URL': JSON.stringify(ML_API_URL),
-      'APP_VERSION': JSON.stringify(APP_VERSION)
-    })
-  ],
+      'ML_API_URL': JSON.stringify(ML_API_URL)
+    }),
+    !flags.production && new HardSourceWebpackPlugin({
+      configHash: flags.mode,
+      cacheDirectory: path.join(flags.rootPath, '.cache/hard-source/[confighash]'),
+      info: {
+        mode: 'test',
+        level: 'debug'
+      },
+      environmentHash: {
+        root: flags.rootPath,
+        directories: [],
+        files: ['package-lock.json', 'yarn.lock']
+      }
+    }),
+    !flags.production && new HardSourceWebpackPlugin.ExcludeModulePlugin([
+      {
+        // HardSource works with mini-css-extract-plugin but due to how
+        // mini-css emits assets, assets are not emitted on repeated builds with
+        // mini-css and hard-source together. Ignoring the mini-css loader
+        // modules, but not the other css loader modules, excludes the modules
+        // that mini-css needs rebuilt to output assets every time.
+        test: /mini-css-extract-plugin[\\/]dist[\\/]loader/
+      },
+      {
+        test: /file-loader/
+      },
+      {
+        test: /css-loader/
+      }
+    ])
+  ].filter(p => p),
   devServer: {
     host: '0.0.0.0', // allows for hitting this from ouside the host machine
     https: true,

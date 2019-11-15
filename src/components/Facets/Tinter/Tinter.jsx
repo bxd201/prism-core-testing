@@ -3,6 +3,7 @@ import React from 'react'
 
 import LivePalette from '../../LivePalette/LivePalette'
 import SceneManager from '../../SceneManager/SceneManager'
+import facetBinder from 'src/facetBinder'
 
 type Props = {
   sceneSet?: string
@@ -17,4 +18,4 @@ export function Tinter ({ sceneSet }: Props) {
   )
 }
 
-export default Tinter
+export default facetBinder(Tinter, 'Tinter')

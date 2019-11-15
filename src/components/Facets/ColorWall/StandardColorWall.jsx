@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 
 import { BLANK_SWATCH } from 'constants/globals'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import 'src/providers/fontawesome/fontawesome'
 import { convertUnorderedColorsToGrid } from '../../../shared/helpers/ColorDataUtils'
 import { generateColorWallPageUrl, generateColorDetailsPageUrl, fullColorName } from '../../../shared/helpers/ColorUtils'
 import { compareKebabs } from '../../../shared/helpers/StringUtils'
@@ -15,6 +16,8 @@ import ColorWallSwatchList from './ColorWallSwatchList'
 import GenericMessage from '../../Messages/GenericMessage'
 
 import { type ColorIdList, type ColorMap, type Color, type ColorIdGrid } from '../../../shared/types/Colors'
+
+import 'src/scss/convenience/visually-hidden.scss'
 
 type Props = {
   colors: ColorIdList,

@@ -128,7 +128,8 @@ class ImagePreloader extends PureComponent<Props, State> {
   }
 
   render () {
-    const { el, ...other } = this.props
+    // remove el and preload because they are specific to ImagePreloader -- we'll pass the other props along
+    const { el, preload, ...other } = this.props
     const { error, loading } = this.state
 
     return React.createElement(el, Object.assign({}, other, { error: error, loading: loading }))

@@ -6,6 +6,7 @@ import { ROUTE_PARAMS } from 'constants/globals'
 
 import ColorWallRouteComponent from '../ColorWall/ColorWallRouteComponent'
 import EnvAdapter from '../../EnvAdapter/EnvAdapter'
+import facetBinder from 'src/facetBinder'
 
 const colorWallBaseUrl = `/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_WALL}`
 
@@ -33,4 +34,5 @@ export function ColorWallFacet (props: ColorWallFacetProps) {
     </React.Fragment>
   )
 }
-export default withRouter(React.memo<ColorWallFacetProps>(ColorWallFacet))
+
+export default facetBinder(withRouter(React.memo<ColorWallFacetProps>(ColorWallFacet)), 'ColorWallFacet')

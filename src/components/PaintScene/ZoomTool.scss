@@ -1,0 +1,44 @@
+.zoom-tool {
+  &__wrapper {
+    display: flex;
+    width: 100%;
+    &> span {
+      display: block;
+      float: left;
+      font-size: .75em;
+      line-height: 1.5;
+      text-align: center;
+      width: 13%;
+    }
+  }
+  &__zoom-slider {
+  display: block;
+  float: left;
+  height: 15px;
+  margin: 0 3%;
+  position: relative;
+  width: 70%;
+  &:before {
+    background: white;
+    border: 1px solid #c8c8c8;
+    content: '';
+    display: block;
+    height: 6px;
+    margin: 0 2%;
+    position: absolute;
+    top: 4px;
+    width: 96%;
+  }
+  }
+  &__zoom-slider-circle {
+    background: #2cabe2;
+    border: 1px solid #2cabe2;
+    border-radius: 50%;
+    color: white;
+    display: inline-block;
+    line-height: 15px;
+    position: relative;
+    width: 15px;
+    height: 15px;
+  }
+}

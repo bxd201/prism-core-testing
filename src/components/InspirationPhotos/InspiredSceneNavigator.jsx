@@ -1,75 +1,116 @@
 // @flow
-import React from 'react'
 import CollectionsHeaderWrapper from '../CollectionsHeaderWrapper/CollectionsHeaderWrapper'
-import ColorCollectionsTab from '../ColorCollections/ColorCollectionsTab'
-import { getImagesCollectionsData, collectionTabs } from './data'
-import '../ColorCollections/ColorCollections.scss'
+import ColorCollectionsTab from '../Shared/ColorCollectionsTab'
 import ImageScenesWithCarousel from './InspiredScene'
-import cloneDeep from 'lodash/cloneDeep'
+import React from 'react'
+
+import { connect } from 'react-redux'
+import { loadInspirationalPhotos as loadData } from '../../store/actions/inspirationalPhotos'
+
+import '../ColorCollections/ColorCollections.scss'
 
 const baseClass = 'color-collections'
 type ComponentProps = {
-  setHeader: Function
+  collectionTabs: Array,
+  flatData: Array,
+  loadData: Function,
+  setHeader: Function,
+  tabMap: Object
 }
 
 type ComponentState = {
-  tabId: string,
-  isClickTab: boolean
+  tabId: string
 }
 
-class InspiredSceneNavigator extends React.Component<ComponentProps, ComponentState> {
-  key: string
-  currTab: Array<Object>
-  tabMap: Object
-  collectionData: Object
-
+export class InspiredSceneNavigator extends React.Component<ComponentProps, ComponentState> {
   constructor (props) {
     super(props)
-    const { collectionData, tabMap } = getImagesCollectionsData(collectionTabs, 'tab1')
-    this.collectionData = cloneDeep(collectionData)
-    this.tabMap = cloneDeep(tabMap)
 
     this.state = {
-      tabId: 'tab1',
-      isClickTab: false
+      tabId: 'tab0',
+      key: 'tab0' + Date.now().toString()
     }
   }
+
   componentDidMount () {
+    this.props.loadData()
     const headerContent = 'Inspirational Photos'
     this.props.setHeader(headerContent)
   }
 
-    showTab = (id: string, isClickTab: boolean) => {
-      this.setState({ tabId: id, isClickTab: isClickTab })
-      const orderedTabList = cloneDeep(collectionTabs)
-      orderedTabList.forEach((tab, index) => {
-        if (id === tab.id) {
-          this.currTab = orderedTabList.slice(index).concat(orderedTabList.splice(0, index))
-        }
-      })
-    }
-
-    render () {
-      const { tabId, isClickTab } = this.state
-      if (isClickTab) {
-        const { collectionData, tabMap } = getImagesCollectionsData(this.currTab, tabId)
-        this.collectionData = cloneDeep(collectionData)
-        this.tabMap = cloneDeep(tabMap)
-        /* this key will be equal to timestamp which create new instance for child component
-           so when user switch between each tab it will create fresh instance that avoid
-           currPointer conflicts
-        */
-        this.key = tabId + Date.now().toString()
-      }
-      return (
-        <div className={`${baseClass}__wrapper`}>
-          <ColorCollectionsTab collectionTabs={collectionTabs} showTab={this.showTab} tabIdShow={tabId} />
-          <div className={`${baseClass}__collections-list`}>
-            <ImageScenesWithCarousel key={this.key} data={this.collectionData} tabMap={this.tabMap} showTab={this.showTab} isInfinity defaultItemsPerView={1} />
-          </div>
-        </div>
+  showTab = (id: string) => {
+    this.setState({
+      tabId: id,
+      rotatedFlatData: this.rotateArray(
+        this.props.flatData,
+        Object.values(this.props.tabMap).indexOf(id)
       )
-    }
+    })
+  }
+
+  rotateArray = (arr, index) => {
+    return arr.slice(index).concat(arr.slice(0, index))
+  }
+
+  render () {
+    return (
+      <div className={`${baseClass}__wrapper`}>
+        <ColorCollectionsTab
+          collectionTabs={this.props.collectionTabs}
+          showTab={this.showTab}
+          tabIdShow={this.state.tabId}
+        />
+        <div className={`${baseClass}__collections-list`}>
+          <ImageScenesWithCarousel
+            data={this.state.rotatedFlatData || this.props.flatData}
+            defaultItemsPerView={1}
+            isInfinity
+            key={this.state.key}
+            showTab={this.showTab}
+            tabMap={this.props.tabMap}
+          />
+        </div>
+      </div>
+    )
+  }
 }
 
-export default CollectionsHeaderWrapper(InspiredSceneNavigator)
+const mapStateToProps = (state) => {
+  const // eslint-disable-line one-var
+    { inspirationalPhotos = { data: [] } } = state,
+    tabMap = [],
+    collectionTabs = [],
+    flatData = inspirationalPhotos.data.flatMap(
+      (scene, i) => (
+        // update collectionTabs
+        collectionTabs.push({ id: `tab${i}`, tabName: scene.name }), // eslint-disable-line no-sequences
+        // update tabMaps
+        tabMap.push(Array(scene.sceneDefinition.length).fill(`tab${i}`)),
+        // create flatData
+        scene.sceneDefinition.map((def, x) => ({
+          img: def.photoUrl,
+          id: `tab${i}-${x}`,
+          initPins: def.initPins
+        }))
+      )
+    )
+
+  return {
+    collectionTabs,
+    flatData,
+    tabMap: tabMap
+      .flat()
+      .reduce((acc, cur, i) => (acc[i] = cur, acc), {}) // eslint-disable-line no-return-assign, no-sequences
+  }
+}
+
+const mapDispatchToProps = (dispatch: Function) => {
+  return {
+    loadData () { dispatch(loadData()) }
+  }
+}
+
+export default CollectionsHeaderWrapper(connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(InspiredSceneNavigator))

@@ -7,6 +7,7 @@ import at from 'lodash/at'
 
 import { BLANK_SWATCH, SW_CHUNK_SIZE } from 'constants/globals'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import 'src/providers/fontawesome/fontawesome'
 import { convertCategorizedColorsToGrid } from '../../../shared/helpers/ColorDataUtils'
 import { generateColorWallPageUrl, generateColorDetailsPageUrl, fullColorName } from '../../../shared/helpers/ColorUtils'
 import { compareKebabs } from '../../../shared/helpers/StringUtils'
@@ -18,6 +19,7 @@ import WithConfigurationContext from '../../../contexts/ConfigurationContext/Wit
 
 import { type CategorizedColorIdGrid, type ColorMap, type Color, type ColorIdGrid } from '../../../shared/types/Colors'
 import { type Configuration } from '../../../shared/types/Configuration'
+import 'src/scss/convenience/visually-hidden.scss'
 
 type Props = {
   colors: CategorizedColorIdGrid,
@@ -127,8 +129,7 @@ export class SherwinColorWall extends PureComponent<Props> {
         {activeColor && (
           <div className='color-wall-wall__btns'>
             <Link to={generateColorWallPageUrl(section, family)} className='color-wall-wall__btns__btn' title={translatedMessages.ZOOM_OUT}>
-              <FontAwesomeIcon icon='search-minus' size='lg' />
-              <span className='visually-hidden'><FormattedMessage id='ZOOM_OUT' /></span>
+              <FontAwesomeIcon title={this.props.intl.messages.ZOOM_OUT} icon='search-minus' size='lg' />
             </Link>
           </div>
         )}

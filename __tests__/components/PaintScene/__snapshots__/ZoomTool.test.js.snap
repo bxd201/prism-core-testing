@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ZoomTool render testing should match snapshot 1`] = `
+<div
+  className="zoom-tool__wrapper"
+>
+  <span>
+    ZOOM OUT
+  </span>
+  <div
+    className="zoom-tool__zoom-slider"
+  >
+    <div
+      className="zoom-tool__zoom-slider-circle"
+      draggable={true}
+      onDragStart={[Function]}
+      onMouseDown={[Function]}
+      role="presentation"
+      style={
+        Object {
+          "left": "0px",
+        }
+      }
+    />
+  </div>
+  <span>
+    ZOOM IN
+  </span>
+</div>
+`;

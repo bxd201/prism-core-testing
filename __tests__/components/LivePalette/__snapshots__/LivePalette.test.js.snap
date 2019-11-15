@@ -1,12 +1,33 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`snapshot testing for LivePalette component  LivePalette component should match snapshot 1`] = `
-<Memo()
+<DndProvider
   backend={[Function]}
 >
   <div
     className="prism-live-palette"
   >
+    <LivePalletteModal
+      isActive={false}
+    />
+    <div
+      className="prism-live-palette__header"
+    >
+      <span
+        className="prism-live-palette__header__name"
+      >
+        <FormattedMessage
+          id="PALETTE_TITLE"
+          values={Object {}}
+        />
+      </span>
+      <button
+        className="prism-live-palette__header__compare-button"
+        onClick={[Function]}
+      >
+        Compare Color
+      </button>
+    </div>
     <div
       className="prism-live-palette__list"
     >
@@ -58,6 +79,7 @@ exports[`snapshot testing for LivePalette component  LivePalette component shoul
           }
         }
         index={0}
+        isCompareColor={false}
         key="1544"
         moveColor={[Function]}
         onClick={[Function]}
@@ -114,6 +136,7 @@ exports[`snapshot testing for LivePalette component  LivePalette component shoul
           }
         }
         index={1}
+        isCompareColor={false}
         key="2446"
         moveColor={[Function]}
         onClick={[Function]}
@@ -142,6 +165,7 @@ exports[`snapshot testing for LivePalette component  LivePalette component shoul
           rotation={null}
           size="2x"
           spin={false}
+          swapOpacity={false}
           symbol={false}
           title=""
           transform={null}
@@ -174,5 +198,5 @@ exports[`snapshot testing for LivePalette component  LivePalette component shoul
       className="prism-live-palette__color-description"
     />
   </div>
-</Memo()>
+</DndProvider>
 `;

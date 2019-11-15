@@ -1,10 +1,10 @@
 /* eslint-env jest */
+
 import React from 'react'
-import { shallow } from 'enzyme'
 import { SherwinColorWall } from 'src/components/Facets/ColorWall/SherwinColorWall'
 import * as Colors from '__mocks__/data/color/Colors'
 import { FormattedMessage } from 'react-intl'
-import CircleLoader from 'src/components/Loaders/CircleLoader/CircleLoader'
+import HeroLoader from 'src/components/Loaders/HeroLoader/HeroLoader'
 import GenericMessage from 'src/components/Messages/GenericMessage'
 import ColorWallSwatchList from 'src/components/Facets/ColorWall/ColorWallSwatchList'
 import { shallowWithIntl } from '__mocks__/helpers/intl'
@@ -47,9 +47,9 @@ describe('SherwinColorWall with props', () => {
     expect(sherwinColorWall).toMatchSnapshot()
   })
 
-  it('should render CircleLoader when loading prop is true', () => {
+  it('should render HeroLoader when loading prop is true', () => {
     sherwinColorWall.setProps({ loading: true })
-    expect(sherwinColorWall.find(CircleLoader).exists()).toBe(true)
+    expect(sherwinColorWall.find(HeroLoader).exists()).toBe(true)
   })
 
   it('should show error message when error prop is true', () => {

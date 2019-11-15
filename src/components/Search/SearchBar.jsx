@@ -1,7 +1,7 @@
 // @flow
 import React, { PureComponent } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSearch } from '@fortawesome/pro-light-svg-icons'
+import 'src/providers/fontawesome/fontawesome'
 
 import './SearchBar.scss'
 
@@ -28,7 +28,7 @@ export class SearchBar extends PureComponent<Props> {
 
     return (
       <div className={`${baseClass}`}>
-        <FontAwesomeIcon className='search-icon' icon={faSearch} size='lg' />
+        <FontAwesomeIcon className='search-icon' icon={['fal', 'search']} size='lg' />
         <div className={`${baseClass}__wrapper ${baseClass}__wrapper--${outline}`}>
           <input
             value={value}

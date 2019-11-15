@@ -9,7 +9,7 @@ const defaultProp = {
   connectDragSource: jest.fn((el) => el),
   connectDropTarget: jest.fn((el) => el)
 }
-
+/** @see https://github.com/react-dnd/react-dnd/issues/1494 */
 const createActiveSlot = (props) => {
   return mountWithDnd(<ActiveSlot {...defaultProp} {...props} />)
 }

@@ -1,3 +1,5 @@
+@import 'src/scss/convenience/_keyframe-animations.scss';
+
 :root {
   #{ getVarName('scenes.hitAreaOutlineColor') }: getVar('scenes.hitAreaOutlineColor');
 }
@@ -50,7 +52,12 @@
   font-size: $base;
   width: 100%;
   height: 100%;
-
+  position: relative;
+  overflow: hidden;
+  padding-top:3em;
+  @include respond-above(sm) {
+    padding-top:0em;
+  }
   &__loader {
     color: getVar('colors.primary');
     left: 50%;

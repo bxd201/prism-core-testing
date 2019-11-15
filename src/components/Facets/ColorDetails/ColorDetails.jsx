@@ -1,6 +1,7 @@
 // @flow
 import React, { PureComponent } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import 'src/providers/fontawesome/fontawesome'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import has from 'lodash/has'
@@ -18,6 +19,7 @@ import SimilarColors from './SimilarColors/SimilarColors'
 import SceneManager from '../../SceneManager/SceneManager'
 import WithConfigurationContext from '../../../contexts/ConfigurationContext/WithConfigurationContext'
 import { ROUTE_PARAM_NAMES } from 'constants/globals'
+import facetBinder from 'src/facetBinder'
 
 import { paintAllMainSurfaces } from '../../../store/actions/scenes'
 import { varValues } from 'variables'
@@ -25,6 +27,7 @@ import { varValues } from 'variables'
 import type { ColorMap, Color } from '../../../shared/types/Colors'
 import type { Configuration } from '../../../shared/types/Configuration'
 
+import 'src/scss/convenience/visually-hidden.scss'
 import './ColorDetails.scss'
 
 type StateProps = {
@@ -260,4 +263,12 @@ const mapDispatchToProps = (dispatch: Function) => {
   }
 }
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(injectIntl(WithConfigurationContext(ColorDetails))))
+export default withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(
+    injectIntl(
+      WithConfigurationContext(
+        facetBinder(ColorDetails, 'ColorDetails')
+      )
+    )
+  )
+)

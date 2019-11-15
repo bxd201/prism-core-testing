@@ -1,0 +1,4 @@
+// I would love for this to be imported straight into the JS, but webpack's choking on some sort of
+// loader misconfiguration that I've already wasted too much time on trying to figure out. This works
+// just as well.
+@import '~@fortawesome/fontawesome-svg-core/styles.css';

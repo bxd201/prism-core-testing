@@ -1,0 +1,18 @@
+.match-photo-picker {
+  &__wrapper {
+    width: 100%;
+    /* @todo - This just stopped the annoy jank, needs to be properly fixed. -RS */
+    cursor: pointer;
+  }
+  &__canvas {
+    &--portrait {
+      margin: 0 auto;
+      text-align: center;
+      display: block;
+    }
+  }
+  &__hidden-image {
+    visibility: hidden;
+    display: none;
+  }
+}

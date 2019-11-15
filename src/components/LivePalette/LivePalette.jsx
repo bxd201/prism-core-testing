@@ -1,6 +1,7 @@
 // @flow
 import React, { PureComponent } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import 'src/providers/fontawesome/fontawesome'
 import { FormattedMessage } from 'react-intl'
 import { connect } from 'react-redux'
 import without from 'lodash/without'
@@ -9,12 +10,13 @@ import flatMap from 'lodash/flatMap'
 import intersection from 'lodash/intersection'
 import update from 'immutability-helper'
 import { Link } from 'react-router-dom'
+import LivePaletteModal from './LivePaletteModal'
+import store from '../../store/store'
+import { LP_MAX_COLORS_ALLOWED, MIN_COMPARE_COLORS_ALLOWED } from 'constants/configurations'
 import { DndProvider } from 'react-dnd'
 import HTML5Backend from 'react-dnd-html5-backend'
 
-import { LP_MAX_COLORS_ALLOWED } from 'constants/configurations'
-
-import { activate, reorder } from '../../store/actions/live-palette'
+import { activate, reorder, toggleCompareColor, cancel, empty } from '../../store/actions/live-palette'
 import { arrayToSpacedString } from '../../shared/helpers/StringUtils'
 
 import { varValues } from 'variables'
@@ -30,23 +32,34 @@ type Props = {
   colors: Array<Color>,
   activateColor: Function,
   reorderColors: Function,
+  toggleCompareColor: Function,
   activeColor: Color,
-  removedColor: Color
+  removedColor: Color,
+  cancel: Function,
+  empty: Function
 }
 
 type State = {
-  spokenWord: string
+  spokenWord: string,
+  isCompareColor: boolean
 }
 
 export class LivePalette extends PureComponent<Props, State> {
   state = {
-    spokenWord: ''
+    spokenWord: '',
+    isCompareColor: false
   }
 
   pendingUpdateFn: any
   requestedFrame: number | void
   activeSlotRef: ?RefObject = void (0)
 
+  componentDidMount () {
+    store.subscribe(() => {
+      const { lp } = store.getState()
+      window.localStorage.setItem('lp', JSON.stringify(lp))
+    })
+  }
   // $FlowIgnore
   componentDidUpdate (prevProps, prevState) {
     let spokenWord: Array<string> = []
@@ -87,10 +100,15 @@ export class LivePalette extends PureComponent<Props, State> {
     }
   }
 
-  render () {
-    const { colors, activeColor } = this.props
+  toggleCompareColor = () => {
+    this.setState({ isCompareColor: !this.state.isCompareColor })
+    this.props.toggleCompareColor()
+  }
 
-    const { spokenWord } = this.state
+  render () {
+    const { colors, activeColor, cancel, empty } = this.props
+
+    const { spokenWord, isCompareColor } = this.state
     // TODO: abstract below into a class method
     // calculate all the active slots
     const activeSlots = colors.map((color, index) => {
@@ -101,7 +119,8 @@ export class LivePalette extends PureComponent<Props, State> {
           color={color}
           onClick={this.activateColor}
           moveColor={this.moveColor}
-          active={(activeColor && activeColor.id === color.id)}
+          active={(activeColor.id === color.id)}
+          isCompareColor={isCompareColor}
         />)
       }
     })
@@ -115,10 +134,14 @@ export class LivePalette extends PureComponent<Props, State> {
 
     const ADD_COLOR_TEXT = (colors.length) ? 'ADD_A_COLOR' : 'FIND_COLORS_IN_CW'
     const COLOR_TRAY_CLASS_MODIFIERS = (colors.length) ? 'add' : 'add-empty'
-
     return (
       <DndProvider backend={HTML5Backend}>
         <div className='prism-live-palette'>
+          <LivePaletteModal cancel={cancel} empty={empty} isActive={colors.length > LP_MAX_COLORS_ALLOWED} />
+          <div className='prism-live-palette__header'>
+            <span className='prism-live-palette__header__name'><FormattedMessage id='PALETTE_TITLE' /></span>
+            {colors.length >= MIN_COMPARE_COLORS_ALLOWED && <button className='prism-live-palette__header__compare-button' onClick={this.toggleCompareColor}>Compare Color</button>}
+          </div>
           <div className='prism-live-palette__list'>
             {activeSlots}
             {colors.length < LP_MAX_COLORS_ALLOWED && <Link to={`/active/color-wall`} className={`prism-live-palette__slot prism-live-palette__slot--${COLOR_TRAY_CLASS_MODIFIERS}`}>
@@ -167,11 +190,20 @@ const mapStateToProps = (state, props) => {
 
 const mapDispatchToProps = (dispatch: Function) => {
   return {
+    toggleCompareColor: () => {
+      dispatch(toggleCompareColor())
+    },
     activateColor: (color) => {
       dispatch(activate(color))
     },
     reorderColors: (colors) => {
       dispatch(reorder(colors))
+    },
+    cancel: () => {
+      dispatch(cancel())
+    },
+    empty: () => {
+      dispatch(empty())
     }
   }
 }

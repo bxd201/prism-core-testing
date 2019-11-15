@@ -1,19 +1,41 @@
 // @flow
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import 'src/providers/fontawesome/fontawesome'
 import PaletteSuggester from './ColorPickerSlideContainer'
 import MoreDetailsCollapse from './MoreDetails'
-import { faLongArrowRight, faLongArrowLeft } from '@fortawesome/pro-light-svg-icons'
 import './ColorPickerSlide.scss'
-import { ExpertColor as expertColor } from './ExpertColor'
-import { fullColorNumber } from '../../../src/shared/helpers/ColorUtils'
+import { connect } from 'react-redux'
+import { injectIntl } from 'react-intl'
+import WithConfigurationContext from '../../contexts/ConfigurationContext/WithConfigurationContext'
+import { loadColors } from '../../store/actions/loadColors'
+import { loadCollectionSummaries } from '../../store/actions/collectionSummaries'
 
 const baseClass = 'prism-color-picker'
 const slideHeader = 'slide-palette-header'
-const paletteSuggesterDetails = 'slide-palette-details'
 
-function ColorPickerSlide () {
+type SummaryProps = {
+  expertColorPicks: number[],
+  associatedColorCollection: Object,
+  colorMap: Object,
+  config: Object,
+  intl: Object,
+  loadColors: Function,
+  loadCollectionSummaries: Function
+}
+
+function ColorPickerSlide (props: SummaryProps) {
+  const { loadColors, loadCollectionSummaries, expertColorPicks, associatedColorCollection, colorMap, config, intl } = props
   const [isShowSlider, handleSlideShow] = useState(false)
+
+  const [dataLoaded, setDataLoaded] = useState(false)
+  useEffect(() => {
+    if (!dataLoaded) {
+      setDataLoaded(true)
+      loadCollectionSummaries()
+      loadColors(config.brandId, { language: intl.locale })
+    }
+  })
 
   return (
     <React.Fragment>
@@ -22,45 +44,22 @@ function ColorPickerSlide () {
           <div className={`${slideHeader} ${isShowSlider ? `${slideHeader}--show` : `${slideHeader}--hide`}`}>
             {isShowSlider && <span>Expert Color Picks</span>}
             <button className={`${slideHeader}__arrow-button`} onClick={() => { handleSlideShow(!isShowSlider) }}>
-              {isShowSlider && <FontAwesomeIcon className={`${baseClass}__toggle-arrow`} icon={faLongArrowRight} />}
-              {!isShowSlider && <FontAwesomeIcon className={`${baseClass}__toggle-arrow`} icon={faLongArrowLeft} />}
+              {isShowSlider && <FontAwesomeIcon className={`${baseClass}__toggle-arrow`} icon={['fal', 'long-arrow-right']} />}
+              {!isShowSlider && <FontAwesomeIcon className={`${baseClass}__toggle-arrow`} icon={['fal', 'long-arrow-left']} />}
             </button>
           </div>
           <div className='slide-palette-content'>
-            <PaletteSuggester expertColor={expertColor} isShowSlider={isShowSlider} handleSlideShow={() => { handleSlideShow(!isShowSlider) }} />
+            {!!Object.keys(colorMap).length &&
+              <PaletteSuggester
+                expertColor={expertColorPicks.map(id => colorMap[id])}
+                isShowSlider={isShowSlider}
+                handleSlideShow={() => { handleSlideShow(!isShowSlider) }}
+              />}
           </div>
           <button className={`${slideHeader}__mobile-toggle-arrow ${isShowSlider ? `${slideHeader}__mobile-toggle-arrow--up` : ``}`} onClick={() => { handleSlideShow(!isShowSlider) }} />
         </div>
-        <MoreDetailsCollapse isShowSlider={isShowSlider} />
+        {associatedColorCollection && <MoreDetailsCollapse isShowSlider={isShowSlider} associatedColorCollection={associatedColorCollection} />}
       </div>
-      {isShowSlider && <div className={`${paletteSuggesterDetails}__wrapper`}>
-        <div className={`${paletteSuggesterDetails}__wrapper__left`}>
-          { expertColor.map((color, id) => {
-            return (
-              <div className={`${paletteSuggesterDetails}__container`} key={`${color.colorNumber}-${id}`}>
-                <div className={`${paletteSuggesterDetails}__container__color`} style={{ backgroundColor: color.hex }}>&nbsp;</div>
-                <div className={`${paletteSuggesterDetails}__container__color-details`}>
-                  <div>
-                    {fullColorNumber(color.brandKey, color.colorNumber)}
-                  </div>
-                  <div>
-                    {color.name}
-                  </div>
-                </div>
-              </div>
-            )
-          })
-          }
-        </div>
-        <div className={`${paletteSuggesterDetails}__wrapper__right`}>
-          <div>
-            <div>Selected from 2016 <br /> Pura Vida </div>
-            <div>
-            VIEW FULL COLLECTION
-            </div>
-          </div>
-        </div>
-      </div>}
     </React.Fragment>
   )
 }
@@ -68,4 +67,15 @@ function ColorPickerSlide () {
 export {
   ColorPickerSlide
 }
-export default ColorPickerSlide
+
+export default connect(
+  (state, { associatedColorCollection }) => {
+    const { data, idToIndexHash } = state.collectionSummaries.summaries
+    const collection = data[idToIndexHash[associatedColorCollection]]
+    return {
+      colorMap: state.colors.items.colorMap || {},
+      associatedColorCollection: collection
+    }
+  },
+  { loadColors, loadCollectionSummaries }
+)(injectIntl(WithConfigurationContext(ColorPickerSlide)))

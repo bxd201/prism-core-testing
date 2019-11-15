@@ -11,13 +11,13 @@
   max-width: 100%;
   position: absolute;
   right: 1rem;
-  top: 1rem;
+  bottom: 1rem;
   z-index: 1;
 
   &__wrapper {
     align-items: center;
     background: rgba(41, 70, 147, 0.5);
-    border-radius: 50%; 
+    border-radius: 50%;
     color: rgb(250, 232, 186);
     display: flex;
     filter: grayscale(100);
@@ -49,7 +49,7 @@
 
   &__day {
     height: $icon-size;
-    width: $icon-size; 
+    width: $icon-size;
   }
 
   &__night {
