@@ -6,12 +6,12 @@ const MAX_STACK_SIZE = 200
 
 export const getPaintAreaPath = (imagePathList, canvas, width, height, color) => {
   const RGB = getActiveColorRGB(color)
-  const [array, alphaArray] = getImageCordinateByPixelPaintBrush(canvas, width, height, true)
+  const [array, pixelIndexAlphaMap] = getImageCordinateByPixelPaintBrush(canvas, width, height, true)
   const newArea = {
     id: uniqueId(),
     color: RGB,
     data: array,
-    alphaArray: alphaArray,
+    pixelIndexAlphaMap: pixelIndexAlphaMap,
     isEnabled: true,
     linkedOperation: null,
     siblingOperations: null
@@ -21,39 +21,39 @@ export const getPaintAreaPath = (imagePathList, canvas, width, height, color) =>
   return copyImagePathList
 }
 
-export const getImageCordinateByPixel = (canvas, color, width, height, returnAlphaArray = true) => {
+export const getImageCordinateByPixel = (canvas, color, width, height, returnPixelIndexAlphaMap = true) => {
   const ctx = canvas.current.getContext('2d')
   let imageData = ctx.getImageData(0, 0, width, height)
   let data = imageData.data
   let pixelArray = []
-  let alphaArray = []
+  let pixelIndexAlphaMap = {}
   for (let index = 0; index < data.length; index += 4) {
     if (data[index] === color[0] && data[index + 1] === color[1] && data[index + 2] === color[2]) {
       pixelArray.push(index)
-      if (returnAlphaArray) alphaArray.push(data[index + 3])
+      if (returnPixelIndexAlphaMap) pixelIndexAlphaMap[index] = data[index + 3]
     }
   }
-  if (returnAlphaArray) {
-    return [pixelArray, alphaArray]
+  if (returnPixelIndexAlphaMap) {
+    return [pixelArray, pixelIndexAlphaMap]
   } else {
     return pixelArray
   }
 }
 
-export const getImageCordinateByPixelPaintBrush = (canvas, width, height, returnAlphaArray = true) => {
+export const getImageCordinateByPixelPaintBrush = (canvas, width, height, returnPixelIndexAlphaMap = true) => {
   const ctx = canvas.current.getContext('2d')
   let imageData = ctx.getImageData(0, 0, width, height)
   let data = imageData.data
   let pixelArray = []
-  let alphaArray = []
+  let pixelIndexAlphaMap = {}
   for (let index = 0; index < data.length; index += 4) {
     if (data[index] !== 0 && data[index + 1] !== 0 && data[index + 2] !== 0) {
       pixelArray.push(index)
-      if (returnAlphaArray) alphaArray.push(data[index + 3])
+      if (returnPixelIndexAlphaMap) pixelIndexAlphaMap[index] = data[index + 3]
     }
   }
-  if (returnAlphaArray) {
-    return [pixelArray, alphaArray]
+  if (returnPixelIndexAlphaMap) {
+    return [pixelArray, pixelIndexAlphaMap]
   } else {
     return pixelArray
   }
@@ -207,7 +207,7 @@ export const repaintImageByPath = (imagePathList, canvas, width, height, isErase
     const selectedItem = imagePathList[item.historyIndex]
     const path = selectedItem.data
     const color = selectedItem.color
-    const alphaArray = selectedItem.alphaArray
+    const pixelIndexAlphaMap = selectedItem.pixelIndexAlphaMap
     const isEnabled = selectedItem.isEnabled
     if (path && isEnabled) {
       for (let j = 0; j < path.length; j++) {
@@ -217,8 +217,8 @@ export const repaintImageByPath = (imagePathList, canvas, width, height, isErase
         if (data[path[j] + 3]) {
           data[path[j] + 3] = 255
         } else {
-          if (alphaArray !== undefined && alphaArray.length > 0) {
-            data[path[j] + 3] = alphaArray[j]
+          if (pixelIndexAlphaMap !== undefined && pixelIndexAlphaMap[path[j]]) {
+            data[path[j] + 3] = pixelIndexAlphaMap[path[j]]
           } else {
             data[path[j] + 3] = 255
           }
@@ -309,6 +309,7 @@ export const eraseIntersection = (imagePathList, erasePath) => {
   let siblingList = []
   for (let i = 0; i < originImagePathList.length; i++) {
     const data = originImagePathList[i].data
+    const pixelIndexAlphaMap = originImagePathList[i].pixelIndexAlphaMap
     const isEnabled = originImagePathList[i].isEnabled
     const color = originImagePathList[i].color
     const linkId = originImagePathList[i].id
@@ -322,6 +323,7 @@ export const eraseIntersection = (imagePathList, erasePath) => {
         id: newId,
         color: color,
         data: remainAreaPath,
+        pixelIndexAlphaMap: pixelIndexAlphaMap,
         isEnabled: true,
         linkedOperation: linkId,
         siblingOperations: null,
@@ -424,7 +426,7 @@ export const colorMatch = (a, b, similar) => {
       return false
     }
   } else {
-    return a.r === b.r && a.g === b.g && a.b === b.b && a.a === b.a
+    return a.r === b.r && a.g === b.g && a.b === b.b
   }
 }
 
