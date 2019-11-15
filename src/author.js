@@ -1,4 +1,5 @@
 import ReactDOM from 'react-dom'
+import 'src/allFacets' // import all facets so they're included in the bundle
 import { flagAsMainBundle, embedAtRoots, TO_BIND_CLASS } from 'src/facetBinder'
 import flatten from 'lodash/flatten'
 
