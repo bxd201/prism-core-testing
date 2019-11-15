@@ -33,6 +33,12 @@ if (process.env.ENTRY) {
   allEntryPoints = pick(allEntryPoints, entries)
 }
 
+allEntryPoints = {
+  ...allEntryPoints,
+  // adding back in everything necessary after ENTRY filtering has been considered
+  ...flags.fixedEntryPoints
+}
+
 // if we do not have any valid entry points...
 if (isEmpty(allEntryPoints)) {
   // ... error out of the build
@@ -59,10 +65,7 @@ module.exports = {
   devtool: false,
   context: flags.rootPath,
   mode: flags.mode,
-  entry: {
-    ...allEntryPoints,
-    cleanslate: flags.cleanslatePath
-  },
+  entry: allEntryPoints,
   output: {
     path: flags.distPath,
     filename: '[name].js',
@@ -144,7 +147,10 @@ module.exports = {
     }),
     ...Object.keys(allEntryPoints).map(key => {
       // wrap each entry's associated CSS file with .cleanslate.prism, excluding :root rules
-      return new PostCssWrapper(`css/${key}.css`, '.cleanslate.prism', /^:root/)
+      // excluding cleanslate CSS
+      if (key !== flags.cleanslateEntryPointName) {
+        return new PostCssWrapper(`css/${key}.css`, '.cleanslate.prism', /^:root/)
+      }
     }),
     new CopyWebpackPlugin([
       {

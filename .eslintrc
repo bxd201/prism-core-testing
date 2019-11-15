@@ -12,11 +12,14 @@
     "jest"
   ],
   "globals" : {
-    "Image": "readonly",
+    "API_PATH": "readonly",
+    "BASE_PATH": "readonly",
     "Blob": "readonly",
-    "Worker": "readonly",
+    "FileReader": "readonly",
+    "Image": "readonly",
+    "ML_API_URL": "readonly",
     "URL": "readonly",
-    "FileReader": "readonly"
+    "Worker": "readonly"
   },
   "rules": {
     "react-hooks/rules-of-hooks": "error",

@@ -19,11 +19,18 @@ const embedPath = path.join(srcPath, 'embed.js')
 const cleanslatePath = path.join(srcPath, 'cleanslate.js')
 
 const mainEntryPointName = 'bundle'
-const mainEntryPointPath = appIndexPath
+const embedEntryPointName = 'embed'
+const authorEntryPointName = 'author'
+const cleanslateEntryPointName = 'cleanslate'
+
+const fixedEntryPoints = {
+  [cleanslateEntryPointName]: cleanslatePath
+}
 
 const mainEntryPoints = {
-  [mainEntryPointName]: mainEntryPointPath,
-  embed: embedPath
+  [authorEntryPointName]: authorPath,
+  [embedEntryPointName]: embedPath,
+  [mainEntryPointName]: appIndexPath
 }
 
 const facetEntryPoints = {
@@ -36,14 +43,16 @@ const facetEntryPoints = {
 
 module.exports = {
   appIndexPath,
+  authorEntryPointName,
   authorPath,
-  cleanslatePath,
+  cleanslateEntryPointName,
   dev,
   distPath,
+  embedEntryPointName,
   embedPath,
   facetEntryPoints,
+  fixedEntryPoints,
   mainEntryPointName,
-  mainEntryPointPath,
   mainEntryPoints,
   mocksPath,
   mode,

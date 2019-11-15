@@ -8,7 +8,7 @@ import '@formatjs/intl-pluralrules/dist/locale-data/en'
 import '@formatjs/intl-pluralrules/dist/locale-data/fr'
 
 import React, { Component } from 'react'
-import { mainEntryPointName } from './../webpack/constants'
+import { mainEntryPointName, cleanslateEntryPointName } from './../webpack/constants'
 import { render } from 'react-dom'
 import { Provider } from 'react-redux'
 import { IntlProvider } from 'react-intl'
@@ -48,7 +48,7 @@ let [addToEmbedQueue, embedQueue] = [(facetName) => {
 }, []]
 
 let [flagAsMainBundle, IS_MAIN_BUNDLE] = [() => {
-  console.info('This instance of Prism has been flagged as a main bundle rather than an individual Facet.')
+  console.info('This instance of Prism has been flagged as main bundle rather than an individual Facet.')
   IS_MAIN_BUNDLE = true
 }, false]
 
@@ -60,10 +60,12 @@ const embedGlobalStylesOnce = once(() => {
   document.body.appendChild(immediateStyleTag)
   immediateStyleTag.innerHTML = `.${CLEANSLATE_CLASS}.${PRISM_CLASS} { display: none }`
 
+  const cleanslatePath = `${BASE_PATH}/css/${cleanslateEntryPointName}.css`
   const cleanslateTag = document.createElement('link')
   cleanslateTag.rel = 'stylesheet'
   cleanslateTag.type = 'text/css'
-  cleanslateTag.href = `${BASE_PATH}/css/cleanslate.css` // eslint-disable-line no-undef
+  cleanslateTag.crossOrigin = 'anonymous'
+  cleanslateTag.href = cleanslatePath // eslint-disable-line no-undef
   cleanslateTag.media = 'all'
   // $FlowIgnore -- flow doesn't think body is defined
   document.body.appendChild(cleanslateTag)
@@ -73,10 +75,13 @@ const embedGlobalStylesOnce = once(() => {
 const memoEmbedBundleStyles = memoizee((bundleName) => {
   // create the link to our css
   const fileName = `${camelCase(bundleName)}.css`
+  const stylePath = `${BASE_PATH}/css/${fileName}`
+  console.info(stylePath)
   const styleTag = document.createElement('link')
   styleTag.rel = 'stylesheet'
   styleTag.type = 'text/css'
-  /* eslint-disable no-undef */ styleTag.href = `${BASE_PATH}/css/${fileName}`
+  styleTag.crossOrigin = 'anonymous'
+  /* eslint-disable no-undef */ styleTag.href = stylePath
   styleTag.media = 'all'
 
   // add our css to the <head>
