@@ -16,8 +16,8 @@ const ImageQueue = (props: ImageQueueProps) => {
     return dataUrls.map((dataUrl, i) => {
       return <img
         src={dataUrl}
-        key={i}
-        id={i}
+        key={`${i}`}
+        id={`${i}`}
         className='merge-canvas-image-comp'
         alt={intl.messages.IMAGE_INVISIBLE}
         onLoad={(e) => props.addToQueue(e, i)}
