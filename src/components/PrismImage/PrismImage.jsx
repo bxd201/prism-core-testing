@@ -1,9 +1,11 @@
 // @flow
 import React, { forwardRef, useRef } from 'react'
+import { useIntl } from 'react-intl'
 import './PrismImage.scss'
 import { getScaledLandscapeHeight, getScaledPortraitHeight } from '../../shared/helpers/ImageUtils'
 
 const PrismImage = forwardRef((props, ref) => {
+  const intl = useIntl()
   const canvasRef = useRef()
   const handleCallback = (e) => {
     // eslint-disable-next-line react/prop-types
@@ -15,7 +17,6 @@ const PrismImage = forwardRef((props, ref) => {
     const ctx = canvas.getContext('2d')
     // eslint-disable-next-line react/prop-types
     const canvasWidth = props.scalingWidth
-    console.log(`Scaling Width: ${canvasWidth}`)
     const canvasHeight = ref.current.height > ref.current.width ? getScaledPortraitHeight(ref.current.width, ref.current.height)(canvasWidth) : getScaledLandscapeHeight(ref.current.width, ref.current.height)(canvasWidth)
     canvas.width = canvasWidth
     canvas.height = canvasHeight
@@ -33,7 +34,7 @@ const PrismImage = forwardRef((props, ref) => {
   }
   return (
     // eslint-disable-next-line react/prop-types
-    props.source ? <><img src={props.source} ref={ref} className='prism-image-comp' onLoad={handleCallback} alt='invisible' /><canvas className={'prism-image-comp'} ref={canvasRef} /></> : null
+    props.source ? <><img src={props.source} ref={ref} className='prism-image-comp' onLoad={handleCallback} alt={intl.messages.IMAGE_INVISIBLE} /><canvas className={'prism-image-comp'} ref={canvasRef} /></> : null
   )
 })
 

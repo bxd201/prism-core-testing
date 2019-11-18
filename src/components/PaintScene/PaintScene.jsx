@@ -21,6 +21,7 @@ import { getScaledPortraitHeight, getScaledLandscapeHeight } from '../../shared/
 import throttle from 'lodash/throttle'
 import { redo, undo } from './UndoRedoUtil'
 import WebWorker from './workers/paintScene.worker'
+import MergeCanvas from '../MergeCanvas/MergeCanvas'
 
 const baseClass = 'paint__scene__wrapper'
 const canvasClass = `${baseClass}__canvas`
@@ -128,6 +129,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.CFICanvasPaint = React.createRef()
     this.CFIWrapper = React.createRef()
     this.CFIImage = React.createRef()
+    this.mergeCanvasRef = React.createRef()
     // @todo - marked for review -RS
     // this.canvasOffsetWidth = 0
     // this.canvasOffsetHeight = 0
@@ -189,6 +191,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.shouldCanvasResize = this.shouldCanvasResize.bind(this)
     this.calcCanvasNewDimensions = this.calcCanvasNewDimensions.bind(this)
     this.scaleCanvases = this.scaleCanvases.bind(this)
+    this.getLayers = this.getLayers.bind(this)
   }
 
   /*:: shouldCanvasResize: (prevWidth: number, newWidth: number) => number */
@@ -325,6 +328,11 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.CFICanvas2.current.height = canvasHeight
     this.CFICanvasPaint.current.width = canvasWidth
     this.CFICanvasPaint.current.height = canvasHeight
+
+    // Handle merge canvas
+    this.mergeCanvasRef.current.width = canvasWidth
+    this.mergeCanvasRef.current.height = canvasHeight
+
     this.canvasOffsetWidth = canvasWidth
     this.canvasOffsetHeight = canvasHeight
     this.canvasOriginalDimensions = { width: canvasWidth, height: canvasHeight }
@@ -906,28 +914,17 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     const scale = this.canvasOriginalDimensions.width / canvasClientOffset.width
     const cursorX = Math.round((clientX - canvasClientOffset.left) * scale)
     const cursorY = Math.round((clientY - canvasClientOffset.top) * scale)
-    const imageData = this.CFICanvasContext2.getImageData(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
-    const imageDataOrigin = this.CFICanvasContext.getImageData(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
+    const mergeContext = this.mergeCanvasRef.current.getContext('2d')
+    const imageData = mergeContext.getImageData(0, 0, mergeContext.canvas.width, mergeContext.canvas.height)
+
     let copyImagePathList = copyImageList(imagePathList)
     const RGB = getActiveColorRGB(hexToRGB(this.props.lpActiveColor.hex))
     const ctx = this.CFICanvas2.current.getContext('2d')
-    const index = (cursorX + cursorY * this.canvasOffsetWidth) * 4
-    let isClickInsideImage = false
     const isPaint = colorMatch(getColorAtPixel(imageData, cursorX, cursorY), { r: RGB[0], g: RGB[1], b: RGB[2], a: RGB[3] }, 100)
 
     if (!isPaint) {
-      for (let i = 0; i < imagePathList.length; i++) {
-        if (imagePathList[i].data.includes(index)) {
-          isClickInsideImage = true
-          break
-        }
-      }
+      imagePath = getSelectArea(imageData, RGB, cursorX, cursorY, 94)
 
-      if (isClickInsideImage) {
-        imagePath = getSelectArea(imageData, RGB, cursorX, cursorY, 100)
-      } else {
-        imagePath = getSelectArea(imageDataOrigin, RGB, cursorX, cursorY, 94)
-      }
       this.clearCanvas()
       drawImagePixelByPath(ctx, this.canvasOffsetWidth, this.canvasOffsetHeight, RGB, imagePath)
       const newPath = getImageCordinateByPixel(this.CFICanvas2, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight, false)
@@ -1306,6 +1303,13 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.setState({ position: { ...position, isHidden: false } })
   }
 
+  getLayers () {
+    if (!this.CFICanvas.current || !this.CFICanvas2.current) {
+      return []
+    }
+    return [this.CFICanvas.current.toDataURL(), this.CFICanvas2.current.toDataURL()]
+  }
+
   render () {
     const { imageUrl, lpActiveColor, intl } = this.props
     const { activeTool, position, paintBrushShape, paintBrushWidth, eraseBrushShape, eraseBrushWidth, undoIsEnabled, redoIsEnabled, showOriginalCanvas, isAddGroup, isDeleteGroup, isUngroup, paintCursor, isInfoToolActive, loading } = this.state
@@ -1317,6 +1321,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     return (
       <div role='presentation' className={baseClass} onClick={this.handleClick} onMouseMove={this.mouseMoveHandler} ref={this.CFIWrapper} style={{ height: this.state.wrapperHeight }} onMouseLeave={this.mouseLeaveHandler} onMouseEnter={this.mouseEnterHandler}>
         <div className={`${animationLoader} ${loading ? `${animationLoader}--load` : ''}`} />
+        {this.state.activeTool === toolNames.PAINTAREA ? <MergeCanvas width={this.canvasOriginalDimensions.width} height={this.canvasOriginalDimensions.height} ref={this.mergeCanvasRef} layers={this.getLayers()} /> : null}
         <canvas className={`${canvasClass} ${showOriginalCanvas ? `${canvasShowByZindex}` : `${canvasHideByZindex}`} ${this.isPortrait ? portraitOrientation : ''}`} name='paint-scene-canvas-first' ref={this.CFICanvas}>{intl.messages.CANVAS_UNSUPPORTED}</canvas>
         <canvas style={{ opacity: showOriginalCanvas ? 1 : 0.8 }} className={`${canvasClass} ${paintCursor} ${canvasSecondClass} ${this.isPortrait ? portraitOrientation : ''}`} name='paint-scene-canvas-second' ref={this.CFICanvas2}>{intl.messages.CANVAS_UNSUPPORTED}</canvas>
         <canvas
