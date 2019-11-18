@@ -196,7 +196,17 @@ module.exports = {
     ])
   ].filter(p => p),
   devServer: {
-    host: '0.0.0.0', // allows for hitting this from ouside the host machine
+    host: (() => {
+      if (process.env.WEB_URL) {
+        const matches = /(http(s?):)\/\/([^:/]*)/g.exec(process.env.WEB_URL)
+
+        if (matches && matches[3]) {
+          return matches[3]
+        }
+      }
+
+      return 'localhost'
+    })(),
     https: true,
     historyApiFallback: {
       rewrites: [
