@@ -12,13 +12,17 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 const flags = require('./webpack/constants')
 const HardSourceWebpackPlugin = require('hard-source-webpack-plugin')
 
+const DEFAULT_LOCAL_URL = 'https://localhost:8080' // default local URL to localhost
+const DEFAULT_ENTRY = `${flags.embedEntryPointName},${flags.mainEntryPointName}` // will build the embed and bundle entry points by default
+
 // create constants that correlate to environment variables to be injected
 const APP_VERSION = process.env.npm_package_version
 const APP_NAME = process.env.npm_package_name
 
 const API_PATH = (process.env.API_URL) ? process.env.API_URL : '$API_URL'
 const ML_API_URL = (process.env.ML_API_URL) ? process.env.ML_API_URL : '$ML_API_URL'
-const BASE_PATH = (process.env.WEB_URL) ? process.env.WEB_URL : '$WEB_URL'
+const BASE_PATH = (process.env.NODE_ENV === 'development') ? (process.env.LOCAL_URL ? process.env.LOCAL_URL : DEFAULT_LOCAL_URL) : (process.env.WEB_URL) ? process.env.WEB_URL : '$WEB_URL'
+const SPECIFIED_ENTRIES = process.env.ENTRY ? process.env.ENTRY : (process.env.NODE_ENV === 'development') ? DEFAULT_ENTRY : undefined
 
 let allEntryPoints = {
   ...flags.mainEntryPoints,
@@ -26,9 +30,9 @@ let allEntryPoints = {
 }
 
 // if an ENTRY value has been passed...
-if (process.env.ENTRY) {
+if (SPECIFIED_ENTRIES) {
   // ... split it by comma
-  const entries = process.env.ENTRY.split(',')
+  const entries = SPECIFIED_ENTRIES.split(',')
   // keep only entry points specified by ENTRY
   allEntryPoints = pick(allEntryPoints, entries)
 }
