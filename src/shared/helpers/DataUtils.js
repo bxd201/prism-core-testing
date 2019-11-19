@@ -1,6 +1,6 @@
 // @flow
-import includes from 'lodash/includes'
 import memoizee from 'memoizee'
+import urlPattern from 'src/shared/regex/url'
 
 export function getByLowerCasePropName (obj: Object, propName: string): any {
   const realKey: string[] = Object.keys(obj).map(prop => prop.toLowerCase()).filter(prop => prop === propName)
@@ -22,7 +22,7 @@ export function getTotalWidthOf2dArray (arr: any[][]): number {
 }
 
 export const ensureFullyQualifiedAssetUrl = memoizee(function ensureFullyQualifiedAssetUrl (url: string): string {
-  return includes(url, 'scene7') ? url : `${BASE_PATH}${url}` // eslint-disable-line no-undef
+  return url.match(urlPattern) ? url : `${BASE_PATH}${url}`
 })
 
 export const generateBrandedEndpoint = memoizee((basePath, brand, options) => {
