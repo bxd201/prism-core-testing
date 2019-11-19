@@ -21,8 +21,13 @@ export function getTotalWidthOf2dArray (arr: any[][]): number {
   return num
 }
 
+export const removeExtraURLSlashesAfterProtocol = (url: string) => {
+  return url.replace(/([^:])(\/){2,}/g, '$1/')
+}
+
 export const ensureFullyQualifiedAssetUrl = memoizee(function ensureFullyQualifiedAssetUrl (url: string): string {
-  return url.match(urlPattern) ? url : `${BASE_PATH}${url}`
+  const matches = url.match(urlPattern)
+  return matches && matches[1] ? url : removeExtraURLSlashesAfterProtocol(`${BASE_PATH}/${url}`)
 })
 
 export const generateBrandedEndpoint = memoizee((basePath, brand, options) => {
