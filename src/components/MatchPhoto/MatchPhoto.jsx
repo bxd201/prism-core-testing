@@ -11,7 +11,7 @@ import ConfirmationModal from './ConfirmationModal'
 import ColorPinsGenerationByHue from './workers/colorPinsGenerationByHue.worker'
 import useEffectAfterMount from '../../shared/hooks/useEffectAfterMount'
 import PaintScene from '../PaintScene/PaintScene'
-import { getScaledPortraitHeight, getScaledLandscapeHeight } from '../../shared/helpers/ImageUtils'
+import { getScaledPortraitHeight } from '../../shared/helpers/ImageUtils'
 import PrismImage from '../PrismImage/PrismImage'
 import DynamicColorFromImage from '../InspirationPhotos/DynamicColorFromImage'
 
@@ -231,18 +231,19 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
     if (orientationIsPortrait) {
       // Height should not change on rotate, so use the portrait height as the fixed height
       fixedHeight = Math.round(getScaledPortraitHeight(width, height)(wrapperWidth / 2))
+
       dimensions.portraitWidth = Math.round(wrapperWidth / 2)
       dimensions.portraitHeight = fixedHeight
 
       dimensions.landscapeWidth = Math.round(height / width * fixedHeight)
       dimensions.landscapeHeight = fixedHeight
     } else {
-      fixedHeight = Math.round(getScaledLandscapeHeight(width, height)(wrapperWidth / 2))
-      dimensions.portraitWidth = Math.round(wrapperWidth / 2)
-      dimensions.portraitHeight = fixedHeight
-
-      dimensions.landscapeWidth = Math.round(width / height * fixedHeight)
+      fixedHeight = Math.round(height / width * wrapperWidth)
+      dimensions.landscapeWidth = wrapperWidth
       dimensions.landscapeHeight = fixedHeight
+
+      dimensions.portraitHeight = fixedHeight
+      dimensions.portraitWidth = Math.round(fixedHeight * height / width)
     }
 
     dimensions.originalImageWidth = width
