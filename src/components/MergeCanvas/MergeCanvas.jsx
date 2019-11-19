@@ -22,7 +22,9 @@ const MergeCanvas = (props: MergeCanvasProp, ref: RefObject) => {
     if (images.length) {
       // This check should ensure that this fires after the images have been loaded
       const ctx = ref.current.getContext('2d')
-      images.forEach(img => ctx.drawImage(img, 0, 0, ctx.canvas.width, ctx.canvas.height))
+      images.forEach((img, i) => {
+        ctx.drawImage(img, 0, 0, ctx.canvas.width, ctx.canvas.height)
+      })
     }
   }, [images])
 

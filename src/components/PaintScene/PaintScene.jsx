@@ -86,7 +86,9 @@ type ComponentState = {
   polyList: Array<Array<number>>,
   BeginPointList: Array<number>,
   initialCanvasWidth: number,
-  initialCanvasHeight: number
+  initialCanvasHeight: number,
+  mergeCanvasKey: string,
+  canvasImageUrls: string[]
 }
 
 type DrawOperation = {
@@ -179,7 +181,9 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       paintCursor: `${canvasClass}--${toolNames.PAINTAREA}`,
       isInfoToolActive: false,
       initialCanvasWidth: 0,
-      initialCanvasHeight: 0
+      initialCanvasHeight: 0,
+      mergeCanvasKey: '1',
+      canvasImageUrls: []
     }
 
     this.undo = this.undo.bind(this)
@@ -192,6 +196,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.calcCanvasNewDimensions = this.calcCanvasNewDimensions.bind(this)
     this.scaleCanvases = this.scaleCanvases.bind(this)
     this.getLayers = this.getLayers.bind(this)
+    this.renderMergeCanvas = this.renderMergeCanvas.bind(this)
   }
 
   /*:: shouldCanvasResize: (prevWidth: number, newWidth: number) => number */
@@ -359,7 +364,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.CFICanvasContext.drawImage(this.CFIImage.current, 0, 0, canvasWidth, canvasHeight)
     this.CFICanvasContext2.clearRect(0, 0, canvasWidth, canvasHeight)
     this.CFICanvasContextPaint.clearRect(0, 0, canvasWidth, canvasHeight)
-    this.setState({ wrapperHeight: canvasHeight })
+    this.setState({ wrapperHeight: canvasHeight, canvasImageUrls: this.getLayers() })
   }
 
   /*:: setDependentPositions: () => void */
@@ -434,12 +439,14 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     }
     this.clearCanvas()
     repaintImageByPath(imagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
-    this.setState({ activeTool, selectedArea: [] })
+    this.setState({ activeTool, selectedArea: [], canvasImageUrls: this.getLayers() })
   }
 
   /*:: undo: () => void */
   undo () {
     const stateFragment = undo(this.state)
+    // Create a new key to ensure a new merge canvas component instance is created
+    stateFragment.mergeCanvasKey = `${Date.now()}`
     this.setState(stateFragment, () => {
       this.redrawCanvas(stateFragment.imagePathList)
     })
@@ -457,6 +464,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   redrawCanvas (imagePathList: Object[]) {
     this.clearCanvas()
     repaintImageByPath(imagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
+    this.setState({ canvasImageUrls: this.getLayers() })
   }
 
   /*:: getImageCoordinatesByPixel: () => DrawOperation */
@@ -1307,7 +1315,21 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     if (!this.CFICanvas.current || !this.CFICanvas2.current) {
       return []
     }
-    return [this.CFICanvas.current.toDataURL(), this.CFICanvas2.current.toDataURL()]
+    const imageUrls = [this.CFICanvas.current.toDataURL(), this.CFICanvas2.current.toDataURL()]
+    return imageUrls
+  }
+
+  renderMergeCanvas (imageUrls: string[]) {
+    if (this.state.activeTool === toolNames.PAINTAREA) {
+      return (<MergeCanvas
+        key={this.state.mergeCanvasKey}
+        width={this.canvasOriginalDimensions.width}
+        height={this.canvasOriginalDimensions.height}
+        ref={this.mergeCanvasRef}
+        layers={imageUrls} />)
+    }
+
+    return null
   }
 
   render () {
@@ -1321,7 +1343,6 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     return (
       <div role='presentation' className={baseClass} onClick={this.handleClick} onMouseMove={this.mouseMoveHandler} ref={this.CFIWrapper} style={{ height: this.state.wrapperHeight }} onMouseLeave={this.mouseLeaveHandler} onMouseEnter={this.mouseEnterHandler}>
         <div className={`${animationLoader} ${loading ? `${animationLoader}--load` : ''}`} />
-        {this.state.activeTool === toolNames.PAINTAREA ? <MergeCanvas width={this.canvasOriginalDimensions.width} height={this.canvasOriginalDimensions.height} ref={this.mergeCanvasRef} layers={this.getLayers()} /> : null}
         <canvas className={`${canvasClass} ${showOriginalCanvas ? `${canvasShowByZindex}` : `${canvasHideByZindex}`} ${this.isPortrait ? portraitOrientation : ''}`} name='paint-scene-canvas-first' ref={this.CFICanvas}>{intl.messages.CANVAS_UNSUPPORTED}</canvas>
         <canvas style={{ opacity: showOriginalCanvas ? 1 : 0.8 }} className={`${canvasClass} ${paintCursor} ${canvasSecondClass} ${this.isPortrait ? portraitOrientation : ''}`} name='paint-scene-canvas-second' ref={this.CFICanvas2}>{intl.messages.CANVAS_UNSUPPORTED}</canvas>
         <canvas
@@ -1335,6 +1356,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
           {intl.messages.CANVAS_UNSUPPORTED}
         </canvas>
         <img className={`${imageClass}`} ref={this.CFIImage} onLoad={this.initCanvas} onError={this.handleImageErrored} src={imageUrl} alt={intl.messages.IMAGE_INVISIBLE} />
+        {this.renderMergeCanvas(this.state.canvasImageUrls)}
         <div className={`${paintToolsClass}`}>
           <PaintToolBar
             activeTool={activeTool}
