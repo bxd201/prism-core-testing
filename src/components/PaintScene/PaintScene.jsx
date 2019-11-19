@@ -44,6 +44,8 @@ const canvasHideByZindex = `${canvasClass}--hide-by-zindex`
 const canvasVisibleByVisibility = `${canvasClass}--visible-by-visibility`
 const canvasHiddenByVisibility = `${canvasClass}--hidden-by-visibility`
 const animationLoader = `${baseClass}--animation`
+const animationPin = `${baseClass}--animation-pin`
+const nonAnimationPin = `${baseClass}--non-animation-pin`
 
 type ComponentProps = {
   imageUrl: string,
@@ -129,6 +131,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.CFICanvas = React.createRef()
     this.CFICanvas2 = React.createRef()
     this.CFICanvasPaint = React.createRef()
+    this.CFICanvas4 = React.createRef()
     this.CFIWrapper = React.createRef()
     this.CFIImage = React.createRef()
     this.mergeCanvasRef = React.createRef()
@@ -166,6 +169,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       lineStart: [],
       BeginPointList: [],
       polyList: [],
+      presentPolyList: [],
       imagePathList: [],
       redoPathList: [],
       showOriginalCanvas: false,
@@ -183,7 +187,13 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       initialCanvasWidth: 0,
       initialCanvasHeight: 0,
       mergeCanvasKey: '1',
-      canvasImageUrls: []
+      canvasImageUrls: [],
+      showAnimatePin: false,
+      showNonAnimatePin: false,
+      pinX: 0,
+      pinY: 0,
+      currPinX: 0,
+      currPinY: 0
     }
 
     this.undo = this.undo.bind(this)
@@ -284,6 +294,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.CFICanvasContext = this.CFICanvas.current.getContext('2d')
     this.CFICanvasContext2 = this.CFICanvas2.current.getContext('2d')
     this.CFICanvasContextPaint = this.CFICanvasPaint.current.getContext('2d')
+    this.CFICanvasContext4 = this.CFICanvas4.current.getContext('2d')
     this.canvasOffsetWidth = parseInt(this.wrapperDimensions.width, 10)
     this.canvasOffsetHeight = parseInt(this.wrapperDimensions.height, 10)
     this.initCanvasWithDimensions()
@@ -340,6 +351,8 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.mergeCanvasRef.current.width = canvasWidth
     this.mergeCanvasRef.current.height = canvasHeight
 
+    this.CFICanvas4.current.width = this.canvasOriginalDimensions.width
+    this.CFICanvas4.current.height = this.canvasOriginalDimensions.height
     this.canvasOffsetWidth = canvasWidth
     this.canvasOffsetHeight = canvasHeight
     this.canvasOriginalDimensions = { width: canvasWidth, height: canvasHeight }
@@ -357,6 +370,8 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.CFICanvas2.current.style.height = `${canvasHeight}px`
     this.CFICanvasPaint.current.style.width = `${canvasWidth}px`
     this.CFICanvasPaint.current.style.height = `${canvasHeight}px`
+    // this.CFICanvas4.current.style.width = `${canvasWidth}px`
+    // this.CFICanvas4.current.style.height = `${canvasHeight}px`
 
     this.CFIWrapper.current.style.height = `${canvasHeight}px`
   }
@@ -847,25 +862,28 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   handlePolygonDefine = (e: Object, isAddArea: boolean) => {
     this.pause = false
     if (!this.props.lpActiveColor) return
-    const { BeginPointList, polyList, lineStart, imagePathList } = this.state
-    const ctx = this.CFICanvas2.current
+    const { BeginPointList, polyList, lineStart, imagePathList, presentPolyList } = this.state
     const { clientX, clientY } = e
-    // const { canvasZoom } = this.state
     const canvasClientOffset = this.CFICanvas2.current.getBoundingClientRect()
+    const canvasClientOffset4 = this.CFICanvas4.current.getBoundingClientRect()
     const scale = this.canvasOriginalDimensions.width / canvasClientOffset.width
     const cursorX = (clientX - canvasClientOffset.left) * scale
     const cursorY = (clientY - canvasClientOffset.top) * scale
+    const X = clientX - canvasClientOffset4.left
+    const Y = clientY - canvasClientOffset4.top
     const poly = [...polyList]
+    const presentPoly = [...presentPolyList]
     poly.push([cursorX, cursorY])
-    if (!ctx.getContext) return
-    let ctxDraw = this.CFICanvasPaint.current.getContext('2d')
+    presentPoly.push([X, Y])
+    let ctxDraw = this.CFICanvas4.current.getContext('2d')
     let isBackToStart = false
     if (BeginPointList.length > 0) {
-      isBackToStart = pointInsideCircle(cursorX, cursorY, BeginPointList, 10, scale)
+      isBackToStart = pointInsideCircle(X, Y, BeginPointList, 10)
     }
     if (isBackToStart) {
       this.pause = true
       this.clearCanvas()
+      this.CFICanvasContext4.clearRect(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
       let tmpImagePathList
       let newImagePathList
       this.CFICanvasContextPaint.clearRect(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
@@ -883,36 +901,43 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
         this.CFICanvasContextPaint.clearRect(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
       }
       this.clearCanvas()
+      this.CFICanvasContext4.clearRect(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
       repaintImageByPath(newImagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
 
       this.setState(
         {
           polyList: [],
+          presentPolyList: [],
           lineStart: [],
           BeginPointList: [],
-          imagePathList: newImagePathList
+          imagePathList: newImagePathList,
+          showAnimatePin: false,
+          showNonAnimatePin: false,
+          undoIsEnabled: newImagePathList.length > 0
         }
       )
       return
     } else {
-      const canvasClientOffset = this.CFICanvas2.current.getBoundingClientRect()
-      const scale = this.canvasOriginalDimensions.width / canvasClientOffset.width
       this.CFICanvasContextPaint.clearRect(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
+      this.CFICanvasContext4.clearRect(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
       if (BeginPointList.length > 0) {
-        this.circleAnimate(this.circleAnimate, 0, ctxDraw, BeginPointList[0], BeginPointList[1], scale, '#28A745')
+        this.dropPin(BeginPointList[0], BeginPointList[1], BeginPointList.length > 0)
       }
-      poly.length > 2 && repaintCircleLine(ctxDraw, BeginPointList, poly.slice(1, -1), scale)
-      drawHollowCircle(ctxDraw, cursorX, cursorY, scale, '#2cabe2')
+      presentPoly.length > 2 && repaintCircleLine(ctxDraw, BeginPointList, presentPoly.slice(1, -1))
+      this.dropPin(X, Y, BeginPointList.length > 0)
       if (lineStart.length > 0) {
         ctxDraw.beginPath()
-        const end = [cursorX, cursorY]
-        drawLine(ctxDraw, lineStart, end, true, scale)
+        const end = [X, Y]
+        drawLine(ctxDraw, lineStart, end, true)
       } else {
-        this.setState({ BeginPointList: [cursorX, cursorY] })
+        this.setState({ BeginPointList: [X, Y] })
       }
       ctxDraw.restore()
     }
-    this.setState({ lineStart: [cursorX, cursorY], polyList: poly })
+    this.setState({ lineStart: [X, Y],
+      polyList: poly,
+      presentPolyList: presentPoly
+    })
   }
 
   handlePaintArea = throttle((e: Object) => {
@@ -952,6 +977,24 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
         redoIsEnabled: false })
     }
   }, 10)
+
+  dropPin = (x, y, isAnimate) => {
+    if (isAnimate) {
+      this.setState({
+        pinX: x,
+        pinY: y,
+        showAnimatePin: true,
+        showNonAnimatePin: true
+      })
+    } else {
+      this.setState({
+        currPinX: x,
+        currPinY: y,
+        showAnimatePin: isAnimate,
+        showNonAnimatePin: true
+      })
+    }
+  }
 
   circleAnimate = (fn, t, ...arg) => {
     const helper = (fn, t, ...arg) => {
@@ -1336,7 +1379,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
   render () {
     const { imageUrl, lpActiveColor, intl } = this.props
-    const { activeTool, position, paintBrushShape, paintBrushWidth, eraseBrushShape, eraseBrushWidth, undoIsEnabled, redoIsEnabled, showOriginalCanvas, isAddGroup, isDeleteGroup, isUngroup, paintCursor, isInfoToolActive, loading } = this.state
+    const { activeTool, position, paintBrushShape, paintBrushWidth, eraseBrushShape, eraseBrushWidth, undoIsEnabled, redoIsEnabled, showOriginalCanvas, isAddGroup, isDeleteGroup, isUngroup, paintCursor, isInfoToolActive, loading, showAnimatePin, showNonAnimatePin, pinX, pinY, currPinX, currPinY } = this.state
     const lpActiveColorRGB = (lpActiveColor) ? `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})` : ``
     const backgroundColorBrush = (activeTool === toolNames.ERASE) ? `rgba(255, 255, 255, 0.7)` : lpActiveColorRGB
     const { paintBrushActiveClass, paintBrushCircleActiveClass } = this.getPaintBrushActiveClass()
@@ -1357,6 +1400,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
           ref={this.CFICanvasPaint}>
           {intl.messages.CANVAS_UNSUPPORTED}
         </canvas>
+        <canvas className={`${canvasClass} ${canvasSecondClass}`} ref={this.CFICanvas4} name='paint-scene-canvas-fourth' />
         <img className={`${imageClass}`} ref={this.CFIImage} onLoad={this.initCanvas} onError={this.handleImageErrored} src={imageUrl} alt={intl.messages.IMAGE_INVISIBLE} />
         {this.renderMergeCanvas(this.state.canvasImageUrls)}
         <div className={`${paintToolsClass}`}>
@@ -1391,6 +1435,16 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
               style={{ backgroundColor: backgroundColorBrush, top: position.top, left: position.left }}
             /> : ''
         }
+        {showAnimatePin && <div className={`${animationPin}`} style={{ top: pinY, left: pinX }}>
+          <div className={`${animationPin}__outer`}>
+            <div className={`${animationPin}__inner`} />
+          </div>
+        </div>}
+        {showNonAnimatePin && <div className={`${nonAnimationPin}`} style={{ top: currPinY, left: currPinX }} >
+          <div className={`${nonAnimationPin}__outer`}>
+            <div className={`${nonAnimationPin}__inner`} />
+          </div>
+        </div>}
       </div>
     )
   }

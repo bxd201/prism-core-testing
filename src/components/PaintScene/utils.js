@@ -85,13 +85,13 @@ export const drawCircle = (circleObj) => {
   ctx.restore()
 }
 
-export const Circle = (ctx, x, y, radius, scale, fillStyle, type = 'source-over', pulse) => {
+export const Circle = (ctx, x, y, radius, fillStyle, type = 'source-over', pulse) => {
   let circleObj = {
     ctx: ctx,
     x: x,
     y: y,
-    radius: radius * scale,
-    lineWidth: 2 * scale,
+    radius: radius,
+    lineWidth: 2,
     type: type,
     pulse: pulse
   }
@@ -103,29 +103,29 @@ export const Circle = (ctx, x, y, radius, scale, fillStyle, type = 'source-over'
   return circleObj
 }
 
-export const drawHollowCircle = (ctxDraw, cursorX, cursorY, scale, color, pulse = 1) => {
-  Circle(ctxDraw, cursorX, cursorY, 10, scale, color, 'source-over', pulse)
-  Circle(ctxDraw, cursorX, cursorY, 4, scale, 'rgba(255, 255, 255, 0)', 'source-over', pulse)
-  Circle(ctxDraw, cursorX, cursorY, 2, scale, 'rgba(255, 255, 255, 255)', 'destination-out')
+export const drawHollowCircle = (ctxDraw, cursorX, cursorY, color, pulse = 1) => {
+  Circle(ctxDraw, cursorX, cursorY, 10, color, 'source-over', pulse)
+  Circle(ctxDraw, cursorX, cursorY, 4, 'rgba(255, 255, 255, 0)', 'source-over', pulse)
+  Circle(ctxDraw, cursorX, cursorY, 2, 'rgba(255, 255, 255, 255)', 'destination-out')
 }
 
 export const repaintCircleLine = (ctx, start, list, scale) => {
   ctx.beginPath()
   for (let i = 0; i < list.length; i++) {
-    Circle(ctx, list[i][0], list[i][1], 6, scale, 'rgba(255, 255, 255, 0)')
+    Circle(ctx, list[i][0], list[i][1], 6, 'rgba(255, 255, 255, 0)')
     if (i === 0) {
-      drawLine(ctx, start, list[i], true, scale)
+      drawLine(ctx, start, list[i], true)
     } else {
-      drawLine(ctx, list[i - 1], list[i], true, scale)
+      drawLine(ctx, list[i - 1], list[i], true)
     }
   }
   ctx.closePath()
 }
 
-export const pointInsideCircle = (x, y, circle, r, scale) => {
+export const pointInsideCircle = (x, y, circle, r) => {
   let dx = circle[0] - x
   let dy = circle[1] - y
-  return dx * dx + dy * dy <= r * scale * r * scale
+  return dx * dx + dy * dy <= r * r
 }
 
 export const alterRGBByPixel = (canvas, color, width, height) => {
@@ -140,11 +140,11 @@ export const alterRGBByPixel = (canvas, color, width, height) => {
   ctx.putImageData(imageData, 0, 0)
 }
 
-export const drawLine = (ctx, lineStart, end, isDash, scale = 1) => {
+export const drawLine = (ctx, lineStart, end, isDash) => {
   ctx.save()
   ctx.beginPath()
   ctx.strokeStyle = '#fff'
-  ctx.lineWidth = 1.5 * scale
+  ctx.lineWidth = 1.5
   isDash && ctx.setLineDash([5, 15])
   ctx.moveTo(lineStart[0], lineStart[1])
   ctx.lineTo(end[0], end[1])
