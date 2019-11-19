@@ -4,11 +4,12 @@
 
 ### Running Local Instance
 ```
-# will generate assets for ALL entrypoints
+# will generate assets for the embed and bundle entrypoints
+# and start a server at localhost:8080
 npm start
 ```
 
-or, to build one or more specific entrypoint assets instead of all of them, pass the desired entrypoints to the `ENTRY` var as a comma-delimited list:
+or, to build one or more specific entrypoint assets, pass the desired entrypoints to the `ENTRY` var as a comma-delimited list:
 ```
 # this will build bundle.js, css/bundle.css, and css/cleanslate.css
 ENTRY=bundle npm start
