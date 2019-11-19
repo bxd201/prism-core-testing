@@ -30,7 +30,7 @@ import { GOOGLE_ANALYTICS_UID } from './constants/globals'
 import docReady from 'src/shared/helpers/docReady'
 import { type EmbeddedConfiguration } from './shared/types/Configuration'
 import ConfigurationContextProvider from './contexts/ConfigurationContext/ConfigurationContextProvider'
-import { flattenNestedObject } from './shared/helpers/DataUtils'
+import { flattenNestedObject, ensureFullyQualifiedAssetUrl } from './shared/helpers/DataUtils'
 
 // all supported languages
 import languages from './translations/translations'
@@ -59,8 +59,7 @@ const embedGlobalStylesOnce = once(() => {
   // $FlowIgnore -- flow doesn't think body is defined
   document.body.appendChild(immediateStyleTag)
   immediateStyleTag.innerHTML = `.${CLEANSLATE_CLASS}.${PRISM_CLASS} { display: none }`
-
-  const cleanslatePath = `${BASE_PATH}/css/${cleanslateEntryPointName}.css`
+  const cleanslatePath = ensureFullyQualifiedAssetUrl(`css/${cleanslateEntryPointName}.css`)
   const cleanslateTag = document.createElement('link')
   cleanslateTag.rel = 'stylesheet'
   cleanslateTag.type = 'text/css'
@@ -75,8 +74,7 @@ const embedGlobalStylesOnce = once(() => {
 const memoEmbedBundleStyles = memoizee((bundleName) => {
   // create the link to our css
   const fileName = `${camelCase(bundleName)}.css`
-  const stylePath = `${BASE_PATH}/css/${fileName}`
-  console.info(stylePath)
+  const stylePath = ensureFullyQualifiedAssetUrl(`css/${fileName}`)
   const styleTag = document.createElement('link')
   styleTag.rel = 'stylesheet'
   styleTag.type = 'text/css'
