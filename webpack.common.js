@@ -198,10 +198,9 @@ module.exports = {
   devServer: {
     host: (() => {
       if (process.env.WEB_URL) {
-        const matches = /(http(s?):)\/\/([^:/]*)/g.exec(process.env.WEB_URL)
-
-        if (matches && matches[3]) {
-          return matches[3]
+        const matches = process.env.WEB_URL.match(/^(([^:/?#]+):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/)
+        if (matches && matches[4]) {
+          return matches[4].split(':')[0]
         }
       }
 
