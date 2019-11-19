@@ -19,7 +19,7 @@ Refer to `webpack/constants.js` for all available entrypoint names in the `facet
 #### Specifying local host
 The local dev server will typically run from `localhost`, but if you need to specify a different host you can do so by passing a var like so:
 ```
-WEB_URL=https://0.0.0.0:8080 npm start
+URL=https://0.0.0.0:8080 npm start
 ```
 
 ### Deploy
