@@ -21,7 +21,9 @@ const APP_NAME = process.env.npm_package_name
 
 const API_PATH = (process.env.API_URL) ? process.env.API_URL : '$API_URL'
 const ML_API_URL = (process.env.ML_API_URL) ? process.env.ML_API_URL : '$ML_API_URL'
-const BASE_PATH = (process.env.NODE_ENV === 'development') ? (process.env.LOCAL_URL ? process.env.LOCAL_URL : DEFAULT_LOCAL_URL) : (process.env.WEB_URL) ? process.env.WEB_URL : '$WEB_URL'
+// TODO: removing this for now due to local env inconsistencies -- will now always default to localhost when running locally
+// const BASE_PATH = (process.env.NODE_ENV === 'development') ? (process.env.LOCAL_URL ? process.env.LOCAL_URL : DEFAULT_LOCAL_URL) : (process.env.WEB_URL) ? process.env.WEB_URL : '$WEB_URL'
+const BASE_PATH = (process.env.NODE_ENV === 'development') ? DEFAULT_LOCAL_URL : (process.env.WEB_URL) ? process.env.WEB_URL : '$WEB_URL'
 const SPECIFIED_ENTRIES = process.env.ENTRY ? process.env.ENTRY : (process.env.NODE_ENV === 'development') ? DEFAULT_ENTRY : undefined
 
 let allEntryPoints = {
@@ -201,8 +203,8 @@ module.exports = {
   ].filter(p => p),
   devServer: {
     host: (() => {
-      if (process.env.WEB_URL) {
-        const matches = process.env.WEB_URL.match(/^(([^:/?#]+):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/)
+      if (BASE_PATH) {
+        const matches = BASE_PATH.match(/^(([^:/?#]+):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/)
         if (matches && matches[4]) {
           return matches[4].split(':')[0]
         }

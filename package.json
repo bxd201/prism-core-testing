@@ -3,7 +3,7 @@
   "version": "1.1.3",
   "private": true,
   "scripts": {
-    "start": "cross-env NODE_ENV=development API_URL=https://develop-prism-api.ebus.swaws LOCAL_URL=$URL ML_API_URL=https://localhost ENTRY=$ENTRY webpack-dev-server --mode development --open --hot --config webpack.dev.js",
+    "start": "cross-env NODE_ENV=development API_URL=https://develop-prism-api.ebus.swaws ML_API_URL=https://localhost ENTRY=$ENTRY webpack-dev-server --mode development --open --hot --config webpack.dev.js",
     "build": "NODE_ENV=production webpack --config webpack.prod.js",
     "test": "jest --coverage --updateSnapshot",
     "test:ci": "jest --ci",
