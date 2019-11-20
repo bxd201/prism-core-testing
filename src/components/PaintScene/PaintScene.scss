@@ -18,6 +18,7 @@
   }
 
   &--animation{
+    height: 3px;
     &::before{
       display:none;
       content: '';
@@ -193,5 +194,11 @@
     &--tiny-circle {
       border-radius: 1em;
     }
+  }
+  &--disable-text-select {
+    user-select: none;
+  }
+  &--disable-click {
+    pointer-events: none;
   }
 }
