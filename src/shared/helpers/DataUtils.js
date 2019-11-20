@@ -26,8 +26,12 @@ export const removeExtraURLSlashesAfterProtocol = (url: string) => {
 }
 
 export const ensureFullyQualifiedAssetUrl = memoizee(function ensureFullyQualifiedAssetUrl (url: string): string {
-  const matches = url.match(urlPattern)
-  return matches && matches[1] ? url : removeExtraURLSlashesAfterProtocol(`${BASE_PATH}/${url}`)
+  if (typeof url === 'string' && url.length > 1) {
+    const matches = url.match(urlPattern)
+    return matches && matches[1] ? url : removeExtraURLSlashesAfterProtocol(`${BASE_PATH}/${url}`)
+  }
+
+  return ''
 })
 
 export const generateBrandedEndpoint = memoizee((basePath, brand, options) => {
