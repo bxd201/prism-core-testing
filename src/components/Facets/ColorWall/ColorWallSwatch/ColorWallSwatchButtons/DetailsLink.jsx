@@ -35,4 +35,4 @@ const DetailsLink = (props: Props) => {
   return null
 }
 
-export default React.memo<Props>(DetailsLink)
+export default DetailsLink

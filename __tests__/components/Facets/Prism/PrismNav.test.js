@@ -76,7 +76,7 @@ describe('PrismNav component with events', () => {
 
   it(`should call pushMock with param defined as ${paramActiveColorWall} constant when second button is clicked`, () => {
     prismNav.find('button.prism-nav-btn').at(1).simulate('click')
-    expect(pushMock).toHaveBeenCalledWith(paramActiveColorWall)
+    expect(pushMock).toHaveBeenCalledWith('/active/color-wall/section/sherwin-williams-colors')
     pushMock.mockClear()
   })
 })

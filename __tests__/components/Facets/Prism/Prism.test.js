@@ -4,7 +4,6 @@ import { shallow } from 'enzyme'
 import { Route } from 'react-router'
 import { Prism, RootRedirect } from 'src/components/Facets/Prism/Prism'
 import { SceneManager } from 'src/components/SceneManager/SceneManager'
-import ColorWallRouteComponent from 'src/components/Facets/ColorWall/ColorWallRouteComponent'
 import { ROUTE_PARAMS, ROUTE_PARAM_NAMES } from 'constants/globals'
 import ColorDetails from 'src/components/Facets/ColorDetails/ColorDetails'
 import { PrismNav } from '../../../../src/components/Facets/Prism/PrismNav'
@@ -52,14 +51,6 @@ describe('Prism routes', () => {
 
   it('should show RootRedirect component for route defined as homeRoute constant', () => {
     expect(pathMap[homeRoute]).toBe(RootRedirect)
-  })
-
-  it('should show SceneManager component for route defined as activeRoute constant', () => {
-    expect(pathMap[activeRoute].WrappedComponent).toBe(SceneManager)
-  })
-
-  it('should show ColorWallRouteComponent for route defined as colorWallUrlPattern constant', () => {
-    expect(pathMap[colorWallUrlPattern]).toBe(ColorWallRouteComponent)
   })
 
   it('should show ColorDetails component for route defined as activeColorIdSeoUrlPattern constant', () => {

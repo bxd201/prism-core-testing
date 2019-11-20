@@ -60,7 +60,7 @@ export class PrismNav extends PureComponent<Props> {
     return (
       <React.Fragment>
         <button onClick={() => { history.push('/active') }} className={`prism-nav-btn ${isScene(pathname) ? 'prism-nav-btn--active' : ''}`}>Scenes</button>
-        <button onClick={() => { history.push('/active/color-wall') }} className={`prism-nav-btn ${isColorWall(pathname) ? 'prism-nav-btn--active' : ''}`}>Color Wall</button>
+        <button onClick={() => { history.push('/active/color-wall/section/sherwin-williams-colors') }} className={`prism-nav-btn ${isColorWall(pathname) ? 'prism-nav-btn--active' : ''}`}>Color Wall</button>
         <button onClick={() => { history.push('/color-from-image') }} className={`prism-nav-btn ${isColorFromImage(pathname) ? 'prism-nav-btn--active' : ''}`}>Color From Image</button>
         <button onClick={() => { history.push('/color-collections') }} className={`prism-nav-btn ${isColorCollections(pathname) ? 'prism-nav-btn--active' : ''}`}>Color Collections</button>
         <button onClick={() => { history.push('/expert-colors') }} className={`prism-nav-btn ${isExpertColor(pathname) ? 'prism-nav-btn--active' : ''}`}>Expert Colors</button>

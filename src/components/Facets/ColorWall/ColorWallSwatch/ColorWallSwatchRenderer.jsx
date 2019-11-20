@@ -21,4 +21,4 @@ const ColorWallSwatchRenderer = ({ color, focus }: Props) => {
   )
 }
 
-export default React.memo<Props>(ColorWallSwatchRenderer)
+export default ColorWallSwatchRenderer

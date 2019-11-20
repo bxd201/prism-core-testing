@@ -2,8 +2,8 @@
 
 import ColorCollection from '../../ColorCollections/ColorCollections'
 import ExpertColorPicks from '../../ExpertColorPicks/ExpertColorPicks'
+import { ColorWallPage } from '../ColorWallFacet'
 import ColorDetails from '../ColorDetails/ColorDetails'
-import ColorWallRouteComponent from '../ColorWall/ColorWallRouteComponent'
 import CompareColor from '../../CompareColor/CompareColor'
 import EnvAdapter from '../../EnvAdapter/EnvAdapter'
 import FastMask from '../../FastMask/FastMask'
@@ -12,6 +12,7 @@ import LivePalette from '../../LivePalette/LivePalette'
 import PrismNav from './PrismNav'
 import React, { Component } from 'react'
 import SceneManager from '../../SceneManager/SceneManager'
+import ColorWallContext from '../ColorWall/ColorWallContext'
 import facetBinder from 'src/facetBinder'
 
 import { connect } from 'react-redux'
@@ -31,10 +32,6 @@ export const RootRedirect = () => {
   return <Redirect to='/active' />
 }
 
-export const ColorWallComponent = (props: any) => {
-  return <ColorWallRouteComponent displayDetailsLink {...props} />
-}
-
 type Props = {toggleCompareColor: boolean}
 
 export class Prism extends Component<Props> {
@@ -50,7 +47,11 @@ export class Prism extends Component<Props> {
             <div className='prism__root-wrapper'>
               <Route path='/' exact component={RootRedirect} />
               <Route path='/active' exact component={() => <SceneManager expertColorPicks />} />
-              <Route path={colorWallUrlPattern} component={ColorWallComponent} />
+              <Route path={colorWallUrlPattern}>
+                <ColorWallContext.Provider value={{ displayDetailsLink: true }}>
+                  <ColorWallPage />
+                </ColorWallContext.Provider>
+              </Route>
               <Route path='/color-from-image' component={InspiredScene} />
               <Route path='/color-collections' component={(props) => (<ColorCollection isExpertColor={false} {...props.location.state} />)} />
               <Route path='/expert-colors' component={() => <ExpertColorPicks isExpertColor />} />

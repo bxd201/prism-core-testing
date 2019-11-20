@@ -21,4 +21,4 @@ const InfoButton = (props: Props) => {
   return null
 }
 
-export default React.memo<Props>(InfoButton)
+export default InfoButton
