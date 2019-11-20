@@ -48,7 +48,7 @@ const handleUndo = (itemId, redos, imagePathList) => {
 const toggleLinkedItems = (linkedItems, history) => {
   if (linkedItems) {
     history.forEach((item) => {
-      if (linkedItems.indexOf(item.id) > -1) {
+      if (linkedItems === item.id) {
         item.isEnabled = !item.isEnabled
       }
     })
