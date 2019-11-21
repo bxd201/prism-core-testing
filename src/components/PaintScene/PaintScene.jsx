@@ -974,7 +974,10 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       repaintImageByPath(copyImagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
       this.setState({ imagePathList: copyImagePathList,
         undoIsEnabled: copyImagePathList.length > 0,
-        redoIsEnabled: false })
+        redoIsEnabled: false,
+        mergeCanvasKey: `${Date.now()}`,
+        canvasImageUrls: this.getLayers()
+      })
     }
   }, 10)
 
@@ -1401,8 +1404,8 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
           {intl.messages.CANVAS_UNSUPPORTED}
         </canvas>
         <canvas className={`${canvasClass} ${canvasSecondClass}`} ref={this.CFICanvas4} name='paint-scene-canvas-fourth' />
-        <img className={`${imageClass}`} ref={this.CFIImage} onLoad={this.initCanvas} onError={this.handleImageErrored} src={imageUrl} alt={intl.messages.IMAGE_INVISIBLE} />
         {this.renderMergeCanvas(this.state.canvasImageUrls)}
+        <img className={`${imageClass}`} ref={this.CFIImage} onLoad={this.initCanvas} onError={this.handleImageErrored} src={imageUrl} alt={intl.messages.IMAGE_INVISIBLE} />
         <div className={`${paintToolsClass}`}>
           <PaintToolBar
             activeTool={activeTool}
