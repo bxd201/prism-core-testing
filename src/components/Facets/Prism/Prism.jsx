@@ -1,11 +1,9 @@
 // @flow
-
 import ColorCollection from '../../ColorCollections/ColorCollections'
 import ExpertColorPicks from '../../ExpertColorPicks/ExpertColorPicks'
 import { ColorWallPage } from '../ColorWallFacet'
 import ColorDetails from '../ColorDetails/ColorDetails'
 import CompareColor from '../../CompareColor/CompareColor'
-import EnvAdapter from '../../EnvAdapter/EnvAdapter'
 import FastMask from '../../FastMask/FastMask'
 import InspiredScene from '../../InspirationPhotos/InspiredSceneNavigator'
 import LivePalette from '../../LivePalette/LivePalette'
@@ -13,7 +11,8 @@ import PrismNav from './PrismNav'
 import React, { Component } from 'react'
 import SceneManager from '../../SceneManager/SceneManager'
 import ColorWallContext, { colorWallContextDefault } from '../ColorWall/ColorWallContext'
-import facetBinder from 'src/facetBinder'
+import facetBinder from 'src/facetSupport/facetBinder'
+import { type PubSubOutProps } from 'src/facetSupport/facetPubSub'
 
 import { connect } from 'react-redux'
 import { Route, Redirect } from 'react-router-dom'
@@ -32,16 +31,18 @@ export const RootRedirect = () => {
   return <Redirect to='/active' />
 }
 
-type Props = {toggleCompareColor: boolean}
+type Props = PubSubOutProps & {
+  toggleCompareColor: boolean
+}
 
 export class Prism extends Component<Props> {
   render () {
     const { toggleCompareColor } = this.props
+
     return (
       <React.Fragment>
         <div className='prism__root-container'>
           <PrismNav />
-          <EnvAdapter />
           <hr />
           {!toggleCompareColor &&
             <div className='prism__root-wrapper'>
@@ -66,6 +67,12 @@ export class Prism extends Component<Props> {
         </div>
       </React.Fragment>
     )
+  }
+
+  componentWillUnmount () {
+    if (typeof this.props.unsubscribeAll === 'function') {
+      this.props.unsubscribeAll()
+    }
   }
 }
 

@@ -3,7 +3,7 @@ import React from 'react'
 
 import LivePalette from '../../LivePalette/LivePalette'
 import SceneManager from '../../SceneManager/SceneManager'
-import facetBinder from 'src/facetBinder'
+import facetBinder from 'src/facetSupport/facetBinder'
 
 type Props = {
   sceneSet?: string

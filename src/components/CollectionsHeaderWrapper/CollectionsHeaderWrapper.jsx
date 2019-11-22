@@ -1,5 +1,5 @@
 // @flow
-import React, { useState } from 'react'
+import React, { useState, type ComponentType } from 'react'
 import './CollectionsHeaderWrapper.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
@@ -17,7 +17,7 @@ const buttonClose = `${baseClass}__close`
 const buttonCancel = `${baseClass}__cancel`
 const wrapperContent = `${baseClass}__content`
 
-export default (WrappedComponent) => (props) => {
+export default (WrappedComponent: ComponentType<any>) => (props: any) => {
   const [showBack, setShowBack] = useState(false)
   const [header, setHeader] = useState('')
 

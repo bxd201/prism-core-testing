@@ -35,9 +35,11 @@ export const removeColorFilters = () => ({ type: REMOVE_COLOR_FILTERS })
 export const MAKE_ACTIVE_COLOR: string = 'MAKE_ACTIVE_COLOR'
 export const makeActiveColor = (color: Color) => ({ type: MAKE_ACTIVE_COLOR, payload: { color } })
 
-export const MAKE_ACTIVE_COLOR_BY_ID: string = 'MAKE_ACTIVE_COLOR_BY_ID'
 export const RESET_ACTIVE_COLOR: string = 'RESET_ACTIVE_COLOR'
-export const makeActiveColorById = (id: string) => id ? { type: MAKE_ACTIVE_COLOR_BY_ID, payload: { id } } : { type: RESET_ACTIVE_COLOR }
+export const resetActiveColor = () => ({ type: RESET_ACTIVE_COLOR })
+
+export const MAKE_ACTIVE_COLOR_BY_ID: string = 'MAKE_ACTIVE_COLOR_BY_ID'
+export const makeActiveColorById = (id?: string) => id ? { type: MAKE_ACTIVE_COLOR_BY_ID, payload: { id } } : resetActiveColor()
 
 // TODO: Make this method configurable via options on call so specific color wall implementations can reuse it to load their colors
 export const loadColors = (brandId: string, options?: any) => {

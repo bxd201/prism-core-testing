@@ -1,0 +1,6 @@
+export const HAS_BOUND_CLASS = '__react-bound'
+export const TO_BIND_CLASS = '__react-root'
+export const CLEANSLATE_CLASS = 'cleanslate'
+export const PRISM_CLASS = 'prism'
+export const EMBED_ROOT_LEGACY = '#prism-root'
+export const EMBED_ROOT_MODERN = '[prism-auto-embed], [data-prism-auto-embed]'
