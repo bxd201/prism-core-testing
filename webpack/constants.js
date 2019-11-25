@@ -16,12 +16,14 @@ const mocksPath = path.join(rootPath, '__mocks__')
 const appIndexPath = path.join(srcPath, 'index.jsx')
 const authorPath = path.join(srcPath, 'author.js')
 const embedPath = path.join(srcPath, 'embed.js')
+const exportPath = path.join(srcPath, 'export.js')
 const cleanslatePath = path.join(srcPath, 'cleanslate.js')
 
 const mainEntryPointName = 'bundle'
 const embedEntryPointName = 'embed'
 const authorEntryPointName = 'author'
 const cleanslateEntryPointName = 'cleanslate'
+const exportEntryPointName = 'index'
 
 const fixedEntryPoints = {
   [cleanslateEntryPointName]: cleanslatePath
@@ -30,7 +32,8 @@ const fixedEntryPoints = {
 const mainEntryPoints = {
   [authorEntryPointName]: authorPath,
   [embedEntryPointName]: embedPath,
-  [mainEntryPointName]: appIndexPath
+  [mainEntryPointName]: appIndexPath,
+  [exportEntryPointName]: exportPath
 }
 
 const facetEntryPoints = {
