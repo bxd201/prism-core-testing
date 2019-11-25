@@ -178,6 +178,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       selectedArea: [],
       groupAreaList: [],
       groupSelectList: [],
+      clearUndoList: [],
       wrapperHeight: this.props.referenceDimensions.imageHeight,
       isUngroup: false,
       isAddGroup: false,
@@ -237,6 +238,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
         drawImagePixelByPath(ctx, this.canvasOffsetWidth, this.canvasOffsetHeight, RGB, this.state.groupSelectList[i].selectPath)
         const [ newPath, pixelIndexAlphaMap ] = getImageCordinateByPixel(this.CFICanvas2, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight, true)
         copyImagePathList.push({
+          id: uniqueId(),
           color: RGB,
           data: newPath,
           pixelIndexAlphaMap: pixelIndexAlphaMap,
@@ -251,6 +253,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
         drawImagePixelByPath(ctx, this.canvasOffsetWidth, this.canvasOffsetHeight, RGB, this.state.selectedArea[i].selectPath)
         const [ newPath, pixelIndexAlphaMap ] = getImageCordinateByPixel(this.CFICanvas2, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight, true)
         copyImagePathList.push({
+          id: uniqueId(),
           color: RGB,
           data: newPath,
           pixelIndexAlphaMap: pixelIndexAlphaMap,
@@ -461,12 +464,19 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
   /*:: undo: () => void */
   undo () {
-    const stateFragment = undo(this.state)
-    // Create a new key to ensure a new merge canvas component instance is created
-    stateFragment.mergeCanvasKey = `${Date.now()}`
-    this.setState(stateFragment, () => {
-      this.redrawCanvas(stateFragment.imagePathList)
-    })
+    const { clearUndoList, imagePathList } = this.state
+    if (clearUndoList.length !== 0 && imagePathList.length === 0) {
+      this.redrawCanvas(clearUndoList)
+      const newImageList = copyImageList(clearUndoList)
+      this.setState({ clearUndoList: [], imagePathList: newImageList })
+    } else {
+      const stateFragment = undo(this.state)
+      // Create a new key to ensure a new merge canvas component instance is created
+      stateFragment.mergeCanvasKey = `${Date.now()}`
+      this.setState(stateFragment, () => {
+        this.redrawCanvas(stateFragment.imagePathList)
+      })
+    }
   }
 
   /*:: redo: () => void */
@@ -706,11 +716,16 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   }
 
   clearCanvas = (clearCanvasDrawing: boolean = false) => {
+    const { imagePathList } = this.state
+    const undolist = copyImageList(imagePathList)
     this.CFICanvasContext2.clearRect(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
     if (clearCanvasDrawing) {
       this.setState({
         imagePathList: [],
-        selectedArea: []
+        selectedArea: [],
+        clearUndoList: undolist,
+        redoPathList: [],
+        redoIsEnabled: false
       })
     }
   }
