@@ -46,6 +46,8 @@ const canvasHiddenByVisibility = `${canvasClass}--hidden-by-visibility`
 const animationLoader = `${baseClass}--animation`
 const animationPin = `${baseClass}--animation-pin`
 const nonAnimationPin = `${baseClass}--non-animation-pin`
+const disableTextSelect = `${baseClass}--disable-text-select`
+const disableClick = `${baseClass}--disable-click`
 
 type ComponentProps = {
   imageUrl: string,
@@ -220,6 +222,9 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   }
 
   componentDidUpdate (prevProps: Object, prevState: Object) {
+    if (prevState.loading) {
+      return
+    }
     const newWidth = this.shouldCanvasResize(prevProps.width, this.props.width)
     if (newWidth) {
       this.scaleCanvases(newWidth)
@@ -1404,66 +1409,68 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     const { eraseBrushActiveClass, eraseBrushCircleActiveClass } = this.getEraseBrushActiveClass()
 
     return (
-      <div role='presentation' className={baseClass} onClick={this.handleClick} onMouseMove={this.mouseMoveHandler} ref={this.CFIWrapper} style={{ height: this.state.wrapperHeight }} onMouseLeave={this.mouseLeaveHandler} onMouseEnter={this.mouseEnterHandler}>
+      <React.Fragment>
         <div className={`${animationLoader} ${loading ? `${animationLoader}--load` : ''}`} />
-        <canvas className={`${canvasClass} ${showOriginalCanvas ? `${canvasShowByZindex}` : `${canvasHideByZindex}`} ${this.isPortrait ? portraitOrientation : ''}`} name='paint-scene-canvas-first' ref={this.CFICanvas}>{intl.messages.CANVAS_UNSUPPORTED}</canvas>
-        <canvas style={{ opacity: showOriginalCanvas ? 1 : 0.8 }} className={`${canvasClass} ${paintCursor} ${canvasSecondClass} ${this.isPortrait ? portraitOrientation : ''}`} name='paint-scene-canvas-second' ref={this.CFICanvas2}>{intl.messages.CANVAS_UNSUPPORTED}</canvas>
-        <canvas
-          onMouseDown={this.onPanStart}
-          style={{ opacity: 1 }}
-          className={`${canvasClass} ${paintCursor} ${(activeTool === toolNames.PAINTBRUSH
-            ? canvasSecondClass : canvasThirdClass)} ${(activeTool === toolNames.ERASE)
-            ? canvasHiddenByVisibility : canvasVisibleByVisibility} ${this.isPortrait ? portraitOrientation : ''}`}
-          name='paint-scene-canvas-paint'
-          ref={this.CFICanvasPaint}>
-          {intl.messages.CANVAS_UNSUPPORTED}
-        </canvas>
-        <canvas className={`${canvasClass} ${canvasSecondClass}`} ref={this.CFICanvas4} name='paint-scene-canvas-fourth' />
-        {this.renderMergeCanvas(this.state.canvasImageUrls)}
-        <img className={`${imageClass}`} ref={this.CFIImage} onLoad={this.initCanvas} onError={this.handleImageErrored} src={imageUrl} alt={intl.messages.IMAGE_INVISIBLE} />
-        <div className={`${paintToolsClass}`}>
-          <PaintToolBar
-            activeTool={activeTool}
-            setActiveTool={this.setActiveTool}
-            clearCanvas={this.clearCanvas}
-            paintBrushShape={paintBrushShape}
-            paintBrushWidth={paintBrushWidth}
-            eraseBrushShape={eraseBrushShape}
-            eraseBrushWidth={eraseBrushWidth}
-            setBrushShapeSize={this.setBrushShapeSize}
-            performRedo={this.redo}
-            performUndo={this.undo}
-            undoIsEnabled={undoIsEnabled}
-            redoIsEnabled={redoIsEnabled}
-            hidePaint={this.hidePaint}
-            applyZoom={this.applyZoom}
-            groupHandler={this.groupHandler}
-            isAddGroup={isAddGroup}
-            isDeleteGroup={isDeleteGroup}
-            isUngroup={isUngroup}
-          />
+        <div role='presentation' className={`${baseClass} ${activeTool === toolNames.PAINTBRUSH || activeTool === toolNames.ERASE || activeTool === toolNames.INFO ? disableTextSelect : ``} ${(loading) ? disableClick : ``}`} onClick={this.handleClick} onMouseMove={this.mouseMoveHandler} ref={this.CFIWrapper} style={{ height: this.state.wrapperHeight }} onMouseLeave={this.mouseLeaveHandler} onMouseEnter={this.mouseEnterHandler}>
+          <canvas className={`${canvasClass} ${showOriginalCanvas ? `${canvasShowByZindex}` : `${canvasHideByZindex}`} ${this.isPortrait ? portraitOrientation : ''}`} name='paint-scene-canvas-first' ref={this.CFICanvas}>{intl.messages.CANVAS_UNSUPPORTED}</canvas>
+          <canvas style={{ opacity: showOriginalCanvas ? 1 : 0.8 }} className={`${canvasClass} ${paintCursor} ${canvasSecondClass} ${this.isPortrait ? portraitOrientation : ''}`} name='paint-scene-canvas-second' ref={this.CFICanvas2}>{intl.messages.CANVAS_UNSUPPORTED}</canvas>
+          <canvas
+            onMouseDown={this.onPanStart}
+            style={{ opacity: 1 }}
+            className={`${canvasClass} ${paintCursor} ${(activeTool === toolNames.PAINTBRUSH
+              ? canvasSecondClass : canvasThirdClass)} ${(activeTool === toolNames.ERASE)
+              ? canvasHiddenByVisibility : canvasVisibleByVisibility} ${this.isPortrait ? portraitOrientation : ''}`}
+            name='paint-scene-canvas-paint'
+            ref={this.CFICanvasPaint}>
+            {intl.messages.CANVAS_UNSUPPORTED}
+          </canvas>
+          <canvas className={`${canvasClass} ${canvasSecondClass}`} ref={this.CFICanvas4} name='paint-scene-canvas-fourth' />
+          {this.renderMergeCanvas(this.state.canvasImageUrls)}
+          <img className={`${imageClass}`} ref={this.CFIImage} onLoad={this.initCanvas} onError={this.handleImageErrored} src={imageUrl} alt={intl.messages.IMAGE_INVISIBLE} />
+          <div className={`${paintToolsClass}`}>
+            <PaintToolBar
+              activeTool={activeTool}
+              setActiveTool={this.setActiveTool}
+              clearCanvas={this.clearCanvas}
+              paintBrushShape={paintBrushShape}
+              paintBrushWidth={paintBrushWidth}
+              eraseBrushShape={eraseBrushShape}
+              eraseBrushWidth={eraseBrushWidth}
+              setBrushShapeSize={this.setBrushShapeSize}
+              performRedo={this.redo}
+              performUndo={this.undo}
+              undoIsEnabled={undoIsEnabled}
+              redoIsEnabled={redoIsEnabled}
+              hidePaint={this.hidePaint}
+              applyZoom={this.applyZoom}
+              groupHandler={this.groupHandler}
+              isAddGroup={isAddGroup}
+              isDeleteGroup={isDeleteGroup}
+              isUngroup={isUngroup}
+            />
+          </div>
+          {
+            ((activeTool === toolNames.PAINTBRUSH || activeTool === toolNames.ERASE) && (position.isHidden === false) && !isInfoToolActive)
+              ? <div
+                className={`${paintBrushClass} ${activeTool === toolNames.PAINTBRUSH ? `${paintBrushActiveClass} ${paintBrushCircleActiveClass}` : activeTool === toolNames.ERASE ? `${eraseBrushActiveClass} ${eraseBrushCircleActiveClass}` : ``}`}
+                role='presentation'
+                draggable
+                onMouseDown={this.mouseDownHandler} onDragStart={this.dragStartHandler}
+                style={{ backgroundColor: backgroundColorBrush, top: position.top, left: position.left }}
+              /> : ''
+          }
+          {showAnimatePin && <div className={`${animationPin}`} style={{ top: pinY, left: pinX }}>
+            <div className={`${animationPin}__outer`}>
+              <div className={`${animationPin}__inner`} />
+            </div>
+          </div>}
+          {showNonAnimatePin && <div className={`${nonAnimationPin}`} style={{ top: currPinY, left: currPinX }} >
+            <div className={`${nonAnimationPin}__outer`}>
+              <div className={`${nonAnimationPin}__inner`} />
+            </div>
+          </div>}
         </div>
-        {
-          ((activeTool === toolNames.PAINTBRUSH || activeTool === toolNames.ERASE) && (position.isHidden === false) && !isInfoToolActive)
-            ? <div
-              className={`${paintBrushClass} ${activeTool === toolNames.PAINTBRUSH ? `${paintBrushActiveClass} ${paintBrushCircleActiveClass}` : activeTool === toolNames.ERASE ? `${eraseBrushActiveClass} ${eraseBrushCircleActiveClass}` : ``}`}
-              role='presentation'
-              draggable
-              onMouseDown={this.mouseDownHandler} onDragStart={this.dragStartHandler}
-              style={{ backgroundColor: backgroundColorBrush, top: position.top, left: position.left }}
-            /> : ''
-        }
-        {showAnimatePin && <div className={`${animationPin}`} style={{ top: pinY, left: pinX }}>
-          <div className={`${animationPin}__outer`}>
-            <div className={`${animationPin}__inner`} />
-          </div>
-        </div>}
-        {showNonAnimatePin && <div className={`${nonAnimationPin}`} style={{ top: currPinY, left: currPinX }} >
-          <div className={`${nonAnimationPin}__outer`}>
-            <div className={`${nonAnimationPin}__inner`} />
-          </div>
-        </div>}
-      </div>
+      </React.Fragment>
     )
   }
 }

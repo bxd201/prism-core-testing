@@ -47,7 +47,7 @@ export const getImageCordinateByPixelPaintBrush = (canvas, width, height, return
   let pixelArray = []
   let pixelIndexAlphaMap = {}
   for (let index = 0; index < data.length; index += 4) {
-    if (data[index] !== 0 && data[index + 1] !== 0 && data[index + 2] !== 0) {
+    if (data[index] !== 0 || data[index + 1] !== 0 || data[index + 2] !== 0) {
       pixelArray.push(index)
       if (returnPixelIndexAlphaMap) pixelIndexAlphaMap[index] = data[index + 3]
     }
