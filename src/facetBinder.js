@@ -320,7 +320,7 @@ export default function (facetDeclaration: typeof Component | Function, facetNam
 
   addToEmbedQueue(facetName)
   embedGlobalStylesOnce()
-  initTrackingOnce()
+  process.env.NODE_ENV === 'production' && initTrackingOnce()
   embedAtRoots()
 
   return facetDeclaration

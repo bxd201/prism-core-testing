@@ -1,2 +1,2 @@
-import 'config/fontawesome'
+import '../../config/fontawesome'
 import './fontawesome.scss'

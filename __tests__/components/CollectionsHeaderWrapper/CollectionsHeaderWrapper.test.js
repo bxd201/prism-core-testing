@@ -51,9 +51,3 @@ describe('CollectionsHeaderWrapper states & events', () => {
     expect(collectionsHeaderWrapper.find(`button.${buttonLeft}`).exists()).toBe(false)
   })
 })
-
-it('renders back button and header when initialized with collectionSummary as a property', () => {
-    const collectionsHeaderWrapper = getCollectionsHeaderWrapper({ collectionSummary: { name: '2016 Pura Vida' } })
-    expect(collectionsHeaderWrapper.find(`button.${buttonLeft}`).exists()).toBe(true)
-    expect(collectionsHeaderWrapper.find(`div.${heading}`).contains('2016 Pura Vida')).toBe(true)
-})

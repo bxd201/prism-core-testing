@@ -8,6 +8,13 @@
   justify-content: center;
   flex: 1;
 
+  &__search-form {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding-bottom: $ui-spacing;
+  }
+
   &__wrapper {
     background: $input-bg;
     position: relative;

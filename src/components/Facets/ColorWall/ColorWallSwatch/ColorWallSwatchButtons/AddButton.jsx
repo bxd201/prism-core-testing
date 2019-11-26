@@ -26,4 +26,4 @@ const AddButton = (props: Props) => {
   return null
 }
 
-export default React.memo<Props>(AddButton)
+export default AddButton

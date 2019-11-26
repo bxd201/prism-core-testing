@@ -49,18 +49,6 @@ describe('colors-reducer', () => {
     expect(state).toEqual(expectedState)
   })
 
-  test('changes status for colors request', () => {
-    const state = colors(initialState, {
-      type: colorActions.REQUEST_COLORS,
-      payload: { loading: false }
-    })
-
-    expect(state).toEqual({
-      ...initialState,
-      status: { loading: false }
-    })
-  })
-
   test('updates seekingColorWallActive to payload color id if loading status is true', () => {
     const initialStateWithLoading = { ...initialState, status: { loading: true } }
 
@@ -237,21 +225,6 @@ describe('colors-reducer', () => {
     }
 
     expect(state).toEqual(expectedState)
-  })
-
-  test('changes status for search request', () => {
-    const state = colors(initialState, {
-      type: searchActions.REQUEST_SEARCH_RESULTS,
-      payload: { status: { loading: true } }
-    })
-
-    expect(state).toEqual({
-      ...initialState,
-      search: {
-        ...initialState.search,
-        loading: true
-      }
-    })
   })
 
   test('updates results for search received', () => {

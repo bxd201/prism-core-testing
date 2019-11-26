@@ -2,18 +2,15 @@
 import React, { PureComponent } from 'react'
 import { Route, Redirect, withRouter, Switch } from 'react-router-dom'
 import { TransitionGroup, CSSTransition } from 'react-transition-group'
-import includes from 'lodash/includes'
-
-import ColorWallRouteComponent from '../ColorWall/ColorWallRouteComponent'
+import { ColorWallPage } from '../ColorWallFacet'
 import ColorDetails from '../ColorDetails/ColorDetails'
 import ColorDataWrapper from '../../../helpers/ColorDataWrapper/ColorDataWrapper'
 import BackToColorWall from './BackToColorWall'
 import facetBinder from 'src/facetBinder'
-
+import ColorWallContext from '../ColorWall/ColorWallContext'
+import includes from 'lodash/includes'
 import { varValues } from 'variables'
-
 import { ROUTE_PARAMS, ROUTE_PARAM_NAMES } from 'constants/globals'
-
 import './ColorListingPage.scss'
 
 const colorWallBaseUrl = `/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_WALL}`
@@ -42,26 +39,20 @@ export const ColorDetailsComponent = (props: any) => {
   )
 }
 
-export const ColorWallComponent = (props: any) => {
-  return <ColorWallRouteComponent displayDetailsLink displayInfoButton={false} displayAddButton={false} {...props} />
+export const ColorWallComponent = () => {
+  return (
+    <ColorWallContext.Provider value={{ displayDetailsLink: true }}>
+      <ColorWallPage />
+    </ColorWallContext.Provider>
+  )
 }
 
-type ColorListingPageProps = {
-  location: Object
-}
+type ColorListingPageProps = { location: Object }
 
-type ColorListingPageState = {
-  prevPathname?: string,
-  toDetails: boolean,
-  toWall: boolean
-}
+type ColorListingPageState = { prevPathname?: string, toDetails: boolean, toWall: boolean }
 
 export class ColorListingPage extends PureComponent<ColorListingPageProps, ColorListingPageState> {
-  state: ColorListingPageState = {
-    prevPathname: void (0),
-    toDetails: false,
-    toWall: false
-  }
+  state: ColorListingPageState = { prevPathname: void (0), toDetails: false, toWall: false }
 
   render () {
     const { location } = this.props
@@ -103,28 +94,18 @@ export class ColorListingPage extends PureComponent<ColorListingPageProps, Color
     const { location: { pathname: newPropsPathname } } = props
 
     if (newPropsPathname !== prevPathname) {
-      let newProps = {
-        prevPathname: newPropsPathname
-      }
+      let newProps = { prevPathname: newPropsPathname }
 
       if (includes(newPropsPathname, colorDetailsBaseUrl) && includes(prevPathname, colorWallBaseUrl)) {
         // going TO color details FROM color wall; slide in from right
-        newProps = Object.assign({}, newProps, {
-          toDetails: true,
-          toWall: false
-        })
+        newProps = Object.assign({}, newProps, { toDetails: true, toWall: false })
         // transitionClassNames = ''
       } else if (includes(newPropsPathname, colorWallBaseUrl) && includes(prevPathname, colorDetailsBaseUrl)) {
         // going TO color wall FROM color details; slide in from left
-        newProps = Object.assign({}, newProps, {
-          toDetails: false,
-          toWall: true
-        })
+        newProps = Object.assign({}, newProps, { toDetails: false, toWall: true })
       }
-
       return newProps
     }
-
     return null
   }
 }

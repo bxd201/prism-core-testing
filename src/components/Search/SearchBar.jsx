@@ -1,62 +1,39 @@
 // @flow
-import React, { PureComponent } from 'react'
+import React from 'react'
+import { useHistory, useRouteMatch } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
-
+import ButtonBar from '../GeneralButtons/ButtonBar/ButtonBar'
+import { FormattedMessage } from 'react-intl'
 import './SearchBar.scss'
 
-type OwnProps = {
-  onSearchInput: Function,
-  onClearSearch: Function,
-  value: string | void
-}
+export default ({ showCancelButton = true }: { showCancelButton: boolean }) => {
+  const { url, params: { query = '' } } = useRouteMatch()
+  const history = useHistory()
+  const [value, setValue] = React.useState(query)
 
-type Ref = {
-  forwardedRef?: RefObject
-}
+  React.useEffect(() => { // mutate url when input hasn't changed in 250ms
+    const id = setTimeout(() => value !== query && history.push(value || './'), 250)
+    return () => clearTimeout(id)
+  }, [value])
 
-type Props = OwnProps & Ref
-
-const baseClass = 'SearchBar'
-
-export class SearchBar extends PureComponent<Props> {
-  render () {
-    const { value, onClearSearch, forwardedRef } = this.props
-    const _value = typeof value === 'string' ? value : ''
-    const hasInput = !!_value
-    const outline = hasInput ? 'with-outline' : 'without-outline'
-
-    return (
-      <div className={`${baseClass}`}>
+  return (
+    <form onSubmit={e => e.preventDefault()} className='SearchBar__search-form'>
+      <div className='SearchBar'>
         <FontAwesomeIcon className='search-icon' icon={['fal', 'search']} size='lg' />
-        <div className={`${baseClass}__wrapper ${baseClass}__wrapper--${outline}`}>
-          <input
-            value={value}
-            ref={forwardedRef}
-            className={`${baseClass}__input`}
-            onChange={this.handleInput} />
-          {
-            hasInput && onClearSearch &&
-            <button type='button' onClick={onClearSearch} className={`${baseClass}__clean`}>
-              <FontAwesomeIcon icon={['fas', 'times']} />
-            </button>
-          }
+        <div className={`SearchBar__wrapper SearchBar__wrapper--with${query ? '-outline' : 'out-outline'}`}>
+          <input value={value} className='SearchBar__input' onChange={e => setValue(e.target.value)} />
+          {value.length > 1 &&
+          <button type='button' className='SearchBar__clean' onClick={() => setValue('')}>
+            <FontAwesomeIcon icon={['fas', 'times']} />
+          </button>}
         </div>
       </div>
-    )
-  }
-
-  handleInput = (e: SyntheticInputEvent<HTMLInputElement>) => {
-    const { onSearchInput } = this.props
-    const value = e.target.value
-
-    e.persist()
-
-    onSearchInput(value)
-  }
+      {showCancelButton && <ButtonBar.Bar>
+        <ButtonBar.Button to={url.endsWith(query) ? '../' : './'}>
+          <FormattedMessage id='CANCEL' />
+        </ButtonBar.Button>
+      </ButtonBar.Bar>}
+    </form>
+  )
 }
-
-// $FlowIgnore -- flow's mad about this ref for some reason.
-const WrappedSearchBar = React.forwardRef<OwnProps, SearchBar>((props, ref) => <SearchBar {...props} forwardedRef={ref} />)
-
-export default WrappedSearchBar
