@@ -20,7 +20,6 @@ import { toolNames, groupToolNames, brushLargeSize, brushMediumSize, brushSmallS
 import { getScaledPortraitHeight, getScaledLandscapeHeight } from '../../shared/helpers/ImageUtils'
 import throttle from 'lodash/throttle'
 import { redo, undo } from './UndoRedoUtil'
-import WebWorker from './workers/paintScene.worker'
 import MergeCanvas from '../MergeCanvas/MergeCanvas'
 
 const baseClass = 'paint__scene__wrapper'
@@ -191,6 +190,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       initialCanvasHeight: 0,
       mergeCanvasKey: '1',
       canvasImageUrls: [],
+      groupIds: [],
       showAnimatePin: false,
       showNonAnimatePin: false,
       pinX: 0,
@@ -229,9 +229,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     if (newWidth) {
       this.scaleCanvases(newWidth)
     }
-
-    const { imagePathList, groupSelectList, selectedArea } = this.state
-    let edgeListToRender = []
+    const { imagePathList } = this.state
     let copyImagePathList = copyImageList(imagePathList)
     const islpActiveColorAvailable = (prevProps.hasOwnProperty('lpActiveColor') && this.props.hasOwnProperty('lpActiveColor')) && this.props.lpActiveColor !== null
     const islpActiveColorHexAvailable = (islpActiveColorAvailable) && prevProps.lpActiveColor.hasOwnProperty('hex') && this.props.lpActiveColor.hasOwnProperty('hex')
@@ -243,6 +241,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
         drawImagePixelByPath(ctx, this.canvasOffsetWidth, this.canvasOffsetHeight, RGB, this.state.groupSelectList[i].selectPath)
         const [ newPath, pixelIndexAlphaMap ] = getImageCordinateByPixel(this.CFICanvas2, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight, true)
         copyImagePathList.push({
+          type: 'paint',
           id: uniqueId(),
           color: RGB,
           data: newPath,
@@ -258,6 +257,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
         drawImagePixelByPath(ctx, this.canvasOffsetWidth, this.canvasOffsetHeight, RGB, this.state.selectedArea[i].selectPath)
         const [ newPath, pixelIndexAlphaMap ] = getImageCordinateByPixel(this.CFICanvas2, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight, true)
         copyImagePathList.push({
+          type: 'paint',
           id: uniqueId(),
           color: RGB,
           data: newPath,
@@ -268,30 +268,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
         this.clearCanvas()
       }
 
-      for (let groupSelect of groupSelectList) {
-        edgeListToRender.push({
-          color: [255, 255, 255, 255],
-          data: groupSelect.edgeList,
-          isEnabled: true,
-          linkedOperation: null,
-          siblingOperations: null
-        })
-      }
-
-      for (let select of selectedArea) {
-        edgeListToRender.push({
-          color: [255, 255, 255, 255],
-          data: select.edgeList,
-          isEnabled: true,
-          linkedOperation: null,
-          siblingOperations: null
-        })
-      }
       repaintImageByPath(copyImagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
-      if (edgeListToRender.length > 0) {
-        repaintImageByPath(edgeListToRender, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
-      }
-
       // eslint-disable-next-line
       this.setState({ imagePathList: copyImagePathList })
     }
@@ -445,6 +422,9 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
   setActiveTool = (activeTool: string) => {
     const { imagePathList } = this.state
+    let newImagePathList = copyImageList(imagePathList)
+    let updateSelectArea = []
+
     this.setState({
       paintCursor: `${canvasClass}--${activeTool}`
     })
@@ -462,9 +442,12 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       this.setState({ isInfoToolActive: true })
       return
     }
+    if (activeTool !== toolNames.UNDO || activeTool !== toolNames.REDO) {
+      newImagePathList = newImagePathList.filter(item => { return (item.type === 'paint' || item.type === 'delete' || item.type === 'delete-group') })
+    }
     this.clearCanvas()
-    repaintImageByPath(imagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
-    this.setState({ activeTool, selectedArea: [], canvasImageUrls: this.getLayers() })
+    repaintImageByPath(newImagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
+    this.setState({ activeTool, selectedArea: updateSelectArea, canvasImageUrls: this.getLayers(), imagePathList: newImagePathList })
   }
 
   /*:: undo: () => void */
@@ -494,8 +477,10 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
   /*:: redrawFromOperation: (imagePathList: Object[]) => void */
   redrawCanvas (imagePathList: Object[]) {
+    const { groupIds } = this.state
     this.clearCanvas()
-    repaintImageByPath(imagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
+    repaintImageByPath(imagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight, false, groupIds)
+    this.setActiveGroupTool()
     this.setState({ canvasImageUrls: this.getLayers() })
   }
 
@@ -702,7 +687,6 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
         }
       })
       context.fill()
-      // context.clearRect(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
       context.restore()
     } else {
       context.save()
@@ -755,16 +739,15 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
      * The main idea is maintain selectAreaList, whenever user click area, we repaint canvas based on update
      * selectAreaList and imagePathList
     */
-    const { imagePathList, selectedArea, groupAreaList, groupSelectList } = this.state
+    const { imagePathList, selectedArea, groupAreaList, groupSelectList, groupIds } = this.state
     const canvasClientOffset = this.CFICanvas2.current.getBoundingClientRect()
     const scale = this.canvasOriginalDimensions.width / canvasClientOffset.width
     const { clientX, clientY } = e
     const cursorX = parseInt((clientX - canvasClientOffset.left) * scale)
     const cursorY = parseInt((clientY - canvasClientOffset.top) * scale)
     const imageData = this.CFICanvasContext2.getImageData(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
-
+    let newImagePathList = copyImageList(imagePathList)
     const index = (cursorX + cursorY * this.canvasOffsetWidth) * 4
-    let edgeListToRender = []
     let isClickInsideImage = false
     let isClickGroupArea = false
     for (let i = 0; i < imagePathList.length; i++) {
@@ -774,15 +757,29 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       }
     }
 
+    const { r, g, b, a } = getColorAtPixel(imageData, cursorX, cursorY)
+    if (r === 0 && g === 0 && b === 0 && a === 0) {
+      console.log(this.state.imagePathList, 'imagePathList')
+      console.log(this.state.selectedArea, 'selected')
+      console.log(this.state.groupAreaList, 'groupArea')
+      console.log(this.state.groupSelectList, 'groupSelect')
+      console.log(this.state.groupIds, 'groupIDs')
+      return
+    }
+
     if (isClickInsideImage) {
       let tmpEdgeArea
       let tmpSelectPath
       let tmpId
+      let ancestorId
+      let tmplinkGroupId
       for (let i = 0; i < groupAreaList.length; i++) {
         if (groupAreaList[i].selectPath.includes(index)) {
           tmpSelectPath = groupAreaList[i].selectPath
           tmpEdgeArea = groupAreaList[i].edgeList
-          tmpId = groupAreaList[i].id
+          tmpId = uniqueId()
+          ancestorId = groupAreaList[i].id
+          tmplinkGroupId = groupAreaList[i].linkGroupId
           isClickGroupArea = true
           break
         }
@@ -791,6 +788,17 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
         let hasAdd = false
         for (let i = 0; i < groupSelectList.length; i++) {
           if (groupSelectList[i].selectPath.includes(index)) {
+            let toggleSelectId = groupSelectList[i].id
+            newImagePathList = newImagePathList.map((item) => item.id === toggleSelectId ? { ...item, isEnabled: false } : item)
+            newImagePathList.push({
+              type: 'unselect-group',
+              data: groupSelectList[i].selectPath,
+              color: [],
+              id: uniqueId(),
+              toggleSelectId: toggleSelectId,
+              isEnabled: true,
+              linkedOperation: null,
+              siblingOperations: null })
             groupSelectList.splice(i, 1)
             tmpSelectPath = null
             tmpEdgeArea = null
@@ -802,69 +810,93 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
           groupSelectList.push({
             selectPath: tmpSelectPath,
             edgeList: tmpEdgeArea,
-            id: tmpId
+            id: tmpId,
+            ancestorId: ancestorId,
+            linkGroupId: tmplinkGroupId
           })
+          newImagePathList.push(
+            { type: 'select-group',
+              data: tmpEdgeArea,
+              redoPath: tmpSelectPath,
+              color: [255, 255, 255, 255],
+              linkGroupId: tmplinkGroupId,
+              id: tmpId,
+              ancestorId: ancestorId,
+              isEnabled: true,
+              linkedOperation: null,
+              siblingOperations: null })
         }
-        this.setState({ groupSelectList })
+        this.setState({ groupSelectList, imagePathList: newImagePathList })
       }
 
       if (!isClickGroupArea) {
         if (selectedArea.length > 0) {
           let hasAdd = false
+          let linkId
           for (let i = 0; i < selectedArea.length; i++) {
             if (selectedArea[i].selectPath.includes(index)) {
-              selectedArea.splice(i, 1)
+              linkId = selectedArea[i].id
               hasAdd = true
+              newImagePathList = newImagePathList.map((item) => item.id === linkId ? { ...item, isEnabled: false } : item)
+              newImagePathList.push({
+                type: 'unselect',
+                data: selectedArea[i].selectPath,
+                color: [],
+                id: uniqueId(),
+                toggleSelectId: linkId,
+                isEnabled: true,
+                linkedOperation: null,
+                siblingOperations: null })
+              selectedArea.splice(i, 1)
               break
             }
           }
+
           if (!hasAdd) {
             const imagePath = getSelectArea(imageData, { r: 255, g: 0, b: 0 }, cursorX, cursorY)
             const edge = edgeDetect(this.CFICanvas2, imagePath, [255, 0, 0, 255], this.canvasOffsetWidth, this.canvasOffsetHeight)
+            const linkId = uniqueId()
             selectedArea.push({
+              id: linkId,
               edgeList: edge,
               selectPath: imagePath
             })
+            newImagePathList.push(
+              { type: 'select',
+                data: edge,
+                redoPath: imagePath,
+                color: [255, 255, 255, 255],
+                id: linkId,
+                isEnabled: true,
+                linkedOperation: null,
+                siblingOperations: null })
           }
-          this.setState({ selectedArea })
+          this.setState({ selectedArea, imagePathList: newImagePathList, redoPathList: [], redoIsEnabled: false })
         } else {
           const imagePath = getSelectArea(imageData, { r: 255, g: 0, b: 0 }, cursorX, cursorY)
           const edge = edgeDetect(this.CFICanvas2, imagePath, [255, 0, 0, 255], this.canvasOffsetWidth, this.canvasOffsetHeight)
+          const linkId = uniqueId()
           selectedArea.push({
+            id: linkId,
             edgeList: edge,
             selectPath: imagePath
           })
-          this.setState({ selectedArea })
+          newImagePathList.push(
+            { type: 'select',
+              data: edge,
+              redoPath: imagePath,
+              color: [255, 255, 255, 255],
+              id: linkId,
+              isEnabled: true,
+              linkedOperation: null,
+              siblingOperations: null })
+          this.setState({ selectedArea, imagePathList: newImagePathList, redoPathList: [], redoIsEnabled: false })
         }
       }
     }
 
     this.clearCanvas()
-
-    for (let groupSelect of groupSelectList) {
-      edgeListToRender.push({
-        color: [255, 255, 255, 255],
-        data: groupSelect.edgeList,
-        isEnabled: true,
-        linkedOperation: null,
-        siblingOperations: null
-      })
-    }
-
-    for (let select of selectedArea) {
-      edgeListToRender.push({
-        color: [255, 255, 255, 255],
-        data: select.edgeList,
-        isEnabled: true,
-        linkedOperation: null,
-        siblingOperations: null
-      })
-    }
-
-    repaintImageByPath(imagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
-    if (edgeListToRender.length > 0) {
-      repaintImageByPath(edgeListToRender, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
-    }
+    repaintImageByPath(newImagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight, false, groupIds)
     this.setActiveGroupTool()
   }
 
@@ -984,6 +1016,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       drawImagePixelByPath(ctx, this.canvasOffsetWidth, this.canvasOffsetHeight, RGB, imagePath)
       const newPath = getImageCordinateByPixel(this.CFICanvas2, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight, false)
       copyImagePathList.push({
+        type: 'paint',
         id: uniqueId(),
         color: RGB,
         data: newPath,
@@ -1211,98 +1244,202 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
   group = () => {
     let newGroupSelectList = []
-    let isNewGroupArea = true
-    const { selectedArea, groupSelectList, groupAreaList } = this.state
+    const { selectedArea, groupSelectList, groupAreaList, imagePathList, groupIds } = this.state
+    let copyImagePathList = copyImageList(imagePathList)
+    let newImagePathList
+    let newGroupIds = [...groupIds]
     let newGroupAreaList = [...groupAreaList]
     let groupAreaPath = []
     let groupEdgeList = []
+    let linkGroupId = []
     for (let i = 0; i < selectedArea.length; i++) {
       const targetPath = selectedArea[i].selectPath
       const edgeList = selectedArea[i].edgeList
+      const selectId = selectedArea[i].id
       groupAreaPath = [...targetPath, ...groupAreaPath]
       groupEdgeList = [...edgeList, ...groupEdgeList]
+      newGroupIds.push(selectId)
+      linkGroupId.push(selectId)
     }
-    for (let j = 0; j < groupSelectList.length; j++) {
-      isNewGroupArea = false
-      const targetPath = groupSelectList[j].selectPath
-      const edgeList = groupSelectList[j].edgeList
-      groupAreaPath = [...targetPath, ...groupAreaPath]
-      groupEdgeList = [...edgeList, ...groupEdgeList]
+
+    if (groupSelectList.length > 0) {
+      newImagePathList = copyImagePathList.map((history) => (history.type === 'select-group') ? { ...history, isEnabled: false } : history)
+
+      for (let j = 0; j < groupSelectList.length; j++) {
+        linkGroupId = [...linkGroupId.concat(groupSelectList[j].linkGroupId)]
+        const targetPath = groupSelectList[j].selectPath
+        const edgeList = groupSelectList[j].edgeList
+        groupAreaPath = [...targetPath, ...groupAreaPath]
+        groupEdgeList = [...edgeList, ...groupEdgeList]
+        for (let index = 0; index < newGroupAreaList.length; index++) {
+          if (newGroupAreaList[index].id === groupSelectList[j].ancestorId) {
+            newGroupAreaList.splice(index, 1)
+            index--
+          }
+        }
+      }
+    } else {
+      newImagePathList = copyImageList(copyImagePathList)
     }
 
     if (groupAreaPath.length > 0) {
+      const copySelectedArea = copyImageList(selectedArea)
+      const copyGroupSelectList = copyImageList(groupSelectList)
+      const ancestorId = uniqueId()
+      newGroupAreaList.push({
+        edgeList: groupEdgeList,
+        selectPath: groupAreaPath,
+        id: ancestorId,
+        linkGroupId: linkGroupId
+      })
+
       const id = uniqueId()
-      if (isNewGroupArea) {
-        newGroupAreaList.push({
-          edgeList: groupEdgeList,
-          selectPath: groupAreaPath,
-          id: id
-        })
-      } else {
-        newGroupAreaList = [{
-          edgeList: groupEdgeList,
-          selectPath: groupAreaPath,
-          id: id
-        }]
-      }
       newGroupSelectList.push({
         edgeList: groupEdgeList,
         selectPath: groupAreaPath,
-        id: id
+        id: id,
+        ancestorId: ancestorId,
+        linkGroupId: linkGroupId
+      })
+
+      newImagePathList.push({
+        type: 'select-group',
+        subType: 'create-group',
+        selectedArea: copySelectedArea,
+        groupSelectList: copyGroupSelectList,
+        groupAreaList: newGroupAreaList,
+        data: groupEdgeList,
+        redoPath: groupAreaPath,
+        id: id,
+        linkGroupId: linkGroupId,
+        color: [255, 255, 255, 255],
+        isEnabled: true,
+        linkedOperation: null,
+        ancestorId: ancestorId,
+        siblingOperations: null
       })
     }
     this.setState({
       groupAreaList: newGroupAreaList,
       groupSelectList: newGroupSelectList,
       selectedArea: [],
-      isUngroup: true
+      isUngroup: true,
+      groupIds: newGroupIds,
+      imagePathList: newImagePathList
     })
   }
 
   ungroup = () => {
-    const { groupSelectList, groupAreaList } = this.state
+    const { groupSelectList, groupAreaList, imagePathList } = this.state
+    let copyImagePathList = copyImageList(imagePathList)
+    let newGroupIds = []
+    let removedIds = []
+    let newImagePathList
+    const ungroupId = uniqueId()
     const idsToUngroup = groupSelectList.map((item) => {
-      return item.id
+      return item.ancestorId
     })
+
+    for (let i = 0; i < groupAreaList.length; i++) {
+      const idToModify = groupAreaList[i].linkGroupId
+      if (idsToUngroup.includes(groupAreaList[i].id)) {
+        removedIds = [...removedIds.concat(idToModify)]
+      } else {
+        newGroupIds = [...newGroupIds.concat(idToModify)]
+      }
+    }
+
     const newGroupAreaList = groupAreaList.filter(item => {
       return (idsToUngroup.indexOf(item.id) === -1)
     })
-    this.setState({ groupAreaList: newGroupAreaList, groupSelectList: [], isUngroup: false })
+
+    newImagePathList = copyImagePathList.map((history) => {
+      if (history.type === 'select' && removedIds.includes(history.id)) {
+        return { ...history, isEnabled: false }
+      } else if (history.type === 'select-group') {
+        return { ...history, isEnabled: false }
+      } else {
+        return history
+      }
+    })
+
+    newImagePathList.push({
+      type: 'ungroup',
+      data: [],
+      redoPath: [],
+      id: ungroupId,
+      linkGroupId: ungroupId,
+      color: [255, 255, 255, 255],
+      isEnabled: true,
+      linkedOperation: null,
+      ancestorId: ungroupId,
+      siblingOperations: null
+    })
+    this.clearCanvas()
+    repaintImageByPath(newImagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight, false, newGroupIds)
+    this.setState({ groupAreaList: newGroupAreaList, groupSelectList: [], isUngroup: false, groupIds: newGroupIds, imagePathList: newImagePathList })
   }
 
   deleteGroup = () => {
-    const { imagePathList, groupSelectList, selectedArea, groupAreaList } = this.state
-    let groupAreaPath = []
-    let selectedAreaPath = []
-    const ctx = this.CFICanvas2.current.getContext('2d')
-    this.setState({ loading: true })
+    const { imagePathList, groupSelectList, selectedArea, groupIds, groupAreaList } = this.state
+    let updateImagePathList = copyImageList(imagePathList)
+    let newGroupIds = []
+
     for (let i = 0; i < groupSelectList.length; i++) {
-      drawImagePixelByPath(ctx, this.canvasOffsetWidth, this.canvasOffsetHeight, [255, 255, 255, 0], groupSelectList[i].selectPath)
-      drawImagePixelByPath(ctx, this.canvasOffsetWidth, this.canvasOffsetHeight, [255, 255, 255, 0], groupSelectList[i].edgeList)
-      groupAreaPath = [...groupAreaPath, ...groupSelectList[i].selectPath, ...groupSelectList[i].edgeList]
+      updateImagePathList.push({
+        type: 'delete-group',
+        data: [...groupSelectList[i].selectPath, ...groupSelectList[i].edgeList],
+        redoPath: groupSelectList[i].selectPath,
+        id: uniqueId(),
+        linkGroupId: null,
+        color: [255, 255, 255, 0],
+        groupSelectList: groupSelectList,
+        groupAreaList: groupAreaList,
+        groupIds: groupIds,
+        isEnabled: true,
+        linkedOperation: null,
+        ancestorId: null,
+        siblingOperations: null
+      })
     }
 
     for (let i = 0; i < selectedArea.length; i++) {
-      drawImagePixelByPath(ctx, this.canvasOffsetWidth, this.canvasOffsetHeight, [255, 255, 255, 0], selectedArea[i].selectPath)
-      drawImagePixelByPath(ctx, this.canvasOffsetWidth, this.canvasOffsetHeight, [255, 255, 255, 0], selectedArea[i].edgeList)
-      selectedAreaPath = [...selectedAreaPath, ...selectedArea[i].selectPath, ...selectedArea[i].edgeList]
+      updateImagePathList.push({
+        type: 'delete',
+        data: [...selectedArea[i].selectPath, ...selectedArea[i].edgeList],
+        redoPath: selectedArea[i].selectPath,
+        id: uniqueId(),
+        linkGroupId: null,
+        color: [255, 255, 255, 0],
+        isEnabled: true,
+        linkedOperation: null,
+        ancestorId: null,
+        siblingOperations: null
+      })
+    }
+    const idsToUngroup = groupSelectList.map((item) => {
+      return item.ancestorId
+    })
+
+    const newGroupAreaList = groupAreaList.filter(item => {
+      return (idsToUngroup.indexOf(item.id) === -1)
+    })
+
+    for (let i = 0; i < groupAreaList.length; i++) {
+      const idToModify = groupAreaList[i].linkGroupId
+      if (!idsToUngroup.includes(groupAreaList[i].id)) {
+        newGroupIds = [...newGroupIds.concat(idToModify)]
+      }
     }
 
-    this.worker = new WebWorker()
-    this.worker.addEventListener('message', this.workerMessageHandler)
-    this.worker.postMessage({ imagePathList: imagePathList,
-      groupSelectList: groupSelectList,
-      groupAreaList: groupAreaList,
-      groupAreaPath: groupAreaPath,
-      selectedAreaPath: selectedAreaPath
-    })
-  }
-
-  workerMessageHandler = (e: Object) => {
-    const { newGroupAreaList, newImagePathList } = e.data
-    this.worker.removeEventListener('message', this.workerMessageHandler)
-    this.worker.terminate()
-    this.setState({ imagePathList: newImagePathList, groupSelectList: [], selectedArea: [], groupAreaList: newGroupAreaList, isAddGroup: false, isUngroup: false, loading: false })
+    this.clearCanvas()
+    repaintImageByPath(updateImagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight, true, groupIds)
+    this.setState({
+      imagePathList: updateImagePathList,
+      selectedArea: [],
+      groupSelectList: [],
+      groupAreaList: newGroupAreaList,
+      groupIds: newGroupIds })
   }
 
   groupHandler = (groupName: string) => {
@@ -1407,7 +1544,6 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     const backgroundColorBrush = (activeTool === toolNames.ERASE) ? `rgba(255, 255, 255, 0.7)` : lpActiveColorRGB
     const { paintBrushActiveClass, paintBrushCircleActiveClass } = this.getPaintBrushActiveClass()
     const { eraseBrushActiveClass, eraseBrushCircleActiveClass } = this.getEraseBrushActiveClass()
-
     return (
       <React.Fragment>
         <div className={`${animationLoader} ${loading ? `${animationLoader}--load` : ''}`} />
