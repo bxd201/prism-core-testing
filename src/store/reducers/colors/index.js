@@ -1,6 +1,6 @@
 // @flow
-import { REQUEST_COLORS, RECEIVE_COLORS, FILTER_BY_FAMILY, MAKE_ACTIVE_COLOR, RESET_ACTIVE_COLOR, FILTER_BY_SECTION, REMOVE_COLOR_FILTERS, MAKE_ACTIVE_COLOR_BY_ID, LOAD_ERROR, EMIT_COLOR } from '../../actions/loadColors'
-import { REQUEST_SEARCH_RESULTS, RECEIVE_SEARCH_RESULTS, CLEAR_SEARCH, SEARCH_RESULTS_ERROR, UPDATE_SEARCH_QUERY, TOGGLE_SEARCH_MODE } from '../../actions/loadSearchResults'
+import { RECEIVE_COLORS, FILTER_BY_FAMILY, MAKE_ACTIVE_COLOR, RESET_ACTIVE_COLOR, FILTER_BY_SECTION, REMOVE_COLOR_FILTERS, MAKE_ACTIVE_COLOR_BY_ID, LOAD_ERROR, EMIT_COLOR } from '../../actions/loadColors'
+import { RECEIVE_SEARCH_RESULTS, CLEAR_SEARCH, SEARCH_RESULTS_ERROR, UPDATE_SEARCH_QUERY, TOGGLE_SEARCH_MODE } from '../../actions/loadSearchResults'
 
 import { type ReduxAction, type ColorsState } from '../../../shared/types/Actions'
 import { initialState, doReceiveColors, doFilterByFamily, doFilterBySection, doMakeActiveColor, doMakeActiveColorById, getErrorState } from './colorReducerMethods'
@@ -35,13 +35,6 @@ export const colors = (state: ColorsState = initialState, action: ReduxAction) =
 
       if (newState) {
         return newState
-      }
-    }
-
-    case REQUEST_COLORS: {
-      return {
-        ...state,
-        status: action.payload
       }
     }
 
@@ -95,17 +88,6 @@ export const colors = (state: ColorsState = initialState, action: ReduxAction) =
         search: {
           ...state.search,
           query: action.payload || ''
-        }
-      }
-    }
-
-    case REQUEST_SEARCH_RESULTS: {
-      return {
-        ...state,
-        search: {
-          ...state.search,
-          loading: true,
-          error: false
         }
       }
     }

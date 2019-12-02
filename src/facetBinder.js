@@ -22,6 +22,7 @@ import at from 'lodash/at'
 import camelCase from 'lodash/camelCase'
 import forOwn from 'lodash/forOwn'
 import memoizee from 'memoizee'
+import ErrorBoundary from './helpers/ErrorBoundary'
 
 import { LiveAnnouncer } from 'react-aria-live'
 
@@ -123,6 +124,63 @@ const getAppIfAvailable = (facetName) => {
   return App
 }
 
+// wraps a react component with the required PRISM HOCs
+export const appWrapper = (Component) => {
+  return (props: EmbeddedConfiguration) => {
+    // set the language
+    const language = props.language || navigator.language || 'en-US'
+
+    // set the page root if it exists
+    const pageRoot = props.pageRoot || '/'
+
+    // checks if a default routing type is set, if not we'll use hash routing
+    const routeType = props.routeType || 'hash'
+
+    const BrowserRouterRender = (
+      <BrowserRouter basename={pageRoot}>
+        <Component {...props} />
+      </BrowserRouter>
+    )
+    const HashRouterRender = (
+      <HashRouter>
+        <Component {...props} />
+      </HashRouter>
+    )
+    const MemoryRouterRender = (
+      <MemoryRouter>
+        <Component {...props} />
+      </MemoryRouter>
+    )
+    const RouterRender = (route => {
+      switch (route) {
+        case 'browser':
+          return BrowserRouterRender
+        case 'hash':
+          return HashRouterRender
+        case 'memory':
+        default:
+          return MemoryRouterRender
+      }
+    })(routeType)
+
+    const flatLanguages = flattenNestedObject(languages[language])
+
+    return (
+      <ErrorBoundary>
+        <IntlProvider locale={language} messages={flatLanguages} textComponent={React.Fragment}>
+          <Provider store={store}>
+            <ConfigurationContextProvider {...props}>
+              <LiveAnnouncer>
+                { RouterRender }
+              </LiveAnnouncer>
+            </ConfigurationContextProvider>
+          </Provider>
+        </IntlProvider>
+      </ErrorBoundary>
+    )
+  }
+}
+
 // renders Facet on specified element
 const renderAppInElement = (el) => {
   if (el.className.indexOf(HAS_BOUND_CLASS) > -1) {
@@ -145,54 +203,9 @@ const renderAppInElement = (el) => {
 
   embedBundleStyles(reactComponent)
 
-  // set the language
-  const language = props.language || navigator.language || 'en-US'
+  const Component = appWrapper(App)
 
-  // set the page root if it exists
-  const pageRoot = props.pageRoot || '/'
-
-  // checks if a default routing type is set, if not we'll use hash routing
-  const routeType = props.routeType || 'hash'
-
-  const BrowserRouterRender = (
-    <BrowserRouter basename={pageRoot}>
-      <App {...props} />
-    </BrowserRouter>
-  )
-  const HashRouterRender = (
-    <HashRouter>
-      <App {...props} />
-    </HashRouter>
-  )
-  const MemoryRouterRender = (
-    <MemoryRouter>
-      <App {...props} />
-    </MemoryRouter>
-  )
-  const RouterRender = (route => {
-    switch (route) {
-      case 'browser':
-        return BrowserRouterRender
-      case 'hash':
-        return HashRouterRender
-      case 'memory':
-      default:
-        return MemoryRouterRender
-    }
-  })(routeType)
-
-  const flatLanguages = flattenNestedObject(languages[language])
-
-  render(
-    <IntlProvider locale={language} messages={flatLanguages} textComponent={React.Fragment}>
-      <Provider store={store}>
-        <ConfigurationContextProvider {...props}>
-          <LiveAnnouncer>
-            { RouterRender }
-          </LiveAnnouncer>
-        </ConfigurationContextProvider>
-      </Provider>
-    </IntlProvider>, el)
+  render(<Component {...props} />, el)
 
   el.classList.add(HAS_BOUND_CLASS)
 }
@@ -307,7 +320,7 @@ export default function (facetDeclaration: typeof Component | Function, facetNam
 
   addToEmbedQueue(facetName)
   embedGlobalStylesOnce()
-  initTrackingOnce()
+  process.env.NODE_ENV === 'production' && initTrackingOnce()
   embedAtRoots()
 
   return facetDeclaration

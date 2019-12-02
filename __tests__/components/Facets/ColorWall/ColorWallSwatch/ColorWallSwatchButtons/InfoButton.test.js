@@ -8,9 +8,7 @@ const detailsLinkString = '/test'
 
 const getInfoButton = (props) => {
   let defaultProps = {
-    config: {
-      displayInfoButton: true
-    },
+    config: { displayInfoButton: true },
     detailsLink: detailsLinkString
   }
 
