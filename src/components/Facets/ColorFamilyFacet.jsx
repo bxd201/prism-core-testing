@@ -5,7 +5,6 @@ import ColorWallRouter from './ColorWall/ColorWallRouter'
 import Search from '../Search/Search'
 import SearchBar from '../Search/SearchBar'
 import ColorWall from './ColorWall/ColorWall'
-import EnvAdapter from '../EnvAdapter/EnvAdapter'
 import facetBinder from 'src/facetBinder'
 
 export const ColorFamilyPage = () => (
@@ -23,9 +22,4 @@ export const ColorFamilyPage = () => (
   </ColorWallRouter>
 )
 
-export default facetBinder(() => (
-  <>
-    <EnvAdapter />
-    <ColorFamilyPage />
-  </>
-), 'ColorFamilyFacet')
+export default facetBinder(ColorFamilyPage, 'ColorFamilyFacet')

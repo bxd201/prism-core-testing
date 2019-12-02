@@ -1,6 +1,11 @@
 import assert from 'assert'
 import { facetEntryPoints } from '../webpack/constants'
 
+/**
+ * IMPORTANT!!!
+ * The facets imported here need to match what is in export.js and webpack/constants.js until further notice
+ */
+
 import ColorDetails from 'src/components/Facets/ColorDetails/ColorDetails'
 import ColorListingPage from 'src/components/Facets/ColorListingPage/ColorListingPage'
 import ColorWallFacet from 'src/components/Facets/ColorWallFacet'
