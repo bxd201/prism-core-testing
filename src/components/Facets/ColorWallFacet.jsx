@@ -5,7 +5,7 @@ import ColorWallRouter from './ColorWall/ColorWallRouter'
 import Search from '../Search/Search'
 import SearchBar from '../Search/SearchBar'
 import ColorWall from './ColorWall/ColorWall'
-import ColorWallToolBar from './ColorWall/ColorWallToolBar'
+import ColorWallToolbar from './ColorWall/ColorWallToolbar'
 import facetBinder from 'src/facetBinder'
 
 export const ColorWallPage = () => (
@@ -14,7 +14,7 @@ export const ColorWallPage = () => (
       <Switch>
         <Route path='(.*)?/search/:query' component={SearchBar} />
         <Route path='(.*)?/search' component={SearchBar} />
-        <Route component={ColorWallToolBar} />
+        <Route component={ColorWallToolbar} />
       </Switch>
       <Switch>
         <Route path='(.*)?/search/:query' component={Search} />
