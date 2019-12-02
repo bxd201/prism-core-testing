@@ -36,6 +36,10 @@ const mainEntryPoints = {
   [exportEntryPointName]: exportPath
 }
 
+/**
+ * IMPORTANT!!!
+ * The facets imported here need to match what is in export.js and allFacets.js until further notice
+ */
 const facetEntryPoints = {
   colorListingPage: path.join(srcPath, 'components/Facets/ColorListingPage/ColorListingPage.jsx'),
   colorWallFacet: path.join(srcPath, 'components/Facets/ColorWallFacet.jsx'),

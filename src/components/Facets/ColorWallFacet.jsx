@@ -6,7 +6,6 @@ import Search from '../Search/Search'
 import SearchBar from '../Search/SearchBar'
 import ColorWall from './ColorWall/ColorWall'
 import ColorWallToolBar from './ColorWall/ColorWallToolBar'
-import EnvAdapter from '../EnvAdapter/EnvAdapter'
 import facetBinder from 'src/facetBinder'
 
 export const ColorWallPage = () => (
@@ -25,9 +24,4 @@ export const ColorWallPage = () => (
   </ColorWallRouter>
 )
 
-export default facetBinder(() => (
-  <>
-    <EnvAdapter />
-    <ColorWallPage />
-  </>
-), 'ColorWallFacet')
+export default facetBinder(ColorWallPage, 'ColorWallFacet')
