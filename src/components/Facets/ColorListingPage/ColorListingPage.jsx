@@ -7,7 +7,7 @@ import ColorDetails from '../ColorDetails/ColorDetails'
 import ColorDataWrapper from '../../../helpers/ColorDataWrapper/ColorDataWrapper'
 import BackToColorWall from './BackToColorWall'
 import facetBinder from 'src/facetBinder'
-import ColorWallContext from '../ColorWall/ColorWallContext'
+import ColorWallContext, { colorWallContextDefault } from '../ColorWall/ColorWallContext'
 import includes from 'lodash/includes'
 import { varValues } from 'variables'
 import { ROUTE_PARAMS, ROUTE_PARAM_NAMES } from 'constants/globals'
@@ -41,7 +41,7 @@ export const ColorDetailsComponent = (props: any) => {
 
 export const ColorWallComponent = () => {
   return (
-    <ColorWallContext.Provider value={{ displayDetailsLink: true }}>
+    <ColorWallContext.Provider value={{ ...colorWallContextDefault, displayDetailsLink: true }}>
       <ColorWallPage />
     </ColorWallContext.Provider>
   )

@@ -12,7 +12,7 @@ import LivePalette from '../../LivePalette/LivePalette'
 import PrismNav from './PrismNav'
 import React, { Component } from 'react'
 import SceneManager from '../../SceneManager/SceneManager'
-import ColorWallContext from '../ColorWall/ColorWallContext'
+import ColorWallContext, { colorWallContextDefault } from '../ColorWall/ColorWallContext'
 import facetBinder from 'src/facetBinder'
 
 import { connect } from 'react-redux'
@@ -48,7 +48,7 @@ export class Prism extends Component<Props> {
               <Route path='/' exact component={RootRedirect} />
               <Route path='/active' exact component={() => <SceneManager expertColorPicks />} />
               <Route path={colorWallUrlPattern}>
-                <ColorWallContext.Provider value={{ displayDetailsLink: true }}>
+                <ColorWallContext.Provider value={{ ...colorWallContextDefault, displayDetailsLink: true }}>
                   <ColorWallPage />
                 </ColorWallContext.Provider>
               </Route>
