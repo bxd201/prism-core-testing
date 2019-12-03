@@ -222,6 +222,7 @@ module.exports = {
     headers: {
       'Access-Control-Allow-Origin': '*'
     },
-    compress: true
+    compress: true,
+    disableHostCheck: true
   }
 }
