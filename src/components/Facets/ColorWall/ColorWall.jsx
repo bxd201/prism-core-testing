@@ -16,9 +16,11 @@ import ConfigurationContext from '../../../contexts/ConfigurationContext/Configu
 import GenericMessage from '../../Messages/GenericMessage'
 import ColorWallSwatchList from './ColorWallSwatchList'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import facetBinder from 'src/facetBinder'
+import ColorWallContext, { type ColorWallContextProps } from './ColorWallContext'
 import './ColorWall.scss'
 
-export default () => {
+const ColorWall = () => {
   const { colorWall, swatchShouldEmit } = React.useContext(ConfigurationContext)
   const { colorWallActive, items, status: { error }, families = [] } = useSelector(state => state.colors)
   const { brights, colorMap, colors, unorderedColors } = items
@@ -47,33 +49,41 @@ export default () => {
         classNames={`color-wall-zoom-transitioner__zoom-${colorWallActive ? 'in' : 'out'} color-wall-zoom-transitioner__zoom-${colorWallActive ? 'in' : 'out'}-`}
       >
         {(colors || unorderedColors) && !error
-          ? <div className='color-wall-wall'>
-            <ColorWallSwatchList
-              showAll={!colorWallActive}
-              immediateSelectionOnActivation={!colorWallActive}
-              activeColor={colorWallActive}
-              section={section}
-              family={family}
-              bloomRadius={colorWall.bloomRadius} // TODO: demo purposes, maybe we want to change this
-              onAddColor={color => dispatch(swatchShouldEmit ? emitColor(color) : add(color))}
-              colorMap={colorMap}
-              swatchLinkGenerator={({ id, brandKey, colorNumber, name }) => (
-                generateColorWallPageUrl(section, family, id, fullColorName(brandKey, colorNumber, name))
-              )}
-              swatchDetailsLinkGenerator={generateColorDetailsPageUrl}
-              minCellSize={colorWallActive ? 50 : 15}
-              maxCellSize={colorWallActive ? 50 : 25}
-              colors={colorsGrid}
-              key={colorsGrid}
-            />
-            {colorWallActive &&
-            <div className='color-wall-wall__btns'>
-              <Link to='../../..' className='color-wall-wall__btns__btn' title={messages.ZOOM_OUT}>
-                <FontAwesomeIcon icon='search-minus' size='lg' />
-                <span className='visually-hidden'><FormattedMessage id='ZOOM_OUT' /></span>
-              </Link>
-            </div>}
-          </div>
+          ? <ColorWallContext.Consumer>
+            {(config: ColorWallContextProps) => {
+              const { swatchMinSize, swatchMaxSize, swatchMinSizeZoomed, swatchMaxSizeZoomed } = config
+              return (
+                <div className='color-wall-wall' style={{ backgroundColor: config.colorWallBgColor }}>
+                  <ColorWallSwatchList
+                    showAll={!colorWallActive}
+                    immediateSelectionOnActivation={!colorWallActive}
+                    activeColor={colorWallActive}
+                    section={section}
+                    family={family}
+                    bloomRadius={colorWall.bloomRadius} // TODO: demo purposes, maybe we want to change this
+                    onAddColor={color => dispatch(swatchShouldEmit ? emitColor(color) : add(color))}
+                    colorMap={colorMap}
+                    swatchLinkGenerator={({ id, brandKey, colorNumber, name }) => (
+                      generateColorWallPageUrl(section, family, id, fullColorName(brandKey, colorNumber, name))
+                    )}
+                    swatchDetailsLinkGenerator={generateColorDetailsPageUrl}
+                    minCellSize={colorWallActive ? swatchMinSizeZoomed : swatchMinSize}
+                    maxCellSize={colorWallActive ? swatchMaxSizeZoomed : swatchMaxSize}
+                    colors={colorsGrid}
+                    key={colorsGrid}
+                  />
+                  {colorWallActive ? (
+                    <div className='color-wall-wall__btns'>
+                      <Link to='../../..' className='color-wall-wall__btns__btn' title={messages.ZOOM_OUT}>
+                        <FontAwesomeIcon icon='search-minus' size='lg' />
+                        <span className='visually-hidden'><FormattedMessage id='ZOOM_OUT' /></span>
+                      </Link>
+                    </div>
+                  ) : null}
+                </div>
+              )
+            }}
+          </ColorWallContext.Consumer>
           : <GenericMessage type={GenericMessage.TYPES.ERROR}>
             <FormattedMessage id='NO_COLORS_AVAILABLE' />
           </GenericMessage>
@@ -82,3 +92,5 @@ export default () => {
     </TransitionGroup>
   )
 }
+
+export default facetBinder(ColorWall, 'ColorWall')

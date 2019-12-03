@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 // $FlowIgnore -- no defs for react-virtualized
 import { Grid, AutoSizer } from 'react-virtualized'
 import ColorWallSwatch from '../Facets/ColorWall/ColorWallSwatch/ColorWallSwatch'
-import ColorWallContext from '../Facets/ColorWall/ColorWallContext'
+import ColorWallContext, { colorWallContextDefault } from '../Facets/ColorWall/ColorWallContext'
 import { add } from '../../store/actions/live-palette'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
@@ -23,6 +23,7 @@ type Props = {
 type Ref = RefObject
 
 const cwProviderValues = {
+  ...colorWallContextDefault,
   displayDetailsLink: false,
   displayInfoButton: true,
   displayAddButton: true
