@@ -14,6 +14,7 @@ export const ColorWallPage = () => (
       <Switch>
         <Route path='(.*)?/search/:query' component={SearchBar} />
         <Route path='(.*)?/search' component={SearchBar} />
+        <Route path='(.*)?/family' component={ColorWallToolbar} />
         <Route component={ColorWallToolbar} />
       </Switch>
       <Switch>

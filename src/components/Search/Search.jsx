@@ -21,10 +21,10 @@ const baseClass = 'Search'
 
 export default () => {
   const { results: colors, count, suggestions, loading, error } = useSelector(state => state.colors.search)
-  const { query } = useParams()
+  const { family, query } = useParams()
   const dispatch = useDispatch()
 
-  React.useEffect(() => { dispatch(loadSearchResults(query)) }, [query])
+  React.useEffect(() => { dispatch(loadSearchResults(query, family)) }, [query, family])
 
   const reRunSearchWith = memoizee((newInput: string) => () => { dispatch(loadSearchResults(newInput)) })
 

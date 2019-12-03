@@ -15,6 +15,7 @@ export const ColorFamilyPage = () => (
         <Route path='(.*)?/search/' component={() => <SearchBar showCancelButton={false} />} />
       </Switch>
       <Switch>
+        <Route path='(.*)?/family/:family/search/:query' component={Search} />
         <Route path='(.*)?/search/:query' component={Search} />
         <Route component={ColorWall} />
       </Switch>
