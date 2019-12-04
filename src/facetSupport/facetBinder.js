@@ -25,7 +25,7 @@ import { addInstance, getInstance, unmount } from './facetInstance'
 // import the redux store
 import { dedupePatternedString } from 'src/shared/utils/dedupePatternedString.util'
 import { embedGlobalStylesOnce, memoEmbedBundleStyles } from './facetStyles'
-import { HAS_BOUND_CLASS, CLEANSLATE_CLASS, PRISM_CLASS, TO_BIND_CLASS, EMBED_ROOT_LEGACY, EMBED_ROOT_MODERN } from './facetConstants'
+import { HAS_BOUND_CLASS, CLEANSLATE_CLASS, PRISM_CLASS, TO_BIND_CLASS, EMBED_ROOT_SELECTOR_DEPRECATED, EMBED_ROOT_SELECTOR } from './facetConstants'
 import { facetMasterWrapper } from './facetMasterWrapper'
 
 const APP_VERSION = process.env.npm_package_version || ''
@@ -44,7 +44,7 @@ const getAppIfAvailable = (facetName) => {
   // if no data attribute specifying the react component exists, let's get out.
   // although if it doesn't have this data attribute, it shouldn't have a __react-root class...
   if (!facetName) {
-    console.warn('The specified element does not have the required data-react-component attribute.')
+    console.warn('The specified element does not have the required Prism facet specifying attribute.')
     return
   }
 
@@ -82,15 +82,17 @@ const renderAppInElement = (el: HTMLElement, explicitProps: Object = {}) => {
 
   // get props from elements data attribute, like the post_id
   const attrProps = mapValues(Object.assign({}, el.dataset), v => v === '' ? true : v)
-  const { reactComponent, bindCallback, ...props }: {
+  const { reactComponent, prismFacet, bindCallback, ...props }: {
     reactComponent: string,
+    prismFacet: string,
     bindCallback: Function,
     props: EmbeddedConfiguration
   } = {
     ...attrProps,
     ...explicitProps
   }
-  const App = getAppIfAvailable(reactComponent)
+  const facet = prismFacet || reactComponent // TODO: deprecate "reactComponent" in favor of "prismFacet"
+  const App = getAppIfAvailable(facet)
 
   console.info('app bound to', App, el, props)
 
@@ -104,7 +106,7 @@ const renderAppInElement = (el: HTMLElement, explicitProps: Object = {}) => {
     bindCallback // a callback which will be passed an PubSubOutProps object on bind
   }
 
-  embedBundleStyles(reactComponent)
+  embedBundleStyles(facet)
 
   const Component = facetMasterWrapper(facetPubSub(App))
 
@@ -121,7 +123,7 @@ function gatherReactRoots (facetName?: string, root: Document = document): any[]
   }
 
   return toArray(nodes).filter(el => {
-    const elFacetName = el.dataset.reactComponent
+    const elFacetName = el.dataset.prismFacet || el.dataset.reactComponent // TODO: deprecate "reactComponent" in favor of "prismFacet"
 
     // if facetName has been provided...
     if (facetName) {
@@ -151,8 +153,8 @@ const dressUpForPrism = memoizee((prismRoot) => {
 
 function injectRoot () {
   // TODO: deprecate #prism-root in favor of class- or attr-based identifier
-  const prismRootLegacy = Array.from(document.querySelectorAll(EMBED_ROOT_LEGACY))
-  const prismRootModern = Array.from(document.querySelectorAll(EMBED_ROOT_MODERN))
+  const prismRootLegacy = Array.from(document.querySelectorAll(EMBED_ROOT_SELECTOR_DEPRECATED))
+  const prismRootModern = Array.from(document.querySelectorAll(EMBED_ROOT_SELECTOR))
   const allRoots = [
     ...prismRootLegacy,
     ...prismRootModern
