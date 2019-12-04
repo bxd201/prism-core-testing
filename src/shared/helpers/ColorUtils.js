@@ -53,21 +53,15 @@ export const generateColorDetailsPageUrl = memoizee(function generateColorDetail
   ]).join('/')
 })
 
-export const assembleColorWallPageUrl = memoizee((sectionName: string | void, familyName: string | void, colorId: string | void, colorSEO: string | void): string => {
-  const url = '/' + compact([
+export const generateColorWallPageUrl = memoizee((sectionName = '', familyName = '', colorId = '', colorSEO = ''): string => {
+  return `/${compact([
     ROUTE_PARAMS.ACTIVE,
     ROUTE_PARAMS.COLOR_WALL,
-    sectionName ? `${ROUTE_PARAMS.SECTION}/${sectionName}` : null,
-    familyName ? `${ROUTE_PARAMS.FAMILY}/${familyName}` : null,
-    colorId ? `${ROUTE_PARAMS.COLOR}/${colorId}` : null,
-    colorSEO ? `${colorSEO}` : null
-  ]).join('/')
-
-  return url + '/'
-}, { primitive: true, length: 3 })
-
-export const generateColorWallPageUrl = memoizee((sectionName = '', familyName = '', colorId = '', colorSEO = ''): string => {
-  return assembleColorWallPageUrl(kebabCase(sectionName), kebabCase(familyName), kebabCase(colorId), kebabCase(colorSEO))
+    sectionName && `${ROUTE_PARAMS.SECTION}/${kebabCase(sectionName)}`,
+    familyName && `${ROUTE_PARAMS.FAMILY}/${kebabCase(familyName)}`,
+    colorId && `${ROUTE_PARAMS.COLOR}/${kebabCase(colorId)}`,
+    kebabCase(colorSEO)
+  ]).join('/')}/`
 }, { primitive: true, length: 3 })
 
 export const getContrastYIQ = memoizee((hexcolor: string) => {
