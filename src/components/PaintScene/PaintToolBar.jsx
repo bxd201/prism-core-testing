@@ -34,6 +34,7 @@ const toolNameDisabledClass = `${toolNameClass}--disabled`
 const paintTooltipClass = `${baseClass}__paint-tooltip`
 const paintTooltipActiveClass = `${paintTooltipClass}--active`
 const toolIconClass = `${baseClass}__tool-icon`
+const toolIconSecondIconClass = `${toolIconClass}__second-icon`
 const groupToolClass = `${baseClass}__group-tool`
 const groupToolShowClass = `${groupToolClass}--show`
 const groupToolHideClass = `${groupToolClass}--hide`
@@ -76,9 +77,14 @@ type ComponentState = {
 }
 
 export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> {
+  groupTooltipDivRef: RefObject
+  tooltipDivRef: RefObject
+
   constructor (props: ComponentProps) {
     super(props)
 
+    this.groupTooltipDivRef = React.createRef()
+    this.tooltipDivRef = React.createRef()
     this.state = {
       showToolBar: true,
       showPaintBrushTypes: false,
@@ -254,8 +260,8 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
         onMouseDown={(e) => this.toolButtonMouseDownHandler(e, tool.name)}
       >
         <FontAwesomeIcon title={intl.messages[`PAINT_TOOLS.${tool.name.toUpperCase()}`]} className={`${toolIconClass}`} icon={[tool.fontAwesomeIcon.variant, tool.fontAwesomeIcon.icon]} size='lg' transform={{ rotate: tool.fontAwesomeIcon.rotate }} {...iconProps} />
-        {tool.name === toolNames.DEFINEAREA && <FontAwesomeIcon className={`${toolIconClass}`} icon={['fal', 'plus']} size='xs' style={{ right: '12px', top: '21px' }} />}
-        {tool.name === toolNames.REMOVEAREA && <FontAwesomeIcon className={`${toolIconClass}`} icon={['fal', 'minus']} size='xs' style={{ right: '12px', top: '21px' }} />}
+        {tool.name === toolNames.DEFINEAREA && <FontAwesomeIcon className={`${toolIconClass} ${toolIconSecondIconClass}`} icon={['fal', 'plus']} size='xs' />}
+        {tool.name === toolNames.REMOVEAREA && <FontAwesomeIcon className={`${toolIconClass} ${toolIconSecondIconClass}`} icon={['fal', 'minus']} size='xs' />}
         <span className={`${toolNameClass} ${(activeTool === tool.name && !showTooltip) || (showTooltip && tooltipToolActiveNumber === tool.id) || (isHidePaint && tool.name === toolNames.HIDEPAINT) ? `${toolNameActiveClass}` : ``}`}>{tool.displayName}</span>
       </button>
     })
@@ -325,13 +331,25 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
     this.setState({ showEraseBrushTypes: false })
   }
 
+  showTooltipContentByZindex = (ref: RefObject) => {
+    if (ref.current) {
+      ref.current.style.zIndex = 100000
+    }
+  }
+
+  hideTooltipContentByZindex = (ref: RefObject) => {
+    if (ref.current) {
+      ref.current.style.zIndex = 10000
+    }
+  }
+
   render () {
     const { showToolBar, showPaintBrushTypes, showEraseBrushTypes, showTooltip, tooltipToolActiveNumber, zoomSliderHide } = this.state
     const { activeTool, paintBrushShape, paintBrushWidth, eraseBrushShape, eraseBrushWidth, setBrushShapeSize, applyZoom, intl } = this.props
 
     return (
       <React.Fragment>
-        <div className={`${groupToolClass} ${(showToolBar && !showTooltip && activeTool === toolNames.SELECTAREA) || (showTooltip && tooltipToolActiveNumber > 0 && tooltipToolActiveNumber === toolNumbers.SELECTAREA) ? `${groupToolShowClass}` : `${groupToolHideClass}`}`}>
+        <div ref={this.groupTooltipDivRef} onMouseEnter={() => this.showTooltipContentByZindex(this.groupTooltipDivRef)} onMouseLeave={() => this.hideTooltipContentByZindex(this.groupTooltipDivRef)} className={`${groupToolClass} ${(showToolBar && !showTooltip && activeTool === toolNames.SELECTAREA) || (showTooltip && tooltipToolActiveNumber > 0 && tooltipToolActiveNumber === toolNumbers.SELECTAREA) ? `${groupToolShowClass}` : `${groupToolHideClass}`}`}>
           { this.generateSelectGroupTools() }
           {showTooltip && tooltipToolActiveNumber > 0 && tooltipToolActiveNumber === toolNumbers.SELECTAREA && <PaintToolTip
             isSelectGroup
@@ -342,9 +360,12 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
             closeTooltip={this.closeTooltip}
             backButtonClickHandler={this.backButtonClickHandler}
             nextButtonClickHandler={this.nextButtonClickHandler}
+            showTooltipContentByZindex={this.showTooltipContentByZindex}
+            hideTooltipContentByZindex={this.hideTooltipContentByZindex}
+            parentDivRef={this.groupTooltipDivRef}
           />}
         </div>
-        <div className={`${wrapperClass}`}>
+        <div ref={this.tooltipDivRef} onMouseEnter={() => this.showTooltipContentByZindex(this.tooltipDivRef)} onMouseLeave={() => this.hideTooltipContentByZindex(this.tooltipDivRef)} className={`${wrapperClass}`}>
           <div className={`${containerClass} ${(!showToolBar) ? `${containerHideClass}` : ``}`}>
             { this.generateTools() }
             <div
@@ -368,7 +389,10 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
                 toolsCount={toolBarButtons.length}
                 closeTooltip={this.closeTooltip}
                 backButtonClickHandler={this.backButtonClickHandler}
-                nextButtonClickHandler={this.nextButtonClickHandler} />
+                nextButtonClickHandler={this.nextButtonClickHandler}
+                showTooltipContentByZindex={this.showTooltipContentByZindex}
+                hideTooltipContentByZindex={this.hideTooltipContentByZindex}
+                parentDivRef={this.tooltipDivRef} />
             </div>}
             <div className={`${zoomToolClass} ${activeTool === toolNames.ZOOM && !showTooltip && zoomSliderHide === -1 ? `${zoomToolShowClass}` : activeTool !== toolNames.ZOOM ? `${zoomToolHideClass}` : ``} ${activeTool === toolNames.ZOOM && zoomSliderHide === 0 && !showTooltip ? `${zoomToolShowByOpacityClass}` : activeTool === toolNames.ZOOM && zoomSliderHide === 1 && !showTooltip ? `${zoomToolHideByOpacityClass}` : ``}`}>
               <ZoomTool applyZoom={applyZoom} />

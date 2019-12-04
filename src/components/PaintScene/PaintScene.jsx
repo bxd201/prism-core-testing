@@ -51,6 +51,8 @@ const animationPin = `${baseClass}--animation-pin`
 const nonAnimationPin = `${baseClass}--non-animation-pin`
 const disableTextSelect = `${baseClass}--disable-text-select`
 const disableClick = `${baseClass}--disable-click`
+const showCursor = `${baseClass}--show-cursor`
+const hideCursor = `${baseClass}--hide-cursor`
 
 type ComponentProps = {
   imageUrl: string,
@@ -630,7 +632,13 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
     if (activeTool === toolNames.ERASE && drawCoordinates.length > 0) {
       const RGB = getActiveColorRGB({ red: 255, blue: 255, green: 255 })
-      const [ erasePath ] = getImageCordinateByPixel(this.CFICanvasPaint, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight, true)
+      const erasePathWithAlpha = getImageCordinateByPixel(this.CFICanvasPaint, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight, true)
+      let erasePath = []
+      Object.keys(erasePathWithAlpha[1]).forEach(key => {
+        if (erasePathWithAlpha[1][key] > 126) {
+          erasePath.push(parseInt(key))
+        }
+      })
       const tmpImagePathList = eraseIntersection(imagePathList, erasePath)
       newImagePathList = remove(tmpImagePathList, (currImagePath) => {
         return currImagePath.data.length !== 0
@@ -1579,7 +1587,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     return (
       <>
         <div className={`${animationLoader} ${loading ? `${animationLoader}--load` : ''}`} />
-        <div role='presentation' className={`${baseClass} ${activeTool === toolNames.PAINTBRUSH || activeTool === toolNames.ERASE || activeTool === toolNames.INFO ? disableTextSelect : ``} ${(loading) ? disableClick : ``}`} onClick={this.handleClick} onMouseMove={this.mouseMoveHandler} ref={this.CFIWrapper} style={{ height: this.state.wrapperHeight }} onMouseLeave={this.mouseLeaveHandler} onMouseEnter={this.mouseEnterHandler}>
+        <div role='presentation' className={`${baseClass} ${isInfoToolActive ? `${disableTextSelect} ${showCursor}` : ``} ${activeTool === toolNames.PAINTBRUSH || activeTool === toolNames.ERASE ? `${disableTextSelect} ${hideCursor}` : ``} ${(loading) ? disableClick : ``}`} onClick={this.handleClick} onMouseMove={this.mouseMoveHandler} ref={this.CFIWrapper} style={{ height: this.state.wrapperHeight }} onMouseLeave={this.mouseLeaveHandler} onMouseEnter={this.mouseEnterHandler}>
           {/* the 35 in the padding is the radius of the circle loader. Note the bitwise rounding */}
           {this.props.savingMasks ? <div style={{ height: canvasHeight }} className='spinner'><div style={{ padding: ((canvasHeight / 2) | 0) - 35 }}><CircleLoader /></div></div> : null}
           {this.props.savingMasks ? <SaveMasks processMasks={this.processMasks} /> : null }

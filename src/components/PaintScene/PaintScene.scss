@@ -1,4 +1,6 @@
 .paint__scene__wrapper{
+  display: flex;
+  justify-content: center;
   min-height: 266px;
   outline: none;
   position: relative;
@@ -202,7 +204,12 @@
   &--disable-click {
     pointer-events: none;
   }
-
+  &--hide-cursor {
+    cursor: none;
+  }
+  &--show-cursor {
+    cursor: default;
+  }
   &__paintscene-footer {
     display: flex;
     justify-content: flex-end;
@@ -210,7 +217,6 @@
     width: 100%;
   }
 }
-
 .spinner {
   background-color: rgba(0, 0, 0, 0.1);
   text-align: center;

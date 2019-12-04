@@ -52,3 +52,8 @@ export const brushSquareShape = 'square'
 export const brushTypes = [
   brushLargeSize, brushMediumSize, brushSmallSize, brushTinySize
 ]
+
+export const divTranslateFactor = -152
+export const divTranslateMultiplier = 52
+export const downPointerDivTranslateFactor = -158
+export const downPointerDivTranslateMultiplie = 26
