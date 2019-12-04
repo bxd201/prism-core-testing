@@ -22,7 +22,6 @@ type Props = {
   color: Color,
   focus?: boolean,
   thisLink?: string,
-  detailsLink?: string,
   showContents?: boolean,
   onAdd?: Function,
   onClick?: Function,
@@ -38,12 +37,11 @@ class ColorWallSwatch extends PureComponent<Props> {
 
     this.handleAddClick = this.handleAddClick.bind(this)
     this.performClickAction = this.performClickAction.bind(this)
-    this.getThisLink = this.getThisLink.bind(this)
     this.handleClick = this.handleClick.bind(this)
   }
 
   render () {
-    const { showContents, color, thisLink, detailsLink, focus } = this.props
+    const { showContents, color, thisLink, focus } = this.props
 
     let containerProps = {
       className: `${this.getBaseClasses()} ${this.getClasses()}`,
@@ -62,21 +60,16 @@ class ColorWallSwatch extends PureComponent<Props> {
               <React.Fragment>
                 {/* Stateless components to handle whether to display the add, details, and info buttons */}
                 <InfoButton
-                  config={config}
-                  detailsLink={detailsLink}
                   className={`${CLASS_NAMES.CONTENT_CTA} ${CLASS_NAMES.CONTENT_CTA_R}`}
                   tabIndex={-1}
                 />
                 <AddButton
-                  config={config}
                   onClick={this.handleAddClick}
                   className={`${CLASS_NAMES.CONTENT_CTA} ${CLASS_NAMES.CONTENT_CTA_L}`}
                   tabIndex={-1}
                 />
                 <DetailsLink
                   color={color}
-                  config={config}
-                  detailsLink={detailsLink}
                   className={`${CLASS_NAMES.CONTENT_CTA} ${CLASS_NAMES.CONTENT_CTA_L} ${focus ? CLASS_NAMES.CONTENT_CTA_FOCUS : ''}`}
                   tabIndex={-1}
                 />
@@ -179,18 +172,6 @@ class ColorWallSwatch extends PureComponent<Props> {
     console.warn('ATTEMPTING TO PERFORM CLICK ACTION IN ColorWallSwatch, BUT NO ACTION IS DEFINED')
     // TODO: Implement multi-element focus control and an externally-triggerable click action.
     // This is for instances when more than just the details link is present on this swatch
-  }
-
-  getThisLink = function getThisLink (): string | void {
-    const { thisLink, detailsLink, showContents } = this.props
-
-    if (showContents && detailsLink) {
-      return detailsLink
-    } else if (thisLink) {
-      return thisLink
-    }
-
-    return void (0)
   }
 
   handleAddClick = function handleAddClick () {

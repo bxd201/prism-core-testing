@@ -2,6 +2,7 @@
 import React from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
 
+import ColorWallContext, { colorWallContextDefault } from './ColorWall/ColorWallContext'
 import ColorWallRouter from './ColorWall/ColorWallRouter'
 import Search from '../Search/Search'
 import SearchBar from '../Search/SearchBar'
@@ -10,7 +11,7 @@ import facetBinder from 'src/facetBinder'
 
 import { ROUTE_PARAMS } from '../../constants/globals'
 
-export const ColorFamilyPage = ({ selectedColorFamily }: Object) => {
+export const ColorFamilyPage = ({ colorDetailPageRoot, selectedColorFamily }: { colorDetailPageRoot: string, selectedColorFamily: string }) => {
   let colorFamilyUrl = 'sherwin-williams-colors/family/red'
   switch (selectedColorFamily) {
     case 'timeless-color':
@@ -26,7 +27,7 @@ export const ColorFamilyPage = ({ selectedColorFamily }: Object) => {
   }
 
   return (
-    <>
+    <ColorWallContext.Provider value={{ ...colorWallContextDefault, colorDetailPageRoot }}>
       <Redirect to={`/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_WALL}/${ROUTE_PARAMS.SECTION}/${colorFamilyUrl}/${ROUTE_PARAMS.SEARCH}/`} />
       <ColorWallRouter>
         <div className='color-wall-wrap'>
@@ -41,7 +42,7 @@ export const ColorFamilyPage = ({ selectedColorFamily }: Object) => {
           </Switch>
         </div>
       </ColorWallRouter>
-    </>
+    </ColorWallContext.Provider>
   )
 }
 

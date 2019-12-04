@@ -48,7 +48,7 @@ export class Prism extends Component<Props> {
               <Route path='/' exact component={RootRedirect} />
               <Route path='/active' exact component={() => <SceneManager expertColorPicks />} />
               <Route path={colorWallUrlPattern}>
-                <ColorWallContext.Provider value={{ ...colorWallContextDefault, displayDetailsLink: true }}>
+                <ColorWallContext.Provider value={{ ...colorWallContextDefault }}>
                   <ColorWallPage />
                 </ColorWallContext.Provider>
               </Route>

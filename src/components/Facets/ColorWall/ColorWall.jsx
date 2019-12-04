@@ -10,7 +10,7 @@ import { add } from '../../../store/actions/live-palette'
 import { varValues } from 'variables'
 import { compareKebabs } from '../../../shared/helpers/StringUtils'
 import { convertCategorizedColorsToGrid } from '../../../shared/helpers/ColorDataUtils'
-import { generateColorWallPageUrl, generateColorDetailsPageUrl, fullColorName } from '../../../shared/helpers/ColorUtils'
+import { generateColorWallPageUrl, fullColorName } from '../../../shared/helpers/ColorUtils'
 import { BLANK_SWATCH, SW_CHUNK_SIZE } from 'constants/globals'
 import ConfigurationContext from '../../../contexts/ConfigurationContext/ConfigurationContext'
 import GenericMessage from '../../Messages/GenericMessage'
@@ -64,7 +64,6 @@ const ColorWall = () => {
                 const linkUrl = generateColorWallPageUrl(section, family, id, fullColorName(brandKey, colorNumber, name))
                 return linkUrl + (url.endsWith('family/') ? 'family/' : url.endsWith('search/') ? 'search/' : '')
               }}
-              swatchDetailsLinkGenerator={generateColorDetailsPageUrl}
               minCellSize={colorWallActive ? config.swatchMinSizeZoomed : config.swatchMinSize}
               maxCellSize={colorWallActive ? config.swatchMaxSizeZoomed : config.swatchMaxSize}
               colors={colorsGrid}

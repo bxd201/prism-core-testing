@@ -7,7 +7,6 @@ import ColorDetails from '../ColorDetails/ColorDetails'
 import ColorDataWrapper from '../../../helpers/ColorDataWrapper/ColorDataWrapper'
 import BackToColorWall from './BackToColorWall'
 import facetBinder from 'src/facetBinder'
-import ColorWallContext, { colorWallContextDefault } from '../ColorWall/ColorWallContext'
 import includes from 'lodash/includes'
 import { varValues } from 'variables'
 import { ROUTE_PARAMS, ROUTE_PARAM_NAMES } from 'constants/globals'
@@ -36,14 +35,6 @@ export const ColorDetailsComponent = (props: any) => {
       <BackToColorWall />
       <ColorDetailsWithData {...props} />
     </div>
-  )
-}
-
-export const ColorWallComponent = () => {
-  return (
-    <ColorWallContext.Provider value={{ ...colorWallContextDefault, displayDetailsLink: true }}>
-      <ColorWallPage />
-    </ColorWallContext.Provider>
   )
 }
 
@@ -80,7 +71,7 @@ export class ColorListingPage extends PureComponent<ColorListingPageProps, Color
             classNames={transitionClassNames}
             timeout={varValues.colorWall.transitionTime * 1.2}>
             <Switch location={location}>
-              <Route path={colorWallUrlPattern} component={ColorWallComponent} />
+              <Route path={colorWallUrlPattern} component={ColorWallPage} />
               <Route path={`${colorDetailsBaseUrl}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`} exact component={ColorDetailsComponent} />
             </Switch>
           </CSSTransition>
