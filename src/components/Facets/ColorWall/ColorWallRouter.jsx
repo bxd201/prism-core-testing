@@ -19,10 +19,15 @@ export default ({ children }: { children: React.Node }) => {
   return (loading
     ? <HeroLoader color={theme.primary[0]} />
     : <Switch>
-      <Route path='/active/color-wall/section/:section/family/:family/color/:colorId'>{children}</Route>
+      <Route path='/active/color-wall/section/:section/family/:family/color/:colorId/:colorName/search/'>{children}</Route>
+      <Route path='/active/color-wall/section/:section/family/:family/color/:colorId/:colorName'>{children}</Route>
+      <Route path='/active/color-wall/section/:section/family/:family/search/'>{children}</Route>
       <Route path='/active/color-wall/section/:section/family/:family'>{children}</Route>
       <Route path='/active/color-wall/section/:section/family'>{children}</Route>
+      <Route path='/active/color-wall/section/:section/color/:colorId/:colorName/family/'>{children}</Route>
+      <Route path='/active/color-wall/section/:section/color/:colorId/:colorName/search/'>{children}</Route>
       <Route path='/active/color-wall/section/:section/color/:colorId'>{children}</Route>
+      <Route path='/active/color-wall/section/:section/search/'>{children}</Route>
       <Route path='/active/color-wall/section/:section'>{children}</Route>
       <Redirect to={`/active/color-wall/section/${kebabCase(section)}`} />
     </Switch>
