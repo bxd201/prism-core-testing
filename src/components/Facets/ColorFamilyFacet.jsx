@@ -26,22 +26,22 @@ export const ColorFamilyPage = ({ selectedColorFamily }: Object) => {
   }
 
   return (
-    <ColorWallRouter>
-      <div className='color-wall-wrap'>
-        <Switch>
-          <Redirect to={`/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_WALL}/${ROUTE_PARAMS.SECTION}/${colorFamilyUrl}/${ROUTE_PARAMS.SEARCH}/`} />
-        </Switch>
-        <Switch>
-          <Route path='(.*)?/search/:query' component={() => <SearchBar showCancelButton={false} />} />
-          <Route path='(.*)?/search/' component={() => <SearchBar showCancelButton={false} />} />
-        </Switch>
-        <Switch>
-          <Route path='(.*)?/family/:family/search/:query' component={Search} />
-          <Route path='(.*)?/search/:query' component={Search} />
-          <Route component={ColorWall} />
-        </Switch>
-      </div>
-    </ColorWallRouter>
+    <>
+      <Redirect to={`/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_WALL}/${ROUTE_PARAMS.SECTION}/${colorFamilyUrl}/${ROUTE_PARAMS.SEARCH}/`} />
+      <ColorWallRouter>
+        <div className='color-wall-wrap'>
+          <Switch>
+            <Route path='(.*)?/search/:query' component={() => <SearchBar showCancelButton={false} />} />
+            <Route path='(.*)?/search/' component={() => <SearchBar showCancelButton={false} />} />
+          </Switch>
+          <Switch>
+            <Route path='(.*)?/family/:family/search/:query' component={Search} />
+            <Route path='(.*)?/search/:query' component={Search} />
+            <Route component={ColorWall} />
+          </Switch>
+        </div>
+      </ColorWallRouter>
+    </>
   )
 }
 
