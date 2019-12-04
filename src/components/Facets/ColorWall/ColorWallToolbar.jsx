@@ -16,8 +16,11 @@ export default () => {
       <div className={MODE_CLASS_NAMES.COL}>
         <div className={MODE_CLASS_NAMES.CELL}>
           <ButtonBar.Bar>
-            {(path.endsWith('family') ? families : sections).map(name =>
-              <ButtonBar.Button key={name} to={path.endsWith('family') ? generateColorWallPageUrl(section, name) : generateColorWallPageUrl(name)}>
+            {(path.endsWith('family/') || family ? families : sections).map(name =>
+              <ButtonBar.Button
+                key={name}
+                to={path.endsWith('family/') || family ? generateColorWallPageUrl(section, name) : generateColorWallPageUrl(name)}
+              >
                 <span className={MODE_CLASS_NAMES.DESC}>{name}</span>
               </ButtonBar.Button>
             )}
