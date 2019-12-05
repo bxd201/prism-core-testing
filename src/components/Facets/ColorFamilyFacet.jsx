@@ -8,10 +8,18 @@ import Search from '../Search/Search'
 import SearchBar from '../Search/SearchBar'
 import ColorWall from './ColorWall/ColorWall'
 import facetBinder from 'src/facetSupport/facetBinder'
+import { facetBinderDefaultProps, type FacetBinderMethods } from 'src/facetSupport/facetInstance'
+import { type FacetPubSubMethods, facetPubSubDefaultProps } from 'src/facetSupport/facetPubSub'
 
 import { ROUTE_PARAMS } from '../../constants/globals'
 
-export const ColorFamilyPage = ({ colorDetailPageRoot, selectedColorFamily }: { colorDetailPageRoot: string, selectedColorFamily: string }) => {
+type Props = FacetBinderMethods & FacetPubSubMethods & {
+  colorDetailPageRoot: string,
+  selectedColorFamily: string
+}
+
+export const ColorFamilyPage = (props: Props) => {
+  const { colorDetailPageRoot, selectedColorFamily } = props
   let colorFamilyUrl = 'sherwin-williams-colors/family/red'
   switch (selectedColorFamily) {
     case 'timeless-color':
@@ -44,6 +52,11 @@ export const ColorFamilyPage = ({ colorDetailPageRoot, selectedColorFamily }: { 
       </ColorWallRouter>
     </ColorWallContext.Provider>
   )
+}
+
+ColorFamilyPage.defaultProps = {
+  ...facetBinderDefaultProps,
+  ...facetPubSubDefaultProps
 }
 
 export default facetBinder(ColorFamilyPage, 'ColorFamilyFacet')

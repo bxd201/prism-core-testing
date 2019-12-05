@@ -12,7 +12,8 @@ import React, { Component } from 'react'
 import SceneManager from '../../SceneManager/SceneManager'
 import ColorWallContext, { colorWallContextDefault } from '../ColorWall/ColorWallContext'
 import facetBinder from 'src/facetSupport/facetBinder'
-import { type PubSubOutProps } from 'src/facetSupport/facetPubSub'
+import { facetBinderDefaultProps, type FacetBinderMethods } from 'src/facetSupport/facetInstance'
+import { type FacetPubSubMethods, facetPubSubDefaultProps } from 'src/facetSupport/facetPubSub'
 
 import { connect } from 'react-redux'
 import { Route, Redirect } from 'react-router-dom'
@@ -31,11 +32,16 @@ export const RootRedirect = () => {
   return <Redirect to='/active' />
 }
 
-type Props = PubSubOutProps & {
+type Props = FacetPubSubMethods & FacetBinderMethods & {
   toggleCompareColor: boolean
 }
 
 export class Prism extends Component<Props> {
+  static defaultProps = {
+    ...facetPubSubDefaultProps,
+    ...facetBinderDefaultProps
+  }
+
   render () {
     const { toggleCompareColor } = this.props
 
