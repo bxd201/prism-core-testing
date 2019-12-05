@@ -7,7 +7,7 @@ import ColorWallRouter from './ColorWall/ColorWallRouter'
 import Search from '../Search/Search'
 import SearchBar from '../Search/SearchBar'
 import ColorWall from './ColorWall/ColorWall'
-import facetBinder from 'src/facetBinder'
+import facetBinder from 'src/facetSupport/facetBinder'
 
 import { ROUTE_PARAMS } from '../../constants/globals'
 

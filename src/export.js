@@ -1,4 +1,4 @@
-import { appWrapper } from './facetBinder'
+import { facetMasterWrapper } from 'src/facetSupport/facetMasterWrapper'
 
 /**
  * IMPORTANT!!!
@@ -13,10 +13,10 @@ import Prism from 'src/components/Facets/Prism/Prism'
 import Tinter from 'src/components/Facets/Tinter/Tinter'
 
 export default {
-  ColorDetails: appWrapper(ColorDetails),
-  ColorListingPage: appWrapper(ColorListingPage),
-  ColorWallFacet: appWrapper(ColorWallFacet),
-  ColorFamilyFacet: appWrapper(ColorFamilyFacet),
-  Prism: appWrapper(Prism),
-  Tinter: appWrapper(Tinter)
+  ColorDetails: facetMasterWrapper(ColorDetails),
+  ColorListingPage: facetMasterWrapper(ColorListingPage),
+  ColorWallFacet: facetMasterWrapper(ColorWallFacet),
+  ColorFamilyFacet: facetMasterWrapper(ColorFamilyFacet),
+  Prism: facetMasterWrapper(Prism),
+  Tinter: facetMasterWrapper(Tinter)
 }

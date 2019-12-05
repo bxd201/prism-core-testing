@@ -1,17 +1,67 @@
 // @flow
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Switch, Route } from 'react-router-dom'
+import { useSelector, useDispatch } from 'react-redux'
 import ColorWallRouter from './ColorWall/ColorWallRouter'
 import Search from '../Search/Search'
 import SearchBar from '../Search/SearchBar'
 import ColorWall from './ColorWall/ColorWall'
 import ColorWallToolbar from './ColorWall/ColorWallToolbar'
-import ColorWallContext, { colorWallContextDefault } from './ColorWall/ColorWallContext'
-import facetBinder from 'src/facetBinder'
+import facetBinder from 'src/facetSupport/facetBinder'
+import ColorWallContext, { colorWallContextDefault } from 'src/components/Facets/ColorWall/ColorWallContext'
+import { type PubSubOutProps } from 'src/facetSupport/facetPubSub'
+import extendIfDefined from '../../shared/helpers/extendIfDefined'
+import GenericOverlay from '../Overlays/GenericOverlay/GenericOverlay'
+import at from 'lodash/at'
+import useEffectAfterMount from '../../shared/hooks/useEffectAfterMount'
+import { resetActiveColor } from '../../store/actions/loadColors'
 
-export const ColorWallPage = ({ colorDetailPageRoot }: { colorDetailPageRoot: string }) => {
+type Props = PubSubOutProps & {
+  colorDetailPageRoot: string,
+  colorWallBgColor?: string,
+  displayAddButton?: boolean
+}
+
+export const EVENTS = {
+  emitColor: 'PRISM/out/change/emitColor',
+  loading: 'PRISM/in/loading'
+}
+
+export const ColorWallPage = (props: Props) => {
+  const { displayAddButton, colorWallBgColor, subscribe, publish, unsubscribeAll, colorDetailPageRoot } = props
+
+  const emitColor = useSelector(state => at(state, 'colors.emitColor')[0])
+  const [isLoading, updateLoading] = useState(false)
+  const dispatch = useDispatch()
+
+  // on mount
+  useEffect(() => {
+    subscribe(EVENTS.loading, updateLoading)
+  }, [])
+
+  // on unmount
+  useEffect(() => () => {
+    // unsubscribe from everything on unmount
+    unsubscribeAll()
+    // and reset the color wall's status by resetting active color
+    dispatch(resetActiveColor())
+  }, [])
+
+  // on color select AFTER initial mount
+  useEffectAfterMount(() => {
+    const color = emitColor && emitColor.color
+    if (color) {
+      // resetWall(true)
+      publish(EVENTS.emitColor, color)
+    }
+  }, [(emitColor && emitColor.timestamp)])
+
   return (
-    <ColorWallContext.Provider value={{ ...colorWallContextDefault, colorDetailPageRoot }}>
+    <ColorWallContext.Provider value={extendIfDefined({}, colorWallContextDefault, {
+      colorDetailPageRoot,
+      colorWallBgColor,
+      displayAddButton
+    })}>
       <ColorWallRouter>
         <div className='color-wall-wrap'>
           <Switch>
@@ -27,6 +77,7 @@ export const ColorWallPage = ({ colorDetailPageRoot }: { colorDetailPageRoot: st
             <Route path='(.*)?/search/:query' component={Search} />
             <Route component={ColorWall} />
           </Switch>
+          {isLoading ? <GenericOverlay type={GenericOverlay.TYPES.LOADING} semitransparent /> : null}
         </div>
       </ColorWallRouter>
     </ColorWallContext.Provider>
