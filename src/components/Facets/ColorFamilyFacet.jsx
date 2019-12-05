@@ -45,6 +45,7 @@ export const ColorFamilyPage = (props: Props) => {
           </Switch>
           <Switch>
             <Route path='(.*)?/family/:family/search/:query' component={Search} />
+            <Route path='(.*)?/section/:section/search/:query' component={Search} />
             <Route path='(.*)?/search/:query' component={Search} />
             <Route component={ColorWall} />
           </Switch>
