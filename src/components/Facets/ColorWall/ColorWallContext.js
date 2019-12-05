@@ -17,7 +17,7 @@ export const colorWallContextDefault: ColorWallContextProps = {
   colorDetailPageRoot: false,
   colorWallBgColor: '#EEEEEE',
   displayAddButton: false,
-  displayDetailsLink: false,
+  displayDetailsLink: true,
   displayInfoButton: false,
   swatchMaxSize: 33,
   swatchMaxSizeZoomed: 50,

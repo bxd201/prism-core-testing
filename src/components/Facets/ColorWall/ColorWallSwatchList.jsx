@@ -48,7 +48,6 @@ type Props = IntlProps & RouterProps & {
   bloomRadius: number,
   colorMap: ColorMap,
   swatchLinkGenerator: Function,
-  swatchDetailsLinkGenerator: Function,
   section: string | void,
   family: string | void,
   activeColor?: Color, // eslint-disable-line react/no-unused-prop-types
@@ -728,7 +727,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     rowIndex, // Vertical (row) index of cell
     style // Style object to be applied to cell (to position it)
   }: Object) {
-    const { colors, colorMap, immediateSelectionOnActivation, onAddColor, swatchLinkGenerator, swatchDetailsLinkGenerator } = this.props
+    const { colors, colorMap, immediateSelectionOnActivation, onAddColor, swatchLinkGenerator } = this.props
     const { levelMap, a11yFocusChunk, a11yFocusCell, renderFocusOutline } = this.state
     const colorId = colors[rowIndex][columnIndex]
 
@@ -739,7 +738,6 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     const color: Color = colorMap[colorId]
     const thisLevel: ColorReference = levelMap[colorId]
     const linkToSwatch: string = swatchLinkGenerator(color)
-    const linkToDetails: string = swatchDetailsLinkGenerator(color)
 
     let focus = false
     let renderedSwatch
@@ -757,7 +755,6 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
         <ColorWallSwatch
           showContents={thisLevel.level === 0}
           thisLink={linkToSwatch}
-          detailsLink={linkToDetails}
           onAdd={onAddColor ? this.addColor : void (0)}
           color={color}
           level={thisLevel.level}
