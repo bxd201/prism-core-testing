@@ -21,10 +21,14 @@ const baseClass = 'Search'
 
 export default () => {
   const { results: colors, count, suggestions, loading, error } = useSelector(state => state.colors.search)
-  const { family, query } = useParams()
+  const { section, family, query } = useParams()
   const dispatch = useDispatch()
 
-  React.useEffect(() => { dispatch(loadSearchResults(query, family)) }, [query, family])
+  React.useEffect(() => {
+    // the api endpoint expects timeless-color/historic-color not timeless-colors/historic-colors
+    const modifiedSection = section === 'timeless-colors' ? 'timeless-color' : section === 'historic-colors' ? 'historic-color' : section
+    dispatch(loadSearchResults(query, family || modifiedSection))
+  }, [query, family, section])
 
   const reRunSearchWith = memoizee((newInput: string) => () => { dispatch(loadSearchResults(newInput)) })
 
