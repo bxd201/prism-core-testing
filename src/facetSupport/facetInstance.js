@@ -1,13 +1,14 @@
 // @flow
-import { type ComponentType } from 'react'
 import { unmountComponentAtNode } from 'react-dom'
 import memoizee from 'memoizee'
 import noop from 'lodash/noop'
 
-import { publishAnEvent, subscribeToAnEvent, unsubscribeFromAnEvent, unsubscribeFromAllEvents } from './facetPubSub'
+import { publishAnEvent, subscribeToAnEvent, unsubscribeFromAnEvent, unsubscribeFromAllEvents, type FacetPubSubMethods } from './facetPubSub'
+
+export type BoundFacet = any
 
 export type Instance = {
-  component: ComponentType<any>,
+  component: BoundFacet,
   el: HTMLElement
 }
 
@@ -16,6 +17,14 @@ export type InstancePromise = {
   promise: Promise<Instance>,
   reject: Function,
   resolve: Function
+}
+
+export type FacetBinderMethods = {
+  unmount: Function
+}
+
+export const facetBinderDefaultProps: FacetBinderMethods = {
+  unmount: noop
 }
 
 // -------------- Instance management -----------------
@@ -62,7 +71,7 @@ const makeInstancePromise = (el: HTMLElement): InstancePromise => {
 export const addInstance = ({ component, el }: Instance): void => {
   instances.push({ component, el })
 
-  const pResolutionData = {
+  const pResolutionData: FacetBinderMethods & FacetPubSubMethods = {
     publish: publishAnEvent(el),
     subscribe: subscribeToAnEvent(el),
     unmount: unmount(el),

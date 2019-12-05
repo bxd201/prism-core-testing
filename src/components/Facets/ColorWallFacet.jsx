@@ -9,14 +9,15 @@ import ColorWall from './ColorWall/ColorWall'
 import ColorWallToolbar from './ColorWall/ColorWallToolbar'
 import facetBinder from 'src/facetSupport/facetBinder'
 import ColorWallContext, { colorWallContextDefault } from 'src/components/Facets/ColorWall/ColorWallContext'
-import { type PubSubOutProps } from 'src/facetSupport/facetPubSub'
+import { type FacetPubSubMethods, facetPubSubDefaultProps } from 'src/facetSupport/facetPubSub'
 import extendIfDefined from '../../shared/helpers/extendIfDefined'
 import GenericOverlay from '../Overlays/GenericOverlay/GenericOverlay'
 import at from 'lodash/at'
 import useEffectAfterMount from '../../shared/hooks/useEffectAfterMount'
 import { resetActiveColor } from '../../store/actions/loadColors'
+import { facetBinderDefaultProps, type FacetBinderMethods } from 'src/facetSupport/facetInstance'
 
-type Props = PubSubOutProps & {
+type Props = FacetPubSubMethods & FacetBinderMethods & {
   colorDetailPageRoot: string,
   colorWallBgColor?: string,
   displayAddButton?: boolean
@@ -82,6 +83,11 @@ export const ColorWallPage = (props: Props) => {
       </ColorWallRouter>
     </ColorWallContext.Provider>
   )
+}
+
+ColorWallPage.defaultProps = {
+  ...facetPubSubDefaultProps,
+  ...facetBinderDefaultProps
 }
 
 export default facetBinder(ColorWallPage, 'ColorWallFacet')

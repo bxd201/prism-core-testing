@@ -7,7 +7,7 @@ import '@formatjs/intl-pluralrules/polyfill'
 import '@formatjs/intl-pluralrules/dist/locale-data/en'
 import '@formatjs/intl-pluralrules/dist/locale-data/fr'
 
-import React, { type ComponentType, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { mainEntryPointName } from '../../webpack/constants'
 import { render } from 'react-dom'
 import toArray from 'lodash/toArray'
@@ -20,7 +20,7 @@ import memoizee from 'memoizee'
 import docReady from 'src/shared/helpers/docReady'
 import { type EmbeddedConfiguration } from 'src/shared/types/Configuration'
 import facetPubSub from './facetPubSub'
-import { addInstance, getInstance, unmount } from './facetInstance'
+import { addInstance, getInstance, unmount, type BoundFacet } from './facetInstance'
 
 // import the redux store
 import { dedupePatternedString } from 'src/shared/utils/dedupePatternedString.util'
@@ -101,9 +101,12 @@ const renderAppInElement = (el: HTMLElement, explicitProps: Object = {}) => {
     return
   }
 
-  const bindProps = {
+  const bindProps: {
+    el: HTMLElement,
+    bindCallback: Function
+  } = {
     el,
-    bindCallback // a callback which will be passed an PubSubOutProps object on bind
+    bindCallback // a callback which will be passed a (FacetPubSubMethods & FacetBinderMethods) object on bind
   }
 
   embedBundleStyles(facet)
@@ -213,10 +216,10 @@ export {
   injectRoot
 }
 
-export default function (FacetDeclaration: ComponentType<any> | Function, facetName: string): ComponentType<any> | Function {
+export default function facetBinder (FacetDeclaration: BoundFacet, facetName: string): BoundFacet {
   const oldFacets = at(window.PRISM, 'facets')[0]
   const oldVersion = at(window.PRISM, 'version')[0]
-  function BoundFacet (props: any): typeof FacetDeclaration {
+  function BF (props: any): BoundFacet {
     const { bindCallback, el, ...passthruProps } = props
 
     useEffect(() => {
@@ -246,7 +249,7 @@ export default function (FacetDeclaration: ComponentType<any> | Function, facetN
     at: getInstance,
     facets: {
       ...(oldFacets || {}),
-      [facetName]: BoundFacet
+      [facetName]: BF
     }
   }
 
@@ -257,5 +260,5 @@ export default function (FacetDeclaration: ComponentType<any> | Function, facetN
 
   embedAtRoots()
 
-  return BoundFacet
+  return BF
 }

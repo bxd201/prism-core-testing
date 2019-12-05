@@ -11,11 +11,18 @@ export type Subscriber = {
   handler: Function
 }
 
-export type PubSubOutProps = {
+export type FacetPubSubMethods = {
   publish: Function,
   subscribe: Function,
   unsubscribe: Function,
   unsubscribeAll: Function
+}
+
+export const facetPubSubDefaultProps: FacetPubSubMethods = {
+  publish: noop,
+  subscribe: noop,
+  unsubscribe: noop,
+  unsubscribeAll: noop
 }
 
 // ---------- Subscriber management ---------------------
@@ -64,12 +71,7 @@ export const unsubscribeFromAllEvents = memoizee((el: HTMLElement) => {
 
 type InProps = { el: HTMLElement }
 
-type OutProps = any & {
-  publish: Function,
-  subscribe: Function,
-  unsubscribe: Function,
-  unsubscribeAll: Function
-}
+type OutProps = any & FacetPubSubMethods
 
 const facetPubSub = (WrappedComponent: ComponentType<InProps>): ComponentType<OutProps> => class FacetPubSub extends Component<InProps> {
   render () {
