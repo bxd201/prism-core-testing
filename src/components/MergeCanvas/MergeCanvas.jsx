@@ -13,7 +13,8 @@ type MergeCanvasProp = {
   layers: string[],
   width: number,
   height: number,
-  applyZoomPan: Function
+  applyZoomPan: Function,
+  hideCanvas?: boolean
 }
 
 const MergeCanvas = (props: MergeCanvasProp, ref: RefObject) => {
@@ -56,7 +57,7 @@ const MergeCanvas = (props: MergeCanvasProp, ref: RefObject) => {
         width={props.width}
         height={props.height}
         ref={ref}
-        className='merge-canvas'
+        className={props.hideCanvas ? 'merge-canvas-image-comp' : 'merge-canvas'}
       >
         {intl.messages.CANVAS_UNSUPPORTED}
       </canvas>

@@ -16,6 +16,9 @@ import collectionSummaries from './collectionSummaries'
 import expertColorPicks from './expertColorPicks'
 import inspirationalPhotos from './inspirationalPhotos'
 import { savingMasks } from './masks'
+import { legacySavedScenesMetadata, scenesAndRegions, selectedSavedSceneId } from './savedScenes'
+import { user } from './user'
+import { paintScenceWorkspace } from './paintSceneWorkspace'
 
 export default combineReducers({
   collectionSummaries,
@@ -32,5 +35,10 @@ export default combineReducers({
   scenes,
   sceneWorkspaces,
   uploads,
-  savingMasks
+  savingMasks,
+  legacySavedScenesMetadata,
+  scenesAndRegions,
+  user,
+  selectedSavedSceneId,
+  paintScenceWorkspace
 })

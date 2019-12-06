@@ -10,14 +10,7 @@ const requestColors = () => ({ type: REQUEST_COLORS, payload: { loading: true, a
 export const RECEIVE_COLORS: string = 'RECEIVE_COLORS'
 const receiveColors = (colorData: any) => ({
   type: RECEIVE_COLORS,
-  payload: {
-    loading: false,
-    activeRequest: false,
-    unorderedColors: colorData.unorderedColors,
-    colors: colorData.colors,
-    brights: colorData.brights,
-    sections: colorData.sections
-  }
+  payload: mapColorDataToPayload(colorData)
 })
 
 export const LOAD_ERROR: string = 'LOAD_ERROR'
@@ -51,15 +44,10 @@ export const loadColors = (brandId: string, options?: any) => {
     dispatch(requestColors())
 
     return Promise
-      .all([
-        axios.get(generateBrandedEndpoint(COLOR_CHUNKS_ENDPOINT, brandId, options)),
-        axios.get(generateBrandedEndpoint(COLOR_BRIGHTS_ENDPOINT, brandId, options)),
-        axios.get(generateBrandedEndpoint(COLOR_FAMILY_NAMES_ENDPOINT, brandId, options)),
-        axios.get(generateBrandedEndpoint(COLORS_ENDPOINT, brandId, options))
-      ])
-      .then(r => {
-        const [colors, brights, sections, unorderedColors]: [any, any, FamilyStructure, any] = r.map(i => i.data)
-        dispatch(receiveColors({ colors, brights, sections, unorderedColors }))
+      .all(getColorsRequests(brandId, options))
+      .then(responses => {
+        const colorData = mapResponsesToColorData(responses)
+        dispatch(receiveColors(colorData))
       })
       .catch(r => dispatch(loadError()))
   }
@@ -67,3 +55,29 @@ export const loadColors = (brandId: string, options?: any) => {
 
 export const EMIT_COLOR: string = 'EMIT_COLOR'
 export const emitColor = (color: Color) => ({ type: EMIT_COLOR, payload: color })
+
+export const mapColorDataToPayload = (colorData: Object) => {
+  return {
+    loading: false,
+    activeRequest: false,
+    unorderedColors: colorData.unorderedColors,
+    colors: colorData.colors,
+    brights: colorData.brights,
+    sections: colorData.sections
+  }
+}
+
+export const getColorsRequests = (brandId: string, options?: any) => {
+  return [
+    axios.get(generateBrandedEndpoint(COLOR_CHUNKS_ENDPOINT, brandId, options)),
+    axios.get(generateBrandedEndpoint(COLOR_BRIGHTS_ENDPOINT, brandId, options)),
+    axios.get(generateBrandedEndpoint(COLOR_FAMILY_NAMES_ENDPOINT, brandId, options)),
+    axios.get(generateBrandedEndpoint(COLORS_ENDPOINT, brandId, options))
+  ]
+}
+
+export const mapResponsesToColorData = (responses: any[]) => {
+  const [colors, brights, sections, unorderedColors]: [any, any, FamilyStructure, any] = responses.map(response => response.data)
+
+  return { colors, brights, sections, unorderedColors }
+}

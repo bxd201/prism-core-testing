@@ -21,6 +21,8 @@ import { Route, Redirect } from 'react-router-dom'
 
 import { ROUTE_PARAMS, ROUTE_PARAM_NAMES } from 'constants/globals'
 import MatchPhoto from '../../MatchPhoto/MatchPhoto'
+import MyIdeasContainer from '../../MyIdeasContainer/MyIdeasContainer'
+import MyIdeaPreview from '../../MyIdeaPreview/MyIdeaPreview'
 const colorWallBaseUrl = `/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_WALL}`
 
 // this is very vague because react-router doesn't have the ability to match /section/x/family/y/color/z and /section/x/color/z with the same route
@@ -34,6 +36,12 @@ const colorDetailsBaseUrl = `/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_DETAIL
 
 // barebones component to always take the user to active if they try to access root.
 // not sure if we need this but if we end up using this for TAG & want to retain bookmarks..
+
+// Route constants
+export const MY_IDEAS_PREVIEW = '/my-ideas-preview'
+export const MATCH_PHOTO = '/match-photo'
+export const MY_IDEAS = '/my-ideas'
+
 export const RootRedirect = () => {
   return <Redirect to='/active' />
 }
@@ -69,8 +77,11 @@ export class Prism extends Component<Props> {
               <Route path='/color-from-image' component={InspiredScene} />
               <Route path='/color-collections' component={(props) => (<ColorCollection isExpertColor={false} {...props.location.state} />)} />
               <Route path='/expert-colors' component={() => <ExpertColorPicks isExpertColor />} />
-              <Route path='/match-photo' component={MatchPhoto} />
+              <Route path={MATCH_PHOTO} component={MatchPhoto} />
               <Route path='/paint-scene' render={() => <MatchPhoto isPaintScene />} />
+              {/* @todo - implement MyIdeas -RS */}
+              <Route path={MY_IDEAS} render={() => <MyIdeasContainer />} />
+              <Route path={MY_IDEAS_PREVIEW} component={MyIdeaPreview} />
               <Route path={`/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`} exact component={ColorDetails} />
               <Route path='/fast-mask' exact component={FastMask} />
             </div>

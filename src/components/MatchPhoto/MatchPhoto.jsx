@@ -12,6 +12,7 @@ import PaintScene from '../PaintScene/PaintScene'
 import { getScaledPortraitHeight } from '../../shared/helpers/ImageUtils'
 import PrismImage from '../PrismImage/PrismImage'
 import DynamicColorFromImage from '../InspirationPhotos/DynamicColorFromImage'
+import { useSelector } from 'react-redux'
 
 import './MatchPhoto.scss'
 
@@ -81,6 +82,8 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
   // eslint-disable-next-line
   const [hasLoaded, setHasLoaded] = useState(false)
   const hasLoadedRef = useRef()
+
+  const paintSceneWorkspace = useSelector(state => state.paintScenceWorkspace)
 
   useEffect(() => {
     prevOrientationRef.current = orientationDimensions
@@ -406,9 +409,9 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
               : ''
           }
           {
-            (imageUrl && isPaintScene && pins.length > 0)
+            ((imageUrl && isPaintScene && pins.length > 0) || paintSceneWorkspace)
               ? (<React.Fragment>
-                <PaintScene imageUrl={imageUrl} imageRotationAngle={imageRotationAngle} referenceDimensions={imageDims} width={wrapperWidth} />
+                <PaintScene imageUrl={imageUrl} workspace={paintSceneWorkspace} imageRotationAngle={imageRotationAngle} referenceDimensions={imageDims} width={wrapperWidth} />
               </React.Fragment>)
               : ''
           }

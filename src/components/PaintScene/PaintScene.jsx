@@ -7,7 +7,7 @@ import PaintToolBar from './PaintToolBar'
 import remove from 'lodash/remove'
 import { injectIntl } from 'react-intl'
 
-import { drawAcrossLine, getColorsFromImagePathList } from './PaintSceneUtils'
+import { drawAcrossLine, getColorsFromImagePathList, processLoadedScene } from './PaintSceneUtils'
 import { getPaintAreaPath, repaintImageByPath,
   createPolygon, drawLine, drawHollowCircle,
   edgeDetect, pointInsideCircle, alterRGBByPixel,
@@ -15,14 +15,13 @@ import { getPaintAreaPath, repaintImageByPath,
   getActiveColorRGB, getSelectArea, hexToRGB,
   checkIntersection, drawImagePixelByPath,
   copyImageList, getColorAtPixel, colorMatch,
-  repaintCircleLine, getImageCordinateByPixelPaintBrush,
-  filterErasePath, updateDeleteAreaList } from './utils'
+  repaintCircleLine, getImageCordinateByPixelPaintBrush, createImagePathItem, filterErasePath, updateDeleteAreaList } from './utils'
 import { toolNames, groupToolNames, brushLargeSize, brushMediumSize, brushSmallSize, brushTinySize, brushRoundShape, brushSquareShape } from './data'
 import { getScaledPortraitHeight, getScaledLandscapeHeight } from '../../shared/helpers/ImageUtils'
 import throttle from 'lodash/throttle'
 import { redo, undo } from './UndoRedoUtil'
 import MergeCanvas from '../MergeCanvas/MergeCanvas'
-import { saveMasks, startSavingMasks } from '../../store/actions/paintScene'
+import { saveMasks, startSavingMasks } from '../../store/actions/persistScene'
 import PaintSceneFooter from './PaintSceneFooter'
 import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 import SaveMasks from './SaveMasks'
@@ -57,13 +56,17 @@ const hideCursor = `${baseClass}--hide-cursor`
 
 type ComponentProps = {
   imageUrl: string,
+  // eslint-disable-next-line react/no-unused-prop-types
+  imageRotationAngle: number,
   lpActiveColor: Object,
   referenceDimensions: Object,
+  // eslint-disable-next-line react/no-unused-prop-types
   width: number,
   intl: any,
   saveMasks: Function,
   savingMasks: boolean,
-  startSavingMasks: Function
+  startSavingMasks: Function,
+  workspace: Object
 }
 
 type ComponentState = {
@@ -138,12 +141,17 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   constructor (props: ComponentProps) {
     super(props)
 
+    const initialImageWidth = props.workspace ? props.workspace.width : props.referenceDimensions.imageWidth
+    const initialImageHeight = props.workspace ? props.workspace.height : this.props.referenceDimensions.imageHeight
+    const isPortrait = props.workspace ? props.workspace.height > props.workspace.width : props.referenceDimensions.isPortrait
+
     this.CFICanvas = React.createRef()
     this.CFICanvas2 = React.createRef()
     this.CFICanvasPaint = React.createRef()
     this.CFICanvas4 = React.createRef()
     this.CFIWrapper = React.createRef()
     this.CFIImage = React.createRef()
+    this.CFIImage2 = React.createRef()
     this.mergeCanvasRef = React.createRef()
     // @todo - marked for review -RS
     // this.canvasOffsetWidth = 0
@@ -152,9 +160,9 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.canvasDimensions = {}
     this.canvasOriginalDimensions = {}
     this.wrapperOriginalDimensions = {}
-    this.backgroundImageWidth = props.referenceDimensions.imageWidth
-    this.backgroundImageHeight = props.referenceDimensions.imageHeight
-    this.isPortrait = props.referenceDimensions.isPortrait
+    this.backgroundImageWidth = initialImageWidth
+    this.backgroundImageHeight = initialImageHeight
+    this.isPortrait = isPortrait
     this.originalIsPortrait = props.referenceDimensions.originalIsPortrait
     this.canvasPanStart = { x: 0.5, y: 0.5 }
     this.lastPanPoint = { x: 0, y: 0 }
@@ -189,7 +197,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       groupAreaList: [],
       groupSelectList: [],
       clearUndoList: [],
-      wrapperHeight: this.props.referenceDimensions.imageHeight,
+      wrapperHeight: initialImageHeight,
       isUngroup: false,
       isAddGroup: false,
       isDeleteGroup: false,
@@ -207,8 +215,8 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       pinY: 0,
       currPinX: 0,
       currPinY: 0,
-      canvasWidth: this.props.referenceDimensions.imageWidth,
-      canvasHeight: this.props.referenceDimensions.imageHeight
+      canvasWidth: initialImageWidth,
+      canvasHeight: initialImageHeight
     }
 
     this.undo = this.undo.bind(this)
@@ -224,6 +232,8 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.renderMergeCanvas = this.renderMergeCanvas.bind(this)
     this.exportImagePaths = this.exportImagePaths.bind(this)
     this.processMasks = this.processMasks.bind(this)
+    this.setForegroundImage = this.setForegroundImage.bind(this)
+    this.initCanvas2 = this.initCanvas2.bind(this)
   }
 
   /*:: shouldCanvasResize: (prevWidth: number, newWidth: number) => number */
@@ -299,6 +309,13 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.canvasOffsetHeight = parseInt(this.wrapperDimensions.height, 10)
     this.initCanvasWithDimensions()
   }
+
+  /*:: initCanvas2: () => void */
+  initCanvas2 () {
+    const { canvasWidth, canvasHeight } = this.calcCanvasNewDimensions()
+    this.setForegroundImage(canvasWidth, canvasHeight)
+  }
+
   /*:: calcCanvasNewDimensions(newWidth: number) => Object */
   calcCanvasNewDimensions (newWidth: number) {
     let canvasWidth = 0
@@ -329,7 +346,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
         canvasHeight = Math.floor(getScaledLandscapeHeight(this.backgroundImageHeight, this.backgroundImageWidth)(canvasWidth))
       }
     }
-    // @todo - Think about adding scale factors here in return payload
+    // @todo [IMPROVEMENT] - Think about adding scale factors here in return payload -RS
     return {
       canvasWidth,
       canvasHeight
@@ -374,7 +391,6 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     // this.CFICanvas4.current.style.height = `${canvasHeight}px`
 
     this.CFIWrapper.current.style.height = `${canvasHeight}px`
-    // @todo new stuff -RS
     this.setState({ canvasWidth, canvasHeight })
   }
 
@@ -384,6 +400,21 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.CFICanvasContext2.clearRect(0, 0, canvasWidth, canvasHeight)
     this.CFICanvasContextPaint.clearRect(0, 0, canvasWidth, canvasHeight)
     this.setState({ wrapperHeight: canvasHeight, canvasHeight, canvasWidth, canvasImageUrls: this.getLayers() })
+  }
+
+  /*:: setForegroundImage: (canvasWidth: number, canvasHeight: number) => void */
+  setForegroundImage (canvasWidth: number, canvasHeight: number) {
+    const { palette } = this.props.workspace
+    const colors = palette.map(color => [color.red, color.green, color.blue])
+    this.CFICanvasContext2.drawImage(this.CFIImage2.current, 0, 0, canvasWidth, canvasHeight)
+    // Separate colors
+    const colorLayers = processLoadedScene(this.CFICanvasContext2, this.props.workspace.palette, 1.5, true)
+    // repaint using the separated color layers
+    // @todo [IMPROVEMENT] - create enum of paint types -RS
+    const imagePaths = colorLayers.pixelIndices.map((item, i) => createImagePathItem(item, colorLayers.alphaPixelMaps[i], colors[i], 'paint', 0))
+    this.clearCanvas()
+    repaintImageByPath(imagePaths, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
+    this.setState({ canvasImageUrls: this.getLayers(), imagePathList: imagePaths })
   }
 
   /*:: setDependentPositions: () => void */
@@ -407,7 +438,6 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     }
   }
 
-  // @todo - We will need to redo the calculations using the offset caused by the margin added to the canvas when isPortrait -RS
   getCanvasOffset = () => {
     const canvasOffset = window.sessionStorage.getItem('canvasOffsetPaintScene')
     return JSON.parse(canvasOffset)
@@ -1618,7 +1648,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
     const ctx = this.CFICanvas2.current.getContext('2d')
     const imageData = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height)
-    // @todo - Implement meta data -RS
+    // @todo - Implement meta data needed for export -RS
     const metaData = {}
     this.props.saveMasks(colorList, imageData, metaData)
   }
@@ -1638,7 +1668,9 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   }
 
   render () {
-    const { imageUrl, lpActiveColor, intl } = this.props
+    const { lpActiveColor, intl } = this.props
+    const bgImageUrl = this.props.workspace ? this.props.workspace.bgImageUrl : this.props.imageUrl
+    const foregroundImageUrl = this.props.workspace ? this.props.workspace.foregroundImageUrl : null
     const { activeTool, position, paintBrushShape, paintBrushWidth, eraseBrushShape, eraseBrushWidth, undoIsEnabled, redoIsEnabled, showOriginalCanvas, isAddGroup, isDeleteGroup, isUngroup, paintCursor, isInfoToolActive, loading, showAnimatePin, showNonAnimatePin, pinX, pinY, currPinX, currPinY, canvasHeight } = this.state
     const lpActiveColorRGB = (lpActiveColor) ? `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})` : ``
     const backgroundColorBrush = (activeTool === toolNames.ERASE) ? `rgba(255, 255, 255, 0.7)` : lpActiveColorRGB
@@ -1666,7 +1698,8 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
           </canvas>
           <canvas className={`${canvasClass} ${canvasSecondClass}`} ref={this.CFICanvas4} name='paint-scene-canvas-fourth' />
           {this.renderMergeCanvas(this.state.canvasImageUrls)}
-          <img className={`${imageClass}`} ref={this.CFIImage} onLoad={this.initCanvas} onError={this.handleImageErrored} src={imageUrl} alt={intl.messages.IMAGE_INVISIBLE} />
+          <img className={`${imageClass}`} ref={this.CFIImage} onLoad={this.initCanvas} onError={this.handleImageErrored} src={bgImageUrl} alt={intl.messages.IMAGE_INVISIBLE} />
+          {foregroundImageUrl ? <img className={`${imageClass}`} ref={this.CFIImage2} onLoad={this.initCanvas2} onError={this.handleImageErrored} src={foregroundImageUrl} alt={intl.messages.IMAGE_INVISIBLE} /> : null}
           <div className={`${paintToolsClass}`}>
             <PaintToolBar
               activeTool={activeTool}

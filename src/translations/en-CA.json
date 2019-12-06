@@ -1,5 +1,4 @@
 {
-  "SAVE_MASKS": "Save",
   "ADD_A_COLOR": "ADD A COLOUR",
   "BACK_TO_COLOR_WALL": "Back to Colour Wall",
   "CANCEL": "Cancel",
@@ -9,9 +8,13 @@
   "COLOR_COLLECTIONS": "Colour Collections",
   "COLOR_FAMILIES": "Colour Families",
   "COORDINATING_COLORS": "Coordinating Colours",
+  "DELETE": "DELETE",
   "DELETE_PIN": "Delete pin",
   "DETAILS": "Details",
   "DISPLAY_SCENE_PAINTER": "Display the Scene Painter",
+  "DONE": "DONE",
+  "EDIT": "EDIT",
+  "EMAIL_ADDRESS": "Email Address",
   "ERROR_LOADING_COLORS": "We're unable to load colours right now.",
   "EXTERIOR": "Exterior",
   "FIND_COLORS_IN_CW": "FIND COLOURS IN THE DIGITAL COLOR WALL",
@@ -19,7 +22,16 @@
   "IMAGE_INVISIBLE": "This image is invisible to the user.",
   "INTERIOR": "Interior",
   "LOCATION_NUMBER": "Location Number",
+  "LOG_IN": "LOG IN",
   "MAXIMIZE_COLOR_SWATCH": "Maximize the Colour Swatch",
+  "MY_IDEAS": {
+    "NO_IDEAS_DESC": "Save all your inspiration and ideas here, and reference them when you're ready to start painting. Edit them any time.",
+    "NO_IDEAS_TITLE": "You haven´t saved any ideas.",
+    "OPEN_PROJECT": "Open this project",
+    "OPEN_UNPAINTED": "Open unpainted scene",
+    "PREVIEW": "Preview of",
+    "TITLE": "View and edit your ideas"
+  },
   "NO_COLORS_AVAILABLE": "No colours available.",
   "PAINT_TOOLS": {
     "BACK": "Go back",
@@ -55,7 +67,10 @@
     "ZOOM": "Adjust the zoom level"
   },
   "PALETTE_TITLE": "My Color Palette",
+  "PASSWORD": "Password",
+  "REGISTER": "REGISTER",
   "RESTORE_COLOR_SWATCH_TO_DEFAULT_SIZE": "Restore the Colour Swatch to default size",
+  "SAVE_MASKS": "Save",
   "SCENE_DISPLAYED": "Scene is displayed",
   "SCENE_HIDDEN": "Scene is hidden",
   "SEARCH": {
@@ -63,14 +78,15 @@
       "GENERIC": "We were unable to perform your search.",
       "HEADLINE": "Something went wrong."
     },
+    "FIND_A_COLOR": "Find a colour",
     "NO_RESULTS": "Sorry, no color matches found.",
     "PROMPT": "Enter a color name, number, or family in the text field above.",
     "SEARCH": "Search",
-    "SEARCHING": "Searching",
     "SEARCH_BY": "Search by colour name or number",
-    "FIND_A_COLOR": "Find a colour",
+    "SEARCHING": "Searching",
     "SUGGESTIONS": "Some examples of things you can search for are {suggestions}"
   },
+  "SIGN_IN": "SIGN IN",
   "SIMILAR_COLORS": "Similar Colours",
   "SWATCH_ACTIVATED_DETAILS": "{color} is selected. Press Enter to view details.",
   "SWATCH_FOCUS": "{color}. Press Enter to select.",

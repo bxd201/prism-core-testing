@@ -1,6 +1,6 @@
 // @flow
 
-import { SAVING_MASKS, DONE_SAVING_MASKS } from '../actions/paintScene'
+import { SAVING_MASKS, DONE_SAVING_MASKS } from '../actions/persistScene'
 
 export const savingMasks = (state: boolean = false, action: {type: string, payload: boolean}) => {
   if (action.type === SAVING_MASKS || action.type === DONE_SAVING_MASKS) {
