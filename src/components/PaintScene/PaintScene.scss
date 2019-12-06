@@ -3,6 +3,7 @@
   outline: none;
   position: relative;
   width: 100%;
+  overflow: hidden;
   /*@include respond-above(xs) {
     min-height:366px;
   }
@@ -201,4 +202,21 @@
   &--disable-click {
     pointer-events: none;
   }
+
+  &__paintscene-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 4px;
+    width: 100%;
+  }
+}
+
+.spinner {
+  background-color: rgba(0, 0, 0, 0.1);
+  text-align: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100001;
 }

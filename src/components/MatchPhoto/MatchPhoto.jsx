@@ -1,8 +1,6 @@
 // @flow
 import React, { useState, useEffect, useRef } from 'react'
 import FileInput from '../FileInput/FileInput'
-
-import './MatchPhoto.scss'
 import ImageRotateTerms from './ImageRotateTerms.jsx'
 import { Link, withRouter, type RouterHistory } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -14,6 +12,8 @@ import PaintScene from '../PaintScene/PaintScene'
 import { getScaledPortraitHeight } from '../../shared/helpers/ImageUtils'
 import PrismImage from '../PrismImage/PrismImage'
 import DynamicColorFromImage from '../InspirationPhotos/DynamicColorFromImage'
+
+import './MatchPhoto.scss'
 
 const baseClass = 'match-photo'
 const wrapperClass = `${baseClass}__wrapper`
