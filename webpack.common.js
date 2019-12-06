@@ -138,15 +138,16 @@ module.exports = {
   plugins: [
     new WebpackBar(),
     flags.dev && new BundleAnalyzerPlugin(),
-
     new HtmlWebpackPlugin({
       inject: false,
       template: './src/index.html'
     }),
-    new HtmlWebpackPlugin({
-      inject: false,
-      filename: 'embeddable.html',
-      template: './src/templates/embeddable.html'
+    ...flags.implementationTemplates.map(page => {
+      return new HtmlWebpackPlugin({
+        inject: false,
+        filename: `${page}.html`,
+        template: `./src/templates/${page}.html`
+      })
     }),
     new MiniCssExtractPlugin({
       filename: 'css/[name].css'
