@@ -1,4 +1,5 @@
 // @flow
+import React, { SyntheticEvent, useState } from 'react'
 import React, { SyntheticEvent } from 'react'
 import { useIntl } from 'react-intl'
 import { login } from '../../store/actions/user'
