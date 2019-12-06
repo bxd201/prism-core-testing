@@ -22,12 +22,9 @@ export const ColorFamilyPage = (props: Props) => {
   const { colorDetailPageRoot, selectedColorFamily } = props
   let colorFamilyUrl = 'sherwin-williams-colors/family/red'
   switch (selectedColorFamily) {
-    case 'timeless-color':
-      colorFamilyUrl = `timeless-colors`
-      break
-
-    case 'historic-color':
-      colorFamilyUrl = `historic-colors`
+    case 'timeless-colors':
+    case 'historic-colors':
+      colorFamilyUrl = selectedColorFamily
       break
 
     default:
