@@ -8,6 +8,7 @@ export const getPaintAreaPath = (imagePathList, canvas, width, height, color) =>
   const RGB = getActiveColorRGB(color)
   const [array, pixelIndexAlphaMap] = getImageCordinateByPixelPaintBrush(canvas, width, height, true)
   const newArea = {
+    type: 'paint',
     id: uniqueId(),
     color: RGB,
     data: array,
@@ -178,7 +179,7 @@ export const checkIntersection = (areaA, areaB) => {
   return Array.from(intersection)
 }
 
-export const repaintImageByPath = (imagePathList, canvas, width, height, isEraseRepaint = false) => {
+export const repaintImageByPath = (imagePathList, canvas, width, height, isEraseRepaint = false, groupIds = []) => {
   const ctx = canvas.current.getContext('2d')
   let imageData = ctx.getImageData(0, 0, width, height)
   let data = imageData.data
@@ -209,18 +210,25 @@ export const repaintImageByPath = (imagePathList, canvas, width, height, isErase
     const color = selectedItem.color
     const pixelIndexAlphaMap = selectedItem.pixelIndexAlphaMap
     const isEnabled = selectedItem.isEnabled
-    if (path && isEnabled) {
+    const type = selectedItem.type
+    const id = selectedItem.id
+    const unSelectType = ['unselect', 'unselect-group', 'ungroup']
+    if ((path && isEnabled && !unSelectType.includes(type) && !groupIds.includes(id)) || (path && isEnabled && type === 'select-group' && groupIds.includes(id))) {
       for (let j = 0; j < path.length; j++) {
         data[path[j]] = color[0]
         data[path[j] + 1] = color[1]
         data[path[j] + 2] = color[2]
-        if (data[path[j] + 3]) {
-          data[path[j] + 3] = 255
+        if (type === 'delete' || type === 'delete-group') {
+          data[path[j] + 3] = 0
         } else {
-          if (pixelIndexAlphaMap !== undefined && pixelIndexAlphaMap[path[j]]) {
-            data[path[j] + 3] = pixelIndexAlphaMap[path[j]]
-          } else {
+          if (data[path[j] + 3]) {
             data[path[j] + 3] = 255
+          } else {
+            if (pixelIndexAlphaMap !== undefined && pixelIndexAlphaMap[path[j]]) {
+              data[path[j] + 3] = pixelIndexAlphaMap[path[j]]
+            } else {
+              data[path[j] + 3] = 255
+            }
           }
         }
       }
@@ -315,11 +323,14 @@ export const eraseIntersection = (imagePathList, erasePath) => {
     const linkId = originImagePathList[i].id
     const drawOrder = originImagePathList[i].drawOrder
     const intersection = checkIntersection(data, erasePath)
-    if (intersection.length > 0 && isEnabled) {
+    const type = originImagePathList[i].type
+
+    if (intersection.length > 0 && isEnabled && type !== 'delete') {
       originImagePathList[i].isEnabled = false
       const remainAreaPath = difference(data, erasePath)
       const newId = uniqueId()
       originImagePathList.push({
+        type: 'paint',
         id: newId,
         color: color,
         data: remainAreaPath,
