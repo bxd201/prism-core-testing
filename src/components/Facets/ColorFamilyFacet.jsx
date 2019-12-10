@@ -15,11 +15,14 @@ import { ROUTE_PARAMS } from '../../constants/globals'
 
 type Props = FacetBinderMethods & FacetPubSubMethods & {
   colorDetailPageRoot: string,
+  colorWallBgColor?: string,
   selectedColorFamily: string
 }
 
+const SearchBarNoCancel = () => <SearchBar showCancelButton={false} />
+
 export const ColorFamilyPage = (props: Props) => {
-  const { colorDetailPageRoot, selectedColorFamily } = props
+  const { colorDetailPageRoot, colorWallBgColor, selectedColorFamily } = props
   let colorFamilyUrl = 'sherwin-williams-colors/family/red'
   switch (selectedColorFamily) {
     case 'timeless-colors':
@@ -32,13 +35,13 @@ export const ColorFamilyPage = (props: Props) => {
   }
 
   return (
-    <ColorWallContext.Provider value={{ ...colorWallContextDefault, colorDetailPageRoot }}>
+    <ColorWallContext.Provider value={{ ...colorWallContextDefault, colorDetailPageRoot, colorWallBgColor }}>
       <Redirect to={`/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_WALL}/${ROUTE_PARAMS.SECTION}/${colorFamilyUrl}/${ROUTE_PARAMS.SEARCH}/`} />
       <ColorWallRouter>
         <div className='color-wall-wrap'>
           <Switch>
-            <Route path='(.*)?/search/:query' component={() => <SearchBar showCancelButton={false} />} />
-            <Route path='(.*)?/search/' component={() => <SearchBar showCancelButton={false} />} />
+            <Route path='(.*)?/search/:query' component={SearchBarNoCancel} />
+            <Route path='(.*)?/search/' component={SearchBarNoCancel} />
           </Switch>
           <Switch>
             <Route path='(.*)?/family/:family/search/:query' component={Search} />

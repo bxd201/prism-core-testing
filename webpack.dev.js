@@ -7,12 +7,12 @@ module.exports = merge.smart(common, {
   mode: flags.mode,
   plugins: [
     new webpack.EvalSourceMapDevToolPlugin({
-        exclude: /vendor|node_modules/,
-        sourceURLTemplate: module => `/${module.identifier}`,
-        moduleFilenameTemplate: 'webpack://[namespace]/[resource-path]?[loaders]',
-        filename: 'dist/public/[name].js.map',
-        columns: false,
-        module: true
-      })
+      exclude: /vendor|node_modules/,
+      sourceURLTemplate: module => `/${module.identifier}`,
+      moduleFilenameTemplate: 'webpack://[namespace]/[resource-path]?[loaders]',
+      filename: 'dist/public/[name].js.map',
+      columns: false,
+      module: true
+    })
   ]
 })

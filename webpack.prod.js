@@ -12,10 +12,6 @@ const webpack = require('webpack')
 module.exports = merge.smart(
   common,
   {
-    entry: {
-      author: flags.authorPath,
-      embed: flags.embedPath
-    },
     mode: flags.mode,
     devtool: 'cheap-source-map',
     plugins: [

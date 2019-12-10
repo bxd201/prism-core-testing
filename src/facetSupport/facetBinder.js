@@ -28,8 +28,6 @@ import { embedGlobalStylesOnce, memoEmbedBundleStyles } from './facetStyles'
 import { HAS_BOUND_CLASS, CLEANSLATE_CLASS, PRISM_CLASS, TO_BIND_CLASS, EMBED_ROOT_SELECTOR_DEPRECATED, EMBED_ROOT_SELECTOR } from './facetConstants'
 import { facetMasterWrapper } from './facetMasterWrapper'
 
-const APP_VERSION = process.env.npm_package_version || ''
-
 let [addToEmbedQueue, embedQueue] = [(facetName) => {
   embedQueue.push(facetName)
 }, []]
