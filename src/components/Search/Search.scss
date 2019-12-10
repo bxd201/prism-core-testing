@@ -1,6 +1,5 @@
 .Search {
   &__results-pane {
-    background: #eee;
     min-height: 60vh;
     text-align: center;
     display: flex;
@@ -8,12 +7,22 @@
     justify-content: center;
     position: relative;
 
+    &--top-align {
+      align-items: flex-start;
+    }
+
     @include respond-above(sm) {
       min-height: 60vw;
     }
 
     @include respond-above(md) {
       min-height: 50vw;
+    }
+  }
+
+  &__auto-sizer {
+    &--expand-with-results {
+      height: auto !important;
     }
   }
 }

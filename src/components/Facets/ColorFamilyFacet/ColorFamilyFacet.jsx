@@ -1,17 +1,19 @@
 // @flow
 import React from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
+import { FormattedMessage } from 'react-intl'
 
-import ColorWallContext, { colorWallContextDefault } from './ColorWall/ColorWallContext'
-import ColorWallRouter from './ColorWall/ColorWallRouter'
-import Search from '../Search/Search'
-import SearchBar from '../Search/SearchBar'
-import ColorWall from './ColorWall/ColorWall'
+import ColorWallContext, { colorWallContextDefault } from '../ColorWall/ColorWallContext'
+import ColorWallRouter from '../ColorWall/ColorWallRouter'
+import Search from '../../Search/Search'
+import SearchBar from '../../Search/SearchBar'
+import ColorWall from '../ColorWall/ColorWall'
 import facetBinder from 'src/facetSupport/facetBinder'
 import { facetBinderDefaultProps, type FacetBinderMethods } from 'src/facetSupport/facetInstance'
 import { type FacetPubSubMethods, facetPubSubDefaultProps } from 'src/facetSupport/facetPubSub'
+import { ROUTE_PARAMS } from 'src/constants/globals'
 
-import { ROUTE_PARAMS } from '../../constants/globals'
+import './ColorFamilyFacet.scss'
 
 type Props = FacetBinderMethods & FacetPubSubMethods & {
   colorDetailPageRoot: string,
@@ -19,7 +21,21 @@ type Props = FacetBinderMethods & FacetPubSubMethods & {
   selectedColorFamily: string
 }
 
-const SearchBarNoCancel = () => <SearchBar showCancelButton={false} />
+const SearchBarNoCancel = () => <div className='color-wall-wrap__chunk'>
+  <FormattedMessage id='SEARCH.FIND_A_COLOR'>
+    {(label: string) => (
+      <FormattedMessage id='SEARCH.SEARCH_BY'>
+        {(placeholder: string) => (
+          <SearchBar showCancelButton={false} label={label} showIcon={false} placeholder={placeholder} />
+        )}
+      </FormattedMessage>
+    )}
+  </FormattedMessage>
+</div>
+
+const SearchNoContain = () => <div className='color-wall-wrap__chunk'>
+  <Search containResults={false} />
+</div>
 
 export const ColorFamilyPage = (props: Props) => {
   const { colorDetailPageRoot, colorWallBgColor, selectedColorFamily } = props
@@ -44,9 +60,9 @@ export const ColorFamilyPage = (props: Props) => {
             <Route path='(.*)?/search/' component={SearchBarNoCancel} />
           </Switch>
           <Switch>
-            <Route path='(.*)?/family/:family/search/:query' component={Search} />
-            <Route path='(.*)?/section/:section/search/:query' component={Search} />
-            <Route path='(.*)?/search/:query' component={Search} />
+            <Route path='(.*)?/family/:family/search/:query' component={SearchNoContain} />
+            <Route path='(.*)?/section/:section/search/:query' component={SearchNoContain} />
+            <Route path='(.*)?/search/:query' component={SearchNoContain} />
             <Route component={ColorWall} />
           </Switch>
         </div>

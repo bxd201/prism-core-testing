@@ -25,6 +25,7 @@ import { generateColorWallPageUrl, fullColorName } from '../../../shared/helpers
 import { type GridBounds, type ColorReference } from './ColorWall.flow'
 
 import 'src/scss/externalComponentSupport/AutoSizer.scss'
+import './ColorWallSwatchList.scss'
 
 const GRID_AUTOSCROLL_SPEED: number = 300
 
@@ -170,7 +171,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
           : null
         }
 
-        <section className={`color-wall-swatch-list ${!showAll ? 'color-wall-swatch-list--zoomed' : 'color-wall-swatch-list--show-all'}`}
+        <section className='color-wall-swatch-list color-wall-swatch-list--cover'
           role='application'
           tabIndex={0} // eslint-disable-line
           ref={this._gridWrapperRef}>
