@@ -2,6 +2,8 @@
 import React from 'react'
 import CSSVariableApplicator from '../../../helpers/CSSVariableApplicator'
 import memoizee from 'memoizee'
+import at from 'lodash/at'
+import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
 
 import { getColors } from '../functions'
 import { varNames } from 'variables'
@@ -48,9 +50,11 @@ type Props = {
 
 function CircleLoader (props: Props) {
   const { color, className, circleProps, ...other } = props
+  const { theme } = React.useContext(ConfigurationContext)
+  const finalColor = color || at(theme, 'primary')[0] || null
 
   return (
-    <CSSVariableApplicator variables={getCssVars(color)}>
+    <CSSVariableApplicator variables={getCssVars(finalColor)}>
       <svg className={`prism-loader-circle ${typeof className === 'string' ? className : ''}`} {...other} xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='xMidYMid'>
         <circle className='prism-loader-circle__circle' cx='50' cy='50' {...circleProps} fill='none' strokeWidth={STROKE_WIDTH} r={R} strokeDasharray='164.93361431346415 56.97787143782138' transform='rotate(143.836 50 50)' />
       </svg>

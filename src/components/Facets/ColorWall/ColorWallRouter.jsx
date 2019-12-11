@@ -9,15 +9,14 @@ import { loadColors } from '../../../store/actions/loadColors'
 import kebabCase from 'lodash/kebabCase'
 
 export default ({ children }: { children: React.Node }) => {
-  const { brandId, theme } = React.useContext(ConfigurationContext)
+  const { brandId } = React.useContext(ConfigurationContext)
   const { section, status: { loading } } = useSelector(state => state.colors)
   const dispatch = useDispatch()
   const { locale } = useIntl()
 
   React.useEffect(() => { dispatch(loadColors(brandId, { language: locale })) }, [])
-
   return (loading
-    ? <HeroLoader color={theme.primary[0]} />
+    ? <HeroLoader />
     : <Switch>
       <Route path='/active/color-wall/section/:section/family/:family/color/:colorId/:colorName/search/'>{children}</Route>
       <Route path='/active/color-wall/section/:section/family/:family/color/:colorId/:colorName'>{children}</Route>

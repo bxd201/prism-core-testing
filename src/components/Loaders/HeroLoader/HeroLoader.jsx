@@ -2,6 +2,8 @@
 import React from 'react'
 import CSSVariableApplicator from '../../../helpers/CSSVariableApplicator'
 import memoizee from 'memoizee'
+import at from 'lodash/at'
+import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
 
 import { getColors } from '../functions'
 import { varNames } from 'variables'
@@ -28,9 +30,11 @@ type Props = {
 
 function HeroLoader (props: Props) {
   const { color, className, size, ...other } = props
+  const { theme } = React.useContext(ConfigurationContext)
+  const finalColor = color || at(theme, 'primary')[0] || null
 
   return (
-    <CSSVariableApplicator variables={getCssVars(color)}>
+    <CSSVariableApplicator variables={getCssVars(finalColor)}>
       <div className={`hero-loader ${size ? `hero-loader--${size}` : ''} ${className || ''}`} {...other}>
         <div className='hero-loader__wrapper'>
           <div className='hero-loader__bar-spinner'>
