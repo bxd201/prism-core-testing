@@ -1,6 +1,6 @@
 // @flow
 import React from 'react'
-import { useHistory, useRouteMatch } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
 import ButtonBar from '../GeneralButtons/ButtonBar/ButtonBar'
@@ -8,7 +8,7 @@ import { FormattedMessage } from 'react-intl'
 import './SearchBar.scss'
 
 export default ({ showCancelButton = true }: { showCancelButton: boolean }) => {
-  const { url, params: { query = '' } } = useRouteMatch()
+  const { query = '' } = useParams()
   const history = useHistory()
   const [value, setValue] = React.useState(query)
 
@@ -18,7 +18,7 @@ export default ({ showCancelButton = true }: { showCancelButton: boolean }) => {
   }, [value])
 
   return (
-    <form onSubmit={e => e.preventDefault()} className='SearchBar__search-form'>
+    <div className='SearchBar__search-form'>
       <div className='SearchBar'>
         <FontAwesomeIcon className='search-icon' icon={['fal', 'search']} size='lg' />
         <div className={`SearchBar__wrapper SearchBar__wrapper--with${query ? '-outline' : 'out-outline'}`}>
@@ -30,10 +30,10 @@ export default ({ showCancelButton = true }: { showCancelButton: boolean }) => {
         </div>
       </div>
       {showCancelButton && <ButtonBar.Bar>
-        <ButtonBar.Button to={url.endsWith(query) ? '../' : './'}>
+        <ButtonBar.Button to='../'>
           <FormattedMessage id='CANCEL' />
         </ButtonBar.Button>
       </ButtonBar.Bar>}
-    </form>
+    </div>
   )
 }

@@ -1,55 +1,29 @@
 /* eslint-env jest */
 import React from 'react'
-import { shallow } from 'enzyme'
 import InfoButton from 'src/components/Facets/ColorWall/ColorWallSwatch/ColorWallSwatchButtons/InfoButton'
 import { Link } from 'react-router-dom'
+import ColorWallContext from 'src/components/Facets/ColorWall/ColorWallContext'
 
-const detailsLinkString = '/test'
+const color = { id: 1, brandKey: 'sw', colorNumber: 1234, name: 'red' }
 
-const getInfoButton = (props) => {
-  let defaultProps = {
-    config: { displayInfoButton: true },
-    detailsLink: detailsLinkString
-  }
-
-  let newProps = Object.assign({}, defaultProps, props)
-  return shallow(<InfoButton {...newProps} />)
-}
-
-describe('InfoButton with config.ColorWall.displayAddButton undefined', () => {
-  let infoButton
-  beforeAll(() => {
-    if (!infoButton) {
-      infoButton = getInfoButton({ config: { ColorWall: { displayAddButton: undefined } } })
-    }
-  })
-
-  it('should match snapshot', () => {
-    expect(infoButton).toMatchSnapshot()
-  })
-
-  it('should render null', () => {
-    expect(infoButton).toEqual({})
-  })
+describe('default InfoButton', () => {
+  test('should not render', () => expect(mocked(<InfoButton />).find(InfoButton)).toEqual({}))
 })
 
-describe('InfoButton', () => {
+describe('InfoButton wrapped in ColorWallContext with displayInfoButton = true', () => {
   let infoButton
   beforeAll(() => {
-    if (!infoButton) {
-      infoButton = getInfoButton()
-    }
+    infoButton = mocked(
+      <ColorWallContext.Provider value={{ displayInfoButton: true }}>
+        <InfoButton color={color} />
+      </ColorWallContext.Provider>
+    )
   })
 
-  it('should match snapshot', () => {
-    expect(infoButton).toMatchSnapshot()
-  })
-
-  it('should render Link component', () => {
-    expect(infoButton.find(Link).exists()).toBeTruthy()
-  })
+  it('should match snapshot', () => expect(infoButton).toMatchSnapshot())
 
   it('should render Link component with to prop defined as detailsLinkString constant', () => {
-    expect(infoButton.find(Link).prop('to')).toEqual(detailsLinkString)
+    const expectedLink = `/active/color-detail/${color.id}/${color.brandKey}-${color.colorNumber}-${color.name}`
+    expect(infoButton.find(Link).prop('to')).toEqual(expectedLink)
   })
 })

@@ -45,10 +45,6 @@ describe('Prism routes', () => {
     expect(prism).toMatchSnapshot()
   })
 
-  it('should have 10? Route components', () => {
-    expect(prism.find(Route)).toHaveLength(10)
-  })
-
   it('should show RootRedirect component for route defined as homeRoute constant', () => {
     expect(pathMap[homeRoute]).toBe(RootRedirect)
   })

@@ -1,20 +1,13 @@
 // @flow
-import React, { PureComponent } from 'react'
-import once from 'lodash/once'
-import memoizee from 'memoizee'
+import React from 'react'
 import { Link } from 'react-router-dom'
-
 import { type Color } from '../../../../shared/types/Colors'
 import { numToAlphaString, arrayToSpacedString } from '../../../../shared/helpers/StringUtils'
 import { fullColorName, fullColorNumber } from '../../../../shared/helpers/ColorUtils'
 import { CLASS_NAMES } from './shared'
-
-import ColorWallContext, { type ColorWallContextProps } from '../ColorWallContext'
-
 import AddButton from './ColorWallSwatchButtons/AddButton'
 import DetailsLink from './ColorWallSwatchButtons/DetailsLink'
 import InfoButton from './ColorWallSwatchButtons/InfoButton'
-
 import './ColorWallSwatch.scss'
 import 'src/scss/convenience/visually-hidden.scss'
 
@@ -31,164 +24,56 @@ type Props = {
   active?: boolean
 }
 
-class ColorWallSwatch extends PureComponent<Props> {
-  constructor (props: Props) {
-    super(props)
+const ColorWallSwatch = (props: Props) => {
+  const { onAdd, onClick, showContents, color, thisLink, focus, level, active, compensateX, compensateY } = props
 
-    this.handleAddClick = this.handleAddClick.bind(this)
-    this.performClickAction = this.performClickAction.bind(this)
-    this.handleClick = this.handleClick.bind(this)
+  let classes = [ CLASS_NAMES.BASE, CLASS_NAMES.BASE_DYNAMIC ]
+  if (color.isDark) { classes.push(CLASS_NAMES.BASE_DARK) }
+  if (active) { classes.push(CLASS_NAMES.BASE_ACTIVE) }
+  // if we have a link to this swatch's active URL assume it's a clickable swatch
+  if (thisLink) { classes.push(CLASS_NAMES.BASE_CLICKABLE) }
+  if (!isNaN(level)) {
+    classes.push(CLASS_NAMES.BASE_BLOOM)
+    classes.push(CLASS_NAMES.BASE_BLOOM_LVL_ + numToAlphaString(level))
+    if (compensateX) { classes.push(CLASS_NAMES.BASE_COMPENSATE_X_ + numToAlphaString(compensateX)) }
+    if (compensateY) { classes.push(CLASS_NAMES.BASE_COMPENSATE_Y_ + numToAlphaString(compensateY)) }
   }
+  if (focus) { classes.push(CLASS_NAMES.BASE_FOCUS) }
 
-  render () {
-    const { showContents, color, thisLink, focus } = this.props
+  classes = arrayToSpacedString(classes)
 
-    let containerProps = {
-      className: `${this.getBaseClasses()} ${this.getClasses()}`,
-      style: ColorWallSwatch.getStyles(color.hex)
-    }
-
-    let contents = null
-
-    if (showContents) {
-      contents = (
-        <section className={CLASS_NAMES.CONTENT}>
-          <p className={CLASS_NAMES.CONTENT_NUMBER}>{`${fullColorNumber(color.brandKey, color.colorNumber)}`}</p>
-          <p className={CLASS_NAMES.CONTENT_NAME}>{color.name}</p>
-          <ColorWallContext.Consumer>
-            {(config: ColorWallContextProps) => (
-              <React.Fragment>
-                {/* Stateless components to handle whether to display the add, details, and info buttons */}
-                <InfoButton
-                  className={`${CLASS_NAMES.CONTENT_CTA} ${CLASS_NAMES.CONTENT_CTA_R}`}
-                  tabIndex={-1}
-                />
-                <AddButton
-                  onClick={this.handleAddClick}
-                  className={`${CLASS_NAMES.CONTENT_CTA} ${CLASS_NAMES.CONTENT_CTA_L}`}
-                  tabIndex={-1}
-                />
-                <DetailsLink
-                  color={color}
-                  className={`${CLASS_NAMES.CONTENT_CTA} ${CLASS_NAMES.CONTENT_CTA_L} ${focus ? CLASS_NAMES.CONTENT_CTA_FOCUS : ''}`}
-                  tabIndex={-1}
-                />
-              </React.Fragment>
-            )}
-          </ColorWallContext.Consumer>
-        </section>
-      )
-    } else if (thisLink) {
-      contents = (
-        <Link to={thisLink}
-          className={CLASS_NAMES.ENGAGE_LINK}
-          onClick={this.handleClick}
-          tabIndex={-1}>
-          <span className='visually-hidden'>
-            {fullColorName(color.brandKey, color.colorNumber, color.name)}
-          </span>
-        </Link>
-      )
-    } else {
-      // if not showing contents or does not have thisLink, augment container's props to contain color title
-      contents = (
-        <span className='visually-hidden'>
-          {fullColorName(color.brandKey, color.colorNumber, color.name)}
-        </span>
-      )
-    }
-
-    return (
-      <div className={CLASS_NAMES.SWATCH}>
-        <div {...containerProps}>
-          {contents}
-        </div>
+  return (
+    <div className={CLASS_NAMES.SWATCH}>
+      <div className={classes} style={{ background: color.hex }}>
+        {showContents
+          ? <section className={CLASS_NAMES.CONTENT}>
+            <p className={CLASS_NAMES.CONTENT_NUMBER}>{fullColorNumber(color.brandKey, color.colorNumber)}</p>
+            <p className={CLASS_NAMES.CONTENT_NAME}>{color.name}</p>
+            <InfoButton
+              color={color}
+              className={`${CLASS_NAMES.CONTENT_CTA} ${CLASS_NAMES.CONTENT_CTA_R}`}
+              tabIndex={-1}
+            />
+            <AddButton
+              onClick={onAdd(color)}
+              className={`${CLASS_NAMES.CONTENT_CTA} ${CLASS_NAMES.CONTENT_CTA_L}`}
+              tabIndex={-1}
+            />
+            <DetailsLink
+              color={color}
+              className={`${CLASS_NAMES.CONTENT_CTA} ${CLASS_NAMES.CONTENT_CTA_L} ${focus ? CLASS_NAMES.CONTENT_CTA_FOCUS : ''}`}
+              tabIndex={-1}
+            />
+          </section>
+          : thisLink
+            ? <Link to={thisLink} className={CLASS_NAMES.ENGAGE_LINK} onClick={e => onClick(e)} tabIndex={-1}>
+              <span className='visually-hidden'>{fullColorName(color.brandKey, color.colorNumber, color.name)}</span>
+            </Link>
+            : <span className='visually-hidden'>{fullColorName(color.brandKey, color.colorNumber, color.name)}</span>
+        }
       </div>
-    )
-  }
-
-  static getStyles = memoizee(function getStyles (color: string): Object {
-    let styleObj: {
-      [key: string]: string
-    } = {
-      background: color
-    }
-
-    return styleObj
-  }, { primitive: true, length: 1 })
-
-  getBaseClasses = once(function getBaseClasses (): string {
-    const { color } = this.props
-    let classes = [
-      CLASS_NAMES.BASE,
-      CLASS_NAMES.BASE_DYNAMIC
-    ]
-
-    if (color.isDark) {
-      classes.push(CLASS_NAMES.BASE_DARK)
-    }
-
-    return arrayToSpacedString(classes)
-  })
-
-  getClasses (): string {
-    const { level, active, thisLink, compensateX, compensateY, focus } = this.props
-    const levelDefined = !isNaN(level)
-    let classes = []
-
-    if (active) {
-      classes.push(CLASS_NAMES.BASE_ACTIVE)
-    }
-
-    // if we have a link to this swatch's active URL...
-    if (thisLink) {
-      // ... assume it's a clickable swatch
-      classes.push(CLASS_NAMES.BASE_CLICKABLE)
-    }
-
-    if (levelDefined) {
-      classes.push(CLASS_NAMES.BASE_BLOOM)
-      classes.push(CLASS_NAMES.BASE_BLOOM_LVL_ + numToAlphaString(level))
-
-      if (compensateX) {
-        classes.push(CLASS_NAMES.BASE_COMPENSATE_X_ + numToAlphaString(compensateX))
-      }
-
-      if (compensateY) {
-        classes.push(CLASS_NAMES.BASE_COMPENSATE_Y_ + numToAlphaString(compensateY))
-      }
-    }
-
-    if (focus) {
-      classes.push(CLASS_NAMES.BASE_FOCUS)
-    }
-
-    return arrayToSpacedString(classes)
-  }
-
-  // TODO: This is absolute nonsense. Replace this whole idea with forward refs down into the swatches that hook into their buttons. This will
-  // let us trigger JS click events on those and not have to build this whole other dumb thing. @cody.richmond
-  performClickAction = function performClickAction (): void {
-    console.warn('ATTEMPTING TO PERFORM CLICK ACTION IN ColorWallSwatch, BUT NO ACTION IS DEFINED')
-    // TODO: Implement multi-element focus control and an externally-triggerable click action.
-    // This is for instances when more than just the details link is present on this swatch
-  }
-
-  handleAddClick = function handleAddClick () {
-    const { onAdd, color } = this.props
-
-    if (typeof onAdd === 'function') {
-      onAdd(color)
-    }
-  }
-
-  handleClick = function handleClick (e: any) {
-    const { onClick } = this.props
-
-    if (typeof onClick === 'function') {
-      onClick(e)
-    }
-  }
+    </div>
+  )
 }
 
 export default ColorWallSwatch

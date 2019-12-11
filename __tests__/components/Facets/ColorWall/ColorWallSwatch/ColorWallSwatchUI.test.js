@@ -6,34 +6,23 @@ import * as Colors from '__mocks__/data/color/Colors'
 import { Link } from 'react-router-dom'
 const color = Colors.getColor()
 
+const clickFn = jest.fn()
 const defaultProps = {
   color: color,
   thisLink: '',
   focus: true,
-  onClick: jest.fn()
-}
-const getColorWallSwatchUI = (props = {}) => {
-  return shallow(<ColorWallSwatchUI {...defaultProps} {...props} />)
+  onClick: clickFn
 }
 
-describe('snapshot test', () => {
-  const wrapper = getColorWallSwatchUI()
-  it('ColorWallSwatchUI should match the Snapshot', () => {
-    expect(wrapper).toMatchSnapshot()
-  })
+test('matches snapshot', () => {
+  expect(mocked(<ColorWallSwatchUI {...defaultProps} />)).toMatchSnapshot()
 })
 
-describe('rendering test', () => {
-  it('should rendring Link correctly with props', () => {
-    const wrapper = getColorWallSwatchUI({ thisLink: 'link' })
-    expect(wrapper.find(Link).exists()).toEqual(true)
-  })
+test('should rendring Link correctly with props', () => {
+  expect(mocked(<ColorWallSwatchUI {...defaultProps} thisLink='link' />).find(Link).exists()).toEqual(true)
 })
 
-describe('event test', () => {
-  it('click function will be invoked when link is clicked', () => {
-    const wrapper = getColorWallSwatchUI({ thisLink: 'link' })
-    wrapper.find(Link).simulate('click')
-    expect(wrapper.instance().props.onClick).toHaveBeenCalled()
-  })
+test('click function will be invoked when link is clicked', () => {
+  mocked(<ColorWallSwatchUI {...defaultProps} thisLink='link' />).find(Link).simulate('click')
+  expect(clickFn).toHaveBeenCalled()
 })
