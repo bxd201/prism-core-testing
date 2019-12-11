@@ -45,25 +45,3 @@ describe('CollectionDetail', () => {
     expect(collectionDetail.find(`div.${triggerNext}`).exists()).toBe(true)
   })
 })
-
-describe('CollectionDetail with Autosizer mounted', () => {
-  let collectionDetail
-  let autoSizerMount
-  beforeAll(() => {
-    if (!collectionDetail) {
-      collectionDetail = getCollectionDetail()
-    }
-    autoSizerMount = mount(collectionDetail.find(AutoSizer).prop('children')({ height: 200, width: 200 }))
-  })
-
-  it('should render Autosizer with ColorWallSwatch', () => {
-    expect(autoSizerMount.find(ColorWallSwatch)).toHaveLength(defaultProps.collectionDetailData.collections.length)
-  })
-
-  it('should call addToLivePalette function for each ColorWallSwatch component', () => {
-    autoSizerMount.find(ColorWallSwatch).map((colorWallSwatch, index) => {
-      colorWallSwatch.prop('onAdd')()
-      expect(defaultProps.addToLivePalette).toHaveBeenCalled()
-    })
-  })
-})

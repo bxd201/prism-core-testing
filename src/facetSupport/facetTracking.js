@@ -6,7 +6,7 @@ import { GOOGLE_ANALYTICS_UID } from 'src/constants/globals'
 // initializes tracking -- only runs once
 export const initTrackingOnce = once(() => {
   // don't initialize tracking on prod
-  if (ENV === 'production') {
+  if (ENV !== 'production') {
     return
   }
 

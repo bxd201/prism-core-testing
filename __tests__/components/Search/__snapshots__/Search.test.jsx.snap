@@ -126,21 +126,40 @@ exports[`matches snapshot 1`] = `
         }
       }
     >
-      <ColorWallSwatchRenderer>
+      <_default>
         <div
-          className="color-wall-swatches__swatch"
-          role="presentation"
+          className="Search"
         >
           <div
-            className="color-swatch-inner "
-            style={
-              Object {
-                "background": undefined,
-              }
-            }
-          />
+            className="Search__results-pane"
+          >
+            <GenericMessage
+              type="WARNING"
+            >
+              <div
+                className="generic-message generic-message--warning"
+              >
+                <div
+                  className="generic-message__inner generic-message__inner--warning"
+                >
+                  <div
+                    className="generic-message__line generic-message__line--headline"
+                    key="0"
+                  >
+                    <FormattedMessage
+                      id="SEARCH.NO_RESULTS"
+                      key=".0"
+                      values={Object {}}
+                    >
+                      Sorry, no color matches found.
+                    </FormattedMessage>
+                  </div>
+                </div>
+              </div>
+            </GenericMessage>
+          </div>
         </div>
-      </ColorWallSwatchRenderer>
+      </_default>
     </Router>
   </Provider>
 </IntlProvider>
