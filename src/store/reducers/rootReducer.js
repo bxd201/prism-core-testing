@@ -15,6 +15,7 @@ import { uploads } from './uploads'
 import collectionSummaries from './collectionSummaries'
 import expertColorPicks from './expertColorPicks'
 import inspirationalPhotos from './inspirationalPhotos'
+import { savingMasks } from './masks'
 
 export default combineReducers({
   collectionSummaries,
@@ -30,5 +31,6 @@ export default combineReducers({
   lp,
   scenes,
   sceneWorkspaces,
-  uploads
+  uploads,
+  savingMasks
 })
