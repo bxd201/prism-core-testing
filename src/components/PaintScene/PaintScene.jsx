@@ -241,11 +241,12 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     if (newWidth) {
       this.scaleCanvases(newWidth)
     }
-    const { imagePathList } = this.state
+    const { imagePathList, selectedArea, groupSelectList } = this.state
     let copyImagePathList = copyImageList(imagePathList)
     const islpActiveColorAvailable = (prevProps.hasOwnProperty('lpActiveColor') && this.props.hasOwnProperty('lpActiveColor')) && this.props.lpActiveColor !== null
     const islpActiveColorHexAvailable = (islpActiveColorAvailable) && prevProps.lpActiveColor.hasOwnProperty('hex') && this.props.lpActiveColor.hasOwnProperty('hex')
-    if (islpActiveColorHexAvailable && prevProps.lpActiveColor.hex !== this.props.lpActiveColor.hex) {
+    const isActive = !!((selectedArea.length > 0 || groupSelectList.length > 0))
+    if (islpActiveColorHexAvailable && prevProps.lpActiveColor.hex !== this.props.lpActiveColor.hex && isActive) {
       const ctx = this.CFICanvas2.current.getContext('2d')
       const RGB = getActiveColorRGB(hexToRGB(this.props.lpActiveColor.hex))
       for (let i = 0; i < this.state.groupSelectList.length; i++) {
@@ -460,7 +461,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       newImagePathList = newImagePathList.filter(item => { return (item.type === 'paint' || item.type === 'delete' || item.type === 'delete-group') })
     }
     this.clearCanvas()
-    repaintImageByPath(newImagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
+    repaintImageByPath(newImagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight, false, [], true)
     this.setState({ activeTool, selectedArea: updateSelectArea, canvasImageUrls: this.getLayers(), imagePathList: newImagePathList })
   }
 
@@ -600,8 +601,8 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     let newGroupSelectList = []
     const drawPath = getImageCordinateByPixelPaintBrush(this.CFICanvasPaint, this.canvasOffsetWidth, this.canvasOffsetHeight, false)
     for (let i = 0; i < groupAreaList.length; i++) {
-      const intersect = checkIntersection(groupAreaList[i].selectPath, drawPath)
-      if (intersect.length > 0) {
+      const isHasIntersection = checkIntersection(groupAreaList[i].selectPath, drawPath)
+      if (isHasIntersection) {
         groupAreaList.splice(i, 1)
         i--
       }
