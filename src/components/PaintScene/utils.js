@@ -175,16 +175,15 @@ export const createPolygon = (polyList = [[0, 0]], canvas, width, height, color,
 export const checkIntersection = (areaA, areaB) => {
   const setA = new Set(areaA)
   const setB = new Set(areaB)
-  const intersection = new Set([...setA].filter(x => setB.has(x)))
-  return Array.from(intersection)
+  return [...setA].some(x => setB.has(x))
 }
 
-export const repaintImageByPath = (imagePathList, canvas, width, height, isEraseRepaint = false, groupIds = []) => {
+export const repaintImageByPath = (imagePathList, canvas, width, height, isEraseRepaint = false, groupIds = [], isSwitchTool = false) => {
   const ctx = canvas.current.getContext('2d')
   let imageData = ctx.getImageData(0, 0, width, height)
   let data = imageData.data
   for (let i = 0; i < imagePathList.length; i++) {
-    if (!isEraseRepaint && !imagePathList[i].hasOwnProperty('drawOrder')) {
+    if ((!isEraseRepaint && !imagePathList[i].hasOwnProperty('drawOrder')) || isSwitchTool) {
       imagePathList[i].drawOrder = i
     }
   }
@@ -322,10 +321,10 @@ export const eraseIntersection = (imagePathList, erasePath) => {
     const color = originImagePathList[i].color
     const linkId = originImagePathList[i].id
     const drawOrder = originImagePathList[i].drawOrder
-    const intersection = checkIntersection(data, erasePath)
+    const isHasIntersection = checkIntersection(data, erasePath)
     const type = originImagePathList[i].type
 
-    if (intersection.length > 0 && isEnabled && type !== 'delete') {
+    if (isHasIntersection && isEnabled && type !== 'delete') {
       originImagePathList[i].isEnabled = false
       const remainAreaPath = difference(data, erasePath)
       const newId = uniqueId()
