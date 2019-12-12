@@ -1,19 +1,16 @@
 // @flow
 import 'src/allFacets' // import all facets so they're included in the bundle
-import { injectRoot, embedAtRoots, flagAsMainBundle } from 'src/facetBinder'
-
-// define a call to an overridden embedAtRoots to use below and to expose as part of the global PRISM object
-const doEmbed = () => embedAtRoots(true)
+import { injectRoot, embedAtRoots, embedAtElement, flagAsMainBundle } from 'src/facetSupport/facetBinder'
 
 // expose embed method on global PRISM object in order to manually call this later
 window.PRISM = {
   ...(window.PRISM || {}),
-  embed: doEmbed
+  embed: embedAtElement
 }
 
 // identify this as the main bundle
 flagAsMainBundle()
-// inject an embed root
+// initial root injection to appropriately decorate auto-embed elements with prism attributes and classes
 injectRoot()
 // perform embedding
-doEmbed()
+embedAtRoots(true)

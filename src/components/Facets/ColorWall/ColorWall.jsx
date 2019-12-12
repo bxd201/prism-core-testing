@@ -1,6 +1,6 @@
 // @flow
-import React from 'react'
 import { useRouteMatch, Link } from 'react-router-dom'
+import React, { useContext, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useIntl, FormattedMessage } from 'react-intl'
 import { TransitionGroup, CSSTransition } from 'react-transition-group'
@@ -10,28 +10,27 @@ import { add } from '../../../store/actions/live-palette'
 import { varValues } from 'variables'
 import { compareKebabs } from '../../../shared/helpers/StringUtils'
 import { convertCategorizedColorsToGrid } from '../../../shared/helpers/ColorDataUtils'
-import { generateColorWallPageUrl, generateColorDetailsPageUrl, fullColorName } from '../../../shared/helpers/ColorUtils'
+import { generateColorWallPageUrl, fullColorName } from '../../../shared/helpers/ColorUtils'
 import { BLANK_SWATCH, SW_CHUNK_SIZE } from 'constants/globals'
 import ConfigurationContext from '../../../contexts/ConfigurationContext/ConfigurationContext'
 import GenericMessage from '../../Messages/GenericMessage'
 import ColorWallSwatchList from './ColorWallSwatchList'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import facetBinder from 'src/facetBinder'
-import ColorWallContext, { type ColorWallContextProps } from './ColorWallContext'
+import ColorWallContext from './ColorWallContext'
 import './ColorWall.scss'
 
 const ColorWall = () => {
-  const config: ColorWallContextProps = React.useContext(ColorWallContext)
-  const { colorWall, swatchShouldEmit } = React.useContext(ConfigurationContext)
+  const { colorWall, swatchShouldEmit } = useContext(ConfigurationContext)
+  const { swatchMinSize, swatchMaxSize, swatchMinSizeZoomed, swatchMaxSizeZoomed, colorWallBgColor } = useContext(ColorWallContext)
   const { colorWallActive, items, families = [] } = useSelector(state => state.colors)
   const { brights, colorMap, colors, unorderedColors } = items
   const { messages = {} } = useIntl()
   const dispatch = useDispatch()
   const { url, params: { section, family, colorId } } = useRouteMatch()
 
-  React.useEffect(() => { dispatch(filterBySection(section)) }, [section])
-  React.useEffect(() => { dispatch(filterByFamily(family)) }, [family])
-  React.useEffect(() => { dispatch(makeActiveColorById(colorId)) }, [colorId])
+  useEffect(() => { dispatch(filterBySection(section)) }, [section])
+  useEffect(() => { dispatch(filterByFamily(family)) }, [family])
+  useEffect(() => { dispatch(makeActiveColorById(colorId)) }, [colorId])
 
   const colorsGrid = (memoizee(() => {
     let filteredColorSets = families.filter((familyName) => family ? compareKebabs(familyName, family) : true)
@@ -50,7 +49,7 @@ const ColorWall = () => {
         classNames={`color-wall-zoom-transitioner__zoom-${colorWallActive ? 'in' : 'out'} color-wall-zoom-transitioner__zoom-${colorWallActive ? 'in' : 'out'}-`}
       >
         {(colors || unorderedColors)
-          ? <div className='color-wall-wall' style={{ backgroundColor: config.colorWallBgColor }}>
+          ? <div className='color-wall-wall' style={{ backgroundColor: colorWallBgColor }}>
             <ColorWallSwatchList
               showAll={!colorWallActive}
               immediateSelectionOnActivation={!colorWallActive}
@@ -64,9 +63,8 @@ const ColorWall = () => {
                 const linkUrl = generateColorWallPageUrl(section, family, id, fullColorName(brandKey, colorNumber, name))
                 return linkUrl + (url.endsWith('family/') ? 'family/' : url.endsWith('search/') ? 'search/' : '')
               }}
-              swatchDetailsLinkGenerator={generateColorDetailsPageUrl}
-              minCellSize={colorWallActive ? config.swatchMinSizeZoomed : config.swatchMinSize}
-              maxCellSize={colorWallActive ? config.swatchMaxSizeZoomed : config.swatchMaxSize}
+              minCellSize={colorWallActive ? swatchMinSizeZoomed : swatchMinSize}
+              maxCellSize={colorWallActive ? swatchMaxSizeZoomed : swatchMaxSize}
               colors={colorsGrid}
               key={colorsGrid}
             />
@@ -92,4 +90,4 @@ const ColorWall = () => {
   )
 }
 
-export default facetBinder(ColorWall, 'ColorWall')
+export default ColorWall

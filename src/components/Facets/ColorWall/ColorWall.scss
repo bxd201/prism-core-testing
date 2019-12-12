@@ -92,26 +92,6 @@
   }
 }
 
-.color-wall-swatch-list {
-  $transition-time: getVar('colorWall.enterTransitionMS') * 1ms;
-
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  position: absolute;
-
-  // React Virtualized Grid classes
-  .ReactVirtualized__Grid {
-    // override component-injected styles to fix iOS problem =\
-    -webkit-overflow-scrolling: auto !important;
-
-    &__innerScrollContainer {
-      margin: auto auto;
-      overflow: visible !important;
-    }
-  }
-}
-
 .color-wall-buttons {
   display: flex;
   align-items: center;

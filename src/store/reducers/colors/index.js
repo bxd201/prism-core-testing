@@ -87,6 +87,8 @@ export const colors = (state: ColorsState = initialState, action: ReduxAction) =
         ...state,
         search: {
           ...state.search,
+          error: false,
+          loading: true,
           query: action.payload || ''
         }
       }

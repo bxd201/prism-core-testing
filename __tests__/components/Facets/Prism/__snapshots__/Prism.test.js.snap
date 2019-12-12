@@ -16,22 +16,50 @@ exports[`Prism routes should match snapshot 1`] = `
         path="/"
       />
       <Route
-        component={
-          Object {
-            "$$typeof": Symbol(react.memo),
-            "WrappedComponent": [Function],
-            "baseClass": "prism-scene-manager",
-            "compare": null,
-            "displayName": "Connect(SceneManager)",
-            "type": [Function],
-          }
-        }
+        component={[Function]}
         exact={true}
         path="/active"
       />
       <Route
-        component={[Function]}
         path="/active/color-wall(/.*)?"
+      >
+        <ContextProvider
+          value={
+            Object {
+              "colorDetailPageRoot": false,
+              "colorWallBgColor": "#EEEEEE",
+              "displayAddButton": false,
+              "displayDetailsLink": true,
+              "displayInfoButton": false,
+              "loading": false,
+              "swatchMaxSize": 33,
+              "swatchMaxSizeZoomed": 50,
+              "swatchMinSize": 15,
+              "swatchMinSizeZoomed": 50,
+            }
+          }
+        >
+          <ColorWallPage
+            publish={[Function]}
+            subscribe={[Function]}
+            unmount={[Function]}
+            unsubscribe={[Function]}
+            unsubscribeAll={[Function]}
+          />
+        </ContextProvider>
+      </Route>
+      <Route
+        component={
+          Object {
+            "$$typeof": Symbol(react.memo),
+            "WrappedComponent": [Function],
+            "compare": null,
+            "displayName": "Connect(Component)",
+            "type": [Function],
+          }
+        }
+        exact={true}
+        path="/active/color-detail/:colorId/:colorSEO"
       />
       <Route
         component={[Function]}

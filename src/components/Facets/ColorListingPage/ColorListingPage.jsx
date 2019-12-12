@@ -6,11 +6,12 @@ import { ColorWallPage } from '../ColorWallFacet'
 import ColorDetails from '../ColorDetails/ColorDetails'
 import ColorDataWrapper from '../../../helpers/ColorDataWrapper/ColorDataWrapper'
 import BackToColorWall from './BackToColorWall'
-import facetBinder from 'src/facetBinder'
-import ColorWallContext, { colorWallContextDefault } from '../ColorWall/ColorWallContext'
+import facetBinder from 'src/facetSupport/facetBinder'
 import includes from 'lodash/includes'
 import { varValues } from 'variables'
 import { ROUTE_PARAMS, ROUTE_PARAM_NAMES } from 'constants/globals'
+import { facetBinderDefaultProps, type FacetBinderMethods } from 'src/facetSupport/facetInstance'
+import { type FacetPubSubMethods, facetPubSubDefaultProps } from 'src/facetSupport/facetPubSub'
 import './ColorListingPage.scss'
 
 const colorWallBaseUrl = `/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_WALL}`
@@ -39,19 +40,15 @@ export const ColorDetailsComponent = (props: any) => {
   )
 }
 
-export const ColorWallComponent = () => {
-  return (
-    <ColorWallContext.Provider value={{ ...colorWallContextDefault, displayDetailsLink: true }}>
-      <ColorWallPage />
-    </ColorWallContext.Provider>
-  )
-}
-
-type ColorListingPageProps = { location: Object }
+type ColorListingPageProps = FacetBinderMethods & FacetPubSubMethods & { location: Object }
 
 type ColorListingPageState = { prevPathname?: string, toDetails: boolean, toWall: boolean }
 
 export class ColorListingPage extends PureComponent<ColorListingPageProps, ColorListingPageState> {
+  static defaultProps = {
+    ...facetBinderDefaultProps,
+    ...facetPubSubDefaultProps
+  }
   state: ColorListingPageState = { prevPathname: void (0), toDetails: false, toWall: false }
 
   render () {
@@ -80,7 +77,7 @@ export class ColorListingPage extends PureComponent<ColorListingPageProps, Color
             classNames={transitionClassNames}
             timeout={varValues.colorWall.transitionTime * 1.2}>
             <Switch location={location}>
-              <Route path={colorWallUrlPattern} component={ColorWallComponent} />
+              <Route path={colorWallUrlPattern} component={ColorWallPage} />
               <Route path={`${colorDetailsBaseUrl}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`} exact component={ColorDetailsComponent} />
             </Switch>
           </CSSTransition>

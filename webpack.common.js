@@ -19,12 +19,13 @@ const DEFAULT_ENTRY = `${flags.embedEntryPointName},${flags.mainEntryPointName}`
 const APP_VERSION = process.env.npm_package_version
 const APP_NAME = process.env.npm_package_name
 
+const ENV = process.env.NODE_ENV ? process.env.NODE_ENV : 'development'
 const API_PATH = (process.env.API_URL) ? process.env.API_URL : '$API_URL'
 const ML_API_URL = (process.env.ML_API_URL) ? process.env.ML_API_URL : '$ML_API_URL'
 // TODO: removing this for now due to local env inconsistencies -- will now always default to localhost when running locally
-// const BASE_PATH = (process.env.NODE_ENV === 'development') ? (process.env.LOCAL_URL ? process.env.LOCAL_URL : DEFAULT_LOCAL_URL) : (process.env.WEB_URL) ? process.env.WEB_URL : '$WEB_URL'
-const BASE_PATH = (process.env.NODE_ENV === 'development') ? DEFAULT_LOCAL_URL : (process.env.WEB_URL) ? process.env.WEB_URL : '$WEB_URL'
-const SPECIFIED_ENTRIES = process.env.ENTRY ? process.env.ENTRY : (process.env.NODE_ENV === 'development') ? DEFAULT_ENTRY : undefined
+// const BASE_PATH = (ENV === 'development') ? (process.env.LOCAL_URL ? process.env.LOCAL_URL : DEFAULT_LOCAL_URL) : (process.env.WEB_URL) ? process.env.WEB_URL : '$WEB_URL'
+const BASE_PATH = (ENV === 'development') ? DEFAULT_LOCAL_URL : (process.env.WEB_URL) ? process.env.WEB_URL : '$WEB_URL'
+const SPECIFIED_ENTRIES = process.env.ENTRY ? process.env.ENTRY : (ENV === 'development') ? DEFAULT_ENTRY : undefined
 
 let allEntryPoints = {
   ...flags.mainEntryPoints,
@@ -138,15 +139,16 @@ module.exports = {
   plugins: [
     new WebpackBar(),
     flags.dev && new BundleAnalyzerPlugin(),
-
     new HtmlWebpackPlugin({
       inject: false,
       template: './src/index.html'
     }),
-    new HtmlWebpackPlugin({
-      inject: false,
-      filename: 'embeddable.html',
-      template: './src/templates/embeddable.html'
+    ...flags.implementationTemplates.map(page => {
+      return new HtmlWebpackPlugin({
+        inject: false,
+        filename: `${page}.html`,
+        template: `./src/templates/${page}.html`
+      })
     }),
     new MiniCssExtractPlugin({
       filename: 'css/[name].css'
@@ -165,6 +167,7 @@ module.exports = {
       }
     ]),
     new webpack.DefinePlugin({
+      'ENV': JSON.stringify(ENV),
       'API_PATH': JSON.stringify(API_PATH),
       'APP_NAME': JSON.stringify(APP_NAME),
       'APP_VERSION': JSON.stringify(APP_VERSION),
@@ -222,6 +225,7 @@ module.exports = {
     headers: {
       'Access-Control-Allow-Origin': '*'
     },
-    compress: true
+    compress: true,
+    disableHostCheck: true
   }
 }

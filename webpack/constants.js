@@ -43,11 +43,18 @@ const mainEntryPoints = {
 const facetEntryPoints = {
   colorListingPage: path.join(srcPath, 'components/Facets/ColorListingPage/ColorListingPage.jsx'),
   colorWallFacet: path.join(srcPath, 'components/Facets/ColorWallFacet.jsx'),
-  colorFamilyFacet: path.join(srcPath, 'components/Facets/ColorFamilyFacet.jsx'),
+  colorFamilyFacet: path.join(srcPath, 'components/Facets/ColorFamilyFacet/ColorFamilyFacet.jsx'),
   tinter: path.join(srcPath, 'components/Facets/Tinter/Tinter.jsx'),
   prism: path.join(srcPath, 'components/Facets/Prism/Prism.jsx'),
   colorDetails: path.join(srcPath, 'components/Facets/ColorDetails/ColorDetails.jsx')
 }
+
+const implementationTemplates = [
+  'embeddable',
+  'sw-canada-en-fr',
+  'sw-tag-color-family-pages',
+  'sw-tag-digital-color-wall'
+]
 
 module.exports = {
   appIndexPath,
@@ -67,5 +74,6 @@ module.exports = {
   nodeModulesPath,
   production,
   rootPath,
-  srcPath
+  srcPath,
+  implementationTemplates
 }

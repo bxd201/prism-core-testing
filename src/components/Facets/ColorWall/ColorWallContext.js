@@ -7,6 +7,7 @@ export type ColorWallContextProps = {
   displayAddButton: boolean | typeof undefined,
   displayDetailsLink: boolean | typeof undefined,
   displayInfoButton: boolean | typeof undefined,
+  loading: boolean,
   swatchMaxSize: number,
   swatchMaxSizeZoomed: number,
   swatchMinSize: number,
@@ -17,14 +18,15 @@ export const colorWallContextDefault: ColorWallContextProps = {
   colorDetailPageRoot: false,
   colorWallBgColor: '#EEEEEE',
   displayAddButton: false,
-  displayDetailsLink: false,
+  displayDetailsLink: true,
   displayInfoButton: false,
+  loading: false,
   swatchMaxSize: 33,
   swatchMaxSizeZoomed: 50,
   swatchMinSize: 15,
   swatchMinSizeZoomed: 50
 }
 
-const ColorWallContext = React.createContext<ColorWallContextProps>(colorWallContextDefault)
+const ColorWallContext = React.createContext<Object>(colorWallContextDefault)
 
 export default ColorWallContext

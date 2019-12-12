@@ -66,6 +66,9 @@
     "NO_RESULTS": "Sorry, no color matches found.",
     "PROMPT": "Enter a color name, number, or family in the text field above.",
     "SEARCH": "Search",
+    "SEARCHING": "Searching",
+    "SEARCH_BY": "Search by color name or number",
+    "FIND_A_COLOR": "Find a color",
     "SUGGESTIONS": "Some examples of things you can search for are {suggestions}"
   },
   "SIMILAR_COLORS": "Similar Colors",

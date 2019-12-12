@@ -5,7 +5,7 @@
   $semitrans-bg-opacity: .75;
 
   animation-name: delayedFadeIn;
-  animation-duration: .5s;
+  animation-duration: .2s;
   animation-timing-function: ease-in-out;
   align-items: center;
   display: flex;
@@ -32,6 +32,14 @@
 
   &--semitrans {
     background: rgba(pick-visible-color(getVar('colors.primary'), $color-black, $color-white), $semitrans-bg-opacity);
+  }
+
+  &--collapse-v {
+    height: auto;
+  }
+
+  &--collapse-h {
+    width: auto;
   }
 
   &--loading {

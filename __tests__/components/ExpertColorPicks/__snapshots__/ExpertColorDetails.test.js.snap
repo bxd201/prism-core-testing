@@ -1,85 +1,308 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ExpertColorDetails rendering should match snapshot 1`] = `
-<div
-  className="prism-expert-color-details"
+exports[`should match snapshot 1`] = `
+<Provider
+  store={
+    Object {
+      "dispatch": [MockFunction],
+      "getState": [Function],
+      "subscribe": [MockFunction] {
+        "calls": Array [
+          Array [
+            [Function],
+          ],
+          Array [
+            [Function],
+          ],
+        ],
+        "results": Array [
+          Object {
+            "type": "return",
+            "value": undefined,
+          },
+          Object {
+            "type": "return",
+            "value": undefined,
+          },
+        ],
+      },
+    }
+  }
 >
-  <div
-    className="prism-expert-color-details__header"
-  >
-    <div
-      className="prism-expert-color-details__header__title"
-    >
-      Seleted from 
-      burning man
-    </div>
-  </div>
-  <div
-    className="prism-expert-color-details__top__section"
-  >
-    <div
-      className="prism-expert-color-details__content__wrapper"
-      style={
-        Object {
-          "backgroundColor": "#cdd2d2",
-          "color": "#000",
-        }
+  <ExpertColorDetails
+    expertColors={
+      Object {
+        "colorDefs": Array [
+          Object {
+            "brandKey": "SW",
+            "colorNumber": 90210,
+            "hex": "#cdd2d2",
+            "name": "Bobafett",
+          },
+          Object {
+            "brandKey": "SW",
+            "colorNumber": 90211,
+            "hex": "#a2a2a2",
+            "name": "Green",
+          },
+          Object {
+            "brandKey": "SW",
+            "colorNumber": 90212,
+            "hex": "#c4c4c4",
+            "name": "Blue",
+          },
+        ],
       }
+    }
+  >
+    <div
+      className="prism-expert-color-details"
     >
       <div
-        className="prism-expert-color-details__content__wrapper__color-number"
+        className="prism-expert-color-details__header"
       >
-        SW 90210 
+        <div
+          className="prism-expert-color-details__header__title"
+        >
+          Seleted from 
+        </div>
       </div>
       <div
-        className="prism-expert-color-details__content__wrapper__color-name"
+        className="prism-expert-color-details__top__section"
       >
-        Bobafett
-      </div>
-      <button
-        onClick={[Function]}
-      >
-        <FontAwesomeIcon
-          border={false}
-          className="prism-expert-color-details__content__wrapper__toggle-check-icons"
-          fixedWidth={false}
-          flip={null}
-          icon={
-            Object {
-              "icon": Array [
-                512,
-                512,
-                Array [],
-                "f055",
-                "M384 250v12c0 6.6-5.4 12-12 12h-98v98c0 6.6-5.4 12-12 12h-12c-6.6 0-12-5.4-12-12v-98h-98c-6.6 0-12-5.4-12-12v-12c0-6.6 5.4-12 12-12h98v-98c0-6.6 5.4-12 12-12h12c6.6 0 12 5.4 12 12v98h98c6.6 0 12 5.4 12 12zm120 6c0 137-111 248-248 248S8 393 8 256 119 8 256 8s248 111 248 248zm-32 0c0-119.9-97.3-216-216-216-119.9 0-216 97.3-216 216 0 119.9 97.3 216 216 216 119.9 0 216-97.3 216-216z",
-              ],
-              "iconName": "plus-circle",
-              "prefix": "fal",
-            }
-          }
-          inverse={false}
-          listItem={false}
-          mask={null}
-          pull={null}
-          pulse={false}
-          rotation={null}
-          size={null}
-          spin={false}
+        <div
+          className="prism-expert-color-details__content__wrapper"
           style={
             Object {
+              "backgroundColor": "#cdd2d2",
               "color": "#000",
             }
           }
-          swapOpacity={false}
-          symbol={false}
-          title=""
-          transform={null}
-        />
-      </button>
+        >
+          <div
+            className="prism-expert-color-details__content__wrapper__color-number"
+          >
+            SW 90210 
+          </div>
+          <div
+            className="prism-expert-color-details__content__wrapper__color-name"
+          >
+            Bobafett
+          </div>
+          <button
+            onClick={[Function]}
+          >
+            <FontAwesomeIcon
+              border={false}
+              className="prism-expert-color-details__content__wrapper__toggle-check-icons"
+              fixedWidth={false}
+              flip={null}
+              icon={
+                Array [
+                  "fal",
+                  "plus-circle",
+                ]
+              }
+              inverse={false}
+              listItem={false}
+              mask={null}
+              pull={null}
+              pulse={false}
+              rotation={null}
+              size={null}
+              spin={false}
+              style={
+                Object {
+                  "color": "#000",
+                }
+              }
+              swapOpacity={false}
+              symbol={false}
+              title=""
+              transform={null}
+            >
+              <svg
+                aria-hidden="true"
+                className="svg-inline--fa fa-plus-circle fa-w-16 prism-expert-color-details__content__wrapper__toggle-check-icons"
+                data-icon="plus-circle"
+                data-prefix="fal"
+                focusable="false"
+                role="img"
+                style={
+                  Object {
+                    "color": "#000",
+                  }
+                }
+                viewBox="0 0 512 512"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M384 250v12c0 6.6-5.4 12-12 12h-98v98c0 6.6-5.4 12-12 12h-12c-6.6 0-12-5.4-12-12v-98h-98c-6.6 0-12-5.4-12-12v-12c0-6.6 5.4-12 12-12h98v-98c0-6.6 5.4-12 12-12h12c6.6 0 12 5.4 12 12v98h98c6.6 0 12 5.4 12 12zm120 6c0 137-111 248-248 248S8 393 8 256 119 8 256 8s248 111 248 248zm-32 0c0-119.9-97.3-216-216-216-119.9 0-216 97.3-216 216 0 119.9 97.3 216 216 216 119.9 0 216-97.3 216-216z"
+                  fill="currentColor"
+                  style={Object {}}
+                />
+              </svg>
+            </FontAwesomeIcon>
+          </button>
+        </div>
+      </div>
+      <div
+        className="prism-expert-color-details__bottom__section"
+      >
+        <div
+          className="prism-expert-color-details__content__wrapper"
+          key="0"
+          style={
+            Object {
+              "backgroundColor": "#a2a2a2",
+              "color": "#000",
+            }
+          }
+        >
+          <div
+            className="prism-expert-color-details__content__wrapper__color-number"
+          >
+            SW 90211 
+          </div>
+          <div
+            className="prism-expert-color-details__content__wrapper__color-name"
+          >
+            Green
+          </div>
+          <button
+            onClick={[Function]}
+          >
+            <FontAwesomeIcon
+              border={false}
+              className="prism-expert-color-details__content__wrapper__toggle-check-icons"
+              fixedWidth={false}
+              flip={null}
+              icon={
+                Array [
+                  "fal",
+                  "plus-circle",
+                ]
+              }
+              inverse={false}
+              listItem={false}
+              mask={null}
+              pull={null}
+              pulse={false}
+              rotation={null}
+              size={null}
+              spin={false}
+              style={
+                Object {
+                  "color": "#000",
+                }
+              }
+              swapOpacity={false}
+              symbol={false}
+              title=""
+              transform={null}
+            >
+              <svg
+                aria-hidden="true"
+                className="svg-inline--fa fa-plus-circle fa-w-16 prism-expert-color-details__content__wrapper__toggle-check-icons"
+                data-icon="plus-circle"
+                data-prefix="fal"
+                focusable="false"
+                role="img"
+                style={
+                  Object {
+                    "color": "#000",
+                  }
+                }
+                viewBox="0 0 512 512"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M384 250v12c0 6.6-5.4 12-12 12h-98v98c0 6.6-5.4 12-12 12h-12c-6.6 0-12-5.4-12-12v-98h-98c-6.6 0-12-5.4-12-12v-12c0-6.6 5.4-12 12-12h98v-98c0-6.6 5.4-12 12-12h12c6.6 0 12 5.4 12 12v98h98c6.6 0 12 5.4 12 12zm120 6c0 137-111 248-248 248S8 393 8 256 119 8 256 8s248 111 248 248zm-32 0c0-119.9-97.3-216-216-216-119.9 0-216 97.3-216 216 0 119.9 97.3 216 216 216 119.9 0 216-97.3 216-216z"
+                  fill="currentColor"
+                  style={Object {}}
+                />
+              </svg>
+            </FontAwesomeIcon>
+          </button>
+        </div>
+        <div
+          className="prism-expert-color-details__content__wrapper"
+          key="1"
+          style={
+            Object {
+              "backgroundColor": "#c4c4c4",
+              "color": "#000",
+            }
+          }
+        >
+          <div
+            className="prism-expert-color-details__content__wrapper__color-number"
+          >
+            SW 90212 
+          </div>
+          <div
+            className="prism-expert-color-details__content__wrapper__color-name"
+          >
+            Blue
+          </div>
+          <button
+            onClick={[Function]}
+          >
+            <FontAwesomeIcon
+              border={false}
+              className="prism-expert-color-details__content__wrapper__toggle-check-icons"
+              fixedWidth={false}
+              flip={null}
+              icon={
+                Array [
+                  "fa",
+                  "check-circle",
+                ]
+              }
+              inverse={false}
+              listItem={false}
+              mask={null}
+              pull={null}
+              pulse={false}
+              rotation={null}
+              size={null}
+              spin={false}
+              style={
+                Object {
+                  "color": "#000",
+                }
+              }
+              swapOpacity={false}
+              symbol={false}
+              title=""
+              transform={null}
+            >
+              <svg
+                aria-hidden="true"
+                className="svg-inline--fa fa-check-circle fa-w-16 prism-expert-color-details__content__wrapper__toggle-check-icons"
+                data-icon="check-circle"
+                data-prefix="fa"
+                focusable="false"
+                role="img"
+                style={
+                  Object {
+                    "color": "#000",
+                  }
+                }
+                viewBox="0 0 512 512"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M504 256c0 136.967-111.033 248-248 248S8 392.967 8 256 119.033 8 256 8s248 111.033 248 248zM227.314 387.314l184-184c6.248-6.248 6.248-16.379 0-22.627l-22.627-22.627c-6.248-6.249-16.379-6.249-22.628 0L216 308.118l-70.059-70.059c-6.248-6.248-16.379-6.248-22.628 0l-22.627 22.627c-6.248 6.248-6.248 16.379 0 22.627l104 104c6.249 6.249 16.379 6.249 22.628.001z"
+                  fill="currentColor"
+                  style={Object {}}
+                />
+              </svg>
+            </FontAwesomeIcon>
+          </button>
+        </div>
+      </div>
     </div>
-  </div>
-  <div
-    className="prism-expert-color-details__bottom__section"
-  />
-</div>
+  </ExpertColorDetails>
+</Provider>
 `;

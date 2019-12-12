@@ -13,7 +13,9 @@
   ],
   "globals" : {
     "API_PATH": "readonly",
+    "APP_VERSION": "readonly",
     "BASE_PATH": "readonly",
+    "ENV": "readonly",
     "Blob": "readonly",
     "FileReader": "readonly",
     "Image": "readonly",

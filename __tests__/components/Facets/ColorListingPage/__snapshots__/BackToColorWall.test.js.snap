@@ -10,9 +10,9 @@ exports[`snapshot match testing should match snapshot 1`] = `
     <div
       className="color-wall-mode-btns__cell"
     >
-      <Memo(Bar)>
-        <Memo(Button)
-          to="/active/color-wall"
+      <Bar>
+        <Button
+          to="/active/color-wall/color/2248/sw-6561-teaberry/"
         >
           <FontAwesomeIcon
             border={false}
@@ -42,8 +42,8 @@ exports[`snapshot match testing should match snapshot 1`] = `
             id="BACK_TO_COLOR_WALL"
             values={Object {}}
           />
-        </Memo(Button)>
-      </Memo(Bar)>
+        </Button>
+      </Bar>
     </div>
   </div>
 </div>

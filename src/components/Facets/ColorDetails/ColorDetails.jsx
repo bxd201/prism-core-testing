@@ -19,7 +19,9 @@ import SimilarColors from './SimilarColors/SimilarColors'
 import SceneManager from '../../SceneManager/SceneManager'
 import WithConfigurationContext from '../../../contexts/ConfigurationContext/WithConfigurationContext'
 import { ROUTE_PARAM_NAMES } from 'constants/globals'
-import facetBinder from 'src/facetBinder'
+import facetBinder from 'src/facetSupport/facetBinder'
+import { facetBinderDefaultProps, type FacetBinderMethods } from 'src/facetSupport/facetInstance'
+import { type FacetPubSubMethods, facetPubSubDefaultProps } from 'src/facetSupport/facetPubSub'
 
 import { paintAllMainSurfaces } from '../../../store/actions/scenes'
 import { varValues } from 'variables'
@@ -49,10 +51,14 @@ type ComponentProps = {
   intl: any
 }
 
-type Props = StateProps & ComponentProps
+type Props = StateProps & ComponentProps & FacetBinderMethods & FacetPubSubMethods
 
 export class ColorDetails extends PureComponent<Props, State> {
   static baseClass = 'color-info'
+  static defaultProps = {
+    ...facetPubSubDefaultProps,
+    ...facetBinderDefaultProps
+  }
 
   toggleSceneDisplayScene: RefObject
   toggleSceneHideScene: RefObject
@@ -263,12 +269,12 @@ const mapDispatchToProps = (dispatch: Function) => {
   }
 }
 
-export default withRouter(
+export default facetBinder(withRouter(
   connect(mapStateToProps, mapDispatchToProps)(
     injectIntl(
       WithConfigurationContext(
-        facetBinder(ColorDetails, 'ColorDetails')
+        ColorDetails
       )
     )
   )
-)
+), 'ColorDetails')
