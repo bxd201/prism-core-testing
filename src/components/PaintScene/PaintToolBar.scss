@@ -1,13 +1,17 @@
 .paint-tool-bar {
   &__wrapper {
     display: flex;
+    z-index: 10000;
   }
   &__tools-container {
     display: flex;
     position: relative;
-    right: 1em;
+    right: 0.2em;
     transition: right 0.5s ease-in-out 0.3s;
     z-index: 10000;
+    @include respond-above(sm) {
+      right: 1em;
+    }
     &--hide {
       right: -40em;
     }
@@ -17,12 +21,17 @@
     border: 1px solid #f2f2f2;
     color: black;
     fill: black;
-    height: 4em;
+    height: 2em;
     outline: none;
-    padding: 1em;
+    padding: 0em;
     position: relative;
     text-align: center;
-    width: 4em;
+    width: 2em;
+    @include respond-above(sm) {
+      height: 4em;
+      padding: 1em;
+      width: 4em;
+    }
     &:hover {
       border-color: #2cabe2;
       color: #2cabe2;
@@ -53,11 +62,17 @@
       }
       &:before {
         display: inline-block;
-        height: 4.5em;
-        left: -.5em;
-        top: -.25em;
+        height: 2em;
+        left: 0em;
+        top: 0em;
         transition: all .3s;
-        width: 5em;
+        width: 2em;
+        @include respond-above(sm) {
+          height: 4.5em;
+          left: -.5em;
+          top: -.25em;
+          width: 5em;
+        }
       }
     }
     &--disabled {
@@ -77,8 +92,9 @@
     }
   }
   &__tool-name {
-    bottom: .75em;
+    bottom: .6em;
     color: rgba(255, 255, 255, 0);
+    display: none;
     font-size: .5em;
     left: -.75em;
     line-height: 1;
@@ -87,6 +103,9 @@
     transition: color .7s;
     width: 127%;
     z-index: 10;
+    @include respond-above(sm) {
+      display: block;
+    }
     &--active {
       color: #000;
       transition: color .7s;
@@ -103,11 +122,16 @@
     background: white;
     border: 1px solid #f2f2f2;
     color: black;
-    display: flex;
+    display: block;
     fill: black;
-    height: 4em;
+    height: 2em;
     outline: none;
+    width: 1em;
     z-index: 10000;
+    @include respond-above(sm) {
+      height: 4em;
+      width: auto;
+    }
     &:hover {
       border-color: #2cabe2;
       color: #2cabe2;
@@ -121,11 +145,16 @@
       content: '';
       display: inline-block;
       height: 0;
+      left: -0.1em;
       margin-left: .5em;
       opacity: 0;
       position: absolute;
-      top: 1.5em;
+      top: 0.5em;
       width: 0;
+      @include respond-above(sm) {
+        left: 0em;
+        top: 1.5em;
+      }
     }
     &:after {
       border: 6px solid transparent;
@@ -134,9 +163,13 @@
       content: '';
       display: inline-block;
       height: 0;
+      margin-left: -0.2em;
       margin-right: .5em;
       opacity: 0;
       width: 0;
+      @include respond-above(sm) {
+        margin-left: 0;
+      }
     }
     &--toolbar-shown {
       &:before {
@@ -158,6 +191,7 @@
     }
   }
   &__brush-types {
+    cursor: default;
     display: none;
     position: absolute;
     &--show {
@@ -176,13 +210,21 @@
     }
   }
   &__brush-types-paint {
-    bottom: 60px;
-    left: -12px;
+    bottom: 32px;
+    left: -50px;
+    @include respond-above(sm) {
+      bottom: 60px;
+      left: -12px;
+    }
   }
   &__brush-types-erase {
     background: #f2f2f2;
-    bottom: 60px;
-    left: 90px;
+    bottom: 32px;
+    left: 4px;
+    @include respond-above(sm) {
+      bottom: 60px;
+      left: 90px;
+    }
   }
   &__clear-all {
     background: white;
@@ -200,10 +242,23 @@
     }
   }
   &__tool-icon {
-    position: absolute;
+    position: relative;
+    right: 0px;
+    top: 0px;
     z-index: 10;
-    top: 16px;
-    right: 18px;
+    @include respond-above(sm) {
+      position: absolute;
+      right: 18px;
+      top: 16px;
+    }
+    &__second-icon {
+      right: 0;
+      top: 0;
+      @include respond-above(sm) {
+        right: 12px;
+        top: 21px;
+      }
+    }
   }
   &__paint-tooltip {
     bottom: calc(100% + 0.5rem);
@@ -223,8 +278,11 @@
     position: relative;
     z-index: 100;
     &--show {
-      left: 1.5em;
+      left: 0.2em;
       transition: left 0.3s ease-in-out 0.3s;
+      @include respond-above(sm) {
+        left: 1em;
+      }
     }
     &--hide {
       left: -12em;
@@ -233,13 +291,17 @@
   }
   &__zoom-tool {
     background: #f2f2f2;
-    bottom: 60px;
+    bottom: 32px;
     display: flex;
-    right: 0;
+    right: 0px;
     opacity: 0;
     padding: 1.5em 1em;
     position: absolute;
-    width: 34.5em;
+    width: 18em;
+    @include respond-above(sm) {
+      bottom: 60px;
+      width: 34.5em;
+    }
     &:after {
       border: 4px solid transparent;
       border-top-color: #f2f2f2;
@@ -247,13 +309,17 @@
       content: '';
       display: inline-block;
       height: 0;
-      left: 53%;
+      left: 58%;
       margin-left: -2px;
       opacity: 1;
       position: absolute;
-      top: 66px;
+      top: 84px;
       transition: opacity 0.3s ease-in-out;
       width: 0;
+      @include respond-above(sm) {
+        left: 53%;
+        top: 66px;
+      }
     }
     &--show-by-opacity {
       opacity: 1;

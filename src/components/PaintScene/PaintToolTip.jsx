@@ -4,6 +4,7 @@ import './PaintToolTip.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { injectIntl } from 'react-intl'
 import 'src/providers/fontawesome/fontawesome'
+import { divTranslateFactor, divTranslateMultiplier, downPointerDivTranslateFactor, downPointerDivTranslateMultiplie } from './data'
 
 type Props = {
   tooltipToolActiveName: string,
@@ -14,7 +15,10 @@ type Props = {
   backButtonClickHandler: Function,
   nextButtonClickHandler: Function,
   isSelectGroup?: boolean,
-  intl: any
+  intl: any,
+  showTooltipContentByZindex: Function,
+  hideTooltipContentByZindex: Function,
+  parentDivRef: RefObject
 }
 
 const baseClass = 'paint-tooltip'
@@ -32,21 +36,21 @@ const buttonLeftClass = `${baseClass}__button-left`
 const buttonRightClass = `${baseClass}__button-right`
 const toolNumberClass = `${baseClass}__tool-number`
 const downPointerClass = `${baseClass}__down-pointer`
+const downPointerGroupToolClass = `${downPointerClass}__group-tool`
 const downPointerHidePaintClass = `${downPointerClass}--hide-paint`
 const downPointerHintsClass = `${downPointerClass}--hints`
 const selectGroup = `${baseClass}__select-group`
 
-const divTranslateFactor = -152
+export function PaintToolTip ({ tooltipToolActiveName, closeTooltip, backButtonClickHandler, nextButtonClickHandler, tooltipContent, tooltipToolActiveNumber, toolsCount, isSelectGroup, intl, showTooltipContentByZindex, hideTooltipContentByZindex, parentDivRef }: Props) {
+  const divTranslateValue = divTranslateFactor + (tooltipToolActiveNumber <= 8 ? tooltipToolActiveNumber - 1 : 8) * divTranslateMultiplier
+  const downPointerTranslateValue = downPointerDivTranslateFactor + (tooltipToolActiveNumber * downPointerDivTranslateMultiplie)
 
-export function PaintToolTip ({ tooltipToolActiveName, closeTooltip, backButtonClickHandler, nextButtonClickHandler, tooltipContent, tooltipToolActiveNumber, toolsCount, isSelectGroup, intl }: Props) {
-  let divTranslateValue = 0
-  if (!isSelectGroup) {
-    divTranslateValue = divTranslateFactor + (tooltipToolActiveNumber <= 8 ? tooltipToolActiveNumber - 1 : 8) * 52
-  }
+  const wrapperStyle = (window.outerWidth > 767) ? { transform: `translate(${divTranslateValue}px)` } : { transform: `translate(0px)` }
+  const downPointerStyle = (window.outerWidth > 767) ? { transform: `translate(0px)` } : { transform: `translate(${downPointerTranslateValue}px)` }
 
   return (
     <React.Fragment>
-      {!isSelectGroup && <div className={`${wrapperClass}`} style={{ transform: `translate(${divTranslateValue}px)` }}>
+      {!isSelectGroup && <div onMouseEnter={() => showTooltipContentByZindex(parentDivRef)} onMouseLeave={() => hideTooltipContentByZindex(parentDivRef)} className={`${wrapperClass}`} style={wrapperStyle}>
         <div className={`${containerClass}`}>
           <button className={`${closeButtonClass}`} onClick={() => closeTooltip()}>
             <FontAwesomeIcon title={intl.messages['PAINT_TOOLS.CLOSE']} className={``} icon={['fal', 'times']} size='lg' />
@@ -68,9 +72,9 @@ export function PaintToolTip ({ tooltipToolActiveName, closeTooltip, backButtonC
             </button>
           </div>
         </div>
-        <div className={`${downPointerClass} ${tooltipToolActiveNumber === 10 ? `${downPointerHidePaintClass}` : ``} ${tooltipToolActiveNumber === 11 ? `${downPointerHintsClass}` : ``}`} />
+        <div className={`${downPointerClass} ${tooltipToolActiveNumber === 10 ? `${downPointerHidePaintClass}` : ``} ${tooltipToolActiveNumber === 11 ? `${downPointerHintsClass}` : ``}`} style={downPointerStyle} />
       </div>}
-      {isSelectGroup && <div className={`${wrapperClass} ${selectGroup}`}>
+      {isSelectGroup && <div onMouseEnter={() => showTooltipContentByZindex(parentDivRef)} onMouseLeave={() => hideTooltipContentByZindex(parentDivRef)} className={`${wrapperClass} ${selectGroup}`}>
         <button className={`${closeButtonClass}`} onClick={() => closeTooltip()}>
           <FontAwesomeIcon title={intl.messages['PAINT_TOOLS.CLOSE']} className={``} icon={['fal', 'times']} size='lg' />
         </button>
@@ -81,7 +85,7 @@ export function PaintToolTip ({ tooltipToolActiveName, closeTooltip, backButtonC
         <div className={`${tooltipContentClass}`}>
           {tooltipContent}
         </div>
-        <div className={`${downPointerClass}`} />
+        <div className={`${downPointerClass} ${downPointerGroupToolClass}`} />
       </div>}
     </React.Fragment>
   )
