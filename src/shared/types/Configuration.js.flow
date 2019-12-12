@@ -5,7 +5,7 @@ export type Configuration = {
   displayAddButton?: boolean,
   displayDetailsLink?: boolean,
   displayInfoButton?: boolean,
-  ga_dimension_id: string,
+  ga_domain_id: string,
   colorWall: {
     bloomRadius: number
   },
