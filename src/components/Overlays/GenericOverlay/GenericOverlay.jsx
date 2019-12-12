@@ -5,7 +5,7 @@ import CircleLoader from '../../Loaders/CircleLoader/CircleLoader'
 import './GenericOverlay.scss'
 
 type Props = {
-  children: any,
+  children?: any,
   type: 'LOADING' | 'ERROR' | 'MESSAGE',
   message?: string,
   loaderColor?: string,

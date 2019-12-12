@@ -33,10 +33,6 @@ const SearchBarNoCancel = () => <div className='color-wall-wrap__chunk'>
   </FormattedMessage>
 </div>
 
-const SearchNoContain = () => <div className='color-wall-wrap__chunk'>
-  <Search containResults={false} />
-</div>
-
 export const ColorFamilyPage = (props: Props) => {
   const { colorDetailPageRoot, colorWallBgColor, selectedColorFamily } = props
   let colorFamilyUrl = 'sherwin-williams-colors/family/red'
@@ -60,9 +56,9 @@ export const ColorFamilyPage = (props: Props) => {
             <Route path='(.*)?/search/' component={SearchBarNoCancel} />
           </Switch>
           <Switch>
-            <Route path='(.*)?/family/:family/search/:query' component={SearchNoContain} />
-            <Route path='(.*)?/section/:section/search/:query' component={SearchNoContain} />
-            <Route path='(.*)?/search/:query' component={SearchNoContain} />
+            <Route path='(.*)?/family/:family/search/:query' component={Search} />
+            <Route path='(.*)?/section/:section/search/:query' component={Search} />
+            <Route path='(.*)?/search/:query' component={Search} />
             <Route component={ColorWall} />
           </Switch>
         </div>

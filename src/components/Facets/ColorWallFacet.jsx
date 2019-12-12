@@ -37,6 +37,9 @@ const searchBarNoLabel = () => <div className='color-wall-wrap__chunk'>
   </FormattedMessage>
 </div>
 
+const ColorWallContain = () => <ColorWall contain />
+const SearchContain = () => <Search contain />
+
 export const ColorWallPage = (props: Props) => {
   const { displayAddButton, colorWallBgColor, subscribe, publish, unsubscribeAll, colorDetailPageRoot } = props
 
@@ -84,8 +87,8 @@ export const ColorWallPage = (props: Props) => {
             <Route component={ColorWallToolbar} />
           </Switch>
           <Switch>
-            <Route path='(.*)?/search/:query' component={Search} />
-            <Route component={ColorWall} />
+            <Route path='(.*)?/search/:query' component={SearchContain} />
+            <Route component={ColorWallContain} />
           </Switch>
           {isLoading ? <GenericOverlay type={GenericOverlay.TYPES.LOADING} semitransparent /> : null}
         </div>
