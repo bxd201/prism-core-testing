@@ -43,7 +43,7 @@ const mainEntryPoints = {
 const facetEntryPoints = {
   colorListingPage: path.join(srcPath, 'components/Facets/ColorListingPage/ColorListingPage.jsx'),
   colorWallFacet: path.join(srcPath, 'components/Facets/ColorWallFacet.jsx'),
-  colorFamilyFacet: path.join(srcPath, 'components/Facets/ColorFamilyFacet.jsx'),
+  colorFamilyFacet: path.join(srcPath, 'components/Facets/ColorFamilyFacet/ColorFamilyFacet.jsx'),
   tinter: path.join(srcPath, 'components/Facets/Tinter/Tinter.jsx'),
   prism: path.join(srcPath, 'components/Facets/Prism/Prism.jsx'),
   colorDetails: path.join(srcPath, 'components/Facets/ColorDetails/ColorDetails.jsx')

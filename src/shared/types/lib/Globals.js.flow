@@ -6,6 +6,7 @@
 declare var BASE_PATH: string
 declare var API_PATH: string
 declare var ML_API_URL: string
+declare var ENV: string
 declare type RefObject = { current: any }
 declare var postMessage: Function
 declare var self: any

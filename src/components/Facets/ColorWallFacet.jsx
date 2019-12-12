@@ -16,6 +16,7 @@ import at from 'lodash/at'
 import useEffectAfterMount from '../../shared/hooks/useEffectAfterMount'
 import { resetActiveColor } from '../../store/actions/loadColors'
 import { facetBinderDefaultProps, type FacetBinderMethods } from 'src/facetSupport/facetInstance'
+import { FormattedMessage } from 'react-intl'
 
 type Props = FacetPubSubMethods & FacetBinderMethods & {
   colorDetailPageRoot: string,
@@ -27,6 +28,14 @@ export const EVENTS = {
   emitColor: 'PRISM/out/change/emitColor',
   loading: 'PRISM/in/loading'
 }
+
+const searchBarNoLabel = () => <div className='color-wall-wrap__chunk'>
+  <FormattedMessage id='SEARCH.FIND_A_COLOR'>
+    {(label: string) => (
+      <SearchBar showCancelButton label={label} showLabel={false} />
+    )}
+  </FormattedMessage>
+</div>
 
 export const ColorWallPage = (props: Props) => {
   const { displayAddButton, colorWallBgColor, subscribe, publish, unsubscribeAll, colorDetailPageRoot } = props
@@ -66,8 +75,8 @@ export const ColorWallPage = (props: Props) => {
       <ColorWallRouter>
         <div className='color-wall-wrap'>
           <Switch>
-            <Route path='(.*)?/search/:query' component={SearchBar} />
-            <Route path='(.*)?/search' component={SearchBar} />
+            <Route path='(.*)?/search/:query' component={searchBarNoLabel} />
+            <Route path='(.*)?/search' component={searchBarNoLabel} />
             <Route path='(.*)?/section/:section/family/:family' component={ColorWallToolbar} />
             <Route path='(.*)?/section/:section/family/' component={ColorWallToolbar} />
             <Route path='(.*)?/family/:family/' component={ColorWallToolbar} />

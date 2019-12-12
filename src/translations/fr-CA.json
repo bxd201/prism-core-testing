@@ -65,6 +65,9 @@
     "NO_RESULTS": "Désolé, aucune correspondance de couleur trouvée.",
     "PROMPT": "Entrez un nom de couleur, un numéro ou une famille dans le champ ci-dessus.",
     "SEARCH": "Chercher",
+    "SEARCHING": "Recherche",
+    "SEARCH_BY": "Recherche par nom ou numéro de couleur",
+    "FIND_A_COLOR": "Trouver une couleur",
     "SUGGESTIONS": "Quelques exemples de choses que vous pouvez rechercher sont {suggestions}"
   },
   "SIMILAR_COLORS": "Couleurs semblables",
