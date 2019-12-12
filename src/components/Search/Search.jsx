@@ -20,18 +20,18 @@ import 'src/scss/externalComponentSupport/AutoSizer.scss'
 import 'src/components/Facets/ColorWall/ColorWallSwatchList.scss'
 
 const baseClass = 'Search'
+const EDGE_SIZE = 15
 
 type Props = {
-  containResults: boolean
+  contain: boolean
 }
 
 const Search = (props: Props) => {
-  const { containResults } = props
+  const { contain = false } = props
   const { results, count, suggestions, loading } = useSelector(state => state.colors.search)
   const { section, family, query } = useParams()
   const dispatch = useDispatch()
   const { colorWallBgColor } = useContext(ColorWallContext)
-  const autoSizerStyleOverride = `${baseClass}__auto-sizer ${containResults ? '' : `${baseClass}__auto-sizer--expand-with-results`}`
 
   React.useEffect(() => {
     // the api endpoint expects timeless-color/historic-color not timeless-colors/historic-colors
@@ -57,10 +57,10 @@ const Search = (props: Props) => {
 
   return (
     <div className={baseClass}>
-      <div className={`${baseClass}__results-pane ${!containResults ? `${baseClass}__results-pane--top-align` : ''}`}
+      <div className={`${baseClass}__results-pane ${!contain ? `${baseClass}__results-pane--top-align` : ''}`}
         style={{ backgroundColor: colorWallBgColor }}>
         {loading ? (
-          <GenericOverlay type={GenericOverlay.TYPES.LOADING} fillVertical={containResults} semitransparent>
+          <GenericOverlay type={GenericOverlay.TYPES.LOADING} semitransparent>
             <FormattedMessage id='SEARCH.SEARCHING' />
           </GenericOverlay>
         ) : !count ? (
@@ -82,16 +82,18 @@ const Search = (props: Props) => {
             )}
           </GenericMessage>
         ) : (
-          <section className={`color-wall-swatch-list ${containResults ? 'color-wall-swatch-list--cover' : ''}`}>
-            <AutoSizer className={autoSizerStyleOverride}>
-              {({ height, width }) => {
-                const columnCount = Math.max(1, Math.round(width / 175))
-                const newSize = width / columnCount
+          <section className={`color-wall-swatch-list ${contain ? 'color-wall-swatch-list--cover' : ''}`}>
+            <AutoSizer disableHeight={!contain}>
+              {({ height = 0, width }) => {
+                const gridWidth = width - (EDGE_SIZE * 2)
+                const columnCount = Math.max(1, Math.round(gridWidth / 175))
+                const newSize = gridWidth / columnCount
                 const rowCount = Math.ceil(results.length / columnCount)
-                const gridHeight = containResults ? height : rowCount * newSize
+                const gridHeight = contain ? height : Math.max(height, rowCount * newSize + (EDGE_SIZE * 2))
 
                 return (
                   <Grid
+                    containerStyle={{ margin: `${EDGE_SIZE}px auto` }}
                     colors={results}
                     cellRenderer={cellRenderer}
                     columnWidth={newSize}
@@ -109,10 +111,6 @@ const Search = (props: Props) => {
       </div>
     </div>
   )
-}
-
-Search.defaultProps = {
-  containResults: true
 }
 
 export default Search

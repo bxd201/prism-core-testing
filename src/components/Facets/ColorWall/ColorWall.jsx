@@ -19,7 +19,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import ColorWallContext from './ColorWallContext'
 import './ColorWall.scss'
 
-const ColorWall = () => {
+type Props = {
+  contain: boolean
+}
+
+const ColorWall = (props: Props) => {
+  const { contain = false } = props
   const { colorWall, swatchShouldEmit } = useContext(ConfigurationContext)
   const { swatchMinSize, swatchMaxSize, swatchMinSizeZoomed, swatchMaxSizeZoomed, colorWallBgColor } = useContext(ColorWallContext)
   const { colorWallActive, items, families = [] } = useSelector(state => state.colors)
@@ -56,6 +61,7 @@ const ColorWall = () => {
               activeColor={colorWallActive}
               section={section}
               family={family}
+              contain={contain}
               bloomRadius={colorWall.bloomRadius} // TODO: demo purposes, maybe we want to change this
               onAddColor={color => dispatch(swatchShouldEmit ? emitColor(color) : add(color))}
               colorMap={colorMap}
