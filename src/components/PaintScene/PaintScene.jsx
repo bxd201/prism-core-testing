@@ -760,11 +760,6 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
     const { r, g, b, a } = getColorAtPixel(imageData, cursorX, cursorY)
     if (r === 0 && g === 0 && b === 0 && a === 0) {
-      console.log(this.state.imagePathList, 'imagePathList')
-      console.log(this.state.selectedArea, 'selected')
-      console.log(this.state.groupAreaList, 'groupArea')
-      console.log(this.state.groupSelectList, 'groupSelect')
-      console.log(this.state.groupIds, 'groupIDs')
       return
     }
 
@@ -1336,7 +1331,6 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     let newGroupIds = []
     let removedIds = []
     let newImagePathList
-    const ungroupId = uniqueId()
     const idsToUngroup = groupSelectList.map((item) => {
       return item.ancestorId
     })
@@ -1354,6 +1348,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       return (idsToUngroup.indexOf(item.id) === -1)
     })
 
+    const unGroupedAreaList = groupAreaList.filter(area => idsToUngroup.includes(area.id))
     newImagePathList = copyImagePathList.map((history) => {
       if (history.type === 'select' && removedIds.includes(history.id)) {
         return { ...history, isEnabled: false }
@@ -1364,18 +1359,34 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       }
     })
 
-    newImagePathList.push({
-      type: 'ungroup',
-      data: [],
-      redoPath: [],
-      id: ungroupId,
-      linkGroupId: ungroupId,
-      color: [255, 255, 255, 255],
-      isEnabled: true,
-      linkedOperation: null,
-      ancestorId: ungroupId,
-      siblingOperations: null
+    const getSelectAreaPathById = (ancestorId) => {
+      for (let j = 0; j < groupSelectList.length; j++) {
+        if (ancestorId === groupSelectList[j].ancestorId) {
+          return groupSelectList[j]
+        }
+      }
+      return []
+    }
+
+    unGroupedAreaList.forEach(area => {
+      const id = uniqueId()
+      const groupSelect = getSelectAreaPathById(area.id)
+      newImagePathList.push({
+        type: 'ungroup',
+        data: [],
+        redoPath: [],
+        id: id,
+        groupIds: area.linkGroupId,
+        groupAreaList: area,
+        groupSelectList: groupSelect,
+        color: [255, 255, 255, 255],
+        isEnabled: true,
+        linkedOperation: null,
+        ancestorId: groupSelect.id,
+        siblingOperations: null
+      })
     })
+
     this.clearCanvas()
     repaintImageByPath(newImagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight, false, newGroupIds)
     this.setState({ groupAreaList: newGroupAreaList, groupSelectList: [], isUngroup: false, groupIds: newGroupIds, imagePathList: newImagePathList })

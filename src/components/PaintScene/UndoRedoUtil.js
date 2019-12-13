@@ -127,7 +127,10 @@ const handleUndo = (itemId, redos, imagePathList, selectedArea, groupSelectList,
     }
 
     if (item.type === 'ungroup') {
-
+      newGroupSelectList.push(item.groupSelectList)
+      updateGroupAreaList.push(item.groupAreaList)
+      updateGroupIds = updateGroupIds.concat(item.groupIds)
+      toggleLinkedItems(item.ancestorId, history)
     }
 
     if (item.siblingOperations) {
@@ -242,6 +245,15 @@ const handleRedo = (itemId, redoPathList, imagePathList, selectedArea, groupSele
           toggleLinkedItems(historyItem, history)
         })
       }
+    }
+
+    if (item.type === 'ungroup') {
+      const selectArea = newGroupSelectList.pop()
+      updateGroupAreaList.pop()
+      updateGroupIds = updateGroupIds.filter(id => {
+        return !selectArea.linkGroupId.includes(id)
+      })
+      toggleLinkedItems(item.ancestorId, history)
     }
 
     if (item.siblingOperations) {
