@@ -6,7 +6,7 @@ import { Prism, RootRedirect } from 'src/components/Facets/Prism/Prism'
 import { SceneManager } from 'src/components/SceneManager/SceneManager'
 import { ROUTE_PARAMS, ROUTE_PARAM_NAMES } from 'constants/globals'
 import ColorDetails from 'src/components/Facets/ColorDetails/ColorDetails'
-import { PrismNav } from '../../../../src/components/Facets/Prism/PrismNav'
+import PrismNav from '../../../../src/components/Facets/Prism/PrismNav'
 
 const homeRoute = '/'
 const activeRoute = '/active'
@@ -53,7 +53,7 @@ describe('Prism routes', () => {
     expect(pathMap[activeColorIdSeoUrlPattern]).toBe(ColorDetails)
   })
 
-  xit('should show component defined as PrismNav component', () => {
+  it('should show component defined as PrismNav component', () => {
     expect(prism.find(PrismNav).exists()).toBe(true)
   })
 

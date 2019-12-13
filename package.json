@@ -20,9 +20,6 @@
       "jest-canvas-mock",
       "<rootDir>/setup/setupFile.js"
     ],
-    "setupFilesAfterEnv": [
-      "<rootDir>/setup/setupEnzyme.js"
-    ],
     "snapshotSerializers": [
       "enzyme-to-json/serializer"
     ],

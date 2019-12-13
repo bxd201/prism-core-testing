@@ -1,54 +1,281 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`PrismNav component with props should match snapshot 1`] = `
-<Fragment>
-  <button
-    className="prism-nav-btn prism-nav-btn--active"
-    onClick={[Function]}
+<IntlProvider
+  defaultFormats={Object {}}
+  defaultLocale="en"
+  formats={Object {}}
+  locale="en-US"
+  messages={
+    Object {
+      "ADD_A_COLOR": "ADD A COLOR",
+      "BACK_TO_COLOR_WALL": "Back to Color Wall",
+      "CANCEL": "Cancel",
+      "CANVAS_UNSUPPORTED": "Your browser does not support the canvas element.",
+      "CHIP_MAXIMIZED": "Color Chip has been maximized",
+      "CHIP_MINIMIZED": "Color Chip has been minimized",
+      "COLOR_COLLECTIONS": "Color Collections",
+      "COLOR_FAMILIES": "Color Families",
+      "COORDINATING_COLORS": "Coordinating Colors",
+      "DELETE_PIN": "Delete pin",
+      "DETAILS": "Details",
+      "DISPLAY_SCENE_PAINTER": "Display the Scene Painter",
+      "ERROR_LOADING_COLORS": "We're unable to load colors right now.",
+      "EXTERIOR": "Exterior",
+      "FIND_COLORS_IN_CW": "FIND COLORS IN THE DIGITAL COLOR WALL",
+      "HIDE_SCENE_PAINTER": "Hide the Scene Painter",
+      "IMAGE_INVISIBLE": "This image is invisible to the user.",
+      "INTERIOR": "Interior",
+      "LOCATION_NUMBER": "Location Number",
+      "MAXIMIZE_COLOR_SWATCH": "Maximize the Color Swatch",
+      "NO_COLORS_AVAILABLE": "No colors available.",
+      "PAINT_TOOLS.BACK": "Go back",
+      "PAINT_TOOLS.CLOSE": "Close tooltip",
+      "PAINT_TOOLS.DEFINEAREA": "Create a polygon to fill",
+      "PAINT_TOOLS.DELETEGROUP": "Delete the group",
+      "PAINT_TOOLS.ERASE": "Remove paint by erasing",
+      "PAINT_TOOLS.FORWARD": "Go forward",
+      "PAINT_TOOLS.GROUP": "Group the selections",
+      "PAINT_TOOLS.HIDEPAINT": "Hide the painted area",
+      "PAINT_TOOLS.INFO": "Toggle the tool tips",
+      "PAINT_TOOLS.PAINTAREA": "fill a continuous area with color",
+      "PAINT_TOOLS.PAINTBRUSH": "Paint using a brush",
+      "PAINT_TOOLS.REDO": "Redo an action",
+      "PAINT_TOOLS.REMOVEAREA": "Erase an area by creating a polygon",
+      "PAINT_TOOLS.SELECTAREA": "Select an area to manipulate",
+      "PAINT_TOOLS.TOOLTIPS.DEFINEAREA": "Outline an area to paint it. Be sure to enclose the area by starting and ending at the same point.",
+      "PAINT_TOOLS.TOOLTIPS.ERASE": "Remove paint from your scene.",
+      "PAINT_TOOLS.TOOLTIPS.HIDEPAINT": "Use this tool to see the original room scene.",
+      "PAINT_TOOLS.TOOLTIPS.INFO": "Click here to revisit the Tool Tips.",
+      "PAINT_TOOLS.TOOLTIPS.PAINTAREA": "Use the Paint Area feature to automatically detect and paint surface areas. Just click or tap on a surface to highlight it, then click or tap again.",
+      "PAINT_TOOLS.TOOLTIPS.PAINTBRUSH": "Allows for the freehand painting of your selected scene. Just point, click or tap and drag to add color to any area.",
+      "PAINT_TOOLS.TOOLTIPS.REDO": "Step forward from your last action.",
+      "PAINT_TOOLS.TOOLTIPS.REMOVEAREA": "Use this tool to select and remove paint from a defined area.",
+      "PAINT_TOOLS.TOOLTIPS.SELECTAREA": "Select an area, then use the tool bar to paint, edit paint colors or remove paint from your scene.",
+      "PAINT_TOOLS.TOOLTIPS.SELECTGROUP": "Use this tool to group and edit multiple areas at the same time. Use the Delete tool to remove areas from your scene.",
+      "PAINT_TOOLS.TOOLTIPS.UNDO": "Step backwards from your last action.",
+      "PAINT_TOOLS.TOOLTIPS.ZOOM": "Zoom in and pan around within your scene to paint small areas with increased accuracy.",
+      "PAINT_TOOLS.UNDO": "Undo an action",
+      "PAINT_TOOLS.UNGROUP": "Ungroup the selections",
+      "PAINT_TOOLS.ZOOM": "Adjust the zoom level",
+      "PALETTE_TITLE": "My Color Palette",
+      "RESTORE_COLOR_SWATCH_TO_DEFAULT_SIZE": "Restore the Color Swatch to default size",
+      "SCENE_DISPLAYED": "Scene is displayed",
+      "SCENE_HIDDEN": "Scene is hidden",
+      "SEARCH.ERROR.GENERIC": "We were unable to perform your search.",
+      "SEARCH.ERROR.HEADLINE": "Something went wrong.",
+      "SEARCH.FIND_A_COLOR": "Find a color",
+      "SEARCH.NO_RESULTS": "Sorry, no color matches found.",
+      "SEARCH.PROMPT": "Enter a color name, number, or family in the text field above.",
+      "SEARCH.SEARCH": "Search",
+      "SEARCH.SEARCHING": "Searching",
+      "SEARCH.SEARCH_BY": "Search by color name or number",
+      "SEARCH.SUGGESTIONS": "Some examples of things you can search for are {suggestions}",
+      "SIMILAR_COLORS": "Similar Colors",
+      "SWATCH_ACTIVATED_DETAILS": "{color} is selected. Press Enter to view details.",
+      "SWATCH_FOCUS": "{color}. Press Enter to select.",
+      "TO_DAY_VIEW": "Switch to day view",
+      "TO_NIGHT_VIEW": "Switch to night view",
+      "VIEW_DETAILS": "View Details",
+      "ZOOM_IN": "Zoom in",
+      "ZOOM_OUT": "Zoom out",
+    }
+  }
+  onError={[Function]}
+  textComponent={Symbol(react.fragment)}
+>
+  <Provider
+    store={
+      Object {
+        "dispatch": [Function],
+        "getState": [Function],
+        "replaceReducer": [Function],
+        "subscribe": [Function],
+        Symbol(observable): [Function],
+      }
+    }
   >
-    Scenes
-  </button>
-  <button
-    className="prism-nav-btn "
-    onClick={[Function]}
-  >
-    Color Wall
-  </button>
-  <button
-    className="prism-nav-btn "
-    onClick={[Function]}
-  >
-    Color From Image
-  </button>
-  <button
-    className="prism-nav-btn "
-    onClick={[Function]}
-  >
-    Color Collections
-  </button>
-  <button
-    className="prism-nav-btn "
-    onClick={[Function]}
-  >
-    Expert Colors
-  </button>
-  <button
-    className="prism-nav-btn "
-    onClick={[Function]}
-  >
-    Match Photo
-  </button>
-  <button
-    className="prism-nav-btn "
-    onClick={[Function]}
-  >
-    Paint a Scene
-  </button>
-  <button
-    className="prism-nav-btn "
-    onClick={[Function]}
-  >
-    Fast Mask
-  </button>
-</Fragment>
+    <Router
+      history={
+        Object {
+          "action": "POP",
+          "block": [Function],
+          "canGo": [Function],
+          "createHref": [Function],
+          "entries": Array [
+            Object {
+              "hash": "",
+              "key": "",
+              "pathname": "/",
+              "search": "",
+              "state": undefined,
+            },
+          ],
+          "go": [Function],
+          "goBack": [Function],
+          "goForward": [Function],
+          "index": 0,
+          "length": 1,
+          "listen": [Function],
+          "location": Object {
+            "hash": "",
+            "key": "",
+            "pathname": "/",
+            "search": "",
+            "state": undefined,
+          },
+          "push": [Function],
+          "replace": [Function],
+        }
+      }
+    >
+      <_default>
+        <Link
+          className="prism-nav-btn "
+          to="/active"
+        >
+          <LinkAnchor
+            className="prism-nav-btn "
+            href="/active"
+            navigate={[Function]}
+          >
+            <a
+              className="prism-nav-btn "
+              href="/active"
+              onClick={[Function]}
+            >
+              Scenes
+            </a>
+          </LinkAnchor>
+        </Link>
+        <Link
+          className="prism-nav-btn "
+          to="/active/color-wall/section/sherwin-williams-colors"
+        >
+          <LinkAnchor
+            className="prism-nav-btn "
+            href="/active/color-wall/section/sherwin-williams-colors"
+            navigate={[Function]}
+          >
+            <a
+              className="prism-nav-btn "
+              href="/active/color-wall/section/sherwin-williams-colors"
+              onClick={[Function]}
+            >
+              Color Wall
+            </a>
+          </LinkAnchor>
+        </Link>
+        <Link
+          className="prism-nav-btn "
+          to="/color-from-image"
+        >
+          <LinkAnchor
+            className="prism-nav-btn "
+            href="/color-from-image"
+            navigate={[Function]}
+          >
+            <a
+              className="prism-nav-btn "
+              href="/color-from-image"
+              onClick={[Function]}
+            >
+              Color From Image
+            </a>
+          </LinkAnchor>
+        </Link>
+        <Link
+          className="prism-nav-btn "
+          to="/color-collections"
+        >
+          <LinkAnchor
+            className="prism-nav-btn "
+            href="/color-collections"
+            navigate={[Function]}
+          >
+            <a
+              className="prism-nav-btn "
+              href="/color-collections"
+              onClick={[Function]}
+            >
+              Color Collections
+            </a>
+          </LinkAnchor>
+        </Link>
+        <Link
+          className="prism-nav-btn "
+          to="/expert-colors"
+        >
+          <LinkAnchor
+            className="prism-nav-btn "
+            href="/expert-colors"
+            navigate={[Function]}
+          >
+            <a
+              className="prism-nav-btn "
+              href="/expert-colors"
+              onClick={[Function]}
+            >
+              Expert Colors
+            </a>
+          </LinkAnchor>
+        </Link>
+        <Link
+          className="prism-nav-btn "
+          to="/match-photo"
+        >
+          <LinkAnchor
+            className="prism-nav-btn "
+            href="/match-photo"
+            navigate={[Function]}
+          >
+            <a
+              className="prism-nav-btn "
+              href="/match-photo"
+              onClick={[Function]}
+            >
+              Match Photo
+            </a>
+          </LinkAnchor>
+        </Link>
+        <Link
+          className="prism-nav-btn "
+          to="/paint-scene"
+        >
+          <LinkAnchor
+            className="prism-nav-btn "
+            href="/paint-scene"
+            navigate={[Function]}
+          >
+            <a
+              className="prism-nav-btn "
+              href="/paint-scene"
+              onClick={[Function]}
+            >
+              Paint a Scene
+            </a>
+          </LinkAnchor>
+        </Link>
+        <Link
+          className="prism-nav-btn "
+          to="/fast-mask"
+        >
+          <LinkAnchor
+            className="prism-nav-btn "
+            href="/fast-mask"
+            navigate={[Function]}
+          >
+            <a
+              className="prism-nav-btn "
+              href="/fast-mask"
+              onClick={[Function]}
+            >
+              Fast Mask
+            </a>
+          </LinkAnchor>
+        </Link>
+      </_default>
+    </Router>
+  </Provider>
+</IntlProvider>
 `;

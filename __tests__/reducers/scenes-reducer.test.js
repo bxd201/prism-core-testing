@@ -1,8 +1,7 @@
 /* eslint-disable flowtype/no-types-missing-file-annotation */
 import { scenes, initialState } from 'src/store/reducers/scenes'
 import * as actions from 'src/store/actions/scenes'
-// TODO: Uncomment this eventually once you're able to properly instantiate MaskObjs and make these tests pass -cody.richmond
-// import { surfaces as scene, sceneStatus } from '__mocks__/data/scene/Scenes.js'
+import { surfaces as scene, sceneStatus } from '__mocks__/data/scene/Scenes.js'
 import * as Colors from '__mocks__/data/color/Colors'
 import cloneDeep from 'lodash/cloneDeep'
 import find from 'lodash/find'
@@ -10,8 +9,7 @@ import find from 'lodash/find'
 const color = Colors.getColor()
 let receiveScenes
 
-// FIXME: Repair scene reducer tests @cody.richmond
-xdescribe('scenes-reducer', () => {
+describe('scenes-reducer', () => {
   test('handles undefined state', () => {
     const state = scenes(undefined, { type: 'TEST' })
 
@@ -46,13 +44,12 @@ xdescribe('scenes-reducer', () => {
   })
 
   test('receive scenes', () => {
-    const action = { type: actions.RECEIVE_SCENES,
-      payload: {
-        loadingScenes: false,
-        scenes: scene,
-        numScenes: scene.length,
-        type: 'rooms'
-      } }
+    const action = { type: actions.RECEIVE_SCENES, payload: {
+      loadingScenes: false,
+      scenes: scene,
+      numScenes: scene.length,
+      type: 'rooms'
+    }}
     const newState = scenes(initialState, action)
     receiveScenes = cloneDeep(newState)
     expect(newState).toEqual({ ...initialState,

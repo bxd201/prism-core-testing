@@ -65,7 +65,6 @@ export class InspiredSceneNavigator extends React.Component<ComponentProps, Comp
             data={this.state.rotatedFlatData || this.props.flatData}
             defaultItemsPerView={1}
             isInfinity
-            key={this.state.key}
             showTab={this.showTab}
             tabMap={this.props.tabMap}
           />

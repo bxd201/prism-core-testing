@@ -93,6 +93,8 @@ exports[`<TintableScene /> matches snapshot of scene with colored surfaces 1`] =
       />
     </div>
     <GenericOverlay
+      fillHorizontal={true}
+      fillVertical={true}
       type="LOADING"
     />
   </div>

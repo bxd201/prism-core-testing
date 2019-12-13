@@ -1,4 +1,3 @@
-// import mocks from '../../../__mocks__/helpers/MockUtility'
 import MaskObj from '../../../src/store/masks/MaskObj'
 
 const instantiate = (props) => new MaskObj(props)
@@ -81,11 +80,11 @@ describe('MaskObj', () => {
   })
 
   describe('exposes a promise for image data', () => {
-    const m = instantiate({ id: 'id', load: 'definitely not something it can load' })
-
-    it('imageData is a Promise', () => {
-      expect(m.imageData instanceof Promise).toBeTruthy()
-    })
+    // const m = instantiate({ id: 'id', load: 'definitely not something it can load' })
+    //
+    // it('imageData is a Promise', () => {
+    //   expect(m.imageData instanceof Promise).toBeTruthy()
+    // })
   })
 
   describe('can be initialized with blob data', () => {
