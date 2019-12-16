@@ -1,10 +1,10 @@
 // @flow
 import { useRouteMatch, Link } from 'react-router-dom'
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useMemo } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useIntl, FormattedMessage } from 'react-intl'
 import { TransitionGroup, CSSTransition } from 'react-transition-group'
-import memoizee from 'memoizee'
+import flattenDeep from 'lodash/flattenDeep'
 import { emitColor, makeActiveColorById, filterBySection, filterByFamily } from '../../../store/actions/loadColors'
 import { add } from '../../../store/actions/live-palette'
 import { varValues } from 'variables'
@@ -23,26 +23,53 @@ type Props = {
   contain: boolean
 }
 
+const EMPTY_COLOR_GRID = [[]]
+
 const ColorWall = (props: Props) => {
   const { contain = false } = props
   const { colorWall, swatchShouldEmit } = useContext(ConfigurationContext)
   const { swatchMinSize, swatchMaxSize, swatchMinSizeZoomed, swatchMaxSizeZoomed, colorWallBgColor } = useContext(ColorWallContext)
-  const { colorWallActive, items, families = [] } = useSelector(state => state.colors)
+  const { colorWallActive, items, section: reduxSection, family: reduxFamily, families = [] } = useSelector(state => state.colors)
   const { brights, colorMap, colors, unorderedColors } = items
   const { messages = {} } = useIntl()
   const dispatch = useDispatch()
   const { url, params: { section, family, colorId } } = useRouteMatch()
+  const trueFamily = reduxFamily || family
+  const trueSection = reduxSection || section
+
+  const colorsGrid = useMemo(() => {
+    let filteredColorSets = families.filter((familyName) => reduxFamily ? compareKebabs(familyName, reduxFamily) : true)
+
+    if (filteredColorSets.length) {
+      const output = convertCategorizedColorsToGrid(filteredColorSets, colors, brights, colorMap, BLANK_SWATCH, SW_CHUNK_SIZE)
+      return output
+    }
+
+    return EMPTY_COLOR_GRID
+  }, [colors, brights, colorMap, reduxFamily, reduxSection, unorderedColors])
+
+  const swatchListKey = useMemo(() => {
+    return flattenDeep(colorsGrid).join(',')
+  }, [colorsGrid])
+
+  const swatchLinkGeneratorFunc = useMemo(() => {
+    return (props) => {
+      if (!props) {
+        return ''
+      }
+      const { id, brandKey, colorNumber, name } = props
+      const linkUrl = generateColorWallPageUrl(trueSection, trueFamily, id, fullColorName(brandKey, colorNumber, name))
+      return linkUrl + (url.endsWith('family/') ? 'family/' : url.endsWith('search/') ? 'search/' : '')
+    }
+  }, [trueSection, trueFamily, url])
+
+  const onAddColor = useMemo(() => {
+    return color => dispatch(swatchShouldEmit ? emitColor(color) : add(color))
+  }, [swatchShouldEmit])
 
   useEffect(() => { dispatch(filterBySection(section)) }, [section])
   useEffect(() => { dispatch(filterByFamily(family)) }, [family])
   useEffect(() => { dispatch(makeActiveColorById(colorId)) }, [colorId])
-
-  const colorsGrid = (memoizee(() => {
-    let filteredColorSets = families.filter((familyName) => family ? compareKebabs(familyName, family) : true)
-    return filteredColorSets.length
-      ? convertCategorizedColorsToGrid(filteredColorSets, colors, brights, colorMap, BLANK_SWATCH, SW_CHUNK_SIZE)
-      : []
-  }))(colors || unorderedColors)
 
   return (
     <TransitionGroup className='sw-colorwall color-wall-zoom-transitioner'>
@@ -59,20 +86,17 @@ const ColorWall = (props: Props) => {
               showAll={!colorWallActive}
               immediateSelectionOnActivation={!colorWallActive}
               activeColor={colorWallActive}
-              section={section}
-              family={family}
+              section={reduxSection}
+              family={reduxFamily}
               contain={contain}
               bloomRadius={colorWall.bloomRadius} // TODO: demo purposes, maybe we want to change this
-              onAddColor={color => dispatch(swatchShouldEmit ? emitColor(color) : add(color))}
+              onAddColor={onAddColor}
               colorMap={colorMap}
-              swatchLinkGenerator={({ id, brandKey, colorNumber, name }) => {
-                const linkUrl = generateColorWallPageUrl(section, family, id, fullColorName(brandKey, colorNumber, name))
-                return linkUrl + (url.endsWith('family/') ? 'family/' : url.endsWith('search/') ? 'search/' : '')
-              }}
+              swatchLinkGenerator={swatchLinkGeneratorFunc}
               minCellSize={colorWallActive ? swatchMinSizeZoomed : swatchMinSize}
               maxCellSize={colorWallActive ? swatchMaxSizeZoomed : swatchMaxSize}
               colors={colorsGrid}
-              key={colorsGrid}
+              key={swatchListKey}
             />
             {colorWallActive ? (
               <div className='color-wall-wall__btns'>

@@ -142,24 +142,24 @@ exports[`matches snapshot 1`] = `
             }
           >
             <GenericMessage
-              type="WARNING"
+              type="NORMAL"
             >
               <div
-                className="generic-message generic-message--warning"
+                className="generic-message"
               >
                 <div
-                  className="generic-message__inner generic-message__inner--warning"
+                  className="generic-message__inner"
                 >
                   <div
                     className="generic-message__line generic-message__line--headline"
                     key="0"
                   >
                     <FormattedMessage
-                      id="SEARCH.NO_RESULTS"
+                      id="SEARCH.PROMPT"
                       key=".0"
                       values={Object {}}
                     >
-                      Sorry, no color matches found.
+                      Enter a color name, number, or family in the text field above.
                     </FormattedMessage>
                   </div>
                 </div>

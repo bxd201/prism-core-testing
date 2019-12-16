@@ -28,18 +28,22 @@ export const facetMasterWrapper = (Component: ComponentType<any>) => {
     // checks if a default routing type is set, if not we'll use hash routing
     const routeType = props.routeType || 'hash'
 
+    const routerProps = {
+      basename: pageRoot
+    }
+
     const BrowserRouterRender = (
-      <BrowserRouter basename={pageRoot}>
+      <BrowserRouter {...routerProps}>
         <Component {...props} />
       </BrowserRouter>
     )
     const HashRouterRender = (
-      <HashRouter>
+      <HashRouter {...routerProps}>
         <Component {...props} />
       </HashRouter>
     )
     const MemoryRouterRender = (
-      <MemoryRouter>
+      <MemoryRouter {...routerProps}>
         <Component {...props} />
       </MemoryRouter>
     )

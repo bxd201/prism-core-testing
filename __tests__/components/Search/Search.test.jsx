@@ -1,7 +1,7 @@
+/* eslint-env jest */
 import React from 'react'
 import Search from 'src/components/Search/Search'
 import GenericOverlay from 'src/components/Overlays/GenericOverlay/GenericOverlay'
-import ColorWallSwatch from 'src/components/Facets/ColorWall/ColorWallSwatch/ColorWallSwatch'
 
 test('matches snapshot', () => expect(mocked(<Search />)).toMatchSnapshot())
 
@@ -14,7 +14,7 @@ test('displays heroLoader while loading', () => {
 
 test('displays error message when there is no search results', () => {
   const MockedSearch = mocked(<Search />, {
-    mockedStoreValues: { colors: { search: { loading: false, error: true } } }
+    mockedStoreValues: { colors: { search: { loading: false, error: true, count: 0, results: [{}] } } }
   })
   expect(MockedSearch.text()).toBe('Sorry, no color matches found.')
 })

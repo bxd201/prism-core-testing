@@ -166,98 +166,64 @@ exports[`snapshot matches 1`] = `
                       <li
                         className="button-bar__options__option"
                       >
-                        <NavLink
-                          activeClassName="button-bar__options__option__btn--active "
+                        <button
                           className="button-bar__options__option__btn "
                           disabled={true}
-                          onClick={null}
-                          to="/active/color-wall/family/"
+                          type="button"
                         >
-                          <Link
-                            aria-current={null}
-                            className="button-bar__options__option__btn "
-                            disabled={true}
-                            onClick={null}
-                            to={
-                              Object {
-                                "hash": "",
-                                "pathname": "/active/color-wall/family/",
-                                "search": "",
-                                "state": null,
-                              }
+                          <FontAwesomeIcon
+                            border={false}
+                            className="color-families-svg"
+                            fixedWidth={false}
+                            flip={null}
+                            icon={
+                              Array [
+                                "fa",
+                                "palette",
+                              ]
                             }
+                            inverse={false}
+                            listItem={false}
+                            mask={null}
+                            pull="left"
+                            pulse={false}
+                            rotation={null}
+                            size={null}
+                            spin={false}
+                            swapOpacity={false}
+                            symbol={false}
+                            title=""
+                            transform={null}
                           >
-                            <LinkAnchor
-                              aria-current={null}
-                              className="button-bar__options__option__btn "
-                              disabled={true}
-                              href="/active/color-wall/family/"
-                              navigate={[Function]}
-                              onClick={null}
+                            <svg
+                              aria-hidden="true"
+                              className="svg-inline--fa fa-palette fa-w-16 fa-pull-left color-families-svg"
+                              data-icon="palette"
+                              data-prefix="fa"
+                              focusable="false"
+                              role="img"
+                              style={Object {}}
+                              viewBox="0 0 512 512"
+                              xmlns="http://www.w3.org/2000/svg"
                             >
-                              <a
-                                aria-current={null}
-                                className="button-bar__options__option__btn "
-                                disabled={true}
-                                href="/active/color-wall/family/"
-                                onClick={[Function]}
-                              >
-                                <FontAwesomeIcon
-                                  border={false}
-                                  className="color-families-svg"
-                                  fixedWidth={false}
-                                  flip={null}
-                                  icon={
-                                    Array [
-                                      "fa",
-                                      "palette",
-                                    ]
-                                  }
-                                  inverse={false}
-                                  listItem={false}
-                                  mask={null}
-                                  pull="left"
-                                  pulse={false}
-                                  rotation={null}
-                                  size={null}
-                                  spin={false}
-                                  swapOpacity={false}
-                                  symbol={false}
-                                  title=""
-                                  transform={null}
-                                >
-                                  <svg
-                                    aria-hidden="true"
-                                    className="svg-inline--fa fa-palette fa-w-16 fa-pull-left color-families-svg"
-                                    data-icon="palette"
-                                    data-prefix="fa"
-                                    focusable="false"
-                                    role="img"
-                                    style={Object {}}
-                                    viewBox="0 0 512 512"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <path
-                                      d="M204.3 5C104.9 24.4 24.8 104.3 5.2 203.4c-37 187 131.7 326.4 258.8 306.7 41.2-6.4 61.4-54.6 42.5-91.7-23.1-45.4 9.9-98.4 60.9-98.4h79.7c35.8 0 64.8-29.6 64.9-65.3C511.5 97.1 368.1-26.9 204.3 5zM96 320c-17.7 0-32-14.3-32-32s14.3-32 32-32 32 14.3 32 32-14.3 32-32 32zm32-128c-17.7 0-32-14.3-32-32s14.3-32 32-32 32 14.3 32 32-14.3 32-32 32zm128-64c-17.7 0-32-14.3-32-32s14.3-32 32-32 32 14.3 32 32-14.3 32-32 32zm128 64c-17.7 0-32-14.3-32-32s14.3-32 32-32 32 14.3 32 32-14.3 32-32 32z"
-                                      fill="currentColor"
-                                      style={Object {}}
-                                    />
-                                  </svg>
-                                </FontAwesomeIcon>
-                                <span
-                                  className="color-wall-mode-btns__descendant inherit-font"
-                                >
-                                  <FormattedMessage
-                                    id="COLOR_FAMILIES"
-                                    values={Object {}}
-                                  >
-                                    Color Families
-                                  </FormattedMessage>
-                                </span>
-                              </a>
-                            </LinkAnchor>
-                          </Link>
-                        </NavLink>
+                              <path
+                                d="M204.3 5C104.9 24.4 24.8 104.3 5.2 203.4c-37 187 131.7 326.4 258.8 306.7 41.2-6.4 61.4-54.6 42.5-91.7-23.1-45.4 9.9-98.4 60.9-98.4h79.7c35.8 0 64.8-29.6 64.9-65.3C511.5 97.1 368.1-26.9 204.3 5zM96 320c-17.7 0-32-14.3-32-32s14.3-32 32-32 32 14.3 32 32-14.3 32-32 32zm32-128c-17.7 0-32-14.3-32-32s14.3-32 32-32 32 14.3 32 32-14.3 32-32 32zm128-64c-17.7 0-32-14.3-32-32s14.3-32 32-32 32 14.3 32 32-14.3 32-32 32zm128 64c-17.7 0-32-14.3-32-32s14.3-32 32-32 32 14.3 32 32-14.3 32-32 32z"
+                                fill="currentColor"
+                                style={Object {}}
+                              />
+                            </svg>
+                          </FontAwesomeIcon>
+                          <span
+                            className="color-wall-mode-btns__descendant inherit-font"
+                          >
+                            <FormattedMessage
+                              id="COLOR_FAMILIES"
+                              values={Object {}}
+                            >
+                              Color Families
+                            </FormattedMessage>
+                          </span>
+                        </button>
                       </li>
                     </Button>
                     <Button
