@@ -1,13 +1,13 @@
 // @flow
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
 import PaletteSuggester from './ColorPickerSlideContainer'
 import MoreDetailsCollapse from './MoreDetails'
 import './ColorPickerSlide.scss'
-import { connect } from 'react-redux'
-import { injectIntl } from 'react-intl'
-import WithConfigurationContext from '../../contexts/ConfigurationContext/WithConfigurationContext'
+import { useSelector, useDispatch } from 'react-redux'
+import { useIntl } from 'react-intl'
+import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import { loadColors } from '../../store/actions/loadColors'
 import { loadCollectionSummaries } from '../../store/actions/collectionSummaries'
 
@@ -16,26 +16,27 @@ const slideHeader = 'slide-palette-header'
 
 type SummaryProps = {
   expertColorPicks: number[],
-  associatedColorCollection: Object,
-  colorMap: Object,
-  config: Object,
-  intl: Object,
-  loadColors: Function,
-  loadCollectionSummaries: Function
+  associatedColorCollection: Object
 }
 
 function ColorPickerSlide (props: SummaryProps) {
-  const { loadColors, loadCollectionSummaries, expertColorPicks, associatedColorCollection, colorMap, config, intl } = props
-  const [isShowSlider, handleSlideShow] = useState(false)
-
-  const [dataLoaded, setDataLoaded] = useState(false)
-  useEffect(() => {
-    if (!dataLoaded) {
-      setDataLoaded(true)
-      loadCollectionSummaries()
-      loadColors(config.brandId, { language: intl.locale })
+  const { expertColorPicks, associatedColorCollection } = props
+  const { colorMap, colorCollection } = useSelector(state => {
+    const { data, idToIndexHash } = state.collectionSummaries.summaries
+    return {
+      colorMap: state.colors.items.colorMap || {},
+      colorCollection: data[idToIndexHash[associatedColorCollection]]
     }
   })
+  const { brandId } = useContext(ConfigurationContext)
+  const { locale } = useIntl()
+  const dispatch = useDispatch()
+  const [isShowSlider, handleSlideShow] = useState(false)
+
+  useEffect(() => {
+    dispatch(loadCollectionSummaries())
+    dispatch(loadColors(brandId, { language: locale }))
+  }, [])
 
   return (
     <React.Fragment>
@@ -58,7 +59,7 @@ function ColorPickerSlide (props: SummaryProps) {
           </div>
           <button className={`${slideHeader}__mobile-toggle-arrow ${isShowSlider ? `${slideHeader}__mobile-toggle-arrow--up` : ``}`} onClick={() => { handleSlideShow(!isShowSlider) }} />
         </div>
-        {associatedColorCollection && <MoreDetailsCollapse isShowSlider={isShowSlider} associatedColorCollection={associatedColorCollection} />}
+        {colorCollection && <MoreDetailsCollapse isShowSlider={isShowSlider} associatedColorCollection={colorCollection} />}
       </div>
     </React.Fragment>
   )
@@ -68,14 +69,4 @@ export {
   ColorPickerSlide
 }
 
-export default connect(
-  (state, { associatedColorCollection }) => {
-    const { data, idToIndexHash } = state.collectionSummaries.summaries
-    const collection = data[idToIndexHash[associatedColorCollection]]
-    return {
-      colorMap: state.colors.items.colorMap || {},
-      associatedColorCollection: collection
-    }
-  },
-  { loadColors, loadCollectionSummaries }
-)(injectIntl(WithConfigurationContext(ColorPickerSlide)))
+export default ColorPickerSlide
