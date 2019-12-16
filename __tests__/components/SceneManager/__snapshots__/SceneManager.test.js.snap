@@ -7,7 +7,7 @@ exports[`snapshot testing should get correct snapshot 1`] = `
   <div
     className="prism-scene-manager"
   >
-    <Connect(injectIntl(Component))
+    <ColorPickerSlide
       image="https: //sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom6_day?wid=1311}&qlt=92"
       name="Living Room Day"
       normalizedImageValueCurve="0 0.1 0.15 0.25 0.4 0.5 0.6 0.7 0.84 0.955 1"

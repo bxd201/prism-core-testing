@@ -12,6 +12,7 @@ import extend from 'lodash/extend'
 import defaultsDeep from 'lodash/defaultsDeep'
 import store from 'src/store/store'
 import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
+import 'src/config/fontawesome'
 
 // polyfilling browser Intl object
 import '@formatjs/intl-relativetimeformat/polyfill'
@@ -47,11 +48,17 @@ global.URL.revokeObjectURL = jest.fn()
  *   - history object associated with a mocked object
  */
 window.mocked = (mockedComponent, nonDefaultParams = {}) => {
-  const { routeParams = {}, mockedStoreValues = {}, url = '/', history = createMemoryHistory({ initialEntries: [url] }) } = nonDefaultParams
+  const {
+    routeParams = {},
+    mockedStoreValues = {},
+    url = '/',
+    path = url,
+    history = createMemoryHistory({ initialEntries: [url] })
+  } = nonDefaultParams
 
   history.entries.forEach(entry => entry.key = "") // prevent entry key from being a randomly generated hash, so that test snapshots match
 
-  useRouteMatch.mockReturnValue({ url: '/', params: routeParams })
+  useRouteMatch.mockReturnValue({ path: path, url: url, params: routeParams })
   useHistory.mockReturnValue(history)
   useParams.mockReturnValue(routeParams)
 
