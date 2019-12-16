@@ -36,7 +36,7 @@ const Search = (props: Props) => {
   const { section, family, query } = useParams()
   const dispatch = useDispatch()
   const { colorWallBgColor } = useContext(ColorWallContext)
-  const [hasSearched, updateHasSearched] = useState(false)
+  const [hasSearched, updateHasSearched] = useState(typeof count !== 'undefined')
 
   React.useEffect(() => {
     if (limitSearchToFamily) {
