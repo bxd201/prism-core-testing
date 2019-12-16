@@ -12,7 +12,8 @@ import ImageQueue from './ImageQueue'
 type MergeCanvasProp = {
   layers: string[],
   width: number,
-  height: number
+  height: number,
+  applyZoomPan: Function
 }
 
 const MergeCanvas = (props: MergeCanvasProp, ref: RefObject) => {
@@ -25,6 +26,7 @@ const MergeCanvas = (props: MergeCanvasProp, ref: RefObject) => {
       images.forEach((img, i) => {
         ctx.drawImage(img, 0, 0, ctx.canvas.width, ctx.canvas.height)
       })
+      props.applyZoomPan(ref)
     }
   }, [images])
 
