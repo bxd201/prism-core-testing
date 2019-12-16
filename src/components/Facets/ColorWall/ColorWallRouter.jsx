@@ -8,7 +8,12 @@ import ConfigurationContext from '../../../contexts/ConfigurationContext/Configu
 import { loadColors } from '../../../store/actions/loadColors'
 import kebabCase from 'lodash/kebabCase'
 
-export default ({ children }: { children: React.Node }) => {
+type Props = {
+  children: React.Node,
+  redirect?: boolean
+}
+
+export default ({ children, redirect = true }: Props) => {
   const { brandId } = React.useContext(ConfigurationContext)
   const { section, status: { loading } } = useSelector(state => state.colors)
   const dispatch = useDispatch()
@@ -28,7 +33,7 @@ export default ({ children }: { children: React.Node }) => {
       <Route path='/active/color-wall/section/:section/color/:colorId'>{children}</Route>
       <Route path='/active/color-wall/section/:section/search/'>{children}</Route>
       <Route path='/active/color-wall/section/:section'>{children}</Route>
-      <Redirect to={`/active/color-wall/section/${kebabCase(section)}`} />
+      {redirect ? <Redirect to={`/active/color-wall/section/${kebabCase(section)}`} /> : null}
     </Switch>
   )
 }

@@ -1,5 +1,5 @@
 // @flow
-import React, { useContext } from 'react'
+import React, { useContext, useState, useMemo } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
 // $FlowIgnore -- no defs for react-virtualized
@@ -13,47 +13,72 @@ import TextButton from '../GeneralButtons/TextButton/TextButton'
 // import HeroLoader from '../Loaders/HeroLoader/HeroLoader'
 import GenericOverlay from '../Overlays/GenericOverlay/GenericOverlay'
 import ColorWallContext from 'src/components/Facets/ColorWall/ColorWallContext'
+import useEffectAfterMount from '../../shared/hooks/useEffectAfterMount'
 import './Search.scss'
 import 'src/scss/externalComponentSupport/AutoSizer.scss'
 // hijacking the styles of another component to use its internal wrapper class here
 // TODO: do NOT do this. extract the relevant portion out inton its own component so you can include it normally here and elsewhere.
 import 'src/components/Facets/ColorWall/ColorWallSwatchList.scss'
+import { compareKebabs } from '../../shared/helpers/StringUtils'
 
 const baseClass = 'Search'
 const EDGE_SIZE = 15
 
 type Props = {
-  contain: boolean
+  contain?: boolean,
+  limitSearchToFamily?: boolean
 }
 
 const Search = (props: Props) => {
-  const { contain = false } = props
+  const { limitSearchToFamily = false, contain = false } = props
   const { results, count, suggestions, loading } = useSelector(state => state.colors.search)
+  const { structure } = useSelector(state => state.colors)
   const { section, family, query } = useParams()
   const dispatch = useDispatch()
   const { colorWallBgColor } = useContext(ColorWallContext)
+  const [hasSearched, updateHasSearched] = useState(false)
 
   React.useEffect(() => {
-    // the api endpoint expects timeless-color/historic-color not timeless-colors/historic-colors
-    const modifiedSection = section === 'timeless-colors' ? 'timeless-color' : section === 'historic-colors' ? 'historic-color' : section
-    dispatch(loadSearchResults(query, family || modifiedSection))
-  }, [query, family, section])
+    if (limitSearchToFamily) {
+      if (family) {
+        dispatch(loadSearchResults(query, family))
+        return
+      }
 
-  const cellRenderer = ({ columnIndex, isScrolling, isVisible, key, parent, rowIndex, style }) => {
-    const columnCount = parent.props.columnCount
-    const index = columnIndex + (rowIndex * columnCount)
+      if (section) {
+        const familiesFromSection = structure.filter(v => compareKebabs(v.name, section)).map(v => v.families)
 
-    return results && results[index] && (
-      <div key={key} style={style}>
-        <ColorWallSwatch
-          key={results[index].hex}
-          showContents
-          color={results[index]}
-          onAdd={add}
-        />
-      </div>
-    )
-  }
+        if (familiesFromSection && familiesFromSection.length === 1) {
+          dispatch(loadSearchResults(query, familiesFromSection[0]))
+          return
+        }
+      }
+    }
+
+    dispatch(loadSearchResults(query))
+  }, [query, family, section, limitSearchToFamily])
+
+  useEffectAfterMount(() => {
+    updateHasSearched(true)
+  }, [count, results, loading])
+
+  const cellRenderer = useMemo(() => {
+    return ({ columnIndex, isScrolling, isVisible, key, parent, rowIndex, style }) => {
+      const columnCount = parent.props.columnCount
+      const index = columnIndex + (rowIndex * columnCount)
+
+      return results && results[index] && (
+        <div key={key} style={style}>
+          <ColorWallSwatch
+            key={results[index].hex}
+            showContents
+            color={results[index]}
+            onAdd={add}
+          />
+        </div>
+      )
+    }
+  }, [results])
 
   return (
     <div className={baseClass}>
@@ -63,10 +88,14 @@ const Search = (props: Props) => {
           <GenericOverlay type={GenericOverlay.TYPES.LOADING} semitransparent>
             <FormattedMessage id='SEARCH.SEARCHING' />
           </GenericOverlay>
+        ) : !hasSearched ? (
+          <GenericMessage type={GenericMessage.TYPES.NORMAL}>
+            <FormattedMessage id='SEARCH.PROMPT' />
+          </GenericMessage>
         ) : !count ? (
           <GenericMessage type={GenericMessage.TYPES.WARNING}>
             <FormattedMessage id='SEARCH.NO_RESULTS' />
-            {suggestions && suggestions.length && (
+            {suggestions && suggestions.length ? (
               <FormattedMessage id='SEARCH.SUGGESTIONS' values={{ suggestions: (
                 <>
                   {suggestions.map((suggestion, i, arr) =>
@@ -79,7 +108,7 @@ const Search = (props: Props) => {
                   )}
                 </>
               ) }} />
-            )}
+            ) : null}
           </GenericMessage>
         ) : (
           <section className={`color-wall-swatch-list ${contain ? 'color-wall-swatch-list--cover' : ''}`}>
