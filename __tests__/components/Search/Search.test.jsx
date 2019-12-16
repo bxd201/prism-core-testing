@@ -1,6 +1,6 @@
 import React from 'react'
 import Search from 'src/components/Search/Search'
-import HeroLoader from 'src/components/Loaders/HeroLoader/HeroLoader'
+import GenericOverlay from 'src/components/Overlays/GenericOverlay/GenericOverlay'
 import ColorWallSwatch from 'src/components/Facets/ColorWall/ColorWallSwatch/ColorWallSwatch'
 
 test('matches snapshot', () => expect(mocked(<Search />)).toMatchSnapshot())
@@ -9,7 +9,7 @@ test('displays heroLoader while loading', () => {
   const MockedSearch = mocked(<Search />, {
     mockedStoreValues: { colors: { search: { loading: true } } }
   })
-  expect(MockedSearch.find(HeroLoader).exists()).toBe(true)
+  expect(MockedSearch.find(GenericOverlay).exists()).toBe(true)
 })
 
 test('displays error message when there is no search results', () => {

@@ -1,91 +1,39 @@
 import React from 'react'
 import renderer from 'react-test-renderer'
-
 import TintableScene from 'src/components/SceneManager/TintableScene'
 import TintableSceneHitArea from 'src/components/SceneManager/TintableSceneHitArea'
 import TintableSceneSurface from 'src/components/SceneManager/TintableSceneSurface'
 import { SCENE_TYPES } from 'constants/globals'
 import { shallow } from 'enzyme'
 import * as Colors from '__mocks__/data/color/Colors'
-// TODO: commenting out breaking import due to MaskObj changes -cody.richmond
-// import { surfaces } from '__mocks__/data/scene/Scenes'
+import { surfaces } from '__mocks__/data/scene/Scenes'
+
+let defaultProps = {
+  width: 100,
+  height: 100,
+  sceneId: 1,
+  type: SCENE_TYPES.ROOM,
+  background: 'https://sherwin.scene7.com/is/image/sw?src=ir{swRender/TEST_SCENE?wid=1311}' // fully-qualified image so our snapshots don't change based on env vars
+}
 
 const getTintableScene = (props) => {
-  let defaultProps = {
-    width: 100,
-    height: 100,
-    sceneId: 1,
-    type: SCENE_TYPES.ROOM,
-    background: 'https://sherwin.scene7.com/is/image/sw?src=ir{swRender/TEST_SCENE?wid=1311}' // fully-qualified image so our snapshots don't change based on env vars
-  }
-
   let newProps = Object.assign({}, defaultProps, props)
   return <TintableScene {...newProps} />
 }
 
-// TODO: tests not passing due to MaskObj changes -cody.richmond
-xdescribe('<TintableScene />', () => {
+describe('<TintableScene />', () => {
   test('does not render without width and height', () => {
-    expect(renderer.create(
-      <TintableScene />
-    ).toJSON()).toEqual(null)
-
-    expect(renderer.create(
-      <TintableScene width={100} />
-    ).toJSON()).toEqual(null)
-
-    expect(renderer.create(
-      <TintableScene height={100} />
-    ).toJSON()).toEqual(null)
-
-    expect(renderer.create(
-      getTintableScene({
-        width: 0,
-        height: 0 })
-    ).toJSON()).toEqual(null)
+    console.warn = jest.fn()
+    expect(renderer.create(<TintableScene />).toJSON()).toBeNull()
+    expect(renderer.create(<TintableScene width={100} />).toJSON()).toBeNull()
+    expect(renderer.create(<TintableScene height={100} />).toJSON()).toBeNull()
+    expect(renderer.create(getTintableScene({ width: 0, height: 0 })).toJSON()).toBeNull()
+    expect(console.warn).toHaveBeenCalledTimes(4)
   })
 
   test('does not render when render set to false', () => {
-    expect(renderer.create(
-      getTintableScene({ render: false })
-    ).toJSON()).toEqual(null)
+    expect(mocked(<TintableScene {...defaultProps} render={false} />).html()).toBe("")
   })
-
-  // test('shows loading', () => {
-  //   const scene = renderer.create(
-  //     getTintableScene({
-  //       loading: true
-  //     })
-  //   )
-
-  //   // does it contain a TintableSceneOverlay and is it a LOADING type?
-  //   expect(scene.root.findByType(TintableSceneOverlay).props.type).toEqual(TintableSceneOverlay.TYPES.LOADING)
-  // })
-
-  // test('shows error', () => {
-  //   const scene = renderer.create(
-  //     getTintableScene({
-  //       error: true
-  //     })
-  //   )
-
-  //   // does it contain a TintableSceneOverlay and is it an ERROR type?
-  //   expect(scene.root.findByType(TintableSceneOverlay).props.type).toEqual(TintableSceneOverlay.TYPES.ERROR)
-  // })
-
-  // test('shows error overlay for hit area error', () => {
-  //   const scene = shallow(
-  //     getTintableScene({
-  //       surfaces: surfaces,
-  //       hitAreaError: false
-  //     }))
-
-  //   // no error at first
-  //   expect(scene.find(TintableSceneOverlay).exists()).toBe(true)
-  //   scene.instance().handleHitAreaLoadingError()
-  //   // does it contain a TintableSceneOverlay and is it an ERROR type?
-  //   expect(scene.instance().state.hitAreaError).toBe(true)
-  // })
 
   test('renders hit areas only for interactive scenes', () => {
     // interactive: true

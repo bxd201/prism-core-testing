@@ -11,6 +11,7 @@ export const registerMask = (path: string) => {
   const id = uniqueId(MASK_ID_PREFIX)
   const maskObj = new MaskObj({
     id,
+    blob: new Blob([]),
     load: ensureFullyQualifiedAssetUrl(path)
   })
 

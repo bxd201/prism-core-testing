@@ -1,13 +1,8 @@
 /* eslint-env jest */
 import React from 'react'
+import { Link } from ''
 import { shallow } from 'enzyme'
-import { PrismNav } from 'src/components/Facets/Prism/PrismNav'
-
-const paramActive = '/active'
-const paramActiveColorWall = '/active/color-wall'
-const firstButtonText = 'Scenes'
-const secondButtonText = 'Color Wall'
-const prismNavBtnActiveClass = 'prism-nav-btn--active'
+import PrismNav from 'src/components/Facets/Prism/PrismNav'
 
 const pushMock = jest.fn()
 const historyMock = { push: pushMock }
@@ -26,57 +21,43 @@ const getPrismNav = (props) => {
   return shallow(<PrismNav {...newProps} />)
 }
 
+const paramActive = '/active'
+
 describe('PrismNav component with props', () => {
   let prismNav
   beforeAll(() => {
-    if (!prismNav) {
-      prismNav = getPrismNav()
-    }
+    prismNav = mocked(<PrismNav />)
   })
 
-  it('should match snapshot', () => {
+  test('should match snapshot', () => {
     expect(prismNav).toMatchSnapshot()
   })
 
-  it('should have buttons', () => {
-    expect(prismNav.find('button.prism-nav-btn').exists()).toBe(true)
+  test('should have buttons', () => {
+    expect(prismNav.find('a.prism-nav-btn').exists()).toBe(true)
   })
 
-  it(`should have first button with text defined as ${firstButtonText} constant`, () => {
-    expect(prismNav.find('button.prism-nav-btn').at(0).text()).toEqual(firstButtonText)
+  const firstButtonText = 'Scenes'
+  test(`should have first button with text defined as ${firstButtonText} constant`, () => {
+    expect(prismNav.find('a.prism-nav-btn').at(0).text()).toEqual(firstButtonText)
   })
 
-  it(`should have second button with text defined as ${secondButtonText} constant`, () => {
-    expect(prismNav.find('button.prism-nav-btn').at(1).text()).toEqual(secondButtonText)
+  test(`should have second button with text defined as "Color Wall" constant`, () => {
+    expect(prismNav.find('a.prism-nav-btn').at(1).text()).toEqual('Color Wall')
   })
 
-  it(`should have first button with class name defined as ${prismNavBtnActiveClass} constant when pathname is ${paramActive}`, () => {
-    expect(prismNav.find('button.prism-nav-btn').at(0).hasClass(prismNavBtnActiveClass)).toBe(true)
+  test('first link is to "/active"', () => {
+    expect(prismNav.find('a.prism-nav-btn').at(0).props().href).toBe('/active')
   })
 
-  it(`should have second button with class name defined as ${prismNavBtnActiveClass} constant when pathname is ${paramActiveColorWall}`, () => {
-    prismNav.setProps({ location: { pathname: paramActiveColorWall } })
-    expect(prismNav.find('button.prism-nav-btn').at(1).hasClass(prismNavBtnActiveClass)).toBe(true)
+  test('second link is to "/active/color-wall/section/sherwin-williams-colors"', () => {
+    expect(prismNav.find('a.prism-nav-btn').at(1).props().href).toBe('/active/color-wall/section/sherwin-williams-colors')
   })
 })
 
-describe('PrismNav component with events', () => {
-  let prismNav
-  beforeAll(() => {
-    if (!prismNav) {
-      prismNav = getPrismNav()
-    }
-  })
-
-  it(`should call pushMock with param defined as ${paramActive} constant when first button is clicked`, () => {
-    prismNav.find('button.prism-nav-btn:first-child').simulate('click')
-    expect(pushMock).toHaveBeenCalledWith(paramActive)
-    pushMock.mockClear()
-  })
-
-  it(`should call pushMock with param defined as ${paramActiveColorWall} constant when second button is clicked`, () => {
-    prismNav.find('button.prism-nav-btn').at(1).simulate('click')
-    expect(pushMock).toHaveBeenCalledWith('/active/color-wall/section/sherwin-williams-colors')
-    pushMock.mockClear()
+test('links are active when url matches their destination', () => {
+  mocked(<PrismNav />).find('a.prism-nav-btn').forEach((link, index) => {
+    const href = link.props().href
+    expect(mocked(<PrismNav />, { url: href }).find('a.prism-nav-btn').at(index).hasClass('prism-nav-btn--active')).toBe(true)
   })
 })

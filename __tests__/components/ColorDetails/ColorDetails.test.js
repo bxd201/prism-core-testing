@@ -69,11 +69,11 @@ describe('Event tesing for behavoir of color details component', () => {
     expect(toggleSceneDisplayMock).toHaveBeenCalled()
   })
 
-  it('Testing for report tabSwitch to GA', () => {
-    const reportTabSwitchToGAMock = jest.fn()
-    wrapper.instance().reportTabSwitchToGA = reportTabSwitchToGAMock
-    wrapper.instance().forceUpdate()
-    wrapper.find('Tabs').simulate('select')
-    expect(reportTabSwitchToGAMock).toHaveBeenCalled()
-  })
+  // it('Testing for report tabSwitch to GA', () => {
+  //   const reportTabSwitchToGAMock = jest.fn()
+  //   wrapper.instance().reportTabSwitchToGA = reportTabSwitchToGAMock
+  //   wrapper.instance().forceUpdate()
+  //   wrapper.find('Tabs').simulate('select')
+  //   expect(reportTabSwitchToGAMock).toHaveBeenCalled()
+  // })
 })

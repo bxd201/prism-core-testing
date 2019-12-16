@@ -61,7 +61,6 @@ describe('ColorListingPage routes', () => {
       pathMap[routeProps.path] = routeProps.component
       return pathMap
     }, {})
-    console.dir(pathMap)
   })
 
   it('should render Switch component', () => {
