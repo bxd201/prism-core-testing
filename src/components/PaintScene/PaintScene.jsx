@@ -1564,6 +1564,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
         width={this.canvasOriginalDimensions.width}
         height={this.canvasOriginalDimensions.height}
         ref={this.mergeCanvasRef}
+        applyZoomPan={this.applyZoomPan}
         layers={imageUrls} />)
     }
 
@@ -1587,6 +1588,20 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     // @todo - Implement meta data -RS
     const metaData = {}
     this.props.saveMasks(colorList, imageData, metaData)
+  }
+
+  applyZoomPan = (ref: RefObject) => {
+    const options = {
+      containerWidth: this.wrapperOriginalDimensions.width,
+      containerHeight: this.wrapperOriginalDimensions.height,
+      canvasWidth: this.canvasOriginalDimensions.width,
+      canvasHeight: this.canvasOriginalDimensions.height,
+      zoom: this.state.canvasZoom,
+      panX: this.canvasPanStart.x,
+      panY: this.canvasPanStart.y
+    }
+    const factors = this.canvasDimensionFactors(options)
+    this.applyDimensionFactorsByCanvas(factors, ref)
   }
 
   render () {
