@@ -15,7 +15,8 @@ import { getPaintAreaPath, repaintImageByPath,
   getActiveColorRGB, getSelectArea, hexToRGB,
   checkIntersection, drawImagePixelByPath,
   copyImageList, getColorAtPixel, colorMatch,
-  repaintCircleLine, getImageCordinateByPixelPaintBrush } from './utils'
+  repaintCircleLine, getImageCordinateByPixelPaintBrush,
+  filterErasePath, updateDeleteAreaList } from './utils'
 import { toolNames, groupToolNames, brushLargeSize, brushMediumSize, brushSmallSize, brushTinySize, brushRoundShape, brushSquareShape } from './data'
 import { getScaledPortraitHeight, getScaledLandscapeHeight } from '../../shared/helpers/ImageUtils'
 import throttle from 'lodash/throttle'
@@ -199,6 +200,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       mergeCanvasKey: '1',
       canvasImageUrls: [],
       groupIds: [],
+      deleteAreaList: [],
       showAnimatePin: false,
       showNonAnimatePin: false,
       pinX: 0,
@@ -616,7 +618,9 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   }
 
   mouseUpHandler = (e: Object) => {
-    const { drawCoordinates, imagePathList, activeTool } = this.state
+    const { drawCoordinates, imagePathList, activeTool, deleteAreaList } = this.state
+    let newDeleteAreaList = copyImageList(deleteAreaList)
+    let paintPath = []
     const { lpActiveColor } = this.props
     if (!lpActiveColor) {
       this.setState({
@@ -627,7 +631,10 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     const { newGroupSelectList, newGroupAreaList } = this.breakGroupIfhasIntersection()
     this.clearCanvas()
     if (lpActiveColor && activeTool === toolNames.PAINTBRUSH && drawCoordinates.length > 0) {
-      newImagePathList = getPaintAreaPath(imagePathList, this.CFICanvasPaint, this.canvasOffsetWidth, this.canvasOffsetHeight, this.props.lpActiveColor)
+      const paintData = getPaintAreaPath(imagePathList, this.CFICanvasPaint, this.canvasOffsetWidth, this.canvasOffsetHeight, this.props.lpActiveColor)
+      newImagePathList = paintData.newImagePathList
+      paintPath = paintData.paintPath
+      newDeleteAreaList = updateDeleteAreaList(paintPath, deleteAreaList)
       repaintImageByPath(newImagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight, false)
     }
 
@@ -640,7 +647,8 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
           erasePath.push(parseInt(key))
         }
       })
-      const tmpImagePathList = eraseIntersection(imagePathList, erasePath)
+      const updateErasePath = filterErasePath(erasePath, deleteAreaList)
+      const tmpImagePathList = eraseIntersection(imagePathList, updateErasePath)
       newImagePathList = remove(tmpImagePathList, (currImagePath) => {
         return currImagePath.data.length !== 0
       })
@@ -651,6 +659,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.setState({ isDragging: false,
       imagePathList: newImagePathList,
       groupAreaList: newGroupAreaList,
+      deletAreaList: newDeleteAreaList,
       groupSelectList: newGroupSelectList,
       redoPathList: [],
       undoIsEnabled: newImagePathList.length > 0,
@@ -772,16 +781,12 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     const index = (cursorX + cursorY * this.canvasOffsetWidth) * 4
     let isClickInsideImage = false
     let isClickGroupArea = false
-    for (let i = 0; i < imagePathList.length; i++) {
-      if (imagePathList[i].isEnabled && imagePathList[i].data.includes(index)) {
-        isClickInsideImage = true
-        break
-      }
-    }
 
     const { r, g, b, a } = getColorAtPixel(imageData, cursorX, cursorY)
     if (r === 0 && g === 0 && b === 0 && a === 0) {
       return
+    } else {
+      isClickInsideImage = true
     }
 
     if (isClickInsideImage) {
@@ -931,7 +936,8 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   handlePolygonDefine = (e: Object, isAddArea: boolean) => {
     this.pause = false
     if (!this.props.lpActiveColor) return
-    const { BeginPointList, polyList, lineStart, imagePathList, presentPolyList } = this.state
+    const { BeginPointList, polyList, lineStart, imagePathList, presentPolyList, deleteAreaList } = this.state
+    let newDeleteAreaList = copyImageList(deleteAreaList)
     const { clientX, clientY } = e
     const canvasClientOffset = this.CFICanvas2.current.getBoundingClientRect()
     const canvasClientOffset4 = this.CFICanvas4.current.getBoundingClientRect()
@@ -966,7 +972,10 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
           return currImagePath.data.length !== 0
         })
       } else {
-        newImagePathList = getPaintAreaPath(imagePathList, this.CFICanvasPaint, this.canvasOffsetWidth, this.canvasOffsetHeight, this.props.lpActiveColor)
+        const paintData = getPaintAreaPath(imagePathList, this.CFICanvasPaint, this.canvasOffsetWidth, this.canvasOffsetHeight, this.props.lpActiveColor)
+        newImagePathList = paintData.newImagePathList
+        const paintPath = paintData.paintPath
+        newDeleteAreaList = updateDeleteAreaList(paintPath, deleteAreaList)
         this.CFICanvasContextPaint.clearRect(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
       }
       this.clearCanvas()
@@ -980,6 +989,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
           lineStart: [],
           BeginPointList: [],
           imagePathList: newImagePathList,
+          deleteAreaList: newDeleteAreaList,
           showAnimatePin: false,
           showNonAnimatePin: false,
           undoIsEnabled: newImagePathList.length > 0
@@ -1414,11 +1424,13 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   }
 
   deleteGroup = () => {
-    const { imagePathList, groupSelectList, selectedArea, groupIds, groupAreaList } = this.state
+    const { imagePathList, groupSelectList, selectedArea, groupIds, groupAreaList, deleteAreaList } = this.state
     let updateImagePathList = copyImageList(imagePathList)
     let newGroupIds = []
 
     for (let i = 0; i < groupSelectList.length; i++) {
+      const deletePath = [...groupSelectList[i].selectPath, ...groupSelectList[i].edgeList]
+      const id = uniqueId()
       updateImagePathList.push({
         type: 'delete-group',
         data: [...groupSelectList[i].selectPath, ...groupSelectList[i].edgeList],
@@ -1434,20 +1446,30 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
         ancestorId: null,
         siblingOperations: null
       })
+      deleteAreaList.push({
+        id: id,
+        data: deletePath
+      })
     }
 
     for (let i = 0; i < selectedArea.length; i++) {
+      const deletePath = [...selectedArea[i].selectPath, ...selectedArea[i].edgeList]
+      const id = uniqueId()
       updateImagePathList.push({
         type: 'delete',
-        data: [...selectedArea[i].selectPath, ...selectedArea[i].edgeList],
+        data: deletePath,
         redoPath: selectedArea[i].selectPath,
-        id: uniqueId(),
+        id: id,
         linkGroupId: null,
         color: [255, 255, 255, 0],
         isEnabled: true,
         linkedOperation: null,
         ancestorId: null,
         siblingOperations: null
+      })
+      deleteAreaList.push({
+        id: id,
+        data: deletePath
       })
     }
     const idsToUngroup = groupSelectList.map((item) => {
@@ -1472,6 +1494,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       selectedArea: [],
       groupSelectList: [],
       groupAreaList: newGroupAreaList,
+      deletAreaList: deleteAreaList,
       groupIds: newGroupIds })
   }
 
