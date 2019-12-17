@@ -19,7 +19,7 @@ export const getPaintAreaPath = (imagePathList, canvas, width, height, color) =>
   }
   const copyImagePathList = copyImageList(imagePathList)
   copyImagePathList.push(newArea)
-  return copyImagePathList
+  return { newImagePathList: copyImagePathList, paintPath: array }
 }
 
 export const getImageCordinateByPixel = (canvas, color, width, height, returnPixelIndexAlphaMap = true) => {
@@ -172,10 +172,15 @@ export const createPolygon = (polyList = [[0, 0]], canvas, width, height, color,
   }
 }
 
-export const checkIntersection = (areaA, areaB) => {
+export const checkIntersection = (areaA, areaB, getIntersectionData = false) => {
   const setA = new Set(areaA)
   const setB = new Set(areaB)
-  return [...setA].some(x => setB.has(x))
+  if (!getIntersectionData) {
+    return [...setA].some(x => setB.has(x))
+  } else {
+    const intersection = new Set([...setA].filter(x => setB.has(x)))
+    return Array.from(intersection)
+  }
 }
 
 export const repaintImageByPath = (imagePathList, canvas, width, height, isEraseRepaint = false, groupIds = [], isSwitchTool = false) => {
@@ -183,7 +188,7 @@ export const repaintImageByPath = (imagePathList, canvas, width, height, isErase
   let imageData = ctx.getImageData(0, 0, width, height)
   let data = imageData.data
   for (let i = 0; i < imagePathList.length; i++) {
-    if ((!isEraseRepaint && !imagePathList[i].hasOwnProperty('drawOrder')) || isSwitchTool) {
+    if ((!isEraseRepaint && !imagePathList[i].hasOwnProperty('drawOrder'))) {
       imagePathList[i].drawOrder = i
     }
   }
@@ -321,15 +326,16 @@ export const eraseIntersection = (imagePathList, erasePath) => {
     const color = originImagePathList[i].color
     const linkId = originImagePathList[i].id
     const drawOrder = originImagePathList[i].drawOrder
-    const isHasIntersection = checkIntersection(data, erasePath)
     const type = originImagePathList[i].type
+    const isHasIntersection = (type !== 'delete' ? checkIntersection(data, erasePath) : false)
 
-    if (isHasIntersection && isEnabled && type !== 'delete') {
+    if (isHasIntersection && isEnabled && type !== 'delete' && type !== 'delete-group') {
       originImagePathList[i].isEnabled = false
       const remainAreaPath = difference(data, erasePath)
       const newId = uniqueId()
       originImagePathList.push({
         type: 'paint',
+        subType: 'erase-paint',
         id: newId,
         color: color,
         data: remainAreaPath,
@@ -501,4 +507,25 @@ const rgb2lab = (rgb) => {
   z = (z > 0.008856) ? Math.pow(z, 1 / 3) : (7.787 * z) + 16 / 116
 
   return [(116 * y) - 16, 500 * (x - y), 200 * (y - z)]
+}
+
+export const filterErasePath = (erasePath, deleteAreaList) => {
+  let updateErasePath = [...erasePath]
+  deleteAreaList.forEach(area => {
+    const intersection = checkIntersection(area.data, erasePath, true)
+    if (intersection.length > 0) {
+      updateErasePath = difference(updateErasePath, intersection)
+    }
+  })
+  return updateErasePath
+}
+
+export const updateDeleteAreaList = (paintPath, deleteAreaList) => {
+  return deleteAreaList.filter((area) => {
+    const intersection = checkIntersection(area.data, paintPath, true)
+    if (intersection.length > 0) {
+      area.data = difference(area.data, intersection)
+      return true
+    }
+  })
 }
