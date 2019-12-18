@@ -1,5 +1,4 @@
 import cloneDeep from 'lodash/cloneDeep'
-import uniqueId from 'lodash/uniqueId'
 import MaskObj from '../../../src/store/masks/MaskObj'
 
 const Scenes =
@@ -22,21 +21,21 @@ const Scenes =
         'surfaces': [
           {
             'id': 1,
-            'mask': new MaskObj({id: uniqueId(`msk`), blob:``
+            'mask': new MaskObj({id: 'msk1', blob: new Blob([])
             }),
             'hitArea': '/prism/images/scenes/rooms/2/m1.svg',
             'role': 'main'
           },
           {
             'id': 2,
-            'mask': new MaskObj({id: uniqueId(`msk`), blob:``
+            'mask': new MaskObj({id: 'msk2', blob: new Blob([])
             }),
             'hitArea': '/prism/images/scenes/rooms/2/m2.svg',
             'role': 'main'
           },
           {
             'id': 3,
-            'mask': new MaskObj({id: uniqueId(`msk`), blob:``
+            'mask': new MaskObj({id: 'msk3', blob: new Blob([])
             }),
             'hitArea': '/prism/images/scenes/rooms/2/m3.svg',
             'role': 'trim'
@@ -52,21 +51,21 @@ const Scenes =
         'surfaces': [
           {
             'id': 1,
-            'mask': new MaskObj({id: uniqueId(`msk`), blob:``
+            'mask': new MaskObj({id: 'msk4', blob: new Blob([])
             }),
             'hitArea': '/prism/images/scenes/rooms/2/m1.svg',
             'role': 'main'
           },
           {
             'id': 2,
-            'mask': new MaskObj({id: uniqueId(`msk`), blob:``
+            'mask': new MaskObj({id: 'msk5', blob: new Blob([])
             }),
             'hitArea': '/prism/images/scenes/rooms/2/m2.svg',
             'role': 'main'
           },
           {
             'id': 3,
-            'mask': new MaskObj({id: uniqueId(`msk`), blob:``
+            'mask': new MaskObj({id: 'msk6', blob: new Blob([])
             }),
             'hitArea': '/prism/images/scenes/rooms/2/m3.svg',
             'role': 'trim'
@@ -93,21 +92,21 @@ const Scenes =
         'surfaces': [
           {
             'id': 1,
-            'mask': new MaskObj({id: uniqueId(`msk`), blob:``
+            'mask': new MaskObj({id: 'msk7', blob: new Blob([])
             }),
             'hitArea': '/prism/images/scenes/rooms/4/1.svg',
             'role': 'main'
           },
           {
             'id': 2,
-            'mask': new MaskObj({id: uniqueId(`msk`), blob:``
+            'mask': new MaskObj({id: 'msk8', blob: new Blob([])
             }),
             'hitArea': '/prism/images/scenes/rooms/4/2.svg',
             'role': 'accent'
           },
           {
             'id': 3,
-            'mask': new MaskObj({id: uniqueId(`msk`), blob:``
+            'mask': new MaskObj({id: 'msk9', blob: new Blob([])
             }),
             'hitArea': '/prism/images/scenes/rooms/4/3.svg',
             'role': 'trim'
@@ -123,21 +122,21 @@ const Scenes =
         'surfaces': [
           {
             'id': 1,
-            'mask': new MaskObj({id: uniqueId(`msk`), blob:``
+            'mask': new MaskObj({id: 'msk10', blob: new Blob([])
             }),
             'hitArea': '/prism/images/scenes/rooms/4/1.svg',
             'role': 'main'
           },
           {
             'id': 2,
-            'mask': new MaskObj({id: uniqueId(`msk`), blob:``
+            'mask': new MaskObj({id: 'msk11', blob: new Blob([])
             }),
             'hitArea': '/prism/images/scenes/rooms/4/2.svg',
             'role': 'accent'
           },
           {
             'id': 3,
-            'mask': new MaskObj({id: uniqueId(`msk`), blob:``
+            'mask': new MaskObj({id: 'msk12', blob: new Blob([])
             }),
             'hitArea': '/prism/images/scenes/rooms/4/3.svg',
             'role': 'trim'
@@ -164,21 +163,21 @@ const Scenes =
         'surfaces': [
           {
             'id': 1,
-            'mask': new MaskObj({id: uniqueId(`msk`), blob:``
+            'mask': new MaskObj({id: 'msk13', blob: new Blob([])
             }),
             'hitArea': '/prism/images/scenes/rooms/bedroom1/main.svg',
             'role': 'main'
           },
           {
             'id': 2,
-            'mask': new MaskObj({id: uniqueId(`msk`), blob:``
+            'mask': new MaskObj({id: 'msk14', blob: new Blob([])
             }),
             'hitArea': '/prism/images/scenes/rooms/bedroom1/accent.svg',
             'role': 'main'
           },
           {
             'id': 3,
-            'mask': new MaskObj({id: uniqueId(`msk`), blob:``
+            'mask': new MaskObj({id: 'msk15', blob: new Blob([])
             }),
             'hitArea': '/prism/images/scenes/rooms/bedroom1/trim.svg',
             'role': 'trim'
@@ -194,21 +193,21 @@ const Scenes =
         'surfaces': [
           {
             'id': 1,
-            'mask': new MaskObj({id: uniqueId(`msk`), blob:``
+            'mask': new MaskObj({id: 'msk16', blob: new Blob([])
             }),
             'hitArea': '/prism/images/scenes/rooms/bedroom1/main.svg',
             'role': 'main'
           },
           {
             'id': 2,
-            'mask': new MaskObj({id: uniqueId(`msk`), blob:``
+            'mask': new MaskObj({id: 'msk17', blob: new Blob([])
             }),
             'hitArea': '/prism/images/scenes/rooms/bedroom1/accent.svg',
             'role': 'main'
           },
           {
             'id': 3,
-            'mask': new MaskObj({id: uniqueId(`msk`), blob:``
+            'mask': new MaskObj({id: 'msk18', blob: new Blob([])
             }),
             'hitArea': '/prism/images/scenes/rooms/bedroom1/trim.svg',
             'role': 'trim'
@@ -235,21 +234,21 @@ const Scenes =
         'surfaces': [
           {
             'id': 1,
-            'mask': new MaskObj({id: uniqueId(`msk`), blob:``
+            'mask': new MaskObj({id: 'msk19', blob: new Blob([])
             }),
             'hitArea': '/prism/images/scenes/rooms/bathroom1/main.svg',
             'role': 'main'
           },
           {
             'id': 2,
-            'mask': new MaskObj({id: uniqueId(`msk`), blob:``
+            'mask': new MaskObj({id: 'msk20', blob: new Blob([])
             }),
             'hitArea': '/prism/images/scenes/rooms/bathroom1/accent.svg',
             'role': 'main'
           },
           {
             'id': 3,
-            'mask': new MaskObj({id: uniqueId(`msk`), blob:``
+            'mask': new MaskObj({id: 'msk21', blob: new Blob([])
             }),
             'hitArea': '/prism/images/scenes/rooms/bathroom1/trim.svg',
             'role': 'trim'
@@ -265,21 +264,21 @@ const Scenes =
         'surfaces': [
           {
             'id': 1,
-            'mask': new MaskObj({id: uniqueId(`msk`), blob:``
+            'mask': new MaskObj({id: 'msk22', blob: new Blob([])
             }),
             'hitArea': '/prism/images/scenes/rooms/bathroom1/main.svg',
             'role': 'main'
           },
           {
             'id': 2,
-            'mask': new MaskObj({id: uniqueId(`msk`), blob:``
+            'mask': new MaskObj({id: 'msk23', blob: new Blob([])
             }),
             'hitArea': '/prism/images/scenes/rooms/bathroom1/accent.svg',
             'role': 'main'
           },
           {
             'id': 3,
-            'mask': new MaskObj({id: uniqueId(`msk`), blob:``
+            'mask': new MaskObj({id: 'msk24', blob: new Blob([])
             }),
             'hitArea': '/prism/images/scenes/rooms/bathroom1/trim.svg',
             'role': 'trim'
@@ -306,21 +305,21 @@ const Scenes =
         'surfaces': [
           {
             'id': 1,
-            'mask': new MaskObj({id: uniqueId(`msk`), blob:``
+            'mask': new MaskObj({id: 'msk25', blob: new Blob([])
             }),
             'hitArea': '/prism/images/scenes/rooms/exterior1/main.svg',
             'role': 'main'
           },
           {
             'id': 2,
-            'mask': new MaskObj({id: uniqueId(`msk`), blob:``
+            'mask': new MaskObj({id: 'msk26', blob: new Blob([])
             }),
             'hitArea': '/prism/images/scenes/rooms/exterior1/accent.svg',
             'role': 'accent'
           },
           {
             'id': 3,
-            'mask': new MaskObj({id: uniqueId(`msk`), blob:``
+            'mask': new MaskObj({id: 'msk27', blob: new Blob([])
             }),
             'hitArea': '/prism/images/scenes/rooms/exterior1/trim.svg',
             'role': 'trim'
@@ -336,21 +335,21 @@ const Scenes =
         'surfaces': [
           {
             'id': 1,
-            'mask': new MaskObj({id: uniqueId(`msk`), blob:``
+            'mask': new MaskObj({id: 'msk28', blob: new Blob([])
             }),
             'hitArea': '/prism/images/scenes/rooms/exterior1/main.svg',
             'role': 'main'
           },
           {
             'id': 2,
-            'mask': new MaskObj({id: uniqueId(`msk`), blob:``
+            'mask': new MaskObj({id: 'msk29', blob: new Blob([])
             }),
             'hitArea': '/prism/images/scenes/rooms/exterior1/accent.svg',
             'role': 'accent'
           },
           {
             'id': 3,
-            'mask': new MaskObj({id: uniqueId(`msk`), blob:``
+            'mask': new MaskObj({id: 'msk30', blob: new Blob([])
             }),
             'hitArea': '/prism/images/scenes/rooms/exterior1/trim.svg',
             'role': 'trim'

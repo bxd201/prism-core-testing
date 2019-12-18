@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`matches snapshot 1`] = `
+exports[`<ColorPickerSlide /> matches snapshot 1`] = `
 <IntlProvider
   defaultFormats={Object {}}
   defaultLocale="en"
@@ -129,21 +129,82 @@ exports[`matches snapshot 1`] = `
         }
       }
     >
-      <ColorWallSwatchRenderer>
+      <ColorPickerSlide
+        expertColorPicks={
+          Array [
+            2761,
+            2043,
+            2689,
+          ]
+        }
+      >
         <div
-          className="color-wall-swatches__swatch"
-          role="presentation"
+          className="prism-color-picker__wrapper prism-color-picker__wrapper--hide"
         >
           <div
-            className="color-swatch-inner "
-            style={
-              Object {
-                "background": undefined,
-              }
-            }
-          />
+            className="prism-color-picker__wrapper__border"
+          >
+            <div
+              className="slide-palette-header slide-palette-header--hide"
+            >
+              <button
+                className="slide-palette-header__arrow-button"
+                onClick={[Function]}
+              >
+                <FontAwesomeIcon
+                  border={false}
+                  className="prism-color-picker__toggle-arrow"
+                  fixedWidth={false}
+                  flip={null}
+                  icon={
+                    Array [
+                      "fal",
+                      "long-arrow-left",
+                    ]
+                  }
+                  inverse={false}
+                  listItem={false}
+                  mask={null}
+                  pull={null}
+                  pulse={false}
+                  rotation={null}
+                  size={null}
+                  spin={false}
+                  swapOpacity={false}
+                  symbol={false}
+                  title=""
+                  transform={null}
+                >
+                  <svg
+                    aria-hidden="true"
+                    className="svg-inline--fa fa-long-arrow-left fa-w-14 prism-color-picker__toggle-arrow"
+                    data-icon="long-arrow-left"
+                    data-prefix="fal"
+                    focusable="false"
+                    role="img"
+                    style={Object {}}
+                    viewBox="0 0 448 512"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M136.97 380.485l7.071-7.07c4.686-4.686 4.686-12.284 0-16.971L60.113 273H436c6.627 0 12-5.373 12-12v-10c0-6.627-5.373-12-12-12H60.113l83.928-83.444c4.686-4.686 4.686-12.284 0-16.971l-7.071-7.07c-4.686-4.686-12.284-4.686-16.97 0l-116.485 116c-4.686 4.686-4.686 12.284 0 16.971l116.485 116c4.686 4.686 12.284 4.686 16.97-.001z"
+                      fill="currentColor"
+                      style={Object {}}
+                    />
+                  </svg>
+                </FontAwesomeIcon>
+              </button>
+            </div>
+            <div
+              className="slide-palette-content"
+            />
+            <button
+              className="slide-palette-header__mobile-toggle-arrow "
+              onClick={[Function]}
+            />
+          </div>
         </div>
-      </ColorWallSwatchRenderer>
+      </ColorPickerSlide>
     </Router>
   </Provider>
 </IntlProvider>

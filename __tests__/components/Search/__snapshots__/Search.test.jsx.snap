@@ -64,9 +64,12 @@ exports[`matches snapshot 1`] = `
       "SCENE_HIDDEN": "Scene is hidden",
       "SEARCH.ERROR.GENERIC": "We were unable to perform your search.",
       "SEARCH.ERROR.HEADLINE": "Something went wrong.",
+      "SEARCH.FIND_A_COLOR": "Find a color",
       "SEARCH.NO_RESULTS": "Sorry, no color matches found.",
       "SEARCH.PROMPT": "Enter a color name, number, or family in the text field above.",
       "SEARCH.SEARCH": "Search",
+      "SEARCH.SEARCHING": "Searching",
+      "SEARCH.SEARCH_BY": "Search by color name or number",
       "SEARCH.SUGGESTIONS": "Some examples of things you can search for are {suggestions}",
       "SIMILAR_COLORS": "Similar Colors",
       "SWATCH_ACTIVATED_DETAILS": "{color} is selected. Press Enter to view details.",
@@ -126,32 +129,37 @@ exports[`matches snapshot 1`] = `
         }
       }
     >
-      <_default>
+      <Search>
         <div
           className="Search"
         >
           <div
-            className="Search__results-pane"
+            className="Search__results-pane Search__results-pane--top-align"
+            style={
+              Object {
+                "backgroundColor": "#EEEEEE",
+              }
+            }
           >
             <GenericMessage
-              type="WARNING"
+              type="NORMAL"
             >
               <div
-                className="generic-message generic-message--warning"
+                className="generic-message"
               >
                 <div
-                  className="generic-message__inner generic-message__inner--warning"
+                  className="generic-message__inner"
                 >
                   <div
                     className="generic-message__line generic-message__line--headline"
                     key="0"
                   >
                     <FormattedMessage
-                      id="SEARCH.NO_RESULTS"
+                      id="SEARCH.PROMPT"
                       key=".0"
                       values={Object {}}
                     >
-                      Sorry, no color matches found.
+                      Enter a color name, number, or family in the text field above.
                     </FormattedMessage>
                   </div>
                 </div>
@@ -159,7 +167,7 @@ exports[`matches snapshot 1`] = `
             </GenericMessage>
           </div>
         </div>
-      </_default>
+      </Search>
     </Router>
   </Provider>
 </IntlProvider>

@@ -188,7 +188,7 @@ export class ColorDetails extends PureComponent<Props, State> {
     const color = this.getColorById(params[ROUTE_PARAM_NAMES.COLOR_ID])
 
     if (color) {
-      ReactGA.set({ dimension1: config.ga_dimension_id }, ['GAtrackerPRISM'])
+      ReactGA.set({ dimension1: config.ga_domain_id }, ['GAtrackerPRISM'])
       ReactGA.pageview(`color-detail/${color.brandKey} ${color.colorNumber} - ${color.name}`, ['GAtrackerPRISM'])
     }
   }

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`matches snapshot 1`] = `
+exports[`snapshot matches 1`] = `
 <IntlProvider
   defaultFormats={Object {}}
   defaultLocale="en"
@@ -129,21 +129,68 @@ exports[`matches snapshot 1`] = `
         }
       }
     >
-      <ColorWallSwatchRenderer>
-        <div
-          className="color-wall-swatches__swatch"
-          role="presentation"
+      <ColorWall>
+        <TransitionGroup
+          childFactory={[Function]}
+          className="sw-colorwall color-wall-zoom-transitioner"
+          component="div"
         >
           <div
-            className="color-swatch-inner "
-            style={
-              Object {
-                "background": undefined,
-              }
-            }
-          />
-        </div>
-      </ColorWallSwatchRenderer>
+            className="sw-colorwall color-wall-zoom-transitioner"
+          >
+            <CSSTransition
+              classNames="color-wall-zoom-transitioner__zoom-out color-wall-zoom-transitioner__zoom-out-"
+              in={true}
+              key=".$"
+              mountOnEnter={true}
+              onExited={[Function]}
+              timeout={700}
+              unmountOnExit={true}
+            >
+              <Transition
+                appear={false}
+                enter={true}
+                exit={true}
+                in={true}
+                mountOnEnter={true}
+                onEnter={[Function]}
+                onEntered={[Function]}
+                onEntering={[Function]}
+                onExit={[Function]}
+                onExited={[Function]}
+                onExiting={[Function]}
+                timeout={700}
+                unmountOnExit={true}
+              >
+                <GenericMessage
+                  type="ERROR"
+                >
+                  <div
+                    className="generic-message generic-message--error"
+                  >
+                    <div
+                      className="generic-message__inner generic-message__inner--error"
+                    >
+                      <div
+                        className="generic-message__line generic-message__line--headline"
+                        key="0"
+                      >
+                        <FormattedMessage
+                          id="NO_COLORS_AVAILABLE"
+                          key=".0"
+                          values={Object {}}
+                        >
+                          No colors available.
+                        </FormattedMessage>
+                      </div>
+                    </div>
+                  </div>
+                </GenericMessage>
+              </Transition>
+            </CSSTransition>
+          </div>
+        </TransitionGroup>
+      </ColorWall>
     </Router>
   </Provider>
 </IntlProvider>

@@ -37,6 +37,10 @@ const searchBarNoLabel = () => <div className='color-wall-wrap__chunk'>
   </FormattedMessage>
 </div>
 
+const ColorWallContain = () => <ColorWall contain />
+const SearchContain = () => <Search contain />
+const CWToolbar = () => <ColorWallToolbar isFamilyPage={false} />
+
 export const ColorWallPage = (props: Props) => {
   const { displayAddButton, colorWallBgColor, subscribe, publish, unsubscribeAll, colorDetailPageRoot } = props
 
@@ -77,15 +81,16 @@ export const ColorWallPage = (props: Props) => {
           <Switch>
             <Route path='(.*)?/search/:query' component={searchBarNoLabel} />
             <Route path='(.*)?/search' component={searchBarNoLabel} />
-            <Route path='(.*)?/section/:section/family/:family' component={ColorWallToolbar} />
-            <Route path='(.*)?/section/:section/family/' component={ColorWallToolbar} />
-            <Route path='(.*)?/family/:family/' component={ColorWallToolbar} />
-            <Route path='(.*)?/family/' component={ColorWallToolbar} />
-            <Route component={ColorWallToolbar} />
+            <Route path='(.*)?/section/:section/family/:family' component={CWToolbar} />
+            <Route path='(.*)?/section/:section/family/' component={CWToolbar} />
+            <Route path='(.*)?/family/:family/' component={CWToolbar} />
+            <Route path='(.*)?/family/' component={CWToolbar} />
+            <Route component={CWToolbar} />
           </Switch>
           <Switch>
-            <Route path='(.*)?/search/:query' component={Search} />
-            <Route component={ColorWall} />
+            <Route path='(.*)?/search/:query' component={SearchContain} />
+            <Route path='(.*)?/search/' component={SearchContain} />
+            <Route component={ColorWallContain} />
           </Switch>
           {isLoading ? <GenericOverlay type={GenericOverlay.TYPES.LOADING} semitransparent /> : null}
         </div>

@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/label-has-for */
 // @flow
 import React from 'react'
-import { useHistory, useRouteMatch } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
 import ButtonBar from '../GeneralButtons/ButtonBar/ButtonBar'
@@ -26,10 +26,12 @@ export default (props: Props) => {
     showIcon = true,
     showLabel = true
   } = props
-  const { params: { query = '' } } = useRouteMatch()
+  const { query = '' } = useParams()
   const history = useHistory()
   const [value, setValue] = React.useState(query)
   const [id] = React.useState(uniqueId('SearchBarInput'))
+
+  React.useEffect(() => { value !== query && setValue(query) }, [query])
 
   React.useEffect(() => { // mutate url when input hasn't changed in 250ms
     const id = setTimeout(() => value !== query && history.push(value || './'), 250)

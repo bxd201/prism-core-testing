@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`matches snapshot 1`] = `
+exports[`snapshot matches 1`] = `
 <IntlProvider
   defaultFormats={Object {}}
   defaultLocale="en"
@@ -129,21 +129,49 @@ exports[`matches snapshot 1`] = `
         }
       }
     >
-      <ColorWallSwatchRenderer>
-        <div
-          className="color-wall-swatches__swatch"
-          role="presentation"
-        >
-          <div
-            className="color-swatch-inner "
-            style={
+      <_default>
+        <Memo(HeroLoader)>
+          <Memo(CSSVariableApplicator)
+            variables={
               Object {
-                "background": undefined,
+                "--prism-hero-loader-color-1": "#00b9e4",
+                "--prism-hero-loader-color-2": "#69be28",
+                "--prism-hero-loader-color-3": "#ffb612",
+                "--prism-hero-loader-color-4": "#e17000",
+                "--prism-hero-loader-color-5": "#b71234",
               }
             }
-          />
-        </div>
-      </ColorWallSwatchRenderer>
+          >
+            <div
+              className="hero-loader  "
+            >
+              <div
+                className="hero-loader__wrapper"
+              >
+                <div
+                  className="hero-loader__bar-spinner"
+                >
+                  <div
+                    className="hero-loader__bar hero-loader__bar--1"
+                  />
+                  <div
+                    className="hero-loader__bar hero-loader__bar--2"
+                  />
+                  <div
+                    className="hero-loader__bar hero-loader__bar--3"
+                  />
+                  <div
+                    className="hero-loader__bar hero-loader__bar--4"
+                  />
+                  <div
+                    className="hero-loader__bar hero-loader__bar--5"
+                  />
+                </div>
+              </div>
+            </div>
+          </Memo(CSSVariableApplicator)>
+        </Memo(HeroLoader)>
+      </_default>
     </Router>
   </Provider>
 </IntlProvider>

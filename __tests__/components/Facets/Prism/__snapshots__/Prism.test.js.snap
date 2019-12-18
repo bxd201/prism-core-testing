@@ -5,7 +5,7 @@ exports[`Prism routes should match snapshot 1`] = `
   <div
     className="prism__root-container"
   >
-    <Connect(withRouter(PrismNav)) />
+    <_default />
     <hr />
     <div
       className="prism__root-wrapper"
@@ -34,7 +34,7 @@ exports[`Prism routes should match snapshot 1`] = `
               "loading": false,
               "swatchMaxSize": 33,
               "swatchMaxSizeZoomed": 50,
-              "swatchMinSize": 15,
+              "swatchMinSize": 14,
               "swatchMinSizeZoomed": 50,
             }
           }

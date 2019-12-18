@@ -1,7 +1,7 @@
 // @flow
-import React, { PureComponent } from 'react'
-import { withRouter, type RouterHistory } from 'react-router-dom'
-import { connect } from 'react-redux'
+import React, { useEffect } from 'react'
+import { Link, useLocation } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
 import { toggleCompareColor } from '../../../store/actions/live-palette'
 import './PrismNav.scss'
 
@@ -37,47 +37,23 @@ const isFastMask = (pathname) => {
   return /^\/fast-mask/.test(pathname)
 }
 
-type Props = {
-  history: RouterHistory,
-  location: Location,
-  toggleCompareColor: Function
+export default () => {
+  const location = useLocation()
+  const { pathname } = location
+  const dispatch = useDispatch()
+
+  useEffect(() => { dispatch(toggleCompareColor(true)) }, [location])
+
+  return (
+    <>
+      <Link to='/active' className={`prism-nav-btn ${isScene(pathname) ? 'prism-nav-btn--active' : ''}`}>Scenes</Link>
+      <Link to='/active/color-wall/section/sherwin-williams-colors' className={`prism-nav-btn ${isColorWall(pathname) ? 'prism-nav-btn--active' : ''}`}>Color Wall</Link>
+      <Link to='/color-from-image' className={`prism-nav-btn ${isColorFromImage(pathname) ? 'prism-nav-btn--active' : ''}`}>Color From Image</Link>
+      <Link to='/color-collections' className={`prism-nav-btn ${isColorCollections(pathname) ? 'prism-nav-btn--active' : ''}`}>Color Collections</Link>
+      <Link to='/expert-colors' className={`prism-nav-btn ${isExpertColor(pathname) ? 'prism-nav-btn--active' : ''}`}>Expert Colors</Link>
+      <Link to='/match-photo' className={`prism-nav-btn ${isMatchPhoto(pathname) ? 'prism-nav-btn--active' : ''}`}>Match Photo</Link>
+      <Link to='/paint-scene' className={`prism-nav-btn ${isPaintScene(pathname) ? 'prism-nav-btn--active' : ''}`}>Paint a Scene</Link>
+      <Link to='/fast-mask' className={`prism-nav-btn ${isFastMask(pathname) ? 'prism-nav-btn--active' : ''}`}>Fast Mask</Link>
+    </>
+  )
 }
-
-export class PrismNav extends PureComponent<Props> {
-  componentDidUpdate (prevProps: Props) {
-    if (this.props.location !== prevProps.location) {
-      this.onRouteChanged()
-    }
-  }
-
-  onRouteChanged () {
-    this.props.toggleCompareColor(true)
-  }
-
-  render () {
-    const { history, location: { pathname } } = this.props
-
-    return (
-      <React.Fragment>
-        <button onClick={() => { history.push('/active') }} className={`prism-nav-btn ${isScene(pathname) ? 'prism-nav-btn--active' : ''}`}>Scenes</button>
-        <button onClick={() => { history.push('/active/color-wall/section/sherwin-williams-colors') }} className={`prism-nav-btn ${isColorWall(pathname) ? 'prism-nav-btn--active' : ''}`}>Color Wall</button>
-        <button onClick={() => { history.push('/color-from-image') }} className={`prism-nav-btn ${isColorFromImage(pathname) ? 'prism-nav-btn--active' : ''}`}>Color From Image</button>
-        <button onClick={() => { history.push('/color-collections') }} className={`prism-nav-btn ${isColorCollections(pathname) ? 'prism-nav-btn--active' : ''}`}>Color Collections</button>
-        <button onClick={() => { history.push('/expert-colors') }} className={`prism-nav-btn ${isExpertColor(pathname) ? 'prism-nav-btn--active' : ''}`}>Expert Colors</button>
-        <button onClick={() => { history.push('/match-photo') }} className={`prism-nav-btn ${isMatchPhoto(pathname) ? 'prism-nav-btn--active' : ''}`}>Match Photo</button>
-        <button onClick={() => { history.push('/paint-scene') }} className={`prism-nav-btn ${isPaintScene(pathname) ? 'prism-nav-btn--active' : ''}`}>Paint a Scene</button>
-        <button onClick={() => { history.push('/fast-mask') }} className={`prism-nav-btn ${isFastMask(pathname) ? 'prism-nav-btn--active' : ''}`}>Fast Mask</button>
-      </React.Fragment>
-    )
-  }
-}
-
-const mapDispatchToProps = (dispatch: Function) => {
-  return {
-    toggleCompareColor: (isClose) => {
-      dispatch(toggleCompareColor(isClose))
-    }
-  }
-}
-
-export default connect(null, mapDispatchToProps)(withRouter(PrismNav))

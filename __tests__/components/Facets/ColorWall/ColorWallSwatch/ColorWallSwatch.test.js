@@ -38,9 +38,14 @@ test('ColorWallSwatch should render Link correctly when showContents = false and
   expect(mocked(<ColorWallSwatch {...defaultProps} thisLink='test' />).find(Link).exists()).toBe(true)
 })
 
-test('clicking a ColorWallSwatch with showContents = true calls the passed in onClick function', () => {
-  mocked(<ColorWallSwatch {...defaultProps} showContents />).simulate('click')
-  expect(clickFn).toHaveBeenCalled()
+// TODO: provided onClick function is only called if A) showContents is true, and B) one of the nested buttons (info/add/detail) is shown and clicked
+// test('clicking a ColorWallSwatch with showContents = true does call the passed in onClick function', () => {
+//   mocked(<ColorWallSwatch {...defaultProps} showContents />).simulate('click')
+//   expect(clickFn).toHaveBeenCalled()
+// })
+
+test('clicking a ColorWallSwatch with showContents = false and no thisLink does NOT generate a Link', () => {
+  expect(mocked(<ColorWallSwatch {...defaultProps} />).find(Link)).toHaveLength(0)
 })
 
 test('clicking a ColorWallSwatch with showContents = false and thisLink = \'test\' calls the passed in onClick function', () => {

@@ -2,6 +2,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import isEmpty from 'lodash/isEmpty'
+import at from 'lodash/at'
 
 import HeroLoader from '../../components/Loaders/HeroLoader/HeroLoader'
 import { loadColors } from '../../store/actions/loadColors'
@@ -12,13 +13,15 @@ import { type Configuration } from '../../shared/types/Configuration'
 
 import './ColorDataWrapper.scss'
 
-type Props = {
+export type ColorDataWrapperProps = {
   colors: CategorizedColorGrid,
   brights: CategorizedColorGrid,
   colorMap: ColorMap,
   loadColors: Function,
   family?: string,
   families?: string[],
+  loading: boolean,
+  error: boolean,
   config: Configuration
 }
 
@@ -27,8 +30,8 @@ type Props = {
  * @param {component} WrappedComponent
  */
 const ColorDataWrapper = (WrappedComponent: any) => {
-  class ColorData extends React.Component<Props> {
-    constructor (props) {
+  class ColorData extends React.Component<ColorDataWrapperProps> {
+    constructor (props: ColorDataWrapperProps) {
       super(props)
 
       if (isEmpty(this.props.colors)) {
@@ -37,7 +40,7 @@ const ColorDataWrapper = (WrappedComponent: any) => {
     }
 
     render () {
-      if (isEmpty(this.props.colors)) {
+      if (this.props.loading) {
         return <HeroLoader />
       }
 
@@ -52,7 +55,9 @@ const ColorDataWrapper = (WrappedComponent: any) => {
       brights: state.colors.items.brights,
       colorWallActive: state.colors.colorWallActive,
       family: state.colors.family,
-      families: state.colors.families
+      families: state.colors.families,
+      loading: !!at(state, 'colors.status.loading')[0],
+      error: !!at(state, 'colors.status.error')[0]
     }
   }
 

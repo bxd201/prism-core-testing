@@ -23,7 +23,7 @@ export const colorWallContextDefault: ColorWallContextProps = {
   loading: false,
   swatchMaxSize: 33,
   swatchMaxSizeZoomed: 50,
-  swatchMinSize: 15,
+  swatchMinSize: 14,
   swatchMinSizeZoomed: 50
 }
 

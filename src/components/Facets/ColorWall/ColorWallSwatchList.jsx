@@ -44,6 +44,7 @@ type RouterProps = {
 
 type Props = IntlProps & RouterProps & {
   colors: ColorIdGrid, // eslint-disable-line react/no-unused-prop-types
+  contain: boolean,
   minCellSize: number,
   maxCellSize: number,
   bloomRadius: number,
@@ -112,7 +113,8 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
   static defaultProps = {
     bloomRadius: 0,
     minCellSize: 50,
-    maxCellSize: 50
+    maxCellSize: 50,
+    contain: true
   }
 
   constructor (props: Props) {
@@ -140,7 +142,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
   // LIFECYCLE METHODS
 
   render () {
-    const { minCellSize, maxCellSize, showAll, activeColor, colors } = this.props
+    const { minCellSize, maxCellSize, showAll, activeColor, colors, contain } = this.props
     const { focusCoords, needsInitialFocus, a11yFocusChunk, a11yFocusCell, renderFocusOutline } = this.state
     const colorIdGrid = colors
     const rowCount = colorIdGrid.length
@@ -171,17 +173,19 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
           : null
         }
 
-        <section className='color-wall-swatch-list color-wall-swatch-list--cover'
+        <section className={`color-wall-swatch-list ${contain ? 'color-wall-swatch-list--contain' : ''}`}
           role='application'
           tabIndex={0} // eslint-disable-line
           ref={this._gridWrapperRef}>
-          <AutoSizer onResize={this.handleGridResize}>
-            {({ height, width }) => {
+          <AutoSizer onResize={this.handleGridResize} disableHeight={!contain}>
+            {({ height = 0, width }) => {
               let size = maxCellSize
 
               if (showAll) {
                 size = Math.max(Math.min(width / columnCount, maxCellSize), minCellSize)
               }
+
+              const gridHeight = contain ? height : Math.max(height, rowCount * size)
 
               // keep tabs on our current size since it can very between min/maxCellSize
               this._cellSize = size
@@ -203,7 +207,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
                   rowHeight={size}
                   rowCount={rowCount}
                   width={width}
-                  height={height}
+                  height={gridHeight}
                   overscanIndicesGetter={overscanIndicesGetter}
                   containerRole='presentation'
                   role='presentation'

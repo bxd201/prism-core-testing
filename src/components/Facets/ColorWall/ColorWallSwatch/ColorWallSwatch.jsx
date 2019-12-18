@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { type Color } from '../../../../shared/types/Colors'
 import { numToAlphaString, arrayToSpacedString } from '../../../../shared/helpers/StringUtils'
@@ -26,6 +26,21 @@ type Props = {
 
 const ColorWallSwatch = (props: Props) => {
   const { onAdd, onClick, showContents, color, thisLink, focus, level, active, compensateX, compensateY } = props
+  const handleOnAdd = useMemo(() => {
+    return () => {
+      if (onAdd) {
+        onAdd(color)
+      }
+    }
+  }, [color, onAdd])
+
+  const handleOnClick = useMemo(() => {
+    return (e) => {
+      if (onClick) {
+        onClick(e)
+      }
+    }
+  }, [onClick])
 
   let classes = [ CLASS_NAMES.BASE, CLASS_NAMES.BASE_DYNAMIC ]
   if (color.isDark) { classes.push(CLASS_NAMES.BASE_DARK) }
@@ -55,7 +70,7 @@ const ColorWallSwatch = (props: Props) => {
               tabIndex={-1}
             />
             <AddButton
-              onClick={onAdd(color)}
+              onClick={handleOnAdd}
               className={`${CLASS_NAMES.CONTENT_CTA} ${CLASS_NAMES.CONTENT_CTA_L}`}
               tabIndex={-1}
             />
@@ -66,7 +81,7 @@ const ColorWallSwatch = (props: Props) => {
             />
           </section>
           : thisLink
-            ? <Link to={thisLink} className={CLASS_NAMES.ENGAGE_LINK} onClick={e => onClick(e)} tabIndex={-1}>
+            ? <Link to={thisLink} className={CLASS_NAMES.ENGAGE_LINK} onClick={handleOnClick} tabIndex={-1}>
               <span className='visually-hidden'>{fullColorName(color.brandKey, color.colorNumber, color.name)}</span>
             </Link>
             : <span className='visually-hidden'>{fullColorName(color.brandKey, color.colorNumber, color.name)}</span>
