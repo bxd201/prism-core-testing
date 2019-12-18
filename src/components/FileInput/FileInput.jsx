@@ -1,8 +1,13 @@
 // @flow
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import 'src/providers/fontawesome/fontawesome'
 
 import './FileInput.scss'
+import 'src/scss/convenience/visually-hidden.scss'
+import 'src/scss/convenience/clickable.scss'
+import 'src/scss/convenience/disabled.scss'
+import 'src/scss/convenience/overflow-ellipsis.scss'
 
 type Props = {
   onChange: Function,
@@ -49,4 +54,4 @@ FileInput.defaultProps = {
   placeholder: 'Select your image...'
 }
 
-export default FileInput
+export default React.memo<Props>(FileInput)

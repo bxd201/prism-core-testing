@@ -1,0 +1,20 @@
+.color-wall-swatch-list {
+  width: 100%;
+
+  &--cover {
+    height: 100%;
+    overflow: hidden;
+    position: absolute;
+  }
+
+  // React Virtualized Grid classes
+  .ReactVirtualized__Grid {
+    // override component-injected styles to fix iOS problem =\
+    -webkit-overflow-scrolling: auto !important;
+
+    &__innerScrollContainer {
+      margin: auto auto;
+      overflow: visible !important;
+    }
+  }
+}

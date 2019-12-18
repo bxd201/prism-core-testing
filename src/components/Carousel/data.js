@@ -1,5 +1,6 @@
 // This is temporary use for mock carousel data from api
 // @flow
+
 import type { ColorCollectionsTabs, CategorizedColorById } from '../../shared/types/Colors'
 import * as Colors from '../../../__mocks__/data/color/Colors'
 const colors = Colors.getAllColors()

@@ -25,8 +25,9 @@ class CollectionSummary extends PureComponent<Props> {
     let bottomColorList
 
     if (isExpertColor) {
-      color = cloneDeep(data[0])
-      bottomColorList = cloneDeep(data.slice(1))
+      if (!data.colorDefs) return null
+      color = cloneDeep(data.colorDefs[0])
+      bottomColorList = cloneDeep(data.colorDefs.slice(1))
     } else {
       img = data.img
       collectionName = data.name

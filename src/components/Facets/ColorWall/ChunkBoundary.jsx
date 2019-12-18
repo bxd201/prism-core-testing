@@ -48,4 +48,4 @@ function ChunkBoundary ({ render, bounds, x, y }: Props) {
   return null
 }
 
-export default ChunkBoundary
+export default React.memo<Props>(ChunkBoundary)

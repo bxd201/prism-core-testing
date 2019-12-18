@@ -1,18 +1,21 @@
 // @flow
 import React, { PureComponent, Fragment } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import 'src/providers/fontawesome/fontawesome'
 import { connect } from 'react-redux'
 import { add } from '../../store/actions/live-palette'
 import { getlpColorByNumber } from '../../../__mocks__/data/color/Colors'
 import type { Color } from '../../../src/shared/types/Colors'
 import some from 'lodash/some'
 import { LiveMessage } from 'react-aria-live'
-import './ColorPins.scss'
 import { activedPinsHalfWidth } from './data'
 import { getContrastYIQ } from '../../../src/shared/helpers/ColorUtils'
 
+import './ColorPins.scss'
+import 'src/scss/convenience/visually-hidden.scss'
+
 type Props = {
-  activedPins: Function,
+  activatePin: Function,
   isActiveFlag: boolean,
   isContentLeft: boolean,
   translateX: number,
@@ -51,7 +54,7 @@ const KEY_CODE_ARROW_DOWN = 40
 const PIN_MOVEMENT_INTERVAL = 10
 const PIN_MOVEMENT_SHIFT_KEY_INTERVAL = 1
 
-class ColorsFromImagePin extends PureComponent<Props, State> {
+export class ColorsFromImagePin extends PureComponent<Props, State> {
   colorDivRef: RefObject
   constructor (props) {
     super(props)
@@ -73,7 +76,7 @@ class ColorsFromImagePin extends PureComponent<Props, State> {
   onClickHandlerLabel = (e: Object) => {
     e.preventDefault()
     e.stopPropagation()
-    this.props.activedPins(this.props.pinNumber)
+    this.props.activatePin(this.props.pinNumber)
   }
 
   onKeyDownHandlerDiv = (e: Object) => {
@@ -87,7 +90,7 @@ class ColorsFromImagePin extends PureComponent<Props, State> {
     if (isColorDivFocused && (e.keyCode === KEY_CODE_ENTER || e.keyCode === KEY_CODE_SPACE)) {
       e.stopPropagation()
       e.preventDefault()
-      this.props.activedPins(this.props.pinNumber)
+      this.props.activatePin(this.props.pinNumber)
       this.focusHandler()
     } else if (isColorDivFocused &&
       this.props.isActiveFlag && (
@@ -174,7 +177,7 @@ class ColorsFromImagePin extends PureComponent<Props, State> {
   }
 
   onChangeHandlerInput = (e: Object) => {
-    this.props.activedPins(this.props.pinNumber)
+    this.props.activatePin(this.props.pinNumber)
   }
 
   handleMouseMove = (e) => {
@@ -199,6 +202,7 @@ class ColorsFromImagePin extends PureComponent<Props, State> {
     window.removeEventListener('mouseup', this.handleDragStop)
   }
 
+  // 360 is subtracted to set the displayed pin to the labels origin. Despite the perfectness of the number its actually coincidental.
   render () {
     const { previewColorName, previewColorNumber, translateX, translateY, RGBstring, isActiveFlag, pinNumber, addColors, isContentLeft, hide } = this.props
     const { isColorDivFocused } = this.state

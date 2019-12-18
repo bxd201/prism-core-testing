@@ -12,7 +12,7 @@ exports[`snapshot match testing should match snapshot 1`] = `
     >
       <Bar>
         <Button
-          to="/active/color-wall"
+          to="/active/color-wall/color/2248/sw-6561-teaberry/"
         >
           <FontAwesomeIcon
             border={false}
@@ -33,6 +33,7 @@ exports[`snapshot match testing should match snapshot 1`] = `
             rotation={null}
             size={null}
             spin={false}
+            swapOpacity={false}
             symbol={false}
             title=""
             transform={null}

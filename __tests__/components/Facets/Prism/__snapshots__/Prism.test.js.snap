@@ -2,32 +2,105 @@
 
 exports[`Prism routes should match snapshot 1`] = `
 <Fragment>
-  <withRouter(PrismNav) />
-  <hr />
-  <Route
-    component={[Function]}
-    exact={true}
-    path="/"
-  />
-  <Route
-    component={[Function]}
-    exact={true}
-    path="/active"
-  />
-  <Route
-    component={[Function]}
-    path="/active/color-wall(/.*)?"
-  />
-  <Route
-    component={[Function]}
-    exact={true}
-    path="/active/color/:colorId/:colorSEO"
-  />
-  <Route
-    component={[Function]}
-    exact={true}
-    path="/fast-mask"
-  />
-  <Connect(LivePalette) />
+  <div
+    className="prism__root-container"
+  >
+    <_default />
+    <hr />
+    <div
+      className="prism__root-wrapper"
+    >
+      <Route
+        component={[Function]}
+        exact={true}
+        path="/"
+      />
+      <Route
+        component={[Function]}
+        exact={true}
+        path="/active"
+      />
+      <Route
+        path="/active/color-wall(/.*)?"
+      >
+        <ContextProvider
+          value={
+            Object {
+              "colorDetailPageRoot": false,
+              "colorWallBgColor": "#EEEEEE",
+              "displayAddButton": false,
+              "displayDetailsLink": true,
+              "displayInfoButton": false,
+              "loading": false,
+              "swatchMaxSize": 33,
+              "swatchMaxSizeZoomed": 50,
+              "swatchMinSize": 14,
+              "swatchMinSizeZoomed": 50,
+            }
+          }
+        >
+          <ColorWallPage
+            publish={[Function]}
+            subscribe={[Function]}
+            unmount={[Function]}
+            unsubscribe={[Function]}
+            unsubscribeAll={[Function]}
+          />
+        </ContextProvider>
+      </Route>
+      <Route
+        component={
+          Object {
+            "$$typeof": Symbol(react.memo),
+            "WrappedComponent": [Function],
+            "compare": null,
+            "displayName": "Connect(Component)",
+            "type": [Function],
+          }
+        }
+        exact={true}
+        path="/active/color-detail/:colorId/:colorSEO"
+      />
+      <Route
+        component={[Function]}
+        path="/color-from-image"
+      />
+      <Route
+        component={[Function]}
+        path="/color-collections"
+      />
+      <Route
+        component={[Function]}
+        path="/expert-colors"
+      />
+      <Route
+        component={[Function]}
+        path="/match-photo"
+      />
+      <Route
+        path="/paint-scene"
+        render={[Function]}
+      />
+      <Route
+        component={[Function]}
+        exact={true}
+        path="/active/color/:colorId/:colorSEO"
+      />
+      <Route
+        component={
+          Object {
+            "$$typeof": Symbol(react.memo),
+            "WrappedComponent": [Function],
+            "compare": null,
+            "displayName": "Connect(FastMask)",
+            "type": [Function],
+          }
+        }
+        exact={true}
+        path="/fast-mask"
+      />
+    </div>
+    <Connect(LivePalette) />
+  </div>
 </Fragment>
 `;

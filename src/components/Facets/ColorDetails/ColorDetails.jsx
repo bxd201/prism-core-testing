@@ -1,6 +1,7 @@
 // @flow
 import React, { PureComponent } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import 'src/providers/fontawesome/fontawesome'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import has from 'lodash/has'
@@ -18,6 +19,9 @@ import SimilarColors from './SimilarColors/SimilarColors'
 import SceneManager from '../../SceneManager/SceneManager'
 import WithConfigurationContext from '../../../contexts/ConfigurationContext/WithConfigurationContext'
 import { ROUTE_PARAM_NAMES } from 'constants/globals'
+import facetBinder from 'src/facetSupport/facetBinder'
+import { facetBinderDefaultProps, type FacetBinderMethods } from 'src/facetSupport/facetInstance'
+import { type FacetPubSubMethods, facetPubSubDefaultProps } from 'src/facetSupport/facetPubSub'
 
 import { paintAllMainSurfaces } from '../../../store/actions/scenes'
 import { varValues } from 'variables'
@@ -25,6 +29,7 @@ import { varValues } from 'variables'
 import type { ColorMap, Color } from '../../../shared/types/Colors'
 import type { Configuration } from '../../../shared/types/Configuration'
 
+import 'src/scss/convenience/visually-hidden.scss'
 import './ColorDetails.scss'
 
 type StateProps = {
@@ -46,10 +51,14 @@ type ComponentProps = {
   intl: any
 }
 
-type Props = StateProps & ComponentProps
+type Props = StateProps & ComponentProps & FacetBinderMethods & FacetPubSubMethods
 
 export class ColorDetails extends PureComponent<Props, State> {
   static baseClass = 'color-info'
+  static defaultProps = {
+    ...facetPubSubDefaultProps,
+    ...facetBinderDefaultProps
+  }
 
   toggleSceneDisplayScene: RefObject
   toggleSceneHideScene: RefObject
@@ -179,7 +188,7 @@ export class ColorDetails extends PureComponent<Props, State> {
     const color = this.getColorById(params[ROUTE_PARAM_NAMES.COLOR_ID])
 
     if (color) {
-      ReactGA.set({ dimension1: config.ga_dimension_id }, ['GAtrackerPRISM'])
+      ReactGA.set({ dimension1: config.ga_domain_id }, ['GAtrackerPRISM'])
       ReactGA.pageview(`color-detail/${color.brandKey} ${color.colorNumber} - ${color.name}`, ['GAtrackerPRISM'])
     }
   }
@@ -260,4 +269,12 @@ const mapDispatchToProps = (dispatch: Function) => {
   }
 }
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(injectIntl(WithConfigurationContext(ColorDetails))))
+export default facetBinder(withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(
+    injectIntl(
+      WithConfigurationContext(
+        ColorDetails
+      )
+    )
+  )
+), 'ColorDetails')

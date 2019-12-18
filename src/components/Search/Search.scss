@@ -1,19 +1,15 @@
 .Search {
-  &__search-form {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    padding-bottom: $ui-spacing;
-  }
-
   &__results-pane {
-    background: #eee;
     min-height: 60vh;
     text-align: center;
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
+
+    &--top-align {
+      align-items: flex-start;
+    }
 
     @include respond-above(sm) {
       min-height: 60vw;

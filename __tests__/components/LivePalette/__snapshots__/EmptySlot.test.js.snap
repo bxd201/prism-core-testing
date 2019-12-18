@@ -23,6 +23,7 @@ exports[`snapshot testing for emptyslot component  emptySlot component should ma
     rotation={null}
     size="2x"
     spin={false}
+    swapOpacity={false}
     symbol={false}
     title=""
     transform={null}

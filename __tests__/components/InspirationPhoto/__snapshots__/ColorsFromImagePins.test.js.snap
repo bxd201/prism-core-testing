@@ -1,0 +1,127 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`snapshot match testing snapshot testing 1`] = `
+<Fragment>
+  <label
+    aria-label=""
+    className="pin__wrapper pin__wrapper--active"
+    htmlFor=""
+    onClick={[Function]}
+    style={
+      Object {
+        "display": "none",
+        "overflow": "visible",
+        "transform": "translate(-360px, 0px)",
+      }
+    }
+    tabIndex="-1"
+    title=""
+  >
+    <div
+      className="pin__content__wrapper"
+    >
+      <div
+        className="pin__chip pin__chip--active"
+        draggable={true}
+        onBlur={[Function]}
+        onDragStart={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        role="button"
+        style={
+          Object {
+            "background": "",
+          }
+        }
+        tabIndex="0"
+      >
+        <input
+          checked={true}
+          className="visually-hidden"
+          id="pin-0"
+          name="pin-0"
+          onChange={[Function]}
+          tabIndex="-1"
+          type="checkbox"
+        />
+      </div>
+      <div
+        className="pin__content pin__content--left"
+      >
+        <div
+          className="pin__name__wrapper pin__name__wrapper--active"
+        >
+          <span
+            className="pin__copy pin__number"
+          >
+            SW0001
+          </span>
+          <span
+            className="pin__copy pin__name"
+          />
+        </div>
+        <div
+          className="pin__wrapper__pin-add pin__wrapper__pin-add--left pin__wrapper__pin-add--active"
+          style={
+            Object {
+              "background": "",
+            }
+          }
+        >
+          <div
+            className="pin__wrapper__pin-add-icon pin__wrapper__pin-add-icon--left"
+          >
+            <button
+              className="pin__wrapper__pin-add-button"
+              onClick={[Function]}
+              tabIndex="0"
+            >
+              <FontAwesomeIcon
+                border={false}
+                className=""
+                fixedWidth={false}
+                flip={null}
+                icon={
+                  Array [
+                    "fal",
+                    "plus-circle",
+                  ]
+                }
+                inverse={false}
+                listItem={false}
+                mask={null}
+                pull={null}
+                pulse={false}
+                rotation={null}
+                size="2x"
+                spin={false}
+                style={
+                  Object {
+                    "color": "#000",
+                  }
+                }
+                swapOpacity={false}
+                symbol={false}
+                tabIndex="-1"
+                title=""
+                transform={null}
+              />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </label>
+  <LiveMessage
+    aria-live="polite"
+    message="Color  is active. Press tab to go to other color pins"
+  />
+  <LiveMessage
+    aria-live="assertive"
+    clearOnUnmount="true"
+    message="Use the arrow keys on your keyboard to move your picked color. Hold shift for fine movement."
+  />
+</Fragment>
+`;

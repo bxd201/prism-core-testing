@@ -1,3 +1,5 @@
+import 'src/scss/convenience/inherit-font.scss'
+
 export const MODE_CLASS_NAMES = {
   BASE: 'color-wall-mode-btns',
   BUTTON: 'color-wall-mode-btns__btn',

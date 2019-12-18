@@ -1,3 +1,9 @@
+.prism__root-container{
+  max-width: 1080px;
+  margin:0 auto;
+  position: relative;
+}
+
 .prism-nav-btn {
   border: none;
   background: #eee;
@@ -6,6 +12,8 @@
   padding: 1em;
   border-radius: 3px;
   margin-right: 2px;
+  text-decoration: none;
+  font-size: small;
 
   &:hover, &:focus {
     background: #ddd;

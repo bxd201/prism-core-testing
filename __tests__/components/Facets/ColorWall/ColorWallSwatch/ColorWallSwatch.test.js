@@ -22,46 +22,33 @@ const defaultProps = {
   active: false
 }
 
-const getColorWallSwatch = (props = {}) => {
-  return shallow(<ColorWallSwatch {...defaultProps} {...props} />)
-}
-const getDeepMountColorWallSwatch = (props = {}) => {
-  const config = { displayInfoButton: true }
-  return mount(<ColorWallContext.Provider value={config}>
-    <ColorWallSwatch {...defaultProps} {...props} />
-  </ColorWallContext.Provider>)
-}
-
-describe('snapshot test', () => {
-  const ColorWallSwatch = getColorWallSwatch()
-  it('ColorWallSwatch should match the Snapshot', () => {
-    expect(ColorWallSwatch).toMatchSnapshot()
-  })
+test('ColorWallSwatch should match the Snapshot', () => {
+  expect(mocked(<ColorWallSwatch {...defaultProps} />)).toMatchSnapshot()
 })
 
-describe('rendering test', () => {
-  it('ColorWallSwatch should render color title as default', () => {
-    expect(typeof fullColorName(color.brandKey, color.colorNumber, color.name)).toBe('string')
-  })
-  it('ColorWallSwatch should rendering buttons correctly when props showContents equal to true', () => {
-    const ColorWallSwatch = getColorWallSwatch({ showContents: true })
-    expect(ColorWallSwatch.find(ColorWallContext.Consumer).exists()).toBe(true)
-  })
-  it('ColorWallSwatch should rendering Link correctly when props thislink is not equal to null', () => {
-    const ColorWallSwatch = getColorWallSwatch({ thisLink: 'test' })
-    expect(ColorWallSwatch.find(Link).exists()).toBe(true)
-  })
+test('ColorWallSwatch should render color title as default', () => {
+  expect(fullColorName(color.brandKey, color.colorNumber, color.name)).toBe('SW 6561 Teaberry')
 })
 
-describe('event test', () => {
-  it('AddButton should working fine', () => {
-    const ColorWallSwatch = getDeepMountColorWallSwatch({ showContents: true })
-    ColorWallSwatch.find(AddButton).props().onClick()
-    expect(clickFn).toHaveBeenCalled()
-  })
-  it('Link component should work fine', () => {
-    const ColorWallSwatch = getColorWallSwatch({ thisLink: 'test' })
-    ColorWallSwatch.find(Link).simulate('click')
-    expect(clickFn).toHaveBeenCalled()
-  })
+test('ColorSwatch renders a view details button by default when showContents = true', () => {
+  expect(mocked(<ColorWallSwatch {...defaultProps} showContents />).text()).toContain('View Details')
+})
+
+test('ColorWallSwatch should render Link correctly when showContents = false and thislink = test', () => {
+  expect(mocked(<ColorWallSwatch {...defaultProps} thisLink='test' />).find(Link).exists()).toBe(true)
+})
+
+// TODO: provided onClick function is only called if A) showContents is true, and B) one of the nested buttons (info/add/detail) is shown and clicked
+// test('clicking a ColorWallSwatch with showContents = true does call the passed in onClick function', () => {
+//   mocked(<ColorWallSwatch {...defaultProps} showContents />).simulate('click')
+//   expect(clickFn).toHaveBeenCalled()
+// })
+
+test('clicking a ColorWallSwatch with showContents = false and no thisLink does NOT generate a Link', () => {
+  expect(mocked(<ColorWallSwatch {...defaultProps} />).find(Link)).toHaveLength(0)
+})
+
+test('clicking a ColorWallSwatch with showContents = false and thisLink = \'test\' calls the passed in onClick function', () => {
+  mocked(<ColorWallSwatch {...defaultProps} thisLink='test' />).find(Link).simulate('click')
+  expect(clickFn).toHaveBeenCalled()
 })

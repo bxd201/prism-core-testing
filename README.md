@@ -4,7 +4,23 @@
 
 ### Running Local Instance
 ```
+# will generate assets for the embed and bundle entrypoints
+# and start a server at localhost:8080
 npm start
+```
+
+or, to build one or more specific entrypoint assets, pass the desired entrypoints to the `ENTRY` var as a comma-delimited list:
+```
+# this will build bundle.js, css/bundle.css, and css/cleanslate.css
+ENTRY=bundle npm start
+```
+
+Refer to `webpack/constants.js` for all available entrypoint names in the `facetEntryPoints` and `mainEntryPoints` exports.
+
+#### Specifying local host
+The local dev server will typically run from `localhost`, but if you need to specify a different host you can do so by passing a var like so:
+```
+URL=https://0.0.0.0:8080 npm start
 ```
 
 ### Deploy
@@ -36,3 +52,38 @@ When adding a new configuration property, this needs accounted for in several pl
 | Website | Facet |
 | --- | ----------- |
 | sherwin-williams.ca | ColorListingPage |
+
+## Importing a PRISM component into an existing React application
+
+### Install PRISM
+1. Ensure you are on the SW VPN or on the SW network
+2. Install the package
+```bash
+npm install git+ssh://git@github.sherwin.com:SherwinWilliams/prism-core.git#develop
+```
+
+### Add the CSS references into your HTML template
+```html
+<link rel="stylesheet" type="text/css" href="https://replatform-prism-web.ebus.swaws/css/cleanslate.css">
+<link rel="stylesheet" type="text/css" href="https://replatform-prism-web.ebus.swaws/css/bundle.css">
+```
+
+### Add the following classes to the element surround the imported PRISM component
+```html
+<div class="prism cleanslate"></div>
+```
+
+### Add FontAwesome credentials
+We have FontAwesomePro as a dependency, so the following items needs to be added to the `.npmrc` file in your project.
+```
+@fortawesome:registry=https://npm.fontawesome.com/
+//npm.fontawesome.com/:_authToken=20128D8C-BDB5-4DCC-AE9E-01ECB91BD7E6
+```
+
+### Using Prism Components
+```javascript
+import { ColorWall } from 'prism'
+
+<ColorWall />
+```
+COMING SOON: Documentation on each component that is available from PRISM along with documentation on what props are available.

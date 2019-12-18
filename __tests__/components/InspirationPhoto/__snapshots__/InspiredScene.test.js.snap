@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`snapshot match testing snapshot test 1`] = `
+<div
+  className="scene__image__wrapper"
+>
+  <ColorsFromImage
+    data={Object {}}
+    isActivedPage={true}
+  />
+</div>
+`;

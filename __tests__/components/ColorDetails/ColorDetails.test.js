@@ -6,7 +6,7 @@ import * as Colors from '__mocks__/data/color/Colors'
 // init props of Compoennt
 const color = Colors.getColor()
 const match = { params: { colorId: 'id', router: jest.fn() } }
-const config = { ga_dimension_id: 'sherwinWilliamsDefault' }
+const config = { ga_domain_id: 'sherwinWilliamsDefault' }
 
 const wrapper = shallow(<ColorDetails match={match} colors={color} config={config} />)
 
@@ -69,11 +69,11 @@ describe('Event tesing for behavoir of color details component', () => {
     expect(toggleSceneDisplayMock).toHaveBeenCalled()
   })
 
-  it('Testing for report tabSwitch to GA', () => {
-    const reportTabSwitchToGAMock = jest.fn()
-    wrapper.instance().reportTabSwitchToGA = reportTabSwitchToGAMock
-    wrapper.instance().forceUpdate()
-    wrapper.find('Tabs').simulate('select')
-    expect(reportTabSwitchToGAMock).toHaveBeenCalled()
-  })
+  // it('Testing for report tabSwitch to GA', () => {
+  //   const reportTabSwitchToGAMock = jest.fn()
+  //   wrapper.instance().reportTabSwitchToGA = reportTabSwitchToGAMock
+  //   wrapper.instance().forceUpdate()
+  //   wrapper.find('Tabs').simulate('select')
+  //   expect(reportTabSwitchToGAMock).toHaveBeenCalled()
+  // })
 })

@@ -3,8 +3,11 @@ import React from 'react'
 
 import LivePalette from '../../LivePalette/LivePalette'
 import SceneManager from '../../SceneManager/SceneManager'
+import facetBinder from 'src/facetSupport/facetBinder'
+import { facetBinderDefaultProps, type FacetBinderMethods } from 'src/facetSupport/facetInstance'
+import { type FacetPubSubMethods, facetPubSubDefaultProps } from 'src/facetSupport/facetPubSub'
 
-type Props = {
+type Props = FacetBinderMethods & FacetPubSubMethods & {
   sceneSet?: string
 }
 
@@ -17,4 +20,9 @@ export function Tinter ({ sceneSet }: Props) {
   )
 }
 
-export default Tinter
+Tinter.defaultProps = {
+  ...facetBinderDefaultProps,
+  ...facetPubSubDefaultProps
+}
+
+export default facetBinder(Tinter, 'Tinter')

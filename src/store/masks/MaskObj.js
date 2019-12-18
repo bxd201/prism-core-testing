@@ -10,7 +10,6 @@ export type MaskObjInput = {
 
 export default class MaskObj {
   _loadingPromise: Promise<string>
-  _isLoading: boolean = false
   _id: string
   _objectURL: string
   _blob: any
@@ -24,14 +23,26 @@ export default class MaskObj {
   }
 
   constructor (props: MaskObjInput) {
+    if (!props) {
+      throw new Error('MaskObj cannot be instantiated without props.')
+    }
+
     const { id, blob, load } = props
+
+    if (!id) {
+      throw new Error('MaskObj cannot be instantiated without id.')
+    }
+
+    if ((!blob || !(blob instanceof Blob)) && !load) {
+      throw new Error('MaskObj cannot be instantiated without valid load or blob.')
+    }
+
     const loadingPromise = new Promise((resolve, reject) => {
       if (blob) {
         resolve(this.updateMask(blob)._path)
       } else if (load) {
         // perform initial asset load
         const _this = this
-        this._isLoading = true
 
         axios({
           method: 'get',
@@ -59,6 +70,8 @@ export default class MaskObj {
         }).catch(err => {
           reject(err)
         })
+      } else {
+        reject(new Error('Cannot load or process provided load or blob data'))
       }
     })
 

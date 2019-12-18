@@ -3,6 +3,8 @@ import React from 'react'
 import { NavLink } from 'react-router-dom'
 
 import './ButtonBar.scss'
+import 'src/scss/convenience/auto-scroll.scss'
+import 'src/scss/convenience/no-list.scss'
 
 export const CLASS_NAMES = {
   OPTION_CONTAINER: 'button-bar__option-container auto-scroll',
@@ -36,23 +38,24 @@ type ButtonProps = {
   onClick?: Function,
   activeClassName?: string,
   className?: string,
-  children: any
+  children: any,
+  disabled?: boolean
 }
 
 function Button (props: ButtonProps) {
-  const { onClick, to, className, activeClassName, ...other } = props
+  const { onClick, to, className, activeClassName, disabled, ...other } = props
 
   const _className = `${CLASS_NAMES.OPTION_BUTTON} ${className || ''}`
   const _activeClassName = `${CLASS_NAMES.OPTION_BUTTON_ACTIVE} ${activeClassName || ''}`
   return (
     <li className={CLASS_NAMES.OPTION}>
       {
-        props.to ? (
+        !disabled && props.to ? (
           <NavLink className={_className} activeClassName={_activeClassName} to={props.to} onClick={onClick || null} {...other}>
             {props.children}
           </NavLink>
         ) : (
-          <button type='button' className={_className} onClick={onClick} {...other}>
+          <button type='button' className={_className} onClick={onClick} disabled={disabled} {...other}>
             {props.children}
           </button>
         )
@@ -61,7 +64,4 @@ function Button (props: ButtonProps) {
   )
 }
 
-export default Object.freeze({
-  Bar: Bar,
-  Button: Button
-})
+export default Object.freeze({ Bar: Bar, Button: Button })

@@ -3,25 +3,61 @@
 import reject from 'lodash/reject'
 import filter from 'lodash/filter'
 import difference from 'lodash/difference'
-
+import type { Color } from '../../shared/types/Colors'
 import { LP_MAX_COLORS_ALLOWED } from 'constants/configurations'
 import {
   ADD_LP_COLOR,
   REMOVE_LP_COLOR,
   ACTIVATE_LP_COLOR,
   ACTIVATE_LP_PREVIEW_COLOR,
-  REORDER_LP_COLORS
+  REORDER_LP_COLORS,
+  TOGGLE_LP_COMPARE_COLOR,
+  EDIT_LP_COMPARE_COLOR,
+  CANCEL_ADD_COLOR,
+  EMPTY_LP_COLOR
 } from '../actions/live-palette'
 
-export const initialState = {
-  colors: []
+type State = {
+  colors: Color[],
+  activeColor: Color,
+  toggleCompareColor: boolean
+}
+
+const lpFromLocalStorage = JSON.parse(window.localStorage.getItem('lp'))
+const initialLpState = { colors: [], activeColor: {} }
+const { colors, activeColor } = lpFromLocalStorage || initialLpState
+export const initialState: State = {
+  colors: colors,
+  activeColor: activeColor,
+  toggleCompareColor: false
 }
 
 export const lp = (state: any = initialState, action: any) => {
   switch (action.type) {
+    case CANCEL_ADD_COLOR:
+      const removeElement = (arr, i) => [...arr.slice(0, i), ...arr.slice(i + 1)]
+      return Object.assign({}, state, {
+        colors: removeElement(state.colors, state.colors.length - 1)
+      })
+    case EMPTY_LP_COLOR:
+      const newPallette = []
+      return Object.assign({}, state, {
+        colors: [...newPallette, state.activeColor]
+      })
+
+    case TOGGLE_LP_COMPARE_COLOR:
+      if (action.payload) {
+        return Object.assign({}, state, {
+          toggleCompareColor: false
+        })
+      }
+      return Object.assign({}, state, {
+        toggleCompareColor: !state.toggleCompareColor,
+        compareColorsId: []
+      })
     case ADD_LP_COLOR:
       // check if there are already 7 colors added and if the color exists already before adding
-      if (state.colors && state.colors.length < LP_MAX_COLORS_ALLOWED && !filter(state.colors, color => color.id === action.payload.color.id).length) {
+      if (state.colors && state.colors.length <= LP_MAX_COLORS_ALLOWED && !filter(state.colors, color => color.id === action.payload.color.id).length) {
         state.colors.push(action.payload.color)
       }
 
@@ -88,6 +124,22 @@ export const lp = (state: any = initialState, action: any) => {
         colors: [
           ...reconstructedColors
         ]
+      })
+
+    case EDIT_LP_COMPARE_COLOR:
+      const originCompareId = state.colors.map((colors) => colors.id)
+      let compareColorsId = state.compareColorsId ? state.compareColorsId : originCompareId
+      const editId = action.payload.colorId
+      let removedCompareColors = [...compareColorsId]
+      const idx = removedCompareColors.indexOf(editId)
+      if (idx !== -1) {
+        removedCompareColors.splice(idx, 1)
+      } else {
+        const insertIdx = originCompareId.indexOf(editId)
+        removedCompareColors.splice(insertIdx, 0, editId)
+      }
+      return Object.assign({}, state, {
+        compareColorsId: removedCompareColors
       })
 
     default:

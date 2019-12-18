@@ -2,7 +2,7 @@
 import axios from 'axios'
 import isEmpty from 'lodash/isEmpty'
 
-import { type ScenePayload } from '../../shared/types/Scene'
+import { type ScenePayload, type SceneWorkspace } from '../../shared/types/Scene'
 import { type Color } from '../../shared/types/Colors'
 import MaskObj from '../masks/MaskObj'
 
@@ -182,5 +182,46 @@ export const updateMask = (mask: MaskObj, data: Blob) => {
       mask,
       data
     }
+  }
+}
+
+export const ADD_NEW_MASK = 'ADD_NEW_MASK'
+export const addNewMask = (sceneId: number, surfaceId: number, variant: string, imageData: string) => {
+  // Workspace is an array of images to be passed to a tintable scene
+  return {
+    type: ADD_NEW_MASK,
+    payload: {
+      sceneId,
+      surfaceId,
+      variant,
+      imageData
+    }
+  }
+}
+
+export const UPDATE_CURRENT_SCENE = 'UPDATE_CURRENT_SCENE'
+export const updateCurrentSceneInfo = (sceneId: number, surfaceId: number) => {
+  return {
+    action: UPDATE_CURRENT_SCENE,
+    payload: {
+      sceneId,
+      surfaceId
+    }
+  }
+}
+
+export const TOGGLE_EDIT_MODE = 'TOGGLE_EDIT_MODE'
+export const toggleEditMode = (currentEditMode: boolean) => {
+  return {
+    type: TOGGLE_EDIT_MODE,
+    payload: !currentEditMode
+  }
+}
+
+export const EDIT_MASK = 'EDIT_MASK'
+export const editMask = (sceneWorkspace: SceneWorkspace) => {
+  return {
+    type: EDIT_MASK,
+    payload: sceneWorkspace
   }
 }

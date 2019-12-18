@@ -1,18 +1,15 @@
 // @flow
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import 'src/providers/fontawesome/fontawesome'
+import ColorWallContext, { type ColorWallContextProps } from '../../ColorWallContext'
 
-const AddButton = (props: Object) => {
-  const { config, onAdd, onClick, ...other } = props
+export default ({ onClick, ...other }: { onClick: Function }) => {
+  const { displayAddButton }: ColorWallContextProps = React.useContext(ColorWallContext)
 
-  if (onAdd && config.displayAddButton) {
-    return (
-      <button onClick={onClick} {...other}>
-        <FontAwesomeIcon icon='plus' size='1x' />
-      </button>
-    )
-  }
-  return null
+  return displayAddButton && (
+    <button onClick={onClick} {...other}>
+      <FontAwesomeIcon icon={['fa', 'plus']} size='1x' />
+    </button>
+  )
 }
-
-export default AddButton

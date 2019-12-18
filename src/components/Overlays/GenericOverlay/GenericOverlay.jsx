@@ -5,9 +5,12 @@ import CircleLoader from '../../Loaders/CircleLoader/CircleLoader'
 import './GenericOverlay.scss'
 
 type Props = {
+  children?: any,
   type: 'LOADING' | 'ERROR' | 'MESSAGE',
   message?: string,
   loaderColor?: string,
+  fillVertical?: boolean,
+  fillHorizontal?: boolean,
   semitransparent?: boolean
 }
 
@@ -33,20 +36,32 @@ class GenericOverlay extends PureComponent<Props> {
     }
   }
 
+  static defaultProps = {
+    fillHorizontal: true,
+    fillVertical: true
+  }
+
   render () {
-    const { type, message, semitransparent } = this.props
-    let { loaderColor } = this.props
+    const { type, message, semitransparent, children, loaderColor, fillHorizontal, fillVertical } = this.props
+    // children take precedence over any message prop
+    const output = children || message || null
+    const className = `
+      ${GenericOverlay.CLASS_NAMES[type].BASE}
+      ${semitransparent ? 'prism-generic-overlay--semitrans' : ''}
+      ${!fillHorizontal ? 'prism-generic-overlay--collapse-h' : ''}
+      ${!fillVertical ? 'prism-generic-overlay--collapse-v' : ''}
+    `
 
     return (
-      <div className={`${GenericOverlay.CLASS_NAMES[type].BASE} ${semitransparent ? 'prism-generic-overlay--semitrans' : ''}`}>
+      <div className={className}>
         {(type === GenericOverlay.TYPES.LOADING) && (
           <span className={GenericOverlay.CLASS_NAMES[type].CONTENT}>
             <CircleLoader color={loaderColor} />
           </span>
         )}
-        {message && (
+        {output && (
           <span className={GenericOverlay.CLASS_NAMES[type].CONTENT}>
-            {message}
+            {output}
           </span>
         )}
       </div>

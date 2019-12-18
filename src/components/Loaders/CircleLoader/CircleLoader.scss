@@ -1,8 +1,53 @@
+@import 'src/scss/convenience/_keyframe-animations.scss';
+
 .prism-loader-circle {
-  opacity: 1;
+  $dashDuration: 1.8s;
+  $times: 5;
+  $rotateDuration: $dashDuration / 2;
+  $strokeColorDuration: ($dashDuration * 2) * $times;
+
+  @keyframes strokeColor {
+    0% {
+      stroke: var(getVarName('loaders.circle.color1'));
+    }
+    20% {
+      stroke: var(getVarName('loaders.circle.color2'));
+    }
+    40% {
+      stroke: var(getVarName('loaders.circle.color3'));
+    }
+    60% {
+      stroke: var(getVarName('loaders.circle.color4'));
+    }
+    80% {
+      stroke: var(getVarName('loaders.circle.color5'));
+    }
+    100% {
+      stroke: var(getVarName('loaders.circle.color1'));
+    }
+  }
+
+  @keyframes dashAdjust {
+    0% {
+      stroke-dasharray: var(getVarName('loaders.circle.beginDash')) var(getVarName('loaders.circle.beginGap'));
+    }
+    100% {
+      stroke-dasharray: var(getVarName('loaders.circle.endDash')) var(getVarName('loaders.circle.endGap'));
+    }
+  }
+
+  animation: fadeOpacityIn 1s, rotate $rotateDuration infinite linear;
+  display: block;
   height: auto;
-  max-width: 90%;
+  margin: auto;
   max-height: 90%;
-  width: 3em;
+  max-width: 90%;
+  opacity: 1;
   stroke: currentColor;
+  width: 3em;
+
+  &__circle {
+    animation: strokeColor $strokeColorDuration infinite cubic-bezier(0.075, 0.820, 0.165, 1.000), dashAdjust $dashDuration infinite alternate cubic-bezier(0.390, 0.575, 0.565, 1.000);
+    stroke-linecap: round;
+  }
 }

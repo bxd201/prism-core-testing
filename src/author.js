@@ -1,5 +1,7 @@
-import bindReactToDOM from './index'
 import ReactDOM from 'react-dom'
+import 'src/allFacets' // import all facets so they're included in the bundle
+import { flagAsMainBundle, embedAtRoots } from 'src/facetSupport/facetBinder'
+import { TO_BIND_CLASS } from 'src/facetSupport/facetConstants'
 import flatten from 'lodash/flatten'
 
 const gatherReactRoots = (nodes) => {
@@ -8,10 +10,10 @@ const gatherReactRoots = (nodes) => {
   }
 
   return flatten(Array.from(nodes).map(node => {
-    if (typeof node.className === 'string' && node.className.indexOf('__react-root') > -1) {
+    if (typeof node.className === 'string' && node.className.indexOf(TO_BIND_CLASS) > -1) {
       return node
-    } else if (typeof node.getElementsByClassName === 'function' && node.getElementsByClassName('__react-root').length) {
-      return Array.from(node.getElementsByClassName('__react-root'))
+    } else if (typeof node.getElementsByClassName === 'function' && node.getElementsByClassName(TO_BIND_CLASS).length) {
+      return Array.from(node.getElementsByClassName(TO_BIND_CLASS))
     }
   })).filter(node => !!node)
 }
@@ -38,9 +40,11 @@ const mutationObserver = new window.MutationObserver((mutationsList) => {
   // only in the authoring environment
   if (rebind) {
     // eslint-disable-next-line no-undef
-    bindReactToDOM()
+    embedAtRoots(true)
   }
 })
+
+flagAsMainBundle()
 
 mutationObserver.observe(document.documentElement, {
   childList: true, // monitors add/removal of child elements

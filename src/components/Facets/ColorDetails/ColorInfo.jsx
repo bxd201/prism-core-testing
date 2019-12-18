@@ -4,6 +4,8 @@ import { FormattedMessage } from 'react-intl'
 
 import type { Color } from '../../../shared/types/Colors'
 
+import 'src/scss/convenience/visually-hidden.scss'
+
 type Props = {
   color: Color
 }

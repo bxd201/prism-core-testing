@@ -15,4 +15,9 @@ const store = createStore(
   enhancers
 )
 
+export {
+  rootReducer,
+  enhancers
+}
+
 export default store

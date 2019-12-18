@@ -45,3 +45,10 @@ export type SceneStatus = {
   variant: string,
   surfaces: SurfaceStatus[]
 }
+
+export type SceneWorkspace = {
+  sceneId: number,
+  surfaceId: number,
+  imageData: string,
+  variant: string
+}

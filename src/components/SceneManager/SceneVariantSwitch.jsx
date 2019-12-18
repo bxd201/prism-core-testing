@@ -1,6 +1,7 @@
 // @flow
 import React, { useCallback } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import 'src/providers/fontawesome/fontawesome'
 import { FormattedMessage } from 'react-intl'
 import ReactGA from 'react-ga'
 import includes from 'lodash/includes'
@@ -8,6 +9,7 @@ import includes from 'lodash/includes'
 import { SCENE_VARIANTS } from 'constants/globals'
 
 import './SceneVariantSwitch.scss'
+import 'src/scss/convenience/visually-hidden.scss'
 
 type SwitchProps = {
   onChange: Function,

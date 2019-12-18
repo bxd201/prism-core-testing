@@ -2,15 +2,14 @@ import React from 'react'
 import { shallow } from 'enzyme'
 import ListWithCarousel from 'src/components/Carousel/Carousel'
 import CollectionSummary from 'src/components/Carousel/CollectionSummary'
-import { expertColorsData } from 'src/components//Carousel/data'
 
 const baseClass = 'prism-slick-carousel'
 const contentWrapper = `${baseClass}__wrapper__content`
 const createCarousel = (props = {}) => {
   const CollectionSummaryWrapper = ListWithCarousel(CollectionSummary)
-  return shallow(<CollectionSummaryWrapper {...props} data={expertColorsData} />)
+  return shallow(<CollectionSummaryWrapper {...props} />)
 }
-const wrapper = createCarousel()
+const wrapper = createCarousel({ data: [] })
 
 describe('snapshot match testing', () => {
   expect(wrapper).toMatchSnapshot()

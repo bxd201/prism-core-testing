@@ -1,70 +1,67 @@
+/* eslint-disable jsx-a11y/label-has-for */
 // @flow
-import React, { PureComponent } from 'react'
+import React from 'react'
+import { useHistory, useParams } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSearch } from '@fortawesome/pro-light-svg-icons'
-
+import 'src/providers/fontawesome/fontawesome'
+import ButtonBar from '../GeneralButtons/ButtonBar/ButtonBar'
+import { FormattedMessage } from 'react-intl'
+import uniqueId from 'lodash/uniqueId'
 import './SearchBar.scss'
+import 'src/scss/convenience/visually-hidden.scss'
 
 type Props = {
-  onSearchInput: Function,
-  onClearSearch: Function,
-  value: string | void
+  showCancelButton: boolean,
+  showLabel?: boolean,
+  showIcon?: boolean,
+  label: string,
+  placeholder?: string
 }
 
-const baseClass = 'SearchBar'
+export default (props: Props) => {
+  const {
+    label,
+    placeholder,
+    showCancelButton = true,
+    showIcon = true,
+    showLabel = true
+  } = props
+  const { query = '' } = useParams()
+  const history = useHistory()
+  const [value, setValue] = React.useState(query)
+  const [id] = React.useState(uniqueId('SearchBarInput'))
 
-export default class SearchBar extends PureComponent<Props> {
-  // these are method names of SearchBar class instances exposed via its ref
-  static API = {
-    focus: 'doFocus',
-    setValue: 'setValue'
-  }
+  React.useEffect(() => { value !== query && setValue(query) }, [query])
 
-  searchInput: RefObject
+  React.useEffect(() => { // mutate url when input hasn't changed in 250ms
+    const id = setTimeout(() => value !== query && history.push(value || './'), 250)
+    return () => clearTimeout(id)
+  }, [value])
 
-  constructor (props: Props) {
-    super(props)
-
-    this.searchInput = React.createRef()
-    this.doFocus = this.doFocus.bind(this)
-  }
-
-  render () {
-    const { value, onClearSearch } = this.props
-    const _value = typeof value === 'string' ? value : ''
-    const hasInput = !!_value
-    const outline = hasInput ? 'with-outline' : 'without-outline'
-
-    return (
-      <div className={`${baseClass}`}>
-        <FontAwesomeIcon className='search-icon' icon={faSearch} size='lg' />
-        <div className={`${baseClass}__wrapper ${baseClass}__wrapper--${outline}`}>
-          <input
-            value={value}
-            ref={this.searchInput}
-            className={`${baseClass}__input`}
-            onChange={this.handleInput} />
-          {
-            hasInput && onClearSearch &&
-            <button type='button' onClick={onClearSearch} className={`${baseClass}__clean`}>
-              <FontAwesomeIcon icon={['fas', 'times']} />
-            </button>
-          }
+  return (
+    <div className='SearchBar'>
+      <form onSubmit={e => e.preventDefault()} className='SearchBar__search-form'>
+        <label className={`SearchBar__label ${!showLabel ? 'visually-hidden' : ''}`} htmlFor={id}>{label}</label>
+        <div className='SearchBar__inner'>
+          {showIcon && (<label htmlFor={id} className='SearchBar__icon'>
+            <FontAwesomeIcon icon={['fal', 'search']} size='lg' />
+          </label>)}
+          <div className={`SearchBar__wrapper SearchBar__wrapper--with${query ? '-outline' : 'out-outline'}`}>
+            <input id={id} value={value} className='SearchBar__input' onChange={e => setValue(e.target.value)} placeholder={placeholder} />
+            {value.length > 1 &&
+              <button type='button' className='SearchBar__clean' onClick={() => setValue('')}>
+                <FontAwesomeIcon icon={['fas', 'times']} />
+              </button>}
+          </div>
+          {showCancelButton && <div className='SearchBar__cancel-button'>
+            <ButtonBar.Bar>
+              <ButtonBar.Button to='../'>
+                <FormattedMessage id='CANCEL' />
+              </ButtonBar.Button>
+            </ButtonBar.Bar>
+          </div>}
         </div>
-      </div>
-    )
-  }
-
-  handleInput = (e: SyntheticInputEvent<HTMLInputElement>) => {
-    const { onSearchInput } = this.props
-    const value = e.target.value
-
-    e.persist()
-
-    onSearchInput(value)
-  }
-
-  doFocus = () => {
-    this.searchInput.current.focus()
-  }
+      </form>
+    </div>
+  )
 }

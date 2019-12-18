@@ -2,15 +2,14 @@
 import React from 'react'
 import { shallow } from 'enzyme'
 import { Route, Switch } from 'react-router-dom'
-import { ColorListingPage, RootRedirect, ColorDetailsComponent, ColorWallComponent } from 'src/components/Facets/ColorListingPage/ColorListingPage'
+import { ColorListingPage, RootRedirect, ColorDetailsComponent } from 'src/components/Facets/ColorListingPage/ColorListingPage'
+import { ColorWallPage } from 'src/components/Facets/ColorWallFacet'
 import { TransitionGroup, CSSTransition } from 'react-transition-group'
 import { ROUTE_PARAMS, ROUTE_PARAM_NAMES } from 'constants/globals'
 
 const homeRoute = '/'
-
 const colorWallBaseUrl = `/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_WALL}`
 const colorDetailsBaseUrl = `/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_DETAIL}`
-const colorWallUrlPattern = `${colorWallBaseUrl}(/.*)?`
 const activeColorIdSeoUrlPattern = `${colorDetailsBaseUrl}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`
 const transitionClassNames = 'cdp-slide'
 const transitionClassNamesCdpSlideToWall = 'cdp-slide-to-wall cdp-slide'
@@ -18,10 +17,7 @@ const transitionClassNamesCdpSlideToDetails = 'cdp-slide-to-details cdp-slide'
 
 const locationProp = { pathname: homeRoute }
 const getColorListingPage = (props) => {
-  let defaultProps = {
-    location: locationProp
-  }
-
+  let defaultProps = { location: locationProp }
   let newProps = Object.assign({}, defaultProps, props)
   return shallow(<ColorListingPage {...newProps} />)
 }
@@ -85,7 +81,7 @@ describe('ColorListingPage routes', () => {
   })
 
   it('should show ColorWallComponent component for route defined as colorWallUrlPattern constant', () => {
-    expect(pathMap[colorWallUrlPattern]).toBe(ColorWallComponent)
+    expect(pathMap[`${colorWallBaseUrl}(/.*)?`]).toBe(ColorWallPage)
   })
 
   it('should show ColorDetailsComponent component for route defined as activeColorIdSeoUrlPattern constant', () => {

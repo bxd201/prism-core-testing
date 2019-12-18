@@ -1,0 +1,275 @@
+.paint-tool-bar {
+  &__wrapper {
+    display: flex;
+  }
+  &__tools-container {
+    display: flex;
+    position: relative;
+    right: 1em;
+    transition: right 0.5s ease-in-out 0.3s;
+    z-index: 10000;
+    &--hide {
+      right: -40em;
+    }
+  }
+  &__toolbar-button {
+    background: white;
+    border: 1px solid #f2f2f2;
+    color: black;
+    fill: black;
+    height: 4em;
+    outline: none;
+    padding: 1em;
+    position: relative;
+    text-align: center;
+    width: 4em;
+    &:hover {
+      border-color: #2cabe2;
+      color: #2cabe2;
+      cursor: pointer;
+      fill: #2cabe2;
+    }
+    &:before {
+      background: #2cabe2;
+      content: '';
+      display: inline-block;
+      height: 0;
+      position: absolute;
+      top: 50%;
+      transition: all .3s;
+      width: 0;
+      z-index: 10;
+    }
+    &--active {
+      border-width: 0;
+      cursor: default;
+      fill: white;
+      overflow: visible;
+      outline: none;
+      &:hover {
+        color: #000;
+        cursor: default;
+        fill: none;
+      }
+      &:before {
+        display: inline-block;
+        height: 4.5em;
+        left: -.5em;
+        top: -.25em;
+        transition: all .3s;
+        width: 5em;
+      }
+    }
+    &--disabled {
+      border-color: #fff;
+      color: #e1e1e1;
+      cursor: default;
+      fill: #e1e1e1;
+      &:before {
+        display: none;
+      }
+      &:hover {
+        border-color: #fff;
+        color: #e1e1e1;
+        cursor: default;
+        fill: #e1e1e1;
+      }
+    }
+  }
+  &__tool-name {
+    bottom: .75em;
+    color: rgba(255, 255, 255, 0);
+    font-size: .5em;
+    left: -.75em;
+    line-height: 1;
+    pointer-events: none;
+    position: absolute;
+    transition: color .7s;
+    width: 127%;
+    z-index: 10;
+    &--active {
+      color: #000;
+      transition: color .7s;
+    }
+    &--disabled {
+      color: #e1e1e1;
+    }
+  }
+  &__toolbar-toggle {
+    display: flex;
+    position: relative;
+  }
+  &__toolbar-toggle-button {
+    background: white;
+    border: 1px solid #f2f2f2;
+    color: black;
+    display: flex;
+    fill: black;
+    height: 4em;
+    outline: none;
+    z-index: 10000;
+    &:hover {
+      border-color: #2cabe2;
+      color: #2cabe2;
+      cursor: pointer;
+      fill: #2cabe2;
+    }
+    &:before {
+      border: 6px solid transparent;
+      border-left-color: #333333;
+      border-left-style: solid;
+      content: '';
+      display: inline-block;
+      height: 0;
+      margin-left: .5em;
+      opacity: 0;
+      position: absolute;
+      top: 1.5em;
+      width: 0;
+    }
+    &:after {
+      border: 6px solid transparent;
+      border-right-color: #333333;
+      border-right-style: solid;
+      content: '';
+      display: inline-block;
+      height: 0;
+      margin-right: .5em;
+      opacity: 0;
+      width: 0;
+    }
+    &--toolbar-shown {
+      &:before {
+        opacity: 1;
+        transition: opacity 0.5s;
+      }
+      &:after {
+        opacity: 0;
+      }
+    }
+    &--toolbar-hidden {
+      &:before {
+        opacity: 0;
+      }
+      &:after {
+        opacity: 1;
+        transition: opacity 0.5s;
+      }
+    }
+  }
+  &__brush-types {
+    display: none;
+    position: absolute;
+    &--show {
+      display: block;
+    }
+    &--hide {
+      display: none;
+    }
+    &--show-by-opacity {
+      opacity: 1;
+      transition: opacity 0.3s ease-in-out 0.7s;
+    }
+    &--hide-by-opacity {
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+    }
+  }
+  &__brush-types-paint {
+    bottom: 60px;
+    left: -12px;
+  }
+  &__brush-types-erase {
+    background: #f2f2f2;
+    bottom: 60px;
+    left: 90px;
+  }
+  &__clear-all {
+    background: white;
+    border: 1px solid #f2f2f2;
+    color: black;
+    display: flex;
+    font-size: .75em;
+    margin: 0 auto 12px;
+    outline: none;
+    padding: 0.3em 1.2em;
+    width: auto;
+    &:hover {
+      border-color: #2cabe2;
+      color: #2cabe2;
+    }
+  }
+  &__tool-icon {
+    position: absolute;
+    z-index: 10;
+    top: 16px;
+    right: 18px;
+  }
+  &__paint-tooltip {
+    bottom: calc(100% + 0.5rem);
+    // TODO: remove following comments after adding tooltip for Color Wall
+    // bottom: calc(100% + 22rem);
+    // right: calc(100% + 8rem);
+    display: none;
+    position: absolute;
+    &--active {
+      display: flex;
+      z-index: 100;
+    }
+  }
+  &__group-tool {
+    display: flex;
+    left: -12em;
+    position: relative;
+    z-index: 100;
+    &--show {
+      left: 1.5em;
+      transition: left 0.3s ease-in-out 0.3s;
+    }
+    &--hide {
+      left: -12em;
+      transition: left 0.3s ease-in-out 0.3s;
+    }
+  }
+  &__zoom-tool {
+    background: #f2f2f2;
+    bottom: 60px;
+    display: flex;
+    right: 0;
+    opacity: 0;
+    padding: 1.5em 1em;
+    position: absolute;
+    width: 34.5em;
+    &:after {
+      border: 4px solid transparent;
+      border-top-color: #f2f2f2;
+      border-top-style: solid;
+      content: '';
+      display: inline-block;
+      height: 0;
+      left: 53%;
+      margin-left: -2px;
+      opacity: 1;
+      position: absolute;
+      top: 66px;
+      transition: opacity 0.3s ease-in-out;
+      width: 0;
+    }
+    &--show-by-opacity {
+      opacity: 1;
+      transition: opacity 0.3s ease-in-out 0.7s;
+    }
+    &--hide-by-opacity {
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+    }
+    &--show {
+      display: flex;
+      opacity: 1;
+    }
+    &--hide {
+      display: none;
+      opacity: 0;
+    }
+  }
+}

@@ -1,0 +1,278 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`matches snapshot 1`] = `
+<IntlProvider
+  defaultFormats={Object {}}
+  defaultLocale="en"
+  formats={Object {}}
+  locale="en-US"
+  messages={
+    Object {
+      "ADD_A_COLOR": "ADD A COLOR",
+      "BACK_TO_COLOR_WALL": "Back to Color Wall",
+      "CANCEL": "Cancel",
+      "CANVAS_UNSUPPORTED": "Your browser does not support the canvas element.",
+      "CHIP_MAXIMIZED": "Color Chip has been maximized",
+      "CHIP_MINIMIZED": "Color Chip has been minimized",
+      "COLOR_COLLECTIONS": "Color Collections",
+      "COLOR_FAMILIES": "Color Families",
+      "COORDINATING_COLORS": "Coordinating Colors",
+      "DELETE_PIN": "Delete pin",
+      "DETAILS": "Details",
+      "DISPLAY_SCENE_PAINTER": "Display the Scene Painter",
+      "ERROR_LOADING_COLORS": "We're unable to load colors right now.",
+      "EXTERIOR": "Exterior",
+      "FIND_COLORS_IN_CW": "FIND COLORS IN THE DIGITAL COLOR WALL",
+      "HIDE_SCENE_PAINTER": "Hide the Scene Painter",
+      "IMAGE_INVISIBLE": "This image is invisible to the user.",
+      "INTERIOR": "Interior",
+      "LOCATION_NUMBER": "Location Number",
+      "MAXIMIZE_COLOR_SWATCH": "Maximize the Color Swatch",
+      "NO_COLORS_AVAILABLE": "No colors available.",
+      "PAINT_TOOLS.BACK": "Go back",
+      "PAINT_TOOLS.CLOSE": "Close tooltip",
+      "PAINT_TOOLS.DEFINEAREA": "Create a polygon to fill",
+      "PAINT_TOOLS.DELETEGROUP": "Delete the group",
+      "PAINT_TOOLS.ERASE": "Remove paint by erasing",
+      "PAINT_TOOLS.FORWARD": "Go forward",
+      "PAINT_TOOLS.GROUP": "Group the selections",
+      "PAINT_TOOLS.HIDEPAINT": "Hide the painted area",
+      "PAINT_TOOLS.INFO": "Toggle the tool tips",
+      "PAINT_TOOLS.PAINTAREA": "fill a continuous area with color",
+      "PAINT_TOOLS.PAINTBRUSH": "Paint using a brush",
+      "PAINT_TOOLS.REDO": "Redo an action",
+      "PAINT_TOOLS.REMOVEAREA": "Erase an area by creating a polygon",
+      "PAINT_TOOLS.SELECTAREA": "Select an area to manipulate",
+      "PAINT_TOOLS.TOOLTIPS.DEFINEAREA": "Outline an area to paint it. Be sure to enclose the area by starting and ending at the same point.",
+      "PAINT_TOOLS.TOOLTIPS.ERASE": "Remove paint from your scene.",
+      "PAINT_TOOLS.TOOLTIPS.HIDEPAINT": "Use this tool to see the original room scene.",
+      "PAINT_TOOLS.TOOLTIPS.INFO": "Click here to revisit the Tool Tips.",
+      "PAINT_TOOLS.TOOLTIPS.PAINTAREA": "Use the Paint Area feature to automatically detect and paint surface areas. Just click or tap on a surface to highlight it, then click or tap again.",
+      "PAINT_TOOLS.TOOLTIPS.PAINTBRUSH": "Allows for the freehand painting of your selected scene. Just point, click or tap and drag to add color to any area.",
+      "PAINT_TOOLS.TOOLTIPS.REDO": "Step forward from your last action.",
+      "PAINT_TOOLS.TOOLTIPS.REMOVEAREA": "Use this tool to select and remove paint from a defined area.",
+      "PAINT_TOOLS.TOOLTIPS.SELECTAREA": "Select an area, then use the tool bar to paint, edit paint colors or remove paint from your scene.",
+      "PAINT_TOOLS.TOOLTIPS.SELECTGROUP": "Use this tool to group and edit multiple areas at the same time. Use the Delete tool to remove areas from your scene.",
+      "PAINT_TOOLS.TOOLTIPS.UNDO": "Step backwards from your last action.",
+      "PAINT_TOOLS.TOOLTIPS.ZOOM": "Zoom in and pan around within your scene to paint small areas with increased accuracy.",
+      "PAINT_TOOLS.UNDO": "Undo an action",
+      "PAINT_TOOLS.UNGROUP": "Ungroup the selections",
+      "PAINT_TOOLS.ZOOM": "Adjust the zoom level",
+      "PALETTE_TITLE": "My Color Palette",
+      "RESTORE_COLOR_SWATCH_TO_DEFAULT_SIZE": "Restore the Color Swatch to default size",
+      "SCENE_DISPLAYED": "Scene is displayed",
+      "SCENE_HIDDEN": "Scene is hidden",
+      "SEARCH.ERROR.GENERIC": "We were unable to perform your search.",
+      "SEARCH.ERROR.HEADLINE": "Something went wrong.",
+      "SEARCH.FIND_A_COLOR": "Find a color",
+      "SEARCH.NO_RESULTS": "Sorry, no color matches found.",
+      "SEARCH.PROMPT": "Enter a color name, number, or family in the text field above.",
+      "SEARCH.SEARCH": "Search",
+      "SEARCH.SEARCHING": "Searching",
+      "SEARCH.SEARCH_BY": "Search by color name or number",
+      "SEARCH.SUGGESTIONS": "Some examples of things you can search for are {suggestions}",
+      "SIMILAR_COLORS": "Similar Colors",
+      "SWATCH_ACTIVATED_DETAILS": "{color} is selected. Press Enter to view details.",
+      "SWATCH_FOCUS": "{color}. Press Enter to select.",
+      "TO_DAY_VIEW": "Switch to day view",
+      "TO_NIGHT_VIEW": "Switch to night view",
+      "VIEW_DETAILS": "View Details",
+      "ZOOM_IN": "Zoom in",
+      "ZOOM_OUT": "Zoom out",
+    }
+  }
+  onError={[Function]}
+  textComponent={Symbol(react.fragment)}
+>
+  <Provider
+    store={
+      Object {
+        "dispatch": [Function],
+        "getState": [Function],
+        "replaceReducer": [Function],
+        "subscribe": [Function],
+        Symbol(observable): [Function],
+      }
+    }
+  >
+    <Router
+      history={
+        Object {
+          "action": "POP",
+          "block": [Function],
+          "canGo": [Function],
+          "createHref": [Function],
+          "entries": Array [
+            Object {
+              "hash": "",
+              "key": "",
+              "pathname": "/",
+              "search": "",
+              "state": undefined,
+            },
+          ],
+          "go": [Function],
+          "goBack": [Function],
+          "goForward": [Function],
+          "index": 0,
+          "length": 1,
+          "listen": [Function],
+          "location": Object {
+            "hash": "",
+            "key": "",
+            "pathname": "/",
+            "search": "",
+            "state": undefined,
+          },
+          "push": [Function],
+          "replace": [Function],
+        }
+      }
+    >
+      <_default>
+        <div
+          className="SearchBar"
+        >
+          <form
+            className="SearchBar__search-form"
+            onSubmit={[Function]}
+          >
+            <label
+              className="SearchBar__label "
+              htmlFor="SearchBarInput1"
+            />
+            <div
+              className="SearchBar__inner"
+            >
+              <label
+                className="SearchBar__icon"
+                htmlFor="SearchBarInput1"
+              >
+                <FontAwesomeIcon
+                  border={false}
+                  className=""
+                  fixedWidth={false}
+                  flip={null}
+                  icon={
+                    Array [
+                      "fal",
+                      "search",
+                    ]
+                  }
+                  inverse={false}
+                  listItem={false}
+                  mask={null}
+                  pull={null}
+                  pulse={false}
+                  rotation={null}
+                  size="lg"
+                  spin={false}
+                  swapOpacity={false}
+                  symbol={false}
+                  title=""
+                  transform={null}
+                >
+                  <svg
+                    aria-hidden="true"
+                    className="svg-inline--fa fa-search fa-w-16 fa-lg "
+                    data-icon="search"
+                    data-prefix="fal"
+                    focusable="false"
+                    role="img"
+                    style={Object {}}
+                    viewBox="0 0 512 512"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M508.5 481.6l-129-129c-2.3-2.3-5.3-3.5-8.5-3.5h-10.3C395 312 416 262.5 416 208 416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c54.5 0 104-21 141.1-55.2V371c0 3.2 1.3 6.2 3.5 8.5l129 129c4.7 4.7 12.3 4.7 17 0l9.9-9.9c4.7-4.7 4.7-12.3 0-17zM208 384c-97.3 0-176-78.7-176-176S110.7 32 208 32s176 78.7 176 176-78.7 176-176 176z"
+                      fill="currentColor"
+                      style={Object {}}
+                    />
+                  </svg>
+                </FontAwesomeIcon>
+              </label>
+              <div
+                className="SearchBar__wrapper SearchBar__wrapper--without-outline"
+              >
+                <input
+                  className="SearchBar__input"
+                  id="SearchBarInput1"
+                  onChange={[Function]}
+                  value=""
+                />
+              </div>
+              <div
+                className="SearchBar__cancel-button"
+              >
+                <Bar>
+                  <div
+                    className="button-bar__option-container auto-scroll"
+                  >
+                    <ul
+                      className="button-bar__options no-list"
+                    >
+                      <Button
+                        to="../"
+                      >
+                        <li
+                          className="button-bar__options__option"
+                        >
+                          <NavLink
+                            activeClassName="button-bar__options__option__btn--active "
+                            className="button-bar__options__option__btn "
+                            onClick={null}
+                            to="../"
+                          >
+                            <Link
+                              aria-current="page"
+                              className="button-bar__options__option__btn  button-bar__options__option__btn--active "
+                              onClick={null}
+                              style={Object {}}
+                              to={
+                                Object {
+                                  "hash": "",
+                                  "pathname": "/",
+                                  "search": "",
+                                  "state": null,
+                                }
+                              }
+                            >
+                              <LinkAnchor
+                                aria-current="page"
+                                className="button-bar__options__option__btn  button-bar__options__option__btn--active "
+                                href="/"
+                                navigate={[Function]}
+                                onClick={null}
+                                style={Object {}}
+                              >
+                                <a
+                                  aria-current="page"
+                                  className="button-bar__options__option__btn  button-bar__options__option__btn--active "
+                                  href="/"
+                                  onClick={[Function]}
+                                  style={Object {}}
+                                >
+                                  <FormattedMessage
+                                    id="CANCEL"
+                                    values={Object {}}
+                                  >
+                                    Cancel
+                                  </FormattedMessage>
+                                </a>
+                              </LinkAnchor>
+                            </Link>
+                          </NavLink>
+                        </li>
+                      </Button>
+                    </ul>
+                  </div>
+                </Bar>
+              </div>
+            </div>
+          </form>
+        </div>
+      </_default>
+    </Router>
+  </Provider>
+</IntlProvider>
+`;
