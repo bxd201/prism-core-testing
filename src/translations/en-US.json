@@ -81,6 +81,7 @@
   "ERROR_BOUNDARY": {
     "TITLE": "Sherwin-Williams Color Tools Error",
     "MESSAGE": "We encountered an error preventing us from rendering this component at this time.",
-    "SHOW_DETAILS": "Show details"
+    "SHOW_DETAILS": "Show error details",
+    "ERROR_DETAILS": "Error details"
   }
 }

@@ -2,8 +2,10 @@
 import React from 'react'
 import { FormattedMessage } from 'react-intl'
 import memoize from 'lodash/memoize'
+import uniqueId from 'lodash/uniqueId'
 
 import './ErrorBoundary.scss'
+import 'src/scss/convenience/visually-hidden.scss'
 
 const tryToGetMessage = memoize((trans: boolean) => (id: string) => {
   if (trans) {
@@ -21,7 +23,8 @@ type Props = {
 type State = {
   hasError: boolean,
   showDetails: boolean,
-  details: string
+  details: string,
+  detailsId: string
 }
 
 class ErrorBoundary extends React.PureComponent<Props, State> {
@@ -36,7 +39,8 @@ class ErrorBoundary extends React.PureComponent<Props, State> {
     this.state = {
       hasError: false,
       showDetails: false,
-      details: ''
+      details: '',
+      detailsId: uniqueId('errbounddetails')
     }
 
     this.detailsRef = React.createRef()
@@ -93,7 +97,7 @@ class ErrorBoundary extends React.PureComponent<Props, State> {
   }
 
   render () {
-    const { hasError, details, showDetails } = this.state
+    const { hasError, details, showDetails, detailsId } = this.state
 
     if (hasError) {
       return (
@@ -103,7 +107,10 @@ class ErrorBoundary extends React.PureComponent<Props, State> {
             <p>{this.getMessage('ERROR_BOUNDARY.MESSAGE')}</p>
           </div>
           {showDetails ? (
-            <textarea ref={this.detailsRef} readOnly className='ErrorBoundary__details' value={details} />
+            <label htmlFor={detailsId}>
+              <span className='visually-hidden'>{this.getMessage('ERROR_BOUNDARY.ERROR_DETAILS')}</span>
+              <textarea id={detailsId} ref={this.detailsRef} readOnly className='ErrorBoundary__details' value={details} />
+            </label>
           ) : (
             <button className='ErrorBoundary__btn' onClick={this.toggleDetails}>{this.getMessage('ERROR_BOUNDARY.SHOW_DETAILS')}</button>
           )}
