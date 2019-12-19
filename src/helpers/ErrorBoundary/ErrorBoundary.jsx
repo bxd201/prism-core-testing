@@ -24,7 +24,8 @@ type State = {
   hasError: boolean,
   showDetails: boolean,
   details: string,
-  detailsId: string
+  detailsId: string,
+  version: string
 }
 
 class ErrorBoundary extends React.PureComponent<Props, State> {
@@ -40,7 +41,14 @@ class ErrorBoundary extends React.PureComponent<Props, State> {
       hasError: false,
       showDetails: false,
       details: '',
-      detailsId: uniqueId('errbounddetails')
+      detailsId: uniqueId('errbounddetails'),
+      version: (() => {
+        try {
+          return APP_VERSION
+        } catch (e) {
+          return 'N/A'
+        }
+      })()
     }
 
     this.detailsRef = React.createRef()
@@ -66,34 +74,29 @@ class ErrorBoundary extends React.PureComponent<Props, State> {
   }
 
   componentDidCatch (error: any, errorInfo: any) {
+    const { version } = this.state
     // you can also log the error to an error reporting service
     console.error('PRISM logged an error: ', error, errorInfo)
 
+    let detailsOutput = `PRISM v${version}\n\n`
+
     switch (typeof error) {
       case 'string': {
-        this.setState({
-          details: `${error}
-
-          ${errorInfo.componentStack}`
-        })
+        detailsOutput += `${error}\n\n${errorInfo.componentStack}`
         break
       }
       case 'object': {
-        this.setState({
-          details: `${error.stack}
-
-          ${errorInfo.componentStack}`
-        })
+        detailsOutput += `${error.stack}\n\n${errorInfo.componentStack}`
         break
       }
       default: {
-        this.setState({
-          details: `Unspecified Error
-
-          ${errorInfo.componentStack}`
-        })
+        detailsOutput += `\nUnspecified Error\n\n${errorInfo.componentStack}`
       }
     }
+
+    this.setState({
+      details: detailsOutput
+    })
   }
 
   render () {
