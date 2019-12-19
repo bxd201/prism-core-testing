@@ -441,9 +441,15 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     const { imagePathList } = this.state
     let newImagePathList = copyImageList(imagePathList)
     let updateSelectArea = []
-
+    this.CFICanvasContext4.clearRect(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
     this.setState({
-      paintCursor: `${canvasClass}--${activeTool}`
+      paintCursor: `${canvasClass}--${activeTool}`,
+      lineStart: [],
+      BeginPointList: [],
+      polyList: [],
+      presentPolyList: [],
+      showAnimatePin: false,
+      showNonAnimatePin: false
     })
     if (activeTool === '') {
       this.setState({
@@ -566,7 +572,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     window.addEventListener('mouseup', this.mouseUpHandler)
     const { isDragging, paintBrushWidth, paintBrushShape, activeTool } = this.state
     const { lpActiveColor } = this.props
-    if (!lpActiveColor && activeTool === toolNames.PAINTBRUSH) return
+    if (lpActiveColor === null && activeTool === toolNames.PAINTBRUSH) return
     const lpActiveColorRGB = (activeTool === toolNames.ERASE) ? `rgba(255, 255, 255, 1)` : `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})`
     const { clientX, clientY } = e
     const canvasClientOffset = this.CFICanvas2.current.getBoundingClientRect()
@@ -618,15 +624,17 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   }
 
   mouseUpHandler = (e: Object) => {
+    window.removeEventListener('mouseup', this.mouseUpHandler)
     const { drawCoordinates, imagePathList, activeTool, deleteAreaList } = this.state
     let newDeleteAreaList = copyImageList(deleteAreaList)
     let paintPath = []
     const { lpActiveColor } = this.props
-    if (!lpActiveColor) {
+    if (lpActiveColor === null) {
       this.setState({
         isDragging: false
       })
     }
+    if (lpActiveColor === null && activeTool === toolNames.PAINTBRUSH) return
     let newImagePathList
     const { newGroupSelectList, newGroupAreaList } = this.breakGroupIfhasIntersection()
     this.clearCanvas()
@@ -665,7 +673,6 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       undoIsEnabled: newImagePathList.length > 0,
       redoIsEnabled: false
     })
-    window.removeEventListener('mouseup', this.mouseUpHandler)
   }
 
   repaintBrushPathByCorrdinates = (drawCoordinates: Array<Object>, paintBrushWidth: number, paintBrushShape: string, clip: boolean) => {
@@ -935,7 +942,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
   handlePolygonDefine = (e: Object, isAddArea: boolean) => {
     this.pause = false
-    if (!this.props.lpActiveColor) return
+    if (this.props.lpActiveColor === null) return
     const { BeginPointList, polyList, lineStart, imagePathList, presentPolyList, deleteAreaList } = this.state
     let newDeleteAreaList = copyImageList(deleteAreaList)
     const { clientX, clientY } = e
@@ -1003,7 +1010,10 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
         this.dropPin(BeginPointList[0], BeginPointList[1], BeginPointList.length > 0)
       }
       presentPoly.length > 2 && repaintCircleLine(ctxDraw, BeginPointList, presentPoly.slice(1, -1))
-      this.dropPin(X, Y, BeginPointList.length > 0)
+      const canvasWrapperOffset = this.getCanvasWrapperOffset()
+      const leftOffset = clientX - canvasWrapperOffset.x
+      const topOffset = clientY - canvasWrapperOffset.y
+      this.dropPin(leftOffset, topOffset, BeginPointList.length > 0)
       if (lineStart.length > 0) {
         ctxDraw.beginPath()
         const end = [X, Y]
@@ -1021,7 +1031,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
   handlePaintArea = throttle((e: Object) => {
     const { imagePathList } = this.state
-    if (!this.props.lpActiveColor) return
+    if (this.props.lpActiveColor === null) return
     let imagePath = []
     const { clientX, clientY } = e
     const canvasClientOffset = this.CFICanvas2.current.getBoundingClientRect()
@@ -1689,12 +1699,12 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
                 style={{ backgroundColor: backgroundColorBrush, top: position.top, left: position.left }}
               /> : ''
           }
-          {showAnimatePin && <div className={`${animationPin}`} style={{ top: pinY, left: pinX }}>
+          {showAnimatePin && (activeTool === toolNames.DEFINEAREA || activeTool === toolNames.REMOVEAREA) && <div className={`${animationPin}`} style={{ top: pinY, left: pinX }}>
             <div className={`${animationPin}__outer`}>
               <div className={`${animationPin}__inner`} />
             </div>
           </div>}
-          {showNonAnimatePin && <div className={`${nonAnimationPin}`} style={{ top: currPinY, left: currPinX }} >
+          {showNonAnimatePin && (activeTool === toolNames.DEFINEAREA || activeTool === toolNames.REMOVEAREA) && <div className={`${nonAnimationPin}`} style={{ top: currPinY, left: currPinX }} >
             <div className={`${nonAnimationPin}__outer`}>
               <div className={`${nonAnimationPin}__inner`} />
             </div>
