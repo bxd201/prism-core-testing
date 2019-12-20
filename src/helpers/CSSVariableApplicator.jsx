@@ -17,8 +17,14 @@ function CSSVariableApplicator ({ variables, children }: Props) {
     }
 
     for (let prop in variables) {
-      // $FlowIgnore -- flow doesn't recognize the style prop of documentElement
-      document.documentElement.style.setProperty(normalizeCssPropName(prop), variables[prop])
+      const value = variables[prop]
+
+      // if a value has been defined...
+      if (value) {
+        // ... set it!
+        // $FlowIgnore -- flow doesn't recognize the style prop of documentElement
+        document.documentElement.style.setProperty(normalizeCssPropName(prop), value)
+      }
     }
   }, [variables])
 
