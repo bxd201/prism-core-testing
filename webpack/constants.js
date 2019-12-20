@@ -17,7 +17,7 @@ const appIndexPath = path.join(srcPath, 'index.jsx')
 const authorPath = path.join(srcPath, 'author.js')
 const embedPath = path.join(srcPath, 'embed.js')
 const exportPath = path.join(srcPath, 'export.js')
-const cleanslatePath = path.join(srcPath, 'cleanslate.js')
+const cleanslatePath = path.join(srcPath, '/cleanslate/cleanslate.js')
 
 const mainEntryPointName = 'bundle'
 const embedEntryPointName = 'embed'
