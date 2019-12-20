@@ -5,6 +5,10 @@
  * with a little less pain.
  */
 
-.cleanslate a {
-  color: getVar('colors.primary');
+ .cleanslate a {
+  color: var(getVarName('theme.colors.primary'));
+}
+
+.cleanslate {
+  font-family: var(getVarName('typography.bodyFontFamily'));
 }

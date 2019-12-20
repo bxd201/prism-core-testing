@@ -21,5 +21,9 @@ export const DEFAULT_CONFIGURATION = {
     success: varValues.colors.success,
     warning: varValues.colors.warning,
     white: varValues.colors.white
+  },
+  typography: {
+    bodyFontFamily: varValues.typography.bodyFontFamily,
+    titleFontFamily: varValues.typography.titleFontFamily
   }
 }

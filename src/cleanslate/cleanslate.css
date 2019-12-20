@@ -287,7 +287,7 @@
   font-family:monospace;
 }
 .cleanslate a {
-    color: #0069af;
+    color: blue;
 }
 .cleanslate a:active
 .cleanslate a:focus,
@@ -296,7 +296,7 @@
     text-decoration: underline;
 }
 .cleanslate a:visited {
-    color: #369;
+    color: blueviolet;
 }
 .cleanslate a, .cleanslate a *, .cleanslate input[type=submit], .cleanslate input[type=button], .cleanslate input[type=radio], .cleanslate input[type=checkbox], .cleanslate select, .cleanslate button {
     cursor:pointer;
