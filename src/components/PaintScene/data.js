@@ -57,3 +57,10 @@ export const divTranslateFactor = -152
 export const divTranslateMultiplier = 52
 export const downPointerDivTranslateFactor = -158
 export const downPointerDivTranslateMultiplie = 26
+export const tooltipShownSession = { key: 'tooltipShown', value: 1 }
+export const setTooltipShownLocalStorage = () => {
+  window.localStorage.setItem(tooltipShownSession.key, tooltipShownSession.value)
+}
+export const getTooltipShownLocalStorage = () => {
+  return window.localStorage.getItem(tooltipShownSession.key)
+}

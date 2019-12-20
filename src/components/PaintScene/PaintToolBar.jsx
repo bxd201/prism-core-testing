@@ -1,13 +1,14 @@
 // @flow
 import React, { PureComponent } from 'react'
 import './PaintToolBar.scss'
-import { toolBarButtons, selectGroupButtons, selectGroupTooltipData, toolNames, toolNumbers, groupToolNames } from './data'
+import { toolBarButtons, selectGroupButtons, selectGroupTooltipData, toolNames, toolNumbers, groupToolNames, getTooltipShownLocalStorage } from './data'
 import BrushTypes from './BrushTypes'
 import PaintToolTip from './PaintToolTip'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
 import ZoomTool from './ZoomTool'
 import { injectIntl } from 'react-intl'
+import storageAvailable from '../../shared/utils/browserStorageCheck.util'
 
 const baseClass = 'paint-tool-bar'
 const wrapperClass = `${baseClass}__wrapper`
@@ -63,6 +64,7 @@ type ComponentProps = {
   isUngroup: boolean,
   isAddGroup: boolean,
   isDeleteGroup: boolean,
+  isInfoToolActive: boolean,
   intl: any
 }
 
@@ -90,7 +92,7 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
       showPaintBrushTypes: false,
       showEraseBrushTypes: false,
       showTooltip: false,
-      tooltipToolActiveNumber: 0,
+      tooltipToolActiveNumber: 1,
       isHidePaint: false,
       zoomSliderHide: -1
     }
@@ -107,6 +109,12 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
     }
     if (prevProps.eraseBrushShape !== this.props.eraseBrushShape || prevProps.eraseBrushWidth !== this.props.eraseBrushWidth) {
       this.hideEraseBrushTypes()
+    }
+  }
+
+  componentDidMount () {
+    if (storageAvailable('localStorage') && getTooltipShownLocalStorage() === null) {
+      this.setState({ showTooltip: this.props.isInfoToolActive })
     }
   }
 

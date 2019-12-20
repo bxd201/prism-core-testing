@@ -16,6 +16,7 @@ import {
   CANCEL_ADD_COLOR,
   EMPTY_LP_COLOR
 } from '../actions/live-palette'
+import storageAvailable from '../../shared/utils/browserStorageCheck.util'
 
 type State = {
   colors: Color[],
@@ -23,7 +24,7 @@ type State = {
   toggleCompareColor: boolean
 }
 
-const lpFromLocalStorage = JSON.parse(window.localStorage.getItem('lp'))
+const lpFromLocalStorage = storageAvailable('localStorage') && JSON.parse(window.localStorage.getItem('lp'))
 const initialLpState = { colors: [], activeColor: {} }
 const { colors, activeColor } = lpFromLocalStorage || initialLpState
 export const initialState: State = {

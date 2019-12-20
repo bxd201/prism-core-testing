@@ -27,6 +27,7 @@ import ActiveSlot from './ActiveSlot'
 import type { Color } from '../../shared/types/Colors'
 
 import './LivePalette.scss'
+import storageAvailable from '../../shared/utils/browserStorageCheck.util'
 
 type Props = {
   colors: Array<Color>,
@@ -57,7 +58,9 @@ export class LivePalette extends PureComponent<Props, State> {
   componentDidMount () {
     store.subscribe(() => {
       const { lp } = store.getState()
-      window.localStorage.setItem('lp', JSON.stringify(lp))
+      if (storageAvailable('localStorage')) {
+        window.localStorage.setItem('lp', JSON.stringify(lp))
+      }
     })
   }
   // $FlowIgnore
