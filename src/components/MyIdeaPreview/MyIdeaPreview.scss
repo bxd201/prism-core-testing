@@ -1,0 +1,25 @@
+.my-ideas-preview-wrapper {
+  position: relative;
+  overflow: hidden;
+  &__overlay-canvas {
+    position: absolute;
+    top: 0;
+    z-index: 9999;
+    opacity: 0.8;
+  }
+  &__button {
+    padding: 0.4rem;
+    border: 1px solid #000000;
+    background-color: #ffffff;
+    margin: 0.5rem;
+  }
+  &__action-buttons {
+    width: 100%;
+    &__inner {
+      width: 100%;
+      height: auto;
+      display: flex;
+      justify-content: center;
+    }
+  }
+}

@@ -73,8 +73,12 @@ export const getColorsFromImagePathList = (imagePathList: any) => {
   return uniqueColorList
 }
 
-export const separateColors = (colors: Object[], imageData: any, threshold: number): Array[] => {
+export const separateColors = (colors: Object[], imageData: any, threshold: number, saveAlpha: boolean): Array[] => {
   const pixelBuckets = colors.map(color => [])
+  // alpha values need to be saved as a separate list due to image path implementation
+  const alphaPixelMaps = colors.map(color => {
+    return {}
+  })
 
   const data = imageData.data
   for (let i = 0; i < data.length; i += 4) {
@@ -83,13 +87,46 @@ export const separateColors = (colors: Object[], imageData: any, threshold: numb
     for (let colorIndex = 0; colorIndex < colors.length; colorIndex++) {
       const colorDiff = getDeltaE00(colors[colorIndex], pixel)
       // 1.5 is a good number to use for a threshold
-      if (colorDiff < threshold) {
-        pixelBuckets[colorIndex].push(data[i], data[i + 1], data[i + 2], data[i + 3])
+      if (saveAlpha) {
+        // This block is for import
+        if (colorDiff < threshold) {
+          pixelBuckets[colorIndex].push(i)
+          alphaPixelMaps[colorIndex][`${i}`] = data[i + 3]
+        }
       } else {
-        pixelBuckets[colorIndex].push(0, 0, 0, 0)
+        // This block is for export
+        if (colorDiff < threshold) {
+          pixelBuckets[colorIndex].push(data[i], data[i + 1], data[i + 2], data[i + 3])
+        } else {
+          pixelBuckets[colorIndex].push(0, 0, 0, 0)
+        }
       }
     }
   }
 
+  if (saveAlpha) {
+    return {
+      pixelIndices: pixelBuckets,
+      alphaPixelMaps
+    }
+  }
+
   return pixelBuckets
+}
+
+export const getUniqueColorsFromPalette = (palette: Object[]) => {
+  const colors = palette.map(color => {
+    const labColor = rgb.lab([color.red, color.green, color.blue, 255])
+    return mapLABArrayToObject(labColor)
+  })
+
+  return colors
+}
+
+export const processLoadedScene = (ctx: any, colors: Object[], threshold: number, saveAlpha: boolean): Array[] => {
+  const imageData = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height)
+  const uniqueColors = getUniqueColorsFromPalette(colors)
+  const colorLayers = separateColors(uniqueColors, imageData, threshold, saveAlpha)
+
+  return colorLayers
 }

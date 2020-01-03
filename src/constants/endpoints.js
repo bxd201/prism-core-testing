@@ -22,3 +22,5 @@ export const SCENES_ENDPOINT = endpoint`scenes`
 // @todo - Legacy endpoints proxies to save masks, these do not exists ? -RS
 export const MASK_ENDPOINT = endpoint`masks`
 export const STATUS_ENDPOINT = endpoint`auth/user/status`
+// @todo - does this need to be brandified? -RS
+export const CUSTOM_SCENE_IMAGE_ENDPOINT = 'https://www.sherwin-williams.com/color-visualization/services/scene/custom'

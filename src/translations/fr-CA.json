@@ -1,5 +1,4 @@
 {
-  "SAVE_MASKS": "Save",
   "ADD_A_COLOR": "Ajouter une couleur",
   "BACK_TO_COLOR_WALL": "Retour au mur de couleurs",
   "CANCEL": "Annuler",
@@ -9,9 +8,13 @@
   "COLOR_COLLECTIONS": "Couleur Collection",
   "COLOR_FAMILIES": "Familles de Couleurs",
   "COORDINATING_COLORS": "Couleurs coordonnées",
+  "DELETE": "DELETE",
   "DELETE_PIN": "Delete pin",
   "DETAILS": "Détails",
   "DISPLAY_SCENE_PAINTER": "Afficher la fonction Peindre une scène",
+  "DONE": "DONE",
+  "EDIT": "EDIT",
+  "EMAIL_ADDRESS": "Email Address",
   "ERROR_LOADING_COLORS": "Erreur lors du chargement des couleurs.",
   "EXTERIOR": "Extérieur",
   "FIND_COLORS_IN_CW": "TROUVER DES COULEURS DANS LE MUR DE COULEUR NUMÉRIQUE",
@@ -19,7 +22,16 @@
   "IMAGE_INVISIBLE": "This image is invisible to the user.",
   "INTERIOR": "Intérieur",
   "LOCATION_NUMBER": "Numéro de localisation",
+  "LOG_IN": "LOG IN",
   "MAXIMIZE_COLOR_SWATCH": "Maximiser l'échantillon de couleur",
+  "MY_IDEAS": {
+    "NO_IDEAS_DESC": "Save all your inspiration and ideas here, and reference them when you're ready to start painting. Edit them any time.",
+    "NO_IDEAS_TITLE": "You haven´t saved any ideas.",
+    "OPEN_PROJECT": "Open this project",
+    "OPEN_UNPAINTED": "Open unpainted scene",
+    "PREVIEW": "Preview of",
+    "TITLE": "View and edit your ideas"
+  },
   "NO_COLORS_AVAILABLE": "Aucune couleur disponible.",
   "PAINT_TOOLS": {
     "BACK": "Go back",
@@ -55,7 +67,10 @@
     "ZOOM": "Adjust the zoom level"
   },
   "PALETTE_TITLE": "My Color Palette",
+  "PASSWORD": "Password",
+  "REGISTER": "REGISTER",
   "RESTORE_COLOR_SWATCH_TO_DEFAULT_SIZE": "Restaurer la nuance de couleur à la taille par défaut",
+  "SAVE_MASKS": "Save",
   "SCENE_DISPLAYED": "La Scène est affichée",
   "SCENE_HIDDEN": "La Scène est cachée",
   "SEARCH": {
@@ -63,14 +78,15 @@
       "GENERIC": "Nous n'avons pas pu effectuer votre recherche.",
       "HEADLINE": "Quelque chose s'est mal passé."
     },
+    "FIND_A_COLOR": "Trouver une couleur",
     "NO_RESULTS": "Désolé, aucune correspondance de couleur trouvée.",
     "PROMPT": "Entrez un nom de couleur, un numéro ou une famille dans le champ ci-dessus.",
     "SEARCH": "Chercher",
-    "SEARCHING": "Recherche",
     "SEARCH_BY": "Recherche par nom ou numéro de couleur",
-    "FIND_A_COLOR": "Trouver une couleur",
+    "SEARCHING": "Recherche",
     "SUGGESTIONS": "Quelques exemples de choses que vous pouvez rechercher sont {suggestions}"
   },
+  "SIGN_IN": "SIGN IN",
   "SIMILAR_COLORS": "Couleurs semblables",
   "SWATCH_ACTIVATED_DETAILS": "{color} a été sélectionné. Appuyez sur Entrée pour voir les détails.",
   "SWATCH_FOCUS": "{color}. Appuyez sur Entrée pour le sélectionner.",

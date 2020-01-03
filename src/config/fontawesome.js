@@ -125,7 +125,8 @@ const faIcons = [
   faTimes,
   faTrash,
   faUndoAlt,
-  faFolder
+  faFolder,
+  falTrashAlt
   // -------- REGULARS ---------
   // far???
 ]

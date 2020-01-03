@@ -1,3 +1,4 @@
+// @flow
 import { getDeltaE00 } from 'delta-e'
 import difference from 'lodash/difference'
 import uniqueId from 'lodash/uniqueId'
@@ -240,6 +241,18 @@ export const repaintImageByPath = (imagePathList, canvas, width, height, isErase
   })
 
   ctx.putImageData(imageData, 0, 0)
+}
+
+export const createImagePathItem = (data: number[], pixelIndexAlphaMap: Object, color: number[], type: string, drawOrder: number, isEnabled: boolean = true) => {
+  return {
+    id: uniqueId(),
+    data,
+    pixelIndexAlphaMap,
+    color,
+    type,
+    drawOrder,
+    isEnabled
+  }
 }
 
 export const drawImagePixelByPath = (ctx, width, height, color, path) => {

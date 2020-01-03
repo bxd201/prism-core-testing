@@ -11,6 +11,7 @@ const srcPath = path.join(rootPath, 'src')
 const distPath = path.join(rootPath, 'dist')
 const nodeModulesPath = path.join(rootPath, 'node_modules')
 const mocksPath = path.join(rootPath, '__mocks__')
+const publicPath = path.join(rootPath, 'public')
 
 // entry file paths
 const appIndexPath = path.join(srcPath, 'index.jsx')
@@ -75,5 +76,6 @@ module.exports = {
   production,
   rootPath,
   srcPath,
-  implementationTemplates
+  implementationTemplates,
+  publicPath
 }

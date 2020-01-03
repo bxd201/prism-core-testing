@@ -19,3 +19,6 @@ flow-typed/npm
 
 # webpack cache
 .cache
+
+# Static files for mock api calls
+public

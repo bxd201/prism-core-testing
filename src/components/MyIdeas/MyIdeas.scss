@@ -1,0 +1,84 @@
+.myideas-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  &__button {
+    padding: 0.4rem;
+    border: 1px solid #000000;
+  }
+  &__section {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    padding: 4px 8px;
+
+    &--left {
+     justify-content: flex-start;
+      text-align: center;
+    }
+  }
+  &__scene {
+    width: auto;
+    cursor: pointer;
+    position: relative;
+    padding: 3px;
+    &__frame {
+      box-shadow: 0 5px 6px -4px rgba(0, 0, 0, 120);
+      border-color: #ffffff;
+      border-width: 2px;
+      border-style: solid;
+      &__pane {
+        &__thumb {
+          overflow: hidden;
+          /*height: 60px;
+          width: 120px;*/
+          border-bottom: 1px solid #ffffff;
+        }
+
+      }
+    }
+    &__edit {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-end;
+      cursor: pointer;
+
+      button {
+        background-color: #ffffff;
+        width: 20px;
+        height: 20px;
+        border-radius: 20px;
+      }
+    }
+    &__label {
+      text-align: center;
+      padding: 8px 4px 4px 4px;
+      font-size: 0.8rem;
+      color: #333333;
+    }
+    &__colors {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+
+      &__color {
+        height: 25px;
+        flex-grow: 1;
+        display: flex;
+        border-left: 1px solid #ffffff;
+        border-collapse: collapse;
+        &:first-child {
+          border: none;
+        }
+      }
+    }
+  }
+}

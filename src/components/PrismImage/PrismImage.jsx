@@ -4,7 +4,15 @@ import { useIntl } from 'react-intl'
 import './PrismImage.scss'
 import { getScaledLandscapeHeight, getScaledPortraitHeight } from '../../shared/helpers/ImageUtils'
 
-const PrismImage = forwardRef((props, ref) => {
+type PrismImageProps = {
+  shouldResample: boolean,
+  width: number,
+  height: number,
+  source: string,
+  scalingWidth: number
+}
+
+const PrismImage = forwardRef((props: PrismImageProps, ref) => {
   const intl = useIntl()
   const canvasRef = useRef()
   const handleCallback = (e) => {
@@ -15,9 +23,12 @@ const PrismImage = forwardRef((props, ref) => {
     }
     const canvas = canvasRef.current
     const ctx = canvas.getContext('2d')
-    // eslint-disable-next-line react/prop-types
-    const canvasWidth = props.scalingWidth
-    const canvasHeight = ref.current.height > ref.current.width ? getScaledPortraitHeight(ref.current.width, ref.current.height)(canvasWidth) : getScaledLandscapeHeight(ref.current.width, ref.current.height)(canvasWidth)
+    let canvasWidth = props.width
+    let canvasHeight = props.height
+    if (props.shouldResample || (!canvasWidth && !canvasHeight)) {
+      canvasWidth = props.scalingWidth
+      canvasHeight = ref.current.height > ref.current.width ? getScaledPortraitHeight(ref.current.width, ref.current.height)(canvasWidth) : getScaledLandscapeHeight(ref.current.width, ref.current.height)(canvasWidth)
+    }
     canvas.width = canvasWidth
     canvas.height = canvasHeight
     ctx.drawImage(ref.current, 0, 0, canvasWidth, canvasHeight)

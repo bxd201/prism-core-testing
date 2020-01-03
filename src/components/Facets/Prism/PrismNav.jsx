@@ -37,6 +37,10 @@ const isFastMask = (pathname) => {
   return /^\/fast-mask/.test(pathname)
 }
 
+const isMyIdeas = (pathname) => {
+  return /^\/my-ideas/.test(pathname)
+}
+
 export default () => {
   const location = useLocation()
   const { pathname } = location
@@ -53,6 +57,7 @@ export default () => {
       <Link to='/expert-colors' className={`prism-nav-btn ${isExpertColor(pathname) ? 'prism-nav-btn--active' : ''}`}>Expert Colors</Link>
       <Link to='/match-photo' className={`prism-nav-btn ${isMatchPhoto(pathname) ? 'prism-nav-btn--active' : ''}`}>Match Photo</Link>
       <Link to='/paint-scene' className={`prism-nav-btn ${isPaintScene(pathname) ? 'prism-nav-btn--active' : ''}`}>Paint a Scene</Link>
+      <Link to='/my-ideas' className={`prism-nav-btn ${isMyIdeas(pathname) ? 'prism-nav-btn--active' : ''}`}>My Ideas</Link>
       <Link to='/fast-mask' className={`prism-nav-btn ${isFastMask(pathname) ? 'prism-nav-btn--active' : ''}`}>Fast Mask</Link>
     </>
   )
