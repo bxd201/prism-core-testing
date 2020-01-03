@@ -2,6 +2,7 @@
 import React, { useMemo, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import kebabCase from 'lodash/kebabCase'
+import at from 'lodash/at'
 import { type Color } from '../../../../shared/types/Colors'
 import { numToAlphaString, arrayToSpacedString } from '../../../../shared/helpers/StringUtils'
 import { fullColorName, fullColorNumber } from '../../../../shared/helpers/ColorUtils'
@@ -11,24 +12,26 @@ import './ColorWallSwatch.scss'
 import 'src/scss/convenience/visually-hidden.scss'
 import OmniButton from './ColorWallSwatchButtons/OmniButton'
 import { generateColorDetailsPageUrl } from 'src/shared/helpers/ColorUtils'
-import { FormattedMessage } from 'react-intl'
+import { useIntl } from 'react-intl'
 
 type Props = {
+  active?: boolean,
   color: Color,
-  focus?: boolean,
-  thisLink?: string,
-  showContents?: boolean,
-  onAdd?: Function,
-  onClick?: Function,
-  level?: number,
   compensateX?: number,
   compensateY?: number,
-  active?: boolean
+  tabIndex?: number,
+  focus?: boolean,
+  level?: number,
+  onAdd?: Function,
+  onClick?: Function,
+  showContents?: boolean,
+  thisLink?: string
 }
 
 const ColorWallSwatch = React.forwardRef<Props, any>((props: Props, ref: any) => {
-  const { onAdd, onClick, showContents, color, thisLink, focus, level, active, compensateX, compensateY } = props
+  const { onAdd, onClick, showContents, color, thisLink, focus, level, active, compensateX, compensateY, tabIndex = 0 } = props
   const { displayAddButton, displayInfoButton, displayDetailsLink, colorDetailPageRoot }: ColorWallContextProps = React.useContext(ColorWallContext)
+  const { messages = {} } = useIntl()
   const handleOnAdd = useMemo(() => {
     return () => {
       if (onAdd) {
@@ -44,6 +47,8 @@ const ColorWallSwatch = React.forwardRef<Props, any>((props: Props, ref: any) =>
       }
     }
   }, [onClick])
+
+  const fullName = useMemo(() => fullColorName(color.brandKey, color.colorNumber, color.name), [color])
 
   const classes = useMemo(() => {
     let classes = [ CLASS_NAMES.BASE, CLASS_NAMES.BASE_DYNAMIC ]
@@ -65,7 +70,7 @@ const ColorWallSwatch = React.forwardRef<Props, any>((props: Props, ref: any) =>
   const { content, refData } = useMemo<any, Object | void>(() => {
     if (!showContents) {
       const inner = (
-        <span className='visually-hidden'>{fullColorName(color.brandKey, color.colorNumber, color.name)}</span>
+        <span className='visually-hidden'>{fullName}</span>
       )
 
       if (thisLink) {
@@ -94,7 +99,7 @@ const ColorWallSwatch = React.forwardRef<Props, any>((props: Props, ref: any) =>
             icon={OmniButton.ICONS.ADD}
             onClick={handleOnAdd}
             className={`${CLASS_NAMES.CONTENT_CTA} ${CLASS_NAMES.CONTENT_CTA_L}`}
-            tabIndex={-1}
+            tabIndex={tabIndex}
           />
         ),
         refData: {
@@ -109,7 +114,7 @@ const ColorWallSwatch = React.forwardRef<Props, any>((props: Props, ref: any) =>
             link={link}
             icon={OmniButton.ICONS.INFO}
             className={`${CLASS_NAMES.CONTENT_CTA} ${CLASS_NAMES.CONTENT_CTA_R}`}
-            tabIndex={-1}
+            tabIndex={tabIndex}
           />
         ),
         refData: {
@@ -118,13 +123,16 @@ const ColorWallSwatch = React.forwardRef<Props, any>((props: Props, ref: any) =>
       }
     } else if (displayDetailsLink) {
       const link = colorDetailPageRoot ? `${colorDetailPageRoot}/${color.brandKey}${color.colorNumber}-${kebabCase(color.name)}` : generateColorDetailsPageUrl(color)
+      const title = (at(messages, 'VIEW_DETAILS_FOR')[0] || '').replace('{name}', fullName)
       return {
         content: (
           <OmniButton
+            title={title}
             link={link}
             className={`${CLASS_NAMES.CONTENT_CTA} ${CLASS_NAMES.CONTENT_CTA_L} ${focus ? CLASS_NAMES.CONTENT_CTA_FOCUS : ''}`}
-            tabIndex={-1}>
-            <FormattedMessage id='VIEW_DETAILS' />
+            tabIndex={tabIndex}
+          >
+            {at(messages, 'VIEW_DETAILS')[0]}
           </OmniButton>
         ),
         refData: {
@@ -134,7 +142,7 @@ const ColorWallSwatch = React.forwardRef<Props, any>((props: Props, ref: any) =>
     }
 
     return {}
-  }, [color, onClick, thisLink, handleOnAdd, displayAddButton, displayInfoButton, displayDetailsLink, colorDetailPageRoot, showContents])
+  }, [color, onClick, tabIndex, thisLink, handleOnAdd, displayAddButton, displayInfoButton, displayDetailsLink, colorDetailPageRoot, showContents, messages])
 
   useEffect(() => {
     if (ref) {

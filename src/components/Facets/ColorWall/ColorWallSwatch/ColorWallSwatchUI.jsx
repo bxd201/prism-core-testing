@@ -11,9 +11,10 @@ import 'src/scss/convenience/visually-hidden.scss'
 
 type Props = {
   color: Color,
-  thisLink: string,
   focus?: boolean,
   onClick?: Function,
+  tabIndex?: number,
+  thisLink: string
 }
 
 const _classes = arrayToSpacedString([
@@ -22,7 +23,7 @@ const _classes = arrayToSpacedString([
 ])
 
 const ColorWallSwatchUI = forwardRef<Props, Object>((props: Props, ref: Object) => {
-  const { focus, color, thisLink, onClick } = props
+  const { focus, color, thisLink, onClick, tabIndex = 0 } = props
 
   useEffect(() => {
     ref.current = {
@@ -52,7 +53,7 @@ const ColorWallSwatchUI = forwardRef<Props, Object>((props: Props, ref: Object) 
       <Link {...linkProps}
         className={linkClasses}
         onClick={handleClick}
-        tabIndex={-1}>
+        tabIndex={tabIndex}>
         <span className='visually-hidden'>
           {colorName}
         </span>

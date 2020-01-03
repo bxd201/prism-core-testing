@@ -765,6 +765,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
       // ALL of the bloomed swatches in the zoomed-in view
       renderedSwatch = (
         <ColorWallSwatch
+          tabIndex={-1}
           showContents={thisLevel.level === 0}
           thisLink={linkToSwatch}
           onAdd={onAddColor ? this.addColor : void (0)}
@@ -788,6 +789,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
       // this is the swatch used in zoomed-out non-bloomed view
       renderedSwatch = (
         <ColorWallSwatchUI
+          tabIndex={-1}
           color={color}
           thisLink={linkToSwatch}
           onClick={this.generateHandleSwatchClick(color)}
@@ -799,6 +801,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
       // ALL non-bloomed swatches in the zoomed-in view
       renderedSwatch = (
         <ColorWallSwatch
+          tabIndex={-1}
           thisLink={linkToSwatch}
           color={color}
           onClick={this.generateHandleSwatchClick(color)}

@@ -76,6 +76,7 @@
   "TO_DAY_VIEW": "Changer en vue de jour",
   "TO_NIGHT_VIEW": "Changer en vue de nuit",
   "VIEW_DETAILS": "Voir les détails",
+  "VIEW_DETAILS_FOR": "Voir les détails pour {name}",
   "ZOOM_IN": "Zoomer",
   "ZOOM_OUT": "Dézoomer",
   "ERROR_BOUNDARY": {
