@@ -2,7 +2,7 @@
 import React from 'react'
 
 export type ColorWallContextProps = {
-  colorDetailPageRoot?: boolean | typeof undefined,
+  colorDetailPageRoot?: string | typeof undefined,
   colorWallBgColor: string,
   displayAddButton: boolean | typeof undefined,
   displayDetailsLink: boolean | typeof undefined,
@@ -15,7 +15,7 @@ export type ColorWallContextProps = {
 }
 
 export const colorWallContextDefault: ColorWallContextProps = {
-  colorDetailPageRoot: false,
+  colorDetailPageRoot: undefined,
   colorWallBgColor: '#EEEEEE',
   displayAddButton: false,
   displayDetailsLink: true,

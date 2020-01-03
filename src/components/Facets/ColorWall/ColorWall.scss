@@ -36,6 +36,7 @@
 
     &__btn {
       font-size: getVar('base');
+      color: var(getVarName('theme.colors.primary'));
       padding: 0;
       background: white;
       float: left;

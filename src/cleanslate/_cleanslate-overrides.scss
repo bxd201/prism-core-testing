@@ -6,7 +6,9 @@
  */
 
  .cleanslate a {
-  color: var(getVarName('theme.colors.primary'));
+  &, &:hover, &:visited, &:active {
+    color: inherit;
+  }
 }
 
 .cleanslate {

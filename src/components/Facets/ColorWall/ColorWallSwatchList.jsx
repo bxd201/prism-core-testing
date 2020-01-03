@@ -6,6 +6,7 @@ import memoizee from 'memoizee'
 import isEqual from 'lodash/isEqual'
 import isEmpty from 'lodash/isEmpty'
 import isArray from 'lodash/isArray'
+import at from 'lodash/at'
 import isFunction from 'lodash/isFunction'
 import clone from 'lodash/clone'
 import * as scroll from 'scroll'
@@ -87,7 +88,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
   _gridWrapperRef: ?RefObject = void (0)
   _swatchRefs: {
     // This will wind up being one of the ColorWallSwatch components
-    [key: string]: any
+    [key: string]: ?RefObject
   }
   _scrollTimeout = void (0)
   // contains references to active scrolls so we can canel them if need be
@@ -485,17 +486,24 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
             return
           }
 
-          const targetedSwatchEl = this._swatchRefs[colorId]
+          const swatchAPI = at(this._swatchRefs, `[${colorId}].current`)[0]
 
-          if (targetedSwatchEl && isFunction(targetedSwatchEl.getThisLink)) {
-            push(targetedSwatchEl.getThisLink(targetedSwatchEl), {
-              a11yFocusChunk,
-              a11yFocusCell,
-              fromKeyboard: true,
-              maintainFocus: true
-            })
-          } else if (targetedSwatchEl && isFunction(targetedSwatchEl.performClickAction)) {
-            targetedSwatchEl.performClickAction(targetedSwatchEl)
+          if (swatchAPI) {
+            if (swatchAPI.externalLink) {
+              window.location.href = swatchAPI.externalLink
+              return
+            } else if (swatchAPI.internalLink) {
+              push(swatchAPI.internalLink, {
+                a11yFocusChunk,
+                a11yFocusCell,
+                fromKeyboard: true,
+                maintainFocus: true
+              })
+            }
+
+            if (swatchAPI.onClick) {
+              swatchAPI.onClick(e)
+            }
           }
 
           e.stopPropagation()
@@ -709,7 +717,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
         maintainFocus: true
       })
     }
-  }, { primitive: true, length: 1 })
+  }, { length: 1 })
 
   // END HANDLERS
   // -----------------------------------------------
@@ -717,11 +725,10 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
   // -----------------------------------------------
   // OTHER METHODS
 
-  generateMakeSwatchRef = memoizee(function makeSwatchRef (colorId: string) {
-    return (el) => {
-      this._swatchRefs[colorId] = el
-    }
-  })
+  generateMakeSwatchRef = (colorId: string): ColorWallSwatchRefData => {
+    const ref = this._swatchRefs[colorId] = this._swatchRefs[colorId] || React.createRef()
+    return ref
+  }
 
   cellRenderer = function cellRenderer ({
     columnIndex, // Horizontal (column) index of cell
@@ -758,11 +765,13 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
       // ALL of the bloomed swatches in the zoomed-in view
       renderedSwatch = (
         <ColorWallSwatch
+          tabIndex={-1}
           showContents={thisLevel.level === 0}
           thisLink={linkToSwatch}
           onAdd={onAddColor ? this.addColor : void (0)}
           color={color}
           level={thisLevel.level}
+          ref={this.generateMakeSwatchRef(colorId)}
           compensateX={isFunction(thisLevel.compensateX) ? thisLevel.compensateX() : 0}
           compensateY={isFunction(thisLevel.compensateY) ? thisLevel.compensateY() : 0}
           focus={focus} />
@@ -780,6 +789,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
       // this is the swatch used in zoomed-out non-bloomed view
       renderedSwatch = (
         <ColorWallSwatchUI
+          tabIndex={-1}
           color={color}
           thisLink={linkToSwatch}
           onClick={this.generateHandleSwatchClick(color)}
@@ -791,9 +801,11 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
       // ALL non-bloomed swatches in the zoomed-in view
       renderedSwatch = (
         <ColorWallSwatch
+          tabIndex={-1}
           thisLink={linkToSwatch}
           color={color}
           onClick={this.generateHandleSwatchClick(color)}
+          ref={this.generateMakeSwatchRef(colorId)}
           focus={focus} />
       )
     }
