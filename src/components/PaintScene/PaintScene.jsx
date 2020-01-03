@@ -1647,10 +1647,11 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       return
     }
 
-    const ctx = this.CFICanvas2.current.getContext('2d')
-    const imageData = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height)
-    const metaData = createCustomSceneMetaData('TEMP_NAME', ctx.canvas.width, ctx.canvas.height)
-    this.props.saveMasks(colorList, imageData, metaData)
+    const backgroundImageUrl = this.CFICanvas.current.toDataURL('image/jpeg', 1.0)
+    const ctx2 = this.CFICanvas2.current.getContext('2d')
+    const imageData = ctx2.getImageData(0, 0, ctx2.canvas.width, ctx2.canvas.height)
+    const metaData = createCustomSceneMetaData('TEMP_NAME', ctx2.canvas.width, ctx2.canvas.height)
+    this.props.saveMasks(colorList, imageData, backgroundImageUrl, metaData)
   }
 
   applyZoomPan = (ref: RefObject) => {

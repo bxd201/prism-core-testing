@@ -26,22 +26,26 @@ export const createSceneXML = (imageData: Object[], metaData: Object) => {
   return imageDataToSurfacesXML(imageData, metaData)
 }
 
-export const saveMasks = (colorList: Array<number[]>, imageData: Object, metaData: Object) => {
+export const saveMasks = (colorList: Array<number[]>, imageData: Object, backgroundImageUrl: string, metaData: Object) => {
   return (dispatch, getState) => {
     dispatch({
       type: SAVING_MASKS,
       payload: true
     })
 
+    // @todo - Post this data -RS
+    // eslint-disable-next-line no-unused-vars
+    const imageUploadPayload = createImageUploadPayload(backgroundImageUrl)
+
     // The separated colors as an array of imageData items
     const imageDataList = separateColors(colorList, imageData, 1.5)
     // eslint-disable-next-line no-unused-vars
     const sceneXML = createSceneXML(imageDataList, metaData)
     console.log('XML', sceneXML)
-    // @todo - THIS IS AN ECHO TEST, this needs to be properly implemented. -RS
     // save background image and use image name
     axios.get('/public/saved-background-image.txt').then(response => {
       // @todo implement...in a real way -RS
+      // Add actual name of image to xml, this is builts using the renderingBaseUrl returned from the image upload
       const realImageBaseName = response.data
       sceneXML.setAttribute('image', realImageBaseName)
       const regionsXMLString = stringifyXML(sceneXML)
@@ -189,4 +193,8 @@ const getColorById = (colorId: number, colors: Object) => {
   const { items: { colorMap } = {} } = colors
 
   return colorMap[`${colorId}`]
+}
+
+const createImageUploadPayload = (imageDataUrl: string) => {
+  return JSON.stringify({ 'image': imageDataUrl.split(',')[1] })
 }
