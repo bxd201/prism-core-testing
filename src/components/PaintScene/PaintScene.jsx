@@ -25,6 +25,7 @@ import { saveMasks, startSavingMasks } from '../../store/actions/persistScene'
 import PaintSceneFooter from './PaintSceneFooter'
 import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 import SaveMasks from './SaveMasks'
+import { createCustomSceneMetaData } from '../../shared/utils/legacyProfileFormatUtil'
 
 const baseClass = 'paint__scene__wrapper'
 const canvasClass = `${baseClass}__canvas`
@@ -1648,8 +1649,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
     const ctx = this.CFICanvas2.current.getContext('2d')
     const imageData = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height)
-    // @todo - Implement meta data needed for export -RS
-    const metaData = {}
+    const metaData = createCustomSceneMetaData('TEMP_NAME', ctx.canvas.width, ctx.canvas.height)
     this.props.saveMasks(colorList, imageData, metaData)
   }
 

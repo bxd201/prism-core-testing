@@ -30,14 +30,13 @@ export const unpackImageDataFromXML = (imageDataString: string, color: Object, w
   const binaryCharArray = new Uint8Array(binaryData.map(char => char.charCodeAt(0)))
   const imageDataData = pako.inflate(binaryCharArray)
   // go from ARGB -> RGBA
-  const fixedImageData = new Uint8ClampedArray(colorizeAndTransposeAlpha(imageDataData, false))
+  const fixedImageData = new Uint8ClampedArray(transposeChannels(imageDataData, false))
 
   return new window.ImageData(fixedImageData, width, height)
 }
 
-// @todo - Review typing -RS
-// This is a large dataset, do in place
-const colorizeAndTransposeAlpha = (imageDataData: Uint8Array, isRGBA: boolean, color: Object) => {
+// This is a large dataset, do in place, if given a color object it will render in technicolor.
+const transposeChannels = (imageDataData: Uint8Array, isRGBA: boolean, color: Object) => {
   let alpha = 0
   let red = color ? color.red : 0
   let green = color ? color.green : 0
@@ -45,20 +44,38 @@ const colorizeAndTransposeAlpha = (imageDataData: Uint8Array, isRGBA: boolean, c
 
   for (let i = 0; i < imageDataData.length; i += 4) {
     if (isRGBA) {
+      // transpose from RGBA -> ARGB
       alpha = imageDataData[i + 3]
-      red = alpha
-      green = alpha
-      blue = alpha
+
+      if (color) {
+        red = imageDataData[i]
+        green = imageDataData[i + 1]
+        blue = imageDataData[i + 2]
+        alpha = imageDataData[i + 3]
+      } else {
+        red = alpha
+        green = alpha
+        blue = alpha
+      }
 
       imageDataData[i] = alpha
       imageDataData[i + 1] = red
       imageDataData[i + 2] = green
       imageDataData[i + 3] = blue
     } else {
+      // transpose from ARGB -> RGBA
       alpha = imageDataData[i]
-      red = alpha
-      green = alpha
-      blue = alpha
+
+      if (color) {
+        alpha = imageDataData[i]
+        red = imageDataData[i + 1]
+        green = imageDataData[i + 2]
+        blue = imageDataData[i + 3]
+      } else {
+        red = alpha
+        green = alpha
+        blue = alpha
+      }
 
       imageDataData[i] = red
       imageDataData[i + 1] = green
@@ -68,41 +85,6 @@ const colorizeAndTransposeAlpha = (imageDataData: Uint8Array, isRGBA: boolean, c
   }
 
   return imageDataData
-}
-
-// This is a large dataset, do in place
-// eslint-disable-next-line no-unused-vars
-const transposeChannels = (imageDataData: Uint8Array, isRGBA: boolean, color: Object) => {
-  let alpha = 0
-  let red = 0
-  let green = 0
-  let blue = 0
-
-  for (let i = 0; i < imageDataData.length; i += 4) {
-    if (isRGBA) {
-      // transpose from RGBA -> ARGB
-      red = imageDataData[i]
-      green = imageDataData[i + 1]
-      blue = imageDataData[i + 2]
-      alpha = imageDataData[i + 3]
-
-      imageDataData[i] = alpha
-      imageDataData[i + 1] = red
-      imageDataData[i + 2] = green
-      imageDataData[i + 3] = blue
-    } else {
-      // transpose from ARGB -> RGBA
-      alpha = imageDataData[i]
-      red = imageDataData[i + 1]
-      green = imageDataData[i + 2]
-      blue = imageDataData[i + 3]
-
-      imageDataData[i] = red
-      imageDataData[i + 1] = green
-      imageDataData[i + 2] = blue
-      imageDataData[i + 3] = alpha
-    }
-  }
 }
 
 const unpackAndColorizeMask = (surface: any, sceneData: Object[], colors: Object[], width: number, height: number) => {
@@ -131,4 +113,109 @@ const unpackAndColorizeMask = (surface: any, sceneData: Object[], colors: Object
       }
     }
   }
+}
+
+export const createCustomSceneMetaData = (imageBaseName: string, width: number, height: number) => {
+  return {
+    imageBaseName,
+    width,
+    height
+  }
+}
+
+// eslint-disable-next-line no-unused-vars
+export const imageDataToSurfacesXML = (surfaceData: any[], metaData: Object) => {
+  const doc = new window.Document()
+  const project = doc.createElement('Project')
+  const { width, height, imageBaseName } = metaData
+
+  project.setAttribute('image', imageBaseName)
+  project.setAttribute('width', width)
+  project.setAttribute('height', height)
+  project.setAttribute('version', 2)
+  project.setAttribute('empty', true)
+
+  const surfaces = doc.createElement('Surfaces')
+  surfaces.setAttribute('numSurfaces', surfaceData.length)
+
+  surfaceData.forEach((item, i) => {
+    let surface = createSurfaceFromImageData(item, width, height, i, doc)
+    surfaces.appendChild(surface)
+  })
+
+  project.appendChild(surfaces)
+
+  return project
+}
+
+export const stringifyXML = (xml: any) => {
+  const xmls = new window.XMLSerializer()
+  return xmls.serializeToString(xml)
+}
+
+const createTimestamp = () => {
+  const now = new Date()
+  return [
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+    now.getHours(),
+    now.getMinutes(),
+    now.getSeconds(),
+    now.getMilliseconds()
+  ].join('-')
+}
+
+const createSurfaceFromImageData = (imageDataItem: Object, width: number, height: number, index: number, doc: Element) => {
+  const surface = doc.createElement('Surface')
+  const surfaceName = `Surface-${createTimestamp()}`
+  const regionName = `Surface${index}`
+  // @todo - Need to implement a wrapper object for export that has properties like surface name -RS format name-timestamp
+  surface.setAttribute('name', surfaceName)
+  surface.setAttribute('region', regionName)
+  surface.setAttribute('width', width)
+  surface.setAttribute('height', height)
+  surface.setAttribute('version', 2)
+  surface.setAttribute('autoQuad', false)
+  surface.setAttribute('category', 'Wall')
+  surface.setAttribute('sensitivity', 50)
+  surface.setAttribute('intensity', 50)
+  surface.setAttribute('thickness', 30)
+  surface.setAttribute('brightness', 50)
+  surface.setAttribute('rotate', 0)
+  surface.setAttribute('gridLength', 10)
+  surface.setAttribute('gridWidth', 10)
+  surface.setAttribute('maxY', 464)
+  surface.setAttribute('minY', 0)
+  surface.setAttribute('maxX', 699)
+  surface.setAttribute('minX', 0)
+  surface.setAttribute('quad', '0,0,0,0,0,0,0,0')
+  surface.setAttribute('asset', '')
+
+  const surfaceMask = document.createElement('SurfaceMask')
+  surfaceMask.setAttribute('color', 65280)
+  surfaceMask.setAttribute('version', 2)
+  surfaceMask.setAttribute('string', packImageDataForXML(imageDataItem))
+
+  surface.appendChild(surfaceMask)
+
+  const surfaceOverlay = document.createElement('SurfaceOverlay')
+  surfaceOverlay.setAttribute('width', 5)
+  surfaceOverlay.setAttribute('length', 3)
+  surfaceOverlay.setAttribute('centerX', -1)
+  surfaceOverlay.setAttribute('centerY', -1)
+  surfaceOverlay.setAttribute('type', 'rectOverlay')
+  surfaceOverlay.setAttribute('rotate', 0)
+
+  surface.appendChild(surfaceOverlay)
+
+  return surface
+}
+
+const packImageDataForXML = (imageDataItem: number[]) => {
+  const imageDataData = new Uint8Array(imageDataItem)
+  transposeChannels(imageDataData, true)
+  const output = pako.deflate(imageDataData, { to: 'string' })
+
+  return window.btoa(output)
 }

@@ -1,8 +1,10 @@
 // @flow
+// Methods named "persists... save to the server
+// Methods named save... save locally in memory or disk
 import axios from 'axios'
 import { separateColors } from '../../components/PaintScene/PaintSceneUtils'
 import { RECEIVE_COLORS, mapColorDataToPayload, getColorsRequests, mapResponsesToColorData } from './loadColors'
-import { getDataFromXML } from '../../shared/utils/legacyProfileFormatUtil'
+import { getDataFromXML, imageDataToSurfacesXML, stringifyXML } from '../../shared/utils/legacyProfileFormatUtil'
 
 export const SAVING_MASKS = 'SAVING_MASKS'
 export const DONE_SAVING_MASKS = 'DONE_SAVING_MASKS'
@@ -20,6 +22,10 @@ export const startSavingMasks = () => {
   }
 }
 
+export const createSceneXML = (imageData: Object[], metaData: Object) => {
+  return imageDataToSurfacesXML(imageData, metaData)
+}
+
 export const saveMasks = (colorList: Array<number[]>, imageData: Object, metaData: Object) => {
   return (dispatch, getState) => {
     dispatch({
@@ -30,11 +36,16 @@ export const saveMasks = (colorList: Array<number[]>, imageData: Object, metaDat
     // The separated colors as an array of imageData items
     const imageDataList = separateColors(colorList, imageData, 1.5)
     // eslint-disable-next-line no-unused-vars
-    const xml = createSceneXML(imageDataList, metaData)
-
+    const sceneXML = createSceneXML(imageDataList, metaData)
+    console.log('XML', sceneXML)
     // @todo - THIS IS AN ECHO TEST, this needs to be properly implemented. -RS
-    axios.get('/public').then(response => {
-      console.log(response)
+    // save background image and use image name
+    axios.get('/public/saved-background-image.txt').then(response => {
+      // @todo implement...in a real way -RS
+      const realImageBaseName = response.data
+      sceneXML.setAttribute('image', realImageBaseName)
+      const regionsXMLString = stringifyXML(sceneXML)
+      console.log('regions XML', regionsXMLString)
       dispatch({
         type: DONE_SAVING_MASKS,
         payload: false
@@ -49,9 +60,6 @@ export const saveMasks = (colorList: Array<number[]>, imageData: Object, metaDat
   }
 }
 
-export const createSceneXML = (imageData: Object[], metaData: Object) => {
-  // @todo - implement -RS
-}
 // @todo - is this a number or a string ? -RS
 export const deleteSavedScene = (sceneId: number) => {
   // @todo - this should make an ajax call and resolve only if the server fulfills the request -RS
