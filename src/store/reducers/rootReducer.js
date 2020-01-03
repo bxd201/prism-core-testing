@@ -18,7 +18,7 @@ import inspirationalPhotos from './inspirationalPhotos'
 import { savingMasks } from './masks'
 import { legacySavedScenesMetadata, scenesAndRegions, selectedSavedSceneId } from './savedScenes'
 import { user } from './user'
-import { paintScenceWorkspace } from './paintSceneWorkspace'
+import { paintSceneWorkspace } from './paintSceneWorkspace'
 
 export default combineReducers({
   collectionSummaries,
@@ -40,5 +40,5 @@ export default combineReducers({
   scenesAndRegions,
   user,
   selectedSavedSceneId,
-  paintScenceWorkspace
+  paintSceneWorkspace
 })

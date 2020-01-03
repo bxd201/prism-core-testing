@@ -39,17 +39,17 @@ export const saveMasks = (colorList: Array<number[]>, imageData: Object, backgro
 
     // The separated colors as an array of imageData items
     const imageDataList = separateColors(colorList, imageData, 1.5)
-    // eslint-disable-next-line no-unused-vars
     const sceneXML = createSceneXML(imageDataList, metaData)
-    console.log('XML', sceneXML)
     // save background image and use image name
     axios.get('/public/saved-background-image.txt').then(response => {
       // @todo implement...in a real way -RS
-      // Add actual name of image to xml, this is builts using the renderingBaseUrl returned from the image upload
+      // Add actual name of image to xml, this is built using the renderingBaseUrl returned from the image upload
       const realImageBaseName = response.data
       sceneXML.setAttribute('image', realImageBaseName)
+      // @todo - IMPLEMENT, consume the XML!!! -RS
+      // eslint-disable-next-line no-unused-vars
       const regionsXMLString = stringifyXML(sceneXML)
-      console.log('regions XML', regionsXMLString)
+
       dispatch({
         type: DONE_SAVING_MASKS,
         payload: false

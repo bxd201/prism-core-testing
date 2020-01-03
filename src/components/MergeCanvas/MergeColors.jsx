@@ -6,18 +6,22 @@ import './MergeCanvas.scss'
 import compositeOperation from '../../constants/canvasCompositeOperations'
 
 type MergeColorsProps = {
-  imageDataList: string[],
+  imageDataList?: string[],
   handleImagesMerged: Function,
   width: number,
   height: number,
-  shouldTint: boolean,
-  colors: Object[],
-  ignoreColorOffset: boolean
+  shouldTint?: boolean,
+  colors?: Object[],
+  ignoreColorOffset?: boolean,
+  preserveLayers?: boolean,
+  preserveLayersAsData?: boolean,
+  imageUrlList?: string[]
 }
 
 const getRGBString = (c) => `rgb(${c.r}, ${c.g}, ${c.b})`
 
-// @todo - Revisit the implementation of this, see context2d.js from prod for context -RS
+// @todo - [IMPROVEMENT] Revisit the implementation of this, see context2d.js from prod for context -RS
+// I may need to remove since the tinting produced here looks dramatically different that the opacity based approach we are taking
 const getImageDataStats = (imageData) => {
   let brightnessBucket = 0
   let brightnessMax = null
@@ -71,27 +75,34 @@ const MergeColors = (props: MergeColorsProps) => {
   const imagesRef = useRef([])
   const intl = useIntl()
   const [imageUrls, setImageUrls] = useState([])
+  const preservedLayersRef = useRef([])
+  const preservedLayersDataRef = useRef([])
 
   useEffect(() => {
     const ctx = canvasRef.current.getContext('2d')
-    ctx.save()
 
-    const imageDataUrls = props.imageDataList.map(imageData => {
-      ctx.putImageData(imageData, 0, 0)
+    if (props.imageDataList) {
+      ctx.save()
 
-      return ctx.canvas.toDataURL()
-    })
+      const imageDataUrls = props.imageDataList.map(imageData => {
+        ctx.putImageData(imageData, 0, 0)
 
-    ctx.restore()
+        return ctx.canvas.toDataURL()
+      })
 
-    setImageUrls(imageDataUrls)
+      ctx.restore()
+      setImageUrls(imageDataUrls)
+    } else {
+      setImageUrls(props.imageUrlList)
+    }
   }, [])
 
   const handleImageLoad = (e) => {
     countRef.current++
     imagesRef.current.push(e.target)
+    const targetCount = props.imageDataList ? props.imageDataList.length : props.imageUrlList.length
 
-    if (countRef.current === props.imageDataList.length) {
+    if (countRef.current === targetCount) {
       // This layer is where the tinted layer is drawn before being painted to the finalized canvas
       const ctx = canvasRef.current.getContext('2d')
       const mergeCtx = mergeCanvasRef.current.getContext('2d')
@@ -111,20 +122,20 @@ const MergeColors = (props: MergeColorsProps) => {
         if (props.shouldTint) {
           if (i === 0) {
             // Just draw the background image to to the finalizing canvas
-            ctx.drawImage(img, 0, 0)
+            ctx.drawImage(img, 0, 0, props.width, props.height)
           } else {
             // Draw background to merge canvas for context
-            mergeCtx.drawImage(imagesRef.current[0], 0, 0)
-            workCtx.drawImage(img, 0, 0)
+            mergeCtx.drawImage(imagesRef.current[0], 0, 0, props.width, props.height)
+            workCtx.drawImage(img, 0, 0, props.width, props.height)
             workCtx.save()
             workCtx.globalCompositeOperation = compositeOperation.sourceIn
             // draw bg image into painted layer
-            workCtx.drawImage(mergeCtx.canvas, 0, 0)
+            workCtx.drawImage(mergeCtx.canvas, 0, 0, props.width, props.height)
             workCtx.restore()
 
             mergeCtx.save()
             mergeCtx.globalCompositeOperation = compositeOperation.copy
-            mergeCtx.drawImage(workCtx.canvas, 0, 0)
+            mergeCtx.drawImage(workCtx.canvas, 0, 0, props.width, props.height)
 
             manipulateLayer(mergeCtx, props.colors[i - colorIndexOffset], compositeOperation.color)
 
@@ -147,28 +158,44 @@ const MergeColors = (props: MergeColorsProps) => {
             manipulateLayer(mergeCtx, props.colors[i - colorIndexOffset], compositeOperation.multiply)
 
             mergeCtx.globalCompositeOperation = compositeOperation.destinationIn
-            mergeCtx.drawImage(workCtx.canvas, 0, 0)
+            mergeCtx.drawImage(workCtx.canvas, 0, 0, props.width, props.height)
             // paint layer to finalize canvas
-            ctx.drawImage(mergeCtx.canvas, 0, 0)
+            ctx.drawImage(mergeCtx.canvas, 0, 0, props.width, props.height)
 
             resetCanvases()
           }
         } else {
-          mergeCtx.drawImage(img, 0, 0)
+          mergeCtx.drawImage(img, 0, 0, props.width, props.height)
           mergeCtx.globalCompositeOperation = compositeOperation.sourceIn
           mergeCtx.save()
           manipulateLayer(workCtx, props.colors[i - colorIndexOffset], compositeOperation.sourceOver)
-          mergeCtx.drawImage(workCtx.canvas, 0, 0)
+          mergeCtx.drawImage(workCtx.canvas, 0, 0, props.width, props.height)
 
-          ctx.drawImage(mergeCtx.canvas, 0, 0)
+          ctx.drawImage(mergeCtx.canvas, 0, 0, props.width, props.height)
+
+          if (props.preserveLayers) {
+            preservedLayersRef.current.push(mergeCtx.canvas.toDataURL())
+          }
+
+          if (props.preserveLayersAsData) {
+            preservedLayersDataRef.current.push(mergeCtx.getImageData(0, 0, mergeCtx.canvas.width, mergeCtx.canvas.height))
+          }
 
           resetCanvases()
         }
       })
 
       const mergedImage = ctx.canvas.toDataURL()
+      const layers = [...preservedLayersRef.current]
+      const layersAsData = [...preservedLayersDataRef.current]
 
-      props.handleImagesMerged(mergedImage)
+      const payload = {
+        mergedImage,
+        layers,
+        layersAsData
+      }
+
+      props.handleImagesMerged(payload)
       // Memory leak protection
       imagesRef.current.length = 0
     }

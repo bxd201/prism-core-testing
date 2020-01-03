@@ -118,7 +118,6 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
   componentDidUpdate (prevProps: ColorFromImageProps, prevState: ColorFromImageState) {
     if (prevProps.width && prevProps.width !== this.props.width) {
       this.handleResize(prevProps, prevState)
-      // @todo - Have not found a good way to redraw the pins. -RS
     }
   }
   /*:: handleResize: (prevProps: ColorFromImageProps, prevState: ColorFromImageState) => void */
@@ -459,6 +458,7 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
     let top = y - canvasDims.top - activedPinsHalfWidth
     let bottom = 0
     let left = x - canvasDims.left - activedPinsHalfWidth + offsetLeft
+
     let right = 0
 
     // Too far left
