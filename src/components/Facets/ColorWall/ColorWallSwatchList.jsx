@@ -493,12 +493,25 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
               window.location.href = swatchAPI.externalLink
               return
             } else if (swatchAPI.internalLink) {
-              push(swatchAPI.internalLink, {
-                a11yFocusChunk,
-                a11yFocusCell,
-                fromKeyboard: true,
-                maintainFocus: true
-              })
+              switch (typeof swatchAPI.internalLink) {
+                case 'string': {
+                  push(swatchAPI.internalLink, {
+                    a11yFocusChunk,
+                    a11yFocusCell,
+                    fromKeyboard: true,
+                    maintainFocus: true
+                  })
+                }
+                case 'object': {
+                  push(swatchAPI.internalLink.pathname, {
+                    ...swatchAPI.internalLink.state || {},
+                    a11yFocusChunk,
+                    a11yFocusCell,
+                    fromKeyboard: true,
+                    maintainFocus: true
+                  })
+                }
+              }
             }
 
             if (swatchAPI.onClick) {
@@ -700,6 +713,8 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     }
   }
 
+  // TODO: can we remove this and just push all the accessibility stuff into the Link building going on in CWSwatch?
+  // curently only ColorWallSwatchUI is using this... update UI to use the new a11yState prop in its Link component @cody.richmond
   generateHandleSwatchClick = memoizee(function handleSwatchClick (color: Color) {
     return (e: any) => {
       const { history: { push }, colors, swatchLinkGenerator } = this.props
@@ -725,7 +740,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
   // -----------------------------------------------
   // OTHER METHODS
 
-  generateMakeSwatchRef = (colorId: string): ColorWallSwatchRefData => {
+  generateMakeSwatchRef = (colorId: string): RefObject => {
     const ref = this._swatchRefs[colorId] = this._swatchRefs[colorId] || React.createRef()
     return ref
   }
@@ -762,13 +777,16 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     }
 
     if (thisLevel) {
+      const showContents = thisLevel.level === 0
       // ALL of the bloomed swatches in the zoomed-in view
       renderedSwatch = (
         <ColorWallSwatch
           tabIndex={-1}
-          showContents={thisLevel.level === 0}
+          showContents={showContents}
           thisLink={linkToSwatch}
+          a11yState={{ a11yFocusCell, a11yFocusChunk }}
           onAdd={onAddColor ? this.addColor : void (0)}
+          onClick={this.returnFocusToThisComponent}
           color={color}
           level={thisLevel.level}
           ref={this.generateMakeSwatchRef(colorId)}
@@ -804,7 +822,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
           tabIndex={-1}
           thisLink={linkToSwatch}
           color={color}
-          onClick={this.generateHandleSwatchClick(color)}
+          onClick={this.returnFocusToThisComponent}
           ref={this.generateMakeSwatchRef(colorId)}
           focus={focus} />
       )

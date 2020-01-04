@@ -1,5 +1,5 @@
 // @flow
-import React, { useMemo, useEffect } from 'react'
+import React, { useMemo, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import kebabCase from 'lodash/kebabCase'
 import at from 'lodash/at'
@@ -16,6 +16,7 @@ import { useIntl } from 'react-intl'
 
 type Props = {
   active?: boolean,
+  a11yState?: any,
   color: Color,
   compensateX?: number,
   compensateY?: number,
@@ -29,24 +30,20 @@ type Props = {
 }
 
 const ColorWallSwatch = React.forwardRef<Props, any>((props: Props, ref: any) => {
-  const { onAdd, onClick, showContents, color, thisLink, focus, level, active, compensateX, compensateY, tabIndex = 0 } = props
+  const { a11yState, onClick, onAdd, showContents, color, thisLink, focus, level, active, compensateX, compensateY, tabIndex = 0 } = props
   const { displayAddButton, displayInfoButton, displayDetailsLink, colorDetailPageRoot }: ColorWallContextProps = React.useContext(ColorWallContext)
   const { messages = {} } = useIntl()
-  const handleOnAdd = useMemo(() => {
-    return () => {
-      if (onAdd) {
-        onAdd(color)
-      }
-    }
-  }, [color, onAdd])
-
-  const handleOnClick = useMemo(() => {
-    return (e) => {
-      if (onClick) {
-        onClick(e)
-      }
+  const handleOnClick = useCallback((e) => {
+    if (onClick) {
+      onClick(e)
     }
   }, [onClick])
+
+  const handleOnAdd = useCallback(() => {
+    if (onAdd) {
+      onAdd(color)
+    }
+  }, [color, onAdd])
 
   const fullName = useMemo(() => fullColorName(color.brandKey, color.colorNumber, color.name), [color])
 
@@ -107,28 +104,31 @@ const ColorWallSwatch = React.forwardRef<Props, any>((props: Props, ref: any) =>
         }
       }
     } else if (displayInfoButton) {
-      const link = generateColorDetailsPageUrl(color)
+      const to = generateColorDetailsPageUrl(color)
       return {
         content: (
           <OmniButton
-            link={link}
+            to={to}
             icon={OmniButton.ICONS.INFO}
             className={`${CLASS_NAMES.CONTENT_CTA} ${CLASS_NAMES.CONTENT_CTA_R}`}
             tabIndex={tabIndex}
           />
         ),
         refData: {
-          internalLink: link
+          internalLink: to
         }
       }
     } else if (displayDetailsLink) {
-      const link = colorDetailPageRoot ? `${colorDetailPageRoot}/${color.brandKey}${color.colorNumber}-${kebabCase(color.name)}` : generateColorDetailsPageUrl(color)
+      const to = colorDetailPageRoot ? `${colorDetailPageRoot}/${color.brandKey}${color.colorNumber}-${kebabCase(color.name)}` : {
+        pathname: generateColorDetailsPageUrl(color),
+        state: a11yState
+      }
       const title = (at(messages, 'VIEW_DETAILS_FOR')[0] || '').replace('{name}', fullName)
       return {
         content: (
           <OmniButton
             title={title}
-            link={link}
+            to={to}
             className={`${CLASS_NAMES.CONTENT_CTA} ${CLASS_NAMES.CONTENT_CTA_L} ${focus ? CLASS_NAMES.CONTENT_CTA_FOCUS : ''}`}
             tabIndex={tabIndex}
           >
@@ -136,13 +136,13 @@ const ColorWallSwatch = React.forwardRef<Props, any>((props: Props, ref: any) =>
           </OmniButton>
         ),
         refData: {
-          [colorDetailPageRoot ? 'externalLink' : 'internalLink']: link
+          [colorDetailPageRoot ? 'externalLink' : 'internalLink']: to
         }
       }
     }
 
     return {}
-  }, [color, onClick, tabIndex, thisLink, handleOnAdd, displayAddButton, displayInfoButton, displayDetailsLink, colorDetailPageRoot, showContents, messages])
+  }, [color, onClick, tabIndex, thisLink, displayAddButton, displayInfoButton, displayDetailsLink, colorDetailPageRoot, showContents, messages])
 
   useEffect(() => {
     if (ref) {

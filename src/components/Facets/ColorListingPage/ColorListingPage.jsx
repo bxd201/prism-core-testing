@@ -2,6 +2,7 @@
 import React, { PureComponent } from 'react'
 import { Route, Redirect, withRouter, Switch } from 'react-router-dom'
 import { TransitionGroup, CSSTransition } from 'react-transition-group'
+// TODO: PRISM-370 | Facets are top-level components -- refactor ColorWallPage so it can be imported without facet-related functionality @cody.richmond
 import { ColorWallPage } from '../ColorWallFacet'
 import ColorDetails from '../ColorDetails/ColorDetails'
 import ColorDataWrapper from '../../../helpers/ColorDataWrapper/ColorDataWrapper'
@@ -40,6 +41,8 @@ export const ColorDetailsComponent = (props: any) => {
   )
 }
 
+const ColorWallPageNoReset = () => <ColorWallPage resetOnUnmount={false} />
+
 type ColorListingPageProps = FacetBinderMethods & FacetPubSubMethods & { location: Object }
 
 type ColorListingPageState = { prevPathname?: string, toDetails: boolean, toWall: boolean }
@@ -77,7 +80,7 @@ export class ColorListingPage extends PureComponent<ColorListingPageProps, Color
             classNames={transitionClassNames}
             timeout={varValues.colorWall.transitionTime * 1.2}>
             <Switch location={location}>
-              <Route path={colorWallUrlPattern} component={ColorWallPage} />
+              <Route path={colorWallUrlPattern} component={ColorWallPageNoReset} />
               <Route path={`${colorDetailsBaseUrl}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`} exact component={ColorDetailsComponent} />
             </Switch>
           </CSSTransition>

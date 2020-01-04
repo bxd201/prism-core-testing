@@ -9,7 +9,11 @@ type Props = {
   children?: any,
   external?: boolean,
   icon?: any, // this should probably be a ReactElement type (or similar)
-  link?: string,
+  href?: string,
+  to?: string | {
+    pathname?: string,
+    state?: Object
+  },
   onClick?: Function
 }
 
@@ -18,7 +22,8 @@ const OmniButton = (props: Props) => {
     children,
     external,
     icon,
-    link,
+    href,
+    to,
     onClick,
     ...other
   } = props
@@ -39,12 +44,12 @@ const OmniButton = (props: Props) => {
     return null
   }
 
-  if (external && link) {
-    return <a href={link} {...passThruProps}>
+  if (href) {
+    return <a href={href} {...passThruProps}>
       {content}
     </a>
-  } else if (link) {
-    return <Link to={link} {...passThruProps}>
+  } else if (to) {
+    return <Link to={to} {...passThruProps}>
       {content}
     </Link>
   } else {
