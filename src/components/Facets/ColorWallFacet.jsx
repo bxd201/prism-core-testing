@@ -19,9 +19,10 @@ import { facetBinderDefaultProps, type FacetBinderMethods } from 'src/facetSuppo
 import { FormattedMessage } from 'react-intl'
 
 type Props = FacetPubSubMethods & FacetBinderMethods & {
-  colorDetailPageRoot: string,
+  colorDetailPageRoot?: string,
   colorWallBgColor?: string,
-  displayAddButton?: boolean
+  displayAddButton?: boolean,
+  resetOnUnmount?: boolean
 }
 
 export const EVENTS = {
@@ -42,7 +43,7 @@ const SearchContain = () => <Search contain />
 const CWToolbar = () => <ColorWallToolbar isFamilyPage={false} />
 
 export const ColorWallPage = (props: Props) => {
-  const { displayAddButton, colorWallBgColor, subscribe, publish, unsubscribeAll, colorDetailPageRoot } = props
+  const { displayAddButton, colorWallBgColor, subscribe, publish, unsubscribeAll, colorDetailPageRoot, resetOnUnmount } = props
 
   const emitColor = useSelector(state => at(state, 'colors.emitColor')[0])
   const [isLoading, updateLoading] = useState(false)
@@ -57,8 +58,11 @@ export const ColorWallPage = (props: Props) => {
   useEffect(() => () => {
     // unsubscribe from everything on unmount
     unsubscribeAll()
-    // and reset the color wall's status by resetting active color
-    dispatch(resetActiveColor())
+
+    if (resetOnUnmount) {
+      // and reset the color wall's status by resetting active color
+      dispatch(resetActiveColor())
+    }
   }, [])
 
   // on color select AFTER initial mount
@@ -101,7 +105,8 @@ export const ColorWallPage = (props: Props) => {
 
 ColorWallPage.defaultProps = {
   ...facetPubSubDefaultProps,
-  ...facetBinderDefaultProps
+  ...facetBinderDefaultProps,
+  resetOnUnmount: true
 }
 
 export default facetBinder(ColorWallPage, 'ColorWallFacet')
