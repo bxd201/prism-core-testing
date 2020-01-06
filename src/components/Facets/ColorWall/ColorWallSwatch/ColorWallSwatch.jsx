@@ -119,16 +119,26 @@ const ColorWallSwatch = React.forwardRef<Props, any>((props: Props, ref: any) =>
         }
       }
     } else if (displayDetailsLink) {
-      const to = colorDetailPageRoot ? `${colorDetailPageRoot}/${color.brandKey}${color.colorNumber}-${kebabCase(color.name)}` : {
-        pathname: generateColorDetailsPageUrl(color),
-        state: a11yState
-      }
+      const to = (() => {
+        if (colorDetailPageRoot) {
+          return `${colorDetailPageRoot}/${color.brandKey}${color.colorNumber}-${kebabCase(color.name)}`
+        } else {
+          return {
+            pathname: generateColorDetailsPageUrl(color),
+            state: a11yState
+          }
+        }
+      })()
       const title = (at(messages, 'VIEW_DETAILS_FOR')[0] || '').replace('{name}', fullName)
+      // if we have a color detail page root, it will always be an external link
+      const isExternalLink = !!colorDetailPageRoot
+
       return {
         content: (
           <OmniButton
-            title={title}
             to={to}
+            external={isExternalLink}
+            title={title}
             className={`${CLASS_NAMES.CONTENT_CTA} ${CLASS_NAMES.CONTENT_CTA_L} ${focus ? CLASS_NAMES.CONTENT_CTA_FOCUS : ''}`}
             tabIndex={tabIndex}
           >

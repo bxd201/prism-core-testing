@@ -9,7 +9,6 @@ type Props = {
   children?: any,
   external?: boolean,
   icon?: any, // this should probably be a ReactElement type (or similar)
-  href?: string,
   to?: string | {
     pathname?: string,
     state?: Object
@@ -44,8 +43,8 @@ const OmniButton = (props: Props) => {
     return null
   }
 
-  if (href) {
-    return <a href={href} {...passThruProps}>
+  if (external && typeof to === 'string') {
+    return <a href={to} {...passThruProps}>
       {content}
     </a>
   } else if (to) {
