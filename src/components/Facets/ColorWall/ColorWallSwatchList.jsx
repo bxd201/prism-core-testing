@@ -6,6 +6,7 @@ import memoizee from 'memoizee'
 import isEqual from 'lodash/isEqual'
 import isEmpty from 'lodash/isEmpty'
 import isArray from 'lodash/isArray'
+import at from 'lodash/at'
 import isFunction from 'lodash/isFunction'
 import clone from 'lodash/clone'
 import * as scroll from 'scroll'
@@ -87,7 +88,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
   _gridWrapperRef: ?RefObject = void (0)
   _swatchRefs: {
     // This will wind up being one of the ColorWallSwatch components
-    [key: string]: any
+    [key: string]: ?RefObject
   }
   _scrollTimeout = void (0)
   // contains references to active scrolls so we can canel them if need be
@@ -485,17 +486,37 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
             return
           }
 
-          const targetedSwatchEl = this._swatchRefs[colorId]
+          const swatchAPI = at(this._swatchRefs, `[${colorId}].current`)[0]
 
-          if (targetedSwatchEl && isFunction(targetedSwatchEl.getThisLink)) {
-            push(targetedSwatchEl.getThisLink(targetedSwatchEl), {
-              a11yFocusChunk,
-              a11yFocusCell,
-              fromKeyboard: true,
-              maintainFocus: true
-            })
-          } else if (targetedSwatchEl && isFunction(targetedSwatchEl.performClickAction)) {
-            targetedSwatchEl.performClickAction(targetedSwatchEl)
+          if (swatchAPI) {
+            if (swatchAPI.externalLink) {
+              window.location.href = swatchAPI.externalLink
+              return
+            } else if (swatchAPI.internalLink) {
+              switch (typeof swatchAPI.internalLink) {
+                case 'string': {
+                  push(swatchAPI.internalLink, {
+                    a11yFocusChunk,
+                    a11yFocusCell,
+                    fromKeyboard: true,
+                    maintainFocus: true
+                  })
+                }
+                case 'object': {
+                  push(swatchAPI.internalLink.pathname, {
+                    ...swatchAPI.internalLink.state || {},
+                    a11yFocusChunk,
+                    a11yFocusCell,
+                    fromKeyboard: true,
+                    maintainFocus: true
+                  })
+                }
+              }
+            }
+
+            if (swatchAPI.onClick) {
+              swatchAPI.onClick(e)
+            }
           }
 
           e.stopPropagation()
@@ -692,6 +713,8 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     }
   }
 
+  // TODO: can we remove this and just push all the accessibility stuff into the Link building going on in CWSwatch?
+  // curently only ColorWallSwatchUI is using this... update UI to use the new a11yState prop in its Link component @cody.richmond
   generateHandleSwatchClick = memoizee(function handleSwatchClick (color: Color) {
     return (e: any) => {
       const { history: { push }, colors, swatchLinkGenerator } = this.props
@@ -709,7 +732,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
         maintainFocus: true
       })
     }
-  }, { primitive: true, length: 1 })
+  }, { length: 1 })
 
   // END HANDLERS
   // -----------------------------------------------
@@ -717,11 +740,10 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
   // -----------------------------------------------
   // OTHER METHODS
 
-  generateMakeSwatchRef = memoizee(function makeSwatchRef (colorId: string) {
-    return (el) => {
-      this._swatchRefs[colorId] = el
-    }
-  })
+  generateMakeSwatchRef = (colorId: string): RefObject => {
+    const ref = this._swatchRefs[colorId] = this._swatchRefs[colorId] || React.createRef()
+    return ref
+  }
 
   cellRenderer = function cellRenderer ({
     columnIndex, // Horizontal (column) index of cell
@@ -755,12 +777,16 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     }
 
     if (thisLevel) {
+      const showContents = thisLevel.level === 0
       // ALL of the bloomed swatches in the zoomed-in view
       renderedSwatch = (
         <ColorWallSwatch
-          showContents={thisLevel.level === 0}
+          tabIndex={-1}
+          showContents={showContents}
           thisLink={linkToSwatch}
+          a11yState={{ a11yFocusCell, a11yFocusChunk }}
           onAdd={onAddColor ? this.addColor : void (0)}
+          onClick={this.returnFocusToThisComponent}
           color={color}
           level={thisLevel.level}
           ref={this.generateMakeSwatchRef(colorId)}
@@ -781,6 +807,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
       // this is the swatch used in zoomed-out non-bloomed view
       renderedSwatch = (
         <ColorWallSwatchUI
+          tabIndex={-1}
           color={color}
           thisLink={linkToSwatch}
           onClick={this.generateHandleSwatchClick(color)}
@@ -792,9 +819,10 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
       // ALL non-bloomed swatches in the zoomed-in view
       renderedSwatch = (
         <ColorWallSwatch
+          tabIndex={-1}
           thisLink={linkToSwatch}
           color={color}
-          onClick={this.generateHandleSwatchClick(color)}
+          onClick={this.returnFocusToThisComponent}
           ref={this.generateMakeSwatchRef(colorId)}
           focus={focus} />
       )

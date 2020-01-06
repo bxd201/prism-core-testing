@@ -1,0 +1,12 @@
+:root {
+  // if we're in development mode, set the root font to sans-serif so Prism has something to inherit by default
+  // in production environments we will inherit the site's font family until config has been successfully loaded
+  @if $env == 'development' {
+    font-family: sans-serif;
+  }
+
+  // TODO: eventually we should bootstrap the default values for ALL (or at least most?) of the style-related configuration props
+  // this is here just so we have SOMETHING defined for bodyFontFamily prior to the configuration loading up
+  #{getVarName('typography.bodyFontFamily')}: getVar('typography.bodyFontFamily');
+  #{getVarName('typography.titleFontFamily')}: getVar('typography.titleFontFamily');
+}

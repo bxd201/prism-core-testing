@@ -9,7 +9,8 @@ module.exports.varValues = {
     lg: '1200px' /* 1200px */
   },
   typography: {
-    font: '\'Open Sans\', sans-serif',
+    bodyFontFamily: 'inherit',
+    titleFontFamily: 'inherit',
     text: '1rem',
     title: '2rem'
   },
@@ -75,7 +76,9 @@ module.exports.varNames = {
   globalCornerRadius: '--sw-global-corner-radius',
   globalSwatchSpacing: '--sw-global-swatch-spacing',
   typography: {
-    globalFontSize: '--sw-global-font-size'
+    globalFontSize: '--sw-global-font-size',
+    bodyFontFamily: '--prism-typography-body-font-family',
+    titleFontFamily: '--prism-typography-title-font-family'
   },
   scenes: {
     hitAreaOutlineColor: '--prism-hit-area-outline-color',

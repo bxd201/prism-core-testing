@@ -1,5 +1,5 @@
 // @flow
-import React, { useEffect } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { connect } from 'react-redux'
 import toLower from 'lodash/toLower'
 
@@ -28,7 +28,11 @@ function ConfigurationContextProvider (props: Props) {
   const {
     brand,
     children,
-    fetchedConfig,
+    fetchedConfig: {
+      theme = {},
+      typography = {},
+      ...otherFetchedConfig
+    },
     loadConfiguration,
     ...otherEmbeddedConfig
     // colorDetailPageRoot
@@ -47,32 +51,36 @@ function ConfigurationContextProvider (props: Props) {
   // }
 
   // construct the theme object with expliciteness
-  const theme = {
-    [varNames.theme.colors.primary]: fetchedConfig.theme.primary,
-    [varNames.theme.colors.secondary]: fetchedConfig.theme.secondary,
-    [varNames.theme.colors.warning]: fetchedConfig.theme.warning,
-    [varNames.theme.colors.success]: fetchedConfig.theme.success,
-    [varNames.theme.colors.danger]: fetchedConfig.theme.danger,
-    [varNames.theme.colors.error]: fetchedConfig.theme.error,
-    [varNames.theme.colors.grey]: fetchedConfig.theme.grey,
-    [varNames.theme.colors.lightGrey]: fetchedConfig.theme.lightGrey,
-    [varNames.theme.colors.nearBlack]: fetchedConfig.theme.nearBlack,
-    [varNames.theme.colors.blackv]: fetchedConfig.theme.black,
-    [varNames.theme.colors.white]: fetchedConfig.theme.white
-  }
+  const cssVariableApplicatorValues = useMemo(() => ({
+    // theme
+    [varNames.theme.colors.primary]: theme.primary,
+    [varNames.theme.colors.secondary]: theme.secondary,
+    [varNames.theme.colors.warning]: theme.warning,
+    [varNames.theme.colors.success]: theme.success,
+    [varNames.theme.colors.danger]: theme.danger,
+    [varNames.theme.colors.error]: theme.error,
+    [varNames.theme.colors.grey]: theme.grey,
+    [varNames.theme.colors.lightGrey]: theme.lightGrey,
+    [varNames.theme.colors.nearBlack]: theme.nearBlack,
+    [varNames.theme.colors.black]: theme.black,
+    [varNames.theme.colors.white]: theme.white,
+    // typography
+    [varNames.typography.bodyFontFamily]: typography.bodyFontFamily,
+    [varNames.typography.titleFontFamily]: typography.titleFontFamily
+  }), [typography, theme])
 
   // add brand to the configuration object
   // TODO: remove this when we have moved the data around in the database to be returned by the brandId
-  const brandId = (toLower(userBrand) === 'sw-ca') ? 'sherwin' : toLower(userBrand)
-  const config = {
+  const brandId = useMemo(() => (toLower(userBrand) === 'sw-ca') ? 'sherwin' : toLower(userBrand), [userBrand])
+  const config = useMemo(() => ({
     brandId,
     ...otherEmbeddedConfig,
-    ...fetchedConfig
-  }
+    ...otherFetchedConfig
+  }), [brandId, otherEmbeddedConfig, otherFetchedConfig])
 
   return (
     <ConfigurationContext.Provider value={config}>
-      <CSSVariableApplicator variables={theme}>
+      <CSSVariableApplicator variables={cssVariableApplicatorValues}>
         {children}
       </CSSVariableApplicator>
     </ConfigurationContext.Provider>

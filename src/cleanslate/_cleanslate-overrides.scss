@@ -5,6 +5,12 @@
  * with a little less pain.
  */
 
-.cleanslate a {
-  color: getVar('colors.primary');
+ .cleanslate a {
+  &, &:hover, &:visited, &:active {
+    color: inherit;
+  }
+}
+
+.cleanslate {
+  font-family: var(getVarName('typography.bodyFontFamily'));
 }

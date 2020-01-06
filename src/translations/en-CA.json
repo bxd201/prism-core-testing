@@ -93,6 +93,13 @@
   "TO_DAY_VIEW": "Switch to day view",
   "TO_NIGHT_VIEW": "Switch to night view",
   "VIEW_DETAILS": "View Details",
+  "VIEW_DETAILS_FOR": "View details for {name}",
   "ZOOM_IN": "Zoom in",
-  "ZOOM_OUT": "Zoom out"
+  "ZOOM_OUT": "Zoom out",
+  "ERROR_BOUNDARY": {
+    "TITLE": "Sherwin-Williams Colour Tools Error",
+    "MESSAGE": "We encountered an error preventing us from rendering this component at this time.",
+    "SHOW_DETAILS": "Show error details",
+    "ERROR_DETAILS": "Error details"
+  }
 }

@@ -7,8 +7,10 @@ import 'src/providers/fontawesome/fontawesome'
 import ButtonBar from '../GeneralButtons/ButtonBar/ButtonBar'
 import { FormattedMessage } from 'react-intl'
 import uniqueId from 'lodash/uniqueId'
+import debounce from 'lodash/debounce'
 import './SearchBar.scss'
 import 'src/scss/convenience/visually-hidden.scss'
+import { MIN_SEARCH_LENGTH } from '../../store/actions/loadSearchResults'
 
 type Props = {
   showCancelButton: boolean,
@@ -30,12 +32,43 @@ export default (props: Props) => {
   const history = useHistory()
   const [value, setValue] = React.useState(query)
   const [id] = React.useState(uniqueId('SearchBarInput'))
+  const updateUrl = React.useMemo(() => debounce((value, abort = false) => {
+    // this is for "cancelling" the debounced method if we unmount before execution
+    if (abort) {
+      return
+    }
+
+    if (typeof value === 'string') {
+      const l = value.length
+      if (l >= MIN_SEARCH_LENGTH) {
+        // ensure we aren't pushing anything dangerous into the URL
+        const v = encodeURIComponent(value)
+
+        // if this is a new search query...
+        if (value !== query) {
+          // ... push it to the URL
+          history.push(v)
+        } else {
+          // ... otherwise just replace the current URL with it
+          // this enables searching on initial load w/ a search param
+          history.replace(v)
+        }
+      } else if (l === 0 && value !== query) {
+        // this allows us to escape via routing if the user clears their search
+        // don't allow if query is already blank -- doing it then auto-pushes a blank state on initial load
+        history.push('./')
+      }
+    }
+  }, 250), [query])
 
   React.useEffect(() => { value !== query && setValue(query) }, [query])
 
   React.useEffect(() => { // mutate url when input hasn't changed in 250ms
-    const id = setTimeout(() => value !== query && history.push(value || './'), 250)
-    return () => clearTimeout(id)
+    updateUrl(value)
+
+    return () => {
+      updateUrl(null, true)
+    }
   }, [value])
 
   return (
@@ -48,7 +81,7 @@ export default (props: Props) => {
           </label>)}
           <div className={`SearchBar__wrapper SearchBar__wrapper--with${query ? '-outline' : 'out-outline'}`}>
             <input id={id} value={value} className='SearchBar__input' onChange={e => setValue(e.target.value)} placeholder={placeholder} />
-            {value.length > 1 &&
+            {value.length > 0 &&
               <button type='button' className='SearchBar__clean' onClick={() => setValue('')}>
                 <FontAwesomeIcon icon={['fas', 'times']} />
               </button>}
