@@ -30,7 +30,7 @@ export default ({ children, redirect = true }: Props) => {
       <Route path='/active/color-wall/section/:section/family'>{children}</Route>
       <Route path='/active/color-wall/section/:section/color/:colorId/:colorName/family/'>{children}</Route>
       <Route path='/active/color-wall/section/:section/color/:colorId/:colorName/search/'>{children}</Route>
-      <Route path='/active/color-wall/section/:section/color/:colorId'>{children}</Route>
+      <Route path='/active/color-wall/section/:section/color/:colorId/:colorName'>{children}</Route>
       <Route path='/active/color-wall/section/:section/search/'>{children}</Route>
       <Route path='/active/color-wall/section/:section'>{children}</Route>
       {redirect ? <Redirect to={`/active/color-wall/section/${kebabCase(section)}`} /> : null}
