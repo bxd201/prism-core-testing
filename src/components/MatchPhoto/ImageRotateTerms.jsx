@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/label-has-for */
 // @flow
 import React, { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'

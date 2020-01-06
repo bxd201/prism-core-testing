@@ -18,12 +18,15 @@ import { type FacetPubSubMethods, facetPubSubDefaultProps } from 'src/facetSuppo
 
 import { connect } from 'react-redux'
 import { Route, Redirect } from 'react-router-dom'
-
+import { withRouter } from 'react-router'
 import { ROUTE_PARAMS, ROUTE_PARAM_NAMES } from 'constants/globals'
 import MatchPhoto from '../../MatchPhoto/MatchPhoto'
 import MyIdeasContainer from '../../MyIdeasContainer/MyIdeasContainer'
 import MyIdeaPreview from '../../MyIdeaPreview/MyIdeaPreview'
 import Help from '../../Help/Help'
+import DropDownMenu from '../../ColorVisualizerWrapper/RouteComponents'
+// import '../../ColorVisualizerWrapper/Navgation.scss'
+
 const colorWallBaseUrl = `/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_WALL}`
 
 // this is very vague because react-router doesn't have the ability to match /section/x/family/y/color/z and /section/x/color/z with the same route
@@ -56,19 +59,65 @@ export class Prism extends Component<Props> {
     ...facetPubSubDefaultProps,
     ...facetBinderDefaultProps
   }
+  constructor (props) {
+    super(props)
+    const { pathname } = this.props.location
+    this.state = {
+      close: pathname !== '/active/colors' || pathname !== '/active/inspiration' || pathname !== '/active/scenes',
+      showDefaultPage: pathname === '/active'
+    }
+  }
+
+  onRouteChanged = () => {
+    const { showDefaultPage } = this.state
+    if (showDefaultPage) {
+      this.setState({ close: false })
+    }
+  }
+
+  close = (e) => {
+    if (e.target.matches('div.nav__dropdown-overlay') || e.target.matches('a')) {
+      this.props.history.push('/active')
+      this.setState({ close: true })
+    }
+  }
+  redirectTo=() => {
+    this.setState({ close: true, showDefaultPage: false })
+  }
+
+  open = (isShowDropDown) => {
+    if (isShowDropDown) {
+      this.setState({ close: false, showDefaultPage: true })
+    } else {
+      this.setState({ close: true, showDefaultPage: false })
+    }
+  }
+
+  renderComponent = (url, type) => {
+    if (type !== '') {
+      if (type === 'MATCH A PHOTO') {
+        this.props.history.push('/match-photo')
+      }
+      if (type === 'UPLOAD YOUR PHOTO') {
+        this.props.history.push('/paint-scene')
+      }
+      this.setState({ imgUrl: url, close: true, showDefaultPage: false })
+    }
+  }
 
   render () {
     const { toggleCompareColor } = this.props
-
+    const { close, showDefaultPage, imgUrl } = this.state
     return (
       <React.Fragment>
         <div className='prism__root-container'>
-          <PrismNav />
+          <PrismNav navigate={(isShowDropDown) => this.open(isShowDropDown)} />
+          {/* will be navigation bar here */}
           <hr />
           {!toggleCompareColor &&
             <div className='prism__root-wrapper'>
               <Route path='/' exact component={RootRedirect} />
-              <Route path='/active' exact component={() => <SceneManager expertColorPicks />} />
+              {/* <Route path='/active' exact component={() => <SceneManager expertColorPicks />} /> */}
               <Route path={colorWallUrlPattern}>
                 <ColorWallContext.Provider value={{ ...colorWallContextDefault }}>
                   <ColorWallPage />
@@ -78,20 +127,34 @@ export class Prism extends Component<Props> {
               <Route path='/color-from-image' component={InspiredScene} />
               <Route path='/color-collections' component={(props) => (<ColorCollection isExpertColor={false} {...props.location.state} />)} />
               <Route path='/expert-colors' component={() => <ExpertColorPicks isExpertColor />} />
-              <Route path={MATCH_PHOTO} component={MatchPhoto} />
-              <Route path='/paint-scene' render={() => <MatchPhoto isPaintScene />} />
+              {/* @todo - implement MyIdeas -RS */}
               <Route path={MY_IDEAS} render={() => <MyIdeasContainer />} />
               <Route path={MY_IDEAS_PREVIEW} component={MyIdeaPreview} />
+              <Route path='/match-photo' render={() => <MatchPhoto imgUrl={imgUrl} />} />
+              <Route path='/paint-scene' render={() => <MatchPhoto isPaintScene imgUrl={imgUrl} />} />
               <Route path={`/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`} exact component={ColorDetails} />
               <Route path='/fast-mask' exact component={FastMask} />
               <Route path='/help' component={Help} />
+              {showDefaultPage && <SceneManager expertColorPicks />}
+              {/* <MatchPhoto isPaintScene /> */}
+              {!close && <div role='presentation' className='nav__dropdown-overlay' onClick={this.close}>
+                <Route path='/active/colors' component={(props) => <DropDownMenu dataKey='color' close={this.close} redirectTo={this.redirectTo} getImageUrl={(url, type) => this.renderComponent(url, type)} />} />
+                <Route path='/active/inspiration' component={() => <DropDownMenu dataKey='inspiration' close={this.close} redirectTo={this.redirectTo} getImageUrl={(url, type) => this.renderComponent(url, type)} />} />
+                <Route path='/active/scenes' component={() => <DropDownMenu dataKey='scenes' close={this.close} redirectTo={this.redirectTo} getImageUrl={(url, type) => this.renderComponent(url, type)} />} />
+              </div>}
+              <LivePalette />
             </div>
           }
           {toggleCompareColor && <CompareColor />}
-          <LivePalette />
         </div>
       </React.Fragment>
     )
+  }
+
+  componentDidUpdate (prevProps) {
+    if (this.props.location !== prevProps.location && this.props.location.pathname !== '/active') {
+      this.onRouteChanged()
+    }
   }
 
   componentWillUnmount () {
@@ -107,4 +170,4 @@ const mapStateToProps = (state, props) => {
   }
 }
 
-export default facetBinder(connect(mapStateToProps, null)(Prism), 'Prism')
+export default facetBinder(connect(mapStateToProps, null)(withRouter(Prism)), 'Prism')
