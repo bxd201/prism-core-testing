@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-no-bind */
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { useRouteMatch, NavLink } from 'react-router-dom'
 import { FormattedMessage, useIntl } from 'react-intl'
@@ -17,8 +17,7 @@ const PATH_END_FAMILY = 'family/'
 export default () => {
   const { path, params: { section, family } } = useRouteMatch()
   const { sections = [], families = [] } = useSelector(state => state.colors)
-  const activeSection = useSelector(state => state.colors.section)
-  const activeFamily = useSelector(state => state.colors.family)
+  const { section: activeSection, family: activeFamily } = useSelector(state => state.colors)
   const isFamilyView = !!family || path.endsWith(PATH_END_FAMILY)
   const menuBarPrefix = 'menu-bar'
   const [menuOpen, setMenuOpen] = useState(false)
@@ -27,10 +26,11 @@ export default () => {
   const allColorsLabelText = at(messages, 'ALL_COLORS')[0]
   const allCollectionsLabelText = at(messages, 'SELECT_COLLECTION')[0]
   const [currentFamily, setNavMenuButtonText] = useState(allCollectionsLabelText)
-  const handleColorFamilySelection = function (value) {
+  const handleColorFamilySelection = useCallback(function (value) {
     setNavMenuButtonText(allColorsLabelText)
     setShowingAllColorFamilies(true)
-  }
+  }, [allColorsLabelText])
+  const handleMenuToggle = useCallback(({ isOpen }) => setMenuOpen(isOpen))
 
   useEffect(() => {
     if (activeFamily) {
@@ -39,32 +39,30 @@ export default () => {
     } else if (activeSection && !showingAllColorFamilies) {
       setNavMenuButtonText(activeSection)
     }
-  })
+  }, [activeFamily, activeSection, showingAllColorFamilies])
 
-  const colorFamiliesAndSearch = () => {
-    return (
-      <div className={MODE_CLASS_NAMES.CELL}>
-        <ButtonBar.Bar>
-          {!isFamilyView && <>
-            <ButtonBar.Button disabled={families.length <= 1} onClick={handleColorFamilySelection} to={`${generateColorWallPageUrl(section)}${PATH_END_FAMILY}`}>
-              <FontAwesomeIcon className='color-families-svg' icon={['fa', 'palette']} pull='left' />
-              <span className={MODE_CLASS_NAMES.DESC}><FormattedMessage id='COLOR_FAMILIES' /></span>
-            </ButtonBar.Button>
-            <ButtonBar.Button to={`${generateColorWallPageUrl(section, family)}search/`}>
-              <FontAwesomeIcon className='color-families-svg' icon={['fa', 'search']} pull='left' />
-              <span className={MODE_CLASS_NAMES.DESC}><FormattedMessage id='SEARCH.SEARCH' /></span>
-            </ButtonBar.Button>
-          </>}
-          {!!isFamilyView && <>
-            <ButtonBar.Button to={generateColorWallPageUrl(section)}>
-              <FontAwesomeIcon className='close-icon-svg' icon={['fa', 'times']} pull='left' />
-              <span className={MODE_CLASS_NAMES.DESC}><FormattedMessage id='CANCEL' /></span>
-            </ButtonBar.Button>
-          </>}
-        </ButtonBar.Bar>
-      </div>
-    )
-  }
+  const colorFamiliesAndSearch = useMemo(() => (
+    <div className={MODE_CLASS_NAMES.CELL}>
+      <ButtonBar.Bar>
+        {!isFamilyView && <>
+          <ButtonBar.Button disabled={families.length <= 1} onClick={handleColorFamilySelection} to={`${generateColorWallPageUrl(section)}${PATH_END_FAMILY}`}>
+            <FontAwesomeIcon className='color-families-svg' icon={['fa', 'palette']} pull='left' />
+            <span className={MODE_CLASS_NAMES.DESC}><FormattedMessage id='COLOR_FAMILIES' /></span>
+          </ButtonBar.Button>
+          <ButtonBar.Button to={`${generateColorWallPageUrl(section, family)}search/`}>
+            <FontAwesomeIcon className='color-families-svg' icon={['fa', 'search']} pull='left' />
+            <span className={MODE_CLASS_NAMES.DESC}><FormattedMessage id='SEARCH.SEARCH' /></span>
+          </ButtonBar.Button>
+        </>}
+        {!!isFamilyView && <>
+          <ButtonBar.Button to={generateColorWallPageUrl(section)}>
+            <FontAwesomeIcon className='close-icon-svg' icon={['fa', 'times']} pull='left' />
+            <span className={MODE_CLASS_NAMES.DESC}><FormattedMessage id='CANCEL' /></span>
+          </ButtonBar.Button>
+        </>}
+      </ButtonBar.Bar>
+    </div>
+  ), [section, family, families, handleColorFamilySelection, isFamilyView])
 
   return (
     <AutoSizer disableHeight style={{ width: '100%' }}>
@@ -73,7 +71,7 @@ export default () => {
           return (
             <div className={MODE_CLASS_NAMES.BASE}>
               <div className={MODE_CLASS_NAMES.COL}>
-                {colorFamiliesAndSearch()}
+                {colorFamiliesAndSearch}
                 <div className={`${MODE_CLASS_NAMES.CELL} ${MODE_CLASS_NAMES.RIGHT}`}>
                   <ButtonBar.Bar>
                     {(isFamilyView ? families : sections).map(name =>
@@ -93,10 +91,10 @@ export default () => {
           return (
             <div className={MODE_CLASS_NAMES.BASE}>
               <div className={MODE_CLASS_NAMES.COL}>
-                {colorFamiliesAndSearch()}
+                {colorFamiliesAndSearch}
                 <Wrapper
                   className={`${menuBarPrefix} ${menuBarPrefix}--${menuOpen ? 'open' : 'closed'}`}
-                  onMenuToggle={({ isOpen }) => { setMenuOpen(isOpen) }}>
+                  onMenuToggle={handleMenuToggle}>
                   <Button className={`${menuBarPrefix}__button`} tag='div'>
                     <span className={`${menuBarPrefix}__button-copy`}>{currentFamily}</span>
                     <FontAwesomeIcon className='close-icon-svg' icon={['fa', 'angle-down']} pull='right' />
