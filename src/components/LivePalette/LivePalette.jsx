@@ -45,6 +45,14 @@ type State = {
   isCompareColor: boolean
 }
 
+const checkIsActive = (activeColor, color) => {
+  if (!activeColor) {
+    return false
+  }
+
+  return activeColor.id === color.id
+}
+
 export class LivePalette extends PureComponent<Props, State> {
   state = {
     spokenWord: '',
@@ -110,7 +118,6 @@ export class LivePalette extends PureComponent<Props, State> {
 
   render () {
     const { colors, activeColor, cancel, empty } = this.props
-
     const { spokenWord, isCompareColor } = this.state
     // TODO: abstract below into a class method
     // calculate all the active slots
@@ -122,7 +129,7 @@ export class LivePalette extends PureComponent<Props, State> {
           color={color}
           onClick={this.activateColor}
           moveColor={this.moveColor}
-          active={(activeColor.id === color.id)}
+          active={(checkIsActive(activeColor, color))}
           isCompareColor={isCompareColor}
         />)
       }

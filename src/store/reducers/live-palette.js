@@ -14,8 +14,9 @@ import {
   TOGGLE_LP_COMPARE_COLOR,
   EDIT_LP_COMPARE_COLOR,
   CANCEL_ADD_COLOR,
-  EMPTY_LP_COLOR
+  EMPTY_LP_COLOR, REPLACE_LP_COLORS, MERGE_LP_COLORS
 } from '../actions/live-palette'
+import { checkCanMergeColors } from '../../components/LivePalette/livePaletteUtility'
 import storageAvailable from '../../shared/utils/browserStorageCheck.util'
 
 type State = {
@@ -142,6 +143,30 @@ export const lp = (state: any = initialState, action: any) => {
       return Object.assign({}, state, {
         compareColorsId: removedCompareColors
       })
+
+    case REPLACE_LP_COLORS:
+      return {
+        ...state,
+        colors: action.payload,
+        activeColor: null,
+        previousActiveColor: null
+      }
+
+    case MERGE_LP_COLORS:
+      const newColors = action.payload
+
+      if (checkCanMergeColors(state.colors, newColors, LP_MAX_COLORS_ALLOWED)) {
+        const existingIds = state.colors.map(color => color.id)
+        const additions = newColors.filter(color => existingIds.indexOf(color.id) === -1)
+        const mergedColors = [...state.colors, ...additions]
+
+        return {
+          ...state,
+          colors: mergedColors
+        }
+      }
+
+      return state
 
     default:
       return state
