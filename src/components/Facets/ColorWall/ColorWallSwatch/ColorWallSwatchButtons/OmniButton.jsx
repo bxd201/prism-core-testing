@@ -21,6 +21,7 @@ const OmniButton = (props: Props) => {
     children,
     external,
     icon,
+    href,
     to,
     onClick,
     ...other

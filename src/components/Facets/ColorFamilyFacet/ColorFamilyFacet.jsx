@@ -1,11 +1,11 @@
 // @flow
-import React, { useMemo, useCallback, useState } from 'react'
+import React, { useMemo } from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { useIntl } from 'react-intl'
 import at from 'lodash/at'
 import kebabCase from 'lodash/kebabCase'
-import ColorWallContext, { colorWallContextDefault, colorWallA11yContextDefault, type ColorWallA11yContextProps } from 'src/components/Facets/ColorWall/ColorWallContext'
+import ColorWallContext, { colorWallContextDefault } from '../ColorWall/ColorWallContext'
 import ColorWallRouter from '../ColorWall/ColorWallRouter'
 import Search from '../../Search/Search'
 import SearchBar from '../../Search/SearchBar'
@@ -18,7 +18,6 @@ import { ROUTE_PARAMS } from 'src/constants/globals'
 import './ColorFamilyFacet.scss'
 import { compareKebabs } from '../../../shared/helpers/StringUtils'
 import ColorDataWrapper, { type ColorDataWrapperProps } from '../../../helpers/ColorDataWrapper/ColorDataWrapper'
-import extendIfDefined from '../../../shared/helpers/extendIfDefined'
 
 type Props = FacetBinderMethods & FacetPubSubMethods & ColorDataWrapperProps & {
   colorDetailPageRoot: string,
@@ -55,29 +54,15 @@ export const ColorFamilyPage = (props: Props) => {
     return `/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_WALL}/${ROUTE_PARAMS.SEARCH}/`
   }, [structure])
 
-  const [a11yState, updateA11yState] = useState(colorWallA11yContextDefault)
-
-  const updateA11y = useCallback((data: ColorWallA11yContextProps) => {
-    updateA11yState({
-      ...a11yState,
-      ...data
-    })
-  }, [a11yState])
-
-  const cwContext = useMemo(() => extendIfDefined({}, colorWallContextDefault, a11yState, {
-    colorDetailPageRoot,
-    colorWallBgColor,
-    updateA11y
-  }), [colorDetailPageRoot, colorWallBgColor, updateA11y, a11yState])
-
   return (
-    <ColorWallContext.Provider value={cwContext}>
+    <ColorWallContext.Provider value={{ ...colorWallContextDefault, colorDetailPageRoot, colorWallBgColor }}>
       <Redirect to={redirectTo} />
       <ColorWallRouter redirect={false}>
         <div className='color-wall-wrap'>
           <Switch>
             <Route path='(.*)?/search/:query' component={SearchBarNoCancel} />
             <Route path='(.*)?/search/' component={SearchBarNoCancel} />
+            <Route component={SearchBarNoCancel} />
           </Switch>
           <Switch>
             <Route path='(.*)?/section/:section/family/:family/(.*/)?search/:query' component={SearchWithinFamily} />

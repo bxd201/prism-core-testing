@@ -11,7 +11,7 @@ import { varValues } from 'variables'
 import { compareKebabs } from '../../../shared/helpers/StringUtils'
 import { convertCategorizedColorsToGrid } from '../../../shared/helpers/ColorDataUtils'
 import { generateColorWallPageUrl, fullColorName } from '../../../shared/helpers/ColorUtils'
-import { BLANK_SWATCH, SW_CHUNK_SIZE, ROUTE_PARAMS } from 'constants/globals'
+import { BLANK_SWATCH, SW_CHUNK_SIZE } from 'constants/globals'
 import ConfigurationContext from '../../../contexts/ConfigurationContext/ConfigurationContext'
 import GenericMessage from '../../Messages/GenericMessage'
 import ColorWallSwatchList from './ColorWallSwatchList'
@@ -33,7 +33,7 @@ const ColorWall = (props: Props) => {
   const { brights, colorMap, colors, unorderedColors } = items
   const { messages = {} } = useIntl()
   const dispatch = useDispatch()
-  const { url, params: { section, family, colorId, colorName } } = useRouteMatch()
+  const { url, params: { section, family, colorId } } = useRouteMatch()
   const trueFamily = reduxFamily || family
   const trueSection = reduxSection || section
 
@@ -71,11 +71,6 @@ const ColorWall = (props: Props) => {
   useEffect(() => { dispatch(filterByFamily(family)) }, [family])
   useEffect(() => { dispatch(makeActiveColorById(colorId)) }, [colorId])
 
-  const zoomOutUrl = useMemo(() => {
-    // zooming out is the UI result of just removing the selected color from the route
-    return url.replace(`/${ROUTE_PARAMS.COLOR}/${colorId}/${colorName}`, '')
-  }, [colorId, colorName])
-
   return (
     <TransitionGroup className='sw-colorwall color-wall-zoom-transitioner'>
       <CSSTransition
@@ -102,12 +97,11 @@ const ColorWall = (props: Props) => {
               maxCellSize={colorWallActive ? swatchMaxSizeZoomed : swatchMaxSize}
               colors={colorsGrid}
               key={swatchListKey}
-              zoomOutUrl={zoomOutUrl}
             />
             {colorWallActive ? (
               <div className='color-wall-wall__btns'>
                 <Link
-                  to={zoomOutUrl}
+                  to={'../../../' + (url.endsWith('family/') ? '../family/' : url.endsWith('search/') ? '../search/' : '')}
                   className='color-wall-wall__btns__btn'
                   title={messages.ZOOM_OUT}
                 >

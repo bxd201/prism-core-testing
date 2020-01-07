@@ -1,23 +1,5 @@
 // @flow
 import React from 'react'
-import { type GridBounds } from './ColorWall.flow'
-import noop from 'lodash/noop'
-
-export type ColorWallA11yContextProps = {
-  a11yFocusCell: number[] | void,
-  a11yFocusChunk: GridBounds,
-  a11yFromKeyboard: boolean,
-  a11yFocusOutline: boolean,
-  a11yMaintainFocus: boolean
-}
-
-export const colorWallA11yContextDefault: ColorWallA11yContextProps = {
-  a11yFocusCell: undefined,
-  a11yFocusChunk: undefined,
-  a11yFromKeyboard: false,
-  a11yFocusOutline: false,
-  a11yMaintainFocus: false
-}
 
 export type ColorWallContextProps = {
   colorDetailPageRoot?: string | typeof undefined,
@@ -29,8 +11,7 @@ export type ColorWallContextProps = {
   swatchMaxSize: number,
   swatchMaxSizeZoomed: number,
   swatchMinSize: number,
-  swatchMinSizeZoomed: number,
-  updateA11y: Function
+  swatchMinSizeZoomed: number
 }
 
 export const colorWallContextDefault: ColorWallContextProps = {
@@ -43,13 +24,9 @@ export const colorWallContextDefault: ColorWallContextProps = {
   swatchMaxSize: 33,
   swatchMaxSizeZoomed: 50,
   swatchMinSize: 14,
-  swatchMinSizeZoomed: 50,
-  updateA11y: noop
+  swatchMinSizeZoomed: 50
 }
 
-const ColorWallContext = React.createContext<Object>({
-  ...colorWallA11yContextDefault,
-  ...colorWallContextDefault
-})
+const ColorWallContext = React.createContext<Object>(colorWallContextDefault)
 
 export default ColorWallContext
