@@ -1,16 +1,14 @@
 .visually-hidden {
-  background: white !important;
   border: 0 !important;
-  clip-path: rect(1px, 1px, 1px, 1px) !important;
   clip: rect(1px 1px 1px 1px) !important;  /* for Internet Explorer */
   clip: rect(1px, 1px, 1px, 1px) !important;
-  color: black !important;
+  clip-path: rect(1px, 1px, 1px, 1px) !important;
   height: 1px !important;
-  letter-spacing: -1em;
-  margin: 0 !important;
+  width: 1px !important;
   overflow: hidden !important;
   padding: 0 !important;
   position: absolute !important;
-  width: 1px !important;
+  margin: 0 !important;
+  letter-spacing: -1em;
   z-index: -1;
 }

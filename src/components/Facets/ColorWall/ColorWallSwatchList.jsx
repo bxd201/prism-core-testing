@@ -2,6 +2,7 @@
 import React, { PureComponent } from 'react'
 // $FlowIgnore -- no defs for react-virtualized
 import { Grid, AutoSizer } from 'react-virtualized'
+import memoizee from 'memoizee'
 import isEqual from 'lodash/isEqual'
 import isEmpty from 'lodash/isEmpty'
 import isArray from 'lodash/isArray'
@@ -21,10 +22,8 @@ import ChunkBoundary from './ChunkBoundary'
 import { type ColorMap, type Color, type ProbablyColorId, type ColorIdGrid } from '../../../shared/types/Colors'
 import { getColorCoords, drawCircle, getCoordsObjectFromPairs, findContainingChunk, findChunkFromCorner, overscanIndicesGetter } from './ColorWallUtils'
 import { getTotalWidthOf2dArray } from '../../../shared/helpers/DataUtils'
-import { fullColorName } from '../../../shared/helpers/ColorUtils'
+import { generateColorWallPageUrl, fullColorName } from '../../../shared/helpers/ColorUtils'
 import { type GridBounds, type ColorReference } from './ColorWall.flow'
-import { type ColorWallContextProps, type ColorWallA11yContextProps } from './ColorWallContext'
-import withColorWallContext from './withColorWallContext'
 
 import 'src/scss/externalComponentSupport/AutoSizer.scss'
 import './ColorWallSwatchList.scss'
@@ -45,22 +44,20 @@ type RouterProps = {
 }
 
 type Props = IntlProps & RouterProps & {
-  activeColor?: Color, // eslint-disable-line react/no-unused-prop-types
+  colors: ColorIdGrid, // eslint-disable-line react/no-unused-prop-types
+  contain: boolean,
+  minCellSize: number,
+  maxCellSize: number,
   bloomRadius: number,
   colorMap: ColorMap,
-  colors: ColorIdGrid, // eslint-disable-line react/no-unused-prop-types
-  colorWallContext: ColorWallContextProps & ColorWallA11yContextProps,
-  contain: boolean,
-  family: string | void,
-  immediateSelectionOnActivation?: boolean,
-  maxCellSize: number,
-  minCellSize: number,
-  onActivateColor?: Function,
-  onAddColor?: Function,
-  section: string | void,
-  showAll?: boolean,
   swatchLinkGenerator: Function,
-  zoomOutUrl: string
+  section: string | void,
+  family: string | void,
+  activeColor?: Color, // eslint-disable-line react/no-unused-prop-types
+  showAll?: boolean,
+  immediateSelectionOnActivation?: boolean,
+  onAddColor?: Function,
+  onActivateColor?: Function
 }
 
 // END PROP TYPES
@@ -80,7 +77,8 @@ type DerivedStateFromProps = {
 
 type State = DerivedStateFromProps & {
   a11yFocusChunk: GridBounds,
-  a11yFocusCell: number[] | void
+  a11yFocusCell: number[] | void,
+  renderFocusOutline: boolean
 }
 
 // END STATE TYPES
@@ -105,6 +103,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
 
   state: State = {
     needsInitialFocus: true,
+    renderFocusOutline: false,
     activeColorCoords: [],
     focusCoords: [],
     levelMap: {},
@@ -132,6 +131,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     this.handleBodyMouseDown = this.handleBodyMouseDown.bind(this)
     this.handleBodyKeyDown = this.handleBodyKeyDown.bind(this)
     this.handleBodyTouchStart = this.handleBodyTouchStart.bind(this)
+    this.generateHandleSwatchClick = this.generateHandleSwatchClick.bind(this)
     this.returnFocusToThisComponent = this.returnFocusToThisComponent.bind(this)
     this.getAudioMessaging = this.getAudioMessaging.bind(this)
 
@@ -143,8 +143,8 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
   // LIFECYCLE METHODS
 
   render () {
-    const { minCellSize, maxCellSize, showAll, activeColor, colors, contain, colorWallContext: { a11yFocusChunk, a11yFocusCell, a11yFocusOutline } } = this.props
-    const { focusCoords, needsInitialFocus } = this.state
+    const { minCellSize, maxCellSize, showAll, activeColor, colors, contain } = this.props
+    const { focusCoords, needsInitialFocus, a11yFocusChunk, a11yFocusCell, renderFocusOutline } = this.state
     const colorIdGrid = colors
     const rowCount = colorIdGrid.length
     const columnCount = getTotalWidthOf2dArray(colorIdGrid)
@@ -158,7 +158,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     }
 
     // if our focus outlines can be shown and we have a value for our a11y focus cell...
-    if (a11yFocusOutline && a11yFocusCell && a11yFocusCell.length) {
+    if (renderFocusOutline && a11yFocusCell && a11yFocusCell.length) {
       // ... set scrollToColumn/Row props for grid to a11yFocusCell
       addlGridProps = {
         ...addlGridProps,
@@ -198,7 +198,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
                   _forceRenderProp3={a11yFocusCell}
                   _forceRenderProp4={showAll}
                   _forceRenderProp5={colorIdGrid}
-                  _forceRenderProp6={a11yFocusOutline}
+                  _forceRenderProp6={renderFocusOutline}
                   scrollToAlignment='center'
                   cellRenderer={this.cellRenderer}
                   columnWidth={size}
@@ -224,14 +224,25 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
   }
 
   static getDerivedStateFromProps (props: Props, state: State) {
-    const { bloomRadius, activeColor, colors } = props
+    const { bloomRadius, activeColor, colors, history: { location: { state: routerState } } } = props
     const { focusCoords } = state
 
-    if (!activeColor) {
-      return state
+    let stateChanges = { ...state }
+
+    if (!(stateChanges.a11yFocusCell || stateChanges.a11yFocusChunk) &&
+      routerState &&
+      (routerState.a11yFocusCell || routerState.a11yFocusChunk)) {
+      stateChanges = {
+        ...stateChanges,
+        a11yFocusCell: routerState.a11yFocusCell,
+        a11yFocusChunk: routerState.a11yFocusChunk
+      }
     }
 
-    let stateChanges = { ...state }
+    if (!activeColor) {
+      return stateChanges
+    }
+
     const coords = getColorCoords(activeColor.id, colors)
 
     if (!isEmpty(focusCoords) && !isEqual(coords, focusCoords)) {
@@ -240,6 +251,8 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
         needsInitialFocus: false
       }
     }
+
+    // TODO: compare coords against a11yFocusCell; if different, update
 
     if (coords) {
       stateChanges = {
@@ -254,13 +267,13 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
   }
 
   componentDidMount () {
-    const { colors, colorWallContext: { a11yFocusCell, a11yFocusChunk, a11yMaintainFocus, a11yFromKeyboard, updateA11y } } = this.props
+    const { location: { state }, colors } = this.props
 
-    const maintainFocus = a11yMaintainFocus
-    const fromKeyboard = a11yFromKeyboard
-    const cell = a11yFocusCell
+    const maintainFocus = state && state.maintainFocus
+    const fromKeyboard = state && state.fromKeyboard
+    const cell = state && state.a11yFocusCell
 
-    let chunk = a11yFocusChunk
+    let chunk = state && state.a11yFocusChunk
     let stateChanges = {}
 
     // if cell is present in our location's state but chunk is NOT...
@@ -282,7 +295,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
         // update state changes to include renderFocusOutline flag since we're assuming we're in the midst of keyboard navigation
         stateChanges = {
           ...stateChanges,
-          a11yFocusOutline: true
+          renderFocusOutline: true
         }
       }
     }
@@ -313,14 +326,14 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     }
 
     if (!isEmpty(stateChanges)) {
-      updateA11y(stateChanges)
+      this.setState(stateChanges)
     }
   }
 
   componentDidUpdate (prevProps: Props, prevState: State) {
-    const { showAll, activeColor, colors, colorWallContext: { a11yFocusCell, updateA11y } } = this.props
+    const { showAll, activeColor, colors } = this.props
     const { activeColor: oldActiveColor } = prevProps
-    const { activeColorCoords, focusCoords } = this.state
+    const { activeColorCoords, focusCoords, a11yFocusCell } = this.state
     const { activeColorCoords: oldActiveColorCoords, focusCoords: oldFocusCoords } = prevState
 
     // if activeColor has updated...
@@ -337,7 +350,8 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
         // if we have successfully located a containing chunk...
         if (containingChunk) {
           // ... set it and the focus cell in state
-          updateA11y({
+          // eslint-disable-next-line
+          this.setState({
             a11yFocusCell: clone(activeColorCoords),
             a11yFocusChunk: containingChunk
           })
@@ -360,7 +374,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     ])
 
     // if the grid's DOM node exists, AND oldCoords and newCoords both exist, AND they have different values...
-    if (this._gridWrapperRef && this._gridWrapperRef.current && newCoords && oldCoords && !isEqual(oldCoords, newCoords)) {
+    if (this._gridWrapperRef && this._gridWrapperRef.current && (newCoords && oldCoords && !isEqual(oldCoords, newCoords))) {
       // ... then we can assume at this point that we need to visually scroll the grid to the new focal point
       const gridEl = this._gridWrapperRef.current.querySelector('.ReactVirtualized__Grid')
 
@@ -437,9 +451,8 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
   }
 
   handleGridKeyDown = function handleGridKeyDown (e: any) {
-    // const { updateA11y } = useContext(ColorWallContext)
-    const { colors, history: { push }, showAll, colorWallContext: { a11yFocusCell, a11yFocusChunk, updateA11y }, zoomOutUrl } = this.props
-    const { activeColorCoords } = this.state
+    const { colors, history: { push }, section, family, showAll } = this.props
+    const { activeColorCoords, a11yFocusChunk, a11yFocusCell } = this.state
     const { shiftKey } = e
 
     let newA11yFocusChunk
@@ -453,30 +466,20 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
       const y = a11yFocusCell[1]
 
       switch (e.keyCode) {
-        // left
-        case 37: {
+        case 37: // left
           newA11yFocusCell = [Math.max(x - 1, TL[0]), y]
           break
-        }
-        // up
-        case 38: {
+        case 38: // up
           newA11yFocusCell = [x, Math.max(y - 1, TL[1])]
           break
-        }
-        // right
-        case 39: {
+        case 39: // right
           newA11yFocusCell = [Math.min(x + 1, BR[0]), y]
           break
-        }
-        // down
-        case 40: {
+        case 40: // down
           newA11yFocusCell = [x, Math.min(y + 1, BR[1])]
           break
-        }
-        // enter
-        case 13:
-          // space? do we need this?
-        case 32: {
+        case 13: // enter
+        case 32: // space? do we need this?
           const colorId = colors[y][x]
 
           if (!colorId) {
@@ -490,7 +493,25 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
               window.location.href = swatchAPI.externalLink
               return
             } else if (swatchAPI.internalLink) {
-              push(swatchAPI.internalLink)
+              switch (typeof swatchAPI.internalLink) {
+                case 'string': {
+                  push(swatchAPI.internalLink, {
+                    a11yFocusChunk,
+                    a11yFocusCell,
+                    fromKeyboard: true,
+                    maintainFocus: true
+                  })
+                }
+                case 'object': {
+                  push(swatchAPI.internalLink.pathname, {
+                    ...swatchAPI.internalLink.state || {},
+                    a11yFocusChunk,
+                    a11yFocusCell,
+                    fromKeyboard: true,
+                    maintainFocus: true
+                  })
+                }
+              }
             }
 
             if (swatchAPI.onClick) {
@@ -501,40 +522,33 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
           e.stopPropagation()
           e.preventDefault()
           break
-        }
       }
 
       // if we've successfully moved within our existing chunk (and we should have)...
       if (newA11yFocusCell) {
         // ... then forward the existing chunk reference along as our "new" chunk; we'll keep it
         newA11yFocusChunk = a11yFocusChunk
-
-        // if the focus cells haven't changed, set the new to the old so we aren't updating needlessly
-        if (isEqual(newA11yFocusCell, a11yFocusCell)) {
-          newA11yFocusCell = a11yFocusCell
-          // NOTE: we SHOULD just be able to return here, since this means the user is just pressing
-          // a direction they can't actually move
-          return
-        }
       }
     }
 
     switch (e.keyCode) {
-      // escape
-      case 27: {
+      case 27: // escape
         // if the user presses the escape key and we are zoomed in (or: not showing all)...
         if (!showAll) {
-          // ... then push the zoomed-out URL, which is effectively just the current URL minus the color/{colorId}/{colorName} bits
-          push(zoomOutUrl)
+          // ... then navigate to the color wall URL of the current section and family (if they exist), effectively zooming out
+          // also pass our current focused chunk and cell as persistent state
+          push(generateColorWallPageUrl(section, family), {
+            a11yFocusChunk,
+            a11yFocusCell,
+            fromKeyboard: true,
+            maintainFocus: true
+          })
 
           e.stopPropagation()
           e.preventDefault()
-          return
         }
         break
-      }
-      // tab
-      case 9: {
+      case 9: // tab
         if (shiftKey) {
           // go up a column
           if (isEmpty(a11yFocusChunk)) {
@@ -546,10 +560,9 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
               newA11yFocusCell = [lastChunk.TL[0], lastChunk.TL[1]]
             } else {
               // if we can't select a first chunk, just let the tab flow through to get the user out of the color wall
-              updateA11y({
+              this.setState({
                 a11yFocusChunk: void (0),
-                a11yFocusCell: void (0),
-                a11yMaintainFocus: false
+                a11yFocusCell: void (0)
               })
 
               return
@@ -570,10 +583,9 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
                 newA11yFocusCell = [nextChunkBack.TL[0], nextChunkBack.TL[1]]
               } else {
                 // if we can't select a "next chunk over," assume we've reached the end and allow the user to tab out
-                updateA11y({
+                this.setState({
                   a11yFocusChunk: void (0),
-                  a11yFocusCell: void (0),
-                  a11yMaintainFocus: false
+                  a11yFocusCell: void (0)
                 })
 
                 return
@@ -593,10 +605,9 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
               newA11yFocusCell = [firstChunk.TL[0], firstChunk.TL[1]]
             } else {
               // if we can't select a first chunk, just let the tab flow through to get the user out of the color wall
-              updateA11y({
+              this.setState({
                 a11yFocusChunk: void (0),
-                a11yFocusCell: void (0),
-                a11yMaintainFocus: false
+                a11yFocusCell: void (0)
               })
 
               return
@@ -616,10 +627,9 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
                 newA11yFocusCell = [nextChunkOver.TL[0], nextChunkOver.TL[1]]
               } else {
                 // if we can't select a "next chunk over," assume we've reached the end and allow the user to tab out
-                updateA11y({
+                this.setState({
                   a11yFocusChunk: void (0),
-                  a11yFocusCell: void (0),
-                  a11yMaintainFocus: false
+                  a11yFocusCell: void (0)
                 })
 
                 return
@@ -635,31 +645,19 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
           isEqual(findContainingChunk(colors, activeColorCoords[0], activeColorCoords[1]), newA11yFocusChunk)) {
           newA11yFocusCell = activeColorCoords
         }
-
-        break
-      }
     }
 
-    // if our focus values are empty...
-    if (isEmpty(newA11yFocusCell) && isEmpty(newA11yFocusChunk)) {
-      return
+    if (!isEmpty(newA11yFocusCell) || !isEmpty(newA11yFocusChunk)) {
+      this.setState({
+        a11yFocusCell: newA11yFocusCell,
+        a11yFocusChunk: newA11yFocusChunk,
+        // always render focus outline if we've had successfuly keyboard navigation within the grid
+        renderFocusOutline: true
+      })
+
+      e.stopPropagation()
+      e.preventDefault()
     }
-
-    // if our focus values haven't changed...
-    if (newA11yFocusCell === a11yFocusCell && newA11yFocusChunk === a11yFocusChunk) {
-      return
-    }
-
-    // if we're here, update. it's expensive so we want to guard it well.
-    updateA11y({
-      a11yFocusCell: newA11yFocusCell,
-      a11yFocusChunk: newA11yFocusChunk,
-      a11yFocusOutline: true,
-      a11yMaintainFocus: true
-    })
-
-    e.stopPropagation()
-    e.preventDefault()
   }
 
   handleGridResize = function handleGridResize ({ width, height }) {
@@ -669,10 +667,11 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
 
   handleGridFocus = function handleGridFocus (e: any) {
     // check focus cell/chunk here; if they don't exist you'll need to define them and set state
-    const { activeColor, colors, colorWallContext: { a11yFocusCell, a11yFocusOutline, updateA11y } } = this.props
+    const { activeColor, colors } = this.props
+    const { a11yFocusCell, renderFocusOutline } = this.state
 
     let newState = {
-      a11yFocusOutline: a11yFocusOutline ? true : this._recentKeypress
+      renderFocusOutline: renderFocusOutline ? true : this._recentKeypress
     }
 
     if (isEmpty(a11yFocusCell)) {
@@ -701,18 +700,39 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
       }
     }
 
-    updateA11y(newState)
+    this.setState(newState)
   }
 
   handleGridBlur = function handleGridBlur (e: any) {
-    const { colorWallContext: { a11yFocusOutline, updateA11y } } = this.props
+    const { renderFocusOutline } = this.state
 
-    if (a11yFocusOutline) {
-      updateA11y({
-        a11yFocusOutline: false
+    if (renderFocusOutline) {
+      this.setState({
+        renderFocusOutline: false
       })
     }
   }
+
+  // TODO: can we remove this and just push all the accessibility stuff into the Link building going on in CWSwatch?
+  // curently only ColorWallSwatchUI is using this... update UI to use the new a11yState prop in its Link component @cody.richmond
+  generateHandleSwatchClick = memoizee(function handleSwatchClick (color: Color) {
+    return (e: any) => {
+      const { history: { push }, colors, swatchLinkGenerator } = this.props
+      const link: string = swatchLinkGenerator(color)
+      const coords = getColorCoords(color.id, colors)
+
+      if (e && isFunction(e.preventDefault)) {
+        e.preventDefault()
+      }
+
+      this.returnFocusToThisComponent()
+
+      push(link, {
+        a11yFocusCell: coords,
+        maintainFocus: true
+      })
+    }
+  }, { length: 1 })
 
   // END HANDLERS
   // -----------------------------------------------
@@ -734,8 +754,8 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     rowIndex, // Vertical (row) index of cell
     style // Style object to be applied to cell (to position it)
   }: Object) {
-    const { colors, colorMap, immediateSelectionOnActivation, onAddColor, swatchLinkGenerator, colorWallContext: { a11yFocusCell, a11yFocusChunk, a11yFocusOutline } } = this.props
-    const { levelMap } = this.state
+    const { colors, colorMap, immediateSelectionOnActivation, onAddColor, swatchLinkGenerator } = this.props
+    const { levelMap, a11yFocusChunk, a11yFocusCell, renderFocusOutline } = this.state
     const colorId = colors[rowIndex][columnIndex]
 
     if (!colorId) {
@@ -751,7 +771,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
 
     // if we can render the focus outline AND if we have a focused chunk AND a11yFocusCell has values...
     // ... AND if we have focused cell coordinates that match this particular cell/row index...
-    if (a11yFocusOutline && a11yFocusChunk && isArray(a11yFocusCell) && isEqual(a11yFocusCell, [columnIndex, rowIndex])) {
+    if (renderFocusOutline && a11yFocusChunk && isArray(a11yFocusCell) && isEqual(a11yFocusCell, [columnIndex, rowIndex])) {
       // ... then set our focus var to true; we'll pass it as a param to the rendered swatch in this cell
       focus = true
     }
@@ -764,6 +784,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
           tabIndex={-1}
           showContents={showContents}
           thisLink={linkToSwatch}
+          a11yState={{ a11yFocusCell, a11yFocusChunk }}
           onAdd={onAddColor ? this.addColor : void (0)}
           onClick={this.returnFocusToThisComponent}
           color={color}
@@ -789,7 +810,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
           tabIndex={-1}
           color={color}
           thisLink={linkToSwatch}
-          onClick={this.returnFocusToThisComponent}
+          onClick={this.generateHandleSwatchClick(color)}
           ref={this.generateMakeSwatchRef(colorId)}
           focus={focus} />
       )
@@ -810,7 +831,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     return (
       <div key={key} style={style} role='presentation'>
         <ChunkBoundary
-          render={a11yFocusOutline}
+          render={renderFocusOutline}
           bounds={a11yFocusChunk}
           x={columnIndex}
           y={rowIndex} />
@@ -831,15 +852,15 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
   }
 
   getAudioMessaging = function getAudioMessaging (cell?: number[]): string | void {
-    const { colors, colorMap, intl, colorWallContext: { a11yFocusCell } } = this.props
-    const { levelMap } = this.state
+    const { colors, colorMap, intl } = this.props
+    const { a11yFocusCell, levelMap } = this.state
     const _cell = cell || a11yFocusCell
 
     if (!_cell) {
       return void (0)
     }
 
-    const focusedColorId: ProbablyColorId = at(colors, `[${_cell[1]}][${_cell[0]}]`)[0]
+    const focusedColorId: ProbablyColorId = colors[_cell[1]][_cell[0]]
 
     if (focusedColorId) {
       const focusedColor: Color = colorMap[focusedColorId]
@@ -867,4 +888,5 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
   // -----------------------------------------------
 }
 
-export default withRouter(injectIntl(withColorWallContext(ColorWallSwatchList)))
+// $FlowIgnore -- Flow is expecting optional argument to be populated, some issue w/ withRouter + injectIntl
+export default withRouter(injectIntl(ColorWallSwatchList))
