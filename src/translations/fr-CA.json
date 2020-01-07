@@ -1,5 +1,6 @@
 {
   "ADD_A_COLOR": "Ajouter une couleur",
+  "ALL_COLORS": "Toutes les couleurs",
   "BACK_TO_COLOR_WALL": "Retour au mur de couleurs",
   "CANCEL": "Annuler",
   "CANVAS_UNSUPPORTED": "Your browser does not support the canvas element.",
@@ -70,6 +71,7 @@
     "FIND_A_COLOR": "Trouver une couleur",
     "SUGGESTIONS": "Quelques exemples de choses que vous pouvez rechercher sont {suggestions}"
   },
+  "SELECT_COLLECTION": "Sélectionnez une collection de couleurs",
   "SIMILAR_COLORS": "Couleurs semblables",
   "SWATCH_ACTIVATED_DETAILS": "{color} a été sélectionné. Appuyez sur Entrée pour voir les détails.",
   "SWATCH_FOCUS": "{color}. Appuyez sur Entrée pour le sélectionner.",
