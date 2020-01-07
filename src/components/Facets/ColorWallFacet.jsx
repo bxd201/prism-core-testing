@@ -1,5 +1,5 @@
 // @flow
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback, useMemo } from 'react'
 import { Switch, Route } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import ColorWallRouter from './ColorWall/ColorWallRouter'
@@ -8,7 +8,7 @@ import SearchBar from '../Search/SearchBar'
 import ColorWall from './ColorWall/ColorWall'
 import ColorWallToolbar from './ColorWall/ColorWallToolbar'
 import facetBinder from 'src/facetSupport/facetBinder'
-import ColorWallContext, { colorWallContextDefault } from 'src/components/Facets/ColorWall/ColorWallContext'
+import ColorWallContext, { colorWallContextDefault, colorWallA11yContextDefault, type ColorWallA11yContextProps } from 'src/components/Facets/ColorWall/ColorWallContext'
 import { type FacetPubSubMethods, facetPubSubDefaultProps } from 'src/facetSupport/facetPubSub'
 import extendIfDefined from '../../shared/helpers/extendIfDefined'
 import GenericOverlay from '../Overlays/GenericOverlay/GenericOverlay'
@@ -48,6 +48,11 @@ export const ColorWallPage = (props: Props) => {
   const emitColor = useSelector(state => at(state, 'colors.emitColor')[0])
   const [isLoading, updateLoading] = useState(false)
   const dispatch = useDispatch()
+  const [a11yState, updateA11yState] = useState(colorWallA11yContextDefault)
+  const updateA11y = useCallback((data: ColorWallA11yContextProps) => updateA11yState({
+    ...a11yState,
+    ...data
+  }), [a11yState])
 
   // on mount
   useEffect(() => {
@@ -74,12 +79,15 @@ export const ColorWallPage = (props: Props) => {
     }
   }, [(emitColor && emitColor.timestamp)])
 
+  const cwContext = useMemo(() => extendIfDefined({}, colorWallContextDefault, a11yState, {
+    colorDetailPageRoot,
+    colorWallBgColor,
+    displayAddButton,
+    updateA11y
+  }), [colorDetailPageRoot, colorWallBgColor, displayAddButton, updateA11y, a11yState])
+
   return (
-    <ColorWallContext.Provider value={extendIfDefined({}, colorWallContextDefault, {
-      colorDetailPageRoot,
-      colorWallBgColor,
-      displayAddButton
-    })}>
+    <ColorWallContext.Provider value={cwContext}>
       <ColorWallRouter>
         <div className='color-wall-wrap'>
           <Switch>
