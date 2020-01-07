@@ -1,5 +1,6 @@
 {
   "ADD_A_COLOR": "ADD A COLOUR",
+  "ALL_COLORS": "All Colours",
   "BACK_TO_COLOR_WALL": "Back to Colour Wall",
   "CANCEL": "Cancel",
   "CANVAS_UNSUPPORTED": "Your browser does not support the canvas element.",
@@ -70,6 +71,7 @@
     "FIND_A_COLOR": "Find a colour",
     "SUGGESTIONS": "Some examples of things you can search for are {suggestions}"
   },
+  "SELECT_COLLECTION": "Select Colour Collection",
   "SIMILAR_COLORS": "Similar Colours",
   "SWATCH_ACTIVATED_DETAILS": "{color} is selected. Press Enter to view details.",
   "SWATCH_FOCUS": "{color}. Press Enter to select.",
