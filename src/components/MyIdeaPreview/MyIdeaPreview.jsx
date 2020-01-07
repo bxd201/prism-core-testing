@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import MergeColors from '../MergeCanvas/MergeColors'
 import PrismImage from '../PrismImage/PrismImage'
 import { useIntl } from 'react-intl'
-import { setBackgroundForPaintScene } from '../../store/actions/paintScene'
+import { setLayersForPaintScene } from '../../store/actions/paintScene'
 
 import './MyIdeaPreview.scss'
 import { Redirect } from 'react-router-dom'
@@ -31,7 +31,7 @@ const getZoomWidthAndHeight = (dimensions, width, height) => {
     newWidth = dimensions.width
     newHeight = Math.round(dimensions.width * height / width)
   } else {
-    // landscape, get hieght based on wrapper width and then calc width based on new height
+    // landscape, get height based on wrapper width and then calc width based on new height
     newHeight = Math.round(dimensions.width * width / height) || 0
     newWidth = Math.round(newHeight * width / height) || 0
   }
@@ -59,7 +59,7 @@ const MyIdeaPreview = (props: myIdeaPreviewProps) => {
     return null
   })
 
-  const paintSceneWorkSpace = useSelector(state => state.paintScenceWorkspace)
+  const paintSceneWorkSpace = useSelector(state => state.paintSceneWorkspace)
 
   const { renderingBaseUrl } = selectedScene || {}
   const initialWidth = selectedScene ? selectedScene.surfaceMasks.surfaces[0].surfaceMaskImageData.width : 0
@@ -72,6 +72,8 @@ const MyIdeaPreview = (props: myIdeaPreviewProps) => {
   const backgroundImageRef = useRef()
   const [foregroundImageUrl, setForegroundImageUrl] = useState(null)
   const foregroundImageRef = useRef()
+  const utilityCanvasRef = useRef()
+  const layersRef = useRef([])
 
   const resizeHandler = (e: SyntheticEvent) => {
     const wrapperDimensions = wrapperRef.current.getBoundingClientRect()
@@ -113,27 +115,31 @@ const MyIdeaPreview = (props: myIdeaPreviewProps) => {
     }
   }, [])
 
-  const loadMergedImage = (imageUrl: string) => {
-    setForegroundImageUrl(imageUrl)
+  // Merge color component callback
+  const loadMergedImage = (payload: Object) => {
+    setForegroundImageUrl(payload.mergedImage)
+    // Save image urls
+    layersRef.current = payload.layers
   }
 
+  // Prism Image comp callback
   const handleBackgroundImageLoaded = (payload: Object) => {
-    // @todo - Do not let the property name fool you, the item isn't a url but imageData, should probably refactor for clarity -RS
     const ctx = backgroundCanvasRef.current.getContext('2d')
-    ctx.putImageData(payload.dataUrl, 0, 0)
+    ctx.putImageData(payload.data, 0, 0)
   }
 
+  // Prism Image comp callback
   const handleForegroundImageLoaded = (payload: Object) => {
     const ctx = foregroundCanvasRef.current.getContext('2d')
-    ctx.putImageData(payload.dataUrl, 0, 0)
+    ctx.putImageData(payload.data, 0, 0)
   }
 
   const openProject = (e: SyntheticEvent) => {
     e.preventDefault()
 
-    dispatch(setBackgroundForPaintScene(
+    dispatch(setLayersForPaintScene(
       backgroundCanvasRef.current.toDataURL(),
-      foregroundCanvasRef.current.toDataURL(),
+      layersRef.current,
       selectedScene.palette,
       initialWidth,
       initialHeight))
@@ -142,7 +148,7 @@ const MyIdeaPreview = (props: myIdeaPreviewProps) => {
   const openUnpaintedProject = (e: SyntheticEvent) => {
     e.preventDefault()
 
-    dispatch(setBackgroundForPaintScene(
+    dispatch(setLayersForPaintScene(
       backgroundCanvasRef.current.toDataURL(),
       null,
       selectedScene.palette,
@@ -164,9 +170,11 @@ const MyIdeaPreview = (props: myIdeaPreviewProps) => {
           ignoreColorOffset
           colors={selectedScene.palette.map(color => {
             return { r: color.red, g: color.green, b: color.blue }
-          })} /> : null}
+          })}
+          preserveLayers /> : null}
         <canvas ref={foregroundCanvasRef} width={initialWidth} height={initialHeight} style={{ width, height }} className={overlayedCanvas} />
         <canvas ref={backgroundCanvasRef} width={initialWidth} height={initialHeight} style={{ width, height, opacity: 0.8 }} />
+        <canvas ref={utilityCanvasRef} width={initialWidth} height={initialHeight} style={{ width, height, opacity: 0 }} />
         {backgroundImageSrc ? <PrismImage
           ref={backgroundImageRef}
           source={backgroundImageSrc}

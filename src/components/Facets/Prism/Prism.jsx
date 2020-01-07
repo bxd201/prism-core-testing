@@ -79,7 +79,6 @@ export class Prism extends Component<Props> {
               <Route path='/expert-colors' component={() => <ExpertColorPicks isExpertColor />} />
               <Route path={MATCH_PHOTO} component={MatchPhoto} />
               <Route path='/paint-scene' render={() => <MatchPhoto isPaintScene />} />
-              {/* @todo - implement MyIdeas -RS */}
               <Route path={MY_IDEAS} render={() => <MyIdeasContainer />} />
               <Route path={MY_IDEAS_PREVIEW} component={MyIdeaPreview} />
               <Route path={`/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`} exact component={ColorDetails} />

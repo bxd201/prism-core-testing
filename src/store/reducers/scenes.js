@@ -276,11 +276,11 @@ export const sceneWorkspaces = (state: SceneWorkspace[] = [], action: {type: str
 
 // This value is unknown at runtime since scene data must be loaded
 export const currentVariant = (state: any = null, action: {type: string, payload: any}) => {
-  // @todo make sure this is set to the default variant when ever a new scene is selected
+  // Make sure this is set to the default variant when ever a new scene is selected
   if (action.type === CHANGE_SCENE_VARIANT) {
     return action.payload
   }
-  // @todo review if this is a safe approach
+
   if (action.type === RECEIVE_SCENES) {
     if (action.payload.scenes && action.payload.scenes.length) {
       const defaultScene = action.payload.scenes[0]
@@ -296,7 +296,7 @@ export const currentVariant = (state: any = null, action: {type: string, payload
 }
 
 export const currentSurfaceId = (state: number | null = null, action: {type: string, payload: Object}) => {
-  // @todo Only set via action triggered from within tintable scene, haven't found a better deterministic way to know user intent
+  // Only set via action triggered from within tintable scene, haven't found a better deterministic way to know user intent
   if (action.type === UPDATE_CURRENT_SCENE) {
     return action.payload.surfaceId
   }
@@ -305,7 +305,7 @@ export const currentSurfaceId = (state: number | null = null, action: {type: str
 }
 
 export const currentActiveSceneId = (state: number | null = null, action: {type: string, payload: Object}) => {
-  // @todo Only set via action triggered from within tintable scene, haven't found a better deterministic way to know user intent
+  // Only set via action triggered from within tintable scene, haven't found a better deterministic way to know user intent
   if (action.type === UPDATE_CURRENT_SCENE) {
     return action.payload.sceneId
   }

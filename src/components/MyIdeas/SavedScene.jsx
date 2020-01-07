@@ -71,7 +71,6 @@ const SavedScene = (props: SavedSceneProps) => {
   const deleteScene = (e: SyntheticEvent) => {
     e.preventDefault()
     props.deleteScene(props.sceneData.id)
-    console.log('Deleting scene...')
   }
 
   const selectScene = (e: SyntheticEvent) => {
@@ -83,18 +82,16 @@ const SavedScene = (props: SavedSceneProps) => {
     props.selectScene(props.sceneData.id)
   }
 
-  const loadThumbnail = (imageUrl: string) => {
-    setThumbnailUrl(imageUrl)
+  const loadThumbnail = (payload: Object) => {
+    setThumbnailUrl(payload.mergedImage)
   }
 
   const handleBackgroundImageLoaded = (payload: Object) => {
-    // @todo - Do not let the property name fool you, the item isn't a url but imageData, should probably refactor for clarity -RS
-    setBackgroundImageData(payload.dataUrl)
+    setBackgroundImageData(payload.data)
   }
 
   return (
     <div className={sceneClassName} onClick={selectScene}>
-      {/* @todo - props.sceneData.renderingBaseUrl as blob???  -RS */}
       {backgroundImageSrc ? <PrismImage
         ref={imageRef}
         source={backgroundImageSrc}

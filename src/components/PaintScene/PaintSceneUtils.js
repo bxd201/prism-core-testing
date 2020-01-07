@@ -61,7 +61,6 @@ const mapLABArrayToObject = (color) => {
 export const getColorsFromImagePathList = (imagePathList: any) => {
   const colorList = imagePathList
     .filter(imagePath => {
-      // @todo implement using the real types -RS
       return imagePath.data
     })
 
@@ -129,4 +128,22 @@ export const processLoadedScene = (ctx: any, colors: Object[], threshold: number
   const colorLayers = separateColors(uniqueColors, imageData, threshold, saveAlpha)
 
   return colorLayers
+}
+
+export const createImageDataAndAlphaPixelMapFromImageData = (imageData) => {
+  const alphaPixelMap = {}
+  const pixelMap = []
+
+  for (let i = 0; i < imageData.data.length; i += 4) {
+    // Add if rgb isn't pure black
+    if (imageData.data[i] !== 0 && imageData.data[i + 1] !== 0 && imageData.data[i + 2] !== 0) {
+      pixelMap.push(i)
+      alphaPixelMap[`${i}`] = imageData.data[i + 3]
+    }
+  }
+
+  return {
+    alphaPixelMap,
+    pixelMap
+  }
 }

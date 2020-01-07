@@ -35,7 +35,7 @@ const PrismImage = forwardRef((props: PrismImageProps, ref) => {
     const imageData = ctx.getImageData(0, 0, canvasWidth, canvasHeight)
 
     const payload = {
-      dataUrl: imageData,
+      data: imageData,
       width: canvasWidth,
       height: Math.ceil(canvasHeight),
       isPortrait: ref.current.height > ref.current.width

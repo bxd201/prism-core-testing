@@ -69,8 +69,6 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
   })
   const [blobUrl, setBlobUrl] = useState(null)
   const [resized, setResized] = useState(0)
-  // eslint-disable-next-line no-unused-vars
-  const [imageWidthAndHeight, setImageWidthAndHeight] = useState({ width: 0, height: 0 })
   // Create ref to dimensions so that resize can use them
   const prevOrientationRef = useRef()
   const prevRotationRef = useRef()
@@ -79,11 +77,10 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
   const prevBlobUrlRef = useRef()
   const [scalingWidth, setScalingWidth] = useState(0)
   const [wrapperWidth, setWrapperWidth] = useState(0)
-  // eslint-disable-next-line
   const [hasLoaded, setHasLoaded] = useState(false)
   const hasLoadedRef = useRef()
 
-  const paintSceneWorkspace = useSelector(state => state.paintScenceWorkspace)
+  const paintSceneWorkspace = useSelector(state => state.paintSceneWorkspace)
 
   useEffect(() => {
     prevOrientationRef.current = orientationDimensions
@@ -315,7 +312,6 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
     setIsPortrait(orientation)
     setImageHeight(height)
     setImageWidth(width)
-    setImageWidthAndHeight({ width, height })
 
     if (isRightRotation) {
       if (imageRotationAngle === 270) {
@@ -356,7 +352,6 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
     setImageWidth(width)
     setImageHeight(height)
     setIsPortrait(height > width)
-    setImageWidthAndHeight({ width, height })
     initCanvas(image, dimensions, dimensions.originalIsPortrait)
   }
 
