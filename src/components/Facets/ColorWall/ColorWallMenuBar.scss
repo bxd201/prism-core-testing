@@ -12,6 +12,10 @@ $menu-bar-width: 14em;
   position: relative;
   width: $menu-bar-width;
 
+  @include respond-below(xs) {
+    padding: 0 0.3em;
+  }
+
   &__button {
     align-items: center;
     display: flex;
