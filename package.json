@@ -74,7 +74,8 @@
     "react-virtualized": "9.21.1",
     "redux": "4.0.4",
     "redux-thunk": "2.3.0",
-    "scroll": "3.0.1"
+    "scroll": "3.0.1",
+    "smoothscroll-polyfill": "^0.4.4"
   },
   "peerDependencies": {
     "react": "16.10.2",

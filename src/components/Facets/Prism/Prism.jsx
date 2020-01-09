@@ -23,6 +23,7 @@ import { ROUTE_PARAMS, ROUTE_PARAM_NAMES } from 'constants/globals'
 import MatchPhoto from '../../MatchPhoto/MatchPhoto'
 import MyIdeasContainer from '../../MyIdeasContainer/MyIdeasContainer'
 import MyIdeaPreview from '../../MyIdeaPreview/MyIdeaPreview'
+import Help from '../../Help/Help'
 const colorWallBaseUrl = `/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_WALL}`
 
 // this is very vague because react-router doesn't have the ability to match /section/x/family/y/color/z and /section/x/color/z with the same route
@@ -83,6 +84,7 @@ export class Prism extends Component<Props> {
               <Route path={MY_IDEAS_PREVIEW} component={MyIdeaPreview} />
               <Route path={`/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`} exact component={ColorDetails} />
               <Route path='/fast-mask' exact component={FastMask} />
+              <Route path='/help' component={Help} />
             </div>
           }
           {toggleCompareColor && <CompareColor />}
