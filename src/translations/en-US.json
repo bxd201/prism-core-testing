@@ -69,6 +69,7 @@
     "SEARCHING": "Searching",
     "SEARCH_BY": "Search by color name or number",
     "FIND_A_COLOR": "Find a color",
+    "SEARCH_COLOR": "Search color",
     "SUGGESTIONS": "Some examples of things you can search for are {suggestions}"
   },
   "SELECT_COLLECTION": "Select Color Collection",
