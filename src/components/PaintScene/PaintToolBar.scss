@@ -105,6 +105,7 @@
     z-index: 10;
     @include respond-above(sm) {
       display: block;
+      left: -1.1em;
     }
     &--active {
       color: #000;

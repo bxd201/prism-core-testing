@@ -19,7 +19,7 @@ import { getPaintAreaPath, repaintImageByPath,
   createImagePathItem,
   filterErasePath,
   updateDeleteAreaList } from './utils'
-import { toolNames, groupToolNames, brushLargeSize, brushMediumSize, brushSmallSize, brushTinySize, brushRoundShape, brushSquareShape } from './data'
+import { toolNames, groupToolNames, brushLargeSize, brushMediumSize, brushSmallSize, brushTinySize, brushRoundShape, brushSquareShape, setTooltipShownLocalStorage, getTooltipShownLocalStorage } from './data'
 import { getScaledPortraitHeight, getScaledLandscapeHeight } from '../../shared/helpers/ImageUtils'
 import throttle from 'lodash/throttle'
 import { redo, undo } from './UndoRedoUtil'
@@ -30,6 +30,7 @@ import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 import SaveMasks from './SaveMasks'
 import { createCustomSceneMetaData } from '../../shared/utils/legacyProfileFormatUtil'
 import MergeColors from '../MergeCanvas/MergeColors'
+import storageAvailable from '../../shared/utils/browserStorageCheck.util'
 
 const baseClass = 'paint__scene__wrapper'
 const canvasClass = `${baseClass}__canvas`
@@ -197,8 +198,8 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       isUngroup: false,
       isAddGroup: false,
       isDeleteGroup: false,
-      paintCursor: `${canvasClass}--${toolNames.PAINTAREA}`,
-      isInfoToolActive: false,
+      paintCursor: `${canvasClass}--${toolNames.INFO}`,
+      isInfoToolActive: true,
       initialCanvasWidth: 0,
       initialCanvasHeight: 0,
       mergeCanvasKey: '1',
@@ -435,13 +436,15 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       const canvasClientOffset = this.CFICanvas.current.getBoundingClientRect()
       canvasOffset.x = parseInt(canvasClientOffset.left, 10)
       canvasOffset.y = parseInt(canvasClientOffset.top, 10)
-      window.sessionStorage.setItem('canvasOffsetPaintScene', JSON.stringify(canvasOffset))
+      if (storageAvailable('sessionStorage')) {
+        window.sessionStorage.setItem('canvasOffsetPaintScene', JSON.stringify(canvasOffset))
+      }
     }
   }
 
   getCanvasOffset = () => {
-    const canvasOffset = window.sessionStorage.getItem('canvasOffsetPaintScene')
-    return JSON.parse(canvasOffset)
+    const canvasOffset = storageAvailable('sessionStorage') && JSON.parse(window.sessionStorage.getItem('canvasOffsetPaintScene'))
+    return canvasOffset
   }
 
   componentDidMount () {
@@ -449,6 +452,14 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.setDependentPositions()
     this.initCanvas()
     window.addEventListener('resize', this.resizeHandler)
+    if (storageAvailable('localStorage') && getTooltipShownLocalStorage() === null) {
+      setTooltipShownLocalStorage()
+    } else {
+      this.setState({
+        isInfoToolActive: false,
+        paintCursor: `${canvasClass}--${toolNames.PAINTAREA}`
+      })
+    }
   }
 
   componentWillUnmount () {
@@ -561,7 +572,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     const position = { left: leftOffset, top: topOffset, isHidden: this.state.position.isHidden }
 
     this.setState({ position })
-
+    if ((this.props.lpActiveColor === null || (this.props.lpActiveColor.constructor === Object && Object.keys(this.props.lpActiveColor).length === 0)) && activeTool === toolNames.PAINTBRUSH) return
     if ((lpActiveColor && activeTool === toolNames.PAINTBRUSH) || activeTool === toolNames.ERASE) {
       const lpActiveColorRGB = (activeTool === toolNames.ERASE) ? `rgba(255, 255, 255, 1)` : `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})`
 
@@ -592,7 +603,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     window.addEventListener('mouseup', this.mouseUpHandler)
     const { isDragging, paintBrushWidth, paintBrushShape, activeTool } = this.state
     const { lpActiveColor } = this.props
-    if (lpActiveColor === null && activeTool === toolNames.PAINTBRUSH) return
+    if ((this.props.lpActiveColor === null || (this.props.lpActiveColor.constructor === Object && Object.keys(this.props.lpActiveColor).length === 0)) && activeTool === toolNames.PAINTBRUSH) return
     const lpActiveColorRGB = (activeTool === toolNames.ERASE) ? `rgba(255, 255, 255, 1)` : `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})`
     const { clientX, clientY } = e
     const canvasClientOffset = this.CFICanvas2.current.getBoundingClientRect()
@@ -649,12 +660,12 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     let newDeleteAreaList = copyImageList(deleteAreaList)
     let paintPath = []
     const { lpActiveColor } = this.props
-    if (lpActiveColor === null) {
+    if ((this.props.lpActiveColor === null || (this.props.lpActiveColor.constructor === Object && Object.keys(this.props.lpActiveColor).length === 0)) && activeTool === toolNames.PAINTBRUSH) {
       this.setState({
         isDragging: false
       })
+      return
     }
-    if (lpActiveColor === null && activeTool === toolNames.PAINTBRUSH) return
     let newImagePathList
     const { newGroupSelectList, newGroupAreaList } = this.breakGroupIfhasIntersection()
     this.clearCanvas()
@@ -962,7 +973,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
   handlePolygonDefine = (e: Object, isAddArea: boolean) => {
     this.pause = false
-    if (this.props.lpActiveColor === null) return
+    if (this.props.lpActiveColor === null || (this.props.lpActiveColor.constructor === Object && Object.keys(this.props.lpActiveColor).length === 0)) return
     const { BeginPointList, polyList, lineStart, imagePathList, presentPolyList, deleteAreaList } = this.state
     let newDeleteAreaList = copyImageList(deleteAreaList)
     const { clientX, clientY } = e
@@ -1051,7 +1062,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
   handlePaintArea = throttle((e: Object) => {
     const { imagePathList } = this.state
-    if (this.props.lpActiveColor === null) return
+    if (this.props.lpActiveColor === null || (this.props.lpActiveColor.constructor === Object && Object.keys(this.props.lpActiveColor).length === 0)) return
     let imagePath = []
     const { clientX, clientY } = e
     const canvasClientOffset = this.CFICanvas2.current.getBoundingClientRect()
@@ -1673,7 +1684,6 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
           {/* the 35 in the padding is the radius of the circle loader. Note the bitwise rounding */}
           {this.props.savingMasks || this.state.loadingMasks ? <div style={{ height: canvasHeight }} className='spinner'><div style={{ padding: ((canvasHeight / 2) | 0) - 35 }}><CircleLoader /></div></div> : null}
           {this.props.savingMasks ? <SaveMasks processMasks={this.processMasks} /> : null }
-          <div className={`${animationLoader} ${loading ? `${animationLoader}--load` : ''}`} />
           <canvas className={`${canvasClass} ${showOriginalCanvas ? `${canvasShowByZindex}` : `${canvasHideByZindex}`} ${this.isPortrait ? portraitOrientation : ''}`} name='paint-scene-canvas-first' ref={this.CFICanvas}>{intl.messages.CANVAS_UNSUPPORTED}</canvas>
           <canvas style={{ opacity: showOriginalCanvas ? 1 : 0.8 }} className={`${canvasClass} ${paintCursor} ${canvasSecondClass} ${this.isPortrait ? portraitOrientation : ''}`} name='paint-scene-canvas-second' ref={this.CFICanvas2}>{intl.messages.CANVAS_UNSUPPORTED}</canvas>
           <canvas
@@ -1719,6 +1729,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
               isAddGroup={isAddGroup}
               isDeleteGroup={isDeleteGroup}
               isUngroup={isUngroup}
+              isInfoToolActive={isInfoToolActive}
             />
           </div>
           {
