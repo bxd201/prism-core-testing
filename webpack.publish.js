@@ -85,14 +85,30 @@ module.exports = {
       },
       {
         test: /\.worker\.js$/,
+        exclude: /node_modules\/(?!react-intl|intl-messageformat|intl-messageformat-parser)/,
         include: flags.srcPath,
-        use: ['babel-loader', 'worker-loader']
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              configFile: path.resolve(__dirname, 'babel.config.json')
+            }
+          },
+          'worker-loader'
+        ]
       },
       {
         test: /\.(js|jsx)$/,
-        exclude: /node_modules/,
-        use: ['babel-loader'],
-        resolve: { extensions: ['.js', '.jsx'] }
+        exclude: /node_modules\/(?!react-intl|intl-messageformat|intl-messageformat-parser)/,
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              configFile: path.resolve(__dirname, 'babel.config.json')
+            }
+          }
+        ],
+        resolve: { extensions: [ '.js', '.jsx' ] }
       }
     ]
   },
