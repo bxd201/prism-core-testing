@@ -70,3 +70,23 @@ export const reorder = (colors: Array<Number>) => {
     payload: { colorsByIndex: colors }
   }
 }
+
+export const REPLACE_LP_COLORS = 'REPLACE_LP_COLORS'
+export const replaceLpColors = (colors: Object[]) => {
+  return {
+    type: REPLACE_LP_COLORS,
+    payload: colors.map(color => {
+      return { ...color }
+    })
+  }
+}
+
+export const MERGE_LP_COLORS = 'MERGE_LP_COLORS'
+export const mergeLpColors = (colors: Object[]) => {
+  return {
+    type: MERGE_LP_COLORS,
+    payload: colors.map(color => {
+      return { ...color }
+    })
+  }
+}

@@ -102,7 +102,14 @@ export const loadSavedScenes = (brandId: string) => {
         })
 
         const colorDataResponses = responses.slice(1, responses.length)
-        const colorData = mapResponsesToColorData(colorDataResponses)
+        let colorData = null
+
+        if (colorsHaveLoaded) {
+          const alreadyLoadedColorData = getState().colors
+          colorData = alreadyLoadedColorData
+        } else {
+          colorData = mapResponsesToColorData(colorDataResponses)
+        }
 
         dispatch({
           type: RECEIVE_COLORS,

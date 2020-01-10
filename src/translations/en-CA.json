@@ -15,6 +15,12 @@
   "DONE": "DONE",
   "EDIT": "EDIT",
   "EMAIL_ADDRESS": "Email Address",
+  "ERROR_BOUNDARY": {
+    "ERROR_DETAILS": "Error details",
+    "MESSAGE": "We encountered an error preventing us from rendering this component at this time.",
+    "SHOW_DETAILS": "Show error details",
+    "TITLE": "Sherwin-Williams Colour Tools Error"
+  },
   "ERROR_LOADING_COLORS": "We're unable to load colours right now.",
   "EXTERIOR": "Exterior",
   "FIND_COLORS_IN_CW": "FIND COLOURS IN THE DIGITAL COLOR WALL",
@@ -33,6 +39,12 @@
     "TITLE": "View and edit your ideas"
   },
   "NO_COLORS_AVAILABLE": "No colours available.",
+  "PAINT_SCENE": {
+    "CANCEL": "CANCEL",
+    "OK": "LOAD PALETTE",
+    "SELECT_PALETTE_DESC": "Would you like to load these saved colors into this palette? This will replace any color(s) currently there.",
+    "SELECT_PALETTE_TITLE": "Work with this palette?"
+  },
   "PAINT_TOOLS": {
     "BACK": "Go back",
     "CLOSE": "Close tooltip",
@@ -95,11 +107,5 @@
   "VIEW_DETAILS": "View Details",
   "VIEW_DETAILS_FOR": "View details for {name}",
   "ZOOM_IN": "Zoom in",
-  "ZOOM_OUT": "Zoom out",
-  "ERROR_BOUNDARY": {
-    "TITLE": "Sherwin-Williams Colour Tools Error",
-    "MESSAGE": "We encountered an error preventing us from rendering this component at this time.",
-    "SHOW_DETAILS": "Show error details",
-    "ERROR_DETAILS": "Error details"
-  }
+  "ZOOM_OUT": "Zoom out"
 }

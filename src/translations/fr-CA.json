@@ -15,6 +15,12 @@
   "DONE": "DONE",
   "EDIT": "EDIT",
   "EMAIL_ADDRESS": "Email Address",
+  "ERROR_BOUNDARY": {
+    "ERROR_DETAILS": "Détails de l'erreur",
+    "MESSAGE": "Nous avons rencontré une erreur nous empêchant de rendre ce composant pour le moment.",
+    "SHOW_DETAILS": "Afficher les détails de l'erreur",
+    "TITLE": "Sherwin-Williams Erreur des outils de couleur"
+  },
   "ERROR_LOADING_COLORS": "Erreur lors du chargement des couleurs.",
   "EXTERIOR": "Extérieur",
   "FIND_COLORS_IN_CW": "TROUVER DES COULEURS DANS LE MUR DE COULEUR NUMÉRIQUE",
@@ -33,6 +39,12 @@
     "TITLE": "View and edit your ideas"
   },
   "NO_COLORS_AVAILABLE": "Aucune couleur disponible.",
+  "PAINT_SCENE": {
+    "CANCEL": "CANCEL",
+    "OK": "LOAD PALETTE",
+    "SELECT_PALETTE_DESC": "Would you like to load these saved colors into this palette? This will replace any color(s) currently there.",
+    "SELECT_PALETTE_TITLE": "Work with this palette?"
+  },
   "PAINT_TOOLS": {
     "BACK": "Go back",
     "CLOSE": "Close tooltip",
@@ -95,11 +107,5 @@
   "VIEW_DETAILS": "Voir les détails",
   "VIEW_DETAILS_FOR": "Voir les détails pour {name}",
   "ZOOM_IN": "Zoomer",
-  "ZOOM_OUT": "Dézoomer",
-  "ERROR_BOUNDARY": {
-    "TITLE": "Sherwin-Williams Erreur des outils de couleur",
-    "MESSAGE": "Nous avons rencontré une erreur nous empêchant de rendre ce composant pour le moment.",
-    "SHOW_DETAILS": "Afficher les détails de l'erreur",
-    "ERROR_DETAILS": "Détails de l'erreur"
-  }
+  "ZOOM_OUT": "Dézoomer"
 }

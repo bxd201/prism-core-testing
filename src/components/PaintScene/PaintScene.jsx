@@ -31,6 +31,12 @@ import SaveMasks from './SaveMasks'
 import { createCustomSceneMetaData } from '../../shared/utils/legacyProfileFormatUtil'
 import MergeColors from '../MergeCanvas/MergeColors'
 import storageAvailable from '../../shared/utils/browserStorageCheck.util'
+import DynamicModal, { DynamicModalButtonType } from '../DynamicModal/DynamicModal'
+// eslint-disable-next-line no-unused-vars
+import { checkCanMergeColors, shouldPromptToReplacePalette } from '../LivePalette/livePaletteUtility'
+// eslint-disable-next-line no-unused-vars
+import { LP_MAX_COLORS_ALLOWED } from '../../constants/configurations'
+import { mergeLpColors, replaceLpColors } from '../../store/actions/live-palette'
 
 const baseClass = 'paint__scene__wrapper'
 const canvasClass = `${baseClass}__canvas`
@@ -69,7 +75,10 @@ type ComponentProps = {
   saveMasks: Function,
   savingMasks: boolean,
   startSavingMasks: Function,
-  workspace: Object
+  workspace: Object,
+  lpColors: Object[],
+  mergeLpColors: Function,
+  replaceLpColors: Function
 }
 
 type ComponentState = {
@@ -108,7 +117,8 @@ type ComponentState = {
   canvasHeight: number,
   canvasHeight: number,
   loadingMasks: boolean,
-  canvasHasBeenInitialized: boolean
+  canvasHasBeenInitialized: boolean,
+  hideSelectPaletteModal: boolean
 }
 
 export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
@@ -144,6 +154,8 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     const initialImageWidth = props.workspace ? props.workspace.width : props.referenceDimensions.imageWidth
     const initialImageHeight = props.workspace ? props.workspace.height : this.props.referenceDimensions.imageHeight
     const isPortrait = props.workspace ? props.workspace.height > props.workspace.width : props.referenceDimensions.isPortrait
+    // eslint-disable-next-line no-unused-vars
+    const { lpColors } = props
 
     this.CFICanvas = React.createRef()
     this.CFICanvas2 = React.createRef()
@@ -215,7 +227,8 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       canvasWidth: initialImageWidth,
       canvasHeight: initialImageHeight,
       loadingMasks: !!props.workspace,
-      canvasHasBeenInitialized: false
+      canvasHasBeenInitialized: false,
+      showSelectPaletteModal: false
     }
 
     this.undo = this.undo.bind(this)
@@ -232,6 +245,55 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.processMasks = this.processMasks.bind(this)
     this.initCanvas2 = this.initCanvas2.bind(this)
     this.importLayers = this.importLayers.bind(this)
+    this.getSelectPaletteModalConfig = this.getSelectPaletteModalConfig.bind(this)
+    this.loadPalette = this.loadPalette.bind(this)
+    this.tryToMergeColors = this.tryToMergeColors.bind(this)
+  }
+
+  tryToMergeColors () {
+    // Destructuring does allow empty object literals, hence the javaesque object instantiation
+    // eslint-disable-next-line no-new-object
+    const { workspace, lpColors } = this.props
+    if (workspace) {
+      if (checkCanMergeColors(lpColors, workspace.palette, LP_MAX_COLORS_ALLOWED)) {
+        this.props.mergeLpColors(workspace.palette)
+      } else {
+        if (shouldPromptToReplacePalette(lpColors, workspace.palette, LP_MAX_COLORS_ALLOWED)) {
+          this.setState({ showSelectPaletteModal: true })
+        }
+      }
+    }
+  }
+
+  getSelectPaletteModalConfig () {
+    const { intl } = this.props
+
+    const selectPaletteActions = [{ callback: (e) => {
+      e.preventDefault()
+      e.stopPropagation()
+      this.setState({ showSelectPaletteModal: false })
+    },
+    text: intl.messages['PAINT_SCENE.CANCEL'],
+    type: DynamicModalButtonType.primary },
+    { callback: (e) => {
+      e.preventDefault()
+      e.stopPropagation()
+      this.loadPalette()
+      this.setState({ showSelectPaletteModal: false })
+    },
+    text: intl.messages['PAINT_SCENE.OK'],
+    type: DynamicModalButtonType.primary }]
+
+    return {
+      selectPaletteActions,
+      selectPaletteTitle: intl.messages['PAINT_SCENE.SELECT_PALETTE_TITLE'],
+      selectPaletteDescription: intl.messages['PAINT_SCENE.SELECT_PALETTE_DESC']
+    }
+  }
+
+  loadPalette () {
+    const { workspace: { palette } } = this.props
+    this.props.replaceLpColors(palette)
   }
 
   /*:: shouldCanvasResize: (prevWidth: number, newWidth: number) => number */
@@ -253,8 +315,8 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     }
     const { imagePathList, selectedArea, groupSelectList } = this.state
     let copyImagePathList = copyImageList(imagePathList)
-    const islpActiveColorAvailable = (prevProps.hasOwnProperty('lpActiveColor') && this.props.hasOwnProperty('lpActiveColor')) && this.props.lpActiveColor !== null
-    const islpActiveColorHexAvailable = (islpActiveColorAvailable) && prevProps.lpActiveColor.hasOwnProperty('hex') && this.props.lpActiveColor.hasOwnProperty('hex')
+    const islpActiveColorAvailable = this.props.lpActiveColor && prevProps.lpActiveColor
+    const islpActiveColorHexAvailable = islpActiveColorAvailable && prevProps.lpActiveColor.hex && this.props.lpActiveColor.hex
     const isActive = !!((selectedArea.length > 0 || groupSelectList.length > 0))
     if (islpActiveColorHexAvailable && prevProps.lpActiveColor.hex !== this.props.lpActiveColor.hex && isActive) {
       const ctx = this.CFICanvas2.current.getContext('2d')
@@ -451,6 +513,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.updateWindowDimensions()
     this.setDependentPositions()
     this.initCanvas()
+    this.tryToMergeColors()
     window.addEventListener('resize', this.resizeHandler)
     if (storageAvailable('localStorage') && getTooltipShownLocalStorage() === null) {
       setTooltipShownLocalStorage()
@@ -1672,15 +1735,21 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     const { lpActiveColor, intl } = this.props
     const bgImageUrl = this.props.workspace ? this.props.workspace.bgImageUrl : this.props.imageUrl
     const layers = this.props.workspace ? this.props.workspace.layers : null
-    const { activeTool, position, paintBrushShape, paintBrushWidth, eraseBrushShape, eraseBrushWidth, undoIsEnabled, redoIsEnabled, showOriginalCanvas, isAddGroup, isDeleteGroup, isUngroup, paintCursor, isInfoToolActive, loading, showAnimatePin, showNonAnimatePin, pinX, pinY, currPinX, currPinY, canvasWidth, canvasHeight, canvasHasBeenInitialized } = this.state
+    const { activeTool, position, paintBrushShape, paintBrushWidth, eraseBrushShape, eraseBrushWidth, undoIsEnabled, redoIsEnabled, showOriginalCanvas, isAddGroup, isDeleteGroup, isUngroup, paintCursor, isInfoToolActive, loading, showAnimatePin, showNonAnimatePin, pinX, pinY, currPinX, currPinY, canvasWidth, canvasHeight, canvasHasBeenInitialized, showSelectPaletteModal } = this.state
     const lpActiveColorRGB = (lpActiveColor) ? `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})` : ``
     const backgroundColorBrush = (activeTool === toolNames.ERASE) ? `rgba(255, 255, 255, 0.7)` : lpActiveColorRGB
     const { paintBrushActiveClass, paintBrushCircleActiveClass } = this.getPaintBrushActiveClass()
     const { eraseBrushActiveClass, eraseBrushCircleActiveClass } = this.getEraseBrushActiveClass()
+    const { selectPaletteActions, selectPaletteTitle, selectPaletteDescription } = this.getSelectPaletteModalConfig()
     return (
       <>
         <div className={`${animationLoader} ${loading ? `${animationLoader}--load` : ''}`} />
         <div role='presentation' className={`${baseClass} ${isInfoToolActive ? `${disableTextSelect} ${showCursor}` : ``} ${activeTool === toolNames.PAINTBRUSH || activeTool === toolNames.ERASE ? `${disableTextSelect} ${hideCursor}` : ``} ${(loading) ? disableClick : ``}`} onClick={this.handleClick} onMouseMove={this.mouseMoveHandler} ref={this.CFIWrapper} style={{ height: this.state.wrapperHeight }} onMouseLeave={this.mouseLeaveHandler} onMouseEnter={this.mouseEnterHandler}>
+          {showSelectPaletteModal ? <DynamicModal
+            actions={selectPaletteActions}
+            title={selectPaletteTitle}
+            height={canvasHeight}
+            description={selectPaletteDescription} /> : null}
           {/* the 35 in the padding is the radius of the circle loader. Note the bitwise rounding */}
           {this.props.savingMasks || this.state.loadingMasks ? <div style={{ height: canvasHeight }} className='spinner'><div style={{ padding: ((canvasHeight / 2) | 0) - 35 }}><CircleLoader /></div></div> : null}
           {this.props.savingMasks ? <SaveMasks processMasks={this.processMasks} /> : null }
@@ -1764,6 +1833,7 @@ const mapStateToProps = (state: Object, props: Object) => {
   const selectedScene = scenesAndRegions.find(item => item.id === selectedSavedSceneId)
 
   return {
+    lpColors: lp.colors,
     lpActiveColor: lp.activeColor,
     savingMasks,
     selectedScene
@@ -1774,7 +1844,9 @@ const mapDispatchToProps = (dispatch: Function) => {
   return {
     saveMasks: (colorList: Array<number[]>, imageData: Object, backgroundImageUrl: string, metaData: Object) =>
       dispatch(saveMasks(colorList, imageData, backgroundImageUrl, metaData)),
-    startSavingMasks: () => dispatch(startSavingMasks())
+    startSavingMasks: () => dispatch(startSavingMasks()),
+    mergeLpColors: (colors: Object[]) => dispatch(mergeLpColors(colors)),
+    replaceLpColors: (colors: Object[]) => dispatch(replaceLpColors(colors))
   }
 }
 
