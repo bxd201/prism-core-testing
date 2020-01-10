@@ -1,6 +1,5 @@
 // @flow
 import React, { useState, useEffect, useRef } from 'react'
-import FileInput from '../FileInput/FileInput'
 import ImageRotateTerms from './ImageRotateTerms.jsx'
 import { Link, withRouter, type RouterHistory } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -35,7 +34,8 @@ let colorPinsGenerationByHueWorker: Object
 
 type Props = {
   history: RouterHistory,
-  isPaintScene: boolean
+  isPaintScene: boolean,
+  imgUrl: string
 }
 
 type OrientationDimension = {
@@ -47,10 +47,10 @@ type OrientationDimension = {
   originalImageHeight: number
 }
 
-export function MatchPhoto ({ history, isPaintScene }: Props) {
+export function MatchPhoto ({ history, isPaintScene, imgUrl }: Props) {
   const canvasRef: RefObject = useRef()
   const wrapperRef: RefObject = useRef()
-  const [imageUrl, setImageUrl] = useState()
+  const [imageUrl, setImageUrl] = useState(imgUrl)
   const [pins, generatePins] = useState([])
   const [imageData, setImageData] = useState([])
   const [imageRotationAngle, setImageRotationAngle] = useState(0)
@@ -67,7 +67,7 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
     originalImageWidth: 0,
     originalImageHeight: 0
   })
-  const [blobUrl, setBlobUrl] = useState(null)
+  const blobUrl = imgUrl
   const [resized, setResized] = useState(0)
   // Create ref to dimensions so that resize can use them
   const prevOrientationRef = useRef()
@@ -252,15 +252,6 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
 
     return dimensions
   }
-
-  function handleChange (e: Event) {
-    const imgUrl = URL.createObjectURL(e.target.files[0])
-    // Used by Prism image to establish image reference
-    setBlobUrl(imgUrl)
-    // Used by matchphoto as the image source
-    setImageUrl(imgUrl)
-  }
-
   const initCanvas = (image: Object, dimensions: Object, orientationIsPortrait: booelan) => {
     const { portraitWidth, portraitHeight, landscapeWidth, landscapeHeight } = dimensions
     const width = orientationIsPortrait ? portraitWidth : landscapeWidth
@@ -365,9 +356,7 @@ export function MatchPhoto ({ history, isPaintScene }: Props) {
       <PrismImage ref={imageRef} source={blobUrl} loadedCallback={handleImageLoaded} shouldResample={hasLoaded} scalingWidth={scalingWidth} />
       <div className={`${getWrapperClassName(imageUrl, pins)}`} ref={wrapperRef}>
         <div className={`${containerClass}`}>
-          { (!imageUrl) &&
-          <FileInput onChange={handleChange} id={'photoInput'} disabled={false} placeholder={'Select image'} />
-          }
+
           <div className={`${headerClass}`}>
             {(imageUrl && pins.length === 0) ? <button className={`${buttonClass} ${buttonLeftClass}`} onClick={() => history.goBack()}>
               <div><FontAwesomeIcon className={``} icon={['fa', 'angle-left']} />&nbsp;<span className={`${buttonLeftTextClass}`}>BACK</span></div>
