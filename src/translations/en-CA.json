@@ -1,5 +1,6 @@
 {
   "ADD_A_COLOR": "ADD A COLOUR",
+  "ALL_COLORS": "All Colours",
   "BACK_TO_COLOR_WALL": "Back to Colour Wall",
   "CANCEL": "Cancel",
   "CANVAS_UNSUPPORTED": "Your browser does not support the canvas element.",
@@ -94,10 +95,13 @@
     "NO_RESULTS": "Sorry, no color matches found.",
     "PROMPT": "Enter a color name, number, or family in the text field above.",
     "SEARCH": "Search",
+    "SEARCH_COLOR": "Search colour",
+    "SEARCHING": "Searching",
     "SEARCH_BY": "Search by colour name or number",
     "SEARCHING": "Searching",
     "SUGGESTIONS": "Some examples of things you can search for are {suggestions}"
   },
+  "SELECT_COLLECTION": "Select Colour Collection",
   "SIGN_IN": "SIGN IN",
   "SIMILAR_COLORS": "Similar Colours",
   "SWATCH_ACTIVATED_DETAILS": "{color} is selected. Press Enter to view details.",

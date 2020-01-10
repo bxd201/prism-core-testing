@@ -1,5 +1,6 @@
 {
   "ADD_A_COLOR": "Ajouter une couleur",
+  "ALL_COLORS": "Toutes les couleurs",
   "BACK_TO_COLOR_WALL": "Retour au mur de couleurs",
   "CANCEL": "Annuler",
   "CANVAS_UNSUPPORTED": "Your browser does not support the canvas element.",
@@ -94,10 +95,13 @@
     "NO_RESULTS": "Désolé, aucune correspondance de couleur trouvée.",
     "PROMPT": "Entrez un nom de couleur, un numéro ou une famille dans le champ ci-dessus.",
     "SEARCH": "Chercher",
+    "SEARCH_COLOR": "Couleur de recherche",
+    "SEARCHING": "Recherche",
     "SEARCH_BY": "Recherche par nom ou numéro de couleur",
     "SEARCHING": "Recherche",
     "SUGGESTIONS": "Quelques exemples de choses que vous pouvez rechercher sont {suggestions}"
   },
+  "SELECT_COLLECTION": "Sélectionnez une collection de couleurs",
   "SIGN_IN": "SIGN IN",
   "SIMILAR_COLORS": "Couleurs semblables",
   "SWATCH_ACTIVATED_DETAILS": "{color} a été sélectionné. Appuyez sur Entrée pour voir les détails.",
