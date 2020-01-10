@@ -994,7 +994,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
                 linkedOperation: null,
                 siblingOperations: null })
           }
-          this.setState({ selectedArea, imagePathList: newImagePathList, redoPathList: [], redoIsEnabled: false })
+          this.setState({ selectedArea, imagePathList: newImagePathList, undoIsEnabled: checkUndoIsEnabled(newImagePathList), redoPathList: [], redoIsEnabled: false })
         } else {
           const imagePath = getSelectArea(imageData, { r: 255, g: 0, b: 0 }, cursorX, cursorY)
           const edge = edgeDetect(this.CFICanvas2, imagePath, [255, 0, 0, 255], this.canvasOffsetWidth, this.canvasOffsetHeight)
@@ -1013,7 +1013,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
               isEnabled: true,
               linkedOperation: null,
               siblingOperations: null })
-          this.setState({ selectedArea, imagePathList: newImagePathList, redoPathList: [], redoIsEnabled: false })
+          this.setState({ selectedArea, imagePathList: newImagePathList, undoIsEnabled: checkUndoIsEnabled(newImagePathList), redoPathList: [], redoIsEnabled: false })
         }
       }
     }
