@@ -105,6 +105,13 @@ $btn-border-thickness: 1px;
         border: none;
         border-radius: 0;
 
+        @include respond-below(xs) {
+          display: flex;
+          flex-direction: column;
+          justify-content: space-around;
+          white-space: normal;
+        }
+
         @include respond-above(xs) {
           min-height: $btn-height - ($btn-border-thickness * 2);
         }

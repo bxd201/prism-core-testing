@@ -143,14 +143,11 @@ svg {
 
   &__col {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    justify-content: space-between;
     margin: 0 $ui-spacing / -2;
     max-width: 100%;
 
     @include respond-above(sm) {
-      align-items: center;
-      flex-direction: row;
       max-width: unset;
     }
 
@@ -168,8 +165,6 @@ svg {
   }
 
   &__right {
-    @include respond-above(sm) {
       margin-left: auto;
-    }
   }
 }
