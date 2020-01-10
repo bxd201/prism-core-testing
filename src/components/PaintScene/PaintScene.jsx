@@ -22,7 +22,7 @@ import { getPaintAreaPath, repaintImageByPath,
 import { toolNames, groupToolNames, brushLargeSize, brushMediumSize, brushSmallSize, brushTinySize, brushRoundShape, brushSquareShape, setTooltipShownLocalStorage, getTooltipShownLocalStorage } from './data'
 import { getScaledPortraitHeight, getScaledLandscapeHeight } from '../../shared/helpers/ImageUtils'
 import throttle from 'lodash/throttle'
-import { redo, undo } from './UndoRedoUtil'
+import { checkUndoIsEnabled, redo, undo } from './UndoRedoUtil'
 import MergeCanvas from '../MergeCanvas/MergeCanvas'
 import { saveMasks, startSavingMasks } from '../../store/actions/persistScene'
 import PaintSceneFooter from './PaintSceneFooter'
@@ -475,7 +475,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     const colorLayers = payload.layersAsData.map(item => createImageDataAndAlphaPixelMapFromImageData(item))
     const imagePaths = colorLayers
       .map((item, i) => {
-        return createImagePathItem(item.pixelMap, item.alphaPixelMap, colors[i], 'paint', 0)
+        return createImagePathItem(item.pixelMap, item.alphaPixelMap, colors[i], 'paint', 0, true, true)
       })
     repaintImageByPath(imagePaths, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
     this.setState({ canvasImageUrls: this.getLayers(), imagePathList: imagePaths, loadingMasks: false })
@@ -764,7 +764,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       deletAreaList: newDeleteAreaList,
       groupSelectList: newGroupSelectList,
       redoPathList: [],
-      undoIsEnabled: newImagePathList.length > 0,
+      undoIsEnabled: checkUndoIsEnabled(newImagePathList),
       redoIsEnabled: false
     })
   }
@@ -994,7 +994,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
                 linkedOperation: null,
                 siblingOperations: null })
           }
-          this.setState({ selectedArea, imagePathList: newImagePathList, redoPathList: [], redoIsEnabled: false })
+          this.setState({ selectedArea, imagePathList: newImagePathList, undoIsEnabled: checkUndoIsEnabled(newImagePathList), redoPathList: [], redoIsEnabled: false })
         } else {
           const imagePath = getSelectArea(imageData, { r: 255, g: 0, b: 0 }, cursorX, cursorY)
           const edge = edgeDetect(this.CFICanvas2, imagePath, [255, 0, 0, 255], this.canvasOffsetWidth, this.canvasOffsetHeight)
@@ -1013,7 +1013,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
               isEnabled: true,
               linkedOperation: null,
               siblingOperations: null })
-          this.setState({ selectedArea, imagePathList: newImagePathList, redoPathList: [], redoIsEnabled: false })
+          this.setState({ selectedArea, imagePathList: newImagePathList, undoIsEnabled: checkUndoIsEnabled(newImagePathList), redoPathList: [], redoIsEnabled: false })
         }
       }
     }
@@ -1093,7 +1093,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
           deleteAreaList: newDeleteAreaList,
           showAnimatePin: false,
           showNonAnimatePin: false,
-          undoIsEnabled: newImagePathList.length > 0
+          undoIsEnabled: checkUndoIsEnabled(newImagePathList)
         }
       )
       return
@@ -1157,7 +1157,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       this.clearCanvas()
       repaintImageByPath(copyImagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
       this.setState({ imagePathList: copyImagePathList,
-        undoIsEnabled: copyImagePathList.length > 0,
+        undoIsEnabled: checkUndoIsEnabled(copyImagePathList),
         redoIsEnabled: false,
         mergeCanvasKey: `${Date.now()}`,
         canvasImageUrls: this.getLayers()

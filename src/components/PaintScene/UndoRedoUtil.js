@@ -18,7 +18,7 @@ export const undo = (state: Object) => {
     groupIds: updateGroupIds,
     imagePathList: undoOperations,
     redoPathList: redoOperations,
-    undoIsEnabled: undoOperations.length > 0,
+    undoIsEnabled: checkUndoIsEnabled(undoOperations),
     redoIsEnabled: redoOperations.length > 0
   }
 }
@@ -174,7 +174,7 @@ export const redo = (state: Object) => {
     groupSelectList: newGroupSelectList,
     imagePathList: history,
     redoPathList: updateRedoPathList,
-    undoIsEnabled: history.length > 0,
+    undoIsEnabled: checkUndoIsEnabled(history),
     redoIsEnabled: updateRedoPathList.length > 0
   }
 }
@@ -270,4 +270,10 @@ const handleRedo = (itemId, redoPathList, imagePathList, selectedArea, groupSele
     }
   }
   return helper(itemId)
+}
+
+export const checkUndoIsEnabled = (imagePathList: Object[]) => {
+  const eligbleImagePaths = imagePathList.filter(imagePath => !imagePath.excludeFromHistory)
+
+  return eligbleImagePaths.length > 0
 }

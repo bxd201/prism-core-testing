@@ -243,7 +243,14 @@ export const repaintImageByPath = (imagePathList, canvas, width, height, isErase
   ctx.putImageData(imageData, 0, 0)
 }
 
-export const createImagePathItem = (data: number[], pixelIndexAlphaMap: Object, color: number[], type: string, drawOrder: number, isEnabled: boolean = true) => {
+export const createImagePathItem = (
+  data: number[],
+  pixelIndexAlphaMap: Object,
+  color: number[],
+  type: string,
+  drawOrder: number,
+  isEnabled: boolean = true,
+  excludeFromHistory: boolean = false) => {
   return {
     id: uniqueId(),
     data,
@@ -251,7 +258,8 @@ export const createImagePathItem = (data: number[], pixelIndexAlphaMap: Object, 
     color,
     type,
     drawOrder,
-    isEnabled
+    isEnabled,
+    excludeFromHistory
   }
 }
 
