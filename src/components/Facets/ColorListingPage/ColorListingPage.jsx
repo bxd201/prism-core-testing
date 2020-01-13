@@ -5,7 +5,6 @@ import { TransitionGroup, CSSTransition } from 'react-transition-group'
 // TODO: PRISM-370 | Facets are top-level components -- refactor ColorWallPage so it can be imported without facet-related functionality @cody.richmond
 import { ColorWallPage } from '../ColorWallFacet'
 import ColorDetails from '../ColorDetails/ColorDetails'
-import ColorDataWrapper from '../../../helpers/ColorDataWrapper/ColorDataWrapper'
 import BackToColorWall from './BackToColorWall'
 import facetBinder from 'src/facetSupport/facetBinder'
 import includes from 'lodash/includes'
@@ -30,13 +29,12 @@ export const RootRedirect = () => {
 
 // since the CDP component won't have any color information if we go to it directly, we need to wrap it
 // in the ColorDataWrapper HOC to ensure it has color data prior to rendering it.
-const ColorDetailsWithData = ColorDataWrapper(ColorDetails)
 export const ColorDetailsComponent = (props: any) => {
   // need a wrapping element that isn't a Fragment in order to get the transition classes applied to the group
   return (
     <div>
       <BackToColorWall />
-      <ColorDetailsWithData {...props} />
+      <ColorDetails {...props} />
     </div>
   )
 }
@@ -76,9 +74,11 @@ export class ColorListingPage extends PureComponent<ColorListingPageProps, Color
           <Route path='/' exact component={RootRedirect} />
         </Switch>
         <TransitionGroup className='color-wall-transitioner'>
-          <CSSTransition key={key}
+          <CSSTransition
+            key={key}
             classNames={transitionClassNames}
-            timeout={varValues.colorWall.transitionTime * 1.2}>
+            timeout={varValues.colorWall.transitionTime * 1.2}
+          >
             <Switch location={location}>
               <Route path={colorWallUrlPattern} component={ColorWallPageNoReset} />
               <Route path={`${colorDetailsBaseUrl}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`} exact component={ColorDetailsComponent} />

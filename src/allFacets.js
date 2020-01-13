@@ -6,7 +6,7 @@ import { facetEntryPoints } from '../webpack/constants'
  * The facets imported here need to match what is in export.js and webpack/constants.js until further notice
  */
 
-import ColorDetails from 'src/components/Facets/ColorDetails/ColorDetails'
+import ColorDetailsFacet from 'src/components/Facets/ColorDetailsFacet'
 import ColorListingPage from 'src/components/Facets/ColorListingPage/ColorListingPage'
 import ColorWallFacet from 'src/components/Facets/ColorWallFacet'
 import ColorFamilyFacet from 'src/components/Facets/ColorFamilyFacet/ColorFamilyFacet'
@@ -14,7 +14,7 @@ import Prism from 'src/components/Facets/Prism/Prism'
 import Tinter from 'src/components/Facets/Tinter/Tinter'
 
 export const allFacets = {
-  ColorDetails,
+  ColorDetailsFacet,
   ColorListingPage,
   ColorWallFacet,
   ColorFamilyFacet,
