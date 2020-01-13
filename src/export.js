@@ -11,6 +11,7 @@ import ColorWallFacet from 'src/components/Facets/ColorWallFacet'
 import ColorFamilyFacet from 'src/components/Facets/ColorFamilyFacet/ColorFamilyFacet'
 import Prism from 'src/components/Facets/Prism/Prism'
 import Tinter from 'src/components/Facets/Tinter/Tinter'
+import ColorVisualizerWrapper from 'src/components/Facets/ColorVisualizerWrapper/ColorVisualizerWrapper'
 
 export default {
   ColorDetails: facetMasterWrapper(ColorDetails),
@@ -18,5 +19,6 @@ export default {
   ColorWallFacet: facetMasterWrapper(ColorWallFacet),
   ColorFamilyFacet: facetMasterWrapper(ColorFamilyFacet),
   Prism: facetMasterWrapper(Prism),
-  Tinter: facetMasterWrapper(Tinter)
+  Tinter: facetMasterWrapper(Tinter),
+  ColorVisualizerWrapper: facetMasterWrapper(ColorVisualizerWrapper)
 }
