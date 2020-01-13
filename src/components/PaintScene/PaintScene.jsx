@@ -7,7 +7,11 @@ import PaintToolBar from './PaintToolBar'
 import remove from 'lodash/remove'
 import { injectIntl } from 'react-intl'
 
-import { createImageDataAndAlphaPixelMapFromImageData, drawAcrossLine, getColorsFromImagePathList } from './PaintSceneUtils'
+import {
+  createImageDataAndAlphaPixelMapFromImageData,
+  drawAcrossLine,
+  getColorsFromImagePathList
+} from './PaintSceneUtils'
 import { getPaintAreaPath, repaintImageByPath,
   createPolygon, drawLine, drawHollowCircle,
   edgeDetect, pointInsideCircle, alterRGBByPixel,
@@ -24,7 +28,7 @@ import { getScaledPortraitHeight, getScaledLandscapeHeight } from '../../shared/
 import throttle from 'lodash/throttle'
 import { checkUndoIsEnabled, redo, undo } from './UndoRedoUtil'
 import MergeCanvas from '../MergeCanvas/MergeCanvas'
-import { saveMasks, startSavingMasks } from '../../store/actions/persistScene'
+import { saveMasks, selectSavedScene, startSavingMasks } from '../../store/actions/persistScene'
 import PaintSceneFooter from './PaintSceneFooter'
 import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 import SaveMasks from './SaveMasks'
@@ -32,9 +36,7 @@ import { createCustomSceneMetaData } from '../../shared/utils/legacyProfileForma
 import MergeColors from '../MergeCanvas/MergeColors'
 import storageAvailable from '../../shared/utils/browserStorageCheck.util'
 import DynamicModal, { DynamicModalButtonType } from '../DynamicModal/DynamicModal'
-// eslint-disable-next-line no-unused-vars
 import { checkCanMergeColors, shouldPromptToReplacePalette } from '../LivePalette/livePaletteUtility'
-// eslint-disable-next-line no-unused-vars
 import { LP_MAX_COLORS_ALLOWED } from '../../constants/configurations'
 import { mergeLpColors, replaceLpColors } from '../../store/actions/live-palette'
 
@@ -78,7 +80,8 @@ type ComponentProps = {
   workspace: Object,
   lpColors: Object[],
   mergeLpColors: Function,
-  replaceLpColors: Function
+  replaceLpColors: Function,
+  selectSavedScene: Function
 }
 
 type ComponentState = {
@@ -449,7 +452,6 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.CFICanvasPaint.current.style.height = `${canvasHeight}px`
     // this.CFICanvas4.current.style.width = `${canvasWidth}px`
     // this.CFICanvas4.current.style.height = `${canvasHeight}px`
-
     this.CFIWrapper.current.style.height = `${canvasHeight}px`
     this.setState({ canvasWidth, canvasHeight })
   }
@@ -512,6 +514,9 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   componentDidMount () {
     this.updateWindowDimensions()
     this.setDependentPositions()
+    if (this.mergeCanvasRef.current) {
+      this.mergeCanvasRef.current.style = 'opacity: 0'
+    }
     this.initCanvas()
     this.tryToMergeColors()
     window.addEventListener('resize', this.resizeHandler)
@@ -527,6 +532,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
   componentWillUnmount () {
     window.removeEventListener('resize', this.resizeHandler)
+    this.props.selectSavedScene(null)
   }
 
   resizeHandler = () => {
@@ -1705,15 +1711,17 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   // This Method sorts the imagePathList by color to trigger the MergeColor component to instantiate and generate a flat (jpg) mask per color
   processMasks () {
     const colorList = getColorsFromImagePathList(this.state.imagePathList)
+    let saveBackgroundOnly = false
 
     if (!colorList.length) {
-      return
+      saveBackgroundOnly = true
     }
 
     const backgroundImageUrl = this.CFICanvas.current.toDataURL('image/jpeg', 1.0)
     const ctx2 = this.CFICanvas2.current.getContext('2d')
-    const imageData = ctx2.getImageData(0, 0, ctx2.canvas.width, ctx2.canvas.height)
+    const imageData = !saveBackgroundOnly ? ctx2.getImageData(0, 0, ctx2.canvas.width, ctx2.canvas.height) : null
     const metaData = createCustomSceneMetaData('TEMP_NAME', ctx2.canvas.width, ctx2.canvas.height)
+
     this.props.saveMasks(colorList, imageData, backgroundImageUrl, metaData)
   }
 
@@ -1743,7 +1751,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     const { selectPaletteActions, selectPaletteTitle, selectPaletteDescription } = this.getSelectPaletteModalConfig()
     return (
       <>
-        <div className={`${animationLoader} ${loading ? `${animationLoader}--load` : ''}`} />
+        {loading ? <div className={`${animationLoader} ${animationLoader}--load`} /> : null}
         <div role='presentation' className={`${baseClass} ${isInfoToolActive ? `${disableTextSelect} ${showCursor}` : ``} ${activeTool === toolNames.PAINTBRUSH || activeTool === toolNames.ERASE ? `${disableTextSelect} ${hideCursor}` : ``} ${(loading) ? disableClick : ``}`} onClick={this.handleClick} onMouseMove={this.mouseMoveHandler} ref={this.CFIWrapper} style={{ height: this.state.wrapperHeight }} onMouseLeave={this.mouseLeaveHandler} onMouseEnter={this.mouseEnterHandler}>
           {showSelectPaletteModal ? <DynamicModal
             actions={selectPaletteActions}
@@ -1846,7 +1854,8 @@ const mapDispatchToProps = (dispatch: Function) => {
       dispatch(saveMasks(colorList, imageData, backgroundImageUrl, metaData)),
     startSavingMasks: () => dispatch(startSavingMasks()),
     mergeLpColors: (colors: Object[]) => dispatch(mergeLpColors(colors)),
-    replaceLpColors: (colors: Object[]) => dispatch(replaceLpColors(colors))
+    replaceLpColors: (colors: Object[]) => dispatch(replaceLpColors(colors)),
+    selectSavedScene: (sceneId) => dispatch(selectSavedScene(sceneId))
   }
 }
 
