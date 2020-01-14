@@ -7,7 +7,6 @@ import { RECEIVE_COLORS, mapColorDataToPayload, getColorsRequests, mapResponsesT
 import { getDataFromXML, imageDataToSurfacesXML, stringifyXML } from '../../shared/utils/legacyProfileFormatUtil'
 
 export const SAVING_MASKS = 'SAVING_MASKS'
-export const DONE_SAVING_MASKS = 'DONE_SAVING_MASKS'
 export const DELETE_SAVED_SCENE = 'DELETE_SAVED_SCENE'
 export const LOADED_SAVED_SCENES_METADATA = 'LOADED_SAVED_SCENES_METADATA'
 export const LOADING_SAVED_MASKS = 'LOADING_SAVED_MASKS'
@@ -22,7 +21,7 @@ export const startSavingMasks = () => {
   }
 }
 
-export const createSceneXML = (imageData: Object[], metaData: Object) => {
+export const createSceneXML = (imageData: Object[] | null, metaData: Object) => {
   return imageDataToSurfacesXML(imageData, metaData)
 }
 
@@ -38,7 +37,7 @@ export const saveMasks = (colorList: Array<number[]>, imageData: Object, backgro
     const imageUploadPayload = createImageUploadPayload(backgroundImageUrl)
 
     // The separated colors as an array of imageData items
-    const imageDataList = separateColors(colorList, imageData, 1.5)
+    const imageDataList = imageData ? separateColors(colorList, imageData, 1.5) : null
     const sceneXML = createSceneXML(imageDataList, metaData)
     // save background image and use image name
     axios.get('/public/saved-background-image.txt').then(response => {
@@ -49,18 +48,20 @@ export const saveMasks = (colorList: Array<number[]>, imageData: Object, backgro
       // @todo - IMPLEMENT, consume the XML!!! -RS
       // eslint-disable-next-line no-unused-vars
       const regionsXMLString = stringifyXML(sceneXML)
-
-      dispatch({
-        type: DONE_SAVING_MASKS,
-        payload: false
-      })
+      // @todo this is here to give feedback until feature is completely implemented. -RS
+      console.log(sceneXML)
+      dispatch(doneSavingMask())
     }).catch(err => {
       console.log(`Error saving masks: ${err}`)
-      dispatch({
-        type: DONE_SAVING_MASKS,
-        payload: false
-      })
+      dispatch(doneSavingMask())
     })
+  }
+}
+
+export const doneSavingMask = () => {
+  return {
+    type: SAVING_MASKS,
+    payload: false
   }
 }
 

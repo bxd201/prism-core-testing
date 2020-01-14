@@ -28,7 +28,15 @@ const buttonRightClass = `${buttonClass}--right`
 const closeClass = `${baseClass}__close`
 const cancelClass = `${baseClass}__cancel`
 
-const getWrapperClassName = (imageUrl, pins) => imageUrl && pins.length === 0 ? previewClass : wrapperClass
+const getWrapperClassName = (imageUrl, pins, hasPaintSceneWorkspace) => {
+  if (hasPaintSceneWorkspace) {
+    return wrapperClass
+  } else if (imageUrl && pins.length === 0) {
+    return previewClass
+  }
+
+  return wrapperClass
+}
 
 let colorPinsGenerationByHueWorker: Object
 
@@ -354,21 +362,21 @@ export function MatchPhoto ({ history, isPaintScene, imgUrl }: Props) {
   return (
     <React.Fragment>
       <PrismImage ref={imageRef} source={blobUrl} loadedCallback={handleImageLoaded} shouldResample={hasLoaded} scalingWidth={scalingWidth} />
-      <div className={`${getWrapperClassName(imageUrl, pins)}`} ref={wrapperRef}>
+      <div className={`${getWrapperClassName(imageUrl, pins, !!paintSceneWorkspace)}`} ref={wrapperRef}>
         <div className={`${containerClass}`}>
 
           <div className={`${headerClass}`}>
-            {(imageUrl && pins.length === 0) ? <button className={`${buttonClass} ${buttonLeftClass}`} onClick={() => history.goBack()}>
+            {(imageUrl && pins.length === 0 && !paintSceneWorkspace) ? <button className={`${buttonClass} ${buttonLeftClass}`} onClick={() => history.goBack()}>
               <div><FontAwesomeIcon className={``} icon={['fa', 'angle-left']} />&nbsp;<span className={`${buttonLeftTextClass}`}>BACK</span></div>
             </button> : ''}
             {
-              (imageUrl && pins.length === 0) ? <Link to={`/active`}>
+              (imageUrl && pins.length === 0 && !paintSceneWorkspace) ? <Link to={`/active`}>
                 {closeButton}
-              </Link> : (imageUrl && pins.length > 0 && !isPaintScene) ? closeButton : ''
+              </Link> : (imageUrl && pins.length > 0 && !isPaintScene && !paintSceneWorkspace) ? closeButton : ''
             }
           </div>
           {
-            (imageUrl && pins.length > 0 && !isPaintScene)
+            (imageUrl && pins.length > 0 && !isPaintScene && !paintSceneWorkspace)
               ? (<React.Fragment>
                 <DynamicColorFromImage
                   originalImageWidth={imageDims.originalImageWidth}
@@ -385,7 +393,7 @@ export function MatchPhoto ({ history, isPaintScene, imgUrl }: Props) {
               : ''
           }
           {
-            (imageUrl && pins.length === 0)
+            (imageUrl && pins.length === 0 && !paintSceneWorkspace)
               ? (<React.Fragment>
                 <canvas className={canvasClass} name='canvas' ref={canvasRef} />
                 <ImageRotateTerms rotateImage={rotateImage} createColorPins={createColorPins} imageData={imageData} />

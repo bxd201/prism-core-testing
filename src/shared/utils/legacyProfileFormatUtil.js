@@ -124,7 +124,7 @@ export const createCustomSceneMetaData = (imageBaseName: string, width: number, 
 }
 
 // eslint-disable-next-line no-unused-vars
-export const imageDataToSurfacesXML = (surfaceData: any[], metaData: Object) => {
+export const imageDataToSurfacesXML = (surfaceData: any[] | null, metaData: Object) => {
   const doc = new window.Document()
   const project = doc.createElement('Project')
   const { width, height, imageBaseName } = metaData
@@ -136,12 +136,15 @@ export const imageDataToSurfacesXML = (surfaceData: any[], metaData: Object) => 
   project.setAttribute('empty', true)
 
   const surfaces = doc.createElement('Surfaces')
-  surfaces.setAttribute('numSurfaces', surfaceData.length)
+  const surfaceCount = surfaceData ? surfaceData.length : 0
+  surfaces.setAttribute('numSurfaces', surfaceCount)
 
-  surfaceData.forEach((item, i) => {
-    let surface = createSurfaceFromImageData(item, width, height, i, doc)
-    surfaces.appendChild(surface)
-  })
+  if (surfaceData) {
+    surfaceData.forEach((item, i) => {
+      let surface = createSurfaceFromImageData(item, width, height, i, doc)
+      surfaces.appendChild(surface)
+    })
+  }
 
   project.appendChild(surfaces)
 
