@@ -21,7 +21,6 @@ const OmniButton = (props: Props) => {
     children,
     external,
     icon,
-    href,
     to,
     onClick,
     ...other
@@ -33,10 +32,10 @@ const OmniButton = (props: Props) => {
   }
 
   const content = useMemo(() => {
-    return [
-      icon ? OmniButton.ICONS[icon] : null,
-      children
-    ]
+    return <>
+      {icon || null}
+      {children}
+    </>
   }, [icon, children])
 
   if (!content) {

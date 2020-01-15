@@ -22,6 +22,7 @@ type Props = FacetPubSubMethods & FacetBinderMethods & {
   colorDetailPageRoot?: string,
   colorWallBgColor?: string,
   displayAddButton?: boolean,
+  displayDetailsLink?: boolean,
   resetOnUnmount?: boolean
 }
 
@@ -43,7 +44,7 @@ const SearchContain = () => <Search contain />
 const CWToolbar = () => <ColorWallToolbar isFamilyPage={false} />
 
 export const ColorWallPage = (props: Props) => {
-  const { displayAddButton, colorWallBgColor, subscribe, publish, unsubscribeAll, colorDetailPageRoot, resetOnUnmount } = props
+  const { displayAddButton, displayDetailsLink, colorWallBgColor, subscribe, publish, unsubscribeAll, colorDetailPageRoot, resetOnUnmount } = props
 
   const emitColor = useSelector(state => at(state, 'colors.emitColor')[0])
   const [isLoading, updateLoading] = useState(false)
@@ -78,7 +79,8 @@ export const ColorWallPage = (props: Props) => {
     <ColorWallContext.Provider value={extendIfDefined({}, colorWallContextDefault, {
       colorDetailPageRoot,
       colorWallBgColor,
-      displayAddButton
+      displayAddButton,
+      displayDetailsLink
     })}>
       <ColorWallRouter>
         <div className='color-wall-wrap'>

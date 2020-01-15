@@ -47,7 +47,7 @@ const facetEntryPoints = {
   colorFamilyFacet: path.join(srcPath, 'components/Facets/ColorFamilyFacet/ColorFamilyFacet.jsx'),
   tinter: path.join(srcPath, 'components/Facets/Tinter/Tinter.jsx'),
   prism: path.join(srcPath, 'components/Facets/Prism/Prism.jsx'),
-  colorDetails: path.join(srcPath, 'components/Facets/ColorDetails/ColorDetails.jsx')
+  colorDetailsFacet: path.join(srcPath, 'components/Facets/ColorDetails/ColorDetailsFacet.jsx')
 }
 
 const implementationTemplates = [

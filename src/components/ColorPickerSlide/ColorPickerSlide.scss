@@ -5,12 +5,12 @@
     font-size: 0.85rem;
     font-weight: 600;
     height: auto;
-    position: absolute;
-    top:0em;
+    position: relative;
     right: 2.9em;
     width: 100%;
     transition: all ease 0.3s;
     z-index: 1000;
+    order: -1;
     &__border {
       padding: 0.15rem 0.15rem 0.15rem 0.3rem;
       float: right;
@@ -21,6 +21,7 @@
     @include respond-above(sm) {
       top: 9.5em;
       width: auto;
+      position: absolute;
       &--show {
         right: 1em;
         width: 175px;
