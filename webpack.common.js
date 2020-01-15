@@ -200,8 +200,20 @@ module.exports = {
       },
       environmentHash: {
         root: flags.rootPath,
-        directories: [],
-        files: ['package-lock.json', 'yarn.lock']
+        directories: ['build-scripts', 'webpack'],
+        files: [
+          '.browserslistrc',
+          '.eslintignore',
+          '.eslintrc',
+          'babel.config.json',
+          'package-lock.json',
+          'package.json',
+          'postcss.config.js',
+          'webpack.common.js',
+          'webpack.dev.js',
+          'webpack.prod.js',
+          'webpack.publish.js'
+        ]
       }
     }),
     !flags.production && new HardSourceWebpackPlugin.ExcludeModulePlugin([
