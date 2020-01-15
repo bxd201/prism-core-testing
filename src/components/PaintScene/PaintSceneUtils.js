@@ -71,6 +71,22 @@ export const getColorsFromImagePathList = (imagePathList: any) => {
 
   return uniqueColorList
 }
+// Provides a unique color list of sherwin colors for firebase
+export const getUniqueColorsFromImagePathList = (imagePathList: Object[]) => {
+  const colors = []
+  const colorMap = {}
+
+  imagePathList.forEach((item, i) => {
+    const colorKey = item.color.join('_')
+
+    if (!colorMap[colorKey]) {
+      colorMap[colorKey] = 1
+      colors.push({ ...item.colorRef })
+    }
+  })
+
+  return colors
+}
 
 export const separateColors = (colors: Object[], imageData: any, threshold: number, saveAlpha: boolean): Array[] => {
   const pixelBuckets = colors.map(color => [])

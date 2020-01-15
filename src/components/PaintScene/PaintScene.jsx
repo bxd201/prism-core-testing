@@ -10,7 +10,7 @@ import { injectIntl } from 'react-intl'
 import {
   createImageDataAndAlphaPixelMapFromImageData,
   drawAcrossLine,
-  getColorsFromImagePathList
+  getColorsFromImagePathList, getUniqueColorsFromImagePathList
 } from './PaintSceneUtils'
 import { getPaintAreaPath, repaintImageByPath,
   createPolygon, drawLine, drawHollowCircle,
@@ -32,7 +32,7 @@ import { saveMasks, selectSavedScene, startSavingMasks } from '../../store/actio
 import PaintSceneFooter from './PaintSceneFooter'
 import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 import SaveMasks from './SaveMasks'
-import { createCustomSceneMetaData } from '../../shared/utils/legacyProfileFormatUtil'
+import { createCustomSceneMetadata, createUniqueSceneId } from '../../shared/utils/legacyProfileFormatUtil'
 import MergeColors from '../MergeCanvas/MergeColors'
 import storageAvailable from '../../shared/utils/browserStorageCheck.util'
 import DynamicModal, { DynamicModalButtonType } from '../DynamicModal/DynamicModal'
@@ -122,7 +122,8 @@ type ComponentState = {
   canvasHeight: number,
   loadingMasks: boolean,
   canvasHasBeenInitialized: boolean,
-  hideSelectPaletteModal: boolean
+  hideSelectPaletteModal: boolean,
+  uniqueSceneId: string
 }
 
 export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
@@ -151,6 +152,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   canvasOriginalDimensions: Object
   wrapperOriginalDimensions: Object
   worker: Object
+
   constructor (props: ComponentProps) {
     super(props)
 
@@ -176,7 +178,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.backgroundImageWidth = initialImageWidth
     this.backgroundImageHeight = initialImageHeight
     this.isPortrait = isPortrait
-    this.originalIsPortrait = props.referenceDimensions.originalIsPortrait
+    this.originalIsPortrait = props.workspace ? (props.workspace.height > props.workspace.width) : props.referenceDimensions.originalIsPortrait
     this.canvasPanStart = { x: 0.5, y: 0.5 }
     this.lastPanPoint = { x: 0, y: 0 }
     this.pause = false
@@ -230,10 +232,11 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       currPinY: 0,
       canvasWidth: initialImageWidth,
       canvasHeight: initialImageHeight,
-      loadingMasks: !!props.workspace,
+      loadingMasks: !!props.workspace && !!props.workspace.layers && props.workspace.layers.length,
       canvasHasBeenInitialized: false,
       showSelectPaletteModal: false,
-      checkIsPaintSceneUpdate: false
+      checkIsPaintSceneUpdate: false,
+      uniqueSceneId: createUniqueSceneId()
     }
 
     this.undo = this.undo.bind(this)
@@ -256,7 +259,6 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   }
 
   tryToMergeColors () {
-    // Destructuring does allow empty object literals, hence the javaesque object instantiation
     // eslint-disable-next-line no-new-object
     const { workspace, lpColors } = this.props
     if (workspace) {
@@ -519,6 +521,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       canvasOffset.x = parseInt(canvasClientOffset.left, 10)
       canvasOffset.y = parseInt(canvasClientOffset.top, 10)
       if (storageAvailable('sessionStorage')) {
+        // @todo candidate for redux? -RS
         window.sessionStorage.setItem('canvasOffsetPaintScene', JSON.stringify(canvasOffset))
       }
     }
@@ -532,12 +535,14 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   componentDidMount () {
     this.updateWindowDimensions()
     this.setDependentPositions()
+
     if (this.mergeCanvasRef.current) {
       this.mergeCanvasRef.current.style = 'opacity: 0'
     }
     this.initCanvas()
     this.tryToMergeColors()
     window.addEventListener('resize', this.resizeHandler)
+    // @todo candidate for redux -RS
     if (storageAvailable('localStorage') && getTooltipShownLocalStorage() === null) {
       setTooltipShownLocalStorage()
     } else {
@@ -1170,10 +1175,12 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       this.clearCanvas()
       drawImagePixelByPath(ctx, this.canvasOffsetWidth, this.canvasOffsetHeight, RGB, imagePath)
       const newPath = getImageCordinateByPixel(this.CFICanvas2, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight, false)
+      // @todo - candidate for createImagePath factory -RS
       copyImagePathList.push({
         type: 'paint',
         id: uniqueId(),
         color: RGB,
+        colorRef: { ...this.props.lpActiveColor },
         data: newPath,
         isEnabled: true,
         linkedOperation: null,
@@ -1722,35 +1729,28 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     return null
   }
 
-  saveBase64 = (imageUrls: string[]) => {
-    return ((<MergeCanvas
-      key={this.state.mergeCanvasKey}
-      width={this.canvasOriginalDimensions.width}
-      height={this.canvasOriginalDimensions.height}
-      ref={this.mergeCanvasRefModal}
-      applyZoomPan={this.applyZoomPan}
-      layers={imageUrls} />))
-  }
-
   exportImagePaths () {
     return this.state.imagePathList
   }
 
   // This Method sorts the imagePathList by color to trigger the MergeColor component to instantiate and generate a flat (jpg) mask per color
   processMasks () {
-    const colorList = getColorsFromImagePathList(this.state.imagePathList)
+    // @todo get a unique color list, I may need to manually merge color-like imagepaths to dedupe... -RS
+    const labColorList = getColorsFromImagePathList(this.state.imagePathList)
+    const colorList = getUniqueColorsFromImagePathList(this.state.imagePathList)
+
     let saveBackgroundOnly = false
 
-    if (!colorList.length) {
+    if (!labColorList.length) {
       saveBackgroundOnly = true
     }
 
     const backgroundImageUrl = this.CFICanvas.current.toDataURL('image/jpeg', 1.0)
     const ctx2 = this.CFICanvas2.current.getContext('2d')
     const imageData = !saveBackgroundOnly ? ctx2.getImageData(0, 0, ctx2.canvas.width, ctx2.canvas.height) : null
-    const metaData = createCustomSceneMetaData('TEMP_NAME', ctx2.canvas.width, ctx2.canvas.height)
+    const metaData = createCustomSceneMetadata('TEMP_NAME', this.state.uniqueSceneId, colorList, ctx2.canvas.width, ctx2.canvas.height)
 
-    this.props.saveMasks(colorList, imageData, backgroundImageUrl, metaData)
+    this.props.saveMasks(labColorList, imageData, backgroundImageUrl, metaData)
   }
 
   applyZoomPan = (ref: RefObject) => {

@@ -7,6 +7,7 @@ import { deleteSavedScene, selectSavedScene, loadSavedScenes } from '../../store
 import SavedScene from './SavedScene'
 
 import './MyIdeas.scss'
+import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 
 const baseClassName = 'myideas-wrapper'
 const buttonClassName = `${baseClassName}__button`
@@ -20,6 +21,7 @@ type MyIdeasProps = {
 
 const MyIdeas = (props: MyIdeasProps) => {
   const savedScenes = useSelector(state => state.scenesAndRegions)
+  const isLoadingSavedScenes = useSelector(state => state.isLoadingSavedScene)
   const dispatch = useDispatch()
   const intl = useIntl()
   const [editEnabled, setEditEnabled] = useState(false)
@@ -49,20 +51,35 @@ const MyIdeas = (props: MyIdeasProps) => {
     dispatch(selectSavedScene(sceneId))
   }
 
-  const generateSavesdScenes = (sceneData: Object[], editIsEnabled: boolean) => {
+  const generateSavedScenes = (sceneData: Object[], editIsEnabled: boolean) => {
     return sceneData.map((scene, i) => {
       return <SavedScene
         width={180}
         height={90}
         sceneData={scene}
         editEnabled={editIsEnabled}
-        key={i}
+        key={scene.id}
         deleteScene={deleteScene}
         selectScene={selectScene} />
     })
   }
+
+  const renderNoScenes = (isLoading: boolean) => {
+    if (isLoading) {
+      return (<div>
+        <CircleLoader />
+      </div>)
+    } else {
+      return (<div className={baseClassName}>
+        <div className={sectionLeftClassName}>
+          <h3>{intl.messages['MY_IDEAS.NO_IDEAS_TITLE']}</h3>
+          <p>{intl.messages['MY_IDEAS.NO_IDEAS_DESC']}</p>
+        </div>
+      </div>)
+    }
+  }
+
   return (
-    // @todo The edit and done buttons are stubbed here, they should be replaced by a app level button component... -RS
     <>
       {savedScenes.length ? <div className={baseClassName}>
         <div className={sectionLeftClassName}>
@@ -71,15 +88,10 @@ const MyIdeas = (props: MyIdeasProps) => {
             : <button className={buttonClassName} onClick={enableEdit}>{intl.messages.EDIT}</button>}
         </div>
         <div className={sectionClassName}>
-          {generateSavesdScenes(savedScenes, editEnabled)}
+          {generateSavedScenes(savedScenes, editEnabled)}
         </div>
       </div>
-        : <div className={baseClassName}>
-          <div className={sectionLeftClassName}>
-            <h3>{intl.messages['MY_IDEAS.NO_IDEAS_TITLE']}</h3>
-            <p>{intl.messages['MY_IDEAS.NO_IDEAS_DESC']}</p>
-          </div>
-        </div>}
+        : renderNoScenes(isLoadingSavedScenes)}
     </>
   )
 }

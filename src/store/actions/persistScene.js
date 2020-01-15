@@ -4,20 +4,32 @@
 import axios from 'axios'
 import { separateColors } from '../../components/PaintScene/PaintSceneUtils'
 import { RECEIVE_COLORS, mapColorDataToPayload, getColorsRequests, mapResponsesToColorData } from './loadColors'
-import { getDataFromXML, imageDataToSurfacesXML, stringifyXML } from '../../shared/utils/legacyProfileFormatUtil'
+import {
+  getDataFromFirebaseXML,
+  getDataFromXML,
+  imageDataToSurfacesXML,
+  stringifyXML
+} from '../../shared/utils/legacyProfileFormatUtil'
 import { anonLogin } from './user'
 import * as firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/storage'
 
 export const SAVING_MASKS = 'SAVING_MASKS'
+export const SAVED_SCENE_LOCAL = 'SAVED_SCENE_LOCAL'
+export const DELETE_ANON_SAVED_SCENE = 'DELETE_ANON_SAVED_SCENE'
 export const DELETE_SAVED_SCENE = 'DELETE_SAVED_SCENE'
 export const LOADED_SAVED_SCENES_METADATA = 'LOADED_SAVED_SCENES_METADATA'
 export const LOADING_SAVED_MASKS = 'LOADING_SAVED_MASKS'
 export const ERROR_LOADING_SAVED_SCENES = 'ERROR_LOADING_SAVED_SCENES'
 export const SELECTED_SAVED_SCENE = 'SELECTED_SAVED_SCENE'
 export const SAVED_REGIONS_UNPICKLED = 'SAVED_REGIONS_UNPICKLED'
-export const CACHE_SCENE_XML_DATA = 'CACHE_SCENE_XML_DATA'
+export const CACHED_SCENE_DATA = 'CACHED_SCENE_DATA'
+export const ERROR_DOWNLOADING_SAVED_DATA = 'ERROR_DOWNLOADING_SAVED_DATA'
+export const WAITING_TO_FETCH_SAVED_SCENE = 'WAITING_TO_FETCH_SAVED_SCENE'
+export const ERROR_DELETING_ANON_SCENE = 'ERROR_DELETING_ANON_SCENE'
+// File name consts
+const SCENE_JSON = 'scene.json'
 
 export const startSavingMasks = () => {
   return {
@@ -29,8 +41,8 @@ export const startSavingMasks = () => {
 export const createSceneXML = (imageData: Object[] | null, metaData: Object) => {
   return imageDataToSurfacesXML(imageData, metaData)
 }
-
-export const saveMasks = (colorList: Array<number[]>, imageData: Object, backgroundImageUrl: string, metaData: Object) => {
+// @todo - put uniqueSceneId in metadata -RS
+export const saveMasks = (colorList: Array<number[]>, imageData: Object, backgroundImageUrl: string, metadata: Object) => {
   return (dispatch, getState) => {
     dispatch({
       type: SAVING_MASKS,
@@ -39,17 +51,14 @@ export const saveMasks = (colorList: Array<number[]>, imageData: Object, backgro
 
     // The separated colors as an array of imageData items
     const imageDataList = imageData ? separateColors(colorList, imageData, 1.5) : null
-    const sceneXML = createSceneXML(imageDataList, metaData)
-    const imageUploadPayload = createImageUploadPayload(backgroundImageUrl)
-
-    console.log('Firebase auth enabled::', FIREBASE_AUTH_ENABLED)
+    const sceneXML = createSceneXML(imageDataList, metadata)
+    // @todo needed for my sherwin persist, this is a usage reminder -RS
+    // const imageUploadPayload = createImageUploadPayload(backgroundImageUrl, metadata.uniqueId)
     if (FIREBASE_AUTH_ENABLED) {
-      // Post if there is a user
-      // @todo save to mysherwin -RS
-      persistSceneToFirebase(dispatch, imageUploadPayload, sceneXML)
+      persistSceneToFirebase(backgroundImageUrl, sceneXML, metadata.colors, metadata.uniqueId, dispatch)
       return
     }
-
+    // @todo REVIEW not sure color info is persisted in current code -RS
     persistSceneToMySherwin(dispatch, backgroundImageUrl, sceneXML)
   }
 }
@@ -64,10 +73,32 @@ export const doneSavingMask = (data: Object) => {
 
 // @todo - is this a number or a string ? -RS
 export const deleteSavedScene = (sceneId: number) => {
-  // @todo - this should make an ajax call and resolve only if the server fulfills the request -RS
-  return {
-    type: DELETE_SAVED_SCENE,
-    payload: sceneId
+  return (dispatch, getState) => {
+    if (FIREBASE_AUTH_ENABLED) {
+      const user = firebase.auth().currentUser
+      if (user) {
+        const storageRef = firebase.storage().ref()
+        const sceneRef = storageRef.child(`/scenes/${user.uid}/${sceneId}-${SCENE_JSON}`)
+        sceneRef.delete().then(() => {
+          dispatch({
+            type: DELETE_ANON_SAVED_SCENE,
+            payload: sceneId
+          })
+        }).catch(error => {
+          // @todo - handle error -RS
+          console.log('Error deleting anonymous scene:', error)
+          dispatch({
+            type: ERROR_DELETING_ANON_SCENE
+          })
+        })
+      }
+    } else {
+      // @todo - this should make an ajax call and resolve only if the server fulfills the request -RS
+      dispatch({
+        type: DELETE_SAVED_SCENE,
+        payload: sceneId
+      })
+    }
   }
 }
 
@@ -90,51 +121,104 @@ export const loadSavedScenes = (brandId: string) => {
       type: LOADING_SAVED_MASKS,
       payload: true
     })
-    // @todo - implement this when real endpoints are available -RS
-    const colorsHaveLoaded = checkColorsHaveLoaded(getState())
-    axios.all(getInitialRequests(colorsHaveLoaded, brandId))
-      .then(responses => {
-        dispatch({
-          type: LOADED_SAVED_SCENES_METADATA,
-          payload: responses[0].data
-        })
 
-        const colorDataResponses = responses.slice(1, responses.length)
-        let colorData = null
-
-        if (colorsHaveLoaded) {
-          const alreadyLoadedColorData = getState().colors
-          colorData = alreadyLoadedColorData
-        } else {
-          colorData = mapResponsesToColorData(colorDataResponses)
-        }
-
-        dispatch({
-          type: RECEIVE_COLORS,
-          payload: mapColorDataToPayload(colorData)
-        })
-
-        return axios.all(mapSceneResponseToCustomSceneRequests(responses[0].data))
-      }).then(responses => {
-      // @todo - implement this when real endpoints are available -RS
-        const { legacySavedScenesMetadata, colors } = getState()
-        const sceneData = responses.map((response, i) => {
-          return mungeRegionAndSceneData(response.data, legacySavedScenesMetadata[i], colors)
-        })
-
-        dispatch({
-          type: SAVED_REGIONS_UNPICKLED,
-          payload: sceneData
-        })
-      }).catch(err => {
-        // @todo handle error -RS
-        console.log(`Error getting saved scenes: ${err}`)
-        dispatch({
-          type: ERROR_LOADING_SAVED_SCENES,
-          payload: null
-        })
-      })
+    if (FIREBASE_AUTH_ENABLED) {
+      loadSavedSceneFromFirebase(brandId, dispatch, getState)
+    } else {
+      loadSavedScenesFromMySherwin(brandId, dispatch, getState)
+    }
   }
+}
+
+export const loadSavedSceneFromFirebase = (brandId: string, dispatch: Function, getState: Function) => {
+  const user = firebase.auth().currentUser
+  const colorsHaveLoaded = checkColorsHaveLoaded(getState())
+
+  if (colorsHaveLoaded) {
+    getSavedScenesFromFirebase(!!user, dispatch, getState)
+  } else {
+    const colorsRequests = getColorsRequests(brandId)
+
+    Promise.all(colorsRequests).then(responses => {
+      const colorData = mapResponsesToColorData(responses)
+
+      dispatch({
+        type: RECEIVE_COLORS,
+        payload: mapColorDataToPayload(colorData)
+      })
+
+      getSavedScenesFromFirebase(!!user, dispatch, getState)
+    }).catch(err => {
+      // @todo - handle error -RS
+      console.log('Error fetching colors:', err)
+    })
+  }
+}
+
+const getSavedScenesFromFirebase = (isLoggedIn: boolean, dispatch, getState) => {
+  if (isLoggedIn) {
+    const { user, cloudSceneMetadata } = getState()
+    if (cloudSceneMetadata.length) {
+      const metadata = getMatchingScenesForFirebase(user.uid, cloudSceneMetadata)
+      fetchSavedScenesFromFirebase(metadata, dispatch, getState)
+    } else {
+    // There are no items saved
+      dispatch({
+        type: LOADING_SAVED_MASKS,
+        payload: false
+      })
+    }
+  } else {
+    dispatch(setWaitingToFetchSavedScene(true))
+    anonLogin()
+  }
+}
+
+export const loadSavedScenesFromMySherwin = (brandId: string, dispatch: Function, getState: Function) => {
+  // @todo - implement this when real endpoints are available -RS
+  const colorsHaveLoaded = checkColorsHaveLoaded(getState())
+  axios.all(getInitialRequestsForMySherwin(colorsHaveLoaded, brandId))
+    .then(responses => {
+      dispatch({
+        type: LOADED_SAVED_SCENES_METADATA,
+        payload: responses[0].data
+      })
+
+      const colorDataResponses = responses.slice(1, responses.length)
+      let colorData = null
+
+      if (colorsHaveLoaded) {
+        const alreadyLoadedColorData = getState().colors
+        colorData = alreadyLoadedColorData
+      } else {
+        colorData = mapResponsesToColorData(colorDataResponses)
+      }
+
+      dispatch({
+        type: RECEIVE_COLORS,
+        payload: mapColorDataToPayload(colorData)
+      })
+
+      return axios.all(mapSceneResponseToCustomSceneRequests(responses[0].data))
+    }).then(responses => {
+      // @todo - implement this when real endpoints are available -RS
+      const { legacySavedScenesMetadata, colors } = getState()
+      const sceneData = responses.map((response, i) => {
+        return mungeRegionAndSceneData(response.data, legacySavedScenesMetadata[i], colors)
+      })
+
+      dispatch({
+        type: SAVED_REGIONS_UNPICKLED,
+        payload: sceneData
+      })
+    }).catch(err => {
+      // @todo handle error -RS
+      console.log(`Error getting saved scenes: ${err}`)
+      dispatch({
+        type: ERROR_LOADING_SAVED_SCENES,
+        payload: null
+      })
+    })
 }
 
 // @todo - is this a string or number? -RS
@@ -167,7 +251,32 @@ const mungeRegionAndSceneData = (regionData: Object, sceneData: Object, colors: 
   }
 }
 
-const getInitialRequests = (colorsHaveLoaded: boolean, brandId: string, options?: any) => {
+// This is firebase equivalent  of mungeRegionAndSceneData
+const processFileFromFirebase = (file: Object, i: number) => {
+  const { regionsXml, uniqueSceneId, image, colors } = file
+  const surfaceMasks = getDataFromFirebaseXML(regionsXml, colors)
+  const sceneDefinitionId = uniqueSceneId
+  const name = ''
+  // @todo - figure out if i need cat id for anon persistence -RS
+  const categoryId = 0
+  // @todo I don't think I need this but setting for api completeness, confirm -RS
+  const id = sceneDefinitionId
+
+  return {
+    surfaceMasks,
+    palette: colors,
+    name,
+    id,
+    sceneDefinitionId,
+    categoryId,
+    // The lack of this property duck types this as a payload from firebase
+    renderingBaseUrl: null,
+    // The existence of this prop too duck types this as a payload from firebase
+    backgroundImageUrl: image
+  }
+}
+
+const getInitialRequestsForMySherwin = (colorsHaveLoaded: boolean, brandId: string, options?: any) => {
   const requests = []
   const loginRequest = axios.get('/public/scene-painted.json')
 
@@ -199,16 +308,18 @@ const getColorById = (colorId: number, colors: Object) => {
   return colorMap[`${colorId}`]
 }
 
-const createImageUploadPayload = (imageDataUrl: string) => {
-  return JSON.stringify({ 'image': imageDataUrl.split(',')[1] })
+// @todo this may not be needed depending on how the API is designed, I'd like to get rid of it -RS
+// eslint-disable-next-line no-unused-vars
+const createImageUploadPayload = (imageDataUrl: string, uniqueSceneId: string) => {
+  return JSON.stringify({ 'image': imageDataUrl.split(',')[1], uniqueSceneId })
 }
 
 // This method should only be used inside of the firebase.auth onchange method
-export const tryToPersistCachedSceneXml = () => {
+export const tryToPersistCachedSceneData = () => {
   return (dispatch, getState) => {
-    const xml = getState().cachedSceneXml
+    const { cachedSceneData: data } = getState()
 
-    if (!xml) {
+    if (!data) {
       // @todo this might be overkill -RS
       dispatch({
         type: SAVING_MASKS,
@@ -217,59 +328,66 @@ export const tryToPersistCachedSceneXml = () => {
 
       return
     }
-    // @todo implement for real -RS
-    axios.get('/public/index.html').then(response => {
-      console.log('Saved XML:', xml)
 
-      dispatch({
-        type: SAVING_MASKS,
-        payload: false
-      })
-    })
+    persistSceneToFirebase(data.background, data.sceneXml, data.colors, data.uniqueSceneId, dispatch)
   }
 }
 
-const persistSceneToFirebase = (dispatch, backgroundImageUrl: string, sceneDataXml: string) => {
+const persistSceneToFirebase = (backgroundImageData: string, sceneDataXml: any, colors: number[], uniqueSceneId: string, dispatch: Function) => {
   const user = firebase.auth().currentUser
   if (!user) {
-    anonLogin()
-    // cache xml payload and have AuthObserver push it when user logs in
-    console.log('Caching XML:', sceneDataXml)
-    // @todo refactor reducer into object -RS
     dispatch({
-      type: CACHE_SCENE_XML_DATA,
+      type: CACHED_SCENE_DATA,
       payload: {
-        backgroundImageUrl,
-        sceneDataXml
+        background: backgroundImageData,
+        sceneXml: sceneDataXml,
+        colors,
+        uniqueSceneId
       }
     })
+
+    anonLogin()(dispatch)
+
     return
   }
 
   const { uid } = user
   const storageRef = firebase.storage().ref()
-  const SCENE_XML = 'scene.xml'
-  const BACKGROUND_JSON = 'background.json'
-
-  const backgroundImageRef = storageRef.child(`/scenes/${uid}/${BACKGROUND_JSON}`)
-  const sceneRef = storageRef.child(`/scenes/${uid}/${SCENE_XML}`)
-  const backgroundImagePromise = backgroundImageRef.putString(backgroundImageUrl)
+  const sceneRef = storageRef.child(`/scenes/${uid}/${uniqueSceneId}-${SCENE_JSON}`)
   sceneDataXml.setAttribute('image', 'background.jpg')
-  const sceneXmlPromise = sceneRef.putString(stringifyXML(sceneDataXml))
+  const xmlString = stringifyXML(sceneDataXml)
 
-  Promise.all([backgroundImagePromise, sceneXmlPromise]).then(metadata => {
-    const sceneMetadata = {}
-    metadata.forEach(metadatum => {
-      if (metadatum.metadata.fullPath.indexOf(BACKGROUND_JSON) > -1) {
-        sceneMetadata.background = metadatum.metadata.fullPath
-      }
+  const sceneData = {
+    regionsXml: xmlString,
+    uniqueSceneId: uniqueSceneId,
+    image: backgroundImageData,
+    colors
+  }
 
-      if (metadatum.metadata.fullPath.indexOf(SCENE_XML) > -1) {
-        sceneMetadata.sceneXml = metadatum.metadata.fullPath
-      }
-    })
+  const scenePromise = sceneRef.putString(window.JSON.stringify(sceneData))
 
+  scenePromise.then(response => {
+    const sceneMetadata = { scene: response.metadata.fullPath }
     dispatch(doneSavingMask(sceneMetadata))
+
+    // This is expensive so we do it after we save the id, that way it appears faster
+    const localSceneData = {
+      surfaceMasks: getDataFromFirebaseXML(xmlString, colors),
+      palette: colors,
+      name: '',
+      id: uniqueSceneId,
+      sceneDefinitionId: uniqueSceneId,
+      categoryId: 0,
+      // The lack of this property duck types this as a payload from firebase
+      renderingBaseUrl: null,
+      // The existence of this prop too duck types this as a payload from firebase
+      backgroundImageUrl: backgroundImageData
+    }
+
+    dispatch({
+      type: SAVED_SCENE_LOCAL,
+      payload: localSceneData
+    })
   }).catch(err => {
     // @todo Handle error
     console.log('Error saving scene to Firebase:', err)
@@ -292,4 +410,99 @@ const persistSceneToMySherwin = (dispatch, backgroundImageUrl: string, sceneData
     console.log(`Error saving masks: ${err}`)
     dispatch(doneSavingMask())
   })
+}
+
+const setWaitingToFetchSavedScene = (isWaiting: boolean) => {
+  return {
+    type: WAITING_TO_FETCH_SAVED_SCENE,
+    payload: isWaiting
+  }
+}
+
+export const tryToFetchSaveScenesFromFirebase = () => {
+  return (dispatch: Function, getState: Function) => {
+    const { user, isWaitingToFetchSavedScenes, cloudSceneMetadata } = getState()
+    if (isWaitingToFetchSavedScenes && cloudSceneMetadata.length && user && user.uid) {
+      // check to see if uid match local cloud scene metadata uid in path
+      const metadata = getMatchingScenesForFirebase(user.uid, cloudSceneMetadata)
+      fetchSavedScenesFromFirebase(metadata, dispatch, getState)
+    }
+  }
+}
+
+const fetchSavedScenesFromFirebase = (metadata: Object[], dispatch: Function, getState: Function) => {
+  if (metadata.length) {
+    const downloadQueue = []
+    const storageRef = firebase.storage().ref()
+
+    metadata.forEach(item => {
+      const sceneInfo = storageRef.child(item.scene).getDownloadURL()
+      downloadQueue.push(sceneInfo)
+    })
+    // background and scene xml need to be keyed to each other to find in redux collections
+    Promise.all(downloadQueue).then(downloadUrl => {
+      downloadRemoteFiles(downloadUrl, dispatch, getState)
+    }).catch(err => {
+      console.log('Error getting download URLs from the server:', err)
+      dispatch(setWaitingToFetchSavedScene(false))
+      // @todo handle error -RS
+      dispatch({
+        type: ERROR_DOWNLOADING_SAVED_DATA,
+        payload: true
+      })
+    })
+  } else {
+    dispatch({
+      action: LOADING_SAVED_MASKS,
+      payload: false
+    })
+  }
+}
+
+const downloadRemoteFiles = (urls: string[], dispatch: Function, getState: Function) => {
+  const downloadPromises = urls.map(url => {
+    return axios.get(url)
+  })
+
+  Promise.all(downloadPromises).then(responses => {
+    const data = responses.map(response => response.data)
+    const sceneData = processDownloadedFiles(data, dispatch, getState)
+    // @todo handle background images -RS
+
+    dispatch({
+      type: SAVED_REGIONS_UNPICKLED,
+      payload: sceneData
+    })
+    dispatch(setWaitingToFetchSavedScene(false))
+  }).catch(err => {
+    console.log('Error downloading files from the server:', err)
+    dispatch(setWaitingToFetchSavedScene(false))
+    // @todo handle error -RS
+    dispatch({
+      type: ERROR_DOWNLOADING_SAVED_DATA,
+      payload: true
+    })
+  })
+}
+
+const isSameUser = (uid: string, path: string) => {
+  if (!uid || !path) {
+    return false
+  }
+
+  return path.split('/').indexOf(uid) > -1
+}
+
+const getMatchingScenesForFirebase = (uid: string, files: Object[] = []) => {
+  return files.filter(file => {
+    return isSameUser(uid, file.scene)
+  })
+}
+
+const processDownloadedFiles = (files: Object[], dispatch: Function, getState: Function) => {
+  const scenes = files.map((file, i) => {
+    return processFileFromFirebase(file, i)
+  })
+  // @todo - Confirm what should be returned -RS
+  return scenes
 }

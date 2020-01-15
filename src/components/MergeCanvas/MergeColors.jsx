@@ -203,7 +203,7 @@ const MergeColors = (props: MergeColorsProps) => {
 
   return (
     <>
-      {imageUrls.length ? imageUrls.map((src, i) => {
+      {imageUrls.length && (props.height && props.width) ? imageUrls.map((src, i) => {
         return (<img
           className={'merge-canvas-image-comp'}
           src={src}
