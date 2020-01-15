@@ -1,5 +1,7 @@
 // @flow
 import axios from 'axios'
+import * as firebase from 'firebase'
+
 export const LOGGING_IN = 'LOGGING_IN'
 export const USER_LOADED = 'USER_LOADED'
 export const ERROR_LOGGING_IN = 'ERROR_LOGGING_IN'
@@ -16,7 +18,7 @@ export const login = (username: string, password: string) => {
       .then(response => {
         dispatch({
           type: USER_LOADED,
-          payload: true
+          payload: response.data
         })
       })
       .catch(err => {
@@ -26,5 +28,31 @@ export const login = (username: string, password: string) => {
           payload: null
         })
       })
+  }
+}
+
+export const anonLogin = () => {
+  // eslint-disable-next-line no-debugger
+  debugger
+  return (dispatch, getState) => {
+    dispatch({
+      type: LOGGING_IN,
+      payload: true
+    })
+
+    firebase.auth().signInAnonymously().catch((err) => {
+      console.log(`Error logging in: ${err}`)
+      dispatch({
+        type: ERROR_LOGGING_IN,
+        payload: null
+      })
+    })
+  }
+}
+
+export const setUser = (user: Object) => {
+  return {
+    type: USER_LOADED,
+    payload: { ...user }
   }
 }

@@ -21,7 +21,8 @@
     "Image": "readonly",
     "ML_API_URL": "readonly",
     "URL": "readonly",
-    "Worker": "readonly"
+    "Worker": "readonly",
+    "FIREBASE_AUTH_ENABLED": "readonly"
   },
   "rules": {
     "react-hooks/rules-of-hooks": "error",

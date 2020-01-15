@@ -27,3 +27,14 @@ export const DEFAULT_CONFIGURATION = {
     titleFontFamily: varValues.typography.titleFontFamily
   }
 }
+
+export const FIREBASE_CONFIG = {
+  apiKey: 'AIzaSyDdLlH1Cm9YdAbt3Cb7eXznbaJZ32SwkeA',
+  authDomain: 'dev-prism-cvw.firebaseapp.com',
+  databaseURL: 'https://dev-prism-cvw.firebaseio.com',
+  projectId: 'dev-prism-cvw',
+  storageBucket: 'dev-prism-cvw.appspot.com',
+  messagingSenderId: '486817725266',
+  appId: '1:486817725266:web:7825d0124632d801b0588b',
+  measurementId: 'G-281S2DNW0Q'
+}
