@@ -91,7 +91,7 @@ module.exports = {
           {
             loader: 'babel-loader',
             options: {
-              configFile: path.resolve(__dirname, 'babel.config.json')
+              configFile: path.resolve(__dirname, '.babelrc')
             }
           },
           'worker-loader'
@@ -104,7 +104,7 @@ module.exports = {
           {
             loader: 'babel-loader',
             options: {
-              configFile: path.resolve(__dirname, 'babel.config.json')
+              configFile: path.resolve(__dirname, '.babelrc')
             }
           }
         ],

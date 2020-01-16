@@ -9,6 +9,7 @@ exports[`snapshot matches 1`] = `
   messages={
     Object {
       "ADD_A_COLOR": "ADD A COLOR",
+      "ALL_COLORS": "All Colors",
       "BACK_TO_COLOR_WALL": "Back to Color Wall",
       "CANCEL": "Cancel",
       "CANVAS_UNSUPPORTED": "Your browser does not support the canvas element.",
@@ -20,6 +21,10 @@ exports[`snapshot matches 1`] = `
       "DELETE_PIN": "Delete pin",
       "DETAILS": "Details",
       "DISPLAY_SCENE_PAINTER": "Display the Scene Painter",
+      "ERROR_BOUNDARY.ERROR_DETAILS": "Error details",
+      "ERROR_BOUNDARY.MESSAGE": "We encountered an error preventing us from rendering this component at this time.",
+      "ERROR_BOUNDARY.SHOW_DETAILS": "Show error details",
+      "ERROR_BOUNDARY.TITLE": "Sherwin-Williams Color Tools Error",
       "ERROR_LOADING_COLORS": "We're unable to load colors right now.",
       "EXTERIOR": "Exterior",
       "FIND_COLORS_IN_CW": "FIND COLORS IN THE DIGITAL COLOR WALL",
@@ -70,13 +75,16 @@ exports[`snapshot matches 1`] = `
       "SEARCH.SEARCH": "Search",
       "SEARCH.SEARCHING": "Searching",
       "SEARCH.SEARCH_BY": "Search by color name or number",
+      "SEARCH.SEARCH_COLOR": "Search color",
       "SEARCH.SUGGESTIONS": "Some examples of things you can search for are {suggestions}",
+      "SELECT_COLLECTION": "Select Color Collection",
       "SIMILAR_COLORS": "Similar Colors",
       "SWATCH_ACTIVATED_DETAILS": "{color} is selected. Press Enter to view details.",
       "SWATCH_FOCUS": "{color}. Press Enter to select.",
       "TO_DAY_VIEW": "Switch to day view",
       "TO_NIGHT_VIEW": "Switch to night view",
       "VIEW_DETAILS": "View Details",
+      "VIEW_DETAILS_FOR": "View details for {name}",
       "ZOOM_IN": "Zoom in",
       "ZOOM_OUT": "Zoom out",
     }
@@ -130,204 +138,290 @@ exports[`snapshot matches 1`] = `
       }
     >
       <_default>
-        <div
-          className="color-wall-mode-btns"
+        <AutoSizer
+          disableHeight={true}
+          disableWidth={false}
+          onResize={[Function]}
+          style={
+            Object {
+              "width": "100%",
+            }
+          }
         >
           <div
-            className="color-wall-mode-btns__col"
+            style={
+              Object {
+                "overflow": "visible",
+                "width": "100%",
+              }
+            }
           >
             <div
-              className="color-wall-mode-btns__cell"
+              className="color-wall-mode-btns"
             >
-              <Bar>
+              <div
+                className="color-wall-mode-btns__col"
+              >
                 <div
-                  className="button-bar__option-container auto-scroll"
+                  className="color-wall-mode-btns__cell"
                 >
-                  <ul
-                    className="button-bar__options no-list"
-                  />
-                </div>
-              </Bar>
-            </div>
-            <div
-              className="color-wall-mode-btns__cell color-wall-mode-btns__right"
-            >
-              <Bar>
-                <div
-                  className="button-bar__option-container auto-scroll"
-                >
-                  <ul
-                    className="button-bar__options no-list"
-                  >
-                    <Button
-                      disabled={true}
-                      to="/active/color-wall/family/"
+                  <Bar>
+                    <div
+                      className="button-bar__option-container auto-scroll"
                     >
-                      <li
-                        className="button-bar__options__option"
+                      <ul
+                        className="button-bar__options no-list"
                       >
-                        <button
-                          className="button-bar__options__option__btn "
-                          disabled={true}
-                          type="button"
-                        >
-                          <FontAwesomeIcon
-                            border={false}
-                            className="color-families-svg"
-                            fixedWidth={false}
-                            flip={null}
-                            icon={
-                              Array [
-                                "fa",
-                                "palette",
-                              ]
-                            }
-                            inverse={false}
-                            listItem={false}
-                            mask={null}
-                            pull="left"
-                            pulse={false}
-                            rotation={null}
-                            size={null}
-                            spin={false}
-                            swapOpacity={false}
-                            symbol={false}
-                            title=""
-                            transform={null}
-                          >
-                            <svg
-                              aria-hidden="true"
-                              className="svg-inline--fa fa-palette fa-w-16 fa-pull-left color-families-svg"
-                              data-icon="palette"
-                              data-prefix="fa"
-                              focusable="false"
-                              role="img"
-                              style={Object {}}
-                              viewBox="0 0 512 512"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                d="M204.3 5C104.9 24.4 24.8 104.3 5.2 203.4c-37 187 131.7 326.4 258.8 306.7 41.2-6.4 61.4-54.6 42.5-91.7-23.1-45.4 9.9-98.4 60.9-98.4h79.7c35.8 0 64.8-29.6 64.9-65.3C511.5 97.1 368.1-26.9 204.3 5zM96 320c-17.7 0-32-14.3-32-32s14.3-32 32-32 32 14.3 32 32-14.3 32-32 32zm32-128c-17.7 0-32-14.3-32-32s14.3-32 32-32 32 14.3 32 32-14.3 32-32 32zm128-64c-17.7 0-32-14.3-32-32s14.3-32 32-32 32 14.3 32 32-14.3 32-32 32zm128 64c-17.7 0-32-14.3-32-32s14.3-32 32-32 32 14.3 32 32-14.3 32-32 32z"
-                                fill="currentColor"
-                                style={Object {}}
-                              />
-                            </svg>
-                          </FontAwesomeIcon>
-                          <span
-                            className="color-wall-mode-btns__descendant inherit-font"
-                          >
-                            <FormattedMessage
-                              id="COLOR_FAMILIES"
-                              values={Object {}}
-                            >
-                              Color Families
-                            </FormattedMessage>
-                          </span>
-                        </button>
-                      </li>
-                    </Button>
-                    <Button
-                      to="/active/color-wall/search/"
-                    >
-                      <li
-                        className="button-bar__options__option"
-                      >
-                        <NavLink
-                          activeClassName="button-bar__options__option__btn--active "
-                          className="button-bar__options__option__btn "
-                          onClick={null}
+                        <Button
                           to="/active/color-wall/search/"
                         >
-                          <Link
-                            aria-current={null}
-                            className="button-bar__options__option__btn "
-                            onClick={null}
-                            to={
-                              Object {
-                                "hash": "",
-                                "pathname": "/active/color-wall/search/",
-                                "search": "",
-                                "state": null,
-                              }
-                            }
+                          <li
+                            className="button-bar__options__option"
                           >
-                            <LinkAnchor
-                              aria-current={null}
+                            <NavLink
+                              activeClassName="button-bar__options__option__btn--active "
                               className="button-bar__options__option__btn "
-                              href="/active/color-wall/search/"
-                              navigate={[Function]}
                               onClick={null}
+                              to="/active/color-wall/search/"
                             >
-                              <a
+                              <Link
                                 aria-current={null}
                                 className="button-bar__options__option__btn "
-                                href="/active/color-wall/search/"
-                                onClick={[Function]}
-                              >
-                                <FontAwesomeIcon
-                                  border={false}
-                                  className="color-families-svg"
-                                  fixedWidth={false}
-                                  flip={null}
-                                  icon={
-                                    Array [
-                                      "fa",
-                                      "search",
-                                    ]
+                                onClick={null}
+                                to={
+                                  Object {
+                                    "hash": "",
+                                    "pathname": "/active/color-wall/search/",
+                                    "search": "",
+                                    "state": null,
                                   }
-                                  inverse={false}
-                                  listItem={false}
-                                  mask={null}
-                                  pull="left"
-                                  pulse={false}
-                                  rotation={null}
-                                  size={null}
-                                  spin={false}
-                                  swapOpacity={false}
-                                  symbol={false}
-                                  title=""
-                                  transform={null}
+                                }
+                              >
+                                <LinkAnchor
+                                  aria-current={null}
+                                  className="button-bar__options__option__btn "
+                                  href="/active/color-wall/search/"
+                                  navigate={[Function]}
+                                  onClick={null}
                                 >
-                                  <svg
-                                    aria-hidden="true"
-                                    className="svg-inline--fa fa-search fa-w-16 fa-pull-left color-families-svg"
-                                    data-icon="search"
-                                    data-prefix="fa"
-                                    focusable="false"
-                                    role="img"
+                                  <a
+                                    aria-current={null}
+                                    className="button-bar__options__option__btn "
+                                    href="/active/color-wall/search/"
+                                    onClick={[Function]}
+                                  >
+                                    <FontAwesomeIcon
+                                      border={false}
+                                      className="color-families-svg"
+                                      fixedWidth={false}
+                                      flip={null}
+                                      icon={
+                                        Array [
+                                          "fa",
+                                          "search",
+                                        ]
+                                      }
+                                      inverse={false}
+                                      listItem={false}
+                                      mask={null}
+                                      pull="left"
+                                      pulse={false}
+                                      rotation={null}
+                                      size={null}
+                                      spin={false}
+                                      swapOpacity={false}
+                                      symbol={false}
+                                      title=""
+                                      transform={null}
+                                    >
+                                      <svg
+                                        aria-hidden="true"
+                                        className="svg-inline--fa fa-search fa-w-16 fa-pull-left color-families-svg"
+                                        data-icon="search"
+                                        data-prefix="fa"
+                                        focusable="false"
+                                        role="img"
+                                        style={Object {}}
+                                        viewBox="0 0 512 512"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                      >
+                                        <path
+                                          d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"
+                                          fill="currentColor"
+                                          style={Object {}}
+                                        />
+                                      </svg>
+                                    </FontAwesomeIcon>
+                                    <span
+                                      className="color-wall-mode-btns__descendant inherit-font"
+                                    >
+                                      <FormattedMessage
+                                        id="SEARCH.SEARCH_COLOR"
+                                        values={Object {}}
+                                      >
+                                        Search color
+                                      </FormattedMessage>
+                                    </span>
+                                  </a>
+                                </LinkAnchor>
+                              </Link>
+                            </NavLink>
+                          </li>
+                        </Button>
+                        <Button
+                          disabled={true}
+                          onClick={[Function]}
+                          to="/active/color-wall/family/"
+                        >
+                          <li
+                            className="button-bar__options__option"
+                          >
+                            <button
+                              className="button-bar__options__option__btn "
+                              disabled={true}
+                              onClick={[Function]}
+                              type="button"
+                            >
+                              <FontAwesomeIcon
+                                border={false}
+                                className="color-families-svg"
+                                fixedWidth={false}
+                                flip={null}
+                                icon={
+                                  Array [
+                                    "fa",
+                                    "palette",
+                                  ]
+                                }
+                                inverse={false}
+                                listItem={false}
+                                mask={null}
+                                pull="left"
+                                pulse={false}
+                                rotation={null}
+                                size={null}
+                                spin={false}
+                                swapOpacity={false}
+                                symbol={false}
+                                title=""
+                                transform={null}
+                              >
+                                <svg
+                                  aria-hidden="true"
+                                  className="svg-inline--fa fa-palette fa-w-16 fa-pull-left color-families-svg"
+                                  data-icon="palette"
+                                  data-prefix="fa"
+                                  focusable="false"
+                                  role="img"
+                                  style={Object {}}
+                                  viewBox="0 0 512 512"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <path
+                                    d="M204.3 5C104.9 24.4 24.8 104.3 5.2 203.4c-37 187 131.7 326.4 258.8 306.7 41.2-6.4 61.4-54.6 42.5-91.7-23.1-45.4 9.9-98.4 60.9-98.4h79.7c35.8 0 64.8-29.6 64.9-65.3C511.5 97.1 368.1-26.9 204.3 5zM96 320c-17.7 0-32-14.3-32-32s14.3-32 32-32 32 14.3 32 32-14.3 32-32 32zm32-128c-17.7 0-32-14.3-32-32s14.3-32 32-32 32 14.3 32 32-14.3 32-32 32zm128-64c-17.7 0-32-14.3-32-32s14.3-32 32-32 32 14.3 32 32-14.3 32-32 32zm128 64c-17.7 0-32-14.3-32-32s14.3-32 32-32 32 14.3 32 32-14.3 32-32 32z"
+                                    fill="currentColor"
                                     style={Object {}}
-                                    viewBox="0 0 512 512"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <path
-                                      d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"
-                                      fill="currentColor"
-                                      style={Object {}}
-                                    />
-                                  </svg>
-                                </FontAwesomeIcon>
-                                <span
-                                  className="color-wall-mode-btns__descendant inherit-font"
+                                  />
+                                </svg>
+                              </FontAwesomeIcon>
+                              <span
+                                className="color-wall-mode-btns__descendant inherit-font"
+                              >
+                                <FormattedMessage
+                                  id="COLOR_FAMILIES"
+                                  values={Object {}}
                                 >
-                                  <FormattedMessage
-                                    id="SEARCH.SEARCH"
-                                    values={Object {}}
-                                  >
-                                    Search
-                                  </FormattedMessage>
-                                </span>
-                              </a>
-                            </LinkAnchor>
-                          </Link>
-                        </NavLink>
-                      </li>
-                    </Button>
-                  </ul>
+                                  Color Families
+                                </FormattedMessage>
+                              </span>
+                            </button>
+                          </li>
+                        </Button>
+                      </ul>
+                    </div>
+                  </Bar>
                 </div>
-              </Bar>
+                <AriaMenuButtonWrapper
+                  className="menu-bar menu-bar--closed"
+                  onMenuToggle={[Function]}
+                  tag="div"
+                >
+                  <div
+                    className="menu-bar menu-bar--closed"
+                  >
+                    <AriaMenuButtonButton
+                      className="menu-bar__button"
+                      tag="div"
+                    >
+                      <div
+                        aria-expanded={false}
+                        aria-haspopup={true}
+                        className="menu-bar__button"
+                        onBlur={[Function]}
+                        onClick={[Function]}
+                        onKeyDown={[Function]}
+                        role="button"
+                        tabIndex="0"
+                      >
+                        <span
+                          className="menu-bar__button-copy"
+                        >
+                          Select Color Collection
+                        </span>
+                        <FontAwesomeIcon
+                          border={false}
+                          className="close-icon-svg"
+                          fixedWidth={false}
+                          flip={null}
+                          icon={
+                            Array [
+                              "fa",
+                              "angle-down",
+                            ]
+                          }
+                          inverse={false}
+                          listItem={false}
+                          mask={null}
+                          pull="right"
+                          pulse={false}
+                          rotation={null}
+                          size={null}
+                          spin={false}
+                          swapOpacity={false}
+                          symbol={false}
+                          title=""
+                          transform={null}
+                        >
+                          <svg
+                            aria-hidden="true"
+                            className="svg-inline--fa fa-angle-down fa-w-10 fa-pull-right close-icon-svg"
+                            data-icon="angle-down"
+                            data-prefix="fa"
+                            focusable="false"
+                            role="img"
+                            style={Object {}}
+                            viewBox="0 0 320 512"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M143 352.3L7 216.3c-9.4-9.4-9.4-24.6 0-33.9l22.6-22.6c9.4-9.4 24.6-9.4 33.9 0l96.4 96.4 96.4-96.4c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9l-136 136c-9.2 9.4-24.4 9.4-33.8 0z"
+                              fill="currentColor"
+                              style={Object {}}
+                            />
+                          </svg>
+                        </FontAwesomeIcon>
+                      </div>
+                    </AriaMenuButtonButton>
+                    <_class
+                      className="menu-bar__menu"
+                      tag="div"
+                    />
+                  </div>
+                </AriaMenuButtonWrapper>
+              </div>
             </div>
           </div>
-        </div>
+        </AutoSizer>
       </_default>
     </Router>
   </Provider>
