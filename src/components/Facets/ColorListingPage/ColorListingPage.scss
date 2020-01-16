@@ -60,7 +60,7 @@
     &-exit-active,
     &-exit-done {
       left: 0;
-      position: absolute;
+      position: absolute !important; // TODO: there's an inline style of relative that is overriding this, need to figure out from what @brendan.do
       top: 0;
       transform: unset;
       width: 100%;
