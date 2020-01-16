@@ -111,7 +111,7 @@ module.exports = {
           {
             loader: 'babel-loader',
             options: {
-              configFile: path.resolve(__dirname, 'babel.config.json')
+              configFile: path.resolve(__dirname, '.babelrc')
             }
           },
           'worker-loader'
@@ -124,7 +124,7 @@ module.exports = {
           {
             loader: 'babel-loader',
             options: {
-              configFile: path.resolve(__dirname, 'babel.config.json')
+              configFile: path.resolve(__dirname, '.babelrc')
             }
           },
           'eslint-loader'
@@ -205,7 +205,7 @@ module.exports = {
           '.browserslistrc',
           '.eslintignore',
           '.eslintrc',
-          'babel.config.json',
+          '.babelrc',
           'package-lock.json',
           'package.json',
           'postcss.config.js',
