@@ -57,7 +57,7 @@ export const renderingData = {
           image: '/src/images/color-visualizer-wrapper/scene-submenu__thumbnail--sample-scenes.png',
           subTitle: 'USE OUR PHOTOS',
           subContent: 'Virtually paint a sample photo.',
-          url: '/color-from-image'
+          url: '/paint-scene'
         },
         {
           image: '/src/images/color-visualizer-wrapper/scene-submenu__thumbnail--my-photos.png',

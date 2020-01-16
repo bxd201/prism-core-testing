@@ -46,6 +46,7 @@ const facetEntryPoints = {
   colorWallFacet: path.join(srcPath, 'components/Facets/ColorWallFacet.jsx'),
   colorFamilyFacet: path.join(srcPath, 'components/Facets/ColorFamilyFacet/ColorFamilyFacet.jsx'),
   tinter: path.join(srcPath, 'components/Facets/Tinter/Tinter.jsx'),
+  colorVisualizerWrapper: path.join(srcPath, 'components/Facets/ColorVisualizerWrapper/ColorVisualizer.jsx'),
   prism: path.join(srcPath, 'components/Facets/Prism/Prism.jsx'),
   colorDetailsFacet: path.join(srcPath, 'components/Facets/ColorDetailsFacet.jsx')
 }
@@ -54,7 +55,8 @@ const implementationTemplates = [
   'embeddable',
   'sw-canada-en-fr',
   'sw-tag-color-family-pages',
-  'sw-tag-digital-color-wall'
+  'sw-tag-digital-color-wall',
+  'sw-color-visualizer-wrapper'
 ]
 
 module.exports = {

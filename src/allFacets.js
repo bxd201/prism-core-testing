@@ -10,6 +10,7 @@ import ColorDetailsFacet from 'src/components/Facets/ColorDetailsFacet'
 import ColorListingPage from 'src/components/Facets/ColorListingPage/ColorListingPage'
 import ColorWallFacet from 'src/components/Facets/ColorWallFacet'
 import ColorFamilyFacet from 'src/components/Facets/ColorFamilyFacet/ColorFamilyFacet'
+import ColorVisualizerWrapper from 'src/components/Facets/ColorVisualizerWrapper/ColorVisualizerWrapper'
 import Prism from 'src/components/Facets/Prism/Prism'
 import Tinter from 'src/components/Facets/Tinter/Tinter'
 
@@ -18,6 +19,7 @@ export const allFacets = {
   ColorListingPage,
   ColorWallFacet,
   ColorFamilyFacet,
+  ColorVisualizerWrapper,
   Prism,
   Tinter
 }
