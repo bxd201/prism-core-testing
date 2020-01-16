@@ -198,7 +198,7 @@ const ListWithCarousel = (BaseComponent: any) => {
                       <div key={index} className={`collection-list__wrapper`}>
                         {
                           slide.map((item, key) => (
-                            <BaseComponent className='collection-list__component' key={key} {...this.props} data={item} isActivedPage={index === pageNumber} isRenderingPage={index === pageNumber || index - 1 === pageNumber || index + 1 === pageNumber} />
+                            <BaseComponent className='collection-list__component' key={key} itemNumber={key + 1} {...this.props} data={item} isActivedPage={index === pageNumber} isRenderingPage={index === pageNumber || index - 1 === pageNumber || index + 1 === pageNumber} handlePrev={this.handlePrev} handleNext={this.handleNext} itemsPerView={itemsPerView} />
                           ))
                         }
                       </div>

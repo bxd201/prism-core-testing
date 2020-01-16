@@ -42,6 +42,7 @@ const helpTabsHeaderList = (activeTabIndex: number, setActiveTabIndex: Function,
       <li
         key={`hints-tab-${index}`}
         className={(index === activeTabIndex) ? activeLi : inactiveLi}
+        onMouseDown={(e) => e.preventDefault()}
         onClick={(e) => showTabContent(e, index, setActiveTabIndex, false, handleClick)}
         onKeyDown={(e) => showTabContent(e, index, setActiveTabIndex, true, handleClick)}
         role='tab'
@@ -208,7 +209,7 @@ const Help = ({ setHeader }: Props) => {
           {helpTabsHeaderList(activeTabIndex, setActiveTabIndex, handleClick)}
         </ul>
       </div>
-      <div role='tab' tabIndex='0' ref={contentWrapperRef} className={`${contentWrapper}`} onScroll={() => contentWrapperScrollHandler()}>
+      <div role='tab' tabIndex='0' ref={contentWrapperRef} className={`${contentWrapper}`} onScroll={contentWrapperScrollHandler}>
         {helpTabsContentList(refs)}
       </div>
     </div>

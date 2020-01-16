@@ -17,6 +17,9 @@ type SwitchProps = {
   sceneId: number
 }
 
+const KEY_CODE_ENTER = 13
+const KEY_CODE_SPACE = 32
+
 export const NAME = 'day-night-toggle'
 export const CLASSES = {
   BASE: 'scene-variant-switch-day-night',
@@ -48,7 +51,7 @@ function DayNight (props: SwitchProps) {
   }, [currentVariant])
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    if (e.keyCode === 32 || e.keyCode === 13) {
+    if (e.keyCode === KEY_CODE_ENTER || e.keyCode === KEY_CODE_SPACE) {
       e.stopPropagation()
       e.preventDefault()
       // ... act as though we've changed the checkbox
@@ -66,7 +69,7 @@ function DayNight (props: SwitchProps) {
           aria-label={txt}
           htmlFor={checkboxName}
           tabIndex='0'>
-          <input className={CLASSES.CHECKBOX} type='checkbox' checked={!isDay} name={checkboxName} id={checkboxName} onChange={toggle} />
+          <input tabIndex='-1' className={CLASSES.CHECKBOX} type='checkbox' checked={!isDay} name={checkboxName} id={checkboxName} onChange={toggle} />
           <div className={`${CLASSES.WRAPPER} ${isDay ? `${CLASSES.WRAPPER}--active` : ''}`}>
             <FontAwesomeIcon className={`${CLASSES.DAY} ${!isDay ? `${CLASSES.DAY}--active` : ''}`} icon={['fa', 'sun']} />
           </div>

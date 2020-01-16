@@ -51,6 +51,12 @@
       cursor: pointer;
       color: #2cabe2;
     }
+    &:focus {
+      outline-style: solid;
+      outline-color: #2cabe2;
+      outline-width: 2px;
+      z-index: 100;
+    }
     &--left {
       left: .875rem;
     }

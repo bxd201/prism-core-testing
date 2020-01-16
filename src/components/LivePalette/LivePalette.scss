@@ -134,6 +134,12 @@
     background: inherit;
     border: none;
     box-shadow: none;
+    &:focus {
+      outline-style: solid;
+      outline-color: #2cabe2;
+      outline-width: 2px;
+      z-index: 100;
+    }
   }
 
   &__color-details {

@@ -75,7 +75,9 @@ export class ColorVisualizerWrapper extends Component<Props> {
       showDefaultPage: isShow,
       showPaintScene: false,
       remountKey: (new Date()).getTime(),
-      lastActiveComponent: SCENE_MANAGER_COMPONENT
+      lastActiveComponent: SCENE_MANAGER_COMPONENT,
+      helpLinkRef: null,
+      isTabbedOutFromHelp: false
     }
   }
 
@@ -99,7 +101,7 @@ export class ColorVisualizerWrapper extends Component<Props> {
   }
 
   close = (e) => {
-    if (e.target.matches('div.nav__dropdown-overlay') || e.target.matches('a')) {
+    if (e.target.matches('div.nav__dropdown-overlay') || e.target.matches('a') || e.target.matches('span') || e.target.matches('button') || e.target.matches('svg') || e.target.matches('path')) {
       this.props.history.push(ACTIVE_ROUTE)
       this.setState({ close: true })
     }
@@ -159,9 +161,23 @@ export class ColorVisualizerWrapper extends Component<Props> {
     }
   }
 
+  setHelpLinkRef = (helpLinkRef) => {
+    if (this.state.helpLinkRef === null) {
+      this.setState({
+        helpLinkRef: helpLinkRef
+      })
+    }
+  }
+
+  setIsTabbedOutFromHelp = () => {
+    this.setState({
+      isTabbedOutFromHelp: true
+    })
+  }
+
   render () {
     const { toggleCompareColor } = this.props
-    const { close, showDefaultPage, imgUrl, showPaintScene, remountKey } = this.state
+    const { close, showDefaultPage, imgUrl, showPaintScene, remountKey, helpLinkRef, isTabbedOutFromHelp } = this.state
     const dropMenuProps = {
       close: this.close,
       redirectTo: this.redirectTo,
@@ -172,7 +188,9 @@ export class ColorVisualizerWrapper extends Component<Props> {
         <div className='cvw__root-container'>
           <RouteContext.Provider value={{
             navigate: (isShowDropDown, close) => this.open(isShowDropDown, close),
-            setActiveComponent: () => this.setActiveComponent()
+            setActiveComponent: () => this.setActiveComponent(),
+            getHelpLinkRef: (helpRef) => this.setHelpLinkRef(helpRef),
+            setIsTabbedOutFromHelp: () => this.setIsTabbedOutFromHelp()
           }}>
             <ColorVisualizerNav />
             {!toggleCompareColor &&
@@ -196,9 +214,9 @@ export class ColorVisualizerWrapper extends Component<Props> {
               {showDefaultPage && <SceneManager expertColorPicks />}
               <MatchPhoto isPaintScene showPaintScene={showPaintScene} imgUrl={imgUrl} key={remountKey} />
               {!close && <div role='presentation' className='nav__dropdown-overlay' onClick={this.close}>
-                <Route path='/active/colors' component={(props) => <DropDownMenu dataKey='color' {...dropMenuProps} />} />
-                <Route path='/active/inspiration' component={() => <DropDownMenu dataKey='inspiration' {...dropMenuProps} />} />
-                <Route path='/active/scenes' component={() => <DropDownMenu dataKey='scenes' {...dropMenuProps} />} />
+                <Route path='/active/colors' component={(props) => <DropDownMenu isTabbedOutFromHelp={isTabbedOutFromHelp} helpLinkRef={helpLinkRef} dataKey='color' {...dropMenuProps} />} />
+                <Route path='/active/inspiration' component={() => <DropDownMenu isTabbedOutFromHelp={isTabbedOutFromHelp} helpLinkRef={helpLinkRef} dataKey='inspiration' {...dropMenuProps} />} />
+                <Route path='/active/scenes' component={() => <DropDownMenu isTabbedOutFromHelp={isTabbedOutFromHelp} helpLinkRef={helpLinkRef} dataKey='scenes' {...dropMenuProps} />} />
               </div>}
               <LivePalette />
             </div>

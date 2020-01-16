@@ -1,5 +1,5 @@
 // @flow
-import React, { useState, type ComponentType } from 'react'
+import React, { useState, type ComponentType, useEffect } from 'react'
 import './CollectionsHeaderWrapper.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
@@ -20,11 +20,18 @@ const wrapperContent = `${baseClass}__content`
 export default (WrappedComponent: ComponentType<any>) => (props: any) => {
   const [showBack, setShowBack] = useState(false)
   const [header, setHeader] = useState('')
+  const backButtonRef = React.useRef()
+
+  useEffect(() => {
+    if (backButtonRef.current) {
+      backButtonRef.current.focus()
+    }
+  }, [showBack])
 
   return (<div className={`${wrapper}`}>
     <div className={`${wrapperHeader}`}>
       <div className={`${heading}`}>{header}</div>
-      {showBack && <button className={`${button} ${buttonLeft}`} onClick={() => setShowBack(false)}>
+      {showBack && <button ref={backButtonRef} className={`${button} ${buttonLeft}`} onClick={() => setShowBack(false)} onMouseDown={(e) => e.preventDefault()}>
         <div>
           <FontAwesomeIcon className={``} icon={['fa', 'angle-left']} />
           &nbsp;<span className={`${buttonLeftText}`}>BACK</span>
@@ -32,7 +39,7 @@ export default (WrappedComponent: ComponentType<any>) => (props: any) => {
       </button>}
       <RouteConsumer>
         {(context) => (
-          <Link to={`/active`}>
+          <Link tabIndex='-1' to={`/active`}>
             <button className={`${button} ${buttonRight}`} onClick={() => { context && context.navigate(true, true) }}>
               <div className={`${buttonClose}`}>
                 <span>CLOSE</span>&nbsp;<FontAwesomeIcon className={``} icon={['fa', 'chevron-up']} />

@@ -1,6 +1,6 @@
 // @flow
 //
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import type { ColorCollectionsTabs } from '../../shared/types/Colors'
 
 type Props = {
@@ -8,6 +8,9 @@ type Props = {
   showTab: Function,
   tabIdShow: string
 }
+
+const KEY_CODE_ENTER = 13
+const KEY_CODE_SPACE = 32
 
 const baseClass = 'color-collections'
 const tabListSelect = `${baseClass}__tab-list-select`
@@ -26,19 +29,31 @@ function ColorCollectionsTab (props: Props) {
   const tabActive = (tabFind) ? tabFind.tabName : undefined
   const tabShowName = (tabActive !== undefined) ? tabActive : 'Choose collection'
 
+  const tabRefs = collectionTabs.reduce((acc, value) => {
+    acc[value.id] = React.createRef()
+    return acc
+  }, {})
+
+  useEffect(() => {
+    if (tabRefs[tabIdShow] && tabRefs[tabIdShow].current) {
+      tabRefs[tabIdShow].current.focus()
+    }
+  }, [tabIdShow])
+
   return (
     <div className={`${tabListSelect}`}>
       <span className={`${tabListHeading}`}>Choose a Collection</span>
 
       <span
         className={`${tabListDropdownMobile}`}
-        tabIndex='-1'
+        tabIndex='0'
         role='button'
-        onKeyDown={() => {}}
+        onKeyDown={(e) => (e.keyCode === KEY_CODE_ENTER || e.keyCode === KEY_CODE_SPACE) && showTabListMobile(!tabListMobileShow)}
         onClick={() => showTabListMobile(!tabListMobileShow)}>{tabShowName}
       </span>
 
       <ul
+        role='tablist'
         className={`${tabList} ${(tabListMobileShow)
           ? `${tabListActive}`
           : `${tabListInactive}`}`}
@@ -47,9 +62,20 @@ function ColorCollectionsTab (props: Props) {
           collectionTabs.map((tab, id) => {
             return (
               <li
+                onBlur={() => tabRefs[tab.id].current.blur()}
+                ref={tabRefs[tab.id]}
                 data-testid={`${tab.id}`}
-                role='presentation'
-                onKeyDown={() => {}}
+                tabIndex='0'
+                role='tab'
+                aria-selected={(tab.id === tabIdShow)}
+                onKeyDown={(e) => {
+                  if (e.keyCode === KEY_CODE_ENTER || e.keyCode === KEY_CODE_SPACE) {
+                    if (tab.id !== tabIdShow) {
+                      showTab(tab.id, true)
+                    }
+                    showTabListMobile(!tabListMobileShow)
+                  }
+                }}
                 className={`${tabListItem} ${(tab.id === tabIdShow)
                   ? `${tabListItemActive}`
                   : ''}`

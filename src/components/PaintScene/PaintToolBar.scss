@@ -38,6 +38,12 @@
       cursor: pointer;
       fill: #2cabe2;
     }
+    &:focus {
+      outline-style: solid;
+      outline-color: #2cabe2;
+      outline-width: 2px;
+      z-index: 100;
+    }
     &:before {
       background: #2cabe2;
       content: '';
@@ -138,6 +144,11 @@
       color: #2cabe2;
       cursor: pointer;
       fill: #2cabe2;
+    }
+    &:focus {
+      outline-style: solid;
+      outline-color: #2cabe2;
+      outline-width: 2px;
     }
     &:before {
       border: 6px solid transparent;
@@ -240,6 +251,11 @@
     &:hover {
       border-color: #2cabe2;
       color: #2cabe2;
+    }
+    &:focus {
+      outline-style: solid;
+      outline-color: #2cabe2;
+      outline-width: 2px;
     }
   }
   &__tool-icon {

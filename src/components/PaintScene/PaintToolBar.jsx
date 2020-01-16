@@ -318,6 +318,7 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
     const groupTools = selectGroupButtons.map((tool: Object, index: number) => {
       return <button
         key={tool.id}
+        tabIndex={(activeTool === toolNames.SELECTAREA) ? '0' : '-1'}
         name={tool.name}
         className={`${toolbarButtonClass}`}
         onClick={(e) => this.groupClickHandler(e, tool.name)}

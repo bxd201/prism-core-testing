@@ -14,6 +14,9 @@
     &__border {
       padding: 0.15rem 0.15rem 0.15rem 0.3rem;
       float: right;
+      &:focus {
+        outline: none;
+      }
       @include respond-above(sm) {
         float: none;
       }
@@ -30,6 +33,12 @@
         right: -8.1em;
       }
     }
+    &:focus {
+      outline-style: solid;
+      outline-color: #2cabe2;
+      outline-width: 2px;
+      z-index: 100;
+    }
   }
 }
 
@@ -44,6 +53,12 @@
     outline: none;
     &:hover {
       color: getVar("colors.summerSkyBlue");
+    }
+    &:focus {
+      outline-style: solid;
+      outline-color: #2cabe2;
+      outline-width: 2px;
+      z-index: 100;
     }
   }
   &__mobile-toggle-arrow {
@@ -103,6 +118,12 @@
     // width: 100%;
     &__button {
       outline: none;
+      &:focus {
+        outline-style: solid;
+        outline-color: #2cabe2;
+        outline-width: 2px;
+        z-index: 100;
+      }
     }
     &__color-display-area {
       align-items: center;
@@ -201,6 +222,12 @@
       margin: 0.7em 0 0 0;
       outline: none;
       text-align: left;
+      &:focus {
+        outline-style: solid;
+        outline-color: #2cabe2;
+        outline-width: 2px;
+        z-index: 100;
+      }
     }
   }
   &__collapse__button {
@@ -210,6 +237,12 @@
     cursor: pointer;
     &--open {
       border: none;
+    }
+    &:focus {
+      outline-style: solid;
+      outline-color: #2cabe2;
+      outline-width: 2px;
+      z-index: 100;
     }
   }
   &__toggle-carets {
