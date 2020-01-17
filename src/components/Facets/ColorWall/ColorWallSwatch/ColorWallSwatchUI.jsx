@@ -1,5 +1,5 @@
 // @flow
-import React, { useMemo, forwardRef, useEffect } from 'react'
+import React, { useMemo, forwardRef, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { CLASS_NAMES } from './shared'
 import { type Color } from '../../../../shared/types/Colors'
@@ -25,14 +25,16 @@ const _classes = arrayToSpacedString([
 const ColorWallSwatchUI = forwardRef<Props, Object>((props: Props, ref: Object) => {
   const { focus, color, thisLink, onClick, tabIndex = 0 } = props
 
-  useEffect(() => {
-    ref.current = {
-      link: thisLink,
-      onClick: onClick
-    }
-  }, [thisLink, onClick])
+  const refData = useMemo<Object | void>(() => ({
+    internalLink: thisLink,
+    onClick: onClick
+  }), [onClick, thisLink])
 
-  const handleClick = useMemo(() => (e: any) => {
+  useEffect(() => {
+    ref.current = refData
+  }, [refData])
+
+  const handleClick = useCallback((e: any) => {
     if (typeof onClick === 'function') {
       onClick(e)
     }

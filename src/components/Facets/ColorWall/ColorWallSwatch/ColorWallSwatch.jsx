@@ -16,7 +16,6 @@ import { useIntl } from 'react-intl'
 
 type Props = {
   active?: boolean,
-  a11yState?: any,
   color: Color,
   compensateX?: number,
   compensateY?: number,
@@ -30,7 +29,7 @@ type Props = {
 }
 
 const ColorWallSwatch = React.forwardRef<Props, any>((props: Props, ref: any) => {
-  const { a11yState, onClick, onAdd, showContents, color, thisLink, focus, level, active, compensateX, compensateY, tabIndex = 0 } = props
+  const { onClick, onAdd, showContents, color, thisLink, focus, level, active, compensateX, compensateY, tabIndex = 0 } = props
   const { displayAddButton, displayInfoButton, displayDetailsLink, colorDetailPageRoot }: ColorWallContextProps = React.useContext(ColorWallContext)
   const { messages = {} } = useIntl()
   const handleOnClick = useCallback((e) => {
@@ -46,6 +45,7 @@ const ColorWallSwatch = React.forwardRef<Props, any>((props: Props, ref: any) =>
   }, [color, onAdd])
 
   const fullName = useMemo(() => fullColorName(color.brandKey, color.colorNumber, color.name), [color])
+  const linkType = useMemo(() => colorDetailPageRoot ? 'externalLink' : 'internalLink', [colorDetailPageRoot])
 
   const classes = useMemo(() => {
     let classes = [ CLASS_NAMES.BASE, CLASS_NAMES.BASE_DYNAMIC ]
@@ -69,16 +69,17 @@ const ColorWallSwatch = React.forwardRef<Props, any>((props: Props, ref: any) =>
       const inner = (
         <span className='visually-hidden'>{fullName}</span>
       )
+      const to = thisLink
 
       if (thisLink) {
         return {
           content: (
-            <Link to={thisLink} className={CLASS_NAMES.ENGAGE_LINK} onClick={handleOnClick} tabIndex={-1}>
+            <Link to={to} className={CLASS_NAMES.ENGAGE_LINK} onClick={handleOnClick} tabIndex={-1}>
               {inner}
             </Link>
           ),
           refData: {
-            internalLink: thisLink,
+            internalLink: to,
             onClick: onClick
           }
         }
@@ -119,19 +120,11 @@ const ColorWallSwatch = React.forwardRef<Props, any>((props: Props, ref: any) =>
         }
       }
     } else if (displayDetailsLink) {
-      const to = (() => {
-        if (colorDetailPageRoot) {
-          return `${colorDetailPageRoot}/${color.brandKey}${color.colorNumber}-${kebabCase(color.name)}`
-        } else {
-          return {
-            pathname: generateColorDetailsPageUrl(color),
-            state: a11yState
-          }
-        }
-      })()
+      const isExternalLink = !!colorDetailPageRoot
+      // $FlowIgnore -- flow doesn't realize colorDetailPageRoot defines isExternalLink
+      const to = isExternalLink ? `${colorDetailPageRoot}/${color.brandKey}${color.colorNumber}-${kebabCase(color.name)}` : generateColorDetailsPageUrl(color)
       const title = (at(messages, 'VIEW_DETAILS_FOR')[0] || '').replace('{name}', fullName)
       // if we have a color detail page root, it will always be an external link
-      const isExternalLink = !!colorDetailPageRoot
 
       return {
         content: (
@@ -146,7 +139,7 @@ const ColorWallSwatch = React.forwardRef<Props, any>((props: Props, ref: any) =>
           </OmniButton>
         ),
         refData: {
-          [colorDetailPageRoot ? 'externalLink' : 'internalLink']: to
+          [linkType]: to
         }
       }
     }
