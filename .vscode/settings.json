@@ -50,5 +50,12 @@
       "background": "#FFAA00",
       "foreground": "black"
     },
+  },
+  "files.watcherExclude": {
+    "**/__mocks__/data/**": true,
+    "**/.cache/**": true,
+    "**/coverage/**": true,
+    "**/dist/**": true,
+    "**/flow-typed/**": true
   }
 }

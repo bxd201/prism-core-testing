@@ -66,7 +66,7 @@ module.exports = {
       config: path.resolve(__dirname, 'src/config/'),
       src: path.resolve(__dirname, 'src/'),
       __mocks__: path.resolve(__dirname, '__mocks__/'),
-      variables: path.resolve(__dirname, 'src/shared/variables.js')
+      variables: path.resolve(__dirname, 'src/shared/variablesExport.js')
     }
   },
   module: {
