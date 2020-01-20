@@ -1,14 +1,8 @@
 // @flow
-import '@babel/polyfill'
-import '@formatjs/intl-relativetimeformat/polyfill'
-import '@formatjs/intl-relativetimeformat/dist/locale-data/en'
-import '@formatjs/intl-relativetimeformat/dist/locale-data/fr'
-import '@formatjs/intl-pluralrules/polyfill'
-import '@formatjs/intl-pluralrules/dist/locale-data/en'
-import '@formatjs/intl-pluralrules/dist/locale-data/fr'
+import './facetPolyfills'
 
 import React, { useEffect } from 'react'
-import { mainEntryPointName } from '../../webpack/constants'
+
 import { render } from 'react-dom'
 import toArray from 'lodash/toArray'
 import mapValues from 'lodash/mapValues'
@@ -171,7 +165,7 @@ function injectRoot () {
 
 function embedAtRoots (override: boolean = false) {
   if (IS_MAIN_BUNDLE) {
-    embedBundleStyles(mainEntryPointName)
+    embedBundleStyles(WEBPACK_CONSTANTS.mainEntryPointName)
     if (!override) {
       return
     }
@@ -182,7 +176,7 @@ function embedAtRoots (override: boolean = false) {
 
 function embedAtElement (el: HTMLElement, props: Object = {}) {
   if (IS_MAIN_BUNDLE) {
-    embedBundleStyles(mainEntryPointName)
+    embedBundleStyles(WEBPACK_CONSTANTS.mainEntryPointName)
   }
 
   docReady(() => {
@@ -194,7 +188,7 @@ function embedAtElement (el: HTMLElement, props: Object = {}) {
 // can be safely called multiple times due to downstream embedding
 const embedBundleStyles = (bundleName: string) => {
   if (IS_MAIN_BUNDLE) {
-    memoEmbedBundleStyles(mainEntryPointName)
+    memoEmbedBundleStyles(WEBPACK_CONSTANTS.mainEntryPointName)
   } else {
     memoEmbedBundleStyles(bundleName)
   }

@@ -5,7 +5,7 @@ import uniqueId from 'lodash/uniqueId'
 
 import SVG from 'react-inlinesvg'
 import { DRAG_TYPES } from 'constants/globals'
-import { DropTarget } from 'react-dnd'
+import { DropTarget } from 'react-dnd-cjs'
 
 import { ensureFullyQualifiedAssetUrl } from '../../shared/helpers/DataUtils'
 

@@ -11,6 +11,7 @@ const WebpackBar = require('webpackbar')
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 const flags = require('./webpack/constants')
 const HardSourceWebpackPlugin = require('hard-source-webpack-plugin')
+const ALL_VARS = require('./src/shared/variableDefs')
 
 const DEFAULT_LOCAL_URL = 'https://localhost:8080' // default local URL to localhost
 const DEFAULT_ENTRY = `${flags.embedEntryPointName},${flags.mainEntryPointName}` // will build the embed and bundle entry points by default
@@ -86,7 +87,7 @@ module.exports = {
       config: path.resolve(__dirname, 'src/config/'),
       src: path.resolve(__dirname, 'src/'),
       __mocks__: path.resolve(__dirname, '__mocks__/'),
-      variables: path.resolve(__dirname, 'src/shared/variables.js')
+      variables: path.resolve(__dirname, 'src/shared/variablesExport.js')
     }
   },
   module: {
@@ -108,13 +109,13 @@ module.exports = {
         exclude: /node_modules\/(?!react-intl|intl-messageformat|intl-messageformat-parser)/,
         include: flags.srcPath,
         use: [
+          'worker-loader',
           {
             loader: 'babel-loader',
             options: {
               configFile: path.resolve(__dirname, '.babelrc')
             }
-          },
-          'worker-loader'
+          }
         ]
       },
       {
@@ -184,12 +185,15 @@ module.exports = {
       }
     ]),
     new webpack.DefinePlugin({
-      'ENV': JSON.stringify(ENV),
       'API_PATH': JSON.stringify(API_PATH),
       'APP_NAME': JSON.stringify(APP_NAME),
       'APP_VERSION': JSON.stringify(APP_VERSION),
       'BASE_PATH': JSON.stringify(BASE_PATH),
-      'ML_API_URL': JSON.stringify(ML_API_URL)
+      'ENV': JSON.stringify(ENV),
+      'ML_API_URL': JSON.stringify(ML_API_URL),
+      'WEBPACK_CONSTANTS': JSON.stringify(flags),
+      'VAR_NAMES': JSON.stringify(ALL_VARS.varNames),
+      'VAR_VALUES': JSON.stringify(ALL_VARS.varValues)
     }),
     !flags.production && new HardSourceWebpackPlugin({
       configHash: flags.mode,

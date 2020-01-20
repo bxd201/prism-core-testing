@@ -4,7 +4,7 @@
     "paths": {
       "constants": ["src/constants"],
       "config": ["src/config"],
-      "variables": ["src/shared/variables.js"],
+      "variables": ["src/shared/variableDefs.js"],
     }
   },
   "exclude": [

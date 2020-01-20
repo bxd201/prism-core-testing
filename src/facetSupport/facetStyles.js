@@ -3,7 +3,6 @@ import once from 'lodash/once'
 import camelCase from 'lodash/camelCase'
 import memoizee from 'memoizee'
 import { ensureFullyQualifiedAssetUrl } from '../shared/helpers/DataUtils'
-import { cleanslateEntryPointName } from '../../webpack/constants'
 import { CLEANSLATE_CLASS, PRISM_CLASS } from './facetConstants'
 
 export const embedGlobalStylesOnce = once(() => {
@@ -12,7 +11,7 @@ export const embedGlobalStylesOnce = once(() => {
   // $FlowIgnore -- flow doesn't think body is defined
   document.body.appendChild(immediateStyleTag)
   immediateStyleTag.innerHTML = `.${CLEANSLATE_CLASS}.${PRISM_CLASS} { display: none }`
-  const cleanslatePath = ensureFullyQualifiedAssetUrl(`css/${cleanslateEntryPointName}.css`)
+  const cleanslatePath = ensureFullyQualifiedAssetUrl(`css/${WEBPACK_CONSTANTS.cleanslateEntryPointName}.css`)
   const cleanslateTag = document.createElement('link')
   cleanslateTag.rel = 'stylesheet'
   cleanslateTag.type = 'text/css'
