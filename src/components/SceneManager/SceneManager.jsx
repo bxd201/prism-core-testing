@@ -8,8 +8,8 @@ import memoizee from 'memoizee'
 import ReactGA from 'react-ga'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
-import { DndProvider } from 'react-dnd'
-import HTML5Backend from 'react-dnd-html5-backend'
+import { DndProvider } from 'react-dnd-cjs'
+import HTML5Backend from 'react-dnd-html5-backend-cjs'
 
 import { SCENE_TYPES, SCENE_VARIANTS } from 'constants/globals'
 import {
