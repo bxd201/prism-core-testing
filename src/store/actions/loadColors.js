@@ -61,7 +61,8 @@ export const mapColorDataToPayload = (colorData: Object) => {
     loading: false,
     activeRequest: false,
     unorderedColors: colorData.unorderedColors,
-    colors: colorData.colors,
+    colors: colorData.colors.values,
+    colorLabels: colorData.colors.names,
     brights: colorData.brights,
     sections: colorData.sections
   }
