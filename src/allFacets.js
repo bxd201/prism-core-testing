@@ -1,5 +1,4 @@
 import assert from 'assert'
-import { facetEntryPoints } from '../webpack/constants'
 
 /**
  * IMPORTANT!!!
@@ -25,5 +24,5 @@ export const allFacets = {
 }
 
 const allFacetsKeys = Object.keys(allFacets)
-const entryPointKeys = Object.keys(facetEntryPoints)
+const entryPointKeys = Object.keys(WEBPACK_CONSTANTS.facetEntryPoints)
 assert(allFacetsKeys.length === entryPointKeys.length, 'Facet entry point length does not match exported Facet length')

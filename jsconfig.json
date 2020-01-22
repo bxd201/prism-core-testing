@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "constants": ["src/constants"],
+      "config": ["src/config"],
+      "variables": ["src/shared/variableDefs.js"],
+    }
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+    ".config",
+    "__mocks__/data",
+    "flow-typed"
+  ]
+}
