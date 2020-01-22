@@ -5,6 +5,10 @@ import axios from 'axios'
 import { separateColors } from '../../components/PaintScene/PaintSceneUtils'
 import { RECEIVE_COLORS, mapColorDataToPayload, getColorsRequests, mapResponsesToColorData } from './loadColors'
 import { getDataFromXML, imageDataToSurfacesXML, stringifyXML } from '../../shared/utils/legacyProfileFormatUtil'
+import { anonLogin } from './user'
+import * as firebase from 'firebase/app'
+import 'firebase/auth'
+import 'firebase/storage'
 
 export const SAVING_MASKS = 'SAVING_MASKS'
 export const DELETE_SAVED_SCENE = 'DELETE_SAVED_SCENE'
@@ -13,6 +17,7 @@ export const LOADING_SAVED_MASKS = 'LOADING_SAVED_MASKS'
 export const ERROR_LOADING_SAVED_SCENES = 'ERROR_LOADING_SAVED_SCENES'
 export const SELECTED_SAVED_SCENE = 'SELECTED_SAVED_SCENE'
 export const SAVED_REGIONS_UNPICKLED = 'SAVED_REGIONS_UNPICKLED'
+export const CACHE_SCENE_XML_DATA = 'CACHE_SCENE_XML_DATA'
 
 export const startSavingMasks = () => {
   return {
@@ -32,36 +37,28 @@ export const saveMasks = (colorList: Array<number[]>, imageData: Object, backgro
       payload: true
     })
 
-    // @todo - Post this data -RS
-    // eslint-disable-next-line no-unused-vars
-    const imageUploadPayload = createImageUploadPayload(backgroundImageUrl)
-
     // The separated colors as an array of imageData items
     const imageDataList = imageData ? separateColors(colorList, imageData, 1.5) : null
     const sceneXML = createSceneXML(imageDataList, metaData)
-    // save background image and use image name
-    axios.get('/public/saved-background-image.txt').then(response => {
-      // @todo implement...in a real way -RS
-      // Add actual name of image to xml, this is built using the renderingBaseUrl returned from the image upload
-      const realImageBaseName = response.data
-      sceneXML.setAttribute('image', realImageBaseName)
-      // @todo - IMPLEMENT, consume the XML!!! -RS
-      // eslint-disable-next-line no-unused-vars
-      const regionsXMLString = stringifyXML(sceneXML)
-      // @todo this is here to give feedback until feature is completely implemented. -RS
-      console.log(sceneXML)
-      dispatch(doneSavingMask())
-    }).catch(err => {
-      console.log(`Error saving masks: ${err}`)
-      dispatch(doneSavingMask())
-    })
+    const imageUploadPayload = createImageUploadPayload(backgroundImageUrl)
+
+    console.log('Firebase auth enabled::', FIREBASE_AUTH_ENABLED)
+    if (FIREBASE_AUTH_ENABLED) {
+      // Post if there is a user
+      // @todo save to mysherwin -RS
+      persistSceneToFirebase(dispatch, imageUploadPayload, sceneXML)
+      return
+    }
+
+    persistSceneToMySherwin(dispatch, backgroundImageUrl, sceneXML)
   }
 }
 
-export const doneSavingMask = () => {
+export const doneSavingMask = (data: Object) => {
   return {
     type: SAVING_MASKS,
-    payload: false
+    payload: false,
+    data
   }
 }
 
@@ -115,7 +112,6 @@ export const loadSavedScenes = (brandId: string) => {
         dispatch({
           type: RECEIVE_COLORS,
           payload: mapColorDataToPayload(colorData)
-
         })
 
         return axios.all(mapSceneResponseToCustomSceneRequests(responses[0].data))
@@ -205,4 +201,95 @@ const getColorById = (colorId: number, colors: Object) => {
 
 const createImageUploadPayload = (imageDataUrl: string) => {
   return JSON.stringify({ 'image': imageDataUrl.split(',')[1] })
+}
+
+// This method should only be used inside of the firebase.auth onchange method
+export const tryToPersistCachedSceneXml = () => {
+  return (dispatch, getState) => {
+    const xml = getState().cachedSceneXml
+
+    if (!xml) {
+      // @todo this might be overkill -RS
+      dispatch({
+        type: SAVING_MASKS,
+        payload: false
+      })
+
+      return
+    }
+    // @todo implement for real -RS
+    axios.get('/public/index.html').then(response => {
+      console.log('Saved XML:', xml)
+
+      dispatch({
+        type: SAVING_MASKS,
+        payload: false
+      })
+    })
+  }
+}
+
+const persistSceneToFirebase = (dispatch, backgroundImageUrl: string, sceneDataXml: string) => {
+  const user = firebase.auth().currentUser
+  if (!user) {
+    anonLogin()
+    // cache xml payload and have AuthObserver push it when user logs in
+    console.log('Caching XML:', sceneDataXml)
+    // @todo refactor reducer into object -RS
+    dispatch({
+      type: CACHE_SCENE_XML_DATA,
+      payload: {
+        backgroundImageUrl,
+        sceneDataXml
+      }
+    })
+    return
+  }
+
+  const { uid } = user
+  const storageRef = firebase.storage().ref()
+  const SCENE_XML = 'scene.xml'
+  const BACKGROUND_JSON = 'background.json'
+
+  const backgroundImageRef = storageRef.child(`/scenes/${uid}/${BACKGROUND_JSON}`)
+  const sceneRef = storageRef.child(`/scenes/${uid}/${SCENE_XML}`)
+  const backgroundImagePromise = backgroundImageRef.putString(backgroundImageUrl)
+  sceneDataXml.setAttribute('image', 'background.jpg')
+  const sceneXmlPromise = sceneRef.putString(stringifyXML(sceneDataXml))
+
+  Promise.all([backgroundImagePromise, sceneXmlPromise]).then(metadata => {
+    const sceneMetadata = {}
+    metadata.forEach(metadatum => {
+      if (metadatum.metadata.fullPath.indexOf(BACKGROUND_JSON) > -1) {
+        sceneMetadata.background = metadatum.metadata.fullPath
+      }
+
+      if (metadatum.metadata.fullPath.indexOf(SCENE_XML) > -1) {
+        sceneMetadata.sceneXml = metadatum.metadata.fullPath
+      }
+    })
+
+    dispatch(doneSavingMask(sceneMetadata))
+  }).catch(err => {
+    // @todo Handle error
+    console.log('Error saving scene to Firebase:', err)
+    dispatch(doneSavingMask())
+  })
+}
+
+const persistSceneToMySherwin = (dispatch, backgroundImageUrl: string, sceneDataXml: string) => {
+  // @todo - Implement this
+  // save background image and use image name
+  axios.get('/public/saved-background-image.txt').then(response => {
+    // @todo implement...in a real way -RS
+    // Add actual name of image to xml, this is built using the renderingBaseUrl returned from the image upload
+    const realImageBaseName = response.data
+    sceneDataXml.setAttribute('image', realImageBaseName)
+    // @todo - IMPLEMENT, consume the XML!!! -RS
+    // eslint-disable-next-line no-unused-vars
+    const regionsXMLString = stringifyXML(sceneDataXml)
+  }).catch(err => {
+    console.log(`Error saving masks: ${err}`)
+    dispatch(doneSavingMask())
+  })
 }

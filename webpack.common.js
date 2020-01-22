@@ -26,6 +26,8 @@ const ML_API_URL = (process.env.ML_API_URL) ? process.env.ML_API_URL : '$ML_API_
 // const BASE_PATH = (ENV === 'development') ? (process.env.LOCAL_URL ? process.env.LOCAL_URL : DEFAULT_LOCAL_URL) : (process.env.WEB_URL) ? process.env.WEB_URL : '$WEB_URL'
 const BASE_PATH = (ENV === 'development') ? DEFAULT_LOCAL_URL : (process.env.WEB_URL) ? process.env.WEB_URL : '$WEB_URL'
 const SPECIFIED_ENTRIES = process.env.ENTRY ? process.env.ENTRY : (ENV === 'development') ? DEFAULT_ENTRY : undefined
+// This flag if positive will use Firebase anonymous login instead of MySherwin. If value is sticky, clear all cached build files.
+const FIREBASE_AUTH_ENABLED = !!parseInt(process.env.FIREBASE_AUTH_ENABLED)
 
 let allEntryPoints = {
   ...flags.mainEntryPoints,
@@ -189,7 +191,8 @@ module.exports = {
       'APP_NAME': JSON.stringify(APP_NAME),
       'APP_VERSION': JSON.stringify(APP_VERSION),
       'BASE_PATH': JSON.stringify(BASE_PATH),
-      'ML_API_URL': JSON.stringify(ML_API_URL)
+      'ML_API_URL': JSON.stringify(ML_API_URL),
+      'FIREBASE_AUTH_ENABLED': FIREBASE_AUTH_ENABLED
     }),
     !flags.production && new HardSourceWebpackPlugin({
       configHash: flags.mode,

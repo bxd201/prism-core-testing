@@ -16,9 +16,12 @@ import collectionSummaries from './collectionSummaries'
 import expertColorPicks from './expertColorPicks'
 import inspirationalPhotos from './inspirationalPhotos'
 import { savingMasks } from './masks'
-import { legacySavedScenesMetadata, scenesAndRegions, selectedSavedSceneId } from './savedScenes'
+import { legacySavedScenesMetadata, scenesAndRegions, selectedSavedSceneId, cloudSceneMetadata } from './savedScenes'
 import { user } from './user'
 import { paintSceneWorkspace } from './paintSceneWorkspace'
+// eslint-disable-next-line no-unused-vars
+import { reducerWithLocalStorage } from '../withStorage'
+import { CLOUD_SCENE_METADATA } from '../storageProperties'
 
 export default combineReducers({
   collectionSummaries,
@@ -40,5 +43,6 @@ export default combineReducers({
   scenesAndRegions,
   user,
   selectedSavedSceneId,
-  paintSceneWorkspace
+  paintSceneWorkspace,
+  cloudSceneMetadata: reducerWithLocalStorage(cloudSceneMetadata, CLOUD_SCENE_METADATA)
 })

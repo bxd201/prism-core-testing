@@ -1,5 +1,6 @@
 import { createStore, applyMiddleware, compose } from 'redux'
 import thunkMiddleware from 'redux-thunk'
+import storeHydrator from './storeHydrator'
 
 import rootReducer from './reducers/rootReducer'
 
@@ -12,6 +13,7 @@ const enhancers = composeEnhancers(
 
 const store = createStore(
   rootReducer,
+  storeHydrator(),
   enhancers
 )
 

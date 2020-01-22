@@ -1,6 +1,8 @@
 // @flow
 import 'src/allFacets' // import all facets so they're included in the bundle
 import { injectRoot, embedAtRoots, embedAtElement, flagAsMainBundle } from 'src/facetSupport/facetBinder'
+import * as firebase from 'firebase'
+import { FIREBASE_CONFIG } from './constants/configurations'
 
 // expose embed method on global PRISM object in order to manually call this later
 window.PRISM = {
@@ -8,6 +10,7 @@ window.PRISM = {
   embed: embedAtElement
 }
 
+firebase.initializeApp(FIREBASE_CONFIG)
 // identify this as the main bundle
 flagAsMainBundle()
 // initial root injection to appropriately decorate auto-embed elements with prism attributes and classes

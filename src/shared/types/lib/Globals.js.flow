@@ -13,3 +13,4 @@ declare var self: any
 declare var Worker: Function
 declare var FileReader: Function
 declare var APP_VERSION: string
+declare var FIREBASE_AUTH_ENABLED: boolean
