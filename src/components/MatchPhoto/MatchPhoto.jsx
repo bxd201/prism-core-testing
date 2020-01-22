@@ -12,7 +12,7 @@ import { getScaledPortraitHeight } from '../../shared/helpers/ImageUtils'
 import PrismImage from '../PrismImage/PrismImage'
 import DynamicColorFromImage from '../InspirationPhotos/DynamicColorFromImage'
 import { useSelector } from 'react-redux'
-
+import { RouteConsumer } from '../../contexts/RouteContext/RouteContext'
 import './MatchPhoto.scss'
 
 const baseClass = 'match-photo'
@@ -43,7 +43,8 @@ let colorPinsGenerationByHueWorker: Object
 type Props = {
   history: RouterHistory,
   isPaintScene: boolean,
-  imgUrl: string
+  imgUrl: string,
+  showPaintScene: boolean
 }
 
 type OrientationDimension = {
@@ -55,7 +56,7 @@ type OrientationDimension = {
   originalImageHeight: number
 }
 
-export function MatchPhoto ({ history, isPaintScene, imgUrl }: Props) {
+export function MatchPhoto ({ history, isPaintScene, imgUrl, showPaintScene }: Props) {
   const canvasRef: RefObject = useRef()
   const wrapperRef: RefObject = useRef()
   const [imageUrl, setImageUrl] = useState(imgUrl)
@@ -354,62 +355,67 @@ export function MatchPhoto ({ history, isPaintScene, imgUrl }: Props) {
     initCanvas(image, dimensions, dimensions.originalIsPortrait)
   }
 
-  const closeButton = <button onClick={() => (imageUrl && pins.length > 0) && setConfirmationModalActive(!isConfirmationModalActive)} className={`${buttonClass} ${buttonRightClass}`}>
+  const closeButton = <RouteConsumer>{(context) => (<button onClick={() => { context.setActiveComponent(); (imageUrl && pins.length > 0) && setConfirmationModalActive(!isConfirmationModalActive) }} className={`${buttonClass} ${buttonRightClass}`}>
     <div className={`${closeClass}`}><span>CLOSE</span>&nbsp;<FontAwesomeIcon className={``} icon={['fa', 'chevron-up']} /></div>
     <div className={`${cancelClass}`}><FontAwesomeIcon className={``} icon={['fa', 'times']} /></div>
-  </button>
+  </button>)}</RouteConsumer>
 
   return (
     <React.Fragment>
-      <PrismImage ref={imageRef} source={blobUrl} loadedCallback={handleImageLoaded} shouldResample={hasLoaded} scalingWidth={scalingWidth} />
-      <div className={`${getWrapperClassName(imageUrl, pins, !!paintSceneWorkspace)}`} ref={wrapperRef}>
-        <div className={`${containerClass}`}>
+      <div style={{ display: `${showPaintScene ? 'block' : 'none'}` }}>
+        <PrismImage ref={imageRef} source={blobUrl} loadedCallback={handleImageLoaded} shouldResample={hasLoaded} scalingWidth={scalingWidth} />
+        <div className={`${getWrapperClassName(imageUrl, pins, !!paintSceneWorkspace)}`} ref={wrapperRef}>
+          <div className={`${containerClass}`}>
 
-          <div className={`${headerClass}`}>
-            {(imageUrl && pins.length === 0 && !paintSceneWorkspace) ? <button className={`${buttonClass} ${buttonLeftClass}`} onClick={() => history.goBack()}>
-              <div><FontAwesomeIcon className={``} icon={['fa', 'angle-left']} />&nbsp;<span className={`${buttonLeftTextClass}`}>BACK</span></div>
-            </button> : ''}
+            <div className={`${headerClass}`}>
+              {(imageUrl && pins.length === 0 && !paintSceneWorkspace) ? <button className={`${buttonClass} ${buttonLeftClass}`} onClick={() => history.goBack()}>
+                <div><FontAwesomeIcon className={``} icon={['fa', 'angle-left']} />&nbsp;<span className={`${buttonLeftTextClass}`}>BACK</span></div>
+              </button> : ''}
+              {
+                (imageUrl && pins.length === 0 && !paintSceneWorkspace)
+                  ? <Link to={`/active`}>
+                    {closeButton}
+                  </Link>
+
+                  : (imageUrl && pins.length > 0 && !isPaintScene && !paintSceneWorkspace) ? closeButton : ''
+              }
+            </div>
             {
-              (imageUrl && pins.length === 0 && !paintSceneWorkspace) ? <Link to={`/active`}>
-                {closeButton}
-              </Link> : (imageUrl && pins.length > 0 && !isPaintScene && !paintSceneWorkspace) ? closeButton : ''
+              (imageUrl && pins.length > 0 && !isPaintScene && !paintSceneWorkspace)
+                ? (<React.Fragment>
+                  <DynamicColorFromImage
+                    originalImageWidth={imageDims.originalImageWidth}
+                    originalImageHeight={imageDims.originalImageHeight}
+                    originalIsPortrait={imageDims.originalIsPortrait}
+                    imageUrl={imageUrl}
+                    width={wrapperWidth}
+                    isPortrait={isPortrait}
+                    pins={pins}
+                    createColorPins={createColorPins}
+                    isActive />
+                  <ConfirmationModal isActive={isConfirmationModalActive} onClickNo={() => setConfirmationModalActive(!isConfirmationModalActive)} />
+                </React.Fragment>)
+                : ''
+            }
+            {
+              (imageUrl && pins.length === 0 && !paintSceneWorkspace)
+                ? (<React.Fragment>
+                  <canvas className={canvasClass} name='canvas' ref={canvasRef} />
+                  <ImageRotateTerms rotateImage={rotateImage} createColorPins={createColorPins} imageData={imageData} />
+                </React.Fragment>)
+                : ''
+            }
+            {
+              ((imageUrl && isPaintScene && pins.length > 0) || paintSceneWorkspace)
+                ? (<React.Fragment>
+                  <PaintScene imageUrl={imageUrl} workspace={paintSceneWorkspace} imageRotationAngle={imageRotationAngle} referenceDimensions={imageDims} width={wrapperWidth} />
+                </React.Fragment>)
+                : ''
             }
           </div>
-          {
-            (imageUrl && pins.length > 0 && !isPaintScene && !paintSceneWorkspace)
-              ? (<React.Fragment>
-                <DynamicColorFromImage
-                  originalImageWidth={imageDims.originalImageWidth}
-                  originalImageHeight={imageDims.originalImageHeight}
-                  originalIsPortrait={imageDims.originalIsPortrait}
-                  imageUrl={imageUrl}
-                  width={wrapperWidth}
-                  isPortrait={isPortrait}
-                  pins={pins}
-                  createColorPins={createColorPins}
-                  isActive />
-                <ConfirmationModal isActive={isConfirmationModalActive} onClickNo={() => setConfirmationModalActive(!isConfirmationModalActive)} />
-              </React.Fragment>)
-              : ''
-          }
-          {
-            (imageUrl && pins.length === 0 && !paintSceneWorkspace)
-              ? (<React.Fragment>
-                <canvas className={canvasClass} name='canvas' ref={canvasRef} />
-                <ImageRotateTerms rotateImage={rotateImage} createColorPins={createColorPins} imageData={imageData} />
-              </React.Fragment>)
-              : ''
-          }
-          {
-            ((imageUrl && isPaintScene && pins.length > 0) || paintSceneWorkspace)
-              ? (<React.Fragment>
-                <PaintScene imageUrl={imageUrl} workspace={paintSceneWorkspace} imageRotationAngle={imageRotationAngle} referenceDimensions={imageDims} width={wrapperWidth} />
-              </React.Fragment>)
-              : ''
-          }
         </div>
+        <hr />
       </div>
-      <hr />
     </React.Fragment>
   )
 }

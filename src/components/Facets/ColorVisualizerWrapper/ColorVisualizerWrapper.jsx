@@ -41,9 +41,15 @@ const colorDetailsBaseUrl = `/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_DETAIL
 // not sure if we need this but if we end up using this for TAG & want to retain bookmarks..
 
 // Route constants
+const PAINT_SCENE_COMPONENT = 'PaintScene'
+const SCENE_MANAGER_COMPONENT = 'SceneManager'
+const PAINT_SCENE_ROUTE = '/paint-scene'
+const ACTIVE_ROUTE = '/active'
 export const MY_IDEAS_PREVIEW = '/my-ideas-preview'
 export const MATCH_PHOTO = '/match-photo'
 export const MY_IDEAS = '/my-ideas'
+const TYPE_MATCH_PHOTO = 'MATCH A PHOTO'
+const TYPE_UPLOAD_YOUR_PHOTO = 'UPLOAD YOUR PHOTO'
 
 export const RootRedirect = () => {
   return <Redirect to='/active' />
@@ -53,31 +59,48 @@ type Props = FacetPubSubMethods & FacetBinderMethods & {
   toggleCompareColor: boolean
 }
 
+const pathNameList = ['/active/colors', '/active/inspiration', '/active/scenes']
 export class ColorVisualizerWrapper extends Component<Props> {
   static defaultProps = {
     ...facetPubSubDefaultProps,
     ...facetBinderDefaultProps
   }
+
   constructor (props) {
     super(props)
     const { pathname } = this.props.location
     const isShow = isMyIdeas(pathname) || isScene(pathname) || isColors(pathname) || isInspiration(pathname) || isHelp(pathname) || '/active'
     this.state = {
-      close: pathname !== '/active/colors' || pathname !== '/active/inspiration' || pathname !== '/active/scenes',
-      showDefaultPage: isShow
+      close: !pathNameList.includes(pathname),
+      showDefaultPage: isShow,
+      showPaintScene: false,
+      remountKey: (new Date()).getTime(),
+      lastActiveComponent: SCENE_MANAGER_COMPONENT
     }
   }
 
   onRouteChanged = () => {
-    const { showDefaultPage } = this.state
+    const { showDefaultPage, showPaintScene } = this.state
+    let isShowPaintScene = true
+    let isShowDefaultPage = true
+    if (showPaintScene) {
+      isShowDefaultPage = false
+    }
     if (showDefaultPage) {
-      this.setState({ close: false })
+      isShowPaintScene = false
+    }
+    if (showPaintScene || showDefaultPage) {
+      if (pathNameList.includes(this.props.location.pathname)) {
+        this.setState({ close: false, showPaintScene: isShowPaintScene, showDefaultPage: isShowDefaultPage })
+      } else {
+        this.setState({ showPaintScene: isShowPaintScene, showDefaultPage: isShowDefaultPage })
+      }
     }
   }
 
   close = (e) => {
     if (e.target.matches('div.nav__dropdown-overlay') || e.target.matches('a')) {
-      this.props.history.push('/active')
+      this.props.history.push(ACTIVE_ROUTE)
       this.setState({ close: true })
     }
   }
@@ -86,37 +109,75 @@ export class ColorVisualizerWrapper extends Component<Props> {
   }
 
   open = (isShowDropDown, close) => {
-    this.setState({ close: close, showDefaultPage: isShowDropDown })
+    const { lastActiveComponent } = this.state
+    if (lastActiveComponent === SCENE_MANAGER_COMPONENT) {
+      this.setState({ showDefaultPage: isShowDropDown, showPaintScene: false })
+    }
+    if (lastActiveComponent === PAINT_SCENE_COMPONENT) {
+      this.setState({ showDefaultPage: false, showPaintScene: isShowDropDown })
+    }
+    this.setState({ close: close })
+  }
+
+  setActiveComponent =() => {
+    const { lastActiveComponent } = this.state
+    if (lastActiveComponent === SCENE_MANAGER_COMPONENT) {
+      this.setState({ showDefaultPage: true, showPaintScene: false })
+    }
+    if (lastActiveComponent === PAINT_SCENE_COMPONENT) {
+      this.setState({ showDefaultPage: false, showPaintScene: true })
+    }
   }
 
   renderComponent = (url, type) => {
-    if (type !== '') {
-      if (type === 'MATCH A PHOTO') {
-        this.props.history.push('/match-photo')
+    let lastActiveComponent = this.state.lastActiveComponent
+    if (type === TYPE_MATCH_PHOTO || type === TYPE_UPLOAD_YOUR_PHOTO) {
+      let isPaintScene
+      if (type === TYPE_MATCH_PHOTO) {
+        isPaintScene = false
+        this.props.history.push(MATCH_PHOTO)
       }
-      if (type === 'UPLOAD YOUR PHOTO') {
-        this.props.history.push('/paint-scene')
+      if (type === TYPE_UPLOAD_YOUR_PHOTO) {
+        isPaintScene = true
+        lastActiveComponent = PAINT_SCENE_COMPONENT
+        this.props.history.push(PAINT_SCENE_ROUTE)
       }
-      this.setState({ imgUrl: url, close: true, showDefaultPage: false })
+      this.setState({
+        imgUrl: url,
+        close: true,
+        showDefaultPage: false,
+        showPaintScene: isPaintScene,
+        remountKey: isPaintScene ? (new Date()).getTime() : this.state.remountKey,
+        lastActiveComponent: lastActiveComponent
+      })
+    } else {
+      this.setState({
+        showDefaultPage: false,
+        showPaintScene: false,
+        lastActiveComponent: lastActiveComponent
+      })
     }
   }
 
   render () {
     const { toggleCompareColor } = this.props
-    const { close, showDefaultPage, imgUrl } = this.state
+    const { close, showDefaultPage, imgUrl, showPaintScene, remountKey } = this.state
+    const dropMenuProps = {
+      close: this.close,
+      redirectTo: this.redirectTo,
+      getImageUrl: (url, type) => this.renderComponent(url, type)
+    }
     return (
       <React.Fragment>
         <div className='cvw__root-container'>
           <RouteContext.Provider value={{
-            navigate: (isShowDropDown, close) => this.open(isShowDropDown, close)
+            navigate: (isShowDropDown, close) => this.open(isShowDropDown, close),
+            setActiveComponent: () => this.setActiveComponent()
           }}>
             <ColorVisualizerNav />
-            {/* will be navigation bar here */}
             {!toggleCompareColor &&
             <div className='cvw__root-wrapper'>
-
               <Route path='/' exact component={RootRedirect} />
-              {/* <Route path='/active' exact component={() => <SceneManager expertColorPicks />} /> */}
               <Route path={colorWallUrlPattern}>
                 <ColorWallContext.Provider value={{ ...colorWallContextDefault }}>
                   <ColorWallPage />
@@ -129,16 +190,15 @@ export class ColorVisualizerWrapper extends Component<Props> {
               {/* @todo - implement MyIdeas -RS */}
               <Route path={MY_IDEAS} render={() => <MyIdeasContainer />} />
               <Route path={MY_IDEAS_PREVIEW} component={MyIdeaPreview} />
-              <Route path='/match-photo' render={() => <MatchPhoto imgUrl={imgUrl} />} />
-              <Route path='/paint-scene' render={() => <MatchPhoto isPaintScene imgUrl={imgUrl} />} />
               <Route path={`/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`} exact component={ColorDetails} />
               <Route path='/help' component={Help} />
+              <Route path='/match-photo' render={() => <MatchPhoto showPaintScene imgUrl={imgUrl} />} />
               {showDefaultPage && <SceneManager expertColorPicks />}
-              {/* <MatchPhoto isPaintScene /> */}
+              <MatchPhoto isPaintScene showPaintScene={showPaintScene} imgUrl={imgUrl} key={remountKey} />
               {!close && <div role='presentation' className='nav__dropdown-overlay' onClick={this.close}>
-                <Route path='/active/colors' component={(props) => <DropDownMenu dataKey='color' close={this.close} redirectTo={this.redirectTo} getImageUrl={(url, type) => this.renderComponent(url, type)} />} />
-                <Route path='/active/inspiration' component={() => <DropDownMenu dataKey='inspiration' close={this.close} redirectTo={this.redirectTo} getImageUrl={(url, type) => this.renderComponent(url, type)} />} />
-                <Route path='/active/scenes' component={() => <DropDownMenu dataKey='scenes' close={this.close} redirectTo={this.redirectTo} getImageUrl={(url, type) => this.renderComponent(url, type)} />} />
+                <Route path='/active/colors' component={(props) => <DropDownMenu dataKey='color' {...dropMenuProps} />} />
+                <Route path='/active/inspiration' component={() => <DropDownMenu dataKey='inspiration' {...dropMenuProps} />} />
+                <Route path='/active/scenes' component={() => <DropDownMenu dataKey='scenes' {...dropMenuProps} />} />
               </div>}
               <LivePalette />
             </div>
@@ -151,7 +211,7 @@ export class ColorVisualizerWrapper extends Component<Props> {
   }
 
   componentDidUpdate (prevProps) {
-    if (this.props.location !== prevProps.location && this.props.location.pathname !== '/active') {
+    if (this.props.location !== prevProps.location && this.props.location.pathname !== ACTIVE_ROUTE) {
       this.onRouteChanged()
     }
   }
