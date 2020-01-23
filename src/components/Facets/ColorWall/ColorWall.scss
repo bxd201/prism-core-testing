@@ -33,6 +33,7 @@
     float: right;
     white-space: nowrap;
     font-size: 0;
+    z-index: 1;
 
     &__btn {
       font-size: getVar('base');
