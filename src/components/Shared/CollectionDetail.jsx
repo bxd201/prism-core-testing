@@ -111,6 +111,9 @@ export const CollectionDetail = (props: Props) => {
                   rowCount={rowCount}
                   width={width}
                   addToLivePalette={addToLivePalette}
+                  tabIndex={-1}
+                  role='presentation'
+                  aria-label=''
                 />
               )
             }}

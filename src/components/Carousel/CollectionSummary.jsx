@@ -9,13 +9,33 @@ const baseClass = 'collection__summary'
 type Props = {
   data: CollectionsSummary,
   getSummaryData: Function,
-  isExpertColor: boolean
+  isExpertColor: boolean,
+  handlePrev: Function,
+  handleNext: Function,
+  itemsPerView: number,
+  itemNumber: number
 }
+
+const KEY_CODE_TAB = 9
+const KEY_CODE_ENTER = 13
+const KEY_CODE_SPACE = 32
 
 class CollectionSummary extends PureComponent<Props> {
   handleClick = () => {
     const { getSummaryData, data } = this.props
     getSummaryData(data)
+  }
+  handleKeyDown = (e) => {
+    if (e.keyCode === KEY_CODE_ENTER || e.keyCode === KEY_CODE_SPACE) {
+      e.preventDefault()
+      this.handleClick()
+    }
+
+    if (!e.shiftKey && e.keyCode === KEY_CODE_TAB && ((this.props.itemNumber) % this.props.itemsPerView === 0)) {
+      this.props.handleNext()
+    } else if (e.shiftKey && e.keyCode === KEY_CODE_TAB && ((this.props.itemNumber) % this.props.itemsPerView === 1)) {
+      this.props.handlePrev()
+    }
   }
   render () {
     const { data, isExpertColor } = this.props
@@ -37,7 +57,7 @@ class CollectionSummary extends PureComponent<Props> {
     return (
       <React.Fragment>
         <div className={`${baseClass}`}>
-          <div className={`${baseClass}__wrapper`} role='button' tabIndex='-1' onClick={this.handleClick} onKeyDown={this.handleClick}>
+          <div className={`${baseClass}__wrapper`} role='button' tabIndex='0' onClick={this.handleClick} onKeyDown={this.handleKeyDown}>
             {isExpertColor &&
               <div className={`${baseClass}__top-section`} style={{ backgroundColor: color.hex, color: getContrastYIQ(color.hex) }}>
                 <div className={`${baseClass}__content__wrapper`}>
@@ -52,7 +72,7 @@ class CollectionSummary extends PureComponent<Props> {
             }
             {
               !isExpertColor &&
-              <img className={`${baseClass}__top-section__image`} alt='' src={img} />
+              <img className={`${baseClass}__top-section__image`} alt={`${collectionName}. ${data.description}`} src={img} />
             }
             <div className={`${baseClass}__bottom-list`}>
               {bottomColorList.map((color, key) => {

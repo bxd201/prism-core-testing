@@ -37,6 +37,12 @@
         &:hover {
           border: 1px solid #2cabe2;
         }
+        &:focus {
+          outline-style: solid;
+          outline-color: #2cabe2;
+          outline-width: 2px;
+          z-index: 100;
+        }
       }
       &__list__wrapper {
         height: 100%;

@@ -150,7 +150,7 @@ export class LivePalette extends PureComponent<Props, State> {
           <LivePaletteModal cancel={cancel} empty={empty} isActive={colors.length > LP_MAX_COLORS_ALLOWED} />
           <div className='prism-live-palette__header'>
             <span className='prism-live-palette__header__name'><FormattedMessage id='PALETTE_TITLE' /></span>
-            {colors.length >= MIN_COMPARE_COLORS_ALLOWED && <button className='prism-live-palette__header__compare-button' onClick={this.toggleCompareColor}>Compare Color</button>}
+            {colors.length >= MIN_COMPARE_COLORS_ALLOWED && <button tabIndex='-1' className='prism-live-palette__header__compare-button' onClick={this.toggleCompareColor}>Compare Color</button>}
           </div>
           <div className='prism-live-palette__list'>
             {activeSlots}

@@ -9,6 +9,8 @@ import 'src/providers/fontawesome/fontawesome'
 import some from 'lodash/some'
 
 const baseClass = 'prism-color-palette-suggester'
+const KEY_CODE_ENTER = 13
+const KEY_CODE_SPACE = 32
 
 type Props = {
     isShowSlider: boolean,
@@ -29,13 +31,13 @@ function PaletteSuggester (props: Props) {
         const isColorAdded = some(addColors, color)
         return (
           <div className={`${baseClass}__container`} key={id}>
-            <button className={`${baseClass}__container__button`} onClick={() => handleClick(isColorAdded, isShowSlider, color, props)}>
+            <button tabIndex={`${(!isColorAdded && isShowSlider) ? `0` : `-1`}`} aria-label={`add ${color.name} to palette`} className={`${baseClass}__container__button ${baseClass}__container__button--focus`} onMouseDown={(e) => e.preventDefault()} onClick={() => handleClick(isColorAdded, isShowSlider, color, props)}>
               <div className={`${baseClass}__${displayArea}
                   ${isColorAdded ? `${baseClass}__${displayArea}--active` : `${baseClass}__${displayArea}--unactive`}
                   ${isShowSlider ? `${baseClass}__${displayArea}--show` : `${baseClass}__${displayArea}--hide`}`
               } style={{ backgroundColor: color.hex }}>
                 { isColorAdded && <FontAwesomeIcon className={`${baseClass}__${icons} ${isShowSlider ? `${baseClass}__${icons}--show` : `${baseClass}__${icons}--hide`}`} icon={['fa', 'check-circle']} size='2x' /> }
-                { !isColorAdded && <FontAwesomeIcon className={`${baseClass}__${icons} ${isShowSlider ? `${baseClass}__${icons}--show` : `${baseClass}__${icons}--hide`}`} icon={['fal', 'plus-circle']} size='2x' onClick={() => handleClick(isColorAdded, true, color, props)} /> }
+                { !isColorAdded && <FontAwesomeIcon className={`${baseClass}__${icons} ${baseClass}__${icons} ${isShowSlider ? `${baseClass}__${icons}--show` : `${baseClass}__${icons}--hide`}`} icon={['fal', 'plus-circle']} size='2x' onMouseDown={(e) => e.preventDefault()} onClick={() => handleClick(isColorAdded, true, color, props)} onKeyDown={(e) => (e.keyCode === KEY_CODE_ENTER || e.keyCode === KEY_CODE_SPACE) && e.stopPropagation() && handleClick(isColorAdded, true, color, props) && e.preventDefault()} /> }
               </div>
             </button>
             <div className={`${baseClass}__${content}`}>

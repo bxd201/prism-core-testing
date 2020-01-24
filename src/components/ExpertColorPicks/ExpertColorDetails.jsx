@@ -33,10 +33,9 @@ export default function ExpertColorDetails ({ expertColors }: Props) {
         <div className={`${baseClass}__content__wrapper__color-name`}>
           {color.name}
         </div>
-        <button onClick={() => dispatch(add(color))}>
+        <button aria-label={`Add ${color.name} to palette`} className={`${baseClass}__content__wrapper__toggle-check-icons`} tabIndex={some(colorsCurrentlyInLivePalette, color) ? -1 : 0} onClick={() => dispatch(add(color))} onMouseDown={(e) => e.preventDefault()}>
           <FontAwesomeIcon
             style={{ color: getContrastYIQ(color.hex) }}
-            className={`${baseClass}__content__wrapper__toggle-check-icons`}
             icon={some(colorsCurrentlyInLivePalette, color) ? ['fa', 'check-circle'] : ['fal', 'plus-circle']}
           />
         </button>
