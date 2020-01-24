@@ -3,7 +3,8 @@ import React from 'react'
 import { useDispatch, useSelector, shallowEqual } from 'react-redux'
 import CollectionsHeaderWrapper from '../CollectionsHeaderWrapper/CollectionsHeaderWrapper'
 import ExpertColorDetails from './ExpertColorDetails'
-import { ColorListWithCarousel } from '../Carousel/Carousel'
+import CollectionSummary from '../ColorCollections/CollectionSummary'
+import Carousel from '../Carousel/Carousel'
 import { loadExpertColorPicks } from '../../store/actions/expertColorPicks'
 import './ExpertColorPicks.scss'
 
@@ -21,10 +22,11 @@ export function ExpertColorPicks ({ isShowBack, showBack, setHeader }: SummaryPr
     ? <ExpertColorDetails expertColors={collectionDataDetails} />
     : <div className='expert-color-picks__wrapper'>
       <div className='expert-color-picks__collections-list'>
-        {expertColorPicks.length > 0 && <ColorListWithCarousel
+        {expertColorPicks.length > 0 && <Carousel
+          BaseComponent={CollectionSummary}
           defaultItemsPerView={8}
           isInfinity={false}
-          key={'expertcolorpicks'}
+          key='expertcolorpicks'
           data={expertColorPicks}
           getSummaryData={collectionSummaryData => {
             showBack()

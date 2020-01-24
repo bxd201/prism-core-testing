@@ -1,230 +1,136 @@
 // @flow
-import React from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
-import CollectionSummary from './CollectionSummary'
-import { varValues } from 'variables'
 import './Carousel.scss'
+import times from 'lodash/times'
 
 type ComponentProps = {
+  BaseComponent: any,
   data: Object[],
-  tabMap?: any,
   defaultItemsPerView: number,
   isInfinity: boolean,
-  showTab?: Function
-}
-
-type ComponentState = {
-  curr: number,
-  itemsPerView: number,
-  width: number
+  tabId?: string,
+  setTabId?: string => void,
+  tabMap?: string[]
 }
 
 const baseClass = 'prism-slick-carousel'
 const contentWrapper = `${baseClass}__wrapper__content`
 const indicators = `${baseClass}__wrapper__indicators`
-const ListWithCarousel = (BaseComponent: any) => {
-  class EnhanceComponent extends React.Component<ComponentProps, ComponentState> {
-    nonTransition: boolean
-    dotsNumbers: number
-    constructor (props: ComponentProps) {
-      super(props)
-      const { data, defaultItemsPerView, isInfinity } = props
-      this.state = {
-        curr: 0,
-        itemsPerView: defaultItemsPerView,
-        width: window.innerWidth
-      }
+let nonTransition = false
 
-      this.nonTransition = false
-      this.dotsNumbers = isInfinity ? 0 : Math.floor(data.length / defaultItemsPerView) + (data.length > defaultItemsPerView ? 1 : 0)
+export default (props: ComponentProps) => {
+  const { BaseComponent, defaultItemsPerView, data, isInfinity, tabId, setTabId, tabMap } = props
+  const [position, setPosition] = useState(0)
+
+  // tracks the previous position
+  const prevPositionRef = useRef()
+  const prevPosition = prevPositionRef.current
+  useEffect(() => { prevPositionRef.current = position })
+
+  // update the position when tabId changes only if the position hasn't changed (tab button was clicked)
+  useEffect(() => {
+    prevPosition === position && tabMap && setPosition(tabMap.findIndex(e => e === tabId))
+  }, [position, tabId])
+
+  const pageNumber = isInfinity ? Math.floor(position + 1) : Math.floor(position / defaultItemsPerView)
+  const slideList = []
+  if (data.length > 0) {
+    const count = Math.floor(data.length / defaultItemsPerView)
+    const numsOfViews = isInfinity ? count : count + 1
+    for (let i = 0; i < numsOfViews; i++) {
+      const dataPerView: Object[] = data.slice(i * defaultItemsPerView, i * defaultItemsPerView + defaultItemsPerView)
+      slideList.push(dataPerView)
     }
-
-    componentDidMount () {
-      this.updateWindowDimensions()
-      window.addEventListener('resize', this.updateWindowDimensions)
-    }
-
-    componentWillUnmount () {
-      window.removeEventListener('resize', this.updateWindowDimensions)
-    }
-
-    // Display different rows per view for slider based on different screen size
-    updateWindowDimensions = () => {
-      const { width } = this.state
-      const { defaultItemsPerView } = this.props
-      let screenSize
-      if (width <= varValues.slick.mobile) {
-        screenSize = varValues.slick.xs
-      }
-      if (width > varValues.slick.mobile && width <= varValues.slick.tablet) {
-        screenSize = varValues.slick.sm
-      }
-      if (width > varValues.slick.tablet) {
-        screenSize = varValues.slick.lg
-      }
-      if (!defaultItemsPerView) {
-        this.setState({ width: window.innerWidth, itemsPerView: screenSize }, () => {
-          this.updateIndicatorsNumber()
-        })
-      }
-    };
-
-    // update Indicators List when scree size change
-    updateIndicatorsNumber= () => {
-      const { data } = this.props
-      const { itemsPerView } = this.state
-      this.dotsNumbers = Math.floor(data.length / itemsPerView) + (data.length > itemsPerView ? 1 : 0)
-    }
-
-    isShowSlideButton = () => {
-      const { curr, itemsPerView } = this.state
-      const { data, isInfinity } = this.props
-      let buttonVisibility = {
-        isHidePrevButton: false,
-        isHideNextButton: true
-      }
-      if (!isInfinity) {
-        if (curr >= itemsPerView) {
-          buttonVisibility.isHidePrevButton = true
-        }
-        if (curr + itemsPerView >= data.length) {
-          buttonVisibility.isHideNextButton = false
-        }
-      } else {
-        buttonVisibility.isHidePrevButton = true
-        buttonVisibility.isHidePrevButton = true
-      }
-      return buttonVisibility
-    }
-
-    handlePrev = () => {
-      const { curr, itemsPerView } = this.state
-      const { data, isInfinity, tabMap, showTab } = this.props
-      if (curr >= itemsPerView) {
-        this.setState({ curr: curr - itemsPerView })
-      }
-      if (isInfinity) {
-        if (curr < itemsPerView) {
-          this.nonTransition = true
-          tabMap && showTab && showTab(tabMap[data.length - 1], false)
-          this.setState({ curr: data.length })
-          setTimeout(() => {
-            this.nonTransition = false
-            this.setState({ curr: data.length - 1 })
-          }, 10)
-        } else {
-          tabMap && showTab && showTab(tabMap[curr - 1], false)
-        }
-      }
-    };
-
-    handleNext = () => {
-      const { curr, itemsPerView } = this.state
-      const { data, isInfinity, tabMap, showTab } = this.props
-      this.nonTransition = false
-      if (curr + itemsPerView < data.length) {
-        this.setState({ curr: curr + itemsPerView })
-      }
-      if (isInfinity) {
-        if (curr + itemsPerView === data.length) {
-          tabMap && showTab && showTab(tabMap[0], false)
-          this.nonTransition = true
-          this.setState({ curr: -1 })
-          setTimeout(() => {
-            this.nonTransition = false
-            this.setState({ curr: 0 })
-          }, 10)
-        } else {
-          tabMap && showTab && showTab(tabMap[curr + 1], false)
-        }
-      }
-    };
-
-    renderPageIndicatorList = () => {
-      const { curr, itemsPerView } = this.state
-      let el = []
-      let activedView = Math.floor(curr / itemsPerView)
-      for (let i = 0; i < this.dotsNumbers; i++) {
-        if (activedView === i) {
-          el.push(<FontAwesomeIcon key={i} className={`${indicators}__icons ${indicators}__icons--active`} icon={['fa', 'circle']} />)
-        } else {
-          el.push(<FontAwesomeIcon key={i} className={`${indicators}__icons ${indicators}__icons--unactive`} icon={['fa', 'circle']} />)
-        }
-      }
-      return el
-    }
-
-    renderingSlider = () => {
-      const { data, isInfinity } = this.props
-      const { itemsPerView } = this.state
-      const slideList = []
-      if (data.length > 0) {
-        const count = Math.floor(data.length / itemsPerView)
-        const numsOfViews = isInfinity ? count : count + 1
-        for (let i = 0; i < numsOfViews; i++) {
-          const dataPerView: Object[] = data.slice(i * itemsPerView, i * itemsPerView + itemsPerView)
-          slideList.push(dataPerView)
-        }
-        if (isInfinity) {
-          slideList.push([data[0]])
-          const dataPerView: Object[] = data.slice(-1)
-          slideList.unshift(dataPerView)
-        }
-        return slideList
-      }
-    }
-    render () {
-      const { curr, itemsPerView } = this.state
-      const { isInfinity } = this.props
-      const { isHidePrevButton, isHideNextButton } = this.isShowSlideButton()
-      const pageIndicatorList = this.renderPageIndicatorList()
-      const slideList = this.renderingSlider()
-      const pageNumber = isInfinity ? Math.floor(curr + 1) : Math.floor(curr / itemsPerView)
-      return (
-        <div className={`${baseClass}__wrapper`}>
-          <div className={`${contentWrapper}`}>
-            <div className={`${contentWrapper}__prev-btn__wrapper`}>
-              {
-                <button className={`${contentWrapper}__buttons ${!isHidePrevButton ? `${contentWrapper}__buttons--visible` : ''}`} onClick={this.handlePrev}>
-                  <FontAwesomeIcon icon={['fa', 'chevron-left']} />
-                </button>}
-            </div>
-            <div className={`${contentWrapper}__list__wrapper ${isInfinity ? `${contentWrapper}__list__wrapper--loop` : ''}`}>
-              <div className={`collection-list__container  ${this.nonTransition ? `collection-list__container--non-transition` : ''}`} style={{ transform: `translateX(-${pageNumber * 100}%)` }}>
-                {
-                  slideList && slideList.map((slide: any, index: number) => {
-                    return (
-                      <div key={index} className={`collection-list__wrapper`}>
-                        {
-                          slide.map((item, key) => (
-                            <BaseComponent className='collection-list__component' key={key} itemNumber={key + 1} {...this.props} data={item} isActivedPage={index === pageNumber} isRenderingPage={index === pageNumber || index - 1 === pageNumber || index + 1 === pageNumber} handlePrev={this.handlePrev} handleNext={this.handleNext} itemsPerView={itemsPerView} />
-                          ))
-                        }
-                      </div>
-                    )
-                  })
-                }
-              </div>
-            </div>
-            <div className={`${contentWrapper}__next-btn__wrapper`}>
-              {
-                <button className={`${contentWrapper}__buttons ${!isHideNextButton ? `${contentWrapper}__buttons--visible` : ''}`} onClick={this.handleNext}>
-                  <FontAwesomeIcon icon={['fa', 'chevron-right']} />
-                </button>
-              }
-            </div>
-          </div>
-          <div className={`${indicators}`}>
-            {
-              pageIndicatorList.map(el => el)
-            }
-          </div>
-        </div>
-      )
+    if (isInfinity) {
+      slideList.push([data[0]])
+      const dataPerView: Object[] = data.slice(-1)
+      slideList.unshift(dataPerView)
     }
   }
-  return EnhanceComponent
+
+  const handlePrev = () => {
+    setPosition(position - defaultItemsPerView)
+    if (position === 0) {
+      tabMap && setTabId && setTabId(tabMap[data.length - 1])
+      setTimeout(() => {
+        nonTransition = true
+        setPosition(data.length - 1)
+        nonTransition = false
+      }, 300)
+    } else {
+      tabMap && setTabId && setTabId(tabMap[position - defaultItemsPerView])
+    }
+  }
+
+  const handleNext = () => {
+    setPosition(position + defaultItemsPerView)
+    if (position + defaultItemsPerView === data.length) {
+      tabMap && setTabId && setTabId(tabMap[defaultItemsPerView - 1])
+      setTimeout(() => {
+        nonTransition = true
+        setPosition(defaultItemsPerView - 1)
+        nonTransition = false
+      }, 300)
+    } else {
+      tabMap && setTabId && setTabId(tabMap[position + defaultItemsPerView])
+    }
+  }
+
+  return (
+    <div className={`${baseClass}__wrapper`}>
+      <div className={`${contentWrapper}`}>
+        <div className={`${contentWrapper}__prev-btn__wrapper`}>
+          {(isInfinity || position >= defaultItemsPerView) && <button className={`${contentWrapper}__buttons`} onClick={handlePrev}>
+            <FontAwesomeIcon icon={['fa', 'chevron-left']} />
+          </button>}
+        </div>
+        <div className={`${contentWrapper}__list__wrapper ${isInfinity ? `${contentWrapper}__list__wrapper--loop` : ''}`}>
+          <div
+            className={`collection-list__container  ${nonTransition ? `collection-list__container--non-transition` : ''}`}
+            style={{ transform: `translateX(-${pageNumber * 100}%)` }}
+          >
+            {slideList && slideList.map((slide: any, index: number) => {
+              // this complicated boolean expression allows us to avoid fetching images before we need them
+              const shouldRender = pageNumber === index || pageNumber === index + 1 || pageNumber === index - 1 || (isInfinity && (
+                // about to jump to page: data.length - 1 so load pages: [data.length - 2, data.length - 1, data.length]
+                (pageNumber < 1 && (index > data.length - 2)) ||
+                // about to jump to page: 1 so load pages [0, 1, 2]
+                (pageNumber > data.length - 3 && (index < 2))
+              ))
+
+              return (
+                <div key={index} className={`collection-list__wrapper`}>
+                  {shouldRender && slide.map((item, key) => (
+                    <BaseComponent
+                      className='collection-list__component'
+                      key={key}
+                      {...props}
+                      data={item}
+                      isActivedPage={index === pageNumber}
+                    />
+                  ))}
+                </div>
+              )
+            })}
+          </div>
+        </div>
+        <div className={`${contentWrapper}__next-btn__wrapper`}>
+          {(isInfinity || position + defaultItemsPerView < data.length) && <button className={`${contentWrapper}__buttons`} onClick={handleNext}>
+            <FontAwesomeIcon icon={['fa', 'chevron-right']} />
+          </button>}
+        </div>
+      </div>
+      {isInfinity || <div className={`${indicators}`}>
+        {times(data.length <= defaultItemsPerView ? 0 : Math.ceil(data.length / defaultItemsPerView), i => (
+          <FontAwesomeIcon
+            key={i}
+            className={`${indicators}__icons ${indicators}__icons--${i === Math.floor(position / defaultItemsPerView) ? '' : 'un'}active`}
+            icon={['fa', 'circle']}
+          />
+        ))}
+      </div>}
+    </div>
+  )
 }
-export default ListWithCarousel
-export const ColorListWithCarousel = ListWithCarousel(CollectionSummary)
