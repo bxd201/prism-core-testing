@@ -22,7 +22,7 @@ const init = once(() => {
 
 // ------------------- UTILITIES -----------------
 const canTrack = memoizee((func: Function): Function => {
-  if (ENV === 'production') {
+  if (ENV !== 'production') {
     return noop
   }
 
@@ -49,16 +49,13 @@ type GAPageView = string
 // ------------------- EXPORTS -----------------
 
 export const event = canTrack((data: GAEvent) => {
-  console.info('zong analytics event |', data)
   ReactGA.event(data, [GA_TRACKER_NAME])
 })
 
 export const set = canTrack((data: GASet) => {
-  console.info('zong analytics set |', data)
-  ReactGA.event(data, [GA_TRACKER_NAME])
+  ReactGA.set(data, [GA_TRACKER_NAME])
 })
 
 export const pageView = canTrack((data: GAPageView) => {
-  console.info('zong analytics pageView |', data)
   ReactGA.pageview(data, [GA_TRACKER_NAME])
 })
