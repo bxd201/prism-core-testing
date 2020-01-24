@@ -49,9 +49,10 @@ const ACTIVE_ROUTE = '/active'
 export const MY_IDEAS_PREVIEW = '/my-ideas-preview'
 export const MATCH_PHOTO = '/match-photo'
 export const MY_IDEAS = '/my-ideas'
-const TYPE_MATCH_PHOTO = 'MATCH A PHOTO'
-const TYPE_UPLOAD_YOUR_PHOTO = 'UPLOAD YOUR PHOTO'
+const TYPE_MATCH_PHOTO = 'MATCH_A_PHOTO'
+const TYPE_UPLOAD_YOUR_PHOTO = 'UPLOAD_YOUR_PHOTO'
 const USE_OUR_PHOTOS = 'USE OUR PHOTOS'
+export const HELP_PATH = '/help'
 
 export const RootRedirect = () => {
   return <Redirect to='/active' />
@@ -233,8 +234,8 @@ export class ColorVisualizerWrapper extends Component<Props> {
   }
 
   render () {
-    const { toggleCompareColor } = this.props
     const { close, showDefaultPage, imgUrl, showPaintScene, remountKey, isShowWarningModal, tmpPaintSceneImage, checkIsPaintSceneUpdate, helpLinkRef, isTabbedOutFromHelp } = this.state
+    const { toggleCompareColor, location } = this.props
     const dropMenuProps = {
       close: this.close,
       redirectTo: this.redirectTo,
@@ -252,7 +253,9 @@ export class ColorVisualizerWrapper extends Component<Props> {
             loadNewCanvas: () => this.loadNewCanvas()
           }}>
             {isShowWarningModal && <CVWWarningModal miniImage={tmpPaintSceneImage} cancle={this.cancle} confirm={this.loadNewCanvas} />}
-            <ColorVisualizerNav />
+            <div className={`cvw__root-container__nav-wrapper ${(location.pathname === HELP_PATH) ? `cvw__root-container__nav-wrapper--hide` : (location.pathname === MY_IDEAS) ? `cvw__root-container__nav-wrapper--hide-my-ideas` : ``}`}>
+              <ColorVisualizerNav />
+            </div>
             {!toggleCompareColor &&
             <div className='cvw__root-wrapper'>
               <Route path='/' exact component={RootRedirect} />

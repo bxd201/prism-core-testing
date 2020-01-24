@@ -1,11 +1,27 @@
 /* eslint-disable jsx-a11y/label-has-for */
 // @flow
-import React, { Fragment, useEffect } from 'react'
-import { renderingData } from './data.js'
+import React, { useEffect } from 'react'
+import {
+  renderingData,
+  scenesContentTitle,
+  subTitleDigitalColorWall,
+  subTitleMatchAPhoto,
+  subTitlePaintedPhotos,
+  subTitleUseOurPhotos,
+  subTitleUploadYourPhoto
+} from './data.js'
 import './DropDown.scss'
 import { Link, type RouterHistory } from 'react-router-dom'
 import { withRouter } from 'react-router'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {
+  isMobileOnly,
+  isTablet,
+  isIOS,
+  isAndroid
+} from 'react-device-detect'
+import { FormattedMessage, useIntl } from 'react-intl'
+import at from 'lodash/at'
 
 type Props = {
   dataKey: string,
@@ -27,6 +43,7 @@ const DropDownMenu = (props: Props) => {
     return acc
   }, {})
   const inputRef = React.useRef()
+  const { messages = {} } = useIntl()
 
   useEffect(() => {
     if (isKeyDownRoute || isTabbedOutFromHelp) {
@@ -36,15 +53,15 @@ const DropDownMenu = (props: Props) => {
 
   const labelKeyDownHandler = (e, data, props) => {
     if (e.keyCode === KEY_CODE_ENTER || e.keyCode === KEY_CODE_SPACE) {
-      if (data.subTitle !== 'MATCH A PHOTO' && data.subTitle !== 'UPLOAD YOUR PHOTO') {
-        redirectTo(data.url, props, data.subTitle)
+      if (data.subTitleIdentifier !== subTitleMatchAPhoto && data.subTitleIdentifier !== subTitleUploadYourPhoto) {
+        redirectTo(data.url, props, data.subTitleIdentifier)
       } else {
         if (inputRef.current) {
           e.preventDefault()
           inputRef.current.click()
         }
       }
-    } else if (e.shiftKey && e.keyCode === KEY_CODE_TAB && (data.subTitle === 'DIGITAL COLOR WALL' || data.subTitle === 'PAINTED PHOTOS' || data.subTitle === 'USE OUR PHOTOS')) {
+    } else if (e.shiftKey && e.keyCode === KEY_CODE_TAB && (data.subTitleIdentifier === subTitleDigitalColorWall || data.subTitleIdentifier === subTitlePaintedPhotos || data.subTitleIdentifier === subTitleUseOurPhotos)) {
       e.preventDefault()
       if (helpLinkRef.current) {
         helpLinkRef.current.focus()
@@ -70,47 +87,54 @@ const DropDownMenu = (props: Props) => {
 
   return (
     <div className='dashboard-submenu'>
-      <div className='dashboard-submenu__header'>{content.title}</div>
+      <div className='dashboard-submenu__header'>{at(messages, content.title)[0]}</div>
       <div className='dashboard-submenu__content'>
-        {
-          content.subContent.map((data, key) => (
-            <Fragment key={key}>
-              <label ref={labelRefs[key]} tabIndex={0} role='button' htmlFor='file-input' className='dashboard-submenu__content__description' onMouseDown={(e) => e.preventDefault()} onClick={() => redirectTo(data.url, props, data.subTitle)} onKeyDown={(e) => labelKeyDownHandler(e, data, props)}>
-                <div className='dashboard-submenu__content__description-img-wrapper'>
-                  <img className='dashboard-submenu__content__description-img' alt='' src={data.image} />
-                </div>
-                <div className='dashboard-submenu__content__description-title'>
-                  {data.subTitle}
-                </div>
-                <div className='dashboard-submenu__content__description-content'>
-                  {data.subContent}
-                </div>
-                { data.description && <div className='dashboard-submenu__content__description-tip'>
-                  <em><strong>{data.description}</strong></em>
-                </div>}
-                {(data.subTitle === 'MATCH A PHOTO' || data.subTitle === 'UPLOAD YOUR PHOTO') &&
-                <input
-                  tabIndex='0'
-                  data-noshow
-                  type='file'
-                  accept={null}
-                  onChange={(e) => handleChange(e, props, data.subTitle)}
-                  style={{ 'display': 'none' }}
-                  id='file-input'
-                  ref={inputRef}
-                />}
-              </label>
-            </Fragment>
-          ))
-        }
+        <ul>
+          {
+            content.subContent.map((data, key) => (
+              <li className={(content.titleIdentifier === scenesContentTitle) ? `dashboard-submenu__content__paint-photo-li` : ``} key={key} ref={labelRefs[key]} tabIndex={0} role='tab' onMouseDown={(e) => e.preventDefault()} onClick={() => redirectTo(data.url, props, data.subTitleIdentifier)} onKeyDown={(e) => labelKeyDownHandler(e, data, props)}>
+                <label tabIndex='-1' htmlFor='file-input' className='dashboard-submenu__content__description'>
+                  <div
+                    className={`dashboard-submenu__content__description-img-wrapper ${(data.subTitleIdentifier === subTitleDigitalColorWall) ? `dashboard-submenu__content__description--explore-color` : (data.subTitleIdentifier === subTitlePaintedPhotos) ? `dashboard-submenu__content__description--painted-scene` : ``}`}
+                    style={{
+                      backgroundImage: `url(${(data.subTitleIdentifier !== subTitleUploadYourPhoto) ? data.image : (isMobileOnly && isIOS) ? data.imageiPhone : (isMobileOnly && isAndroid) ? data.imageAndroid : (isTablet && isIOS) ? data.imageiPad : data.image})`
+                    }}
+                  />
+                  <div className='dashboard-submenu__content__description-title'>
+                    {(data.subTitleIdentifier !== subTitleUploadYourPhoto) ? at(messages, data.subTitle)[0] : (((isMobileOnly || isTablet) && isIOS) || isAndroid) ? at(messages, data.subTitleMobile)[0] : at(messages, data.subTitle)[0]}
+                  </div>
+                  <div className='dashboard-submenu__content__description-content'>
+                    {(data.subTitleIdentifier !== subTitleUploadYourPhoto) ? at(messages, data.subContent)[0] : (isMobileOnly && isIOS) ? at(messages, data.subContentiPhone)[0] : (isMobileOnly && isAndroid) ? at(messages, data.subContentAndroid)[0] : (isTablet && isIOS) ? at(messages, data.subContentiPad)[0] : at(messages, data.subContent)[0]}
+                  </div>
+                  { data.description && !isMobileOnly && !isTablet && <div className='dashboard-submenu__content__description-tip'>
+                    <em><strong>{at(messages, data.description)[0]}</strong></em>
+                  </div>}
+                  {(data.subTitleIdentifier === subTitleUploadYourPhoto) && (isMobileOnly || isTablet) && isIOS && <div className={`dashboard-submenu__content__description-ios-app-icon`} /> }
+                  {(data.subTitleIdentifier === subTitleUploadYourPhoto) && (isMobileOnly || isTablet) && isAndroid && <div className={`dashboard-submenu__content__description-android-app-icon`} /> }
+                  {(data.subTitleIdentifier === subTitleMatchAPhoto || data.subTitleIdentifier === subTitleUploadYourPhoto) &&
+                  <input
+                    tabIndex='0'
+                    data-noshow
+                    type='file'
+                    accept={null}
+                    onChange={(e) => handleChange(e, props, data.subTitleIdentifier)}
+                    style={{ 'display': 'none' }}
+                    id='file-input'
+                    ref={inputRef}
+                  />}
+                </label>
+              </li>
+            ))
+          }
+        </ul>
       </div>
       <Link tabIndex='-1' to={`/active`} onClick={closeDropDown} onKeyDown={closeButtonKeyDownHandler}>
         <button className={`dashboard-submenu__cls-btn dashboard-submenu__button`} tabIndex='0' onClick={closeDropDown} onKeyDown={closeButtonKeyDownHandler}>
           <div className={`dashboard-submenu__close`}>
-            <span>CLOSE</span>&nbsp;<FontAwesomeIcon onClick={closeDropDown} className={``} icon={['fa', 'chevron-up']} />
+            <span><FormattedMessage id='CLOSE' /></span>&nbsp;<FontAwesomeIcon onClick={closeDropDown} className={``} icon={['fa', 'chevron-up']} />
           </div>
           <div className={`dashboard-submenu__cancel`}>
-            <FontAwesomeIcon className={``} icon={['fa', 'times']} />
+            <FontAwesomeIcon className={``} icon={['fa', 'chevron-up']} />
           </div>
         </button>
       </Link>
@@ -119,7 +143,7 @@ const DropDownMenu = (props: Props) => {
 }
 
 const redirectTo = (url, props, type) => {
-  if (type !== 'MATCH A PHOTO' && type !== 'UPLOAD YOUR PHOTO') {
+  if (type !== subTitleMatchAPhoto && type !== subTitleUploadYourPhoto) {
     props.history.push(url)
     props.redirectTo()
     props.getImageUrl('null', type)
