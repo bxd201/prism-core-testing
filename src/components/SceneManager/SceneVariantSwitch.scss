@@ -1,6 +1,7 @@
 .scene-variant-switch-day-night {
   $base-font-size: $base; // 16px
   $icon-size: 1em;
+  $_self: &;
 
   align-items: center;
   cursor: pointer;
@@ -20,6 +21,14 @@
     z-index: 100;
   }
 
+  &__input {
+    &:focus {
+      & ~ #{$_self}__wrapper {
+        @include browser-highlight();
+      }
+    }
+  }
+
   &__wrapper {
     align-items: center;
     background: rgba(41, 70, 147, 0.5);
@@ -34,12 +43,14 @@
     transition: filter 0.6s, opacity 0.6s, transform 0.6s;
     width: $icon-size * 1.5;
     will-change: opacity transform;
+    z-index: 0;
 
     &--active {
       background: rgba(41, 70, 147, 1);
       filter: grayscale(0);
       opacity: 1;
       transform: scale(1.35);
+      z-index: 1;
     }
 
     &--night {

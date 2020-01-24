@@ -1,10 +1,9 @@
 // @flow
-import React, { type ComponentType, useEffect, useMemo } from 'react'
+import React, { type ComponentType, useMemo } from 'react'
 import { Provider } from 'react-redux'
 import { IntlProvider } from 'react-intl'
 import { BrowserRouter, HashRouter, MemoryRouter } from 'react-router-dom'
 import ErrorBoundary from 'src/helpers/ErrorBoundary/ErrorBoundary'
-import { initTrackingOnce } from './facetTracking'
 import { type EmbeddedConfiguration } from 'src/shared/types/Configuration'
 import ConfigurationContextProvider from 'src/contexts/ConfigurationContext/ConfigurationContextProvider'
 import { LiveAnnouncer } from 'react-aria-live'
@@ -18,8 +17,6 @@ import AuthObserver from '../components/AuthObserver/AuthObserver'
 // wraps a react component with the required PRISM HOCs
 export const facetMasterWrapper = (Component: ComponentType<any>) => {
   return (props: EmbeddedConfiguration) => {
-    useEffect(initTrackingOnce, [])
-
     // set the language
     const language = props.language || navigator.language || 'en-US'
 

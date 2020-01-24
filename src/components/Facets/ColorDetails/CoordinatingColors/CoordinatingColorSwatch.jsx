@@ -1,7 +1,7 @@
 // @flow
 import React from 'react'
 import { Link } from 'react-router-dom'
-import ReactGA from 'react-ga'
+import * as GA from 'src/analytics/GoogleAnalytics'
 
 import type { Color } from '../../../../shared/types/Colors'
 
@@ -18,11 +18,11 @@ function CoordinatingColorSwatch ({ color }: Props) {
   }
   const BASE_CLASS = 'color-info'
   const handleClick = () => {
-    ReactGA.event({
+    GA.event({
       category: 'Color Detail / Coordinating Color',
       action: 'View Coord Color',
       label: color.name
-    }, ['GAtrackerPRISM'])
+    })
   }
   return (
     <li className={`${BASE_CLASS}__coord-color ${color.isDark ? `${BASE_CLASS}__coord-color--dark-color` : ''}`}
