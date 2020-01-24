@@ -8,8 +8,6 @@ import toArray from 'lodash/toArray'
 import mapValues from 'lodash/mapValues'
 import debounce from 'lodash/debounce'
 import at from 'lodash/at'
-import forOwn from 'lodash/forOwn'
-import memoizee from 'memoizee'
 
 import docReady from 'src/shared/helpers/docReady'
 import { type EmbeddedConfiguration } from 'src/shared/types/Configuration'
@@ -17,10 +15,10 @@ import facetPubSub from './facetPubSub'
 import { addInstance, getInstance, unmount, type BoundFacet } from './facetInstance'
 
 // import the redux store
-import { dedupePatternedString } from 'src/shared/utils/dedupePatternedString.util'
 import { embedGlobalStylesOnce, memoEmbedBundleStyles } from './facetStyles'
-import { HAS_BOUND_CLASS, CLEANSLATE_CLASS, PRISM_CLASS, TO_BIND_CLASS, EMBED_ROOT_SELECTOR_DEPRECATED, EMBED_ROOT_SELECTOR } from './facetConstants'
+import { HAS_BOUND_CLASS, TO_BIND_CLASS } from './facetConstants'
 import { facetMasterWrapper } from './facetMasterWrapper'
+import { dressUpForPrism } from './facetUtils'
 
 let [addToEmbedQueue, embedQueue] = [(facetName) => {
   embedQueue.push(facetName)
@@ -131,38 +129,6 @@ function gatherReactRoots (facetName?: string, root: Document = document): any[]
   })
 }
 
-const dressUpForPrism = memoizee((prismRoot) => {
-  const prismDefaultSettings = {
-    // nothing in here for now
-  }
-
-  // populate default attributes on root if they are not already defined
-  forOwn(prismDefaultSettings, (key, val) => {
-    if (typeof val === 'undefined') {
-      prismRoot.setAttribute(key, val)
-    }
-  })
-
-  prismRoot.className = dedupePatternedString(`${prismRoot.className} ${TO_BIND_CLASS} ${CLEANSLATE_CLASS} ${PRISM_CLASS}`, ' ')
-})
-
-function injectRoot () {
-  // TODO: deprecate #prism-root in favor of class- or attr-based identifier
-  const prismRootLegacy = Array.from(document.querySelectorAll(EMBED_ROOT_SELECTOR_DEPRECATED))
-  const prismRootModern = Array.from(document.querySelectorAll(EMBED_ROOT_SELECTOR))
-  const allRoots = [
-    ...prismRootLegacy,
-    ...prismRootModern
-  ]
-
-  if (allRoots.length === 0) {
-    console.info('Missing PRISM root mounting element. Please add a container with id="prism-root" or [prism-auto-embed] and try again.')
-    return
-  }
-
-  allRoots.forEach(dressUpForPrism)
-}
-
 function embedAtRoots (override: boolean = false) {
   if (IS_MAIN_BUNDLE) {
     embedBundleStyles(WEBPACK_CONSTANTS.mainEntryPointName)
@@ -204,8 +170,7 @@ export {
   embedAtElement,
   embedAtRoots,
   flagAsMainBundle,
-  gatherReactRoots,
-  injectRoot
+  gatherReactRoots
 }
 
 export default function facetBinder (FacetDeclaration: BoundFacet, facetName: string): BoundFacet {
