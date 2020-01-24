@@ -1,5 +1,5 @@
 // @flow
-import React, { useRef, useEffect, useContext } from 'react'
+import React, { useRef, useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
 import { useSelector, useDispatch } from 'react-redux'
@@ -18,8 +18,6 @@ import SceneManager from '../../SceneManager/SceneManager'
 import { paintAllMainSurfaces } from '../../../store/actions/scenes'
 import { varValues } from 'variables'
 import type { ColorMap, Color } from '../../../shared/types/Colors'
-import type { Configuration } from '../../../shared/types/Configuration'
-import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import 'src/scss/convenience/visually-hidden.scss'
 import './ColorDetails.scss'
 import ColorDataWrapper from 'src/helpers/ColorDataWrapper/ColorDataWrapper'
@@ -28,18 +26,16 @@ const baseClass = 'color-info'
 
 const ColorDetails = ColorDataWrapper(({ onColorChanged }: { onColorChanged: Function }) => {
   const { colorId } = useParams()
-  const config: Configuration = useContext(ConfigurationContext)
   const dispatch = useDispatch()
   const toggleSceneDisplayScene = useRef(null)
   const toggleSceneHideScene = useRef(null)
   const colors: ColorMap = useSelector(state => state.colors.items.colorMap)
   const scenesLoaded: boolean = useSelector(state => !state.scenes.loadingScenes)
   // grab the color by color number from the URL
-  const activeColor: Color = has(colors, colorId) ? colors[colorId] : null
+  const activeColor: Color | typeof undefined = has(colors, colorId) ? colors[colorId] : undefined
 
   useEffect(() => {
     if (activeColor) {
-      GA.set({ dimension1: config.ga_domain_id })
       GA.pageView(`color-detail/${activeColor.brandKey} ${activeColor.colorNumber} - ${activeColor.name}`)
       onColorChanged(activeColor)
     }
