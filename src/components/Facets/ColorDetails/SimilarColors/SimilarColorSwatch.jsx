@@ -1,7 +1,7 @@
 // @flow
 import React from 'react'
 import { Link } from 'react-router-dom'
-import ReactGA from 'react-ga'
+import * as GA from 'src/analytics/GoogleAnalytics'
 
 import type { Color } from '../../../../shared/types/Colors'
 
@@ -14,11 +14,11 @@ type Props = {
 function SimilarColorSwatch ({ color }: Props) {
   const BASE_CLASS = 'color-info'
   const handleClick = () => {
-    ReactGA.event({
+    GA.event({
       category: 'Color Detail / Similar Color',
       action: 'View Similar Color',
       label: color.name
-    }, ['GAtrackerPRISM'])
+    })
   }
 
   return (

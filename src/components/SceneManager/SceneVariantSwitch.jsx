@@ -3,7 +3,7 @@ import React, { useCallback } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
 import { FormattedMessage } from 'react-intl'
-import ReactGA from 'react-ga'
+import * as GA from 'src/analytics/GoogleAnalytics'
 import includes from 'lodash/includes'
 
 import { SCENE_VARIANTS } from 'constants/globals'
@@ -35,16 +35,13 @@ function DayNight (props: SwitchProps) {
   const isDay = currentVariant === SCENE_VARIANTS.DAY
 
   const toggle = useCallback(() => {
-    if (currentVariant === SCENE_VARIANTS.DAY) {
-      onChange(SCENE_VARIANTS.NIGHT)
-      ReactGA.event({
-        category: 'Scene Manager',
-        action: 'View Night Scene',
-        label: 'View Night Scene'
-      }, ['GAtrackerPRISM'])
-    } else {
-      onChange(SCENE_VARIANTS.DAY)
-    }
+    const newVariant = (currentVariant === SCENE_VARIANTS.DAY) ? SCENE_VARIANTS.NIGHT : SCENE_VARIANTS.DAY
+    GA.event({
+      category: 'Scene Manager',
+      action: `View ${newVariant} Scene`,
+      label: `View ${newVariant} Scene`
+    })
+    onChange(newVariant)
   }, [currentVariant])
 
   return (
