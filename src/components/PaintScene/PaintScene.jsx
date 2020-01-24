@@ -39,6 +39,7 @@ import DynamicModal, { DynamicModalButtonType } from '../DynamicModal/DynamicMod
 import { checkCanMergeColors, shouldPromptToReplacePalette } from '../LivePalette/livePaletteUtility'
 import { LP_MAX_COLORS_ALLOWED } from '../../constants/configurations'
 import { mergeLpColors, replaceLpColors } from '../../store/actions/live-palette'
+import { RouteContext } from '../../contexts/RouteContext/RouteContext'
 
 const baseClass = 'paint__scene__wrapper'
 const canvasClass = `${baseClass}__canvas`
@@ -150,7 +151,6 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   canvasOriginalDimensions: Object
   wrapperOriginalDimensions: Object
   worker: Object
-
   constructor (props: ComponentProps) {
     super(props)
 
@@ -168,6 +168,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.CFIImage = React.createRef()
     this.CFIImage2 = React.createRef()
     this.mergeCanvasRef = React.createRef()
+    this.mergeCanvasRefModal = React.createRef()
     this.wrapperDimensions = {}
     this.canvasDimensions = {}
     this.canvasOriginalDimensions = {}
@@ -231,7 +232,8 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       canvasHeight: initialImageHeight,
       loadingMasks: !!props.workspace,
       canvasHasBeenInitialized: false,
-      showSelectPaletteModal: false
+      showSelectPaletteModal: false,
+      checkIsPaintSceneUpdate: false
     }
 
     this.undo = this.undo.bind(this)
@@ -308,7 +310,23 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     return 0
   }
 
+  static getDerivedStateFromProps (props, state) {
+    if (props.checkIsPaintSceneUpdate !== state.checkIsPaintSceneUpdate) {
+      return {
+        checkIsPaintSceneUpdate: props.checkIsPaintSceneUpdate
+      }
+    }
+    return null
+  }
+
   componentDidUpdate (prevProps: Object, prevState: Object) {
+    if (prevState.checkIsPaintSceneUpdate !== this.state.checkIsPaintSceneUpdate) {
+      if (this.state.imagePathList.length > 0) {
+        this.context.showWarningModal(this.saveBase64(this.getLayers()))
+      } else {
+        this.context.loadNewCanvas()
+      }
+    }
     if (prevState.loading) {
       return
     }
@@ -1704,6 +1722,16 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     return null
   }
 
+  saveBase64 = (imageUrls: string[]) => {
+    return ((<MergeCanvas
+      key={this.state.mergeCanvasKey}
+      width={this.canvasOriginalDimensions.width}
+      height={this.canvasOriginalDimensions.height}
+      ref={this.mergeCanvasRefModal}
+      applyZoomPan={this.applyZoomPan}
+      layers={imageUrls} />))
+  }
+
   exportImagePaths () {
     return this.state.imagePathList
   }
@@ -1864,3 +1892,4 @@ export {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(injectIntl(PaintScene))
+PaintScene.contextType = RouteContext

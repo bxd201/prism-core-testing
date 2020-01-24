@@ -348,7 +348,7 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
 
   hideTooltipContentByZindex = (ref: RefObject) => {
     if (ref.current) {
-      ref.current.style.zIndex = 10000
+      ref.current.style.zIndex = 1002
     }
   }
 

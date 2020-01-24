@@ -63,7 +63,7 @@ export const renderingData = {
           image: '/prism/images/color-visualizer-wrapper/scene-submenu__thumbnail--sample-scenes.png',
           subTitle: 'USE OUR PHOTOS',
           subContent: 'Virtually paint a sample photo.',
-          url: '/paint-scene',
+          url: '/active',
           id: 0
         },
         {

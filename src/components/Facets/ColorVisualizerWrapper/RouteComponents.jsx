@@ -122,7 +122,7 @@ const redirectTo = (url, props, type) => {
   if (type !== 'MATCH A PHOTO' && type !== 'UPLOAD YOUR PHOTO') {
     props.history.push(url)
     props.redirectTo()
-    props.getImageUrl('null', 'other')
+    props.getImageUrl('null', type)
   }
 }
 

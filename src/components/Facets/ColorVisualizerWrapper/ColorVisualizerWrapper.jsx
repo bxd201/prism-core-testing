@@ -26,6 +26,7 @@ import Help from '../../Help/Help'
 import { withRouter } from 'react-router'
 import DropDownMenu from './RouteComponents'
 import { RouteContext } from '../../../contexts/RouteContext/RouteContext'
+import { CVWWarningModal } from './WarningModal'
 const colorWallBaseUrl = `/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_WALL}`
 
 // this is very vague because react-router doesn't have the ability to match /section/x/family/y/color/z and /section/x/color/z with the same route
@@ -50,6 +51,7 @@ export const MATCH_PHOTO = '/match-photo'
 export const MY_IDEAS = '/my-ideas'
 const TYPE_MATCH_PHOTO = 'MATCH A PHOTO'
 const TYPE_UPLOAD_YOUR_PHOTO = 'UPLOAD YOUR PHOTO'
+const USE_OUR_PHOTOS = 'USE OUR PHOTOS'
 
 export const RootRedirect = () => {
   return <Redirect to='/active' />
@@ -77,7 +79,11 @@ export class ColorVisualizerWrapper extends Component<Props> {
       remountKey: (new Date()).getTime(),
       lastActiveComponent: SCENE_MANAGER_COMPONENT,
       helpLinkRef: null,
-      isTabbedOutFromHelp: false
+      isTabbedOutFromHelp: false,
+      isShowWarningModal: false,
+      checkIsPaintSceneUpdate: false,
+      isUseOurPhoto: false,
+      showMatchPhoto: false
     }
   }
 
@@ -107,7 +113,7 @@ export class ColorVisualizerWrapper extends Component<Props> {
     }
   }
   redirectTo=() => {
-    this.setState({ close: true, showDefaultPage: false })
+    this.setState({ close: true })
   }
 
   open = (isShowDropDown, close) => {
@@ -132,26 +138,42 @@ export class ColorVisualizerWrapper extends Component<Props> {
   }
 
   renderComponent = (url, type) => {
-    let lastActiveComponent = this.state.lastActiveComponent
-    if (type === TYPE_MATCH_PHOTO || type === TYPE_UPLOAD_YOUR_PHOTO) {
-      let isPaintScene
+    const { checkIsPaintSceneUpdate, lastActiveComponent } = this.state
+    if (type === USE_OUR_PHOTOS) {
+      this.setState({
+        checkIsPaintSceneUpdate: !checkIsPaintSceneUpdate,
+        isUseOurPhoto: true
+      })
+    } else if (type === TYPE_MATCH_PHOTO || type === TYPE_UPLOAD_YOUR_PHOTO) {
       if (type === TYPE_MATCH_PHOTO) {
-        isPaintScene = false
         this.props.history.push(MATCH_PHOTO)
+        this.setState({
+          imgUrl: url,
+          showDefaultPage: false,
+          showPaintScene: false,
+          close: true,
+          showMatchPhoto: true,
+          remountKey: this.state.remountKey,
+          lastActiveComponent: lastActiveComponent
+        })
       }
       if (type === TYPE_UPLOAD_YOUR_PHOTO) {
-        isPaintScene = true
-        lastActiveComponent = PAINT_SCENE_COMPONENT
-        this.props.history.push(PAINT_SCENE_ROUTE)
+        if (lastActiveComponent === SCENE_MANAGER_COMPONENT) {
+          // check scene manager whether update here
+          this.props.history.push(PAINT_SCENE_ROUTE)
+          this.setState({
+            imgUrl: url,
+            showDefaultPage: false,
+            close: true,
+            showPaintScene: true,
+            showMatchPhoto: false,
+            remountKey: (new Date()).getTime(),
+            lastActiveComponent: PAINT_SCENE_COMPONENT
+          })
+        } else {
+          this.setState({ checkIsPaintSceneUpdate: !checkIsPaintSceneUpdate, tmpUrl: url })
+        }
       }
-      this.setState({
-        imgUrl: url,
-        close: true,
-        showDefaultPage: false,
-        showPaintScene: isPaintScene,
-        remountKey: isPaintScene ? (new Date()).getTime() : this.state.remountKey,
-        lastActiveComponent: lastActiveComponent
-      })
     } else {
       this.setState({
         showDefaultPage: false,
@@ -175,9 +197,44 @@ export class ColorVisualizerWrapper extends Component<Props> {
     })
   }
 
+  showWarningModal = (base64) => {
+    this.setState({ isShowWarningModal: true, tmpPaintSceneImage: base64 })
+  }
+
+  loadNewCanvas=() => {
+    const { tmpUrl, checkIsPaintSceneUpdate, isUseOurPhoto } = this.state
+    if (isUseOurPhoto) {
+      this.setState({
+        showDefaultPage: true,
+        showPaintScene: false,
+        lastActiveComponent: SCENE_MANAGER_COMPONENT,
+        remountKey: (new Date()).getTime(),
+        isShowWarningModal: false,
+        isUseOurPhoto: false,
+        checkIsPaintSceneUpdate: !checkIsPaintSceneUpdate
+      })
+    }
+    if (!isUseOurPhoto) {
+      this.setState({
+        imgUrl: tmpUrl,
+        showDefaultPage: false,
+        close: true,
+        showPaintScene: true,
+        remountKey: (new Date()).getTime(),
+        lastActiveComponent: PAINT_SCENE_COMPONENT,
+        isShowWarningModal: false,
+        checkIsPaintSceneUpdate: !checkIsPaintSceneUpdate
+      })
+    }
+  }
+
+  cancle = () => {
+    this.setState({ isShowWarningModal: false })
+  }
+
   render () {
     const { toggleCompareColor } = this.props
-    const { close, showDefaultPage, imgUrl, showPaintScene, remountKey, helpLinkRef, isTabbedOutFromHelp } = this.state
+    const { close, showDefaultPage, imgUrl, showPaintScene, remountKey, isShowWarningModal, tmpPaintSceneImage, checkIsPaintSceneUpdate, helpLinkRef, isTabbedOutFromHelp } = this.state
     const dropMenuProps = {
       close: this.close,
       redirectTo: this.redirectTo,
@@ -190,8 +247,11 @@ export class ColorVisualizerWrapper extends Component<Props> {
             navigate: (isShowDropDown, close) => this.open(isShowDropDown, close),
             setActiveComponent: () => this.setActiveComponent(),
             getHelpLinkRef: (helpRef) => this.setHelpLinkRef(helpRef),
-            setIsTabbedOutFromHelp: () => this.setIsTabbedOutFromHelp()
+            setIsTabbedOutFromHelp: () => this.setIsTabbedOutFromHelp(),
+            showWarningModal: (base64) => this.showWarningModal(base64),
+            loadNewCanvas: () => this.loadNewCanvas()
           }}>
+            {isShowWarningModal && <CVWWarningModal miniImage={tmpPaintSceneImage} cancle={this.cancle} confirm={this.loadNewCanvas} />}
             <ColorVisualizerNav />
             {!toggleCompareColor &&
             <div className='cvw__root-wrapper'>
@@ -212,7 +272,8 @@ export class ColorVisualizerWrapper extends Component<Props> {
               <Route path='/help' component={Help} />
               <Route path='/match-photo' render={() => <MatchPhoto showPaintScene imgUrl={imgUrl} />} />
               {showDefaultPage && <SceneManager expertColorPicks />}
-              <MatchPhoto isPaintScene showPaintScene={showPaintScene} imgUrl={imgUrl} key={remountKey} />
+              <MatchPhoto isPaintScene checkIsPaintSceneUpdate={checkIsPaintSceneUpdate} showPaintScene={showPaintScene} imgUrl={imgUrl} key={remountKey} />
+              <div className={`${isShowWarningModal ? 'cvw__modal__overlay' : 'cvw__route-wrapper'}`} />
               {!close && <div role='presentation' className='nav__dropdown-overlay' onClick={this.close}>
                 <Route path='/active/colors' component={(props) => <DropDownMenu isTabbedOutFromHelp={isTabbedOutFromHelp} helpLinkRef={helpLinkRef} dataKey='color' {...dropMenuProps} />} />
                 <Route path='/active/inspiration' component={() => <DropDownMenu isTabbedOutFromHelp={isTabbedOutFromHelp} helpLinkRef={helpLinkRef} dataKey='inspiration' {...dropMenuProps} />} />

@@ -32,7 +32,7 @@ const PrismImage = forwardRef((props: PrismImageProps, ref) => {
     canvas.width = canvasWidth
     canvas.height = canvasHeight
     ctx.drawImage(ref.current, 0, 0, canvasWidth, canvasHeight)
-    const imageData = ctx.getImageData(0, 0, canvasWidth, canvasHeight)
+    const imageData = canvasWidth && ctx.getImageData(0, 0, canvasWidth, canvasHeight)
 
     const payload = {
       data: imageData,
