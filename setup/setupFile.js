@@ -1,5 +1,4 @@
 import React, { useContext } from 'react'
-import ReactGA from 'react-ga'
 import { IntlProvider } from 'react-intl'
 import { Provider } from 'react-redux'
 import { mount } from 'enzyme'

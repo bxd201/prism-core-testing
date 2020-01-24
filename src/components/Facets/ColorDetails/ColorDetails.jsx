@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom'
 import has from 'lodash/has'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import { FormattedMessage } from 'react-intl'
-import ReactGA from 'react-ga'
+import * as GA from 'src/analytics/GoogleAnalytics'
 import ColorChipMaximizer from './ColorChipMaximizer'
 import ColorInfo from './ColorInfo'
 import ColorViewer from './ColorViewer'
@@ -39,8 +39,8 @@ const ColorDetails = ColorDataWrapper(({ onColorChanged }: { onColorChanged: Fun
 
   useEffect(() => {
     if (activeColor) {
-      ReactGA.set({ dimension1: config.ga_domain_id }, ['GAtrackerPRISM'])
-      ReactGA.pageview(`color-detail/${activeColor.brandKey} ${activeColor.colorNumber} - ${activeColor.name}`, ['GAtrackerPRISM'])
+      GA.set({ dimension1: config.ga_domain_id })
+      GA.pageView(`color-detail/${activeColor.brandKey} ${activeColor.colorNumber} - ${activeColor.name}`)
       onColorChanged(activeColor)
     }
   }, [activeColor])
@@ -96,7 +96,7 @@ const ColorDetails = ColorDataWrapper(({ onColorChanged }: { onColorChanged: Fun
           <div className={`${baseClass}__additional-info`}>
             <Tabs onSelect={index => {
               const tabNames = ['View Coord Color Section', 'View Similar Color Section', 'View Color Info Section']
-              ReactGA.event({ category: 'Color Detail', action: tabNames[index], label: tabNames[index] }, ['GAtrackerPRISM'])
+              GA.event({ category: 'Color Detail', action: tabNames[index], label: tabNames[index] })
             }}>
               <TabList className={`${baseClass}__tab-list`} style={{ backgroundColor: activeColor.hex }}>
                 <Tab className={`${baseClass}__tab ${activeColor.isDark ? `${baseClass}__tab--dark-color` : ''}`}>

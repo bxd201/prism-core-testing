@@ -1,6 +1,6 @@
 // @flow
 import React from 'react'
-import ReactGA from 'react-ga'
+import * as GA from 'src/analytics/GoogleAnalytics'
 import { withRouter, type RouterHistory } from 'react-router-dom'
 
 import type { Color } from '../../../../shared/types/Colors'
@@ -17,11 +17,11 @@ type Props = {
 
 export function ColorStripSwatch ({ color, active, history }: Props) {
   const selectColor = () => {
-    ReactGA.event({
+    GA.event({
       category: 'Color Detail / Swatch Chip List',
       action: 'View Swatch Chip Color',
       label: color.name
-    }, ['GAtrackerPRISM'])
+    })
     history.push(generateColorDetailsPageUrl(color))
   }
 

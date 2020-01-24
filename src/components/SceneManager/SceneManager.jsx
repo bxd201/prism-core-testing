@@ -5,7 +5,7 @@ import find from 'lodash/find'
 import flattenDeep from 'lodash/flattenDeep'
 import includes from 'lodash/includes'
 import memoizee from 'memoizee'
-import ReactGA from 'react-ga'
+import * as GA from 'src/analytics/GoogleAnalytics'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
 import { DndProvider } from 'react-dnd-cjs'
@@ -133,11 +133,11 @@ export class SceneManager extends PureComponent<Props, State> {
     } else {
       // ... otherwise activate this scene
       this.activateScene(id)
-      ReactGA.event({
+      GA.event({
         category: 'Scene Manager',
         action: 'Toggle Active Scene',
         label: 'Toggle Active Scene'
-      }, ['GAtrackerPRISM'])
+      })
     }
   }
 
