@@ -3,7 +3,7 @@ import React, { useCallback } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
 import { FormattedMessage } from 'react-intl'
-import ReactGA from 'react-ga'
+import * as GA from 'src/analytics/GoogleAnalytics'
 import includes from 'lodash/includes'
 
 import { SCENE_VARIANTS } from 'constants/globals'
@@ -17,13 +17,10 @@ type SwitchProps = {
   sceneId: number
 }
 
-const KEY_CODE_ENTER = 13
-const KEY_CODE_SPACE = 32
-
 export const NAME = 'day-night-toggle'
 export const CLASSES = {
   BASE: 'scene-variant-switch-day-night',
-  CHECKBOX: 'visually-hidden',
+  CHECKBOX: 'scene-variant-switch-day-night__input visually-hidden',
   WRAPPER: 'scene-variant-switch-day-night__wrapper',
   DAY: 'scene-variant-switch-day-night__day',
   SWITCH: 'scene-variant-switch-day-night__switch',
@@ -38,38 +35,25 @@ function DayNight (props: SwitchProps) {
   const isDay = currentVariant === SCENE_VARIANTS.DAY
 
   const toggle = useCallback(() => {
-    if (currentVariant === SCENE_VARIANTS.DAY) {
-      onChange(SCENE_VARIANTS.NIGHT)
-      ReactGA.event({
-        category: 'Scene Manager',
-        action: 'View Night Scene',
-        label: 'View Night Scene'
-      }, ['GAtrackerPRISM'])
-    } else {
-      onChange(SCENE_VARIANTS.DAY)
-    }
-  }, [currentVariant])
-
-  const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    if (e.keyCode === KEY_CODE_ENTER || e.keyCode === KEY_CODE_SPACE) {
-      e.stopPropagation()
-      e.preventDefault()
-      // ... act as though we've changed the checkbox
-      toggle()
-    }
+    const newVariant = (currentVariant === SCENE_VARIANTS.DAY) ? SCENE_VARIANTS.NIGHT : SCENE_VARIANTS.DAY
+    GA.event({
+      category: 'Scene Manager',
+      action: `View ${newVariant} Scene`,
+      label: `View ${newVariant} Scene`
+    })
+    onChange(newVariant)
   }, [currentVariant])
 
   return (
     <FormattedMessage id={isDay ? 'TO_NIGHT_VIEW' : 'TO_DAY_VIEW'}>
-      {(txt: string) => (
+      {(txt: string) => <>
+        {/* eslint-disable-next-line jsx-a11y/label-has-for */}
         <label className={`${CLASSES.BASE} ${!isDay ? `${CLASSES.BASE}--night` : ''}`}
-          onKeyDown={handleKeyDown}
-          role='button'
           title={txt}
           aria-label={txt}
-          htmlFor={checkboxName}
-          tabIndex='0'>
-          <input tabIndex='-1' className={CLASSES.CHECKBOX} type='checkbox' checked={!isDay} name={checkboxName} id={checkboxName} onChange={toggle} />
+          htmlFor={checkboxName}>
+
+          <input className={CLASSES.CHECKBOX} type='checkbox' checked={!isDay} name={checkboxName} id={checkboxName} onChange={toggle} />
           <div className={`${CLASSES.WRAPPER} ${isDay ? `${CLASSES.WRAPPER}--active` : ''}`}>
             <FontAwesomeIcon className={`${CLASSES.DAY} ${!isDay ? `${CLASSES.DAY}--active` : ''}`} icon={['fa', 'sun']} />
           </div>
@@ -77,7 +61,7 @@ function DayNight (props: SwitchProps) {
             <FontAwesomeIcon className={`${CLASSES.NIGHT} ${!isDay ? `${CLASSES.NIGHT}--active` : ''}`} icon={['fa', 'moon-stars']} />
           </div>
         </label>
-      )}
+      </>}
     </FormattedMessage>
   )
 }

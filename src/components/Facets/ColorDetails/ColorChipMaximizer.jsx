@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
 import { FormattedMessage, injectIntl } from 'react-intl'
 import { LiveMessage } from 'react-aria-live'
-import ReactGA from 'react-ga'
+import * as GA from 'src/analytics/GoogleAnalytics'
 
 import { type Color } from '../../../shared/types/Colors'
 import { varValues } from 'variables'
@@ -72,11 +72,11 @@ export function ColorChipMaximizer ({ color, intl }: Props) {
       setTimeout(() => {
         setLiveRegionMessage(intl.messages.CHIP_MAXIMIZED)
       }, 500)
-      ReactGA.event({
+      GA.event({
         category: 'Color Detail',
         action: 'Maximize Swatch',
         label: 'Maximize Swatch'
-      }, ['GAtrackerPRISM'])
+      })
     }
     if (isMaximized === false) {
       maximizeChipBtn.current && maximizeChipBtn.current.focus()

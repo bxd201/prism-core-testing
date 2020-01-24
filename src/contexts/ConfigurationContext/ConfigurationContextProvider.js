@@ -11,6 +11,7 @@ import { varNames } from 'variables'
 import ConfigurationContext from './ConfigurationContext'
 
 import { type Configuration, type EmbeddedConfiguration } from '../../shared/types/Configuration'
+import * as GA from 'src/analytics/GoogleAnalytics'
 
 type ReduxStateProps = {
   fetchedConfig: Configuration
@@ -44,6 +45,13 @@ function ConfigurationContextProvider (props: Props) {
   useEffect(() => {
     loadConfiguration(userBrand)
   }, [])
+
+  // TODO: extract this into an appropriate location, perhaps an initial bootstrapping step tied into rdx or ctx -@cody.richmond
+  useEffect(() => {
+    if (otherFetchedConfig.ga_domain_id) {
+      GA.set({ dimension1: otherFetchedConfig.ga_domain_id })
+    }
+  }, [otherFetchedConfig.ga_domain_id])
 
   // TODO: if we want, we can render a loader here or something
   // if (fetchedConfig.loadingConfiguration) {
