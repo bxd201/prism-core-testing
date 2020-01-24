@@ -4,13 +4,12 @@ import CollectionsHeaderWrapper from '../CollectionsHeaderWrapper/CollectionsHea
 import ColorCollectionsTab from '../Shared/ColorCollectionsTab'
 import React, { useState, useEffect } from 'react'
 import WithConfigurationContext from '../../contexts/ConfigurationContext/WithConfigurationContext'
-
-import { ColorListWithCarousel } from '../Carousel/Carousel'
+import Carousel from '../Carousel/Carousel'
+import CollectionSummary from './CollectionSummary'
 import { connect } from 'react-redux'
 import { injectIntl } from 'react-intl'
 import { loadCollectionSummaries as loadCS } from '../../store/actions/collectionSummaries'
 import { loadColors } from '../../store/actions/loadColors'
-
 import './ColorCollections.scss'
 
 type SummaryProps = {
@@ -21,7 +20,7 @@ type SummaryProps = {
   isShowBack: boolean,
   loadColors: Function,
   loadCS: Function,
-  setHeader: Function,
+  setHeader: string => void,
   showBack: Function,
   summaries: {
     data: any[],
@@ -142,13 +141,7 @@ export function ColorCollections (props: SummaryProps) {
     ColorCollections.updateCollectionData({ tabId: tabIdShow, props })
   }
 
-  const headerContent = 'Color Collections'
-
-  useEffect(() => {
-    if (!isShowBack) {
-      setHeader(headerContent)
-    }
-  }, [isShowBack])
+  useEffect(() => { isShowBack || setHeader('Color Collections') }, [isShowBack])
 
   if (isShowBack === true) {
     return <CollectionDetail collectionDetailData={collectionDataDetails} />
@@ -168,7 +161,8 @@ export function ColorCollections (props: SummaryProps) {
         tabIdShow={tabIdShow}
       />
       <div className={`${collectionsList}`}>
-        <ColorListWithCarousel
+        <Carousel
+          BaseComponent={CollectionSummary}
           defaultItemsPerView={8}
           isInfinity={false}
           key={tabIdShow}

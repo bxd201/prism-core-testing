@@ -67,6 +67,7 @@ function ColorCollectionsTab (props: Props) {
                 data-testid={`${tab.id}`}
                 tabIndex='0'
                 role='tab'
+                key={tab.id}
                 aria-selected={(tab.id === tabIdShow)}
                 onKeyDown={(e) => {
                   if (e.keyCode === KEY_CODE_ENTER || e.keyCode === KEY_CODE_SPACE) {
@@ -76,23 +77,13 @@ function ColorCollectionsTab (props: Props) {
                     showTabListMobile(!tabListMobileShow)
                   }
                 }}
-                className={`${tabListItem} ${(tab.id === tabIdShow)
-                  ? `${tabListItemActive}`
-                  : ''}`
-                }
-                key={tab.id}
-                onClick={() => {
-                  if (tab.id !== tabIdShow) {
-                    showTab(tab.id, true)
-                  }
-                  showTabListMobile(!tabListMobileShow)
-                }}
+                className={`${tabListItem} ${(tab.id === tabIdShow) ? `${tabListItemActive}` : ''}`}
+                onClick={() => tab.id !== tabIdShow && showTab(tab.id, true)}
               >
                 {tab.tabName}
               </li>
             )
-          })
-        }
+          })}
       </ul>
     </div>
   )

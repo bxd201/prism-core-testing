@@ -1,7 +1,7 @@
 import React from 'react'
 import { shallow } from 'enzyme'
 import ListWithCarousel from 'src/components/Carousel/Carousel'
-import CollectionSummary from 'src/components/Carousel/CollectionSummary'
+import CollectionSummary from 'src/components/ColorCollections/CollectionSummary'
 
 const baseClass = 'prism-slick-carousel'
 const contentWrapper = `${baseClass}__wrapper__content`
