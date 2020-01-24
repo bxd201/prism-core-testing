@@ -20,7 +20,7 @@ type SwitchProps = {
 export const NAME = 'day-night-toggle'
 export const CLASSES = {
   BASE: 'scene-variant-switch-day-night',
-  CHECKBOX: 'visually-hidden',
+  CHECKBOX: 'scene-variant-switch-day-night__input visually-hidden',
   WRAPPER: 'scene-variant-switch-day-night__wrapper',
   DAY: 'scene-variant-switch-day-night__day',
   SWITCH: 'scene-variant-switch-day-night__switch',
@@ -47,25 +47,15 @@ function DayNight (props: SwitchProps) {
     }
   }, [currentVariant])
 
-  const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    if (e.keyCode === 32 || e.keyCode === 13) {
-      e.stopPropagation()
-      e.preventDefault()
-      // ... act as though we've changed the checkbox
-      toggle()
-    }
-  }, [currentVariant])
-
   return (
     <FormattedMessage id={isDay ? 'TO_NIGHT_VIEW' : 'TO_DAY_VIEW'}>
-      {(txt: string) => (
+      {(txt: string) => <>
+        {/* eslint-disable-next-line jsx-a11y/label-has-for */}
         <label className={`${CLASSES.BASE} ${!isDay ? `${CLASSES.BASE}--night` : ''}`}
-          onKeyDown={handleKeyDown}
-          role='button'
           title={txt}
           aria-label={txt}
-          htmlFor={checkboxName}
-          tabIndex='0'>
+          htmlFor={checkboxName}>
+
           <input className={CLASSES.CHECKBOX} type='checkbox' checked={!isDay} name={checkboxName} id={checkboxName} onChange={toggle} />
           <div className={`${CLASSES.WRAPPER} ${isDay ? `${CLASSES.WRAPPER}--active` : ''}`}>
             <FontAwesomeIcon className={`${CLASSES.DAY} ${!isDay ? `${CLASSES.DAY}--active` : ''}`} icon={['fa', 'sun']} />
@@ -74,7 +64,7 @@ function DayNight (props: SwitchProps) {
             <FontAwesomeIcon className={`${CLASSES.NIGHT} ${!isDay ? `${CLASSES.NIGHT}--active` : ''}`} icon={['fa', 'moon-stars']} />
           </div>
         </label>
-      )}
+      </>}
     </FormattedMessage>
   )
 }

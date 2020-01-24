@@ -2,6 +2,7 @@
 // Everything in this file will be included multiple times in the compiled CSS
 // Only mixins and variables should be in here
 
+@import "browser-highlights";
 @import "css-variables";
 @import "global";
 @import "live-palette-chip-distribution";
