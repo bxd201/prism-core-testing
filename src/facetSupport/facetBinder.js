@@ -13,12 +13,14 @@ import docReady from 'src/shared/helpers/docReady'
 import { type EmbeddedConfiguration } from 'src/shared/types/Configuration'
 import facetPubSub from './facetPubSub'
 import { addInstance, getInstance, unmount, type BoundFacet } from './facetInstance'
+import { initFirebaseOnce } from './facetFirebase'
 
 // import the redux store
 import { embedGlobalStylesOnce, memoEmbedBundleStyles } from './facetStyles'
 import { HAS_BOUND_CLASS, TO_BIND_CLASS } from './facetConstants'
 import { facetMasterWrapper } from './facetMasterWrapper'
 import { dressUpForPrism } from './facetUtils'
+import { FIREBASE_CONFIG } from 'constants/configurations'
 
 let [addToEmbedQueue, embedQueue] = [(facetName) => {
   embedQueue.push(facetName)
@@ -214,6 +216,8 @@ export default function facetBinder (FacetDeclaration: BoundFacet, facetName: st
   addToEmbedQueue(facetName)
   // this will load global styles immediately
   embedGlobalStylesOnce()
+
+  initFirebaseOnce(FIREBASE_CONFIG)
 
   embedAtRoots()
 

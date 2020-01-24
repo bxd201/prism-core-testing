@@ -1,7 +1,4 @@
 // @flow
-import { flagAsMainBundle } from 'src/facetSupport/facetBinder'
-import * as firebase from 'firebase'
-import { FIREBASE_CONFIG } from './constants/configurations'
 import { ensureFullyQualifiedAssetUrl } from './shared/helpers/DataUtils'
 import { EMBED_ROOT_SELECTOR_DEPRECATED, EMBED_ROOT_SELECTOR } from './facetSupport/facetConstants'
 import { dressUpForPrism } from './facetSupport/facetUtils'
@@ -34,9 +31,5 @@ function injectRoot () {
   allRoots.forEach(dressUpForPrism)
 }
 
-firebase.initializeApp(FIREBASE_CONFIG)
-// identify this as the main bundle
-flagAsMainBundle()
-// initial root injection to appropriately decorate auto-embed elements with prism attributes and classes
 injectRoot()
 loadBundle()

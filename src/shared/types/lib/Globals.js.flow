@@ -3,14 +3,20 @@
  * Anything available globally that Flow needs to know about can be declared here.
  */
 
-declare var BASE_PATH: string
-declare var API_PATH: string
-declare var ML_API_URL: string
-declare var ENV: string
 declare type RefObject = { current: any }
+
+declare var FileReader: Function
 declare var postMessage: Function
 declare var self: any
 declare var Worker: Function
-declare var FileReader: Function
+
+declare var API_PATH: string
+declare var APP_NAME: string
 declare var APP_VERSION: string
+declare var BASE_PATH: string
+declare var ENV: string
 declare var FIREBASE_AUTH_ENABLED: boolean
+declare var ML_API_URL: string
+declare var WEBPACK_CONSTANTS: { [key: string]: any }
+declare var VAR_NAMES: { [key: string]: string }
+declare var VAR_VALUES: { [key: string]: number | string }

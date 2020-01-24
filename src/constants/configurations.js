@@ -1,3 +1,4 @@
+// @flow
 import { varValues } from 'variables'
 
 // live palette max colors allowed to be added
@@ -28,7 +29,11 @@ export const DEFAULT_CONFIGURATION = {
   }
 }
 
-export const FIREBASE_CONFIG = {
+export type FirebaseConfig = {
+  [key: string]: string
+}
+
+export const FIREBASE_CONFIG: FirebaseConfig = {
   apiKey: 'AIzaSyDdLlH1Cm9YdAbt3Cb7eXznbaJZ32SwkeA',
   authDomain: 'dev-prism-cvw.firebaseapp.com',
   databaseURL: 'https://dev-prism-cvw.firebaseio.com',
