@@ -3,8 +3,6 @@ import 'src/allFacets' // import all facets so they're included in the bundle
 import { flagAsMainBundle, embedAtRoots } from 'src/facetSupport/facetBinder'
 import { TO_BIND_CLASS } from 'src/facetSupport/facetConstants'
 import flatten from 'lodash/flatten'
-import * as firebase from 'firebase'
-import { FIREBASE_CONFIG } from './constants/configurations'
 
 const gatherReactRoots = (nodes) => {
   if (!nodes || !nodes.length) {
@@ -45,8 +43,6 @@ const mutationObserver = new window.MutationObserver((mutationsList) => {
     embedAtRoots(true)
   }
 })
-
-firebase.initializeApp(FIREBASE_CONFIG)
 
 flagAsMainBundle()
 
