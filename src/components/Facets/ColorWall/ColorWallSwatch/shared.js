@@ -9,6 +9,8 @@ export const CLASS_NAMES = {
   BASE_COMPENSATE_X_: 'color-swatch-inner--compensate-x-',
   BASE_COMPENSATE_Y_: 'color-swatch-inner--compensate-y-',
   BASE_DARK: 'color-swatch-inner--dark-color',
+  FLAG: 'color-swatch-inner__flag',
+  MESSAGE: 'color-swatch-inner__message',
   CONTENT: 'color-swatch-inner__content',
   CONTENT_NUMBER: 'color-swatch-inner__content__number',
   CONTENT_NAME: 'color-swatch-inner__content__name',

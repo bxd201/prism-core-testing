@@ -59,7 +59,7 @@ const OmniButton = (props: Props) => {
 
 OmniButton.ICONS = {
   'INFO': <FontAwesomeIcon icon='info' size='1x' />,
-  'ADD': <FontAwesomeIcon icon={['fa', 'plus']} size='1x' />
+  'ADD': <FontAwesomeIcon icon={['fal', 'plus-circle']} size='2x' />
 }
 
 export default OmniButton

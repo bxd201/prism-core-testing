@@ -93,7 +93,7 @@ export default () => {
               <div className={MODE_CLASS_NAMES.COL}>
                 {colorFamiliesAndSearch}
                 <Wrapper
-                  className={`${menuBarPrefix} ${menuBarPrefix}--${menuOpen ? 'open' : 'closed'}`}
+                  className={`${MODE_CLASS_NAMES.CELL} ${MODE_CLASS_NAMES.RIGHT} ${menuBarPrefix} ${menuBarPrefix}--${menuOpen ? 'open' : 'closed'}`}
                   onMenuToggle={handleMenuToggle}>
                   <Button className={`${menuBarPrefix}__button`} tag='div'>
                     <span className={`${menuBarPrefix}__button-copy`}>{currentFamily}</span>

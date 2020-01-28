@@ -1,6 +1,6 @@
 // @flow
-import { RECEIVE_COLORS, FILTER_BY_FAMILY, MAKE_ACTIVE_COLOR, RESET_ACTIVE_COLOR, FILTER_BY_SECTION, REMOVE_COLOR_FILTERS, MAKE_ACTIVE_COLOR_BY_ID, LOAD_ERROR, EMIT_COLOR } from '../../actions/loadColors'
-import { RECEIVE_SEARCH_RESULTS, CLEAR_SEARCH, SEARCH_RESULTS_ERROR, UPDATE_SEARCH_QUERY, TOGGLE_SEARCH_MODE } from '../../actions/loadSearchResults'
+import { EMIT_COLOR, FILTER_BY_FAMILY, FILTER_BY_SECTION, LOAD_ERROR, MAKE_ACTIVE_COLOR, MAKE_ACTIVE_COLOR_BY_ID, RECEIVE_COLORS, REMOVE_COLOR_FILTERS, RESET_ACTIVE_COLOR, UPDATE_COLOR_STATUSES } from '../../actions/loadColors'
+import { CLEAR_SEARCH, RECEIVE_SEARCH_RESULTS, SEARCH_RESULTS_ERROR, TOGGLE_SEARCH_MODE, UPDATE_SEARCH_QUERY } from '../../actions/loadSearchResults'
 
 import { type ReduxAction, type ColorsState } from '../../../shared/types/Actions'
 import { initialState, doReceiveColors, doFilterByFamily, doFilterBySection, doMakeActiveColor, doMakeActiveColorById, getErrorState } from './colorReducerMethods'
@@ -135,6 +135,16 @@ export const colors = (state: ColorsState = initialState, action: ReduxAction) =
         emitColor: {
           color: action.payload,
           timestamp: Date.now()
+        }
+      })
+    }
+
+    case UPDATE_COLOR_STATUSES: {
+      return ({
+        ...state,
+        items: {
+          ...state.items,
+          colorStatuses: action.payload
         }
       })
     }

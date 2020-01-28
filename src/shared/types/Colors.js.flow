@@ -118,3 +118,12 @@ export type CollectionsSummary = Object & {
   collectionName: string,
   collections: Array<Object>
 }
+
+export type ColorStatus = {
+  message: string | typeof undefined,
+  status: number
+}
+
+export type ColorStatuses = {
+  [ key: ColorId ]: ColorStatus
+}

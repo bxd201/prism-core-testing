@@ -20,6 +20,10 @@ import 'src/scss/externalComponentSupport/AutoSizer.scss'
 // TODO: do NOT do this. extract the relevant portion out inton its own component so you can include it normally here and elsewhere.
 import 'src/components/Facets/ColorWall/ColorWallSwatchList.scss'
 import { compareKebabs } from '../../shared/helpers/StringUtils'
+import at from 'lodash/at'
+import { type ColorStatus } from 'src/shared/types/Colors'
+import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
+import { emitColor } from 'src/store/actions/loadColors'
 
 const baseClass = 'Search'
 const EDGE_SIZE = 15
@@ -32,11 +36,15 @@ type Props = {
 const Search = (props: Props) => {
   const { limitSearchToFamily = false, contain = false } = props
   const { results, count, suggestions, loading } = useSelector(state => state.colors.search)
-  const { structure } = useSelector(state => state.colors)
+  const { structure, items: { colorStatuses } } = useSelector(state => state.colors)
   const { section, family, query } = useParams()
   const dispatch = useDispatch()
   const { colorWallBgColor } = useContext(ColorWallContext)
   const [hasSearched, updateHasSearched] = useState(typeof count !== 'undefined')
+  const { swatchShouldEmit } = useContext(ConfigurationContext)
+  const onAddColor = useMemo(() => {
+    return color => dispatch(swatchShouldEmit ? emitColor(color) : add(color))
+  }, [swatchShouldEmit])
 
   React.useEffect(() => {
     if (limitSearchToFamily) {
@@ -66,17 +74,26 @@ const Search = (props: Props) => {
     return ({ columnIndex, isScrolling, isVisible, key, parent, rowIndex, style }) => {
       const columnCount = parent.props.columnCount
       const index = columnIndex + (rowIndex * columnCount)
+      const result = results && results[index]
 
-      return results && results[index] && (
-        <div key={key} style={style}>
-          <ColorWallSwatch
-            key={results[index].hex}
-            showContents
-            color={results[index]}
-            onAdd={add}
-          />
-        </div>
-      )
+      if (result) {
+        const thisStatus: ColorStatus | typeof undefined = colorStatuses && colorStatuses[result.id]
+        const isDisabled = at(thisStatus, 'status')[0] === 0
+        const message = at(thisStatus, 'message')[0]
+
+        return (
+          <div key={key} style={style}>
+            <ColorWallSwatch
+              key={result.hex}
+              showContents
+              color={result}
+              onAdd={onAddColor}
+              disabled={isDisabled}
+              message={message}
+            />
+          </div>
+        )
+      }
     }
   }, [results])
 

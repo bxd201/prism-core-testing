@@ -19,9 +19,11 @@ type Props = {
   color: Color,
   compensateX?: number,
   compensateY?: number,
+  disabled?: boolean,
   tabIndex?: number,
   focus?: boolean,
   level?: number,
+  message?: string,
   onAdd?: Function,
   onClick?: Function,
   showContents?: boolean,
@@ -29,7 +31,7 @@ type Props = {
 }
 
 const ColorWallSwatch = React.forwardRef<Props, any>((props: Props, ref: any) => {
-  const { onClick, onAdd, showContents, color, thisLink, focus, level, active, compensateX, compensateY, tabIndex = 0 } = props
+  const { disabled, onClick, onAdd, showContents, color, thisLink, focus, level, active, compensateX, compensateY, tabIndex = 0, message } = props
   const { displayAddButton, displayInfoButton, displayDetailsLink, colorDetailPageRoot }: ColorWallContextProps = React.useContext(ColorWallContext)
   const { messages = {} } = useIntl()
   const handleOnClick = useCallback((e) => {
@@ -90,7 +92,14 @@ const ColorWallSwatch = React.forwardRef<Props, any>((props: Props, ref: any) =>
       }
     }
 
-    if (displayAddButton) {
+    if (message) {
+      return {
+        content: (
+          <p className={CLASS_NAMES.MESSAGE}>{message}</p>
+        ),
+        refData: null
+      }
+    } else if (displayAddButton) {
       return {
         content: (
           <OmniButton
@@ -156,6 +165,7 @@ const ColorWallSwatch = React.forwardRef<Props, any>((props: Props, ref: any) =>
   return (
     <div className={CLASS_NAMES.SWATCH}>
       <div className={classes} style={{ background: color.hex }}>
+        {disabled ? <div className={CLASS_NAMES.FLAG} /> : null}
         {showContents ? (
           <section className={CLASS_NAMES.CONTENT}>
             <p className={CLASS_NAMES.CONTENT_NUMBER}>{fullColorNumber(color.brandKey, color.colorNumber)}</p>

@@ -18,7 +18,7 @@ import ColorWallSwatch from './ColorWallSwatch/ColorWallSwatch'
 import ColorWallSwatchUI from './ColorWallSwatch/ColorWallSwatchUI'
 import ColorWallSwatchRenderer from './ColorWallSwatch/ColorWallSwatchRenderer'
 import ChunkBoundary from './ChunkBoundary'
-import { type ColorMap, type Color, type ProbablyColorId, type ColorIdGrid } from '../../../shared/types/Colors'
+import { type ColorMap, type Color, type ProbablyColorId, type ColorIdGrid, type ColorStatuses, type ColorStatus } from '../../../shared/types/Colors'
 import { getColorCoords, drawCircle, getCoordsObjectFromPairs, findContainingChunk, findChunkFromCorner, overscanIndicesGetter } from './ColorWallUtils'
 import { getTotalWidthOf2dArray } from '../../../shared/helpers/DataUtils'
 import { fullColorName } from '../../../shared/helpers/ColorUtils'
@@ -49,6 +49,7 @@ type Props = IntlProps & RouterProps & {
   bloomRadius: number,
   colorMap: ColorMap,
   colors: ColorIdGrid, // eslint-disable-line react/no-unused-prop-types
+  colorStatuses?: ColorStatuses,
   colorWallContext: ColorWallContextProps & ColorWallA11yContextProps,
   contain: boolean,
   family: string | void,
@@ -143,7 +144,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
   // LIFECYCLE METHODS
 
   render () {
-    const { minCellSize, maxCellSize, showAll, activeColor, colors, contain, colorWallContext: { a11yFocusChunk, a11yFocusCell, a11yFocusOutline } } = this.props
+    const { minCellSize, maxCellSize, showAll, activeColor, colors, contain, colorWallContext: { a11yFocusChunk, a11yFocusCell, a11yFocusOutline }, colorStatuses } = this.props
     const { focusCoords, needsInitialFocus } = this.state
     const colorIdGrid = colors
     const rowCount = colorIdGrid.length
@@ -199,6 +200,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
                   _forceRenderProp4={showAll}
                   _forceRenderProp5={colorIdGrid}
                   _forceRenderProp6={a11yFocusOutline}
+                  _forceRenderProp7={colorStatuses}
                   scrollToAlignment='center'
                   cellRenderer={this.cellRenderer}
                   columnWidth={size}
@@ -734,7 +736,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     rowIndex, // Vertical (row) index of cell
     style // Style object to be applied to cell (to position it)
   }: Object) {
-    const { colors, colorMap, immediateSelectionOnActivation, onAddColor, swatchLinkGenerator, colorWallContext: { a11yFocusCell, a11yFocusChunk, a11yFocusOutline } } = this.props
+    const { colors, colorMap, immediateSelectionOnActivation, onAddColor, swatchLinkGenerator, colorWallContext: { a11yFocusCell, a11yFocusChunk, a11yFocusOutline }, colorStatuses } = this.props
     const { levelMap } = this.state
     const colorId = colors[rowIndex][columnIndex]
 
@@ -745,6 +747,10 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     const color: Color = colorMap[colorId]
     const thisLevel: ColorReference = levelMap[colorId]
     const linkToSwatch: string = swatchLinkGenerator(color)
+
+    const thisStatus: ColorStatus | typeof undefined = colorStatuses && colorStatuses[colorId]
+    const isDisabled = at(thisStatus, 'status')[0] === 0
+    const message = at(thisStatus, 'message')[0]
 
     let focus = false
     let renderedSwatch
@@ -766,11 +772,13 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
           thisLink={linkToSwatch}
           onAdd={onAddColor ? this.addColor : void (0)}
           onClick={this.returnFocusToThisComponent}
+          message={message}
           color={color}
           level={thisLevel.level}
           ref={this.generateMakeSwatchRef(colorId)}
           compensateX={isFunction(thisLevel.compensateX) ? thisLevel.compensateX() : 0}
           compensateY={isFunction(thisLevel.compensateY) ? thisLevel.compensateY() : 0}
+          disabled={isDisabled}
           focus={focus} />
       )
     } else if (isScrolling) {
@@ -779,7 +787,8 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
       renderedSwatch = (
         <ColorWallSwatchRenderer
           color={color.hex}
-          focus={focus} />
+          focus={focus}
+          disabled={isDisabled} />
       )
     } else if (immediateSelectionOnActivation) {
       // a color swatch that behaves as a button and that's it
@@ -791,6 +800,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
           thisLink={linkToSwatch}
           onClick={this.returnFocusToThisComponent}
           ref={this.generateMakeSwatchRef(colorId)}
+          disabled={isDisabled}
           focus={focus} />
       )
     } else {
@@ -803,6 +813,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
           color={color}
           onClick={this.returnFocusToThisComponent}
           ref={this.generateMakeSwatchRef(colorId)}
+          disabled={isDisabled}
           focus={focus} />
       )
     }
