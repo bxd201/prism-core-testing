@@ -145,6 +145,7 @@
     "react-hooks-testing-library": "0.6.0",
     "react-test-renderer": "16.10.2",
     "redux-mock-store": "1.5.3",
+    "require-context": "1.1.0",
     "sass-loader": "8.0.0",
     "sass-math-pow": "0.1.5",
     "sass-resources-loader": "2.0.1",

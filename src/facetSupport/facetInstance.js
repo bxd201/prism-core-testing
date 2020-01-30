@@ -68,7 +68,7 @@ const makeInstancePromise = (el: HTMLElement): InstancePromise => {
   return newIp
 }
 
-export const addInstance = ({ component, el }: Instance): void => {
+export const addInstance = ({ component, el }: Instance, callback?: Function): void => {
   instances.push({ component, el })
 
   const pResolutionData: FacetBinderMethods & FacetPubSubMethods = {
@@ -80,6 +80,12 @@ export const addInstance = ({ component, el }: Instance): void => {
   }
 
   makeInstancePromise(el).resolve(pResolutionData)
+
+  // if a callback has been provided, call it IMMEDIATELY
+  // this can avoid race conditions having to do with promise resolution delays
+  if (typeof callback === 'function') {
+    callback(pResolutionData)
+  }
 }
 
 export const getInstance = memoizee((seekingEl: HTMLElement): Promise<Instance> => {

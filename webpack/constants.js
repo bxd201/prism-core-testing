@@ -49,13 +49,6 @@ const facetEntryPoints = {
   colorDetailsFacet: path.join(srcPath, 'components/Facets/ColorDetailsFacet.jsx')
 }
 
-const implementationTemplates = [
-  'embeddable',
-  'sw-canada-en-fr',
-  'sw-tag-color-family-pages',
-  'sw-tag-digital-color-wall'
-]
-
 module.exports = {
   appIndexPath,
   authorEntryPointName,
@@ -74,6 +67,5 @@ module.exports = {
   nodeModulesPath,
   production,
   rootPath,
-  srcPath,
-  implementationTemplates
+  srcPath
 }

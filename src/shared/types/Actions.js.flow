@@ -1,5 +1,5 @@
 // @flow
-import type { Color, CategorizedColorIdGrid, ColorList, ColorIdList, ColorMap, FamilyStructure } from './Colors'
+import type { CategorizedColorIdGrid, Color, ColorIdList, ColorList, ColorMap, ColorStatuses, FamilyStructure } from './Colors'
 
 export type ReduxAction = {
   type: string,
@@ -25,9 +25,10 @@ export type ColorsState = {
     activeRequest: boolean
   },
   items: {
-    colors?: CategorizedColorIdGrid,
     brights?: CategorizedColorIdGrid,
     colorMap?: ColorMap,
+    colors?: CategorizedColorIdGrid,
+    colorStatuses?: ColorStatuses,
     unorderedColors?: ColorIdList
   },
   structure?: FamilyStructure,

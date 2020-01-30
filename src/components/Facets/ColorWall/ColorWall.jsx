@@ -6,6 +6,7 @@ import { useIntl, FormattedMessage } from 'react-intl'
 import { TransitionGroup, CSSTransition } from 'react-transition-group'
 import flattenDeep from 'lodash/flattenDeep'
 import { emitColor, makeActiveColorById, filterBySection, filterByFamily } from '../../../store/actions/loadColors'
+import { type ColorsState } from 'src/shared/types/Actions'
 import { add } from '../../../store/actions/live-palette'
 import { varValues } from 'variables'
 import { compareKebabs } from '../../../shared/helpers/StringUtils'
@@ -17,6 +18,7 @@ import GenericMessage from '../../Messages/GenericMessage'
 import ColorWallSwatchList from './ColorWallSwatchList'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import ColorWallContext from './ColorWallContext'
+import ColorWallProp from './ColorWallProp/ColorWallProp'
 import './ColorWall.scss'
 
 type Props = {
@@ -29,8 +31,7 @@ const ColorWall = (props: Props) => {
   const { contain = false } = props
   const { colorWall, swatchShouldEmit } = useContext(ConfigurationContext)
   const { swatchMinSize, swatchMaxSize, swatchMinSizeZoomed, swatchMaxSizeZoomed, colorWallBgColor } = useContext(ColorWallContext)
-  const { colorWallActive, items, section: reduxSection, family: reduxFamily, families = [] } = useSelector(state => state.colors)
-  const { brights, colorMap, colors, unorderedColors } = items
+  const { colorWallActive, items: { brights, colorMap, colors, unorderedColors, colorStatuses }, section: reduxSection, family: reduxFamily, families = [] }: ColorsState = useSelector(state => state.colors)
   const { messages = {} } = useIntl()
   const dispatch = useDispatch()
   const { url, params: { section, family, colorId, colorName } } = useRouteMatch()
@@ -87,21 +88,23 @@ const ColorWall = (props: Props) => {
       >
         {(colors || unorderedColors)
           ? <div className='color-wall-wall' style={{ backgroundColor: colorWallBgColor }}>
+            <ColorWallProp />
             <ColorWallSwatchList
-              showAll={!colorWallActive}
-              immediateSelectionOnActivation={!colorWallActive}
               activeColor={colorWallActive}
-              section={reduxSection}
-              family={reduxFamily}
-              contain={contain}
               bloomRadius={colorWall.bloomRadius} // TODO: demo purposes, maybe we want to change this
-              onAddColor={onAddColor}
               colorMap={colorMap}
-              swatchLinkGenerator={swatchLinkGeneratorFunc}
-              minCellSize={colorWallActive ? swatchMinSizeZoomed : swatchMinSize}
-              maxCellSize={colorWallActive ? swatchMaxSizeZoomed : swatchMaxSize}
               colors={colorsGrid}
+              colorStatuses={colorStatuses}
+              contain={contain}
+              family={reduxFamily}
+              immediateSelectionOnActivation={!colorWallActive}
               key={swatchListKey}
+              maxCellSize={colorWallActive ? swatchMaxSizeZoomed : swatchMaxSize}
+              minCellSize={colorWallActive ? swatchMinSizeZoomed : swatchMinSize}
+              onAddColor={onAddColor}
+              section={reduxSection}
+              showAll={!colorWallActive}
+              swatchLinkGenerator={swatchLinkGeneratorFunc}
               zoomOutUrl={zoomOutUrl}
             />
             {colorWallActive ? (

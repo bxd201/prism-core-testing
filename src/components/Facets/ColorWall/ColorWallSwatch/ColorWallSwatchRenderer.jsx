@@ -7,16 +7,19 @@ import './ColorWallSwatch.scss'
 
 type Props = {
   color: string,
+  disabled?: boolean,
   focus?: boolean
 }
 
-const ColorWallSwatchRenderer = ({ color, focus }: Props) => {
+const ColorWallSwatchRenderer = ({ color, disabled, focus }: Props) => {
   return (
     <div className={CLASS_NAMES.SWATCH}
       role='presentation'>
       <div
-        className={`${CLASS_NAMES.BASE} ${focus ? CLASS_NAMES.BASE_FOCUS : ''}`}
-        style={{ background: color }} />
+        className={`${CLASS_NAMES.BASE} ${CLASS_NAMES.BASE_DISABLED} ${focus ? CLASS_NAMES.BASE_FOCUS : ''}`}
+        style={{ background: color }}>
+        {disabled ? <div className={CLASS_NAMES.FLAG} /> : null}
+      </div>
     </div>
   )
 }
