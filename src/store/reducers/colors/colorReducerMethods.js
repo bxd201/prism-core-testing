@@ -1,5 +1,7 @@
 // @flow
 import find from 'lodash/find'
+import at from 'lodash/at'
+import flattenDeep from 'lodash/flattenDeep'
 import kebabCase from 'lodash/kebabCase'
 import intersection from 'lodash/intersection'
 
@@ -16,7 +18,8 @@ export const initialState: ColorsState = {
     activeRequest: false
   },
   items: {},
-
+  layouts: void (0),
+  layout: void (0),
   structure: [],
   sections: [],
   section: void (0),
@@ -67,6 +70,94 @@ export function doReceiveColors (state: ColorsState, action: ReduxAction) {
     return section.name
   })
   const defaultSection = hasSections && find(structure, { default: true })
+  const colors = action.payload.colors
+
+  // --------------------------------------------------
+  // PRISM-457: In progress -@cody.richmond
+  // BEGIN MOCKED COLOR LAYOUTS
+
+  // all colors
+  const sw = flattenDeep(unorderedColorList)
+  // const sw = flattenDeep(action.payload.unorderedColors)
+  // wide and thin
+  const historic = flattenDeep(colors['Couleur Historique'] || colors['Historic Colour'] || colors['Historic Color']).map(i => `${i}`)
+  // const historic = flattenDeep(colors['Couleur Historique'] || colors['Historic Colour'] || colors['Historic Color']).map(id => colorMap[id])
+  // many short blocks
+  const timeless = flattenDeep(colors['Couleur Intemporelle'] || colors['Timeless Colour'] || colors['Timeless Color']).map(i => `${i}`)
+  // const timeless = flattenDeep(colors['Couleur Intemporelle'] || colors['Timeless Colour'] || colors['Timeless Color']).map(id => colorMap[id])
+
+  const historicStructure = [
+    [
+      [historic.slice(0, 8), historic.slice(9, 12)],
+      [historic.slice(13, 21), historic.slice(22, 25)],
+      [historic.slice(26, 34), historic.slice(35, 38)]
+    ]
+  ]
+
+  const timelessStructure = [
+    [
+      [timeless.slice(0, 7), timeless.slice(8, 15)],
+      [timeless.slice(16, 23), timeless.slice(24, 31)]
+    ],
+    [
+      [timeless.slice(32, 39), timeless.slice(40, 47)],
+      [timeless.slice(48, 55), timeless.slice(56, 63)]
+    ]
+  ]
+
+  const swStructure = [
+    [
+      [sw.slice(0, 7), sw.slice(7, 14), sw.slice(14, 21)]
+    ],
+    [
+      [sw.slice(21, 28), sw.slice(28, 35), sw.slice(35, 42)],
+      [sw.slice(42, 49), sw.slice(49, 56), sw.slice(56, 63)]
+    ],
+    [
+      [sw.slice(63, 70), sw.slice(70, 77), sw.slice(77, 84)],
+      [sw.slice(84, 91), sw.slice(91, 98), sw.slice(98, 105)]
+    ]
+  ]
+
+  const getAFamily = (push = 0) => {
+    return [
+      [
+        [sw.slice(0 + push, 7 + push), [], []]
+      ],
+      [
+        [sw.slice(7 + push, 14 + push), sw.slice(14 + push, 21 + push), sw.slice(21 + push, 28 + push)],
+        [sw.slice(28 + push, 35 + push), sw.slice(35 + push, 42 + push), sw.slice(42 + push, 49 + push)],
+        [sw.slice(49 + push, 56 + push), sw.slice(56 + push, 63 + push), sw.slice(63 + push, 70 + push)]
+      ]
+    ]
+  }
+
+  const layouts = structure.map(section => {
+    const { name, families } = section
+    const isHistoric = name.indexOf('Couleur Hist') === 0 || name.indexOf('Historic') === 0
+    const isTimeless = name.indexOf('Couleur Intemporelle') === 0 || name.indexOf('Timeless') === 0
+    let layout = [[[[]]]]
+
+    if (isHistoric) {
+      layout = historicStructure
+    } else if (isTimeless) {
+      layout = timelessStructure
+    } else {
+      layout = swStructure
+    }
+
+    return {
+      name,
+      layout,
+      families: families.map((fam, i) => ({
+        name: fam,
+        layout: isHistoric ? historicStructure : isTimeless ? timelessStructure : getAFamily(i * 10)
+      }))
+    }
+  })
+
+  // END MOCKED COLOR LAYOUTS
+  // --------------------------------------------------
 
   let useDefault = true // this will be toggled to false if initSection/family/color can be found
 
@@ -74,11 +165,12 @@ export function doReceiveColors (state: ColorsState, action: ReduxAction) {
   let newState = {
     ...state,
     items: {
-      colors: action.payload.colors,
+      colors: colors,
       brights: action.payload.brights,
       unorderedColors: unorderedColorList,
       colorMap
     },
+    layouts,
     status: {
       ...state.status,
       loading: action.payload.loading,
@@ -134,9 +226,13 @@ export function doReceiveColors (state: ColorsState, action: ReduxAction) {
           return getErrorState(state)
         }
 
+        const layoutSection = layouts.filter(l => l.name === foundSection.name)[0]
+        const newLayout = initFam && layoutSection.families ? at(layoutSection.families.filter(l => l.name === initFam)[0], 'layout')[0] : at(layoutSection, 'layout')[0]
+
         // populate our new state with section, family, and active color wall color (if we found them)
         newState = {
           ...newState,
+          layout: newLayout,
           structure: structure,
           sections: sectionNames,
           section: foundSection.name,
@@ -149,9 +245,13 @@ export function doReceiveColors (state: ColorsState, action: ReduxAction) {
 
     // if useDefault has not been set to false above, and we have a default section...
     if (useDefault && defaultSection) {
+      const layoutSection = layouts.filter(l => l.name === defaultSection.name)[0]
+      const newLayout = at(layoutSection, 'layout')[0]
+
       // ... then populate newState with our default section's name and families
       newState = {
         ...newState,
+        layout: newLayout,
         structure: structure,
         sections: sectionNames,
         section: defaultSection.name,
@@ -189,14 +289,18 @@ export function doFilterBySection (state: ColorsState, action: ReduxAction) {
   }
 
   if (!compareKebabs(state.section, payloadSection)) {
-    const targetedSection = getSectionByName(state.structure, payloadSection)
+    const { layouts = [], structure } = state
+    const targetedSection = getSectionByName(structure, payloadSection)
 
     if (targetedSection && targetedSection.families) {
+      const newLayout = layouts.filter(l => l.name === targetedSection.name)[0].layout
+
       return {
         ...state,
         family: initialState.family, // reset family when section changes
         families: targetedSection.families,
         section: targetedSection.name,
+        layout: newLayout,
         // only reset the relevant initializeWith prop -- we may need to keep the others if initial filters are happening out of sync
         initializeWith: {
           ...state.initializeWith,
@@ -294,14 +398,19 @@ export function doFilterByFamily (state: ColorsState, action: ReduxAction) {
   }
 
   if (!compareKebabs(state.family, payloadFamily)) {
-    const targetedFam = getFamilyByName(state.families, payloadFamily)
+    const { families, section, layouts = [] } = state
+    const targetedFam = getFamilyByName(families, payloadFamily)
 
     // if we have a match for provided family in possible families, OR if we have NO provided family...
     if (targetedFam || !payloadFamily) {
       // update family and reset colorWallActive
+      const layoutSection = layouts.filter(l => l.name === section)[0]
+      const newLayout = targetedFam && layoutSection.families ? at(layoutSection.families.filter(l => l.name === targetedFam)[0], 'layout')[0] : at(layoutSection, 'layout')[0]
+
       return {
         ...state,
         family: targetedFam || void (0),
+        layout: newLayout,
         // only reset the relevant initializeWith prop -- we may need to keep the others if initial filters are happening out of sync
         initializeWith: {
           ...state.initializeWith,
