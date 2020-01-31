@@ -1729,6 +1729,16 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     return null
   }
 
+  saveBase64 = (imageUrls: string[]) => {
+    return ((<MergeCanvas
+      key={this.state.mergeCanvasKey}
+      width={this.canvasOriginalDimensions.width}
+      height={this.canvasOriginalDimensions.height}
+      ref={this.mergeCanvasRefModal}
+      applyZoomPan={this.applyZoomPan}
+      layers={imageUrls} />))
+  }
+
   exportImagePaths () {
     return this.state.imagePathList
   }

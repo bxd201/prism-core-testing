@@ -1,49 +1,49 @@
 export const helpTabs = [
   {
     id: 0,
-    header: 'Icons & Buttons',
-    subHeader: 'Use these icons and buttons to help narrow down your final choices.',
+    header: 'HELPFUL_HINTS.HEADER.ICONS_&_BUTTONS',
+    subHeader: 'HELPFUL_HINTS.SUB_HEADER.ICONS_&_BUTTONS',
     content: [
       {
         fontAwesomeIcon: { variant: 'fal', icon: 'plus-circle', rotate: 0 },
-        iconInfoName: 'Add Color',
+        iconInfoName: 'HELPFUL_HINTS.CONTENT.ICONS_&_BUTTONS.ICON_INFO_NAME.ADD_COLOR',
         iconInfoContent: [
-          'In a color swatch, tapping this icon will add that color to My Color Palette. In My Color Palette, tapping this icon will open the Digital Color Wall.'
+          'HELPFUL_HINTS.CONTENT.ICONS_&_BUTTONS.ICON_INFO_CONTENT.ADD_COLOR'
         ]
       },
       {
         fontAwesomeIcon: { variant: 'fal', icon: 'folder', rotate: 0 },
-        iconInfoName: 'Save',
+        iconInfoName: 'HELPFUL_HINTS.CONTENT.ICONS_&_BUTTONS.ICON_INFO_NAME.SAVE',
         iconInfoContent: [
-          `Tap this icon to save your inspiration and ideas. Access them in My Ideas any time you’re logged in to mySW.`
+          `HELPFUL_HINTS.CONTENT.ICONS_&_BUTTONS.ICON_INFO_CONTENT.SAVE`
         ]
       },
       {
         fontAwesomeIcon: { variant: 'fa', icon: 'trash', rotate: 0 },
-        iconInfoName: 'Trash a Color',
+        iconInfoName: 'HELPFUL_HINTS.CONTENT.ICONS_&_BUTTONS.ICON_INFO_NAME.TRASH_A_COLOR',
         iconInfoContent: [
-          'Tap this icon to delete a color from My Color Palette. Dragging an inspirational color dot over this icon will delete it from your inspirational color options.'
+          'HELPFUL_HINTS.CONTENT.ICONS_&_BUTTONS.ICON_INFO_CONTENT.TRASH_A_COLOR'
         ]
       },
       {
         fontAwesomeIcon: { variant: 'fal', icon: 'clone', rotate: 0, flip: 'horizontal' },
-        iconInfoName: 'More Scenes',
+        iconInfoName: 'HELPFUL_HINTS.CONTENT.ICONS_&_BUTTONS.ICON_INFO_NAME.MORE_SCENES',
         iconInfoContent: [
-          'This icon opens interior and exterior room scene options. Explore different scenes to find your favorite and begin painting.'
+          'HELPFUL_HINTS.CONTENT.ICONS_&_BUTTONS.ICON_INFO_CONTENT.MORE_SCENES'
         ]
       },
       {
         fontAwesomeIcon: { variant: 'fal', icon: 'align-justify', rotate: 0, flip: 'horizontal' },
-        iconInfoName: 'Color Details',
+        iconInfoName: 'HELPFUL_HINTS.CONTENT.ICONS_&_BUTTONS.ICON_INFO_NAME.COLOR_DETAILS',
         iconInfoContent: [
-          'Tapping this icon will expand info about that color, including coordinating colors, similar colors and color details.'
+          'HELPFUL_HINTS.CONTENT.ICONS_&_BUTTONS.ICON_INFO_CONTENT.COLOR_DETAILS'
         ]
       },
       {
         fontAwesomeIcon: { variant: 'fal', icon: 'signal-3', rotate: 235, size: 'lg' },
-        iconInfoName: 'Grab & Reorder',
+        iconInfoName: 'HELPFUL_HINTS.CONTENT.ICONS_&_BUTTONS.ICON_INFO_NAME.GRAB_&_REORDER',
         iconInfoContent: [
-          'Tap and drag this icon to reorder colors within My Color Palette.'
+          'HELPFUL_HINTS.CONTENT.ICONS_&_BUTTONS.ICON_INFO_CONTENT.GRAB_&_REORDER'
         ]
       }
     ],
@@ -51,8 +51,8 @@ export const helpTabs = [
   },
   {
     id: 1,
-    header: 'My Color Palette',
-    subHeader: 'My Color Palette is used to collect and compare colors to paint with.',
+    header: 'HELPFUL_HINTS.HEADER.MY_COLOR_PALETTE',
+    subHeader: 'HELPFUL_HINTS.SUB_HEADER.MY_COLOR_PALETTE',
     content: '',
     imageList: [
       {
@@ -62,58 +62,58 @@ export const helpTabs = [
       },
       {
         imagePath: '/prism/images/help/my-color-palette-1@2x.png',
-        alt: `Click the color details icon the see a color's details`,
+        alt: `HELPFUL_HINTS.IMAGE_ALT.MY_COLOR_PALETTE.CLICK_THE_COLOR_DETAILS_ICON_TO`,
         role: 'text'
       },
       {
         imagePath: '/prism/images/help/my-color-palette-2@2x.png',
-        alt: 'Click the trash icon to delete a color swatch',
+        alt: 'HELPFUL_HINTS.IMAGE_ALT.MY_COLOR_PALETTE.CLICK_THE_TRASH_ICON_TO',
         role: 'text'
       },
       {
         imagePath: '/prism/images/help/my-color-palette-3@2x.png',
-        alt: 'An active color state shows the paint color to be applied to the scene',
+        alt: 'HELPFUL_HINTS.IMAGE_ALT.MY_COLOR_PALETTE.AN_ACTIVE_COLOR_STATE',
         role: 'text'
       },
       {
         imagePath: '/prism/images/help/my-color-palette-4@2x.png',
-        alt: 'Tap and hold the bottom edge of a color swatch to rearrange your palette',
+        alt: 'HELPFUL_HINTS.IMAGE_ALT.MY_COLOR_PALETTE.TAP_AND_HOLD_THE_BOTTOM_EDGE_OF_A_COLOR_SWATCH_TO',
         role: 'text'
       },
       {
         imagePath: '/prism/images/help/my-color-palette-5@2x.png',
-        alt: 'Click the add a color icon from the color palette to launch the digital color wall and explore color at any time during your experience',
+        alt: 'HELPFUL_HINTS.IMAGE_ALT.MY_COLOR_PALETTE.CLICK_THE_ADD_COLOR_ICON_TO',
         role: 'text'
       }
     ],
     subContent: [
       {
-        header: 'Custom Keyboard Navigation for Accessibility',
-        content: `On your keyboard, use "up" and "down" arrow keys (\u2191 \u2193) to switch focus between live palette and paintable scene regions.`
+        header: 'HELPFUL_HINTS.SUB_CONTENT_HEADER.MY_COLOR_PALETTE',
+        content: `HELPFUL_HINTS.SUB_CONTENT_DESCRIPTION.MY_COLOR_PALETTE`
       }
     ],
     imageListMobile: [
       {
         imagePath: '/prism/images/help/mobile/my-color-palette-mobile-1@2x.jpg',
-        alt: `Click the color details icon the see a color's details, Click the trash icon to delete a color swatch`,
+        alt: `HELPFUL_HINTS.IMAGE_ALT.MY_COLOR_PALETTE.CLICK_THE_COLOR_DETAILS_ICON_TRASH_ICON_TO`,
         role: 'text'
       },
       {
         imagePath: '/prism/images/help/mobile/my-color-palette-mobile-2@2x.jpg',
-        alt: `An active color state shows the paint color to be applied to the scene`,
+        alt: `HELPFUL_HINTS.IMAGE_ALT.MY_COLOR_PALETTE.AN_ACTIVE_COLOR_STATE`,
         role: 'text'
       },
       {
         imagePath: '/prism/images/help/mobile/my-color-palette-mobile-3@2x.jpg',
-        alt: `Click the add a color icon from the color palette to launch the digital color wall and explore color at any time during your experience`,
+        alt: `HELPFUL_HINTS.IMAGE_ALT.MY_COLOR_PALETTE.CLICK_THE_ADD_COLOR_ICON_TO`,
         role: 'text'
       }
     ]
   },
   {
     id: 2,
-    header: 'Adding Colors',
-    subHeader: 'Add colors to your palette wherever you see an plus icon.',
+    header: 'HELPFUL_HINTS.HEADER.ADDING_COLORS',
+    subHeader: 'HELPFUL_HINTS.SUB_HEADER.ADDING_COLORS',
     content: '',
     imageList: [
       {
@@ -123,48 +123,48 @@ export const helpTabs = [
       },
       {
         imagePath: '/prism/images/help/add-color-1@2x.png',
-        alt: 'Clicking the add a color icon inside a color tile will add a color to the Color Palette',
+        alt: 'HELPFUL_HINTS.IMAGE_ALT.ADDING_COLORS.CLICK_ADD_A_COLOR_ICON_IN_A_COLOR_TILE_TO',
         role: 'text'
       },
       {
         imagePath: '/prism/images/help/add-color-2@2x.png',
-        alt: 'Click the add a color icon from the color palette to launch the digital color wall and explore color at any time during your experience',
+        alt: 'HELPFUL_HINTS.IMAGE_ALT.ADDING_COLORS.CLICK_THE_ADD_COLOR_ICON_TO',
         role: 'text'
       },
       {
         imagePath: '/prism/images/help/add-color-3@2x.png',
-        alt: 'My Color Palette can hold up to 8 colors at a time. To add more, just save your current palette and start a new one.',
+        alt: 'HELPFUL_HINTS.IMAGE_ALT.ADDING_COLORS.START_A_NEW_PALETTE_TO_ADD_MORE_THAN_EIGHT_COLORS',
         role: 'text'
       }
     ],
     subContent: [
       {
-        header: 'Custom Keyboard Navigation for Accessibility',
-        content: `On your keyboard, use "up", "down", "left", and "right" arrow keys (\u2190 \u2193 \u2191 \u2192) to navigate within color grids.`
+        header: 'HELPFUL_HINTS.SUB_CONTENT_HEADER.ADDING_COLORS',
+        content: `HELPFUL_HINTS.SUB_CONTENT_DESCRIPTION.ADDING_COLORS`
       }
     ],
     imageListMobile: [
       {
         imagePath: '/prism/images/help/mobile/add-color-mobile-1@2x.jpg',
-        alt: `Clicking the add a color icon inside a color tile will add a color to the Color Palette`,
+        alt: `HELPFUL_HINTS.IMAGE_ALT.ADDING_COLORS.CLICK_ADD_A_COLOR_ICON_IN_A_COLOR_TILE_TO`,
         role: 'text'
       },
       {
         imagePath: '/prism/images/help/mobile/add-color-mobile-2@2x.jpg',
-        alt: `Click the add a color icon from the color palette to launch the digital color wall and explore color at any time during your experience`,
+        alt: `HELPFUL_HINTS.IMAGE_ALT.ADDING_COLORS.CLICK_THE_ADD_COLOR_ICON_TO`,
         role: 'text'
       },
       {
         imagePath: '/prism/images/help/mobile/add-color-mobile-3@2x.jpg',
-        alt: `My Color Palette can hold up to 8 colors at a time. To add more, just save your current palette and start a new one.`,
+        alt: `HELPFUL_HINTS.IMAGE_ALT.ADDING_COLORS.START_A_NEW_PALETTE_TO_ADD_MORE_THAN_EIGHT_COLORS`,
         role: 'text'
       }
     ]
   },
   {
     id: 3,
-    header: 'Color Details',
-    subHeader: 'Provides a color scene preview, coordinating colors, similar colors and additional information.',
+    header: 'HELPFUL_HINTS.HEADER.COLOR_DETAILS',
+    subHeader: 'HELPFUL_HINTS.SUB_HEADER.COLOR_DETAILS',
     content: '',
     imageList: [
       {
@@ -174,59 +174,59 @@ export const helpTabs = [
       },
       {
         imagePath: '/prism/images/help/color-detail-1@2x.png',
-        alt: `Click the color details icon the see a color's details`,
+        alt: `HELPFUL_HINTS.IMAGE_ALT.COLOR_DETAILS.CLICK_THE_COLOR_DETAILS_ICON_TO`,
         role: 'text'
       },
       {
         imagePath: '/prism/images/help/color-detail-2@2x.png',
-        alt: 'Preview a color in 5 different photos to decide if you want to add it to your palette',
+        alt: 'HELPFUL_HINTS.IMAGE_ALT.COLOR_DETAILS.PREVIEW_A_COLOR_IN_COLOR_DETAILS',
         role: 'text'
       }
     ],
     imageListMobile: [
       {
         imagePath: '/prism/images/help/mobile/color-detail-mobile-1@2x.jpg',
-        alt: `Click the color details icon the see a color's details`,
+        alt: `HELPFUL_HINTS.IMAGE_ALT.COLOR_DETAILS.CLICK_THE_COLOR_DETAILS_ICON_TO`,
         role: 'text'
       },
       {
         imagePath: '/prism/images/help/mobile/color-detail-mobile-2@2x.jpg',
-        alt: `Preview a color in 5 different photos to decide if you want to add it to your palette`,
+        alt: `HELPFUL_HINTS.IMAGE_ALT.COLOR_DETAILS.PREVIEW_A_COLOR_IN_COLOR_DETAILS`,
         role: 'text'
       }
     ]
   },
   {
     id: 4,
-    header: 'Painting My Own Photo',
-    subHeader: 'Use these tools to help you see how color will look in your space.',
+    header: 'HELPFUL_HINTS.HEADER.PAINTING_MY_OWN_PHOTO',
+    subHeader: 'HELPFUL_HINTS.SUB_HEADER.PAINTING_MY_OWN_PHOTO',
     content: [
       {
         fontAwesomeIcon: { variant: 'fa', icon: 'fill-drip', rotate: 0, flip: 'horizontal' },
-        iconInfoName: 'Paint Area',
+        iconInfoName: 'HELPFUL_HINTS.CONTENT.PAINTING_MY_OWN_PHOTO.ICON_INFO_NAME.PAINT_AREA',
         iconInfoContent: [
-          'Use the Paint Area feature to automatically detect and paint surface areas. Just click or tap on a surface to highlight it, then click or tap again to paint.'
+          'HELPFUL_HINTS.CONTENT.PAINTING_MY_OWN_PHOTO.ICON_INFO_CONTENT.PAINT_AREA'
         ]
       },
       {
         fontAwesomeIcon: { variant: 'fa', icon: 'brush', rotate: 45 },
-        iconInfoName: 'Paintbrush',
+        iconInfoName: 'HELPFUL_HINTS.CONTENT.PAINTING_MY_OWN_PHOTO.ICON_INFO_NAME.PAINTBRUSH',
         iconInfoContent: [
-          `Select this icon to paint your photo freehand. Just point, click or tap, and drag to add color to any area.`
+          `HELPFUL_HINTS.CONTENT.PAINTING_MY_OWN_PHOTO.ICON_INFO_CONTENT.PAINTBRUSH`
         ]
       },
       {
         fontAwesomeIcon: { variant: 'fa', icon: 'mouse-pointer', rotate: -20, flip: 'horizontal' },
-        iconInfoName: 'Select',
+        iconInfoName: 'HELPFUL_HINTS.CONTENT.PAINTING_MY_OWN_PHOTO.ICON_INFO_NAME.SELECT',
         iconInfoContent: [
-          'Select an area, then use the tool bar to paint, edit paint color or remove paint from your photo.'
+          'HELPFUL_HINTS.CONTENT.PAINTING_MY_OWN_PHOTO.ICON_INFO_CONTENT.SELECT'
         ]
       },
       {
         fontAwesomeIcon: { variant: 'fa', icon: 'eraser', rotate: 0 },
-        iconInfoName: 'Erase',
+        iconInfoName: 'HELPFUL_HINTS.CONTENT.PAINTING_MY_OWN_PHOTO.ICON_INFO_NAME.ERASE',
         iconInfoContent: [
-          'Quickly remove paint from your photo.'
+          'HELPFUL_HINTS.CONTENT.PAINTING_MY_OWN_PHOTO.ICON_INFO_CONTENT.ERASE'
         ]
       },
       {
@@ -234,9 +234,9 @@ export const helpTabs = [
           { variant: 'fal', icon: 'draw-polygon', rotate: 10 },
           { variant: 'fal', icon: 'plus', rotate: 0, size: 'xs' }
         ],
-        iconInfoName: 'Define Area',
+        iconInfoName: 'HELPFUL_HINTS.CONTENT.PAINTING_MY_OWN_PHOTO.ICON_INFO_NAME.DEFINE_AREA',
         iconInfoContent: [
-          'Outline an area to paint it. Be sure to enclose the area by starting and ending at the same point.'
+          'HELPFUL_HINTS.CONTENT.PAINTING_MY_OWN_PHOTO.ICON_INFO_CONTENT.DEFINE_AREA'
         ]
       },
       {
@@ -244,16 +244,16 @@ export const helpTabs = [
           { variant: 'fal', icon: 'draw-polygon', rotate: 10 },
           { variant: 'fal', icon: 'minus', rotate: 0, size: 'xs' }
         ],
-        iconInfoName: 'Remove Area',
+        iconInfoName: 'HELPFUL_HINTS.CONTENT.PAINTING_MY_OWN_PHOTO.ICON_INFO_NAME.REMOVE_AREA',
         iconInfoContent: [
-          'Use this tool to select and remove paint from a defined area.'
+          'HELPFUL_HINTS.CONTENT.PAINTING_MY_OWN_PHOTO.ICON_INFO_CONTENT.REMOVE_AREA'
         ]
       },
       {
         fontAwesomeIcon: { variant: 'fal', icon: 'search-plus', rotate: 0 },
-        iconInfoName: 'Zoom',
+        iconInfoName: 'HELPFUL_HINTS.CONTENT.PAINTING_MY_OWN_PHOTO.ICON_INFO_NAME.ZOOM',
         iconInfoContent: [
-          'Zoom in and pan around within your photo to paint small areas with better accuracy.'
+          'HELPFUL_HINTS.CONTENT.PAINTING_MY_OWN_PHOTO.ICON_INFO_CONTENT.ZOOM'
         ]
       },
       {
@@ -261,9 +261,9 @@ export const helpTabs = [
           { variant: 'fa', icon: 'undo-alt', rotate: 0 },
           { variant: 'fa', icon: 'redo-alt', rotate: 0 }
         ],
-        iconInfoName: 'Undo & Redo',
+        iconInfoName: 'HELPFUL_HINTS.CONTENT.PAINTING_MY_OWN_PHOTO.ICON_INFO_NAME.UNDO_&_REDO',
         iconInfoContent: [
-          'Easily delete or repeat your last action.'
+          'HELPFUL_HINTS.CONTENT.PAINTING_MY_OWN_PHOTO.ICON_INFO_CONTENT.UNDO_&_REDO'
         ],
         isUndoRedo: true
       }
@@ -273,8 +273,8 @@ export const helpTabs = [
   },
   {
     id: 5,
-    header: 'Saving My Work',
-    subHeader: 'When you register an account with mySW, you can access saved color palettes from any device.',
+    header: 'HELPFUL_HINTS.HEADER.SAVING_MY_WORK',
+    subHeader: 'HELPFUL_HINTS.SUB_HEADER.SAVING_MY_WORK',
     content: '',
     imageList: [
       {
@@ -284,30 +284,30 @@ export const helpTabs = [
       },
       {
         imagePath: '/prism/images/help/saving-1@2x.png',
-        alt: 'Name your current photo or palette for future use',
+        alt: 'HELPFUL_HINTS.IMAGE_ALT.SAVING_MY_WORK.NAME_YOUR_CURRENT_PHOTO',
         role: 'text'
       },
       {
         imagePath: '/prism/images/help/saving-3@2x.png',
-        alt: 'Tap the save icon at the bottom of the page',
+        alt: 'HELPFUL_HINTS.IMAGE_ALT.SAVING_MY_WORK.CLICK_SAVE_ICON_TO',
         role: 'text'
       }
     ],
     imageListMobile: [
       {
         imagePath: '/prism/images/help/mobile/saving-mobile-1@2x.jpg',
-        alt: `Tap the save icon at the bottom of the page`,
+        alt: `HELPFUL_HINTS.IMAGE_ALT.SAVING_MY_WORK.CLICK_SAVE_ICON_TO`,
         role: 'text'
       },
       {
         imagePath: '/prism/images/help/mobile/saving-mobile-2@2x.jpg',
-        alt: `Name your current photo or palette for future use`,
+        alt: `HELPFUL_HINTS.IMAGE_ALT.SAVING_MY_WORK.NAME_YOUR_CURRENT_PHOTO`,
         role: 'text'
       }
     ]
   }
 ]
 
-export const helpHeader = 'Helpful Hints'
+export const helpHeader = 'HELPFUL_HINTS.TITLE'
 export const KEY_CODE_ENTER = 13
 export const KEY_CODE_SPACE = 32

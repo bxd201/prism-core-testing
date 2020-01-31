@@ -6,18 +6,17 @@ import PaletteSuggester from './ColorPickerSlideContainer'
 import MoreDetailsCollapse from './MoreDetails'
 import './ColorPickerSlide.scss'
 import { useSelector, useDispatch } from 'react-redux'
-import { useIntl } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import { loadColors } from '../../store/actions/loadColors'
 import { loadCollectionSummaries } from '../../store/actions/collectionSummaries'
+import at from 'lodash/at'
 
 const baseClass = 'prism-color-picker'
 const slideHeader = 'slide-palette-header'
 
 const KEY_CODE_ENTER = 13
 const KEY_CODE_SPACE = 32
-
-const ariaLabelToggleButton = 'Toggle Expert Picks'
 
 type SummaryProps = {
   expertColorPicks: number[],
@@ -34,7 +33,7 @@ function ColorPickerSlide (props: SummaryProps) {
     }
   })
   const { brandId } = useContext(ConfigurationContext)
-  const { locale } = useIntl()
+  const { locale, messages = {} } = useIntl()
   const dispatch = useDispatch()
   const [isShowSlider, handleSlideShow] = useState(false)
   const wrapperRef = React.useRef()
@@ -72,10 +71,11 @@ function ColorPickerSlide (props: SummaryProps) {
 
   return (
     <React.Fragment>
+      <button className={`${slideHeader}__mobile-toggle-arrow ${isShowSlider ? `${slideHeader}__mobile-toggle-arrow--up` : ``}`} onClick={() => { handleSlideShow(!isShowSlider) }} onMouseDown={(e) => e.preventDefault()} />
       <div ref={wrapperRef} className={`${baseClass}__wrapper ${isShowSlider ? `${baseClass}__wrapper--show` : `${baseClass}__wrapper--hide`}`}>
         <div className={`${slideHeader} ${isShowSlider ? `${slideHeader}--show` : `${slideHeader}--hide`}`}>
-          {isShowSlider && <span>Expert Color Picks</span>}
-          <button aria-label={`${ariaLabelToggleButton}`} aria-expanded={isShowSlider} className={`${slideHeader}__arrow-button`} onMouseDown={(e) => e.preventDefault()} onClick={() => { handleSlideShow(!isShowSlider) }}>
+          {isShowSlider && <span><FormattedMessage id='EXPERT_COLOR_PICKS' /></span>}
+          <button aria-label={`${at(messages, 'TOGGLE_EXPERT_PICKS')[0]}`} aria-expanded={isShowSlider} className={`${slideHeader}__arrow-button`} onMouseDown={(e) => e.preventDefault()} onClick={() => { handleSlideShow(!isShowSlider) }}>
             {isShowSlider && <FontAwesomeIcon className={`${baseClass}__toggle-arrow`} icon={['fal', 'long-arrow-right']} />}
             {!isShowSlider && <FontAwesomeIcon className={`${baseClass}__toggle-arrow`} icon={['fal', 'long-arrow-left']} />}
           </button>
@@ -89,10 +89,15 @@ function ColorPickerSlide (props: SummaryProps) {
                 handleSlideShow={handleSlideShowWrapper}
               />}
           </div>
-          <button className={`${slideHeader}__mobile-toggle-arrow ${isShowSlider ? `${slideHeader}__mobile-toggle-arrow--up` : ``}`} onClick={() => { handleSlideShow(!isShowSlider) }} />
         </div>
         {colorCollection && <MoreDetailsCollapse isShowSlider={isShowSlider} associatedColorCollection={colorCollection} />}
       </div>
+      {isShowSlider && <PaletteSuggester
+        expertColor={expertColorPicks.map(id => colorMap[id])}
+        isShowSlider={isShowSlider}
+        isMobile
+        associatedColorCollection={colorCollection}
+      />}
     </React.Fragment>
   )
 }
