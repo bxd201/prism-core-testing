@@ -24,7 +24,8 @@ import ColorDataWrapper from 'src/helpers/ColorDataWrapper/ColorDataWrapper'
 
 const baseClass = 'color-info'
 
-const ColorDetails = ColorDataWrapper(({ onColorChanged }: { onColorChanged: Function }) => {
+type Props = { onColorChanged?: Function }
+const ColorDetails = ColorDataWrapper(({ onColorChanged }: Props) => {
   const { colorId } = useParams()
   const dispatch = useDispatch()
   const toggleSceneDisplayScene = useRef(null)
@@ -37,7 +38,7 @@ const ColorDetails = ColorDataWrapper(({ onColorChanged }: { onColorChanged: Fun
   useEffect(() => {
     if (activeColor) {
       GA.pageView(`color-detail/${activeColor.brandKey} ${activeColor.colorNumber} - ${activeColor.name}`)
-      onColorChanged(activeColor)
+      onColorChanged && onColorChanged(activeColor)
     }
   }, [activeColor])
 
