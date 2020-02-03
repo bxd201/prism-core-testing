@@ -14,8 +14,8 @@
   text-decoration: none;
   height: 100%;
   &:hover {
-    color:#2cabe2;
-    & > div:first-child{
+    color: #2cabe2;
+    & > div:first-child {
       height: 10%;
       transition: all 0.3s;
       background: #2cabe2;
@@ -41,7 +41,7 @@
 
 .cvw__btn-overlay {
   position: absolute;
-  background:#fff;
+  background: #fff;
   width: 100%;
   bottom: 0;
   right: 0;
@@ -52,8 +52,8 @@
     height: 100%;
     color: #fff;
   }
-  &--last--active{
-    background-color:#2cabe2;
+  &--last--active {
+    background-color: #2cabe2;
     animation: slide-down 0.3s;
     height: 0%;
   }
@@ -114,5 +114,72 @@
   }
   100% {
     height: 0%;
+  }
+}
+
+.cvw__modal {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  min-height: 170px;
+  background-color: #d40000;
+  color: #fff;
+  font-weight: 600;
+  padding: 10px;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  &__overlay{
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.5);
+    width: 100%;
+    height: 100%;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 1003;
+    cursor: pointer;
+  }
+  &__title {
+    text-align: center;
+    line-height: 1.5em;
+  }
+  &__mini-image {
+    & > canvas {
+      width: 20% !important; // use important to override the inline style which build in canvas of mergeCanvas compoenent
+      position: relative !important;
+      left: 0 !important;
+      top: 0 !important;
+      margin: 8px auto;
+    }
+  }
+  &__action--btn {
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    & > div {
+      padding: 10px;
+      color: #fff;
+      border: 1px solid #fff;
+      margin: 0 10px;
+      width: 5em;
+      text-align: center;
+      &:hover {
+        cursor: pointer;
+        color: #d40000;
+        background-color: rgba(255, 255, 255, 0.8);
+      }
+      &:last-child {
+        border: 1px solid #2cabe2;
+        color: #2cabe2;
+        background-color: rgba(255, 255, 255, 0.8);
+        &:hover{
+          border:1px solid #fff;
+          cursor: pointer;
+          color: #d40000;
+          background-color: rgba(255, 255, 255, 0.8);
+        }
+      }
+    }
   }
 }

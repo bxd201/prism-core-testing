@@ -44,7 +44,8 @@ type Props = {
   history: RouterHistory,
   isPaintScene: boolean,
   imgUrl: string,
-  showPaintScene: boolean
+  showPaintScene: boolean,
+  checkIsPaintSceneUpdate: boolean
 }
 
 type OrientationDimension = {
@@ -56,7 +57,7 @@ type OrientationDimension = {
   originalImageHeight: number
 }
 
-export function MatchPhoto ({ history, isPaintScene, imgUrl, showPaintScene }: Props) {
+export function MatchPhoto ({ history, isPaintScene, imgUrl, showPaintScene, checkIsPaintSceneUpdate }: Props) {
   const canvasRef: RefObject = useRef()
   const wrapperRef: RefObject = useRef()
   const [imageUrl, setImageUrl] = useState(imgUrl)
@@ -183,7 +184,7 @@ export function MatchPhoto ({ history, isPaintScene, imgUrl, showPaintScene }: P
     setImageDims(imageDims)
     setImageUrl(canvasRef.current.toDataURL())
     // Set the image data used by the match color component
-    const newImageData = ctx.getImageData(0, 0, canvasWidth, canvasHeight)
+    const newImageData = canvasWidth && ctx.getImageData(0, 0, canvasWidth, canvasHeight)
     setImageData(newImageData)
   }, [resized, imageRotationAngle])
 
@@ -278,7 +279,7 @@ export function MatchPhoto ({ history, isPaintScene, imgUrl, showPaintScene }: P
     canvasRef.current.height = height
     const ctx = canvasRef.current.getContext('2d')
     ctx.drawImage(image, 0, 0, width, height)
-    const newImageData = ctx.getImageData(0, 0, width, height)
+    const newImageData = width && ctx.getImageData(0, 0, width, height)
     setImageData(newImageData)
   }
 
@@ -377,7 +378,7 @@ export function MatchPhoto ({ history, isPaintScene, imgUrl, showPaintScene }: P
                     {closeButton}
                   </Link>
 
-                  : (imageUrl && pins.length > 0 && !isPaintScene && !paintSceneWorkspace) ? closeButton : ''
+                  : (imageUrl && pins.length > 0 && !isPaintScene && !paintSceneWorkspace) ? <Link to={`/active`}>{closeButton}</Link> : ''
               }
             </div>
             {
@@ -408,7 +409,7 @@ export function MatchPhoto ({ history, isPaintScene, imgUrl, showPaintScene }: P
             {
               ((imageUrl && isPaintScene && pins.length > 0) || paintSceneWorkspace)
                 ? (<React.Fragment>
-                  <PaintScene imageUrl={imageUrl} workspace={paintSceneWorkspace} imageRotationAngle={imageRotationAngle} referenceDimensions={imageDims} width={wrapperWidth} />
+                  <PaintScene checkIsPaintSceneUpdate={checkIsPaintSceneUpdate} imageUrl={imageUrl} workspace={paintSceneWorkspace} imageRotationAngle={imageRotationAngle} referenceDimensions={imageDims} width={wrapperWidth} />
                 </React.Fragment>)
                 : ''
             }
