@@ -1,9 +1,11 @@
 // @flow
-import find from 'lodash/find'
 import at from 'lodash/at'
+import chunk from 'lodash/chunk'
+import find from 'lodash/find'
 import flattenDeep from 'lodash/flattenDeep'
-import kebabCase from 'lodash/kebabCase'
 import intersection from 'lodash/intersection'
+import kebabCase from 'lodash/kebabCase'
+import sortBy from 'lodash/sortBy'
 
 import { convertUnorderedColorsToColorMap, convertUnorderedColorsToClasses } from '../../../shared/helpers/ColorDataUtils'
 import { compareKebabs } from '../../../shared/helpers/StringUtils'
@@ -79,20 +81,25 @@ export function doReceiveColors (state: ColorsState, action: ReduxAction) {
   // all colors
   const sw = flattenDeep(unorderedColorList)
   // const sw = flattenDeep(action.payload.unorderedColors)
+
   // wide and thin
-  const historic = flattenDeep(colors['Couleur Historique'] || colors['Historic Colour'] || colors['Historic Color']).map(i => `${i}`)
-  // const historic = flattenDeep(colors['Couleur Historique'] || colors['Historic Colour'] || colors['Historic Color']).map(id => colorMap[id])
+  const historicStructure = ((colors) => {
+    const _colors = flattenDeep(colors['Couleur Historique'] || colors['Historic Colour'] || colors['Historic Color']).map(id => colorMap[id])
+    const sorted = sortBy(_colors, c => c.id)
+    // NOTE: these aren't actually divided by interior and exterior colors per our color data; they're just sorted by ID and then split 80/60
+    const int = chunk(sorted.slice(0, 80).map(c => `${c.id}`), 8)
+    const ext = chunk(sorted.slice(80, 140).map(c => `${c.id}`), 6)
+
+    return int.map((row, i) => {
+      return [
+        row, ext[i]
+      ]
+    })
+  })(colors)
+
   // many short blocks
   const timeless = flattenDeep(colors['Couleur Intemporelle'] || colors['Timeless Colour'] || colors['Timeless Color']).map(i => `${i}`)
   // const timeless = flattenDeep(colors['Couleur Intemporelle'] || colors['Timeless Colour'] || colors['Timeless Color']).map(id => colorMap[id])
-
-  const historicStructure = [
-    [
-      [historic.slice(0, 8), historic.slice(9, 12)],
-      [historic.slice(13, 21), historic.slice(22, 25)],
-      [historic.slice(26, 34), historic.slice(35, 38)]
-    ]
-  ]
 
   const timelessStructure = [
     [
