@@ -5,19 +5,24 @@
       {
         "targets": {
           "ie": "11"
-        }
+        },
+        "useBuiltIns": "usage",
+        "exclude": [
+          "es.symbol.*"
+        ],
+        "corejs": 3
       }
     ],
     "@babel/preset-react",
     "@babel/preset-flow"
   ],
   "plugins": [
+    "@babel/plugin-transform-flow-strip-types",
+    "@babel/plugin-transform-object-assign",
+    "@babel/plugin-proposal-class-properties",
     "@babel/plugin-transform-template-literals",
     "@babel/plugin-proposal-object-rest-spread",
-    "@babel/plugin-proposal-class-properties",
-    "@babel/plugin-transform-flow-strip-types",
     "@babel/plugin-syntax-export-default-from",
     "@babel/plugin-transform-classes"
-
   ]
 }

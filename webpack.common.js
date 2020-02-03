@@ -11,6 +11,8 @@ const WebpackBar = require('webpackbar')
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 const flags = require('./webpack/constants')
 const HardSourceWebpackPlugin = require('hard-source-webpack-plugin')
+const ALL_VARS = require('./src/shared/variableDefs')
+const requireContext = require('require-context')
 
 const DEFAULT_LOCAL_URL = 'https://localhost:8080' // default local URL to localhost
 const DEFAULT_ENTRY = `${flags.embedEntryPointName},${flags.mainEntryPointName}` // will build the embed and bundle entry points by default
@@ -26,6 +28,11 @@ const ML_API_URL = (process.env.ML_API_URL) ? process.env.ML_API_URL : '$ML_API_
 // const BASE_PATH = (ENV === 'development') ? (process.env.LOCAL_URL ? process.env.LOCAL_URL : DEFAULT_LOCAL_URL) : (process.env.WEB_URL) ? process.env.WEB_URL : '$WEB_URL'
 const BASE_PATH = (ENV === 'development') ? DEFAULT_LOCAL_URL : (process.env.WEB_URL) ? process.env.WEB_URL : '$WEB_URL'
 const SPECIFIED_ENTRIES = process.env.ENTRY ? process.env.ENTRY : (ENV === 'development') ? DEFAULT_ENTRY : undefined
+
+// TODO: Use this same concept to eliminate the redundancy of facetEntryPoints in constants, export.js, and allFacets.js -@cody.richmond
+const allTemplates = (ctx => {
+  return ctx.keys()
+})(requireContext(path.resolve(__dirname, 'src/templates'), true, /.*/))
 
 let allEntryPoints = {
   ...flags.mainEntryPoints,
@@ -86,7 +93,7 @@ module.exports = {
       config: path.resolve(__dirname, 'src/config/'),
       src: path.resolve(__dirname, 'src/'),
       __mocks__: path.resolve(__dirname, '__mocks__/'),
-      variables: path.resolve(__dirname, 'src/shared/variables.js')
+      variables: path.resolve(__dirname, 'src/shared/variablesExport.js')
     }
   },
   module: {
@@ -105,13 +112,30 @@ module.exports = {
       },
       {
         test: /\.worker\.js$/,
+        exclude: /node_modules\/(?!react-intl|intl-messageformat|intl-messageformat-parser)/,
         include: flags.srcPath,
-        use: [ 'babel-loader', 'worker-loader' ]
+        use: [
+          'worker-loader',
+          {
+            loader: 'babel-loader',
+            options: {
+              configFile: path.resolve(__dirname, '.babelrc')
+            }
+          }
+        ]
       },
       {
         test: /\.(js|jsx)$/,
-        exclude: /node_modules/,
-        use: [ 'babel-loader', 'eslint-loader' ],
+        exclude: /node_modules\/(?!react-intl|intl-messageformat|intl-messageformat-parser)/,
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              configFile: path.resolve(__dirname, '.babelrc')
+            }
+          },
+          'eslint-loader'
+        ],
         resolve: { extensions: [ '.js', '.jsx' ] }
       }
     ]
@@ -143,11 +167,11 @@ module.exports = {
       inject: false,
       template: './src/index.html'
     }),
-    ...flags.implementationTemplates.map(page => {
+    ...allTemplates.map(page => {
       return new HtmlWebpackPlugin({
         inject: false,
-        filename: `${page}.html`,
-        template: `./src/templates/${page}.html`
+        filename: page,
+        template: `./src/templates/${page}`
       })
     }),
     new MiniCssExtractPlugin({
@@ -167,12 +191,15 @@ module.exports = {
       }
     ]),
     new webpack.DefinePlugin({
-      'ENV': JSON.stringify(ENV),
       'API_PATH': JSON.stringify(API_PATH),
       'APP_NAME': JSON.stringify(APP_NAME),
       'APP_VERSION': JSON.stringify(APP_VERSION),
       'BASE_PATH': JSON.stringify(BASE_PATH),
-      'ML_API_URL': JSON.stringify(ML_API_URL)
+      'ENV': JSON.stringify(ENV),
+      'ML_API_URL': JSON.stringify(ML_API_URL),
+      'WEBPACK_CONSTANTS': JSON.stringify(flags),
+      'VAR_NAMES': JSON.stringify(ALL_VARS.varNames),
+      'VAR_VALUES': JSON.stringify(ALL_VARS.varValues)
     }),
     !flags.production && new HardSourceWebpackPlugin({
       configHash: flags.mode,
@@ -183,8 +210,20 @@ module.exports = {
       },
       environmentHash: {
         root: flags.rootPath,
-        directories: [],
-        files: ['package-lock.json', 'yarn.lock']
+        directories: ['build-scripts', 'webpack'],
+        files: [
+          '.browserslistrc',
+          '.eslintignore',
+          '.eslintrc',
+          '.babelrc',
+          'package-lock.json',
+          'package.json',
+          'postcss.config.js',
+          'webpack.common.js',
+          'webpack.dev.js',
+          'webpack.prod.js',
+          'webpack.publish.js'
+        ]
       }
     }),
     !flags.production && new HardSourceWebpackPlugin.ExcludeModulePlugin([

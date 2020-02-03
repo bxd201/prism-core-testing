@@ -10,9 +10,9 @@
 
 <body>
 
-  <div id="prism-root"
+  <div prism-auto-embed
     data-brand="SW-CA"
-    data-react-component="ColorListingPage"
+    data-prism-facet="ColorListingPage"
     data-language="en-CA"
     data-page-root="/"
     data-route-type="hash"></div>
@@ -22,7 +22,7 @@
       var js, fjs = d.getElementsByTagName(s)[0];
       if (d.getElementById(id)) return;
       js = d.createElement(s); js.id = id;
-      js.src = "//localhost:8080/embed.js";
+      js.src = "/embed.js";
       fjs.parentNode.insertBefore(js, fjs);
     }(document, 'script', 'prism-widget'));
   </script>

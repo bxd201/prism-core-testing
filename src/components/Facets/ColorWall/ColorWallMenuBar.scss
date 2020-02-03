@@ -8,9 +8,12 @@ $menu-bar-width: 14em;
   border-radius: $btn-radius;
   cursor: default;
   height: auto;
-  margin: 0 4px 8px;
   position: relative;
   width: $menu-bar-width;
+
+  @include respond-below(xs) {
+    padding: 0 0.3em;
+  }
 
   &__button {
     align-items: center;

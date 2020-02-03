@@ -64,6 +64,7 @@ import { faUndo as falUndo } from '@fortawesome/pro-light-svg-icons/faUndo'
 
 // regulars
 // import { fa??? as far??? } from '@fortawesome/pro-regular-svg-icons/fa???'
+import { faPlusCircle as farPlusCircle } from '@fortawesome/pro-regular-svg-icons/faPlusCircle'
 
 // populate with all the FontAwesome svg icons we want to use
 const faIcons = [
@@ -123,9 +124,9 @@ const faIcons = [
   faSun,
   faTimes,
   faTrash,
-  faUndoAlt
+  faUndoAlt,
   // -------- REGULARS ---------
-  // far???
+  farPlusCircle
 ]
 library.add(...faIcons)
 

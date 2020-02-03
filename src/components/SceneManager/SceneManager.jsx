@@ -5,11 +5,11 @@ import find from 'lodash/find'
 import flattenDeep from 'lodash/flattenDeep'
 import includes from 'lodash/includes'
 import memoizee from 'memoizee'
-import ReactGA from 'react-ga'
+import * as GA from 'src/analytics/GoogleAnalytics'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
-import { DndProvider } from 'react-dnd'
-import HTML5Backend from 'react-dnd-html5-backend'
+import { DndProvider } from 'react-dnd-cjs'
+import HTML5Backend from 'react-dnd-html5-backend-cjs'
 
 import { SCENE_TYPES, SCENE_VARIANTS } from 'constants/globals'
 import {
@@ -133,11 +133,11 @@ export class SceneManager extends PureComponent<Props, State> {
     } else {
       // ... otherwise activate this scene
       this.activateScene(id)
-      ReactGA.event({
+      GA.event({
         category: 'Scene Manager',
         action: 'Toggle Active Scene',
         label: 'Toggle Active Scene'
-      }, ['GAtrackerPRISM'])
+      })
     }
   }
 

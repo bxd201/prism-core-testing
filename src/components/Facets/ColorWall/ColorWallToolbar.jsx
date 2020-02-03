@@ -47,7 +47,7 @@ export default () => {
         {!isFamilyView && <>
           <ButtonBar.Button to={`${generateColorWallPageUrl(section, family)}search/`}>
             <FontAwesomeIcon className='color-families-svg' icon={['fa', 'search']} pull='left' />
-            <span className={MODE_CLASS_NAMES.DESC}><FormattedMessage id='SEARCH.SEARCH' /></span>
+            <span className={MODE_CLASS_NAMES.DESC}><FormattedMessage id='SEARCH.SEARCH_COLOR' /></span>
           </ButtonBar.Button>
           <ButtonBar.Button disabled={families.length <= 1} onClick={handleColorFamilySelection} to={`${generateColorWallPageUrl(section)}${PATH_END_FAMILY}`}>
             <FontAwesomeIcon className='color-families-svg' icon={['fa', 'palette']} pull='left' />
@@ -93,7 +93,7 @@ export default () => {
               <div className={MODE_CLASS_NAMES.COL}>
                 {colorFamiliesAndSearch}
                 <Wrapper
-                  className={`${menuBarPrefix} ${menuBarPrefix}--${menuOpen ? 'open' : 'closed'}`}
+                  className={`${MODE_CLASS_NAMES.CELL} ${MODE_CLASS_NAMES.RIGHT} ${menuBarPrefix} ${menuBarPrefix}--${menuOpen ? 'open' : 'closed'}`}
                   onMenuToggle={handleMenuToggle}>
                   <Button className={`${menuBarPrefix}__button`} tag='div'>
                     <span className={`${menuBarPrefix}__button-copy`}>{currentFamily}</span>

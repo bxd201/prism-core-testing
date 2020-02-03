@@ -66,7 +66,7 @@ module.exports = {
       config: path.resolve(__dirname, 'src/config/'),
       src: path.resolve(__dirname, 'src/'),
       __mocks__: path.resolve(__dirname, '__mocks__/'),
-      variables: path.resolve(__dirname, 'src/shared/variables.js')
+      variables: path.resolve(__dirname, 'src/shared/variablesExport.js')
     }
   },
   module: {
@@ -85,14 +85,30 @@ module.exports = {
       },
       {
         test: /\.worker\.js$/,
+        exclude: /node_modules\/(?!react-intl|intl-messageformat|intl-messageformat-parser)/,
         include: flags.srcPath,
-        use: ['babel-loader', 'worker-loader']
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              configFile: path.resolve(__dirname, '.babelrc')
+            }
+          },
+          'worker-loader'
+        ]
       },
       {
         test: /\.(js|jsx)$/,
-        exclude: /node_modules/,
-        use: ['babel-loader'],
-        resolve: { extensions: ['.js', '.jsx'] }
+        exclude: /node_modules\/(?!react-intl|intl-messageformat|intl-messageformat-parser)/,
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              configFile: path.resolve(__dirname, '.babelrc')
+            }
+          }
+        ],
+        resolve: { extensions: [ '.js', '.jsx' ] }
       }
     ]
   },

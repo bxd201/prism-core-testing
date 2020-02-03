@@ -38,35 +38,26 @@ function ColorCollectionsTab (props: Props) {
         onClick={() => showTabListMobile(!tabListMobileShow)}>{tabShowName}
       </span>
 
-      <ul
-        className={`${tabList} ${(tabListMobileShow)
-          ? `${tabListActive}`
-          : `${tabListInactive}`}`}
-      >
-        {
-          collectionTabs.map((tab, id) => {
-            return (
-              <li
-                data-testid={`${tab.id}`}
-                role='presentation'
-                onKeyDown={() => {}}
-                className={`${tabListItem} ${(tab.id === tabIdShow)
-                  ? `${tabListItemActive}`
-                  : ''}`
+      <ul className={`${tabList} ${(tabListMobileShow) ? `${tabListActive}` : `${tabListInactive}`}`}>
+        {collectionTabs.map((tab, id) => {
+          return (
+            <li
+              data-testid={`${tab.id}`}
+              role='presentation'
+              onKeyDown={() => {}}
+              className={`${tabListItem} ${(tab.id === tabIdShow) ? `${tabListItemActive}` : ''}`}
+              key={tab.id}
+              onClick={() => {
+                if (tab.id !== tabIdShow) {
+                  showTab(tab.id, true)
                 }
-                key={tab.id}
-                onClick={() => {
-                  if (tab.id !== tabIdShow) {
-                    showTab(tab.id, true)
-                  }
-                  showTabListMobile(!tabListMobileShow)
-                }}
-              >
-                {tab.tabName}
-              </li>
-            )
-          })
-        }
+                showTabListMobile(!tabListMobileShow)
+              }}
+            >
+              {tab.tabName}
+            </li>
+          )
+        })}
       </ul>
     </div>
   )

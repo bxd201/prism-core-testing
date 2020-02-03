@@ -26,7 +26,7 @@ exports[`Prism routes should match snapshot 1`] = `
         <ContextProvider
           value={
             Object {
-              "colorDetailPageRoot": false,
+              "colorDetailPageRoot": undefined,
               "colorWallBgColor": "#EEEEEE",
               "displayAddButton": false,
               "displayDetailsLink": true,
@@ -40,7 +40,10 @@ exports[`Prism routes should match snapshot 1`] = `
           }
         >
           <ColorWallPage
+            displayAddButton={true}
+            displayDetailsLink={false}
             publish={[Function]}
+            resetOnUnmount={true}
             subscribe={[Function]}
             unmount={[Function]}
             unsubscribe={[Function]}
@@ -82,7 +85,15 @@ exports[`Prism routes should match snapshot 1`] = `
         render={[Function]}
       />
       <Route
-        component={[Function]}
+        component={
+          Object {
+            "$$typeof": Symbol(react.memo),
+            "WrappedComponent": [Function],
+            "compare": null,
+            "displayName": "Connect(Component)",
+            "type": [Function],
+          }
+        }
         exact={true}
         path="/active/color/:colorId/:colorSEO"
       />

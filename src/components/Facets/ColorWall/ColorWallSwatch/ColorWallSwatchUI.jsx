@@ -1,5 +1,5 @@
 // @flow
-import React, { useMemo, forwardRef, useEffect } from 'react'
+import React, { useMemo, forwardRef, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { CLASS_NAMES } from './shared'
 import { type Color } from '../../../../shared/types/Colors'
@@ -11,6 +11,7 @@ import 'src/scss/convenience/visually-hidden.scss'
 
 type Props = {
   color: Color,
+  disabled?: boolean,
   focus?: boolean,
   onClick?: Function,
   tabIndex?: number,
@@ -23,16 +24,18 @@ const _classes = arrayToSpacedString([
 ])
 
 const ColorWallSwatchUI = forwardRef<Props, Object>((props: Props, ref: Object) => {
-  const { focus, color, thisLink, onClick, tabIndex = 0 } = props
+  const { focus, color, disabled, thisLink, onClick, tabIndex = 0 } = props
+
+  const refData = useMemo<Object | void>(() => ({
+    internalLink: thisLink,
+    onClick: onClick
+  }), [onClick, thisLink])
 
   useEffect(() => {
-    ref.current = {
-      link: thisLink,
-      onClick: onClick
-    }
-  }, [thisLink, onClick])
+    ref.current = refData
+  }, [refData])
 
-  const handleClick = useMemo(() => (e: any) => {
+  const handleClick = useCallback((e: any) => {
     if (typeof onClick === 'function') {
       onClick(e)
     }
@@ -57,6 +60,7 @@ const ColorWallSwatchUI = forwardRef<Props, Object>((props: Props, ref: Object) 
         <span className='visually-hidden'>
           {colorName}
         </span>
+        {disabled ? <div className={CLASS_NAMES.FLAG} /> : null}
       </Link>
     </div>
   )

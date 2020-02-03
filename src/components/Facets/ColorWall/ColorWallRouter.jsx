@@ -3,7 +3,7 @@ import React from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { useIntl } from 'react-intl'
-import HeroLoader from '../../Loaders/HeroLoader/HeroLoader'
+import HeroLoaderExpanded from '../../Loaders/HeroLoader/HeroLoaderExpanded'
 import ConfigurationContext from '../../../contexts/ConfigurationContext/ConfigurationContext'
 import { loadColors } from '../../../store/actions/loadColors'
 import kebabCase from 'lodash/kebabCase'
@@ -21,7 +21,7 @@ export default ({ children, redirect = true }: Props) => {
 
   React.useEffect(() => { dispatch(loadColors(brandId, { language: locale })) }, [])
   return (loading
-    ? <HeroLoader />
+    ? <HeroLoaderExpanded />
     : <Switch>
       <Route path='/active/color-wall/section/:section/family/:family/color/:colorId/:colorName/search/'>{children}</Route>
       <Route path='/active/color-wall/section/:section/family/:family/color/:colorId/:colorName'>{children}</Route>
@@ -30,7 +30,7 @@ export default ({ children, redirect = true }: Props) => {
       <Route path='/active/color-wall/section/:section/family'>{children}</Route>
       <Route path='/active/color-wall/section/:section/color/:colorId/:colorName/family/'>{children}</Route>
       <Route path='/active/color-wall/section/:section/color/:colorId/:colorName/search/'>{children}</Route>
-      <Route path='/active/color-wall/section/:section/color/:colorId'>{children}</Route>
+      <Route path='/active/color-wall/section/:section/color/:colorId/:colorName'>{children}</Route>
       <Route path='/active/color-wall/section/:section/search/'>{children}</Route>
       <Route path='/active/color-wall/section/:section'>{children}</Route>
       {redirect ? <Redirect to={`/active/color-wall/section/${kebabCase(section)}`} /> : null}
