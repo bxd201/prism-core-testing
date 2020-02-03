@@ -98,19 +98,18 @@ export function doReceiveColors (state: ColorsState, action: ReduxAction) {
   })(colors)
 
   // many short blocks
-  const timeless = flattenDeep(colors['Couleur Intemporelle'] || colors['Timeless Colour'] || colors['Timeless Color']).map(i => `${i}`)
-  // const timeless = flattenDeep(colors['Couleur Intemporelle'] || colors['Timeless Colour'] || colors['Timeless Color']).map(id => colorMap[id])
+  const timelessStructure = ((colors) => {
+    const _colors = flattenDeep(colors['Couleur Intemporelle'] || colors['Timeless Colour'] || colors['Timeless Color']).map(id => colorMap[id])
+    const sorted = chunk(sortBy(_colors, c => c.storeStripLocator).map(c => c.colorNumber), 7)
+    const rows = sorted.length
+    const left = sorted.slice(0, rows / 2)
+    const right = sorted.slice(rows / 2, rows)
 
-  const timelessStructure = [
-    [
-      [timeless.slice(0, 7), timeless.slice(8, 15)],
-      [timeless.slice(16, 23), timeless.slice(24, 31)]
-    ],
-    [
-      [timeless.slice(32, 39), timeless.slice(40, 47)],
-      [timeless.slice(48, 55), timeless.slice(56, 63)]
-    ]
-  ]
+    return chunk(left.map((row, i) => ([
+      row,
+      right[i]
+    ])), 3)
+  })(colors)
 
   const swStructure = [
     [
