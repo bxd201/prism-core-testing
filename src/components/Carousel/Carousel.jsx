@@ -27,6 +27,7 @@ export default (props: ComponentProps) => {
   // tracks the previous position
   const prevPositionRef = useRef()
   const prevPosition = prevPositionRef.current
+  let serialCount = 0
   useEffect(() => { prevPositionRef.current = position })
 
   // update the position when tabId changes only if the position hasn't changed (tab button was clicked)
@@ -102,15 +103,22 @@ export default (props: ComponentProps) => {
 
               return (
                 <div key={index} className={`collection-list__wrapper`}>
-                  {shouldRender && slide.map((item, key) => (
-                    <BaseComponent
-                      className='collection-list__component'
-                      key={key}
-                      {...props}
-                      data={item}
-                      isActivedPage={index === pageNumber}
-                    />
-                  ))}
+                  {shouldRender && slide.map((item, key) => {
+                    serialCount++
+                    return (
+                      <BaseComponent
+                        className='collection-list__component'
+                        key={key}
+                        itemNumber={serialCount}
+                        {...props}
+                        data={item}
+                        handlePrev={handlePrev}
+                        handleNext={handleNext}
+                        itemsPerView={defaultItemsPerView}
+                        isActivedPage={index === pageNumber}
+                      />
+                    )
+                  })}
                 </div>
               )
             })}

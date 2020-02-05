@@ -33,7 +33,7 @@ class CollectionSummary extends PureComponent<Props> {
 
     if (!e.shiftKey && e.keyCode === KEY_CODE_TAB && ((this.props.itemNumber) % this.props.itemsPerView === 0)) {
       this.props.handleNext()
-    } else if (e.shiftKey && e.keyCode === KEY_CODE_TAB && ((this.props.itemNumber) % this.props.itemsPerView === 1)) {
+    } else if (e.shiftKey && this.props.itemNumber !== 1 && e.keyCode === KEY_CODE_TAB && ((this.props.itemNumber) % this.props.itemsPerView === 1)) {
       this.props.handlePrev()
     }
   }

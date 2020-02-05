@@ -9,9 +9,14 @@ import { MY_IDEAS_PREVIEW } from '../Facets/Prism/Prism'
 import { clearSceneWorkspace } from '../../store/actions/paintScene'
 // eslint-disable-next-line no-unused-vars
 import { selectSavedScene } from '../../store/actions/persistScene'
+import './MyIdeasContainer.scss'
+import CollectionsHeaderWrapper from '../CollectionsHeaderWrapper/CollectionsHeaderWrapper'
+import { FormattedMessage, useIntl } from 'react-intl'
+import at from 'lodash/at'
 
 type MyIdeasContainerProps = {
-  config: Object
+  config: Object,
+  setHeader: Function
 }
 
 const MyIdeasContainer = (props: MyIdeasContainerProps) => {
@@ -20,11 +25,13 @@ const MyIdeasContainer = (props: MyIdeasContainerProps) => {
   const [shouldRedirect, setShouldRedirect] = useState(false)
   // Record original selected scene value
   const [initialSceneId, setInitialSceneId] = useState(selectedSceneId)
+  const { messages = {} } = useIntl()
 
   useEffect(() => {
     if (selectedSceneId && initialSceneId !== selectedSceneId) {
       setShouldRedirect(true)
     }
+    props.setHeader(at(messages, 'MY_IDEAS.MY_IDEAS_HEADER')[0])
   })
 
   useEffect(() => {
@@ -43,10 +50,20 @@ const MyIdeasContainer = (props: MyIdeasContainerProps) => {
   }
 
   return (
-    <div>
-      {isLoggedIn ? <MyIdeas brandId={props.config.brandId} /> : <Login />}
+    <div className={`my-ideas-container__wrapper`}>
+      {isLoggedIn ? <MyIdeas brandId={props.config.brandId} />
+        : (<div className={`my-ideas-container__content`}>
+          <div className={`my-ideas-container__description`}>
+            <FormattedMessage id='MY_IDEAS.MY_IDEAS_CONTENT' />
+          </div>
+          <div className={`my-ideas-container__buttons`}>
+            <button><FormattedMessage id='REGISTER' /></button>
+            <div><Login /></div>
+          </div>
+        </div>)
+      }
     </div>
   )
 }
 
-export default WithConfigurationContext(MyIdeasContainer)
+export default WithConfigurationContext(CollectionsHeaderWrapper(MyIdeasContainer))

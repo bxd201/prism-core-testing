@@ -72,6 +72,7 @@
     "pako": "^1.0.10",
     "react-aria-live": "2.0.5",
     "react-aria-menubutton": "6.2.0",
+    "react-device-detect": "^1.11.14",
     "react-dnd-cjs": "9.5.1",
     "react-dnd-html5-backend-cjs": "9.5.1",
     "react-ga": "2.7.0",

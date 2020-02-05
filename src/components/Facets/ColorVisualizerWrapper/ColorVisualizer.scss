@@ -2,24 +2,57 @@
   max-width: 1080px;
   margin: 0 auto;
   position: relative;
+  &__nav-wrapper {
+    display: block;
+    &--hide {
+      display: none;
+    }
+    &--hide-my-ideas {
+      display: none;
+      @include respond-above(sm) {
+        display: block;
+      }
+    }
+  }
 }
 
 .cvw-nav-btn {
   border: none;
-  display: inline-block;
   color: black;
-  padding: 1.2em 2em 0.8em 2em;
-  position: relative;
+  display: inline-block;
+  height: 96%;
   margin-right: 2px;
+  padding: 13% 6% 5%;
+  position: relative;
   text-decoration: none;
-  height: 100%;
+  @include respond-above(xs) {
+    padding: 1.2em 1em;
+  }
+  @include respond-above(sm) {
+    padding: 1.2em 1.7em 0.8em 2em;
+  }
+  &:after {
+    background: #2cabe2;
+    bottom: 0;
+    content: '';
+    display: block;
+    height: 0;
+    left: 0;
+    position: absolute;
+    transition: height .3s;
+    width: 100%;
+  }
   &:hover {
     color: #2cabe2;
-    & > div:first-child {
-      height: 10%;
-      transition: all 0.3s;
-      background: #2cabe2;
+    &:after {
+      height: 6px;
+      transition: height .3s;
     }
+    // & > div:first-child{
+    //   height: 10%;
+    //   transition: all 0.3s;
+    //   background: #2cabe2;
+    // }
   }
   &:focus {
     outline-style: solid;
@@ -32,7 +65,7 @@
     &:hover{
       color:#fff;
       & > div:first-child{
-        height: 100%;
+        height: 96%;
         background: #2cabe2;
       }
     }
@@ -49,13 +82,44 @@
   &--active {
     background-color: #2cabe2;
     animation: slide-up 0.3s;
-    height: 100%;
+    height: 96%;
     color: #fff;
   }
   &--last--active {
     background-color: #2cabe2;
     animation: slide-down 0.3s;
     height: 0%;
+  }
+  &__svg {
+    display: none;
+    @include respond-above(sm) {
+      display: inline-block;
+      margin-right: 1em;
+    }
+    &--brush {
+      background-color: white;
+      margin-left: -22px;
+    }
+    &--plus-circle {
+      margin-left: -30px;
+      margin-bottom: 2px;
+    }
+    &--square {
+      background-color: white;
+    }
+    &--square-small {
+      background-color: white;
+      margin-right: -18px;
+      margin-bottom: 2px;
+    }
+    &--square-xsmall {
+      background-color: white;
+      margin-right: -16px;
+      margin-bottom: 2px;
+    }
+    &--active {
+      background-color: #2cabe2;
+    }
   }
 }
 
@@ -74,25 +138,95 @@
   bottom: 0;
   z-index: 1000;
   cursor: pointer;
+  overflow-y: scroll;
 }
 
 .cvw-navigation-wrapper {
   display: flex;
   position: relative;
-  justify-content: center;
+  justify-content: left;
   border-top: 1px solid #d4cfcf;
   border-bottom: 1px solid #d4cfcf;
+  @include respond-above(md) {
+    justify-content: center;
+  }
   &__center {
-    text-align: center;
+    align-items: center;
+    display: flex;
+    margin-left: 2%;
+    text-align: left;
+    max-width: 68%;
+    z-index: 1000;
+    @include respond-above(xs) {
+      margin-left: 0;
+      max-width: 75%;
+      text-align: center;
+    }
+    @include respond-above(md) {
+      width: auto;
+    }
+    & > li {
+      position: relative;
+      &:after {
+        border-left: 1px solid #c8c8c8;
+        content: '';
+        display: block;
+        height: 70%;
+        position: absolute;
+        right: 0;
+        top: 15%;
+        @include respond-above(xs) {
+          display: none;
+        }
+      }
+    }
+    & > li:last-child > a {
+      @include respond-below(xs) {
+        width: 85%;
+      }
+    }
+    & > li:nth-last-child(1) {
+      &:after {
+        display: none;
+      }
+    }
   }
   &__right {
-    position: absolute;
+    align-items: center;
+    display: flex;
     font-size: small;
     font-weight: bold;
-    right: 0;
     height: 100%;
-    display: flex;
-    align-items: center;
+    justify-content: flex-end;
+    right: 1%;
+    position: absolute;
+    width: 29%;
+    @include respond-above(sm) {
+      width: 30%;
+    }
+    & > li {
+      align-items: center;
+      display: inline-flex;
+      height: 100%;
+      text-align: center;
+      width: 100%;
+      @include respond-above(xs) {
+        width: auto;
+      }
+    }
+    & > li > a {
+      margin-top: 1px;
+      padding: 1.4em 0.5em;
+      @include respond-above(sm) {
+        padding: 1.2em 2em 0.8em 2em;
+      }
+    }
+    & > li:first-child > a {
+      @include respond-below(xs) {
+        padding: 0.5em;
+        width: 80%;
+      }
+    }
     &__text {
       line-height: 1.5em;
     }

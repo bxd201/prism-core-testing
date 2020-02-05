@@ -6,6 +6,7 @@
   "CANVAS_UNSUPPORTED": "Your browser does not support the canvas element.",
   "CHIP_MAXIMIZED": "L'échantillon de couleur a été maximisée",
   "CHIP_MINIMIZED": "L'échantillon de couleur a été minimisée",
+  "CLOSE": "CLOSE",
   "COLOR_COLLECTIONS": "Couleur Collection",
   "COLOR_FAMILIES": "Familles de Couleurs",
   "COORDINATING_COLORS": "Couleurs coordonnées",
@@ -32,12 +33,51 @@
   "LOG_IN": "LOG IN",
   "MAXIMIZE_COLOR_SWATCH": "Maximiser l'échantillon de couleur",
   "MY_IDEAS": {
+    "MY_IDEAS_HEADER": "View and edit your saved ideas",
+    "MY_IDEAS_CONTENT": "Log in or Register for a mySW account to save all your ideas and see them on any of your devices.",
     "NO_IDEAS_DESC": "Save all your inspiration and ideas here, and reference them when you're ready to start painting. Edit them any time.",
     "NO_IDEAS_TITLE": "You haven´t saved any ideas.",
     "OPEN_PROJECT": "Open this project",
     "OPEN_UNPAINTED": "Open unpainted scene",
     "PREVIEW": "Preview of",
     "TITLE": "View and edit your ideas"
+  },
+  "NAV_DROPDOWN_LINK_SUB_CONTENT": {
+    "COLOR_COLLECTIONS": "Find colors that work together seamlessly throughout your home.",
+    "DIGITAL_COLOR_WALL": "Search Sherwin-Williams paint colors to add to your palette or get color info.",
+    "EXPERT_COLOR_PICKS": "Find expertly designed color palettes to use in your space.",
+    "INSPIRATIONAL_PHOTOS": "Use our images to discover colors from around the world.",
+    "MATCH_A_PHOTO": "Capture colors from any photo and match them to real paint colors.",
+    "PAINTED_PHOTOS": "See colors in context to start building your color confidence.",
+    "UPLOAD_YOUR_PHOTO": "Virtually paint your own photo.",
+    "UPLOAD_YOUR_PHOTO_ANDROID": "Virtually paint your own photo by downloading the ColorSnap Visualizer for Android app.",
+    "UPLOAD_YOUR_PHOTO_IPAD": "Virtually paint your own photo by downloading the ColorSnap Visualizer for iPad app.",
+    "UPLOAD_YOUR_PHOTO_IPHONE": "Virtually paint your own photo by downloading the ColorSnap Visualizer for iPhone app.",
+    "USE_OUR_PHOTOS": "Virtually paint a sample photo."
+  },
+  "NAV_DROPDOWN_LINK_TIP_DESCRIPTION": {
+    "UPLOAD_YOUR_PHOTO": "Photo Tips: For best results make sure your room is well lit. Natural light works best."
+  },
+  "NAV_DROPDOWN_TITLE": {
+    "EXPLORE_COLORS": "Explore all the ways to start building My Color Palette.",
+    "GET_INSPIRED": "Find inspiration for your next painting project.",
+    "PAINT_A_PHOTO": "Start Painting."
+  },
+  "NAV_LINKS": {
+    "COLOR_COLLECTIONS": "COLOR COLLECTIONS",
+    "DIGITAL_COLOR_WALL": "DIGITAL COLOR WALL",
+    "EXPERT_COLOR_PICKS": "EXPERT COLOR PICKS",
+    "EXPLORE_COLORS": "Explore Colors",
+    "GET_INSPIRED": "Get Inspired",
+    "GET_THE_APP": "GET THE APP",
+    "HELP": "Help",
+    "INSPIRATIONAL_PHOTOS": "INSPIRATIONAL PHOTOS",
+    "MATCH_A_PHOTO": "MATCH A PHOTO",
+    "MY_IDEAS": "My Ideas",
+    "PAINTED_PHOTOS": "PAINTED PHOTOS",
+    "PAINT_A_PHOTO": "Paint a Photo",
+    "UPLOAD_YOUR_PHOTO": "UPLOAD YOUR PHOTO",
+    "USE_OUR_PHOTOS": "USE OUR PHOTOS"
   },
   "NO_COLORS_AVAILABLE": "Aucune couleur disponible.",
   "PAINT_SCENE": {
@@ -98,7 +138,6 @@
     "SEARCH_COLOR": "Couleur de recherche",
     "SEARCHING": "Recherche",
     "SEARCH_BY": "Recherche par nom ou numéro de couleur",
-    "SEARCHING": "Recherche",
     "SUGGESTIONS": "Quelques exemples de choses que vous pouvez rechercher sont {suggestions}"
   },
   "SELECT_COLLECTION": "Sélectionnez une collection de couleurs",
