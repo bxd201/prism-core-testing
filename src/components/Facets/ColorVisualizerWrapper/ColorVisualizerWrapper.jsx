@@ -7,7 +7,7 @@ import CompareColor from '../../CompareColor/CompareColor'
 import InspiredScene from '../../InspirationPhotos/InspiredSceneNavigator'
 import LivePalette from '../../LivePalette/LivePalette'
 import ColorDataWrapper from '../../../helpers/ColorDataWrapper/ColorDataWrapper'
-import ColorVisualizerNav, { isMyIdeas, isScene, isColors, isInspiration, isHelp } from './ColorVisualizerNav'
+import ColorVisualizerNav, { isColors, isInspiration } from './ColorVisualizerNav'
 import React, { Component } from 'react'
 import SceneManager from '../../SceneManager/SceneManager'
 import ColorWallContext, { colorWallContextDefault } from '../ColorWall/ColorWallContext'
@@ -46,6 +46,8 @@ const PAINT_SCENE_COMPONENT = 'PaintScene'
 const SCENE_MANAGER_COMPONENT = 'SceneManager'
 const PAINT_SCENE_ROUTE = '/paint-scene'
 const ACTIVE_ROUTE = '/active'
+const HELP_ROUTE = '/help'
+
 export const MY_IDEAS_PREVIEW = '/my-ideas-preview'
 export const MATCH_PHOTO = '/match-photo'
 export const MY_IDEAS = '/my-ideas'
@@ -62,7 +64,9 @@ type Props = FacetPubSubMethods & FacetBinderMethods & {
   toggleCompareColor: boolean
 }
 
-const pathNameList = ['/active/colors', '/active/inspiration', '/active/scenes']
+const pathNameSet = new Set([`${ACTIVE_ROUTE}/colors`, `${ACTIVE_ROUTE}/inspiration`, `${ACTIVE_ROUTE}/scenes`, ACTIVE_ROUTE, '/'])
+const nonOverlayRouteSet = new Set([ACTIVE_ROUTE, HELP_ROUTE, MY_IDEAS])
+
 export class ColorVisualizerWrapper extends Component<Props> {
   static defaultProps = {
     ...facetPubSubDefaultProps,
@@ -72,9 +76,9 @@ export class ColorVisualizerWrapper extends Component<Props> {
   constructor (props) {
     super(props)
     const { pathname } = this.props.location
-    const isShow = isMyIdeas(pathname) || isScene(pathname) || isColors(pathname) || isInspiration(pathname) || isHelp(pathname) || '/active'
+    const isShow = pathNameSet.has(pathname)
     this.state = {
-      close: !pathNameList.includes(pathname),
+      close: !isShow,
       showDefaultPage: isShow,
       showPaintScene: false,
       remountKey: (new Date()).getTime(),
@@ -89,7 +93,9 @@ export class ColorVisualizerWrapper extends Component<Props> {
   }
 
   onRouteChanged = () => {
-    const { showDefaultPage, showPaintScene } = this.state
+    const currLocation = this.props.location.pathname
+    const isSubRoute = isColors(currLocation) || isInspiration(currLocation)
+    const { showDefaultPage, showPaintScene, lastActiveComponent } = this.state
     let isShowPaintScene = true
     let isShowDefaultPage = true
     if (showPaintScene) {
@@ -99,10 +105,21 @@ export class ColorVisualizerWrapper extends Component<Props> {
       isShowPaintScene = false
     }
     if (showPaintScene || showDefaultPage) {
-      if (pathNameList.includes(this.props.location.pathname)) {
+      if (pathNameSet.has(currLocation)) {
         this.setState({ close: false, showPaintScene: isShowPaintScene, showDefaultPage: isShowDefaultPage })
+      } else if (isSubRoute) {
+        this.setState({ showPaintScene: false, showDefaultPage: false, close: true })
       } else {
         this.setState({ showPaintScene: isShowPaintScene, showDefaultPage: isShowDefaultPage })
+      }
+    } else {
+      if (pathNameSet.has(currLocation)) {
+        if (lastActiveComponent === SCENE_MANAGER_COMPONENT) {
+          this.setState({ showDefaultPage: true, showPaintScene: false, close: false })
+        }
+        if (lastActiveComponent === PAINT_SCENE_COMPONENT) {
+          this.setState({ showDefaultPage: false, showPaintScene: true, close: false })
+        }
       }
     }
   }
@@ -113,6 +130,7 @@ export class ColorVisualizerWrapper extends Component<Props> {
       this.setState({ close: true })
     }
   }
+
   redirectTo=() => {
     this.setState({ close: true })
   }
@@ -277,7 +295,7 @@ export class ColorVisualizerWrapper extends Component<Props> {
               {showDefaultPage && <SceneManager expertColorPicks />}
               <MatchPhoto isPaintScene checkIsPaintSceneUpdate={checkIsPaintSceneUpdate} showPaintScene={showPaintScene} imgUrl={imgUrl} key={remountKey} />
               <div className={`${isShowWarningModal ? 'cvw__modal__overlay' : 'cvw__route-wrapper'}`} />
-              {!close && <div role='presentation' className='nav__dropdown-overlay' onClick={this.close}>
+              {!close && <div role='presentation' className={`${(!close && !nonOverlayRouteSet.has(location.pathname)) ? 'nav__dropdown-overlay' : ''}`} onClick={this.close}>
                 <Route path='/active/colors' component={(props) => <DropDownMenu isTabbedOutFromHelp={isTabbedOutFromHelp} helpLinkRef={helpLinkRef} dataKey='color' {...dropMenuProps} />} />
                 <Route path='/active/inspiration' component={() => <DropDownMenu isTabbedOutFromHelp={isTabbedOutFromHelp} helpLinkRef={helpLinkRef} dataKey='inspiration' {...dropMenuProps} />} />
                 <Route path='/active/scenes' component={() => <DropDownMenu isTabbedOutFromHelp={isTabbedOutFromHelp} helpLinkRef={helpLinkRef} dataKey='scenes' {...dropMenuProps} />} />
