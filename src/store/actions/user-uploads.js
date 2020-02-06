@@ -98,7 +98,7 @@ export const uploadImage = (file: File) => {
         // }
 
         // this will get the monolithic mask; comment out one or the other
-        masks.push(payload.full_wall_mask_local)
+        masks.push(payload.processed)
 
         const images = {
           source: imageUrl,
