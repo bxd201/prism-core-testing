@@ -45,6 +45,7 @@ export default withRouter((props: Props) => {
   const dispatch = useDispatch()
   const helpLinkRef = React.useRef()
   useEffect(() => { dispatch(toggleCompareColor(true)) }, [location])
+  useEffect(() => { window.onpopstate = (event) => { setLastActive('') } }, [])
 
   const setActiveHelper = (currActiveName) => {
     if (currActiveName !== currActive) {
