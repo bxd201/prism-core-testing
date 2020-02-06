@@ -15,22 +15,20 @@ const BASE_CLASS = 'color-info'
 
 type Props = {
   color: Color,
-  intl: any
+  intl: any,
+  onToggle?: boolean => void,
 }
 
-export function ColorChipMaximizer ({ color, intl }: Props) {
-  const [isMaximized, setMaximized] = useState(null)
+export function ColorChipMaximizer ({ color, intl, onToggle }: Props) {
+  const [isMaximized, setMaximized] = useState(false)
   const [liveRegionMessage, setLiveRegionMessage] = useState('')
 
   const maximizeChipBtn = React.createRef()
   const minimizeChipBtn = React.createRef()
-  const maximizeChip = e => {
+
+  const toggleChipMaximized = e => {
     setLiveRegionMessage('')
-    setMaximized(true)
-  }
-  const minimizeChip = e => {
-    setLiveRegionMessage('')
-    setMaximized(false)
+    setMaximized(!isMaximized)
   }
 
   const contrastingTextColor = (color.isDark) ? varValues.colors.white : varValues.colors.black
@@ -67,6 +65,7 @@ export function ColorChipMaximizer ({ color, intl }: Props) {
   }
 
   useEffect(() => {
+    onToggle && onToggle(isMaximized)
     if (isMaximized === true) {
       minimizeChipBtn.current && minimizeChipBtn.current.focus()
       setTimeout(() => {
@@ -90,13 +89,13 @@ export function ColorChipMaximizer ({ color, intl }: Props) {
     <React.Fragment>
       <div className={CHIP_CLASS.join(' ')} style={{ backgroundColor: color.hex }} />
       <div className={SWATCH_SIZE_WRAPPER_CLASSES.join(' ')}>
-        <button className={SWATCH_SIZE_TOGGLE_BUTTON_CLASSES.join(' ')} onClick={maximizeChip} ref={maximizeChipBtn}>
+        <button className={SWATCH_SIZE_TOGGLE_BUTTON_CLASSES.join(' ')} onClick={toggleChipMaximized} ref={maximizeChipBtn}>
           <FontAwesomeIcon className={`${BASE_CLASS}__display-toggles-icon`} icon={['fal', 'expand-alt']} color={contrastingTextColor} size={'2x'} />
           <div className={`${BASE_CLASS}__scene-toggle-copy visually-hidden`}>
             <FormattedMessage id='MAXIMIZE_COLOR_SWATCH' />
           </div>
         </button>
-        <button className={ALT_SWATCH_SIZE_TOGGLE_BUTTON_CLASSES.join(' ')} onClick={minimizeChip} ref={minimizeChipBtn}>
+        <button className={ALT_SWATCH_SIZE_TOGGLE_BUTTON_CLASSES.join(' ')} onClick={toggleChipMaximized} ref={minimizeChipBtn}>
           <FontAwesomeIcon className={`${BASE_CLASS}__display-toggles-icon`} icon={['fal', 'compress-alt']} color={contrastingTextColor} size={'2x'} />
           <div className={`${BASE_CLASS}__scene-toggle-copy visually-hidden`}>
             <FormattedMessage id='RESTORE_COLOR_SWATCH_TO_DEFAULT_SIZE' />

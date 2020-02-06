@@ -81,7 +81,9 @@ type Props = {
   // eslint-disable-next-line react/no-unused-prop-types
   toggleEditMode: Function,
   type: string,
-  updateCurrentSceneInfo: Function
+  updateCurrentSceneInfo: Function,
+  onSceneChanged?: number => void,
+  onVariantChanged?: string => void
 }
 
 type State = {
@@ -107,7 +109,6 @@ export class SceneManager extends PureComponent<Props, State> {
 
     this.handleColorUpdate = this.handleColorUpdate.bind(this)
     this.handleClickSceneToggle = this.handleClickSceneToggle.bind(this)
-    // @todo review this
     this.changeVariant = this.changeVariant.bind(this)
     this.changeVariant = memoizee(this.changeVariant, { primitive: true, length: 1 })
     this.updateCurrentSceneInfo = this.updateCurrentSceneInfo.bind(this)
@@ -132,6 +133,7 @@ export class SceneManager extends PureComponent<Props, State> {
       this.deactivateScene(id)
     } else {
       // ... otherwise activate this scene
+      this.props.onSceneChanged && this.props.onSceneChanged(id)
       this.activateScene(id)
       GA.event({
         category: 'Scene Manager',
@@ -169,9 +171,10 @@ export class SceneManager extends PureComponent<Props, State> {
   }
 
   changeVariant = (sceneId: number) => {
-    const { changeSceneVariant } = this.props
+    const { changeSceneVariant, onVariantChanged } = this.props
 
     return function _changeVariant (variant: string) {
+      onVariantChanged && onVariantChanged(variant)
       changeSceneVariant(sceneId, variant)
     }
   }
@@ -266,7 +269,14 @@ export class SceneManager extends PureComponent<Props, State> {
               // TODO: Remove this dayNightToggle check, this is for demonstration purposes
                 if (SceneVariantSwitch.DayNight.isCompatible(scene.variant_names)) {
                 // ... then create a day/night variant switch
-                  variantSwitch = <SceneVariantSwitch.DayNight currentVariant={status.variant} variants={[SCENE_VARIANTS.DAY, SCENE_VARIANTS.NIGHT]} onChange={this.changeVariant(sceneId)} sceneId={scene.id} />
+                  variantSwitch = (
+                    <SceneVariantSwitch.DayNight
+                      currentVariant={status.variant}
+                      variants={[SCENE_VARIANTS.DAY, SCENE_VARIANTS.NIGHT]}
+                      onChange={this.changeVariant(sceneId)}
+                      sceneId={scene.id}
+                    />
+                  )
                 }
               }
 
