@@ -9,10 +9,9 @@ import { emitColor, makeActiveColorById, filterBySection, filterByFamily } from 
 import { type ColorsState } from 'src/shared/types/Actions'
 import { add } from '../../../store/actions/live-palette'
 import { varValues } from 'variables'
-import { compareKebabs } from '../../../shared/helpers/StringUtils'
-import { convertCategorizedColorsToGrid } from '../../../shared/helpers/ColorDataUtils'
+import { convertToSpacedGrid } from '../../../shared/helpers/ColorDataUtils'
 import { generateColorWallPageUrl, fullColorName } from '../../../shared/helpers/ColorUtils'
-import { BLANK_SWATCH, SW_CHUNK_SIZE, ROUTE_PARAMS } from 'constants/globals'
+import { ROUTE_PARAMS } from 'constants/globals'
 import ConfigurationContext from '../../../contexts/ConfigurationContext/ConfigurationContext'
 import GenericMessage from '../../Messages/GenericMessage'
 import ColorWallSwatchList from './ColorWallSwatchList'
@@ -21,9 +20,7 @@ import ColorWallContext from './ColorWallContext'
 import ColorWallProp from './ColorWallProp/ColorWallProp'
 import './ColorWall.scss'
 
-type Props = {
-  contain: boolean
-}
+type Props = { contain: boolean }
 
 const EMPTY_COLOR_GRID = [[]]
 
@@ -31,7 +28,13 @@ const ColorWall = (props: Props) => {
   const { contain = false } = props
   const { colorWall, swatchShouldEmit } = useContext(ConfigurationContext)
   const { swatchMinSize, swatchMaxSize, swatchMinSizeZoomed, swatchMaxSizeZoomed, colorWallBgColor } = useContext(ColorWallContext)
-  const { colorWallActive, items: { brights, colorMap, colors, unorderedColors, colorStatuses }, section: reduxSection, family: reduxFamily, families = [] }: ColorsState = useSelector(state => state.colors)
+  const {
+    colorWallActive,
+    items: { brights, colorMap, colors, unorderedColors, colorStatuses, sectionLabels },
+    section: reduxSection,
+    family: reduxFamily,
+    layout
+  }: ColorsState = useSelector(state => state.colors)
   const { messages = {} } = useIntl()
   const dispatch = useDispatch()
   const { url, params: { section, family, colorId, colorName } } = useRouteMatch()
@@ -39,14 +42,7 @@ const ColorWall = (props: Props) => {
   const trueSection = reduxSection || section
 
   const colorsGrid = useMemo(() => {
-    let filteredColorSets = families.filter((familyName) => reduxFamily ? compareKebabs(familyName, reduxFamily) : true)
-
-    if (filteredColorSets.length) {
-      const output = convertCategorizedColorsToGrid(filteredColorSets, colors, brights, colorMap, BLANK_SWATCH, SW_CHUNK_SIZE)
-      return output
-    }
-
-    return EMPTY_COLOR_GRID
+    return layout ? convertToSpacedGrid(layout, sectionLabels[reduxSection]) : EMPTY_COLOR_GRID
   }, [colors, brights, colorMap, reduxFamily, reduxSection, unorderedColors])
 
   const swatchListKey = useMemo(() => {

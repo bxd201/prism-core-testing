@@ -11,6 +11,14 @@
   .ReactVirtualized__Grid {
     // override component-injected styles to fix iOS problem =\
     -webkit-overflow-scrolling: auto !important;
+    .color-wall-section-title {
+      display: inline-block;
+      text-transform: uppercase;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 400;
+      padding: 30%;
+    }
 
     &__innerScrollContainer {
       margin: auto auto;
