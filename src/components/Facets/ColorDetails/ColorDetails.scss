@@ -497,7 +497,14 @@ $tab-set-padding: 0.5rem 0.25rem;
   }
 
   &__details-tab-wrapper {
-    padding: 0 $width-medium 2.5rem;
+    padding: 1rem $width-medium 2.5rem;
+
+    .view-family-link {
+      font-size: 0.8rem;
+      color: #39c;
+      text-transform: capitalize;
+      text-decoration: none;
+    }
   }
 
   &__visual-specifications {

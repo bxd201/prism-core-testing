@@ -28,10 +28,11 @@ type Props = {
   onColorChanged?: {} => void,
   onSceneChanged?: string => void,
   onVariantChanged?: string => void,
-  onColorChipToggled?: boolean => void
+  onColorChipToggled?: boolean => void,
+  familyLink?: string
 }
 
-const ColorDetails = ColorDataWrapper(({ onColorChanged, onSceneChanged, onVariantChanged, onColorChipToggled }: Props) => {
+const ColorDetails = ColorDataWrapper(({ onColorChanged, onSceneChanged, onVariantChanged, onColorChipToggled, familyLink }: Props) => {
   const { colorId } = useParams()
   const dispatch = useDispatch()
   const toggleSceneDisplayScene = useRef(null)
@@ -131,7 +132,7 @@ const ColorDetails = ColorDataWrapper(({ onColorChanged, onSceneChanged, onVaria
                 <SimilarColors colors={colors} color={activeColor} />
               </TabPanel>
               <TabPanel className={`${baseClass}__tab-panel color-info__tab-panel-details`}>
-                <ColorInfo color={activeColor} />
+                <ColorInfo color={activeColor} familyLink={familyLink} />
               </TabPanel>
             </Tabs>
           </div>
