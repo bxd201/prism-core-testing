@@ -25,7 +25,12 @@ const ColorDetailsPage = (props: Props) => {
       <Redirect to={`${colorDetailsBaseUrl}/${colorId}/${colorSEO}`} />
       <Switch>
         <Route path={`${colorDetailsBaseUrl}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`}>
-          <ColorDetails onColorChanged={newColor => props.publish('prism-new-color', newColor)} />
+          <ColorDetails
+            onColorChanged={newColor => props.publish('prism-new-color', newColor)}
+            onSceneChanged={newScene => props.publish('prism-new-scene', newScene)}
+            onVariantChanged={newVariant => props.publish('prism-new-variant', newVariant)}
+            onColorChipToggled={newPosition => props.publish('prism-color-chip-toggled', newPosition)}
+          />
         </Route>
       </Switch>
     </>

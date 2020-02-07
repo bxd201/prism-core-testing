@@ -24,8 +24,14 @@ import ColorDataWrapper from 'src/helpers/ColorDataWrapper/ColorDataWrapper'
 
 const baseClass = 'color-info'
 
-type Props = { onColorChanged?: Function }
-const ColorDetails = ColorDataWrapper(({ onColorChanged }: Props) => {
+type Props = {
+  onColorChanged?: {} => void,
+  onSceneChanged?: string => void,
+  onVariantChanged?: string => void,
+  onColorChipToggled?: boolean => void
+}
+
+const ColorDetails = ColorDataWrapper(({ onColorChanged, onSceneChanged, onVariantChanged, onColorChipToggled }: Props) => {
   const { colorId } = useParams()
   const dispatch = useDispatch()
   const toggleSceneDisplayScene = useRef(null)
@@ -69,9 +75,15 @@ const ColorDetails = ColorDataWrapper(({ onColorChanged }: Props) => {
   return (
     <>
       <div className='color-detail-view'>
-        <ColorChipMaximizer color={activeColor} />
+        <ColorChipMaximizer color={activeColor} onToggle={onColorChipToggled} />
         <div className={`color-detail__scene-wrapper color-detail__scene-wrapper--displayed`}>
-          <SceneManager maxActiveScenes={1} interactive={false} mainColor={activeColor} />
+          <SceneManager
+            maxActiveScenes={1}
+            interactive={false}
+            mainColor={activeColor}
+            onSceneChanged={onSceneChanged}
+            onVariantChanged={onVariantChanged}
+          />
         </div>
         <div className='color-detail__info-wrapper'>
           <button className={SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.join(' ')} ref={toggleSceneDisplayScene}>
