@@ -88,13 +88,13 @@ export function doReceiveColors (state: ColorsState, action: ReduxAction) {
     const int = chunk(sorted.slice(0, 80).map(c => `${c.id}`), 8)
     const ext = chunk(sorted.slice(80, 140).map(c => `${c.id}`), 6)
 
-    return int.map((row, i) => ([ row, ext[i] ]))
+    return [int.map((row, i) => ([ row, ext[i] ]))]
   })(colors)
 
   // many short blocks
   const timelessStructure = ((colors) => {
     const _colors = flattenDeep(colors['Couleur Intemporelle'] || colors['Timeless Colour'] || colors['Timeless Color']).map(id => colorMap[id])
-    const sorted = chunk(sortBy(_colors, c => c.storeStripLocator).map(c => c.colorNumber), 7)
+    const sorted = chunk(sortBy(_colors, c => c.storeStripLocator).map(c => c.id), 7)
     const rows = sorted.length
     const left = sorted.slice(0, rows / 2)
     const right = sorted.slice(rows / 2, rows)
@@ -176,6 +176,7 @@ export function doReceiveColors (state: ColorsState, action: ReduxAction) {
       colors: colors,
       brights: action.payload.brights,
       unorderedColors: unorderedColorList,
+      sectionLabels: action.payload.colorLabels,
       colorMap
     },
     layouts,

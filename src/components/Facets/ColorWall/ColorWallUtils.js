@@ -1,8 +1,6 @@
 // @flow
 import findIndex from 'lodash/findIndex'
 import concat from 'lodash/concat'
-import isEmpty from 'lodash/isEmpty'
-import compact from 'lodash/compact'
 import isNumber from 'lodash/isNumber'
 import isUndefined from 'lodash/isUndefined'
 import memoizee from 'memoizee'
@@ -217,6 +215,8 @@ export function findChunkFromCorner (grid: ColorIdGrid, Ox: number = 0, Oy: numb
   let X2: number
   let Y2: number
 
+  const rowHasColors = (row: any[]): boolean => row.some(cell => cell && typeof cell !== 'object')
+
   // loop over each row; first non-empty row is your Y1
   // after that point, continue to loop until you encounter an empty; the previous index is your Y2
   for (let y = Oy; (forward ? y < numRows : y >= 0); (forward ? y++ : y--)) {
@@ -224,12 +224,12 @@ export function findChunkFromCorner (grid: ColorIdGrid, Ox: number = 0, Oy: numb
     const row: ColorIdLine = grid[y] && (forward ? grid[y].slice(Ox, searchPathWidth ? Ox + searchPathWidth : void (0)) : grid[y].slice(searchPathWidth ? Ox - searchPathWidth : 0, Ox))
 
     // if this row is not empty and we have not set Y1 yet...
-    if (!isEmpty(compact(row)) && !isNumber(Y1)) {
-      // set it; this is the top of our chunk
+    if (rowHasColors(row) && !isNumber(Y1)) {
+    // set it; this is the top of our chunk
       Y1 = y
-    } else if (isEmpty(compact(row)) && isNumber(Y1)) {
-      // if we encounter an empty row after Y1 has been set...
-      // then we need to take the previous index as the bottom of our chunk
+    } else if (!rowHasColors(row) && isNumber(Y1)) {
+    // if we encounter an empty row after Y1 has been set...
+    // then we need to take the previous index as the bottom of our chunk
       Y2 = (forward ? y - 1 : y + 1)
     }
 
@@ -253,12 +253,12 @@ export function findChunkFromCorner (grid: ColorIdGrid, Ox: number = 0, Oy: numb
 
     // loop over each col
     for (let x = Ox; (forward ? x < numCols : x >= 0); (forward ? x++ : x--)) {
-      const col: ProbablyColorId = row[x]
+      const cell: ProbablyColorId = row[x]
 
       // first non-empty column while X1 is empty...
-      if (!isUndefined(col) && !isNumber(X1)) {
+      if (!isUndefined(cell) && !isNumber(X1)) {
         X1 = x
-      } else if (isUndefined(col) && isNumber(X1)) {
+      } else if (isUndefined(cell) && isNumber(X1)) {
         // if we encounter an empty col and X1 has been set...
         // then set X2 with the previous index
         X2 = (forward ? x - 1 : x + 1)

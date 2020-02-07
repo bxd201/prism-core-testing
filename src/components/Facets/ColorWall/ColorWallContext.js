@@ -20,11 +20,11 @@ export const colorWallA11yContextDefault: ColorWallA11yContextProps = {
 }
 
 export type ColorWallContextProps = {
-  colorDetailPageRoot?: string | typeof undefined,
+  colorDetailPageRoot?: string,
   colorWallBgColor: string,
-  displayAddButton: boolean | typeof undefined,
-  displayDetailsLink: boolean | typeof undefined,
-  displayInfoButton: boolean | typeof undefined,
+  displayAddButton?: boolean,
+  displayDetailsLink?: boolean,
+  displayInfoButton?: boolean,
   loading: boolean,
   swatchMaxSize: number,
   swatchMaxSizeZoomed: number,
