@@ -27,6 +27,7 @@ import { type ColorWallContextProps, type ColorWallA11yContextProps } from './Co
 import withColorWallContext from './withColorWallContext'
 
 import 'src/scss/externalComponentSupport/AutoSizer.scss'
+import 'src/scss/convenience/overflow-ellipsis.scss'
 import './ColorWallSwatchList.scss'
 
 const GRID_AUTOSCROLL_SPEED: number = 300
@@ -662,7 +663,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
   generateMakeSwatchRef = (colorId: string): RefObject => (this._swatchRefs[colorId] = this._swatchRefs[colorId] || React.createRef())
 
   cellRenderer = function cellRenderer ({ columnIndex, isScrolling, isVisible, key, parent, rowIndex, style }: Object) {
-    const { colors, colorMap, immediateSelectionOnActivation, onAddColor, swatchLinkGenerator, colorWallContext, colorStatuses } = this.props
+    const { colors, colorMap, immediateSelectionOnActivation, onAddColor, swatchLinkGenerator, colorWallContext, colorStatuses, showAll } = this.props
     const { a11yFocusCell, a11yFocusChunk, a11yFocusOutline } = colorWallContext
     const { levelMap } = this.state
     const colorId = colors[rowIndex][columnIndex]
@@ -672,9 +673,15 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     if (!colorId) {
       return null
     } else if (typeof colorId === 'object') {
+      const height = Math.min(parseInt(style.height, 10) * 0.75, 14)
+      const _style = {
+        ...style,
+        fontSize: `${height}px`
+      }
+
       return (
-        <div style={style} role='presentation'>
-          <div className='color-wall-section-title' style={{
+        <div style={_style} role='presentation'>
+          <div className={`color-wall-swatch-list__section-title ${!showAll ? 'color-wall-swatch-list__section-title--top-align' : ''}`} title={colorId.label} style={{
             width: `${colorId.columnWidth * 100}%`,
             marginLeft: `-${(Math.ceil(colorId.columnWidth / 2) - 1) * 100}%`
           }}>
