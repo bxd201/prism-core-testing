@@ -5,6 +5,7 @@ import find from 'lodash/find'
 import flattenDeep from 'lodash/flattenDeep'
 import intersection from 'lodash/intersection'
 import kebabCase from 'lodash/kebabCase'
+import pick from 'lodash/pick'
 import sortBy from 'lodash/sortBy'
 
 import { convertUnorderedColorsToColorMap, convertUnorderedColorsToClasses } from '../../../shared/helpers/ColorDataUtils'
@@ -72,15 +73,12 @@ export function doReceiveColors (state: ColorsState, action: ReduxAction) {
     return section.name
   })
   const defaultSection = hasSections && find(structure, { default: true })
-  const colors = action.payload.colors
+  const { colors, brights } = action.payload
 
-  // --------------------------------------------------
-  // PRISM-457: In progress -@cody.richmond
-  // BEGIN MOCKED COLOR LAYOUTS
-
-  // all colors
-  const sw = flattenDeep(unorderedColorList)
-  // const sw = flattenDeep(action.payload.unorderedColors)
+  // -----------------------------------------------------------------
+  // PRISM-450 - mocked color layouts
+  // Breaking apart and reforming color groups for ingestion by ColorSwatchList.
+  // TODO: Move this logic into API in the future.
 
   // wide and thin
   const historicStructure = ((colors) => {
@@ -90,11 +88,7 @@ export function doReceiveColors (state: ColorsState, action: ReduxAction) {
     const int = chunk(sorted.slice(0, 80).map(c => `${c.id}`), 8)
     const ext = chunk(sorted.slice(80, 140).map(c => `${c.id}`), 6)
 
-    return int.map((row, i) => {
-      return [
-        row, ext[i]
-      ]
-    })
+    return int.map((row, i) => ([ row, ext[i] ]))
   })(colors)
 
   // many short blocks
@@ -111,30 +105,38 @@ export function doReceiveColors (state: ColorsState, action: ReduxAction) {
     ])), 3)
   })(colors)
 
-  const swStructure = [
-    [
-      [sw.slice(0, 7), sw.slice(7, 14), sw.slice(14, 21)]
-    ],
-    [
-      [sw.slice(21, 28), sw.slice(28, 35), sw.slice(35, 42)],
-      [sw.slice(42, 49), sw.slice(49, 56), sw.slice(56, 63)]
-    ],
-    [
-      [sw.slice(63, 70), sw.slice(70, 77), sw.slice(77, 84)],
-      [sw.slice(84, 91), sw.slice(91, 98), sw.slice(98, 105)]
-    ]
-  ]
+  const swFamilies = structure.filter(section => section.name.indexOf('Sherwin-Williams') >= 0)[0].families
 
-  const getAFamily = (push = 0) => {
+  const swStructureBrights = Object.keys(pick(brights, swFamilies)).map(key => brights[key]).map(v => {
+    const famColors = flattenDeep(v).map(id => colorMap[id])
+    return sortBy(famColors.filter(c => c.storeStripLocator), c => c.storeStripLocator.split('-')[0]).map(c => c.id)
+  })
+
+  const swStructure = Object.keys(pick(colors, swFamilies)).map(key => colors[key]).map((structuredFamilyColors, i) => {
+    const famColors = flattenDeep(structuredFamilyColors).map(id => colorMap[id])
+    const unsortedChunkArray = chunk(sortBy(famColors.filter(c => c.storeStripLocator), c => c.storeStripLocator.split('-')[0]), 49)
+    return unsortedChunkArray.map(thisChunk => chunk(sortBy(thisChunk, c => c.storeStripLocator.split('-').reverse()[0]).map(c => c.id), 7))
+  })
+
+  // and then modify getAFamily() here to use these two arrays to generate the family grid
+  const swStructureAll = (() => {
+    const brightsRow = [swFamilies.map((_, iFam) => swStructureBrights[iFam])]
+    const regularsRows = swStructure[0].map((_, iChunkRow) => swStructure[0][iChunkRow].map((_, iRow) => swFamilies.map((_, iFam) => swStructure[iFam][iChunkRow][iRow])))
+
+    regularsRows.unshift(brightsRow)
+
+    return regularsRows
+  })()
+
+  const getAFamily = (iFam) => {
+    const brights = swStructureBrights[iFam]
+    const rest = swStructure[iFam]
+
     return [
       [
-        [sw.slice(0 + push, 7 + push), [], []]
+        [brights]
       ],
-      [
-        [sw.slice(7 + push, 14 + push), sw.slice(14 + push, 21 + push), sw.slice(21 + push, 28 + push)],
-        [sw.slice(28 + push, 35 + push), sw.slice(35 + push, 42 + push), sw.slice(42 + push, 49 + push)],
-        [sw.slice(49 + push, 56 + push), sw.slice(56 + push, 63 + push), sw.slice(63 + push, 70 + push)]
-      ]
+      [...Array(rest[0].length)].map((_, iRow) => rest.map((_, iChunkCol) => rest[iChunkCol][iRow]))
     ]
   }
 
@@ -149,7 +151,7 @@ export function doReceiveColors (state: ColorsState, action: ReduxAction) {
     } else if (isTimeless) {
       layout = timelessStructure
     } else {
-      layout = swStructure
+      layout = swStructureAll
     }
 
     return {
@@ -157,13 +159,13 @@ export function doReceiveColors (state: ColorsState, action: ReduxAction) {
       layout,
       families: families.map((fam, i) => ({
         name: fam,
-        layout: isHistoric ? historicStructure : isTimeless ? timelessStructure : getAFamily(i * 10)
+        layout: isHistoric ? historicStructure : isTimeless ? timelessStructure : getAFamily(i)
       }))
     }
   })
 
-  // END MOCKED COLOR LAYOUTS
-  // --------------------------------------------------
+  // END PRISM-450 - mocked color layouts
+  // -----------------------------------------------------------------
 
   let useDefault = true // this will be toggled to false if initSection/family/color can be found
 
