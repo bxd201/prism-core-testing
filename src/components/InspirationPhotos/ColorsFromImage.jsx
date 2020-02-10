@@ -88,6 +88,7 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
   }
 
   getCanvasOffset = () => {
+    this.setCanvasOffset()
     const canvasOffset = window.sessionStorage.getItem('canvasOffset')
     return JSON.parse(canvasOffset)
   }
