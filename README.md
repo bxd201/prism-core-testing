@@ -30,6 +30,9 @@ npm run build
 ```
 Jenkins Build - https://jenkins.ebus.swaws/job/TAG%20Ecomm/job/Prism/
 
+### Add templates for local testing
+Add new html templates into the `src/templates` directory. Re-run `npm start` and they'll now be available for viewing at `localhost:8080/<templateName>.html`
+
 ## Scripts and Styles Share Vars
 `src/shared/themes/ScriptVars.js` contains a JSON object of style variables which can be `import`ed into React components and also `@import`ed into SCSS via `src/scss/StyleVars.scss` which translates ScriptVars values by key name via the `get()` method.
 

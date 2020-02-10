@@ -10,15 +10,7 @@ export function getByLowerCasePropName (obj: Object, propName: string): any {
 }
 
 export function getTotalWidthOf2dArray (arr: any[][]): number {
-  // if we have not been provided a 2D array...
-  if (!arr || !arr[0]) {
-    return 0
-  }
-
-  const num = arr.reduce((total: number, current: any[]) => {
-    return Math.max(total, current.length)
-  }, arr[0].length)
-  return num
+  return (!arr || !arr[0]) ? 0 : arr.reduce((total: number, cur: any[]) => Math.max(total, cur.length), 0)
 }
 
 export const removeExtraURLSlashesAfterProtocol = (url: string) => {

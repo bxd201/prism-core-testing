@@ -1,20 +1,19 @@
 // @flow
 import fill from 'lodash/fill'
-import flatten from 'lodash/flatten'
 import flattenDeep from 'lodash/flattenDeep'
 import keys from 'lodash/keys'
 import concat from 'lodash/concat'
 import uniq from 'lodash/uniq'
 import max from 'lodash/max'
+// import range from 'lodash/range'
 import mapValues from 'lodash/mapValues'
-import union from 'lodash/union'
 import intersection from 'lodash/intersection'
 import memoizee from 'memoizee'
 import { tinycolor as tc, type tinycolor as TinyColor } from '@ctrl/tinycolor'
 import { compareKebabs } from './StringUtils'
 import { ZOOMED_VIEW_GRID_PADDING } from '../../constants/globals'
-import { getTotalWidthOf2dArray, formToGridWithAspectRatio, type GridShape } from './DataUtils'
-import type { CategorizedColorIdGrid, CategorizedColorGrid, ProbablyColorId, ProbablyColor, ColorIdGrid, ColorIdLine, BlankColor, Color, ColorMap, ColorIdList, ColorList } from '../types/Colors'
+import { formToGridWithAspectRatio, type GridShape } from './DataUtils'
+import type { CategorizedColorIdGrid, CategorizedColorGrid, ProbablyColor, ColorIdGrid, ColorIdLine, BlankColor, Color, ColorMap, ColorIdList, ColorList } from '../types/Colors'
 
 function ColorInstance (color: Object | Color) {
   for (let prop in color) {
@@ -36,37 +35,6 @@ ColorInstance.prototype.toString = function (): string {
 const getArrayOfPads = memoizee(function getArrayOfPads (length: number, padWith: BlankColor): ColorIdLine {
   return fill(new Array(length), padWith)
 }, { primitive: true, length: 2 })
-
-function extractSegment (index: number, segSize: number, whole: ColorIdLine, BLANK: BlankColor) {
-  const start = index * segSize
-  const end = start + segSize
-  let next = whole.slice(start, end)
-  const nl = next.length
-
-  if (nl < segSize) {
-    return concat(next, getArrayOfPads(segSize - nl, BLANK))
-  }
-
-  return next
-}
-
-function insertColumnCellsBetweenAndAfter (toPad: (ColorIdLine | BlankColor)[], amt: number, padWith: BlankColor): (ColorIdLine | BlankColor)[] {
-  if (amt && toPad) {
-    let returner: (ColorIdLine | BlankColor)[] = []
-    toPad.forEach((__yy, i) => {
-      let _amt = amt
-      returner.push(toPad[i])
-
-      while (_amt--) {
-        returner.push(padWith)
-      }
-    })
-
-    return returner
-  }
-
-  return toPad
-}
 
 function insertColumnBefore (toPad: ColorIdGrid, amt: number, padWith: BlankColor): ColorIdGrid {
   if (amt && toPad) {
@@ -151,94 +119,37 @@ function fillGrid (toPad: ColorIdGrid, padWith: BlankColor): ColorIdGrid {
   })
 }
 
-export function convertCategorizedColorsToGrid (colorSets: string[] = [], colors: CategorizedColorIdGrid, brights: CategorizedColorIdGrid, colorMap: ColorMap, BLANK: BlankColor, chunkWidth: number): ColorIdGrid {
-  const padH = ZOOMED_VIEW_GRID_PADDING
-  const padV = ZOOMED_VIEW_GRID_PADDING
-  let output: ColorIdGrid = [] // this will be a 2D array of numbers
-  let brightOutput = []
-  let singleColorSet = false
+/**
+ * Converts a 4d color array into the 'undefined' seperated 2d array expected by react-virtualized
+ *
+ * @param {*} colors : 4d array to be converted to an 'undefined' seperated 2d array
+ * @param {*} labels : optional labels to center at the top of each section column
+ */
+export function convertToSpacedGrid (colors: string[][][][], labels: string[]): any[][] {
+  const blankLine = [undefined, ...colors[0][0].flatMap(arr => [...arr.map(() => undefined), undefined])]
+  const intersperseBlanks = (arr: string[][]): (void | string)[] => [undefined, ...arr.flatMap(arr => [...arr, undefined])]
 
-  let _colorSets = colorSets
+  // place any labels in the top row at the center of each column (for even-width columns, place left of center)
+  const labelLine = Array.from(blankLine)
+  labels && colors[0][0].reduce((acc: number, cur: string[], i: number) => {
+    labelLine[acc + Math.ceil(cur.length / 2)] = { label: labels[i], columnWidth: cur.length }
+    return acc + cur.length + 1
+  }, 0)
 
-  if (_colorSets.length === 0) {
-    // ... then effectively display "all" by merging all colorSets from both brights and colors
-    _colorSets = Object.keys(colors)
-
-    if (brights) {
-      _colorSets = union(_colorSets, Object.keys(brights))
-    }
-  }
-
-  if (_colorSets.length === 1) {
-    singleColorSet = true
-  }
-
-  // BEGIN GRIDIFYING BRIGHTS
-  if (brights) {
-    _colorSets.forEach((colorSet: string) => {
-      let famBrights: ProbablyColorId[] = flatten(brights[colorSet])
-
-      if (famBrights && famBrights.length) {
-        brightOutput.push(extractSegment(0, chunkWidth, famBrights, BLANK))
-      }
-    })
-
-    if (brightOutput.length) {
-      const flatBrights = flatten(insertColumnCellsBetweenAndAfter(brightOutput, padH, BLANK))
-
-      if (flatBrights && flatBrights.length) {
-        output.push(flatBrights)
-        output.push(getArrayOfPads(flatBrights.length, BLANK))
-      }
-    }
-  }
-  // END GRIDIFYING BRIGHTS
-  const firstColorSet = colors[_colorSets[0]]
-  const iterations = Math.ceil(getTotalWidthOf2dArray(firstColorSet) / chunkWidth)
-
-  if (singleColorSet) {
-    for (let chunkY = 0; chunkY < iterations; chunkY++) {
-      let xAxis: (ColorIdLine | void)[] = []
-
-      firstColorSet.forEach((chunkColors) => {
-        xAxis.push(extractSegment(chunkY, chunkWidth, chunkColors, BLANK))
-      })
-
-      xAxis = insertColumnCellsBetweenAndAfter(xAxis, padH, BLANK)
-      output.push(flatten(xAxis))
-    }
-
-    output = insertRowAfter(output, padV, BLANK)
-  } else {
-    firstColorSet.forEach((__, chunkY) => {
-      for (let chunkX = 0; chunkX < iterations; chunkX++) {
-        // this is a grid that will be flattened into a single line
-        let xAxis: (ColorIdLine | void)[] = []
-
-        _colorSets.forEach((colorSetName) => {
-          xAxis.push(extractSegment(chunkX, chunkWidth, colors[colorSetName][chunkY], BLANK))
-        })
-
-        xAxis = insertColumnCellsBetweenAndAfter(xAxis, padH, BLANK)
-        output.push(flatten(xAxis))
-      }
-
-      output = insertRowAfter(output, padV, BLANK)
-    })
-  }
-
-  output = fillGrid(output, BLANK)
-  output = insertRowBefore(output, padV, BLANK)
-  output = insertColumnBefore(output, padH, BLANK)
-
-  return output
+  return [labelLine, ...colors.flatMap(row => [...row.map(intersperseBlanks), blankLine])]
 }
 
 // -------------------------------------------------------
 // END convertCategorizedColorsToGrid
 // -------------------------------------------------------
 
-export function convertUnorderedColorsToGrid (colorSets: string[] = [], colors: ColorIdList, colorMap: ColorMap, aspectRatio: number, BLANK: BlankColor): ColorIdGrid {
+export function convertUnorderedColorsToGrid (
+  colorSets: string[] = [],
+  colors: ColorIdList,
+  colorMap: ColorMap,
+  aspectRatio: number,
+  BLANK: BlankColor
+): ColorIdGrid {
   const padH = ZOOMED_VIEW_GRID_PADDING
   const padV = ZOOMED_VIEW_GRID_PADDING
   let output: ColorIdGrid = [] // this will be a 2D array of numbers

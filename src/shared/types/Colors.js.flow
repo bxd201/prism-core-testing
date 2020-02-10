@@ -118,3 +118,27 @@ export type CollectionsSummary = Object & {
   collectionName: string,
   collections: Array<Object>
 }
+
+export type ColorStatus = {
+  message: string | typeof undefined,
+  status: number
+}
+
+export type ColorStatuses = {
+  [ key: ColorId ]: ColorStatus
+}
+
+type LayoutRow = ColorId[][]
+type LayoutChunkRow = LayoutRow[]
+export type Layout = LayoutChunkRow[]
+
+type LayoutObj = {
+  name: string,
+  layout: Layout
+}
+
+export type Layouts = [
+  LayoutObj & {
+    families: LayoutObj[]
+  }
+]
