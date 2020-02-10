@@ -1,7 +1,7 @@
 // @flow
 import './facetPolyfills'
 
-import React, { useEffect } from 'react'
+import React, { useMemo } from 'react'
 
 import { render } from 'react-dom'
 import toArray from 'lodash/toArray'
@@ -178,19 +178,18 @@ export {
 export default function facetBinder (FacetDeclaration: BoundFacet, facetName: string): BoundFacet {
   const oldFacets = at(window.PRISM, 'facets')[0]
   const oldVersion = at(window.PRISM, 'version')[0]
+
   function BF (props: any): BoundFacet {
     const { bindCallback, el, ...passthruProps } = props
 
-    useEffect(() => {
+    // NOTE: I need to mimic componentWillMount behavior here, so I'm using useMemo in order to
+    // execute immediately
+    useMemo(() => {
       addInstance({
         component: FacetDeclaration,
         el
-      })
-
-      if (typeof bindCallback === 'function') {
-        getInstance(el).then(bindCallback)
-      }
-    }, [ el ])
+      }, bindCallback)
+    }, [])
 
     return <FacetDeclaration unmount={unmount(el)} {...passthruProps} />
   }

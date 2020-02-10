@@ -39,12 +39,16 @@ import { faTrash } from '@fortawesome/pro-solid-svg-icons/faTrash'
 import { faUndoAlt } from '@fortawesome/pro-solid-svg-icons/faUndoAlt'
 
 // lights
+import { faAlignJustify as falAlignJustify } from '@fortawesome/pro-light-svg-icons/faAlignJustify'
 import { faCircle as falCircle } from '@fortawesome/pro-light-svg-icons/faCircle'
+import { faClone as falClone } from '@fortawesome/pro-light-svg-icons/faClone'
 import { faCompressAlt as falCompressAlt } from '@fortawesome/pro-light-svg-icons/faCompressAlt'
 import { faDrawPolygon as falDrawPolygon } from '@fortawesome/pro-light-svg-icons/faDrawPolygon'
 import { faExpandAlt as falExpandAlt } from '@fortawesome/pro-light-svg-icons/faExpandAlt'
+import { faFolder as falFolder } from '@fortawesome/pro-light-svg-icons/faFolder'
 import { faHome as falHome } from '@fortawesome/pro-light-svg-icons/faHome'
 import { faInfoCircle as falInfoCircle } from '@fortawesome/pro-light-svg-icons/faInfoCircle'
+import { faLightbulb as falLightbulb } from '@fortawesome/pro-light-svg-icons/faLightbulb'
 import { faLongArrowLeft as falLongArrowLeft } from '@fortawesome/pro-light-svg-icons/faLongArrowLeft'
 import { faLongArrowRight as falLongArrowRight } from '@fortawesome/pro-light-svg-icons/faLongArrowRight'
 import { faMinus as falMinus } from '@fortawesome/pro-light-svg-icons/faMinus'
@@ -56,20 +60,21 @@ import { faPlusCircle as falPlusCircle } from '@fortawesome/pro-light-svg-icons/
 import { faRedo as falRedo } from '@fortawesome/pro-light-svg-icons/faRedo'
 import { faSearch as falSearch } from '@fortawesome/pro-light-svg-icons/faSearch'
 import { faSearchPlus as falSearchPlus } from '@fortawesome/pro-light-svg-icons/faSearchPlus'
+import { faSignal3 as falSignal3 } from '@fortawesome/pro-light-svg-icons/faSignal3'
+import { faSquareFull as falSquareFull } from '@fortawesome/pro-light-svg-icons/faSquareFull'
 import { faSun as falSun } from '@fortawesome/pro-light-svg-icons/faSun'
 import { faThLarge as falThLarge } from '@fortawesome/pro-light-svg-icons/faThLarge'
 import { faTimes as falTimes } from '@fortawesome/pro-light-svg-icons/faTimes'
 import { faTrashAlt as falTrashAlt } from '@fortawesome/pro-light-svg-icons/faTrashAlt'
 import { faUndo as falUndo } from '@fortawesome/pro-light-svg-icons/faUndo'
-import { faFolder, faSignal3, faClone, faAlignJustify, faLightbulb, faSquareFull } from '@fortawesome/pro-light-svg-icons'
 
 // regulars
 // import { fa??? as far??? } from '@fortawesome/pro-regular-svg-icons/fa???'
+import { faPlusCircle as farPlusCircle } from '@fortawesome/pro-regular-svg-icons/faPlusCircle'
 
 // populate with all the FontAwesome svg icons we want to use
 const faIcons = [
   // -------- SOLIDS ---------
-  falExpandAlt,
   faAngleDown,
   faAngleLeft,
   faAngleUp,
@@ -90,28 +95,7 @@ const faIcons = [
   faImage,
   faInfo,
   faInfoCircle,
-  // -------- LIGHTS ---------
-  falCircle,
-  falCompressAlt,
-  falDrawPolygon,
-  falHome,
-  falInfoCircle,
-  falLongArrowLeft,
-  falLongArrowRight,
-  falMinus,
-  falMoon,
-  falObjectGroup,
-  falObjectUngroup,
-  falPlus,
-  falPlusCircle,
-  falRedo,
-  falSearch,
-  falSearchPlus,
-  falSun,
-  falThLarge,
-  falTimes,
-  falTrashAlt,
-  falUndo,
+  falExpandAlt,
   faMoon,
   faMoonStars,
   faMousePointer,
@@ -123,17 +107,39 @@ const faIcons = [
   faSearchMinus,
   faSun,
   faTimes,
-  faTrash,
   faUndoAlt,
-  faFolder,
+  // -------- LIGHTS ---------
+  falAlignJustify,
+  falCircle,
+  falClone,
+  falCompressAlt,
+  falDrawPolygon,
+  falFolder,
+  falHome,
+  falInfoCircle,
+  falLightbulb,
+  falLongArrowLeft,
+  falLongArrowRight,
+  falMinus,
+  falMoon,
+  falObjectGroup,
+  falObjectUngroup,
+  falPlus,
+  falPlusCircle,
+  falRedo,
+  falSearch,
+  falSearchPlus,
+  falSignal3,
+  falSquareFull,
+  falSun,
+  falThLarge,
+  falTimes,
   falTrashAlt,
-  faSignal3,
-  faClone,
-  faAlignJustify,
-  faLightbulb,
-  faSquareFull
+  falTrashAlt,
+  falUndo,
+  faTrash,
   // -------- REGULARS ---------
-  // far???
+  farPlusCircle
 ]
 library.add(...faIcons)
 

@@ -24,7 +24,15 @@ import ColorDataWrapper from 'src/helpers/ColorDataWrapper/ColorDataWrapper'
 
 const baseClass = 'color-info'
 
-const ColorDetails = ColorDataWrapper(({ onColorChanged }: { onColorChanged: Function }) => {
+type Props = {
+  onColorChanged?: {} => void,
+  onSceneChanged?: string => void,
+  onVariantChanged?: string => void,
+  onColorChipToggled?: boolean => void,
+  familyLink?: string
+}
+
+const ColorDetails = ColorDataWrapper(({ onColorChanged, onSceneChanged, onVariantChanged, onColorChipToggled, familyLink }: Props) => {
   const { colorId } = useParams()
   const dispatch = useDispatch()
   const toggleSceneDisplayScene = useRef(null)
@@ -37,7 +45,7 @@ const ColorDetails = ColorDataWrapper(({ onColorChanged }: { onColorChanged: Fun
   useEffect(() => {
     if (activeColor) {
       GA.pageView(`color-detail/${activeColor.brandKey} ${activeColor.colorNumber} - ${activeColor.name}`)
-      onColorChanged(activeColor)
+      onColorChanged && onColorChanged(activeColor)
     }
   }, [activeColor])
 
@@ -68,9 +76,15 @@ const ColorDetails = ColorDataWrapper(({ onColorChanged }: { onColorChanged: Fun
   return (
     <>
       <div className='color-detail-view'>
-        <ColorChipMaximizer color={activeColor} />
+        <ColorChipMaximizer color={activeColor} onToggle={onColorChipToggled} />
         <div className={`color-detail__scene-wrapper color-detail__scene-wrapper--displayed`}>
-          <SceneManager maxActiveScenes={1} interactive={false} mainColor={activeColor} />
+          <SceneManager
+            maxActiveScenes={1}
+            interactive={false}
+            mainColor={activeColor}
+            onSceneChanged={onSceneChanged}
+            onVariantChanged={onVariantChanged}
+          />
         </div>
         <div className='color-detail__info-wrapper'>
           <button className={SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.join(' ')} ref={toggleSceneDisplayScene}>
@@ -118,7 +132,7 @@ const ColorDetails = ColorDataWrapper(({ onColorChanged }: { onColorChanged: Fun
                 <SimilarColors colors={colors} color={activeColor} />
               </TabPanel>
               <TabPanel className={`${baseClass}__tab-panel color-info__tab-panel-details`}>
-                <ColorInfo color={activeColor} />
+                <ColorInfo color={activeColor} familyLink={familyLink} />
               </TabPanel>
             </Tabs>
           </div>

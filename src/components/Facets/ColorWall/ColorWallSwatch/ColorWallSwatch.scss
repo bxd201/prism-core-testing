@@ -4,7 +4,9 @@ $focus-z: 100;
 $hover-z: 101;
 $switchover: sm;
 $swatch-font-size: $base;
-$swatch-font-size--small: $base * .8;
+$swatch-font-size-reducer: .8;
+$swatch-font-size--small: $base * $swatch-font-size-reducer;
+$swatch-message-font-size: 0.625em;
 
 @mixin swatch-focus() {
   outline: $cw-focus-outline;
@@ -205,6 +207,38 @@ $swatch-font-size--small: $base * .8;
       &--r {
         right: .5em;
       }
+    }
+  }
+
+  &__flag {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    max-height: 10px;
+    min-height: 5px;
+    height: 16%; // this is a magic number
+    background-image: url('/prism/images/swatch/dogear.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: 0 0;
+  }
+
+  &__message {
+    background: white;
+    bottom: 3px;
+    border-radius: 2px;
+    color: black;
+    font-size: $swatch-message-font-size / $swatch-font-size-reducer;
+    font-weight: bold;
+    left: 3px;
+    padding: 3px 4px;
+    position: absolute;
+    right: 3px;
+    line-height: 1.2;
+
+    @include respond-above($switchover) {
+      font-size: $swatch-message-font-size;
     }
   }
 

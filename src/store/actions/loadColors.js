@@ -1,7 +1,7 @@
 // @flow
 import axios from 'axios'
 import { generateBrandedEndpoint } from '../../shared/helpers/DataUtils'
-import { type Color, type FamilyStructure } from '../../shared/types/Colors'
+import { type Color, type FamilyStructure, type ColorStatuses } from '../../shared/types/Colors'
 import { COLOR_CHUNKS_ENDPOINT, COLOR_BRIGHTS_ENDPOINT, COLOR_FAMILY_NAMES_ENDPOINT, COLORS_ENDPOINT } from '../../constants/endpoints'
 
 export const REQUEST_COLORS: string = 'REQUEST_COLORS'
@@ -55,6 +55,9 @@ export const loadColors = (brandId: string, options?: any) => {
 
 export const EMIT_COLOR: string = 'EMIT_COLOR'
 export const emitColor = (color: Color) => ({ type: EMIT_COLOR, payload: color })
+
+export const UPDATE_COLOR_STATUSES: string = 'UPDATE_COLOR_STATUSES'
+export const updateColorStatuses = (statuses: ColorStatuses) => ({ type: UPDATE_COLOR_STATUSES, payload: statuses })
 
 export const mapColorDataToPayload = (colorData: Object) => {
   return {

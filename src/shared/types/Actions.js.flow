@@ -1,5 +1,6 @@
 // @flow
-import type { Color, CategorizedColorIdGrid, ColorList, ColorIdList, ColorMap, FamilyStructure } from './Colors'
+import typeimport anymatch = require("../../../../Library/Caches/typescript/3.4.5/node_modules/@types/anymatch");
+ { CategorizedColorIdGrid, Color, ColorIdList, ColorList, ColorMap, ColorStatuses, FamilyStructure, Layouts, Layout } from './Colors'
 
 export type ReduxAction = {
   type: string,
@@ -25,12 +26,16 @@ export type ColorsState = {
     activeRequest: boolean
   },
   items: {
-    colors?: CategorizedColorIdGrid,
     brights?: CategorizedColorIdGrid,
     colorMap?: ColorMap,
-    unorderedColors?: ColorIdList
+    colors?: CategorizedColorIdGrid,
+    colorStatuses?: ColorStatuses,
+    unorderedColors?: ColorIdList,
+    sectionLabels?: {},
   },
   structure?: FamilyStructure,
+  layouts?: Layouts,
+  layout?: Layout,
   sections?: string[],
   section?: string,
   families?: string[],

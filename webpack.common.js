@@ -12,6 +12,7 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 const flags = require('./webpack/constants')
 const HardSourceWebpackPlugin = require('hard-source-webpack-plugin')
 const ALL_VARS = require('./src/shared/variableDefs')
+const requireContext = require('require-context')
 
 const DEFAULT_LOCAL_URL = 'https://localhost:8080' // default local URL to localhost
 const DEFAULT_ENTRY = `${flags.embedEntryPointName},${flags.mainEntryPointName}` // will build the embed and bundle entry points by default
@@ -29,6 +30,11 @@ const BASE_PATH = (ENV === 'development') ? DEFAULT_LOCAL_URL : (process.env.WEB
 const SPECIFIED_ENTRIES = process.env.ENTRY ? process.env.ENTRY : (ENV === 'development') ? DEFAULT_ENTRY : undefined
 // This flag if positive will use Firebase anonymous login instead of MySherwin. If value is sticky, clear all cached build files.
 const FIREBASE_AUTH_ENABLED = !!parseInt(process.env.FIREBASE_AUTH_ENABLED)
+
+// TODO: Use this same concept to eliminate the redundancy of facetEntryPoints in constants, export.js, and allFacets.js -@cody.richmond
+const allTemplates = (ctx => {
+  return ctx.keys()
+})(requireContext(path.resolve(__dirname, 'src/templates'), true, /.*/))
 
 let allEntryPoints = {
   ...flags.mainEntryPoints,
@@ -163,11 +169,11 @@ module.exports = {
       inject: false,
       template: './src/index.html'
     }),
-    ...flags.implementationTemplates.map(page => {
+    ...allTemplates.map(page => {
       return new HtmlWebpackPlugin({
         inject: false,
-        filename: `${page}.html`,
-        template: `./src/templates/${page}.html`
+        filename: page,
+        template: `./src/templates/${page}`
       })
     }),
     new MiniCssExtractPlugin({

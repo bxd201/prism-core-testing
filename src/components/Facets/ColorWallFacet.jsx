@@ -14,7 +14,7 @@ import extendIfDefined from '../../shared/helpers/extendIfDefined'
 import GenericOverlay from '../Overlays/GenericOverlay/GenericOverlay'
 import at from 'lodash/at'
 import useEffectAfterMount from '../../shared/hooks/useEffectAfterMount'
-import { resetActiveColor } from '../../store/actions/loadColors'
+import { resetActiveColor, updateColorStatuses } from '../../store/actions/loadColors'
 import { facetBinderDefaultProps, type FacetBinderMethods } from 'src/facetSupport/facetInstance'
 import { FormattedMessage } from 'react-intl'
 
@@ -27,7 +27,9 @@ type Props = FacetPubSubMethods & FacetBinderMethods & {
 }
 
 export const EVENTS = {
-  emitColor: 'PRISM/out/change/emitColor',
+  emitColor: 'PRISM/out/emitColor',
+  colorsLoaded: 'PRISM/out/colorsLoaded',
+  decorateColors: 'PRISM/in/decorateColors',
   loading: 'PRISM/in/loading'
 }
 
@@ -41,36 +43,28 @@ const searchBarNoLabel = () => <div className='color-wall-wrap__chunk'>
 
 const ColorWallContain = () => <ColorWall contain />
 const SearchContain = () => <Search contain />
-const CWToolbar = () => <ColorWallToolbar isFamilyPage={false} />
+const CWToolbar = () => <div className='color-wall-wrap__chunk'>
+  <ColorWallToolbar isFamilyPage={false} />
+</div>
 
 export const ColorWallPage = (props: Props) => {
   const { displayAddButton, displayDetailsLink, colorWallBgColor, subscribe, publish, unsubscribeAll, colorDetailPageRoot, resetOnUnmount } = props
-
-  const emitColor = useSelector(state => at(state, 'colors.emitColor')[0])
-  const [isLoading, updateLoading] = useState(false)
   const dispatch = useDispatch()
-  const [a11yState, updateA11yState] = useState(colorWallA11yContextDefault)
-  const updateA11y = useCallback((data: ColorWallA11yContextProps) => updateA11yState({
-    ...a11yState,
-    ...data
-  }), [a11yState])
 
-  // on mount
+  // -----------------------------------------------------
+  // accept and process color decoration from host
+  useEffect(() => subscribe(EVENTS.decorateColors, handleColorDecoration), [])
+  const handleColorDecoration = useCallback((decoratedColors) => dispatch(updateColorStatuses(decoratedColors)), [])
+  const colorMap = useSelector(state => at(state, 'colors.items.colorMap')[0])
   useEffect(() => {
-    subscribe(EVENTS.loading, updateLoading)
-  }, [])
-
-  // on unmount
-  useEffect(() => () => {
-    // unsubscribe from everything on unmount
-    unsubscribeAll()
-
-    if (resetOnUnmount) {
-      // and reset the color wall's status by resetting active color
-      dispatch(resetActiveColor())
+    if (colorMap) {
+      publish(EVENTS.colorsLoaded, colorMap)
     }
-  }, [])
+  }, [colorMap])
 
+  // -----------------------------------------------------
+  // handle emitting selected color to host
+  const emitColor = useSelector(state => at(state, 'colors.emitColor')[0])
   // on color select AFTER initial mount
   useEffectAfterMount(() => {
     const color = emitColor && emitColor.color
@@ -80,6 +74,18 @@ export const ColorWallPage = (props: Props) => {
     }
   }, [(emitColor && emitColor.timestamp)])
 
+  // -----------------------------------------------------
+  // handle host demanding appearance of loading
+  const [isLoading, updateLoading] = useState(false)
+  useEffect(() => subscribe(EVENTS.loading, updateLoading), [])
+
+  // -----------------------------------------------------
+  // build color wall context and a11y state
+  const [a11yState, updateA11yState] = useState(colorWallA11yContextDefault)
+  const updateA11y = useCallback((data: ColorWallA11yContextProps) => updateA11yState({
+    ...a11yState,
+    ...data
+  }), [a11yState])
   const cwContext = useMemo(() => extendIfDefined({}, colorWallContextDefault, a11yState, {
     colorDetailPageRoot,
     colorWallBgColor,
@@ -87,6 +93,17 @@ export const ColorWallPage = (props: Props) => {
     displayDetailsLink,
     updateA11y
   }), [colorDetailPageRoot, colorWallBgColor, displayAddButton, displayDetailsLink, updateA11y, a11yState])
+
+  // -----------------------------------------------------
+  // handle unmounting
+  useEffect(() => () => {
+    // unsubscribe from everything on unmount
+    unsubscribeAll()
+    if (resetOnUnmount) {
+      // and reset the color wall's status by resetting active color
+      dispatch(resetActiveColor())
+    }
+  }, [])
 
   return (
     <ColorWallContext.Provider value={cwContext}>

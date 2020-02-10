@@ -18,7 +18,7 @@ import ColorWallSwatch from './ColorWallSwatch/ColorWallSwatch'
 import ColorWallSwatchUI from './ColorWallSwatch/ColorWallSwatchUI'
 import ColorWallSwatchRenderer from './ColorWallSwatch/ColorWallSwatchRenderer'
 import ChunkBoundary from './ChunkBoundary'
-import { type ColorMap, type Color, type ProbablyColorId, type ColorIdGrid } from '../../../shared/types/Colors'
+import { type ColorMap, type Color, type ProbablyColorId, type ColorIdGrid, type ColorStatuses, type ColorStatus } from '../../../shared/types/Colors'
 import { getColorCoords, drawCircle, getCoordsObjectFromPairs, findContainingChunk, findChunkFromCorner, overscanIndicesGetter } from './ColorWallUtils'
 import { getTotalWidthOf2dArray } from '../../../shared/helpers/DataUtils'
 import { fullColorName } from '../../../shared/helpers/ColorUtils'
@@ -27,6 +27,7 @@ import { type ColorWallContextProps, type ColorWallA11yContextProps } from './Co
 import withColorWallContext from './withColorWallContext'
 
 import 'src/scss/externalComponentSupport/AutoSizer.scss'
+import 'src/scss/convenience/overflow-ellipsis.scss'
 import './ColorWallSwatchList.scss'
 
 const GRID_AUTOSCROLL_SPEED: number = 300
@@ -34,21 +35,19 @@ const GRID_AUTOSCROLL_SPEED: number = 300
 // ----------------------------------------
 // PROP TYPES
 type IntlProps = {
-  intl: {
-    formatMessage: Function
-  }
+  intl: { formatMessage: Function }
 }
 
-type RouterProps = {
-  location: any,
-  history: any
-}
+type RouterProps = { location: any, history: any }
 
-type Props = IntlProps & RouterProps & {
+type ReduxProps = { sectionLabels: any }
+
+type Props = IntlProps & RouterProps & ReduxProps & {
   activeColor?: Color, // eslint-disable-line react/no-unused-prop-types
   bloomRadius: number,
   colorMap: ColorMap,
   colors: ColorIdGrid, // eslint-disable-line react/no-unused-prop-types
+  colorStatuses?: ColorStatuses,
   colorWallContext: ColorWallContextProps & ColorWallA11yContextProps,
   contain: boolean,
   family: string | void,
@@ -60,7 +59,8 @@ type Props = IntlProps & RouterProps & {
   section: string | void,
   showAll?: boolean,
   swatchLinkGenerator: Function,
-  zoomOutUrl: string
+  zoomOutUrl: string,
+  sectionLabels: {}
 }
 
 // END PROP TYPES
@@ -134,7 +134,6 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     this.handleBodyTouchStart = this.handleBodyTouchStart.bind(this)
     this.returnFocusToThisComponent = this.returnFocusToThisComponent.bind(this)
     this.getAudioMessaging = this.getAudioMessaging.bind(this)
-
     this._gridWrapperRef = React.createRef()
     this._swatchRefs = {}
   }
@@ -143,12 +142,11 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
   // LIFECYCLE METHODS
 
   render () {
-    const { minCellSize, maxCellSize, showAll, activeColor, colors, contain, colorWallContext: { a11yFocusChunk, a11yFocusCell, a11yFocusOutline } } = this.props
+    const { minCellSize, maxCellSize, showAll, activeColor, colors, contain, colorWallContext: { a11yFocusChunk, a11yFocusCell, a11yFocusOutline }, colorStatuses } = this.props
     const { focusCoords, needsInitialFocus } = this.state
     const colorIdGrid = colors
     const rowCount = colorIdGrid.length
     const columnCount = getTotalWidthOf2dArray(colorIdGrid)
-    const focusMessaging = this.getAudioMessaging()
 
     let addlGridProps = {}
 
@@ -160,24 +158,18 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     // if our focus outlines can be shown and we have a value for our a11y focus cell...
     if (a11yFocusOutline && a11yFocusCell && a11yFocusCell.length) {
       // ... set scrollToColumn/Row props for grid to a11yFocusCell
-      addlGridProps = {
-        ...addlGridProps,
-        scrollToColumn: a11yFocusCell[0],
-        scrollToRow: a11yFocusCell[1]
-      }
+      addlGridProps = { ...addlGridProps, scrollToColumn: a11yFocusCell[0], scrollToRow: a11yFocusCell[1] }
     }
 
     return (
-      <React.Fragment>
-        {focusMessaging
-          ? <LiveMessage message={focusMessaging} aria-live='assertive' clearOnUnmount='true' />
-          : null
-        }
-
-        <section className={`color-wall-swatch-list ${contain ? 'color-wall-swatch-list--contain' : ''}`}
+      <>
+        {this.getAudioMessaging() && <LiveMessage message={this.getAudioMessaging()} aria-live='assertive' clearOnUnmount='true' />}
+        <section
+          className={`color-wall-swatch-list ${contain ? 'color-wall-swatch-list--contain' : ''}`}
           role='application'
           tabIndex={0} // eslint-disable-line
-          ref={this._gridWrapperRef}>
+          ref={this._gridWrapperRef}
+        >
           <AutoSizer onResize={this.handleGridResize} disableHeight={!contain}>
             {({ height = 0, width }) => {
               let size = maxCellSize
@@ -199,6 +191,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
                   _forceRenderProp4={showAll}
                   _forceRenderProp5={colorIdGrid}
                   _forceRenderProp6={a11yFocusOutline}
+                  _forceRenderProp7={colorStatuses}
                   scrollToAlignment='center'
                   cellRenderer={this.cellRenderer}
                   columnWidth={size}
@@ -219,7 +212,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
             }}
           </AutoSizer>
         </section>
-      </React.Fragment>
+      </>
     )
   }
 
@@ -272,18 +265,11 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     // if we have a cell and chunk by this point...
     if (cell && chunk) {
       // ... then we should persist those into our state changes
-      stateChanges = {
-        ...stateChanges,
-        a11yFocusCell: cell,
-        a11yFocusChunk: chunk
-      }
+      stateChanges = { ...stateChanges, a11yFocusCell: cell, a11yFocusChunk: chunk }
 
       if (fromKeyboard) {
         // update state changes to include renderFocusOutline flag since we're assuming we're in the midst of keyboard navigation
-        stateChanges = {
-          ...stateChanges,
-          a11yFocusOutline: true
-        }
+        stateChanges = { ...stateChanges, a11yFocusOutline: true }
       }
     }
 
@@ -337,10 +323,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
         // if we have successfully located a containing chunk...
         if (containingChunk) {
           // ... set it and the focus cell in state
-          updateA11y({
-            a11yFocusCell: clone(activeColorCoords),
-            a11yFocusChunk: containingChunk
-          })
+          updateA11y({ a11yFocusCell: clone(activeColorCoords), a11yFocusChunk: containingChunk })
         }
       }
     }
@@ -412,10 +395,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
 
   addColor = function addColor (newColor: Color) {
     const { onAddColor } = this.props
-
-    if (onAddColor) {
-      onAddColor(newColor)
-    }
+    onAddColor && onAddColor(newColor)
   }
 
   // END ACTIONS
@@ -424,20 +404,13 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
   // -----------------------------------------------
   // HANDLERS
 
-  handleBodyKeyDown = function handleBodyKeyDown () {
-    this._recentKeypress = true
-  }
+  handleBodyKeyDown = function handleBodyKeyDown () { this._recentKeypress = true }
 
-  handleBodyMouseDown = function handleBodyMouseDown () {
-    this._recentKeypress = false
-  }
+  handleBodyMouseDown = function handleBodyMouseDown () { this._recentKeypress = false }
 
-  handleBodyTouchStart = function handleBodyTouchStart () {
-    this._recentKeypress = false
-  }
+  handleBodyTouchStart = function handleBodyTouchStart () { this._recentKeypress = false }
 
   handleGridKeyDown = function handleGridKeyDown (e: any) {
-    // const { updateA11y } = useContext(ColorWallContext)
     const { colors, history: { push }, showAll, colorWallContext: { a11yFocusCell, a11yFocusChunk, updateA11y }, zoomOutUrl } = this.props
     const { activeColorCoords } = this.state
     const { shiftKey } = e
@@ -546,12 +519,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
               newA11yFocusCell = [lastChunk.TL[0], lastChunk.TL[1]]
             } else {
               // if we can't select a first chunk, just let the tab flow through to get the user out of the color wall
-              updateA11y({
-                a11yFocusChunk: void (0),
-                a11yFocusCell: void (0),
-                a11yMaintainFocus: false
-              })
-
+              updateA11y({ a11yFocusChunk: void (0), a11yFocusCell: void (0), a11yMaintainFocus: false })
               return
             }
           } else {
@@ -582,7 +550,6 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
           }
         } else {
           // go down a column
-
           // if we have no current chunk...
           if (isEmpty(a11yFocusChunk)) {
             // ... try to select the first chunk
@@ -593,12 +560,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
               newA11yFocusCell = [firstChunk.TL[0], firstChunk.TL[1]]
             } else {
               // if we can't select a first chunk, just let the tab flow through to get the user out of the color wall
-              updateA11y({
-                a11yFocusChunk: void (0),
-                a11yFocusCell: void (0),
-                a11yMaintainFocus: false
-              })
-
+              updateA11y({ a11yFocusChunk: void (0), a11yFocusCell: void (0), a11yMaintainFocus: false })
               return
             }
           } else {
@@ -616,12 +578,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
                 newA11yFocusCell = [nextChunkOver.TL[0], nextChunkOver.TL[1]]
               } else {
                 // if we can't select a "next chunk over," assume we've reached the end and allow the user to tab out
-                updateA11y({
-                  a11yFocusChunk: void (0),
-                  a11yFocusCell: void (0),
-                  a11yMaintainFocus: false
-                })
-
+                updateA11y({ a11yFocusChunk: void (0), a11yFocusCell: void (0), a11yMaintainFocus: false })
                 return
               }
             }
@@ -651,12 +608,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     }
 
     // if we're here, update. it's expensive so we want to guard it well.
-    updateA11y({
-      a11yFocusCell: newA11yFocusCell,
-      a11yFocusChunk: newA11yFocusChunk,
-      a11yFocusOutline: true,
-      a11yMaintainFocus: true
-    })
+    updateA11y({ a11yFocusCell: newA11yFocusCell, a11yFocusChunk: newA11yFocusChunk, a11yFocusOutline: true, a11yMaintainFocus: true })
 
     e.stopPropagation()
     e.preventDefault()
@@ -670,10 +622,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
   handleGridFocus = function handleGridFocus (e: any) {
     // check focus cell/chunk here; if they don't exist you'll need to define them and set state
     const { activeColor, colors, colorWallContext: { a11yFocusCell, a11yFocusOutline, updateA11y } } = this.props
-
-    let newState = {
-      a11yFocusOutline: a11yFocusOutline ? true : this._recentKeypress
-    }
+    let newState = { a11yFocusOutline: a11yFocusOutline ? true : this._recentKeypress }
 
     if (isEmpty(a11yFocusCell)) {
       let cell, chunk
@@ -693,11 +642,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
       }
 
       if (cell && chunk) {
-        newState = {
-          ...newState,
-          a11yFocusCell: cell,
-          a11yFocusChunk: chunk
-        }
+        newState = { ...newState, a11yFocusCell: cell, a11yFocusChunk: chunk }
       }
     }
 
@@ -706,12 +651,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
 
   handleGridBlur = function handleGridBlur (e: any) {
     const { colorWallContext: { a11yFocusOutline, updateA11y } } = this.props
-
-    if (a11yFocusOutline) {
-      updateA11y({
-        a11yFocusOutline: false
-      })
-    }
+    a11yFocusOutline && updateA11y({ a11yFocusOutline: false })
   }
 
   // END HANDLERS
@@ -720,34 +660,43 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
   // -----------------------------------------------
   // OTHER METHODS
 
-  generateMakeSwatchRef = (colorId: string): RefObject => {
-    const ref = this._swatchRefs[colorId] = this._swatchRefs[colorId] || React.createRef()
-    return ref
-  }
+  generateMakeSwatchRef = (colorId: string): RefObject => (this._swatchRefs[colorId] = this._swatchRefs[colorId] || React.createRef())
 
-  cellRenderer = function cellRenderer ({
-    columnIndex, // Horizontal (column) index of cell
-    isScrolling, // The Grid is currently being scrolled
-    isVisible, // This cell is visible within the grid (eg it is not an overscanned cell)
-    key, // Unique key within array of cells
-    parent, // Reference to the parent Grid (instance)
-    rowIndex, // Vertical (row) index of cell
-    style // Style object to be applied to cell (to position it)
-  }: Object) {
-    const { colors, colorMap, immediateSelectionOnActivation, onAddColor, swatchLinkGenerator, colorWallContext: { a11yFocusCell, a11yFocusChunk, a11yFocusOutline } } = this.props
+  cellRenderer = function cellRenderer ({ columnIndex, isScrolling, isVisible, key, parent, rowIndex, style }: Object) {
+    const { colors, colorMap, immediateSelectionOnActivation, onAddColor, swatchLinkGenerator, colorWallContext, colorStatuses, showAll } = this.props
+    const { a11yFocusCell, a11yFocusChunk, a11yFocusOutline } = colorWallContext
     const { levelMap } = this.state
     const colorId = colors[rowIndex][columnIndex]
 
+    let focus = false
+
     if (!colorId) {
       return null
+    } else if (typeof colorId === 'object') {
+      const height = Math.min(parseInt(style.height, 10) * 0.75, 14)
+      const _style = {
+        ...style,
+        fontSize: `${height}px`
+      }
+
+      return (
+        <div style={_style} role='presentation'>
+          <div className={`color-wall-swatch-list__section-title ${!showAll ? 'color-wall-swatch-list__section-title--top-align' : ''}`} title={colorId.label} style={{
+            width: `${colorId.columnWidth * 100}%`,
+            marginLeft: `-${(Math.ceil(colorId.columnWidth / 2) - 1) * 100}%`
+          }}>
+            {colorId.label}
+          </div>
+        </div>
+      )
     }
 
     const color: Color = colorMap[colorId]
     const thisLevel: ColorReference = levelMap[colorId]
     const linkToSwatch: string = swatchLinkGenerator(color)
-
-    let focus = false
-    let renderedSwatch
+    const thisStatus: ColorStatus | typeof undefined = colorStatuses && colorStatuses[colorId]
+    const isDisabled = at(thisStatus, 'status')[0] === 0
+    const message = at(thisStatus, 'message')[0]
 
     // if we can render the focus outline AND if we have a focused chunk AND a11yFocusCell has values...
     // ... AND if we have focused cell coordinates that match this particular cell/row index...
@@ -756,6 +705,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
       focus = true
     }
 
+    let renderedSwatch
     if (thisLevel) {
       const showContents = thisLevel.level === 0
       // ALL of the bloomed swatches in the zoomed-in view
@@ -766,24 +716,21 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
           thisLink={linkToSwatch}
           onAdd={onAddColor ? this.addColor : void (0)}
           onClick={this.returnFocusToThisComponent}
+          message={message}
           color={color}
           level={thisLevel.level}
           ref={this.generateMakeSwatchRef(colorId)}
           compensateX={isFunction(thisLevel.compensateX) ? thisLevel.compensateX() : 0}
           compensateY={isFunction(thisLevel.compensateY) ? thisLevel.compensateY() : 0}
-          focus={focus} />
+          disabled={isDisabled}
+          focus={focus}
+        />
       )
     } else if (isScrolling) {
-      // ALL non-bloomed swatches when scrolling, the least complicated swatch option
-      // purely a display element, no interactivity
-      renderedSwatch = (
-        <ColorWallSwatchRenderer
-          color={color.hex}
-          focus={focus} />
-      )
+      // ALL non-bloomed swatches when scrolling, the least complicated swatch option purely a display element, no interactivity
+      renderedSwatch = (<ColorWallSwatchRenderer color={color.hex} focus={focus} disabled={isDisabled} />)
     } else if (immediateSelectionOnActivation) {
-      // a color swatch that behaves as a button and that's it
-      // this is the swatch used in zoomed-out non-bloomed view
+      // a color swatch that behaves as a button and that's it this is the swatch used in zoomed-out non-bloomed view
       renderedSwatch = (
         <ColorWallSwatchUI
           tabIndex={-1}
@@ -791,7 +738,9 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
           thisLink={linkToSwatch}
           onClick={this.returnFocusToThisComponent}
           ref={this.generateMakeSwatchRef(colorId)}
-          focus={focus} />
+          disabled={isDisabled}
+          focus={focus}
+        />
       )
     } else {
       // a normal color swatch that behaves as a button and also is able to be visually activated (not just behave like a button)... a bloomable swatch, basically
@@ -803,18 +752,15 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
           color={color}
           onClick={this.returnFocusToThisComponent}
           ref={this.generateMakeSwatchRef(colorId)}
-          focus={focus} />
+          disabled={isDisabled}
+          focus={focus}
+        />
       )
     }
 
     return (
       <div key={key} style={style} role='presentation'>
-        <ChunkBoundary
-          render={a11yFocusOutline}
-          bounds={a11yFocusChunk}
-          x={columnIndex}
-          y={rowIndex} />
-
+        <ChunkBoundary render={a11yFocusOutline} bounds={a11yFocusChunk} x={columnIndex} y={rowIndex} />
         {renderedSwatch}
       </div>
     )
@@ -835,7 +781,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     const { levelMap } = this.state
     const _cell = cell || a11yFocusCell
 
-    if (!_cell) {
+    if (!_cell || typeof _cell === 'object') {
       return void (0)
     }
 
@@ -846,17 +792,9 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
       const thisLevel: ColorReference = levelMap[focusedColorId]
 
       if (thisLevel && thisLevel.level === 0) {
-        return intl.formatMessage({
-          id: 'SWATCH_ACTIVATED_DETAILS'
-        }, {
-          color: focusedColor.name
-        })
+        return intl.formatMessage({ id: 'SWATCH_ACTIVATED_DETAILS' }, { color: focusedColor.name })
       } else {
-        return intl.formatMessage({
-          id: 'SWATCH_FOCUS'
-        }, {
-          color: fullColorName(focusedColor.brandKey, focusedColor.colorNumber, focusedColor.name)
-        })
+        return intl.formatMessage({ id: 'SWATCH_FOCUS' }, { color: fullColorName(focusedColor.brandKey, focusedColor.colorNumber, focusedColor.name) })
       }
     }
 
