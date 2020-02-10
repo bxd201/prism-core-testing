@@ -55,26 +55,30 @@ export default withRouter((props: Props) => {
   }
 
   const linkKeyDownHandler = (e, context, isContextNavigate, toLink) => {
-    context.getHelpLinkRef(helpLinkRef)
-    if (e.keyCode === KEY_CODE_ENTER || e.keyCode === KEY_CODE_SPACE) {
-      e.preventDefault()
-      context.navigate(isContextNavigate, true)
-      setActiveHelper(e.target.getAttribute('name'))
-      props.history.push({
-        pathname: toLink,
-        state: {
-          isKeyDownRoute: true
-        }
-      })
-    } else if (!e.shiftKey && e.keyCode === KEY_CODE_TAB && toLink === '/help') {
-      context.setIsTabbedOutFromHelp()
+    if (e.target.getAttribute('name') !== currActive) {
+      context.getHelpLinkRef(helpLinkRef)
+      if (e.keyCode === KEY_CODE_ENTER || e.keyCode === KEY_CODE_SPACE) {
+        e.preventDefault()
+        context.navigate(isContextNavigate, true)
+        setActiveHelper(e.target.getAttribute('name'))
+        props.history.push({
+          pathname: toLink,
+          state: {
+            isKeyDownRoute: true
+          }
+        })
+      } else if (!e.shiftKey && e.keyCode === KEY_CODE_TAB && toLink === '/help') {
+        context.setIsTabbedOutFromHelp()
+      }
     }
   }
 
   const linkClickHandler = (linkName, context, isContextNavigate) => {
     if (linkName !== null) {
-      context.navigate(isContextNavigate, true)
-      setActiveHelper(linkName)
+      if (linkName !== currActive) {
+        context.navigate(isContextNavigate, true)
+        setActiveHelper(linkName)
+      }
     }
   }
 

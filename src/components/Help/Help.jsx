@@ -5,7 +5,9 @@ import { helpTabs, KEY_CODE_ENTER, KEY_CODE_SPACE, helpHeader } from './data'
 import './Help.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import debounce from 'lodash/debounce'
-import smoothscroll from 'smoothscroll-polyfill'
+import { FormattedMessage, useIntl } from 'react-intl'
+import at from 'lodash/at'
+import * as scroll from 'scroll'
 
 const baseClass = `help`
 const wrapper = `${baseClass}__wrapper`
@@ -32,8 +34,6 @@ type Props = {
   setHeader: Function
 }
 
-smoothscroll.polyfill()
-
 let isTabClick: boolean = false
 
 const helpTabsHeaderList = (activeTabIndex: number, setActiveTabIndex: Function, handleClick: Function) => {
@@ -48,13 +48,13 @@ const helpTabsHeaderList = (activeTabIndex: number, setActiveTabIndex: Function,
         role='tab'
         tabIndex='0'
       >
-        {tab.header}
+        <FormattedMessage id={`${tab.header}`} />
       </li>
     )
   })
 }
 
-const helpTabsContentList = (refs: Object) => {
+const helpTabsContentList = (refs: Object, messages: Object) => {
   return helpTabs.map((tab: Object, index: number) => {
     const tabContent = tab.content
     const imageList = tab.imageList
@@ -63,8 +63,8 @@ const helpTabsContentList = (refs: Object) => {
     return (
       <div ref={refs[index]} key={`content-${index}`} className={`${helpContent} ${tab.isHiddenMobile ? helpContentHide : ''}`}>
         <div className={`${contentHeader}`}>
-          <h2>{tab.header}</h2>
-          <span>{tab.subHeader}</span>
+          <h2><FormattedMessage id={`${tab.header}`} /></h2>
+          <span><FormattedMessage id={`${tab.subHeader}`} /></span>
         </div>
         <div className={`${contentDetails}`}>
           {
@@ -95,10 +95,10 @@ const helpTabsContentList = (refs: Object) => {
                     </div>
                     <div className={`${iconInfo}`}>
                       <h3>
-                        {tab.iconInfoName}
+                        <FormattedMessage id={`${tab.iconInfoName}`} />
                       </h3>
                       <p>
-                        {tab.iconInfoContent[0]}
+                        <FormattedMessage id={`${tab.iconInfoContent[0]}`} />
                       </p>
                     </div>
                   </li>
@@ -108,7 +108,7 @@ const helpTabsContentList = (refs: Object) => {
               {
                 imageList && imageList.map((imageData, index) => {
                   return <li key={`li-${index}`} className={`${(index > 0) ? `cel cel-${index}` : ``}`}>
-                    <img src={`${imageData.imagePath}`} alt={`${imageData.alt}`} />
+                    <img src={`${imageData.imagePath}`} alt={`${(imageData.alt) ? at(messages, imageData.alt)[0] : ''}`} />
                   </li>
                 })
               }
@@ -119,7 +119,7 @@ const helpTabsContentList = (refs: Object) => {
               {
                 imageListMobile.map((list, index) => {
                   return <li key={`li-mobile-image-${index}`} className={`cel`}>
-                    <img src={`${list.imagePath}`} alt={`${list.alt}`} />
+                    <img src={`${list.imagePath}`} alt={`${(list.alt) ? at(messages, list.alt)[0] : ''}`} />
                   </li>
                 })
               }
@@ -130,10 +130,10 @@ const helpTabsContentList = (refs: Object) => {
           return (
             <div key={`tabSubContent-${index}`} className={`${subContent}`}>
               <div className={`${subContentHeader}`}>
-                {content.header}
+                <FormattedMessage id={`${content.header}`} />
               </div>
               <p className={`${subContentDetails}`}>
-                {content.content}
+                <FormattedMessage id={`${content.content}`} />
               </p>
             </div>
           )
@@ -165,9 +165,10 @@ const getElementWindowTop = (elem: RefObject, contentWrapperRef: RefObject) => {
 const Help = ({ setHeader }: Props) => {
   const [activeTabIndex, setActiveTabIndex] = useState(0)
   const contentWrapperRef = React.createRef()
+  const { messages = {} } = useIntl()
 
   useEffect(() => {
-    setHeader(helpHeader)
+    setHeader(at(messages, helpHeader)[0])
   })
 
   const refs = helpTabs.reduce((acc, value) => {
@@ -176,10 +177,10 @@ const Help = ({ setHeader }: Props) => {
   }, {})
 
   const handleClick = (id: number) => {
-    refs[id].current.scrollIntoView({
-      behavior: 'smooth',
-      block: 'start'
-    })
+    const elementsFirstChildTop = refs[id].current.firstChild.getBoundingClientRect().top
+    const elementsParentTop = refs[id].current.parentNode.getBoundingClientRect().top
+    const elementsParentScrollTop = refs[id].current.parentNode.scrollTop
+    scroll.top(refs[id].current.parentNode, elementsFirstChildTop - elementsParentTop + elementsParentScrollTop, { duration: 1000 })
     setTimeout(() => { isTabClick = false }, 200)
   }
 
@@ -210,7 +211,7 @@ const Help = ({ setHeader }: Props) => {
         </ul>
       </div>
       <div role='tab' tabIndex='0' ref={contentWrapperRef} className={`${contentWrapper}`} onScroll={contentWrapperScrollHandler}>
-        {helpTabsContentList(refs)}
+        {helpTabsContentList(refs, messages)}
       </div>
     </div>
   )

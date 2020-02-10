@@ -53,7 +53,7 @@ export const MATCH_PHOTO = '/match-photo'
 export const MY_IDEAS = '/my-ideas'
 const TYPE_MATCH_PHOTO = 'MATCH_A_PHOTO'
 const TYPE_UPLOAD_YOUR_PHOTO = 'UPLOAD_YOUR_PHOTO'
-const USE_OUR_PHOTOS = 'USE OUR PHOTOS'
+const USE_OUR_PHOTOS = 'USE_OUR_PHOTOS'
 export const HELP_PATH = '/help'
 
 export const RootRedirect = () => {

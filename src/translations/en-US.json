@@ -24,8 +24,101 @@
     "TITLE": "Sherwin-Williams Color Tools Error"
   },
   "ERROR_LOADING_COLORS": "We're unable to load colors right now.",
+  "EXPERT_COLOR_PICKS": "Expert Color Picks",
   "EXTERIOR": "Exterior",
   "FIND_COLORS_IN_CW": "FIND COLORS IN THE DIGITAL COLOR WALL",
+  "HELPFUL_HINTS": {
+    "TITLE": "Helpful Hints",
+    "HEADER": {
+      "ICONS_&_BUTTONS" : "Icons & Buttons",
+      "MY_COLOR_PALETTE": "My Color Palette",
+      "ADDING_COLORS": "Adding Colors",
+      "COLOR_DETAILS": "Color Details",
+      "PAINTING_MY_OWN_PHOTO": "Painting My Own Photo",
+      "SAVING_MY_WORK": "Saving My Work"
+    },
+    "IMAGE_ALT": {
+      "MY_COLOR_PALETTE": {
+        "CLICK_THE_COLOR_DETAILS_ICON_TO": "Click the color details icon to see a color's details",
+        "CLICK_THE_TRASH_ICON_TO": "Click the trash icon to delete a color swatch",
+        "CLICK_THE_COLOR_DETAILS_ICON_TRASH_ICON_TO": "Click the color details icon to see a color's details, Click the trash icon to delete a color swatch",
+        "AN_ACTIVE_COLOR_STATE": "An active color state shows the paint color to be applied to the scene",
+        "TAP_AND_HOLD_THE_BOTTOM_EDGE_OF_A_COLOR_SWATCH_TO": "Tap and hold the bottom edge of a color swatch to rearrange your palette",
+        "CLICK_THE_ADD_COLOR_ICON_TO": "Click the add a color icon from the color palette to launch the digital color wall and explore color at any time during your experience"
+      },
+      "ADDING_COLORS": {
+        "CLICK_ADD_A_COLOR_ICON_IN_A_COLOR_TILE_TO": "Clicking the add a color icon inside a color tile will add a color to the Color Palette",
+        "CLICK_THE_ADD_COLOR_ICON_TO": "Click the add a color icon from the color palette to launch the digital color wall and explore color at any time during your experience",
+        "START_A_NEW_PALETTE_TO_ADD_MORE_THAN_EIGHT_COLORS": "My Color Palette can hold up to 8 colors at a time. To add more, just save your current palette and start a new one."
+      },
+      "COLOR_DETAILS": {
+        "CLICK_THE_COLOR_DETAILS_ICON_TO": "Click the color details icon to see a color's details",
+        "PREVIEW_A_COLOR_IN_COLOR_DETAILS": "Preview a color in 5 different photos to decide if you want to add it to your palette"
+      },
+      "SAVING_MY_WORK": {
+        "NAME_YOUR_CURRENT_PHOTO": "Name your current photo or palette for future use",
+        "CLICK_SAVE_ICON_TO": "Tap the save icon at the bottom of the page"
+      }
+    },
+    "SUB_HEADER": {
+      "ICONS_&_BUTTONS" : "Use these icons and buttons to help narrow down your final choices.",
+      "MY_COLOR_PALETTE": "My Color Palette is used to collect and compare colors to paint with.",
+      "ADDING_COLORS": "Add colors to your palette wherever you see an plus icon.",
+      "COLOR_DETAILS": "Provides a color scene preview, coordinating colors, similar colors and additional information.",
+      "PAINTING_MY_OWN_PHOTO": "Use these tools to help you see how color will look in your space.",
+      "SAVING_MY_WORK": "When you register an account with mySW, you can access saved color palettes from any device."
+    },
+    "SUB_CONTENT_HEADER": {
+      "MY_COLOR_PALETTE": "Custom Keyboard Navigation for Accessibility",
+      "ADDING_COLORS": "Custom Keyboard Navigation for Accessibility"
+    },
+    "SUB_CONTENT_DESCRIPTION": {
+      "MY_COLOR_PALETTE": "On your keyboard, use \"up\" and \"down\" arrow keys (\u2191 \u2193) to switch focus between live palette and paintable scene regions.",
+      "ADDING_COLORS": "On your keyboard, use \"up\", \"down\", \"left\", and \"right\" arrow keys (\u2190 \u2193 \u2191 \u2192) to navigate within color grids."
+    },
+    "CONTENT": {
+      "ICONS_&_BUTTONS": {
+        "ICON_INFO_NAME": {
+          "ADD_COLOR": "Add Color",
+          "SAVE": "Save",
+          "TRASH_A_COLOR": "Trash a Color",
+          "MORE_SCENES": "More Scenes",
+          "COLOR_DETAILS": "Color Details",
+          "GRAB_&_REORDER": "Grab & Reorder"
+        },
+        "ICON_INFO_CONTENT": {
+          "ADD_COLOR": "In a color swatch, tapping this icon will add that color to My Color Palette. In My Color Palette, tapping this icon will open the Digital Color Wall.",
+          "SAVE": "Tap this icon to save your inspiration and ideas. Access them in My Ideas any time you’re logged in to mySW.",
+          "TRASH_A_COLOR": "Tap this icon to delete a color from My Color Palette. Dragging an inspirational color dot over this icon will delete it from your inspirational color options.",
+          "MORE_SCENES": "This icon opens interior and exterior room scene options. Explore different scenes to find your favorite and begin painting.",
+          "COLOR_DETAILS": "Tapping this icon will expand info about that color, including coordinating colors, similar colors and color details.",
+          "GRAB_&_REORDER": "Tap and drag this icon to reorder colors within My Color Palette."
+        }
+      },
+      "PAINTING_MY_OWN_PHOTO": {
+        "ICON_INFO_NAME": {
+          "PAINT_AREA": "Paint Area",
+          "PAINTBRUSH": "Paintbrush",
+          "SELECT": "Select",
+          "ERASE": "Erase",
+          "DEFINE_AREA": "Define Area",
+          "REMOVE_AREA": "Remove Area",
+          "ZOOM": "Zoom",
+          "UNDO_&_REDO": "Undo & Redo"
+        },
+        "ICON_INFO_CONTENT": {
+          "PAINT_AREA": "Use the Paint Area feature to automatically detect and paint surface areas. Just click or tap on a surface to highlight it, then click or tap again to paint.",
+          "PAINTBRUSH": "Select this icon to paint your photo freehand. Just point, click or tap, and drag to add color to any area.",
+          "SELECT": "Select an area, then use the tool bar to paint, edit paint color or remove paint from your photo.",
+          "ERASE": "Quickly remove paint from your photo.",
+          "DEFINE_AREA": "Outline an area to paint it. Be sure to enclose the area by starting and ending at the same point.",
+          "REMOVE_AREA": "Use this tool to select and remove paint from a defined area.",
+          "ZOOM": "Zoom in and pan around within your photo to paint small areas with better accuracy.",
+          "UNDO_&_REDO": "Easily delete or repeat your last action."
+        }
+      }
+    }
+  },
   "HIDE_SCENE_PAINTER": "Hide the Scene Painter",
   "IMAGE_INVISIBLE": "This image is invisible to the user.",
   "INTERIOR": "Interior",
@@ -139,15 +232,18 @@
     "SEARCH_COLOR": "Search color",
     "SUGGESTIONS": "Some examples of things you can search for are {suggestions}"
   },
+  "SELECTED_FROM": "Selected from",
   "SELECT_COLLECTION": "Select Color Collection",
   "SIGN_IN": "SIGN IN",
   "SIMILAR_COLORS": "Similar Colors",
   "SWATCH_ACTIVATED_DETAILS": "{color} is selected. Press Enter to view details.",
   "SWATCH_FOCUS": "{color}. Press Enter to select.",
+  "TOGGLE_EXPERT_PICKS": "Toggle Expert Picks",
   "TO_DAY_VIEW": "Switch to day view",
   "TO_NIGHT_VIEW": "Switch to night view",
   "VIEW_DETAILS": "View Details",
   "VIEW_DETAILS_FOR": "View details for {name}",
+  "VIEW_FULL_COLLECTION": "VIEW FULL COLLECTION",
   "ZOOM_IN": "Zoom in",
   "ZOOM_OUT": "Zoom out"
 }
