@@ -16,7 +16,9 @@ export const getPaintAreaPath = (imagePathList, canvas, width, height, color) =>
     pixelIndexAlphaMap: pixelIndexAlphaMap,
     isEnabled: true,
     linkedOperation: null,
-    siblingOperations: null
+    siblingOperations: null,
+    // A reference to the full color object need for persistence
+    colorRef: { ...color }
   }
   const copyImagePathList = copyImageList(imagePathList)
   copyImagePathList.push(newArea)

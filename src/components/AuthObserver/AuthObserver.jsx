@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import * as firebase from 'firebase'
-import { tryToPersistCachedSceneXml } from '../../store/actions/persistScene'
+import { tryToFetchSaveScenesFromFirebase, tryToPersistCachedSceneData } from '../../store/actions/persistScene'
 import { setUser } from '../../store/actions/user'
 
 type authObserverProps = {
@@ -17,7 +17,8 @@ const AuthObserver = (props: authObserverProps) => {
       console.log('Firebase User:', user)
       if (user) {
         dispatch(setUser(user))
-        dispatch(tryToPersistCachedSceneXml())
+        dispatch(tryToPersistCachedSceneData())
+        dispatch(tryToFetchSaveScenesFromFirebase())
       }
     })
   }, [])

@@ -32,8 +32,6 @@ export const login = (username: string, password: string) => {
 }
 
 export const anonLogin = () => {
-  // eslint-disable-next-line no-debugger
-  debugger
   return (dispatch, getState) => {
     dispatch({
       type: LOGGING_IN,

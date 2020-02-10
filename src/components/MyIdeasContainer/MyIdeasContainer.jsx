@@ -9,6 +9,7 @@ import { MY_IDEAS_PREVIEW } from '../Facets/Prism/Prism'
 import { clearSceneWorkspace } from '../../store/actions/paintScene'
 // eslint-disable-next-line no-unused-vars
 import { selectSavedScene } from '../../store/actions/persistScene'
+import AnonLogin from '../AnonLogin/AnonLogin'
 import './MyIdeasContainer.scss'
 import CollectionsHeaderWrapper from '../CollectionsHeaderWrapper/CollectionsHeaderWrapper'
 import { FormattedMessage, useIntl } from 'react-intl'
@@ -51,16 +52,17 @@ const MyIdeasContainer = (props: MyIdeasContainerProps) => {
 
   return (
     <div className={`my-ideas-container__wrapper`}>
-      {isLoggedIn ? <MyIdeas brandId={props.config.brandId} />
-        : (<div className={`my-ideas-container__content`}>
-          <div className={`my-ideas-container__description`}>
-            <FormattedMessage id='MY_IDEAS.MY_IDEAS_CONTENT' />
+      {FIREBASE_AUTH_ENABLED && !isLoggedIn ? <AnonLogin />
+        : isLoggedIn ? <MyIdeas brandId={props.config.brandId} />
+          : <div className={`my-ideas-container__content`}>
+            <div className={`my-ideas-container__description`}>
+              <FormattedMessage id='MY_IDEAS.MY_IDEAS_CONTENT' />
+            </div>
+            <div className={`my-ideas-container__buttons`}>
+              <button><FormattedMessage id='REGISTER' /></button>
+              <div><Login /></div>
+            </div>
           </div>
-          <div className={`my-ideas-container__buttons`}>
-            <button><FormattedMessage id='REGISTER' /></button>
-            <div><Login /></div>
-          </div>
-        </div>)
       }
     </div>
   )

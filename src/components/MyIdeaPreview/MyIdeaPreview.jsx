@@ -15,7 +15,8 @@ type myIdeaPreviewProps = {
 }
 
 const wrapperClass = 'my-ideas-preview-wrapper'
-const overlayedCanvas = `${wrapperClass}__overlay-canvas`
+const canvasOverlayWrapper = `${wrapperClass}__overlay-canvas-wrapper`
+const overlayedCanvas = `${canvasOverlayWrapper}__overlay-canvas`
 const buttonClassName = `${wrapperClass}__button`
 const actionButtonWrapperClassName = `${wrapperClass}__action-buttons`
 const actionButtonInnerWrapperClassName = `${actionButtonWrapperClassName}__inner`
@@ -61,9 +62,9 @@ const MyIdeaPreview = (props: myIdeaPreviewProps) => {
 
   const paintSceneWorkSpace = useSelector(state => state.paintSceneWorkspace)
 
-  const { renderingBaseUrl } = selectedScene || {}
-  const initialWidth = selectedScene ? selectedScene.surfaceMasks.surfaces[0].surfaceMaskImageData.width : 0
-  const initialHeight = selectedScene ? selectedScene.surfaceMasks.surfaces[0].surfaceMaskImageData.height : 0
+  const { renderingBaseUrl, backgroundImageUrl } = selectedScene || {}
+  const initialWidth = selectedScene ? selectedScene.surfaceMasks.width : 0
+  const initialHeight = selectedScene ? selectedScene.surfaceMasks.height : 0
   // eslint-disable-next-line no-unused-vars
   const [width, setWidth] = useState(initialWidth)
   // eslint-disable-next-line no-unused-vars
@@ -93,17 +94,17 @@ const MyIdeaPreview = (props: myIdeaPreviewProps) => {
     // @todo props approach, having CORS issues in dev... -RS
     // const imageEndpoint = `${CUSTOM_SCENE_IMAGE_ENDPOINT}/${props.sceneData.renderingBaseUrl}?w=${props.width || 120}`
     // @todo - This is a dev approach to stub out the endpoints
-    const imageEndpoint = ((renderingBaseUrl) => {
+    const backgroundImage = ((renderingBaseUrl) => {
       if (renderingBaseUrl) {
         const splitUrl = renderingBaseUrl.split('/')
         return `/public/${splitUrl[splitUrl.length - 1]}.jpg`
       }
-
-      return ''
+      // assumes this is from non-mysherwin account
+      return backgroundImageUrl
     })(renderingBaseUrl)
 
-    if (imageEndpoint) {
-      setBackgroundImageSrc(imageEndpoint)
+    if (backgroundImage) {
+      setBackgroundImageSrc(backgroundImage)
     }
   }, [])
 
@@ -172,9 +173,11 @@ const MyIdeaPreview = (props: myIdeaPreviewProps) => {
             return { r: color.red, g: color.green, b: color.blue }
           })}
           preserveLayers /> : null}
-        <canvas ref={foregroundCanvasRef} width={initialWidth} height={initialHeight} style={{ width, height }} className={overlayedCanvas} />
-        <canvas ref={backgroundCanvasRef} width={initialWidth} height={initialHeight} style={{ width, height, opacity: 0.8 }} />
-        <canvas ref={utilityCanvasRef} width={initialWidth} height={initialHeight} style={{ width, height, opacity: 0 }} />
+        <div className={canvasOverlayWrapper}>
+          <canvas ref={foregroundCanvasRef} width={initialWidth} height={initialHeight} style={{ width, height }} className={overlayedCanvas} />
+          <canvas ref={backgroundCanvasRef} width={initialWidth} height={initialHeight} style={{ width, height, opacity: 0.8 }} />
+          <canvas ref={utilityCanvasRef} width={initialWidth} height={initialHeight} style={{ width, height, opacity: 0, visibility: 'hidden', display: 'none' }} />
+        </div>
         {backgroundImageSrc ? <PrismImage
           ref={backgroundImageRef}
           source={backgroundImageSrc}

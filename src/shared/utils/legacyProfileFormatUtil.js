@@ -1,7 +1,12 @@
 // @flow
 import pako from 'pako'
+import uuid from 'react-tabs/lib/helpers/uuid'
 
-export const getDataFromXML = (xmlString: string, sceneData: Object[], colors: Object[]) => {
+export const getDataFromFirebaseXML = (xmlString: string, colors) => {
+  return getDataFromXML(xmlString, null, colors, true)
+}
+
+export const getDataFromXML = (xmlString: string, sceneData: Object[] | null = null, colors: Object[] | null = null, isFromFirebase: boolean) => {
   const parser = new window.DOMParser()
   const doc = parser.parseFromString(xmlString, 'application/xml')
   // There is only one surfaces node
@@ -11,9 +16,14 @@ export const getDataFromXML = (xmlString: string, sceneData: Object[], colors: O
   const height = parseInt(project.getAttribute('height'))
 
   const processedSurfaces = []
-
+  let surfaceMask = null
   for (let surfaceIndex = 0; surfaceIndex < surfaces.children.length; surfaceIndex++) {
-    const surfaceMask = unpackAndColorizeMask(surfaces.children[surfaceIndex], sceneData, colors, width, height)
+    if (isFromFirebase) {
+      // @todo - right now this code assumes that the colors are linked by order to the surfaces.
+      surfaceMask = unpackAndColorizeMaskFromFirebase(surfaces.children[surfaceIndex], colors[surfaceIndex], width, height)
+    } else {
+      surfaceMask = unpackAndColorizeMask(surfaces.children[surfaceIndex], sceneData, colors, width, height)
+    }
     processedSurfaces.push(surfaceMask)
   }
 
@@ -22,6 +32,17 @@ export const getDataFromXML = (xmlString: string, sceneData: Object[], colors: O
     width,
     height,
     colors
+  }
+}
+
+const unpackAndColorizeMaskFromFirebase = (surface: any, color: Object, width: number, height: number) => {
+  const surfaceMask = surface.children[0]
+  const surfaceName = surface.getAttribute('region').toLowerCase()
+  const surfaceMaskImageData = unpackImageDataFromXML(surfaceMask.getAttribute('string'), color, width, height)
+
+  return {
+    surfaceMaskImageData,
+    surfaceName
   }
 }
 
@@ -86,7 +107,7 @@ const transposeChannels = (imageDataData: Uint8Array, isRGBA: boolean, color: Ob
 
   return imageDataData
 }
-
+// This method is from my sherwin
 const unpackAndColorizeMask = (surface: any, sceneData: Object[], colors: Object[], width: number, height: number) => {
   // @todo What is sherlandia001 regionColorMap -RS
   const regionName = surface.getAttribute('region').toLowerCase()
@@ -115,12 +136,20 @@ const unpackAndColorizeMask = (surface: any, sceneData: Object[], colors: Object
   }
 }
 
-export const createCustomSceneMetaData = (imageBaseName: string, width: number, height: number) => {
+export const createCustomSceneMetadata = (imageBaseName: string, uniqueId: string, colors: Object[], width: number, height: number) => {
   return {
     imageBaseName,
+    uniqueId,
     width,
-    height
+    height,
+    colors: colors.map(color => {
+      return { ...color }
+    })
   }
+}
+
+export const createUniqueSceneId = () => {
+  return `${createTimestamp()}-${uuid()}`
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -135,7 +164,7 @@ export const imageDataToSurfacesXML = (surfaceData: any[] | null, metaData: Obje
   project.setAttribute('version', 2)
   project.setAttribute('empty', true)
 
-  const surfaces = doc.createElement('Surfaces')
+  const surfaces = doc.createElement('surfaces')
   const surfaceCount = surfaceData ? surfaceData.length : 0
   surfaces.setAttribute('numSurfaces', surfaceCount)
 

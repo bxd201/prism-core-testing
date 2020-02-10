@@ -57,15 +57,21 @@ const SavedScene = (props: SavedSceneProps) => {
   const imageRef = useRef()
 
   useEffect(() => {
-    // @todo props approach, having CORS issues in dev... -RS
-    // const imageEndpoint = `${CUSTOM_SCENE_IMAGE_ENDPOINT}/${props.sceneData.renderingBaseUrl}?w=${props.width || 120}`
-    // @todo - This is a dev approach to stub out the endpoints
-    const imageEndpoint = ((renderingBaseUrl) => {
-      const splitUrl = renderingBaseUrl.split('/')
-      return `/public/${splitUrl[splitUrl.length - 1]}.jpg`
-    })(props.sceneData.renderingBaseUrl)
+    let backgroundImageUrl = ''
 
-    setBackgroundImageSrc(imageEndpoint)
+    if (props.sceneData.renderingBaseUrl) {
+      // @todo props approach, having CORS issues in dev... -RS
+      // imageEndpoint = `${CUSTOM_SCENE_IMAGE_ENDPOINT}/${props.sceneData.renderingBaseUrl}?w=${props.width || 120}`
+      // @todo - This is a dev approach to stub out the endpoints
+      backgroundImageUrl = ((renderingBaseUrl) => {
+        const splitUrl = renderingBaseUrl.split('/')
+        return `/public/${splitUrl[splitUrl.length - 1]}.jpg`
+      })(props.sceneData.renderingBaseUrl)
+    } else {
+      backgroundImageUrl = props.sceneData.backgroundImageUrl
+    }
+
+    setBackgroundImageSrc(backgroundImageUrl)
   }, [])
 
   const deleteScene = (e: SyntheticEvent) => {
