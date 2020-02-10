@@ -1,7 +1,12 @@
 // @flow
+import at from 'lodash/at'
+import chunk from 'lodash/chunk'
 import find from 'lodash/find'
-import kebabCase from 'lodash/kebabCase'
+import flattenDeep from 'lodash/flattenDeep'
 import intersection from 'lodash/intersection'
+import kebabCase from 'lodash/kebabCase'
+import pick from 'lodash/pick'
+import sortBy from 'lodash/sortBy'
 
 import { convertUnorderedColorsToColorMap, convertUnorderedColorsToClasses } from '../../../shared/helpers/ColorDataUtils'
 import { compareKebabs } from '../../../shared/helpers/StringUtils'
@@ -16,7 +21,8 @@ export const initialState: ColorsState = {
     activeRequest: false
   },
   items: {},
-
+  layouts: void (0),
+  layout: void (0),
   structure: [],
   sections: [],
   section: void (0),
@@ -67,6 +73,99 @@ export function doReceiveColors (state: ColorsState, action: ReduxAction) {
     return section.name
   })
   const defaultSection = hasSections && find(structure, { default: true })
+  const { colors, brights } = action.payload
+
+  // -----------------------------------------------------------------
+  // PRISM-450 - mocked color layouts
+  // Breaking apart and reforming color groups for ingestion by ColorSwatchList.
+  // TODO: Move this logic into API in the future.
+
+  // wide and thin
+  const historicStructure = ((colors) => {
+    const _colors = flattenDeep(colors['Couleur Historique'] || colors['Historic Colour'] || colors['Historic Color']).map(id => colorMap[id])
+    const sorted = sortBy(_colors, c => c.id)
+    // NOTE: these aren't actually divided by interior and exterior colors per our color data; they're just sorted by ID and then split 80/60
+    const int = chunk(sorted.slice(0, 80).map(c => `${c.id}`), 8)
+    const ext = chunk(sorted.slice(80, 140).map(c => `${c.id}`), 6)
+
+    return [int.map((row, i) => ([ row, ext[i] ]))]
+  })(colors)
+
+  // many short blocks
+  const timelessStructure = ((colors) => {
+    const _colors = flattenDeep(colors['Couleur Intemporelle'] || colors['Timeless Colour'] || colors['Timeless Color']).map(id => colorMap[id])
+    const sorted = chunk(sortBy(_colors, c => c.storeStripLocator).map(c => c.id), 7)
+    const rows = sorted.length
+    const left = sorted.slice(0, rows / 2)
+    const right = sorted.slice(rows / 2, rows)
+
+    return chunk(left.map((row, i) => ([
+      row,
+      right[i]
+    ])), 3)
+  })(colors)
+
+  const swFamilies = structure.filter(section => section.name.indexOf('Sherwin-Williams') >= 0)[0].families
+
+  const swStructureBrights = Object.keys(pick(brights, swFamilies)).map(key => brights[key]).map(v => {
+    const famColors = flattenDeep(v).map(id => colorMap[id])
+    return sortBy(famColors.filter(c => c.storeStripLocator), c => c.storeStripLocator.split('-')[0]).map(c => c.id)
+  })
+
+  const swStructure = Object.keys(pick(colors, swFamilies)).map(key => colors[key]).map((structuredFamilyColors, i) => {
+    const famColors = flattenDeep(structuredFamilyColors).map(id => colorMap[id])
+    const unsortedChunkArray = chunk(sortBy(famColors.filter(c => c.storeStripLocator), c => c.storeStripLocator.split('-')[0]), 49)
+    return unsortedChunkArray.map(thisChunk => chunk(sortBy(thisChunk, c => c.storeStripLocator.split('-').reverse()[0]).map(c => c.id), 7))
+  })
+
+  // and then modify getAFamily() here to use these two arrays to generate the family grid
+  const swStructureAll = (() => {
+    const brightsRow = [swFamilies.map((_, iFam) => swStructureBrights[iFam])]
+    const regularsRows = swStructure[0].map((_, iChunkRow) => swStructure[0][iChunkRow].map((_, iRow) => swFamilies.map((_, iFam) => swStructure[iFam][iChunkRow][iRow])))
+
+    regularsRows.unshift(brightsRow)
+
+    return regularsRows
+  })()
+
+  const getAFamily = (iFam) => {
+    const brights = swStructureBrights[iFam]
+    const rest = swStructure[iFam]
+
+    return [
+      [
+        [brights]
+      ],
+      [...Array(rest[0].length)].map((_, iRow) => rest.map((_, iChunkCol) => rest[iChunkCol][iRow]))
+    ]
+  }
+
+  const layouts = structure.map(section => {
+    const { name, families } = section
+    const isHistoric = name.indexOf('Couleur Hist') === 0 || name.indexOf('Historic') === 0
+    const isTimeless = name.indexOf('Couleur Intemporelle') === 0 || name.indexOf('Timeless') === 0
+    let layout = [[[[]]]]
+
+    if (isHistoric) {
+      layout = historicStructure
+    } else if (isTimeless) {
+      layout = timelessStructure
+    } else {
+      layout = swStructureAll
+    }
+
+    return {
+      name,
+      layout,
+      families: families.map((fam, i) => ({
+        name: fam,
+        layout: isHistoric ? historicStructure : isTimeless ? timelessStructure : getAFamily(i)
+      }))
+    }
+  })
+
+  // END PRISM-450 - mocked color layouts
+  // -----------------------------------------------------------------
 
   let useDefault = true // this will be toggled to false if initSection/family/color can be found
 
@@ -74,11 +173,13 @@ export function doReceiveColors (state: ColorsState, action: ReduxAction) {
   let newState = {
     ...state,
     items: {
-      colors: action.payload.colors,
+      colors: colors,
       brights: action.payload.brights,
       unorderedColors: unorderedColorList,
+      sectionLabels: action.payload.colorLabels,
       colorMap
     },
+    layouts,
     status: {
       ...state.status,
       loading: action.payload.loading,
@@ -134,9 +235,13 @@ export function doReceiveColors (state: ColorsState, action: ReduxAction) {
           return getErrorState(state)
         }
 
+        const layoutSection = layouts.filter(l => l.name === foundSection.name)[0]
+        const newLayout = initFam && layoutSection.families ? at(layoutSection.families.filter(l => l.name === initFam)[0], 'layout')[0] : at(layoutSection, 'layout')[0]
+
         // populate our new state with section, family, and active color wall color (if we found them)
         newState = {
           ...newState,
+          layout: newLayout,
           structure: structure,
           sections: sectionNames,
           section: foundSection.name,
@@ -149,9 +254,13 @@ export function doReceiveColors (state: ColorsState, action: ReduxAction) {
 
     // if useDefault has not been set to false above, and we have a default section...
     if (useDefault && defaultSection) {
+      const layoutSection = layouts.filter(l => l.name === defaultSection.name)[0]
+      const newLayout = at(layoutSection, 'layout')[0]
+
       // ... then populate newState with our default section's name and families
       newState = {
         ...newState,
+        layout: newLayout,
         structure: structure,
         sections: sectionNames,
         section: defaultSection.name,
@@ -189,14 +298,18 @@ export function doFilterBySection (state: ColorsState, action: ReduxAction) {
   }
 
   if (!compareKebabs(state.section, payloadSection)) {
-    const targetedSection = getSectionByName(state.structure, payloadSection)
+    const { layouts = [], structure } = state
+    const targetedSection = getSectionByName(structure, payloadSection)
 
     if (targetedSection && targetedSection.families) {
+      const newLayout = layouts.filter(l => l.name === targetedSection.name)[0].layout
+
       return {
         ...state,
         family: initialState.family, // reset family when section changes
         families: targetedSection.families,
         section: targetedSection.name,
+        layout: newLayout,
         // only reset the relevant initializeWith prop -- we may need to keep the others if initial filters are happening out of sync
         initializeWith: {
           ...state.initializeWith,
@@ -294,14 +407,19 @@ export function doFilterByFamily (state: ColorsState, action: ReduxAction) {
   }
 
   if (!compareKebabs(state.family, payloadFamily)) {
-    const targetedFam = getFamilyByName(state.families, payloadFamily)
+    const { families, section, layouts = [] } = state
+    const targetedFam = getFamilyByName(families, payloadFamily)
 
     // if we have a match for provided family in possible families, OR if we have NO provided family...
     if (targetedFam || !payloadFamily) {
       // update family and reset colorWallActive
+      const layoutSection = layouts.filter(l => l.name === section)[0]
+      const newLayout = targetedFam && layoutSection.families ? at(layoutSection.families.filter(l => l.name === targetedFam)[0], 'layout')[0] : at(layoutSection, 'layout')[0]
+
       return {
         ...state,
         family: targetedFam || void (0),
+        layout: newLayout,
         // only reset the relevant initializeWith prop -- we may need to keep the others if initial filters are happening out of sync
         initializeWith: {
           ...state.initializeWith,

@@ -7,13 +7,19 @@ import type { Color } from '../../../shared/types/Colors'
 import 'src/scss/convenience/visually-hidden.scss'
 
 type Props = {
-  color: Color
+  color: Color,
+  familyLink?: string
 }
 
-function ColorInfo ({ color }: Props) {
+function ColorInfo ({ color, familyLink }: Props) {
   return (
     <div className='color-info__details-tab-wrapper'>
       <h5 className='visually-hidden'><FormattedMessage id='DETAILS' /></h5>
+      {familyLink && color.colorFamilyNames.length &&
+        <a className='view-family-link' href={familyLink + color.colorFamilyNames[0].toLowerCase()}>
+          View all {color.colorFamilyNames[0]} paint colors →
+        </a>
+      }
       <ul className='color-info__visual-specifications'>
         <li className='color-info__visual-specification'>
           <dl>
