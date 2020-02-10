@@ -10,7 +10,7 @@ import { injectIntl } from 'react-intl'
 import {
   createImageDataAndAlphaPixelMapFromImageData,
   drawAcrossLine,
-  getColorsFromImagePathList, getUniqueColorsFromImagePathList
+  getColorsFromImagePathList, getLABFromColor
 } from './PaintSceneUtils'
 import { getPaintAreaPath, repaintImageByPath,
   createPolygon, drawLine, drawHollowCircle,
@@ -1746,8 +1746,8 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   // This Method sorts the imagePathList by color to trigger the MergeColor component to instantiate and generate a flat (jpg) mask per color
   processMasks () {
     // @todo get a unique color list, I may need to manually merge color-like imagepaths to dedupe... -RS
-    const labColorList = getColorsFromImagePathList(this.state.imagePathList)
-    const colorList = getUniqueColorsFromImagePathList(this.state.imagePathList)
+    const colorList = getColorsFromImagePathList(this.state.imagePathList)
+    const labColorList = colorList.map(color => getLABFromColor(color))
 
     let saveBackgroundOnly = false
 
