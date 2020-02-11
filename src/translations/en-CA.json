@@ -1,11 +1,13 @@
 {
   "ADD_A_COLOR": "ADD A COLOUR",
   "ALL_COLORS": "All Colours",
+  "BACK": "Back",
   "BACK_TO_COLOR_WALL": "Back to Colour Wall",
   "CANCEL": "Cancel",
   "CANVAS_UNSUPPORTED": "Your browser does not support the canvas element.",
   "CHIP_MAXIMIZED": "Colour Chip has been maximized",
   "CHIP_MINIMIZED": "Colour Chip has been minimized",
+  "CLEAR_ALL": "CLEAR ALL",
   "CLOSE": "CLOSE",
   "COLOR_COLLECTIONS": "Colour Collections",
   "COLOR_FAMILIES": "Colour Families",
@@ -172,6 +174,7 @@
     "UPLOAD_YOUR_PHOTO": "UPLOAD YOUR PHOTO",
     "USE_OUR_PHOTOS": "USE OUR PHOTOS"
   },
+  "NEXT": "Next",
   "NO_COLORS_AVAILABLE": "No colours available.",
   "PAINT_SCENE": {
     "CANCEL": "CANCEL",
@@ -240,6 +243,7 @@
   "SWATCH_ACTIVATED_DETAILS": "{color} is selected. Press Enter to view details.",
   "SWATCH_FOCUS": "{color}. Press Enter to select.",
   "TOGGLE_EXPERT_PICKS": "Toggle Expert Picks",
+  "TOOL_TIPS": "TOOL TIPS",
   "TO_DAY_VIEW": "Switch to day view",
   "TO_NIGHT_VIEW": "Switch to night view",
   "VIEW_DETAILS": "View Details",

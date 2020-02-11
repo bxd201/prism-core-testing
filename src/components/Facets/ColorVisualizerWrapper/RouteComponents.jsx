@@ -93,7 +93,7 @@ const DropDownMenu = (props: Props) => {
           {
             content.subContent.map((data, key) => (
               <li className={(content.titleIdentifier === scenesContentTitle) ? `dashboard-submenu__content__paint-photo-li` : ``} key={key} ref={labelRefs[key]} tabIndex={0} role='tab' onMouseDown={(e) => e.preventDefault()} onClick={() => redirectTo(data.url, props, data.subTitleIdentifier)} onKeyDown={(e) => labelKeyDownHandler(e, data, props)}>
-                <label tabIndex='-1' htmlFor='file-input' className='dashboard-submenu__content__description'>
+                <label tabIndex='-1' htmlFor={(data.subTitleIdentifier === subTitleMatchAPhoto || data.subTitleIdentifier === subTitleUploadYourPhoto) ? 'file-input' : ''} className='dashboard-submenu__content__description'>
                   <div
                     className={`dashboard-submenu__content__description-img-wrapper ${(data.subTitleIdentifier === subTitleDigitalColorWall) ? `dashboard-submenu__content__description--explore-color` : (data.subTitleIdentifier === subTitlePaintedPhotos) ? `dashboard-submenu__content__description--painted-scene` : ``}`}
                     style={{

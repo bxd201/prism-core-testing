@@ -2,7 +2,7 @@
 import React from 'react'
 import './PaintToolTip.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { injectIntl } from 'react-intl'
+import { FormattedMessage, injectIntl } from 'react-intl'
 import 'src/providers/fontawesome/fontawesome'
 import { divTranslateFactor, divTranslateMultiplier, downPointerDivTranslateFactor, downPointerDivTranslateMultiplie } from './data'
 
@@ -56,7 +56,7 @@ export function PaintToolTip ({ tooltipToolActiveName, closeTooltip, backButtonC
             <FontAwesomeIcon title={intl.messages['PAINT_TOOLS.CLOSE']} className={``} icon={['fal', 'times']} size='lg' />
           </button>
           <div className={`${headerClass}`}>
-            <FontAwesomeIcon className={``} icon={['fal', 'info-circle']} size='1x' />&nbsp;<span>TOOL TIPS</span>
+            <FontAwesomeIcon className={``} icon={['fal', 'info-circle']} size='1x' />&nbsp;<span><FormattedMessage id='TOOL_TIPS' /></span>
           </div>
           <div className={`${toolNameClass}`}>{tooltipToolActiveName}</div>
           <div className={`${tooltipContentClass}`}>
@@ -64,11 +64,11 @@ export function PaintToolTip ({ tooltipToolActiveName, closeTooltip, backButtonC
           </div>
           <div className={`${footerClass}`}>
             <button className={`${buttonClass} ${buttonLeftClass} ${tooltipToolActiveNumber === 1 ? `${buttonHideClass}` : `${buttonShowClass}`}`} onClick={() => backButtonClickHandler()}>
-              <FontAwesomeIcon title={intl.messages['PAINT_TOOLS.BACK']} icon={['fa', 'chevron-left']} />&nbsp;<span>BACK</span>
+              <FontAwesomeIcon title={intl.messages['PAINT_TOOLS.BACK']} icon={['fa', 'chevron-left']} />&nbsp;<span><FormattedMessage id='BACK' /></span>
             </button>
             <span className={`${toolNumberClass}`}>{tooltipToolActiveNumber} of {toolsCount}</span>
             <button className={`${buttonClass} ${buttonRightClass} ${tooltipToolActiveNumber < toolsCount ? `${buttonShowClass}` : `${buttonHideClass}`}`} onClick={() => nextButtonClickHandler()}>
-              <span>NEXT</span>&nbsp;<FontAwesomeIcon title={intl.messages['PAINT_TOOLS.FORWARD']} icon={['fa', 'chevron-right']} />
+              <span><FormattedMessage id='NEXT' /></span>&nbsp;<FontAwesomeIcon title={intl.messages['PAINT_TOOLS.FORWARD']} icon={['fa', 'chevron-right']} />
             </button>
           </div>
         </div>
@@ -79,7 +79,7 @@ export function PaintToolTip ({ tooltipToolActiveName, closeTooltip, backButtonC
           <FontAwesomeIcon title={intl.messages['PAINT_TOOLS.CLOSE']} className={``} icon={['fal', 'times']} size='lg' />
         </button>
         <div className={`${headerClass}`}>
-          <FontAwesomeIcon title={intl.messages['PAINT_TOOLS.INFO']} className={``} icon={['fal', 'info-circle']} size='1x' />&nbsp;TOOL TIPS
+          <FontAwesomeIcon title={intl.messages['PAINT_TOOLS.INFO']} className={``} icon={['fal', 'info-circle']} size='1x' />&nbsp;<FormattedMessage id='TOOL_TIPS' />
         </div>
         <div className={`${toolNameClass}`}>{tooltipToolActiveName}</div>
         <div className={`${tooltipContentClass}`}>

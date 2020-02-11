@@ -14,6 +14,7 @@ import DynamicColorFromImage from '../InspirationPhotos/DynamicColorFromImage'
 import { useSelector } from 'react-redux'
 import { RouteConsumer } from '../../contexts/RouteContext/RouteContext'
 import './MatchPhoto.scss'
+import { FormattedMessage } from 'react-intl'
 
 const baseClass = 'match-photo'
 const wrapperClass = `${baseClass}__wrapper`
@@ -91,6 +92,7 @@ export function MatchPhoto ({ history, isPaintScene, imgUrl, showPaintScene, che
   const hasLoadedRef = useRef()
 
   const paintSceneWorkspace = useSelector(state => state.paintSceneWorkspace)
+  const [isConfirmationModalShown, setConfirmationModalShown] = useState(false)
 
   useEffect(() => {
     prevOrientationRef.current = orientationDimensions
@@ -356,8 +358,21 @@ export function MatchPhoto ({ history, isPaintScene, imgUrl, showPaintScene, che
     initCanvas(image, dimensions, dimensions.originalIsPortrait)
   }
 
-  const closeButton = <RouteConsumer>{(context) => (<button onClick={() => { context.setActiveComponent(); (imageUrl && pins.length > 0) && setConfirmationModalActive(!isConfirmationModalActive) }} className={`${buttonClass} ${buttonRightClass}`}>
-    <div className={`${closeClass}`}><span>CLOSE</span>&nbsp;<FontAwesomeIcon className={``} icon={['fa', 'chevron-up']} /></div>
+  const closeButton = <RouteConsumer>{(context) => (<button onClick={(e: SyntheticEvent) => {
+    if (isConfirmationModalShown) {
+      context.setActiveComponent()
+    } else {
+      if (imageUrl && pins.length > 0) {
+        e.preventDefault()
+        setConfirmationModalActive(!isConfirmationModalActive)
+        setConfirmationModalShown(!isConfirmationModalShown)
+        return false
+      } else {
+        context.setActiveComponent()
+      }
+    }
+  }} className={`${buttonClass} ${buttonRightClass}`}>
+    <div className={`${closeClass}`}><span><FormattedMessage id='CLOSE' /></span>&nbsp;<FontAwesomeIcon className={``} icon={['fa', 'chevron-up']} /></div>
     <div className={`${cancelClass}`}><FontAwesomeIcon className={``} icon={['fa', 'times']} /></div>
   </button>)}</RouteConsumer>
 
@@ -370,7 +385,7 @@ export function MatchPhoto ({ history, isPaintScene, imgUrl, showPaintScene, che
 
             <div className={`${headerClass}`}>
               {(imageUrl && pins.length === 0 && !paintSceneWorkspace) ? <button className={`${buttonClass} ${buttonLeftClass}`} onClick={() => history.goBack()}>
-                <div><FontAwesomeIcon className={``} icon={['fa', 'angle-left']} />&nbsp;<span className={`${buttonLeftTextClass}`}>BACK</span></div>
+                <div><FontAwesomeIcon className={``} icon={['fa', 'angle-left']} />&nbsp;<span className={`${buttonLeftTextClass}`}><FormattedMessage id='BACK' /></span></div>
               </button> : ''}
               {
                 (imageUrl && pins.length === 0 && !paintSceneWorkspace)

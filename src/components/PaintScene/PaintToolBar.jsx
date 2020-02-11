@@ -7,7 +7,7 @@ import PaintToolTip from './PaintToolTip'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
 import ZoomTool from './ZoomTool'
-import { injectIntl } from 'react-intl'
+import { FormattedMessage, injectIntl } from 'react-intl'
 import storageAvailable from '../../shared/utils/browserStorageCheck.util'
 
 const baseClass = 'paint-tool-bar'
@@ -232,9 +232,9 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
   }
 
   toolButtonMouseDownHandler = (e: Object, toolName: string) => {
+    e.preventDefault()
     if (toolName === toolNames.HIDEPAINT && !this.state.showTooltip) {
       this.setState({ isHidePaint: true })
-      e.preventDefault()
       const { hidePaint } = this.props
       hidePaint(e, true)
       window.addEventListener('mouseup', this.toolButtonMouseUpHandler)
@@ -322,6 +322,7 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
         name={tool.name}
         className={`${toolbarButtonClass}`}
         onClick={(e) => this.groupClickHandler(e, tool.name)}
+        onMouseDown={(e) => e.preventDefault()}
       >
         <FontAwesomeIcon title={intl.messages[`PAINT_TOOLS.${tool.name.toUpperCase()}`]} className={`${toolIconClass}`} icon={[tool.fontAwesomeIcon.variant, tool.fontAwesomeIcon.icon]} size='lg' transform={{ rotate: tool.fontAwesomeIcon.rotate }} />
         <span className={`${toolNameClass} ${this.checkButtonIfDisable(tool) ? '' : toolNameDisabledClass} ${activeTool === toolNames.SELECTAREA || tooltipToolActiveNumber === toolNumbers.SELECTAREA ? `${toolNameActiveClass}` : ``}`}>{tool.displayName}</span>
@@ -388,7 +389,7 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
               className={`${brushTypesClass} ${(!showTooltip && (activeTool === toolNames.ERASE && showEraseBrushTypes)) ? `${brushTypesShowClass}` : `${brushTypesHideClass}`} ${brushTypesEraseClass} ${showToolBar ? `${brushTypesShowByOpacityClass}` : `${brushTypesHideByOpacityClass}`} `}
             >
               <BrushTypes hideEraseBrushTypes={this.hideEraseBrushTypes} activeWidth={eraseBrushWidth} activeShape={eraseBrushShape} setBrushShapeSize={setBrushShapeSize} />
-              {(activeTool === toolNames.ERASE) && <button className={`${clearAllButtonClass}`} onClick={this.clearAllClickHandler}>CLEAR ALL</button>}
+              {(activeTool === toolNames.ERASE) && <button className={`${clearAllButtonClass}`} onClick={this.clearAllClickHandler}><FormattedMessage id='CLEAR_ALL' /></button>}
             </div>
             {showTooltip && <div className={`${paintTooltipClass} ${paintTooltipActiveClass}`}>
               <PaintToolTip

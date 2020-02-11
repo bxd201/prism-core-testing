@@ -48,7 +48,7 @@
   &__button {
     color: #fff;
     cursor: pointer;
-    font-size: 0.6em;
+    font-size: 0.8em;
     font-weight: 600;
     outline: none;
     position: relative;
@@ -58,6 +58,9 @@
     &--hide {
       cursor: default;
       opacity: 0;
+    }
+    & > span {
+      text-transform: uppercase;
     }
   }
   &__button-left {
@@ -85,7 +88,7 @@
     }
   }
   &__tool-number {
-    font-size: 0.6em;
+    font-size: 0.8em;
   }
   &__down-pointer {
     border: 6px solid transparent;
