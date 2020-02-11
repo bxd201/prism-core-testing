@@ -1,6 +1,5 @@
 // @flow
 import { rgb } from 'color-space'
-import uniqBy from 'lodash/uniqBy'
 import { getDeltaE00 } from 'delta-e'
 
 export const drawAcrossLine = (context: Object, to: Object, from: Object, shapeDrawer: Function) => {
@@ -56,36 +55,6 @@ const mapLABArrayToObject = (color) => {
     A: color[1],
     B: color[2]
   }
-}
-
-export const getColorsFromImagePathList = (imagePathList: any) => {
-  const colorList = imagePathList
-    .filter(imagePath => {
-      return imagePath.data
-    })
-
-  const uniqueColorList = uniqBy(colorList, imagePath => imagePath.color.join('_'))
-    .map(imagePath => {
-      return mapLABArrayToObject(rgb.lab(imagePath.color))
-    })
-
-  return uniqueColorList
-}
-// Provides a unique color list of sherwin colors for firebase
-export const getUniqueColorsFromImagePathList = (imagePathList: Object[]) => {
-  const colors = []
-  const colorMap = {}
-
-  imagePathList.forEach((item, i) => {
-    const colorKey = item.color.join('_')
-
-    if (!colorMap[colorKey]) {
-      colorMap[colorKey] = 1
-      colors.push({ ...item.colorRef })
-    }
-  })
-
-  return colors
 }
 
 export const separateColors = (colors: Object[], imageData: any, threshold: number, saveAlpha: boolean): Array[] => {
@@ -161,5 +130,40 @@ export const createImageDataAndAlphaPixelMapFromImageData = (imageData) => {
   return {
     alphaPixelMap,
     pixelMap
+  }
+}
+
+export const getColorsFromImagePathList = (imagePathList: Object[]) => {
+  const paintItems = []
+  const paintTypes = ['paint']
+  const savedColors = []
+
+  imagePathList.forEach((item, i) => {
+    if (item.isEnabled) {
+      if (paintTypes.indexOf(item.type) > -1) {
+        // In many cases one SHOULD copy an object...however this is a HUUUGE deeply nest object, do not copy.
+        // This algorithm should only be used during blocking operations and the product should not be stored, it should be ephemeral.
+        paintItems.push(item)
+      }
+    }
+  })
+
+  paintItems.forEach((item, i) => {
+    const colorId = item.colorRef.id
+    if (!savedColors.find(color => color.id === colorId)) {
+      savedColors.push(item.colorRef)
+    }
+  })
+
+  return savedColors
+}
+
+export const getLABFromColor = (colorObj: Object) => {
+  const color = rgb.lab([colorObj.red, colorObj.green, colorObj.blue])
+
+  return {
+    L: color[0],
+    A: color[1],
+    B: color[2]
   }
 }
