@@ -11,10 +11,11 @@ import PaintScene from '../PaintScene/PaintScene'
 import { getScaledPortraitHeight } from '../../shared/helpers/ImageUtils'
 import PrismImage from '../PrismImage/PrismImage'
 import DynamicColorFromImage from '../InspirationPhotos/DynamicColorFromImage'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { RouteConsumer } from '../../contexts/RouteContext/RouteContext'
 import './MatchPhoto.scss'
 import { FormattedMessage } from 'react-intl'
+import { loadBrandColors } from '../../store/actions/brandColors'
 
 const baseClass = 'match-photo'
 const wrapperClass = `${baseClass}__wrapper`
@@ -93,6 +94,11 @@ export function MatchPhoto ({ history, isPaintScene, imgUrl, showPaintScene, che
 
   const paintSceneWorkspace = useSelector(state => state.paintSceneWorkspace)
   const [isConfirmationModalShown, setConfirmationModalShown] = useState(false)
+
+  const dispatch = useDispatch()
+  useEffect(() => { dispatch(loadBrandColors()) }, [])
+
+  const brandColors = useSelector(state => state.brandColors.data)
 
   useEffect(() => {
     prevOrientationRef.current = orientationDimensions
@@ -294,7 +300,7 @@ export function MatchPhoto ({ history, isPaintScene, imgUrl, showPaintScene, che
       // $FlowIgnore - flow can't understand how the worker is being used since it's not exporting anything
       colorPinsGenerationByHueWorker = new ColorPinsGenerationByHue()
       colorPinsGenerationByHueWorker.addEventListener('message', messageHandler)
-      colorPinsGenerationByHueWorker.postMessage({ imageData: imageData, imageDimensions: { width: imageWidth, height: imageHeight } })
+      colorPinsGenerationByHueWorker.postMessage({ imageData: imageData, imageDimensions: { width: imageWidth, height: imageHeight }, brandColors: brandColors })
     }
   }
 
@@ -400,6 +406,7 @@ export function MatchPhoto ({ history, isPaintScene, imgUrl, showPaintScene, che
               (imageUrl && pins.length > 0 && !isPaintScene && !paintSceneWorkspace)
                 ? (<React.Fragment>
                   <DynamicColorFromImage
+                    brandColors={brandColors}
                     originalImageWidth={imageDims.originalImageWidth}
                     originalImageHeight={imageDims.originalImageHeight}
                     originalIsPortrait={imageDims.originalIsPortrait}

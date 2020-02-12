@@ -9,6 +9,7 @@ import type { Scene } from '../../shared/types/Scene'
 import { toggleCompareColor } from '../../store/actions/live-palette'
 import './CompareColor.scss'
 import { StaticTintScene } from './StaticTintScene'
+import { FormattedMessage } from 'react-intl'
 
 const baseClass = 'color__comparison'
 const containerClass = `${baseClass}__container`
@@ -165,8 +166,8 @@ export class CompareColor extends React.Component<CompareColorProps, CompareColo
       return (
         <div className={`${containerClass}`}>
           <div className={`${containerHeaderClass}`}>
-            <span>Compare Colors</span>
-            <button className={`${containerHeaderButtonClass}`} onClick={this.props.toggleCompareColor}>close &nbsp;<FontAwesomeIcon className={``} icon={['fa', 'chevron-up']} /></button>
+            <span><FormattedMessage id='COMPARE_COLORS' /></span>
+            <button className={`${containerHeaderButtonClass}`} onClick={this.props.toggleCompareColor}><FormattedMessage id='CLOSE' /> &nbsp;<FontAwesomeIcon className={``} icon={['fa', 'chevron-up']} /></button>
           </div>
           <div className={`${wrapperClass}`} >
             <div className={`${prevBtnWrapperClass}`}>

@@ -24,3 +24,5 @@ export const MASK_ENDPOINT = endpoint`masks`
 export const STATUS_ENDPOINT = endpoint`auth/user/status`
 // @todo - does this need to be brandified? -RS
 export const CUSTOM_SCENE_IMAGE_ENDPOINT = 'https://www.sherwin-williams.com/color-visualization/services/scene/custom'
+// @todo - Need to implement following API -Pravin
+export const BRAND_COLORS_ENDPOINT = endpoint`brandcolors/sherwin`

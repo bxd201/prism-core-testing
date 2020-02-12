@@ -11,6 +11,8 @@
   "CLOSE": "CLOSE",
   "COLOR_COLLECTIONS": "Couleur Collection",
   "COLOR_FAMILIES": "Familles de Couleurs",
+  "COMPARE_COLORS": "Compare Colors",
+  "CONFIRMATION_DIALOG_MATCH_A_PHOTO_EXIT": "The photo content will be lost if you close. Make sure the colors you want to keep have been added to your palette. Do you still want to close?",
   "COORDINATING_COLORS": "Couleurs coordonnées",
   "DELETE": "DELETE",
   "DELETE_PIN": "Delete pin",
@@ -124,6 +126,7 @@
   "HIDE_SCENE_PAINTER": "Masquer la fonction Peindre une scène",
   "IMAGE_INVISIBLE": "This image is invisible to the user.",
   "INTERIOR": "Intérieur",
+  "I_ACCEPT": "I accept",
   "LOCATION_NUMBER": "Numéro de localisation",
   "LOG_IN": "LOG IN",
   "MAXIMIZE_COLOR_SWATCH": "Maximiser l'échantillon de couleur",
@@ -175,6 +178,7 @@
     "USE_OUR_PHOTOS": "USE OUR PHOTOS"
   },
   "NEXT": "Next",
+  "NO": "No",
   "NO_COLORS_AVAILABLE": "Aucune couleur disponible.",
   "PAINT_SCENE": {
     "CANCEL": "CANCEL",
@@ -217,6 +221,7 @@
   },
   "PALETTE_TITLE": "My Color Palette",
   "PASSWORD": "Password",
+  "PREVIEW_ROTATE_SCALE": "Use these arrows to rotate your image.",
   "REGISTER": "REGISTER",
   "RESTORE_COLOR_SWATCH_TO_DEFAULT_SIZE": "Restaurer la nuance de couleur à la taille par défaut",
   "SAVE_MASKS": "Save",
@@ -242,6 +247,7 @@
   "SIMILAR_COLORS": "Couleurs semblables",
   "SWATCH_ACTIVATED_DETAILS": "{color} a été sélectionné. Appuyez sur Entrée pour voir les détails.",
   "SWATCH_FOCUS": "{color}. Appuyez sur Entrée pour le sélectionner.",
+  "TERMS_OF_USE": "Terms of Use",
   "TOGGLE_EXPERT_PICKS": "Toggle Expert Picks",
   "TOOL_TIPS": "TOOL TIPS",
   "TO_DAY_VIEW": "Changer en vue de jour",
@@ -249,6 +255,7 @@
   "VIEW_DETAILS": "Voir les détails",
   "VIEW_DETAILS_FOR": "Voir les détails pour {name}",
   "VIEW_FULL_COLLECTION": "VIEW FULL COLLECTION",
+  "YES": "Yes",
   "ZOOM_IN": "Zoomer",
   "ZOOM_OUT": "Dézoomer"
 }

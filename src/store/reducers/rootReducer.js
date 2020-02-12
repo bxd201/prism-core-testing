@@ -29,8 +29,10 @@ import { paintSceneWorkspace } from './paintSceneWorkspace'
 // eslint-disable-next-line no-unused-vars
 import { reducerWithLocalStorage } from '../withStorage'
 import { CLOUD_SCENE_METADATA } from '../storageProperties'
+import brandColors from './brandColors'
 
 export default combineReducers({
+  brandColors,
   collectionSummaries,
   colors,
   configurations,
