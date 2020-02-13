@@ -1,14 +1,14 @@
 // @flow
 import { copyImageList } from './utils'
 export const undo = (state: Object) => {
-  const { imagePathList, redoPathList, selectedArea, groupSelectList, groupAreaList, groupIds } = state
+  const { imagePathList, redoPathList, selectedArea, groupSelectList, groupAreaList, groupIds, deleteAreaList } = state
   if (!imagePathList.length) {
     return
   }
 
   const lastItem = imagePathList[imagePathList.length - 1]
   let relatedRedoOps = []
-  const { undoOperations, redos, newGroupSelectList, updateGroupAreaList, updateGroupIds, updateSelectArea } = handleUndo(lastItem.id, relatedRedoOps, imagePathList, selectedArea, groupSelectList, groupAreaList, groupIds)
+  const { undoOperations, redos, newGroupSelectList, updateGroupAreaList, updateGroupIds, updateSelectArea } = handleUndo(lastItem.id, relatedRedoOps, imagePathList, selectedArea, groupSelectList, groupAreaList, groupIds, deleteAreaList)
   redos.forEach(redoItem => redoPathList.push(redoItem))
   const redoOperations = [...redoPathList]
   return {
@@ -23,7 +23,7 @@ export const undo = (state: Object) => {
   }
 }
 
-const handleUndo = (itemId, redos, imagePathList, selectedArea, groupSelectList, groupAreaList, groupIds) => {
+const handleUndo = (itemId, redos, imagePathList, selectedArea, groupSelectList, groupAreaList, groupIds, deleteAreaList) => {
   let history = copyImageList(imagePathList)
   let redoList = copyImageList(redos)
   let updateSelectArea = copyImageList(selectedArea)
@@ -42,6 +42,10 @@ const handleUndo = (itemId, redos, imagePathList, selectedArea, groupSelectList,
     const toggleSelect = item.toggleSelectId
     if (linkedItems) {
       toggleLinkedItems(linkedItems, history)
+    }
+
+    if (item.type === 'delete') {
+      deleteAreaList.pop()
     }
 
     if (item.type === 'select') {
@@ -144,7 +148,8 @@ const handleUndo = (itemId, redos, imagePathList, selectedArea, groupSelectList,
       newGroupSelectList: newGroupSelectList,
       updateGroupIds: updateGroupIds,
       updateGroupAreaList: updateGroupAreaList,
-      updateSelectArea: updateSelectArea
+      updateSelectArea: updateSelectArea,
+      deleteAreaList: deleteAreaList
     }
   }
   return helper(itemId)
@@ -161,13 +166,13 @@ const toggleLinkedItems = (linkedItems, history) => {
 }
 
 export const redo = (state: Object) => {
-  const { imagePathList, redoPathList, selectedArea, groupSelectList, groupAreaList, groupIds } = state
+  const { imagePathList, redoPathList, selectedArea, groupSelectList, groupAreaList, groupIds, deleteAreaList } = state
   if (!redoPathList.length) {
     return
   }
 
   const lastItem = redoPathList[redoPathList.length - 1]
-  const { history, updateRedoPathList, newGroupSelectList, updateGroupIds, updateGroupAreaList } = handleRedo(lastItem.id, redoPathList, imagePathList, selectedArea, groupSelectList, groupAreaList, groupIds)
+  const { history, updateRedoPathList, newGroupSelectList, updateGroupIds, updateGroupAreaList } = handleRedo(lastItem.id, redoPathList, imagePathList, selectedArea, groupSelectList, groupAreaList, groupIds, deleteAreaList)
   return {
     groupIds: updateGroupIds,
     groupAreaList: updateGroupAreaList,
@@ -179,7 +184,7 @@ export const redo = (state: Object) => {
   }
 }
 
-const handleRedo = (itemId, redoPathList, imagePathList, selectedArea, groupSelectList, groupAreaList, groupIds) => {
+const handleRedo = (itemId, redoPathList, imagePathList, selectedArea, groupSelectList, groupAreaList, groupIds, deleteAreaList) => {
   let history = copyImageList(imagePathList)
   let redoList = copyImageList(redoPathList)
   let newGroupSelectList = copyImageList(groupSelectList)
@@ -245,6 +250,13 @@ const handleRedo = (itemId, redoPathList, imagePathList, selectedArea, groupSele
           toggleLinkedItems(historyItem, history)
         })
       }
+    }
+
+    if (item.type === 'delete') {
+      deleteAreaList.push({
+        id: item.id,
+        data: item.data
+      })
     }
 
     if (item.type === 'ungroup') {
