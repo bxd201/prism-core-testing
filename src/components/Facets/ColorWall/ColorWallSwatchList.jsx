@@ -696,8 +696,8 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
       }
 
       return (
-        <div style={_style} role='presentation'>
-          <div className={`color-wall-swatch-list__section-title ${!showAll ? 'color-wall-swatch-list__section-title--top-align' : ''}`} title={colorId.label} style={{
+        <div key={key} style={_style} role='presentation'>
+          <div className={`color-wall-swatch-list__section-title ${!showAll ? 'color-wall-swatch-list__section-title--push-up' : ''}`} title={colorId.label} style={{
             width: `${colorId.columnWidth * 100}%`,
             marginLeft: `-${(Math.ceil(colorId.columnWidth / 2) - 1) * 100}%`
           }}>
