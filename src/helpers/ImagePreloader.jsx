@@ -76,6 +76,7 @@ class ImagePreloader extends PureComponent<Props, State> {
 
     if (tgt instanceof MaskObj) {
       ImagePreloader.promiseMap[tgt.id] = tgt.loading
+      return tgt.loading
     } else if (typeof tgt === 'string') {
       const newPromise = new Promise((resolve: Function, reject: Function) => {
         const fullPath = ensureFullyQualifiedAssetUrl(tgt)
