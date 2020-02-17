@@ -93,11 +93,6 @@ pipeline {
         archiveArtifacts artifacts: "prism-core.tgz", fingerprint: true
       }
     }
-    stage('test') {
-      steps {
-        sh 'npm run test'
-      }
-    }
     stage('image-testing') {
       when {
         not {
