@@ -1,50 +1,316 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`snapshot match testing should match snapshot 1`] = `
-<div
-  className="color-wall-mode-btns"
+exports[`BackToColorWall should match snapshot 1`] = `
+<IntlProvider
+  defaultFormats={Object {}}
+  defaultLocale="en"
+  formats={Object {}}
+  locale="en-US"
+  messages={
+    Object {
+      "ADD_A_COLOR": "ADD A COLOR",
+      "ALL_COLORS": "All Colors",
+      "BACK_TO_COLOR_WALL": "Back to Color Wall",
+      "CANCEL": "Cancel",
+      "CANVAS_UNSUPPORTED": "Your browser does not support the canvas element.",
+      "CHIP_MAXIMIZED": "Color Chip has been maximized",
+      "CHIP_MINIMIZED": "Color Chip has been minimized",
+      "COLOR_COLLECTIONS": "Color Collections",
+      "COLOR_FAMILIES": "Color Families",
+      "COORDINATING_COLORS": "Coordinating Colors",
+      "DELETE_PIN": "Delete pin",
+      "DETAILS": "Details",
+      "DISPLAY_SCENE_PAINTER": "Display the Scene Painter",
+      "ERROR_BOUNDARY.ERROR_DETAILS": "Error details",
+      "ERROR_BOUNDARY.MESSAGE": "We encountered an error preventing us from rendering this component at this time.",
+      "ERROR_BOUNDARY.SHOW_DETAILS": "Show error details",
+      "ERROR_BOUNDARY.TITLE": "Sherwin-Williams Color Tools Error",
+      "ERROR_LOADING_COLORS": "We're unable to load colors right now.",
+      "EXTERIOR": "Exterior",
+      "FIND_COLORS_IN_CW": "FIND COLORS IN THE DIGITAL COLOR WALL",
+      "HIDE_SCENE_PAINTER": "Hide the Scene Painter",
+      "IMAGE_INVISIBLE": "This image is invisible to the user.",
+      "INTERIOR": "Interior",
+      "LOCATION_NUMBER": "Location Number",
+      "MAXIMIZE_COLOR_SWATCH": "Maximize the Color Swatch",
+      "NO_COLORS_AVAILABLE": "No colors available.",
+      "PAINT_TOOLS.BACK": "Go back",
+      "PAINT_TOOLS.CLOSE": "Close tooltip",
+      "PAINT_TOOLS.DEFINEAREA": "Create a polygon to fill",
+      "PAINT_TOOLS.DELETEGROUP": "Delete the group",
+      "PAINT_TOOLS.ERASE": "Remove paint by erasing",
+      "PAINT_TOOLS.FORWARD": "Go forward",
+      "PAINT_TOOLS.GROUP": "Group the selections",
+      "PAINT_TOOLS.HIDEPAINT": "Hide the painted area",
+      "PAINT_TOOLS.INFO": "Toggle the tool tips",
+      "PAINT_TOOLS.PAINTAREA": "fill a continuous area with color",
+      "PAINT_TOOLS.PAINTBRUSH": "Paint using a brush",
+      "PAINT_TOOLS.REDO": "Redo an action",
+      "PAINT_TOOLS.REMOVEAREA": "Erase an area by creating a polygon",
+      "PAINT_TOOLS.SELECTAREA": "Select an area to manipulate",
+      "PAINT_TOOLS.TOOLTIPS.DEFINEAREA": "Outline an area to paint it. Be sure to enclose the area by starting and ending at the same point.",
+      "PAINT_TOOLS.TOOLTIPS.ERASE": "Remove paint from your scene.",
+      "PAINT_TOOLS.TOOLTIPS.HIDEPAINT": "Use this tool to see the original room scene.",
+      "PAINT_TOOLS.TOOLTIPS.INFO": "Click here to revisit the Tool Tips.",
+      "PAINT_TOOLS.TOOLTIPS.PAINTAREA": "Use the Paint Area feature to automatically detect and paint surface areas. Just click or tap on a surface to highlight it, then click or tap again.",
+      "PAINT_TOOLS.TOOLTIPS.PAINTBRUSH": "Allows for the freehand painting of your selected scene. Just point, click or tap and drag to add color to any area.",
+      "PAINT_TOOLS.TOOLTIPS.REDO": "Step forward from your last action.",
+      "PAINT_TOOLS.TOOLTIPS.REMOVEAREA": "Use this tool to select and remove paint from a defined area.",
+      "PAINT_TOOLS.TOOLTIPS.SELECTAREA": "Select an area, then use the tool bar to paint, edit paint colors or remove paint from your scene.",
+      "PAINT_TOOLS.TOOLTIPS.SELECTGROUP": "Use this tool to group and edit multiple areas at the same time. Use the Delete tool to remove areas from your scene.",
+      "PAINT_TOOLS.TOOLTIPS.UNDO": "Step backwards from your last action.",
+      "PAINT_TOOLS.TOOLTIPS.ZOOM": "Zoom in and pan around within your scene to paint small areas with increased accuracy.",
+      "PAINT_TOOLS.UNDO": "Undo an action",
+      "PAINT_TOOLS.UNGROUP": "Ungroup the selections",
+      "PAINT_TOOLS.ZOOM": "Adjust the zoom level",
+      "PALETTE_TITLE": "My Color Palette",
+      "RESTORE_COLOR_SWATCH_TO_DEFAULT_SIZE": "Restore the Color Swatch to default size",
+      "SCENE_DISPLAYED": "Scene is displayed",
+      "SCENE_HIDDEN": "Scene is hidden",
+      "SEARCH.ERROR.GENERIC": "We were unable to perform your search.",
+      "SEARCH.ERROR.HEADLINE": "Something went wrong.",
+      "SEARCH.FIND_A_COLOR": "Find a color",
+      "SEARCH.NO_RESULTS": "Sorry, no color matches found.",
+      "SEARCH.PROMPT": "Enter a color name, number, or family in the text field above.",
+      "SEARCH.SEARCH": "Search",
+      "SEARCH.SEARCHING": "Searching",
+      "SEARCH.SEARCH_BY": "Search by color name or number",
+      "SEARCH.SEARCH_COLOR": "Search color",
+      "SEARCH.SUGGESTIONS": "Some examples of things you can search for are {suggestions}",
+      "SELECT_COLLECTION": "Select Color Collection",
+      "SIMILAR_COLORS": "Similar Colors",
+      "SWATCH_ACTIVATED_DETAILS": "{color} is selected. Press Enter to view details.",
+      "SWATCH_FOCUS": "{color}. Press Enter to select.",
+      "TO_DAY_VIEW": "Switch to day view",
+      "TO_NIGHT_VIEW": "Switch to night view",
+      "VIEW_DETAILS": "View Details",
+      "VIEW_DETAILS_FOR": "View details for {name}",
+      "ZOOM_IN": "Zoom in",
+      "ZOOM_OUT": "Zoom out",
+    }
+  }
+  onError={[Function]}
+  textComponent={Symbol(react.fragment)}
 >
-  <div
-    className="color-wall-mode-btns__col"
+  <Provider
+    store={
+      Object {
+        "dispatch": [Function],
+        "getState": [Function],
+        "replaceReducer": [Function],
+        "subscribe": [Function],
+        Symbol(observable): [Function],
+      }
+    }
   >
-    <div
-      className="color-wall-mode-btns__cell"
+    <Router
+      history={
+        Object {
+          "action": "POP",
+          "block": [Function],
+          "canGo": [Function],
+          "createHref": [Function],
+          "entries": Array [
+            Object {
+              "hash": "",
+              "key": "",
+              "pathname": "/",
+              "search": "",
+              "state": undefined,
+            },
+          ],
+          "go": [Function],
+          "goBack": [Function],
+          "goForward": [Function],
+          "index": 0,
+          "length": 1,
+          "listen": [Function],
+          "location": Object {
+            "hash": "",
+            "key": "",
+            "pathname": "/",
+            "search": "",
+            "state": undefined,
+          },
+          "push": [Function],
+          "replace": [Function],
+        }
+      }
     >
-      <Bar>
-        <Button
-          to="/active/color-wall/color/2248/sw-6561-teaberry/"
+      <BackToColorWall
+        color={
+          Object {
+            "blue": 219,
+            "brandKey": "SW",
+            "colorFamilyNames": Array [
+              "Red",
+            ],
+            "colorNumber": "6561",
+            "coordinatingColors": Object {
+              "coord1ColorId": 2250,
+              "coord2ColorId": 1926,
+              "whiteColorId": 2681,
+            },
+            "cssrgb": "rgb(235,209,219)",
+            "description": Array [
+              "Subdued",
+              "Muted",
+              "Brilliant",
+              "Radiant",
+            ],
+            "green": 209,
+            "hex": "#ebd1db",
+            "hue": 0.935897435897436,
+            "id": "2248",
+            "isDark": false,
+            "isExterior": true,
+            "isInterior": true,
+            "lightness": 0.8705882352941177,
+            "lrv": 68.551,
+            "name": "Teaberry",
+            "red": 235,
+            "rgb": 15454683,
+            "saturation": 0.39393939393939387,
+            "similarColors": Array [
+              "2255",
+              "2262",
+              "2269",
+              "2662",
+              "2535",
+              "2276",
+              "2658",
+              "1974",
+              "2543",
+              "2531",
+            ],
+            "storeStripLocator": "102-C1",
+          }
+        }
+      >
+        <div
+          className="color-wall-mode-btns"
         >
-          <FontAwesomeIcon
-            border={false}
-            className=""
-            fixedWidth={true}
-            flip={null}
-            icon={
-              Array [
-                "fal",
-                "th-large",
-              ]
-            }
-            inverse={false}
-            listItem={false}
-            mask={null}
-            pull="left"
-            pulse={false}
-            rotation={null}
-            size={null}
-            spin={false}
-            swapOpacity={false}
-            symbol={false}
-            title=""
-            transform={null}
-          />
-          <FormattedMessage
-            id="BACK_TO_COLOR_WALL"
-            values={Object {}}
-          />
-        </Button>
-      </Bar>
-    </div>
-  </div>
-</div>
+          <div
+            className="color-wall-mode-btns__col"
+          >
+            <div
+              className="color-wall-mode-btns__cell"
+            >
+              <Bar>
+                <div
+                  className="button-bar__option-container auto-scroll"
+                >
+                  <ul
+                    className="button-bar__options no-list"
+                  >
+                    <Button
+                      to={
+                        Object {
+                          "pathname": "/active/color-wall/color/2248/sw-6561-teaberry/",
+                          "state": undefined,
+                        }
+                      }
+                    >
+                      <li
+                        className="button-bar__options__option"
+                      >
+                        <NavLink
+                          activeClassName="button-bar__options__option__btn--active "
+                          className="button-bar__options__option__btn "
+                          onClick={null}
+                          to={
+                            Object {
+                              "pathname": "/active/color-wall/color/2248/sw-6561-teaberry/",
+                              "state": undefined,
+                            }
+                          }
+                        >
+                          <Link
+                            aria-current={null}
+                            className="button-bar__options__option__btn "
+                            onClick={null}
+                            to={
+                              Object {
+                                "pathname": "/active/color-wall/color/2248/sw-6561-teaberry/",
+                                "state": undefined,
+                              }
+                            }
+                          >
+                            <LinkAnchor
+                              aria-current={null}
+                              className="button-bar__options__option__btn "
+                              href="/active/color-wall/color/2248/sw-6561-teaberry/"
+                              navigate={[Function]}
+                              onClick={null}
+                            >
+                              <a
+                                aria-current={null}
+                                className="button-bar__options__option__btn "
+                                href="/active/color-wall/color/2248/sw-6561-teaberry/"
+                                onClick={[Function]}
+                              >
+                                <FontAwesomeIcon
+                                  border={false}
+                                  className=""
+                                  fixedWidth={true}
+                                  flip={null}
+                                  icon={
+                                    Array [
+                                      "fal",
+                                      "th-large",
+                                    ]
+                                  }
+                                  inverse={false}
+                                  listItem={false}
+                                  mask={null}
+                                  pull="left"
+                                  pulse={false}
+                                  rotation={null}
+                                  size={null}
+                                  spin={false}
+                                  swapOpacity={false}
+                                  symbol={false}
+                                  title=""
+                                  transform={null}
+                                >
+                                  <svg
+                                    aria-hidden="true"
+                                    className="svg-inline--fa fa-th-large fa-w-16 fa-fw fa-pull-left "
+                                    data-icon="th-large"
+                                    data-prefix="fal"
+                                    focusable="false"
+                                    role="img"
+                                    style={Object {}}
+                                    viewBox="0 0 512 512"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                  >
+                                    <path
+                                      d="M0 80v352c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V80c0-26.51-21.49-48-48-48H48C21.49 32 0 53.49 0 80zm240-16v176H32V80c0-8.837 7.163-16 16-16h192zM32 432V272h208v176H48c-8.837 0-16-7.163-16-16zm240 16V272h208v160c0 8.837-7.163 16-16 16H272zm208-208H272V64h192c8.837 0 16 7.163 16 16v160z"
+                                      fill="currentColor"
+                                      style={Object {}}
+                                    />
+                                  </svg>
+                                </FontAwesomeIcon>
+                                <FormattedMessage
+                                  id="BACK_TO_COLOR_WALL"
+                                  values={Object {}}
+                                >
+                                  Back to Color Wall
+                                </FormattedMessage>
+                              </a>
+                            </LinkAnchor>
+                          </Link>
+                        </NavLink>
+                      </li>
+                    </Button>
+                  </ul>
+                </div>
+              </Bar>
+            </div>
+          </div>
+        </div>
+      </BackToColorWall>
+    </Router>
+  </Provider>
+</IntlProvider>
 `;

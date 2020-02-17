@@ -8,7 +8,7 @@ import concat from 'lodash/concat'
 import find from 'lodash/find'
 import kebabCase from 'lodash/kebabCase'
 import { LiveMessage } from 'react-aria-live'
-import { varValues } from 'variables'
+import { varValues } from 'src/shared/variableDefs'
 import { TransitionGroup, CSSTransition } from 'react-transition-group'
 
 import { ensureFullyQualifiedAssetUrl } from '../../shared/helpers/DataUtils'

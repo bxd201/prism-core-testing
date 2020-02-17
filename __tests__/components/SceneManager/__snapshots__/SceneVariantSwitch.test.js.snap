@@ -14,17 +14,15 @@ exports[`SceneVariantSwitch component with props should match snapshot 1`] = `
       aria-label="Switch to day view"
       className="scene-variant-switch-day-night scene-variant-switch-day-night--night"
       htmlFor="day-night-toggle1"
-      onKeyDown={[Function]}
-      role="button"
-      tabIndex="0"
       title="Switch to day view"
     >
       <input
         checked={true}
-        className="visually-hidden"
+        className="scene-variant-switch-day-night__input visually-hidden"
         id="day-night-toggle1"
         name="day-night-toggle1"
         onChange={[Function]}
+        onKeyDown={[Function]}
         type="checkbox"
       />
       <div

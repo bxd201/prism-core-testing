@@ -19,7 +19,7 @@ import HTML5Backend from 'react-dnd-html5-backend-cjs'
 import { activate, reorder, toggleCompareColor, cancel, empty } from '../../store/actions/live-palette'
 import { arrayToSpacedString } from '../../shared/helpers/StringUtils'
 
-import { varValues } from 'variables'
+import { varValues } from 'src/shared/variableDefs'
 
 import EmptySlot from './EmptySlot'
 import ActiveSlot from './ActiveSlot'

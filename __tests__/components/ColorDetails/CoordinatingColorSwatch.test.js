@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { shallow } from 'enzyme'
 import CoordinatingColorSwatch from 'src/components/Facets/ColorDetails/CoordinatingColors/CoordinatingColorSwatch'
 import * as Colors from '__mocks__/data/color/Colors'
-import ReactGA from 'react-ga'
+import * as GA from 'src/analytics/GoogleAnalytics'
 
 const color = Colors.getColor()
 let colors = [color.name, `${color.brandKey} ${color.colorNumber}`]
@@ -36,9 +36,8 @@ describe('Coordinary Color Swatch component will pass props correctly', () => {
 describe(('click event test of color swatch component'), () => {
   const wrapper = coordinatingColorSwatch(color)
   it('component should call handclick function', () => {
-    const handleClickMock = jest.fn()
-    ReactGA.event = handleClickMock
+    GA.event = jest.fn()
     wrapper.find(Link).simulate('click')
-    expect(ReactGA.event).toHaveBeenCalled()
+    expect(GA.event).toHaveBeenCalled()
   })
 })

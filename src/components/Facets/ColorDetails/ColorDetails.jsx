@@ -16,7 +16,7 @@ import CoordinatingColors from './CoordinatingColors/CoordinatingColors'
 import SimilarColors from './SimilarColors/SimilarColors'
 import SceneManager from '../../SceneManager/SceneManager'
 import { paintAllMainSurfaces } from '../../../store/actions/scenes'
-import { varValues } from 'variables'
+import { varValues } from 'src/shared/variableDefs'
 import type { ColorMap, Color } from '../../../shared/types/Colors'
 import 'src/scss/convenience/visually-hidden.scss'
 import './ColorDetails.scss'
@@ -32,7 +32,7 @@ type Props = {
   familyLink?: string
 }
 
-const ColorDetails = ColorDataWrapper(({ onColorChanged, onSceneChanged, onVariantChanged, onColorChipToggled, familyLink }: Props) => {
+export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged, onColorChipToggled, familyLink }: Props) => {
   const { colorId } = useParams()
   const dispatch = useDispatch()
   const toggleSceneDisplayScene = useRef(null)
@@ -109,17 +109,17 @@ const ColorDetails = ColorDataWrapper(({ onColorChanged, onSceneChanged, onVaria
               GA.event({ category: 'Color Detail', action: tabNames[index], label: tabNames[index] })
             }}>
               <TabList className={`${baseClass}__tab-list`} style={{ backgroundColor: activeColor.hex }}>
-                <Tab className={`${baseClass}__tab ${activeColor.isDark ? `${baseClass}__tab--dark-color` : ''}`}>
+                <Tab className={`coordinating-colors-tab ${baseClass}__tab ${activeColor.isDark ? `${baseClass}__tab--dark-color` : ''}`}>
                   <div className={`${baseClass}__tab-copy`}>
                     <FormattedMessage id='COORDINATING_COLORS' />
                   </div>
                 </Tab>
-                <Tab className={`${baseClass}__tab ${activeColor.isDark ? `${baseClass}__tab--dark-color` : ''}`}>
+                <Tab className={`similar-colors-tab ${baseClass}__tab ${activeColor.isDark ? `${baseClass}__tab--dark-color` : ''}`}>
                   <div className={`${baseClass}__tab-copy`}>
                     <FormattedMessage id='SIMILAR_COLORS' />
                   </div>
                 </Tab>
-                <Tab className={`${baseClass}__tab ${activeColor.isDark ? `${baseClass}__tab--dark-color` : ''}`}>
+                <Tab className={`color-info-tab ${baseClass}__tab ${activeColor.isDark ? `${baseClass}__tab--dark-color` : ''}`}>
                   <div className={`${baseClass}__tab-copy`}>
                     <FormattedMessage id='DETAILS' />
                   </div>
@@ -140,6 +140,6 @@ const ColorDetails = ColorDataWrapper(({ onColorChanged, onSceneChanged, onVaria
       </div>
     </>
   )
-})
+}
 
-export default ColorDetails
+export default ColorDataWrapper(ColorDetails)

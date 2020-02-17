@@ -1,6 +1,5 @@
 /* eslint-env jest */
 import React from 'react'
-import { shallow } from 'enzyme'
 import ColorWallSwatchUI from 'src/components/Facets/ColorWall/ColorWallSwatch/ColorWallSwatchUI'
 import * as Colors from '__mocks__/data/color/Colors'
 import { Link } from 'react-router-dom'
@@ -11,6 +10,7 @@ const defaultProps = {
   color: color,
   thisLink: '',
   focus: true,
+  ref: { current: null },
   onClick: clickFn
 }
 

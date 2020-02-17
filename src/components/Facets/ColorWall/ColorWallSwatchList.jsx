@@ -13,7 +13,7 @@ import { withRouter } from 'react-router-dom'
 import { LiveMessage } from 'react-aria-live'
 import { injectIntl } from 'react-intl'
 
-import { varValues } from 'variables'
+import { varValues } from 'src/shared/variableDefs'
 import ColorWallSwatch from './ColorWallSwatch/ColorWallSwatch'
 import ColorWallSwatchUI from './ColorWallSwatch/ColorWallSwatchUI'
 import ColorWallSwatchRenderer from './ColorWallSwatch/ColorWallSwatchRenderer'

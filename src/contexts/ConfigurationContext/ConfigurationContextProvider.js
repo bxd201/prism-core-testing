@@ -6,7 +6,7 @@ import toLower from 'lodash/toLower'
 import { loadConfiguration } from '../../store/actions/configurations'
 
 import CSSVariableApplicator from '../../helpers/CSSVariableApplicator'
-import { varNames } from 'variables'
+import { varNames } from 'src/shared/variableDefs'
 
 import ConfigurationContext from './ConfigurationContext'
 

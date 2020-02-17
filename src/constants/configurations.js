@@ -1,4 +1,4 @@
-import { varValues } from 'variables'
+import { varValues } from 'src/shared/variableDefs'
 
 // live palette max colors allowed to be added
 export const LP_MAX_COLORS_ALLOWED = 8
