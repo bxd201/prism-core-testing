@@ -1,11 +1,11 @@
 /* eslint-env jest */
 import React from 'react'
-import { mount } from 'enzyme'
 import CircleLoader from 'src/components/Loaders/CircleLoader/CircleLoader'
 
 describe('CircleLoader with empty props', () => {
   let circleLoader
   beforeAll(() => {
+    // eslint-disable-next-line no-undef
     circleLoader = mocked(<CircleLoader />)
   })
 
@@ -25,6 +25,7 @@ describe('CircleLoader with empty props', () => {
 describe('CircleLoader with props', () => {
   let circleLoader
   beforeAll(() => {
+    // eslint-disable-next-line no-undef
     circleLoader = mocked(<CircleLoader />)
   })
 
@@ -33,6 +34,6 @@ describe('CircleLoader with props', () => {
   })
 
   it('should render svg tag with class name: prism-loader-circle', () => {
-    expect(circleLoader.find('svg.prism-loader-circle').length).toBe(1)
+    expect(circleLoader.find('svg.prism-loader-circle')).toHaveLength(1)
   })
 })

@@ -1,6 +1,6 @@
 import React from 'react'
 import { shallow } from 'enzyme'
-import { InspiredScene } from 'src/components/InspirationPhotos/InspiredScene'
+import InspiredScene from 'src/components/InspirationPhotos/InspiredScene'
 import ColorsFromImage from 'src/components/InspirationPhotos/ColorsFromImage'
 let defaultProps = {
   data: {},

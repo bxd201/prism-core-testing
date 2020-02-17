@@ -176,24 +176,6 @@ exports[`PrismNav component with props should match snapshot 1`] = `
         </Link>
         <Link
           className="prism-nav-btn "
-          to="/color-from-image"
-        >
-          <LinkAnchor
-            className="prism-nav-btn "
-            href="/color-from-image"
-            navigate={[Function]}
-          >
-            <a
-              className="prism-nav-btn "
-              href="/color-from-image"
-              onClick={[Function]}
-            >
-              Color From Image
-            </a>
-          </LinkAnchor>
-        </Link>
-        <Link
-          className="prism-nav-btn "
           to="/color-collections"
         >
           <LinkAnchor
@@ -225,42 +207,6 @@ exports[`PrismNav component with props should match snapshot 1`] = `
               onClick={[Function]}
             >
               Expert Colors
-            </a>
-          </LinkAnchor>
-        </Link>
-        <Link
-          className="prism-nav-btn "
-          to="/match-photo"
-        >
-          <LinkAnchor
-            className="prism-nav-btn "
-            href="/match-photo"
-            navigate={[Function]}
-          >
-            <a
-              className="prism-nav-btn "
-              href="/match-photo"
-              onClick={[Function]}
-            >
-              Match Photo
-            </a>
-          </LinkAnchor>
-        </Link>
-        <Link
-          className="prism-nav-btn "
-          to="/paint-scene"
-        >
-          <LinkAnchor
-            className="prism-nav-btn "
-            href="/paint-scene"
-            navigate={[Function]}
-          >
-            <a
-              className="prism-nav-btn "
-              href="/paint-scene"
-              onClick={[Function]}
-            >
-              Paint a Scene
             </a>
           </LinkAnchor>
         </Link>

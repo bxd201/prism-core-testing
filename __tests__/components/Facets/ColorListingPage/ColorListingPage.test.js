@@ -80,10 +80,6 @@ describe('ColorListingPage routes', () => {
     expect(pathMap[homeRoute]).toBe(RootRedirect)
   })
 
-  it('should show ColorWallComponent component for route defined as colorWallUrlPattern constant', () => {
-    expect(pathMap[`${colorWallBaseUrl}(/.*)?`]).toBe(ColorWallPage)
-  })
-
   it('should show ColorDetailsComponent component for route defined as activeColorIdSeoUrlPattern constant', () => {
     expect(pathMap[activeColorIdSeoUrlPattern]).toBe(ColorDetailsComponent)
   })

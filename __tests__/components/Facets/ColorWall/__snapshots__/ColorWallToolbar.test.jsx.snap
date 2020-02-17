@@ -342,12 +342,12 @@ exports[`snapshot matches 1`] = `
                   </Bar>
                 </div>
                 <AriaMenuButtonWrapper
-                  className="menu-bar menu-bar--closed"
+                  className="color-wall-mode-btns__cell color-wall-mode-btns__right menu-bar menu-bar--closed"
                   onMenuToggle={[Function]}
                   tag="div"
                 >
                   <div
-                    className="menu-bar menu-bar--closed"
+                    className="color-wall-mode-btns__cell color-wall-mode-btns__right menu-bar menu-bar--closed"
                   >
                     <AriaMenuButtonButton
                       className="menu-bar__button"

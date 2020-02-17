@@ -6,7 +6,7 @@ import at from 'lodash/at'
 import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
 
 import { getColors } from '../functions'
-import { varNames } from 'variables'
+import { varNames } from 'src/shared/variableDefs'
 
 import './HeroLoader.scss'
 

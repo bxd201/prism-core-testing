@@ -36,6 +36,7 @@ exports[`Prism routes should match snapshot 1`] = `
               "swatchMaxSizeZoomed": 50,
               "swatchMinSize": 14,
               "swatchMinSizeZoomed": 50,
+              "updateA11y": [Function],
             }
           }
         >
@@ -66,23 +67,11 @@ exports[`Prism routes should match snapshot 1`] = `
       />
       <Route
         component={[Function]}
-        path="/color-from-image"
-      />
-      <Route
-        component={[Function]}
         path="/color-collections"
       />
       <Route
         component={[Function]}
         path="/expert-colors"
-      />
-      <Route
-        component={[Function]}
-        path="/match-photo"
-      />
-      <Route
-        path="/paint-scene"
-        render={[Function]}
       />
       <Route
         component={
