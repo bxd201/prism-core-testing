@@ -33,7 +33,8 @@ pipeline {
         rm -rf dist
 
         # Make sure the build container has been removed
-        docker rm -f ${IMAGE_NAME}-build-${BUILD_NUMBER}
+        docker stop ${IMAGE_NAME}-build-${BUILD_NUMBER} || true
+        docker rm ${IMAGE_NAME}-build-${BUILD_NUMBER} || true
 
         # Mount the volumes from Jenkins and run the deploy
         docker run \
@@ -90,6 +91,11 @@ pipeline {
 
         archiveArtifacts artifacts: "${IMAGE_NAME}.docker.tar.gz", fingerprint: true
         archiveArtifacts artifacts: "prism-core.tgz", fingerprint: true
+      }
+    }
+    state('test') {
+      steps {
+        sh 'npm run test'
       }
     }
     stage('image-testing') {
