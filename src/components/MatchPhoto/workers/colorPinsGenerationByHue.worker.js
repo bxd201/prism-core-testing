@@ -5,12 +5,11 @@ import sampleSize from 'lodash/sampleSize'
 import groupBy from 'lodash/groupBy'
 import toArray from 'lodash/toArray'
 import { findBrandColor } from '../../InspirationPhotos/data'
-import { brandColors } from '../../InspirationPhotos/sw-colors-in-LAB.js'
 
 declare var self: DedicatedWorkerGlobalScope
 
 self.addEventListener('message', (e: Object) => {
-  const { imageData, imageDimensions } = e.data
+  const { imageData, imageDimensions, brandColors } = e.data
   const colorTally = createColorTallies(imageData.data, imageDimensions.width, imageDimensions.height)
   const colorTallyGroupByHue = toArray(groupBy(colorTally, (color) => color.hueRangeNumber))
 
@@ -31,7 +30,7 @@ self.addEventListener('message', (e: Object) => {
       const r = color.value.r
       const g = color.value.g
       const b = color.value.b
-      const arrayIndex = findBrandColor([r, g, b])
+      const arrayIndex = findBrandColor([r, g, b], brandColors)
       const sherwinRgb = `rgb(${brandColors[arrayIndex + 2]})`
 
       const key = sherwinRgb

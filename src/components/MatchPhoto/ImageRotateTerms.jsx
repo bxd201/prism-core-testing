@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
 import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
-
+import { FormattedMessage } from 'react-intl'
 import 'src/scss/convenience/visually-hidden.scss'
 
 const baseClass = 'image-rotate-terms-modal'
@@ -72,7 +72,7 @@ const ImageRotateTerms = ({ rotateImage, createColorPins, imageData }: Props) =>
       <div className={`${wrapperContainerClass} ${hideModal ? `${wrapperContainerInactiveClass}` : ``}`}>
         <div className={`${wrapperToolsClass}`}>
           <div className={`${wrapperToolsMessageClass}`}>
-            Use these arrows to rotate your image.
+            <FormattedMessage id='PREVIEW_ROTATE_SCALE' />
           </div>
           <button
             onMouseDown={mouseDownHandler}
@@ -100,12 +100,12 @@ const ImageRotateTerms = ({ rotateImage, createColorPins, imageData }: Props) =>
                 }
                 <input tabIndex='-1' className='visually-hidden' type='checkbox' value='terms' checked={accetTerms} onChange={handleChange} />
               </label>
-            </span> <span className={`${wrapperAgreeTermsTextClass}`}>I accept Terms of Use</span>
+            </span> <span className={`${wrapperAgreeTermsTextClass}`}><FormattedMessage id='I_ACCEPT' /> <FormattedMessage id='TERMS_OF_USE' /></span>
           </div>
         </div>
         <button
           className={`${wrapperAgreeTermsAcceptClass} ${accetTerms ? `${wrapperAgreeTermsAcceptActiveClass}` : ``}`}
-          onClick={() => (accetTerms) ? clickHandler() : {}}>DONE</button>
+          onClick={() => (accetTerms) ? clickHandler() : {}}><FormattedMessage id='DONE' /></button>
       </div>
       { hideModal && <div className={`${wrapperLoaderClass}`}><CircleLoader /></div> }
     </div>

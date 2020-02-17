@@ -1,7 +1,6 @@
 // @flow
 // import type { CollectionsTab } from '../../shared/types/Colors'
 import { getDeltaE00 } from 'delta-e'
-import { brandColors } from './sw-colors-in-LAB.js'
 
 export const throttleDragTime = 5
 // we need this two const to make sure cursor always point to the center of preview circle
@@ -75,12 +74,12 @@ export const rgb2lab = (rgb: Array<any>) => {
   return [(116 * y) - 16, 500 * (x - y), 200 * (y - z)]
 }
 
-export const renderingPins = (initPins: Array<Object>, canvasOffsetWidth: number, canvasOffsetHeight: number) => {
+export const renderingPins = (initPins: Array<Object>, canvasOffsetWidth: number, canvasOffsetHeight: number, brandColors: Array) => {
   const RGBinitPins = getRGBInitPins(initPins)
   return RGBinitPins.map<Object>((acgColor: any, index: number): Object => {
     const calculateTranslateX = acgColor.translateValueX * canvasOffsetWidth
     const calculateTranslateY = acgColor.translateValueY * canvasOffsetHeight
-    const arrayIndex = findBrandColor(acgColor.rgbArray)
+    const arrayIndex = findBrandColor(acgColor.rgbArray, brandColors)
     const rgbValueBrandColor = 'rgb(' + brandColors[arrayIndex + 2] + ')'
     let isContentLeft = false
     if (calculateTranslateX < canvasOffsetWidth / 2) {
@@ -99,7 +98,7 @@ export const renderingPins = (initPins: Array<Object>, canvasOffsetWidth: number
   })
 }
 
-export const findBrandColor = (currentPixelRGB: Array<number>) => {
+export const findBrandColor = (currentPixelRGB: Array<number>, brandColors: Array) => {
   let currentPixelInLABarray = rgb2lab(currentPixelRGB)
   let theMostCloseDistance = 100
   let index = 0

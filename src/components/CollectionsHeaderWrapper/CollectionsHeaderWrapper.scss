@@ -71,6 +71,7 @@
   }
   &__button-left-text {
     display: none;
+    text-transform: uppercase;
     @include respond-above(sm) {
       display: inline-block;
     }
