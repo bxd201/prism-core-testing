@@ -32,6 +32,9 @@ pipeline {
         # Clean up any old image archive files
         rm -rf dist
 
+        # Make sure the build container has been removed
+        docker rm -f ${IMAGE_NAME}-build-${BUILD_NUMBER}
+
         # Mount the volumes from Jenkins and run the deploy
         docker run \
           --name ${IMAGE_NAME}-build-${BUILD_NUMBER} \
