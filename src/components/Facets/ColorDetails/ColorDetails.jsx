@@ -109,11 +109,13 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
               GA.event({ category: 'Color Detail', action: tabNames[index], label: tabNames[index] })
             }}>
               <TabList className={`${baseClass}__tab-list`} style={{ backgroundColor: activeColor.hex }}>
-                <Tab className={`coordinating-colors-tab ${baseClass}__tab ${activeColor.isDark ? `${baseClass}__tab--dark-color` : ''}`}>
-                  <div className={`${baseClass}__tab-copy`}>
-                    <FormattedMessage id='COORDINATING_COLORS' />
-                  </div>
-                </Tab>
+                {activeColor.coordinatingColors && (
+                  <Tab className={`coordinating-colors-tab ${baseClass}__tab ${activeColor.isDark ? `${baseClass}__tab--dark-color` : ''}`}>
+                    <div className={`${baseClass}__tab-copy`}>
+                      <FormattedMessage id='COORDINATING_COLORS' />
+                    </div>
+                  </Tab>
+                )}
                 <Tab className={`similar-colors-tab ${baseClass}__tab ${activeColor.isDark ? `${baseClass}__tab--dark-color` : ''}`}>
                   <div className={`${baseClass}__tab-copy`}>
                     <FormattedMessage id='SIMILAR_COLORS' />
@@ -125,9 +127,11 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
                   </div>
                 </Tab>
               </TabList>
-              <TabPanel className={`${baseClass}__tab-panel`}>
-                <CoordinatingColors colors={colors} color={activeColor} />
-              </TabPanel>
+              {activeColor.coordinatingColors && (
+                <TabPanel className={`${baseClass}__tab-panel`}>
+                  <CoordinatingColors colors={colors} color={activeColor} />
+                </TabPanel>
+              )}
               <TabPanel className={`${baseClass}__tab-panel`}>
                 <SimilarColors colors={colors} color={activeColor} />
               </TabPanel>
