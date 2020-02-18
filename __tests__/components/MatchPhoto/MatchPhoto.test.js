@@ -22,10 +22,6 @@ describe('MatchPhoto with props', () => {
     }
   })
 
-  it('should match snapshot with props', () => {
-    expect(matchPhoto).toMatchSnapshot()
-  })
-
   it('should render FileInput', () => {
     expect(matchPhoto.find(FileInput).exists()).toBe(true)
   })

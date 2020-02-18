@@ -13,6 +13,7 @@ import 'src/config/fontawesome'
 import '@formatjs/intl-relativetimeformat/polyfill'
 import '@formatjs/intl-relativetimeformat/polyfill-locales'
 import Adapter from 'enzyme-adapter-react-16'
+import { LiveAnnouncer } from 'react-aria-live'
 
 configure({ adapter: new Adapter() })
 
@@ -52,8 +53,6 @@ window.mocked = (mockedComponent, nonDefaultParams = {}) => {
     history = createMemoryHistory({ initialEntries: [url] })
   } = nonDefaultParams
 
-  history.entries.forEach(entry => entry.key = '') // prevent entry key from being a randomly generated hash, so that test snapshots match
-
   useRouteMatch.mockReturnValue({ path: path, url: url, params: routeParams })
   useHistory.mockReturnValue(history)
   useParams.mockReturnValue(routeParams)
@@ -66,7 +65,9 @@ window.mocked = (mockedComponent, nonDefaultParams = {}) => {
       <Provider store={store}>
         <Router history={history}>
           <ConfigurationContext.Provider value={{ brandId: 'sherwin', theme: {} }}>
-            {mockedComponent}
+            <LiveAnnouncer>
+              {mockedComponent}
+            </LiveAnnouncer>
           </ConfigurationContext.Provider>
         </Router>
       </Provider>

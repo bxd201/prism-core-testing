@@ -21,8 +21,6 @@ describe('ZoomTool render testing', () => {
 
   beforeEach(() => (zoomTool = createZoomTool()))
 
-  it('should match snapshot', () => expect(zoomTool).toMatchSnapshot())
-
   it('should render 2 spans with content', () => {
     expect(zoomTool.find(`div.${wrapperClass} > span`).at(0).text()).toEqual('ZOOM OUT')
     expect(zoomTool.find(`div.${wrapperClass} > span`).at(1).text()).toEqual('ZOOM IN')

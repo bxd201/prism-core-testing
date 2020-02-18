@@ -30,10 +30,6 @@ describe('ColorListingPage', () => {
     }
   })
 
-  it('should match snapshot', () => {
-    expect(colorListingPage).toMatchSnapshot()
-  })
-
   it('should render TransitionGroup component', () => {
     expect(colorListingPage.find(TransitionGroup).exists()).toBe(true)
   })

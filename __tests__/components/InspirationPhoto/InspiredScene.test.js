@@ -15,12 +15,6 @@ const createInspiredScene = (props) => {
 
 const wrapper = createInspiredScene()
 
-describe('snapshot match testing', () => {
-  it('snapshot test', () => {
-    expect(wrapper).toMatchSnapshot()
-  })
-})
-
 describe('compoments rendring test', () => {
   it('should rendering ColorsFromImage Component', () => {
     expect(wrapper.find(ColorsFromImage).exists()).toBe(true)

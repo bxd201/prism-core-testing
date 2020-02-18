@@ -12,10 +12,6 @@ const createCollectionSummary = (props = {}) => {
 const wrapper = createCollectionSummary({ isExpertColor: true, getSummaryData: jest.fn(), data: [] })
 const collectionWrapper = createCollectionSummary({ isExpertColor: false, getSummaryData: jest.fn(), data: [] })
 
-describe('snapshot match testing', () => {
-  expect(wrapper).toMatchSnapshot()
-})
-
 describe('CollectionSummary should rendering correctly with different props', () => {
   it('should rendering component wrapper', () => {
     expect(wrapper.find(`${baseClass}__wrapper`)).toBeTruthy()

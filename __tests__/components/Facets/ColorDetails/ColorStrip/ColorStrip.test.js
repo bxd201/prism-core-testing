@@ -23,10 +23,6 @@ describe('ColorStrip component with empty props', () => {
     }
   })
 
-  it('ColorStrip Snapshot with empty props', () => {
-    expect(colorStrip).toMatchSnapshot()
-  })
-
   it('ColorStrip is rendering with empty props', () => {
     expect(colorStrip.exists()).toBe(true)
   })
@@ -38,10 +34,6 @@ describe('ColorStrip component with props', () => {
     if (!colorStrip) {
       colorStrip = getColorStrip({ colors: colors, color: color, history: historyMock })
     }
-  })
-
-  it('ColorStrip Snapshot with props', () => {
-    expect(colorStrip).toMatchSnapshot()
   })
 
   it('ColorStrip is rendering', () => {

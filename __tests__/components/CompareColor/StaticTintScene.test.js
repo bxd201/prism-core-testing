@@ -26,10 +26,6 @@ describe('StaticTintScene with props', () => {
     }
   })
 
-  it('should match snapshot with props', () => {
-    expect(staticTintScene).toMatchSnapshot()
-  })
-
   it('should render ImagePreloader', () => {
     expect(staticTintScene.find(ImagePreloader).exists()).toBe(true)
   })

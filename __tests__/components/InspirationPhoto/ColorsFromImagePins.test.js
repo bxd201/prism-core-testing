@@ -38,12 +38,6 @@ const focus = jest.fn()
 const keyUp = jest.fn()
 const button = `[role='button']`
 
-describe('snapshot match testing', () => {
-  it('snapshot testing', () => {
-    expect(wrapper).toMatchSnapshot()
-  })
-})
-
 describe('Testing state for createColorsFromImage Pins component', () => {
   it('State should initialize correctly', () => {
     const initialState = wrapper.instance().state

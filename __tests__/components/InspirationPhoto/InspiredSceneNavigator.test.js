@@ -19,8 +19,6 @@ describe('Testing state for InspiredSceneNavigator component', () => {
     inspiredSceneNavigator = mocked(<InspiredSceneNavigator {...defaultProps} />)
   })
 
-  it('matches snapshot', () => expect(inspiredSceneNavigator).toMatchSnapshot())
-
   it('State should initialize correctly', () => {
     expect(inspiredSceneNavigator.find(ColorCollectionsTab).props().tabIdShow).toEqual('tab0')
   })

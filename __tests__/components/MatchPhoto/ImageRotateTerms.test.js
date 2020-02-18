@@ -34,10 +34,6 @@ describe('ImageRotateTerms with props', () => {
     }
   })
 
-  it('should match snapshot with props', () => {
-    expect(imageRotateTerms).toMatchSnapshot()
-  })
-
   it(`should render div.${wrapperToolsMessageClass} with headerContnet`, () => {
     const headerContnet = 'Use these arrows to rotate your image.'
     expect(imageRotateTerms.find(`div.${wrapperToolsMessageClass}`).contains(headerContnet)).toBe(true)
