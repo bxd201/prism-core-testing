@@ -2,7 +2,6 @@
 import React from 'react'
 import { shallow, mount } from 'enzyme'
 import { ColorCollections } from 'src/components/ColorCollections/ColorCollections'
-import CollectionDetail from 'src/components/Shared/CollectionDetail'
 import mocks from '../../../__mocks__/helpers/MockUtility'
 
 // create reusable mocks
@@ -122,12 +121,12 @@ describe('Color Collections component', () => {
     it('should load colors', () => {
       getColorCollections(stub, true)
       expect(mocks.fn.loadColors.mock.calls).toHaveLength(2)
-      expect(mocks.fn.loadColors.mock.calls[0]).toEqual(expect.arrayContaining(['mike', {language: 'tyson'}]))
+      expect(mocks.fn.loadColors.mock.calls[0]).toEqual(expect.arrayContaining(['mike', { language: 'tyson' }]))
     })
 
     it('should NOT load colors if NOT required', () => {
       expect(mocks.fn.loadColors.mock.calls).toHaveLength(1)
-      expect(JSON.stringify(defaultProps.loadColors.mock.calls[0])).toBe(JSON.stringify(['mike', {language: 'tyson'}]))
+      expect(JSON.stringify(defaultProps.loadColors.mock.calls[0])).toBe(JSON.stringify(['mike', { language: 'tyson' }]))
     })
   })
 
@@ -174,7 +173,7 @@ describe('Color Collections component', () => {
         mocks.restore(ColorCollections, 'getSummariesForTab')
 
         mocks.set(ColorCollections, 'getSummary', () => 'munchies')
-        const actual = ColorCollections.getSummariesForTab(stub.tabId, stub.props);
+        const actual = ColorCollections.getSummariesForTab(stub.tabId, stub.props)
 
         // returns whatever getSummary returns
         expect(actual).toEqual(Array(stub.props.categories.data[1].summaryIds.length).fill('munchies'))

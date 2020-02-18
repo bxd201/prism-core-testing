@@ -3,18 +3,12 @@ import React from 'react'
 import { shallow } from 'enzyme'
 import { Route } from 'react-router'
 import { Prism, RootRedirect } from 'src/components/Facets/Prism/Prism'
-import { SceneManager } from 'src/components/SceneManager/SceneManager'
 import { ROUTE_PARAMS, ROUTE_PARAM_NAMES } from 'constants/globals'
 import ColorDetails from 'src/components/Facets/ColorDetails/ColorDetails'
 import PrismNav from '../../../../src/components/Facets/Prism/PrismNav'
 
 const homeRoute = '/'
-const activeRoute = '/active'
-const activeColorsFromImageRoute = '/active/colors-from-image'
 const livePaletteConnectSelect = 'Connect(LivePalette)'
-
-const colorWallBaseUrl = `/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_WALL}`
-const colorWallUrlPattern = `${colorWallBaseUrl}(/.*)?`
 const activeColorIdSeoUrlPattern = `/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`
 
 const getPrism = (props) => {
@@ -39,10 +33,6 @@ describe('Prism routes', () => {
       pathMap[routeProps.path] = routeProps.component
       return pathMap
     }, {})
-  })
-
-  it('should match snapshot', () => {
-    expect(prism).toMatchSnapshot()
   })
 
   it('should show RootRedirect component for route defined as homeRoute constant', () => {

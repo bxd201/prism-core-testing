@@ -21,10 +21,6 @@ describe('Tinter without props', () => {
     }
   })
 
-  it('should match snapshot', () => {
-    expect(tinter).toMatchSnapshot()
-  })
-
   it('should render', () => {
     expect(tinter.exists()).toBe(true)
   })
@@ -44,10 +40,6 @@ describe('Tinter with props', () => {
     if (!tinter) {
       tinter = getTinter()
     }
-  })
-
-  it('should match snapshot', () => {
-    expect(tinter).toMatchSnapshot()
   })
 
   it('should render', () => {

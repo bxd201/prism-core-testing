@@ -34,10 +34,6 @@ describe('SceneVariantSwitch component with props', () => {
     }
   })
 
-  it('should match snapshot', () => {
-    expect(sceneVariantSwitch).toMatchSnapshot()
-  })
-
   it('should render label', () => {
     expect(sceneVariantSwitch.find(labelSelect).exists()).toBe(true)
   })

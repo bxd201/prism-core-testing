@@ -2,8 +2,6 @@ import React from 'react'
 import SearchBar from 'src/components/Search/SearchBar'
 import ButtonBar from 'src/components/GeneralButtons/ButtonBar/ButtonBar'
 
-test('matches snapshot', () => expect(mocked(<SearchBar />)).toMatchSnapshot())
-
 describe('<SearchBar />', () => {
   test('renders a cancel button by default', () => {
     expect(mocked(<SearchBar />).contains(ButtonBar.Button)).toBe(true)

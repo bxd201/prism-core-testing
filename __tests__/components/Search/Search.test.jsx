@@ -3,8 +3,6 @@ import React from 'react'
 import Search from 'src/components/Search/Search'
 import GenericOverlay from 'src/components/Overlays/GenericOverlay/GenericOverlay'
 
-test('matches snapshot', () => expect(mocked(<Search />)).toMatchSnapshot())
-
 test('displays heroLoader while loading', () => {
   const MockedSearch = mocked(<Search />, {
     mockedStoreValues: {

@@ -14,10 +14,6 @@ const defaultProps = {
   onClick: clickFn
 }
 
-test('matches snapshot', () => {
-  expect(mocked(<ColorWallSwatchUI {...defaultProps} />)).toMatchSnapshot()
-})
-
 test('should rendring Link correctly with props', () => {
   expect(mocked(<ColorWallSwatchUI {...defaultProps} thisLink='link' />).find(Link).exists()).toEqual(true)
 })

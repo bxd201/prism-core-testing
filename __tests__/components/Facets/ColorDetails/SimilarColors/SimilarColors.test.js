@@ -20,10 +20,6 @@ describe('SimilarColors component with props', () => {
     }
   })
 
-  it('SimilarColors Snapshot with props', () => {
-    expect(similarColors).toMatchSnapshot()
-  })
-
   it('SimilarColors is rendering', () => {
     expect(similarColors.exists()).toBe(true)
   })

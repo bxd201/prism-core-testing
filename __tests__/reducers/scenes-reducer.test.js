@@ -45,12 +45,12 @@ xdescribe('scenes-reducer', () => {
 
   test('receive scenes', () => {
     const action = { type: actions.RECEIVE_SCENES,
-payload: {
-      loadingScenes: false,
-      scenes: scene,
-      numScenes: scene.length,
-      type: 'rooms'
-    } }
+      payload: {
+        loadingScenes: false,
+        scenes: scene,
+        numScenes: scene.length,
+        type: 'rooms'
+      } }
     const newState = scenes(initialState, action)
     receiveScenes = cloneDeep(newState)
     expect(newState).toEqual({ ...initialState,

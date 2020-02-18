@@ -13,14 +13,6 @@ describe('<TintableSceneSVGDefs />', () => {
   })
 
   describe(`${SCENE_TYPES.ROOM} SVG filters and masks`, () => {
-    test('render', () => {
-      const component = renderer.create(
-        <TintableSceneSVGDefs type={SCENE_TYPES.ROOM} />
-      ).toJSON()
-
-      expect(component).toMatchSnapshot()
-    })
-
     test('does not respond to shadow and highlight maps', () => {
       const component1 = renderer.create(
         <TintableSceneSVGDefs type={SCENE_TYPES.ROOM} shadowMap={'shadows'} highlightMap={'highlights'} />
@@ -54,13 +46,6 @@ describe('<TintableSceneSVGDefs />', () => {
   })
 
   describe(`${SCENE_TYPES.OBJECT} SVG filters and masks`, () => {
-    test('render', () => {
-      const component = renderer.create(
-        <TintableSceneSVGDefs type={SCENE_TYPES.OBJECT} />
-      ).toJSON()
-      expect(component).toMatchSnapshot()
-    })
-
     test('responds to shadow and highlight maps', () => {
       const component1 = renderer.create(
         <TintableSceneSVGDefs type={SCENE_TYPES.OBJECT} shadowMap={'shadows'} highlightMap={'highlights'} />

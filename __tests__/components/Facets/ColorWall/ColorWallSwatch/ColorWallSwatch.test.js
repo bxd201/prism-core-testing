@@ -20,10 +20,6 @@ const defaultProps = {
   active: false
 }
 
-test('ColorWallSwatch should match the Snapshot', () => {
-  expect(mocked(<ColorWallSwatch {...defaultProps} />)).toMatchSnapshot()
-})
-
 test('ColorWallSwatch should render color title as default', () => {
   expect(fullColorName(color.brandKey, color.colorNumber, color.name)).toBe('SW 6561 Teaberry')
 })

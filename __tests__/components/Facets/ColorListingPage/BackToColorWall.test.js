@@ -12,8 +12,6 @@ describe('BackToColorWall', () => {
     backToColorWall = mocked(<BackToColorWall color={Colors.getColor()} />)
   })
 
-  it('should match snapshot', () => expect(backToColorWall).toMatchSnapshot())
-
   it('should rendring format message component', () => expect(backToColorWall.find(FormattedMessage)).toBeTruthy())
 
   it('should rendring Link correctly', () => expect(backToColorWall.find(Link)).toBeTruthy())

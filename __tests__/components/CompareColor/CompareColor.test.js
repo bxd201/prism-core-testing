@@ -39,10 +39,6 @@ describe('CompareColor with props', () => {
     }
   })
 
-  it('should match snapshot with props', () => {
-    expect(compareColor).toMatchSnapshot()
-  })
-
   it('CompareColor is rendering with props', () => {
     expect(compareColor.exists()).toBe(true)
   })

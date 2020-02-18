@@ -15,10 +15,6 @@ const coordinatingColorSwatch = (color) => {
 describe('Coordinary Color Swatch component will pass props correctly', () => {
   const wrapper = coordinatingColorSwatch(color)
 
-  it('snapshot testing', () => {
-    expect(wrapper).toMatchSnapshot()
-  })
-
   it('component will be rendering', () => {
     const colorSwatchExist = wrapper.exists()
     expect(colorSwatchExist).toEqual(true)

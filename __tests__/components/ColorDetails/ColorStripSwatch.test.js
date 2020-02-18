@@ -15,9 +15,6 @@ const colorStripSwatch = (color) => {
 // rendering test
 describe('Coordinary Color Swatch component will pass props correctly', () => {
   const wrapper = colorStripSwatch(color)
-  it('snapshot testing', () => {
-    expect(wrapper).toMatchSnapshot()
-  })
 
   it('component will be rendering', () => {
     const colorSwatchExist = wrapper.exists()

@@ -9,10 +9,6 @@ describe('CircleLoader with empty props', () => {
     circleLoader = mocked(<CircleLoader />)
   })
 
-  it('should match snapshot', () => {
-    expect(circleLoader).toMatchSnapshot()
-  })
-
   it('should render svg tag', () => {
     expect(circleLoader.find('svg').exists()).toBe(true)
   })
@@ -27,10 +23,6 @@ describe('CircleLoader with props', () => {
   beforeAll(() => {
     // eslint-disable-next-line no-undef
     circleLoader = mocked(<CircleLoader />)
-  })
-
-  it('should match snapshot', () => {
-    expect(circleLoader).toMatchSnapshot()
   })
 
   it('should render svg tag with class name: prism-loader-circle', () => {
