@@ -2,6 +2,7 @@
 import axios from 'axios'
 
 import { CONFIG_ENDPOINT } from 'constants/endpoints'
+import { generateBrandedEndpoint } from 'src/shared/helpers/DataUtils'
 
 export const REQUEST_CONFIGURATION: string = 'REQUEST_CONFIGURATION'
 const requestConfiguration = () => {
@@ -36,7 +37,7 @@ export const loadConfiguration = (brandId: string) => {
     dispatch(requestConfiguration())
 
     axios
-      .get(`${CONFIG_ENDPOINT}/${brandId.toLowerCase()}`) // TODO: remove this toLowecase() concat as well, maybe.
+      .get(generateBrandedEndpoint(CONFIG_ENDPOINT, brandId.toLowerCase())) // TODO: remove this toLowecase()
       .then(r => r.data)
       .then(config => {
         dispatch(receiveConfiguration(config))
