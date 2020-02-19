@@ -6,7 +6,8 @@ import { BrowserRouter, HashRouter, MemoryRouter } from 'react-router-dom'
 import ErrorBoundary from 'src/helpers/ErrorBoundary/ErrorBoundary'
 import { type EmbeddedConfiguration } from 'src/shared/types/Configuration'
 import ConfigurationContextProvider from 'src/contexts/ConfigurationContext/ConfigurationContextProvider'
-import { LiveAnnouncer } from 'react-aria-live'
+import { LiveAnnouncer, LiveMessenger } from 'react-aria-live'
+import LiveAnnouncerContextProvider from 'src/contexts/LiveAnnouncerContext/LiveAnnouncerContextProvider'
 // all supported languages
 import languages from 'src/translations/translations'
 
@@ -71,7 +72,13 @@ export const facetMasterWrapper = (Component: ComponentType<any>) => {
             <Provider store={store}>
               <ConfigurationContextProvider {...props}>
                 <LiveAnnouncer>
-                  { RouterRender }
+                  <LiveMessenger>
+                    {({ announcePolite, announceAssertive }) => {
+                      return <LiveAnnouncerContextProvider announcePolite={announcePolite} announceAssertive={announceAssertive}>
+                        { RouterRender }
+                      </LiveAnnouncerContextProvider>
+                    }}
+                  </LiveMessenger>
                 </LiveAnnouncer>
               </ConfigurationContextProvider>
             </Provider>
