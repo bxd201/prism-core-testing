@@ -118,8 +118,10 @@ export const paintAllSceneSurfaces = (color: Color) => {
 export const loadScenes = (type: string) => {
   return (dispatch: Function, getState: Function) => {
     const { sceneCollection, type: oldType } = getState().scenes
+    const { current } = getState().language
+
     // const { brandId } = getState().configurations
-    const SCENES_URL = generateBrandedEndpoint(SCENES_ENDPOINT, 'sherwin')
+    const SCENES_URL = generateBrandedEndpoint(SCENES_ENDPOINT, 'sherwin', { language: current })
 
     let scenes = !isEmpty(sceneCollection) && !isEmpty(sceneCollection[type]) && sceneCollection[type]
 

@@ -6,7 +6,6 @@ import PaletteSuggester from './ColorPickerSlideContainer'
 import MoreDetailsCollapse from './MoreDetails'
 import './ColorPickerSlide.scss'
 import { useSelector, useDispatch } from 'react-redux'
-import { useIntl } from 'react-intl'
 import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import { loadColors } from '../../store/actions/loadColors'
 import { loadCollectionSummaries } from '../../store/actions/collectionSummaries'
@@ -29,13 +28,12 @@ function ColorPickerSlide (props: SummaryProps) {
     }
   })
   const { brandId } = useContext(ConfigurationContext)
-  const { locale } = useIntl()
   const dispatch = useDispatch()
   const [isShowSlider, handleSlideShow] = useState(false)
 
   useEffect(() => {
     dispatch(loadCollectionSummaries())
-    dispatch(loadColors(brandId, { language: locale }))
+    dispatch(loadColors(brandId))
   }, [])
 
   return (

@@ -33,11 +33,12 @@ const loadError = () => {
 }
 
 export const loadConfiguration = (brandId: string) => {
-  return (dispatch: Function) => {
+  return (dispatch: Function, getState: Function) => {
     dispatch(requestConfiguration())
+    const { current } = getState().language
 
     axios
-      .get(generateBrandedEndpoint(CONFIG_ENDPOINT, brandId.toLowerCase())) // TODO: remove this toLowecase()
+      .get(generateBrandedEndpoint(CONFIG_ENDPOINT, brandId.toLowerCase(), { language: current })) // TODO: remove this toLowecase()
       .then(r => r.data)
       .then(config => {
         dispatch(receiveConfiguration(config))

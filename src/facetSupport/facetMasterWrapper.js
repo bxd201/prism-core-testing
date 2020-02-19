@@ -11,6 +11,7 @@ import { LiveAnnouncer } from 'react-aria-live'
 import languages from 'src/translations/translations'
 
 import store from 'src/store/store'
+import { setLanguage } from 'src/store/actions/language'
 import { flattenNestedObject } from '../shared/helpers/DataUtils'
 
 // wraps a react component with the required PRISM HOCs
@@ -61,9 +62,14 @@ export const facetMasterWrapper = (Component: ComponentType<any>) => {
 
     const flatLanguages = useMemo(() => flattenNestedObject(languages[language]), [languages, language])
 
+    // define chosen language within redux -- this is used for API requests
+    // this will need to update if language changes in realtime
+    store.dispatch(setLanguage(language))
+
     // Two levels of error boundary here. The vast majority of errors will hit the inner boundary, which will provide translated messaging.
     // If, for some reason, an error occurs in the IntlProvider (or ErrorBoundary) level, the outer boundary will catch it instead and at least display SOMETHING, although
     // that something will include our message keys.
+
     return (
       <ErrorBoundary translated={false}>
         <IntlProvider locale={language} messages={flatLanguages} textComponent={React.Fragment}>

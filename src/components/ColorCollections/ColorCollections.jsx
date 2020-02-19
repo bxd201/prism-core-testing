@@ -7,7 +7,6 @@ import WithConfigurationContext from '../../contexts/ConfigurationContext/WithCo
 import Carousel from '../Carousel/Carousel'
 import CollectionSummary from './CollectionSummary'
 import { connect } from 'react-redux'
-import { injectIntl } from 'react-intl'
 import { loadCollectionSummaries as loadCS } from '../../store/actions/collectionSummaries'
 import { loadColors } from '../../store/actions/loadColors'
 import './ColorCollections.scss'
@@ -16,7 +15,6 @@ type SummaryProps = {
   categories: Object,
   colorMap: Object,
   config: Object,
-  intl: Object,
   isShowBack: boolean,
   loadColors: Function,
   loadCS: Function,
@@ -107,7 +105,7 @@ export function ColorCollections (props: SummaryProps) {
   const [colorsRequested, setColorsRequested] = useState(false)
   // load colors if dont exist
   if (!colorsRequested && !hasColors) {
-    props.loadColors(props.config.brandId, { language: props.intl.locale })
+    props.loadColors(props.config.brandId)
     setColorsRequested(true)
   }
 
@@ -204,4 +202,4 @@ const mapDispatchToProps = (dispatch: Function) => {
 export default CollectionsHeaderWrapper(connect(
   mapStateToProps,
   mapDispatchToProps
-)(injectIntl(WithConfigurationContext(ColorCollections))))
+)(WithConfigurationContext(ColorCollections)))
