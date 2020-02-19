@@ -5,9 +5,10 @@
     justify-content: center;
     height: 100%;
     margin: 0 auto;
-    max-width: 1050px;
+    // max-width: 1050px;
     overflow: hidden;
     /*padding: 3em 0;*/
+    width: 100%;
     @include respond-above(sm) {
       padding: 0em;
     }
@@ -122,6 +123,7 @@
     text-align: center;
     top: 0;
     width: 19rem;
+    z-index: 1000;
     &__container {
       background: #f0f0f0;
       display: flex;
