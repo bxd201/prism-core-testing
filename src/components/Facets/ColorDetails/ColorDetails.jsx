@@ -1,10 +1,12 @@
 // @flow
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect, useMemo } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
 import { useSelector, useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import has from 'lodash/has'
+import flattenDeep from 'lodash/flattenDeep'
+import intersection from 'lodash/intersection'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import { FormattedMessage } from 'react-intl'
 import * as GA from 'src/analytics/GoogleAnalytics'
@@ -17,7 +19,7 @@ import SimilarColors from './SimilarColors/SimilarColors'
 import SceneManager from '../../SceneManager/SceneManager'
 import { paintAllMainSurfaces } from '../../../store/actions/scenes'
 import { varValues } from 'src/shared/variableDefs'
-import type { ColorMap, Color } from '../../../shared/types/Colors'
+import type { ColorMap, Color, FamilyStructure } from '../../../shared/types/Colors'
 import 'src/scss/convenience/visually-hidden.scss'
 import './ColorDetails.scss'
 import ColorDataWrapper from 'src/helpers/ColorDataWrapper/ColorDataWrapper'
@@ -38,6 +40,7 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
   const toggleSceneDisplayScene = useRef(null)
   const toggleSceneHideScene = useRef(null)
   const colors: ColorMap = useSelector(state => state.colors.items.colorMap)
+  const structure: FamilyStructure = useSelector(state => state.colors.structure)
   const scenesLoaded: boolean = useSelector(state => !state.scenes.loadingScenes)
   // grab the color by color number from the URL
   const activeColor: Color | typeof undefined = has(colors, colorId) ? colors[colorId] : undefined
@@ -52,6 +55,28 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
   useEffect(() => { // paint all the main surfaces on load of the CDP
     scenesLoaded && activeColor && dispatch(paintAllMainSurfaces(activeColor))
   }, [scenesLoaded, activeColor])
+
+  const optionsPanelProps = useMemo(() => {
+    // default props only contain color
+    let props = {
+      color: activeColor
+    }
+
+    // if we have structure and color data...
+    if (structure && activeColor && familyLink) {
+      const allFams = flattenDeep(structure.map(s => s.families))
+      const { colorFamilyNames } = activeColor
+      // see if our active color's families exist in all families; if yes, allow showing the family link
+      if (intersection(allFams, colorFamilyNames).length > 0) {
+        props = {
+          ...props,
+          familyLink
+        }
+      }
+    }
+
+    return props
+  }, [ structure, activeColor, familyLink ])
 
   if (!activeColor) {
     console.info(`ColorDetails: ${colorId} is not a valid color ID`)
@@ -136,7 +161,7 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
                 <SimilarColors colors={colors} color={activeColor} />
               </TabPanel>
               <TabPanel className={`${baseClass}__tab-panel color-info__tab-panel-details`}>
-                <ColorInfo color={activeColor} familyLink={familyLink} />
+                <ColorInfo {...optionsPanelProps} />
               </TabPanel>
             </Tabs>
           </div>
