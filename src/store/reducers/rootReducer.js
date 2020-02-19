@@ -2,6 +2,7 @@ import { colors } from './colors/index'
 import { combineReducers } from 'redux'
 import { configurations } from './configurations'
 import { lp } from './live-palette'
+import { language } from './language'
 import {
   scenes,
   currentActiveSceneId,
@@ -27,6 +28,7 @@ export default combineReducers({
   expertColorPicks,
   inspirationalPhotos,
   isEditMode,
+  language,
   lp,
   scenes,
   sceneWorkspaces,
