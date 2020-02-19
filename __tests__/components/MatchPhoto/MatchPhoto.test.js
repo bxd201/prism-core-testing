@@ -1,7 +1,7 @@
 /* eslint-env jest */
 import React from 'react'
 import { shallow } from 'enzyme'
-import { MatchPhoto } from 'src/components/MatchPhoto/MatchPhoto'
+import { ImageRotateContainer } from 'src/components/MatchPhoto/ImageRotateContainer'
 import FileInput from 'src/components/FileInput/FileInput'
 
 const historyMock = { goBack: jest.fn() }
@@ -11,7 +11,7 @@ const getMatchPhoto = props => {
   }
 
   let newProps = Object.assign({}, defaultProps, props)
-  return shallow(<MatchPhoto {...newProps} />)
+  return shallow(<ImageRotateContainer {...newProps} />)
 }
 
 describe('MatchPhoto with props', () => {

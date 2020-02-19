@@ -21,7 +21,7 @@ import { Route, Redirect } from 'react-router-dom'
 import { RouteContext } from '../../../contexts/RouteContext/RouteContext'
 import { ROUTE_PARAMS, ROUTE_PARAM_NAMES } from 'constants/globals'
 // TODO: remove static data importing from this component before merging into develop
-import MatchPhoto from '../../MatchPhoto/MatchPhoto'
+import ImageRotateContainer from '../../MatchPhoto/ImageRotateContainer'
 import MyIdeasContainer from '../../MyIdeasContainer/MyIdeasContainer'
 import MyIdeaPreview from '../../MyIdeaPreview/MyIdeaPreview'
 import Help from '../../Help/Help'
@@ -81,8 +81,8 @@ export class Prism extends Component<Props> {
               <Route path='/color-from-image' component={InspiredScene} />
               <Route path='/color-collections' component={(props) => (<ColorCollection isExpertColor={false} {...props.location.state} />)} />
               <Route path='/expert-colors' component={() => <ExpertColorPicks isExpertColor />} />
-              <Route path={MATCH_PHOTO} component={MatchPhoto} />
-              <Route path='/paint-scene' render={() => <MatchPhoto isPaintScene />} />
+              <Route path={MATCH_PHOTO} component={ImageRotateContainer} />
+              <Route path='/paint-scene' render={() => <ImageRotateContainer isPaintScene />} />
               <Route path={MY_IDEAS} render={() => <MyIdeasContainer />} />
               <Route path={MY_IDEAS_PREVIEW} component={MyIdeaPreview} />
               <Route path={`/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`} exact component={ColorDetails} />

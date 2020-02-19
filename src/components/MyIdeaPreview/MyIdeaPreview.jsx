@@ -1,5 +1,5 @@
 // @flow
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState, useContext } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import MergeColors from '../MergeCanvas/MergeColors'
 import PrismImage from '../PrismImage/PrismImage'
@@ -8,7 +8,8 @@ import { setLayersForPaintScene } from '../../store/actions/paintScene'
 
 import './MyIdeaPreview.scss'
 import { Redirect } from 'react-router-dom'
-import { MATCH_PHOTO, MY_IDEAS } from '../Facets/Prism/Prism'
+import { MY_IDEAS } from '../Facets/ColorVisualizerWrapper/ColorVisualizerWrapper'
+import { RouteContext } from '../../contexts/RouteContext/RouteContext'
 
 type myIdeaPreviewProps = {
   // @todo implement -RS
@@ -49,6 +50,7 @@ const MyIdeaPreview = (props: myIdeaPreviewProps) => {
   const backgroundCanvasRef = useRef()
   const foregroundCanvasRef = useRef()
   const wrapperRef = useRef()
+  const routeContext = useContext(RouteContext)
 
   const selectedScene = useSelector(state => {
     const id = state.selectedSavedSceneId
@@ -60,7 +62,7 @@ const MyIdeaPreview = (props: myIdeaPreviewProps) => {
     return null
   })
 
-  const paintSceneWorkSpace = useSelector(state => state.paintSceneWorkspace)
+  // const paintSceneWorkSpace = useSelector(state => state.paintSceneWorkspace)
 
   const { renderingBaseUrl, backgroundImageUrl } = selectedScene || {}
   const initialWidth = selectedScene ? selectedScene.surfaceMasks.width : 0
@@ -144,6 +146,9 @@ const MyIdeaPreview = (props: myIdeaPreviewProps) => {
       selectedScene.palette,
       initialWidth,
       initialHeight))
+
+    routeContext.redirectMyIdeas()
+    return false
   }
 
   const openUnpaintedProject = (e: SyntheticEvent) => {
@@ -155,13 +160,16 @@ const MyIdeaPreview = (props: myIdeaPreviewProps) => {
       selectedScene.palette,
       initialWidth,
       initialHeight))
+
+    routeContext.redirectMyIdeas()
+    return false
   }
 
   return (
     <>
       {/* eslint-disable-next-line no-constant-condition */}
       { selectedScene ? null : <Redirect to={MY_IDEAS} /> }
-      {paintSceneWorkSpace ? <Redirect to={MATCH_PHOTO} /> : null}
+      {/* {paintSceneWorkSpace ? <Redirect to={MATCH_PHOTO} /> : null} */}
       <div ref={wrapperRef} className={wrapperClass} style={{ height: Math.round(height * heightCrop) }}>
         {selectedScene ? <MergeColors
           imageDataList={selectedScene.surfaceMasks.surfaces.map(surface => surface.surfaceMaskImageData)}

@@ -40,6 +40,7 @@ import { checkCanMergeColors, shouldPromptToReplacePalette } from '../LivePalett
 import { LP_MAX_COLORS_ALLOWED } from '../../constants/configurations'
 import { mergeLpColors, replaceLpColors } from '../../store/actions/live-palette'
 import { RouteContext } from '../../contexts/RouteContext/RouteContext'
+import { clearSceneWorkspace } from '../../store/actions/paintScene'
 
 const baseClass = 'paint__scene__wrapper'
 const canvasClass = `${baseClass}__canvas`
@@ -82,7 +83,8 @@ type ComponentProps = {
   lpColors: Object[],
   mergeLpColors: Function,
   replaceLpColors: Function,
-  selectSavedScene: Function
+  selectSavedScene: Function,
+  clearSceneWorkspace: Function
 }
 
 type ComponentState = {
@@ -450,12 +452,12 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     // Handle merge canvas
     this.mergeCanvasRef.current.width = canvasWidth
     this.mergeCanvasRef.current.height = canvasHeight
-
+    this.canvasOriginalDimensions = { width: canvasWidth, height: canvasHeight }
     this.CFICanvas4.current.width = this.canvasOriginalDimensions.width
     this.CFICanvas4.current.height = this.canvasOriginalDimensions.height
     this.canvasOffsetWidth = canvasWidth
     this.canvasOffsetHeight = canvasHeight
-    this.canvasOriginalDimensions = { width: canvasWidth, height: canvasHeight }
+    // this.canvasOriginalDimensions = { width: canvasWidth, height: canvasHeight }
     this.wrapperOriginalDimensions = { width: this.CFIWrapper.current.getBoundingClientRect().width, height: canvasHeight }
     this.setBackgroundImage(canvasWidth, canvasHeight)
   }
@@ -550,6 +552,9 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
         isInfoToolActive: false,
         paintCursor: `${canvasClass}--${toolNames.PAINTAREA}`
       })
+    }
+    if (this.props.workspace) {
+      this.props.clearSceneWorkspace()
     }
   }
 
@@ -1893,7 +1898,8 @@ const mapDispatchToProps = (dispatch: Function) => {
     startSavingMasks: () => dispatch(startSavingMasks()),
     mergeLpColors: (colors: Object[]) => dispatch(mergeLpColors(colors)),
     replaceLpColors: (colors: Object[]) => dispatch(replaceLpColors(colors)),
-    selectSavedScene: (sceneId) => dispatch(selectSavedScene(sceneId))
+    selectSavedScene: (sceneId) => dispatch(selectSavedScene(sceneId)),
+    clearSceneWorkspace: () => clearSceneWorkspace()
   }
 }
 
