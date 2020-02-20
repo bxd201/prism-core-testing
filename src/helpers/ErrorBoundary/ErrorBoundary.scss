@@ -7,15 +7,15 @@
   padding: 10px;
 
   &__title {
-    color: getVar('colors.error');
+    color: getVar('colors.error') !important;
     font-size: 1.2em;
-    margin: 0 0 1em;
+    margin: 0 0 .5em;
     padding: 0;
   }
 
   &__message {
     font-size: 1em;
-    margin: 1em 0 2em;
+    margin: 0 0 2em;
   }
 
   &__btn {

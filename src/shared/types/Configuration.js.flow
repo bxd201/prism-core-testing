@@ -2,13 +2,15 @@
 export type Configuration = {
   brandId: string,
   colorDetailPageRoot: string,
-  displayAddButton?: boolean,
-  displayDetailsLink?: boolean,
-  displayInfoButton?: boolean,
-  ga_domain_id: string,
   colorWall: {
     bloomRadius: number
   },
+  displayAddButton?: boolean,
+  displayDetailsLink?: boolean,
+  displayInfoButton?: boolean,
+  error: any,
+  ga_domain_id: string,
+  loading: boolean,
   swatchShouldEmit: boolean,
   theme: {
     primary: string,
