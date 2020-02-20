@@ -2,6 +2,7 @@
 import { getDeltaE00 } from 'delta-e'
 import difference from 'lodash/difference'
 import uniqueId from 'lodash/uniqueId'
+import cloneDeep from 'lodash/cloneDeep'
 
 const MAX_STACK_SIZE = 200
 
@@ -248,16 +249,19 @@ export const repaintImageByPath = (imagePathList, canvas, width, height, isErase
 export const createImagePathItem = (
   data: number[],
   pixelIndexAlphaMap: Object,
-  color: number[],
+  colorRef: Object,
   type: string,
   drawOrder: number,
   isEnabled: boolean = true,
   excludeFromHistory: boolean = false) => {
+  const color = [colorRef.red, colorRef.green, colorRef.blue]
+
   return {
     id: uniqueId(),
     data,
     pixelIndexAlphaMap,
     color,
+    colorRef: cloneDeep(colorRef),
     type,
     drawOrder,
     isEnabled,

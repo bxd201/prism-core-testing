@@ -97,9 +97,9 @@ const MergeColors = (props: MergeColorsProps) => {
     }
   }, [])
 
-  const handleImageLoad = (e) => {
+  const handleImageLoad = (e, imageIndex) => {
     countRef.current++
-    imagesRef.current.push(e.target)
+    imagesRef.current[imageIndex] = e.target
     const targetCount = props.imageDataList ? props.imageDataList.length : props.imageUrlList.length
 
     if (countRef.current === targetCount) {
@@ -208,7 +208,7 @@ const MergeColors = (props: MergeColorsProps) => {
           className={'merge-canvas-image-comp'}
           src={src}
           key={`${i}`}
-          onLoad={(e) => handleImageLoad(e)}
+          onLoad={(e) => handleImageLoad(e, i)}
           alt={intl.messages.IMAGE_INVISIBLE}
         />)
       }) : null}

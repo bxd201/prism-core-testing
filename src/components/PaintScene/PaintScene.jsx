@@ -498,11 +498,10 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   /*:: importLayers: (payload: Object) => void */
   importLayers (payload: Object) {
     const { palette } = this.props.workspace
-    const colors = palette.map(color => [color.red, color.green, color.blue])
     const colorLayers = payload.layersAsData.map(item => createImageDataAndAlphaPixelMapFromImageData(item))
     const imagePaths = colorLayers
       .map((item, i) => {
-        return createImagePathItem(item.pixelMap, item.alphaPixelMap, colors[i], 'paint', 0, true, true)
+        return createImagePathItem(item.pixelMap, item.alphaPixelMap, palette[i], 'paint', 0, true, true)
       })
     repaintImageByPath(imagePaths, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
     this.setState({ canvasImageUrls: this.getLayers(), imagePathList: imagePaths, loadingMasks: false })
