@@ -234,7 +234,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       currPinY: 0,
       canvasWidth: initialImageWidth,
       canvasHeight: initialImageHeight,
-      loadingMasks: !!props.workspace && !!props.workspace.layers && props.workspace.layers.length,
+      loadingMasks: !!props.workspace && !!props.workspace.layers && !!props.workspace.layers.length,
       canvasHasBeenInitialized: false,
       showSelectPaletteModal: false,
       checkIsPaintSceneUpdate: false,

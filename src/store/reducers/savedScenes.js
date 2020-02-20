@@ -39,10 +39,12 @@ export const scenesAndRegions = (state: Object[] = [], action: {type: string, pa
   }
 
   if (action.type === SAVED_SCENE_LOCAL) {
-    let newState = state
+    let newState = [...state]
     const existingItem = state.find(item => item.scene === action.payload.id)
     if (existingItem) {
       newState = state.filter(item => item.scene !== existingItem.id)
+      newState.push(action.payload)
+    } else {
       newState.push(action.payload)
     }
 

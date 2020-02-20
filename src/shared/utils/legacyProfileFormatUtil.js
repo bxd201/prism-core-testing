@@ -19,7 +19,6 @@ export const getDataFromXML = (xmlString: string, sceneData: Object[] | null = n
   let surfaceMask = null
   for (let surfaceIndex = 0; surfaceIndex < surfaces.children.length; surfaceIndex++) {
     if (isFromFirebase) {
-      // @todo - right now this code assumes that the colors are linked by order to the surfaces.
       surfaceMask = unpackAndColorizeMaskFromFirebase(surfaces.children[surfaceIndex], colors[surfaceIndex], width, height)
     } else {
       surfaceMask = unpackAndColorizeMask(surfaces.children[surfaceIndex], sceneData, colors, width, height)
