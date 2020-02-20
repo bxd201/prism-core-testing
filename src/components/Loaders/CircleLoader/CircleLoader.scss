@@ -3,7 +3,7 @@
 .prism-loader-circle {
   $dashDuration: 1.8s;
   $times: 5;
-  $rotateDuration: $dashDuration / 2;
+  $rotateDuration: $dashDuration / 5 * 3;
   $strokeColorDuration: ($dashDuration * 2) * $times;
 
   @keyframes strokeColor {
@@ -38,13 +38,18 @@
 
   animation: fadeOpacityIn 1s, rotate $rotateDuration infinite linear;
   display: block;
+  font-size: 30px;
   height: auto;
   margin: auto;
   max-height: 90%;
   max-width: 90%;
   opacity: 1;
   stroke: currentColor;
-  width: 3em;
+  width: 1em;
+
+  &--inherit {
+    font-size: inherit;
+  }
 
   &__circle {
     animation: strokeColor $strokeColorDuration infinite cubic-bezier(0.075, 0.820, 0.165, 1.000), dashAdjust $dashDuration infinite alternate cubic-bezier(0.390, 0.575, 0.565, 1.000);

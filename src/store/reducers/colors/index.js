@@ -8,7 +8,7 @@ import { initialState, doReceiveColors, doFilterByFamily, doFilterBySection, doM
 export const colors = (state: ColorsState = initialState, action: ReduxAction) => {
   switch (action.type) {
     case LOAD_ERROR: {
-      return getErrorState(state)
+      return getErrorState(state, action.payload)
     }
 
     case RESET_ACTIVE_COLOR: {

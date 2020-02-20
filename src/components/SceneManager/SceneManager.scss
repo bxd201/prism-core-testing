@@ -55,11 +55,7 @@
   position: relative;
   overflow: hidden;
   &__loader {
-    color: getVar('colors.primary');
-    left: 50%;
-    position: absolute;
-    top: 50%;
-    transform: translateX(-50%) translateY(-50%);
+    margin: 1em auto;
   }
 
   &__block {

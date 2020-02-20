@@ -48,13 +48,13 @@ export const initialState: ColorsState = {
   }
 }
 
-export function getErrorState (state: ColorsState) {
+export function getErrorState (state: ColorsState, error?: any) {
   // TODO: this is too generic; we need a way to specify other kinds of errors
   return {
     ...state,
     status: {
       loading: false,
-      error: true,
+      error: error || true,
       activeRequest: false
     }
   }

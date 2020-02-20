@@ -184,7 +184,7 @@ export class SceneManager extends PureComponent<Props, State> {
     const { scenes, sceneStatus, loadingScenes, activeColor, previewColor, mainColor, activeScenes, type, interactive, sceneWorkspaces, expertColorPicks } = this.props
 
     if (loadingScenes) {
-      return <CircleLoader className={`${SceneManager.baseClass}__loader`} />
+      return <div className={`${SceneManager.baseClass}__loader`}><CircleLoader /></div>
     }
 
     return (

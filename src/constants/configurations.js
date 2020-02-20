@@ -25,5 +25,7 @@ export const DEFAULT_CONFIGURATION = {
   typography: {
     bodyFontFamily: varValues.typography.bodyFontFamily,
     titleFontFamily: varValues.typography.titleFontFamily
-  }
+  },
+  loadingConfiguration: false,
+  error: false
 }
