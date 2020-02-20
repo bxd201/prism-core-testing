@@ -1,0 +1,9 @@
+image:
+  tag: integration
+
+ingress:
+  host: integration-prism-web.ebus.swaws
+
+env:
+  API_URL: "https://integration-prism-api.ebus.swaws"
+  WEB_URL: "https://integration-prism-web.ebus.swaws"
