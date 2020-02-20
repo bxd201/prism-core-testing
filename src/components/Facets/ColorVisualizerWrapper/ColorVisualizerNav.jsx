@@ -43,7 +43,7 @@ export default withRouter((props: Props) => {
   const location = useLocation()
   const { pathname } = location
   const dispatch = useDispatch()
-  const helpLinkRef = React.useRef()
+  const exploreColorsLinkRef = React.useRef()
   useEffect(() => { dispatch(toggleCompareColor(true)) }, [location])
   useEffect(() => { window.onpopstate = (event) => { setLastActive('') } }, [])
 
@@ -56,7 +56,7 @@ export default withRouter((props: Props) => {
 
   const linkKeyDownHandler = (e, context, isContextNavigate, toLink) => {
     if (e.target.getAttribute('name') !== currActive) {
-      context.getHelpLinkRef(helpLinkRef)
+      context.getExploreColorsLinkRef(exploreColorsLinkRef)
       if (e.keyCode === KEY_CODE_ENTER || e.keyCode === KEY_CODE_SPACE) {
         e.preventDefault()
         context.navigate(isContextNavigate, true)
@@ -90,7 +90,7 @@ export default withRouter((props: Props) => {
             <>
               <ul className='cvw-navigation-wrapper__center' role='presentation' onClick={(e) => linkClickHandler(e.target.getAttribute('name'), context, true)}>
                 <li>
-                  <Link onMouseDown={(e) => e.preventDefault()} onKeyDown={(e) => linkKeyDownHandler(e, context, true, '/active/colors')} to='/active/colors' name='colors' className={`cvw-nav-btn ${isColors(pathname) ? 'cvw-nav-btn--active' : ''}`}>
+                  <Link ref={exploreColorsLinkRef} onMouseDown={(e) => e.preventDefault()} onKeyDown={(e) => linkKeyDownHandler(e, context, true, '/active/colors')} to='/active/colors' name='colors' className={`cvw-nav-btn ${isColors(pathname) ? 'cvw-nav-btn--active' : ''}`}>
                     <FontAwesomeIcon onClick={(e) => linkClickHandler(e.currentTarget.parentNode.getAttribute('name'), context, true)} className={`cvw__btn-overlay__svg cvw__btn-overlay__svg--square-xsmall ${isColors(pathname) ? 'cvw__btn-overlay__svg--active' : ''}`} icon={['fal', 'square-full']} size='xs' transform={{ rotate: 10 }} />
                     <FontAwesomeIcon onClick={(e) => linkClickHandler(e.currentTarget.parentNode.getAttribute('name'), context, true)} className={`cvw__btn-overlay__svg cvw__btn-overlay__svg--square-small ${isColors(pathname) ? 'cvw__btn-overlay__svg--active' : ''}`} icon={['fal', 'square-full']} size='sm' transform={{ rotate: 0 }} />
                     <FontAwesomeIcon onClick={(e) => linkClickHandler(e.currentTarget.parentNode.getAttribute('name'), context, true)} className={`cvw__btn-overlay__svg cvw__btn-overlay__svg--square ${isColors(pathname) ? 'cvw__btn-overlay__svg--active' : ''}`} icon={['fal', 'square-full']} size='1x' transform={{ rotate: 350 }} />
@@ -123,7 +123,7 @@ export default withRouter((props: Props) => {
                   </Link>
                 </li>
                 <li>
-                  <Link ref={helpLinkRef} onMouseDown={(e) => e.preventDefault()} onKeyDown={(e) => linkKeyDownHandler(e, context, false, '/help')} to='/help' name='help' className={`cvw-nav-btn ${isHelp(pathname) ? 'cvw-nav-btn--active' : ''}`}>
+                  <Link onMouseDown={(e) => e.preventDefault()} onKeyDown={(e) => linkKeyDownHandler(e, context, false, '/help')} to='/help' name='help' className={`cvw-nav-btn ${isHelp(pathname) ? 'cvw-nav-btn--active' : ''}`}>
                     <div className={`cvw__btn-overlay ${isHelp(pathname) ? 'cvw__btn-overlay--active' : ''} ${lastActive === 'help' ? 'cvw__btn-overlay--last--active' : ''}`} />
                     <span name='help' className='cvw-navigation-wrapper__right__text'><FormattedMessage id='NAV_LINKS.HELP' /></span>
                   </Link>

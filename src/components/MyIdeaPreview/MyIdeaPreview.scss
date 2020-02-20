@@ -20,6 +20,11 @@
     border: 1px solid #000000;
     background-color: #ffffff;
     margin: 0.5rem;
+    &:focus {
+      outline-style: solid;
+      outline-color: #2cabe2;
+      outline-width: 2px;
+    }
   }
   &__action-buttons {
     width: 100%;

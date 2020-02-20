@@ -4,13 +4,11 @@ import ImageRotateTerms from './ImageRotateTerms.jsx'
 import { Link, withRouter, type RouterHistory } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
-// import ConfirmationModal from './ConfirmationModal'
 import ColorPinsGenerationByHue from './workers/colorPinsGenerationByHue.worker'
 import useEffectAfterMount from '../../shared/hooks/useEffectAfterMount'
 import PaintScene from '../PaintScene/PaintScene'
 import { getScaledPortraitHeight } from '../../shared/helpers/ImageUtils'
 import PrismImage from '../PrismImage/PrismImage'
-// import DynamicColorFromImage from '../InspirationPhotos/DynamicColorFromImage'
 import { useSelector, useDispatch } from 'react-redux'
 import { RouteConsumer } from '../../contexts/RouteContext/RouteContext'
 import './MatchPhoto.scss'
@@ -396,20 +394,20 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
           <div className={`${containerClass}`}>
 
             <div className={`${headerClass}`}>
-              {(imageUrl && pins.length === 0 && !paintSceneWorkspace) ? <button className={`${buttonClass} ${buttonLeftClass}`} onClick={() => history.goBack()}>
+              {(imageUrl && pins.length === 0) ? <button className={`${buttonClass} ${buttonLeftClass}`} onClick={() => history.goBack()}>
                 <div><FontAwesomeIcon className={``} icon={['fa', 'angle-left']} />&nbsp;<span className={`${buttonLeftTextClass}`}><FormattedMessage id='BACK' /></span></div>
               </button> : ''}
               {
-                (imageUrl && pins.length === 0 && !paintSceneWorkspace)
+                (imageUrl && pins.length === 0 && !isPaintScene)
                   ? <Link to={`/active`}>
                     {closeButton}
                   </Link>
 
-                  : (imageUrl && pins.length > 0 && !isPaintScene && !paintSceneWorkspace) ? <Link to={`/active`}>{closeButton}</Link> : ''
+                  : (imageUrl && pins.length > 0 && !isPaintScene) ? <Link to={`/active`}>{closeButton}</Link> : ''
               }
             </div>
             {
-              (imageUrl && pins.length > 0 && !isPaintScene && !paintSceneWorkspace)
+              (imageUrl && pins.length > 0 && !isPaintScene)
                 ? (<React.Fragment>
                   <MatchPhoto isConfirmationModalActive={isConfirmationModalActive} imageUrl={imageUrl} wrapperWidth={wrapperWidth} isPortrait={isPortrait} imageDims={imageDims} pins={pins} onClickNo={setConfirmationModal} />
                 </React.Fragment>)
