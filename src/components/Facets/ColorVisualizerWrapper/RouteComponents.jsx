@@ -27,7 +27,7 @@ type Props = {
   dataKey: string,
   close: Function,
   history: RouterHistory,
-  helpLinkRef: RefObject,
+  exploreColorsLinkRef: RefObject,
   isTabbedOutFromHelp: boolean
 }
 
@@ -36,7 +36,7 @@ const KEY_CODE_ENTER = 13
 const KEY_CODE_SPACE = 32
 
 const DropDownMenu = (props: Props) => {
-  const { dataKey, history: { location: { state: isKeyDownRoute } }, helpLinkRef, isTabbedOutFromHelp } = props
+  const { dataKey, history: { location: { state: isKeyDownRoute } }, exploreColorsLinkRef, isTabbedOutFromHelp } = props
   const { content } = renderingData[dataKey]
   const labelRefs = content.subContent.reduce((acc, value) => {
     acc[value.id] = React.createRef()
@@ -63,8 +63,8 @@ const DropDownMenu = (props: Props) => {
       }
     } else if (e.shiftKey && e.keyCode === KEY_CODE_TAB && (data.subTitleIdentifier === subTitleDigitalColorWall || data.subTitleIdentifier === subTitlePaintedPhotos || data.subTitleIdentifier === subTitleUseOurPhotos)) {
       e.preventDefault()
-      if (helpLinkRef.current) {
-        helpLinkRef.current.focus()
+      if (exploreColorsLinkRef.current) {
+        exploreColorsLinkRef.current.focus()
       }
     }
   }
@@ -76,8 +76,8 @@ const DropDownMenu = (props: Props) => {
   const closeButtonKeyDownHandler = (e) => {
     if (!e.shiftKey && e.keyCode === KEY_CODE_TAB) {
       e.preventDefault()
-      if (helpLinkRef.current) {
-        helpLinkRef.current.focus()
+      if (exploreColorsLinkRef.current) {
+        exploreColorsLinkRef.current.focus()
       }
     } else if (e.keyCode === KEY_CODE_ENTER || e.keyCode === KEY_CODE_SPACE) {
       e.preventDefault()

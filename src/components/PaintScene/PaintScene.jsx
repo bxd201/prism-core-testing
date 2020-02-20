@@ -324,7 +324,10 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   }
 
   componentDidUpdate (prevProps: Object, prevState: Object) {
-    if (prevState.checkIsPaintSceneUpdate !== this.state.checkIsPaintSceneUpdate) {
+    if ((this.state.imagePathList.length > 0 && !this.props.workspace) || (this.state.imagePathList.length > 1 && this.props.workspace)) {
+      this.context.setIsPaintScenePolluted()
+    }
+    if (prevState.checkIsPaintSceneUpdate !== this.state.checkIsPaintSceneUpdate && this.state.checkIsPaintSceneUpdate !== false) {
       if (this.state.imagePathList.length > 0) {
         this.context.showWarningModal(this.saveBase64(this.getLayers()))
       } else {
@@ -556,11 +559,14 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     if (this.props.workspace) {
       this.props.clearSceneWorkspace()
     }
+    this.context.setIsPaintSceneActive()
   }
 
   componentWillUnmount () {
     window.removeEventListener('resize', this.resizeHandler)
     this.props.selectSavedScene(null)
+    this.context.setIsPaintSceneActive()
+    this.context.unSetIsPaintScenePolluted()
   }
 
   resizeHandler = () => {

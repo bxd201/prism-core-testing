@@ -97,7 +97,7 @@ const SavedScene = (props: SavedSceneProps) => {
   }
 
   return (
-    <div className={sceneClassName} onClick={selectScene}>
+    <div className={sceneClassName}>
       {backgroundImageSrc ? <PrismImage
         ref={imageRef}
         source={backgroundImageSrc}
@@ -124,7 +124,7 @@ const SavedScene = (props: SavedSceneProps) => {
               size='sm' />
           </button>
         </div> : null}
-      <div className={sceneFrameClassName}>
+      <div role='tab' tabIndex='0' className={sceneFrameClassName} onClick={selectScene} onKeyDown={(e) => { if (e.keyCode === 13 || e.keyCode === 32) { selectScene(e) } }}>
         <div className={paneClassName}>
           <div className={thumbnailClassName} style={{ width: `${props.width || FIXED_WIDTH}px`, height: `${props.height || FIXED_HEIGHT}px` }}>
             {thumbnailUrl ? <img style={{ width: `${props.width || FIXED_WIDTH}px` }} src={thumbnailUrl} alt={`${intl.messages['MY_IDEAS.PREVIEW']}: ${props.sceneData.name}`} /> : <CircleLoader />}
