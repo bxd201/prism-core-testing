@@ -13,12 +13,14 @@ const nodeModulesPath = path.join(rootPath, 'node_modules')
 const mocksPath = path.join(rootPath, '__mocks__')
 
 // entry file paths
-const appIndexPath = path.join(srcPath, 'index.jsx')
+const appIndexPath = path.join(srcPath, 'bundle.js')
 const authorPath = path.join(srcPath, 'author.js')
 const embedPath = path.join(srcPath, 'embed.js')
 const exportPath = path.join(srcPath, 'export.js')
+const templateIndexPath = path.join(srcPath, '/index/index.jsx')
 const cleanslatePath = path.join(srcPath, '/cleanslate/cleanslate.js')
 
+const templateIndexEntryPointName = 'index'
 const mainEntryPointName = 'bundle'
 const embedEntryPointName = 'embed'
 const authorEntryPointName = 'author'
@@ -26,7 +28,8 @@ const cleanslateEntryPointName = 'cleanslate'
 const exportEntryPointName = 'index'
 
 const fixedEntryPoints = {
-  [cleanslateEntryPointName]: cleanslatePath
+  [cleanslateEntryPointName]: cleanslatePath,
+  [templateIndexEntryPointName]: templateIndexPath
 }
 
 const mainEntryPoints = {

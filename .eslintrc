@@ -19,6 +19,7 @@
     "WEBPACK_CONSTANTS": "readonly",
     "VAR_NAMES": "readonly",
     "VAR_VALUES": "readonly",
+    "STATIC_TEMPLATES": "readonly",
     "Blob": "readonly",
     "FileReader": "readonly",
     "Image": "readonly",
