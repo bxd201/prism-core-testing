@@ -1,7 +1,7 @@
 // @flow
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import CollectionsHeaderWrapper from '../CollectionsHeaderWrapper/CollectionsHeaderWrapper'
+import CardMenu from 'src/components/CardMenu/CardMenu'
 import ColorCollectionsTab from '../Shared/ColorCollectionsTab'
 import InspiredScene from './InspiredScene'
 import Carousel from '../Carousel/Carousel'
@@ -10,9 +10,7 @@ import '../ColorCollections/ColorCollections.scss'
 
 const baseClass = 'color-collections'
 
-type ComponentProps = { setHeader: Function }
-
-const InspiredSceneNavigator = ({ setHeader }: ComponentProps) => {
+const InspiredSceneNavigator = () => {
   const dispatch = useDispatch()
   useEffect(() => { loadInspirationalPhotos()(dispatch) }, [])
 
@@ -26,24 +24,26 @@ const InspiredSceneNavigator = ({ setHeader }: ComponentProps) => {
 
   const [tabId: string, setTabId: string => void] = useState('tab0')
 
-  useEffect(() => { setHeader('Inspirational Photos') }, [])
-
   return (
-    <div className={`${baseClass}__wrapper`}>
-      <ColorCollectionsTab collectionTabs={collectionTabs} tabIdShow={tabId} showTab={setTabId} />
-      <div className={`${baseClass}__collections-list`}>
-        <Carousel
-          BaseComponent={InspiredScene}
-          data={flatData}
-          defaultItemsPerView={1}
-          tabId={tabId}
-          setTabId={setTabId}
-          isInfinity
-          tabMap={tabMap}
-        />
-      </div>
-    </div>
+    <CardMenu menuTitle='Inspirational Photos'>
+      {() => (
+        <div className={`${baseClass}__wrapper`}>
+          <ColorCollectionsTab collectionTabs={collectionTabs} tabIdShow={tabId} showTab={setTabId} />
+          <div className={`${baseClass}__collections-list`}>
+            <Carousel
+              BaseComponent={InspiredScene}
+              data={flatData}
+              defaultItemsPerView={1}
+              tabId={tabId}
+              setTabId={setTabId}
+              isInfinity
+              tabMap={tabMap}
+            />
+          </div>
+        </div>
+      )}
+    </CardMenu>
   )
 }
 
-export default CollectionsHeaderWrapper(InspiredSceneNavigator)
+export default InspiredSceneNavigator
