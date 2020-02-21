@@ -343,7 +343,7 @@ export const edgeDetect = (canvas, targetImagePath, targetImageColor, width, hei
   return edge
 }
 
-export const eraseIntersection = (imagePathList, erasePath) => {
+export const eraseIntersection = (imagePathList: Object[], erasePath: any, activeColor: Object) => {
   const originImagePathList = copyImageList(imagePathList)
   let siblingList = []
   for (let i = 0; i < originImagePathList.length; i++) {
@@ -360,11 +360,13 @@ export const eraseIntersection = (imagePathList, erasePath) => {
       originImagePathList[i].isEnabled = false
       const remainAreaPath = difference(data, erasePath)
       const newId = uniqueId()
+      // @todo [IMPROVEMENT] possible candidate for imagepath factory -RS
       originImagePathList.push({
         type: 'paint',
         subType: 'erase-paint',
         id: newId,
         color: color,
+        colorRef: cloneDeep(activeColor),
         data: remainAreaPath,
         pixelIndexAlphaMap: pixelIndexAlphaMap,
         isEnabled: true,

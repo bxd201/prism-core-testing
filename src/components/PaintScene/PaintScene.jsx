@@ -789,7 +789,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
         }
       })
       const updateErasePath = filterErasePath(erasePath, deleteAreaList)
-      const tmpImagePathList = eraseIntersection(imagePathList, updateErasePath)
+      const tmpImagePathList = eraseIntersection(imagePathList, updateErasePath, lpActiveColor)
       newImagePathList = remove(tmpImagePathList, (currImagePath) => {
         return currImagePath.data.length !== 0
       })
@@ -1076,6 +1076,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   handlePolygonDefine = (e: Object, isAddArea: boolean) => {
     this.pause = false
     if (this.props.lpActiveColor === null || (this.props.lpActiveColor.constructor === Object && Object.keys(this.props.lpActiveColor).length === 0)) return
+    const lpActiveColor = this.props
     const { BeginPointList, polyList, lineStart, imagePathList, presentPolyList, deleteAreaList } = this.state
     let newDeleteAreaList = copyImageList(deleteAreaList)
     const { clientX, clientY } = e
@@ -1107,7 +1108,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
         const RGB = getActiveColorRGB(hexToRGB(this.props.lpActiveColor.hex))
         const erasePath = getImageCordinateByPixel(this.CFICanvasPaint, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight, false)
         this.CFICanvasContextPaint.clearRect(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
-        tmpImagePathList = eraseIntersection(imagePathList, erasePath)
+        tmpImagePathList = eraseIntersection(imagePathList, erasePath, lpActiveColor)
         newImagePathList = remove(tmpImagePathList, (currImagePath) => {
           return currImagePath.data.length !== 0
         })
