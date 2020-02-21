@@ -103,6 +103,9 @@ export const renderingData = {
           subContentiPhone: 'NAV_DROPDOWN_LINK_SUB_CONTENT.UPLOAD_YOUR_PHOTO_IPHONE',
           description: 'NAV_DROPDOWN_LINK_TIP_DESCRIPTION.UPLOAD_YOUR_PHOTO',
           url: '/paint-scene',
+          urlAndroid: 'https://play.google.com/store/apps/details?id=com.colorsnap',
+          urliPad: 'https://itunes.apple.com/us/app/colorsnap-studio/id555300600?mt=8',
+          urliPhone: 'https://itunes.apple.com/us/app/colorsnap-visualizer-iphone/id316256242?mt=8',
           id: 1
         }
       ]
