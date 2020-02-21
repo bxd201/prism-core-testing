@@ -6,7 +6,7 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { fullColorNumber, getContrastYIQ } from '../../../src/shared/helpers/ColorUtils'
-import type { Color } from '../../shared/types/Colors'
+import type { Color } from '../../shared/types/Colors.js.flow'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
 import { add } from '../../store/actions/live-palette'

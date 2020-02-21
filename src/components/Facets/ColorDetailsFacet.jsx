@@ -7,7 +7,7 @@ import ColorDetails from 'src/components/Facets/ColorDetails/ColorDetails'
 import { ROUTE_PARAMS, ROUTE_PARAM_NAMES } from 'src/constants/globals'
 import { facetBinderDefaultProps } from 'src/facetSupport/facetInstance'
 import { facetPubSubDefaultProps } from 'src/facetSupport/facetPubSub'
-import type { ColorMap } from 'src/shared/types/Colors'
+import type { ColorMap } from 'src/shared/types/Colors.js.flow'
 import findKey from 'lodash/findKey'
 
 const colorDetailsBaseUrl = `/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_DETAIL}`

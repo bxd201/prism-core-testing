@@ -28,7 +28,7 @@ import ImagePreloader from '../../helpers/ImagePreloader'
 import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 import ConfigurationContext from '../../contexts/ConfigurationContext/ConfigurationContext'
 import ColorPickerSlide from '../ColorPickerSlide/ColorPickerSlide'
-import type { Color } from '../../shared/types/Colors'
+import type { Color } from '../../shared/types/Colors.js.flow'
 import type { Scene, SceneStatus, SceneWorkspace, Surface, Variant } from '../../shared/types/Scene'
 
 import './SceneManager.scss'

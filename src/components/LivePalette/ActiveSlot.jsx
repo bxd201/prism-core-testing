@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
 import { useDrag, useDrop } from 'react-dnd-cjs'
 import { fullColorNumber, getContrastYIQ } from '../../shared/helpers/ColorUtils'
-import { type Color } from '../../shared/types/Colors'
+import { type Color } from '../../shared/types/Colors.js.flow'
 import { remove, activatePreview, editCompareColor } from '../../store/actions/live-palette'
 
 import { DRAG_TYPES } from 'constants/globals'

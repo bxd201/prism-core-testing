@@ -10,7 +10,7 @@ import debounce from 'lodash/debounce'
 import at from 'lodash/at'
 
 import docReady from 'src/shared/helpers/docReady'
-import { type EmbeddedConfiguration } from 'src/shared/types/Configuration'
+import { type EmbeddedConfiguration } from 'src/shared/types/Configuration.js.flow'
 import facetPubSub from './facetPubSub'
 import { addInstance, getInstance, unmount, type BoundFacet } from './facetInstance'
 import { initFirebaseOnce } from './facetFirebase'

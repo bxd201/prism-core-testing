@@ -3,7 +3,7 @@ import axios from 'axios'
 import isEmpty from 'lodash/isEmpty'
 
 import { type ScenePayload, type SceneWorkspace } from '../../shared/types/Scene'
-import { type Color } from '../../shared/types/Colors'
+import { type Color } from '../../shared/types/Colors.js.flow'
 import MaskObj from '../masks/MaskObj'
 
 import { generateBrandedEndpoint } from '../../shared/helpers/DataUtils'

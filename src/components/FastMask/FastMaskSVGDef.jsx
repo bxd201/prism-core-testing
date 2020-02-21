@@ -5,7 +5,7 @@ import flattenDeep from 'lodash/flattenDeep'
 
 import { createCanvasElementWithData } from './FastMaskUtils'
 
-import { type Color } from '../../shared/types/Colors'
+import { type Color } from '../../shared/types/Colors.js.flow'
 
 /* global ImageData */
 

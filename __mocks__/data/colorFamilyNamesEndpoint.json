@@ -1,0 +1,37 @@
+[
+    {
+        "name": "Historic Colors",
+        "default": false,
+        "families": [
+            "Historic Color"
+        ]
+    },
+    {
+        "name": "Sherwin-Williams Colors",
+        "default": true,
+        "families": [
+            "Red",
+            "Orange",
+            "Yellow",
+            "Green",
+            "Blue",
+            "Purple",
+            "Neutral",
+            "White & Pastel"
+        ]
+    },
+    {
+        "name": "Timeless Colors",
+        "default": false,
+        "families": [
+            "Timeless Color"
+        ]
+    },
+    {
+        "name": "Emerald Designer Edition",
+        "default": false,
+        "families": [
+            "Emerald Designer Edition"
+        ]
+    }
+]

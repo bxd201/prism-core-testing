@@ -39,7 +39,7 @@ function ColorPickerSlide (props: SummaryProps) {
   const wrapperRef = React.useRef()
 
   useEffect(() => {
-    dispatch(loadCollectionSummaries())
+    loadCollectionSummaries(dispatch)
     dispatch(loadColors(brandId))
   }, [])
 

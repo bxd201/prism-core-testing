@@ -1,68 +1,21 @@
-import React, { useState } from 'react'
-import { Provider } from 'react-redux'
-import { shallow, mount } from 'enzyme'
-import { ExpertColorPicks } from 'src/components/ExpertColorPicks/ExpertColorPicks'
-import ExpertColorDetails from 'src/components/ExpertColorPicks/ExpertColorDetails'
-import Carousel from 'src/components/Carousel/Carousel'
+import React from 'react'
+import ExpertColorPicks from 'src/components/ExpertColorPicks/ExpertColorPicks'
+import { fireEvent } from '@testing-library/dom'
 
-const collectionDataDetails = {
-  colorDefs: [
-    { hex: '#bc9c9e' },
-    { hex: '#bc9c9e' },
-    { hex: '#bc9c9e' }
-  ]
-}
-
-const getExpertColorPicks = props => {
-  return mount(
-    <Provider store={{
-      getState: () => ({
-        expertColorPicks: { data: [collectionDataDetails] },
-        lp: { colors: [] }
-      }),
-      subscribe: () => {},
-      dispatch: () => {}
-    }}>
-      <ExpertColorPicks {...props} />
-    </Provider>)
-}
-
-const setHeader = jest.fn(); const showBack = jest.fn(); const setState = jest.fn()
-
-const useStateSpy = jest.spyOn(React, 'useState')
-
-describe('isShowBack = false', () => {
-  let expertColorPicks
-  useStateSpy.mockImplementation((init) => [init, setState])
-
-  beforeEach(() => expertColorPicks = getExpertColorPicks({ isShowBack: false, setHeader: setHeader, showBack: showBack }))
-
-  afterEach(jest.clearAllMocks)
-
-  it('renders a carousel', () => {
-    expect(expertColorPicks.find(Carousel).exists()).toBe(true)
-    expect(expertColorPicks.find(ExpertColorDetails).exists()).toBe(false)
-  })
-
-  it('calls setHeader', () => expect(setHeader.mock.calls[0][0]).toBe('Expert Color Picks'))
-
-  it('Clicking the first collection calls showBack & setState', () => {
-    expertColorPicks.find('.collection__summary__wrapper').simulate('click')
-    expect(showBack.mock.calls).toHaveLength(1)
-    expect(setState.mock.calls).toHaveLength(1)
-  })
+it('title and expertColorPick buttons exist', async () => {
+  const { findByText } = render(<ExpertColorPicks />)
+  await findByText('Expert Color Picks')
+  await findByText('Orchid')
+  await findByText('Organic Green')
+  await findByText('Homburg Gray')
 })
 
-describe('isShowBack = true', () => {
-  let expertColorPicks
-  useStateSpy.mockImplementation((init) => [collectionDataDetails, setState])
+it('clicking an expert color pick displays it\'s details', async () => {
+  const { findByText } = render(<ExpertColorPicks />)
 
-  beforeEach(() => expertColorPicks = getExpertColorPicks({ isShowBack: true, setHeader: setHeader, showBack: showBack }))
+  await findByText('Orchid').then(fireEvent.click)
+  // fireEvent.click(findByText('Orchid'))
 
-  afterEach(jest.clearAllMocks)
-
-  it('renders Color details', () => {
-    expect(expertColorPicks.find(Carousel).exists()).toBe(false)
-    expect(expertColorPicks.find(ExpertColorDetails).exists()).toBe(true)
-  })
+  await findByText('Poised Taupe')
+  await findByText('Porcelain')
 })

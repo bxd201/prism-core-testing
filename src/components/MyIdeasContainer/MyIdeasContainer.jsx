@@ -11,13 +11,12 @@ import { clearSceneWorkspace } from '../../store/actions/paintScene'
 import { selectSavedScene } from '../../store/actions/persistScene'
 import AnonLogin from '../AnonLogin/AnonLogin'
 import './MyIdeasContainer.scss'
-import CollectionsHeaderWrapper from '../CollectionsHeaderWrapper/CollectionsHeaderWrapper'
+import CardMenu from 'src/components/CardMenu/CardMenu'
 import { FormattedMessage, useIntl } from 'react-intl'
 import at from 'lodash/at'
 
 type MyIdeasContainerProps = {
-  config: Object,
-  setHeader: Function
+  config: Object
 }
 
 const MyIdeasContainer = (props: MyIdeasContainerProps) => {
@@ -32,7 +31,6 @@ const MyIdeasContainer = (props: MyIdeasContainerProps) => {
     if (selectedSceneId && initialSceneId !== selectedSceneId) {
       setShouldRedirect(true)
     }
-    props.setHeader(at(messages, 'MY_IDEAS.MY_IDEAS_HEADER')[0])
   })
 
   useEffect(() => {
@@ -51,21 +49,25 @@ const MyIdeasContainer = (props: MyIdeasContainerProps) => {
   }
 
   return (
-    <div className={`my-ideas-container__wrapper`}>
-      {FIREBASE_AUTH_ENABLED && !isLoggedIn ? <AnonLogin />
-        : isLoggedIn ? <MyIdeas brandId={props.config.brandId} />
-          : <div className={`my-ideas-container__content`}>
-            <div className={`my-ideas-container__description`}>
-              <FormattedMessage id='MY_IDEAS.MY_IDEAS_CONTENT' />
-            </div>
-            <div className={`my-ideas-container__buttons`}>
-              <button><FormattedMessage id='REGISTER' /></button>
-              <div><Login /></div>
-            </div>
-          </div>
-      }
-    </div>
+    <CardMenu menuTitle={at(messages, 'MY_IDEAS.MY_IDEAS_HEADER')[0]}>
+      {() => (
+        <div className={`my-ideas-container__wrapper`}>
+          {FIREBASE_AUTH_ENABLED && !isLoggedIn ? <AnonLogin />
+            : isLoggedIn ? <MyIdeas brandId={props.config.brandId} />
+              : <div className={`my-ideas-container__content`}>
+                <div className={`my-ideas-container__description`}>
+                  <FormattedMessage id='MY_IDEAS.MY_IDEAS_CONTENT' />
+                </div>
+                <div className={`my-ideas-container__buttons`}>
+                  <button><FormattedMessage id='REGISTER' /></button>
+                  <div><Login /></div>
+                </div>
+              </div>
+          }
+        </div>
+      )}
+    </CardMenu>
   )
 }
 
-export default WithConfigurationContext(CollectionsHeaderWrapper(MyIdeasContainer))
+export default WithConfigurationContext(MyIdeasContainer)
