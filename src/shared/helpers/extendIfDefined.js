@@ -1,5 +1,5 @@
 // @flow
-import { type $Arguments } from 'src/shared/types/Common'
+import { type $Arguments } from 'src/shared/types/Common.js.flow'
 
 export default function extendIfDefined<T> (...args: $Arguments<T>): T | typeof undefined {
   const argsArr = Array.from(arguments)

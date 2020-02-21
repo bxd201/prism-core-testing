@@ -10,7 +10,7 @@ import ButtonBar from '../../GeneralButtons/ButtonBar/ButtonBar'
 
 import { generateColorWallPageUrl, fullColorName } from '../../../shared/helpers/ColorUtils'
 import { MODE_CLASS_NAMES } from '../ColorWall/shared'
-import { type Color } from '../../../shared/types/Colors'
+import { type Color } from '../../../shared/types/Colors.js.flow'
 import { urlWorker } from '../../../shared/helpers/URLUtils'
 import { ROUTE_PARAMS } from 'constants/globals'
 import { useLocation } from 'react-router-dom'

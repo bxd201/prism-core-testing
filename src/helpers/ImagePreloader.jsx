@@ -4,7 +4,7 @@ import isEmpty from 'lodash/isEmpty'
 import flattenDeep from 'lodash/flattenDeep'
 
 import { ensureFullyQualifiedAssetUrl } from '../shared/helpers/DataUtils'
-import { type NestedArray } from '../shared/types/Common'
+import { type NestedArray } from '../shared/types/Common.js.flow'
 import MaskObj from '../store/masks/MaskObj'
 
 type Props = {

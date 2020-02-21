@@ -6,7 +6,7 @@ import { FormattedMessage, injectIntl } from 'react-intl'
 import { LiveMessage } from 'react-aria-live'
 import * as GA from 'src/analytics/GoogleAnalytics'
 
-import { type Color } from '../../../shared/types/Colors'
+import { type Color } from '../../../shared/types/Colors.js.flow'
 import { varValues } from 'src/shared/variableDefs'
 
 import 'src/scss/convenience/visually-hidden.scss'

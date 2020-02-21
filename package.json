@@ -9,7 +9,7 @@
     "build:publish": "cross-env API_URL=https://prism-api.sherwin-williams.com WEB_URL=https://replatform-prism-web.ebus.swaws webpack --config webpack.publish.js",
     "test": "jest --coverage",
     "test:ci": "jest --ci",
-    "test-watch": "jest --watch --coverage __tests__/",
+    "test-watch": "jest --watch --coverage",
     "preflow-check": "npm run flow-install",
     "flow-check": "flow check",
     "flow-check-verbose": "flow check --show-all-errors",
