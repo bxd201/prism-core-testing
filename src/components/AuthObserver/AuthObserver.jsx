@@ -1,7 +1,8 @@
 // @flow
 import React, { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
-import * as firebase from 'firebase'
+import * as firebase from 'firebase/app'
+import 'firebase/auth'
 import { tryToFetchSaveScenesFromFirebase, tryToPersistCachedSceneData } from '../../store/actions/persistScene'
 import { setUser } from '../../store/actions/user'
 

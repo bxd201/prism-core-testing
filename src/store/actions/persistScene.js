@@ -41,7 +41,7 @@ export const startSavingMasks = () => {
 export const createSceneXML = (imageData: Object[] | null, metaData: Object) => {
   return imageDataToSurfacesXML(imageData, metaData)
 }
-// @todo - put uniqueSceneId in metadata -RS
+
 export const saveMasks = (colorList: Array<number[]>, imageData: Object, backgroundImageUrl: string, metadata: Object) => {
   return (dispatch, getState) => {
     dispatch({
@@ -71,8 +71,7 @@ export const doneSavingMask = (data: Object) => {
   }
 }
 
-// @todo - is this a number or a string ? -RS
-export const deleteSavedScene = (sceneId: number) => {
+export const deleteSavedScene = (sceneId: number | string) => {
   return (dispatch, getState) => {
     if (FIREBASE_AUTH_ENABLED) {
       const user = firebase.auth().currentUser
@@ -221,8 +220,7 @@ export const loadSavedScenesFromMySherwin = (brandId: string, dispatch: Function
     })
 }
 
-// @todo - is this a string or number? -RS
-export const selectSavedScene = (sceneId: number | null) => {
+export const selectSavedScene = (sceneId: number | string | null) => {
   return {
     type: SELECTED_SAVED_SCENE,
     payload: sceneId
@@ -257,9 +255,9 @@ const processFileFromFirebase = (file: Object, i: number) => {
   const surfaceMasks = getDataFromFirebaseXML(regionsXml, colors)
   const sceneDefinitionId = uniqueSceneId
   const name = ''
-  // @todo - figure out if i need cat id for anon persistence -RS
+  // This is here for consistency
   const categoryId = 0
-  // @todo I don't think I need this but setting for api completeness, confirm -RS
+  // This is here for consistency
   const id = sceneDefinitionId
 
   return {
@@ -320,7 +318,7 @@ export const tryToPersistCachedSceneData = () => {
     const { cachedSceneData: data } = getState()
 
     if (!data) {
-      // @todo this might be overkill -RS
+      // This is here to prevent a theoretical edge case
       dispatch({
         type: SAVING_MASKS,
         payload: false
@@ -503,6 +501,6 @@ const processDownloadedFiles = (files: Object[], dispatch: Function, getState: F
   const scenes = files.map((file, i) => {
     return processFileFromFirebase(file, i)
   })
-  // @todo - Confirm what should be returned -RS
+
   return scenes
 }
