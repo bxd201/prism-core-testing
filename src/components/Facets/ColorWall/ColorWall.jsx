@@ -30,7 +30,7 @@ const ColorWall = (props: Props) => {
   const { swatchMinSize, swatchMaxSize, swatchMinSizeZoomed, swatchMaxSizeZoomed, colorWallBgColor } = useContext(ColorWallContext)
   const {
     colorWallActive,
-    items: { brights, colorMap, colors, unorderedColors, colorStatuses, sectionLabels },
+    items: { colorMap, colors, unorderedColors, colorStatuses, sectionLabels },
     section: reduxSection,
     family: reduxFamily,
     layout
@@ -43,7 +43,7 @@ const ColorWall = (props: Props) => {
 
   const colorsGrid = useMemo(() => {
     return layout ? convertToSpacedGrid(layout, sectionLabels[reduxSection]) : EMPTY_COLOR_GRID
-  }, [colors, brights, colorMap, reduxFamily, reduxSection, unorderedColors])
+  }, [layout, reduxSection, sectionLabels])
 
   const swatchListKey = useMemo(() => {
     return flattenDeep(colorsGrid).join(',')
