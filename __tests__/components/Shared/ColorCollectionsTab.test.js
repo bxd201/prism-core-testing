@@ -3,13 +3,7 @@ import React from 'react'
 import { shallow } from 'enzyme'
 // import { renderHook, act } from 'react-hooks-testing-library'
 import { render, fireEvent, getByTestId } from '@testing-library/react'
-import ColorCollectionsTab, {
-  tabListSelect,
-  tabList, tabListItem,
-  tabListDropdownMobile,
-  tabListActive,
-  tabListInactive
-} from 'src/components/Shared/ColorCollectionsTab'
+import ColorCollectionsTab, { tabListSelect, tabList, tabListItem, tabListDropdownMobile, tabListActive, tabListInactive } from 'src/components/Shared/ColorCollectionsTab'
 import { collectionTabs } from 'src/components/Carousel/data'
 
 let defaultProps = {
@@ -26,13 +20,7 @@ const getColorCollectionsTab = (props) => {
 describe('ColorCollectionsTab', () => {
   let colorCollectionsTab
   beforeAll(() => {
-    if (!colorCollectionsTab) {
-      colorCollectionsTab = getColorCollectionsTab()
-    }
-  })
-
-  it('should match snapshot', () => {
-    expect(colorCollectionsTab).toMatchSnapshot()
+    colorCollectionsTab = getColorCollectionsTab()
   })
 
   it('should render tabListSelect class div', () => {

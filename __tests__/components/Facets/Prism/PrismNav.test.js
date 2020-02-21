@@ -1,36 +1,12 @@
 /* eslint-env jest */
 import React from 'react'
-import { Link } from ''
 import { shallow } from 'enzyme'
 import PrismNav from 'src/components/Facets/Prism/PrismNav'
-
-const pushMock = jest.fn()
-const historyMock = { push: pushMock }
-const locationMock = { pathname: paramActive }
-const matchMock = { params: { router: jest.fn() } }
-
-const getPrismNav = (props) => {
-  let defaultProps = {
-    history: historyMock,
-    location: locationMock,
-    match: matchMock,
-    toggleCompareColor: () => null
-  }
-
-  let newProps = Object.assign({}, defaultProps, props)
-  return shallow(<PrismNav {...newProps} />)
-}
-
-const paramActive = '/active'
 
 describe('PrismNav component with props', () => {
   let prismNav
   beforeAll(() => {
     prismNav = mocked(<PrismNav />)
-  })
-
-  test('should match snapshot', () => {
-    expect(prismNav).toMatchSnapshot()
   })
 
   test('should have buttons', () => {

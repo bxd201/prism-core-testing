@@ -15,11 +15,18 @@ type Props = {
 
 export default ({ children, redirect = true }: Props) => {
   const { brandId } = React.useContext(ConfigurationContext)
-  const { section, status: { loading } } = useSelector(state => state.colors)
+  const { section, status: { loading, error } } = useSelector(state => state.colors)
   const dispatch = useDispatch()
   const { locale } = useIntl()
 
+  if (error) {
+    // TODO: Improve this handling in the future. Right now it's just being caught by
+    // the global error boundary so the loader doesn't hang indefinitely.
+    throw new Error(error)
+  }
+
   React.useEffect(() => { dispatch(loadColors(brandId, { language: locale })) }, [])
+
   return (loading
     ? <HeroLoaderExpanded />
     : <Switch>

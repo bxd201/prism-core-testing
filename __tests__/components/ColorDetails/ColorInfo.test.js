@@ -13,10 +13,6 @@ const colorInfo = (color) => {
 describe('Color Info component with props as empty array', () => {
   const mountedColorInfo = colorInfo([])
 
-  it('snapshot testing', () => {
-    expect(mountedColorInfo).toMatchSnapshot()
-  })
-
   it('component will be rendering', () => {
     const colorInfoExist = mountedColorInfo.exists()
     expect(colorInfoExist).toEqual(true)
@@ -40,10 +36,6 @@ describe('Color Info component with props of colors', () => {
     })
     colors.push(Math.round(color.lrv).toString())
     color.brandedCollectionNames && colors.push(color.brandedCollectionNames.join(', '))
-  })
-
-  it('snapshot testing', () => {
-    expect(mountedColorInfo).toMatchSnapshot()
   })
 
   it('component will be rendering', () => {

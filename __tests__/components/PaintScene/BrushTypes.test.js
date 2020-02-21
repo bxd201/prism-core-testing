@@ -22,8 +22,6 @@ describe('BrushTypes render & event testing', () => {
 
   afterEach(jest.clearAllMocks)
 
-  it('should match snapshot', () => expect(brushTypes).toMatchSnapshot())
-
   it('should render 8 buttons for 8 brush types', () => {
     expect(brushTypes.find('button')).toHaveLength(8)
   })

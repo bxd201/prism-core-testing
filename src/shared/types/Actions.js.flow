@@ -1,6 +1,5 @@
 // @flow
-import typeimport anymatch = require("../../../../Library/Caches/typescript/3.4.5/node_modules/@types/anymatch");
- { CategorizedColorIdGrid, Color, ColorIdList, ColorList, ColorMap, ColorStatuses, FamilyStructure, Layouts, Layout } from './Colors'
+import type { CategorizedColorIdGrid, Color, ColorIdList, ColorList, ColorMap, ColorStatuses, FamilyStructure, Layouts, Layout } from './Colors'
 
 export type ReduxAction = {
   type: string,

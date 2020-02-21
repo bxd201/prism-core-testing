@@ -2,7 +2,7 @@ import React from 'react'
 import { shallow } from 'enzyme'
 import { ColorStripSwatch } from 'src/components/Facets/ColorDetails/ColorStrip/ColorStripSwatch'
 import * as Colors from '__mocks__/data/color/Colors'
-import ReactGA from 'react-ga'
+import * as GA from 'src/analytics/GoogleAnalytics'
 
 const color = Colors.getColor()
 const active = true
@@ -15,9 +15,6 @@ const colorStripSwatch = (color) => {
 // rendering test
 describe('Coordinary Color Swatch component will pass props correctly', () => {
   const wrapper = colorStripSwatch(color)
-  it('snapshot testing', () => {
-    expect(wrapper).toMatchSnapshot()
-  })
 
   it('component will be rendering', () => {
     const colorSwatchExist = wrapper.exists()
@@ -34,9 +31,9 @@ describe(('click event test of color swatch component'), () => {
   const wrapper = colorStripSwatch(color)
   it('component should call handclick function', () => {
     const handleClickMock = jest.fn()
-    ReactGA.event = handleClickMock
+    GA.event = handleClickMock
     wrapper.find('button').simulate('click')
-    expect(ReactGA.event).toHaveBeenCalled()
+    expect(GA.event).toHaveBeenCalled()
     expect(historyMock.push).toHaveBeenCalled()
   })
 })

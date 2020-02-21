@@ -2,6 +2,7 @@
 import axios from 'axios'
 
 import { CONFIG_ENDPOINT } from 'constants/endpoints'
+import { generateBrandedEndpoint } from 'src/shared/helpers/DataUtils'
 
 export const REQUEST_CONFIGURATION: string = 'REQUEST_CONFIGURATION'
 const requestConfiguration = () => {
@@ -25,24 +26,26 @@ const receiveConfiguration = (configurationData: Number) => {
 }
 
 export const LOAD_ERROR: string = 'LOAD_ERROR'
-const loadError = () => {
+const loadError = (err) => {
   return {
-    type: LOAD_ERROR
+    type: LOAD_ERROR,
+    payload: err
   }
 }
 
 export const loadConfiguration = (brandId: string) => {
-  return (dispatch: Function) => {
+  return (dispatch: Function, getState: Function) => {
     dispatch(requestConfiguration())
+    const { current } = getState().language
 
     axios
-      .get(`${CONFIG_ENDPOINT}/${brandId.toLowerCase()}`) // TODO: remove this toLowecase() concat as well, maybe.
+      .get(generateBrandedEndpoint(CONFIG_ENDPOINT, brandId.toLowerCase(), { language: current })) // TODO: remove this toLowecase()
       .then(r => r.data)
       .then(config => {
         dispatch(receiveConfiguration(config))
       })
       .catch(err => {
-        dispatch(loadError())
+        dispatch(loadError(err))
         console.error(`There was an error loading the configuration for ${brandId}.`, err)
       })
   }

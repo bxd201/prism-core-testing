@@ -157,10 +157,9 @@ describe('colors-reducer', () => {
   test('filters by family', () => {
     const initialStateWithLoadingFalse = {
       ...initialState,
-      status: {
-        ...initialState.status,
-        loading: false
-      },
+      layouts: [{ name: 'a' }],
+      section: 'a',
+      status: { ...initialState.status, loading: false },
       families: families
     }
 
@@ -171,16 +170,12 @@ describe('colors-reducer', () => {
 
     const expectedState = {
       ...initialState,
+      layouts: [{ name: 'a' }],
+      section: 'a',
       family: family,
       families: families,
-      initializeWith: {
-        ...initialState.initializeWith,
-        family: initialState.initializeWith.family
-      },
-      status: {
-        ...initialState.status,
-        loading: false
-      }
+      initializeWith: { ...initialState.initializeWith, family: initialState.initializeWith.family },
+      status: { ...initialState.status, loading: false }
     }
 
     expect(state).toEqual(expectedState)
@@ -205,6 +200,7 @@ describe('colors-reducer', () => {
   test('filters by section', () => {
     const initialStateWithLoadingFalse = {
       ...initialState,
+      layouts: [{ name: 'Sherwin-Williams Colors' }],
       status: {
         ...initialState.status,
         loading: false

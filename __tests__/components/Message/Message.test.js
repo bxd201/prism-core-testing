@@ -10,13 +10,7 @@ const dummyComponent = () => {
   return <div>TEST</div>
 }
 
-// rendering and snapshot test
 describe('Coordinary Color Swatch component will pass props correctly', () => {
-  it('snapshot testing', () => {
-    const wrapper = createMessage({}, dummyComponent())
-    expect(wrapper).toMatchSnapshot()
-  })
-
   it('child component will be rendering', () => {
     const inner = dummyComponent()
     const wrapper = createMessage({}, inner)

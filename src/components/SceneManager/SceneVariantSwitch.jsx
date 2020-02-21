@@ -48,12 +48,21 @@ function DayNight (props: SwitchProps) {
     <FormattedMessage id={isDay ? 'TO_NIGHT_VIEW' : 'TO_DAY_VIEW'}>
       {(txt: string) => <>
         {/* eslint-disable-next-line jsx-a11y/label-has-for */}
-        <label className={`${CLASSES.BASE} ${!isDay ? `${CLASSES.BASE}--night` : ''}`}
+        <label
+          className={`${CLASSES.BASE} ${!isDay ? `${CLASSES.BASE}--night` : ''}`}
           title={txt}
           aria-label={txt}
-          htmlFor={checkboxName}>
-
-          <input className={CLASSES.CHECKBOX} type='checkbox' checked={!isDay} name={checkboxName} id={checkboxName} onChange={toggle} />
+          htmlFor={checkboxName}
+        >
+          <input
+            className={CLASSES.CHECKBOX}
+            type='checkbox'
+            checked={!isDay}
+            name={checkboxName}
+            id={checkboxName}
+            onChange={toggle}
+            onKeyDown={event => event.key === 'Enter' && toggle()}
+          />
           <div className={`${CLASSES.WRAPPER} ${isDay ? `${CLASSES.WRAPPER}--active` : ''}`}>
             <FontAwesomeIcon className={`${CLASSES.DAY} ${!isDay ? `${CLASSES.DAY}--active` : ''}`} icon={['fa', 'sun']} />
           </div>

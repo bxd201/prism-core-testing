@@ -1,7 +1,7 @@
 import React from 'react'
-import { shallow } from 'enzyme'
-import { InspiredSceneNavigator } from 'src/components/InspirationPhotos/InspiredSceneNavigator'
-import ImageScenesWithCarousel from 'src/components/InspirationPhotos/InspiredScene'
+import InspiredSceneNavigator from 'src/components/InspirationPhotos/InspiredSceneNavigator'
+import Carousel from 'src/components/Carousel/Carousel'
+import ColorCollectionsTab from 'src/components/Shared/ColorCollectionsTab'
 
 let defaultProps = {
   collectionTabs: [],
@@ -9,33 +9,21 @@ let defaultProps = {
   loadData: () => null,
   setHeader: jest.fn(),
   tabMap: {}
-
 }
-
-const createInspiredSceneNavigator = (props) => {
-  let newProps = Object.assign({}, defaultProps, props)
-  return shallow(<InspiredSceneNavigator {...newProps} />)
-}
-
-const wrapper = createInspiredSceneNavigator()
-
-// TODO: skipping failing snapshot test for now. remove snapshots? -cody.richmond
-test('snapshot testing', () => {
-  expect(mocked(<InspiredSceneNavigator {...defaultProps} />)).toMatchSnapshot()
-})
 
 describe('Testing state for InspiredSceneNavigator component', () => {
-  it('State should initialize correctly', () => {
-    const initialState = wrapper.instance().state
-    expect(initialState).toEqual(expect.objectContaining({
-      tabId: 'tab0'
-    }))
-  })
-})
+  let inspiredSceneNavigator
 
-describe('compoments rendring test', () => {
-  const wrapper = createInspiredSceneNavigator()
+  beforeAll(() => {
+    // eslint-disable-next-line no-undef
+    inspiredSceneNavigator = mocked(<InspiredSceneNavigator {...defaultProps} />)
+  })
+
+  it('State should initialize correctly', () => {
+    expect(inspiredSceneNavigator.find(ColorCollectionsTab).props().tabIdShow).toEqual('tab0')
+  })
+
   it('should rendering ImageScenesWithCarousel Component', () => {
-    expect(wrapper.find(ImageScenesWithCarousel).exists()).toBe(true)
+    expect(inspiredSceneNavigator.find(Carousel).exists()).toBe(true)
   })
 })

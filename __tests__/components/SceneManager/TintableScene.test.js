@@ -13,7 +13,7 @@ let defaultProps = {
   height: 100,
   sceneId: 1,
   type: SCENE_TYPES.ROOM,
-  background: 'https://sherwin.scene7.com/is/image/sw?src=ir{swRender/TEST_SCENE?wid=1311}' // fully-qualified image so our snapshots don't change based on env vars
+  background: 'https://sherwin.scene7.com/is/image/sw?src=ir{swRender/TEST_SCENE?wid=1311}'
 }
 
 const getTintableScene = (props) => {
@@ -32,7 +32,7 @@ describe('<TintableScene />', () => {
   })
 
   test('does not render when render set to false', () => {
-    expect(mocked(<TintableScene {...defaultProps} render={false} />).html()).toBe("")
+    expect(mocked(<TintableScene {...defaultProps} render={false} />).find('.prism-scene-manager__scene').exists()).toBe(false)
   })
 
   test('renders hit areas only for interactive scenes', () => {
@@ -119,19 +119,6 @@ describe('<TintableScene />', () => {
     instance.updateSurfaceColor(surfaces[0].id, color)
 
     expect(onUpdateColor).toHaveBeenCalledWith(sceneId, surfaces[0].id, color)
-  })
-
-  test('matches snapshot of scene with colored surfaces', () => {
-    const filterSurfaces = surfaces.map(surface => {
-      surface.color = Colors.getColor()
-      return surface
-    })
-
-    const scene = shallow(
-      getTintableScene({
-        surfaces: filterSurfaces
-      }))
-    expect(scene).toMatchSnapshot()
   })
 
   test('renders for hovered surfaces when previewColor is active', () => {

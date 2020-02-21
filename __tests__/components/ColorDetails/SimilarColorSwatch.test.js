@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { shallow } from 'enzyme'
 import SimilarColorSwatch from 'src/components/Facets/ColorDetails/SimilarColors/SimilarColorSwatch'
 import * as Colors from '__mocks__/data/color/Colors'
-import ReactGA from 'react-ga'
+import * as GA from 'src/analytics/GoogleAnalytics'
 
 const color = Colors.getColor()
 let colors = []
@@ -20,10 +20,6 @@ Object.keys(color).filter((el) => {
 
 describe('Color Swatch component will pass props correctly', () => {
   const wrapper = similarColorSwatch(color)
-
-  it('snapshot testing', () => {
-    expect(wrapper).toMatchSnapshot()
-  })
 
   it('component will be rendering', () => {
     const colorSwatchExist = wrapper.exists()
@@ -44,8 +40,8 @@ describe(('click event test of color swatch component'), () => {
   const wrapper = similarColorSwatch(color)
   it('component should call handclick function', () => {
     const handleClickMock = jest.fn()
-    ReactGA.event = handleClickMock
+    GA.event = handleClickMock
     wrapper.find(Link).simulate('click')
-    expect(ReactGA.event).toHaveBeenCalled()
+    expect(GA.event).toHaveBeenCalled()
   })
 })
