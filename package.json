@@ -18,7 +18,7 @@
   },
   "main": "dist/index.js",
   "jest": {
-    "setupFiles": [
+    "setupFilesAfterEnv": [
       "jest-canvas-mock",
       "<rootDir>/setup/setupFile.js"
     ],
@@ -95,6 +95,7 @@
     "@babel/preset-env": "7.8.3",
     "@babel/preset-flow": "7.8.3",
     "@babel/preset-react": "7.8.3",
+    "@testing-library/jest-dom": "^5.1.1",
     "@testing-library/react": "9.3.0",
     "autoprefixer": "9.6.1",
     "babel-eslint": "10.0.3",

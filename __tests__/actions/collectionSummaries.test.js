@@ -43,13 +43,6 @@ function getStubs () {
 }
 
 describe('collectionSummaries', () => {
-  describe('handleGetCollectionSummaries', () => {
-    it('should transform collection summaries into useable objects', () => {
-      const { collectionSummaries, categories, summaries } = getStubs()
-      expect(colSummaryModule.handleGetCollectionSummaries(collectionSummaries))
-        .toEqual(expect.objectContaining({ summaries, categories }))
-    })
-  })
 
   describe('loadCollectionSummaries', () => {
     beforeEach(() => {
