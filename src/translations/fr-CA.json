@@ -80,6 +80,7 @@
   "TO_NIGHT_VIEW": "Changer en vue de nuit",
   "VIEW_DETAILS": "Voir les détails",
   "VIEW_DETAILS_FOR": "Voir les détails pour {name}",
+  "ADD_TO_PALETTE": "Ajouter {name} à la palette",
   "ZOOM_IN": "Zoomer",
   "ZOOM_OUT": "Dézoomer",
   "ERROR_BOUNDARY": {

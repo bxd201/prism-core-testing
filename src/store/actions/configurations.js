@@ -26,9 +26,10 @@ const receiveConfiguration = (configurationData: Number) => {
 }
 
 export const LOAD_ERROR: string = 'LOAD_ERROR'
-const loadError = () => {
+const loadError = (err) => {
   return {
-    type: LOAD_ERROR
+    type: LOAD_ERROR,
+    payload: err
   }
 }
 
@@ -44,7 +45,7 @@ export const loadConfiguration = (brandId: string) => {
         dispatch(receiveConfiguration(config))
       })
       .catch(err => {
-        dispatch(loadError())
+        dispatch(loadError(err))
         console.error(`There was an error loading the configuration for ${brandId}.`, err)
       })
   }

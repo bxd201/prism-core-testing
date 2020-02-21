@@ -10,9 +10,6 @@
   $rotation: 360deg / 5;
   $partRotation: $rotation / 2;
   $times: 5;
-  $pulseDuration: .5s;
-  $pulseScaleMin: 1;
-  $pulseScaleMax: 1.5;
   $introDelay: .5s;
 
   @keyframes spin {
@@ -70,31 +67,6 @@
     }
   }
 
-  @keyframes throb {
-    from {
-      transform: scale($pulseScaleMax);
-    }
-
-    to {
-      transform: scale($pulseScaleMin);
-    }
-  }
-
-  @keyframes pulse {
-    0% {
-      background: black;
-      opacity: 0.05;
-    }
-    50% {
-      opacity: 0;
-      background: transparent;
-    }
-    100% {
-      background: white;
-      opacity: 0.3;
-    }
-  }
-
   align-items: center;
   animation-duration: $introDelay;
   animation-fill-mode: both;
@@ -102,7 +74,7 @@
   animation-timing-function: ease-in-out;
   display: flex;
   justify-content: center;
-  padding: 1em * ( $pulseScaleMax - 1);
+  padding: 0.5em;
 
   &, & * {
     font-size: $size;
@@ -121,7 +93,6 @@
   }
 
   &__wrapper,
-  &__wrapper::before,
   &__bar-spinner {
     border-radius: 1em * .5;
     height: 1em;
@@ -132,21 +103,6 @@
 
   &__wrapper {
     overflow: visible;
-
-    &::before {
-      animation-direction: normal, alternate;
-      animation-duration: $pulseDuration * 2, $pulseDuration * 2;
-      animation-delay: 0s, $pulseDuration;
-      animation-fill-mode: both, both;
-      animation-iteration-count: infinite, infinite;
-      animation-name: throb, pulse;
-      animation-timing-function: ease-in, ease-in-out;
-      content: '';
-      display: block;
-      left: 0;
-      position: absolute;
-      top: 0;
-    }
   }
 
   &__bar-spinner {
@@ -197,5 +153,10 @@
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
+  }
+
+  &__circle-loader {
+    position: absolute;
+    width: 1.2em;
   }
 }

@@ -22,7 +22,7 @@ const receiveColors = (colorData: any) => ({
 })
 
 export const LOAD_ERROR: string = 'LOAD_ERROR'
-const loadError = () => ({ type: LOAD_ERROR })
+const loadError = (error) => ({ type: LOAD_ERROR, payload: error })
 
 export const FILTER_BY_FAMILY: string = 'FILTER_BY_FAMILY'
 export const filterByFamily = (family: string) => ({ type: FILTER_BY_FAMILY, payload: { family } })
@@ -69,7 +69,7 @@ export const loadColors = (brandId: string, options: Object = {}) => {
         const [colors, brights, sections, unorderedColors]: [any, any, FamilyStructure, any] = r.map(i => i.data)
         dispatch(receiveColors({ colors, brights, sections, unorderedColors }))
       })
-      .catch(r => dispatch(loadError()))
+      .catch(r => dispatch(loadError(r)))
   }
 }
 
