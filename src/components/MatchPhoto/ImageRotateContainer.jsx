@@ -93,6 +93,7 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
   const hasLoadedRef = useRef()
 
   const paintSceneWorkspace = useSelector(state => state.paintSceneWorkspace)
+  const [paintSceneWorkspaceState] = useState((imgUrl) ? null : paintSceneWorkspace)
   const [isConfirmationModalShown, setConfirmationModalShown] = useState(false)
 
   const dispatch = useDispatch()
@@ -390,7 +391,7 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
     <React.Fragment>
       <div style={{ display: `${showPaintScene ? 'block' : 'none'}` }}>
         <PrismImage ref={imageRef} source={blobUrl} loadedCallback={handleImageLoaded} shouldResample={hasLoaded} scalingWidth={scalingWidth} />
-        <div className={`${getWrapperClassName(imageUrl, pins, !!paintSceneWorkspace)}`} ref={wrapperRef}>
+        <div className={`${getWrapperClassName(imageUrl, pins, !!paintSceneWorkspaceState)}`} ref={wrapperRef}>
           <div className={`${containerClass}`}>
 
             <div className={`${headerClass}`}>
@@ -424,12 +425,12 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
             {
               ((imageUrl && isPaintScene && pins.length > 0) || isFromMyIdeas)
                 ? (<React.Fragment>
-                  <PaintScene checkIsPaintSceneUpdate={checkIsPaintSceneUpdate} imageUrl={imageUrl} workspace={paintSceneWorkspace} imageRotationAngle={imageRotationAngle} referenceDimensions={imageDims} width={wrapperWidth} />
+                  <PaintScene checkIsPaintSceneUpdate={checkIsPaintSceneUpdate} imageUrl={imageUrl} workspace={paintSceneWorkspaceState} imageRotationAngle={imageRotationAngle} referenceDimensions={imageDims} width={wrapperWidth} />
                 </React.Fragment>)
                 : ''
             }
             {
-              (!imageUrl && !isPaintScene && !paintSceneWorkspace)
+              (!imageUrl && !isPaintScene && !paintSceneWorkspaceState)
                 ? (<canvas className={canvasClass} name='canvas' width='600' height='600' />)
                 : ''
             }
