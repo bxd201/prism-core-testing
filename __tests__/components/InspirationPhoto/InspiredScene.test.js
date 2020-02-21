@@ -1,6 +1,6 @@
 import React from 'react'
 import { shallow } from 'enzyme'
-import { InspiredScene } from 'src/components/InspirationPhotos/InspiredScene'
+import InspiredScene from 'src/components/InspirationPhotos/InspiredScene'
 import ColorsFromImage from 'src/components/InspirationPhotos/ColorsFromImage'
 let defaultProps = {
   data: {},
@@ -14,12 +14,6 @@ const createInspiredScene = (props) => {
 }
 
 const wrapper = createInspiredScene()
-
-describe('snapshot match testing', () => {
-  it('snapshot test', () => {
-    expect(wrapper).toMatchSnapshot()
-  })
-})
 
 describe('compoments rendring test', () => {
   it('should rendering ColorsFromImage Component', () => {

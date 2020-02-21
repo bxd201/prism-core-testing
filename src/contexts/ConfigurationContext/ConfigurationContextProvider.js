@@ -6,7 +6,7 @@ import toLower from 'lodash/toLower'
 import { loadConfiguration } from '../../store/actions/configurations'
 
 import CSSVariableApplicator from '../../helpers/CSSVariableApplicator'
-import { varNames } from 'variables'
+import { varNames } from 'src/shared/variableDefs'
 
 import ConfigurationContext from './ConfigurationContext'
 
@@ -30,6 +30,7 @@ function ConfigurationContextProvider (props: Props) {
     brand,
     children,
     fetchedConfig: {
+      error,
       theme = {},
       typography = {},
       ...otherFetchedConfig
@@ -45,6 +46,12 @@ function ConfigurationContextProvider (props: Props) {
   useEffect(() => {
     loadConfiguration(userBrand)
   }, [])
+
+  useEffect(() => {
+    if (error) {
+      throw new Error(error)
+    }
+  }, [ error ])
 
   // TODO: extract this into an appropriate location, perhaps an initial bootstrapping step tied into rdx or ctx -@cody.richmond
   useEffect(() => {

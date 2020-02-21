@@ -14,14 +14,6 @@ const createActiveSlot = (props) => {
   return mountWithDnd(<ActiveSlot {...defaultProp} {...props} />)
 }
 
-// snapshot testing
-describe('snapshot testing for activeslot component ', () => {
-  it('ActiveSlot component should match snapshot', () => {
-    const wrapper = createActiveSlot()
-    expect(wrapper).toMatchSnapshot()
-  })
-})
-
 // rendering testing
 describe('rendering testing for activeslot compoenent', () => {
   it('active slot component should rendering correctly with colors', () => {

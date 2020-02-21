@@ -1,4 +1,3 @@
-/* eslint-disable */
 // @flow
 import reject from 'lodash/reject'
 import filter from 'lodash/filter'
@@ -168,9 +167,8 @@ export const lp = (state: any = initialState, action: any) => {
 
         if (_activeColor.length) {
           activeColor = { ..._activeColor[0] }
-        }
-      else {
-        activeColor = { ...mergedColors[0] }
+        } else {
+          activeColor = { ...mergedColors[0] }
         }
 
         return {

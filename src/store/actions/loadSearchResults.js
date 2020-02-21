@@ -34,14 +34,16 @@ const searchResultsError = () => ({ type: SEARCH_RESULTS_ERROR })
 
 export const MIN_SEARCH_LENGTH = 3
 export const loadSearchResults = (term: string, family?: string) => {
-  return (dispatch: Function) => {
+  return (dispatch: Function, getState: Function) => {
     if (!term || term.length < MIN_SEARCH_LENGTH) { return }
+
+    const { current } = getState().language
 
     dispatch(updateSearchQuery(term))
     dispatch(toggleSearchMode(true))
 
     return axios
-      .get(generateBrandedEndpoint(COLORS_SEARCH_ENDPOINT, 'sherwin'), { params: { query: term, family } })
+      .get(generateBrandedEndpoint(COLORS_SEARCH_ENDPOINT, 'sherwin', { language: current }), { params: { query: term, family } })
       .then(({ data }) => dispatch(receiveSearchResults(data)))
       .catch(data => dispatch(searchResultsError()))
   }

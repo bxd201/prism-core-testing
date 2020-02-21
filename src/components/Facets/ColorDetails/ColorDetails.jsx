@@ -1,10 +1,12 @@
 // @flow
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect, useMemo } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
 import { useSelector, useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import has from 'lodash/has'
+import flattenDeep from 'lodash/flattenDeep'
+import intersection from 'lodash/intersection'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import { FormattedMessage } from 'react-intl'
 import * as GA from 'src/analytics/GoogleAnalytics'
@@ -16,8 +18,8 @@ import CoordinatingColors from './CoordinatingColors/CoordinatingColors'
 import SimilarColors from './SimilarColors/SimilarColors'
 import SceneManager from '../../SceneManager/SceneManager'
 import { paintAllMainSurfaces } from '../../../store/actions/scenes'
-import { varValues } from 'variables'
-import type { ColorMap, Color } from '../../../shared/types/Colors'
+import { varValues } from 'src/shared/variableDefs'
+import type { ColorMap, Color, FamilyStructure } from '../../../shared/types/Colors'
 import 'src/scss/convenience/visually-hidden.scss'
 import './ColorDetails.scss'
 import ColorDataWrapper from 'src/helpers/ColorDataWrapper/ColorDataWrapper'
@@ -32,12 +34,13 @@ type Props = {
   familyLink?: string
 }
 
-const ColorDetails = ColorDataWrapper(({ onColorChanged, onSceneChanged, onVariantChanged, onColorChipToggled, familyLink }: Props) => {
+export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged, onColorChipToggled, familyLink }: Props) => {
   const { colorId } = useParams()
   const dispatch = useDispatch()
   const toggleSceneDisplayScene = useRef(null)
   const toggleSceneHideScene = useRef(null)
   const colors: ColorMap = useSelector(state => state.colors.items.colorMap)
+  const structure: FamilyStructure = useSelector(state => state.colors.structure)
   const scenesLoaded: boolean = useSelector(state => !state.scenes.loadingScenes)
   // grab the color by color number from the URL
   const activeColor: Color | typeof undefined = has(colors, colorId) ? colors[colorId] : undefined
@@ -52,6 +55,28 @@ const ColorDetails = ColorDataWrapper(({ onColorChanged, onSceneChanged, onVaria
   useEffect(() => { // paint all the main surfaces on load of the CDP
     scenesLoaded && activeColor && dispatch(paintAllMainSurfaces(activeColor))
   }, [scenesLoaded, activeColor])
+
+  const optionsPanelProps = useMemo(() => {
+    // default props only contain color
+    let props = {
+      color: activeColor
+    }
+
+    // if we have structure and color data...
+    if (structure && activeColor && familyLink) {
+      const allFams = flattenDeep(structure.map(s => s.families))
+      const { colorFamilyNames } = activeColor
+      // see if our active color's families exist in all families; if yes, allow showing the family link
+      if (intersection(allFams, colorFamilyNames).length > 0) {
+        props = {
+          ...props,
+          familyLink
+        }
+      }
+    }
+
+    return props
+  }, [ structure, activeColor, familyLink ])
 
   if (!activeColor) {
     console.info(`ColorDetails: ${colorId} is not a valid color ID`)
@@ -109,30 +134,34 @@ const ColorDetails = ColorDataWrapper(({ onColorChanged, onSceneChanged, onVaria
               GA.event({ category: 'Color Detail', action: tabNames[index], label: tabNames[index] })
             }}>
               <TabList className={`${baseClass}__tab-list`} style={{ backgroundColor: activeColor.hex }}>
-                <Tab className={`${baseClass}__tab ${activeColor.isDark ? `${baseClass}__tab--dark-color` : ''}`}>
-                  <div className={`${baseClass}__tab-copy`}>
-                    <FormattedMessage id='COORDINATING_COLORS' />
-                  </div>
-                </Tab>
-                <Tab className={`${baseClass}__tab ${activeColor.isDark ? `${baseClass}__tab--dark-color` : ''}`}>
+                {activeColor.coordinatingColors && (
+                  <Tab className={`coordinating-colors-tab ${baseClass}__tab ${activeColor.isDark ? `${baseClass}__tab--dark-color` : ''}`}>
+                    <div className={`${baseClass}__tab-copy`}>
+                      <FormattedMessage id='COORDINATING_COLORS' />
+                    </div>
+                  </Tab>
+                )}
+                <Tab className={`similar-colors-tab ${baseClass}__tab ${activeColor.isDark ? `${baseClass}__tab--dark-color` : ''}`}>
                   <div className={`${baseClass}__tab-copy`}>
                     <FormattedMessage id='SIMILAR_COLORS' />
                   </div>
                 </Tab>
-                <Tab className={`${baseClass}__tab ${activeColor.isDark ? `${baseClass}__tab--dark-color` : ''}`}>
+                <Tab className={`color-info-tab ${baseClass}__tab ${activeColor.isDark ? `${baseClass}__tab--dark-color` : ''}`}>
                   <div className={`${baseClass}__tab-copy`}>
                     <FormattedMessage id='DETAILS' />
                   </div>
                 </Tab>
               </TabList>
-              <TabPanel className={`${baseClass}__tab-panel`}>
-                <CoordinatingColors colors={colors} color={activeColor} />
-              </TabPanel>
+              {activeColor.coordinatingColors && (
+                <TabPanel className={`${baseClass}__tab-panel`}>
+                  <CoordinatingColors colors={colors} color={activeColor} />
+                </TabPanel>
+              )}
               <TabPanel className={`${baseClass}__tab-panel`}>
                 <SimilarColors colors={colors} color={activeColor} />
               </TabPanel>
               <TabPanel className={`${baseClass}__tab-panel color-info__tab-panel-details`}>
-                <ColorInfo color={activeColor} familyLink={familyLink} />
+                <ColorInfo {...optionsPanelProps} />
               </TabPanel>
             </Tabs>
           </div>
@@ -140,6 +169,6 @@ const ColorDetails = ColorDataWrapper(({ onColorChanged, onSceneChanged, onVaria
       </div>
     </>
   )
-})
+}
 
-export default ColorDetails
+export default ColorDataWrapper(ColorDetails)

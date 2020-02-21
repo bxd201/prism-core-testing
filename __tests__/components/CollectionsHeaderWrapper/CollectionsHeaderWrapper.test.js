@@ -1,8 +1,7 @@
 /* eslint-env jest */
 import React from 'react'
-import { shallow, mount } from 'enzyme'
+import { shallow } from 'enzyme'
 import CollectionsHeaderWrapper, { buttonLeft, heading, buttonRight } from 'src/components/CollectionsHeaderWrapper/CollectionsHeaderWrapper'
-import CollectionDetail from 'src/components/Shared/CollectionDetail'
 import { ColorCollections } from 'src/components/ColorCollections/ColorCollections'
 import { Link } from 'react-router-dom'
 
@@ -15,8 +14,6 @@ describe('CollectionsHeaderWrapper', () => {
   let collectionsHeaderWrapper
 
   beforeAll(() => (collectionsHeaderWrapper = getCollectionsHeaderWrapper()))
-
-  it('should match snapshot', () => expect(collectionsHeaderWrapper).toMatchSnapshot())
 
   it('should render Link and with to prop as /active', () => {
     expect(collectionsHeaderWrapper.find(Link).exists()).toBe(true)

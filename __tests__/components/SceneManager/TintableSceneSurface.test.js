@@ -11,14 +11,6 @@ const createSurface = (props = {}) => {
   return shallow(<TintableSceneSurface {...defaultProps} {...props} />)
 }
 
-// snapshot testing
-describe('Snapshot Testing', () => {
-  it('component should match snapshot', () => {
-    const wrapper = createSurface()
-    expect(wrapper).toMatchSnapshot()
-  })
-})
-
 // rendering test
 describe('testing Tintable Surface', () => {
   it('SVG should rendering correctly', () => {

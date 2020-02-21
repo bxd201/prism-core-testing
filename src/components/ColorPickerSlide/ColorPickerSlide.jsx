@@ -33,14 +33,14 @@ function ColorPickerSlide (props: SummaryProps) {
     }
   })
   const { brandId } = useContext(ConfigurationContext)
-  const { locale, messages = {} } = useIntl()
+  const { messages = {} } = useIntl()
   const dispatch = useDispatch()
   const [isShowSlider, handleSlideShow] = useState(false)
   const wrapperRef = React.useRef()
 
   useEffect(() => {
     dispatch(loadCollectionSummaries())
-    dispatch(loadColors(brandId, { language: locale }))
+    dispatch(loadColors(brandId))
   }, [])
 
   const divKeyDownHandler = (e) => {

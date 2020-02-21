@@ -22,7 +22,7 @@ const defaultProps = {
   }],
   sceneStatus: [{
     id: 1,
-    variant: 'day',
+    variant: 'day'
   }],
   maxActiveScenes: 2,
   activeScenes: [1],
@@ -45,13 +45,6 @@ const sample = (arr) => {
 const createSceneManager = (props = {}) => {
   return shallow(<SceneManager {...defaultProps} {...props} />)
 }
-
-describe('snapshot testing', () => {
-  it('should get correct snapshot', () => {
-    const wrapper = createSceneManager({ scenes: surfaces, sceneStatus: sceneStatus })
-    expect(wrapper).toMatchSnapshot()
-  })
-})
 
 describe('Scene Manager Rendering Testing', () => {
   it('Component should rendering loading icon correctly when loading scene set to true', () => {

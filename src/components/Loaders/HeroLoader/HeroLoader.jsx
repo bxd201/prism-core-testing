@@ -1,26 +1,14 @@
 // @flow
-import React from 'react'
+import React, { useMemo } from 'react'
 import CSSVariableApplicator from '../../../helpers/CSSVariableApplicator'
-import memoizee from 'memoizee'
 import at from 'lodash/at'
 import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
 
 import { getColors } from '../functions'
-import { varNames } from 'variables'
+import { varNames } from 'src/shared/variableDefs'
 
 import './HeroLoader.scss'
-
-const getCssVars = memoizee((color?: string): Object => {
-  const colors = getColors(color)
-
-  return {
-    [varNames.loaders.hero.color1]: colors[0],
-    [varNames.loaders.hero.color2]: colors[1],
-    [varNames.loaders.hero.color3]: colors[2],
-    [varNames.loaders.hero.color4]: colors[3],
-    [varNames.loaders.hero.color5]: colors[4]
-  }
-}, { primitive: true, length: 1 })
+import CircleLoader from '../CircleLoader/CircleLoader'
 
 type Props = {
   color?: string,
@@ -33,9 +21,22 @@ function HeroLoader (props: Props) {
   const { theme } = React.useContext(ConfigurationContext)
   const finalColor = color || at(theme, 'primary')[0] || null
 
+  const cssVars = useMemo(() => {
+    const colors = getColors(finalColor)
+
+    return {
+      [varNames.loaders.hero.color1]: colors[0],
+      [varNames.loaders.hero.color2]: colors[1],
+      [varNames.loaders.hero.color3]: colors[2],
+      [varNames.loaders.hero.color4]: colors[3],
+      [varNames.loaders.hero.color5]: colors[4]
+    }
+  }, [ finalColor ])
+
   return (
-    <CSSVariableApplicator variables={getCssVars(finalColor)}>
+    <CSSVariableApplicator variables={cssVars}>
       <div className={`hero-loader ${size ? `hero-loader--${size}` : ''} ${className || ''}`} {...other}>
+        <CircleLoader className='hero-loader__circle-loader' inheritSize />
         <div className='hero-loader__wrapper'>
           <div className='hero-loader__bar-spinner'>
             <div className='hero-loader__bar hero-loader__bar--1' />
