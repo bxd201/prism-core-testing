@@ -35,7 +35,9 @@ describe('isShowBack = false', () => {
   let expertColorPicks
   useStateSpy.mockImplementation((init) => [init, setState])
 
-  beforeEach(() => expertColorPicks = getExpertColorPicks({ isShowBack: false, setHeader: setHeader, showBack: showBack }))
+  beforeEach(() => {
+    expertColorPicks = getExpertColorPicks({ isShowBack: false, setHeader: setHeader, showBack: showBack })
+  })
 
   afterEach(jest.clearAllMocks)
 
@@ -47,7 +49,7 @@ describe('isShowBack = false', () => {
   it('calls setHeader', () => expect(setHeader.mock.calls[0][0]).toBe('Expert Color Picks'))
 
   it('Clicking the first collection calls showBack & setState', () => {
-    expertColorPicks.find('.collection__summary__wrapper').simulate('click')
+    expertColorPicks.find('.color-strip-button__wrapper').simulate('click')
     expect(showBack.mock.calls).toHaveLength(1)
     expect(setState.mock.calls).toHaveLength(1)
   })
@@ -57,7 +59,9 @@ describe('isShowBack = true', () => {
   let expertColorPicks
   useStateSpy.mockImplementation((init) => [collectionDataDetails, setState])
 
-  beforeEach(() => expertColorPicks = getExpertColorPicks({ isShowBack: true, setHeader: setHeader, showBack: showBack }))
+  beforeAll(() => {
+    expertColorPicks = getExpertColorPicks({ isShowBack: true, setHeader: setHeader, showBack: showBack })
+  })
 
   afterEach(jest.clearAllMocks)
 

@@ -14,6 +14,7 @@ import '@formatjs/intl-relativetimeformat/polyfill'
 import '@formatjs/intl-relativetimeformat/polyfill-locales'
 import Adapter from 'enzyme-adapter-react-16'
 import { LiveAnnouncer } from 'react-aria-live'
+import '@testing-library/jest-dom/extend-expect'
 
 configure({ adapter: new Adapter() })
 

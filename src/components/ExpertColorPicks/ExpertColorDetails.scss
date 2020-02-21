@@ -1,3 +1,14 @@
+.expert-color-pick-button {
+  &__top-section {
+    min-height: 100px;
+  }
+  &__content__wrapper {
+    padding: 14px;
+    &__color-name{
+      font-weight: 700;
+    }
+  }
+}
 .prism-expert-color-details {
   display: flex;
   justify-content: center;
