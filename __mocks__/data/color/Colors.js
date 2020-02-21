@@ -1,7 +1,7 @@
 // @flow
 import cloneDeep from 'lodash/cloneDeep'
 
-import type { CategorizedColorGrid, Color, CategorizedColorById } from '../../../src/shared/types/Colors'
+import type { CategorizedColorGrid, Color, CategorizedColorById } from '../../../src/shared/types/Colors.js.flow'
 
 import sampleSize from 'lodash/sampleSize'
 

@@ -1,6 +1,6 @@
 // @flow
 import React from 'react'
-import type { Color } from '../../../src/shared/types/Colors'
+import type { Color } from '../../../src/shared/types/Colors.js.flow'
 import { fullColorNumber } from '../../../src/shared/helpers/ColorUtils'
 import { connect } from 'react-redux'
 import { add } from '../../store/actions/live-palette'

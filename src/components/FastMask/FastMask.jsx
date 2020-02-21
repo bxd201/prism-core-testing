@@ -10,7 +10,7 @@ import { loadImage, getImageRgbaData } from './FastMaskUtils'
 import { uploadImage } from '../../store/actions/user-uploads'
 
 import { type WorkerMessage } from './workers/TotalImage/totalImage.types.js.flow'
-import { type Color } from '../../shared/types/Colors'
+import { type Color } from '../../shared/types/Colors.js.flow'
 
 import './FastMask.scss'
 import FileInput from '../FileInput/FileInput'

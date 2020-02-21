@@ -1,7 +1,7 @@
 // @flow
 //
 import React, { useState } from 'react'
-import type { ColorCollectionsTabs } from '../../shared/types/Colors'
+import type { ColorCollectionsTabs } from '../../shared/types/Colors.js.flow'
 
 type Props = {
   collectionTabs: ColorCollectionsTabs,

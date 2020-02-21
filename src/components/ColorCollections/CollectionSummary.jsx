@@ -1,7 +1,7 @@
 // @flow
 import React, { PureComponent } from 'react'
 import { fullColorNumber, getContrastYIQ } from '../../shared/helpers/ColorUtils'
-import type { CollectionsSummary } from '../../shared/types/Colors'
+import type { CollectionsSummary } from '../../shared/types/Colors.js.flow'
 import cloneDeep from 'lodash/cloneDeep'
 import './CollectionSummary.scss'
 const baseClass = 'collection__summary'

@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 // @flow
 
-import type { BlankColor } from '../shared/types/Colors'
+import type { BlankColor } from '../shared/types/Colors.js.flow'
 
 export const DRAG_TYPES = Object.freeze({
   SWATCH: 'SWATCH'

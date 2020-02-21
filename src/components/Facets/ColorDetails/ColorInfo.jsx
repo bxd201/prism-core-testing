@@ -3,7 +3,7 @@ import React from 'react'
 import { FormattedMessage } from 'react-intl'
 import kebabCase from 'lodash/kebabCase'
 
-import type { Color } from '../../../shared/types/Colors'
+import type { Color } from '../../../shared/types/Colors.js.flow'
 
 import 'src/scss/convenience/visually-hidden.scss'
 
