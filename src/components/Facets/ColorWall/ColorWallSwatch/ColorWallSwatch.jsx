@@ -100,13 +100,16 @@ const ColorWallSwatch = React.forwardRef<Props, any>((props: Props, ref: any) =>
         refData: null
       }
     } else if (displayAddButton) {
+      const title = (at(messages, 'ADD_TO_PALETTE')[0] || '').replace('{name}', fullName)
+
       return {
         content: (
           <OmniButton
+            className={`${CLASS_NAMES.CONTENT_CTA} ${CLASS_NAMES.CONTENT_CTA_L}`}
             icon={OmniButton.ICONS.ADD}
             onClick={handleOnAdd}
-            className={`${CLASS_NAMES.CONTENT_CTA} ${CLASS_NAMES.CONTENT_CTA_L}`}
             tabIndex={tabIndex}
+            title={title}
           />
         ),
         refData: {
@@ -115,13 +118,16 @@ const ColorWallSwatch = React.forwardRef<Props, any>((props: Props, ref: any) =>
       }
     } else if (displayInfoButton) {
       const to = generateColorDetailsPageUrl(color)
+      const title = (at(messages, 'VIEW_DETAILS_FOR')[0] || '').replace('{name}', fullName)
+
       return {
         content: (
           <OmniButton
-            to={to}
-            icon={OmniButton.ICONS.INFO}
             className={`${CLASS_NAMES.CONTENT_CTA} ${CLASS_NAMES.CONTENT_CTA_R}`}
+            icon={OmniButton.ICONS.INFO}
             tabIndex={tabIndex}
+            title={title}
+            to={to}
           />
         ),
         refData: {
@@ -138,11 +144,11 @@ const ColorWallSwatch = React.forwardRef<Props, any>((props: Props, ref: any) =>
       return {
         content: (
           <OmniButton
-            to={to}
-            external={isExternalLink}
-            title={title}
             className={`${CLASS_NAMES.CONTENT_CTA} ${CLASS_NAMES.CONTENT_CTA_L} ${focus ? CLASS_NAMES.CONTENT_CTA_FOCUS : ''}`}
+            external={isExternalLink}
             tabIndex={tabIndex}
+            title={title}
+            to={to}
           >
             {at(messages, 'VIEW_DETAILS')[0]}
           </OmniButton>

@@ -10,7 +10,6 @@ import isFunction from 'lodash/isFunction'
 import clone from 'lodash/clone'
 import * as scroll from 'scroll'
 import { withRouter } from 'react-router-dom'
-import { LiveMessage } from 'react-aria-live'
 import { injectIntl } from 'react-intl'
 
 import { varValues } from 'src/shared/variableDefs'
@@ -25,6 +24,8 @@ import { fullColorName } from '../../../shared/helpers/ColorUtils'
 import { type GridBounds, type ColorReference } from './ColorWall.flow'
 import { type ColorWallContextProps, type ColorWallA11yContextProps } from './ColorWallContext'
 import withColorWallContext from './withColorWallContext'
+import WithLiveAnnouncerContext from 'src/contexts/LiveAnnouncerContext/WithLiveAnnouncerContext'
+import { type LiveAnnouncerProps } from 'src/contexts/LiveAnnouncerContext/LiveAnnouncerContextProvider'
 
 import 'src/scss/externalComponentSupport/AutoSizer.scss'
 import 'src/scss/convenience/overflow-ellipsis.scss'
@@ -52,6 +53,7 @@ type Props = IntlProps & RouterProps & ReduxProps & {
   contain: boolean,
   family: string | void,
   immediateSelectionOnActivation?: boolean,
+  liveAnnouncerContext: LiveAnnouncerProps,
   maxCellSize: number,
   minCellSize: number,
   onActivateColor?: Function,
@@ -133,7 +135,6 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     this.handleBodyKeyDown = this.handleBodyKeyDown.bind(this)
     this.handleBodyTouchStart = this.handleBodyTouchStart.bind(this)
     this.returnFocusToThisComponent = this.returnFocusToThisComponent.bind(this)
-    this.getAudioMessaging = this.getAudioMessaging.bind(this)
     this._gridWrapperRef = React.createRef()
     this._swatchRefs = {}
   }
@@ -163,7 +164,6 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
 
     return (
       <>
-        {this.getAudioMessaging() && <LiveMessage message={this.getAudioMessaging()} aria-live='assertive' clearOnUnmount='true' />}
         <section
           className={`color-wall-swatch-list ${contain ? 'color-wall-swatch-list--contain' : ''}`}
           role='application'
@@ -304,9 +304,9 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
   }
 
   componentDidUpdate (prevProps: Props, prevState: State) {
-    const { showAll, activeColor, colors, colorWallContext: { a11yFocusCell, updateA11y } } = this.props
+    const { showAll, activeColor, colors, colorMap, colorWallContext: { a11yFocusCell, updateA11y }, liveAnnouncerContext: { announceAssertive }, intl: { formatMessage } } = this.props
     const { activeColor: oldActiveColor } = prevProps
-    const { activeColorCoords, focusCoords } = this.state
+    const { activeColorCoords, focusCoords, levelMap } = this.state
     const { activeColorCoords: oldActiveColorCoords, focusCoords: oldFocusCoords } = prevState
 
     // if activeColor has updated...
@@ -324,6 +324,22 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
         if (containingChunk) {
           // ... set it and the focus cell in state
           updateA11y({ a11yFocusCell: clone(activeColorCoords), a11yFocusChunk: containingChunk })
+        }
+      }
+    }
+
+    // cell should be a 2-value array representing location in the colors grid
+    if (isArray(a11yFocusCell)) {
+      const focusedColorId: ProbablyColorId = at(colors, `[${a11yFocusCell[1]}][${a11yFocusCell[0]}]`)[0]
+
+      if (focusedColorId) {
+        const focusedColor: Color = colorMap[focusedColorId]
+        const thisLevel: ColorReference = levelMap[focusedColorId]
+
+        if (thisLevel && thisLevel.level === 0) {
+          announceAssertive(formatMessage({ id: 'SWATCH_ACTIVATED_DETAILS' }, { color: focusedColor.name }))
+        } else {
+          announceAssertive(formatMessage({ id: 'SWATCH_FOCUS' }, { color: fullColorName(focusedColor.brandKey, focusedColor.colorNumber, focusedColor.name) }))
         }
       }
     }
@@ -776,33 +792,8 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     return false
   }
 
-  getAudioMessaging = function getAudioMessaging (cell?: number[]): string | void {
-    const { colors, colorMap, intl, colorWallContext: { a11yFocusCell } } = this.props
-    const { levelMap } = this.state
-    const _cell = cell || a11yFocusCell
-
-    if (!_cell || typeof _cell === 'object') {
-      return void (0)
-    }
-
-    const focusedColorId: ProbablyColorId = at(colors, `[${_cell[1]}][${_cell[0]}]`)[0]
-
-    if (focusedColorId) {
-      const focusedColor: Color = colorMap[focusedColorId]
-      const thisLevel: ColorReference = levelMap[focusedColorId]
-
-      if (thisLevel && thisLevel.level === 0) {
-        return intl.formatMessage({ id: 'SWATCH_ACTIVATED_DETAILS' }, { color: focusedColor.name })
-      } else {
-        return intl.formatMessage({ id: 'SWATCH_FOCUS' }, { color: fullColorName(focusedColor.brandKey, focusedColor.colorNumber, focusedColor.name) })
-      }
-    }
-
-    return void (0)
-  }
-
   // END OTHER METHODS
   // -----------------------------------------------
 }
 
-export default withRouter(injectIntl(withColorWallContext(ColorWallSwatchList)))
+export default withRouter(injectIntl(withColorWallContext(WithLiveAnnouncerContext(ColorWallSwatchList))))

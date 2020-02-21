@@ -1,4 +1,3 @@
-/* eslint-disable */
 // @flow
 import reject from 'lodash/reject'
 import filter from 'lodash/filter'
