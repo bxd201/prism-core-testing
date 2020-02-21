@@ -27,7 +27,7 @@ function ColorCollectionsTab (props: Props) {
   const tabShowName = (tabActive !== undefined) ? tabActive : 'Choose collection'
 
   return (
-    <div className={`${tabListSelect}`}>
+    <div className={tabListSelect} role='tablist'>
       <span className={`${tabListHeading}`}>Choose a Collection</span>
 
       <span
@@ -43,7 +43,7 @@ function ColorCollectionsTab (props: Props) {
           return (
             <li
               data-testid={`${tab.id}`}
-              role='presentation'
+              role='tab'
               onKeyDown={() => {}}
               className={`${tabListItem} ${(tab.id === tabIdShow) ? `${tabListItemActive}` : ''}`}
               key={tab.id}

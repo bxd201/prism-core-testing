@@ -1,5 +1,5 @@
 // @flow
-import api from './api'
+import axios from 'axios'
 import { INSPIRATIONAL_PHOTOS_ENDPOINT as IPE } from 'constants/endpoints'
 
 export const REQUEST: string = 'REQUEST_INSPIRATIONAL_PHOTOS'
@@ -35,7 +35,7 @@ export const loadInspirationalPhotos = () => {
   return (dispatch: Function) => {
     dispatch(request())
 
-    return api.get(IPE)
+    return axios.get(IPE)
       .then(response => {
         // TODO:noah.hall
         // confirm error handling
