@@ -55,8 +55,6 @@ export const scenesAndRegions = (state: Object[] = [], action: {type: string, pa
     return state.filter(item => item.id !== action.payload)
   }
 
-  // @todo DELETE_SAVED_SCENE not fully implemented... REVISIT -RS
-
   return state
 }
 

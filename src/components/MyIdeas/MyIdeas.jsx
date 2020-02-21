@@ -14,7 +14,6 @@ const buttonClassName = `${baseClassName}__button`
 const sectionClassName = `${baseClassName}__section`
 const sectionLeftClassName = `${sectionClassName}--left`
 
-// @todo - Refactor to use selector and get from redux store
 type MyIdeasProps = {
   brandId: string
 }
@@ -42,12 +41,12 @@ const MyIdeas = (props: MyIdeasProps) => {
     e.preventDefault()
     setEditEnabled(false)
   }
-  // @todo - is this a string or number? -RS
-  const deleteScene = (id: number) => {
+
+  const deleteScene = (id: number | string) => {
     dispatch(deleteSavedScene(id))
   }
-  // @todo - is this a string or number? -RS
-  const selectScene = (sceneId: number) => {
+
+  const selectScene = (sceneId: number | string) => {
     dispatch(selectSavedScene(sceneId))
   }
 
