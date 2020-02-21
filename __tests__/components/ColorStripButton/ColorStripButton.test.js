@@ -1,5 +1,4 @@
 import React from 'react'
-import { render } from '@testing-library/react'
 import ColorStripButton from 'src/components/ColorStripButton/ColorStripButton'
 
 it('renders any children elements', () => {

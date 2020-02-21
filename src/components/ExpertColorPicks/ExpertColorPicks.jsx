@@ -10,10 +10,10 @@ import { fullColorNumber, getContrastYIQ } from 'src/shared/helpers/ColorUtils'
 import './ExpertColorPicks.scss'
 
 const ExpertColorPicks = () => {
-  const expertColorPicks = useSelector(state => state.expertColorPicks.data)
   const dispatch = useDispatch()
-
   React.useEffect(() => { loadExpertColorPicks(dispatch) }, [])
+
+  const expertColorPicks = useSelector(state => state.expertColorPicks.data)
 
   return (
     <CardMenu menuTitle='Expert Color Picks'>

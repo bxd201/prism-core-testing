@@ -3,7 +3,7 @@ import { IntlProvider } from 'react-intl'
 import { Provider } from 'react-redux'
 import { mount, configure } from 'enzyme'
 import languages from 'src/translations/translations'
-import { Router, useRouteMatch, useHistory, useParams } from 'react-router-dom'
+import { Router, MemoryRouter, useRouteMatch, useHistory, useParams } from 'react-router-dom'
 import { createMemoryHistory } from 'history'
 import { flattenNestedObject } from 'src/shared/helpers/DataUtils'
 import extend from 'lodash/extend'
@@ -14,6 +14,7 @@ import '@formatjs/intl-relativetimeformat/polyfill'
 import '@formatjs/intl-relativetimeformat/polyfill-locales'
 import Adapter from 'enzyme-adapter-react-16'
 import { LiveAnnouncer } from 'react-aria-live'
+import { render } from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect'
 
 configure({ adapter: new Adapter() })
@@ -74,4 +75,16 @@ window.mocked = (mockedComponent, nonDefaultParams = {}) => {
       </Provider>
     </IntlProvider>
   ), { history: history })
+}
+
+window.render = (component) => {
+  return { ...render(
+    <MemoryRouter>
+      <IntlProvider locale='en-US' messages={flattenNestedObject(languages['en-US'])}>
+        <ConfigurationContext.Provider value={{ brandId: 'sherwin', theme: {} }}>
+          <Provider store={store}>{component}</Provider>
+        </ConfigurationContext.Provider>
+      </IntlProvider>
+    </MemoryRouter>
+  ) }
 }
