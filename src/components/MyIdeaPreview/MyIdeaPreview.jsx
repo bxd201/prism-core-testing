@@ -44,13 +44,18 @@ const getZoomWidthAndHeight = (dimensions, width, height) => {
   return widthAndHeight
 }
 
+export const RedirectMyIdeas = () => {
+  const routeContext = useContext(RouteContext)
+  routeContext.redirectMyIdeas()
+  return null
+}
+
 const MyIdeaPreview = (props: myIdeaPreviewProps) => {
   const dispatch = useDispatch()
   const intl = useIntl()
   const backgroundCanvasRef = useRef()
   const foregroundCanvasRef = useRef()
   const wrapperRef = useRef()
-  const routeContext = useContext(RouteContext)
 
   const selectedScene = useSelector(state => {
     const id = state.selectedSavedSceneId
@@ -62,7 +67,7 @@ const MyIdeaPreview = (props: myIdeaPreviewProps) => {
     return null
   })
 
-  // const paintSceneWorkSpace = useSelector(state => state.paintSceneWorkspace)
+  const paintSceneWorkSpace = useSelector(state => state.paintSceneWorkspace)
 
   const { renderingBaseUrl, backgroundImageUrl } = selectedScene || {}
   const initialWidth = selectedScene ? selectedScene.surfaceMasks.width : 0
@@ -146,9 +151,6 @@ const MyIdeaPreview = (props: myIdeaPreviewProps) => {
       selectedScene.palette,
       initialWidth,
       initialHeight))
-
-    routeContext.redirectMyIdeas()
-    return false
   }
 
   const openUnpaintedProject = (e: SyntheticEvent) => {
@@ -160,16 +162,13 @@ const MyIdeaPreview = (props: myIdeaPreviewProps) => {
       selectedScene.palette,
       initialWidth,
       initialHeight))
-
-    routeContext.redirectMyIdeas()
-    return false
   }
 
   return (
     <>
       {/* eslint-disable-next-line no-constant-condition */}
       { selectedScene ? null : <Redirect to={MY_IDEAS} /> }
-      {/* {paintSceneWorkSpace ? <Redirect to={MATCH_PHOTO} /> : null} */}
+      { paintSceneWorkSpace ? <RedirectMyIdeas /> : null}
       <div ref={wrapperRef} className={wrapperClass} style={{ height: Math.round(height * heightCrop) }}>
         {selectedScene ? <MergeColors
           imageDataList={selectedScene.surfaceMasks.surfaces.map(surface => surface.surfaceMaskImageData)}
