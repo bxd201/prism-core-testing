@@ -1,6 +1,6 @@
 {
   "name": "prism",
-  "version": "1.3.1",
+  "version": "1.3.2",
   "scripts": {
     "precleanstart": "node build-scripts/utilities/clear-build-cache.js",
     "cleanstart": "npm start",
@@ -9,12 +9,11 @@
     "build:publish": "cross-env API_URL=https://prism-api.sherwin-williams.com WEB_URL=https://replatform-prism-web.ebus.swaws webpack --config webpack.publish.js",
     "test": "jest --coverage",
     "test:ci": "jest --ci",
-    "update-test-snapshots": "jest -u",
+    "test-watch": "jest --watch --coverage __tests__/",
     "preflow-check": "npm run flow-install",
     "flow-check": "flow check",
     "flow-check-verbose": "flow check --show-all-errors",
     "flow-install": "flow-typed install",
-    "test-watch": "jest --watch",
     "prepare": "npm run build:publish"
   },
   "main": "dist/index.js",
@@ -22,9 +21,6 @@
     "setupFiles": [
       "jest-canvas-mock",
       "<rootDir>/setup/setupFile.js"
-    ],
-    "snapshotSerializers": [
-      "enzyme-to-json/serializer"
     ],
     "moduleNameMapper": {
       "^dnd-core$": "dnd-core/dist/cjs",

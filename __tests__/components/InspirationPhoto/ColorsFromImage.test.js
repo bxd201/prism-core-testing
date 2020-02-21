@@ -28,12 +28,6 @@ const pinnedColors = [
 
 const wrapper = createColorsFromImage()
 
-describe('snapshot match testing', () => {
-  it('snapshot testing', () => {
-    expect(wrapper).toMatchSnapshot()
-  })
-})
-
 describe('Testing state for createColorsFromImage component', () => {
   it('State should initialize correctly', () => {
     const initialState = wrapper.instance().state

@@ -1,21 +1,16 @@
 import React from 'react'
-import { shallow } from 'enzyme'
 import ListWithCarousel from 'src/components/Carousel/Carousel'
 import CollectionSummary from 'src/components/ColorCollections/CollectionSummary'
 
 const baseClass = 'collection__summary'
 
 const createCollectionSummary = (props = {}) => {
-  const CollectionSummaryWrapper = ListWithCarousel(CollectionSummary)
-  return shallow(<CollectionSummaryWrapper {...props} />)
+  // eslint-disable-next-line no-undef
+  return mocked(<ListWithCarousel BaseComponent={CollectionSummary} {...props} />)
 }
 
 const wrapper = createCollectionSummary({ isExpertColor: true, getSummaryData: jest.fn(), data: [] })
 const collectionWrapper = createCollectionSummary({ isExpertColor: false, getSummaryData: jest.fn(), data: [] })
-
-describe('snapshot match testing', () => {
-  expect(wrapper).toMatchSnapshot()
-})
 
 describe('CollectionSummary should rendering correctly with different props', () => {
   it('should rendering component wrapper', () => {

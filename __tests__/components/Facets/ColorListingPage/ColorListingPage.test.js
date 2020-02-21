@@ -30,10 +30,6 @@ describe('ColorListingPage', () => {
     }
   })
 
-  it('should match snapshot', () => {
-    expect(colorListingPage).toMatchSnapshot()
-  })
-
   it('should render TransitionGroup component', () => {
     expect(colorListingPage.find(TransitionGroup).exists()).toBe(true)
   })
@@ -78,10 +74,6 @@ describe('ColorListingPage routes', () => {
 
   it('should show RootRedirect component for route defined as homeRoute constant', () => {
     expect(pathMap[homeRoute]).toBe(RootRedirect)
-  })
-
-  it('should show ColorWallComponent component for route defined as colorWallUrlPattern constant', () => {
-    expect(pathMap[`${colorWallBaseUrl}(/.*)?`]).toBe(ColorWallPage)
   })
 
   it('should show ColorDetailsComponent component for route defined as activeColorIdSeoUrlPattern constant', () => {

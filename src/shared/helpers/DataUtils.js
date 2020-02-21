@@ -26,11 +26,19 @@ export const ensureFullyQualifiedAssetUrl = (url: string): string => {
   return ''
 }
 
-export const generateBrandedEndpoint = memoizee((basePath, brand, options) => {
+export const generateBrandedEndpoint = memoizee((basePath, brand, options = {}) => {
+  const { language = undefined, params = {} } = options
+  const queryParams = {
+    ...params,
+    // map language to lng
+    lng: language,
+    _corev: APP_VERSION
+  }
+
   let url = `${basePath}/${brand}`
 
-  if (options && options.language) {
-    url += `?lng=${options.language}`
+  if (queryParams) {
+    url += '?' + Object.keys(queryParams).filter(param => typeof queryParams[param] !== 'undefined').map(param => `${param}=${encodeURIComponent(queryParams[param])}`).join('&')
   }
 
   return url

@@ -28,10 +28,6 @@ describe('CollectionDetail', () => {
     }
   })
 
-  it('should match snapshot', () => {
-    expect(collectionDetail).toMatchSnapshot()
-  })
-
   it('should render img with the src as in collectionDetailData', () => {
     expect(collectionDetail.find(`img.${collectionCover}`).exists()).toBe(true)
     expect(collectionDetail.find(`img.${collectionCover}`).prop('src')).toEqual(defaultProps.collectionDetailData.img)

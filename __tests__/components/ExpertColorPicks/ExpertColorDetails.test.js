@@ -27,26 +27,24 @@ let expertColorDetails
 
 beforeEach(() => expertColorDetails = getExpertColorDetails())
 
-it('should match snapshot', () => expect(expertColorDetails).toMatchSnapshot())
-
 it('renders a color wall for each color', () => {
   const colorWalls = expertColorDetails.find('.prism-expert-color-details__content__wrapper')
-  expect(colorWalls.length).toBe(3)
+  expect(colorWalls).toHaveLength(3)
   expect(colorWalls.get(0).props.style.backgroundColor).toBe('#cdd2d2')
   expect(colorWalls.get(1).props.style.backgroundColor).toBe('#a2a2a2')
   expect(colorWalls.get(2).props.style.backgroundColor).toBe('#c4c4c4')
 })
 
 it('shows a faCheckCircle for colors that are already present in the live-palette', () => {
-  expect(expertColorDetails.find('svg[data-icon="check-circle"]').length).toBe(1)
-  expect(expertColorDetails.find('svg[data-icon="plus-circle"]').length).toBe(2)
+  expect(expertColorDetails.find('svg[data-icon="check-circle"]')).toHaveLength(1)
+  expect(expertColorDetails.find('svg[data-icon="plus-circle"]')).toHaveLength(2)
 })
 
 it('clicking a button calls add dispatch function and updates icons', () => {
   expertColorDetails.find('button').first().simulate('click')
   expect(dispatch.mock.calls[0][0]).toEqual({
     payload: {
-      color: { brandKey: 'SW', colorNumber: 90210, hex: '#cdd2d2', name: 'Bobafett'}
+      color: { brandKey: 'SW', colorNumber: 90210, hex: '#cdd2d2', name: 'Bobafett' }
     },
     type: 'ADD_LP_COLOR'
   })

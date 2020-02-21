@@ -15,14 +15,6 @@ const createLivePalette = (props = {}) => {
   return shallow(<LivePalette {...defaultProps} {...props} />)
 }
 
-// snapshot testing
-describe('snapshot testing for LivePalette component ', () => {
-  it('LivePalette component should match snapshot', () => {
-    const wrapper = createLivePalette()
-    expect(wrapper).toMatchSnapshot()
-  })
-})
-
 // rendering test
 describe('rendering testing for LivePalette component ', () => {
   it('LivePalette component rendering correctly', () => {

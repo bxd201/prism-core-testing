@@ -1,7 +1,6 @@
 /* eslint-env jest */
 
 import React from 'react'
-// import { shallow } from 'enzyme'
 import { mountWithIntl } from '__mocks__/helpers/intl'
 import SceneVariantSwitch, { CLASSES } from 'src/components/SceneManager/SceneVariantSwitch'
 
@@ -35,10 +34,6 @@ describe('SceneVariantSwitch component with props', () => {
     }
   })
 
-  it('should match snapshot', () => {
-    expect(sceneVariantSwitch).toMatchSnapshot()
-  })
-
   it('should render label', () => {
     expect(sceneVariantSwitch.find(labelSelect).exists()).toBe(true)
   })
@@ -68,13 +63,8 @@ describe('SceneVariantSwitch events', () => {
     }
   })
 
-  it('should call onchange on keydown event with keycode 32 for label', () => {
-    sceneVariantSwitch.find(labelSelect).simulate('keyDown', { keyCode: 32 })
-    expect(mockFn).toHaveBeenCalled()
-  })
-
-  it('should call onchange on keydown event with keycode 13 for label', () => {
-    sceneVariantSwitch.find(labelSelect).simulate('keyDown', { keyCode: 13 })
+  it('should call onchange on keydown event with `Enter` for label', () => {
+    sceneVariantSwitch.find(inputSelect).simulate('keydown', { key: 'Enter' })
     expect(mockFn).toHaveBeenCalled()
   })
 

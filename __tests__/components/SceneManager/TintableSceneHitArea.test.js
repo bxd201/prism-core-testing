@@ -16,14 +16,6 @@ const createHitArea = (props = {}) => {
   return shallow(<TintableSceneHitArea {...defaultProps} {...props} />)
 }
 
-// snapshot testing
-describe('Snapshot Testing', () => {
-  it('component should match snapshot', () => {
-    const wrapper = createHitArea()
-    expect(wrapper).toMatchSnapshot()
-  })
-})
-
 // rendering test
 describe('testing Tintable Scene hit area', () => {
   it('SVG should rendering correctly', () => {

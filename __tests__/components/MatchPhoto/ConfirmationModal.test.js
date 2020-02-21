@@ -22,10 +22,6 @@ describe('ConfirmationModal with props', () => {
     }
   })
 
-  it('should match snapshot with props', () => {
-    expect(confirmationModal).toMatchSnapshot()
-  })
-
   it(`should render p.${contentClass} with headerContent`, () => {
     const headerContent = 'The photo content will be lost if you close. Make sure the colors you want to keep have been added to your palette. Do you still want to close?'
     expect(confirmationModal.find(`p.${contentClass}`).contains(headerContent)).toBe(true)

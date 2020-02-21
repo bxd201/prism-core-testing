@@ -20,10 +20,6 @@ describe('ColorViewer component without data', () => {
     }
   })
 
-  it('ColorViewer Snapshot without data', () => {
-    expect(colorViewer).toMatchSnapshot()
-  })
-
   it('ColorViewer is rendering', () => {
     expect(colorViewer.exists).toBeTruthy()
   })
@@ -45,10 +41,6 @@ describe('ColorViewer component with data', () => {
     if (!colorViewer) {
       colorViewer = getColorViewer({ color: color })
     }
-  })
-
-  it('ColorViewer Snapshot with data', () => {
-    expect(colorViewer).toMatchSnapshot()
   })
 
   it('ColorViewer is rendering', () => {

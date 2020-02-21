@@ -21,10 +21,6 @@ describe('CoordinatingColors component with props', () => {
     }
   })
 
-  it('CoordinatingColors Snapshot with props', () => {
-    expect(coordinatingColors).toMatchSnapshot()
-  })
-
   it('CoordinatingColors is rendering', () => {
     expect(coordinatingColors.exists()).toBe(true)
   })

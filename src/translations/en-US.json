@@ -255,6 +255,7 @@
   "VIEW_DETAILS_FOR": "View details for {name}",
   "VIEW_FULL_COLLECTION": "VIEW FULL COLLECTION",
   "YES": "Yes",
+  "ADD_TO_PALETTE": "Add {name} to palette",
   "ZOOM_IN": "Zoom in",
   "ZOOM_OUT": "Zoom out"
 }
