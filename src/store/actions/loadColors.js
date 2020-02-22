@@ -1,8 +1,9 @@
 // @flow
 import axios from 'axios'
 import { generateBrandedEndpoint } from '../../shared/helpers/DataUtils'
-import { type Color, type FamilyStructure, type ColorStatuses } from '../../shared/types/Colors'
+import { type Color, type FamilyStructure, type ColorStatuses } from '../../shared/types/Colors.js.flow'
 import { COLOR_CHUNKS_ENDPOINT, COLOR_BRIGHTS_ENDPOINT, COLOR_FAMILY_NAMES_ENDPOINT, COLORS_ENDPOINT } from '../../constants/endpoints'
+import store from 'src/store/store'
 
 export const REQUEST_COLORS: string = 'REQUEST_COLORS'
 const requestColors = () => ({ type: REQUEST_COLORS, payload: { loading: true, activeRequest: true } })
@@ -36,7 +37,7 @@ export const makeActiveColorById = (id?: string) => id ? { type: MAKE_ACTIVE_COL
 
 // TODO: Make this method configurable via options on call so specific color wall implementations can reuse it to load their colors
 export const loadColors = (brandId: string, options: Object = {}) => {
-  return (dispatch: Function, getState: Function) => {
+  return (dispatch: Function, getState: Function = store.getState) => {
     // if a request to load is active OR we already have colors loaded return out of here, do not load anything else
     const { items: { colors }, status: { activeRequest } } = getState().colors
     const { current } = getState().language

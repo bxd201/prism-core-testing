@@ -1,5 +1,5 @@
 // @flow
-import api from './api'
+import axios from 'axios'
 import { BRAND_COLORS_ENDPOINT } from 'constants/endpoints'
 
 export const REQUEST_BRAND_COLORS: string = 'REQUEST_BRAND_COLORS'
@@ -43,7 +43,7 @@ export const loadBrandColors = () => {
 
     dispatch(request())
 
-    return api.get(BRAND_COLORS_ENDPOINT)
+    return axios.get(BRAND_COLORS_ENDPOINT)
       .then(response => {
         if (response && response.status === 200) {
           dispatch(received(response.data))

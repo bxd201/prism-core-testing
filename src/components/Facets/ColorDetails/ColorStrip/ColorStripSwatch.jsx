@@ -3,7 +3,7 @@ import React from 'react'
 import * as GA from 'src/analytics/GoogleAnalytics'
 import { withRouter, type RouterHistory } from 'react-router-dom'
 
-import type { Color } from '../../../../shared/types/Colors'
+import type { Color } from '../../../../shared/types/Colors.js.flow'
 
 import { generateColorDetailsPageUrl } from '../../../../shared/helpers/ColorUtils'
 

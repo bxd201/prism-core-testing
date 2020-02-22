@@ -1,6 +1,6 @@
 // @flow
-import React, { useState, useEffect } from 'react'
-import CollectionsHeaderWrapper from '../CollectionsHeaderWrapper/CollectionsHeaderWrapper'
+import React, { useState } from 'react'
+import CardMenu from 'src/components/CardMenu/CardMenu'
 import { helpTabs, KEY_CODE_ENTER, KEY_CODE_SPACE, helpHeader } from './data'
 import './Help.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -29,10 +29,6 @@ const iconWrap = `${baseClass}__icon-wrap`
 const iconWrapUndoRedo = `${baseClass}__icon-wrap-undoredo`
 const iconInfo = `${baseClass}__icon-info`
 const secondIcon = `${baseClass}__second-icon`
-
-type Props = {
-  setHeader: Function
-}
 
 let isTabClick: boolean = false
 
@@ -162,14 +158,10 @@ const getElementWindowTop = (elem: RefObject, contentWrapperRef: RefObject) => {
   return elem && typeof elem.getBoundingClientRect === 'function' ? elem.getBoundingClientRect().top - contentWrapperRef.current.getBoundingClientRect().top : 0
 }
 
-const Help = ({ setHeader }: Props) => {
+const Help = () => {
   const [activeTabIndex, setActiveTabIndex] = useState(0)
   const contentWrapperRef = React.createRef()
   const { messages = {} } = useIntl()
-
-  useEffect(() => {
-    setHeader(at(messages, helpHeader)[0])
-  })
 
   const refs = helpTabs.reduce((acc, value) => {
     acc[value.id] = React.createRef()
@@ -204,17 +196,21 @@ const Help = ({ setHeader }: Props) => {
   }
 
   return (
-    <div className={`${wrapper}`}>
-      <div className={`${tabsContainer}`}>
-        <ul>
-          {helpTabsHeaderList(activeTabIndex, setActiveTabIndex, handleClick)}
-        </ul>
-      </div>
-      <div role='tab' tabIndex='0' ref={contentWrapperRef} className={`${contentWrapper}`} onScroll={contentWrapperScrollHandler}>
-        {helpTabsContentList(refs, messages)}
-      </div>
-    </div>
+    <CardMenu menuTitle={at(messages, helpHeader)[0]}>
+      {() => (
+        <div className={`${wrapper}`}>
+          <div className={`${tabsContainer}`}>
+            <ul>
+              {helpTabsHeaderList(activeTabIndex, setActiveTabIndex, handleClick)}
+            </ul>
+          </div>
+          <div role='tab' tabIndex='0' ref={contentWrapperRef} className={`${contentWrapper}`} onScroll={contentWrapperScrollHandler}>
+            {helpTabsContentList(refs, messages)}
+          </div>
+        </div>
+      )}
+    </CardMenu>
   )
 }
 
-export default CollectionsHeaderWrapper(Help)
+export default Help

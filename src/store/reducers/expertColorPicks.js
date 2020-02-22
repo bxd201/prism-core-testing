@@ -1,23 +1,8 @@
-import {
-  RECEIVED,
-  REQUEST
-} from '../actions/expertColorPicks'
+import { RECEIVED } from '../actions/expertColorPicks'
 
-export const initialState = { loading: false, data: [] }
-
-export default function expertColorPicks (
-  state = initialState,
-  action = {}
-) {
+export default function expertColorPicks (state = { data: [] }, action = {}) {
   switch (action.type) {
-    case RECEIVED: return {
-      ...state,
-      ...action.payload
-    }
-    case REQUEST: return {
-      ...state,
-      ...action.payload
-    }
+    case RECEIVED: return { ...state, ...action.payload }
     default: return state
   }
 }

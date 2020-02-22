@@ -11,7 +11,7 @@ import 'src/providers/fontawesome/fontawesome'
 import * as scroll from 'scroll'
 import './CollectionDetail.scss'
 import 'src/scss/externalComponentSupport/AutoSizer.scss'
-import type { ColorCollectionDetail, Color } from '../../shared/types/Colors'
+import type { ColorCollectionDetail, Color } from '../../shared/types/Colors.js.flow'
 
 const GRID_AUTOSCROLL_SPEED: number = 300
 

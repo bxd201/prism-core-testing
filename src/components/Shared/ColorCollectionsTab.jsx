@@ -1,7 +1,7 @@
 // @flow
 //
 import React, { useState, useEffect } from 'react'
-import type { ColorCollectionsTabs } from '../../shared/types/Colors'
+import type { ColorCollectionsTabs } from '../../shared/types/Colors.js.flow'
 
 type Props = {
   collectionTabs: ColorCollectionsTabs,
@@ -41,7 +41,7 @@ function ColorCollectionsTab (props: Props) {
   }, [tabIdShow])
 
   return (
-    <div className={`${tabListSelect}`}>
+    <div className={tabListSelect} role='tablist'>
       <span className={`${tabListHeading}`}>Choose a Collection</span>
 
       <span
@@ -52,38 +52,26 @@ function ColorCollectionsTab (props: Props) {
         onClick={() => showTabListMobile(!tabListMobileShow)}>{tabShowName}
       </span>
 
-      <ul
-        role='tablist'
-        className={`${tabList} ${(tabListMobileShow)
-          ? `${tabListActive}`
-          : `${tabListInactive}`}`}
-      >
-        {
-          collectionTabs.map((tab, id) => {
-            return (
-              <li
-                onBlur={() => tabRefs[tab.id].current.blur()}
-                ref={tabRefs[tab.id]}
-                data-testid={`${tab.id}`}
-                tabIndex='0'
-                role='tab'
-                key={tab.id}
-                aria-selected={(tab.id === tabIdShow)}
-                onKeyDown={(e) => {
-                  if (e.keyCode === KEY_CODE_ENTER || e.keyCode === KEY_CODE_SPACE) {
-                    if (tab.id !== tabIdShow) {
-                      showTab(tab.id, true)
-                    }
-                    showTabListMobile(!tabListMobileShow)
-                  }
-                }}
-                className={`${tabListItem} ${(tab.id === tabIdShow) ? `${tabListItemActive}` : ''}`}
-                onClick={() => tab.id !== tabIdShow && showTab(tab.id, true)}
-              >
-                {tab.tabName}
-              </li>
-            )
-          })}
+      <ul className={`${tabList} ${(tabListMobileShow) ? `${tabListActive}` : `${tabListInactive}`}`} role='tablist'>
+        {collectionTabs.map((tab, id) => {
+          return (
+            <li
+              data-testid={`${tab.id}`}
+              role='tab'
+              onKeyDown={() => {}}
+              className={`${tabListItem} ${(tab.id === tabIdShow) ? `${tabListItemActive}` : ''}`}
+              key={tab.id}
+              onClick={() => {
+                if (tab.id !== tabIdShow) {
+                  showTab(tab.id, true)
+                }
+                showTabListMobile(!tabListMobileShow)
+              }}
+            >
+              {tab.tabName}
+            </li>
+          )
+        })}
       </ul>
     </div>
   )

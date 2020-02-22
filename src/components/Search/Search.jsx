@@ -21,7 +21,7 @@ import 'src/scss/externalComponentSupport/AutoSizer.scss'
 import 'src/components/Facets/ColorWall/ColorWallSwatchList.scss'
 import { compareKebabs } from '../../shared/helpers/StringUtils'
 import at from 'lodash/at'
-import { type ColorStatus } from 'src/shared/types/Colors'
+import { type ColorStatus } from 'src/shared/types/Colors.js.flow'
 import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import { emitColor } from 'src/store/actions/loadColors'
 

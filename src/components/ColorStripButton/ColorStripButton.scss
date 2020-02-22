@@ -1,4 +1,4 @@
-.collection__summary {
+.color-strip-button {
   padding: 2% 3%;
   flex: 50% 0 0;
   @include respond-above(sm){
@@ -19,19 +19,6 @@
       z-index: 100;
     }
   }
-  &__top-section {
-    min-height: 100px;
-    &__image {
-      width: 100%;
-      height: auto;
-    }
-  }
-  &__content__wrapper {
-    padding: 14px;
-    &__color-name{
-      font-weight: 700;
-    }
-  }
   &__bottom-item {
     flex: 1 1 0;
     border-top: 3px solid #ffffff;
@@ -50,7 +37,7 @@
     display: flex;
     height: 30px;
   }
-  &__collection-name {
+  &__label {
     text-align: center;
     font-weight: 700;
     margin: 1.5em 0 0;

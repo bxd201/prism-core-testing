@@ -2,7 +2,7 @@
 import React from 'react'
 import filter from 'lodash/filter'
 import split from 'lodash/split'
-import type { Color, ColorMap } from '../../../../shared/types/Colors'
+import type { Color, ColorMap } from '../../../../shared/types/Colors.js.flow'
 import { withRouter, type RouterHistory } from 'react-router-dom'
 
 import ColorStripSwatch from './ColorStripSwatch'

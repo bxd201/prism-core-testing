@@ -2,7 +2,7 @@
 import reject from 'lodash/reject'
 import filter from 'lodash/filter'
 import difference from 'lodash/difference'
-import type { Color } from '../../shared/types/Colors'
+import type { Color } from '../../shared/types/Colors.js.flow'
 import { LP_MAX_COLORS_ALLOWED } from 'constants/configurations'
 import {
   ADD_LP_COLOR,

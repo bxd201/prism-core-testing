@@ -1,5 +1,5 @@
 // @flow
-// import type { CollectionsTab } from '../../shared/types/Colors'
+// import type { CollectionsTab } from '../../shared/types/Colors.js.flow'
 import { getDeltaE00 } from 'delta-e'
 
 export const throttleDragTime = 5
