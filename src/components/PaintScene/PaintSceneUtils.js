@@ -135,7 +135,7 @@ export const createImageDataAndAlphaPixelMapFromImageData = (imageData) => {
 
 export const getColorsFromImagePathList = (imagePathList: Object[]) => {
   const paintItems = []
-  const paintTypes = ['paint']
+  const paintTypes = ['paint', 'erase-paint']
   const savedColors = []
 
   imagePathList.forEach((item, i) => {
