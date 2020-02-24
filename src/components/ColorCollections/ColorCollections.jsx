@@ -2,7 +2,7 @@
 import CollectionDetail from 'src/components/Shared/CollectionDetail'
 import CardMenu from 'src/components/CardMenu/CardMenu'
 import ColorCollectionsTab from 'src/components/Shared/ColorCollectionsTab'
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect, useContext, useCallback, useMemo } from 'react'
 import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import Carousel from 'src/components/Carousel/Carousel'
 import ColorStripButton from 'src/components/ColorStripButton/ColorStripButton'
@@ -10,6 +10,7 @@ import { useSelector, useDispatch, shallowEqual } from 'react-redux'
 import { loadCollectionSummaries } from 'src/store/actions/collectionSummaries'
 import { loadColors } from 'src/store/actions/loadColors'
 import './ColorCollections.scss'
+import { KEY_CODES } from 'src/constants/globals'
 
 export function ColorCollections () {
   const dispatch = useDispatch()
@@ -34,11 +35,7 @@ export function ColorCollections () {
           <ColorCollectionsTab collectionTabs={categories.data} showTab={setTabId} tabIdShow={tabId} />
           <div className='color-collections__collections-list' role='main'>
             <Carousel
-              BaseComponent={({ data, getSummaryData }) => (
-                <ColorStripButton onClick={() => getSummaryData(data)} colors={data.collections.slice(0, 5)} bottomLabel={data.name}>
-                  <img className='collection__summary__top-section__image' alt={data.name} src={data.img} />
-                </ColorStripButton>
-              )}
+              BaseComponent={ColorStripButtonWrapper}
               defaultItemsPerView={8}
               isInfinity={false}
               key={tabId}
@@ -52,6 +49,32 @@ export function ColorCollections () {
         </div>
       )}
     </CardMenu>
+  )
+}
+
+const ColorStripButtonWrapper = (props: any) => {
+  const { data, getSummaryData, handlePrev, handleNext, itemNumber, itemsPerView, totalItems } = props
+  const clickHandler = useCallback(() => getSummaryData(data), [data])
+
+  const keyDownHandler = useCallback((e) => {
+    if (e.shiftKey && e.keyCode === KEY_CODES.KEY_CODE_TAB) {
+      if (itemNumber !== 1 && itemNumber % itemsPerView === 1) handlePrev()
+    } else if (e.keyCode === KEY_CODES.KEY_CODE_TAB) {
+      if (itemNumber !== totalItems && itemNumber % itemsPerView === 0) handleNext()
+    } else if (e.keyCode === KEY_CODES.KEY_CODE_ENTER || e.keyCode === KEY_CODES.KEY_CODE_SPACE) getSummaryData(data)
+  }, [ data, getSummaryData, handleNext, handlePrev, itemsPerView, itemNumber, totalItems ])
+
+  const colors = useMemo(() => data.collections.slice(0, 5), [data.collections])
+
+  return (
+    <ColorStripButton
+      onClick={clickHandler}
+      onKeyDown={keyDownHandler}
+      colors={colors}
+      bottomLabel={data.name}
+    >
+      <img className='collection__summary__top-section__image' alt={data.name} src={data.img} />
+    </ColorStripButton>
   )
 }
 

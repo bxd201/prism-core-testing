@@ -9,12 +9,11 @@ import 'src/providers/fontawesome/fontawesome'
 import some from 'lodash/some'
 import { Link } from 'react-router-dom'
 import { FormattedMessage } from 'react-intl'
+import { KEY_CODES } from 'src/constants/globals'
 
 const baseClass = 'prism-color-palette-suggester'
 const paletteSuggesterDetails = 'slide-palette-details'
 
-const KEY_CODE_ENTER = 13
-const KEY_CODE_SPACE = 32
 const colorCollectionsPath = '/color-collections'
 
 type Props = {
@@ -45,7 +44,7 @@ function PaletteSuggester (props: Props) {
                     ${isShowSlider ? `${baseClass}__${displayArea}--show` : `${baseClass}__${displayArea}--hide`}`
                 } style={{ backgroundColor: color.hex }}>
                   { isColorAdded && <FontAwesomeIcon className={`${baseClass}__${icons} ${isShowSlider ? `${baseClass}__${icons}--show` : `${baseClass}__${icons}--hide`}`} icon={['fa', 'check-circle']} size='2x' /> }
-                  { !isColorAdded && <FontAwesomeIcon className={`${baseClass}__${icons} ${baseClass}__${icons} ${isShowSlider ? `${baseClass}__${icons}--show` : `${baseClass}__${icons}--hide`}`} icon={['fal', 'plus-circle']} size='2x' onMouseDown={(e) => e.preventDefault()} onClick={() => handleClick(isColorAdded, true, color, props)} onKeyDown={(e) => (e.keyCode === KEY_CODE_ENTER || e.keyCode === KEY_CODE_SPACE) && e.stopPropagation() && handleClick(isColorAdded, true, color, props) && e.preventDefault()} /> }
+                  { !isColorAdded && <FontAwesomeIcon className={`${baseClass}__${icons} ${baseClass}__${icons} ${isShowSlider ? `${baseClass}__${icons}--show` : `${baseClass}__${icons}--hide`}`} icon={['fal', 'plus-circle']} size='2x' onMouseDown={(e) => e.preventDefault()} onClick={() => handleClick(isColorAdded, true, color, props)} onKeyDown={(e) => (e.keyCode === KEY_CODES.KEY_CODE_ENTER || e.keyCode === KEY_CODES.KEY_CODE_SPACE) && e.stopPropagation() && handleClick(isColorAdded, true, color, props) && e.preventDefault()} /> }
                 </div>
               </button>
               <div className={`${baseClass}__${content}`}>

@@ -1,16 +1,16 @@
 // @flow
 //
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import type { ColorCollectionsTabs } from '../../shared/types/Colors.js.flow'
+import { KEY_CODES } from 'src/constants/globals'
+import { FormattedMessage, useIntl } from 'react-intl'
+import at from 'lodash/at'
 
 type Props = {
   collectionTabs: ColorCollectionsTabs,
   showTab: Function,
   tabIdShow: string
 }
-
-const KEY_CODE_ENTER = 13
-const KEY_CODE_SPACE = 32
 
 const baseClass = 'color-collections'
 const tabListSelect = `${baseClass}__tab-list-select`
@@ -27,7 +27,8 @@ function ColorCollectionsTab (props: Props) {
   const [tabListMobileShow, showTabListMobile] = useState(false)
   const tabFind = collectionTabs.find(tab => tab.id === tabIdShow)
   const tabActive = (tabFind) ? tabFind.tabName : undefined
-  const tabShowName = (tabActive !== undefined) ? tabActive : 'Choose collection'
+  const { messages = {} } = useIntl()
+  const tabShowName = (tabActive !== undefined) ? tabActive : at(messages, 'CHOOSE_A_COLLECTION')[0]
 
   const tabRefs = collectionTabs.reduce((acc, value) => {
     acc[value.id] = React.createRef()
@@ -40,16 +41,44 @@ function ColorCollectionsTab (props: Props) {
     }
   }, [tabIdShow])
 
+  const handleKeyDownSpan = useCallback((e: SyntheticEvent) => {
+    if (e.keyCode === KEY_CODES.KEY_CODE_ENTER || e.keyCode === KEY_CODES.KEY_CODE_SPACE) {
+      showTabListMobile(!tabListMobileShow)
+    }
+  }, [showTabListMobile, tabListMobileShow])
+
+  const handleClickSpan = useCallback(() => {
+    showTabListMobile(!tabListMobileShow)
+  }, [showTabListMobile, tabListMobileShow])
+
+  const handleKeyDownLiTab = useCallback((e: SyntheticEvent) => {
+    if (e.keyCode === KEY_CODES.KEY_CODE_SPACE || e.keyCode === KEY_CODES.KEY_CODE_ENTER) {
+      if (e.currentTarget.dataset.tabid !== tabIdShow) {
+        showTab(e.currentTarget.dataset.tabid, true)
+      }
+      showTabListMobile(!tabListMobileShow)
+    }
+  }, [showTabListMobile, tabListMobileShow])
+
+  const handleClickLiTab = useCallback((e: SyntheticEvent) => {
+    if (e.currentTarget.dataset.tabid !== tabIdShow) {
+      showTab(e.currentTarget.dataset.tabid, true)
+    }
+    showTabListMobile(!tabListMobileShow)
+  }, [showTabListMobile, tabListMobileShow])
+
   return (
     <div className={tabListSelect} role='tablist'>
-      <span className={`${tabListHeading}`}>Choose a Collection</span>
+      <span className={`${tabListHeading}`}><FormattedMessage id='CHOOSE_A_COLLECTION' /></span>
 
       <span
         className={`${tabListDropdownMobile}`}
         tabIndex='0'
         role='button'
-        onKeyDown={(e) => (e.keyCode === KEY_CODE_ENTER || e.keyCode === KEY_CODE_SPACE) && showTabListMobile(!tabListMobileShow)}
-        onClick={() => showTabListMobile(!tabListMobileShow)}>{tabShowName}
+        onKeyDown={handleKeyDownSpan}
+        onClick={handleClickSpan}
+      >
+        {tabShowName}
       </span>
 
       <ul className={`${tabList} ${(tabListMobileShow) ? `${tabListActive}` : `${tabListInactive}`}`} role='tablist'>
@@ -57,16 +86,13 @@ function ColorCollectionsTab (props: Props) {
           return (
             <li
               data-testid={`${tab.id}`}
+              data-tabid={tab.id}
               role='tab'
-              onKeyDown={() => {}}
-              className={`${tabListItem} ${(tab.id === tabIdShow) ? `${tabListItemActive}` : ''}`}
+              tabIndex='0'
+              onKeyDown={handleKeyDownLiTab}
+              className={`${tabListItem} ${(tab.id === parseInt(tabIdShow)) ? `${tabListItemActive}` : ''}`}
               key={tab.id}
-              onClick={() => {
-                if (tab.id !== tabIdShow) {
-                  showTab(tab.id, true)
-                }
-                showTabListMobile(!tabListMobileShow)
-              }}
+              onClick={handleClickLiTab}
             >
               {tab.tabName}
             </li>

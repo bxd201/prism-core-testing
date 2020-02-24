@@ -82,6 +82,7 @@ const MyIdeaPreview = (props: myIdeaPreviewProps) => {
   const foregroundImageRef = useRef()
   const utilityCanvasRef = useRef()
   const layersRef = useRef([])
+  const routeContext = useContext(RouteContext)
 
   const resizeHandler = (e: SyntheticEvent) => {
     const wrapperDimensions = wrapperRef.current.getBoundingClientRect()
@@ -144,24 +145,46 @@ const MyIdeaPreview = (props: myIdeaPreviewProps) => {
 
   const openProject = (e: SyntheticEvent) => {
     e.preventDefault()
-
-    dispatch(setLayersForPaintScene(
-      backgroundCanvasRef.current.toDataURL(),
-      layersRef.current,
-      selectedScene.palette,
-      initialWidth,
-      initialHeight))
+    if (routeContext.checkIsPaintScenePolluted()) {
+      routeContext.showWarningModalMyIdeas(
+        {
+          backgroundCanvasRef: backgroundCanvasRef.current.toDataURL(),
+          layersRef: layersRef.current,
+          selectedScenePalette: selectedScene.palette,
+          initialWidth: initialWidth,
+          initialHeight: initialHeight
+        }
+      )
+    } else {
+      dispatch(setLayersForPaintScene(
+        backgroundCanvasRef.current.toDataURL(),
+        layersRef.current,
+        selectedScene.palette,
+        initialWidth,
+        initialHeight))
+    }
   }
 
   const openUnpaintedProject = (e: SyntheticEvent) => {
     e.preventDefault()
-
-    dispatch(setLayersForPaintScene(
-      backgroundCanvasRef.current.toDataURL(),
-      null,
-      selectedScene.palette,
-      initialWidth,
-      initialHeight))
+    if (routeContext.checkIsPaintScenePolluted()) {
+      routeContext.showWarningModalMyIdeas(
+        {
+          backgroundCanvasRef: backgroundCanvasRef.current.toDataURL(),
+          layersRef: null,
+          selectedScenePalette: selectedScene.palette,
+          initialWidth: initialWidth,
+          initialHeight: initialHeight
+        }
+      )
+    } else {
+      dispatch(setLayersForPaintScene(
+        backgroundCanvasRef.current.toDataURL(),
+        null,
+        selectedScene.palette,
+        initialWidth,
+        initialHeight))
+    }
   }
 
   return (

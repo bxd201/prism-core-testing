@@ -21,4 +21,9 @@
     color:#2cabe2;
     border: 1px solid #2cabe2;
   }
+  &:focus {
+    outline-style: solid;
+    outline-color: #2cabe2;
+    outline-width: 2px;
+  }
 }

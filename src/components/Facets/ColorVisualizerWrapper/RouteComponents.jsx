@@ -22,6 +22,7 @@ import {
 } from 'react-device-detect'
 import { FormattedMessage, useIntl } from 'react-intl'
 import at from 'lodash/at'
+import { KEY_CODES } from 'src/constants/globals'
 
 type Props = {
   dataKey: string,
@@ -30,10 +31,6 @@ type Props = {
   exploreColorsLinkRef: RefObject,
   isTabbedOutFromHelp: boolean
 }
-
-const KEY_CODE_TAB = 9
-const KEY_CODE_ENTER = 13
-const KEY_CODE_SPACE = 32
 
 const DropDownMenu = (props: Props) => {
   const { dataKey, history: { location: { state: isKeyDownRoute } }, exploreColorsLinkRef, isTabbedOutFromHelp } = props
@@ -52,7 +49,7 @@ const DropDownMenu = (props: Props) => {
   }, [isKeyDownRoute])
 
   const labelKeyDownHandler = (e, data, props) => {
-    if (e.keyCode === KEY_CODE_ENTER || e.keyCode === KEY_CODE_SPACE) {
+    if (e.keyCode === KEY_CODES.KEY_CODE_ENTER || e.keyCode === KEY_CODES.KEY_CODE_SPACE) {
       if (data.subTitleIdentifier !== subTitleMatchAPhoto && data.subTitleIdentifier !== subTitleUploadYourPhoto) {
         redirectTo(data.url, props, data.subTitleIdentifier)
       } else {
@@ -61,7 +58,7 @@ const DropDownMenu = (props: Props) => {
           inputRef.current.click()
         }
       }
-    } else if (e.shiftKey && e.keyCode === KEY_CODE_TAB && (data.subTitleIdentifier === subTitleDigitalColorWall || data.subTitleIdentifier === subTitlePaintedPhotos || data.subTitleIdentifier === subTitleUseOurPhotos)) {
+    } else if (e.shiftKey && e.keyCode === KEY_CODES.KEY_CODE_TAB && (data.subTitleIdentifier === subTitleDigitalColorWall || data.subTitleIdentifier === subTitlePaintedPhotos || data.subTitleIdentifier === subTitleUseOurPhotos)) {
       e.preventDefault()
       if (exploreColorsLinkRef.current) {
         exploreColorsLinkRef.current.focus()
@@ -74,12 +71,12 @@ const DropDownMenu = (props: Props) => {
   }
 
   const closeButtonKeyDownHandler = (e) => {
-    if (!e.shiftKey && e.keyCode === KEY_CODE_TAB) {
+    if (!e.shiftKey && e.keyCode === KEY_CODES.KEY_CODE_TAB) {
       e.preventDefault()
       if (exploreColorsLinkRef.current) {
         exploreColorsLinkRef.current.focus()
       }
-    } else if (e.keyCode === KEY_CODE_ENTER || e.keyCode === KEY_CODE_SPACE) {
+    } else if (e.keyCode === KEY_CODES.KEY_CODE_ENTER || e.keyCode === KEY_CODES.KEY_CODE_SPACE) {
       e.preventDefault()
       props.close(e)
     }
@@ -155,7 +152,7 @@ const redirectTo = (url, props, type) => {
 }
 
 const redirectToApp = (data, props, type, e) => {
-  if (!e || (e && e.keyCode && (e.keyCode === KEY_CODE_ENTER || e.keyCode === KEY_CODE_SPACE))) {
+  if (!e || (e && e.keyCode && (e.keyCode === KEY_CODES.KEY_CODE_ENTER || e.keyCode === KEY_CODES.KEY_CODE_SPACE))) {
     if (isAndroid) {
       window.location = data.urlAndroid
     } else if (isTablet && isIOS) {

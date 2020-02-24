@@ -263,7 +263,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   tryToMergeColors () {
     // eslint-disable-next-line no-new-object
     const { workspace, lpColors } = this.props
-    if (workspace) {
+    if (workspace && workspace.palette && lpColors) {
       if (checkCanMergeColors(lpColors, workspace.palette, LP_MAX_COLORS_ALLOWED)) {
         this.props.mergeLpColors(workspace.palette)
       } else {
@@ -324,11 +324,11 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   }
 
   componentDidUpdate (prevProps: Object, prevState: Object) {
-    if ((this.state.imagePathList.length > 0 && !this.props.workspace) || (this.state.imagePathList.length > 1 && this.props.workspace)) {
+    if ((this.state.imagePathList.length > 0 && !this.props.workspace) || (this.props.workspace && this.props.workspace.layers === null && this.state.imagePathList.length > 0) || (this.props.workspace && this.props.workspace.layers && this.state.imagePathList.length > this.props.workspace.layers.length)) {
       this.context.setIsPaintScenePolluted()
     }
     if (prevState.checkIsPaintSceneUpdate !== this.state.checkIsPaintSceneUpdate && this.state.checkIsPaintSceneUpdate !== false) {
-      if (this.state.imagePathList.length > 0) {
+      if ((this.state.imagePathList.length > 0 && !this.props.workspace) || (this.props.workspace && this.props.workspace.layers === null && this.state.imagePathList.length > 0) || (this.props.workspace && this.props.workspace.layers && this.state.imagePathList.length > this.props.workspace.layers.length)) {
         this.context.showWarningModal(this.saveBase64(this.getLayers()))
       } else {
         this.context.loadNewCanvas()

@@ -7,6 +7,7 @@ import CardMenu from 'src/components/CardMenu/CardMenu'
 import { sceneData } from './data.js'
 import { groupScenesByCategory } from './utils.js'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { FormattedMessage } from 'react-intl'
 import './SampleScenes.scss'
 
 const baseClass = 'color-collections'
@@ -39,8 +40,8 @@ export const SampleScenesWrapper = ({ isColorTinted, setHeader, activateScene }:
   )
 }
 
-type Props = { data: Object, isColorTinted: boolean, activateScene: Function}
-const StaticTintSceneWrapper = ({ data, isColorTinted, activateScene }: Props) => {
+type Props = { data: Object, isColorTinted: boolean, activateScene: Function, isActivedPage?: boolean}
+const StaticTintSceneWrapper = ({ data, isColorTinted, activateScene, isActivedPage }: Props) => {
   let props = isColorTinted ? {
     color: void (0),
     scene: data
@@ -54,10 +55,10 @@ const StaticTintSceneWrapper = ({ data, isColorTinted, activateScene }: Props) =
       <div className='static__scene__image__wrapper'>
         <StaticTintScene {...props} />
       </div>
-      <button className='static__scene__paint__btn' onClick={() => activateScene(data.id)}>
+      <button tabIndex={(isActivedPage) ? '0' : '-1'} className='static__scene__paint__btn' onClick={() => activateScene(data.id)}>
         <FontAwesomeIcon className={`cvw__btn-overlay__svg`} size='lg' icon={['fal', 'square-full']} />
         <FontAwesomeIcon className={`cvw__btn-overlay__svg cvw__btn-overlay__svg--brush`} icon={['fa', 'brush']} size='lg' transform={{ rotate: 320 }} />
-        Paint this Scene
+        <FormattedMessage id='PAINT_THIS_SCENE' />
       </button>
     </>
   )
