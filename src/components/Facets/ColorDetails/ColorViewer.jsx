@@ -2,7 +2,7 @@
 import React from 'react'
 import { FormattedMessage } from 'react-intl'
 
-import type { Color } from '../../../shared/types/Colors'
+import type { Color } from '../../../shared/types/Colors.js.flow'
 
 import { fullColorNumber } from '../../../shared/helpers/ColorUtils'
 

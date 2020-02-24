@@ -1,7 +1,7 @@
 // @flow
 import React from 'react'
 import ImagePreloader from '../../helpers/ImagePreloader'
-import type { Color } from '../../shared/types/Colors'
+import type { Color } from '../../shared/types/Colors.js.flow'
 import type { Scene, Surface, Variant, SurfaceStatus } from '../../shared/types/Scene'
 import memoizee from 'memoizee'
 import flattenDeep from 'lodash/flattenDeep'

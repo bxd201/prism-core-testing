@@ -2,7 +2,7 @@
 import { EMIT_COLOR, FILTER_BY_FAMILY, FILTER_BY_SECTION, LOAD_ERROR, MAKE_ACTIVE_COLOR, MAKE_ACTIVE_COLOR_BY_ID, RECEIVE_COLORS, REMOVE_COLOR_FILTERS, RESET_ACTIVE_COLOR, UPDATE_COLOR_STATUSES } from '../../actions/loadColors'
 import { CLEAR_SEARCH, RECEIVE_SEARCH_RESULTS, SEARCH_RESULTS_ERROR, TOGGLE_SEARCH_MODE, UPDATE_SEARCH_QUERY } from '../../actions/loadSearchResults'
 
-import { type ReduxAction, type ColorsState } from '../../../shared/types/Actions'
+import { type ReduxAction, type ColorsState } from '../../../shared/types/Actions.js.flow'
 import { initialState, doReceiveColors, doFilterByFamily, doFilterBySection, doMakeActiveColor, doMakeActiveColorById, getErrorState } from './colorReducerMethods'
 
 export const colors = (state: ColorsState = initialState, action: ReduxAction) => {

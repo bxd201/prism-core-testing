@@ -12,8 +12,8 @@ import sortBy from 'lodash/sortBy'
 import { convertUnorderedColorsToColorMap, convertUnorderedColorsToClasses } from '../../../shared/helpers/ColorDataUtils'
 import { compareKebabs } from '../../../shared/helpers/StringUtils'
 
-import { type ColorsState, type ReduxAction, type Section } from '../../../shared/types/Actions'
-import type { Color } from '../../../shared/types/Colors'
+import { type ColorsState, type ReduxAction, type Section } from '../../../shared/types/Actions.js.flow'
+import type { Color } from '../../../shared/types/Colors.js.flow'
 
 export const initialState: ColorsState = {
   status: {

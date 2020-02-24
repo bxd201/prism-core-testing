@@ -1,5 +1,5 @@
 // @flow
-import tinycolor from '@ctrl/tinycolor'
+import tinycolor, { mostReadable } from '@ctrl/tinycolor'
 import memoizee from 'memoizee'
 import kebabCase from 'lodash/kebabCase'
 import compact from 'lodash/compact'
@@ -65,6 +65,5 @@ export const generateColorWallPageUrl = memoizee((sectionName = '', familyName =
 }, { primitive: true, length: 3 })
 
 export const getContrastYIQ = memoizee((hexcolor: string) => {
-  const color = hexcolor.substring(1)
-  return parseInt(`0x${color}`, 16) > parseInt('0xffffff', 16) / 2 ? '#000' : '#fff'
+  return mostReadable(hexcolor, [ '#000', '#FFF' ]).toHexString()
 }, { primitive: true, length: 1 })
