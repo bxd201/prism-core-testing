@@ -271,7 +271,6 @@ module.exports = {
 
       return 'localhost'
     })(),
-    writeToDisk: true,
     https: true,
     historyApiFallback: {
       rewrites: [

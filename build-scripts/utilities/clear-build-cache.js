@@ -24,3 +24,7 @@ console.log('Successfully cleared hard-source cache!')
 console.log('Clearing terser cache...')
 deleteFolderRecursive('./node_modules/.cache')
 console.log('Successfully cleared terser cache!')
+
+console.log('Emptying dist...')
+deleteFolderRecursive('./dist')
+console.log('Successfully emptied dist directory!')
