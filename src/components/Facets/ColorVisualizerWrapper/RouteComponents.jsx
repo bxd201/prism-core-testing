@@ -92,7 +92,11 @@ const DropDownMenu = (props: Props) => {
         <ul>
           {
             content.subContent.map((data, key) => (
-              <li className={(content.titleIdentifier === scenesContentTitle) ? `dashboard-submenu__content__paint-photo-li` : ``} key={key} ref={labelRefs[key]} tabIndex={0} role='tab' onMouseDown={(e) => e.preventDefault()} onClick={() => redirectTo(data.url, props, data.subTitleIdentifier)} onKeyDown={(e) => labelKeyDownHandler(e, data, props)}>
+              <li className={(content.titleIdentifier === scenesContentTitle) ? `dashboard-submenu__content__paint-photo-li` : ``} key={key} ref={labelRefs[key]} tabIndex={0} role='tab' onMouseDown={(e) => e.preventDefault()} onClick={
+                () => (data.subTitleIdentifier === subTitleUploadYourPhoto) && (isMobileOnly || isTablet) && (isIOS || isAndroid) ? redirectToApp(data, props, data.subTitleIdentifier) : redirectTo(data.url, props, data.subTitleIdentifier)
+              } onKeyDown={
+                (e) => (data.subTitleIdentifier === subTitleUploadYourPhoto) && (isMobileOnly || isTablet) && (isIOS || isAndroid) ? redirectToApp(data, props, data.subTitleIdentifier, e) : labelKeyDownHandler(e, data, props)
+              }>
                 <label tabIndex='-1' htmlFor={(data.subTitleIdentifier === subTitleMatchAPhoto || data.subTitleIdentifier === subTitleUploadYourPhoto) ? 'file-input' : ''} className='dashboard-submenu__content__description'>
                   <div
                     className={`dashboard-submenu__content__description-img-wrapper ${(data.subTitleIdentifier === subTitleDigitalColorWall) ? `dashboard-submenu__content__description--explore-color` : (data.subTitleIdentifier === subTitlePaintedPhotos) ? `dashboard-submenu__content__description--painted-scene` : ``}`}
@@ -117,7 +121,7 @@ const DropDownMenu = (props: Props) => {
                     data-noshow
                     type='file'
                     accept={null}
-                    onChange={(e) => handleChange(e, props, data.subTitleIdentifier)}
+                    onChange={(e) => !isMobileOnly && !isTablet && handleChange(e, props, data.subTitleIdentifier)}
                     style={{ 'display': 'none' }}
                     id='file-input'
                     ref={inputRef}
@@ -147,6 +151,20 @@ const redirectTo = (url, props, type) => {
     props.history.push(url)
     props.redirectTo()
     props.getImageUrl('null', type)
+  }
+}
+
+const redirectToApp = (data, props, type, e) => {
+  if (!e || (e && e.keyCode && (e.keyCode === KEY_CODE_ENTER || e.keyCode === KEY_CODE_SPACE))) {
+    if (isAndroid) {
+      window.location = data.urlAndroid
+    } else if (isTablet && isIOS) {
+      window.location = data.urliPad
+    } else if (isMobileOnly && isIOS) {
+      window.location = data.urliPhone
+    } else {
+      redirectTo(data.url, props, type)
+    }
   }
 }
 
