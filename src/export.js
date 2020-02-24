@@ -9,6 +9,7 @@ import ColorDetailsFacet from 'src/components/Facets/ColorDetailsFacet'
 import ColorListingPage from 'src/components/Facets/ColorListingPage/ColorListingPage'
 import ColorWallFacet from 'src/components/Facets/ColorWallFacet'
 import ColorFamilyFacet from 'src/components/Facets/ColorFamilyFacet/ColorFamilyFacet'
+import FastMaskSimple from 'src/components/Facets/FastMaskSimple/FastMaskSimple'
 import Prism from 'src/components/Facets/Prism/Prism'
 import Tinter from 'src/components/Facets/Tinter/Tinter'
 import ColorVisualizerWrapper from 'src/components/Facets/ColorVisualizerWrapper/ColorVisualizerWrapper'
@@ -18,6 +19,7 @@ export default {
   ColorListingPage: facetMasterWrapper(ColorListingPage),
   ColorWallFacet: facetMasterWrapper(ColorWallFacet),
   ColorFamilyFacet: facetMasterWrapper(ColorFamilyFacet),
+  FastMaskSimple: facetMasterWrapper(FastMaskSimple),
   Prism: facetMasterWrapper(Prism),
   Tinter: facetMasterWrapper(Tinter),
   ColorVisualizerWrapper: facetMasterWrapper(ColorVisualizerWrapper)
