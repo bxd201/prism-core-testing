@@ -7,14 +7,15 @@ import CompareColor from '../../CompareColor/CompareColor'
 import InspiredScene from '../../InspirationPhotos/InspiredSceneNavigator'
 import LivePalette from '../../LivePalette/LivePalette'
 import ColorDataWrapper from '../../../helpers/ColorDataWrapper/ColorDataWrapper'
-import ColorVisualizerNav, { isColors, isInspiration, isMyIdeas } from './ColorVisualizerNav'
+import ColorVisualizerNav, { isColors, isInspiration, isPaintPhoto, isMyIdeas } from './ColorVisualizerNav'
 import React, { Component } from 'react'
 import SceneManager from '../../SceneManager/SceneManager'
+import SampleScenesWrapper from '../../SampleScenes/SampleScenes'
 import ColorWallContext, { colorWallContextDefault } from '../ColorWall/ColorWallContext'
 import facetBinder from 'src/facetSupport/facetBinder'
 import { facetBinderDefaultProps, type FacetBinderMethods } from 'src/facetSupport/facetInstance'
 import { type FacetPubSubMethods, facetPubSubDefaultProps } from 'src/facetSupport/facetPubSub'
-
+import { activateScene, deactivateScene } from '../../../store/actions/scenes'
 import { connect } from 'react-redux'
 import { Route, Redirect } from 'react-router-dom'
 
@@ -53,7 +54,6 @@ export const MATCH_PHOTO = '/match-photo'
 export const MY_IDEAS = '/my-ideas'
 const TYPE_MATCH_PHOTO = 'MATCH_A_PHOTO'
 const TYPE_UPLOAD_YOUR_PHOTO = 'UPLOAD_YOUR_PHOTO'
-const USE_OUR_PHOTOS = 'USE_OUR_PHOTOS'
 export const HELP_PATH = '/help'
 
 export const RootRedirect = () => {
@@ -94,13 +94,15 @@ export class ColorVisualizerWrapper extends Component<Props> {
       isPaintScenePolluted: false,
       imgUrlMatchPhoto: '',
       imgUrl: '',
-      tmpUrl: ''
+      tmpUrl: '',
+      currentActiveId: 1,
+      lastActiveId: 0
     }
   }
 
   onRouteChanged = () => {
     const currLocation = this.props.location.pathname
-    const isSubRoute = isColors(currLocation) || isInspiration(currLocation) || isMyIdeas(currLocation)
+    const isSubRoute = isColors(currLocation) || isInspiration(currLocation) || isPaintPhoto(currLocation) || isMyIdeas(currLocation)
     const { showDefaultPage, showPaintScene, lastActiveComponent } = this.state
     let isShowPaintScene = true
     let isShowDefaultPage = true
@@ -178,12 +180,7 @@ export class ColorVisualizerWrapper extends Component<Props> {
 
   renderComponent = (url, type) => {
     const { checkIsPaintSceneUpdate, lastActiveComponent, isPaintSceneActive, isPaintScenePolluted } = this.state
-    if (type === USE_OUR_PHOTOS) {
-      this.setState({
-        checkIsPaintSceneUpdate: !checkIsPaintSceneUpdate,
-        isUseOurPhoto: true
-      })
-    } else if (type === TYPE_MATCH_PHOTO || type === TYPE_UPLOAD_YOUR_PHOTO) {
+    if (type === TYPE_MATCH_PHOTO || type === TYPE_UPLOAD_YOUR_PHOTO) {
       if (type === TYPE_MATCH_PHOTO) {
         this.props.history.push(MATCH_PHOTO)
         this.setState({
@@ -242,8 +239,13 @@ export class ColorVisualizerWrapper extends Component<Props> {
   }
 
   loadNewCanvas=() => {
-    const { tmpUrl, checkIsPaintSceneUpdate, isUseOurPhoto } = this.state
+    const { tmpUrl, checkIsPaintSceneUpdate, isUseOurPhoto, lastActiveId, currentActiveId } = this.state
     if (isUseOurPhoto) {
+      this.props.history.push('/')
+      if (currentActiveId !== lastActiveId) {
+        this.props.activateScene(currentActiveId)
+        this.props.deactivateScene(lastActiveId)
+      }
       this.setState({
         showDefaultPage: true,
         showPaintScene: false,
@@ -252,7 +254,8 @@ export class ColorVisualizerWrapper extends Component<Props> {
         isShowWarningModal: false,
         isUseOurPhoto: false,
         checkIsPaintSceneUpdate: !checkIsPaintSceneUpdate,
-        isFromMyIdeas: false
+        isFromMyIdeas: false,
+        lastActiveId: currentActiveId
       })
     }
     if (!isUseOurPhoto) {
@@ -270,7 +273,7 @@ export class ColorVisualizerWrapper extends Component<Props> {
     }
   }
 
-  cancle = () => {
+  cancel = () => {
     this.setState({ isShowWarningModal: false, checkIsPaintSceneUpdate: false })
   }
 
@@ -284,6 +287,32 @@ export class ColorVisualizerWrapper extends Component<Props> {
 
   unSetIsPaintScenePolluted = () => {
     if (this.state.isPaintScenePolluted) this.setState({ isPaintScenePolluted: false })
+  }
+
+  activateScene = (id) => {
+    const { checkIsPaintSceneUpdate, lastActiveComponent, currentActiveId } = this.state
+    if (lastActiveComponent === SCENE_MANAGER_COMPONENT) {
+      this.props.history.push('/')
+      if (id !== currentActiveId) {
+        this.props.activateScene(id)
+        this.props.deactivateScene(currentActiveId)
+      }
+      this.setState({
+        showDefaultPage: true,
+        showPaintScene: false,
+        lastActiveComponent: SCENE_MANAGER_COMPONENT,
+        remountKey: (new Date()).getTime(),
+        currentActiveId: id,
+        lastActiveId: currentActiveId
+      })
+    } else {
+      this.setState({
+        isUseOurPhoto: true,
+        checkIsPaintSceneUpdate: !checkIsPaintSceneUpdate,
+        currentActiveId: id,
+        lastActiveId: currentActiveId
+      })
+    }
   }
 
   render () {
@@ -309,7 +338,7 @@ export class ColorVisualizerWrapper extends Component<Props> {
             setIsPaintScenePolluted: () => this.setIsPaintScenePolluted(),
             unSetIsPaintScenePolluted: () => this.unSetIsPaintScenePolluted()
           }}>
-            {isShowWarningModal && <CVWWarningModal miniImage={tmpPaintSceneImage} cancle={this.cancle} confirm={this.loadNewCanvas} />}
+            {isShowWarningModal && <CVWWarningModal miniImage={tmpPaintSceneImage} cancel={this.cancel} confirm={this.loadNewCanvas} />}
             <div className={`cvw__root-container__nav-wrapper ${(location.pathname === HELP_PATH) ? `cvw__root-container__nav-wrapper--hide` : (location.pathname === MY_IDEAS) ? `cvw__root-container__nav-wrapper--hide-my-ideas` : ``}`}>
               <ColorVisualizerNav />
             </div>
@@ -323,6 +352,8 @@ export class ColorVisualizerWrapper extends Component<Props> {
               </Route>
               <Route path={`${colorDetailsBaseUrl}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`} exact component={ColorDetailsWithData} />
               <Route path='/color-from-image' component={InspiredScene} />
+              <Route path='/use-our-image' component={() => <SampleScenesWrapper isColorTinted activateScene={(id) => this.activateScene(id)} />} />
+              <Route path='/paint-photo' component={() => <SampleScenesWrapper activateScene={(id) => this.activateScene(id)} />} />
               <Route path='/color-collections' component={(props) => (<ColorCollection isExpertColor={false} {...props.location.state} />)} />
               <Route path='/expert-colors' component={() => <ExpertColorPicks isExpertColor />} />
               {/* @todo - implement MyIdeas -RS */}
@@ -367,4 +398,15 @@ const mapStateToProps = (state, props) => {
     toggleCompareColor: state.lp.toggleCompareColor
   }
 }
-export default facetBinder(connect(mapStateToProps, null)(withRouter(ColorVisualizerWrapper)), 'ColorVisualizerWrapper')
+
+const mapDispatchToProps = (dispatch: Function) => {
+  return {
+    activateScene: (sceneId) => {
+      dispatch(activateScene(sceneId))
+    },
+    deactivateScene: (sceneId) => {
+      dispatch(deactivateScene(sceneId))
+    }
+  }
+}
+export default facetBinder(connect(mapStateToProps, mapDispatchToProps)(withRouter(ColorVisualizerWrapper)), 'ColorVisualizerWrapper')

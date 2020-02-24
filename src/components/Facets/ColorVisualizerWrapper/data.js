@@ -54,7 +54,7 @@ export const renderingData = {
           subTitle: 'NAV_LINKS.PAINTED_PHOTOS',
           subTitleIdentifier: subTitlePaintedPhotos,
           subContent: 'NAV_DROPDOWN_LINK_SUB_CONTENT.PAINTED_PHOTOS',
-          url: '/color-from-image',
+          url: '/use-our-image',
           id: 0
         },
         {
@@ -86,7 +86,7 @@ export const renderingData = {
           subTitle: 'NAV_LINKS.USE_OUR_PHOTOS',
           subTitleIdentifier: subTitleUseOurPhotos,
           subContent: 'NAV_DROPDOWN_LINK_SUB_CONTENT.USE_OUR_PHOTOS',
-          url: '/active',
+          url: '/paint-photo',
           id: 0
         },
         {

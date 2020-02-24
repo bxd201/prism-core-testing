@@ -103,6 +103,7 @@ export class CompareColor extends React.Component<CompareColorProps, CompareColo
             <StaticTintScene
               color={color}
               scene={scene}
+              isCompareColor
             />
             <div style={{ color: getContrastYIQ(color.hex) }} className={`${colorInfoClass}`} >
               <span className={`${colorInfoNumberClass}`}>{fullColorNumber(color.brandKey, color.colorNumber)}</span>

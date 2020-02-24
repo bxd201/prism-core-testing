@@ -1,5 +1,7 @@
 // @flow
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { useIntl } from 'react-intl'
 import ImagePreloader from '../../helpers/ImagePreloader'
 import type { Color } from '../../shared/types/Colors.js.flow'
 import type { Scene, Surface, Variant, SurfaceStatus } from '../../shared/types/Scene'
@@ -7,24 +9,36 @@ import memoizee from 'memoizee'
 import flattenDeep from 'lodash/flattenDeep'
 import { SCENE_TYPES } from 'constants/globals'
 import TintableScene from '../SceneManager/TintableScene'
+import { loadColors } from '../../store/actions/loadColors'
+import ConfigurationContext from '../../contexts/ConfigurationContext/ConfigurationContext'
 
 type PropsType = {
   color: Color,
-  scene: Scene
+  scene: Scene,
+  isCompareColor: boolean
 }
 
 export const StaticTintScene = (props: PropsType) => {
+  const { brandId } = React.useContext(ConfigurationContext)
   const tintColor: Color = props.color /* the color this particular scene is being tinted to */
   const chosenScene: Scene = props.scene /* the scene you're using */
+  const isCompareColor: boolean = props.isCompareColor
   const defaultSceneVariantName: string = chosenScene.variant_names[0]
   const defaultSceneVariant: Variant[] = chosenScene.variants.filter((variant) => {
     return variant && variant.variant_name === defaultSceneVariantName
   })
+  const dispatch = useDispatch()
+  const { locale } = useIntl()
+  useEffect(() => { dispatch(loadColors(brandId, { language: locale })) }, [])
+  const allColors = useSelector(state => state.colors.items.colorMap)
   const surfaces: Surface[] = defaultSceneVariant[0].surfaces
   const surfaceStatuses: SurfaceStatus[] = surfaces.map((surface: Surface) => {
-    return {
-      id: surface.id,
-      color: tintColor
+    const key = surface.colorId && ((surface.colorId).toString())
+    if (allColors) {
+      return {
+        id: surface.id,
+        color: tintColor || (tintColor === void (0) ? allColors[key] : '')
+      }
     }
   })
 
@@ -47,7 +61,7 @@ export const StaticTintScene = (props: PropsType) => {
       preload={getThumbnailAssetArrayByScene(defaultSceneVariant, surfaces)}
       type={SCENE_TYPES.ROOM} // 'room', 'automotive', etc.
       sceneId={sceneId}
-      background={defaultSceneVariant[0].thumb}
+      background={isCompareColor ? defaultSceneVariant[0].thumb : defaultSceneVariant[0].image}
       surfaceStatus={surfaceStatuses}
       surfaces={surfaces}
     />

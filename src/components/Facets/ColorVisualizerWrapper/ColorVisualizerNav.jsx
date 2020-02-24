@@ -17,7 +17,11 @@ export const isMyIdeas = (pathname) => {
 }
 
 export const isScene = (pathname) => {
-  return (/^\/active\/scenes/.test(pathname) || /^\/paint-scene/.test(pathname))
+  return (/^\/active\/scenes/.test(pathname) || /^\/paint-scene/.test(pathname) || /^\/paint-photo/.test(pathname))
+}
+
+export const isPaintPhoto = (pathname) => {
+  return /^\/paint-photo/.test(pathname)
 }
 
 export const isColors = (pathname) => {
@@ -30,7 +34,8 @@ export const isColors = (pathname) => {
 export const isInspiration = (pathname) => {
   return (/^\/active\/inspiration/.test(pathname) ||
     /^\/color-from-image/.test(pathname) ||
-    /^\/expert-colors/.test(pathname))
+    /^\/expert-colors/.test(pathname) ||
+    /^\/use-our-image/.test(pathname))
 }
 
 export const isHelp = (pathname) => {

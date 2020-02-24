@@ -92,7 +92,7 @@ function ColorPickerSlide (props: SummaryProps) {
         </div>
         {colorCollection && <MoreDetailsCollapse isShowSlider={isShowSlider} associatedColorCollection={colorCollection} />}
       </div>
-      {isShowSlider && <PaletteSuggester
+      {isShowSlider && colorCollection && <PaletteSuggester
         expertColor={expertColorPicks.map(id => colorMap[id])}
         isShowSlider={isShowSlider}
         isMobile
