@@ -343,7 +343,7 @@ export const edgeDetect = (canvas, targetImagePath, targetImageColor, width, hei
   return edge
 }
 
-export const eraseIntersection = (imagePathList: Object[], erasePath: any, activeColor: Object) => {
+export const eraseIntersection = (imagePathList: Object[], erasePath: any) => {
   const originImagePathList = copyImageList(imagePathList)
   let siblingList = []
   for (let i = 0; i < originImagePathList.length; i++) {
@@ -366,7 +366,7 @@ export const eraseIntersection = (imagePathList: Object[], erasePath: any, activ
         subType: 'erase-paint',
         id: newId,
         color: color,
-        colorRef: cloneDeep(activeColor),
+        colorRef: originImagePathList[i].colorRef,
         data: remainAreaPath,
         pixelIndexAlphaMap: pixelIndexAlphaMap,
         isEnabled: true,
