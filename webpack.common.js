@@ -13,9 +13,10 @@ const flags = require('./webpack/constants')
 const HardSourceWebpackPlugin = require('hard-source-webpack-plugin')
 const ALL_VARS = require('./src/shared/variableDefs')
 const requireContext = require('require-context')
+const hash = require('object-hash')
 
 const DEFAULT_LOCAL_URL = 'https://localhost:8080' // default local URL to localhost
-const DEFAULT_ENTRY = `${flags.embedEntryPointName},${flags.mainEntryPointName}` // will build the embed and bundle entry points by default
+const DEFAULT_ENTRY = `${flags.embedEntryPointName},${flags.mainEntryPointName},${flags.templateIndexEntryPointName}` // will build the embed and bundle entry points by default
 
 // create constants that correlate to environment variables to be injected
 const APP_VERSION = process.env.npm_package_version
@@ -30,9 +31,14 @@ const BASE_PATH = (ENV === 'development') ? DEFAULT_LOCAL_URL : (process.env.WEB
 const SPECIFIED_ENTRIES = process.env.ENTRY ? process.env.ENTRY : (ENV === 'development') ? DEFAULT_ENTRY : undefined
 
 // TODO: Use this same concept to eliminate the redundancy of facetEntryPoints in constants, export.js, and allFacets.js -@cody.richmond
+const TEMPLATES_SRC_LOCATION = 'src/templates/'
+const TEMPLATES_DIST_LOCATION = 'templates/'
 const allTemplates = (ctx => {
-  return ctx.keys()
-})(requireContext(path.resolve(__dirname, 'src/templates'), true, /.*/))
+  return ctx.keys().map(template => ({
+    input: `${TEMPLATES_SRC_LOCATION}${template}`,
+    output: `${TEMPLATES_DIST_LOCATION}${template}`
+  }))
+})(requireContext(path.resolve(__dirname, TEMPLATES_SRC_LOCATION), true, /.*/))
 
 let allEntryPoints = {
   ...flags.mainEntryPoints,
@@ -60,6 +66,18 @@ if (isEmpty(allEntryPoints)) {
 } else {
   console.info('You are attempting to build the following entry points:', Object.keys(allEntryPoints))
 }
+
+// NOTE re: CACHE_HASH
+// HardsourceCache sometimes does a pretty lousy job of invalidating itself when things that AREN'T imported change
+// In particular it seems to have issues with our template files since they're just unrelated HTML files in a directory
+// To get around this, we're generating a CACHE_HASH value based on the hash of our current mode (which maps to the
+// node environment value) as well as an array of all our existing templates.
+// Creating a new template, changing the name of an existing template or directory, and altering directory structure will
+// continue to require a restart, but at least those changes WILL be included in the cache.
+const CACHE_HASH = hash([
+  ...flags.mode,
+  ...allTemplates.map(template => template.input)
+])
 
 module.exports = {
   stats: {
@@ -165,22 +183,20 @@ module.exports = {
     flags.dev && new BundleAnalyzerPlugin(),
     new HtmlWebpackPlugin({
       inject: false,
-      template: './src/index.html'
+      template: './src/index/index.html'
     }),
-    ...allTemplates.map(page => {
-      return new HtmlWebpackPlugin({
-        inject: false,
-        filename: page,
-        template: `./src/templates/${page}`
-      })
-    }),
+    ...allTemplates.map(template => new HtmlWebpackPlugin({
+      inject: false,
+      filename: `${template.output}`,
+      template: `${template.input}`
+    })),
     new MiniCssExtractPlugin({
       filename: 'css/[name].css'
     }),
     ...Object.keys(allEntryPoints).map(key => {
       // wrap each entry's associated CSS file with .cleanslate.prism, excluding :root rules
-      // excluding cleanslate CSS
-      if (key !== flags.cleanslateEntryPointName) {
+      // excluding anything from our "fixed" entrypoints, which are cleanslate and template index
+      if (!flags.fixedEntryPoints[key]) {
         return new PostCssWrapper(`css/${key}.css`, '.cleanslate.prism', /^:root/)
       }
     }),
@@ -199,10 +215,11 @@ module.exports = {
       'ML_API_URL': JSON.stringify(ML_API_URL),
       'WEBPACK_CONSTANTS': JSON.stringify(flags),
       'VAR_NAMES': JSON.stringify(ALL_VARS.varNames),
-      'VAR_VALUES': JSON.stringify(ALL_VARS.varValues)
+      'VAR_VALUES': JSON.stringify(ALL_VARS.varValues),
+      'STATIC_TEMPLATES': JSON.stringify(allTemplates.map(template => template.output))
     }),
     !flags.production && new HardSourceWebpackPlugin({
-      configHash: flags.mode,
+      configHash: CACHE_HASH,
       cacheDirectory: path.join(flags.rootPath, '.cache/hard-source/[confighash]'),
       info: {
         mode: 'test',
@@ -254,11 +271,12 @@ module.exports = {
 
       return 'localhost'
     })(),
+    writeToDisk: true,
     https: true,
     historyApiFallback: {
       rewrites: [
-        { from: /^\/$/, to: '/index.html' },
-        { from: /^\/embeddable/, to: '/embeddable.html' }
+        { from: /^\/$/, to: '/index/' },
+        { from: /^\/index\/embeddable/, to: '/index/embeddable.html' }
       ]
     },
     headers: {
