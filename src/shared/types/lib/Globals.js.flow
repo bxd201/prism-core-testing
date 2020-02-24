@@ -20,3 +20,4 @@ declare var ML_API_URL: string
 declare var WEBPACK_CONSTANTS: { [key: string]: any }
 declare var VAR_NAMES: { [key: string]: string }
 declare var VAR_VALUES: { [key: string]: number | string }
+declare var STATIC_TEMPLATES: string[]
