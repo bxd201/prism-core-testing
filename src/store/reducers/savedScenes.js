@@ -71,7 +71,7 @@ export const cachedSceneData = (state: string | null = null, action: {type: stri
   return state
 }
 
-export const cloudSceneMetadata = (state: Object[] = [], action: {type: string, payload: boolean, data: Object}) => {
+export const sceneMetadata = (state: Object[] = [], action: {type: string, payload: boolean, data: Object}) => {
   if (action.type === SAVING_MASKS && !action.payload && action.data) {
     if (!state.find(item => item.scene === action.data.scene)) {
       return [...state, { ...action.data }]

@@ -21,7 +21,7 @@ import {
   legacySavedScenesMetadata,
   scenesAndRegions,
   selectedSavedSceneId,
-  cloudSceneMetadata,
+  sceneMetadata,
   isWaitingToFetchSavedScenes,
   cachedSceneData,
   isLoadingSavedScene,
@@ -32,7 +32,7 @@ import { user } from './user'
 import { paintSceneWorkspace } from './paintSceneWorkspace'
 // eslint-disable-next-line no-unused-vars
 import { reducerWithLocalStorage } from '../withStorage'
-import { CLOUD_SCENE_METADATA } from '../storageProperties'
+import { SCENE_METADATA } from '../storageProperties'
 import brandColors from './brandColors'
 
 export default combineReducers({
@@ -58,7 +58,7 @@ export default combineReducers({
   user,
   selectedSavedSceneId,
   paintSceneWorkspace,
-  cloudSceneMetadata: reducerWithLocalStorage(cloudSceneMetadata, CLOUD_SCENE_METADATA),
+  sceneMetadata: reducerWithLocalStorage(sceneMetadata, SCENE_METADATA),
   isWaitingToFetchSavedScenes,
   cachedSceneData,
   isLoadingSavedScene,

@@ -33,6 +33,12 @@ export const RESET_SAVE_STATE = 'RESET_SAVE_STATE'
 // File name consts
 const SCENE_JSON = 'scene.json'
 
+const SCENE_TYPE = {
+  custom: 'custom',
+  stock: 'stock',
+  anonCustom: 'anon-custom'
+}
+
 export const startSavingMasks = (sceneName: string) => {
   return {
     type: SAVING_MASKS,
@@ -159,9 +165,9 @@ export const loadSavedSceneFromFirebase = (brandId: string, dispatch: Function, 
 
 const getSavedScenesFromFirebase = (isLoggedIn: boolean, dispatch, getState) => {
   if (isLoggedIn) {
-    const { user, cloudSceneMetadata } = getState()
-    if (cloudSceneMetadata.length) {
-      const metadata = getMatchingScenesForFirebase(user.uid, cloudSceneMetadata)
+    const { user, sceneMetadata } = getState()
+    if (sceneMetadata.length) {
+      const metadata = getMatchingScenesForFirebase(user.uid, sceneMetadata)
       fetchSavedScenesFromFirebase(metadata, dispatch, getState)
     } else {
     // There are no items saved
@@ -262,6 +268,7 @@ const processFileFromFirebase = (file: Object, i: number) => {
   // This is here for consistency
   const id = sceneDefinitionId
 
+  // Any changes to the returned object will likely need to be made in localSceneData
   return {
     surfaceMasks,
     palette: colors,
@@ -272,7 +279,8 @@ const processFileFromFirebase = (file: Object, i: number) => {
     // The lack of this property duck types this as a payload from firebase
     renderingBaseUrl: null,
     // The existence of this prop too duck types this as a payload from firebase
-    backgroundImageUrl: image
+    backgroundImageUrl: image,
+    sceneType: SCENE_TYPE.anonCustom
   }
 }
 
@@ -373,6 +381,7 @@ const persistSceneToFirebase = (backgroundImageData: string, sceneDataXml: any, 
     dispatch(doneSavingMask(sceneMetadata))
 
     // This is expensive so we do it after we save the id, that way it appears faster
+    // Any changes to the returned object will likely need to be made in processFileFromFirebase
     const localSceneData = {
       surfaceMasks: getDataFromFirebaseXML(xmlString, colors),
       palette: colors,
@@ -383,7 +392,8 @@ const persistSceneToFirebase = (backgroundImageData: string, sceneDataXml: any, 
       // The lack of this property duck types this as a payload from firebase
       renderingBaseUrl: null,
       // The existence of this prop too duck types this as a payload from firebase
-      backgroundImageUrl: backgroundImageData
+      backgroundImageUrl: backgroundImageData,
+      sceneType: SCENE_TYPE.anonCustom
     }
 
     dispatch({
@@ -423,10 +433,10 @@ const setWaitingToFetchSavedScene = (isWaiting: boolean) => {
 
 export const tryToFetchSaveScenesFromFirebase = () => {
   return (dispatch: Function, getState: Function) => {
-    const { user, isWaitingToFetchSavedScenes, cloudSceneMetadata } = getState()
-    if (isWaitingToFetchSavedScenes && cloudSceneMetadata.length && user && user.uid) {
+    const { user, isWaitingToFetchSavedScenes, sceneMetadata } = getState()
+    if (isWaitingToFetchSavedScenes && sceneMetadata.length && user && user.uid) {
       // check to see if uid match local cloud scene metadata uid in path
-      const metadata = getMatchingScenesForFirebase(user.uid, cloudSceneMetadata)
+      const metadata = getMatchingScenesForFirebase(user.uid, sceneMetadata)
       fetchSavedScenesFromFirebase(metadata, dispatch, getState)
     }
   }
