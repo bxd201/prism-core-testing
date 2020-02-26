@@ -3,18 +3,19 @@ import React, { useEffect, useState, useCallback, useMemo } from 'react'
 import { Switch, Route } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import ColorWallRouter from './ColorWall/ColorWallRouter'
-import Search from '../Search/Search'
-import SearchBar from '../Search/SearchBar'
+import Search from 'src/components/Search/Search'
+import SearchBar from 'src/components/Search/SearchBar'
 import ColorWall from './ColorWall/ColorWall'
 import ColorWallToolbar from './ColorWall/ColorWallToolbar'
 import facetBinder from 'src/facetSupport/facetBinder'
 import ColorWallContext, { colorWallContextDefault, colorWallA11yContextDefault, type ColorWallA11yContextProps } from 'src/components/Facets/ColorWall/ColorWallContext'
 import { type FacetPubSubMethods, facetPubSubDefaultProps } from 'src/facetSupport/facetPubSub'
-import extendIfDefined from '../../shared/helpers/extendIfDefined'
-import GenericOverlay from '../Overlays/GenericOverlay/GenericOverlay'
+import extendIfDefined from 'src/shared/helpers/extendIfDefined'
+import GenericOverlay from 'src/components/Overlays/GenericOverlay/GenericOverlay'
 import at from 'lodash/at'
-import useEffectAfterMount from '../../shared/hooks/useEffectAfterMount'
-import { resetActiveColor, updateColorStatuses } from '../../store/actions/loadColors'
+import isArray from 'lodash/isArray'
+import useEffectAfterMount from 'src/shared/hooks/useEffectAfterMount'
+import { resetActiveColor, updateColorStatuses } from 'src/store/actions/loadColors'
 import { facetBinderDefaultProps, type FacetBinderMethods } from 'src/facetSupport/facetInstance'
 import { FormattedMessage } from 'react-intl'
 
@@ -23,6 +24,7 @@ type Props = FacetPubSubMethods & FacetBinderMethods & {
   colorWallBgColor?: string,
   displayAddButton?: boolean,
   displayDetailsLink?: boolean,
+  hiddenSections?: string | string[], // as string, "section name 1" or "section name 1|section name 2|etc" will be parsed into an array
   resetOnUnmount?: boolean
 }
 
@@ -48,7 +50,7 @@ const CWToolbar = () => <div className='color-wall-wrap__chunk'>
 </div>
 
 export const ColorWallPage = (props: Props) => {
-  const { displayAddButton, displayDetailsLink, colorWallBgColor, subscribe, publish, unsubscribeAll, colorDetailPageRoot, resetOnUnmount } = props
+  const { displayAddButton, displayDetailsLink, colorWallBgColor, subscribe, publish, unsubscribeAll, colorDetailPageRoot, resetOnUnmount, hiddenSections } = props
   const dispatch = useDispatch()
 
   // -----------------------------------------------------
@@ -80,6 +82,19 @@ export const ColorWallPage = (props: Props) => {
   useEffect(() => subscribe(EVENTS.loading, updateLoading), [])
 
   // -----------------------------------------------------
+  // handle hidden sections
+  const processedHiddenSections = useMemo(() => {
+    if (typeof hiddenSections === 'string') {
+      // hiddenSections is a single pipe-delimited string; break it into an array here before it gets into context
+      return hiddenSections.split('|')
+    } else if (isArray(hiddenSections)) {
+      return hiddenSections
+    }
+
+    return []
+  }, [ hiddenSections ])
+
+  // -----------------------------------------------------
   // build color wall context and a11y state
   const [a11yState, updateA11yState] = useState(colorWallA11yContextDefault)
   const updateA11y = useCallback((data: ColorWallA11yContextProps) => updateA11yState({
@@ -91,6 +106,7 @@ export const ColorWallPage = (props: Props) => {
     colorWallBgColor,
     displayAddButton,
     displayDetailsLink,
+    hiddenSections: processedHiddenSections,
     updateA11y
   }), [colorDetailPageRoot, colorWallBgColor, displayAddButton, displayDetailsLink, updateA11y, a11yState])
 
