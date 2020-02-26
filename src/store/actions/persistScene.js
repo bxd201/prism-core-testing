@@ -28,13 +28,16 @@ export const CACHED_SCENE_DATA = 'CACHED_SCENE_DATA'
 export const ERROR_DOWNLOADING_SAVED_DATA = 'ERROR_DOWNLOADING_SAVED_DATA'
 export const WAITING_TO_FETCH_SAVED_SCENE = 'WAITING_TO_FETCH_SAVED_SCENE'
 export const ERROR_DELETING_ANON_SCENE = 'ERROR_DELETING_ANON_SCENE'
+export const SHOW_SAVE_SCENE_MODAL = 'SHOW_SAVE_SCENE_MODAL'
+export const RESET_SAVE_STATE = 'RESET_SAVE_STATE'
 // File name consts
 const SCENE_JSON = 'scene.json'
 
-export const startSavingMasks = () => {
+export const startSavingMasks = (sceneName: string) => {
   return {
     type: SAVING_MASKS,
-    payload: true
+    payload: true,
+    sceneName
   }
 }
 
@@ -55,7 +58,7 @@ export const saveMasks = (colorList: Array<number[]>, imageData: Object, backgro
     // @todo needed for my sherwin persist, this is a usage reminder -RS
     // const imageUploadPayload = createImageUploadPayload(backgroundImageUrl, metadata.uniqueId)
     if (FIREBASE_AUTH_ENABLED) {
-      persistSceneToFirebase(backgroundImageUrl, sceneXML, metadata.colors, metadata.uniqueId, dispatch)
+      persistSceneToFirebase(backgroundImageUrl, sceneXML, metadata.colors, metadata.uniqueId, metadata.description, dispatch)
       return
     }
     // @todo REVIEW not sure color info is persisted in current code -RS
@@ -251,10 +254,9 @@ const mungeRegionAndSceneData = (regionData: Object, sceneData: Object, colors: 
 
 // This is firebase equivalent  of mungeRegionAndSceneData
 const processFileFromFirebase = (file: Object, i: number) => {
-  const { regionsXml, uniqueSceneId, image, colors } = file
+  const { regionsXml, uniqueSceneId, image, colors, name } = file
   const surfaceMasks = getDataFromFirebaseXML(regionsXml, colors)
   const sceneDefinitionId = uniqueSceneId
-  const name = ''
   // This is here for consistency
   const categoryId = 0
   // This is here for consistency
@@ -327,11 +329,11 @@ export const tryToPersistCachedSceneData = () => {
       return
     }
 
-    persistSceneToFirebase(data.background, data.sceneXml, data.colors, data.uniqueSceneId, dispatch)
+    persistSceneToFirebase(data.background, data.sceneXml, data.colors, data.uniqueSceneId, data.description, dispatch)
   }
 }
 
-const persistSceneToFirebase = (backgroundImageData: string, sceneDataXml: any, colors: number[], uniqueSceneId: string, dispatch: Function) => {
+const persistSceneToFirebase = (backgroundImageData: string, sceneDataXml: any, colors: number[], uniqueSceneId: string, description: string, dispatch: Function) => {
   const user = firebase.auth().currentUser
   if (!user) {
     dispatch({
@@ -340,7 +342,8 @@ const persistSceneToFirebase = (backgroundImageData: string, sceneDataXml: any, 
         background: backgroundImageData,
         sceneXml: sceneDataXml,
         colors,
-        uniqueSceneId
+        uniqueSceneId,
+        name: description
       }
     })
 
@@ -359,7 +362,8 @@ const persistSceneToFirebase = (backgroundImageData: string, sceneDataXml: any, 
     regionsXml: xmlString,
     uniqueSceneId: uniqueSceneId,
     image: backgroundImageData,
-    colors
+    colors,
+    name: description
   }
 
   const scenePromise = sceneRef.putString(window.JSON.stringify(sceneData))
@@ -372,7 +376,7 @@ const persistSceneToFirebase = (backgroundImageData: string, sceneDataXml: any, 
     const localSceneData = {
       surfaceMasks: getDataFromFirebaseXML(xmlString, colors),
       palette: colors,
-      name: '',
+      name: description,
       id: uniqueSceneId,
       sceneDefinitionId: uniqueSceneId,
       categoryId: 0,
@@ -503,4 +507,17 @@ const processDownloadedFiles = (files: Object[], dispatch: Function, getState: F
   })
 
   return scenes
+}
+
+export const showSaveSceneModal = (shouldShow: boolean) => {
+  return {
+    type: SHOW_SAVE_SCENE_MODAL,
+    payload: shouldShow
+  }
+}
+
+export const resetSaveState = () => {
+  return {
+    type: RESET_SAVE_STATE
+  }
 }

@@ -28,8 +28,7 @@ import { getScaledPortraitHeight, getScaledLandscapeHeight } from '../../shared/
 import throttle from 'lodash/throttle'
 import { checkUndoIsEnabled, redo, undo } from './UndoRedoUtil'
 import MergeCanvas from '../MergeCanvas/MergeCanvas'
-import { saveMasks, selectSavedScene, startSavingMasks } from '../../store/actions/persistScene'
-import PaintSceneFooter from './PaintSceneFooter'
+import { saveMasks, selectSavedScene, showSaveSceneModal, startSavingMasks } from '../../store/actions/persistScene'
 import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 import SaveMasks from './SaveMasks'
 import { createCustomSceneMetadata, createUniqueSceneId } from '../../shared/utils/legacyProfileFormatUtil'
@@ -84,7 +83,11 @@ type ComponentProps = {
   mergeLpColors: Function,
   replaceLpColors: Function,
   selectSavedScene: Function,
-  clearSceneWorkspace: Function
+  clearSceneWorkspace: Function,
+  showSaveSceneModal: boolean,
+  showSaveSceneModalAction: Function,
+  saveSceneName: string,
+  sceneCount: number
 }
 
 type ComponentState = {
@@ -258,6 +261,23 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.getSelectPaletteModalConfig = this.getSelectPaletteModalConfig.bind(this)
     this.loadPalette = this.loadPalette.bind(this)
     this.tryToMergeColors = this.tryToMergeColors.bind(this)
+    this.hideSaveSceneModal = this.hideSaveSceneModal.bind(this)
+    this.saveSceneFromModal = this.saveSceneFromModal.bind(this)
+  }
+
+  hideSaveSceneModal (e: SyntheticEvent) {
+    e.preventDefault()
+    e.stopPropagation()
+
+    this.props.showSaveSceneModalAction(false)
+  }
+
+  saveSceneFromModal (e: SyntheticEvent, sceneName: string) {
+    e.preventDefault()
+    e.stopPropagation()
+
+    this.props.showSaveSceneModalAction(false)
+    this.props.startSavingMasks(sceneName)
   }
 
   tryToMergeColors () {
@@ -527,7 +547,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       canvasOffset.x = parseInt(canvasClientOffset.left, 10)
       canvasOffset.y = parseInt(canvasClientOffset.top, 10)
       if (storageAvailable('sessionStorage')) {
-        // @todo candidate for redux? -RS
+        // @todo [IMPROVEMENT] candidate for redux? -RS
         window.sessionStorage.setItem('canvasOffsetPaintScene', JSON.stringify(canvasOffset))
       }
     }
@@ -548,7 +568,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.initCanvas()
     this.tryToMergeColors()
     window.addEventListener('resize', this.resizeHandler)
-    // @todo candidate for redux -RS
+    // @todo [IMPROVEMENT] candidate for redux -RS
     if (storageAvailable('localStorage') && getTooltipShownLocalStorage() === null) {
       setTooltipShownLocalStorage()
     } else {
@@ -1769,7 +1789,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     const backgroundImageUrl = this.CFICanvas.current.toDataURL('image/jpeg', 1.0)
     const ctx2 = this.CFICanvas2.current.getContext('2d')
     const imageData = !saveBackgroundOnly ? ctx2.getImageData(0, 0, ctx2.canvas.width, ctx2.canvas.height) : null
-    const metaData = createCustomSceneMetadata('TEMP_NAME', this.state.uniqueSceneId, colorList, ctx2.canvas.width, ctx2.canvas.height)
+    const metaData = createCustomSceneMetadata('TEMP_NAME', this.props.saveSceneName, this.state.uniqueSceneId, colorList, ctx2.canvas.width, ctx2.canvas.height)
 
     this.props.saveMasks(labColorList, imageData, backgroundImageUrl, metaData)
   }
@@ -1789,7 +1809,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   }
 
   render () {
-    const { lpActiveColor, intl } = this.props
+    const { lpActiveColor, intl, showSaveSceneModal } = this.props
     const bgImageUrl = this.props.workspace ? this.props.workspace.bgImageUrl : this.props.imageUrl
     const layers = this.props.workspace ? this.props.workspace.layers : null
     const { activeTool, position, paintBrushShape, paintBrushWidth, eraseBrushShape, eraseBrushWidth, undoIsEnabled, redoIsEnabled, showOriginalCanvas, isAddGroup, isDeleteGroup, isUngroup, paintCursor, isInfoToolActive, loading, showAnimatePin, showNonAnimatePin, pinX, pinY, currPinX, currPinY, canvasWidth, canvasHeight, canvasHasBeenInitialized, showSelectPaletteModal } = this.state
@@ -1807,6 +1827,15 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
             title={selectPaletteTitle}
             height={canvasHeight}
             description={selectPaletteDescription} /> : null}
+          {showSaveSceneModal ? <DynamicModal
+            actions={[
+              { text: intl.messages['SAVE_SCENE_MODAL.SAVE'], callback: this.saveSceneFromModal },
+              { text: intl.messages['SAVE_SCENE_MODAL.CANCEL'], callback: this.hideSaveSceneModal }
+            ]}
+            description={intl.messages['SAVE_SCENE_MODAL.DESCRIPTION']}
+            height={canvasHeight}
+            allowInput
+            inputDefault={`${intl.messages['SAVE_SCENE_MODAL.DEFAULT_DESCRIPTION']} ${this.props.sceneCount}`} /> : null}
           {/* the 35 in the padding is the radius of the circle loader. Note the bitwise rounding */}
           {this.props.savingMasks || this.state.loadingMasks ? <div style={{ height: canvasHeight }} className='spinner'><div style={{ padding: ((canvasHeight / 2) | 0) - 35 }}><CircleLoader /></div></div> : null}
           {this.props.savingMasks ? <SaveMasks processMasks={this.processMasks} /> : null }
@@ -1879,21 +1908,23 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
             </div>
           </div>}
         </div>
-        <PaintSceneFooter handleSave={this.props.startSavingMasks} top={this.state.wrapperHeight} />
       </>
     )
   }
 }
 
 const mapStateToProps = (state: Object, props: Object) => {
-  const { lp, savingMasks, selectedSavedSceneId, scenesAndRegions } = state
+  const { lp, savingMasks, selectedSavedSceneId, scenesAndRegions, showSaveSceneModal, saveSceneName } = state
   const selectedScene = scenesAndRegions.find(item => item.id === selectedSavedSceneId)
 
   return {
     lpColors: lp.colors,
     lpActiveColor: lp.activeColor,
     savingMasks,
-    selectedScene
+    selectedScene,
+    showSaveSceneModal,
+    saveSceneName,
+    sceneCount: scenesAndRegions.length + 1
   }
 }
 
@@ -1901,11 +1932,12 @@ const mapDispatchToProps = (dispatch: Function) => {
   return {
     saveMasks: (colorList: Array<number[]>, imageData: Object, backgroundImageUrl: string, metaData: Object) =>
       dispatch(saveMasks(colorList, imageData, backgroundImageUrl, metaData)),
-    startSavingMasks: () => dispatch(startSavingMasks()),
+    startSavingMasks: (sceneName) => dispatch(startSavingMasks(sceneName)),
     mergeLpColors: (colors: Object[]) => dispatch(mergeLpColors(colors)),
     replaceLpColors: (colors: Object[]) => dispatch(replaceLpColors(colors)),
     selectSavedScene: (sceneId) => dispatch(selectSavedScene(sceneId)),
-    clearSceneWorkspace: () => clearSceneWorkspace()
+    clearSceneWorkspace: () => clearSceneWorkspace(),
+    showSaveSceneModalAction: (shouldShow) => dispatch(showSaveSceneModal(shouldShow))
   }
 }
 

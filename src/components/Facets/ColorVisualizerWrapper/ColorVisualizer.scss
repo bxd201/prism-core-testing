@@ -14,6 +14,20 @@
       }
     }
   }
+  &__footer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    &--priority {
+      flex-basis: 86%;
+    }
+    &--secondary {
+      display: flex;
+      flex-basis: 14%;
+      justify-content: space-around;
+    }
+  }
 }
 
 .cvw-nav-btn {
