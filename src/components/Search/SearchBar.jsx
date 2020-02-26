@@ -5,31 +5,31 @@ import { useHistory, useParams } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
 import ButtonBar from '../GeneralButtons/ButtonBar/ButtonBar'
-import { FormattedMessage } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 import uniqueId from 'lodash/uniqueId'
 import debounce from 'lodash/debounce'
 import './SearchBar.scss'
 import 'src/scss/convenience/visually-hidden.scss'
 import { MIN_SEARCH_LENGTH } from '../../store/actions/loadSearchResults'
+import at from 'lodash/at'
 
 type Props = {
   showCancelButton: boolean,
   showLabel?: boolean,
   showIcon?: boolean,
-  label: string,
-  placeholder?: string
+  label: string
 }
 
 export default (props: Props) => {
   const {
     label,
-    placeholder,
     showCancelButton = true,
     showIcon = true,
     showLabel = true
   } = props
   const { query = '' } = useParams()
   const history = useHistory()
+  const { messages = {} } = useIntl()
   const [value, setValue] = React.useState(query)
   const [id] = React.useState(uniqueId('SearchBarInput'))
   const updateUrl = React.useMemo(() => debounce((value, abort = false) => {
@@ -80,7 +80,7 @@ export default (props: Props) => {
             <FontAwesomeIcon icon={['fal', 'search']} size='lg' />
           </label>)}
           <div className={`SearchBar__wrapper SearchBar__wrapper--with${query ? '-outline' : 'out-outline'}`}>
-            <input id={id} value={value} className='SearchBar__input' onChange={e => setValue(e.target.value)} placeholder={placeholder} />
+            <input id={id} value={value} className='SearchBar__input' onChange={e => setValue(e.target.value)} placeholder={at(messages, 'SEARCH.SEARCH_BY')[0]} />
             {value.length > 0 &&
               <button type='button' className='SearchBar__clean' onClick={() => setValue('')}>
                 <FontAwesomeIcon icon={['fas', 'times']} />

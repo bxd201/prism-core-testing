@@ -4,7 +4,9 @@ import {
   COLOR_BRIGHTS_ENDPOINT,
   COLOR_FAMILY_NAMES_ENDPOINT,
   COLORS_ENDPOINT,
-  COLLECTION_SUMMARIES_ENDPOINT
+  COLLECTION_SUMMARIES_ENDPOINT,
+  INSPIRATIONAL_PHOTOS_ENDPOINT,
+  SCENES_ENDPOINT
 } from 'src/constants/endpoints'
 
 import { generateBrandedEndpoint } from 'src/shared/helpers/DataUtils'
@@ -17,6 +19,10 @@ axios.get = (url) => {
       return Promise.resolve({ data: require('./data/expertColorPicksEndpoint.json') })
     case COLLECTION_SUMMARIES_ENDPOINT:
       return Promise.resolve({ data: require('./data/collectionsEndpoint.json') })
+    case INSPIRATIONAL_PHOTOS_ENDPOINT:
+      return Promise.resolve({ data: require('./data/inspirationalPhotosEndpoint.json') })
+    case generateBrandedEndpoint(SCENES_ENDPOINT, 'sherwin', { language: 'en-US' }):
+      return Promise.resolve({ data: require('./data/scenesEndpoint.json') })
     case generateBrandedEndpoint(COLOR_CHUNKS_ENDPOINT, 'sherwin', { language: 'en-US' }):
       return Promise.resolve({ data: require('./data/colorChunksEndpoint.json') })
     case generateBrandedEndpoint(COLOR_FAMILY_NAMES_ENDPOINT, 'sherwin', { language: 'en-US' }):

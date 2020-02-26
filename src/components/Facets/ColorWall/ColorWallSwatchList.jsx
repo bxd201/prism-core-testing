@@ -200,8 +200,8 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
                   overscanRowCount={6}
                   rowHeight={size}
                   rowCount={rowCount}
-                  width={width}
-                  height={gridHeight}
+                  width={width || 900}
+                  height={gridHeight || 400}
                   overscanIndicesGetter={overscanIndicesGetter}
                   containerRole='presentation'
                   role='presentation'
@@ -696,7 +696,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
       }
 
       return (
-        <div style={_style} role='presentation'>
+        <div key={key} style={_style} role='presentation'>
           <div className={`color-wall-swatch-list__section-title ${!showAll ? 'color-wall-swatch-list__section-title--top-align' : ''}`} title={colorId.label} style={{
             width: `${colorId.columnWidth * 100}%`,
             marginLeft: `-${(Math.ceil(colorId.columnWidth / 2) - 1) * 100}%`

@@ -218,7 +218,8 @@ export class ColorsFromImagePin extends PureComponent<Props, State> {
           tabIndex='-1'
           onClick={this.onClickHandlerLabel}
           style={{ transform: transformValue, overflow: 'visible', display: (hide) ? 'none' : 'flex' }}
-          className={`pin__wrapper ${isActiveFlag ? 'pin__wrapper--active' : ''}`}>
+          className={`pin__wrapper ${isActiveFlag ? 'pin__wrapper--active' : ''}`}
+        >
           <div className='pin__content__wrapper'>
             <div ref={this.colorDivRef} role='button' draggable
               tabIndex={'0'}

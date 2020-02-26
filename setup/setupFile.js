@@ -1,90 +1,57 @@
 import React from 'react'
 import { IntlProvider } from 'react-intl'
 import { Provider } from 'react-redux'
-import { mount, configure } from 'enzyme'
 import languages from 'src/translations/translations'
-import { Router, MemoryRouter, useRouteMatch, useHistory, useParams } from 'react-router-dom'
+import { Router } from 'react-router-dom'
 import { createMemoryHistory } from 'history'
 import { flattenNestedObject } from 'src/shared/helpers/DataUtils'
-import extend from 'lodash/extend'
 import store from 'src/store/store'
 import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
+import { DEFAULT_CONFIGURATION } from 'src/constants/configurations'
+import { render } from '@testing-library/react'
+import { LiveAnnouncer, LiveMessenger } from 'react-aria-live'
+import LiveAnnouncerContextProvider from 'src/contexts/LiveAnnouncerContext/LiveAnnouncerContextProvider'
 import 'src/config/fontawesome'
 import '@formatjs/intl-relativetimeformat/polyfill'
 import '@formatjs/intl-relativetimeformat/polyfill-locales'
-import Adapter from 'enzyme-adapter-react-16'
-import { LiveAnnouncer } from 'react-aria-live'
-import { render } from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect'
-
-configure({ adapter: new Adapter() })
 
 // force debounced functions to execute immediately in tests
 jest.mock('lodash/debounce', () => jest.fn(fn => fn))
 
-jest.useFakeTimers()
+// jest.useFakeTimers()
 
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useRouteMatch: jest.fn(),
-  useHistory: jest.fn(),
-  useParams: jest.fn()
-}))
+// jest.mock('react-router-dom', () => ({
+//   ...jest.requireActual('react-router-dom'),
+//   useRouteMatch: jest.fn(),
+//   useHistory: jest.fn(),
+//   useParams: jest.fn()
+// }))
 
-global.URL.createObjectURL = jest.fn()
-global.URL.revokeObjectURL = jest.fn()
+// global.URL.createObjectURL = jest.fn()
+// global.URL.revokeObjectURL = jest.fn()
 
-/**
- * Mocks react-router-dom and react-redux hooks with provided values or defaults and returns a properly wrapped and enzyme-mounted component
- *
- * example: mocked(<Component />)
- *   - standard mocked component where useSelector(store => store) === require('src/store/store') && useRouteParams().url === '/' && useParams() === {}
- * example: mocked(<Component />, { mockedStoreValues: { a: 1, b: '' } })
- *   - mocked component where useSelector(store => store) === { ...require('src/store/store'), ...{ a: 1, b: '' } }
- * example: mocked(<Component />, { url: '/search/blue', routeParams: { query: blue } })
- *   - mocked component where useRouteParams().url === '/search/blue' && useParams() === { query: blue }
- * example: mocked(<Component />).history
- *   - history object associated with a mocked object
- */
-window.mocked = (mockedComponent, nonDefaultParams = {}) => {
-  const {
-    routeParams = {},
-    mockedStoreValues = {},
-    url = '/',
-    path = url,
-    history = createMemoryHistory({ initialEntries: [url] })
-  } = nonDefaultParams
-
-  useRouteMatch.mockReturnValue({ path: path, url: url, params: routeParams })
-  useHistory.mockReturnValue(history)
-  useParams.mockReturnValue(routeParams)
-
-  const defaultState = store.getState()
-  store.getState = () => ({ ...defaultState, ...mockedStoreValues })
-
-  return extend(mount(
-    <IntlProvider locale='en-US' messages={flattenNestedObject(languages['en-US'])}>
-      <Provider store={store}>
-        <Router history={history}>
-          <ConfigurationContext.Provider value={{ brandId: 'sherwin', theme: {} }}>
-            <LiveAnnouncer>
-              {mockedComponent}
-            </LiveAnnouncer>
+window.render = (component, { route = '/', history = createMemoryHistory({ initialEntries: [route] }) } = {}) => {
+  return {
+    ...render(
+      <Router history={history}>
+        <IntlProvider locale='en-US' messages={flattenNestedObject(languages['en-US'])}>
+          <ConfigurationContext.Provider value={{ ...DEFAULT_CONFIGURATION, brandId: 'sherwin' }}>
+            <Provider store={store}>
+              <LiveAnnouncer>
+                <LiveMessenger>
+                  {({ announcePolite, announceAssertive }) => (
+                    <LiveAnnouncerContextProvider announcePolite={announcePolite} announceAssertive={announceAssertive}>
+                      {component}
+                    </LiveAnnouncerContextProvider>
+                  )}
+                </LiveMessenger>
+              </LiveAnnouncer>
+            </Provider>
           </ConfigurationContext.Provider>
-        </Router>
-      </Provider>
-    </IntlProvider>
-  ), { history: history })
-}
-
-window.render = (component) => {
-  return { ...render(
-    <MemoryRouter>
-      <IntlProvider locale='en-US' messages={flattenNestedObject(languages['en-US'])}>
-        <ConfigurationContext.Provider value={{ brandId: 'sherwin', theme: {} }}>
-          <Provider store={store}>{component}</Provider>
-        </ConfigurationContext.Provider>
-      </IntlProvider>
-    </MemoryRouter>
-  ) }
+        </IntlProvider>
+      </Router>
+    ),
+    history
+  }
 }

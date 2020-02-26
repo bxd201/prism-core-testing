@@ -1,29 +1,28 @@
 import React from 'react'
 import InspiredSceneNavigator from 'src/components/InspirationPhotos/InspiredSceneNavigator'
-import Carousel from 'src/components/Carousel/Carousel'
-import ColorCollectionsTab from 'src/components/Shared/ColorCollectionsTab'
+import { within } from '@testing-library/react'
+import { fireEvent } from '@testing-library/dom'
 
-let defaultProps = {
-  collectionTabs: [],
-  flatData: [],
-  loadData: () => null,
-  setHeader: jest.fn(),
-  tabMap: {}
-}
+it('default pin\'s text is "Cloudless"', async () => {
+  const { findByRole } = render(<InspiredSceneNavigator />)
+  await within(await findByRole('main')).findByText('Cloudless')
+})
 
-describe('Testing state for InspiredSceneNavigator component', () => {
-  let inspiredSceneNavigator
+it('after clicking the globetrotting tab, the default pin\'s text is "Gecko"', async () => {
+  const { findByRole } = render(<InspiredSceneNavigator />)
+  await within(await findByRole('tablist')).findByText('Globetrotting').then(fireEvent.click)
+  await within(await findByRole('main')).findByText('Gecko')
+})
 
-  beforeAll(() => {
-    // eslint-disable-next-line no-undef
-    inspiredSceneNavigator = mocked(<InspiredSceneNavigator {...defaultProps} />)
-  })
+it('after clicking the next button (right arrow), the default pin\'s text is "Cyclamen"', async () => {
+  const { findByRole } = render(<InspiredSceneNavigator />)
+  await within(await findByRole('main')).findByLabelText('next').then(fireEvent.click)
+  await within(await findByRole('main')).findByText('Cyclamen')
+})
 
-  it('State should initialize correctly', () => {
-    expect(inspiredSceneNavigator.find(ColorCollectionsTab).props().tabIdShow).toEqual('tab0')
-  })
-
-  it('should rendering ImageScenesWithCarousel Component', () => {
-    expect(inspiredSceneNavigator.find(Carousel).exists()).toBe(true)
-  })
+it('after clicking the previous button (left arrow), the default pin\'s text is "Danube" and "Time Capsule" is the selected tab', async () => {
+  const { findByRole } = render(<InspiredSceneNavigator />)
+  await within(await findByRole('main')).findByLabelText('previous').then(fireEvent.click)
+  await within(await findByRole('main')).findByText('Danube')
+  expect(await within(await findByRole('tablist')).findByText('Time Capsule')).toHaveAttribute('aria-selected', 'true')
 })

@@ -82,7 +82,7 @@ export default (props: ComponentProps) => {
     <div className={`${baseClass}__wrapper`}>
       <div className={`${contentWrapper}`}>
         <div className={`${contentWrapper}__prev-btn__wrapper`}>
-          {(isInfinity || position >= defaultItemsPerView) && <button className={`${contentWrapper}__buttons`} onClick={handlePrev}>
+          {(isInfinity || position >= defaultItemsPerView) && <button className={`${contentWrapper}__buttons`} onClick={handlePrev} aria-label='previous'>
             <FontAwesomeIcon icon={['fa', 'chevron-left']} />
           </button>}
         </div>
@@ -117,7 +117,7 @@ export default (props: ComponentProps) => {
           </div>
         </div>
         <div className={`${contentWrapper}__next-btn__wrapper`}>
-          {(isInfinity || position + defaultItemsPerView < data.length) && <button className={`${contentWrapper}__buttons`} onClick={handleNext}>
+          {(isInfinity || position + defaultItemsPerView < data.length) && <button className={`${contentWrapper}__buttons`} onClick={handleNext} aria-label='next'>
             <FontAwesomeIcon icon={['fa', 'chevron-right']} />
           </button>}
         </div>

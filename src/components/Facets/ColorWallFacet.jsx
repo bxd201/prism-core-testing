@@ -109,15 +109,17 @@ export const ColorWallPage = (props: Props) => {
     <ColorWallContext.Provider value={cwContext}>
       <ColorWallRouter>
         <div className='color-wall-wrap'>
-          <Switch>
-            <Route path='(.*)?/search/:query' component={searchBarNoLabel} />
-            <Route path='(.*)?/search' component={searchBarNoLabel} />
-            <Route path='(.*)?/section/:section/family/:family' component={CWToolbar} />
-            <Route path='(.*)?/section/:section/family/' component={CWToolbar} />
-            <Route path='(.*)?/family/:family/' component={CWToolbar} />
-            <Route path='(.*)?/family/' component={CWToolbar} />
-            <Route component={CWToolbar} />
-          </Switch>
+          <nav>
+            <Switch>
+              <Route path='(.*)?/search/:query' component={searchBarNoLabel} />
+              <Route path='(.*)?/search' component={searchBarNoLabel} />
+              <Route path='(.*)?/section/:section/family/:family' component={CWToolbar} />
+              <Route path='(.*)?/section/:section/family/' component={CWToolbar} />
+              <Route path='(.*)?/family/:family/' component={CWToolbar} />
+              <Route path='(.*)?/family/' component={CWToolbar} />
+              <Route component={CWToolbar} />
+            </Switch>
+          </nav>
           <Switch>
             <Route path='(.*)?/search/:query' component={SearchContain} />
             <Route path='(.*)?/search/' component={SearchContain} />

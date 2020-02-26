@@ -19,7 +19,7 @@ type Props = {
   subscribe: (string, Function) => void,
 }
 
-const ColorDetailsPage = (props: Props) => {
+export const ColorDetailsPage = (props: Props) => {
   const [familyLink, setFamilyLink] = useState('not set')
   props.subscribe('prism-family-link', setFamilyLink)
 

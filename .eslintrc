@@ -25,7 +25,8 @@
     "Image": "readonly",
     "ML_API_URL": "readonly",
     "URL": "readonly",
-    "Worker": "readonly"
+    "Worker": "readonly",
+    "render": "readonly"
   },
   "rules": {
     "react-hooks/rules-of-hooks": "error",
