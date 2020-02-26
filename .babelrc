@@ -1,4 +1,5 @@
 {
+  "sourceType": "unambiguous",
   "presets": [
     [
       "@babel/preset-env",
@@ -7,9 +8,6 @@
           "ie": "11"
         },
         "useBuiltIns": "usage",
-        "exclude": [
-          "es.symbol.*"
-        ],
         "corejs": 3
       }
     ],

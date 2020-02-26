@@ -132,7 +132,7 @@ module.exports = {
       },
       {
         test: /\.worker\.js$/,
-        exclude: /node_modules\/(?!react-intl|intl-messageformat|intl-messageformat-parser)/,
+        exclude: /node_modules\/(?!(react-intl|intl-messageformat|intl-messageformat-parser|hashids))/,
         include: flags.srcPath,
         use: [
           'worker-loader',
@@ -146,7 +146,7 @@ module.exports = {
       },
       {
         test: /\.(js|jsx)$/,
-        exclude: /node_modules\/(?!react-intl|intl-messageformat|intl-messageformat-parser)/,
+        exclude: /node_modules\/(?!(react-intl|intl-messageformat|intl-messageformat-parser|hashids))/,
         use: [
           {
             loader: 'babel-loader',
