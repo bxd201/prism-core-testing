@@ -377,7 +377,7 @@ const persistSceneToFirebase = (backgroundImageData: string, sceneDataXml: any, 
   const scenePromise = sceneRef.putString(window.JSON.stringify(sceneData))
 
   scenePromise.then(response => {
-    const sceneMetadata = { scene: response.metadata.fullPath }
+    const sceneMetadata = { scene: response.metadata.fullPath, sceneType: SCENE_TYPE.anonCustom }
     dispatch(doneSavingMask(sceneMetadata))
 
     // This is expensive so we do it after we save the id, that way it appears faster
