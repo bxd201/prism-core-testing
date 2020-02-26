@@ -13,8 +13,8 @@ import {
   getColorsFromImagePathList, getLABFromColor
 } from './PaintSceneUtils'
 import { getPaintAreaPath, repaintImageByPath,
-  createPolygon, drawLine, drawHollowCircle,
-  edgeDetect, pointInsideCircle, alterRGBByPixel,
+  createPolygon, drawLine, edgeDetect,
+  pointInsideCircle, alterRGBByPixel,
   getImageCordinateByPixel, eraseIntersection,
   getActiveColorRGB, getSelectArea, hexToRGB,
   checkIntersection, drawImagePixelByPath,
@@ -1224,16 +1224,6 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
         showNonAnimatePin: true
       })
     }
-  }
-
-  circleAnimate = (fn, t, ...arg) => {
-    const helper = (fn, t, ...arg) => {
-      if (this.pause) { return }
-      let y = Math.sin(t * Math.PI / 180)
-      drawHollowCircle(...arg, y)
-      window.requestAnimationFrame((t) => helper(fn, t, ...arg))
-    }
-    helper(fn, t, ...arg)
   }
 
   save = () => {

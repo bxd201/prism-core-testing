@@ -108,12 +108,6 @@ export const Circle = (ctx, x, y, radius, fillStyle, type = 'source-over', pulse
   return circleObj
 }
 
-export const drawHollowCircle = (ctxDraw, cursorX, cursorY, color, pulse = 1) => {
-  Circle(ctxDraw, cursorX, cursorY, 10, color, 'source-over', pulse)
-  Circle(ctxDraw, cursorX, cursorY, 4, 'rgba(255, 255, 255, 0)', 'source-over', pulse)
-  Circle(ctxDraw, cursorX, cursorY, 2, 'rgba(255, 255, 255, 255)', 'destination-out')
-}
-
 export const repaintCircleLine = (ctx, start, list, scale) => {
   ctx.beginPath()
   for (let i = 0; i < list.length; i++) {
@@ -191,10 +185,12 @@ export const repaintImageByPath = (imagePathList, canvas, width, height, isErase
   const ctx = canvas.current.getContext('2d')
   let imageData = ctx.getImageData(0, 0, width, height)
   let data = imageData.data
+  let maxDrawOrder = 0
   for (let i = 0; i < imagePathList.length; i++) {
     if ((!isEraseRepaint && !imagePathList[i].hasOwnProperty('drawOrder'))) {
-      imagePathList[i].drawOrder = i
+      imagePathList[i].drawOrder = maxDrawOrder + 1
     }
+    maxDrawOrder = Math.max(maxDrawOrder, imagePathList[i].drawOrder)
   }
 
   const redrawByOrder = imagePathList.map((item, i) => {
