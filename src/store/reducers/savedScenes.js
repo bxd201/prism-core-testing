@@ -9,7 +9,7 @@ import {
   WAITING_TO_FETCH_SAVED_SCENE,
   DELETE_ANON_SAVED_SCENE,
   SAVED_SCENE_LOCAL,
-  LOADING_SAVED_MASKS, ERROR_DOWNLOADING_SAVED_DATA
+  LOADING_SAVED_MASKS, ERROR_DOWNLOADING_SAVED_DATA, SHOW_SAVE_SCENE_MODAL, RESET_SAVE_STATE
 } from '../actions/persistScene'
 export const legacySavedScenesMetadata = (state: Object[] = [], action: { type: string, payload: Object }) => {
   if (action.type === DELETE_SAVED_SCENE) {
@@ -103,6 +103,30 @@ export const isLoadingSavedScene = (state: boolean = false, action: {type: strin
 
   if (action.type === SAVED_REGIONS_UNPICKLED || action.type === ERROR_DOWNLOADING_SAVED_DATA) {
     return false
+  }
+
+  return state
+}
+
+export const showSaveSceneModal = (state: boolean = false, action: {type: string, payload: boolean}) => {
+  if (action.type === SHOW_SAVE_SCENE_MODAL) {
+    return action.payload
+  }
+
+  if (action.type === RESET_SAVE_STATE) {
+    return false
+  }
+
+  return state
+}
+
+export const saveSceneName = (state: string = '', action: any) => {
+  if (action.type === SAVING_MASKS) {
+    return action.sceneName || ''
+  }
+
+  if (action.type === RESET_SAVE_STATE) {
+    return ''
   }
 
   return state

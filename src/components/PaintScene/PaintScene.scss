@@ -210,12 +210,6 @@
   &--show-cursor {
     cursor: default;
   }
-  &__paintscene-footer {
-    display: flex;
-    justify-content: flex-end;
-    padding: 4px;
-    width: 100%;
-  }
 }
 .spinner {
   background-color: rgba(0, 0, 0, 0.1);

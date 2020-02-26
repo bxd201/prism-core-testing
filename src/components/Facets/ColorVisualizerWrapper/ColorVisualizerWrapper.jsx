@@ -29,6 +29,8 @@ import DropDownMenu from './RouteComponents'
 import { RouteContext } from '../../../contexts/RouteContext/RouteContext'
 import { CVWWarningModal } from './WarningModal'
 import { setLayersForPaintScene } from '../../../store/actions/paintScene'
+import SaveOptions from '../../SaveOptions/SaveOptions'
+import { resetSaveState } from '../../../store/actions/persistScene'
 const colorWallBaseUrl = `/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_WALL}`
 
 // this is very vague because react-router doesn't have the ability to match /section/x/family/y/color/z and /section/x/color/z with the same route
@@ -42,6 +44,11 @@ const colorDetailsBaseUrl = `/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_DETAIL
 
 // barebones component to always take the user to active if they try to access root.
 // not sure if we need this but if we end up using this for TAG & want to retain bookmarks..
+
+const cvwBaseClassName = 'cvw__root-container'
+const cvwFooterClassName = `${cvwBaseClassName}__footer`
+const footerPriorityItemClassName = `${cvwFooterClassName}--priority`
+const footerSecondaryItemClassName = `${cvwFooterClassName}--secondary`
 
 // Route constants
 const PAINT_SCENE_COMPONENT = 'PaintScene'
@@ -62,7 +69,8 @@ export const RootRedirect = () => {
 }
 
 type Props = FacetPubSubMethods & FacetBinderMethods & {
-  toggleCompareColor: boolean
+  toggleCompareColor: boolean,
+  resetSaveState: Function
 }
 
 const pathNameSet = new Set([`${ACTIVE_ROUTE}/colors`, `${ACTIVE_ROUTE}/inspiration`, `${ACTIVE_ROUTE}/scenes`, ACTIVE_ROUTE, '/'])
@@ -111,6 +119,10 @@ export class ColorVisualizerWrapper extends Component<Props> {
     const { showDefaultPage, showPaintScene, lastActiveComponent } = this.state
     let isShowPaintScene = true
     let isShowDefaultPage = true
+
+    // save action uses redux flags that need to be cleared. This prevents the save modal from showing up when it should not
+    this.props.resetSaveState()
+
     if (showPaintScene) {
       isShowDefaultPage = false
     }
@@ -371,7 +383,7 @@ export class ColorVisualizerWrapper extends Component<Props> {
     }
     return (
       <React.Fragment>
-        <div className='cvw__root-container'>
+        <div className={cvwBaseClassName}>
           <RouteContext.Provider value={{
             navigate: (isShowDropDown, close) => this.open(isShowDropDown, close),
             setActiveComponent: () => this.setActiveComponent(),
@@ -419,7 +431,14 @@ export class ColorVisualizerWrapper extends Component<Props> {
                 <Route path='/active/inspiration' component={() => <DropDownMenu isTabbedOutFromHelp={isTabbedOutFromHelp} exploreColorsLinkRef={exploreColorsLinkRef} dataKey='inspiration' {...dropMenuProps} />} />
                 <Route path='/active/scenes' component={() => <DropDownMenu isTabbedOutFromHelp={isTabbedOutFromHelp} exploreColorsLinkRef={exploreColorsLinkRef} dataKey='scenes' {...dropMenuProps} />} />
               </div>}
-              <LivePalette />
+              <div className={cvwFooterClassName}>
+                <div className={footerPriorityItemClassName}>
+                  <LivePalette />
+                </div>
+                <div className={footerSecondaryItemClassName}>
+                  <SaveOptions />
+                </div>
+              </div>
             </div>
             }
             {toggleCompareColor && <CompareColor />}
@@ -459,7 +478,8 @@ const mapDispatchToProps = (dispatch: Function) => {
     setLayersForPaintScene: (data) => {
       const { backgroundCanvasRef, layersRef, selectedScenePalette, initialWidth, initialHeight } = data
       dispatch(setLayersForPaintScene(backgroundCanvasRef, layersRef, selectedScenePalette, initialWidth, initialHeight))
-    }
+    },
+    resetSaveState: () => dispatch(resetSaveState())
   }
 }
 export default facetBinder(connect(mapStateToProps, mapDispatchToProps)(withRouter(ColorVisualizerWrapper)), 'ColorVisualizerWrapper')
