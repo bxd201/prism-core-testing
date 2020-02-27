@@ -7,7 +7,7 @@
 | colorWallBgColor | `string` | `color-wall-bg-color="#FFF"` | `colorWallBgColor="#FFF"` | Defines background color for color wall. |
 | displayAddButton | `boolean` | `display-add-button` | `displayAddButton` | Shows an add button on active color swatches. |
 | displayDetailsLink | `boolean` | `display-details-link` | `displayDetailsLink` | Shows a "View Details" link on active color swatches. |
-| hiddenSections | `string` or `string[]`| `hidden-sections="Emerald Designer Edition|Historic"` | `hiddenSections={[ 'Emerald Designer Edition', 'Historic' ]}` | Designates sections to be removed from the UI of the color wall facet. These sections can still be searched for. Bar delimited section names. |
+| hiddenSections | `string` or `string[]`| `hidden-sections='Emerald Designer Edition|Historic'` | `hiddenSections={[ 'Emerald Designer Edition', 'Historic' ]}` | Designates sections to be removed from the UI of the color wall facet. These sections can still be searched for. Bar delimited section names. |
 | resetOnUnmount | `boolean` | `reset-on-unmount` | `resetOnUnmount` | If true will reset the active color in redux when the Facet is unmounted. |
 | swatchShouldEmit | `boolean` | `swatch-should-emit` | `swatchShouldEmit` | Will cause a selected swatch to publish a `PRISM/out/emitColor` event.
 
