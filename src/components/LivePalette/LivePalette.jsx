@@ -24,7 +24,7 @@ import { varValues } from 'src/shared/variableDefs'
 import EmptySlot from './EmptySlot'
 import ActiveSlot from './ActiveSlot'
 
-import type { Color } from '../../shared/types/Colors'
+import type { Color } from '../../shared/types/Colors.js.flow'
 
 import './LivePalette.scss'
 

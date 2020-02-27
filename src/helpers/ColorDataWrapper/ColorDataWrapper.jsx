@@ -8,7 +8,7 @@ import HeroLoader from '../../components/Loaders/HeroLoader/HeroLoader'
 import { loadColors } from '../../store/actions/loadColors'
 import WithConfigurationContext from '../../contexts/ConfigurationContext/WithConfigurationContext'
 
-import { type CategorizedColorGrid, type ColorMap } from '../../shared/types/Colors'
+import { type CategorizedColorGrid, type ColorMap } from '../../shared/types/Colors.js.flow'
 import { type Configuration } from '../../shared/types/Configuration'
 
 import './ColorDataWrapper.scss'

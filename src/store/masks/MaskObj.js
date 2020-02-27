@@ -44,9 +44,7 @@ export default class MaskObj {
         // perform initial asset load
         const _this = this
 
-        axios({
-          method: 'get',
-          url: load,
+        axios.get(load, {
           responseType: 'blob'
         }).then(response => {
           const path = _this.updateMask(response.data)._path

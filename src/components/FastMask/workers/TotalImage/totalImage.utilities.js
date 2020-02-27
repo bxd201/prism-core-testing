@@ -5,7 +5,7 @@ import mean from 'lodash/mean'
 
 import { significantFigures, geometricMean } from '../../../../shared/helpers/DataUtils'
 
-import { type NumericArray } from '../../../../shared/types/Common'
+import { type NumericArray } from '../../../../shared/types/Common.js.flow'
 
 import { OUTLIER_PCT, TGT_QUINTILE } from './totalImage.constants'
 

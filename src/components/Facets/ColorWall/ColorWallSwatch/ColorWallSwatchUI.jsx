@@ -2,7 +2,7 @@
 import React, { useMemo, forwardRef, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { CLASS_NAMES } from './shared'
-import { type Color } from '../../../../shared/types/Colors'
+import { type Color } from '../../../../shared/types/Colors.js.flow'
 import { arrayToSpacedString } from '../../../../shared/helpers/StringUtils'
 import { fullColorName } from '../../../../shared/helpers/ColorUtils'
 

@@ -5,17 +5,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Sherwin-Williams Color Family Page</title>
+  <base href="/">
+  <title>Sherwin-Williams Color Detail Page</title>
 </head>
 
 <body>
 
   <div prism-auto-embed
-    data-prism-facet="ColorFamilyFacet"
-    data-selected-color-family="yellow"
+    class="prism-color-details-facet"
+    data-prism-facet="ColorDetailsFacet"
+    data-page-root="/"
     data-language="en-US"
-    data-color-detail-page-root="https://www.sherwin-williams.com/homeowners/color/find-and-explore-colors/paint-colors-by-family"
-    data-route-type="memory"></div>
+    data-route-type="hash"></div>
 
   <script>
     (function(d, s, id) {

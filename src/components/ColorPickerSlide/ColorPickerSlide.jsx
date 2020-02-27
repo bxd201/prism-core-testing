@@ -32,7 +32,7 @@ function ColorPickerSlide (props: SummaryProps) {
   const [isShowSlider, handleSlideShow] = useState(false)
 
   useEffect(() => {
-    dispatch(loadCollectionSummaries())
+    loadCollectionSummaries(dispatch)
     dispatch(loadColors(brandId))
   }, [])
 

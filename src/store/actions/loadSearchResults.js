@@ -2,7 +2,7 @@
 import axios from 'axios'
 import { COLORS_SEARCH_ENDPOINT } from '../../constants/endpoints'
 import { generateBrandedEndpoint } from '../../shared/helpers/DataUtils'
-import type { ColorList } from '../../shared/types/Colors'
+import type { ColorList } from '../../shared/types/Colors.js.flow'
 
 export const CLEAR_SEARCH: string = 'CLEAR_SEARCH'
 export const clearSearch = () => ({ type: CLEAR_SEARCH })

@@ -14,13 +14,19 @@ function deleteFolderRecursive (path) {
 
     console.log(`Deleting directory "${path}"...`)
     fs.rmdirSync(path)
+  } else {
+    console.log('(nothing to delete)')
   }
 };
 
 console.log('Clearing hard-source cache...')
-deleteFolderRecursive('./cache')
+deleteFolderRecursive('./.cache/hard-source')
 console.log('Successfully cleared hard-source cache!')
 
 console.log('Clearing terser cache...')
 deleteFolderRecursive('./node_modules/.cache')
 console.log('Successfully cleared terser cache!')
+
+console.log('Emptying dist...')
+deleteFolderRecursive('./dist')
+console.log('Successfully emptied dist directory!')
