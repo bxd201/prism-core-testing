@@ -11,12 +11,10 @@ import ConfigurationContext from 'src/contexts/ConfigurationContext/Configuratio
 import { loadColors } from '../../store/actions/loadColors'
 import { loadCollectionSummaries } from '../../store/actions/collectionSummaries'
 import at from 'lodash/at'
+import { KEY_CODES } from 'src/constants/globals'
 
 const baseClass = 'prism-color-picker'
 const slideHeader = 'slide-palette-header'
-
-const KEY_CODE_ENTER = 13
-const KEY_CODE_SPACE = 32
 
 type SummaryProps = {
   expertColorPicks: number[],
@@ -45,7 +43,7 @@ function ColorPickerSlide (props: SummaryProps) {
 
   const divKeyDownHandler = (e) => {
     e.stopPropagation()
-    if (e.keyCode === KEY_CODE_ENTER || e.keyCode === KEY_CODE_SPACE) {
+    if (e.keyCode === KEY_CODES.KEY_CODE_ENTER || e.keyCode === KEY_CODES.KEY_CODE_SPACE) {
       if (!isShowSlider) {
         handleSlideShow(!isShowSlider)
         wrapperRef.current.style.outlineStyle = 'none'

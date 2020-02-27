@@ -8,6 +8,7 @@ import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 import PrismImage from '../PrismImage/PrismImage'
 // eslint-disable-next-line no-unused-vars
 import { CUSTOM_SCENE_IMAGE_ENDPOINT } from '../../constants/endpoints'
+import { KEY_CODES } from 'src/constants/globals'
 
 import './MyIdeas.scss'
 
@@ -96,6 +97,12 @@ const SavedScene = (props: SavedSceneProps) => {
     setBackgroundImageData(payload.data)
   }
 
+  const handleKeyDown = (e: SyntheticEvent) => {
+    if (e.keyCode === KEY_CODES.KEY_CODE_ENTER || e.keyCode === KEY_CODES.KEY_CODE_SPACE) {
+      selectScene(e)
+    }
+  }
+
   return (
     <div className={sceneClassName}>
       {backgroundImageSrc ? <PrismImage
@@ -124,7 +131,7 @@ const SavedScene = (props: SavedSceneProps) => {
               size='sm' />
           </button>
         </div> : null}
-      <div role='tab' tabIndex='0' className={sceneFrameClassName} onClick={selectScene} onKeyDown={(e) => { if (e.keyCode === 13 || e.keyCode === 32) { selectScene(e) } }}>
+      <div role='tab' tabIndex='0' className={sceneFrameClassName} onClick={selectScene} onKeyDown={handleKeyDown}>
         <div className={paneClassName}>
           <div className={thumbnailClassName} style={{ width: `${props.width || FIXED_WIDTH}px`, height: `${props.height || FIXED_HEIGHT}px` }}>
             {thumbnailUrl ? <img style={{ width: `${props.width || FIXED_WIDTH}px` }} src={thumbnailUrl} alt={`${intl.messages['MY_IDEAS.PREVIEW']}: ${props.sceneData.name}`} /> : <CircleLoader />}

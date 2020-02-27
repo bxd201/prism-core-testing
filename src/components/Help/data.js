@@ -309,5 +309,3 @@ export const helpTabs = [
 ]
 
 export const helpHeader = 'HELPFUL_HINTS.TITLE'
-export const KEY_CODE_ENTER = 13
-export const KEY_CODE_SPACE = 32

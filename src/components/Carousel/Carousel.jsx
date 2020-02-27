@@ -116,6 +116,7 @@ export default (props: ComponentProps) => {
                         handleNext={handleNext}
                         itemsPerView={defaultItemsPerView}
                         isActivedPage={index === pageNumber}
+                        totalItems={data.length}
                       />
                     )
                   })}

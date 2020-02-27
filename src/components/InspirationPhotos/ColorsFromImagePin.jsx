@@ -10,6 +10,7 @@ import some from 'lodash/some'
 import { LiveMessage } from 'react-aria-live'
 import { activedPinsHalfWidth } from './data'
 import { getContrastYIQ } from '../../../src/shared/helpers/ColorUtils'
+import { KEY_CODES } from 'src/constants/globals'
 
 import './ColorPins.scss'
 import 'src/scss/convenience/visually-hidden.scss'
@@ -44,13 +45,6 @@ export const CLASSES = {
   CHECKBOX: 'visually-hidden'
 }
 
-const KEY_CODE_TAB = 9
-const KEY_CODE_ENTER = 13
-const KEY_CODE_SPACE = 32
-const KEY_CODE_ARROW_LEFT = 37
-const KEY_CODE_ARROW_UP = 38
-const KEY_CODE_ARROW_RIGHT = 39
-const KEY_CODE_ARROW_DOWN = 40
 const PIN_MOVEMENT_INTERVAL = 10
 const PIN_MOVEMENT_SHIFT_KEY_INTERVAL = 1
 
@@ -80,24 +74,24 @@ export class ColorsFromImagePin extends PureComponent<Props, State> {
   }
 
   onKeyDownHandlerDiv = (e: Object) => {
-    if (e.keyCode === KEY_CODE_TAB) {
+    if (e.keyCode === KEY_CODES.KEY_CODE_TAB) {
       this.setState({
         isColorDivFocused: true
       })
     }
 
     const { isColorDivFocused } = this.state
-    if (isColorDivFocused && (e.keyCode === KEY_CODE_ENTER || e.keyCode === KEY_CODE_SPACE)) {
+    if (isColorDivFocused && (e.keyCode === KEY_CODES.KEY_CODE_ENTER || e.keyCode === KEY_CODES.KEY_CODE_SPACE)) {
       e.stopPropagation()
       e.preventDefault()
       this.props.activatePin(this.props.pinNumber)
       this.focusHandler()
     } else if (isColorDivFocused &&
       this.props.isActiveFlag && (
-      e.keyCode === KEY_CODE_ARROW_LEFT ||
-      e.keyCode === KEY_CODE_ARROW_UP ||
-      e.keyCode === KEY_CODE_ARROW_RIGHT ||
-      e.keyCode === KEY_CODE_ARROW_DOWN)
+      e.keyCode === KEY_CODES.KEY_CODE_ARROW_LEFT ||
+      e.keyCode === KEY_CODES.KEY_CODE_ARROW_UP ||
+      e.keyCode === KEY_CODES.KEY_CODE_ARROW_RIGHT ||
+      e.keyCode === KEY_CODES.KEY_CODE_ARROW_DOWN)
     ) {
       e.stopPropagation()
       e.preventDefault()
@@ -112,16 +106,16 @@ export class ColorsFromImagePin extends PureComponent<Props, State> {
       }
 
       switch (e.keyCode) {
-        case KEY_CODE_ARROW_LEFT:
+        case KEY_CODES.KEY_CODE_ARROW_LEFT:
           pinLeftReferredToCanvas -= movementInterval
           break
-        case KEY_CODE_ARROW_UP:
+        case KEY_CODES.KEY_CODE_ARROW_UP:
           pinTopReferredToCanvas -= movementInterval
           break
-        case KEY_CODE_ARROW_RIGHT:
+        case KEY_CODES.KEY_CODE_ARROW_RIGHT:
           pinLeftReferredToCanvas += movementInterval
           break
-        case KEY_CODE_ARROW_DOWN:
+        case KEY_CODES.KEY_CODE_ARROW_DOWN:
           pinTopReferredToCanvas += movementInterval
           break
       }
@@ -143,13 +137,13 @@ export class ColorsFromImagePin extends PureComponent<Props, State> {
   }
 
   handleKeyUpDiv = (e: Object) => {
-    if (e.keyCode === KEY_CODE_ENTER || e.keyCode === KEY_CODE_SPACE) {
+    if (e.keyCode === KEY_CODES.KEY_CODE_ENTER || e.keyCode === KEY_CODES.KEY_CODE_SPACE) {
       this.focusHandler()
     } else if (this.props.isActiveFlag && (
-      e.keyCode === KEY_CODE_ARROW_LEFT ||
-      e.keyCode === KEY_CODE_ARROW_UP ||
-      e.keyCode === KEY_CODE_ARROW_RIGHT ||
-      e.keyCode === KEY_CODE_ARROW_DOWN
+      e.keyCode === KEY_CODES.KEY_CODE_ARROW_LEFT ||
+      e.keyCode === KEY_CODES.KEY_CODE_ARROW_UP ||
+      e.keyCode === KEY_CODES.KEY_CODE_ARROW_RIGHT ||
+      e.keyCode === KEY_CODES.KEY_CODE_ARROW_DOWN
     )
     ) {
       this.props.handleKeyUpAfterPinMove(this.props.pinNumber)

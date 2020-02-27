@@ -1,13 +1,14 @@
 // @flow
 import React, { useState } from 'react'
 import CardMenu from 'src/components/CardMenu/CardMenu'
-import { helpTabs, KEY_CODE_ENTER, KEY_CODE_SPACE, helpHeader } from './data'
+import { helpTabs, helpHeader } from './data'
 import './Help.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import debounce from 'lodash/debounce'
 import { FormattedMessage, useIntl } from 'react-intl'
 import at from 'lodash/at'
 import * as scroll from 'scroll'
+import { KEY_CODES } from 'src/constants/globals'
 
 const baseClass = `help`
 const wrapper = `${baseClass}__wrapper`
@@ -141,7 +142,7 @@ const helpTabsContentList = (refs: Object, messages: Object) => {
 
 const showTabContent = (e: SyntheticEvent, index: number, setActiveTabIndex: Function, isKeyDown: boolean = false, handleClick: Function) => {
   if (isKeyDown) {
-    if (e.keyCode === KEY_CODE_ENTER || e.keyCode === KEY_CODE_SPACE) {
+    if (e.keyCode === KEY_CODES.KEY_CODE_ENTER || e.keyCode === KEY_CODES.KEY_CODE_SPACE) {
       e.preventDefault()
       isTabClick = true
       setActiveTabIndex(index)
