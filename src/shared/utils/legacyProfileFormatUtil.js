@@ -135,9 +135,10 @@ const unpackAndColorizeMask = (surface: any, sceneData: Object[], colors: Object
   }
 }
 
-export const createCustomSceneMetadata = (imageBaseName: string, uniqueId: string, colors: Object[], width: number, height: number) => {
+export const createCustomSceneMetadata = (imageBaseName: string, description: string, uniqueId: string, colors: Object[], width: number, height: number) => {
   return {
     imageBaseName,
+    description,
     uniqueId,
     width,
     height,
@@ -201,7 +202,6 @@ const createSurfaceFromImageData = (imageDataItem: Object, width: number, height
   const surface = doc.createElement('Surface')
   const surfaceName = `Surface-${createTimestamp()}`
   const regionName = `Surface${index}`
-  // @todo - Need to implement a wrapper object for export that has properties like surface name -RS format name-timestamp
   surface.setAttribute('name', surfaceName)
   surface.setAttribute('region', regionName)
   surface.setAttribute('width', width)

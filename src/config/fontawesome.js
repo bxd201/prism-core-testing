@@ -67,6 +67,7 @@ import { faThLarge as falThLarge } from '@fortawesome/pro-light-svg-icons/faThLa
 import { faTimes as falTimes } from '@fortawesome/pro-light-svg-icons/faTimes'
 import { faTrashAlt as falTrashAlt } from '@fortawesome/pro-light-svg-icons/faTrashAlt'
 import { faUndo as falUndo } from '@fortawesome/pro-light-svg-icons/faUndo'
+import { faDownload as falDownload } from '@fortawesome/pro-light-svg-icons/faDownload'
 
 // regulars
 // import { fa??? as far??? } from '@fortawesome/pro-regular-svg-icons/fa???'
@@ -138,6 +139,7 @@ const faIcons = [
   falTrashAlt,
   falUndo,
   faTrash,
+  falDownload,
   // -------- REGULARS ---------
   farPlusCircle
 ]

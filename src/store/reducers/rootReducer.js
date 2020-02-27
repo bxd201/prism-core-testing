@@ -23,7 +23,10 @@ import {
   selectedSavedSceneId,
   cloudSceneMetadata,
   isWaitingToFetchSavedScenes,
-  cachedSceneData, isLoadingSavedScene
+  cachedSceneData,
+  isLoadingSavedScene,
+  showSaveSceneModal,
+  saveSceneName
 } from './savedScenes'
 import { user } from './user'
 import { paintSceneWorkspace } from './paintSceneWorkspace'
@@ -58,5 +61,7 @@ export default combineReducers({
   cloudSceneMetadata: reducerWithLocalStorage(cloudSceneMetadata, CLOUD_SCENE_METADATA),
   isWaitingToFetchSavedScenes,
   cachedSceneData,
-  isLoadingSavedScene
+  isLoadingSavedScene,
+  showSaveSceneModal,
+  saveSceneName
 })
