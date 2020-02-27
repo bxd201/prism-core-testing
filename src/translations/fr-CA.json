@@ -25,6 +25,7 @@
   "DOWNLOAD_MASK": "Download",
   "EDIT": "EDIT",
   "EMAIL_ADDRESS": "Email Address",
+  "ERR_IDEA_NAME_REQUIRED": "Please name this idea.",
   "ERROR_BOUNDARY": {
     "ERROR_DETAILS": "Détails de l'erreur",
     "MESSAGE": "Nous avons rencontré une erreur nous empêchant de rendre ce composant pour le moment.",

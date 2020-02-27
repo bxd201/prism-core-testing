@@ -235,6 +235,11 @@
     text-align: center;
     text-transform: uppercase;
     min-width: 140px;
+    &:focus {
+      outline-style: solid;
+      outline-color: #2cabe2;
+      outline-width: 2px;
+    }
     &:hover {
       border-color: getVar("colors.summerSkyBlue");
       color: getVar("colors.summerSkyBlue");

@@ -10,6 +10,8 @@ import './MyIdeaPreview.scss'
 import { Redirect } from 'react-router-dom'
 import { MY_IDEAS } from '../Facets/ColorVisualizerWrapper/ColorVisualizerWrapper'
 import { RouteContext } from '../../contexts/RouteContext/RouteContext'
+import ColorPalette from './ColorPalette'
+import CardMenu from 'src/components/CardMenu/CardMenu'
 
 type myIdeaPreviewProps = {
   // @todo implement -RS
@@ -192,45 +194,50 @@ const MyIdeaPreview = (props: myIdeaPreviewProps) => {
       {/* eslint-disable-next-line no-constant-condition */}
       { selectedScene ? null : <Redirect to={MY_IDEAS} /> }
       { paintSceneWorkSpace ? <RedirectMyIdeas /> : null}
-      <div ref={wrapperRef} className={wrapperClass} style={{ height: Math.round(height * heightCrop) }}>
-        {selectedScene ? <MergeColors
-          imageDataList={selectedScene.surfaceMasks.surfaces.map(surface => surface.surfaceMaskImageData)}
-          handleImagesMerged={loadMergedImage}
-          width={initialWidth}
-          height={initialHeight}
-          ignoreColorOffset
-          colors={selectedScene.palette.map(color => {
-            return { r: color.red, g: color.green, b: color.blue }
-          })}
-          preserveLayers /> : null}
-        <div className={canvasOverlayWrapper}>
-          <canvas ref={foregroundCanvasRef} width={initialWidth} height={initialHeight} style={{ width, height }} className={overlayedCanvas} />
-          <canvas ref={backgroundCanvasRef} width={initialWidth} height={initialHeight} style={{ width, height, opacity: 0.8 }} />
-          <canvas ref={utilityCanvasRef} width={initialWidth} height={initialHeight} style={{ width, height, opacity: 0, visibility: 'hidden', display: 'none' }} />
-        </div>
-        {backgroundImageSrc ? <PrismImage
-          ref={backgroundImageRef}
-          source={backgroundImageSrc}
-          loadedCallback={handleBackgroundImageLoaded}
-          scalingWidth={initialWidth}
-          width={initialWidth}
-          height={initialHeight}
-        /> : null}
-        {foregroundImageUrl ? <PrismImage
-          ref={foregroundImageRef}
-          source={foregroundImageUrl}
-          loadedCallback={handleForegroundImageLoaded}
-          scalingWidth={initialWidth}
-          width={initialWidth}
-          height={initialHeight}
-        /> : null}
-        <div className={actionButtonWrapperClassName} style={{ position: 'absolute', zIndex: 10000, bottom: 20 }}>
-          <div className={actionButtonInnerWrapperClassName}>
-            <button className={buttonClassName} onClick={openProject}>{intl.messages['MY_IDEAS.OPEN_PROJECT'].toUpperCase()}</button>
-            <button className={buttonClassName} onClick={openUnpaintedProject}>{intl.messages['MY_IDEAS.OPEN_UNPAINTED'].toUpperCase()}</button>
+      <CardMenu menuTitle={`${(selectedScene && selectedScene.name) ? selectedScene.name : ``}`} showBackByDefault backPath={MY_IDEAS}>
+        {() => (
+          <div ref={wrapperRef} className={wrapperClass} style={{ minHeight: Math.round(height * heightCrop) }}>
+            {selectedScene ? <MergeColors
+              imageDataList={selectedScene.surfaceMasks.surfaces.map(surface => surface.surfaceMaskImageData)}
+              handleImagesMerged={loadMergedImage}
+              width={initialWidth}
+              height={initialHeight}
+              ignoreColorOffset
+              colors={selectedScene.palette.map(color => {
+                return { r: color.red, g: color.green, b: color.blue }
+              })}
+              preserveLayers /> : null}
+            <div className={canvasOverlayWrapper}>
+              <canvas ref={foregroundCanvasRef} width={initialWidth} height={initialHeight} style={{ width, height }} className={overlayedCanvas} />
+              <canvas ref={backgroundCanvasRef} width={initialWidth} height={initialHeight} style={{ width, height, opacity: 0.8 }} />
+              <canvas ref={utilityCanvasRef} width={initialWidth} height={initialHeight} style={{ width, height, opacity: 0, visibility: 'hidden', display: 'none' }} />
+            </div>
+            {backgroundImageSrc ? <PrismImage
+              ref={backgroundImageRef}
+              source={backgroundImageSrc}
+              loadedCallback={handleBackgroundImageLoaded}
+              scalingWidth={initialWidth}
+              width={initialWidth}
+              height={initialHeight}
+            /> : null}
+            {foregroundImageUrl ? <PrismImage
+              ref={foregroundImageRef}
+              source={foregroundImageUrl}
+              loadedCallback={handleForegroundImageLoaded}
+              scalingWidth={initialWidth}
+              width={initialWidth}
+              height={initialHeight}
+            /> : null}
+            <div className={actionButtonWrapperClassName}>
+              <div className={actionButtonInnerWrapperClassName}>
+                <button className={buttonClassName} onClick={openProject}>{intl.messages['MY_IDEAS.OPEN_PROJECT'].toUpperCase()}</button>
+                <button className={buttonClassName} onClick={openUnpaintedProject}>{intl.messages['MY_IDEAS.OPEN_UNPAINTED'].toUpperCase()}</button>
+              </div>
+            </div>
+            {selectedScene && selectedScene.palette && <ColorPalette palette={selectedScene.palette.slice(0, 8)} />}
           </div>
-        </div>
-      </div>
+        )}
+      </CardMenu>
     </>
   )
 }

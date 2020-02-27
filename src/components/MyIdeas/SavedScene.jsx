@@ -18,7 +18,9 @@ type SavedSceneProps = {
   deleteScene: Function,
   selectScene: Function,
   width: number,
-  height: number
+  height: number,
+  editIndividualScene: Function,
+  hideSceneName?: boolean
 }
 
 const FIXED_WIDTH = 120
@@ -82,6 +84,7 @@ const SavedScene = (props: SavedSceneProps) => {
 
   const selectScene = (e: SyntheticEvent) => {
     if (props.editEnabled) {
+      props.editIndividualScene(props.sceneData)
       return
     }
 
@@ -99,7 +102,9 @@ const SavedScene = (props: SavedSceneProps) => {
 
   const handleKeyDown = (e: SyntheticEvent) => {
     if (e.keyCode === KEY_CODES.KEY_CODE_ENTER || e.keyCode === KEY_CODES.KEY_CODE_SPACE) {
-      selectScene(e)
+      if (props.editEnabled) {
+        props.editIndividualScene(props.sceneData)
+      } else selectScene(e)
     }
   }
 
@@ -142,7 +147,7 @@ const SavedScene = (props: SavedSceneProps) => {
         </div>
       </div>
       <div className={sceneLabelClassName}>
-        {props.sceneData.name}
+        {!props.hideSceneName && props.sceneData.name}
       </div>
     </div>
   )

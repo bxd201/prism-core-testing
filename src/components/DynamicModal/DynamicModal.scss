@@ -54,6 +54,11 @@
       text-transform: capitalize;
       font-weight: 600;
       margin: 0 0.4rem;
+      &:focus {
+        outline-style: solid;
+        outline-color: #2cabe2;
+        outline-width: 2px;
+      }
       &--primary {
         background-color: #ffffff;
       }
