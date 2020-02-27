@@ -85,4 +85,5 @@ function stripLeadingSlash (path: string): string {
   return path.replace(/(\/*)?(.*)/, '$2')
 }
 
+// $FlowIgnore -- flow doesn't know document exists
 render(<Index />, document.querySelector('#template-index'))
