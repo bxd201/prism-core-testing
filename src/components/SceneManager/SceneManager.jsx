@@ -136,8 +136,19 @@ export class SceneManager extends PureComponent<Props, State> {
     // this.props.toggleEditMode(false)
   }
 
-  saveSceneFromModal () {
-
+  saveSceneFromModal (
+    categoryId: number,
+    isInterior: boolean,
+    sceneDefName: string,
+    sceneDefId: string,
+    renderingBaseUrl: string,
+    sceneId: string,
+    sceneName: string,
+    sceneColorPalette: Object,
+    paintedSceneType: string) {
+    console.log('Current Scenes:', this.props.scenes)
+    console.log('Active Scenes:', this.props.activeScenes)
+    console.log('Scene Statuses:', this.props.sceneStatus)
   }
 
   hideSaveSceneModal () {
@@ -213,6 +224,16 @@ export class SceneManager extends PureComponent<Props, State> {
     return (
       <DndProvider backend={HTML5Backend}>
         <div className={SceneManager.baseClass} ref={this.wrapperRef}>
+          {/* Do not use scene height for modal, use the sceneManager wrapper */}
+          {showSaveSceneModalFlag ? <DynamicModal
+            actions={[
+              { text: intl.messages['SAVE_SCENE_MODAL.SAVE'], callback: this.saveSceneFromModal },
+              { text: intl.messages['SAVE_SCENE_MODAL.CANCEL'], callback: this.hideSaveSceneModal }
+            ]}
+            description={intl.messages['SAVE_SCENE_MODAL.DESCRIPTION']}
+            height={getRefDimension(this.wrapperRef, 'height')}
+            allowInput
+            inputDefault={`${intl.messages['SAVE_SCENE_MODAL.DEFAULT_DESCRIPTION']} ${this.props.sceneCount}`} /> : null}
           {activeScenes.length === 1 && expertColorPicks ? <ColorPickerSlide {...getSceneInfoById(find(scenes, { 'id': activeScenes[0] }), sceneStatus).variant} /> : null}
           <div className={`${SceneManager.baseClass}__block ${SceneManager.baseClass}__block--tabs`}>
             {scenes.map((scene, index) => {
@@ -305,16 +326,6 @@ export class SceneManager extends PureComponent<Props, State> {
 
               return (
                 <div className={`${SceneManager.baseClass}__scene-wrapper`} key={sceneId}>
-                  {/* Do not use scene height for modal, use the sceneManager wrapper */}
-                  {showSaveSceneModalFlag ? <DynamicModal
-                    actions={[
-                      { text: intl.messages['SAVE_SCENE_MODAL.SAVE'], callback: this.saveSceneFromModal },
-                      { text: intl.messages['SAVE_SCENE_MODAL.CANCEL'], callback: this.hideSaveSceneModal }
-                    ]}
-                    description={intl.messages['SAVE_SCENE_MODAL.DESCRIPTION']}
-                    height={getRefDimension(this.wrapperRef, 'height')}
-                    allowInput
-                    inputDefault={`${intl.messages['SAVE_SCENE_MODAL.DEFAULT_DESCRIPTION']} ${this.props.sceneCount}`} /> : null}
                   <ImagePreloader
                     el={TintableScene}
                     preload={getFullSizeAssetArrayByScene(scene)}

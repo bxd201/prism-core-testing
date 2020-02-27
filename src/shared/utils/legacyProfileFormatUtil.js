@@ -250,3 +250,5 @@ const packImageDataForXML = (imageDataItem: number[]) => {
 
   return window.btoa(output)
 }
+
+// Methods to serialize data to 
