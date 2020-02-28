@@ -6,15 +6,20 @@ $strip-chip-margin: $strip-chip-size * 0.1;
 $width-thin: 0.125rem;
 $width-small: 0.250rem;
 $width-medium: 1rem;
-$tab-set-padding: 0.5rem 0.25rem;
+$tab-set-padding: 0 0.25rem;
+$tab-btn-height: strip-units(32px / 16px) * 1rem;
+$details-tab-item-v-spacing: 0.75rem;
+$details-tab-padding: 1rem;
 
 .color-detail-view {
   display: flex;
   flex-direction: column;
+  justify-content: flex-end;
   position: relative;
 
   @include respond-above(sm) {
     flex-direction: row;
+    margin-bottom: $width-small;
   }
 }
 
@@ -38,8 +43,16 @@ $tab-set-padding: 0.5rem 0.25rem;
   }
 
   @include respond-above(sm) {
+    &__info-wrapper,
+    &__scene-wrapper {
+      margin: 0;
+    }
+
     &__info-wrapper {
-      order: 1;
+      height: 100%;
+      left: 0;
+      position: absolute;
+      top: 0;
       width: 50%;
     }
 
@@ -296,6 +309,7 @@ $tab-set-padding: 0.5rem 0.25rem;
     color: $color-near-black;
     cursor: pointer;
     font-size: 0.85rem;
+    height: $tab-btn-height;
     overflow: hidden;
     padding: $tab-set-padding;
     text-align: center;
@@ -333,21 +347,20 @@ $tab-set-padding: 0.5rem 0.25rem;
   &__tab-copy {
     font-size: .8em;
     font-weight: 600;
-    line-height: 1.1;
+    line-height: 1;
     text-transform: uppercase;
   }
 
   &__tab-panel {
     background-color: $neutral-background-color;
     box-sizing: border-box;
-    overflow: hidden;
+    overflow: auto;
 
     &.react-tabs__tab-panel--selected {
       border-top: $width-thin solid $neutral-background-color;
 
       @include respond-above(sm) {
-        height: 10rem;
-        min-height: 10rem;
+        height: calc(100% - #{$tab-btn-height});
       }
     }
   }
@@ -497,7 +510,9 @@ $tab-set-padding: 0.5rem 0.25rem;
   }
 
   &__details-tab-wrapper {
-    padding: 1rem $width-medium 2.5rem;
+    font-size: 0.8rem;
+    line-height: 1.1;
+    padding: $details-tab-padding $width-medium $details-tab-padding - $details-tab-item-v-spacing;
 
     .view-family-link {
       font-size: 0.8rem;
@@ -507,16 +522,28 @@ $tab-set-padding: 0.5rem 0.25rem;
     }
   }
 
+  &__chunk {
+    margin: 0 0 $details-tab-item-v-spacing;
+  }
+
   &__visual-specifications {
     display: flex;
+    flex-direction: column;
     justify-content: stretch;
-    margin: 1rem 0;
+    margin: 0;
+
+    @include respond-above(sm) {
+      flex-direction: row;
+    }
   }
 
   &__visual-specification {
-    font-size: 0.8rem;
     list-style: none;
-    margin-right: 0.4rem;
+    margin: 0 0.4rem 0.2rem 0;
+
+    @include respond-above(sm) {
+      margin-bottom: 0;
+    }
   }
 
   &__family-link {
@@ -527,7 +554,7 @@ $tab-set-padding: 0.5rem 0.25rem;
   &__description-term {
     display: inline;
     font-weight: bold;
-    margin-right: 0.05rem;
+    margin-right: 0.1rem;
   }
 
   &__description-definition {
@@ -551,17 +578,6 @@ $tab-set-padding: 0.5rem 0.25rem;
         display: flex;
         flex-direction: column;
         height: 100%;
-      }
-    }
-
-    &__tab {
-      height: initial;
-    }
-
-    &__tab-panel {
-      &.react-tabs__tab-panel--selected {
-        height: inherit;
-        min-height: inherit;
       }
     }
 
