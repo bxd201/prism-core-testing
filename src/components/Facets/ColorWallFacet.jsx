@@ -15,13 +15,14 @@ import GenericOverlay from 'src/components/Overlays/GenericOverlay/GenericOverla
 import at from 'lodash/at'
 import isArray from 'lodash/isArray'
 import useEffectAfterMount from 'src/shared/hooks/useEffectAfterMount'
-import { resetActiveColor, updateColorStatuses } from 'src/store/actions/loadColors'
+import { resetActiveColor, updateColorStatuses, filterBySection } from 'src/store/actions/loadColors'
 import { facetBinderDefaultProps, type FacetBinderMethods } from 'src/facetSupport/facetInstance'
 import { FormattedMessage } from 'react-intl'
 
 type Props = FacetPubSubMethods & FacetBinderMethods & {
   colorDetailPageRoot?: string,
   colorWallBgColor?: string,
+  defaultSection?: string,
   displayAddButton?: boolean,
   displayDetailsLink?: boolean,
   hiddenSections?: string | string[], // as string, "section name 1" or "section name 1|section name 2|etc" will be parsed into an array
@@ -50,7 +51,7 @@ const CWToolbar = () => <div className='color-wall-wrap__chunk'>
 </div>
 
 export const ColorWallPage = (props: Props) => {
-  const { displayAddButton, displayDetailsLink, colorWallBgColor, subscribe, publish, unsubscribeAll, colorDetailPageRoot, resetOnUnmount, hiddenSections } = props
+  const { displayAddButton, displayDetailsLink, colorWallBgColor, subscribe, publish, unsubscribeAll, colorDetailPageRoot, resetOnUnmount, hiddenSections, defaultSection } = props
   const dispatch = useDispatch()
 
   // -----------------------------------------------------
@@ -93,6 +94,14 @@ export const ColorWallPage = (props: Props) => {
 
     return []
   }, [ hiddenSections ])
+
+  // -----------------------------------------------------
+  // handle selecting a default section
+  useEffect(() => {
+    if (defaultSection) {
+      dispatch(filterBySection(defaultSection))
+    }
+  }, [ defaultSection ])
 
   // -----------------------------------------------------
   // build color wall context and a11y state

@@ -5,6 +5,7 @@
 |--------------------|-------|---------|---|-------------|
 | colorDetailPageRoot | `string` | `color-detail-page-root="https://site.com/color-details/"` | `colorDetailPageRoot="https://site.com/color-details/"` | Defines the URL path used for links to color details pages. This will cause CDPs to navigate to a new URL. |
 | colorWallBgColor | `string` | `color-wall-bg-color="#FFF"` | `colorWallBgColor="#FFF"` | Defines background color for color wall. |
+| defaultSection | `string` | `default-section` | `defaultSection` | Overrides default section to show when Facet mounts. |
 | displayAddButton | `boolean` | `display-add-button` | `displayAddButton` | Shows an add button on active color swatches. |
 | displayDetailsLink | `boolean` | `display-details-link` | `displayDetailsLink` | Shows a "View Details" link on active color swatches. |
 | hiddenSections | `string` or `string[]`| `hidden-sections='Emerald Designer Edition|Historic'` | `hiddenSections={[ 'Emerald Designer Edition', 'Historic' ]}` | Designates sections to be removed from the UI of the color wall facet. These sections can still be searched for. Bar delimited section names. |
