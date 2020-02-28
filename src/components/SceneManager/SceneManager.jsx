@@ -142,11 +142,6 @@ export class SceneManager extends PureComponent<Props, State> {
   saveSceneFromModal (e: SyntheticEvent, saveSceneName: string) {
     e.preventDefault()
     e.stopPropagation()
-    console.log('Current Scenes:', this.props.scenes)
-    console.log('Active Scenes:', this.props.activeScenes)
-    console.log('Scene Statuses:', this.props.sceneStatus)
-    console.log('Scene Name', saveSceneName)
-    console.log('Current Variant:', this.props.sceneStatus)
 
     if (this.props.sceneStatus && this.props.activeScenes) {
       // @todo should I throw an error if no active scene or is this over kill? -RS
