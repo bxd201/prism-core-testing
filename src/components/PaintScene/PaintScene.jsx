@@ -14,7 +14,7 @@ import {
 } from './PaintSceneUtils'
 import { getPaintAreaPath, repaintImageByPath,
   createPolygon, drawLine, edgeDetect,
-  pointInsideCircle, alterRGBByPixel,
+  pointInsideCircle, alterRGBByPixel, floodFillScanLineStack,
   getImageCordinateByPixel, eraseIntersection,
   getActiveColorRGB, getSelectArea, hexToRGB,
   checkIntersection, drawImagePixelByPath,
@@ -1017,7 +1017,8 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
           }
 
           if (!hasAdd) {
-            const imagePath = getSelectArea(imageData, { r: 255, g: 0, b: 0 }, cursorX, cursorY)
+            const performance = window.performance.now()
+            const imagePath = getSelectArea(imageData, { r: 255, g: 0, b: 0 }, cursorX, cursorY, 100, performance)
             const edge = edgeDetect(this.CFICanvas2, imagePath, [255, 0, 0, 255], this.canvasOffsetWidth, this.canvasOffsetHeight)
             const linkId = uniqueId()
             selectedArea.push({
@@ -1037,7 +1038,8 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
           }
           this.setState({ selectedArea, imagePathList: newImagePathList, undoIsEnabled: checkUndoIsEnabled(newImagePathList), redoPathList: [], redoIsEnabled: false })
         } else {
-          const imagePath = getSelectArea(imageData, { r: 255, g: 0, b: 0 }, cursorX, cursorY)
+          const performance = window.performance.now()
+          const imagePath = getSelectArea(imageData, { r: 255, g: 0, b: 0 }, cursorX, cursorY, 100, performance)
           const edge = edgeDetect(this.CFICanvas2, imagePath, [255, 0, 0, 255], this.canvasOffsetWidth, this.canvasOffsetHeight)
           const linkId = uniqueId()
           selectedArea.push({
@@ -1182,8 +1184,8 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     const isPaint = colorMatch(getColorAtPixel(imageData, cursorX, cursorY), { r: RGB[0], g: RGB[1], b: RGB[2], a: RGB[3] }, 100)
 
     if (!isPaint) {
-      imagePath = getSelectArea(imageData, RGB, cursorX, cursorY, 94)
-
+      const performance = window.performance.now()
+      imagePath = floodFillScanLineStack(imageData, RGB, cursorX, cursorY, 94, performance)
       this.clearCanvas()
       drawImagePixelByPath(ctx, this.canvasOffsetWidth, this.canvasOffsetHeight, RGB, imagePath)
       const newPath = getImageCordinateByPixel(this.CFICanvas2, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight, false)
