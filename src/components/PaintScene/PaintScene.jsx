@@ -13,8 +13,8 @@ import {
   getColorsFromImagePathList, getLABFromColor
 } from './PaintSceneUtils'
 import { getPaintAreaPath, repaintImageByPath,
-  createPolygon, drawLine, drawHollowCircle,
-  edgeDetect, pointInsideCircle, alterRGBByPixel,
+  createPolygon, drawLine, edgeDetect,
+  pointInsideCircle, alterRGBByPixel,
   getImageCordinateByPixel, eraseIntersection,
   getActiveColorRGB, getSelectArea, hexToRGB,
   checkIntersection, drawImagePixelByPath,
@@ -283,7 +283,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   tryToMergeColors () {
     // eslint-disable-next-line no-new-object
     const { workspace, lpColors } = this.props
-    if (workspace) {
+    if (workspace && workspace.palette && lpColors) {
       if (checkCanMergeColors(lpColors, workspace.palette, LP_MAX_COLORS_ALLOWED)) {
         this.props.mergeLpColors(workspace.palette)
       } else {
@@ -344,11 +344,11 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   }
 
   componentDidUpdate (prevProps: Object, prevState: Object) {
-    if ((this.state.imagePathList.length > 0 && !this.props.workspace) || (this.state.imagePathList.length > 1 && this.props.workspace)) {
+    if ((this.state.imagePathList.length > 0 && !this.props.workspace) || (this.props.workspace && this.props.workspace.layers === null && this.state.imagePathList.length > 0) || (this.props.workspace && this.props.workspace.layers && this.state.imagePathList.length > this.props.workspace.layers.length)) {
       this.context.setIsPaintScenePolluted()
     }
     if (prevState.checkIsPaintSceneUpdate !== this.state.checkIsPaintSceneUpdate && this.state.checkIsPaintSceneUpdate !== false) {
-      if (this.state.imagePathList.length > 0) {
+      if ((this.state.imagePathList.length > 0 && !this.props.workspace) || (this.props.workspace && this.props.workspace.layers === null && this.state.imagePathList.length > 0) || (this.props.workspace && this.props.workspace.layers && this.state.imagePathList.length > this.props.workspace.layers.length)) {
         this.context.showWarningModal(this.saveBase64(this.getLayers()))
       } else {
         this.context.loadNewCanvas()
@@ -1244,16 +1244,6 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
         showNonAnimatePin: true
       })
     }
-  }
-
-  circleAnimate = (fn, t, ...arg) => {
-    const helper = (fn, t, ...arg) => {
-      if (this.pause) { return }
-      let y = Math.sin(t * Math.PI / 180)
-      drawHollowCircle(...arg, y)
-      window.requestAnimationFrame((t) => helper(fn, t, ...arg))
-    }
-    helper(fn, t, ...arg)
   }
 
   save = () => {

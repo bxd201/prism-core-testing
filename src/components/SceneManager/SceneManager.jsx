@@ -37,6 +37,7 @@ import 'src/scss/convenience/visually-hidden.scss'
 import DynamicModal from '../DynamicModal/DynamicModal'
 import { saveStockScene } from '../../store/actions/stockScenes'
 import { showSaveSceneModal } from '../../store/actions/persistScene'
+import { createUniqueSceneId } from '../../shared/utils/legacyProfileFormatUtil'
 
 const getRefDimension = (ref, dimName) => ref && ref.current ? ref.current.getBoundingClientRect()[dimName] : 0
 
@@ -98,7 +99,8 @@ type Props = {
 }
 
 type State = {
-  currentSceneIndex: number
+  currentSceneIndex: number,
+  uniqueSceneId: string
 }
 
 export class SceneManager extends PureComponent<Props, State> {
@@ -112,7 +114,8 @@ export class SceneManager extends PureComponent<Props, State> {
   }
 
   state = {
-    currentSceneIndex: 0
+    currentSceneIndex: 0,
+    uniqueSceneId: createUniqueSceneId()
   }
 
   constructor (props: Props) {
@@ -136,19 +139,21 @@ export class SceneManager extends PureComponent<Props, State> {
     // this.props.toggleEditMode(false)
   }
 
-  saveSceneFromModal (
-    categoryId: number,
-    isInterior: boolean,
-    sceneDefName: string,
-    sceneDefId: string,
-    renderingBaseUrl: string,
-    sceneId: string,
-    sceneName: string,
-    sceneColorPalette: Object,
-    paintedSceneType: string) {
+  saveSceneFromModal (e: SyntheticEvent, saveSceneName: string) {
+    e.preventDefault()
+    e.stopPropagation()
     console.log('Current Scenes:', this.props.scenes)
     console.log('Active Scenes:', this.props.activeScenes)
     console.log('Scene Statuses:', this.props.sceneStatus)
+    console.log('Scene Name', saveSceneName)
+    console.log('Current Variant:', this.props.sceneStatus)
+
+    if (this.props.sceneStatus && this.props.activeScenes) {
+      // @todo should I throw an error if no active scene or is this over kill? -RS
+      const currentSceneData = this.props.sceneStatus.find(item => item.id === this.props.activeScenes[0])
+
+      this.props.saveStockScene(this.state.uniqueSceneId, currentSceneData)
+    }
   }
 
   hideSaveSceneModal () {
@@ -379,7 +384,6 @@ const mapStateToProps = (state, props) => {
     loadingScenes: state.scenes.loadingScenes,
     activeColor: activeColor,
     previewColor: previewColor,
-    currentVariant: state.currentVariant,
     // @todo - the idea is the scene workspace is the data object created by the mask editor.
     sceneWorkspaces: state.sceneWorkspaces,
     isEditMode: state.isEditMode,
@@ -419,26 +423,7 @@ const mapDispatchToProps = (dispatch: Function) => {
       dispatch(updateCurrentSceneInfo(sceneId, surfaceId))
     },
     showSaveSceneModalAction: (shouldShow) => dispatch(showSaveSceneModal(shouldShow)),
-    saveStockScene: dispatch((
-      categoryId: number,
-      isInterior: boolean,
-      sceneDefName: string,
-      sceneDefId: string,
-      renderingBaseUrl: string,
-      sceneId: string,
-      sceneName: string,
-      sceneColorPalette: Object,
-      paintedSceneType: string) => {
-      saveStockScene(categoryId,
-        isInterior,
-        sceneDefName,
-        sceneDefId,
-        renderingBaseUrl,
-        sceneId,
-        sceneName,
-        sceneColorPalette,
-        paintedSceneType)
-    })
+    saveStockScene: (id: string, sceneData: Object) => dispatch(saveStockScene(id, sceneData))
   }
 }
 

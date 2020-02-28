@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import React, { useCallback } from 'react'
 import { useDispatch } from 'react-redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
@@ -19,14 +19,16 @@ const SaveOptions = (props: SaveOptionsProps) => {
   const intl = useIntl()
   const dispatch = useDispatch()
 
-  const handleSave = (e: SyntheticEvent) => {
+  // @todo integrate downlaod -RS
+  const handleSave = useCallback((e: SyntheticEvent) => {
     e.preventDefault()
     dispatch(showSaveSceneModal(true))
-  }
+  }, [])
 
+  // @todo [IMPLEMENT] determine if implementation should have use usecallback -RS
   const handleDownload = (e: SyntheticEvent) => {
     e.preventDefault()
-    // @todo integrate downlaod -RS
+    // @todo integrate download -RS
     console.log('Downloading Scene...')
   }
 

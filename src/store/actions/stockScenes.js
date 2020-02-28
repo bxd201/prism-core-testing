@@ -1,54 +1,36 @@
 // @flow
+import { SCENE_TYPES } from '../../constants/globals'
 
-export const saveStockScene = (
-  categoryId: number,
-  isInterior: boolean,
-  sceneDefName: string,
-  sceneDefId: string,
-  renderingBaseUrl: string,
-  sceneId: string,
-  sceneName: string,
-  sceneColorPalette: Object,
-  paintedSceneType: string) => {
+export const SAVING_STOCK_SCENE = 'SAVING_STOCK_SCENE'
+export const SAVE_ANON_STOCK_SCENE = 'SAVE_ANON_STOCK_SCENE'
+export const SAVE_STOCK_SCENE = 'SAVE_STOCK_SCENE'
+
+export const saveStockScene = (id: string, sceneData: object) => {
   return (dispatch, getState) => {
+    dispatch({
+      type: SAVING_STOCK_SCENE,
+      payload: true
+    })
+
     if (FIREBASE_AUTH_ENABLED) {
-      anonSaveStockScene(categoryId,
-        isInterior,
-        sceneDefName,
-        sceneDefId,
-        renderingBaseUrl,
-        sceneId,
-        sceneName,
-        sceneColorPalette,
-        paintedSceneType)
+      dispatch(anonSaveStockScene(id, sceneData))
+    } else {
+      // @todo [IMPLEMENT] mysherwin save -RS
     }
   }
-  // @todo [IMPLEMENT] mysherwin save -RS
 }
 
-const anonSaveStockScene = (
-  categoryId: number,
-  isInterior: boolean,
-  sceneDefName: string,
-  sceneDefId: string,
-  renderingBaseUrl: string,
-  sceneId: string,
-  sceneName: string,
-  sceneColorPalette: Object,
-  paintedSceneType: string) => {
-  return {
-    scene: {
-      sceneDefinition: {
-        categoryId,
-        isInterior,
-        name: sceneDefName,
-        id: sceneDefId,
-        renderingBaseUrl
-      }
-    },
-    id: sceneId,
-    name: sceneName,
-    sceneColorPalette,
-    paintedSceneType
+const anonSaveStockScene = (id: string, sceneData: Object) => {
+  // eslint-disable-next-line no-debugger
+  debugger
+  const payload = {
+    type: SAVE_ANON_STOCK_SCENE,
+    payload: {
+      id,
+      scene: sceneData,
+      type: SCENE_TYPES.anonStock
+    }
   }
+
+  return payload
 }

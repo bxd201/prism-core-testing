@@ -28,7 +28,7 @@ export const shouldPromptToReplacePalette = (currentColors: Object[], newColors:
 export const getDupeColorCount = (currentColors: Object[], newColors: Object[]) => {
   let dupeCount = 0
 
-  newColors.forEach(newColor => {
+  newColors && newColors.forEach(newColor => {
     currentColors.some(oldColor => {
       if (oldColor.id === newColor.id) {
         dupeCount++

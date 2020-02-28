@@ -36,7 +36,8 @@ const SCENE_JSON = 'scene.json'
 const SCENE_TYPE = {
   custom: 'custom',
   stock: 'stock',
-  anonCustom: 'anon-custom'
+  anonCustom: 'anon-custom',
+  anonStock: 'anon-stock'
 }
 
 export const startSavingMasks = (sceneName: string) => {
@@ -166,8 +167,9 @@ export const loadSavedSceneFromFirebase = (brandId: string, dispatch: Function, 
 const getSavedScenesFromFirebase = (isLoggedIn: boolean, dispatch, getState) => {
   if (isLoggedIn) {
     const { user, sceneMetadata } = getState()
-    if (sceneMetadata.length) {
-      const metadata = getMatchingScenesForFirebase(user.uid, sceneMetadata)
+    const firebaseFileIds = sceneMetadata.filter(item => item.type === SCENE_TYPE.anonCustom)
+    if (firebaseFileIds.length) {
+      const metadata = getMatchingScenesForFirebase(user.uid, firebaseFileIds)
       fetchSavedScenesFromFirebase(metadata, dispatch, getState)
     } else {
     // There are no items saved
@@ -377,7 +379,7 @@ const persistSceneToFirebase = (backgroundImageData: string, sceneDataXml: any, 
   const scenePromise = sceneRef.putString(window.JSON.stringify(sceneData))
 
   scenePromise.then(response => {
-    const sceneMetadata = { scene: response.metadata.fullPath, sceneType: SCENE_TYPE.anonCustom }
+    const sceneMetadata = { scene: response.metadata.fullPath, sceneType: SCENE_TYPE.anonCustom, type: SCENE_TYPE.anonCustom }
     dispatch(doneSavingMask(sceneMetadata))
 
     // This is expensive so we do it after we save the id, that way it appears faster
@@ -392,8 +394,7 @@ const persistSceneToFirebase = (backgroundImageData: string, sceneDataXml: any, 
       // The lack of this property duck types this as a payload from firebase
       renderingBaseUrl: null,
       // The existence of this prop too duck types this as a payload from firebase
-      backgroundImageUrl: backgroundImageData,
-      sceneType: SCENE_TYPE.anonCustom
+      backgroundImageUrl: backgroundImageData
     }
 
     dispatch({

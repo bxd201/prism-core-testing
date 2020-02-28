@@ -11,6 +11,9 @@ import {
   SAVED_SCENE_LOCAL,
   LOADING_SAVED_MASKS, ERROR_DOWNLOADING_SAVED_DATA, SHOW_SAVE_SCENE_MODAL, RESET_SAVE_STATE
 } from '../actions/persistScene'
+import { SAVE_ANON_STOCK_SCENE } from '../actions/stockScenes'
+import { SCENE_TYPES } from '../../constants/globals'
+import { cloneDeep } from 'lodash'
 export const legacySavedScenesMetadata = (state: Object[] = [], action: { type: string, payload: Object }) => {
   if (action.type === DELETE_SAVED_SCENE) {
     const newState = state.filter(scene => scene.id !== action.payload)
@@ -72,16 +75,32 @@ export const cachedSceneData = (state: string | null = null, action: {type: stri
 }
 
 export const sceneMetadata = (state: Object[] = [], action: {type: string, payload: boolean, data: Object}) => {
+  let newState = null
   if (action.type === SAVING_MASKS && !action.payload && action.data) {
     if (!state.find(item => item.scene === action.data.scene)) {
       return [...state, { ...action.data }]
-    }
+    } else {
+      newState = state.filter(item => item.scene !== action.data.scene)
+      newState.push({ ...action.data })
 
-    return state
+      return newState
+    }
   }
 
   if (action.type === DELETE_ANON_SAVED_SCENE) {
     return state.filter(item => item.scene.indexOf(action.payload) === -1)
+  }
+
+  if (action.type === SAVE_ANON_STOCK_SCENE && action.payload) {
+    const dataCopy = cloneDeep(action.payload)
+    if (state.find(item => item.type === SCENE_TYPES.anonStock && item.id === action.payload.id)) {
+      newState = state.filter(item => item.id !== action.payload.id)
+      newState.push(dataCopy)
+
+      return newState
+    } else {
+      return [...state, dataCopy]
+    }
   }
 
   return state
@@ -113,7 +132,7 @@ export const showSaveSceneModal = (state: boolean = false, action: {type: string
     return action.payload
   }
 
-  if (action.type === RESET_SAVE_STATE) {
+  if (action.type === RESET_SAVE_STATE || SAVE_ANON_STOCK_SCENE) {
     return false
   }
 
@@ -129,5 +148,10 @@ export const saveSceneName = (state: string = '', action: any) => {
     return ''
   }
 
+  return state
+}
+
+export const selectedStockSceneId = (state: string, action: { type: string, payload: string }) => {
+  // @todo implement -RS
   return state
 }

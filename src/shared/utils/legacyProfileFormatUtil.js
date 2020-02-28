@@ -1,6 +1,6 @@
 // @flow
 import pako from 'pako'
-import uuid from 'react-tabs/lib/helpers/uuid'
+import uniqueId from 'lodash/uniqueId'
 
 export const getDataFromFirebaseXML = (xmlString: string, colors) => {
   return getDataFromXML(xmlString, null, colors, true)
@@ -149,7 +149,7 @@ export const createCustomSceneMetadata = (imageBaseName: string, description: st
 }
 
 export const createUniqueSceneId = () => {
-  return `${createTimestamp()}-${uuid()}`
+  return `${createTimestamp()}-${uniqueId()}`
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -250,5 +250,3 @@ const packImageDataForXML = (imageDataItem: number[]) => {
 
   return window.btoa(output)
 }
-
-// Methods to serialize data to 

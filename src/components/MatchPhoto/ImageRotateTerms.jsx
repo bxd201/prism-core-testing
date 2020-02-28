@@ -6,6 +6,7 @@ import 'src/providers/fontawesome/fontawesome'
 import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 import { FormattedMessage } from 'react-intl'
 import 'src/scss/convenience/visually-hidden.scss'
+import { KEY_CODES } from 'src/constants/globals'
 
 const baseClass = 'image-rotate-terms-modal'
 const wrapperClass = `${baseClass}__wrapper`
@@ -26,9 +27,6 @@ type Props = {
   createColorPins: Function,
   imageData: Object
 }
-
-const KEY_CODE_ENTER = 13
-const KEY_CODE_SPACE = 32
 
 const ImageRotateTerms = ({ rotateImage, createColorPins, imageData }: Props) => {
   const [accetTerms, setAcceptTerms] = useState(false)
@@ -56,7 +54,7 @@ const ImageRotateTerms = ({ rotateImage, createColorPins, imageData }: Props) =>
   }
 
   function keyDownHandler (e: KeyboardEvent) {
-    if (e.keyCode && (e.keyCode === KEY_CODE_ENTER || e.keyCode === KEY_CODE_SPACE)) {
+    if (e.keyCode && (e.keyCode === KEY_CODES.KEY_CODE_ENTER || e.keyCode === KEY_CODES.KEY_CODE_SPACE)) {
       e.preventDefault()
       handleChange()
     }

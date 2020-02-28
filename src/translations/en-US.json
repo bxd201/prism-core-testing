@@ -8,6 +8,8 @@
   "CANVAS_UNSUPPORTED": "Your browser does not support the canvas element.",
   "CHIP_MAXIMIZED": "Color Chip has been maximized",
   "CHIP_MINIMIZED": "Color Chip has been minimized",
+  "CHOOSE_A_COLLECTION": "Choose a Collection",
+  "CHOOSE_COLLECTION": "Choose collection",
   "CLEAR_ALL": "CLEAR ALL",
   "CLOSE": "CLOSE",
   "COLOR_COLLECTIONS": "Color Collections",
@@ -188,6 +190,7 @@
     "SELECT_PALETTE_DESC": "Would you like to load these saved colors into this palette? This will replace any color(s) currently there.",
     "SELECT_PALETTE_TITLE": "Work with this palette?"
   },
+  "PAINT_THIS_SCENE": "Paint this Scene",
   "PAINT_TOOLS": {
     "BACK": "Go back",
     "CLOSE": "Close tooltip",

@@ -5,6 +5,7 @@ import './ColorStripButton.scss'
 type Props = {
   children?: React.Node,
   onClick?: (SyntheticEvent<HTMLButtonElement>) => void,
+  onKeyDown?: (SyntheticEvent<HTMLButtonElement>) => void,
   colors?: { hex: string }[],
   bottomLabel?: string
 }
@@ -13,9 +14,9 @@ type Props = {
  * A Styled button with an optional color strip on the bottom and an optional label underneath it.
  * The button's main content is defined by it's children.
  */
-export default ({ children, onClick, colors, bottomLabel }: Props) => (
+export default ({ children, onClick, colors, bottomLabel, onKeyDown }: Props) => (
   <div className='color-strip-button'>
-    <div className='color-strip-button__wrapper' role='button' tabIndex='-1' onClick={onClick} onKeyDown={onClick}>
+    <div className='color-strip-button__wrapper' role='button' tabIndex='0' onClick={onClick} onKeyDown={onKeyDown}>
       {children}
       <div className='color-strip-button__bottom-list' role='img'>
         {colors && colors.map((color, key) =>
