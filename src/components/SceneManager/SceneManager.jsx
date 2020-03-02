@@ -261,24 +261,29 @@ export class SceneManager extends PureComponent<Props, State> {
 
                   <span className='visually-hidden'>{sceneVariant.name}</span>
                   <div role='presentation'>
-                    <ImagePreloader
-                      el={TintableScene}
-                      preload={getThumbnailAssetArrayByScene(sceneVariant, surfaces)}
-                      interactive={false}
-                      width={scene.width}
-                      height={scene.height}
-                      type={type}
-                      sceneId={scene.id}
-                      background={sceneVariant.thumb}
-                      clickToPaintColor={activeColor}
-                      onUpdateColor={this.handleColorUpdate}
-                      previewColor={previewColor}
-                      mainColor={mainColor}
-                      surfaceStatus={status.surfaces}
-                      surfaces={surfaces}
-                      sceneWorkspaces={sceneWorkspaces}
-                      isEditMode={this.props.isEditMode}
-                    />
+                    <ImagePreloader preload={getThumbnailAssetArrayByScene(sceneVariant, surfaces)}>
+                      {({ loading, error }) => (
+                        <TintableScene
+                          background={sceneVariant.thumb}
+                          clickToPaintColor={activeColor}
+                          error={error}
+                          height={scene.height}
+                          interactive={false}
+                          isEditMode={this.props.isEditMode}
+                          loading={loading}
+                          mainColor={mainColor}
+                          onUpdateColor={this.handleColorUpdate}
+                          previewColor={previewColor}
+                          sceneId={scene.id}
+                          sceneName={sceneVariant.name}
+                          sceneWorkspaces={sceneWorkspaces}
+                          surfaces={surfaces}
+                          surfaceStatus={status.surfaces}
+                          type={type}
+                          width={scene.width}
+                        />
+                      )}
+                    </ImagePreloader>
                   </div>
                   {activeMarker}
                 </button>
@@ -326,28 +331,33 @@ export class SceneManager extends PureComponent<Props, State> {
 
               return (
                 <div className={`${SceneManager.baseClass}__scene-wrapper`} key={sceneId}>
-                  <ImagePreloader
-                    el={TintableScene}
-                    preload={getFullSizeAssetArrayByScene(scene)}
-                    width={scene.width}
-                    height={scene.height}
-                    interactive={interactive}
-                    type={type}
-                    sceneId={sceneId}
-                    background={sceneVariant.image}
-                    clickToPaintColor={activeColor}
-                    onUpdateColor={this.handleColorUpdate}
-                    previewColor={previewColor}
-                    mainColor={mainColor}
-                    surfaceStatus={status.surfaces}
-                    surfaces={surfaces}
-                    imageValueCurve={sceneVariant.normalizedImageValueCurve}
-                    sceneName={sceneVariant.name}
-                    /* eslint-disable-next-line no-undef */
-                    sceneWorkspaces={sceneWorkspaces}
-                    updateCurrentSceneInfo={this.updateCurrentSceneInfo}
-                    isEditMode={this.props.isEditMode}
-                  />
+                  <ImagePreloader preload={getFullSizeAssetArrayByScene(scene)}>
+                    {({ loading, error }) => (
+                      <TintableScene
+                        background={sceneVariant.image}
+                        clickToPaintColor={activeColor}
+                        el={TintableScene}
+                        error={error}
+                        height={scene.height}
+                        imageValueCurve={sceneVariant.normalizedImageValueCurve}
+                        interactive={interactive}
+                        isEditMode={this.props.isEditMode}
+                        loading={loading}
+                        mainColor={mainColor}
+                        onUpdateColor={this.handleColorUpdate}
+                        previewColor={previewColor}
+                        sceneId={sceneId}
+                        sceneName={sceneVariant.name}
+                        /* eslint-disable-next-line no-undef */
+                        sceneWorkspaces={sceneWorkspaces}
+                        surfaces={surfaces}
+                        surfaceStatus={status.surfaces}
+                        type={type}
+                        updateCurrentSceneInfo={this.updateCurrentSceneInfo}
+                        width={scene.width}
+                      />
+                    )}
+                  </ImagePreloader>
                   {variantSwitch}
                 </div>
               )
