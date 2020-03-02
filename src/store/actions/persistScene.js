@@ -37,7 +37,7 @@ export const ERROR_UPDATING_SAVED_SCENE_NAME = 'ERROR_UPDATING_SAVED_SCENE_NAME'
 // File name consts
 const SCENE_JSON = 'scene.json'
 
-const SCENE_TYPE = {
+export const SCENE_TYPE = {
   custom: 'custom',
   stock: 'stock',
   anonCustom: 'anon-custom',
@@ -171,7 +171,7 @@ export const loadSavedSceneFromFirebase = (brandId: string, dispatch: Function, 
 const getSavedScenesFromFirebase = (isLoggedIn: boolean, dispatch, getState) => {
   if (isLoggedIn) {
     const { user, sceneMetadata } = getState()
-    const firebaseFileIds = sceneMetadata.filter(item => item.type === SCENE_TYPE.anonCustom)
+    const firebaseFileIds = sceneMetadata.filter(item => item.sceneType === SCENE_TYPE.anonCustom)
     if (firebaseFileIds.length) {
       const metadata = getMatchingScenesForFirebase(user.uid, firebaseFileIds)
       fetchSavedScenesFromFirebase(metadata, dispatch, getState)
@@ -389,7 +389,7 @@ const persistSceneToFirebase = (backgroundImageData: string, sceneDataXml: any, 
   const scenePromise = sceneRef.putString(window.JSON.stringify(sceneData), 'raw', customMetaData)
 
   scenePromise.then(response => {
-    const sceneMetadata = { scene: response.metadata.fullPath, sceneType: SCENE_TYPE.anonCustom, type: SCENE_TYPE.anonCustom }
+    const sceneMetadata = { scene: response.metadata.fullPath, sceneType: SCENE_TYPE.anonCustom }
     dispatch(doneSavingMask(sceneMetadata))
 
     // This is expensive so we do it after we save the id, that way it appears faster

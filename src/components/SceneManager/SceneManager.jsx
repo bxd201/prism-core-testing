@@ -95,7 +95,9 @@ type Props = {
   showSaveSceneModalFlag: boolean,
   showSaveSceneModalAction: Function,
   intl: any,
-  saveStockScene: Function
+  saveStockScene: Function,
+  currentSceneType: string,
+  saveSceneName: string
 }
 
 type State = {
@@ -146,8 +148,7 @@ export class SceneManager extends PureComponent<Props, State> {
     if (this.props.sceneStatus && this.props.activeScenes) {
       // @todo should I throw an error if no active scene or is this over kill? -RS
       const currentSceneData = this.props.sceneStatus.find(item => item.id === this.props.activeScenes[0])
-
-      this.props.saveStockScene(this.state.uniqueSceneId, currentSceneData)
+      this.props.saveStockScene(this.state.uniqueSceneId, saveSceneName, currentSceneData, this.props.currentSceneType)
     }
   }
 
@@ -393,10 +394,12 @@ const mapStateToProps = (state, props) => {
     sceneWorkspaces: state.sceneWorkspaces,
     isEditMode: state.isEditMode,
     sceneCount: state.scenesAndRegions.length + 1,
-    showSaveSceneModalFlag: state.showSaveSceneModal
+    showSaveSceneModalFlag: state.showSaveSceneModal,
+    // Created this to prevent the syncing warned below
+    currentSceneType: state.scenes.type,
+    saveSceneName: state.saveSceneName
     // NOTE: uncommenting this will sync scene type with redux data
     // we may not want that in case there are multiple instances with different scene collections running at once
-    // leaving here for posterity
     // type: state.scenes.type
   }
 }
@@ -428,7 +431,7 @@ const mapDispatchToProps = (dispatch: Function) => {
       dispatch(updateCurrentSceneInfo(sceneId, surfaceId))
     },
     showSaveSceneModalAction: (shouldShow) => dispatch(showSaveSceneModal(shouldShow)),
-    saveStockScene: (id: string, sceneData: Object) => dispatch(saveStockScene(id, sceneData))
+    saveStockScene: (id: string, sceneName: string, sceneData: Object, sceneType: string) => dispatch(saveStockScene(id, sceneName, sceneData, sceneType))
   }
 }
 

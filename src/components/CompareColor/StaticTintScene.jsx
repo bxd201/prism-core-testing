@@ -15,7 +15,8 @@ import ConfigurationContext from '../../contexts/ConfigurationContext/Configurat
 type PropsType = {
   color: Color,
   scene: Scene,
-  isCompareColor: boolean
+  isCompareColor?: boolean,
+  statuses?: SurfaceStatus[]
 }
 
 export const StaticTintScene = (props: PropsType) => {
@@ -32,7 +33,7 @@ export const StaticTintScene = (props: PropsType) => {
   useEffect(() => { dispatch(loadColors(brandId, { language: locale })) }, [])
   const allColors = useSelector(state => state.colors.items.colorMap)
   const surfaces: Surface[] = defaultSceneVariant[0].surfaces
-  const surfaceStatuses: SurfaceStatus[] = surfaces.map((surface: Surface) => {
+  const surfaceStatuses: SurfaceStatus[] = props.statuses ? props.statuses : surfaces.map((surface: Surface) => {
     const key = surface.colorId && ((surface.colorId).toString())
     if (allColors) {
       return {

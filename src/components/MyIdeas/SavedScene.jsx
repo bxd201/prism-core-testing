@@ -11,6 +11,7 @@ import { CUSTOM_SCENE_IMAGE_ENDPOINT } from '../../constants/endpoints'
 import { KEY_CODES } from 'src/constants/globals'
 
 import './MyIdeas.scss'
+import { StaticTintScene } from '../CompareColor/StaticTintScene'
 
 type SavedSceneProps = {
   sceneData: Object,
@@ -21,6 +22,8 @@ type SavedSceneProps = {
   height: number,
   editIndividualScene: Function,
   hideSceneName?: boolean,
+  useTintableScene?: boolean,
+  sceneId: string
   isImgWidthPixel?: boolean
 }
 
@@ -40,7 +43,12 @@ const colorClassName = `${colorsClassName}__color`
 const thumbnailClassName = `${paneClassName}__thumb`
 const editButtonClassName = `${sceneClassName}__edit`
 
-const createColors = (colors) => {
+const getColorsFromMetadata = (surfaces: Object[]) => {
+  return surfaces.map(surface => surface.color)
+}
+
+const createColors = (sceneData: any, isTintableScene: boolean) => {
+  const colors = isTintableScene ? getColorsFromMetadata(sceneData.sceneMetadata.scene.surfaces) : sceneData.palette
   return colors.map((color, i) => {
     const { red, green, blue } = color
     return (
@@ -56,15 +64,30 @@ const createColors = (colors) => {
 
 const SavedScene = (props: SavedSceneProps) => {
   const intl = useIntl()
-  const { width, height } = props.sceneData.surfaceMasks
+  const { width, height } = props.useTintableScene ? props.sceneData.scene : props.sceneData.surfaceMasks
 
   const [thumbnailUrl, setThumbnailUrl] = useState(null)
   const [backgroundImageData, setBackgroundImageData] = useState(null)
   const [backgroundImageSrc, setBackgroundImageSrc] = useState(null)
   const imageRef = useRef()
 
+  const getStockSceneVariant = (useTinableScene: booelan, sceneData: Object) => {
+    if (useTinableScene) {
+      const variant = sceneData.sceneMetadata.scene.variant
+      const sceneVariant = sceneData.scene.variants.find(item => item.variant_name === variant)
+
+      if (sceneVariant) {
+        return sceneVariant
+      }
+    }
+
+    return null
+  }
+
   useEffect(() => {
     let backgroundImageUrl = ''
+    const variant = getStockSceneVariant(props.useTintableScene, props.sceneData)
+    const stockSceneBackgroundUrl = variant ? variant.thumb : null
 
     if (props.sceneData.renderingBaseUrl) {
       // @todo props approach, having CORS issues in dev... -RS
@@ -74,8 +97,10 @@ const SavedScene = (props: SavedSceneProps) => {
         const splitUrl = renderingBaseUrl.split('/')
         return `/public/${splitUrl[splitUrl.length - 1]}.jpg`
       })(props.sceneData.renderingBaseUrl)
-    } else {
+    } else if (props.sceneData.backgroundImageUrl) {
       backgroundImageUrl = props.sceneData.backgroundImageUrl
+    } else if (stockSceneBackgroundUrl) {
+      backgroundImageUrl = stockSceneBackgroundUrl
     }
 
     setBackgroundImageSrc(backgroundImageUrl)
@@ -93,7 +118,7 @@ const SavedScene = (props: SavedSceneProps) => {
     }
 
     e.preventDefault()
-    props.selectScene(props.sceneData.id)
+    props.selectScene(props.sceneId)
   }
 
   const loadThumbnail = (payload: Object) => {
@@ -118,7 +143,7 @@ const SavedScene = (props: SavedSceneProps) => {
 
   return (
     <div className={`${sceneClassName} ${(props.isImgWidthPixel) ? sceneIndividual : sceneCarousel}`}>
-      {backgroundImageSrc ? <PrismImage
+      {backgroundImageSrc  && !props.useTintableScene ? <PrismImage
         ref={imageRef}
         source={backgroundImageSrc}
         loadedCallback={handleBackgroundImageLoaded}
@@ -126,7 +151,7 @@ const SavedScene = (props: SavedSceneProps) => {
         scalingWidth={width}
         width={width}
         height={height} /> : null}
-      {backgroundImageData ? <MergeColors
+      {backgroundImageData && !props.useTintableScene ? <MergeColors
         shouldTint
         imageDataList={[backgroundImageData, ...props.sceneData.surfaceMasks.surfaces.map(surface => surface.surfaceMaskImageData)]}
         colors={props.sceneData.palette.map(color => {
@@ -147,17 +172,23 @@ const SavedScene = (props: SavedSceneProps) => {
           </div> : null}
         <div role='tab' tabIndex='0' className={sceneFrameClassName} onClick={selectScene} onKeyDown={handleKeyDown} onMouseDown={mouseDownHandler}>
           <div className={paneClassName}>
-            <div className={thumbnailClassName} style={{ width: `${props.width || FIXED_WIDTH}${props.isImgWidthPixel ? `px` : `%`}`, height: `${props.height || FIXED_HEIGHT}px` }}>
+            {props.useTintableScene ? <div className={thumbnailClassName} style={{ width: `${props.width || FIXED_WIDTH}${props.isImgWidthPixel ? `px` : `%`}`, height: `${props.height || FIXED_HEIGHT}px` }}>
               {thumbnailUrl ? <img style={{ width: `${props.width || FIXED_WIDTH}${props.isImgWidthPixel ? `px` : `%`}` }} src={thumbnailUrl} alt={`${intl.messages['MY_IDEAS.PREVIEW']}: ${props.sceneData.name}`} /> : <CircleLoader />}
-            </div>
+            </div> : null}
+            {props.useTintableScene ? <div className={thumbnailClassName} style={{ width: `${props.width || FIXED_WIDTH}px`, height: `${props.height || FIXED_HEIGHT}px` }}>
+              <StaticTintScene
+                colors={getColorsFromMetadata(props.sceneData.sceneMetadata.scene.surfaces)}
+                scene={props.sceneData.scene}
+                statuses={props.sceneData.sceneMetadata.scene.surfaces} />
+            </div> : null}
             <div className={colorsClassName}>
-              {createColors(props.sceneData.palette)}
+              {createColors(props.sceneData.palette, props.useTintableScene)}
             </div>
           </div>
         </div>
-        <div className={sceneLabelClassName}>
+        {!props.hideSceneName ? <div className={sceneLabelClassName}>
           {!props.hideSceneName && props.sceneData.name}
-        </div>
+        </div> : null}
       </div>
     </div>
   )

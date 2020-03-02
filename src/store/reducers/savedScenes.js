@@ -12,7 +12,7 @@ import {
   LOADING_SAVED_MASKS, ERROR_DOWNLOADING_SAVED_DATA, SHOW_SAVE_SCENE_MODAL, RESET_SAVE_STATE,
   UPDATE_ANON_SAVED_SCENE_NAME
 } from '../actions/persistScene'
-import { SAVE_ANON_STOCK_SCENE } from '../actions/stockScenes'
+import { SAVE_ANON_STOCK_SCENE, SELECT_ANON_STOCK_SCENE } from '../actions/stockScenes'
 import { SCENE_TYPES } from '../../constants/globals'
 import { cloneDeep } from 'lodash'
 export const legacySavedScenesMetadata = (state: Object[] = [], action: { type: string, payload: Object }) => {
@@ -163,7 +163,10 @@ export const saveSceneName = (state: string = '', action: any) => {
   return state
 }
 
-export const selectedStockSceneId = (state: string, action: { type: string, payload: string }) => {
-  // @todo implement -RS
+export const selectedStockSceneId = (state: string | null = null, action: { type: string, payload: string }) => {
+  // @todo implement for no anon scenes -RS
+  if (action.type === SELECT_ANON_STOCK_SCENE) {
+    return action.payload
+  }
   return state
 }
