@@ -1,4 +1,3 @@
-/* eslint-disable */
 // @flow
 
 import React, { useEffect, useState } from 'react'
@@ -76,8 +75,8 @@ const MyIdeas = (props: MyIdeasProps) => {
     dispatch(deleteSavedScene(id))
   }
 
-  const deleteStockScene = (id: number | string) => {
-    dispatch(deleteSavedScene(id))
+  const deleteAnonStockScene = (id: number | string) => {
+    // @todo -RS
   }
 
   const selectScene = (sceneId: number | string) => {
@@ -86,10 +85,6 @@ const MyIdeas = (props: MyIdeasProps) => {
 
   const selectAnonStockScene = (sceneId: number | string) => {
     dispatch(selectSavedAnonStockScene(sceneId))
-  }
-
-  const orderScene = (orderer, orderees) => {
-
   }
 
   /**
@@ -101,54 +96,23 @@ const MyIdeas = (props: MyIdeasProps) => {
    * @returns {*[]}
    */
   const generateSavedScenes = (sceneData: Object[], stockSceneData: any, sceneMetadata: Object[], editIsEnabled: boolean) => {
-    const customScenes = sceneData.map((scene, i) => {
-      return <SavedScene
-        width={180}
-        height={90}
-        sceneData={scene}
-        sceneId={scene.id}
-        editEnabled={editIsEnabled}
-        key={scene.id}
-        deleteScene={deleteScene}
-        selectScene={selectScene}
-        editIndividualScene={editIndividualScene} />
-    })
-
-    const stockScenes = sceneMetadata
-      .filter(item => item.sceneType === SCENE_TYPE.anonStock)
-      .map(item => {
-        const baseSceneData = stockSceneData.sceneCollection[item.sceneFetchType]
-        const sceneDatum = baseSceneData.find(scene => item.scene.id === scene.id)
-        // @todo - implement -RS
-        const scene = {
-          scene: sceneDatum,
-          sceneMetadata: item
-        }
-
-        return <SavedScene
-          sceneData={scene}
-          sceneId={item.id}
-          editEnabled={editIsEnabled}
-          deleteScene={deleteStockScene}
-          selectScene={selectAnonStockScene}
-          key={item.id}
-          width={180}
-          height={90}
-          editIndividualScene={editIndividualScene}
-          useTintableScene />
-      })
-
-    const orderedSceneData = []
+    const baseSceneData = {
+      stockScenes: stockSceneData,
+      customScenes: sceneData
+    }
 
     return <Carousel
       BaseComponent={SavedSceneWrapper}
       defaultItemsPerView={8}
       isInfinity={false}
       key='myideas'
-      data={orderedSceneData}
+      baseSceneData={baseSceneData}
+      data={sceneMetadata}
       editIsEnabled={editIsEnabled}
       deleteScene={deleteScene}
       selectScene={selectScene}
+      deleteAnonStockScene={deleteAnonStockScene}
+      selectAnonStockScene={selectAnonStockScene}
       editIndividualScene={editIndividualScene}
     />
   }
@@ -187,7 +151,7 @@ const MyIdeas = (props: MyIdeasProps) => {
 
   return (
     <>
-      {(savedScenes.length && stockScenesLoaded) ? <div className={baseClassName}>
+      {(sceneMetadata.length && stockScenesLoaded) ? <div className={baseClassName}>
         <div className={sectionLeftClassName}>
           {showBack
             ? <button className={`${buttonClassName} ${buttonBack}`} onClick={showMyIdeas} onMouseDown={mouseDownHandler}>
@@ -210,12 +174,41 @@ const MyIdeas = (props: MyIdeasProps) => {
 }
 
 const SavedSceneWrapper = (props: any) => {
+  let scene = null
+
+  if (props.data.sceneType === SCENE_TYPE.anonStock) {
+    // handle stock scenes
+    const stockSceneMetadata = props.data
+    const sceneType = props.baseSceneData.stockScenes.sceneCollection[stockSceneMetadata.sceneFetchType]
+
+    const sceneDatum = sceneType.find(item => item.id === stockSceneMetadata.scene.id)
+    // @todo - implement -RS
+    scene = {
+      scene: sceneDatum,
+      sceneMetadata: stockSceneMetadata
+    }
+
+    return <SavedScene
+      width={100}
+      height={90}
+      sceneId={stockSceneMetadata.id}
+      sceneData={scene}
+      editEnabled={props.editIsEnabled}
+      key={stockSceneMetadata.id}
+      deleteScene={props.deleteAnonStockScene}
+      selectScene={props.selectAnonStockScene}
+      editIndividualScene={props.editIndividualScene}
+      useTintableScene />
+  }
+  // Handle custom scenes
+  scene = props.baseSceneData.customScenes.find(item => props.data.scene.indexOf(item.id) > -1)
   return <SavedScene
     width={100}
     height={90}
-    sceneData={props.data}
+    sceneData={scene}
     editEnabled={props.editIsEnabled}
-    key={props.data.id}
+    key={scene.id}
+    sceneId={scene.id}
     deleteScene={props.deleteScene}
     selectScene={props.selectScene}
     editIndividualScene={props.editIndividualScene} />

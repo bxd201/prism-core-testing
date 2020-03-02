@@ -12,7 +12,17 @@ type ComponentProps = {
   isInfinity: boolean,
   tabId?: string,
   setTabId?: string => void,
-  tabMap?: string[]
+  tabMap?: string[],
+  // eslint-disable-next-line react/no-unused-prop-types
+  baseSceneData?: Object,
+  // eslint-disable-next-line react/no-unused-prop-types
+  deleteSavedScene?: Function,
+  // eslint-disable-next-line react/no-unused-prop-types
+  selectSavedScene?: Function,
+  // eslint-disable-next-line react/no-unused-prop-types
+  deleteAnonStockScene?: Function,
+  // eslint-disable-next-line react/no-unused-prop-types
+  selectAnonStockScene?: Function
 }
 
 const baseClass = 'prism-slick-carousel'
