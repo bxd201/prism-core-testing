@@ -70,19 +70,13 @@
       max-width: 300px;
       &:hover {
         & > div:first-child {
-          // transition: color 0.8s ease;
           border-color: #2cabe2;
         }
         & > div:nth-child(2) {
-          // transition: color 0.8s ease;
-          border-color: #2cabe2;
+          color: #2cabe2;
         }
       }
       &-img-wrapper {
-        // width: 100%;
-        // margin: 0 auto;
-        // border: 2px rgba($color: #fff, $alpha: 0) solid;
-        // line-height: 0;
         background-color: #fff;
         background-position: top center;
         background-repeat: no-repeat;

@@ -82,6 +82,10 @@ const DropDownMenu = (props: Props) => {
     }
   }
 
+  const mouseDownHandler = (e: SyntheticEvent) => {
+    e.preventDefault()
+  }
+
   return (
     <div className='dashboard-submenu'>
       <div className='dashboard-submenu__header'>{at(messages, content.title)[0]}</div>
@@ -130,7 +134,7 @@ const DropDownMenu = (props: Props) => {
         </ul>
       </div>
       <Link tabIndex='-1' to={`/active`} onClick={closeDropDown} onKeyDown={closeButtonKeyDownHandler}>
-        <button className={`dashboard-submenu__cls-btn dashboard-submenu__button`} tabIndex='0' onClick={closeDropDown} onKeyDown={closeButtonKeyDownHandler}>
+        <button className={`dashboard-submenu__cls-btn dashboard-submenu__button`} tabIndex='0' onClick={closeDropDown} onKeyDown={closeButtonKeyDownHandler} onMouseDown={mouseDownHandler}>
           <div className={`dashboard-submenu__close`}>
             <span><FormattedMessage id='CLOSE' /></span>&nbsp;<FontAwesomeIcon onClick={closeDropDown} className={``} icon={['fa', 'chevron-up']} />
           </div>

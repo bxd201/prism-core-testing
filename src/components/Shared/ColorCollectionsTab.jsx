@@ -67,6 +67,10 @@ function ColorCollectionsTab (props: Props) {
     showTabListMobile(!tabListMobileShow)
   }, [showTabListMobile, tabListMobileShow])
 
+  const mouseDownHandler = (e: SyntheticEvent) => {
+    e.preventDefault()
+  }
+
   return (
     <div className={tabListSelect} role='tablist'>
       <span className={`${tabListHeading}`}><FormattedMessage id='CHOOSE_A_COLLECTION' /></span>
@@ -91,9 +95,10 @@ function ColorCollectionsTab (props: Props) {
               tabIndex='0'
               aria-selected={tab.id === tabIdShow}
               onKeyDown={handleKeyDownLiTab}
-              className={`${tabListItem} ${(tab.id === parseInt(tabIdShow)) ? `${tabListItemActive}` : ''}`}
+              className={`${tabListItem} ${((tab.id).toString() === tabIdShow.toString()) ? `${tabListItemActive}` : ''}`}
               key={tab.id}
               onClick={handleClickLiTab}
+              onMouseDown={mouseDownHandler}
             >
               {tab.tabName}
             </li>

@@ -265,17 +265,8 @@ const mungeRegionAndSceneData = (regionData: Object, sceneData: Object, colors: 
 }
 
 // This is firebase equivalent  of mungeRegionAndSceneData
-const processFileFromFirebase = (file: Object, i: number, storageRef: Ref) => {
+const processFileFromFirebase = (file: Object, i: number, sceneCustomMetadata: Array<Object>) => {
   const { regionsXml, uniqueSceneId, image, colors, name } = file
-
-  let nameFromCustomMetaData = name
-  const user = firebase.auth().currentUser
-  const sceneRef = storageRef.child(`/scenes/${user.uid}/${uniqueSceneId}-${SCENE_JSON}`)
-  // @todo - refactor code for updating name - Pravin
-  sceneRef.getMetadata().then((metadata) => {
-    if (metadata.customMetadata && metadata.customMetadata.name) nameFromCustomMetaData = metadata.customMetadata.name
-  }).catch(error => console.log('error ', error))
-
   const surfaceMasks = getDataFromFirebaseXML(regionsXml, colors)
   const sceneDefinitionId = uniqueSceneId
   // This is here for consistency
@@ -287,7 +278,7 @@ const processFileFromFirebase = (file: Object, i: number, storageRef: Ref) => {
   return {
     surfaceMasks,
     palette: colors,
-    name: nameFromCustomMetaData,
+    name: (Array.isArray(sceneCustomMetadata) && sceneCustomMetadata[i] && sceneCustomMetadata[i].name) ? sceneCustomMetadata[i].name : name,
     id,
     sceneDefinitionId,
     categoryId,
@@ -465,15 +456,24 @@ export const tryToFetchSaveScenesFromFirebase = () => {
 const fetchSavedScenesFromFirebase = (metadata: Object[], dispatch: Function, getState: Function) => {
   if (metadata.length) {
     const downloadQueue = []
+    const sceneMetadataQueue = []
     const storageRef = firebase.storage().ref()
 
     metadata.forEach(item => {
       const sceneInfo = storageRef.child(item.scene).getDownloadURL()
       downloadQueue.push(sceneInfo)
+      sceneMetadataQueue.push(storageRef.child(item.scene).getMetadata())
     })
     // background and scene xml need to be keyed to each other to find in redux collections
-    Promise.all(downloadQueue).then(downloadUrl => {
-      downloadRemoteFiles(downloadUrl, dispatch, getState, storageRef)
+    Promise.all([
+      ...downloadQueue,
+      ...sceneMetadataQueue // downloadQueue & sceneMetadataQueue are arrays, so merging them into one array for promise.all
+    ]).then(data => {
+      const dataLength = data.length
+      // data is an Array of download urls & scenes custom metadata, so slicing it into half to get downloadUrl & sceneCustomMetadata array
+      const downloadUrl = data.slice(0, (dataLength / 2))
+      const sceneCustomMetadata = data.slice((dataLength / 2), dataLength).map(scenemetadata => scenemetadata.customMetadata)
+      downloadRemoteFiles(downloadUrl, dispatch, getState, sceneCustomMetadata)
     }).catch(err => {
       console.log('Error getting download URLs from the server:', err)
       dispatch(setWaitingToFetchSavedScene(false))
@@ -491,14 +491,14 @@ const fetchSavedScenesFromFirebase = (metadata: Object[], dispatch: Function, ge
   }
 }
 
-const downloadRemoteFiles = (urls: string[], dispatch: Function, getState: Function, storageRef: Ref) => {
+const downloadRemoteFiles = (urls: string[], dispatch: Function, getState: Function, sceneCustomMetadata: Array<Object>) => {
   const downloadPromises = urls.map(url => {
     return axios.get(url)
   })
 
   Promise.all(downloadPromises).then(responses => {
     const data = responses.map(response => response.data)
-    const sceneData = processDownloadedFiles(data, dispatch, getState, storageRef)
+    const sceneData = processDownloadedFiles(data, dispatch, getState, sceneCustomMetadata)
     // @todo handle background images -RS
 
     dispatch({
@@ -531,9 +531,9 @@ const getMatchingScenesForFirebase = (uid: string, files: Object[] = []) => {
   })
 }
 
-const processDownloadedFiles = (files: Object[], dispatch: Function, getState: Function, storageRef: Ref) => {
+const processDownloadedFiles = (files: Object[], dispatch: Function, getState: Function, sceneCustomMetadata: Array<Object>) => {
   const scenes = files.map((file, i) => {
-    return processFileFromFirebase(file, i, storageRef)
+    return processFileFromFirebase(file, i, sceneCustomMetadata)
   })
 
   return scenes

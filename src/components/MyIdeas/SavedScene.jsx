@@ -20,7 +20,8 @@ type SavedSceneProps = {
   width: number,
   height: number,
   editIndividualScene: Function,
-  hideSceneName?: boolean
+  hideSceneName?: boolean,
+  isImgWidthPixel?: boolean
 }
 
 const FIXED_WIDTH = 120
@@ -28,6 +29,9 @@ const FIXED_HEIGHT = FIXED_WIDTH / 2
 
 const baseClassName = 'myideas-wrapper'
 const sceneClassName = `${baseClassName}__scene`
+const sceneIndividual = `${sceneClassName}--individual`
+const sceneCarousel = `${sceneClassName}--carousel`
+const sceneFrameWrapper = `${sceneClassName}__frame-wrapper`
 const sceneFrameClassName = `${sceneClassName}__frame`
 const sceneLabelClassName = `${sceneClassName}__label`
 const paneClassName = `${sceneFrameClassName}__pane`
@@ -108,8 +112,12 @@ const SavedScene = (props: SavedSceneProps) => {
     }
   }
 
+  const mouseDownHandler = (e: SyntheticEvent) => {
+    e.preventDefault()
+  }
+
   return (
-    <div className={sceneClassName}>
+    <div className={`${sceneClassName} ${(props.isImgWidthPixel) ? sceneIndividual : sceneCarousel}`}>
       {backgroundImageSrc ? <PrismImage
         ref={imageRef}
         source={backgroundImageSrc}
@@ -127,27 +135,29 @@ const SavedScene = (props: SavedSceneProps) => {
         handleImagesMerged={loadThumbnail}
         width={width}
         height={height} /> : null}
-      {props.editEnabled
-        ? <div className={editButtonClassName}>
-          <button onClick={deleteScene}>
-            <FontAwesomeIcon
-              title={intl.messages.DELETE}
-              icon={['fal', 'trash-alt']}
-              size='sm' />
-          </button>
-        </div> : null}
-      <div role='tab' tabIndex='0' className={sceneFrameClassName} onClick={selectScene} onKeyDown={handleKeyDown}>
-        <div className={paneClassName}>
-          <div className={thumbnailClassName} style={{ width: `${props.width || FIXED_WIDTH}px`, height: `${props.height || FIXED_HEIGHT}px` }}>
-            {thumbnailUrl ? <img style={{ width: `${props.width || FIXED_WIDTH}px` }} src={thumbnailUrl} alt={`${intl.messages['MY_IDEAS.PREVIEW']}: ${props.sceneData.name}`} /> : <CircleLoader />}
-          </div>
-          <div className={colorsClassName}>
-            {createColors(props.sceneData.palette)}
+      <div className={`${sceneFrameWrapper}`}>
+        {props.editEnabled
+          ? <div className={editButtonClassName}>
+            <button onClick={deleteScene}>
+              <FontAwesomeIcon
+                title={intl.messages.DELETE}
+                icon={['fal', 'trash-alt']}
+                size='sm' />
+            </button>
+          </div> : null}
+        <div role='tab' tabIndex='0' className={sceneFrameClassName} onClick={selectScene} onKeyDown={handleKeyDown} onMouseDown={mouseDownHandler}>
+          <div className={paneClassName}>
+            <div className={thumbnailClassName} style={{ width: `${props.width || FIXED_WIDTH}${props.isImgWidthPixel ? `px` : `%`}`, height: `${props.height || FIXED_HEIGHT}px` }}>
+              {thumbnailUrl ? <img style={{ width: `${props.width || FIXED_WIDTH}${props.isImgWidthPixel ? `px` : `%`}` }} src={thumbnailUrl} alt={`${intl.messages['MY_IDEAS.PREVIEW']}: ${props.sceneData.name}`} /> : <CircleLoader />}
+            </div>
+            <div className={colorsClassName}>
+              {createColors(props.sceneData.palette)}
+            </div>
           </div>
         </div>
-      </div>
-      <div className={sceneLabelClassName}>
-        {!props.hideSceneName && props.sceneData.name}
+        <div className={sceneLabelClassName}>
+          {!props.hideSceneName && props.sceneData.name}
+        </div>
       </div>
     </div>
   )
