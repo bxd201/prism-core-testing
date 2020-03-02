@@ -14,7 +14,7 @@ import {
 } from './PaintSceneUtils'
 import { getPaintAreaPath, repaintImageByPath,
   createPolygon, drawLine, edgeDetect,
-  pointInsideCircle, alterRGBByPixel, floodFillScanLineStack,
+  pointInsideCircle, floodFillScanLineStack,
   getImageCordinateByPixel, eraseIntersection,
   getActiveColorRGB, getSelectArea, hexToRGB,
   checkIntersection, drawImagePixelByPath,
@@ -810,24 +810,6 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     })
   }
 
-  repaintBrushPathByCorrdinates = (drawCoordinates: Array<Object>, paintBrushWidth: number, paintBrushShape: string, clip: boolean) => {
-    const { lpActiveColor } = this.props
-    const { activeTool } = this.state
-    const lpActiveColorRGB = (activeTool === toolNames.ERASE) ? `rgba(255, 255, 255, 1)` : `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})`
-    this.CFICanvasContext2.beginPath()
-    for (let i = 0; i < drawCoordinates.length; i++) {
-      const currentPoint = drawCoordinates[i]
-      const lastPoint = (i === 0) ? drawCoordinates[i] : drawCoordinates[i - 1]
-      if ((activeTool === toolNames.PAINTBRUSH) || (activeTool === toolNames.ERASE)) {
-        this.drawPaintBrushPath(this.CFICanvasContext2, currentPoint, lastPoint, paintBrushWidth, paintBrushShape, clip)
-      } else {
-        if (activeTool === toolNames.PAINTBRUSH) {
-          this.drawPaintBrushPathUsingLine(this.CFICanvasContext2, currentPoint, lastPoint, paintBrushWidth, paintBrushShape, clip, lpActiveColorRGB)
-        }
-      }
-    }
-  }
-
   drawPaintBrushPoint = (point: Object, lastPoint: Object) => {
     const { paintBrushWidth, activeTool, eraseBrushWidth, paintBrushShape, eraseBrushShape } = this.state
     const previousPoint = lastPoint || point
@@ -1226,23 +1208,6 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
         showNonAnimatePin: true
       })
     }
-  }
-
-  save = () => {
-    /** This function will create mask */
-    let destinationCanvas = document.createElement('canvas')
-    destinationCanvas.width = this.canvasOffsetWidth
-    destinationCanvas.height = this.canvasOffsetHeight
-
-    let destCtx = destinationCanvas.getContext('2d')
-    /** create a rectangle with the desired color */
-    destCtx.fillStyle = '#000'
-    destCtx.fillRect(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
-    /** draw the original canvas onto the destination canvas */
-    alterRGBByPixel(this.CFICanvas2, [255, 255, 255], this.canvasOffsetWidth, this.canvasOffsetHeight)
-    destCtx.drawImage(this.CFICanvas2.current, 0, 0)
-    alterRGBByPixel(this.CFICanvas2, [255, 255, 0], this.canvasOffsetWidth, this.canvasOffsetHeight)
-    return destinationCanvas.toDataURL()
   }
 
   handleClick = (e: Object) => {
