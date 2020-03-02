@@ -4,7 +4,7 @@ import difference from 'lodash/difference'
 import uniqueId from 'lodash/uniqueId'
 import cloneDeep from 'lodash/cloneDeep'
 
-const MAX_STACK_SIZE = 200
+const MAX_RES_TIME = 3000
 
 export const getPaintAreaPath = (imagePathList, canvas, width, height, color) => {
   const RGB = getActiveColorRGB(color)
@@ -388,7 +388,7 @@ export const eraseIntersection = (imagePathList: Object[], erasePath: any) => {
  * similar is value refer to distance between two color you would set.
  * it is set as 100 by default which you want to paint on the same color.*
 */
-export const getSelectArea = (imageData, newColor, x, y, similar = 100) => {
+export const getSelectArea = (imageData, newColor, x, y, similar = 100, performance) => {
   let resultArr = []
   const { width, height } = imageData
   const stack = []
@@ -405,9 +405,7 @@ export const getSelectArea = (imageData, newColor, x, y, similar = 100) => {
   stack.push({ x: operator.x, y: operator.y })
 
   while (stack.length) {
-    if (stack.length > MAX_STACK_SIZE) {
-      /* * when doing Paint Area, colorMatch function would check color if is similar,
-      to reduce space complex and avoid stackoverflow, so we set max_stack_size */
+    if (window.performance.now() - performance > MAX_RES_TIME) {
       return resultArr
     }
     operator = stack.pop()
@@ -449,6 +447,60 @@ export const getSelectArea = (imageData, newColor, x, y, similar = 100) => {
 
       operator.y++
       contiguousDown = colorMatch(getColorAtPixel(imageData, operator.x, operator.y), baseColor, similar)
+    }
+  }
+  return resultArr
+}
+
+/** Inspired by https://lodev.org/cgtutor/floodfill.html,
+ * This article using different ways to implement flood fill algorithm
+ * I believe the last one is the most efficiency one.
+ * so I modified it for our canvas tool use.
+*/
+export const floodFillScanLineStack = (imageData, newColor, x, y, similar, performance) => {
+  const oldColor = getColorAtPixel(imageData, x, y)
+  const { width, height } = imageData
+  let resultArr = []
+  let spanAbove
+  let spanBelow
+  let stack = []
+  const color = { r: newColor[0], g: newColor[1], b: newColor[2], a: newColor[3] }
+  stack.push({ x: x, y: y })
+
+  if (colorMatch(oldColor, color, similar)) {
+    return
+  }
+
+  while (stack.length) {
+    if (window.performance.now() - performance > MAX_RES_TIME) {
+      return resultArr
+    }
+    let item = stack.pop()
+    let x1 = item.x
+    let y1 = item.y
+    while (x1 > 0 && colorMatch(getColorAtPixel(imageData, x1, y1), oldColor, similar)) {
+      x1--
+    }
+    x1++
+    spanAbove = 0
+    spanBelow = 0
+    while (x1 < width && colorMatch(getColorAtPixel(imageData, x1, y1), oldColor, similar)) {
+      setColorAtPixel(imageData, newColor, x1, y1)
+      const index = width * y1 * 4 + x1 * 4
+      resultArr.push(index)
+      if (!spanAbove && y > 0 && colorMatch(getColorAtPixel(imageData, x1, y1 - 1), oldColor, similar)) {
+        stack.push({ x: x1, y: y1 - 1 })
+        spanAbove = 1
+      } else if (spanAbove && y1 > 0 && !colorMatch(getColorAtPixel(imageData, x1, y1 - 1), oldColor, similar)) {
+        spanAbove = 0
+      }
+      if (!spanBelow && y < height - 1 && colorMatch(getColorAtPixel(imageData, x1, y1 + 1), oldColor, similar)) {
+        stack.push({ x: x1, y: y1 + 1 })
+        spanBelow = 1
+      } else if (spanBelow && y1 < height - 1 && !colorMatch(getColorAtPixel(imageData, x1, y1 + 1), oldColor, similar)) {
+        spanBelow = 0
+      }
+      x1++
     }
   }
   return resultArr
