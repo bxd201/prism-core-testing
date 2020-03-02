@@ -53,17 +53,22 @@ export const StaticTintScene = (props: PropsType) => {
 
   const sceneId = 1/* some value that will be unique for every scene */
   return (
-    <ImagePreloader
-      el={TintableScene}
-      interactive={false} // setting to false disables interactive layer
-      width={chosenScene.width}
-      height={chosenScene.height}
-      preload={getThumbnailAssetArrayByScene(defaultSceneVariant, surfaces)}
-      type={SCENE_TYPES.ROOM} // 'room', 'automotive', etc.
-      sceneId={sceneId}
-      background={isCompareColor ? defaultSceneVariant[0].thumb : defaultSceneVariant[0].image}
-      surfaceStatus={surfaceStatuses}
-      surfaces={surfaces}
-    />
+    <ImagePreloader preload={getThumbnailAssetArrayByScene(defaultSceneVariant, surfaces)}>
+      {({ loading, error }) => (
+        <TintableScene
+          background={isCompareColor ? defaultSceneVariant[0].thumb : defaultSceneVariant[0].image}
+          error={error}
+          height={chosenScene.height}
+          interactive={false} // setting to false disables interactive layer
+          loading={loading}
+          sceneId={sceneId}
+          sceneName={defaultSceneVariant[0].name}
+          surfaces={surfaces}
+          surfaceStatus={surfaceStatuses}
+          type={SCENE_TYPES.ROOM} // 'room', 'automotive', etc.
+          width={chosenScene.width}
+        />
+      )}
+    </ImagePreloader>
   )
 }

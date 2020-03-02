@@ -24,9 +24,9 @@ type Props = {
   clickToPaintColor?: Color,
   error?: boolean,
   height: number,
-  imageValueCurve: string,
+  imageValueCurve?: string,
   interactive: boolean,
-  isEditMode: boolean,
+  isEditMode?: boolean,
   loading?: boolean,
   mainColor?: Color | void, // eslint-disable-line
   onUpdateColor?: Function,
@@ -232,8 +232,8 @@ class TintableScene extends PureComponent<Props, State> {
                             type={type}
                             width={width}
                             height={height}
-                            highlightMap={ensureFullyQualifiedAssetUrl(highlights)}
-                            shadowMap={ensureFullyQualifiedAssetUrl(shadows)}
+                            highlightMap={highlights ? ensureFullyQualifiedAssetUrl(highlights) : undefined}
+                            shadowMap={shadows ? ensureFullyQualifiedAssetUrl(shadows) : undefined}
                             filterId={getFilterId(instanceId, id, tintColor.hex)}
                             filterColor={tintColor.hex}
                             filterImageValueCurve={imageValueCurve}
@@ -274,7 +274,7 @@ class TintableScene extends PureComponent<Props, State> {
                 </TransitionGroup>
               </div>
 
-              <LiveMessage message={`${sceneName} scene has been loaded`} aria-live='polite' />
+              {sceneName && (<LiveMessage message={`${sceneName} scene has been loaded`} aria-live='polite' />)}
             </Fragment>
           )}
 
