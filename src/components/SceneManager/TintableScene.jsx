@@ -274,7 +274,7 @@ class TintableScene extends PureComponent<Props, State> {
                 </TransitionGroup>
               </div>
 
-              <LiveMessage message={`${sceneName} scene has been loaded`} aria-live='polite' />
+              {sceneName && (<LiveMessage message={`${sceneName} scene has been loaded`} aria-live='polite' />)}
             </Fragment>
           )}
 
