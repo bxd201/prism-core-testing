@@ -151,7 +151,7 @@ export const scenes = (state: Object = initialState, action: { type: string, pay
       })
 
     case PAINT_SCENE_SURFACE:
-      return Object.assign({}, state, {
+      const newState = Object.assign({}, state, {
         sceneStatus: Object.assign({}, state.sceneStatus, {
           [state.type]: state.sceneStatus[state.type].map((_scene: SceneStatus) => {
             if (_scene.id === action.payload.sceneId) {
@@ -172,7 +172,7 @@ export const scenes = (state: Object = initialState, action: { type: string, pay
           })
         })
       })
-
+      return newState
     case PAINT_ALL_SCENE_SURFACES:
       return Object.assign({}, state, {
         sceneStatus: Object.assign({}, state.sceneStatus, {

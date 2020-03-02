@@ -1,5 +1,5 @@
 // @flow
-import React, { PureComponent } from 'react'
+import React, { createRef, PureComponent } from 'react'
 import { connect } from 'react-redux'
 import find from 'lodash/find'
 import flattenDeep from 'lodash/flattenDeep'
@@ -10,6 +10,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
 import { DndProvider } from 'react-dnd-cjs'
 import HTML5Backend from 'react-dnd-html5-backend-cjs'
+import { injectIntl } from 'react-intl'
 
 import { SCENE_TYPES, SCENE_VARIANTS } from 'constants/globals'
 import {
@@ -33,6 +34,12 @@ import type { Scene, SceneStatus, SceneWorkspace, Surface, Variant } from '../..
 
 import './SceneManager.scss'
 import 'src/scss/convenience/visually-hidden.scss'
+import DynamicModal from '../DynamicModal/DynamicModal'
+import { saveStockScene } from '../../store/actions/stockScenes'
+import { showSaveSceneModal } from '../../store/actions/persistScene'
+import { createUniqueSceneId } from '../../shared/utils/legacyProfileFormatUtil'
+
+const getRefDimension = (ref, dimName) => ref && ref.current ? ref.current.getBoundingClientRect()[dimName] : 0
 
 const getThumbnailAssetArrayByScene = memoizee((sceneVariant: Variant, surfaces: Surface[]): string[] => {
   return flattenDeep([
@@ -83,11 +90,17 @@ type Props = {
   type: string,
   updateCurrentSceneInfo: Function,
   onSceneChanged?: number => void,
-  onVariantChanged?: string => void
+  onVariantChanged?: string => void,
+  sceneCount: number,
+  showSaveSceneModalFlag: boolean,
+  showSaveSceneModalAction: Function,
+  intl: any,
+  saveStockScene: Function
 }
 
 type State = {
-  currentSceneIndex: number
+  currentSceneIndex: number,
+  uniqueSceneId: string
 }
 
 export class SceneManager extends PureComponent<Props, State> {
@@ -101,7 +114,8 @@ export class SceneManager extends PureComponent<Props, State> {
   }
 
   state = {
-    currentSceneIndex: 0
+    currentSceneIndex: 0,
+    uniqueSceneId: createUniqueSceneId()
   }
 
   constructor (props: Props) {
@@ -112,6 +126,10 @@ export class SceneManager extends PureComponent<Props, State> {
     this.changeVariant = this.changeVariant.bind(this)
     this.changeVariant = memoizee(this.changeVariant, { primitive: true, length: 1 })
     this.updateCurrentSceneInfo = this.updateCurrentSceneInfo.bind(this)
+    this.saveSceneFromModal = this.saveSceneFromModal.bind(this)
+    this.hideSaveSceneModal = this.hideSaveSceneModal.bind(this)
+
+    this.wrapperRef = createRef()
   }
 
   componentDidMount () {
@@ -119,6 +137,22 @@ export class SceneManager extends PureComponent<Props, State> {
     // @todo uncomment the two immediate lines below to add custom mask data for manual test.
     // this.props.addNewMask(1, 2, window.localStorage.getItem('sampleMask'))
     // this.props.toggleEditMode(false)
+  }
+
+  saveSceneFromModal (e: SyntheticEvent, saveSceneName: string) {
+    e.preventDefault()
+    e.stopPropagation()
+
+    if (this.props.sceneStatus && this.props.activeScenes) {
+      // @todo should I throw an error if no active scene or is this over kill? -RS
+      const currentSceneData = this.props.sceneStatus.find(item => item.id === this.props.activeScenes[0])
+
+      this.props.saveStockScene(this.state.uniqueSceneId, currentSceneData)
+    }
+  }
+
+  hideSaveSceneModal () {
+    this.props.showSaveSceneModalAction(false)
   }
 
   handleColorUpdate = function handleColorUpdate (sceneId: string, surfaceId: string, color: Color) {
@@ -181,7 +215,7 @@ export class SceneManager extends PureComponent<Props, State> {
 
   render () {
     // eslint-disable-next-line no-unused-vars
-    const { scenes, sceneStatus, loadingScenes, activeColor, previewColor, mainColor, activeScenes, type, interactive, sceneWorkspaces, expertColorPicks } = this.props
+    const { scenes, sceneStatus, loadingScenes, activeColor, previewColor, mainColor, activeScenes, type, interactive, sceneWorkspaces, expertColorPicks, intl, showSaveSceneModalFlag } = this.props
 
     if (loadingScenes) {
       return <div className={`${SceneManager.baseClass}__loader`}><CircleLoader /></div>
@@ -189,7 +223,17 @@ export class SceneManager extends PureComponent<Props, State> {
 
     return (
       <DndProvider backend={HTML5Backend}>
-        <div className={SceneManager.baseClass}>
+        <div className={SceneManager.baseClass} ref={this.wrapperRef}>
+          {/* Do not use scene height for modal, use the sceneManager wrapper */}
+          {showSaveSceneModalFlag ? <DynamicModal
+            actions={[
+              { text: intl.messages['SAVE_SCENE_MODAL.SAVE'], callback: this.saveSceneFromModal },
+              { text: intl.messages['SAVE_SCENE_MODAL.CANCEL'], callback: this.hideSaveSceneModal }
+            ]}
+            description={intl.messages['SAVE_SCENE_MODAL.DESCRIPTION']}
+            height={getRefDimension(this.wrapperRef, 'height')}
+            allowInput
+            inputDefault={`${intl.messages['SAVE_SCENE_MODAL.DEFAULT_DESCRIPTION']} ${this.props.sceneCount}`} /> : null}
           {activeScenes.length === 1 && expertColorPicks ? <ColorPickerSlide {...getSceneInfoById(find(scenes, { 'id': activeScenes[0] }), sceneStatus).variant} /> : null}
           <div className={`${SceneManager.baseClass}__block ${SceneManager.baseClass}__block--tabs`}>
             {scenes.map((scene, index) => {
@@ -335,10 +379,11 @@ const mapStateToProps = (state, props) => {
     loadingScenes: state.scenes.loadingScenes,
     activeColor: activeColor,
     previewColor: previewColor,
-    currentVariant: state.currentVariant,
     // @todo - the idea is the scene workspace is the data object created by the mask editor.
     sceneWorkspaces: state.sceneWorkspaces,
-    isEditMode: state.isEditMode
+    isEditMode: state.isEditMode,
+    sceneCount: state.scenesAndRegions.length + 1,
+    showSaveSceneModalFlag: state.showSaveSceneModal
     // NOTE: uncommenting this will sync scene type with redux data
     // we may not want that in case there are multiple instances with different scene collections running at once
     // leaving here for posterity
@@ -371,7 +416,9 @@ const mapDispatchToProps = (dispatch: Function) => {
     },
     updateCurrentSceneInfo: (sceneId: number, surfaceId: number) => {
       dispatch(updateCurrentSceneInfo(sceneId, surfaceId))
-    }
+    },
+    showSaveSceneModalAction: (shouldShow) => dispatch(showSaveSceneModal(shouldShow)),
+    saveStockScene: (id: string, sceneData: Object) => dispatch(saveStockScene(id, sceneData))
   }
 }
 
@@ -397,4 +444,4 @@ function getSceneInfoById (scene: Scene, sceneStatus: SceneStatus[]): {
   return void (0)
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SceneManager)
+export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(SceneManager))
