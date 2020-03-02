@@ -8,11 +8,15 @@ import SavedScene from './SavedScene'
 
 import './MyIdeas.scss'
 import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import EditSavedScene from './EditSavedScene'
 
 const baseClassName = 'myideas-wrapper'
 const buttonClassName = `${baseClassName}__button`
+const buttonSvg = `${buttonClassName}__button-svg`
 const sectionClassName = `${baseClassName}__section`
 const sectionLeftClassName = `${sectionClassName}--left`
+const sectionNoIdeasMessage = `${sectionClassName}__no-ideas-message`
 
 type MyIdeasProps = {
   brandId: string
@@ -24,6 +28,8 @@ const MyIdeas = (props: MyIdeasProps) => {
   const dispatch = useDispatch()
   const intl = useIntl()
   const [editEnabled, setEditEnabled] = useState(false)
+  const [editedIndividualScene, setEditedIndividualScene] = useState(null)
+  const [showBack, setShowBack] = useState(false)
 
   useEffect(() => {
     if (!savedScenes.length) {
@@ -59,7 +65,8 @@ const MyIdeas = (props: MyIdeasProps) => {
         editEnabled={editIsEnabled}
         key={scene.id}
         deleteScene={deleteScene}
-        selectScene={selectScene} />
+        selectScene={selectScene}
+        editIndividualScene={editIndividualScene} />
     })
   }
 
@@ -70,7 +77,7 @@ const MyIdeas = (props: MyIdeasProps) => {
       </div>)
     } else {
       return (<div className={baseClassName}>
-        <div className={sectionLeftClassName}>
+        <div className={sectionNoIdeasMessage}>
           <h3>{intl.messages['MY_IDEAS.NO_IDEAS_TITLE']}</h3>
           <p>{intl.messages['MY_IDEAS.NO_IDEAS_DESC']}</p>
         </div>
@@ -78,16 +85,37 @@ const MyIdeas = (props: MyIdeasProps) => {
     }
   }
 
+  const mouseDownHandler = (e: SyntheticEvent) => {
+    e.preventDefault()
+  }
+
+  const editIndividualScene = (scene) => {
+    setEditedIndividualScene(scene)
+    setShowBack(true)
+  }
+
+  const showMyIdeas = () => {
+    setShowBack(false)
+    setEditedIndividualScene(null)
+    setEditEnabled(true)
+  }
+
   return (
     <>
       {savedScenes.length ? <div className={baseClassName}>
         <div className={sectionLeftClassName}>
-          {editEnabled
-            ? <button className={buttonClassName} onClick={disableEdit}>{intl.messages.DONE}</button>
-            : <button className={buttonClassName} onClick={enableEdit}>{intl.messages.EDIT}</button>}
+          {showBack
+            ? <button className={buttonClassName} onClick={showMyIdeas}>
+              <FontAwesomeIcon size='lg' className={`${buttonSvg}`} icon={['fa', 'angle-left']} />{intl.messages.BACK}</button>
+            : editEnabled
+              ? <button className={buttonClassName} onClick={disableEdit} onMouseDown={mouseDownHandler}>{intl.messages.DONE}</button>
+              : <button className={buttonClassName} onClick={enableEdit} onMouseDown={mouseDownHandler}>
+                <FontAwesomeIcon className={`${buttonSvg}`} icon={['fal', 'edit']} />
+                {intl.messages.EDIT}
+              </button>}
         </div>
         <div className={sectionClassName}>
-          {generateSavedScenes(savedScenes, editEnabled)}
+          {(editedIndividualScene) ? <EditSavedScene showMyIdeas={showMyIdeas} sceneData={editedIndividualScene} width={296} height={204} selectScene={selectScene} /> : generateSavedScenes(savedScenes, editEnabled)}
         </div>
       </div>
         : renderNoScenes(isLoadingSavedScenes)}

@@ -25,6 +25,7 @@
   "DOWNLOAD_MASK": "Download",
   "EDIT": "EDIT",
   "EMAIL_ADDRESS": "Email Address",
+  "ERR_IDEA_NAME_REQUIRED": "Please name this idea.",
   "ERROR_BOUNDARY": {
     "ERROR_DETAILS": "Error details",
     "MESSAGE": "We encountered an error preventing us from rendering this component at this time.",

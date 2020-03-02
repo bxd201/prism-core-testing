@@ -30,6 +30,10 @@ export const WAITING_TO_FETCH_SAVED_SCENE = 'WAITING_TO_FETCH_SAVED_SCENE'
 export const ERROR_DELETING_ANON_SCENE = 'ERROR_DELETING_ANON_SCENE'
 export const SHOW_SAVE_SCENE_MODAL = 'SHOW_SAVE_SCENE_MODAL'
 export const RESET_SAVE_STATE = 'RESET_SAVE_STATE'
+export const UPDATE_ANON_SAVED_SCENE_NAME = 'UPDATE_ANON_SAVED_SCENE_NAME'
+export const ERROR_UPDATING_ANON_SAVED_SCENE_NAME = 'ERROR_UPDATING_ANON_SAVED_SCENE_NAME'
+export const UPDATE_SAVED_SCENE_NAME = 'UPDATE_SAVED_SCENE_NAME'
+export const ERROR_UPDATING_SAVED_SCENE_NAME = 'ERROR_UPDATING_SAVED_SCENE_NAME'
 // File name consts
 const SCENE_JSON = 'scene.json'
 
@@ -261,8 +265,17 @@ const mungeRegionAndSceneData = (regionData: Object, sceneData: Object, colors: 
 }
 
 // This is firebase equivalent  of mungeRegionAndSceneData
-const processFileFromFirebase = (file: Object, i: number) => {
+const processFileFromFirebase = (file: Object, i: number, storageRef: Ref) => {
   const { regionsXml, uniqueSceneId, image, colors, name } = file
+
+  let nameFromCustomMetaData = name
+  const user = firebase.auth().currentUser
+  const sceneRef = storageRef.child(`/scenes/${user.uid}/${uniqueSceneId}-${SCENE_JSON}`)
+  // @todo - refactor code for updating name - Pravin
+  sceneRef.getMetadata().then((metadata) => {
+    if (metadata.customMetadata && metadata.customMetadata.name) nameFromCustomMetaData = metadata.customMetadata.name
+  }).catch(error => console.log('error ', error))
+
   const surfaceMasks = getDataFromFirebaseXML(regionsXml, colors)
   const sceneDefinitionId = uniqueSceneId
   // This is here for consistency
@@ -274,7 +287,7 @@ const processFileFromFirebase = (file: Object, i: number) => {
   return {
     surfaceMasks,
     palette: colors,
-    name,
+    name: nameFromCustomMetaData,
     id,
     sceneDefinitionId,
     categoryId,
@@ -376,7 +389,13 @@ const persistSceneToFirebase = (backgroundImageData: string, sceneDataXml: any, 
     name: description
   }
 
-  const scenePromise = sceneRef.putString(window.JSON.stringify(sceneData))
+  const customMetaData = {
+    customMetadata: {
+      name: description
+    }
+  }
+
+  const scenePromise = sceneRef.putString(window.JSON.stringify(sceneData), 'raw', customMetaData)
 
   scenePromise.then(response => {
     const sceneMetadata = { scene: response.metadata.fullPath, sceneType: SCENE_TYPE.anonCustom, type: SCENE_TYPE.anonCustom }
@@ -454,7 +473,7 @@ const fetchSavedScenesFromFirebase = (metadata: Object[], dispatch: Function, ge
     })
     // background and scene xml need to be keyed to each other to find in redux collections
     Promise.all(downloadQueue).then(downloadUrl => {
-      downloadRemoteFiles(downloadUrl, dispatch, getState)
+      downloadRemoteFiles(downloadUrl, dispatch, getState, storageRef)
     }).catch(err => {
       console.log('Error getting download URLs from the server:', err)
       dispatch(setWaitingToFetchSavedScene(false))
@@ -472,14 +491,14 @@ const fetchSavedScenesFromFirebase = (metadata: Object[], dispatch: Function, ge
   }
 }
 
-const downloadRemoteFiles = (urls: string[], dispatch: Function, getState: Function) => {
+const downloadRemoteFiles = (urls: string[], dispatch: Function, getState: Function, storageRef: Ref) => {
   const downloadPromises = urls.map(url => {
     return axios.get(url)
   })
 
   Promise.all(downloadPromises).then(responses => {
     const data = responses.map(response => response.data)
-    const sceneData = processDownloadedFiles(data, dispatch, getState)
+    const sceneData = processDownloadedFiles(data, dispatch, getState, storageRef)
     // @todo handle background images -RS
 
     dispatch({
@@ -512,9 +531,9 @@ const getMatchingScenesForFirebase = (uid: string, files: Object[] = []) => {
   })
 }
 
-const processDownloadedFiles = (files: Object[], dispatch: Function, getState: Function) => {
+const processDownloadedFiles = (files: Object[], dispatch: Function, getState: Function, storageRef: Ref) => {
   const scenes = files.map((file, i) => {
-    return processFileFromFirebase(file, i)
+    return processFileFromFirebase(file, i, storageRef)
   })
 
   return scenes
@@ -530,5 +549,46 @@ export const showSaveSceneModal = (shouldShow: boolean) => {
 export const resetSaveState = () => {
   return {
     type: RESET_SAVE_STATE
+  }
+}
+
+export const updateSavedSceneName = (sceneId: number | string, updatedSceneName: string) => {
+  return (dispatch, getState) => {
+    if (FIREBASE_AUTH_ENABLED) {
+      const user = firebase.auth().currentUser
+      if (user) {
+        const storageRef = firebase.storage().ref()
+        const sceneRef = storageRef.child(`/scenes/${user.uid}/${sceneId}-${SCENE_JSON}`)
+        const editedSceneCustomMetaData = {
+          customMetadata: {
+            name: updatedSceneName
+          }
+        }
+        sceneRef.updateMetadata(editedSceneCustomMetaData).then((metadata) => {
+          dispatch({
+            type: UPDATE_ANON_SAVED_SCENE_NAME,
+            payload: {
+              id: sceneId,
+              name: updatedSceneName
+            }
+          })
+        }).catch(error => {
+          // @todo - handle error
+          console.log('Error updating anonymous scene name:', error)
+          dispatch({
+            type: ERROR_UPDATING_ANON_SAVED_SCENE_NAME
+          })
+        })
+      }
+    } else {
+      // @todo - this should make an ajax call and resolve only if the server fulfills the request
+      dispatch({
+        type: UPDATE_SAVED_SCENE_NAME,
+        payload: {
+          id: sceneId,
+          name: updatedSceneName
+        }
+      })
+    }
   }
 }

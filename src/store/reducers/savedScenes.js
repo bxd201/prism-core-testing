@@ -9,7 +9,8 @@ import {
   WAITING_TO_FETCH_SAVED_SCENE,
   DELETE_ANON_SAVED_SCENE,
   SAVED_SCENE_LOCAL,
-  LOADING_SAVED_MASKS, ERROR_DOWNLOADING_SAVED_DATA, SHOW_SAVE_SCENE_MODAL, RESET_SAVE_STATE
+  LOADING_SAVED_MASKS, ERROR_DOWNLOADING_SAVED_DATA, SHOW_SAVE_SCENE_MODAL, RESET_SAVE_STATE,
+  UPDATE_ANON_SAVED_SCENE_NAME
 } from '../actions/persistScene'
 import { SAVE_ANON_STOCK_SCENE } from '../actions/stockScenes'
 import { SCENE_TYPES } from '../../constants/globals'
@@ -56,6 +57,17 @@ export const scenesAndRegions = (state: Object[] = [], action: {type: string, pa
 
   if (action.type === DELETE_ANON_SAVED_SCENE) {
     return state.filter(item => item.id !== action.payload)
+  }
+
+  if (action.type === UPDATE_ANON_SAVED_SCENE_NAME) {
+    const sceneDataFromState = state.find(item => item.id === action.payload.id)
+    if (sceneDataFromState) {
+      const newState = state.filter(item => item.id !== action.payload.id)
+      newState.push({ ...sceneDataFromState, name: action.payload.name })
+      return newState
+    }
+
+    return state
   }
 
   return state
