@@ -1,3 +1,4 @@
+import { generateBrandedEndpoint } from 'src/shared/helpers/DataUtils'
 import {
   EXPERT_COLOR_PICKS_ENDPOINT,
   COLOR_CHUNKS_ENDPOINT,
@@ -9,11 +10,15 @@ import {
   SCENES_ENDPOINT
 } from 'src/constants/endpoints'
 
-import { generateBrandedEndpoint } from 'src/shared/helpers/DataUtils'
-
 const axios = jest.genMockFromModule('axios')
 
 axios.get = (url) => {
+  // requests for images are ignored for now
+  if (url.startsWith('https://sherwin.scene7.com/is/image/')) {
+    return Promise.resolve({})
+  }
+
+  // endpoints
   switch (url) {
     case EXPERT_COLOR_PICKS_ENDPOINT:
       return Promise.resolve({ data: require('./data/expertColorPicksEndpoint.json') })

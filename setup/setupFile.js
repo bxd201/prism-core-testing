@@ -19,17 +19,17 @@ import '@testing-library/jest-dom/extend-expect'
 // force debounced functions to execute immediately in tests
 jest.mock('lodash/debounce', () => jest.fn(fn => fn))
 
-// jest.useFakeTimers()
+global.URL.createObjectURL = jest.fn()
+global.URL.revokeObjectURL = jest.fn()
 
-// jest.mock('react-router-dom', () => ({
-//   ...jest.requireActual('react-router-dom'),
-//   useRouteMatch: jest.fn(),
-//   useHistory: jest.fn(),
-//   useParams: jest.fn()
-// }))
+global.Image = () => {
+  // run the callback function for load event listeners as soon as they get set
+  const image = { addEventListener: (evt, cb) => { evt === 'load' && cb() } }
+  // in 200ms call an image's onload function if it's been set
+  setTimeout(() => { image.onload && image.onload() }, 200)
 
-// global.URL.createObjectURL = jest.fn()
-// global.URL.revokeObjectURL = jest.fn()
+  return image
+}
 
 window.render = (component, { route = '/', history = createMemoryHistory({ initialEntries: [route] }) } = {}) => {
   return {

@@ -5,7 +5,7 @@ import { fireEvent } from '@testing-library/dom'
 test('ColorWallFacet', async () => {
   const { findByText, findByPlaceholderText } = render(<ColorWallPage />)
 
-  // clicking "Color Families" shows a list of color families
+  // clicking "Color Families" shows a list of color families and a cancel button
   await fireEvent.click(await findByText('Color Families'))
   await findByText('All Colors')
   await fireEvent.click(await findByText('Cancel'))
@@ -15,7 +15,7 @@ test('ColorWallFacet', async () => {
   await findByPlaceholderText('Search by color name or number')
   await fireEvent.click(await findByText('Cancel'))
 
-  // // clicking the "Ebbtide" color swatch expands that color swatch and displays a "View Details" button by default
+  // clicking the "Ebbtide" color swatch expands that color swatch and displays a "View Details" button by default
   await fireEvent.click(await findByText('SW 6493 Ebbtide'))
   await findByText('SW 6493')
   await findByText('Ebbtide')
