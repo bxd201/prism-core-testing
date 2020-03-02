@@ -27,9 +27,8 @@ function ColorCollectionsTab (props: Props) {
   const tabShowName = (tabActive !== undefined) ? tabActive : 'Choose collection'
 
   return (
-    <div className={tabListSelect} role='tablist'>
+    <div className={tabListSelect} >
       <span className={`${tabListHeading}`}>Choose a Collection</span>
-
       <span
         className={`${tabListDropdownMobile}`}
         tabIndex='-1'
@@ -37,13 +36,12 @@ function ColorCollectionsTab (props: Props) {
         onKeyDown={() => {}}
         onClick={() => showTabListMobile(!tabListMobileShow)}>{tabShowName}
       </span>
-
-      <ul className={`${tabList} ${(tabListMobileShow) ? `${tabListActive}` : `${tabListInactive}`}`}>
+      <ul className={`${tabList} ${(tabListMobileShow) ? `${tabListActive}` : `${tabListInactive}`}`} role='tablist'>
         {collectionTabs.map((tab, id) => {
           return (
             <li
-              data-testid={`${tab.id}`}
               role='tab'
+              aria-selected={tab.id === tabIdShow}
               onKeyDown={() => {}}
               className={`${tabListItem} ${(tab.id === tabIdShow) ? `${tabListItemActive}` : ''}`}
               key={tab.id}

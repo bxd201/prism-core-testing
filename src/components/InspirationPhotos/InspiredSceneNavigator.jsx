@@ -1,6 +1,6 @@
 // @flow
 import React, { useState, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch, useSelector, shallowEqual } from 'react-redux'
 import CardMenu from 'src/components/CardMenu/CardMenu'
 import ColorCollectionsTab from '../Shared/ColorCollectionsTab'
 import InspiredScene from './InspiredScene'
@@ -20,7 +20,7 @@ const InspiredSceneNavigator = () => {
     flatData: data.flatMap((scene, i) => (
       scene.sceneDefinition.map((def, x) => ({ img: def.photoUrl, id: `tab${i}-${x}`, initPins: def.initPins }))
     ))
-  }))
+  }), shallowEqual)
 
   const [tabId: string, setTabId: string => void] = useState('tab0')
 
@@ -29,7 +29,7 @@ const InspiredSceneNavigator = () => {
       {() => (
         <div className={`${baseClass}__wrapper`}>
           <ColorCollectionsTab collectionTabs={collectionTabs} tabIdShow={tabId} showTab={setTabId} />
-          <div className={`${baseClass}__collections-list`}>
+          <div className={`${baseClass}__collections-list`} role='main'>
             <Carousel
               BaseComponent={InspiredScene}
               data={flatData}
