@@ -13,7 +13,7 @@ type Props = {
   filterColor?: string,
   highlightMap?: string,
   shadowMap?: string,
-  filterImageValueCurve: string
+  filterImageValueCurve?: string
 }
 
 class TintableSceneSurface extends PureComponent<Props> {
@@ -26,11 +26,13 @@ class TintableSceneSurface extends PureComponent<Props> {
         content = (
           <Fragment>
             <filter id={filterId} x='0' y='0' width='100%' height='100%' filterUnits='objectBoundingBox' primitiveUnits='objectBoundingBox' colorInterpolationFilters='sRGB'>
-              <feComponentTransfer in='SourceGraphic' result='adjustedHistogram'>
-                <feFuncR type='table' tableValues={filterImageValueCurve} />
-                <feFuncG type='table' tableValues={filterImageValueCurve} />
-                <feFuncB type='table' tableValues={filterImageValueCurve} />
-              </feComponentTransfer>
+              {filterImageValueCurve ? (
+                <feComponentTransfer in='SourceGraphic' result='adjustedHistogram'>
+                  <feFuncR type='table' tableValues={filterImageValueCurve} />
+                  <feFuncG type='table' tableValues={filterImageValueCurve} />
+                  <feFuncB type='table' tableValues={filterImageValueCurve} />
+                </feComponentTransfer>
+              ) : null}
 
               <feFlood floodColor={filterColor} result='tintHue' />
               <feBlend mode='multiply' in2='tintHue' in='adjustedHistogram' />
@@ -48,8 +50,12 @@ class TintableSceneSurface extends PureComponent<Props> {
           <Fragment>
             <filter id={filterId} x='0' y='0' width='100%' height='100%' filterUnits='objectBoundingBox' primitiveUnits='objectBoundingBox' colorInterpolationFilters='sRGB'>
               <feFlood floodColor={filterColor} result='tintHue' />
-              <feImage xlinkHref={highlightMap} x='0' y='0' width='100%' height='100%' result='highlight-map' />
-              <feImage xlinkHref={shadowMap} x='0' y='0' width='100%' height='100%' result='shadow-map' />
+              {highlightMap ? (
+                <feImage xlinkHref={highlightMap} x='0' y='0' width='100%' height='100%' result='highlight-map' />
+              ) : null}
+              {shadowMap ? (
+                <feImage xlinkHref={shadowMap} x='0' y='0' width='100%' height='100%' result='shadow-map' />
+              ) : null}
               <feBlend mode='screen' in2='highlight-map' in='tintHue' result='tint-highlight-blend' />
               <feBlend mode='multiply' in='shadow-map' in2='tint-highlight-blend' result='finished-tint' />
               <feBlend mode='luminosity' in='finished-tint' in2='tintHue' result='finished-filter' />
