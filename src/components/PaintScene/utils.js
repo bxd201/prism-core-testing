@@ -127,18 +127,6 @@ export const pointInsideCircle = (x, y, circle, r) => {
   return dx * dx + dy * dy <= r * r
 }
 
-export const alterRGBByPixel = (canvas, color, width, height) => {
-  const ctx = canvas.current.getContext('2d')
-  let imageData = ctx.getImageData(0, 0, width, height)
-  let data = imageData.data
-  for (let i = 0; i < data.length; i += 4) {
-    data[i] = color[0]
-    data[i + 1] = color[1]
-    data[i + 2] = color[2]
-  }
-  ctx.putImageData(imageData, 0, 0)
-}
-
 export const drawLine = (ctx, lineStart, end, isDash) => {
   ctx.save()
   ctx.beginPath()
