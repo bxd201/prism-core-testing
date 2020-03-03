@@ -123,7 +123,17 @@ const RoomTypeDetector = () => {
             const roomObjImageData = new ImageData(roomObjPixels, width, height)
             const roomObjImg = getObjectImageUrl(roomObjImageData, width, height)
 
-            objectImages.push(roomObjImg)
+            // get sizes of array
+            const sourceImageSize = sourceImgData.data.length
+            const maskedImageSize = roomObjPixels.filter(v => v > 0).length
+
+            // only return objects that are xx% of the original image size
+            if (maskedImageSize > Math.round(sourceImageSize * 0.05)) {
+              objectImages.push({
+                label,
+                img: roomObjImg
+              })
+            }
           })
 
           setRoomObjectImages(objectImages)
@@ -153,11 +163,11 @@ const RoomTypeDetector = () => {
           ) : null}
         </div>
       ) : null}
-      {roomObjectImages.map((img, index) => (
-        <>
-          <h3>{labels[index]}</h3>
-          <img src={img} alt='' />
-        </>
+      {roomObjectImages.map((obj, index) => (
+        <React.Fragment key={obj.label}>
+          <h3>{obj.label}</h3>
+          <img src={obj.img} alt='' />
+        </React.Fragment>
       ))}
       <canvas ref={segmentCanvas} />
       <canvas ref={originalImageCanvas} />
