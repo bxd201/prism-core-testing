@@ -34,10 +34,3 @@ test('<ColorDetailsFacet colorSEO=\'sw-6475-country-squire\' subscribe={...} />'
   await fireEvent.click(await findByLabelText('Switch to night view'))
   await findByAltText('Kitchen Night')
 }, 30000)
-
-test('<ColorDetailsFacet colorSEO=\'sw-6587-valentine\' />', async () => {
-  const { findByText } = render(<ColorDetailsPage colorSEO='sw-6587-valentine' />)
-
-  // shows "SW6475"
-  await findByText('SW 6587')
-}, 30000)
