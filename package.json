@@ -80,6 +80,7 @@
     "react-virtualized": "9.21.1",
     "redux": "4.0.4",
     "redux-thunk": "2.3.0",
+    "rgbquant": "git+https://github.com/leeoniya/RgbQuant.js.git",
     "scroll": "3.0.1"
   },
   "peerDependencies": {
