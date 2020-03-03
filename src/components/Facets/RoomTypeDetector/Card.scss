@@ -1,0 +1,28 @@
+.Card {
+  $color: #34607B;
+  $label-bg: rgba($color, .15);
+  $label-color: $color;
+  $label-bg--strong: $color;
+  $label-color--strong: white;
+
+  margin: 20px 20px 0 0;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+
+  &__title {
+    padding: .5em;
+    margin: 0;
+    font-size: 1rem;
+    text-align: center;
+    letter-spacing: .05em;
+    background: $label-bg--strong;
+    color: $label-color--strong;
+  }
+
+  &__body {
+    padding: .5em;
+    border-top: 1px solid #ddd;
+  }
+}
