@@ -1,10 +1,10 @@
 import React from 'react'
 import { ColorDetailsPage } from 'src/components/Facets/ColorDetailsFacet'
-import { fireEvent } from '@testing-library/dom'
+import { fireEvent, wait } from '@testing-library/dom'
 import memoizee from 'memoizee'
 
 test('<ColorDetailsFacet colorSEO=\'sw-6475-country-squire\' subscribe={...} />', async () => {
-  const { findByText, findByLabelText, findByAltText } = render(
+  const { findByText, findByLabelText, findAllByAltText } = render(
     <ColorDetailsPage colorSEO='sw-6475-country-squire' subscribe={memoizee((key, callbackfn) => { callbackfn('/') })} />
   )
   // shows "SW 6475" and it's coordinating colors by default
@@ -23,16 +23,35 @@ test('<ColorDetailsFacet colorSEO=\'sw-6475-country-squire\' subscribe={...} />'
   expect(await findByText('View all Blue paint colors →')).toHaveAttribute('href', '/blue')
   await findByText('#124a42')
 
-  // "Living Room Day" scene image is displayed by default
-  await findByAltText('Living Room Day')
+  // "Living Room Day" scene image is displayed by default, once in thumbnails and once in main scene
+  await wait(() => {
+  }, { timeout: 1000 }).then(async () => {
+    const activeScenes = await findAllByAltText('Living Room Day')
+    expect(activeScenes).toHaveLength(2)
+  })
 
   // "Kitchen Day" scene image is displayed after clicking it's thumbnail
   await fireEvent.click(await findByText('Kitchen Day'))
-  await findByAltText('Kitchen Day')
+  // two should be present, one in thumbnails one in main
+  await findAllByAltText('Kitchen Day')
 
   // "Kitchen Night" scene image is displayed after clicking the variant toggle
   await fireEvent.click(await findByLabelText('Switch to night view'))
-  await findByAltText('Kitchen Night')
+  // two should be present, one in thumbnails one in main
+  await wait(() => {
+  }, { timeout: 1000 }).then(async () => {
+    const activeScenes = await findAllByAltText('Kitchen Night')
+    expect(activeScenes).toHaveLength(2)
+  })
+
+  // "Kitchen Day" scene is again displayed after clicking the toggle
+  await fireEvent.click(await findByLabelText('Switch to day view'))
+  // two should be present, one in thumbnails one in main
+  await wait(() => {
+  }, { timeout: 1000 }).then(async () => {
+    const activeScenes = await findAllByAltText('Kitchen Day')
+    expect(activeScenes).toHaveLength(2)
+  })
 }, 30000)
 
 test('<ColorDetailsFacet colorSEO=\'sw-6587-valentine\' />', async () => {
