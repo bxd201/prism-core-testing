@@ -3,9 +3,9 @@ import { ColorDetailsPage } from 'src/components/Facets/ColorDetailsFacet'
 import { fireEvent } from '@testing-library/dom'
 import memoizee from 'memoizee'
 
-test('ColorDetailsFacet', async () => {
+test('<ColorDetailsFacet colorSEO=\'sw-6475-country-squire\' subscribe={...} />', async () => {
   const { findByText, findByLabelText, findByAltText } = render(
-    <ColorDetailsPage colorId='2161' colorSEO='sw-6475-country-squire' subscribe={memoizee((key, callbackfn) => { callbackfn('/') })} />
+    <ColorDetailsPage colorSEO='sw-6475-country-squire' subscribe={memoizee((key, callbackfn) => { callbackfn('/') })} />
   )
   // shows "SW 6475" and it's coordinating colors by default
   await findByText('SW 6475')
@@ -33,4 +33,11 @@ test('ColorDetailsFacet', async () => {
   // "Kitchen Night" scene image is displayed after clicking the variant toggle
   await fireEvent.click(await findByLabelText('Switch to night view'))
   await findByAltText('Kitchen Night')
+}, 30000)
+
+test('<ColorDetailsFacet colorSEO=\'sw-6587-valentine\' />', async () => {
+  const { findByText } = render(<ColorDetailsPage colorSEO='sw-6587-valentine' />)
+
+  // shows "SW6475"
+  await findByText('SW 6587')
 }, 30000)
