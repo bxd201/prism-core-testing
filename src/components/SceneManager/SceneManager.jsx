@@ -32,7 +32,6 @@ import type { Color } from '../../shared/types/Colors.js.flow'
 import type { Scene, SceneStatus, SceneWorkspace, Surface, Variant } from '../../shared/types/Scene'
 
 import './SceneManager.scss'
-import 'src/scss/convenience/visually-hidden.scss'
 
 const getThumbnailAssetArrayByScene = memoizee((sceneVariant: Variant, surfaces: Surface[]): string[] => {
   return flattenDeep([
@@ -190,8 +189,8 @@ export class SceneManager extends PureComponent<Props, State> {
     return (
       <DndProvider backend={HTML5Backend}>
         <div className={SceneManager.baseClass}>
-          {activeScenes.length === 1 && expertColorPicks ? <ColorPickerSlide {...getSceneInfoById(find(scenes, { 'id': activeScenes[0] }), sceneStatus).variant} /> : null}
-          <div className={`${SceneManager.baseClass}__block ${SceneManager.baseClass}__block--tabs`}>
+          {activeScenes.length === 1 && expertColorPicks && <ColorPickerSlide {...getSceneInfoById(find(scenes, { 'id': activeScenes[0] }), sceneStatus).variant} />}
+          <div className={`${SceneManager.baseClass}__block ${SceneManager.baseClass}__block--tabs`} role='radiogroup' aria-label='scene selector'>
             {scenes.map((scene, index) => {
               const sceneInfo = getSceneInfoById(scene, sceneStatus)
               const sceneWorkspaces = this.props.sceneWorkspaces.filter(workspace => workspace.sceneId === scene.id)
@@ -209,32 +208,39 @@ export class SceneManager extends PureComponent<Props, State> {
                 : null
 
               return (
-              // TODO: Convert these to labels around checkboxes since that's how they're being used
-                <button key={scene.id}
-                  onClick={() => this.handleClickSceneToggle(scene.id)}
+                <button
+                  key={scene.id}
+                  role='radio'
+                  aria-checked={includes(activeScenes, scene.id)}
                   className={`${SceneManager.baseClass}__btn ${includes(activeScenes, scene.id) ? `${SceneManager.baseClass}__btn--active` : ''}`}
-                  type='button'>
-
-                  <span className='visually-hidden'>{sceneVariant.name}</span>
+                  onClick={() => this.handleClickSceneToggle(scene.id)}
+                  onKeyDown={e => e.key === 'Enter' && this.handleClickSceneToggle(scene.id)}
+                  tabIndex={0}
+                >
                   <div role='presentation'>
-                    <ImagePreloader
-                      el={TintableScene}
-                      preload={getThumbnailAssetArrayByScene(sceneVariant, surfaces)}
-                      interactive={false}
-                      width={scene.width}
-                      height={scene.height}
-                      type={type}
-                      sceneId={scene.id}
-                      background={sceneVariant.thumb}
-                      clickToPaintColor={activeColor}
-                      onUpdateColor={this.handleColorUpdate}
-                      previewColor={previewColor}
-                      mainColor={mainColor}
-                      surfaceStatus={status.surfaces}
-                      surfaces={surfaces}
-                      sceneWorkspaces={sceneWorkspaces}
-                      isEditMode={this.props.isEditMode}
-                    />
+                    <ImagePreloader preload={getThumbnailAssetArrayByScene(sceneVariant, surfaces)}>
+                      {({ loading, error }) => (
+                        <TintableScene
+                          background={sceneVariant.thumb}
+                          clickToPaintColor={activeColor}
+                          error={error}
+                          height={scene.height}
+                          interactive={false}
+                          isEditMode={this.props.isEditMode}
+                          loading={loading}
+                          mainColor={mainColor}
+                          onUpdateColor={this.handleColorUpdate}
+                          previewColor={previewColor}
+                          sceneId={scene.id}
+                          sceneName={sceneVariant.name}
+                          sceneWorkspaces={sceneWorkspaces}
+                          surfaces={surfaces}
+                          surfaceStatus={status.surfaces}
+                          type={type}
+                          width={scene.width}
+                        />
+                      )}
+                    </ImagePreloader>
                   </div>
                   {activeMarker}
                 </button>
@@ -242,7 +248,7 @@ export class SceneManager extends PureComponent<Props, State> {
             })}
           </div>
 
-          <div className={`${SceneManager.baseClass}__block ${SceneManager.baseClass}__block--scenes`}>
+          <div className={`${SceneManager.baseClass}__block ${SceneManager.baseClass}__block--scenes`} role='main'>
             {activeScenes.map((sceneId, index) => {
               const scene: Scene = scenes.filter(scene => (scene.id === sceneId))[0]
 
@@ -282,28 +288,33 @@ export class SceneManager extends PureComponent<Props, State> {
 
               return (
                 <div className={`${SceneManager.baseClass}__scene-wrapper`} key={sceneId}>
-                  <ImagePreloader
-                    el={TintableScene}
-                    preload={getFullSizeAssetArrayByScene(scene)}
-                    width={scene.width}
-                    height={scene.height}
-                    interactive={interactive}
-                    type={type}
-                    sceneId={sceneId}
-                    background={sceneVariant.image}
-                    clickToPaintColor={activeColor}
-                    onUpdateColor={this.handleColorUpdate}
-                    previewColor={previewColor}
-                    mainColor={mainColor}
-                    surfaceStatus={status.surfaces}
-                    surfaces={surfaces}
-                    imageValueCurve={sceneVariant.normalizedImageValueCurve}
-                    sceneName={sceneVariant.name}
-                    /* eslint-disable-next-line no-undef */
-                    sceneWorkspaces={sceneWorkspaces}
-                    updateCurrentSceneInfo={this.updateCurrentSceneInfo}
-                    isEditMode={this.props.isEditMode}
-                  />
+                  <ImagePreloader preload={getFullSizeAssetArrayByScene(scene)}>
+                    {({ loading, error }) => (
+                      <TintableScene
+                        background={sceneVariant.image}
+                        clickToPaintColor={activeColor}
+                        el={TintableScene}
+                        error={error}
+                        height={scene.height}
+                        imageValueCurve={sceneVariant.normalizedImageValueCurve}
+                        interactive={interactive}
+                        isEditMode={this.props.isEditMode}
+                        loading={loading}
+                        mainColor={mainColor}
+                        onUpdateColor={this.handleColorUpdate}
+                        previewColor={previewColor}
+                        sceneId={sceneId}
+                        sceneName={sceneVariant.name}
+                        /* eslint-disable-next-line no-undef */
+                        sceneWorkspaces={sceneWorkspaces}
+                        surfaces={surfaces}
+                        surfaceStatus={status.surfaces}
+                        type={type}
+                        updateCurrentSceneInfo={this.updateCurrentSceneInfo}
+                        width={scene.width}
+                      />
+                    )}
+                  </ImagePreloader>
                   {variantSwitch}
                 </div>
               )

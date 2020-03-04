@@ -1,15 +1,17 @@
 /* eslint-disable react/jsx-no-bind */
-import React, { useState, useEffect, useCallback, useMemo } from 'react'
+import React, { useState, useEffect, useCallback, useMemo, useContext } from 'react'
 import { useSelector } from 'react-redux'
 import { useRouteMatch, NavLink } from 'react-router-dom'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { AutoSizer } from 'react-virtualized'
 import { Menu, MenuItem, Wrapper, Button } from 'react-aria-menubutton'
 import at from 'lodash/at'
+import difference from 'lodash/difference'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { MODE_CLASS_NAMES } from './shared'
-import ButtonBar from '../../GeneralButtons/ButtonBar/ButtonBar'
-import { generateColorWallPageUrl } from '../../../shared/helpers/ColorUtils'
+import ButtonBar from 'src/components/GeneralButtons/ButtonBar/ButtonBar'
+import { generateColorWallPageUrl } from 'src/shared/helpers/ColorUtils'
+import ColorWallContext from './ColorWallContext'
 import './ColorWallMenuBar.scss'
 
 const PATH_END_FAMILY = 'family/'
@@ -26,12 +28,28 @@ export default () => {
   const allColorsLabelText = at(messages, 'ALL_COLORS')[0]
   const allCollectionsLabelText = at(messages, 'SELECT_COLLECTION')[0]
   const [currentFamily, setNavMenuButtonText] = useState(allCollectionsLabelText)
+
+  // -----------------------------------------
+  // section hiding
+  const { hiddenSections } = useContext(ColorWallContext)
+  const visibleSections = useMemo(() => {
+    if (sections && sections.length && hiddenSections && hiddenSections.length) {
+      return difference(sections, hiddenSections)
+    }
+
+    return sections
+  }, [ hiddenSections, sections ])
+
+  // -----------------------------------------
+  // handlers
   const handleColorFamilySelection = useCallback(function (value) {
     setNavMenuButtonText(allColorsLabelText)
     setShowingAllColorFamilies(true)
   }, [allColorsLabelText])
   const handleMenuToggle = useCallback(({ isOpen }) => setMenuOpen(isOpen))
 
+  // -----------------------------------------
+  // UI state toggling based on active sections and families
   useEffect(() => {
     if (activeFamily) {
       setShowingAllColorFamilies(false)
@@ -41,6 +59,9 @@ export default () => {
     }
   }, [activeFamily, activeSection, showingAllColorFamilies])
 
+  // -----------------------------------------
+  // generate color families and search snippet
+  // TODO: make this its own component, since that's basically waht we're doing here.
   const colorFamiliesAndSearch = useMemo(() => (
     <div className={MODE_CLASS_NAMES.CELL}>
       <ButtonBar.Bar>
@@ -74,7 +95,7 @@ export default () => {
                 {colorFamiliesAndSearch}
                 <div className={`${MODE_CLASS_NAMES.CELL} ${MODE_CLASS_NAMES.RIGHT}`}>
                   <ButtonBar.Bar>
-                    {(isFamilyView ? families : sections).map(name =>
+                    {(isFamilyView ? families : visibleSections).map(name =>
                       <ButtonBar.Button
                         key={name}
                         to={isFamilyView ? generateColorWallPageUrl(section, name) : generateColorWallPageUrl(name)}
@@ -100,7 +121,7 @@ export default () => {
                     <FontAwesomeIcon className='close-icon-svg' icon={['fa', 'angle-down']} pull='right' />
                   </Button>
                   <Menu className={`${menuBarPrefix}__menu`}>
-                    {(isFamilyView || family ? families : sections).map(name =>
+                    {(isFamilyView || family ? families : visibleSections).map(name =>
                       <MenuItem
                         className={`${menuBarPrefix}__menu-item`}
                         key={name}

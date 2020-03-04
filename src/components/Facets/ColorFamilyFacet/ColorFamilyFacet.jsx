@@ -31,7 +31,7 @@ const SearchBarNoCancel = () => {
 
   return (
     <div className='color-wall-wrap__chunk'>
-      <SearchBar showCancelButton={false} label={at(messages, 'SEARCH.FIND_A_COLOR')[0]} showIcon={false} placeholder={at(messages, 'SEARCH.SEARCH_BY')[0]} />
+      <SearchBar showCancelButton={false} label={at(messages, 'SEARCH.FIND_A_COLOR')[0]} showIcon={false} />
     </div>
   )
 }

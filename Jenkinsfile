@@ -131,7 +131,7 @@ pipeline {
     }
     stage('Deploy') {
       when {
-        expression { BRANCH_NAME ==~ /^(develop|hotfix|qa|release|replatform)$/ }
+        expression { BRANCH_NAME ==~ /^(develop|integration|hotfix|qa|release|replatform)$/ }
       }
       agent {
         docker {
@@ -216,6 +216,7 @@ pipeline {
         DEVELOP_DOMAIN = "https://develop-prism-web.ebus.swaws"
         QA_DOMAIN = "https://qa-prism-web.ebus.swaws"
         FEATURE_BRANCH = "https://replatform-prism-web.ebus.swaws"
+        INTEGRATION_BRANCH = "https://integration-prism-web.ebus.swaws"
         RELEASE_DOMAIN = "https://prism.sherwin-williams.com"
 
         LINKS_FILE = "ci/shepherd/links"
@@ -228,6 +229,8 @@ pipeline {
             export DOMAIN="${DEVELOP_DOMAIN}"
         elif [ "${BRANCH_NAME}" = "qa" ]; then
             export DOMAIN="${QA_DOMAIN}"
+        elif [ "${BRANCH_NAME}" = "integration" ]; then
+            export DOMAIN="${INTEGRATION_BRANCH}"
         elif [ "${BRANCH_NAME}" = "replatform" ]; then
             export DOMAIN="${FEATURE_BRANCH}"
         elif [ "${BRANCH_NAME}" = "release" ]; then
