@@ -236,8 +236,8 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
                   rowHeight={this.getRowHeight(emptyRows, size)}
                   estimatedRowHeight={size}
                   rowCount={rowCount}
-                  width={width}
-                  height={gridHeight}
+                  width={width || 900}
+                  height={gridHeight || 400}
                   overscanIndicesGetter={overscanIndicesGetter}
                   containerRole='presentation'
                   role='presentation'
