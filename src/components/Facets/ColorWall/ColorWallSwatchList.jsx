@@ -204,12 +204,8 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
           ref={this._gridWrapperRef}
         >
           <AutoSizer onResize={this.handleGridResize} disableHeight={!contain}>
-            {({ height = 0, width = 0 }) => {
+            {({ height = 400, width = 900 }) => {
               let size = maxCellSize
-
-              if (width === 0 || height === 0) {
-                return null
-              }
 
               if (showAll) {
                 size = Math.max(Math.min(width / columnCount, maxCellSize), minCellSize)
@@ -240,8 +236,8 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
                   rowHeight={this.getRowHeight(emptyRows, size)}
                   estimatedRowHeight={size}
                   rowCount={rowCount}
-                  width={width || 900}
-                  height={gridHeight || 400}
+                  width={width}
+                  height={gridHeight}
                   overscanIndicesGetter={overscanIndicesGetter}
                   containerRole='presentation'
                   role='presentation'
