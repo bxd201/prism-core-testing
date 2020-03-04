@@ -39,17 +39,17 @@
     height: $icon-size * 1.5;
     justify-content: center;
     opacity: 0.6;
-    transform: scale(1);
-    transition: filter 0.6s, opacity 0.6s, transform 0.6s;
+    transform: scale(1) translateZ(0);
+    transition: all 0.2s;
     width: $icon-size * 1.5;
-    will-change: opacity transform;
     z-index: 0;
 
     &--active {
       background: rgba(41, 70, 147, 1);
       filter: grayscale(0);
       opacity: 1;
-      transform: scale(1.35);
+      // translateZ needed here to prevent iOS safari from inadvertantly glitching out and disappearing things after transitions
+      transform: scale(1.35) translateZ(0);
       z-index: 1;
     }
 

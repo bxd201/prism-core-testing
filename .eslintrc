@@ -26,7 +26,8 @@
     "ML_API_URL": "readonly",
     "URL": "readonly",
     "Worker": "readonly",
-    "FIREBASE_AUTH_ENABLED": "readonly"
+    "FIREBASE_AUTH_ENABLED": "readonly",
+    "render": "readonly"
   },
   "rules": {
     "react-hooks/rules-of-hooks": "error",
