@@ -45,3 +45,5 @@ export const ROUTE_PARAM_NAMES = Object.freeze({
 })
 
 export const GOOGLE_ANALYTICS_UID = 'UA-130955316-1'
+
+export const IS_IE = !!window.document.documentMode
