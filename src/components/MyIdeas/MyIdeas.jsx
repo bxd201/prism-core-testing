@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useIntl } from 'react-intl'
 import { deleteSavedScene, selectSavedScene, loadSavedScenes } from '../../store/actions/persistScene'
 import SavedScene from './SavedScene'
-
+import Carousel from '../Carousel/Carousel'
 import './MyIdeas.scss'
 import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -13,13 +13,19 @@ import EditSavedScene from './EditSavedScene'
 
 const baseClassName = 'myideas-wrapper'
 const buttonClassName = `${baseClassName}__button`
+const buttonBack = `${baseClassName}__button-back`
+const backText = `${baseClassName}__back-text`
 const buttonSvg = `${buttonClassName}__button-svg`
 const sectionClassName = `${baseClassName}__section`
+const savedScenesWrapper = `${baseClassName}__saved-scenes-wrapper`
+const savedScenesWrapperShow = `${savedScenesWrapper}--show`
+const savedScenesWrapperHide = `${savedScenesWrapper}--hide`
 const sectionLeftClassName = `${sectionClassName}--left`
 const sectionNoIdeasMessage = `${sectionClassName}__no-ideas-message`
 
 type MyIdeasProps = {
-  brandId: string
+  brandId: string,
+  setCardTitle: Function
 }
 
 const MyIdeas = (props: MyIdeasProps) => {
@@ -57,17 +63,17 @@ const MyIdeas = (props: MyIdeasProps) => {
   }
 
   const generateSavedScenes = (sceneData: Object[], editIsEnabled: boolean) => {
-    return sceneData.map((scene, i) => {
-      return <SavedScene
-        width={180}
-        height={90}
-        sceneData={scene}
-        editEnabled={editIsEnabled}
-        key={scene.id}
-        deleteScene={deleteScene}
-        selectScene={selectScene}
-        editIndividualScene={editIndividualScene} />
-    })
+    return <Carousel
+      BaseComponent={SavedSceneWrapper}
+      defaultItemsPerView={8}
+      isInfinity={false}
+      key='myideas'
+      data={sceneData}
+      editIsEnabled={editIsEnabled}
+      deleteScene={deleteScene}
+      selectScene={selectScene}
+      editIndividualScene={editIndividualScene}
+    />
   }
 
   const renderNoScenes = (isLoading: boolean) => {
@@ -89,15 +95,17 @@ const MyIdeas = (props: MyIdeasProps) => {
     e.preventDefault()
   }
 
-  const editIndividualScene = (scene) => {
+  const editIndividualScene = (scene: Object) => {
     setEditedIndividualScene(scene)
     setShowBack(true)
+    props.setCardTitle(intl.messages.RENAME_SAVED_IDEA)
   }
 
   const showMyIdeas = () => {
     setShowBack(false)
     setEditedIndividualScene(null)
     setEditEnabled(true)
+    props.setCardTitle(intl.messages['MY_IDEAS.MY_IDEAS_HEADER'])
   }
 
   return (
@@ -105,8 +113,8 @@ const MyIdeas = (props: MyIdeasProps) => {
       {savedScenes.length ? <div className={baseClassName}>
         <div className={sectionLeftClassName}>
           {showBack
-            ? <button className={buttonClassName} onClick={showMyIdeas}>
-              <FontAwesomeIcon size='lg' className={`${buttonSvg}`} icon={['fa', 'angle-left']} />{intl.messages.BACK}</button>
+            ? <button className={`${buttonClassName} ${buttonBack}`} onClick={showMyIdeas} onMouseDown={mouseDownHandler}>
+              <FontAwesomeIcon size='lg' className={`${buttonSvg}`} icon={['fa', 'angle-left']} /><span className={`${backText}`}>{intl.messages.BACK}</span></button>
             : editEnabled
               ? <button className={buttonClassName} onClick={disableEdit} onMouseDown={mouseDownHandler}>{intl.messages.DONE}</button>
               : <button className={buttonClassName} onClick={enableEdit} onMouseDown={mouseDownHandler}>
@@ -115,12 +123,25 @@ const MyIdeas = (props: MyIdeasProps) => {
               </button>}
         </div>
         <div className={sectionClassName}>
-          {(editedIndividualScene) ? <EditSavedScene showMyIdeas={showMyIdeas} sceneData={editedIndividualScene} width={296} height={204} selectScene={selectScene} /> : generateSavedScenes(savedScenes, editEnabled)}
+          {editedIndividualScene && <EditSavedScene showMyIdeas={showMyIdeas} sceneData={editedIndividualScene} width={296} height={204} selectScene={selectScene} />}
+          <div className={`${(editedIndividualScene) ? savedScenesWrapperHide : savedScenesWrapperShow}`}>{generateSavedScenes(savedScenes, editEnabled)}</div>
         </div>
       </div>
         : renderNoScenes(isLoadingSavedScenes)}
     </>
   )
+}
+
+const SavedSceneWrapper = (props: any) => {
+  return <SavedScene
+    width={100}
+    height={90}
+    sceneData={props.data}
+    editEnabled={props.editIsEnabled}
+    key={props.data.id}
+    deleteScene={props.deleteScene}
+    selectScene={props.selectScene}
+    editIndividualScene={props.editIndividualScene} />
 }
 
 export default MyIdeas

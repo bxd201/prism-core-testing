@@ -26,11 +26,15 @@ const CardMenu = ({ children, menuTitle = '', showBackByDefault = false, backPat
   const [cardTitle: string, setCardTitle] = React.useState(menuTitle)
   const history = useHistory()
 
+  const mouseDownHandler = (e: SyntheticEvent) => {
+    e.preventDefault()
+  }
+
   return (
     <div className='card-menu__wrapper'>
       <div className='card-menu__header'>
         <div className='card-menu__heading'>{cardTitle}</div>
-        {(cardShowing || showBackByDefault) && <button className='card-menu__button card-menu__button--left' onClick={() => {
+        {(cardShowing || showBackByDefault) && <button className='card-menu__button card-menu__button--left' onMouseDown={mouseDownHandler} onClick={() => {
           setCardShowing(null)
           setCardTitle(menuTitle)
           if (showBackByDefault && !cardShowing) backPath && history.push(backPath)
@@ -43,7 +47,7 @@ const CardMenu = ({ children, menuTitle = '', showBackByDefault = false, backPat
         <RouteConsumer>
           {(context: any) => (
             <Link tabIndex='-1' to={`/active`}>
-              <button className='card-menu__button card-menu__button--right' onClick={() => { context && context.navigate(true, true) }}>
+              <button className='card-menu__button card-menu__button--right' onMouseDown={mouseDownHandler} onClick={() => { context && context.navigate(true, true) }}>
                 <div className='card-menu__close'>
                   <span><FormattedMessage id='CLOSE' /></span>&nbsp;<FontAwesomeIcon className={``} icon={['fa', 'chevron-up']} />
                 </div>

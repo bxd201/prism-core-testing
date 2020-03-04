@@ -57,6 +57,7 @@ const EditSavedScene = ({ width, height, sceneData, selectScene, showMyIdeas }: 
           sceneData={sceneData}
           selectScene={selectScene}
           hideSceneName
+          isImgWidthPixel
         />
       </div>
       <div className={`${inputWrapper}`}>
