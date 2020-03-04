@@ -129,6 +129,7 @@ const MyIdeas = (props: MyIdeasProps) => {
           key={item.id}
           width={180}
           height={90}
+          editIndividualScene={editIndividualScene}
           useTintableScene />
       })
     // @todo set order -RS
