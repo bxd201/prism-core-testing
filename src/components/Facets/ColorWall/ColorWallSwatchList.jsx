@@ -204,8 +204,12 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
           ref={this._gridWrapperRef}
         >
           <AutoSizer onResize={this.handleGridResize} disableHeight={!contain}>
-            {({ height = 0, width }) => {
+            {({ height = 0, width = 0 }) => {
               let size = maxCellSize
+
+              if (width === 0 || height === 0) {
+                return null
+              }
 
               if (showAll) {
                 size = Math.max(Math.min(width / columnCount, maxCellSize), minCellSize)
@@ -261,20 +265,10 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     if (colors) {
       const rowCount = colors.length
       const columnCount = getTotalWidthOf2dArray(colors)
-
-      const emptyRows = colors.map((row, y) => {
-        if (y > 0 && y < rowCount - 1) {
-          return row.filter(v => v).length === 0 ? y : undefined
-        }
-      }).filter(v => v)
-
-      const emptyColumns = colors[0].map((col, x) => {
-        return colors.map((row, y) => {
-          if (x > 0 && x < columnCount - 1) {
-            return row[x]
-          }
-        }).filter(v => v).length === 0 ? x : undefined
-      }).filter(v => v)
+      // determine all empty rows, leaving out the first (0) and last (rowCount - 1)
+      const emptyRows = colors.map((row, y) => row.filter(v => v).length === 0 ? y : undefined).filter(v => !!v && v < rowCount - 1)
+      // determine all empty columns, leaving out the first (0) and last (columnCount - 1)
+      const emptyColumns = colors[0].map((col, x) => colors.map((row, y) => row[x]).filter(v => v).length === 0 ? x : undefined).filter(v => !!v && v < columnCount - 1)
 
       stateChanges = {
         ...stateChanges,
