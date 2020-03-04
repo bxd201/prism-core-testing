@@ -37,8 +37,4 @@ test('<ColorDetailsFacet colorSEO=\'sw-6475-country-squire\' subscribe={...} />'
   // "Kitchen Day" scene image is displayed in the main section after clicking it's thumbnail
   await fireEvent.click(await within(radiogroup).findByAltText('Kitchen Day'))
   await within(main).findByAltText('Kitchen Day')
-
-  // "Kitchen Night" scene image is displayed in the main section after clicking the variant toggle
-  await fireEvent.click(await findByLabelText('Switch to night view'))
-  await within(main).findByAltText('Kitchen Night')
 }, 30000)

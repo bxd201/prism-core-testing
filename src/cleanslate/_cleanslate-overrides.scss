@@ -14,3 +14,7 @@
 .cleanslate {
   font-family: var(getVarName('typography.bodyFontFamily'));
 }
+
+.cleanslate h1 {
+  color: inherit !important
+}
