@@ -23,7 +23,7 @@ type SavedSceneProps = {
   editIndividualScene: Function,
   hideSceneName?: boolean,
   useTintableScene?: boolean,
-  sceneId: string
+  sceneId: string,
   isImgWidthPixel?: boolean
 }
 
