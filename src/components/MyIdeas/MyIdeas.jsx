@@ -1,3 +1,4 @@
+/* eslint-disable */
 // @flow
 
 import React, { useEffect, useState } from 'react'
@@ -87,6 +88,10 @@ const MyIdeas = (props: MyIdeasProps) => {
     dispatch(selectSavedAnonStockScene(sceneId))
   }
 
+  const orderScene = (orderer, orderees) => {
+
+  }
+
   /**
    * @todo This approach will need to be rethought for use beyond anon persistence -RS
    * @param sceneData - the data from the custom saved scenes
@@ -96,7 +101,7 @@ const MyIdeas = (props: MyIdeasProps) => {
    * @returns {*[]}
    */
   const generateSavedScenes = (sceneData: Object[], stockSceneData: any, sceneMetadata: Object[], editIsEnabled: boolean) => {
-    const _customScenes = sceneData.map((scene, i) => {
+    const customScenes = sceneData.map((scene, i) => {
       return <SavedScene
         width={180}
         height={90}
@@ -132,15 +137,15 @@ const MyIdeas = (props: MyIdeasProps) => {
           editIndividualScene={editIndividualScene}
           useTintableScene />
       })
-    // @todo set order -RS
-    return [...customScenes, ...stockScenes]
-  const generateSavedScenes = (sceneData: Object[], editIsEnabled: boolean) => {
+
+    const orderedSceneData = []
+
     return <Carousel
       BaseComponent={SavedSceneWrapper}
       defaultItemsPerView={8}
       isInfinity={false}
       key='myideas'
-      data={sceneData}
+      data={orderedSceneData}
       editIsEnabled={editIsEnabled}
       deleteScene={deleteScene}
       selectScene={selectScene}
