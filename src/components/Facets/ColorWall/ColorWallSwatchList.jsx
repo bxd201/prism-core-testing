@@ -204,8 +204,12 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
           ref={this._gridWrapperRef}
         >
           <AutoSizer onResize={this.handleGridResize} disableHeight={!contain}>
-            {({ height = 0, width }) => {
+            {({ height = 0, width = 0 }) => {
               let size = maxCellSize
+
+              if (width === 0 || height === 0) {
+                return null
+              }
 
               if (showAll) {
                 size = Math.max(Math.min(width / columnCount, maxCellSize), minCellSize)
