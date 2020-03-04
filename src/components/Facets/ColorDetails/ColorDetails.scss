@@ -494,21 +494,6 @@ $details-tab-padding: 1rem;
     }
   }
 
-  &__similar-color-info-wrapper {
-    height: 100%;
-    opacity: 0;
-    transition: transform 0.3s, opacity 0.5s;
-    width: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    overflow: hidden;
-  }
-
-  &__similar-color-name {
-    font-weight: bold;
-  }
-
   &__details-tab-wrapper {
     font-size: 0.8rem;
     line-height: 1.1;

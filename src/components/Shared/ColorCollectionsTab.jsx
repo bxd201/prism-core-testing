@@ -89,6 +89,7 @@ function ColorCollectionsTab (props: Props) {
               data-tabid={tab.id}
               role='tab'
               tabIndex='0'
+              aria-selected={tab.id === tabIdShow}
               onKeyDown={handleKeyDownLiTab}
               className={`${tabListItem} ${(tab.id === parseInt(tabIdShow)) ? `${tabListItemActive}` : ''}`}
               key={tab.id}

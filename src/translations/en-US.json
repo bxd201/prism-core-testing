@@ -263,6 +263,7 @@
   "TO_NIGHT_VIEW": "Switch to night view",
   "TOGGLE_EXPERT_PICKS": "Toggle Expert Picks",
   "TOOL_TIPS": "TOOL TIPS",
+  "UNSPECIFIED_COLOR": "Color details was loaded without specifying a color",
   "VIEW_DETAILS": "View Details",
   "VIEW_DETAILS_FOR": "View details for {name}",
   "VIEW_FULL_COLLECTION": "VIEW FULL COLLECTION",
