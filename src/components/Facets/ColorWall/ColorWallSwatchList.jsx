@@ -11,6 +11,7 @@ import clone from 'lodash/clone'
 import * as scroll from 'scroll'
 import { withRouter } from 'react-router-dom'
 import { injectIntl } from 'react-intl'
+import memoizee from 'memoizee'
 
 import { varValues } from 'src/shared/variableDefs'
 import ColorWallSwatch from './ColorWallSwatch/ColorWallSwatch'
@@ -24,6 +25,7 @@ import { fullColorName } from '../../../shared/helpers/ColorUtils'
 import { type GridBounds, type ColorReference } from './ColorWall.flow'
 import { type ColorWallContextProps, type ColorWallA11yContextProps } from './ColorWallContext'
 import withColorWallContext from './withColorWallContext'
+import { IS_IE } from 'src/constants/globals'
 import WithLiveAnnouncerContext from 'src/contexts/LiveAnnouncerContext/WithLiveAnnouncerContext'
 import { type LiveAnnouncerProps } from 'src/contexts/LiveAnnouncerContext/LiveAnnouncerContextProvider'
 
@@ -31,7 +33,10 @@ import 'src/scss/externalComponentSupport/AutoSizer.scss'
 import 'src/scss/convenience/overflow-ellipsis.scss'
 import './ColorWallSwatchList.scss'
 
+// controls the duration of the grid's autoscroll when centering on an active swatch
 const GRID_AUTOSCROLL_SPEED: number = 300
+// this is used to adjust how much smaller the between-chunk cells are in relation to populated cells
+const COLLAPSED_CELL_SIZE_RATIO: number = 0.4
 
 // ----------------------------------------
 // PROP TYPES
@@ -73,6 +78,8 @@ type Props = IntlProps & RouterProps & ReduxProps & {
 
 type DerivedStateFromProps = {
   activeColorCoords: number[],
+  emptyRows: string[],
+  emptyColumns: string[],
   focusCoords: number[],
   levelMap: {
     [ key: string ]: ColorReference
@@ -106,12 +113,14 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
   _recentKeypress: boolean = false
 
   state: State = {
-    needsInitialFocus: true,
+    a11yFocusCell: void (0),
+    a11yFocusChunk: void (0),
     activeColorCoords: [],
+    emptyColumns: [],
+    emptyRows: [],
     focusCoords: [],
     levelMap: {},
-    a11yFocusChunk: void (0),
-    a11yFocusCell: void (0)
+    needsInitialFocus: true
   }
 
   static defaultProps = {
@@ -139,12 +148,36 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     this._swatchRefs = {}
   }
 
+  getColumnWidth = memoizee((emptyColumns, size) => {
+    const collapsedSize = Math.round(size * COLLAPSED_CELL_SIZE_RATIO)
+
+    return ({ index }) => {
+      if (emptyColumns.indexOf(index) >= 0) {
+        return collapsedSize
+      }
+
+      return size
+    }
+  })
+
+  getRowHeight = memoizee((emptyRows, size) => {
+    const collapsedSize = Math.round(size * COLLAPSED_CELL_SIZE_RATIO)
+
+    return ({ index }) => {
+      if (emptyRows.indexOf(index) >= 0) {
+        return collapsedSize
+      }
+
+      return size
+    }
+  })
+
   // -----------------------------------------------
   // LIFECYCLE METHODS
 
   render () {
     const { minCellSize, maxCellSize, showAll, activeColor, colors, contain, colorWallContext: { a11yFocusChunk, a11yFocusCell, a11yFocusOutline }, colorStatuses } = this.props
-    const { focusCoords, needsInitialFocus } = this.state
+    const { emptyRows, emptyColumns, focusCoords, needsInitialFocus } = this.state
     const colorIdGrid = colors
     const rowCount = colorIdGrid.length
     const columnCount = getTotalWidthOf2dArray(colorIdGrid)
@@ -178,7 +211,8 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
                 size = Math.max(Math.min(width / columnCount, maxCellSize), minCellSize)
               }
 
-              const gridHeight = contain ? height : Math.max(height, rowCount * size)
+              const emptyRowOffset = emptyRows.length * size * (1 - COLLAPSED_CELL_SIZE_RATIO)
+              const gridHeight = contain ? height : Math.max(height, rowCount * size - emptyRowOffset)
 
               // keep tabs on our current size since it can very between min/maxCellSize
               this._cellSize = size
@@ -194,11 +228,13 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
                   _forceRenderProp7={colorStatuses}
                   scrollToAlignment='center'
                   cellRenderer={this.cellRenderer}
-                  columnWidth={size}
+                  columnWidth={this.getColumnWidth(emptyColumns, size)}
+                  estimatedColumnSize={size}
                   columnCount={columnCount}
                   overscanColumnCount={6}
                   overscanRowCount={6}
-                  rowHeight={size}
+                  rowHeight={this.getRowHeight(emptyRows, size)}
+                  estimatedRowHeight={size}
                   rowCount={rowCount}
                   width={width || 900}
                   height={gridHeight || 400}
@@ -220,11 +256,37 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     const { bloomRadius, activeColor, colors } = props
     const { focusCoords } = state
 
-    if (!activeColor) {
-      return state
+    let stateChanges = state
+
+    if (colors) {
+      const rowCount = colors.length
+      const columnCount = getTotalWidthOf2dArray(colors)
+
+      const emptyRows = colors.map((row, y) => {
+        if (y > 0 && y < rowCount - 1) {
+          return row.filter(v => v).length === 0 ? y : undefined
+        }
+      }).filter(v => v)
+
+      const emptyColumns = colors[0].map((col, x) => {
+        return colors.map((row, y) => {
+          if (x > 0 && x < columnCount - 1) {
+            return row[x]
+          }
+        }).filter(v => v).length === 0 ? x : undefined
+      }).filter(v => v)
+
+      stateChanges = {
+        ...stateChanges,
+        emptyRows,
+        emptyColumns
+      }
     }
 
-    let stateChanges = { ...state }
+    if (!activeColor) {
+      return stateChanges
+    }
+
     const coords = getColorCoords(activeColor.id, colors)
 
     if (!isEmpty(focusCoords) && !isEqual(coords, focusCoords)) {
@@ -306,7 +368,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
   componentDidUpdate (prevProps: Props, prevState: State) {
     const { showAll, activeColor, colors, colorMap, colorWallContext: { a11yFocusCell, updateA11y }, liveAnnouncerContext: { announceAssertive }, intl: { formatMessage } } = this.props
     const { activeColor: oldActiveColor } = prevProps
-    const { activeColorCoords, focusCoords, levelMap } = this.state
+    const { activeColorCoords, emptyRows, emptyColumns, focusCoords, levelMap } = this.state
     const { activeColorCoords: oldActiveColorCoords, focusCoords: oldFocusCoords } = prevState
 
     // if activeColor has updated...
@@ -366,17 +428,21 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
       if (gridEl) {
         clearTimeout(this._scrollTimeout)
 
+        // we need to calculate an offset for empty rows and columns because they can be narrower than populated cells
+        const emptyColumnOffset = emptyColumns.filter(v => v < newCoords.x).length * this._cellSize * (1 - COLLAPSED_CELL_SIZE_RATIO)
+        const emptyRowOffset = emptyRows.filter(v => v < newCoords.y).length * this._cellSize * (1 - COLLAPSED_CELL_SIZE_RATIO)
+
         this._scrollTimeout = setTimeout(() => {
-          const scrollToX = newCoords.x * this._cellSize - (this._gridWidth - this._cellSize) / 2
-          const scrollToY = newCoords.y * this._cellSize - (this._gridHeight - this._cellSize) / 2
+          const scrollToX = (newCoords.x * this._cellSize) - emptyColumnOffset - (this._gridWidth - this._cellSize) / 2
+          const scrollToY = (newCoords.y * this._cellSize) - emptyRowOffset - (this._gridHeight - this._cellSize) / 2
 
           while (this._scrollInstances && this._scrollInstances.length) {
             this._scrollInstances.pop().call()
           }
 
           this._scrollInstances = [
-            scroll.left(gridEl, scrollToX, { duration: GRID_AUTOSCROLL_SPEED }),
-            scroll.top(gridEl, scrollToY, { duration: GRID_AUTOSCROLL_SPEED })
+            scroll.left(gridEl, scrollToX, { duration: !IS_IE ? GRID_AUTOSCROLL_SPEED : 0 }),
+            scroll.top(gridEl, scrollToY, { duration: !IS_IE ? GRID_AUTOSCROLL_SPEED : 0 })
           ]
         }, (varValues.colorWall.swatchActivateDelayMS + varValues.colorWall.swatchActivateDurationMS) * 1.2)
       }
@@ -697,7 +763,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
 
       return (
         <div key={key} style={_style} role='presentation'>
-          <div className={`color-wall-swatch-list__section-title ${!showAll ? 'color-wall-swatch-list__section-title--top-align' : ''}`} title={colorId.label} style={{
+          <div className={`color-wall-swatch-list__section-title ${!showAll ? 'color-wall-swatch-list__section-title--push-up' : ''}`} title={colorId.label} style={{
             width: `${colorId.columnWidth * 100}%`,
             marginLeft: `-${(Math.ceil(colorId.columnWidth / 2) - 1) * 100}%`
           }}>
