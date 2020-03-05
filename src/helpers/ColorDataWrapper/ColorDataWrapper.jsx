@@ -1,7 +1,6 @@
 // @flow
 import React from 'react'
 import { connect } from 'react-redux'
-import isEmpty from 'lodash/isEmpty'
 import at from 'lodash/at'
 
 import HeroLoader from '../../components/Loaders/HeroLoader/HeroLoader'
@@ -21,6 +20,8 @@ export type ColorDataWrapperProps = {
   family?: string,
   families?: string[],
   loading: boolean,
+  requestComplete: boolean,
+  activeRequest: boolean,
   error: boolean,
   config: Configuration
 }
@@ -34,17 +35,26 @@ const ColorDataWrapper = (WrappedComponent: any) => {
     constructor (props: ColorDataWrapperProps) {
       super(props)
 
-      if (isEmpty(this.props.colors)) {
-        this.props.loadColors(this.props.config.brandId)
+      const { colors, config, loadColors, activeRequest, requestComplete } = props
+
+      if (typeof colors === 'undefined' && !activeRequest && !requestComplete) {
+        loadColors(config.brandId)
       }
     }
 
     render () {
-      if (this.props.loading) {
+      const {
+        loading,
+        requestComplete,
+        activeRequest,
+        ...other
+      } = this.props
+
+      if (!requestComplete && activeRequest && loading) {
         return <HeroLoader />
       }
 
-      return <WrappedComponent {...this.props} />
+      return <WrappedComponent {...other} loading={loading} />
     }
   }
 
@@ -57,6 +67,8 @@ const ColorDataWrapper = (WrappedComponent: any) => {
       family: state.colors.family,
       families: state.colors.families,
       loading: !!at(state, 'colors.status.loading')[0],
+      requestComplete: !!at(state, 'colors.status.requestComplete')[0],
+      activeRequest: !!at(state, 'colors.status.activeRequest')[0],
       error: !!at(state, 'colors.status.error')[0]
     }
   }

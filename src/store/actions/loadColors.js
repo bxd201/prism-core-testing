@@ -12,8 +12,6 @@ export const RECEIVE_COLORS: string = 'RECEIVE_COLORS'
 const receiveColors = (colorData: any) => ({
   type: RECEIVE_COLORS,
   payload: {
-    loading: false,
-    activeRequest: false,
     unorderedColors: colorData.unorderedColors,
     colors: colorData.colors.values,
     colorLabels: colorData.colors.names,
