@@ -11,7 +11,7 @@ import './MyIdeas.scss'
 import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import EditSavedScene from './EditSavedScene'
-import { selectSavedAnonStockScene } from '../../store/actions/stockScenes'
+import { deleteStockScene, selectSavedAnonStockScene } from '../../store/actions/stockScenes'
 
 const baseClassName = 'myideas-wrapper'
 const buttonClassName = `${baseClassName}__button`
@@ -33,7 +33,6 @@ type MyIdeasProps = {
 const MyIdeas = (props: MyIdeasProps) => {
   const savedScenes = useSelector(state => state.scenesAndRegions)
   const [stockScenes, setStockScenes] = useState(null)
-  const [stockScenesLoaded, setStockScenesLoaded] = useState(false)
   const sceneMetadata = useSelector(state => state.sceneMetadata)
   const isLoadingSavedScenes = useSelector(state => state.isLoadingSavedScene)
   const dispatch = useDispatch()
@@ -56,9 +55,6 @@ const MyIdeas = (props: MyIdeasProps) => {
     if (!stockScenes) {
       setStockScenes(sceneData)
     }
-    if (sceneData || !sceneFetchTypes.length) {
-      setStockScenesLoaded(true)
-    }
   }, [sceneData])
 
   const enableEdit = (e: SyntheticEvent) => {
@@ -76,7 +72,7 @@ const MyIdeas = (props: MyIdeasProps) => {
   }
 
   const deleteAnonStockScene = (id: number | string) => {
-    // @todo -RS
+    dispatch(deleteStockScene(id))
   }
 
   const selectScene = (sceneId: number | string) => {
@@ -85,6 +81,34 @@ const MyIdeas = (props: MyIdeasProps) => {
 
   const selectAnonStockScene = (sceneId: number | string) => {
     dispatch(selectSavedAnonStockScene(sceneId))
+  }
+
+  const isReadyToRender = (sceneMetadata: Object[], customSceneData, stockSceneData) => {
+    const expectCustomData = !!sceneMetadata.find(item => item.sceneType === SCENE_TYPE.anonCustom)
+    const expectStockData = !!sceneMetadata.find(item => item.sceneType === SCENE_TYPE.anonStock)
+
+    if (expectCustomData && !expectStockData) {
+      // handle only custom data
+      if (customSceneData && (customSceneData && customSceneData.length)) {
+        return true
+      }
+    }
+
+    if (expectStockData && !expectCustomData) {
+      // handle only stock data
+      if (stockSceneData) {
+        return true
+      }
+    }
+
+    if (expectStockData && expectCustomData) {
+      // handle both
+      if (stockSceneData && (customSceneData && customSceneData.length)) {
+        return true
+      }
+    }
+
+    return false
   }
 
   /**
@@ -151,7 +175,7 @@ const MyIdeas = (props: MyIdeasProps) => {
 
   return (
     <>
-      {(sceneMetadata.length && stockScenesLoaded) ? <div className={baseClassName}>
+      {isReadyToRender(sceneMetadata, savedScenes, stockScenes) ? <div className={baseClassName}>
         <div className={sectionLeftClassName}>
           {showBack
             ? <button className={`${buttonClassName} ${buttonBack}`} onClick={showMyIdeas} onMouseDown={mouseDownHandler}>
@@ -202,16 +226,20 @@ const SavedSceneWrapper = (props: any) => {
   }
   // Handle custom scenes
   scene = props.baseSceneData.customScenes.find(item => props.data.scene.indexOf(item.id) > -1)
-  return <SavedScene
-    width={100}
-    height={90}
-    sceneData={scene}
-    editEnabled={props.editIsEnabled}
-    key={scene.id}
-    sceneId={scene.id}
-    deleteScene={props.deleteScene}
-    selectScene={props.selectScene}
-    editIndividualScene={props.editIndividualScene} />
+  if (scene) {
+    return <SavedScene
+      width={100}
+      height={90}
+      sceneData={scene}
+      editEnabled={props.editIsEnabled}
+      key={scene.id}
+      sceneId={scene.id}
+      deleteScene={props.deleteScene}
+      selectScene={props.selectScene}
+      editIndividualScene={props.editIndividualScene} />
+  }
+
+  return null
 }
 
 export default MyIdeas

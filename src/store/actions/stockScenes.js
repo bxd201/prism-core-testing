@@ -5,6 +5,8 @@ export const SAVING_STOCK_SCENE = 'SAVING_STOCK_SCENE'
 export const SAVE_ANON_STOCK_SCENE = 'SAVE_ANON_STOCK_SCENE'
 export const SAVE_STOCK_SCENE = 'SAVE_STOCK_SCENE'
 export const SELECT_ANON_STOCK_SCENE = 'SELECT_ANON_STOCK_SCENE'
+export const DELETE_ANON_STOCK_SCENE = 'DELETE_ANON_STOCK_SCENE'
+export const DELETE_STOCK_SCENE = 'DELETE_STOCK_SCENE'
 
 export const saveStockScene = (id: string, sceneName: string, sceneData: object, sceneType: string) => {
   return (dispatch, getState) => {
@@ -47,5 +49,19 @@ export const selectSavedAnonStockScene = (id: string) => {
   return {
     type: SELECT_ANON_STOCK_SCENE,
     payload: id
+  }
+}
+
+export const deleteStockScene = (sceneId: string) => {
+  if (FIREBASE_AUTH_ENABLED) {
+    return {
+      type: DELETE_ANON_STOCK_SCENE,
+      payload: sceneId
+    }
+  }
+
+  return {
+    type: DELETE_STOCK_SCENE,
+    payload: sceneId
   }
 }

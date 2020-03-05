@@ -10,9 +10,9 @@ import {
   DELETE_ANON_SAVED_SCENE,
   SAVED_SCENE_LOCAL,
   LOADING_SAVED_MASKS, ERROR_DOWNLOADING_SAVED_DATA, SHOW_SAVE_SCENE_MODAL, RESET_SAVE_STATE,
-  UPDATE_ANON_SAVED_SCENE_NAME
+  UPDATE_ANON_SAVED_SCENE_NAME, SCENE_TYPE
 } from '../actions/persistScene'
-import { SAVE_ANON_STOCK_SCENE, SELECT_ANON_STOCK_SCENE } from '../actions/stockScenes'
+import { DELETE_ANON_STOCK_SCENE, SAVE_ANON_STOCK_SCENE, SELECT_ANON_STOCK_SCENE } from '../actions/stockScenes'
 import { SCENE_TYPES } from '../../constants/globals'
 import { cloneDeep } from 'lodash'
 export const legacySavedScenesMetadata = (state: Object[] = [], action: { type: string, payload: Object }) => {
@@ -100,7 +100,7 @@ export const sceneMetadata = (state: Object[] = [], action: {type: string, paylo
   }
 
   if (action.type === DELETE_ANON_SAVED_SCENE) {
-    return state.filter(item => item.scene.indexOf(action.payload) === -1)
+    return state.filter(item => item.sceneType !== SCENE_TYPE.anonCustom || item.scene.indexOf(action.payload) === -1)
   }
 
   if (action.type === SAVE_ANON_STOCK_SCENE && action.payload) {
@@ -113,6 +113,11 @@ export const sceneMetadata = (state: Object[] = [], action: {type: string, paylo
     } else {
       return [...state, dataCopy]
     }
+  }
+
+  if (action.type === DELETE_ANON_STOCK_SCENE) {
+    newState = state.filter(item => item.id !== action.payload)
+    return newState
   }
 
   return state
