@@ -1,6 +1,6 @@
 // @flow
-// import type { CollectionsTab } from '../../shared/types/Colors.js.flow'
 import { getDeltaE00 } from 'delta-e'
+import tinycolor from '@ctrl/tinycolor'
 
 export const throttleDragTime = 5
 // we need this two const to make sure cursor always point to the center of preview circle
@@ -98,7 +98,7 @@ export const renderingPins = (initPins: Array<Object>, canvasOffsetWidth: number
   })
 }
 
-export const findBrandColor = (currentPixelRGB: Array<number>, brandColors: Array) => {
+export const findBrandColorWithDeltaE00 = (currentPixelRGB: Array<number>, brandColors: Array) => {
   let currentPixelInLABarray = rgb2lab(currentPixelRGB)
   let theMostCloseDistance = 100
   let index = 0
@@ -112,6 +112,53 @@ export const findBrandColor = (currentPixelRGB: Array<number>, brandColors: Arra
     }
   }
   return index
+}
+
+export const findBrandColor = (currentPixelRGB: Array<number>, brandColors: Array) => {
+  const currentPixelHex = tinycolor(`rgb (${currentPixelRGB[0]}, ${currentPixelRGB[1]}, ${currentPixelRGB[2]})`).toHex()
+  let minDistance
+  const n = brandColors.length
+  let index = 0
+  for (let brandColorsIndex = 0; brandColorsIndex < n; brandColorsIndex += 6) {
+    const brandColorHex = tinycolor(`rgb (${brandColors[brandColorsIndex + 2]})`).toHex()
+    const distance = measureDistance(currentPixelHex, brandColorHex)
+    if (typeof minDistance === 'undefined' || distance < minDistance) {
+      minDistance = distance
+      index = brandColorsIndex
+    }
+  }
+  return index
+}
+
+export const measureDistance = (color1: string, color2: string) => {
+  const position1 = getChromaLuma(color1)
+  const position2 = getChromaLuma(color2)
+  const redDelta = position1[0] - position2[0]
+  const greenDelta = position1[1] - position2[1]
+  const lumaDelta = position1[2] - position2[2]
+  const distance = redDelta * redDelta + greenDelta * greenDelta + lumaDelta * lumaDelta
+  return distance
+}
+
+export const getChromaLuma = (rgbString: string) => {
+  const color = tinycolor(rgbString)
+  const luminosity = color.getLuminance()
+  const colorRgb = color.toRgb()
+  const red = colorRgb.r
+  const green = colorRgb.g
+  const blue = colorRgb.b
+  const sum = red + green + blue
+  let redChroma
+  let greenChroma
+  if (sum > 25) {
+    redChroma = red / sum
+    greenChroma = green / sum
+  } else {
+    redChroma = 1 / 3
+    greenChroma = 1 / 3
+  }
+
+  return [redChroma, greenChroma, luminosity]
 }
 
 const allCollectionsData = [
