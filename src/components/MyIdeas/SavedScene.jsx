@@ -143,7 +143,7 @@ const SavedScene = (props: SavedSceneProps) => {
 
   return (
     <div className={`${sceneClassName} ${(props.isImgWidthPixel) ? sceneIndividual : sceneCarousel}`}>
-      {backgroundImageSrc  && !props.useTintableScene ? <PrismImage
+      {backgroundImageSrc && !props.useTintableScene ? <PrismImage
         ref={imageRef}
         source={backgroundImageSrc}
         loadedCallback={handleBackgroundImageLoaded}
@@ -172,7 +172,7 @@ const SavedScene = (props: SavedSceneProps) => {
           </div> : null}
         <div role='tab' tabIndex='0' className={sceneFrameClassName} onClick={selectScene} onKeyDown={handleKeyDown} onMouseDown={mouseDownHandler}>
           <div className={paneClassName}>
-            {props.useTintableScene ? <div className={thumbnailClassName} style={{ width: `${props.width || FIXED_WIDTH}${props.isImgWidthPixel ? `px` : `%`}`, height: `${props.height || FIXED_HEIGHT}px` }}>
+            {!props.useTintableScene ? <div className={thumbnailClassName} style={{ width: `${props.width || FIXED_WIDTH}${props.isImgWidthPixel ? `px` : `%`}`, height: `${props.height || FIXED_HEIGHT}px` }}>
               {thumbnailUrl ? <img style={{ width: `${props.width || FIXED_WIDTH}${props.isImgWidthPixel ? `px` : `%`}` }} src={thumbnailUrl} alt={`${intl.messages['MY_IDEAS.PREVIEW']}: ${props.sceneData.name}`} /> : <CircleLoader />}
             </div> : null}
             {props.useTintableScene ? <div className={thumbnailClassName} style={{ width: `${props.width || FIXED_WIDTH}px`, height: `${props.height || FIXED_HEIGHT}px` }}>
@@ -182,7 +182,7 @@ const SavedScene = (props: SavedSceneProps) => {
                 statuses={props.sceneData.sceneMetadata.scene.surfaces} />
             </div> : null}
             <div className={colorsClassName}>
-              {createColors(props.sceneData.palette, props.useTintableScene)}
+              {createColors(props.sceneData, props.useTintableScene)}
             </div>
           </div>
         </div>
