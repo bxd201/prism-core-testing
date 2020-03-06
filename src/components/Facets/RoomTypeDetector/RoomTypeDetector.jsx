@@ -2,11 +2,13 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import uniqueId from 'lodash/uniqueId'
 import * as deeplab from '@tensorflow-models/deeplab'
+import intersection from 'lodash/intersection'
 
 import FileInput from '../../FileInput/FileInput'
 import GenericOverlay from '../../Overlays/GenericOverlay/GenericOverlay'
 
 import { loadImage, getImageRgbaData, createCanvasElementWithData } from './utils'
+import { desiredLabels } from './RoomTypeDetector.constants'
 
 import facetBinder from 'src/facetSupport/facetBinder'
 import GenericMessage from '../../Messages/GenericMessage'
@@ -17,7 +19,7 @@ import RoomPiece from './RoomPiece'
 import Card from './Card'
 
 const FILE_UPLOAD_ID = uniqueId('roomTypeDetectorFileUpload_')
-const VALID_SEGMENT_THRESHHOLD = 0.02
+const VALID_SEGMENT_THRESHHOLD = 0.03
 
 // get the object out of the original image
 function getObjectPixels (imageData, label, src) {
@@ -115,13 +117,15 @@ const RoomTypeDetector = () => {
           // need to save this canvas element so we can render it
           setSegmentationImagePath(createCanvasElementWithData(segmentationImgData, width, height).toDataURL())
 
-          /** HAHAH Let's see how slow this is if we get every single object */
-          const labels = Object.keys(results.legend)
+          // get every object based on the provided labels that are returned and cross checking that with the
+          // list of labels we care about.
+          const labels = Object.keys(legend)
+          const relevantLabels = intersection(desiredLabels, labels)
           const displayedLabels = []
           const roomPieces = []
           const sourceImageSize = sourceImgData.data.length / 4
 
-          labels.forEach(label => {
+          relevantLabels.forEach(label => {
             // this can maybe just be segmentationMap
             const legendColor = legend[label]
             const roomObjPixels = getObjectPixels(segmentationMap, legendColor, sourceImgData.data)
@@ -129,10 +133,8 @@ const RoomTypeDetector = () => {
             // get sizes of array
             const maskedImageSize = roomObjPixels.filter((v, i) => (i + 1) % 4 === 0).filter(v => v > 0).length
 
-            const segmentPct = Math.round(sourceImageSize * VALID_SEGMENT_THRESHHOLD)
-            console.info(`${label} is ${maskedImageSize} ${segmentPct}% of the whole`)
             // only return objects that are xx% of the original image size
-            if (maskedImageSize > segmentPct) {
+            if (maskedImageSize > Math.round(sourceImageSize * VALID_SEGMENT_THRESHHOLD)) {
               displayedLabels.push(label)
               roomPieces.push({
                 label,
@@ -146,10 +148,8 @@ const RoomTypeDetector = () => {
 
           setRoomPieces(roomPieces)
           setDisplayedLabels(displayedLabels)
-          setLabels(labels)
+          setLabels(relevantLabels)
           setIsProcessing(false)
-
-          /** ************************************************************** */
         }).catch(error => {
           console.error(error)
           setError('The image segmentation process encountered an error.')
