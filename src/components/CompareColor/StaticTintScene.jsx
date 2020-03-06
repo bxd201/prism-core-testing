@@ -16,7 +16,8 @@ type PropsType = {
   color: Color,
   scene: Scene,
   isCompareColor?: boolean,
-  statuses?: SurfaceStatus[]
+  statuses?: SurfaceStatus[],
+  config: Object
 }
 
 export const StaticTintScene = (props: PropsType) => {
@@ -24,7 +25,9 @@ export const StaticTintScene = (props: PropsType) => {
   const tintColor: Color = props.color /* the color this particular scene is being tinted to */
   const chosenScene: Scene = props.scene /* the scene you're using */
   const isCompareColor: boolean = props.isCompareColor
-  const defaultSceneVariantName: string = chosenScene.variant_names[0]
+  const nightSceneIndex = props.config && props.config.isNightScene ? 1 : 0
+  const sceneType = props.config && props.config.type ? props.config.type : SCENE_TYPES.ROOM
+  const defaultSceneVariantName: string = chosenScene.variant_names[nightSceneIndex]
   const defaultSceneVariant: Variant[] = chosenScene.variants.filter((variant) => {
     return variant && variant.variant_name === defaultSceneVariantName
   })
@@ -66,7 +69,7 @@ export const StaticTintScene = (props: PropsType) => {
           sceneName={defaultSceneVariant[0].name}
           surfaces={surfaces}
           surfaceStatus={surfaceStatuses}
-          type={SCENE_TYPES.ROOM} // 'room', 'automotive', etc.
+          type={sceneType} // 'room', 'automotive', etc.
           width={chosenScene.width}
         />
       )}
