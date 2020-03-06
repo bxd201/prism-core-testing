@@ -23,6 +23,7 @@ import type { ColorMap, Color, FamilyStructure } from '../../../shared/types/Col
 import 'src/scss/convenience/visually-hidden.scss'
 import './ColorDetails.scss'
 import ColorDataWrapper from 'src/helpers/ColorDataWrapper/ColorDataWrapper'
+import HeroLoader from 'src/components/Loaders/HeroLoader/HeroLoader'
 
 const baseClass = 'color-info'
 
@@ -31,10 +32,11 @@ type Props = {
   onSceneChanged?: string => void,
   onVariantChanged?: string => void,
   onColorChipToggled?: boolean => void,
-  familyLink?: string
+  familyLink?: string,
+  loading?: boolean
 }
 
-export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged, onColorChipToggled, familyLink }: Props) => {
+export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged, onColorChipToggled, familyLink, loading }: Props) => {
   const { colorId } = useParams()
   const dispatch = useDispatch()
   const toggleSceneDisplayScene = useRef(null)
@@ -81,6 +83,10 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
   if (!activeColor) {
     console.info(`ColorDetails: ${colorId} is not a valid color ID`)
     return null
+  }
+
+  if (loading) {
+    return <HeroLoader />
   }
 
   // perform some css class logic & scaffolding instead of within the DOM itself

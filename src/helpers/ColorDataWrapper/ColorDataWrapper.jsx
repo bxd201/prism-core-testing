@@ -3,7 +3,6 @@ import React from 'react'
 import { connect } from 'react-redux'
 import at from 'lodash/at'
 
-import HeroLoader from '../../components/Loaders/HeroLoader/HeroLoader'
 import { loadColors } from '../../store/actions/loadColors'
 import WithConfigurationContext from '../../contexts/ConfigurationContext/WithConfigurationContext'
 
@@ -49,10 +48,6 @@ const ColorDataWrapper = (WrappedComponent: any) => {
         activeRequest,
         ...other
       } = this.props
-
-      if (!requestComplete && activeRequest && loading) {
-        return <HeroLoader />
-      }
 
       return <WrappedComponent {...other} loading={loading} />
     }
