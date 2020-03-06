@@ -10,21 +10,20 @@
   }
 
   &__section-title {
-    align-items: center;
+    align-items: flex-end;
     display: flex;
     // this is affected by the dynamic font size being applied to each cell based on that cell's height
     font-size: 1em;
     height: 100%;
     justify-content: center;
+    letter-spacing: .1em;
     line-height: 1.1;
-    letter-spacing: .1em;
     padding: 1px 0;
+    position: relative;
     text-align: center;
-    text-transform: uppercase;
-    letter-spacing: .1em;
 
-    &--top-align {
-      align-items: flex-start;
+    &--push-up {
+      bottom: 50%;
     }
   }
 

@@ -32,7 +32,6 @@ import type { Color } from '../../shared/types/Colors.js.flow'
 import type { Scene, SceneStatus, SceneWorkspace, Surface, Variant } from '../../shared/types/Scene'
 
 import './SceneManager.scss'
-import 'src/scss/convenience/visually-hidden.scss'
 
 const getThumbnailAssetArrayByScene = memoizee((sceneVariant: Variant, surfaces: Surface[]): string[] => {
   return flattenDeep([
@@ -190,8 +189,8 @@ export class SceneManager extends PureComponent<Props, State> {
     return (
       <DndProvider backend={HTML5Backend}>
         <div className={SceneManager.baseClass}>
-          {activeScenes.length === 1 && expertColorPicks ? <ColorPickerSlide {...getSceneInfoById(find(scenes, { 'id': activeScenes[0] }), sceneStatus).variant} /> : null}
-          <div className={`${SceneManager.baseClass}__block ${SceneManager.baseClass}__block--tabs`}>
+          {activeScenes.length === 1 && expertColorPicks && <ColorPickerSlide {...getSceneInfoById(find(scenes, { 'id': activeScenes[0] }), sceneStatus).variant} />}
+          <div className={`${SceneManager.baseClass}__block ${SceneManager.baseClass}__block--tabs`} role='radiogroup' aria-label='scene selector'>
             {scenes.map((scene, index) => {
               const sceneInfo = getSceneInfoById(scene, sceneStatus)
               const sceneWorkspaces = this.props.sceneWorkspaces.filter(workspace => workspace.sceneId === scene.id)
@@ -209,13 +208,15 @@ export class SceneManager extends PureComponent<Props, State> {
                 : null
 
               return (
-              // TODO: Convert these to labels around checkboxes since that's how they're being used
-                <button key={scene.id}
-                  onClick={() => this.handleClickSceneToggle(scene.id)}
+                <button
+                  key={scene.id}
+                  role='radio'
+                  aria-checked={includes(activeScenes, scene.id)}
                   className={`${SceneManager.baseClass}__btn ${includes(activeScenes, scene.id) ? `${SceneManager.baseClass}__btn--active` : ''}`}
-                  type='button'>
-
-                  <span className='visually-hidden'>{sceneVariant.name}</span>
+                  onClick={() => this.handleClickSceneToggle(scene.id)}
+                  onKeyDown={e => e.key === 'Enter' && this.handleClickSceneToggle(scene.id)}
+                  tabIndex={0}
+                >
                   <div role='presentation'>
                     <ImagePreloader preload={getThumbnailAssetArrayByScene(sceneVariant, surfaces)}>
                       {({ loading, error }) => (
@@ -247,7 +248,7 @@ export class SceneManager extends PureComponent<Props, State> {
             })}
           </div>
 
-          <div className={`${SceneManager.baseClass}__block ${SceneManager.baseClass}__block--scenes`}>
+          <div className={`${SceneManager.baseClass}__block ${SceneManager.baseClass}__block--scenes`} role='main'>
             {activeScenes.map((sceneId, index) => {
               const scene: Scene = scenes.filter(scene => (scene.id === sceneId))[0]
 

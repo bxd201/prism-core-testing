@@ -2,6 +2,7 @@
 import at from 'lodash/at'
 import chunk from 'lodash/chunk'
 import find from 'lodash/find'
+import sum from 'lodash/sum'
 import flattenDeep from 'lodash/flattenDeep'
 import intersection from 'lodash/intersection'
 import kebabCase from 'lodash/kebabCase'
@@ -16,9 +17,10 @@ import type { Color } from '../../../shared/types/Colors.js.flow'
 
 export const initialState: ColorsState = {
   status: {
-    loading: true,
+    loading: false,
     error: false,
-    activeRequest: false
+    activeRequest: false,
+    requestComplete: false
   },
   items: {},
   layouts: void (0),
@@ -55,7 +57,8 @@ export function getErrorState (state: ColorsState, error?: any) {
     status: {
       loading: false,
       error: error || true,
-      activeRequest: false
+      activeRequest: false,
+      requestComplete: true
     }
   }
 }
@@ -80,29 +83,54 @@ export function doReceiveColors (state: ColorsState, action: ReduxAction) {
   // Breaking apart and reforming color groups for ingestion by ColorSwatchList.
   // TODO: Move this logic into API in the future.
 
+  const emeraldStructure = ((colors, structure) => {
+    const emerald = structure.filter(s => s.name.indexOf('Emerald') > -1)[0]
+
+    if (!emerald) {
+      return undefined
+    }
+
+    const _colors = colors[emerald.name].map(aChunk => chunk(aChunk, 5))
+    return maximizeAllShortRows([
+      _colors[0].map((_, i) => _colors.map((aChunk, j) => aChunk[i]))
+    ])
+  })(colors, structure)
+
   // wide and thin
   const historicStructure = ((colors) => {
-    const _colors = flattenDeep(colors['Couleur Historique'] || colors['Historic Colour'] || colors['Historic Color']).map(id => colorMap[id])
+    const historic = colors['Couleur Historique'] || colors['Historic Colour'] || colors['Historic Color']
+
+    if (!historic) {
+      return undefined
+    }
+
+    const _colors = flattenDeep(historic).map(id => colorMap[id])
     const sorted = sortBy(_colors, c => c.id)
     // NOTE: these aren't actually divided by interior and exterior colors per our color data; they're just sorted by ID and then split 80/60
     const int = chunk(sorted.slice(0, 80).map(c => `${c.id}`), 8)
     const ext = chunk(sorted.slice(80, 140).map(c => `${c.id}`), 6)
 
-    return [int.map((row, i) => ([ row, ext[i] ]))]
+    return maximizeAllShortRows([int.map((row, i) => ([ row, ext[i] ]))])
   })(colors)
 
   // many short blocks
   const timelessStructure = ((colors) => {
-    const _colors = flattenDeep(colors['Couleur Intemporelle'] || colors['Timeless Colour'] || colors['Timeless Color']).map(id => colorMap[id])
+    const timeless = colors['Couleur Intemporelle'] || colors['Timeless Colour'] || colors['Timeless Color']
+
+    if (!timeless) {
+      return undefined
+    }
+
+    const _colors = flattenDeep(timeless).map(id => colorMap[id])
     const sorted = chunk(sortBy(_colors, c => c.storeStripLocator).map(c => c.id), 7)
     const rows = sorted.length
     const left = sorted.slice(0, rows / 2)
     const right = sorted.slice(rows / 2, rows)
 
-    return chunk(left.map((row, i) => ([
+    return maximizeAllShortRows(chunk(left.map((row, i) => ([
       row,
       right[i]
-    ])), 3)
+    ])), 3))
   })(colors)
 
   const swFamilies = structure.filter(section => section.name.indexOf('Sherwin-Williams') >= 0)[0].families
@@ -125,23 +153,24 @@ export function doReceiveColors (state: ColorsState, action: ReduxAction) {
 
     regularsRows.unshift(brightsRow)
 
-    return regularsRows
+    return maximizeAllShortRows(regularsRows)
   })()
 
   const getAFamily = (iFam) => {
     const brights = swStructureBrights[iFam]
     const rest = swStructure[iFam]
 
-    return [
+    return maximizeAllShortRows([
       [
         [brights]
       ],
       [...Array(rest[0].length)].map((_, iRow) => rest.map((_, iChunkCol) => rest[iChunkCol][iRow]))
-    ]
+    ])
   }
 
   const layouts = structure.map(section => {
     const { name, families } = section
+    const isEmerald = name.indexOf('Emerald') > -1
     const isHistoric = name.indexOf('Couleur Hist') === 0 || name.indexOf('Historic') === 0
     const isTimeless = name.indexOf('Couleur Intemporelle') === 0 || name.indexOf('Timeless') === 0
     let layout = [[[[]]]]
@@ -150,6 +179,8 @@ export function doReceiveColors (state: ColorsState, action: ReduxAction) {
       layout = historicStructure
     } else if (isTimeless) {
       layout = timelessStructure
+    } else if (isEmerald) {
+      layout = emeraldStructure
     } else {
       layout = swStructureAll
     }
@@ -159,7 +190,7 @@ export function doReceiveColors (state: ColorsState, action: ReduxAction) {
       layout,
       families: families.map((fam, i) => ({
         name: fam,
-        layout: isHistoric ? historicStructure : isTimeless ? timelessStructure : getAFamily(i)
+        layout: isHistoric ? historicStructure : isTimeless ? timelessStructure : isEmerald ? emeraldStructure : getAFamily(i)
       }))
     }
   })
@@ -182,8 +213,10 @@ export function doReceiveColors (state: ColorsState, action: ReduxAction) {
     layouts,
     status: {
       ...state.status,
-      loading: action.payload.loading,
-      activeRequest: action.payload.activeRequest
+      activeRequest: false,
+      error: false,
+      loading: false,
+      requestComplete: true
     }
   }
 
@@ -444,3 +477,53 @@ export function getSectionByName (sections: Section[] = [], name: string) {
     return compareKebabs(section.name, name)
   })
 }
+
+// -----------------------------------------------------
+// STRUCTURE (GRID) ANALYSIS AND AUGMENTATION
+// -----------------------------------------------------
+/**
+   * @description analyzes a grid structure to determine how many chunks are needed and how wide the chunks should be to make even columns
+   * @param {string[][][][]} structure a 4D structure of color IDs
+   */
+function findIdealStructure (structure) {
+  const colReducer = (prev, next) => {
+    if (prev) {
+      if (prev && next) {
+        if (next.length >= prev.length && sum(next) >= sum(prev)) {
+          return next
+        }
+      }
+      return prev
+    }
+    return next
+  }
+
+  return structure.map(chunkRow => chunkRow.map(row => row.map(chunkCol => chunkCol.length)).reduce(colReducer)).reduce(colReducer)
+}
+
+/**
+   * @description ensures all rows in a structure are filled with data to produce a squared grid, even if that data is undefined
+   * @param {string[][][][]} structure a 4D structure of color IDs
+   */
+function maximizeAllShortRows (structure) {
+  const ideal = findIdealStructure(structure)
+
+  return structure.map(chunkRow => chunkRow.map(row => ideal.map((chunkLength, i) => {
+    const chunk = row[i]
+
+    if (chunk) {
+      // check length
+      return [
+        ...chunk,
+        ...Array.from(Array(chunkLength - chunk.length))
+      ]
+    }
+
+    // if there's no chunk, create a new one and fill it with undefineds
+    return Array.from(Array(chunkLength))
+  })))
+}
+
+// -----------------------------------------------------
+// END STRUCTURE (GRID) ANALYSIS AND AUGMENTATION
+// -----------------------------------------------------

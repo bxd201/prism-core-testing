@@ -23,6 +23,7 @@
     "Blob": "readonly",
     "FileReader": "readonly",
     "Image": "readonly",
+    "ImageData": "readonly",
     "ML_API_URL": "readonly",
     "URL": "readonly",
     "Worker": "readonly",
