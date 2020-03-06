@@ -49,7 +49,7 @@ const getColorsFromMetadata = (surfaces: Object[]) => {
 
 const createColors = (sceneData: any, isTintableScene: boolean) => {
   const colors = isTintableScene ? getColorsFromMetadata(sceneData.sceneMetadata.scene.surfaces) : sceneData.palette
-  return colors.map((color, i) => {
+  return colors.filter(color => !!color).map((color, i) => {
     const { red, green, blue } = color
     return (
       <div
@@ -108,7 +108,7 @@ const SavedScene = (props: SavedSceneProps) => {
 
   const deleteScene = (e: SyntheticEvent) => {
     e.preventDefault()
-    props.deleteScene(props.sceneData.id)
+    props.deleteScene(props.sceneId)
   }
 
   const selectScene = (e: SyntheticEvent) => {
@@ -187,7 +187,7 @@ const SavedScene = (props: SavedSceneProps) => {
           </div>
         </div>
         {!props.hideSceneName ? <div className={sceneLabelClassName}>
-          {!props.hideSceneName && props.sceneData.name}
+          {props.useTintableScene ? props.sceneData.sceneMetadata.name : props.sceneData.name}
         </div> : null}
       </div>
     </div>
