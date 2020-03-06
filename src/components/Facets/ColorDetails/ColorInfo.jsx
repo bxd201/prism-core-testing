@@ -1,8 +1,6 @@
 // @flow
 import React from 'react'
 import { FormattedMessage } from 'react-intl'
-import kebabCase from 'lodash/kebabCase'
-
 import type { Color } from '../../../shared/types/Colors.js.flow'
 
 import 'src/scss/convenience/visually-hidden.scss'
@@ -16,9 +14,9 @@ function ColorInfo ({ color, familyLink }: Props) {
   return (
     <div className='color-info__details-tab-wrapper'>
       <h5 className='visually-hidden'><FormattedMessage id='DETAILS' /></h5>
-      {familyLink && color.colorFamilyNames.length &&
+      {familyLink &&
         <div className='color-info__chunk'>
-          <a className='view-family-link' href={familyLink + kebabCase(color.colorFamilyNames[0])}>
+          <a className='view-family-link' href={familyLink}>
               View all {color.colorFamilyNames[0]} paint colors →
           </a>
         </div>
