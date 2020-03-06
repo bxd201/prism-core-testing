@@ -7,6 +7,7 @@ export const SAVE_STOCK_SCENE = 'SAVE_STOCK_SCENE'
 export const SELECT_ANON_STOCK_SCENE = 'SELECT_ANON_STOCK_SCENE'
 export const DELETE_ANON_STOCK_SCENE = 'DELETE_ANON_STOCK_SCENE'
 export const DELETE_STOCK_SCENE = 'DELETE_STOCK_SCENE'
+export const UPDATE_STOCK_SAVED_SCENE_NAME = 'UPDATE_STOCK_SAVED_SCENE_NAME'
 
 export const saveStockScene = (id: string, sceneName: string, sceneData: object, sceneType: string) => {
   return (dispatch, getState) => {
@@ -63,5 +64,28 @@ export const deleteStockScene = (sceneId: string) => {
   return {
     type: DELETE_STOCK_SCENE,
     payload: sceneId
+  }
+}
+
+export const updateSavedStockSceneName = (sceneId: number | string, updatedSceneName: string) => {
+  return (dispatch, getState) => {
+    if (FIREBASE_AUTH_ENABLED) {
+      dispatch({
+        type: UPDATE_STOCK_SAVED_SCENE_NAME,
+        payload: {
+          id: sceneId,
+          name: updatedSceneName
+        }
+      })
+    } else {
+      // @todo - this should make an ajax call and resolve only if the server fulfills the request
+      dispatch({
+        type: UPDATE_STOCK_SAVED_SCENE_NAME,
+        payload: {
+          id: sceneId,
+          name: updatedSceneName
+        }
+      })
+    }
   }
 }

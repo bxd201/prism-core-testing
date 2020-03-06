@@ -43,6 +43,7 @@ const MyIdeas = (props: MyIdeasProps) => {
   const _sceneFetchTypes = new Set(sceneMetadata.filter(item => item.sceneFetchType).map(item => item.sceneFetchType))
   const sceneFetchTypes = Array.from(_sceneFetchTypes)
   const sceneData = useSceneData(sceneFetchTypes)
+  const [editedTintableIndividualScene, setEditedTintableIndividualScene] = useState(false)
 
   useEffect(() => {
     if (!savedScenes.length) {
@@ -160,8 +161,9 @@ const MyIdeas = (props: MyIdeasProps) => {
     e.preventDefault()
   }
 
-  const editIndividualScene = (scene: Object) => {
+  const editIndividualScene = (scene: Object, useTintableScene: boolean) => {
     setEditedIndividualScene(scene)
+    setEditedTintableIndividualScene(useTintableScene)
     setShowBack(true)
     props.setCardTitle(intl.messages.RENAME_SAVED_IDEA)
   }
@@ -188,7 +190,16 @@ const MyIdeas = (props: MyIdeasProps) => {
               </button>}
         </div>
         <div className={sectionClassName}>
-          {editedIndividualScene && <EditSavedScene showMyIdeas={showMyIdeas} sceneData={editedIndividualScene} width={296} height={204} selectScene={selectScene} />}
+          {editedIndividualScene &&
+            <EditSavedScene
+              showMyIdeas={showMyIdeas}
+              sceneData={(editedTintableIndividualScene) ? { scene: editedIndividualScene.scene, sceneMetadata: editedIndividualScene.sceneMetadata } : editedIndividualScene}
+              width={296}
+              height={196}
+              selectScene={editedTintableIndividualScene ? selectAnonStockScene : selectScene}
+              editedTintableIndividualScene={editedTintableIndividualScene}
+            />
+          }
           <div className={`${(editedIndividualScene) ? savedScenesWrapperHide : savedScenesWrapperShow}`}>{generateSavedScenes(savedScenes, stockScenes, sceneMetadata, editEnabled)}</div>
         </div>
       </div>

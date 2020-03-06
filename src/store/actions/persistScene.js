@@ -485,7 +485,7 @@ const fetchSavedScenesFromFirebase = (metadata: Object[], dispatch: Function, ge
     })
   } else {
     dispatch({
-      action: LOADING_SAVED_MASKS,
+      type: LOADING_SAVED_MASKS,
       payload: false
     })
   }

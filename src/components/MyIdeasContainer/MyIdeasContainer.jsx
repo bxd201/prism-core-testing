@@ -22,13 +22,14 @@ type MyIdeasContainerProps = {
 const MyIdeasContainer = (props: MyIdeasContainerProps) => {
   const dispatch = useDispatch()
   const selectedSceneId = useSelector(state => state.selectedSavedSceneId)
+  const selectedStockSceneId = useSelector(state => state.selectedStockSceneId)
   const [shouldRedirect, setShouldRedirect] = useState(false)
   // Record original selected scene value
   const [initialSceneId, setInitialSceneId] = useState(selectedSceneId)
   const { messages = {} } = useIntl()
 
   useEffect(() => {
-    if (selectedSceneId && initialSceneId !== selectedSceneId) {
+    if ((selectedSceneId && initialSceneId !== selectedSceneId) || (selectedStockSceneId && initialSceneId !== selectedStockSceneId)) {
       setShouldRedirect(true)
     }
   })
