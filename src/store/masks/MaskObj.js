@@ -16,6 +16,7 @@ export default class MaskObj {
   _path: string
   _width: number
   _height: number
+  _load: string
 
   // $FlowIgnore - enforce functionality of hasInstance through minification, but flow doesn't like it
   static [Symbol.hasInstance] (obj: MaskObj) {
@@ -57,6 +58,7 @@ export default class MaskObj {
             resolve(_this.path)
             _this._width = img.naturalWidth
             _this._height = img.naturalHeight
+            _this._load = load
           }))
 
           listeners.push(addListener(img, 'error', (err) => {
@@ -85,6 +87,10 @@ export default class MaskObj {
 
   get path () {
     return this._path
+  }
+
+  get load () {
+    return this._load
   }
 
   get imageData (): Promise<Uint8Array> | typeof undefined {

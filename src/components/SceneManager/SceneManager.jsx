@@ -33,6 +33,8 @@ import type { Color } from '../../shared/types/Colors.js.flow'
 import type { Scene, SceneStatus, SceneWorkspace, Surface, Variant } from '../../shared/types/Scene'
 
 import './SceneManager.scss'
+import 'src/scss/convenience/visually-hidden.scss'
+import SceneDownload from '../SceneDownload/SceneDownload'
 import DynamicModal from '../DynamicModal/DynamicModal'
 import { saveStockScene } from '../../store/actions/stockScenes'
 import { showSaveSceneModal } from '../../store/actions/persistScene'
@@ -110,7 +112,7 @@ export class SceneManager extends PureComponent<Props, State> {
   static defaultProps = {
     expertColorPicks: false,
     interactive: true,
-    maxActiveScenes: 2,
+    maxActiveScenes: 1,
     type: SCENE_TYPES.ROOM
   }
 
@@ -221,6 +223,19 @@ export class SceneManager extends PureComponent<Props, State> {
       return <div className={`${SceneManager.baseClass}__loader`}><CircleLoader /></div>
     }
 
+    const colors = []
+    sceneStatus.map((status) => {
+      status.surfaces.map((statusSurface) => {
+        if (statusSurface.color) {
+          colors.push(statusSurface.color)
+        }
+      })
+    })
+
+    const firstActiveSceneId = activeScenes[0]
+    const firstActiveScene: Scene = scenes.filter(scene => (scene.id === firstActiveSceneId))[0]
+    const firstActiveSceneInfo = getSceneInfoById(firstActiveScene, sceneStatus)
+
     return (
       <DndProvider backend={HTML5Backend}>
         <div className={SceneManager.baseClass} ref={this.wrapperRef}>
@@ -238,19 +253,26 @@ export class SceneManager extends PureComponent<Props, State> {
           <div className={`${SceneManager.baseClass}__block ${SceneManager.baseClass}__block--tabs`} role='radiogroup' aria-label='scene selector'>
             {scenes.map((scene, index) => {
               const sceneInfo = getSceneInfoById(scene, sceneStatus)
-              const sceneWorkspaces = this.props.sceneWorkspaces.filter(workspace => workspace.sceneId === scene.id)
+              const sceneWorkspaces = this.props.sceneWorkspaces.filter(
+                workspace => workspace.sceneId === scene.id
+              )
 
               if (!sceneInfo) {
-                console.warn(`Cannot find scene variant based on id ${scene.id}`)
-                return void (0)
+                console.warn(
+                  `Cannot find scene variant based on id ${scene.id}`
+                )
+                return void 0
               }
 
               const status: SceneStatus = sceneInfo.status
               const sceneVariant: Variant = sceneInfo.variant
               const surfaces: Surface[] = sceneInfo.surfaces
-              const activeMarker = includes(activeScenes, scene.id)
-                ? <FontAwesomeIcon icon={['fa', 'check']} className={`${SceneManager.baseClass}__flag`} />
-                : null
+              const activeMarker = includes(activeScenes, scene.id) ? (
+                <FontAwesomeIcon
+                  icon={['fa', 'check']}
+                  className={`${SceneManager.baseClass}__flag`}
+                />
+              ) : null
 
               return (
                 <button
@@ -295,7 +317,9 @@ export class SceneManager extends PureComponent<Props, State> {
 
           <div className={`${SceneManager.baseClass}__block ${SceneManager.baseClass}__block--scenes`} role='main'>
             {activeScenes.map((sceneId, index) => {
-              const scene: Scene = scenes.filter(scene => (scene.id === sceneId))[0]
+              const scene: Scene = scenes.filter(
+                scene => scene.id === sceneId
+              )[0]
 
               if (!scene) {
                 return null
@@ -304,8 +328,10 @@ export class SceneManager extends PureComponent<Props, State> {
               const sceneInfo = getSceneInfoById(scene, sceneStatus)
 
               if (!sceneInfo) {
-                console.warn(`Cannot find scene variant based on id ${scene.id}`)
-                return void (0)
+                console.warn(
+                  `Cannot find scene variant based on id ${scene.id}`
+                )
+                return void 0
               }
 
               const status: SceneStatus = sceneInfo.status
@@ -316,10 +342,12 @@ export class SceneManager extends PureComponent<Props, State> {
 
               // if we have more than one variant for this scene...
               if (scene.variant_names.length > 1) {
-              // if we have day and night variants...
-              // TODO: Remove this dayNightToggle check, this is for demonstration purposes
-                if (SceneVariantSwitch.DayNight.isCompatible(scene.variant_names)) {
-                // ... then create a day/night variant switch
+                // if we have day and night variants...
+                // TODO: Remove this dayNightToggle check, this is for demonstration purposes
+                if (
+                  SceneVariantSwitch.DayNight.isCompatible(scene.variant_names)
+                ) {
+                  // ... then create a day/night variant switch
                   variantSwitch = (
                     <SceneVariantSwitch.DayNight
                       currentVariant={status.variant}
@@ -366,6 +394,9 @@ export class SceneManager extends PureComponent<Props, State> {
             })}
           </div>
         </div>
+        <div>
+          <SceneDownload {...{ buttonCaption: 'DOWNLOAD_SCENE', colors: colors, sceneInfo: firstActiveSceneInfo }} />
+        </div>
       </DndProvider>
     )
   }
@@ -402,6 +433,7 @@ const mapStateToProps = (state, props) => {
     // NOTE: uncommenting this will sync scene type with redux data
     // we may not want that in case there are multiple instances with different scene collections running at once
     // type: state.scenes.type
+    // scenes.sceneStatus[<scenes.sceneStatus.sceneType>].rooms[roomIndex].surfaces[surfaceIndex].color
   }
 }
 

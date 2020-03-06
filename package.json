@@ -65,6 +65,7 @@
     "firebase": "^7.6.2",
     "hashids": "^2.2.1",
     "immutability-helper": "3.0.1",
+    "jimp": "^0.9.3",
     "lodash": "4.17.15",
     "pako": "^1.0.10",
     "react-aria-live": "2.0.5",
