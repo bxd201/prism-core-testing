@@ -186,7 +186,6 @@ class TintableScene extends PureComponent<Props, State> {
         return sceneWorkspaces.imageData
       }
     }
-
     return surface.mask.path
   }
 
@@ -216,41 +215,11 @@ class TintableScene extends PureComponent<Props, State> {
         <Fragment>
           {!loading && (
             <Fragment>
-              <div className={`${TintableScene.classNames.base}__svg-defs`}>
-                <TransitionGroup className={`${TintableScene.classNames.transition}__svg-defs`}>
-                  {surfaces.map((surface, index) => {
-                    const { mask, highlights, shadows, id } = surface
-                    const tintColor: ?Color = this.getTintColorBySurface(surface)
-                    if (tintColor && mask) {
-                      return (
-                        <CSSTransition
-                          key={`${id}_${tintColor.hex}`}
-                          timeout={varValues.scenes.tintTransitionTime}
-                          mountOnEnter
-                          classNames={`${TintableScene.classNames.transition}__svg-defs__def-`}>
-                          <TintableSceneSVGDefs
-                            type={type}
-                            width={width}
-                            height={height}
-                            highlightMap={highlights ? ensureFullyQualifiedAssetUrl(highlights) : undefined}
-                            shadowMap={shadows ? ensureFullyQualifiedAssetUrl(shadows) : undefined}
-                            filterId={getFilterId(instanceId, id, tintColor.hex)}
-                            filterColor={tintColor.hex}
-                            filterImageValueCurve={imageValueCurve}
-                            maskId={getMaskId(instanceId, id, tintColor.hex)}
-                            maskImage={this.getMaskImage(surface)}
-                          />
-                        </CSSTransition>
-                      )
-                    }
-                  })}
-                </TransitionGroup>
-              </div>
-
               <div className={`${TintableScene.classNames.base}__tint-wrapper`}>
                 <img className={`${TintableScene.classNames.base}__natural`} src={_background} alt={sceneName} />
                 <TransitionGroup className={`${TintableScene.classNames.transition}__colors`}>
                   {surfaces.map((surface: Surface, index) => {
+                    const { highlights, shadows, id } = surface
                     const tintColor: ?Color = this.getTintColorBySurface(surface)
                     if (tintColor) {
                       return (
@@ -258,15 +227,26 @@ class TintableScene extends PureComponent<Props, State> {
                           key={`${surface.id}_${tintColor.hex}`}
                           timeout={varValues.scenes.tintTransitionTime}
                           mountOnEnter
-                          classNames={`${TintableScene.classNames.transition}__colors__color-`}>
+                          classNames={`${TintableScene.classNames.transition}__colors__color-`} >
                           <TintableSceneSurface
                             type={type}
                             image={_background}
                             width={width}
                             height={height}
                             maskId={getMaskId(instanceId, surface.id, tintColor.hex)}
-                            filterId={getFilterId(instanceId, surface.id, tintColor.hex)}
-                          />
+                            filterId={getFilterId(instanceId, surface.id, tintColor.hex)} >
+                            <TintableSceneSVGDefs
+                              type={type}
+                              width={width}
+                              height={height}
+                              highlightMap={ensureFullyQualifiedAssetUrl(highlights)}
+                              shadowMap={ensureFullyQualifiedAssetUrl(shadows)}
+                              filterId={getFilterId(instanceId, id, tintColor.hex)}
+                              filterColor={tintColor.hex}
+                              filterImageValueCurve={imageValueCurve}
+                              maskId={getMaskId(instanceId, id, tintColor.hex)}
+                              maskImage={this.getMaskImage(surface)} />
+                          </TintableSceneSurface>
                         </CSSTransition>
                       )
                     }
