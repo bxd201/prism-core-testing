@@ -2,11 +2,13 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import uniqueId from 'lodash/uniqueId'
 import * as deeplab from '@tensorflow-models/deeplab'
+import intersection from 'lodash/intersection'
 
 import FileInput from '../../FileInput/FileInput'
 import GenericOverlay from '../../Overlays/GenericOverlay/GenericOverlay'
 
 import { loadImage, getImageRgbaData, createCanvasElementWithData } from './utils'
+import { desiredLabels } from './RoomTypeDetector.constants'
 
 import facetBinder from 'src/facetSupport/facetBinder'
 import GenericMessage from '../../Messages/GenericMessage'
@@ -56,7 +58,7 @@ function getObjectPixels (imageData, label, src) {
 
 const loadModel = async () => {
   const modelName = 'ade20k' // set to your preferred model, either `pascal`, `cityscapes` or `ade20k`
-  const quantizationBytes = 2 // either 1, 2 or 4
+  const quantizationBytes = 4 // either 1, 2 or 4
 
   // eslint-disable-next-line no-return-await
   return await deeplab.load({ base: modelName, quantizationBytes })
@@ -115,13 +117,15 @@ const RoomTypeDetector = () => {
           // need to save this canvas element so we can render it
           setSegmentationImagePath(createCanvasElementWithData(segmentationImgData, width, height).toDataURL())
 
-          /** HAHAH Let's see how slow this is if we get every single object */
-          const labels = Object.keys(results.legend)
+          // get every object based on the provided labels that are returned and cross checking that with the
+          // list of labels we care about.
+          const labels = Object.keys(legend)
+          const relevantLabels = intersection(desiredLabels, labels)
           const displayedLabels = []
           const roomPieces = []
           const sourceImageSize = sourceImgData.data.length / 4
 
-          labels.forEach(label => {
+          relevantLabels.forEach(label => {
             // this can maybe just be segmentationMap
             const legendColor = legend[label]
             const roomObjPixels = getObjectPixels(segmentationMap, legendColor, sourceImgData.data)
@@ -144,10 +148,8 @@ const RoomTypeDetector = () => {
 
           setRoomPieces(roomPieces)
           setDisplayedLabels(displayedLabels)
-          setLabels(labels)
+          setLabels(relevantLabels)
           setIsProcessing(false)
-
-          /** ************************************************************** */
         }).catch(error => {
           console.error(error)
           setError('The image segmentation process encountered an error.')
