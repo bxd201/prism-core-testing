@@ -17,7 +17,7 @@ import RoomPiece from './RoomPiece'
 import Card from './Card'
 
 const FILE_UPLOAD_ID = uniqueId('roomTypeDetectorFileUpload_')
-const VALID_SEGMENT_THRESHHOLD = 0.03
+const VALID_SEGMENT_THRESHHOLD = 0.02
 
 // get the object out of the original image
 function getObjectPixels (imageData, label, src) {
@@ -56,7 +56,7 @@ function getObjectPixels (imageData, label, src) {
 
 const loadModel = async () => {
   const modelName = 'ade20k' // set to your preferred model, either `pascal`, `cityscapes` or `ade20k`
-  const quantizationBytes = 2 // either 1, 2 or 4
+  const quantizationBytes = 4 // either 1, 2 or 4
 
   // eslint-disable-next-line no-return-await
   return await deeplab.load({ base: modelName, quantizationBytes })
@@ -129,8 +129,10 @@ const RoomTypeDetector = () => {
             // get sizes of array
             const maskedImageSize = roomObjPixels.filter((v, i) => (i + 1) % 4 === 0).filter(v => v > 0).length
 
+            const segmentPct = Math.round(sourceImageSize * VALID_SEGMENT_THRESHHOLD)
+            console.info(`${label} is ${maskedImageSize} ${segmentPct}% of the whole`)
             // only return objects that are xx% of the original image size
-            if (maskedImageSize > Math.round(sourceImageSize * VALID_SEGMENT_THRESHHOLD)) {
+            if (maskedImageSize > segmentPct) {
               displayedLabels.push(label)
               roomPieces.push({
                 label,

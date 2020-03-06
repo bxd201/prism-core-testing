@@ -35,8 +35,9 @@ const Swatches = (props: SwatchesProps) => {
     if (palette) {
       return sortBy(palette.map((rgb: RgbArr) => tinycolor(`rgb(${rgb.join(',')})`)).filter(tc => {
         const sat = tc.toHsl().s
+        const l = tc.toHsl().l
         // colors need to be at least 50% saturated to be considered part of our palette
-        return sat > 0.2
+        return sat > 0.2 && l < 0.9 && l > 0.1
       }), tc => {
         // order from most to least saturated
         return 1 - tc.toHsl().s
