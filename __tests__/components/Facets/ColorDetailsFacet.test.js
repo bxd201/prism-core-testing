@@ -3,9 +3,11 @@ import { ColorDetailsPage } from 'src/components/Facets/ColorDetailsFacet'
 import { fireEvent, within } from '@testing-library/dom'
 import memoizee from 'memoizee'
 
+const FAMILY_LINK = 'testFamilyLink'
+
 test('<ColorDetailsFacet colorSEO=\'sw-6475-country-squire\' subscribe={...} />', async () => {
   const { findByText, findByLabelText, findByRole } = render(
-    <ColorDetailsPage colorSEO='sw-6475-country-squire' subscribe={memoizee((key, callbackfn) => { callbackfn('/') })} />
+    <ColorDetailsPage colorSEO='sw-6475-country-squire' subscribe={memoizee((key, callbackfn) => { callbackfn(FAMILY_LINK) })} />
   )
   // shows "SW 6475" and it's coordinating colors by default
   await findByText('SW 6475')
@@ -20,7 +22,7 @@ test('<ColorDetailsFacet colorSEO=\'sw-6475-country-squire\' subscribe={...} />'
 
   // after clicking the details tab, the "View all Blue paint colors →" link and the "#124a42" hex value is displayed
   await fireEvent.click(await findByText('Details'))
-  expect(await findByText('View all Blue paint colors →')).toHaveAttribute('href', '/blue')
+  expect(await findByText('View all Blue paint colors →')).toHaveAttribute('href', `${FAMILY_LINK}`)
   await findByText('#124a42')
 
   // the radiogroup section has images for all 5 scenes

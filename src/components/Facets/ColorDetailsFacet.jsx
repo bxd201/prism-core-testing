@@ -25,7 +25,7 @@ type Props = {
 export const ColorDetailsPage = ({ colorSEO, publish, subscribe }: Props) => {
   loadColors('sherwin')(useDispatch())
 
-  const [familyLink, setFamilyLink] = useState('not set')
+  const [familyLink, setFamilyLink] = useState()
   subscribe('prism-family-link', setFamilyLink)
 
   const colorMap: ColorMap = useSelector(state => state.colors.items.colorMap, shallowEqual)
