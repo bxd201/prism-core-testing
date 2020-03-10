@@ -143,7 +143,7 @@ const SavedScene = (props: SavedSceneProps) => {
 
   return (
     <div className={`${sceneClassName} ${(props.isImgWidthPixel) ? sceneIndividual : sceneCarousel}`}>
-      {backgroundImageSrc  && !props.useTintableScene ? <PrismImage
+      {backgroundImageSrc && !props.useTintableScene ? <PrismImage
         ref={imageRef}
         source={backgroundImageSrc}
         loadedCallback={handleBackgroundImageLoaded}
