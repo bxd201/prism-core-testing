@@ -13,7 +13,7 @@ import { RouteContext } from '../../contexts/RouteContext/RouteContext'
 import ColorPalette from './ColorPalette'
 import CardMenu from 'src/components/CardMenu/CardMenu'
 import { selectSavedScene, SCENE_TYPE } from '../../store/actions/persistScene'
-import { selectSavedAnonStockScene } from '../../store/actions/stockScenes'
+import { selectSavedAnonStockScene, setSelectedSceneStatus } from '../../store/actions/stockScenes'
 import { StaticTintScene } from '../CompareColor/StaticTintScene'
 
 type myIdeaPreviewProps = {
@@ -204,6 +204,7 @@ const MyIdeaPreview = (props: myIdeaPreviewProps) => {
           initialWidth,
           initialHeight))
       } else if (selectedScene.savedSceneType === SCENE_TYPE.anonStock) {
+        dispatch(setSelectedSceneStatus(selectedScene))
         return routeContext.redirectMyIdeas(true, selectedScene.expectStockData.scene.id)
       }
     }

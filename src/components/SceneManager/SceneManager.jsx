@@ -39,6 +39,7 @@ import DynamicModal from '../DynamicModal/DynamicModal'
 import { saveStockScene } from '../../store/actions/stockScenes'
 import { showSaveSceneModal } from '../../store/actions/persistScene'
 import { createUniqueSceneId } from '../../shared/utils/legacyProfileFormatUtil'
+import { replaceSceneStatus } from '../../shared/utils/sceneUtil'
 
 const getRefDimension = (ref, dimName) => ref && ref.current ? ref.current.getBoundingClientRect()[dimName] : 0
 
@@ -98,7 +99,8 @@ type Props = {
   intl: any,
   saveStockScene: Function,
   currentSceneType: string,
-  saveSceneName: string
+  saveSceneName: string,
+  selectedSceneStatus: Object
 }
 
 type State = {
@@ -405,6 +407,7 @@ export class SceneManager extends PureComponent<Props, State> {
 const mapStateToProps = (state, props) => {
   let activeColor = void (0)
   let previewColor = void (0)
+  const scenes = state.selectedSceneStatus ? replaceSceneStatus(state.scenes, state.selectedSceneStatus) : state.scenes
 
   if (state.lp.activeColor) {
     activeColor = state.lp.activeColor
@@ -415,11 +418,11 @@ const mapStateToProps = (state, props) => {
   }
 
   return {
-    scenes: state.scenes.sceneCollection[state.scenes.type],
-    sceneStatus: state.scenes.sceneStatus[state.scenes.type],
-    numScenes: state.scenes.numScenes,
-    activeScenes: state.scenes.activeScenes,
-    loadingScenes: state.scenes.loadingScenes,
+    scenes: scenes.sceneCollection[state.scenes.type],
+    sceneStatus: scenes.sceneStatus[state.scenes.type],
+    numScenes: scenes.numScenes,
+    activeScenes: scenes.activeScenes,
+    loadingScenes: scenes.loadingScenes,
     activeColor: activeColor,
     previewColor: previewColor,
     // @todo - the idea is the scene workspace is the data object created by the mask editor.
@@ -429,7 +432,8 @@ const mapStateToProps = (state, props) => {
     showSaveSceneModalFlag: state.showSaveSceneModal,
     // Created this to prevent the syncing warned below
     currentSceneType: state.scenes.type,
-    saveSceneName: state.saveSceneName
+    saveSceneName: state.saveSceneName,
+    selectedSceneStatus: state.selectedSceneStatus
     // NOTE: uncommenting this will sync scene type with redux data
     // we may not want that in case there are multiple instances with different scene collections running at once
     // type: state.scenes.type
