@@ -56,4 +56,9 @@ export const KEY_CODES = Object.freeze({
 
 export const GOOGLE_ANALYTICS_UID = 'UA-130955316-1'
 
-export const IS_IE = !!window.document.documentMode
+export const IS_IE = (() => {
+  if (typeof window !== 'undefined') {
+    return !!window.document.documentMode
+  }
+  return false
+})()
