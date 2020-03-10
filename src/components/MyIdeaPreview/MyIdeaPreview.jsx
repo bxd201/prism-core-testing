@@ -12,6 +12,9 @@ import { MY_IDEAS } from '../Facets/ColorVisualizerWrapper/ColorVisualizerWrappe
 import { RouteContext } from '../../contexts/RouteContext/RouteContext'
 import ColorPalette from './ColorPalette'
 import CardMenu from 'src/components/CardMenu/CardMenu'
+import { selectSavedScene, SCENE_TYPE } from '../../store/actions/persistScene'
+import { selectSavedAnonStockScene } from '../../store/actions/stockScenes'
+import { StaticTintScene } from '../CompareColor/StaticTintScene'
 
 type myIdeaPreviewProps = {
   // @todo implement -RS
@@ -48,7 +51,7 @@ const getZoomWidthAndHeight = (dimensions, width, height) => {
 
 export const RedirectMyIdeas = () => {
   const routeContext = useContext(RouteContext)
-  routeContext.redirectMyIdeas()
+  routeContext.redirectMyIdeas(false, null)
   return null
 }
 
@@ -60,20 +63,29 @@ const MyIdeaPreview = (props: myIdeaPreviewProps) => {
   const wrapperRef = useRef()
 
   const selectedScene = useSelector(state => {
-    const id = state.selectedSavedSceneId
-    const selectedScene = state.scenesAndRegions.filter(scene => scene.id === id)
-    if (selectedScene.length) {
-      return selectedScene[0]
+    if (state.selectedStockSceneId) {
+      const expectStockData = state.sceneMetadata.find(item => item.sceneType === SCENE_TYPE.anonStock && item.id === state.selectedStockSceneId)
+      if (expectStockData) {
+        const stockSceneData = state.scenes.sceneCollection[expectStockData.sceneFetchType].find(item => item.id === expectStockData.scene.id)
+        const palette = expectStockData.scene.surfaces.map(surface => surface.color).filter(color => color !== undefined)
+        return { name: expectStockData.name, palette: palette, savedSceneType: SCENE_TYPE.anonStock, stockSceneData: stockSceneData, expectStockData: expectStockData }
+      }
     }
-
+    if (state.selectedSavedSceneId) {
+      const selectedScene = state.scenesAndRegions.filter(scene => scene.id === state.selectedSavedSceneId)
+      if (selectedScene.length) {
+        selectedScene[0].savedSceneType = SCENE_TYPE.anonCustom
+        return selectedScene[0]
+      }
+    }
     return null
   })
 
   const paintSceneWorkSpace = useSelector(state => state.paintSceneWorkspace)
 
   const { renderingBaseUrl, backgroundImageUrl } = selectedScene || {}
-  const initialWidth = selectedScene ? selectedScene.surfaceMasks.width : 0
-  const initialHeight = selectedScene ? selectedScene.surfaceMasks.height : 0
+  const initialWidth = selectedScene && selectedScene.savedSceneType === SCENE_TYPE.anonCustom ? selectedScene.surfaceMasks.width : 0
+  const initialHeight = selectedScene && selectedScene.savedSceneType === SCENE_TYPE.anonCustom ? selectedScene.surfaceMasks.height : 0
   // eslint-disable-next-line no-unused-vars
   const [width, setWidth] = useState(initialWidth)
   // eslint-disable-next-line no-unused-vars
@@ -123,6 +135,8 @@ const MyIdeaPreview = (props: myIdeaPreviewProps) => {
 
     return function cleanup () {
       window.removeEventListener('resize', resizeHandler)
+      dispatch(selectSavedScene(null))
+      dispatch(selectSavedAnonStockScene(null))
     }
   }, [])
 
@@ -147,47 +161,83 @@ const MyIdeaPreview = (props: myIdeaPreviewProps) => {
 
   const openProject = (e: SyntheticEvent) => {
     e.preventDefault()
+    const openPaintedProject = e.currentTarget.dataset.buttonid === 'painted' && true
     if (routeContext.checkIsPaintScenePolluted()) {
-      routeContext.showWarningModalMyIdeas(
-        {
-          backgroundCanvasRef: backgroundCanvasRef.current.toDataURL(),
-          layersRef: layersRef.current,
-          selectedScenePalette: selectedScene.palette,
-          initialWidth: initialWidth,
-          initialHeight: initialHeight
-        }
-      )
+      if (selectedScene.savedSceneType === SCENE_TYPE.anonCustom) {
+        routeContext.showWarningModalMyIdeas(
+          {
+            backgroundCanvasRef: backgroundCanvasRef.current.toDataURL(),
+            layersRef: openPaintedProject ? layersRef.current : null,
+            selectedScenePalette: selectedScene.palette,
+            initialWidth: initialWidth,
+            initialHeight: initialHeight,
+            isPaintSceneProject: true
+          }
+        )
+      } else if (selectedScene.savedSceneType === SCENE_TYPE.anonStock) {
+        routeContext.showWarningModalMyIdeas({ isPaintSceneProject: false, tmpActiveId: selectedScene.expectStockData.scene.id })
+      }
+    } else if (routeContext.checkIsStockScenePolluted()) {
+      if (selectedScene.savedSceneType === SCENE_TYPE.anonCustom) {
+        routeContext.showWarningModalMyIdeas(
+          {
+            backgroundCanvasRef: backgroundCanvasRef.current.toDataURL(),
+            layersRef: openPaintedProject ? layersRef.current : null,
+            selectedScenePalette: selectedScene.palette,
+            initialWidth: initialWidth,
+            initialHeight: initialHeight,
+            isPaintSceneProject: true,
+            isStockScenePolluted: true
+          }
+        )
+      } else if (selectedScene.savedSceneType === SCENE_TYPE.anonStock) {
+        routeContext.showWarningModalMyIdeas({
+          isPaintSceneProject: false, isStockScenePolluted: true, tmpActiveId: selectedScene.expectStockData.scene.id
+        })
+      }
     } else {
-      dispatch(setLayersForPaintScene(
-        backgroundCanvasRef.current.toDataURL(),
-        layersRef.current,
-        selectedScene.palette,
-        initialWidth,
-        initialHeight))
+      if (selectedScene.savedSceneType === SCENE_TYPE.anonCustom) {
+        dispatch(setLayersForPaintScene(
+          backgroundCanvasRef.current.toDataURL(),
+          openPaintedProject ? layersRef.current : null,
+          selectedScene.palette,
+          initialWidth,
+          initialHeight))
+      } else if (selectedScene.savedSceneType === SCENE_TYPE.anonStock) {
+        return routeContext.redirectMyIdeas(true, selectedScene.expectStockData.scene.id)
+      }
     }
   }
 
-  const openUnpaintedProject = (e: SyntheticEvent) => {
-    e.preventDefault()
-    if (routeContext.checkIsPaintScenePolluted()) {
-      routeContext.showWarningModalMyIdeas(
-        {
-          backgroundCanvasRef: backgroundCanvasRef.current.toDataURL(),
-          layersRef: null,
-          selectedScenePalette: selectedScene.palette,
-          initialWidth: initialWidth,
-          initialHeight: initialHeight
-        }
-      )
-    } else {
-      dispatch(setLayersForPaintScene(
-        backgroundCanvasRef.current.toDataURL(),
-        null,
-        selectedScene.palette,
-        initialWidth,
-        initialHeight))
-    }
-  }
+  // const openUnpaintedProject = (e: SyntheticEvent) => {
+  //   e.preventDefault()
+  //   if (routeContext.checkIsPaintScenePolluted()) {
+  //     if (selectedScene.savedSceneType === SCENE_TYPE.anonCustom) {
+  //       routeContext.showWarningModalMyIdeas(
+  //         {
+  //           backgroundCanvasRef: backgroundCanvasRef.current.toDataURL(),
+  //           layersRef: null,
+  //           selectedScenePalette: selectedScene.palette,
+  //           initialWidth: initialWidth,
+  //           initialHeight: initialHeight
+  //         }
+  //       )
+  //     } else if (selectedScene.savedSceneType === SCENE_TYPE.anonStock) {
+  //       routeContext.showWarningModalMyIdeas({})
+  //     }
+  //   } else {
+  //     if (selectedScene.savedSceneType === SCENE_TYPE.anonCustom) {
+  //       dispatch(setLayersForPaintScene(
+  //         backgroundCanvasRef.current.toDataURL(),
+  //         null,
+  //         selectedScene.palette,
+  //         initialWidth,
+  //         initialHeight))
+  //     } else if (selectedScene.savedSceneType === SCENE_TYPE.anonStock) {
+  //       // routeContext.showWarningModalMyIdeas({})
+  //     }
+  //   }
+  // }
 
   return (
     <>
@@ -197,7 +247,7 @@ const MyIdeaPreview = (props: myIdeaPreviewProps) => {
       <CardMenu menuTitle={`${(selectedScene && selectedScene.name) ? selectedScene.name : ``}`} showBackByDefault backPath={MY_IDEAS}>
         {() => (
           <div ref={wrapperRef} className={wrapperClass} style={{ minHeight: Math.round(height * heightCrop) }}>
-            {selectedScene ? <MergeColors
+            {(selectedScene && selectedScene.savedSceneType === SCENE_TYPE.anonCustom) ? <MergeColors
               imageDataList={selectedScene.surfaceMasks.surfaces.map(surface => surface.surfaceMaskImageData)}
               handleImagesMerged={loadMergedImage}
               width={initialWidth}
@@ -207,11 +257,14 @@ const MyIdeaPreview = (props: myIdeaPreviewProps) => {
                 return { r: color.red, g: color.green, b: color.blue }
               })}
               preserveLayers /> : null}
-            <div className={canvasOverlayWrapper}>
+            {(selectedScene && selectedScene.savedSceneType === SCENE_TYPE.anonCustom) ? <div className={canvasOverlayWrapper}>
               <canvas ref={foregroundCanvasRef} width={initialWidth} height={initialHeight} style={{ width, height }} className={overlayedCanvas} />
               <canvas ref={backgroundCanvasRef} width={initialWidth} height={initialHeight} style={{ width, height, opacity: 0.8 }} />
               <canvas ref={utilityCanvasRef} width={initialWidth} height={initialHeight} style={{ width, height, opacity: 0, visibility: 'hidden', display: 'none' }} />
-            </div>
+            </div> : (selectedScene && selectedScene.savedSceneType === SCENE_TYPE.anonStock) ? <StaticTintScene
+              colors={selectedScene.palette}
+              scene={selectedScene.stockSceneData}
+              statuses={selectedScene.expectStockData.scene.surfaces} /> : null}
             {backgroundImageSrc ? <PrismImage
               ref={backgroundImageRef}
               source={backgroundImageSrc}
@@ -230,8 +283,8 @@ const MyIdeaPreview = (props: myIdeaPreviewProps) => {
             /> : null}
             <div className={actionButtonWrapperClassName}>
               <div className={actionButtonInnerWrapperClassName}>
-                <button className={buttonClassName} onClick={openProject}>{intl.messages['MY_IDEAS.OPEN_PROJECT'].toUpperCase()}</button>
-                <button className={buttonClassName} onClick={openUnpaintedProject}>{intl.messages['MY_IDEAS.OPEN_UNPAINTED'].toUpperCase()}</button>
+                <button data-buttonid='painted' className={buttonClassName} onClick={openProject}>{intl.messages['MY_IDEAS.OPEN_PROJECT'].toUpperCase()}</button>
+                <button data-buttonid='unpainted' className={buttonClassName} onClick={openProject}>{intl.messages['MY_IDEAS.OPEN_UNPAINTED'].toUpperCase()}</button>
               </div>
             </div>
             {selectedScene && selectedScene.palette && <ColorPalette palette={selectedScene.palette.slice(0, 8)} />}

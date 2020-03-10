@@ -16,7 +16,7 @@ import { StaticTintScene } from '../CompareColor/StaticTintScene'
 type SavedSceneProps = {
   sceneData: Object,
   editEnabled: boolean,
-  deleteScene: Function,
+  deleteScene?: Function,
   selectScene: Function,
   width: number,
   height: number,
@@ -87,7 +87,7 @@ const SavedScene = (props: SavedSceneProps) => {
   useEffect(() => {
     let backgroundImageUrl = ''
     const variant = getStockSceneVariant(props.useTintableScene, props.sceneData)
-    const stockSceneBackgroundUrl = variant ? variant.thumb : null
+    const stockSceneBackgroundUrl = variant ? variant.image : null
 
     if (props.sceneData.renderingBaseUrl) {
       // @todo props approach, having CORS issues in dev... -RS
@@ -113,7 +113,7 @@ const SavedScene = (props: SavedSceneProps) => {
 
   const selectScene = (e: SyntheticEvent) => {
     if (props.editEnabled) {
-      props.editIndividualScene(props.sceneData)
+      props.editIndividualScene(props.sceneData, !!props.useTintableScene)
       return
     }
 

@@ -12,7 +12,7 @@ import {
   LOADING_SAVED_MASKS, ERROR_DOWNLOADING_SAVED_DATA, SHOW_SAVE_SCENE_MODAL, RESET_SAVE_STATE,
   UPDATE_ANON_SAVED_SCENE_NAME, SCENE_TYPE
 } from '../actions/persistScene'
-import { DELETE_ANON_STOCK_SCENE, SAVE_ANON_STOCK_SCENE, SELECT_ANON_STOCK_SCENE } from '../actions/stockScenes'
+import { DELETE_ANON_STOCK_SCENE, SAVE_ANON_STOCK_SCENE, SELECT_ANON_STOCK_SCENE, UPDATE_STOCK_SAVED_SCENE_NAME } from '../actions/stockScenes'
 import { SCENE_TYPES } from '../../constants/globals'
 import { cloneDeep } from 'lodash'
 export const legacySavedScenesMetadata = (state: Object[] = [], action: { type: string, payload: Object }) => {
@@ -118,6 +118,17 @@ export const sceneMetadata = (state: Object[] = [], action: {type: string, paylo
   if (action.type === DELETE_ANON_STOCK_SCENE) {
     newState = state.filter(item => item.id !== action.payload)
     return newState
+  }
+
+  if (action.type === UPDATE_STOCK_SAVED_SCENE_NAME) {
+    const sceneDataFromState = state.find(item => item.id === action.payload.id)
+    if (sceneDataFromState) {
+      const newState = state.filter(item => item.id !== action.payload.id)
+      newState.push({ ...sceneDataFromState, name: action.payload.name })
+      return newState
+    }
+
+    return state
   }
 
   return state
