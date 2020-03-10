@@ -423,14 +423,14 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
                 : ''
             }
             {
-              ((imageUrl && isPaintScene && pins.length > 0) || isFromMyIdeas)
+              ((imageUrl && isPaintScene && pins.length > 0) || (isFromMyIdeas && paintSceneWorkspaceState.bgImageUrl !== undefined))
                 ? (<React.Fragment>
                   <PaintScene checkIsPaintSceneUpdate={checkIsPaintSceneUpdate} imageUrl={imageUrl} workspace={paintSceneWorkspaceState} imageRotationAngle={imageRotationAngle} referenceDimensions={imageDims} width={wrapperWidth} />
                 </React.Fragment>)
                 : ''
             }
             {
-              (!imageUrl && !isPaintScene && !paintSceneWorkspaceState)
+              (!imageUrl && !isPaintScene && paintSceneWorkspaceState.bgImageUrl === undefined)
                 ? (<canvas className={canvasClass} name='canvas' width='600' height='600' />)
                 : ''
             }

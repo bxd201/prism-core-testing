@@ -241,6 +241,7 @@ const MyIdeas = (props: MyIdeasProps) => {
 
 const SavedSceneWrapper = (props: any) => {
   let scene = null
+  const { handlePrev, handleNext, itemNumber, itemsPerView, totalItems } = props
 
   if (props.data.sceneType === SCENE_TYPE.anonStock) {
     // handle stock scenes
@@ -264,7 +265,12 @@ const SavedSceneWrapper = (props: any) => {
       deleteScene={props.deleteScene}
       selectScene={props.selectAnonStockScene}
       editIndividualScene={props.editIndividualScene}
-      useTintableScene />
+      useTintableScene
+      handlePrev={handlePrev}
+      handleNext={handleNext}
+      itemNumber={itemNumber}
+      itemsPerView={itemsPerView}
+      totalItems={totalItems} />
   }
   // Handle custom scenes
   scene = props.baseSceneData.customScenes.find(item => props.data.scene.indexOf(item.id) > -1)
@@ -278,7 +284,12 @@ const SavedSceneWrapper = (props: any) => {
       sceneId={scene.id}
       deleteScene={props.deleteScene}
       selectScene={props.selectScene}
-      editIndividualScene={props.editIndividualScene} />
+      editIndividualScene={props.editIndividualScene}
+      handlePrev={handlePrev}
+      handleNext={handleNext}
+      itemNumber={itemNumber}
+      itemsPerView={itemsPerView}
+      totalItems={totalItems} />
   }
 
   return null

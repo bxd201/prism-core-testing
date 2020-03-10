@@ -24,7 +24,12 @@ type SavedSceneProps = {
   hideSceneName?: boolean,
   useTintableScene?: boolean,
   sceneId: string,
-  isImgWidthPixel?: boolean
+  isImgWidthPixel?: boolean,
+  handlePrev?: Function,
+  handleNext?: Function,
+  itemNumber?: number,
+  itemsPerView?: number,
+  totalItems?: number
 }
 
 const FIXED_WIDTH = 120
@@ -133,7 +138,11 @@ const SavedScene = (props: SavedSceneProps) => {
   }
 
   const handleKeyDown = (e: SyntheticEvent) => {
-    if (e.keyCode === KEY_CODES.KEY_CODE_ENTER || e.keyCode === KEY_CODES.KEY_CODE_SPACE) {
+    if (e.shiftKey && e.keyCode === KEY_CODES.KEY_CODE_TAB) {
+      if (props.itemNumber !== 1 && props.itemNumber % props.itemsPerView === 1) props.handlePrev()
+    } else if (e.keyCode === KEY_CODES.KEY_CODE_TAB) {
+      if (props.itemNumber !== props.totalItems && props.itemNumber % props.itemsPerView === 0) props.handleNext()
+    } else if (e.keyCode === KEY_CODES.KEY_CODE_ENTER || e.keyCode === KEY_CODES.KEY_CODE_SPACE) {
       if (props.editEnabled) {
         props.editIndividualScene(props.sceneData)
       } else selectScene(e)
@@ -178,7 +187,7 @@ const SavedScene = (props: SavedSceneProps) => {
             {!props.useTintableScene ? <div className={thumbnailClassName} style={{ width: `${props.width || FIXED_WIDTH}${props.isImgWidthPixel ? `px` : `%`}`, height: `${props.height || FIXED_HEIGHT}px` }}>
               {thumbnailUrl ? <img style={{ width: `${props.width || FIXED_WIDTH}${props.isImgWidthPixel ? `px` : `%`}` }} src={thumbnailUrl} alt={`${intl.messages['MY_IDEAS.PREVIEW']}: ${props.sceneData.name}`} /> : <CircleLoader />}
             </div> : null}
-            {props.useTintableScene ? <div className={thumbnailClassName} style={{ width: `${props.width || FIXED_WIDTH}px`, height: `${props.height || FIXED_HEIGHT}px` }}>
+            {props.useTintableScene ? <div className={thumbnailClassName} style={{ width: `${props.width || FIXED_WIDTH}${props.isImgWidthPixel ? `px` : `%`}`, height: `${props.height || FIXED_HEIGHT}px` }}>
               <StaticTintScene
                 colors={getColorsFromMetadata(props.sceneData.sceneMetadata.scene.surfaces)}
                 scene={props.sceneData.scene}
