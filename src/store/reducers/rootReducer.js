@@ -26,7 +26,9 @@ import {
   cachedSceneData,
   isLoadingSavedScene,
   showSaveSceneModal,
-  saveSceneName, selectedStockSceneId
+  saveSceneName,
+  selectedStockSceneId,
+  selectedSceneStatus
 } from './savedScenes'
 import { user } from './user'
 import { paintSceneWorkspace } from './paintSceneWorkspace'
@@ -64,5 +66,6 @@ export default combineReducers({
   isLoadingSavedScene,
   showSaveSceneModal,
   saveSceneName,
-  selectedStockSceneId
+  selectedStockSceneId,
+  selectedSceneStatus
 })

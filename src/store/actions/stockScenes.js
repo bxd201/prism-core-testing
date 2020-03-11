@@ -8,6 +8,7 @@ export const SELECT_ANON_STOCK_SCENE = 'SELECT_ANON_STOCK_SCENE'
 export const DELETE_ANON_STOCK_SCENE = 'DELETE_ANON_STOCK_SCENE'
 export const DELETE_STOCK_SCENE = 'DELETE_STOCK_SCENE'
 export const UPDATE_STOCK_SAVED_SCENE_NAME = 'UPDATE_STOCK_SAVED_SCENE_NAME'
+export const SELECT_SCENE_STATUS = 'SELECT_SCENE_STATUS'
 
 export const saveStockScene = (id: string, sceneName: string, sceneData: object, sceneType: string) => {
   return (dispatch, getState) => {
@@ -87,5 +88,12 @@ export const updateSavedStockSceneName = (sceneId: number | string, updatedScene
         }
       })
     }
+  }
+}
+
+export const setSelectedSceneStatus = (status: Object | null = null) => {
+  return {
+    type: SELECT_SCENE_STATUS,
+    payload: status
   }
 }
