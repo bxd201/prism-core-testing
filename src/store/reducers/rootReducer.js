@@ -28,7 +28,8 @@ import {
   showSaveSceneModal,
   saveSceneName,
   selectedStockSceneId,
-  selectedSceneStatus
+  selectedSceneStatus,
+  showSavedConfirmModal
 } from './savedScenes'
 import { user } from './user'
 import { paintSceneWorkspace } from './paintSceneWorkspace'
@@ -67,5 +68,6 @@ export default combineReducers({
   showSaveSceneModal,
   saveSceneName,
   selectedStockSceneId,
-  selectedSceneStatus
+  selectedSceneStatus,
+  showSavedConfirmModal
 })

@@ -10,7 +10,7 @@ import {
   DELETE_ANON_SAVED_SCENE,
   SAVED_SCENE_LOCAL,
   LOADING_SAVED_MASKS, ERROR_DOWNLOADING_SAVED_DATA, SHOW_SAVE_SCENE_MODAL, RESET_SAVE_STATE,
-  UPDATE_ANON_SAVED_SCENE_NAME, SCENE_TYPE
+  UPDATE_ANON_SAVED_SCENE_NAME, SCENE_TYPE, SHOW_SAVED_CONFIRM_MODAL
 } from '../actions/persistScene'
 import {
   DELETE_ANON_STOCK_SCENE,
@@ -195,6 +195,14 @@ export const selectedStockSceneId = (state: string | null = null, action: { type
 export const selectedSceneStatus = (state: Object | null = null, action: { type: string, payload: Object }) => {
   if (action.type === SELECT_SCENE_STATUS) {
     return cloneDeep(action.payload)
+  }
+
+  return state
+}
+
+export const showSavedConfirmModal = (state: boolean = false, action: {type: string, payload: boolean}) => {
+  if (action.type === SHOW_SAVED_CONFIRM_MODAL) {
+    return action.payload
   }
 
   return state
