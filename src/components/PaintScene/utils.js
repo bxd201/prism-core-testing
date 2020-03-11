@@ -1,8 +1,15 @@
+// @flow
 import { getDeltaE00 } from 'delta-e'
 import difference from 'lodash/difference'
 import uniqueId from 'lodash/uniqueId'
 
 const MAX_STACK_SIZE = 200
+
+type RGB = {
+  r: number,
+  g: number,
+  b: number
+}
 
 export const getPaintAreaPath = (imagePathList, canvas, width, height, color) => {
   const RGB = getActiveColorRGB(color)
@@ -411,13 +418,17 @@ export const getSelectArea = (imageData, newColor, x, y, similar = 100) => {
   return resultArr
 }
 
-export const colorMatch = (a, b, similar) => {
+export const getColorDistance = (a: RGB, b: RGB) => {
+  const colorA = rgb2lab([a.r, a.g, a.b])
+  const colorB = rgb2lab([b.r, b.g, b.b])
+  let labA = { L: colorA[0], A: colorA[1], B: colorA[2] }
+  let labB = { L: colorB[0], A: colorB[1], B: colorB[2] }
+  return getDeltaE00(labA, labB)
+}
+
+export const colorMatch = (a: RGB, b: RGB, similar) => {
   if (similar !== 100) {
-    const colorA = rgb2lab([a.r, a.g, a.b])
-    const colorB = rgb2lab([b.r, b.g, b.b])
-    let labA = { L: colorA[0], A: colorA[1], B: colorA[2] }
-    let labB = { L: colorB[0], A: colorB[1], B: colorB[2] }
-    const colorDistance = getDeltaE00(labA, labB)
+    const colorDistance = getColorDistance(a, b)
     if (colorDistance < 100 - similar) {
       return true
     } else {

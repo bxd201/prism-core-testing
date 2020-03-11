@@ -1,5 +1,5 @@
 // @flow
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import RgbQuant from 'rgbquant'
 
 import { loadImage, getImageRgbaData, createCanvasElementWithData } from './utils'
@@ -22,7 +22,7 @@ function getObjectImageUrl (imageData, width, height) {
 }
 
 var opts = {
-  colors: 10
+  colors: 20
 }
 
 type Props = {
@@ -44,7 +44,16 @@ const RoomPiece = (props: Props) => {
 
   const [palette, setPalette] = useState()
   const [image, setImage] = useState()
+  const [imageBg, setImageBg] = useState()
   const [processing, setProcessing] = useState(true)
+
+  const handleSetColor = useCallback((color: string) => {
+    if (color && color === imageBg) {
+      setImageBg()
+    } else if (color) {
+      setImageBg(color)
+    }
+  }, [ imageBg ])
 
   useEffect(() => {
     const roomObjImageData = new ImageData(pixels, width, height)
@@ -68,11 +77,11 @@ const RoomPiece = (props: Props) => {
   return (
     <>
       {!image ? <Card title={label}><CircleLoader inheritSize /></Card> : (
-        <Card title={label} image={image} titleBg={`rgb(${legendColor[0]}, ${legendColor[1]}, ${legendColor[2]})`}>
+        <Card title={label} image={image} imageBg={imageBg} titleBg={`rgb(${legendColor[0]}, ${legendColor[1]}, ${legendColor[2]})`}>
           {processing ? (
             <CircleLoader inheritSize />
           ) : palette ? (
-            <Swatches palette={palette} />
+            <Swatches palette={palette} onSetColor={handleSetColor} />
           ) : null}
         </Card>
       )}

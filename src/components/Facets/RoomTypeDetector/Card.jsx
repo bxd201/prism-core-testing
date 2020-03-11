@@ -8,6 +8,7 @@ import './Card.scss'
 type Props = {
   image?: string,
   imageAlt?: string,
+  imageBg?: string,
   title: string,
   titleBg?: string,
   children?: any,
@@ -18,6 +19,7 @@ const Card = (props: Props) => {
   const {
     image,
     imageAlt,
+    imageBg,
     title,
     titleBg = '#222',
     children,
@@ -36,7 +38,7 @@ const Card = (props: Props) => {
     <div className='Card'>
       <h3 className='Card__title' style={{ background: titleBg, color: titleColor }}>{title}</h3>
       {image ? (
-        <TransImage src={image} alt={imageAlt || title} />
+        <TransImage src={image} alt={imageAlt || title} color={imageBg} />
       ) : null}
       {children
         ? omitShim ? children : (
