@@ -22,10 +22,11 @@ const FILE_UPLOAD_ID = uniqueId('fastMaskFileUpload_')
 type Props = {
   color: Color,
   uploadImage: Function,
-  uploads: Object
+  uploads: Object,
+  hideUploadBtn: boolean
 }
 
-export function FastMask ({ color, uploadImage, uploads }: Props) {
+export function FastMask ({ color, uploadImage, uploads, hideUploadBtn = false }: Props) {
   const { masks: maskSources, source, uploading, error } = uploads
 
   const [userImage, setUserImage] = useState()
@@ -114,7 +115,7 @@ export function FastMask ({ color, uploadImage, uploads }: Props) {
 
   return (
     <React.Fragment>
-      <FileInput onChange={handleChange} id={FILE_UPLOAD_ID} disabled={isUploading || isProcessing} placeholder={userImage ? 'Select new image' : 'Select an image'} />
+      {!hideUploadBtn && <FileInput onChange={handleChange} id={FILE_UPLOAD_ID} disabled={isUploading || isProcessing} placeholder={userImage ? 'Select new image' : 'Select an image'} />}
 
       {!hasDoneAnything ? (
         <hr />

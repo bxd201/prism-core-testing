@@ -1,8 +1,11 @@
 // @flow
 import React, { useMemo } from 'react'
+import { useDispatch } from 'react-redux'
 import { tinycolor } from '@ctrl/tinycolor'
 import sortBy from 'lodash/sortBy'
+
 import ColorDataWrapper from 'src/helpers/ColorDataWrapper/ColorDataWrapper'
+import { activate } from '../../../store/actions/live-palette'
 
 import './Swatches.scss'
 
@@ -11,12 +14,20 @@ type SwatchProps = {
 }
 
 const Swatch = (props: SwatchProps) => {
-  const {
-    color
-  } = props
+  const dispatch = useDispatch()
+  const { color } = props
+
+  function onSwatchClick () {
+    const c = {
+      hex: color
+    }
+
+    dispatch(activate(c))
+  }
 
   return (
-    <div className='Swatches__swatch' style={{ background: color }} />
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events
+    <div className='Swatches__swatch' onClick={onSwatchClick} role='button' tabIndex={-1} style={{ background: color }} />
   )
 }
 
