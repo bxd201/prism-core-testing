@@ -270,5 +270,9 @@
   "VIEW_FULL_COLLECTION": "VIEW FULL COLLECTION",
   "YES": "Yes",
   "ZOOM_IN": "Zoomer",
-  "ZOOM_OUT": "Dézoomer"
+  "ZOOM_OUT": "Dézoomer",
+  "SCENE_MANAGER": {
+    "OK": "OK",
+    "SCENE_SAVED": "Saved"
+  }
 }

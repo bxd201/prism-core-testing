@@ -37,7 +37,7 @@ import 'src/scss/convenience/visually-hidden.scss'
 import SceneDownload from '../SceneDownload/SceneDownload'
 import DynamicModal from '../DynamicModal/DynamicModal'
 import { saveStockScene } from '../../store/actions/stockScenes'
-import { showSaveSceneModal } from '../../store/actions/persistScene'
+import { showSavedConfirmModal, showSaveSceneModal } from '../../store/actions/persistScene'
 import { createUniqueSceneId } from '../../shared/utils/legacyProfileFormatUtil'
 import { replaceSceneStatus } from '../../shared/utils/sceneUtil'
 
@@ -100,7 +100,9 @@ type Props = {
   saveStockScene: Function,
   currentSceneType: string,
   saveSceneName: string,
-  selectedSceneStatus: Object
+  selectedSceneStatus: Object,
+  showSavedConfirmModalFlag: boolean,
+  showSavedConfirmModal: Function
 }
 
 type State = {
@@ -133,6 +135,7 @@ export class SceneManager extends PureComponent<Props, State> {
     this.updateCurrentSceneInfo = this.updateCurrentSceneInfo.bind(this)
     this.saveSceneFromModal = this.saveSceneFromModal.bind(this)
     this.hideSaveSceneModal = this.hideSaveSceneModal.bind(this)
+    this.hideSavedConfirmModal = this.hideSavedConfirmModal.bind(this)
 
     this.wrapperRef = createRef()
   }
@@ -152,11 +155,16 @@ export class SceneManager extends PureComponent<Props, State> {
       // @todo should I throw an error if no active scene or is this over kill? -RS
       const currentSceneData = this.props.sceneStatus.find(item => item.id === this.props.activeScenes[0])
       this.props.saveStockScene(this.state.uniqueSceneId, saveSceneName, currentSceneData, this.props.currentSceneType)
+      this.props.showSavedConfirmModal(true)
     }
   }
 
   hideSaveSceneModal () {
     this.props.showSaveSceneModalAction(false)
+  }
+
+  hideSavedConfirmModal () {
+    this.props.showSavedConfirmModal(false)
   }
 
   handleColorUpdate = function handleColorUpdate (sceneId: string, surfaceId: string, color: Color) {
@@ -219,7 +227,20 @@ export class SceneManager extends PureComponent<Props, State> {
 
   render () {
     // eslint-disable-next-line no-unused-vars
-    const { scenes, sceneStatus, loadingScenes, activeColor, previewColor, mainColor, activeScenes, type, interactive, sceneWorkspaces, expertColorPicks, intl, showSaveSceneModalFlag } = this.props
+    const { scenes,
+      sceneStatus,
+      loadingScenes,
+      activeColor,
+      previewColor,
+      mainColor,
+      activeScenes,
+      type,
+      interactive,
+      sceneWorkspaces,
+      expertColorPicks,
+      intl,
+      showSaveSceneModalFlag,
+      showSavedConfirmModalFlag } = this.props
 
     if (loadingScenes) {
       return <div className={`${SceneManager.baseClass}__loader`}><CircleLoader /></div>
@@ -251,6 +272,13 @@ export class SceneManager extends PureComponent<Props, State> {
             height={getRefDimension(this.wrapperRef, 'height')}
             allowInput
             inputDefault={`${intl.messages['SAVE_SCENE_MODAL.DEFAULT_DESCRIPTION']} ${this.props.sceneCount}`} /> : null}
+          { /* ----------Confirm modal ---------- */ }
+          {showSavedConfirmModalFlag ? <DynamicModal
+            actions={[
+              { text: intl.messages['SCENE_MANAGER.OK'], callback: this.hideSavedConfirmModal }
+            ]}
+            description={intl.messages['SCENE_MANAGER.SCENE_SAVED']}
+            height={getRefDimension(this.wrapperRef, 'height')} /> : null}
           {activeScenes.length === 1 && expertColorPicks ? <ColorPickerSlide {...getSceneInfoById(find(scenes, { 'id': activeScenes[0] }), sceneStatus).variant} /> : null}
           <div className={`${SceneManager.baseClass}__block ${SceneManager.baseClass}__block--tabs`} role='radiogroup' aria-label='scene selector'>
             {scenes.map((scene, index) => {
@@ -433,7 +461,8 @@ const mapStateToProps = (state, props) => {
     // Created this to prevent the syncing warned below
     currentSceneType: state.scenes.type,
     saveSceneName: state.saveSceneName,
-    selectedSceneStatus: state.selectedSceneStatus
+    selectedSceneStatus: state.selectedSceneStatus,
+    showSavedConfirmModalFlag: state.showSavedConfirmModal
     // NOTE: uncommenting this will sync scene type with redux data
     // we may not want that in case there are multiple instances with different scene collections running at once
     // type: state.scenes.type
@@ -468,7 +497,8 @@ const mapDispatchToProps = (dispatch: Function) => {
       dispatch(updateCurrentSceneInfo(sceneId, surfaceId))
     },
     showSaveSceneModalAction: (shouldShow) => dispatch(showSaveSceneModal(shouldShow)),
-    saveStockScene: (id: string, sceneName: string, sceneData: Object, sceneType: string) => dispatch(saveStockScene(id, sceneName, sceneData, sceneType))
+    saveStockScene: (id: string, sceneName: string, sceneData: Object, sceneType: string) => dispatch(saveStockScene(id, sceneName, sceneData, sceneType)),
+    showSavedConfirmModal: (shouldShow: boolean) => dispatch(showSavedConfirmModal(shouldShow))
   }
 }
 
