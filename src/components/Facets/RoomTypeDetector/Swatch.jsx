@@ -1,9 +1,9 @@
 // @flow
-import React, { useMemo, useEffect } from 'react'
-import { useSelector } from 'react-redux'
+import React, { useMemo, useEffect, useCallback } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 import sortBy from 'lodash/sortBy'
 import flatten from 'lodash/flatten'
-
+import { activate } from 'src/store/actions/live-palette'
 import ColorDataWrapper from 'src/helpers/ColorDataWrapper/ColorDataWrapper'
 
 import { getColorDistance } from 'src/components/PaintScene/utils'
@@ -23,6 +23,17 @@ const Swatch = ColorDataWrapper((props: SwatchProps) => {
     color,
     reportAccents
   } = props
+
+  const dispatch = useDispatch()
+
+  const onSwatchClick = useCallback(() => {
+    const c = {
+      hex: color
+    }
+
+    // $FlowIgnore -- this is kind of a hack, since activate() expects a full Color object, but we're just dealing with hexes
+    dispatch(activate(c))
+  }, [ color ])
 
   const { colorMap } = useSelector(state => state.colors.items)
   const hex = useMemo(() => color && color.toHexString(), [ color ])
@@ -64,7 +75,7 @@ const Swatch = ColorDataWrapper((props: SwatchProps) => {
   }, [ colorMatches ])
 
   return (
-    <div className='Swatch' style={{ background: hex }}>
+    <div className='Swatch' style={{ background: hex }} onClick={onSwatchClick} role='button' tabIndex={-1}>
       <div className='Swatch__coordinating'>
         <>
           {colorMatches ? colorMatches.map((color, i) => {

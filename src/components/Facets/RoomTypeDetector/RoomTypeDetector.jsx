@@ -1,5 +1,6 @@
 // @flow
 import React, { useState, useEffect, useCallback } from 'react'
+import { useDispatch } from 'react-redux'
 import uniqueId from 'lodash/uniqueId'
 import * as deeplab from '@tensorflow-models/deeplab'
 import intersection from 'lodash/intersection'
@@ -13,6 +14,9 @@ import { desiredLabels } from './RoomTypeDetector.constants'
 import facetBinder from 'src/facetSupport/facetBinder'
 import GenericMessage from '../../Messages/GenericMessage'
 import CircleLoader from 'src/components/Loaders/CircleLoader/CircleLoader'
+import FastMask from 'src/components/FastMask/FastMask'
+
+import { uploadImage } from '../../../store/actions/user-uploads'
 
 import './RoomTypeDetector.scss'
 import RoomPiece from './RoomPiece'
@@ -65,6 +69,7 @@ const loadModel = async () => {
 }
 
 const RoomTypeDetector = () => {
+  const dispatch = useDispatch()
   const [error, setError] = useState()
   const [uploadedImage, setUploadedImage] = useState()
   const [roomPieces, setRoomPieces] = useState([])
@@ -79,6 +84,7 @@ const RoomTypeDetector = () => {
     const { target } = e
 
     if (target && target.files && target.files[0]) {
+      dispatch(uploadImage(e.target.files[0]))
       setIsLoading(true)
       setSegmentationImagePath()
       setLabels([])
@@ -194,6 +200,12 @@ const RoomTypeDetector = () => {
               {isLoading || isProcessing ? (
                 <CircleLoader />
               ) : null}
+            </Card>
+          </div>
+
+          <div className='RoomTypeDetector__side-by-side__side'>
+            <Card title='Fast Mask'>
+              <FastMask hideUploadBtn />
             </Card>
           </div>
         </> : null}
