@@ -35,6 +35,7 @@ export const ERROR_UPDATING_ANON_SAVED_SCENE_NAME = 'ERROR_UPDATING_ANON_SAVED_S
 export const UPDATE_SAVED_SCENE_NAME = 'UPDATE_SAVED_SCENE_NAME'
 export const ERROR_UPDATING_SAVED_SCENE_NAME = 'ERROR_UPDATING_SAVED_SCENE_NAME'
 export const SHOW_SAVED_CONFIRM_MODAL = 'SHOW_SAVED_CONFIRM_MODAL'
+export const SHOW_SAVED_CUSTOM_SUCCESS = 'SHOW_SAVED_CUSTOM_SUCCESS'
 // File name consts
 const SCENE_JSON = 'scene.json'
 
@@ -597,6 +598,13 @@ export const updateSavedSceneName = (sceneId: number | string, updatedSceneName:
 export const showSavedConfirmModal = (shouldShow: boolean = false) => {
   return {
     type: SHOW_SAVED_CONFIRM_MODAL,
+    payload: shouldShow
+  }
+}
+
+export const showSavedCustomSceneSuccessModal = (shouldShow: boolean = false) => {
+  return {
+    type: SHOW_SAVED_CUSTOM_SUCCESS,
     payload: shouldShow
   }
 }

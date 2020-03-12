@@ -28,7 +28,13 @@ import { getScaledPortraitHeight, getScaledLandscapeHeight } from '../../shared/
 import throttle from 'lodash/throttle'
 import { checkUndoIsEnabled, redo, undo } from './UndoRedoUtil'
 import MergeCanvas from '../MergeCanvas/MergeCanvas'
-import { saveMasks, selectSavedScene, showSaveSceneModal, startSavingMasks } from '../../store/actions/persistScene'
+import {
+  saveMasks,
+  selectSavedScene,
+  showSavedCustomSceneSuccessModal,
+  showSaveSceneModal,
+  startSavingMasks
+} from '../../store/actions/persistScene'
 import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 import SaveMasks from './SaveMasks'
 import { createCustomSceneMetadata, createUniqueSceneId } from '../../shared/utils/legacyProfileFormatUtil'
@@ -87,7 +93,9 @@ type ComponentProps = {
   showSaveSceneModal: boolean,
   showSaveSceneModalAction: Function,
   saveSceneName: string,
-  sceneCount: number
+  sceneCount: number,
+  showSavedConfirmModalFlag: boolean,
+  hideSavedConfirmModal: Function
 }
 
 type ComponentState = {
@@ -1793,6 +1801,13 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
             height={canvasHeight}
             allowInput
             inputDefault={`${intl.messages['SAVE_SCENE_MODAL.DEFAULT_DESCRIPTION']} ${this.props.sceneCount}`} /> : null}
+          { /* ----------Confirm modal ---------- */ }
+          { this.props.showSavedConfirmModalFlag ? <DynamicModal
+            actions={[
+              { text: intl.messages['PAINT_SCENE.OK_DISMISS'], callback: this.props.hideSavedConfirmModal }
+            ]}
+            description={intl.messages['PAINT_SCENE.SCENE_SAVED']}
+            height={canvasHeight} /> : null}
           {/* the 35 in the padding is the radius of the circle loader. Note the bitwise rounding */}
           {this.props.savingMasks || this.state.loadingMasks ? <div style={{ height: canvasHeight }} className='spinner'><div style={{ padding: ((canvasHeight / 2) | 0) - 35 }}><CircleLoader /></div></div> : null}
           {this.props.savingMasks ? <SaveMasks processMasks={this.processMasks} /> : null }
@@ -1881,7 +1896,8 @@ const mapStateToProps = (state: Object, props: Object) => {
     selectedScene,
     showSaveSceneModal,
     saveSceneName,
-    sceneCount: scenesAndRegions.length + 1
+    sceneCount: state.sceneMetadata.length + 1,
+    showSavedConfirmModalFlag: state.showSavedCustomSceneSuccess
   }
 }
 
@@ -1894,7 +1910,12 @@ const mapDispatchToProps = (dispatch: Function) => {
     replaceLpColors: (colors: Object[]) => dispatch(replaceLpColors(colors)),
     selectSavedScene: (sceneId) => dispatch(selectSavedScene(sceneId)),
     clearSceneWorkspace: () => clearSceneWorkspace(),
-    showSaveSceneModalAction: (shouldShow) => dispatch(showSaveSceneModal(shouldShow))
+    showSaveSceneModalAction: (shouldShow) => dispatch(showSaveSceneModal(shouldShow)),
+    hideSavedConfirmModal: (e: SyntheticEvent) => {
+      e.preventDefault()
+      e.stopPropagation()
+      dispatch(showSavedCustomSceneSuccessModal(false))
+    }
   }
 }
 

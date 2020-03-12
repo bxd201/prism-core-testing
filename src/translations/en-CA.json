@@ -188,6 +188,7 @@
   "PAINT_SCENE": {
     "CANCEL": "CANCEL",
     "OK": "LOAD PALETTE",
+    "SCENE_SAVED": "Saved",
     "SELECT_PALETTE_DESC": "Would you like to load these saved colors into this palette? This will replace any color(s) currently there.",
     "SELECT_PALETTE_TITLE": "Work with this palette?"
   },
@@ -240,6 +241,10 @@
   },
   "SCENE_DISPLAYED": "Scene is displayed",
   "SCENE_HIDDEN": "Scene is hidden",
+  "SCENE_MANAGER": {
+    "OK": "OK",
+    "SCENE_SAVED": "Saved"
+  },
   "SEARCH": {
     "ERROR": {
       "GENERIC": "We were unable to perform your search.",
@@ -270,9 +275,5 @@
   "VIEW_FULL_COLLECTION": "VIEW FULL COLLECTION",
   "YES": "Yes",
   "ZOOM_IN": "Zoom in",
-  "ZOOM_OUT": "Zoom out",
-  "SCENE_MANAGER": {
-    "OK": "OK",
-    "SCENE_SAVED": "Saved"
-  }
+  "ZOOM_OUT": "Zoom out"
 }
