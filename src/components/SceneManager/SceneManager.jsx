@@ -456,7 +456,7 @@ const mapStateToProps = (state, props) => {
     // @todo - the idea is the scene workspace is the data object created by the mask editor.
     sceneWorkspaces: state.sceneWorkspaces,
     isEditMode: state.isEditMode,
-    sceneCount: state.scenesAndRegions.length + 1,
+    sceneCount: state.sceneMetadata.length + 1,
     showSaveSceneModalFlag: state.showSaveSceneModal,
     // Created this to prevent the syncing warned below
     currentSceneType: state.scenes.type,
