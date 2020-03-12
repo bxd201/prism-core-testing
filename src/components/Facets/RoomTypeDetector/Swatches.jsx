@@ -1,5 +1,5 @@
 // @flow
-import React, { useMemo, useState, useCallback, useRef } from 'react'
+import React, { useMemo, useState, useCallback, useRef, useContext } from 'react'
 import { useSelector } from 'react-redux'
 import { tinycolor } from '@ctrl/tinycolor'
 import groupBy from 'lodash/groupBy'
@@ -9,6 +9,7 @@ import debounce from 'lodash/debounce'
 import Swatch from './Swatch'
 
 import { colorMatch } from 'src/components/PaintScene/utils'
+import { ColorCollector } from './RoomTypeDetector'
 
 import './Swatches.scss'
 
@@ -26,13 +27,14 @@ const Swatches = (props: SwatchesProps) => {
   } = props
 
   const accents = useRef([])
-
   const [commonAccents, setCommonAccents] = useState()
   const { colorMap } = useSelector(state => state.colors.items)
+  const { update } = useContext(ColorCollector)
 
   const setColor = useCallback((color: string) => {
     return () => {
       if (onSetColor) {
+        update(color)
         onSetColor(color)
       }
     }

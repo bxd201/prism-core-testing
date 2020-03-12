@@ -1,5 +1,5 @@
 // @flow
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, createContext, useMemo } from 'react'
 import { useDispatch } from 'react-redux'
 import uniqueId from 'lodash/uniqueId'
 import * as deeplab from '@tensorflow-models/deeplab'
@@ -21,6 +21,9 @@ import { uploadImage } from '../../../store/actions/user-uploads'
 import './RoomTypeDetector.scss'
 import RoomPiece from './RoomPiece'
 import Card from './Card'
+import { activate } from 'src/store/actions/live-palette'
+
+export const ColorCollector = createContext<Object>({})
 
 const FILE_UPLOAD_ID = uniqueId('roomTypeDetectorFileUpload_')
 const VALID_SEGMENT_THRESHHOLD = 0.03
@@ -93,6 +96,17 @@ const RoomTypeDetector = () => {
       setUploadedImage(URL.createObjectURL(e.target.files[0]))
     }
   })
+
+  const contextValues = useMemo(() => ({
+    update: hex => {
+      const c = {
+        hex: hex
+      }
+
+      // $FlowIgnore -- this is kind of a hack, since activate() expects a full Color object, but we're just dealing with hexes
+      dispatch(activate(c))
+    }
+  }), [])
 
   useEffect(() => {
     if (deeplabModel === null) {
@@ -180,7 +194,7 @@ const RoomTypeDetector = () => {
   }
 
   return (
-    <>
+    <ColorCollector.Provider value={contextValues}>
       <FileInput onChange={handleChange} disabled={false} id={FILE_UPLOAD_ID} placeholder={uploadedImage ? 'Select new image' : 'Select an image'} />
 
       <div className='RoomTypeDetector__side-by-side'>
@@ -230,7 +244,7 @@ const RoomTypeDetector = () => {
           </div>)}
         </div>
       ) : null}
-    </>
+    </ColorCollector.Provider>
   )
 }
 
