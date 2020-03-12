@@ -20,6 +20,7 @@ import {
 } from '../actions/stockScenes'
 import { SCENE_TYPES } from '../../constants/globals'
 import { cloneDeep } from 'lodash'
+import { PAINT_SCENE_SURFACE } from '../actions/scenes'
 export const legacySavedScenesMetadata = (state: Object[] = [], action: { type: string, payload: Object }) => {
   if (action.type === DELETE_SAVED_SCENE) {
     const newState = state.filter(scene => scene.id !== action.payload)
@@ -195,6 +196,20 @@ export const selectedStockSceneId = (state: string | null = null, action: { type
 export const selectedSceneStatus = (state: Object | null = null, action: { type: string, payload: Object }) => {
   if (action.type === SELECT_SCENE_STATUS) {
     return cloneDeep(action.payload)
+  }
+
+  if (action.type === PAINT_SCENE_SURFACE && state) {
+    const newState = cloneDeep(state)
+
+    newState.expectStockData.scene.surfaces.some(surface => {
+      if (surface.id === action.payload.surfaceId) {
+        surface.color = cloneDeep(action.payload.color)
+
+        return true
+      }
+    })
+
+    return newState
   }
 
   return state
