@@ -35,13 +35,11 @@ import type { Scene, SceneStatus, SceneWorkspace, Surface, Variant } from '../..
 import './SceneManager.scss'
 import 'src/scss/convenience/visually-hidden.scss'
 import SceneDownload from '../SceneDownload/SceneDownload'
-import DynamicModal from '../DynamicModal/DynamicModal'
+import DynamicModal, { getRefDimension } from '../DynamicModal/DynamicModal'
 import { saveStockScene } from '../../store/actions/stockScenes'
 import { showSavedConfirmModal, showSaveSceneModal } from '../../store/actions/persistScene'
 import { createUniqueSceneId } from '../../shared/utils/legacyProfileFormatUtil'
 import { replaceSceneStatus } from '../../shared/utils/sceneUtil'
-
-const getRefDimension = (ref, dimName) => ref && ref.current ? ref.current.getBoundingClientRect()[dimName] : 0
 
 const getThumbnailAssetArrayByScene = memoizee((sceneVariant: Variant, surfaces: Surface[]): string[] => {
   return flattenDeep([
@@ -194,7 +192,7 @@ export class SceneManager extends PureComponent<Props, State> {
 
     // if active scenes exceed or match max active scenes...
     if (activeScenes.length >= parseInt(maxActiveScenes, 10)) {
-      // compare prev and current scenes, continut to eliminate oldest until max active is all that remains
+      // compare prev and current scenes, continue to eliminate oldest until max active is all that remains
       deactivateScene(activeScenes.slice(0, activeScenes.length - maxActiveScenes + 1))
     }
 

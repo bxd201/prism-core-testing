@@ -1,9 +1,9 @@
 // @flow
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useIntl } from 'react-intl'
-import { deleteSavedScene, selectSavedScene, loadSavedScenes, SCENE_TYPE } from '../../store/actions/persistScene'
+import { deleteSavedScene, selectSavedScene, loadSavedScenes, showDeleteConfirmModal, SCENE_TYPE } from '../../store/actions/persistScene'
 import SavedScene from './SavedScene'
 import useSceneData from '../../shared/hooks/useSceneData'
 import Carousel from '../Carousel/Carousel'
@@ -12,6 +12,7 @@ import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import EditSavedScene from './EditSavedScene'
 import { deleteStockScene, selectSavedAnonStockScene } from '../../store/actions/stockScenes'
+import DynamicModal, { DYNAMIC_MODAL_STYLE, getRefDimension } from '../DynamicModal/DynamicModal'
 
 const baseClassName = 'myideas-wrapper'
 const buttonClassName = `${baseClassName}__button`
@@ -44,6 +45,9 @@ const MyIdeas = (props: MyIdeasProps) => {
   const sceneFetchTypes = Array.from(_sceneFetchTypes)
   const sceneData = useSceneData(sceneFetchTypes)
   const [editedTintableIndividualScene, setEditedTintableIndividualScene] = useState(false)
+  const showDeleteConfirmModalFlag = useSelector(state => state.showDeleteConfirmModal)
+  const [deleteCandidate, setDeleteCandidate] = useState(null)
+  const wrapperRef = useRef(null)
 
   useEffect(() => {
     if (!savedScenes.length) {
@@ -69,11 +73,14 @@ const MyIdeas = (props: MyIdeasProps) => {
   }
 
   const deleteScene = (id: number | string) => {
-    dispatch(deleteSavedScene(id))
-  }
-
-  const deleteAnonStockScene = (id: number | string) => {
-    dispatch(deleteStockScene(id))
+    if (deleteCandidate) {
+      if (deleteCandidate.isStockScene) {
+        dispatch(deleteStockScene(deleteCandidate.id))
+      } else {
+        dispatch(deleteSavedScene(deleteCandidate.id))
+      }
+    }
+    dispatch(showDeleteConfirmModal(false))
   }
 
   const selectScene = (sceneId: number | string) => {
@@ -82,6 +89,22 @@ const MyIdeas = (props: MyIdeasProps) => {
 
   const selectAnonStockScene = (sceneId: number | string) => {
     dispatch(selectSavedAnonStockScene(sceneId))
+  }
+
+  const closeDeleteSceneConfirm = (e: SyntheticEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    dispatch(showDeleteConfirmModal(false))
+  }
+
+  const showDeleteConfirm = (sceneId: string | number, isStockScene: boolean) => {
+    setDeleteCandidate({
+      id: sceneId,
+      isStockScene
+    })
+
+    dispatch(showDeleteConfirmModal(true))
   }
 
   const isReadyToRender = (sceneMetadata: Object[], customSceneData, stockSceneData) => {
@@ -134,9 +157,8 @@ const MyIdeas = (props: MyIdeasProps) => {
       baseSceneData={baseSceneData}
       data={sceneMetadata}
       editIsEnabled={editIsEnabled}
-      deleteScene={deleteScene}
+      deleteScene={showDeleteConfirm}
       selectScene={selectScene}
-      deleteAnonStockScene={deleteAnonStockScene}
       selectAnonStockScene={selectAnonStockScene}
       editIndividualScene={editIndividualScene}
     />
@@ -177,7 +199,16 @@ const MyIdeas = (props: MyIdeasProps) => {
 
   return (
     <>
-      {isReadyToRender(sceneMetadata, savedScenes, stockScenes) ? <div className={baseClassName}>
+      {isReadyToRender(sceneMetadata, savedScenes, stockScenes) ? <div className={baseClassName} ref={wrapperRef}>
+        { /* @todo NEED TO GET HEIGHT OF CVW WRAPPER -RS */ }
+        { showDeleteConfirmModalFlag ? <DynamicModal
+          modalStyle={DYNAMIC_MODAL_STYLE.danger}
+          actions={[
+            { text: intl.messages['MY_IDEAS.YES'], callback: deleteScene },
+            { text: intl.messages['MY_IDEAS.NO'], callback: closeDeleteSceneConfirm }
+          ]}
+          description={intl.messages['MY_IDEAS.DELETE_CONFIRM']}
+          height={getRefDimension(wrapperRef, 'height')} /> : null}
         <div className={sectionLeftClassName}>
           {showBack
             ? <button className={`${buttonClassName} ${buttonBack}`} onClick={showMyIdeas} onMouseDown={mouseDownHandler}>
@@ -230,7 +261,7 @@ const SavedSceneWrapper = (props: any) => {
       sceneData={scene}
       editEnabled={props.editIsEnabled}
       key={stockSceneMetadata.id}
-      deleteScene={props.deleteAnonStockScene}
+      deleteScene={props.deleteScene}
       selectScene={props.selectAnonStockScene}
       editIndividualScene={props.editIndividualScene}
       useTintableScene />

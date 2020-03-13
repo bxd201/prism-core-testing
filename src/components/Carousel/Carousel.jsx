@@ -20,8 +20,6 @@ type ComponentProps = {
   // eslint-disable-next-line react/no-unused-prop-types
   selectSavedScene?: Function,
   // eslint-disable-next-line react/no-unused-prop-types
-  deleteAnonStockScene?: Function,
-  // eslint-disable-next-line react/no-unused-prop-types
   selectAnonStockScene?: Function
 }
 

@@ -136,14 +136,17 @@
   "LOG_IN": "LOG IN",
   "MAXIMIZE_COLOR_SWATCH": "Maximize the Colour Swatch",
   "MY_IDEAS": {
+    "DELETE_CONFIRM": "Are you sure you want to delete this item?",
     "MY_IDEAS_CONTENT": "Log in or Register for a mySW account to save all your ideas and see them on any of your devices.",
     "MY_IDEAS_HEADER": "View and edit your saved ideas",
+    "NO": "NO",
     "NO_IDEAS_DESC": "Save all your inspiration and ideas here, and reference them when you're ready to start painting. Edit them any time.",
     "NO_IDEAS_TITLE": "You haven´t saved any ideas.",
     "OPEN_PROJECT": "Open this project",
     "OPEN_UNPAINTED": "Open unpainted scene",
     "PREVIEW": "Preview of",
-    "TITLE": "View and edit your ideas"
+    "TITLE": "View and edit your ideas",
+    "YES": "YES"
   },
   "NAV_DROPDOWN_LINK_SUB_CONTENT": {
     "COLOR_COLLECTIONS": "Find colors that work together seamlessly throughout your home.",
