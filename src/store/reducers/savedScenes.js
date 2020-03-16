@@ -10,7 +10,7 @@ import {
   DELETE_ANON_SAVED_SCENE,
   SAVED_SCENE_LOCAL,
   LOADING_SAVED_MASKS, ERROR_DOWNLOADING_SAVED_DATA, SHOW_SAVE_SCENE_MODAL, RESET_SAVE_STATE,
-  UPDATE_ANON_SAVED_SCENE_NAME, SCENE_TYPE, SHOW_SAVED_CONFIRM_MODAL, SHOW_SAVED_CUSTOM_SUCCESS
+  UPDATE_ANON_SAVED_SCENE_NAME, SCENE_TYPE, SHOW_SAVED_CONFIRM_MODAL, SHOW_SAVED_CUSTOM_SUCCESS, SHOW_DELETE_CONFIRM
 } from '../actions/persistScene'
 import {
   DELETE_ANON_STOCK_SCENE,
@@ -229,6 +229,14 @@ export const showSavedCustomSceneSuccess = (state: boolean = false, action: { ty
   }
 
   if (action.type === SHOW_SAVED_CUSTOM_SUCCESS) {
+    return action.payload
+  }
+
+  return state
+}
+
+export const showDeleteConfirmModal = (state: boolean = false, action: { type: string, payload: boolean }) => {
+  if (action.type === SHOW_DELETE_CONFIRM) {
     return action.payload
   }
 

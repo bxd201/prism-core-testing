@@ -22,6 +22,23 @@
     align-content: center;
     justify-content: center;
     color: #333333;
+    &.primary {
+      background-color: #f0f0f0;
+    }
+    &.secondary {
+
+    }
+    &.danger {
+      color: #ffffff;
+      background-color: #d40000;
+      border: none;
+    }
+    &.success {
+
+    }
+    &.warning {
+
+    }
   }
   &__title {
     margin-bottom: 1.1rem;
@@ -66,7 +83,13 @@
 
       }
       &--danger {
-
+        background-color: #d40000;
+        border: #f2f2f2 solid 1px;
+        color: #ffffff;
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.8);
+          color: #d40000;
+        }
       }
       &--success {
 
@@ -74,7 +97,6 @@
       &--warning {
 
       }
-
     }
   }
 }

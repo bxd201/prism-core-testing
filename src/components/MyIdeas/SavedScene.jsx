@@ -108,7 +108,9 @@ const SavedScene = (props: SavedSceneProps) => {
 
   const deleteScene = (e: SyntheticEvent) => {
     e.preventDefault()
-    props.deleteScene(props.sceneId)
+    e.stopPropagation()
+    // useTinableScene infers scene type
+    props.deleteScene(props.sceneId, !!props.useTintableScene)
   }
 
   const selectScene = (e: SyntheticEvent) => {
@@ -118,6 +120,7 @@ const SavedScene = (props: SavedSceneProps) => {
     }
 
     e.preventDefault()
+    e.stopPropagation()
     props.selectScene(props.sceneId)
   }
 

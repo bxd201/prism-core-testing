@@ -40,7 +40,7 @@ import SaveMasks from './SaveMasks'
 import { createCustomSceneMetadata, createUniqueSceneId } from '../../shared/utils/legacyProfileFormatUtil'
 import MergeColors from '../MergeCanvas/MergeColors'
 import storageAvailable from '../../shared/utils/browserStorageCheck.util'
-import DynamicModal, { DynamicModalButtonType } from '../DynamicModal/DynamicModal'
+import DynamicModal, { DYNAMIC_MODAL_STYLE } from '../DynamicModal/DynamicModal'
 import { checkCanMergeColors, shouldPromptToReplacePalette } from '../LivePalette/livePaletteUtility'
 import { LP_MAX_COLORS_ALLOWED } from '../../constants/configurations'
 import { mergeLpColors, replaceLpColors } from '../../store/actions/live-palette'
@@ -311,7 +311,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       this.setState({ showSelectPaletteModal: false })
     },
     text: intl.messages['PAINT_SCENE.CANCEL'],
-    type: DynamicModalButtonType.primary },
+    type: DYNAMIC_MODAL_STYLE.primary },
     { callback: (e) => {
       e.preventDefault()
       e.stopPropagation()
@@ -319,7 +319,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       this.setState({ showSelectPaletteModal: false })
     },
     text: intl.messages['PAINT_SCENE.OK'],
-    type: DynamicModalButtonType.primary }]
+    type: DYNAMIC_MODAL_STYLE.primary }]
 
     return {
       selectPaletteActions,

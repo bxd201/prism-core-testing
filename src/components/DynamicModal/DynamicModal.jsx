@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 
 import './DynamicModal.scss'
 
-export const DynamicModalButtonType = {
+export const DYNAMIC_MODAL_STYLE = {
   success: 'success',
   danger: 'danger',
   warning: 'warning',
@@ -32,7 +32,16 @@ type DynamicModalProps = {
   description: String,
   height: number,
   allowInput: boolean,
-  inputDefault?: string
+  inputDefault?: string,
+  modalStyle?: string
+}
+
+const getDymanicModalClassName = (baseName: string, modalStyle) => {
+  if (modalStyle) {
+    return `${baseName} ${modalStyle}`
+  } else {
+    return baseName
+  }
 }
 
 const DynamicModal = (props: DynamicModalProps) => {
@@ -49,7 +58,7 @@ const DynamicModal = (props: DynamicModalProps) => {
       } : action.callback
       return (
         <button
-          className={getButtonClassName(action.type || DynamicModalButtonType.primary)}
+          className={getButtonClassName(action.type || props.modalStyle || DYNAMIC_MODAL_STYLE.primary)}
           // The callbacks must manually stop propogation
           onClick={callback}
           key={`${i}`}>
@@ -63,7 +72,7 @@ const DynamicModal = (props: DynamicModalProps) => {
   const setInputVal = (e: SyntheticEvent) => setInputValue(e.target.value)
   return (
     <div className={dynamicModalClassName} style={{ height: props.height }}>
-      <div className={dynamicModalInnerClassName}>
+      <div className={getDymanicModalClassName(dynamicModalInnerClassName, props.modalStyle)}>
         {props.title ? <div className={dynamicModalTitleClassName}>{props.title}</div> : null}
         {props.description ? <div className={dynamicModalDescriptionClassName}>{props.description}</div> : null}
         {props.allowInput ? <div className={dynamicModalInputWrapperClassName}><input onChange={setInputVal} value={inputValue} /></div> : null}
@@ -74,5 +83,7 @@ const DynamicModal = (props: DynamicModalProps) => {
     </div>
   )
 }
+
+export const getRefDimension = (ref, dimName) => ref && ref.current ? ref.current.getBoundingClientRect()[dimName] : 0
 
 export default DynamicModal
