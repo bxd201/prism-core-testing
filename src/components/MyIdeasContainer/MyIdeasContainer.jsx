@@ -1,5 +1,5 @@
 // @flow
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { Redirect } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import MyIdeas from '../MyIdeas/MyIdeas'
@@ -27,6 +27,7 @@ const MyIdeasContainer = (props: MyIdeasContainerProps) => {
   // Record original selected scene value
   const [initialSceneId, setInitialSceneId] = useState(selectedSceneId)
   const { messages = {} } = useIntl()
+  const wrapperRef = useRef()
 
   useEffect(() => {
     if ((selectedSceneId && initialSceneId !== selectedSceneId) || (selectedStockSceneId && initialSceneId !== selectedStockSceneId)) {
@@ -52,7 +53,7 @@ const MyIdeasContainer = (props: MyIdeasContainerProps) => {
   return (
     <CardMenu menuTitle={at(messages, 'MY_IDEAS.MY_IDEAS_HEADER')[0]}>
       {(setCardShowing, setCardTitle) => (
-        <div className={`my-ideas-container__wrapper`}>
+        <div ref={wrapperRef} className={`my-ideas-container__wrapper`}>
           {FIREBASE_AUTH_ENABLED && !isLoggedIn ? <AnonLogin />
             : isLoggedIn ? <MyIdeas brandId={props.config.brandId} setCardTitle={setCardTitle} />
               : <div className={`my-ideas-container__content`}>

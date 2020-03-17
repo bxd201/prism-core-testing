@@ -12,7 +12,8 @@ import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import EditSavedScene from './EditSavedScene'
 import { deleteStockScene, selectSavedAnonStockScene } from '../../store/actions/stockScenes'
-import DynamicModal, { DYNAMIC_MODAL_STYLE, getRefDimension } from '../DynamicModal/DynamicModal'
+import DynamicModal, { DYNAMIC_MODAL_STYLE } from '../DynamicModal/DynamicModal'
+import { refreshModalHeight } from '../../store/actions/modal'
 
 const baseClassName = 'myideas-wrapper'
 const buttonClassName = `${baseClassName}__button`
@@ -48,6 +49,9 @@ const MyIdeas = (props: MyIdeasProps) => {
   const showDeleteConfirmModalFlag = useSelector(state => state.showDeleteConfirmModal)
   const [deleteCandidate, setDeleteCandidate] = useState(null)
   const wrapperRef = useRef(null)
+  const _parentHeight = useSelector(state => state.modalHeight)
+  const [parentHeight, setParentHeight] = useState(0)
+  const [isReadyToRenderFlag, setIsReadyToRenderFlag] = useState(false)
 
   useEffect(() => {
     if (!savedScenes.length) {
@@ -61,6 +65,17 @@ const MyIdeas = (props: MyIdeasProps) => {
       setStockScenes(sceneData)
     }
   }, [sceneData])
+
+  useEffect(() => {
+    if (isReadyToRender(sceneMetadata, savedScenes, stockScenes)) {
+      setIsReadyToRenderFlag(true)
+      dispatch(refreshModalHeight(true))
+    }
+  }, [sceneMetadata, savedScenes, stockScenes])
+
+  useEffect(() => {
+    setParentHeight(_parentHeight)
+  }, [_parentHeight])
 
   const enableEdit = (e: SyntheticEvent) => {
     e.preventDefault()
@@ -199,7 +214,7 @@ const MyIdeas = (props: MyIdeasProps) => {
 
   return (
     <>
-      {isReadyToRender(sceneMetadata, savedScenes, stockScenes) ? <div className={baseClassName} ref={wrapperRef}>
+      {isReadyToRenderFlag ? <div className={baseClassName} ref={wrapperRef}>
         { /* @todo NEED TO GET HEIGHT OF CVW WRAPPER -RS */ }
         { showDeleteConfirmModalFlag ? <DynamicModal
           modalStyle={DYNAMIC_MODAL_STYLE.danger}
@@ -208,7 +223,7 @@ const MyIdeas = (props: MyIdeasProps) => {
             { text: intl.messages['MY_IDEAS.NO'], callback: closeDeleteSceneConfirm }
           ]}
           description={intl.messages['MY_IDEAS.DELETE_CONFIRM']}
-          height={getRefDimension(wrapperRef, 'height')} /> : null}
+          height={parentHeight} /> : null}
         <div className={sectionLeftClassName}>
           {showBack
             ? <button className={`${buttonClassName} ${buttonBack}`} onClick={showMyIdeas} onMouseDown={mouseDownHandler}>
