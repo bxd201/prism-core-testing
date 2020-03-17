@@ -95,7 +95,7 @@ function ColorCollectionsTab (props: Props) {
               tabIndex='0'
               aria-selected={tab.id === tabIdShow}
               onKeyDown={handleKeyDownLiTab}
-              className={`${tabListItem} ${((tab.id).toString() === tabIdShow.toString()) ? `${tabListItemActive}` : ''}`}
+              className={`${tabListItem} ${(tab.id === tabIdShow) ? `${tabListItemActive}` : ''}`}
               key={tab.id}
               onClick={handleClickLiTab}
               onMouseDown={mouseDownHandler}

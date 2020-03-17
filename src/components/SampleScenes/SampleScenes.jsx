@@ -1,11 +1,13 @@
 // @flow
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import Carousel from '../Carousel/Carousel'
 import ColorCollectionsTab from '../Shared/ColorCollectionsTab'
 import { StaticTintScene } from '../CompareColor/StaticTintScene'
 import CardMenu from 'src/components/CardMenu/CardMenu'
-import { sceneData } from './data.js'
 import { groupScenesByCategory } from './utils.js'
+import { loadScenes } from '../../store/actions/scenes'
+import { SCENE_TYPES } from 'constants/globals'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FormattedMessage } from 'react-intl'
 import './SampleScenes.scss'
@@ -15,24 +17,46 @@ type ComponentProps = { isColorTinted: boolean, setHeader: Function, activateSce
 
 export const SampleScenesWrapper = ({ isColorTinted, setHeader, activateScene }: ComponentProps) => {
   const [tabId: string, setTabId: string => void] = useState('tab0')
-  const { tabMap, groupScenes, collectionTabs } = groupScenesByCategory(sceneData)
+  const dispatch = useDispatch()
+  const scenes = useSelector(state => {
+    if (state.scenes.sceneCollection) {
+      let collections = Object.values(state.scenes.sceneCollection).flat()
+      return groupScenesByCategory(collections)
+    }
+  })
+
+  useEffect(() => {
+    fetchData(SCENE_TYPES.ROOM)
+  }, [])
+
+  const fetchData = (type = null) => {
+    /** load specific type of collection */
+    if (type) {
+      (scenes.groupScenes.length === 0) && dispatch(loadScenes(type))
+    } else {
+      /** load all types */
+      Object.values(SCENE_TYPES).forEach((type) => {
+        (scenes.groupScenes.length === 0) && dispatch(loadScenes(type))
+      })
+    }
+  }
 
   return (
     <CardMenu menuTitle={'Use Our Photo'}>
       {() => (<div className={`${baseClass}__wrapper`}>
-        <ColorCollectionsTab collectionTabs={collectionTabs} tabIdShow={tabId} showTab={setTabId} />
+        {scenes && scenes.collectionTabs && <ColorCollectionsTab collectionTabs={scenes.collectionTabs} tabIdShow={tabId} showTab={setTabId} />}
         <div className={`${baseClass}__collections-list`}>
-          <Carousel
+          {scenes && scenes.groupScenes && scenes.tabMap && <Carousel
             BaseComponent={StaticTintSceneWrapper}
-            data={groupScenes}
+            data={scenes.groupScenes}
             defaultItemsPerView={1}
             tabId={tabId}
             setTabId={setTabId}
-            tabMap={tabMap}
+            tabMap={scenes.tabMap}
             isInfinity
             isColorTinted={isColorTinted}
             activateScene={activateScene}
-          />
+          />}
         </div>
       </div>
       )}
@@ -44,7 +68,11 @@ type Props = { data: Object, isColorTinted: boolean, activateScene: Function, is
 const StaticTintSceneWrapper = ({ data, isColorTinted, activateScene, isActivedPage }: Props) => {
   let props = isColorTinted ? {
     color: void (0),
-    scene: data
+    scene: data,
+    config: {
+      isNightScene: false,
+      type: SCENE_TYPES.ROOM
+    }
   } : {
     color: null,
     scene: data
