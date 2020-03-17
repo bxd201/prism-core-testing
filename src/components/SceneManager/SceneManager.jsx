@@ -100,7 +100,8 @@ type Props = {
   saveSceneName: string,
   selectedSceneStatus: Object,
   showSavedConfirmModalFlag: boolean,
-  showSavedConfirmModal: Function
+  showSavedConfirmModal: Function,
+  hideSceneSelector?: boolean
 }
 
 type State = {
@@ -238,7 +239,8 @@ export class SceneManager extends PureComponent<Props, State> {
       expertColorPicks,
       intl,
       showSaveSceneModalFlag,
-      showSavedConfirmModalFlag } = this.props
+      showSavedConfirmModalFlag,
+      hideSceneSelector } = this.props
 
     if (loadingScenes) {
       return <div className={`${SceneManager.baseClass}__loader`}><CircleLoader /></div>
@@ -278,7 +280,7 @@ export class SceneManager extends PureComponent<Props, State> {
             description={intl.messages['SCENE_MANAGER.SCENE_SAVED']}
             height={getRefDimension(this.wrapperRef, 'height')} /> : null}
           {activeScenes.length === 1 && expertColorPicks ? <ColorPickerSlide {...getSceneInfoById(find(scenes, { 'id': activeScenes[0] }), sceneStatus).variant} /> : null}
-          <div className={`${SceneManager.baseClass}__block ${SceneManager.baseClass}__block--tabs`} role='radiogroup' aria-label='scene selector'>
+          {!hideSceneSelector && <div className={`${SceneManager.baseClass}__block ${SceneManager.baseClass}__block--tabs`} role='radiogroup' aria-label='scene selector'>
             {scenes.map((scene, index) => {
               const sceneInfo = getSceneInfoById(scene, sceneStatus)
               const sceneWorkspaces = this.props.sceneWorkspaces.filter(
@@ -341,7 +343,7 @@ export class SceneManager extends PureComponent<Props, State> {
                 </button>
               )
             })}
-          </div>
+          </div>}
 
           <div className={`${SceneManager.baseClass}__block ${SceneManager.baseClass}__block--scenes`} role='main'>
             {activeScenes.map((sceneId, index) => {

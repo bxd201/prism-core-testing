@@ -589,12 +589,13 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       this.props.clearSceneWorkspace()
     }
     this.context.setIsPaintSceneActive()
+    this.applyZoom(this.state.canvasZoom)
   }
 
   componentWillUnmount () {
     window.removeEventListener('resize', this.resizeHandler)
     this.props.selectSavedScene(null)
-    this.context.setIsPaintSceneActive()
+    this.context.unsetIsPaintSceneActive()
     this.context.unSetIsPaintScenePolluted()
   }
 

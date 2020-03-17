@@ -84,6 +84,16 @@ export const paintSceneSurface = (sceneId: number, surfaceId: number, color: Col
   }
 }
 
+export const UNPAINT_SCENE_SURFACES = 'UNPAINT_SCENE_SURFACES'
+export const unpaintSceneSurfaces = (sceneId: number) => {
+  return {
+    type: UNPAINT_SCENE_SURFACES,
+    payload: {
+      sceneId
+    }
+  }
+}
+
 export const PAINT_SCENE_MAIN_SURFACE = 'PAINT_SCENE_MAIN_SURFACE'
 export const paintSceneMainSurfaces = (sceneId: number, color: Color) => {
   return {

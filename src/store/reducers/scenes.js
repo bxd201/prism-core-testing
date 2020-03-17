@@ -24,7 +24,8 @@ import {
   UPDATE_CURRENT_SCENE,
   TOGGLE_EDIT_MODE,
   EDIT_MASK,
-  UPDATE_MASK
+  UPDATE_MASK,
+  UNPAINT_SCENE_SURFACES
 } from '../actions/scenes'
 import { registerMask, updateMask } from '../masks/store'
 
@@ -173,6 +174,29 @@ export const scenes = (state: Object = initialState, action: { type: string, pay
         })
       })
       return newState
+
+    case UNPAINT_SCENE_SURFACES:
+      return Object.assign({}, state, {
+        sceneStatus: Object.assign({}, state.sceneStatus, {
+          [state.type]: state.sceneStatus[state.type].map((_scene: SceneStatus) => {
+            if (_scene.id === action.payload.sceneId) {
+              return Object.assign({}, _scene, {
+                surfaces: _scene.surfaces.map((_surface: SurfaceStatus) => {
+                  const newSurface = Object.assign({}, _surface)
+                  if (_surface.color) {
+                    delete newSurface.color
+                  }
+
+                  return newSurface
+                })
+              })
+            }
+
+            return _scene
+          })
+        })
+      })
+
     case PAINT_ALL_SCENE_SURFACES:
       return Object.assign({}, state, {
         sceneStatus: Object.assign({}, state.sceneStatus, {

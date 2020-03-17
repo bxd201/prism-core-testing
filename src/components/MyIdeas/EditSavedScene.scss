@@ -6,7 +6,7 @@
   }
   &__input-wrapper {
     position: relative;
-    padding: 3px;
+    padding: 1em 0em;
   }
   &__scene-name-input {
     background:#fff;
@@ -57,7 +57,7 @@
     position: absolute;
     right: .5em;
     text-align: center;
-    top: .5em;
+    top: 1.4em;
     width: 1.3em;
     &:focus {
       outline-style: solid;
