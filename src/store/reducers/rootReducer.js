@@ -37,6 +37,7 @@ import { paintSceneWorkspace } from './paintSceneWorkspace'
 import { reducerWithLocalStorage } from '../withStorage'
 import { SCENE_METADATA } from '../storageProperties'
 import brandColors from './brandColors'
+import { modalHeight, refreshModalHeight } from './modal'
 
 export default combineReducers({
   brandColors,
@@ -73,5 +74,7 @@ export default combineReducers({
   showSavedConfirmModal,
   // For paint scene
   showSavedCustomSceneSuccess,
-  showDeleteConfirmModal
+  showDeleteConfirmModal,
+  modalHeight,
+  refreshModalHeight
 })

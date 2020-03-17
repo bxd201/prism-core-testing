@@ -59,7 +59,7 @@ const DynamicModal = (props: DynamicModalProps) => {
       return (
         <button
           className={getButtonClassName(action.type || props.modalStyle || DYNAMIC_MODAL_STYLE.primary)}
-          // The callbacks must manually stop propogation
+          // The callbacks must manually stop propagation
           onClick={callback}
           key={`${i}`}>
           {action.text}
@@ -84,6 +84,14 @@ const DynamicModal = (props: DynamicModalProps) => {
   )
 }
 
-export const getRefDimension = (ref, dimName) => ref && ref.current ? ref.current.getBoundingClientRect()[dimName] : 0
+export const getRefDimension = (ref, dimName, shouldRound: boolean = false) => {
+  const value = ref && ref.current ? ref.current.getBoundingClientRect()[dimName] : 0
+
+  if (shouldRound) {
+    return Math.floor(value)
+  }
+
+  return value
+}
 
 export default DynamicModal

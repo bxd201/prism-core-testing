@@ -8,7 +8,7 @@ import InspiredScene from '../../InspirationPhotos/InspiredSceneNavigator'
 import LivePalette from '../../LivePalette/LivePalette'
 import ColorDataWrapper from '../../../helpers/ColorDataWrapper/ColorDataWrapper'
 import ColorVisualizerNav, { isColors, isInspiration, isPaintPhoto, isMyIdeas } from './ColorVisualizerNav'
-import React, { Component } from 'react'
+import React, { Component, createRef } from 'react'
 import SceneManager from '../../SceneManager/SceneManager'
 import SampleScenesWrapper from '../../SampleScenes/SampleScenes'
 import ColorWallContext, { colorWallContextDefault } from '../ColorWall/ColorWallContext'
@@ -33,6 +33,11 @@ import SaveOptions from '../../SaveOptions/SaveOptions'
 import { resetSaveState } from '../../../store/actions/persistScene'
 import type { Scene, SceneStatus } from '../../shared/types/Scene'
 import { StaticTintScene } from '../../CompareColor/StaticTintScene'
+// eslint-disable-next-line no-unused-vars
+import { getRefDimension } from '../../DynamicModal/DynamicModal'
+import { modalHeight, refreshModalHeight } from '../../../store/actions/modal'
+import debounce from 'lodash/debounce'
+
 const colorWallBaseUrl = `/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_WALL}`
 
 // this is very vague because react-router doesn't have the ability to match /section/x/family/y/color/z and /section/x/color/z with the same route
@@ -76,7 +81,9 @@ type Props = FacetPubSubMethods & FacetBinderMethods & {
   sceneStatus: SceneStatus[],
   scenes: Scene[],
   activeScenes: Array<number>,
-  unpaintSceneSurfaces: Function
+  unpaintSceneSurfaces: Function,
+  setModalHeight: number,
+  refreshModalHeight: boolean
 }
 
 const pathNameSet = new Set([`${ACTIVE_ROUTE}/colors`, `${ACTIVE_ROUTE}/inspiration`, `${ACTIVE_ROUTE}/scenes`, ACTIVE_ROUTE, '/'])
@@ -118,6 +125,16 @@ export class ColorVisualizerWrapper extends Component<Props> {
       tmpActiveId: null,
       isRedirectFromMyIdeasStockScene: false
     }
+
+    this.wrapperRef = createRef()
+    this.resizeHandler = debounce(this.resizeHandler.bind(this), 300)
+
+    window.addEventListener('resize', this.resizeHandler)
+  }
+
+  resizeHandler (e: SyntheticEvent) {
+    const height = getRefDimension(this.wrapperRef, 'height', true)
+    this.props.setModalHeight(height)
   }
 
   onRouteChanged = () => {
@@ -469,7 +486,7 @@ export class ColorVisualizerWrapper extends Component<Props> {
     }
     return (
       <React.Fragment>
-        <div className={cvwBaseClassName}>
+        <div className={cvwBaseClassName} ref={this.wrapperRef}>
           <RouteContext.Provider value={{
             navigate: (isShowDropDown, close) => this.open(isShowDropDown, close),
             setActiveComponent: () => this.setActiveComponent(),
@@ -540,12 +557,18 @@ export class ColorVisualizerWrapper extends Component<Props> {
     if (this.props.location !== prevProps.location && this.props.location.pathname !== ACTIVE_ROUTE) {
       this.onRouteChanged()
     }
+
+    if (this.props.refreshModalHeight) {
+      const height = getRefDimension(this.wrapperRef, 'height', true)
+      this.props.setModalHeight(height)
+    }
   }
 
   componentWillUnmount () {
     if (typeof this.props.unsubscribeAll === 'function') {
       this.props.unsubscribeAll()
     }
+    window.removeEventListener('resize', this.resizeHandler)
   }
 }
 
@@ -554,7 +577,8 @@ const mapStateToProps = (state, props) => {
     toggleCompareColor: state.lp.toggleCompareColor,
     scenes: state.scenes.sceneCollection[state.scenes.type],
     sceneStatus: state.scenes.sceneStatus[state.scenes.type],
-    activeScenes: state.scenes.activeScenes
+    activeScenes: state.scenes.activeScenes,
+    refreshModalHeight: state.refreshModalHeight
   }
 }
 
@@ -571,7 +595,12 @@ const mapDispatchToProps = (dispatch: Function) => {
       dispatch(setLayersForPaintScene(backgroundCanvasRef, layersRef, selectedScenePalette, initialWidth, initialHeight))
     },
     resetSaveState: () => dispatch(resetSaveState()),
-    unpaintSceneSurfaces: (sceneId) => dispatch(unpaintSceneSurfaces(sceneId))
+    unpaintSceneSurfaces: (sceneId) => dispatch(unpaintSceneSurfaces(sceneId)),
+    setModalHeight: (height: number) => {
+      dispatch(modalHeight(height))
+      dispatch(refreshModalHeight(false))
+    }
+
   }
 }
 export default facetBinder(connect(mapStateToProps, mapDispatchToProps)(withRouter(ColorVisualizerWrapper)), 'ColorVisualizerWrapper')
