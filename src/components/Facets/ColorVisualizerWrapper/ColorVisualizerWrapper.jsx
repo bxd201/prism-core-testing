@@ -30,13 +30,15 @@ import { RouteContext } from '../../../contexts/RouteContext/RouteContext'
 import { CVWWarningModal } from './WarningModal'
 import { setLayersForPaintScene } from '../../../store/actions/paintScene'
 import SaveOptions from '../../SaveOptions/SaveOptions'
-import { resetSaveState } from '../../../store/actions/persistScene'
+import { resetSaveState, SCENE_TYPE } from '../../../store/actions/persistScene'
 import type { Scene, SceneStatus } from '../../shared/types/Scene'
 import { StaticTintScene } from '../../CompareColor/StaticTintScene'
 // eslint-disable-next-line no-unused-vars
 import { getRefDimension } from '../../DynamicModal/DynamicModal'
 import { modalHeight, refreshModalHeight } from '../../../store/actions/modal'
 import debounce from 'lodash/debounce'
+import { setSelectedSceneStatus } from '../../../store/actions/stockScenes'
+import { replaceSceneStatus } from '../../../shared/utils/sceneUtil'
 
 const colorWallBaseUrl = `/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_WALL}`
 
@@ -83,7 +85,9 @@ type Props = FacetPubSubMethods & FacetBinderMethods & {
   activeScenes: Array<number>,
   unpaintSceneSurfaces: Function,
   setModalHeight: number,
-  refreshModalHeight: boolean
+  refreshModalHeight: boolean,
+  selectedStockSceneId: string | null,
+  sceneMetadata: Array<Object> | null
 }
 
 const pathNameSet = new Set([`${ACTIVE_ROUTE}/colors`, `${ACTIVE_ROUTE}/inspiration`, `${ACTIVE_ROUTE}/scenes`, ACTIVE_ROUTE, '/'])
@@ -350,14 +354,24 @@ export class ColorVisualizerWrapper extends Component<Props> {
       this.props.history.push('/')
       this.props.unpaintSceneSurfaces(currentActiveId)
       if (isUseOurPhoto && currentActiveId !== lastActiveId) {
-        // this.props.unpaintSceneSurfaces(lastActiveId)
         this.props.activateScene(currentActiveId)
         this.props.deactivateScene(lastActiveId)
-      } else if (isActivateScene) {
+      } else if (isActivateScene || isRedirectFromMyIdeasStockScene) {
         if (currentActiveId !== tmpActiveId) {
-          // this.props.unpaintSceneSurfaces(currentActiveId)
           this.props.activateScene(tmpActiveId)
           this.props.deactivateScene(currentActiveId)
+        }
+        if (isRedirectFromMyIdeasStockScene) {
+          let selectedScene = {}
+          const expectStockData = this.props.sceneMetadata.find(item => item.sceneType === SCENE_TYPE.anonStock && item.id === this.props.selectedStockSceneId)
+          if (expectStockData) {
+            const stockSceneData = this.props.scenes.find(item => item.id === expectStockData.scene.id)
+            const palette = expectStockData.scene.surfaces.map(surface => surface.color).filter(color => color !== undefined)
+            selectedScene = { name: expectStockData.name, palette: palette, savedSceneType: SCENE_TYPE.anonStock, stockSceneData: stockSceneData, expectStockData: expectStockData }
+          }
+          if (selectedScene.stockSceneData) {
+            this.props.setSelectedSceneStatus(selectedScene)
+          }
         }
         this.setState({
           currentActiveId: tmpActiveId,
@@ -573,12 +587,19 @@ export class ColorVisualizerWrapper extends Component<Props> {
 }
 
 const mapStateToProps = (state, props) => {
+  const currentSceneData = state.scenes && state.scenes.sceneStatus[state.scenes.type] && state.scenes.sceneStatus[state.scenes.type].find(item => item.id === state.scenes.activeScenes[0])
+  const sceneSurfaceTinted = currentSceneData && currentSceneData.surfaces.find(surface => !!surface.color)
+  const scenes = state.selectedSceneStatus && sceneSurfaceTinted !== undefined ? replaceSceneStatus(state.scenes, state.selectedSceneStatus) : state.scenes
+
   return {
     toggleCompareColor: state.lp.toggleCompareColor,
-    scenes: state.scenes.sceneCollection[state.scenes.type],
-    sceneStatus: state.scenes.sceneStatus[state.scenes.type],
-    activeScenes: state.scenes.activeScenes,
-    refreshModalHeight: state.refreshModalHeight
+    scenes: scenes.sceneCollection[state.scenes.type],
+    sceneStatus: scenes.sceneStatus[state.scenes.type],
+    activeScenes: scenes.activeScenes,
+    refreshModalHeight: state.refreshModalHeight,
+    selectedStockSceneId: state.selectedStockSceneId,
+    sceneMetadata: state.sceneMetadata,
+    selectedSceneStatus: state.selectedSceneStatus
   }
 }
 
@@ -599,8 +620,8 @@ const mapDispatchToProps = (dispatch: Function) => {
     setModalHeight: (height: number) => {
       dispatch(modalHeight(height))
       dispatch(refreshModalHeight(false))
-    }
-
+    },
+    setSelectedSceneStatus: (selectedScene) => dispatch(setSelectedSceneStatus(selectedScene))
   }
 }
 export default facetBinder(connect(mapStateToProps, mapDispatchToProps)(withRouter(ColorVisualizerWrapper)), 'ColorVisualizerWrapper')
