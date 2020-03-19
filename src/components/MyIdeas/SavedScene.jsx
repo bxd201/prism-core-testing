@@ -1,6 +1,7 @@
 // @flow
 
 import React, { useState, useRef, useEffect } from 'react'
+import { useSelector } from 'react-redux'
 import { useIntl } from 'react-intl'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import MergeColors from '../MergeCanvas/MergeColors'
@@ -8,10 +9,11 @@ import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 import PrismImage from '../PrismImage/PrismImage'
 // eslint-disable-next-line no-unused-vars
 import { CUSTOM_SCENE_IMAGE_ENDPOINT } from '../../constants/endpoints'
-import { KEY_CODES } from 'src/constants/globals'
+import { KEY_CODES, SCENE_VARIANTS } from 'src/constants/globals'
 
 import './MyIdeas.scss'
 import { StaticTintScene } from '../CompareColor/StaticTintScene'
+import type { ColorMap } from 'src/shared/types/Colors.js.flow'
 
 type SavedSceneProps = {
   sceneData: Object,
@@ -49,12 +51,19 @@ const thumbnailClassName = `${paneClassName}__thumb`
 const editButtonClassName = `${sceneClassName}__edit`
 
 const getColorsFromMetadata = (surfaces: Object[]) => {
-  return surfaces.map(surface => surface.color)
+  return surfaces.map(surface => surface.color).filter(color => color !== undefined)
 }
 
-const createColors = (sceneData: any, isTintableScene: boolean) => {
+const createColors = (sceneData: any, isTintableScene: boolean, colorMap: ColorMap) => {
   const colors = isTintableScene ? getColorsFromMetadata(sceneData.sceneMetadata.scene.surfaces) : sceneData.palette
-  return colors.filter(color => !!color).map((color, i) => {
+  const livePaletteColorsIdArray = (sceneData.sceneMetadata && sceneData.sceneMetadata.hasOwnProperty('livePaletteColorsIdArray'))
+    ? sceneData.sceneMetadata.livePaletteColorsIdArray
+    : sceneData.hasOwnProperty('livePaletteColorsIdArray') ? sceneData.livePaletteColorsIdArray
+      : null
+
+  const colorInstances = getColorInstances(colors, livePaletteColorsIdArray, colorMap)
+
+  return colorInstances.filter(color => !!color).map((color, i) => {
     const { red, green, blue } = color
     return (
       <div
@@ -67,6 +76,23 @@ const createColors = (sceneData: any, isTintableScene: boolean) => {
   })
 }
 
+const getColorInstances = (colors, livePaletteColorsIdArray, colorMap) => {
+  let uniqueColorIdsWithSavedLivePalette = new Set()
+  colors && colors.map(color => {
+    uniqueColorIdsWithSavedLivePalette.add(color.id)
+  })
+  livePaletteColorsIdArray && livePaletteColorsIdArray.map(colorId => {
+    uniqueColorIdsWithSavedLivePalette.add(colorId)
+  })
+  const colorInstances = []
+  for (let colorId of uniqueColorIdsWithSavedLivePalette) {
+    if (colorMap && colorMap[colorId]) {
+      colorInstances.push(colorMap[colorId])
+    }
+  }
+  return colorInstances
+}
+
 const SavedScene = (props: SavedSceneProps) => {
   const intl = useIntl()
   const { width, height } = props.useTintableScene ? props.sceneData.scene : props.sceneData.surfaceMasks
@@ -75,6 +101,7 @@ const SavedScene = (props: SavedSceneProps) => {
   const [backgroundImageData, setBackgroundImageData] = useState(null)
   const [backgroundImageSrc, setBackgroundImageSrc] = useState(null)
   const imageRef = useRef()
+  const { items: { colorMap } }: ColorMap = useSelector(state => state.colors)
 
   const getStockSceneVariant = (useTinableScene: booelan, sceneData: Object) => {
     if (useTinableScene) {
@@ -192,10 +219,12 @@ const SavedScene = (props: SavedSceneProps) => {
               <StaticTintScene
                 colors={getColorsFromMetadata(props.sceneData.sceneMetadata.scene.surfaces)}
                 scene={props.sceneData.scene}
-                statuses={props.sceneData.sceneMetadata.scene.surfaces} />
+                statuses={props.sceneData.sceneMetadata.scene.surfaces}
+                config={{ isNightScene: props.sceneData.sceneMetadata.scene.variant === SCENE_VARIANTS.NIGHT, type: props.sceneData.sceneMetadata.scene.sceneFetchType }}
+                isSavedScene />
             </div> : null}
             <div className={colorsClassName}>
-              {createColors(props.sceneData, props.useTintableScene)}
+              {createColors(props.sceneData, props.useTintableScene, colorMap)}
             </div>
           </div>
         </div>

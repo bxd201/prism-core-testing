@@ -237,3 +237,38 @@ export const editMask = (sceneWorkspace: SceneWorkspace) => {
     payload: sceneWorkspace
   }
 }
+
+export const TOGGLE_COLOR_DETAILS_PAGE = 'TOGGLE_COLOR_DETAILS_PAGE'
+export const toggleColorDetailsPage = () => {
+  return {
+    type: TOGGLE_COLOR_DETAILS_PAGE
+  }
+}
+
+export const SET_ACTIVE_STOCK_SCENE_POLLUTED = 'SET_ACTIVE_STOCK_SCENE_POLLUTED'
+export const setActiveStockScenePolluted = () => {
+  return {
+    type: SET_ACTIVE_STOCK_SCENE_POLLUTED
+  }
+}
+
+export const UNSET_ACTIVE_STOCK_SCENE_POLLUTED = 'UNSET_ACTIVE_STOCK_SCENE_POLLUTED'
+export const unsetActiveStockScenePolluted = () => {
+  return {
+    type: UNSET_ACTIVE_STOCK_SCENE_POLLUTED
+  }
+}
+
+export const SET_SELECTED_SCENE_VARIANT_CHANGED = 'SET_SELECTED_SCENE_VARIANT_CHANGED'
+export const setSelectedSceneVariantChanged = () => {
+  return {
+    type: SET_SELECTED_SCENE_VARIANT_CHANGED
+  }
+}
+
+export const UNSET_SELECTED_SCENE_VARIANT_CHANGED = 'UNSET_SELECTED_SCENE_VARIANT_CHANGED'
+export const unsetSelectedSceneVariantChanged = () => {
+  return {
+    type: UNSET_SELECTED_SCENE_VARIANT_CHANGED
+  }
+}

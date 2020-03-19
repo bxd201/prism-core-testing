@@ -1,5 +1,5 @@
 // @flow
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useIntl } from 'react-intl'
 import ImagePreloader from '../../helpers/ImagePreloader'
@@ -17,7 +17,8 @@ type PropsType = {
   scene: Scene,
   isCompareColor?: boolean,
   statuses?: SurfaceStatus[],
-  config: Object
+  config: Object,
+  isSavedScene?: boolean
 }
 
 export const StaticTintScene = (props: PropsType) => {
@@ -36,6 +37,27 @@ export const StaticTintScene = (props: PropsType) => {
   useEffect(() => { dispatch(loadColors(brandId, { language: locale })) }, [])
   const allColors = useSelector(state => state.colors.items.colorMap)
   const surfaces: Surface[] = defaultSceneVariant[0].surfaces
+  const [surfacePromise, setSurfacePromise] = useState(props.isSavedScene ? null : surfaces)
+  useEffect(() => {
+    if (props.isSavedScene) {
+      const sceneVariantSurfacesLoadingPromise = surfaces.map(surface => surface.mask._loadingPromise)
+      Promise.all([...sceneVariantSurfacesLoadingPromise]).then(result => {
+        const resultSurfaces = surfaces.map((surface, index) => {
+          return {
+            ...surface,
+            mask: {
+              ...surface.mask,
+              path: result[index]
+            }
+          }
+        })
+        setSurfacePromise(resultSurfaces)
+      }).catch(error => {
+        console.log('Error loadingpromise scene surfaces', error)
+        setSurfacePromise(surfaces)
+      })
+    }
+  }, [props.isSavedScene])
   const surfaceStatuses: SurfaceStatus[] = props.statuses ? props.statuses : surfaces.map((surface: Surface) => {
     const key = surface.colorId && ((surface.colorId).toString())
     if (allColors) {
@@ -57,17 +79,18 @@ export const StaticTintScene = (props: PropsType) => {
 
   const sceneId = 1/* some value that will be unique for every scene */
   return (
-    <ImagePreloader preload={getThumbnailAssetArrayByScene(defaultSceneVariant, surfaces)}>
+    surfacePromise && <ImagePreloader preload={getThumbnailAssetArrayByScene(defaultSceneVariant, surfacePromise)}>
       {({ loading, error }) => (
         <TintableScene
           background={isCompareColor ? defaultSceneVariant[0].thumb : defaultSceneVariant[0].image}
           error={error}
           height={chosenScene.height}
+          imageValueCurve={defaultSceneVariant[0].normalizedImageValueCurve}
           interactive={false} // setting to false disables interactive layer
           loading={loading}
           sceneId={sceneId}
           sceneName={defaultSceneVariant[0].name}
-          surfaces={surfaces}
+          surfaces={surfacePromise}
           surfaceStatus={surfaceStatuses}
           type={sceneType} // 'room', 'automotive', etc.
           width={chosenScene.width}

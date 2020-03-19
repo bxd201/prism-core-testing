@@ -135,7 +135,7 @@ const unpackAndColorizeMask = (surface: any, sceneData: Object[], colors: Object
   }
 }
 
-export const createCustomSceneMetadata = (imageBaseName: string, description: string, uniqueId: string, colors: Object[], width: number, height: number) => {
+export const createCustomSceneMetadata = (imageBaseName: string, description: string, uniqueId: string, colors: Object[], width: number, height: number, livePaletteColorsIdArray: Array<Object>) => {
   return {
     imageBaseName,
     description,
@@ -144,7 +144,8 @@ export const createCustomSceneMetadata = (imageBaseName: string, description: st
     height,
     colors: colors.map(color => {
       return { ...color }
-    })
+    }),
+    livePaletteColorsIdArray: livePaletteColorsIdArray
   }
 }
 

@@ -14,11 +14,11 @@ import SampleScenesWrapper from '../../SampleScenes/SampleScenes'
 import facetBinder from 'src/facetSupport/facetBinder'
 import { facetBinderDefaultProps, type FacetBinderMethods } from 'src/facetSupport/facetInstance'
 import { type FacetPubSubMethods, facetPubSubDefaultProps } from 'src/facetSupport/facetPubSub'
-import { activateScene, deactivateScene, unpaintSceneSurfaces } from '../../../store/actions/scenes'
+import { activateScene, deactivateScene, unpaintSceneSurfaces, unsetActiveStockScenePolluted, changeSceneVariant, unsetSelectedSceneVariantChanged } from '../../../store/actions/scenes'
 import { connect } from 'react-redux'
 import { Route, Redirect } from 'react-router-dom'
 
-import { ROUTE_PARAMS, ROUTE_PARAM_NAMES } from 'constants/globals'
+import { ROUTE_PARAMS, ROUTE_PARAM_NAMES, SCENE_VARIANTS } from 'constants/globals'
 import ImageRotateContainer from '../../MatchPhoto/ImageRotateContainer'
 import MyIdeasContainer from '../../MyIdeasContainer/MyIdeasContainer'
 import MyIdeaPreview from '../../MyIdeaPreview/MyIdeaPreview'
@@ -86,7 +86,11 @@ type Props = FacetPubSubMethods & FacetBinderMethods & {
   setModalHeight: number,
   refreshModalHeight: boolean,
   selectedStockSceneId: string | null,
-  sceneMetadata: Array<Object> | null
+  sceneMetadata: Array<Object> | null,
+  setSelectedSceneStatus: Function,
+  selectedSceneStatus: Object,
+  isActiveStockScenePolluted: boolean,
+  unsetSelectedSceneVariantChanged: Function
 }
 
 const pathNameSet = new Set([`${ACTIVE_ROUTE}/colors`, `${ACTIVE_ROUTE}/inspiration`, `${ACTIVE_ROUTE}/scenes`, ACTIVE_ROUTE, '/'])
@@ -126,7 +130,8 @@ export class ColorVisualizerWrapper extends Component<Props> {
       isRedirectFromMyIdeas: false,
       isActivateScene: false,
       tmpActiveId: null,
-      isRedirectFromMyIdeasStockScene: false
+      isRedirectFromMyIdeasStockScene: false,
+      openUnpaintedStockScene: false
     }
 
     this.wrapperRef = createRef()
@@ -210,7 +215,7 @@ export class ColorVisualizerWrapper extends Component<Props> {
 
   redirectMyIdeas = (isRedirectFromMyIdeasStockScene: boolean = false, tmpActiveId: string | null = null) => {
     if (isRedirectFromMyIdeasStockScene) {
-      this.activateScene(tmpActiveId)
+      this.activateScene(tmpActiveId, isRedirectFromMyIdeasStockScene)
     } else {
       this.props.history.push(ACTIVE_ROUTE)
       this.setState({
@@ -244,12 +249,13 @@ export class ColorVisualizerWrapper extends Component<Props> {
           checkIsPaintSceneUpdate: !checkIsPaintSceneUpdate,
           isRedirectFromMyIdeas: true,
           tmpActiveId: data.tmpActiveId,
-          isActivateScene: true
+          isActivateScene: true,
+          openUnpaintedStockScene: data.openUnpaintedStockScene
         })
       }
       const currentSceneData = this.props.sceneStatus.find(item => item.id === this.props.activeScenes[0])
       const currentSceneMetaData = this.props.scenes.find(scene => scene.id === this.props.activeScenes[0])
-      const miniImage = <StaticTintScene scene={currentSceneMetaData} statuses={currentSceneData.surfaces} />
+      const miniImage = <StaticTintScene scene={currentSceneMetaData} statuses={currentSceneData.surfaces} config={{ isNightScene: currentSceneData.variant === SCENE_VARIANTS.NIGHT }} />
       this.showWarningModal(miniImage)
       return false
     }
@@ -265,7 +271,8 @@ export class ColorVisualizerWrapper extends Component<Props> {
         checkIsPaintSceneUpdate: !checkIsPaintSceneUpdate,
         isRedirectFromMyIdeas: true,
         tmpActiveId: data.tmpActiveId,
-        isActivateScene: true
+        isActivateScene: true,
+        openUnpaintedStockScene: data.openUnpaintedStockScene
       })
     }
     return false
@@ -308,7 +315,7 @@ export class ColorVisualizerWrapper extends Component<Props> {
             this.setState({ tmpUrl: url, isFromMyIdeas: false })
             const currentSceneData = this.props.sceneStatus.find(item => item.id === this.props.activeScenes[0])
             const currentSceneMetaData = this.props.scenes.find(scene => scene.id === this.props.activeScenes[0])
-            const miniImage = <StaticTintScene scene={currentSceneMetaData} statuses={currentSceneData.surfaces} />
+            const miniImage = <StaticTintScene scene={currentSceneMetaData} statuses={currentSceneData.surfaces} config={{ isNightScene: currentSceneData.variant === SCENE_VARIANTS.NIGHT }} />
             this.showWarningModal(miniImage)
           } else {
             this.setState({ checkIsPaintSceneUpdate: !checkIsPaintSceneUpdate, tmpUrl: url })
@@ -343,7 +350,7 @@ export class ColorVisualizerWrapper extends Component<Props> {
   }
 
   loadNewCanvas=() => {
-    const { tmpUrl, checkIsPaintSceneUpdate, isUseOurPhoto, lastActiveId, currentActiveId, isRedirectFromMyIdeas, isActivateScene, tmpActiveId, isRedirectFromMyIdeasStockScene } = this.state
+    const { tmpUrl, checkIsPaintSceneUpdate, isUseOurPhoto, lastActiveId, currentActiveId, isRedirectFromMyIdeas, isActivateScene, tmpActiveId, isRedirectFromMyIdeasStockScene, openUnpaintedStockScene } = this.state
     if (isRedirectFromMyIdeas && !isRedirectFromMyIdeasStockScene && this.state.setLayersForPaintSceneData.backgroundCanvasRef) {
       this.props.setLayersForPaintScene(this.state.setLayersForPaintSceneData)
       this.redirectMyIdeas(false)
@@ -352,6 +359,10 @@ export class ColorVisualizerWrapper extends Component<Props> {
     if (isUseOurPhoto || isActivateScene || isRedirectFromMyIdeasStockScene) {
       this.props.history.push('/')
       this.props.unpaintSceneSurfaces(currentActiveId)
+      this.props.changeSceneVariant(currentActiveId, SCENE_VARIANTS.DAY)
+      this.props.unsetActiveStockScenePolluted()
+      this.props.setSelectedSceneStatus(null)
+      this.props.unsetSelectedSceneVariantChanged()
       if (isUseOurPhoto && currentActiveId !== lastActiveId) {
         this.props.activateScene(currentActiveId)
         this.props.deactivateScene(lastActiveId)
@@ -366,7 +377,7 @@ export class ColorVisualizerWrapper extends Component<Props> {
           if (expectStockData) {
             const stockSceneData = this.props.scenes.find(item => item.id === expectStockData.scene.id)
             const palette = expectStockData.scene.surfaces.map(surface => surface.color).filter(color => color !== undefined)
-            selectedScene = { name: expectStockData.name, palette: palette, savedSceneType: SCENE_TYPE.anonStock, stockSceneData: stockSceneData, expectStockData: expectStockData }
+            selectedScene = { name: expectStockData.name, palette: palette, savedSceneType: SCENE_TYPE.anonStock, stockSceneData: stockSceneData, expectStockData: expectStockData, openUnpaintedStockScene: openUnpaintedStockScene }
           }
           if (selectedScene.stockSceneData) {
             this.props.setSelectedSceneStatus(selectedScene)
@@ -414,7 +425,7 @@ export class ColorVisualizerWrapper extends Component<Props> {
   }
 
   cancel = () => {
-    this.setState({ isShowWarningModal: false, checkIsPaintSceneUpdate: false, isActivateScene: false, tmpActiveId: null, tmpUrl: '', isRedirectFromMyIdeas: false })
+    this.setState({ isShowWarningModal: false, checkIsPaintSceneUpdate: false, isActivateScene: false, tmpActiveId: null, tmpUrl: '', isRedirectFromMyIdeas: false, openUnpaintedStockScene: false })
   }
 
   setIsPaintSceneActive = () => {
@@ -433,7 +444,7 @@ export class ColorVisualizerWrapper extends Component<Props> {
     if (this.state.isPaintScenePolluted) this.setState({ isPaintScenePolluted: false })
   }
 
-  activateScene = (id) => {
+  activateScene = (id, isRedirectFromMyIdeasStockScene = false) => {
     const { checkIsPaintSceneUpdate, lastActiveComponent, currentActiveId, isPaintScenePolluted } = this.state
     if (lastActiveComponent === SCENE_MANAGER_COMPONENT) {
       if (this.checkIsStockScenePolluted()) {
@@ -443,11 +454,18 @@ export class ColorVisualizerWrapper extends Component<Props> {
         })
         const currentSceneData = this.props.sceneStatus.find(item => item.id === this.props.activeScenes[0])
         const currentSceneMetaData = this.props.scenes.find(scene => scene.id === this.props.activeScenes[0])
-        const miniImage = <StaticTintScene scene={currentSceneMetaData} statuses={currentSceneData.surfaces} />
+        const miniImage = <StaticTintScene scene={currentSceneMetaData} statuses={currentSceneData.surfaces} config={{ isNightScene: currentSceneData.variant === SCENE_VARIANTS.NIGHT }} />
         this.showWarningModal(miniImage)
         return
       }
       this.props.history.push('/')
+      this.props.unpaintSceneSurfaces(currentActiveId)
+      this.props.changeSceneVariant(currentActiveId, SCENE_VARIANTS.DAY)
+      this.props.unsetActiveStockScenePolluted()
+      if (!isRedirectFromMyIdeasStockScene) {
+        this.props.unsetSelectedSceneVariantChanged()
+        this.props.setSelectedSceneStatus(null)
+      }
       if (id !== currentActiveId) {
         this.props.activateScene(id)
         this.props.deactivateScene(currentActiveId)
@@ -481,9 +499,7 @@ export class ColorVisualizerWrapper extends Component<Props> {
   checkIsPaintScenePolluted = () => this.state.isPaintScenePolluted
 
   checkIsStockScenePolluted = () => {
-    const currentSceneData = (this.props.sceneStatus) ? this.props.sceneStatus.find(item => item.id === this.props.activeScenes[0]) : null
-    const isCurrentSceneHasColor = (currentSceneData) ? currentSceneData.surfaces.findIndex(surface => surface.hasOwnProperty('color')) : -1
-    if (isCurrentSceneHasColor !== -1) {
+    if (this.props.isActiveStockScenePolluted) {
       return true
     }
     return false
@@ -552,7 +568,7 @@ export class ColorVisualizerWrapper extends Component<Props> {
                   <LivePalette />
                 </div>
                 <div className={footerSecondaryItemClassName}>
-                  <SaveOptions />
+                  <SaveOptions activeComponent={this.state.lastActiveComponent} />
                 </div>
               </div>
             </div>
@@ -586,7 +602,7 @@ export class ColorVisualizerWrapper extends Component<Props> {
 const mapStateToProps = (state, props) => {
   const currentSceneData = state.scenes && state.scenes.sceneStatus[state.scenes.type] && state.scenes.sceneStatus[state.scenes.type].find(item => item.id === state.scenes.activeScenes[0])
   const sceneSurfaceTinted = currentSceneData && currentSceneData.surfaces.find(surface => !!surface.color)
-  const scenes = state.selectedSceneStatus && sceneSurfaceTinted !== undefined ? replaceSceneStatus(state.scenes, state.selectedSceneStatus) : state.scenes
+  const scenes = state.selectedSceneStatus && !state.selectedSceneStatus.openUnpaintedStockScene && sceneSurfaceTinted !== void 0 ? replaceSceneStatus(state.scenes, state.selectedSceneStatus) : state.scenes
 
   return {
     toggleCompareColor: state.lp.toggleCompareColor,
@@ -596,7 +612,8 @@ const mapStateToProps = (state, props) => {
     refreshModalHeight: state.refreshModalHeight,
     selectedStockSceneId: state.selectedStockSceneId,
     sceneMetadata: state.sceneMetadata,
-    selectedSceneStatus: state.selectedSceneStatus
+    selectedSceneStatus: state.selectedSceneStatus,
+    isActiveStockScenePolluted: state.scenes.isActiveStockScenePolluted
   }
 }
 
@@ -618,7 +635,12 @@ const mapDispatchToProps = (dispatch: Function) => {
       dispatch(modalHeight(height))
       dispatch(refreshModalHeight(false))
     },
-    setSelectedSceneStatus: (selectedScene) => dispatch(setSelectedSceneStatus(selectedScene))
+    setSelectedSceneStatus: (selectedScene) => dispatch(setSelectedSceneStatus(selectedScene)),
+    unsetActiveStockScenePolluted: () => dispatch(unsetActiveStockScenePolluted()),
+    changeSceneVariant: (sceneId: number, variant: string) => {
+      dispatch(changeSceneVariant(sceneId, variant))
+    },
+    unsetSelectedSceneVariantChanged: () => dispatch(unsetSelectedSceneVariantChanged())
   }
 }
 export default facetBinder(connect(mapStateToProps, mapDispatchToProps)(withRouter(ColorVisualizerWrapper)), 'ColorVisualizerWrapper')

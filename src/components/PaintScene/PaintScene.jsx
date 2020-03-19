@@ -1029,6 +1029,10 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   processMasks () {
     const colorList = getColorsFromImagePathList(this.state.imagePathList)
     const labColorList = colorList.map(color => getLABFromColor(color))
+    let livePaletteColorsIdArray = []
+    this.props.lpColors && this.props.lpColors.map(color => {
+      livePaletteColorsIdArray.push(color.id)
+    })
 
     let saveBackgroundOnly = false
 
@@ -1039,8 +1043,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     const backgroundImageUrl = this.CFICanvas.current.toDataURL('image/jpeg', 1.0)
     const ctx2 = this.CFICanvas2.current.getContext('2d')
     const imageData = !saveBackgroundOnly ? ctx2.getImageData(0, 0, ctx2.canvas.width, ctx2.canvas.height) : null
-    const metaData = createCustomSceneMetadata('TEMP_NAME', this.props.saveSceneName, this.state.uniqueSceneId, colorList, ctx2.canvas.width, ctx2.canvas.height)
-
+    const metaData = createCustomSceneMetadata('TEMP_NAME', this.props.saveSceneName, this.state.uniqueSceneId, colorList, ctx2.canvas.width, ctx2.canvas.height, livePaletteColorsIdArray)
     this.props.saveMasks(labColorList, imageData, backgroundImageUrl, metaData)
   }
 

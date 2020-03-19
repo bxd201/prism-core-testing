@@ -27,11 +27,11 @@ const dynamicModalButtonBaseClassName = `${dynamicModalButtonsClassName}__button
 
 type DynamicModalProps = {
   // Actions are used to create buttons
-  actions: DynamicModalAction,
-  title: String,
+  actions?: DynamicModalAction,
+  title?: String,
   description: String,
   height: number,
-  allowInput: boolean,
+  allowInput?: boolean,
   inputDefault?: string,
   modalStyle?: string
 }
@@ -77,7 +77,7 @@ const DynamicModal = (props: DynamicModalProps) => {
         {props.description ? <div className={dynamicModalDescriptionClassName}>{props.description}</div> : null}
         {props.allowInput ? <div className={dynamicModalInputWrapperClassName}><input onChange={setInputVal} value={inputValue} /></div> : null}
         <div className={dynamicModalButtonsClassName}>
-          {createButtonsFromActions(props.actions)}
+          {props.actions && createButtonsFromActions(props.actions)}
         </div>
       </div>
     </div>
