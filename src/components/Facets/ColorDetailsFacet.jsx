@@ -9,8 +9,9 @@ import { facetBinderDefaultProps } from 'src/facetSupport/facetInstance'
 import { facetPubSubDefaultProps } from 'src/facetSupport/facetPubSub'
 import GenericMessage from '../Messages/GenericMessage'
 import { FormattedMessage } from 'react-intl'
-import type { ColorMap } from 'src/shared/types/Colors.js.flow'
+import type { ColorMap, Color, ColorId } from 'src/shared/types/Colors.js.flow'
 import findKey from 'lodash/findKey'
+import kebabCase from 'lodash/kebabCase'
 import { loadColors } from 'src/store/actions/loadColors'
 import HeroLoader from '../Loaders/HeroLoader/HeroLoader'
 
@@ -24,41 +25,40 @@ type Props = {
 
 export const ColorDetailsPage = ({ colorSEO, publish, subscribe }: Props) => {
   loadColors('sherwin')(useDispatch())
-
   const [familyLink, setFamilyLink] = useState('not set')
+  const location = useLocation()
+  const colorMap: ColorMap = useSelector(state => state.colors.items.colorMap, shallowEqual)
+
+  if (!colorMap) return <HeroLoader />
+
   subscribe('prism-family-link', setFamilyLink)
 
-  const colorMap: ColorMap = useSelector(state => state.colors.items.colorMap, shallowEqual)
-  const colorId = findKey(colorMap, { colorNumber: colorSEO.split('-')[1] })
-
-  const location = useLocation()
-
-  if (!colorSEO) {
+  const colorId: ?ColorId = findKey(colorMap, { colorNumber: colorSEO.match(/\d+/)[0] })
+  if (!colorId) {
     return (
       <GenericMessage type={GenericMessage.TYPES.ERROR}>
         <FormattedMessage id='UNSPECIFIED_COLOR' />
       </GenericMessage>
     )
-  } else if (!colorId) {
-    return (<HeroLoader />)
-  } else {
-    return (
-      <>
-        <Redirect to={`${colorDetailsBaseUrl}/${colorId}/${colorSEO}`} />
-        {location.pathname !== '/' && (
-          <Route path={`${colorDetailsBaseUrl}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`}>
-            <ColorDetails
-              familyLink={familyLink}
-              onColorChanged={newColor => publish('prism-new-color', newColor)}
-              onSceneChanged={newScene => publish('prism-new-scene', newScene)}
-              onVariantChanged={newVariant => publish('prism-new-variant', newVariant)}
-              onColorChipToggled={newPosition => publish('prism-color-chip-toggled', newPosition)}
-            />
-          </Route>
-        )}
-      </>
-    )
   }
+
+  const { brandKey, name, colorNumber }: Color = colorMap[colorId]
+  return (
+    <>
+      <Redirect to={`${colorDetailsBaseUrl}/${colorId}/${brandKey}-${colorNumber}-${kebabCase(name)}`} />
+      {location.pathname !== '/' && (
+        <Route path={`${colorDetailsBaseUrl}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`}>
+          <ColorDetails
+            familyLink={familyLink}
+            onColorChanged={newColor => publish('prism-new-color', newColor)}
+            onSceneChanged={newScene => publish('prism-new-scene', newScene)}
+            onVariantChanged={newVariant => publish('prism-new-variant', newVariant)}
+            onColorChipToggled={newPosition => publish('prism-color-chip-toggled', newPosition)}
+          />
+        </Route>
+      )}
+    </>
+  )
 }
 
 ColorDetailsPage.defaultProps = { ...facetBinderDefaultProps, ...facetPubSubDefaultProps }
