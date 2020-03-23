@@ -8,13 +8,16 @@
     "build": "NODE_ENV=production webpack --config webpack.prod.js",
     "build:publish": "cross-env API_URL=https://prism-api.sherwin-williams.com WEB_URL=https://replatform-prism-web.ebus.swaws webpack --config webpack.publish.js",
     "test": "jest --coverage",
+    "test:changed": "jest --changedSince=develop --coverage",
     "test:ci": "jest --ci",
     "test-watch": "jest --watch --coverage",
     "preflow-check": "npm run flow-install",
     "flow-check": "flow check",
     "flow-check-verbose": "flow check --show-all-errors",
     "flow-install": "flow-typed install",
-    "prepare": "npm run build:publish"
+    "prepare": "npm run build:publish",
+    "lint": "eslint src/ --ext .js,.ts,.jsx,.tsx",
+    "lint-fix": "npm run lint --fix"
   },
   "main": "dist/index.js",
   "jest": {
@@ -46,6 +49,32 @@
       "WEBPACK_CONSTANTS": {},
       "VAR_NAMES": {},
       "VAR_VALUES": {}
+    },
+    "coverageThreshold": {
+      "global": {
+        "branches": 30,
+        "functions": 30,
+        "lines": 30,
+        "statements": -10
+      },
+      "./src/store/actions/**/*.js": {
+        "branch": 90,
+        "functions": 90,
+        "line": 90,
+        "statements": 90
+      },
+      "./src/store/masks/**/*.js": {
+        "branch": 90,
+        "functions": 90,
+        "line": 90,
+        "statements": 90
+      },
+      "./src/store/reducers/**/*.js": {
+        "branch": 90,
+        "functions": 90,
+        "line": 90,
+        "statements": 90
+      }
     }
   },
   "dependencies": {
@@ -89,6 +118,9 @@
     "react": "16.10.2",
     "react-dom": "16.10.2"
   },
+  "resolutions": {
+    "@babel/preset-env": "^7.8.7"
+  },
   "devDependencies": {
     "@babel/cli": "7.8.3",
     "@babel/plugin-proposal-class-properties": "7.8.3",
@@ -98,7 +130,7 @@
     "@babel/plugin-transform-flow-strip-types": "7.8.3",
     "@babel/plugin-transform-object-assign": "7.8.3",
     "@babel/plugin-transform-template-literals": "7.8.3",
-    "@babel/preset-env": "7.8.3",
+    "@babel/preset-env": "7.8.7",
     "@babel/preset-flow": "7.8.3",
     "@babel/preset-react": "7.8.3",
     "@testing-library/jest-dom": "^5.1.1",
@@ -130,6 +162,7 @@
     "flow-typed": "2.6.1",
     "hard-source-webpack-plugin": "0.13.1",
     "html-webpack-plugin": "3.2.0",
+    "husky": "^4.2.3",
     "identity-obj-proxy": "3.0.0",
     "jest": "25.1.0",
     "jest-canvas-mock": "2.1.1",
@@ -138,6 +171,7 @@
     "nock": "11.4.0",
     "node-sass": "4.12.0",
     "node-sass-utils": "1.1.2",
+    "npm-force-resolutions": "0.0.3",
     "object-hash": "^2.0.3",
     "postcss-loader": "3.0.0",
     "postcss-wrapper-loader-w-exclude": "0.0.2",
