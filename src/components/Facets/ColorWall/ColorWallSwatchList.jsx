@@ -89,7 +89,8 @@ type DerivedStateFromProps = {
 
 type State = DerivedStateFromProps & {
   a11yFocusChunk: GridBounds,
-  a11yFocusCell: number[] | void
+  a11yFocusCell: number[] | void,
+  lastKeyDown: number
 }
 
 // END STATE TYPES
@@ -120,7 +121,8 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     emptyRows: [],
     focusCoords: [],
     levelMap: {},
-    needsInitialFocus: true
+    needsInitialFocus: true,
+    lastKeyDown: 0
   }
 
   static defaultProps = {
@@ -450,7 +452,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
 
   handleGridKeyDown = function handleGridKeyDown (e: any) {
     const { colors, history: { push }, showAll, colorWallContext: { a11yFocusCell, a11yFocusChunk, updateA11y }, zoomOutUrl } = this.props
-    const { activeColorCoords } = this.state
+    const { activeColorCoords, levelMap, lastKeyDown } = this.state
     const { shiftKey } = e
 
     let newA11yFocusChunk
@@ -491,7 +493,17 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
           const colorId = colors[y][x]
 
           if (!colorId) {
+            this.setState({ lastKeyDown: e.keyCode })
             return
+          }
+
+          // just use default enter behavior when focused on a bloom swatch
+          const level = this.state.levelMap[colorId]
+          if (level && level.level === 0) {
+            this.setState({ lastKeyDown: e.keyCode })
+            return
+          } else {
+            this._gridWrapperRef.current.focus()
           }
 
           const swatchAPI = at(this._swatchRefs, `[${colorId}].current`)[0]
@@ -525,6 +537,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
           newA11yFocusCell = a11yFocusCell
           // NOTE: we SHOULD just be able to return here, since this means the user is just pressing
           // a direction they can't actually move
+          this.setState({ lastKeyDown: e.keyCode })
           return
         }
       }
@@ -540,6 +553,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
 
           e.stopPropagation()
           e.preventDefault()
+          this.setState({ lastKeyDown: e.keyCode })
           return
         }
         break
@@ -558,6 +572,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
             } else {
               // if we can't select a first chunk, just let the tab flow through to get the user out of the color wall
               updateA11y({ a11yFocusChunk: void (0), a11yFocusCell: void (0), a11yMaintainFocus: false })
+              this.setState({ lastKeyDown: e.keyCode })
               return
             }
           } else {
@@ -582,11 +597,21 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
                   a11yMaintainFocus: false
                 })
 
-                return
+                this.setState({ lastKeyDown: e.keyCode })
               }
             }
           }
         } else {
+          // if focused on the bloomed swatch use default tab behavior for first tab select
+          if (!isEmpty(a11yFocusCell)) {
+            const colorId = colors[a11yFocusCell[1]][a11yFocusCell[0]]
+            const level = levelMap[colorId]
+            if (level && level.level === 0 && (lastKeyDown !== 9)) {
+              this.setState({ lastKeyDown: e.keyCode })
+              return
+            }
+          }
+
           // go down a column
           // if we have no current chunk...
           if (isEmpty(a11yFocusChunk)) {
@@ -599,6 +624,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
             } else {
               // if we can't select a first chunk, just let the tab flow through to get the user out of the color wall
               updateA11y({ a11yFocusChunk: void (0), a11yFocusCell: void (0), a11yMaintainFocus: false })
+              this.setState({ lastKeyDown: e.keyCode })
               return
             }
           } else {
@@ -617,6 +643,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
               } else {
                 // if we can't select a "next chunk over," assume we've reached the end and allow the user to tab out
                 updateA11y({ a11yFocusChunk: void (0), a11yFocusCell: void (0), a11yMaintainFocus: false })
+                this.setState({ lastKeyDown: e.keyCode })
                 return
               }
             }
@@ -637,11 +664,13 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
 
     // if our focus values are empty...
     if (isEmpty(newA11yFocusCell) && isEmpty(newA11yFocusChunk)) {
+      this.setState({ lastKeyDown: e.keyCode })
       return
     }
 
     // if our focus values haven't changed...
     if (newA11yFocusCell === a11yFocusCell && newA11yFocusChunk === a11yFocusChunk) {
+      this.setState({ lastKeyDown: e.keyCode })
       return
     }
 
@@ -650,6 +679,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
 
     e.stopPropagation()
     e.preventDefault()
+    this.setState({ lastKeyDown: e.keyCode })
   }
 
   handleGridResize = function handleGridResize ({ width, height }) {
@@ -749,7 +779,6 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
       // ALL of the bloomed swatches in the zoomed-in view
       renderedSwatch = (
         <ColorWallSwatch
-          tabIndex={-1}
           showContents={showContents}
           thisLink={linkToSwatch}
           onAdd={onAddColor ? this.addColor : void (0)}
