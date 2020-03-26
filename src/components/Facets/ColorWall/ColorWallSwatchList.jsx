@@ -367,9 +367,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
         const focusedColor: Color = colorMap[focusedColorId]
         const thisLevel: ColorReference = levelMap[focusedColorId]
 
-        if (thisLevel && thisLevel.level === 0) {
-          announceAssertive(formatMessage({ id: 'SWATCH_ACTIVATED_DETAILS' }, { color: focusedColor.name }))
-        } else {
+        if (!thisLevel && thisLevel.level !== 0) {
           announceAssertive(formatMessage({ id: 'SWATCH_FOCUS' }, { color: fullColorName(focusedColor.brandKey, focusedColor.colorNumber, focusedColor.name) }))
         }
       }
@@ -779,6 +777,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
       // ALL of the bloomed swatches in the zoomed-in view
       renderedSwatch = (
         <ColorWallSwatch
+          aria-hidden='true'
           showContents={showContents}
           thisLink={linkToSwatch}
           onAdd={onAddColor ? this.addColor : void (0)}
@@ -799,6 +798,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
       // a color swatch that behaves as a button and that's it this is the swatch used in zoomed-out non-bloomed view
       renderedSwatch = (
         <ColorWallSwatchUI
+          aria-hidden='true'
           tabIndex={-1}
           color={color}
           thisLink={linkToSwatch}
@@ -812,6 +812,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
       // ALL non-bloomed swatches in the zoomed-in view
       renderedSwatch = (
         <ColorWallSwatch
+          aria-hidden='true'
           tabIndex={-1}
           thisLink={linkToSwatch}
           color={color}
