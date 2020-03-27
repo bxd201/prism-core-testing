@@ -14,6 +14,7 @@ import { anonLogin } from './user'
 import * as firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/storage'
+import { getFirebaseListItemPaths } from '../../shared/utils/sceneUtil'
 
 export const SAVING_MASKS = 'SAVING_MASKS'
 export const SAVED_SCENE_LOCAL = 'SAVED_SCENE_LOCAL'
@@ -461,30 +462,39 @@ const fetchSavedScenesFromFirebase = (metadata: Object[], dispatch: Function, ge
     const downloadQueue = []
     const sceneMetadataQueue = []
     const storageRef = firebase.storage().ref()
+    const { user } = getState()
 
-    metadata.forEach(item => {
-      const sceneInfo = storageRef.child(item.scene).getDownloadURL()
-      downloadQueue.push(sceneInfo)
-      sceneMetadataQueue.push(storageRef.child(item.scene).getMetadata())
-    })
-    // background and scene xml need to be keyed to each other to find in redux collections
-    Promise.all([
-      ...downloadQueue,
-      ...sceneMetadataQueue // downloadQueue & sceneMetadataQueue are arrays, so merging them into one array for promise.all
-    ]).then(data => {
-      const dataLength = data.length
-      // data is an Array of download urls & scenes custom metadata, so slicing it into half to get downloadUrl & sceneCustomMetadata array
-      const downloadUrl = data.slice(0, (dataLength / 2))
-      const sceneCustomMetadata = data.slice((dataLength / 2), dataLength).map(scenemetadata => scenemetadata.customMetadata)
-      downloadRemoteFiles(downloadUrl, dispatch, getState, sceneCustomMetadata)
-    }).catch(err => {
-      console.log('Error getting download URLs from the server:', err)
-      dispatch(setWaitingToFetchSavedScene(false))
-      // @todo handle error -RS
-      dispatch({
-        type: ERROR_DOWNLOADING_SAVED_DATA,
-        payload: true
+    storageRef.child(`scenes/${user.uid}`).list().then(data => {
+      console.log('Scenes in Firebase:', data.items)
+      const paths = getFirebaseListItemPaths(data)
+      const validatedMetadata = metadata.filter(item => item.scene && paths.indexOf(item.scene) > -1)
+      validatedMetadata.forEach(item => {
+        const sceneInfo = storageRef.child(item.scene).getDownloadURL()
+        downloadQueue.push(sceneInfo)
+        sceneMetadataQueue.push(storageRef.child(item.scene).getMetadata())
       })
+      // background and scene xml need to be keyed to each other to find in redux collections
+      Promise.all([
+        ...downloadQueue,
+        ...sceneMetadataQueue // downloadQueue & sceneMetadataQueue are arrays, so merging them into one array for promise.all
+      ]).then(data => {
+        const dataLength = data.length
+        // data is an Array of download urls & scenes custom metadata, so slicing it into half to get downloadUrl & sceneCustomMetadata array
+        const downloadUrl = data.slice(0, (dataLength / 2))
+        const sceneCustomMetadata = data.slice((dataLength / 2), dataLength).map(scenemetadata => scenemetadata.customMetadata)
+        downloadRemoteFiles(downloadUrl, dispatch, getState, sceneCustomMetadata)
+      }).catch(err => {
+        console.log('Error getting download URLs from the server:', err)
+        dispatch(setWaitingToFetchSavedScene(false))
+
+        dispatch({
+          type: ERROR_DOWNLOADING_SAVED_DATA,
+          payload: true
+        })
+      })
+    }).catch(err => {
+      // The user has no remote files that can be fetched
+      console.log('No data could be fetched in from Firebase for pre-check.', err)
     })
   } else {
     dispatch({
