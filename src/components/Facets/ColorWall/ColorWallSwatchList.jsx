@@ -89,7 +89,8 @@ type DerivedStateFromProps = {
 
 type State = DerivedStateFromProps & {
   a11yFocusChunk: GridBounds,
-  a11yFocusCell: number[] | void
+  a11yFocusCell: number[] | void,
+  lastKeyDown: number
 }
 
 // END STATE TYPES
@@ -120,7 +121,8 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     emptyRows: [],
     focusCoords: [],
     levelMap: {},
-    needsInitialFocus: true
+    needsInitialFocus: true,
+    lastKeyDown: 0
   }
 
   static defaultProps = {
@@ -140,10 +142,6 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
     this.handleGridResize = this.handleGridResize.bind(this)
     this.handleGridFocus = this.handleGridFocus.bind(this)
     this.handleGridBlur = this.handleGridBlur.bind(this)
-    this.handleBodyMouseDown = this.handleBodyMouseDown.bind(this)
-    this.handleBodyKeyDown = this.handleBodyKeyDown.bind(this)
-    this.handleBodyTouchStart = this.handleBodyTouchStart.bind(this)
-    this.returnFocusToThisComponent = this.returnFocusToThisComponent.bind(this)
     this._gridWrapperRef = React.createRef()
     this._swatchRefs = {}
   }
@@ -299,9 +297,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
   }
 
   componentDidMount () {
-    const { colors, colorWallContext: { a11yFocusCell, a11yFocusChunk, a11yMaintainFocus, a11yFromKeyboard, updateA11y } } = this.props
-
-    const maintainFocus = a11yMaintainFocus
+    const { colors, colorWallContext: { a11yFocusCell, a11yFocusChunk, a11yFromKeyboard, updateA11y } } = this.props
     const fromKeyboard = a11yFromKeyboard
     const cell = a11yFocusCell
 
@@ -325,29 +321,11 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
       }
     }
 
-    // if we've been provided a maintainFocus flag in location state...
-    if (maintainFocus) {
-      // ... then we can assume we got here via keyboard.
-
-      // attempt to return focus to this component (void if it's already focused)
-      this.returnFocusToThisComponent()
-    }
-
-    // Attach listeners to document for keypress and click
-    // each will toggle an internal flag off/on (say, true for keypress and false for click)
-    // in our grid focus handler we'll take a look at whether our flag indicates a keypress, and if so we'll
-    // activate our focus area; if not then we can assume we got here via click/tap and we can disable the outline
-    document.addEventListener('keydown', this.handleBodyKeyDown)
-    document.addEventListener('mousedown', this.handleBodyMouseDown)
-    document.addEventListener('touchstart', this.handleBodyTouchStart)
-
     if (this._gridWrapperRef && this._gridWrapperRef.current) {
-      const current = this._gridWrapperRef.current
-      current.addEventListener('keydown', this.handleGridKeyDown)
-      current.addEventListener('blur', this.handleGridBlur)
-      current.addEventListener('focus', this.handleGridFocus, {
-        capture: true
-      })
+      this._gridWrapperRef.current.focus()
+      this._gridWrapperRef.current.addEventListener('keydown', this.handleGridKeyDown)
+      this._gridWrapperRef.current.addEventListener('blur', this.handleGridBlur)
+      this._gridWrapperRef.current.addEventListener('focus', this.handleGridFocus, { capture: true })
     }
 
     if (!isEmpty(stateChanges)) {
@@ -373,6 +351,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
         const containingChunk = findContainingChunk(colors, activeColorCoords[0], activeColorCoords[1])
 
         // if we have successfully located a containing chunk...
+
         if (containingChunk) {
           // ... set it and the focus cell in state
           updateA11y({ a11yFocusCell: clone(activeColorCoords), a11yFocusChunk: containingChunk })
@@ -388,9 +367,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
         const focusedColor: Color = colorMap[focusedColorId]
         const thisLevel: ColorReference = levelMap[focusedColorId]
 
-        if (thisLevel && thisLevel.level === 0) {
-          announceAssertive(formatMessage({ id: 'SWATCH_ACTIVATED_DETAILS' }, { color: focusedColor.name }))
-        } else {
+        if (!thisLevel || thisLevel.level !== 0) {
           announceAssertive(formatMessage({ id: 'SWATCH_FOCUS' }, { color: fullColorName(focusedColor.brandKey, focusedColor.colorNumber, focusedColor.name) }))
         }
       }
@@ -444,15 +421,10 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
       this._scrollInstances.pop().call()
     }
 
-    document.removeEventListener('keydown', this.handleBodyKeyDown)
-    document.removeEventListener('click', this.handleBodyMouseDown)
-    document.removeEventListener('touchstart', this.handleBodyTouchStart)
-
     if (this._gridWrapperRef && this._gridWrapperRef.current) {
-      const current = this._gridWrapperRef.current
-      current.removeEventListener('focus', this.handleGridFocus)
-      current.removeEventListener('blur', this.handleGridBlur)
-      current.removeEventListener('keydown', this.handleGridKeyDown)
+      this._gridWrapperRef.current.removeEventListener('focus', this.handleGridFocus)
+      this._gridWrapperRef.current.removeEventListener('blur', this.handleGridBlur)
+      this._gridWrapperRef.current.removeEventListener('keydown', this.handleGridKeyDown)
     }
 
     this._scrollInstances = void (0)
@@ -476,15 +448,9 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
   // -----------------------------------------------
   // HANDLERS
 
-  handleBodyKeyDown = function handleBodyKeyDown () { this._recentKeypress = true }
-
-  handleBodyMouseDown = function handleBodyMouseDown () { this._recentKeypress = false }
-
-  handleBodyTouchStart = function handleBodyTouchStart () { this._recentKeypress = false }
-
   handleGridKeyDown = function handleGridKeyDown (e: any) {
     const { colors, history: { push }, showAll, colorWallContext: { a11yFocusCell, a11yFocusChunk, updateA11y }, zoomOutUrl } = this.props
-    const { activeColorCoords } = this.state
+    const { activeColorCoords, levelMap, lastKeyDown } = this.state
     const { shiftKey } = e
 
     let newA11yFocusChunk
@@ -520,12 +486,22 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
         }
         // enter
         case 13:
-          // space? do we need this?
+        // space? do we need this?
         case 32: {
           const colorId = colors[y][x]
 
           if (!colorId) {
+            this.setState({ lastKeyDown: e.keyCode })
             return
+          }
+
+          // just use default enter behavior when focused on a bloom swatch
+          const level = this.state.levelMap[colorId]
+          if (level && level.level === 0) {
+            this.setState({ lastKeyDown: e.keyCode })
+            return
+          } else {
+            this._gridWrapperRef.current.focus()
           }
 
           const swatchAPI = at(this._swatchRefs, `[${colorId}].current`)[0]
@@ -559,6 +535,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
           newA11yFocusCell = a11yFocusCell
           // NOTE: we SHOULD just be able to return here, since this means the user is just pressing
           // a direction they can't actually move
+          this.setState({ lastKeyDown: e.keyCode })
           return
         }
       }
@@ -574,6 +551,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
 
           e.stopPropagation()
           e.preventDefault()
+          this.setState({ lastKeyDown: e.keyCode })
           return
         }
         break
@@ -592,6 +570,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
             } else {
               // if we can't select a first chunk, just let the tab flow through to get the user out of the color wall
               updateA11y({ a11yFocusChunk: void (0), a11yFocusCell: void (0), a11yMaintainFocus: false })
+              this.setState({ lastKeyDown: e.keyCode })
               return
             }
           } else {
@@ -616,11 +595,21 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
                   a11yMaintainFocus: false
                 })
 
-                return
+                this.setState({ lastKeyDown: e.keyCode })
               }
             }
           }
         } else {
+          // if focused on the bloomed swatch use default tab behavior for first tab select
+          if (!isEmpty(a11yFocusCell)) {
+            const colorId = colors[a11yFocusCell[1]][a11yFocusCell[0]]
+            const level = levelMap[colorId]
+            if (level && level.level === 0 && (lastKeyDown !== 9)) {
+              this.setState({ lastKeyDown: e.keyCode })
+              return
+            }
+          }
+
           // go down a column
           // if we have no current chunk...
           if (isEmpty(a11yFocusChunk)) {
@@ -633,6 +622,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
             } else {
               // if we can't select a first chunk, just let the tab flow through to get the user out of the color wall
               updateA11y({ a11yFocusChunk: void (0), a11yFocusCell: void (0), a11yMaintainFocus: false })
+              this.setState({ lastKeyDown: e.keyCode })
               return
             }
           } else {
@@ -651,6 +641,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
               } else {
                 // if we can't select a "next chunk over," assume we've reached the end and allow the user to tab out
                 updateA11y({ a11yFocusChunk: void (0), a11yFocusCell: void (0), a11yMaintainFocus: false })
+                this.setState({ lastKeyDown: e.keyCode })
                 return
               }
             }
@@ -671,11 +662,13 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
 
     // if our focus values are empty...
     if (isEmpty(newA11yFocusCell) && isEmpty(newA11yFocusChunk)) {
+      this.setState({ lastKeyDown: e.keyCode })
       return
     }
 
     // if our focus values haven't changed...
     if (newA11yFocusCell === a11yFocusCell && newA11yFocusChunk === a11yFocusChunk) {
+      this.setState({ lastKeyDown: e.keyCode })
       return
     }
 
@@ -684,6 +677,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
 
     e.stopPropagation()
     e.preventDefault()
+    this.setState({ lastKeyDown: e.keyCode })
   }
 
   handleGridResize = function handleGridResize ({ width, height }) {
@@ -783,11 +777,10 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
       // ALL of the bloomed swatches in the zoomed-in view
       renderedSwatch = (
         <ColorWallSwatch
-          tabIndex={-1}
+          aria-hidden='true'
           showContents={showContents}
           thisLink={linkToSwatch}
           onAdd={onAddColor ? this.addColor : void (0)}
-          onClick={this.returnFocusToThisComponent}
           message={message}
           color={color}
           level={thisLevel.level}
@@ -805,10 +798,10 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
       // a color swatch that behaves as a button and that's it this is the swatch used in zoomed-out non-bloomed view
       renderedSwatch = (
         <ColorWallSwatchUI
+          aria-hidden='true'
           tabIndex={-1}
           color={color}
           thisLink={linkToSwatch}
-          onClick={this.returnFocusToThisComponent}
           ref={this.generateMakeSwatchRef(colorId)}
           disabled={isDisabled}
           focus={focus}
@@ -819,10 +812,10 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
       // ALL non-bloomed swatches in the zoomed-in view
       renderedSwatch = (
         <ColorWallSwatch
+          aria-hidden='true'
           tabIndex={-1}
           thisLink={linkToSwatch}
           color={color}
-          onClick={this.returnFocusToThisComponent}
           ref={this.generateMakeSwatchRef(colorId)}
           disabled={isDisabled}
           focus={focus}
@@ -836,16 +829,6 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
         {renderedSwatch}
       </div>
     )
-  }
-
-  returnFocusToThisComponent = function returnFocusToThisComponent (): boolean {
-    if (this._gridWrapperRef && this._gridWrapperRef.current && this._gridWrapperRef.current !== document.activeElement) {
-      // ... then focus on the grid wrapper so we can get right back to navigating the grid with the keyboard
-      this._gridWrapperRef.current.focus()
-      return true
-    }
-
-    return false
   }
 
   // END OTHER METHODS

@@ -17,3 +17,19 @@ export const dressUpForPrism = memoizee((prismRoot) => {
 
   prismRoot.className = dedupePatternedString(`${prismRoot.className} ${TO_BIND_CLASS} ${CLEANSLATE_CLASS} ${PRISM_CLASS}`, ' ')
 })
+
+export const translateBooleanFlexibly = (value) => {
+  const t = typeof value
+  if (value === 'string') {
+    const valueLc = value.toLowerCase()
+    if (valueLc === 'true') {
+      return true
+    } else if (valueLc === 'false') {
+      return false
+    }
+  } else if (t === 'boolean') {
+    return value
+  }
+
+  return false
+}
