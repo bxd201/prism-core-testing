@@ -367,7 +367,7 @@ class ColorWallSwatchList extends PureComponent<Props, State> {
         const focusedColor: Color = colorMap[focusedColorId]
         const thisLevel: ColorReference = levelMap[focusedColorId]
 
-        if (!thisLevel && thisLevel.level !== 0) {
+        if (!thisLevel || thisLevel.level !== 0) {
           announceAssertive(formatMessage({ id: 'SWATCH_FOCUS' }, { color: fullColorName(focusedColor.brandKey, focusedColor.colorNumber, focusedColor.name) }))
         }
       }
