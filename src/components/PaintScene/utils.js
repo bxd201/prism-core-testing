@@ -3,6 +3,11 @@ import { getDeltaE00 } from 'delta-e'
 import difference from 'lodash/difference'
 import uniqueId from 'lodash/uniqueId'
 import cloneDeep from 'lodash/cloneDeep'
+import { toolNames, brushSquareShape, paintBrushMediumCircleClass,
+  brushRoundShape, brushMediumSize, paintBrushMediumClass,
+  brushSmallSize, brushTinySize, paintBrushLargeCircleClass,
+  paintBrushSmallClass, paintBrushSmallCircleClass, paintBrushTinyClass,
+  brushLargeSize, paintBrushLargeClass, paintBrushTinyCircleClass } from './data'
 
 const MAX_RES_TIME = 3000
 
@@ -139,6 +144,24 @@ export const drawLine = (ctx, lineStart, end, isDash) => {
   ctx.setLineDash([])
   ctx.closePath()
   ctx.restore()
+}
+
+export const dropPin = (x, y, isAnimate) => {
+  if (isAnimate) {
+    return {
+      pinX: x,
+      pinY: y,
+      showAnimatePin: true,
+      showNonAnimatePin: true
+    }
+  } else {
+    return {
+      currPinX: x,
+      currPinY: y,
+      showAnimatePin: isAnimate,
+      showNonAnimatePin: true
+    }
+  }
 }
 
 export const createPolygon = (polyList = [[0, 0]], canvas, width, height, color, operation) => {
@@ -593,4 +616,255 @@ export const updateDeleteAreaList = (paintPath, deleteAreaList) => {
       return true
     }
   })
+}
+
+export const breakGroupIfhasIntersection = (state, ref) => {
+  const { groupAreaList, groupSelectList } = state
+  const { CFICanvasPaint, canvasOffsetWidth, canvasOffsetHeight } = ref
+  let idsToUngroup = []
+  let newGroupSelectList = []
+  const drawPath = getImageCordinateByPixelPaintBrush(CFICanvasPaint, canvasOffsetWidth, canvasOffsetHeight, false)
+  for (let i = 0; i < groupAreaList.length; i++) {
+    const isHasIntersection = checkIntersection(groupAreaList[i].selectPath, drawPath)
+    if (isHasIntersection) {
+      groupAreaList.splice(i, 1)
+      i--
+    }
+  }
+  if (idsToUngroup.length !== 0) {
+    newGroupSelectList = groupSelectList.filter(item => {
+      return (idsToUngroup.indexOf(item.id) === -1)
+    })
+  }
+  return { newGroupSelectList: newGroupSelectList, newGroupAreaList: groupAreaList }
+}
+
+export const getCanvasWrapperOffset = (CFIWrapper) => {
+  let canvasWrapperOffset = {}
+  if (CFIWrapper.current) {
+    const wrapperClientOffset = CFIWrapper.current.getBoundingClientRect()
+    canvasWrapperOffset.x = parseInt(wrapperClientOffset.left, 10)
+    canvasWrapperOffset.y = parseInt(wrapperClientOffset.top, 10)
+    canvasWrapperOffset.width = parseInt(wrapperClientOffset.width, 10)
+    canvasWrapperOffset.height = parseInt(wrapperClientOffset.height, 10)
+  }
+  return canvasWrapperOffset
+}
+
+export const drawAcrossLine = (context: Object, to: Object, from: Object, shapeDrawer: Function) => {
+  let x0 = parseInt(to.x)
+  let y0 = parseInt(to.y)
+  const x1 = parseInt(from.x)
+  const y1 = parseInt(from.y)
+  const dx = Math.abs(x1 - x0)
+  const dy = Math.abs(y1 - y0)
+  const sx = (x0 < x1) ? 1 : -1
+  const sy = (y0 < y1) ? 1 : -1
+  let err = dx - dy
+
+  while (true) {
+    shapeDrawer.call(this, context, x0, y0)
+
+    if ((x0 === x1) && (y0 === y1)) { break }
+
+    let e2 = 2 * err
+    if (e2 > -dy) {
+      err -= dy
+      x0 += sx
+    }
+    if (e2 < dx) {
+      err += dx
+      y0 += sy
+    }
+  }
+}
+
+export const drawPaintBrushPath = (context: Object, to: Object, from: Object, width: number, brushShape: string, clip: boolean, state: Object, props: Object, ref: Object) => {
+  const { lpActiveColor } = props
+  const { activeTool } = state
+  const { CFICanvas2, canvasOriginalDimensions } = ref
+  const lpActiveColorRGB = (activeTool === toolNames.ERASE) ? `rgba(255, 255, 255, 1)` : `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})`
+  context.fillStyle = lpActiveColorRGB
+  const canvasClientOffset = CFICanvas2.current.getBoundingClientRect()
+  const scale = canvasOriginalDimensions.width / canvasClientOffset.width
+  const radius = Math.round(0.5 * width * scale)
+  if (clip) {
+    context.save()
+    context.globalCompositeOperation = 'destination-out'
+    context.beginPath()
+    drawAcrossLine(context, to, from, (ctx, x, y) => {
+      if (brushShape === brushSquareShape) {
+        ctx.rect(x - radius, y - radius, width * scale, width * scale)
+      } else {
+        ctx.arc(x, y, radius, 0, 2 * Math.PI)
+      }
+    })
+    context.fill()
+    context.restore()
+  } else {
+    context.save()
+    context.beginPath()
+    drawAcrossLine(context, to, from, (ctx, x, y) => {
+      if (brushShape === brushSquareShape) {
+        ctx.rect(x - radius, y - radius, width * scale, width * scale)
+      } else {
+        ctx.arc(x, y, radius, 0, 2 * Math.PI)
+        ctx.closePath()
+      }
+    })
+    context.fill()
+    context.restore()
+  }
+}
+
+export const drawPaintBrushPoint = (point: Object, lastPoint: Object, state: Object, props: Object, ref) => {
+  const { paintBrushWidth, activeTool, eraseBrushWidth, paintBrushShape, eraseBrushShape } = state
+  const { CFICanvasContext2, CFICanvasContextPaint } = ref
+  const previousPoint = lastPoint || point
+
+  if (activeTool === toolNames.ERASE) {
+    drawPaintBrushPath(CFICanvasContext2, point, previousPoint, eraseBrushWidth, eraseBrushShape, true, state, props, ref)
+    drawPaintBrushPath(CFICanvasContextPaint, point, previousPoint, eraseBrushWidth, eraseBrushShape, false, state, props, ref)
+  } else {
+    drawPaintBrushPath(CFICanvasContextPaint, point, previousPoint, paintBrushWidth, paintBrushShape, false, state, props, ref)
+  }
+}
+
+export const drawPaintBrushPathUsingLine = (ctx: Object, currentPoint: Object, lastPoint: Object, paintBrushWidth: number, paintBrushShape: string, clip: boolean, color: string, ref: Object) => {
+  const { CFICanvas2, canvasOriginalDimensions } = ref
+  ctx.save()
+  if (paintBrushShape === brushRoundShape) {
+    ctx.lineCap = 'round'
+    ctx.lineJoin = 'round'
+  }
+  const canvasClientOffset = CFICanvas2.current.getBoundingClientRect()
+  const scale = canvasOriginalDimensions.width / canvasClientOffset.width
+  ctx.lineWidth = paintBrushWidth * scale
+  ctx.strokeStyle = color
+  ctx.moveTo(lastPoint.x, lastPoint.y)
+  ctx.lineTo(currentPoint.x, currentPoint.y)
+  if (clip) {
+    ctx.clip()
+  } else {
+    ctx.stroke()
+  }
+  ctx.restore()
+}
+
+export const constgetPaintBrushActiveClass = (state) => {
+  const { paintBrushWidth, paintBrushShape } = this.state
+  let paintBrushActiveClass = ''
+  let paintBrushCircleActiveClass = ''
+  if (paintBrushWidth === brushLargeSize) {
+    paintBrushActiveClass = paintBrushLargeClass
+    if (paintBrushShape === brushRoundShape) paintBrushCircleActiveClass = paintBrushLargeCircleClass
+  } else if (paintBrushWidth === brushMediumSize) {
+    paintBrushActiveClass = paintBrushMediumClass
+    if (paintBrushShape === brushRoundShape) paintBrushCircleActiveClass = paintBrushMediumCircleClass
+  } else if (paintBrushWidth === brushSmallSize) {
+    paintBrushActiveClass = paintBrushSmallClass
+    if (paintBrushShape === brushRoundShape) paintBrushCircleActiveClass = paintBrushSmallCircleClass
+  } else if (paintBrushWidth === brushTinySize) {
+    paintBrushActiveClass = paintBrushTinyClass
+    if (paintBrushShape === brushRoundShape) paintBrushCircleActiveClass = paintBrushTinyCircleClass
+  }
+  return { paintBrushActiveClass: paintBrushActiveClass, paintBrushCircleActiveClass: paintBrushCircleActiveClass }
+}
+
+export const getPaintBrushActiveClass = (state) => {
+  const { paintBrushWidth, paintBrushShape } = state
+  let paintBrushActiveClass = ''
+  let paintBrushCircleActiveClass = ''
+  if (paintBrushWidth === brushLargeSize) {
+    paintBrushActiveClass = paintBrushLargeClass
+    if (paintBrushShape === brushRoundShape) paintBrushCircleActiveClass = paintBrushLargeCircleClass
+  } else if (paintBrushWidth === brushMediumSize) {
+    paintBrushActiveClass = paintBrushMediumClass
+    if (paintBrushShape === brushRoundShape) paintBrushCircleActiveClass = paintBrushMediumCircleClass
+  } else if (paintBrushWidth === brushSmallSize) {
+    paintBrushActiveClass = paintBrushSmallClass
+    if (paintBrushShape === brushRoundShape) paintBrushCircleActiveClass = paintBrushSmallCircleClass
+  } else if (paintBrushWidth === brushTinySize) {
+    paintBrushActiveClass = paintBrushTinyClass
+    if (paintBrushShape === brushRoundShape) paintBrushCircleActiveClass = paintBrushTinyCircleClass
+  }
+  return { paintBrushActiveClass: paintBrushActiveClass, paintBrushCircleActiveClass: paintBrushCircleActiveClass }
+}
+
+export const getEraseBrushActiveClass = (state) => {
+  const { eraseBrushWidth, eraseBrushShape } = state
+  let eraseBrushActiveClass = ''
+  let eraseBrushCircleActiveClass = ''
+  if (eraseBrushWidth === brushLargeSize) {
+    eraseBrushActiveClass = paintBrushLargeClass
+    if (eraseBrushShape === brushRoundShape) eraseBrushCircleActiveClass = paintBrushLargeCircleClass
+  } else if (eraseBrushWidth === brushMediumSize) {
+    eraseBrushActiveClass = paintBrushMediumClass
+    if (eraseBrushShape === brushRoundShape) eraseBrushCircleActiveClass = paintBrushMediumCircleClass
+  } else if (eraseBrushWidth === brushSmallSize) {
+    eraseBrushActiveClass = paintBrushSmallClass
+    if (eraseBrushShape === brushRoundShape) eraseBrushCircleActiveClass = paintBrushSmallCircleClass
+  } else if (eraseBrushWidth === brushTinySize) {
+    eraseBrushActiveClass = paintBrushTinyClass
+    if (eraseBrushShape === brushRoundShape) eraseBrushCircleActiveClass = paintBrushTinyCircleClass
+  }
+  return { eraseBrushActiveClass: eraseBrushActiveClass, eraseBrushCircleActiveClass: eraseBrushCircleActiveClass }
+}
+
+export const canvasDimensionFactors = (options: Object) => {
+  const { canvasWidth, canvasHeight, containerWidth, containerHeight, panX, panY, zoom } = options
+  let canvasScaleX = canvasWidth / containerWidth
+  let canvasScaleY = canvasHeight / containerHeight
+  let shouldFitWidth = false
+  let shouldFitHeight = false
+  let width = 0
+  let height = 0
+
+  if (canvasScaleX > canvasScaleY) {
+    // image is wider than it is tall
+    shouldFitWidth = true
+  } else {
+    // image is taller than it is wide
+    shouldFitHeight = true
+  }
+
+  if (shouldFitWidth) {
+    width = containerWidth * zoom
+    height = width * canvasHeight / canvasWidth
+  } else if (shouldFitHeight) {
+    height = containerHeight * zoom
+    width = height * canvasWidth / canvasHeight
+  }
+
+  const widthFactor = width / containerWidth
+  const heightFactor = height / containerHeight
+  const clampedPanX = (widthFactor < 1) ? 0.5 : panX
+  const clampedPanY = (heightFactor < 1) ? 0.5 : panY
+  const xFactor = clampedPanX * (1 - widthFactor)
+  const yFactor = clampedPanY * (1 - heightFactor)
+
+  return {
+    widthFactor, heightFactor, xFactor, yFactor
+  }
+}
+
+export const shouldCanvasResize = (prevWidth: number, newWidth: number) => {
+  if (newWidth !== prevWidth) {
+    return newWidth
+  }
+  return 0
+}
+
+export const applyDimensionFactorsToCanvas = (factors: Object, ref: Object) => {
+  const { CFICanvas, CFICanvas2, CFICanvasPaint } = ref
+  applyDimensionFactorsByCanvas(factors, CFICanvas)
+  applyDimensionFactorsByCanvas(factors, CFICanvas2)
+  applyDimensionFactorsByCanvas(factors, CFICanvasPaint)
+}
+
+export const applyDimensionFactorsByCanvas = (factors: Object, canvas: RefObject) => {
+  canvas.current.style.width = `${Math.floor(factors.widthFactor * 100)}%`
+  canvas.current.style.height = `${Math.floor(factors.heightFactor * 100)}%`
+  canvas.current.style.left = `${Math.floor(factors.xFactor * 100)}%`
+  canvas.current.style.top = `${Math.floor(factors.yFactor * 100)}%`
 }

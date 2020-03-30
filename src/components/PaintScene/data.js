@@ -64,3 +64,13 @@ export const setTooltipShownLocalStorage = () => {
 export const getTooltipShownLocalStorage = () => {
   return window.localStorage.getItem(tooltipShownSession.key)
 }
+const baseClass = 'paint__scene__wrapper'
+const paintBrushClass = `${baseClass}__paint-brush`
+export const paintBrushLargeClass = `${paintBrushClass}--large`
+export const paintBrushMediumClass = `${paintBrushClass}--medium`
+export const paintBrushSmallClass = `${paintBrushClass}--small`
+export const paintBrushTinyClass = `${paintBrushClass}--tiny`
+export const paintBrushLargeCircleClass = `${paintBrushClass}--large-circle`
+export const paintBrushMediumCircleClass = `${paintBrushClass}--medium-circle`
+export const paintBrushSmallCircleClass = `${paintBrushClass}--small-circle`
+export const paintBrushTinyCircleClass = `${paintBrushClass}--tiny-circle`
