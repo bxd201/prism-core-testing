@@ -128,7 +128,7 @@ const MyIdeas = (props: MyIdeasProps) => {
 
     if (expectCustomData && !expectStockData) {
       // handle only custom data
-      if (customSceneData && (customSceneData && customSceneData.length)) {
+      if (customSceneData && (customSceneData)) {
         return true
       }
     }
@@ -142,7 +142,7 @@ const MyIdeas = (props: MyIdeasProps) => {
 
     if (expectStockData && expectCustomData) {
       // handle both
-      if (stockSceneData && (customSceneData && customSceneData.length)) {
+      if (stockSceneData && customSceneData) {
         return true
       }
     }
@@ -209,13 +209,15 @@ const MyIdeas = (props: MyIdeasProps) => {
     setShowBack(false)
     setEditedIndividualScene(null)
     setEditEnabled(true)
-    props.setCardTitle(intl.messages['MY_IDEAS.MY_IDEAS_HEADER'])
+    // @todo talk to pravin about best way to handle card titles... -RS
+    // const headerText = FIREBASE_AUTH_ENABLED ? `${intl.messages['MY_IDEAS.MY_IDEAS_HEADER']} ${intl.messages['MY_IDEAS.SCENE_EXPIRATION']}` : intl.messages['MY_IDEAS.MY_IDEAS_HEADER']
+    const headerText = intl.messages['MY_IDEAS.MY_IDEAS_HEADER']
+    props.setCardTitle(headerText)
   }
 
   return (
     <>
       {isReadyToRenderFlag ? <div className={baseClassName} ref={wrapperRef}>
-        { /* @todo NEED TO GET HEIGHT OF CVW WRAPPER -RS */ }
         { showDeleteConfirmModalFlag ? <DynamicModal
           modalStyle={DYNAMIC_MODAL_STYLE.danger}
           actions={[

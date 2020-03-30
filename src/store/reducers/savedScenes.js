@@ -92,7 +92,7 @@ export const cachedSceneData = (state: string | null = null, action: {type: stri
   return state
 }
 
-export const sceneMetadata = (state: Object[] = [], action: {type: string, payload: boolean, data: Object}) => {
+export const sceneMetadata = (state: Object[] = [], action: {type: string, payload: boolean, data: Object, anonSceneId?: string }) => {
   let newState = null
   if (action.type === SAVING_MASKS && !action.payload && action.data) {
     if (!state.find(item => item.scene === action.data.scene)) {
@@ -133,8 +133,6 @@ export const sceneMetadata = (state: Object[] = [], action: {type: string, paylo
       newState.push({ ...sceneDataFromState, name: action.payload.name })
       return newState
     }
-
-    return state
   }
 
   return state

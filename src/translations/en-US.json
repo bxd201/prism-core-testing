@@ -146,6 +146,7 @@
     "OPEN_PROJECT": "Open this project",
     "OPEN_UNPAINTED": "Open unpainted scene",
     "PREVIEW": "Preview of",
+    "SCENE_EXPIRATION": "Saved scenes will be removed 30 days after their last update.",
     "TITLE": "View and edit your ideas",
     "YES": "YES"
   },
