@@ -15,53 +15,17 @@ type MergeColorsProps = {
   ignoreColorOffset?: boolean,
   preserveLayers?: boolean,
   preserveLayersAsData?: boolean,
-  imageUrlList?: string[]
+  imageUrlList?: string[],
+  // eslint-disable-next-line react/no-unused-prop-types
+  colorOpacity?: number
 }
 
 const getRGBString = (c) => `rgb(${c.r}, ${c.g}, ${c.b})`
 
-// @todo - [IMPROVEMENT] Revisit the implementation of this, see context2d.js from prod for context -RS
-// I may need to remove since the tinting produced here looks dramatically different that the opacity based approach we are taking
-const getImageDataStats = (imageData) => {
-  let brightnessBucket = 0
-  let brightnessMax = null
-  let brightnessMin = null
-  let pixelCount = 0
-
-  for (let i = 0; i < imageData.data.length; i += 4) {
-    const value = 0.2126 * imageData.data[i] + 0.7152 * imageData.data[i + 1] + 0.0722 * imageData.data[i + 2]
-    if (brightnessMin === null) {
-      brightnessMin = value
-    }
-    if (brightnessMax === null) {
-      brightnessMax = value
-    }
-    if (imageData.data[i + 4] > 127) {
-      brightnessBucket += value
-      brightnessMax = Math.max(brightnessMax, value)
-      brightnessMin = Math.min(brightnessMin, value)
-      pixelCount++
-    }
-  }
-
-  const brightnessMean = brightnessBucket / pixelCount
-  const adjustmentDelta = 255 - brightnessMax
-  const adjustmentMean = (brightnessMean + adjustmentDelta)
-
-  const delta = Math.round(adjustmentDelta)
-
-  return {
-    delta,
-    adjustmentMean,
-    brightnessMax,
-    brightnessMin,
-    brightnessMean
-  }
-}
-
-const manipulateLayer = (layerCtx, color, operation) => {
+const manipulateLayer = (layerCtx: any, color: Object, operation: string, opacity: number) => {
   layerCtx.save()
   layerCtx.globalCompositeOperation = operation
+  layerCtx.globalAlpha = opacity
   layerCtx.fillStyle = getRGBString(color)
   layerCtx.fillRect(0, 0, layerCtx.canvas.width, layerCtx.canvas.height)
   layerCtx.restore()
@@ -119,56 +83,15 @@ const MergeColors = (props: MergeColorsProps) => {
       }
 
       imagesRef.current.forEach((img, i) => {
-        if (props.shouldTint) {
-          if (i === 0) {
-            // Just draw the background image to to the finalizing canvas
-            ctx.drawImage(img, 0, 0, props.width, props.height)
-          } else {
-            // Draw background to merge canvas for context
-            mergeCtx.drawImage(imagesRef.current[0], 0, 0, props.width, props.height)
-            workCtx.drawImage(img, 0, 0, props.width, props.height)
-            workCtx.save()
-            workCtx.globalCompositeOperation = compositeOperation.sourceIn
-            // draw bg image into painted layer
-            workCtx.drawImage(mergeCtx.canvas, 0, 0, props.width, props.height)
-            workCtx.restore()
-
-            mergeCtx.save()
-            mergeCtx.globalCompositeOperation = compositeOperation.copy
-            mergeCtx.drawImage(workCtx.canvas, 0, 0, props.width, props.height)
-
-            manipulateLayer(mergeCtx, props.colors[i - colorIndexOffset], compositeOperation.color)
-
-            const imageData = mergeCtx.getImageData(0, 0, mergeCtx.canvas.width, mergeCtx.canvas.height)
-            const stats = getImageDataStats(imageData)
-
-            if (stats.delta > 0) {
-              manipulateLayer(mergeCtx, { r: stats.delta, g: stats.delta, b: stats.delta }, compositeOperation.lighter)
-            } else if (stats.delta < 0) {
-              // invert
-              manipulateLayer(mergeCtx, { r: 255, g: 255, b: 255 }, compositeOperation.difference)
-              // make lighter
-              manipulateLayer(mergeCtx, { r: -stats.delta, g: -stats.delta, b: -stats.delta }, compositeOperation.lighter)
-              // revert
-              manipulateLayer(mergeCtx, { r: stats.delta, g: stats.delta, b: stats.delta }, compositeOperation.difference)
-            }
-            // boost
-            const min = Math.round(255 - stats.brightnessMean)
-            manipulateLayer(mergeCtx, { r: min, g: min, b: min }, compositeOperation.screen)
-            manipulateLayer(mergeCtx, props.colors[i - colorIndexOffset], compositeOperation.multiply)
-
-            mergeCtx.globalCompositeOperation = compositeOperation.destinationIn
-            mergeCtx.drawImage(workCtx.canvas, 0, 0, props.width, props.height)
-            // paint layer to finalize canvas
-            ctx.drawImage(mergeCtx.canvas, 0, 0, props.width, props.height)
-
-            resetCanvases()
-          }
+        const opacity = props.colorOpacity !== void (0) ? props.colorOpacity : 1
+        if (props.shouldTint && i === 0) {
+          // Just draw the background image to to the finalizing canvas
+          ctx.drawImage(img, 0, 0, props.width, props.height)
         } else {
           mergeCtx.drawImage(img, 0, 0, props.width, props.height)
           mergeCtx.globalCompositeOperation = compositeOperation.sourceIn
           mergeCtx.save()
-          manipulateLayer(workCtx, props.colors[i - colorIndexOffset], compositeOperation.sourceOver)
+          manipulateLayer(workCtx, props.colors[i - colorIndexOffset], compositeOperation.sourceOver, opacity)
           mergeCtx.drawImage(workCtx.canvas, 0, 0, props.width, props.height)
 
           ctx.drawImage(mergeCtx.canvas, 0, 0, props.width, props.height)
@@ -180,7 +103,6 @@ const MergeColors = (props: MergeColorsProps) => {
           if (props.preserveLayersAsData) {
             preservedLayersDataRef.current.push(mergeCtx.getImageData(0, 0, mergeCtx.canvas.width, mergeCtx.canvas.height))
           }
-
           resetCanvases()
         }
       })
