@@ -165,6 +165,7 @@ const SavedScene = (props: SavedSceneProps) => {
         height={height} /> : null}
       {backgroundImageData && !props.useTintableScene ? <MergeColors
         shouldTint
+        colorOpacity={0.8}
         imageDataList={[backgroundImageData, ...props.sceneData.surfaceMasks.surfaces.map(surface => surface.surfaceMaskImageData)]}
         colors={props.sceneData.palette.map(color => {
           return { r: color.red, g: color.green, b: color.blue }
