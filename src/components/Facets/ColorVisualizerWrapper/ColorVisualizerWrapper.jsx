@@ -11,7 +11,6 @@ import ColorVisualizerNav, { isColors, isInspiration, isPaintPhoto, isMyIdeas } 
 import React, { Component, createRef } from 'react'
 import SceneManager from '../../SceneManager/SceneManager'
 import SampleScenesWrapper from '../../SampleScenes/SampleScenes'
-import ColorWallContext, { colorWallContextDefault } from '../ColorWall/ColorWallContext'
 import facetBinder from 'src/facetSupport/facetBinder'
 import { facetBinderDefaultProps, type FacetBinderMethods } from 'src/facetSupport/facetInstance'
 import { type FacetPubSubMethods, facetPubSubDefaultProps } from 'src/facetSupport/facetPubSub'
@@ -526,9 +525,7 @@ export class ColorVisualizerWrapper extends Component<Props> {
               {(!showDefaultPage && !showPaintScene && location.pathname === PAINT_SCENE_ROUTE) && (<canvas name='canvas' width='600' height='600' />)}
               <Route path='/' exact component={RootRedirect} />
               <Route path={colorWallUrlPattern}>
-                <ColorWallContext.Provider value={{ ...colorWallContextDefault }}>
-                  <ColorWallPage />
-                </ColorWallContext.Provider>
+                <ColorWallPage displayAddButton displayDetailsLink={false} />
               </Route>
               <Route path={`${colorDetailsBaseUrl}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`} exact component={ColorDetailsWithData} />
               <Route path='/color-from-image' component={InspiredScene} />
