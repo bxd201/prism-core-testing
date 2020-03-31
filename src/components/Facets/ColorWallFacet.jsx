@@ -54,7 +54,7 @@ const CWToolbar = () => <div className='color-wall-wrap__chunk'>
 </div>
 
 export const ColorWallPage = (props: Props) => {
-  const { addButtonText, displayAddButton, displayAddButtonText, displayDetailsLink, colorWallBgColor, subscribe, publish, unsubscribeAll, colorDetailPageRoot, resetOnUnmount, hiddenSections, defaultSection } = props
+  const { addButtonText, displayAddButton = false, displayAddButtonText, displayDetailsLink = true, colorWallBgColor, subscribe, publish, unsubscribeAll, colorDetailPageRoot, resetOnUnmount, hiddenSections, defaultSection } = props
   const dispatch = useDispatch()
 
   // -----------------------------------------------------
