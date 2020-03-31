@@ -253,6 +253,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.tryToMergeColors = this.tryToMergeColors.bind(this)
     this.hideSaveSceneModal = this.hideSaveSceneModal.bind(this)
     this.saveSceneFromModal = this.saveSceneFromModal.bind(this)
+    this.handleClick = this.handleClick.bind(this)
   }
 
   hideSaveSceneModal (e: SyntheticEvent) {
@@ -330,7 +331,11 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     }
     if (prevState.checkIsPaintSceneUpdate !== this.state.checkIsPaintSceneUpdate && this.state.checkIsPaintSceneUpdate !== false) {
       if ((this.state.imagePathList.length > 0 && !this.props.workspace) || (this.props.workspace && this.props.workspace.layers === null && this.state.imagePathList.length > 0) || (this.props.workspace && this.props.workspace.layers && this.state.imagePathList.length > this.props.workspace.layers.length)) {
-        this.context.showWarningModal(this.saveBase64(this.getLayers()))
+        this.context.showWarningModal({
+          dataUrls: this.getLayers(),
+          width: this.backgroundImageWidth,
+          height: this.backgroundImageHeight
+        })
       } else {
         this.context.loadNewCanvas()
       }
@@ -860,9 +865,12 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     }
   }, 10)
 
-  handleClick = (e: Object) => {
+  handleClick (e: Object) {
     const { activeTool, isInfoToolActive } = this.state
-    if (isInfoToolActive) return
+    // showSaveSceneModal prevents click from painting when modal is open
+    if (isInfoToolActive || this.props.showSaveSceneModal || this.props.showSavedConfirmModalFlag) {
+      return
+    }
     switch (activeTool) {
       case toolNames.DEFINEAREA:
         this.handlePolygonDefine(e, true)
@@ -1013,16 +1021,6 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     }
 
     return null
-  }
-
-  saveBase64 = (imageUrls: string[]) => {
-    return ((<MergeCanvas
-      key={this.state.mergeCanvasKey}
-      width={this.canvasOriginalDimensions.width}
-      height={this.canvasOriginalDimensions.height}
-      ref={this.mergeCanvasRefModal}
-      applyZoomPan={this.applyZoomPan}
-      layers={imageUrls} />))
   }
 
   // This Method sorts the imagePathList by color to trigger the MergeColor component to instantiate and generate a flat (jpg) mask per color

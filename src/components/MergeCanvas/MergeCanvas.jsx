@@ -13,21 +13,31 @@ type MergeCanvasProp = {
   layers: string[],
   width: number,
   height: number,
-  applyZoomPan: Function,
-  hideCanvas?: boolean
+  applyZoomPan?: Function,
+  hideCanvas?: boolean,
+  colorOpacity?: number
 }
 
 const MergeCanvas = (props: MergeCanvasProp, ref: RefObject) => {
   const [images, setImages] = useState([])
+  const opacity = props.colorOpacity !== void (0) ? props.colorOpacity : 1
 
   useEffect(() => {
     if (images.length) {
       // This check should ensure that this fires after the images have been loaded
       const ctx = ref.current.getContext('2d')
       images.forEach((img, i) => {
+        ctx.save()
+        if (opacity && i > 0) {
+          ctx.globalAlpha = opacity
+        }
         ctx.drawImage(img, 0, 0, ctx.canvas.width, ctx.canvas.height)
+        ctx.restore()
       })
-      props.applyZoomPan(ref)
+
+      if (props.applyZoomPan) {
+        props.applyZoomPan(ref)
+      }
     }
   }, [images])
 

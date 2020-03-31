@@ -266,7 +266,7 @@ const SavedSceneWrapper = (props: any) => {
     const sceneType = props.baseSceneData.stockScenes.sceneCollection[stockSceneMetadata.sceneFetchType]
 
     const sceneDatum = sceneType.find(item => item.id === stockSceneMetadata.scene.id)
-    // @todo - implement -RS
+
     scene = {
       scene: sceneDatum,
       sceneMetadata: stockSceneMetadata

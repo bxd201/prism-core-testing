@@ -26,7 +26,7 @@ import Help from '../../Help/Help'
 import { withRouter } from 'react-router'
 import DropDownMenu from './RouteComponents'
 import { RouteContext } from '../../../contexts/RouteContext/RouteContext'
-import { CVWWarningModal } from './WarningModal'
+import CVWWarningModal from './WarningModal'
 import { setLayersForPaintScene } from '../../../store/actions/paintScene'
 import SaveOptions from '../../SaveOptions/SaveOptions'
 import { resetSaveState, SCENE_TYPE } from '../../../store/actions/persistScene'
@@ -516,6 +516,7 @@ export class ColorVisualizerWrapper extends Component<Props> {
             showWarningModalMyIdeas: (data) => this.showWarningModalMyIdeas(data),
             checkIsStockScenePolluted: () => this.checkIsStockScenePolluted()
           }}>
+            { /* The warning modal can also be triggered by the router context, when debugging trace showWarningModalMyIdeas too */ }
             {isShowWarningModal && <CVWWarningModal miniImage={tmpPaintSceneImage} cancel={this.cancel} confirm={this.loadNewCanvas} />}
             <div className={`cvw__root-container__nav-wrapper ${(location.pathname === HELP_PATH) ? `cvw__root-container__nav-wrapper--hide` : (location.pathname === MY_IDEAS) ? `cvw__root-container__nav-wrapper--hide-my-ideas` : ``}`}>
               <ColorVisualizerNav />
