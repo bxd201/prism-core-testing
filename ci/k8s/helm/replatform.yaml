@@ -1,7 +1,5 @@
 image:
   tag: develop
-  resourceMemLimits: 128Mi
-  resourceMemRequests: 20Mi
 
 ingress:
   host: replatform-prism-web.ebus.swaws
