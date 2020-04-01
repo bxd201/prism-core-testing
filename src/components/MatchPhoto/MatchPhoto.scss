@@ -88,14 +88,9 @@
     text-align: center;
     margin: 0 auto;
     display: block;
-    /*min-height: 266px;
-    width:100%;
-    @include respond-above(xs) {
-        min-height:366px;
+    &__portrait{
+      width:100%;
     }
-    @include respond-above(md){
-        min-height:540px;
-    }*/
   }
   &__image {
     height: 0;

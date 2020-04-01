@@ -6,7 +6,6 @@ import { add } from 'src/store/actions/live-palette'
 import facetBinder from 'src/facetSupport/facetBinder'
 import ColorDataWrapper from 'src/helpers/ColorDataWrapper/ColorDataWrapper'
 import { connect, useDispatch, useSelector } from 'react-redux'
-import './FastMaskSimple.scss'
 
 function FastMaskSimpleFacet (props) {
 /* TO DO: Add logic to guard against colors being in the Live Palette  */
