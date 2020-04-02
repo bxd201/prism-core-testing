@@ -17,7 +17,7 @@ import ColorStrip from './ColorStrip/ColorStrip'
 import CoordinatingColors from './CoordinatingColors/CoordinatingColors'
 import SimilarColors from './SimilarColors/SimilarColors'
 import SceneManager from '../../SceneManager/SceneManager'
-import { paintAllMainSurfaces } from '../../../store/actions/scenes'
+import { paintAllMainSurfaces, toggleColorDetailsPage } from '../../../store/actions/scenes'
 import { varValues } from 'src/shared/variableDefs'
 import type { ColorMap, Color, FamilyStructure } from '../../../shared/types/Colors.js.flow'
 import 'src/scss/convenience/visually-hidden.scss'
@@ -44,6 +44,12 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
   const scenesLoaded: boolean = useSelector(state => !state.scenes.loadingScenes)
   // grab the color by color number from the URL
   const activeColor: Color | typeof undefined = has(colors, colorId) ? colors[colorId] : undefined
+  useEffect(() => {
+    dispatch(toggleColorDetailsPage())
+    return function cleanup () {
+      dispatch(toggleColorDetailsPage())
+    }
+  }, [])
 
   useEffect(() => {
     if (activeColor) {
@@ -109,6 +115,7 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
             mainColor={activeColor}
             onSceneChanged={onSceneChanged}
             onVariantChanged={onVariantChanged}
+            isColorDetail
           />
         </div>
         <div className='color-detail__info-wrapper'>

@@ -21,7 +21,9 @@ import {
   changeSceneVariant,
   addNewMask,
   toggleEditMode,
-  updateCurrentSceneInfo
+  updateCurrentSceneInfo,
+  setActiveStockScenePolluted,
+  setSelectedSceneVariantChanged
 } from '../../store/actions/scenes'
 import TintableScene from './TintableScene'
 import SceneVariantSwitch from './SceneVariantSwitch'
@@ -34,7 +36,6 @@ import type { Scene, SceneStatus, SceneWorkspace, Surface, Variant } from '../..
 
 import './SceneManager.scss'
 import 'src/scss/convenience/visually-hidden.scss'
-import SceneDownload from '../SceneDownload/SceneDownload'
 import DynamicModal, { getRefDimension } from '../DynamicModal/DynamicModal'
 import { saveStockScene } from '../../store/actions/stockScenes'
 import { showSavedConfirmModal, showSaveSceneModal } from '../../store/actions/persistScene'
@@ -101,12 +102,23 @@ type Props = {
   selectedSceneStatus: Object,
   showSavedConfirmModalFlag: boolean,
   showSavedConfirmModal: Function,
-  hideSceneSelector?: boolean
+  hideSceneSelector?: boolean,
+  sceneStatusActiveSceneStore: SceneStatus,
+  isColorDetail?: boolean,
+  selectedSceneStatusActiveScene: SceneStatus,
+  setActiveStockScenePolluted: Function,
+  isActiveStockScenePolluted: boolean,
+  selectedScenedVariant: string | null,
+  setSelectedSceneVariantChanged: Function,
+  selectedSceneVariantChanged: boolean,
+  lpColors: Array<Color> | undefined,
 }
 
 type State = {
   currentSceneIndex: number,
-  uniqueSceneId: string
+  uniqueSceneId: string,
+  activeSceneStatus: Object | null,
+  isChangeVariantCalled: boolean
 }
 
 export class SceneManager extends PureComponent<Props, State> {
@@ -119,14 +131,15 @@ export class SceneManager extends PureComponent<Props, State> {
     type: SCENE_TYPES.ROOM
   }
 
-  state = {
-    currentSceneIndex: 0,
-    uniqueSceneId: createUniqueSceneId()
-  }
-
   constructor (props: Props) {
     super(props)
 
+    this.state = {
+      currentSceneIndex: 0,
+      uniqueSceneId: createUniqueSceneId(),
+      activeSceneStatus: props.sceneStatusActiveSceneStore || null,
+      isChangeVariantCalled: false
+    }
     this.handleColorUpdate = this.handleColorUpdate.bind(this)
     this.handleClickSceneToggle = this.handleClickSceneToggle.bind(this)
     this.changeVariant = this.changeVariant.bind(this)
@@ -146,6 +159,31 @@ export class SceneManager extends PureComponent<Props, State> {
     // this.props.toggleEditMode(false)
   }
 
+  static getDerivedStateFromProps (props: Props, state: State) {
+    let derivedState = state
+    if (!props.isColorDetail && props.selectedSceneStatusActiveScene && state.activeSceneStatus !== null && props.sceneStatusActiveSceneStore) {
+      props.selectedSceneStatusActiveScene.surfaces.map((surface, index) => {
+        if (props.sceneStatusActiveSceneStore.surfaces[index].color) {
+          derivedState.activeSceneStatus.surfaces[index].color = props.sceneStatusActiveSceneStore.surfaces[index].color
+        } else if (surface.color) {
+          derivedState.activeSceneStatus.surfaces[index].color = surface.color
+        }
+      })
+
+      if (!state.isChangeVariantCalled) {
+        derivedState.activeSceneStatus.variant = props.selectedScenedVariant
+      } else if (state.isChangeVariantCalled && state.activeSceneStatus.variant !== props.sceneStatusActiveSceneStore.variant) {
+        derivedState.activeSceneStatus.variant = props.sceneStatusActiveSceneStore.variant
+      }
+
+      derivedState = {
+        ...derivedState,
+        activeSceneStatus: derivedState.activeSceneStatus
+      }
+    }
+    return derivedState
+  }
+
   saveSceneFromModal (e: SyntheticEvent, saveSceneName: string) {
     e.preventDefault()
     e.stopPropagation()
@@ -153,7 +191,11 @@ export class SceneManager extends PureComponent<Props, State> {
     if (this.props.sceneStatus && this.props.activeScenes) {
       // @todo should I throw an error if no active scene or is this over kill? -RS
       const currentSceneData = this.props.sceneStatus.find(item => item.id === this.props.activeScenes[0])
-      this.props.saveStockScene(this.state.uniqueSceneId, saveSceneName, currentSceneData, this.props.currentSceneType)
+      let livePaletteColorsIdArray = []
+      this.props.lpColors && this.props.lpColors.map(color => {
+        livePaletteColorsIdArray.push(color.id)
+      })
+      this.props.saveStockScene(this.state.uniqueSceneId, saveSceneName, currentSceneData, this.props.currentSceneType, livePaletteColorsIdArray)
       this.props.showSavedConfirmModal(true)
     }
   }
@@ -167,6 +209,35 @@ export class SceneManager extends PureComponent<Props, State> {
   }
 
   handleColorUpdate = function handleColorUpdate (sceneId: string, surfaceId: string, color: Color) {
+    const { selectedSceneStatusActiveScene, isColorDetail, isActiveStockScenePolluted } = this.props
+    const sceneStatusStoreBeforeUpdate = this.props.sceneStatus.find(scene => scene.id === sceneId)
+    if (!isColorDetail && sceneStatusStoreBeforeUpdate && !isActiveStockScenePolluted) {
+      let sceneStatusStoreUpdated = {
+        ...sceneStatusStoreBeforeUpdate,
+        surfaces: sceneStatusStoreBeforeUpdate.surfaces.map(surface => {
+          if (surface.id === surfaceId) {
+            surface.color = color
+            return surface
+          }
+          return surface
+        })
+      }
+      if (selectedSceneStatusActiveScene && sceneStatusStoreUpdated) {
+        selectedSceneStatusActiveScene.surfaces.map((surface, index) => {
+          if (surface.color && sceneStatusStoreUpdated.surfaces[index].color && surface.color.colorNumber !== sceneStatusStoreUpdated.surfaces[index].color.colorNumber) {
+            this.props.setActiveStockScenePolluted()
+          } else if (!surface.color && sceneStatusStoreUpdated.surfaces[index].color) {
+            this.props.setActiveStockScenePolluted()
+          }
+        })
+      } else if (this.props.sceneStatus && this.props.sceneStatus.find(scene => scene.id === this.props.activeScenes[0])) {
+        this.props.sceneStatus.find(scene => scene.id === this.props.activeScenes[0]).surfaces && this.props.sceneStatus.find(scene => scene.id === this.props.activeScenes[0]).surfaces.map(surface => {
+          if (surface.color) {
+            this.props.setActiveStockScenePolluted()
+          }
+        })
+      }
+    }
     this.props.paintSceneSurface(sceneId, surfaceId, color)
   }
 
@@ -194,7 +265,7 @@ export class SceneManager extends PureComponent<Props, State> {
     // if active scenes exceed or match max active scenes...
     if (activeScenes.length >= parseInt(maxActiveScenes, 10)) {
       // compare prev and current scenes, continue to eliminate oldest until max active is all that remains
-      deactivateScene(activeScenes.slice(0, activeScenes.length - maxActiveScenes + 1))
+      activeScenes.map(id => deactivateScene(id))
     }
 
     activateScene(id)
@@ -216,12 +287,20 @@ export class SceneManager extends PureComponent<Props, State> {
   }
 
   changeVariant = (sceneId: number) => {
-    const { changeSceneVariant, onVariantChanged } = this.props
+    const { changeSceneVariant, onVariantChanged, isColorDetail, selectedSceneVariantChanged, setSelectedSceneVariantChanged, selectedSceneStatus } = this.props
+    const { isChangeVariantCalled } = this.state
 
-    return function _changeVariant (variant: string) {
+    const _changeVariant = (variant: string) => {
       onVariantChanged && onVariantChanged(variant)
+      if (!isChangeVariantCalled && !isColorDetail) {
+        this.setState({ isChangeVariantCalled: true })
+      }
+      if (selectedSceneStatus && !selectedSceneVariantChanged) {
+        setSelectedSceneVariantChanged()
+      }
       changeSceneVariant(sceneId, variant)
     }
+    return _changeVariant
   }
 
   render () {
@@ -242,28 +321,27 @@ export class SceneManager extends PureComponent<Props, State> {
       showSavedConfirmModalFlag,
       hideSceneSelector } = this.props
 
+    const { activeSceneStatus } = this.state
+    const livePaletteColorCount = (this.props.lpColors && this.props.lpColors.length) || 0
     if (loadingScenes) {
       return <div className={`${SceneManager.baseClass}__loader`}><CircleLoader /></div>
     }
 
-    const colors = []
-    sceneStatus.map((status) => {
-      status.surfaces.map((statusSurface) => {
-        if (statusSurface.color) {
-          colors.push(statusSurface.color)
-        }
-      })
-    })
+    if (activeSceneStatus) {
+      const sceneStatusIndexActiveScene = sceneStatus.findIndex(scene => scene.id === activeScenes[0])
+      sceneStatus[sceneStatusIndexActiveScene] = activeSceneStatus
+    }
 
-    const firstActiveSceneId = activeScenes[0]
-    const firstActiveScene: Scene = scenes.filter(scene => (scene.id === firstActiveSceneId))[0]
-    const firstActiveSceneInfo = getSceneInfoById(firstActiveScene, sceneStatus)
+    if (this.props.selectedScenedVariant && !this.state.isChangeVariantCalled) {
+      const sceneStatusIndexActiveScene = sceneStatus.findIndex(scene => scene.id === activeScenes[0])
+      sceneStatus[sceneStatusIndexActiveScene].variant = this.props.selectedScenedVariant
+    }
 
     return (
       <DndProvider backend={HTML5Backend}>
         <div className={SceneManager.baseClass} ref={this.wrapperRef}>
           {/* Do not use scene height for modal, use the sceneManager wrapper */}
-          {showSaveSceneModalFlag ? <DynamicModal
+          {showSaveSceneModalFlag && livePaletteColorCount !== 0 ? <DynamicModal
             actions={[
               { text: intl.messages['SAVE_SCENE_MODAL.SAVE'], callback: this.saveSceneFromModal },
               { text: intl.messages['SAVE_SCENE_MODAL.CANCEL'], callback: this.hideSaveSceneModal }
@@ -272,6 +350,12 @@ export class SceneManager extends PureComponent<Props, State> {
             height={getRefDimension(this.wrapperRef, 'height')}
             allowInput
             inputDefault={`${intl.messages['SAVE_SCENE_MODAL.DEFAULT_DESCRIPTION']} ${this.props.sceneCount}`} /> : null}
+          {showSaveSceneModalFlag && livePaletteColorCount === 0 ? <DynamicModal
+            actions={[
+              { text: intl.messages['SAVE_SCENE_MODAL.CANCEL'], callback: this.hideSaveSceneModal }
+            ]}
+            description={intl.messages['SAVE_SCENE_MODAL.UNABLE_TO_SAVE_WARNING']}
+            height={getRefDimension(this.wrapperRef, 'height')} /> : null}
           { /* ----------Confirm modal ---------- */ }
           {showSavedConfirmModalFlag ? <DynamicModal
             actions={[
@@ -425,9 +509,6 @@ export class SceneManager extends PureComponent<Props, State> {
             })}
           </div>
         </div>
-        <div>
-          <SceneDownload {...{ buttonCaption: 'DOWNLOAD_SCENE', colors: colors, sceneInfo: firstActiveSceneInfo }} />
-        </div>
       </DndProvider>
     )
   }
@@ -436,8 +517,7 @@ export class SceneManager extends PureComponent<Props, State> {
 const mapStateToProps = (state, props) => {
   let activeColor = void (0)
   let previewColor = void (0)
-  const scenes = state.selectedSceneStatus ? replaceSceneStatus(state.scenes, state.selectedSceneStatus) : state.scenes
-
+  const scenes = !props.isColorDetail && state.selectedSceneStatus && !state.selectedSceneStatus.openUnpaintedStockScene ? replaceSceneStatus(state.scenes, state.selectedSceneStatus) : state.scenes
   if (state.lp.activeColor) {
     activeColor = state.lp.activeColor
   }
@@ -446,11 +526,32 @@ const mapStateToProps = (state, props) => {
     previewColor = state.lp.activePreviewColor
   }
 
+  const sceneStatus = (props.isColorDetail)
+    ? state.scenes.sceneStatusColorDetails[state.scenes.type] : scenes.sceneStatus[state.scenes.type]
+
+  const selectedSceneStatusActiveScene = state.selectedSceneStatus &&
+    !state.selectedSceneStatus.openUnpaintedStockScene &&
+    scenes.sceneStatus &&
+    scenes.sceneStatus[state.scenes.type]
+    ? scenes.sceneStatus[state.scenes.type].find(scene => scene.id === scenes.activeScenes[0])
+    : null
+
+  const sceneStatusActiveSceneStore = !props.isColorDetail && state.selectedSceneStatus &&
+    !state.selectedSceneStatus.openUnpaintedStockScene &&
+    state.scenes.sceneStatus &&
+    scenes.sceneStatus[state.scenes.type]
+    ? state.scenes.sceneStatus[state.scenes.type].find(scene => scene.id === scenes.activeScenes[0])
+    : null
+
+  const selectedScenedVariant = (!props.isColorDetail && state.selectedSceneStatus) ? state.selectedSceneStatus.expectStockData.scene.variant : null
+
   return {
     scenes: scenes.sceneCollection[state.scenes.type],
-    sceneStatus: scenes.sceneStatus[state.scenes.type],
+    sceneStatus: sceneStatus,
+    selectedSceneStatusActiveScene: selectedSceneStatusActiveScene,
+    sceneStatusActiveSceneStore: sceneStatusActiveSceneStore,
     numScenes: scenes.numScenes,
-    activeScenes: scenes.activeScenes,
+    activeScenes: (props.isColorDetail) ? scenes.activeScenesColorDetails : scenes.activeScenes,
     loadingScenes: scenes.loadingScenes,
     activeColor: activeColor,
     previewColor: previewColor,
@@ -463,7 +564,11 @@ const mapStateToProps = (state, props) => {
     currentSceneType: state.scenes.type,
     saveSceneName: state.saveSceneName,
     selectedSceneStatus: state.selectedSceneStatus,
-    showSavedConfirmModalFlag: state.showSavedConfirmModal
+    showSavedConfirmModalFlag: state.showSavedConfirmModal,
+    isActiveStockScenePolluted: state.scenes.isActiveStockScenePolluted,
+    selectedScenedVariant: selectedScenedVariant,
+    selectedSceneVariantChanged: state.scenes.selectedSceneVariantChanged,
+    lpColors: state.lp.colors
     // NOTE: uncommenting this will sync scene type with redux data
     // we may not want that in case there are multiple instances with different scene collections running at once
     // type: state.scenes.type
@@ -498,12 +603,14 @@ const mapDispatchToProps = (dispatch: Function) => {
       dispatch(updateCurrentSceneInfo(sceneId, surfaceId))
     },
     showSaveSceneModalAction: (shouldShow) => dispatch(showSaveSceneModal(shouldShow)),
-    saveStockScene: (id: string, sceneName: string, sceneData: Object, sceneType: string) => dispatch(saveStockScene(id, sceneName, sceneData, sceneType)),
-    showSavedConfirmModal: (shouldShow: boolean) => dispatch(showSavedConfirmModal(shouldShow))
+    saveStockScene: (id: string, sceneName: string, sceneData: Object, sceneType: string, livePaletteColorsIdArray: Array<string>) => dispatch(saveStockScene(id, sceneName, sceneData, sceneType, livePaletteColorsIdArray)),
+    showSavedConfirmModal: (shouldShow: boolean) => dispatch(showSavedConfirmModal(shouldShow)),
+    setActiveStockScenePolluted: () => dispatch(setActiveStockScenePolluted()),
+    setSelectedSceneVariantChanged: () => dispatch(setSelectedSceneVariantChanged())
   }
 }
 
-function getSceneInfoById (scene: Scene, sceneStatus: SceneStatus[]): {
+export function getSceneInfoById (scene: Scene, sceneStatus: SceneStatus[]): {
   status: SceneStatus,
   variant: Variant,
   surfaces: Surface[]

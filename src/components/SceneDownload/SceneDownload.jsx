@@ -1,23 +1,23 @@
 // @flow strict
 import React, { useState, useCallback } from 'react'
 import ButtonBar from '../GeneralButtons/ButtonBar/ButtonBar'
-import { FormattedMessage } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
-import type { Color } from '../../shared/types/Colors'
 import Jimp from 'jimp'
 import type { SceneInfo } from '../../shared/types/Scene'
 import { generateImage } from '../../shared/services/sceneDownload'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 type Props = {
   buttonCaption: string,
-  sceneInfo: void | SceneInfo,
-  colors: Color[]
+  sceneInfo: void | SceneInfo
 }
 
 export default (props: Props) => {
   const [isCreatingDownload, setIsCreatingDownload] = useState(false)
   const [finalImageUrl, setFinalImageUrl] = useState()
-  const { buttonCaption, sceneInfo, colors } = props
+  const { buttonCaption, sceneInfo } = props
+  const intl = useIntl()
 
   const downloadLinkRef = useCallback(link => {
     if (link !== null) {
@@ -52,16 +52,21 @@ export default (props: Props) => {
 
   return (
     <ul>
-      <li style={{ display: 'inline-block', verticalAlign: 'top' }}>
+      {!isCreatingDownload && <li style={{ display: 'inline-block', verticalAlign: 'top' }}>
         <ul>
           <ButtonBar.Button
             onClick={onDownloadClick}
-            disabled={isCreatingDownload || colors.length < 1}
+            disabled={isCreatingDownload}
+            style={{ flexDirection: 'column' }}
           >
+            <FontAwesomeIcon
+              title={intl.messages.DOWNLOAD_MASK}
+              icon={['fal', 'download']}
+              size='2x' />
             <FormattedMessage id={buttonCaption} />
           </ButtonBar.Button>
         </ul>
-      </li>
+      </li>}
       {isCreatingDownload && (
         <li style={{ display: 'inline-block' }}>
           <CircleLoader color='#0069af' />

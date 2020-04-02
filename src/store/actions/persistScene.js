@@ -73,7 +73,7 @@ export const saveMasks = (colorList: Array<number[]>, imageData: Object, backgro
     // @todo needed for my sherwin persist, this is a usage reminder -RS
     // const imageUploadPayload = createImageUploadPayload(backgroundImageUrl, metadata.uniqueId)
     if (FIREBASE_AUTH_ENABLED) {
-      persistSceneToFirebase(backgroundImageUrl, sceneXML, metadata.colors, metadata.uniqueId, metadata.description, dispatch)
+      persistSceneToFirebase(backgroundImageUrl, sceneXML, metadata.colors, metadata.uniqueId, metadata.description, dispatch, metadata.livePaletteColorsIdArray)
       return
     }
     // @todo REVIEW not sure color info is persisted in current code -RS
@@ -270,7 +270,7 @@ const mungeRegionAndSceneData = (regionData: Object, sceneData: Object, colors: 
 
 // This is firebase equivalent  of mungeRegionAndSceneData
 const processFileFromFirebase = (file: Object, i: number, sceneCustomMetadata: Array<Object>) => {
-  const { regionsXml, uniqueSceneId, image, colors, name } = file
+  const { regionsXml, uniqueSceneId, image, colors, name, livePaletteColorsIdArray } = file
   const surfaceMasks = getDataFromFirebaseXML(regionsXml, colors)
   const sceneDefinitionId = uniqueSceneId
   // This is here for consistency
@@ -290,7 +290,8 @@ const processFileFromFirebase = (file: Object, i: number, sceneCustomMetadata: A
     renderingBaseUrl: null,
     // The existence of this prop too duck types this as a payload from firebase
     backgroundImageUrl: image,
-    sceneType: SCENE_TYPE.anonCustom
+    sceneType: SCENE_TYPE.anonCustom,
+    livePaletteColorsIdArray
   }
 }
 
@@ -351,7 +352,7 @@ export const tryToPersistCachedSceneData = () => {
   }
 }
 
-const persistSceneToFirebase = (backgroundImageData: string, sceneDataXml: any, colors: number[], uniqueSceneId: string, description: string, dispatch: Function) => {
+const persistSceneToFirebase = (backgroundImageData: string, sceneDataXml: any, colors: number[], uniqueSceneId: string, description: string, dispatch: Function, livePaletteColorsIdArray?: Array<Object>) => {
   const user = firebase.auth().currentUser
   if (!user) {
     dispatch({
@@ -361,7 +362,8 @@ const persistSceneToFirebase = (backgroundImageData: string, sceneDataXml: any, 
         sceneXml: sceneDataXml,
         colors,
         uniqueSceneId,
-        name: description
+        name: description,
+        livePaletteColorsIdArray
       }
     })
 
@@ -381,7 +383,8 @@ const persistSceneToFirebase = (backgroundImageData: string, sceneDataXml: any, 
     uniqueSceneId: uniqueSceneId,
     image: backgroundImageData,
     colors,
-    name: description
+    name: description,
+    livePaletteColorsIdArray
   }
 
   const customMetaData = {
@@ -408,7 +411,8 @@ const persistSceneToFirebase = (backgroundImageData: string, sceneDataXml: any, 
       // The lack of this property duck types this as a payload from firebase
       renderingBaseUrl: null,
       // The existence of this prop too duck types this as a payload from firebase
-      backgroundImageUrl: backgroundImageData
+      backgroundImageUrl: backgroundImageData,
+      livePaletteColorsIdArray
     }
 
     dispatch({

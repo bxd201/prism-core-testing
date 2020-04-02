@@ -10,7 +10,7 @@ export const DELETE_STOCK_SCENE = 'DELETE_STOCK_SCENE'
 export const UPDATE_STOCK_SAVED_SCENE_NAME = 'UPDATE_STOCK_SAVED_SCENE_NAME'
 export const SELECT_SCENE_STATUS = 'SELECT_SCENE_STATUS'
 
-export const saveStockScene = (id: string, sceneName: string, sceneData: object, sceneType: string) => {
+export const saveStockScene = (id: string, sceneName: string, sceneData: object, sceneType: string, livePaletteColorsIdArray: Array<string>) => {
   return (dispatch, getState) => {
     dispatch({
       type: SAVING_STOCK_SCENE,
@@ -18,7 +18,7 @@ export const saveStockScene = (id: string, sceneName: string, sceneData: object,
     })
 
     if (FIREBASE_AUTH_ENABLED) {
-      dispatch(anonSaveStockScene(id, sceneName, sceneData, sceneType))
+      dispatch(anonSaveStockScene(id, sceneName, sceneData, sceneType, livePaletteColorsIdArray))
     } else {
       // @todo [IMPLEMENT] mysherwin save -RS
     }
@@ -32,7 +32,7 @@ export const saveStockScene = (id: string, sceneName: string, sceneData: object,
  * @param sceneFetchType - This is used in in cases where scenes need to be loaded
  * @returns {{payload: {sceneType: string, id: string, sceneFetchType: string, scene: Object}, type: string}}
  */
-const anonSaveStockScene = (id: string, sceneName: string, sceneData: Object, sceneFetchType: string) => {
+const anonSaveStockScene = (id: string, sceneName: string, sceneData: Object, sceneFetchType: string, livePaletteColorsIdArray: Array<string>) => {
   const payload = {
     type: SAVE_ANON_STOCK_SCENE,
     payload: {
@@ -40,7 +40,8 @@ const anonSaveStockScene = (id: string, sceneName: string, sceneData: Object, sc
       scene: sceneData,
       sceneFetchType,
       name: sceneName,
-      sceneType: SCENE_TYPE.anonStock
+      sceneType: SCENE_TYPE.anonStock,
+      livePaletteColorsIdArray: livePaletteColorsIdArray
     }
   }
 

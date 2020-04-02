@@ -15,6 +15,8 @@ import CardMenu from 'src/components/CardMenu/CardMenu'
 import { selectSavedScene, SCENE_TYPE } from '../../store/actions/persistScene'
 import { selectSavedAnonStockScene, setSelectedSceneStatus } from '../../store/actions/stockScenes'
 import { StaticTintScene } from '../CompareColor/StaticTintScene'
+import { SCENE_VARIANTS } from 'src/constants/globals'
+import type { ColorMap } from 'src/shared/types/Colors.js.flow'
 
 type myIdeaPreviewProps = {
   // @todo implement -RS
@@ -55,6 +57,23 @@ export const RedirectMyIdeas = () => {
   return null
 }
 
+const getColorInstances = (colors, livePaletteColorsIdArray, colorMap) => {
+  let uniqueColorIdsWithSavedLivePalette = new Set()
+  colors && colors.map(color => {
+    uniqueColorIdsWithSavedLivePalette.add(color.id)
+  })
+  livePaletteColorsIdArray && livePaletteColorsIdArray.map(colorId => {
+    uniqueColorIdsWithSavedLivePalette.add(colorId)
+  })
+  const colorInstances = []
+  for (let colorId of uniqueColorIdsWithSavedLivePalette) {
+    if (colorMap && colorMap[colorId]) {
+      colorInstances.push(colorMap[colorId])
+    }
+  }
+  return colorInstances
+}
+
 const MyIdeaPreview = (props: myIdeaPreviewProps) => {
   const dispatch = useDispatch()
   const intl = useIntl()
@@ -63,12 +82,16 @@ const MyIdeaPreview = (props: myIdeaPreviewProps) => {
   const wrapperRef = useRef()
 
   const selectedScene = useSelector(state => {
+    const { items: { colorMap } }: ColorMap = state.colors
+
     if (state.selectedStockSceneId) {
       const expectStockData = state.sceneMetadata.find(item => item.sceneType === SCENE_TYPE.anonStock && item.id === state.selectedStockSceneId)
       if (expectStockData) {
         const stockSceneData = state.scenes.sceneCollection[expectStockData.sceneFetchType].find(item => item.id === expectStockData.scene.id)
         const palette = expectStockData.scene.surfaces.map(surface => surface.color).filter(color => color !== undefined)
-        return { name: expectStockData.name, palette: palette, savedSceneType: SCENE_TYPE.anonStock, stockSceneData: stockSceneData, expectStockData: expectStockData }
+        const livePaletteColorsIdArray = (expectStockData.hasOwnProperty('livePaletteColorsIdArray')) ? expectStockData.livePaletteColorsIdArray : null
+        const colorInstances = getColorInstances(palette, livePaletteColorsIdArray, colorMap)
+        return { name: expectStockData.name, palette: colorInstances, savedSceneType: SCENE_TYPE.anonStock, stockSceneData: stockSceneData, expectStockData: expectStockData }
       }
     }
     if (state.selectedSavedSceneId) {
@@ -175,7 +198,7 @@ const MyIdeaPreview = (props: myIdeaPreviewProps) => {
           }
         )
       } else if (selectedScene.savedSceneType === SCENE_TYPE.anonStock) {
-        routeContext.showWarningModalMyIdeas({ isPaintSceneProject: false, tmpActiveId: selectedScene.expectStockData.scene.id })
+        routeContext.showWarningModalMyIdeas({ isPaintSceneProject: false, tmpActiveId: selectedScene.expectStockData.scene.id, openUnpaintedStockScene: !openPaintedProject })
       }
     } else if (routeContext.checkIsStockScenePolluted()) {
       if (selectedScene.savedSceneType === SCENE_TYPE.anonCustom) {
@@ -192,7 +215,7 @@ const MyIdeaPreview = (props: myIdeaPreviewProps) => {
         )
       } else if (selectedScene.savedSceneType === SCENE_TYPE.anonStock) {
         routeContext.showWarningModalMyIdeas({
-          isPaintSceneProject: false, isStockScenePolluted: true, tmpActiveId: selectedScene.expectStockData.scene.id
+          isPaintSceneProject: false, isStockScenePolluted: true, tmpActiveId: selectedScene.expectStockData.scene.id, openUnpaintedStockScene: !openPaintedProject
         })
       }
     } else {
@@ -204,41 +227,13 @@ const MyIdeaPreview = (props: myIdeaPreviewProps) => {
           initialWidth,
           initialHeight))
       } else if (selectedScene.savedSceneType === SCENE_TYPE.anonStock) {
+        selectedScene.openUnpaintedStockScene = !openPaintedProject
+        dispatch(setSelectedSceneStatus(null))
         dispatch(setSelectedSceneStatus(selectedScene))
         return routeContext.redirectMyIdeas(true, selectedScene.expectStockData.scene.id)
       }
     }
   }
-
-  // const openUnpaintedProject = (e: SyntheticEvent) => {
-  //   e.preventDefault()
-  //   if (routeContext.checkIsPaintScenePolluted()) {
-  //     if (selectedScene.savedSceneType === SCENE_TYPE.anonCustom) {
-  //       routeContext.showWarningModalMyIdeas(
-  //         {
-  //           backgroundCanvasRef: backgroundCanvasRef.current.toDataURL(),
-  //           layersRef: null,
-  //           selectedScenePalette: selectedScene.palette,
-  //           initialWidth: initialWidth,
-  //           initialHeight: initialHeight
-  //         }
-  //       )
-  //     } else if (selectedScene.savedSceneType === SCENE_TYPE.anonStock) {
-  //       routeContext.showWarningModalMyIdeas({})
-  //     }
-  //   } else {
-  //     if (selectedScene.savedSceneType === SCENE_TYPE.anonCustom) {
-  //       dispatch(setLayersForPaintScene(
-  //         backgroundCanvasRef.current.toDataURL(),
-  //         null,
-  //         selectedScene.palette,
-  //         initialWidth,
-  //         initialHeight))
-  //     } else if (selectedScene.savedSceneType === SCENE_TYPE.anonStock) {
-  //       // routeContext.showWarningModalMyIdeas({})
-  //     }
-  //   }
-  // }
 
   return (
     <>
@@ -265,7 +260,11 @@ const MyIdeaPreview = (props: myIdeaPreviewProps) => {
             </div> : (selectedScene && selectedScene.savedSceneType === SCENE_TYPE.anonStock) ? <StaticTintScene
               colors={selectedScene.palette}
               scene={selectedScene.stockSceneData}
-              statuses={selectedScene.expectStockData.scene.surfaces} /> : null}
+              statuses={selectedScene.expectStockData.scene.surfaces}
+              config={{
+                isNightScene: selectedScene.expectStockData.scene.variant === SCENE_VARIANTS.NIGHT,
+                type: selectedScene.expectStockData.scene.sceneFetchType
+              }} /> : null}
             {backgroundImageSrc ? <PrismImage
               ref={backgroundImageRef}
               source={backgroundImageSrc}
