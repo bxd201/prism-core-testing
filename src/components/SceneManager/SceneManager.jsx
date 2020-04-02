@@ -225,6 +225,7 @@ export class SceneManager extends PureComponent<Props, State> {
                           clickToPaintColor={activeColor}
                           error={error}
                           height={scene.height}
+                          imageValueCurve={sceneVariant.normalizedImageValueCurve}
                           interactive={false}
                           isEditMode={this.props.isEditMode}
                           loading={loading}

@@ -6,19 +6,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <base href="/">
-  <title>Sherwin-Williams PDP Color Picker</title>
+  <title>Sherwin-Williams Digital Color Wall</title>
 </head>
 
 <body>
 
   <div prism-auto-embed
-    class="prism-color-wall"
     data-prism-facet="ColorWallFacet"
+    data-add-button-bext="Add to cart"
+    data-color-wall-bg-color="#f9f9f9"
     data-display-add-button
+    data-display-add-button-text,
     data-display-details-link="false"
+    data-hidden-sections="Emerald Designer Edition"
+    data-language="en-US"
     data-route-type="memory"
     data-swatch-should-emit
-    data-language="en-US"></div>
+  ></div>
 
   <script>
     (function(d, s, id) {
@@ -27,7 +31,7 @@
       js = d.createElement(s); js.id = id;
       js.src = "/embed.js";
       fjs.parentNode.insertBefore(js, fjs);
-    }(document, 'script', 'prism-widget'));
+    }(document, "script", "prism-widget"));
   </script>
 
 </body>

@@ -39,7 +39,7 @@ export const ColorDetailsComponent = (props: any) => {
   )
 }
 
-const ColorWallPageNoReset = () => <ColorWallPage resetOnUnmount={false} />
+const ColorWallPageNoReset = () => <ColorWallPage resetOnUnmount={false} displayDetailsLink displayAddButton={false} />
 
 type ColorListingPageProps = FacetBinderMethods & FacetPubSubMethods & { location: Object }
 

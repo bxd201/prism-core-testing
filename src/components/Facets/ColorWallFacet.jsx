@@ -18,12 +18,15 @@ import useEffectAfterMount from 'src/shared/hooks/useEffectAfterMount'
 import { resetActiveColor, updateColorStatuses, filterBySection } from 'src/store/actions/loadColors'
 import { facetBinderDefaultProps, type FacetBinderMethods } from 'src/facetSupport/facetInstance'
 import { FormattedMessage } from 'react-intl'
+import { translateBooleanFlexibly } from 'src/facetSupport/facetUtils'
 
 type Props = FacetPubSubMethods & FacetBinderMethods & {
+  addButtonText?: string,
   colorDetailPageRoot?: string,
   colorWallBgColor?: string,
   defaultSection?: string,
   displayAddButton?: boolean,
+  displayAddButtonText?: boolean,
   displayDetailsLink?: boolean,
   hiddenSections?: string | string[], // as string, "section name 1" or "section name 1|section name 2|etc" will be parsed into an array
   resetOnUnmount?: boolean
@@ -51,7 +54,7 @@ const CWToolbar = () => <div className='color-wall-wrap__chunk'>
 </div>
 
 export const ColorWallPage = (props: Props) => {
-  const { displayAddButton, displayDetailsLink, colorWallBgColor, subscribe, publish, unsubscribeAll, colorDetailPageRoot, resetOnUnmount, hiddenSections, defaultSection } = props
+  const { addButtonText, displayAddButton = false, displayAddButtonText, displayDetailsLink = true, colorWallBgColor, subscribe, publish, unsubscribeAll, colorDetailPageRoot, resetOnUnmount, hiddenSections, defaultSection } = props
   const dispatch = useDispatch()
 
   // -----------------------------------------------------
@@ -111,13 +114,15 @@ export const ColorWallPage = (props: Props) => {
     ...data
   }), [a11yState])
   const cwContext = useMemo(() => extendIfDefined({}, colorWallContextDefault, a11yState, {
+    addButtonText,
     colorDetailPageRoot,
     colorWallBgColor,
-    displayAddButton,
-    displayDetailsLink,
+    displayAddButton: translateBooleanFlexibly(displayAddButton),
+    displayAddButtonText: translateBooleanFlexibly(displayAddButtonText),
+    displayDetailsLink: translateBooleanFlexibly(displayDetailsLink),
     hiddenSections: processedHiddenSections,
     updateA11y
-  }), [colorDetailPageRoot, colorWallBgColor, displayAddButton, displayDetailsLink, updateA11y, a11yState])
+  }), [addButtonText, colorDetailPageRoot, colorWallBgColor, displayAddButton, displayAddButtonText, displayDetailsLink, updateA11y, a11yState])
 
   // -----------------------------------------------------
   // handle unmounting

@@ -32,7 +32,7 @@ type Props = {
 
 const ColorWallSwatch = React.forwardRef<Props, any>((props: Props, ref: any) => {
   const { disabled, onClick, onAdd, showContents, color, thisLink, focus, level, active, compensateX, compensateY, tabIndex = 0, message } = props
-  const { displayAddButton, displayInfoButton, displayDetailsLink, colorDetailPageRoot }: ColorWallContextProps = React.useContext(ColorWallContext)
+  const { addButtonText, displayAddButton, displayAddButtonText, displayInfoButton, displayDetailsLink, colorDetailPageRoot }: ColorWallContextProps = React.useContext(ColorWallContext)
   const { messages = {} } = useIntl()
   const handleOnClick = useCallback((e) => {
     if (onClick) {
@@ -100,7 +100,7 @@ const ColorWallSwatch = React.forwardRef<Props, any>((props: Props, ref: any) =>
         refData: null
       }
     } else if (displayAddButton) {
-      const title = (at(messages, 'ADD_TO_PALETTE')[0] || '').replace('{name}', fullName)
+      const title = (addButtonText || at(messages, 'ADD_TO_PALETTE')[0] || '').replace('{name}', fullName)
 
       return {
         content: (
@@ -110,7 +110,9 @@ const ColorWallSwatch = React.forwardRef<Props, any>((props: Props, ref: any) =>
             onClick={handleOnAdd}
             tabIndex={tabIndex}
             title={title}
-          />
+          >
+            {displayAddButtonText ? title : null}
+          </OmniButton>
         ),
         refData: {
           onClick: onClick

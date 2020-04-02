@@ -5,8 +5,13 @@ import noop from 'lodash/noop'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
 
+import './OmniButton.scss'
+
+const ROOT_CLASS = 'OmniButton'
+
 type Props = {
   children?: any,
+  className?: string,
   external?: boolean,
   icon?: any, // this should probably be a ReactElement type (or similar)
   to?: string | {
@@ -19,10 +24,11 @@ type Props = {
 const OmniButton = (props: Props) => {
   const {
     children,
+    className = '',
     external,
     icon,
-    to,
     onClick,
+    to,
     ...other
   } = props
 
@@ -33,8 +39,8 @@ const OmniButton = (props: Props) => {
 
   const content = useMemo(() => {
     return <>
-      {icon || null}
-      {children}
+      {icon ? <span className={`${ROOT_CLASS}__icon`}>{icon}</span> : null}
+      {children ? <span className={`${ROOT_CLASS}__content`}>{children}</span> : null}
     </>
   }, [icon, children])
 
@@ -43,15 +49,15 @@ const OmniButton = (props: Props) => {
   }
 
   if (external && typeof to === 'string') {
-    return <a href={to} {...passThruProps}>
+    return <a href={to} className={`${ROOT_CLASS} ${className}`} {...passThruProps}>
       {content}
     </a>
   } else if (to) {
-    return <Link to={to} {...passThruProps}>
+    return <Link to={to} className={`${ROOT_CLASS} ${className}`} {...passThruProps}>
       {content}
     </Link>
   } else {
-    return <button {...passThruProps}>
+    return <button className={`${ROOT_CLASS} ${className}`} {...passThruProps}>
       {content}
     </button>
   }
