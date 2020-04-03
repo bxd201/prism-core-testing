@@ -1,4 +1,6 @@
 // @flow
+import type { ColorMap } from 'src/shared/types/Colors.js.flow'
+
 export const checkCanMergeColors = (currentColors: Object[], newColors: Object[], max: number) => {
   const emptySlots = max - currentColors.length
   const dupeCount = getDupeColorCount(currentColors, newColors)
@@ -38,4 +40,21 @@ export const getDupeColorCount = (currentColors: Object[], newColors: Object[]) 
   })
 
   return dupeCount
+}
+
+export const getColorInstances = (colors: Array<Object>, livePaletteColorsIdArray: Array<string>, colorMap: ColorMap) => {
+  let uniqueColorIdsWithSavedLivePalette = new Set()
+  colors && colors.map(color => {
+    uniqueColorIdsWithSavedLivePalette.add(color.id)
+  })
+  livePaletteColorsIdArray && livePaletteColorsIdArray.map(colorId => {
+    uniqueColorIdsWithSavedLivePalette.add(colorId)
+  })
+  const colorInstances = []
+  for (let colorId of uniqueColorIdsWithSavedLivePalette) {
+    if (colorMap && colorMap[colorId]) {
+      colorInstances.push(colorMap[colorId])
+    }
+  }
+  return colorInstances
 }

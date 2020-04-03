@@ -274,7 +274,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   tryToMergeColors () {
     // eslint-disable-next-line no-new-object
     const { workspace, lpColors } = this.props
-    if (workspace && workspace.palette && lpColors) {
+    if (workspace && workspace.layers && workspace.palette && lpColors) {
       if (checkCanMergeColors(lpColors, workspace.palette, LP_MAX_COLORS_ALLOWED)) {
         this.props.mergeLpColors(workspace.palette)
       } else {
@@ -1060,7 +1060,8 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   }
 
   render () {
-    const { lpActiveColor, intl, showSaveSceneModal } = this.props
+    const { lpActiveColor, intl, showSaveSceneModal, lpColors } = this.props
+    const livePaletteColorCount = (lpColors && lpColors.length) || 0
     const bgImageUrl = this.props.workspace ? this.props.workspace.bgImageUrl : this.props.imageUrl
     const layers = this.props.workspace ? this.props.workspace.layers : null
     const { activeTool, position, paintBrushShape, paintBrushWidth, eraseBrushShape, eraseBrushWidth, undoIsEnabled, redoIsEnabled, showOriginalCanvas, isAddGroup, isDeleteGroup, isUngroup, paintCursor, isInfoToolActive, loading, showAnimatePin, showNonAnimatePin, pinX, pinY, currPinX, currPinY, canvasWidth, canvasHeight, canvasHasBeenInitialized, showSelectPaletteModal } = this.state
@@ -1078,7 +1079,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
             title={selectPaletteTitle}
             height={canvasHeight}
             description={selectPaletteDescription} /> : null}
-          {showSaveSceneModal ? <DynamicModal
+          {showSaveSceneModal && livePaletteColorCount !== 0 ? <DynamicModal
             actions={[
               { text: intl.messages['SAVE_SCENE_MODAL.SAVE'], callback: this.saveSceneFromModal },
               { text: intl.messages['SAVE_SCENE_MODAL.CANCEL'], callback: this.hideSaveSceneModal }
@@ -1087,6 +1088,12 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
             height={canvasHeight}
             allowInput
             inputDefault={`${intl.messages['SAVE_SCENE_MODAL.DEFAULT_DESCRIPTION']} ${this.props.sceneCount}`} /> : null}
+          {showSaveSceneModal && livePaletteColorCount === 0 ? <DynamicModal
+            actions={[
+              { text: intl.messages['SAVE_SCENE_MODAL.CANCEL'], callback: this.hideSaveSceneModal }
+            ]}
+            description={intl.messages['SAVE_SCENE_MODAL.UNABLE_TO_SAVE_WARNING']}
+            height={canvasHeight} /> : null}
           { /* ----------Confirm modal ---------- */ }
           { this.props.showSavedConfirmModalFlag ? <DynamicModal
             actions={[

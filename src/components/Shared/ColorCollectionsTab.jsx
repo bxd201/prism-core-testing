@@ -25,7 +25,7 @@ const tabListItemActive = `${baseClass}__tab-list-item--active`
 function ColorCollectionsTab (props: Props) {
   const { collectionTabs, showTab, tabIdShow } = props
   const [tabListMobileShow, showTabListMobile] = useState(false)
-  const tabFind = collectionTabs.find(tab => tab.id === tabIdShow)
+  const tabFind = collectionTabs.find(tab => tabIdShow && tab.id.toString() === tabIdShow.toString())
   const tabActive = (tabFind) ? tabFind.tabName : undefined
   const { messages = {} } = useIntl()
   const tabShowName = (tabActive !== undefined) ? tabActive : at(messages, 'CHOOSE_A_COLLECTION')[0]
@@ -93,9 +93,9 @@ function ColorCollectionsTab (props: Props) {
               data-tabid={tab.id}
               role='tab'
               tabIndex='0'
-              aria-selected={tab.id === tabIdShow}
+              aria-selected={tabIdShow && tab.id.toString() === tabIdShow.toString()}
               onKeyDown={handleKeyDownLiTab}
-              className={`${tabListItem} ${(tab.id === tabIdShow) ? `${tabListItemActive}` : ''}`}
+              className={`${tabListItem} ${(tabIdShow && tab.id.toString() === tabIdShow.toString()) ? `${tabListItemActive}` : ''}`}
               key={tab.id}
               onClick={handleClickLiTab}
               onMouseDown={mouseDownHandler}

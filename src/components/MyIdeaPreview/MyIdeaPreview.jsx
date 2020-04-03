@@ -16,8 +16,9 @@ import { selectSavedScene, SCENE_TYPE } from '../../store/actions/persistScene'
 import { selectSavedAnonStockScene, setSelectedSceneStatus } from '../../store/actions/stockScenes'
 import { StaticTintScene } from '../CompareColor/StaticTintScene'
 import { SCENE_VARIANTS } from 'src/constants/globals'
+import { getColorInstances } from '../LivePalette/livePaletteUtility'
 import type { ColorMap } from 'src/shared/types/Colors.js.flow'
-
+import { unsetSelectedScenePaletteLoaded } from '../../store/actions/scenes'
 type myIdeaPreviewProps = {
   // @todo implement -RS
 }
@@ -57,23 +58,6 @@ export const RedirectMyIdeas = () => {
   return null
 }
 
-const getColorInstances = (colors, livePaletteColorsIdArray, colorMap) => {
-  let uniqueColorIdsWithSavedLivePalette = new Set()
-  colors && colors.map(color => {
-    uniqueColorIdsWithSavedLivePalette.add(color.id)
-  })
-  livePaletteColorsIdArray && livePaletteColorsIdArray.map(colorId => {
-    uniqueColorIdsWithSavedLivePalette.add(colorId)
-  })
-  const colorInstances = []
-  for (let colorId of uniqueColorIdsWithSavedLivePalette) {
-    if (colorMap && colorMap[colorId]) {
-      colorInstances.push(colorMap[colorId])
-    }
-  }
-  return colorInstances
-}
-
 const MyIdeaPreview = (props: myIdeaPreviewProps) => {
   const dispatch = useDispatch()
   const intl = useIntl()
@@ -98,6 +82,9 @@ const MyIdeaPreview = (props: myIdeaPreviewProps) => {
       const selectedScene = state.scenesAndRegions.filter(scene => scene.id === state.selectedSavedSceneId)
       if (selectedScene.length) {
         selectedScene[0].savedSceneType = SCENE_TYPE.anonCustom
+        const livePaletteColorsIdArray = selectedScene[0].livePaletteColorsIdArray
+        const colorInstances = getColorInstances(selectedScene[0].palette, livePaletteColorsIdArray, colorMap)
+        selectedScene[0].palette = colorInstances
         return selectedScene[0]
       }
     }
@@ -219,6 +206,8 @@ const MyIdeaPreview = (props: myIdeaPreviewProps) => {
         })
       }
     } else {
+      dispatch(unsetSelectedScenePaletteLoaded())
+      dispatch(setSelectedSceneStatus(null))
       if (selectedScene.savedSceneType === SCENE_TYPE.anonCustom) {
         dispatch(setLayersForPaintScene(
           backgroundCanvasRef.current.toDataURL(),
@@ -228,7 +217,6 @@ const MyIdeaPreview = (props: myIdeaPreviewProps) => {
           initialHeight))
       } else if (selectedScene.savedSceneType === SCENE_TYPE.anonStock) {
         selectedScene.openUnpaintedStockScene = !openPaintedProject
-        dispatch(setSelectedSceneStatus(null))
         dispatch(setSelectedSceneStatus(selectedScene))
         return routeContext.redirectMyIdeas(true, selectedScene.expectStockData.scene.id)
       }

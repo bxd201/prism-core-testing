@@ -265,6 +265,10 @@
   }
 }
 
+@keyframes show-by-opacity {
+  to { opacity: 1; }
+}
+
 .cvw__modal {
   position: absolute;
   top: 40%;
@@ -275,6 +279,8 @@
   font-weight: 600;
   padding: 10px;
   transform: translate(-50%, -50%);
+  animation: show-by-opacity 0s 0.2s forwards;
+  opacity: 0;
   z-index: 99999;
   &__overlay{
     position: absolute;
@@ -295,7 +301,7 @@
   }
   &__mini-image {
     width: 120px;
-    height: 90px;
+    height: auto;
     margin: 0 auto;
     & > canvas {
       // width: 20% !important; // use important to override the inline style which build in canvas of mergeCanvas compoenent

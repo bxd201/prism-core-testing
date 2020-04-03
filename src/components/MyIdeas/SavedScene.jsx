@@ -13,6 +13,7 @@ import { KEY_CODES, SCENE_VARIANTS } from 'src/constants/globals'
 
 import './MyIdeas.scss'
 import { StaticTintScene } from '../CompareColor/StaticTintScene'
+import { getColorInstances } from '../LivePalette/livePaletteUtility'
 import type { ColorMap } from 'src/shared/types/Colors.js.flow'
 
 type SavedSceneProps = {
@@ -64,6 +65,8 @@ const createColors = (sceneData: any, isTintableScene: boolean, colorMap: ColorM
   const colorInstances = getColorInstances(colors, livePaletteColorsIdArray, colorMap)
 
   return colorInstances.filter(color => !!color).map((color, i) => {
+    if (i > 7) return
+
     const { red, green, blue } = color
     return (
       <div
@@ -74,23 +77,6 @@ const createColors = (sceneData: any, isTintableScene: boolean, colorMap: ColorM
       </div>
     )
   })
-}
-
-const getColorInstances = (colors, livePaletteColorsIdArray, colorMap) => {
-  let uniqueColorIdsWithSavedLivePalette = new Set()
-  colors && colors.map(color => {
-    uniqueColorIdsWithSavedLivePalette.add(color.id)
-  })
-  livePaletteColorsIdArray && livePaletteColorsIdArray.map(colorId => {
-    uniqueColorIdsWithSavedLivePalette.add(colorId)
-  })
-  const colorInstances = []
-  for (let colorId of uniqueColorIdsWithSavedLivePalette) {
-    if (colorMap && colorMap[colorId]) {
-      colorInstances.push(colorMap[colorId])
-    }
-  }
-  return colorInstances
 }
 
 const SavedScene = (props: SavedSceneProps) => {

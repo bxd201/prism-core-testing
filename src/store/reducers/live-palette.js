@@ -159,21 +159,26 @@ export const lp = (state: any = initialState, action: any) => {
       if (checkCanMergeColors(state.colors, newColors, LP_MAX_COLORS_ALLOWED)) {
         let activeColor = action.payload.length ? { ...action.payload[0] } : null
 
-        const existingIds = state.colors.map(color => color.id)
-        const additions = newColors.filter(color => existingIds.indexOf(color.id) === -1)
-        const mergedColors = [...state.colors, ...additions]
-
-        let _activeColor = mergedColors.filter(color => !!color.isActive)
+        const mergedColors = [...newColors, ...state.colors]
+        let uniqueColorIds = new Set()
+        mergedColors && mergedColors.map(color => {
+          uniqueColorIds.add(color.id)
+        })
+        const uniqueMergedColors = []
+        for (let colorId of uniqueColorIds) {
+          uniqueMergedColors.push(mergedColors.find(color => color.id === colorId))
+        }
+        let _activeColor = uniqueMergedColors.filter(color => !!color.isActive)
 
         if (_activeColor.length) {
           activeColor = { ..._activeColor[0] }
         } else {
-          activeColor = { ...mergedColors[0] }
+          activeColor = { ...uniqueMergedColors[0] }
         }
 
         return {
           ...state,
-          colors: mergedColors,
+          colors: uniqueMergedColors,
           activeColor
         }
       }
