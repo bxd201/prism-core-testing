@@ -26,6 +26,7 @@ const embedEntryPointName = 'embed'
 const authorEntryPointName = 'author'
 const cleanslateEntryPointName = 'cleanslate'
 const exportEntryPointName = 'index'
+const vendorAssetsName = 'vendor'
 
 const fixedEntryPoints = {
   [cleanslateEntryPointName]: cleanslatePath,
@@ -71,5 +72,7 @@ module.exports = {
   nodeModulesPath,
   production,
   rootPath,
-  srcPath
+  srcPath,
+  templateIndexEntryPointName,
+  vendorAssetsName
 }

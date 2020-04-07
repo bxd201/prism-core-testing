@@ -15,7 +15,7 @@ import facetPubSub from './facetPubSub'
 import { addInstance, getInstance, unmount, type BoundFacet } from './facetInstance'
 
 // import the redux store
-import { embedGlobalStylesOnce, memoEmbedBundleStyles } from './facetStyles'
+import { embedGlobalStyles, embedBundleStyles } from './facetStyles'
 import { HAS_BOUND_CLASS, TO_BIND_CLASS } from './facetConstants'
 import { facetMasterWrapper } from './facetMasterWrapper'
 import { dressUpForPrism } from './facetUtils'
@@ -99,7 +99,7 @@ const renderAppInElement = (el: HTMLElement, explicitProps: Object = {}) => {
     bindCallback // a callback which will be passed a (FacetPubSubMethods & FacetBinderMethods) object on bind
   }
 
-  embedBundleStyles(facet)
+  _embedBundleStyles(facet)
 
   const Component = facetMasterWrapper(facetPubSub(App))
 
@@ -131,7 +131,7 @@ function gatherReactRoots (facetName?: string, root: Document = document): any[]
 
 function embedAtRoots (override: boolean = false) {
   if (IS_MAIN_BUNDLE) {
-    embedBundleStyles(WEBPACK_CONSTANTS.mainEntryPointName)
+    _embedBundleStyles(WEBPACK_CONSTANTS.mainEntryPointName)
     if (!override) {
       return
     }
@@ -142,7 +142,7 @@ function embedAtRoots (override: boolean = false) {
 
 function embedAtElement (el: HTMLElement, props: Object = {}) {
   if (IS_MAIN_BUNDLE) {
-    embedBundleStyles(WEBPACK_CONSTANTS.mainEntryPointName)
+    _embedBundleStyles(WEBPACK_CONSTANTS.mainEntryPointName)
   }
 
   docReady(() => {
@@ -152,11 +152,11 @@ function embedAtElement (el: HTMLElement, props: Object = {}) {
 
 // embeds styles for provided facet OR main bundle (internal switch); passes work off to memoized function
 // can be safely called multiple times due to downstream embedding
-const embedBundleStyles = (bundleName: string) => {
+const _embedBundleStyles = (bundleName: string) => {
   if (IS_MAIN_BUNDLE) {
-    memoEmbedBundleStyles(WEBPACK_CONSTANTS.mainEntryPointName)
+    embedBundleStyles(WEBPACK_CONSTANTS.mainEntryPointName)
   } else {
-    memoEmbedBundleStyles(bundleName)
+    embedBundleStyles(bundleName)
   }
 }
 
@@ -212,7 +212,7 @@ export default function facetBinder (FacetDeclaration: BoundFacet, facetName: st
   // make this facet available to be embedded
   addToEmbedQueue(facetName)
   // this will load global styles immediately
-  embedGlobalStylesOnce()
+  embedGlobalStyles()
 
   embedAtRoots()
 
