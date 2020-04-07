@@ -2,17 +2,8 @@
 import { ensureFullyQualifiedAssetUrl } from './shared/helpers/DataUtils'
 import { EMBED_ROOT_SELECTOR_DEPRECATED, EMBED_ROOT_SELECTOR } from './facetSupport/facetConstants'
 import { dressUpForPrism } from './facetSupport/facetUtils'
-
-function loadBundle () {
-  const bundleTag = document.createElement('script')
-  // NOTE: adding APP_VERSION in here will allow us to have a very old cache for bundle.js
-  // BUT, that only works if we're able to instate rather light caching on embed.js. Since this file will be quite small, we'll
-  // be able to load it anew much more often but still keep the bulk of the download protected by cache.
-  const bundlePath = ensureFullyQualifiedAssetUrl(`${WEBPACK_CONSTANTS.mainEntryPointName}.js?v=${APP_VERSION}`)
-  bundleTag.src = bundlePath // eslint-disable-line no-undef
-  // $FlowIgnore -- flow doesn't think body is defined
-  document.body.appendChild(bundleTag)
-}
+import { embedGlobalStyles, embedBundleStyles } from './facetSupport/facetStyles'
+import { embedScript } from './facetSupport/facetScripts'
 
 function injectRoot () {
   // TODO: deprecate #prism-root in favor of class- or attr-based identifier
@@ -31,5 +22,8 @@ function injectRoot () {
   allRoots.forEach(dressUpForPrism)
 }
 
+embedGlobalStyles()
+embedScript(ensureFullyQualifiedAssetUrl(`${WEBPACK_CONSTANTS.vendorAssetsName}.js`))
 injectRoot()
-loadBundle()
+embedScript(ensureFullyQualifiedAssetUrl(`${WEBPACK_CONSTANTS.mainEntryPointName}.js`))
+embedBundleStyles(WEBPACK_CONSTANTS.mainEntryPointName)

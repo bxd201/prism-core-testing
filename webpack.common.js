@@ -176,6 +176,19 @@ module.exports = {
     removeAvailableModules: true,
     removeEmptyChunks: true,
     sideEffects: flags.production,
+    splitChunks: {
+      cacheGroups: {
+        defaultVendors: {
+          filename: '[name].js',
+          name: flags.vendorAssetsName,
+          test: /[\\/]node_modules[\\/]/,
+          chunks (chunk) {
+            const dontChunk = chunk.name === flags.templateIndexEntryPointName || chunk.name === flags.embedEntryPointName
+            return !dontChunk
+          }
+        }
+      }
+    },
     usedExports: flags.production
   },
   plugins: [
