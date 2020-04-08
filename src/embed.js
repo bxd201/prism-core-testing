@@ -23,7 +23,8 @@ function injectRoot () {
 }
 
 embedGlobalStyles()
-embedScript(ensureFullyQualifiedAssetUrl(`${WEBPACK_CONSTANTS.vendorAssetsName}.js`))
+embedScript(ensureFullyQualifiedAssetUrl(`${WEBPACK_CONSTANTS.chunkReactName}.js`))
+embedScript(ensureFullyQualifiedAssetUrl(`${WEBPACK_CONSTANTS.chunkNonReactName}.js`))
 injectRoot()
 embedScript(ensureFullyQualifiedAssetUrl(`${WEBPACK_CONSTANTS.mainEntryPointName}.js`))
 embedBundleStyles(WEBPACK_CONSTANTS.mainEntryPointName)
