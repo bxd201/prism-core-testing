@@ -39,7 +39,7 @@ const addHideStyles = () => {
 
 export const embedGlobalStyles = () => {
   addHideStyles()
-  embedStyle(ensureFullyQualifiedAssetUrl(`css/${WEBPACK_CONSTANTS.vendorAssetsName}.css`))
+  embedStyle(ensureFullyQualifiedAssetUrl(`css/${WEBPACK_CONSTANTS.chunkNonReactName}.css`))
   embedStyle(ensureFullyQualifiedAssetUrl(`css/${WEBPACK_CONSTANTS.cleanslateEntryPointName}.css`))
 }
 
