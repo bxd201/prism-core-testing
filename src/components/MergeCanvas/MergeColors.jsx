@@ -16,7 +16,6 @@ type MergeColorsProps = {
   preserveLayers?: boolean,
   preserveLayersAsData?: boolean,
   imageUrlList?: string[],
-  // eslint-disable-next-line react/no-unused-prop-types
   colorOpacity?: number
 }
 

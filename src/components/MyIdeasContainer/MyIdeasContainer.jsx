@@ -7,7 +7,6 @@ import Login from '../Login/Login'
 import WithConfigurationContext from '../../contexts/ConfigurationContext/WithConfigurationContext'
 import { MY_IDEAS_PREVIEW } from '../Facets/Prism/Prism'
 import { clearSceneWorkspace } from '../../store/actions/paintScene'
-// eslint-disable-next-line no-unused-vars
 import { selectSavedScene } from '../../store/actions/persistScene'
 import AnonLogin from '../AnonLogin/AnonLogin'
 import './MyIdeasContainer.scss'

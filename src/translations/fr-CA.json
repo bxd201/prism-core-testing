@@ -17,6 +17,9 @@
   "COMPARE_COLORS": "Compare Colors",
   "CONFIRMATION_DIALOG_MATCH_A_PHOTO_EXIT": "The photo content will be lost if you close. Make sure the colors you want to keep have been added to your palette. Do you still want to close?",
   "COORDINATING_COLORS": "Couleurs coordonnées",
+  "CVW": {
+    "WARNING_REPLACEMENT": "Opening this scene will replace the current scene you are working on. Would you like to continue?"
+  },
   "DELETE": "DELETE",
   "DELETE_PIN": "Delete pin",
   "DETAILS": "Détails",
