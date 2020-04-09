@@ -379,8 +379,8 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
   /*:: handlePinMoveByKeyboard: (movingPinData: Object) => */
   handlePinMoveByKeyboard (movingPinData: Object) {
     const canvasOffset = this.canvasRef.current.getBoundingClientRect()
-    let cursorX = Math.floor(movingPinData.offsetX - canvasOffset.x)
-    let cursorY = Math.floor(movingPinData.offsetY - canvasOffset.y)
+    let cursorX = movingPinData.offsetX - Math.floor(canvasOffset.x)
+    let cursorY = movingPinData.offsetY - Math.floor(canvasOffset.y)
     let isContentLeft = false
     if (cursorX < this.state.canvasWidth / 2) {
       isContentLeft = true
@@ -412,7 +412,6 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
     const duplicatePinIndex = clonedPins.findIndex((colors) => {
       return parseInt(colors.pinNumber, 10) !== parseInt(pinNumber, 10) && colors.rgbValue === newRgb && !colors.hide
     })
-
     clonedPins[pinNumber].rgbValue = newRgb
     clonedPins[pinNumber].translateX = translateX
     clonedPins[pinNumber].translateY = translateY

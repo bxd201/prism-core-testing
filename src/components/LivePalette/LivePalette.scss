@@ -22,6 +22,9 @@
       margin: 1em;
     }
     &__compare-button{
+      &--hide{
+        display: none;
+      }
       padding: 0.5em 1em;
       margin-right: 5px;
       border-top: 1px solid #ebebeb;

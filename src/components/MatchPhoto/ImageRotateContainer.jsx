@@ -24,10 +24,10 @@ const headerClass = `${baseClass}__header`
 const buttonClass = `${baseClass}__button`
 const buttonLeftClass = `${buttonClass}--left`
 const buttonLeftTextClass = `${buttonClass}-left-text`
-const canvasClass = `${baseClass}__canvas`
 const buttonRightClass = `${buttonClass}--right`
 const closeClass = `${baseClass}__close`
 const cancelClass = `${baseClass}__cancel`
+const canvasBaseClass = `${baseClass}__canvas`
 
 const getWrapperClassName = (imageUrl, pins, hasPaintSceneWorkspace) => {
   if (hasPaintSceneWorkspace) {
@@ -90,6 +90,7 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
   const [scalingWidth, setScalingWidth] = useState(0)
   const [wrapperWidth, setWrapperWidth] = useState(0)
   const [hasLoaded, setHasLoaded] = useState(false)
+  const [canvasClass, setCanvasClass] = useState(canvasBaseClass)
   const hasLoadedRef = useRef()
 
   const paintSceneWorkspace = useSelector(state => state.paintSceneWorkspace)
@@ -120,6 +121,7 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
     const oldHeight = isPortrait ? landscapeHeight : portraitHeight
     let newWidth = isPortrait ? portraitWidth : landscapeWidth
     let newHeight = isPortrait ? portraitHeight : landscapeHeight
+    let dynamicClass = canvasClass
 
     if (newOrientationDims.landscapeWidth !== landscapeWidth) {
       newWidth = isPortrait ? newOrientationDims.portraitWidth : newOrientationDims.landscapeWidth
@@ -145,6 +147,7 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
         hTrans = newWidth
         canvasWidth = newHeight
         canvasHeight = newWidth
+        dynamicClass = `${canvasBaseClass}__portrait`
         break
       case 180:
       case -180:
@@ -152,18 +155,21 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
         hTrans = newWidth
         canvasWidth = newWidth
         canvasHeight = newHeight
+        dynamicClass = canvasBaseClass
         break
       case 270:
       case -90:
         vTrans = newHeight
         canvasWidth = newHeight
         canvasHeight = newWidth
+        dynamicClass = `${canvasBaseClass}__portrait`
         break
       default:
         // 0 degrees
         rotation = 0
         canvasWidth = newWidth
         canvasHeight = newHeight
+        dynamicClass = canvasBaseClass
     }
 
     const ctx = canvasRef.current.getContext('2d')
@@ -195,6 +201,7 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
     // Set the image data used by the match color component
     const newImageData = canvasWidth && ctx.getImageData(0, 0, canvasWidth, canvasHeight)
     setImageData(newImageData)
+    setCanvasClass(dynamicClass)
   }, [resized, imageRotationAngle])
 
   useEffect(() => {
@@ -423,14 +430,14 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
                 : ''
             }
             {
-              ((imageUrl && isPaintScene && pins.length > 0) || (isFromMyIdeas && paintSceneWorkspaceState.bgImageUrl !== undefined))
+              ((imageUrl && isPaintScene && pins.length > 0) || (isFromMyIdeas && paintSceneWorkspaceState && paintSceneWorkspaceState.bgImageUrl !== undefined))
                 ? (<React.Fragment>
                   <PaintScene checkIsPaintSceneUpdate={checkIsPaintSceneUpdate} imageUrl={imageUrl} workspace={paintSceneWorkspaceState} imageRotationAngle={imageRotationAngle} referenceDimensions={imageDims} width={wrapperWidth} />
                 </React.Fragment>)
                 : ''
             }
             {
-              (!imageUrl && !isPaintScene && paintSceneWorkspaceState.bgImageUrl === undefined)
+              ((!imageUrl && !isPaintScene && paintSceneWorkspaceState && paintSceneWorkspaceState.bgImageUrl === undefined) || !paintSceneWorkspaceState)
                 ? (<canvas className={canvasClass} name='canvas' width='600' height='600' />)
                 : ''
             }

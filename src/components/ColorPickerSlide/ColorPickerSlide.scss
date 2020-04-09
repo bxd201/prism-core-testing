@@ -33,7 +33,8 @@
         width: 175px;
       }
       &--hide {
-        right: -8.1em;
+        right: 0;
+        transform: translateX(75%)
       }
     }
     &:focus {

@@ -28,6 +28,7 @@ import type { Color } from '../../shared/types/Colors.js.flow'
 
 import './LivePalette.scss'
 import storageAvailable from '../../shared/utils/browserStorageCheck.util'
+const PATH__NAME = 'fast-mask-simple.html'
 
 type Props = {
   colors: Array<Color>,
@@ -42,7 +43,8 @@ type Props = {
 
 type State = {
   spokenWord: string,
-  isCompareColor: boolean
+  isCompareColor: boolean,
+  isFastMaskPage: boolean
 }
 
 const checkIsActive = (activeColor, color) => {
@@ -56,7 +58,8 @@ const checkIsActive = (activeColor, color) => {
 export class LivePalette extends PureComponent<Props, State> {
   state = {
     spokenWord: '',
-    isCompareColor: false
+    isCompareColor: false,
+    isFastMaskPage: false
   }
 
   pendingUpdateFn: any
@@ -64,6 +67,10 @@ export class LivePalette extends PureComponent<Props, State> {
   activeSlotRef: ?RefObject = void (0)
 
   componentDidMount () {
+    const pathName = window.location.pathname
+    if (pathName.split('/').slice(-1)[0] === PATH__NAME) {
+      this.setState({ isFastMaskPage: true })
+    }
     store.subscribe(() => {
       const { lp } = store.getState()
       if (storageAvailable('localStorage')) {
@@ -118,7 +125,7 @@ export class LivePalette extends PureComponent<Props, State> {
 
   render () {
     const { colors, activeColor, cancel, empty } = this.props
-    const { spokenWord, isCompareColor } = this.state
+    const { spokenWord, isCompareColor, isFastMaskPage } = this.state
     // TODO: abstract below into a class method
     // calculate all the active slots
     const activeSlots = colors.map((color, index) => {
@@ -150,7 +157,7 @@ export class LivePalette extends PureComponent<Props, State> {
           <LivePaletteModal cancel={cancel} empty={empty} isActive={colors.length > LP_MAX_COLORS_ALLOWED} />
           <div className='prism-live-palette__header'>
             <span className='prism-live-palette__header__name'><FormattedMessage id='PALETTE_TITLE' /></span>
-            {colors.length >= MIN_COMPARE_COLORS_ALLOWED && <button tabIndex='-1' className='prism-live-palette__header__compare-button' onClick={this.toggleCompareColor}>Compare Color</button>}
+            {colors.length >= MIN_COMPARE_COLORS_ALLOWED && <button tabIndex='-1' className={!isFastMaskPage ? 'prism-live-palette__header__compare-button' : 'prism-live-palette__header__compare-button--hide'} onClick={this.toggleCompareColor}>Compare Color</button>}
           </div>
           <div className='prism-live-palette__list'>
             {activeSlots}
