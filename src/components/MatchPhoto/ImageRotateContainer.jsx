@@ -437,7 +437,7 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
                 : ''
             }
             {
-              ((!imageUrl && !isPaintScene && paintSceneWorkspaceState && paintSceneWorkspaceState.bgImageUrl === undefined) || !paintSceneWorkspaceState)
+              ((!imageUrl && !isPaintScene && paintSceneWorkspaceState && paintSceneWorkspaceState.bgImageUrl === undefined) || (!imageUrl && !isPaintScene && !paintSceneWorkspaceState))
                 ? (<canvas className={canvasClass} name='canvas' width='600' height='600' />)
                 : ''
             }
