@@ -57,7 +57,7 @@
       z-index: 10;
     }
     &--paintArea{
-      cursor: url('/prism/images/paint-bucket-cursor.png'), pointer;
+      cursor: url('../../images/paint-bucket-cursor.png'), pointer;
     }
     &--paintBrush, &--erase {
       cursor: none;
