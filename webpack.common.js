@@ -178,6 +178,28 @@ module.exports = {
     removeAvailableModules: true,
     removeEmptyChunks: true,
     sideEffects: flags.production,
+    splitChunks: {
+      cacheGroups: {
+        [flags.chunkNonReactName]: {
+          filename: '[name].js',
+          name: flags.chunkNonReactName,
+          test: /[\\/]node_modules[\\/](?!(react|react-dom))/,
+          chunks (chunk) {
+            const dontChunk = chunk.name === flags.templateIndexEntryPointName || chunk.name === flags.embedEntryPointName
+            return !dontChunk
+          }
+        },
+        [flags.chunkReactName]: {
+          filename: '[name].js',
+          name: flags.chunkReactName,
+          test: /[\\/]node_modules[\\/](react|react-dom)/,
+          chunks (chunk) {
+            const dontChunk = chunk.name === flags.embedEntryPointName
+            return !dontChunk
+          }
+        }
+      }
+    },
     usedExports: flags.production
   },
   plugins: [

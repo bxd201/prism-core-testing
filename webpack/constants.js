@@ -27,6 +27,8 @@ const embedEntryPointName = 'embed'
 const authorEntryPointName = 'author'
 const cleanslateEntryPointName = 'cleanslate'
 const exportEntryPointName = 'index'
+const chunkReactName = 'commonR'
+const chunkNonReactName = 'commonNonR'
 
 const fixedEntryPoints = {
   [cleanslateEntryPointName]: cleanslatePath,
@@ -59,6 +61,8 @@ module.exports = {
   appIndexPath,
   authorEntryPointName,
   authorPath,
+  chunkNonReactName,
+  chunkReactName,
   cleanslateEntryPointName,
   dev,
   distPath,
@@ -74,5 +78,6 @@ module.exports = {
   production,
   rootPath,
   srcPath,
-  publicPath
+  publicPath,
+  templateIndexEntryPointName
 }
