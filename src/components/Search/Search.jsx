@@ -1,50 +1,32 @@
 // @flow
-import React, { useContext, useState, useMemo } from 'react'
+import React, { useContext, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
 // $FlowIgnore -- no defs for react-virtualized
 import { Grid, AutoSizer } from 'react-virtualized'
 import { loadSearchResults } from '../../store/actions/loadSearchResults'
-import { add } from '../../store/actions/live-palette'
 import { FormattedMessage } from 'react-intl'
-import ColorWallSwatch from '../Facets/ColorWall/ColorWallSwatch/ColorWallSwatch'
+import ColorSwatch from 'src/components/Facets/ColorWall/ColorSwatch/ColorSwatch'
 import GenericMessage from '../Messages/GenericMessage'
 import TextButton from '../GeneralButtons/TextButton/TextButton'
-// import HeroLoader from '../Loaders/HeroLoader/HeroLoader'
 import GenericOverlay from '../Overlays/GenericOverlay/GenericOverlay'
 import ColorWallContext from 'src/components/Facets/ColorWall/ColorWallContext'
 import useEffectAfterMount from '../../shared/hooks/useEffectAfterMount'
 import './Search.scss'
 import 'src/scss/externalComponentSupport/AutoSizer.scss'
-// hijacking the styles of another component to use its internal wrapper class here
-// TODO: do NOT do this. extract the relevant portion out inton its own component so you can include it normally here and elsewhere.
-import 'src/components/Facets/ColorWall/ColorWallSwatchList.scss'
 import { compareKebabs } from '../../shared/helpers/StringUtils'
-import at from 'lodash/at'
-import { type ColorStatus } from 'src/shared/types/Colors.js.flow'
-import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
-import { emitColor } from 'src/store/actions/loadColors'
 
 const baseClass = 'Search'
 const EDGE_SIZE = 15
 
-type Props = {
-  contain?: boolean,
-  limitSearchToFamily?: boolean
-}
-
-const Search = (props: Props) => {
-  const { limitSearchToFamily = false, contain = false } = props
+type SearchProps = { contain?: boolean, limitSearchToFamily?: boolean }
+const Search = ({ limitSearchToFamily = false, contain = false }: SearchProps) => {
   const { results, count, suggestions, loading } = useSelector(state => state.colors.search)
-  const { structure, items: { colorStatuses } } = useSelector(state => state.colors)
+  const { structure, items: { colorStatuses = {} } } = useSelector(state => state.colors)
   const { section, family, query } = useParams()
   const dispatch = useDispatch()
   const { colorWallBgColor } = useContext(ColorWallContext)
   const [hasSearched, updateHasSearched] = useState(typeof count !== 'undefined')
-  const { swatchShouldEmit } = useContext(ConfigurationContext)
-  const onAddColor = useMemo(() => {
-    return color => dispatch(swatchShouldEmit ? emitColor(color) : add(color))
-  }, [swatchShouldEmit])
 
   React.useEffect(() => {
     if (limitSearchToFamily) {
@@ -66,36 +48,12 @@ const Search = (props: Props) => {
     dispatch(loadSearchResults(query))
   }, [query, family, section, limitSearchToFamily])
 
-  useEffectAfterMount(() => {
-    updateHasSearched(true)
-  }, [count, results, loading])
+  useEffectAfterMount(() => { updateHasSearched(true) }, [count, results, loading])
 
-  const cellRenderer = useMemo(() => {
-    return ({ columnIndex, isScrolling, isVisible, key, parent, rowIndex, style }) => {
-      const columnCount = parent.props.columnCount
-      const index = columnIndex + (rowIndex * columnCount)
-      const result = results && results[index]
-
-      if (result) {
-        const thisStatus: ColorStatus | typeof undefined = colorStatuses && colorStatuses[result.id]
-        const isDisabled = at(thisStatus, 'status')[0] === 0
-        const message = at(thisStatus, 'message')[0]
-
-        return (
-          <div key={key} style={style}>
-            <ColorWallSwatch
-              key={result.hex}
-              showContents
-              color={result}
-              onAdd={onAddColor}
-              disabled={isDisabled}
-              message={message}
-            />
-          </div>
-        )
-      }
-    }
-  }, [results])
+  const cellRenderer = ({ columnIndex, isScrolling, isVisible, key, parent, rowIndex, style }) => {
+    const result = results && results[columnIndex + (rowIndex * parent.props.columnCount)]
+    return result && <ColorSwatch key={key} style={style} color={result} status={colorStatuses[result.id]} showContents />
+  }
 
   return (
     <div className={baseClass}>
@@ -128,31 +86,29 @@ const Search = (props: Props) => {
             ) : null}
           </GenericMessage>
         ) : (
-          <section className={`color-wall-swatch-list ${contain ? 'color-wall-swatch-list--cover' : ''}`}>
-            <AutoSizer disableHeight={!contain}>
-              {({ height = 0, width }) => {
-                const gridWidth = width - (EDGE_SIZE * 2)
-                const columnCount = Math.max(1, Math.round(gridWidth / 175))
-                const newSize = gridWidth / columnCount
-                const rowCount = Math.ceil(results.length / columnCount)
-                const gridHeight = contain ? height : Math.max(height, rowCount * newSize + (EDGE_SIZE * 2))
+          <AutoSizer>
+            {({ height, width }) => {
+              const gridWidth = width - (EDGE_SIZE * 2)
+              const columnCount = Math.max(1, Math.round(gridWidth / 175))
+              const newSize = gridWidth / columnCount
+              const rowCount = Math.ceil(results.length / columnCount)
+              const gridHeight = contain ? height : Math.max(height, rowCount * newSize + (EDGE_SIZE * 2))
 
-                return (
-                  <Grid
-                    containerStyle={{ margin: `${EDGE_SIZE}px auto` }}
-                    colors={results}
-                    cellRenderer={cellRenderer}
-                    columnWidth={newSize}
-                    columnCount={columnCount}
-                    height={gridHeight}
-                    rowHeight={newSize}
-                    rowCount={Math.ceil(results.length / columnCount)}
-                    width={width}
-                  />
-                )
-              }}
-            </AutoSizer>
-          </section>
+              return (
+                <Grid
+                  // containerStyle={{ margin: `${EDGE_SIZE}px auto` }}
+                  // colors={results}
+                  cellRenderer={cellRenderer}
+                  columnWidth={newSize}
+                  columnCount={columnCount}
+                  height={gridHeight}
+                  rowHeight={newSize}
+                  rowCount={Math.ceil(results.length / columnCount)}
+                  width={width}
+                />
+              )
+            }}
+          </AutoSizer>
         )}
       </div>
     </div>

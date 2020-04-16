@@ -33,7 +33,7 @@ export function BackToColorWall ({ color, family, section, searchActive, searchQ
 
   const url = useMemo(() => {
     const colorWallUrl = color
-      ? generateColorWallPageUrl(section, family, color.id, fullColorName(color.brandKey, color.colorNumber, color.name))
+      ? generateColorWallPageUrl(section, family, color.id, fullColorName(color))
       : generateColorWallPageUrl(section, family)
     const colorWallUrlPlusSearch = searchActive && searchQuery ? urlWorker.set(ROUTE_PARAMS.SEARCH, searchQuery).in(colorWallUrl) : colorWallUrl
     return colorWallUrlPlusSearch
