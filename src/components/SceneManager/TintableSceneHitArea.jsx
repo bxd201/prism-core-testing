@@ -8,6 +8,7 @@ import { DRAG_TYPES } from 'constants/globals'
 import { DropTarget } from 'react-dnd-cjs'
 
 import { ensureFullyQualifiedAssetUrl } from '../../shared/helpers/DataUtils'
+import { getBaseUrl } from '../../shared/utils/util'
 
 type Props = {
   connectDropTarget: Function,
@@ -95,7 +96,7 @@ export class TintableSceneHitArea extends PureComponent<Props> {
           }} />
         <svg className={TintableSceneHitArea.classNames.hitArea}>
           <use className={`${TintableSceneHitArea.classNames.hitAreaMask} ${isOver ? `${TintableSceneHitArea.classNames.hitAreaMask}--hover` : ''}`}
-            xlinkHref={`#mask___${maskId}`}
+            xlinkHref={`${getBaseUrl(window.location.href)}#mask___${maskId}`}
             onClick={this.handleClick} />
         </svg>
       </div>
