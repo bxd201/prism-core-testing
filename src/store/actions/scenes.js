@@ -272,3 +272,17 @@ export const unsetSelectedSceneVariantChanged = () => {
     type: UNSET_SELECTED_SCENE_VARIANT_CHANGED
   }
 }
+
+export const SET_SELECTED_SCENE_PALETTE_LOADED = 'SET_SELECTED_SCENE_PALETTE_LOADED'
+export const setSelectedScenePaletteLoaded = () => {
+  return {
+    type: SET_SELECTED_SCENE_PALETTE_LOADED
+  }
+}
+
+export const UNSET_SELECTED_SCENE_PALETTE_LOADED = 'UNSET_SELECTED_SCENE_PALETTE_LOADED'
+export const unsetSelectedScenePaletteLoaded = () => {
+  return {
+    type: UNSET_SELECTED_SCENE_PALETTE_LOADED
+  }
+}

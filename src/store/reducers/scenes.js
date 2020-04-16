@@ -30,7 +30,9 @@ import {
   SET_ACTIVE_STOCK_SCENE_POLLUTED,
   UNSET_ACTIVE_STOCK_SCENE_POLLUTED,
   SET_SELECTED_SCENE_VARIANT_CHANGED,
-  UNSET_SELECTED_SCENE_VARIANT_CHANGED
+  UNSET_SELECTED_SCENE_VARIANT_CHANGED,
+  SET_SELECTED_SCENE_PALETTE_LOADED,
+  UNSET_SELECTED_SCENE_PALETTE_LOADED
 } from '../actions/scenes'
 import { registerMask, updateMask } from '../masks/store'
 
@@ -51,7 +53,8 @@ type State = {
   activeScenesColorDetails: number[],
   isColorDetailsPage: boolean,
   isActiveStockScenePolluted: boolean,
-  selectedSceneVariantChanged: boolean
+  selectedSceneVariantChanged: boolean,
+  selectedScenePaletteLoaded: boolean
 }
 
 export const initialState: State = {
@@ -65,7 +68,8 @@ export const initialState: State = {
   activeScenesColorDetails: [],
   isColorDetailsPage: false,
   isActiveStockScenePolluted: false,
-  selectedSceneVariantChanged: false
+  selectedSceneVariantChanged: false,
+  selectedScenePaletteLoaded: false
 }
 
 export const scenes = (state: Object = initialState, action: { type: string, payload: Object }) => {
@@ -452,6 +456,16 @@ export const scenes = (state: Object = initialState, action: { type: string, pay
     case UNSET_SELECTED_SCENE_VARIANT_CHANGED:
       return Object.assign({}, state, {
         selectedSceneVariantChanged: false
+      })
+
+    case SET_SELECTED_SCENE_PALETTE_LOADED:
+      return Object.assign({}, state, {
+        selectedScenePaletteLoaded: true
+      })
+
+    case UNSET_SELECTED_SCENE_PALETTE_LOADED:
+      return Object.assign({}, state, {
+        selectedScenePaletteLoaded: false
       })
 
     default:

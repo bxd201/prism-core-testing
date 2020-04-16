@@ -23,7 +23,8 @@ import {
   toggleEditMode,
   updateCurrentSceneInfo,
   setActiveStockScenePolluted,
-  setSelectedSceneVariantChanged
+  setSelectedSceneVariantChanged,
+  setSelectedScenePaletteLoaded
 } from '../../store/actions/scenes'
 import TintableScene from './TintableScene'
 import SceneVariantSwitch from './SceneVariantSwitch'
@@ -33,14 +34,18 @@ import ConfigurationContext from '../../contexts/ConfigurationContext/Configurat
 import ColorPickerSlide from '../ColorPickerSlide/ColorPickerSlide'
 import type { Color } from '../../shared/types/Colors.js.flow'
 import type { Scene, SceneStatus, SceneWorkspace, Surface, Variant } from '../../shared/types/Scene'
+import type { ColorMap } from 'src/shared/types/Colors.js.flow'
 
 import './SceneManager.scss'
 import 'src/scss/convenience/visually-hidden.scss'
-import DynamicModal, { getRefDimension } from '../DynamicModal/DynamicModal'
+import DynamicModal, { getRefDimension, DYNAMIC_MODAL_STYLE } from '../DynamicModal/DynamicModal'
 import { saveStockScene } from '../../store/actions/stockScenes'
 import { showSavedConfirmModal, showSaveSceneModal } from '../../store/actions/persistScene'
 import { createUniqueSceneId } from '../../shared/utils/legacyProfileFormatUtil'
 import { replaceSceneStatus } from '../../shared/utils/sceneUtil'
+import { LP_MAX_COLORS_ALLOWED } from 'constants/configurations'
+import { checkCanMergeColors, shouldPromptToReplacePalette, getColorInstances } from '../LivePalette/livePaletteUtility'
+import { mergeLpColors, replaceLpColors } from '../../store/actions/live-palette'
 
 const getThumbnailAssetArrayByScene = memoizee((sceneVariant: Variant, surfaces: Surface[]): string[] => {
   return flattenDeep([
@@ -112,13 +117,19 @@ type Props = {
   setSelectedSceneVariantChanged: Function,
   selectedSceneVariantChanged: boolean,
   lpColors: Array<Color> | undefined,
+  mergeLpColors: Function,
+  replaceLpColors: Function,
+  colorMap: ColorMap | null,
+  setSelectedScenePaletteLoaded: Function,
+  selectedScenePaletteLoaded: boolean
 }
 
 type State = {
   currentSceneIndex: number,
   uniqueSceneId: string,
   activeSceneStatus: Object | null,
-  isChangeVariantCalled: boolean
+  isChangeVariantCalled: boolean,
+  showSelectPaletteModal: boolean
 }
 
 export class SceneManager extends PureComponent<Props, State> {
@@ -138,7 +149,8 @@ export class SceneManager extends PureComponent<Props, State> {
       currentSceneIndex: 0,
       uniqueSceneId: createUniqueSceneId(),
       activeSceneStatus: props.sceneStatusActiveSceneStore || null,
-      isChangeVariantCalled: false
+      isChangeVariantCalled: false,
+      showSelectPaletteModal: false
     }
     this.handleColorUpdate = this.handleColorUpdate.bind(this)
     this.handleClickSceneToggle = this.handleClickSceneToggle.bind(this)
@@ -148,12 +160,18 @@ export class SceneManager extends PureComponent<Props, State> {
     this.saveSceneFromModal = this.saveSceneFromModal.bind(this)
     this.hideSaveSceneModal = this.hideSaveSceneModal.bind(this)
     this.hideSavedConfirmModal = this.hideSavedConfirmModal.bind(this)
-
+    this.tryToMergeColors = this.tryToMergeColors.bind(this)
+    this.loadPalette = this.loadPalette.bind(this)
+    this.getSelectPaletteModalConfig = this.getSelectPaletteModalConfig.bind(this)
     this.wrapperRef = createRef()
   }
 
   componentDidMount () {
     this.props.loadScenes(this.props.type)
+    if (!this.props.isColorDetail && this.props.selectedSceneStatusActiveScene && !this.props.selectedScenePaletteLoaded) {
+      this.tryToMergeColors()
+      this.props.setSelectedScenePaletteLoaded()
+    }
     // @todo uncomment the two immediate lines below to add custom mask data for manual test.
     // this.props.addNewMask(1, 2, window.localStorage.getItem('sampleMask'))
     // this.props.toggleEditMode(false)
@@ -303,6 +321,54 @@ export class SceneManager extends PureComponent<Props, State> {
     return _changeVariant
   }
 
+  tryToMergeColors () {
+    // eslint-disable-next-line no-new-object
+    const { lpColors, isColorDetail, selectedSceneStatus, colorMap } = this.props
+    if (!isColorDetail && selectedSceneStatus && !selectedSceneStatus.openUnpaintedStockScene && selectedSceneStatus.palette && lpColors) {
+      const colorInstances = getColorInstances(selectedSceneStatus.palette, selectedSceneStatus.expectStockData.livePaletteColorsIdArray, colorMap)
+      const colorInstancesSliced = colorInstances.slice(0, 8)
+      if (checkCanMergeColors(lpColors, colorInstancesSliced, LP_MAX_COLORS_ALLOWED)) {
+        this.props.mergeLpColors(colorInstancesSliced)
+      } else {
+        if (shouldPromptToReplacePalette(lpColors, colorInstancesSliced, LP_MAX_COLORS_ALLOWED)) {
+          this.setState({ showSelectPaletteModal: true })
+        }
+      }
+    }
+  }
+
+  getSelectPaletteModalConfig () {
+    const { intl } = this.props
+
+    const selectPaletteActions = [{ callback: (e) => {
+      e.preventDefault()
+      e.stopPropagation()
+      this.setState({ showSelectPaletteModal: false })
+    },
+    text: intl.messages['PAINT_SCENE.CANCEL'],
+    type: DYNAMIC_MODAL_STYLE.primary },
+    { callback: (e) => {
+      e.preventDefault()
+      e.stopPropagation()
+      this.loadPalette()
+      this.setState({ showSelectPaletteModal: false })
+    },
+    text: intl.messages['PAINT_SCENE.OK'],
+    type: DYNAMIC_MODAL_STYLE.primary }]
+
+    return {
+      selectPaletteActions,
+      selectPaletteTitle: intl.messages['PAINT_SCENE.SELECT_PALETTE_TITLE'],
+      selectPaletteDescription: intl.messages['PAINT_SCENE.SELECT_PALETTE_DESC']
+    }
+  }
+
+  loadPalette () {
+    const { selectedSceneStatus, colorMap } = this.props
+    const colorInstances = getColorInstances(selectedSceneStatus.palette, selectedSceneStatus.expectStockData.livePaletteColorsIdArray, colorMap)
+    this.props.replaceLpColors(colorInstances.slice(0, 8))
+  }
+
   render () {
     // eslint-disable-next-line no-unused-vars
     const { scenes,
@@ -321,7 +387,8 @@ export class SceneManager extends PureComponent<Props, State> {
       showSavedConfirmModalFlag,
       hideSceneSelector } = this.props
 
-    const { activeSceneStatus } = this.state
+    const { activeSceneStatus, showSelectPaletteModal } = this.state
+    const { selectPaletteActions, selectPaletteTitle, selectPaletteDescription } = this.getSelectPaletteModalConfig()
     const livePaletteColorCount = (this.props.lpColors && this.props.lpColors.length) || 0
     if (loadingScenes) {
       return <div className={`${SceneManager.baseClass}__loader`}><CircleLoader /></div>
@@ -341,6 +408,11 @@ export class SceneManager extends PureComponent<Props, State> {
       <DndProvider backend={HTML5Backend}>
         <div className={SceneManager.baseClass} ref={this.wrapperRef}>
           {/* Do not use scene height for modal, use the sceneManager wrapper */}
+          {showSelectPaletteModal ? <DynamicModal
+            actions={selectPaletteActions}
+            title={selectPaletteTitle}
+            height={getRefDimension(this.wrapperRef, 'height')}
+            description={selectPaletteDescription} /> : null}
           {showSaveSceneModalFlag && livePaletteColorCount !== 0 ? <DynamicModal
             actions={[
               { text: intl.messages['SAVE_SCENE_MODAL.SAVE'], callback: this.saveSceneFromModal },
@@ -568,7 +640,9 @@ const mapStateToProps = (state, props) => {
     isActiveStockScenePolluted: state.scenes.isActiveStockScenePolluted,
     selectedScenedVariant: selectedScenedVariant,
     selectedSceneVariantChanged: state.scenes.selectedSceneVariantChanged,
-    lpColors: state.lp.colors
+    lpColors: state.lp.colors,
+    colorMap: (state.colors && state.colors.items && state.colors.items.colorMap) ? state.colors.items.colorMap : null,
+    selectedScenePaletteLoaded: state.scenes.selectedScenePaletteLoaded
     // NOTE: uncommenting this will sync scene type with redux data
     // we may not want that in case there are multiple instances with different scene collections running at once
     // type: state.scenes.type
@@ -606,7 +680,10 @@ const mapDispatchToProps = (dispatch: Function) => {
     saveStockScene: (id: string, sceneName: string, sceneData: Object, sceneType: string, livePaletteColorsIdArray: Array<string>) => dispatch(saveStockScene(id, sceneName, sceneData, sceneType, livePaletteColorsIdArray)),
     showSavedConfirmModal: (shouldShow: boolean) => dispatch(showSavedConfirmModal(shouldShow)),
     setActiveStockScenePolluted: () => dispatch(setActiveStockScenePolluted()),
-    setSelectedSceneVariantChanged: () => dispatch(setSelectedSceneVariantChanged())
+    setSelectedSceneVariantChanged: () => dispatch(setSelectedSceneVariantChanged()),
+    mergeLpColors: (colors: Object[]) => dispatch(mergeLpColors(colors)),
+    replaceLpColors: (colors: Object[]) => dispatch(replaceLpColors(colors)),
+    setSelectedScenePaletteLoaded: () => dispatch(setSelectedScenePaletteLoaded())
   }
 }
 
