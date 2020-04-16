@@ -3,16 +3,14 @@
     min-height: 60vh;
     text-align: center;
     display: flex;
-    align-items: center;
-    justify-content: center;
     position: relative;
 
-    &--top-align {
-      align-items: flex-start;
-    }
+    .generic-message { margin: auto; }
 
-    @include respond-above(sm) {
-      min-height: 66vh;
-    }
+    &--top-align { align-items: flex-start; }
+
+    @include respond-above(sm) { min-height: 66vh; }
   }
+
+  .ReactVirtualized__Grid__innerScrollContainer { margin: auto; }
 }
