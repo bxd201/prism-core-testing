@@ -139,3 +139,11 @@ export const getLABFromColor = (colorObj: Object) => {
     B: color[2]
   }
 }
+
+export const getInitialDims = (workspace, referenceDims) => {
+  if (workspace) {
+    return [workspace.width, workspace.height]
+  }
+
+  return [referenceDims.imageWidth, referenceDims.imageHeight]
+}

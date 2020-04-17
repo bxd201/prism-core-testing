@@ -302,6 +302,8 @@
   &__mini-image {
     width: 120px;
     height: auto;
+    max-height: 180px;
+    overflow: hidden;
     margin: 0 auto;
     & > canvas {
       // width: 20% !important; // use important to override the inline style which build in canvas of mergeCanvas compoenent
