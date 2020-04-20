@@ -129,6 +129,43 @@ module.exports = {
         use: sassRules
       },
       {
+        test: /\.(png|jpe?g|gif|svg)$/i,
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              // inline images below this threshhold
+              limit: 8192,
+              // the following options get passed to fallback file-loader
+              name: '[name].[contenthash].[ext]',
+              outputPath: 'images',
+              publicPath: '/images/'
+            }
+          },
+          {
+            loader: 'image-webpack-loader',
+            options: {
+              disable: !flags.production,
+              mozjpeg: {
+                progressive: true,
+                quality: 65
+              },
+              // optipng.enabled: false will disable optipng
+              optipng: {
+                enabled: false
+              },
+              pngquant: {
+                quality: [0.65, 0.90],
+                speed: 4
+              },
+              gifsicle: {
+                interlaced: false
+              }
+            }
+          }
+        ]
+      },
+      {
         test: /\.worker\.js$/,
         exclude: /node_modules\/(?!(react-intl|intl-messageformat|intl-messageformat-parser|hashids))/,
         include: flags.srcPath,
@@ -226,9 +263,10 @@ module.exports = {
         return new PostCssWrapper(`css/${key}.css`, '.cleanslate.prism', /^:root/)
       }
     }).filter(v => !!v),
+    // NOTE: This is ONLY for copying over scene SVG masks, which webpack otherwise has no way of knowing about
     new CopyWebpackPlugin([
       {
-        from: 'src/images',
+        from: 'src/images-to-copy',
         to: 'prism/images'
       }
     ]),
@@ -308,6 +346,7 @@ module.exports = {
       'Access-Control-Allow-Origin': '*'
     },
     compress: true,
+    writeToDisk: true,
     disableHostCheck: true
   }
 }
