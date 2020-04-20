@@ -5,16 +5,16 @@
  * with a little less pain.
  */
 
- .cleanslate a {
-  &, &:hover, &:visited, &:active {
-    color: inherit;
-  }
-}
-
-.cleanslate {
+.#{$cleanslateWrappingClass} {
   font-family: var(getVarName('typography.bodyFontFamily'));
-}
 
-.cleanslate h1 {
-  color: inherit !important
+  a {
+    &, &:hover, &:visited, &:active {
+      color: inherit;
+    }
+  }
+
+  h1 {
+    color: inherit !important
+  }
 }

@@ -260,7 +260,7 @@ module.exports = {
       // wrap each entry's associated CSS file with .clnslt.prism, excluding :root rules
       // excluding anything from our "fixed" entrypoints, which are cleanslate and template index
       if (!flags.fixedEntryPoints[key]) {
-        return new PostCssWrapper(`css/${key}.css`, '.cleanslate.prism', /^:root/)
+        return new PostCssWrapper(`css/${key}.css`, `.${flags.prismWrappingClass}.${flags.cleanslateWrappingClass}`, /^:root/)
       }
     }).filter(v => !!v),
     // NOTE: This is ONLY for copying over scene SVG masks, which webpack otherwise has no way of knowing about

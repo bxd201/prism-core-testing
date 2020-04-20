@@ -5,6 +5,10 @@ const mode = process.env.NODE_ENV || 'development'
 const dev = mode === 'development'
 const production = mode === 'production'
 
+// wrapping classes
+const cleanslateWrappingClass = 'c8e'
+const prismWrappingClass = 'p3m'
+
 // paths
 const rootPath = path.resolve(__dirname, '..')
 const srcPath = path.join(rootPath, 'src')
@@ -62,6 +66,7 @@ module.exports = {
   chunkNonReactName,
   chunkReactName,
   cleanslateEntryPointName,
+  cleanslateWrappingClass,
   dev,
   distPath,
   embedEntryPointName,
@@ -73,6 +78,7 @@ module.exports = {
   mocksPath,
   mode,
   nodeModulesPath,
+  prismWrappingClass,
   production,
   rootPath,
   srcPath,
