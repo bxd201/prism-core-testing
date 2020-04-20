@@ -1,5 +1,5 @@
 // @flow
-import React, { useCallback, useMemo } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import CardMenu from 'src/components/CardMenu/CardMenu'
 import ExpertColorDetails from './ExpertColorDetails'
@@ -17,8 +17,8 @@ const ExpertColorPicks = () => {
   React.useEffect(() => { loadExpertColorPicks(dispatch) }, [])
 
   const { messages = {} } = useIntl()
+  const [initPosition, setPosition] = useState(0)
   const expertColorPicks = useSelector(state => state.expertColorPicks.data)
-
   return (
     <CardMenu menuTitle={at(messages, 'EXPERT_COLOR_PICKS')[0]}>
       {(setCardShowing) => (
@@ -30,6 +30,8 @@ const ExpertColorPicks = () => {
               isInfinity={false}
               key='expertcolorpicks'
               data={expertColorPicks}
+              setInitialPosition={setPosition}
+              initPosition={initPosition}
               getSummaryData={collectionSummaryData => setCardShowing(<ExpertColorDetails expertColors={collectionSummaryData} />)}
             />}
           </div>

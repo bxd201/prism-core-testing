@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
 import './Carousel.scss'
 import times from 'lodash/times'
+import isFunction from 'lodash/isFunction'
 
 type ComponentProps = {
   BaseComponent: any,
@@ -13,7 +14,9 @@ type ComponentProps = {
   tabId?: string,
   setTabId?: string => void,
   tabMap?: string[],
-  // eslint-disable-next-line react/no-unused-prop-types
+  initPosition?: number,
+  setInitialPosition?: number => void,
+   // eslint-disable-next-line react/no-unused-prop-types
   baseSceneData?: Object,
   // eslint-disable-next-line react/no-unused-prop-types
   deleteSavedScene?: Function,
@@ -29,8 +32,8 @@ const indicators = `${baseClass}__wrapper__indicators`
 let nonTransition = false
 
 export default (props: ComponentProps) => {
-  const { BaseComponent, defaultItemsPerView, data, isInfinity, tabId, setTabId, tabMap } = props
-  const [position, setPosition] = useState(0)
+  const { BaseComponent, defaultItemsPerView, data, isInfinity, tabId, setTabId, tabMap, setInitialPosition, initPosition } = props
+  const [position, setPosition] = useState(initPosition || 0)
 
   // tracks the previous position
   const prevPositionRef = useRef()
@@ -60,7 +63,9 @@ export default (props: ComponentProps) => {
   }
 
   const handlePrev = () => {
-    setPosition(position - defaultItemsPerView)
+    const currPosition = position - defaultItemsPerView
+    isFunction(setInitialPosition) && setInitialPosition(currPosition)
+    setPosition(currPosition)
     if (position === 0) {
       tabMap && setTabId && setTabId(tabMap[data.length - 1])
       setTimeout(() => {
@@ -74,7 +79,9 @@ export default (props: ComponentProps) => {
   }
 
   const handleNext = () => {
-    setPosition(position + defaultItemsPerView)
+    const currPosition = position + defaultItemsPerView
+    isFunction(setInitialPosition) && setInitialPosition(currPosition)
+    setPosition(currPosition)
     if (position + defaultItemsPerView === data.length) {
       tabMap && setTabId && setTabId(tabMap[defaultItemsPerView - 1])
       setTimeout(() => {
