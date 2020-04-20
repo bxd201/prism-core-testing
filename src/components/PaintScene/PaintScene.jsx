@@ -48,7 +48,6 @@ const canvasSecondClass = `${baseClass}__canvas-second`
 const canvasThirdClass = `${baseClass}__canvas-third`
 const portraitOrientation = `${canvasClass}--portrait`
 const imageClass = `${baseClass}__image`
-const paintToolsClass = `${baseClass}__paint-tools`
 const paintBrushClass = `${baseClass}__paint-brush`
 const canvasShowByZindex = `${canvasClass}--show-by-zindex`
 const canvasHideByZindex = `${canvasClass}--hide-by-zindex`
@@ -1119,29 +1118,27 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
             height={canvasHeight}
             ignoreColorOffset
             preserveLayersAsData /> : null}
-          <div className={`${paintToolsClass}`}>
-            <PaintToolBar
-              activeTool={activeTool}
-              setActiveTool={this.setActiveTool}
-              clearCanvas={this.clearCanvas}
-              paintBrushShape={paintBrushShape}
-              paintBrushWidth={paintBrushWidth}
-              eraseBrushShape={eraseBrushShape}
-              eraseBrushWidth={eraseBrushWidth}
-              setBrushShapeSize={this.setBrushShapeSize}
-              performRedo={this.redo}
-              performUndo={this.undo}
-              undoIsEnabled={undoIsEnabled}
-              redoIsEnabled={redoIsEnabled}
-              hidePaint={this.hidePaint}
-              applyZoom={this.applyZoom}
-              groupHandler={this.groupHandler}
-              isAddGroup={isAddGroup}
-              isDeleteGroup={isDeleteGroup}
-              isUngroup={isUngroup}
-              isInfoToolActive={isInfoToolActive}
-            />
-          </div>
+          <PaintToolBar
+            activeTool={activeTool}
+            setActiveTool={this.setActiveTool}
+            clearCanvas={this.clearCanvas}
+            paintBrushShape={paintBrushShape}
+            paintBrushWidth={paintBrushWidth}
+            eraseBrushShape={eraseBrushShape}
+            eraseBrushWidth={eraseBrushWidth}
+            setBrushShapeSize={this.setBrushShapeSize}
+            performRedo={this.redo}
+            performUndo={this.undo}
+            undoIsEnabled={undoIsEnabled}
+            redoIsEnabled={redoIsEnabled}
+            hidePaint={this.hidePaint}
+            applyZoom={this.applyZoom}
+            groupHandler={this.groupHandler}
+            isAddGroup={isAddGroup}
+            isDeleteGroup={isDeleteGroup}
+            isUngroup={isUngroup}
+            isInfoToolActive={isInfoToolActive}
+          />
           {
             ((activeTool === toolNames.PAINTBRUSH || activeTool === toolNames.ERASE) && (position.isHidden === false) && !isInfoToolActive)
               ? <div
