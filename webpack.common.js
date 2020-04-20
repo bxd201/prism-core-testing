@@ -215,13 +215,17 @@ module.exports = {
     new MiniCssExtractPlugin({
       filename: 'css/[name].css'
     }),
-    ...Object.keys(allEntryPoints).map(key => {
-      // wrap each entry's associated CSS file with .cleanslate.prism, excluding :root rules
+    ...[
+      ...Object.keys(allEntryPoints),
+      flags.chunkNonReactName,
+      flags.chunkReactName
+    ].map(key => {
+      // wrap each entry's associated CSS file with .clnslt.prism, excluding :root rules
       // excluding anything from our "fixed" entrypoints, which are cleanslate and template index
       if (!flags.fixedEntryPoints[key]) {
         return new PostCssWrapper(`css/${key}.css`, '.cleanslate.prism', /^:root/)
       }
-    }),
+    }).filter(v => !!v),
     new CopyWebpackPlugin([
       {
         from: 'src/images',
