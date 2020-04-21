@@ -139,7 +139,7 @@ module.exports = {
               // inline images below this threshhold
               limit: 8192,
               // the following options get passed to fallback file-loader
-              name: '[name].[contenthash].[ext]',
+              name: '[name].[hash].[ext]',
               outputPath: 'images',
               publicPath: '/images/'
             }
