@@ -8,7 +8,7 @@ import { injectIntl } from 'react-intl'
 
 import {
   createImageDataAndAlphaPixelMapFromImageData,
-  getColorsFromImagePathList, getLABFromColor
+  getColorsFromImagePathList, getInitialDims, getLABFromColor
 } from './PaintSceneUtils'
 import { repaintImageByPath, pointInsideCircle,
   getImageCordinateByPixel, canvasDimensionFactors, applyDimensionFactorsByCanvas,
@@ -155,8 +155,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   constructor (props: ComponentProps) {
     super(props)
 
-    const initialImageWidth = props.workspace ? props.workspace.width : props.referenceDimensions.imageWidth
-    const initialImageHeight = props.workspace ? props.workspace.height : this.props.referenceDimensions.imageHeight
+    const [initialImageWidth, initialImageHeight] = getInitialDims(props.workspace, props.referenceDimensions)
     const isPortrait = props.workspace ? props.workspace.height > props.workspace.width : props.referenceDimensions.isPortrait
     // eslint-disable-next-line no-unused-vars
     const { lpColors } = props
@@ -430,18 +429,9 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     let canvasHeight = 0
 
     if (this.isPortrait) {
-      if (this.originalIsPortrait) {
-        canvasHeight = Math.floor(getScaledPortraitHeight(this.backgroundImageWidth, this.backgroundImageHeight)(canvasWidth))
-      } else {
-        canvasHeight = Math.floor(getScaledPortraitHeight(this.backgroundImageHeight, this.backgroundImageWidth)(canvasWidth))
-      }
+      canvasHeight = Math.floor(getScaledPortraitHeight(this.backgroundImageWidth, this.backgroundImageHeight)(canvasWidth))
     } else {
-      if (this.originalIsPortrait) {
-        canvasHeight = Math.floor(getScaledLandscapeHeight(this.backgroundImageWidth, this.backgroundImageHeight)(canvasWidth))
-      } else {
-        // Swap width and height for photos that are originally landscape
-        canvasHeight = Math.floor(getScaledLandscapeHeight(this.backgroundImageHeight, this.backgroundImageWidth)(canvasWidth))
-      }
+      canvasHeight = Math.floor(getScaledLandscapeHeight(this.backgroundImageHeight, this.backgroundImageWidth)(canvasWidth))
     }
 
     return {
