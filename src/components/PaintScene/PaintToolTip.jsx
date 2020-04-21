@@ -4,7 +4,8 @@ import './PaintToolTip.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FormattedMessage, injectIntl } from 'react-intl'
 import 'src/providers/fontawesome/fontawesome'
-import { divTranslateFactor, divTranslateMultiplier, downPointerDivTranslateFactor, downPointerDivTranslateMultiplie } from './data'
+import { divTranslateFactor, divTranslateMultiplier, downPointerDivTranslateFactor, downPointerDivTranslateMultiplie, addColorsTooltipNumber, hidePaintTooltipNumber, hintsTooltipNumber, paintAreaTooltipNumber, undoTooltipNumber } from './data'
+import { varValues } from 'src/shared/variableDefs'
 
 type Props = {
   tooltipToolActiveName: string,
@@ -42,11 +43,24 @@ const downPointerHintsClass = `${downPointerClass}--hints`
 const selectGroup = `${baseClass}__select-group`
 
 export function PaintToolTip ({ tooltipToolActiveName, closeTooltip, backButtonClickHandler, nextButtonClickHandler, tooltipContent, tooltipToolActiveNumber, toolsCount, isSelectGroup, intl, showTooltipContentByZindex, hideTooltipContentByZindex, parentDivRef }: Props) {
-  const divTranslateValue = divTranslateFactor + (tooltipToolActiveNumber <= 8 ? tooltipToolActiveNumber - 1 : 8) * divTranslateMultiplier
+  const divTranslateValue = divTranslateFactor + (tooltipToolActiveNumber <= undoTooltipNumber ? tooltipToolActiveNumber - 1 : undoTooltipNumber) * divTranslateMultiplier
   const downPointerTranslateValue = downPointerDivTranslateFactor + (tooltipToolActiveNumber * downPointerDivTranslateMultiplie)
 
-  const wrapperStyle = (window.outerWidth > 767) ? { transform: `translate(${divTranslateValue}px)` } : { transform: `translate(0px)` }
-  const downPointerStyle = (window.outerWidth > 767) ? { transform: `translate(0px)` } : { transform: `translate(${downPointerTranslateValue}px)` }
+  const wrapperStyle = (window.outerWidth < varValues.slick.tablet && tooltipToolActiveNumber === addColorsTooltipNumber)
+    ? { transform: `translate(20px, 138px)` }
+    : (tooltipToolActiveNumber === addColorsTooltipNumber)
+      ? { transform: `translate(140px, 138px)` }
+      : (window.outerWidth >= varValues.slick.tablet)
+        ? { transform: `translate(${divTranslateValue}px)` }
+        : { transform: `translate(0px)` }
+
+  const downPointerStyle = (window.outerWidth < varValues.slick.tablet && tooltipToolActiveNumber === addColorsTooltipNumber)
+    ? { top: '-6px', borderBottomColor: '#2cabe2', borderBottomStyle: 'solid', borderTopStyle: 'none' }
+    : (tooltipToolActiveNumber === addColorsTooltipNumber)
+      ? { top: '-6px', borderBottomColor: '#2cabe2', borderBottomStyle: 'solid', borderTopStyle: 'none' }
+      : (window.outerWidth >= varValues.slick.tablet)
+        ? { transform: `translate(0px)` }
+        : { transform: `translate(${downPointerTranslateValue}px)` }
 
   return (
     <React.Fragment>
@@ -63,16 +77,20 @@ export function PaintToolTip ({ tooltipToolActiveName, closeTooltip, backButtonC
             {tooltipContent}
           </div>
           <div className={`${footerClass}`}>
-            <button className={`${buttonClass} ${buttonLeftClass} ${tooltipToolActiveNumber === 1 ? `${buttonHideClass}` : `${buttonShowClass}`}`} onClick={() => backButtonClickHandler()}>
+            <button tabIndex={tooltipToolActiveNumber === paintAreaTooltipNumber ? '-1' : '0'} className={`${buttonClass} ${buttonLeftClass} ${tooltipToolActiveNumber === paintAreaTooltipNumber ? `${buttonHideClass}` : `${buttonShowClass}`}`} onClick={() => backButtonClickHandler()}>
               <FontAwesomeIcon title={intl.messages['PAINT_TOOLS.BACK']} icon={['fa', 'chevron-left']} />&nbsp;<span><FormattedMessage id='BACK' /></span>
             </button>
             <span className={`${toolNumberClass}`}>{tooltipToolActiveNumber} of {toolsCount}</span>
-            <button className={`${buttonClass} ${buttonRightClass} ${tooltipToolActiveNumber < toolsCount ? `${buttonShowClass}` : `${buttonHideClass}`}`} onClick={() => nextButtonClickHandler()}>
-              <span><FormattedMessage id='NEXT' /></span>&nbsp;<FontAwesomeIcon title={intl.messages['PAINT_TOOLS.FORWARD']} icon={['fa', 'chevron-right']} />
+            <button className={`${buttonClass} ${buttonRightClass}`} onClick={() => tooltipToolActiveNumber === addColorsTooltipNumber ? closeTooltip() : nextButtonClickHandler()}>
+              {(tooltipToolActiveNumber < toolsCount)
+                ? <><span><FormattedMessage id='NEXT' /></span>&nbsp;<FontAwesomeIcon title={intl.messages['PAINT_TOOLS.FORWARD']} icon={['fa', 'chevron-right']} /></>
+                : (tooltipToolActiveNumber === addColorsTooltipNumber)
+                  ? <span><FormattedMessage id='START_PAINTING' /></span>
+                  : ''}
             </button>
           </div>
         </div>
-        <div className={`${downPointerClass} ${tooltipToolActiveNumber === 10 ? `${downPointerHidePaintClass}` : ``} ${tooltipToolActiveNumber === 11 ? `${downPointerHintsClass}` : ``}`} style={downPointerStyle} />
+        <div className={`${downPointerClass} ${tooltipToolActiveNumber === hidePaintTooltipNumber ? `${downPointerHidePaintClass}` : ``} ${tooltipToolActiveNumber === hintsTooltipNumber ? `${downPointerHintsClass}` : ``}`} style={downPointerStyle} />
       </div>}
       {isSelectGroup && <div onMouseEnter={() => showTooltipContentByZindex(parentDivRef)} onMouseLeave={() => hideTooltipContentByZindex(parentDivRef)} className={`${wrapperClass} ${selectGroup}`}>
         <button className={`${closeButtonClass}`} onClick={() => closeTooltip()}>

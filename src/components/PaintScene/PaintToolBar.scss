@@ -1,4 +1,12 @@
 .paint-tool-bar {
+  &__paint-tools {
+    bottom: 2em;
+    display: flex;
+    justify-content: space-between;
+    position: absolute;
+    right: 0;
+    width: 100%;
+  }
   &__wrapper {
     display: flex;
     z-index: 10000;
@@ -269,11 +277,11 @@
       top: 16px;
     }
     &__second-icon {
-      right: 0;
-      top: 0;
+      right: 2px;
+      top: 4px;
       @include respond-above(sm) {
-        right: 12px;
-        top: 21px;
+        right: 10px;
+        top: 18px;
       }
     }
   }

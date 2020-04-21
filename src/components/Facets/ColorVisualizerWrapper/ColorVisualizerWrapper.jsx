@@ -65,6 +65,9 @@ const PAINT_SCENE_ROUTE = '/paint-scene'
 const ACTIVE_ROUTE = '/active'
 const HELP_ROUTE = '/help'
 
+export const COLORS_ROUTE = `${ACTIVE_ROUTE}/colors`
+export const INSPIRATION_ROUTE = `${ACTIVE_ROUTE}/inspiration`
+export const SCENES_ROUTE = `${ACTIVE_ROUTE}/scenes`
 export const MY_IDEAS_PREVIEW = '/my-ideas-preview'
 export const MATCH_PHOTO = '/match-photo'
 export const MY_IDEAS = '/my-ideas'
@@ -556,7 +559,8 @@ export class ColorVisualizerWrapper extends Component<Props> {
             unSetIsPaintScenePolluted: () => this.unSetIsPaintScenePolluted(),
             checkIsPaintScenePolluted: () => this.checkIsPaintScenePolluted(),
             showWarningModalMyIdeas: (data) => this.showWarningModalMyIdeas(data),
-            checkIsStockScenePolluted: () => this.checkIsStockScenePolluted()
+            checkIsStockScenePolluted: () => this.checkIsStockScenePolluted(),
+            exploreColorsLinkRef: exploreColorsLinkRef
           }}>
             { /* The warning modal can also be triggered by the router context, when debugging trace showWarningModalMyIdeas too */ }
             {isShowWarningModal && <CVWWarningModal miniImage={tmpPaintSceneImage} cancel={this.cancel} confirm={this.loadNewCanvas} />}

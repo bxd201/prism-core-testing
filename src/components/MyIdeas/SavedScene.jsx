@@ -157,7 +157,7 @@ const SavedScene = (props: SavedSceneProps) => {
       if (props.itemNumber !== props.totalItems && props.itemNumber % props.itemsPerView === 0) props.handleNext()
     } else if (e.keyCode === KEY_CODES.KEY_CODE_ENTER || e.keyCode === KEY_CODES.KEY_CODE_SPACE) {
       if (props.editEnabled) {
-        props.editIndividualScene(props.sceneData)
+        props.editIndividualScene(props.sceneData, !!props.useTintableScene)
       } else selectScene(e)
     }
   }

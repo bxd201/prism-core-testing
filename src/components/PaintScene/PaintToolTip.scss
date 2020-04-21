@@ -19,7 +19,7 @@
     background: white;
     cursor: pointer;
     fill: black;
-    height: 1.5em;
+    height: auto;
     outline: none;
     padding: 0.1em;
     position: absolute;
@@ -27,6 +27,11 @@
     text-align: center;
     top: 0;
     width: 1.5em;
+    &:focus {
+      outline-style: solid;
+      outline-color: #2cabe2;
+      outline-width: 2px;
+    }
   }
   &__header {
     font-size: 0.8em;
@@ -65,26 +70,32 @@
   }
   &__button-left {
     left: 0px;
-    & > span {
-      &:hover {
-        transition: none;
-      }
+    &:focus {
+      outline-style: solid;
+      outline-color: #2cabe2;
+      outline-width: 2px;
+      font-size: 0.9em;
     }
     &:hover {
-      left: -3px;
-      transition: left 0.3s ease;
+      & > svg {
+        transform: translate(-3px, 0px);
+        transition: transform 0.3s ease;
+      }
     }
   }
   &__button-right {
     right: 0px;
-    & > span {
-      &:hover {
-        transition: none;
-      }
+    &:focus {
+      outline-style: solid;
+      outline-color: #2cabe2;
+      outline-width: 2px;
+      font-size: 0.9em;
     }
     &:hover {
-      right: -3px;
-      transition: right 0.3s ease;
+      & > svg {
+        transform: translate(3px, 0px);
+        transition: transform 0.3s ease;
+      }
     }
   }
   &__tool-number {

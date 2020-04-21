@@ -218,6 +218,7 @@
     "REMOVEAREA": "Erase an area by creating a polygon",
     "SELECTAREA": "Select an area to manipulate",
     "TOOLTIPS": {
+      "ADDCOLORS": "Click or tap here to add colors to your palette.",
       "DEFINEAREA": "Outline an area to paint it. Be sure to enclose the area by starting and ending at the same point.",
       "ERASE": "Remove paint from your scene.",
       "HIDEPAINT": "Use this tool to see the original room scene.",
@@ -272,6 +273,7 @@
   "SELECTED_FROM": "Selected from",
   "SIGN_IN": "SIGN IN",
   "SIMILAR_COLORS": "Similar Colors",
+  "START_PAINTING": "Start Painting",
   "SWATCH_ACTIVATED_DETAILS": "{color} is selected. Press Enter to view details.",
   "SWATCH_FOCUS": "{color}. Press Enter to select.",
   "TERMS_OF_USE": "Terms of Use",

@@ -1,7 +1,7 @@
 // @flow
 import React, { PureComponent } from 'react'
 import './PaintToolBar.scss'
-import { toolBarButtons, selectGroupButtons, selectGroupTooltipData, toolNames, toolNumbers, groupToolNames, getTooltipShownLocalStorage } from './data'
+import { toolBarButtons, selectGroupButtons, selectGroupTooltipData, toolNames, toolNumbers, groupToolNames, getTooltipShownLocalStorage, addColorsTooltip, addColorsTooltipNumber } from './data'
 import BrushTypes from './BrushTypes'
 import PaintToolTip from './PaintToolTip'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -11,6 +11,7 @@ import { FormattedMessage, injectIntl } from 'react-intl'
 import storageAvailable from '../../shared/utils/browserStorageCheck.util'
 
 const baseClass = 'paint-tool-bar'
+const paintToolsClass = `${baseClass}__paint-tools`
 const wrapperClass = `${baseClass}__wrapper`
 const containerClass = `${baseClass}__tools-container`
 const containerHideClass = `${containerClass}--hide`
@@ -298,7 +299,7 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
 
   nextButtonClickHandler = () => {
     const { tooltipToolActiveNumber } = this.state
-    if (tooltipToolActiveNumber < toolBarButtons.length) {
+    if (tooltipToolActiveNumber < toolBarButtons.length + 1) {
       this.setState({ tooltipToolActiveNumber: tooltipToolActiveNumber + 1 })
     }
   }
@@ -358,61 +359,76 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
     const { activeTool, paintBrushShape, paintBrushWidth, eraseBrushShape, eraseBrushWidth, setBrushShapeSize, applyZoom, intl } = this.props
 
     return (
-      <React.Fragment>
-        <div ref={this.groupTooltipDivRef} onMouseEnter={() => this.showTooltipContentByZindex(this.groupTooltipDivRef)} onMouseLeave={() => this.hideTooltipContentByZindex(this.groupTooltipDivRef)} className={`${groupToolClass} ${(showToolBar && !showTooltip && activeTool === toolNames.SELECTAREA) || (showTooltip && tooltipToolActiveNumber > 0 && tooltipToolActiveNumber === toolNumbers.SELECTAREA) ? `${groupToolShowClass}` : `${groupToolHideClass}`}`}>
-          { this.generateSelectGroupTools() }
-          {showTooltip && tooltipToolActiveNumber > 0 && tooltipToolActiveNumber === toolNumbers.SELECTAREA && <PaintToolTip
-            isSelectGroup
-            tooltipToolActiveName={selectGroupTooltipData[0].displayName}
-            tooltipToolActiveNumber={toolNumbers.SELECTAREA}
-            tooltipContent={intl.messages['PAINT_TOOLS.TOOLTIPS.SELECTGROUP']}
-            toolsCount={toolBarButtons.length}
+      <>
+        <div className={`${paintToolsClass}`}>
+          <div ref={this.groupTooltipDivRef} onMouseEnter={() => this.showTooltipContentByZindex(this.groupTooltipDivRef)} onMouseLeave={() => this.hideTooltipContentByZindex(this.groupTooltipDivRef)} className={`${groupToolClass} ${(showToolBar && !showTooltip && activeTool === toolNames.SELECTAREA) || (showTooltip && tooltipToolActiveNumber > 0 && tooltipToolActiveNumber === toolNumbers.SELECTAREA) ? `${groupToolShowClass}` : `${groupToolHideClass}`}`}>
+            { this.generateSelectGroupTools() }
+            {showTooltip && tooltipToolActiveNumber > 0 && tooltipToolActiveNumber === toolNumbers.SELECTAREA && <PaintToolTip
+              isSelectGroup
+              tooltipToolActiveName={selectGroupTooltipData[0].displayName}
+              tooltipToolActiveNumber={toolNumbers.SELECTAREA}
+              tooltipContent={intl.messages['PAINT_TOOLS.TOOLTIPS.SELECTGROUP']}
+              toolsCount={toolBarButtons.length}
+              closeTooltip={this.closeTooltip}
+              backButtonClickHandler={this.backButtonClickHandler}
+              nextButtonClickHandler={this.nextButtonClickHandler}
+              showTooltipContentByZindex={this.showTooltipContentByZindex}
+              hideTooltipContentByZindex={this.hideTooltipContentByZindex}
+              parentDivRef={this.groupTooltipDivRef}
+            />}
+          </div>
+          <div ref={this.tooltipDivRef} onMouseEnter={() => this.showTooltipContentByZindex(this.tooltipDivRef)} onMouseLeave={() => this.hideTooltipContentByZindex(this.tooltipDivRef)} className={`${wrapperClass}`}>
+            <div className={`${containerClass} ${(!showToolBar) ? `${containerHideClass}` : ``}`}>
+              { this.generateTools() }
+              <div
+                onMouseLeave={this.hidePaintBrushTypes}
+                className={`${brushTypesClass} ${(!showTooltip && (activeTool === toolNames.PAINTBRUSH && showPaintBrushTypes)) ? `${brushTypesShowClass}` : `${brushTypesHideClass}`} ${brushTypesPaintClass} ${showToolBar ? `${brushTypesShowByOpacityClass}` : `${brushTypesHideByOpacityClass}`} `}
+              >
+                <BrushTypes hidePaintBrushTypes={this.hidePaintBrushTypes} activeWidth={paintBrushWidth} activeShape={paintBrushShape} setBrushShapeSize={setBrushShapeSize} />
+              </div>
+              <div
+                onMouseLeave={this.hideEraseBrushTypes}
+                className={`${brushTypesClass} ${(!showTooltip && (activeTool === toolNames.ERASE && showEraseBrushTypes)) ? `${brushTypesShowClass}` : `${brushTypesHideClass}`} ${brushTypesEraseClass} ${showToolBar ? `${brushTypesShowByOpacityClass}` : `${brushTypesHideByOpacityClass}`} `}
+              >
+                <BrushTypes hideEraseBrushTypes={this.hideEraseBrushTypes} activeWidth={eraseBrushWidth} activeShape={eraseBrushShape} setBrushShapeSize={setBrushShapeSize} />
+                {(activeTool === toolNames.ERASE) && <button className={`${clearAllButtonClass}`} onClick={this.clearAllClickHandler}><FormattedMessage id='CLEAR_ALL' /></button>}
+              </div>
+              {showTooltip && tooltipToolActiveNumber < addColorsTooltipNumber && <div className={`${paintTooltipClass} ${paintTooltipActiveClass}`}>
+                <PaintToolTip
+                  tooltipToolActiveName={toolBarButtons[tooltipToolActiveNumber - 1].displayName}
+                  tooltipToolActiveNumber={tooltipToolActiveNumber}
+                  tooltipContent={intl.messages[`PAINT_TOOLS.TOOLTIPS.${toolBarButtons[tooltipToolActiveNumber - 1].name.toUpperCase()}`]}
+                  toolsCount={toolBarButtons.length + 1}
+                  closeTooltip={this.closeTooltip}
+                  backButtonClickHandler={this.backButtonClickHandler}
+                  nextButtonClickHandler={this.nextButtonClickHandler}
+                  showTooltipContentByZindex={this.showTooltipContentByZindex}
+                  hideTooltipContentByZindex={this.hideTooltipContentByZindex}
+                  parentDivRef={this.tooltipDivRef} />
+              </div>}
+              <div className={`${zoomToolClass} ${activeTool === toolNames.ZOOM && !showTooltip && zoomSliderHide === -1 ? `${zoomToolShowClass}` : activeTool !== toolNames.ZOOM ? `${zoomToolHideClass}` : ``} ${activeTool === toolNames.ZOOM && zoomSliderHide === 0 && !showTooltip ? `${zoomToolShowByOpacityClass}` : activeTool === toolNames.ZOOM && zoomSliderHide === 1 && !showTooltip ? `${zoomToolHideByOpacityClass}` : ``}`}>
+                <ZoomTool applyZoom={applyZoom} />
+              </div>
+            </div>
+            <div className={`${toolbarToggleClass}`}>
+              <button onClick={this.toggleButtonClickHandler} className={`${toolbarToggleButtonClass} ${showToolBar ? `${toolbarToggleButtonToolbarShownClass}` : `${toolbarToggleButtonToolbarHiddenClass}`}`} />
+            </div>
+          </div>
+        </div>
+        {showTooltip && tooltipToolActiveNumber === addColorsTooltipNumber && <div className={`${paintTooltipClass} ${paintTooltipActiveClass}`} style={{ left: '0px' }}>
+          <PaintToolTip
+            tooltipToolActiveName={addColorsTooltip.displayName}
+            tooltipToolActiveNumber={tooltipToolActiveNumber}
+            tooltipContent={intl.messages[`PAINT_TOOLS.TOOLTIPS.${addColorsTooltip.name.toUpperCase()}`]}
+            toolsCount={toolBarButtons.length + 1}
             closeTooltip={this.closeTooltip}
             backButtonClickHandler={this.backButtonClickHandler}
             nextButtonClickHandler={this.nextButtonClickHandler}
             showTooltipContentByZindex={this.showTooltipContentByZindex}
             hideTooltipContentByZindex={this.hideTooltipContentByZindex}
-            parentDivRef={this.groupTooltipDivRef}
-          />}
-        </div>
-        <div ref={this.tooltipDivRef} onMouseEnter={() => this.showTooltipContentByZindex(this.tooltipDivRef)} onMouseLeave={() => this.hideTooltipContentByZindex(this.tooltipDivRef)} className={`${wrapperClass}`}>
-          <div className={`${containerClass} ${(!showToolBar) ? `${containerHideClass}` : ``}`}>
-            { this.generateTools() }
-            <div
-              onMouseLeave={this.hidePaintBrushTypes}
-              className={`${brushTypesClass} ${(!showTooltip && (activeTool === toolNames.PAINTBRUSH && showPaintBrushTypes)) ? `${brushTypesShowClass}` : `${brushTypesHideClass}`} ${brushTypesPaintClass} ${showToolBar ? `${brushTypesShowByOpacityClass}` : `${brushTypesHideByOpacityClass}`} `}
-            >
-              <BrushTypes hidePaintBrushTypes={this.hidePaintBrushTypes} activeWidth={paintBrushWidth} activeShape={paintBrushShape} setBrushShapeSize={setBrushShapeSize} />
-            </div>
-            <div
-              onMouseLeave={this.hideEraseBrushTypes}
-              className={`${brushTypesClass} ${(!showTooltip && (activeTool === toolNames.ERASE && showEraseBrushTypes)) ? `${brushTypesShowClass}` : `${brushTypesHideClass}`} ${brushTypesEraseClass} ${showToolBar ? `${brushTypesShowByOpacityClass}` : `${brushTypesHideByOpacityClass}`} `}
-            >
-              <BrushTypes hideEraseBrushTypes={this.hideEraseBrushTypes} activeWidth={eraseBrushWidth} activeShape={eraseBrushShape} setBrushShapeSize={setBrushShapeSize} />
-              {(activeTool === toolNames.ERASE) && <button className={`${clearAllButtonClass}`} onClick={this.clearAllClickHandler}><FormattedMessage id='CLEAR_ALL' /></button>}
-            </div>
-            {showTooltip && <div className={`${paintTooltipClass} ${paintTooltipActiveClass}`}>
-              <PaintToolTip
-                tooltipToolActiveName={toolBarButtons[tooltipToolActiveNumber - 1].displayName}
-                tooltipToolActiveNumber={tooltipToolActiveNumber}
-                tooltipContent={intl.messages[`PAINT_TOOLS.TOOLTIPS.${toolBarButtons[tooltipToolActiveNumber - 1].name.toUpperCase()}`]}
-                toolsCount={toolBarButtons.length}
-                closeTooltip={this.closeTooltip}
-                backButtonClickHandler={this.backButtonClickHandler}
-                nextButtonClickHandler={this.nextButtonClickHandler}
-                showTooltipContentByZindex={this.showTooltipContentByZindex}
-                hideTooltipContentByZindex={this.hideTooltipContentByZindex}
-                parentDivRef={this.tooltipDivRef} />
-            </div>}
-            <div className={`${zoomToolClass} ${activeTool === toolNames.ZOOM && !showTooltip && zoomSliderHide === -1 ? `${zoomToolShowClass}` : activeTool !== toolNames.ZOOM ? `${zoomToolHideClass}` : ``} ${activeTool === toolNames.ZOOM && zoomSliderHide === 0 && !showTooltip ? `${zoomToolShowByOpacityClass}` : activeTool === toolNames.ZOOM && zoomSliderHide === 1 && !showTooltip ? `${zoomToolHideByOpacityClass}` : ``}`}>
-              <ZoomTool applyZoom={applyZoom} />
-            </div>
-          </div>
-          <div className={`${toolbarToggleClass}`}>
-            <button onClick={this.toggleButtonClickHandler} className={`${toolbarToggleButtonClass} ${showToolBar ? `${toolbarToggleButtonToolbarShownClass}` : `${toolbarToggleButtonToolbarHiddenClass}`}`} />
-          </div>
-        </div>
-      </React.Fragment>
+            parentDivRef={this.tooltipDivRef} />
+        </div>}
+      </>
     )
   }
 }

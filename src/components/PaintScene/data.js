@@ -14,6 +14,14 @@ export const toolBarButtons = [
   { id: 11, name: 'info', displayName: 'HINTS', fontAwesomeIcon: { variant: 'fal', icon: 'info-circle', rotate: 0 } }
 ]
 
+export const addColorsTooltip = { name: 'addColors', displayName: 'ADD COLORS' }
+
+export const paintAreaTooltipNumber = 1
+export const undoTooltipNumber = 8
+export const hidePaintTooltipNumber = 10
+export const hintsTooltipNumber = 11
+export const addColorsTooltipNumber = 12
+
 export const selectGroupButtons = [
   { id: 1, name: 'deleteGroup', displayName: 'DELETE', fontAwesomeIcon: { variant: 'fal', icon: 'trash-alt', rotate: 0 } },
   { id: 2, name: 'group', displayName: 'GROUP', fontAwesomeIcon: { variant: 'fal', icon: 'object-group', rotate: 0 } },
