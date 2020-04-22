@@ -118,7 +118,7 @@
       z-index: 10;
     }
     &--paintArea{
-      cursor: url('../../images/paint-bucket-cursor.png'), pointer;
+      cursor: url('~src/images/paint-bucket-cursor.png'), pointer;
     }
     &--paintBrush, &--erase {
       cursor: none;

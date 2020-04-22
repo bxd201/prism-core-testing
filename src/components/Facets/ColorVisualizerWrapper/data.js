@@ -18,7 +18,7 @@ export const renderingData = {
       titleIdentifier: colorContentTitle,
       subContent: [
         {
-          image: '/prism/images/color-visualizer-wrapper/color-submenu__thumbnail--explore-color.png',
+          image: require('src/images/color-visualizer-wrapper/color-submenu__thumbnail--explore-color.png'),
           subTitle: 'NAV_LINKS.DIGITAL_COLOR_WALL',
           subTitleIdentifier: subTitleDigitalColorWall,
           subContent: 'NAV_DROPDOWN_LINK_SUB_CONTENT.DIGITAL_COLOR_WALL',
@@ -26,7 +26,7 @@ export const renderingData = {
           id: 0
         },
         {
-          image: '/prism/images/color-visualizer-wrapper/color-submenu__thumbnail--color-collections.png',
+          image: require('src/images/color-visualizer-wrapper/color-submenu__thumbnail--color-collections.png'),
           subTitle: 'NAV_LINKS.COLOR_COLLECTIONS',
           subTitleIdentifier: subTitleColorCollections,
           subContent: 'NAV_DROPDOWN_LINK_SUB_CONTENT.COLOR_COLLECTIONS',
@@ -34,7 +34,7 @@ export const renderingData = {
           id: 1
         },
         {
-          image: '/prism/images/color-visualizer-wrapper/color-submenu__thumbnail--match-photo.png',
+          image: require('src/images/color-visualizer-wrapper/color-submenu__thumbnail--match-photo.png'),
           subTitle: 'NAV_LINKS.MATCH_A_PHOTO',
           subTitleIdentifier: subTitleMatchAPhoto,
           subContent: 'NAV_DROPDOWN_LINK_SUB_CONTENT.MATCH_A_PHOTO',
@@ -50,7 +50,7 @@ export const renderingData = {
       titleIdentifier: inspirationContentTitle,
       subContent: [
         {
-          image: '/prism/images/color-visualizer-wrapper/inspiration-submenu__thumbnail--painted-scenes.png',
+          image: require('src/images/color-visualizer-wrapper/inspiration-submenu__thumbnail--painted-scenes.png'),
           subTitle: 'NAV_LINKS.PAINTED_PHOTOS',
           subTitleIdentifier: subTitlePaintedPhotos,
           subContent: 'NAV_DROPDOWN_LINK_SUB_CONTENT.PAINTED_PHOTOS',
@@ -58,7 +58,7 @@ export const renderingData = {
           id: 0
         },
         {
-          image: '/prism/images/color-visualizer-wrapper/inspiration-submenu__thumbnail--expert-color-picks.png',
+          image: require('src/images/color-visualizer-wrapper/inspiration-submenu__thumbnail--expert-color-picks.png'),
           subTitle: 'NAV_LINKS.EXPERT_COLOR_PICKS',
           subTitleIdentifier: subTitleExperColorPicks,
           subContent: 'NAV_DROPDOWN_LINK_SUB_CONTENT.EXPERT_COLOR_PICKS',
@@ -66,7 +66,7 @@ export const renderingData = {
           id: 1
         },
         {
-          image: '/prism/images/color-visualizer-wrapper/inspiration-submenu__thumbnail--sample-photos.png',
+          image: require('src/images/color-visualizer-wrapper/inspiration-submenu__thumbnail--sample-photos.png'),
           subTitle: 'NAV_LINKS.INSPIRATIONAL_PHOTOS',
           subTitleIdentifier: subTitleInspirationalPhotos,
           subContent: 'NAV_DROPDOWN_LINK_SUB_CONTENT.INSPIRATIONAL_PHOTOS',
@@ -82,7 +82,7 @@ export const renderingData = {
       titleIdentifier: scenesContentTitle,
       subContent: [
         {
-          image: '/prism/images/color-visualizer-wrapper/scene-submenu__thumbnail--sample-scenes.png',
+          image: require('src/images/color-visualizer-wrapper/scene-submenu__thumbnail--sample-scenes.png'),
           subTitle: 'NAV_LINKS.USE_OUR_PHOTOS',
           subTitleIdentifier: subTitleUseOurPhotos,
           subContent: 'NAV_DROPDOWN_LINK_SUB_CONTENT.USE_OUR_PHOTOS',
@@ -90,10 +90,10 @@ export const renderingData = {
           id: 0
         },
         {
-          image: '/prism/images/color-visualizer-wrapper/scene-submenu__thumbnail--my-photos.png',
-          imageiPhone: '/prism/images/color-visualizer-wrapper/scene-submenu__thumbnail--iphone.png',
-          imageiPad: '/prism/images/color-visualizer-wrapper/scene-submenu__thumbnail--ipad.png',
-          imageAndroid: '/prism/images/color-visualizer-wrapper/scene-submenu__thumbnail--android.png',
+          image: require('src/images/color-visualizer-wrapper/scene-submenu__thumbnail--my-photos.png'),
+          imageiPhone: require('src/images/color-visualizer-wrapper/scene-submenu__thumbnail--iphone.png'),
+          imageiPad: require('src/images/color-visualizer-wrapper/scene-submenu__thumbnail--ipad.png'),
+          imageAndroid: require('src/images/color-visualizer-wrapper/scene-submenu__thumbnail--android.png'),
           subTitle: 'NAV_LINKS.UPLOAD_YOUR_PHOTO',
           subTitleIdentifier: subTitleUploadYourPhoto,
           subTitleMobile: 'NAV_LINKS.GET_THE_APP',

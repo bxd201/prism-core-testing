@@ -93,6 +93,7 @@ module.exports = {
             options: {
               // inline images below this threshhold
               limit: 8192,
+              esModule: false,
               // the following options get passed to fallback file-loader
               name: '[name].[hash].[ext]',
               outputPath: 'images',
