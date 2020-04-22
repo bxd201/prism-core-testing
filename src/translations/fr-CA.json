@@ -135,6 +135,11 @@
   "I_ACCEPT": "I accept",
   "IMAGE_INVISIBLE": "This image is invisible to the user.",
   "INTERIOR": "Intérieur",
+  "LIVE_PALETTE_MODAL": {
+    "DELETE_COLOR": "Delete a color below before adding a new one, or create a new palette.",
+    "NEW_PALETTE": "New Palette",
+    "PALETTE_FULL": "This Palette is Full"
+  },
   "LOCATION_NUMBER": "Numéro de localisation",
   "LOG_IN": "LOG IN",
   "MAXIMIZE_COLOR_SWATCH": "Maximiser l'échantillon de couleur",

@@ -90,3 +90,10 @@ export const mergeLpColors = (colors: Object[]) => {
     })
   }
 }
+
+export const DEACTIVATE_TEMPORARY_COLOR: string = 'DEACTIVATE_TEMPORARY_COLOR'
+export const deactivateTemporaryColor = (colorObj: Color) => {
+  return {
+    type: DEACTIVATE_TEMPORARY_COLOR
+  }
+}

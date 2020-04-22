@@ -36,7 +36,7 @@ export function MatchPhoto ({ imageUrl, wrapperWidth, isPortrait, imageDims, pin
               isPortrait={isPortrait}
               pins={pins}
               isActive />
-            <ConfirmationModal isActive={isConfirmationModalActive} onClickNo={onClickNo} />
+            {isConfirmationModalActive && <ConfirmationModal onClickNo={onClickNo} />}
           </React.Fragment>)
           : ''
       }

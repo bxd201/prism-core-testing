@@ -58,9 +58,14 @@
     font-size: 1rem;
     text-align: center;
     width: 100%;
-    input {
-      padding: 2px;
-      background-color: #ffffff;
+  }
+  &__text-input {
+    padding: 2px;
+    background-color: #ffffff;
+    &:focus {
+      outline-style: solid;
+      outline-color: #2cabe2;
+      outline-width: 2px;
     }
   }
   &__button-row {
