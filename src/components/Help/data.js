@@ -56,32 +56,32 @@ export const helpTabs = [
     content: '',
     imageList: [
       {
-        imagePath: '/prism/images/help/my-color-palette-bg@2x.jpg',
+        imagePath: require('src/images/help/my-color-palette-bg@2x.jpg'),
         alt: '',
         role: ''
       },
       {
-        imagePath: '/prism/images/help/my-color-palette-1@2x.png',
+        imagePath: require('src/images/help/my-color-palette-1@2x.png'),
         alt: `HELPFUL_HINTS.IMAGE_ALT.MY_COLOR_PALETTE.CLICK_THE_COLOR_DETAILS_ICON_TO`,
         role: 'text'
       },
       {
-        imagePath: '/prism/images/help/my-color-palette-2@2x.png',
+        imagePath: require('src/images/help/my-color-palette-2@2x.png'),
         alt: 'HELPFUL_HINTS.IMAGE_ALT.MY_COLOR_PALETTE.CLICK_THE_TRASH_ICON_TO',
         role: 'text'
       },
       {
-        imagePath: '/prism/images/help/my-color-palette-3@2x.png',
+        imagePath: require('src/images/help/my-color-palette-3@2x.png'),
         alt: 'HELPFUL_HINTS.IMAGE_ALT.MY_COLOR_PALETTE.AN_ACTIVE_COLOR_STATE',
         role: 'text'
       },
       {
-        imagePath: '/prism/images/help/my-color-palette-4@2x.png',
+        imagePath: require('src/images/help/my-color-palette-4@2x.png'),
         alt: 'HELPFUL_HINTS.IMAGE_ALT.MY_COLOR_PALETTE.TAP_AND_HOLD_THE_BOTTOM_EDGE_OF_A_COLOR_SWATCH_TO',
         role: 'text'
       },
       {
-        imagePath: '/prism/images/help/my-color-palette-5@2x.png',
+        imagePath: require('src/images/help/my-color-palette-5@2x.png'),
         alt: 'HELPFUL_HINTS.IMAGE_ALT.MY_COLOR_PALETTE.CLICK_THE_ADD_COLOR_ICON_TO',
         role: 'text'
       }
@@ -94,17 +94,17 @@ export const helpTabs = [
     ],
     imageListMobile: [
       {
-        imagePath: '/prism/images/help/mobile/my-color-palette-mobile-1@2x.jpg',
+        imagePath: require('src/images/help/mobile/my-color-palette-mobile-1@2x.jpg'),
         alt: `HELPFUL_HINTS.IMAGE_ALT.MY_COLOR_PALETTE.CLICK_THE_COLOR_DETAILS_ICON_TRASH_ICON_TO`,
         role: 'text'
       },
       {
-        imagePath: '/prism/images/help/mobile/my-color-palette-mobile-2@2x.jpg',
+        imagePath: require('src/images/help/mobile/my-color-palette-mobile-2@2x.jpg'),
         alt: `HELPFUL_HINTS.IMAGE_ALT.MY_COLOR_PALETTE.AN_ACTIVE_COLOR_STATE`,
         role: 'text'
       },
       {
-        imagePath: '/prism/images/help/mobile/my-color-palette-mobile-3@2x.jpg',
+        imagePath: require('src/images/help/mobile/my-color-palette-mobile-3@2x.jpg'),
         alt: `HELPFUL_HINTS.IMAGE_ALT.MY_COLOR_PALETTE.CLICK_THE_ADD_COLOR_ICON_TO`,
         role: 'text'
       }
@@ -117,22 +117,22 @@ export const helpTabs = [
     content: '',
     imageList: [
       {
-        imagePath: '/prism/images/help/add-color-bg@2x.jpg',
+        imagePath: require('src/images/help/add-color-bg@2x.jpg'),
         alt: '',
         role: ''
       },
       {
-        imagePath: '/prism/images/help/add-color-1@2x.png',
+        imagePath: require('src/images/help/add-color-1@2x.png'),
         alt: 'HELPFUL_HINTS.IMAGE_ALT.ADDING_COLORS.CLICK_ADD_A_COLOR_ICON_IN_A_COLOR_TILE_TO',
         role: 'text'
       },
       {
-        imagePath: '/prism/images/help/add-color-2@2x.png',
+        imagePath: require('src/images/help/add-color-2@2x.png'),
         alt: 'HELPFUL_HINTS.IMAGE_ALT.ADDING_COLORS.CLICK_THE_ADD_COLOR_ICON_TO',
         role: 'text'
       },
       {
-        imagePath: '/prism/images/help/add-color-3@2x.png',
+        imagePath: require('src/images/help/add-color-3@2x.png'),
         alt: 'HELPFUL_HINTS.IMAGE_ALT.ADDING_COLORS.START_A_NEW_PALETTE_TO_ADD_MORE_THAN_EIGHT_COLORS',
         role: 'text'
       }
@@ -145,17 +145,17 @@ export const helpTabs = [
     ],
     imageListMobile: [
       {
-        imagePath: '/prism/images/help/mobile/add-color-mobile-1@2x.jpg',
+        imagePath: require('src/images/help/mobile/add-color-mobile-1@2x.jpg'),
         alt: `HELPFUL_HINTS.IMAGE_ALT.ADDING_COLORS.CLICK_ADD_A_COLOR_ICON_IN_A_COLOR_TILE_TO`,
         role: 'text'
       },
       {
-        imagePath: '/prism/images/help/mobile/add-color-mobile-2@2x.jpg',
+        imagePath: require('src/images/help/mobile/add-color-mobile-2@2x.jpg'),
         alt: `HELPFUL_HINTS.IMAGE_ALT.ADDING_COLORS.CLICK_THE_ADD_COLOR_ICON_TO`,
         role: 'text'
       },
       {
-        imagePath: '/prism/images/help/mobile/add-color-mobile-3@2x.jpg',
+        imagePath: require('src/images/help/mobile/add-color-mobile-3@2x.jpg'),
         alt: `HELPFUL_HINTS.IMAGE_ALT.ADDING_COLORS.START_A_NEW_PALETTE_TO_ADD_MORE_THAN_EIGHT_COLORS`,
         role: 'text'
       }
@@ -168,29 +168,29 @@ export const helpTabs = [
     content: '',
     imageList: [
       {
-        imagePath: '/prism/images/help/color-detail-bg@2x.jpg',
+        imagePath: require('src/images/help/color-detail-bg@2x.jpg'),
         alt: '',
         role: ''
       },
       {
-        imagePath: '/prism/images/help/color-detail-1@2x.png',
+        imagePath: require('src/images/help/color-detail-1@2x.png'),
         alt: `HELPFUL_HINTS.IMAGE_ALT.COLOR_DETAILS.CLICK_THE_COLOR_DETAILS_ICON_TO`,
         role: 'text'
       },
       {
-        imagePath: '/prism/images/help/color-detail-2@2x.png',
+        imagePath: require('src/images/help/color-detail-2@2x.png'),
         alt: 'HELPFUL_HINTS.IMAGE_ALT.COLOR_DETAILS.PREVIEW_A_COLOR_IN_COLOR_DETAILS',
         role: 'text'
       }
     ],
     imageListMobile: [
       {
-        imagePath: '/prism/images/help/mobile/color-detail-mobile-1@2x.jpg',
+        imagePath: require('src/images/help/mobile/color-detail-mobile-1@2x.jpg'),
         alt: `HELPFUL_HINTS.IMAGE_ALT.COLOR_DETAILS.CLICK_THE_COLOR_DETAILS_ICON_TO`,
         role: 'text'
       },
       {
-        imagePath: '/prism/images/help/mobile/color-detail-mobile-2@2x.jpg',
+        imagePath: require('src/images/help/mobile/color-detail-mobile-2@2x.jpg'),
         alt: `HELPFUL_HINTS.IMAGE_ALT.COLOR_DETAILS.PREVIEW_A_COLOR_IN_COLOR_DETAILS`,
         role: 'text'
       }
@@ -278,29 +278,29 @@ export const helpTabs = [
     content: '',
     imageList: [
       {
-        imagePath: '/prism/images/help/saving-bg@2x.jpg',
+        imagePath: require('src/images/help/saving-bg@2x.jpg'),
         alt: '',
         role: ''
       },
       {
-        imagePath: '/prism/images/help/saving-1@2x.png',
+        imagePath: require('src/images/help/saving-1@2x.png'),
         alt: 'HELPFUL_HINTS.IMAGE_ALT.SAVING_MY_WORK.NAME_YOUR_CURRENT_PHOTO',
         role: 'text'
       },
       {
-        imagePath: '/prism/images/help/saving-3@2x.png',
+        imagePath: require('src/images/help/saving-3@2x.png'),
         alt: 'HELPFUL_HINTS.IMAGE_ALT.SAVING_MY_WORK.CLICK_SAVE_ICON_TO',
         role: 'text'
       }
     ],
     imageListMobile: [
       {
-        imagePath: '/prism/images/help/mobile/saving-mobile-1@2x.jpg',
+        imagePath: require('src/images/help/mobile/saving-mobile-1@2x.jpg'),
         alt: `HELPFUL_HINTS.IMAGE_ALT.SAVING_MY_WORK.CLICK_SAVE_ICON_TO`,
         role: 'text'
       },
       {
-        imagePath: '/prism/images/help/mobile/saving-mobile-2@2x.jpg',
+        imagePath: require('src/images/help/mobile/saving-mobile-2@2x.jpg'),
         alt: `HELPFUL_HINTS.IMAGE_ALT.SAVING_MY_WORK.NAME_YOUR_CURRENT_PHOTO`,
         role: 'text'
       }
