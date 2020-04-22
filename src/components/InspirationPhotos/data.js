@@ -122,7 +122,7 @@ const allCollectionsData = [
     collections: [
       {
         id: 'tab1-1',
-        img: 'src/images/inspirational-photos/green-thumb/GreenThumb1.jpg',
+        img: require('src/images/inspirational-photos/green-thumb/GreenThumb1.jpg'),
         initPins: [
           { r: 91, g: 200, b: 255, x: 0.3769487750556793, y: 0.6694045174537988 },
           { r: 217, g: 251, b: 255, x: 0.43207126948775054, y: 0.1673511293634497 },
@@ -136,7 +136,7 @@ const allCollectionsData = [
       },
       {
         id: 'tab1-2',
-        img: 'src/images/inspirational-photos/green-thumb/GreenThumb2.jpg',
+        img: require('src/images/inspirational-photos/green-thumb/GreenThumb2.jpg'),
         initPins: [
           { r: 39, g: 0, b: 20, x: 0.13697104677060135, y: 0.21252566735112938 },
           { r: 79, g: 102, b: 139, x: 0.383630289532294, y: 0.8552361396303901 },
@@ -150,7 +150,7 @@ const allCollectionsData = [
       },
       {
         id: 'tab1-3',
-        img: 'src/images/inspirational-photos/green-thumb/GreenThumb3.jpg',
+        img: require('src/images/inspirational-photos/green-thumb/GreenThumb3.jpg'),
         initPins: [
           { r: 99, g: 112, b: 7, x: 0.3145879732739421, y: 0.1591375770020534 },
           { r: 46, g: 54, b: 0, x: 0.9337416481069042, y: 0.13141683778234087 },
@@ -164,7 +164,7 @@ const allCollectionsData = [
       },
       {
         id: 'tab1-4',
-        img: 'src/images/inspirational-photos/green-thumb/GreenThumb4.jpg',
+        img: require('src/images/inspirational-photos/green-thumb/GreenThumb4.jpg'),
         initPins: [
           { r: 89, g: 111, b: 107, x: 0.2516703786191537, y: 0.08829568788501027 },
           { r: 218, g: 182, b: 125, x: 0.5044543429844098, y: 0.24845995893223818 },
@@ -178,7 +178,7 @@ const allCollectionsData = [
       },
       {
         id: 'tab1-5',
-        img: 'src/images/inspirational-photos/green-thumb/GreenThumb5.jpg',
+        img: require('src/images/inspirational-photos/green-thumb/GreenThumb5.jpg'),
         initPins: [
           { r: 118, g: 0, b: 20, x: 0.09743875278396437, y: 0.42505133470225875 },
           { r: 229, g: 74, b: 0, x: 0.8212694877505567, y: 0.555441478439425 },
@@ -196,7 +196,7 @@ const allCollectionsData = [
     collections: [
       {
         id: 'tab2-1',
-        img: 'src/images/inspirational-photos/wildlife/Wildlife1.jpg',
+        img: require('src/images/inspirational-photos/wildlife/Wildlife1.jpg'),
         initPins: [
           { r: 78, g: 53, b: 31, x: 0.6041202672605791, y: 0.7012320328542094 },
           { r: 223, g: 220, b: 202, x: 0.4298440979955457, y: 0.43634496919917864 },
@@ -210,7 +210,7 @@ const allCollectionsData = [
       },
       {
         id: 'tab2-2',
-        img: 'src/images/inspirational-photos/wildlife/Wildlife2.jpg',
+        img: require('src/images/inspirational-photos/wildlife/Wildlife2.jpg'),
         initPins: [
           { r: 142, g: 182, b: 41, x: 0.4515590200445434, y: 0.01642710472279261 },
           { r: 69, g: 132, b: 22, x: 0.6714922048997772, y: 0.003080082135523614 },
@@ -224,7 +224,7 @@ const allCollectionsData = [
       },
       {
         id: 'tab2-3',
-        img: 'src/images/inspirational-photos/wildlife/Wildlife3.jpg',
+        img: require('src/images/inspirational-photos/wildlife/Wildlife3.jpg'),
         initPins: [
           { r: 7, g: 212, b: 250, x: 0.6631403118040089, y: 0.9168377823408624 },
           { r: 24, g: 173, b: 255, x: 0.2182628062360802, y: 0.7361396303901437 },
@@ -238,7 +238,7 @@ const allCollectionsData = [
       },
       {
         id: 'tab2-4',
-        img: 'src/images/inspirational-photos/wildlife/Wildlife4.jpg',
+        img: require('src/images/inspirational-photos/wildlife/Wildlife4.jpg'),
         initPins: [
           { r: 220, g: 184, b: 169, x: 0.5133630289532294, y: 0.555441478439425 },
           { r: 255, g: 110, b: 31, x: 0.41648106904231624, y: 0.7505133470225873 },
@@ -252,7 +252,7 @@ const allCollectionsData = [
       },
       {
         id: 'tab2-5',
-        img: 'src/images/inspirational-photos/wildlife/Wildlife5.jpg',
+        img: require('src/images/inspirational-photos/wildlife/Wildlife5.jpg'),
         initPins: [
           { r: 255, g: 231, b: 181, x: 0.34966592427616927, y: 0.9014373716632443 },
           { r: 153, g: 98, b: 0, x: 0.6002227171492205, y: 0.7402464065708418 },
@@ -271,7 +271,7 @@ const allCollectionsData = [
     collections: [
       {
         id: 'tab3-1',
-        img: 'src/images/inspirational-photos/cuisine/Cuisine1.jpg',
+        img: require('src/images/inspirational-photos/cuisine/Cuisine1.jpg'),
         initPins: [
           { r: 203, g: 164, b: 199, x: 0.4610244988864143, y: 0.20636550308008214 },
           { r: 151, g: 138, b: 201, x: 0.339086859688196, y: 0.18993839835728954 },
@@ -285,7 +285,7 @@ const allCollectionsData = [
       },
       {
         id: 'tab3-2',
-        img: 'src/images/inspirational-photos/cuisine/Cuisine2.jpg',
+        img: require('src/images/inspirational-photos/cuisine/Cuisine2.jpg'),
         initPins: [
           { r: 253, g: 137, b: 77, x: 0.4309576837416481, y: 0.48973305954825463 },
           { r: 0, g: 56, b: 48, x: 0.2906458797327394, y: 0.0944558521560575 },
@@ -299,7 +299,7 @@ const allCollectionsData = [
       },
       {
         id: 'tab3-3',
-        img: 'src/images/inspirational-photos/cuisine/Cuisine3.jpg',
+        img: require('src/images/inspirational-photos/cuisine/Cuisine3.jpg'),
         initPins: [
           { r: 180, g: 53, b: 0, x: 0.6770601336302895, y: 0.7412731006160165 },
           { r: 77, g: 3, b: 0, x: 0.7483296213808464, y: 0.5934291581108829 },
@@ -313,7 +313,7 @@ const allCollectionsData = [
       },
       {
         id: 'tab3-4',
-        img: 'src/images/inspirational-photos/cuisine/Cuisine4.jpg',
+        img: require('src/images/inspirational-photos/cuisine/Cuisine4.jpg'),
         initPins: [
           { r: 164, g: 130, b: 127, x: 0.5612472160356348, y: 0.1673511293634497 },
           { r: 131, g: 174, b: 145, x: 0.35412026726057905, y: 0.08316221765913757 },
@@ -327,7 +327,7 @@ const allCollectionsData = [
       },
       {
         id: 'tab3-5',
-        img: 'src/images/inspirational-photos/cuisine/Cuisine5.jpg',
+        img: require('src/images/inspirational-photos/cuisine/Cuisine5.jpg'),
         initPins: [
           { r: 234, g: 216, b: 183, x: 0.6531180400890868, y: 0.6981519507186859 },
           { r: 213, g: 194, b: 119, x: 0.7344097995545658, y: 0.6540041067761807 },
@@ -346,7 +346,7 @@ const allCollectionsData = [
     collections: [
       {
         id: 'tab4-1',
-        img: 'src/images/inspirational-photos/great-outdoors/GreatOutdoors1.jpg',
+        img: require('src/images/inspirational-photos/great-outdoors/GreatOutdoors1.jpg'),
         initPins: [
           { r: 206, g: 172, b: 125, x: 0.2188195991091314, y: 0.7720739219712526 },
           { r: 102, g: 165, b: 191, x: 0.8023385300668151, y: 0.003080082135523614 },
@@ -360,7 +360,7 @@ const allCollectionsData = [
       },
       {
         id: 'tab4-2',
-        img: 'src/images/inspirational-photos/great-outdoors/GreatOutdoors2.jpg',
+        img: require('src/images/inspirational-photos/great-outdoors/GreatOutdoors2.jpg'),
         initPins: [
           { r: 180, g: 155, b: 118, x: 0.8279510022271714, y: 0.6981519507186859 },
           { r: 221, g: 184, b: 113, x: 0.8507795100222717, y: 0.27002053388090347 },
@@ -373,7 +373,7 @@ const allCollectionsData = [
       },
       {
         id: 'tab4-3',
-        img: 'src/images/inspirational-photos/great-outdoors/GreatOutdoors3.jpg',
+        img: require('src/images/inspirational-photos/great-outdoors/GreatOutdoors3.jpg'),
         initPins: [
           { r: 0, g: 41, b: 62, x: 0.41648106904231624, y: 0.9455852156057495 },
           { r: 220, g: 169, b: 139, x: 0.44320712694877507, y: 0.19404517453798767 },
@@ -387,7 +387,7 @@ const allCollectionsData = [
       },
       {
         id: 'tab4-4',
-        img: 'src/images/inspirational-photos/great-outdoors/GreatOutdoors4.jpg',
+        img: require('src/images/inspirational-photos/great-outdoors/GreatOutdoors4.jpg'),
         initPins: [
           { r: 0, g: 48, b: 87, x: 0.8758351893095768, y: 0.8819301848049281 },
           { r: 9, g: 132, b: 193, x: 0.7600222717149221, y: 0.01642710472279261 },
@@ -401,7 +401,7 @@ const allCollectionsData = [
       },
       {
         id: 'tab4-5',
-        img: 'src/images/inspirational-photos/great-outdoors/GreatOutdoors5.jpg',
+        img: require('src/images/inspirational-photos/great-outdoors/GreatOutdoors5.jpg'),
         initPins: [
           { r: 45, g: 22, b: 0, x: 0.2633630289532294, y: 0.39014373716632444 },
           { r: 142, g: 79, b: 69, x: 0.31570155902004454, y: 0.12628336755646818 },
@@ -420,7 +420,7 @@ const allCollectionsData = [
     collections: [
       {
         id: 'tab5-1',
-        img: 'src/images/inspirational-photos/globetrotting/Globetrotting1.jpg',
+        img: require('src/images/inspirational-photos/globetrotting/Globetrotting1.jpg'),
         initPins: [
           { r: 237, g: 55, b: 17, x: 0.4521158129175947, y: 0.4671457905544148 },
           { r: 132, g: 1, b: 0, x: 0.5506681514476615, y: 0.8234086242299795 },
@@ -434,7 +434,7 @@ const allCollectionsData = [
       },
       {
         id: 'tab5-2',
-        img: 'src/images/inspirational-photos/globetrotting/Globetrotting2.jpg',
+        img: require('src/images/inspirational-photos/globetrotting/Globetrotting2.jpg'),
         initPins: [
           { r: 10, g: 54, b: 172, x: 0.2951002227171492, y: 0.059548254620123205 },
           { r: 208, g: 188, b: 144, x: 0.24443207126948774, y: 0.6139630390143738 },
@@ -448,7 +448,7 @@ const allCollectionsData = [
       },
       {
         id: 'tab5-3',
-        img: 'src/images/inspirational-photos/globetrotting/Globetrotting3.jpg',
+        img: require('src/images/inspirational-photos/globetrotting/Globetrotting3.jpg'),
         initPins: [
           { r: 29, g: 29, b: 22, x: 0.8335189309576837, y: 0.3008213552361396 },
           { r: 3, g: 39, b: 83, x: 0.4755011135857461, y: 0.6242299794661191 },
@@ -462,7 +462,7 @@ const allCollectionsData = [
       },
       {
         id: 'tab5-4',
-        img: 'src/images/inspirational-photos/globetrotting/Globetrotting4.jpg',
+        img: require('src/images/inspirational-photos/globetrotting/Globetrotting4.jpg'),
         initPins: [
           { r: 147, g: 143, b: 187, x: 0.12750556792873052, y: 0.5595482546201233 },
           { r: 255, g: 213, b: 151, x: 0.5451002227171492, y: 0.1375770020533881 },
@@ -476,7 +476,7 @@ const allCollectionsData = [
       },
       {
         id: 'tab5-5',
-        img: 'src/images/inspirational-photos/globetrotting/Globetrotting5.jpg',
+        img: require('src/images/inspirational-photos/globetrotting/Globetrotting5.jpg'),
         initPins: [
           { r: 121, g: 149, b: 0, x: 0.1915367483296214, y: 0.75564681724846 },
           { r: 70, g: 40, b: 0, x: 0.36414253897550114, y: 0.797741273100616 },
@@ -495,7 +495,7 @@ const allCollectionsData = [
     collections: [
       {
         id: 'tab6-1',
-        img: 'src/images/inspirational-photos/rustic/Rustic1.jpg',
+        img: require('src/images/inspirational-photos/rustic/Rustic1.jpg'),
         initPins: [
           { r: 13, g: 89, b: 148, x: 0.9376391982182628, y: 0.38295687885010266 },
           { r: 71, g: 187, b: 247, x: 0.3730512249443207, y: 0.6201232032854209 },
@@ -509,7 +509,7 @@ const allCollectionsData = [
       },
       {
         id: 'tab6-2',
-        img: 'src/images/inspirational-photos/rustic/Rustic2.jpg',
+        img: require('src/images/inspirational-photos/rustic/Rustic2.jpg'),
         initPins: [
           { r: 181, g: 203, b: 210, x: 0.5278396436525612, y: 0.7217659137577002 },
           { r: 255, g: 204, b: 187, x: 0.8479955456570156, y: 0.2053388090349076 },
@@ -523,7 +523,7 @@ const allCollectionsData = [
       },
       {
         id: 'tab6-3',
-        img: 'src/images/inspirational-photos/rustic/Rustic3.jpg',
+        img: require('src/images/inspirational-photos/rustic/Rustic3.jpg'),
         initPins: [
           { r: 205, g: 225, b: 255, x: 0.6197104677060133, y: 0.24229979466119098 },
           { r: 242, g: 222, b: 192, x: 0.7121380846325167, y: 0.4383983572895277 },
@@ -537,7 +537,7 @@ const allCollectionsData = [
       },
       {
         id: 'tab6-4',
-        img: 'src/images/inspirational-photos/rustic/Rustic4.jpg',
+        img: require('src/images/inspirational-photos/rustic/Rustic4.jpg'),
         initPins: [
           { r: 64, g: 13, b: 11, x: 0.544543429844098, y: 0.5051334702258727 },
           { r: 234, g: 34, b: 0, x: 0.7366369710467706, y: 0.5092402464065708 },
@@ -551,7 +551,7 @@ const allCollectionsData = [
       },
       {
         id: 'tab6-5',
-        img: 'src/images/inspirational-photos/rustic/Rustic5.jpg',
+        img: require('src/images/inspirational-photos/rustic/Rustic5.jpg'),
         initPins: [
           { r: 125, g: 141, b: 147, x: 0.7611358574610245, y: 0.043121149897330596 },
           { r: 255, g: 193, b: 50, x: 0.09187082405345212, y: 0.9188911704312115 },
@@ -570,7 +570,7 @@ const allCollectionsData = [
     collections: [
       {
         id: 'tab7-1',
-        img: 'src/images/inspirational-photos/time-capsule/TimeCapsule1.jpg',
+        img: require('src/images/inspirational-photos/time-capsule/TimeCapsule1.jpg'),
         initPins: [
           { r: 253, g: 92, b: 3, x: 0.938195991091314, y: 0.5420944558521561 },
           { r: 253, g: 65, b: 36, x: 0.8418708240534521, y: 0.28234086242299794 },
@@ -584,7 +584,7 @@ const allCollectionsData = [
       },
       {
         id: 'tab7-2',
-        img: 'src/images/inspirational-photos/time-capsule/TimeCapsule2.jpg',
+        img: require('src/images/inspirational-photos/time-capsule/TimeCapsule2.jpg'),
         initPins: [
           { r: 240, g: 193, b: 168, x: 0.2583518930957684, y: 0.001026694045174538 },
           { r: 211, g: 131, b: 123, x: 0.8006681514476615, y: 0.011293634496919919 },
@@ -597,7 +597,7 @@ const allCollectionsData = [
       },
       {
         id: 'tab7-3',
-        img: 'src/images/inspirational-photos/time-capsule/TimeCapsule3.jpg',
+        img: require('src/images/inspirational-photos/time-capsule/TimeCapsule3.jpg'),
         initPins: [
           { r: 4, g: 37, b: 0, x: 0.6948775055679287, y: 0.13963039014373715 },
           { r: 169, g: 133, b: 116, x: 0.6586859688195991, y: 0.6139630390143738 },
@@ -611,7 +611,7 @@ const allCollectionsData = [
       },
       {
         id: 'tab7-4',
-        img: 'src/images/inspirational-photos/time-capsule/TimeCapsule4.jpg',
+        img: require('src/images/inspirational-photos/time-capsule/TimeCapsule4.jpg'),
         initPins: [
           { r: 142, g: 180, b: 146, x: 0.272271714922049, y: 0.6324435318275154 },
           { r: 63, g: 38, b: 0, x: 0.6653674832962138, y: 0.6129363449691991 },
@@ -625,7 +625,7 @@ const allCollectionsData = [
       },
       {
         id: 'tab7-5',
-        img: 'src/images/inspirational-photos/time-capsule/TimeCapsule5.jpg',
+        img: require('src/images/inspirational-photos/time-capsule/TimeCapsule5.jpg'),
         initPins: [
           { r: 255, g: 1, b: 6, x: 0.2477728285077951, y: 0.33572895277207393 },
           { r: 253, g: 219, b: 201, x: 0.37639198218262804, y: 0.42813141683778233 },
