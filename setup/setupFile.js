@@ -22,6 +22,9 @@ jest.mock('lodash/debounce', () => jest.fn(fn => fn))
 global.URL.createObjectURL = jest.fn()
 global.URL.revokeObjectURL = jest.fn()
 
+Object.defineProperty(HTMLElement.prototype, 'offsetHeight', { configurable: true, value: 500 })
+Object.defineProperty(HTMLElement.prototype, 'offsetWidth', { configurable: true, value: 1000 })
+
 global.Image = () => {
   // run the callback function for load event listeners as soon as they get set
   const image = { addEventListener: (evt, cb) => { evt === 'load' && cb() } }

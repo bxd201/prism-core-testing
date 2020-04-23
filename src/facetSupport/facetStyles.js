@@ -17,8 +17,7 @@ const embedStyle = (path: string) => {
   css.type = 'text/css'
   css.crossOrigin = 'anonymous'
   css.href = `${path}?v=${APP_VERSION}`
-  // $FlowIgnore -- flow doesn't think body is defined
-  fjs.parentNode.insertBefore(css, fjs)
+  fjs && fjs.parentNode.insertBefore(css, fjs)
 }
 
 const addHideStyles = () => {
@@ -32,8 +31,7 @@ const addHideStyles = () => {
   css.rel = 'stylesheet'
   css.type = 'text/css'
   css.id = id
-  // $FlowIgnore -- flow doesn't think body is defined
-  fjs.parentNode.insertBefore(css, fjs)
+  fjs && fjs.parentNode.insertBefore(css, fjs)
   css.innerHTML = `.${CLEANSLATE_CLASS}.${PRISM_CLASS} { display: none }`
 }
 
