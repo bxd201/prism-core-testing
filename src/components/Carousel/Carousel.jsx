@@ -1,10 +1,11 @@
 // @flow
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
 import './Carousel.scss'
 import times from 'lodash/times'
 import isFunction from 'lodash/isFunction'
+import { KEY_CODES } from 'src/constants/globals'
 
 type ComponentProps = {
   BaseComponent: any,
@@ -16,6 +17,8 @@ type ComponentProps = {
   tabMap?: string[],
   initPosition?: number,
   setInitialPosition?: number => void,
+  btnRefList?: Object[],
+  getSummaryData?: object=> void,
    // eslint-disable-next-line react/no-unused-prop-types
   baseSceneData?: Object,
   // eslint-disable-next-line react/no-unused-prop-types
@@ -32,9 +35,9 @@ const indicators = `${baseClass}__wrapper__indicators`
 let nonTransition = false
 
 export default (props: ComponentProps) => {
-  const { BaseComponent, defaultItemsPerView, data, isInfinity, tabId, setTabId, tabMap, setInitialPosition, initPosition } = props
+  const { BaseComponent, defaultItemsPerView, data, isInfinity, tabId, setTabId, tabMap, setInitialPosition, initPosition, btnRefList, getSummaryData } = props
   const [position, setPosition] = useState(initPosition || 0)
-
+  const [focusIndex, setCurrentFocusItem] = useState(1)
   // tracks the previous position
   const prevPositionRef = useRef()
   const prevPosition = prevPositionRef.current
@@ -96,6 +99,22 @@ export default (props: ComponentProps) => {
     }
   }
 
+  const onKeyDown = useCallback((e) => {
+    if (e.shiftKey && e.keyCode === KEY_CODES.KEY_CODE_TAB) {
+      if (focusIndex !== 1 && focusIndex % defaultItemsPerView === 1) { handlePrev() }
+      focusIndex > 1 && setCurrentFocusItem(focusIndex - 1)
+    } else if (e.keyCode === KEY_CODES.KEY_CODE_TAB) {
+      if (focusIndex !== btnRefList.length && focusIndex % defaultItemsPerView === 0) {
+        e.preventDefault()
+        handleNext()
+        setTimeout(() => { btnRefList[focusIndex].current.focus() }, 300)
+      }
+      focusIndex <= btnRefList.length - 1 && setCurrentFocusItem(focusIndex + 1)
+    } else if (e.keyCode === KEY_CODES.KEY_CODE_ENTER || e.keyCode === KEY_CODES.KEY_CODE_SPACE) {
+      getSummaryData(data[focusIndex - 1])
+    }
+  })
+
   return (
     <div className={`${baseClass}__wrapper`}>
       <div className={`${contentWrapper}`}>
@@ -111,7 +130,7 @@ export default (props: ComponentProps) => {
           >
             {slideList && slideList.map((slide: any, index: number) => {
               // this complicated boolean expression allows us to avoid fetching images before we need them
-              const shouldRender = pageNumber === index || pageNumber === index + 1 || pageNumber === index - 1 || (isInfinity && (
+              const shouldRender = (Array.isArray(btnRefList)) || pageNumber === index || pageNumber === index + 1 || pageNumber === index - 1 || (isInfinity && (
                 // about to jump to page: data.length - 1 so load pages: [data.length - 2, data.length - 1, data.length]
                 (pageNumber < 1 && (index > data.length - 2)) ||
                 // about to jump to page: 1 so load pages [0, 1, 2]
@@ -119,7 +138,7 @@ export default (props: ComponentProps) => {
               ))
 
               return (
-                <div key={index} className={`collection-list__wrapper`}>
+                <div key={index} className='collection-list__wrapper'>
                   {shouldRender && slide.map((item, key) => {
                     return (
                       <BaseComponent
@@ -133,6 +152,7 @@ export default (props: ComponentProps) => {
                         itemsPerView={defaultItemsPerView}
                         isActivedPage={index === pageNumber}
                         totalItems={data.length}
+                        onKeyDown={onKeyDown}
                       />
                     )
                   })}
