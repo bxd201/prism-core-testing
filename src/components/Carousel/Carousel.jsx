@@ -38,7 +38,6 @@ export default (props: ComponentProps) => {
   // tracks the previous position
   const prevPositionRef = useRef()
   const prevPosition = prevPositionRef.current
-  let serialCount = 0
   useEffect(() => { prevPositionRef.current = position })
 
   // update the position when tabId changes only if the position hasn't changed (tab button was clicked)
@@ -49,10 +48,13 @@ export default (props: ComponentProps) => {
   const pageNumber = isInfinity ? Math.floor(position + 1) : Math.floor(position / defaultItemsPerView)
   const slideList = []
   if (data.length > 0) {
+    const indexedData = data.map((item, i) => {
+      return { ...item, itemIndex: i }
+    })
     const count = Math.floor(data.length / defaultItemsPerView)
     const numsOfViews = isInfinity ? count : count + 1
     for (let i = 0; i < numsOfViews; i++) {
-      const dataPerView: Object[] = data.slice(i * defaultItemsPerView, i * defaultItemsPerView + defaultItemsPerView)
+      const dataPerView: Object[] = indexedData.slice(i * defaultItemsPerView, i * defaultItemsPerView + defaultItemsPerView)
       slideList.push(dataPerView)
     }
     if (isInfinity) {
@@ -119,12 +121,11 @@ export default (props: ComponentProps) => {
               return (
                 <div key={index} className={`collection-list__wrapper`}>
                   {shouldRender && slide.map((item, key) => {
-                    serialCount++
                     return (
                       <BaseComponent
                         className='collection-list__component'
-                        key={key}
-                        itemNumber={serialCount}
+                        key={item.itemIndex}
+                        itemNumber={item.itemIndex}
                         {...props}
                         data={item}
                         handlePrev={handlePrev}

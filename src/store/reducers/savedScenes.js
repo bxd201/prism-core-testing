@@ -9,8 +9,16 @@ import {
   WAITING_TO_FETCH_SAVED_SCENE,
   DELETE_ANON_SAVED_SCENE,
   SAVED_SCENE_LOCAL,
-  LOADING_SAVED_MASKS, ERROR_DOWNLOADING_SAVED_DATA, SHOW_SAVE_SCENE_MODAL, RESET_SAVE_STATE,
-  UPDATE_ANON_SAVED_SCENE_NAME, SCENE_TYPE, SHOW_SAVED_CONFIRM_MODAL, SHOW_SAVED_CUSTOM_SUCCESS, SHOW_DELETE_CONFIRM
+  LOADING_SAVED_MASKS,
+  ERROR_DOWNLOADING_SAVED_DATA,
+  SHOW_SAVE_SCENE_MODAL,
+  RESET_SAVE_STATE,
+  UPDATE_ANON_SAVED_SCENE_NAME,
+  SCENE_TYPE,
+  SHOW_SAVED_CONFIRM_MODAL,
+  SHOW_SAVED_CUSTOM_SUCCESS,
+  SHOW_DELETE_CONFIRM,
+  PURGE_METADATA
 } from '../actions/persistScene'
 import {
   DELETE_ANON_STOCK_SCENE,
@@ -133,6 +141,30 @@ export const sceneMetadata = (state: Object[] = [], action: {type: string, paylo
       newState.push({ ...sceneDataFromState, name: action.payload.name })
       return newState
     }
+  }
+
+  if (action.type === SAVED_REGIONS_UNPICKLED || action.type === PURGE_METADATA) {
+    const idMap = action.payload.map(item => item.id)
+    newState = state.map(item => {
+      if (item.sceneType === SCENE_TYPE.anonStock) {
+        return { ...item }
+      }
+
+      if (item.sceneType === SCENE_TYPE.anonCustom) {
+        // If the storage location structure/ id generation is changed this will need to be
+        let id = item.scene.match(/\/[0-9-]+/)
+
+        if (id) {
+          id = id[0].substr(1, id[0].length - 2)
+          if (idMap.indexOf(id) > -1) {
+            return { ...item }
+          }
+        }
+      }
+      return null
+    }).filter(item => item)
+
+    return newState
   }
 
   return state
