@@ -18,7 +18,7 @@ import useEffectAfterMount from 'src/shared/hooks/useEffectAfterMount'
 import { resetActiveColor, updateColorStatuses } from 'src/store/actions/loadColors'
 import { facetBinderDefaultProps, type FacetBinderMethods } from 'src/facetSupport/facetInstance'
 import { FormattedMessage } from 'react-intl'
-import { translateBooleanFlexibly } from 'src/facetSupport/facetUtils'
+import translateBooleanFlexibly from 'src/shared/utils/translateBooleanFlexibly.util'
 
 type Props = FacetPubSubMethods & FacetBinderMethods & {
   addButtonText?: string,

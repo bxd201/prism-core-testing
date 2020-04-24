@@ -1,9 +1,10 @@
 // @flow
-import { ensureFullyQualifiedAssetUrl } from './shared/helpers/DataUtils'
+import ensureFullyQualifiedAssetUrl from 'src/shared/utils/ensureFullyQualifiedAssetUrl.util'
 import { EMBED_ROOT_SELECTOR_DEPRECATED, EMBED_ROOT_SELECTOR } from './facetSupport/facetConstants'
-import { dressUpForPrism } from './facetSupport/facetUtils'
-import { embedGlobalStyles, embedBundleStyles } from './facetSupport/facetStyles'
-import { embedScript } from './facetSupport/facetScripts'
+import dressUpForPrism from './facetSupport/utils/dressUpForPrism'
+import embedGlobalStyles from './facetSupport/styles/embedGlobalStyles'
+import embedBundleStyles from './facetSupport/styles/embedBundleStyles'
+import embedScript from './facetSupport/scripts/embedScript'
 
 function injectRoot () {
   // TODO: deprecate #prism-root in favor of class- or attr-based identifier
