@@ -4,7 +4,6 @@ import chunk from 'lodash/chunk'
 import find from 'lodash/find'
 import sum from 'lodash/sum'
 import flattenDeep from 'lodash/flattenDeep'
-import intersection from 'lodash/intersection'
 import kebabCase from 'lodash/kebabCase'
 import pick from 'lodash/pick'
 import sortBy from 'lodash/sortBy'
@@ -65,8 +64,6 @@ export function getErrorState (state: ColorsState, error?: any) {
 
 export function doReceiveColors (state: ColorsState, action: ReduxAction) {
   // adding toString methods to all Color objects
-  const initSection = state.initializeWith.section
-  const initFam = state.initializeWith.family
   const initColor = state.initializeWith.colorWallActive
   const colorMap = convertUnorderedColorsToColorMap(convertUnorderedColorsToClasses(action.payload.unorderedColors))
   const unorderedColorList = action.payload.unorderedColors.map((c: Color) => c.id)
@@ -75,7 +72,6 @@ export function doReceiveColors (state: ColorsState, action: ReduxAction) {
   const sectionNames = hasSections && structure.map((section: Section) => {
     return section.name
   })
-  const defaultSection = hasSections && find(structure, { default: true })
   const { colors, brights } = action.payload
 
   // -----------------------------------------------------------------
@@ -92,7 +88,7 @@ export function doReceiveColors (state: ColorsState, action: ReduxAction) {
 
     const _colors = colors[emerald.name].map(aChunk => chunk(aChunk, 5))
     return maximizeAllShortRows([
-      _colors[0].map((_, i) => _colors.map((aChunk, j) => aChunk[i]))
+      _colors[0].map((_, i) => _colors.map((aChunk, j) => aChunk[i].map(id => id.toString())))
     ])
   })(colors, structure)
 
@@ -198,8 +194,6 @@ export function doReceiveColors (state: ColorsState, action: ReduxAction) {
   // END PRISM-450 - mocked color layouts
   // -----------------------------------------------------------------
 
-  let useDefault = true // this will be toggled to false if initSection/family/color can be found
-
   // newState will be modified in the below conditions depending what section/family/color matches we find
   let newState = {
     ...state,
@@ -222,83 +216,11 @@ export function doReceiveColors (state: ColorsState, action: ReduxAction) {
 
   // if we have a structure...
   if (hasSections) {
-    // ... and if we have a section to initialize with...
-    if (initSection) {
-      // ... then see if we can match our init section within structure
-      const foundSection = getSectionByName(structure, initSection)
-
-      // if we have a match for our init section...
-      if (foundSection) {
-        // get this section's families
-        const sectionFamilies = foundSection.families
-
-        // we now know that we do not need to use default section since we have an init match
-        useDefault = false
-
-        // if we have an init color...
-        if (initColor) {
-          // ... locate it in colorMap
-          const foundColor = colorMap[initColor]
-
-          // if it doesn't exist...
-          if (!foundColor) {
-            console.warn('Desired color not found in section.')
-            return getErrorState(state)
-          }
-
-          // get all color families for matched init color
-          const colorFamilies = foundColor.colorFamilyNames
-          // get all families that match this section as well as this color
-          const possibleFamilies = intersection(colorFamilies, sectionFamilies)
-
-          // if we DO NOT have families that match both the selected section and color...
-          if (possibleFamilies.length === 0) {
-            console.warn('Desired color\'s family not found in section.')
-            return getErrorState(state)
-          }
-
-          // if we have an initial family specified but it isn't within the families we matched above...
-          if (initFam && !getFamilyByName(possibleFamilies, initFam)) {
-            console.warn('Desired familiy and desired color not associated with each other.')
-            return getErrorState(state)
-          }
-        } else if (initFam && !getFamilyByName(sectionFamilies, initFam)) {
-          // if we only have an init family and it does not occur in the selected section's families...
-          console.warn('Desired family not found in section.')
-          return getErrorState(state)
-        }
-
-        const layoutSection = layouts.filter(l => l.name === foundSection.name)[0]
-        const newLayout = initFam && layoutSection.families ? at(layoutSection.families.filter(l => l.name === initFam)[0], 'layout')[0] : at(layoutSection, 'layout')[0]
-
-        // populate our new state with section, family, and active color wall color (if we found them)
-        newState = {
-          ...newState,
-          layout: newLayout,
-          structure: structure,
-          sections: sectionNames,
-          section: foundSection.name,
-          families: sectionFamilies,
-          family: initFam || void (0),
-          colorWallActive: initColor ? colorMap[initColor] : void (0)
-        }
-      }
-    }
-
-    // if useDefault has not been set to false above, and we have a default section...
-    if (useDefault && defaultSection) {
-      const layoutSection = layouts.filter(l => l.name === defaultSection.name)[0]
-      const newLayout = at(layoutSection, 'layout')[0]
-
-      // ... then populate newState with our default section's name and families
-      newState = {
-        ...newState,
-        layout: newLayout,
-        structure: structure,
-        sections: sectionNames,
-        section: defaultSection.name,
-        families: defaultSection.families
-      }
+    newState = {
+      ...newState,
+      structure: structure,
+      sections: sectionNames,
+      colorWallActive: initColor ? colorMap[initColor] : void (0)
     }
   } else {
     // if we have no structure then we cannot proceed -- all colors must exist in a section
@@ -347,8 +269,7 @@ export function doFilterBySection (state: ColorsState, action: ReduxAction) {
         initializeWith: {
           ...state.initializeWith,
           section: initialState.initializeWith.section
-        },
-        colorWallActive: initialState.colorWallActive
+        }
       }
     } else {
       return getErrorState(state)
@@ -424,7 +345,7 @@ export function doMakeActiveColorById (state: ColorsState, action: ReduxAction) 
   return getErrorState(state)
 }
 
-export function doFilterByFamily (state: ColorsState, action: ReduxAction) {
+export function doFilterByFamily (state: ColorsState, action: { payload: { family: ?string }}) {
   const payloadFamily = action.payload.family
 
   // if we're currently still loading data...
@@ -457,8 +378,7 @@ export function doFilterByFamily (state: ColorsState, action: ReduxAction) {
         initializeWith: {
           ...state.initializeWith,
           family: initialState.initializeWith.family
-        },
-        colorWallActive: initialState.colorWallActive
+        }
       }
     } else {
       return getErrorState(state)

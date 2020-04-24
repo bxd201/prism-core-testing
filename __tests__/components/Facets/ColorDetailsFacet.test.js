@@ -3,11 +3,12 @@ import { ColorDetailsPage } from 'src/components/Facets/ColorDetailsFacet'
 import { fireEvent, within } from '@testing-library/dom'
 import memoizee from 'memoizee'
 
-const FAMILY_LINK = 'testFamilyLink'
-
 test('<ColorDetailsFacet colorSEO=\'sw-6475-country-squire\' subscribe={...} />', async () => {
   const { findByText, findByLabelText, findByRole } = render(
-    <ColorDetailsPage colorSEO='sw-6475-country-squire' subscribe={memoizee((key, callbackfn) => { callbackfn(FAMILY_LINK) })} />
+    <ColorDetailsPage
+      colorSEO='sw-6475-country-squire'
+      subscribe={memoizee((key, callbackfn) => { callbackfn('/blue') })}
+    />
   )
   // shows "SW 6475" and it's coordinating colors by default
   await findByText('SW 6475')

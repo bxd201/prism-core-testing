@@ -2,7 +2,7 @@
   // if we're in development mode, set the root font to sans-serif so Prism has something to inherit by default
   // in production environments we will inherit the site's font family until config has been successfully loaded
   @if $env == 'development' {
-    font-family: sans-serif;
+    font-family: 'THIS ONLY HAPPENS IN DEVELOPMENT MODE', sans-serif;
   }
 
   // TODO: eventually we should bootstrap the default values for ALL (or at least most?) of the style-related configuration props

@@ -1,14 +1,23 @@
-import once from 'lodash/once'
+// @flow
+import kebabCase from 'lodash/kebabCase'
 import { ensureFullyQualifiedAssetUrl } from '../shared/helpers/DataUtils'
 
-const loadBundle = once(() => {
-  const bundleTag = document.createElement('script')
-  const bundlePath = ensureFullyQualifiedAssetUrl(`${WEBPACK_CONSTANTS.mainEntryPointName}.js`)
-  bundleTag.src = bundlePath // eslint-disable-line no-undef
+const embedScript = (path: string) => {
+  const s = 'script'
+  const id = kebabCase(path)
+
+  if (document.getElementById(id)) return
+
+  const fjs = document.getElementsByTagName(s)[0]
+  const js = document.createElement(s); js.id = id
+  js.src = `${path}?v=${APP_VERSION}`
   // $FlowIgnore -- flow doesn't think body is defined
-  document.body.appendChild(bundleTag)
-})
+  fjs.parentNode.insertBefore(js, fjs)
+}
+
+const loadBundle = () => embedScript(ensureFullyQualifiedAssetUrl(`${WEBPACK_CONSTANTS.mainEntryPointName}.js`))
 
 export {
+  embedScript,
   loadBundle
 }

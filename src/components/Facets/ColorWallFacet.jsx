@@ -6,27 +6,28 @@ import ColorWallRouter from './ColorWall/ColorWallRouter'
 import Search from 'src/components/Search/Search'
 import SearchBar from 'src/components/Search/SearchBar'
 import ColorWall from './ColorWall/ColorWall'
-import ColorWallToolbar from './ColorWall/ColorWallToolbar'
+import ColorWallToolbar from './ColorWall/ColorWallToolbar/ColorWallToolbar'
 import facetBinder from 'src/facetSupport/facetBinder'
-import ColorWallContext, { colorWallContextDefault, colorWallA11yContextDefault, type ColorWallA11yContextProps } from 'src/components/Facets/ColorWall/ColorWallContext'
+import ColorWallContext, { colorWallContextDefault } from 'src/components/Facets/ColorWall/ColorWallContext'
 import { type FacetPubSubMethods, facetPubSubDefaultProps } from 'src/facetSupport/facetPubSub'
 import extendIfDefined from 'src/shared/helpers/extendIfDefined'
 import GenericOverlay from 'src/components/Overlays/GenericOverlay/GenericOverlay'
 import at from 'lodash/at'
 import isArray from 'lodash/isArray'
 import useEffectAfterMount from 'src/shared/hooks/useEffectAfterMount'
-import { resetActiveColor, updateColorStatuses, filterBySection } from 'src/store/actions/loadColors'
+import { resetActiveColor, updateColorStatuses } from 'src/store/actions/loadColors'
 import { facetBinderDefaultProps, type FacetBinderMethods } from 'src/facetSupport/facetInstance'
 import { FormattedMessage } from 'react-intl'
+import { translateBooleanFlexibly } from 'src/facetSupport/facetUtils'
 
 type Props = FacetPubSubMethods & FacetBinderMethods & {
+  addButtonText?: string,
   colorDetailPageRoot?: string,
   colorWallBgColor?: string,
-  defaultSection?: string,
   displayAddButton?: boolean,
+  displayAddButtonText?: boolean,
   displayDetailsLink?: boolean,
   hiddenSections?: string | string[], // as string, "section name 1" or "section name 1|section name 2|etc" will be parsed into an array
-  resetOnUnmount?: boolean
 }
 
 export const EVENTS = {
@@ -44,14 +45,13 @@ const searchBarNoLabel = () => <div className='color-wall-wrap__chunk'>
   </FormattedMessage>
 </div>
 
-const ColorWallContain = () => <ColorWall contain />
 const SearchContain = () => <Search contain />
 const CWToolbar = () => <div className='color-wall-wrap__chunk'>
   <ColorWallToolbar isFamilyPage={false} />
 </div>
 
 export const ColorWallPage = (props: Props) => {
-  const { displayAddButton, displayDetailsLink, colorWallBgColor, subscribe, publish, unsubscribeAll, colorDetailPageRoot, resetOnUnmount, hiddenSections, defaultSection } = props
+  const { addButtonText, displayAddButton = false, displayAddButtonText, displayDetailsLink = true, colorWallBgColor, subscribe, publish, unsubscribeAll, colorDetailPageRoot, resetOnUnmount, hiddenSections } = props
   const dispatch = useDispatch()
 
   // -----------------------------------------------------
@@ -59,11 +59,7 @@ export const ColorWallPage = (props: Props) => {
   useEffect(() => subscribe(EVENTS.decorateColors, handleColorDecoration), [])
   const handleColorDecoration = useCallback((decoratedColors) => dispatch(updateColorStatuses(decoratedColors)), [])
   const colorMap = useSelector(state => at(state, 'colors.items.colorMap')[0])
-  useEffect(() => {
-    if (colorMap) {
-      publish(EVENTS.colorsLoaded, colorMap)
-    }
-  }, [colorMap])
+  useEffect(() => { colorMap && publish(EVENTS.colorsLoaded, colorMap) }, [colorMap])
 
   // -----------------------------------------------------
   // handle emitting selected color to host
@@ -80,7 +76,10 @@ export const ColorWallPage = (props: Props) => {
   // -----------------------------------------------------
   // handle host demanding appearance of loading
   const [isLoading, updateLoading] = useState(false)
-  useEffect(() => subscribe(EVENTS.loading, updateLoading), [])
+  useEffect(() => {
+    subscribe(EVENTS.loading, updateLoading)
+    return unsubscribeAll
+  }, [])
 
   // -----------------------------------------------------
   // handle hidden sections
@@ -96,28 +95,16 @@ export const ColorWallPage = (props: Props) => {
   }, [ hiddenSections ])
 
   // -----------------------------------------------------
-  // handle selecting a default section
-  useEffect(() => {
-    if (defaultSection) {
-      dispatch(filterBySection(defaultSection))
-    }
-  }, [ defaultSection ])
-
-  // -----------------------------------------------------
   // build color wall context and a11y state
-  const [a11yState, updateA11yState] = useState(colorWallA11yContextDefault)
-  const updateA11y = useCallback((data: ColorWallA11yContextProps) => updateA11yState({
-    ...a11yState,
-    ...data
-  }), [a11yState])
-  const cwContext = useMemo(() => extendIfDefined({}, colorWallContextDefault, a11yState, {
+  const cwContext = useMemo(() => extendIfDefined({}, colorWallContextDefault, {
+    addButtonText,
     colorDetailPageRoot,
     colorWallBgColor,
-    displayAddButton,
-    displayDetailsLink,
-    hiddenSections: processedHiddenSections,
-    updateA11y
-  }), [colorDetailPageRoot, colorWallBgColor, displayAddButton, displayDetailsLink, updateA11y, a11yState])
+    displayAddButton: translateBooleanFlexibly(displayAddButton),
+    displayAddButtonText: translateBooleanFlexibly(displayAddButtonText),
+    displayDetailsLink: translateBooleanFlexibly(displayDetailsLink),
+    hiddenSections: processedHiddenSections
+  }), [addButtonText, colorDetailPageRoot, colorWallBgColor, displayAddButton, displayAddButtonText, displayDetailsLink])
 
   // -----------------------------------------------------
   // handle unmounting
@@ -148,7 +135,7 @@ export const ColorWallPage = (props: Props) => {
           <Switch>
             <Route path='(.*)?/search/:query' component={SearchContain} />
             <Route path='(.*)?/search/' component={SearchContain} />
-            <Route component={ColorWallContain} />
+            <Route component={ColorWall} />
           </Switch>
           {isLoading ? <GenericOverlay type={GenericOverlay.TYPES.LOADING} semitransparent /> : null}
         </div>

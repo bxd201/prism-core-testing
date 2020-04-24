@@ -1,6 +1,13 @@
 // @flow
 import type { CategorizedColorIdGrid, Color, ColorIdList, ColorList, ColorMap, ColorStatuses, FamilyStructure, Layouts, Layout } from './Colors'
 
+export type GridRefState = { current: ?{
+  recomputeGridSize: () => void,
+  scrollToCell: ({ rowIndex: number, columnIndex: number}) => void,
+  scrollToPosition: ({ scrollLeft: number, scrollTop: number }) => void,
+  state: { scrollLeft: number, scrollTop: number }
+} }
+
 export type ReduxAction = {
   type: string,
   payload: any
@@ -30,7 +37,7 @@ export type ColorsState = {
     colors?: CategorizedColorIdGrid,
     colorStatuses?: ColorStatuses,
     unorderedColors?: ColorIdList,
-    sectionLabels?: {},
+    sectionLabels?: { [?string]: string[] }
   },
   structure?: FamilyStructure,
   layouts?: Layouts,
@@ -53,5 +60,5 @@ export type ColorsState = {
     section?: string,
     family?: string,
     colorWallActive?: string
-  }
+  },
 }

@@ -1,40 +1,50 @@
 // @flow
-import once from 'lodash/once'
 import camelCase from 'lodash/camelCase'
-import memoizee from 'memoizee'
+import kebabCase from 'lodash/kebabCase'
 import { ensureFullyQualifiedAssetUrl } from '../shared/helpers/DataUtils'
 import { CLEANSLATE_CLASS, PRISM_CLASS } from './facetConstants'
 
-export const embedGlobalStylesOnce = once(() => {
-  const immediateStyleTag = document.createElement('style')
-  immediateStyleTag.type = 'text/css'
-  // $FlowIgnore -- flow doesn't think body is defined
-  document.body.appendChild(immediateStyleTag)
-  immediateStyleTag.innerHTML = `.${CLEANSLATE_CLASS}.${PRISM_CLASS} { display: none }`
-  const cleanslatePath = ensureFullyQualifiedAssetUrl(`css/${WEBPACK_CONSTANTS.cleanslateEntryPointName}.css?v=${APP_VERSION}`)
-  const cleanslateTag = document.createElement('link')
-  cleanslateTag.rel = 'stylesheet'
-  cleanslateTag.type = 'text/css'
-  cleanslateTag.crossOrigin = 'anonymous'
-  cleanslateTag.href = cleanslatePath // eslint-disable-line no-undef
-  cleanslateTag.media = 'all'
-  // $FlowIgnore -- flow doesn't think body is defined
-  document.body.appendChild(cleanslateTag)
-})
+const embedStyle = (path: string) => {
+  const id = kebabCase(path)
+
+  if (document.getElementById(id)) return
+
+  const fjs = document.getElementsByTagName('script')[0]
+  const css = document.createElement('link')
+  css.id = id
+  css.media = 'all'
+  css.rel = 'stylesheet'
+  css.type = 'text/css'
+  css.crossOrigin = 'anonymous'
+  css.href = `${path}?v=${APP_VERSION}`
+  fjs && fjs.parentNode.insertBefore(css, fjs)
+}
+
+const addHideStyles = () => {
+  const id = kebabCase(`prism-hide-styles-${APP_VERSION}`)
+
+  if (document.getElementById(id)) return
+
+  const fjs = document.getElementsByTagName('script')[0]
+  const css = document.createElement('link')
+  css.media = 'all'
+  css.rel = 'stylesheet'
+  css.type = 'text/css'
+  css.id = id
+  fjs && fjs.parentNode.insertBefore(css, fjs)
+  css.innerHTML = `.${CLEANSLATE_CLASS}.${PRISM_CLASS} { display: none }`
+}
+
+export const embedGlobalStyles = () => {
+  addHideStyles()
+  embedStyle(ensureFullyQualifiedAssetUrl(`css/${WEBPACK_CONSTANTS.chunkNonReactName}.css`))
+  embedStyle(ensureFullyQualifiedAssetUrl(`css/${WEBPACK_CONSTANTS.cleanslateEntryPointName}.css`))
+}
 
 // attaches styles for provided bundle -- only runs once per bundle name
-export const memoEmbedBundleStyles = memoizee((bundleName) => {
+export const embedBundleStyles = (bundleName: string) => {
   // create the link to our css
-  const fileName = `${camelCase(bundleName)}.css?v=${APP_VERSION}`
+  const fileName = `${camelCase(bundleName)}.css`
   const stylePath = ensureFullyQualifiedAssetUrl(`css/${fileName}`)
-  const styleTag = document.createElement('link')
-  styleTag.rel = 'stylesheet'
-  styleTag.type = 'text/css'
-  styleTag.crossOrigin = 'anonymous'
-  /* eslint-disable no-undef */ styleTag.href = stylePath
-  styleTag.media = 'all'
-
-  // add our css to the <head>
-  // $FlowIgnore -- flow doesn't think body is defined
-  document.body.appendChild(styleTag)
-}, { primitive: true, length: 1 })
+  embedStyle(stylePath)
+}

@@ -3,7 +3,7 @@ import { EMIT_COLOR, FILTER_BY_FAMILY, FILTER_BY_SECTION, LOAD_ERROR, MAKE_ACTIV
 import { CLEAR_SEARCH, RECEIVE_SEARCH_RESULTS, SEARCH_RESULTS_ERROR, TOGGLE_SEARCH_MODE, UPDATE_SEARCH_QUERY } from '../../actions/loadSearchResults'
 
 import { type ReduxAction, type ColorsState } from '../../../shared/types/Actions.js.flow'
-import { initialState, doReceiveColors, doFilterByFamily, doFilterBySection, doMakeActiveColor, doMakeActiveColorById, getErrorState } from './colorReducerMethods'
+import { initialState, doReceiveColors, doFilterByFamily, doFilterBySection, doMakeActiveColorById, getErrorState } from './colorReducerMethods'
 
 export const colors = (state: ColorsState = initialState, action: ReduxAction) => {
   switch (action.type) {
@@ -19,14 +19,6 @@ export const colors = (state: ColorsState = initialState, action: ReduxAction) =
           colorWallActive: initialState.initializeWith.colorWallActive
         },
         colorWallActive: initialState.colorWallActive
-      }
-    }
-
-    case MAKE_ACTIVE_COLOR: {
-      const newState = doMakeActiveColor(state, action)
-
-      if (newState) {
-        return newState
       }
     }
 

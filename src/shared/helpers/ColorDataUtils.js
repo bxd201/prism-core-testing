@@ -1,6 +1,5 @@
 // @flow
 import fill from 'lodash/fill'
-import flatten from 'lodash/flatten'
 import flattenDeep from 'lodash/flattenDeep'
 import keys from 'lodash/keys'
 import concat from 'lodash/concat'
@@ -118,38 +117,6 @@ function fillGrid (toPad: ColorIdGrid, padWith: BlankColor): ColorIdGrid {
     }
     return row
   })
-}
-
-/**
- * Converts a 4d color array into the 'undefined' seperated 2d array expected by react-virtualized
- *
- * @param {*} colors : 4d array to be converted to an 'undefined' seperated 2d array
- * @param {*} labels : optional labels to center at the top of each section column
- */
-export function convertToSpacedGrid (colors: string[][][][], labels: string[]): any[][] {
-  // calculating grid width based on all available rows -- this is done because some rows may not fill to their ends
-  const gridWidth = flatten(colors).map(row => row.map(cells => cells.length).reduce((prev, curr) => prev + curr + 1, 0)).reduce((prev, curr) => prev > curr ? prev : curr, 0) + 1
-  const blankLine = Array.from(Array(gridWidth))
-  const intersperseBlanks = (arr: string[][]): (void | string)[] => [undefined, ...arr.flatMap(arr => [...arr, undefined])]
-
-  // place any labels in the top row at the center of each column (for even-width columns, place left of center)
-  const labelLine = Array.from(blankLine)
-
-  labels && colors[0][0].reduce((acc: number, cur: string[], i: number) => {
-    labelLine[acc + Math.ceil(cur.length / 2)] = { label: labels[i], columnWidth: cur.length }
-    return acc + cur.length + 1
-  }, 0)
-
-  let firstLines = [blankLine]
-  if (labels) {
-    firstLines = [
-      blankLine,
-      labelLine,
-      blankLine
-    ]
-  }
-
-  return [...firstLines, ...colors.flatMap(row => [...row.map(intersperseBlanks), blankLine])]
 }
 
 // -------------------------------------------------------

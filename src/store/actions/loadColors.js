@@ -24,7 +24,7 @@ export const LOAD_ERROR: string = 'LOAD_ERROR'
 const loadError = (error) => ({ type: LOAD_ERROR, payload: error })
 
 export const FILTER_BY_FAMILY: string = 'FILTER_BY_FAMILY'
-export const filterByFamily = (family: string) => ({ type: FILTER_BY_FAMILY, payload: { family } })
+export const filterByFamily = (family: ?string) => ({ type: FILTER_BY_FAMILY, payload: { family } })
 
 export const FILTER_BY_SECTION: string = 'FILTER_BY_SECTION'
 export const filterBySection = (section: string) => ({ type: FILTER_BY_SECTION, payload: { section } })
@@ -32,14 +32,11 @@ export const filterBySection = (section: string) => ({ type: FILTER_BY_SECTION, 
 export const REMOVE_COLOR_FILTERS: string = 'REMOVE_COLOR_FILTERS'
 export const removeColorFilters = () => ({ type: REMOVE_COLOR_FILTERS })
 
-export const MAKE_ACTIVE_COLOR: string = 'MAKE_ACTIVE_COLOR'
-export const makeActiveColor = (color: Color) => ({ type: MAKE_ACTIVE_COLOR, payload: { color } })
-
 export const RESET_ACTIVE_COLOR: string = 'RESET_ACTIVE_COLOR'
 export const resetActiveColor = () => ({ type: RESET_ACTIVE_COLOR })
 
 export const MAKE_ACTIVE_COLOR_BY_ID: string = 'MAKE_ACTIVE_COLOR_BY_ID'
-export const makeActiveColorById = (id?: string) => id ? { type: MAKE_ACTIVE_COLOR_BY_ID, payload: { id } } : resetActiveColor()
+export const makeActiveColorById = (id: ?string) => id ? { type: MAKE_ACTIVE_COLOR_BY_ID, payload: { id } } : resetActiveColor()
 
 // TODO: Make this method configurable via options on call so specific color wall implementations can reuse it to load their colors
 export const loadColors = (brandId: string, options: Object = {}) => {

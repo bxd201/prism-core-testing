@@ -99,7 +99,11 @@ const sassRules = [
   {
     loader: 'sass-loader',
     options: {
-      prependData: '$env: ' + flags.mode + ';',
+      prependData: [
+        '$cleanslateWrappingClass: ' + flags.cleanslateWrappingClass,
+        '$env: ' + flags.mode,
+        '$prismWrappingClass: ' + flags.prismWrappingClass
+      ].join(';') + ';',
       sassOptions: (loaderContext) => {
         return {
           functions: {

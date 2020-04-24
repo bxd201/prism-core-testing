@@ -3,14 +3,16 @@
 ## Available props
 | Prop | Type | HTML Attribute Example | React Prop Example | Description |
 |--------------------|-------|---------|---|-------------|
-| colorDetailPageRoot | `string` | `color-detail-page-root="https://site.com/color-details/"` | `colorDetailPageRoot="https://site.com/color-details/"` | Defines the URL path used for links to color details pages. This will cause CDPs to navigate to a new URL. |
-| colorWallBgColor | `string` | `color-wall-bg-color="#FFF"` | `colorWallBgColor="#FFF"` | Defines background color for color wall. |
-| defaultSection | `string` | `default-section` | `defaultSection` | Overrides default section to show when Facet mounts. |
-| displayAddButton | `boolean` | `display-add-button` | `displayAddButton` | Shows an add button on active color swatches. |
-| displayDetailsLink | `boolean` | `display-details-link` | `displayDetailsLink` | Shows a "View Details" link on active color swatches. |
-| hiddenSections | `string` or `string[]`| `hidden-sections='Emerald Designer Edition|Historic'` | `hiddenSections={[ 'Emerald Designer Edition', 'Historic' ]}` | Designates sections to be removed from the UI of the color wall facet. These sections can still be searched for. Bar delimited section names. |
-| resetOnUnmount | `boolean` | `reset-on-unmount` | `resetOnUnmount` | If true will reset the active color in redux when the Facet is unmounted. |
-| swatchShouldEmit | `boolean` | `swatch-should-emit` | `swatchShouldEmit` | Will cause a selected swatch to publish a `PRISM/out/emitColor` event.
+| addButtonText | `string` | `data-add-button-text="Add to Cart` | `addButtonText="Add to Cat"` | Defines text shown with add button on color swatches. Any instances of the `{name}` keyword in this property will be replaced with the name of the associated color. |
+| colorDetailPageRoot | `string` | `data-color-detail-page-root="https://site.com/color-details/"` | `colorDetailPageRoot="https://site.com/color-details/"` | Defines the URL path used for links to color details pages. This will cause CDPs to navigate to a new URL. |
+| colorWallBgColor | `string` | `data-color-wall-bg-color="#FFF"` | `colorWallBgColor="#FFF"` | Defines background color for color wall. |
+| defaultSection | `string` | `data-default-section` | `defaultSection` | Overrides default section to show when Facet mounts. |
+| displayAddButton | `boolean` | `data-display-add-button` | `displayAddButton` | Shows an add button on active color swatches. |
+| displayAddButtonText | `boolean` | `data-display-add-button-text` | `displayAddButtonText` | Shows an add button on active color swatches. |
+| displayDetailsLink | `boolean` | `data-display-details-link` | `displayDetailsLink` | Shows a "View Details" link on active color swatches. |
+| hiddenSections | `string` or `string[]`| `data-hidden-sections='Emerald Designer Edition|Historic'` | `hiddenSections={[ 'Emerald Designer Edition', 'Historic' ]}` | Designates sections to be removed from the UI of the color wall facet. These sections can still be searched for. Bar delimited section names. |
+| resetOnUnmount | `boolean` | `data-reset-on-unmount` | `resetOnUnmount` | If true will reset the active color in redux when the Facet is unmounted. |
+| swatchShouldEmit | `boolean` | `data-swatch-should-emit` | `swatchShouldEmit` | Will cause a selected swatch to publish a `PRISM/out/emitColor` event.
 
 ## Published events
 

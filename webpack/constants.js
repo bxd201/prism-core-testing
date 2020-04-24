@@ -5,6 +5,10 @@ const mode = process.env.NODE_ENV || 'development'
 const dev = mode === 'development'
 const production = mode === 'production'
 
+// wrapping classes
+const cleanslateWrappingClass = 'c8e'
+const prismWrappingClass = 'p3m'
+
 // paths
 const rootPath = path.resolve(__dirname, '..')
 const srcPath = path.join(rootPath, 'src')
@@ -26,6 +30,8 @@ const embedEntryPointName = 'embed'
 const authorEntryPointName = 'author'
 const cleanslateEntryPointName = 'cleanslate'
 const exportEntryPointName = 'index'
+const chunkReactName = 'commonR'
+const chunkNonReactName = 'commonNonR'
 
 const fixedEntryPoints = {
   [cleanslateEntryPointName]: cleanslatePath,
@@ -58,7 +64,10 @@ module.exports = {
   appIndexPath,
   authorEntryPointName,
   authorPath,
+  chunkNonReactName,
+  chunkReactName,
   cleanslateEntryPointName,
+  cleanslateWrappingClass,
   dev,
   distPath,
   embedEntryPointName,
@@ -70,7 +79,9 @@ module.exports = {
   mocksPath,
   mode,
   nodeModulesPath,
+  prismWrappingClass,
   production,
   rootPath,
-  srcPath
+  srcPath,
+  templateIndexEntryPointName
 }
