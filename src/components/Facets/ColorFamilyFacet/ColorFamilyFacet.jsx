@@ -78,6 +78,7 @@ export const ColorFamilyPage = (props: Props) => {
           <Switch>
             <Route path='(.*)?/search/:query' component={SearchBarNoCancel} />
             <Route path='(.*)?/search/' component={SearchBarNoCancel} />
+            <Redirect to={redirectTo} />
           </Switch>
           <Switch>
             <Route path='(.*)?/section/:section/family/:family/(.*/)?search/:query' component={SearchWithinFamily} />
