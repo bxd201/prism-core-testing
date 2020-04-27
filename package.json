@@ -50,32 +50,6 @@
       "WEBPACK_CONSTANTS": {},
       "VAR_NAMES": {},
       "VAR_VALUES": {}
-    },
-    "coverageThreshold": {
-      "global": {
-        "branches": 30,
-        "functions": 30,
-        "lines": 30,
-        "statements": -10
-      },
-      "./src/store/actions/**/*.js": {
-        "branch": 90,
-        "functions": 90,
-        "line": 90,
-        "statements": 90
-      },
-      "./src/store/masks/**/*.js": {
-        "branch": 90,
-        "functions": 90,
-        "line": 90,
-        "statements": 90
-      },
-      "./src/store/reducers/**/*.js": {
-        "branch": 90,
-        "functions": 90,
-        "line": 90,
-        "statements": 90
-      }
     }
   },
   "dependencies": {

@@ -35,4 +35,4 @@ test('ColorWallFacet', async () => {
   await fireEvent.click(await findByText('Historic Colors'))
   await fireEvent.click(await findByText('Timeless Colors'))
   await findByLabelText('SW 9185 Marea Baja')
-}, 15000)
+})
