@@ -1,6 +1,6 @@
 // @flow
 import uniqueId from 'lodash/uniqueId'
-import { ensureFullyQualifiedAssetUrl } from '../../shared/helpers/DataUtils'
+import ensureFullyQualifiedAssetUrl from 'src/shared/utils/ensureFullyQualifiedAssetUrl.util'
 import MaskObj from './MaskObj'
 
 const MASK_ID_PREFIX = 'msk'

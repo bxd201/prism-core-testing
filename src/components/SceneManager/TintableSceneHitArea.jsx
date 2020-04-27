@@ -7,7 +7,7 @@ import SVG from 'react-inlinesvg'
 import { DRAG_TYPES } from 'constants/globals'
 import { DropTarget } from 'react-dnd-cjs'
 
-import { ensureFullyQualifiedAssetUrl } from '../../shared/helpers/DataUtils'
+import ensureFullyQualifiedAssetUrl from 'src/shared/utils/ensureFullyQualifiedAssetUrl.util'
 import { getBaseUrl } from '../../shared/utils/util'
 
 type Props = {

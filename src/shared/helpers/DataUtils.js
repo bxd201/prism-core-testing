@@ -1,6 +1,5 @@
 // @flow
 import memoizee from 'memoizee'
-import urlPattern from 'src/shared/regex/url'
 
 export function getByLowerCasePropName (obj: Object, propName: string): any {
   const realKey: string[] = Object.keys(obj).map(prop => prop.toLowerCase()).filter(prop => prop === propName)
@@ -11,19 +10,6 @@ export function getByLowerCasePropName (obj: Object, propName: string): any {
 
 export function getTotalWidthOf2dArray (arr: any[][]): number {
   return (!arr || !arr[0]) ? 0 : arr.reduce((total: number, cur: any[]) => Math.max(total, cur.length), 0)
-}
-
-export const removeExtraURLSlashesAfterProtocol = (url: string) => {
-  return url.replace(/([^:])(\/){2,}/g, '$1/')
-}
-
-export const ensureFullyQualifiedAssetUrl = (url: string): string => {
-  if (typeof url === 'string' && url.length > 1) {
-    const matches = url.match(urlPattern)
-    return matches && matches[1] ? url : removeExtraURLSlashesAfterProtocol(`${BASE_PATH}/${url}`)
-  }
-
-  return ''
 }
 
 export const generateBrandedEndpoint = memoizee((basePath, brand, options = {}) => {
