@@ -21,11 +21,13 @@ type Props = {
   handleCompareColor: Function
 }
 const baseClass = 'prism-live-palette__slot'
+const width = 20
 
 export function ActiveSlot (props: Props) {
   const { color, active, index, toggleCompareColor } = props
 
   const activeSlotRef = useRef(null)
+  const dragIcon = useRef(null)
   const [isDeleting, setDeletingStatus] = useState(false)
   const [isColorAdded, setToggleAddedColor] = useState(true)
   const [isToggleCompareColor, setPrevToggle] = useState(null)
@@ -42,7 +44,6 @@ export function ActiveSlot (props: Props) {
       if (!activeSlotRef.current) {
         return
       }
-
       const dragIndex = item.index
       const hoverIndex = index
 
@@ -102,9 +103,15 @@ export function ActiveSlot (props: Props) {
     item: { type: DRAG_TYPES.SWATCH, color, index },
     collect: monitor => ({
       isDragging: monitor.isDragging()
-    })
+    }),
+    canDrag: (monitor) => {
+      let { x: mouseX, y: mouseY } = monitor.getClientOffset()
+      const dragIconBoundingRect = dragIcon.current.getBoundingClientRect()
+      let { x: iconX, y: iconY, width, height } = dragIconBoundingRect
+      return !((toggleCompareColor || mouseX < iconX || mouseX > (iconX + width) || mouseY < iconY || mouseY > (iconY + height)))
+    }
   })
-  const opacity = isDragging ? 0.33 : 1
+  const opacity = isDragging ? 0 : 1
 
   drag(drop(activeSlotRef))
 
@@ -112,7 +119,7 @@ export function ActiveSlot (props: Props) {
     setToggleAddedColor(true)
     setPrevToggle(toggleCompareColor)
   }
-
+  const lineColor = getContrastYIQ(color.hex)
   return (
     <div ref={activeSlotRef} className={`prism-live-palette__slot ${(active ? ACTIVE_CLASS : '')} ${(isDeleting ? REMOVAL_CLASS : '')}`} style={{ backgroundColor: color.hex, opacity }} onClick={activateSlot} onKeyDown={activateSlot} role='button' tabIndex='-1'>
       {!toggleCompareColor && <div className={`prism-live-palette__color-details ${LIGHT_DARK_CLASS}`}>
@@ -127,6 +134,13 @@ export function ActiveSlot (props: Props) {
           { !isColorAdded && <FontAwesomeIcon className={`${baseClass}__${icons} ${toggleCompareColor ? `${baseClass}__${icons}--show` : `${baseClass}__${icons}--hide`}`} icon={['fal', 'plus-circle']} size='2x' /> }
         </div>
       </button>}
+      <div ref={dragIcon} className={`${baseClass}__drag-icon-wrapper ${!toggleCompareColor ? `${baseClass}__drag-icon-wrapper--show` : `${baseClass}__drag-icon-wrapper--hide`}`} >
+        <svg>
+          <line strokeWidth='1px' stroke={lineColor} x1={width} y1='0' x2='0' y2={width} />
+          <line strokeWidth='1px' stroke={lineColor} x1={width} y1={Math.floor(width / 3)} x2={Math.floor(width / 3)} y2={width} />
+          <line strokeWidth='1px' stroke={lineColor} x1={width} y1={2 * Math.floor(width / 3)} x2={2 * Math.floor(width / 3)} y2={width} />
+        </svg>
+      </div>
     </div>
   )
 }
