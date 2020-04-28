@@ -36,7 +36,7 @@ const TEMPLATES_DIST_LOCATION = 'templates/'
 const allTemplates = (ctx => {
   return ctx.keys().map(template => ({
     input: `${TEMPLATES_SRC_LOCATION}${template}`,
-    output: `${TEMPLATES_DIST_LOCATION}${template}`
+    output: `${TEMPLATES_DIST_LOCATION}${template.replace(/(.*)\.ejs/, '$1.html')}`
   }))
 })(requireContext(path.resolve(__dirname, TEMPLATES_SRC_LOCATION), true, /.*/))
 
@@ -78,6 +78,19 @@ const CACHE_HASH = hash([
   ...flags.mode,
   ...allTemplates.map(template => template.input)
 ])
+
+const DEFINED_VARS = {
+  'API_PATH': API_PATH,
+  'APP_NAME': APP_NAME,
+  'APP_VERSION': APP_VERSION,
+  'BASE_PATH': BASE_PATH,
+  'ENV': ENV,
+  'ML_API_URL': ML_API_URL,
+  'WEBPACK_CONSTANTS': flags,
+  'VAR_NAMES': ALL_VARS.varNames,
+  'VAR_VALUES': ALL_VARS.varValues,
+  'STATIC_TEMPLATES': allTemplates.map(template => template.output)
+}
 
 module.exports = {
   stats: {
@@ -129,6 +142,44 @@ module.exports = {
         use: sassRules
       },
       {
+        test: /\.(png|jpe?g|gif|svg)$/i,
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              // inline images below this threshhold
+              limit: 8192,
+              esModule: false,
+              // the following options get passed to fallback file-loader
+              name: '[name].[hash].[ext]',
+              outputPath: 'images',
+              publicPath: '/images/'
+            }
+          },
+          {
+            loader: 'image-webpack-loader',
+            options: {
+              disable: !flags.production,
+              mozjpeg: {
+                progressive: true,
+                quality: 65
+              },
+              // optipng.enabled: false will disable optipng
+              optipng: {
+                enabled: false
+              },
+              pngquant: {
+                quality: [0.65, 0.90],
+                speed: 4
+              },
+              gifsicle: {
+                interlaced: false
+              }
+            }
+          }
+        ]
+      },
+      {
         test: /\.worker\.js$/,
         exclude: /node_modules\/(?!(react-intl|intl-messageformat|intl-messageformat-parser|hashids))/,
         include: flags.srcPath,
@@ -155,6 +206,16 @@ module.exports = {
           'eslint-loader'
         ],
         resolve: { extensions: [ '.js', '.jsx' ] }
+      },
+      {
+        test: /\.ejs$/,
+        use: [
+          'html-loader',
+          {
+            loader: 'ejs-html-loader',
+            options: DEFINED_VARS
+          }
+        ]
       }
     ]
   },
@@ -176,6 +237,28 @@ module.exports = {
     removeAvailableModules: true,
     removeEmptyChunks: true,
     sideEffects: flags.production,
+    splitChunks: {
+      cacheGroups: {
+        [flags.chunkNonReactName]: {
+          filename: '[name].js',
+          name: flags.chunkNonReactName,
+          test: /[\\/]node_modules[\\/](?!(react|react-dom))/,
+          chunks (chunk) {
+            const dontChunk = chunk.name === flags.templateIndexEntryPointName || chunk.name === flags.embedEntryPointName
+            return !dontChunk
+          }
+        },
+        [flags.chunkReactName]: {
+          filename: '[name].js',
+          name: flags.chunkReactName,
+          test: /[\\/]node_modules[\\/](react|react-dom)/,
+          chunks (chunk) {
+            const dontChunk = chunk.name === flags.templateIndexEntryPointName || chunk.name === flags.embedEntryPointName
+            return !dontChunk
+          }
+        }
+      }
+    },
     usedExports: flags.production
   },
   plugins: [
@@ -183,41 +266,38 @@ module.exports = {
     flags.dev && new BundleAnalyzerPlugin(),
     new HtmlWebpackPlugin({
       inject: false,
-      template: './src/index/index.html'
+      template: './src/index/index.ejs',
+      filename: path.resolve(flags.distPath, 'index.html')
     }),
-    ...allTemplates.map(template => new HtmlWebpackPlugin({
-      inject: false,
-      filename: `${template.output}`,
-      template: `${template.input}`
-    })),
+    ...allTemplates.map(template => {
+      return new HtmlWebpackPlugin({
+        inject: false,
+        filename: `${template.output}`,
+        template: `${template.input}`
+      })
+    }),
     new MiniCssExtractPlugin({
       filename: 'css/[name].css'
     }),
-    ...Object.keys(allEntryPoints).map(key => {
-      // wrap each entry's associated CSS file with .cleanslate.prism, excluding :root rules
+    ...[
+      ...Object.keys(allEntryPoints),
+      flags.chunkNonReactName,
+      flags.chunkReactName
+    ].map(key => {
+      // wrap each entry's associated CSS file with .clnslt.prism, excluding :root rules
       // excluding anything from our "fixed" entrypoints, which are cleanslate and template index
       if (!flags.fixedEntryPoints[key]) {
-        return new PostCssWrapper(`css/${key}.css`, '.cleanslate.prism', /^:root/)
+        return new PostCssWrapper(`css/${key}.css`, `.${flags.prismWrappingClass}.${flags.cleanslateWrappingClass}`, /^:root/)
       }
-    }),
+    }).filter(v => !!v),
+    // NOTE: This is ONLY for copying over scene SVG masks, which webpack otherwise has no way of knowing about
     new CopyWebpackPlugin([
       {
-        from: 'src/images',
+        from: 'src/images-to-copy',
         to: 'prism/images'
       }
     ]),
-    new webpack.DefinePlugin({
-      'API_PATH': JSON.stringify(API_PATH),
-      'APP_NAME': JSON.stringify(APP_NAME),
-      'APP_VERSION': JSON.stringify(APP_VERSION),
-      'BASE_PATH': JSON.stringify(BASE_PATH),
-      'ENV': JSON.stringify(ENV),
-      'ML_API_URL': JSON.stringify(ML_API_URL),
-      'WEBPACK_CONSTANTS': JSON.stringify(flags),
-      'VAR_NAMES': JSON.stringify(ALL_VARS.varNames),
-      'VAR_VALUES': JSON.stringify(ALL_VARS.varValues),
-      'STATIC_TEMPLATES': JSON.stringify(allTemplates.map(template => template.output))
-    }),
+    new webpack.DefinePlugin(Object.entries(DEFINED_VARS).reduce((last, next) => ({ ...last, [next[0]]: JSON.stringify(next[1]) }), {})),
     !flags.production && new HardSourceWebpackPlugin({
       configHash: CACHE_HASH,
       cacheDirectory: path.join(flags.rootPath, '.cache/hard-source/[confighash]'),
@@ -282,6 +362,7 @@ module.exports = {
       'Access-Control-Allow-Origin': '*'
     },
     compress: true,
+    writeToDisk: true,
     disableHostCheck: true
   }
 }

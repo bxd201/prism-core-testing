@@ -36,7 +36,8 @@ export const fullColorNumber = memoizee(function fullColorNumber (brandKey: stri
   return colorNamePrefix
 }, { primitive: true, length: 2 })
 
-export const fullColorName = memoizee(function fullColorName (brandKey: string | void, colorNumber: string | void, name: string): string {
+type fullColorNameProps = { brandKey: string | void, colorNumber: string | void, name: string }
+export const fullColorName = memoizee(function fullColorName ({ brandKey, colorNumber, name }: fullColorNameProps): string {
   return `${fullColorNumber(brandKey, colorNumber)}${name}`
 }, { primitive: true, length: 3 })
 

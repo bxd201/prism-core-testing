@@ -5,6 +5,7 @@ const { sassRules } = require('./webpack/sassRules')
 const webpack = require('webpack')
 const WebpackBar = require('webpackbar')
 const flags = require('./webpack/constants')
+const ALL_VARS = require('./src/shared/variableDefs')
 
 // create constants that correlate to environment variables to be injected
 const APP_VERSION = process.env.npm_package_version
@@ -13,6 +14,19 @@ const APP_NAME = process.env.npm_package_name
 const API_PATH = (process.env.API_URL) ? process.env.API_URL : '$API_URL'
 const ML_API_URL = (process.env.ML_API_URL) ? process.env.ML_API_URL : '$ML_API_URL'
 const BASE_PATH = (process.env.WEB_URL) ? process.env.WEB_URL : '$WEB_URL'
+const ENV = process.env.NODE_ENV
+
+const DEFINED_VARS = {
+  'API_PATH': API_PATH,
+  'APP_NAME': APP_NAME,
+  'APP_VERSION': APP_VERSION,
+  'BASE_PATH': BASE_PATH,
+  'ENV': ENV,
+  'ML_API_URL': ML_API_URL,
+  'WEBPACK_CONSTANTS': flags,
+  'VAR_NAMES': ALL_VARS.varNames,
+  'VAR_VALUES': ALL_VARS.varValues
+}
 
 module.exports = {
   stats: {
@@ -84,6 +98,44 @@ module.exports = {
         use: sassRules
       },
       {
+        test: /\.(png|jpe?g|gif|svg)$/i,
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              // inline images below this threshhold
+              limit: 8192,
+              esModule: false,
+              // the following options get passed to fallback file-loader
+              name: '[name].[hash].[ext]',
+              outputPath: 'images',
+              publicPath: '/images/'
+            }
+          },
+          {
+            loader: 'image-webpack-loader',
+            options: {
+              disable: !flags.production,
+              mozjpeg: {
+                progressive: true,
+                quality: 65
+              },
+              // optipng.enabled: false will disable optipng
+              optipng: {
+                enabled: false
+              },
+              pngquant: {
+                quality: [0.65, 0.90],
+                speed: 4
+              },
+              gifsicle: {
+                interlaced: false
+              }
+            }
+          }
+        ]
+      },
+      {
         test: /\.worker\.js$/,
         exclude: /node_modules\/(?!(react-intl|intl-messageformat|intl-messageformat-parser|hashids))/,
         include: flags.srcPath,
@@ -137,18 +189,13 @@ module.exports = {
     new MiniCssExtractPlugin({
       filename: 'css/[name].css'
     }),
+    // NOTE: This is ONLY for copying over scene SVG masks, which webpack otherwise has no way of knowing about
     new CopyWebpackPlugin([
       {
-        from: 'src/images',
+        from: 'src/images-to-copy',
         to: 'prism/images'
       }
     ]),
-    new webpack.DefinePlugin({
-      'API_PATH': JSON.stringify(API_PATH),
-      'APP_NAME': JSON.stringify(APP_NAME),
-      'APP_VERSION': JSON.stringify(APP_VERSION),
-      'BASE_PATH': JSON.stringify(BASE_PATH),
-      'ML_API_URL': JSON.stringify(ML_API_URL)
-    })
+    new webpack.DefinePlugin(Object.entries(DEFINED_VARS).reduce((last, next) => ({ ...last, [next[0]]: JSON.stringify(next[1]) }), {}))
   ].filter(p => p)
 }

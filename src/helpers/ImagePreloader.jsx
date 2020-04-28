@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import isEmpty from 'lodash/isEmpty'
 import flattenDeep from 'lodash/flattenDeep'
 
-import { ensureFullyQualifiedAssetUrl } from '../shared/helpers/DataUtils'
+import ensureFullyQualifiedAssetUrl from 'src/shared/utils/ensureFullyQualifiedAssetUrl.util'
 import { type NestedArray } from '../shared/types/Common.js.flow'
 import MaskObj from '../store/masks/MaskObj'
 

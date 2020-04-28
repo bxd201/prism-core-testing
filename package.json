@@ -1,10 +1,11 @@
 {
   "name": "prism",
-  "version": "1.3.5",
+  "version": "1.3.7",
   "scripts": {
     "precleanstart": "node build-scripts/utilities/clear-build-cache.js",
     "cleanstart": "npm start",
     "start": "cross-env NODE_ENV=development API_URL=https://develop-prism-api.ebus.swaws ML_API_URL=http://localhost ENTRY=$ENTRY webpack-dev-server --mode development --open --hot --config webpack.dev.js",
+    "prebuild": "node build-scripts/utilities/clear-build-cache.js",
     "build": "NODE_ENV=production webpack --config webpack.prod.js",
     "build:publish": "cross-env API_URL=https://prism-api.sherwin-williams.com WEB_URL=https://replatform-prism-web.ebus.swaws webpack --config webpack.publish.js",
     "test": "jest --coverage",
@@ -49,32 +50,6 @@
       "WEBPACK_CONSTANTS": {},
       "VAR_NAMES": {},
       "VAR_VALUES": {}
-    },
-    "coverageThreshold": {
-      "global": {
-        "branches": 30,
-        "functions": 30,
-        "lines": 30,
-        "statements": -10
-      },
-      "./src/store/actions/**/*.js": {
-        "branch": 90,
-        "functions": 90,
-        "line": 90,
-        "statements": 90
-      },
-      "./src/store/masks/**/*.js": {
-        "branch": 90,
-        "functions": 90,
-        "line": 90,
-        "statements": 90
-      },
-      "./src/store/reducers/**/*.js": {
-        "branch": 90,
-        "functions": 90,
-        "line": 90,
-        "statements": 90
-      }
     }
   },
   "dependencies": {
@@ -90,6 +65,7 @@
     "axios": "0.19.0",
     "core-js": "2.6.5",
     "delta-e": "0.0.7",
+    "focus-within-polyfill": "^5.0.7",
     "hashids": "^2.2.1",
     "immutability-helper": "3.0.1",
     "lodash": "4.17.15",
@@ -135,9 +111,10 @@
     "babel-jest": "24.9.0",
     "babel-loader": "8.0.6",
     "clean-webpack-plugin": "3.0.0",
-    "copy-webpack-plugin": "5.0.4",
+    "copy-webpack-plugin": "^5.1.1",
     "cross-env": "5.2.1",
     "css-loader": "3.2.0",
+    "ejs-html-loader": "^4.0.1",
     "eslint": "5.15.3",
     "eslint-config-standard": "12.0.0",
     "eslint-config-standard-react": "7.0.2",
@@ -156,9 +133,11 @@
     "flow-interfaces": "0.6.1",
     "flow-typed": "2.6.1",
     "hard-source-webpack-plugin": "0.13.1",
+    "html-loader": "^1.1.0",
     "html-webpack-plugin": "3.2.0",
     "husky": "^4.2.3",
     "identity-obj-proxy": "3.0.0",
+    "image-webpack-loader": "^6.0.0",
     "jest": "25.1.0",
     "jest-canvas-mock": "2.1.1",
     "memoizee": "0.4.14",
@@ -183,6 +162,7 @@
     "style-loader": "1.0.0",
     "terser-webpack-plugin": "2.1.3",
     "uglifyjs-webpack-plugin": "2.2.0",
+    "url-loader": "^4.1.0",
     "webpack": "4.41.1",
     "webpack-bundle-analyzer": "3.5.2",
     "webpack-clean": "1.2.3",

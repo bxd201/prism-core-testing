@@ -13,30 +13,18 @@ import 'src/scss/convenience/visually-hidden.scss'
 import { MIN_SEARCH_LENGTH } from '../../store/actions/loadSearchResults'
 import at from 'lodash/at'
 
-type Props = {
-  showCancelButton: boolean,
-  showLabel?: boolean,
-  showIcon?: boolean,
-  label: string
-}
-
-export default (props: Props) => {
-  const {
-    label,
-    showCancelButton = true,
-    showIcon = true,
-    showLabel = true
-  } = props
-  const { query = '' } = useParams()
+type Props = { showCancelButton: boolean, showLabel?: boolean, showIcon?: boolean, label: string }
+const SearchBar = ({ label, showCancelButton = true, showIcon = true, showLabel = true }: Props) => {
+  let { query }: { query: ?string } = useParams()
+  query = decodeURIComponent(query || '')
   const history = useHistory()
   const { messages = {} } = useIntl()
-  const [value, setValue] = React.useState(query)
+  const [value: string, setValue: (string) => void] = React.useState(query)
   const [id] = React.useState(uniqueId('SearchBarInput'))
+
   const updateUrl = React.useMemo(() => debounce((value, abort = false) => {
     // this is for "cancelling" the debounced method if we unmount before execution
-    if (abort) {
-      return
-    }
+    if (abort) { return }
 
     if (typeof value === 'string') {
       const l = value.length
@@ -98,3 +86,5 @@ export default (props: Props) => {
     </div>
   )
 }
+
+export default SearchBar
