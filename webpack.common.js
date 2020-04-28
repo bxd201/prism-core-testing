@@ -36,7 +36,7 @@ const TEMPLATES_DIST_LOCATION = 'templates/'
 const allTemplates = (ctx => {
   return ctx.keys().map(template => ({
     input: `${TEMPLATES_SRC_LOCATION}${template}`,
-    output: `${TEMPLATES_DIST_LOCATION}${template}`
+    output: `${TEMPLATES_DIST_LOCATION}${template.replace(/(.*)\.ejs/, '$1.html')}`
   }))
 })(requireContext(path.resolve(__dirname, TEMPLATES_SRC_LOCATION), true, /.*/))
 
@@ -78,6 +78,19 @@ const CACHE_HASH = hash([
   ...flags.mode,
   ...allTemplates.map(template => template.input)
 ])
+
+const DEFINED_VARS = {
+  'API_PATH': API_PATH,
+  'APP_NAME': APP_NAME,
+  'APP_VERSION': APP_VERSION,
+  'BASE_PATH': BASE_PATH,
+  'ENV': ENV,
+  'ML_API_URL': ML_API_URL,
+  'WEBPACK_CONSTANTS': flags,
+  'VAR_NAMES': ALL_VARS.varNames,
+  'VAR_VALUES': ALL_VARS.varValues,
+  'STATIC_TEMPLATES': allTemplates.map(template => template.output)
+}
 
 module.exports = {
   stats: {
@@ -193,6 +206,16 @@ module.exports = {
           'eslint-loader'
         ],
         resolve: { extensions: [ '.js', '.jsx' ] }
+      },
+      {
+        test: /\.ejs$/,
+        use: [
+          'html-loader',
+          {
+            loader: 'ejs-html-loader',
+            options: DEFINED_VARS
+          }
+        ]
       }
     ]
   },
@@ -230,7 +253,7 @@ module.exports = {
           name: flags.chunkReactName,
           test: /[\\/]node_modules[\\/](react|react-dom)/,
           chunks (chunk) {
-            const dontChunk = chunk.name === flags.embedEntryPointName
+            const dontChunk = chunk.name === flags.templateIndexEntryPointName || chunk.name === flags.embedEntryPointName
             return !dontChunk
           }
         }
@@ -243,13 +266,16 @@ module.exports = {
     flags.dev && new BundleAnalyzerPlugin(),
     new HtmlWebpackPlugin({
       inject: false,
-      template: './src/index/index.html'
+      template: './src/index/index.ejs',
+      filename: path.resolve(flags.distPath, 'index.html')
     }),
-    ...allTemplates.map(template => new HtmlWebpackPlugin({
-      inject: false,
-      filename: `${template.output}`,
-      template: `${template.input}`
-    })),
+    ...allTemplates.map(template => {
+      return new HtmlWebpackPlugin({
+        inject: false,
+        filename: `${template.output}`,
+        template: `${template.input}`
+      })
+    }),
     new MiniCssExtractPlugin({
       filename: 'css/[name].css'
     }),
@@ -271,18 +297,7 @@ module.exports = {
         to: 'prism/images'
       }
     ]),
-    new webpack.DefinePlugin({
-      'API_PATH': JSON.stringify(API_PATH),
-      'APP_NAME': JSON.stringify(APP_NAME),
-      'APP_VERSION': JSON.stringify(APP_VERSION),
-      'BASE_PATH': JSON.stringify(BASE_PATH),
-      'ENV': JSON.stringify(ENV),
-      'ML_API_URL': JSON.stringify(ML_API_URL),
-      'WEBPACK_CONSTANTS': JSON.stringify(flags),
-      'VAR_NAMES': JSON.stringify(ALL_VARS.varNames),
-      'VAR_VALUES': JSON.stringify(ALL_VARS.varValues),
-      'STATIC_TEMPLATES': JSON.stringify(allTemplates.map(template => template.output))
-    }),
+    new webpack.DefinePlugin(Object.entries(DEFINED_VARS).reduce((last, next) => ({ ...last, [next[0]]: JSON.stringify(next[1]) }), {})),
     !flags.production && new HardSourceWebpackPlugin({
       configHash: CACHE_HASH,
       cacheDirectory: path.join(flags.rootPath, '.cache/hard-source/[confighash]'),
