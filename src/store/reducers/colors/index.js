@@ -1,5 +1,5 @@
 // @flow
-import { EMIT_COLOR, FILTER_BY_FAMILY, FILTER_BY_SECTION, LOAD_ERROR, MAKE_ACTIVE_COLOR_BY_ID, RECEIVE_COLORS, REMOVE_COLOR_FILTERS, RESET_ACTIVE_COLOR, UPDATE_COLOR_STATUSES } from '../../actions/loadColors'
+import { EMIT_COLOR, FILTER_BY_FAMILY, FILTER_BY_SECTION, LOAD_ERROR, MAKE_ACTIVE_COLOR_BY_ID, RECEIVE_COLORS, REMOVE_COLOR_FILTERS, RESET_ACTIVE_COLOR, UPDATE_COLOR_STATUSES, REQUEST_COLORS } from '../../actions/loadColors'
 import { CLEAR_SEARCH, RECEIVE_SEARCH_RESULTS, SEARCH_RESULTS_ERROR, TOGGLE_SEARCH_MODE, UPDATE_SEARCH_QUERY } from '../../actions/loadSearchResults'
 
 import { type ReduxAction, type ColorsState } from '../../../shared/types/Actions.js.flow'
@@ -27,6 +27,19 @@ export const colors = (state: ColorsState = initialState, action: ReduxAction) =
 
       if (newState) {
         return newState
+      }
+    }
+
+    case REQUEST_COLORS: {
+      return {
+        ...state,
+        status: {
+          ...state.status,
+          activeRequest: true,
+          error: false,
+          loading: true,
+          requestComplete: false
+        }
       }
     }
 

@@ -12,6 +12,7 @@ import ColorFamilyFacet from 'src/components/Facets/ColorFamilyFacet/ColorFamily
 import FastMaskSimple from 'src/components/Facets/FastMaskSimple/FastMaskSimple'
 import Prism from 'src/components/Facets/Prism/Prism'
 import Tinter from 'src/components/Facets/Tinter/Tinter'
+import RoomTypeDetector from 'src/components/Facets/RoomTypeDetector/RoomTypeDetector'
 
 export default {
   ColorDetailsFacet: facetMasterWrapper(ColorDetailsFacet),
@@ -20,5 +21,6 @@ export default {
   ColorFamilyFacet: facetMasterWrapper(ColorFamilyFacet),
   FastMaskSimple: facetMasterWrapper(FastMaskSimple),
   Prism: facetMasterWrapper(Prism),
-  Tinter: facetMasterWrapper(Tinter)
+  Tinter: facetMasterWrapper(Tinter),
+  RoomTypeDetector: facetMasterWrapper(RoomTypeDetector)
 }
