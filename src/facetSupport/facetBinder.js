@@ -16,11 +16,12 @@ import { addInstance, getInstance, unmount, type BoundFacet } from './facetInsta
 import { initFirebaseOnce } from './facetFirebase'
 
 // import the redux store
-import { embedGlobalStyles, embedBundleStyles } from './facetStyles'
+import embedGlobalStyles from './styles/embedGlobalStyles'
+import embedBundleStyles from './styles/embedBundleStyles'
 import { HAS_BOUND_CLASS, TO_BIND_CLASS } from './facetConstants'
 import { facetMasterWrapper } from './facetMasterWrapper'
-import { dressUpForPrism } from './facetUtils'
 import { FIREBASE_CONFIG } from 'constants/configurations'
+import dressUpForPrism from './utils/dressUpForPrism'
 
 let [addToEmbedQueue, embedQueue] = [(facetName) => {
   embedQueue.push(facetName)

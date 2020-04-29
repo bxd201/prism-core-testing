@@ -5,6 +5,7 @@ const { sassRules } = require('./webpack/sassRules')
 const webpack = require('webpack')
 const WebpackBar = require('webpackbar')
 const flags = require('./webpack/constants')
+const ALL_VARS = require('./src/shared/variableDefs')
 
 // create constants that correlate to environment variables to be injected
 const APP_VERSION = process.env.npm_package_version
@@ -15,6 +16,20 @@ const ML_API_URL = (process.env.ML_API_URL) ? process.env.ML_API_URL : '$ML_API_
 const BASE_PATH = (process.env.WEB_URL) ? process.env.WEB_URL : '$WEB_URL'
 // This flag if positive will use Firebase anonymous login instead of MySherwin
 const FIREBASE_AUTH_ENABLED = !!parseInt(process.env.FIREBASE_AUTH_ENABLED)
+const ENV = process.env.NODE_ENV
+
+const DEFINED_VARS = {
+  'API_PATH': API_PATH,
+  'APP_NAME': APP_NAME,
+  'APP_VERSION': APP_VERSION,
+  'BASE_PATH': BASE_PATH,
+  'ENV': ENV,
+  'FIREBASE_AUTH_ENABLED': FIREBASE_AUTH_ENABLED,
+  'ML_API_URL': ML_API_URL,
+  'WEBPACK_CONSTANTS': flags,
+  'VAR_NAMES': ALL_VARS.varNames,
+  'VAR_VALUES': ALL_VARS.varValues
+}
 
 module.exports = {
   stats: {
@@ -184,13 +199,6 @@ module.exports = {
         to: 'prism/images'
       }
     ]),
-    new webpack.DefinePlugin({
-      'API_PATH': JSON.stringify(API_PATH),
-      'APP_NAME': JSON.stringify(APP_NAME),
-      'APP_VERSION': JSON.stringify(APP_VERSION),
-      'BASE_PATH': JSON.stringify(BASE_PATH),
-      'ML_API_URL': JSON.stringify(ML_API_URL),
-      'FIREBASE_AUTH_ENABLED': FIREBASE_AUTH_ENABLED
-    })
+    new webpack.DefinePlugin(Object.entries(DEFINED_VARS).reduce((last, next) => ({ ...last, [next[0]]: JSON.stringify(next[1]) }), {}))
   ].filter(p => p)
 }
