@@ -5,7 +5,10 @@ import memoizee from 'memoizee'
 
 test('<ColorDetailsFacet colorSEO=\'sw-6475-country-squire\' subscribe={...} />', async () => {
   const { findByText, findByLabelText, findByRole } = render(
-    <ColorDetailsPage colorSEO='sw-6475-country-squire' subscribe={memoizee((key, callbackfn) => { callbackfn('/') })} />
+    <ColorDetailsPage
+      colorSEO='sw-6475-country-squire'
+      subscribe={memoizee((key, callbackfn) => { callbackfn('/blue') })}
+    />
   )
   // shows "SW 6475" and it's coordinating colors by default
   await findByText('SW 6475')
@@ -37,4 +40,4 @@ test('<ColorDetailsFacet colorSEO=\'sw-6475-country-squire\' subscribe={...} />'
   // "Kitchen Day" scene image is displayed in the main section after clicking it's thumbnail
   await fireEvent.click(await within(radiogroup).findByAltText('Kitchen Day'))
   await within(main).findByAltText('Kitchen Day')
-}, 30000)
+})

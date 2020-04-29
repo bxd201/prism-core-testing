@@ -11,7 +11,7 @@ import { LiveMessage } from 'react-aria-live'
 import { varValues } from 'src/shared/variableDefs'
 import { TransitionGroup, CSSTransition } from 'react-transition-group'
 
-import { ensureFullyQualifiedAssetUrl } from '../../shared/helpers/DataUtils'
+import ensureFullyQualifiedAssetUrl from 'src/shared/utils/ensureFullyQualifiedAssetUrl.util'
 import type { Color } from '../../shared/types/Colors.js.flow'
 import type { SceneWorkspace, Surface, SurfaceStatus } from '../../shared/types/Scene'
 import TintableSceneHitArea from './TintableSceneHitArea'

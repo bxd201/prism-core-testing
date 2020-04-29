@@ -8,7 +8,7 @@ import uniq from 'lodash/uniq'
  * @example dedupePatternedString('test') // outputs 'tes'
  * @example dedupePatternedString('a,b,a,c', ',') // outputs 'a,b,c')
  */
-export const dedupePatternedString = (string: string, delimiter: string = ''): string => {
+export default (string: string, delimiter: string = ''): string => {
   if (typeof string !== 'string') {
     return ''
   }
