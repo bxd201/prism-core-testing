@@ -183,6 +183,17 @@ module.exports = {
         ]
       },
       {
+        test: /(\/fonts\/)|(\.(woff|woff2|eot|ttf|otf)$)/,
+        use: [{
+          loader: 'file-loader',
+          options: {
+            name: '[name].[ext]',
+            outputPath: 'fonts',
+            publicPath: '/fonts/'
+          }
+        }]
+      },
+      {
         test: /\.worker\.js$/,
         exclude: /node_modules\/(?!(react-intl|intl-messageformat|intl-messageformat-parser|hashids))/,
         include: flags.srcPath,
@@ -298,6 +309,10 @@ module.exports = {
       {
         from: 'src/images-to-copy',
         to: 'prism/images'
+      },
+      {
+        from: 'src/fonts-to-copy',
+        to: 'prism/fonts'
       }
     ]),
     new webpack.DefinePlugin(Object.entries(DEFINED_VARS).reduce((last, next) => ({ ...last, [next[0]]: JSON.stringify(next[1]) }), {})),

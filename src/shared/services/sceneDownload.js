@@ -7,9 +7,9 @@ const generateImage = async (scene: SceneInfo): Jimp => {
   // Load base image, logos, and text
   const [image, logo, bottomLogo, smallBlackFont] = await Promise.all([
     Jimp.read(scene.variant.image),
-    Jimp.read(`${BASE_PATH}/prism/images/scene-download/colorsnap.jpg`),
-    Jimp.read(`${BASE_PATH}/prism/images/scene-download/swlogo.jpg`),
-    Jimp.loadFont(`${BASE_PATH}/prism/images/scene-download/open-sans-16-black.fnt`)
+    Jimp.read(require('src/images/scene-download/colorsnap.jpg')),
+    Jimp.read(require('src/images/scene-download/swlogo.jpg')),
+    Jimp.loadFont(`${BASE_PATH}/prism/fonts/scene-download/open-sans-16-black.fnt`)
 
   ])
 
@@ -35,8 +35,8 @@ const generateImage = async (scene: SceneInfo): Jimp => {
     bold: undefined }
   if (blackFontsArray.includes(true)) {
     const [font, boldFont] = await Promise.all([
-      Jimp.loadFont(`${BASE_PATH}/prism/images/scene-download/open-sans-32-black.fnt`),
-      Jimp.loadFont(`${BASE_PATH}/prism/images/scene-download/open-sans-bold-32-black.fnt`)
+      Jimp.loadFont(`${BASE_PATH}/prism/fonts/scene-download/open-sans-32-black.fnt`),
+      Jimp.loadFont(`${BASE_PATH}/prism/fonts/scene-download/open-sans-bold-32-black.fnt`)
     ])
 
     blackFonts.regular = font
@@ -46,9 +46,9 @@ const generateImage = async (scene: SceneInfo): Jimp => {
   let whiteFonts = {}
   if (blackFontsArray.includes(false)) {
     const [font, smallFont, boldFont] = await Promise.all([
-      Jimp.loadFont(`${BASE_PATH}/prism/images/scene-download/open-sans-32-white.fnt`),
-      Jimp.loadFont(`${BASE_PATH}/prism/images/scene-download/open-sans-16-white.fnt`),
-      Jimp.loadFont(`${BASE_PATH}/prism/images/scene-download/open-sans-bold-32-white.fnt`)
+      Jimp.loadFont(`${BASE_PATH}/prism/fonts/scene-download/open-sans-32-white.fnt`),
+      Jimp.loadFont(`${BASE_PATH}/prism/fonts/scene-download/open-sans-16-white.fnt`),
+      Jimp.loadFont(`${BASE_PATH}/prism/fonts/scene-download/open-sans-bold-32-white.fnt`)
     ])
 
     whiteFonts = {
