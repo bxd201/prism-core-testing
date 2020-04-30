@@ -1,5 +1,6 @@
 // @flow
 import React, { PureComponent } from 'react'
+import { useSelector } from 'react-redux'
 import { Route, Redirect, withRouter, Switch } from 'react-router-dom'
 import { TransitionGroup, CSSTransition } from 'react-transition-group'
 // TODO: PRISM-370 | Facets are top-level components -- refactor ColorWallPage so it can be imported without facet-related functionality @cody.richmond
@@ -8,10 +9,14 @@ import ColorDetails from '../ColorDetails/ColorDetails'
 import BackToColorWall from './BackToColorWall'
 import facetBinder from 'src/facetSupport/facetBinder'
 import includes from 'lodash/includes'
+import findKey from 'lodash/findKey'
 import { varValues } from 'src/shared/variableDefs'
 import { ROUTE_PARAMS, ROUTE_PARAM_NAMES } from 'constants/globals'
 import { facetBinderDefaultProps, type FacetBinderMethods } from 'src/facetSupport/facetInstance'
 import { type FacetPubSubMethods, facetPubSubDefaultProps } from 'src/facetSupport/facetPubSub'
+import type { ColorMap, Color, ColorId } from 'src/shared/types/Colors.js.flow'
+import { generateColorDetailsPageUrl } from 'src/shared/helpers/ColorUtils'
+import HeroLoader from 'src/components/Loaders/HeroLoader/HeroLoader'
 import './ColorListingPage.scss'
 
 const colorWallBaseUrl = `/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_WALL}`
@@ -29,12 +34,19 @@ export const RootRedirect = () => {
 
 // since the CDP component won't have any color information if we go to it directly, we need to wrap it
 // in the ColorDataWrapper HOC to ensure it has color data prior to rendering it.
-export const ColorDetailsComponent = (props: any) => {
+export const ColorDetailsComponent = ({ match, history }: any) => {
   // need a wrapping element that isn't a Fragment in order to get the transition classes applied to the group
+  const colorMap: ColorMap = useSelector(store => store.colors.items.colorMap)
+
+  if (!colorMap) { return <HeroLoader /> }
+
+  const colorId: ?ColorId = findKey(colorMap, { colorNumber: match.params.colorSEO.match(/\d+/)[0] })
+  const color: ?Color = colorId ? colorMap[colorId] : undefined
+
   return (
     <div>
       <BackToColorWall />
-      <ColorDetails {...props} />
+      <ColorDetails initialColor={color} onColorChanged={(newColor: Color) => history.push(generateColorDetailsPageUrl(newColor))} />
     </div>
   )
 }
