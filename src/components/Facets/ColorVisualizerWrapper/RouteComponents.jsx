@@ -23,6 +23,7 @@ import {
 import { FormattedMessage, useIntl } from 'react-intl'
 import at from 'lodash/at'
 import { KEY_CODES } from 'src/constants/globals'
+import { mouseDownPreventDefault } from 'src/shared/helpers/MiscUtils'
 
 type Props = {
   dataKey: string,
@@ -78,12 +79,11 @@ const DropDownMenu = (props: Props) => {
       }
     } else if (e.keyCode === KEY_CODES.KEY_CODE_ENTER || e.keyCode === KEY_CODES.KEY_CODE_SPACE) {
       e.preventDefault()
+      if (exploreColorsLinkRef.current) {
+        exploreColorsLinkRef.current.focus()
+      }
       props.close(e)
     }
-  }
-
-  const mouseDownHandler = (e: SyntheticEvent) => {
-    e.preventDefault()
   }
 
   return (
@@ -134,7 +134,7 @@ const DropDownMenu = (props: Props) => {
         </ul>
       </div>
       <Link tabIndex='-1' to={`/active`} onClick={closeDropDown} onKeyDown={closeButtonKeyDownHandler}>
-        <button className={`dashboard-submenu__cls-btn dashboard-submenu__button`} tabIndex='0' onClick={closeDropDown} onKeyDown={closeButtonKeyDownHandler} onMouseDown={mouseDownHandler}>
+        <button className={`dashboard-submenu__cls-btn dashboard-submenu__button`} tabIndex='0' onClick={closeDropDown} onKeyDown={closeButtonKeyDownHandler} onMouseDown={mouseDownPreventDefault}>
           <div className={`dashboard-submenu__close`}>
             <span><FormattedMessage id='CLOSE' /></span>&nbsp;<FontAwesomeIcon onClick={closeDropDown} className={``} icon={['fa', 'chevron-up']} />
           </div>

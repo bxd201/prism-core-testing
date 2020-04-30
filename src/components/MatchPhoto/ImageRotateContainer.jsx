@@ -1,5 +1,5 @@
 // @flow
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useContext } from 'react'
 import ImageRotateTerms from './ImageRotateTerms.jsx'
 import { Link, withRouter, type RouterHistory } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -10,7 +10,7 @@ import PaintScene from '../PaintScene/PaintScene'
 import { getScaledPortraitHeight } from '../../shared/helpers/ImageUtils'
 import PrismImage from '../PrismImage/PrismImage'
 import { useSelector, useDispatch } from 'react-redux'
-import { RouteConsumer } from '../../contexts/RouteContext/RouteContext'
+import { RouteContext } from '../../contexts/RouteContext/RouteContext'
 import './MatchPhoto.scss'
 import { FormattedMessage } from 'react-intl'
 import { loadBrandColors } from '../../store/actions/brandColors'
@@ -95,6 +95,7 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
   const paintSceneWorkspace = useSelector(state => state.paintSceneWorkspace)
   const [paintSceneWorkspaceState] = useState((imgUrl) ? null : paintSceneWorkspace)
   const [isConfirmationModalShown, setConfirmationModalShown] = useState(false)
+  const routeContext = useContext(RouteContext)
 
   const dispatch = useDispatch()
   useEffect(() => { dispatch(loadBrandColors()) }, [])
@@ -370,9 +371,9 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
     setConfirmationModalActive(!isConfirmationModalActive)
   }
 
-  const closeButton = <RouteConsumer>{(context) => (<button onClick={(e: SyntheticEvent) => {
+  const closeButton = <button onClick={(e: SyntheticEvent) => {
     if (isConfirmationModalShown) {
-      context.setActiveComponent()
+      routeContext.setActiveComponent()
     } else {
       if (imageUrl && pins.length > 0) {
         e.preventDefault()
@@ -380,13 +381,13 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
         setConfirmationModalShown(!isConfirmationModalShown)
         return false
       } else {
-        context.setActiveComponent()
+        routeContext.setActiveComponent()
       }
     }
   }} className={`${buttonClass} ${buttonRightClass}`}>
     <div className={`${closeClass}`}><span><FormattedMessage id='CLOSE' /></span>&nbsp;<FontAwesomeIcon className={``} icon={['fa', 'chevron-up']} /></div>
     <div className={`${cancelClass}`}><FontAwesomeIcon className={``} icon={['fa', 'times']} /></div>
-  </button>)}</RouteConsumer>
+  </button>
 
   return (
     <React.Fragment>
@@ -401,11 +402,11 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
               </button> : ''}
               {
                 (imageUrl && pins.length === 0 && !isPaintScene)
-                  ? <Link to={`/active`}>
+                  ? <Link to={`/active`} tabIndex='-1'>
                     {closeButton}
                   </Link>
 
-                  : (imageUrl && pins.length > 0 && !isPaintScene) ? <Link to={`/active`}>{closeButton}</Link> : ''
+                  : (imageUrl && pins.length > 0 && !isPaintScene) ? <Link to={`/active`} tabIndex='-1'>{closeButton}</Link> : ''
               }
             </div>
             {

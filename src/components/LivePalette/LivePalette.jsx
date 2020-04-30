@@ -16,7 +16,7 @@ import { LP_MAX_COLORS_ALLOWED, MIN_COMPARE_COLORS_ALLOWED } from 'constants/con
 import { DndProvider } from 'react-dnd-cjs'
 import HTML5Backend from 'react-dnd-html5-backend-cjs'
 
-import { activate, reorder, toggleCompareColor, cancel, empty } from '../../store/actions/live-palette'
+import { activate, reorder, toggleCompareColor, deactivateTemporaryColor, empty } from '../../store/actions/live-palette'
 import { arrayToSpacedString } from '../../shared/helpers/StringUtils'
 
 import { varValues } from 'src/shared/variableDefs'
@@ -37,8 +37,9 @@ type Props = {
   toggleCompareColor: Function,
   activeColor: Color,
   removedColor: Color,
-  cancel: Function,
-  empty: Function
+  deactivateTemporaryColor: Function,
+  empty: Function,
+  temporaryActiveColor: Color | null
 }
 
 type State = {
@@ -124,7 +125,7 @@ export class LivePalette extends PureComponent<Props, State> {
   }
 
   render () {
-    const { colors, activeColor, cancel, empty } = this.props
+    const { colors, activeColor, deactivateTemporaryColor, empty, temporaryActiveColor } = this.props
     const { spokenWord, isCompareColor, isFastMaskPage } = this.state
     // TODO: abstract below into a class method
     // calculate all the active slots
@@ -154,7 +155,7 @@ export class LivePalette extends PureComponent<Props, State> {
     return (
       <DndProvider backend={HTML5Backend}>
         <div className='prism-live-palette'>
-          <LivePaletteModal cancel={cancel} empty={empty} isActive={colors.length > LP_MAX_COLORS_ALLOWED} />
+          <LivePaletteModal cancel={deactivateTemporaryColor} empty={empty} isActive={temporaryActiveColor !== null} />
           <div className='prism-live-palette__header'>
             <span className='prism-live-palette__header__name'><FormattedMessage id='PALETTE_TITLE' /></span>
             {colors.length >= MIN_COMPARE_COLORS_ALLOWED && <button tabIndex='-1' className={!isFastMaskPage ? 'prism-live-palette__header__compare-button' : 'prism-live-palette__header__compare-button--hide'} onClick={this.toggleCompareColor}>Compare Color</button>}
@@ -201,7 +202,8 @@ const mapStateToProps = (state, props) => {
     colors: lp.colors,
     activeColor: lp.activeColor,
     // previousActiveColor: lp.previousActiveColor,
-    removedColor: lp.removedColor
+    removedColor: lp.removedColor,
+    temporaryActiveColor: lp.temporaryActiveColor
   }
 }
 
@@ -216,8 +218,8 @@ const mapDispatchToProps = (dispatch: Function) => {
     reorderColors: (colors) => {
       dispatch(reorder(colors))
     },
-    cancel: () => {
-      dispatch(cancel())
+    deactivateTemporaryColor: () => {
+      dispatch(deactivateTemporaryColor())
     },
     empty: () => {
       dispatch(empty())

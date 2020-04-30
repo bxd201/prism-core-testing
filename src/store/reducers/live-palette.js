@@ -13,7 +13,8 @@ import {
   TOGGLE_LP_COMPARE_COLOR,
   EDIT_LP_COMPARE_COLOR,
   CANCEL_ADD_COLOR,
-  EMPTY_LP_COLOR, REPLACE_LP_COLORS, MERGE_LP_COLORS
+  EMPTY_LP_COLOR, REPLACE_LP_COLORS, MERGE_LP_COLORS,
+  DEACTIVATE_TEMPORARY_COLOR
 } from '../actions/live-palette'
 import { checkCanMergeColors } from '../../components/LivePalette/livePaletteUtility'
 import storageAvailable from '../../shared/utils/browserStorageCheck.util'
@@ -21,7 +22,8 @@ import storageAvailable from '../../shared/utils/browserStorageCheck.util'
 type State = {
   colors: Color[],
   activeColor: Color,
-  toggleCompareColor: boolean
+  toggleCompareColor: boolean,
+  temporaryActiveColor: Color | null
 }
 
 const lpFromLocalStorage = storageAvailable('localStorage') && JSON.parse(window.localStorage.getItem('lp'))
@@ -30,7 +32,8 @@ const { colors, activeColor } = lpFromLocalStorage || initialLpState
 export const initialState: State = {
   colors: colors,
   activeColor: activeColor,
-  toggleCompareColor: false
+  toggleCompareColor: false,
+  temporaryActiveColor: null
 }
 
 export const lp = (state: any = initialState, action: any) => {
@@ -43,7 +46,9 @@ export const lp = (state: any = initialState, action: any) => {
     case EMPTY_LP_COLOR:
       const newPallette = []
       return Object.assign({}, state, {
-        colors: [...newPallette, state.activeColor]
+        colors: [...newPallette, state.temporaryActiveColor],
+        activeColor: state.temporaryActiveColor,
+        temporaryActiveColor: null
       })
 
     case TOGGLE_LP_COMPARE_COLOR:
@@ -58,7 +63,15 @@ export const lp = (state: any = initialState, action: any) => {
       })
     case ADD_LP_COLOR:
       // check if there are already 7 colors added and if the color exists already before adding
-      if (state.colors && state.colors.length <= LP_MAX_COLORS_ALLOWED && !filter(state.colors, color => color.id === action.payload.color.id).length) {
+      if (state.colors.length === LP_MAX_COLORS_ALLOWED) {
+        const isColorExistInLp = state.colors.findIndex(color => color.colorNumber === action.payload.color.colorNumber)
+        if (isColorExistInLp === -1) {
+          return Object.assign({}, state, {
+            temporaryActiveColor: action.payload.color
+          })
+        }
+      }
+      if (state.colors && state.colors.length < LP_MAX_COLORS_ALLOWED && !filter(state.colors, color => color.id === action.payload.color.id).length) {
         state.colors.push(action.payload.color)
       }
 
@@ -98,7 +111,8 @@ export const lp = (state: any = initialState, action: any) => {
     case ACTIVATE_LP_COLOR:
       return Object.assign({}, state, {
         activeColor: action.payload.color,
-        previousActiveColor: state.activeColor
+        previousActiveColor: state.activeColor,
+        temporaryActiveColor: null
       })
 
     case ACTIVATE_LP_PREVIEW_COLOR:
@@ -184,6 +198,11 @@ export const lp = (state: any = initialState, action: any) => {
       }
 
       return state
+
+    case DEACTIVATE_TEMPORARY_COLOR:
+      return Object.assign({}, state, {
+        temporaryActiveColor: null
+      })
 
     default:
       return state

@@ -38,6 +38,7 @@ import { modalHeight, refreshModalHeight } from '../../../store/actions/modal'
 import debounce from 'lodash/debounce'
 import { setSelectedSceneStatus } from '../../../store/actions/stockScenes'
 import { replaceSceneStatus } from '../../../shared/utils/sceneUtil'
+import { mouseDownPreventDefault } from 'src/shared/helpers/MiscUtils'
 
 const colorWallBaseUrl = `/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_WALL}`
 
@@ -588,7 +589,7 @@ export class ColorVisualizerWrapper extends Component<Props> {
               <Route path='/match-photo' render={() => <ImageRotateContainer showPaintScene imgUrl={imgUrlMatchPhoto} />} />
               {showDefaultPage && <SceneManager expertColorPicks hideSceneSelector />}
               <ImageRotateContainer isFromMyIdeas={isFromMyIdeas} isPaintScene checkIsPaintSceneUpdate={checkIsPaintSceneUpdate} showPaintScene={showPaintScene} imgUrl={imgUrl} key={remountKey} />
-              <div className={`${isShowWarningModal ? 'cvw__modal__overlay' : 'cvw__route-wrapper'}`} />
+              <div className={`${isShowWarningModal ? 'cvw__modal__overlay' : 'cvw__route-wrapper'}`} role='presentation' onMouseDown={mouseDownPreventDefault} />
               {!close && <div role='presentation' className={`${(!close && !nonOverlayRouteSet.has(location.pathname)) ? 'nav__dropdown-overlay' : ''}`} onClick={this.close}>
                 <Route path='/active/colors' component={(props) => <DropDownMenu isTabbedOutFromHelp={isTabbedOutFromHelp} exploreColorsLinkRef={exploreColorsLinkRef} dataKey='color' {...dropMenuProps} />} />
                 <Route path='/active/inspiration' component={() => <DropDownMenu isTabbedOutFromHelp={isTabbedOutFromHelp} exploreColorsLinkRef={exploreColorsLinkRef} dataKey='inspiration' {...dropMenuProps} />} />

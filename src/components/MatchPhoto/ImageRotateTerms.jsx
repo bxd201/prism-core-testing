@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/label-has-for */
 // @flow
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
 import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
@@ -32,6 +32,11 @@ const ImageRotateTerms = ({ rotateImage, createColorPins, imageData }: Props) =>
   const [accetTerms, setAcceptTerms] = useState(false)
   const [hideModal, setHideModal] = useState(false)
   let mouseDown = false
+  const btnRef = useRef()
+
+  useEffect(() => {
+    btnRef.current.focus()
+  }, [])
 
   function handleChange () {
     setAcceptTerms(!accetTerms)
@@ -73,6 +78,7 @@ const ImageRotateTerms = ({ rotateImage, createColorPins, imageData }: Props) =>
             <FormattedMessage id='PREVIEW_ROTATE_SCALE' />
           </div>
           <button
+            ref={btnRef}
             onMouseDown={mouseDownHandler}
             onMouseUp={mouseUpHandler}
             onFocus={focusHandler}
@@ -102,6 +108,7 @@ const ImageRotateTerms = ({ rotateImage, createColorPins, imageData }: Props) =>
           </div>
         </div>
         <button
+          tabIndex={accetTerms ? '0' : '-1'}
           className={`${wrapperAgreeTermsAcceptClass} ${accetTerms ? `${wrapperAgreeTermsAcceptActiveClass}` : ``}`}
           onClick={() => (accetTerms) ? clickHandler() : {}}><FormattedMessage id='DONE' /></button>
       </div>

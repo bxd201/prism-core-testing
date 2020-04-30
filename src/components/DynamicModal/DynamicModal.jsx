@@ -1,5 +1,5 @@
 // @flow
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import './DynamicModal.scss'
 
@@ -22,6 +22,7 @@ const dynamicModalInnerClassName = `${dynamicModalClassName}__inner-box`
 const dynamicModalTitleClassName = `${dynamicModalClassName}__title`
 const dynamicModalDescriptionClassName = `${dynamicModalClassName}__description`
 const dynamicModalInputWrapperClassName = `${dynamicModalClassName}__input-wrapper`
+const dynamicModalTextInputClassName = `${dynamicModalClassName}__text-input`
 const dynamicModalButtonsClassName = `${dynamicModalClassName}__button-row`
 const dynamicModalButtonBaseClassName = `${dynamicModalButtonsClassName}__button`
 
@@ -47,6 +48,24 @@ const getDymanicModalClassName = (baseName: string, modalStyle) => {
 const DynamicModal = (props: DynamicModalProps) => {
   const defaultName = props.inputDefault ? props.inputDefault : ''
   const [inputValue, setInputValue] = useState(defaultName)
+  const { actions } = props
+  const btnRefs = actions && actions.reduce((acc, value) => {
+    acc[value.text] = React.createRef()
+    return acc
+  }, {})
+
+  useEffect(() => {
+    if (actions && actions.length) {
+      btnRefs[actions[0].text].current.focus()
+    }
+  }, [actions])
+
+  const blurHandler = (btnNumber) => {
+    if (actions && actions.length && actions.length === btnNumber + 1) {
+      btnRefs[actions[0].text].current.focus()
+    }
+  }
+
   const getButtonClassName = (buttonType: string) => {
     return `${dynamicModalButtonBaseClassName} ${dynamicModalButtonBaseClassName}--${buttonType}`
   }
@@ -58,6 +77,8 @@ const DynamicModal = (props: DynamicModalProps) => {
       } : action.callback
       return (
         <button
+          onBlur={() => blurHandler(i)}
+          ref={btnRefs[action.text]}
           className={getButtonClassName(action.type || props.modalStyle || DYNAMIC_MODAL_STYLE.primary)}
           // The callbacks must manually stop propagation
           onClick={callback}
@@ -75,7 +96,7 @@ const DynamicModal = (props: DynamicModalProps) => {
       <div className={getDymanicModalClassName(dynamicModalInnerClassName, props.modalStyle)}>
         {props.title ? <div className={dynamicModalTitleClassName}>{props.title}</div> : null}
         {props.description ? <div className={dynamicModalDescriptionClassName}>{props.description}</div> : null}
-        {props.allowInput ? <div className={dynamicModalInputWrapperClassName}><input onChange={setInputVal} value={inputValue} /></div> : null}
+        {props.allowInput ? <div className={dynamicModalInputWrapperClassName}><input className={`${dynamicModalTextInputClassName}`} onChange={setInputVal} value={inputValue} /></div> : null}
         <div className={dynamicModalButtonsClassName}>
           {props.actions && createButtonsFromActions(props.actions)}
         </div>

@@ -47,6 +47,11 @@
     top: .875rem;
     width: auto;
     z-index: 1000;
+    &:focus {
+      outline-style: solid;
+      outline-color: #2cabe2;
+      outline-width: 2px;
+    }
     &:hover {
       background: #fff;
       border-color: #2cabe2;
@@ -194,6 +199,11 @@
           border: 1px solid #2cabe2;
           color: #2cabe2;
           cursor: pointer;
+          &:focus {
+            outline-style: solid;
+            outline-color: #2cabe2;
+            outline-width: 2px;
+          }
         }
       }
     }
@@ -205,7 +215,7 @@
     align-items: center;
     background-color: rgba(0, 0, 0, 0.7);
     bottom: 0;
-    display: none;
+    display: flex;
     flex-direction: column;
     justify-content: center;
     left: 0;
@@ -214,9 +224,6 @@
     right: 0;
     top: 0;
     z-index: 10000;
-    &--active {
-      display: flex;
-    }
     @include respond-above(md){
       overflow: visible;
     }
@@ -253,6 +260,11 @@
     text-align: center;
     text-transform: uppercase;
     width: auto;
+    &:focus {
+      outline-style: solid;
+      outline-color: #2cabe2;
+      outline-width: 2px;
+    }
     &:hover {
       background: rgba(255, 255, 255, 0.8);
       border-color: white;
