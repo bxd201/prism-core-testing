@@ -10,7 +10,6 @@ import { fullColorNumber, getContrastYIQ } from 'src/shared/helpers/ColorUtils'
 import './ExpertColorPicks.scss'
 import { useIntl } from 'react-intl'
 import at from 'lodash/at'
-import { KEY_CODES } from 'src/constants/globals'
 
 const ExpertColorPicks = () => {
   const dispatch = useDispatch()
@@ -26,6 +25,7 @@ const ExpertColorPicks = () => {
           <div className='expert-color-picks__collections-list'>
             {expertColorPicks.length > 0 && <Carousel
               BaseComponent={ColorStripButtonWrapper}
+              btnRefList={[]}
               defaultItemsPerView={8}
               isInfinity={false}
               key='expertcolorpicks'
@@ -42,25 +42,17 @@ const ExpertColorPicks = () => {
 }
 
 const ColorStripButtonWrapper = (props: any) => {
-  const { data, getSummaryData, handlePrev, handleNext, itemNumber, itemsPerView, totalItems } = props
+  const { data, getSummaryData, onKeyDown, itemNumber, btnRefList } = props
   const clickHandler = useCallback(() => getSummaryData(data), [data])
   const color = data.colorDefs[0]
-
-  const keyDownHandler = useCallback((e) => {
-    if (e.shiftKey && e.keyCode === KEY_CODES.KEY_CODE_TAB) {
-      if (itemNumber !== 1 && itemNumber % itemsPerView === 1) handlePrev()
-    } else if (e.keyCode === KEY_CODES.KEY_CODE_TAB) {
-      if (itemNumber !== totalItems && itemNumber % itemsPerView === 0) handleNext()
-    } else if (e.keyCode === KEY_CODES.KEY_CODE_ENTER || e.keyCode === KEY_CODES.KEY_CODE_SPACE) getSummaryData(data)
-  }, [data, getSummaryData, handleNext, handlePrev, itemsPerView, itemNumber, totalItems])
-
   const colors = useMemo(() => data.colorDefs.slice(1), [data.colorDefs])
-
+  btnRefList[itemNumber] = React.useRef()
   return (
     <ColorStripButton
       onClick={clickHandler}
-      onKeyDown={keyDownHandler}
+      onKeyDown={onKeyDown}
       colors={colors}
+      ref={btnRefList[itemNumber]}
     >
       <div
         className='expert-color-pick-button__top-section'

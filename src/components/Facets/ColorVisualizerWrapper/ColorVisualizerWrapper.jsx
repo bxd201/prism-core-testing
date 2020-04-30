@@ -568,8 +568,7 @@ export class ColorVisualizerWrapper extends Component<Props> {
             {!toggleCompareColor && <div className={`cvw__root-container__nav-wrapper ${(location.pathname === HELP_PATH) ? `cvw__root-container__nav-wrapper--hide` : (location.pathname === MY_IDEAS) ? `cvw__root-container__nav-wrapper--hide-my-ideas` : ``}`}>
               <ColorVisualizerNav />
             </div>}
-            {!toggleCompareColor &&
-            <div className='cvw__root-wrapper'>
+            <div className={`cvw__root-wrapper ${!toggleCompareColor ? 'cvw__root-wrapper--show' : 'cvw__root-wrapper--hide'}`}>
               {(!showDefaultPage && !showPaintScene && location.pathname === PAINT_SCENE_ROUTE) && (<canvas name='canvas' width='600' height='600' />)}
               <Route path='/' exact component={RootRedirect} />
               <Route path={colorWallUrlPattern}>
@@ -596,7 +595,6 @@ export class ColorVisualizerWrapper extends Component<Props> {
                 <Route path='/active/scenes' component={() => <DropDownMenu isTabbedOutFromHelp={isTabbedOutFromHelp} exploreColorsLinkRef={exploreColorsLinkRef} dataKey='scenes' {...dropMenuProps} />} />
               </div>}
             </div>
-            }
             {toggleCompareColor && <CompareColor />}
             <div className={cvwFooterClassName}>
               <div className={footerPriorityItemClassName}>

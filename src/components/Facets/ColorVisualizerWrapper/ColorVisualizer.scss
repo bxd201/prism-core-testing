@@ -139,6 +139,12 @@
 
 .cvw__root-wrapper {
   position: relative;
+  &--show {
+    display: block;
+  }
+  &--hide{
+    display: none;
+  }
 }
 
 .nav__dropdown-overlay {

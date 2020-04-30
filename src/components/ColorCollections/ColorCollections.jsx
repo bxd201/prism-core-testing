@@ -10,7 +10,6 @@ import { useSelector, useDispatch, shallowEqual } from 'react-redux'
 import { loadCollectionSummaries } from 'src/store/actions/collectionSummaries'
 import { loadColors } from 'src/store/actions/loadColors'
 import './ColorCollections.scss'
-import { KEY_CODES } from 'src/constants/globals'
 
 export function ColorCollections () {
   const dispatch = useDispatch()
@@ -36,6 +35,7 @@ export function ColorCollections () {
           <div className='color-collections__collections-list' role='main'>
             <Carousel
               BaseComponent={ColorStripButtonWrapper}
+              btnRefList={[]}
               defaultItemsPerView={8}
               isInfinity={false}
               key={tabId}
@@ -53,25 +53,17 @@ export function ColorCollections () {
 }
 
 const ColorStripButtonWrapper = (props: any) => {
-  const { data, getSummaryData, handlePrev, handleNext, itemNumber, itemsPerView, totalItems } = props
+  const { data, getSummaryData, itemNumber, btnRefList, onKeyDown } = props
   const clickHandler = useCallback(() => getSummaryData(data), [data])
-
-  const keyDownHandler = useCallback((e) => {
-    if (e.shiftKey && e.keyCode === KEY_CODES.KEY_CODE_TAB) {
-      if (itemNumber !== 1 && itemNumber % itemsPerView === 1) handlePrev()
-    } else if (e.keyCode === KEY_CODES.KEY_CODE_TAB) {
-      if (itemNumber !== totalItems && itemNumber % itemsPerView === 0) handleNext()
-    } else if (e.keyCode === KEY_CODES.KEY_CODE_ENTER || e.keyCode === KEY_CODES.KEY_CODE_SPACE) getSummaryData(data)
-  }, [ data, getSummaryData, handleNext, handlePrev, itemsPerView, itemNumber, totalItems ])
-
   const colors = useMemo(() => data.collections.slice(0, 5), [data.collections])
-
+  btnRefList[itemNumber] = React.useRef()
   return (
     <ColorStripButton
       onClick={clickHandler}
-      onKeyDown={keyDownHandler}
+      onKeyDown={onKeyDown}
       colors={colors}
       bottomLabel={data.name}
+      ref={btnRefList[itemNumber]}
     >
       <img className='collection__summary__top-section__image' alt={data.name} src={data.img} />
     </ColorStripButton>
