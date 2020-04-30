@@ -38,6 +38,8 @@ export const ERROR_UPDATING_SAVED_SCENE_NAME = 'ERROR_UPDATING_SAVED_SCENE_NAME'
 export const SHOW_SAVED_CONFIRM_MODAL = 'SHOW_SAVED_CONFIRM_MODAL'
 export const SHOW_SAVED_CUSTOM_SUCCESS = 'SHOW_SAVED_CUSTOM_SUCCESS'
 export const SHOW_DELETE_CONFIRM = 'SHOW_DELETE_CONFIRM'
+export const RECEIVED_FIREBASE_FILE_LIST = 'RECEIVED_FIREBASE_FILE_LIST'
+export const PURGE_METADATA = 'PURGE_METADATA'
 // File name consts
 const SCENE_JSON = 'scene.json'
 
@@ -469,7 +471,6 @@ const fetchSavedScenesFromFirebase = (metadata: Object[], dispatch: Function, ge
     const { user } = getState()
 
     storageRef.child(`scenes/${user.uid}`).list().then(data => {
-      console.log('Scenes in Firebase:', data.items)
       const paths = getFirebaseListItemPaths(data)
       const validatedMetadata = metadata.filter(item => item.scene && paths.indexOf(item.scene) > -1)
       validatedMetadata.forEach(item => {
@@ -483,6 +484,16 @@ const fetchSavedScenesFromFirebase = (metadata: Object[], dispatch: Function, ge
         ...sceneMetadataQueue // downloadQueue & sceneMetadataQueue are arrays, so merging them into one array for promise.all
       ]).then(data => {
         const dataLength = data.length
+
+        if (!dataLength) {
+          // An empty array means that no items will be kept
+          dispatch({
+            type: PURGE_METADATA,
+            payload: []
+          })
+
+          return
+        }
         // data is an Array of download urls & scenes custom metadata, so slicing it into half to get downloadUrl & sceneCustomMetadata array
         const downloadUrl = data.slice(0, (dataLength / 2))
         const sceneCustomMetadata = data.slice((dataLength / 2), dataLength).map(scenemetadata => scenemetadata.customMetadata)

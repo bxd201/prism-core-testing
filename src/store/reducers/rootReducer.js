@@ -29,7 +29,9 @@ import {
   saveSceneName,
   selectedStockSceneId,
   selectedSceneStatus,
-  showSavedConfirmModal, showSavedCustomSceneSuccess, showDeleteConfirmModal
+  showSavedConfirmModal,
+  showSavedCustomSceneSuccess,
+  showDeleteConfirmModal
 } from './savedScenes'
 import { user } from './user'
 import { paintSceneWorkspace } from './paintSceneWorkspace'
