@@ -24,7 +24,7 @@ const Content = ({ msg, color }: ContentProps) => {
   const { messages = {} } = useIntl()
 
   if (msg) {
-    return (<p className='color-swatch__message'>{msg}</p>)
+    return (<p className='color-swatch__content__message'>{msg}</p>)
   } else if (displayAddButton) {
     const title = (addButtonText || at(messages, 'ADD_TO_PALETTE')[0] || '').replace('{name}', fullColorName(color.brandKey, color.colorNumber, color.name))
     return (
