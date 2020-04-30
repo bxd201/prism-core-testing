@@ -57,6 +57,15 @@ const ColorStripButtonWrapper = (props: any) => {
   const clickHandler = useCallback(() => getSummaryData(data), [data])
   const colors = useMemo(() => data.collections.slice(0, 5), [data.collections])
   btnRefList[itemNumber] = React.useRef()
+  let imgAltText = `${data.name}.`
+
+  if (colors.length > 0) {
+    imgAltText += ` Color group includes `
+    colors.map((color, index) => {
+      imgAltText += (colors.length === index + 1) ? `${color.name}.` : `${color.name}, `
+    })
+  }
+
   return (
     <ColorStripButton
       onClick={clickHandler}
@@ -65,7 +74,7 @@ const ColorStripButtonWrapper = (props: any) => {
       bottomLabel={data.name}
       ref={btnRefList[itemNumber]}
     >
-      <img className='collection__summary__top-section__image' alt={data.name} src={data.img} />
+      <img className='collection__summary__top-section__image' alt={imgAltText} src={data.img} />
     </ColorStripButton>
   )
 }

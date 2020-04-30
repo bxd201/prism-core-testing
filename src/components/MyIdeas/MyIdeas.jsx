@@ -52,6 +52,7 @@ const MyIdeas = (props: MyIdeasProps) => {
   const _parentHeight = useSelector(state => state.modalHeight)
   const [parentHeight, setParentHeight] = useState(0)
   const [isReadyToRenderFlag, setIsReadyToRenderFlag] = useState(false)
+  const [initPosition, setPosition] = useState(0)
 
   useEffect(() => {
     if (!savedScenes.length) {
@@ -166,6 +167,9 @@ const MyIdeas = (props: MyIdeasProps) => {
 
     return <Carousel
       BaseComponent={SavedSceneWrapper}
+      btnRefList={[]}
+      setInitialPosition={setPosition}
+      initPosition={initPosition}
       defaultItemsPerView={8}
       isInfinity={false}
       key='myideas'
@@ -258,7 +262,8 @@ const MyIdeas = (props: MyIdeasProps) => {
 
 const SavedSceneWrapper = (props: any) => {
   let scene = null
-  const { handlePrev, handleNext, itemNumber, itemsPerView, totalItems } = props
+  const { itemNumber, itemsPerView, totalItems, btnRefList } = props
+  btnRefList[itemNumber] = React.useRef()
 
   if (props.data.sceneType === SCENE_TYPE.anonStock) {
     // handle stock scenes
@@ -283,11 +288,10 @@ const SavedSceneWrapper = (props: any) => {
       selectScene={props.selectAnonStockScene}
       editIndividualScene={props.editIndividualScene}
       useTintableScene
-      handlePrev={handlePrev}
-      handleNext={handleNext}
       itemNumber={itemNumber}
       itemsPerView={itemsPerView}
-      totalItems={totalItems} />
+      totalItems={totalItems}
+      ref={btnRefList[itemNumber]} />
   }
   // Handle custom scenes
   scene = props.baseSceneData.customScenes.find(item => props.data.scene.indexOf(item.id) > -1)
@@ -302,11 +306,10 @@ const SavedSceneWrapper = (props: any) => {
       deleteScene={props.deleteScene}
       selectScene={props.selectScene}
       editIndividualScene={props.editIndividualScene}
-      handlePrev={handlePrev}
-      handleNext={handleNext}
       itemNumber={itemNumber}
       itemsPerView={itemsPerView}
-      totalItems={totalItems} />
+      totalItems={totalItems}
+      ref={btnRefList[itemNumber]} />
   }
 
   return null
