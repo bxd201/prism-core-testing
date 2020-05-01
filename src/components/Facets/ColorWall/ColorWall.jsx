@@ -15,6 +15,7 @@ import ColorSwatch from './ColorSwatch/ColorSwatch'
 import { compareKebabs } from 'src/shared/helpers/StringUtils'
 import range from 'lodash/range'
 import rangeRight from 'lodash/rangeRight'
+import flatten from 'lodash/flatten'
 import { generateColorWallPageUrl } from 'src/shared/helpers/ColorUtils'
 import 'src/scss/externalComponentSupport/AutoSizer.scss'
 import 'src/scss/convenience/overflow-ellipsis.scss'
@@ -64,7 +65,7 @@ const ColorWall = () => {
           const nextCoords = (e.shiftKey
             ? rangeRight(column + 1).flatMap((c: number) => rangeRight(0, c === column ? row : chunkGrid.length).map(r => [r, c]))
             : range(column, chunkGrid[row].length).flatMap((c: number) => range(c === column ? row + 1 : 0, chunkGrid.length).map(r => [r, c]))
-          ).find(([r, c]) => chunkGrid[r][c].flat().some(cell => cell !== undefined))
+          ).find(([r, c]) => flatten(chunkGrid[r][c]).some(cell => cell !== undefined))
 
           if (nextCoords !== undefined) {
             e.preventDefault()
@@ -123,7 +124,7 @@ const ColorWall = () => {
     const lengthOfLongestRow: number = getWidthOf2dArray(chunk)
     const containsBloomedCell = findIndexIn2dArray(params.colorId, chunk)[0] !== -1
 
-    return (chunk.flat().some(cell => cell !== undefined) &&
+    return (flatten(chunk).some(cell => cell !== undefined) &&
       <div key={key} className='color-wall-chunk' style={{ ...style, padding: cellSize * 0.2, zIndex: containsBloomedCell ? 1 : 'auto' }}>
         {chunkRow === 0 && sectionLabels[section] && (
           <div className='color-wall-section-label' style={{ width: style.width - cellSize * 0.4, top: -(Math.max(1.2 * cellSize, 40)) }}>
