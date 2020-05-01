@@ -101,7 +101,11 @@ const ColorWall = () => {
   }, [layout])
 
   // recalculate gridSize/cellSize when zooming in/out, chainging the layout, or changing grid width
-  useEffect(() => { gridRef.current && gridRef.current.recomputeGridSize() }, [params.colorId === undefined, gridWidth, layout])
+  useEffect(() => {
+    gridRef.current && gridRef.current.recomputeGridSize()
+    // forces the scroll position to reset after zooming out (for some reason the scroll position is not updated in firefox)
+    gridRef.current && params.colorId === undefined && gridRef.current.scrollToPosition({ scrollLeft: 0, scrollTop: 0 })
+  }, [params.colorId === undefined, gridWidth, layout])
 
   // start scrolling animation when scroll position changes due to new active color or gridWidth changing
   useEffect(() => {
