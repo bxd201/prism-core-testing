@@ -123,6 +123,24 @@
       transform: translate(-50%, -50%);
       outline:none;
     }
+
+    &__drag-icon-wrapper{
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      right: 5px;
+      bottom: 5px;
+      overflow:hidden;
+      &--show{
+        display: block;
+      }
+      &--hide{
+        display: none;
+      }
+      &:hover{
+        cursor: grab;
+      }
+    }
   }
 
   &__icon {
