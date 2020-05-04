@@ -84,7 +84,7 @@ const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, le
           ref={ref}
           onFocus={onFocus}
           aria-label={fullColorName(color)}
-          className={'color-swatch__content' + (level === undefined ? '' : ' color-swatch__content-raised') + (color.isDark ? ' color-swatch__content--dark-color' : '')}
+          className={'color-swatch__content' + (level === undefined ? '' : ' color-swatch__content--raised') + (color.isDark ? ' color-swatch__content--dark-color' : '')}
           style={style}
         >
           <p className='color-swatch__content__number'>{fullColorNumber(color.brandKey, color.colorNumber)}</p>

@@ -63,7 +63,7 @@
     opacity: 0;
     animation: fadeIn 0.3s forwards .2s;
 
-    &-raised {
+    &--raised {
       height: 123px !important;
       width: 123px !important;
       transform: translate3d(-36px, -36px, 0);
