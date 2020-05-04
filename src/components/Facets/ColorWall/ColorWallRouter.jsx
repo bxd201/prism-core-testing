@@ -1,5 +1,5 @@
 // @flow
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import type { Node } from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
@@ -11,8 +11,15 @@ import HeroLoaderExpanded from 'src/components/Loaders/HeroLoader/HeroLoaderExpa
 
 type Props = { children: Node, redirect?: boolean }
 export default ({ children, redirect = true }: Props) => {
-  useDispatch()(loadColors(useContext(ConfigurationContext).brandId, { language: useIntl().locale }))
+  const dispatch = useDispatch()
   const defaultSection = useSelector(state => state.colors.structure.find(s => s.default))
+  const { brandId } = useContext(ConfigurationContext)
+  const { locale } = useIntl()
+
+  useEffect(() => {
+    if (!locale || !brandId) return
+    dispatch(loadColors(brandId, { language: locale }))
+  }, [ locale, brandId ])
 
   return (defaultSection
     ? (
