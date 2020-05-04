@@ -1,5 +1,7 @@
 .color-wall {
-  *:focus { outline: 2px solid #0069af; }
+  font-size: $base;
+
+  *:focus { outline: 2px solid var(getVarName('theme.colors.primary')); }
 
   &.enter, &.exit {
     opacity: 0;
@@ -19,8 +21,23 @@
   .color-wall-section-label {
     position: absolute;
     text-align: center;
-    letter-spacing: 0.1em;
-    line-height: 1.1;
+    display: flex;
+    align-items: flex-end;
+
+    &__text {
+      font-size: .75em;
+      hyphens: auto;
+      max-width: 100%;
+      overflow-wrap: break-word;
+      overflow: hidden;
+      width: 100%;
+
+      &--large {
+        font-size: 0.875em;
+        letter-spacing: 0.1em;
+        line-height: 1.1;
+      }
+    }
   }
 
   .inner-grid {
