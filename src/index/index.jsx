@@ -13,7 +13,7 @@ import './index.scss'
 
 const PAGES = '__pages'
 const hashids = new Hashids('', 6, '0123456789abcdef')
-const appVersionHex = hashids.encode((APP_VERSION || '0').split('.').reverse()).replace(/(.*)(.{6})$/, '#$2')
+const appVersionHex = hashids.encode((APP_VERSION || '0').replace(/[^0-9.]*/g, '').split('.').reverse()).replace(/(.*)(.{6})$/, '#$2')
 const appVersionContrastHex = getContrastYIQ(appVersionHex)
 
 type Directory = {
