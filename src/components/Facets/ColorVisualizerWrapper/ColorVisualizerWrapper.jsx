@@ -38,7 +38,7 @@ import { modalHeight, refreshModalHeight } from '../../../store/actions/modal'
 import debounce from 'lodash/debounce'
 import { setSelectedSceneStatus } from '../../../store/actions/stockScenes'
 import { replaceSceneStatus } from '../../../shared/utils/sceneUtil'
-import { mouseDownPreventDefault } from 'src/shared/helpers/MiscUtils'
+import ColorDetailsModal from './ColorDetailsModal/ColorDetailsModal'
 
 const colorWallBaseUrl = `/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_WALL}`
 
@@ -537,7 +537,7 @@ export class ColorVisualizerWrapper extends Component<Props> {
 
   render () {
     const { close, showDefaultPage, imgUrl, showPaintScene, remountKey, isShowWarningModal, tmpPaintSceneImage, checkIsPaintSceneUpdate, exploreColorsLinkRef, isTabbedOutFromHelp, isFromMyIdeas, imgUrlMatchPhoto } = this.state
-    const { toggleCompareColor, location } = this.props
+    const { toggleCompareColor, location, colorDetailsModalShowing } = this.props
     const dropMenuProps = {
       close: this.close,
       redirectTo: this.redirectTo,
@@ -565,36 +565,39 @@ export class ColorVisualizerWrapper extends Component<Props> {
           }}>
             { /* The warning modal can also be triggered by the router context, when debugging trace showWarningModalMyIdeas too */ }
             {isShowWarningModal && <CVWWarningModal miniImage={tmpPaintSceneImage} cancel={this.cancel} confirm={this.loadNewCanvas} />}
-            {!toggleCompareColor && <div className={`cvw__root-container__nav-wrapper ${(location.pathname === HELP_PATH) ? `cvw__root-container__nav-wrapper--hide` : (location.pathname === MY_IDEAS) ? `cvw__root-container__nav-wrapper--hide-my-ideas` : ``}`}>
-              <ColorVisualizerNav />
+            {!toggleCompareColor && <div className='cvw__root-wrapper'>
+              <ColorDetailsModal />
+              <div className={colorDetailsModalShowing ? 'hide-on-small-screens' : ''}>
+                <div className={`cvw__root-container__nav-wrapper ${(location.pathname === HELP_PATH) ? `cvw__root-container__nav-wrapper--hide` : (location.pathname === MY_IDEAS) ? `cvw__root-container__nav-wrapper--hide-my-ideas` : ``}`}>
+                  <ColorVisualizerNav />
+                </div>
+                {(!showDefaultPage && !showPaintScene && location.pathname === PAINT_SCENE_ROUTE) && (<canvas name='canvas' width='600' height='600' />)}
+                <Route path='/' exact component={RootRedirect} />
+                <Route path={colorWallUrlPattern}>
+                  <ColorWallPage displayAddButton displayInfoButton displayDetailsLink={false} />
+                </Route>
+                <Route path={`${colorDetailsBaseUrl}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`} exact component={ColorDetailsWithData} />
+                <Route path='/color-from-image' component={InspiredScene} />
+                <Route path='/use-our-image' render={() => <SampleScenesWrapper isColorTinted activateScene={(id) => this.activateScene(id)} />} />
+                <Route path='/paint-photo' render={() => <SampleScenesWrapper activateScene={(id) => this.activateScene(id)} />} />
+                <Route path='/color-collections' component={(props) => (<ColorCollection isExpertColor={false} {...props.location.state} />)} />
+                <Route path='/expert-colors' component={() => <ExpertColorPicks isExpertColor />} />
+                {/* @todo - implement MyIdeas -RS */}
+                <Route path={MY_IDEAS} render={() => <MyIdeasContainer />} />
+                <Route path={MY_IDEAS_PREVIEW} component={MyIdeaPreview} />
+                <Route path={`/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`} exact component={ColorDetails} />
+                <Route path='/help' component={Help} />
+                <Route path='/match-photo' render={() => <ImageRotateContainer showPaintScene imgUrl={imgUrlMatchPhoto} />} />
+                {showDefaultPage && <SceneManager expertColorPicks hideSceneSelector />}
+                <ImageRotateContainer isFromMyIdeas={isFromMyIdeas} isPaintScene checkIsPaintSceneUpdate={checkIsPaintSceneUpdate} showPaintScene={showPaintScene} imgUrl={imgUrl} key={remountKey} />
+                <div className={`${isShowWarningModal ? 'cvw__modal__overlay' : 'cvw__route-wrapper'}`} />
+                {!close && <div role='presentation' className={`${(!close && !nonOverlayRouteSet.has(location.pathname)) ? 'nav__dropdown-overlay' : ''}`} onClick={this.close}>
+                  <Route path='/active/colors' component={(props) => <DropDownMenu isTabbedOutFromHelp={isTabbedOutFromHelp} exploreColorsLinkRef={exploreColorsLinkRef} dataKey='color' {...dropMenuProps} />} />
+                  <Route path='/active/inspiration' component={() => <DropDownMenu isTabbedOutFromHelp={isTabbedOutFromHelp} exploreColorsLinkRef={exploreColorsLinkRef} dataKey='inspiration' {...dropMenuProps} />} />
+                  <Route path='/active/scenes' component={() => <DropDownMenu isTabbedOutFromHelp={isTabbedOutFromHelp} exploreColorsLinkRef={exploreColorsLinkRef} dataKey='scenes' {...dropMenuProps} />} />
+                </div>}
+              </div>
             </div>}
-            <div className={`cvw__root-wrapper ${!toggleCompareColor ? 'cvw__root-wrapper--show' : 'cvw__root-wrapper--hide'}`}>
-              {(!showDefaultPage && !showPaintScene && location.pathname === PAINT_SCENE_ROUTE) && (<canvas name='canvas' width='600' height='600' />)}
-              <Route path='/' exact component={RootRedirect} />
-              <Route path={colorWallUrlPattern}>
-                <ColorWallPage displayAddButton displayDetailsLink={false} />
-              </Route>
-              <Route path={`${colorDetailsBaseUrl}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`} exact component={ColorDetailsWithData} />
-              <Route path='/color-from-image' component={InspiredScene} />
-              <Route path='/use-our-image' render={() => <SampleScenesWrapper isColorTinted activateScene={(id) => this.activateScene(id)} />} />
-              <Route path='/paint-photo' render={() => <SampleScenesWrapper activateScene={(id) => this.activateScene(id)} />} />
-              <Route path='/color-collections' component={(props) => (<ColorCollection isExpertColor={false} {...props.location.state} />)} />
-              <Route path='/expert-colors' component={() => <ExpertColorPicks isExpertColor />} />
-              {/* @todo - implement MyIdeas -RS */}
-              <Route path={MY_IDEAS} render={() => <MyIdeasContainer />} />
-              <Route path={MY_IDEAS_PREVIEW} component={MyIdeaPreview} />
-              <Route path={`/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`} exact component={ColorDetails} />
-              <Route path='/help' component={Help} />
-              <Route path='/match-photo' render={() => <ImageRotateContainer showPaintScene imgUrl={imgUrlMatchPhoto} />} />
-              {showDefaultPage && <SceneManager expertColorPicks hideSceneSelector />}
-              <ImageRotateContainer isFromMyIdeas={isFromMyIdeas} isPaintScene checkIsPaintSceneUpdate={checkIsPaintSceneUpdate} showPaintScene={showPaintScene} imgUrl={imgUrl} key={remountKey} />
-              <div className={`${isShowWarningModal ? 'cvw__modal__overlay' : 'cvw__route-wrapper'}`} role='presentation' onMouseDown={mouseDownPreventDefault} />
-              {!close && <div role='presentation' className={`${(!close && !nonOverlayRouteSet.has(location.pathname)) ? 'nav__dropdown-overlay' : ''}`} onClick={this.close}>
-                <Route path='/active/colors' component={(props) => <DropDownMenu isTabbedOutFromHelp={isTabbedOutFromHelp} exploreColorsLinkRef={exploreColorsLinkRef} dataKey='color' {...dropMenuProps} />} />
-                <Route path='/active/inspiration' component={() => <DropDownMenu isTabbedOutFromHelp={isTabbedOutFromHelp} exploreColorsLinkRef={exploreColorsLinkRef} dataKey='inspiration' {...dropMenuProps} />} />
-                <Route path='/active/scenes' component={() => <DropDownMenu isTabbedOutFromHelp={isTabbedOutFromHelp} exploreColorsLinkRef={exploreColorsLinkRef} dataKey='scenes' {...dropMenuProps} />} />
-              </div>}
-            </div>
             {toggleCompareColor && <CompareColor />}
             <div className={cvwFooterClassName}>
               <div className={footerPriorityItemClassName}>
@@ -643,7 +646,8 @@ const mapStateToProps = (state, props) => {
     selectedStockSceneId: state.selectedStockSceneId,
     sceneMetadata: state.sceneMetadata,
     selectedSceneStatus: state.selectedSceneStatus,
-    isActiveStockScenePolluted: state.scenes.isActiveStockScenePolluted
+    isActiveStockScenePolluted: state.scenes.isActiveStockScenePolluted,
+    colorDetailsModalShowing: state.colors.colorDetailsModal.showing
   }
 }
 

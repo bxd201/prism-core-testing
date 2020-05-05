@@ -2,6 +2,7 @@
 import React, { useState, useRef } from 'react'
 import { connect } from 'react-redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import InfoButton from 'src/components/InfoButton/InfoButton'
 import 'src/providers/fontawesome/fontawesome'
 import { useDrag, useDrop } from 'react-dnd-cjs'
 import { fullColorNumber, getContrastYIQ } from '../../shared/helpers/ColorUtils'
@@ -123,10 +124,15 @@ export function ActiveSlot (props: Props) {
   return (
     <div ref={activeSlotRef} className={`prism-live-palette__slot ${(active ? ACTIVE_CLASS : '')} ${(isDeleting ? REMOVAL_CLASS : '')}`} style={{ backgroundColor: color.hex, opacity }} onClick={activateSlot} onKeyDown={activateSlot} role='button' tabIndex='-1'>
       {!toggleCompareColor && <div className={`prism-live-palette__color-details ${LIGHT_DARK_CLASS}`}>
-        <span className='prism-live-palette__color-number'>{fullColorNumber(color.brandKey, color.colorNumber)}</span>
-        <span className='prism-live-palette__color-name'>{ color.name }</span>
-        <span className='prism-live-palette__color-description'>{ color.description.join(', ') }</span>
-        <button className='prism-live-palette__trash' onClick={remove}><FontAwesomeIcon icon={['fa', 'trash']} size='1x' /></button>
+        <div className='prism-live-palette__description'>
+          <span className='prism-live-palette__color-number'>{fullColorNumber(color.brandKey, color.colorNumber)}</span>
+          <span className='prism-live-palette__color-name'>{ color.name }</span>
+          <span className='prism-live-palette__color-description'>{ color.description.join(', ') }</span>
+        </div>
+        <div className='prism-live-palette__button-group'>
+          <InfoButton color={color} />
+          <button className='prism-live-palette__trash' onClick={remove}><FontAwesomeIcon icon={['fa', 'trash']} size='1x' /></button>
+        </div>
       </div>}
       {toggleCompareColor && <button style={{ color: getContrastYIQ(color.hex) }} className={`${baseClass}__button`} onClick={() => hanleToggle()}>
         <div className={`${baseClass}__${displayArea}`} style={{ backgroundColor: color.hex }}>

@@ -22,7 +22,7 @@ export function ColorStrip ({ color, onColorChanged }: Props) {
       {stripColors.map(stripColor => {
         const active = color.id === stripColor.id
         return (
-          <li className='color-info__strip-color' style={{ backgroundColor: stripColor.hex }}>
+          <li key={stripColor.id} className='color-info__strip-color' style={{ backgroundColor: stripColor.hex }}>
             <button
               className={`color-info__strip-color-info${active ? ` color-info__strip-color-info--active` : ''}`}
               onClick={() => {

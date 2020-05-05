@@ -45,6 +45,10 @@ export const initialState: ColorsState = {
     section: void (0),
     family: void (0),
     colorWallActive: void (0)
+  },
+  colorDetailsModal: {
+    showing: false,
+    color: undefined
   }
 }
 

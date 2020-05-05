@@ -36,17 +36,14 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
   const toggleSceneDisplayScene = useRef(null)
   const toggleSceneHideScene = useRef(null)
   const scenesLoaded: boolean = useSelector(state => !state.scenes.loadingScenes)
-  // grab the color by color number from the URL
-  const activeColor: Color | typeof undefined = has(colors, colorId) ? colors[colorId] : undefined
-  useEffect(() => {
-    dispatch(toggleColorDetailsPage())
-    return function cleanup () {
-      dispatch(toggleColorDetailsPage())
-    }
-  }, [])
 
   const [color: Color, setColor: Color => void] = useState(initialColor)
   useEffect(() => { onColorChanged && onColorChanged(color) }, [color])
+
+  useEffect(() => {
+    dispatch(toggleColorDetailsPage())
+    return () => { dispatch(toggleColorDetailsPage()) }
+  }, [])
 
   useEffect(() => {
     color && GA.pageView(`color-detail/${color.brandKey} ${color.colorNumber} - ${color.name}`)
