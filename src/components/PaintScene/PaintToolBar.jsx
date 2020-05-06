@@ -262,6 +262,7 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
       }
 
       return <button
+        aria-label='Tool button'
         key={tool.id}
         name={tool.name}
         className={`${this.getToolBarItemClassName(tool)}`}
@@ -354,14 +355,30 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
     }
   }
 
+  groupTooltipDivMouseEnterHandler = () => {
+    this.showTooltipContentByZindex(this.groupTooltipDivRef)
+  }
+
+  groupTooltipDivMouseLeaveHandler = () => {
+    this.hideTooltipContentByZindex(this.groupTooltipDivRef)
+  }
+
+  tooltipDivMouseEnterHandler = () => {
+    this.showTooltipContentByZindex(this.tooltipDivRef)
+  }
+
+  tooltipDivMouseLeaveHandler = () => {
+    this.hideTooltipContentByZindex(this.tooltipDivRef)
+  }
+
   render () {
     const { showToolBar, showPaintBrushTypes, showEraseBrushTypes, showTooltip, tooltipToolActiveNumber, zoomSliderHide } = this.state
     const { activeTool, paintBrushShape, paintBrushWidth, eraseBrushShape, eraseBrushWidth, setBrushShapeSize, applyZoom, intl } = this.props
 
     return (
       <>
-        <div className={`${paintToolsClass}`}>
-          <div ref={this.groupTooltipDivRef} onMouseEnter={() => this.showTooltipContentByZindex(this.groupTooltipDivRef)} onMouseLeave={() => this.hideTooltipContentByZindex(this.groupTooltipDivRef)} className={`${groupToolClass} ${(showToolBar && !showTooltip && activeTool === toolNames.SELECTAREA) || (showTooltip && tooltipToolActiveNumber > 0 && tooltipToolActiveNumber === toolNumbers.SELECTAREA) ? `${groupToolShowClass}` : `${groupToolHideClass}`}`}>
+        <div aria-label={'Tooltips tool wrapper'} className={`${paintToolsClass}`}>
+          <div ref={this.groupTooltipDivRef} onMouseEnter={this.groupTooltipDivMouseEnterHandler} onMouseLeave={this.groupTooltipDivMouseLeaveHandler} className={`${groupToolClass} ${(showToolBar && !showTooltip && activeTool === toolNames.SELECTAREA) || (showTooltip && tooltipToolActiveNumber > 0 && tooltipToolActiveNumber === toolNumbers.SELECTAREA) ? `${groupToolShowClass}` : `${groupToolHideClass}`}`}>
             { this.generateSelectGroupTools() }
             {showTooltip && tooltipToolActiveNumber > 0 && tooltipToolActiveNumber === toolNumbers.SELECTAREA && <PaintToolTip
               isSelectGroup
@@ -377,8 +394,8 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
               parentDivRef={this.groupTooltipDivRef}
             />}
           </div>
-          <div ref={this.tooltipDivRef} onMouseEnter={() => this.showTooltipContentByZindex(this.tooltipDivRef)} onMouseLeave={() => this.hideTooltipContentByZindex(this.tooltipDivRef)} className={`${wrapperClass}`}>
-            <div className={`${containerClass} ${(!showToolBar) ? `${containerHideClass}` : ``}`}>
+          <div ref={this.tooltipDivRef} onMouseEnter={this.tooltipDivMouseEnterHandler} onMouseLeave={this.tooltipDivMouseLeaveHandler} className={`${wrapperClass}`}>
+            <div aria-label={`${(showToolBar) ? 'Tools container' : 'Tools container hidden'}`} className={`${containerClass} ${(!showToolBar) ? `${containerHideClass}` : ``}`}>
               { this.generateTools() }
               <div
                 onMouseLeave={this.hidePaintBrushTypes}
@@ -411,7 +428,7 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
               </div>
             </div>
             <div className={`${toolbarToggleClass}`}>
-              <button onClick={this.toggleButtonClickHandler} className={`${toolbarToggleButtonClass} ${showToolBar ? `${toolbarToggleButtonToolbarShownClass}` : `${toolbarToggleButtonToolbarHiddenClass}`}`} />
+              <button aria-label='Toggle toolbar' onClick={this.toggleButtonClickHandler} className={`${toolbarToggleButtonClass} ${showToolBar ? `${toolbarToggleButtonToolbarShownClass}` : `${toolbarToggleButtonToolbarHiddenClass}`}`} />
             </div>
           </div>
         </div>
@@ -433,7 +450,4 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
   }
 }
 
-export {
-  toolbarButtonClass, toolbarToggleButtonClass, brushTypesClass
-}
 export default injectIntl(PaintToolBar)

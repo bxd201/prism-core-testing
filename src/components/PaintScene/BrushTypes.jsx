@@ -26,6 +26,7 @@ export function BrushTypes ({ activeWidth, activeShape, setBrushShapeSize }: Pro
     return (
       brushTypes.map((brushType: number) => {
         let brushClass = `${brushButtonClass}`
+        let ariaLabel = `select the ${brushType} pixel wide, ${brushShape} brush`
 
         if (brushShape === brushRoundShape) {
           brushClass += ` ${brushButtonCircleClass}`
@@ -43,9 +44,10 @@ export function BrushTypes ({ activeWidth, activeShape, setBrushShapeSize }: Pro
 
         if ((activeWidth === brushType && activeShape === brushShape)) {
           brushClass += ` ${brushButtonActiveClass}`
+          ariaLabel = `the ${brushType} pixel wide, ${brushShape} brush is active`
         }
 
-        return <button key={`${brushShape}-${brushType}`} className={`${brushClass}`} onClick={() => setBrushShapeSize(brushShape, brushType)} />
+        return <button aria-label={`${ariaLabel}`} key={`${brushShape}-${brushType}`} className={`${brushClass}`} onClick={() => setBrushShapeSize(brushShape, brushType)} />
       })
     )
   }
