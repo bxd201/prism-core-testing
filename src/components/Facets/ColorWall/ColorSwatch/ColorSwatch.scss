@@ -27,6 +27,7 @@
 .color-swatch {
   border: 1px solid #fff;
   font-size: getFontSizeByScale(1);
+  outline-offset: 0px;
 
   &:focus { z-index: 1; }
 
@@ -67,6 +68,7 @@
       height: 123px !important;
       width: 123px !important;
       transform: translate3d(-36px, -36px, 0);
+      &--focus, &:focus { outline: 5.5px solid getVar('colors.primary') !important; }
 
       @include respond-above(sm) {
         height: 135px !important;
