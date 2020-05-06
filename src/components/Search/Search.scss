@@ -1,15 +1,23 @@
 .Search {
   &__results-pane {
-    min-height: 60vh;
-    text-align: center;
+    align-items: center;
     display: flex;
+    justify-content: center;
+    min-height: 60vh;
     position: relative;
-
-    .generic-message { margin: auto; }
-
-    &--top-align { align-items: flex-start; }
+    text-align: center;
 
     @include respond-above(sm) { min-height: 66vh; }
+
+    &__swatches {
+      width: 100%;
+
+      &--cover {
+        height: 100%;
+        overflow: hidden;
+        position: absolute;
+      }
+    }
   }
 
   .ReactVirtualized__Grid__innerScrollContainer { margin: auto; }

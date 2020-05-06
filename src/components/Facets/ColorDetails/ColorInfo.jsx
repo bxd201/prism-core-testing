@@ -1,23 +1,24 @@
 // @flow
 import React from 'react'
+import { useSelector } from 'react-redux'
 import { FormattedMessage } from 'react-intl'
-import type { Color } from '../../../shared/types/Colors.js.flow'
-
+import type { Color, FamilyStructure } from '../../../shared/types/Colors.js.flow'
+import flattenDeep from 'lodash/flattenDeep'
+import intersection from 'lodash/intersection'
 import 'src/scss/convenience/visually-hidden.scss'
 
-type Props = {
-  color: Color,
-  familyLink?: string
-}
-
+type Props = { color: Color, familyLink?: string }
 function ColorInfo ({ color, familyLink }: Props) {
+  const structure: FamilyStructure = useSelector(state => state.colors.structure)
+
   return (
     <div className='color-info__details-tab-wrapper'>
       <h5 className='visually-hidden'><FormattedMessage id='DETAILS' /></h5>
-      {familyLink &&
+      {/* see if our active color's families exist in all families; if yes, allow showing the family link */}
+      {familyLink && intersection(flattenDeep(structure.map(s => s.families)), color.colorFamilyNames).length > 0 &&
         <div className='color-info__chunk'>
           <a className='view-family-link' href={familyLink}>
-              View all {color.colorFamilyNames[0]} paint colors →
+            View all {color.colorFamilyNames[0]} paint colors →
           </a>
         </div>
       }
