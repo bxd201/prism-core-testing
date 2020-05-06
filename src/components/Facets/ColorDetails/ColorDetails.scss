@@ -257,6 +257,10 @@ $details-tab-padding: 1rem;
         text-decoration: underline;
       }
     }
+
+    @include respond-above(md) {
+      text-align: left;
+    }
   }
 
   &__swatch-size-toggle-button {
