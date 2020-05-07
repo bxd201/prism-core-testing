@@ -101,14 +101,20 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
               <TabList className={`${baseClass}__tab-list`} style={{ backgroundColor: color.hex }}>
                 {color.coordinatingColors && (
                   <Tab className={`coordinating-colors-tab ${baseClass}__tab ${color.isDark ? `${baseClass}__tab--dark-color` : ''}`}>
-                    <FormattedMessage className={`${baseClass}__tab-copy`} id='COORDINATING_COLORS' />
+                    <div className={`${baseClass}__tab-copy`}>
+                      <FormattedMessage id='COORDINATING_COLORS' />
+                    </div>
                   </Tab>
                 )}
                 <Tab className={`similar-colors-tab ${baseClass}__tab ${color.isDark ? `${baseClass}__tab--dark-color` : ''}`}>
-                  <FormattedMessage className={`${baseClass}__tab-copy`} id='SIMILAR_COLORS' />
+                  <div className={`${baseClass}__tab-copy`}>
+                    <FormattedMessage id='SIMILAR_COLORS' />
+                  </div>
                 </Tab>
                 <Tab className={`color-info-tab ${baseClass}__tab ${color.isDark ? `${baseClass}__tab--dark-color` : ''}`}>
-                  <FormattedMessage className={`${baseClass}__tab-copy`} id='DETAILS' />
+                  <div className={`${baseClass}__tab-copy`}>
+                    <FormattedMessage id='DETAILS' />
+                  </div>
                 </Tab>
               </TabList>
               {color.coordinatingColors && (
