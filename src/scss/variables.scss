@@ -12,9 +12,10 @@ $color-light-grey: getVar( "colors.lightGrey" );
 $color-swBlue: getVar( "colors.swBlue" );
 
 // COLOR WALL
+$cw-chunk-outline-color: var(getVarName('theme.colors.primary'));
 $cw-chunk-outline-offset: 6px;
 $cw-focus-outline-size: 2px;
-$cw-focus-outline: $cw-focus-outline-size solid getVar('colors.primary');
+$cw-focus-outline: $cw-focus-outline-size solid $cw-chunk-outline-color;
 
 // UI
 $ui-height-min: 38px;
