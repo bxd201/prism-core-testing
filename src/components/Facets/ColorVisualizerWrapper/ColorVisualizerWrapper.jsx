@@ -39,6 +39,8 @@ import debounce from 'lodash/debounce'
 import { setSelectedSceneStatus } from '../../../store/actions/stockScenes'
 import { replaceSceneStatus } from '../../../shared/utils/sceneUtil'
 import ColorDetailsModal from './ColorDetailsModal/ColorDetailsModal'
+import { PreLoadingSVG } from './PreLoadingSVG'
+import at from 'lodash/at'
 
 const colorWallBaseUrl = `/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_WALL}`
 
@@ -99,6 +101,7 @@ type Props = FacetPubSubMethods & FacetBinderMethods & {
 }
 
 const pathNameSet = new Set([`${ACTIVE_ROUTE}/colors`, `${ACTIVE_ROUTE}/inspiration`, `${ACTIVE_ROUTE}/scenes`, ACTIVE_ROUTE, '/'])
+const notReLoadingPath = new Set(['/color-from-image', '/match-photo', '/paint-scene', '/help'])
 const nonOverlayRouteSet = new Set([ACTIVE_ROUTE, HELP_ROUTE, MY_IDEAS])
 
 export class ColorVisualizerWrapper extends Component<Props> {
@@ -136,12 +139,12 @@ export class ColorVisualizerWrapper extends Component<Props> {
       isActivateScene: false,
       tmpActiveId: null,
       isRedirectFromMyIdeasStockScene: false,
-      openUnpaintedStockScene: false
+      openUnpaintedStockScene: false,
+      isFirstLoading: true
     }
 
     this.wrapperRef = createRef()
     this.resizeHandler = debounce(this.resizeHandler.bind(this), 300)
-
     window.addEventListener('resize', this.resizeHandler)
   }
 
@@ -156,7 +159,6 @@ export class ColorVisualizerWrapper extends Component<Props> {
     const { showDefaultPage, showPaintScene, lastActiveComponent } = this.state
     let isShowPaintScene = true
     let isShowDefaultPage = true
-
     // save action uses redux flags that need to be cleared. This prevents the save modal from showing up when it should not
     this.props.resetSaveState()
 
@@ -168,7 +170,7 @@ export class ColorVisualizerWrapper extends Component<Props> {
     }
     if (showPaintScene || showDefaultPage) {
       if (pathNameSet.has(currLocation)) {
-        this.setState({ close: false, showPaintScene: isShowPaintScene, showDefaultPage: isShowDefaultPage })
+        this.setState({ close: false, showPaintScene: isShowPaintScene, showDefaultPage: isShowDefaultPage, isFirstLoading: false })
       } else if (isSubRoute) {
         this.setState({ showPaintScene: false, showDefaultPage: false, close: true })
       } else {
@@ -538,8 +540,10 @@ export class ColorVisualizerWrapper extends Component<Props> {
   }
 
   render () {
-    const { close, showDefaultPage, imgUrl, showPaintScene, remountKey, isShowWarningModal, tmpPaintSceneImage, checkIsPaintSceneUpdate, exploreColorsLinkRef, isTabbedOutFromHelp, isFromMyIdeas, imgUrlMatchPhoto } = this.state
-    const { toggleCompareColor, location, colorDetailsModalShowing } = this.props
+    const { close, imgUrl, showDefaultPage, showPaintScene, remountKey, isShowWarningModal, tmpPaintSceneImage, checkIsPaintSceneUpdate, exploreColorsLinkRef, isTabbedOutFromHelp, isFromMyIdeas, imgUrlMatchPhoto, isFirstLoading } = this.state
+    const { toggleCompareColor, location, loadingScenes, loadingColorData, loadingCS, loadingECP, colorDetailsModalShowing } = this.props
+    const isloadingPath = !notReLoadingPath.has(this.props.location.pathname)
+    const isLoading = loadingScenes && loadingColorData && loadingCS && loadingECP && isloadingPath && isFirstLoading
     const dropMenuProps = {
       close: this.close,
       redirectTo: this.redirectTo,
@@ -547,7 +551,8 @@ export class ColorVisualizerWrapper extends Component<Props> {
     }
     return (
       <React.Fragment>
-        <div className={cvwBaseClassName} ref={this.wrapperRef}>
+        { isLoading && <PreLoadingSVG />}
+        <div className={`${cvwBaseClassName} ${isLoading ? `${cvwBaseClassName}--loading` : ''} `} ref={this.wrapperRef}>
           <RouteContext.Provider value={{
             navigate: (isShowDropDown, close) => this.open(isShowDropDown, close),
             setActiveComponent: () => this.setActiveComponent(),
@@ -649,7 +654,11 @@ const mapStateToProps = (state, props) => {
     sceneMetadata: state.sceneMetadata,
     selectedSceneStatus: state.selectedSceneStatus,
     isActiveStockScenePolluted: state.scenes.isActiveStockScenePolluted,
-    colorDetailsModalShowing: state.colors.colorDetailsModal.showing
+    colorDetailsModalShowing: state.colors.colorDetailsModal.showing,
+    loadingScenes: scenes.loadingScenes,
+    loadingColorData: !!at(state, 'colors.status.loading')[0],
+    loadingCS: state.collectionSummaries.loadingCS,
+    loadingECP: state.expertColorPicks.loadingECP
   }
 }
 
