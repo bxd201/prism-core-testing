@@ -6,14 +6,36 @@ import flatten from 'lodash/flatten'
 import isArray from 'lodash/isArray'
 import set from 'lodash/set'
 import sortBy from 'lodash/sortBy'
-import Hashids from 'hashids'
 
 import { getContrastYIQ } from 'src/shared/helpers/ColorUtils'
 import './index.scss'
 
+const appVersionHex = (() => {
+  const hexKey = [
+    8, 0, 9, 1, 'A', 2, 'B', 3, 'C', 4, 'D', 5, 'E', 6, 'F', 7
+  ]
+  const order = [
+    '$1$2$3',
+    '$2$3$1',
+    '$3$1$2'
+  ]
+  const plainVersion = (APP_VERSION || '0.0.0').replace(/[^0-9.]/g, '')
+  const parts = plainVersion.split('.').map(v => parseInt(v, 10))
+
+  const getRgbPosition = (parts) => {
+    const i = parts.reduce((prev, next) => prev + next, 0) % 3
+    return order[i]
+  }
+
+  const hexMap = parts.map(v => v % 16).map(v => hexKey[v].toString())
+  const hex = getRgbPosition(parts).replace('$1', hexMap[0]).replace('$2', hexMap[1]).replace('$3', hexMap[2])
+
+  return `#${hex}`
+})()
+
+console.info('zong', appVersionHex)
+
 const PAGES = '__pages'
-const hashids = new Hashids('', 6, '0123456789abcdef')
-const appVersionHex = hashids.encode((APP_VERSION || '0').replace(/[^0-9.]*/g, '').split('.').reverse()).replace(/(.*)(.{6})$/, '#$2')
 const appVersionContrastHex = getContrastYIQ(appVersionHex)
 
 type Directory = {
