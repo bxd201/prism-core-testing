@@ -1,5 +1,5 @@
 // @flow
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useRef, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import SavedScene from './SavedScene'
 import { updateSavedSceneName } from '../../store/actions/persistScene'
@@ -31,6 +31,13 @@ const EditSavedScene = ({ width, height, sceneData, selectScene, showMyIdeas, ed
   const [savedSceneName, setSavedSceneName] = useState((editedTintableIndividualScene) ? sceneData.sceneMetadata.name : sceneData.name)
   const dispatch = useDispatch()
   const intl = useIntl()
+  const savedSceneFrameRef = useRef()
+
+  useEffect(() => {
+    if (savedSceneFrameRef.current) {
+      savedSceneFrameRef.current.focus()
+    }
+  }, [savedSceneFrameRef])
 
   const clickHandler = useCallback(() => {
     if (savedSceneName) {
@@ -66,6 +73,7 @@ const EditSavedScene = ({ width, height, sceneData, selectScene, showMyIdeas, ed
           hideSceneName
           isImgWidthPixel
           useTintableScene={editedTintableIndividualScene}
+          ref={savedSceneFrameRef}
         />
       </div>
       <div className={`${inputWrapper}`}>

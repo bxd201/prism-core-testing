@@ -344,9 +344,11 @@ export class ColorVisualizerWrapper extends Component<Props> {
   }
 
   setIsTabbedOutFromHelp = () => {
-    this.setState({
-      isTabbedOutFromHelp: true
-    })
+    if (!this.state.close) {
+      this.setState({
+        isTabbedOutFromHelp: true
+      })
+    }
   }
 
   showWarningModal = (base64) => {

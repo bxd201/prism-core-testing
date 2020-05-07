@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, forwardRef } from 'react'
 import { useSelector } from 'react-redux'
 import { useIntl } from 'react-intl'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -27,12 +27,7 @@ type SavedSceneProps = {
   hideSceneName?: boolean,
   useTintableScene?: boolean,
   sceneId: string,
-  isImgWidthPixel?: boolean,
-  handlePrev?: Function,
-  handleNext?: Function,
-  itemNumber?: number,
-  itemsPerView?: number,
-  totalItems?: number
+  isImgWidthPixel?: boolean
 }
 
 const FIXED_WIDTH = 120
@@ -79,7 +74,7 @@ const createColors = (sceneData: any, isTintableScene: boolean, colorMap: ColorM
   })
 }
 
-const SavedScene = (props: SavedSceneProps) => {
+const SavedScene = (props: SavedSceneProps, ref: RefObject | null) => {
   const intl = useIntl()
   const { width, height } = props.useTintableScene ? props.sceneData.scene : props.sceneData.surfaceMasks
 
@@ -151,11 +146,7 @@ const SavedScene = (props: SavedSceneProps) => {
   }
 
   const handleKeyDown = (e: SyntheticEvent) => {
-    if (e.shiftKey && e.keyCode === KEY_CODES.KEY_CODE_TAB) {
-      if (props.itemNumber !== 1 && props.itemNumber % props.itemsPerView === 1) props.handlePrev()
-    } else if (e.keyCode === KEY_CODES.KEY_CODE_TAB) {
-      if (props.itemNumber !== props.totalItems && props.itemNumber % props.itemsPerView === 0) props.handleNext()
-    } else if (e.keyCode === KEY_CODES.KEY_CODE_ENTER || e.keyCode === KEY_CODES.KEY_CODE_SPACE) {
+    if (e.keyCode === KEY_CODES.KEY_CODE_ENTER || e.keyCode === KEY_CODES.KEY_CODE_SPACE) {
       if (props.editEnabled) {
         props.editIndividualScene(props.sceneData, !!props.useTintableScene)
       } else selectScene(e)
@@ -196,7 +187,7 @@ const SavedScene = (props: SavedSceneProps) => {
                 size='sm' />
             </button>
           </div> : null}
-        <div role='tab' tabIndex='0' className={sceneFrameClassName} onClick={selectScene} onKeyDown={handleKeyDown} onMouseDown={mouseDownHandler}>
+        <div aria-label={props.useTintableScene ? props.sceneData.sceneMetadata.name : props.sceneData.name} ref={ref} role='tab' tabIndex='0' className={sceneFrameClassName} onClick={selectScene} onKeyDown={handleKeyDown} onMouseDown={mouseDownHandler} >
           <div className={paneClassName}>
             {!props.useTintableScene ? <div className={thumbnailClassName} style={{ width: `${props.width || FIXED_WIDTH}${props.isImgWidthPixel ? `px` : `%`}`, height: `${props.height || FIXED_HEIGHT}px` }}>
               {thumbnailUrl ? <img style={{ width: `${props.width || FIXED_WIDTH}${props.isImgWidthPixel ? `px` : `%`}` }} src={thumbnailUrl} alt={`${intl.messages['MY_IDEAS.PREVIEW']}: ${props.sceneData.name}`} /> : <CircleLoader />}
@@ -222,4 +213,4 @@ const SavedScene = (props: SavedSceneProps) => {
   )
 }
 
-export default SavedScene
+export default forwardRef(SavedScene)

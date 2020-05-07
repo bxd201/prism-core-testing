@@ -31,9 +31,15 @@ function ColorCollectionsTab (props: Props) {
   const tabShowName = (tabActive !== undefined) ? tabActive : at(messages, 'CHOOSE_A_COLLECTION')[0]
 
   const tabRefs = collectionTabs.reduce((acc, value) => {
-    acc[value.id] = React.createRef()
+    acc[value.id.toString()] = React.createRef()
     return acc
   }, {})
+
+  useEffect(() => {
+    if (collectionTabs && collectionTabs.length) {
+      tabRefs[collectionTabs[0].id.toString()].current.focus()
+    }
+  }, [])
 
   useEffect(() => {
     if (tabRefs[tabIdShow] && tabRefs[tabIdShow].current) {
@@ -89,6 +95,7 @@ function ColorCollectionsTab (props: Props) {
         {collectionTabs.map((tab, id) => {
           return (
             <li
+              ref={tabRefs[tab.id.toString()]}
               data-testid={`${tab.id}`}
               data-tabid={tab.id}
               role='tab'

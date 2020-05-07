@@ -1,5 +1,5 @@
 // @flow
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import CardMenu from 'src/components/CardMenu/CardMenu'
 import ExpertColorDetails from './ExpertColorDetails'
@@ -47,6 +47,13 @@ const ColorStripButtonWrapper = (props: any) => {
   const color = data.colorDefs[0]
   const colors = useMemo(() => data.colorDefs.slice(1), [data.colorDefs])
   btnRefList[itemNumber] = React.useRef()
+
+  useEffect(() => {
+    if (btnRefList[0].current) {
+      btnRefList[0].current.focus()
+    }
+  }, [btnRefList[0]])
+
   return (
     <ColorStripButton
       onClick={clickHandler}
