@@ -2,21 +2,26 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { FormattedMessage } from 'react-intl'
-import filter from 'lodash/filter'
-import values from 'lodash/values'
 import type { Color, ColorMap } from 'src/shared/types/Colors.js.flow'
 import * as GA from 'src/analytics/GoogleAnalytics'
 import 'src/scss/convenience/visually-hidden.scss'
 
+const coordColorPropNames = [
+  'whiteColorId',
+  'coord1ColorId',
+  'coord2ColorId'
+]
+
 type Props = { color: Color, onColorChanged: Color => void }
 function CoordinatingColors ({ color, onColorChanged }: Props) {
   const colorMap: ColorMap = useSelector(store => store.colors.items.colorMap)
+  const { coordinatingColors } = color
 
   return (
     <>
       <h5 className='visually-hidden'><FormattedMessage id='COORDINATING_COLORS' /></h5>
       <ul className={`color-info__coord-colors`}>
-        {filter(colorMap, c => values(color.coordinatingColors).some(id => id === c.id)).map((color: Color) => {
+        {coordColorPropNames.map(prop => coordinatingColors && coordinatingColors[prop]).filter(Boolean).map(id => colorMap[id]).filter(Boolean).map((color: Color) => {
           return (
             <li
               key={color.colorNumber}
