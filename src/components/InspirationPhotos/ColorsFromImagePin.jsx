@@ -96,8 +96,8 @@ export class ColorsFromImagePin extends PureComponent<Props, State> {
       e.stopPropagation()
       e.preventDefault()
       const pinPositionDocument = this.getElementsTopLeftCoordinates(e)
-      let pinTopReferredToCanvas = parseInt(pinPositionDocument.top, 10) + activedPinsHalfWidth
-      let pinLeftReferredToCanvas = parseInt(pinPositionDocument.left, 10) + activedPinsHalfWidth
+      let pinTopReferredToCanvas = Math.floor(pinPositionDocument.top) + activedPinsHalfWidth
+      let pinLeftReferredToCanvas = Math.floor(pinPositionDocument.left) + activedPinsHalfWidth
 
       let movementInterval = PIN_MOVEMENT_INTERVAL
 

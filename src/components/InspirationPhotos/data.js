@@ -6,6 +6,10 @@ export const throttleDragTime = 5
 // we need this two const to make sure cursor always point to the center of preview circle
 export const activedPinsHalfWidth = 24
 
+export const cloneColorPinsArr = (pins) => {
+  return pins.map(pin => ({ ...pin }))
+}
+
 export const getRGBInitPins = (acgColors: Array<Object>) => {
   return acgColors.map<Object>((acgColor: any): Object => {
     return {
@@ -40,6 +44,8 @@ export const rgb2lab = (rgb: Array<any>) => {
 
 export const renderingPins = (initPins: Array<Object>, canvasOffsetWidth: number, canvasOffsetHeight: number, brandColors: Array) => {
   const RGBinitPins = getRGBInitPins(initPins)
+  const maxHeight = canvasOffsetHeight - 2 * activedPinsHalfWidth
+  const maxWidth = canvasOffsetWidth - 2 * activedPinsHalfWidth
   return RGBinitPins.map<Object>((acgColor: any, index: number): Object => {
     const calculateTranslateX = acgColor.translateValueX * canvasOffsetWidth
     const calculateTranslateY = acgColor.translateValueY * canvasOffsetHeight
@@ -56,8 +62,8 @@ export const renderingPins = (initPins: Array<Object>, canvasOffsetWidth: number
       rgbValue: rgbValueBrandColor,
       pinNumber: index,
       isContentLeft: isContentLeft,
-      translateX: calculateTranslateX,
-      translateY: calculateTranslateY
+      translateX: calculateTranslateX > maxWidth ? maxWidth : calculateTranslateX,
+      translateY: calculateTranslateY > maxHeight ? maxHeight : calculateTranslateY
     }
   })
 }
