@@ -6,10 +6,10 @@ import type { Color, ColorMap } from 'src/shared/types/Colors.js.flow'
 import * as GA from 'src/analytics/GoogleAnalytics'
 import 'src/scss/convenience/visually-hidden.scss'
 
-const coordColorPropNames = [
-  'whiteColorId',
+const orderedCoordColorProps = [
   'coord1ColorId',
-  'coord2ColorId'
+  'coord2ColorId',
+  'whiteColorId'
 ]
 
 type Props = { color: Color, onColorChanged: Color => void }
@@ -21,7 +21,7 @@ function CoordinatingColors ({ color, onColorChanged }: Props) {
     <>
       <h5 className='visually-hidden'><FormattedMessage id='COORDINATING_COLORS' /></h5>
       <ul className={`color-info__coord-colors`}>
-        {coordColorPropNames.map(prop => coordinatingColors && coordinatingColors[prop]).filter(Boolean).map(id => colorMap[id]).filter(Boolean).map((color: Color) => {
+        {orderedCoordColorProps.map(prop => coordinatingColors && coordinatingColors[prop]).filter(Boolean).map(id => colorMap[id]).filter(Boolean).map((color: Color) => {
           return (
             <li
               key={color.colorNumber}
