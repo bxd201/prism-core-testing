@@ -10,6 +10,7 @@
     @include respond-above(sm) { min-height: 66vh; }
 
     &__swatches {
+      align-self: flex-start;
       width: 100%;
 
       &--cover {
