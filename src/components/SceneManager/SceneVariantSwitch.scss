@@ -18,7 +18,7 @@
   &__input {
     &:focus {
       & ~ #{$_self}__wrapper {
-        @include browser-highlight();
+        @include browser-highlight($outline-size, $outline-style, $outline-color);
       }
     }
   }
