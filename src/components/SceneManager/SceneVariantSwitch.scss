@@ -18,7 +18,7 @@
   &__input {
     &:focus {
       & ~ #{$_self}__wrapper {
-        @include browser-highlight(null, null, var(getVarName('theme.colors.primary')));
+        @include browser-highlight($outline-size, $outline-style, $outline-color);
       }
     }
   }
