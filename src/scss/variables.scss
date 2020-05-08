@@ -11,11 +11,16 @@ $color-white: getVar( "colors.white" );
 $color-light-grey: getVar( "colors.lightGrey" );
 $color-swBlue: getVar( "colors.swBlue" );
 
+// FOCUS OUTLINE DEFAULTS
+$outline-color: var(getVarName('theme.colors.primary'));
+$outline-size: 2px;
+$outline-style: solid;
+
 // COLOR WALL
-$cw-chunk-outline-color: var(getVarName('theme.colors.primary'));
+$cw-chunk-outline-color: $outline-color;
 $cw-chunk-outline-offset: 6px;
-$cw-focus-outline-size: 2px;
-$cw-focus-outline: $cw-focus-outline-size solid $cw-chunk-outline-color;
+$cw-focus-outline-size: $outline-size;
+$cw-focus-outline: $cw-focus-outline-size $outline-style $cw-chunk-outline-color;
 
 // UI
 $ui-height-min: 38px;
