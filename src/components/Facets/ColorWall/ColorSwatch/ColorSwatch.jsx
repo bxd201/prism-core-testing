@@ -1,7 +1,7 @@
 // @flow
 import React, { useContext } from 'react'
 import { useDispatch } from 'react-redux'
-import { Link, useRouteMatch } from 'react-router-dom'
+import { Link, useRouteMatch, useHistory } from 'react-router-dom'
 import { emitColor } from 'src/store/actions/loadColors'
 import { add } from 'src/store/actions/live-palette'
 import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
@@ -65,48 +65,37 @@ const Content = ({ msg, color }: ContentProps) => {
   } else { return null }
 }
 
-type ColorSwatchProps = { color: Color, level?: number, status?: ColorStatus, style?: {}, showContents?: boolean, onFocus?: () => void, tabIndex?: number }
-const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, level, status, style, showContents = (level === 0), onFocus, tabIndex }: ColorSwatchProps, ref) => {
+type ColorSwatchProps = { color: Color, level?: number, status?: ColorStatus, style?: {}, showContents?: boolean, onFocus?: () => void }
+const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, level, status, style, showContents = (level === 0), onFocus }: ColorSwatchProps, ref) => {
   const { url, params: { section, family } } = useRouteMatch()
+  const history = useHistory()
   const isDisabled = at(status, 'status')[0] === 0
 
-  return (showContents
-    ? (
-      <>
-        <div
-          className={'active color-swatch' + (level === undefined ? '' : ' color-swatch-' + numToAlphaString(level))}
-          style={{ ...style, background: color.hex }}
-        >
-          {isDisabled && <div className='color-swatch__flag' />}
-        </div>
-        <section
-          tabIndex={-1}
-          ref={ref}
-          onFocus={onFocus}
-          aria-label={fullColorName(color)}
-          className={'color-swatch__content' + (level === undefined ? '' : ' color-swatch__content--raised') + (color.isDark ? ' color-swatch__content--dark-color' : '')}
-          style={style}
-        >
-          <p className='color-swatch__content__number'>{fullColorNumber(color.brandKey, color.colorNumber)}</p>
-          <p className='color-swatch__content__name'>{color.name}</p>
-          <Content msg={at(status, 'message')[0]} color={color} />
-        </section>
-      </>
-    )
-    : (
-      <Link
-        role='button'
-        tabIndex={tabIndex}
+  return (
+    <>
+      <button
+        className={'color-swatch color-swatch-' + (level === undefined ? 'flat' : numToAlphaString(level))}
+        style={{ ...style, background: color.hex }}
+        ref={ref}
+        onFocus={onFocus}
+        onClick={() => history.push(generateColorWallPageUrl(section, family, color.id, fullColorName(color)) + (url.endsWith('family/') ? 'family/' : url.endsWith('search/') ? 'search/' : ''))}
+        aria-label={fullColorName(color)}
+      >
+        {isDisabled && <div className='color-swatch__flag' />}
+      </button>
+      {showContents && (<section
+        tabIndex={-1}
         ref={ref}
         onFocus={onFocus}
         aria-label={fullColorName(color)}
-        to={generateColorWallPageUrl(section, family, color.id, fullColorName(color)) + (url.endsWith('family/') ? 'family/' : url.endsWith('search/') ? 'search/' : '')}
-        className={'color-swatch' + (level === undefined ? '' : ' color-swatch-' + numToAlphaString(level))}
-        style={{ ...style, background: color.hex }}
+        className={'color-swatch__content' + (color.isDark ? ' color-swatch__content--dark-color' : '')}
+        style={style}
       >
-        {isDisabled && <div className='color-swatch__flag' />}
-      </Link>
-    )
+        <p className='color-swatch__content__number'>{fullColorNumber(color.brandKey, color.colorNumber)}</p>
+        <p className='color-swatch__content__name'>{color.name}</p>
+        <Content msg={at(status, 'message')[0]} color={color} />
+      </section>)}
+    </>
   )
 })
 
