@@ -8,21 +8,27 @@
 
   @keyframes strokeColor {
     0% {
+      color: var(getVarName('loaders.circle.color1'));
       stroke: var(getVarName('loaders.circle.color1'));
     }
     20% {
+      color: var(getVarName('loaders.circle.color2'));
       stroke: var(getVarName('loaders.circle.color2'));
     }
     40% {
+      color: var(getVarName('loaders.circle.color3'));
       stroke: var(getVarName('loaders.circle.color3'));
     }
     60% {
+      color: var(getVarName('loaders.circle.color4'));
       stroke: var(getVarName('loaders.circle.color4'));
     }
     80% {
+      color: var(getVarName('loaders.circle.color5'));
       stroke: var(getVarName('loaders.circle.color5'));
     }
     100% {
+      color: var(getVarName('loaders.circle.color1'));
       stroke: var(getVarName('loaders.circle.color1'));
     }
   }
@@ -52,7 +58,9 @@
   }
 
   &__circle {
+    color: var(getVarName('theme.colors.primary'));
     animation: strokeColor $strokeColorDuration infinite cubic-bezier(0.075, 0.820, 0.165, 1.000), dashAdjust $dashDuration infinite alternate cubic-bezier(0.390, 0.575, 0.565, 1.000);
+    stroke: var(getVarName('theme.colors.primary'));
     stroke-linecap: round;
   }
 }
