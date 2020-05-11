@@ -91,6 +91,7 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
   const [wrapperWidth, setWrapperWidth] = useState(0)
   const [hasLoaded, setHasLoaded] = useState(false)
   const hasLoadedRef = useRef()
+  // const sceneHeight = useSelector(state => state.sceneHeight)
 
   const paintSceneWorkspace = useSelector(state => state.paintSceneWorkspace)
   const [paintSceneWorkspaceState] = useState((imgUrl) ? null : paintSceneWorkspace)
@@ -337,7 +338,8 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
       }
     }
 
-    setImageDims({ ...imageDims, imageWidth: width, imageHeight: height, isPortrait: orientation })
+    const newDims = { ...imageDims, imageWidth: width, imageHeight: height, isPortrait: orientation }
+    setImageDims(newDims)
   }
 
   const handleImageLoaded = (payload) => {

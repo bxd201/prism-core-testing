@@ -33,6 +33,17 @@ type Props = {
   isTabbedOutFromHelp: boolean
 }
 
+const isSupportedImageFormat = (file: Object, exts: string[] = ['jpeg', 'jpg', 'png']) => {
+  if (file && file.name) {
+    const fileName = file.name.toLowerCase().split('.')
+    if (fileName.length > 1) {
+      return exts.indexOf(fileName[fileName.length - 1]) > -1
+    }
+  }
+
+  return false
+}
+
 const DropDownMenu = (props: Props) => {
   const { dataKey, history: { location: { state: isKeyDownRoute } }, exploreColorsLinkRef, isTabbedOutFromHelp } = props
   const { content } = renderingData[dataKey]
@@ -170,8 +181,14 @@ const redirectToApp = (data, props, type, e) => {
 }
 
 const handleChange = (e, props, type) => {
-  const imgUrl = URL.createObjectURL(e.target.files[0])
-  props.getImageUrl(imgUrl, type)
+  const userImg = e.target.files && e.target.files.length ? e.target.files[0] : null
+
+  if (userImg && isSupportedImageFormat(userImg)) {
+    const imgUrl = URL.createObjectURL(userImg)
+    props.getImageUrl(imgUrl, type)
+  } else {
+    // @todo implement notification of failed format. -RS
+  }
 }
 
 export default withRouter(DropDownMenu)

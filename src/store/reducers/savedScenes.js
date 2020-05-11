@@ -152,7 +152,7 @@ export const sceneMetadata = (state: Object[] = [], action: {type: string, paylo
 
       if (item.sceneType === SCENE_TYPE.anonCustom) {
         // If the storage location structure/ id generation is changed this will need to be
-        let id = item.scene.match(/\/[0-9-]+/)
+        let id = item.scene.match(/\/([0-9]+-)+/)
 
         if (id) {
           id = id[0].substr(1, id[0].length - 2)

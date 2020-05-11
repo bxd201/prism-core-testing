@@ -71,6 +71,16 @@ const getFullSizeAssetArrayByScene = memoizee((scene: Scene): string[] => {
   ])
 })
 
+const getMinHeightFromRef = (ref: React$Ref, aspectRatio: number = 0.75) => {
+  // This default value is the same as the myideas wrapper
+  const val = 606
+  if (ref && ref.current) {
+    const { width } = ref.current.getBoundingClientRect()
+    return Math.floor(width * aspectRatio)
+  }
+  return val
+}
+
 type Props = {
   activateScene: Function,
   activeColor: Color | void,
@@ -164,6 +174,7 @@ export class SceneManager extends PureComponent<Props, State> {
     this.loadPalette = this.loadPalette.bind(this)
     this.getSelectPaletteModalConfig = this.getSelectPaletteModalConfig.bind(this)
     this.wrapperRef = createRef()
+    this.loaderWrapperRef = createRef()
   }
 
   componentDidMount () {
@@ -391,7 +402,7 @@ export class SceneManager extends PureComponent<Props, State> {
     const { selectPaletteActions, selectPaletteTitle, selectPaletteDescription } = this.getSelectPaletteModalConfig()
     const livePaletteColorCount = (this.props.lpColors && this.props.lpColors.length) || 0
     if (loadingScenes) {
-      return <div className={`${SceneManager.baseClass}__loader`}><CircleLoader /></div>
+      return <div ref={this.loaderWrapperRef} style={{ 'minHeight': getMinHeightFromRef(this.loaderWrapperRef) }} className={`${SceneManager.baseClass}__loader`}><CircleLoader /></div>
     }
 
     if (activeSceneStatus) {

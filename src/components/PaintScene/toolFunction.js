@@ -597,6 +597,7 @@ export const applyZoom = (zoomNumber, ref) => {
     panX: canvasPanStart.x,
     panY: canvasPanStart.y
   }
+
   const factors = canvasDimensionFactors(options)
   applyDimensionFactorsToCanvas(factors, ref)
 }

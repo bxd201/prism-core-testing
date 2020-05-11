@@ -156,8 +156,6 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
     const [initialImageWidth, initialImageHeight] = getInitialDims(props.workspace, props.referenceDimensions)
     const isPortrait = props.workspace ? props.workspace.height > props.workspace.width : props.referenceDimensions.isPortrait
-    // eslint-disable-next-line no-unused-vars
-    const { lpColors } = props
 
     this.CFICanvas = React.createRef()
     this.CFICanvas2 = React.createRef()
@@ -178,6 +176,8 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.originalIsPortrait = props.workspace ? (props.workspace.height > props.workspace.width) : props.referenceDimensions.originalIsPortrait
     this.canvasPanStart = { x: 0.5, y: 0.5 }
     this.lastPanPoint = { x: 0, y: 0 }
+    this.originalImageWidth = props.referenceDimensions.originalImageWidth
+    this.originalImageHeight = props.referenceDimensions.originalImageHeight
 
     this.state = {
       imageStatus: 'loading',
@@ -343,7 +343,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     }
     const newWidth = shouldCanvasResize(prevProps.width, this.props.width)
     if (newWidth) {
-      this.scaleCanvases(newWidth)
+      this.scaleCanvases(newWidth, prevProps.width)
     }
     const { imagePathList, selectedArea, groupSelectList } = this.state
     let copyImagePathList = copyImageList(imagePathList)
@@ -407,30 +407,32 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
   /*:: initCanvas2: () => void */
   initCanvas2 () {
-    const { canvasWidth, canvasHeight } = this.calcCanvasNewDimensions()
-    this.setForegroundImage(canvasWidth, canvasHeight)
+    // const { canvasWidth, canvasHeight } = this.calcCanvasNewDimensions()
+    this.setForegroundImage(this.state.canvasWidth, this.state.canvasHeight)
   }
 
   /*:: calcCanvasNewDimensions(newWidth: number) => Object */
-  calcCanvasNewDimensions (newWidth: number) {
+  calcCanvasNewDimensions (newWidth: number, oldWidth: number) {
+    const originalImageWidth = this.originalIsPortrait === this.isPortrait ? this.originalImageWidth : this.originalImageHeight
+    const originalImageHeight = this.originalIsPortrait === this.isPortrait ? this.originalImageHeight : this.originalImageWidth
     let canvasWidth = 0
     const wrapperWidth = newWidth || this.wrapperDimensions.width
 
+    const scaleRatio = newWidth / oldWidth
+
     if (this.isPortrait) {
-      canvasWidth = wrapperWidth / 2
+      canvasWidth = Math.floor(this.state.canvasWidth * scaleRatio)
     } else {
       // Landscape
-      canvasWidth = wrapperWidth
+      canvasWidth = Math.floor(wrapperWidth)
     }
-    // Rounding via bitwise or since this could be called A LOT
-    canvasWidth = canvasWidth | 1
 
     let canvasHeight = 0
 
     if (this.isPortrait) {
-      canvasHeight = Math.floor(getScaledPortraitHeight(this.backgroundImageWidth, this.backgroundImageHeight)(canvasWidth))
+      canvasHeight = Math.floor(getScaledPortraitHeight(originalImageWidth, originalImageHeight)(canvasWidth))
     } else {
-      canvasHeight = Math.floor(getScaledLandscapeHeight(this.backgroundImageHeight, this.backgroundImageWidth)(canvasWidth))
+      canvasHeight = Math.floor(getScaledLandscapeHeight(originalImageHeight, originalImageWidth)(canvasWidth))
     }
 
     return {
@@ -441,7 +443,8 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
   /*:: initCanvasWithNewDimensions: (newWidth?: number) => void */
   initCanvasWithDimensions (newWidth?: number) {
-    const { canvasWidth, canvasHeight } = this.calcCanvasNewDimensions(newWidth)
+    const canvasWidth = this.state.canvasWidth
+    const canvasHeight = this.state.canvasHeight
 
     this.CFICanvas.current.width = canvasWidth
     this.CFICanvas.current.height = canvasHeight
@@ -464,8 +467,8 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   }
 
   /*:: scaleCanvases: (newWidth: number) => void */
-  scaleCanvases (newWidth: number) {
-    const { canvasWidth, canvasHeight } = this.calcCanvasNewDimensions(newWidth)
+  scaleCanvases (newWidth: number, oldWidth: number) {
+    const { canvasWidth, canvasHeight } = this.calcCanvasNewDimensions(newWidth, oldWidth)
 
     this.CFICanvas.current.style.width = `${canvasWidth}px`
     this.CFICanvas.current.style.height = `${canvasHeight}px`
@@ -894,7 +897,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       canvasPanStart: this.canvasPanStart
     }
     applyZoom(zoomNumber, ref)
-    this.setState({ canvasZoom: zoomNumber })
+    // this.setState({ canvasZoom: zoomNumber })
   }
 
   onPanStart = (event: Object) => {
@@ -965,7 +968,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     repaintImageByPath(newState.imagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight, true, newState.groupIds)
     this.setState(newState)
   }
-
+canvasHeight
   groupHandler = (groupName: string) => {
     switch (groupName) {
       case groupToolNames.DELETEGROUP:
