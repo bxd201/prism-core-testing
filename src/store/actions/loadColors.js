@@ -61,6 +61,12 @@ export const loadColors = (brandId: string, options: Object = {}) => {
 export const EMIT_COLOR: string = 'EMIT_COLOR'
 export const emitColor = (color: Color) => ({ type: EMIT_COLOR, payload: color })
 
+export const SHOW_COLOR_DETAILS_MODAL: string = 'SHOW_COLOR_DETAILS'
+export const showColorDetailsModal = (color: Color) => ({ type: SHOW_COLOR_DETAILS_MODAL, payload: color })
+
+export const HIDE_COLOR_DETAILS_MODAL: string = 'HIDE_COLOR_DETAILS'
+export const hideColorDetailsModal = () => ({ type: HIDE_COLOR_DETAILS_MODAL })
+
 export const UPDATE_COLOR_STATUSES: string = 'UPDATE_COLOR_STATUSES'
 export const updateColorStatuses = (statuses: ColorStatuses) => ({ type: UPDATE_COLOR_STATUSES, payload: statuses })
 

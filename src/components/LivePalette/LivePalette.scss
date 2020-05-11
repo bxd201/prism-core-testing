@@ -97,6 +97,22 @@
 
       .prism-live-palette__color-details {
         display: block;
+
+        .prism-live-palette__description {
+          width: 60%;
+        }
+
+        .prism-live-palette__button-group {
+          position: absolute;
+          display: flex;
+          right: 0;
+          top: 0;
+          width: 40%;
+          justify-content: space-between;
+          padding: 5px;
+          opacity: 0;
+          animation: fadeIn 1s forwards;
+        }
       }
     }
 
