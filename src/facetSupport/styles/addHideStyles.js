@@ -8,9 +8,8 @@ export default () => {
 
   if (document.getElementById(id)) return
 
-  const css = document.createElement('link')
+  const css = document.createElement('style')
   css.media = 'all'
-  css.rel = 'stylesheet'
   css.type = 'text/css'
   css.id = id
   appendToBodyUtil(css)
