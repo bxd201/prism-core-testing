@@ -11,6 +11,11 @@
 
   &__nav-wrapper {
     display: block;
+    &--hide{
+      display: none;
+    }
+  }
+  &__nav-container {
     &--hide {
       display: none;
     }
@@ -24,15 +29,30 @@
   &__footer {
     display: flex;
     flex-direction: row;
+    flex-flow: column-reverse;
     flex-wrap: wrap;
     justify-content: space-between;
+    @include respond-above(sm) {
+      flex-flow: row;
+    }
     &--priority {
-      flex-basis: 86%;
+      flex-basis: 84%;
     }
     &--secondary {
+      align-items: center;
       display: flex;
-      flex-basis: 14%;
-      justify-content: space-around;
+      flex-basis: 16%;
+      justify-content: space-between;
+      @include respond-above(sm) {
+        justify-content: space-around;
+      }
+      &__text {
+        display: block;
+        padding: 0.5em;
+        @include respond-above(sm) {
+          display: none;
+        }
+      }
     }
   }
 }

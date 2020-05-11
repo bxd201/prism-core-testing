@@ -1,11 +1,17 @@
 .info-button {
     display: flex;
     flex-direction: column;
-    width: 22px;
-    height: 22px;
+    width: 20px;
+    height: 20px;
     cursor: pointer;
     align-items: center;
     justify-content: center;
+    &:focus {
+      outline-style: solid;
+      outline-color: #2cabe2;
+      outline-width: 2px;
+      z-index: 100;
+    }
 
     .info-button-color-strip {
         border: 1px solid #333;

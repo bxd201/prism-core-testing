@@ -15,6 +15,7 @@ import store from '../../store/store'
 import { LP_MAX_COLORS_ALLOWED, MIN_COMPARE_COLORS_ALLOWED } from 'constants/configurations'
 import { DndProvider } from 'react-dnd-cjs'
 import HTML5Backend from 'react-dnd-html5-backend-cjs'
+import InfoButton from 'src/components/InfoButton/InfoButton'
 
 import { activate, reorder, toggleCompareColor, deactivateTemporaryColor, empty } from '../../store/actions/live-palette'
 import { arrayToSpacedString } from '../../shared/helpers/StringUtils'
@@ -28,6 +29,7 @@ import type { Color } from '../../shared/types/Colors.js.flow'
 
 import './LivePalette.scss'
 import storageAvailable from '../../shared/utils/browserStorageCheck.util'
+import { fullColorNumber } from '../../shared/helpers/ColorUtils'
 const PATH__NAME = 'fast-mask-simple.html'
 
 type Props = {
@@ -159,6 +161,15 @@ export class LivePalette extends PureComponent<Props, State> {
           <div className='prism-live-palette__header'>
             <span className='prism-live-palette__header__name'><FormattedMessage id='PALETTE_TITLE' /></span>
             {colors.length >= MIN_COMPARE_COLORS_ALLOWED && <button tabIndex='-1' className={!isFastMaskPage ? 'prism-live-palette__header__compare-button' : 'prism-live-palette__header__compare-button--hide'} onClick={this.toggleCompareColor}>Compare Color</button>}
+          </div>
+          <div className='prism-live-palette__active-color' style={{ backgroundColor: activeColor.hex }}>
+            <div className={`prism-live-palette__active-color__details ${(activeColor.isDark) ? `prism-live-palette__active-color__details--dark` : ``}`}>
+              <span className='prism-live-palette__active-color__color-number'>{fullColorNumber(activeColor.brandKey, activeColor.colorNumber)}</span>
+              <span className='prism-live-palette__active-color__color-name'>{ activeColor.name }</span>
+            </div>
+            <div className='prism-live-palette__active-color__info-button'>
+              <InfoButton color={activeColor} />
+            </div>
           </div>
           <div className='prism-live-palette__list'>
             {activeSlots}

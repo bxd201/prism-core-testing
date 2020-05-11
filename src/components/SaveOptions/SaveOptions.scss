@@ -4,6 +4,18 @@
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: center;
+  margin-right: 0.5em;
+  & > button {
+    &:focus {
+      outline-style: solid;
+      outline-color: #2cabe2;
+      outline-width: 2px;
+      z-index: 100;
+    }
+  }
+  @include respond-above(sm) {
+    margin-right: 0;
+  }
   &__items {
     display: flex;
     flex-direction: column;
@@ -11,6 +23,9 @@
     flex-wrap: wrap;
     justify-content: space-between;
     padding: 4px;
+    &:hover {
+      color: #2cabe2;
+    }
   }
 }
 
