@@ -231,7 +231,7 @@ module.exports = {
     namedModules: !flags.production,
     nodeEnv: flags.mode,
     noEmitOnErrors: flags.production,
-    occurrenceOrder: flags.production,
+    occurrenceOrder: false, // <-- KEEP THIS OFF. it can cause a race condition that fails app initialization.
     portableRecords: false,
     providedExports: true,
     removeAvailableModules: true,

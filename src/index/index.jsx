@@ -33,8 +33,6 @@ const appVersionHex = (() => {
   return `#${hex}`
 })()
 
-console.info('zong', appVersionHex)
-
 const PAGES = '__pages'
 const appVersionContrastHex = getContrastYIQ(appVersionHex)
 
