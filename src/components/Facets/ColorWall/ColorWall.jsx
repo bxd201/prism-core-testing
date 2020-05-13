@@ -152,7 +152,6 @@ const ColorWall = () => {
             const colorId: string = chunk[rowIndex][columnIndex]
             return (
               <ColorSwatch
-                tabIndex={chunkRow === chunkGrid.length - 1 && chunkColumn === chunkGrid[chunkGrid.length - 1].length - 1 ? -1 : 0}
                 ref={ref => { cellRefs.current[colorId] = ref }}
                 onFocus={() => {
                   focusedCell.current = colorId
