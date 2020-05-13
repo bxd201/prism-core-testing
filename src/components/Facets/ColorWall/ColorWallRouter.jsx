@@ -15,10 +15,10 @@ import Propper from 'src/components/Propper/Propper'
 // because of that, this gives us a percentage roughly equal to its aspect ratio
 const proppingPct = 475 / 990 * 100
 
-type Props = { children: Node, redirect?: boolean }
-export default ({ children, redirect = true }: Props) => {
+type Props = { children: Node, redirect?: boolean, defaultSection?: string }
+export default ({ children, redirect = true, defaultSection }: Props) => {
   const dispatch = useDispatch()
-  const defaultSection = useSelector(state => state.colors.structure.find(s => s.default))
+  const reduxSection = useSelector(state => state.colors.structure.find(s => s.default))
   const { brandId } = useContext(ConfigurationContext)
   const { locale } = useIntl()
 
@@ -27,7 +27,7 @@ export default ({ children, redirect = true }: Props) => {
     dispatch(loadColors(brandId, { language: locale }))
   }, [ locale, brandId ])
 
-  return (defaultSection
+  return (reduxSection
     ? (
       <Switch>
         <Route path='/active/color-wall/section/:section/family/:family/color/:colorId/:colorName/search/'>{children}</Route>
@@ -40,7 +40,7 @@ export default ({ children, redirect = true }: Props) => {
         <Route path='/active/color-wall/section/:section/color/:colorId/:colorName'>{children}</Route>
         <Route path='/active/color-wall/section/:section/search/'>{children}</Route>
         <Route path='/active/color-wall/section/:section'>{children}</Route>
-        {redirect && <Redirect to={`/active/color-wall/section/${kebabCase(defaultSection.name)}`} />}
+        {redirect && <Redirect to={`/active/color-wall/section/${kebabCase(defaultSection === undefined ? reduxSection.name : defaultSection)}`} />}
       </Switch>
     )
     : <Propper vPosition={Propper.V_POSITION.CENTER} propSize={`${proppingPct}%`}>
