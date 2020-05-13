@@ -28,6 +28,7 @@ type Props = FacetPubSubMethods & FacetBinderMethods & {
   displayAddButtonText?: boolean,
   displayDetailsLink?: boolean,
   hiddenSections?: string | string[], // as string, "section name 1" or "section name 1|section name 2|etc" will be parsed into an array
+  defaultSection?: string
 }
 
 export const EVENTS = {
@@ -51,7 +52,7 @@ const CWToolbar = () => <div className='color-wall-wrap__chunk'>
 </div>
 
 export const ColorWallPage = (props: Props) => {
-  const { addButtonText, displayAddButton = false, displayAddButtonText, displayDetailsLink = true, colorWallBgColor, subscribe, publish, unsubscribeAll, colorDetailPageRoot, resetOnUnmount, hiddenSections } = props
+  const { addButtonText, displayAddButton = false, displayAddButtonText, displayDetailsLink = true, colorWallBgColor, subscribe, publish, unsubscribeAll, colorDetailPageRoot, resetOnUnmount, hiddenSections, defaultSection } = props
   const dispatch = useDispatch()
 
   // -----------------------------------------------------
@@ -119,7 +120,7 @@ export const ColorWallPage = (props: Props) => {
 
   return (
     <ColorWallContext.Provider value={cwContext}>
-      <ColorWallRouter>
+      <ColorWallRouter defaultSection={defaultSection}>
         <div className='color-wall-wrap'>
           <nav>
             <Switch>
