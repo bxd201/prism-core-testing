@@ -73,26 +73,28 @@ export const facetMasterWrapper = (Component: ComponentType<any>) => {
     // that something will include our message keys.
 
     return (
-      <ErrorBoundary translated={false}>
-        <IntlProvider locale={language} messages={flatLanguages} textComponent={React.Fragment}>
-          <ErrorBoundary>
-            <Provider store={store}>
-              <ConfigurationContextProvider {...props}>
-                <LiveAnnouncer>
-                  <LiveMessenger>
-                    {({ announcePolite, announceAssertive }) => {
-                      return <LiveAnnouncerContextProvider announcePolite={announcePolite} announceAssertive={announceAssertive}>
-                        <AuthObserver />
-                        { RouterRender }
-                      </LiveAnnouncerContextProvider>
-                    }}
-                  </LiveMessenger>
-                </LiveAnnouncer>
-              </ConfigurationContextProvider>
-            </Provider>
-          </ErrorBoundary>
-        </IntlProvider>
-      </ErrorBoundary>
+      <div lang={language}>
+        <ErrorBoundary translated={false}>
+          <IntlProvider locale={language} messages={flatLanguages} textComponent={React.Fragment}>
+            <ErrorBoundary>
+              <Provider store={store}>
+                <ConfigurationContextProvider {...props}>
+                  <LiveAnnouncer>
+                    <LiveMessenger>
+                      {({ announcePolite, announceAssertive }) => {
+                        return <LiveAnnouncerContextProvider announcePolite={announcePolite} announceAssertive={announceAssertive}>
+                          <AuthObserver />
+                          { RouterRender }
+                        </LiveAnnouncerContextProvider>
+                      }}
+                    </LiveMessenger>
+                  </LiveAnnouncer>
+                </ConfigurationContextProvider>
+              </Provider>
+            </ErrorBoundary>
+          </IntlProvider>
+        </ErrorBoundary>
+      </div>
     )
   }
 }

@@ -1,5 +1,6 @@
 // @flow
 import memoizee from 'memoizee'
+import flatten from 'lodash/flatten'
 
 export const getWidthOf2dArray = memoizee((arr: any[][]): number => arr.reduce((widest, arr) => Math.max(widest, arr.length), 0))
 
@@ -26,7 +27,7 @@ export const convertToChunkArray = memoizee((layout: string[][][][]): string[][]
 export const getLevelMap = memoizee((chunkGrid: string[][][][], centerId: ?string): { [string]: number } => {
   if (!centerId) return {}
   // find chunk with active centerId
-  for (const chunk of chunkGrid.flat()) {
+  for (const chunk of flatten(chunkGrid)) {
     const [row: number, column: number] = findIndexIn2dArray(centerId, chunk)
     if (row === -1) { continue }
 

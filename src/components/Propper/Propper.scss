@@ -1,0 +1,31 @@
+.Propper {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch; // vertically fill space up to prop
+  justify-content: center; // align to horizontal center
+
+  &__prop {
+    position: relative;
+    width: 0;
+    display: block;
+    height: 0;
+  }
+
+  &__content {
+    position: relative;
+    width: 100%;
+
+    &--v-center {
+      align-self: center;
+    }
+
+    &--v-top {
+      align-self: flex-start;
+    }
+
+    &--v-btm {
+      align-self: flex-end;
+    }
+  }
+}

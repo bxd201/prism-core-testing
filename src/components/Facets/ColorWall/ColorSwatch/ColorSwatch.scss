@@ -1,12 +1,21 @@
+@function getFontSizeByScale ($scale) {
+  @return $base / $scale;
+}
 
-@keyframes scale130 { to { transform: scale(1.30); } }
-@keyframes scale141 { to { transform: scale(1.41); } }
-@keyframes scale174 { to { transform: scale(1.74); } }
-@keyframes scale200 { to { transform: scale(2.00); } }
-@keyframes scale208 { to { transform: scale(2.08); } }
-@keyframes scale236 { to { transform: scale(2.36); } }
-@keyframes scale250 { to { transform: scale(2.50); } }
-@keyframes scale275 { to { transform: scale(2.75); } }
+@mixin scaleAndFontSizeCounterscale($scale) {
+  transform: scale($scale);
+  font-size: getFontSizeByScale($scale);
+}
+
+@keyframes scale130 { to { @include scaleAndFontSizeCounterscale(1.30); } }
+@keyframes scale141 { to { @include scaleAndFontSizeCounterscale(1.41); } }
+@keyframes scale174 { to { @include scaleAndFontSizeCounterscale(1.74); } }
+@keyframes scale200 { to { @include scaleAndFontSizeCounterscale(2.00); } }
+@keyframes scale208 { to { @include scaleAndFontSizeCounterscale(2.08); } }
+@keyframes scale236 { to { @include scaleAndFontSizeCounterscale(2.36); } }
+@keyframes scale250 { to { @include scaleAndFontSizeCounterscale(2.50); } }
+@keyframes scale275 { to { @include scaleAndFontSizeCounterscale(2.75); } }
+
 @keyframes fadeIn { 50% { opacity: 0; } to { opacity: 1;} }
 
 @mixin bloom($small-screen-animation, $large-screen-animation, $z) {
@@ -15,14 +24,12 @@
   @include respond-above(sm) { animation: $large-screen-animation 0.2s forwards; }
 }
 
-
 .color-swatch {
   border: 1px solid #fff;
-  font-size: $base * 0.8;
+  font-size: getFontSizeByScale(1);
+  outline-offset: 0px;
 
   &:focus { z-index: 1; }
-
-  @include respond-above(sm) { font-size: $base; }
 
   &-0 { @include bloom(scale250, scale275, 900); }
   &-n0-5 { @include bloom(scale200, scale236, 750); }
@@ -31,17 +38,22 @@
   &-n2 { @include bloom(scale130, scale141, 600); }
 
   &__flag {
-    position: absolute;
+    background-image: url('~src/images/swatch/dogear.png');
+    background-position: 0 0;
+    background-repeat: no-repeat;
+    background-size: contain;
+    height: 16%; // this is a magic number
     left: 0;
+    font-size: .65em;
+    max-height: 1em;
+    min-height: .5em;
+    position: absolute;
     top: 0;
     width: 100%;
-    max-height: 10px;
-    min-height: 5px;
-    height: 16%; // this is a magic number
-    background-image: url('~src/images/swatch/dogear.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: 0 0;
+
+    @include respond-above(sm) {
+      font-size: .75em;
+    }
   }
 
   &__content {
@@ -50,12 +62,13 @@
     line-height: 1;
     padding: 0.5em;
     opacity: 0;
-    animation: fadeIn 0.3s forwards;
+    animation: fadeIn 0.3s forwards .2s;
 
-    &-raised {
+    &--raised {
       height: 123px !important;
       width: 123px !important;
       transform: translate3d(-36px, -36px, 0);
+      &--focus, &:focus { outline: 5.5px solid getVar('colors.primary') !important; }
 
       @include respond-above(sm) {
         height: 135px !important;
@@ -64,12 +77,22 @@
       }
     }
 
-    &__name { font-weight: bold; }
+    &__name {
+      font-weight: bold;
+      max-width: 100%;
+      overflow-wrap: break-word;
+      hyphens: auto;
+    }
 
     &__number {
       opacity: $color-near-opacity;
-      font-size: $base * 0.8;
-      margin-bottom: 0.4em;
+      font-size: .7em;
+      margin-bottom: 0.3em;
+
+      @include respond-above(sm) {
+        font-size: .8em;
+        margin-bottom: 0.4em;
+      }
     }
 
     &__cta {
@@ -99,7 +122,7 @@
       bottom: 3px;
       border-radius: 2px;
       color: black;
-      font-size: 0.625em / 0.8;
+      font-size: 0.5em;
       font-weight: bold;
       left: 3px;
       padding: 3px 4px;
@@ -112,19 +135,19 @@
 
     &--dark-color { color: rgba(white, .9); }
 
-    .color-swatch__button-group {
-      position: absolute;
-      left: 0;
-      bottom: 0;
-      display: flex;
-      justify-content: space-between;
-      width: 100%;
-      padding: 10px;
-    }
-
     .add-icon {
       width: 22px;
       height: 22px;
     }
+  }
+
+  &__button-group {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px;
   }
 }

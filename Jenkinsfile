@@ -114,6 +114,34 @@ pipeline {
         """
       }
     }
+
+    stage('Security Scan') {
+    when {
+      not {
+        expression { BRANCH_NAME ==~ /^(qa|release)$/ }
+      }
+    }
+      agent {
+        docker {
+            image 'docker.cpartdc01.sherwin.com/ecomm/utils/trivy-nightly:latest'
+            args "-u root --entrypoint=''"
+            reuseNode true
+            alwaysPull true
+        }
+      }
+      steps {
+        sh """
+        # Run the trivy security scanner
+        trivy \
+          --exit-code 0 \
+          --no-progress \
+          --ignore-unfixed \
+          --severity HIGH,CRITICAL \
+          ${IMAGE_NAME}:${BUILD_NUMBER} \
+        """
+      }
+    }
+    
     stage('publish') {
       agent {
         docker {
