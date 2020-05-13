@@ -172,7 +172,7 @@
     width: 1em;
     height: 1em;
     color: currentColor;
-    /* default fill or stroke to currentColor? */
+    stroke: currentColor;
 }
 
 .#{$cleanslateWrappingClass}::before, .#{$cleanslateWrappingClass} h1::before, .#{$cleanslateWrappingClass} h2::before, .#{$cleanslateWrappingClass} h3::before, .#{$cleanslateWrappingClass} h4::before, .#{$cleanslateWrappingClass} h5::before, .#{$cleanslateWrappingClass} h6::before, .#{$cleanslateWrappingClass} p::before, .#{$cleanslateWrappingClass} td::before, .#{$cleanslateWrappingClass} dl::before, .#{$cleanslateWrappingClass} tr::before, .#{$cleanslateWrappingClass} dt::before, .#{$cleanslateWrappingClass} ol::before, .#{$cleanslateWrappingClass} form::before, .#{$cleanslateWrappingClass} select::before, .#{$cleanslateWrappingClass} option::before, .#{$cleanslateWrappingClass} pre::before, .#{$cleanslateWrappingClass} div::before, .#{$cleanslateWrappingClass} table::before,  .#{$cleanslateWrappingClass} th::before, .#{$cleanslateWrappingClass} tbody::before, .#{$cleanslateWrappingClass} tfoot::before, .#{$cleanslateWrappingClass} caption::before, .#{$cleanslateWrappingClass} thead::before, .#{$cleanslateWrappingClass} ul::before, .#{$cleanslateWrappingClass} li::before, .#{$cleanslateWrappingClass} address::before, .#{$cleanslateWrappingClass} blockquote::before, .#{$cleanslateWrappingClass} dd::before, .#{$cleanslateWrappingClass} fieldset::before, .#{$cleanslateWrappingClass} li::before, .#{$cleanslateWrappingClass} iframe::before, .#{$cleanslateWrappingClass} strong::before, .#{$cleanslateWrappingClass} legend::before, .#{$cleanslateWrappingClass} em::before, .#{$cleanslateWrappingClass} summary::before, .#{$cleanslateWrappingClass} cite::before, .#{$cleanslateWrappingClass} span::before, .#{$cleanslateWrappingClass} input::before, .#{$cleanslateWrappingClass} sup::before, .#{$cleanslateWrappingClass} label::before, .#{$cleanslateWrappingClass} dfn::before, .#{$cleanslateWrappingClass} object::before, .#{$cleanslateWrappingClass} big::before, .#{$cleanslateWrappingClass} q::before, .#{$cleanslateWrappingClass} samp::before, .#{$cleanslateWrappingClass} acronym::before, .#{$cleanslateWrappingClass} small::before, .#{$cleanslateWrappingClass} img::before, .#{$cleanslateWrappingClass} strike::before, .#{$cleanslateWrappingClass} code::before, .#{$cleanslateWrappingClass} sub::before, .#{$cleanslateWrappingClass} ins::before, .#{$cleanslateWrappingClass} textarea::before, .#{$cleanslateWrappingClass} button::before, .#{$cleanslateWrappingClass} var::before, .#{$cleanslateWrappingClass} a::before, .#{$cleanslateWrappingClass} abbr::before, .#{$cleanslateWrappingClass} applet::before, .#{$cleanslateWrappingClass} del::before, .#{$cleanslateWrappingClass} kbd::before, .#{$cleanslateWrappingClass} tt::before, .#{$cleanslateWrappingClass} b::before, .#{$cleanslateWrappingClass} i::before, .#{$cleanslateWrappingClass} hr::before,
@@ -310,7 +310,7 @@
     font-size: small;
     background: none;
     -webkit-appearance: none;
-    color: buttontext;
+    color: inherit;
     border: none;
     filter: none; /* IE6-9 */
     -webkit-box-shadow: none;

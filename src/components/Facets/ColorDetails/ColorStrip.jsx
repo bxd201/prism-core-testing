@@ -19,10 +19,10 @@ export function ColorStrip ({ color, onColorChanged }: Props) {
       <li className={`color-info__strip-location`}>
         <span className={`color-info__strip-location-name`}>{stripLocation}</span>
       </li>
-      {stripColors.map(stripColor => {
+      {stripColors.map((stripColor, i) => {
         const active = color.id === stripColor.id
         return (
-          <li key={stripColor.id} className='color-info__strip-color' style={{ backgroundColor: stripColor.hex }}>
+          <li key={i} className='color-info__strip-color' style={{ backgroundColor: stripColor.hex }}>
             <button
               className={`color-info__strip-color-info${active ? ` color-info__strip-color-info--active` : ''}`}
               onClick={() => {

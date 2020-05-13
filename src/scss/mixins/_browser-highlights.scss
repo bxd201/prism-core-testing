@@ -1,11 +1,29 @@
-@mixin browser-highlight() {
+@mixin browser-highlight($size: null, $style: null, $color: null) {
   // reference: https://ghinda.net/article/mimic-native-focus-css/
-  outline-width: 2px;
-  outline-style: solid;
-  outline-color: Highlight;
 
-  @media (-webkit-min-device-pixel-ratio: 0) {
-    outline-color: -webkit-focus-ring-color;
-    outline-style: auto;
+  @if not $style {
+    outline-style: solid;
+
+    @media (-webkit-min-device-pixel-ratio: 0) {
+      outline-style: auto;
+    }
+  } @else {
+    outline-style: $style;
+  }
+
+  @if not $size {
+    outline-width: 2px;
+  } @else {
+    outline-width: $size;
+  }
+
+  @if not $color {
+    outline-color: Highlight;
+
+    @media (-webkit-min-device-pixel-ratio: 0) {
+      outline-color: -webkit-focus-ring-color;
+    }
+  } @else {
+    outline-color: $color;
   }
 }
