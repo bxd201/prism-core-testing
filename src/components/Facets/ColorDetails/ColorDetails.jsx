@@ -38,7 +38,6 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
   const scenesLoaded: boolean = useSelector(state => !state.scenes.loadingScenes)
 
   const [color: Color, setColor: Color => void] = useState(initialColor)
-  useEffect(() => { onColorChanged && onColorChanged(color) }, [color])
 
   useEffect(() => {
     color && GA.pageView(`color-detail/${color.brandKey} ${color.colorNumber} - ${color.name}`)
