@@ -774,6 +774,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       canvasOffsetHeight: this.canvasOffsetHeight
     }
     let newState = selectArea(e, this.state, ref)
+    if (!newState) return
     this.setState(newState)
     this.clearCanvas()
     repaintImageByPath(newState.imagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight, false, this.state.groupIds)
