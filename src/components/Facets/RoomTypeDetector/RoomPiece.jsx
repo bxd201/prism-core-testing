@@ -6,6 +6,7 @@ import { loadImage, getImageRgbaData, createCanvasElementWithData } from './util
 import CircleLoader from 'src/components/Loaders/CircleLoader/CircleLoader'
 import Swatches from './Swatches'
 import Card from './Card'
+import { type RGBArr } from 'src/shared/types/Colors.js.flow'
 
 import './RoomPiece.scss'
 
@@ -28,7 +29,7 @@ var opts = {
 type Props = {
   label: string,
   pixels: Uint8ClampedArray,
-  legendColor: number[],
+  legendColor: RGBArr,
   width: number,
   height: number
 }
