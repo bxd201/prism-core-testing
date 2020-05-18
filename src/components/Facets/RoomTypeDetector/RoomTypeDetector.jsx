@@ -2,7 +2,6 @@
 import React, { useState, useEffect, useCallback, createContext, useMemo } from 'react'
 import { useDispatch } from 'react-redux'
 import uniqueId from 'lodash/uniqueId'
-import * as deeplab from '@tensorflow-models/deeplab'
 import intersection from 'lodash/intersection'
 
 import FileInput from '../../FileInput/FileInput'
@@ -22,6 +21,7 @@ import './RoomTypeDetector.scss'
 import RoomPiece from './RoomPiece'
 import Card from './Card'
 import { activate } from 'src/store/actions/live-palette'
+import useDeepLabModel, { deepLabModels } from 'src/shared/hooks/useDeepLabModel'
 
 export const ColorCollector = createContext<Object>({})
 
@@ -63,14 +63,6 @@ function getObjectPixels (imageData, label, src) {
   return objPixels
 }
 
-const loadModel = async () => {
-  const modelName = 'ade20k' // set to your preferred model, either `pascal`, `cityscapes` or `ade20k`
-  const quantizationBytes = 4 // either 1, 2 or 4
-
-  // eslint-disable-next-line no-return-await
-  return await deeplab.load({ base: modelName, quantizationBytes })
-}
-
 const RoomTypeDetector = () => {
   const dispatch = useDispatch()
   const [error, setError] = useState()
@@ -78,8 +70,8 @@ const RoomTypeDetector = () => {
   const [roomPieces, setRoomPieces] = useState([])
   const [isProcessing, setIsProcessing] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [deeplabModel, setDeeplabModel] = useState(null)
   const [displayedLabels, setDisplayedLabels] = useState([])
+  const deeplabModel = useDeepLabModel(deepLabModels.ADE20K, 4)
   const [labels, setLabels] = useState([])
   const [segmentationImagePath, setSegmentationImagePath] = useState()
 
@@ -107,14 +99,6 @@ const RoomTypeDetector = () => {
       dispatch(activate(c))
     }
   }), [])
-
-  useEffect(() => {
-    if (deeplabModel === null) {
-      loadModel().then(model => {
-        setDeeplabModel(model)
-      })
-    }
-  }, [ deeplabModel ])
 
   useEffect(() => {
     if (uploadedImage && deeplabModel) {
