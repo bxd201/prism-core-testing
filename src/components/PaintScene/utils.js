@@ -499,13 +499,13 @@ export const floodFillScanLineStack = (imageData, newColor, x, y, similar, perfo
       setColorAtPixel(imageData, newColor, x1, y1)
       const index = width * y1 * 4 + x1 * 4
       resultArr.push(index)
-      if (!spanAbove && y > 0 && colorMatch(getColorAtPixel(imageData, x1, y1 - 1), oldColor, similar)) {
+      if (!spanAbove && y1 > 0 && colorMatch(getColorAtPixel(imageData, x1, y1 - 1), oldColor, similar)) {
         stack.push({ x: x1, y: y1 - 1 })
         spanAbove = 1
       } else if (spanAbove && y1 > 0 && !colorMatch(getColorAtPixel(imageData, x1, y1 - 1), oldColor, similar)) {
         spanAbove = 0
       }
-      if (!spanBelow && y < height - 1 && colorMatch(getColorAtPixel(imageData, x1, y1 + 1), oldColor, similar)) {
+      if (!spanBelow && y1 < height - 1 && colorMatch(getColorAtPixel(imageData, x1, y1 + 1), oldColor, similar)) {
         stack.push({ x: x1, y: y1 + 1 })
         spanBelow = 1
       } else if (spanBelow && y1 < height - 1 && !colorMatch(getColorAtPixel(imageData, x1, y1 + 1), oldColor, similar)) {
@@ -521,17 +521,14 @@ export const colorMatch = (a, b, similar) => {
   if (similar !== 100) {
     const colorA = rgb2lab([a.r, a.g, a.b])
     const colorB = rgb2lab([b.r, b.g, b.b])
-    let labA = { L: colorA[0], A: colorA[1], B: colorA[2] }
-    let labB = { L: colorB[0], A: colorB[1], B: colorB[2] }
+    const colorC = rgb2lab([0, 0, 0])
+    const labA = { L: colorA[0], A: colorA[1], B: colorA[2] }
+    const labB = { L: colorB[0], A: colorB[1], B: colorB[2] }
+    const labC = { L: colorC[0], A: colorC[1], B: colorC[2] }
     const colorDistance = getDeltaE00(labA, labB)
-    if (colorDistance < 100 - similar) {
-      return true
-    } else {
-      return false
-    }
-  } else {
-    return a.r === b.r && a.g === b.g && a.b === b.b
+    return getDeltaE00(labA, labC) < 1 ? colorDistance < 1 : colorDistance < 8
   }
+  return a.r === b.r && a.g === b.g && a.b === b.b
 }
 
 export const getColorAtPixel = (imageData, x, y) => {

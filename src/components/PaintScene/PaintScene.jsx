@@ -831,6 +831,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   }
 
   handlePaintArea = throttle((e: Object) => {
+    e.persist()
     const ref = {
       CFICanvas2: this.CFICanvas2,
       canvasOriginalDimensions: this.canvasOriginalDimensions,
@@ -850,10 +851,13 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     const isPaint = colorMatch(getColorAtPixel(imageData, cursorX, cursorY), { r: RGB[0], g: RGB[1], b: RGB[2], a: RGB[3] }, 100)
 
     if (!isPaint) {
-      let newState = bucketPaint(e, this.state, this.props, ref)
-      this.clearCanvas()
-      repaintImageByPath(newState.imagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
-      this.setState({ ...newState, canvasImageUrls: this.getLayers() })
+      this.setState({ paintCursor: `${canvasClass}--${toolNames.PAINTAREA}--loading` })
+      setTimeout(() => {
+        let newState = bucketPaint(e, this.state, this.props, ref)
+        this.clearCanvas()
+        repaintImageByPath(newState.imagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
+        this.setState({ ...newState, canvasImageUrls: this.getLayers(), paintCursor: `${canvasClass}--${toolNames.PAINTAREA}` })
+      }, 100)
     }
   }, 10)
 
