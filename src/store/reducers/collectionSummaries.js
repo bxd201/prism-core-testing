@@ -5,7 +5,8 @@ import {
 
 export const defaultCollectionSummaries = {
   categories: { idToIndexHash: {}, data: [] },
-  summaries: { idToIndexHash: {}, data: [] }
+  summaries: { idToIndexHash: {}, data: [] },
+  loadingCS: true
 }
 
 export default function collectionSummaries (

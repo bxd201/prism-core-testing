@@ -120,6 +120,9 @@
     &--paintArea{
       cursor: url('~src/images/paint-bucket-cursor.png'), pointer;
     }
+    &--paintArea--loading{
+      cursor: progress;
+    }
     &--paintBrush, &--erase {
       cursor: none;
     }
