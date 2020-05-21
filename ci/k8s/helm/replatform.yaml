@@ -2,7 +2,7 @@ image:
   tag: develop
 
 ingress:
-  host: replatform-prism-web.ebus.swaws
+  host: replatform-prism.ebus.swaws
 
 env:
   API_URL: "https://develop-prism-api.ebus.swaws"
