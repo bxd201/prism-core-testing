@@ -1,81 +1,65 @@
-@function getFontSizeByScale ($scale) {
-  @return $base / $scale;
-}
+$bloom-duration: 200ms;
 
-@mixin scaleAndFontSizeCounterscale($scale) {
-  transform: scale($scale);
-  font-size: getFontSizeByScale($scale);
-}
+@keyframes fadeIn { from { opacity: 0; } 50% { opacity: 0; } to { opacity: 1;} }
 
-@keyframes scale130 { to { @include scaleAndFontSizeCounterscale(1.30); } }
-@keyframes scale141 { to { @include scaleAndFontSizeCounterscale(1.41); } }
-@keyframes scale174 { to { @include scaleAndFontSizeCounterscale(1.74); } }
-@keyframes scale200 { to { @include scaleAndFontSizeCounterscale(2.00); } }
-@keyframes scale208 { to { @include scaleAndFontSizeCounterscale(2.08); } }
-@keyframes scale236 { to { @include scaleAndFontSizeCounterscale(2.36); } }
-@keyframes scale250 { to { @include scaleAndFontSizeCounterscale(2.50); } }
-@keyframes scale275 { to { @include scaleAndFontSizeCounterscale(2.75); } }
-
-@keyframes fadeIn { 50% { opacity: 0; } to { opacity: 1;} }
-
-@mixin bloom($small-screen-animation, $large-screen-animation, $z) {
-  z-index: $z !important;
-  animation: $small-screen-animation 0.2s forwards;
-  @include respond-above(sm) { animation: $large-screen-animation 0.2s forwards; }
+@mixin bloom($small-screen-scale-amt, $large-screen-scale-amt, $z) {
+    z-index: $z !important;
+    transform: scale($small-screen-scale-amt);
+    transition: transform $bloom-duration;
+    @include respond-above(sm) { transform: scale($large-screen-scale-amt); }
 }
 
 .color-swatch {
   border: 1px solid #fff;
-  font-size: getFontSizeByScale(1);
   outline-offset: 0px;
 
-  &:focus { z-index: 1; }
+  &--focus, &:focus { z-index: 2; }
 
-  &-0 { @include bloom(scale250, scale275, 900); }
-  &-n0-5 { @include bloom(scale200, scale236, 750); }
-  &-n1 { @include bloom(scale200, scale208, 700);  }
-  &-n1-5 { @include bloom(scale141, scale174, 650); }
-  &-n2 { @include bloom(scale130, scale141, 600); }
+  &-0 { @include bloom(2.50, 2.75, 900); }
+
+  &-0 + .color-swatch__content {
+    transform: translate3d(-36px, -36px, 0);
+    height: 123px !important;
+    width: 123px !important;
+    @include respond-above(sm) {
+      transform: translate3d(-42px, -42px, 0);
+      height: 135px !important;
+      width: 135px !important;
+    }
+  }
+
+  &-n0-5 { @include bloom(2.00, 2.36, 750); }
+
+  &-n1 { @include bloom(2.00, 2.08, 700); }
+
+  &-n1-5 { @include bloom(1.41, 1.74, 650); }
+
+  &-n2 { @include bloom(1.30, 1.41, 600); }
+
+  &-flat {
+    transform: scale(1);
+    z-index: 1;
+    transition: transform $bloom-duration, z-index 10ms;
+  }
 
   &__flag {
-    background-image: url('~src/images/swatch/dogear.png');
-    background-position: 0 0;
-    background-repeat: no-repeat;
+    background: url('~src/images/swatch/dogear.png') no-repeat;
     background-size: contain;
-    height: 16%; // this is a magic number
-    left: 0;
-    font-size: .65em;
-    max-height: 1em;
-    min-height: .5em;
+    height: 0.5em;
     position: absolute;
     top: 0;
     width: 100%;
 
-    @include respond-above(sm) {
-      font-size: .75em;
-    }
+    @include respond-above(sm) { font-size: .75em; }
   }
 
   &__content {
     z-index: 950 !important;
+    padding: 0.6em;
+    animation: fadeIn $bloom-duration;
     text-align: left;
-    line-height: 1;
-    padding: 0.5em;
-    opacity: 0;
-    animation: fadeIn 0.3s forwards .2s;
 
-    &--raised {
-      height: 123px !important;
-      width: 123px !important;
-      transform: translate3d(-36px, -36px, 0);
-      &--focus, &:focus { outline: 5.5px solid getVar('colors.primary') !important; }
-
-      @include respond-above(sm) {
-        height: 135px !important;
-        width: 135px !important;
-        transform: translate3d(-42px, -42px, 0);
-      }
-    }
+    &--focus, &:focus { outline: 5.5px solid getVar('colors.primary') !important; }
 
     &__name {
       font-weight: bold;
