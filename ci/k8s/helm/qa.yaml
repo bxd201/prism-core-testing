@@ -2,7 +2,7 @@ image:
   tag: qa
 
 ingress:
-  host: qa-prism.ebus.swaws
+  host: qa-prism-web.ebus.swaws
 
 service:
   type: LoadBalancer

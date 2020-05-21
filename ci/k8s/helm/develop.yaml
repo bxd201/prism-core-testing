@@ -2,8 +2,8 @@ image:
   tag: develop
 
 ingress:
-  host: develop-prism.ebus.swaws
+  host: develop-prism-web.ebus.swaws
 
 env:
   API_URL: "https://develop-prism-api.ebus.swaws"
-  WEB_URL: "https://develop-prism.ebus.swaws"
+  WEB_URL: "https://develop-prism-web.ebus.swaws"
