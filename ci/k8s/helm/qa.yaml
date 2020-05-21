@@ -16,4 +16,4 @@ service:
 
 env:
   API_URL: "https://qa-api.sherwin-williams.com/prism"
-  WEB_URL: "https://qa-prism.sherwin-williams.com"
+  WEB_URL: "https://qa-prism-web.ebus.swaws"
