@@ -14,11 +14,11 @@ import SampleScenesWrapper from '../../SampleScenes/SampleScenes'
 import facetBinder from 'src/facetSupport/facetBinder'
 import { facetBinderDefaultProps, type FacetBinderMethods } from 'src/facetSupport/facetInstance'
 import { type FacetPubSubMethods, facetPubSubDefaultProps } from 'src/facetSupport/facetPubSub'
-import { activateScene, deactivateScene, unpaintSceneSurfaces, unsetActiveStockScenePolluted, changeSceneVariant, unsetSelectedSceneVariantChanged, unsetSelectedScenePaletteLoaded } from '../../../store/actions/scenes'
+import { activateScene, deactivateScene, unpaintSceneSurfaces, unsetActiveStockScenePolluted, changeSceneVariant, unsetSelectedSceneVariantChanged, unsetSelectedScenePaletteLoaded, loadScenes } from '../../../store/actions/scenes'
 import { connect } from 'react-redux'
 import { Route, Redirect } from 'react-router-dom'
 
-import { ROUTE_PARAMS, ROUTE_PARAM_NAMES, SCENE_VARIANTS } from 'constants/globals'
+import { ROUTE_PARAMS, ROUTE_PARAM_NAMES, SCENE_VARIANTS, SCENE_TYPES } from 'constants/globals'
 import ImageRotateContainer from '../../MatchPhoto/ImageRotateContainer'
 import MyIdeasContainer from '../../MyIdeasContainer/MyIdeasContainer'
 import MyIdeaPreview from '../../MyIdeaPreview/MyIdeaPreview'
@@ -620,6 +620,12 @@ export class ColorVisualizerWrapper extends Component<Props> {
     )
   }
 
+  componentDidMount () {
+    if (!this.props.scenes) {
+      this.props.loadScenes()
+    }
+  }
+
   componentDidUpdate (prevProps) {
     if (this.props.location !== prevProps.location && this.props.location.pathname !== ACTIVE_ROUTE) {
       this.onRouteChanged()
@@ -669,6 +675,9 @@ const mapDispatchToProps = (dispatch: Function) => {
     },
     deactivateScene: (sceneId) => {
       dispatch(deactivateScene(sceneId))
+    },
+    loadScenes: (scene) => {
+      dispatch(loadScenes(SCENE_TYPES.ROOM))
     },
     setLayersForPaintScene: (data) => {
       const { backgroundCanvasRef, layersRef, selectedScenePalette, initialWidth, initialHeight } = data
