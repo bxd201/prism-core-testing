@@ -130,14 +130,14 @@ export function ActiveSlot (props: Props) {
           <span className='prism-live-palette__color-description'>{ color.description.join(', ') }</span>
         </div>
         <div className='prism-live-palette__button-group'>
-          <InfoButton color={color} />
+          <div className='prism-live-palette__info-button'><InfoButton color={color} /></div>
           <button className='prism-live-palette__trash' onClick={remove}><FontAwesomeIcon icon={['fa', 'trash']} size='1x' /></button>
         </div>
       </div>}
       {toggleCompareColor && <button style={{ color: getContrastYIQ(color.hex) }} className={`${baseClass}__button`} onClick={() => hanleToggle()}>
         <div className={`${baseClass}__${displayArea}`} style={{ backgroundColor: color.hex }}>
-          { isColorAdded && <FontAwesomeIcon className={`${baseClass}__${icons} ${toggleCompareColor ? `${baseClass}__${icons}--show` : `${baseClass}__${icons}--hide`}`} icon={['fa', 'check-circle']} size='2x' /> }
-          { !isColorAdded && <FontAwesomeIcon className={`${baseClass}__${icons} ${toggleCompareColor ? `${baseClass}__${icons}--show` : `${baseClass}__${icons}--hide`}`} icon={['fal', 'plus-circle']} size='2x' /> }
+          { isColorAdded && <FontAwesomeIcon className={`${baseClass}__${icons} ${toggleCompareColor ? `${baseClass}__${icons}--show` : `${baseClass}__${icons}--hide`}`} icon={['fa', 'check-circle']} size='1x' /> }
+          { !isColorAdded && <FontAwesomeIcon className={`${baseClass}__${icons} ${toggleCompareColor ? `${baseClass}__${icons}--show` : `${baseClass}__${icons}--hide`}`} icon={['fal', 'plus-circle']} size='1x' /> }
         </div>
       </button>}
       <div ref={dragIcon} className={`${baseClass}__drag-icon-wrapper ${!toggleCompareColor ? `${baseClass}__drag-icon-wrapper--show` : `${baseClass}__drag-icon-wrapper--hide`}`} >

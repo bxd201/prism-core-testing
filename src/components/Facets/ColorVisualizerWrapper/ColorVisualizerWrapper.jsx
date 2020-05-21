@@ -7,7 +7,7 @@ import CompareColor from '../../CompareColor/CompareColor'
 import InspiredScene from '../../InspirationPhotos/InspiredSceneNavigator'
 import LivePalette from '../../LivePalette/LivePalette'
 import ColorDataWrapper from '../../../helpers/ColorDataWrapper/ColorDataWrapper'
-import ColorVisualizerNav, { isColors, isInspiration, isPaintPhoto, isMyIdeas } from './ColorVisualizerNav'
+import ColorVisualizerNav, { isColors, isInspiration, isPaintPhoto, isMyIdeas, isHelp } from './ColorVisualizerNav'
 import React, { Component, createRef } from 'react'
 import SceneManager from '../../SceneManager/SceneManager'
 import SampleScenesWrapper from '../../SampleScenes/SampleScenes'
@@ -60,6 +60,7 @@ const cvwBaseClassName = 'cvw__root-container'
 const cvwFooterClassName = `${cvwBaseClassName}__footer`
 const footerPriorityItemClassName = `${cvwFooterClassName}--priority`
 const footerSecondaryItemClassName = `${cvwFooterClassName}--secondary`
+const footerSecondaryItemTextClassName = `${cvwFooterClassName}--secondary__text`
 
 // Route constants
 const PAINT_SCENE_COMPONENT = 'PaintScene'
@@ -155,7 +156,7 @@ export class ColorVisualizerWrapper extends Component<Props> {
 
   onRouteChanged = () => {
     const currLocation = this.props.location.pathname
-    const isSubRoute = isColors(currLocation) || isInspiration(currLocation) || isPaintPhoto(currLocation) || isMyIdeas(currLocation)
+    const isSubRoute = isColors(currLocation) || isInspiration(currLocation) || isPaintPhoto(currLocation) || isMyIdeas(currLocation) || isHelp(currLocation)
     const { showDefaultPage, showPaintScene, lastActiveComponent } = this.state
     let isShowPaintScene = true
     let isShowDefaultPage = true
@@ -572,12 +573,10 @@ export class ColorVisualizerWrapper extends Component<Props> {
           }}>
             { /* The warning modal can also be triggered by the router context, when debugging trace showWarningModalMyIdeas too */ }
             {isShowWarningModal && <CVWWarningModal miniImage={tmpPaintSceneImage} cancel={this.cancel} confirm={this.loadNewCanvas} />}
-            {!toggleCompareColor && <div className='cvw__root-wrapper'>
-              <ColorDetailsModal />
-              <div className={colorDetailsModalShowing ? 'hide-on-small-screens' : ''}>
-                <div className={`cvw__root-container__nav-wrapper ${(location.pathname === HELP_PATH) ? `cvw__root-container__nav-wrapper--hide` : (location.pathname === MY_IDEAS) ? `cvw__root-container__nav-wrapper--hide-my-ideas` : ``}`}>
-                  <ColorVisualizerNav />
-                </div>
+            <ColorDetailsModal />
+            {<div className={`cvw__root-container__nav-wrapper ${colorDetailsModalShowing ? 'hide-on-small-screens' : ''} ${toggleCompareColor ? 'cvw__root-container__nav-wrapper--hide' : ''}`}>
+              <div className={`cvw__root-container__nav-container ${(location.pathname === HELP_PATH) ? `cvw__root-container__nav-container--hide` : (location.pathname === MY_IDEAS) ? `cvw__root-container__nav-container--hide-my-ideas` : ``}`}><ColorVisualizerNav /></div>
+              <div className='cvw__root-wrapper'>
                 {(!showDefaultPage && !showPaintScene && location.pathname === PAINT_SCENE_ROUTE) && (<canvas name='canvas' width='600' height='600' />)}
                 <Route path='/' exact component={RootRedirect} />
                 <Route path={colorWallUrlPattern}>
@@ -587,8 +586,8 @@ export class ColorVisualizerWrapper extends Component<Props> {
                 <Route path='/color-from-image' component={InspiredScene} />
                 <Route path='/use-our-image' render={() => <SampleScenesWrapper isColorTinted activateScene={(id) => this.activateScene(id)} />} />
                 <Route path='/paint-photo' render={() => <SampleScenesWrapper activateScene={(id) => this.activateScene(id)} />} />
-                <Route path='/color-collections' component={(props) => (<ColorCollection isExpertColor={false} {...props.location.state} />)} />
-                <Route path='/expert-colors' component={() => <ExpertColorPicks isExpertColor />} />
+                <Route path='/color-collections' render={(props) => (<ColorCollection isExpertColor={false} {...props.location.state} />)} />
+                <Route path='/expert-colors' render={() => <ExpertColorPicks isExpertColor />} />
                 {/* @todo - implement MyIdeas -RS */}
                 <Route path={MY_IDEAS} render={() => <MyIdeasContainer />} />
                 <Route path={MY_IDEAS_PREVIEW} component={MyIdeaPreview} />
@@ -611,6 +610,7 @@ export class ColorVisualizerWrapper extends Component<Props> {
                 <LivePalette />
               </div>
               <div className={footerSecondaryItemClassName}>
+                <div className={footerSecondaryItemTextClassName}>My Color Palette</div>
                 <SaveOptions activeComponent={this.state.lastActiveComponent} />
               </div>
             </div>
