@@ -78,12 +78,14 @@ const ImageRotateTerms = ({ rotateImage, createColorPins, imageData }: Props) =>
             <FormattedMessage id='PREVIEW_ROTATE_SCALE' />
           </div>
           <button
+            aria-label='rotate image 90 degree anticlockwise'
             ref={btnRef}
             onMouseDown={mouseDownHandler}
             onMouseUp={mouseUpHandler}
             onFocus={focusHandler}
             className={`${wrapperToolsRotateArrowClass}`} onClick={() => rotateImage(false)}><FontAwesomeIcon icon={['fal', 'undo']} size='xs' /></button>
           <button
+            aria-label='rotate image 90 degree clockwise'
             onMouseDown={mouseDownHandler}
             onMouseUp={mouseUpHandler}
             onFocus={focusHandler}
@@ -93,6 +95,7 @@ const ImageRotateTerms = ({ rotateImage, createColorPins, imageData }: Props) =>
           <div>
             <span>
               <label
+                aria-label='Accept terms'
                 onMouseDown={mouseDownHandler}
                 onMouseUp={mouseUpHandler}
                 onFocus={focusHandler}
@@ -108,6 +111,7 @@ const ImageRotateTerms = ({ rotateImage, createColorPins, imageData }: Props) =>
           </div>
         </div>
         <button
+          aria-label={accetTerms ? 'done' : ''}
           tabIndex={accetTerms ? '0' : '-1'}
           className={`${wrapperAgreeTermsAcceptClass} ${accetTerms ? `${wrapperAgreeTermsAcceptActiveClass}` : ``}`}
           onClick={() => (accetTerms) ? clickHandler() : {}}><FormattedMessage id='DONE' /></button>

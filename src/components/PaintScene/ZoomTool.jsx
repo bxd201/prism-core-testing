@@ -84,7 +84,7 @@ export class ZoomTool extends PureComponent<ComponentProps, ComponentState> {
     return (
       <div className={`${wrapperClass}`}>
         <span>ZOOM OUT</span>
-        <div className={`${zoomSliderClass}`} ref={this.zoomSlider}>
+        <div aria-label='zoom slider' className={`${zoomSliderClass}`} ref={this.zoomSlider}>
           <div draggable role='presentation' ref={this.zoomSliderCircle} style={{ left: `${leftPosition}px` }} onMouseDown={this.mouseDownHandler} onDragStart={this.dragStartHandler} className={`${zoomSliderCircleClass}`} />
         </div>
         <span>ZOOM IN</span>
