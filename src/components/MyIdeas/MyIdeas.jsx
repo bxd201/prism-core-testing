@@ -234,8 +234,8 @@ const MyIdeas = (props: MyIdeasProps) => {
             ? <button className={`${buttonClassName} ${buttonBack}`} onClick={showMyIdeas} onMouseDown={mouseDownHandler}>
               <FontAwesomeIcon size='lg' className={`${buttonSvg}`} icon={['fa', 'angle-left']} /><span className={`${backText}`}>{intl.messages.BACK}</span></button>
             : editEnabled
-              ? <button className={buttonClassName} onClick={disableEdit} onMouseDown={mouseDownHandler}>{intl.messages.DONE}</button>
-              : <button className={buttonClassName} onClick={enableEdit} onMouseDown={mouseDownHandler}>
+              ? <button aria-label='done editing saved ideas' className={buttonClassName} onClick={disableEdit} onMouseDown={mouseDownHandler}>{intl.messages.DONE}</button>
+              : <button aria-label='edit saved ideas' className={buttonClassName} onClick={enableEdit} onMouseDown={mouseDownHandler}>
                 <FontAwesomeIcon className={`${buttonSvg}`} icon={['fal', 'edit']} />
                 {intl.messages.EDIT}
               </button>}

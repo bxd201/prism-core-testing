@@ -162,7 +162,7 @@ export class LivePalette extends PureComponent<Props, State> {
             <span className='prism-live-palette__header__name'><FormattedMessage id='PALETTE_TITLE' /></span>
             {colors.length >= MIN_COMPARE_COLORS_ALLOWED && <button tabIndex='-1' className={!isFastMaskPage ? 'prism-live-palette__header__compare-button' : 'prism-live-palette__header__compare-button--hide'} onClick={this.toggleCompareColor}>Compare Color</button>}
           </div>
-          <div className='prism-live-palette__active-color' style={{ backgroundColor: activeColor.hex }}>
+          {activeColor && <div className='prism-live-palette__active-color' style={{ backgroundColor: activeColor.hex }}>
             <div className={`prism-live-palette__active-color__details ${(activeColor.isDark) ? `prism-live-palette__active-color__details--dark` : ``}`}>
               <span className='prism-live-palette__active-color__color-number'>{fullColorNumber(activeColor.brandKey, activeColor.colorNumber)}</span>
               <span className='prism-live-palette__active-color__color-name'>{ activeColor.name }</span>
@@ -170,7 +170,7 @@ export class LivePalette extends PureComponent<Props, State> {
             <div className='prism-live-palette__active-color__info-button'>
               <InfoButton color={activeColor} />
             </div>
-          </div>
+          </div>}
           <div className='prism-live-palette__list'>
             {activeSlots}
             {colors.length < LP_MAX_COLORS_ALLOWED && <Link to={`/active/color-wall`} className={`prism-live-palette__slot prism-live-palette__slot--${COLOR_TRAY_CLASS_MODIFIERS}`}>

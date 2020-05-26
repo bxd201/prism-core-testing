@@ -182,12 +182,12 @@ const SavedScene = (props: SavedSceneProps, ref: RefObject | null) => {
           ? <div className={editButtonClassName}>
             <button onClick={deleteScene}>
               <FontAwesomeIcon
-                title={intl.messages.DELETE}
+                title={`${intl.messages.DELETE} ${props.useTintableScene ? props.sceneData.sceneMetadata.name : props.sceneData.name}`}
                 icon={['fal', 'trash-alt']}
                 size='sm' />
             </button>
           </div> : null}
-        <div aria-label={props.useTintableScene ? props.sceneData.sceneMetadata.name : props.sceneData.name} ref={ref} role='tab' tabIndex='0' className={sceneFrameClassName} onClick={selectScene} onKeyDown={handleKeyDown} onMouseDown={mouseDownHandler} >
+        <div aria-label={props.useTintableScene ? `${props.editEnabled ? 'Rename ' : 'Show '}${props.sceneData.sceneMetadata.name}` : `${props.editEnabled ? 'Rename ' : 'Show '}${props.sceneData.name}`} ref={ref} role='button' tabIndex='0' className={sceneFrameClassName} onClick={selectScene} onKeyDown={handleKeyDown} onMouseDown={mouseDownHandler} >
           <div className={paneClassName}>
             {!props.useTintableScene ? <div className={thumbnailClassName} style={{ width: `${props.width || FIXED_WIDTH}${props.isImgWidthPixel ? `px` : `%`}`, height: `${props.height || FIXED_HEIGHT}px` }}>
               {thumbnailUrl ? <img style={{ width: `${props.width || FIXED_WIDTH}${props.isImgWidthPixel ? `px` : `%`}` }} src={thumbnailUrl} alt={`${intl.messages['MY_IDEAS.PREVIEW']}: ${props.sceneData.name}`} /> : <CircleLoader />}
