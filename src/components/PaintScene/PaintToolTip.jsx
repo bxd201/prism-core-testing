@@ -66,7 +66,7 @@ export function PaintToolTip ({ tooltipToolActiveName, closeTooltip, backButtonC
     <React.Fragment>
       {!isSelectGroup && <div onMouseEnter={() => showTooltipContentByZindex(parentDivRef)} onMouseLeave={() => hideTooltipContentByZindex(parentDivRef)} className={`${wrapperClass}`} style={wrapperStyle}>
         <div className={`${containerClass}`}>
-          <button className={`${closeButtonClass}`} onClick={() => closeTooltip()}>
+          <button aria-label='Close' className={`${closeButtonClass}`} onClick={closeTooltip}>
             <FontAwesomeIcon title={intl.messages['PAINT_TOOLS.CLOSE']} className={``} icon={['fal', 'times']} size='lg' />
           </button>
           <div className={`${headerClass}`}>
@@ -92,8 +92,8 @@ export function PaintToolTip ({ tooltipToolActiveName, closeTooltip, backButtonC
         </div>
         <div className={`${downPointerClass} ${tooltipToolActiveNumber === hidePaintTooltipNumber ? `${downPointerHidePaintClass}` : ``} ${tooltipToolActiveNumber === hintsTooltipNumber ? `${downPointerHintsClass}` : ``}`} style={downPointerStyle} />
       </div>}
-      {isSelectGroup && <div onMouseEnter={() => showTooltipContentByZindex(parentDivRef)} onMouseLeave={() => hideTooltipContentByZindex(parentDivRef)} className={`${wrapperClass} ${selectGroup}`}>
-        <button className={`${closeButtonClass}`} onClick={() => closeTooltip()}>
+      {isSelectGroup && <div data-testid='wrapper-select' onMouseEnter={() => showTooltipContentByZindex(parentDivRef)} onMouseLeave={() => hideTooltipContentByZindex(parentDivRef)} className={`${wrapperClass} ${selectGroup}`}>
+        <button className={`${closeButtonClass}`} onClick={closeTooltip}>
           <FontAwesomeIcon title={intl.messages['PAINT_TOOLS.CLOSE']} className={``} icon={['fal', 'times']} size='lg' />
         </button>
         <div className={`${headerClass}`}>
@@ -109,7 +109,4 @@ export function PaintToolTip ({ tooltipToolActiveName, closeTooltip, backButtonC
   )
 }
 
-export {
-  toolNameClass, tooltipContentClass, toolNumberClass, headerClass
-}
 export default injectIntl(PaintToolTip)
