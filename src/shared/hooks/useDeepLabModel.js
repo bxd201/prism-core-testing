@@ -21,12 +21,23 @@ const getModel = memoize(async (modelName: DeepLabModels, quantizationBytes: Qua
 
 function useDeepLabModel (modelName: DeepLabModels, quantizationBytes: QuantizationBytes = defaultQuantizationBytes) {
   const [model, setModel] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
 
   useEffect(() => {
-    getModel(modelName, quantizationBytes).then(model => setModel(model))
-  }, [])
+    setLoading(true)
+    setError(false)
 
-  return model
+    getModel(modelName, quantizationBytes)
+      .then(model => setModel(model))
+      .catch(err => {
+        console.warn('Error loading model', err)
+        setError(true)
+      })
+      .then(() => setLoading(false))
+  }, [modelName, quantizationBytes])
+
+  return [model, loading, error]
 }
 
 export { deepLabModels }

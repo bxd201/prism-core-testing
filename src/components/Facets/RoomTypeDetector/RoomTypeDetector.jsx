@@ -27,15 +27,16 @@ const FILE_UPLOAD_ID = uniqueId('roomTypeDetectorFileUpload_')
 const RoomTypeDetector = () => {
   const dispatch = useDispatch()
   const [uploadedImage, setUploadedImage] = useState()
-  const deeplabModel = useDeepLabModel(deepLabModels.ADE20K, 4)
-  const [results, success, error, isLoading, isProcessing] = useDeepLabModelForSegmentation(deeplabModel, uploadedImage)
+  const [deeplabModel, modelLoading, modelError] = useDeepLabModel(deepLabModels.ADE20K, 4)
+  const [segmentationResults, segmentationSuccess, segmentationError, segmentationLoading, segmentationProcessing] = useDeepLabModelForSegmentation(deeplabModel, uploadedImage)
 
   const {
     displayedLabels,
     relevantLabels,
     pieces: roomPieces,
+    piecesData,
     segmentationMapImagePath
-  } = results || {}
+  } = segmentationResults || {}
 
   const handleChange = useCallback((e) => {
     const { target } = e
@@ -57,15 +58,15 @@ const RoomTypeDetector = () => {
     }
   }), [])
 
-  if (deeplabModel === null) {
+  if (modelLoading) {
     return (
       <GenericMessage>Loading model...</GenericMessage>
     )
   }
 
-  if (error) {
+  if (segmentationError || modelError) {
     return (
-      <GenericMessage type={GenericMessage.TYPES.ERROR}>{error}</GenericMessage>
+      <GenericMessage type={GenericMessage.TYPES.ERROR}>We've encountered an error.</GenericMessage>
     )
   }
 
@@ -76,10 +77,10 @@ const RoomTypeDetector = () => {
       <div className='RoomTypeDetector__side-by-side'>
         {uploadedImage ? <>
           <div className='RoomTypeDetector__side-by-side__side'>
-            <Card title='Original Image' image={!isLoading ? uploadedImage : undefined} omitShim={isProcessing}>
-              {isLoading ? (
+            <Card title='Original Image' image={!segmentationLoading ? uploadedImage : undefined} omitShim={segmentationProcessing}>
+              {segmentationLoading ? (
                 <CircleLoader />
-              ) : isProcessing ? (
+              ) : segmentationProcessing ? (
                 <GenericOverlay type={GenericOverlay.TYPES.LOADING} message='Detecting...' semitransparent />
               ) : null}
             </Card>
@@ -87,7 +88,7 @@ const RoomTypeDetector = () => {
 
           <div className='RoomTypeDetector__side-by-side__side'>
             <Card title='Detected Regions' image={segmentationMapImagePath}>
-              {isLoading || isProcessing ? (
+              {segmentationLoading || segmentationProcessing ? (
                 <CircleLoader />
               ) : null}
             </Card>
@@ -101,7 +102,7 @@ const RoomTypeDetector = () => {
         </> : null}
       </div>
 
-      {success && relevantLabels.length ? (
+      {segmentationSuccess && relevantLabels.length ? (
         <ul className='RoomTypeDetector__labels'>
           {relevantLabels.map((l, i) => {
             return (
@@ -113,10 +114,10 @@ const RoomTypeDetector = () => {
         </ul>
       ) : null}
 
-      {success && roomPieces && roomPieces.length ? (
+      {segmentationSuccess && roomPieces && roomPieces.length ? (
         <div className='RoomTypeDetector__found-pieces'>
           {roomPieces.map((piece, index) => <div key={piece.label} className='RoomTypeDetector__found-pieces__piece'>
-            <RoomPiece width={piece.width} height={piece.height} label={piece.label} pixels={piece.pixels} legendColor={piece.legendColor} />
+            <RoomPiece label={piece.label} legendColor={piece.legendColor} image={piecesData[index].image} palette={piecesData[index].palette} swPalette={piecesData[index].swPalette} swRecommendations={piecesData[index].recurringCoordinatingColors} />
           </div>)}
         </div>
       ) : null}

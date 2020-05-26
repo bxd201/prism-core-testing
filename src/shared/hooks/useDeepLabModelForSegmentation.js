@@ -2,10 +2,22 @@
 import { useState, useEffect } from 'react'
 import { loadImage, getImageRgbaData, createCanvasElementWithData } from 'src/components/Facets/RoomTypeDetector/utils'
 import intersection from 'lodash/intersection'
-import { type RGBArr } from 'src/shared/types/Colors.js.flow'
+import { type RGBArr, type Color } from 'src/shared/types/Colors.js.flow'
+import RgbQuant from 'rgbquant'
+import { tinycolor } from '@ctrl/tinycolor'
+import { colorMatch, getColorDistance } from 'src/components/PaintScene/utils'
+import flattenDeep from 'lodash/flattenDeep'
+import uniq from 'lodash/uniq'
+import sortBy from 'lodash/sortBy'
+import values from 'lodash/values'
+import useColors from './useColors'
 
+const SW_COLOR_MATCH_THRESHHOLD = 8 // 0 = perfect match, 100 = worst possible match
 const VALID_SEGMENT_THRESHHOLD = 0.03
-const desiredLabels = ['wall', 'floor', 'flooring', 'ceiling', 'bed', 'cabinet', 'table', 'plant', 'flora', 'plantlife', 'curtain', 'drape', 'drapery', 'mantle', 'pall', 'chair', 'painting', 'picture', 'sofa', 'couch', 'lounge', 'shelf', 'rug', 'carpet', 'carpeting', 'armchair', 'desk', 'wardrobe', 'closet', 'press', 'chestofdrawers', 'chest', 'bureau', 'dresser', 'counter', 'sink', 'fireplace', 'hearth', 'openfireplace', 'refrigerator', 'icebox', 'case', 'displaycase', 'showcase', 'vitrine', 'bookcase', 'coffeetable', 'cocktailtable', 'countertop', 'stove', 'kitchenstove', 'range', 'kitchenrange', 'cookingstove', 'kitchen island', 'ottoman', 'pouf', 'pouffe', 'puff', 'hassock', 'buffet', 'counter', 'sideboard', 'oven', 'dishwasher', 'dishwasher', 'dishwashingmachine']
+const DESIRED_LABELS = ['wall', 'floor', 'flooring', 'ceiling', 'bed', 'cabinet', 'table', 'plant', 'flora', 'plantlife', 'curtain', 'drape', 'drapery', 'mantle', 'pall', 'chair', 'painting', 'picture', 'sofa', 'couch', 'lounge', 'shelf', 'rug', 'carpet', 'carpeting', 'armchair', 'desk', 'wardrobe', 'closet', 'press', 'chestofdrawers', 'chest', 'bureau', 'dresser', 'counter', 'sink', 'fireplace', 'hearth', 'openfireplace', 'refrigerator', 'icebox', 'case', 'displaycase', 'showcase', 'vitrine', 'bookcase', 'coffeetable', 'cocktailtable', 'countertop', 'stove', 'kitchenstove', 'range', 'kitchenrange', 'cookingstove', 'kitchen island', 'ottoman', 'pouf', 'pouffe', 'puff', 'hassock', 'buffet', 'counter', 'sideboard', 'oven', 'dishwasher', 'dishwasher', 'dishwashingmachine']
+const RGB_QUANT_OPTIONS = {
+  colors: 20 // how many colors to which to reduce input image
+}
 
 type Piece = {
   height: number,
@@ -13,6 +25,13 @@ type Piece = {
   pixels: Uint8ClampedArray,
   legendColor: RGBArr,
   label: string
+}
+
+type PiecePosterizationData = {
+  image: string,
+  palette: tinycolor[],
+  swPalette: (Color[] | typeof undefined)[],
+  recurringCoordinatingColors: Color[]
 }
 
 type Results = {
@@ -29,6 +48,7 @@ type Response = [
     segmentationMapImagePath: string,
     displayedLabels: string[],
     pieces: Piece[],
+    piecesData: PiecePosterizationData[],
     relevantLabels: string[]
   } | typeof undefined,
   boolean, // success
@@ -43,6 +63,7 @@ function useModelForSegmentation (model, inputImage): Response {
   const [error, setError] = useState()
   const [loading, setLoading] = useState(false)
   const [processing, setProcessing] = useState(false)
+  const [ { colorMap }, { loading: loadingColorData } ] = useColors()
 
   const reset = () => {
     setResults()
@@ -57,22 +78,25 @@ function useModelForSegmentation (model, inputImage): Response {
       reset()
       setLoading(true)
 
+      if (loadingColorData) {
+        return
+      }
+
       loadImage(inputImage).then((loadedImg) => {
         setLoading(false)
         setProcessing(true)
         model.segment(loadedImg).then(results => {
           const { legend, height, width, segmentationMap }: Results = results
           const sourceImgData = getImageRgbaData(loadedImg, width, height)
-          const segmentationMapImageData = new ImageData(segmentationMap, width, height)
 
           // need to save this canvas element so we can render it
-          const segmentationMapImagePath = createCanvasElementWithData(segmentationMapImageData, width, height).toDataURL()
+          const segmentationMapImagePath = createCanvasElementWithData(new ImageData(segmentationMap, width, height), width, height).toDataURL()
 
           // get every object based on the provided labels that are returned and cross checking that with the
           // list of labels we care about.
           const labels = Object.keys(legend)
 
-          const relevantLabels = intersection(desiredLabels, labels)
+          const relevantLabels = intersection(DESIRED_LABELS, labels)
           const displayedLabels: string[] = []
           const roomPieces: Piece[] = []
           const sourceImageSize = sourceImgData.data.length / 4
@@ -98,14 +122,99 @@ function useModelForSegmentation (model, inputImage): Response {
             }
           })
 
-          setResults({
-            segmentationMapImagePath: segmentationMapImagePath,
-            displayedLabels: displayedLabels,
-            pieces: roomPieces,
-            relevantLabels: relevantLabels
+          Promise.all(roomPieces.map((piece: Piece): Promise<PiecePosterizationData> => {
+            return new Promise((resolve, reject) => {
+              // -----------------------------------------------
+              // DETERMINE MOST PROMINENT COLORS IN IMAGE
+              const { height, pixels, width } = piece
+              const ctx = createCanvasElementWithData(new ImageData(pixels, width, height), width, height)
+              const q = new RgbQuant(RGB_QUANT_OPTIONS)
+
+              q.sample(ctx)
+
+              const palette = q.palette(true, true)
+
+              const filteredPalette = palette.map((rgb: RGBArr) => tinycolor(`rgb(${rgb.join(',')})`)).filter(tc => {
+                const sat = tc.toHsl().s
+                const l = tc.toHsl().l
+                // colors need to be at least 5% saturated, and 20-90% light to be considered part of our palette
+                return sat > 0.05 && l < 0.9 && l > 0.2
+              })
+
+              const filteredPalette2 = filteredPalette.filter((val, i) => {
+                let keep = true
+
+                filteredPalette.forEach((val2, i2) => {
+                  // don't test same colors
+                  if (i === i2) {
+                    return
+                  }
+
+                  // if these two colors are at least 90% similar...
+                  if (colorMatch(val, val2, 85)) {
+                    // AND our main index is > this index...
+                    if (i > i2) {
+                      // ... we need to reject this color
+                      keep = false
+                    }
+                  }
+                })
+
+                return keep
+              })
+
+              // -----------------------------------------------
+              // GET NEAREST SW COLOR MATCHES
+
+              const swColorMatches = filteredPalette2.map((color: tinycolor) => {
+                const thisRgb = color.toRgb()
+                const thisMatches = sortBy(
+                  values(colorMap)
+                    .map((swCol) => {
+                      const { red: r, green: g, blue: b } = swCol
+                      return {
+                        _dist: getColorDistance({ r: r, g: g, b: b }, thisRgb),
+                        color: swCol
+                      }
+                    })
+                    .filter(({ _dist }) => _dist <= SW_COLOR_MATCH_THRESHHOLD)
+                    .map(({ color }) => color),
+                  '_dist'
+                ).slice(0, 3)
+
+                return thisMatches
+              })
+
+              // -----------------------------------------------
+              // GET REPEATED ACCENT COLORS
+
+              const allCoordinating = sortBy(flattenDeep(swColorMatches.map((colors: Color[]) => colors.map((color: Color) => values(color.coordinatingColors)))))
+              const duplicates = uniq(allCoordinating.filter((v, i, a) => a.indexOf(v) !== i)).map(id => id && colorMap[id])
+
+              resolve({
+                palette: filteredPalette2,
+                swPalette: swColorMatches,
+                recurringCoordinatingColors: duplicates,
+                image: ctx.toDataURL()
+              })
+            })
+          })).then((piecesPosterizationData: PiecePosterizationData[]) => {
+            setResults({
+              segmentationMapImagePath: segmentationMapImagePath,
+              displayedLabels: displayedLabels,
+              pieces: roomPieces,
+              piecesData: piecesPosterizationData,
+              relevantLabels: relevantLabels
+            })
+
+            setSuccess(true)
+          }).catch(error => {
+            console.error(error)
+            setSuccess(false)
+            setError('Encountered an issue determining segment colors.')
+          }).then(() => {
+            setProcessing(false)
           })
-          setProcessing(false)
-          setSuccess(true)
         }).catch(error => {
           console.error(error)
           setError('The image segmentation process encountered an error.')
@@ -115,7 +224,7 @@ function useModelForSegmentation (model, inputImage): Response {
         setError('Unable to load the image.')
       })
     }
-  }, [ inputImage, model ])
+  }, [ inputImage, model, loadingColorData ])
 
   return [
     results,
