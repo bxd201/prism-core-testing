@@ -1,43 +1,75 @@
-.cvw__loading__wrapper{
+.PreLoadingSVG {
   align-items: center;
   background-color: white;
   display: flex;
   flex-direction: column;
   height: 100vh;
-  justify-content: center;
   width: 100vw;
+  justify-content: center;
+  &__loader {
+    transform: scale(30) translateY(10px);
+    &__inner-rect {
+      transform-origin: 50% 40%;
+      animation: spin 0.2s linear;
+    }
+
+    &__outer-rect {
+      transform-origin: 50% 40%;
+      animation: spin 0.2s linear;
+    }
+
+    &__text {
+      animation: fade_in_text 0.5s linear;
+    }
+  }
 }
 
-.loading__inner__rect{
-  transform-origin:50% 40%;
-  animation: spin 0.18s linear;
+@keyframes fade_in_text {
+  0% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 0;
+  }
+  60% {
+    opacity: 0.6;
+  }
+  80% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
-.loading__outer__rect{
-  transform-origin:50% 40%;
-  animation: spin 0.2s linear;
-}
-
-.loading__text{
-  animation: fade_in_text 0.5s linear;
-}
-
-@keyframes fade_in_text{
-  0% { opacity: 0; }
-  20% {  opacity: 0;}
-  40% { opacity: 0;}
-  60% { opacity: 0.6;}
-  80% { opacity: 0.8;}
-  100% { opacity: 1;}
-}
-
-@keyframes spin{
-  0% { transform:rotate(90deg) scale(2); opacity: 0.5; }
-  20% {  transform:rotate(72deg) scale(1.8); opacity: 0.7;}
-  40% { transform:rotate(54deg) scale(1.6); opacity: 0.9;}
-  60% { transform:rotate(36deg) scale(1.4); opacity: 1;}
-  80% { transform:rotate(18deg) scale(1.2); opacity: 1;}
-  100% { transform:rotate(0deg) scale(1); opacity: 1;}
+@keyframes spin {
+  0% {
+    transform: rotate(90deg) scale(2);
+    opacity: 0.5;
+  }
+  20% {
+    transform: rotate(72deg) scale(1.8);
+    opacity: 0.7;
+  }
+  40% {
+    transform: rotate(54deg) scale(1.6);
+    opacity: 0.9;
+  }
+  60% {
+    transform: rotate(36deg) scale(1.4);
+    opacity: 1;
+  }
+  80% {
+    transform: rotate(18deg) scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(0deg) scale(1);
+    opacity: 1;
+  }
 }
 
 .cvw__root-container {
@@ -51,12 +83,12 @@
     }
   }
 
-  &--loading{
+  &--loading {
     display: none;
   }
   &__nav-wrapper {
     display: block;
-    &--hide{
+    &--hide {
       display: none;
     }
   }
@@ -120,19 +152,19 @@
   &:after {
     background: #2cabe2;
     bottom: 0;
-    content: '';
+    content: "";
     display: block;
     height: 0;
     left: 0;
     position: absolute;
-    transition: height .3s;
+    transition: height 0.3s;
     width: 100%;
   }
   &:hover {
     color: #2cabe2;
     &:after {
       height: 6px;
-      transition: height .3s;
+      transition: height 0.3s;
     }
     // & > div:first-child{
     //   height: 10%;
@@ -146,11 +178,11 @@
     outline-width: 2px;
     z-index: 100;
   }
-  &--active{
-    color:#fff;
-    &:hover{
-      color:#fff;
-      & > div:first-child{
+  &--active {
+    color: #fff;
+    &:hover {
+      color: #fff;
+      & > div:first-child {
         height: 96%;
         background: #2cabe2;
       }
@@ -214,7 +246,7 @@
   &--show {
     display: block;
   }
-  &--hide{
+  &--hide {
     display: none;
   }
 }
@@ -261,7 +293,7 @@
       position: relative;
       &:after {
         border-left: 1px solid #c8c8c8;
-        content: '';
+        content: "";
         display: block;
         height: 70%;
         position: absolute;
@@ -344,7 +376,9 @@
 }
 
 @keyframes show-by-opacity {
-  to { opacity: 1; }
+  to {
+    opacity: 1;
+  }
 }
 
 .cvw__modal {
@@ -360,7 +394,7 @@
   animation: show-by-opacity 0s 0.2s forwards;
   opacity: 0;
   z-index: 99999;
-  &__overlay{
+  &__overlay {
     position: absolute;
     background-color: rgba(0, 0, 0, 0.5);
     width: 100%;
@@ -418,8 +452,8 @@
       border: 1px solid #2cabe2;
       color: #2cabe2;
       background-color: rgba(255, 255, 255, 0.8);
-      &:hover{
-        border:1px solid #fff;
+      &:hover {
+        border: 1px solid #fff;
         cursor: pointer;
         color: #d40000;
         background-color: rgba(255, 255, 255, 0.8);
