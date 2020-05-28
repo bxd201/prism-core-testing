@@ -1,7 +1,7 @@
 // @flow
 import React, { useState } from 'react'
-import { useSelector, useDispatch, shallowEqual } from 'react-redux'
-import { Route, Redirect, useLocation } from 'react-router-dom'
+import { useSelector, useDispatch } from 'react-redux'
+import { Route, Redirect, useLocation, useHistory } from 'react-router-dom'
 import facetBinder from 'src/facetSupport/facetBinder'
 import ColorDetails from 'src/components/Facets/ColorDetails/ColorDetails'
 import { ROUTE_PARAMS, ROUTE_PARAM_NAMES } from 'src/constants/globals'
@@ -14,50 +14,56 @@ import findKey from 'lodash/findKey'
 import kebabCase from 'lodash/kebabCase'
 import { loadColors } from 'src/store/actions/loadColors'
 import HeroLoader from '../Loaders/HeroLoader/HeroLoader'
+import { generateColorDetailsPageUrl } from 'src/shared/helpers/ColorUtils'
 
 const colorDetailsBaseUrl = `/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_DETAIL}`
 
 type Props = {
-  colorSEO: string,
+  colorSEO: string, // ${brandKey}-${colorNumber}-${kebabCase(name)}
   publish: (string, any) => void,
   subscribe: (string, Function) => void,
 }
 
 export const ColorDetailsPage = ({ colorSEO, publish, subscribe }: Props) => {
   loadColors('sherwin')(useDispatch())
-  const [familyLink, setFamilyLink] = useState('not set')
   const location = useLocation()
-  const colorMap: ColorMap = useSelector(state => state.colors.items.colorMap, shallowEqual)
+  const history = useHistory()
+  const [familyLink: string, setFamilyLink: string => void] = useState('')
+  const colorMap: ColorMap = useSelector(store => store.colors.items.colorMap)
 
-  if (!colorMap) return <HeroLoader />
+  if (!colorMap) { return <HeroLoader /> }
+
+  const colorId: ?ColorId = findKey(colorMap, { colorNumber: colorSEO.match(/\d+/)[0] })
+  const color: ?Color = colorId ? colorMap[colorId] : undefined
 
   subscribe('prism-family-link', setFamilyLink)
 
-  const colorId: ?ColorId = findKey(colorMap, { colorNumber: colorSEO.match(/\d+/)[0] })
-  if (!colorId) {
-    return (
+  return (colorId && color
+    ? (
+      <>
+        <Redirect to={`${colorDetailsBaseUrl}/${colorId}/${color.brandKey}-${color.colorNumber}-${kebabCase(color.name)}`} />
+        {location.pathname !== '/' && (
+          <Route path={`${colorDetailsBaseUrl}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`}>
+            <ColorDetails
+              familyLink={familyLink}
+              initialColor={color}
+              onColorChanged={newColor => {
+                publish('prism-new-color', newColor)
+                history.push(generateColorDetailsPageUrl(newColor))
+              }}
+              onSceneChanged={newScene => publish('prism-new-scene', newScene)}
+              onVariantChanged={newVariant => publish('prism-new-variant', newVariant)}
+              onColorChipToggled={newPosition => publish('prism-color-chip-toggled', newPosition)}
+            />
+          </Route>
+        )}
+      </>
+    )
+    : (
       <GenericMessage type={GenericMessage.TYPES.ERROR}>
         <FormattedMessage id='UNSPECIFIED_COLOR' />
       </GenericMessage>
     )
-  }
-
-  const { brandKey, name, colorNumber }: Color = colorMap[colorId]
-  return (
-    <>
-      <Redirect to={`${colorDetailsBaseUrl}/${colorId}/${brandKey}-${colorNumber}-${kebabCase(name)}`} />
-      {location.pathname !== '/' && (
-        <Route path={`${colorDetailsBaseUrl}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`}>
-          <ColorDetails
-            familyLink={familyLink}
-            onColorChanged={newColor => publish('prism-new-color', newColor)}
-            onSceneChanged={newScene => publish('prism-new-scene', newScene)}
-            onVariantChanged={newVariant => publish('prism-new-variant', newVariant)}
-            onColorChipToggled={newPosition => publish('prism-color-chip-toggled', newPosition)}
-          />
-        </Route>
-      )}
-    </>
   )
 }
 

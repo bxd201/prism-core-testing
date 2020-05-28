@@ -57,7 +57,7 @@ const Search = ({ limitSearchToFamily = false, contain = false }: SearchProps) =
 
   return (
     <div className={baseClass}>
-      <div className={`${baseClass}__results-pane ${!contain ? `${baseClass}__results-pane--top-align` : ''}`}
+      <div className={`${baseClass}__results-pane`}
         style={{ backgroundColor: colorWallBgColor }}>
         {loading ? (
           <GenericOverlay type={GenericOverlay.TYPES.LOADING} semitransparent>
@@ -86,29 +86,33 @@ const Search = ({ limitSearchToFamily = false, contain = false }: SearchProps) =
             ) : null}
           </GenericMessage>
         ) : (
-          <AutoSizer>
-            {({ height, width }) => {
-              const gridWidth = width - (EDGE_SIZE * 2)
-              const columnCount = Math.max(1, Math.round(gridWidth / 175))
-              const newSize = gridWidth / columnCount
-              const rowCount = Math.ceil(results.length / columnCount)
-              const gridHeight = contain ? height : Math.max(height, rowCount * newSize + (EDGE_SIZE * 2))
+          <div className={`${baseClass}__results-pane__swatches ${contain ? `${baseClass}__results-pane__swatches--cover` : ''}`}>
+            <AutoSizer disableHeight={!contain}>
+              {({ height = 0, width }) => {
+                const gridWidth = width - (EDGE_SIZE * 2)
+                const columnCount = Math.max(1, Math.round(gridWidth / 175))
+                const newSize = gridWidth / columnCount
+                const rowCount = Math.ceil(results.length / columnCount)
+                const gridHeight = contain ? height : Math.max(height, rowCount * newSize + (EDGE_SIZE * 2))
 
-              return (
-                <Grid
-                  // containerStyle={{ margin: `${EDGE_SIZE}px auto` }}
-                  // colors={results}
-                  cellRenderer={cellRenderer}
-                  columnWidth={newSize}
-                  columnCount={columnCount}
-                  height={gridHeight}
-                  rowHeight={newSize}
-                  rowCount={Math.ceil(results.length / columnCount)}
-                  width={width}
-                />
-              )
-            }}
-          </AutoSizer>
+                return (
+                  <Grid
+                    containerStyle={{
+                      marginBotom: `${EDGE_SIZE}px`,
+                      marginTop: `${EDGE_SIZE}px`
+                    }}
+                    cellRenderer={cellRenderer}
+                    columnWidth={newSize}
+                    columnCount={columnCount}
+                    height={gridHeight}
+                    rowHeight={newSize}
+                    rowCount={Math.ceil(results.length / columnCount)}
+                    width={width}
+                  />
+                )
+              }}
+            </AutoSizer>
+          </div>
         )}
       </div>
     </div>

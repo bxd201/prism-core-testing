@@ -247,15 +247,22 @@ $details-tab-padding: 1rem;
     width: 100%;
 
     &:active,
+    &:focus {
+      @include browser-highlight($outline-size, $outline-style, $outline-color);
+    }
+
+    &:active,
     &:focus,
     &:hover {
-      outline: solid $color-swBlue 2px;
-      outline: -webkit-focus-ring-color auto 5px;
       text-decoration: underline;
 
       span {
         text-decoration: underline;
       }
+    }
+
+    @include respond-above(md) {
+      text-align: left;
     }
   }
 
