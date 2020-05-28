@@ -2,7 +2,7 @@
   &__wrapper {
     background-image: url('~src/images/color-visualizer-wrapper/saved-items-background.jpg');
     background-size: cover;
-    min-height: 606px;
+    min-height: $myideas-min-height;
   }
   &__content {
     align-items: center;

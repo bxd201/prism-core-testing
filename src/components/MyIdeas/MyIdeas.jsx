@@ -26,6 +26,7 @@ const savedScenesWrapperShow = `${savedScenesWrapper}--show`
 const savedScenesWrapperHide = `${savedScenesWrapper}--hide`
 const sectionLeftClassName = `${sectionClassName}--left`
 const sectionNoIdeasMessage = `${sectionClassName}__no-ideas-message`
+const loaderClassName = `${baseClassName}__waiting`
 
 type MyIdeasProps = {
   brandId: string,
@@ -68,11 +69,11 @@ const MyIdeas = (props: MyIdeasProps) => {
   }, [sceneData])
 
   useEffect(() => {
-    if (isReadyToRender(sceneMetadata, savedScenes, stockScenes)) {
+    if (isReadyToRender(sceneMetadata, savedScenes, stockScenes, isLoadingSavedScenes)) {
       setIsReadyToRenderFlag(true)
       dispatch(refreshModalHeight(true))
     }
-  }, [sceneMetadata, savedScenes, stockScenes])
+  }, [sceneMetadata, savedScenes, stockScenes, isLoadingSavedScenes])
 
   useEffect(() => {
     setParentHeight(_parentHeight)
@@ -123,13 +124,13 @@ const MyIdeas = (props: MyIdeasProps) => {
     dispatch(showDeleteConfirmModal(true))
   }
 
-  const isReadyToRender = (sceneMetadata: Object[], customSceneData, stockSceneData) => {
+  const isReadyToRender = (sceneMetadata: Object[], customSceneData, stockSceneData, isLoadingSavedScenes) => {
     const expectCustomData = !!sceneMetadata.find(item => item.sceneType === SCENE_TYPE.anonCustom)
     const expectStockData = !!sceneMetadata.find(item => item.sceneType === SCENE_TYPE.anonStock)
 
     if (expectCustomData && !expectStockData) {
       // handle only custom data
-      if (customSceneData && (customSceneData)) {
+      if (customSceneData && !isLoadingSavedScenes) {
         return true
       }
     }
@@ -143,7 +144,7 @@ const MyIdeas = (props: MyIdeasProps) => {
 
     if (expectStockData && expectCustomData) {
       // handle both
-      if (stockSceneData && customSceneData) {
+      if (stockSceneData && customSceneData && !isLoadingSavedScenes) {
         return true
       }
     }
@@ -185,7 +186,7 @@ const MyIdeas = (props: MyIdeasProps) => {
 
   const renderNoScenes = (isLoading: boolean) => {
     if (isLoading) {
-      return (<div>
+      return (<div className={loaderClassName}>
         <CircleLoader />
       </div>)
     } else {
@@ -213,8 +214,6 @@ const MyIdeas = (props: MyIdeasProps) => {
     setShowBack(false)
     setEditedIndividualScene(null)
     setEditEnabled(true)
-    // @todo talk to pravin about best way to handle card titles... -RS
-    // const headerText = FIREBASE_AUTH_ENABLED ? `${intl.messages['MY_IDEAS.MY_IDEAS_HEADER']} ${intl.messages['MY_IDEAS.SCENE_EXPIRATION']}` : intl.messages['MY_IDEAS.MY_IDEAS_HEADER']
     const headerText = intl.messages['MY_IDEAS.MY_IDEAS_HEADER']
     props.setCardTitle(headerText)
   }

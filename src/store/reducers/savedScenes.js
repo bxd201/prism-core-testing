@@ -77,7 +77,7 @@ export const scenesAndRegions = (state: Object[] = [], action: {type: string, pa
     const sceneDataFromState = state.find(item => item.id === action.payload.id)
     if (sceneDataFromState) {
       const newState = state.filter(item => item.id !== action.payload.id)
-      newState.push({ ...sceneDataFromState, name: action.payload.name })
+      newState.push({ ...sceneDataFromState, name: action.payload.name, updated: Date.now() })
       return newState
     }
 
