@@ -29,7 +29,7 @@ type Props = {
   onVariantChanged?: string => void,
   onColorChipToggled?: boolean => void,
   familyLink?: string,
-  loading?: boolean
+  loading?: boolean,
   initialColor: Color
 }
 
