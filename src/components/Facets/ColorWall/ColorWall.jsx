@@ -15,12 +15,15 @@ import ColorSwatch from './ColorSwatch/ColorSwatch'
 import { compareKebabs } from 'src/shared/helpers/StringUtils'
 import range from 'lodash/range'
 import rangeRight from 'lodash/rangeRight'
+import flatten from 'lodash/flatten'
 import { generateColorWallPageUrl } from 'src/shared/helpers/ColorUtils'
 import 'src/scss/externalComponentSupport/AutoSizer.scss'
 import 'src/scss/convenience/overflow-ellipsis.scss'
 import './ColorWall.scss'
 // polyfill to make focus-within css class work in IE
 import 'focus-within-polyfill'
+
+const WALL_HEIGHT = 475
 
 const ColorWall = () => {
   const dispatch: ({ type: string, payload: {} }) => void = useDispatch()
@@ -40,7 +43,8 @@ const ColorWall = () => {
   const chunkGrid: string[][][][] = layout ? convertToChunkArray(layout) : []
   const levelMap: { [string]: number } = getLevelMap(chunkGrid, params.colorId)
   const lengthOfLongestChunkRow: number = getWidthOf2dArray(chunkGrid)
-  const cellSize: number = params.colorId ? swatchMaxSizeZoomed : Math.max(Math.min(gridWidth / (getWidthOf4dArray(chunkGrid) + lengthOfLongestChunkRow + 1), swatchMaxSize), swatchMinSize)
+  const isZoomedIn = !!params.colorId
+  const cellSize: number = isZoomedIn ? swatchMaxSizeZoomed : Math.max(Math.min(gridWidth / (getWidthOf4dArray(chunkGrid) + lengthOfLongestChunkRow + 1), swatchMaxSize), swatchMinSize)
 
   // keeps redux store and url in sync for family and section data
   useEffect(() => { params.section && dispatch(filterBySection(params.section)) }, [compareKebabs(params.section, section)])
@@ -64,7 +68,7 @@ const ColorWall = () => {
           const nextCoords = (e.shiftKey
             ? rangeRight(column + 1).flatMap((c: number) => rangeRight(0, c === column ? row : chunkGrid.length).map(r => [r, c]))
             : range(column, chunkGrid[row].length).flatMap((c: number) => range(c === column ? row + 1 : 0, chunkGrid.length).map(r => [r, c]))
-          ).find(([r, c]) => chunkGrid[r][c].flat().some(cell => cell !== undefined))
+          ).find(([r, c]) => flatten(chunkGrid[r][c]).some(cell => cell !== undefined))
 
           if (nextCoords !== undefined) {
             e.preventDefault()
@@ -101,14 +105,18 @@ const ColorWall = () => {
   }, [layout])
 
   // recalculate gridSize/cellSize when zooming in/out, chainging the layout, or changing grid width
-  useEffect(() => { gridRef.current && gridRef.current.recomputeGridSize() }, [params.colorId === undefined, gridWidth, layout])
+  useEffect(() => {
+    gridRef.current && gridRef.current.recomputeGridSize()
+    // forces the scroll position to reset after zooming out (for some reason the scroll position is not updated in firefox)
+    gridRef.current && !isZoomedIn && gridRef.current.scrollToPosition({ scrollLeft: 0, scrollTop: 0 })
+  }, [isZoomedIn, gridWidth, layout])
 
   // start scrolling animation when scroll position changes due to new active color or gridWidth changing
   useEffect(() => {
     if (!params.colorId || !gridRef.current || !layout) { return }
 
     const startTime: number = window.performance.now()
-    const end = getScrollPosition(params.colorId, chunkGrid, cellSize * 0.4, cellSize, gridWidth, 475)
+    const end = getScrollPosition(params.colorId, chunkGrid, cellSize * 0.4, cellSize, gridWidth, WALL_HEIGHT)
 
     ;(function scroll () {
       window.requestAnimationFrame(() => {
@@ -122,12 +130,18 @@ const ColorWall = () => {
     const chunk: string[][] = chunkGrid[chunkRow][chunkColumn]
     const lengthOfLongestRow: number = getWidthOf2dArray(chunk)
     const containsBloomedCell = findIndexIn2dArray(params.colorId, chunk)[0] !== -1
+    const labelHeight = Math.max(1.2 * cellSize, 40)
+    const chunkWidth = cellSize * lengthOfLongestRow
+    const isLargeLabel = chunkWidth > 120 // magic number breakpoint for choosing between small and large font
+    const labelTopOffset = isZoomedIn ? -(labelHeight * 1.75) : -labelHeight
 
-    return (chunk.flat().some(cell => cell !== undefined) &&
+    return (flatten(chunk).some(cell => cell !== undefined) &&
       <div key={key} className='color-wall-chunk' style={{ ...style, padding: cellSize * 0.2, zIndex: containsBloomedCell ? 1 : 'auto' }}>
         {chunkRow === 0 && sectionLabels[section] && (
-          <div className='color-wall-section-label' style={{ width: style.width - cellSize * 0.4, top: -(Math.max(1.2 * cellSize, 40)) }}>
-            {sectionLabels[section][chunkColumn]}
+          <div className='color-wall-section-label' style={{ width: style.width - cellSize * 0.4, height: labelHeight, top: labelTopOffset }}>
+            <div className={`color-wall-section-label__text ${isLargeLabel ? 'color-wall-section-label__text--large' : ''}`}>
+              {sectionLabels[section][chunkColumn]}
+            </div>
           </div>
         )}
         <Grid
@@ -138,7 +152,6 @@ const ColorWall = () => {
             const colorId: string = chunk[rowIndex][columnIndex]
             return (
               <ColorSwatch
-                tabIndex={chunkRow === chunkGrid.length - 1 && chunkColumn === chunkGrid[chunkGrid.length - 1].length - 1 ? -1 : 0}
                 ref={ref => { cellRefs.current[colorId] = ref }}
                 onFocus={() => {
                   focusedCell.current = colorId
@@ -164,7 +177,7 @@ const ColorWall = () => {
   }
 
   return (
-    <CSSTransition in={!!params.colorId} timeout={200}>
+    <CSSTransition in={isZoomedIn} timeout={200}>
       <div className='color-wall'>
         {params.colorId && (
           <Link to={generateColorWallPageUrl(section, family)} className='zoom-out-btn' title={messages.ZOOM_OUT}>
@@ -172,7 +185,7 @@ const ColorWall = () => {
           </Link>
         )}
         <AutoSizer disableHeight onResize={({ width }) => setGridWidth(width)}>
-          {({ height = 475, width = 900 }) => (
+          {({ height = WALL_HEIGHT, width = 900 }) => (
             <Grid
               role='presentation'
               tabIndex={-1}

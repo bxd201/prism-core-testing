@@ -181,7 +181,7 @@ module.exports = {
       },
       {
         test: /\.worker\.js$/,
-        exclude: /node_modules\/(?!(react-intl|intl-messageformat|intl-messageformat-parser|hashids))/,
+        exclude: /node_modules\/(?!(react-intl|intl-messageformat|intl-messageformat-parser))/,
         include: flags.srcPath,
         use: [
           'worker-loader',
@@ -195,7 +195,7 @@ module.exports = {
       },
       {
         test: /\.(js|jsx)$/,
-        exclude: /node_modules\/(?!(react-intl|intl-messageformat|intl-messageformat-parser|hashids))/,
+        exclude: /node_modules\/(?!(react-intl|intl-messageformat|intl-messageformat-parser))/,
         use: [
           {
             loader: 'babel-loader',
@@ -231,7 +231,7 @@ module.exports = {
     namedModules: !flags.production,
     nodeEnv: flags.mode,
     noEmitOnErrors: flags.production,
-    occurrenceOrder: flags.production,
+    occurrenceOrder: false, // <-- KEEP THIS OFF. it can cause a race condition that fails app initialization.
     portableRecords: false,
     providedExports: true,
     removeAvailableModules: true,
