@@ -40,6 +40,7 @@ import { setSelectedSceneStatus } from '../../../store/actions/stockScenes'
 import { replaceSceneStatus } from '../../../shared/utils/sceneUtil'
 import ColorDetailsModal from './ColorDetailsModal/ColorDetailsModal'
 import { PreLoadingSVG } from './PreLoadingSVG'
+import LandingPage, { getLandingPageShownLocalStorage } from '../../LandingPage/LandingPage'
 import at from 'lodash/at'
 
 const colorWallBaseUrl = `/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_WALL}`
@@ -141,7 +142,8 @@ export class ColorVisualizerWrapper extends Component<Props> {
       tmpActiveId: null,
       isRedirectFromMyIdeasStockScene: false,
       openUnpaintedStockScene: false,
-      isFirstLoading: true
+      isFirstLoading: true,
+      showLandingPage: !getLandingPageShownLocalStorage()
     }
 
     this.wrapperRef = createRef()
@@ -540,8 +542,12 @@ export class ColorVisualizerWrapper extends Component<Props> {
     return false
   }
 
+  handlePageShow = () => {
+    this.setState({ showLandingPage: false })
+  }
+
   render () {
-    const { close, imgUrl, showDefaultPage, showPaintScene, remountKey, isShowWarningModal, tmpPaintSceneImage, checkIsPaintSceneUpdate, exploreColorsLinkRef, isTabbedOutFromHelp, isFromMyIdeas, imgUrlMatchPhoto, isFirstLoading } = this.state
+    const { close, imgUrl, showDefaultPage, showPaintScene, remountKey, isShowWarningModal, tmpPaintSceneImage, checkIsPaintSceneUpdate, exploreColorsLinkRef, isTabbedOutFromHelp, isFromMyIdeas, imgUrlMatchPhoto, isFirstLoading, showLandingPage } = this.state
     const { toggleCompareColor, location, loadingScenes, loadingColorData, loadingCS, loadingECP, colorDetailsModalShowing } = this.props
     const isloadingPath = !notReLoadingPath.has(this.props.location.pathname)
     const isLoading = loadingScenes && loadingColorData && loadingCS && loadingECP && isloadingPath && isFirstLoading
@@ -554,6 +560,7 @@ export class ColorVisualizerWrapper extends Component<Props> {
       <React.Fragment>
         { isLoading && <PreLoadingSVG />}
         <div className={`${cvwBaseClassName} ${isLoading ? `${cvwBaseClassName}--loading` : ''} `} ref={this.wrapperRef}>
+          {showLandingPage && <LandingPage handlePageShow={this.handlePageShow} />}
           <RouteContext.Provider value={{
             navigate: (isShowDropDown, close) => this.open(isShowDropDown, close),
             setActiveComponent: () => this.setActiveComponent(),
@@ -574,7 +581,7 @@ export class ColorVisualizerWrapper extends Component<Props> {
             { /* The warning modal can also be triggered by the router context, when debugging trace showWarningModalMyIdeas too */ }
             {isShowWarningModal && <CVWWarningModal miniImage={tmpPaintSceneImage} cancel={this.cancel} confirm={this.loadNewCanvas} />}
             <ColorDetailsModal />
-            {<div className={`cvw__root-container__nav-wrapper ${colorDetailsModalShowing ? 'hide-on-small-screens' : ''} ${toggleCompareColor ? 'cvw__root-container__nav-wrapper--hide' : ''}`}>
+            {<div className={`cvw__root-container__nav-wrapper ${colorDetailsModalShowing ? 'hide-on-small-screens' : ''} ${(toggleCompareColor || showLandingPage) ? 'cvw__root-container__nav-wrapper--hide' : ''}`}>
               <div className={`cvw__root-container__nav-container ${(location.pathname === HELP_PATH) ? `cvw__root-container__nav-container--hide` : (location.pathname === MY_IDEAS) ? `cvw__root-container__nav-container--hide-my-ideas` : ``}`}><ColorVisualizerNav /></div>
               <div className='cvw__root-wrapper'>
                 {(!showDefaultPage && !showPaintScene && location.pathname === PAINT_SCENE_ROUTE) && (<canvas name='canvas' width='600' height='600' />)}
@@ -604,8 +611,8 @@ export class ColorVisualizerWrapper extends Component<Props> {
                 </div>}
               </div>
             </div>}
-            {toggleCompareColor && <CompareColor />}
-            <div className={cvwFooterClassName}>
+            {!showLandingPage && toggleCompareColor && <CompareColor />}
+            {!showLandingPage && <div className={cvwFooterClassName}>
               <div className={footerPriorityItemClassName}>
                 <LivePalette />
               </div>
@@ -613,7 +620,7 @@ export class ColorVisualizerWrapper extends Component<Props> {
                 <div className={footerSecondaryItemTextClassName}>My Color Palette</div>
                 <SaveOptions activeComponent={this.state.lastActiveComponent} />
               </div>
-            </div>
+            </div>}
           </RouteContext.Provider>
         </div>
       </React.Fragment>
