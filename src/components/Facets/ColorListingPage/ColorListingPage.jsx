@@ -1,6 +1,6 @@
 // @flow
 import React, { PureComponent } from 'react'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { Route, Redirect, withRouter, Switch } from 'react-router-dom'
 import { TransitionGroup, CSSTransition } from 'react-transition-group'
 // TODO: PRISM-370 | Facets are top-level components -- refactor ColorWallPage so it can be imported without facet-related functionality @cody.richmond
@@ -17,6 +17,7 @@ import { type FacetPubSubMethods, facetPubSubDefaultProps } from 'src/facetSuppo
 import type { ColorMap, Color, ColorId } from 'src/shared/types/Colors.js.flow'
 import { generateColorDetailsPageUrl } from 'src/shared/helpers/ColorUtils'
 import HeroLoader from 'src/components/Loaders/HeroLoader/HeroLoader'
+import { loadColors } from 'src/store/actions/loadColors'
 import './ColorListingPage.scss'
 
 const colorWallBaseUrl = `/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_WALL}`
@@ -35,6 +36,7 @@ export const RootRedirect = () => {
 // since the CDP component won't have any color information if we go to it directly, we need to wrap it
 // in the ColorDataWrapper HOC to ensure it has color data prior to rendering it.
 export const ColorDetailsComponent = ({ match, history }: any) => {
+  loadColors('sherwin')(useDispatch())
   // need a wrapping element that isn't a Fragment in order to get the transition classes applied to the group
   const colorMap: ColorMap = useSelector(store => store.colors.items.colorMap)
 
@@ -46,7 +48,10 @@ export const ColorDetailsComponent = ({ match, history }: any) => {
   return (
     <div>
       <BackToColorWall />
-      <ColorDetails initialColor={color} onColorChanged={(newColor: Color) => history.push(generateColorDetailsPageUrl(newColor))} />
+      <ColorDetails
+        initialColor={color}
+        onColorChanged={(newColor: Color) => history.push(generateColorDetailsPageUrl(newColor))}
+      />
     </div>
   )
 }
