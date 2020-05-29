@@ -38,8 +38,10 @@ function FastMaskSimpleFacet (props: Props) {
 
   return (
     <>
-      <div className='prism__root-container'>
-        <FastMask />
+      <div className='FastMaskSimple prism__root-container'>
+        <div className='FastMaskSimple__fm-wrap'>
+          <FastMask />
+        </div>
         <LivePalette />
       </div>
     </>

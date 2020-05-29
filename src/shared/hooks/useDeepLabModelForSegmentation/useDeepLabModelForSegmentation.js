@@ -1,6 +1,5 @@
 // @flow
 import { useState, useEffect } from 'react'
-import { loadImage, getImageRgbaData, createCanvasElementWithData } from 'src/components/Facets/RoomTypeDetector/utils'
 import intersection from 'lodash/intersection'
 import { type RGBArr, type Color } from 'src/shared/types/Colors.js.flow'
 import RgbQuant from 'rgbquant'
@@ -10,7 +9,12 @@ import flattenDeep from 'lodash/flattenDeep'
 import uniq from 'lodash/uniq'
 import sortBy from 'lodash/sortBy'
 import values from 'lodash/values'
-import useColors from './useColors'
+import useColors from 'src/shared/hooks/useColors'
+import { type ModelSegmentationResults } from 'src/shared/hooks/useDeepLabModel'
+import { type SemanticSegmentation } from '@tensorflow-models/deeplab'
+import getImageDataFromImage from 'src/shared/utils/getImageDataFromImage.util'
+import loadImage from 'src/shared/utils/loadImage.util'
+import createCanvasElementWithData from 'src/shared/utils/createCanvasElementWithData.util'
 
 const SW_COLOR_MATCH_THRESHHOLD = 8 // 0 = perfect match, 100 = worst possible match
 const VALID_SEGMENT_THRESHHOLD = 0.03
@@ -31,38 +35,32 @@ type PiecePosterizationData = {
   image: string,
   palette: tinycolor[],
   swPalette: (Color[] | typeof undefined)[],
-  recurringCoordinatingColors: Color[]
+  recurringCoordinatingColors: Color[],
+  suggestedColors: string[]
 }
 
-type Results = {
-  legend: {
-    [key: string]: RGBArr
-  },
-  height: number,
-  width: number,
-  segmentationMap: Uint8ClampedArray
-}
+type SegmentationResults = {
+  segmentationMapImagePath: string,
+  displayedLabels: string[],
+  pieces: Piece[],
+  piecesData: PiecePosterizationData[],
+  relevantLabels: string[]
+} | typeof undefined
 
 type Response = [
-  {
-    segmentationMapImagePath: string,
-    displayedLabels: string[],
-    pieces: Piece[],
-    piecesData: PiecePosterizationData[],
-    relevantLabels: string[]
-  } | typeof undefined,
+  SegmentationResults,
   boolean, // success
   string | typeof undefined, // error
   boolean, // loading
   boolean // processing
 ]
 
-function useModelForSegmentation (model, inputImage): Response {
-  const [results, setResults] = useState()
-  const [success, setSuccess] = useState(false)
-  const [error, setError] = useState()
-  const [loading, setLoading] = useState(false)
-  const [processing, setProcessing] = useState(false)
+function useDeepLabModelForSegmentation (model: SemanticSegmentation, inputImage: typeof undefined | string): Response {
+  const [results, setResults] = useState<SegmentationResults | typeof undefined>()
+  const [success, setSuccess] = useState<boolean>(false)
+  const [error, setError] = useState<string | typeof undefined>()
+  const [loading, setLoading] = useState<boolean>(false)
+  const [processing, setProcessing] = useState<boolean>(false)
   const [ { colorMap }, { loading: loadingColorData } ] = useColors()
 
   const reset = () => {
@@ -85,9 +83,10 @@ function useModelForSegmentation (model, inputImage): Response {
       loadImage(inputImage).then((loadedImg) => {
         setLoading(false)
         setProcessing(true)
-        model.segment(loadedImg).then(results => {
-          const { legend, height, width, segmentationMap }: Results = results
-          const sourceImgData = getImageRgbaData(loadedImg, width, height)
+
+        model.segment(loadedImg).then((results: ModelSegmentationResults) => {
+          const { legend, height, width, segmentationMap } = results
+          const sourceImgData = getImageDataFromImage(loadedImg, width, height)
 
           // need to save this canvas element so we can render it
           const segmentationMapImagePath = createCanvasElementWithData(new ImageData(segmentationMap, width, height), width, height).toDataURL()
@@ -195,7 +194,8 @@ function useModelForSegmentation (model, inputImage): Response {
                 palette: filteredPalette2,
                 swPalette: swColorMatches,
                 recurringCoordinatingColors: duplicates,
-                image: ctx.toDataURL()
+                image: ctx.toDataURL(),
+                suggestedColors: [] // TODO: Add suggested color strings in here from color relationship logic @cody.richmond
               })
             })
           })).then((piecesPosterizationData: PiecePosterizationData[]) => {
@@ -206,7 +206,6 @@ function useModelForSegmentation (model, inputImage): Response {
               piecesData: piecesPosterizationData,
               relevantLabels: relevantLabels
             })
-
             setSuccess(true)
           }).catch(error => {
             console.error(error)
@@ -215,8 +214,7 @@ function useModelForSegmentation (model, inputImage): Response {
           }).then(() => {
             setProcessing(false)
           })
-        }).catch(error => {
-          console.error(error)
+        }).catch(e => {
           setError('The image segmentation process encountered an error.')
         })
       }).catch(error => {
@@ -270,4 +268,4 @@ function getObjectPixels (imageData, label, src) {
   return objPixels
 }
 
-export default useModelForSegmentation
+export default useDeepLabModelForSegmentation

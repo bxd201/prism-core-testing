@@ -5,8 +5,6 @@ import { connect } from 'react-redux'
 import FastMaskSVGDef from './FastMaskSVGDef'
 import TotalImageWorker from './workers/TotalImage/totalImage.worker'
 
-import { loadImage, getImageRgbaData } from './FastMaskUtils'
-
 import { uploadImage } from '../../store/actions/user-uploads'
 
 import { type WorkerMessage } from './workers/TotalImage/totalImage.types.js.flow'
@@ -16,6 +14,8 @@ import './FastMask.scss'
 import FileInput from '../FileInput/FileInput'
 import uniqueId from 'lodash/uniqueId'
 import GenericOverlay from '../Overlays/GenericOverlay/GenericOverlay'
+import getImageDataFromImage from 'src/shared/utils/getImageDataFromImage.util'
+import loadImage from 'src/shared/utils/loadImage.util'
 
 const FILE_UPLOAD_ID = uniqueId('fastMaskFileUpload_')
 
@@ -76,9 +76,9 @@ export function FastMask ({ color, uploadImage, uploads, hideUploadBtn = false }
 
         // $FlowIgnore - flow can't understand how the worker is being used since it's not exporting anything
         const totalImageWorker = new TotalImageWorker()
-        const userImageData = getImageRgbaData(mainImage, mainImage.naturalWidth, mainImage.naturalHeight)
+        const userImageData = getImageDataFromImage(mainImage, mainImage.naturalWidth, mainImage.naturalHeight)
         const maskData = masks.map(mask => {
-          const maskImageData = getImageRgbaData(mask, mask.naturalWidth, mask.naturalHeight)
+          const maskImageData = getImageDataFromImage(mask, mask.naturalWidth, mask.naturalHeight)
           return maskImageData.data
         })
 
@@ -114,7 +114,7 @@ export function FastMask ({ color, uploadImage, uploads, hideUploadBtn = false }
   }, [source, maskSources])
 
   return (
-    <React.Fragment>
+    <div className='FastMask'>
       {!hideUploadBtn && <FileInput onChange={handleChange} id={FILE_UPLOAD_ID} disabled={isUploading || isProcessing} placeholder={userImage ? 'Select new image' : 'Select an image'} />}
 
       {!hasDoneAnything ? (
@@ -160,7 +160,7 @@ export function FastMask ({ color, uploadImage, uploads, hideUploadBtn = false }
           ) : null}
         </div>
       )}
-    </React.Fragment >
+    </div>
   )
 }
 

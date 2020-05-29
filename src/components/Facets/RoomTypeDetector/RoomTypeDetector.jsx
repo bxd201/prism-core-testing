@@ -95,7 +95,7 @@ const RoomTypeDetector = () => {
           </div>
 
           <div className='RoomTypeDetector__side-by-side__side'>
-            <Card title='Fast Mask'>
+            <Card title='Fast Mask' omitBodyPadding>
               <FastMask hideUploadBtn />
             </Card>
           </div>
@@ -117,7 +117,13 @@ const RoomTypeDetector = () => {
       {segmentationSuccess && roomPieces && roomPieces.length ? (
         <div className='RoomTypeDetector__found-pieces'>
           {roomPieces.map((piece, index) => <div key={piece.label} className='RoomTypeDetector__found-pieces__piece'>
-            <RoomPiece label={piece.label} legendColor={piece.legendColor} image={piecesData[index].image} palette={piecesData[index].palette} swPalette={piecesData[index].swPalette} swRecommendations={piecesData[index].recurringCoordinatingColors} />
+            <RoomPiece label={piece.label}
+              legendColor={piece.legendColor}
+              image={piecesData[index].image}
+              palette={piecesData[index].palette}
+              swPalette={piecesData[index].swPalette}
+              suggestedColors={piecesData[index].suggestedColors}
+              swRecommendations={piecesData[index].recurringCoordinatingColors} />
           </div>)}
         </div>
       ) : null}
