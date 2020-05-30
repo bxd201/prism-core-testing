@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import isNull from 'lodash/isNull'
 import flattenDeep from 'lodash/flattenDeep'
 
-import { createCanvasElementWithData } from './FastMaskUtils'
+import createCanvasElementWithData from 'src/shared/utils/createCanvasElementWithData.util'
 
 import { type Color } from '../../shared/types/Colors.js.flow'
 

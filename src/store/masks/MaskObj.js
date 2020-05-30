@@ -1,6 +1,7 @@
 // @flow
 import axios from 'axios'
 import { addListener } from '../../shared/helpers/MiscUtils'
+import FileReader2 from 'src/shared/utils/FileReader2.util'
 
 export type MaskObjInput = {
   id: string,
@@ -99,22 +100,9 @@ export default class MaskObj {
         return
       }
 
-      const fileReader = new FileReader()
-      const listeners = []
-      const stopListening = () => listeners.map(l => l())
-
-      listeners.push(addListener(fileReader, 'load', event => {
-        stopListening()
-        resolve(new Uint8Array(event.target.result))
-      }))
-
-      listeners.push(addListener(fileReader, 'error', err => {
-        fileReader.abort()
-        stopListening()
-        reject(err)
-      }))
-
-      fileReader.readAsArrayBuffer(blob)
+      new FileReader2().readAsArrayBuffer(blob)
+        .then(data => resolve(new Uint8Array(data)))
+        .catch(() => reject(new Error(`Unable to read blob as array buffer in ${this._id}`)))
     }))
   }
 

@@ -12,7 +12,8 @@ type Props = {
   title: string,
   titleBg?: string,
   children?: any,
-  omitShim?: boolean
+  omitShim?: boolean,
+  omitBodyPadding?: boolean
 }
 
 const Card = (props: Props) => {
@@ -23,7 +24,8 @@ const Card = (props: Props) => {
     title,
     titleBg = '#222',
     children,
-    omitShim
+    omitShim,
+    omitBodyPadding
   } = props
 
   const titleColor = useMemo(() => {
@@ -42,7 +44,7 @@ const Card = (props: Props) => {
       ) : null}
       {children
         ? omitShim ? children : (
-          <div className='Card__body'>
+          <div className={`Card__body ${omitBodyPadding ? 'Card__body--no-padding' : ''}`}>
             {children}
           </div>
         ) : null
