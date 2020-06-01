@@ -19,9 +19,8 @@ import { SCENE_VARIANTS } from 'src/constants/globals'
 import { getColorInstances } from '../LivePalette/livePaletteUtility'
 import type { ColorMap } from 'src/shared/types/Colors.js.flow'
 import { unsetSelectedScenePaletteLoaded } from '../../store/actions/scenes'
-type myIdeaPreviewProps = {
-  // @todo implement -RS
-}
+// @todo for mysherwin feature -RS
+// import { CUSTOM_SCENE_IMAGE_ENDPOINT } from '../../constants/endpoints'
 
 const wrapperClass = 'my-ideas-preview-wrapper'
 const canvasOverlayWrapper = `${wrapperClass}__overlay-canvas-wrapper`
@@ -58,7 +57,7 @@ export const RedirectMyIdeas = () => {
   return null
 }
 
-const MyIdeaPreview = (props: myIdeaPreviewProps) => {
+const MyIdeaPreview = (props) => {
   const dispatch = useDispatch()
   const intl = useIntl()
   const backgroundCanvasRef = useRef()
@@ -123,15 +122,15 @@ const MyIdeaPreview = (props: myIdeaPreviewProps) => {
   }, [])
 
   useEffect(() => {
-    // @todo props approach, having CORS issues in dev... -RS
-    // const imageEndpoint = `${CUSTOM_SCENE_IMAGE_ENDPOINT}/${props.sceneData.renderingBaseUrl}?w=${props.width || 120}`
-    // @todo - This is a dev approach to stub out the endpoints
+    // @todo some of this code is for when mysherwin will be integrated. -RS
+    // const imageEndpoint = selectedScene ? `${CUSTOM_SCENE_IMAGE_ENDPOINT}/${selectedScene.renderingBaseUrl}?w=${props.width || 120}` : null
     const backgroundImage = ((renderingBaseUrl) => {
       if (renderingBaseUrl) {
         const splitUrl = renderingBaseUrl.split('/')
+        // @todo ensure the correct path is set when mysherwin is integrated -RS
         return `/public/${splitUrl[splitUrl.length - 1]}.jpg`
       }
-      // assumes this is from non-mysherwin account
+      // assumes this is from an anonymous account if it makes it here
       return backgroundImageUrl
     })(renderingBaseUrl)
 

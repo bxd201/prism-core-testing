@@ -41,7 +41,8 @@ const anonSaveStockScene = (id: string, sceneName: string, sceneData: Object, sc
       sceneFetchType,
       name: sceneName,
       sceneType: SCENE_TYPE.anonStock,
-      livePaletteColorsIdArray: livePaletteColorsIdArray
+      livePaletteColorsIdArray: livePaletteColorsIdArray,
+      updated: Date.now()
     }
   }
 

@@ -62,3 +62,6 @@ export const IS_IE = (() => {
   }
   return false
 })()
+
+// 30 days in
+export const ANON_STOCK_SCENE_LIFETIME = 1000 * 60 * 24 * 30

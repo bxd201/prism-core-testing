@@ -588,7 +588,6 @@ export class ColorVisualizerWrapper extends Component<Props> {
                 <Route path='/paint-photo' render={() => <SampleScenesWrapper activateScene={(id) => this.activateScene(id)} />} />
                 <Route path='/color-collections' render={(props) => (<ColorCollection isExpertColor={false} {...props.location.state} />)} />
                 <Route path='/expert-colors' render={() => <ExpertColorPicks isExpertColor />} />
-                {/* @todo - implement MyIdeas -RS */}
                 <Route path={MY_IDEAS} render={() => <MyIdeasContainer />} />
                 <Route path={MY_IDEAS_PREVIEW} component={MyIdeaPreview} />
                 <Route path={`/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`} exact component={ColorDetails} />
