@@ -26,7 +26,7 @@ const Content = ({ msg, color }: ContentProps) => {
   if (msg) {
     return (<p className='color-swatch__content__message'>{msg}</p>)
   } else if (displayAddButton) {
-    const title = (addButtonText || at(messages, 'ADD_TO_PALETTE')[0] || '').replace('{name}', fullColorName(color.brandKey, color.colorNumber, color.name))
+    const title = (addButtonText || at(messages, 'ADD_TO_PALETTE')[0] || '').replace('{name}', fullColorName(color))
     return (
       <button className='OmniButton color-swatch__content__cta color-swatch__content__cta--l' title={title} onClick={() => dispatch(swatchShouldEmit ? emitColor(color) : add(color))}>
         <span className='OmniButton__icon'><FontAwesomeIcon icon={['fal', 'plus-circle']} size='2x' /></span>
@@ -35,7 +35,7 @@ const Content = ({ msg, color }: ContentProps) => {
     )
   } else if (displayInfoButton) {
     return (
-      <Link to={generateColorDetailsPageUrl(color)} title={at(messages, 'VIEW_DETAILS_FOR')[0] || ''} className='OmniButton color-swatch__content__cta color-swatch__content__cta--r'>
+      <Link to={generateColorDetailsPageUrl(color)} title={(at(messages, 'VIEW_DETAILS_FOR')[0] || '').replace('{name}', fullColorName(color))} className='OmniButton color-swatch__content__cta color-swatch__content__cta--r'>
         <span className='OmniButton__icon'>
           <FontAwesomeIcon icon='info' size='1x' />,
         </span>
@@ -46,7 +46,7 @@ const Content = ({ msg, color }: ContentProps) => {
       ? (
         <a
           href={`${colorDetailPageRoot}/${color.brandKey}${color.colorNumber}-${kebabCase(color.name)}`}
-          title={at(messages, 'VIEW_DETAILS_FOR')[0] || ''}
+          title={(at(messages, 'VIEW_DETAILS_FOR')[0] || '').replace('{name}', fullColorName(color))}
           className='OmniButton color-swatch__content__cta color-swatch__content__cta--l'
         >
           {at(messages, 'VIEW_DETAILS')[0]}
@@ -55,7 +55,7 @@ const Content = ({ msg, color }: ContentProps) => {
       : (
         <Link
           to={generateColorDetailsPageUrl(color)}
-          title={at(messages, 'VIEW_DETAILS_FOR')[0] || ''}
+          title={(at(messages, 'VIEW_DETAILS_FOR')[0] || '').replace('{name}', fullColorName(color))}
           className='OmniButton color-swatch__content__cta color-swatch__content__cta--l'
         >
           {at(messages, 'VIEW_DETAILS')[0]}
