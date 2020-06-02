@@ -208,7 +208,7 @@ export class ColorVisualizerWrapper extends Component<Props> {
     if (lastActiveComponent === PAINT_SCENE_COMPONENT) {
       this.setState({ showDefaultPage: false, showPaintScene: isShowDropDown })
     }
-    this.setState({ close: close })
+    this.setState({ close: close, isFirstLoading: false })
   }
 
   setActiveComponent =() => {
@@ -661,7 +661,7 @@ const mapStateToProps = (state, props) => {
     isActiveStockScenePolluted: state.scenes.isActiveStockScenePolluted,
     colorDetailsModalShowing: state.colors.colorDetailsModal.showing,
     loadingScenes: scenes.loadingScenes,
-    loadingColorData: !!at(state, 'colors.status.loading')[0],
+    loadingColorData: !at(state, 'colors.status.loading')[0],
     loadingCS: state.collectionSummaries.loadingCS,
     loadingECP: state.expertColorPicks.loadingECP
   }
