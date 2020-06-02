@@ -16,9 +16,10 @@ import type { Color } from '../../../shared/types/Colors.js.flow'
 
 export const initialState: ColorsState = {
   status: {
-    loading: true,
+    loading: false,
     error: false,
-    activeRequest: false
+    activeRequest: false,
+    requestComplete: false
   },
   items: {},
   layouts: void (0),
@@ -59,7 +60,8 @@ export function getErrorState (state: ColorsState, error?: any) {
     status: {
       loading: false,
       error: error || true,
-      activeRequest: false
+      activeRequest: false,
+      requestComplete: true
     }
   }
 }
@@ -209,8 +211,10 @@ export function doReceiveColors (state: ColorsState, action: ReduxAction) {
     layouts,
     status: {
       ...state.status,
-      loading: action.payload.loading,
-      activeRequest: action.payload.activeRequest
+      activeRequest: false,
+      error: false,
+      loading: false,
+      requestComplete: true
     }
   }
 
