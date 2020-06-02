@@ -13,6 +13,7 @@ import ColorVisualizerWrapper from 'src/components/Facets/ColorVisualizerWrapper
 import FastMaskSimple from 'src/components/Facets/FastMaskSimple/FastMaskSimple'
 import Prism from 'src/components/Facets/Prism/Prism'
 import Tinter from 'src/components/Facets/Tinter/Tinter'
+import RoomTypeDetector from 'src/components/Facets/RoomTypeDetector/RoomTypeDetector'
 
 export const allFacets = {
   ColorDetailsFacet,
@@ -22,7 +23,8 @@ export const allFacets = {
   ColorVisualizerWrapper,
   FastMaskSimple,
   Prism,
-  Tinter
+  Tinter,
+  RoomTypeDetector
 }
 
 const allFacetsKeys = Object.keys(allFacets)

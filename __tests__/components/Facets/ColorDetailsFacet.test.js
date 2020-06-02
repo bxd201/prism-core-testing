@@ -23,7 +23,7 @@ test('<ColorDetailsFacet colorSEO=\'sw-6475-country-squire\' subscribe={...} />'
 
   // after clicking the details tab, the "View all Blue paint colors →" link and the "#124a42" hex value is displayed
   await fireEvent.click(await findByText('Details'))
-  expect(await findByText('View all Blue paint colors →')).toHaveAttribute('href', '/blue')
+  expect(await findByText('View all Blue paint colors →')).toHaveAttribute('href', `${FAMILY_LINK}`)
   await findByText('#124a42')
 
   // the radiogroup section has images for all 5 scenes

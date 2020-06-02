@@ -8,7 +8,6 @@ import FastMask from '../../FastMask/FastMask'
 // TODO: remove static data importing from this component before merging into develop
 import InspiredScene from '../../InspirationPhotos/InspiredSceneNavigator'
 import LivePalette from '../../LivePalette/LivePalette'
-import ColorDataWrapper from '../../../helpers/ColorDataWrapper/ColorDataWrapper'
 import PrismNav from './PrismNav'
 import React, { Component } from 'react'
 import SceneManager from '../../SceneManager/SceneManager'
@@ -33,7 +32,6 @@ const colorWallUrlPattern = `${colorWallBaseUrl}(/.*)?`
 
 // since the CDP component won't have any color information if we go to it directly, we need to wrap it
 // in the ColorDataWrapper HOC to ensure it has color data prior to rendering it.
-const ColorDetailsWithData = ColorDataWrapper(ColorDetails)
 const colorDetailsBaseUrl = `/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_DETAIL}`
 
 // barebones component to always take the user to active if they try to access root.
@@ -77,7 +75,7 @@ export class Prism extends Component<Props> {
                   <ColorWallPage displayAddButton displayDetailsLink={false} />
                 </ColorWallContext.Provider>
               </Route>
-              <Route path={`${colorDetailsBaseUrl}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`} exact component={ColorDetailsWithData} />
+              <Route path={`${colorDetailsBaseUrl}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`} exact component={ColorDetails} />
               <Route path='/color-from-image' component={InspiredScene} />
               <Route path='/color-collections' component={(props) => (<ColorCollection isExpertColor={false} {...props.location.state} />)} />
               <Route path='/expert-colors' component={() => <ExpertColorPicks isExpertColor />} />

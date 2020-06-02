@@ -58,7 +58,8 @@ const facetEntryPoints = {
   tinter: path.join(srcPath, 'components/Facets/Tinter/Tinter.jsx'),
   colorVisualizerWrapper: path.join(srcPath, 'components/Facets/ColorVisualizerWrapper/ColorVisualizerWrapper.jsx'),
   prism: path.join(srcPath, 'components/Facets/Prism/Prism.jsx'),
-  colorDetailsFacet: path.join(srcPath, 'components/Facets/ColorDetailsFacet.jsx')
+  colorDetailsFacet: path.join(srcPath, 'components/Facets/ColorDetailsFacet.jsx'),
+  RoomTypeDetector: path.join(srcPath, 'components/Facets/RoomTypeDetector/RoomTypeDetector.jsx')
 }
 
 module.exports = {

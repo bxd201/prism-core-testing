@@ -11,6 +11,12 @@ import { toolNames, brushSquareShape, paintBrushMediumCircleClass,
 
 const MAX_RES_TIME = 3000
 
+type RGB = {
+  r: number,
+  g: number,
+  b: number
+}
+
 export const getPaintAreaPath = (imagePathList, canvas, width, height, color) => {
   const RGB = getActiveColorRGB(color)
   const [array, pixelIndexAlphaMap] = getImageCordinateByPixelPaintBrush(canvas, width, height, true)
@@ -490,18 +496,25 @@ export const floodFillScanLineStack = (imageData, newColor, x, y, similar, perfo
   return resultArr
 }
 
-export const colorMatch = (a, b, similar) => {
+export const getColorDistance = (a: RGB, b: RGB) => {
+  const colorA = rgb2lab([a.r, a.g, a.b])
+  const colorB = rgb2lab([b.r, b.g, b.b])
+  let labA = { L: colorA[0], A: colorA[1], B: colorA[2] }
+  let labB = { L: colorB[0], A: colorB[1], B: colorB[2] }
+  return getDeltaE00(labA, labB)
+}
+
+export const colorMatch = (a: RGB, b: RGB, similar) => {
   if (similar !== 100) {
-    const colorA = rgb2lab([a.r, a.g, a.b])
-    const colorB = rgb2lab([b.r, b.g, b.b])
-    const colorC = rgb2lab([0, 0, 0])
-    const labA = { L: colorA[0], A: colorA[1], B: colorA[2] }
-    const labB = { L: colorB[0], A: colorB[1], B: colorB[2] }
-    const labC = { L: colorC[0], A: colorC[1], B: colorC[2] }
-    const colorDistance = getDeltaE00(labA, labB)
-    return getDeltaE00(labA, labC) < 1 ? colorDistance < 1 : colorDistance < 8
+    const colorDistance = getColorDistance(a, b)
+    const colorDistanceBlk = getColorDistance(a, [0, 0, 0])
+    if (colorDistanceBlk < 1) {
+      return colorDistance < 1
+    } else {
+      return colorDistance < 8
+    }
   }
-  return a.r === b.r && a.g === b.g && a.b === b.b
+  return a.r === b.r && a.g === b.g && a.b === b.b && a.a === b.a
 }
 
 export const getColorAtPixel = (imageData, x, y) => {
