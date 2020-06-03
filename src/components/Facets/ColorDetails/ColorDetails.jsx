@@ -38,10 +38,13 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
   const scenesLoaded: boolean = useSelector(state => !state.scenes.loadingScenes)
 
   const [color: Color, setColor: Color => void] = useState(initialColor)
+  const [tabIndex: number, setTabIndex: number => void] = useState(0)
 
   useEffect(() => {
     color && GA.pageView(`color-detail/${color.brandKey} ${color.colorNumber} - ${color.name}`)
     onColorChanged && onColorChanged(color)
+    // force tab change to first tab if there is no coordinating colors tab
+    color.coordinatingColors || setTabIndex(0)
   }, [color])
 
   // paint all the main surfaces on load of the CDP
@@ -93,10 +96,14 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
             <ColorStrip key={color.id} color={color} onColorChanged={setColor} />
           </div>
           <div className={`${baseClass}__additional-info`}>
-            <Tabs onSelect={index => {
-              const tabNames = ['View Coord Color Section', 'View Similar Color Section', 'View Color Info Section']
-              GA.event({ category: 'Color Detail', action: tabNames[index], label: tabNames[index] })
-            }}>
+            <Tabs
+              selectedIndex={tabIndex}
+              onSelect={index => {
+                const tabNames = ['View Coord Color Section', 'View Similar Color Section', 'View Color Info Section']
+                GA.event({ category: 'Color Detail', action: tabNames[index], label: tabNames[index] })
+                setTabIndex(index)
+              }}
+            >
               <TabList className={`${baseClass}__tab-list`} style={{ backgroundColor: color.hex }}>
                 {color.coordinatingColors && (
                   <Tab className={`coordinating-colors-tab ${baseClass}__tab ${color.isDark ? `${baseClass}__tab--dark-color` : ''}`}>
