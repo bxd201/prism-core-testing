@@ -19,8 +19,8 @@ class TintableSceneSurface extends PureComponent<Props> {
   getSvgContents () {
     const { image, maskId, filterId, type } = this.props
     const baseUrl = getBaseUrl(window.location.href)
-    const mask = `url(${baseUrl}#${maskId})`
-    const filter = `url(${baseUrl}#${filterId})`
+    const mask = `url("${baseUrl}#${maskId}")`
+    const filter = `url("${baseUrl}#${filterId}")`
 
     switch (type) {
       case SCENE_TYPES.ROOM:
