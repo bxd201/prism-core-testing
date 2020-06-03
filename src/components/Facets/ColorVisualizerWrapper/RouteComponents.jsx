@@ -24,6 +24,8 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import at from 'lodash/at'
 import { KEY_CODES } from 'src/constants/globals'
 import { mouseDownPreventDefault } from 'src/shared/helpers/MiscUtils'
+import { useDispatch } from 'react-redux'
+import { addSystemMessage, SYSTEM_MESSAGE_TYPES } from '../../../store/actions/systemMessages'
 
 type Props = {
   dataKey: string,
@@ -53,6 +55,7 @@ const DropDownMenu = (props: Props) => {
   }, {})
   const inputRef = React.useRef()
   const { messages = {} } = useIntl()
+  const dispatch = useDispatch()
 
   useEffect(() => {
     if (isKeyDownRoute || isTabbedOutFromHelp) {
@@ -133,7 +136,7 @@ const DropDownMenu = (props: Props) => {
                     data-noshow
                     type='file'
                     accept={null}
-                    onChange={(e) => !isMobileOnly && !isTablet && handleChange(e, props, data.subTitleIdentifier)}
+                    onChange={(e) => !isMobileOnly && !isTablet && handleChange(e, props, data.subTitleIdentifier, dispatch, messages)}
                     style={{ 'display': 'none' }}
                     id='file-input'
                     ref={inputRef}
@@ -180,14 +183,14 @@ const redirectToApp = (data, props, type, e) => {
   }
 }
 
-const handleChange = (e, props, type) => {
+const handleChange = (e, props, type, dispatch, messages) => {
   const userImg = e.target.files && e.target.files.length ? e.target.files[0] : null
 
   if (userImg && isSupportedImageFormat(userImg)) {
     const imgUrl = URL.createObjectURL(userImg)
     props.getImageUrl(imgUrl, type)
   } else {
-    // @todo implement notification of failed format. -RS
+    dispatch(addSystemMessage(messages['SYSTEM.IMAGE_FORMAT_ERROR'], SYSTEM_MESSAGE_TYPES.danger))
   }
 }
 

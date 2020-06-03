@@ -37,6 +37,7 @@ import { faSun } from '@fortawesome/pro-solid-svg-icons/faSun'
 import { faTimes } from '@fortawesome/pro-solid-svg-icons/faTimes'
 import { faTrash } from '@fortawesome/pro-solid-svg-icons/faTrash'
 import { faUndoAlt } from '@fortawesome/pro-solid-svg-icons/faUndoAlt'
+import { faWindowClose } from '@fortawesome/pro-solid-svg-icons/faWindowClose'
 
 // lights
 import { faAlignJustify as falAlignJustify } from '@fortawesome/pro-light-svg-icons/faAlignJustify'
@@ -110,6 +111,7 @@ const faIcons = [
   faSun,
   faTimes,
   faUndoAlt,
+  faWindowClose,
   // -------- LIGHTS ---------
   falAlignJustify,
   falCircle,

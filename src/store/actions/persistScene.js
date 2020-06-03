@@ -15,6 +15,7 @@ import * as firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/storage'
 import { getFirebaseListItemPaths } from '../../shared/utils/sceneUtil'
+import { addSystemMessage, SYSTEM_MESSAGE_TYPES } from './systemMessages'
 
 export const SAVING_MASKS = 'SAVING_MASKS'
 export const SAVED_SCENE_LOCAL = 'SAVED_SCENE_LOCAL'
@@ -104,7 +105,8 @@ export const deleteSavedScene = (sceneId: number | string) => {
             payload: sceneId
           })
         }).catch(error => {
-          // @todo - handle error -RS
+          dispatch(addSystemMessage('', SYSTEM_MESSAGE_TYPES.danger, 'ERROR_DELETING_ANON_SCENE'))
+          // @todo [IMPROVEMENT] Log this error -RS
           console.log('Error deleting anonymous scene:', error)
           dispatch({
             type: ERROR_DELETING_ANON_SCENE
@@ -168,7 +170,8 @@ export const loadSavedSceneFromFirebase = (brandId: string, dispatch: Function, 
 
       getSavedScenesFromFirebase(!!user, dispatch, getState)
     }).catch(err => {
-      // @todo - handle error -RS
+      dispatch(addSystemMessage('', SYSTEM_MESSAGE_TYPES.danger, 'ERROR_GETTING_ANON_SCENE'))
+      // @todo [IMPROVEMENT] Log this error -RS
       console.log('Error fetching colors:', err)
     })
   }
@@ -232,7 +235,8 @@ export const loadSavedScenesFromMySherwin = (brandId: string, dispatch: Function
         payload: sceneData
       })
     }).catch(err => {
-      // @todo handle error -RS
+      dispatch(addSystemMessage('', SYSTEM_MESSAGE_TYPES.danger, 'ERROR_GETTING_SCENE'))
+      // @todo [IMPROVEMENT] Log this error -RS
       console.log(`Error getting saved scenes: ${err}`)
       dispatch({
         type: ERROR_LOADING_SAVED_SCENES,
@@ -422,7 +426,8 @@ const persistSceneToFirebase = (backgroundImageData: string, sceneDataXml: any, 
       payload: localSceneData
     })
   }).catch(err => {
-    // @todo Handle error
+    dispatch(addSystemMessage('', SYSTEM_MESSAGE_TYPES.danger, 'ERROR_SAVING_ANON_SCENE'))
+    // @todo [IMPROVEMENT] Log this error -RS
     console.log('Error saving scene to Firebase:', err)
     dispatch(doneSavingMask())
   })
@@ -440,6 +445,8 @@ const persistSceneToMySherwin = (dispatch, backgroundImageUrl: string, sceneData
     // eslint-disable-next-line no-unused-vars
     const regionsXMLString = stringifyXML(sceneDataXml)
   }).catch(err => {
+    dispatch(addSystemMessage('', SYSTEM_MESSAGE_TYPES.danger, 'ERROR_SAVING_SCENE'))
+    // @todo [IMPROVEMENT] Log this error -RS
     console.log(`Error saving masks: ${err}`)
     dispatch(doneSavingMask())
   })
@@ -535,9 +542,10 @@ const downloadRemoteFiles = (urls: string[], dispatch: Function, getState: Funct
     })
     dispatch(setWaitingToFetchSavedScene(false))
   }).catch(err => {
+    dispatch(addSystemMessage('', SYSTEM_MESSAGE_TYPES.danger, 'ERROR_DOWNLOADING_ANON_SCENE'))
+    // @todo [IMPROVEMENT] Log this error -RS
     console.log('Error downloading files from the server:', err)
     dispatch(setWaitingToFetchSavedScene(false))
-    // @todo handle error -RS
     dispatch({
       type: ERROR_DOWNLOADING_SAVED_DATA,
       payload: true
@@ -601,7 +609,8 @@ export const updateSavedSceneName = (sceneId: number | string, updatedSceneName:
             }
           })
         }).catch(error => {
-          // @todo - handle error
+          dispatch(addSystemMessage('', SYSTEM_MESSAGE_TYPES.danger, 'ERROR_UPDATING_ANON_SCENE'))
+          // @todo [IMPROVEMENT] Log this error -RS
           console.log('Error updating anonymous scene name:', error)
           dispatch({
             type: ERROR_UPDATING_ANON_SAVED_SCENE_NAME

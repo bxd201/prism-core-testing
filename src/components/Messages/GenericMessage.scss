@@ -21,6 +21,9 @@
     color: $color-near-black;
     display: inline-block;
     padding: .5em;
+    width: 100%;
+    font-weight: normal;
+    font-size: 0.8rem;
 
     @include respond-above(sm) {
       padding: 1em;
@@ -34,6 +37,11 @@
     &--warning {
       background: rgba(getVar('colors.warning'), $color-near-opacity);
       color: pick-visible-color(getVar('colors.warning'), $color-black, $color-white);
+    }
+
+    &--success {
+      background: rgba(getVar('colors.success'), $color-near-opacity);
+      color: pick-visible-color(getVar('colors.success'), $color-black, $color-white);
     }
   }
 

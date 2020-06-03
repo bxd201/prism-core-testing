@@ -218,7 +218,6 @@ export class SceneManager extends PureComponent<Props, State> {
     e.stopPropagation()
 
     if (this.props.sceneStatus && this.props.activeScenes) {
-      // @todo should I throw an error if no active scene or is this over kill? -RS
       const currentSceneData = this.props.sceneStatus.find(item => item.id === this.props.activeScenes[0])
       let livePaletteColorsIdArray = []
       this.props.lpColors && this.props.lpColors.map(color => {
