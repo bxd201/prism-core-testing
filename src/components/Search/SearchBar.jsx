@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/label-has-for */
 // @flow
-import React from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
@@ -10,54 +11,96 @@ import uniqueId from 'lodash/uniqueId'
 import debounce from 'lodash/debounce'
 import './SearchBar.scss'
 import 'src/scss/convenience/visually-hidden.scss'
-import { MIN_SEARCH_LENGTH } from '../../store/actions/loadSearchResults'
+import { loadSearchResults, MIN_SEARCH_LENGTH } from 'src/store/actions/loadSearchResults'
 import at from 'lodash/at'
+import { compareKebabs } from 'src/shared/helpers/StringUtils'
+import recursiveDecodeURIComponent from 'src/shared/utils/recursiveDecodeURIComponent.util'
 
-type Props = { showCancelButton: boolean, showLabel?: boolean, showIcon?: boolean, label: string }
-const SearchBar = ({ label, showCancelButton = true, showIcon = true, showLabel = true }: Props) => {
-  let { query }: { query: ?string } = useParams()
-  query = decodeURIComponent(query || '')
-  const history = useHistory()
+type Props = {
+  label: string,
+  limitSearchToFamily?: boolean,
+  showCancelButton?: boolean,
+  showIcon?: boolean,
+  showLabel?: boolean
+}
+
+const SearchBar = (props: Props) => {
+  const {
+    label,
+    limitSearchToFamily = false,
+    showCancelButton = true,
+    showIcon = true,
+    showLabel = true
+  } = props
+  const [id] = useState(uniqueId('SearchBarInput'))
+  const [inputValue, setInputValue] = useState<string>('')
+  const [newSearchParam, setNewSearchParam] = useState<string>('')
   const { messages = {} } = useIntl()
-  const [value: string, setValue: (string) => void] = React.useState(query)
-  const [id] = React.useState(uniqueId('SearchBarInput'))
+  const { section, family, query = '' } = useParams()
+  const { structure } = useSelector(state => state.colors)
+  const currentSearchParam = useRef('')
+  const dispatch = useDispatch()
+  const history = useHistory()
+  const inputRef = useRef()
 
-  const updateUrl = React.useMemo(() => debounce((value, abort = false) => {
+  useEffect(() => {
+    // recursively decode incoming query and use it to update input value
+    setInputValue(recursiveDecodeURIComponent(query))
+  }, [query])
+
+  useEffect(() => {
+    // whenever inputValue changes we need to check if the value meets our requirements for searching
+    checkIfSearchableInput(inputValue)
+
+    return () => {
+      checkIfSearchableInput(null, true)
+    }
+  }, [inputValue])
+
+  const checkIfSearchableInput = useCallback(debounce((value: string | null = '', abort: boolean = false) => {
     // this is for "cancelling" the debounced method if we unmount before execution
     if (abort) { return }
 
-    if (typeof value === 'string') {
-      const l = value.length
-      if (l >= MIN_SEARCH_LENGTH) {
-        // ensure we aren't pushing anything dangerous into the URL
-        const v = encodeURIComponent(value)
+    // if value is empty or it matches our current search param... return out
+    if (typeof value !== 'string' || !value.trim().length || currentSearchParam.current === value) { return }
 
-        // if this is a new search query...
-        if (value !== query) {
-          // ... push it to the URL
-          history.push(v)
-        } else {
-          // ... otherwise just replace the current URL with it
-          // this enables searching on initial load w/ a search param
-          history.replace(v)
+    // if value doe not meet minimum searchable length... return out
+    if (value.length < MIN_SEARCH_LENGTH) { return }
+
+    // IMPORTANT: need to double encode in order to preserve encoding in URL
+    // if we do NOT do this, we run into decoding issues when retrieving the URL via react router
+    history.push(encodeURIComponent(encodeURIComponent(value)))
+
+    // set ref for current search that we can use to prevent duplicate searches
+    currentSearchParam.current = value
+
+    // set new search param which we will actually perform a search on
+    setNewSearchParam(value)
+  }, 500), [])
+
+  useEffect(() => {
+    // if the new search param is empty, do not proceed
+    if (typeof newSearchParam !== 'string' || newSearchParam.trim().length === 0) { return }
+
+    // at this point we're now sending off the search based on a set of conditions
+    if (limitSearchToFamily) {
+      if (family) {
+        dispatch(loadSearchResults(newSearchParam, family))
+        return
+      }
+
+      if (section) {
+        const familiesFromSection = structure.filter(v => compareKebabs(v.name, section)).map(v => v.families)
+
+        if (familiesFromSection && familiesFromSection.length === 1) {
+          dispatch(loadSearchResults(newSearchParam, familiesFromSection[0]))
+          return
         }
-      } else if (l === 0 && value !== query) {
-        // this allows us to escape via routing if the user clears their search
-        // don't allow if query is already blank -- doing it then auto-pushes a blank state on initial load
-        history.push('./')
       }
     }
-  }, 250), [query])
 
-  React.useEffect(() => { value !== query && setValue(query) }, [query])
-
-  React.useEffect(() => { // mutate url when input hasn't changed in 250ms
-    updateUrl(value)
-
-    return () => {
-      updateUrl(null, true)
-    }
-  }, [value])
+    dispatch(loadSearchResults(newSearchParam))
+  }, [newSearchParam, family, section, limitSearchToFamily])
 
   return (
     <div className='SearchBar'>
@@ -68,9 +111,19 @@ const SearchBar = ({ label, showCancelButton = true, showIcon = true, showLabel 
             <FontAwesomeIcon icon={['fal', 'search']} size='lg' />
           </label>)}
           <div className={`SearchBar__wrapper SearchBar__wrapper--with${query ? '-outline' : 'out-outline'}`}>
-            <input id={id} value={value} className='SearchBar__input' onChange={e => setValue(e.target.value)} placeholder={at(messages, 'SEARCH.SEARCH_BY')[0]} />
-            {value.length > 0 &&
-              <button type='button' className='SearchBar__clean' onClick={() => setValue('')}>
+            <input
+              className='SearchBar__input'
+              id={id}
+              onChange={e => setInputValue(e.target.value)}
+              placeholder={at(messages, 'SEARCH.SEARCH_BY')[0]}
+              ref={inputRef}
+              value={inputValue}
+            />
+            {inputValue.length > 0 &&
+              <button type='button' className='SearchBar__clean' onClick={() => {
+                setInputValue('')
+                inputRef.current && inputRef.current.focus()
+              }}>
                 <FontAwesomeIcon icon={['fas', 'times']} />
               </button>}
           </div>
