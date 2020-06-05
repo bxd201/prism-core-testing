@@ -902,7 +902,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       canvasPanStart: this.canvasPanStart
     }
     applyZoom(zoomNumber, ref)
-    // this.setState({ canvasZoom: zoomNumber })
+    this.setState({ canvasZoom: zoomNumber })
   }
 
   onPanStart = (event: Object) => {
@@ -923,7 +923,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   onPanMove = throttle((event: Object) => {
     const ref = { CFICanvas: this.CFICanvas, CFICanvas2: this.CFICanvas2, CFICanvasPaint: this.CFICanvasPaint }
     const { canvasZoom, canvasMouseDown } = this.state
-    if (canvasZoom <= 1 && canvasZoom >= 8) return
+    if (canvasZoom <= 1 || canvasZoom >= 8) return
     if (!canvasMouseDown) return
     const MIN_PAN = -0.1
     const MAX_PAN = 1.1
@@ -935,7 +935,6 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     const panY = this.canvasPanStart.y - dy
     this.canvasPanStart = { x: Math.max(MIN_PAN, Math.min(MAX_PAN, panX)), y: Math.max(MIN_PAN, Math.min(MAX_PAN, panY)) }
     this.lastPanPoint = { x: event.pageX, y: event.pageY }
-
     const options = {
       containerWidth: this.wrapperOriginalDimensions.width,
       containerHeight: this.wrapperOriginalDimensions.height,
