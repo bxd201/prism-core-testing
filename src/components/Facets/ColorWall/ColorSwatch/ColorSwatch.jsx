@@ -31,7 +31,7 @@ const Content = ({ msg, color }: ContentProps) => {
     <div className='color-swatch__button-group'>
       {displayAddButton && (
         <button
-          title={(addButtonText || at(messages, 'ADD_TO_PALETTE')[0] || '').replace('{name}', fullColorName(color.brandKey, color.colorNumber, color.name))}
+          title={(addButtonText || at(messages, 'ADD_TO_PALETTE')[0] || '').replace('{name}', fullColorName(color))}
           onClick={() => dispatch(swatchShouldEmit ? emitColor(color) : add(color))}
         >
           <FontAwesomeIcon className='add-icon' icon={['fal', 'plus-circle']} size='2x' />
@@ -43,7 +43,7 @@ const Content = ({ msg, color }: ContentProps) => {
           ? (
             <a
               href={`${colorDetailPageRoot}/${color.brandKey}${color.colorNumber}-${kebabCase(color.name)}`}
-              title={at(messages, 'VIEW_DETAILS_FOR')[0] || ''}
+              title={(at(messages, 'VIEW_DETAILS_FOR')[0] || '').replace('{name}', fullColorName(color))}
               className='OmniButton color-swatch__content__cta color-swatch__content__cta--l'
             >
               {at(messages, 'VIEW_DETAILS')[0]}
@@ -52,7 +52,7 @@ const Content = ({ msg, color }: ContentProps) => {
           : (
             <Link
               to={generateColorDetailsPageUrl(color)}
-              title={at(messages, 'VIEW_DETAILS_FOR')[0] || ''}
+              title={(at(messages, 'VIEW_DETAILS_FOR')[0] || '').replace('{name}', fullColorName(color))}
               className='OmniButton color-swatch__content__cta color-swatch__content__cta--l'
             >
               {at(messages, 'VIEW_DETAILS')[0]}
