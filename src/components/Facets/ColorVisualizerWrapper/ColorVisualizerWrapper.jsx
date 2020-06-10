@@ -597,9 +597,9 @@ export class ColorVisualizerWrapper extends Component<Props> {
                 <ImageRotateContainer isFromMyIdeas={isFromMyIdeas} isPaintScene checkIsPaintSceneUpdate={checkIsPaintSceneUpdate} showPaintScene={showPaintScene} imgUrl={imgUrl} key={remountKey} />
                 <div className={`${isShowWarningModal ? 'cvw__modal__overlay' : 'cvw__route-wrapper'}`} />
                 {!close && <div role='presentation' className={`${(!close && !nonOverlayRouteSet.has(location.pathname)) ? 'nav__dropdown-overlay' : ''}`} onClick={this.close}>
-                  <Route path='/active/colors' component={(props) => <DropDownMenu isTabbedOutFromHelp={isTabbedOutFromHelp} exploreColorsLinkRef={exploreColorsLinkRef} dataKey='color' {...dropMenuProps} />} />
-                  <Route path='/active/inspiration' component={() => <DropDownMenu isTabbedOutFromHelp={isTabbedOutFromHelp} exploreColorsLinkRef={exploreColorsLinkRef} dataKey='inspiration' {...dropMenuProps} />} />
-                  <Route path='/active/scenes' component={() => <DropDownMenu isTabbedOutFromHelp={isTabbedOutFromHelp} exploreColorsLinkRef={exploreColorsLinkRef} dataKey='scenes' {...dropMenuProps} />} />
+                  <Route path='/active/colors' render={(props) => <DropDownMenu isTabbedOutFromHelp={isTabbedOutFromHelp} exploreColorsLinkRef={exploreColorsLinkRef} dataKey='color' {...dropMenuProps} />} />
+                  <Route path='/active/inspiration' render={() => <DropDownMenu isTabbedOutFromHelp={isTabbedOutFromHelp} exploreColorsLinkRef={exploreColorsLinkRef} dataKey='inspiration' {...dropMenuProps} />} />
+                  <Route path='/active/scenes' render={() => <DropDownMenu isTabbedOutFromHelp={isTabbedOutFromHelp} exploreColorsLinkRef={exploreColorsLinkRef} dataKey='scenes' {...dropMenuProps} />} />
                 </div>}
               </div>
             </div>}
