@@ -15,6 +15,7 @@ import './MatchPhoto.scss'
 import { FormattedMessage } from 'react-intl'
 import { loadBrandColors } from '../../store/actions/brandColors'
 import MatchPhoto from './MatchPhoto'
+import { LiveMessage } from 'react-aria-live'
 
 const baseClass = 'match-photo'
 const wrapperClass = `${baseClass}__wrapper`
@@ -97,6 +98,7 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
   const [paintSceneWorkspaceState] = useState((imgUrl) ? null : paintSceneWorkspace)
   const [isConfirmationModalShown, setConfirmationModalShown] = useState(false)
   const routeContext = useContext(RouteContext)
+  const [isImageRotate, setIsImageRotate] = useState(false)
 
   const dispatch = useDispatch()
   useEffect(() => { dispatch(loadBrandColors()) }, [])
@@ -340,6 +342,7 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
 
     const newDims = { ...imageDims, imageWidth: width, imageHeight: height, isPortrait: orientation }
     setImageDims(newDims)
+    setIsImageRotate(true)
   }
 
   const handleImageLoaded = (payload) => {
@@ -442,6 +445,7 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
         </div>
         <hr />
       </div>
+      {isImageRotate && <LiveMessage message={`Image rotated ${imageRotationAngle} degree`} aria-live='assertive' clearOnUnmount='true' />}
     </React.Fragment>
   )
 }

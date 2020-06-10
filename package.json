@@ -35,6 +35,7 @@
       "^react-dnd-test-utils$": "react-dnd-test-utils/dist/cjs",
       "^constants(.*)$": "<rootDir>/src/constants$1",
       "^variables$": "<rootDir>/src/shared/variablesExport.js",
+      "\\.(jpg|jpeg|png|gif|webp|svg)$": "<rootDir>/__mocks__/fileMock.js",
       "\\.((s?css)|less)$": "identity-obj-proxy",
       "^src/(.*)$": "<rootDir>/src/$1",
       "^config/(.*)$": "<rootDir>/config/$1",
