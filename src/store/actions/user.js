@@ -1,6 +1,6 @@
 // @flow
-import axios from 'axios'
 import * as firebase from 'firebase'
+import { addSystemMessage, SYSTEM_MESSAGE_TYPES } from './systemMessages'
 
 export const LOGGING_IN = 'LOGGING_IN'
 export const USER_LOADED = 'USER_LOADED'
@@ -12,22 +12,6 @@ export const login = (username: string, password: string) => {
       type: LOGGING_IN,
       payload: true
     })
-
-    // @todo - implement all of this stuff, it is just reading static files so that I can work with the shape of the data. -RS
-    axios.get('/public/user.json')
-      .then(response => {
-        dispatch({
-          type: USER_LOADED,
-          payload: response.data
-        })
-      })
-      .catch(err => {
-        console.log(`Error logging in: ${err}`)
-        dispatch({
-          type: ERROR_LOGGING_IN,
-          payload: null
-        })
-      })
   }
 }
 
@@ -39,6 +23,8 @@ export const anonLogin = () => {
     })
 
     firebase.auth().signInAnonymously().catch((err) => {
+      dispatch(addSystemMessage('', SYSTEM_MESSAGE_TYPES.danger, 'ERROR_ANON_LOGIN'))
+      // @todo [IMPROVEMENT] Log this error -RS
       console.log(`Error logging in: ${err}`)
       dispatch({
         type: ERROR_LOGGING_IN,

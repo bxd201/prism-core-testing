@@ -40,6 +40,7 @@ import { reducerWithLocalStorage } from '../withStorage'
 import { SCENE_METADATA } from '../storageProperties'
 import brandColors from './brandColors'
 import { modalHeight, refreshModalHeight } from './modal'
+import { systemMessages } from './systemMessages'
 
 export default combineReducers({
   brandColors,
@@ -78,5 +79,6 @@ export default combineReducers({
   showSavedCustomSceneSuccess,
   showDeleteConfirmModal,
   modalHeight,
-  refreshModalHeight
+  refreshModalHeight,
+  systemMessages
 })

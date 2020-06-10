@@ -281,6 +281,17 @@
   "START_PAINTING": "Start Painting",
   "SWATCH_ACTIVATED_DETAILS": "{color} is selected. Press Enter to view details.",
   "SWATCH_FOCUS": "{color}. Press Enter to select.",
+  "SYSTEM": {
+    "ERROR_ANON_LOGIN": "Uh-oh, something went wrong.",
+    "ERROR_DELETING_ANON_SCENE": "There was an error deleting your saved scene.",
+    "ERROR_DOWNLOADING_ANON_SCENE": "There was a problem downloading your scene.",
+    "ERROR_GETTING_ANON_SCENE": "Could not fetch your scene data.",
+    "ERROR_GETTING_SCENE": "Could not fetch your scene data from MySherwin.",
+    "ERROR_SAVING_ANON_SCENE": "Uh-oh, there was an error saving your scene.",
+    "ERROR_SAVING_SCENE": "Uh-oh, there was an error saving your scene to MySherwin.",
+    "ERROR_UPDATING_ANON_SCENE": "There was a problem updating your scene.",
+    "IMAGE_FORMAT_ERROR": "The type image you uploaded is not support. Please make sure that you upload a JPG or PNG."
+  },
   "TERMS_OF_USE": "Terms of Use",
   "TO_DAY_VIEW": "Switch to day view",
   "TO_NIGHT_VIEW": "Switch to night view",

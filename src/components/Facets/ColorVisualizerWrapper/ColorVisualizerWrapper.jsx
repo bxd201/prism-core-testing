@@ -41,6 +41,10 @@ import { replaceSceneStatus } from '../../../shared/utils/sceneUtil'
 import ColorDetailsModal from './ColorDetailsModal/ColorDetailsModal'
 import { PreLoadingSVG } from './PreLoadingSVG'
 import at from 'lodash/at'
+import GenericMessage from '../../Messages/GenericMessage'
+import { injectIntl } from 'react-intl'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { removeSystemMessage } from '../../../store/actions/systemMessages'
 
 const colorWallBaseUrl = `/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_WALL}`
 
@@ -61,6 +65,9 @@ const cvwFooterClassName = `${cvwBaseClassName}__footer`
 const footerPriorityItemClassName = `${cvwFooterClassName}--priority`
 const footerSecondaryItemClassName = `${cvwFooterClassName}--secondary`
 const footerSecondaryItemTextClassName = `${cvwFooterClassName}--secondary__text`
+const messageWrapper = `${cvwBaseClassName}__message_wrapper`
+const messageBodyBox = `${messageWrapper}__message`
+const messageCloseButton = `${messageWrapper}__btn`
 
 // Route constants
 const PAINT_SCENE_COMPONENT = 'PaintScene'
@@ -98,7 +105,9 @@ type Props = FacetPubSubMethods & FacetBinderMethods & {
   selectedSceneStatus: Object,
   isActiveStockScenePolluted: boolean,
   unsetSelectedSceneVariantChanged: Function,
-  unsetSelectedScenePaletteLoaded: Function
+  unsetSelectedScenePaletteLoaded: Function,
+  systemMessages: string,
+  dismissSystemMessage: Function, intl: any
 }
 
 const pathNameSet = new Set([`${ACTIVE_ROUTE}/colors`, `${ACTIVE_ROUTE}/inspiration`, `${ACTIVE_ROUTE}/scenes`, ACTIVE_ROUTE, '/'])
@@ -550,8 +559,32 @@ export class ColorVisualizerWrapper extends Component<Props> {
       redirectTo: this.redirectTo,
       getImageUrl: (url, type) => this.renderComponent(url, type)
     }
+
+    const { systemMessages } = this.props
+    const currentSystemMessage = systemMessages.length ? systemMessages[systemMessages.length - 1] : null
+    let currentSystemMessageBody = currentSystemMessage ? currentSystemMessage.messageBody : null
+
+    if (currentSystemMessage && currentSystemMessage.errorKey) {
+      currentSystemMessageBody = this.props.intl.messages[`SYSTEM.${currentSystemMessage.errorKey}`]
+    }
+
+    const currentSystemMessageType = currentSystemMessage ? currentSystemMessage.messageType : null
+    const currentSystemMessageId = currentSystemMessage ? currentSystemMessage.id : null
+
     return (
       <React.Fragment>
+        {systemMessages.length ? <GenericMessage type={currentSystemMessageType} fillParent><div className={messageWrapper}><div className={messageBodyBox}>{currentSystemMessageBody}</div>
+          <div className={messageCloseButton}>
+            <button onClick={(e: SyntheticEvent) => {
+              e.preventDefault()
+              this.props.dismissSystemMessage(currentSystemMessageId)
+            }}>
+              <FontAwesomeIcon
+                title={this.props.intl.messages.SAVE_MASKS}
+                icon={['fa', 'window-close']}
+                size='2x' />
+            </button>
+          </div></div></GenericMessage> : null}
         { isLoading && <PreLoadingSVG />}
         <div className={`${cvwBaseClassName} ${isLoading ? `${cvwBaseClassName}--loading` : ''} `} ref={this.wrapperRef}>
           <RouteContext.Provider value={{
@@ -648,6 +681,7 @@ const mapStateToProps = (state, props) => {
   const currentSceneData = state.scenes && state.scenes.sceneStatus[state.scenes.type] && state.scenes.sceneStatus[state.scenes.type].find(item => item.id === state.scenes.activeScenes[0])
   const sceneSurfaceTinted = currentSceneData && currentSceneData.surfaces.find(surface => !!surface.color)
   const scenes = state.selectedSceneStatus && !state.selectedSceneStatus.openUnpaintedStockScene && sceneSurfaceTinted !== void 0 ? replaceSceneStatus(state.scenes, state.selectedSceneStatus) : state.scenes
+  const { systemMessages } = state
 
   return {
     toggleCompareColor: state.lp.toggleCompareColor,
@@ -663,7 +697,8 @@ const mapStateToProps = (state, props) => {
     loadingScenes: scenes.loadingScenes,
     loadingColorData: !at(state, 'colors.status.loading')[0],
     loadingCS: state.collectionSummaries.loadingCS,
-    loadingECP: state.expertColorPicks.loadingECP
+    loadingECP: state.expertColorPicks.loadingECP,
+    systemMessages
   }
 }
 
@@ -694,7 +729,8 @@ const mapDispatchToProps = (dispatch: Function) => {
       dispatch(changeSceneVariant(sceneId, variant))
     },
     unsetSelectedSceneVariantChanged: () => dispatch(unsetSelectedSceneVariantChanged()),
-    unsetSelectedScenePaletteLoaded: () => dispatch(unsetSelectedScenePaletteLoaded())
+    unsetSelectedScenePaletteLoaded: () => dispatch(unsetSelectedScenePaletteLoaded()),
+    dismissSystemMessage: (id) => dispatch(removeSystemMessage(id))
   }
 }
-export default facetBinder(connect(mapStateToProps, mapDispatchToProps)(withRouter(ColorVisualizerWrapper)), 'ColorVisualizerWrapper')
+export default facetBinder(connect(mapStateToProps, mapDispatchToProps)(withRouter(injectIntl(ColorVisualizerWrapper))), 'ColorVisualizerWrapper')
