@@ -265,7 +265,9 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   saveSceneFromModal (e: SyntheticEvent, sceneName: string) {
     e.preventDefault()
     e.stopPropagation()
-
+    if (sceneName.trim() === '') {
+      return false
+    }
     this.props.showSaveSceneModalAction(false)
     this.props.startSavingMasks(sceneName)
   }
@@ -1056,6 +1058,32 @@ canvasHeight
     applyDimensionFactorsByCanvas(factors, ref)
   }
 
+  getPreviewData = () => {
+    const livePaletteColorsDiv = this.props.lpColors.filter(color => !!color).map((color, i) => {
+      const { red, green, blue } = color
+      return (
+        <div
+          key={i}
+          style={{ backgroundColor: `rgb(${red},${green},${blue})`, flexGrow: '1', borderLeft: (i > 0) ? '1px solid #ffffff' : 'none' }}>
+          &nbsp;
+        </div>
+      )
+    })
+
+    return <>
+      <div style={{ height: '68px' }}>
+        <MergeCanvas
+          ref={React.createRef()}
+          layers={this.getLayers()}
+          width={110}
+          height={68}
+          colorOpacity={0.8}
+        />
+      </div>
+      <div style={{ display: 'flex', marginTop: '1px' }}>{livePaletteColorsDiv}</div>
+    </>
+  }
+
   render () {
     const { lpActiveColor, intl, showSaveSceneModal, lpColors } = this.props
     const livePaletteColorCount = (lpColors && lpColors.length) || 0
@@ -1067,6 +1095,7 @@ canvasHeight
     const { paintBrushActiveClass, paintBrushCircleActiveClass } = getPaintBrushActiveClass(this.state)
     const { eraseBrushActiveClass, eraseBrushCircleActiveClass } = getEraseBrushActiveClass(this.state)
     const { selectPaletteActions, selectPaletteTitle, selectPaletteDescription } = this.getSelectPaletteModalConfig()
+
     return (
       <>
         {loading ? <div className={`${animationLoader} ${animationLoader}--load`} /> : null}
@@ -1081,7 +1110,7 @@ canvasHeight
               { text: intl.messages['SAVE_SCENE_MODAL.SAVE'], callback: this.saveSceneFromModal },
               { text: intl.messages['SAVE_SCENE_MODAL.CANCEL'], callback: this.hideSaveSceneModal }
             ]}
-            description={intl.messages['SAVE_SCENE_MODAL.DESCRIPTION']}
+            previewData={this.getPreviewData()}
             height={canvasHeight}
             allowInput
             inputDefault={`${intl.messages['SAVE_SCENE_MODAL.DEFAULT_DESCRIPTION']} ${this.props.sceneCount}`} /> : null}

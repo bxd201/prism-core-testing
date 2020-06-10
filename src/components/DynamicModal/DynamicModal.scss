@@ -13,11 +13,11 @@
   &__inner-box {
     background-color: #f0f0f0;
     border: 1px solid getVar( "colors.grey" );
-    width: 66%;
+    width: auto;
     height: auto;
     padding: 1.2rem;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     align-content: center;
     justify-content: center;
@@ -40,12 +40,22 @@
     &.warning {
 
     }
+    @include respond-above(xs) {
+      width: 66%;
+    }
   }
   &__title {
     margin-bottom: 1.1rem;
     font-weight: 600;
     font-size: 1rem;
     text-align: center;
+  }
+  &__preview-image {
+    width: 112px;
+    margin: 0 1em;
+    background: white;
+    padding: 1px;
+    position: relative;
   }
   &__description {
     margin-bottom: 1rem;
@@ -58,10 +68,31 @@
     font-size: 1rem;
     text-align: center;
     width: 100%;
+    position: relative;
   }
   &__text-input {
     padding: 2px;
     background-color: #ffffff;
+    &:focus {
+      outline-style: solid;
+      outline-color: #2cabe2;
+      outline-width: 2px;
+    }
+  }
+  &__input-label {
+    background-color: #666;
+    border-radius: 1.3em;
+    color: #fff;
+    cursor: pointer;
+    display: block;
+    fill: #fff;
+    height: 1.3em;
+    line-height: 1.3em;
+    position: absolute;
+    right: 0.1em;
+    text-align: center;
+    top: 0.1em;
+    width: 1.3em;
     &:focus {
       outline-style: solid;
       outline-color: #2cabe2;

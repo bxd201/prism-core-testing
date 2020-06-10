@@ -26,6 +26,7 @@ import {
   setSelectedSceneVariantChanged,
   setSelectedScenePaletteLoaded
 } from '../../store/actions/scenes'
+import { StaticTintScene } from '../CompareColor/StaticTintScene'
 import TintableScene from './TintableScene'
 import SceneVariantSwitch from './SceneVariantSwitch'
 import ImagePreloader from '../../helpers/ImagePreloader'
@@ -216,8 +217,11 @@ export class SceneManager extends PureComponent<Props, State> {
   saveSceneFromModal (e: SyntheticEvent, saveSceneName: string) {
     e.preventDefault()
     e.stopPropagation()
-
+    if (saveSceneName.trim() === '') {
+      return false
+    }
     if (this.props.sceneStatus && this.props.activeScenes) {
+      // @todo should I throw an error if no active scene or is this over kill? -RS
       const currentSceneData = this.props.sceneStatus.find(item => item.id === this.props.activeScenes[0])
       let livePaletteColorsIdArray = []
       this.props.lpColors && this.props.lpColors.map(color => {
@@ -379,6 +383,26 @@ export class SceneManager extends PureComponent<Props, State> {
     this.props.replaceLpColors(colorInstances.slice(0, 8))
   }
 
+  getPreviewData = () => {
+    const currentSceneData = this.props.sceneStatus.find(item => item.id === this.props.activeScenes[0])
+    const currentSceneMetaData = this.props.scenes.find(scene => scene.id === this.props.activeScenes[0])
+    const livePaletteColorsDiv = this.props.lpColors.filter(color => !!color).map((color, i) => {
+      const { red, green, blue } = color
+      return (
+        <div
+          key={i}
+          style={{ backgroundColor: `rgb(${red},${green},${blue})`, flexGrow: '1', borderLeft: (i > 0) ? '1px solid #ffffff' : 'none' }}>
+          &nbsp;
+        </div>
+      )
+    })
+
+    return <>
+      <StaticTintScene scene={currentSceneMetaData} statuses={currentSceneData.surfaces} config={{ isNightScene: currentSceneData.variant === SCENE_VARIANTS.NIGHT }} />
+      <div style={{ display: 'flex', marginTop: '1px' }}>{livePaletteColorsDiv}</div>
+    </>
+  }
+
   render () {
     // eslint-disable-next-line no-unused-vars
     const { scenes,
@@ -428,7 +452,7 @@ export class SceneManager extends PureComponent<Props, State> {
               { text: intl.messages['SAVE_SCENE_MODAL.SAVE'], callback: this.saveSceneFromModal },
               { text: intl.messages['SAVE_SCENE_MODAL.CANCEL'], callback: this.hideSaveSceneModal }
             ]}
-            description={intl.messages['SAVE_SCENE_MODAL.DESCRIPTION']}
+            previewData={this.getPreviewData()}
             height={getRefDimension(this.wrapperRef, 'height')}
             allowInput
             inputDefault={`${intl.messages['SAVE_SCENE_MODAL.DEFAULT_DESCRIPTION']} ${this.props.sceneCount}`} /> : null}
