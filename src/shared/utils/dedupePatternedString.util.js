@@ -1,17 +1,19 @@
 // @flow
 import uniq from 'lodash/uniq'
 
+export const ERROR_NOT_STRING = 'Input must be a string'
+
 /**
  * @description Will take a string and remove duplicates based on a provided delimiter.
- * @param {string} string string on which deduping should be performed
+ * @param {string} input input on which deduping should be performed
  * @param {string} [''] delimiter delimiter marking breaks in provided string
  * @example dedupePatternedString('test') // outputs 'tes'
  * @example dedupePatternedString('a,b,a,c', ',') // outputs 'a,b,c')
  */
-export default (string: string, delimiter: string = ''): string => {
-  if (typeof string !== 'string') {
-    return ''
-  }
+function dedupePatternedString (input: string, delimiter: string = ''): string {
+  if (typeof input !== 'string') throw new TypeError(ERROR_NOT_STRING)
 
-  return uniq(string.split(delimiter)).join(delimiter)
+  return uniq(input.split(delimiter)).join(delimiter)
 }
+
+export default dedupePatternedString
