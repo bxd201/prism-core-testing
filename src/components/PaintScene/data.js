@@ -60,6 +60,16 @@ export const brushSquareShape = 'square'
 export const brushTypes = [
   brushLargeSize, brushMediumSize, brushSmallSize, brushTinySize
 ]
+export const brushShapesTypes = [
+  { id: 0, shape: brushRoundShape, size: brushLargeSize },
+  { id: 1, shape: brushRoundShape, size: brushMediumSize },
+  { id: 2, shape: brushRoundShape, size: brushSmallSize },
+  { id: 3, shape: brushRoundShape, size: brushTinySize },
+  { id: 4, shape: brushSquareShape, size: brushLargeSize },
+  { id: 5, shape: brushSquareShape, size: brushMediumSize },
+  { id: 6, shape: brushSquareShape, size: brushSmallSize },
+  { id: 7, shape: brushSquareShape, size: brushTinySize }
+]
 
 export const divTranslateFactor = -152
 export const divTranslateMultiplier = 52

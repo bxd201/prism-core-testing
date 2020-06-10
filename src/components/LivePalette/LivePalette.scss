@@ -96,6 +96,11 @@
     height: 0;
     overflow: inherit;
     outline: none;
+    &:focus {
+      outline-style: solid;
+      outline-color: #2cabe2;
+      outline-width: 2px;
+    }
     @include respond-above(sm) {
       overflow: hidden;
     }
@@ -125,9 +130,9 @@
       width: 30%;
 
       .prism-live-palette__slot__copy {
-        width: 75%;
+        width: 65%;
         top: 50%;
-        left: 5em;
+        left: 38%;
         bottom: auto;
         text-align: left;
         transform: translateY(-50%);

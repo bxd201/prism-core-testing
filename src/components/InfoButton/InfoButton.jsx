@@ -14,7 +14,7 @@ export default ({ color }: InfoButtonProps) => {
   const dispatch = useDispatch()
 
   return (
-    <button className={'info-button' + (colors.length > 0 ? '' : ' outlined')} onClick={() => dispatch(showColorDetailsModal(color))}>
+    <button aria-label={`${color.name} color details`} className={'info-button' + (colors.length > 0 ? '' : ' outlined')} onClick={() => dispatch(showColorDetailsModal(color))}>
       {colors.length > 0
         ? colors.map((color: Color, index: number) => <span key={index} className='info-button-color-strip' style={{ backgroundColor: color.hex, borderTop: index !== 0 ? 0 : '1px solid #333' }} />)
         : <FontAwesomeIcon icon={['fas', 'info']} size='1x' />}

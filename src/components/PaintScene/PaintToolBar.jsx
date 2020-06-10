@@ -104,15 +104,6 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
     this.hideEraseBrushTypes = this.hideEraseBrushTypes.bind(this)
   }
 
-  componentDidUpdate (prevProps: Object, prevState: Object) {
-    if (prevProps.paintBrushShape !== this.props.paintBrushShape || prevProps.paintBrushWidth !== this.props.paintBrushWidth) {
-      this.hidePaintBrushTypes()
-    }
-    if (prevProps.eraseBrushShape !== this.props.eraseBrushShape || prevProps.eraseBrushWidth !== this.props.eraseBrushWidth) {
-      this.hideEraseBrushTypes()
-    }
-  }
-
   componentDidMount () {
     if (storageAvailable('localStorage') && getTooltipShownLocalStorage() === null) {
       this.setState({ showTooltip: this.props.isInfoToolActive })
@@ -252,18 +243,26 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
   }
 
   /*:: generateTools: () => Array<any> */
-  generateTools (): Array<any> {
+  generateTools (paintBrushTypesRender, eraseBrushTypesRender): Array<any> {
     const { tooltipToolActiveNumber, isHidePaint, showTooltip } = this.state
-    const { activeTool, intl } = this.props
+    const { activeTool, intl, undoIsEnabled, redoIsEnabled } = this.props
     const tools = toolBarButtons.map((tool: Object, index: number) => {
       const iconProps = {}
       if (tool.fontAwesomeIcon.flip) {
         iconProps.flip = tool.fontAwesomeIcon.flip
       }
 
-      return <button
-        aria-label='Tool button'
-        key={tool.id}
+      let renderBrushTypes = <></>
+
+      if ((index + 1) === toolNumbers.PAINTBRUSH) {
+        renderBrushTypes = paintBrushTypesRender
+      } else if ((index + 1) === toolNumbers.ERASE) {
+        renderBrushTypes = eraseBrushTypesRender
+      }
+
+      return <React.Fragment key={tool.id}><button
+        tabIndex={((showTooltip) || (tool.name === toolNames.UNDO && !undoIsEnabled) || (tool.name === toolNames.REDO && !redoIsEnabled)) ? '-1' : '0'}
+        aria-label={`${tool.displayName}`}
         name={tool.name}
         className={`${this.getToolBarItemClassName(tool)}`}
         onClick={(e) => this.buttonClickHandler(e, tool.name)}
@@ -273,7 +272,7 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
         {tool.name === toolNames.DEFINEAREA && <FontAwesomeIcon className={`${toolIconClass} ${toolIconSecondIconClass}`} icon={['fal', 'plus']} size='xs' />}
         {tool.name === toolNames.REMOVEAREA && <FontAwesomeIcon className={`${toolIconClass} ${toolIconSecondIconClass}`} icon={['fal', 'minus']} size='xs' />}
         <span className={`${toolNameClass} ${(activeTool === tool.name && !showTooltip) || (showTooltip && tooltipToolActiveNumber === tool.id) || (isHidePaint && tool.name === toolNames.HIDEPAINT) ? `${toolNameActiveClass}` : ``}`}>{tool.displayName}</span>
-      </button>
+      </button>{renderBrushTypes}</React.Fragment>
     })
 
     return tools
@@ -374,6 +373,20 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
   render () {
     const { showToolBar, showPaintBrushTypes, showEraseBrushTypes, showTooltip, tooltipToolActiveNumber, zoomSliderHide } = this.state
     const { activeTool, paintBrushShape, paintBrushWidth, eraseBrushShape, eraseBrushWidth, setBrushShapeSize, applyZoom, intl } = this.props
+    const paintBrushTypesRender = (!showTooltip && (activeTool === toolNames.PAINTBRUSH && showPaintBrushTypes)) ? <div
+      onMouseLeave={this.hidePaintBrushTypes}
+      className={`${brushTypesClass} ${(!showTooltip && (activeTool === toolNames.PAINTBRUSH && showPaintBrushTypes)) ? `${brushTypesShowClass}` : `${brushTypesHideClass}`} ${brushTypesPaintClass} ${showToolBar ? `${brushTypesShowByOpacityClass}` : `${brushTypesHideByOpacityClass}`} `}
+    >
+      <BrushTypes activeWidth={paintBrushWidth} activeShape={paintBrushShape} setBrushShapeSize={setBrushShapeSize} brushTypeName='paint' />
+    </div> : ''
+
+    const eraseBrushTypesRender = (!showTooltip && (activeTool === toolNames.ERASE && showEraseBrushTypes)) ? <div
+      onMouseLeave={this.hideEraseBrushTypes}
+      className={`${brushTypesClass} ${(!showTooltip && (activeTool === toolNames.ERASE && showEraseBrushTypes)) ? `${brushTypesShowClass}` : `${brushTypesHideClass}`} ${brushTypesEraseClass} ${showToolBar ? `${brushTypesShowByOpacityClass}` : `${brushTypesHideByOpacityClass}`} `}
+    >
+      <BrushTypes activeWidth={eraseBrushWidth} activeShape={eraseBrushShape} setBrushShapeSize={setBrushShapeSize} brushTypeName='erase' />
+      {(activeTool === toolNames.ERASE) && <button className={`${clearAllButtonClass}`} onClick={this.clearAllClickHandler}><FormattedMessage id='CLEAR_ALL' /></button>}
+    </div> : ''
 
     return (
       <>
@@ -396,20 +409,7 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
           </div>
           <div ref={this.tooltipDivRef} onMouseEnter={this.tooltipDivMouseEnterHandler} onMouseLeave={this.tooltipDivMouseLeaveHandler} className={`${wrapperClass}`}>
             <div aria-label={`${(showToolBar) ? 'Tools container' : 'Tools container hidden'}`} className={`${containerClass} ${(!showToolBar) ? `${containerHideClass}` : ``}`}>
-              { this.generateTools() }
-              <div
-                onMouseLeave={this.hidePaintBrushTypes}
-                className={`${brushTypesClass} ${(!showTooltip && (activeTool === toolNames.PAINTBRUSH && showPaintBrushTypes)) ? `${brushTypesShowClass}` : `${brushTypesHideClass}`} ${brushTypesPaintClass} ${showToolBar ? `${brushTypesShowByOpacityClass}` : `${brushTypesHideByOpacityClass}`} `}
-              >
-                <BrushTypes hidePaintBrushTypes={this.hidePaintBrushTypes} activeWidth={paintBrushWidth} activeShape={paintBrushShape} setBrushShapeSize={setBrushShapeSize} />
-              </div>
-              <div
-                onMouseLeave={this.hideEraseBrushTypes}
-                className={`${brushTypesClass} ${(!showTooltip && (activeTool === toolNames.ERASE && showEraseBrushTypes)) ? `${brushTypesShowClass}` : `${brushTypesHideClass}`} ${brushTypesEraseClass} ${showToolBar ? `${brushTypesShowByOpacityClass}` : `${brushTypesHideByOpacityClass}`} `}
-              >
-                <BrushTypes hideEraseBrushTypes={this.hideEraseBrushTypes} activeWidth={eraseBrushWidth} activeShape={eraseBrushShape} setBrushShapeSize={setBrushShapeSize} />
-                {(activeTool === toolNames.ERASE) && <button className={`${clearAllButtonClass}`} onClick={this.clearAllClickHandler}><FormattedMessage id='CLEAR_ALL' /></button>}
-              </div>
+              { this.generateTools(paintBrushTypesRender, eraseBrushTypesRender) }
               {showTooltip && tooltipToolActiveNumber < addColorsTooltipNumber && <div className={`${paintTooltipClass} ${paintTooltipActiveClass}`}>
                 <PaintToolTip
                   tooltipToolActiveName={toolBarButtons[tooltipToolActiveNumber - 1].displayName}
@@ -428,7 +428,7 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
               </div>
             </div>
             <div className={`${toolbarToggleClass}`}>
-              <button aria-label='Toggle toolbar' onClick={this.toggleButtonClickHandler} className={`${toolbarToggleButtonClass} ${showToolBar ? `${toolbarToggleButtonToolbarShownClass}` : `${toolbarToggleButtonToolbarHiddenClass}`}`} />
+              <button tabIndex={showTooltip ? '-1' : '0'} aria-label='Toggle toolbar' onClick={this.toggleButtonClickHandler} className={`${toolbarToggleButtonClass} ${showToolBar ? `${toolbarToggleButtonToolbarShownClass}` : `${toolbarToggleButtonToolbarHiddenClass}`}`} />
             </div>
           </div>
         </div>

@@ -1,12 +1,12 @@
 // @flow
 import React from 'react'
 import './BrushTypes.scss'
-import { brushLargeSize, brushMediumSize, brushSmallSize, brushTinySize, brushRoundShape, brushSquareShape, brushTypes } from './data'
+import { brushLargeSize, brushMediumSize, brushSmallSize, brushTinySize, brushRoundShape, brushShapesTypes } from './data'
+import RadioButton from './RadioButton'
 
 const baseClass = 'brush-types'
 const wrapperClass = `${baseClass}__wrapper`
-const circleShapesContainerClass = `${baseClass}__circle-shapes-container`
-const squareShapesContainerClass = `${baseClass}__square-shapes-container`
+const shapesContainerClass = `${baseClass}__shapes-container`
 const brushButtonClass = `${baseClass}__brush-button`
 const brushButtonCircleClass = `${brushButtonClass}--circle`
 const brushButtonLargeClass = `${brushButtonClass}--large`
@@ -18,15 +18,50 @@ const brushButtonActiveClass = `${brushButtonClass}--active`
 type Props = {
   activeWidth: number,
   activeShape: string,
-  setBrushShapeSize: Function
+  setBrushShapeSize: Function,
+  brushTypeName: string
 }
 
-export function BrushTypes ({ activeWidth, activeShape, setBrushShapeSize }: Props) {
-  const getBrushTypes = (brushShape: string, activeWidth: number, activeShape: string) => {
+export function BrushTypes ({ activeWidth, activeShape, setBrushShapeSize, brushTypeName }: Props) {
+  const brushTypesRefs = brushShapesTypes.reduce((acc, value) => {
+    acc[value.id] = React.createRef()
+    return acc
+  }, {})
+
+  const enableBrushType = (isNext: boolean, ref: Object) => {
+    if (isNext) {
+      if (ref.current === brushTypesRefs[7].current) {
+        brushTypesRefs[0].current.focus()
+        brushTypesRefs[0].current.click()
+      } else {
+        brushShapesTypes.forEach((brushElement, index) => {
+          if (ref.current === brushTypesRefs[index].current) {
+            brushTypesRefs[index + 1].current.click()
+            brushTypesRefs[index + 1].current.focus()
+          }
+        })
+      }
+    } else if (!isNext) {
+      if (ref.current === brushTypesRefs[0].current) {
+        brushTypesRefs[7].current.focus()
+        brushTypesRefs[7].current.click()
+      } else {
+        brushShapesTypes.forEach((brushElement, index) => {
+          if (ref.current === brushTypesRefs[index].current) {
+            brushTypesRefs[index - 1].current.focus()
+            brushTypesRefs[index - 1].current.click()
+          }
+        })
+      }
+    }
+  }
+
+  const getBrushTypes = (activeWidth: number, activeShape: string) => {
     return (
-      brushTypes.map((brushType: number) => {
+      brushShapesTypes.map((brushShapeType: Object, index: number) => {
+        const brushType = brushShapeType.size
+        const brushShape = brushShapeType.shape
         let brushClass = `${brushButtonClass}`
-        let ariaLabel = `select the ${brushType} pixel wide, ${brushShape} brush`
 
         if (brushShape === brushRoundShape) {
           brushClass += ` ${brushButtonCircleClass}`
@@ -44,21 +79,33 @@ export function BrushTypes ({ activeWidth, activeShape, setBrushShapeSize }: Pro
 
         if ((activeWidth === brushType && activeShape === brushShape)) {
           brushClass += ` ${brushButtonActiveClass}`
-          ariaLabel = `the ${brushType} pixel wide, ${brushShape} brush is active`
         }
 
-        return <button aria-label={`${ariaLabel}`} key={`${brushShape}-${brushType}`} className={`${brushClass}`} onClick={() => setBrushShapeSize(brushShape, brushType)} />
+        const triggerSetBrushShapeSize = () => {
+          setBrushShapeSize(brushShape, brushType)
+        }
+
+        return <RadioButton
+          className={`${brushClass}`}
+          key={`${brushShape}-${brushType}`}
+          triggerSetBrushShapeSize={triggerSetBrushShapeSize}
+          enableBrushType={enableBrushType}
+          isSelected={(activeWidth === brushType && activeShape === brushShape)}
+          value={`${brushShape}-${brushType}`}
+          ariaLabel={`the ${brushType} pixel wide, ${brushShape} ${brushTypeName} brush`}
+          id={`${brushTypeName}${index}`}
+          ref={brushTypesRefs[index]}
+          brushTypeName={brushTypeName}
+        />
       })
     )
   }
 
   return (
-    <div className={`${wrapperClass}`}>
-      <div className={`${circleShapesContainerClass}`}>
-        {getBrushTypes(brushRoundShape, activeWidth, activeShape)}
-      </div>
-      <div className={`${squareShapesContainerClass}`}>
-        {getBrushTypes(brushSquareShape, activeWidth, activeShape)}
+    <div className={`${wrapperClass}`} role='radiogroup' aria-labelledby={`${brushTypeName}BrushType`}>
+      <div className={`visually-hidden`} id={`${brushTypeName}BrushType`}>{`${brushTypeName} Brush Types`}</div>
+      <div className={`${shapesContainerClass}`}>
+        {getBrushTypes(activeWidth, activeShape)}
       </div>
     </div>
   )

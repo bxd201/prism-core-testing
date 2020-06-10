@@ -1,14 +1,14 @@
 import React from 'react'
 import PaintToolBar from 'src/components/PaintScene/PaintToolBar'
-import { fireEvent } from '@testing-library/dom'
+import { fireEvent, within } from '@testing-library/dom'
 
-it('PaintToolBar', async () => {
+test('PaintToolBar', async () => {
   const activeTool = 'paintArea'
   const activeToolText = 'PAINT AREA'
   const toolButtonsCount = 11
   const setActiveTool = jest.fn()
   const hidePaint = jest.fn()
-  const { findByText, findByLabelText, findAllByLabelText } = render(
+  const { findByText, findByLabelText } = render(
     <PaintToolBar
       activeTool={activeTool}
       setActiveTool={setActiveTool}
@@ -18,7 +18,9 @@ it('PaintToolBar', async () => {
 
   await findByText(activeToolText)
 
-  const toolButtons = await findAllByLabelText('Tool button')
+  const { getAllByRole } = within(await findByLabelText('Tools container'))
+  const toolButtons = getAllByRole('button')
+
   expect(toolButtons).toHaveLength(toolButtonsCount)
 
   await findByLabelText('Tooltips tool wrapper') // Tools wrapper div exist

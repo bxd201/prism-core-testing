@@ -78,9 +78,9 @@ const EditSavedScene = ({ width, height, sceneData, selectScene, showMyIdeas, ed
       </div>
       <div className={`${inputWrapper}`}>
         <input className={`${sceneNameInput}`} type='text' value={savedSceneName} onChange={changeHandler} />
-        <label className={`${inputLabel}`} tabIndex='0' role='button' htmlFor='input' onClick={clearSceneName} onKeyDown={clearSceneName} onMouseDown={(e: SyntheticEvent) => e.preventDefault()}>
+        <label aria-label='clear text' className={`${inputLabel}`} tabIndex='0' role='button' htmlFor='clearBtn' onClick={clearSceneName} onKeyDown={clearSceneName} onMouseDown={(e: SyntheticEvent) => e.preventDefault()}>
           <div>
-            <input tabIndex='-1' className='visually-hidden' />
+            <input id='clearBtn' tabIndex='-1' className='visually-hidden' />
             <FontAwesomeIcon size='xs' className={``} icon={['fa', 'times']} />
           </div>
         </label>

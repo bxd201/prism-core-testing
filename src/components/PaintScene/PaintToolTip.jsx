@@ -6,6 +6,7 @@ import { FormattedMessage, injectIntl } from 'react-intl'
 import 'src/providers/fontawesome/fontawesome'
 import { divTranslateFactor, divTranslateMultiplier, downPointerDivTranslateFactor, downPointerDivTranslateMultiplie, addColorsTooltipNumber, hidePaintTooltipNumber, hintsTooltipNumber, paintAreaTooltipNumber, undoTooltipNumber } from './data'
 import { varValues } from 'src/shared/variableDefs'
+import { LiveMessage } from 'react-aria-live'
 
 type Props = {
   tooltipToolActiveName: string,
@@ -26,6 +27,7 @@ const baseClass = 'paint-tooltip'
 const wrapperClass = `${baseClass}__wrapper`
 const containerClass = `${baseClass}__container`
 const closeButtonClass = `${baseClass}__close-button`
+const closeButtonSvgClass = `${closeButtonClass}--svg`
 const headerClass = `${baseClass}__header`
 const toolNameClass = `${baseClass}__tool-name`
 const tooltipContentClass = `${baseClass}__tooltip-content`
@@ -66,8 +68,8 @@ export function PaintToolTip ({ tooltipToolActiveName, closeTooltip, backButtonC
     <React.Fragment>
       {!isSelectGroup && <div onMouseEnter={() => showTooltipContentByZindex(parentDivRef)} onMouseLeave={() => hideTooltipContentByZindex(parentDivRef)} className={`${wrapperClass}`} style={wrapperStyle}>
         <div className={`${containerClass}`}>
-          <button aria-label='Close' className={`${closeButtonClass}`} onClick={closeTooltip}>
-            <FontAwesomeIcon title={intl.messages['PAINT_TOOLS.CLOSE']} className={``} icon={['fal', 'times']} size='lg' />
+          <button aria-label='close tooltip' className={`${closeButtonClass}`} onClick={closeTooltip}>
+            <FontAwesomeIcon title={intl.messages['PAINT_TOOLS.CLOSE']} className={`${closeButtonSvgClass}`} icon={['fal', 'times']} size='lg' />
           </button>
           <div className={`${headerClass}`}>
             <FontAwesomeIcon className={``} icon={['fal', 'info-circle']} size='1x' />&nbsp;<span><FormattedMessage id='TOOL_TIPS' /></span>
@@ -94,7 +96,7 @@ export function PaintToolTip ({ tooltipToolActiveName, closeTooltip, backButtonC
       </div>}
       {isSelectGroup && <div data-testid='wrapper-select' onMouseEnter={() => showTooltipContentByZindex(parentDivRef)} onMouseLeave={() => hideTooltipContentByZindex(parentDivRef)} className={`${wrapperClass} ${selectGroup}`}>
         <button className={`${closeButtonClass}`} onClick={closeTooltip}>
-          <FontAwesomeIcon title={intl.messages['PAINT_TOOLS.CLOSE']} className={``} icon={['fal', 'times']} size='lg' />
+          <FontAwesomeIcon title={intl.messages['PAINT_TOOLS.CLOSE']} className={`${closeButtonSvgClass}`} icon={['fal', 'times']} size='lg' />
         </button>
         <div className={`${headerClass}`}>
           <FontAwesomeIcon title={intl.messages['PAINT_TOOLS.INFO']} className={``} icon={['fal', 'info-circle']} size='1x' />&nbsp;<FormattedMessage id='TOOL_TIPS' />
@@ -105,6 +107,7 @@ export function PaintToolTip ({ tooltipToolActiveName, closeTooltip, backButtonC
         </div>
         <div className={`${downPointerClass} ${downPointerGroupToolClass}`} />
       </div>}
+      <LiveMessage message={`${tooltipToolActiveName} ${tooltipContent}`} aria-live='assertive' clearOnUnmount='true' />
     </React.Fragment>
   )
 }

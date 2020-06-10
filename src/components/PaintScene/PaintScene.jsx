@@ -41,6 +41,7 @@ import { RouteContext } from '../../contexts/RouteContext/RouteContext'
 import { clearSceneWorkspace } from '../../store/actions/paintScene'
 import { group, ungroup, deleteGroup, selectArea, bucketPaint, applyZoom,
   createOrDeletePolygon, createPolygonPin, eraseOrPaintMouseUp, eraseOrPaintMouseDown } from './toolFunction'
+import { LiveMessage } from 'react-aria-live'
 
 const baseClass = 'paint__scene__wrapper'
 const canvasClass = `${baseClass}__canvas`
@@ -1167,6 +1168,7 @@ canvasHeight
             </div>
           </div>}
         </div>
+        <LiveMessage message={`${activeTool} tool is activated`} aria-live='assertive' clearOnUnmount='true' />
       </>
     )
   }
