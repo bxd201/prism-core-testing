@@ -9,7 +9,8 @@
     "flowtype",
     "jsx-a11y",
     "react-hooks",
-    "jest"
+    "jest",
+    "formatjs"
   ],
   "globals" : {
     "API_PATH": "readonly",
@@ -43,7 +44,8 @@
     "jsx-a11y/no-noninteractive-tabindex": "warn",
     "jsx-a11y/no-noninteractive-element-to-interactive-role": "warn",
     "jsx-a11y/label-has-for": "warn",
-    "jsx-a11y/no-static-element-interactions": "warn"
+    "jsx-a11y/no-static-element-interactions": "warn",
+    "formatjs/no-offset": "error"
   },
   "env": {
     "jest/globals": true

@@ -5,6 +5,7 @@ import CardMenu from 'src/components/CardMenu/CardMenu'
 import ColorCollectionsTab from '../Shared/ColorCollectionsTab'
 import InspiredScene from './InspiredScene'
 import Carousel from '../Carousel/Carousel'
+import { useIntl } from 'react-intl'
 import { loadInspirationalPhotos } from '../../store/actions/inspirationalPhotos'
 import '../ColorCollections/ColorCollections.scss'
 
@@ -12,6 +13,7 @@ const baseClass = 'color-collections'
 
 const InspiredSceneNavigator = () => {
   const dispatch = useDispatch()
+  const { formatMessage } = useIntl()
   useEffect(() => { loadInspirationalPhotos()(dispatch) }, [])
 
   const { collectionTabs, flatData, tabMap } = useSelector(({ inspirationalPhotos: { data } }) => ({
@@ -25,7 +27,7 @@ const InspiredSceneNavigator = () => {
   const [tabId: string, setTabId: string => void] = useState('tab0')
 
   return (
-    <CardMenu menuTitle='Inspirational Photos'>
+    <CardMenu menuTitle={`${formatMessage({ id: 'INSPIRATIONAL_PHOTOS' })}`}>
       {() => (
         <div className={`${baseClass}__wrapper`}>
           <ColorCollectionsTab collectionTabs={collectionTabs} tabIdShow={tabId} showTab={setTabId} />

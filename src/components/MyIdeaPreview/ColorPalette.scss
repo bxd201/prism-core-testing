@@ -37,6 +37,9 @@
     }
   }
   &__color-info {
+    &--dark {
+      color: getVar( "colors.white" );
+    }
     &__name {
       display: block;
       font-weight: 700;

@@ -1,6 +1,7 @@
 // @flow
 import React, { useState, useCallback, createContext, useMemo } from 'react'
 import { useDispatch } from 'react-redux'
+import { FormattedMessage, useIntl } from 'react-intl'
 import uniqueId from 'lodash/uniqueId'
 
 import FileInput from '../../FileInput/FileInput'
@@ -38,6 +39,8 @@ const RoomTypeDetector = () => {
     segmentationMapImagePath
   } = segmentationResults || {}
 
+  const { formatMessage } = useIntl()
+
   const handleChange = useCallback((e) => {
     const { target } = e
 
@@ -60,34 +63,34 @@ const RoomTypeDetector = () => {
 
   if (modelLoading) {
     return (
-      <GenericMessage>Loading model...</GenericMessage>
+      <GenericMessage><FormattedMessage id='LOADING_MODEL' />...</GenericMessage>
     )
   }
 
   if (segmentationError || modelError) {
     return (
-      <GenericMessage type={GenericMessage.TYPES.ERROR}>We've encountered an error.</GenericMessage>
+      <GenericMessage type={GenericMessage.TYPES.ERROR}><FormattedMessage id='ERROR_ENCOUNTERED' /></GenericMessage>
     )
   }
 
   return (
     <ColorCollector.Provider value={contextValues}>
-      <FileInput onChange={handleChange} disabled={false} id={FILE_UPLOAD_ID} placeholder={uploadedImage ? 'Select new image' : 'Select an image'} />
+      <FileInput onChange={handleChange} disabled={false} id={FILE_UPLOAD_ID} placeholder={uploadedImage ? `${formatMessage({ id: 'SELECT_NEW_IMAGE' })}` : `${formatMessage({ id: 'SELECT_IMAGE' })}`} />
 
       <div className='RoomTypeDetector__side-by-side'>
         {uploadedImage ? <>
           <div className='RoomTypeDetector__side-by-side__side'>
-            <Card title='Original Image' image={!segmentationLoading ? uploadedImage : undefined} omitShim={segmentationProcessing}>
+            <Card title={`${formatMessage({ id: 'ORIGINAL_IMAGE' })}`} image={!segmentationLoading ? uploadedImage : undefined} omitShim={segmentationProcessing}>
               {segmentationLoading ? (
                 <CircleLoader />
               ) : segmentationProcessing ? (
-                <GenericOverlay type={GenericOverlay.TYPES.LOADING} message='Detecting...' semitransparent />
+                <GenericOverlay type={GenericOverlay.TYPES.LOADING} message={`${formatMessage({ id: 'DETECTING' })}...`} semitransparent />
               ) : null}
             </Card>
           </div>
 
           <div className='RoomTypeDetector__side-by-side__side'>
-            <Card title='Detected Regions' image={segmentationMapImagePath}>
+            <Card title={`${formatMessage({ id: 'DETECTED_REGIONS' })}`} image={segmentationMapImagePath}>
               {segmentationLoading || segmentationProcessing ? (
                 <CircleLoader />
               ) : null}

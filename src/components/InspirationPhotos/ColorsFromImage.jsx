@@ -3,6 +3,7 @@ import React, { PureComponent } from 'react'
 import ColorsFromImagePin from './ColorsFromImagePin'
 import { renderingPins, findBrandColor, throttleDragTime, activedPinsHalfWidth, cloneColorPinsArr } from './data'
 import './InspiredScene.scss'
+import { injectIntl } from 'react-intl'
 import throttle from 'lodash/throttle'
 import includes from 'lodash/includes'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -11,7 +12,8 @@ import 'src/providers/fontawesome/fontawesome'
 type ComponentProps = {
   data: any,
   isActivedPage: boolean,
-  brandColors: Array
+  brandColors: Array,
+  intl: any
 }
 
 type ComponentState = {
@@ -394,7 +396,7 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
   render () {
     const { pinnedColors, currentPixelRGBstring, position, isDragging } = this.state
     const { img } = this.props.data
-    const { isActivedPage } = this.props
+    const { isActivedPage, intl } = this.props
     let showDeletePin = false
     return (
       <div role='presentation' className='scene__image__wrapper' onClick={isActivedPage ? this.handleClick : null} ref={this.CFIWrapper}>
@@ -434,10 +436,10 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
             right: position.right
           }} />
         }
-        {(showDeletePin) && <button className='scene__image__wrapper__delete-pin' onClick={this.pinRemove}><FontAwesomeIcon icon='trash' size='1x' /></button>}
+        {(showDeletePin) && <button title={`${intl.messages['DELETE_COLOR']}`} className='scene__image__wrapper__delete-pin' onClick={this.pinRemove}><FontAwesomeIcon icon='trash' size='1x' /></button>}
       </div>
     )
   }
 }
 
-export default ColorsFromImage
+export default injectIntl(ColorsFromImage)

@@ -9,10 +9,12 @@ import ColorStripButton from 'src/components/ColorStripButton/ColorStripButton'
 import { useSelector, useDispatch, shallowEqual } from 'react-redux'
 import { loadCollectionSummaries } from 'src/store/actions/collectionSummaries'
 import { loadColors } from 'src/store/actions/loadColors'
+import { useIntl } from 'react-intl'
 import './ColorCollections.scss'
 
 export function ColorCollections () {
   const dispatch = useDispatch()
+  const { formatMessage } = useIntl()
   useEffect(() => { loadCollectionSummaries(dispatch) }, [])
   useEffect(() => { loadColors(brandId)(dispatch) }, [])
 
@@ -28,7 +30,7 @@ export function ColorCollections () {
   }) : []
 
   return (
-    <CardMenu menuTitle='Color Collections'>
+    <CardMenu menuTitle={formatMessage({ id: 'COLOR_COLLECTIONS' })}>
       {(setCardShowing, setCardTitle) => (
         <div className='color-collections__wrapper'>
           <ColorCollectionsTab collectionTabs={categories.data} showTab={setTabId} tabIdShow={tabId} />

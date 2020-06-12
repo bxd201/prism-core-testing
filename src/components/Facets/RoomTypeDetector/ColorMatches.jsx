@@ -1,5 +1,6 @@
 // @flow
 import React, { type Node, type ChildrenArray, Children } from 'react'
+import { FormattedMessage } from 'react-intl'
 
 import './ColorMatches.scss'
 
@@ -14,7 +15,7 @@ const ColorMatches = ({ children, title }: ColorMatchWrapperProps) => {
       <h1 className='ColorMatches__title'>{title}</h1>
       {Children.count(children)
         ? children
-        : <p>No suitable colors found.</p>
+        : <p><FormattedMessage id='NO_COLORS_FOUND' /></p>
       }
     </section>
   )

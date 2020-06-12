@@ -69,6 +69,7 @@
     "color-space": "^1.16.0",
     "core-js": "2.6.5",
     "delta-e": "0.0.7",
+    "eslint-plugin-formatjs": "^2.3.13",
     "firebase": "^7.6.2",
     "focus-within-polyfill": "^5.0.7",
     "immutability-helper": "3.0.1",
