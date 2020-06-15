@@ -1,5 +1,4 @@
 // @flow
-/* eslint-disable */
 /* global FormData */
 import axios from 'axios'
 import at from 'lodash/at'
@@ -104,8 +103,8 @@ const completeIrisUploading = () => {
   }
 }
 
-const NANONETS_PREDICTION_ENDPOINT = 'https://customer.nanonets.com/sherwinWilliams/predict/rgbamask'
-const NANONETS_AUTH_KEY = 'wrusnuj4vDg14jcrXOxmIirV6p33U8Az'
+// const NANONETS_PREDICTION_ENDPOINT = 'https://customer.nanonets.com/sherwinWilliams/predict/rgbamask'
+// const NANONETS_AUTH_KEY = 'wrusnuj4vDg14jcrXOxmIirV6p33U8Az'
 
 export const uploadImage = (file: File) => {
   // TODO: remove this when we no longer hvae to deal with https://None showing up in the API results
@@ -128,7 +127,8 @@ export const uploadImage = (file: File) => {
       .post(`${ML_API_URL}/pipeline/`, uploadForm, {})
       .then(res => at(res, 'data.per_img_resp[0][0].payload')[0] || (() => { throw new Error('No relevant data in response') })())
       .then(data => {
-        const {mask_path0, original_img_path} = data
+        // eslint-disable-next-line camelcase
+        const { mask_path0, original_img_path } = data
         const mask = deNoneify(mask_path0)
         const originalImage = deNoneify(original_img_path)
 
@@ -172,7 +172,7 @@ export const dequeueImageUpload = () => {
 }
 
 // polling for iris API since it returns a processing state when a worker in the api is running
-function poll(fn, timeout, interval) {
+function poll (fn, timeout, interval) {
   const endTime = Number(new Date()) + (timeout || 2000)
 
   interval = interval || 100
@@ -218,8 +218,7 @@ export const uploadIrisImage = (file: File) => {
 
         poll(() => axios.get(`https://develop-prism-ml-api.ebus.swaws/iris/pieces/${uuid}`), 30000, 500).then(data => {
           dispatch(completeIrisProcessing(data, imageUrl))
-        })
-        .catch(err => {
+        }).catch(err => {
           console.error('issue with iris processing: ', err)
           dispatch(errorUploading())
         })

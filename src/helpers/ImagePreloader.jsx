@@ -86,6 +86,7 @@ function performDownload (path: string, resolve: {
   }
 
   // set the source
+  img.crossOrigin = 'Anonymous'
   img.src = path
 }
 

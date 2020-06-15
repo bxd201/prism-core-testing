@@ -67,6 +67,7 @@ export default class MaskObj {
             reject(err)
           }))
 
+          img.crossOrigin = 'Anonymous'
           img.src = path
         }).catch(err => {
           reject(err)
