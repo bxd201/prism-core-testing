@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { useIntl } from 'react-intl'
+import { useIntl, FormattedMessage } from 'react-intl'
 import { deleteSavedScene, selectSavedScene, loadSavedScenes, showDeleteConfirmModal, SCENE_TYPE } from '../../store/actions/persistScene'
 import SavedScene from './SavedScene'
 import useSceneData from '../../shared/hooks/useSceneData'
@@ -192,8 +192,8 @@ const MyIdeas = (props: MyIdeasProps) => {
     } else {
       return (<div className={baseClassName}>
         <div className={sectionNoIdeasMessage}>
-          <h3>{intl.messages['MY_IDEAS.NO_IDEAS_TITLE']}</h3>
-          <p>{intl.messages['MY_IDEAS.NO_IDEAS_DESC']}</p>
+          <h3><FormattedMessage id='MY_IDEAS.NO_IDEAS_TITLE' /></h3>
+          <p><FormattedMessage id='MY_IDEAS.NO_IDEAS_DESC' /></p>
         </div>
       </div>)
     }
@@ -207,14 +207,14 @@ const MyIdeas = (props: MyIdeasProps) => {
     setEditedIndividualScene(scene)
     setEditedTintableIndividualScene(useTintableScene)
     setShowBack(true)
-    props.setCardTitle(intl.messages.RENAME_SAVED_IDEA)
+    props.setCardTitle(intl.formatMessage({ id: 'RENAME_SAVED_IDEA' }))
   }
 
   const showMyIdeas = () => {
     setShowBack(false)
     setEditedIndividualScene(null)
     setEditEnabled(true)
-    const headerText = intl.messages['MY_IDEAS.MY_IDEAS_HEADER']
+    const headerText = intl.formatMessage({ id: 'MY_IDEAS.MY_IDEAS_HEADER' })
     props.setCardTitle(headerText)
   }
 
@@ -224,20 +224,20 @@ const MyIdeas = (props: MyIdeasProps) => {
         { showDeleteConfirmModalFlag ? <DynamicModal
           modalStyle={DYNAMIC_MODAL_STYLE.danger}
           actions={[
-            { text: intl.messages['MY_IDEAS.YES'], callback: deleteScene },
-            { text: intl.messages['MY_IDEAS.NO'], callback: closeDeleteSceneConfirm }
+            { text: intl.formatMessage({ id: 'MY_IDEAS.YES' }), callback: deleteScene },
+            { text: intl.formatMessage({ id: 'MY_IDEAS.NO' }), callback: closeDeleteSceneConfirm }
           ]}
-          description={intl.messages['MY_IDEAS.DELETE_CONFIRM']}
+          description={intl.formatMessage({ id: 'MY_IDEAS.DELETE_CONFIRM' })}
           height={parentHeight} /> : null}
         <div className={sectionLeftClassName}>
           {showBack
             ? <button className={`${buttonClassName} ${buttonBack}`} onClick={showMyIdeas} onMouseDown={mouseDownHandler}>
-              <FontAwesomeIcon size='lg' className={`${buttonSvg}`} icon={['fa', 'angle-left']} /><span className={`${backText}`}>{intl.messages.BACK}</span></button>
+              <FontAwesomeIcon size='lg' className={`${buttonSvg}`} icon={['fa', 'angle-left']} /><span className={`${backText}`}><FormattedMessage id='BACK' /></span></button>
             : editEnabled
-              ? <button aria-label='done editing saved ideas' className={buttonClassName} onClick={disableEdit} onMouseDown={mouseDownHandler}>{intl.messages.DONE}</button>
-              : <button aria-label='edit saved ideas' className={buttonClassName} onClick={enableEdit} onMouseDown={mouseDownHandler}>
+              ? <button aria-label={intl.formatMessage({ id: 'MY_IDEAS.ARIA_LABEL_DONE' })} className={buttonClassName} onClick={disableEdit} onMouseDown={mouseDownHandler}><FormattedMessage id='DONE' /></button>
+              : <button aria-label={intl.formatMessage({ id: 'MY_IDEAS.ARIA_LABEL_EDIT' })} className={buttonClassName} onClick={enableEdit} onMouseDown={mouseDownHandler}>
                 <FontAwesomeIcon className={`${buttonSvg}`} icon={['fal', 'edit']} />
-                {intl.messages.EDIT}
+                <FormattedMessage id='EDIT' />
               </button>}
         </div>
         <div className={sectionClassName}>

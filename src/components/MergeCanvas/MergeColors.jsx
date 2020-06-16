@@ -1,6 +1,6 @@
 // @flow
 import React, { useRef, useState, useEffect } from 'react'
-import { useIntl } from 'react-intl'
+import { useIntl, FormattedMessage } from 'react-intl'
 
 import './MergeCanvas.scss'
 import compositeOperation from '../../constants/canvasCompositeOperations'
@@ -130,7 +130,7 @@ const MergeColors = (props: MergeColorsProps) => {
           src={src}
           key={`${i}`}
           onLoad={(e) => handleImageLoad(e, i)}
-          alt={intl.messages.IMAGE_INVISIBLE}
+          alt={intl.formatMessage({ id: 'IMAGE_INVISIBLE' })}
         />)
       }) : null}
       <canvas
@@ -138,21 +138,21 @@ const MergeColors = (props: MergeColorsProps) => {
         ref={canvasRef}
         width={props.width}
         height={props.height}>
-        {intl.messages.CANVAS_UNSUPPORTED}
+        <FormattedMessage id='CANVAS_UNSUPPORTED' />
       </canvas>
       <canvas
         className={'merge-canvas-image-comp'}
         ref={mergeCanvasRef}
         width={props.width}
         height={props.height}>
-        {intl.messages.CANVAS_UNSUPPORTED}
+        <FormattedMessage id='CANVAS_UNSUPPORTED' />
       </canvas>
       <canvas
         className={'merge-canvas-image-comp'}
         ref={workCanvasRef}
         width={props.width}
         height={props.height}>
-        {intl.messages.CANVAS_UNSUPPORTED}
+        <FormattedMessage id='CANVAS_UNSUPPORTED' />
       </canvas>
     </>
   )

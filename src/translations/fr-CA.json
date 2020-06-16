@@ -166,7 +166,10 @@
     "PREVIEW": "Preview of",
     "SCENE_EXPIRATION": "Saved scenes will be removed 30 days after their last update.",
     "TITLE": "View and edit your ideas",
-    "YES": "YES"
+    "YES": "YES",
+    "ARIA_LABEL_DONE":"done editing saved ideas",
+    "ARIA_LABEL_EDIT":"edit saved ideas",
+    "ARIA_LABEL_ADD":"Add {colorName} to palette"
   },
   "NAV_DROPDOWN_LINK_SUB_CONTENT": {
     "COLOR_COLLECTIONS": "Find colors that work together seamlessly throughout your home.",
@@ -219,6 +222,22 @@
   },
   "PAINT_THIS_SCENE": "Paint this Scene",
   "PAINT_TOOLS": {
+    "TOOLS_NAME":{
+      "DEFINEAREA": "DEFINE AREA",
+      "DELETEGROUP": "DELETE",
+      "ERASE": "ERASE",
+      "GROUP": "GROUP",
+      "HIDEPAINT": "HIDE PAINT",
+      "INFO": "HINTS",
+      "PAINTAREA": "PAINT AREA",
+      "PAINTBRUSH": "PAINTBRUSH",
+      "REDO": "REDO",
+      "REMOVEAREA": "REMOVE AREA",
+      "SELECTAREA": "SELECT",
+      "UNDO": "UNDO",
+      "UNGROUP": "UNGROUP",
+      "ZOOM": "ZOOM"
+    },
     "BACK": "Go back",
     "CLOSE": "Close tooltip",
     "DEFINEAREA": "Create a polygon to fill",
@@ -233,6 +252,7 @@
     "REDO": "Redo an action",
     "REMOVEAREA": "Erase an area by creating a polygon",
     "SELECTAREA": "Select an area to manipulate",
+    "ICON_SELECTED_INFO": "the {brushType} pixel wide, {brushShape} {brushTypeName} brush",
     "TOOLTIPS": {
       "ADDCOLORS": "Click or tap here to add colors to your palette.",
       "DEFINEAREA": "Outline an area to paint it. Be sure to enclose the area by starting and ending at the same point.",
@@ -321,5 +341,21 @@
   "VIEW_FULL_COLLECTION": "VIEW FULL COLLECTION",
   "YES": "Yes",
   "ZOOM_IN": "Zoomer",
-  "ZOOM_OUT": "Dézoomer"
+  "ZOOM_OUT": "Dézoomer",
+  "LANDING_PAGES":{
+    "PAINTING_BUTTON":"Start Painting Now",
+    "OR":"OR",
+    "EXPLORE_COLOR": "Explore Color",
+    "GET_INSPIRED": "Get Inspired",
+    "PAINT_A_PHOTO": "Paint a Photo"
+  },
+  "CLEAR_TEXT": "clear text",
+  "RENAME":"Rename ",
+  "SHOW":"Show ",
+  "ACCEPT_TERM":"Accept term",
+  "LIVE_PALETTE_REMOVE":"Remove color {colorName} from live palette",
+  "LIVE_MESSAGE_IMAGE_ANGLE":"Image rotated {imageRotationAngle} degree",
+  "LIVE_MESSAGE_COLOR_NAME":"Color {previewColorName} is active. Press tab to go to other color pins",
+  "LIVE_MESSAGE_REMOVE":"Remove color {colorName} from live palette",
+  "LIVE_MESSAGE_MOVE_PIN":"Use the arrow keys on your keyboard to move your picked color. Hold shift for fine movement."
 }

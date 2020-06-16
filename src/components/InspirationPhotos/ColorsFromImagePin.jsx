@@ -11,6 +11,7 @@ import { LiveMessage } from 'react-aria-live'
 import { activedPinsHalfWidth } from './data'
 import { getContrastYIQ } from '../../../src/shared/helpers/ColorUtils'
 import { KEY_CODES } from 'src/constants/globals'
+import { injectIntl } from 'react-intl'
 
 import './ColorPins.scss'
 import 'src/scss/convenience/visually-hidden.scss'
@@ -33,7 +34,8 @@ type Props = {
   handlePinMoveByKeyboard: Function,
   handleKeyUpAfterPinMove: Function,
   hide: boolean,
-  isMovingPin: boolean
+  isMovingPin: boolean,
+  intl: any
 }
 
 type State = {
@@ -198,7 +200,7 @@ export class ColorsFromImagePin extends PureComponent<Props, State> {
 
   // 360 is subtracted to set the displayed pin to the labels origin. Despite the perfectness of the number its actually coincidental.
   render () {
-    const { previewColorName, previewColorNumber, translateX, translateY, RGBstring, isActiveFlag, pinNumber, addColors, isContentLeft, hide } = this.props
+    const { previewColorName, previewColorNumber, translateX, translateY, RGBstring, isActiveFlag, pinNumber, addColors, isContentLeft, hide, intl } = this.props
     const { isColorDivFocused } = this.state
     const colorObject = getlpColorByNumber(previewColorNumber)
     const isColorAdded = some(addColors, colorObject)
@@ -249,8 +251,8 @@ export class ColorsFromImagePin extends PureComponent<Props, State> {
             }
           </div>
         </label>
-        {isActiveFlag && <LiveMessage message={`Color ${previewColorName} is active. Press tab to go to other color pins`} aria-live='polite' />}
-        {isActiveFlag && isColorDivFocused && <LiveMessage message={`Use the arrow keys on your keyboard to move your picked color. Hold shift for fine movement.`} aria-live='assertive' clearOnUnmount='true' />}
+        {isActiveFlag && <LiveMessage message={intl.formatMessage({ id: 'LIVE_MESSAGE_COLOR_NAME' }, { previewColorName: previewColorName })} aria-live='polite' />}
+        {isActiveFlag && isColorDivFocused && <LiveMessage message={intl.formatMessage({ id: 'LIVE_MESSAGE_MOVE_PIN' })} aria-live='assertive' clearOnUnmount='true' />}
       </Fragment>
     )
   }
@@ -271,4 +273,4 @@ const mapDispatchToProps = (dispatch: Function) => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ColorsFromImagePin)
+export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(ColorsFromImagePin))

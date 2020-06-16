@@ -268,10 +268,10 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
         onClick={(e) => this.buttonClickHandler(e, tool.name)}
         onMouseDown={(e) => this.toolButtonMouseDownHandler(e, tool.name)}
       >
-        <FontAwesomeIcon title={intl.messages[`PAINT_TOOLS.${tool.name.toUpperCase()}`]} className={`${toolIconClass}`} icon={[tool.fontAwesomeIcon.variant, tool.fontAwesomeIcon.icon]} size='lg' transform={{ rotate: tool.fontAwesomeIcon.rotate }} {...iconProps} />
+        <FontAwesomeIcon title={intl.formatMessage({ id: `PAINT_TOOLS.${tool.name.toUpperCase()}` })} className={`${toolIconClass}`} icon={[tool.fontAwesomeIcon.variant, tool.fontAwesomeIcon.icon]} size='lg' transform={{ rotate: tool.fontAwesomeIcon.rotate }} {...iconProps} />
         {tool.name === toolNames.DEFINEAREA && <FontAwesomeIcon className={`${toolIconClass} ${toolIconSecondIconClass}`} icon={['fal', 'plus']} size='xs' />}
         {tool.name === toolNames.REMOVEAREA && <FontAwesomeIcon className={`${toolIconClass} ${toolIconSecondIconClass}`} icon={['fal', 'minus']} size='xs' />}
-        <span className={`${toolNameClass} ${(activeTool === tool.name && !showTooltip) || (showTooltip && tooltipToolActiveNumber === tool.id) || (isHidePaint && tool.name === toolNames.HIDEPAINT) ? `${toolNameActiveClass}` : ``}`}>{tool.displayName}</span>
+        <span className={`${toolNameClass} ${(activeTool === tool.name && !showTooltip) || (showTooltip && tooltipToolActiveNumber === tool.id) || (isHidePaint && tool.name === toolNames.HIDEPAINT) ? `${toolNameActiveClass}` : ``}`}>{intl.formatMessage({ id: `PAINT_TOOLS.TOOLS_NAME.${tool.name.toUpperCase()}` })}</span>
       </button>{renderBrushTypes}</React.Fragment>
     })
 
@@ -325,7 +325,7 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
         onClick={(e) => this.groupClickHandler(e, tool.name)}
         onMouseDown={(e) => e.preventDefault()}
       >
-        <FontAwesomeIcon title={intl.messages[`PAINT_TOOLS.${tool.name.toUpperCase()}`]} className={`${toolIconClass}`} icon={[tool.fontAwesomeIcon.variant, tool.fontAwesomeIcon.icon]} size='lg' transform={{ rotate: tool.fontAwesomeIcon.rotate }} />
+        <FontAwesomeIcon title={intl.formatMessage({ id: `PAINT_TOOLS.${tool.name.toUpperCase()}` })} className={`${toolIconClass}`} icon={[tool.fontAwesomeIcon.variant, tool.fontAwesomeIcon.icon]} size='lg' transform={{ rotate: tool.fontAwesomeIcon.rotate }} />
         <span className={`${toolNameClass} ${this.checkButtonIfDisable(tool) ? '' : toolNameDisabledClass} ${activeTool === toolNames.SELECTAREA || tooltipToolActiveNumber === toolNumbers.SELECTAREA ? `${toolNameActiveClass}` : ``}`}>{tool.displayName}</span>
       </button>
     })
@@ -397,7 +397,7 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
               isSelectGroup
               tooltipToolActiveName={selectGroupTooltipData[0].displayName}
               tooltipToolActiveNumber={toolNumbers.SELECTAREA}
-              tooltipContent={intl.messages['PAINT_TOOLS.TOOLTIPS.SELECTGROUP']}
+              tooltipContent={intl.formatMessage({ id: 'PAINT_TOOLS.TOOLTIPS.SELECTGROUP' })}
               toolsCount={toolBarButtons.length}
               closeTooltip={this.closeTooltip}
               backButtonClickHandler={this.backButtonClickHandler}
@@ -414,7 +414,7 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
                 <PaintToolTip
                   tooltipToolActiveName={toolBarButtons[tooltipToolActiveNumber - 1].displayName}
                   tooltipToolActiveNumber={tooltipToolActiveNumber}
-                  tooltipContent={intl.messages[`PAINT_TOOLS.TOOLTIPS.${toolBarButtons[tooltipToolActiveNumber - 1].name.toUpperCase()}`]}
+                  tooltipContent={intl.formatMessage({ id: `PAINT_TOOLS.TOOLTIPS.${toolBarButtons[tooltipToolActiveNumber - 1].name.toUpperCase()}` })}
                   toolsCount={toolBarButtons.length + 1}
                   closeTooltip={this.closeTooltip}
                   backButtonClickHandler={this.backButtonClickHandler}
@@ -436,7 +436,7 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
           <PaintToolTip
             tooltipToolActiveName={addColorsTooltip.displayName}
             tooltipToolActiveNumber={tooltipToolActiveNumber}
-            tooltipContent={intl.messages[`PAINT_TOOLS.TOOLTIPS.${addColorsTooltip.name.toUpperCase()}`]}
+            tooltipContent={intl.formatMessage({ id: `PAINT_TOOLS.TOOLTIPS.${addColorsTooltip.name.toUpperCase()}` })}
             toolsCount={toolBarButtons.length + 1}
             closeTooltip={this.closeTooltip}
             backButtonClickHandler={this.backButtonClickHandler}

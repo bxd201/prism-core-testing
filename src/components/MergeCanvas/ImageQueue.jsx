@@ -19,7 +19,7 @@ const ImageQueue = (props: ImageQueueProps) => {
         key={`${i}`}
         id={`${i}`}
         className='merge-canvas-image-comp'
-        alt={intl.messages.IMAGE_INVISIBLE}
+        alt={intl.formatMessage({ id: 'IMAGE_INVISIBLE' })}
         onLoad={(e) => props.addToQueue(e, i)}
       />
     })
