@@ -239,8 +239,8 @@ class TintableScene extends PureComponent<Props, State> {
                               type={type}
                               width={width}
                               height={height}
-                              highlightMap={ensureFullyQualifiedAssetUrl(highlights)}
-                              shadowMap={ensureFullyQualifiedAssetUrl(shadows)}
+                              highlightMap={highlights ? ensureFullyQualifiedAssetUrl(highlights) : void (0)}
+                              shadowMap={shadows ? ensureFullyQualifiedAssetUrl(shadows) : void (0)}
                               filterId={getFilterId(instanceId, id, tintColor.hex)}
                               filterColor={tintColor.hex}
                               filterImageValueCurve={imageValueCurve}
