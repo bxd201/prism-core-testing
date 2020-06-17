@@ -3,9 +3,8 @@ import * as React from 'react'
 import './CardMenu.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
-import { Link, useHistory } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 import { FormattedMessage } from 'react-intl'
-import { RouteConsumer } from '../../contexts/RouteContext/RouteContext'
 
 type CardMenuProps = {
   children: (setCardShowing: (React.Node) => void, setTitle: (string) => void) => React.Node,
@@ -26,15 +25,11 @@ const CardMenu = ({ children, menuTitle = '', showBackByDefault = false, backPat
   const [cardTitle: string, setCardTitle] = React.useState(menuTitle)
   const history = useHistory()
 
-  const mouseDownHandler = (e: SyntheticEvent) => {
-    e.preventDefault()
-  }
-
   return (
     <div className='card-menu__wrapper'>
       <div className='card-menu__header'>
         <div className='card-menu__heading'>{cardTitle}</div>
-        {(cardShowing || showBackByDefault) && <button className='card-menu__button card-menu__button--left' onMouseDown={mouseDownHandler} onClick={() => {
+        {(cardShowing || showBackByDefault) && <button className='card-menu__button card-menu__button--left' onClick={() => {
           setCardShowing(null)
           setCardTitle(menuTitle)
           if (showBackByDefault && !cardShowing) backPath && history.push(backPath)
@@ -44,20 +39,14 @@ const CardMenu = ({ children, menuTitle = '', showBackByDefault = false, backPat
             &nbsp;<span className='card-menu__button-left-text'><FormattedMessage id='BACK' /></span>
           </div>
         </button>}
-        <RouteConsumer>
-          {(context: any) => (
-            <Link tabIndex='-1' to={`/active`}>
-              <button className='card-menu__button card-menu__button--right' onMouseDown={mouseDownHandler} onClick={() => { context && context.navigate(true, true) }}>
-                <div className='card-menu__close'>
-                  <span><FormattedMessage id='CLOSE' /></span>&nbsp;<FontAwesomeIcon className={``} icon={['fa', 'chevron-up']} />
-                </div>
-                <div className='card-menu__cancel'>
-                  <FontAwesomeIcon size='lg' className={``} icon={['fa', 'times']} />
-                </div>
-              </button>
-            </Link>
-          )}
-        </RouteConsumer>
+        <button className='card-menu__button card-menu__button--right' onClick={() => history.push('/active')}>
+          <div className='card-menu__close'>
+            <span><FormattedMessage id='CLOSE' /></span>&nbsp;<FontAwesomeIcon className={``} icon={['fa', 'chevron-up']} />
+          </div>
+          <div className='card-menu__cancel'>
+            <FontAwesomeIcon size='lg' icon={['fa', 'times']} />
+          </div>
+        </button>
       </div>
       <div className='card-menu__content'>
         {cardShowing || children(setCardShowing, setCardTitle)}

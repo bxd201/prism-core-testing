@@ -1,3 +1,95 @@
+.cvw-navigation-wrapper {
+  display: flex;
+  position: relative;
+  justify-content: left;
+  border-top: 1px solid #d4cfcf;
+  border-bottom: 1px solid #d4cfcf;
+  @include respond-above(md) {
+    justify-content: center;
+  }
+  &__center {
+    align-items: center;
+    display: flex;
+    margin-left: 2%;
+    text-align: left;
+    max-width: 68%;
+    z-index: 1000;
+    @include respond-above(xs) {
+      margin-left: 0;
+      max-width: 75%;
+      text-align: center;
+    }
+    @include respond-above(md) {
+      width: auto;
+    }
+    & > li {
+      position: relative;
+      &:after {
+        border-left: 1px solid #c8c8c8;
+        content: '';
+        display: block;
+        height: 70%;
+        position: absolute;
+        right: 0;
+        top: 15%;
+        @include respond-above(xs) {
+          display: none;
+        }
+      }
+    }
+    & > li:last-child > a {
+      @include respond-below(xs) {
+        width: 85%;
+      }
+    }
+    & > li:nth-last-child(1) {
+      &:after {
+        display: none;
+      }
+    }
+  }
+  &__right {
+    align-items: center;
+    display: flex;
+    font-size: small;
+    font-weight: bold;
+    height: 100%;
+    justify-content: flex-end;
+    right: 1%;
+    position: absolute;
+    width: 29%;
+    @include respond-above(sm) {
+      width: 30%;
+    }
+    & > li {
+      align-items: center;
+      display: inline-flex;
+      height: 100%;
+      text-align: center;
+      width: 100%;
+      @include respond-above(xs) {
+        width: auto;
+      }
+    }
+    & > li > a {
+      margin-top: 1px;
+      padding: 1.4em 0.5em;
+      @include respond-above(sm) {
+        padding: 1.2em 2em 0.8em 2em;
+      }
+    }
+    & > li:first-child > a {
+      @include respond-below(xs) {
+        padding: 0.5em;
+        width: 80%;
+      }
+    }
+    &__text {
+      line-height: 1.5em;
+    }
+  }
+}
+
 .dashboard-submenu {
   font-size: 18px;
   font-weight: 400;
@@ -202,3 +294,4 @@
     }
   }
 }
+

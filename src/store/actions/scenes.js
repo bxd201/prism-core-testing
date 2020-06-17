@@ -259,6 +259,12 @@ export const unsetActiveStockScenePolluted = () => {
   }
 }
 
+export const SET_ACTIVE_PAINT_SCENE_POLLUTED = 'SET_ACTIVE_PAINT_SCENE_POLLUTED '
+export const setActivePaintScenePolluted = () => ({ type: SET_ACTIVE_PAINT_SCENE_POLLUTED })
+
+export const UNSET_ACTIVE_PAINT_SCENE_POLLUTED = 'UNSET_ACTIVE_PAINT_SCENE_POLLUTED '
+export const unsetActivePaintScenePolluted = () => ({ type: UNSET_ACTIVE_PAINT_SCENE_POLLUTED })
+
 export const SET_SELECTED_SCENE_VARIANT_CHANGED = 'SET_SELECTED_SCENE_VARIANT_CHANGED'
 export const setSelectedSceneVariantChanged = () => {
   return {
@@ -286,3 +292,9 @@ export const unsetSelectedScenePaletteLoaded = () => {
     type: UNSET_SELECTED_SCENE_PALETTE_LOADED
   }
 }
+
+export const SHOW_WARNING_MODAL = 'SHOW_WARNING_MODAL'
+export const showWarningModal = (openFn: () => void) => ({ type: SHOW_WARNING_MODAL, payload: openFn })
+
+export const HIDE_WARNING_MODAL = 'HIDE_WARNING_MODAL'
+export const hideWarningModal = () => ({ type: HIDE_WARNING_MODAL })

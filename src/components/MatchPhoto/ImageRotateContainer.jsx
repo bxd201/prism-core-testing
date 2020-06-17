@@ -1,5 +1,5 @@
 // @flow
-import React, { useState, useEffect, useRef, useContext } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import ImageRotateTerms from './ImageRotateTerms.jsx'
 import { Link, withRouter, type RouterHistory } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -10,7 +10,6 @@ import PaintScene from '../PaintScene/PaintScene'
 import { getScaledPortraitHeight } from '../../shared/helpers/ImageUtils'
 import PrismImage from '../PrismImage/PrismImage'
 import { useSelector, useDispatch } from 'react-redux'
-import { RouteContext } from '../../contexts/RouteContext/RouteContext'
 import './MatchPhoto.scss'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { loadBrandColors } from '../../store/actions/brandColors'
@@ -97,7 +96,6 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
   const paintSceneWorkspace = useSelector(state => state.paintSceneWorkspace)
   const [paintSceneWorkspaceState] = useState((imgUrl) ? null : paintSceneWorkspace)
   const [isConfirmationModalShown, setConfirmationModalShown] = useState(false)
-  const routeContext = useContext(RouteContext)
   const [isImageRotate, setIsImageRotate] = useState(false)
   const { formatMessage } = useIntl()
   const dispatch = useDispatch()
@@ -378,7 +376,7 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
 
   const closeButton = <button onClick={(e: SyntheticEvent) => {
     if (isConfirmationModalShown) {
-      routeContext.setActiveComponent()
+      history.push('/active')
     } else {
       if (imageUrl && pins.length > 0) {
         e.preventDefault()
@@ -386,7 +384,7 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
         setConfirmationModalShown(!isConfirmationModalShown)
         return false
       } else {
-        routeContext.setActiveComponent()
+        history.push('/active')
       }
     }
   }} className={`${buttonClass} ${buttonRightClass}`}>

@@ -29,10 +29,14 @@ import {
   TOGGLE_COLOR_DETAILS_PAGE,
   SET_ACTIVE_STOCK_SCENE_POLLUTED,
   UNSET_ACTIVE_STOCK_SCENE_POLLUTED,
+  SET_ACTIVE_PAINT_SCENE_POLLUTED,
+  UNSET_ACTIVE_PAINT_SCENE_POLLUTED,
   SET_SELECTED_SCENE_VARIANT_CHANGED,
   UNSET_SELECTED_SCENE_VARIANT_CHANGED,
   SET_SELECTED_SCENE_PALETTE_LOADED,
-  UNSET_SELECTED_SCENE_PALETTE_LOADED
+  UNSET_SELECTED_SCENE_PALETTE_LOADED,
+  SHOW_WARNING_MODAL,
+  HIDE_WARNING_MODAL
 } from '../actions/scenes'
 import { registerMask, updateMask } from '../masks/store'
 
@@ -53,8 +57,10 @@ type State = {
   activeScenesColorDetails: number[],
   isColorDetailsPage: boolean,
   isActiveStockScenePolluted: boolean,
+  isActivePaintScenePolluted: Boolean,
   selectedSceneVariantChanged: boolean,
-  selectedScenePaletteLoaded: boolean
+  selectedScenePaletteLoaded: boolean,
+  warningModal: { showing: boolean, openFn: () => void }
 }
 
 export const initialState: State = {
@@ -68,8 +74,10 @@ export const initialState: State = {
   activeScenesColorDetails: [],
   isColorDetailsPage: false,
   isActiveStockScenePolluted: false,
+  isActivePaintScenePolluted: false,
   selectedSceneVariantChanged: false,
-  selectedScenePaletteLoaded: false
+  selectedScenePaletteLoaded: false,
+  warningModal: { showing: false, openFn: () => {} }
 }
 
 export const scenes = (state: Object = initialState, action: { type: string, payload: Object }) => {
@@ -438,38 +446,17 @@ export const scenes = (state: Object = initialState, action: { type: string, pay
         isColorDetailsPage: !state.isColorDetailsPage
       })
 
-    case SET_ACTIVE_STOCK_SCENE_POLLUTED:
-      return Object.assign({}, state, {
-        isActiveStockScenePolluted: true
-      })
-
-    case UNSET_ACTIVE_STOCK_SCENE_POLLUTED:
-      return Object.assign({}, state, {
-        isActiveStockScenePolluted: false
-      })
-
-    case SET_SELECTED_SCENE_VARIANT_CHANGED:
-      return Object.assign({}, state, {
-        selectedSceneVariantChanged: true
-      })
-
-    case UNSET_SELECTED_SCENE_VARIANT_CHANGED:
-      return Object.assign({}, state, {
-        selectedSceneVariantChanged: false
-      })
-
-    case SET_SELECTED_SCENE_PALETTE_LOADED:
-      return Object.assign({}, state, {
-        selectedScenePaletteLoaded: true
-      })
-
-    case UNSET_SELECTED_SCENE_PALETTE_LOADED:
-      return Object.assign({}, state, {
-        selectedScenePaletteLoaded: false
-      })
-
-    default:
-      return state
+    case SET_ACTIVE_STOCK_SCENE_POLLUTED: return { ...state, isActiveStockScenePolluted: true }
+    case UNSET_ACTIVE_STOCK_SCENE_POLLUTED: return { ...state, isActiveStockScenePolluted: false }
+    case SET_ACTIVE_PAINT_SCENE_POLLUTED: return { ...state, isActivePaintScenePolluted: true }
+    case UNSET_ACTIVE_PAINT_SCENE_POLLUTED: return { ...state, isActivePaintScenePolluted: false }
+    case SET_SELECTED_SCENE_VARIANT_CHANGED: return { ...state, selectedSceneVariantChanged: true }
+    case UNSET_SELECTED_SCENE_VARIANT_CHANGED: return { ...state, selectedSceneVariantChanged: false }
+    case SET_SELECTED_SCENE_PALETTE_LOADED: return { ...state, selectedScenePaletteLoaded: true }
+    case UNSET_SELECTED_SCENE_PALETTE_LOADED: return { ...state, selectedScenePaletteLoaded: false }
+    case SHOW_WARNING_MODAL: return { ...state, warningModal: { showing: true, openFn: action.payload } }
+    case HIDE_WARNING_MODAL: return { ...state, warningModal: { showing: false } }
+    default: return state
   }
 }
 
