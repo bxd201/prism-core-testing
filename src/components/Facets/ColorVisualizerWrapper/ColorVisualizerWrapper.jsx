@@ -24,6 +24,7 @@ import Help from '../../Help/Help'
 import CVWWarningModal from './WarningModal'
 import SaveOptions from '../../SaveOptions/SaveOptions'
 import ColorDetailsModal from './ColorDetailsModal/ColorDetailsModal'
+import { PreLoadingSVG } from './PreLoadingSVG'
 import './ColorVisualizer.scss'
 
 export const CVW = () => {
@@ -39,6 +40,9 @@ export const CVW = () => {
   const hiddenFileUploadInput = useRef()
   const [imgUrl, setImgUrl] = useState()
   const [activeScene: Element, setActiveScene: (Element) => void] = useState(<SceneManager expertColorPicks hideSceneSelector />)
+  const [isLoading: boolean, setIsLoading: boolean => void] = useState(true)
+
+  setTimeout(() => setIsLoading(false), 500)
 
   const activateSceneFn = (id: number): void => {
     const activate = () => {
@@ -49,6 +53,8 @@ export const CVW = () => {
     }
     (isActiveStockScenePolluted || isActivePaintScenePolluted) ? dispatch(showWarningModal(activate)) : activate()
   }
+
+  if (isLoading) { return <PreLoadingSVG /> }
 
   return (
     <div className='cvw__root-container'>
