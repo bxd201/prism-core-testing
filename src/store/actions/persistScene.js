@@ -48,7 +48,8 @@ export const SCENE_TYPE = {
   custom: 'custom',
   stock: 'stock',
   anonCustom: 'anon-custom',
-  anonStock: 'anon-stock'
+  anonStock: 'anon-stock',
+  livePalette: 'live-palette'
 }
 
 export const startSavingMasks = (sceneName: string) => {

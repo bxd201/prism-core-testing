@@ -1,5 +1,18 @@
 .color-palette {
   &__wrapper {
+    &--my-ideas-live-palette {
+      flex: 50% 0 0;
+      width: auto;
+      cursor: pointer;
+      position: relative;
+      padding: 2% 4%;
+      @include respond-above(sm) {
+        flex: 25% 0 0;
+      }
+    }
+    &--my-ideas-edit-lp {
+      padding: 0;
+    }
     &__colors-ul {
       bottom: 0;
       height: 100%;
@@ -22,6 +35,28 @@
         height: 30%;
         position: absolute;
       }
+      &--my-ideas-live-palette {
+        height: 119px;
+        position: relative;
+        border: 1px solid #fff;
+        flex-direction: row;
+        &:focus {
+          outline-style: solid;
+          outline-color: #2cabe2;
+          outline-width: 2px;
+        }
+      }
+      &--my-ideas-preview {
+        @include respond-above(sm) {
+          height: 230px;
+        }
+      }
+      &--my-ideas-preview-lp {
+        position: inherit;
+        @include respond-above(sm) {
+          height: 650px;
+        }
+      }
     }
     &__color-li {
       align-items: center;
@@ -29,14 +64,16 @@
       flex-basis: 0;
       flex-grow: 1;
       height: 100%;
-      padding: 1em 1.75em;
+      padding: 0;
       position: relative;
-      @include respond-above(sm) {
-        padding: 1em;
-      }
     }
   }
+  &__container {
+    position: relative;
+    width: 100%;
+  }
   &__color-info {
+    padding: 1em;
     &--dark {
       color: getVar( "colors.white" );
     }
@@ -71,6 +108,34 @@
     }
   }
   &__toggle-check-icons {
+    &:focus {
+      outline-style: solid;
+      outline-color: #2cabe2;
+      outline-width: 2px;
+    }
+  }
+  &__live-palette-name {
+    text-align: center;
+    padding: 8px 4px 4px 4px;
+    font-size: 0.8rem;
+    color: #333333;
+  }
+  &__delete-live-palette {
+    position: absolute;
+    top: -8px;
+    left: 8px;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    cursor: pointer;
+    z-index: 100000;
+  }
+  &__delete-live-palette-button {
+    background-color: #ffffff;
+    width: 20px;
+    height: 20px;
+    border-radius: 20px;
     &:focus {
       outline-style: solid;
       outline-color: #2cabe2;

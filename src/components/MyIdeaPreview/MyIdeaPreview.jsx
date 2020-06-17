@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState, useContext } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import MergeColors from '../MergeCanvas/MergeColors'
 import PrismImage from '../PrismImage/PrismImage'
-import { useIntl } from 'react-intl'
+import { useIntl, FormattedMessage } from 'react-intl'
 import { setLayersForPaintScene } from '../../store/actions/paintScene'
 
 import './MyIdeaPreview.scss'
@@ -16,13 +16,20 @@ import { selectSavedScene, SCENE_TYPE } from '../../store/actions/persistScene'
 import { selectSavedAnonStockScene, setSelectedSceneStatus } from '../../store/actions/stockScenes'
 import { StaticTintScene } from '../CompareColor/StaticTintScene'
 import { SCENE_VARIANTS } from 'src/constants/globals'
-import { getColorInstances } from '../LivePalette/livePaletteUtility'
+import { getColorInstances, checkCanMergeColors, shouldPromptToReplacePalette } from '../LivePalette/livePaletteUtility'
 import type { ColorMap } from 'src/shared/types/Colors.js.flow'
 import { unsetSelectedScenePaletteLoaded } from '../../store/actions/scenes'
+import { selectedSavedLivePalette } from 'src/store/actions/saveLivePalette'
+import { mergeLpColors, replaceLpColors } from 'src/store/actions/live-palette'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { LP_MAX_COLORS_ALLOWED } from 'constants/configurations'
+import DynamicModal, { DYNAMIC_MODAL_STYLE } from '../DynamicModal/DynamicModal'
 // @todo for mysherwin feature -RS
 // import { CUSTOM_SCENE_IMAGE_ENDPOINT } from '../../constants/endpoints'
 
 const wrapperClass = 'my-ideas-preview-wrapper'
+const addAllBtn = `${wrapperClass}__add-all-btn`
+const addAllText = `${addAllBtn}__add-all-text`
 const canvasOverlayWrapper = `${wrapperClass}__overlay-canvas-wrapper`
 const overlayedCanvas = `${canvasOverlayWrapper}__overlay-canvas`
 const buttonClassName = `${wrapperClass}__button`
@@ -59,14 +66,18 @@ export const RedirectMyIdeas = () => {
 
 const MyIdeaPreview = (props) => {
   const dispatch = useDispatch()
-  const intl = useIntl()
+  const { formatMessage } = useIntl()
   const backgroundCanvasRef = useRef()
   const foregroundCanvasRef = useRef()
   const wrapperRef = useRef()
 
   const selectedScene = useSelector(state => {
     const { items: { colorMap } }: ColorMap = state.colors
-
+    if (state.selectedSavedLivePaletteId) {
+      const expectSavedLivePaletteData = state.sceneMetadata.find(item => item.sceneType === SCENE_TYPE.livePalette && item.id === state.selectedSavedLivePaletteId)
+      const livePalette = getColorInstances(null, expectSavedLivePaletteData.livePaletteColorsIdArray, colorMap)
+      return { ...expectSavedLivePaletteData, livePalette, savedSceneType: SCENE_TYPE.livePalette }
+    }
     if (state.selectedStockSceneId) {
       const expectStockData = state.sceneMetadata.find(item => item.sceneType === SCENE_TYPE.anonStock && item.id === state.selectedStockSceneId)
       if (expectStockData) {
@@ -91,6 +102,8 @@ const MyIdeaPreview = (props) => {
   })
 
   const paintSceneWorkSpace = useSelector(state => state.paintSceneWorkspace)
+  const lpColors = useSelector(state => state.lp.colors)
+  const [showSelectPaletteModal, setShowSelectPaletteModal] = useState(false)
 
   const { renderingBaseUrl, backgroundImageUrl } = selectedScene || {}
   const initialWidth = selectedScene && selectedScene.savedSceneType === SCENE_TYPE.anonCustom ? selectedScene.surfaceMasks.width : 0
@@ -146,6 +159,7 @@ const MyIdeaPreview = (props) => {
       window.removeEventListener('resize', resizeHandler)
       dispatch(selectSavedScene(null))
       dispatch(selectSavedAnonStockScene(null))
+      dispatch(selectedSavedLivePalette(null))
     }
   }, [])
 
@@ -222,14 +236,65 @@ const MyIdeaPreview = (props) => {
     }
   }
 
+  const addAllColorsToLp = () => {
+    if (selectedScene && selectedScene.livePalette) {
+      if (checkCanMergeColors(lpColors, selectedScene.livePalette, LP_MAX_COLORS_ALLOWED)) {
+        dispatch(mergeLpColors(selectedScene.livePalette))
+      } else {
+        if (shouldPromptToReplacePalette(lpColors, selectedScene.livePalette, LP_MAX_COLORS_ALLOWED)) {
+          setShowSelectPaletteModal(true)
+        }
+      }
+    }
+  }
+
+  const loadPalette = () => {
+    dispatch(replaceLpColors(selectedScene.livePalette))
+  }
+
+  const getSelectPaletteModalConfig = () => {
+    const selectPaletteActions = [{ callback: (e) => {
+      e.preventDefault()
+      e.stopPropagation()
+      setShowSelectPaletteModal(false)
+    },
+    text: formatMessage({ id: 'PAINT_SCENE.CANCEL' }),
+    type: DYNAMIC_MODAL_STYLE.primary },
+    { callback: (e) => {
+      e.preventDefault()
+      e.stopPropagation()
+      loadPalette()
+      setShowSelectPaletteModal(false)
+    },
+    text: formatMessage({ id: 'PAINT_SCENE.OK' }),
+    type: DYNAMIC_MODAL_STYLE.primary }]
+
+    return {
+      selectPaletteActions,
+      selectPaletteTitle: formatMessage({ id: 'PAINT_SCENE.SELECT_PALETTE_TITLE' }),
+      selectPaletteDescription: formatMessage({ id: 'PAINT_SCENE.SELECT_PALETTE_DESC' })
+    }
+  }
+
+  const { selectPaletteActions, selectPaletteTitle, selectPaletteDescription } = getSelectPaletteModalConfig()
+
   return (
     <>
       {/* eslint-disable-next-line no-constant-condition */}
       { selectedScene ? null : <Redirect to={MY_IDEAS} /> }
       { paintSceneWorkSpace ? <RedirectMyIdeas /> : null}
+      {showSelectPaletteModal ? <DynamicModal
+        actions={selectPaletteActions}
+        title={selectPaletteTitle}
+        height={document.documentElement.clientHeight + window.pageYOffset}
+        description={selectPaletteDescription} /> : null}
       <CardMenu menuTitle={`${(selectedScene && selectedScene.name) ? selectedScene.name : ``}`} showBackByDefault backPath={MY_IDEAS}>
         {() => (
           <div ref={wrapperRef} className={wrapperClass} style={{ minHeight: Math.round(height * heightCrop) }}>
+            {selectedScene && selectedScene.savedSceneType === SCENE_TYPE.livePalette && <button className={addAllBtn} onClick={addAllColorsToLp}>
+              <span className={addAllText}><FormattedMessage id='ADD_ALL' /></span>
+              <FontAwesomeIcon icon={['fal', 'plus-circle']} size='1x' />
+            </button>}
             {(selectedScene && selectedScene.savedSceneType === SCENE_TYPE.anonCustom) ? <MergeColors
               imageDataList={selectedScene.surfaceMasks.surfaces.map(surface => surface.surfaceMaskImageData)}
               handleImagesMerged={loadMergedImage}
@@ -268,13 +333,14 @@ const MyIdeaPreview = (props) => {
               width={initialWidth}
               height={initialHeight}
             /> : null}
-            <div className={actionButtonWrapperClassName}>
+            {selectedScene && selectedScene.savedSceneType !== SCENE_TYPE.livePalette && <div className={actionButtonWrapperClassName}>
               <div className={actionButtonInnerWrapperClassName}>
-                <button data-buttonid='painted' className={buttonClassName} onClick={openProject}>{intl.formatMessage({ id: 'MY_IDEAS.OPEN_PROJECT' }).toUpperCase()}</button>
-                <button data-buttonid='unpainted' className={buttonClassName} onClick={openProject}>{intl.formatMessage({ id: 'MY_IDEAS.OPEN_UNPAINTED' }).toUpperCase()}</button>
+                <button data-buttonid='painted' className={buttonClassName} onClick={openProject}>{formatMessage({ id: 'MY_IDEAS.OPEN_PROJECT' }).toUpperCase()}</button>
+                <button data-buttonid='unpainted' className={buttonClassName} onClick={openProject}>{formatMessage({ id: 'MY_IDEAS.OPEN_UNPAINTED' }).toUpperCase()}</button>
               </div>
-            </div>
-            {selectedScene && selectedScene.palette && <ColorPalette palette={selectedScene.palette.slice(0, 8)} />}
+            </div>}
+            {selectedScene && selectedScene.palette && <ColorPalette palette={selectedScene.palette.slice(0, 8)} isMyIdeaPreview />}
+            {selectedScene && selectedScene.livePalette && <ColorPalette palette={selectedScene.livePalette.slice(0, 8)} isMyIdeaPreview isMyIdeaPreviewLp />}
           </div>
         )}
       </CardMenu>

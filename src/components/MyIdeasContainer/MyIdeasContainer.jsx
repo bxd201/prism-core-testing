@@ -22,6 +22,7 @@ const MyIdeasContainer = (props: MyIdeasContainerProps) => {
   const dispatch = useDispatch()
   const selectedSceneId = useSelector(state => state.selectedSavedSceneId)
   const selectedStockSceneId = useSelector(state => state.selectedStockSceneId)
+  const selectedSavedLivePaletteId = useSelector(state => state.selectedSavedLivePaletteId)
   const [shouldRedirect, setShouldRedirect] = useState(false)
   // Record original selected scene value
   const [initialSceneId, setInitialSceneId] = useState(selectedSceneId)
@@ -29,7 +30,7 @@ const MyIdeasContainer = (props: MyIdeasContainerProps) => {
   const wrapperRef = useRef()
 
   useEffect(() => {
-    if ((selectedSceneId && initialSceneId !== selectedSceneId) || (selectedStockSceneId && initialSceneId !== selectedStockSceneId)) {
+    if ((selectedSceneId && initialSceneId !== selectedSceneId) || (selectedStockSceneId && initialSceneId !== selectedStockSceneId) || (selectedSavedLivePaletteId && initialSceneId !== selectedSavedLivePaletteId)) {
       setShouldRedirect(true)
     }
   })

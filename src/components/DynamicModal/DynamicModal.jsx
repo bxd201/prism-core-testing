@@ -104,9 +104,9 @@ const DynamicModal = (props: DynamicModalProps) => {
   return (
     <div className={dynamicModalClassName} style={{ height: props.height }}>
       <div className={getDymanicModalClassName(dynamicModalInnerClassName, props.modalStyle)}>
-        {props.title ? <div className={dynamicModalTitleClassName}>{props.title}</div> : null}
         {props.previewData ? <div className={dynamicModalPreviewImageClassName}>{props.previewData}</div> : null}
         <div>
+          {props.title ? <div className={dynamicModalTitleClassName}>{props.title}</div> : null}
           {props.description ? <div className={dynamicModalDescriptionClassName}>{props.description}</div> : null}
           {props.allowInput ? <div className={dynamicModalInputWrapperClassName}><input className={`${dynamicModalTextInputClassName}`} onChange={setInputVal} value={inputValue} />
             <label aria-label='clear text' className={`${dynamicModalInputLabelClassName}`} tabIndex='0' role='button' htmlFor='clearModalInput' onClick={clearInputVal} onKeyDown={clearInputVal} onMouseDown={(e: SyntheticEvent) => e.preventDefault()}>

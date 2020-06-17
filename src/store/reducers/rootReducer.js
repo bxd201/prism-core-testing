@@ -31,7 +31,8 @@ import {
   selectedSceneStatus,
   showSavedConfirmModal,
   showSavedCustomSceneSuccess,
-  showDeleteConfirmModal
+  showDeleteConfirmModal,
+  selectedSavedLivePaletteId
 } from './savedScenes'
 import { user } from './user'
 import { paintSceneWorkspace } from './paintSceneWorkspace'
@@ -64,6 +65,7 @@ export default combineReducers({
   scenesAndRegions,
   user,
   selectedSavedSceneId,
+  selectedSavedLivePaletteId,
   paintSceneWorkspace,
   sceneMetadata: reducerWithLocalStorage(sceneMetadata, SCENE_METADATA),
   isWaitingToFetchSavedScenes,
