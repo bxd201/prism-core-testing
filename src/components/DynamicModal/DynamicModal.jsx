@@ -1,6 +1,7 @@
 // @flow
 import React, { useState, useEffect } from 'react'
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { KEY_CODES } from 'src/constants/globals'
 import './DynamicModal.scss'
 
 export const DYNAMIC_MODAL_STYLE = {
@@ -20,8 +21,10 @@ type DynamicModalAction = {
 const dynamicModalClassName = 'dynamic-modal'
 const dynamicModalInnerClassName = `${dynamicModalClassName}__inner-box`
 const dynamicModalTitleClassName = `${dynamicModalClassName}__title`
+const dynamicModalPreviewImageClassName = `${dynamicModalClassName}__preview-image`
 const dynamicModalDescriptionClassName = `${dynamicModalClassName}__description`
 const dynamicModalInputWrapperClassName = `${dynamicModalClassName}__input-wrapper`
+const dynamicModalInputLabelClassName = `${dynamicModalClassName}__input-label`
 const dynamicModalTextInputClassName = `${dynamicModalClassName}__text-input`
 const dynamicModalButtonsClassName = `${dynamicModalClassName}__button-row`
 const dynamicModalButtonBaseClassName = `${dynamicModalButtonsClassName}__button`
@@ -34,7 +37,8 @@ type DynamicModalProps = {
   height: number,
   allowInput?: boolean,
   inputDefault?: string,
-  modalStyle?: string
+  modalStyle?: string,
+  previewData?: HTMLElement
 }
 
 const getDymanicModalClassName = (baseName: string, modalStyle) => {
@@ -91,14 +95,30 @@ const DynamicModal = (props: DynamicModalProps) => {
   }
 
   const setInputVal = (e: SyntheticEvent) => setInputValue(e.target.value)
+  const clearInputVal = (e: SyntheticEvent) => {
+    if (!e.keyCode || (e.keyCode && (e.keyCode === KEY_CODES.KEY_CODE_ENTER || e.keyCode === KEY_CODES.KEY_CODE_SPACE))) {
+      e.preventDefault()
+      setInputValue('')
+    }
+  }
   return (
     <div className={dynamicModalClassName} style={{ height: props.height }}>
       <div className={getDymanicModalClassName(dynamicModalInnerClassName, props.modalStyle)}>
         {props.title ? <div className={dynamicModalTitleClassName}>{props.title}</div> : null}
-        {props.description ? <div className={dynamicModalDescriptionClassName}>{props.description}</div> : null}
-        {props.allowInput ? <div className={dynamicModalInputWrapperClassName}><input className={`${dynamicModalTextInputClassName}`} onChange={setInputVal} value={inputValue} /></div> : null}
-        <div className={dynamicModalButtonsClassName}>
-          {props.actions && createButtonsFromActions(props.actions)}
+        {props.previewData ? <div className={dynamicModalPreviewImageClassName}>{props.previewData}</div> : null}
+        <div>
+          {props.description ? <div className={dynamicModalDescriptionClassName}>{props.description}</div> : null}
+          {props.allowInput ? <div className={dynamicModalInputWrapperClassName}><input className={`${dynamicModalTextInputClassName}`} onChange={setInputVal} value={inputValue} />
+            <label aria-label='clear text' className={`${dynamicModalInputLabelClassName}`} tabIndex='0' role='button' htmlFor='clearModalInput' onClick={clearInputVal} onKeyDown={clearInputVal} onMouseDown={(e: SyntheticEvent) => e.preventDefault()}>
+              <div>
+                <input id='clearModalInput' tabIndex='-1' className='visually-hidden' />
+                <FontAwesomeIcon size='xs' className={``} icon={['fa', 'times']} />
+              </div>
+            </label>
+          </div> : null}
+          <div className={dynamicModalButtonsClassName}>
+            {props.actions && createButtonsFromActions(props.actions)}
+          </div>
         </div>
       </div>
     </div>
