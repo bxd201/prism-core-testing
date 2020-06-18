@@ -272,6 +272,7 @@
     "SEARCH": "Search",
     "SEARCH_BY": "Search by color name or number",
     "SEARCH_COLOR": "Search color",
+    "SEARCHING": "Searching",
     "SUGGESTIONS": "Some examples of things you can search for are {suggestions}"
   },
   "SELECT_COLLECTION": "Select Color Collection",
