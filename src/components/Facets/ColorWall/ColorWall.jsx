@@ -85,7 +85,7 @@ const ColorWall = () => {
           // directly modifing params.colorId instead of calling history.push will make the react-test-renderer not run the useEffect that depends on params.colorId
           focusedCell.current && history.push(generateColorWallPageUrl(params.section, params.family, focusedCell.current, fullColorName(colorMap[focusedCell.current])) + (url.endsWith('family/') ? 'family/' : url.endsWith('search/') ? 'search/' : ''))
         },
-        '27': () => { params.colorId && history.push(generateColorWallPageUrl(section, family)) },
+        '27': () => { focusedCell.current && history.push(generateColorWallPageUrl(section, family)) },
         '37': () => { cellColumn > 0 && cellRefs.current[chunk[cellRow][cellColumn - 1]].focus() },
         '38': () => { cellRow > 0 && cellRefs.current[chunk[cellRow - 1][cellColumn]].focus() },
         '39': () => { cellColumn < chunk[cellRow].length - 1 && cellRefs.current[chunk[cellRow][cellColumn + 1]].focus() },
