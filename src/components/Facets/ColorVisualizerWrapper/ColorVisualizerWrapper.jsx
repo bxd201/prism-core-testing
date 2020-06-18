@@ -66,7 +66,12 @@ export const CVW = () => {
             <ColorDetailsModal />
             <CVWWarningModal />
             <div className={colorDetailsModalShowing ? 'hide-on-small-screens' : ''}>
-              <ColorVisualizerNav onImageUpload={setImgUrl} />
+              <ColorVisualizerNav
+                onImageUpload={(imgUrl, url) => {
+                  setImgUrl(imgUrl)
+                  url === '/active/paint-scene' && setActiveScene(<ImageRotateContainer isFromMyIdeas isPaintScene checkIsPaintSceneUpdate={false} showPaintScene imgUrl={imgUrl} />)
+                }}
+              />
               <Switch>
                 <Route path='/active/color/:colorId/:colorSEO' render={() => <ColorDetails />} />
                 <Route path='/active/color-wall(/.*)?' render={() => <ColorWallPage displayAddButton displayInfoButton displayDetailsLink={false} />} />
