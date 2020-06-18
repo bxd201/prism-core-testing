@@ -11,6 +11,7 @@ import { type WorkerMessage } from './workers/TotalImage/totalImage.types.js.flo
 import { type Color } from '../../shared/types/Colors.js.flow'
 
 import './FastMask.scss'
+import { useIntl } from 'react-intl'
 import FileInput from '../FileInput/FileInput'
 import uniqueId from 'lodash/uniqueId'
 import GenericOverlay from '../Overlays/GenericOverlay/GenericOverlay'
@@ -34,6 +35,7 @@ export function FastMask ({ color, uploadImage, uploads, hideUploadBtn = false }
   const [pctComplete, setPctComplete] = useState(0)
   const [maskHunches, setMaskHunches] = useState([])
   const [isProcessing, setIsProcessing] = useState(false)
+  const { formatMessage } = useIntl()
 
   const hasMasks = masks && masks.length > 0
   const hasHunches = maskHunches && maskHunches.length > 0
@@ -115,7 +117,7 @@ export function FastMask ({ color, uploadImage, uploads, hideUploadBtn = false }
 
   return (
     <div className='FastMask'>
-      {!hideUploadBtn && <FileInput onChange={handleChange} id={FILE_UPLOAD_ID} disabled={isUploading || isProcessing} placeholder={userImage ? 'Select new image' : 'Select an image'} />}
+      {!hideUploadBtn && <FileInput onChange={handleChange} id={FILE_UPLOAD_ID} disabled={isUploading || isProcessing} placeholder={userImage ? `${formatMessage({ id: 'SELECT_NEW_IMAGE' })}` : `${formatMessage({ id: 'SELECT_IMAGE' })}`} />}
 
       {!hasDoneAnything ? (
         <hr />
@@ -152,11 +154,11 @@ export function FastMask ({ color, uploadImage, uploads, hideUploadBtn = false }
           ) : null}
 
           {isProcessing || isUploading ? (
-            <GenericOverlay type={GenericOverlay.TYPES.LOADING} message={isUploading ? 'Loading...' : `Processing ${parseInt(pctComplete * 100, 10)}%`} semitransparent />
+            <GenericOverlay type={GenericOverlay.TYPES.LOADING} message={isUploading ? `${formatMessage({ id: 'LOADING' })}...` : `${formatMessage({ id: 'PROCESSING' })} ${parseInt(pctComplete * 100, 10)}%`} semitransparent />
           ) : null}
 
           {error ? (
-            <GenericOverlay type={GenericOverlay.TYPES.ERROR} message={'We encountered an error.'} semitransparent />
+            <GenericOverlay type={GenericOverlay.TYPES.ERROR} message={`${formatMessage({ id: 'ERROR_ENCOUNTERED' })}`} semitransparent />
           ) : null}
         </div>
       )}

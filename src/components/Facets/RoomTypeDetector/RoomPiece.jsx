@@ -1,6 +1,6 @@
 // @flow
 import React, { useState, useCallback, useContext } from 'react'
-
+import { useIntl } from 'react-intl'
 import CircleLoader from 'src/components/Loaders/CircleLoader/CircleLoader'
 import ColorMatches from './ColorMatches'
 import Card from './Card'
@@ -34,6 +34,7 @@ const RoomPiece = (props: Props) => {
 
   const [imageBg, setImageBg] = useState()
   const { update } = useContext(ColorCollector)
+  const { formatMessage } = useIntl()
 
   const handleSetColor = useCallback((color: string) => {
     if (color && color === imageBg) {
@@ -49,21 +50,21 @@ const RoomPiece = (props: Props) => {
       {!image ? <Card title={label}><CircleLoader inheritSize /></Card> : (
         <Card title={label} image={image} imageBg={imageBg} titleBg={`rgb(${legendColor.join(',')})`}>
           {swRecommendations && swRecommendations.length ? (
-            <ColorMatches title='SW Recommendations'>
+            <ColorMatches title={`SW ${formatMessage({ id: 'RECOMMENDATIONS' })}`}>
               {swRecommendations.map((color: Color, i) => {
                 return <Swatch key={i} color={color.hex} name={color.name} onClick={() => handleSetColor(color.hex)} />
               })}
             </ColorMatches>
           ) : null}
           {suggestedColors && suggestedColors.length ? (
-            <ColorMatches title='Recommendations'>
+            <ColorMatches title={`SW ${formatMessage({ id: 'RECOMMENDATIONS' })}`}>
               {suggestedColors.map((color: string, i) => {
                 return <Swatch key={i} color={color} name={color} onClick={() => handleSetColor(color)} />
               })}
             </ColorMatches>
           ) : null}
           {palette && palette.length ? (
-            <ColorMatches title='Identified Colors, SW Matches'>
+            <ColorMatches title={`SW ${formatMessage({ id: 'IDENTIFIED_COLORS' })} , SW ${formatMessage({ id: 'MATCHES' })}`}>
               {palette.map((color, i) => {
                 return <SWMatchSwatch key={i} color={color} swPalette={swPalette[i]} />
               })}

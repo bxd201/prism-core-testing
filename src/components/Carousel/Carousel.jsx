@@ -1,5 +1,6 @@
 // @flow
 import React, { useState, useEffect, useRef, useCallback } from 'react'
+import { useIntl } from 'react-intl'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
 import './Carousel.scss'
@@ -41,6 +42,7 @@ export default (props: ComponentProps) => {
   // tracks the previous position
   const prevPositionRef = useRef()
   const prevPosition = prevPositionRef.current
+  const { formatMessage } = useIntl()
   useEffect(() => { prevPositionRef.current = position })
 
   // update the position when tabId changes only if the position hasn't changed (tab button was clicked)
@@ -119,7 +121,7 @@ export default (props: ComponentProps) => {
     <div className={`${baseClass}__wrapper`}>
       <div className={`${contentWrapper}`}>
         <div className={`${contentWrapper}__prev-btn__wrapper`}>
-          {(isInfinity || position >= defaultItemsPerView) && <button className={`${contentWrapper}__buttons`} onClick={handlePrev} aria-label='previous'>
+          {(isInfinity || position >= defaultItemsPerView) && <button className={`${contentWrapper}__buttons`} onClick={handlePrev} aria-label={formatMessage({ id: 'PREVIOUS' })}>
             <FontAwesomeIcon icon={['fa', 'chevron-left']} />
           </button>}
         </div>
@@ -162,7 +164,7 @@ export default (props: ComponentProps) => {
           </div>
         </div>
         <div className={`${contentWrapper}__next-btn__wrapper`}>
-          {(isInfinity || position + defaultItemsPerView < data.length) && <button className={`${contentWrapper}__buttons`} onClick={handleNext} aria-label='next'>
+          {(isInfinity || position + defaultItemsPerView < data.length) && <button className={`${contentWrapper}__buttons`} onClick={handleNext} aria-label={formatMessage({ id: 'NEXT' })}>
             <FontAwesomeIcon icon={['fa', 'chevron-right']} />
           </button>}
         </div>

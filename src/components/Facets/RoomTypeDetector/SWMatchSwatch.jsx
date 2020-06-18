@@ -1,6 +1,7 @@
 // @flow
 import React, { useMemo } from 'react'
 import { useSelector } from 'react-redux'
+import { useIntl } from 'react-intl'
 import ColorDataWrapper from 'src/helpers/ColorDataWrapper/ColorDataWrapper'
 import tinycolor from '@ctrl/tinycolor'
 import { type Color } from 'src/shared/types/Colors.js.flow'
@@ -18,6 +19,7 @@ const SWMatchSwatch = (props: SWMatchSwatchProps) => {
     swPalette: colorMatches
   } = props
 
+  const { formatMessage } = useIntl()
   const { colorMap } = useSelector(state => state.colors.items)
   const hex = useMemo(() => color && color.toHexString(), [ color ])
 
@@ -43,7 +45,7 @@ const SWMatchSwatch = (props: SWMatchSwatchProps) => {
                 </>
               </ul>
             )
-          }) : 'Processing...'}
+          }) : `${formatMessage({ id: 'PROCESSING' })}...`}
         </>
       </div>
     </div>

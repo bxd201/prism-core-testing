@@ -14,6 +14,7 @@ type colorPaletteProps = {
 const baseClass = 'color-palette'
 const wrapper = `${baseClass}__wrapper`
 const colorInfo = `${baseClass}__color-info`
+const colorInfoDark = `${colorInfo}--dark`
 const colorInfoNumber = `${colorInfo}__number`
 const colorInfoName = `${colorInfo}__name`
 const checkCircle = `${baseClass}__check-circle`
@@ -39,7 +40,7 @@ const ColorPalette = ({ palette }: colorPaletteProps) => {
           palette.map((color: Object, index: number) => {
             return (
               <li className={`${colorLi}`} key={`color-${index}`} style={{ backgroundColor: `rgb(${color.red},${color.green},${color.blue})` }}>
-                <div className={`${colorInfo}`}>
+                <div className={`${colorInfo} ${color.isDark ? `${colorInfoDark}` : ``}`}>
                   <span className={`${colorInfoNumber}`}>SW {color.colorNumber}</span>
                   <span className={`${colorInfoName}`}>SW {color.name}</span>
                 </div>
