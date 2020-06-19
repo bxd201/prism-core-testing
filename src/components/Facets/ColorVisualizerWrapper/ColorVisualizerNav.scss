@@ -1,273 +1,44 @@
+
 .cvw-navigation-wrapper {
   display: flex;
-  position: relative;
-  justify-content: left;
-  border-top: 1px solid #d4cfcf;
-  border-bottom: 1px solid #d4cfcf;
-  @include respond-above(md) {
-    justify-content: center;
-  }
-  &__center {
-    align-items: center;
-    display: flex;
-    margin-left: 2%;
-    text-align: left;
-    max-width: 68%;
-    z-index: 1000;
-    @include respond-above(xs) {
-      margin-left: 0;
-      max-width: 75%;
-      text-align: center;
-    }
-    @include respond-above(md) {
-      width: auto;
-    }
-    & > li {
-      position: relative;
-      &:after {
-        border-left: 1px solid #c8c8c8;
-        content: '';
-        display: block;
-        height: 70%;
-        position: absolute;
-        right: 0;
-        top: 15%;
-        @include respond-above(xs) {
-          display: none;
-        }
-      }
-    }
-    & > li:last-child > a {
-      @include respond-below(xs) {
-        width: 85%;
-      }
-    }
-    & > li:nth-last-child(1) {
-      &:after {
-        display: none;
-      }
-    }
-  }
-  &__right {
-    align-items: center;
-    display: flex;
-    font-size: small;
-    font-weight: bold;
-    height: 100%;
-    justify-content: flex-end;
-    right: 1%;
-    position: absolute;
-    width: 29%;
-    @include respond-above(sm) {
-      width: 30%;
-    }
-    & > li {
-      align-items: center;
-      display: inline-flex;
-      height: 100%;
-      text-align: center;
-      width: 100%;
-      @include respond-above(xs) {
-        width: auto;
-      }
-    }
-    & > li > a {
-      margin-top: 1px;
-      padding: 1.4em 0.5em;
-      @include respond-above(sm) {
-        padding: 1.2em 2em 0.8em 2em;
-      }
-    }
-    & > li:first-child > a {
-      @include respond-below(xs) {
-        padding: 0.5em;
-        width: 80%;
-      }
-    }
-    &__text {
-      line-height: 1.5em;
-    }
-  }
-}
+  flex-direction: column;
 
-.dashboard-submenu {
-  font-size: 18px;
-  font-weight: 400;
-  color: #333;
-  line-height: 21.6px;
-  background: #f0f0f0;
-  width: 100%;
-  padding: 4em 2em 2em;
-  text-align: center;
-  position: relative;
-  cursor: default;
-  &__header {
-    color: #333;
-    display: none;
-    line-height: 21.6px;
-    text-align: center;
-    font-weight: 700;
-    font-size: 1.5em;
-    margin-bottom: 2em;
-    @include respond-above(sm) {
-      display: block;
-    }
+  .cvw-nav-btn {
+    height: 96%;
   }
-  &__content {
-    display: flex;
-    justify-content: center;
-    & > label:nth-last-child(n + 2) {
-      margin-right: 5%;
+
+  .cvw-nav-btn {
+    border: none;
+    color: black;
+    display: inline-block;
+    height: 96%;
+    margin-right: 2px;
+    padding: 13% 6% 5%;
+    position: relative;
+    text-decoration: none;
+    @include respond-above(xs) {
+      padding: 1.2em 1em;
     }
-    & > ul {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      list-style-type: none;
+    @include respond-above(sm) {
+      padding: 1.2em 1.7em 0.8em 2em;
+    }
+    &:after {
+      background: #2cabe2;
+      bottom: 0;
+      content: "";
+      display: block;
+      height: 0;
+      left: 0;
+      position: absolute;
+      transition: height 0.3s;
       width: 100%;
     }
-    & > ul > li {
-      cursor: pointer;
-      width: 30%;
-      margin-right: 5%;
-      &:focus {
-        outline-style: solid;
-        outline-color: #2cabe2;
-        outline-width: 2px;
-        z-index: 100;
-      }
-    }
-    & > ul > li:nth-last-child(1) {
-      margin-right: 0;
-    }
-    & > ul > li:first-of-type {
-      @include respond-below(xs) {
-        width: 100%;
-        margin: 0 0 1em;
-      }
-    }
-    & > ul > li {
-      @include respond-below(xs) {
-        width: 46%;
-      }
-    }
-    & > ul > li.dashboard-submenu__content__paint-photo-li {
-      @include respond-below(sm) {
-        width: 40%;
-        margin-right: 4%;
-      }
-    }
-    &__description {
-      flex: 1;
-      max-width: 300px;
-      &:hover {
-        & > div:first-child {
-          border-color: #2cabe2;
-        }
-        & > div:nth-child(2) {
-          color: #2cabe2;
-        }
-      }
-      &-img-wrapper {
-        background-color: #fff;
-        background-position: top center;
-        background-repeat: no-repeat;
-        background-size: cover;
-        border: 3px solid #fff;
-        box-shadow: 0 10px 10px -12px rgba(0,0,0,.4);
-        padding-bottom: 65%;
-        transition: border-color .3s ease;
-        @include respond-above(xs) {
-          background-position: center;
-          background-size: 95% 95%;
-          padding-bottom: 75%;
-        }
-      }
-      &--explore-color {
-        padding-bottom: 35%;
-        @include respond-above(xs) {
-          padding-bottom: 75%;
-        }
-        @include respond-above(sm) {
-          background-position: center;
-          background-size: 95% 95%;
-        }
-      }
-      &--painted-scene {
-        background-position: 40% 50%;
-        @include respond-above(xs) {
-          background-position: center;
-          padding-bottom: 75%;
-        }
-        @include respond-above(sm) {
-          background-position: center;
-          background-size: 95% 95%;
-        }
-      }
-      &-title {
-        font-size: 0.8em;
-        color: #333;
-        display: block;
-        font-weight: 600;
-        line-height: 1em;
-        margin: 1em 0 0;
-        padding: 0.25em 0;
-        text-transform: uppercase;
-        transition: color 0.3s ease;
-      }
-      &-content {
-        color: #333;
-        display: block;
-        font-size: 0.75em;
-        line-height: 1.3em;
-        padding: 0;
-        margin: 0.5em 0;
-      }
-      &-tip {
-        font-size: 0.7em;
-      }
-      &-ios-app-icon {
-        background-color: transparent;
-        background-image: url('~src/images/color-visualizer-wrapper/app-store-badge.png');
-        background-position: top center;
-        background-repeat: no-repeat;
-        background-size: contain;
-        padding: 14%;
-      }
-      &-android-app-icon {
-        background-color: transparent;
-        background-image: url('~src/images/color-visualizer-wrapper/google-play-badge.png');
-        background-position: top center;
-        background-repeat: no-repeat;
-        background-size: contain;
-        padding: 14%;
-      }
-    }
-  }
-  &__cls-btn {
-    position: absolute;
-    right: 0.875rem;
-    top: 0.875rem;
-    &:focus {
-      outline-style: solid;
-      outline-color: #2cabe2;
-      outline-width: 2px;
-    }
-  }
-  &__button {
-    background: none;
-    border: none;
-    display: inline-block;
-    text-align: center;
-    text-transform: uppercase;
-    width: auto;
-    color: #000;
-    fill: #000;
-    padding: 0;
     &:hover {
-      border-color: #2cabe2;
-      cursor: pointer;
       color: #2cabe2;
+      &:after {
+        height: 6px;
+        transition: height 0.3s;
+      }
     }
     &:focus {
       outline-style: solid;
@@ -275,23 +46,80 @@
       outline-width: 2px;
       z-index: 100;
     }
-    @include respond-above(sm) {
-      background: #fff;
-      border: 1px solid #f2f2f2;
+    &--active {
+      color: #fff;
+      &:hover {
+        color: #fff;
+        & > div:first-child {
+          height: 96%;
+          background: #2cabe2;
+        }
+      }
+    }
+  }
+
+  &__center {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    border-bottom: 1px solid #c8c8c8;
+  }
+
+  &__right {
+    display: flex;
+    position: absolute;
+    right: 1em;
+  }
+
+  .overlay {
+    position: absolute;
+    top: 10%;
+    height: 90%;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 1;
+  }
+
+  .dashboard-submenu {
+    position: absolute;
+    top: 2.5em;
+    z-index: 10001; // to make it higher than the ColorPickerSlider
+    background-color: rgb(240, 240, 240);
+    padding-top: 1em;
+    text-align: center;
+    font-family: "Frutiger Neue Light", Arial, Helvetica, sans-serif;
+    font-weight: 500;
+
+    &__close {
+      position: absolute;
+      right: 1em;
+      background-color: white;
       padding: .75em 1.75em;
+      svg.fa-chevron-up { margin-left: 0.5em; }
     }
-  }
-  &__close {
-    display: none;
-    @include respond-above(sm) {
-      display: block;
+
+    &__header {
+      margin-top: 1.1em;
+      font-size: 1.7em;
     }
-  }
-  &__cancel {
-    display: block;
-    @include respond-above(sm) {
-      display: none;
+
+    &__content {
+      display: flex;
+      justify-content: center;
+      padding: 1em;
+      li {
+        width: 28%;
+        margin: 1.5em;
+      }
+      img {
+        width: 100%;
+        height: auto;
+        border: 3px solid #fff
+      }
+      button:hover {
+        img { border-color: #2cabe2; }
+        .dashboard-submenu__content__title { color: #2cabe2; }
+      }
     }
   }
 }
-

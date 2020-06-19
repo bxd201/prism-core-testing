@@ -1,6 +1,6 @@
 // @flow
 import React, { useRef } from 'react'
-import { Switch, Route, useHistory } from 'react-router-dom'
+import { Switch, Route, useHistory, useLocation } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSquareFull, faPlusCircle } from '@fortawesome/pro-light-svg-icons'
 import { FormattedMessage, useIntl } from 'react-intl'
@@ -9,7 +9,7 @@ import './ColorVisualizerNav.scss'
 
 type DropDownMenuProps = {
   title: string,
-  onImageUpload?: (string, string) => void,
+  onImageUpload?: (string) => void,
   items: {
     img: string,
     imgiPhone?: string,
@@ -34,15 +34,20 @@ export const DropDownMenu = ({ title, onImageUpload, items }: DropDownMenuProps)
   const hiddenImageUploadInput = useRef()
   const selectDevice = (web, iPhone = web, android = web, iPad = web) => (isMobileOnly ? (isIOS ? iPhone : android) : (isTablet ? iPad : web)) || web
   return (
-    <div className='dashboard-submenu'>
-      <h1 className='dashboard-submenu__header'>{title}</h1>
-      <div className='dashboard-submenu__content'>
-        <ul>
+    <>
+      <div className='overlay' />
+      <div className='dashboard-submenu'>
+        <button className='dashboard-submenu__close' onClick={() => history.push('/active')}>
+          <FormattedMessage id='CLOSE' />
+          <FontAwesomeIcon icon={['fa', 'chevron-up']} />
+        </button>
+        <h1 className='dashboard-submenu__header'>{title}</h1>
+        <ul className='dashboard-submenu__content'>
           {items.map(({ img, imgiPhone, imgiPad, imgAndroid, title, titleMobile, content, contentAndroid, contentiPhone, description, url, urlAndroid, urliPhone, urliPad, uploadsImage }, i) => {
             return (
               <li key={i}>
                 <button onClick={() => uploadsImage && hiddenImageUploadInput.current ? hiddenImageUploadInput.current.click() : history.push(selectDevice(url, urlAndroid, urliPhone, urliPad))}>
-                  <div className='dashboard-submenu-image' style={{ backgroundImage: `url("${selectDevice(img, imgiPhone, imgAndroid, imgiPad)}")` }} />
+                  <img className='dashboard-submenu-image' src={selectDevice(img, imgiPhone, imgAndroid, imgiPad)} alt='' />
                   <h3 className='dashboard-submenu__content__title'>{selectDevice(title, titleMobile)}</h3>
                   <p className='dashboard-submenu__content__content'>{selectDevice(content, contentiPhone, contentAndroid)}</p>
                   {description && <p className='dashboard-submenu__content__tip'>{description}</p>}
@@ -53,7 +58,7 @@ export const DropDownMenu = ({ title, onImageUpload, items }: DropDownMenuProps)
                     style={{ display: 'none' }}
                     type='file'
                     onChange={e => {
-                      onImageUpload && onImageUpload(URL.createObjectURL(e.target.files[0]), url)
+                      onImageUpload && onImageUpload(URL.createObjectURL(e.target.files[0]))
                       history.push(selectDevice(url, urlAndroid, urliPhone, urliPad))
                     }}
                   />
@@ -63,19 +68,58 @@ export const DropDownMenu = ({ title, onImageUpload, items }: DropDownMenuProps)
           })}
         </ul>
       </div>
-      <button className='dashboard-submenu__close' onClick={() => history.push('/active')}>
-        <FormattedMessage id='CLOSE' />
-        <FontAwesomeIcon icon={['fa', 'chevron-up']} />
-      </button>
-    </div>
+    </>
   )
 }
 
 export default ({ onImageUpload = () => {} }: { onImageUpload?: (string) => void }) => {
   const { messages } = useIntl()
   const history = useHistory()
+  const location = useLocation()
   return (
     <nav className='cvw-navigation-wrapper'>
+      <ul className='cvw-navigation-wrapper__center' role='presentation'>
+        <li>
+          <button className={`cvw-nav-btn ${location.pathname === '/active/colors' ? 'active' : ''}`} onClick={() => history.push('/active/colors')}>
+            <span className='fa-layers fa-fw cvw__btn-overlay__svg'>
+              <FontAwesomeIcon icon={faSquareFull} size='xs' transform={{ rotate: 10 }} />
+              <FontAwesomeIcon icon={faSquareFull} size='sm' transform={{ rotate: 0 }} />
+              <FontAwesomeIcon icon={faSquareFull} size='1x' transform={{ rotate: 350 }} />
+              <FontAwesomeIcon icon={faPlusCircle} size='xs' />
+            </span>
+            <FormattedMessage id='NAV_LINKS.EXPLORE_COLORS' />
+          </button>
+        </li>
+        <li>
+          <button className={`cvw-nav-btn ${location.pathname === '/active/inspiration' ? 'active' : ''}`} onClick={() => history.push('/active/inspiration')}>
+            <FontAwesomeIcon className='cvw__btn-overlay__svg' icon={['fal', 'lightbulb']} size='1x' />
+            <FormattedMessage id='NAV_LINKS.GET_INSPIRED' />
+          </button>
+        </li>
+        <li>
+          <button className={`cvw-nav-btn ${location.pathname === '/active/scenes' ? 'active' : ''}`} onClick={() => history.push('/active/scenes')}>
+            <span className='fa-layers fa-fw cvw__btn-overlay__svg'>
+              <FontAwesomeIcon icon={faSquareFull} />
+              <FontAwesomeIcon icon={['fa', 'brush']} size='sm' transform={{ rotate: 320 }} />
+            </span>
+            <FormattedMessage id='NAV_LINKS.PAINT_A_PHOTO' />
+          </button>
+        </li>
+      </ul>
+      <ul className='cvw-navigation-wrapper__right' role='presentation'>
+        <li>
+          <button className={`cvw-nav-btn ${location.pathname === '/active/my-ideas' ? 'active' : ''}`} onClick={() => history.push('/active/my-ideas')}>
+            <div className='cvw__btn-overlay' />
+            <FormattedMessage id='NAV_LINKS.MY_IDEAS' />
+          </button>
+        </li>
+        <li>
+          <button className={`cvw-nav-btn ${location.pathname === '/active/help' ? 'active' : ''}`} onClick={() => history.push('/active/help')}>
+            <div className='cvw__btn-overlay' />
+            <FormattedMessage id='NAV_LINKS.HELP' />
+          </button>
+        </li>
+      </ul>
       <Switch>
         <Route path='/active/colors'>
           <DropDownMenu
@@ -160,51 +204,6 @@ export default ({ onImageUpload = () => {} }: { onImageUpload?: (string) => void
               }
             ]}
           />
-        </Route>
-        <Route>
-          <ul className='cvw-navigation-wrapper__center' role='presentation'>
-            <li>
-              <button className='cvw-nav-btn' onClick={() => history.push('/active/colors')}>
-                <span className='fa-layers fa-fw cvw__btn-overlay__svg'>
-                  <FontAwesomeIcon icon={faSquareFull} size='xs' transform={{ rotate: 10 }} />
-                  <FontAwesomeIcon icon={faSquareFull} size='sm' transform={{ rotate: 0 }} />
-                  <FontAwesomeIcon icon={faSquareFull} size='1x' transform={{ rotate: 350 }} />
-                  <FontAwesomeIcon icon={faPlusCircle} size='xs' />
-                </span>
-                <div className='cvw__btn-overlay' />
-                <FormattedMessage id='NAV_LINKS.EXPLORE_COLORS' />
-              </button>
-            </li>
-            <li>
-              <button className='cvw-nav-btn' onClick={() => history.push('/active/inspiration')}>
-                <FontAwesomeIcon className='cvw__btn-overlay__svg' icon={['fal', 'lightbulb']} size='1x' />
-                <div className='cvw__btn-overlay' />
-                <FormattedMessage id='NAV_LINKS.GET_INSPIRED' />
-              </button>
-            </li>
-            <li>
-              <button className='cvw-nav-btn' onClick={() => history.push('/active/scenes')}>
-                <FontAwesomeIcon icon={faSquareFull} />
-                <FontAwesomeIcon icon={['fa', 'brush']} size='sm' transform={{ rotate: 320 }} />
-                <div className='cvw__btn-overlay' />
-                <FormattedMessage id='NAV_LINKS.PAINT_A_PHOTO' />
-              </button>
-            </li>
-          </ul>
-          <ul className='cvw-navigation-wrapper__right' role='presentation'>
-            <li>
-              <button className='cvw-nav-btn' onClick={() => history.push('/active/my-ideas')}>
-                <div className='cvw__btn-overlay' />
-                <FormattedMessage id='NAV_LINKS.MY_IDEAS' />
-              </button>
-            </li>
-            <li>
-              <button className='cvw-nav-btn' onClick={() => history.push('/active/help')}>
-                <div className='cvw__btn-overlay' />
-                <FormattedMessage id='NAV_LINKS.HELP' />
-              </button>
-            </li>
-          </ul>
         </Route>
       </Switch>
     </nav>
