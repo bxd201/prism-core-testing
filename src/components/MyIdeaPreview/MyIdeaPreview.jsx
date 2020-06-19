@@ -192,13 +192,13 @@ const MyIdeaPreview = ({ openScene }: MyIdeaPreviewProps) => {
       dispatch(setSelectedSceneStatus(null))
       if (selectedScene.savedSceneType === SCENE_TYPE.anonCustom) {
         dispatch(setLayersForPaintScene(backgroundCanvasRef.current.toDataURL(), openPaintedProject ? layersRef.current : null, selectedScene.palette, initialWidth, initialHeight))
-        openScene(<ImageRotateContainer isFromMyIdeas isPaintScene checkIsPaintSceneUpdate={false} showPaintScene imgUrl='' />)
+        openScene(<ImageRotateContainer isFromMyIdeas isPaintScene checkIsPaintSceneUpdate={false} showPaintScene imgUrl='' />, 'PaintScene')
       } else if (selectedScene.savedSceneType === SCENE_TYPE.anonStock) {
         selectedScene.openUnpaintedStockScene = !openPaintedProject
         dispatch(unpaintSceneSurfaces(selectedScene.stockSceneData.id))
         dispatch(activateOnlyScene(selectedScene.stockSceneData.id))
         dispatch(setSelectedSceneStatus(selectedScene))
-        openScene(<SceneManager expertColorPicks hideSceneSelector scenes={[selectedScene]} />)
+        openScene(<SceneManager expertColorPicks hideSceneSelector scenes={[selectedScene]} />, 'StockScene')
       }
       history.push('/active')
     }

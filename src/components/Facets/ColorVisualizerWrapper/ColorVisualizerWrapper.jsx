@@ -40,6 +40,7 @@ export const CVW = () => {
   const hiddenFileUploadInput = useRef()
   const [imgUrl, setImgUrl] = useState()
   const [activeScene: Element, setActiveScene: (Element) => void] = useState(<SceneManager expertColorPicks hideSceneSelector />)
+  const [lastActiveComponent: string, setLastActiveComponent: (string) => void] = useState('StockScene')
   const [isLoading: boolean, setIsLoading: boolean => void] = useState(true)
 
   setTimeout(() => setIsLoading(false), 500)
@@ -81,7 +82,10 @@ export const CVW = () => {
                 <Route path='/active/expert-colors' render={() => <ExpertColorPicks isExpertColor />} />
                 <Route path='/active/color-from-image' render={() => <InspiredScene />} />
                 <Route path='/active/paint-photo' render={() => <SampleScenesWrapper activateScene={activateSceneFn} />} />
-                <Route path='/my-ideas-preview' render={() => <MyIdeaPreview openScene={setActiveScene} />} />
+                <Route path='/my-ideas-preview' render={() => <MyIdeaPreview openScene={(scene, type) => {
+                  setActiveScene(scene)
+                  setLastActiveComponent(type)
+                }} />} />
                 <Route path='/active/my-ideas' render={() => <MyIdeasContainer />} />
                 <Route path='/active/help' render={() => <Help />} />
                 <Route path='/active/paint-scene' render={() => <ImageRotateContainer isFromMyIdeas={false} isPaintScene showPaintScene imgUrl={imgUrl} />} />
@@ -96,7 +100,7 @@ export const CVW = () => {
           <LivePalette />
         </div>
         <div className='cvw__root-container__footer--secondary'>
-          <SaveOptions activeComponent='PaintScene' />
+          <SaveOptions activeComponent={lastActiveComponent} />
         </div>
       </div>
     </div>
