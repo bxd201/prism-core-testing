@@ -16,10 +16,6 @@ function QRCodeUploader ({ setUploadedImage }) {
   const isLoggedIn = useSelector(state => state.user)
   const storageRef = firebase.storage().ref()
 
-  useEffect(() => {
-    console.log(isLoggedIn.uid)
-  }, [isLoggedIn])
-
   const handleUpload = useCallback((e) => {
     const queryString = window.location.search
     const params = queryString.replace('?', '').split('&')
@@ -49,7 +45,7 @@ function QRCodeUploader ({ setUploadedImage }) {
   return (
     <>
       {FIREBASE_AUTH_ENABLED && !isLoggedIn ? <AnonLogin /> : null}
-      <QRCode value={`https://replatform-prism-web.ebus.swaws/templates/iris/iris.html?uid=${isLoggedIn.uid}`} />
+      {isLoggedIn && <QRCode value={`https://replatform-prism-web.ebus.swaws/templates/iris/iris.html?uid=${isLoggedIn.uid}`} />}
       <FileInput onChange={handleUpload} disabled={false} id={FILE_UPLOAD_ID} placeholder={`SELECT IMAGE`} />
       <p><button onClick={downloadFirebaseImg}>Push Button, Get Bacon</button></p>
       <p>{firebaseStatusMsg}</p>
