@@ -45,9 +45,10 @@ function QRCodeUploader ({ setUploadedImage }) {
   return (
     <>
       {FIREBASE_AUTH_ENABLED && !isLoggedIn ? <AnonLogin /> : null}
-      {isLoggedIn && <QRCode value={`https://replatform-prism-web.ebus.swaws/templates/iris/iris.html?uid=${isLoggedIn.uid}`} />}
-      <FileInput onChange={handleUpload} disabled={false} id={FILE_UPLOAD_ID} placeholder={`SELECT IMAGE`} />
-      <p><button onClick={downloadFirebaseImg}>Push Button, Get Bacon</button></p>
+      {isLoggedIn && <QRCode value={`/templates/iris/iris.html?uid=${isLoggedIn.uid}`} />}
+      {isLoggedIn && <p><a href={`/templates/iris/iris.html?uid=${isLoggedIn.uid}`}>Click Here to Upload Image (this link is the same as the QR code)</a></p>}
+      <FileInput onChange={handleUpload} disabled={false} id={FILE_UPLOAD_ID} placeholder={`Select Image (QR Code Version)`} />
+      <p><button className='prism-nav-btn' onClick={downloadFirebaseImg}>Push Button, Get Bacon</button></p>
       <p>{firebaseStatusMsg}</p>
       <hr />
     </>
