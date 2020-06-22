@@ -76,6 +76,7 @@
     "jimp": "^0.9.3",
     "lodash": "4.17.15",
     "pako": "^1.0.10",
+    "qrcode.react": "^1.0.0",
     "react-aria-live": "2.0.5",
     "react-aria-menubutton": "6.2.0",
     "react-device-detect": "^1.11.14",
