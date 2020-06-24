@@ -34,8 +34,7 @@ export const CVW = () => {
 
   const toggleCompareColor: boolean = useSelector(store => store.lp.toggleCompareColor)
   const colorDetailsModalShowing: boolean = useSelector(store => store.colors.colorDetailsModal.showing)
-  const isActiveStockScenePolluted: boolean = useSelector(store => store.scenes.isActiveStockScenePolluted)
-  const isActivePaintScenePolluted: boolean = useSelector(store => store.scenes.isActivePaintScenePolluted)
+  const isActiveScenePolluted: boolean = useSelector(store => store.scenes.isActiveStockScenePolluted && store.scenes.isActivePaintScenePolluted)
 
   const hiddenFileUploadInput = useRef()
   const [imgUrl, setImgUrl] = useState()
@@ -45,14 +44,14 @@ export const CVW = () => {
 
   setTimeout(() => setIsLoading(false), 500)
 
-  const activateSceneFn = (id: number): void => {
+  const activateStockScene = (id) => {
     const activate = () => {
       dispatch(unpaintSceneSurfaces(id))
       dispatch(activateOnlyScene(id))
       setActiveScene(<SceneManager expertColorPicks hideSceneSelector />)
       history.push('/active')
     }
-    (isActiveStockScenePolluted || isActivePaintScenePolluted) ? dispatch(showWarningModal(activate)) : activate()
+    isActiveScenePolluted ? dispatch(showWarningModal(activate)) : activate()
   }
 
   if (isLoading) { return <PreLoadingSVG /> }
@@ -70,7 +69,11 @@ export const CVW = () => {
               <ColorVisualizerNav
                 onImageUpload={(imgUrl, url) => {
                   setImgUrl(imgUrl)
-                  url === '/active/paint-scene' && setActiveScene(<ImageRotateContainer isFromMyIdeas isPaintScene checkIsPaintSceneUpdate={false} showPaintScene imgUrl={imgUrl} />)
+                  if (url === '/active/paint-scene') {
+                    setActiveScene(<ImageRotateContainer isPaintScene showPaintScene imgUrl={imgUrl} />)
+                  } else if (url === '/active/match-photo') {
+                    setActiveScene(<ImageRotateContainer showPaintScene imgUrl={imgUrl} />)
+                  }
                 }}
               />
               <Switch>
@@ -78,10 +81,10 @@ export const CVW = () => {
                 <Route path='/active/color-wall(/.*)?' render={() => <ColorWallPage displayAddButton displayInfoButton displayDetailsLink={false} />} />
                 <Route path='/active/color-collections' render={() => <ColorCollections isExpertColor={false} {...location.state} />} />
                 <Route path='/active/match-photo' render={() => <ImageRotateContainer showPaintScene imgUrl={imgUrl} />} />
-                <Route path='/active/use-our-image' render={() => <SampleScenesWrapper isColorTinted activateScene={activateSceneFn} />} />
+                <Route path='/active/use-our-image' render={() => <SampleScenesWrapper isColorTinted activateScene={activateStockScene} />} />
                 <Route path='/active/expert-colors' render={() => <ExpertColorPicks isExpertColor />} />
                 <Route path='/active/color-from-image' render={() => <InspiredScene />} />
-                <Route path='/active/paint-photo' render={() => <SampleScenesWrapper activateScene={activateSceneFn} />} />
+                <Route path='/active/paint-photo' render={() => <SampleScenesWrapper activateScene={activateStockScene} />} />
                 <Route path='/my-ideas-preview' render={() => <MyIdeaPreview openScene={(scene, type) => {
                   setActiveScene(scene)
                   setLastActiveComponent(type)

@@ -9,7 +9,7 @@ import './ColorVisualizerNav.scss'
 
 type DropDownMenuProps = {
   title: string,
-  onImageUpload?: (string) => void,
+  onImageUpload?: (imgUrl: string, url: string) => void,
   items: {
     img: string,
     imgiPhone?: string,
@@ -58,7 +58,7 @@ export const DropDownMenu = ({ title, onImageUpload, items }: DropDownMenuProps)
                     style={{ display: 'none' }}
                     type='file'
                     onChange={e => {
-                      onImageUpload && onImageUpload(URL.createObjectURL(e.target.files[0]))
+                      onImageUpload && onImageUpload(URL.createObjectURL(e.target.files[0]), url)
                       history.push(selectDevice(url, urlAndroid, urliPhone, urliPad))
                     }}
                   />
