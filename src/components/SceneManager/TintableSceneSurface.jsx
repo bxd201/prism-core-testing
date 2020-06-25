@@ -2,7 +2,7 @@
 import React, { PureComponent } from 'react'
 
 import { SCENE_TYPES } from 'constants/globals'
-import { getBaseUrl } from '../../shared/utils/util'
+import getBeforeHash from 'src/shared/utils/getBeforeHash.util'
 
 type Props = {
   image: string,
@@ -18,7 +18,7 @@ class TintableSceneSurface extends PureComponent<Props> {
 
   getSvgContents () {
     const { image, maskId, filterId, type } = this.props
-    const baseUrl = getBaseUrl(window.location.href)
+    const baseUrl = getBeforeHash(window.location.href)
     const mask = `url("${baseUrl}#${maskId}")`
     const filter = `url("${baseUrl}#${filterId}")`
 

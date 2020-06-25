@@ -1,15 +1,11 @@
-export default (value) => {
-  const t = typeof value
-  if (value === 'string') {
-    const valueLc = value.toLowerCase()
-    if (valueLc === 'true') {
-      return true
-    } else if (valueLc === 'false') {
-      return false
-    }
-  } else if (t === 'boolean') {
-    return value
+// @flow
+function translateBooleanFlexibly (value: any): boolean {
+  switch (typeof value) {
+    case 'string': { return value.toLowerCase() === 'true' }
+    case 'boolean': { return value }
   }
 
   return false
 }
+
+export default translateBooleanFlexibly
