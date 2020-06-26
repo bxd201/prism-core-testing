@@ -198,37 +198,64 @@ export const checkIntersection = (areaA, areaB, getIntersectionData = false) => 
   }
 }
 
-export const repaintImageByPath = (
-  imagePathList: { data: number[], color: number[], isEnabled: Boolean, type: string, id: string, pixelIndexAlphaMap?: number[] }[],
-  canvas: { current: HTMLCanvasElement },
-  width: number,
-  height: number,
-  isEraseRepaint: boolean = false, // not being used
-  groupIds: string[] = []
-) => {
-  if (imagePathList.length < 1) { return }
-  const ctx: CanvasRenderingContext2D = canvas.current.getContext('2d')
-  let imageData: ImageData = ctx.getImageData(0, 0, width, height)
-  imagePathList
-    .filter(imagePath => {
-      const isUnselectType = ['unselect', 'unselect-group', 'ungroup'].includes(imagePath.type)
-      const containsGroupId = groupIds.includes(imagePath.id)
-      return imagePath.data && imagePath.isEnabled && ((!isUnselectType && !containsGroupId) || (imagePath.type === 'select-group' && containsGroupId))
-    })
-    .forEach(({ id, data, color, type, pixelIndexAlphaMap }) => {
-      data.forEach((d: number) => {
-        imageData.data[d] = color[0]
-        imageData.data[d + 1] = color[1]
-        imageData.data[d + 2] = color[2]
-        if (['delete', 'delete-group'].includes(type)) {
-          imageData.data[d + 3] = 0
-        } else if (imageData.data[d + 3] === undefined && pixelIndexAlphaMap && pixelIndexAlphaMap[d]) {
-          imageData.data[d + 3] = pixelIndexAlphaMap[d]
+export const repaintImageByPath = (imagePathList, canvas, width, height, isEraseRepaint = false, groupIds = [], isSwitchTool = false) => {
+  const ctx = canvas.current.getContext('2d')
+  let imageData = ctx.getImageData(0, 0, width, height)
+  let data = imageData.data
+  let maxDrawOrder = 0
+  for (let i = 0; i < imagePathList.length; i++) {
+    if ((!isEraseRepaint && !imagePathList[i].hasOwnProperty('drawOrder'))) {
+      imagePathList[i].drawOrder = maxDrawOrder + 1
+    }
+    maxDrawOrder = Math.max(maxDrawOrder, imagePathList[i].drawOrder)
+  }
+
+  const redrawByOrder = imagePathList.map((item, i) => {
+    return {
+      drawOrder: item.drawOrder,
+      historyIndex: i
+    }
+  }).sort((a, b) => {
+    if (a.drawOrder < b.drawOrder) {
+      return -1
+    }
+    if (a.drawOrder > b.drawOrder) {
+      return 1
+    }
+    return 0
+  })
+
+  redrawByOrder.forEach(item => {
+    const selectedItem = imagePathList[item.historyIndex]
+    const path = selectedItem.data
+    const color = selectedItem.color
+    const pixelIndexAlphaMap = selectedItem.pixelIndexAlphaMap
+    const isEnabled = selectedItem.isEnabled
+    const type = selectedItem.type
+    const id = selectedItem.id
+    const unSelectType = ['unselect', 'unselect-group', 'ungroup']
+    if ((path && isEnabled && !unSelectType.includes(type) && !groupIds.includes(id)) || (path && isEnabled && type === 'select-group' && groupIds.includes(id))) {
+      for (let j = 0; j < path.length; j++) {
+        data[path[j]] = color[0]
+        data[path[j] + 1] = color[1]
+        data[path[j] + 2] = color[2]
+        if (type === 'delete' || type === 'delete-group') {
+          data[path[j] + 3] = 0
         } else {
-          imageData.data[d + 3] = 255
+          if (data[path[j] + 3]) {
+            data[path[j] + 3] = 255
+          } else {
+            if (pixelIndexAlphaMap !== undefined && pixelIndexAlphaMap[path[j]]) {
+              data[path[j] + 3] = pixelIndexAlphaMap[path[j]]
+            } else {
+              data[path[j] + 3] = 255
+            }
+          }
         }
-      })
-    })
+      }
+    }
+  })
+
   ctx.putImageData(imageData, 0, 0)
 }
 
