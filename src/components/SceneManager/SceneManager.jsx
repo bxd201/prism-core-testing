@@ -359,7 +359,7 @@ export class SceneManager extends PureComponent<Props, State> {
       e.stopPropagation()
       this.setState({ showSelectPaletteModal: false })
     },
-    text: intl.messages['PAINT_SCENE.CANCEL'],
+    text: intl.formatMessage({ id: 'PAINT_SCENE.CANCEL' }),
     type: DYNAMIC_MODAL_STYLE.primary },
     { callback: (e) => {
       e.preventDefault()
@@ -367,13 +367,13 @@ export class SceneManager extends PureComponent<Props, State> {
       this.loadPalette()
       this.setState({ showSelectPaletteModal: false })
     },
-    text: intl.messages['PAINT_SCENE.OK'],
+    text: intl.formatMessage({ id: 'PAINT_SCENE.OK' }),
     type: DYNAMIC_MODAL_STYLE.primary }]
 
     return {
       selectPaletteActions,
-      selectPaletteTitle: intl.messages['PAINT_SCENE.SELECT_PALETTE_TITLE'],
-      selectPaletteDescription: intl.messages['PAINT_SCENE.SELECT_PALETTE_DESC']
+      selectPaletteTitle: intl.formatMessage({ id: 'PAINT_SCENE.SELECT_PALETTE_TITLE' }),
+      selectPaletteDescription: intl.formatMessage({ id: 'PAINT_SCENE.SELECT_PALETTE_DESC' })
     }
   }
 
@@ -449,25 +449,25 @@ export class SceneManager extends PureComponent<Props, State> {
             description={selectPaletteDescription} /> : null}
           {showSaveSceneModalFlag && livePaletteColorCount !== 0 ? <DynamicModal
             actions={[
-              { text: intl.messages['SAVE_SCENE_MODAL.SAVE'], callback: this.saveSceneFromModal },
-              { text: intl.messages['SAVE_SCENE_MODAL.CANCEL'], callback: this.hideSaveSceneModal }
+              { text: intl.formatMessage({ id: 'SAVE_SCENE_MODAL.SAVE' }), callback: this.saveSceneFromModal },
+              { text: intl.formatMessage({ id: 'SAVE_SCENE_MODAL.CANCEL' }), callback: this.hideSaveSceneModal }
             ]}
             previewData={this.getPreviewData()}
             height={getRefDimension(this.wrapperRef, 'height')}
             allowInput
-            inputDefault={`${intl.messages['SAVE_SCENE_MODAL.DEFAULT_DESCRIPTION']} ${this.props.sceneCount}`} /> : null}
+            inputDefault={`${intl.formatMessage({ id: 'SAVE_SCENE_MODAL.DEFAULT_DESCRIPTION' })} ${this.props.sceneCount}`} /> : null}
           {showSaveSceneModalFlag && livePaletteColorCount === 0 ? <DynamicModal
             actions={[
-              { text: intl.messages['SAVE_SCENE_MODAL.CANCEL'], callback: this.hideSaveSceneModal }
+              { text: intl.formatMessage({ id: 'SAVE_SCENE_MODAL.CANCEL' }), callback: this.hideSaveSceneModal }
             ]}
-            description={intl.messages['SAVE_SCENE_MODAL.UNABLE_TO_SAVE_WARNING']}
+            description={intl.formatMessage({ id: 'SAVE_SCENE_MODAL.UNABLE_TO_SAVE_WARNING' })}
             height={getRefDimension(this.wrapperRef, 'height')} /> : null}
           { /* ----------Confirm modal ---------- */ }
           {showSavedConfirmModalFlag ? <DynamicModal
             actions={[
-              { text: intl.messages['SCENE_MANAGER.OK'], callback: this.hideSavedConfirmModal }
+              { text: intl.formatMessage({ id: 'SCENE_MANAGER.OK' }), callback: this.hideSavedConfirmModal }
             ]}
-            description={intl.messages['SCENE_MANAGER.SCENE_SAVED']}
+            description={intl.formatMessage({ id: 'SCENE_MANAGER.SCENE_SAVED' })}
             height={getRefDimension(this.wrapperRef, 'height')} /> : null}
           {activeScenes.length === 1 && expertColorPicks ? <ColorPickerSlide {...getSceneInfoById(find(scenes, { 'id': activeScenes[0] }), sceneStatus).variant} /> : null}
           {!hideSceneSelector && <div className={`${SceneManager.baseClass}__block ${SceneManager.baseClass}__block--tabs`} role='radiogroup' aria-label='scene selector'>

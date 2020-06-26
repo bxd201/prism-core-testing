@@ -3,6 +3,7 @@ import React from 'react'
 import './BrushTypes.scss'
 import { brushLargeSize, brushMediumSize, brushSmallSize, brushTinySize, brushRoundShape, brushShapesTypes } from './data'
 import RadioButton from './RadioButton'
+import { useIntl } from 'react-intl'
 
 const baseClass = 'brush-types'
 const wrapperClass = `${baseClass}__wrapper`
@@ -14,6 +15,7 @@ const brushButtonMediumClass = `${brushButtonClass}--medium`
 const brushButtonSmallClass = `${brushButtonClass}--small`
 const brushButtonTinyClass = `${brushButtonClass}--tiny`
 const brushButtonActiveClass = `${brushButtonClass}--active`
+const ARIA_LABEL = 'PAINT_TOOLS.ICON_SELECTED_INFO'
 
 type Props = {
   activeWidth: number,
@@ -23,6 +25,7 @@ type Props = {
 }
 
 export function BrushTypes ({ activeWidth, activeShape, setBrushShapeSize, brushTypeName }: Props) {
+  const intl = useIntl()
   const brushTypesRefs = brushShapesTypes.reduce((acc, value) => {
     acc[value.id] = React.createRef()
     return acc
@@ -92,7 +95,7 @@ export function BrushTypes ({ activeWidth, activeShape, setBrushShapeSize, brush
           enableBrushType={enableBrushType}
           isSelected={(activeWidth === brushType && activeShape === brushShape)}
           value={`${brushShape}-${brushType}`}
-          ariaLabel={`the ${brushType} pixel wide, ${brushShape} ${brushTypeName} brush`}
+          ariaLabel={intl.formatMessage({ id: ARIA_LABEL }, { brushType: brushType, brushShape: brushShape, brushTypeName: brushTypeName })}
           id={`${brushTypeName}${index}`}
           ref={brushTypesRefs[index]}
           brushTypeName={brushTypeName}

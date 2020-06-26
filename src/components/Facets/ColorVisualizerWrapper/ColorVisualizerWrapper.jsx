@@ -571,7 +571,7 @@ export class ColorVisualizerWrapper extends Component<Props> {
     let currentSystemMessageBody = currentSystemMessage ? currentSystemMessage.messageBody : null
 
     if (currentSystemMessage && currentSystemMessage.errorKey) {
-      currentSystemMessageBody = this.props.intl.messages[`SYSTEM.${currentSystemMessage.errorKey}`]
+      currentSystemMessageBody = this.props.intl.formatMessage({ id: `SYSTEM.${currentSystemMessage.errorKey}` })
     }
 
     const currentSystemMessageType = currentSystemMessage ? currentSystemMessage.messageType : null
@@ -586,7 +586,7 @@ export class ColorVisualizerWrapper extends Component<Props> {
               this.props.dismissSystemMessage(currentSystemMessageId)
             }}>
               <FontAwesomeIcon
-                title={this.props.intl.messages.SAVE_MASKS}
+                title={this.props.intl.formatMessage({ id: 'SAVE_MASKS' })}
                 icon={['fa', 'window-close']}
                 size='2x' />
             </button>

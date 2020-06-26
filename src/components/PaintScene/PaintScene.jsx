@@ -294,7 +294,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       e.stopPropagation()
       this.setState({ showSelectPaletteModal: false })
     },
-    text: intl.messages['PAINT_SCENE.CANCEL'],
+    text: intl.formatMessage({ id: 'PAINT_SCENE.CANCEL' }),
     type: DYNAMIC_MODAL_STYLE.primary },
     { callback: (e) => {
       e.preventDefault()
@@ -302,13 +302,13 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       this.loadPalette()
       this.setState({ showSelectPaletteModal: false })
     },
-    text: intl.messages['PAINT_SCENE.OK'],
+    text: intl.formatMessage({ id: 'PAINT_SCENE.OK' }),
     type: DYNAMIC_MODAL_STYLE.primary }]
 
     return {
       selectPaletteActions,
-      selectPaletteTitle: intl.messages['PAINT_SCENE.SELECT_PALETTE_TITLE'],
-      selectPaletteDescription: intl.messages['PAINT_SCENE.SELECT_PALETTE_DESC']
+      selectPaletteTitle: intl.formatMessage({ id: 'PAINT_SCENE.SELECT_PALETTE_TITLE' }),
+      selectPaletteDescription: intl.formatMessage({ id: 'PAINT_SCENE.SELECT_PALETTE_DESC' })
     }
   }
 
@@ -1107,31 +1107,31 @@ canvasHeight
             description={selectPaletteDescription} /> : null}
           {showSaveSceneModal && livePaletteColorCount !== 0 ? <DynamicModal
             actions={[
-              { text: intl.messages['SAVE_SCENE_MODAL.SAVE'], callback: this.saveSceneFromModal },
-              { text: intl.messages['SAVE_SCENE_MODAL.CANCEL'], callback: this.hideSaveSceneModal }
+              { text: intl.formatMessage({ id: 'SAVE_SCENE_MODAL.SAVE' }), callback: this.saveSceneFromModal },
+              { text: intl.formatMessage({ id: 'SAVE_SCENE_MODAL.CANCEL' }), callback: this.hideSaveSceneModal }
             ]}
             previewData={this.getPreviewData()}
             height={canvasHeight}
             allowInput
-            inputDefault={`${intl.messages['SAVE_SCENE_MODAL.DEFAULT_DESCRIPTION']} ${this.props.sceneCount}`} /> : null}
+            inputDefault={`${intl.formatMessage({ id: 'SAVE_SCENE_MODAL.DEFAULT_DESCRIPTION' })} ${this.props.sceneCount}`} /> : null}
           {showSaveSceneModal && livePaletteColorCount === 0 ? <DynamicModal
             actions={[
-              { text: intl.messages['SAVE_SCENE_MODAL.CANCEL'], callback: this.hideSaveSceneModal }
+              { text: intl.formatMessage({ id: 'SAVE_SCENE_MODAL.CANCEL' }), callback: this.hideSaveSceneModal }
             ]}
-            description={intl.messages['SAVE_SCENE_MODAL.UNABLE_TO_SAVE_WARNING']}
+            description={intl.formatMessage({ id: 'SAVE_SCENE_MODAL.UNABLE_TO_SAVE_WARNING' })}
             height={canvasHeight} /> : null}
           { /* ----------Confirm modal ---------- */ }
           { this.props.showSavedConfirmModalFlag ? <DynamicModal
             actions={[
-              { text: intl.messages['PAINT_SCENE.OK_DISMISS'], callback: this.props.hideSavedConfirmModal }
+              { text: intl.formatMessage({ id: 'PAINT_SCENE.OK_DISMISS' }), callback: this.props.hideSavedConfirmModal }
             ]}
-            description={intl.messages['PAINT_SCENE.SCENE_SAVED']}
+            description={intl.formatMessage({ id: 'PAINT_SCENE.SCENE_SAVED' })}
             height={canvasHeight} /> : null}
           {/* the 35 in the padding is the radius of the circle loader. Note the bitwise rounding */}
           {this.props.savingMasks || this.state.loadingMasks ? <div style={{ height: canvasHeight }} className='spinner'><div style={{ padding: ((canvasHeight / 2) | 0) - 35 }}><CircleLoader /></div></div> : null}
           {this.props.savingMasks ? <SaveMasks processMasks={this.processMasks} /> : null }
-          <canvas className={`${canvasClass} ${showOriginalCanvas ? `${canvasShowByZindex}` : `${canvasHideByZindex}`} ${this.isPortrait ? portraitOrientation : ''}`} name='paint-scene-canvas-first' ref={this.CFICanvas}>{intl.messages.CANVAS_UNSUPPORTED}</canvas>
-          <canvas style={{ opacity: showOriginalCanvas ? 1 : 0.8 }} className={`${canvasClass} ${paintCursor} ${canvasSecondClass} ${this.isPortrait ? portraitOrientation : ''}`} name='paint-scene-canvas-second' ref={this.CFICanvas2}>{intl.messages.CANVAS_UNSUPPORTED}</canvas>
+          <canvas className={`${canvasClass} ${showOriginalCanvas ? `${canvasShowByZindex}` : `${canvasHideByZindex}`} ${this.isPortrait ? portraitOrientation : ''}`} name='paint-scene-canvas-first' ref={this.CFICanvas}>{intl.formatMessage({ id: 'CANVAS_UNSUPPORTED' })}</canvas>
+          <canvas style={{ opacity: showOriginalCanvas ? 1 : 0.8 }} className={`${canvasClass} ${paintCursor} ${canvasSecondClass} ${this.isPortrait ? portraitOrientation : ''}`} name='paint-scene-canvas-second' ref={this.CFICanvas2}>{intl.formatMessage({ id: 'CANVAS_UNSUPPORTED' })}</canvas>
           <canvas
             onMouseDown={this.onPanStart}
             style={{ opacity: 1 }}
@@ -1140,11 +1140,11 @@ canvasHeight
               ? canvasHiddenByVisibility : canvasVisibleByVisibility} ${this.isPortrait ? portraitOrientation : ''}`}
             name='paint-scene-canvas-paint'
             ref={this.CFICanvasPaint}>
-            {intl.messages.CANVAS_UNSUPPORTED}
+            {intl.formatMessage({ id: 'CANVAS_UNSUPPORTED' })}
           </canvas>
           <canvas className={`${canvasClass} ${canvasSecondClass}`} ref={this.CFICanvas4} name='paint-scene-canvas-fourth' />
           {this.renderMergeCanvas(this.state.canvasImageUrls)}
-          <img className={`${imageClass}`} ref={this.CFIImage} onLoad={this.initCanvas} onError={this.handleImageErrored} src={bgImageUrl} alt={intl.messages.IMAGE_INVISIBLE} />
+          <img className={`${imageClass}`} ref={this.CFIImage} onLoad={this.initCanvas} onError={this.handleImageErrored} src={bgImageUrl} alt={intl.formatMessage({ id: 'IMAGE_INVISIBLE' })} />
           {layers && canvasHasBeenInitialized ? <MergeColors
             imageUrlList={layers}
             colors={layers.map(item => {

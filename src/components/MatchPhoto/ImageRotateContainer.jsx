@@ -12,7 +12,7 @@ import PrismImage from '../PrismImage/PrismImage'
 import { useSelector, useDispatch } from 'react-redux'
 import { RouteContext } from '../../contexts/RouteContext/RouteContext'
 import './MatchPhoto.scss'
-import { FormattedMessage } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { loadBrandColors } from '../../store/actions/brandColors'
 import MatchPhoto from './MatchPhoto'
 import { LiveMessage } from 'react-aria-live'
@@ -99,7 +99,7 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
   const [isConfirmationModalShown, setConfirmationModalShown] = useState(false)
   const routeContext = useContext(RouteContext)
   const [isImageRotate, setIsImageRotate] = useState(false)
-
+  const { formatMessage } = useIntl()
   const dispatch = useDispatch()
   useEffect(() => { dispatch(loadBrandColors()) }, [])
 
@@ -445,7 +445,7 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
         </div>
         <hr />
       </div>
-      {isImageRotate && <LiveMessage message={`Image rotated ${imageRotationAngle} degree`} aria-live='assertive' clearOnUnmount='true' />}
+      {isImageRotate && <LiveMessage message={formatMessage({ id: 'LIVE_MESSAGE.IMAGE_ANGLE' }, { imageRotationAngle: imageRotationAngle })} aria-live='assertive' clearOnUnmount='true' />}
     </React.Fragment>
   )
 }

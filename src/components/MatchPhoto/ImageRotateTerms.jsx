@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
 import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
-import { FormattedMessage } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 import 'src/scss/convenience/visually-hidden.scss'
 import { KEY_CODES } from 'src/constants/globals'
 
@@ -33,7 +33,7 @@ const ImageRotateTerms = ({ rotateImage, createColorPins, imageData }: Props) =>
   const [hideModal, setHideModal] = useState(false)
   let mouseDown = false
   const btnRef = useRef()
-
+  const { messages } = useIntl()
   useEffect(() => {
     btnRef.current.focus()
   }, [])
@@ -95,7 +95,7 @@ const ImageRotateTerms = ({ rotateImage, createColorPins, imageData }: Props) =>
           <div>
             <span>
               <label
-                aria-label='Accept terms'
+                aria-label={messages['ACCEPT_TERM']}
                 onMouseDown={mouseDownHandler}
                 onMouseUp={mouseUpHandler}
                 onFocus={focusHandler}

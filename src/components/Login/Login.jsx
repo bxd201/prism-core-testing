@@ -1,6 +1,6 @@
 // @flow
 import React, { SyntheticEvent } from 'react'
-import { useIntl } from 'react-intl'
+import { FormattedMessage } from 'react-intl'
 import { login } from '../../store/actions/user'
 import { useDispatch } from 'react-redux'
 
@@ -19,14 +19,13 @@ const Login = (props: loginProps) => {
     dispatch(login(null, null))
   }
 
-  const intl = useIntl()
   // @todo - check for logged in user flow -RS
   return (
     <div className={baseClassName}>
       <div className={sectionClassName}>
         <div className={loginFormClassName}>
           <form>
-            <button className={userButtonClassName} onClick={submitLogin}>{intl.messages.SIGN_IN}</button>
+            <button className={userButtonClassName} onClick={submitLogin}><FormattedMessage id='SIGN_IN' /></button>
           </form>
         </div>
       </div>

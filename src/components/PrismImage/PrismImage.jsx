@@ -45,7 +45,7 @@ const PrismImage = forwardRef((props: PrismImageProps, ref) => {
   }
   return (
     // eslint-disable-next-line react/prop-types
-    props.source ? <><img src={props.source} ref={ref} className='prism-image-comp' onLoad={handleCallback} alt={intl.messages.IMAGE_INVISIBLE} /><canvas className={'prism-image-comp'} ref={canvasRef} /></> : null
+    props.source ? <><img src={props.source} ref={ref} className='prism-image-comp' onLoad={handleCallback} alt={intl.formatMessage({ id: 'IMAGE_INVISIBLE' })} /><canvas className={'prism-image-comp'} ref={canvasRef} /></> : null
   )
 })
 

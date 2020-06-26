@@ -69,7 +69,7 @@ export function PaintToolTip ({ tooltipToolActiveName, closeTooltip, backButtonC
       {!isSelectGroup && <div onMouseEnter={() => showTooltipContentByZindex(parentDivRef)} onMouseLeave={() => hideTooltipContentByZindex(parentDivRef)} className={`${wrapperClass}`} style={wrapperStyle}>
         <div className={`${containerClass}`}>
           <button aria-label='close tooltip' className={`${closeButtonClass}`} onClick={closeTooltip}>
-            <FontAwesomeIcon title={intl.messages['PAINT_TOOLS.CLOSE']} className={`${closeButtonSvgClass}`} icon={['fal', 'times']} size='lg' />
+            <FontAwesomeIcon title={intl.formatMessage({ id: 'PAINT_TOOLS.CLOSE' })} className={`${closeButtonSvgClass}`} icon={['fal', 'times']} size='lg' />
           </button>
           <div className={`${headerClass}`}>
             <FontAwesomeIcon className={``} icon={['fal', 'info-circle']} size='1x' />&nbsp;<span><FormattedMessage id='TOOL_TIPS' /></span>
@@ -80,12 +80,12 @@ export function PaintToolTip ({ tooltipToolActiveName, closeTooltip, backButtonC
           </div>
           <div className={`${footerClass}`}>
             <button tabIndex={tooltipToolActiveNumber === paintAreaTooltipNumber ? '-1' : '0'} className={`${buttonClass} ${buttonLeftClass} ${tooltipToolActiveNumber === paintAreaTooltipNumber ? `${buttonHideClass}` : `${buttonShowClass}`}`} onClick={() => backButtonClickHandler()}>
-              <FontAwesomeIcon title={intl.messages['PAINT_TOOLS.BACK']} icon={['fa', 'chevron-left']} />&nbsp;<span><FormattedMessage id='BACK' /></span>
+              <FontAwesomeIcon title={intl.formatMessage({ id: 'PAINT_TOOLS.BACK' })} icon={['fa', 'chevron-left']} />&nbsp;<span><FormattedMessage id='BACK' /></span>
             </button>
             <span className={`${toolNumberClass}`}>{tooltipToolActiveNumber} of {toolsCount}</span>
             <button className={`${buttonClass} ${buttonRightClass}`} onClick={() => tooltipToolActiveNumber === addColorsTooltipNumber ? closeTooltip() : nextButtonClickHandler()}>
               {(tooltipToolActiveNumber < toolsCount)
-                ? <><span><FormattedMessage id='NEXT' /></span>&nbsp;<FontAwesomeIcon title={intl.messages['PAINT_TOOLS.FORWARD']} icon={['fa', 'chevron-right']} /></>
+                ? <><span><FormattedMessage id='NEXT' /></span>&nbsp;<FontAwesomeIcon title={intl.formatMessage({ id: 'PAINT_TOOLS.FORWARD' })} icon={['fa', 'chevron-right']} /></>
                 : (tooltipToolActiveNumber === addColorsTooltipNumber)
                   ? <span><FormattedMessage id='START_PAINTING' /></span>
                   : ''}
@@ -96,10 +96,10 @@ export function PaintToolTip ({ tooltipToolActiveName, closeTooltip, backButtonC
       </div>}
       {isSelectGroup && <div data-testid='wrapper-select' onMouseEnter={() => showTooltipContentByZindex(parentDivRef)} onMouseLeave={() => hideTooltipContentByZindex(parentDivRef)} className={`${wrapperClass} ${selectGroup}`}>
         <button className={`${closeButtonClass}`} onClick={closeTooltip}>
-          <FontAwesomeIcon title={intl.messages['PAINT_TOOLS.CLOSE']} className={`${closeButtonSvgClass}`} icon={['fal', 'times']} size='lg' />
+          <FontAwesomeIcon title={intl.formatMessage({ id: 'PAINT_TOOLS.CLOSE' })} className={`${closeButtonSvgClass}`} icon={['fal', 'times']} size='lg' />
         </button>
         <div className={`${headerClass}`}>
-          <FontAwesomeIcon title={intl.messages['PAINT_TOOLS.INFO']} className={``} icon={['fal', 'info-circle']} size='1x' />&nbsp;<FormattedMessage id='TOOL_TIPS' />
+          <FontAwesomeIcon title={intl.formatMessage({ id: 'PAINT_TOOLS.INFO' })} className={``} icon={['fal', 'info-circle']} size='1x' />&nbsp;<FormattedMessage id='TOOL_TIPS' />
         </div>
         <div className={`${toolNameClass}`}>{tooltipToolActiveName}</div>
         <div className={`${tooltipContentClass}`}>

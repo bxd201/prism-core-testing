@@ -3,6 +3,7 @@ import React, { useCallback } from 'react'
 import { getContrastYIQ } from '../../../src/shared/helpers/ColorUtils'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useDispatch, useSelector } from 'react-redux'
+import { useIntl } from 'react-intl'
 import { add } from '../../store/actions/live-palette'
 import some from 'lodash/some'
 import './ColorPalette.scss'
@@ -28,6 +29,7 @@ const ColorPalette = ({ palette }: colorPaletteProps) => {
   const mouseDownHandler = (e: SyntheticEvent) => {
     e.preventDefault()
   }
+  const intl = useIntl()
   const clickHandler = useCallback((e: SyntheticEvent) => {
     const color = palette.find((color) => (color.colorNumber === e.currentTarget.dataset.colornumber))
     if (color) dispatch(add(color))
@@ -45,7 +47,7 @@ const ColorPalette = ({ palette }: colorPaletteProps) => {
                   <span className={`${colorInfoName}`}>SW {color.name}</span>
                 </div>
                 <div className={`${checkCircle}`}>
-                  <button data-colornumber={`${color.colorNumber}`} aria-label={`Add ${color.name} to palette`} className={`${toggleCheckIcons}`} tabIndex={some(colorsCurrentlyInLivePalette, color) ? -1 : 0} onClick={clickHandler} onMouseDown={mouseDownHandler}>
+                  <button data-colornumber={`${color.colorNumber}`} aria-label={intl.formatMessage({ id: 'MY_IDEAS.ARIA_LABEL_ADD' }, { colorName: color.name })} className={`${toggleCheckIcons}`} tabIndex={some(colorsCurrentlyInLivePalette, color) ? -1 : 0} onClick={clickHandler} onMouseDown={mouseDownHandler}>
                     <FontAwesomeIcon
                       size='2x'
                       style={{ color: getContrastYIQ(color.hex) }}

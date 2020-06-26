@@ -60,7 +60,7 @@ export default (props: Props) => {
             style={{ flexDirection: 'column' }}
           >
             <FontAwesomeIcon
-              title={intl.messages.DOWNLOAD_MASK}
+              title={intl.formatMessage({ id: 'DOWNLOAD_MASK' })}
               icon={['fal', 'download']}
               size='2x' />
             <FormattedMessage id={buttonCaption} />

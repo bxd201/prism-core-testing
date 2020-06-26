@@ -270,8 +270,8 @@ const MyIdeaPreview = (props) => {
             /> : null}
             <div className={actionButtonWrapperClassName}>
               <div className={actionButtonInnerWrapperClassName}>
-                <button data-buttonid='painted' className={buttonClassName} onClick={openProject}>{intl.messages['MY_IDEAS.OPEN_PROJECT'].toUpperCase()}</button>
-                <button data-buttonid='unpainted' className={buttonClassName} onClick={openProject}>{intl.messages['MY_IDEAS.OPEN_UNPAINTED'].toUpperCase()}</button>
+                <button data-buttonid='painted' className={buttonClassName} onClick={openProject}>{intl.formatMessage({ id: 'MY_IDEAS.OPEN_PROJECT' }).toUpperCase()}</button>
+                <button data-buttonid='unpainted' className={buttonClassName} onClick={openProject}>{intl.formatMessage({ id: 'MY_IDEAS.OPEN_UNPAINTED' }).toUpperCase()}</button>
               </div>
             </div>
             {selectedScene && selectedScene.palette && <ColorPalette palette={selectedScene.palette.slice(0, 8)} />}

@@ -9,7 +9,7 @@ import { fullColorNumber, getContrastYIQ } from '../../shared/helpers/ColorUtils
 import { type Color } from '../../shared/types/Colors.js.flow'
 import { remove, activatePreview, editCompareColor } from '../../store/actions/live-palette'
 import { KEY_CODES } from 'src/constants/globals'
-
+import { useIntl } from 'react-intl'
 import { DRAG_TYPES } from 'constants/globals'
 
 type Props = {
@@ -39,6 +39,7 @@ export function ActiveSlot (props: Props) {
   const displayArea = 'container__color-display-area'
   const icons = 'container__toggle-check-icons'
   const LIGHT_DARK_CLASS = color.isDark ? 'prism-live-palette__color-details--dark' : 'prism-live-palette__color-details--dark-color'
+  const intl = useIntl()
 
   const [, drop] = useDrop({
     accept: DRAG_TYPES.SWATCH,
@@ -132,7 +133,7 @@ export function ActiveSlot (props: Props) {
         </div>
         <div className='prism-live-palette__button-group'>
           <div className='prism-live-palette__info-button'><InfoButton color={color} /></div>
-          <button aria-label={`Remove color ${color.name} from live palette`} className='prism-live-palette__trash' onClick={remove}><FontAwesomeIcon icon={['fa', 'trash']} size='1x' /></button>
+          <button aria-label={intl.formatMessage({ id: 'LIVE_PALETTE_REMOVE' }, { colorName: color.name })} className='prism-live-palette__trash' onClick={remove}><FontAwesomeIcon icon={['fa', 'trash']} size='1x' /></button>
         </div>
       </div>}
       {toggleCompareColor && <button style={{ color: getContrastYIQ(color.hex) }} className={`${baseClass}__button`} onClick={() => hanleToggle()}>

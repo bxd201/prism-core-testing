@@ -4,7 +4,7 @@
  */
 // @flow
 import React, { useState, useEffect, forwardRef } from 'react'
-import { useIntl } from 'react-intl'
+import { FormattedMessage } from 'react-intl'
 
 import './MergeCanvas.scss'
 import ImageQueue from './ImageQueue'
@@ -47,8 +47,6 @@ const MergeCanvas = (props: MergeCanvasProp, ref: RefObject) => {
     images.length = 0
   }, [images])
 
-  const intl = useIntl()
-
   const addToQueue = (e: SyntheticEvent, i: number) => {
     const queue = [...images]
     e.target.onLoad = null
@@ -69,7 +67,7 @@ const MergeCanvas = (props: MergeCanvasProp, ref: RefObject) => {
         ref={ref}
         className={props.hideCanvas ? 'merge-canvas-image-comp' : 'merge-canvas'}
       >
-        {intl.messages.CANVAS_UNSUPPORTED}
+        <FormattedMessage id='CANVAS_UNSUPPORTED' />
       </canvas>
     </>
   )

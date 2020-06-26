@@ -70,11 +70,11 @@ const SaveOptions = (props: SaveOptionsProps) => {
         <div className={saveOptionsItemsClassName}>
           <div>
             <FontAwesomeIcon
-              title={intl.messages.DOWNLOAD_MASK}
+              title={intl.formatMessage({ id: 'DOWNLOAD_MASK' })}
               icon={['fal', 'download']}
               size='2x' />
           </div>
-          <div>{intl.messages.DOWNLOAD_MASK}</div>
+          <div>{intl.formatMessage({ id: 'DOWNLOAD_MASK' })}</div>
         </div>
       </button> : <div>
         <SceneDownload {...{ buttonCaption: 'DOWNLOAD_MASK', sceneInfo: firstActiveSceneInfo }} />
@@ -83,11 +83,11 @@ const SaveOptions = (props: SaveOptionsProps) => {
         <div className={saveOptionsItemsClassName}>
           <div>
             <FontAwesomeIcon
-              title={intl.messages.SAVE_MASKS}
+              title={intl.formatMessage({ id: 'SAVE_MASKS' })}
               icon={['fal', 'folder']}
               size='2x' />
           </div>
-          <div>{intl.messages.SAVE_MASKS}</div>
+          <div>{intl.formatMessage({ id: 'SAVE_MASKS' })}</div>
         </div>
       </button>
     </div>

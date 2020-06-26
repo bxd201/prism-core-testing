@@ -436,7 +436,7 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
             right: position.right
           }} />
         }
-        {(showDeletePin) && <button title={`${intl.messages['DELETE_COLOR']}`} className='scene__image__wrapper__delete-pin' onClick={this.pinRemove}><FontAwesomeIcon icon='trash' size='1x' /></button>}
+        {(showDeletePin) && <button title={`${intl.formatMessage({ id: 'DELETE_COLOR' })}`} className='scene__image__wrapper__delete-pin' onClick={this.pinRemove}><FontAwesomeIcon icon='trash' size='1x' /></button>}
       </div>
     )
   }

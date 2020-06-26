@@ -37,7 +37,7 @@ const CVWWarningModal = (props: CVWWarningModalProps) => {
 
   return (
     <div className='cvw__modal' role='presentation' onMouseDown={mouseDownPreventDefault}>
-      <div className='cvw__modal__title'>{intl.messages['CVW.WARNING_REPLACEMENT']}</div>
+      <div className='cvw__modal__title'>{intl.formatMessage({ id: 'CVW.WARNING_REPLACEMENT' })}</div>
       {miniImage && !miniImage.dataUrls ? <div className='cvw__modal__mini-image'>{miniImage}</div> : null}
       {miniImage && miniImage.dataUrls
         ? <div className='cvw__modal__mini-image'>

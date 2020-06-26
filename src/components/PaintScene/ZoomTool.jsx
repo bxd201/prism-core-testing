@@ -2,7 +2,7 @@
 import React, { PureComponent } from 'react'
 import './ZoomTool.scss'
 import throttle from 'lodash/throttle'
-
+import { FormattedMessage } from 'react-intl'
 const baseClass = 'zoom-tool'
 const wrapperClass = `${baseClass}__wrapper`
 const zoomSliderClass = `${baseClass}__zoom-slider`
@@ -80,14 +80,13 @@ export class ZoomTool extends PureComponent<ComponentProps, ComponentState> {
 
   render () {
     const { leftPosition } = this.state
-
     return (
       <div className={`${wrapperClass}`}>
-        <span>ZOOM OUT</span>
+        <span><FormattedMessage id='ZOOM_OUT' /></span>
         <div aria-label='zoom slider' className={`${zoomSliderClass}`} ref={this.zoomSlider}>
           <div draggable role='presentation' ref={this.zoomSliderCircle} style={{ left: `${leftPosition}px` }} onMouseDown={this.mouseDownHandler} onDragStart={this.dragStartHandler} className={`${zoomSliderCircleClass}`} />
         </div>
-        <span>ZOOM IN</span>
+        <span><FormattedMessage id='ZOOM_IN' /></span>
       </div>
     )
   }

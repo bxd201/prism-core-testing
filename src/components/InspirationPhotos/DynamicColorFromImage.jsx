@@ -567,14 +567,14 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
           <canvas
             className='colorfrom__image__wrapper__canvas'
             ref={this.canvasRef}
-            onClick={this.handleClick}>{this.props.intl.messages.CANVAS_UNSUPPORTED}</canvas>
+            onClick={this.handleClick}>{this.props.intl.formatMessage({ id: 'CANVAS_UNSUPPORTED' })}</canvas>
           <img
             className='colorfrom__image__wrapper__image--hidden'
             ref={this.imageRef}
             onLoad={this.handleImageLoaded}
             onError={this.handleImageLoadError}
             src={this.props.imageUrl}
-            alt={this.props.intl.messages.IMAGE_INVISIBLE} />
+            alt={this.props.intl.formatMessage({ id: 'IMAGE_INVISIBLE' })} />
           {this.props.isActive && (this.state.pinnedColors && this.state.pinnedColors.length) ? this.generatePins(this.state.pinnedColors) : null}
           {this.props.isActive && this.state.isDragging ? <ColorFromImageIndicator
             top={this.state.indicatorTop}

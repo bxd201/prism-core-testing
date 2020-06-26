@@ -7,7 +7,7 @@ import { updateSavedStockSceneName } from '../../store/actions/stockScenes'
 // import { createCustomSceneMetadata } from '../../shared/utils/legacyProfileFormatUtil'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { KEY_CODES } from 'src/constants/globals'
-import { useIntl } from 'react-intl'
+import { useIntl, FormattedMessage } from 'react-intl'
 import './EditSavedScene.scss'
 
 type editSavedSceneProps = {
@@ -78,15 +78,15 @@ const EditSavedScene = ({ width, height, sceneData, selectScene, showMyIdeas, ed
       </div>
       <div className={`${inputWrapper}`}>
         <input className={`${sceneNameInput}`} type='text' value={savedSceneName} onChange={changeHandler} />
-        <label aria-label='clear text' className={`${inputLabel}`} tabIndex='0' role='button' htmlFor='clearBtn' onClick={clearSceneName} onKeyDown={clearSceneName} onMouseDown={(e: SyntheticEvent) => e.preventDefault()}>
+        <label aria-label={intl.formatMessage({ id: 'CLEAR_TEXT' })} className={`${inputLabel}`} tabIndex='0' role='button' htmlFor='clearBtn' onClick={clearSceneName} onKeyDown={clearSceneName} onMouseDown={(e: SyntheticEvent) => e.preventDefault()}>
           <div>
             <input id='clearBtn' tabIndex='-1' className='visually-hidden' />
             <FontAwesomeIcon size='xs' className={``} icon={['fa', 'times']} />
           </div>
         </label>
-        {savedSceneName && <button className={`${saveButton}`} onClick={clickHandler}>{intl.messages['SAVE_MASKS']}</button>}
+        {savedSceneName && <button className={`${saveButton}`} onClick={clickHandler}><FormattedMessage id='SAVE_MASKS' /></button>}
         {!savedSceneName && <div className={`${sceneNameError}`}>
-          <span>{intl.messages['ERR_IDEA_NAME_REQUIRED']}</span>
+          <span><FormattedMessage id='ERR_IDEA_NAME_REQUIRED' /></span>
         </div>}
       </div>
     </div>
