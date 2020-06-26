@@ -1,0 +1,75 @@
+.edit-color-palette {
+  &__wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 300px;
+  }
+  &__input-wrapper {
+    position: relative;
+    padding: 1em 0em;
+  }
+  &__scene-name-input {
+    background:#fff;
+    text-align: center;
+    width: 100%;
+    border: 0;
+    border-radius: 0;
+    color: #333;
+    height: 2.5em;
+    margin-bottom: 10px;
+    padding: 10px;
+    &:focus {
+      outline-style: solid;
+      outline-color: #2cabe2;
+      outline-width: 2px;
+    }
+  }
+  &__save-button {
+    border: 1px solid #f2f2f2;
+    background: #fff;
+    color:  #000;
+    display: block;
+    fill: #000;
+    margin: 0 auto;
+    padding: .75em 1.75em;
+    text-transform: uppercase;
+    &:hover {
+      border-color: #2cabe2;
+      color: #2cabe2;
+      cursor: pointer;
+    }
+    &:focus {
+      outline-style: solid;
+      outline-color: #2cabe2;
+      outline-width: 2px;
+    }
+  }
+  &__input-label {
+    background-color: #666;
+    border-radius: 1.3em;
+    color: #fff;
+    cursor: pointer;
+    display: block;
+    fill: #fff;
+    height: 1.3em;
+    line-height: 1.3em;
+    margin-left: -2em;
+    position: absolute;
+    right: .5em;
+    text-align: center;
+    top: 1.4em;
+    width: 1.3em;
+    &:focus {
+      outline-style: solid;
+      outline-color: #2cabe2;
+      outline-width: 2px;
+    }
+  }
+  &__scene-name-error {
+    color: #d40000;
+    display: flex;
+    font-size: 1em;
+    justify-content: center;
+  }
+}

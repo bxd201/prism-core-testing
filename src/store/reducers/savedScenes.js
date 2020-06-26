@@ -26,6 +26,12 @@ import {
   SELECT_ANON_STOCK_SCENE, SELECT_SCENE_STATUS,
   UPDATE_STOCK_SAVED_SCENE_NAME
 } from '../actions/stockScenes'
+import {
+  SAVE_LIVE_PALETTE,
+  UPDATE_LIVE_PALETTE,
+  DELETE_SAVED_LIVE_PALETTE,
+  SELECTED_SAVED_LIVE_PALETTE
+} from '../actions/saveLivePalette'
 import { SCENE_TYPES } from '../../constants/globals'
 import { cloneDeep } from 'lodash'
 import { PAINT_SCENE_SURFACE } from '../actions/scenes'
@@ -45,6 +51,14 @@ export const legacySavedScenesMetadata = (state: Object[] = [], action: { type: 
 
 export const selectedSavedSceneId = (state: string | null = null, action: { type: string, payload: string | null }) => {
   if (action.type === SELECTED_SAVED_SCENE) {
+    return action.payload
+  }
+
+  return state
+}
+
+export const selectedSavedLivePaletteId = (state: string | null = null, action: { type: string, payload: string | null }) => {
+  if (action.type === SELECTED_SAVED_LIVE_PALETTE) {
     return action.payload
   }
 
@@ -150,6 +164,10 @@ export const sceneMetadata = (state: Object[] = [], action: {type: string, paylo
         return { ...item }
       }
 
+      if (item.sceneType === SCENE_TYPE.livePalette) {
+        return { ...item }
+      }
+
       if (item.sceneType === SCENE_TYPE.anonCustom) {
         // If the storage location structure/ id generation is changed this will need to be
         let id = item.scene.match(/\/([0-9]+-)+/)
@@ -164,6 +182,33 @@ export const sceneMetadata = (state: Object[] = [], action: {type: string, paylo
       return null
     }).filter(item => item)
 
+    return newState
+  }
+
+  if (action.type === SAVE_LIVE_PALETTE) {
+    const dataCopy = cloneDeep(action.payload)
+    if (state.find(item => item.sceneType === SCENE_TYPE.livePalette && item.id === action.payload.id)) {
+      newState = state.filter(item => item.id !== action.payload.id)
+      newState.push(dataCopy)
+
+      return newState
+    } else {
+      return [...state, dataCopy]
+    }
+  }
+
+  if (action.type === UPDATE_LIVE_PALETTE) {
+    const livePaletteData = state.find(item => item.sceneType === SCENE_TYPE.livePalette && item.id === action.payload.id)
+    if (livePaletteData) {
+      newState = state.filter(item => item.id !== action.payload.id)
+      newState.push({ ...livePaletteData, name: action.payload.name })
+
+      return newState
+    }
+  }
+
+  if (action.type === DELETE_SAVED_LIVE_PALETTE) {
+    newState = state.filter(item => item.id !== action.payload.id)
     return newState
   }
 
