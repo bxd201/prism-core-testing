@@ -1,5 +1,5 @@
 // @flow
-import React, { useState, useRef } from 'react'
+import React, { useState } from 'react'
 import type { Element } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Switch, Route, useLocation, useHistory } from 'react-router-dom'
@@ -17,7 +17,6 @@ import facetBinder from 'src/facetSupport/facetBinder'
 import { facetBinderDefaultProps } from 'src/facetSupport/facetInstance'
 import { facetPubSubDefaultProps } from 'src/facetSupport/facetPubSub'
 import { activateOnlyScene, unpaintSceneSurfaces, showWarningModal } from '../../../store/actions/scenes'
-import ImageRotateContainer from '../../MatchPhoto/ImageRotateContainer'
 import MyIdeasContainer from '../../MyIdeasContainer/MyIdeasContainer'
 import MyIdeaPreview from '../../MyIdeaPreview/MyIdeaPreview'
 import Help from '../../Help/Help'
@@ -34,10 +33,8 @@ export const CVW = () => {
 
   const toggleCompareColor: boolean = useSelector(store => store.lp.toggleCompareColor)
   const colorDetailsModalShowing: boolean = useSelector(store => store.colors.colorDetailsModal.showing)
-  const isActiveScenePolluted: boolean = useSelector(store => store.scenes.isActiveStockScenePolluted && store.scenes.isActivePaintScenePolluted)
+  const isActiveScenePolluted: boolean = useSelector(store => store.scenes.isActiveStockScenePolluted || store.scenes.isActivePaintScenePolluted)
 
-  const hiddenFileUploadInput = useRef()
-  const [imgUrl, setImgUrl] = useState()
   const [activeScene: Element, setActiveScene: (Element) => void] = useState(<SceneManager expertColorPicks hideSceneSelector />)
   const [lastActiveComponent: string, setLastActiveComponent: (string) => void] = useState('StockScene')
   const [isLoading: boolean, setIsLoading: boolean => void] = useState(true)
@@ -62,25 +59,14 @@ export const CVW = () => {
         ? <CompareColor />
         : (
           <div className='cvw__root-wrapper'>
-            <input ref={hiddenFileUploadInput} type='file' onChange={e => setImgUrl(URL.createObjectURL(e.target.files[0]))} style={{ 'display': 'none' }} />
             <ColorDetailsModal />
             <CVWWarningModal />
             <div className={colorDetailsModalShowing ? 'hide-on-small-screens' : ''}>
-              <ColorVisualizerNav
-                onImageUpload={(imgUrl, url) => {
-                  setImgUrl(imgUrl)
-                  if (url === '/active/paint-scene') {
-                    setActiveScene(<ImageRotateContainer isPaintScene showPaintScene imgUrl={imgUrl} />)
-                  } else if (url === '/active/match-photo') {
-                    setActiveScene(<ImageRotateContainer showPaintScene imgUrl={imgUrl} />)
-                  }
-                }}
-              />
+              <ColorVisualizerNav setActiveScene={setActiveScene} />
               <Switch>
                 <Route path='/active/color/:colorId/:colorSEO' render={() => <ColorDetails />} />
                 <Route path='/active/color-wall(/.*)?' render={() => <ColorWallPage displayAddButton displayInfoButton displayDetailsLink={false} />} />
                 <Route path='/active/color-collections' render={() => <ColorCollections isExpertColor={false} {...location.state} />} />
-                <Route path='/active/match-photo' render={() => <ImageRotateContainer showPaintScene imgUrl={imgUrl} />} />
                 <Route path='/active/use-our-image' render={() => <SampleScenesWrapper isColorTinted activateScene={activateStockScene} />} />
                 <Route path='/active/expert-colors' render={() => <ExpertColorPicks isExpertColor />} />
                 <Route path='/active/color-from-image' render={() => <InspiredScene />} />
@@ -91,9 +77,8 @@ export const CVW = () => {
                 }} />} />
                 <Route path='/active/my-ideas' render={() => <MyIdeasContainer />} />
                 <Route path='/active/help' render={() => <Help />} />
-                <Route path='/active/paint-scene' render={() => <ImageRotateContainer isFromMyIdeas={false} isPaintScene showPaintScene imgUrl={imgUrl} />} />
-                <Route render={() => <>{activeScene}</>} />
               </Switch>
+              {activeScene}
             </div>
           </div>
         )

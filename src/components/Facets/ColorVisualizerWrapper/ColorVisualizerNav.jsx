@@ -1,15 +1,15 @@
 // @flow
-import React, { useRef } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import { Switch, Route, useHistory, useLocation } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSquareFull, faPlusCircle } from '@fortawesome/pro-light-svg-icons'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { isMobileOnly, isTablet, isIOS } from 'react-device-detect'
+import ImageRotateContainer from '../../MatchPhoto/ImageRotateContainer'
 import './ColorVisualizerNav.scss'
 
 type DropDownMenuProps = {
   title: string,
-  onImageUpload?: (imgUrl: string, url: string) => void,
   items: {
     img: string,
     imgiPhone?: string,
@@ -21,17 +21,12 @@ type DropDownMenuProps = {
     contentAndroid?: string,
     contentiPhone?: string,
     description?: string,
-    url: string,
-    urlAndroid?: string,
-    urliPad?: string,
-    urliPhone?: string,
-    uploadsImage?: boolean
+    onClick: () => void
   }[]
 }
 
-export const DropDownMenu = ({ title, onImageUpload, items }: DropDownMenuProps) => {
+export const DropDownMenu = ({ title, items }: DropDownMenuProps) => {
   const history = useHistory()
-  const hiddenImageUploadInput = useRef()
   const selectDevice = (web, iPhone = web, android = web, iPad = web) => (isMobileOnly ? (isIOS ? iPhone : android) : (isTablet ? iPad : web)) || web
   return (
     <>
@@ -43,26 +38,15 @@ export const DropDownMenu = ({ title, onImageUpload, items }: DropDownMenuProps)
         </button>
         <h1 className='dashboard-submenu__header'>{title}</h1>
         <ul className='dashboard-submenu__content'>
-          {items.map(({ img, imgiPhone, imgiPad, imgAndroid, title, titleMobile, content, contentAndroid, contentiPhone, description, url, urlAndroid, urliPhone, urliPad, uploadsImage }, i) => {
+          {items.map(({ img, imgiPhone, imgiPad, imgAndroid, title, titleMobile, content, contentAndroid, contentiPhone, description, onClick }, i) => {
             return (
               <li key={i}>
-                <button onClick={() => uploadsImage && hiddenImageUploadInput.current ? hiddenImageUploadInput.current.click() : history.push(selectDevice(url, urlAndroid, urliPhone, urliPad))}>
+                <button onClick={onClick}>
                   <img className='dashboard-submenu-image' src={selectDevice(img, imgiPhone, imgAndroid, imgiPad)} alt='' />
                   <h3 className='dashboard-submenu__content__title'>{selectDevice(title, titleMobile)}</h3>
                   <p className='dashboard-submenu__content__content'>{selectDevice(content, contentiPhone, contentAndroid)}</p>
                   {description && <p className='dashboard-submenu__content__tip'>{description}</p>}
                 </button>
-                {uploadsImage && (
-                  <input
-                    ref={hiddenImageUploadInput}
-                    style={{ display: 'none' }}
-                    type='file'
-                    onChange={e => {
-                      onImageUpload && onImageUpload(URL.createObjectURL(e.target.files[0]), url)
-                      history.push(selectDevice(url, urlAndroid, urliPhone, urliPad))
-                    }}
-                  />
-                )}
               </li>
             )
           })}
@@ -72,12 +56,21 @@ export const DropDownMenu = ({ title, onImageUpload, items }: DropDownMenuProps)
   )
 }
 
-export default ({ onImageUpload = () => {} }: { onImageUpload?: (string) => void }) => {
+export default ({ setActiveScene }: { setActiveScene: (React.Element) => void }) => {
   const { messages } = useIntl()
   const history = useHistory()
   const location = useLocation()
+  const hiddenImageUploadInput: { current: ?HTMLElement } = useRef()
+
+  const [imgUrl: string, setImgUrl: (string) => void] = useState()
+
+  useEffect(() => {
+    imgUrl && setActiveScene(<ImageRotateContainer key={imgUrl} showPaintScene isFromMyIdeas={false} isPaintScene={location.pathname === '/active/paint-scene'} imgUrl={imgUrl} />)
+  }, [imgUrl/*, location.pathname */])
+
   return (
     <nav className='cvw-navigation-wrapper'>
+      <input ref={hiddenImageUploadInput} style={{ display: 'none' }} type='file' onChange={e => setImgUrl(URL.createObjectURL(e.target.files[0]))} />
       <ul className='cvw-navigation-wrapper__center' role='presentation'>
         <li>
           <button className={`cvw-nav-btn ${location.pathname === '/active/colors' ? 'active' : ''}`} onClick={() => history.push('/active/colors')}>
@@ -124,26 +117,28 @@ export default ({ onImageUpload = () => {} }: { onImageUpload?: (string) => void
         <Route path='/active/colors'>
           <DropDownMenu
             title={messages['NAV_DROPDOWN_TITLE.EXPLORE_COLORS']}
-            onImageUpload={onImageUpload}
             items={[
               {
                 img: require('src/images/color-visualizer-wrapper/color-submenu__thumbnail--explore-color.png'),
                 title: messages['NAV_LINKS.DIGITAL_COLOR_WALL'],
                 content: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.DIGITAL_COLOR_WALL'],
-                url: '/active/color-wall/section/sherwin-williams-colors'
+                onClick: () => history.push('/active/color-wall/section/sherwin-williams-colors')
               },
               {
                 img: require('src/images/color-visualizer-wrapper/color-submenu__thumbnail--color-collections.png'),
                 title: messages['NAV_LINKS.COLOR_COLLECTIONS'],
                 content: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.COLOR_COLLECTIONS'],
-                url: '/active/color-collections'
+                onClick: () => history.push('/active/color-collections')
               },
               {
                 img: require('src/images/color-visualizer-wrapper/color-submenu__thumbnail--match-photo.png'),
                 title: messages['NAV_LINKS.MATCH_A_PHOTO'],
                 content: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.MATCH_A_PHOTO'],
-                url: '/active/match-photo',
-                uploadsImage: true
+                onClick: () => {
+                  // TODO: warning
+                  history.push('/active/match-photo')
+                  hiddenImageUploadInput.current && hiddenImageUploadInput.current.click()
+                }
               }
             ]}
           />
@@ -156,19 +151,19 @@ export default ({ onImageUpload = () => {} }: { onImageUpload?: (string) => void
                 img: require('src/images/color-visualizer-wrapper/inspiration-submenu__thumbnail--painted-scenes.png'),
                 title: messages['NAV_LINKS.PAINTED_PHOTOS'],
                 content: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.PAINTED_PHOTOS'],
-                url: '/active/use-our-image'
+                onClick: () => history.push('/active/use-our-image')
               },
               {
                 img: require('src/images/color-visualizer-wrapper/inspiration-submenu__thumbnail--expert-color-picks.png'),
                 title: messages['NAV_LINKS.EXPERT_COLOR_PICKS'],
                 content: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.EXPERT_COLOR_PICKS'],
-                url: '/active/expert-colors'
+                onClick: () => history.push('/active/expert-colors')
               },
               {
                 img: require('src/images/color-visualizer-wrapper/inspiration-submenu__thumbnail--sample-photos.png'),
                 title: messages['NAV_LINKS.INSPIRATIONAL_PHOTOS'],
                 content: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.INSPIRATIONAL_PHOTOS'],
-                url: '/active/color-from-image'
+                onClick: () => history.push('/active/color-from-image')
               }
             ]}
           />
@@ -176,13 +171,12 @@ export default ({ onImageUpload = () => {} }: { onImageUpload?: (string) => void
         <Route path='/active/scenes'>
           <DropDownMenu
             title={messages['NAV_DROPDOWN_TITLE.PAINT_A_PHOTO']}
-            onImageUpload={onImageUpload}
             items={[
               {
                 img: require('src/images/color-visualizer-wrapper/scene-submenu__thumbnail--sample-scenes.png'),
                 title: messages['NAV_LINKS.USE_OUR_PHOTOS'],
                 content: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.USE_OUR_PHOTOS'],
-                url: '/active/paint-photo'
+                onClick: () => history.push('/active/paint-photo')
               },
               {
                 img: require('src/images/color-visualizer-wrapper/scene-submenu__thumbnail--my-photos.png'),
@@ -196,11 +190,18 @@ export default ({ onImageUpload = () => {} }: { onImageUpload?: (string) => void
                 contentiPad: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.UPLOAD_YOUR_PHOTO_IPAD'],
                 contentiPhone: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.UPLOAD_YOUR_PHOTO_IPHONE'],
                 description: messages['NAV_DROPDOWN_LINK_TIP_DESCRIPTION.UPLOAD_YOUR_PHOTO'],
-                url: '/active/paint-scene',
-                urlAndroid: 'https://play.google.com/store/apps/details?id=com.colorsnap',
-                urliPad: 'https://itunes.apple.com/us/app/colorsnap-studio/id555300600?mt=8',
-                urliPhone: 'https://itunes.apple.com/us/app/colorsnap-visualizer-iphone/id316256242?mt=8',
-                uploadsImage: true
+                onClick: () => {
+                  // TODO: warning, reconsider selectDevice
+                  const selectDevice = (web, iPhone = web, android = web, iPad = web) => (isMobileOnly ? (isIOS ? iPhone : android) : (isTablet ? iPad : web)) || web
+                  history.push(selectDevice(
+                    '/active/paint-scene',
+                    'https://play.google.com/store/apps/details?id=com.colorsnap',
+                    'https://itunes.apple.com/us/app/colorsnap-visualizer-iphone/id316256242?mt=8',
+                    'https://itunes.apple.com/us/app/colorsnap-studio/id555300600?mt=8'
+                  ))
+
+                  hiddenImageUploadInput.current && hiddenImageUploadInput.current.click() // uploads image
+                }
               }
             ]}
           />
