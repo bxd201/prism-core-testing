@@ -58,24 +58,37 @@ const SearchBar = (props: Props) => {
   }, [inputValue])
 
   const checkIfSearchableInput = useCallback(debounce((value: string | null = '', abort: boolean = false) => {
-    // this is for "cancelling" the debounced method if we unmount before execution
-    if (abort) { return }
+    const _current = currentSearchParam.current || ''
+    const _value = value || ''
 
-    // if value is empty or it matches our current search param... return out
-    if (typeof value !== 'string' || !value.trim().length || currentSearchParam.current === value) { return }
+    // this is for "cancelling" the debounced method if we unmount before execution
+    if (abort || typeof value !== 'string' || _current === _value) { return }
+
+    // NOTE: must check for intentional emptiness from clearing a search before subsequent checks
+    // for no-value string or too-short searches in order to maintain this functionality
+
+    // if value is empty AND our previous search is a non-empty string  ...
+    if (_value === '' && _current.length > 0) {
+      // this means we've cleared a search and should return out
+      history.push('./')
+      return
+    }
+
+    // if input is just a bunch of spaces... return out
+    if (_value.trim() === '') { return }
 
     // if value doe not meet minimum searchable length... return out
-    if (value.length < MIN_SEARCH_LENGTH) { return }
+    if (_value.length < MIN_SEARCH_LENGTH) { return }
 
     // IMPORTANT: need to double encode in order to preserve encoding in URL
     // if we do NOT do this, we run into decoding issues when retrieving the URL via react router
-    history.push(encodeURIComponent(encodeURIComponent(value)))
+    history.push(encodeURIComponent(encodeURIComponent(_value)))
 
     // set ref for current search that we can use to prevent duplicate searches
-    currentSearchParam.current = value
+    currentSearchParam.current = _value
 
     // set new search param which we will actually perform a search on
-    setNewSearchParam(value)
+    setNewSearchParam(_value)
   }, 500), [])
 
   useEffect(() => {
