@@ -1,11 +1,13 @@
 // @flow
 import React, { useRef, useState, useEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 import { Switch, Route, useHistory, useLocation } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSquareFull, faPlusCircle } from '@fortawesome/pro-light-svg-icons'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { isMobileOnly, isTablet, isIOS } from 'react-device-detect'
 import ImageRotateContainer from '../../MatchPhoto/ImageRotateContainer'
+import { showWarningModal, unsetActiveScenePolluted } from 'src/store/actions/scenes'
 import './ColorVisualizerNav.scss'
 
 type DropDownMenuProps = {
@@ -60,13 +62,15 @@ export default ({ setActiveScene }: { setActiveScene: (React.Element) => void })
   const { messages } = useIntl()
   const history = useHistory()
   const location = useLocation()
-  const hiddenImageUploadInput: { current: ?HTMLElement } = useRef()
+  const dispatch = useDispatch()
+  const isActiveScenePolluted: boolean = useSelector(store => store.scenes.isActiveScenePolluted)
 
+  const hiddenImageUploadInput: { current: ?HTMLElement } = useRef()
   const [imgUrl: string, setImgUrl: (string) => void] = useState()
 
   useEffect(() => {
     imgUrl && setActiveScene(<ImageRotateContainer key={imgUrl} showPaintScene isFromMyIdeas={false} isPaintScene={location.pathname === '/active/paint-scene'} imgUrl={imgUrl} />)
-  }, [imgUrl/*, location.pathname */])
+  }, [imgUrl])
 
   return (
     <nav className='cvw-navigation-wrapper'>
@@ -135,9 +139,13 @@ export default ({ setActiveScene }: { setActiveScene: (React.Element) => void })
                 title: messages['NAV_LINKS.MATCH_A_PHOTO'],
                 content: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.MATCH_A_PHOTO'],
                 onClick: () => {
-                  // TODO: warning
-                  history.push('/active/match-photo')
-                  hiddenImageUploadInput.current && hiddenImageUploadInput.current.click()
+                  const activate = () => {
+                    dispatch(unsetActiveScenePolluted())
+                    history.push('/active/match-photo')
+                    hiddenImageUploadInput.current && hiddenImageUploadInput.current.click()
+                  }
+
+                  isActiveScenePolluted ? dispatch(showWarningModal(activate)) : activate()
                 }
               }
             ]}
@@ -191,16 +199,20 @@ export default ({ setActiveScene }: { setActiveScene: (React.Element) => void })
                 contentiPhone: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.UPLOAD_YOUR_PHOTO_IPHONE'],
                 description: messages['NAV_DROPDOWN_LINK_TIP_DESCRIPTION.UPLOAD_YOUR_PHOTO'],
                 onClick: () => {
-                  // TODO: warning, reconsider selectDevice
-                  const selectDevice = (web, iPhone = web, android = web, iPad = web) => (isMobileOnly ? (isIOS ? iPhone : android) : (isTablet ? iPad : web)) || web
-                  history.push(selectDevice(
-                    '/active/paint-scene',
-                    'https://play.google.com/store/apps/details?id=com.colorsnap',
-                    'https://itunes.apple.com/us/app/colorsnap-visualizer-iphone/id316256242?mt=8',
-                    'https://itunes.apple.com/us/app/colorsnap-studio/id555300600?mt=8'
-                  ))
+                  const activate = () => {
+                    dispatch(unsetActiveScenePolluted())
+                    const selectDevice = (web, iPhone = web, android = web, iPad = web) => (isMobileOnly ? (isIOS ? iPhone : android) : (isTablet ? iPad : web)) || web
+                    history.push(selectDevice(
+                      '/active/paint-scene',
+                      'https://play.google.com/store/apps/details?id=com.colorsnap',
+                      'https://itunes.apple.com/us/app/colorsnap-visualizer-iphone/id316256242?mt=8',
+                      'https://itunes.apple.com/us/app/colorsnap-studio/id555300600?mt=8'
+                    ))
 
-                  hiddenImageUploadInput.current && hiddenImageUploadInput.current.click() // uploads image
+                    hiddenImageUploadInput.current && hiddenImageUploadInput.current.click() // uploads image
+                  }
+
+                  isActiveScenePolluted ? dispatch(showWarningModal(activate)) : activate()
                 }
               }
             ]}

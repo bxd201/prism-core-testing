@@ -38,7 +38,7 @@ import { checkCanMergeColors, shouldPromptToReplacePalette } from '../LivePalett
 import { LP_MAX_COLORS_ALLOWED } from '../../constants/configurations'
 import { mergeLpColors, replaceLpColors } from '../../store/actions/live-palette'
 import { clearSceneWorkspace } from '../../store/actions/paintScene'
-import { setActivePaintScenePolluted, unsetActivePaintScenePolluted, showWarningModal } from 'src/store/actions/scenes'
+import { setActiveScenePolluted, unsetActiveScenePolluted, showWarningModal } from 'src/store/actions/scenes'
 import { group, ungroup, deleteGroup, selectArea, bucketPaint, applyZoom,
   createOrDeletePolygon, createPolygonPin, eraseOrPaintMouseUp, eraseOrPaintMouseDown } from './toolFunction'
 import { LiveMessage } from 'react-aria-live'
@@ -83,8 +83,8 @@ type ComponentProps = {
   sceneCount: number,
   showSavedConfirmModalFlag: boolean,
   hideSavedConfirmModal: Function,
-  setActivePaintScenePolluted: () => void,
-  unsetActivePaintScenePolluted: () => void,
+  setActiveScenePolluted: () => void,
+  unsetActiveScenePolluted: () => void,
   showWarningModal: ({}) => void
 }
 
@@ -331,7 +331,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
   componentDidUpdate (prevProps: Object, prevState: Object) {
     if ((this.state.imagePathList.length > 0 && !this.props.workspace) || (this.props.workspace && this.props.workspace.layers === null && this.state.imagePathList.length > 0) || (this.props.workspace && this.props.workspace.layers && this.state.imagePathList.length > this.props.workspace.layers.length)) {
-      this.props.setActivePaintScenePolluted()
+      this.props.setActiveScenePolluted()
     }
     if (prevState.checkIsPaintSceneUpdate !== this.state.checkIsPaintSceneUpdate && this.state.checkIsPaintSceneUpdate !== false) {
       if ((this.state.imagePathList.length > 0 && !this.props.workspace) || (this.props.workspace && this.props.workspace.layers === null && this.state.imagePathList.length > 0) || (this.props.workspace && this.props.workspace.layers && this.state.imagePathList.length > this.props.workspace.layers.length)) {
@@ -565,7 +565,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   componentWillUnmount () {
     window.removeEventListener('resize', this.resizeHandler)
     this.props.selectSavedScene(null)
-    this.props.unsetActivePaintScenePolluted()
+    this.props.unsetActiveScenePolluted()
   }
 
   resizeHandler = () => {
@@ -1229,8 +1229,8 @@ const mapDispatchToProps = (dispatch: Function) => {
       e.stopPropagation()
       dispatch(showSavedCustomSceneSuccessModal(false))
     },
-    setActivePaintScenePolluted: () => dispatch(setActivePaintScenePolluted()),
-    unsetActivePaintScenePolluted: () => dispatch(unsetActivePaintScenePolluted()),
+    setActiveScenePolluted: () => dispatch(setActiveScenePolluted()),
+    unsetActiveScenePolluted: () => dispatch(unsetActiveScenePolluted()),
     showWarningModal: (data) => dispatch(showWarningModal(data))
   }
 }

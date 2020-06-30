@@ -16,7 +16,7 @@ import SampleScenesWrapper from '../../SampleScenes/SampleScenes'
 import facetBinder from 'src/facetSupport/facetBinder'
 import { facetBinderDefaultProps } from 'src/facetSupport/facetInstance'
 import { facetPubSubDefaultProps } from 'src/facetSupport/facetPubSub'
-import { activateOnlyScene, unpaintSceneSurfaces, showWarningModal } from '../../../store/actions/scenes'
+import { activateOnlyScene, unpaintSceneSurfaces, showWarningModal, unsetActiveScenePolluted } from '../../../store/actions/scenes'
 import MyIdeasContainer from '../../MyIdeasContainer/MyIdeasContainer'
 import MyIdeaPreview from '../../MyIdeaPreview/MyIdeaPreview'
 import Help from '../../Help/Help'
@@ -33,16 +33,17 @@ export const CVW = () => {
 
   const toggleCompareColor: boolean = useSelector(store => store.lp.toggleCompareColor)
   const colorDetailsModalShowing: boolean = useSelector(store => store.colors.colorDetailsModal.showing)
-  const isActiveScenePolluted: boolean = useSelector(store => store.scenes.isActiveStockScenePolluted || store.scenes.isActivePaintScenePolluted)
+  const isActiveScenePolluted: boolean = useSelector(store => store.scenes.isActiveScenePolluted)
 
   const [activeScene: Element, setActiveScene: (Element) => void] = useState(<SceneManager expertColorPicks hideSceneSelector />)
   const [lastActiveComponent: string, setLastActiveComponent: (string) => void] = useState('StockScene')
   const [isLoading: boolean, setIsLoading: boolean => void] = useState(true)
 
-  setTimeout(() => setIsLoading(false), 500)
+  setTimeout(() => setIsLoading(false), 1000)
 
   const activateStockScene = (id) => {
     const activate = () => {
+      dispatch(unsetActiveScenePolluted())
       dispatch(unpaintSceneSurfaces(id))
       dispatch(activateOnlyScene(id))
       setActiveScene(<SceneManager expertColorPicks hideSceneSelector />)

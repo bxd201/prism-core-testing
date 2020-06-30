@@ -27,10 +27,8 @@ import {
   UPDATE_MASK,
   UNPAINT_SCENE_SURFACES,
   TOGGLE_COLOR_DETAILS_PAGE,
-  SET_ACTIVE_STOCK_SCENE_POLLUTED,
-  UNSET_ACTIVE_STOCK_SCENE_POLLUTED,
-  SET_ACTIVE_PAINT_SCENE_POLLUTED,
-  UNSET_ACTIVE_PAINT_SCENE_POLLUTED,
+  SET_ACTIVE_SCENE_POLLUTED,
+  UNSET_ACTIVE_SCENE_POLLUTED,
   SET_SELECTED_SCENE_VARIANT_CHANGED,
   UNSET_SELECTED_SCENE_VARIANT_CHANGED,
   SET_SELECTED_SCENE_PALETTE_LOADED,
@@ -56,8 +54,7 @@ type State = {
   activeScenes: number[],
   activeScenesColorDetails: number[],
   isColorDetailsPage: boolean,
-  isActiveStockScenePolluted: boolean,
-  isActivePaintScenePolluted: Boolean,
+  isActiveScenePolluted: boolean,
   selectedSceneVariantChanged: boolean,
   selectedScenePaletteLoaded: boolean,
   warningModal: { showing: boolean, openFn: () => void }
@@ -73,8 +70,7 @@ export const initialState: State = {
   activeScenes: [],
   activeScenesColorDetails: [],
   isColorDetailsPage: false,
-  isActiveStockScenePolluted: false,
-  isActivePaintScenePolluted: false,
+  isActiveScenePolluted: false,
   selectedSceneVariantChanged: false,
   selectedScenePaletteLoaded: false,
   warningModal: { showing: false, openFn: () => {} }
@@ -446,10 +442,8 @@ export const scenes = (state: Object = initialState, action: { type: string, pay
         isColorDetailsPage: !state.isColorDetailsPage
       })
 
-    case SET_ACTIVE_STOCK_SCENE_POLLUTED: return { ...state, isActiveStockScenePolluted: true }
-    case UNSET_ACTIVE_STOCK_SCENE_POLLUTED: return { ...state, isActiveStockScenePolluted: false }
-    case SET_ACTIVE_PAINT_SCENE_POLLUTED: return { ...state, isActivePaintScenePolluted: true }
-    case UNSET_ACTIVE_PAINT_SCENE_POLLUTED: return { ...state, isActivePaintScenePolluted: false }
+    case SET_ACTIVE_SCENE_POLLUTED: return { ...state, isActiveScenePolluted: true }
+    case UNSET_ACTIVE_SCENE_POLLUTED: return { ...state, isActiveScenePolluted: false }
     case SET_SELECTED_SCENE_VARIANT_CHANGED: return { ...state, selectedSceneVariantChanged: true }
     case UNSET_SELECTED_SCENE_VARIANT_CHANGED: return { ...state, selectedSceneVariantChanged: false }
     case SET_SELECTED_SCENE_PALETTE_LOADED: return { ...state, selectedScenePaletteLoaded: true }
