@@ -16,8 +16,8 @@ import 'src/scss/externalComponentSupport/AutoSizer.scss'
 const baseClass = 'Search'
 const EDGE_SIZE = 15
 
-type SearchProps = { contain?: boolean, limitSearchToFamily?: boolean }
-const Search = ({ limitSearchToFamily = false, contain = false }: SearchProps) => {
+type SearchProps = { contain?: boolean }
+const Search = ({ contain = false }: SearchProps) => {
   const { results, count, suggestions, loading } = useSelector(state => state.colors.search)
   const { items: { colorStatuses = {} } } = useSelector(state => state.colors)
   const { colorWallBgColor } = useContext(ColorWallContext)
