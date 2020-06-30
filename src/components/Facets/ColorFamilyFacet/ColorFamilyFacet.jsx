@@ -31,12 +31,10 @@ const SearchBarNoCancel = () => {
 
   return (
     <div className='color-wall-wrap__chunk'>
-      <SearchBar showCancelButton={false} label={at(messages, 'SEARCH.FIND_A_COLOR')[0]} showIcon={false} />
+      <SearchBar limitSearchToFamily showCancelButton={false} label={at(messages, 'SEARCH.FIND_A_COLOR')[0]} showIcon={false} />
     </div>
   )
 }
-
-const SearchWithinFamily = () => <Search limitSearchToFamily />
 
 export const ColorFamilyPage = (props: Props) => {
   const { colorDetailPageRoot, colorWallBgColor, selectedColorFamily } = props
@@ -63,15 +61,15 @@ export const ColorFamilyPage = (props: Props) => {
       <ColorWallRouter redirect={false}>
         <div className='color-wall-wrap'>
           <Switch>
+            <Route path='(.*)?/section/:section/family/:family/(.*/)?search/:query' component={SearchBarNoCancel} />
+            <Route path='(.*)?/family/:family/(.*/)?search/:query' component={SearchBarNoCancel} />
+            <Route path='(.*)?/section/:section/(.*/)?search/:query' component={SearchBarNoCancel} />
             <Route path='(.*)?/search/:query' component={SearchBarNoCancel} />
             <Route path='(.*)?/search/' component={SearchBarNoCancel} />
             <Redirect to={redirectTo} />
           </Switch>
           <Switch>
-            <Route path='(.*)?/section/:section/family/:family/(.*/)?search/:query' component={SearchWithinFamily} />
-            <Route path='(.*)?/family/:family/(.*/)?search/:query' component={SearchWithinFamily} />
-            <Route path='(.*)?/section/:section/(.*/)?search/:query' component={SearchWithinFamily} />
-            <Route path='(.*)?/search/:query' component={SearchWithinFamily} />
+            <Route path='(.*)?/search/:query' component={Search} />
             <Route component={ColorWall} />
           </Switch>
         </div>
