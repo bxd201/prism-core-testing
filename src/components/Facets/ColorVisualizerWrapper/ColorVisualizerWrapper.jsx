@@ -24,6 +24,7 @@ import CVWWarningModal from './WarningModal'
 import SaveOptions from '../../SaveOptions/SaveOptions'
 import ColorDetailsModal from './ColorDetailsModal/ColorDetailsModal'
 import { PreLoadingSVG } from './PreLoadingSVG'
+import LandingPage from '../../LandingPage/LandingPage'
 import './ColorVisualizer.scss'
 
 export const CVW = () => {
@@ -52,7 +53,11 @@ export const CVW = () => {
     isActiveScenePolluted ? dispatch(showWarningModal(activate)) : activate()
   }
 
-  if (isLoading) { return <PreLoadingSVG /> }
+  if (isLoading) {
+    return <PreLoadingSVG />
+  } else if (!window.localStorage.getItem('landingPageShownSession')) {
+    return <LandingPage />
+  }
 
   return (
     <div className='cvw__root-container'>
