@@ -12,7 +12,9 @@
   $times: 5;
   $introDelay: .5s;
 
-  @keyframes spin {
+  $kf_spin: spin#{unique-id()};
+
+  @keyframes #{$kf_spin} {
     0%, 33% {
       transform: rotate(180deg);
     }
@@ -109,7 +111,7 @@
     animation-duration: $times * $duration * 2;
     animation-fill-mode: both;
     animation-iteration-count: infinite;
-    animation-name: spin;
+    animation-name: $kf_spin;
     animation-timing-function: cubic-bezier(0.975, -0.045, 0.405, 1.130);
   }
 

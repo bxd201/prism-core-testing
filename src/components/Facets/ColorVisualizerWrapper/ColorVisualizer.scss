@@ -10,28 +10,22 @@
     transform: scale(30) translateY(10px);
     &__inner-rect {
       transform-origin: 50% 40%;
-      animation: spin 0.2s linear;
+      animation: cv-preloading-spin 0.2s linear;
     }
 
     &__outer-rect {
       transform-origin: 50% 40%;
-      animation: spin 0.2s linear;
+      animation: cv-preloading-spin 0.2s linear;
     }
 
     &__text {
-      animation: fade_in_text 0.5s linear;
+      animation: cv-preloading-fade-in-text 0.5s linear;
     }
   }
 }
 
-@keyframes fade_in_text {
-  0% {
-    opacity: 0;
-  }
-  20% {
-    opacity: 0;
-  }
-  40% {
+@keyframes cv-preloading-fade-in-text {
+  0%, 40% {
     opacity: 0;
   }
   60% {
@@ -45,7 +39,7 @@
   }
 }
 
-@keyframes spin {
+@keyframes cv-preloading-spin {
   0% {
     transform: rotate(90deg) scale(2);
     opacity: 0.5;
