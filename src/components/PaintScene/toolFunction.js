@@ -382,10 +382,12 @@ export const deleteGroup = (state) => {
   selectedArea.forEach(selectArea => {
     const deletePath = [...selectArea.selectPath, ...selectArea.edgeList]
     const id = uniqueId()
+    const linkId = selectArea.id
     updateImagePathList.push({
       type: 'delete',
       data: deletePath,
       redoPath: selectArea.selectPath,
+      toggleSelectId: linkId,
       id: id,
       linkGroupId: null,
       color: [255, 255, 255, 0],
