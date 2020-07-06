@@ -45,6 +45,12 @@ const handleUndo = (itemId, redos, imagePathList, selectedArea, groupSelectList,
     }
 
     if (item.type === 'delete') {
+      const toggleItem = history.filter(historyItem => historyItem.id === toggleSelect)[0]
+      updateSelectArea.push({
+        id: toggleItem.id,
+        edgeList: toggleItem.data,
+        selectPath: item.data
+      })
       deleteAreaList.pop()
     }
 
