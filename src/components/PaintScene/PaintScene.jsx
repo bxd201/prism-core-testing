@@ -38,7 +38,7 @@ import { checkCanMergeColors, shouldPromptToReplacePalette } from '../LivePalett
 import { LP_MAX_COLORS_ALLOWED } from '../../constants/configurations'
 import { mergeLpColors, replaceLpColors } from '../../store/actions/live-palette'
 import { clearSceneWorkspace } from '../../store/actions/paintScene'
-import { setActiveScenePolluted, unsetActiveScenePolluted, showWarningModal } from 'src/store/actions/scenes'
+import { setActiveScenePolluted, unsetActiveScenePolluted, setWarningModalImgPreview } from 'src/store/actions/scenes'
 import { group, ungroup, deleteGroup, selectArea, bucketPaint, applyZoom,
   createOrDeletePolygon, createPolygonPin, eraseOrPaintMouseUp, eraseOrPaintMouseDown } from './toolFunction'
 import { LiveMessage } from 'react-aria-live'
@@ -85,7 +85,7 @@ type ComponentProps = {
   hideSavedConfirmModal: Function,
   setActiveScenePolluted: () => void,
   unsetActiveScenePolluted: () => void,
-  showWarningModal: ({}) => void
+  setWarningModalImgPreview: ({}) => void
 }
 
 type ComponentState = {
@@ -333,11 +333,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     if ((this.state.imagePathList.length > 0 && !this.props.workspace) || (this.props.workspace && this.props.workspace.layers === null && this.state.imagePathList.length > 0) || (this.props.workspace && this.props.workspace.layers && this.state.imagePathList.length > this.props.workspace.layers.length)) {
       this.props.setActiveScenePolluted()
     }
-    if (prevState.checkIsPaintSceneUpdate !== this.state.checkIsPaintSceneUpdate && this.state.checkIsPaintSceneUpdate !== false) {
-      if ((this.state.imagePathList.length > 0 && !this.props.workspace) || (this.props.workspace && this.props.workspace.layers === null && this.state.imagePathList.length > 0) || (this.props.workspace && this.props.workspace.layers && this.state.imagePathList.length > this.props.workspace.layers.length)) {
-        this.props.showWarningModal({ dataUrls: this.getLayers(), width: this.backgroundImageWidth, height: this.backgroundImageHeight })
-      }
-    }
+    this.props.setWarningModalImgPreview({ dataUrls: this.getLayers(), width: this.backgroundImageWidth, height: this.backgroundImageHeight })
     if (prevState.loading) {
       return
     }
@@ -1231,7 +1227,7 @@ const mapDispatchToProps = (dispatch: Function) => {
     },
     setActiveScenePolluted: () => dispatch(setActiveScenePolluted()),
     unsetActiveScenePolluted: () => dispatch(unsetActiveScenePolluted()),
-    showWarningModal: (data) => dispatch(showWarningModal(data))
+    setWarningModalImgPreview: (data) => dispatch(setWarningModalImgPreview(data))
   }
 }
 

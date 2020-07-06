@@ -17,6 +17,7 @@ export default () => {
   const history = useHistory()
   const showing: boolean = useSelector(store => store.scenes.warningModal.showing)
   const openFn: () => void = useSelector(store => store.scenes.warningModal.openFn)
+  let miniImage: ?{} = useSelector(store => store.scenes.warningModal.miniImg)
 
   const { scenes, sceneStatus, activeScenes }: { scenes: Scene[], sceneStatus: SceneStatus[], activeScenes: number[] } = useSelector(store => {
     const currentSceneData: ?SceneStatus = store.scenes && store.scenes.sceneStatus[store.scenes.type] && store.scenes.sceneStatus[store.scenes.type].find(item => item.id === store.scenes.activeScenes[0])
@@ -29,12 +30,13 @@ export default () => {
     }
   })
 
-  const currentSceneData: ?SceneStatus = sceneStatus && sceneStatus.find(item => item.id === activeScenes[0])
-  const currentSceneMetaData: ?Scene = scenes && scenes.find(scene => scene.id === activeScenes[0])
-  let miniImage
-  currentSceneMetaData && currentSceneData && (miniImage =
-    <StaticTintScene scene={currentSceneMetaData} statuses={currentSceneData.surfaces} config={{ isNightScene: currentSceneData.variant === SCENE_VARIANTS.NIGHT }} />
-  )
+  if (miniImage === undefined) {
+    const currentSceneData: ?SceneStatus = sceneStatus && sceneStatus.find(item => item.id === activeScenes[0])
+    const currentSceneMetaData: ?Scene = scenes && scenes.find(scene => scene.id === activeScenes[0])
+    currentSceneMetaData && currentSceneData && (miniImage =
+      <StaticTintScene scene={currentSceneMetaData} statuses={currentSceneData.surfaces} config={{ isNightScene: currentSceneData.variant === SCENE_VARIANTS.NIGHT }} />
+    )
+  }
 
   const canvasRef = useRef()
 

@@ -249,6 +249,9 @@ export const setSelectedScenePaletteLoaded = () => ({ type: SET_SELECTED_SCENE_P
 export const UNSET_SELECTED_SCENE_PALETTE_LOADED = 'UNSET_SELECTED_SCENE_PALETTE_LOADED'
 export const unsetSelectedScenePaletteLoaded = () => ({ type: UNSET_SELECTED_SCENE_PALETTE_LOADED })
 
+export const SET_WARNING_MODAL_IMG_PREVIEW = 'SET_WARNING_MODAL_IMG_PREVIEW '
+export const setWarningModalImgPreview = (miniImg) => ({ type: SET_WARNING_MODAL_IMG_PREVIEW, payload: miniImg })
+
 export const SHOW_WARNING_MODAL = 'SHOW_WARNING_MODAL'
 export const showWarningModal = (openFn: () => void) => ({ type: SHOW_WARNING_MODAL, payload: openFn })
 

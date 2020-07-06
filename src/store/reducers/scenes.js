@@ -33,6 +33,7 @@ import {
   UNSET_SELECTED_SCENE_VARIANT_CHANGED,
   SET_SELECTED_SCENE_PALETTE_LOADED,
   UNSET_SELECTED_SCENE_PALETTE_LOADED,
+  SET_WARNING_MODAL_IMG_PREVIEW,
   SHOW_WARNING_MODAL,
   HIDE_WARNING_MODAL
 } from '../actions/scenes'
@@ -448,7 +449,8 @@ export const scenes = (state: Object = initialState, action: { type: string, pay
     case UNSET_SELECTED_SCENE_VARIANT_CHANGED: return { ...state, selectedSceneVariantChanged: false }
     case SET_SELECTED_SCENE_PALETTE_LOADED: return { ...state, selectedScenePaletteLoaded: true }
     case UNSET_SELECTED_SCENE_PALETTE_LOADED: return { ...state, selectedScenePaletteLoaded: false }
-    case SHOW_WARNING_MODAL: return { ...state, warningModal: { showing: true, openFn: action.payload } }
+    case SET_WARNING_MODAL_IMG_PREVIEW: return { ...state, warningModal: { ...state.warningModal, miniImg: action.payload } }
+    case SHOW_WARNING_MODAL: return { ...state, warningModal: { ...state.warningModal, showing: true, openFn: action.payload } }
     case HIDE_WARNING_MODAL: return { ...state, warningModal: { showing: false } }
     default: return state
   }
