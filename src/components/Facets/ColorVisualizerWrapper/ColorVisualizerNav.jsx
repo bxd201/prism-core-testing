@@ -77,8 +77,8 @@ export default ({ setActiveScene }: { setActiveScene: (React.Element) => void })
       <input ref={hiddenImageUploadInput} style={{ display: 'none' }} type='file' onChange={e => setImgUrl(URL.createObjectURL(e.target.files[0]))} />
       <ul className='cvw-navigation-wrapper__center' role='presentation'>
         <li>
-          <button className={`cvw-nav-btn ${location.pathname === '/active/colors' ? 'active' : ''}`} onClick={() => history.push('/active/colors')}>
-            <span className='fa-layers fa-fw cvw__btn-overlay__svg'>
+          <button className={`cvw-nav-btn ${location.pathname === '/active/colors' ? 'cvw-nav-btn--active' : ''}`} onClick={() => history.push('/active/colors')}>
+            <span className='fa-layers fa-fw cvw-nav-btn-icon'>
               <FontAwesomeIcon icon={faSquareFull} size='xs' transform={{ rotate: 10 }} />
               <FontAwesomeIcon icon={faSquareFull} size='sm' transform={{ rotate: 0 }} />
               <FontAwesomeIcon icon={faSquareFull} size='1x' transform={{ rotate: 350 }} />
@@ -88,14 +88,14 @@ export default ({ setActiveScene }: { setActiveScene: (React.Element) => void })
           </button>
         </li>
         <li>
-          <button className={`cvw-nav-btn ${location.pathname === '/active/inspiration' ? 'active' : ''}`} onClick={() => history.push('/active/inspiration')}>
-            <FontAwesomeIcon className='cvw__btn-overlay__svg' icon={['fal', 'lightbulb']} size='1x' />
+          <button className={`cvw-nav-btn ${location.pathname === '/active/inspiration' ? 'cvw-nav-btn--active' : ''}`} onClick={() => history.push('/active/inspiration')}>
+            <FontAwesomeIcon className='cvw-nav-btn-icon' icon={['fal', 'lightbulb']} size='1x' />
             <FormattedMessage id='NAV_LINKS.GET_INSPIRED' />
           </button>
         </li>
         <li>
-          <button className={`cvw-nav-btn ${location.pathname === '/active/scenes' ? 'active' : ''}`} onClick={() => history.push('/active/scenes')}>
-            <span className='fa-layers fa-fw cvw__btn-overlay__svg'>
+          <button className={`cvw-nav-btn ${location.pathname === '/active/scenes' ? 'cvw-nav-btn--active' : ''}`} onClick={() => history.push('/active/scenes')}>
+            <span className='fa-layers fa-fw cvw-nav-btn-icon'>
               <FontAwesomeIcon icon={faSquareFull} />
               <FontAwesomeIcon icon={['fa', 'brush']} size='sm' transform={{ rotate: 320 }} />
             </span>
@@ -105,14 +105,12 @@ export default ({ setActiveScene }: { setActiveScene: (React.Element) => void })
       </ul>
       <ul className='cvw-navigation-wrapper__right' role='presentation'>
         <li>
-          <button className={`cvw-nav-btn ${location.pathname === '/active/my-ideas' ? 'active' : ''}`} onClick={() => history.push('/active/my-ideas')}>
-            <div className='cvw__btn-overlay' />
+          <button className={`cvw-nav-btn ${location.pathname === '/active/my-ideas' ? 'cvw-nav-btn--active' : ''}`} onClick={() => history.push('/active/my-ideas')}>
             <FormattedMessage id='NAV_LINKS.MY_IDEAS' />
           </button>
         </li>
         <li>
-          <button className={`cvw-nav-btn ${location.pathname === '/active/help' ? 'active' : ''}`} onClick={() => history.push('/active/help')}>
-            <div className='cvw__btn-overlay' />
+          <button className={`cvw-nav-btn ${location.pathname === '/active/help' ? 'cvw-nav-btn--active' : ''}`} onClick={() => history.push('/active/help')}>
             <FormattedMessage id='NAV_LINKS.HELP' />
           </button>
         </li>

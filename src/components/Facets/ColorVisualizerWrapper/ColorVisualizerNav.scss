@@ -3,58 +3,56 @@
   display: flex;
   flex-direction: column;
 
-  .cvw-nav-btn {
-    height: 96%;
-  }
+  .cvw-nav-btn { height: 96%; }
 
   .cvw-nav-btn {
-    border: none;
-    color: black;
-    display: inline-block;
-    height: 96%;
+    // color: #2cabe2;
+    background-color: white;
+    background-image: linear-gradient(to top, #fff 50%, #2cabe2 50%);
+    background-size: 100% 200%;
+    background-position: 0 -100%;
+    -webkit-transition: background-position 0.2s;
+    -moz-transition: background-position 0.2s;
+    transition: background-position 0.2s;
     margin-right: 2px;
     padding: 13% 6% 5%;
-    position: relative;
-    text-decoration: none;
-    @include respond-above(xs) {
-      padding: 1.2em 1em;
-    }
-    @include respond-above(sm) {
-      padding: 1.2em 1.7em 0.8em 2em;
-    }
-    &:after {
-      background: #2cabe2;
-      bottom: 0;
-      content: "";
-      display: block;
-      height: 0;
-      left: 0;
-      position: absolute;
-      transition: height 0.3s;
-      width: 100%;
-    }
+    @include respond-above(xs) { padding: 1.2em 1em; }
+    @include respond-above(sm) { padding: 1.2em 1.7em 0.9em 2em; }
+
     &:hover {
       color: #2cabe2;
-      &:after {
-        height: 6px;
-        transition: height 0.3s;
+      background-position: 0 -80%;
+    }
+
+    &--active {
+      color: #fff;
+      background-position: 0 0;
+      background-color: #2cabe2;
+      // .cvw-nav-btn-icon { background-color: #2cabe2; }
+      &:hover {
+        color: #fff;
+        background-position: 0 0;
       }
     }
+
     &:focus {
       outline-style: solid;
       outline-color: #2cabe2;
       outline-width: 2px;
       z-index: 100;
     }
-    &--active {
-      color: #fff;
-      &:hover {
-        color: #fff;
-        & > div:first-child {
-          height: 96%;
-          background: #2cabe2;
-        }
+
+    .cvw-nav-btn-icon {
+      background-color: inherit;
+      display: none;
+      @include respond-above(sm) {
+        display: inline-block;
+        margin-right: 1em;
       }
+      svg { background-color: inherit; }
+      .fa-square-full.fa-sm { margin-right: -1px; }
+      .fa-square-full.fa-xs { margin-right: -3px; }
+      &--brush { margin-left: -22px; }
     }
   }
 

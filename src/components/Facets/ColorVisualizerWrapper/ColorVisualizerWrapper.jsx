@@ -65,27 +65,29 @@ export const CVW = () => {
         ? <CompareColor />
         : (
           <div className='cvw__root-wrapper'>
+            <ColorVisualizerNav setActiveScene={setActiveScene} />
             <ColorDetailsModal />
             <CVWWarningModal />
-            <div className={colorDetailsModalShowing ? 'hide-on-small-screens' : ''}>
-              <ColorVisualizerNav setActiveScene={setActiveScene} />
-              <Switch>
-                <Route path='/active/color/:colorId/:colorSEO' render={() => <ColorDetails />} />
-                <Route path='/active/color-wall(/.*)?' render={() => <ColorWallPage displayAddButton displayInfoButton displayDetailsLink={false} />} />
-                <Route path='/active/color-collections' render={() => <ColorCollections isExpertColor={false} {...location.state} />} />
-                <Route path='/active/use-our-image' render={() => <SampleScenesWrapper isColorTinted activateScene={activateStockScene} />} />
-                <Route path='/active/expert-colors' render={() => <ExpertColorPicks isExpertColor />} />
-                <Route path='/active/color-from-image' render={() => <InspiredScene />} />
-                <Route path='/active/paint-photo' render={() => <SampleScenesWrapper activateScene={activateStockScene} />} />
-                <Route path='/my-ideas-preview' render={() => <MyIdeaPreview openScene={(scene, type) => {
-                  setActiveScene(scene)
-                  setLastActiveComponent(type)
-                }} />} />
-                <Route path='/active/my-ideas' render={() => <MyIdeasContainer />} />
-                <Route path='/active/help' render={() => <Help />} />
-              </Switch>
-              {activeScene}
-            </div>
+            <Switch>
+              <Route path='/active/color/:colorId/:colorSEO' render={() => <ColorDetails />} />
+              <Route path='/active/color-wall(/.*)?' render={() => <ColorWallPage displayAddButton displayInfoButton displayDetailsLink={false} />} />
+              <Route path='/active/color-collections' render={() => <ColorCollections isExpertColor={false} {...location.state} />} />
+              <Route path='/active/use-our-image' render={() => <SampleScenesWrapper isColorTinted activateScene={activateStockScene} />} />
+              <Route path='/active/expert-colors' render={() => <ExpertColorPicks isExpertColor />} />
+              <Route path='/active/color-from-image' render={() => <InspiredScene />} />
+              <Route path='/active/paint-photo' render={() => <SampleScenesWrapper activateScene={activateStockScene} />} />
+              <Route path='/my-ideas-preview' render={() => <MyIdeaPreview openScene={(scene, type) => {
+                setActiveScene(scene)
+                setLastActiveComponent(type)
+              }} />} />
+              <Route path='/active/my-ideas' render={() => <MyIdeasContainer />} />
+              <Route path='/active/help' render={() => <Help />} />
+              <Route>
+                <div className={colorDetailsModalShowing ? 'hide-on-small-screens' : ''}>
+                  {activeScene}
+                </div>
+              </Route>
+            </Switch>
           </div>
         )
       }
