@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import './LandingPage.scss'
 import { useHistory } from 'react-router-dom'
 import { FormattedMessage } from 'react-intl'
+import { faSquareFull, faPlusCircle } from '@fortawesome/pro-light-svg-icons'
 
 const LandingPage = () => {
   const history = useHistory()
@@ -28,18 +29,23 @@ const LandingPage = () => {
       </div>
       <div className='cvw-landing-page-wrapper__intro-button-container'>
         <button className='cvw-landing-page-wrapper__intro-button-container__intro-buttons' onClick={() => redirect('/active/colors')}>
-          <FontAwesomeIcon className='cvw__btn-overlay__svg cvw__btn-overlay__svg--square-small' icon={['fal', 'square-full']} size='sm' transform={{ rotate: 0 }} />
-          <FontAwesomeIcon className='cvw__btn-overlay__svg cvw__btn-overlay__svg--square' icon={['fal', 'square-full']} size='1x' transform={{ rotate: 350 }} />
-          <FontAwesomeIcon className='cvw__btn-overlay__svg cvw__btn-overlay__svg--plus-circle' style={{ marginLeft: '-30px' }}icon={['fal', 'plus-circle']} size='xs' />
+          <span className='fa-layers fa-fw cvw-nav-btn-icon'>
+            <FontAwesomeIcon icon={faSquareFull} size='xs' transform={{ rotate: 10 }} />
+            <FontAwesomeIcon icon={faSquareFull} size='sm' transform={{ rotate: 0 }} />
+            <FontAwesomeIcon icon={faSquareFull} size='1x' transform={{ rotate: 350 }} />
+            <FontAwesomeIcon icon={faPlusCircle} size='xs' />
+          </span>
           <FormattedMessage id='EXPLORE_COLOR' />
         </button>
         <button className='cvw-landing-page-wrapper__intro-button-container__intro-buttons' onClick={() => redirect('/active/inspiration')}>
-          <FontAwesomeIcon className='cvw__btn-overlay__svg' icon={['fal', 'lightbulb']} size='1x' />
+          <FontAwesomeIcon className='cvw-nav-btn-icon' icon={['fal', 'lightbulb']} size='1x' />
           <FormattedMessage id='NAV_LINKS.GET_INSPIRED' />
         </button>
         <button className='cvw-landing-page-wrapper__intro-button-container__intro-buttons' onClick={() => redirect('/active/scenes')}>
-          <FontAwesomeIcon className='cvw__btn-overlay__svg' icon={['fal', 'square-full']} />
-          <FontAwesomeIcon className='cvw__btn-overlay__svg cvw__btn-overlay__svg--brush' icon={['fa', 'brush']} size='sm' transform={{ rotate: 320 }} />
+          <span className='fa-layers fa-fw cvw-nav-btn-icon'>
+            <FontAwesomeIcon icon={faSquareFull} />
+            <FontAwesomeIcon icon={['fa', 'brush']} size='sm' transform={{ rotate: 320 }} />
+          </span>
           <FormattedMessage id='NAV_LINKS.PAINT_A_PHOTO' />
         </button>
       </div>

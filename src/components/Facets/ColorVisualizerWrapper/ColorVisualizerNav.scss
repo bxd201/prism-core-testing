@@ -28,7 +28,6 @@
       color: #fff;
       background-position: 0 0;
       background-color: #2cabe2;
-      // .cvw-nav-btn-icon { background-color: #2cabe2; }
       &:hover {
         color: #fff;
         background-position: 0 0;
@@ -40,19 +39,6 @@
       outline-color: #2cabe2;
       outline-width: 2px;
       z-index: 100;
-    }
-
-    .cvw-nav-btn-icon {
-      background-color: inherit;
-      display: none;
-      @include respond-above(sm) {
-        display: inline-block;
-        margin-right: 1em;
-      }
-      svg { background-color: inherit; }
-      .fa-square-full.fa-sm { margin-right: -1px; }
-      .fa-square-full.fa-xs { margin-right: -3px; }
-      &--brush { margin-left: -22px; }
     }
   }
 

@@ -166,21 +166,32 @@
   }
 }
 
-.nav__dropdown-overlay {
-  background-color: rgba(0, 0, 0, 0.5);
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  z-index: 10000;
-  cursor: pointer;
-  overflow-y: scroll;
+// .nav__dropdown-overlay {
+//   background-color: rgba(0, 0, 0, 0.5);
+//   position: absolute;
+//   width: 100%;
+//   height: 100%;
+//   left: 0;
+//   right: 0;
+//   top: 0;
+//   bottom: 0;
+//   z-index: 10000;
+//   cursor: pointer;
+//   overflow-y: scroll;
+// }
+
+.cvw-nav-btn-icon {
+  background-color: inherit;
+  display: none;
+  @include respond-above(sm) {
+    display: inline-block;
+    margin-right: 1em;
+  }
+  svg { background-color: inherit; }
+  .fa-square-full.fa-sm { margin-right: -1px; }
+  .fa-square-full.fa-xs { margin-right: -3px; }
+  &--brush { margin-left: -22px; }
 }
-
-
 
 .cvw__modal {
   position: absolute;
