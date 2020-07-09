@@ -39,6 +39,7 @@ export const CVW = () => {
   const [activeScene: Element, setActiveScene: (Element) => void] = useState(<SceneManager expertColorPicks hideSceneSelector />)
   const [lastActiveComponent: string, setLastActiveComponent: (string) => void] = useState('StockScene')
   const [isLoading: boolean, setIsLoading: boolean => void] = useState(true)
+  const [matchPhotoScene: Element, setMatchPhotoScene: (Element) => void] = useState()
 
   setTimeout(() => setIsLoading(false), 1000)
 
@@ -65,13 +66,14 @@ export const CVW = () => {
         ? <CompareColor />
         : (
           <div className='cvw__root-wrapper'>
-            <ColorVisualizerNav setActiveScene={setActiveScene} />
+            <ColorVisualizerNav setPaintScene={setActiveScene} setMatchPhotoScene={setMatchPhotoScene} />
             <ColorDetailsModal />
             <CVWWarningModal />
             <Switch>
               <Route path='/active/color/:colorId/:colorSEO' render={() => <ColorDetails />} />
               <Route path='/active/color-wall(/.*)?' render={() => <ColorWallPage displayAddButton displayInfoButton displayDetailsLink={false} />} />
               <Route path='/active/color-collections' render={() => <ColorCollections isExpertColor={false} {...location.state} />} />
+              <Route path='/active/match-photo'>{matchPhotoScene}</Route>
               <Route path='/active/use-our-image' render={() => <SampleScenesWrapper isColorTinted activateScene={activateStockScene} />} />
               <Route path='/active/expert-colors' render={() => <ExpertColorPicks isExpertColor />} />
               <Route path='/active/color-from-image' render={() => <InspiredScene />} />

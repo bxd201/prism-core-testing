@@ -58,7 +58,7 @@ export const DropDownMenu = ({ title, items }: DropDownMenuProps) => {
   )
 }
 
-export default ({ setActiveScene }: { setActiveScene: (React.Element) => void }) => {
+export default ({ setPaintScene, setMatchPhotoScene }: { setPaintScene: (React.Element) => void, setMatchPhotoScene: (React.Element) => void }) => {
   const { messages } = useIntl()
   const history = useHistory()
   const location = useLocation()
@@ -69,7 +69,11 @@ export default ({ setActiveScene }: { setActiveScene: (React.Element) => void })
   const [imgUrl: string, setImgUrl: (string) => void] = useState()
 
   useEffect(() => {
-    imgUrl && setActiveScene(<ImageRotateContainer key={imgUrl} showPaintScene isFromMyIdeas={false} isPaintScene={location.pathname === '/active/paint-scene'} imgUrl={imgUrl} />)
+    if (imgUrl) {
+      location.pathname === '/active/match-photo'
+        ? setMatchPhotoScene(<ImageRotateContainer showPaintScene isFromMyIdeas={false} isPaintScene={false} imgUrl={imgUrl} />)
+        : setPaintScene(<ImageRotateContainer showPaintScene isFromMyIdeas={false} isPaintScene imgUrl={imgUrl} />)
+    }
   }, [imgUrl])
 
   return (
