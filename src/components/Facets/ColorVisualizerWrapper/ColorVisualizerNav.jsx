@@ -140,7 +140,10 @@ export default ({ setActiveScene }: { setActiveScene: (React.Element) => void })
                   const activate = () => {
                     dispatch(unsetActiveScenePolluted())
                     history.push('/active/match-photo')
-                    hiddenImageUploadInput.current && hiddenImageUploadInput.current.click()
+                    if (hiddenImageUploadInput.current) {
+                      hiddenImageUploadInput.current.value = ''
+                      hiddenImageUploadInput.current.click()
+                    }
                   }
 
                   isActiveScenePolluted ? dispatch(showWarningModal(activate)) : activate()
@@ -207,7 +210,10 @@ export default ({ setActiveScene }: { setActiveScene: (React.Element) => void })
                       'https://itunes.apple.com/us/app/colorsnap-studio/id555300600?mt=8'
                     ))
 
-                    hiddenImageUploadInput.current && hiddenImageUploadInput.current.click() // uploads image
+                    if (hiddenImageUploadInput.current) {
+                      hiddenImageUploadInput.current.value = ''
+                      hiddenImageUploadInput.current.click() // uploads image
+                    }
                   }
 
                   isActiveScenePolluted ? dispatch(showWarningModal(activate)) : activate()
