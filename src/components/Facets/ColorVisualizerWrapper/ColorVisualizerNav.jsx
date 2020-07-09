@@ -32,7 +32,7 @@ export const DropDownMenu = ({ title, items }: DropDownMenuProps) => {
   const selectDevice = (web, iPhone = web, android = web, iPad = web) => (isMobileOnly ? (isIOS ? iPhone : android) : (isTablet ? iPad : web)) || web
   return (
     <>
-      <div className='overlay' />
+      <button className='overlay' onClick={() => history.push('/active')} />
       <div className='dashboard-submenu'>
         <button className='dashboard-submenu__close' onClick={() => history.push('/active')}>
           <FormattedMessage id='CLOSE' />
