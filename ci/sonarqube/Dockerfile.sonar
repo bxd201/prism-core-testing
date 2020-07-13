@@ -1,0 +1,20 @@
+FROM sonarsource/sonar-scanner-cli
+ARG TOKEN=""
+ARG SONAR_URL=""
+ARG SWAWS_CERT_KEY_STORE="swaws.keystore"
+
+# Environment variables
+ENV NODE_ENV="$NODE_ENV"
+ENV TOKEN=${TOKEN}
+ENV SONAR_URL=${SONAR_URL}
+ENV SONAR_SCANNER_OPTS="-Djavax.net.ssl.trustStore=${SWAWS_CERT_KEY_STORE} -Djavax.net.ssl.keyStore=${SWAWS_CERT_KEY_STORE} -Djavax.net.ssl.keyStorePassword=123456 -Djavax.net.ssl.trustStorePassword=123456  -Djavax.net.ssl.trustStoreType=jks -Djavax.net.ssl.trustStoreType=jks"
+
+COPY src/ src/
+
+RUN apk add curl jq
+RUN mkdir -p ./tmpcerts/ && \
+   curl -k -H 'Accept: application/json' https://ca.ebus.swaws/ca/bundle| jq -r .cabundle > ./tmpcerts/sw_simple_ca_signer.pem && \
+   keytool -noprompt -import -storepass 123456 -trustcacerts -file ./tmpcerts/sw_simple_ca_signer.pem -alias sw_simple_ca_signer -keystore ${SWAWS_CERT_KEY_STORE} && \
+   keytool -list -storepass 123456 -keystore $SWAWS_CERT_KEY_STORE -alias sw_simple_ca_signer
+
+RUN  sonar-scanner -X -Dsonar.login=${TOKEN}  -Dsonar.host.url=${SONAR_URL} -Dsonar.projectKey=prism-core -Dsonar.sources=. -Dsonar.inclusions=src/**/*.js,**/*.js  -Dsonar.exclusions=src/node_modules/*
