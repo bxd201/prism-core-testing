@@ -84,12 +84,13 @@ export const CVW = () => {
               }} />} />
               <Route path='/active/my-ideas' render={() => <MyIdeasContainer />} />
               <Route path='/active/help' render={() => <Help />} />
-              <Route>
-                <div className={colorDetailsModalShowing ? 'hide-on-small-screens' : ''}>
-                  {activeScene}
-                </div>
-              </Route>
             </Switch>
+            <div
+              style={{ display: location.pathname.match(/(active|paint-scene|active\/colors|inspiration|scenes)$/) === null ? 'none' : 'block' }}
+              className={colorDetailsModalShowing ? 'hide-on-small-screens' : ''}
+            >
+              {activeScene}
+            </div>
           </div>
         )
       }
