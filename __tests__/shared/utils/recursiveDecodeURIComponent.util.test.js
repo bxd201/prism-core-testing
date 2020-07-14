@@ -36,4 +36,14 @@ describe('recursiveDecodeURIComponent.util', () => {
     expect(decode(encode(encode(encode(allValues))))).toEqual(allValues)
     expect(decode(encode(allValues))).toEqual(allValues)
   })
+
+  it('will return the same results for the following inputs ', () => {
+    // Previously had encoded char regex externalized, but that (mysteriously) allowed for the following
+    // two strings to be decoded differently as a result of inconsistent regex test results during recursion.
+    // My best guess is "something to do with Webpack," but I couldn't isolate it. Moved regex definitions
+    // into functions (still DRY) and as a result no longer have the problem. This test is here to ensure it
+    // doesn't resurface accidentally.
+    expect(decode('!@%23$%25%5E%26()')).toEqual('!@#$%^&()')
+    expect(decode('!@%2523$%25%5E%26()')).toEqual('!@#$%^&()')
+  })
 })
