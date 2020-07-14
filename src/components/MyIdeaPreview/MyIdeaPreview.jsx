@@ -1,15 +1,11 @@
 // @flow
-import React, { useEffect, useRef, useState, useContext } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import MergeColors from '../MergeCanvas/MergeColors'
 import PrismImage from '../PrismImage/PrismImage'
 import { useIntl, FormattedMessage } from 'react-intl'
 import { setLayersForPaintScene } from '../../store/actions/paintScene'
-
-import './MyIdeaPreview.scss'
-import { Redirect } from 'react-router-dom'
-import { MY_IDEAS } from '../Facets/ColorVisualizerWrapper/ColorVisualizerWrapper'
-import { RouteContext } from '../../contexts/RouteContext/RouteContext'
+import { Redirect, useHistory } from 'react-router-dom'
 import ColorPalette from './ColorPalette'
 import CardMenu from 'src/components/CardMenu/CardMenu'
 import { selectSavedScene, SCENE_TYPE } from '../../store/actions/persistScene'
@@ -18,12 +14,15 @@ import { StaticTintScene } from '../CompareColor/StaticTintScene'
 import { SCENE_VARIANTS } from 'src/constants/globals'
 import { getColorInstances, checkCanMergeColors, shouldPromptToReplacePalette } from '../LivePalette/livePaletteUtility'
 import type { ColorMap } from 'src/shared/types/Colors.js.flow'
-import { unsetSelectedScenePaletteLoaded } from '../../store/actions/scenes'
 import { selectedSavedLivePalette } from 'src/store/actions/saveLivePalette'
 import { mergeLpColors, replaceLpColors } from 'src/store/actions/live-palette'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { LP_MAX_COLORS_ALLOWED } from 'constants/configurations'
 import DynamicModal, { DYNAMIC_MODAL_STYLE } from '../DynamicModal/DynamicModal'
+import { unsetSelectedScenePaletteLoaded, showWarningModal, activateOnlyScene, unpaintSceneSurfaces } from '../../store/actions/scenes'
+import ImageRotateContainer from 'src/components/MatchPhoto/ImageRotateContainer'
+import SceneManager from 'src/components/SceneManager/SceneManager'
+import './MyIdeaPreview.scss'
 // @todo for mysherwin feature -RS
 // import { CUSTOM_SCENE_IMAGE_ENDPOINT } from '../../constants/endpoints'
 
@@ -59,17 +58,21 @@ const getZoomWidthAndHeight = (dimensions, width, height) => {
 }
 
 export const RedirectMyIdeas = () => {
-  const routeContext = useContext(RouteContext)
-  routeContext.redirectMyIdeas(false, null)
-  return null
+  const history = useHistory()
+  history.push('/active')
 }
 
-const MyIdeaPreview = (props) => {
+type MyIdeaPreviewProps = { openScene: Function }
+const MyIdeaPreview = ({ openScene }: MyIdeaPreviewProps) => {
   const dispatch = useDispatch()
   const { formatMessage } = useIntl()
+  const history = useHistory()
   const backgroundCanvasRef = useRef()
   const foregroundCanvasRef = useRef()
   const wrapperRef = useRef()
+
+  const isActiveStockScenePolluted: boolean = useSelector(store => store.scenes.isActiveStockScenePolluted)
+  const isActivePaintScenePolluted: boolean = useSelector(store => store.scenes.isActivePaintScenePolluted)
 
   const selectedScene = useSelector(state => {
     const { items: { colorMap } }: ColorMap = state.colors
@@ -118,7 +121,6 @@ const MyIdeaPreview = (props) => {
   const foregroundImageRef = useRef()
   const utilityCanvasRef = useRef()
   const layersRef = useRef([])
-  const routeContext = useContext(RouteContext)
 
   const resizeHandler = (e: SyntheticEvent) => {
     const wrapperDimensions = wrapperRef.current.getBoundingClientRect()
@@ -185,55 +187,22 @@ const MyIdeaPreview = (props) => {
   const openProject = (e: SyntheticEvent) => {
     e.preventDefault()
     const openPaintedProject = e.currentTarget.dataset.buttonid === 'painted' && true
-    if (routeContext.checkIsPaintScenePolluted()) {
-      if (selectedScene.savedSceneType === SCENE_TYPE.anonCustom) {
-        routeContext.showWarningModalMyIdeas(
-          {
-            backgroundCanvasRef: backgroundCanvasRef.current.toDataURL(),
-            layersRef: openPaintedProject ? layersRef.current : null,
-            selectedScenePalette: selectedScene.palette,
-            initialWidth: initialWidth,
-            initialHeight: initialHeight,
-            isPaintSceneProject: true
-          }
-        )
-      } else if (selectedScene.savedSceneType === SCENE_TYPE.anonStock) {
-        routeContext.showWarningModalMyIdeas({ isPaintSceneProject: false, tmpActiveId: selectedScene.expectStockData.scene.id, openUnpaintedStockScene: !openPaintedProject })
-      }
-    } else if (routeContext.checkIsStockScenePolluted()) {
-      if (selectedScene.savedSceneType === SCENE_TYPE.anonCustom) {
-        routeContext.showWarningModalMyIdeas(
-          {
-            backgroundCanvasRef: backgroundCanvasRef.current.toDataURL(),
-            layersRef: openPaintedProject ? layersRef.current : null,
-            selectedScenePalette: selectedScene.palette,
-            initialWidth: initialWidth,
-            initialHeight: initialHeight,
-            isPaintSceneProject: true,
-            isStockScenePolluted: true
-          }
-        )
-      } else if (selectedScene.savedSceneType === SCENE_TYPE.anonStock) {
-        routeContext.showWarningModalMyIdeas({
-          isPaintSceneProject: false, isStockScenePolluted: true, tmpActiveId: selectedScene.expectStockData.scene.id, openUnpaintedStockScene: !openPaintedProject
-        })
-      }
-    } else {
+    const open = () => {
       dispatch(unsetSelectedScenePaletteLoaded())
       dispatch(setSelectedSceneStatus(null))
       if (selectedScene.savedSceneType === SCENE_TYPE.anonCustom) {
-        dispatch(setLayersForPaintScene(
-          backgroundCanvasRef.current.toDataURL(),
-          openPaintedProject ? layersRef.current : null,
-          selectedScene.palette,
-          initialWidth,
-          initialHeight))
+        dispatch(setLayersForPaintScene(backgroundCanvasRef.current.toDataURL(), openPaintedProject ? layersRef.current : null, selectedScene.palette, initialWidth, initialHeight))
+        openScene(<ImageRotateContainer isFromMyIdeas isPaintScene checkIsPaintSceneUpdate={false} showPaintScene imgUrl='' />, 'PaintScene')
       } else if (selectedScene.savedSceneType === SCENE_TYPE.anonStock) {
         selectedScene.openUnpaintedStockScene = !openPaintedProject
+        dispatch(unpaintSceneSurfaces(selectedScene.stockSceneData.id))
+        dispatch(activateOnlyScene(selectedScene.stockSceneData.id))
         dispatch(setSelectedSceneStatus(selectedScene))
-        return routeContext.redirectMyIdeas(true, selectedScene.expectStockData.scene.id)
+        openScene(<SceneManager expertColorPicks hideSceneSelector scenes={[selectedScene]} />, 'StockScene')
       }
+      history.push('/active')
     }
+    (isActiveStockScenePolluted || isActivePaintScenePolluted) ? dispatch(showWarningModal(open)) : open()
   }
 
   const addAllColorsToLp = () => {
@@ -281,14 +250,14 @@ const MyIdeaPreview = (props) => {
   return (
     <>
       {/* eslint-disable-next-line no-constant-condition */}
-      { selectedScene ? null : <Redirect to={MY_IDEAS} /> }
+      { selectedScene ? null : <Redirect to='/active/my-ideas' /> }
       { paintSceneWorkSpace ? <RedirectMyIdeas /> : null}
       {showSelectPaletteModal ? <DynamicModal
         actions={selectPaletteActions}
         title={selectPaletteTitle}
         height={document.documentElement.clientHeight + window.pageYOffset}
         description={selectPaletteDescription} /> : null}
-      <CardMenu menuTitle={`${(selectedScene && selectedScene.name) ? selectedScene.name : ``}`} showBackByDefault backPath={MY_IDEAS}>
+      <CardMenu menuTitle={`${(selectedScene && selectedScene.name) ? selectedScene.name : ``}`} showBackByDefault backPath='/active/my-ideas'>
         {() => (
           <div ref={wrapperRef} className={wrapperClass} style={{ minHeight: Math.round(height * heightCrop) }}>
             {selectedScene && selectedScene.savedSceneType === SCENE_TYPE.livePalette && <button className={addAllBtn} onClick={addAllColorsToLp}>

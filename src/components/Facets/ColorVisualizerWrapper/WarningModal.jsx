@@ -1,25 +1,44 @@
 // @flow
-import React, { useRef, useEffect, useCallback } from 'react'
+import React, { useRef } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 import { useIntl, FormattedMessage } from 'react-intl'
+import { useHistory } from 'react-router-dom'
 import MergeCanvas from '../../MergeCanvas/MergeCanvas'
 import { mouseDownPreventDefault } from 'src/shared/helpers/MiscUtils'
+import type { Scene, SceneStatus } from 'src/shared/types/Scene'
+import { StaticTintScene } from '../../CompareColor/StaticTintScene'
+import { replaceSceneStatus } from '../../../shared/utils/sceneUtil'
+import { SCENE_VARIANTS } from 'constants/globals'
+import { hideWarningModal } from 'src/store/actions/scenes'
 
-type CVWWarningModalProps = {
-  miniImage: any,
-  confirm: Function,
-  cancel: Function
-}
-
-const CVWWarningModal = (props: CVWWarningModalProps) => {
+export default () => {
   const intl = useIntl()
-  const { miniImage, confirm, cancel } = props
-  const canvasRef = useRef()
-  const btnYesRef = useRef()
-  const btnNoRef = useRef()
+  const dispatch = useDispatch()
+  const history = useHistory()
+  const showing: boolean = useSelector(store => store.scenes.warningModal.showing)
+  const openFn: () => void = useSelector(store => store.scenes.warningModal.openFn)
+  let miniImage: ?{} = useSelector(store => store.scenes.warningModal.miniImg)
 
-  useEffect(() => {
-    if (btnYesRef && btnYesRef.current) btnYesRef.current.focus()
-  }, [])
+  const { scenes, sceneStatus, activeScenes }: { scenes: Scene[], sceneStatus: SceneStatus[], activeScenes: number[] } = useSelector(store => {
+    const currentSceneData: ?SceneStatus = store.scenes && store.scenes.sceneStatus[store.scenes.type] && store.scenes.sceneStatus[store.scenes.type].find(item => item.id === store.scenes.activeScenes[0])
+    const sceneSurfaceTinted = currentSceneData && currentSceneData.surfaces.find(surface => !!surface.color)
+    const scenes: Scene = store.selectedSceneStatus && !store.selectedSceneStatus.openUnpaintedStockScene && sceneSurfaceTinted !== void 0 ? replaceSceneStatus(store.scenes, store.selectedSceneStatus) : store.scenes
+    return {
+      scenes: scenes.sceneCollection[store.scenes.type],
+      sceneStatus: scenes.sceneStatus[store.scenes.type],
+      activeScenes: scenes.activeScenes
+    }
+  })
+
+  if (miniImage === undefined) {
+    const currentSceneData: ?SceneStatus = sceneStatus && sceneStatus.find(item => item.id === activeScenes[0])
+    const currentSceneMetaData: ?Scene = scenes && scenes.find(scene => scene.id === activeScenes[0])
+    currentSceneMetaData && currentSceneData && (miniImage =
+      <StaticTintScene scene={currentSceneMetaData} statuses={currentSceneData.surfaces} config={{ isNightScene: currentSceneData.variant === SCENE_VARIANTS.NIGHT }} />
+    )
+  }
+
+  const canvasRef = useRef()
 
   const applyZoomPan = (ref: any) => {
     if (ref && ref.current) {
@@ -27,34 +46,40 @@ const CVWWarningModal = (props: CVWWarningModalProps) => {
     }
   }
 
-  const blurHandler = useCallback((e: SyntheticEvent, ref: any) => {
-    if (ref.current === btnYesRef.current) {
-      btnNoRef.current.focus()
-    } else if (ref.current === btnNoRef.current) {
-      btnYesRef.current.focus()
-    }
-  }, [btnYesRef, btnNoRef])
-
-  return (
-    <div className='cvw__modal' role='presentation' onMouseDown={mouseDownPreventDefault}>
-      <div className='cvw__modal__title'>{intl.formatMessage({ id: 'CVW.WARNING_REPLACEMENT' })}</div>
-      {miniImage && !miniImage.dataUrls ? <div className='cvw__modal__mini-image'>{miniImage}</div> : null}
-      {miniImage && miniImage.dataUrls
-        ? <div className='cvw__modal__mini-image'>
-          <MergeCanvas
-            ref={canvasRef}
-            applyZoomPan={applyZoomPan}
-            layers={miniImage.dataUrls}
-            width={miniImage.width}
-            height={miniImage.height}
-            colorOpacity={0.8} />
-        </div> : null}
-      <div className='cvw__modal__action-wrapper'>
-        <button className='cvw__modal__action-btn' ref={btnYesRef} onBlur={(e) => blurHandler(e, btnYesRef)} onClick={confirm}><FormattedMessage id='YES' /></button>
-        <button className='cvw__modal__action-btn' ref={btnNoRef} onBlur={(e) => blurHandler(e, btnNoRef)} onClick={cancel}><FormattedMessage id='NO' /></button>
+  return showing && (
+    <>
+      <div className='cvw__modal__overlay' />
+      <div className='cvw__modal' role='presentation' onMouseDown={mouseDownPreventDefault}>
+        <div className='cvw__modal__title'>{intl.messages['CVW.WARNING_REPLACEMENT']}</div>
+        {miniImage && !miniImage.dataUrls ? <div className='cvw__modal__mini-image'>{miniImage}</div> : null}
+        {miniImage && miniImage.dataUrls && (
+          <div className='cvw__modal__mini-image'>
+            <MergeCanvas
+              ref={canvasRef}
+              applyZoomPan={applyZoomPan}
+              layers={miniImage.dataUrls}
+              width={miniImage.width}
+              height={miniImage.height}
+              colorOpacity={0.8}
+            />
+          </div>
+        )}
+        <div className='cvw__modal__action-wrapper'>
+          <button
+            className='cvw__modal__action-btn'
+            onClick={() => {
+              dispatch(hideWarningModal())
+              openFn()
+              history.push('/active')
+            }}
+          >
+            <FormattedMessage id='YES' />
+          </button>
+          <button className='cvw__modal__action-btn' onClick={() => dispatch(hideWarningModal())}>
+            <FormattedMessage id='NO' />
+          </button>
+        </div>
       </div>
-    </div>
+    </>
   )
 }
-
-export default CVWWarningModal

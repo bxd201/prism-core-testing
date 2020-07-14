@@ -22,7 +22,7 @@ import {
   addNewMask,
   toggleEditMode,
   updateCurrentSceneInfo,
-  setActiveStockScenePolluted,
+  setActiveScenePolluted,
   setSelectedSceneVariantChanged,
   setSelectedScenePaletteLoaded
 } from '../../store/actions/scenes'
@@ -122,7 +122,7 @@ type Props = {
   sceneStatusActiveSceneStore: SceneStatus,
   isColorDetail?: boolean,
   selectedSceneStatusActiveScene: SceneStatus,
-  setActiveStockScenePolluted: Function,
+  setActiveScenePolluted: Function,
   isActiveStockScenePolluted: boolean,
   selectedScenedVariant: string | null,
   setSelectedSceneVariantChanged: Function,
@@ -257,15 +257,15 @@ export class SceneManager extends PureComponent<Props, State> {
       if (selectedSceneStatusActiveScene && sceneStatusStoreUpdated) {
         selectedSceneStatusActiveScene.surfaces.map((surface, index) => {
           if (surface.color && sceneStatusStoreUpdated.surfaces[index].color && surface.color.colorNumber !== sceneStatusStoreUpdated.surfaces[index].color.colorNumber) {
-            this.props.setActiveStockScenePolluted()
+            this.props.setActiveScenePolluted()
           } else if (!surface.color && sceneStatusStoreUpdated.surfaces[index].color) {
-            this.props.setActiveStockScenePolluted()
+            this.props.setActiveScenePolluted()
           }
         })
       } else if (this.props.sceneStatus && this.props.sceneStatus.find(scene => scene.id === this.props.activeScenes[0])) {
         this.props.sceneStatus.find(scene => scene.id === this.props.activeScenes[0]).surfaces && this.props.sceneStatus.find(scene => scene.id === this.props.activeScenes[0]).surfaces.map(surface => {
           if (surface.color) {
-            this.props.setActiveStockScenePolluted()
+            this.props.setActiveScenePolluted()
           }
         })
       }
@@ -713,7 +713,7 @@ const mapDispatchToProps = (dispatch: Function) => {
     showSaveSceneModalAction: (shouldShow) => dispatch(showSaveSceneModal(shouldShow)),
     saveStockScene: (id: string, sceneName: string, sceneData: Object, sceneType: string, livePaletteColorsIdArray: Array<string>) => dispatch(saveStockScene(id, sceneName, sceneData, sceneType, livePaletteColorsIdArray)),
     showSavedConfirmModal: (shouldShow: boolean) => dispatch(showSavedConfirmModal(shouldShow)),
-    setActiveStockScenePolluted: () => dispatch(setActiveStockScenePolluted()),
+    setActiveScenePolluted: () => dispatch(setActiveScenePolluted()),
     setSelectedSceneVariantChanged: () => dispatch(setSelectedSceneVariantChanged()),
     mergeLpColors: (colors: Object[]) => dispatch(mergeLpColors(colors)),
     replaceLpColors: (colors: Object[]) => dispatch(replaceLpColors(colors)),

@@ -1,74 +1,53 @@
 // @flow
 
-import React, { useState } from 'react'
+import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { useIntl, FormattedMessage } from 'react-intl'
 import './LandingPage.scss'
-import { Link } from 'react-router-dom'
-import { COLORS_ROUTE, INSPIRATION_ROUTE, SCENES_ROUTE } from '../Facets/ColorVisualizerWrapper/ColorVisualizerWrapper'
-import { KEY_CODES } from 'src/constants/globals'
-const cvwLandingPage = 'cvw-landing-page-wrapper'
+import { useHistory } from 'react-router-dom'
+import { FormattedMessage } from 'react-intl'
+import { faSquareFull, faPlusCircle } from '@fortawesome/pro-light-svg-icons'
 
-type LandingPageProps = {
-    handlePageShow: Function
-}
+const LandingPage = () => {
+  const history = useHistory()
 
-export const landingPageShownSession = { key: 'landingPageShownSession', value: 1 }
-
-export const setLandingPageShownLocalStorage = () => {
-  window.localStorage.setItem(landingPageShownSession.key, landingPageShownSession.value)
-}
-export const getLandingPageShownLocalStorage = () => {
-  return window.localStorage.getItem(landingPageShownSession.key)
-}
-
-const LandingPage = (props: LandingPageProps) => {
-  const [showLandingPage, setDisplayPage] = useState(true)
-  const intl = useIntl()
-  const onKeyDown = (e) => {
-    if (e.keyCode === KEY_CODES.KEY_CODE_ENTER) {
-      props.handlePageShow()
-      setDisplayPage(false)
-    }
+  const redirect = (url) => {
+    window.localStorage.setItem('landingPageShownSession', 1)
+    history.push(url)
   }
-  const handleRedirect = (e) => {
-    props.handlePageShow()
-    setDisplayPage(false)
-  }
-  setLandingPageShownLocalStorage()
+
   return (
-    showLandingPage &&
-    <div className={`${cvwLandingPage}`}>
-      <div className={`${cvwLandingPage}__image`} />
-      <div tabIndex='0' role='button' onKeyDown={onKeyDown} className={`${cvwLandingPage}__painting-btn`} onClick={handleRedirect}>
-        <FormattedMessage id='LANDING_PAGES.PAINTING_BUTTON' />
-        {<button tabIndex='-1' aria-label={intl.formatMessage({ id: 'LANDING_PAGES.PAINTING_BUTTON' })}>
-          <FontAwesomeIcon icon={['fa', 'chevron-right']} />
-        </button>}
+    <div className='cvw-landing-page-wrapper'>
+      <div className='cvw-landing-page-wrapper__image' />
+      <button className='cvw-landing-page-wrapper__painting-btn' onClick={() => redirect('/active')}>
+        <FormattedMessage id='START_PAINTING_NOW' />
+        <FontAwesomeIcon icon={['fa', 'chevron-right']} />
+      </button>
+      <div className='cvw-landing-page-wrapper__intro-divider'>
+        <div className='cvw-landing-page-wrapper__intro-divider__line' />
+        <FormattedMessage id='OR' />
+        <div className='cvw-landing-page-wrapper__intro-divider__line' />
       </div>
-      <div className={`${cvwLandingPage}__intro-divider`}>
-        <div className={`${cvwLandingPage}__intro-divider__line`} />
-        <span>{intl.formatMessage({ id: 'LANDING_PAGES.OR' })}</span>
-        <div className={`${cvwLandingPage}__intro-divider__line`} />
-      </div>
-      <div className={`${cvwLandingPage}__intro-button-container`}>
-        <Link aria-label={intl.formatMessage({ id: 'LANDING_PAGES.EXPLORE_COLOR' })} tabIndex='0' onKeyDown={onKeyDown} className={`${cvwLandingPage}__intro-button-container__intro-buttons`} to={`${COLORS_ROUTE}`} onClick={handleRedirect}>
-          <FontAwesomeIcon className={`cvw__btn-overlay__svg cvw__btn-overlay__svg--square-small`} icon={['fal', 'square-full']} size='sm' transform={{ rotate: 0 }} />
-          <FontAwesomeIcon className={`cvw__btn-overlay__svg cvw__btn-overlay__svg--square`} icon={['fal', 'square-full']} size='1x' transform={{ rotate: 350 }} />
-          <FontAwesomeIcon className={`cvw__btn-overlay__svg cvw__btn-overlay__svg--plus-circle`} style={{ marginLeft: '-30px' }}icon={['fal', 'plus-circle']} size='xs' />
-          <FormattedMessage id='LANDING_PAGES.EXPLORE_COLOR' />
-        </Link>
-
-        <Link aria-label={intl.formatMessage({ id: 'LANDING_PAGES.GET_INSPIRED' })} tabIndex='0' onKeyDown={onKeyDown} className={`${cvwLandingPage}__intro-button-container__intro-buttons`} to={`${INSPIRATION_ROUTE}`} onClick={handleRedirect}>
-          <FontAwesomeIcon className={`cvw__btn-overlay__svg`} icon={['fal', 'lightbulb']} size='1x' />
-          <FormattedMessage id='LANDING_PAGES.GET_INSPIRED' />
-        </Link>
-
-        <Link aria-label={intl.formatMessage({ id: 'LANDING_PAGES.PAINT_A_PHOTO' })} tabIndex='0' onKeyDown={onKeyDown} className={`${cvwLandingPage}__intro-button-container__intro-buttons`} to={`${SCENES_ROUTE}`} onClick={handleRedirect}>
-          <FontAwesomeIcon className={`cvw__btn-overlay__svg`} icon={['fal', 'square-full']} />
-          <FontAwesomeIcon className={`cvw__btn-overlay__svg cvw__btn-overlay__svg--brush`} icon={['fa', 'brush']} size='sm' transform={{ rotate: 320 }} />
-          <FormattedMessage id='LANDING_PAGES.PAINT_A_PHOTO' />
-        </Link>
+      <div className='cvw-landing-page-wrapper__intro-button-container'>
+        <button className='cvw-landing-page-wrapper__intro-button-container__intro-buttons' onClick={() => redirect('/active/colors')}>
+          <span className='fa-layers fa-fw cvw-nav-btn-icon'>
+            <FontAwesomeIcon icon={faSquareFull} size='xs' transform={{ rotate: 10 }} />
+            <FontAwesomeIcon icon={faSquareFull} size='sm' transform={{ rotate: 0 }} />
+            <FontAwesomeIcon icon={faSquareFull} size='1x' transform={{ rotate: 350 }} />
+            <FontAwesomeIcon icon={faPlusCircle} size='xs' />
+          </span>
+          <FormattedMessage id='EXPLORE_COLOR' />
+        </button>
+        <button className='cvw-landing-page-wrapper__intro-button-container__intro-buttons' onClick={() => redirect('/active/inspiration')}>
+          <FontAwesomeIcon className='cvw-nav-btn-icon' icon={['fal', 'lightbulb']} size='1x' />
+          <FormattedMessage id='NAV_LINKS.GET_INSPIRED' />
+        </button>
+        <button className='cvw-landing-page-wrapper__intro-button-container__intro-buttons' onClick={() => redirect('/active/scenes')}>
+          <span className='fa-layers fa-fw cvw-nav-btn-icon'>
+            <FontAwesomeIcon icon={faSquareFull} />
+            <FontAwesomeIcon icon={['fa', 'brush']} size='sm' transform={{ rotate: 320 }} />
+          </span>
+          <FormattedMessage id='NAV_LINKS.PAINT_A_PHOTO' />
+        </button>
       </div>
     </div>
   )

@@ -45,6 +45,7 @@
   "ERROR_ENCOUNTERED": "We've encountered an error.",
   "ERROR_LOADING_COLORS": "We're unable to load colors right now.",
   "EXPERT_COLOR_PICKS": "Expert Color Picks",
+  "EXPLORE_COLOR": "Explore Color",
   "EXTERIOR": "Exterior",
   "FIND_COLORS_IN_CW": "FIND COLORS IN THE DIGITAL COLOR WALL",
   "HELPFUL_HINTS": {
@@ -215,6 +216,7 @@
   "NO_COLORS_AVAILABLE": "No colors available.",
   "NO_COLORS_FOUND": "No suitable colors found.",
   "ORIGINAL_IMAGE": "Original Image",
+  "OR": "OR",
   "PAINT_SCENE": {
     "CANCEL": "CANCEL",
     "OK": "LOAD PALETTE",
@@ -329,6 +331,7 @@
   "SIGN_IN": "SIGN IN",
   "SIMILAR_COLORS": "Similar Colors",
   "START_PAINTING": "Start Painting",
+  "START_PAINTING_NOW": "Start Painting Now",
   "SWATCH_ACTIVATED_DETAILS": "{color} is selected. Press Enter to view details.",
   "SWATCH_FOCUS": "{color}. Press Enter to select.",
   "SYSTEM": {

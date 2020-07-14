@@ -223,66 +223,37 @@ export const updateCurrentSceneInfo = (sceneId: number, surfaceId: number) => {
 }
 
 export const TOGGLE_EDIT_MODE = 'TOGGLE_EDIT_MODE'
-export const toggleEditMode = (currentEditMode: boolean) => {
-  return {
-    type: TOGGLE_EDIT_MODE,
-    payload: !currentEditMode
-  }
-}
+export const toggleEditMode = (currentEditMode: boolean) => ({ type: TOGGLE_EDIT_MODE, payload: !currentEditMode })
 
 export const EDIT_MASK = 'EDIT_MASK'
-export const editMask = (sceneWorkspace: SceneWorkspace) => {
-  return {
-    type: EDIT_MASK,
-    payload: sceneWorkspace
-  }
-}
+export const editMask = (sceneWorkspace: SceneWorkspace) => ({ type: EDIT_MASK, payload: sceneWorkspace })
 
 export const TOGGLE_COLOR_DETAILS_PAGE = 'TOGGLE_COLOR_DETAILS_PAGE'
-export const toggleColorDetailsPage = () => {
-  return {
-    type: TOGGLE_COLOR_DETAILS_PAGE
-  }
-}
+export const toggleColorDetailsPage = () => ({ type: TOGGLE_COLOR_DETAILS_PAGE })
 
-export const SET_ACTIVE_STOCK_SCENE_POLLUTED = 'SET_ACTIVE_STOCK_SCENE_POLLUTED'
-export const setActiveStockScenePolluted = () => {
-  return {
-    type: SET_ACTIVE_STOCK_SCENE_POLLUTED
-  }
-}
+export const SET_ACTIVE_SCENE_POLLUTED = 'SET_ACTIVE_SCENE_POLLUTED '
+export const setActiveScenePolluted = () => ({ type: SET_ACTIVE_SCENE_POLLUTED })
 
-export const UNSET_ACTIVE_STOCK_SCENE_POLLUTED = 'UNSET_ACTIVE_STOCK_SCENE_POLLUTED'
-export const unsetActiveStockScenePolluted = () => {
-  return {
-    type: UNSET_ACTIVE_STOCK_SCENE_POLLUTED
-  }
-}
+export const UNSET_ACTIVE_SCENE_POLLUTED = 'UNSET_ACTIVE_SCENE_POLLUTED '
+export const unsetActiveScenePolluted = () => ({ type: UNSET_ACTIVE_SCENE_POLLUTED })
 
 export const SET_SELECTED_SCENE_VARIANT_CHANGED = 'SET_SELECTED_SCENE_VARIANT_CHANGED'
-export const setSelectedSceneVariantChanged = () => {
-  return {
-    type: SET_SELECTED_SCENE_VARIANT_CHANGED
-  }
-}
+export const setSelectedSceneVariantChanged = () => ({ type: SET_SELECTED_SCENE_VARIANT_CHANGED })
 
 export const UNSET_SELECTED_SCENE_VARIANT_CHANGED = 'UNSET_SELECTED_SCENE_VARIANT_CHANGED'
-export const unsetSelectedSceneVariantChanged = () => {
-  return {
-    type: UNSET_SELECTED_SCENE_VARIANT_CHANGED
-  }
-}
+export const unsetSelectedSceneVariantChanged = () => ({ type: UNSET_SELECTED_SCENE_VARIANT_CHANGED })
 
 export const SET_SELECTED_SCENE_PALETTE_LOADED = 'SET_SELECTED_SCENE_PALETTE_LOADED'
-export const setSelectedScenePaletteLoaded = () => {
-  return {
-    type: SET_SELECTED_SCENE_PALETTE_LOADED
-  }
-}
+export const setSelectedScenePaletteLoaded = () => ({ type: SET_SELECTED_SCENE_PALETTE_LOADED })
 
 export const UNSET_SELECTED_SCENE_PALETTE_LOADED = 'UNSET_SELECTED_SCENE_PALETTE_LOADED'
-export const unsetSelectedScenePaletteLoaded = () => {
-  return {
-    type: UNSET_SELECTED_SCENE_PALETTE_LOADED
-  }
-}
+export const unsetSelectedScenePaletteLoaded = () => ({ type: UNSET_SELECTED_SCENE_PALETTE_LOADED })
+
+export const SET_WARNING_MODAL_IMG_PREVIEW = 'SET_WARNING_MODAL_IMG_PREVIEW '
+export const setWarningModalImgPreview = (miniImg) => ({ type: SET_WARNING_MODAL_IMG_PREVIEW, payload: miniImg })
+
+export const SHOW_WARNING_MODAL = 'SHOW_WARNING_MODAL'
+export const showWarningModal = (openFn: () => void) => ({ type: SHOW_WARNING_MODAL, payload: openFn })
+
+export const HIDE_WARNING_MODAL = 'HIDE_WARNING_MODAL'
+export const hideWarningModal = () => ({ type: HIDE_WARNING_MODAL })

@@ -237,15 +237,11 @@ export const isLoadingSavedScene = (state: boolean = false, action: {type: strin
 }
 
 export const showSaveSceneModal = (state: boolean = false, action: {type: string, payload: boolean}) => {
-  if (action.type === SHOW_SAVE_SCENE_MODAL) {
-    return action.payload
+  switch (action.type) {
+    case SHOW_SAVE_SCENE_MODAL: return action.payload
+    case RESET_SAVE_STATE: case SAVE_ANON_STOCK_SCENE: return false
+    default: return state
   }
-
-  if (action.type === RESET_SAVE_STATE || SAVE_ANON_STOCK_SCENE) {
-    return false
-  }
-
-  return state
 }
 
 export const saveSceneName = (state: string = '', action: any) => {

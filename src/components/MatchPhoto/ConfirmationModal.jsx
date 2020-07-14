@@ -1,7 +1,6 @@
 // @flow
-import React, { useContext, useRef, useCallback, useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import { RouteContext } from '../../contexts/RouteContext/RouteContext'
+import React, { useRef, useCallback, useEffect } from 'react'
+import { Link, useHistory } from 'react-router-dom'
 import { FormattedMessage } from 'react-intl'
 
 const baseClass = 'confirmation-modal'
@@ -15,9 +14,9 @@ type Props = {
 }
 
 const ConfirmationModal = ({ onClickNo }: Props) => {
-  const routeContext = useContext(RouteContext)
   const btnYesRef = useRef()
   const btnNoRef = useRef()
+  const history = useHistory()
 
   useEffect(() => {
     if (btnYesRef && btnYesRef.current) btnYesRef.current.focus()
@@ -38,7 +37,9 @@ const ConfirmationModal = ({ onClickNo }: Props) => {
           <FormattedMessage id='CONFIRMATION_DIALOG_MATCH_A_PHOTO_EXIT' />
         </p>
         <Link tabIndex='-1' to={`/active`}>
-          <button ref={btnYesRef} onBlur={() => blurHandler(btnYesRef)} className={`${buttonClass}`} onClick={() => routeContext.setActiveComponent()}><FormattedMessage id='YES' /></button>
+          <button ref={btnYesRef} onBlur={() => blurHandler(btnYesRef)} className={`${buttonClass}`} onClick={() => history.push('/active')}>
+            <FormattedMessage id='YES' />
+          </button>
         </Link>
         <button ref={btnNoRef} onBlur={() => blurHandler(btnNoRef)} className={`${buttonClass}`} onClick={onClickNo}><FormattedMessage id='NO' /></button>
       </div>
