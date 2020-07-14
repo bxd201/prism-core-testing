@@ -475,49 +475,34 @@ export const getSelectArea = (imageData, newColor, x, y, similar = 100, performa
  * so I modified it for our canvas tool use.
 */
 export const floodFillScanLineStack = (imageData, newColor, x, y, similar, performance) => {
-  const oldColor = getColorAtPixel(imageData, x, y)
+  const visited = new Uint8Array(imageData.width, imageData.height)
+  const originColor = getColorAtPixel(imageData, x, y)
   const { width, height } = imageData
   let resultArr = []
-  let spanAbove
-  let spanBelow
   let stack = []
   const color = { r: newColor[0], g: newColor[1], b: newColor[2], a: newColor[3] }
   stack.push({ x: x, y: y })
 
-  if (colorMatch(oldColor, color, similar)) {
+  if (colorMatch(originColor, color, 100)) {
     return
   }
-
-  while (stack.length) {
+  while (stack.length > 0) {
     if (window.performance.now() - performance > MAX_RES_TIME) {
       return resultArr
     }
     let item = stack.pop()
     let x1 = item.x
     let y1 = item.y
-    while (x1 > 0 && colorMatch(getColorAtPixel(imageData, x1, y1), oldColor, similar)) {
-      x1--
-    }
-    x1++
-    spanAbove = 0
-    spanBelow = 0
-    while (x1 < width && colorMatch(getColorAtPixel(imageData, x1, y1), oldColor, similar)) {
+    const currentColor = getColorAtPixel(imageData, x1, y1)
+    const index = width * y1 * 4 + x1 * 4
+    if (!visited[index] && isColorSimilar(currentColor, originColor)) {
       setColorAtPixel(imageData, newColor, x1, y1)
-      const index = width * y1 * 4 + x1 * 4
       resultArr.push(index)
-      if (!spanAbove && y1 > 0 && colorMatch(getColorAtPixel(imageData, x1, y1 - 1), oldColor, similar)) {
-        stack.push({ x: x1, y: y1 - 1 })
-        spanAbove = 1
-      } else if (spanAbove && y1 > 0 && !colorMatch(getColorAtPixel(imageData, x1, y1 - 1), oldColor, similar)) {
-        spanAbove = 0
-      }
-      if (!spanBelow && y1 < height - 1 && colorMatch(getColorAtPixel(imageData, x1, y1 + 1), oldColor, similar)) {
-        stack.push({ x: x1, y: y1 + 1 })
-        spanBelow = 1
-      } else if (spanBelow && y1 < height - 1 && !colorMatch(getColorAtPixel(imageData, x1, y1 + 1), oldColor, similar)) {
-        spanBelow = 0
-      }
-      x1++
+      visited[index] = 1
+      x1 + 1 < width && stack.push({ x: x1 + 1, y: y1 })
+      x1 - 1 > 0 && stack.push({ x: x1 - 1, y: y1 })
+      y1 + 1 < height && stack.push({ x: x1, y: y1 + 1 })
+      y1 - 1 > 0 && stack.push({ x: x1, y: y1 - 1 })
     }
   }
   return resultArr
@@ -531,37 +516,52 @@ export const getColorDistance = (a: RGB, b: RGB) => {
   return getDeltaE00(labA, labB)
 }
 
+export const isColorSimilar = (color1, color2) => {
+  // To simulate deltaE algorithm, we use below function to get a approximation value for color similarity based on RGB space
+  // Because R,G,B for human eyes take different weight, so the max color distance is calculated as 764.8 based on the fomula space distance(RWeight,GWeight,BWeigth)
+  // then we could use max color distance to get similarity percentage.
+  const maxColDist = 764.8
+  const rmean = (color1.r + color2.r) / 2
+  const r = color1.r - color2.r
+  const g = color1.g - color2.g
+  const b = color1.b - color2.b
+  const a = color1.a - color2.a
+  const weightR = 2 + rmean / 256
+  const weightG = 4.0
+  const weightB = 2 + (255 - rmean) / 256
+  const d1 = Math.sqrt(weightR * r * r + weightG * g * g + weightB * b * b + a * a)
+  return Math.round((maxColDist - d1) / maxColDist * 100) > 90
+}
+
 export const colorMatch = (a: RGB, b: RGB, similar) => {
   if (similar !== 100) {
     const colorDistance = getColorDistance(a, b)
-    const colorDistanceBlk = getColorDistance(a, [0, 0, 0])
-    if (colorDistanceBlk < 1) {
-      return colorDistance < 1
-    } else {
-      return colorDistance < 8
-    }
+    return colorDistance < 8
   }
   return a.r === b.r && a.g === b.g && a.b === b.b && a.a === b.a
 }
 
 export const getColorAtPixel = (imageData, x, y) => {
-  const { width, data } = imageData
-
+  const { width, height, data } = imageData
+  if (x < 0 || y < 0 || x > width || y > height) {
+    return { r: -1, g: -1, b: -1, a: -1 } // impossible color
+  }
+  const offset = (y * width + x) * 4
   return {
-    r: data[4 * (width * y + x) + 0],
-    g: data[4 * (width * y + x) + 1],
-    b: data[4 * (width * y + x) + 2],
-    a: data[4 * (width * y + x) + 3]
+    r: data[offset + 0],
+    g: data[offset + 1],
+    b: data[offset + 2],
+    a: data[offset + 3]
   }
 }
 
 export const setColorAtPixel = (imageData, color, x, y) => {
   const { width, data } = imageData
-
-  data[4 * (width * y + x) + 0] = color.r & 0xff
-  data[4 * (width * y + x) + 1] = color.g & 0xff
-  data[4 * (width * y + x) + 2] = color.b & 0xff
-  data[4 * (width * y + x) + 3] = color.a & 0xff
+  const offset = (y * width + x) * 4
+  data[offset + 0] = color.r & 0xff
+  data[offset + 1] = color.g & 0xff
+  data[offset + 2] = color.b & 0xff
+  data[offset + 3] = color.a & 0xff
 }
 
 export const hexToRGB = (hex) => {
