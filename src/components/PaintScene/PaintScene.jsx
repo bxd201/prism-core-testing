@@ -842,17 +842,18 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     const cursorY = Math.round((clientY - canvasClientOffset.top) * scale)
     const mergeContext = this.mergeCanvasRef.current.getContext('2d')
     const imageData = mergeContext.getImageData(0, 0, mergeContext.canvas.width, mergeContext.canvas.height)
-    const RGB = getActiveColorRGB(hexToRGB(this.props.lpActiveColor.hex))
-    const isPaint = colorMatch(getColorAtPixel(imageData, cursorX, cursorY), { r: RGB[0], g: RGB[1], b: RGB[2], a: RGB[3] }, 100)
-
-    if (!isPaint) {
-      this.setState({ paintCursor: `${canvasClass}--${toolNames.PAINTAREA}--loading` })
-      setTimeout(() => {
-        let newState = bucketPaint(e, this.state, this.props, ref)
-        this.clearCanvas()
-        repaintImageByPath(newState.imagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
-        this.setState({ ...newState, canvasImageUrls: this.getLayers(), paintCursor: `${canvasClass}--${toolNames.PAINTAREA}` })
-      }, 100)
+    const RGB = this.props.lpActiveColor && getActiveColorRGB(hexToRGB(this.props.lpActiveColor.hex))
+    if (RGB) {
+      const isPaint = colorMatch(getColorAtPixel(imageData, cursorX, cursorY), { r: RGB[0], g: RGB[1], b: RGB[2], a: RGB[3] }, 100)
+      if (!isPaint) {
+        this.setState({ paintCursor: `${canvasClass}--${toolNames.PAINTAREA}--loading` })
+        setTimeout(() => {
+          let newState = bucketPaint(e, this.state, this.props, ref)
+          this.clearCanvas()
+          repaintImageByPath(newState.imagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
+          this.setState({ ...newState, canvasImageUrls: this.getLayers(), paintCursor: `${canvasClass}--${toolNames.PAINTAREA}` })
+        }, 100)
+      }
     }
   }, 10)
 
