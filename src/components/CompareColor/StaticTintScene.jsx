@@ -25,7 +25,6 @@ export const StaticTintScene = (props: PropsType) => {
   const { brandId } = React.useContext(ConfigurationContext)
   const tintColor: Color = props.color /* the color this particular scene is being tinted to */
   const chosenScene: Scene = props.scene /* the scene you're using */
-  const isCompareColor: boolean = props.isCompareColor
   const nightSceneIndex = props.config && props.config.isNightScene ? 1 : 0
   const sceneType = props.config && props.config.type ? props.config.type : SCENE_TYPES.ROOM
   const defaultSceneVariantName: string = chosenScene.variant_names[nightSceneIndex]
@@ -82,7 +81,7 @@ export const StaticTintScene = (props: PropsType) => {
     surfacePromise && <ImagePreloader preload={getThumbnailAssetArrayByScene(defaultSceneVariant, surfacePromise)}>
       {({ loading, error }) => (
         <TintableScene
-          background={isCompareColor ? defaultSceneVariant[0].thumb : defaultSceneVariant[0].image}
+          background={defaultSceneVariant[0].image}
           error={error}
           height={chosenScene.height}
           imageValueCurve={defaultSceneVariant[0].normalizedImageValueCurve}
