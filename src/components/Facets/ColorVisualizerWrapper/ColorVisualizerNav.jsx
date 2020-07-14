@@ -71,8 +71,8 @@ export default ({ setPaintScene, setMatchPhotoScene }: { setPaintScene: (React.E
   useEffect(() => {
     if (imgUrl) {
       location.pathname === '/active/match-photo'
-        ? setMatchPhotoScene(<ImageRotateContainer showPaintScene isFromMyIdeas={false} isPaintScene={false} imgUrl={imgUrl} />)
-        : setPaintScene(<ImageRotateContainer showPaintScene isFromMyIdeas={false} isPaintScene imgUrl={imgUrl} />)
+        ? setMatchPhotoScene(<ImageRotateContainer key={imgUrl + 'mp'} showPaintScene isFromMyIdeas={false} isPaintScene={false} imgUrl={imgUrl} />)
+        : setPaintScene(<ImageRotateContainer key={imgUrl} showPaintScene isFromMyIdeas={false} isPaintScene imgUrl={imgUrl} />)
     }
   }, [imgUrl])
 
