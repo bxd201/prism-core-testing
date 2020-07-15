@@ -16,10 +16,12 @@ $details-tab-padding: 1rem;
   flex-direction: column;
   justify-content: flex-end;
   position: relative;
+  width: 100vw;
 
   @include respond-above(sm) {
     flex-direction: row;
     margin-bottom: $width-small;
+    width: auto;
   }
 }
 
