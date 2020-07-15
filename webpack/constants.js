@@ -33,6 +33,9 @@ const cleanslateEntryPointName = 'cleanslate'
 const exportEntryPointName = 'index'
 const chunkReactName = 'commonR'
 const chunkNonReactName = 'commonNonR'
+const chunkFirebaseName = 'commonFirebase'
+const chunkImageManipulationName = 'commonImageManipulation'
+const chunkAIName = 'commonAI'
 
 const fixedEntryPoints = {
   [cleanslateEntryPointName]: cleanslatePath,
@@ -66,6 +69,9 @@ module.exports = {
   appIndexPath,
   authorEntryPointName,
   authorPath,
+  chunkAIName,
+  chunkFirebaseName,
+  chunkImageManipulationName,
   chunkNonReactName,
   chunkReactName,
   cleanslateEntryPointName,
@@ -83,8 +89,8 @@ module.exports = {
   nodeModulesPath,
   prismWrappingClass,
   production,
+  publicPath,
   rootPath,
   srcPath,
-  publicPath,
   templateIndexEntryPointName
 }

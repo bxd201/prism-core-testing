@@ -1,6 +1,6 @@
 // @flow
 
-import { uniqueId } from 'lodash'
+import uniqueId from 'lodash/uniqueId'
 
 export const SYSTEM_MESSAGE_TYPES = {
   success: 'NORMAL',

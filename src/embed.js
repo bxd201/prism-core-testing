@@ -24,8 +24,11 @@ function injectRoot () {
 }
 
 embedGlobalStyles()
-embedScript(ensureFullyQualifiedAssetUrl(`${WEBPACK_CONSTANTS.chunkReactName}.js`))
+embedScript(ensureFullyQualifiedAssetUrl(`${WEBPACK_CONSTANTS.chunkAIName}.js`))
+embedScript(ensureFullyQualifiedAssetUrl(`${WEBPACK_CONSTANTS.chunkFirebaseName}.js`))
+embedScript(ensureFullyQualifiedAssetUrl(`${WEBPACK_CONSTANTS.chunkImageManipulationName}.js`))
 embedScript(ensureFullyQualifiedAssetUrl(`${WEBPACK_CONSTANTS.chunkNonReactName}.js`))
+embedScript(ensureFullyQualifiedAssetUrl(`${WEBPACK_CONSTANTS.chunkReactName}.js`))
 injectRoot()
 embedScript(ensureFullyQualifiedAssetUrl(`${WEBPACK_CONSTANTS.mainEntryPointName}.js`))
 embedBundleStyles(WEBPACK_CONSTANTS.mainEntryPointName)

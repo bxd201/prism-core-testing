@@ -33,7 +33,7 @@ import {
   SELECTED_SAVED_LIVE_PALETTE
 } from '../actions/saveLivePalette'
 import { SCENE_TYPES } from '../../constants/globals'
-import { cloneDeep } from 'lodash'
+import cloneDeep from 'lodash/cloneDeep'
 import { PAINT_SCENE_SURFACE } from '../actions/scenes'
 export const legacySavedScenesMetadata = (state: Object[] = [], action: { type: string, payload: Object }) => {
   if (action.type === DELETE_SAVED_SCENE) {
