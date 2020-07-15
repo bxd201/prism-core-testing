@@ -41,7 +41,14 @@ export const CollectionDetail = ({ addToLivePalette, collectionDetailData }: Pro
   const cellRenderer = ({ columnIndex, isScrolling, isVisible, key, parent, rowIndex, style }) => {
     const { columnCount, colors } = parent.props
     const index = columnIndex + (rowIndex * columnCount)
-    return colors && colors[index] && <ColorSwatch key={key} style={style} color={colors[index]} showContents />
+    const pctW = 100 / columnCount
+
+    const _style = {
+      ...style,
+      width: `${pctW}%`,
+      left: `${pctW * columnIndex}%`
+    }
+    return colors && colors[index] && <ColorSwatch key={key} style={_style} color={colors[index]} showContents />
   }
 
   return (
@@ -71,6 +78,7 @@ export const CollectionDetail = ({ addToLivePalette, collectionDetailData }: Pro
                     rowHeight={newSize}
                     rowCount={rowCount}
                     width={width}
+                    autoContainerWidth
                     addToLivePalette={addToLivePalette}
                   />
                 )
