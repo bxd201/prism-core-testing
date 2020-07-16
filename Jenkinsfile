@@ -10,7 +10,6 @@ pipeline {
   agent any
   environment {
     IMAGE_NAME = "prism-core"
-    SONAR_URL = "https://sonarqube.ebus.swaws"
   }
   stages {
     stage('builder') {
