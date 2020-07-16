@@ -13,33 +13,6 @@ pipeline {
     SONAR_URL = "https://sonarqube.ebus.swaws"
   }
   stages {
-    stage('sonar scan') {
-      when {
-        not {
-          expression { BRANCH_NAME ==~ /^(qa|release)$/ }
-        }
-      }
-      steps {
-        withCredentials([string(credentialsId: 'sonar-prod', variable: 'TOKEN')]){
-          sh """
-          # Clean up any old image archive files
-          rm -rf ${IMAGE_NAME}.docker.tar.gz
-          docker build --pull \
-            -t ${IMAGE_NAME}-sonar:${BUILD_NUMBER} \
-            --build-arg SONAR_URL=${SONAR_URL} \
-            --build-arg TOKEN=${TOKEN} \
-            --label "jenkins.build=${BUILD_NUMBER}" \
-            --label "jenkins.job_url=${JOB_URL}" \
-            --label "jenkins.build_url=${BUILD_URL}" \
-            --label "prism-api.version=1.0.0" \
-            --label "git.commit=${GIT_COMMIT}" \
-            --label "git.repo=${GIT_URL}" \
-            -f ci/sonarqube/Dockerfile.sonar \
-            .
-          """
-        }
-      }
-    }
     stage('builder') {
       when {
         not {
@@ -140,6 +113,31 @@ pipeline {
         bundle install
         bundle exec rspec
         """
+      }
+    }
+    stage('Sonar Scan') {
+      when {
+        not {
+            expression { BRANCH_NAME ==~ /^(qa|release)$/ }
+        }
+      }
+      agent {
+        docker {
+          image 'docker.cpartdc01.sherwin.com/ecomm/utils/sonar-scanner:latest'
+          reuseNode true
+          alwaysPull true
+        }
+      }
+      environment {
+        SONAR_URL = "https://sonarqube.ebus.swaws"
+        PROJECT_ID = "prism-api"
+      }
+      steps {
+        withCredentials([string(credentialsId: 'sonar-prod', variable: 'TOKEN')]){
+          sh """
+          sonar-scanner -X -Dsonar.login=${TOKEN}  -Dsonar.host.url=${SONAR_URL} -Dsonar.projectKey=${PROJECT_ID} -Dsonar.sources=. -Dsonar.inclusions=src/**/*.js,**/*.js  -Dsonar.exclusions=src/node_modules/*
+          """
+        }
       }
     }
 
