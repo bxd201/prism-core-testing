@@ -58,13 +58,15 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
     pinnedColors: [],
     imageStatus: 'loading',
     isDragging: false,
-    position: { x: 0, y: 0, left: 0, right: 0, top: 0, bottom: 0 }
+    position: { x: 0, y: 0, left: 0, right: 0, top: 0, bottom: 0 },
+    isDeleting: false
   }
   constructor (props: ComponentProps) {
     super(props)
     this.CFICanvas = React.createRef()
     this.CFIWrapper = React.createRef()
     this.CFIImage = React.createRef()
+    this.deleteButtonRef = React.createRef()
     this.canvasOffsetWidth = 0
     this.canvasOffsetHeight = 0
   }
@@ -85,6 +87,12 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
       canvasOffset.x = Math.floor(canvasClientOffset.left)
       canvasOffset.y = Math.floor(canvasClientOffset.top)
       window.sessionStorage.setItem('canvasOffset', JSON.stringify(canvasOffset))
+    }
+    if (this.deleteButtonRef.current) {
+      this.deleteButtonOffset = this.deleteButtonRef.current.getBoundingClientRect()
+      this.deleteButtonR = this.deleteButtonOffset.width / 2
+      this.deleteButtonX = this.deleteButtonOffset.x + this.deleteButtonR
+      this.deleteButtonY = this.deleteButtonOffset.y + this.deleteButtonR
     }
   }
 
@@ -108,6 +116,10 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
   updateWindowDimensions = () => {
     this.setCanvasOffset()
     this.canvasOffset = this.CFICanvas.current.getBoundingClientRect()
+    this.deleteButtonOffset = this.deleteButtonRef.current.getBoundingClientRect()
+    this.deleteButtonR = this.deleteButtonOffset.width / 2
+    this.deleteButtonX = this.deleteButtonOffset.x + this.deleteButtonR
+    this.deleteButtonY = this.deleteButtonOffset.y + this.deleteButtonR
     this.canvasOffsetWidth = parseInt(this.canvasOffset.width, 10)
     this.canvasOffsetHeight = parseInt(this.canvasOffset.height, 10)
     this.canvasClientX = parseInt(this.canvasOffset.left, 10)
@@ -287,11 +299,16 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
   handleDrag = throttle((x: number, y: number) => {
     const canvasOffset = this.getCanvasOffset()
     const position = this.borderChecking(x, y)
+    let isDeleting = false
+    const circleDistance = Math.sqrt(Math.pow((this.deleteButtonX - x), 2) + Math.pow((this.deleteButtonY - y), 2))
+    if (circleDistance < (activedPinsHalfWidth + this.deleteButtonR)) {
+      isDeleting = true
+    }
     const offsetY = x - canvasOffset.x
     const offsetX = y - canvasOffset.y
     const mappedCanvasIndex = (offsetX * this.canvasOffsetWidth + offsetY) * 4
     const currentPixelRGBstring = `rgb(${this.imageDataData[mappedCanvasIndex]},${this.imageDataData[mappedCanvasIndex + 1]},${this.imageDataData[mappedCanvasIndex + 2]})`
-    this.setState({ position: position, currentPixelRGBstring: currentPixelRGBstring, isDragging: true })
+    this.setState({ position: position, currentPixelRGBstring: currentPixelRGBstring, isDragging: true, isDeleting: isDeleting })
   }, throttleDragTime)
 
   handleDragStop = (e: Object) => {
@@ -301,13 +318,18 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
       const offsetX = position.x + activedPinsHalfWidth
       const offsetY = position.y + activedPinsHalfWidth
       const mappedCanvasIndex = (offsetY * this.canvasOffsetWidth + offsetX) * 4
-      this.setState({
-        currentPixelRGB: [this.imageDataData[mappedCanvasIndex], this.imageDataData[mappedCanvasIndex + 1], this.imageDataData[mappedCanvasIndex + 2]],
-        currentPixelRGBstring: `rgb(${this.imageDataData[mappedCanvasIndex]},${this.imageDataData[mappedCanvasIndex + 1]},${this.imageDataData[mappedCanvasIndex + 2]})`,
-        isDragging: false
-      }, () => {
-        this.addNewPin(offsetX, offsetY)
-      })
+      const circleDistance = Math.sqrt(Math.pow((this.deleteButtonX - e.clientX), 2) + Math.pow((this.deleteButtonY - e.clientY), 2))
+      if (circleDistance < (activedPinsHalfWidth + this.deleteButtonR)) {
+        this.setState({ isDragging: false, isDeleting: false })
+      } else {
+        this.setState({
+          currentPixelRGB: [this.imageDataData[mappedCanvasIndex], this.imageDataData[mappedCanvasIndex + 1], this.imageDataData[mappedCanvasIndex + 2]],
+          currentPixelRGBstring: `rgb(${this.imageDataData[mappedCanvasIndex]},${this.imageDataData[mappedCanvasIndex + 1]},${this.imageDataData[mappedCanvasIndex + 2]})`,
+          isDragging: false
+        }, () => {
+          this.addNewPin(offsetX, offsetY)
+        })
+      }
     }
   }
 
@@ -394,10 +416,11 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
   }
 
   render () {
-    const { pinnedColors, currentPixelRGBstring, position, isDragging } = this.state
+    const { pinnedColors, currentPixelRGBstring, position, isDragging, isDeleting } = this.state
     const { img } = this.props.data
     const { isActivedPage, intl } = this.props
     let showDeletePin = false
+
     return (
       <div role='presentation' className='scene__image__wrapper' onClick={isActivedPage ? this.handleClick : null} ref={this.CFIWrapper}>
         <canvas className='scene__image__wrapper__canvas' name='canvas' ref={this.CFICanvas} />
@@ -436,7 +459,7 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
             right: position.right
           }} />
         }
-        {(showDeletePin) && <button title={`${intl.formatMessage({ id: 'DELETE_COLOR' })}`} className='scene__image__wrapper__delete-pin' onClick={this.pinRemove}><FontAwesomeIcon icon='trash' size='1x' /></button>}
+        {<button ref={this.deleteButtonRef} title={`${intl.formatMessage({ id: 'DELETE_COLOR' })}`} className={`scene__image__wrapper__delete-pin ${isDeleting ? 'scene__image__wrapper__delete-pin--active' : ''} ${!showDeletePin ? 'scene__image__wrapper__delete-pin--display' : ''}`} onClick={this.pinRemove}><FontAwesomeIcon icon='trash' size='1x' /></button>}
       </div>
     )
   }
