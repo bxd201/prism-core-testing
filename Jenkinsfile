@@ -130,7 +130,7 @@ pipeline {
       }
       environment {
         SONAR_URL = "https://sonarqube.ebus.swaws"
-        PROJECT_ID = "prism-api"
+        PROJECT_ID = "prism-core"
       }
       steps {
         withCredentials([string(credentialsId: 'sonar-prod', variable: 'TOKEN')]){
