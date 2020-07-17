@@ -2,7 +2,7 @@
 import React, { useState } from 'react'
 import type { Element } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { Switch, Route, useLocation, useHistory } from 'react-router-dom'
+import { Switch, Route, Redirect, useLocation, useHistory } from 'react-router-dom'
 import { ColorCollections } from '../../ColorCollections/ColorCollections'
 import ExpertColorPicks from '../../ExpertColorPicks/ExpertColorPicks'
 import { ColorWallPage } from '../ColorWallFacet'
@@ -84,6 +84,7 @@ export const CVW = () => {
               }} />} />
               <Route path='/active/my-ideas' render={() => <MyIdeasContainer />} />
               <Route path='/active/help' render={() => <Help />} />
+              <Route render={() => <Redirect to='/active' />} />
             </Switch>
             <div
               style={{ display: location.pathname.match(/(active|paint-scene|active\/colors|inspiration|scenes)$/) === null ? 'none' : 'block' }}
