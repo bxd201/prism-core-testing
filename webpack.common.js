@@ -256,7 +256,34 @@ module.exports = {
         [flags.chunkNonReactName]: {
           filename: '[name].js',
           name: flags.chunkNonReactName,
-          test: /[\\/]node_modules[\\/](?!(react|react-dom))/,
+          test: /[\\/]node_modules[\\/](?!(react|react-dom|@firebase|@tensorflow|jimp))/,
+          chunks (chunk) {
+            const dontChunk = chunk.name === flags.templateIndexEntryPointName || chunk.name === flags.embedEntryPointName
+            return !dontChunk
+          }
+        },
+        [flags.chunkAIName]: {
+          filename: '[name].js',
+          name: flags.chunkAIName,
+          test: /[\\/]node_modules[\\/](@tensorflow)/,
+          chunks (chunk) {
+            const dontChunk = chunk.name === flags.templateIndexEntryPointName || chunk.name === flags.embedEntryPointName
+            return !dontChunk
+          }
+        },
+        [flags.chunkImageManipulationName]: {
+          filename: '[name].js',
+          name: flags.chunkImageManipulationName,
+          test: /[\\/]node_modules[\\/](jimp)/,
+          chunks (chunk) {
+            const dontChunk = chunk.name === flags.templateIndexEntryPointName || chunk.name === flags.embedEntryPointName
+            return !dontChunk
+          }
+        },
+        [flags.chunkFirebaseName]: {
+          filename: '[name].js',
+          name: flags.chunkFirebaseName,
+          test: /[\\/]node_modules[\\/](@firebase)/,
           chunks (chunk) {
             const dontChunk = chunk.name === flags.templateIndexEntryPointName || chunk.name === flags.embedEntryPointName
             return !dontChunk
@@ -295,6 +322,9 @@ module.exports = {
     }),
     ...[
       ...Object.keys(allEntryPoints),
+      flags.chunkAIName,
+      flags.chunkFirebaseName,
+      flags.chunkImageManipulationName,
       flags.chunkNonReactName,
       flags.chunkReactName
     ].map(key => {

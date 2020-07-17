@@ -3,7 +3,6 @@ import React, { useRef, useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Switch, Route, useHistory, useLocation } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSquareFull, faPlusCircle } from '@fortawesome/pro-light-svg-icons'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { isMobileOnly, isTablet, isIOS } from 'react-device-detect'
 import ImageRotateContainer from '../../MatchPhoto/ImageRotateContainer'
@@ -83,10 +82,10 @@ export default ({ setPaintScene, setMatchPhotoScene }: { setPaintScene: (React.E
         <li>
           <button className={`cvw-nav-btn ${location.pathname === '/active/colors' ? 'cvw-nav-btn--active' : ''}`} onClick={() => history.push('/active/colors')}>
             <span className='fa-layers fa-fw cvw-nav-btn-icon'>
-              <FontAwesomeIcon icon={faSquareFull} size='xs' transform={{ rotate: 10 }} />
-              <FontAwesomeIcon icon={faSquareFull} size='sm' transform={{ rotate: 0 }} />
-              <FontAwesomeIcon icon={faSquareFull} size='1x' transform={{ rotate: 350 }} />
-              <FontAwesomeIcon icon={faPlusCircle} size='xs' />
+              <FontAwesomeIcon icon={['fal', 'square-full']} size='xs' transform={{ rotate: 10 }} />
+              <FontAwesomeIcon icon={['fal', 'square-full']} size='sm' transform={{ rotate: 0 }} />
+              <FontAwesomeIcon icon={['fal', 'square-full']} size='1x' transform={{ rotate: 350 }} />
+              <FontAwesomeIcon icon={['fal', 'plus-circle']} size='xs' />
             </span>
             <FormattedMessage id='NAV_LINKS.EXPLORE_COLORS' />
           </button>
@@ -100,7 +99,7 @@ export default ({ setPaintScene, setMatchPhotoScene }: { setPaintScene: (React.E
         <li>
           <button className={`cvw-nav-btn ${location.pathname === '/active/scenes' ? 'cvw-nav-btn--active' : ''}`} onClick={() => history.push('/active/scenes')}>
             <span className='fa-layers fa-fw cvw-nav-btn-icon'>
-              <FontAwesomeIcon icon={faSquareFull} />
+              <FontAwesomeIcon icon={['fal', 'square-full']} />
               <FontAwesomeIcon icon={['fa', 'brush']} size='sm' transform={{ rotate: 320 }} />
             </span>
             <FormattedMessage id='NAV_LINKS.PAINT_A_PHOTO' />
