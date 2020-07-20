@@ -252,6 +252,8 @@ module.exports = {
     removeEmptyChunks: true,
     sideEffects: flags.production,
     splitChunks: {
+      minSize: 0,
+      maxInitialRequests: Infinity,
       cacheGroups: {
         [flags.chunkNonReactName]: {
           filename: '[name].js',
