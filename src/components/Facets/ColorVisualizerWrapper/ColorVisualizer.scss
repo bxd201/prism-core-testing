@@ -60,12 +60,12 @@
     transform: scale(30) translateY(10px);
     &__inner-rect {
       transform-origin: 50% 40%;
-      animation: spin 0.2s linear;
+      animation: cv-preloading-spin  0.2s linear;
     }
 
     &__outer-rect {
       transform-origin: 50% 40%;
-      animation: spin 0.2s linear;
+      animation: cv-preloading-spin  0.2s linear;
     }
 
     &__text {

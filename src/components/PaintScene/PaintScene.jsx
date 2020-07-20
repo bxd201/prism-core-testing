@@ -852,7 +852,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
           this.clearCanvas()
           repaintImageByPath(newState.imagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
           this.setState({ ...newState, canvasImageUrls: this.getLayers(), paintCursor: `${canvasClass}--${toolNames.PAINTAREA}` })
-        }, 100)
+        }, 200)
       }
     }
   }, 10)
