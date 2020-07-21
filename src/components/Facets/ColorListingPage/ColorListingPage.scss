@@ -1,71 +1,20 @@
-@keyframes slideDetailsIn {
-    0%, 20% {
-      opacity: 0;
-      transform: translate3d(50%, 0, 0);
-    }
-    80%, 100% {
-      opacity: 1;
-      transform: translate3d(0%, 0, 0);
-    }
-  }
+.transition-wrapper {
+  width: 100%;
+  overflow: hidden;
+}
 
-  @keyframes slideWallIn {
-    0%, 20% {
-      opacity: 0;
-      transform: translate3d(-50%, 0, 0);
-    }
-    80%, 100% {
-      opacity: 1;
-      transform: translate3d(0%, 0, 0);
-    }
-  }
+.inline-color-details {
+  &.enter { transform: translateX(100%); }
+  &.enter-active { transform: translateX(0%); }
+  &.exit { transform: translateX(0%); }
+  &.exit-active { transform: translateX(100%); }
+  &.enter-active, &.exit-active { transition: transform 200ms; }
+}
 
-  .color-wall-transitioner {
-    overflow: hidden;
-    position: relative;
-
-    .cdp-slide {
-      &-enter,
-      &-enter-active,
-      &-enter-done {
-        // keep duration significatnly less than the transitionTime that JS is using
-        // to reduce jumpy transitions and background flashing in Chrome
-        animation-duration: #{getVar('colorWall.transitionTime')}ms;
-        animation-fill-mode: both;
-        animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        backface-visibility: hidden;
-        background: white;
-        position: relative;
-        z-index: 100;
-        will-change: transform opacity;
-
-        &.cdp-slide-to-wall {
-          animation-name: slideWallIn;
-        }
-
-        &.cdp-slide-to-details {
-          animation-name: slideDetailsIn;
-        }
-      }
-
-      &-enter-done {
-        animation: none;
-        transform: unset;
-      }
-
-      &-exit,
-      &-exit-active,
-      &-exit-done {
-        left: 0;
-        position: absolute !important; // TODO: there's an inline style of relative that is overriding this, need to figure out from what @brendan.do
-        top: 0;
-        transform: unset;
-        width: 100%;
-        z-index: 0;
-      }
-
-      &-exit-done {
-        display: none;
-      }
-    }
-  }
+.color-wall-wrap {
+  &.enter  { opacity: 0; }
+  &.enter-active { opacity: 1; }
+  &.exit { opacity: 1; }
+  &.exit-active { opacity: 0; }
+  &.enter-active, &.exit-active { transition: opacity 100ms; }
+}

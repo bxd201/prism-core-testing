@@ -19,7 +19,7 @@ import { generateColorDetailsPageUrl } from 'src/shared/helpers/ColorUtils'
 const colorDetailsBaseUrl = `/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_DETAIL}`
 
 type Props = {
-  colorSEO: string, // ${brandKey}-${colorNumber}-${kebabCase(name)}
+  colorSEO: ?string, // ${brandKey}-${colorNumber}-${kebabCase(name)}
   publish: (string, any) => void,
   subscribe: (string, Function) => void,
 }
