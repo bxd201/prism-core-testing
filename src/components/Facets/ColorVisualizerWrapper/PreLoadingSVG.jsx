@@ -6,11 +6,11 @@ export const PreLoadingSVG = () => {
     <div className='PreLoadingSVG'>
       <svg className='PreLoadingSVG__loader' version='1.1' baseProfile='tiny' id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlnsXlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 1200 1200' xmlSpace='preserve'>
         <g id='flower-container' data-svg-origin='610.2215728759766 492.3915252685547' style={{ transform: 'matrix(1, 0, 0, 1, 0, 0)' }}>
-          <polygon className='PreLoadingSVG__loader__outer-rect' fill='#E17000' path='' points='600,386 691,452 691,186 509,186 509,452' />
-          <polygon className='PreLoadingSVG__loader__outer-rect' fill='#B71234' path='' points='691,452 656,560 910,478 854,304 600,386' />
-          <polygon className='PreLoadingSVG__loader__outer-rect' fill='#00B9E4' path='' points='656,560 544,560 700,774 848,668 691,452' />
-          <polygon className='PreLoadingSVG__loader__outer-rect' fill='#69BE28' path='' points='544,560 509,452 352,668 500,774 656,560' />
-          <polygon className='PreLoadingSVG__loader__inner-rect' fill='#FFB612' path='' points='509,452 600,386 346,304 290,478 544,560' />
+          <polygon className='PreLoadingSVG__loader__outer-rect PreLoadingSVG__loader__outer-rect--1' fill='#E17000' path='' points='600,386 691,452 691,186 509,186 509,452' />
+          <polygon className='PreLoadingSVG__loader__outer-rect PreLoadingSVG__loader__outer-rect--2' fill='#B71234' path='' points='691,452 656,560 910,478 854,304 600,386' />
+          <polygon className='PreLoadingSVG__loader__outer-rect PreLoadingSVG__loader__outer-rect--3' fill='#00B9E4' path='' points='656,560 544,560 700,774 848,668 691,452' />
+          <polygon className='PreLoadingSVG__loader__outer-rect PreLoadingSVG__loader__outer-rect--4' fill='#69BE28' path='' points='544,560 509,452 352,668 500,774 656,560' />
+          <polygon className='PreLoadingSVG__loader__outer-rect PreLoadingSVG__loader__outer-rect--5' fill='#FFB612' path='' points='509,452 600,386 346,304 290,478 544,560' />
           <polygon className='PreLoadingSVG__loader__inner-rect' fill='#D2492A' path='' points='600,386 691,452 691,356' />
           <polygon className='PreLoadingSVG__loader__inner-rect' fill='#7C109A' path='' points='691,452 656,560 748,530' />
           <polygon className='PreLoadingSVG__loader__inner-rect' fill='#009581' path='' points='656,560 544,560 600,637' />
