@@ -330,10 +330,10 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   }
 
   componentDidUpdate (prevProps: Object, prevState: Object) {
-    if ((this.state.imagePathList.length > 0 && !this.props.workspace) || (this.props.workspace && this.props.workspace.layers === null && this.state.imagePathList.length > 0) || (this.props.workspace && this.props.workspace.layers && this.state.imagePathList.length > this.props.workspace.layers.length)) {
+    if ((this.state.imagePathList.length !== prevState.imagePathList.length && !this.props.workspace) || (this.props.workspace && this.props.workspace.layers === null && this.state.imagePathList.length !== prevState.imagePathList.length) || (this.props.workspace && this.props.workspace.layers && this.state.imagePathList.length > this.props.workspace.layers.length)) {
       this.props.setActiveScenePolluted()
+      this.props.setWarningModalImgPreview({ dataUrls: this.getLayers(), width: this.backgroundImageWidth, height: this.backgroundImageHeight })
     }
-    this.props.setWarningModalImgPreview({ dataUrls: this.getLayers(), width: this.backgroundImageWidth, height: this.backgroundImageHeight })
     if (prevState.loading) {
       return
     }
@@ -348,7 +348,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     const isActive = !!((selectedArea.length > 0 || groupSelectList.length > 0))
     if (islpActiveColorHexAvailable && prevProps.lpActiveColor.hex !== this.props.lpActiveColor.hex && isActive) {
       const ctx = this.CFICanvas2.current.getContext('2d')
-      const RGB = getActiveColorRGB(hexToRGB(this.props.lpActiveColor.hex))
+      const RGB = this.props.lpActiveColor && getActiveColorRGB(hexToRGB(this.props.lpActiveColor.hex))
 
       groupSelectList.forEach(selectItem => {
         this.clearCanvas()
