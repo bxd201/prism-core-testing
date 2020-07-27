@@ -62,7 +62,7 @@
     min-height:0;
     min-width:0;
     opacity:1;
-    /* outline:invert none medium;  appears to kill :focus outline in desktop Chrome */
+    outline:invert none medium;  //appears to kill :focus outline in desktop Chrome */
     overflow:visible;
     padding:0;
     position:static;
@@ -292,7 +292,7 @@
 .#{$cleanslateWrappingClass} a:active
 .#{$cleanslateWrappingClass} a:focus,
 .#{$cleanslateWrappingClass} a:hover {
-    outline: initial;
+    @include browser-highlight();
     text-decoration: underline;
 }
 .#{$cleanslateWrappingClass} a:visited {
@@ -317,7 +317,9 @@
        -moz-box-shadow: none;
          -o-box-shadow: none;
             box-shadow: none;
-    /* outline: initial; appears to kill :focus outline in desktop Chrome */
+    &:focus{
+        @include browser-highlight(); /* appears to kill :focus outline in desktop Chrome */
+    }
 }
 .#{$cleanslateWrappingClass} button:active, .#{$cleanslateWrappingClass} input[type=submit]:active, .#{$cleanslateWrappingClass} input[type=button]:active, .#{$cleanslateWrappingClass} button:active {
 	background: none; /* W3C */
@@ -348,7 +350,7 @@
 }
 .#{$cleanslateWrappingClass} textarea:focus, .#{$cleanslateWrappingClass} input:focus {
     /* outline: auto 5px -webkit-focus-ring-color; */
-    /* outline: initial; appears to kill :focus outline in desktop Chrome */
+    @include browser-highlight(); /* appears to kill :focus outline in desktop Chrome */
 }
 .#{$cleanslateWrappingClass} input[type=text] {
     background: white;
@@ -360,9 +362,9 @@
     border: 1px #2b2b2b solid;
     border-radius: 4px;
 }
-/* .#{$cleanslateWrappingClass} input[type=checkbox], .#{$cleanslateWrappingClass} input[type=radio] {
-    outline: initial; appears to kill :focus outline in desktop Chrome
-} */
+ .#{$cleanslateWrappingClass} input[type=checkbox], .#{$cleanslateWrappingClass} input[type=radio] {
+    @include browser-highlight(); //appears to kill :focus outline in desktop Chrome
+}
 .#{$cleanslateWrappingClass} input[type=radio] {
     margin: 2px 2px 3px 2px;
 }
