@@ -25,8 +25,6 @@ const saveOptionsBaseClassName = 'save-options'
 const saveOptionsItemsClassName = `${saveOptionsBaseClassName}__items`
 
 const PAINT_SCENE_COMPONENT = 'PaintScene'
-const PAINT_SCENE_ROUTE = '/paint-scene'
-const ACTIVE_ROUTE = '/active'
 
 const SaveOptions = (props: SaveOptionsProps) => {
   const { formatMessage } = useIntl()
@@ -69,7 +67,7 @@ const SaveOptions = (props: SaveOptionsProps) => {
   // @todo integrate downlaod -RS
   const handleSave = useCallback((e: SyntheticEvent) => {
     e.preventDefault()
-    if ((pathname === ACTIVE_ROUTE) || (pathname === PAINT_SCENE_ROUTE)) {
+    if ((pathname === '/active') || (pathname === '/active/paint-scene')) {
       dispatch(showSaveSceneModal(true))
     } else {
       setShowLivePaletteSaveModal(true)
