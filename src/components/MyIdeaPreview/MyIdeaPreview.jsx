@@ -70,9 +70,7 @@ const MyIdeaPreview = ({ openScene }: MyIdeaPreviewProps) => {
   const backgroundCanvasRef = useRef()
   const foregroundCanvasRef = useRef()
   const wrapperRef = useRef()
-
-  const isActiveStockScenePolluted: boolean = useSelector(store => store.scenes.isActiveStockScenePolluted)
-  const isActivePaintScenePolluted: boolean = useSelector(store => store.scenes.isActivePaintScenePolluted)
+  const isActivePaintScenePolluted: boolean = useSelector(store => store.scenes.isActiveScenePolluted)
 
   const selectedScene = useSelector(state => {
     const { items: { colorMap } }: ColorMap = state.colors
@@ -202,7 +200,7 @@ const MyIdeaPreview = ({ openScene }: MyIdeaPreviewProps) => {
       }
       history.push('/active')
     }
-    (isActiveStockScenePolluted || isActivePaintScenePolluted) ? dispatch(showWarningModal(open)) : open()
+    isActivePaintScenePolluted ? dispatch(showWarningModal(open)) : open()
   }
 
   const addAllColorsToLp = () => {
