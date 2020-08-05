@@ -12,9 +12,8 @@
   $times: 5;
   $introDelay: .5s;
 
-  $kf_spin: spin#{unique-id()};
-
-  @keyframes #{$kf_spin} {
+  // making this name verbose to prevent clobbering more generically-named animations (like "spin")
+  @keyframes spin-this-hero-loader-anim {
     0%, 33% {
       transform: rotate(180deg);
     }
@@ -111,7 +110,7 @@
     animation-duration: $times * $duration * 2;
     animation-fill-mode: both;
     animation-iteration-count: infinite;
-    animation-name: $kf_spin;
+    animation-name: spin-this-hero-loader-anim;
     animation-timing-function: cubic-bezier(0.975, -0.045, 0.405, 1.130);
   }
 

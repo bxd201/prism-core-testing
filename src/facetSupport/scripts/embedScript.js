@@ -9,6 +9,7 @@ export default (path: string) => {
 
   const js = document.createElement('script')
   js.id = id
-  js.src = `${path}?v=${APP_VERSION}`
+  js.async = true
+  js.src = path
   appendToBodyUtil(js)
 }

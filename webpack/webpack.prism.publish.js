@@ -1,11 +1,15 @@
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const path = require('path')
-const { sassRules } = require('./webpack/sassRules')
 const webpack = require('webpack')
 const WebpackBar = require('webpackbar')
-const flags = require('./webpack/constants')
-const ALL_VARS = require('./src/shared/variableDefs')
+const flags = require('./constants')
+const ALL_VARS = require('../src/shared/variableDefs')
+
+const alias = require('./partial.resolve.alias')
+const stats = require('./partial.stats')
+const moduleRuleJsx = require('./partial.module.rules.jsx')
+const moduleRuleSass = require('./partial.module.rules.sass')
 
 // create constants that correlate to environment variables to be injected
 const APP_VERSION = process.env.npm_package_version
@@ -32,17 +36,7 @@ const DEFINED_VARS = {
 }
 
 module.exports = {
-  stats: {
-    colors: true,
-    hash: true,
-    timings: true,
-    assets: true,
-    chunks: true,
-    chunkModules: true,
-    modules: true,
-    children: false,
-    errors: true
-  },
+  stats: stats,
   target: 'web',
   watch: false,
   cache: !flags.production,
@@ -77,13 +71,9 @@ module.exports = {
   resolve: {
     symlinks: false,
     alias: {
+      ...alias,
       'react': path.resolve(__dirname, './node_modules/react'),
-      'react-dom': path.resolve(__dirname, './node_modules/react-dom'),
-      constants: path.resolve(__dirname, 'src/constants/'),
-      config: path.resolve(__dirname, 'src/config/'),
-      src: path.resolve(__dirname, 'src/'),
-      __mocks__: path.resolve(__dirname, '__mocks__/'),
-      variables: path.resolve(__dirname, 'src/shared/variablesExport.js')
+      'react-dom': path.resolve(__dirname, './node_modules/react-dom')
     }
   },
   module: {
@@ -95,11 +85,7 @@ module.exports = {
           mainFields: ['module', 'jsnext:main', 'browser', 'main']
         }
       },
-      {
-        test: /\.(sc|sa|c)ss$/,
-        include: flags.srcPath,
-        use: sassRules
-      },
+      moduleRuleSass,
       {
         test: /\.(png|jpe?g|gif|svg)$/i,
         use: [
@@ -146,25 +132,13 @@ module.exports = {
           {
             loader: 'babel-loader',
             options: {
-              configFile: path.resolve(__dirname, '.babelrc')
+              configFile: path.resolve(__dirname, '..', '.babelrc')
             }
           },
           'worker-loader'
         ]
       },
-      {
-        test: /\.(js|jsx)$/,
-        exclude: /node_modules\/(?!(react-intl|intl-messageformat|intl-messageformat-parser))/,
-        use: [
-          {
-            loader: 'babel-loader',
-            options: {
-              configFile: path.resolve(__dirname, '.babelrc')
-            }
-          }
-        ],
-        resolve: { extensions: [ '.js', '.jsx' ] }
-      }
+      moduleRuleJsx
     ]
   },
   optimization: {

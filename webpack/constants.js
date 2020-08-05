@@ -12,7 +12,10 @@ const prismWrappingClass = 'p3m'
 // paths
 const rootPath = path.resolve(__dirname, '..')
 const srcPath = path.join(rootPath, 'src')
+const srcEmbedPath = path.join(rootPath, 'src-embed')
 const distPath = path.join(rootPath, 'dist')
+const embedWorkingPath = path.join(rootPath, 'embed-working')
+const embedOutputPath = path.join(rootPath, 'embed-output')
 const nodeModulesPath = path.join(rootPath, 'node_modules')
 const mocksPath = path.join(rootPath, '__mocks__')
 const publicPath = path.join(rootPath, 'public')
@@ -20,38 +23,31 @@ const publicPath = path.join(rootPath, 'public')
 // entry file paths
 const appIndexPath = path.join(srcPath, 'bundle.js')
 const authorPath = path.join(srcPath, 'author.js')
-const embedPath = path.join(srcPath, 'embed.js')
+const embedPath = path.join(srcEmbedPath, 'embed.js')
 const exportPath = path.join(srcPath, 'export.js')
-const templateIndexPath = path.join(srcPath, '/index/index.jsx')
 const cleanslatePath = path.join(srcPath, '/cleanslate/cleanslate.js')
 
-const templateIndexEntryPointName = 'index'
 const mainEntryPointName = 'bundle'
 const embedEntryPointName = 'embed'
 const authorEntryPointName = 'author'
 const cleanslateEntryPointName = 'cleanslate'
 const exportEntryPointName = 'index'
-const chunkReactName = 'commonR'
-const chunkNonReactName = 'commonNonR'
-const chunkFirebaseName = 'commonFirebase'
-const chunkImageManipulationName = 'commonImageManipulation'
-const chunkAIName = 'commonAI'
+const runtimeNamePrism = 'prismRuntime'
+const manifestNamePrism = 'prismManifest.json'
 
 const fixedEntryPoints = {
-  [cleanslateEntryPointName]: cleanslatePath,
-  [templateIndexEntryPointName]: templateIndexPath
+  [cleanslateEntryPointName]: cleanslatePath
 }
 
 const mainEntryPoints = {
   [authorEntryPointName]: authorPath,
-  [embedEntryPointName]: embedPath,
   [mainEntryPointName]: appIndexPath,
   [exportEntryPointName]: exportPath
 }
 
 /**
  * IMPORTANT!!!
- * The facets imported here need to match what is in export.js and allFacets.js until further notice
+ * The facets imported here need to match what is in allFacets.js until further notice
  */
 const facetEntryPoints = {
   colorListingPage: path.join(srcPath, 'components/Facets/ColorListingPage/ColorListingPage.jsx'),
@@ -69,21 +65,21 @@ module.exports = {
   appIndexPath,
   authorEntryPointName,
   authorPath,
-  chunkAIName,
-  chunkFirebaseName,
-  chunkImageManipulationName,
-  chunkNonReactName,
-  chunkReactName,
   cleanslateEntryPointName,
+  cleanslatePath,
   cleanslateWrappingClass,
   dev,
   distPath,
   embedEntryPointName,
+  embedOutputPath,
   embedPath,
+  embedWorkingPath,
+  exportEntryPointName,
   facetEntryPoints,
   fixedEntryPoints,
   mainEntryPointName,
   mainEntryPoints,
+  manifestNamePrism,
   mocksPath,
   mode,
   nodeModulesPath,
@@ -91,6 +87,7 @@ module.exports = {
   production,
   publicPath,
   rootPath,
-  srcPath,
-  templateIndexEntryPointName
+  runtimeNamePrism,
+  srcEmbedPath,
+  srcPath
 }
