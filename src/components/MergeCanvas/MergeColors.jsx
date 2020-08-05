@@ -40,10 +40,8 @@ const MergeColors = (props: MergeColorsProps) => {
   const [imageUrls, setImageUrls] = useState([])
   const preservedLayersRef = useRef([])
   const preservedLayersDataRef = useRef([])
-
   useEffect(() => {
     const ctx = canvasRef.current.getContext('2d')
-
     if (props.imageDataList) {
       ctx.save()
 
@@ -57,14 +55,16 @@ const MergeColors = (props: MergeColorsProps) => {
       setImageUrls(imageDataUrls)
     } else {
       setImageUrls(props.imageUrlList)
+      countRef.current = 0
+      preservedLayersDataRef.current = []
+      preservedLayersRef.current = []
     }
-  }, [])
+  }, [props.imageUrlList, props.imageDataList])
 
   const handleImageLoad = (e, imageIndex) => {
     countRef.current++
     imagesRef.current[imageIndex] = e.target
     const targetCount = props.imageDataList ? props.imageDataList.length : props.imageUrlList.length
-
     if (countRef.current === targetCount) {
       // This layer is where the tinted layer is drawn before being painted to the finalized canvas
       const ctx = canvasRef.current.getContext('2d')
@@ -80,7 +80,6 @@ const MergeColors = (props: MergeColorsProps) => {
         workCtx.globalCompositeOperation = compositeOperation.sourceOver
         workCtx.save()
       }
-
       imagesRef.current.forEach((img, i) => {
         const opacity = props.colorOpacity !== void (0) ? props.colorOpacity : 1
         if (props.shouldTint && i === 0) {
@@ -115,7 +114,6 @@ const MergeColors = (props: MergeColorsProps) => {
         layers,
         layersAsData
       }
-
       props.handleImagesMerged(payload)
       // Memory leak protection
       imagesRef.current.length = 0

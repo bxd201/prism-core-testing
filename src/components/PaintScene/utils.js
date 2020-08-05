@@ -878,3 +878,12 @@ export const applyDimensionFactorsByCanvas = (factors: Object, canvas: RefObject
   canvas.current.style.left = `${Math.floor(factors.xFactor * 100)}%`
   canvas.current.style.top = `${Math.floor(factors.yFactor * 100)}%`
 }
+
+export const compareArraysOfObjects = (a1, a2) => {
+  return a1.length === a2.length && a1.every((o, idx) => objectsEqual(o, a2[idx]))
+}
+
+export const objectsEqual = (o1, o2) => {
+  return Object.keys(o1).length === Object.keys(o2).length &&
+        Object.keys(o1).every(p => o1[p] === o2[p])
+}
