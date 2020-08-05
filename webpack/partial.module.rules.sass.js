@@ -1,5 +1,6 @@
 const memoizee = require('memoizee')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const PrefixWrap = require('postcss-prefixwrap')
 const sass = require('node-sass')
 const sassUtils = require('node-sass-utils')(sass)
 const ALL_VARS = require('../src/shared/variableDefs.js')
@@ -95,7 +96,17 @@ const getVarGenerator = (function () {
 const sassRules = [
   MiniCssExtractPlugin.loader,
   'css-loader',
-  'postcss-loader',
+  {
+    loader: 'postcss-loader',
+    options: {
+      plugins: [
+        PrefixWrap(`.${flags.prismWrappingClass}.${flags.cleanslateWrappingClass}`, {
+          ignoredSelectors: [/^:root/],
+          blacklist: [flags.cleanslateEntryPointName]
+        })
+      ]
+    }
+  },
   {
     loader: 'sass-loader',
     options: {
@@ -127,5 +138,6 @@ const sassRules = [
 ]
 
 module.exports = {
-  sassRules
+  test: /\.(sc|sa|c)ss$/,
+  use: sassRules
 }

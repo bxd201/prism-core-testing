@@ -13,6 +13,6 @@ export default (path: string) => {
   css.rel = 'stylesheet'
   css.type = 'text/css'
   css.crossOrigin = 'anonymous'
-  css.href = `${path}?v=${APP_VERSION}`
+  css.href = path
   appendToBodyUtil(css)
 }

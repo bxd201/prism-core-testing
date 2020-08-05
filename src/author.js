@@ -1,6 +1,6 @@
 import ReactDOM from 'react-dom'
 import 'src/allFacets' // import all facets so they're included in the bundle
-import { flagAsMainBundle, embedAtRoots } from 'src/facetSupport/facetBinder'
+import { embedAtRoots } from 'src/facetSupport/facetBinder'
 import { TO_BIND_CLASS } from 'src/facetSupport/facetConstants'
 import flatten from 'lodash/flatten'
 
@@ -43,8 +43,6 @@ const mutationObserver = new window.MutationObserver((mutationsList) => {
     embedAtRoots(true)
   }
 })
-
-flagAsMainBundle()
 
 mutationObserver.observe(document.documentElement, {
   childList: true, // monitors add/removal of child elements

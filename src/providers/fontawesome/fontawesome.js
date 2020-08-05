@@ -1,2 +1,2 @@
 import 'src/config/fontawesome'
-import './fontawesome.scss'
+import '@fortawesome/fontawesome-svg-core/styles.css'

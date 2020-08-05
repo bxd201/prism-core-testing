@@ -1,8 +1,6 @@
-import assert from 'assert'
-
 /**
  * IMPORTANT!!!
- * The facets imported here need to match what is in export.js and webpack/constants.js until further notice
+ * The facets imported here need to match what is in webpack/constants.js until further notice
  */
 
 import ColorDetailsFacet from 'src/components/Facets/ColorDetailsFacet'
@@ -26,7 +24,3 @@ export const allFacets = {
   Tinter,
   RoomTypeDetector
 }
-
-const allFacetsKeys = Object.keys(allFacets)
-const entryPointKeys = Object.keys(WEBPACK_CONSTANTS.facetEntryPoints)
-assert(allFacetsKeys.length === entryPointKeys.length, 'Facet entry point length does not match exported Facet length')

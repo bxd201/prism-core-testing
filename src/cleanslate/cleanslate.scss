@@ -161,7 +161,7 @@
     word-break: normal;
 }
 
-.#{$cleanslateWrappingClass}.prism {
+.#{$cleanslateWrappingClass}.#{$prismWrappingClass} {
     display: block;
     position: relative;
     z-index: 0;

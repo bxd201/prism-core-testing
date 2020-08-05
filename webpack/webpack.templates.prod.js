@@ -1,10 +1,5 @@
-// TODO: brendan.do
-// Uncomment the clean plugin when we merge back into develop since we don't want the HTML files
-// going out onto production. But it needs to exist during the replatform testing.
-
-const { CleanWebpackPlugin } = require('clean-webpack-plugin')
-const common = require('./webpack.common.js')
-const flags = require('./webpack/constants')
+const common = require('./webpack.templates.common.js')
+const flags = require('./constants')
 const merge = require('webpack-merge')
 const TerserPlugin = require('terser-webpack-plugin')
 const webpack = require('webpack')
@@ -15,7 +10,6 @@ module.exports = merge.smart(
     mode: flags.mode,
     devtool: 'cheap-source-map',
     plugins: [
-      new CleanWebpackPlugin(),
       new webpack.HashedModuleIdsPlugin()
     ],
     optimization: {

@@ -8,6 +8,10 @@ package-lock.json
 # Compiled assets
 dist
 
+# Embed output
+embed-output
+embed-working
+
 # Test coverage
 coverage
 
