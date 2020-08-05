@@ -330,7 +330,8 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   }
 
   componentDidUpdate (prevProps: Object, prevState: Object) {
-    if ((this.state.imagePathList.length !== prevState.imagePathList.length && !this.props.workspace) || (this.props.workspace && this.props.workspace.layers === null && this.state.imagePathList.length !== prevState.imagePathList.length) || (this.props.workspace && this.props.workspace.layers && this.state.imagePathList.length > this.props.workspace.layers.length)) {
+    if ((this.state.imagePathList.length !== prevState.imagePathList.length && !this.props.workspace) ||
+    (this.props.workspace && this.props.workspace.layers !== null && this.state.imagePathList.length !== prevState.imagePathList.length)) {
       this.props.setActiveScenePolluted()
       this.props.setWarningModalImgPreview({ dataUrls: this.getLayers(), width: this.backgroundImageWidth, height: this.backgroundImageHeight })
     }
