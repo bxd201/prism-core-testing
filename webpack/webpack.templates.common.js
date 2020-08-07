@@ -1,8 +1,10 @@
+const envVars = require('./constants.env-vars')
+
 // define templates dev server origin
-process.env.TEMPLATES_LOCAL_PROTOCOL = process.env.TEMPLATES_LOCAL_PROTOCOL || 'https'
-process.env.TEMPLATES_LOCAL_HOST = process.env.TEMPLATES_LOCAL_HOST || 'localhost'
-process.env.TEMPLATES_LOCAL_PORT = process.env.TEMPLATES_LOCAL_PORT || '8082'
-process.env.TEMPLATES_LOCAL_ORIGIN = `${process.env.TEMPLATES_LOCAL_PROTOCOL}://${process.env.TEMPLATES_LOCAL_HOST}${process.env.TEMPLATES_LOCAL_PORT ? `:${process.env.TEMPLATES_LOCAL_PORT}` : ''}`// default local URL to localhost
+process.env[envVars.TEMPLATES_LOCAL_PROTOCOL] = process.env[envVars.TEMPLATES_LOCAL_PROTOCOL] || 'https'
+process.env[envVars.TEMPLATES_LOCAL_HOST] = process.env[envVars.TEMPLATES_LOCAL_HOST] || 'localhost'
+process.env[envVars.TEMPLATES_LOCAL_PORT] = process.env[envVars.TEMPLATES_LOCAL_PORT] || '8082'
+process.env[envVars.TEMPLATES_LOCAL_ORIGIN] = `${process.env[envVars.TEMPLATES_LOCAL_PROTOCOL]}://${process.env[envVars.TEMPLATES_LOCAL_HOST]}${process.env[envVars.TEMPLATES_LOCAL_PORT] ? `:${process.env[envVars.TEMPLATES_LOCAL_PORT]}` : ''}`// default local URL to localhost
 
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
@@ -20,8 +22,8 @@ const moduleRuleJsx = require('./partial.module.rules.jsx')
 const APP_VERSION = process.env.npm_package_version
 const APP_NAME = process.env.npm_package_name
 
-const ENV = process.env.NODE_ENV ? process.env.NODE_ENV : 'development'
-const BASE_PATH = (ENV === 'development') ? process.env.PRISM_LOCAL_ORIGIN : (process.env.WEB_URL) ? process.env.WEB_URL : '$WEB_URL'
+const ENV = process.env[envVars.NODE_ENV] ? process.env[envVars.NODE_ENV] : 'development'
+const BASE_PATH = (ENV === 'development') ? process.env[envVars.PRISM_LOCAL_ORIGIN] : (process.env[envVars.WEB_URL]) ? process.env[envVars.WEB_URL] : '$WEB_URL'
 
 // TODO: Use this same concept to eliminate the redundancy of facetEntryPoints in constants and allFacets.js -@cody.richmond
 const TEMPLATES_SRC_LOCATION = path.join(templateConstants.srcTemplatesPath, '/templates/')

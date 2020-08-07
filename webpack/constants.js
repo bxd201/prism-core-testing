@@ -1,7 +1,8 @@
 const path = require('path')
+const envVars = require('./constants.env-vars')
 
 // flags
-const mode = process.env.NODE_ENV || 'development'
+const mode = process.env[envVars.NODE_ENV] || 'development'
 const dev = mode === 'development'
 const production = mode === 'production'
 

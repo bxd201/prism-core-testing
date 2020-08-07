@@ -1,22 +1,25 @@
+const envVars = require('./constants.env-vars')
+const envVarDefaults = require('./constants.env-var-defaults')
+
 // define prism dev server origin
-process.env.PRISM_LOCAL_PROTOCOL = process.env.PRISM_LOCAL_PROTOCOL || 'https'
-process.env.PRISM_LOCAL_HOST = process.env.PRISM_LOCAL_HOST || 'localhost'
-process.env.PRISM_LOCAL_PORT = process.env.PRISM_LOCAL_PORT || '8080'
-process.env.PRISM_LOCAL_ORIGIN = `${process.env.PRISM_LOCAL_PROTOCOL}://${process.env.PRISM_LOCAL_HOST}${process.env.PRISM_LOCAL_PORT ? `:${process.env.PRISM_LOCAL_PORT}` : ''}`// default local URL to localhost
+process.env[envVars.PRISM_LOCAL_PROTOCOL] = process.env[envVars.PRISM_LOCAL_PROTOCOL] || envVarDefaults.PRISM_LOCAL_PROTOCOL
+process.env[envVars.PRISM_LOCAL_HOST] = process.env[envVars.PRISM_LOCAL_HOST] || envVarDefaults.PRISM_LOCAL_HOST
+process.env[envVars.PRISM_LOCAL_PORT] = process.env[envVars.PRISM_LOCAL_PORT] || envVarDefaults.PRISM_LOCAL_PORT
+process.env[envVars.PRISM_LOCAL_ORIGIN] = `${process.env[envVars.PRISM_LOCAL_PROTOCOL]}://${process.env[envVars.PRISM_LOCAL_HOST]}${process.env[envVars.PRISM_LOCAL_PORT] ? `:${process.env[envVars.PRISM_LOCAL_PORT]}` : ''}`// default local URL to localhost
 
 // define embed dev server origin
-process.env.EMBED_LOCAL_PROTOCOL = process.env.EMBED_LOCAL_PROTOCOL || 'https'
-process.env.EMBED_LOCAL_HOST = process.env.EMBED_LOCAL_HOST || 'localhost'
-process.env.EMBED_LOCAL_PORT = process.env.EMBED_LOCAL_PORT || '8081'
-process.env.EMBED_LOCAL_ORIGIN = `${process.env.EMBED_LOCAL_PROTOCOL}://${process.env.EMBED_LOCAL_HOST}${process.env.EMBED_LOCAL_PORT ? `:${process.env.EMBED_LOCAL_PORT}` : ''}`// default local URL to localhost
+process.env[envVars.EMBED_LOCAL_PROTOCOL] = process.env[envVars.EMBED_LOCAL_PROTOCOL] || envVarDefaults.EMBED_LOCAL_PROTOCOL
+process.env[envVars.EMBED_LOCAL_HOST] = process.env[envVars.EMBED_LOCAL_HOST] || envVarDefaults.EMBED_LOCAL_HOST
+process.env[envVars.EMBED_LOCAL_PORT] = process.env[envVars.EMBED_LOCAL_PORT] || envVarDefaults.EMBED_LOCAL_PORT
+process.env[envVars.EMBED_LOCAL_ORIGIN] = `${process.env[envVars.EMBED_LOCAL_PROTOCOL]}://${process.env[envVars.EMBED_LOCAL_HOST]}${process.env[envVars.EMBED_LOCAL_PORT] ? `:${process.env[envVars.EMBED_LOCAL_PORT]}` : ''}`// default local URL to localhost
 
 // define embed dev server origin
-process.env.TEMPLATES_LOCAL_PROTOCOL = process.env.TEMPLATES_LOCAL_PROTOCOL || 'https'
-process.env.TEMPLATES_LOCAL_HOST = process.env.TEMPLATES_LOCAL_HOST || 'localhost'
-process.env.TEMPLATES_LOCAL_PORT = process.env.TEMPLATES_LOCAL_PORT || '8082'
-process.env.TEMPLATES_LOCAL_ORIGIN = `${process.env.TEMPLATES_LOCAL_PROTOCOL}://${process.env.TEMPLATES_LOCAL_HOST}${process.env.TEMPLATES_LOCAL_PORT ? `:${process.env.TEMPLATES_LOCAL_PORT}` : ''}`// default local URL to localhost
+process.env[envVars.TEMPLATES_LOCAL_PROTOCOL] = process.env[envVars.TEMPLATES_LOCAL_PROTOCOL] || envVarDefaults.TEMPLATES_LOCAL_PROTOCOL
+process.env[envVars.TEMPLATES_LOCAL_HOST] = process.env[envVars.TEMPLATES_LOCAL_HOST] || envVarDefaults.TEMPLATES_LOCAL_HOST
+process.env[envVars.TEMPLATES_LOCAL_PORT] = process.env[envVars.TEMPLATES_LOCAL_PORT] || envVarDefaults.TEMPLATES_LOCAL_PORT
+process.env[envVars.TEMPLATES_LOCAL_ORIGIN] = `${process.env[envVars.TEMPLATES_LOCAL_PROTOCOL]}://${process.env[envVars.TEMPLATES_LOCAL_HOST]}${process.env[envVars.TEMPLATES_LOCAL_PORT] ? `:${process.env[envVars.TEMPLATES_LOCAL_PORT]}` : ''}`// default local URL to localhost
 
-console.assert(process.env.PRISM_LOCAL_ORIGIN !== process.env.EMBED_LOCAL_ORIGIN, 'ERROR: Prism and Prism Embed local dev servers must not be identical.')
+console.assert(process.env[envVars.PRISM_LOCAL_ORIGIN] !== process.env[envVars.EMBED_LOCAL_ORIGIN], 'ERROR: Prism and Prism Embed local dev servers must not be identical.')
 
 const merge = require('webpack-merge')
 const flags = require('./constants')
@@ -40,9 +43,9 @@ module.exports = merge.smart(common, {
     })
   ],
   devServer: {
-    host: process.env.PRISM_LOCAL_HOST,
-    port: process.env.PRISM_LOCAL_PORT,
-    https: process.env.PRISM_LOCAL_PROTOCOL === 'https',
+    host: process.env[envVars.PRISM_LOCAL_HOST],
+    port: process.env[envVars.PRISM_LOCAL_PORT],
+    https: process.env[envVars.PRISM_LOCAL_PROTOCOL] === 'https',
     historyApiFallback: {
       rewrites: [
         { from: /^\/$/, to: '/index/' },
@@ -58,7 +61,7 @@ module.exports = merge.smart(common, {
     proxy: [{
       // proxy over to embed.js dev server
       context: () => true,
-      target: process.env.EMBED_LOCAL_ORIGIN,
+      target: process.env[envVars.EMBED_LOCAL_ORIGIN],
       secure: false,
       bypass: (req, res, proxyOptions) => {
         if (req.url.indexOf('/embed.js') === 0) {
@@ -70,7 +73,7 @@ module.exports = merge.smart(common, {
     }, {
       // proxy over to templates dev server
       context: () => true,
-      target: process.env.TEMPLATES_LOCAL_ORIGIN,
+      target: process.env[envVars.TEMPLATES_LOCAL_ORIGIN],
       secure: false,
       bypass: (req, res, proxyOptions) => {
         if (req.url.match(/^\/(index\.html)?$/) || req.url.indexOf('/prism-templates/') === 0) {

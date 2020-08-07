@@ -6,15 +6,16 @@ const alias = require('./partial.resolve.alias')
 const stats = require('./partial.stats')
 const optimization = require('./partial.optimization')
 const moduleRuleJsx = require('./partial.module.rules.jsx')
+const envVars = require('./constants.env-vars')
 
 // define embed dev server origin
-process.env.EMBED_LOCAL_PROTOCOL = process.env.EMBED_LOCAL_PROTOCOL || 'https'
-process.env.EMBED_LOCAL_HOST = process.env.EMBED_LOCAL_HOST || 'localhost'
-process.env.EMBED_LOCAL_PORT = process.env.EMBED_LOCAL_PORT || '8081'
-process.env.EMBED_LOCAL_ORIGIN = `${process.env.EMBED_LOCAL_PROTOCOL}://${process.env.EMBED_LOCAL_HOST}${process.env.EMBED_LOCAL_PORT ? `:${process.env.EMBED_LOCAL_PORT}` : ''}`// default local URL to localhost
+process.env[envVars.EMBED_LOCAL_PROTOCOL] = process.env[envVars.EMBED_LOCAL_PROTOCOL] || 'https'
+process.env[envVars.EMBED_LOCAL_HOST] = process.env[envVars.EMBED_LOCAL_HOST] || 'localhost'
+process.env[envVars.EMBED_LOCAL_PORT] = process.env[envVars.EMBED_LOCAL_PORT] || '8081'
+process.env[envVars.EMBED_LOCAL_ORIGIN] = `${process.env[envVars.EMBED_LOCAL_PROTOCOL]}://${process.env[envVars.EMBED_LOCAL_HOST]}${process.env[envVars.EMBED_LOCAL_PORT] ? `:${process.env[envVars.EMBED_LOCAL_PORT]}` : ''}`// default local URL to localhost
 
 // create constants that correlate to environment variables to be injected
-const ENV = process.env.NODE_ENV ? process.env.NODE_ENV : 'development'
+const ENV = process.env[envVars.NODE_ENV] ? process.env[envVars.NODE_ENV] : 'development'
 const APP_VERSION = process.env.npm_package_version
 const APP_NAME = process.env.npm_package_name
 

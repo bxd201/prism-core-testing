@@ -1,11 +1,13 @@
+const envVars = require('./constants.env-vars')
+const envVarDefaults = require('./constants.env-var-defaults')
+
 // define embed dev server origin
+process.env[envVars.EMBED_LOCAL_PROTOCOL] = process.env[envVars.EMBED_LOCAL_PROTOCOL] || envVarDefaults.EMBED_LOCAL_PROTOCOL
+process.env[envVars.EMBED_LOCAL_HOST] = process.env[envVars.EMBED_LOCAL_HOST] || envVarDefaults.EMBED_LOCAL_HOST
+process.env[envVars.EMBED_LOCAL_PORT] = process.env[envVars.EMBED_LOCAL_PORT] || envVarDefaults.EMBED_LOCAL_PORT
+process.env[envVars.EMBED_LOCAL_ORIGIN] = `${process.env[envVars.EMBED_LOCAL_PROTOCOL]}://${process.env[envVars.EMBED_LOCAL_HOST]}${process.env[envVars.EMBED_LOCAL_PORT] ? `:${process.env[envVars.EMBED_LOCAL_PORT]}` : ''}`// default local URL to localhost
 
-process.env.EMBED_LOCAL_PROTOCOL = process.env.EMBED_LOCAL_PROTOCOL || 'https'
-process.env.EMBED_LOCAL_HOST = process.env.EMBED_LOCAL_HOST || 'localhost'
-process.env.EMBED_LOCAL_PORT = process.env.EMBED_LOCAL_PORT || '8081'
-process.env.EMBED_LOCAL_ORIGIN = `${process.env.EMBED_LOCAL_PROTOCOL}://${process.env.EMBED_LOCAL_HOST}${process.env.EMBED_LOCAL_PORT ? `:${process.env.EMBED_LOCAL_PORT}` : ''}`// default local URL to localhost
-
-console.assert(process.env.PRISM_LOCAL_ORIGIN !== process.env.EMBED_LOCAL_ORIGIN, 'ERROR: Prism and Prism Embed local dev servers must not be identical.')
+console.assert(process.env[envVars.PRISM_LOCAL_ORIGIN] !== process.env[envVars.EMBED_LOCAL_ORIGIN], 'ERROR: Prism and Prism Embed local dev servers must not be identical.')
 
 const WebpackBar = require('webpackbar')
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
@@ -23,9 +25,9 @@ module.exports = merge.smart(common, {
   ],
   devServer: {
     index: '',
-    host: process.env.EMBED_LOCAL_HOST,
-    https: process.env.EMBED_LOCAL_PROTOCOL === 'https',
-    port: process.env.EMBED_LOCAL_PORT,
+    host: process.env[envVars.EMBED_LOCAL_HOST],
+    https: process.env[envVars.EMBED_LOCAL_PROTOCOL] === 'https',
+    port: process.env[envVars.EMBED_LOCAL_PORT],
     headers: {
       'Access-Control-Allow-Origin': '*'
     },
