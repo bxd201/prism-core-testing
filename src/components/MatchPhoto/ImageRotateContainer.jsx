@@ -91,16 +91,22 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
   const [wrapperWidth, setWrapperWidth] = useState(0)
   const [hasLoaded, setHasLoaded] = useState(false)
   const hasLoadedRef = useRef()
-  // const sceneHeight = useSelector(state => state.sceneHeight)
+  let paintSceneWorkspaceRef = useRef()
 
   const paintSceneWorkspace = useSelector(state => state.paintSceneWorkspace)
-  const [paintSceneWorkspaceState] = useState((imgUrl) ? null : paintSceneWorkspace)
+  if (paintSceneWorkspace !== null) {
+    paintSceneWorkspaceRef.current = paintSceneWorkspace
+  }
   const [isConfirmationModalShown, setConfirmationModalShown] = useState(false)
   const [isImageRotate, setIsImageRotate] = useState(false)
   const { formatMessage } = useIntl()
   const dispatch = useDispatch()
   useEffect(() => { dispatch(loadBrandColors()) }, [])
-
+  useEffect(() => {
+    if (paintSceneWorkspace !== null) {
+      paintSceneWorkspaceRef.current = paintSceneWorkspace
+    }
+  }, [paintSceneWorkspace])
   const brandColors = useSelector(state => state.brandColors.data)
 
   useEffect(() => {
@@ -391,12 +397,11 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
     <div className={`${closeClass}`}><span><FormattedMessage id='CLOSE' /></span>&nbsp;<FontAwesomeIcon className={``} icon={['fa', 'chevron-up']} /></div>
     <div className={`${cancelClass}`}><FontAwesomeIcon className={``} icon={['fa', 'times']} /></div>
   </button>
-
   return (
     <React.Fragment>
       <div style={{ display: `${showPaintScene ? 'block' : 'none'}` }}>
         <PrismImage ref={imageRef} source={blobUrl} loadedCallback={handleImageLoaded} shouldResample={hasLoaded} scalingWidth={scalingWidth} />
-        <div className={`${getWrapperClassName(imageUrl, pins, !!paintSceneWorkspaceState)}`} ref={wrapperRef}>
+        <div className={`${getWrapperClassName(imageUrl, pins, !!paintSceneWorkspaceRef.current)}`} ref={wrapperRef}>
           <div className={`${containerClass}`}>
 
             <div className={`${headerClass}`}>
@@ -428,14 +433,14 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
                 : ''
             }
             {
-              ((imageUrl && isPaintScene && pins.length > 0) || (isFromMyIdeas && paintSceneWorkspaceState && paintSceneWorkspaceState.bgImageUrl !== undefined))
+              ((imageUrl && isPaintScene && pins.length > 0) || (isFromMyIdeas && paintSceneWorkspaceRef.current && paintSceneWorkspaceRef.current.bgImageUrl !== undefined))
                 ? (<React.Fragment>
-                  <PaintScene checkIsPaintSceneUpdate={checkIsPaintSceneUpdate} imageUrl={imageUrl} workspace={paintSceneWorkspaceState} imageRotationAngle={imageRotationAngle} referenceDimensions={imageDims} width={wrapperWidth} />
+                  <PaintScene checkIsPaintSceneUpdate={checkIsPaintSceneUpdate} imageUrl={imageUrl} workspace={paintSceneWorkspaceRef.current} imageRotationAngle={imageRotationAngle} referenceDimensions={imageDims} width={wrapperWidth} />
                 </React.Fragment>)
                 : ''
             }
             {
-              ((!imageUrl && !isPaintScene && paintSceneWorkspaceState && paintSceneWorkspaceState.bgImageUrl === undefined) || (!imageUrl && !isPaintScene && !paintSceneWorkspaceState))
+              ((!imageUrl && !isPaintScene && paintSceneWorkspaceRef.current && paintSceneWorkspaceRef.current.bgImageUrl === undefined) || (!imageUrl && !isPaintScene && !paintSceneWorkspaceRef))
                 ? (<canvas className={canvasBaseClass} name='canvas' width='600' height='600' />)
                 : ''
             }

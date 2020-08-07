@@ -15,7 +15,7 @@ import { repaintImageByPath, pointInsideCircle,
   getActiveColorRGB, hexToRGB, colorMatch, shouldCanvasResize,
   drawImagePixelByPath, getColorAtPixel, getCanvasWrapperOffset,
   copyImageList, createImagePathItem, drawPaintBrushPoint, applyDimensionFactorsToCanvas,
-  getPaintBrushActiveClass, getEraseBrushActiveClass } from './utils'
+  getPaintBrushActiveClass, getEraseBrushActiveClass, compareArraysOfObjects, objectsEqual } from './utils'
 import { toolNames, groupToolNames, brushLargeSize, brushRoundShape, setTooltipShownLocalStorage, getTooltipShownLocalStorage } from './data'
 import { getScaledPortraitHeight, getScaledLandscapeHeight } from '../../shared/helpers/ImageUtils'
 import throttle from 'lodash/throttle'
@@ -126,7 +126,8 @@ type ComponentState = {
   loadingMasks: boolean,
   canvasHasBeenInitialized: boolean,
   hideSelectPaletteModal: boolean,
-  uniqueSceneId: string
+  uniqueSceneId: string,
+  prevWorkspace: Object
 }
 
 export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
@@ -232,10 +233,12 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       canvasWidth: initialImageWidth,
       canvasHeight: initialImageHeight,
       loadingMasks: !!props.workspace && !!props.workspace.layers && !!props.workspace.layers.length,
+      prevWorkspace: {},
       canvasHasBeenInitialized: false,
       showSelectPaletteModal: false,
       checkIsPaintSceneUpdate: false,
-      uniqueSceneId: createUniqueSceneId()
+      uniqueSceneId: createUniqueSceneId(),
+      isSceneOpend: false
     }
 
     this.undo = this.undo.bind(this)
@@ -326,12 +329,19 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
         checkIsPaintSceneUpdate: props.checkIsPaintSceneUpdate
       }
     }
+    const checkWorkSpaceIfUpdate = props.workspace ? !objectsEqual(props.workspace, state.prevWorkspace) : false
+    if (checkWorkSpaceIfUpdate && props.workspace && props.workspace.layers === null) {
+      return {
+        imagePathList: [],
+        prevWorkspace: props.workspace
+      }
+    }
     return null
   }
 
   componentDidUpdate (prevProps: Object, prevState: Object) {
-    if ((this.state.imagePathList.length !== prevState.imagePathList.length && !this.props.workspace) ||
-    (this.props.workspace && this.props.workspace.layers !== null && this.state.imagePathList.length !== prevState.imagePathList.length)) {
+    const checkImageListIfUpdate = !compareArraysOfObjects(this.state.imagePathList, prevState.imagePathList)
+    if (checkImageListIfUpdate) {
       this.props.setActiveScenePolluted()
       this.props.setWarningModalImgPreview({ dataUrls: this.getLayers(), width: this.backgroundImageWidth, height: this.backgroundImageHeight })
     }
@@ -502,7 +512,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
         return createImagePathItem(item.pixelMap, item.alphaPixelMap, palette[i], 'paint', 0, true, true)
       })
     repaintImageByPath(imagePaths, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
-    this.setState({ canvasImageUrls: this.getLayers(), imagePathList: imagePaths, loadingMasks: false })
+    this.setState({ canvasImageUrls: this.getLayers(), imagePathList: imagePaths, loadingMasks: false, canvasHasBeenInitialized: false })
   }
 
   /*:: setDependentPositions: () => void */
@@ -537,7 +547,6 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   componentDidMount () {
     this.updateWindowDimensions()
     this.setDependentPositions()
-
     if (this.mergeCanvasRef.current) {
       this.mergeCanvasRef.current.style = 'opacity: 0'
     }
@@ -1002,17 +1011,13 @@ canvasHeight
   }
 
   renderMergeCanvas (imageUrls: string[]) {
-    if (this.state.activeTool === toolNames.PAINTAREA) {
-      return (<MergeCanvas
-        key={this.state.mergeCanvasKey}
-        width={this.canvasOriginalDimensions.width}
-        height={this.canvasOriginalDimensions.height}
-        ref={this.mergeCanvasRef}
-        applyZoomPan={this.applyZoomPan}
-        layers={imageUrls} />)
-    }
-
-    return null
+    return (<MergeCanvas
+      key={this.state.mergeCanvasKey}
+      width={this.canvasOriginalDimensions.width}
+      height={this.canvasOriginalDimensions.height}
+      ref={this.mergeCanvasRef}
+      applyZoomPan={this.applyZoomPan}
+      layers={imageUrls} />)
   }
 
   // This Method sorts the imagePathList by color to trigger the MergeColor component to instantiate and generate a flat (jpg) mask per color
@@ -1088,7 +1093,6 @@ canvasHeight
     const { paintBrushActiveClass, paintBrushCircleActiveClass } = getPaintBrushActiveClass(this.state)
     const { eraseBrushActiveClass, eraseBrushCircleActiveClass } = getEraseBrushActiveClass(this.state)
     const { selectPaletteActions, selectPaletteTitle, selectPaletteDescription } = this.getSelectPaletteModalConfig()
-
     return (
       <>
         {loading ? <div className={`${animationLoader} ${animationLoader}--load`} /> : null}
