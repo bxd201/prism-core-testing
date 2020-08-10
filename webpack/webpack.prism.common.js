@@ -16,20 +16,21 @@ const stats = require('./partial.stats')
 const optimization = require('./partial.optimization')
 const moduleRuleJsx = require('./partial.module.rules.jsx')
 const moduleRuleSass = require('./partial.module.rules.sass')
+const envVars = require('./constants.env-vars')
 
 const DEFAULT_ENTRY = `${flags.embedEntryPointName},${flags.mainEntryPointName}` // will build the bundle entry points by default
 
 // create constants that correlate to environment variables to be injected
-const APP_VERSION = process.env.npm_package_version
-const APP_NAME = process.env.npm_package_name
+const APP_VERSION = process.env[envVars.npm_package_version]
+const APP_NAME = process.env[envVars.npm_package_name]
 
-const ENV = process.env.NODE_ENV ? process.env.NODE_ENV : 'development'
-const API_PATH = (process.env.API_URL) ? process.env.API_URL : '$API_URL'
-const ML_API_URL = (process.env.ML_API_URL) ? process.env.ML_API_URL : '$ML_API_URL'
-const BASE_PATH = (ENV === 'development') ? process.env.PRISM_LOCAL_ORIGIN : (process.env.WEB_URL) ? process.env.WEB_URL : '$WEB_URL'
-const SPECIFIED_ENTRIES = process.env.ENTRY ? process.env.ENTRY : (ENV === 'development') ? DEFAULT_ENTRY : undefined
+const ENV = process.env[envVars.NODE_ENV] ? process.env[envVars.NODE_ENV] : 'development'
+const API_PATH = (process.env[envVars.API_URL]) ? process.env[envVars.API_URL] : '$API_URL'
+const ML_API_URL = (process.env[envVars.ML_API_URL]) ? process.env[envVars.ML_API_URL] : '$ML_API_URL'
+const BASE_PATH = (ENV === 'development') ? process.env[envVars.PRISM_LOCAL_ORIGIN] : (process.env[envVars.WEB_URL]) ? process.env[envVars.WEB_URL] : '$WEB_URL'
+const SPECIFIED_ENTRIES = process.env[envVars.ENTRY] ? process.env[envVars.ENTRY] : (ENV === 'development') ? DEFAULT_ENTRY : undefined
 // This flag if positive will use Firebase anonymous login instead of MySherwin. If value is sticky, clear all cached build files.
-const FIREBASE_AUTH_ENABLED = !!parseInt(process.env.FIREBASE_AUTH_ENABLED)
+const FIREBASE_AUTH_ENABLED = !!parseInt(process.env[envVars.FIREBASE_AUTH_ENABLED])
 
 let allEntryPoints = {
   ...flags.mainEntryPoints,
@@ -59,7 +60,8 @@ if (isEmpty(allEntryPoints)) {
 }
 
 const CACHE_HASH = hash([
-  ...flags.mode
+  ...flags.mode,
+  ...Object.keys(envVars).map(key => process.env[envVars[key]] || '')
 ])
 
 const DEFINED_VARS = {
@@ -87,7 +89,7 @@ module.exports = {
   entry: allEntryPoints,
   output: {
     path: flags.distPath,
-    filename: flags.production ? '[name].[contenthash].js' : '[name].js',
+    filename: flags.production ? `${flags.dirNameDistJs}/[name].[contenthash].js` : `${flags.dirNameDistJs}/[name].js`,
     globalObject: 'self'
   },
   resolve: {
@@ -158,7 +160,13 @@ module.exports = {
         exclude: /node_modules\/(?!(react-intl|intl-messageformat|intl-messageformat-parser))/,
         include: flags.srcPath,
         use: [
-          'worker-loader',
+          {
+            loader: 'worker-loader',
+            options: {
+              filename: flags.production ? `${flags.dirNameDistJs}/[name].[contenthash].js` : `${flags.dirNameDistJs}/[name].js`,
+              chunkFilename: flags.production ? `${flags.dirNameDistJs}/[id].[contenthash].worker.js` : `${flags.dirNameDistJs}/[id].worker.js`
+            }
+          },
           {
             loader: 'babel-loader',
             options: {
@@ -211,7 +219,7 @@ module.exports = {
         }
       ].map(v => ({
         ...v,
-        filename: flags.production ? '[name].[contenthash].js' : '[name].js',
+        filename: flags.production ? `${flags.dirNameDistJs}/[name].[contenthash].js` : `${flags.dirNameDistJs}/[name].js`,
         chunks: 'all'
       })).reduce((accum, next) => ({
         ...accum,
@@ -234,7 +242,7 @@ module.exports = {
     }),
     new WebpackBar(),
     new MiniCssExtractPlugin({
-      filename: flags.production ? 'css/[name].[contenthash].css' : 'css/[name].css'
+      filename: flags.production ? `${flags.dirNameCss}/[name].[contenthash].css` : `${flags.dirNameCss}/[name].css`
     }),
     // NOTE: This is ONLY for copying over scene SVG masks, which webpack otherwise has no way of knowing about
     new CopyWebpackPlugin([
@@ -265,11 +273,7 @@ module.exports = {
           '.babelrc',
           'package-lock.json',
           'package.json',
-          'postcss.config.js',
-          'webpack.prism.common.js',
-          'webpack.prism.dev.js',
-          'webpack.prism.prod.js',
-          'webpack.prism.publish.js'
+          'postcss.config.js'
         ]
       }
     }),

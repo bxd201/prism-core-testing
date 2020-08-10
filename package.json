@@ -11,14 +11,14 @@
     "preembed-cleanstart": "npm run clear-embed-output",
     "embed-cleanstart": "npm run embed-start",
     "preembed-start": "npm run create-empty-embed-file",
-    "embed-start": "cross-env NODE_ENV=development EMBED_LOCAL_PROTOCOL=https EMBED_LOCAL_HOST=localhost EMBED_LOCAL_PORT=8081 webpack-dev-server --mode development --hot --config webpack/webpack.embed.dev.js",
+    "embed-start": "cross-env NODE_ENV=development webpack-dev-server --mode development --hot --config webpack/webpack.embed.dev.js",
     "embed-build": "NODE_ENV=production webpack --config webpack/webpack.embed.prod.js",
-    "templates-start": "cross-env NODE_ENV=development TEMPLATES_LOCAL_PROTOCOL=https TEMPLATES_LOCAL_HOST=localhost TEMPLATES_LOCAL_PORT=8082 webpack-dev-server --mode development --hot --config webpack/webpack.templates.dev.js",
+    "templates-start": "cross-env NODE_ENV=development webpack-dev-server --mode development --hot --config webpack/webpack.templates.dev.js",
     "templates-build": "NODE_ENV=production webpack --config webpack/webpack.templates.prod.js",
     "preprism-cleanstart": "npm run clear-prism-build-cache",
     "prism-cleanstart": "npm start",
     "preprism-start": "npm run create-empty-prism-manifest",
-    "prism-start": "cross-env PRISM_LOCAL_PROTOCOL=https PRISM_LOCAL_HOST=localhost PRISM_LOCAL_PORT=8080 EMBED_LOCAL_PROTOCOL=https EMBED_LOCAL_HOST=localhost EMBED_LOCAL_PORT=8081 TEMPLATES_LOCAL_PROTOCOL=https TEMPLATES_LOCAL_HOST=localhost TEMPLATES_LOCAL_PORT=8082 NODE_ENV=development FIREBASE_AUTH_ENABLED=1 API_URL=https://develop-prism-api.ebus.swaws ML_API_URL=http://localhost ENTRY=$ENTRY webpack-dev-server --mode development --open --hot --config webpack/webpack.prism.dev.js",
+    "prism-start": "cross-env NODE_ENV=development FIREBASE_AUTH_ENABLED=1 API_URL=https://develop-prism-api.ebus.swaws ML_API_URL=http://localhost ENTRY=$ENTRY webpack-dev-server --mode development --open --hot --config webpack/webpack.prism.dev.js",
     "precleanstart": "npm run clear-embed-output && npm run clear-prism-build-cache && npm run create-empty-prism-manifest",
     "cleanstart": "npm run start",
     "start": "npm run prism-start & npm run embed-start & npm run templates-start",
@@ -208,6 +208,6 @@
     "webpack-manifest-plugin": "^2.2.0",
     "webpack-merge": "4.2.2",
     "webpackbar": "4.0.0",
-    "worker-loader": "2.0.0"
+    "worker-loader": "3.0.1"
   }
 }

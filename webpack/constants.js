@@ -1,7 +1,8 @@
 const path = require('path')
+const envVars = require('./constants.env-vars')
 
 // flags
-const mode = process.env.NODE_ENV || 'development'
+const mode = process.env[envVars.NODE_ENV] || 'development'
 const dev = mode === 'development'
 const production = mode === 'production'
 
@@ -9,11 +10,16 @@ const production = mode === 'production'
 const cleanslateWrappingClass = 'c8e'
 const prismWrappingClass = 'p3m'
 
+// dir names
+const dirNameDist = 'dist'
+const dirNameDistJs = 'js'
+const dirNameDistCss = 'css'
+
 // paths
 const rootPath = path.resolve(__dirname, '..')
 const srcPath = path.join(rootPath, 'src')
 const srcEmbedPath = path.join(rootPath, 'src-embed')
-const distPath = path.join(rootPath, 'dist')
+const distPath = path.join(rootPath, dirNameDist)
 const embedWorkingPath = path.join(rootPath, 'embed-working')
 const embedOutputPath = path.join(rootPath, 'embed-output')
 const nodeModulesPath = path.join(rootPath, 'node_modules')
@@ -69,6 +75,9 @@ module.exports = {
   cleanslatePath,
   cleanslateWrappingClass,
   dev,
+  dirNameDist,
+  dirNameDistCss,
+  dirNameDistJs,
   distPath,
   embedEntryPointName,
   embedOutputPath,
