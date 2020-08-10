@@ -89,7 +89,7 @@ module.exports = {
   entry: allEntryPoints,
   output: {
     path: flags.distPath,
-    filename: flags.production ? '[name].[contenthash].js' : '[name].js',
+    filename: flags.production ? `${flags.dirNameDistJs}/[name].[contenthash].js` : `${flags.dirNameDistJs}/[name].js`,
     globalObject: 'self'
   },
   resolve: {
@@ -160,7 +160,13 @@ module.exports = {
         exclude: /node_modules\/(?!(react-intl|intl-messageformat|intl-messageformat-parser))/,
         include: flags.srcPath,
         use: [
-          'worker-loader',
+          {
+            loader: 'worker-loader',
+            options: {
+              filename: flags.production ? `${flags.dirNameDistJs}/[name].[contenthash].js` : `${flags.dirNameDistJs}/[name].js`,
+              chunkFilename: flags.production ? `${flags.dirNameDistJs}/[id].[contenthash].worker.js` : `${flags.dirNameDistJs}/[id].worker.js`
+            }
+          },
           {
             loader: 'babel-loader',
             options: {
@@ -213,7 +219,7 @@ module.exports = {
         }
       ].map(v => ({
         ...v,
-        filename: flags.production ? '[name].[contenthash].js' : '[name].js',
+        filename: flags.production ? `${flags.dirNameDistJs}/[name].[contenthash].js` : `${flags.dirNameDistJs}/[name].js`,
         chunks: 'all'
       })).reduce((accum, next) => ({
         ...accum,
@@ -236,7 +242,7 @@ module.exports = {
     }),
     new WebpackBar(),
     new MiniCssExtractPlugin({
-      filename: flags.production ? 'css/[name].[contenthash].css' : 'css/[name].css'
+      filename: flags.production ? `${flags.dirNameCss}/[name].[contenthash].css` : `${flags.dirNameCss}/[name].css`
     }),
     // NOTE: This is ONLY for copying over scene SVG masks, which webpack otherwise has no way of knowing about
     new CopyWebpackPlugin([

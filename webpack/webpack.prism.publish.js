@@ -49,7 +49,7 @@ module.exports = {
   },
   output: {
     path: flags.distPath,
-    filename: '[name].js',
+    filename: `${flags.dirNameDistJs}/[name].js`,
     library: 'prism',
     libraryTarget: 'umd',
     publicPath: '/dist/',
@@ -165,7 +165,7 @@ module.exports = {
   plugins: [
     new WebpackBar(),
     new MiniCssExtractPlugin({
-      filename: 'css/[name].css'
+      filename: `${flags.dirNameDistCss}/[name].css`
     }),
     // NOTE: This is ONLY for copying over scene SVG masks, which webpack otherwise has no way of knowing about
     new CopyWebpackPlugin([
