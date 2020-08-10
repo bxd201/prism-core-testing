@@ -8,6 +8,7 @@ import { toolNames, brushSquareShape, paintBrushMediumCircleClass,
   brushSmallSize, brushTinySize, paintBrushLargeCircleClass,
   paintBrushSmallClass, paintBrushSmallCircleClass, paintBrushTinyClass,
   brushLargeSize, paintBrushLargeClass, paintBrushTinyCircleClass } from './data'
+import type { PaintSceneWorkspace } from '../../store/actions/paintScene'
 
 const MAX_RES_TIME = 3000
 
@@ -886,4 +887,10 @@ export const compareArraysOfObjects = (a1, a2) => {
 export const objectsEqual = (o1, o2) => {
   return Object.keys(o1).length === Object.keys(o2).length &&
         Object.keys(o1).every(p => o1[p] === o2[p])
+}
+
+export const getColorsForMergeColors = (workspace: PaintSceneWorkspace) => {
+  return workspace.layers.map(item => {
+    return { r: 255, g: 255, b: 255 }
+  })
 }

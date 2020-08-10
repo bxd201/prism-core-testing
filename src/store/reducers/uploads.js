@@ -21,3 +21,35 @@ export const uploads = (state: Object = initialState, action: { type: string, pa
       return state
   }
 }
+
+export const QUEUE_IMAGE_UPLOAD = 'QUEUE_IMAGE_UPLOAD'
+export const queueImageUpload = (file: File) => {
+  return (dispatch) => {
+    dispatch({
+      type: QUEUE_IMAGE_UPLOAD,
+      payload: file
+    })
+  }
+}
+
+export const DEQUEUE_IMAGE_UPLOAD = 'DEQUEUE_IMAGE_UPLOAD'
+export const dequeueImageUpload = () => {
+  return (dispatch) => {
+    dispatch({
+      type: DEQUEUE_IMAGE_UPLOAD,
+      payload: null
+    })
+  }
+}
+
+export const queuedImageUpload = (state: File | null = null, action: {type: string, payload: File | null }) => {
+  if (action.type === QUEUE_IMAGE_UPLOAD || action.type === DEQUEUE_IMAGE_UPLOAD) {
+    return action.payload
+  }
+
+  if ([UPLOAD_COMPLETE, ERROR_UPLOADING, STOP_UPLOADING].indexOf(action.type) > -1) {
+    return null
+  }
+
+  return state
+}

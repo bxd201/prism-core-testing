@@ -15,7 +15,7 @@ import { repaintImageByPath, pointInsideCircle,
   getActiveColorRGB, hexToRGB, colorMatch, shouldCanvasResize,
   drawImagePixelByPath, getColorAtPixel, getCanvasWrapperOffset,
   copyImageList, createImagePathItem, drawPaintBrushPoint, applyDimensionFactorsToCanvas,
-  getPaintBrushActiveClass, getEraseBrushActiveClass, compareArraysOfObjects, objectsEqual } from './utils'
+  getPaintBrushActiveClass, getEraseBrushActiveClass, compareArraysOfObjects, objectsEqual, getColorsForMergeColors } from './utils'
 import { toolNames, groupToolNames, brushLargeSize, brushRoundShape, setTooltipShownLocalStorage, getTooltipShownLocalStorage } from './data'
 import { getScaledPortraitHeight, getScaledLandscapeHeight } from '../../shared/helpers/ImageUtils'
 import throttle from 'lodash/throttle'
@@ -37,7 +37,7 @@ import DynamicModal, { DYNAMIC_MODAL_STYLE } from '../DynamicModal/DynamicModal'
 import { checkCanMergeColors, shouldPromptToReplacePalette } from '../LivePalette/livePaletteUtility'
 import { LP_MAX_COLORS_ALLOWED } from '../../constants/configurations'
 import { mergeLpColors, replaceLpColors } from '../../store/actions/live-palette'
-import { clearSceneWorkspace } from '../../store/actions/paintScene'
+import { clearSceneWorkspace, WORKSPACE_TYPES } from '../../store/actions/paintScene'
 import { setActiveScenePolluted, unsetActiveScenePolluted, setWarningModalImgPreview } from 'src/store/actions/scenes'
 import { group, ungroup, deleteGroup, selectArea, bucketPaint, applyZoom,
   createOrDeletePolygon, createPolygonPin, eraseOrPaintMouseUp, eraseOrPaintMouseDown } from './toolFunction'
@@ -281,7 +281,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   tryToMergeColors () {
     // eslint-disable-next-line no-new-object
     const { workspace, lpColors } = this.props
-    if (workspace && workspace.layers && workspace.palette && lpColors) {
+    if (workspace && workspace.workspaceType !== WORKSPACE_TYPES.smartMask && workspace.layers && workspace.palette && lpColors) {
       if (checkCanMergeColors(lpColors, workspace.palette, LP_MAX_COLORS_ALLOWED)) {
         this.props.mergeLpColors(workspace.palette)
       } else {
@@ -505,7 +505,20 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
   /*:: importLayers: (payload: Object) => void */
   importLayers (payload: Object) {
-    const { palette } = this.props.workspace
+    let { palette } = this.props.workspace
+    const { lpColors } = this.props
+    // @todo Currently this  replaces the pseudo-color(s) with colors from the palette, this will likely change -RS
+    if (this.props.workspace.workspaceType === WORKSPACE_TYPES.smartMask && lpColors && lpColors.length) {
+      palette = palette.map((pColor, i) => {
+        if (parseInt(pColor.id) < 0) {
+          return {
+            ...lpColors[i % lpColors.length]
+          }
+        }
+
+        return pColor
+      })
+    }
     const colorLayers = payload.layersAsData.map(item => createImageDataAndAlphaPixelMapFromImageData(item))
     const imagePaths = colorLayers
       .map((item, i) => {
@@ -1083,10 +1096,11 @@ canvasHeight
   }
 
   render () {
-    const { lpActiveColor, intl, showSaveSceneModal, lpColors } = this.props
+    const { lpActiveColor, intl, showSaveSceneModal, lpColors, workspace } = this.props
     const livePaletteColorCount = (lpColors && lpColors.length) || 0
-    const bgImageUrl = this.props.workspace ? this.props.workspace.bgImageUrl : this.props.imageUrl
-    const layers = this.props.workspace ? this.props.workspace.layers : null
+    const bgImageUrl = workspace ? workspace.bgImageUrl : this.props.imageUrl
+    const layers = workspace && workspace.workspaceType !== WORKSPACE_TYPES.smartMask ? workspace.layers : null
+    const workspaceImageData = workspace && workspace.workspaceType === WORKSPACE_TYPES.smartMask ? workspace.layers : null
     const { activeTool, position, paintBrushShape, paintBrushWidth, eraseBrushShape, eraseBrushWidth, undoIsEnabled, redoIsEnabled, showOriginalCanvas, isAddGroup, isDeleteGroup, isUngroup, paintCursor, isInfoToolActive, loading, showAnimatePin, showNonAnimatePin, pinX, pinY, currPinX, currPinY, canvasWidth, canvasHeight, canvasHasBeenInitialized, showSelectPaletteModal } = this.state
     const lpActiveColorRGB = (lpActiveColor) ? `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})` : ``
     const backgroundColorBrush = (activeTool === toolNames.ERASE) ? `rgba(255, 255, 255, 0.7)` : lpActiveColorRGB
@@ -1140,13 +1154,15 @@ canvasHeight
             {intl.formatMessage({ id: 'CANVAS_UNSUPPORTED' })}
           </canvas>
           <canvas className={`${canvasClass} ${canvasSecondClass}`} ref={this.CFICanvas4} name='paint-scene-canvas-fourth' />
+          {/* renderMergeCanvas is dependency of the flood fill operation. The returned component ensures that the algorithm can search/fill a flattened image. */}
           {this.renderMergeCanvas(this.state.canvasImageUrls)}
+          {/* Loads background image */}
           <img className={`${imageClass}`} ref={this.CFIImage} onLoad={this.initCanvas} onError={this.handleImageErrored} src={bgImageUrl} alt={intl.formatMessage({ id: 'IMAGE_INVISIBLE' })} />
-          {layers && canvasHasBeenInitialized ? <MergeColors
+          {/* MergeColors component is used to load and imported surfaces. Currently loads smartmasks and saved scenes */}
+          {(layers || workspaceImageData) && canvasHasBeenInitialized ? <MergeColors
             imageUrlList={layers}
-            colors={layers.map(item => {
-              return { r: 255, g: 255, b: 255 }
-            })}
+            imageDataList={workspaceImageData}
+            colors={getColorsForMergeColors(workspace)}
             handleImagesMerged={this.importLayers}
             width={canvasWidth}
             height={canvasHeight}

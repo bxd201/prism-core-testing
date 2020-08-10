@@ -26,6 +26,7 @@ import ColorDetailsModal from './ColorDetailsModal/ColorDetailsModal'
 import { PreLoadingSVG } from './PreLoadingSVG'
 import LandingPage from '../../LandingPage/LandingPage'
 import './ColorVisualizer.scss'
+import { shouldShowLoadingAnimation } from '../../../shared/utils/devUtils'
 
 export const CVW = () => {
   const dispatch = useDispatch()
@@ -54,7 +55,10 @@ export const CVW = () => {
     isActiveScenePolluted ? dispatch(showWarningModal(activate)) : activate()
   }
 
-  if (isLoading) {
+  // to speed up development check the value returned from shouldShowLoadingAnimation()
+  // which is set by calling window.devutils.hideLoadingAnimation() or window.devutils.showLoadingAnimation()
+  // @todo remove dev helper before deploying to prod -RS
+  if (isLoading && shouldShowLoadingAnimation()) {
     return <PreLoadingSVG />
   } else if (!window.localStorage.getItem('landingPageShownSession')) {
     return <LandingPage />

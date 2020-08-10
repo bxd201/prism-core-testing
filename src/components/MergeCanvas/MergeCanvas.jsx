@@ -8,6 +8,7 @@ import { FormattedMessage } from 'react-intl'
 
 import './MergeCanvas.scss'
 import ImageQueue from './ImageQueue'
+import { getTransformParams } from '../../shared/utils/rotationUtil'
 
 type MergeCanvasProp = {
   layers: string[],
@@ -15,35 +16,73 @@ type MergeCanvasProp = {
   height: number,
   applyZoomPan?: Function,
   hideCanvas?: boolean,
-  colorOpacity?: number
+  colorOpacity?: number,
+  handleLayersLoaded?: Function,
+  rotationAngle?: Function
 }
 
 const MergeCanvas = (props: MergeCanvasProp, ref: RefObject) => {
   const [images, setImages] = useState([])
   const opacity = props.colorOpacity !== void (0) ? props.colorOpacity : 1
+  // The height  and width of the transformed input image
+  const { width, height } = props
+  const angle = props.rotationAngle || 0
+
+  const {
+    canvasWidth,
+    canvasHeight,
+    vScale,
+    hScale,
+    vSkew,
+    hSkew,
+    hTrans,
+    vTrans,
+    rotation
+  } = getTransformParams(angle, width, height)
 
   useEffect(() => {
-    if (images.length) {
+    const imageDataList = []
+    if (images.length && images.length === props.layers.length) {
       // This check should ensure that this fires after the images have been loaded
-      const ctx = ref.current.getContext('2d')
       images.forEach((img, i) => {
+        const ctx = ref.current.getContext('2d')
         ctx.save()
         if (opacity && i > 0) {
           ctx.globalAlpha = opacity
         }
-        ctx.drawImage(img, 0, 0, ctx.canvas.width, ctx.canvas.height)
+
+        if (props.rotationAngle) {
+          ctx.setTransform(hScale, vSkew, hSkew, vScale, hTrans, vTrans)
+          ctx.rotate(rotation)
+        }
+
+        ctx.drawImage(img, 0, 0, canvasWidth, canvasHeight)
+
+        if (props.handleLayersLoaded) {
+          const imgData = ctx.getImageData(0, 0, canvasWidth, canvasHeight)
+          imageDataList.push(imgData)
+        }
         ctx.restore()
       })
+
+      if (props.handleLayersLoaded && imageDataList.length) {
+        const ctx = ref.current.getContext('2d')
+        const { width, height } = ctx.canvas
+
+        props.handleLayersLoaded({
+          imageData: [...imageDataList],
+          width,
+          height
+        })
+      }
 
       if (props.applyZoomPan) {
         props.applyZoomPan(ref)
       }
     }
-  }, [images])
 
-  useEffect(() => {
-    // I found that if I do not explicitly empty the array, it will hold on to the refs of the images and leak memory
-    // There is not a great way (that I could find) to get react refs for images when they must be queue and consumed in a specific order. -RS
+    // Prevent memory leaks
+    imageDataList.length = 0
     images.length = 0
   }, [images])
 
@@ -62,8 +101,8 @@ const MergeCanvas = (props: MergeCanvasProp, ref: RefObject) => {
         addToQueue={addToQueue}
       />
       <canvas
-        width={props.width}
-        height={props.height}
+        width={width}
+        height={height}
         ref={ref}
         className={props.hideCanvas ? 'merge-canvas-image-comp' : 'merge-canvas'}
       >

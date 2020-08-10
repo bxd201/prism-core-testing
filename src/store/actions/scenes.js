@@ -9,6 +9,7 @@ import MaskObj from '../masks/MaskObj'
 import { generateBrandedEndpoint } from '../../shared/helpers/DataUtils'
 
 import { SCENES_ENDPOINT } from 'constants/endpoints'
+export const SET_USE_SMART_MASK = 'SET_USE_SMART_MASK'
 
 export const REQUEST_SCENES = 'REQUEST_SCENES'
 const requestScenes = () => {
@@ -257,3 +258,11 @@ export const showWarningModal = (openFn: () => void) => ({ type: SHOW_WARNING_MO
 
 export const HIDE_WARNING_MODAL = 'HIDE_WARNING_MODAL'
 export const hideWarningModal = () => ({ type: HIDE_WARNING_MODAL })
+
+// @todo use this action to init which flavor of upload should be used -RS
+export const setUseSmartMask = (shouldUse: boolean = false) => {
+  return {
+    type: SET_USE_SMART_MASK,
+    payload: shouldUse
+  }
+}

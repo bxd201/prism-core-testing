@@ -7,6 +7,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { isMobileOnly, isTablet, isIOS } from 'react-device-detect'
 import ImageRotateContainer from '../../MatchPhoto/ImageRotateContainer'
 import { showWarningModal, unsetActiveScenePolluted } from 'src/store/actions/scenes'
+import { queueImageUpload } from 'src/store/actions/user-uploads'
 import './ColorVisualizerNav.scss'
 
 type DropDownMenuProps = {
@@ -24,6 +25,17 @@ type DropDownMenuProps = {
     description?: string,
     onClick: () => void
   }[]
+}
+
+const isSupportedImageFormat = (file: Object, exts: string[] = ['jpeg', 'jpg', 'png']) => {
+  if (file && file.name) {
+    const fileName = file.name.toLowerCase().split('.')
+    if (fileName.length > 1) {
+      return exts.indexOf(fileName[fileName.length - 1]) > -1
+    }
+  }
+
+  return false
 }
 
 export const DropDownMenu = ({ title, items }: DropDownMenuProps) => {
@@ -63,6 +75,7 @@ export default ({ setPaintScene, setMatchPhotoScene }: { setPaintScene: (React.E
   const location = useLocation()
   const dispatch = useDispatch()
   const isActiveScenePolluted: boolean = useSelector(store => store.scenes.isActiveScenePolluted)
+  const useSmartMask = useSelector(state => state.useSmartMask)
 
   const hiddenImageUploadInput: { current: ?HTMLElement } = useRef()
   const [imgUrl: string, setImgUrl: (string) => void] = useState()
@@ -77,7 +90,22 @@ export default ({ setPaintScene, setMatchPhotoScene }: { setPaintScene: (React.E
 
   return (
     <nav className='cvw-navigation-wrapper'>
-      <input ref={hiddenImageUploadInput} style={{ display: 'none' }} type='file' onChange={e => setImgUrl(URL.createObjectURL(e.target.files[0]))} />
+      <input ref={hiddenImageUploadInput} style={{ display: 'none' }} type='file' onChange={e => {
+        if (!isMobileOnly && !isTablet) {
+          const userImg = e.target.files && e.target.files.length ? e.target.files[0] : null
+
+          if (userImg && isSupportedImageFormat(userImg)) {
+            if (useSmartMask) {
+              dispatch(queueImageUpload(userImg))
+            }
+            const imageUrl = URL.createObjectURL(userImg)
+            // @todo In the old code base this action aroused suspicious of race conditions edge cases... this needs to be revisited -RS
+            setImgUrl(imageUrl)
+          } else {
+            // @todo implement notification of failed format. -RS
+          }
+        }
+      }} />
       <ul className='cvw-navigation-wrapper__center' role='presentation'>
         <li>
           <button className={`cvw-nav-btn ${location.pathname === '/active/colors' ? 'cvw-nav-btn--active' : ''}`} onClick={() => history.push('/active/colors')}>

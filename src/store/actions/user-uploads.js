@@ -50,7 +50,7 @@ const loadLocalImageUrl = (images) => {
 }
 
 export const CLEAR_UPLOADS = 'CLEAR_UPLOADS'
-const clearUploads = () => {
+export const clearUploads = () => {
   return {
     type: CLEAR_UPLOADS,
     payload: {
@@ -59,71 +59,18 @@ const clearUploads = () => {
   }
 }
 
-// export const uploadImage = (file: File) => {
-//   return (dispatch: Function) => {
-//     const imageUrl = URL.createObjectURL(file)
-//     const uploadForm = new FormData()
-
-//     // clear out any existing images that were uploaded
-//     dispatch(clearUploads())
-
-//     uploadForm.append('image', file)
-
-//     dispatch(startUploading())
-
-//     axios
-//       .post(ML_PIPELINE_ENDPOINT, uploadForm, {})
-//       .then(res => {
-//         // const base = 'pool'
-//         // let masks = [
-//         //   `http://localhost:800/static/${base}/left.png`,
-//         //   `http://localhost:800/static/${base}/right.png`
-//         // ]
-
-//         // -------------- FAKE ABOVE / REAL BELOW ---------------//
-
-//         const { payload } = res.data
-//         // let maskI = 1
-//         let masks = []
-
-//         // this will get all the individual masks; comment out one or the other
-//         // while (maskI) {
-//         //   const mask = payload[`wall_view${maskI}_local`]
-//         //   if (mask) {
-//         //     masks.push(mask)
-//         //     maskI++
-//         //     continue
-//         //   }
-//         //   break
-//         // }
-
-//         // this will get the monolithic mask; comment out one or the other
-//         masks.push(payload.full_wall_mask_local)
-
-//         const images = {
-//           source: imageUrl,
-//           masks
-//         }
-//         dispatch(loadLocalImageUrl(images))
-//         dispatch(stopUploading())
-//       })
-//       .catch(err => {
-//         console.error('issue with segmentation: ', err)
-//         dispatch(errorUploading())
-//       })
-//   }
-// }
-
 const NANONETS_PREDICTION_ENDPOINT = 'https://customer.nanonets.com/sherwinWilliams/predict/rgbamask'
 const NANONETS_AUTH_KEY = 'wrusnuj4vDg14jcrXOxmIirV6p33U8Az'
 
-export const uploadImage = (file: File) => {
+export const uploadImage = (file: File | string, suppressClear: ?boolean = false) => {
   return (dispatch: Function) => {
-    const imageUrl = URL.createObjectURL(file)
+    const imageUrl = typeof file === 'string' ? file : URL.createObjectURL(file)
     const uploadForm = new FormData()
 
     // clear out any existing images that were uploaded
-    dispatch(clearUploads())
+    if (!suppressClear) {
+      dispatch(clearUploads())
+    }
 
     uploadForm.append('image_file', file)
 
@@ -147,5 +94,25 @@ export const uploadImage = (file: File) => {
         console.error('issue with segmentation: ', err)
         dispatch(errorUploading())
       })
+  }
+}
+
+export const QUEUE_IMAGE_UPLOAD = 'QUEUE_IMAGE_UPLOAD'
+export const queueImageUpload = (file: File) => {
+  return (dispatch) => {
+    dispatch({
+      type: QUEUE_IMAGE_UPLOAD,
+      payload: file
+    })
+  }
+}
+
+export const DEQUEUE_IMAGE_UPLOAD = 'DEQUEUE_IMAGE_UPLOAD'
+export const dequeueImageUpload = () => {
+  return (dispatch) => {
+    dispatch({
+      type: DEQUEUE_IMAGE_UPLOAD,
+      payload: null
+    })
   }
 }

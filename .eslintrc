@@ -29,6 +29,7 @@
     "URL": "readonly",
     "Worker": "readonly",
     "FIREBASE_AUTH_ENABLED": "readonly",
+    "SMARTMASK_ENABLED": "readonly",
     "render": "readonly"
   },
   "rules": {

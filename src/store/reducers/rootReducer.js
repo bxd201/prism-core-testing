@@ -10,9 +10,10 @@ import {
   currentVariant,
   isEditMode,
   sceneWorkspaces,
-  currentWorkspace
+  currentWorkspace,
+  useSmartMask
 } from './scenes'
-import { uploads } from './uploads'
+import { queuedImageUpload, uploads } from './uploads'
 import collectionSummaries from './collectionSummaries'
 import expertColorPicks from './expertColorPicks'
 import inspirationalPhotos from './inspirationalPhotos'
@@ -82,5 +83,7 @@ export default combineReducers({
   showDeleteConfirmModal,
   modalHeight,
   refreshModalHeight,
+  useSmartMask,
+  queuedImageUpload,
   systemMessages
 })
