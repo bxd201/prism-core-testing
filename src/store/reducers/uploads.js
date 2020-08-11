@@ -1,12 +1,18 @@
 // @flow
-import { UPLOAD_COMPLETE, CLEAR_UPLOADS, START_UPLOADING, STOP_UPLOADING, ERROR_UPLOADING } from '../actions/user-uploads'
+import {
+  UPLOAD_COMPLETE,
+  CLEAR_UPLOADS,
+  START_UPLOADING,
+  STOP_UPLOADING,
+  ERROR_UPLOADING
+} from '../actions/user-uploads'
 
 const initialState: Object = {
   uploading: false,
   error: false
 }
 
-export const uploads = (state: Object = initialState, action: { type: string, payload: Object }) => {
+export const uploads = (state: any = initialState, action: { type: string, payload: Object }) => {
   switch (action.type) {
     case START_UPLOADING:
     case STOP_UPLOADING:
@@ -16,6 +22,11 @@ export const uploads = (state: Object = initialState, action: { type: string, pa
       return Object.assign({}, state, {
         ...action.payload
       })
+    case QUEUE_IMAGE_UPLOAD:
+      return {
+        ...state,
+        sceneName: action.payload.name
+      }
 
     default:
       return state
@@ -24,7 +35,7 @@ export const uploads = (state: Object = initialState, action: { type: string, pa
 
 export const QUEUE_IMAGE_UPLOAD = 'QUEUE_IMAGE_UPLOAD'
 export const queueImageUpload = (file: File) => {
-  return (dispatch) => {
+  return (dispatch: any) => {
     dispatch({
       type: QUEUE_IMAGE_UPLOAD,
       payload: file
@@ -34,7 +45,7 @@ export const queueImageUpload = (file: File) => {
 
 export const DEQUEUE_IMAGE_UPLOAD = 'DEQUEUE_IMAGE_UPLOAD'
 export const dequeueImageUpload = () => {
-  return (dispatch) => {
+  return (dispatch: any) => {
     dispatch({
       type: DEQUEUE_IMAGE_UPLOAD,
       payload: null

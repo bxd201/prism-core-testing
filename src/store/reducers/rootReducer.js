@@ -11,7 +11,8 @@ import {
   isEditMode,
   sceneWorkspaces,
   currentWorkspace,
-  useSmartMask
+  useSmartMask,
+  showEditCustomScene
 } from './scenes'
 import { queuedImageUpload, uploads } from './uploads'
 import collectionSummaries from './collectionSummaries'
@@ -82,5 +83,6 @@ export default combineReducers({
   showDeleteConfirmModal,
   useSmartMask,
   queuedImageUpload,
-  systemMessages
+  systemMessages,
+  showEditCustomScene
 })

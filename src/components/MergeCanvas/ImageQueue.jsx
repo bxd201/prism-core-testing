@@ -11,7 +11,6 @@ type ImageQueueProps = {
 
 const ImageQueue = (props: ImageQueueProps) => {
   const intl = useIntl()
-
   const mapImages = (dataUrls) => {
     return dataUrls.map((dataUrl, i) => {
       return <img
