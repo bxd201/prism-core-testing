@@ -34,26 +34,20 @@ type DynamicModalProps = {
   actions?: DynamicModalAction,
   title?: String,
   description: String,
-  height: number,
+  height?: number,
   allowInput?: boolean,
   inputDefault?: string,
   modalStyle?: string,
   previewData?: HTMLElement
 }
 
-const getDymanicModalClassName = (baseName: string, modalStyle) => {
-  if (modalStyle) {
-    return `${baseName} ${modalStyle}`
-  } else {
-    return baseName
-  }
-}
+const getDymanicModalClassName = (baseName: string, modalStyle) => modalStyle ? `${baseName} ${modalStyle}` : baseName
 
 const DynamicModal = (props: DynamicModalProps) => {
   const defaultName = props.inputDefault ? props.inputDefault : ''
   const [inputValue, setInputValue] = useState(defaultName)
-  const { actions } = props
-  const btnRefs = actions && actions.reduce((acc, value) => {
+  const { actions, height = '100%' } = props
+  const btnRefs = actions && actions.reduce((acc: {}, value) => {
     acc[value.text] = React.createRef()
     return acc
   }, {})
@@ -101,8 +95,9 @@ const DynamicModal = (props: DynamicModalProps) => {
       setInputValue('')
     }
   }
+
   return (
-    <div className={dynamicModalClassName} style={{ height: props.height }}>
+    <div className={dynamicModalClassName} style={{ height: height }}>
       <div className={getDymanicModalClassName(dynamicModalInnerClassName, props.modalStyle)}>
         {props.previewData ? <div className={dynamicModalPreviewImageClassName}>{props.previewData}</div> : null}
         <div>

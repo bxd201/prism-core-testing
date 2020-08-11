@@ -14,7 +14,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import EditSavedScene from './EditSavedScene'
 import { deleteStockScene, selectSavedAnonStockScene } from '../../store/actions/stockScenes'
 import DynamicModal, { DYNAMIC_MODAL_STYLE } from '../DynamicModal/DynamicModal'
-import { refreshModalHeight } from '../../store/actions/modal'
 import ColorPalette from '../MyIdeaPreview/ColorPalette'
 import { getColorInstances } from '../LivePalette/livePaletteUtility'
 import EditColorPalette from '../MyIdeaPreview/EditColorPalette'
@@ -55,8 +54,6 @@ const MyIdeas = (props: MyIdeasProps) => {
   const showDeleteConfirmModalFlag = useSelector(state => state.showDeleteConfirmModal)
   const [deleteCandidate, setDeleteCandidate] = useState(null)
   const wrapperRef = useRef(null)
-  const _parentHeight = useSelector(state => state.modalHeight)
-  const [parentHeight, setParentHeight] = useState(0)
   const [isReadyToRenderFlag, setIsReadyToRenderFlag] = useState(false)
   const [initPosition, setPosition] = useState(0)
 
@@ -76,13 +73,8 @@ const MyIdeas = (props: MyIdeasProps) => {
   useEffect(() => {
     if (isReadyToRender(sceneMetadata, savedScenes, stockScenes, isLoadingSavedScenes)) {
       setIsReadyToRenderFlag(true)
-      dispatch(refreshModalHeight(true))
     }
   }, [sceneMetadata, savedScenes, stockScenes, isLoadingSavedScenes])
-
-  useEffect(() => {
-    setParentHeight(_parentHeight)
-  }, [_parentHeight])
 
   const enableEdit = (e: SyntheticEvent) => {
     e.preventDefault()
@@ -247,14 +239,19 @@ const MyIdeas = (props: MyIdeasProps) => {
   return (
     <>
       {isReadyToRenderFlag ? <div className={baseClassName} ref={wrapperRef}>
-        { showDeleteConfirmModalFlag ? <DynamicModal
-          modalStyle={DYNAMIC_MODAL_STYLE.danger}
-          actions={[
-            { text: formatMessage({ id: 'MY_IDEAS.YES' }), callback: deleteScene },
-            { text: formatMessage({ id: 'MY_IDEAS.NO' }), callback: closeDeleteSceneConfirm }
-          ]}
-          description={formatMessage({ id: 'MY_IDEAS.DELETE_CONFIRM' })}
-          height={parentHeight} /> : null}
+        { showDeleteConfirmModalFlag
+          ? (
+            <DynamicModal
+              modalStyle={DYNAMIC_MODAL_STYLE.danger}
+              actions={[
+                { text: formatMessage({ id: 'MY_IDEAS.YES' }), callback: deleteScene },
+                { text: formatMessage({ id: 'MY_IDEAS.NO' }), callback: closeDeleteSceneConfirm }
+              ]}
+              description={formatMessage({ id: 'MY_IDEAS.DELETE_CONFIRM' })}
+            />
+          )
+          : null
+        }
         <div className={sectionLeftClassName}>
           {showBack
             ? <button className={`${buttonClassName} ${buttonBack}`} onClick={showMyIdeas} onMouseDown={mouseDownHandler}>
