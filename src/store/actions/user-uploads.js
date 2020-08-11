@@ -1,9 +1,6 @@
 // @flow
 /* global FormData */
-// eslint-disable-next-line no-unused-vars
 import axios from 'axios'
-
-import { ML_PIPELINE_ENDPOINT } from '../../constants/endpoints'
 
 export const START_UPLOADING = 'START_UPLOADING'
 const startUploading = () => {
@@ -61,7 +58,7 @@ const clearUploads = () => {
 
 export const uploadImage = (file: File) => {
   return (dispatch: Function) => {
-    const imageUrl = URL.createObjectURL(file)
+    // const imageUrl = URL.createObjectURL(file)
     const uploadForm = new FormData()
 
     // clear out any existing images that were uploaded
@@ -72,36 +69,21 @@ export const uploadImage = (file: File) => {
     dispatch(startUploading())
 
     axios
-      .post(ML_PIPELINE_ENDPOINT, uploadForm, {})
+      .post(`${ML_API_URL}/pipeline/`, uploadForm, {})
       .then(res => {
-        // const base = 'pool'
-        // let masks = [
-        //   `http://localhost:800/static/${base}/left.png`,
-        //   `http://localhost:800/static/${base}/right.png`
-        // ]
-
         // -------------- FAKE ABOVE / REAL BELOW ---------------//
+        const resp = res.data.per_img_resp
+        const payload = resp[0][0].payload
+        const mask = payload.mask_path0.replace('https://None', ML_API_URL)
+        const originalImage = payload.original_img_path.replace('https://None', ML_API_URL)
 
-        const { payload } = res.data
-        // let maskI = 1
         let masks = []
 
-        // this will get all the individual masks; comment out one or the other
-        // while (maskI) {
-        //   const mask = payload[`wall_view${maskI}_local`]
-        //   if (mask) {
-        //     masks.push(mask)
-        //     maskI++
-        //     continue
-        //   }
-        //   break
-        // }
-
         // this will get the monolithic mask; comment out one or the other
-        masks.push(payload.full_wall_mask_local)
+        masks.push(mask)
 
         const images = {
-          source: imageUrl,
+          source: originalImage,
           masks
         }
         dispatch(loadLocalImageUrl(images))
