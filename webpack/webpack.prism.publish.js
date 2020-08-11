@@ -21,6 +21,7 @@ const ML_API_URL = (process.env[envVars.ML_API_URL]) ? process.env[envVars.ML_AP
 const BASE_PATH = (process.env[envVars.WEB_URL]) ? process.env[envVars.WEB_URL] : '$WEB_URL'
 // This flag if positive will use Firebase anonymous login instead of MySherwin
 const FIREBASE_AUTH_ENABLED = !!parseInt(process.env[envVars.FIREBASE_AUTH_ENABLED])
+const SMARTMASK_ENABLED = !!parseInt(process.env[envVars.SMARTMASK_ENABLED])
 const ENV = process.env[envVars.NODE_ENV]
 
 const DEFINED_VARS = {
@@ -30,6 +31,7 @@ const DEFINED_VARS = {
   'BASE_PATH': BASE_PATH,
   'ENV': ENV,
   'FIREBASE_AUTH_ENABLED': FIREBASE_AUTH_ENABLED,
+  'SMARTMASK_ENABLED': SMARTMASK_ENABLED,
   'ML_API_URL': ML_API_URL,
   'WEBPACK_CONSTANTS': flags,
   'VAR_NAMES': ALL_VARS.varNames,

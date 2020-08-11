@@ -31,6 +31,7 @@ const BASE_PATH = (ENV === 'development') ? process.env[envVars.PRISM_LOCAL_ORIG
 const SPECIFIED_ENTRIES = process.env[envVars.ENTRY] ? process.env[envVars.ENTRY] : (ENV === 'development') ? DEFAULT_ENTRY : undefined
 // This flag if positive will use Firebase anonymous login instead of MySherwin. If value is sticky, clear all cached build files.
 const FIREBASE_AUTH_ENABLED = !!parseInt(process.env[envVars.FIREBASE_AUTH_ENABLED])
+const SMARTMASK_ENABLED = !!parseInt(process.env[envVars.SMARTMASK_ENABLED])
 
 let allEntryPoints = {
   ...flags.mainEntryPoints,
@@ -72,6 +73,7 @@ const DEFINED_VARS = {
   'ENV': ENV,
   'ML_API_URL': ML_API_URL,
   'FIREBASE_AUTH_ENABLED': FIREBASE_AUTH_ENABLED,
+  'SMARTMASK_ENABLED': SMARTMASK_ENABLED,
   'WEBPACK_CONSTANTS': flags,
   'VAR_NAMES': ALL_VARS.varNames,
   'VAR_VALUES': ALL_VARS.varValues

@@ -35,7 +35,8 @@ import {
   UNSET_SELECTED_SCENE_PALETTE_LOADED,
   SET_WARNING_MODAL_IMG_PREVIEW,
   SHOW_WARNING_MODAL,
-  HIDE_WARNING_MODAL
+  HIDE_WARNING_MODAL,
+  SET_USE_SMART_MASK
 } from '../actions/scenes'
 import { registerMask, updateMask } from '../masks/store'
 
@@ -518,6 +519,14 @@ export const isEditMode = (state: boolean = false, action: {type: string, payloa
 
 export const currentWorkspace = (state: SceneWorkspace | null = null, action: { type: string, payload: SceneWorkspace}) => {
   if (action.type === EDIT_MASK) {
+    return action.payload
+  }
+
+  return state
+}
+
+export const useSmartMask = (state: boolean = SMARTMASK_ENABLED, action: {type: string, payload: boolean}) => {
+  if (action.type === SET_USE_SMART_MASK) {
     return action.payload
   }
 

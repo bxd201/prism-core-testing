@@ -15,6 +15,7 @@ const ImageQueue = (props: ImageQueueProps) => {
   const mapImages = (dataUrls) => {
     return dataUrls.map((dataUrl, i) => {
       return <img
+        crossOrigin={'Anonymous'}
         src={dataUrl}
         key={`${i}`}
         id={`${i}`}
