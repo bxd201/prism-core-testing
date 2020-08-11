@@ -18,11 +18,11 @@ import MatchPhoto from './MatchPhoto'
 import { LiveMessage } from 'react-aria-live'
 import { clearUploads, uploadImage } from '../../store/actions/user-uploads'
 import MergeCanvas from '../MergeCanvas/MergeCanvas'
-import { createPaintSceneWorkspace, WORKSPACE_TYPES } from '../../store/actions/paintScene'
+import { createPaintSceneWorkspace, setLayersForPaintScene, WORKSPACE_TYPES } from '../../store/actions/paintScene'
 import { getTransformParams } from '../../shared/utils/rotationUtil'
 import CustomSceneTinterContainer from '../CustomSceneTinter/CustomSceneTinterContainer'
 import { shouldShowPaintScene } from '../../shared/utils/devUtils'
-
+import { objectsEqual } from '../PaintScene/utils'
 const baseClass = 'match-photo'
 const wrapperClass = `${baseClass}__wrapper`
 const previewClass = `${wrapperClass}--preview`
@@ -54,7 +54,8 @@ type Props = {
   imgUrl: string,
   showPaintScene: boolean,
   checkIsPaintSceneUpdate: boolean,
-  isFromMyIdeas?: boolean
+  isFromMyIdeas?: boolean,
+  sendImageData?: Function
 }
 
 type OrientationDimension = {
@@ -66,7 +67,7 @@ type OrientationDimension = {
   originalImageHeight: number
 }
 
-export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaintScene, checkIsPaintSceneUpdate, isFromMyIdeas }: Props) {
+export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaintScene, checkIsPaintSceneUpdate, isFromMyIdeas, sendImageData }: Props) {
   const canvasRef: RefObject = useRef()
   const wrapperRef: RefObject = useRef()
   const [imageUrl, setImageUrl] = useState(imgUrl)
@@ -100,7 +101,7 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
   const hasLoadedRef = useRef()
   const smartMaskRef = useRef(null)
   const paintSceneWorkspace = useSelector(state => state.paintSceneWorkspace)
-  const [paintSceneWorkspaceState, setPaintSceneWorkspaceState] = useState((imgUrl) ? null : paintSceneWorkspace)
+  const [paintSceneWorkspaceState, setPaintSceneWorkspaceState] = useState(paintSceneWorkspace)
   const [isConfirmationModalShown, setConfirmationModalShown] = useState(false)
   const [isImageRotate, setIsImageRotate] = useState(false)
   const { formatMessage } = useIntl()
@@ -108,9 +109,15 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
   const [isLoadingSmartMask, setIsLoadingSmartMask] = useState(false)
   const brandColors = useSelector(state => state.brandColors.data)
   const uploads = useSelector(state => state.uploads)
-
   const dispatch = useDispatch()
   useEffect(() => { dispatch(loadBrandColors()) }, [])
+
+  useEffect(() => {
+    if (paintSceneWorkspace && paintSceneWorkspaceState &&
+      !objectsEqual(paintSceneWorkspace, paintSceneWorkspaceState) && paintSceneWorkspace.surfaces.length > 0) {
+      setPaintSceneWorkspaceState(paintSceneWorkspace)
+    }
+  }, [paintSceneWorkspace])
 
   useEffect(() => {
     prevOrientationRef.current = orientationDimensions
@@ -376,10 +383,21 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
       }
     })
 
-    // @todo at somepoint we might want to wrap the urls in objects with unique ids so that we can identify them outside of index order... -RS
     const surfaces = [...uploads.masks]
     const b64ImageUrl = canvasRef.current.toDataURL()
-    const workspace = createPaintSceneWorkspace(b64ImageUrl, data.imageData, colors, data.width, data.height, WORKSPACE_TYPES.smartMask, uploads.sceneName, surfaces)
+    const workspace = createPaintSceneWorkspace(b64ImageUrl, data.imageData, colors, data.width, data.height, WORKSPACE_TYPES.smartMask, 0, uploads.sceneName, surfaces)
+    // add dummy data for test will remove before merge
+    const copyData = workspace.layers[0].data
+    const modifiedData = copyData.map((item, idx) => {
+      if (item === 0) {
+        return 255
+      }
+      return 0
+    })
+
+    const dummyImageData = new ImageData(new Uint8ClampedArray(modifiedData), data.width, data.height)
+    data.imageData.push(dummyImageData)
+    dispatch(setLayersForPaintScene(imageUrl, data.imageData, colors, data.width, data.height, WORKSPACE_TYPES.smartMask))
     setIsLoadingSmartMask(false)
     dispatch(clearUploads())
     setPaintSceneWorkspaceState(workspace)
@@ -402,6 +420,7 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
     <div className={`${closeClass}`}><span><FormattedMessage id='CLOSE' /></span>&nbsp;<FontAwesomeIcon className={``} icon={['fa', 'chevron-up']} /></div>
     <div className={`${cancelClass}`}><FontAwesomeIcon className={``} icon={['fa', 'times']} /></div>
   </button>
+  const selectedMaskIndex = paintSceneWorkspaceState ? paintSceneWorkspaceState.selectIndex : null
   return (
     <>
       {imageUrl && imageHeight && imageWidth && uploads && uploads.source && isLoadingSmartMask ? <MergeCanvas
@@ -457,6 +476,7 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
                       workspace={paintSceneWorkspaceState}
                       imageRotationAngle={imageRotationAngle}
                       referenceDimensions={imageDims}
+                      selectedMaskIndex={selectedMaskIndex}
                       width={wrapperWidth} />
                     : <CustomSceneTinterContainer workspace={paintSceneWorkspaceState} allowEdit />}
                 </>)

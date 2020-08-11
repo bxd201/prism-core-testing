@@ -17,7 +17,6 @@ export const bucketPaint = (e, state, props, ref) => {
   const { imagePathList } = state
   const { lpActiveColor } = props
 
-  let imagePath = []
   const { clientX, clientY } = e
   const canvasClientOffset = CFICanvas2.current.getBoundingClientRect()
   const scale = canvasOriginalDimensions.width / canvasClientOffset.width
@@ -30,17 +29,18 @@ export const bucketPaint = (e, state, props, ref) => {
   const RGB = getActiveColorRGB(hexToRGB(lpActiveColor.hex))
   const ctx = CFICanvas2.current.getContext('2d')
   const performance = window.performance.now()
-  imagePath = floodFillScanLineStack(imageData, RGB, cursorX, cursorY, 94, performance)
+  const imagePath = floodFillScanLineStack(imageData, RGB, cursorX, cursorY, 94, performance)
   CFICanvasContext2.clearRect(0, 0, canvasOffsetWidth, canvasOffsetHeight)
   drawImagePixelByPath(ctx, canvasOffsetWidth, canvasOffsetHeight, RGB, imagePath)
-  const newPath = getImageCordinateByPixel(CFICanvas2, RGB, canvasOffsetWidth, canvasOffsetHeight, false)
+  const [pixelArray, pixelIndexAlphaMap] = getImageCordinateByPixel(CFICanvas2, RGB, canvasOffsetWidth, canvasOffsetHeight, true)
   // @todo [IMRPOVEMENT]- candidate for createImagePath factory -RS
   copyImagePathList.push({
     type: 'paint',
     id: uniqueId(),
     color: RGB,
     colorRef: { ...lpActiveColor },
-    data: newPath,
+    data: pixelArray,
+    pixelIndexAlphaMap: pixelIndexAlphaMap,
     isEnabled: true,
     linkedOperation: null,
     siblingOperations: null })

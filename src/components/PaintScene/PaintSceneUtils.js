@@ -2,25 +2,6 @@
 import { rgb } from 'color-space'
 import { getDeltaE00 } from 'delta-e'
 
-// eslint-disable-next-line no-unused-vars
-export const imagePathListToImageData = (imagePathList: any, width: number, height: number): Object => {
-  // eslint-disable-next-line no-unused-vars
-  const imageData = new window.ImageData(width, height)
-  const { pixelIndexAlphaMap } = imagePathList
-
-  for (let pixelIndexKey in pixelIndexAlphaMap) {
-    const index = parseInt(pixelIndexKey)
-    // Use the alpha value to create a grayscale image
-    const alphaAsGrey = pixelIndexAlphaMap[pixelIndexKey]
-    imageData.data[index] = alphaAsGrey
-    imageData.data[index + 1] = alphaAsGrey
-    imageData.data[index + 2] = alphaAsGrey
-    imageData.data[index + 3] = alphaAsGrey
-  }
-
-  return imageData
-}
-
 const mapLABArrayToObject = (color) => {
   return {
     L: color[0],

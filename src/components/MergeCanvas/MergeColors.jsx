@@ -4,10 +4,9 @@
  */
 import React, { useRef, useState, useEffect } from 'react'
 import { useIntl, FormattedMessage } from 'react-intl'
-
 import './MergeCanvas.scss'
 import compositeOperation from '../../constants/canvasCompositeOperations'
-
+import { WORKSPACE_TYPES } from '../../store/actions/paintScene'
 type MergeColorsProps = {
   imageDataList?: string[],
   handleImagesMerged: Function,
@@ -19,7 +18,8 @@ type MergeColorsProps = {
   preserveLayers?: boolean,
   preserveLayersAsData?: boolean,
   imageUrlList?: string[],
-  colorOpacity?: number
+  colorOpacity?: number,
+  workSpaceType: string
 }
 
 const getRGBString = (c) => `rgb(${c.r}, ${c.g}, ${c.b})`
@@ -43,17 +43,16 @@ const MergeColors = (props: MergeColorsProps) => {
   const [imageUrls, setImageUrls] = useState([])
   const preservedLayersRef = useRef([])
   const preservedLayersDataRef = useRef([])
+  const isSmartMask = props.workSpaceType === WORKSPACE_TYPES.smartMask
+  const isGeneric = props.workSpaceType === WORKSPACE_TYPES.generic
   useEffect(() => {
     const ctx = canvasRef.current.getContext('2d')
     if (props.imageDataList) {
       ctx.save()
-
-      const imageDataUrls = props.imageDataList.map(imageData => {
-        ctx.putImageData(imageData, 0, 0)
-
+      const imageDataUrls = props.imageDataList.map(data => {
+        ctx.putImageData(data, 0, 0)
         return ctx.canvas.toDataURL()
       })
-
       ctx.restore()
       setImageUrls(imageDataUrls)
     } else {
@@ -68,7 +67,7 @@ const MergeColors = (props: MergeColorsProps) => {
     countRef.current++
     imagesRef.current[imageIndex] = e.target
     const targetCount = props.imageDataList ? props.imageDataList.length : props.imageUrlList.length
-    if (countRef.current === targetCount) {
+    if (targetCount === countRef.current || isSmartMask || isGeneric) {
       // This layer is where the tinted layer is drawn before being painted to the finalized canvas
       const ctx = canvasRef.current.getContext('2d')
       const mergeCtx = mergeCanvasRef.current.getContext('2d')
@@ -102,7 +101,11 @@ const MergeColors = (props: MergeColorsProps) => {
           }
 
           if (props.preserveLayersAsData) {
-            preservedLayersDataRef.current.push(mergeCtx.getImageData(0, 0, mergeCtx.canvas.width, mergeCtx.canvas.height))
+            if (isSmartMask) {
+              preservedLayersDataRef.current = [ctx.getImageData(0, 0, mergeCtx.canvas.width, mergeCtx.canvas.height)]
+            } else {
+              preservedLayersDataRef.current.push(mergeCtx.getImageData(0, 0, mergeCtx.canvas.width, mergeCtx.canvas.height))
+            }
           }
           resetCanvases()
         }
@@ -122,7 +125,6 @@ const MergeColors = (props: MergeColorsProps) => {
       imagesRef.current.length = 0
     }
   }
-
   return (
     <>
       {imageUrls.length && (props.height && props.width) ? imageUrls.map((src, i) => {

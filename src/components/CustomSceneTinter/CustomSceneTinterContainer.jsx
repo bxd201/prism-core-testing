@@ -64,6 +64,10 @@ const CustomSceneTinterContainer = (props: CustomSceneTinterContainerProps) => {
     dispatch(setShowEditCustomScene(true))
   }, [])
 
+  const { workspace, allowEdit } = props
+
+  // eslint-disable-next-line no-unused-vars
+  const { height, width, sceneName, bgImageUrl: background, surfaces } = workspace
   useEffect(() => {
     if (livePaletteColors) {
       setLivePaletteColorCount(livePaletteColors.length)
@@ -82,13 +86,9 @@ const CustomSceneTinterContainer = (props: CustomSceneTinterContainerProps) => {
     return function () {
       maskImageRef.current.length = 0
     }
-  }, [maskImageRef])
+  }, [maskImageRef, surfaces])
 
-  const { workspace, allowEdit } = props
-
-  const { height, width, sceneName, bgImageUrl: background, surfaces } = workspace
   const surfaceIds = surfaces.map((surface: string, i: number) => i)
-
   const handleSurfaceLoaded = (e, i) => {
     maskImageRef.current.push(e.target)
     setImagesLoaded(maskImageRef.current.length)
