@@ -10,6 +10,7 @@ import ColorListingPage from 'src/components/Facets/ColorListingPage/ColorListin
 import ColorWallFacet from 'src/components/Facets/ColorWallFacet'
 import ColorFamilyFacet from 'src/components/Facets/ColorFamilyFacet/ColorFamilyFacet'
 import FastMaskSimple from 'src/components/Facets/FastMaskSimple/FastMaskSimple'
+import JumpStartFacet from 'src/components/Facets/JumpStartFacet/JumpStartFacet'
 import Prism from 'src/components/Facets/Prism/Prism'
 import Tinter from 'src/components/Facets/Tinter/Tinter'
 
@@ -19,6 +20,7 @@ export const allFacets = {
   ColorWallFacet,
   ColorFamilyFacet,
   FastMaskSimple,
+  JumpStartFacet,
   Prism,
   Tinter
 }

@@ -54,6 +54,7 @@ const facetEntryPoints = {
   colorWallFacet: path.join(srcPath, 'components/Facets/ColorWallFacet.jsx'),
   colorFamilyFacet: path.join(srcPath, 'components/Facets/ColorFamilyFacet/ColorFamilyFacet.jsx'),
   FastMaskSimple: path.join(srcPath, 'components/Facets/FastMaskSimple/FastMaskSimple.jsx'),
+  JumpStartFacet: path.join(srcPath, 'components/Facets/JumpStartFacet/JumpStartFacet.jsx'),
   tinter: path.join(srcPath, 'components/Facets/Tinter/Tinter.jsx'),
   prism: path.join(srcPath, 'components/Facets/Prism/Prism.jsx'),
   colorDetailsFacet: path.join(srcPath, 'components/Facets/ColorDetailsFacet.jsx')
