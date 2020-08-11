@@ -41,7 +41,6 @@ import { paintSceneWorkspace } from './paintSceneWorkspace'
 import { reducerWithLocalStorage } from '../withStorage'
 import { SCENE_METADATA } from '../storageProperties'
 import brandColors from './brandColors'
-import { modalHeight, refreshModalHeight } from './modal'
 import { systemMessages } from './systemMessages'
 
 export default combineReducers({
@@ -81,8 +80,6 @@ export default combineReducers({
   // For paint scene
   showSavedCustomSceneSuccess,
   showDeleteConfirmModal,
-  modalHeight,
-  refreshModalHeight,
   useSmartMask,
   queuedImageUpload,
   systemMessages
