@@ -1,9 +1,6 @@
 // @flow
 /* global FormData */
-// eslint-disable-next-line no-unused-vars
 import axios from 'axios'
-// eslint-disable-next-line no-unused-vars
-import { ML_PIPELINE_ENDPOINT } from '../../constants/endpoints'
 
 export const START_UPLOADING = 'START_UPLOADING'
 const startUploading = () => {
@@ -59,32 +56,34 @@ export const clearUploads = () => {
   }
 }
 
-const NANONETS_PREDICTION_ENDPOINT = 'https://customer.nanonets.com/sherwinWilliams/predict/rgbamask'
-const NANONETS_AUTH_KEY = 'wrusnuj4vDg14jcrXOxmIirV6p33U8Az'
-
-export const uploadImage = (file: File | string, suppressClear: ?boolean = false) => {
+export const uploadImage = (file: File) => {
   return (dispatch: Function) => {
-    const imageUrl = typeof file === 'string' ? file : URL.createObjectURL(file)
+    // const imageUrl = URL.createObjectURL(file)
     const uploadForm = new FormData()
 
     // clear out any existing images that were uploaded
-    if (!suppressClear) {
-      dispatch(clearUploads())
-    }
+    dispatch(clearUploads())
 
-    uploadForm.append('image_file', file)
+    uploadForm.append('image', file)
 
     dispatch(startUploading())
 
     axios
-      .post(NANONETS_PREDICTION_ENDPOINT, uploadForm, { headers: { Authorization: NANONETS_AUTH_KEY } })
+      .post(`${ML_API_URL}/pipeline/`, uploadForm, {})
       .then(res => {
+        // -------------- FAKE ABOVE / REAL BELOW ---------------//
+        const resp = res.data.per_img_resp
+        const payload = resp[0][0].payload
+        const mask = payload.mask_path0.replace('https://None', ML_API_URL)
+        const originalImage = payload.original_img_path.replace('https://None', ML_API_URL)
+
         let masks = []
 
-        masks.push(res.data.result.wall)
+        // this will get the monolithic mask; comment out one or the other
+        masks.push(mask)
 
         const images = {
-          source: imageUrl,
+          source: originalImage,
           masks
         }
         dispatch(loadLocalImageUrl(images))
