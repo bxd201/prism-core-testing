@@ -1,7 +1,11 @@
 #!/bin/sh
 
-envsubst '$API_URL:$WEB_URL' < /app/templates/bundle.js.template > /app/config/bundle.js
-envsubst '$API_URL:$WEB_URL' < /app/templates/author.js.template > /app/config/author.js
-envsubst '$API_URL:$WEB_URL' < /app/templates/embed.js.template > /app/config/embed.js
+# Loop over all template files
+for file_path in $(ls -1 /app/templates/*.js.template); do
+  file=$(basename ${file_path} .template)
+  echo "Templating ${file}..."
+
+  envsubst '$API_URL:$WEB_URL' < /app/templates/${file}.template > /app/config/${file}
+done
 
 exec nginx -g "daemon off;"
