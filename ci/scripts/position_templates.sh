@@ -13,7 +13,7 @@ mkdir -p /app/config
 mkdir -p /app/templates
 
 # Loop over all files that contain one of our variables for templating
-for file_path in $(grep -l -E '\$(API|WEB)_URL' /usr/share/nginx/html/*.js); do
+for file_path in $(grep -l -E '\$(API|WEB)_URL' /usr/share/nginx/html/js/*.js); do
   file=$(basename ${file_path})
   echo "Setting up ${file} for templating..."
   mv ${file_path} /app/templates/${file}.template
