@@ -244,7 +244,7 @@ module.exports = {
     }),
     new WebpackBar(),
     new MiniCssExtractPlugin({
-      filename: flags.production ? `${flags.dirNameCss}/[name].[contenthash].css` : `${flags.dirNameCss}/[name].css`
+      filename: flags.production ? `${flags.dirNameDistCss}/[name].[contenthash].css` : `${flags.dirNameDistCss}/[name].css`
     }),
     // NOTE: This is ONLY for copying over scene SVG masks, which webpack otherwise has no way of knowing about
     new CopyWebpackPlugin([
