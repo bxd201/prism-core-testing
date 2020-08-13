@@ -9,6 +9,7 @@ import ColorWallFacet from 'src/components/Facets/ColorWallFacet'
 import ColorFamilyFacet from 'src/components/Facets/ColorFamilyFacet/ColorFamilyFacet'
 import ColorVisualizerWrapper from 'src/components/Facets/ColorVisualizerWrapper/ColorVisualizerWrapper'
 import FastMaskSimple from 'src/components/Facets/FastMaskSimple/FastMaskSimple'
+import JumpStartFacet from 'src/components/Facets/JumpStartFacet/JumpStartFacet'
 import Prism from 'src/components/Facets/Prism/Prism'
 import Tinter from 'src/components/Facets/Tinter/Tinter'
 import RoomTypeDetector from 'src/components/Facets/RoomTypeDetector/RoomTypeDetector'
@@ -20,6 +21,7 @@ export const allFacets = {
   ColorFamilyFacet,
   ColorVisualizerWrapper,
   FastMaskSimple,
+  JumpStartFacet,
   Prism,
   Tinter,
   RoomTypeDetector
