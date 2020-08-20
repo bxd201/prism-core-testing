@@ -114,6 +114,31 @@ pipeline {
         """
       }
     }
+    stage('Sonar Scan') {
+      when {
+        not {
+            expression { BRANCH_NAME ==~ /^(qa|release)$/ }
+        }
+      }
+      agent {
+        docker {
+          image 'docker.cpartdc01.sherwin.com/ecomm/utils/sonar-scanner:latest'
+          reuseNode true
+          alwaysPull true
+        }
+      }
+      environment {
+        SONAR_URL = "https://sonarqube.ebus.swaws"
+        PROJECT_ID = "prism-core"
+      }
+      steps {
+        withCredentials([string(credentialsId: 'sonar-prod', variable: 'TOKEN')]){
+          sh """
+          sonar-scanner -X -Dsonar.login=${TOKEN}  -Dsonar.host.url=${SONAR_URL} -Dsonar.projectKey=${PROJECT_ID} -Dsonar.sources=. -Dsonar.inclusions=src/**/*.js,**/*.js  -Dsonar.exclusions=src/node_modules/*
+          """
+        }
+      }
+    }
 
     stage('Security Scan') {
     when {
@@ -289,7 +314,7 @@ pipeline {
         currentBuild.result = currentBuild.result ?: 'SUCCESS'
 
         emailext (
-          to: 'brendan.do@sherwin.com,cody.richmond@sherwin.com,prwilliams@sherwin.com,brandon.chartier@sherwin.com,cc:jonathan.l.gnagy@sherwin.com',
+          to: 'brendan.do@sherwin.com,cody.richmond@sherwin.com,prwilliams@sherwin.com,cc:jonathan.l.gnagy@sherwin.com',
           subject: "${env.JOB_NAME} #${env.BUILD_NUMBER} [${currentBuild.result}]",
           body: "Build URL: ${env.BUILD_URL}.\n\n",
           attachLog: true,
