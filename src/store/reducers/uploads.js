@@ -5,12 +5,17 @@ import {
   START_UPLOADING,
   STOP_UPLOADING,
   ERROR_UPLOADING,
-  IRIS_PROCESSING_COMPLETE
+  IRIS_PROCESSING_COMPLETE,
+  IRIS_PROCESSING_BEGIN,
+  IRIS_LOADING_BEGIN,
+  IRIS_LOADING_COMPLETE
 } from '../actions/user-uploads'
 
 const initialState: Object = {
   uploading: false,
-  error: false
+  error: false,
+  processing: false,
+  iris: null
 }
 
 export const uploads = (state: any = initialState, action: { type: string, payload: Object }) => {
@@ -20,10 +25,14 @@ export const uploads = (state: any = initialState, action: { type: string, paylo
     case UPLOAD_COMPLETE:
     case ERROR_UPLOADING:
     case CLEAR_UPLOADS:
+    case IRIS_LOADING_BEGIN:
+    case IRIS_LOADING_COMPLETE:
+    case IRIS_PROCESSING_BEGIN:
     case IRIS_PROCESSING_COMPLETE:
-      return Object.assign({}, state, {
+      return {
+        ...state,
         ...action.payload
-      })
+      }
     case QUEUE_IMAGE_UPLOAD:
       return {
         ...state,

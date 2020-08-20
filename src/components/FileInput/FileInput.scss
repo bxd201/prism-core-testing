@@ -2,6 +2,10 @@
   $_self: &;
   position: relative;
 
+  &--inline {
+    display: inline-block;
+  }
+
   &__label {
     border: 1px solid grey;
     border-radius: $ui-radius;
@@ -26,6 +30,5 @@
     font-weight: bold;
     display: block;
     white-space: nowrap;
-
   }
 }

@@ -1,0 +1,11 @@
+@import './constants';
+
+.JumpStartFacet {
+  &__header {
+    background: blue;
+    font-style: italic;
+    color: white;
+    text-align: center;
+    padding: 1em;
+  }
+}
