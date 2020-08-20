@@ -8,6 +8,10 @@ package-lock.json
 # Compiled assets
 dist
 
+# Embed output
+embed-output
+embed-working
+
 # Test coverage
 coverage
 
@@ -19,5 +23,6 @@ flow-typed/npm
 
 # webpack cache
 .cache
-public
 
+# Static files for mock api calls
+public
