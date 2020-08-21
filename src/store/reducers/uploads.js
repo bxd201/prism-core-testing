@@ -4,7 +4,8 @@ import {
   CLEAR_UPLOADS,
   START_UPLOADING,
   STOP_UPLOADING,
-  ERROR_UPLOADING
+  ERROR_UPLOADING,
+  IRIS_PROCESSING_COMPLETE
 } from '../actions/user-uploads'
 
 const initialState: Object = {
@@ -19,6 +20,7 @@ export const uploads = (state: any = initialState, action: { type: string, paylo
     case UPLOAD_COMPLETE:
     case ERROR_UPLOADING:
     case CLEAR_UPLOADS:
+    case IRIS_PROCESSING_COMPLETE:
       return Object.assign({}, state, {
         ...action.payload
       })

@@ -1,4 +1,5 @@
 // @flow
+/* eslint-disable */
 /* global FormData */
 import axios from 'axios'
 
@@ -58,6 +59,20 @@ export const clearUploads = () => {
   }
 }
 
+export const IRIS_PROCESSING_COMPLETE = 'IRIS_PROCESSING_COMPLETE'
+const completeIrisProcessing = (irisData) => {
+  return {
+    type: IRIS_PROCESSING_COMPLETE,
+    payload: {
+      iris: irisData,
+      error: false
+    }
+  }
+}
+
+const NANONETS_PREDICTION_ENDPOINT = 'https://customer.nanonets.com/sherwinWilliams/predict/rgbamask'
+const NANONETS_AUTH_KEY = 'wrusnuj4vDg14jcrXOxmIirV6p33U8Az'
+
 export const uploadImage = (file: File) => {
   return (dispatch: Function) => {
     // const imageUrl = URL.createObjectURL(file)
@@ -115,5 +130,58 @@ export const dequeueImageUpload = () => {
       type: DEQUEUE_IMAGE_UPLOAD,
       payload: null
     })
+  }
+}
+
+// polling for iris API since it returns a processing state when a worker in the api is running
+function poll(fn, timeout, interval) {
+  const endTime = Number(new Date()) + (timeout || 2000)
+
+  interval = interval || 100
+
+  const checkCondition = (resolve, reject) => {
+    const ajax = fn()
+
+    ajax
+      .then(r => r.data)
+      .then(r => {
+        if (!r.Status && r.Status !== 'Processing') {
+          resolve(r)
+        } else if (Number(new Date()) < endTime) {
+          setTimeout(checkCondition, interval, resolve, reject)
+        } else {
+          reject(new Error(`Timeout for poll function exceeded: ${arguments}`))
+        }
+      })
+  }
+
+  return new Promise(checkCondition)
+}
+
+export const uploadIrisImage = (file: File) => {
+  return (dispatch: Function) => {
+    const imageUrl = URL.createObjectURL(file)
+    const uploadForm = new FormData()
+
+    // clear out any existing images that were uploaded
+    dispatch(clearUploads())
+
+    // uploadForm.append('image_file', file)
+    uploadForm.append('image', file)
+
+    axios
+      .post('https://develop-prism-ml-api.ebus.swaws/iris/upload', uploadForm)
+      .then(r => r.data)
+      .then(r => {
+        const uuid = r.uuid
+
+        poll(() => axios.get(`https://develop-prism-ml-api.ebus.swaws/iris/pieces/${uuid}`), 30000, 500).then(data => {
+          dispatch(completeIrisProcessing(data))
+        })
+        .catch(err => {
+          console.error('issue with iris processing: ', err)
+          dispatch(errorUploading())
+        })
+      })
   }
 }
