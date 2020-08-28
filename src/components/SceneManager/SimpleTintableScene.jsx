@@ -51,6 +51,8 @@ const getTintColorBySurfaceAdapter = (isUsingWorkspace: boolean, surface: any, s
   return getTintColorBySurface(surface)
 }
 
+const simpleTintableClassName = 'simple-tintable'
+
 const SimpleTintableScene = (props: SimpleTintableSceneProps) => {
   // @todo the scene prop is here for posterity, this component can be used as an adapter -RS
   const { sceneType, background, sceneName, width, height, imageValueCurve, surfaceUrls, isUsingWorkspace, surfaceIds, highlights, shadows, colors, activeColorId } = props
@@ -58,7 +60,7 @@ const SimpleTintableScene = (props: SimpleTintableSceneProps) => {
 
   return (
     <>
-      <div className={`${baseClassName}__tint-wrapper`}>
+      <div className={`${simpleTintableClassName}-wrapper`}>
         <img className={`${baseClassName}__natural`} src={background} alt={sceneName} />
         <TransitionGroup className={`${transitionClassName}__colors`}>
           {surfaceUrls.map((surface: string, i) => {
