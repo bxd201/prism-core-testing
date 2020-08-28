@@ -36,7 +36,7 @@ import {
   SET_WARNING_MODAL_IMG_PREVIEW,
   SHOW_WARNING_MODAL,
   HIDE_WARNING_MODAL,
-  SET_USE_SMART_MASK
+  SET_USE_SMART_MASK, SET_SHOW_EDIT_CUSTOM_SCENE
 } from '../actions/scenes'
 import { registerMask, updateMask } from '../masks/store'
 
@@ -527,6 +527,14 @@ export const currentWorkspace = (state: SceneWorkspace | null = null, action: { 
 
 export const useSmartMask = (state: boolean = SMARTMASK_ENABLED, action: {type: string, payload: boolean}) => {
   if (action.type === SET_USE_SMART_MASK) {
+    return action.payload
+  }
+
+  return state
+}
+
+export const showEditCustomScene = (state: boolean = false, action: {type: string, payload: boolean}) => {
+  if (action.type === SET_SHOW_EDIT_CUSTOM_SCENE) {
     return action.payload
   }
 

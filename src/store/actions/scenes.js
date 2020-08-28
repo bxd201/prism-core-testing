@@ -266,3 +266,11 @@ export const setUseSmartMask = (shouldUse: boolean = false) => {
     payload: shouldUse
   }
 }
+
+export const SET_SHOW_EDIT_CUSTOM_SCENE = 'SET_SHOW_EDIT_CUSTOM_SCENE'
+export const setShowEditCustomScene = (shouldShow: boolean) => {
+  return {
+    type: SET_SHOW_EDIT_CUSTOM_SCENE,
+    payload: shouldShow
+  }
+}

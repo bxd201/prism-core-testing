@@ -1,4 +1,5 @@
 {
+  "ACCEPT_TERM": "Accept term",
   "ADD_A_COLOR": "ADD A COLOR",
   "ADD_ALL": "Add All",
   "ADD_COLOR_TO_PALETTE": "Add {colorName} to palette",
@@ -13,6 +14,7 @@
   "CHOOSE_A_COLLECTION": "Choose a Collection",
   "CHOOSE_COLLECTION": "Choose collection",
   "CLEAR_ALL": "CLEAR ALL",
+  "CLEAR_TEXT": "clear text",
   "CLOSE": "CLOSE",
   "COLOR_COLLECTIONS": "Color Collections",
   "COLOR_DETAILS": "color details",
@@ -146,11 +148,23 @@
   "IMAGE_INVISIBLE": "This image is invisible to the user.",
   "INSPIRATIONAL_PHOTOS": "Inspirational Photos",
   "INTERIOR": "Interior",
+  "LANDING_PAGES": {
+    "EXPLORE_COLOR": "Explore Color",
+    "GET_INSPIRED": "Get Inspired",
+    "OR": "OR",
+    "PAINT_A_PHOTO": "Paint a Photo",
+    "PAINTING_BUTTON": "Start Painting Now"
+  },
+  "LIVE_MESSAGE_COLOR_NAME": "Color {previewColorName} is active. Press tab to go to other color pins",
+  "LIVE_MESSAGE_IMAGE_ANGLE": "Image rotated {imageRotationAngle} degree",
+  "LIVE_MESSAGE_MOVE_PIN": "Use the arrow keys on your keyboard to move your picked color. Hold shift for fine movement.",
+  "LIVE_MESSAGE_REMOVE": "Remove color {colorName} from live palette",
   "LIVE_PALETTE_MODAL": {
     "DELETE_COLOR": "Delete a color below before adding a new one, or create a new palette.",
     "NEW_PALETTE": "New Palette",
     "PALETTE_FULL": "This Palette is Full"
   },
+  "LIVE_PALETTE_REMOVE": "Remove color {colorName} from live palette",
   "LOADING": "Loading",
   "LOADING_MODEL": "Loading model",
   "LOCATION_NUMBER": "Location Number",
@@ -158,6 +172,9 @@
   "MATCHES": "Matches",
   "MAXIMIZE_COLOR_SWATCH": "Maximize the Color Swatch",
   "MY_IDEAS": {
+    "ARIA_LABEL_ADD": "Add {colorName} to palette",
+    "ARIA_LABEL_DONE": "done editing saved ideas",
+    "ARIA_LABEL_EDIT": "edit saved ideas",
     "DELETE_CONFIRM": "Are you sure you want to delete this item?",
     "MY_IDEAS_CONTENT": "Log in or Register for a mySW account to save all your ideas and see them on any of your devices.",
     "MY_IDEAS_HEADER": "View and edit your saved ideas",
@@ -169,10 +186,7 @@
     "PREVIEW": "Preview of",
     "SCENE_EXPIRATION": "Saved scenes will be removed 30 days after their last update.",
     "TITLE": "View and edit your ideas",
-    "YES": "YES",
-    "ARIA_LABEL_DONE":"done editing saved ideas",
-    "ARIA_LABEL_EDIT":"edit saved ideas",
-    "ARIA_LABEL_ADD":"Add {colorName} to palette"
+    "YES": "YES"
   },
   "NAV_DROPDOWN_LINK_SUB_CONTENT": {
     "COLOR_COLLECTIONS": "Find colors that work together seamlessly throughout your home.",
@@ -215,8 +229,9 @@
   "NO": "No",
   "NO_COLORS_AVAILABLE": "No colors available.",
   "NO_COLORS_FOUND": "No suitable colors found.",
-  "ORIGINAL_IMAGE": "Original Image",
   "OR": "OR",
+  "ORIGINAL_IMAGE": "Original Image",
+  "PAINT_COLORS": "paint colors",
   "PAINT_SCENE": {
     "CANCEL": "CANCEL",
     "OK": "LOAD PALETTE",
@@ -227,7 +242,22 @@
   },
   "PAINT_THIS_SCENE": "Paint this Scene",
   "PAINT_TOOLS": {
-    "TOOLS_NAME":{
+    "BACK": "Go back",
+    "CLOSE": "Close tooltip",
+    "DEFINEAREA": "Create a polygon to fill",
+    "DELETEGROUP": "Delete the group",
+    "ERASE": "Remove paint by erasing",
+    "FORWARD": "Go forward",
+    "GROUP": "Group the selections",
+    "HIDEPAINT": "Hide the painted area",
+    "ICON_SELECTED_INFO": "the {brushType} pixel wide, {brushShape} {brushTypeName} brush",
+    "INFO": "Toggle the tool tips",
+    "PAINTAREA": "fill a continuous area with color",
+    "PAINTBRUSH": "Paint using a brush",
+    "REDO": "Redo an action",
+    "REMOVEAREA": "Erase an area by creating a polygon",
+    "SELECTAREA": "Select an area to manipulate",
+    "TOOLS_NAME": {
       "DEFINEAREA": "DEFINE AREA",
       "DELETEGROUP": "DELETE",
       "ERASE": "ERASE",
@@ -243,21 +273,6 @@
       "UNGROUP": "UNGROUP",
       "ZOOM": "ZOOM"
     },
-    "BACK": "Go back",
-    "CLOSE": "Close tooltip",
-    "DEFINEAREA": "Create a polygon to fill",
-    "DELETEGROUP": "Delete the group",
-    "ERASE": "Remove paint by erasing",
-    "FORWARD": "Go forward",
-    "GROUP": "Group the selections",
-    "HIDEPAINT": "Hide the painted area",
-    "INFO": "Toggle the tool tips",
-    "PAINTAREA": "fill a continuous area with color",
-    "PAINTBRUSH": "Paint using a brush",
-    "REDO": "Redo an action",
-    "REMOVEAREA": "Erase an area by creating a polygon",
-    "SELECTAREA": "Select an area to manipulate",
-    "ICON_SELECTED_INFO": "the {brushType} pixel wide, {brushShape} {brushTypeName} brush",
     "TOOLTIPS": {
       "ADDCOLORS": "Click or tap here to add colors to your palette.",
       "DEFINEAREA": "Outline an area to paint it. Be sure to enclose the area by starting and ending at the same point.",
@@ -279,12 +294,12 @@
   },
   "PALETTE_TITLE": "My Color Palette",
   "PASSWORD": "Password",
-  "PAINT_COLORS": "paint colors",
   "PREVIEW_ROTATE_SCALE": "Use these arrows to rotate your image.",
   "PREVIOUS": "Previous",
   "PROCESSING": "Processing",
   "RECOMMENDATIONS": "Recommendations",
   "REGISTER": "REGISTER",
+  "RENAME": "Rename ",
   "RENAME_SAVED_IDEA": "Rename Saved Idea",
   "RESTORE_COLOR_SWATCH_TO_DEFAULT_SIZE": "Restore the Color Swatch to default size",
   "SAVE_LIVE_PALETTE_MODAL": {
@@ -310,6 +325,11 @@
     "OK": "OK",
     "SCENE_SAVED": "Saved"
   },
+  "SCENE_TINTER": {
+    "FEEDBACK_CANCEL": "looks good",
+    "FEEDBACK_CONFIRM": "Let me edit",
+    "FEEDBACK_MESSAGE": "Would you like to touch up the paint job?"
+  },
   "SEARCH": {
     "ERROR": {
       "GENERIC": "We were unable to perform your search.",
@@ -328,6 +348,7 @@
   "SELECT_IMAGE": "Select an image",
   "SELECT_NEW_IMAGE": "Select new image",
   "SELECTED_FROM": "Selected from",
+  "SHOW": "Show ",
   "SIGN_IN": "SIGN IN",
   "SIMILAR_COLORS": "Similar Colors",
   "START_PAINTING": "Start Painting",
@@ -357,21 +378,5 @@
   "VIEW_FULL_COLLECTION": "VIEW FULL COLLECTION",
   "YES": "Yes",
   "ZOOM_IN": "Zoom in",
-  "ZOOM_OUT": "Zoom out",
-  "LANDING_PAGES":{
-    "PAINTING_BUTTON":"Start Painting Now",
-    "OR":"OR",
-    "EXPLORE_COLOR": "Explore Color",
-    "GET_INSPIRED": "Get Inspired",
-    "PAINT_A_PHOTO": "Paint a Photo"
-  },
-  "CLEAR_TEXT": "clear text",
-  "RENAME":"Rename ",
-  "SHOW":"Show ",
-  "ACCEPT_TERM":"Accept term",
-  "LIVE_PALETTE_REMOVE":"Remove color {colorName} from live palette",
-  "LIVE_MESSAGE_IMAGE_ANGLE":"Image rotated {imageRotationAngle} degree",
-  "LIVE_MESSAGE_COLOR_NAME":"Color {previewColorName} is active. Press tab to go to other color pins",
-  "LIVE_MESSAGE_REMOVE":"Remove color {colorName} from live palette",
-  "LIVE_MESSAGE_MOVE_PIN":"Use the arrow keys on your keyboard to move your picked color. Hold shift for fine movement."
+  "ZOOM_OUT": "Zoom out"
 }

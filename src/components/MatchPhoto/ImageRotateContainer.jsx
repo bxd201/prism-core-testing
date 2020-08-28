@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
 import ColorPinsGenerationByHue from './workers/colorPinsGenerationByHue.worker'
 import useEffectAfterMount from '../../shared/hooks/useEffectAfterMount'
+// eslint-disable-next-line no-unused-vars
 import PaintScene from '../PaintScene/PaintScene'
 import { getScaledPortraitHeight } from '../../shared/helpers/ImageUtils'
 import PrismImage from '../PrismImage/PrismImage'
@@ -19,6 +20,8 @@ import { clearUploads, uploadImage } from '../../store/actions/user-uploads'
 import MergeCanvas from '../MergeCanvas/MergeCanvas'
 import { createPaintSceneWorkspace, WORKSPACE_TYPES } from '../../store/actions/paintScene'
 import { getTransformParams } from '../../shared/utils/rotationUtil'
+import CustomSceneTinterContainer from '../CustomSceneTinter/CustomSceneTinterContainer'
+import { shouldShowPaintScene } from '../../shared/utils/devUtils'
 
 const baseClass = 'match-photo'
 const wrapperClass = `${baseClass}__wrapper`
@@ -96,13 +99,8 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
   const [hasLoaded, setHasLoaded] = useState(false)
   const hasLoadedRef = useRef()
   const smartMaskRef = useRef(null)
-  // const sceneHeight = useSelector(state => state.sceneHeight)
-  let paintSceneWorkspaceRef = useRef()
   const paintSceneWorkspace = useSelector(state => state.paintSceneWorkspace)
   const [paintSceneWorkspaceState, setPaintSceneWorkspaceState] = useState((imgUrl) ? null : paintSceneWorkspace)
-  if (paintSceneWorkspaceState !== null) {
-    paintSceneWorkspaceRef.current = paintSceneWorkspaceState
-  }
   const [isConfirmationModalShown, setConfirmationModalShown] = useState(false)
   const [isImageRotate, setIsImageRotate] = useState(false)
   const { formatMessage } = useIntl()
@@ -113,11 +111,6 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
 
   const dispatch = useDispatch()
   useEffect(() => { dispatch(loadBrandColors()) }, [])
-  useEffect(() => {
-    if (paintSceneWorkspaceState !== null) {
-      paintSceneWorkspaceRef.current = paintSceneWorkspaceState
-    }
-  }, [paintSceneWorkspaceState])
 
   useEffect(() => {
     prevOrientationRef.current = orientationDimensions
@@ -365,7 +358,7 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
   const handleDismiss = () => {
     if (imageUrl && queuedImageUpload) {
       setIsLoadingSmartMask(true)
-      dispatch(uploadImage(queuedImageUpload, true))
+      dispatch(uploadImage(queuedImageUpload))
     } else {
       // @todo throw an error since data should be here -RS
     }
@@ -383,10 +376,12 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
       }
     })
 
-    const workspace = createPaintSceneWorkspace(imageUrl, data.imageData, colors, data.width, data.height, WORKSPACE_TYPES.smartMask)
-    setPaintSceneWorkspaceState(workspace)
+    // @todo at somepoint we might want to wrap the urls in objects with unique ids so that we can identify them outside of index order... -RS
+    const surfaces = [...uploads.masks]
+    const workspace = createPaintSceneWorkspace(imageUrl, data.imageData, colors, data.width, data.height, WORKSPACE_TYPES.smartMask, uploads.sceneName, surfaces)
     setIsLoadingSmartMask(false)
     dispatch(clearUploads())
+    setPaintSceneWorkspaceState(workspace)
   }
 
   const closeButton = <button onClick={(e: SyntheticEvent) => {
@@ -407,7 +402,7 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
     <div className={`${cancelClass}`}><FontAwesomeIcon className={``} icon={['fa', 'times']} /></div>
   </button>
   return (
-    <React.Fragment>
+    <>
       {imageUrl && imageHeight && imageWidth && uploads && uploads.source && isLoadingSmartMask ? <MergeCanvas
         handleLayersLoaded={HandleSmartMaskLoaded}
         layers={uploads.masks}
@@ -419,7 +414,7 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
       <div style={{ display: `${showPaintScene ? 'block' : 'none'}` }}>
         {/* This preloads the uploaded image for the canvas */ }
         <PrismImage ref={imageRef} source={blobUrl} loadedCallback={handleImageLoaded} shouldResample={hasLoaded} scalingWidth={scalingWidth} />
-        <div className={`${getWrapperClassName(imageUrl, pins, !!paintSceneWorkspaceRef.current)}`} ref={wrapperRef}>
+        <div className={`${getWrapperClassName(imageUrl, pins, !!paintSceneWorkspaceState)}`} ref={wrapperRef}>
           <div className={`${containerClass}`}>
 
             <div className={`${headerClass}`}>
@@ -437,37 +432,46 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
             </div>
             {
               (imageUrl && pins.length > 0 && !isPaintScene)
-                ? (<React.Fragment>
+                ? (<>
                   <MatchPhoto isConfirmationModalActive={isConfirmationModalActive} imageUrl={imageUrl} wrapperWidth={wrapperWidth} isPortrait={isPortrait} imageDims={imageDims} pins={pins} onClickNo={setConfirmationModal} />
-                </React.Fragment>)
-                : ''
+                </>)
+                : null
             }
             {
               (imageUrl && (pins.length === 0 || isLoadingSmartMask) && !isFromMyIdeas)
-                ? (<React.Fragment>
+                ? (<>
                   <canvas className={canvasBaseClass} name='canvas' ref={canvasRef} />
                   <ImageRotateTerms rotateImage={rotateImage} createColorPins={createColorPins} imageData={imageData} handleDismiss={handleDismiss} />
-                </React.Fragment>)
-                : ''
+                </>)
+                : null
             }
             {
-              ((imageUrl && isPaintScene && pins.length > 0 && !isLoadingSmartMask) || (isFromMyIdeas && paintSceneWorkspaceRef.current && paintSceneWorkspaceRef.current.bgImageUrl !== undefined))
-                ? (<React.Fragment>
-                  <PaintScene checkIsPaintSceneUpdate={checkIsPaintSceneUpdate} imageUrl={imageUrl} workspace={paintSceneWorkspaceRef.current} imageRotationAngle={imageRotationAngle} referenceDimensions={imageDims} width={wrapperWidth} />
-                </React.Fragment>)
-                : ''
+              ((imageUrl && isPaintScene && pins.length > 0 && !isLoadingSmartMask) || (isFromMyIdeas && paintSceneWorkspaceState && paintSceneWorkspaceState.bgImageUrl !== undefined))
+                ? (<>
+                  {/* @todo Remove dev function -RS */}
+                  {shouldShowPaintScene()
+                    ? <PaintScene
+                      checkIsPaintSceneUpdate={checkIsPaintSceneUpdate}
+                      imageUrl={imageUrl}
+                      workspace={paintSceneWorkspaceState}
+                      imageRotationAngle={imageRotationAngle}
+                      referenceDimensions={imageDims}
+                      width={wrapperWidth} />
+                    : <CustomSceneTinterContainer workspace={paintSceneWorkspaceState} allowEdit />}
+                </>)
+                : null
             }
             {
-              ((!imageUrl && !isPaintScene && paintSceneWorkspaceRef.current && paintSceneWorkspaceRef.current.bgImageUrl === undefined) || (!imageUrl && !isPaintScene && !paintSceneWorkspaceRef))
+              ((!imageUrl && !isPaintScene && paintSceneWorkspaceState && paintSceneWorkspaceState.bgImageUrl === undefined) || (!imageUrl && !isPaintScene && !paintSceneWorkspaceState))
                 ? (<canvas className={canvasBaseClass} name='canvas' width='600' height='600' />)
-                : ''
+                : null
             }
           </div>
         </div>
         <hr />
       </div>
       {isImageRotate && <LiveMessage message={formatMessage({ id: 'LIVE_MESSAGE.IMAGE_ANGLE' }, { imageRotationAngle: imageRotationAngle })} aria-live='assertive' clearOnUnmount='true' />}
-    </React.Fragment>
+    </>
   )
 }
 

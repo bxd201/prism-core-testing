@@ -1,4 +1,7 @@
 // @flow
+/**
+ * This component will accept a list of canvas imagedata load them and apply them in order to a canvas.  There are options to pass through the image data as well as return each layer as a base64 image instead
+ */
 import React, { useRef, useState, useEffect } from 'react'
 import { useIntl, FormattedMessage } from 'react-intl'
 
