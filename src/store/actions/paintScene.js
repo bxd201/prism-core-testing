@@ -1,6 +1,6 @@
 
 // @flow
-import uniqueId from 'lodash/uniqueId'
+import { createUniqueSceneId } from '../../shared/utils/legacyProfileFormatUtil'
 
 export const WORKSPACE_TYPES = {
   smartMask: 'smartmask',
@@ -40,7 +40,7 @@ export type PaintSceneWorkspace = {
 export const createPaintSceneWorkspace = (
   backgroundImageUrl: string,
   surfacesImageData: ImageData[],
-  colors: Object[], width: number, height: number, workspaceType: string = WORKSPACE_TYPES.generic, sceneName?: string = '', surfaces?: string[] = []): PaintSceneWorkspace => {
+  colors: Object[], width: number, height: number, workspaceType: string = WORKSPACE_TYPES.generic, sceneName: string = '', surfaces: string[] = []): PaintSceneWorkspace => {
   return {
     bgImageUrl: backgroundImageUrl,
     layers: surfacesImageData,
@@ -48,7 +48,7 @@ export const createPaintSceneWorkspace = (
     width,
     height,
     workspaceType: workspaceType,
-    uid: uniqueId('workspace_'),
+    uid: createUniqueSceneId(),
     // added for tintable scene
     sceneName,
     // urls from nanonets

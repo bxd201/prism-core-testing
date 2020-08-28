@@ -64,7 +64,7 @@ const SaveOptions = (props: SaveOptionsProps) => {
       firstActiveSceneInfo.variant = sceneVariant
     }
   }
-  // @todo integrate downlaod -RS
+
   const handleSave = useCallback((e: SyntheticEvent) => {
     e.preventDefault()
     if ((pathname === '/active') || (pathname === '/active/paint-scene')) {

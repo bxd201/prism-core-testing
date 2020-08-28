@@ -64,15 +64,18 @@ export const createSceneXML = (imageData: Object[] | null, metaData: Object) => 
   return imageDataToSurfacesXML(imageData, metaData)
 }
 
-export const saveMasks = (colorList: Array<number[]>, imageData: Object, backgroundImageUrl: string, metadata: Object) => {
+export const saveMasks = (colorList: Array<number[]>, imageData: ImageData | ImageData[], backgroundImageUrl: string, metadata: Object) => {
   return (dispatch, getState) => {
     dispatch({
       type: SAVING_MASKS,
       payload: true
     })
 
-    // The separated colors as an array of imageData items
-    const imageDataList = imageData ? separateColors(colorList, imageData, 1.5) : null
+    // Separate the colors if passed an imagedata object
+    let imageDataList = imageData && imageData.data ? separateColors(colorList, imageData, 1.5) : null
+    // If there is an array assume it is an array of imagedata members
+    imageDataList = !imageDataList && imageData.length ? imageData.map(layer => layer.data) : null
+    // This call only needs a 2d array like structure (reg array or clamped) of pixel data
     const sceneXML = createSceneXML(imageDataList, metadata)
     // @todo needed for my sherwin persist, this is a usage reminder -RS
     // const imageUploadPayload = createImageUploadPayload(backgroundImageUrl, metadata.uniqueId)

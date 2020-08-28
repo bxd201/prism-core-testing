@@ -378,7 +378,8 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
 
     // @todo at somepoint we might want to wrap the urls in objects with unique ids so that we can identify them outside of index order... -RS
     const surfaces = [...uploads.masks]
-    const workspace = createPaintSceneWorkspace(imageUrl, data.imageData, colors, data.width, data.height, WORKSPACE_TYPES.smartMask, uploads.sceneName, surfaces)
+    const b64ImageUrl = canvasRef.current.toDataURL()
+    const workspace = createPaintSceneWorkspace(b64ImageUrl, data.imageData, colors, data.width, data.height, WORKSPACE_TYPES.smartMask, uploads.sceneName, surfaces)
     setIsLoadingSmartMask(false)
     dispatch(clearUploads())
     setPaintSceneWorkspaceState(workspace)

@@ -1131,7 +1131,7 @@ canvasHeight
             ]}
             description={intl.formatMessage({ id: 'SAVE_SCENE_MODAL.UNABLE_TO_SAVE_WARNING' })}
             height={canvasHeight} /> : null}
-          { /* ----------Confirm modal ---------- */ }
+          { /* ---------- Saved notification modal ---------- */ }
           { this.props.showSavedConfirmModalFlag ? <DynamicModal
             actions={[
               { text: intl.formatMessage({ id: 'PAINT_SCENE.OK_DISMISS' }), callback: this.props.hideSavedConfirmModal }
