@@ -74,8 +74,8 @@ export const uploadImage = (file: File) => {
         // -------------- FAKE ABOVE / REAL BELOW ---------------//
         const resp = res.data.per_img_resp
         const payload = resp[0][0].payload
-        const mask = payload.mask_path0.replace('https://None', ML_API_URL)
-        const originalImage = payload.original_img_path.replace('https://None', ML_API_URL)
+        const mask = `${ML_API_URL}${payload.mask_path0}`
+        const originalImage = `${ML_API_URL}${payload.original_img_path}`
 
         let masks = []
 
