@@ -22,17 +22,22 @@ const ImagePreloader = (props: Props) => {
   const [error, setError] = useState(false)
   const [loading, setLoading] = useState(false)
   useEffect(() => {
+    //* https://reactjs.org/docs/hooks-effect.html#effects-with-cleanup/
+    let cancelSubscription = false
     if (!isEmpty(preload)) {
       const flatPreload = flattenDeep(preload).filter(val => !!val)
-
       if (flatPreload.length) {
         Promise.all(flatPreload.map(tgt => makePromise(tgt))).then((response: any) => {
-          setError(false)
-          setLoading(false)
+          if (!cancelSubscription) {
+            setError(false)
+            setLoading(false)
+          }
         }).catch((error: any) => {
-          setError(true)
-          setLoading(false)
-          console.warn(error)
+          if (!cancelSubscription) {
+            setError(true)
+            setLoading(false)
+            console.warn(error)
+          }
         })
 
         setLoading(true)
@@ -41,6 +46,7 @@ const ImagePreloader = (props: Props) => {
         setError(false)
       }
     }
+    return () => { cancelSubscription = true }
   }, [preload])
 
   return children({ error, loading })

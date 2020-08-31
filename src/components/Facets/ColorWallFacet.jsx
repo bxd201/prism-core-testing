@@ -25,6 +25,7 @@ type Props = FacetPubSubMethods & FacetBinderMethods & {
   colorDetailPageRoot?: string,
   colorWallBgColor?: string,
   displayAddButton?: boolean,
+  displayInfoButton?: boolean,
   displayAddButtonText?: boolean,
   displayDetailsLink?: boolean,
   hiddenSections?: string | string[], // as string, "section name 1" or "section name 1|section name 2|etc" will be parsed into an array
@@ -52,7 +53,21 @@ const CWToolbar = () => <div className='color-wall-wrap__chunk'>
 </div>
 
 export const ColorWallPage = (props: Props) => {
-  const { addButtonText, displayAddButton = false, displayAddButtonText, displayDetailsLink = true, colorWallBgColor, subscribe, publish, unsubscribeAll, colorDetailPageRoot, resetOnUnmount, hiddenSections, defaultSection } = props
+  const {
+    addButtonText,
+    defaultSection,
+    displayAddButton = false,
+    displayAddButtonText,
+    displayInfoButton = false,
+    displayDetailsLink = true,
+    colorWallBgColor,
+    subscribe,
+    publish,
+    unsubscribeAll,
+    colorDetailPageRoot,
+    resetOnUnmount,
+    hiddenSections
+  } = props
   const dispatch = useDispatch()
 
   // -----------------------------------------------------
@@ -102,6 +117,7 @@ export const ColorWallPage = (props: Props) => {
     colorDetailPageRoot,
     colorWallBgColor,
     displayAddButton: translateBooleanFlexibly(displayAddButton),
+    displayInfoButton: translateBooleanFlexibly(displayInfoButton),
     displayAddButtonText: translateBooleanFlexibly(displayAddButtonText),
     displayDetailsLink: translateBooleanFlexibly(displayDetailsLink),
     hiddenSections: processedHiddenSections

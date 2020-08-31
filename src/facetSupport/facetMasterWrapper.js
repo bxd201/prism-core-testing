@@ -14,6 +14,7 @@ import languages from 'src/translations/translations'
 import store from 'src/store/store'
 import { setLanguage } from 'src/store/actions/language'
 import { flattenNestedObject } from '../shared/helpers/DataUtils'
+import AuthObserver from '../components/AuthObserver/AuthObserver'
 
 // wraps a react component with the required PRISM HOCs
 export const facetMasterWrapper = (Component: ComponentType<any>) => {
@@ -82,6 +83,7 @@ export const facetMasterWrapper = (Component: ComponentType<any>) => {
                     <LiveMessenger>
                       {({ announcePolite, announceAssertive }) => {
                         return <LiveAnnouncerContextProvider announcePolite={announcePolite} announceAssertive={announceAssertive}>
+                          <AuthObserver />
                           { RouterRender }
                         </LiveAnnouncerContextProvider>
                       }}

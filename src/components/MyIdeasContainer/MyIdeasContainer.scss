@@ -1,0 +1,41 @@
+.my-ideas-container {
+  &__wrapper {
+    background-image: url('~src/images/color-visualizer-wrapper/saved-items-background.jpg');
+    background-size: cover;
+    min-height: $myideas-min-height;
+  }
+  &__content {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: 4em;
+  }
+  &__description {
+    font-size: 1.2em;
+    text-align: center;
+    width: 96%;
+    @include respond-above(sm) {
+      width: 28em;
+    }
+  }
+  &__buttons {
+    display: flex;
+    font-weight: 700;
+    padding-top: 1em;
+    & > button {
+      text-decoration: none;
+      padding: 1em 2em;
+      color: #333;
+      margin-right: 10px;
+      background-color: #fff;
+      min-width: 120px;
+      &:focus {
+        outline-style: solid;
+        outline-color: #2cabe2;
+        outline-width: 2px;
+        z-index: 100;
+      }
+    }
+  }
+}

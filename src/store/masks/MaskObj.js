@@ -1,6 +1,7 @@
 // @flow
 import axios from 'axios'
 import { addListener } from '../../shared/helpers/MiscUtils'
+import FileReader2 from 'src/shared/utils/FileReader2.util'
 
 export type MaskObjInput = {
   id: string,
@@ -16,6 +17,7 @@ export default class MaskObj {
   _path: string
   _width: number
   _height: number
+  _load: string
 
   // $FlowIgnore - enforce functionality of hasInstance through minification, but flow doesn't like it
   static [Symbol.hasInstance] (obj: MaskObj) {
@@ -57,6 +59,7 @@ export default class MaskObj {
             resolve(_this.path)
             _this._width = img.naturalWidth
             _this._height = img.naturalHeight
+            _this._load = load
           }))
 
           listeners.push(addListener(img, 'error', (err) => {
@@ -87,6 +90,10 @@ export default class MaskObj {
     return this._path
   }
 
+  get load () {
+    return this._load
+  }
+
   get imageData (): Promise<Uint8Array> | typeof undefined {
     // returns promise that provides array buffer data
     return this._loadingPromise.then(() => new Promise((resolve, reject) => {
@@ -99,22 +106,9 @@ export default class MaskObj {
         return
       }
 
-      const fileReader = new FileReader()
-      const listeners = []
-      const stopListening = () => listeners.map(l => l())
-
-      listeners.push(addListener(fileReader, 'load', event => {
-        stopListening()
-        resolve(new Uint8Array(event.target.result))
-      }))
-
-      listeners.push(addListener(fileReader, 'error', err => {
-        fileReader.abort()
-        stopListening()
-        reject(err)
-      }))
-
-      fileReader.readAsArrayBuffer(blob)
+      new FileReader2().readAsArrayBuffer(blob)
+        .then(data => resolve(new Uint8Array(data)))
+        .catch(() => reject(new Error(`Unable to read blob as array buffer in ${this._id}`)))
     }))
   }
 

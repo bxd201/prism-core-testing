@@ -69,7 +69,7 @@ export function ColorChipMaximizer ({ color, intl, onToggle }: Props) {
     if (isMaximized === true) {
       minimizeChipBtn.current && minimizeChipBtn.current.focus()
       setTimeout(() => {
-        setLiveRegionMessage(intl.messages.CHIP_MAXIMIZED)
+        setLiveRegionMessage(intl.formatMessage({ id: 'CHIP_MAXIMIZED' }))
       }, 500)
       GA.event({
         category: 'Color Detail',
@@ -80,7 +80,7 @@ export function ColorChipMaximizer ({ color, intl, onToggle }: Props) {
     if (isMaximized === false) {
       maximizeChipBtn.current && maximizeChipBtn.current.focus()
       setTimeout(() => {
-        setLiveRegionMessage(intl.messages.CHIP_MINIMIZED)
+        setLiveRegionMessage(intl.formatMessage({ id: 'CHIP_MAXIMIZED' }))
       }, 500)
     }
   }, [isMaximized])

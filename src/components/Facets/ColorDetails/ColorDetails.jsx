@@ -13,12 +13,13 @@ import ColorStrip from './ColorStrip'
 import CoordinatingColors from './CoordinatingColors'
 import SimilarColors from './SimilarColors'
 import SceneManager from '../../SceneManager/SceneManager'
-import { paintAllMainSurfaces } from '../../../store/actions/scenes'
+import { paintAllMainSurfaces, toggleColorDetailsPage } from '../../../store/actions/scenes'
 import { varValues } from 'src/shared/variableDefs'
 import type { Color } from '../../../shared/types/Colors.js.flow'
 import 'src/scss/convenience/visually-hidden.scss'
 import './ColorDetails.scss'
 import ColorDataWrapper from 'src/helpers/ColorDataWrapper/ColorDataWrapper'
+import HeroLoader from 'src/components/Loaders/HeroLoader/HeroLoader'
 
 const baseClass = 'color-info'
 
@@ -28,10 +29,11 @@ type Props = {
   onVariantChanged?: string => void,
   onColorChipToggled?: boolean => void,
   familyLink?: string,
+  loading?: boolean,
   initialColor: Color
 }
 
-export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged, onColorChipToggled, familyLink, initialColor }: Props) => {
+export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged, onColorChipToggled, familyLink, loading, initialColor }: Props) => {
   const dispatch = useDispatch()
   const toggleSceneDisplayScene = useRef(null)
   const toggleSceneHideScene = useRef(null)
@@ -39,6 +41,11 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
 
   const [color: Color, setColor: Color => void] = useState(initialColor)
   const [tabIndex: number, setTabIndex: number => void] = useState(0)
+
+  useEffect(() => {
+    dispatch(toggleColorDetailsPage())
+    return () => { dispatch(toggleColorDetailsPage()) }
+  }, [])
 
   useEffect(() => {
     color && GA.pageView(`color-detail/${color.brandKey} ${color.colorNumber} - ${color.name}`)
@@ -49,6 +56,10 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
 
   // paint all the main surfaces on load of the CDP
   useEffect(() => { scenesLoaded && color && dispatch(paintAllMainSurfaces(color)) }, [scenesLoaded, color])
+
+  if (loading) {
+    return <HeroLoader />
+  }
 
   // perform some css class logic & scaffolding instead of within the DOM itself
   let contrastingTextColor = varValues.colors.black
@@ -76,6 +87,7 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
             mainColor={color}
             onSceneChanged={onSceneChanged}
             onVariantChanged={onVariantChanged}
+            isColorDetail
           />
         </div>
         <div className='color-detail__info-wrapper'>

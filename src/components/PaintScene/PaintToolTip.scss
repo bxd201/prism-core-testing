@@ -1,7 +1,11 @@
 .paint-tooltip {
   &__wrapper {
     display: flex;
-    width: 310px;
+    width: 278px;
+    transform: none;
+    @include respond-above(sm) {
+      width: 310px;
+    }
   }
   &__container {
     background: #2cabe2;
@@ -15,7 +19,7 @@
     background: white;
     cursor: pointer;
     fill: black;
-    height: 1.5em;
+    height: auto;
     outline: none;
     padding: 0.1em;
     position: absolute;
@@ -23,6 +27,14 @@
     text-align: center;
     top: 0;
     width: 1.5em;
+    &:focus {
+      outline-style: solid;
+      outline-color: #2cabe2;
+      outline-width: 2px;
+    }
+    &--svg {
+      color: #000000;
+    }
   }
   &__header {
     font-size: 0.8em;
@@ -44,7 +56,7 @@
   &__button {
     color: #fff;
     cursor: pointer;
-    font-size: 0.6em;
+    font-size: 0.8em;
     font-weight: 600;
     outline: none;
     position: relative;
@@ -55,33 +67,42 @@
       cursor: default;
       opacity: 0;
     }
+    & > span {
+      text-transform: uppercase;
+    }
   }
   &__button-left {
     left: 0px;
-    & > span {
-      &:hover {
-        transition: none;
-      }
+    &:focus {
+      outline-style: solid;
+      outline-color: #2cabe2;
+      outline-width: 2px;
+      font-size: 0.9em;
     }
     &:hover {
-      left: -3px;
-      transition: left 0.3s ease;
+      & > svg {
+        transform: translate(-3px, 0px);
+        transition: transform 0.3s ease;
+      }
     }
   }
   &__button-right {
     right: 0px;
-    & > span {
-      &:hover {
-        transition: none;
-      }
+    &:focus {
+      outline-style: solid;
+      outline-color: #2cabe2;
+      outline-width: 2px;
+      font-size: 0.9em;
     }
     &:hover {
-      right: -3px;
-      transition: right 0.3s ease;
+      & > svg {
+        transform: translate(3px, 0px);
+        transition: transform 0.3s ease;
+      }
     }
   }
   &__tool-number {
-    font-size: 0.6em;
+    font-size: 0.8em;
   }
   &__down-pointer {
     border: 6px solid transparent;
@@ -92,11 +113,21 @@
     left: 48%;
     position: absolute;
     width: 0;
+    &__group-tool {
+      left: 26%;
+      @include respond-above(sm) {
+        left: 48%;
+      }
+    }
     &--hide-paint {
-      left: 64%;
+      @include respond-above(sm) {
+        left: 64%;
+      }
     }
     &--hints {
-      left: 80%;
+      @include respond-above(sm) {
+        left: 80%;
+      }
     }
   }
   &__select-group {
@@ -106,7 +137,7 @@
     color: #fff;
     display: block;
     font-size: 18px;
-    left: calc(100% + -9.7rem);
+    left: calc(100% + -5.7rem);
     line-height: 21.6px;
     padding: 0.5em 1.5em 0.5em 1.5em;
     position: absolute;
@@ -114,5 +145,8 @@
     // bottom: calc(100% + -9rem);
     // transform: translate(-150%);
     // left: calc(0% - 26.9rem);
+    @include respond-above(sm) {
+      left: calc(100% + -9.7rem);
+    }
   }
 }

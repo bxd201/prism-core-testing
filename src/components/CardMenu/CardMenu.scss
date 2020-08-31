@@ -9,6 +9,7 @@
     background: #f0f0f0;
     width: 100%;
     max-width: 100%;
+    position: relative;
   }
   &__content {
     display: block;
@@ -23,7 +24,7 @@
     background: #fff;
     display: block;
     overflow: hidden;
-    padding: 3% 26% 1.25em;
+    padding: 3% 16% 1.25em;
     position: relative;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -51,6 +52,12 @@
       cursor: pointer;
       color: #2cabe2;
     }
+    &:focus {
+      outline-style: solid;
+      outline-color: #2cabe2;
+      outline-width: 2px;
+      z-index: 100;
+    }
     &--left {
       left: .875rem;
     }
@@ -65,6 +72,7 @@
   }
   &__button-left-text {
     display: none;
+    text-transform: uppercase;
     @include respond-above(sm) {
       display: inline-block;
     }

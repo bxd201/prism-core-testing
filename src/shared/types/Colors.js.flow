@@ -142,3 +142,5 @@ export type Layouts = [
     families: LayoutObj[]
   }
 ]
+
+export type RGBArr = [number, number, number]

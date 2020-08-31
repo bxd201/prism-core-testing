@@ -14,6 +14,7 @@ import facetBinder from 'src/facetSupport/facetBinder'
 import { facetBinderDefaultProps, type FacetBinderMethods } from 'src/facetSupport/facetInstance'
 import { type FacetPubSubMethods, facetPubSubDefaultProps } from 'src/facetSupport/facetPubSub'
 import { ROUTE_PARAMS } from 'src/constants/globals'
+import HeroLoader from 'src/components/Loaders/HeroLoader/HeroLoader'
 
 import './ColorFamilyFacet.scss'
 import { compareKebabs } from '../../../shared/helpers/StringUtils'
@@ -23,7 +24,8 @@ import extendIfDefined from '../../../shared/helpers/extendIfDefined'
 type Props = FacetBinderMethods & FacetPubSubMethods & ColorDataWrapperProps & {
   colorDetailPageRoot: string,
   colorWallBgColor?: string,
-  selectedColorFamily: string
+  selectedColorFamily: string,
+  loading: boolean
 }
 
 const SearchBarNoCancel = () => {
@@ -37,7 +39,7 @@ const SearchBarNoCancel = () => {
 }
 
 export const ColorFamilyPage = (props: Props) => {
-  const { colorDetailPageRoot, colorWallBgColor, selectedColorFamily } = props
+  const { colorDetailPageRoot, colorWallBgColor, selectedColorFamily, loading } = props
   const { structure } = useSelector(state => at(state, 'colors')[0])
   const redirectTo = useMemo(() => {
     const selectedSectionStructure = structure.filter(v => v.families.filter(f => compareKebabs(f, selectedColorFamily)).length > 0)[0]
@@ -54,6 +56,10 @@ export const ColorFamilyPage = (props: Props) => {
   }, [structure])
 
   const cwContext = useMemo(() => extendIfDefined({}, colorWallContextDefault, { colorDetailPageRoot, colorWallBgColor }), [colorDetailPageRoot, colorWallBgColor])
+
+  if (loading) {
+    return <HeroLoader />
+  }
 
   return (
     <ColorWallContext.Provider value={cwContext}>

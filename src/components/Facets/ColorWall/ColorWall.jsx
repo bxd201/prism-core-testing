@@ -1,6 +1,6 @@
 // @flow
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { useHistory, useParams, Link } from 'react-router-dom'
+import { useHistory, useRouteMatch, Link } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { useIntl } from 'react-intl'
 import { CSSTransition } from 'react-transition-group'
@@ -16,7 +16,7 @@ import { compareKebabs } from 'src/shared/helpers/StringUtils'
 import range from 'lodash/range'
 import rangeRight from 'lodash/rangeRight'
 import flatten from 'lodash/flatten'
-import { generateColorWallPageUrl } from 'src/shared/helpers/ColorUtils'
+import { generateColorWallPageUrl, fullColorName } from 'src/shared/helpers/ColorUtils'
 import 'src/scss/externalComponentSupport/AutoSizer.scss'
 import 'src/scss/convenience/overflow-ellipsis.scss'
 import './ColorWall.scss'
@@ -27,7 +27,7 @@ const WALL_HEIGHT = 475
 
 const ColorWall = () => {
   const dispatch: ({ type: string, payload: {} }) => void = useDispatch()
-  const params: { section: ?string, family?: ?string, colorId?: ?string } = useParams()
+  const { url, params }: { url: string, params: { section: ?string, family?: ?string, colorId?: ?string } } = useRouteMatch()
   const history = useHistory()
   const { items: { colorMap = {}, colorStatuses = {}, sectionLabels = {} }, layout, section, family }: ColorsState = useSelector(state => state.colors)
   const { swatchMinSize, swatchMaxSize, swatchMaxSizeZoomed, colorWallBgColor }: ColorWallContextProps = useContext(ColorWallContext)
@@ -82,10 +82,10 @@ const ColorWall = () => {
           }
         },
         '13': () => {
-          params.colorId = focusedCell.current
-          setTimeout(() => params.colorId && cellRefs.current[params.colorId].focus(), 1)
+          // directly modifing params.colorId instead of calling history.push will make the react-test-renderer not run the useEffect that depends on params.colorId
+          focusedCell.current && history.push(generateColorWallPageUrl(params.section, params.family, focusedCell.current, fullColorName(colorMap[focusedCell.current])) + (url.endsWith('family/') ? 'family/' : url.endsWith('search/') ? 'search/' : ''))
         },
-        '27': () => { params.colorId && history.push(generateColorWallPageUrl(section, family)) },
+        '27': () => { focusedCell.current && history.push(generateColorWallPageUrl(section, family)) },
         '37': () => { cellColumn > 0 && cellRefs.current[chunk[cellRow][cellColumn - 1]].focus() },
         '38': () => { cellRow > 0 && cellRefs.current[chunk[cellRow - 1][cellColumn]].focus() },
         '39': () => { cellColumn < chunk[cellRow].length - 1 && cellRefs.current[chunk[cellRow][cellColumn + 1]].focus() },
@@ -114,6 +114,9 @@ const ColorWall = () => {
   // start scrolling animation when scroll position changes due to new active color or gridWidth changing
   useEffect(() => {
     if (!params.colorId || !gridRef.current || !layout) { return }
+
+    // set focus on bloomed swatch
+    cellRefs.current[params.colorId] && cellRefs.current[params.colorId].focus()
 
     const startTime: number = window.performance.now()
     const end = getScrollPosition(params.colorId, chunkGrid, cellSize * 0.4, cellSize, gridWidth, WALL_HEIGHT)

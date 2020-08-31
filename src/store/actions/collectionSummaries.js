@@ -24,12 +24,26 @@ export function handleGetCollectionSummaries (collectionSummaries: any) {
       {}
     )
   }
-
   return { categories, summaries }
 }
 
-export const loadCollectionSummaries = (dispatch: Function) => {
+export const requestCollectionSummaries = () => {
+  return {
+    type: REQUEST_CS,
+    payload: { loadingCS: true }
+  }
+}
+
+export const receivedCollectionSummaries = (res) => {
+  return {
+    type: RECEIVED_CS,
+    payload: { loadingCS: false, ...handleGetCollectionSummaries(res.data) }
+  }
+}
+
+export const loadCollectionSummaries = (dispatch) => {
+  dispatch(requestCollectionSummaries)
   axios
     .get(COLLECTION_SUMMARIES_ENDPOINT)
-    .then(res => dispatch({ type: RECEIVED_CS, payload: { ...handleGetCollectionSummaries(res.data) } }))
+    .then(res => dispatch(receivedCollectionSummaries(res)))
 }

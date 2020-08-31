@@ -12,6 +12,12 @@
     &:hover {
       border-color: #2cabe2;
     }
+    &:focus {
+      outline-style: solid;
+      outline-color: #2cabe2;
+      outline-width: 2px;
+      z-index: 100;
+    }
   }
   &__bottom-item {
     flex: 1 1 0;

@@ -4,23 +4,44 @@ import { connect } from 'react-redux'
 import './PaintScene.scss'
 import uniqueId from 'lodash/uniqueId'
 import PaintToolBar from './PaintToolBar'
-import remove from 'lodash/remove'
 import { injectIntl } from 'react-intl'
 
-import { drawAcrossLine } from './PaintSceneUtils'
-import { getPaintAreaPath, repaintImageByPath,
-  createPolygon, drawLine, drawHollowCircle,
-  edgeDetect, pointInsideCircle, alterRGBByPixel,
-  getImageCordinateByPixel, eraseIntersection,
-  getActiveColorRGB, getSelectArea, hexToRGB,
-  checkIntersection, drawImagePixelByPath,
-  copyImageList, getColorAtPixel, colorMatch,
-  repaintCircleLine, getImageCordinateByPixelPaintBrush } from './utils'
-import { toolNames, groupToolNames, brushLargeSize, brushMediumSize, brushSmallSize, brushTinySize, brushRoundShape, brushSquareShape } from './data'
+import {
+  createImageDataAndAlphaPixelMapFromImageData,
+  getColorsFromImagePathList, getInitialDims, getLABFromColor
+} from './PaintSceneUtils'
+import { repaintImageByPath, pointInsideCircle,
+  getImageCordinateByPixel, canvasDimensionFactors, applyDimensionFactorsByCanvas,
+  getActiveColorRGB, hexToRGB, colorMatch, shouldCanvasResize,
+  drawImagePixelByPath, getColorAtPixel, getCanvasWrapperOffset,
+  copyImageList, createImagePathItem, drawPaintBrushPoint, applyDimensionFactorsToCanvas,
+  getPaintBrushActiveClass, getEraseBrushActiveClass, compareArraysOfObjects, objectsEqual, getColorsForMergeColors } from './utils'
+import { toolNames, groupToolNames, brushLargeSize, brushRoundShape, setTooltipShownLocalStorage, getTooltipShownLocalStorage } from './data'
 import { getScaledPortraitHeight, getScaledLandscapeHeight } from '../../shared/helpers/ImageUtils'
 import throttle from 'lodash/throttle'
 import { redo, undo } from './UndoRedoUtil'
-import WebWorker from './workers/paintScene.worker'
+import MergeCanvas from '../MergeCanvas/MergeCanvas'
+import {
+  saveMasks,
+  selectSavedScene,
+  showSavedCustomSceneSuccessModal,
+  showSaveSceneModal,
+  startSavingMasks
+} from '../../store/actions/persistScene'
+import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
+import SaveMasks from './SaveMasks'
+import { createCustomSceneMetadata, createUniqueSceneId } from '../../shared/utils/legacyProfileFormatUtil'
+import MergeColors from '../MergeCanvas/MergeColors'
+import storageAvailable from '../../shared/utils/browserStorageCheck.util'
+import DynamicModal, { DYNAMIC_MODAL_STYLE } from '../DynamicModal/DynamicModal'
+import { checkCanMergeColors, shouldPromptToReplacePalette } from '../LivePalette/livePaletteUtility'
+import { LP_MAX_COLORS_ALLOWED } from '../../constants/configurations'
+import { mergeLpColors, replaceLpColors } from '../../store/actions/live-palette'
+import { clearSceneWorkspace, WORKSPACE_TYPES } from '../../store/actions/paintScene'
+import { setActiveScenePolluted, unsetActiveScenePolluted, setWarningModalImgPreview } from 'src/store/actions/scenes'
+import { group, ungroup, deleteGroup, selectArea, bucketPaint, applyZoom,
+  createOrDeletePolygon, createPolygonPin, eraseOrPaintMouseUp, eraseOrPaintMouseDown } from './toolFunction'
+import { LiveMessage } from 'react-aria-live'
 
 const baseClass = 'paint__scene__wrapper'
 const canvasClass = `${baseClass}__canvas`
@@ -28,31 +49,43 @@ const canvasSecondClass = `${baseClass}__canvas-second`
 const canvasThirdClass = `${baseClass}__canvas-third`
 const portraitOrientation = `${canvasClass}--portrait`
 const imageClass = `${baseClass}__image`
-const paintToolsClass = `${baseClass}__paint-tools`
 const paintBrushClass = `${baseClass}__paint-brush`
-const paintBrushLargeClass = `${paintBrushClass}--large`
-const paintBrushMediumClass = `${paintBrushClass}--medium`
-const paintBrushSmallClass = `${paintBrushClass}--small`
-const paintBrushTinyClass = `${paintBrushClass}--tiny`
-const paintBrushLargeCircleClass = `${paintBrushClass}--large-circle`
-const paintBrushMediumCircleClass = `${paintBrushClass}--medium-circle`
-const paintBrushSmallCircleClass = `${paintBrushClass}--small-circle`
-const paintBrushTinyCircleClass = `${paintBrushClass}--tiny-circle`
 const canvasShowByZindex = `${canvasClass}--show-by-zindex`
 const canvasHideByZindex = `${canvasClass}--hide-by-zindex`
 const canvasVisibleByVisibility = `${canvasClass}--visible-by-visibility`
 const canvasHiddenByVisibility = `${canvasClass}--hidden-by-visibility`
 const animationLoader = `${baseClass}--animation`
+const animationPin = `${baseClass}--animation-pin`
+const nonAnimationPin = `${baseClass}--non-animation-pin`
+const disableTextSelect = `${baseClass}--disable-text-select`
+const disableClick = `${baseClass}--disable-click`
+const showCursor = `${baseClass}--show-cursor`
+const hideCursor = `${baseClass}--hide-cursor`
 
 type ComponentProps = {
   imageUrl: string,
-  // eslint-disable-next-line react/no-unused-prop-types
-  imageRotationAngle: number,
   lpActiveColor: Object,
   referenceDimensions: Object,
-  // eslint-disable-next-line react/no-unused-prop-types
   width: number,
-  intl: any
+  intl: any,
+  saveMasks: Function,
+  savingMasks: boolean,
+  startSavingMasks: Function,
+  workspace: Object,
+  lpColors: Object[],
+  mergeLpColors: Function,
+  replaceLpColors: Function,
+  selectSavedScene: Function,
+  clearSceneWorkspace: Function,
+  showSaveSceneModal: boolean,
+  showSaveSceneModalAction: Function,
+  saveSceneName: string,
+  sceneCount: number,
+  showSavedConfirmModalFlag: boolean,
+  hideSavedConfirmModal: Function,
+  setActiveScenePolluted: () => void,
+  unsetActiveScenePolluted: () => void,
+  setWarningModalImgPreview: ({}) => void
 }
 
 type ComponentState = {
@@ -85,12 +118,16 @@ type ComponentState = {
   polyList: Array<Array<number>>,
   BeginPointList: Array<number>,
   initialCanvasWidth: number,
-  initialCanvasHeight: number
-}
-
-type DrawOperation = {
-  colors: number[],
-  data: number[],
+  initialCanvasHeight: number,
+  mergeCanvasKey: string,
+  canvasImageUrls: string[],
+  canvasHeight: number,
+  canvasHeight: number,
+  loadingMasks: boolean,
+  canvasHasBeenInitialized: boolean,
+  hideSelectPaletteModal: boolean,
+  uniqueSceneId: string,
+  prevWorkspace: Object
 }
 
 export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
@@ -118,31 +155,34 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   lastPanPoint: Object
   canvasOriginalDimensions: Object
   wrapperOriginalDimensions: Object
-  worker: Object
 
   constructor (props: ComponentProps) {
     super(props)
 
+    const [initialImageWidth, initialImageHeight] = getInitialDims(props.workspace, props.referenceDimensions)
+    const isPortrait = props.workspace ? props.workspace.height > props.workspace.width : props.referenceDimensions.isPortrait
+
     this.CFICanvas = React.createRef()
     this.CFICanvas2 = React.createRef()
     this.CFICanvasPaint = React.createRef()
+    this.CFICanvas4 = React.createRef()
     this.CFIWrapper = React.createRef()
     this.CFIImage = React.createRef()
-    // @todo - marked for review -RS
-    // this.canvasOffsetWidth = 0
-    // this.canvasOffsetHeight = 0
+    this.CFIImage2 = React.createRef()
+    this.mergeCanvasRef = React.createRef()
+    this.mergeCanvasRefModal = React.createRef()
     this.wrapperDimensions = {}
     this.canvasDimensions = {}
     this.canvasOriginalDimensions = {}
     this.wrapperOriginalDimensions = {}
-    this.backgroundImageWidth = props.referenceDimensions.imageWidth
-    this.backgroundImageHeight = props.referenceDimensions.imageHeight
-    this.isPortrait = props.referenceDimensions.isPortrait
-    this.originalIsPortrait = props.referenceDimensions.originalIsPortrait
+    this.backgroundImageWidth = initialImageWidth
+    this.backgroundImageHeight = initialImageHeight
+    this.isPortrait = isPortrait
+    this.originalIsPortrait = props.workspace ? (props.workspace.height > props.workspace.width) : props.referenceDimensions.originalIsPortrait
     this.canvasPanStart = { x: 0.5, y: 0.5 }
     this.lastPanPoint = { x: 0, y: 0 }
-    this.pause = false
-    this.worker = null
+    this.originalImageWidth = props.referenceDimensions.originalImageWidth
+    this.originalImageHeight = props.referenceDimensions.originalImageHeight
 
     this.state = {
       imageStatus: 'loading',
@@ -162,6 +202,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       lineStart: [],
       BeginPointList: [],
       polyList: [],
+      presentPolyList: [],
       imagePathList: [],
       redoPathList: [],
       showOriginalCanvas: false,
@@ -170,100 +211,191 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       selectedArea: [],
       groupAreaList: [],
       groupSelectList: [],
-      wrapperHeight: this.props.referenceDimensions.imageHeight,
+      clearUndoList: [],
+      wrapperHeight: initialImageHeight,
       isUngroup: false,
       isAddGroup: false,
       isDeleteGroup: false,
-      paintCursor: `${canvasClass}--${toolNames.PAINTAREA}`,
-      isInfoToolActive: false,
+      paintCursor: `${canvasClass}--${toolNames.INFO}`,
+      isInfoToolActive: true,
       initialCanvasWidth: 0,
-      initialCanvasHeight: 0
+      initialCanvasHeight: 0,
+      mergeCanvasKey: '1',
+      canvasImageUrls: [],
+      groupIds: [],
+      deleteAreaList: [],
+      showAnimatePin: false,
+      showNonAnimatePin: false,
+      pinX: 0,
+      pinY: 0,
+      currPinX: 0,
+      currPinY: 0,
+      canvasWidth: initialImageWidth,
+      canvasHeight: initialImageHeight,
+      loadingMasks: !!props.workspace && !!props.workspace.layers && !!props.workspace.layers.length,
+      prevWorkspace: {},
+      canvasHasBeenInitialized: false,
+      showSelectPaletteModal: false,
+      checkIsPaintSceneUpdate: false,
+      uniqueSceneId: createUniqueSceneId(),
+      isSceneOpend: false
     }
 
     this.undo = this.undo.bind(this)
     this.redo = this.redo.bind(this)
     this.redrawCanvas = this.redrawCanvas.bind(this)
-    this.getImageCoordinatesByPixel = this.getImageCoordinatesByPixel.bind(this)
     this.initCanvas = this.initCanvas.bind(this)
     this.initCanvasWithDimensions = this.initCanvasWithDimensions.bind(this)
-    this.shouldCanvasResize = this.shouldCanvasResize.bind(this)
     this.calcCanvasNewDimensions = this.calcCanvasNewDimensions.bind(this)
     this.scaleCanvases = this.scaleCanvases.bind(this)
+    this.getLayers = this.getLayers.bind(this)
+    this.renderMergeCanvas = this.renderMergeCanvas.bind(this)
+    this.processMasks = this.processMasks.bind(this)
+    this.initCanvas2 = this.initCanvas2.bind(this)
+    this.importLayers = this.importLayers.bind(this)
+    this.getSelectPaletteModalConfig = this.getSelectPaletteModalConfig.bind(this)
+    this.loadPalette = this.loadPalette.bind(this)
+    this.tryToMergeColors = this.tryToMergeColors.bind(this)
+    this.hideSaveSceneModal = this.hideSaveSceneModal.bind(this)
+    this.saveSceneFromModal = this.saveSceneFromModal.bind(this)
+    this.handleClick = this.handleClick.bind(this)
   }
 
-  /*:: shouldCanvasResize: (prevWidth: number, newWidth: number) => number */
-  shouldCanvasResize (prevWidth: number, newWidth: number) {
-    if (newWidth !== prevWidth) {
-      return newWidth
-    }
+  hideSaveSceneModal (e: SyntheticEvent) {
+    e.preventDefault()
+    e.stopPropagation()
 
-    return 0
+    this.props.showSaveSceneModalAction(false)
+  }
+
+  saveSceneFromModal (e: SyntheticEvent, sceneName: string) {
+    e.preventDefault()
+    e.stopPropagation()
+    if (sceneName.trim() === '') {
+      return false
+    }
+    this.props.showSaveSceneModalAction(false)
+    this.props.startSavingMasks(sceneName)
+  }
+
+  tryToMergeColors () {
+    // eslint-disable-next-line no-new-object
+    const { workspace, lpColors } = this.props
+    if (workspace && workspace.workspaceType !== WORKSPACE_TYPES.smartMask && workspace.layers && workspace.palette && lpColors) {
+      if (checkCanMergeColors(lpColors, workspace.palette, LP_MAX_COLORS_ALLOWED)) {
+        this.props.mergeLpColors(workspace.palette)
+      } else {
+        if (shouldPromptToReplacePalette(lpColors, workspace.palette, LP_MAX_COLORS_ALLOWED)) {
+          this.setState({ showSelectPaletteModal: true })
+        }
+      }
+    }
+  }
+
+  getSelectPaletteModalConfig () {
+    const { intl } = this.props
+
+    const selectPaletteActions = [{ callback: (e) => {
+      e.preventDefault()
+      e.stopPropagation()
+      this.setState({ showSelectPaletteModal: false })
+    },
+    text: intl.formatMessage({ id: 'PAINT_SCENE.CANCEL' }),
+    type: DYNAMIC_MODAL_STYLE.primary },
+    { callback: (e) => {
+      e.preventDefault()
+      e.stopPropagation()
+      this.loadPalette()
+      this.setState({ showSelectPaletteModal: false })
+    },
+    text: intl.formatMessage({ id: 'PAINT_SCENE.OK' }),
+    type: DYNAMIC_MODAL_STYLE.primary }]
+
+    return {
+      selectPaletteActions,
+      selectPaletteTitle: intl.formatMessage({ id: 'PAINT_SCENE.SELECT_PALETTE_TITLE' }),
+      selectPaletteDescription: intl.formatMessage({ id: 'PAINT_SCENE.SELECT_PALETTE_DESC' })
+    }
+  }
+
+  loadPalette () {
+    const { workspace: { palette } } = this.props
+    this.props.replaceLpColors(palette)
+  }
+
+  static getDerivedStateFromProps (props, state) {
+    if (props.checkIsPaintSceneUpdate !== state.checkIsPaintSceneUpdate) {
+      return {
+        checkIsPaintSceneUpdate: props.checkIsPaintSceneUpdate
+      }
+    }
+    const checkWorkSpaceIfUpdate = props.workspace ? !objectsEqual(props.workspace, state.prevWorkspace) : false
+    if (checkWorkSpaceIfUpdate && props.workspace && props.workspace.layers === null) {
+      return {
+        imagePathList: [],
+        prevWorkspace: props.workspace
+      }
+    }
+    return null
   }
 
   componentDidUpdate (prevProps: Object, prevState: Object) {
-    const newWidth = this.shouldCanvasResize(prevProps.width, this.props.width)
-    if (newWidth) {
-      this.scaleCanvases(newWidth)
+    const checkImageListIfUpdate = !compareArraysOfObjects(this.state.imagePathList, prevState.imagePathList)
+    if (checkImageListIfUpdate) {
+      this.props.setActiveScenePolluted()
+      this.props.setWarningModalImgPreview({ dataUrls: this.getLayers(), width: this.backgroundImageWidth, height: this.backgroundImageHeight })
     }
-
-    const { imagePathList, groupSelectList, selectedArea } = this.state
-    let edgeListToRender = []
+    if (prevState.loading) {
+      return
+    }
+    const newWidth = shouldCanvasResize(prevProps.width, this.props.width)
+    if (newWidth) {
+      this.scaleCanvases(newWidth, prevProps.width)
+    }
+    const { imagePathList, selectedArea, groupSelectList } = this.state
     let copyImagePathList = copyImageList(imagePathList)
-    const islpActiveColorAvailable = (prevProps.hasOwnProperty('lpActiveColor') && this.props.hasOwnProperty('lpActiveColor')) && this.props.lpActiveColor !== null
-    const islpActiveColorHexAvailable = (islpActiveColorAvailable) && prevProps.lpActiveColor.hasOwnProperty('hex') && this.props.lpActiveColor.hasOwnProperty('hex')
-    if (islpActiveColorHexAvailable && prevProps.lpActiveColor.hex !== this.props.lpActiveColor.hex) {
+    const islpActiveColorAvailable = this.props.lpActiveColor && prevProps.lpActiveColor
+    const islpActiveColorHexAvailable = islpActiveColorAvailable && prevProps.lpActiveColor.hex && this.props.lpActiveColor.hex
+    const isActive = !!((selectedArea.length > 0 || groupSelectList.length > 0))
+    if (islpActiveColorHexAvailable && prevProps.lpActiveColor.hex !== this.props.lpActiveColor.hex && isActive) {
       const ctx = this.CFICanvas2.current.getContext('2d')
-      const RGB = getActiveColorRGB(hexToRGB(this.props.lpActiveColor.hex))
-      for (let i = 0; i < this.state.groupSelectList.length; i++) {
+      const RGB = this.props.lpActiveColor && getActiveColorRGB(hexToRGB(this.props.lpActiveColor.hex))
+
+      groupSelectList.forEach(selectItem => {
         this.clearCanvas()
-        drawImagePixelByPath(ctx, this.canvasOffsetWidth, this.canvasOffsetHeight, RGB, this.state.groupSelectList[i].selectPath)
-        const newPath = getImageCordinateByPixel(this.CFICanvas2, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight, false)
+        drawImagePixelByPath(ctx, this.canvasOffsetWidth, this.canvasOffsetHeight, RGB, selectItem.selectPath)
+        const [ newPath, pixelIndexAlphaMap ] = getImageCordinateByPixel(this.CFICanvas2, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight, true)
         copyImagePathList.push({
+          type: 'paint',
+          id: uniqueId(),
           color: RGB,
+          colorRef: { ...this.props.lpActiveColor },
           data: newPath,
+          pixelIndexAlphaMap: pixelIndexAlphaMap,
           isEnabled: true,
           linkedOperation: null,
           siblingOperations: null })
         this.clearCanvas()
-      }
+      })
 
-      for (let i = 0; i < this.state.selectedArea.length; i++) {
+      selectedArea.forEach(selectItem => {
         this.clearCanvas()
-        drawImagePixelByPath(ctx, this.canvasOffsetWidth, this.canvasOffsetHeight, RGB, this.state.selectedArea[i].selectPath)
-        const newPath = getImageCordinateByPixel(this.CFICanvas2, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight, false)
+        drawImagePixelByPath(ctx, this.canvasOffsetWidth, this.canvasOffsetHeight, RGB, selectItem.selectPath)
+        const [ newPath, pixelIndexAlphaMap ] = getImageCordinateByPixel(this.CFICanvas2, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight, true)
         copyImagePathList.push({
+          type: 'paint',
+          id: uniqueId(),
           color: RGB,
+          colorRef: { ...this.props.lpActiveColor },
           data: newPath,
+          pixelIndexAlphaMap: pixelIndexAlphaMap,
           isEnabled: true,
           linkedOperation: null,
           siblingOperations: null })
         this.clearCanvas()
-      }
+      })
 
-      for (let groupSelect of groupSelectList) {
-        edgeListToRender.push({
-          color: [255, 255, 255, 255],
-          data: groupSelect.edgeList,
-          isEnabled: true,
-          linkedOperation: null,
-          siblingOperations: null
-        })
-      }
-
-      for (let select of selectedArea) {
-        edgeListToRender.push({
-          color: [255, 255, 255, 255],
-          data: select.edgeList,
-          isEnabled: true,
-          linkedOperation: null,
-          siblingOperations: null
-        })
-      }
       repaintImageByPath(copyImagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
-      if (edgeListToRender.length > 0) {
-        repaintImageByPath(edgeListToRender, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
-      }
-
       // eslint-disable-next-line
       this.setState({ imagePathList: copyImagePathList })
     }
@@ -274,41 +406,42 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.CFICanvasContext = this.CFICanvas.current.getContext('2d')
     this.CFICanvasContext2 = this.CFICanvas2.current.getContext('2d')
     this.CFICanvasContextPaint = this.CFICanvasPaint.current.getContext('2d')
+    this.CFICanvasContext4 = this.CFICanvas4.current.getContext('2d')
     this.canvasOffsetWidth = parseInt(this.wrapperDimensions.width, 10)
     this.canvasOffsetHeight = parseInt(this.wrapperDimensions.height, 10)
     this.initCanvasWithDimensions()
   }
+
+  /*:: initCanvas2: () => void */
+  initCanvas2 () {
+    // const { canvasWidth, canvasHeight } = this.calcCanvasNewDimensions()
+    this.setForegroundImage(this.state.canvasWidth, this.state.canvasHeight)
+  }
+
   /*:: calcCanvasNewDimensions(newWidth: number) => Object */
-  calcCanvasNewDimensions (newWidth: number) {
+  calcCanvasNewDimensions (newWidth: number, oldWidth: number) {
+    const originalImageWidth = this.originalIsPortrait === this.isPortrait ? this.originalImageWidth : this.originalImageHeight
+    const originalImageHeight = this.originalIsPortrait === this.isPortrait ? this.originalImageHeight : this.originalImageWidth
     let canvasWidth = 0
     const wrapperWidth = newWidth || this.wrapperDimensions.width
 
+    const scaleRatio = newWidth / oldWidth
+
     if (this.isPortrait) {
-      canvasWidth = wrapperWidth / 2
+      canvasWidth = Math.floor(this.state.canvasWidth * scaleRatio)
     } else {
       // Landscape
-      canvasWidth = wrapperWidth
+      canvasWidth = Math.floor(wrapperWidth)
     }
-    // Rounding via bitwise or since this could be called A LOT
-    canvasWidth = canvasWidth | 1
 
     let canvasHeight = 0
 
     if (this.isPortrait) {
-      if (this.originalIsPortrait) {
-        canvasHeight = Math.floor(getScaledPortraitHeight(this.backgroundImageWidth, this.backgroundImageHeight)(canvasWidth))
-      } else {
-        canvasHeight = Math.floor(getScaledPortraitHeight(this.backgroundImageHeight, this.backgroundImageWidth)(canvasWidth))
-      }
+      canvasHeight = Math.floor(getScaledPortraitHeight(originalImageWidth, originalImageHeight)(canvasWidth))
     } else {
-      if (this.originalIsPortrait) {
-        canvasHeight = Math.floor(getScaledLandscapeHeight(this.backgroundImageWidth, this.backgroundImageHeight)(canvasWidth))
-      } else {
-        // Swap width and height for photos that are originally landscape
-        canvasHeight = Math.floor(getScaledLandscapeHeight(this.backgroundImageHeight, this.backgroundImageWidth)(canvasWidth))
-      }
+      canvasHeight = Math.floor(getScaledLandscapeHeight(originalImageHeight, originalImageWidth)(canvasWidth))
     }
-    // @todo - Think about adding scale factors here in return payload
+
     return {
       canvasWidth,
       canvasHeight
@@ -317,7 +450,8 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
   /*:: initCanvasWithNewDimensions: (newWidth?: number) => void */
   initCanvasWithDimensions (newWidth?: number) {
-    const { canvasWidth, canvasHeight } = this.calcCanvasNewDimensions(newWidth)
+    const canvasWidth = this.state.canvasWidth
+    const canvasHeight = this.state.canvasHeight
 
     this.CFICanvas.current.width = canvasWidth
     this.CFICanvas.current.height = canvasHeight
@@ -325,16 +459,23 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.CFICanvas2.current.height = canvasHeight
     this.CFICanvasPaint.current.width = canvasWidth
     this.CFICanvasPaint.current.height = canvasHeight
+
+    // Handle merge canvas
+    this.mergeCanvasRef.current.width = canvasWidth
+    this.mergeCanvasRef.current.height = canvasHeight
+    this.canvasOriginalDimensions = { width: canvasWidth, height: canvasHeight }
+    this.CFICanvas4.current.width = this.canvasOriginalDimensions.width
+    this.CFICanvas4.current.height = this.canvasOriginalDimensions.height
     this.canvasOffsetWidth = canvasWidth
     this.canvasOffsetHeight = canvasHeight
-    this.canvasOriginalDimensions = { width: canvasWidth, height: canvasHeight }
+    // this.canvasOriginalDimensions = { width: canvasWidth, height: canvasHeight }
     this.wrapperOriginalDimensions = { width: this.CFIWrapper.current.getBoundingClientRect().width, height: canvasHeight }
     this.setBackgroundImage(canvasWidth, canvasHeight)
   }
 
   /*:: scaleCanvases: (newWidth: number) => void */
-  scaleCanvases (newWidth: number) {
-    const { canvasWidth, canvasHeight } = this.calcCanvasNewDimensions(newWidth)
+  scaleCanvases (newWidth: number, oldWidth: number) {
+    const { canvasWidth, canvasHeight } = this.calcCanvasNewDimensions(newWidth, oldWidth)
 
     this.CFICanvas.current.style.width = `${canvasWidth}px`
     this.CFICanvas.current.style.height = `${canvasHeight}px`
@@ -342,8 +483,10 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.CFICanvas2.current.style.height = `${canvasHeight}px`
     this.CFICanvasPaint.current.style.width = `${canvasWidth}px`
     this.CFICanvasPaint.current.style.height = `${canvasHeight}px`
-
+    // this.CFICanvas4.current.style.width = `${canvasWidth}px`
+    // this.CFICanvas4.current.style.height = `${canvasHeight}px`
     this.CFIWrapper.current.style.height = `${canvasHeight}px`
+    this.setState({ canvasWidth, canvasHeight })
   }
 
   /*:: setBackgroundImage: (canvasWidth: number, canvasHeight: number) => void */
@@ -351,7 +494,38 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.CFICanvasContext.drawImage(this.CFIImage.current, 0, 0, canvasWidth, canvasHeight)
     this.CFICanvasContext2.clearRect(0, 0, canvasWidth, canvasHeight)
     this.CFICanvasContextPaint.clearRect(0, 0, canvasWidth, canvasHeight)
-    this.setState({ wrapperHeight: canvasHeight })
+
+    this.setState({
+      wrapperHeight: canvasHeight,
+      canvasHeight,
+      canvasWidth,
+      canvasImageUrls: this.getLayers(),
+      canvasHasBeenInitialized: true })
+  }
+
+  /*:: importLayers: (payload: Object) => void */
+  importLayers (payload: Object) {
+    let { palette } = this.props.workspace
+    const { lpColors } = this.props
+    // @todo Currently this  replaces the pseudo-color(s) with colors from the palette, this will likely change -RS
+    if (this.props.workspace.workspaceType === WORKSPACE_TYPES.smartMask && lpColors && lpColors.length) {
+      palette = palette.map((pColor, i) => {
+        if (parseInt(pColor.id) < 0) {
+          return {
+            ...lpColors[i % lpColors.length]
+          }
+        }
+
+        return pColor
+      })
+    }
+    const colorLayers = payload.layersAsData.map(item => createImageDataAndAlphaPixelMapFromImageData(item))
+    const imagePaths = colorLayers
+      .map((item, i) => {
+        return createImagePathItem(item.pixelMap, item.alphaPixelMap, palette[i], 'paint', 0, true, true)
+      })
+    repaintImageByPath(imagePaths, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
+    this.setState({ canvasImageUrls: this.getLayers(), imagePathList: imagePaths, loadingMasks: false, canvasHasBeenInitialized: false })
   }
 
   /*:: setDependentPositions: () => void */
@@ -371,25 +545,46 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       const canvasClientOffset = this.CFICanvas.current.getBoundingClientRect()
       canvasOffset.x = parseInt(canvasClientOffset.left, 10)
       canvasOffset.y = parseInt(canvasClientOffset.top, 10)
-      window.sessionStorage.setItem('canvasOffsetPaintScene', JSON.stringify(canvasOffset))
+      if (storageAvailable('sessionStorage')) {
+        // @todo [IMPROVEMENT] candidate for redux? -RS
+        window.sessionStorage.setItem('canvasOffsetPaintScene', JSON.stringify(canvasOffset))
+      }
     }
   }
 
-  // @todo - We will need to redo the calculations using the offset caused by the margin added to the canvas when isPortrait -RS
   getCanvasOffset = () => {
-    const canvasOffset = window.sessionStorage.getItem('canvasOffsetPaintScene')
-    return JSON.parse(canvasOffset)
+    const canvasOffset = storageAvailable('sessionStorage') && JSON.parse(window.sessionStorage.getItem('canvasOffsetPaintScene'))
+    return canvasOffset
   }
 
   componentDidMount () {
     this.updateWindowDimensions()
     this.setDependentPositions()
+    if (this.mergeCanvasRef.current) {
+      this.mergeCanvasRef.current.style = 'opacity: 0'
+    }
     this.initCanvas()
+    this.tryToMergeColors()
     window.addEventListener('resize', this.resizeHandler)
+    // @todo [IMPROVEMENT] candidate for redux -RS
+    if (storageAvailable('localStorage') && getTooltipShownLocalStorage() === null) {
+      setTooltipShownLocalStorage()
+    } else {
+      this.setState({
+        isInfoToolActive: false,
+        paintCursor: `${canvasClass}--${toolNames.PAINTAREA}`
+      })
+    }
+    if (this.props.workspace) {
+      this.props.clearSceneWorkspace()
+    }
+    this.applyZoom(this.state.canvasZoom)
   }
 
   componentWillUnmount () {
     window.removeEventListener('resize', this.resizeHandler)
+    this.props.selectSavedScene(null)
+    this.props.unsetActiveScenePolluted()
   }
 
   resizeHandler = () => {
@@ -407,8 +602,17 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
   setActiveTool = (activeTool: string) => {
     const { imagePathList } = this.state
+    let newImagePathList = copyImageList(imagePathList)
+    let updateSelectArea = []
+    this.CFICanvasContext4.clearRect(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
     this.setState({
-      paintCursor: `${canvasClass}--${activeTool}`
+      paintCursor: `${canvasClass}--${activeTool}`,
+      lineStart: [],
+      BeginPointList: [],
+      polyList: [],
+      presentPolyList: [],
+      showAnimatePin: false,
+      showNonAnimatePin: false
     })
     if (activeTool === '') {
       this.setState({
@@ -424,17 +628,29 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       this.setState({ isInfoToolActive: true })
       return
     }
+    if (activeTool !== toolNames.UNDO || activeTool !== toolNames.REDO) {
+      newImagePathList = newImagePathList.filter(item => { return (item.type === 'paint' || item.type === 'delete' || item.type === 'delete-group') })
+    }
     this.clearCanvas()
-    repaintImageByPath(imagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
-    this.setState({ activeTool, selectedArea: [] })
+    repaintImageByPath(newImagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight, false, [], true)
+    this.setState({ activeTool, selectedArea: updateSelectArea, canvasImageUrls: this.getLayers(), imagePathList: newImagePathList })
   }
 
   /*:: undo: () => void */
   undo () {
-    const stateFragment = undo(this.state)
-    this.setState(stateFragment, () => {
-      this.redrawCanvas(stateFragment.imagePathList)
-    })
+    const { clearUndoList, imagePathList } = this.state
+    if (clearUndoList.length !== 0 && imagePathList.length === 0) {
+      this.redrawCanvas(clearUndoList)
+      const newImageList = copyImageList(clearUndoList)
+      this.setState({ clearUndoList: [], imagePathList: newImageList })
+    } else {
+      const stateFragment = undo(this.state)
+      // Create a new key to ensure a new merge canvas component instance is created
+      stateFragment.mergeCanvasKey = `${Date.now()}`
+      this.setState(stateFragment, () => {
+        this.redrawCanvas(stateFragment.imagePathList)
+      })
+    }
   }
 
   /*:: redo: () => void */
@@ -447,19 +663,11 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
   /*:: redrawFromOperation: (imagePathList: Object[]) => void */
   redrawCanvas (imagePathList: Object[]) {
+    const { groupIds } = this.state
     this.clearCanvas()
-    repaintImageByPath(imagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
-  }
-
-  /*:: getImageCoordinatesByPixel: () => DrawOperation */
-  getImageCoordinatesByPixel (): DrawOperation {
-    // @todo implement,  this will wrap @jialai's lib
-    const operation = {
-      colors: [],
-      data: []
-    }
-
-    return operation
+    repaintImageByPath(imagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight, false, groupIds)
+    this.setActiveGroupTool()
+    this.setState({ canvasImageUrls: this.getLayers() })
   }
 
   mouseMoveHandler = (e: Object) => {
@@ -475,16 +683,18 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
   throttledMouseMove = throttle((e: Object) => {
     const { clientX, clientY } = e
+    const ref = { CFICanvas2: this.CFICanvas2, canvasOriginalDimensions: this.canvasOriginalDimensions, CFICanvasContextPaint: this.CFICanvasContextPaint, CFICanvasContext2: this.CFICanvasContext2 }
     const { activeTool, paintBrushWidth, isDragging, drawCoordinates, eraseBrushWidth, paintBrushShape } = this.state
     const { lpActiveColor } = this.props
     const canvasClientOffset = this.CFICanvas2.current.getBoundingClientRect()
-    const canvasWrapperOffset = this.getCanvasWrapperOffset()
+    const canvasWrapperOffset = getCanvasWrapperOffset(this.CFIWrapper)
     const paintBrushHalfWidth = (activeTool === toolNames.PAINTBRUSH) ? paintBrushWidth / 2 : eraseBrushWidth / 2
     const leftOffset = clientX - canvasWrapperOffset.x - paintBrushHalfWidth
     const topOffset = clientY - canvasWrapperOffset.y - paintBrushHalfWidth
     const position = { left: leftOffset, top: topOffset, isHidden: this.state.position.isHidden }
-    this.setState({ position })
 
+    this.setState({ position })
+    if ((lpActiveColor === null || (lpActiveColor.constructor === Object && Object.keys(lpActiveColor).length === 0)) && activeTool === toolNames.PAINTBRUSH) return
     if ((lpActiveColor && activeTool === toolNames.PAINTBRUSH) || activeTool === toolNames.ERASE) {
       const lpActiveColorRGB = (activeTool === toolNames.ERASE) ? `rgba(255, 255, 255, 1)` : `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})`
 
@@ -499,7 +709,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
         const drawCoordinatesLength = drawCoordinates.length
         const lastPoint = { x: drawCoordinates[drawCoordinatesLength - 1].x, y: drawCoordinates[drawCoordinatesLength - 1].y }
         if ((activeTool === toolNames.PAINTBRUSH) || (activeTool === toolNames.ERASE)) {
-          this.drawPaintBrushPoint(currentPoint, drawCoordinates[drawCoordinatesLength - 1])
+          drawPaintBrushPoint(currentPoint, drawCoordinates[drawCoordinatesLength - 1], this.state, this.props, ref)
         } else {
           this.CFICanvasContextPaint.beginPath()
           if (activeTool === toolNames.PAINTBRUSH) {
@@ -513,30 +723,8 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
   mouseDownHandler = (e: Object) => {
     window.addEventListener('mouseup', this.mouseUpHandler)
-    const { isDragging, paintBrushWidth, paintBrushShape, activeTool } = this.state
-    const { lpActiveColor } = this.props
-    if (!lpActiveColor && activeTool === toolNames.PAINTBRUSH) return
-    const lpActiveColorRGB = (activeTool === toolNames.ERASE) ? `rgba(255, 255, 255, 1)` : `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})`
-    const { clientX, clientY } = e
-    const canvasClientOffset = this.CFICanvas2.current.getBoundingClientRect()
-    const drawCoordinates = []
-    const scale = this.canvasOriginalDimensions.width / canvasClientOffset.width
-    const currentPoint = {
-      x: (clientX - canvasClientOffset.left) * scale,
-      y: (clientY - canvasClientOffset.top) * scale
-    }
-    const lastPoint = { x: currentPoint.x - 1, y: currentPoint.y }
-    drawCoordinates.push(currentPoint)
-    this.CFICanvasContextPaint.beginPath()
-    if (isDragging === false) {
-      if ((activeTool === toolNames.PAINTBRUSH) || (activeTool === toolNames.ERASE)) {
-        this.drawPaintBrushPoint(currentPoint)
-      } else {
-        if (activeTool === toolNames.PAINTBRUSH) {
-          this.drawPaintBrushPathUsingLine(this.CFICanvasContextPaint, currentPoint, lastPoint, paintBrushWidth, paintBrushShape, false, lpActiveColorRGB)
-        }
-      }
-    }
+    const ref = { CFICanvas2: this.CFICanvas2, canvasOriginalDimensions: this.canvasOriginalDimensions, CFICanvasContextPaint: this.CFICanvasContextPaint, CFICanvasContext2: this.CFICanvasContext2 }
+    let drawCoordinates = eraseOrPaintMouseDown(e, this.state, this.props, ref)
     this.setState({ drawCoordinates })
   }
 
@@ -546,138 +734,31 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.setState({ isDragging: true })
   }
 
-  breakGroupIfhasIntersection = () => {
-    const { groupAreaList, groupSelectList } = this.state
-    let idsToUngroup = []
-    let newGroupSelectList = []
-    const drawPath = getImageCordinateByPixelPaintBrush(this.CFICanvasPaint, this.canvasOffsetWidth, this.canvasOffsetHeight, false)
-    for (let i = 0; i < groupAreaList.length; i++) {
-      const intersect = checkIntersection(groupAreaList[i].selectPath, drawPath)
-      if (intersect.length > 0) {
-        groupAreaList.splice(i, 1)
-        i--
-      }
-    }
-    if (idsToUngroup.length !== 0) {
-      newGroupSelectList = groupSelectList.filter(item => {
-        return (idsToUngroup.indexOf(item.id) === -1)
-      })
-    }
-    return { newGroupSelectList: newGroupSelectList, newGroupAreaList: groupAreaList }
-  }
-
   mouseUpHandler = (e: Object) => {
-    const { drawCoordinates, imagePathList, activeTool } = this.state
-    const { lpActiveColor } = this.props
-    if (!lpActiveColor) {
-      this.setState({
-        isDragging: false
-      })
-    }
-    let newImagePathList
-    const { newGroupSelectList, newGroupAreaList } = this.breakGroupIfhasIntersection()
-    this.clearCanvas()
-    if (lpActiveColor && activeTool === toolNames.PAINTBRUSH && drawCoordinates.length > 0) {
-      newImagePathList = getPaintAreaPath(imagePathList, this.CFICanvasPaint, this.canvasOffsetWidth, this.canvasOffsetHeight, this.props.lpActiveColor)
-      repaintImageByPath(newImagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight, false)
+    const ref = {
+      CFICanvasPaint: this.CFICanvasPaint,
+      canvasOffsetWidth: this.canvasOffsetWidth,
+      canvasOffsetHeight: this.canvasOffsetHeight,
+      CFICanvas2: this.CFICanvas2,
+      CFICanvasContextPaint: this.CFICanvasContextPaint
     }
 
-    if (activeTool === toolNames.ERASE && drawCoordinates.length > 0) {
-      const RGB = getActiveColorRGB({ red: 255, blue: 255, green: 255 })
-      const erasePath = getImageCordinateByPixel(this.CFICanvasPaint, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight, false)
-      const tmpImagePathList = eraseIntersection(imagePathList, erasePath)
-      newImagePathList = remove(tmpImagePathList, (currImagePath) => {
-        return currImagePath.data.length !== 0
-      })
-      repaintImageByPath(newImagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight, true)
-    }
-    this.CFICanvasContextPaint.clearRect(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
-
-    this.setState({ isDragging: false,
-      imagePathList: newImagePathList,
-      groupAreaList: newGroupAreaList,
-      groupSelectList: newGroupSelectList,
-      redoPathList: [],
-      undoIsEnabled: newImagePathList.length > 0,
-      redoIsEnabled: false
-    })
     window.removeEventListener('mouseup', this.mouseUpHandler)
-  }
-
-  repaintBrushPathByCorrdinates = (drawCoordinates: Array<Object>, paintBrushWidth: number, paintBrushShape: string, clip: boolean) => {
-    const { lpActiveColor } = this.props
-    const { activeTool } = this.state
-    const lpActiveColorRGB = (activeTool === toolNames.ERASE) ? `rgba(255, 255, 255, 1)` : `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})`
-    this.CFICanvasContext2.beginPath()
-    for (let i = 0; i < drawCoordinates.length; i++) {
-      const currentPoint = drawCoordinates[i]
-      const lastPoint = (i === 0) ? drawCoordinates[i] : drawCoordinates[i - 1]
-      if ((activeTool === toolNames.PAINTBRUSH) || (activeTool === toolNames.ERASE)) {
-        this.drawPaintBrushPath(this.CFICanvasContext2, currentPoint, lastPoint, paintBrushWidth, paintBrushShape, clip)
-      } else {
-        if (activeTool === toolNames.PAINTBRUSH) {
-          this.drawPaintBrushPathUsingLine(this.CFICanvasContext2, currentPoint, lastPoint, paintBrushWidth, paintBrushShape, clip, lpActiveColorRGB)
-        }
-      }
-    }
-  }
-
-  drawPaintBrushPoint = (point: Object, lastPoint: Object) => {
-    const { paintBrushWidth, activeTool, eraseBrushWidth, paintBrushShape, eraseBrushShape } = this.state
-    const previousPoint = lastPoint || point
-
-    if (activeTool === toolNames.ERASE) {
-      this.drawPaintBrushPath(this.CFICanvasContext2, point, previousPoint, eraseBrushWidth, eraseBrushShape, true)
-      this.drawPaintBrushPath(this.CFICanvasContextPaint, point, previousPoint, eraseBrushWidth, eraseBrushShape, false)
-    } else {
-      this.drawPaintBrushPath(this.CFICanvasContextPaint, point, previousPoint, paintBrushWidth, paintBrushShape, false)
-    }
-  }
-
-  drawPaintBrushPath = (context: Object, to: Object, from: Object, width: number, brushShape: string, clip: boolean) => {
-    const { lpActiveColor } = this.props
-    const { activeTool } = this.state
-    const lpActiveColorRGB = (activeTool === toolNames.ERASE) ? `rgba(255, 255, 255, 1)` : `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})`
-    context.fillStyle = lpActiveColorRGB
-    const canvasClientOffset = this.CFICanvas2.current.getBoundingClientRect()
-    const scale = this.canvasOriginalDimensions.width / canvasClientOffset.width
-    const radius = Math.round(0.5 * width * scale)
-    if (clip) {
-      context.save()
-      context.globalCompositeOperation = 'destination-out'
-      context.beginPath()
-      drawAcrossLine(context, to, from, (ctx, x, y) => {
-        if (brushShape === brushSquareShape) {
-          ctx.rect(x - radius, y - radius, width * scale, width * scale)
-        } else {
-          ctx.arc(x, y, radius, 0, 2 * Math.PI)
-        }
-      })
-      context.fill()
-      // context.clearRect(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
-      context.restore()
-    } else {
-      context.save()
-      context.beginPath()
-      drawAcrossLine(context, to, from, (ctx, x, y) => {
-        if (brushShape === brushSquareShape) {
-          ctx.rect(x - radius, y - radius, width * scale, width * scale)
-        } else {
-          ctx.arc(x, y, radius, 0, 2 * Math.PI)
-          ctx.closePath()
-        }
-      })
-      context.fill()
-      context.restore()
-    }
+    let newState = eraseOrPaintMouseUp(this.state, this.props, ref)
+    this.setState(newState)
   }
 
   clearCanvas = (clearCanvasDrawing: boolean = false) => {
+    const { imagePathList } = this.state
+    const undolist = copyImageList(imagePathList)
     this.CFICanvasContext2.clearRect(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
     if (clearCanvasDrawing) {
       this.setState({
         imagePathList: [],
-        selectedArea: []
+        selectedArea: [],
+        clearUndoList: undolist,
+        redoPathList: [],
+        redoIsEnabled: false
       })
     }
   }
@@ -702,116 +783,18 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
      * The main idea is maintain selectAreaList, whenever user click area, we repaint canvas based on update
      * selectAreaList and imagePathList
     */
-    const { imagePathList, selectedArea, groupAreaList, groupSelectList } = this.state
-    const canvasClientOffset = this.CFICanvas2.current.getBoundingClientRect()
-    const scale = this.canvasOriginalDimensions.width / canvasClientOffset.width
-    const { clientX, clientY } = e
-    const cursorX = parseInt((clientX - canvasClientOffset.left) * scale)
-    const cursorY = parseInt((clientY - canvasClientOffset.top) * scale)
-    const imageData = this.CFICanvasContext2.getImageData(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
-
-    const index = (cursorX + cursorY * this.canvasOffsetWidth) * 4
-    let edgeListToRender = []
-    let isClickInsideImage = false
-    let isClickGroupArea = false
-    for (let i = 0; i < imagePathList.length; i++) {
-      if (imagePathList[i].isEnabled && imagePathList[i].data.includes(index)) {
-        isClickInsideImage = true
-        break
-      }
+    const ref = {
+      CFICanvas2: this.CFICanvas2,
+      canvasOriginalDimensions: this.canvasOriginalDimensions,
+      CFICanvasContext2: this.CFICanvasContext2,
+      canvasOffsetWidth: this.canvasOffsetWidth,
+      canvasOffsetHeight: this.canvasOffsetHeight
     }
-
-    if (isClickInsideImage) {
-      let tmpEdgeArea
-      let tmpSelectPath
-      let tmpId
-      for (let i = 0; i < groupAreaList.length; i++) {
-        if (groupAreaList[i].selectPath.includes(index)) {
-          tmpSelectPath = groupAreaList[i].selectPath
-          tmpEdgeArea = groupAreaList[i].edgeList
-          tmpId = groupAreaList[i].id
-          isClickGroupArea = true
-          break
-        }
-      }
-      if (isClickGroupArea) {
-        let hasAdd = false
-        for (let i = 0; i < groupSelectList.length; i++) {
-          if (groupSelectList[i].selectPath.includes(index)) {
-            groupSelectList.splice(i, 1)
-            tmpSelectPath = null
-            tmpEdgeArea = null
-            hasAdd = true
-            break
-          }
-        }
-        if (!hasAdd) {
-          groupSelectList.push({
-            selectPath: tmpSelectPath,
-            edgeList: tmpEdgeArea,
-            id: tmpId
-          })
-        }
-        this.setState({ groupSelectList })
-      }
-
-      if (!isClickGroupArea) {
-        if (selectedArea.length > 0) {
-          let hasAdd = false
-          for (let i = 0; i < selectedArea.length; i++) {
-            if (selectedArea[i].selectPath.includes(index)) {
-              selectedArea.splice(i, 1)
-              hasAdd = true
-              break
-            }
-          }
-          if (!hasAdd) {
-            const imagePath = getSelectArea(imageData, { r: 255, g: 0, b: 0 }, cursorX, cursorY)
-            const edge = edgeDetect(this.CFICanvas2, imagePath, [255, 0, 0, 255], this.canvasOffsetWidth, this.canvasOffsetHeight)
-            selectedArea.push({
-              edgeList: edge,
-              selectPath: imagePath
-            })
-          }
-          this.setState({ selectedArea })
-        } else {
-          const imagePath = getSelectArea(imageData, { r: 255, g: 0, b: 0 }, cursorX, cursorY)
-          const edge = edgeDetect(this.CFICanvas2, imagePath, [255, 0, 0, 255], this.canvasOffsetWidth, this.canvasOffsetHeight)
-          selectedArea.push({
-            edgeList: edge,
-            selectPath: imagePath
-          })
-          this.setState({ selectedArea })
-        }
-      }
-    }
-
+    let newState = selectArea(e, this.state, ref)
+    if (!newState) return
+    this.setState(newState)
     this.clearCanvas()
-
-    for (let groupSelect of groupSelectList) {
-      edgeListToRender.push({
-        color: [255, 255, 255, 255],
-        data: groupSelect.edgeList,
-        isEnabled: true,
-        linkedOperation: null,
-        siblingOperations: null
-      })
-    }
-
-    for (let select of selectedArea) {
-      edgeListToRender.push({
-        color: [255, 255, 255, 255],
-        data: select.edgeList,
-        isEnabled: true,
-        linkedOperation: null,
-        siblingOperations: null
-      })
-    }
-
-    repaintImageByPath(imagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
-    if (edgeListToRender.length > 0) {
-      repaintImageByPath(edgeListToRender, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
-    }
+    repaintImageByPath(newState.imagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight, false, this.state.groupIds)
     this.setActiveGroupTool()
   }
 
@@ -827,155 +810,82 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   }
 
   handlePolygonDefine = (e: Object, isAddArea: boolean) => {
-    this.pause = false
-    if (!this.props.lpActiveColor) return
-    const { BeginPointList, polyList, lineStart, imagePathList } = this.state
-    const ctx = this.CFICanvas2.current
+    if (this.props.lpActiveColor === null || (this.props.lpActiveColor.constructor === Object && Object.keys(this.props.lpActiveColor).length === 0)) return
+    const { BeginPointList, polyList, presentPolyList } = this.state
     const { clientX, clientY } = e
-    // const { canvasZoom } = this.state
+    const ref = { CFICanvasContext4: this.CFICanvasContext4, CFICanvas4: this.CFICanvas4, canvasOffsetWidth: this.canvasOffsetWidth, canvasOffsetHeight: this.canvasOffsetHeight, CFICanvasPaint: this.CFICanvasPaint, CFICanvasContextPaint: this.CFICanvasContextPaint, CFIWrapper: this.CFIWrapper }
     const canvasClientOffset = this.CFICanvas2.current.getBoundingClientRect()
+    const canvasClientOffset4 = this.CFICanvas4.current.getBoundingClientRect()
     const scale = this.canvasOriginalDimensions.width / canvasClientOffset.width
     const cursorX = (clientX - canvasClientOffset.left) * scale
     const cursorY = (clientY - canvasClientOffset.top) * scale
+    const X = clientX - canvasClientOffset4.left
+    const Y = clientY - canvasClientOffset4.top
     const poly = [...polyList]
+    const presentPoly = [...presentPolyList]
     poly.push([cursorX, cursorY])
-    if (!ctx.getContext) return
-    let ctxDraw = this.CFICanvasPaint.current.getContext('2d')
+    presentPoly.push([X, Y])
+
     let isBackToStart = false
     if (BeginPointList.length > 0) {
-      isBackToStart = pointInsideCircle(cursorX, cursorY, BeginPointList, 10, scale)
+      isBackToStart = pointInsideCircle(X, Y, BeginPointList, 10)
     }
     if (isBackToStart) {
-      this.pause = true
       this.clearCanvas()
-      let tmpImagePathList
-      let newImagePathList
-      this.CFICanvasContextPaint.clearRect(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
-      createPolygon(polyList, this.CFICanvasPaint, this.canvasOffsetWidth, this.canvasOffsetHeight, this.props.lpActiveColor.hex, 'source-over')
-      if (!isAddArea) {
-        const RGB = getActiveColorRGB(hexToRGB(this.props.lpActiveColor.hex))
-        const erasePath = getImageCordinateByPixel(this.CFICanvasPaint, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight, false)
-        this.CFICanvasContextPaint.clearRect(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
-        tmpImagePathList = eraseIntersection(imagePathList, erasePath)
-        newImagePathList = remove(tmpImagePathList, (currImagePath) => {
-          return currImagePath.data.length !== 0
-        })
-      } else {
-        newImagePathList = getPaintAreaPath(imagePathList, this.CFICanvasPaint, this.canvasOffsetWidth, this.canvasOffsetHeight, this.props.lpActiveColor)
-        this.CFICanvasContextPaint.clearRect(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
-      }
+      let newState = createOrDeletePolygon(isAddArea, this.state, this.props, ref)
       this.clearCanvas()
-      repaintImageByPath(newImagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
-
-      this.setState(
-        {
-          polyList: [],
-          lineStart: [],
-          BeginPointList: [],
-          imagePathList: newImagePathList
-        }
-      )
+      this.CFICanvasContext4.clearRect(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
+      repaintImageByPath(newState.imagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
+      this.setState(newState)
       return
     } else {
-      const canvasClientOffset = this.CFICanvas2.current.getBoundingClientRect()
-      const scale = this.canvasOriginalDimensions.width / canvasClientOffset.width
-      this.CFICanvasContextPaint.clearRect(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
-      if (BeginPointList.length > 0) {
-        this.circleAnimate(this.circleAnimate, 0, ctxDraw, BeginPointList[0], BeginPointList[1], scale, '#28A745')
-      }
-      poly.length > 2 && repaintCircleLine(ctxDraw, BeginPointList, poly.slice(1, -1), scale)
-      drawHollowCircle(ctxDraw, cursorX, cursorY, scale, '#2cabe2')
-      if (lineStart.length > 0) {
-        ctxDraw.beginPath()
-        const end = [cursorX, cursorY]
-        drawLine(ctxDraw, lineStart, end, true, scale)
-      } else {
-        this.setState({ BeginPointList: [cursorX, cursorY] })
-      }
-      ctxDraw.restore()
+      let newState = createPolygonPin(e, this.state, this.props, ref, [X, Y], presentPoly)
+      this.setState(newState)
     }
-    this.setState({ lineStart: [cursorX, cursorY], polyList: poly })
+    this.setState({ lineStart: [X, Y],
+      polyList: poly,
+      presentPolyList: presentPoly
+    })
   }
 
   handlePaintArea = throttle((e: Object) => {
-    const { imagePathList } = this.state
-    if (!this.props.lpActiveColor) return
-    let imagePath = []
+    e.persist()
+    const ref = {
+      CFICanvas2: this.CFICanvas2,
+      canvasOriginalDimensions: this.canvasOriginalDimensions,
+      canvasOffsetWidth: this.canvasOffsetWidth,
+      canvasOffsetHeight: this.canvasOffsetHeight,
+      CFICanvasContext2: this.CFICanvasContext2,
+      mergeCanvasRef: this.mergeCanvasRef
+    }
     const { clientX, clientY } = e
-    const canvasClientOffset = this.CFICanvas2.current.getBoundingClientRect()
-    const scale = this.canvasOriginalDimensions.width / canvasClientOffset.width
+    const canvasClientOffset = ref.CFICanvas2.current.getBoundingClientRect()
+    const scale = ref.canvasOriginalDimensions.width / canvasClientOffset.width
     const cursorX = Math.round((clientX - canvasClientOffset.left) * scale)
     const cursorY = Math.round((clientY - canvasClientOffset.top) * scale)
-    const imageData = this.CFICanvasContext2.getImageData(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
-    const imageDataOrigin = this.CFICanvasContext.getImageData(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
-    let copyImagePathList = copyImageList(imagePathList)
-    const RGB = getActiveColorRGB(hexToRGB(this.props.lpActiveColor.hex))
-    const ctx = this.CFICanvas2.current.getContext('2d')
-    const index = (cursorX + cursorY * this.canvasOffsetWidth) * 4
-    let isClickInsideImage = false
-    const isPaint = colorMatch(getColorAtPixel(imageData, cursorX, cursorY), { r: RGB[0], g: RGB[1], b: RGB[2], a: RGB[3] }, 100)
-
-    if (!isPaint) {
-      for (let i = 0; i < imagePathList.length; i++) {
-        if (imagePathList[i].data.includes(index)) {
-          isClickInsideImage = true
-          break
-        }
+    const mergeContext = this.mergeCanvasRef.current.getContext('2d')
+    const imageData = mergeContext.getImageData(0, 0, mergeContext.canvas.width, mergeContext.canvas.height)
+    const RGB = this.props.lpActiveColor && getActiveColorRGB(hexToRGB(this.props.lpActiveColor.hex))
+    if (RGB) {
+      const isPaint = colorMatch(getColorAtPixel(imageData, cursorX, cursorY), { r: RGB[0], g: RGB[1], b: RGB[2], a: RGB[3] }, 100)
+      if (!isPaint) {
+        this.setState({ paintCursor: `${canvasClass}--${toolNames.PAINTAREA}--loading` })
+        setTimeout(() => {
+          let newState = bucketPaint(e, this.state, this.props, ref)
+          this.clearCanvas()
+          repaintImageByPath(newState.imagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
+          this.setState({ ...newState, canvasImageUrls: this.getLayers(), paintCursor: `${canvasClass}--${toolNames.PAINTAREA}` })
+        }, 200)
       }
-
-      if (isClickInsideImage) {
-        imagePath = getSelectArea(imageData, RGB, cursorX, cursorY, 100)
-      } else {
-        imagePath = getSelectArea(imageDataOrigin, RGB, cursorX, cursorY, 94)
-      }
-      this.clearCanvas()
-      drawImagePixelByPath(ctx, this.canvasOffsetWidth, this.canvasOffsetHeight, RGB, imagePath)
-      const newPath = getImageCordinateByPixel(this.CFICanvas2, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight, false)
-      copyImagePathList.push({
-        id: uniqueId(),
-        color: RGB,
-        data: newPath,
-        isEnabled: true,
-        linkedOperation: null,
-        siblingOperations: null })
-      this.clearCanvas()
-      repaintImageByPath(copyImagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
-      this.setState({ imagePathList: copyImagePathList,
-        undoIsEnabled: copyImagePathList.length > 0,
-        redoIsEnabled: false })
     }
   }, 10)
 
-  circleAnimate = (fn, t, ...arg) => {
-    const helper = (fn, t, ...arg) => {
-      if (this.pause) { return }
-      let y = Math.sin(t * Math.PI / 180)
-      drawHollowCircle(...arg, y)
-      window.requestAnimationFrame((t) => helper(fn, t, ...arg))
-    }
-    helper(fn, t, ...arg)
-  }
-
-  save = () => {
-    /** This function will create mask */
-    let destinationCanvas = document.createElement('canvas')
-    destinationCanvas.width = this.canvasOffsetWidth
-    destinationCanvas.height = this.canvasOffsetHeight
-
-    let destCtx = destinationCanvas.getContext('2d')
-    /** create a rectangle with the desired color */
-    destCtx.fillStyle = '#000'
-    destCtx.fillRect(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
-    /** draw the original canvas onto the destination canvas */
-    alterRGBByPixel(this.CFICanvas2, [255, 255, 255], this.canvasOffsetWidth, this.canvasOffsetHeight)
-    destCtx.drawImage(this.CFICanvas2.current, 0, 0)
-    alterRGBByPixel(this.CFICanvas2, [255, 255, 0], this.canvasOffsetWidth, this.canvasOffsetHeight)
-    return destinationCanvas.toDataURL()
-  }
-
-  handleClick = (e: Object) => {
+  handleClick (e: Object) {
     const { activeTool, isInfoToolActive } = this.state
-    if (isInfoToolActive) return
+    // showSaveSceneModal prevents click from painting when modal is open
+    if (isInfoToolActive || this.props.showSaveSceneModal || this.props.showSavedConfirmModalFlag) {
+      return
+    }
     switch (activeTool) {
       case toolNames.DEFINEAREA:
         this.handlePolygonDefine(e, true)
@@ -1001,17 +911,15 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   }
 
   applyZoom = (zoomNumber: number) => {
-    const options = {
-      containerWidth: this.wrapperOriginalDimensions.width,
-      containerHeight: this.wrapperOriginalDimensions.height,
-      canvasWidth: this.canvasOriginalDimensions.width,
-      canvasHeight: this.canvasOriginalDimensions.height,
-      zoom: zoomNumber,
-      panX: this.canvasPanStart.x,
-      panY: this.canvasPanStart.y
+    const ref = {
+      wrapperOriginalDimensions: this.wrapperOriginalDimensions,
+      canvasOriginalDimensions: this.canvasOriginalDimensions,
+      CFICanvas: this.CFICanvas,
+      CFICanvas2: this.CFICanvas2,
+      CFICanvasPaint: this.CFICanvasPaint,
+      canvasPanStart: this.canvasPanStart
     }
-    const factors = this.canvasDimensionFactors(options)
-    this.applyDimensionFactorsToCanvas(factors)
+    applyZoom(zoomNumber, ref)
     this.setState({ canvasZoom: zoomNumber })
   }
 
@@ -1031,8 +939,9 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   }
 
   onPanMove = throttle((event: Object) => {
+    const ref = { CFICanvas: this.CFICanvas, CFICanvas2: this.CFICanvas2, CFICanvasPaint: this.CFICanvasPaint }
     const { canvasZoom, canvasMouseDown } = this.state
-    if (canvasZoom <= 1 && canvasZoom >= 8) return
+    if (canvasZoom <= 1 || canvasZoom >= 8) return
     if (!canvasMouseDown) return
     const MIN_PAN = -0.1
     const MAX_PAN = 1.1
@@ -1044,7 +953,6 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     const panY = this.canvasPanStart.y - dy
     this.canvasPanStart = { x: Math.max(MIN_PAN, Math.min(MAX_PAN, panX)), y: Math.max(MIN_PAN, Math.min(MAX_PAN, panY)) }
     this.lastPanPoint = { x: event.pageX, y: event.pageY }
-
     const options = {
       containerWidth: this.wrapperOriginalDimensions.width,
       containerHeight: this.wrapperOriginalDimensions.height,
@@ -1054,8 +962,8 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       panX: this.canvasPanStart.x,
       panY: this.canvasPanStart.y
     }
-    const factors = this.canvasDimensionFactors(options)
-    this.applyDimensionFactorsToCanvas(factors)
+    const factors = canvasDimensionFactors(options)
+    applyDimensionFactorsToCanvas(factors, ref)
   }, 10)
 
   onPanEnd = () => {
@@ -1064,174 +972,25 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     })
   }
 
-  drawPaintBrushPathUsingLine = (ctx: Object, currentPoint: Object, lastPoint: Object, paintBrushWidth: number, paintBrushShape: string, clip: boolean, color: string) => {
-    ctx.save()
-    if (paintBrushShape === brushRoundShape) {
-      ctx.lineCap = 'round'
-      ctx.lineJoin = 'round'
-    }
-    const canvasClientOffset = this.CFICanvas2.current.getBoundingClientRect()
-    const scale = this.canvasOriginalDimensions.width / canvasClientOffset.width
-    ctx.lineWidth = paintBrushWidth * scale
-    ctx.strokeStyle = color
-    ctx.moveTo(lastPoint.x, lastPoint.y)
-    ctx.lineTo(currentPoint.x, currentPoint.y)
-    if (clip) {
-      ctx.clip()
-    } else {
-      ctx.stroke()
-    }
-    ctx.restore()
-  }
-
-  getPaintBrushActiveClass = () => {
-    const { paintBrushWidth, paintBrushShape } = this.state
-    let paintBrushActiveClass = ''
-    let paintBrushCircleActiveClass = ''
-    if (paintBrushWidth === brushLargeSize) {
-      paintBrushActiveClass = paintBrushLargeClass
-      if (paintBrushShape === brushRoundShape) paintBrushCircleActiveClass = paintBrushLargeCircleClass
-    } else if (paintBrushWidth === brushMediumSize) {
-      paintBrushActiveClass = paintBrushMediumClass
-      if (paintBrushShape === brushRoundShape) paintBrushCircleActiveClass = paintBrushMediumCircleClass
-    } else if (paintBrushWidth === brushSmallSize) {
-      paintBrushActiveClass = paintBrushSmallClass
-      if (paintBrushShape === brushRoundShape) paintBrushCircleActiveClass = paintBrushSmallCircleClass
-    } else if (paintBrushWidth === brushTinySize) {
-      paintBrushActiveClass = paintBrushTinyClass
-      if (paintBrushShape === brushRoundShape) paintBrushCircleActiveClass = paintBrushTinyCircleClass
-    }
-    return { paintBrushActiveClass: paintBrushActiveClass, paintBrushCircleActiveClass: paintBrushCircleActiveClass }
-  }
-
-  getEraseBrushActiveClass = () => {
-    const { eraseBrushWidth, eraseBrushShape } = this.state
-    let eraseBrushActiveClass = ''
-    let eraseBrushCircleActiveClass = ''
-    if (eraseBrushWidth === brushLargeSize) {
-      eraseBrushActiveClass = paintBrushLargeClass
-      if (eraseBrushShape === brushRoundShape) eraseBrushCircleActiveClass = paintBrushLargeCircleClass
-    } else if (eraseBrushWidth === brushMediumSize) {
-      eraseBrushActiveClass = paintBrushMediumClass
-      if (eraseBrushShape === brushRoundShape) eraseBrushCircleActiveClass = paintBrushMediumCircleClass
-    } else if (eraseBrushWidth === brushSmallSize) {
-      eraseBrushActiveClass = paintBrushSmallClass
-      if (eraseBrushShape === brushRoundShape) eraseBrushCircleActiveClass = paintBrushSmallCircleClass
-    } else if (eraseBrushWidth === brushTinySize) {
-      eraseBrushActiveClass = paintBrushTinyClass
-      if (eraseBrushShape === brushRoundShape) eraseBrushCircleActiveClass = paintBrushTinyCircleClass
-    }
-    return { eraseBrushActiveClass: eraseBrushActiveClass, eraseBrushCircleActiveClass: eraseBrushCircleActiveClass }
-  }
-
-  getCanvasWrapperOffset = () => {
-    let canvasWrapperOffset = {}
-    if (this.CFIWrapper.current) {
-      const wrapperClientOffset = this.CFIWrapper.current.getBoundingClientRect()
-      canvasWrapperOffset.x = parseInt(wrapperClientOffset.left, 10)
-      canvasWrapperOffset.y = parseInt(wrapperClientOffset.top, 10)
-      canvasWrapperOffset.width = parseInt(wrapperClientOffset.width, 10)
-      canvasWrapperOffset.height = parseInt(wrapperClientOffset.height, 10)
-    }
-    return canvasWrapperOffset
-  }
-
   group = () => {
-    let newGroupSelectList = []
-    let isNewGroupArea = true
-    const { selectedArea, groupSelectList, groupAreaList } = this.state
-    let newGroupAreaList = [...groupAreaList]
-    let groupAreaPath = []
-    let groupEdgeList = []
-    for (let i = 0; i < selectedArea.length; i++) {
-      const targetPath = selectedArea[i].selectPath
-      const edgeList = selectedArea[i].edgeList
-      groupAreaPath = [...targetPath, ...groupAreaPath]
-      groupEdgeList = [...edgeList, ...groupEdgeList]
-    }
-    for (let j = 0; j < groupSelectList.length; j++) {
-      isNewGroupArea = false
-      const targetPath = groupSelectList[j].selectPath
-      const edgeList = groupSelectList[j].edgeList
-      groupAreaPath = [...targetPath, ...groupAreaPath]
-      groupEdgeList = [...edgeList, ...groupEdgeList]
-    }
-
-    if (groupAreaPath.length > 0) {
-      const id = uniqueId()
-      if (isNewGroupArea) {
-        newGroupAreaList.push({
-          edgeList: groupEdgeList,
-          selectPath: groupAreaPath,
-          id: id
-        })
-      } else {
-        newGroupAreaList = [{
-          edgeList: groupEdgeList,
-          selectPath: groupAreaPath,
-          id: id
-        }]
-      }
-      newGroupSelectList.push({
-        edgeList: groupEdgeList,
-        selectPath: groupAreaPath,
-        id: id
-      })
-    }
-    this.setState({
-      groupAreaList: newGroupAreaList,
-      groupSelectList: newGroupSelectList,
-      selectedArea: [],
-      isUngroup: true
-    })
+    let newState = group(this.state)
+    this.setState(newState)
   }
 
   ungroup = () => {
-    const { groupSelectList, groupAreaList } = this.state
-    const idsToUngroup = groupSelectList.map((item) => {
-      return item.id
-    })
-    const newGroupAreaList = groupAreaList.filter(item => {
-      return (idsToUngroup.indexOf(item.id) === -1)
-    })
-    this.setState({ groupAreaList: newGroupAreaList, groupSelectList: [], isUngroup: false })
+    let newState = ungroup(this.state)
+    this.clearCanvas()
+    repaintImageByPath(newState.imagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight, false, newState.groupIds)
+    this.setState(newState)
   }
 
   deleteGroup = () => {
-    const { imagePathList, groupSelectList, selectedArea, groupAreaList } = this.state
-    let groupAreaPath = []
-    let selectedAreaPath = []
-    const ctx = this.CFICanvas2.current.getContext('2d')
-    this.setState({ loading: true })
-    for (let i = 0; i < groupSelectList.length; i++) {
-      drawImagePixelByPath(ctx, this.canvasOffsetWidth, this.canvasOffsetHeight, [255, 255, 255, 0], groupSelectList[i].selectPath)
-      drawImagePixelByPath(ctx, this.canvasOffsetWidth, this.canvasOffsetHeight, [255, 255, 255, 0], groupSelectList[i].edgeList)
-      groupAreaPath = [...groupAreaPath, ...groupSelectList[i].selectPath]
-    }
-
-    for (let i = 0; i < selectedArea.length; i++) {
-      drawImagePixelByPath(ctx, this.canvasOffsetWidth, this.canvasOffsetHeight, [255, 255, 255, 0], selectedArea[i].selectPath)
-      drawImagePixelByPath(ctx, this.canvasOffsetWidth, this.canvasOffsetHeight, [255, 255, 255, 0], selectedArea[i].edgeList)
-      selectedAreaPath = [...selectedAreaPath, ...selectedArea[i].selectPath]
-    }
-
-    this.worker = new WebWorker()
-    this.worker.addEventListener('message', this.workerMessageHandler)
-    this.worker.postMessage({ imagePathList: imagePathList,
-      groupSelectList: groupSelectList,
-      groupAreaList: groupAreaList,
-      groupAreaPath: groupAreaPath,
-      selectedAreaPath: selectedAreaPath
-    })
+    let newState = deleteGroup(this.state)
+    this.clearCanvas()
+    repaintImageByPath(newState.imagePathList, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight, true, newState.groupIds)
+    this.setState(newState)
   }
-
-  workerMessageHandler = (e: Object) => {
-    const { newGroupAreaList, newImagePathList } = e.data
-    this.worker.removeEventListener('message', this.workerMessageHandler)
-    this.worker.terminate()
-    this.setState({ imagePathList: newImagePathList, groupSelectList: [], selectedArea: [], groupAreaList: newGroupAreaList, isAddGroup: false, isUngroup: false, loading: false })
-  }
-
+canvasHeight
   groupHandler = (groupName: string) => {
     switch (groupName) {
       case groupToolNames.DELETEGROUP:
@@ -1246,56 +1005,6 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     }
   }
 
-  canvasDimensionFactors = (options: Object) => {
-    const { canvasWidth, canvasHeight, containerWidth, containerHeight, panX, panY, zoom } = options
-    let canvasScaleX = canvasWidth / containerWidth
-    let canvasScaleY = canvasHeight / containerHeight
-    let shouldFitWidth = false
-    let shouldFitHeight = false
-    let width = 0
-    let height = 0
-
-    if (canvasScaleX > canvasScaleY) {
-      // image is wider than it is tall
-      shouldFitWidth = true
-    } else {
-      // image is taller than it is wide
-      shouldFitHeight = true
-    }
-
-    if (shouldFitWidth) {
-      width = containerWidth * zoom
-      height = width * canvasHeight / canvasWidth
-    } else if (shouldFitHeight) {
-      height = containerHeight * zoom
-      width = height * canvasWidth / canvasHeight
-    }
-
-    const widthFactor = width / containerWidth
-    const heightFactor = height / containerHeight
-    const clampedPanX = (widthFactor < 1) ? 0.5 : panX
-    const clampedPanY = (heightFactor < 1) ? 0.5 : panY
-    const xFactor = clampedPanX * (1 - widthFactor)
-    const yFactor = clampedPanY * (1 - heightFactor)
-
-    return {
-      widthFactor, heightFactor, xFactor, yFactor
-    }
-  }
-
-  applyDimensionFactorsToCanvas = (factors: Object) => {
-    this.applyDimensionFactorsByCanvas(factors, this.CFICanvas)
-    this.applyDimensionFactorsByCanvas(factors, this.CFICanvas2)
-    this.applyDimensionFactorsByCanvas(factors, this.CFICanvasPaint)
-  }
-
-  applyDimensionFactorsByCanvas = (factors: Object, canvas: RefObject) => {
-    canvas.current.style.width = `${Math.floor(factors.widthFactor * 100)}%`
-    canvas.current.style.height = `${Math.floor(factors.heightFactor * 100)}%`
-    canvas.current.style.left = `${Math.floor(factors.xFactor * 100)}%`
-    canvas.current.style.top = `${Math.floor(factors.yFactor * 100)}%`
-  }
-
   mouseLeaveHandler = () => {
     const { position } = this.state
     this.setState({ position: { ...position, isHidden: true } })
@@ -1306,31 +1015,159 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.setState({ position: { ...position, isHidden: false } })
   }
 
+  getLayers () {
+    if (!this.CFICanvas.current || !this.CFICanvas2.current) {
+      return []
+    }
+    const imageUrls = [this.CFICanvas.current.toDataURL(), this.CFICanvas2.current.toDataURL()]
+    return imageUrls
+  }
+
+  renderMergeCanvas (imageUrls: string[]) {
+    return (<MergeCanvas
+      key={this.state.mergeCanvasKey}
+      width={this.canvasOriginalDimensions.width}
+      height={this.canvasOriginalDimensions.height}
+      ref={this.mergeCanvasRef}
+      applyZoomPan={this.applyZoomPan}
+      layers={imageUrls} />)
+  }
+
+  // This Method sorts the imagePathList by color to trigger the MergeColor component to instantiate and generate a flat (jpg) mask per color
+  processMasks () {
+    const colorList = getColorsFromImagePathList(this.state.imagePathList)
+    const labColorList = colorList.map(color => getLABFromColor(color))
+    let livePaletteColorsIdArray = []
+    this.props.lpColors && this.props.lpColors.map(color => {
+      livePaletteColorsIdArray.push(color.id)
+    })
+
+    let saveBackgroundOnly = false
+
+    if (!labColorList.length) {
+      saveBackgroundOnly = true
+    }
+
+    const backgroundImageUrl = this.CFICanvas.current.toDataURL('image/jpeg', 1.0)
+    const ctx2 = this.CFICanvas2.current.getContext('2d')
+    const imageData = !saveBackgroundOnly ? ctx2.getImageData(0, 0, ctx2.canvas.width, ctx2.canvas.height) : null
+    const metaData = createCustomSceneMetadata('TEMP_NAME', this.props.saveSceneName, this.state.uniqueSceneId, colorList, ctx2.canvas.width, ctx2.canvas.height, livePaletteColorsIdArray)
+    this.props.saveMasks(labColorList, imageData, backgroundImageUrl, metaData)
+  }
+
+  applyZoomPan = (ref: RefObject) => {
+    const options = {
+      containerWidth: this.wrapperOriginalDimensions.width,
+      containerHeight: this.wrapperOriginalDimensions.height,
+      canvasWidth: this.canvasOriginalDimensions.width,
+      canvasHeight: this.canvasOriginalDimensions.height,
+      zoom: this.state.canvasZoom,
+      panX: this.canvasPanStart.x,
+      panY: this.canvasPanStart.y
+    }
+    const factors = canvasDimensionFactors(options)
+    applyDimensionFactorsByCanvas(factors, ref)
+  }
+
+  getPreviewData = () => {
+    const livePaletteColorsDiv = this.props.lpColors.filter(color => !!color).map((color, i) => {
+      const { red, green, blue } = color
+      return (
+        <div
+          key={i}
+          style={{ backgroundColor: `rgb(${red},${green},${blue})`, flexGrow: '1', borderLeft: (i > 0) ? '1px solid #ffffff' : 'none' }}>
+          &nbsp;
+        </div>
+      )
+    })
+
+    return <>
+      <div style={{ height: '68px' }}>
+        <MergeCanvas
+          ref={React.createRef()}
+          layers={this.getLayers()}
+          width={110}
+          height={68}
+          colorOpacity={0.8}
+        />
+      </div>
+      <div style={{ display: 'flex', marginTop: '1px' }}>{livePaletteColorsDiv}</div>
+    </>
+  }
+
   render () {
-    const { imageUrl, lpActiveColor, intl } = this.props
-    const { activeTool, position, paintBrushShape, paintBrushWidth, eraseBrushShape, eraseBrushWidth, undoIsEnabled, redoIsEnabled, showOriginalCanvas, isAddGroup, isDeleteGroup, isUngroup, paintCursor, isInfoToolActive, loading } = this.state
+    const { lpActiveColor, intl, showSaveSceneModal, lpColors, workspace } = this.props
+    const livePaletteColorCount = (lpColors && lpColors.length) || 0
+    const bgImageUrl = workspace ? workspace.bgImageUrl : this.props.imageUrl
+    const layers = workspace && workspace.workspaceType !== WORKSPACE_TYPES.smartMask ? workspace.layers : null
+    const workspaceImageData = workspace && workspace.workspaceType === WORKSPACE_TYPES.smartMask ? workspace.layers : null
+    const { activeTool, position, paintBrushShape, paintBrushWidth, eraseBrushShape, eraseBrushWidth, undoIsEnabled, redoIsEnabled, showOriginalCanvas, isAddGroup, isDeleteGroup, isUngroup, paintCursor, isInfoToolActive, loading, showAnimatePin, showNonAnimatePin, pinX, pinY, currPinX, currPinY, canvasWidth, canvasHeight, canvasHasBeenInitialized, showSelectPaletteModal } = this.state
     const lpActiveColorRGB = (lpActiveColor) ? `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})` : ``
     const backgroundColorBrush = (activeTool === toolNames.ERASE) ? `rgba(255, 255, 255, 0.7)` : lpActiveColorRGB
-    const { paintBrushActiveClass, paintBrushCircleActiveClass } = this.getPaintBrushActiveClass()
-    const { eraseBrushActiveClass, eraseBrushCircleActiveClass } = this.getEraseBrushActiveClass()
-
+    const { paintBrushActiveClass, paintBrushCircleActiveClass } = getPaintBrushActiveClass(this.state)
+    const { eraseBrushActiveClass, eraseBrushCircleActiveClass } = getEraseBrushActiveClass(this.state)
+    const { selectPaletteActions, selectPaletteTitle, selectPaletteDescription } = this.getSelectPaletteModalConfig()
     return (
-      <div role='presentation' className={baseClass} onClick={this.handleClick} onMouseMove={this.mouseMoveHandler} ref={this.CFIWrapper} style={{ height: this.state.wrapperHeight }} onMouseLeave={this.mouseLeaveHandler} onMouseEnter={this.mouseEnterHandler}>
-        <div className={`${animationLoader} ${loading ? `${animationLoader}--load` : ''}`} />
-        <canvas className={`${canvasClass} ${showOriginalCanvas ? `${canvasShowByZindex}` : `${canvasHideByZindex}`} ${this.isPortrait ? portraitOrientation : ''}`} name='paint-scene-canvas-first' ref={this.CFICanvas}>{intl.messages.CANVAS_UNSUPPORTED}</canvas>
-        <canvas style={{ opacity: showOriginalCanvas ? 1 : 0.8 }} className={`${canvasClass} ${paintCursor} ${canvasSecondClass} ${this.isPortrait ? portraitOrientation : ''}`} name='paint-scene-canvas-second' ref={this.CFICanvas2}>{intl.messages.CANVAS_UNSUPPORTED}</canvas>
-        <canvas
-          onMouseDown={this.onPanStart}
-          style={{ opacity: 1 }}
-          className={`${canvasClass} ${paintCursor} ${(activeTool === toolNames.PAINTBRUSH
-            ? canvasSecondClass : canvasThirdClass)} ${(activeTool === toolNames.ERASE)
-            ? canvasHiddenByVisibility : canvasVisibleByVisibility} ${this.isPortrait ? portraitOrientation : ''}`}
-          name='paint-scene-canvas-paint'
-          ref={this.CFICanvasPaint}>
-          {intl.messages.CANVAS_UNSUPPORTED}
-        </canvas>
-        <img className={`${imageClass}`} ref={this.CFIImage} onLoad={this.initCanvas} onError={this.handleImageErrored} src={imageUrl} alt={intl.messages.IMAGE_INVISIBLE} />
-        <div className={`${paintToolsClass}`}>
+      <>
+        {loading ? <div className={`${animationLoader} ${animationLoader}--load`} /> : null}
+        <div role='presentation' className={`${baseClass} ${isInfoToolActive ? `${disableTextSelect} ${showCursor}` : ``} ${activeTool === toolNames.PAINTBRUSH || activeTool === toolNames.ERASE ? `${disableTextSelect} ${hideCursor}` : ``} ${(loading) ? disableClick : ``}`} onClick={this.handleClick} onMouseMove={this.mouseMoveHandler} ref={this.CFIWrapper} style={{ height: this.state.wrapperHeight }} onMouseLeave={this.mouseLeaveHandler} onMouseEnter={this.mouseEnterHandler}>
+          {showSelectPaletteModal ? <DynamicModal
+            actions={selectPaletteActions}
+            title={selectPaletteTitle}
+            height={canvasHeight}
+            description={selectPaletteDescription} /> : null}
+          {showSaveSceneModal && livePaletteColorCount !== 0 ? <DynamicModal
+            actions={[
+              { text: intl.formatMessage({ id: 'SAVE_SCENE_MODAL.SAVE' }), callback: this.saveSceneFromModal },
+              { text: intl.formatMessage({ id: 'SAVE_SCENE_MODAL.CANCEL' }), callback: this.hideSaveSceneModal }
+            ]}
+            previewData={this.getPreviewData()}
+            height={canvasHeight}
+            allowInput
+            inputDefault={`${intl.formatMessage({ id: 'SAVE_SCENE_MODAL.DEFAULT_DESCRIPTION' })} ${this.props.sceneCount}`} /> : null}
+          {showSaveSceneModal && livePaletteColorCount === 0 ? <DynamicModal
+            actions={[
+              { text: intl.formatMessage({ id: 'SAVE_SCENE_MODAL.CANCEL' }), callback: this.hideSaveSceneModal }
+            ]}
+            description={intl.formatMessage({ id: 'SAVE_SCENE_MODAL.UNABLE_TO_SAVE_WARNING' })}
+            height={canvasHeight} /> : null}
+          { /* ----------Confirm modal ---------- */ }
+          { this.props.showSavedConfirmModalFlag ? <DynamicModal
+            actions={[
+              { text: intl.formatMessage({ id: 'PAINT_SCENE.OK_DISMISS' }), callback: this.props.hideSavedConfirmModal }
+            ]}
+            description={intl.formatMessage({ id: 'PAINT_SCENE.SCENE_SAVED' })}
+            height={canvasHeight} /> : null}
+          {/* the 35 in the padding is the radius of the circle loader. Note the bitwise rounding */}
+          {this.props.savingMasks || this.state.loadingMasks ? <div style={{ height: canvasHeight }} className='spinner'><div style={{ padding: ((canvasHeight / 2) | 0) - 35 }}><CircleLoader /></div></div> : null}
+          {this.props.savingMasks ? <SaveMasks processMasks={this.processMasks} /> : null }
+          <canvas className={`${canvasClass} ${showOriginalCanvas ? `${canvasShowByZindex}` : `${canvasHideByZindex}`} ${this.isPortrait ? portraitOrientation : ''}`} name='paint-scene-canvas-first' ref={this.CFICanvas}>{intl.formatMessage({ id: 'CANVAS_UNSUPPORTED' })}</canvas>
+          <canvas style={{ opacity: showOriginalCanvas ? 1 : 0.8 }} className={`${canvasClass} ${paintCursor} ${canvasSecondClass} ${this.isPortrait ? portraitOrientation : ''}`} name='paint-scene-canvas-second' ref={this.CFICanvas2}>{intl.formatMessage({ id: 'CANVAS_UNSUPPORTED' })}</canvas>
+          <canvas
+            onMouseDown={this.onPanStart}
+            style={{ opacity: 1 }}
+            className={`${canvasClass} ${paintCursor} ${(activeTool === toolNames.PAINTBRUSH
+              ? canvasSecondClass : canvasThirdClass)} ${(activeTool === toolNames.ERASE)
+              ? canvasHiddenByVisibility : canvasVisibleByVisibility} ${this.isPortrait ? portraitOrientation : ''}`}
+            name='paint-scene-canvas-paint'
+            ref={this.CFICanvasPaint}>
+            {intl.formatMessage({ id: 'CANVAS_UNSUPPORTED' })}
+          </canvas>
+          <canvas className={`${canvasClass} ${canvasSecondClass}`} ref={this.CFICanvas4} name='paint-scene-canvas-fourth' />
+          {/* renderMergeCanvas is dependency of the flood fill operation. The returned component ensures that the algorithm can search/fill a flattened image. */}
+          {this.renderMergeCanvas(this.state.canvasImageUrls)}
+          {/* Loads background image */}
+          <img className={`${imageClass}`} ref={this.CFIImage} onLoad={this.initCanvas} onError={this.handleImageErrored} src={bgImageUrl} alt={intl.formatMessage({ id: 'IMAGE_INVISIBLE' })} />
+          {/* MergeColors component is used to load and imported surfaces. Currently loads smartmasks and saved scenes */}
+          {(layers || workspaceImageData) && canvasHasBeenInitialized ? <MergeColors
+            imageUrlList={layers}
+            imageDataList={workspaceImageData}
+            colors={getColorsForMergeColors(workspace)}
+            handleImagesMerged={this.importLayers}
+            width={canvasWidth}
+            height={canvasHeight}
+            ignoreColorOffset
+            preserveLayersAsData /> : null}
           <PaintToolBar
             activeTool={activeTool}
             setActiveTool={this.setActiveTool}
@@ -1350,30 +1187,74 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
             isAddGroup={isAddGroup}
             isDeleteGroup={isDeleteGroup}
             isUngroup={isUngroup}
+            isInfoToolActive={isInfoToolActive}
           />
+          {
+            ((activeTool === toolNames.PAINTBRUSH || activeTool === toolNames.ERASE) && (position.isHidden === false) && !isInfoToolActive)
+              ? <div
+                className={`${paintBrushClass} ${activeTool === toolNames.PAINTBRUSH ? `${paintBrushActiveClass} ${paintBrushCircleActiveClass}` : activeTool === toolNames.ERASE ? `${eraseBrushActiveClass} ${eraseBrushCircleActiveClass}` : ``}`}
+                role='presentation'
+                draggable
+                onMouseDown={this.mouseDownHandler} onDragStart={this.dragStartHandler}
+                style={{ backgroundColor: backgroundColorBrush, top: position.top, left: position.left }}
+              /> : ''
+          }
+          {showAnimatePin && (activeTool === toolNames.DEFINEAREA || activeTool === toolNames.REMOVEAREA) && <div className={`${animationPin}`} style={{ top: pinY, left: pinX }}>
+            <div className={`${animationPin}__outer`}>
+              <div className={`${animationPin}__inner`} />
+            </div>
+          </div>}
+          {showNonAnimatePin && (activeTool === toolNames.DEFINEAREA || activeTool === toolNames.REMOVEAREA) && <div className={`${nonAnimationPin}`} style={{ top: currPinY, left: currPinX }} >
+            <div className={`${nonAnimationPin}__outer`}>
+              <div className={`${nonAnimationPin}__inner`} />
+            </div>
+          </div>}
         </div>
-        {
-          ((activeTool === toolNames.PAINTBRUSH || activeTool === toolNames.ERASE) && (position.isHidden === false) && !isInfoToolActive)
-            ? <div
-              className={`${paintBrushClass} ${activeTool === toolNames.PAINTBRUSH ? `${paintBrushActiveClass} ${paintBrushCircleActiveClass}` : activeTool === toolNames.ERASE ? `${eraseBrushActiveClass} ${eraseBrushCircleActiveClass}` : ``}`}
-              role='presentation'
-              draggable
-              onMouseDown={this.mouseDownHandler} onDragStart={this.dragStartHandler}
-              style={{ backgroundColor: backgroundColorBrush, top: position.top, left: position.left }}
-            /> : ''
-        }
-      </div>
+        <LiveMessage message={`${activeTool} tool is activated`} aria-live='assertive' clearOnUnmount='true' />
+      </>
     )
   }
 }
 
 const mapStateToProps = (state: Object, props: Object) => {
-  const { lp } = state
+  const { lp, savingMasks, selectedSavedSceneId, scenesAndRegions, showSaveSceneModal, saveSceneName } = state
+  const selectedScene = scenesAndRegions.find(item => item.id === selectedSavedSceneId)
+
   return {
-    lpActiveColor: lp.activeColor
+    lpColors: lp.colors,
+    lpActiveColor: lp.activeColor,
+    savingMasks,
+    selectedScene,
+    showSaveSceneModal,
+    saveSceneName,
+    sceneCount: state.sceneMetadata.length + 1,
+    showSavedConfirmModalFlag: state.showSavedCustomSceneSuccess
   }
 }
+
+const mapDispatchToProps = (dispatch: Function) => {
+  return {
+    saveMasks: (colorList: Array<number[]>, imageData: Object, backgroundImageUrl: string, metaData: Object) =>
+      dispatch(saveMasks(colorList, imageData, backgroundImageUrl, metaData)),
+    startSavingMasks: (sceneName) => dispatch(startSavingMasks(sceneName)),
+    mergeLpColors: (colors: Object[]) => dispatch(mergeLpColors(colors)),
+    replaceLpColors: (colors: Object[]) => dispatch(replaceLpColors(colors)),
+    selectSavedScene: (sceneId) => dispatch(selectSavedScene(sceneId)),
+    clearSceneWorkspace: () => clearSceneWorkspace(),
+    showSaveSceneModalAction: (shouldShow) => dispatch(showSaveSceneModal(shouldShow)),
+    hideSavedConfirmModal: (e: SyntheticEvent) => {
+      e.preventDefault()
+      e.stopPropagation()
+      dispatch(showSavedCustomSceneSuccessModal(false))
+    },
+    setActiveScenePolluted: () => dispatch(setActiveScenePolluted()),
+    unsetActiveScenePolluted: () => dispatch(unsetActiveScenePolluted()),
+    setWarningModalImgPreview: (data) => dispatch(setWarningModalImgPreview(data))
+  }
+}
+
 export {
   baseClass, paintBrushClass, canvasClass
 }
-export default connect(mapStateToProps, null)(injectIntl(PaintScene))
+
+export default connect(mapStateToProps, mapDispatchToProps)(injectIntl(PaintScene))

@@ -4,7 +4,7 @@
     display: flex;
     flex-direction: column;
     opacity: 1;
-    padding: 1em;
+    padding: 0.5em 1em;
     text-align: center;
     transition: opacity 0.3s ease-in-out;
     width: auto;
@@ -21,12 +21,13 @@
       transition: border-color 0.3s;
     }
   }
-  &__circle-shapes-container {
+  &__shapes-container {
     align-items: center;
     display: flex;
-    height: 2.5em;
     justify-content: space-between;
     width: 152px;
+    margin-bottom: 0.5em;
+    flex-wrap: wrap;
   }
   &__square-shapes-container {
     align-items: center;
@@ -43,8 +44,15 @@
     line-height: 0;
     outline: none;
     vertical-align: middle;
+    margin-top: 0.5em;
+    margin-right: 0.5em;
     &:hover {
       border-color: #2cabe2;
+    }
+    &:focus {
+      outline-style: solid;
+      outline-color: #2cabe2;
+      outline-width: 2px;
     }
     &--circle {
       border-radius: 50%;

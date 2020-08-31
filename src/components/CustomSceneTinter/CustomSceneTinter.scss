@@ -1,0 +1,26 @@
+.custom-scene-tinter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  &__modal {
+    color: #ffffff;
+    background-color: rgba(0, 0, 0, 0.5);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    width: 100%;
+    height: 48px;
+    align-items: center;
+    justify-content: space-around;
+    &__text {
+      margin: 6px;
+    }
+    &__btn {
+      padding: 8px;
+      color: #000000;
+      background-color: #ffffff;
+      margin: 6px;
+    }
+  }
+}

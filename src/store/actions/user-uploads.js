@@ -30,7 +30,8 @@ const errorUploading = () => {
     type: ERROR_UPLOADING,
     payload: {
       error: true,
-      uploading: false
+      uploading: false,
+      mask: null
     }
   }
 }
@@ -47,11 +48,12 @@ const loadLocalImageUrl = (images) => {
 }
 
 export const CLEAR_UPLOADS = 'CLEAR_UPLOADS'
-const clearUploads = () => {
+export const clearUploads = () => {
   return {
     type: CLEAR_UPLOADS,
     payload: {
-      error: false
+      error: false,
+      source: null
     }
   }
 }
@@ -93,5 +95,25 @@ export const uploadImage = (file: File) => {
         console.error('issue with segmentation: ', err)
         dispatch(errorUploading())
       })
+  }
+}
+
+export const QUEUE_IMAGE_UPLOAD = 'QUEUE_IMAGE_UPLOAD'
+export const queueImageUpload = (file: File) => {
+  return (dispatch: Function) => {
+    dispatch({
+      type: QUEUE_IMAGE_UPLOAD,
+      payload: file
+    })
+  }
+}
+
+export const DEQUEUE_IMAGE_UPLOAD = 'DEQUEUE_IMAGE_UPLOAD'
+export const dequeueImageUpload = () => {
+  return (dispatch: Function) => {
+    dispatch({
+      type: DEQUEUE_IMAGE_UPLOAD,
+      payload: null
+    })
   }
 }

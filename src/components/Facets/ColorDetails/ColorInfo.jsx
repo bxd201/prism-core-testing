@@ -18,7 +18,7 @@ function ColorInfo ({ color, familyLink }: Props) {
       {familyLink && intersection(flattenDeep(structure.map(s => s.families)), color.colorFamilyNames).length > 0 &&
         <div className='color-info__chunk'>
           <a className='view-family-link' href={familyLink}>
-            View all {color.colorFamilyNames[0]} paint colors →
+            <FormattedMessage id='VIEW_ALL' /> {color.colorFamilyNames[0]} <FormattedMessage id='PAINT_COLORS' /> →
           </a>
         </div>
       }

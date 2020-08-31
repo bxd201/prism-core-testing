@@ -4,7 +4,6 @@ import ColorsFromImagePin from './ColorsFromImagePin'
 import { getScaledLandscapeHeight, getScaledPortraitHeight } from '../../shared/helpers/ImageUtils'
 import { activedPinsHalfWidth, findBrandColor, renderingPins } from './data'
 import ColorFromImageIndicator from './ColorFromImageIndicator'
-import { brandColors } from './sw-colors-in-LAB'
 import ColorFromImageDeleteButton from './ColorFromImageDeleteButton'
 import throttle from 'lodash/throttle'
 import { injectIntl } from 'react-intl'
@@ -42,7 +41,8 @@ type ColorFromImageProps = {
   originalImageHeight: number,
   isActive: boolean,
   pins: Object[],
-  intl: any
+  intl: any,
+  brandColors: Array
 }
 
 const shouldShowDelete = (pins) => {
@@ -118,7 +118,6 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
   componentDidUpdate (prevProps: ColorFromImageProps, prevState: ColorFromImageState) {
     if (prevProps.width && prevProps.width !== this.props.width) {
       this.handleResize(prevProps, prevState)
-      // @todo - Have not found a good way to redraw the pins. -RS
     }
   }
   /*:: handleResize: (prevProps: ColorFromImageProps, prevState: ColorFromImageState) => void */
@@ -226,7 +225,7 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
     }
 
     if (!this.state.pinnedColors) {
-      const renderedPins = renderingPins(this.props.pins, canvasDimensions.width, canvasDimensions.height)
+      const renderedPins = renderingPins(this.props.pins, canvasDimensions.width, canvasDimensions.height, this.props.brandColors)
       newState.pinnedColors = renderedPins
     }
 
@@ -287,7 +286,7 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
   }
   /*:: addNewPin: (cursorX: number, cursorY: number) => void */
   addNewPin (cursorX: number, cursorY: number) {
-    const arrayIndex = findBrandColor(this.state.currentPixelRGB)
+    const arrayIndex = findBrandColor(this.state.currentPixelRGB, this.props.brandColors)
     const clonePins = this.state.pinnedColors.map(pins => {
       return { ...pins }
     })
@@ -305,17 +304,17 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
     const newPins = this.removeSameColorPin(clonePins, arrayIndex)
     this.setState({
       currentBrandColorIndex: arrayIndex,
-      currentPixelRGB: brandColors[arrayIndex + 2],
-      currentPixelRGBstring: 'rgb(' + brandColors[arrayIndex + 2] + ')',
+      currentPixelRGB: this.props.brandColors[arrayIndex + 2],
+      currentPixelRGBstring: 'rgb(' + this.props.brandColors[arrayIndex + 2] + ')',
       previewPinIsUpdating: false,
-      previewColorName: brandColors[arrayIndex],
-      previewColorNumber: brandColors[arrayIndex + 1],
+      previewColorName: this.props.brandColors[arrayIndex],
+      previewColorNumber: this.props.brandColors[arrayIndex + 1],
       pinnedColors: [
         ...newPins,
         {
-          colorName: brandColors[arrayIndex],
-          colorNumber: brandColors[arrayIndex + 1],
-          rgbValue: 'rgb(' + brandColors[arrayIndex + 2] + ')',
+          colorName: this.props.brandColors[arrayIndex],
+          colorNumber: this.props.brandColors[arrayIndex + 1],
+          rgbValue: 'rgb(' + this.props.brandColors[arrayIndex + 2] + ')',
           // The translated values are calculated this way due to resize.
           // To keep the logic simpler the pin generator always calcs the scale factor and the new pins translate values are always in reference to the initial canvas size.
           // When there is no resize, scale should be 1 here and in the pin generator. the scales for user added pins is the inverse of the pin generators scale.
@@ -331,7 +330,7 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
   /*:: removeSameColorPin: (currentPins: Array<any>, index: number) => Object[] */
   removeSameColorPin (currentPins: Array<any>, index: number) {
     const duplicatePinIndex = currentPins.findIndex((colors) => {
-      return colors.rgbValue === 'rgb(' + brandColors[index + 2] + ')'
+      return colors.rgbValue === 'rgb(' + this.props.brandColors[index + 2] + ')'
     })
     if (duplicatePinIndex !== -1) {
       currentPins.splice(duplicatePinIndex, 1)
@@ -380,8 +379,8 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
   /*:: handlePinMoveByKeyboard: (movingPinData: Object) => */
   handlePinMoveByKeyboard (movingPinData: Object) {
     const canvasOffset = this.canvasRef.current.getBoundingClientRect()
-    let cursorX = Math.floor(movingPinData.offsetX - canvasOffset.x)
-    let cursorY = Math.floor(movingPinData.offsetY - canvasOffset.y)
+    let cursorX = movingPinData.offsetX - Math.floor(canvasOffset.x)
+    let cursorY = movingPinData.offsetY - Math.floor(canvasOffset.y)
     let isContentLeft = false
     if (cursorX < this.state.canvasWidth / 2) {
       isContentLeft = true
@@ -404,8 +403,8 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
     // When there is no resize, scale should be 1 here and in the pin generator. the scales for user added pins is the inverse of the pin generators scale.
     const translateX = (cursorX - activedPinsHalfWidth) * this.state.initialWidth / this.state.canvasWidth
     const translateY = (cursorY - activedPinsHalfWidth) * this.state.initialHeight / this.state.canvasHeight
-    const arrayIndex = findBrandColor([this.state.imageData.data[mappedCanvasIndex], this.state.imageData.data[mappedCanvasIndex + 1], this.state.imageData.data[mappedCanvasIndex + 2]])
-    const newRgb = `rgb(${brandColors[arrayIndex + 2]})`
+    const arrayIndex = findBrandColor([this.state.imageData.data[mappedCanvasIndex], this.state.imageData.data[mappedCanvasIndex + 1], this.state.imageData.data[mappedCanvasIndex + 2]], this.props.brandColors)
+    const newRgb = `rgb(${this.props.brandColors[arrayIndex + 2]})`
     const clonedPins = this.state.pinnedColors.map(pin => {
       return { ...pin }
     })
@@ -413,14 +412,13 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
     const duplicatePinIndex = clonedPins.findIndex((colors) => {
       return parseInt(colors.pinNumber, 10) !== parseInt(pinNumber, 10) && colors.rgbValue === newRgb && !colors.hide
     })
-
     clonedPins[pinNumber].rgbValue = newRgb
     clonedPins[pinNumber].translateX = translateX
     clonedPins[pinNumber].translateY = translateY
     clonedPins[pinNumber].isActiveFlag = true
     clonedPins[pinNumber].isContentLeft = isContentLeft
-    clonedPins[pinNumber].colorName = brandColors[arrayIndex]
-    clonedPins[pinNumber].colorNumber = brandColors[arrayIndex + 1]
+    clonedPins[pinNumber].colorName = this.props.brandColors[arrayIndex]
+    clonedPins[pinNumber].colorNumber = this.props.brandColors[arrayIndex + 1]
 
     if (duplicatePinIndex !== -1) {
       clonedPins[duplicatePinIndex].hide = true
@@ -459,6 +457,7 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
     let top = y - canvasDims.top - activedPinsHalfWidth
     let bottom = 0
     let left = x - canvasDims.left - activedPinsHalfWidth + offsetLeft
+
     let right = 0
 
     // Too far left
@@ -568,14 +567,14 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
           <canvas
             className='colorfrom__image__wrapper__canvas'
             ref={this.canvasRef}
-            onClick={this.handleClick}>{this.props.intl.messages.CANVAS_UNSUPPORTED}</canvas>
+            onClick={this.handleClick}>{this.props.intl.formatMessage({ id: 'CANVAS_UNSUPPORTED' })}</canvas>
           <img
             className='colorfrom__image__wrapper__image--hidden'
             ref={this.imageRef}
             onLoad={this.handleImageLoaded}
             onError={this.handleImageLoadError}
             src={this.props.imageUrl}
-            alt={this.props.intl.messages.IMAGE_INVISIBLE} />
+            alt={this.props.intl.formatMessage({ id: 'IMAGE_INVISIBLE' })} />
           {this.props.isActive && (this.state.pinnedColors && this.state.pinnedColors.length) ? this.generatePins(this.state.pinnedColors) : null}
           {this.props.isActive && this.state.isDragging ? <ColorFromImageIndicator
             top={this.state.indicatorTop}

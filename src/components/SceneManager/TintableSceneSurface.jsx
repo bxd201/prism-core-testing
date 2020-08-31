@@ -10,7 +10,8 @@ type Props = {
   filterId: string,
   width: string | number,
   height: string | number,
-  type: string
+  type: string,
+  children: any
 }
 
 class TintableSceneSurface extends PureComponent<Props> {
@@ -41,6 +42,7 @@ class TintableSceneSurface extends PureComponent<Props> {
         xmlns='http://www.w3.org/2000/svg'
         xmlnsXlink='http://www.w3.org/1999/xlink'
         preserveAspectRatio='none'>
+        {this.props.children}
         {this.getSvgContents()}
       </svg>
     )

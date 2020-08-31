@@ -119,21 +119,19 @@ $bloom-duration: 200ms;
 
     &--dark-color { color: rgba(white, .9); }
 
-    .OmniButton {
-      display: flex;
-      align-items: center;
-      max-width: 100%;
-
-      &__icon { flex-shrink: 0; }
-
-      &__content {
-        padding-left: .25em;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 100%;
-        white-space: nowrap;
-        text-align: left;
-      }
+    .add-icon {
+      width: 22px;
+      height: 22px;
     }
+  }
+
+  &__button-group {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px;
   }
 }

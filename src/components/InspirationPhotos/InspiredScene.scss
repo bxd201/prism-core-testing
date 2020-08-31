@@ -55,6 +55,16 @@
         text-align: center;
         text-transform: uppercase;
         width: 3em;
+        &--active{
+            transform: scale(1.5);
+            transition: all 0.3s;
+            background-color: #2cabe2;
+            border-color: #2cabe2;
+            color:#ffffff;
+        }
+        &--hide{
+            display: none;
+        }
         &:focus {
             outline-color: #2cabe2;
             outline-style: solid;

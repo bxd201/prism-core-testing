@@ -65,6 +65,12 @@
       position: relative;
       top: .35em;
     }
+    &:focus {
+      outline-style: solid;
+      outline-color: #2cabe2;
+      outline-width: 2px;
+      z-index: 100;
+    }
     @include respond-above(sm) {
       display: none;
     }
@@ -127,6 +133,12 @@
       @include respond-above(sm) {
         border: 1px solid #2cabe2;
       }
+    }
+    &:focus {
+      outline-style: solid;
+      outline-color: #2cabe2;
+      outline-width: 2px;
+      z-index: 100;
     }
     &--active {
       background: none;

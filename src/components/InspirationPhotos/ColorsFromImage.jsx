@@ -1,10 +1,9 @@
 // @flow
 import React, { PureComponent } from 'react'
 import ColorsFromImagePin from './ColorsFromImagePin'
-import cloneDeep from 'lodash/cloneDeep'
-import { renderingPins, findBrandColor, throttleDragTime, activedPinsHalfWidth } from './data'
+import { renderingPins, findBrandColor, throttleDragTime, activedPinsHalfWidth, cloneColorPinsArr } from './data'
 import './InspiredScene.scss'
-import { brandColors } from './sw-colors-in-LAB.js'
+import { injectIntl } from 'react-intl'
 import throttle from 'lodash/throttle'
 import includes from 'lodash/includes'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -12,7 +11,9 @@ import 'src/providers/fontawesome/fontawesome'
 
 type ComponentProps = {
   data: any,
-  isActivedPage: boolean
+  isActivedPage: boolean,
+  brandColors: Array,
+  intl: any
 }
 
 type ComponentState = {
@@ -57,13 +58,15 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
     pinnedColors: [],
     imageStatus: 'loading',
     isDragging: false,
-    position: { x: 0, y: 0, left: 0, right: 0, top: 0, bottom: 0 }
+    position: { x: 0, y: 0, left: 0, right: 0, top: 0, bottom: 0 },
+    isDeleting: false
   }
   constructor (props: ComponentProps) {
     super(props)
     this.CFICanvas = React.createRef()
     this.CFIWrapper = React.createRef()
     this.CFIImage = React.createRef()
+    this.deleteButtonRef = React.createRef()
     this.canvasOffsetWidth = 0
     this.canvasOffsetHeight = 0
   }
@@ -81,13 +84,20 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
     let canvasOffset = {}
     if (isActivedPage && this.CFICanvas.current) {
       const canvasClientOffset = this.CFICanvas.current.getBoundingClientRect()
-      canvasOffset.x = parseInt(canvasClientOffset.left, 10)
-      canvasOffset.y = parseInt(canvasClientOffset.top, 10)
+      canvasOffset.x = Math.floor(canvasClientOffset.left)
+      canvasOffset.y = Math.floor(canvasClientOffset.top)
       window.sessionStorage.setItem('canvasOffset', JSON.stringify(canvasOffset))
+    }
+    if (this.deleteButtonRef.current) {
+      this.deleteButtonOffset = this.deleteButtonRef.current.getBoundingClientRect()
+      this.deleteButtonR = this.deleteButtonOffset.width / 2
+      this.deleteButtonX = this.deleteButtonOffset.x + this.deleteButtonR
+      this.deleteButtonY = this.deleteButtonOffset.y + this.deleteButtonR
     }
   }
 
   getCanvasOffset = () => {
+    this.setCanvasOffset()
     const canvasOffset = window.sessionStorage.getItem('canvasOffset')
     return JSON.parse(canvasOffset)
   }
@@ -106,11 +116,15 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
   updateWindowDimensions = () => {
     this.setCanvasOffset()
     this.canvasOffset = this.CFICanvas.current.getBoundingClientRect()
+    this.deleteButtonOffset = this.deleteButtonRef.current.getBoundingClientRect()
+    this.deleteButtonR = this.deleteButtonOffset.width / 2
+    this.deleteButtonX = this.deleteButtonOffset.x + this.deleteButtonR
+    this.deleteButtonY = this.deleteButtonOffset.y + this.deleteButtonR
     this.canvasOffsetWidth = parseInt(this.canvasOffset.width, 10)
     this.canvasOffsetHeight = parseInt(this.canvasOffset.height, 10)
     this.canvasClientX = parseInt(this.canvasOffset.left, 10)
     this.canvasClientY = parseInt(this.canvasOffset.top, 10)
-    this.setState({ pinnedColors: renderingPins(this.props.data.initPins, this.canvasOffsetWidth, this.canvasOffsetHeight) })
+    this.setState({ pinnedColors: renderingPins(this.props.data.initPins, this.canvasOffsetWidth, this.canvasOffsetHeight, this.props.brandColors) })
   }
 
   initCanvas = () => {
@@ -137,7 +151,7 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
     }
     const imageData = this.CFICanvasContext.getImageData(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
     this.imageDataData = imageData.data
-    this.setState({ pinnedColors: renderingPins(this.props.data.initPins, this.canvasOffsetWidth, this.canvasOffsetHeight) })
+    this.setState({ pinnedColors: renderingPins(this.props.data.initPins, this.canvasOffsetWidth, this.canvasOffsetHeight, this.props.brandColors) })
   }
 
   activatePin = (pinNumber: number) => {
@@ -148,7 +162,7 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
     const lastActivedPin = this.state.pinnedColors.findIndex((colors) => {
       return colors.isActiveFlag === true
     })
-    const clonePins = cloneDeep(this.state.pinnedColors)
+    const clonePins = cloneColorPinsArr(this.state.pinnedColors)
 
     if (pinnedColorClicked !== -1) {
       clonePins[pinnedColorClicked].isActiveFlag = true
@@ -165,8 +179,8 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
   }
 
   addNewPin = (cursorX: number, cursorY: number) => {
-    const arrayIndex = findBrandColor(this.state.currentPixelRGB)
-    const clonePins = cloneDeep(this.state.pinnedColors)
+    const arrayIndex = findBrandColor(this.state.currentPixelRGB, this.props.brandColors)
+    const clonePins = cloneColorPinsArr(this.state.pinnedColors)
     const activePinIndex = this.state.pinnedColors.findIndex((colors) => {
       return colors.isActiveFlag === true
     })
@@ -181,17 +195,17 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
     const newPins = this.removeSameColorPin(clonePins, arrayIndex)
     this.setState({
       currentBrandColorIndex: arrayIndex,
-      currentPixelRGB: brandColors[arrayIndex + 2],
-      currentPixelRGBstring: 'rgb(' + brandColors[arrayIndex + 2] + ')',
+      currentPixelRGB: this.props.brandColors[arrayIndex + 2],
+      currentPixelRGBstring: 'rgb(' + this.props.brandColors[arrayIndex + 2] + ')',
       previewPinIsUpdating: false,
-      previewColorName: brandColors[arrayIndex],
-      previewColorNumber: brandColors[arrayIndex + 1],
+      previewColorName: this.props.brandColors[arrayIndex],
+      previewColorNumber: this.props.brandColors[arrayIndex + 1],
       pinnedColors: [
         ...newPins,
         {
-          colorName: brandColors[arrayIndex],
-          colorNumber: brandColors[arrayIndex + 1],
-          rgbValue: 'rgb(' + brandColors[arrayIndex + 2] + ')',
+          colorName: this.props.brandColors[arrayIndex],
+          colorNumber: this.props.brandColors[arrayIndex + 1],
+          rgbValue: 'rgb(' + this.props.brandColors[arrayIndex + 2] + ')',
           translateX: cursorX - activedPinsHalfWidth,
           translateY: cursorY - activedPinsHalfWidth,
           pinNumber: newPins.length,
@@ -204,7 +218,7 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
 
   removeSameColorPin = (currentPins: Array<any>, index: number) => {
     const duplicatePinIndex = currentPins.findIndex((colors) => {
-      return colors.rgbValue === 'rgb(' + brandColors[index + 2] + ')'
+      return colors.rgbValue === 'rgb(' + this.props.brandColors[index + 2] + ')'
     })
     if (duplicatePinIndex !== -1) {
       currentPins.splice(duplicatePinIndex, 1)
@@ -239,7 +253,7 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
   }
 
   deleteCurrentPin = (pinNumber: number) => {
-    const clonePins = cloneDeep(this.state.pinnedColors)
+    const clonePins = cloneColorPinsArr(this.state.pinnedColors)
     clonePins.splice(pinNumber, 1)
     const newPins = clonePins.map((pins, index) => {
       pins.pinNumber = index
@@ -285,11 +299,16 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
   handleDrag = throttle((x: number, y: number) => {
     const canvasOffset = this.getCanvasOffset()
     const position = this.borderChecking(x, y)
+    let isDeleting = false
+    const circleDistance = Math.sqrt(Math.pow((this.deleteButtonX - x), 2) + Math.pow((this.deleteButtonY - y), 2))
+    if (circleDistance < (activedPinsHalfWidth + this.deleteButtonR)) {
+      isDeleting = true
+    }
     const offsetY = x - canvasOffset.x
     const offsetX = y - canvasOffset.y
     const mappedCanvasIndex = (offsetX * this.canvasOffsetWidth + offsetY) * 4
     const currentPixelRGBstring = `rgb(${this.imageDataData[mappedCanvasIndex]},${this.imageDataData[mappedCanvasIndex + 1]},${this.imageDataData[mappedCanvasIndex + 2]})`
-    this.setState({ position: position, currentPixelRGBstring: currentPixelRGBstring, isDragging: true })
+    this.setState({ position: position, currentPixelRGBstring: currentPixelRGBstring, isDragging: true, isDeleting: isDeleting })
   }, throttleDragTime)
 
   handleDragStop = (e: Object) => {
@@ -299,20 +318,25 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
       const offsetX = position.x + activedPinsHalfWidth
       const offsetY = position.y + activedPinsHalfWidth
       const mappedCanvasIndex = (offsetY * this.canvasOffsetWidth + offsetX) * 4
-      this.setState({
-        currentPixelRGB: [this.imageDataData[mappedCanvasIndex], this.imageDataData[mappedCanvasIndex + 1], this.imageDataData[mappedCanvasIndex + 2]],
-        currentPixelRGBstring: `rgb(${this.imageDataData[mappedCanvasIndex]},${this.imageDataData[mappedCanvasIndex + 1]},${this.imageDataData[mappedCanvasIndex + 2]})`,
-        isDragging: false
-      }, () => {
-        this.addNewPin(offsetX, offsetY)
-      })
+      const circleDistance = Math.sqrt(Math.pow((this.deleteButtonX - e.clientX), 2) + Math.pow((this.deleteButtonY - e.clientY), 2))
+      if (circleDistance < (activedPinsHalfWidth + this.deleteButtonR)) {
+        this.setState({ isDragging: false, isDeleting: false })
+      } else {
+        this.setState({
+          currentPixelRGB: [this.imageDataData[mappedCanvasIndex], this.imageDataData[mappedCanvasIndex + 1], this.imageDataData[mappedCanvasIndex + 2]],
+          currentPixelRGBstring: `rgb(${this.imageDataData[mappedCanvasIndex]},${this.imageDataData[mappedCanvasIndex + 1]},${this.imageDataData[mappedCanvasIndex + 2]})`,
+          isDragging: false
+        }, () => {
+          this.addNewPin(offsetX, offsetY)
+        })
+      }
     }
   }
 
   handlePinMoveByKeyboard = throttle((movingPinData: Object) => {
     const canvasOffset = this.getCanvasOffset()
-    let cursorX = movingPinData.offsetX - canvasOffset.x
-    let cursorY = movingPinData.offsetY - canvasOffset.y
+    let cursorX = movingPinData.offsetX - Math.floor(canvasOffset.x)
+    let cursorY = movingPinData.offsetY - Math.floor(canvasOffset.y)
     let isContentLeft = false
     if (cursorX < this.canvasOffsetWidth / 2) {
       isContentLeft = true
@@ -328,13 +352,12 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
     } else if (cursorY > this.canvasOffsetHeight - pinsHalfWidthWithBorder) {
       cursorY = this.canvasOffsetHeight - pinsHalfWidthWithBorder
     }
-
     const mappedCanvasIndex = (cursorY * this.canvasOffsetWidth + cursorX) * 4
     const translateX = cursorX - activedPinsHalfWidth
     const translateY = cursorY - activedPinsHalfWidth
-    const arrayIndex = findBrandColor([this.imageDataData[mappedCanvasIndex], this.imageDataData[mappedCanvasIndex + 1], this.imageDataData[mappedCanvasIndex + 2]])
-    const newRgb = `rgb(${brandColors[arrayIndex + 2]})`
-    const clonedPins = cloneDeep(this.state.pinnedColors)
+    const arrayIndex = findBrandColor([this.imageDataData[mappedCanvasIndex], this.imageDataData[mappedCanvasIndex + 1], this.imageDataData[mappedCanvasIndex + 2]], this.props.brandColors)
+    const newRgb = `rgb(${this.props.brandColors[arrayIndex + 2]})`
+    const clonedPins = cloneColorPinsArr(this.state.pinnedColors)
     const pinNumber = movingPinData.pinNumber
     const duplicatePinIndex = clonedPins.findIndex((colors) => {
       return parseInt(colors.pinNumber, 10) !== parseInt(pinNumber, 10) && colors.rgbValue === newRgb && !colors.hide
@@ -345,8 +368,8 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
     clonedPins[pinNumber].translateY = translateY
     clonedPins[pinNumber].isActiveFlag = true
     clonedPins[pinNumber].isContentLeft = isContentLeft
-    clonedPins[pinNumber].colorName = brandColors[arrayIndex]
-    clonedPins[pinNumber].colorNumber = brandColors[arrayIndex + 1]
+    clonedPins[pinNumber].colorName = this.props.brandColors[arrayIndex]
+    clonedPins[pinNumber].colorNumber = this.props.brandColors[arrayIndex + 1]
 
     if (duplicatePinIndex !== -1) {
       clonedPins[duplicatePinIndex].hide = true
@@ -357,7 +380,7 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
   }, 50)
 
   handleKeyUpAfterPinMove = (movingPinNumber: number) => {
-    const clonedPins = cloneDeep(this.state.pinnedColors)
+    const clonedPins = cloneColorPinsArr(this.state.pinnedColors)
     const newPins = clonedPins.filter((pins, index) => {
       return !pins.hide
     })
@@ -377,7 +400,7 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
 
   pinRemove = (e: Object) => {
     e.stopPropagation()
-    const clonedPins = cloneDeep(this.state.pinnedColors)
+    const clonedPins = cloneColorPinsArr(this.state.pinnedColors)
     const pinsWithoutActiveFlag = clonedPins.filter((colors, index) => {
       return colors.isActiveFlag !== true
     })
@@ -393,10 +416,11 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
   }
 
   render () {
-    const { pinnedColors, currentPixelRGBstring, position, isDragging } = this.state
+    const { pinnedColors, currentPixelRGBstring, position, isDragging, isDeleting } = this.state
     const { img } = this.props.data
-    const { isActivedPage } = this.props
+    const { isActivedPage, intl } = this.props
     let showDeletePin = false
+
     return (
       <div role='presentation' className='scene__image__wrapper' onClick={isActivedPage ? this.handleClick : null} ref={this.CFIWrapper}>
         <canvas className='scene__image__wrapper__canvas' name='canvas' ref={this.CFICanvas} />
@@ -435,10 +459,10 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
             right: position.right
           }} />
         }
-        {(showDeletePin) && <button className='scene__image__wrapper__delete-pin' onClick={this.pinRemove}><FontAwesomeIcon icon='trash' size='1x' /></button>}
+        {<button ref={this.deleteButtonRef} title={`${intl.formatMessage({ id: 'DELETE_COLOR' })}`} className={`scene__image__wrapper__delete-pin ${isDeleting ? 'scene__image__wrapper__delete-pin--active' : ''} ${!showDeletePin ? 'scene__image__wrapper__delete-pin--display' : ''}`} onClick={this.pinRemove}><FontAwesomeIcon icon='trash' size='1x' /></button>}
       </div>
     )
   }
 }
 
-export default ColorsFromImage
+export default injectIntl(ColorsFromImage)

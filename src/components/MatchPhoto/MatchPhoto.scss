@@ -5,9 +5,10 @@
     justify-content: center;
     height: 100%;
     margin: 0 auto;
-    max-width: 1050px;
+    // max-width: 1050px;
     overflow: hidden;
     /*padding: 3em 0;*/
+    width: 100%;
     @include respond-above(sm) {
       padding: 0em;
     }
@@ -17,7 +18,7 @@
       line-height: 0px;
       &::before {
         display: block;
-        content: url('../../images/ghost-gradient.svg');
+        content: url('~src/images/ghost-gradient.svg');
         position: absolute;
         left: 0;
         right: 0;
@@ -46,6 +47,11 @@
     top: .875rem;
     width: auto;
     z-index: 1000;
+    &:focus {
+      outline-style: solid;
+      outline-color: #2cabe2;
+      outline-width: 2px;
+    }
     &:hover {
       background: #fff;
       border-color: #2cabe2;
@@ -65,6 +71,7 @@
   }
   &__button-left-text {
     display: none;
+    text-transform: uppercase;
     @include respond-above(sm) {
       display: inline-block;
     }
@@ -86,14 +93,6 @@
     text-align: center;
     margin: 0 auto;
     display: block;
-    /*min-height: 266px;
-    width:100%;
-    @include respond-above(xs) {
-        min-height:366px;
-    }
-    @include respond-above(md){
-        min-height:540px;
-    }*/
   }
   &__image {
     height: 0;
@@ -121,6 +120,7 @@
     text-align: center;
     top: 0;
     width: 19rem;
+    z-index: 1000;
     &__container {
       background: #f0f0f0;
       display: flex;
@@ -199,6 +199,11 @@
           border: 1px solid #2cabe2;
           color: #2cabe2;
           cursor: pointer;
+          &:focus {
+            outline-style: solid;
+            outline-color: #2cabe2;
+            outline-width: 2px;
+          }
         }
       }
     }
@@ -210,7 +215,7 @@
     align-items: center;
     background-color: rgba(0, 0, 0, 0.7);
     bottom: 0;
-    display: none;
+    display: flex;
     flex-direction: column;
     justify-content: center;
     left: 0;
@@ -219,9 +224,6 @@
     right: 0;
     top: 0;
     z-index: 10000;
-    &--active {
-      display: flex;
-    }
     @include respond-above(md){
       overflow: visible;
     }
@@ -258,6 +260,11 @@
     text-align: center;
     text-transform: uppercase;
     width: auto;
+    &:focus {
+      outline-style: solid;
+      outline-color: #2cabe2;
+      outline-width: 2px;
+    }
     &:hover {
       background: rgba(255, 255, 255, 0.8);
       border-color: white;

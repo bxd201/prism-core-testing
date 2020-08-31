@@ -9,6 +9,7 @@ import MaskObj from '../masks/MaskObj'
 import { generateBrandedEndpoint } from '../../shared/helpers/DataUtils'
 
 import { SCENES_ENDPOINT } from 'constants/endpoints'
+export const SET_USE_SMART_MASK = 'SET_USE_SMART_MASK'
 
 export const REQUEST_SCENES = 'REQUEST_SCENES'
 const requestScenes = () => {
@@ -80,6 +81,16 @@ export const paintSceneSurface = (sceneId: number, surfaceId: number, color: Col
       sceneId,
       surfaceId,
       color
+    }
+  }
+}
+
+export const UNPAINT_SCENE_SURFACES = 'UNPAINT_SCENE_SURFACES'
+export const unpaintSceneSurfaces = (sceneId: number) => {
+  return {
+    type: UNPAINT_SCENE_SURFACES,
+    payload: {
+      sceneId
     }
   }
 }
@@ -213,17 +224,53 @@ export const updateCurrentSceneInfo = (sceneId: number, surfaceId: number) => {
 }
 
 export const TOGGLE_EDIT_MODE = 'TOGGLE_EDIT_MODE'
-export const toggleEditMode = (currentEditMode: boolean) => {
+export const toggleEditMode = (currentEditMode: boolean) => ({ type: TOGGLE_EDIT_MODE, payload: !currentEditMode })
+
+export const EDIT_MASK = 'EDIT_MASK'
+export const editMask = (sceneWorkspace: SceneWorkspace) => ({ type: EDIT_MASK, payload: sceneWorkspace })
+
+export const TOGGLE_COLOR_DETAILS_PAGE = 'TOGGLE_COLOR_DETAILS_PAGE'
+export const toggleColorDetailsPage = () => ({ type: TOGGLE_COLOR_DETAILS_PAGE })
+
+export const SET_ACTIVE_SCENE_POLLUTED = 'SET_ACTIVE_SCENE_POLLUTED '
+export const setActiveScenePolluted = () => ({ type: SET_ACTIVE_SCENE_POLLUTED })
+
+export const UNSET_ACTIVE_SCENE_POLLUTED = 'UNSET_ACTIVE_SCENE_POLLUTED '
+export const unsetActiveScenePolluted = () => ({ type: UNSET_ACTIVE_SCENE_POLLUTED })
+
+export const SET_SELECTED_SCENE_VARIANT_CHANGED = 'SET_SELECTED_SCENE_VARIANT_CHANGED'
+export const setSelectedSceneVariantChanged = () => ({ type: SET_SELECTED_SCENE_VARIANT_CHANGED })
+
+export const UNSET_SELECTED_SCENE_VARIANT_CHANGED = 'UNSET_SELECTED_SCENE_VARIANT_CHANGED'
+export const unsetSelectedSceneVariantChanged = () => ({ type: UNSET_SELECTED_SCENE_VARIANT_CHANGED })
+
+export const SET_SELECTED_SCENE_PALETTE_LOADED = 'SET_SELECTED_SCENE_PALETTE_LOADED'
+export const setSelectedScenePaletteLoaded = () => ({ type: SET_SELECTED_SCENE_PALETTE_LOADED })
+
+export const UNSET_SELECTED_SCENE_PALETTE_LOADED = 'UNSET_SELECTED_SCENE_PALETTE_LOADED'
+export const unsetSelectedScenePaletteLoaded = () => ({ type: UNSET_SELECTED_SCENE_PALETTE_LOADED })
+
+export const SET_WARNING_MODAL_IMG_PREVIEW = 'SET_WARNING_MODAL_IMG_PREVIEW '
+export const setWarningModalImgPreview = (miniImg) => ({ type: SET_WARNING_MODAL_IMG_PREVIEW, payload: miniImg })
+
+export const SHOW_WARNING_MODAL = 'SHOW_WARNING_MODAL'
+export const showWarningModal = (openFn: () => void) => ({ type: SHOW_WARNING_MODAL, payload: openFn })
+
+export const HIDE_WARNING_MODAL = 'HIDE_WARNING_MODAL'
+export const hideWarningModal = () => ({ type: HIDE_WARNING_MODAL })
+
+// @todo use this action to init which flavor of upload should be used -RS
+export const setUseSmartMask = (shouldUse: boolean = false) => {
   return {
-    type: TOGGLE_EDIT_MODE,
-    payload: !currentEditMode
+    type: SET_USE_SMART_MASK,
+    payload: shouldUse
   }
 }
 
-export const EDIT_MASK = 'EDIT_MASK'
-export const editMask = (sceneWorkspace: SceneWorkspace) => {
+export const SET_SHOW_EDIT_CUSTOM_SCENE = 'SET_SHOW_EDIT_CUSTOM_SCENE'
+export const setShowEditCustomScene = (shouldShow: boolean) => {
   return {
-    type: EDIT_MASK,
-    payload: sceneWorkspace
+    type: SET_SHOW_EDIT_CUSTOM_SCENE,
+    payload: shouldShow
   }
 }

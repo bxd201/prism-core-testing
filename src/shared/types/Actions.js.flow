@@ -21,24 +21,30 @@ export type Section = {
 
 export type SectionCollection = Section[]
 
+export type ColorsStateItems = {
+  brights?: CategorizedColorIdGrid,
+  colorMap?: ColorMap,
+  colors?: CategorizedColorIdGrid,
+  colorStatuses?: ColorStatuses,
+  unorderedColors?: ColorIdList,
+  sectionLabels?: {
+    [?string]: string[]
+  }
+}
+
+export type ColorsStateStatus = {
+  loading: boolean,
+  error: boolean,
+  activeRequest: boolean
+}
+
 export type ColorsState = {
   emitColor?: {
     color: Color,
     timestamp: number
   },
-  status: {
-    loading: boolean,
-    error: boolean,
-    activeRequest: boolean
-  },
-  items: {
-    brights?: CategorizedColorIdGrid,
-    colorMap?: ColorMap,
-    colors?: CategorizedColorIdGrid,
-    colorStatuses?: ColorStatuses,
-    unorderedColors?: ColorIdList,
-    sectionLabels?: { [?string]: string[] }
-  },
+  status: ColorsStateStatus,
+  items: ColorsStateItems,
   structure?: FamilyStructure,
   layouts?: Layouts,
   layout?: Layout,

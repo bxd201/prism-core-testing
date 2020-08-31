@@ -3,9 +3,12 @@
   display: flex;
   overflow: hidden;
   background-color: getVar( "colors.white" );
-  border: 1px solid getVar( "colors.grey" );
   padding: $livePalette__chip-side-margin;
-
+  flex-direction: column;
+  @include respond-above(sm) {
+    border: 1px solid getVar( "colors.grey" );
+    flex-direction: row;
+  }
   &__header {
     display: flex;
     flex-direction: column;
@@ -16,19 +19,26 @@
     }
     &__name {
       display: none;
-      @include respond-above(md) {
+      text-align: center;
+      @include respond-above(sm) {
         display: block;
+        margin: 0.2em 0.5em;
       }
-      margin: 1em;
+      @include respond-above(md) {
+        margin: 0.5em;
+      }
     }
     &__compare-button{
+      &--hide{
+        display: none;
+      }
       padding: 0.5em 1em;
       margin-right: 5px;
       border-top: 1px solid #ebebeb;
       font-weight: 600;
       font-size: 16px;
       outline:none;
-      border-top: none;
+      border-top: 1px solid #ebebeb;
       @include respond-above(md) {
         border-top: 1px solid #ebebeb;
       }
@@ -37,6 +47,37 @@
         color: #fff;
         cursor: pointer;
       }
+    }
+  }
+
+  &__active-color {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    z-index: 100;
+    margin-bottom: 4px;
+    @include respond-above(sm) {
+      display: none;
+    }
+    &__details {
+      display: block;
+      font-size: .8rem;
+      line-height: 1.2em;
+      padding: 0.5em;
+      &--dark {
+        color: getVar( "colors.white" );
+      }
+    }
+    &__info-button {
+      padding: 0.5em;
+      display: flex;
+      align-items: center;
+    }
+    &__color-number {
+      display: block;
+    }
+    &__color-name {
+      display: block;
     }
   }
 
@@ -51,16 +92,30 @@
     background-color: #ebebeb;
     position: relative;
     cursor: pointer;
-    transition: width .6s ease-out, opacity .2s ease-out;
+    transition: width .4s ease-out, opacity .1s ease-out;
     height: 0;
-    overflow: hidden;
-
+    overflow: inherit;
+    outline: none;
+    &:focus {
+      outline-style: solid;
+      outline-color: #2cabe2;
+      outline-width: 2px;
+    }
+    @include respond-above(sm) {
+      overflow: hidden;
+    }
     &--empty,
     &--add {
       display: flex;
       flex-direction: row;
       align-items: center;
       justify-content: center;
+      &:focus {
+        outline-style: solid;
+        outline-color: #2cabe2;
+        outline-width: 2px;
+        z-index: 100;
+      }
     }
 
     &--empty {
@@ -75,9 +130,9 @@
       width: 30%;
 
       .prism-live-palette__slot__copy {
-        width: 75%;
+        width: 65%;
         top: 50%;
-        left: 5em;
+        left: 38%;
         bottom: auto;
         text-align: left;
         transform: translateY(-50%);
@@ -89,11 +144,55 @@
     }
 
     &--active {
-      width: 25%; // TODO: calculate actual width
       opacity: 1;
+      position: relative;
+      &:before {
+        background: inherit;
+        content: '';
+        display: block;
+        position: absolute;
+        width: 100%;
+        height: 6px;
+        top: -4px;
+      }
+      @include respond-above(sm) {
+        width: 30%; // TODO: calculate actual width
+        &:before {
+          display: none;
+        }
+      }
 
       .prism-live-palette__color-details {
-        display: block;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        position: relative;
+        align-items: center;
+        @include respond-above(sm) {
+          position: static;
+          justify-content: space-between;
+        }
+        .prism-live-palette__description {
+          width: auto;
+        }
+
+        .prism-live-palette__button-group {
+          position: relative;
+          display: flex;
+          width: auto;
+          justify-content: space-between;
+          padding: 0px;
+          opacity: 0;
+          animation: fadeIn 1s forwards;
+          margin-top: 22%;
+          @include respond-above(sm) {
+            padding: 5px;
+            position: absolute;
+            margin-top: 0;
+            right: 0;
+            top: 0;
+          }
+        }
       }
     }
 
@@ -104,10 +203,15 @@
 
     &__copy {
       position: absolute;
-      display: block;
-      bottom: 0.75em;
-      font-size: 0.7rem;
+      display: none;
+      bottom: 2px;
+      font-size: 7px;
       text-decoration: none;
+      text-align: center;
+      width: 100%;
+      @include respond-above(sm) {
+        display: block;
+      }
     }
 
     &__button{
@@ -116,6 +220,27 @@
       left:50%;
       transform: translate(-50%, -50%);
       outline:none;
+    }
+
+    &__drag-icon-wrapper{
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      right: 5px;
+      bottom: 5px;
+      overflow:hidden;
+      &--show{
+        display: none;
+        @include respond-above(sm) {
+          display: block;
+        }
+      }
+      &--hide{
+        display: none;
+      }
+      &:hover{
+        cursor: grab;
+      }
     }
   }
 
@@ -126,21 +251,45 @@
     transform: translateY(-50%);
   }
 
+  &__info-button {
+    display: none;
+    @include respond-above(sm) {
+      display: flex;
+    }
+  }
+
   &__trash {
-    position: absolute;
-    top: 0.5em;
-    right: 0.5em;
+    position: relative;
+    display: flex;
+    width: 100%;
     color: inherit;
     background: inherit;
     border: none;
     box-shadow: none;
+    font-size: 20px;
+    @include respond-above(sm) {
+      display: flex;
+      flex-direction: column;
+      width: 16px;
+      height: 20px;
+      margin-left: 4px;
+    }
+    &:focus {
+      outline-style: solid;
+      outline-color: #2cabe2;
+      outline-width: 2px;
+      z-index: 100;
+    }
   }
 
   &__color-details {
     height: auto;
     position: static;
-    padding: 0.5em;
+    padding: 0em;
     display: none;
+    @include respond-above(sm) {
+      padding: 0.5em;
+    }
 
     &--dark {
       color: getVar( "colors.white" );
@@ -149,24 +298,37 @@
 
   &__color-number {
     font-size: 0.8rem;
-    display: block;
+    display: none;
     color: inherit;
+    @include respond-above(sm) {
+      display: block;
+    }
   }
 
   &__color-name {
     font-size: 0.8rem;
     font-weight: bold;
-    display: block;
+    display: none;
     color: inherit;
+    @include respond-above(sm) {
+      display: block;
+      width: 4em;
+    }
+    @include respond-above(md) {
+      width: auto;
+    }
   }
 
   &__color-description {
     clip: rect(1px, 1px, 1px, 1px); // For screen readers only
     font-size: 0.7em;
-    display: block;
+    display: none;
     position: absolute;
     bottom: 0.5em;
     color: inherit;
+    @include respond-above(sm) {
+      display: block;
+    }
   }
 }
 
@@ -183,7 +345,7 @@
     position: absolute;
     right: 0;
     top: 2px;
-    z-index: 1000;
+    z-index: 100000;
     &--active {
       display: flex;
     }
@@ -226,6 +388,11 @@
     text-align: center;
     text-transform: uppercase;
     min-width: 140px;
+    &:focus {
+      outline-style: solid;
+      outline-color: #2cabe2;
+      outline-width: 2px;
+    }
     &:hover {
       border-color: getVar("colors.summerSkyBlue");
       color: getVar("colors.summerSkyBlue");
