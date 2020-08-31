@@ -3,7 +3,6 @@ import React, { useState, useEffect, useCallback, useMemo, useContext } from 're
 import { useSelector } from 'react-redux'
 import { useRouteMatch, NavLink } from 'react-router-dom'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { AutoSizer } from 'react-virtualized'
 import { Menu, MenuItem, Wrapper, Button } from 'react-aria-menubutton'
 import at from 'lodash/at'
 import difference from 'lodash/difference'
@@ -86,62 +85,34 @@ export default () => {
   ), [section, family, families, handleColorFamilySelection, isFamilyView])
 
   return (
-    <AutoSizer disableHeight style={{ width: '100%' }}>
-      {({ width }) => {
-        if (width > 768) {
-          return (
-            <div className={MODE_CLASS_NAMES.BASE}>
-              <div className={MODE_CLASS_NAMES.COL}>
-                {colorFamiliesAndSearch}
-                <div className={`${MODE_CLASS_NAMES.CELL} ${MODE_CLASS_NAMES.RIGHT}`}>
-                  <ButtonBar.Bar>
-                    {(isFamilyView ? families : visibleSections).map(name =>
-                      <ButtonBar.Button
-                        key={name}
-                        to={isFamilyView ? generateColorWallPageUrl(section, name) : generateColorWallPageUrl(name)}
-                      >
-                        <span className={MODE_CLASS_NAMES.DESC}>{name}</span>
-                      </ButtonBar.Button>
-                    )}
-                  </ButtonBar.Bar>
-                </div>
-              </div>
-            </div>
-          )
-        } else {
-          return (
-            <div className={MODE_CLASS_NAMES.BASE}>
-              <div className={MODE_CLASS_NAMES.COL}>
-                {colorFamiliesAndSearch}
-                <Wrapper
-                  className={`${MODE_CLASS_NAMES.CELL} ${MODE_CLASS_NAMES.RIGHT} ${menuBarPrefix} ${menuBarPrefix}--${menuOpen ? 'open' : 'closed'}`}
-                  onMenuToggle={handleMenuToggle}>
-                  <Button className={`${menuBarPrefix}__button`} tag='div'>
-                    <span className={`${menuBarPrefix}__button-copy`}>{currentFamily}</span>
-                    <FontAwesomeIcon className='close-icon-svg' icon={['fa', 'angle-down']} pull='right' />
-                  </Button>
-                  <Menu className={`${menuBarPrefix}__menu`}>
-                    {(isFamilyView || family ? families : visibleSections).map(name =>
-                      <MenuItem
-                        className={`${menuBarPrefix}__menu-item`}
-                        key={name}
-                        text={name}
-                        value={name}>
-                        <NavLink
-                          className={`${menuBarPrefix}__menu-link`}
-                          to={isFamilyView ? generateColorWallPageUrl(section, name) : generateColorWallPageUrl(name)}
-                        >
-                          <span className={MODE_CLASS_NAMES.DESC}>{name}</span>
-                        </NavLink>
-                      </MenuItem>
-                    )}
-                  </Menu>
-                </Wrapper>
-              </div>
-            </div>
-          )
-        }
-      }}
-    </AutoSizer>
+    <div className={MODE_CLASS_NAMES.BASE}>
+      <div className={MODE_CLASS_NAMES.COL}>
+        {colorFamiliesAndSearch}
+        <Wrapper
+          className={`${MODE_CLASS_NAMES.CELL} ${MODE_CLASS_NAMES.RIGHT} ${menuBarPrefix} ${menuBarPrefix}--${menuOpen ? 'open' : 'closed'}`}
+          onMenuToggle={handleMenuToggle}>
+          <Button className={`${menuBarPrefix}__button`} tag='div'>
+            <span className={`${menuBarPrefix}__button-copy`}>{currentFamily}</span>
+            <FontAwesomeIcon className='close-icon-svg' icon={['fa', 'angle-down']} pull='right' />
+          </Button>
+          <Menu className={`${menuBarPrefix}__menu`}>
+            {(isFamilyView || family ? families : visibleSections).map(name =>
+              <MenuItem
+                className={`${menuBarPrefix}__menu-item`}
+                key={name}
+                text={name}
+                value={name}>
+                <NavLink
+                  className={`${menuBarPrefix}__menu-link`}
+                  to={isFamilyView ? generateColorWallPageUrl(section, name) : generateColorWallPageUrl(name)}
+                >
+                  <span className={MODE_CLASS_NAMES.DESC}>{name}</span>
+                </NavLink>
+              </MenuItem>
+            )}
+          </Menu>
+        </Wrapper>
+      </div>
+    </div>
   )
 }
