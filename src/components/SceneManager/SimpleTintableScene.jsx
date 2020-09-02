@@ -29,7 +29,7 @@ type SimpleTintableSceneProps = {
   activeColorId?: string
 }
 
-const reorderColors = (colors: Color[], activeColorId?: string) => {
+export const reorderColors = (colors: Color[], activeColorId?: string) => {
   return colors.map((color, i) => {
     if (i === 0 && activeColorId) {
       return colors.find(c => c.id === activeColorId)

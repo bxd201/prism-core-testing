@@ -52,7 +52,7 @@ export const StaticTintScene = (props: PropsType) => {
         })
         setSurfacePromise(resultSurfaces)
       }).catch(error => {
-        console.log('Error loadingpromise scene surfaces', error)
+        console.log('Error loading promise for scene surfaces', error)
         setSurfacePromise(surfaces)
       })
     }
@@ -77,6 +77,7 @@ export const StaticTintScene = (props: PropsType) => {
   })
 
   const sceneId = 1/* some value that will be unique for every scene */
+
   return (
     surfacePromise && <ImagePreloader preload={getThumbnailAssetArrayByScene(defaultSceneVariant, surfacePromise)}>
       {({ loading, error }) => (
