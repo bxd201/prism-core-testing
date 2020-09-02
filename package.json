@@ -103,6 +103,7 @@
     "react-device-detect": "^1.11.14",
     "react-dnd-cjs": "9.5.1",
     "react-dnd-html5-backend-cjs": "9.5.1",
+    "react-dropzone": "^11.0.3",
     "react-ga": "2.7.0",
     "react-inlinesvg": "0.8.4",
     "react-intl": "3.10.0",

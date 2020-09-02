@@ -1,0 +1,52 @@
+.JSFResultsPage {
+  &__cols {
+    $jsf-res-col-spacing: 1rem;
+
+    display: flex;
+    flex-direction: column;
+    margin: 0 -($jsf-res-col-spacing / 2);
+
+    @include respond-above(sm) {
+      flex-direction: row;
+    }
+
+    &__col {
+      padding-left: $jsf-res-col-spacing / 2;
+      padding-right: $jsf-res-col-spacing / 2;
+      margin-bottom: $jsf-res-col-spacing;
+
+      &--media {
+        @include respond-above(sm) {
+          width: 25%;
+        }
+      }
+
+      &--content {
+        flex: 1;
+      }
+    }
+  }
+
+  &__summary {
+    &__media {
+      position: relative;
+
+      &__image {
+        max-width: 100%;
+        display: block;
+      }
+
+      &__caption {
+        background: rgba(black, .7);
+        bottom: 0;
+        color: white;
+        font-style: italic;
+        left: 0;
+        padding: .5em .25em;
+        position: absolute;
+        text-align: center;
+        width: 100%;
+      }
+    }
+  }
+}

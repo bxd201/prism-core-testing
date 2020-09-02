@@ -1,0 +1,13 @@
+.JSFProcessingPage {
+  &__demo-btn {
+    padding: .5em;
+    margin: .1em;
+    background: rgba(lightblue, .2);
+    cursor: pointer;
+
+    &[disabled] {
+      opacity: .4;
+      cursor: default;
+    }
+  }
+}
