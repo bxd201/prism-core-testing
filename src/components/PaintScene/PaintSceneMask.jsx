@@ -2,7 +2,7 @@
 import React, { useRef, useState, useImperativeHandle, forwardRef, useEffect, useCallback } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useHistory } from 'react-router-dom'
-import { setLayersForPaintScene, setInitialWorkspace, WORKSPACE_TYPES } from '../../store/actions/paintScene'
+import { setLayersForPaintScene, createPaintSceneWorkspace, setInitialWorkspace, WORKSPACE_TYPES } from '../../store/actions/paintScene'
 import './PaintSceneMask.scss'
 import PaintScene from './PaintScene'
 import { FormattedMessage } from 'react-intl'
@@ -11,69 +11,80 @@ export const PaintSceneMaskingWrapper = () => {
   const childRef = useRef()
   const dispatch = useDispatch()
   const paintSceneWorkspace = useSelector(store => store.paintSceneWorkspace)
+  const [paintSceneWorkspaceState, setPaintSceneWorkspaceState] = useState(paintSceneWorkspace)
   const sendImageData = useCallback((data) => {
     childRef.current.sendImageData(data)
   }, [childRef.current])
 
+  const reloadPaintScene = (workspace) => {
+    setPaintSceneWorkspaceState(workspace)
+  }
+
   useEffect(() => {
-    paintSceneWorkspace && dispatch(setInitialWorkspace(paintSceneWorkspace))
+    paintSceneWorkspaceState && dispatch(setInitialWorkspace(paintSceneWorkspaceState))
   }, [])
 
-  const selectedMaskIndex = paintSceneWorkspace ? paintSceneWorkspace.selectIndex : null
-  const imageDimensions = paintSceneWorkspace ? { imageWidth: paintSceneWorkspace.width, imageHeight: paintSceneWorkspace.height } : { imageWidth: null, imageHeight: null }
+  const selectedMaskIndex = paintSceneWorkspaceState ? paintSceneWorkspaceState.selectIndex : null
+  const imageDimensions = paintSceneWorkspaceState ? { imageWidth: paintSceneWorkspaceState.width, imageHeight: paintSceneWorkspaceState.height } : { imageWidth: null, imageHeight: null }
 
   return (
     <>
       <PaintScene
         checkIsPaintSceneUpdate={false}
-        workspace={paintSceneWorkspace}
+        workspace={paintSceneWorkspaceState}
         referenceDimensions={imageDimensions}
         selectedMaskIndex={selectedMaskIndex}
         sendImageData={sendImageData}
         imageUrl={''}
       />
-      <PaintSceneMasking ref={childRef} />
+      <PaintSceneMasking ref={childRef} reloadPaintScene={(workspace) => reloadPaintScene(workspace)} />
     </>
   )
 }
 
-const PaintSceneMasking = forwardRef((props, ref) => {
+type paintSceneMaskingProps = {
+     reloadPaintScene: Function,
+  }
+
+const PaintSceneMasking = forwardRef((props: paintSceneMaskingProps, ref) => {
   const canvasRef = useRef()
   const mergeCanvasRef = useRef()
   const imageRef = useRef()
   let mergeCtx = useRef()
   const paintSceneWorkspace = useSelector(store => store.paintSceneWorkspace)
-  const dispatch = useDispatch()
   const [thumbnailListInfo, setThumbnailList] = useState([])
-
+  const [paintSceneWorkspaceState, setPaintSceneWorkspaceState] = useState(paintSceneWorkspace)
   useImperativeHandle(ref, () => ({
     sendImageData (data) {
-      const { bgImageUrl, width, height, palette, workspaceType, selectIndex } = paintSceneWorkspace
-      const currLayers = paintSceneWorkspace.layers.map((layer, idx) => {
+      const { bgImageUrl, width, height, palette, workspaceType, selectIndex } = paintSceneWorkspaceState
+      const currLayers = paintSceneWorkspaceState.layers.map((layer, idx) => {
         if (data && idx !== selectIndex) {
           return layer
         }
         return data
       })
-      dispatch(setLayersForPaintScene(bgImageUrl, currLayers, palette, width, height, workspaceType, selectIndex))
+      const workspace = createPaintSceneWorkspace(bgImageUrl, currLayers, palette, width, height, workspaceType, selectIndex)
+      setPaintSceneWorkspaceState(workspace)
     }
   }))
 
   useEffect(() => {
-    paintSceneWorkspace && setThumbnailList(mergeLayers())
-  }, [paintSceneWorkspace])
+    paintSceneWorkspaceState && setThumbnailList(mergeLayers())
+  }, [paintSceneWorkspaceState])
 
   const swichImage = (index) => {
-    const { bgImageUrl, layers, width, height, palette, workspaceType } = paintSceneWorkspace
-    dispatch(setLayersForPaintScene(bgImageUrl, layers, palette, width, height, workspaceType, index))
+    const { bgImageUrl, layers, width, height, palette, workspaceType } = paintSceneWorkspaceState
+    const workspace = createPaintSceneWorkspace(bgImageUrl, layers, palette, width, height, workspaceType, index)
+    props.reloadPaintScene(workspace)
+    setPaintSceneWorkspaceState(workspace)
   }
 
   const mergeLayers = () => {
-    if (paintSceneWorkspace) {
-      const originWidth = paintSceneWorkspace.width
-      const originHeight = paintSceneWorkspace.height
+    if (paintSceneWorkspaceState) {
+      const originWidth = paintSceneWorkspaceState.width
+      const originHeight = paintSceneWorkspaceState.height
       mergeCtx.current = mergeCanvasRef.current.getContext('2d')
-      const thumbnailList = paintSceneWorkspace.layers.map((mask, idx) => {
+      const thumbnailList = paintSceneWorkspaceState.layers.map((mask, idx) => {
         const ctx = canvasRef.current.getContext('2d')
         for (let index = 0; index < mask.data.length; index += 4) {
           if (mask.data[index] !== 0) {
@@ -98,13 +109,13 @@ const PaintSceneMasking = forwardRef((props, ref) => {
   return (
     <>
       {
-        paintSceneWorkspace && paintSceneWorkspace.layers.map((miniMask, i) => {
+        paintSceneWorkspaceState && paintSceneWorkspaceState.layers.map((miniMask, i) => {
           return (
             <React.Fragment key={`${i}-work-area`}>
               <img
                 className={'merge-canvas-image-comp'}
                 style={{ width: miniMask.width, height: miniMask.height }}
-                src={paintSceneWorkspace.bgImageUrl}
+                src={paintSceneWorkspaceState.bgImageUrl}
                 onLoad={(e) => handleImageLoaded(e)}
                 ref={imageRef}
                 alt={'IMAGE_INVISIBLE'}
@@ -123,17 +134,18 @@ const PaintSceneMasking = forwardRef((props, ref) => {
           )
         })
       }
-      <ThumbnailsList swichImage={swichImage} thumbnailList={thumbnailListInfo} />
+      <ThumbnailsList swichImage={swichImage} thumbnailList={thumbnailListInfo} workspace={paintSceneWorkspaceState} />
     </>
   )
 })
 
 type thumbnailsListProps = {
   thumbnailList: [],
-  swichImage: Function
+  swichImage: Function,
+  workspace: Obejct
   }
 
-const ThumbnailsList = ({ thumbnailList, swichImage }: thumbnailsListProps) => {
+const ThumbnailsList = ({ thumbnailList, swichImage, workspace }: thumbnailsListProps) => {
   const dispatch = useDispatch()
   const history = useHistory()
   const paintSceneWorkspace = useSelector(store => store.paintSceneWorkspace)
@@ -156,11 +168,23 @@ const ThumbnailsList = ({ thumbnailList, swichImage }: thumbnailsListProps) => {
     return surfaces
   }
 
-  const asyncSaveWorkspace = (dispatch, workspace) => {
+  const greyScaleBackground = (imageDataList) => {
+    return imageDataList.map((imageData) => {
+      for (let i = 0; i < imageData.data.length; i += 4) {
+        let pixel = (imageData.data[i] !== 0 || imageData.data[i + 1] !== 0 || imageData.data[i + 2] !== 0) ? 255 : 0
+        imageData.data[i] = pixel
+        imageData.data[i + 1] = pixel
+        imageData.data[i + 2] = pixel
+      }
+      return imageData
+    })
+  }
+
+  const asyncSaveWorkspace = (dispatch, workspace, isCancel = false) => {
     return (() => {
       return new Promise((resolve, reject) => {
         const { bgImageUrl, width, height, layers, palette, sceneName } = workspace
-        const surfaces = imageDataToUrl(layers)
+        const surfaces = isCancel ? imageDataToUrl(layers) : imageDataToUrl(greyScaleBackground(layers))
         dispatch(setLayersForPaintScene(bgImageUrl, layers, palette, width, height, WORKSPACE_TYPES.smartMask, 0, sceneName, surfaces))
         resolve()
       })
@@ -169,12 +193,12 @@ const ThumbnailsList = ({ thumbnailList, swichImage }: thumbnailsListProps) => {
 
   const done = () => {
     // redirect to next page
-    asyncSaveWorkspace(dispatch, paintSceneWorkspace).then(() => {
+    asyncSaveWorkspace(dispatch, workspace).then(() => {
       history.push('/active')
     })
   }
   const cancel = () => {
-    asyncSaveWorkspace(dispatch, paintSceneWorkspace.originWorkspace).then(() => {
+    asyncSaveWorkspace(dispatch, paintSceneWorkspace.originWorkspace, true).then(() => {
       history.push('/active')
     })
   }
@@ -186,7 +210,7 @@ const ThumbnailsList = ({ thumbnailList, swichImage }: thumbnailsListProps) => {
           return (
             <div role='presentation' className={'paint-scene__mini-mask-image'} key={selectedIndex} onClick={() => swichImage(selectedIndex)}>
               {thumbnailList.length > 0 && <img
-                style={paintSceneWorkspace.selectIndex === selectedIndex ? { border: '2px solid red' } : {}}
+                style={workspace.selectIndex === selectedIndex ? { border: '2px solid red' } : {}}
                 src={image}
                 alt={'IMAGE_INVISIBLE'}
               />}
