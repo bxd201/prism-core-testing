@@ -227,7 +227,7 @@
       pointer-events: none;
       position: absolute;
       top: 0;
-      width: 100%;
+      width: inherit;
     }
 
     &__hit-area {
@@ -267,6 +267,10 @@
 
   &__transition {
     &__colors {
+      position: absolute;
+      top: 0;
+      width: inherit;
+      height: 100%;
       &__color {
         $tintFadeTime: getVar('scenes.tintTransitionTime');
         $tintFadeInDuration: $tintFadeTime / 5 * 3;

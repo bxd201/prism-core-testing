@@ -216,7 +216,7 @@ const CustomSceneTinterContainer = (props: CustomSceneTinterContainerProps) => {
   return (
     <>
       <ImageQueue dataUrls={surfaces} addToQueue={handleSurfaceLoaded} />
-      <div className={customSceneTinterClass} style={{ width, height }} >
+      <div className={customSceneTinterClass}>
         {isSavingMask ? <div className={customSceneTinterSpinnerClass}><CircleLoader /></div> : null}
         {/* this is the loader that appears when saving a mask */}
         {/* Save scene confirm modal */}

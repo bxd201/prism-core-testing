@@ -41,7 +41,7 @@ type Props = {
   surfaces: Surface[],
   type: string,
   updateCurrentSceneInfo?: Function,
-  width: number,
+  width: number
 }
 
 type State = {
@@ -198,6 +198,7 @@ class TintableScene extends PureComponent<Props, State> {
     } else {
       // run our background image through here to eliminate relative references
       const _background = ensureFullyQualifiedAssetUrl(background)
+
       content = (
         <Fragment>
           {!loading && (
