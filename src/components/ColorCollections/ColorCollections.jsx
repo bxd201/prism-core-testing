@@ -17,7 +17,6 @@ export function ColorCollections () {
   const { formatMessage } = useIntl()
   useEffect(() => { loadCollectionSummaries(dispatch) }, [])
   useEffect(() => { loadColors(brandId)(dispatch) }, [])
-
   const { summaries, categories } = useSelector(state => state.collectionSummaries, shallowEqual)
   const colorMap = useSelector(state => state.colors.items.colorMap, shallowEqual)
   const { brandId } = useContext(ConfigurationContext)

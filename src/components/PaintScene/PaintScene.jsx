@@ -42,6 +42,7 @@ import { setActiveScenePolluted, unsetActiveScenePolluted, setWarningModalImgPre
 import { group, ungroup, deleteGroup, selectArea, bucketPaint, applyZoom,
   createOrDeletePolygon, createPolygonPin, eraseOrPaintMouseUp, eraseOrPaintMouseDown } from './toolFunction'
 import { LiveMessage } from 'react-aria-live'
+import { maskingPink } from './sampleData.js'
 
 const baseClass = 'paint__scene__wrapper'
 const canvasClass = `${baseClass}__canvas`
@@ -67,6 +68,7 @@ type ComponentProps = {
   lpActiveColor: Object,
   referenceDimensions: Object,
   width: number,
+  selectedMaskIndex: number,
   intl: any,
   saveMasks: Function,
   savingMasks: boolean,
@@ -85,7 +87,8 @@ type ComponentProps = {
   hideSavedConfirmModal: Function,
   setActiveScenePolluted: () => void,
   unsetActiveScenePolluted: () => void,
-  setWarningModalImgPreview: ({}) => void
+  setWarningModalImgPreview: ({}) => void,
+  sendImageData?: Function
 }
 
 type ComponentState = {
@@ -158,7 +161,6 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
   constructor (props: ComponentProps) {
     super(props)
-
     const [initialImageWidth, initialImageHeight] = getInitialDims(props.workspace, props.referenceDimensions)
     const isPortrait = props.workspace ? props.workspace.height > props.workspace.width : props.referenceDimensions.isPortrait
 
@@ -329,11 +331,25 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
         checkIsPaintSceneUpdate: props.checkIsPaintSceneUpdate
       }
     }
+
     const checkWorkSpaceIfUpdate = props.workspace ? !objectsEqual(props.workspace, state.prevWorkspace) : false
-    if (checkWorkSpaceIfUpdate && props.workspace && props.workspace.layers === null) {
-      return {
-        imagePathList: [],
-        prevWorkspace: props.workspace
+    if (checkWorkSpaceIfUpdate && props.workspace) {
+      if (props.workspace.layers === null) {
+        return {
+          imagePathList: [],
+          prevWorkspace: props.workspace
+        }
+      }
+      if ((props.workspace.workspaceType === WORKSPACE_TYPES.smartMask) && (props.workspace.selectIndex !== state.prevWorkspace.selectIndex)) {
+        return {
+          canvasHasBeenInitialized: true,
+          prevWorkspace: props.workspace
+        }
+      }
+      if (props.workspace.workspaceType === WORKSPACE_TYPES.savedScene || props.workspace.workspaceType === WORKSPACE_TYPES.generic) {
+        return {
+          canvasHasBeenInitialized: true
+        }
       }
     }
     return null
@@ -342,6 +358,8 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   componentDidUpdate (prevProps: Object, prevState: Object) {
     const checkImageListIfUpdate = !compareArraysOfObjects(this.state.imagePathList, prevState.imagePathList)
     if (checkImageListIfUpdate) {
+      const imageData = this.CFICanvas2.current.getContext('2d').getImageData(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
+      this.props.sendImageData && this.props.sendImageData(imageData)
       this.props.setActiveScenePolluted()
       this.props.setWarningModalImgPreview({ dataUrls: this.getLayers(), width: this.backgroundImageWidth, height: this.backgroundImageHeight })
     }
@@ -506,24 +524,15 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   /*:: importLayers: (payload: Object) => void */
   importLayers (payload: Object) {
     let { palette } = this.props.workspace
-    const { lpColors } = this.props
+    const { lpActiveColor } = this.props
+    const isSmartMask = this.props.workspace.workspaceType === WORKSPACE_TYPES.smartMask
     // @todo Currently this  replaces the pseudo-color(s) with colors from the palette, this will likely change -RS
-    if (this.props.workspace.workspaceType === WORKSPACE_TYPES.smartMask && lpColors && lpColors.length) {
-      palette = palette.map((pColor, i) => {
-        if (parseInt(pColor.id) < 0) {
-          return {
-            ...lpColors[i % lpColors.length]
-          }
-        }
-
-        return pColor
-      })
-    }
     const colorLayers = payload.layersAsData.map(item => createImageDataAndAlphaPixelMapFromImageData(item))
     const imagePaths = colorLayers
       .map((item, i) => {
-        return createImagePathItem(item.pixelMap, item.alphaPixelMap, palette[i], 'paint', 0, true, true)
+        return createImagePathItem(item.pixelMap, item.alphaPixelMap, isSmartMask ? lpActiveColor : palette[i], 'paint', 0, true, true)
       })
+    this.clearCanvas()
     repaintImageByPath(imagePaths, this.CFICanvas2, this.canvasOffsetWidth, this.canvasOffsetHeight)
     this.setState({ canvasImageUrls: this.getLayers(), imagePathList: imagePaths, loadingMasks: false, canvasHasBeenInitialized: false })
   }
@@ -1096,17 +1105,19 @@ canvasHeight
   }
 
   render () {
-    const { lpActiveColor, intl, showSaveSceneModal, lpColors, workspace } = this.props
+    const { lpActiveColor, intl, showSaveSceneModal, lpColors, workspace, selectedMaskIndex } = this.props
     const livePaletteColorCount = (lpColors && lpColors.length) || 0
     const bgImageUrl = workspace ? workspace.bgImageUrl : this.props.imageUrl
     const layers = workspace && workspace.workspaceType !== WORKSPACE_TYPES.smartMask ? workspace.layers : null
     const workspaceImageData = workspace && workspace.workspaceType === WORKSPACE_TYPES.smartMask ? workspace.layers : null
-    const { activeTool, position, paintBrushShape, paintBrushWidth, eraseBrushShape, eraseBrushWidth, undoIsEnabled, redoIsEnabled, showOriginalCanvas, isAddGroup, isDeleteGroup, isUngroup, paintCursor, isInfoToolActive, loading, showAnimatePin, showNonAnimatePin, pinX, pinY, currPinX, currPinY, canvasWidth, canvasHeight, canvasHasBeenInitialized, showSelectPaletteModal } = this.state
+    const workspaceType = workspace ? workspace.workspaceType : WORKSPACE_TYPES.generic
+    const { activeTool, position, paintBrushShape, paintBrushWidth, eraseBrushShape, eraseBrushWidth, undoIsEnabled, redoIsEnabled, showOriginalCanvas, isAddGroup, isDeleteGroup, isUngroup, paintCursor, isInfoToolActive, loading, showAnimatePin, showNonAnimatePin, pinX, pinY, currPinX, currPinY, canvasWidth, canvasHeight, showSelectPaletteModal, canvasHasBeenInitialized } = this.state
     const lpActiveColorRGB = (lpActiveColor) ? `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})` : ``
     const backgroundColorBrush = (activeTool === toolNames.ERASE) ? `rgba(255, 255, 255, 0.7)` : lpActiveColorRGB
     const { paintBrushActiveClass, paintBrushCircleActiveClass } = getPaintBrushActiveClass(this.state)
     const { eraseBrushActiveClass, eraseBrushCircleActiveClass } = getEraseBrushActiveClass(this.state)
     const { selectPaletteActions, selectPaletteTitle, selectPaletteDescription } = this.getSelectPaletteModalConfig()
+    const imageDataList = workspaceType === WORKSPACE_TYPES.smartMask ? [workspaceImageData[selectedMaskIndex]] : layers
     return (
       <>
         {loading ? <div className={`${animationLoader} ${animationLoader}--load`} /> : null}
@@ -1159,15 +1170,16 @@ canvasHeight
           {/* Loads background image */}
           <img className={`${imageClass}`} ref={this.CFIImage} onLoad={this.initCanvas} onError={this.handleImageErrored} src={bgImageUrl} alt={intl.formatMessage({ id: 'IMAGE_INVISIBLE' })} />
           {/* MergeColors component is used to load and imported surfaces. Currently loads smartmasks and saved scenes */}
-          {(layers || workspaceImageData) && canvasHasBeenInitialized ? <MergeColors
+          {(layers || workspaceImageData) && canvasHasBeenInitialized && <MergeColors
             imageUrlList={layers}
-            imageDataList={workspaceImageData}
+            imageDataList={imageDataList}
             colors={getColorsForMergeColors(workspace)}
+            workSpaceType={workspaceType}
             handleImagesMerged={this.importLayers}
             width={canvasWidth}
             height={canvasHeight}
             ignoreColorOffset
-            preserveLayersAsData /> : null}
+            preserveLayersAsData />}
           <PaintToolBar
             activeTool={activeTool}
             setActiveTool={this.setActiveTool}
@@ -1217,12 +1229,12 @@ canvasHeight
 }
 
 const mapStateToProps = (state: Object, props: Object) => {
-  const { lp, savingMasks, selectedSavedSceneId, scenesAndRegions, showSaveSceneModal, saveSceneName } = state
+  const { lp, savingMasks, selectedSavedSceneId, scenesAndRegions, showSaveSceneModal, saveSceneName, paintSceneWorkspace } = state
   const selectedScene = scenesAndRegions.find(item => item.id === selectedSavedSceneId)
-
+  const activeColor = paintSceneWorkspace && paintSceneWorkspace.workspaceType === WORKSPACE_TYPES.smartMask ? maskingPink : lp.activeColor
   return {
     lpColors: lp.colors,
-    lpActiveColor: lp.activeColor,
+    lpActiveColor: activeColor,
     savingMasks,
     selectedScene,
     showSaveSceneModal,

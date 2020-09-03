@@ -27,6 +27,7 @@ import { PreLoadingSVG } from './PreLoadingSVG'
 import LandingPage from '../../LandingPage/LandingPage'
 import './ColorVisualizer.scss'
 import { shouldShowLoadingAnimation } from '../../../shared/utils/devUtils'
+import PaintSceneMaskingWrapper from 'src/components/PaintScene/PaintSceneMask'
 
 export const CVW = () => {
   const dispatch = useDispatch()
@@ -41,7 +42,7 @@ export const CVW = () => {
   const [lastActiveComponent: string, setLastActiveComponent: (string) => void] = useState('StockScene')
   const [isLoading: boolean, setIsLoading: boolean => void] = useState(true)
   const [matchPhotoScene: Element, setMatchPhotoScene: (Element) => void] = useState()
-
+  const isShowFooter = location.pathname.match(/active\/masking$/) === null
   setTimeout(() => setIsLoading(false), 1000)
 
   const activateStockScene = (id) => {
@@ -86,6 +87,7 @@ export const CVW = () => {
                 setActiveScene(scene)
                 setLastActiveComponent(type)
               }} />} />
+              <Route path='/active/masking' render={() => <PaintSceneMaskingWrapper />} />
               <Route path='/active/my-ideas' render={() => <MyIdeasContainer />} />
               <Route path='/active/help' render={() => <Help />} />
               <Route render={() => <Redirect to='/active' />} />
@@ -99,14 +101,16 @@ export const CVW = () => {
           </div>
         )
       }
-      <div className='cvw__root-container__footer'>
-        <div className='cvw__root-container__footer--priority'>
-          <LivePalette />
+      {
+        isShowFooter && <div className='cvw__root-container__footer'>
+          <div className='cvw__root-container__footer--priority'>
+            <LivePalette />
+          </div>
+          <div className='cvw__root-container__footer--secondary'>
+            <SaveOptions activeComponent={lastActiveComponent} />
+          </div>
         </div>
-        <div className='cvw__root-container__footer--secondary'>
-          <SaveOptions activeComponent={lastActiveComponent} />
-        </div>
-      </div>
+      }
     </div>
   )
 }

@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import MergeColors from '../MergeCanvas/MergeColors'
 import PrismImage from '../PrismImage/PrismImage'
 import { useIntl, FormattedMessage } from 'react-intl'
-import { setLayersForPaintScene } from '../../store/actions/paintScene'
+import { setLayersForPaintScene, WORKSPACE_TYPES } from '../../store/actions/paintScene'
 import { Redirect, useHistory } from 'react-router-dom'
 import ColorPalette from './ColorPalette'
 import CardMenu from 'src/components/CardMenu/CardMenu'
@@ -166,7 +166,6 @@ const MyIdeaPreview = ({ openScene }: MyIdeaPreviewProps) => {
   // Merge color component callback
   const loadMergedImage = (payload: Object) => {
     setForegroundImageUrl(payload.mergedImage)
-    // Save image urls
     layersRef.current = payload.layers
   }
 
@@ -189,7 +188,7 @@ const MyIdeaPreview = ({ openScene }: MyIdeaPreviewProps) => {
       dispatch(unsetSelectedScenePaletteLoaded())
       dispatch(setSelectedSceneStatus(null))
       if (selectedScene.savedSceneType === SCENE_TYPE.anonCustom) {
-        dispatch(setLayersForPaintScene(backgroundCanvasRef.current.toDataURL(), openPaintedProject ? layersRef.current : null, selectedScene.palette, initialWidth, initialHeight))
+        dispatch(setLayersForPaintScene(backgroundCanvasRef.current.toDataURL(), openPaintedProject ? layersRef.current : null, selectedScene.palette, initialWidth, initialHeight, WORKSPACE_TYPES.savedScene))
         openScene(<ImageRotateContainer isFromMyIdeas isPaintScene checkIsPaintSceneUpdate={false} showPaintScene imgUrl='' />, 'PaintScene')
       } else if (selectedScene.savedSceneType === SCENE_TYPE.anonStock) {
         selectedScene.openUnpaintedStockScene = !openPaintedProject
