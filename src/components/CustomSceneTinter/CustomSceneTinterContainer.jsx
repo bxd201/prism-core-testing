@@ -4,15 +4,13 @@ import React, { useEffect, useRef, useState } from 'react'
 import type { PaintSceneWorkspace } from '../../store/actions/paintScene'
 import type { Color } from '../../shared/types/Colors'
 import { FormattedMessage, useIntl } from 'react-intl'
-import SimpleTintableScene from '../SceneManager/SimpleTintableScene'
+import SimpleTintableScene from './SimpleTintableScene'
 import { SCENE_TYPES, SCENE_VARIANTS } from '../../constants/globals'
 import useColors from '../../shared/hooks/useColors'
 import { useDispatch, useSelector } from 'react-redux'
 import ImageQueue from '../MergeCanvas/ImageQueue'
 import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 import uniqueId from 'lodash/uniqueId'
-
-import './CustomSceneTinter.scss'
 import { setShowEditCustomScene } from '../../store/actions/scenes'
 import { useHistory } from 'react-router-dom'
 import DynamicModal from '../DynamicModal/DynamicModal'
@@ -25,10 +23,17 @@ import {
 import { StaticTintScene } from '../CompareColor/StaticTintScene'
 import { getLABFromColor } from '../PaintScene/PaintSceneUtils'
 import { createCustomSceneMetadata } from '../../shared/utils/legacyProfileFormatUtil'
+import { SurfaceSelector } from '../SurfaceSelector/SurfaceSelector'
+
+import './CustomSceneTinter.scss'
 
 type CustomSceneTinterContainerProps = {
   workspace: PaintSceneWorkspace,
-  allowEdit: boolean
+  allowEdit: boolean,
+  // A change in wrapper width indicates a resize
+  wrapperWidth: number,
+  angle: number,
+  originalIsPortrait: boolean
 }
 
 const customSceneTinterClass = 'custom-scene-tinter'
@@ -36,6 +41,63 @@ const customSceneTinterSpinnerClass = `${customSceneTinterClass}__spinner`
 const customSceneTinterModalClass = `${customSceneTinterClass}__modal`
 const customSceneTinterModalButtonClass = `${customSceneTinterModalClass}__btn`
 const customSceneTinterModalTextClass = `${customSceneTinterModalClass}__text`
+const customSceneTinterSurfaceSelectorWrapper = `${customSceneTinterClass}__surface-selector`
+
+export const createPseudoScene = (bgImage: string, maskRef: any[], colorMap: any, width: number, height: number) => {
+  let surfacePaths = maskRef && maskRef.current ? maskRef.current.map(item => item.src) : []
+  const surfaces = surfacePaths.map((sp: string, i: number) => {
+    const surface = {
+      id: i,
+      mask: {
+        path: sp
+      },
+      colorId: colorMap[`${i}`]
+    }
+
+    return surface
+  })
+  const scene = {
+    // Default to day
+    variant_names: [SCENE_VARIANTS.DAY],
+    variants: [{
+      surfaces,
+      variant_name: SCENE_VARIANTS.DAY,
+      // @todo make this a const maybe? -RS
+      name: '',
+      normalizedImageValueCurve: '',
+      image: bgImage,
+      // @todo may not need thumb -RS
+      thumb: bgImage
+    }],
+    id: uniqueId('cs_'),
+    width,
+    height
+  }
+
+  return scene
+}
+
+export const createPseudoSceneMetaData = (scene, lpColors: Color[], variant: string, singleSurfaceIndex?: number) => {
+  const variantId = scene.variant_names.findIndex(item => item === variant)
+  const sceneMetaData = {
+    variant,
+    id: scene.id,
+    surfaces: scene.variants[variantId].surfaces.map((surface, i) => {
+      return {
+        id: surface.id,
+        color: lpColors.find((color) => color.id === surface.colorId)
+      }
+    }).filter((item, i) => {
+      if (singleSurfaceIndex !== void (0)) {
+        return i === singleSurfaceIndex
+      }
+
+      return true
+    })
+  }
+
+  return sceneMetaData
+}
 
 const CustomSceneTinterContainer = (props: CustomSceneTinterContainerProps) => {
   const intl = useIntl()
@@ -59,15 +121,42 @@ const CustomSceneTinterContainer = (props: CustomSceneTinterContainerProps) => {
   // eslint-disable-next-line no-unused-vars
   const [currentSurfaceIndex, setCurrentSurfaceIndex] = useState(0)
   const showSavedConfirmModalFlag = useSelector(state => state['showSavedCustomSceneSuccess'])
+  const { workspace, allowEdit, wrapperWidth, angle, originalIsPortrait } = props
+
+  const [wrapperWidthVal, setWrapperWidthVal] = useState(wrapperWidth)
+
+  // eslint-disable-next-line no-unused-vars
+  const { height, width, sceneName, bgImageUrl: background, surfaces } = workspace
+
+  const [imageHeight, setImageHeight] = useState(height)
+  const [imageWidth, setImageWidth] = useState(width)
 
   useEffect(() => {
     dispatch(setShowEditCustomScene(true))
   }, [])
 
-  const { workspace, allowEdit } = props
+  useEffect(() => {
+    console.log(`Width param: ${wrapperWidth} :: Width state: ${wrapperWidthVal}`)
+    // calc diff in width change
+    const widthDiffPct = wrapperWidth / wrapperWidthVal
+    // separate cases for portrait vs vertical images
+    let newImageWidth = 0
+    let newImageHeight = 0
 
-  // eslint-disable-next-line no-unused-vars
-  const { height, width, sceneName, bgImageUrl: background, surfaces } = workspace
+    if ((originalIsPortrait && (Math.abs(angle) / 90 % 2)) || (!originalIsPortrait && !(Math.abs(angle) / 90 % 2))) {
+      // handle og portrait turned on its side
+      newImageWidth = wrapperWidth
+      newImageHeight = Math.floor(newImageWidth * (height / width))
+    } else {
+      newImageWidth = Math.floor(imageWidth * widthDiffPct)
+      newImageHeight = Math.floor(newImageWidth * (height / width))
+    }
+
+    setImageWidth(newImageWidth)
+    setImageHeight(newImageHeight)
+    setWrapperWidthVal(wrapperWidth)
+  }, [wrapperWidth, wrapperWidthVal, imageWidth, angle])
+
   useEffect(() => {
     if (livePaletteColors) {
       setLivePaletteColorCount(livePaletteColors.length)
@@ -142,56 +231,6 @@ const CustomSceneTinterContainer = (props: CustomSceneTinterContainerProps) => {
     dispatch(showSavedCustomSceneSuccessModal(false))
   }
 
-  const createPseudoScene = (bgImage: string, maskRef: any[], colorMap: any, width: number, height: number) => {
-    let surfacePaths = maskRef && maskRef.current ? maskRef.current.map(item => item.src) : []
-    const surfaces = surfacePaths.map((sp: string, i: number) => {
-      const surface = {
-        id: i,
-        mask: {
-          path: sp
-        },
-        colorId: colorMap[`${i}`]
-      }
-
-      return surface
-    })
-    const scene = {
-      // Default to day
-      variant_names: [SCENE_VARIANTS.DAY],
-      variants: [{
-        surfaces,
-        variant_name: SCENE_VARIANTS.DAY,
-        // @todo make this a const maybe? -RS
-        name: '',
-        normalizedImageValueCurve: '',
-        image: bgImage,
-        // @todo may not need thumb -RS
-        thumb: bgImage
-      }],
-      id: uniqueId('cs_'),
-      width,
-      height
-    }
-
-    return scene
-  }
-
-  const createPseudoSceneMetaData = (scene, lpColors: Color[], variant: string) => {
-    const variantId = scene.variant_names.findIndex(item => item === variant)
-    const sceneMetaData = {
-      variant,
-      id: scene.id,
-      surfaces: scene.variants[variantId].surfaces.map((surface, i) => {
-        return {
-          id: surface.id,
-          color: lpColors.find((color) => color.id === surface.colorId)
-        }
-      })
-    }
-
-    return sceneMetaData
-  }
-
   const getPreviewData = (workspace: PaintSceneWorkspace, maskRef: any[], lpColors: Color[]) => {
     const { bgImageUrl, width, height } = workspace
     const scene = createPseudoScene(bgImageUrl, maskRef, colorSurfaceMap, width, height)
@@ -214,7 +253,7 @@ const CustomSceneTinterContainer = (props: CustomSceneTinterContainerProps) => {
   }
 
   return (
-    <>
+    <div>
       <ImageQueue dataUrls={surfaces} addToQueue={handleSurfaceLoaded} />
       <div className={customSceneTinterClass}>
         {isSavingMask ? <div className={customSceneTinterSpinnerClass}><CircleLoader /></div> : null}
@@ -226,7 +265,7 @@ const CustomSceneTinterContainer = (props: CustomSceneTinterContainerProps) => {
             { text: intl.formatMessage({ id: 'SAVE_SCENE_MODAL.CANCEL' }), callback: hideSaveSceneModal }
           ]}
           previewData={getPreviewData(workspace, maskImageRef, livePaletteColors.colors)}
-          height={height}
+          height={imageHeight}
           allowInput
           inputDefault={`${intl.formatMessage({ id: 'SAVE_SCENE_MODAL.DEFAULT_DESCRIPTION' })} ${sceneCount}`} /> : null}
         {showSaveSceneModalFlag && livePaletteColorCount === 0 ? <DynamicModal
@@ -234,26 +273,28 @@ const CustomSceneTinterContainer = (props: CustomSceneTinterContainerProps) => {
             { text: intl.formatMessage({ id: 'SAVE_SCENE_MODAL.CANCEL' }), callback: hideSaveSceneModal }
           ]}
           description={intl.formatMessage({ id: 'SAVE_SCENE_MODAL.UNABLE_TO_SAVE_WARNING' })}
-          height={height} /> : null}
+          height={imageHeight} /> : null}
         { /* ---------- Saved notification modal ---------- */ }
         { showSavedConfirmModalFlag ? <DynamicModal
           actions={[
             { text: intl.formatMessage({ id: 'PAINT_SCENE.OK_DISMISS' }), callback: hideSavedConfirmModal }
           ]}
           description={intl.formatMessage({ id: 'PAINT_SCENE.SCENE_SAVED' })}
-          height={height} /> : null}
-        { isReadyToTint(imagesLoaded, livePaletteColors, surfaces) ? <SimpleTintableScene
-          colors={livePaletteColors.colors}
-          activeColorId={getActiveColorId(livePaletteColors)}
-          surfaceUrls={surfaces}
-          surfaceIds={surfaceIds}
-          width={width}
-          allowEdit={allowEdit}
-          height={height}
-          sceneName={sceneName}
-          sceneType={SCENE_TYPES.ROOM}
-          background={background}
-          isUsingWorkspace /> : <CircleLoader />}
+          height={imageHeight} /> : null}
+        { isReadyToTint(imagesLoaded, livePaletteColors, surfaces)
+          ? <SimpleTintableScene
+            colors={livePaletteColors.colors}
+            activeColorId={getActiveColorId(livePaletteColors)}
+            surfaceUrls={surfaces}
+            surfaceIds={surfaceIds}
+            width={imageWidth}
+            allowEdit={allowEdit}
+            height={imageHeight}
+            sceneName={sceneName}
+            sceneType={SCENE_TYPES.ROOM}
+            background={background}
+            isUsingWorkspace />
+          : <CircleLoader />}
         { isReadyToTint(imagesLoaded, livePaletteColors, surfaces) && allowEdit && showEditModal ? <div className={`${customSceneTinterModalClass}`}>
           <div className={customSceneTinterModalTextClass}>
             <FormattedMessage id={'SCENE_TINTER.FEEDBACK_MESSAGE'} />
@@ -266,7 +307,16 @@ const CustomSceneTinterContainer = (props: CustomSceneTinterContainerProps) => {
           </div>
         </div> : null }
       </div>
-    </>
+      <div className={customSceneTinterSurfaceSelectorWrapper}>
+        { isReadyToTint(imagesLoaded, livePaletteColors, surfaces)
+          ? <SurfaceSelector
+            workspace={workspace}
+            maskRef={maskImageRef}
+            lpColors={livePaletteColors.colors}
+            colorSurfaceMap={colorSurfaceMap} />
+          : null }
+      </div>
+    </div>
   )
 }
 

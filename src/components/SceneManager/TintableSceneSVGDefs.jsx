@@ -24,13 +24,13 @@ class TintableSceneSurface extends PureComponent<Props> {
         content = (
           <Fragment>
             <filter id={filterId} x='0' y='0' width='100%' height='100%' filterUnits='objectBoundingBox' primitiveUnits='objectBoundingBox' colorInterpolationFilters='sRGB'>
-              {filterImageValueCurve ? (
-                <feComponentTransfer in='SourceGraphic' result='adjustedHistogram'>
+              <feComponentTransfer in='SourceGraphic' result='adjustedHistogram'>
+                {filterImageValueCurve ? <>
                   <feFuncR type='table' tableValues={filterImageValueCurve} />
                   <feFuncG type='table' tableValues={filterImageValueCurve} />
                   <feFuncB type='table' tableValues={filterImageValueCurve} />
-                </feComponentTransfer>
-              ) : null}
+                </> : null}
+              </feComponentTransfer>
 
               <feFlood floodColor={filterColor} result='tintHue' />
               <feBlend mode='multiply' in2='tintHue' in='adjustedHistogram' />
