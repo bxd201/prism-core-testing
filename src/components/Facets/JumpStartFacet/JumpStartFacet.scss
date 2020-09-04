@@ -2,7 +2,7 @@
 
 .JumpStartFacet {
   &__header {
-    background: blue;
+    background: map-get($jsf-color, 'primary');
     font-style: italic;
     color: white;
     text-align: center;
