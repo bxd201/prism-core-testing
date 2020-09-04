@@ -2,6 +2,7 @@
 @import 'src/scss/convenience/_keyframe-animations.scss';
 
 .JSFResultsPage {
+  background-color: $jsf-page-bg;
   &__cols {
     $jsf-res-col-spacing: 1rem;
 

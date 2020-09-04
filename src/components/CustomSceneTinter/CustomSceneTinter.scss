@@ -26,6 +26,7 @@
     height: 48px;
     align-items: center;
     justify-content: space-around;
+    z-index: 9999;
     &__text {
       margin: 6px;
     }
@@ -35,5 +36,8 @@
       background-color: #ffffff;
       margin: 6px;
     }
+  }
+  &__surface-selector {
+    border-top: 1px solid #cccccc;
   }
 }

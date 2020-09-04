@@ -1,4 +1,7 @@
+@import '../../constants';
+
 .JSFProcessingPage {
+  background-color: $jsf-page-bg;
   &__demo-btn {
     padding: 0.5em;
     margin: 0.1em;

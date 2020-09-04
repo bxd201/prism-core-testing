@@ -25,23 +25,11 @@ const MergeCanvas = (props: MergeCanvasProp, ref: RefObject) => {
   const [images, setImages] = useState([])
   const opacity = props.colorOpacity !== void (0) ? props.colorOpacity : 1
   // The height  and width of the transformed input image
-  const { width, height } = props
-  const angle = props.rotationAngle || 0
-
-  const {
-    canvasWidth,
-    canvasHeight,
-    vScale,
-    hScale,
-    vSkew,
-    hSkew,
-    hTrans,
-    vTrans,
-    rotation
-  } = getTransformParams(angle, width, height)
+  const { width, height, rotationAngle } = props
 
   useEffect(() => {
     const imageDataList = []
+    const imageDataUrls = []
     if (images.length && images.length === props.layers.length) {
       // This check should ensure that this fires after the images have been loaded
       images.forEach((img, i) => {
@@ -51,16 +39,47 @@ const MergeCanvas = (props: MergeCanvasProp, ref: RefObject) => {
           ctx.globalAlpha = opacity
         }
 
-        if (props.rotationAngle) {
+        let imageWidth = 0
+        let imageHeight = 0
+
+        // Check the loaded image orientation, it may not match the input width height
+        if (img.height > img.width) {
+          // is portrait
+          imageWidth = Math.min(width, height)
+          imageHeight = Math.max(width, height)
+        } else {
+          // is landscape
+          imageWidth = Math.max(width, height)
+          imageHeight = Math.min(width, height)
+        }
+
+        if (rotationAngle) {
+          const {
+            canvasWidth,
+            canvasHeight,
+            vScale,
+            hScale,
+            vSkew,
+            hSkew,
+            hTrans,
+            vTrans,
+            rotation
+          } = getTransformParams(rotationAngle, width, height)
+          // stuff needed for when there is a mismatch between the loaded image orientation and the rotation state
+          imageWidth = canvasWidth
+          imageHeight = canvasHeight
+
           ctx.setTransform(hScale, vSkew, hSkew, vScale, hTrans, vTrans)
           ctx.rotate(rotation)
         }
 
-        ctx.drawImage(img, 0, 0, canvasWidth, canvasHeight)
+        ctx.drawImage(img, 0, 0, imageWidth, imageHeight)
 
         if (props.handleLayersLoaded) {
-          const imgData = ctx.getImageData(0, 0, canvasWidth, canvasHeight)
+          const imgData = ctx.getImageData(0, 0, width, height)
           imageDataList.push(imgData)
+          const imgDataUrl = ctx.canvas.toDataURL()
+          imageDataUrls.push(imgDataUrl)
         }
         ctx.restore()
       })
@@ -71,6 +90,7 @@ const MergeCanvas = (props: MergeCanvasProp, ref: RefObject) => {
 
         props.handleLayersLoaded({
           imageData: [...imageDataList],
+          imageDataUrls: [...imageDataUrls],
           width,
           height
         })
@@ -83,6 +103,7 @@ const MergeCanvas = (props: MergeCanvasProp, ref: RefObject) => {
 
     // Prevent memory leaks
     imageDataList.length = 0
+    imageDataUrls.length = 0
     images.length = 0
   }, [images])
 

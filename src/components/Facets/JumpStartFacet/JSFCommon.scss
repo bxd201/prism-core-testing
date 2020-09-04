@@ -1,12 +1,16 @@
 @import './constants';
 
 :root {
-  background-color: #f7f7f7;
-  font-family: sans-serif;
+  body {
+    &.jumpstart-bd {
+      background-color: $jsf-page-bg !important;
+      margin: 0 !important;
+    }
+  }
 }
 
 .JSFCommon {
-  background-color: #f7f7f7;
+  background-color: $jsf-page-bg;
   &__title {
     font-size: 2rem;
     font-weight: bold;
@@ -52,7 +56,7 @@
   &__band {
     display: flex;
     justify-content: center;
-    background-color: #f7f7f7;
+    background-color: $jsf-page-bg;
 
     &--dark {
       background: $jsf-band-bg;
