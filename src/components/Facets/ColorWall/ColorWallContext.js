@@ -30,7 +30,7 @@ export type ColorWallContextProps = {
   hiddenSections?: string[],
   loading: boolean,
   swatchMaxSize: number,
-  swatchMaxSizeZoomed: number,
+  swatchSizeZoomed: number,
   swatchMinSize: number,
   swatchMinSizeZoomed: number,
   updateA11y: Function
@@ -47,7 +47,7 @@ export const colorWallContextDefault: ColorWallContextProps = {
   hiddenSections: [],
   loading: false,
   swatchMaxSize: 33,
-  swatchMaxSizeZoomed: 50,
+  swatchSizeZoomed: 50,
   swatchMinSize: 14,
   swatchMinSizeZoomed: 50,
   updateA11y: noop

@@ -1,55 +1,31 @@
-/* eslint-disable */
 // @flow
-import React, { useMemo } from 'react'
+import React from 'react'
 import { FormattedMessage } from 'react-intl'
-import { connect } from 'react-redux'
+import { useSelector } from 'react-redux'
+import { useParams } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import 'src/providers/fontawesome/fontawesome'
-
 import ButtonBar from '../../GeneralButtons/ButtonBar/ButtonBar'
-
 import { generateColorWallPageUrl, fullColorName } from '../../../shared/helpers/ColorUtils'
 import { MODE_CLASS_NAMES } from '../ColorWall/shared'
-import { type Color } from '../../../shared/types/Colors.js.flow'
+import { type ColorsState } from 'src/shared/types/Actions.js.flow'
 import { urlWorker } from '../../../shared/helpers/URLUtils'
 import { ROUTE_PARAMS } from 'constants/globals'
-import { useLocation } from 'react-router-dom'
+import 'src/providers/fontawesome/fontawesome'
 
-type StateProps = {
-  color?: Color,
-  family?: string,
-  section?: string,
-  searchQuery?: string,
-  searchActive?: boolean
-}
+export function BackToColorWall () {
+  const { items: { colorMap = {} }, family, section, search }: ColorsState = useSelector(state => state.colors)
+  const { colorId }: { colorId?: ?string } = useParams()
 
-type OwnProps = {}
-
-type Props = StateProps & OwnProps
-
-export function BackToColorWall ({ color, family, section, searchActive, searchQuery }: Props) {
-  // this will degrade gracefully if section and/or family and or color do(es) not exist in redux down to the root color wall URL
-  const { state } = useLocation()
-
-  const url = useMemo(() => {
-    const colorWallUrl = color
-      ? generateColorWallPageUrl(section, family, color.id, fullColorName(color))
-      : generateColorWallPageUrl(section, family)
-    const colorWallUrlPlusSearch = searchActive && searchQuery ? urlWorker.set(ROUTE_PARAMS.SEARCH, searchQuery).in(colorWallUrl) : colorWallUrl
-    return colorWallUrlPlusSearch
-  }, [color, section, family, searchActive, searchQuery])
-
-  const to = useMemo(() => ({
-    pathname: url,
-    state
-  }), [state, url])
+  const color = colorId && colorMap[colorId]
+  const colorWallUrl = color ? generateColorWallPageUrl(section, family, color.id, fullColorName(color)) : generateColorWallPageUrl(section, family)
+  const url = search.active && search.query ? urlWorker.set(ROUTE_PARAMS.SEARCH, search.query).in(colorWallUrl) : colorWallUrl
 
   return (
     <div className={MODE_CLASS_NAMES.BASE}>
       <div className={MODE_CLASS_NAMES.COL}>
         <div className={MODE_CLASS_NAMES.CELL}>
           <ButtonBar.Bar>
-            <ButtonBar.Button to={to}>
+            <ButtonBar.Button to={url}>
               <FontAwesomeIcon icon={['fal', 'th-large']} pull='left' fixedWidth />
               <FormattedMessage id='BACK_TO_COLOR_WALL' />
             </ButtonBar.Button>
@@ -60,14 +36,4 @@ export function BackToColorWall ({ color, family, section, searchActive, searchQ
   )
 }
 
-const mapStateToProps = (state, props) => {
-  return {
-    family: state.colors.family,
-    section: state.colors.section,
-    color: state.colors.colorWallActive,
-    searchQuery: state.colors.search.query,
-    searchActive: state.colors.search.active
-  }
-}
-
-export default connect(mapStateToProps, null)(BackToColorWall)
+export default BackToColorWall

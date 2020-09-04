@@ -58,7 +58,6 @@ const ColorDataWrapper = (WrappedComponent: any) => {
       colorMap: state.colors.colorMap,
       colors: state.colors.items.colors,
       brights: state.colors.items.brights,
-      colorWallActive: state.colors.colorWallActive,
       family: state.colors.family,
       families: state.colors.families,
       loading: !!at(state, 'colors.status.loading')[0],

@@ -15,7 +15,7 @@ import GenericOverlay from 'src/components/Overlays/GenericOverlay/GenericOverla
 import at from 'lodash/at'
 import isArray from 'lodash/isArray'
 import useEffectAfterMount from 'src/shared/hooks/useEffectAfterMount'
-import { resetActiveColor, updateColorStatuses } from 'src/store/actions/loadColors'
+import { updateColorStatuses } from 'src/store/actions/loadColors'
 import { facetBinderDefaultProps, type FacetBinderMethods } from 'src/facetSupport/facetInstance'
 import { FormattedMessage } from 'react-intl'
 import translateBooleanFlexibly from 'src/shared/utils/translateBooleanFlexibly.util'
@@ -65,7 +65,6 @@ export const ColorWallPage = (props: Props) => {
     publish,
     unsubscribeAll,
     colorDetailPageRoot,
-    resetOnUnmount,
     hiddenSections
   } = props
   const dispatch = useDispatch()
@@ -128,10 +127,6 @@ export const ColorWallPage = (props: Props) => {
   useEffect(() => () => {
     // unsubscribe from everything on unmount
     unsubscribeAll()
-    if (resetOnUnmount) {
-      // and reset the color wall's status by resetting active color
-      dispatch(resetActiveColor())
-    }
   }, [])
 
   return (
