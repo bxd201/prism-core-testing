@@ -27,12 +27,6 @@ export const filterBySection = (section: string) => ({ type: FILTER_BY_SECTION, 
 export const REMOVE_COLOR_FILTERS: string = 'REMOVE_COLOR_FILTERS'
 export const removeColorFilters = () => ({ type: REMOVE_COLOR_FILTERS })
 
-export const RESET_ACTIVE_COLOR: string = 'RESET_ACTIVE_COLOR'
-export const resetActiveColor = () => ({ type: RESET_ACTIVE_COLOR })
-
-export const MAKE_ACTIVE_COLOR_BY_ID: string = 'MAKE_ACTIVE_COLOR_BY_ID'
-export const makeActiveColorById = (id: ?string) => id ? { type: MAKE_ACTIVE_COLOR_BY_ID, payload: { id } } : resetActiveColor()
-
 // TODO: Make this method configurable via options on call so specific color wall implementations can reuse it to load their colors
 export const loadColors = once((brandId: string, options: Object = {}) => {
   return (dispatch: Function, getState: Function = store.getState) => {
@@ -52,8 +46,7 @@ export const loadColors = once((brandId: string, options: Object = {}) => {
     return Promise
       .all(getColorsRequests(brandId, _options))
       .then(responses => {
-        const colorData = mapResponsesToColorData(responses)
-        dispatch(receiveColors(colorData))
+        dispatch(receiveColors(mapResponsesToColorData(responses)))
       })
       .catch(r => dispatch(loadError(r)))
   }
@@ -72,6 +65,8 @@ export const UPDATE_COLOR_STATUSES: string = 'UPDATE_COLOR_STATUSES'
 export const updateColorStatuses = (statuses: ColorStatuses) => ({ type: UPDATE_COLOR_STATUSES, payload: statuses })
 
 export const mapColorDataToPayload = (colorData: Object) => {
+  // adds canadian spellings of sections TODO: remove this when the API is correct
+  Object.entries(colorData.colors.names).forEach(([key, value]) => { colorData.colors.names[key.replace('Colors', 'Colours')] = value })
   return {
     loading: false,
     activeRequest: false,
@@ -85,15 +80,18 @@ export const mapColorDataToPayload = (colorData: Object) => {
 
 export const getColorsRequests = (brandId: string, options?: any) => {
   return [
+    // { data: { names: { [string]: string[] }, values: { [string]: number[][] } } }
     axios.get(generateBrandedEndpoint(COLOR_CHUNKS_ENDPOINT, brandId, options)),
+    // { data: { [string]: string[][] } }
     axios.get(generateBrandedEndpoint(COLOR_BRIGHTS_ENDPOINT, brandId, options)),
+    // { data: { default: boolean, families: string[], name: string }[] }
     axios.get(generateBrandedEndpoint(COLOR_FAMILY_NAMES_ENDPOINT, brandId, options)),
+    // { data: { archived: boolean, blue: number, brandKey: string, brandedCollectionNames: string[], colorFamilyNames: string[], colorNumber: string, coordinatingColors: {}..... }[] }
     axios.get(generateBrandedEndpoint(COLORS_ENDPOINT, brandId, options))
   ]
 }
 
 export const mapResponsesToColorData = (responses: any[]) => {
   const [colors, brights, sections, unorderedColors]: [any, any, FamilyStructure, any] = responses.map(response => response.data)
-
   return { colors, brights, sections, unorderedColors }
 }
