@@ -6,15 +6,19 @@ import LivePalette from 'src/components/LivePalette/LivePalette'
 
 import './ResultsPage.scss'
 import '../../JSFCommon.scss'
+import { getRoomTypeFromRoomData } from '../../../../../shared/utils/roomClassifier.utils'
+import startCase from 'lodash/startCase'
 
 const baseClass = 'JSFResultsPage'
 
 type ResultsPageProps = {
-  referenceImgUrl?: string
+  roomData: any
 }
 
 function ResultsPage (props: ResultsPageProps) {
-  const { referenceImgUrl } = props
+  const { roomData } = props
+
+  const roomType = getRoomTypeFromRoomData(roomData)
 
   return (
     <div className={baseClass}>
@@ -23,20 +27,14 @@ function ResultsPage (props: ResultsPageProps) {
           <div className={`${baseClass}__summary ${baseClass}__cols`}>
             <div className={`${baseClass}__cols__col ${baseClass}__cols__col--content`}>
               <div className={`${baseClass}__summary__text JSFCommon__text`}>
-                <h1 className='JSFCommon__title'>Your Results</h1>
-                <p>We've also compiled some colors for your project. Whether you want to match your couch, your painting, or your rug, we've got you covered!</p>
+                <h1 className='JSFCommon__title'>{`Your ${startCase(roomType)}`}</h1>
+                <p className='JSFCommon__description'>Based on your space, our experts recommend trying these colors:</p>
               </div>
             </div>
-            {referenceImgUrl ? <div className={`${baseClass}__cols__col ${baseClass}__cols__col--media`}>
-              <figure className={`${baseClass}__summary__media`}>
-                <img className={`${baseClass}__summary__media__image`} src={referenceImgUrl} alt='Original' />
-                <figcaption className={`${baseClass}__summary__media__caption`}>Original image</figcaption>
-              </figure>
-            </div> : null}
           </div>
         </div>
       </div>
-      <div className='JSFCommon__band JSFCommon__band--dark'>
+      <div className='JSFCommon__band JSFCommon__band'>
         <div className='JSFCommon__content'>
           <FastMask hideUploadBtn />
         </div>

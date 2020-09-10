@@ -116,7 +116,7 @@ function JumpStartFacet () {
             onBeginInteraction={() => setCompletionBarriers(completionBarriers + 1)}
             onEndInteraction={() => setCompletionBarriers(completionBarriers - 1)} />
         ) : (PHASES.RESULTS === status) ? (
-          <ResultsPage referenceImgUrl={uploadedImage} />
+          <ResultsPage roomData={irisData} />
         ) : (PHASES.ERROR === status) ? (
           // TODO: make this real
           <p>There is a problem.</p>

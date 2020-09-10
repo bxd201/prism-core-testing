@@ -6,10 +6,14 @@
     font-weight: 200;
     margin: 0 0 .75em 0;
     padding: 0;
+    text-align: center;
 
     @include respond-above(sm) {
       font-size: 2rem;
     }
+  }
+  &__description {
+    text-align: center;
   }
 
   &__text {
