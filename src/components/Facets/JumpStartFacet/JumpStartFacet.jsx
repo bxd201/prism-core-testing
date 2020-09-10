@@ -6,12 +6,13 @@ import facetBinder from 'src/facetSupport/facetBinder'
 import MainPage from './components/MainPage/MainPage'
 import ProcessingPage from './components/ProcessingPage/ProcessingPage'
 import ResultsPage from './components/ResultsPage/ResultsPage'
-import { replaceLpColors, activate } from 'src/store/actions/live-palette'
+import { replaceLpColors, activate, empty } from 'src/store/actions/live-palette'
 import GenericMessage from 'src/components/Messages/GenericMessage'
 import useDeepLabModel, { deepLabModels } from 'src/shared/hooks/useDeepLabModel'
 import useDeepLabModelForSegmentation from 'src/shared/hooks/useDeepLabModelForSegmentation'
 import flatten from 'lodash/flatten'
-import uniqBy from 'lodash/uniqBy'
+import uniq from 'lodash/uniq'
+import zip from 'lodash/zip'
 import { type Color } from 'src/shared/types/Colors.js.flow'
 import { uploadImage } from 'src/store/actions/user-uploads'
 import useEffectAfterMount from 'src/shared/hooks/useEffectAfterMount'
@@ -71,18 +72,26 @@ function JumpStartFacet () {
 
   useEffect(() => {
     if (irisSuccess && irisData) {
-      const { displayedLabels, pieces, piecesData } = irisData
-      // exclude unwanted area data here
-      const data: Color[] = uniqBy(flatten(displayedLabels.filter(label => ['wall', 'ceiling'].indexOf(label) === -1).map(val => pieces.findIndex((piece) => piece.label === val)).map(i => piecesData[i].recurringCoordinatingColors)))
+      const { piecesData } = irisData
+      // grab suggestions from each found object -- we'll wind up with the best recommendations for each object
+      const dataSuggested: Color[] = uniq(flatten(zip.apply(undefined, piecesData.map(piece => piece.suggestedColors)))).slice(0, 4)
+      // same as above, but with recurring coordinating colors
+      const dataCoordinating: Color[] = uniq(flatten(zip.apply(undefined, piecesData.map(piece => piece.recurringCoordinatingColors)))).slice(0, 7 - dataSuggested.length)
+      const data: Color[] = [
+        ...dataSuggested,
+        ...dataCoordinating
+      ]
 
-      // TODO: update this logic to grab a couple results from each label
       if (data) {
-        dispatch(replaceLpColors(data.slice(0, 7)))
+        dispatch(replaceLpColors(data))
         dispatch(activate(data[0]))
-        decrementCompletionBarriers()
       } else {
         // TODO: Handle an error case where we've processed everything and we have no data to show for it
+        dispatch(replaceLpColors([]))
+        dispatch(empty())
+        console.error('We found no matching colors.')
       }
+      decrementCompletionBarriers()
     }
   }, [irisSuccess, irisData])
 
