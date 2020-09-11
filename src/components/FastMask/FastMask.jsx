@@ -24,10 +24,11 @@ type Props = {
   color: Color,
   uploadImage: Function,
   uploads: Object,
-  hideUploadBtn: boolean
+  hideUploadBtn: boolean,
+  onProcessingComplete?: Function
 }
 
-export function FastMask ({ color, uploadImage, uploads, hideUploadBtn = false }: Props) {
+export function FastMask ({ color, uploadImage, uploads, hideUploadBtn = false, onProcessingComplete }: Props) {
   const { masks: maskSources, source, uploading, error } = uploads
 
   const [userImage, setUserImage] = useState()
@@ -60,6 +61,7 @@ export function FastMask ({ color, uploadImage, uploads, hideUploadBtn = false }
 
   function handleFinishProcessing () {
     setIsProcessing(false)
+    onProcessingComplete && onProcessingComplete()
   }
 
   useEffect(() => {
