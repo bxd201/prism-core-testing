@@ -101,9 +101,6 @@ function JumpStartFacet () {
   return (
     <>
       <div className={baseClass}>
-        <header className={`${baseClass} ${baseClass}__header`}>
-          <h1>JumpStart</h1>
-        </header>
         {isError ? (
           <GenericMessage type={GenericMessage.TYPES.ERROR}>
             We've encountered a problem.
