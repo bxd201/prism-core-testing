@@ -378,5 +378,7 @@
   "VIEW_FULL_COLLECTION": "VIEW FULL COLLECTION",
   "YES": "Yes",
   "ZOOM_IN": "Zoom in",
-  "ZOOM_OUT": "Zoom out"
+  "ZOOM_OUT": "Zoom out",
+  "FURNITURE_NAME": "SUGGESTED COLORS THAT WILL WORK WELL WITH YOUR {furnitureName}",
+  "FURNITURE_IMAGE": " This is image placeholder for your {furnitureName}"
 }

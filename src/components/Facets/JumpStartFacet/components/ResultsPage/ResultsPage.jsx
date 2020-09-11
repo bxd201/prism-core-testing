@@ -9,12 +9,13 @@ import '../../JSFCommon.scss'
 import { getRoomTypeFromRoomData } from 'src/shared/utils/roomClassifier.utils'
 import { type Piece, type SegmentationResults } from 'src/shared/hooks/useDeepLabModelForSegmentation'
 import startCase from 'lodash/startCase'
+
 import flatten from 'lodash/flatten'
 import uniq from 'lodash/uniq'
 import zip from 'lodash/zip'
 import { type Color } from 'src/shared/types/Colors.js.flow'
 import { activate, replaceLpColors, empty } from '../../../../../store/actions/live-palette'
-
+import { FurnitureDetail } from '../ResultsPage/FurnitureDetail'
 const HOW_MANY_ROOM_OBJECTS = 3
 const HOW_MANY_TOTAL_COLORS = 7 // this can probably be pulled from a LivePalette const
 
@@ -29,12 +30,12 @@ function ResultsPage (props: ResultsPageProps) {
   const dispatch = useDispatch()
   const roomType = getRoomTypeFromRoomData(roomData)
   const [isFastMaskComplete, setFastMaskComplete] = useState(false)
-  const [colorsByRoomObject, setColorsByRoomObject] = useState({})
+  // const [colorsByRoomObject, setColorsByRoomObject] = useState({})
   const [roomObjects, setRoomObjects] = useState([])
+  const [furnitureInfo, setFurnitureInfo] = useState([])
 
   useEffect(() => {
     const { piecesData, pieces } = roomData
-
     const relevantRoomObjects = pieces.slice(0, HOW_MANY_ROOM_OBJECTS)
     const relevantRoomColorData = relevantRoomObjects.map((obj, i) => piecesData[i])
     const colorsPerObject = Math.floor(HOW_MANY_TOTAL_COLORS / HOW_MANY_ROOM_OBJECTS)
@@ -71,8 +72,11 @@ function ResultsPage (props: ResultsPageProps) {
     setRoomObjects(finalRelevantRoomObjects)
 
     const finalRelevantColorGroups = relevantColorGroups.slice(0, totalCollectedColors.length)
-    setColorsByRoomObject(finalRelevantColorGroups)
-
+    const furnitureInfo = finalRelevantRoomObjects.map((roomObjects, i) => {
+      roomObjects.relevantColorGroup = finalRelevantColorGroups[i]
+      return roomObjects
+    })
+    setFurnitureInfo(furnitureInfo)
     const livePaletteData: Color[] = uniq(flatten(zip.apply(undefined, finalRelevantColorGroups)).filter(v => !!v))
 
     if (livePaletteData && livePaletteData.length) {
@@ -85,7 +89,6 @@ function ResultsPage (props: ResultsPageProps) {
       console.error('We found no matching colors.')
     }
   }, [roomData])
-
   return (
     <div className={baseClass}>
       <div className='JSFCommon__band JSFCommon__band--pad'>
@@ -117,13 +120,7 @@ function ResultsPage (props: ResultsPageProps) {
       </div>
       <div className='JSFCommon__band JSFCommon__band--pad'>
         <div className='JSFCommon__content'>
-          {roomObjects.map((piece: Piece, i) => <div key={i} className='JSFResultsPage__found-piece'>
-            <p>Suggested colors that will work well with your {piece.label}:</p>
-            <div className='JSFResultsPage__found-piece__img' style={{ backgroundImage: `url('${piece.img}')` }} />
-            {colorsByRoomObject[i].map((color, i) => {
-              return <div key={i} style={{ background: color.hex }}>{color.brandKey} {color.colorNumber} {color.name}</div>
-            })}
-          </div>)}
+          <FurnitureDetail furnitureInfo={furnitureInfo} />
         </div>
       </div>
     </div>
