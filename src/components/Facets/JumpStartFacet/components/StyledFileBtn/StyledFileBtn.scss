@@ -1,12 +1,11 @@
+@import '../../constants';
+
 .StyledFileBtn {
   display: inline-block;
-  padding: 3px 6px;
-  background: var(getVarName('theme.colors.primary'));
+  padding: 4px 6px;
+  background: map-get($jsf-color, 'primary');
   font-weight: bold;
   color: white;
   border-radius: 3px;
-
-  &__text {
-
-  }
+  line-height: 1.1;
 }

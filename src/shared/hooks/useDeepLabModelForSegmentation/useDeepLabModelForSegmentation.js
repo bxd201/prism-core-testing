@@ -1,5 +1,5 @@
 // @flow
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import intersection from 'lodash/intersection'
 import { type RGBArr, type Color } from 'src/shared/types/Colors.js.flow'
 import RgbQuant from 'rgbquant'
@@ -15,12 +15,26 @@ import { type SemanticSegmentation } from '@tensorflow-models/deeplab'
 import getImageDataFromImage from 'src/shared/utils/getImageDataFromImage.util'
 import loadImage from 'src/shared/utils/loadImage.util'
 import createCanvasElementWithData from 'src/shared/utils/createCanvasElementWithData.util'
+import determineRelatedHues from 'src/shared/utils/colorRelationship/determineRelatedHues'
 
 const SW_COLOR_MATCH_THRESHHOLD = 8 // 0 = perfect match, 100 = worst possible match
 const VALID_SEGMENT_THRESHHOLD = 0.03
-const DESIRED_LABELS = ['wall', 'floor', 'flooring', 'ceiling', 'bed', 'cabinet', 'table', 'plant', 'flora', 'plantlife', 'curtain', 'drape', 'drapery', 'mantle', 'pall', 'chair', 'painting', 'picture', 'sofa', 'couch', 'lounge', 'shelf', 'rug', 'carpet', 'carpeting', 'armchair', 'desk', 'wardrobe', 'closet', 'press', 'chestofdrawers', 'chest', 'bureau', 'dresser', 'counter', 'sink', 'fireplace', 'hearth', 'openfireplace', 'refrigerator', 'icebox', 'case', 'displaycase', 'showcase', 'vitrine', 'bookcase', 'coffeetable', 'cocktailtable', 'countertop', 'stove', 'kitchenstove', 'range', 'kitchenrange', 'cookingstove', 'kitchen island', 'ottoman', 'pouf', 'pouffe', 'puff', 'hassock', 'buffet', 'counter', 'sideboard', 'oven', 'dishwasher', 'dishwasher', 'dishwashingmachine']
+const DESIRED_LABELS = ['flooring', 'ceiling', 'bed', 'cabinet', 'table', 'plant', 'flora', 'plantlife', 'curtain', 'drape', 'drapery', 'mantle', 'pall', 'chair', 'painting', 'picture', 'sofa', 'couch', 'lounge', 'shelf', 'rug', 'carpet', 'carpeting', 'armchair', 'desk', 'wardrobe', 'closet', 'press', 'chestofdrawers', 'chest', 'bureau', 'dresser', 'counter', 'sink', 'fireplace', 'hearth', 'openfireplace', 'refrigerator', 'icebox', 'case', 'displaycase', 'showcase', 'vitrine', 'bookcase', 'coffeetable', 'cocktailtable', 'countertop', 'stove', 'kitchenstove', 'range', 'kitchenrange', 'cookingstove', 'kitchen island', 'ottoman', 'pouf', 'pouffe', 'puff', 'hassock', 'buffet', 'counter', 'sideboard', 'oven', 'dishwasher', 'dishwasher', 'dishwashingmachine']
 const RGB_QUANT_OPTIONS = {
-  colors: 20 // how many colors to which to reduce input image
+  colors: 100, // how many colors to which to reduce input image
+  minHueCols: 256 // very slight increase in processing time; supposedly better representation of important under-represented colors
+}
+
+const withinXOf = (v: number, x: number, of: number): boolean => !((v > of + x) || (v < of - x))
+const reduceSimilarHues = (accum: number[], curr: number): number[] => {
+  if (accum.filter((v) => withinXOf(v, 360 * 0.05, curr)).length === 0) {
+    return [
+      ...accum,
+      curr
+    ]
+  }
+
+  return accum
 }
 
 type Piece = {
@@ -28,7 +42,8 @@ type Piece = {
   width: number,
   pixels: Uint8ClampedArray,
   legendColor: RGBArr,
-  label: string
+  label: string,
+  weight: number
 }
 
 type PiecePosterizationData = {
@@ -61,7 +76,7 @@ function useDeepLabModelForSegmentation (model: SemanticSegmentation, inputImage
   const [error, setError] = useState<string | typeof undefined>()
   const [loading, setLoading] = useState<boolean>(false)
   const [processing, setProcessing] = useState<boolean>(false)
-  const [ { colorMap }, { loading: loadingColorData } ] = useColors()
+  const [ { colorMap = {} }, { loading: loadingColorData } ] = useColors()
 
   const reset = () => {
     setResults()
@@ -70,6 +85,22 @@ function useDeepLabModelForSegmentation (model: SemanticSegmentation, inputImage
     setLoading(false)
     setProcessing(false)
   }
+
+  const getSwColorMatches = useCallback((rgb: RGBArr, matchCount: number = 1) => {
+    return sortBy(
+      values(colorMap)
+        .map((swCol) => {
+          const { red: r, green: g, blue: b } = swCol
+          return {
+            _dist: getColorDistance({ r: r, g: g, b: b }, rgb),
+            color: swCol
+          }
+        })
+        .filter(({ _dist }) => _dist <= SW_COLOR_MATCH_THRESHHOLD)
+        .map(({ color }) => color),
+      '_dist'
+    ).slice(0, matchCount)
+  }, [colorMap])
 
   useEffect(() => {
     if (inputImage && model) {
@@ -96,30 +127,30 @@ function useDeepLabModelForSegmentation (model: SemanticSegmentation, inputImage
           const labels = Object.keys(legend)
 
           const relevantLabels = intersection(DESIRED_LABELS, labels)
-          const displayedLabels: string[] = []
-          const roomPieces: Piece[] = []
           const sourceImageSize = sourceImgData.data.length / 4
-
-          relevantLabels.forEach(label => {
+          const roomPieces: Piece[] = relevantLabels.map(label => {
             // this can maybe just be segmentationMap
             const legendColor = legend[label]
             const roomObjPixels = getObjectPixels(segmentationMap, legendColor, sourceImgData.data)
 
             // get sizes of array
             const maskedImageSize = roomObjPixels.filter((v, i) => (i + 1) % 4 === 0).filter(v => v > 0).length
+            const weight = maskedImageSize / sourceImageSize
 
             // only return objects that are xx% of the original image size
-            if (maskedImageSize > Math.round(sourceImageSize * VALID_SEGMENT_THRESHHOLD)) {
-              displayedLabels.push(label)
-              roomPieces.push({
-                label,
-                width,
-                height,
-                legendColor,
-                pixels: roomObjPixels
-              })
+            return {
+              label,
+              width,
+              height,
+              legendColor,
+              pixels: roomObjPixels,
+              weight: weight
             }
           })
+            .filter(piece => piece.weight >= VALID_SEGMENT_THRESHHOLD)
+            .sort((p1, p2) => p1.weight < p2.weight ? 1 : -1)
+
+          const displayedLabels: string[] = roomPieces.map(piece => piece.label)
 
           Promise.all(roomPieces.map((piece: Piece): Promise<PiecePosterizationData> => {
             return new Promise((resolve, reject) => {
@@ -129,18 +160,18 @@ function useDeepLabModelForSegmentation (model: SemanticSegmentation, inputImage
               const ctx = createCanvasElementWithData(new ImageData(pixels, width, height), width, height)
               const q = new RgbQuant(RGB_QUANT_OPTIONS)
 
+              console.time(`Iris color analysis for ${piece.label} time elapsed`)
               q.sample(ctx)
 
               const palette = q.palette(true, true)
+              console.timeEnd(`Iris color analysis for ${piece.label} time elapsed`)
 
               const filteredPalette = palette.map((rgb: RGBArr) => tinycolor(`rgb(${rgb.join(',')})`)).filter(tc => {
                 const sat = tc.toHsl().s
                 const l = tc.toHsl().l
                 // colors need to be at least 5% saturated, and 20-90% light to be considered part of our palette
                 return sat > 0.05 && l < 0.9 && l > 0.2
-              })
-
-              const filteredPalette2 = filteredPalette.filter((val, i) => {
+              }).filter((val, i, filteredPalette) => {
                 let keep = true
 
                 filteredPalette.forEach((val2, i2) => {
@@ -162,26 +193,25 @@ function useDeepLabModelForSegmentation (model: SemanticSegmentation, inputImage
                 return keep
               })
 
+              const suggestedColorInput = filteredPalette.map(v => parseInt(v.toHsl().h, 10)).reduce(reduceSimilarHues, [])
+              const suggestedColors = flattenDeep([
+                determineRelatedHues(suggestedColorInput[0], suggestedColorInput[1]),
+                determineRelatedHues(suggestedColorInput[1], suggestedColorInput[2]),
+                determineRelatedHues(suggestedColorInput[2], suggestedColorInput[3]),
+                determineRelatedHues(suggestedColorInput[0], suggestedColorInput[3])
+              ])
+                .filter(v => typeof v !== 'undefined')
+                // $FlowIgnore -- flow chokes on what reduceSimilarHues is receiving here
+                .reduce(reduceSimilarHues, [])
+                .map(hue => tinycolor(`hsl(${hue}, 30%, 90%)`).toRgb())
+                .map((color: RGBArr) => getSwColorMatches(color, 1)[0])
+
               // -----------------------------------------------
               // GET NEAREST SW COLOR MATCHES
 
-              const swColorMatches = filteredPalette2.map((color: tinycolor) => {
+              const swColorMatches = filteredPalette.map((color: tinycolor) => {
                 const thisRgb = color.toRgb()
-                const thisMatches = sortBy(
-                  values(colorMap)
-                    .map((swCol) => {
-                      const { red: r, green: g, blue: b } = swCol
-                      return {
-                        _dist: getColorDistance({ r: r, g: g, b: b }, thisRgb),
-                        color: swCol
-                      }
-                    })
-                    .filter(({ _dist }) => _dist <= SW_COLOR_MATCH_THRESHHOLD)
-                    .map(({ color }) => color),
-                  '_dist'
-                ).slice(0, 3)
-
-                return thisMatches
+                return getSwColorMatches(thisRgb, 3)
               })
 
               // -----------------------------------------------
@@ -191,11 +221,11 @@ function useDeepLabModelForSegmentation (model: SemanticSegmentation, inputImage
               const duplicates = uniq(allCoordinating.filter((v, i, a) => a.indexOf(v) !== i)).map(id => id && colorMap[id])
 
               resolve({
-                palette: filteredPalette2,
+                palette: filteredPalette,
                 swPalette: swColorMatches,
                 recurringCoordinatingColors: duplicates,
                 image: ctx.toDataURL(),
-                suggestedColors: [] // TODO: Add suggested color strings in here from color relationship logic @cody.richmond
+                suggestedColors: suggestedColors
               })
             })
           })).then((piecesPosterizationData: PiecePosterizationData[]) => {
