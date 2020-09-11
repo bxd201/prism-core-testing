@@ -2,14 +2,15 @@
 
 .JSFCommon {
   &__title {
-    font-size: 1.5rem;
-    font-weight: 200;
+    font-size: 2rem;
+    font-weight: bold;
     margin: 0 0 .75em 0;
     padding: 0;
     text-align: center;
+    color: getVar("colors.primary") !important;
 
     @include respond-above(sm) {
-      font-size: 2rem;
+      font-size: 4rem;
     }
   }
   &__description {
@@ -30,6 +31,10 @@
     margin-right: auto;
     max-width: $jsf-content-max-width;
     width: 100%;
+    p {
+      line-height: 1.5em;
+      color: #7e7e7e ;
+    }
 
     &--centered {
       text-align: center;

@@ -1,0 +1,393 @@
+.simple-prism-live-palette {
+  max-width: 100%;
+  display: flex;
+  overflow: hidden;
+  background-color: getVar( "colors.white" );
+  padding: $livePalette__chip-side-margin 0px;
+  flex-direction: column;
+  @include respond-above(sm) {
+    flex-direction: row;
+  }
+  &__color-block {
+    width: 100%;
+    margin-bottom: 6px;
+  }
+  &__header {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    display: none;
+    @include respond-above(sm) {
+      display: flex;
+    }
+    &__name {
+      display: none;
+      text-align: center;
+      @include respond-above(sm) {
+        display: block;
+        margin: 0.2em 0.5em;
+      }
+      @include respond-above(md) {
+        margin: 0.5em;
+      }
+    }
+    &__compare-button{
+      &--hide{
+        display: none;
+      }
+      padding: 0.5em 1em;
+      margin-right: 5px;
+      font-weight: 600;
+      font-size: 16px;
+      outline:none;
+      &:hover{
+        background-color: #2cabe2;
+        color: #fff;
+        cursor: pointer;
+      }
+    }
+  }
+
+  &__active-color {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    z-index: 100;
+    margin-bottom: 4px;
+    @include respond-above(sm) {
+      display: none;
+    }
+    &__details {
+      display: block;
+      font-size: .8rem;
+      line-height: 1.2em;
+      padding: 0.5em;
+      &--dark {
+        color: getVar( "colors.white" );
+      }
+    }
+    &__info-button {
+      padding: 0.5em;
+      display: flex;
+      align-items: center;
+    }
+    &__color-number {
+      display: block;
+    }
+    &__color-name {
+      display: block;
+    }
+  }
+
+  &__list {
+    display: flex;
+    flex-grow: 1;
+    margin: 0.25%;
+  }
+
+  &__slot {
+    @include chip-attributes($distribution: even);
+    position: relative;
+    cursor: pointer;
+    transition: width .4s ease-out, opacity .1s ease-out;
+    overflow: inherit;
+    outline: none;
+    padding-bottom: 0px;
+    &:focus {
+      outline-style: solid;
+      outline-color: #2cabe2;
+      outline-width: 2px;
+    }
+    @include respond-above(sm) {
+      overflow: hidden;
+    }
+    &--empty,
+    &--add {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      &:focus {
+        outline-style: solid;
+        outline-color: #2cabe2;
+        outline-width: 2px;
+        z-index: 100;
+      }
+    }
+
+    &--empty {
+      cursor: default;
+    }
+
+    &--add {
+      background-color: getVar( "colors.white" );
+    }
+
+    &--add-empty {
+      width: 30%;
+
+      .prism-live-palette__slot__copy {
+        width: 65%;
+        top: 50%;
+        left: 38%;
+        bottom: auto;
+        text-align: left;
+        transform: translateY(-50%);
+      }
+
+      .prism-live-palette__icon {
+        left: 0.5em;
+      }
+    }
+
+    &--active {
+      opacity: 1;
+      position: relative;
+      &:before {
+        background: inherit;
+        content: '';
+        display: block;
+        position: absolute;
+        width: 100%;
+        height: 6px;
+        top: -4px;
+      }
+      @include respond-above(sm) {
+        width: 30%; // TODO: calculate actual width
+        &:before {
+          display: none;
+        }
+      }
+
+      /* .prism-live-palette__color-details {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        position: relative;
+        align-items: center;
+        @include respond-above(sm) {
+          position: static;
+          justify-content: space-between;
+        }
+        .prism-live-palette__description {
+          width: auto;
+        }
+
+        .prism-live-palette__button-group {
+          position: relative;
+          display: flex;
+          width: auto;
+          justify-content: space-between;
+          padding: 0px;
+          opacity: 0;
+          animation: fadeIn 1s forwards;
+          margin-top: 22%;
+          @include respond-above(sm) {
+            padding: 5px;
+            position: absolute;
+            margin-top: 0;
+            right: 0;
+            top: 0;
+          }
+        }
+      } */
+    }
+
+    &--removing {
+      opacity: 0.01;
+      transition: 700ms;
+    }
+
+    &__copy {
+      position: absolute;
+      display: none;
+      bottom: 2px;
+      font-size: 7px;
+      text-decoration: none;
+      text-align: center;
+      width: 100%;
+      @include respond-above(sm) {
+        display: block;
+      }
+    }
+
+    &__button{
+      position: absolute;
+      top:50%;
+      left:50%;
+      transform: translate(-50%, -50%);
+      outline:none;
+    }
+
+    &__drag-icon-wrapper{
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      right: 5px;
+      bottom: 5px;
+      overflow:hidden;
+      &--show{
+        display: none;
+        @include respond-above(sm) {
+          display: block;
+        }
+      }
+      &--hide{
+        display: none;
+      }
+      &:hover{
+        cursor: grab;
+      }
+    }
+  }
+
+  &__icon {
+    top: 50%;
+    position: absolute;
+    color: #000000;
+    transform: translateY(-50%);
+  }
+
+  &__info-button {
+    display: none;
+    @include respond-above(sm) {
+      display: flex;
+    }
+  }
+
+  &__trash {
+    position: relative;
+    display: flex;
+    width: 100%;
+    color: inherit;
+    background: inherit;
+    border: none;
+    box-shadow: none;
+    font-size: 20px;
+    @include respond-above(sm) {
+      display: flex;
+      flex-direction: column;
+      width: 16px;
+      height: 20px;
+      margin-left: 4px;
+    }
+    &:focus {
+      outline-style: solid;
+      outline-color: #2cabe2;
+      outline-width: 2px;
+      z-index: 100;
+    }
+  }
+
+  &__color-details {
+    font-size: 10px;
+    height: auto;
+    padding: 0em;
+
+    &--dark {
+      color: getVar( "colors.white" );
+    }
+  }
+
+  &__color-number {
+    font-size: 0.8rem;
+    display: none;
+    color: inherit;
+    @include respond-above(sm) {
+      display: block;
+    }
+  }
+
+  &__color-name {
+    font-size: 0.8rem;
+    font-weight: bold;
+    display: none;
+    color: inherit;
+    @include respond-above(sm) {
+      display: block;
+      width: 4em;
+    }
+    @include respond-above(md) {
+      width: auto;
+    }
+  }
+
+  &__color-description {
+    clip: rect(1px, 1px, 1px, 1px); // For screen readers only
+    font-size: 0.7em;
+    display: none;
+    position: absolute;
+    bottom: 0.5em;
+    color: inherit;
+    @include respond-above(sm) {
+      display: block;
+    }
+  }
+}
+
+.live-palette-modal {
+  &__wrapper {
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.7);
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    left: 0;
+    overflow-y: scroll;
+    position: absolute;
+    right: 0;
+    top: 2px;
+    z-index: 100000;
+    &--active {
+      display: flex;
+    }
+    @include respond-above(md) {
+      overflow: visible;
+    }
+  }
+  &__container {
+    background-color: #f0f0f0;
+    box-sizing: border-box;
+    color: #333;
+    font-size: 1em;
+    font-weight: bold;
+    height: auto;
+    line-height: 21.6px;
+    margin: 0;
+    padding: 14px;
+    position: relative;
+    text-align: center;
+    width: 90%;
+    @include respond-above(md) {
+      max-width: 480px;
+      overflow: visible;
+    }
+  }
+  &__content {
+    &__title {
+      font-size: 125%;
+    }
+    margin: 0.5em 0;
+  }
+  &__button {
+    background: #fff;
+    color: #333;
+    display: inline-block;
+    margin: 1em 0px 0px 1em;
+    outline: none;
+    padding: 0.75em 1.75em;
+    text-align: center;
+    text-transform: uppercase;
+    min-width: 140px;
+    &:focus {
+      outline-style: solid;
+      outline-color: #2cabe2;
+      outline-width: 2px;
+    }
+    &:hover {
+      border-color: getVar("colors.summerSkyBlue");
+      color: getVar("colors.summerSkyBlue");
+    }
+  }
+}

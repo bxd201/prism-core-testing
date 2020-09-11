@@ -2,8 +2,7 @@
 import React, { useState, useEffect } from 'react'
 
 import FastMask from 'src/components/FastMask/FastMask'
-import LivePalette from 'src/components/LivePalette/LivePalette'
-import { replaceLpColors, activate, empty } from 'src/store/actions/live-palette'
+import SimpleLivePalette from 'src/components/LivePalette/SimpleLivePalette'
 import { useDispatch } from 'react-redux'
 import './ResultsPage.scss'
 import '../../JSFCommon.scss'
@@ -14,6 +13,7 @@ import flatten from 'lodash/flatten'
 import uniq from 'lodash/uniq'
 import zip from 'lodash/zip'
 import { type Color } from 'src/shared/types/Colors.js.flow'
+import { activate, replaceLpColors, empty } from '../../../../../store/actions/live-palette'
 
 const HOW_MANY_ROOM_OBJECTS = 3
 const HOW_MANY_TOTAL_COLORS = 7 // this can probably be pulled from a LivePalette const
@@ -112,7 +112,7 @@ function ResultsPage (props: ResultsPageProps) {
       </div>
       <div className='JSFCommon__band'>
         <div className='JSFCommon__content'>
-          <LivePalette />
+          <SimpleLivePalette />
         </div>
       </div>
       <div className='JSFCommon__band JSFCommon__band--pad'>
