@@ -1,18 +1,89 @@
 @import '../../constants';
 
-.JSFMainPage {
-  &__dropzone {
-    background: lightblue;
-    border: 2px dotted blue;
-    display: block;
-    flex: 1;
-    margin: .5em;
-    max-width: $jsf-content-max-width;
-    padding: 2em;
-    text-align: center;
+:root {
+  body { margin: 0; }
+}
 
-    &--active {
-      background: lightgreen;
+.jumpstart-image-upload {
+  width: 100vw;
+  height: 100vh;
+  background-color: #f7f7f7;
+  display: grid;
+
+  .centered-content {
+    width: 600px;
+    text-align: center;
+    margin: auto;
+    display: grid;
+
+    h1, h2 { color: getVar("colors.primary") !important; }
+
+    h1 { font-size: 4em; }
+
+    h2 {
+      font-size: 1.4em;
+      margin: 1em;
+    }
+
+    p {
+      line-height: 1.5em;
+      color: #7e7e7e ;
+    }
+
+    svg { color: getVar("colors.primary"); }
+
+    img, form { width: 600px; }
+
+    form {
+      border: 2px dashed getVar("colors.primary");
+      background-color: white;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 300px;
+
+      div {
+        line-height: 1.7em;
+
+        svg { margin: 15px; }
+
+        p { color: #343434; }
+
+        button {
+          text-decoration: underline;
+          color: getVar("colors.primary");
+          font-size: 1em;
+        }
+      }
+    }
+
+    .note {
+      font-size: 0.8em;
+      color: #7e7e7e;
+      margin: 15px;
+
+      strong { color: #343434; }
+    }
+
+    .upload-new-image {
+      margin: auto;
+      color: getVar("colors.primary");
+      display: inline-flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 1em;
+      width: 180px;
+    }
+
+    .submit-button {
+      background-color: getVar("colors.primary");
+      width: 125px;
+      height: 50px;
+      color: white;
+      font-size: 1.1em;
+      margin: auto;
+      margin-top: 1em;
     }
   }
 }
