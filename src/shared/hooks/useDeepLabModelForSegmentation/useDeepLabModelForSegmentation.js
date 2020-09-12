@@ -1,13 +1,14 @@
 // @flow
 import { useState, useEffect, useCallback } from 'react'
 import intersection from 'lodash/intersection'
-import { type RGBArr, type Color } from 'src/shared/types/Colors.js.flow'
+import { type RGBArr, type RGBObj, type Color } from 'src/shared/types/Colors.js.flow'
 import RgbQuant from 'rgbquant'
 import { tinycolor } from '@ctrl/tinycolor'
 import { colorMatch, getColorDistance } from 'src/components/PaintScene/utils'
 import flattenDeep from 'lodash/flattenDeep'
 import uniq from 'lodash/uniq'
 import sortBy from 'lodash/sortBy'
+import chunk from 'lodash/chunk'
 import values from 'lodash/values'
 import useColors from 'src/shared/hooks/useColors'
 import { type ModelSegmentationResults } from 'src/shared/hooks/useDeepLabModel'
@@ -37,13 +38,16 @@ const reduceSimilarHues = (accum: number[], curr: number): number[] => {
   return accum
 }
 
-type Piece = {
+export type Piece = {
   height: number,
   width: number,
   pixels: Uint8ClampedArray,
   legendColor: RGBArr,
   label: string,
-  weight: number
+  weight: number,
+  img?: string,
+  posX?: number,
+  posY?: number
 }
 
 type PiecePosterizationData = {
@@ -54,7 +58,7 @@ type PiecePosterizationData = {
   suggestedColors: string[]
 }
 
-type SegmentationResults = {
+export type SegmentationResults = {
   segmentationMapImagePath: string,
   displayedLabels: string[],
   pieces: Piece[],
@@ -86,7 +90,7 @@ function useDeepLabModelForSegmentation (model: SemanticSegmentation, inputImage
     setProcessing(false)
   }
 
-  const getSwColorMatches = useCallback((rgb: RGBArr, matchCount: number = 1) => {
+  const getSwColorMatches = useCallback((rgb: RGBObj, matchCount: number = 1) => {
     return sortBy(
       values(colorMap)
         .map((swCol) => {
@@ -149,6 +153,10 @@ function useDeepLabModelForSegmentation (model: SemanticSegmentation, inputImage
           })
             .filter(piece => piece.weight >= VALID_SEGMENT_THRESHHOLD)
             .sort((p1, p2) => p1.weight < p2.weight ? 1 : -1)
+            .map(piece => ({
+              ...piece,
+              ...cropSourceImgBasedOnMapColor(sourceImgData.data, width, segmentationMap, legend[piece.label])
+            }))
 
           const displayedLabels: string[] = roomPieces.map(piece => piece.label)
 
@@ -204,7 +212,7 @@ function useDeepLabModelForSegmentation (model: SemanticSegmentation, inputImage
                 // $FlowIgnore -- flow chokes on what reduceSimilarHues is receiving here
                 .reduce(reduceSimilarHues, [])
                 .map(hue => tinycolor(`hsl(${hue}, 30%, 90%)`).toRgb())
-                .map((color: RGBArr) => getSwColorMatches(color, 1)[0])
+                .map((color: RGBObj) => getSwColorMatches(color, 1)[0])
 
               // -----------------------------------------------
               // GET NEAREST SW COLOR MATCHES
@@ -296,6 +304,52 @@ function getObjectPixels (imageData, label, src) {
   }
 
   return objPixels
+}
+
+function cropSourceImgBasedOnMapColor (sourceImg: Uint8ClampedArray, width: number, mapImg: Uint8ClampedArray, rgb: RGBArr) {
+  // $FlowIgnore -- flow doesn't like Uint8ClampedArray being passed as an array. it's fine.
+  const reducedMap = chunk(chunk(mapImg, 4).map(v => v.slice(0, 3).join(',')), width) // output should be [["r,g,b", "r,g,b", ...], ...]
+  const height = reducedMap.length
+  const colStr = rgb.join(',') // output should be "r,g,b"
+
+  let top = width - 1
+  let left = height - 1
+  let right = 0
+  let bottom = 0
+
+  reducedMap.forEach((vy, y) => {
+    vy.forEach((vx, x) => {
+      if (vx === colStr) {
+        if (top > y) {
+          top = y
+        }
+
+        if (left > x) {
+          left = x
+        }
+
+        if (bottom < y) {
+          bottom = y
+        }
+
+        if (right < x) {
+          right = x
+        }
+      }
+    })
+  })
+
+  const cropW = right - left
+  const cropH = bottom - top
+  const posX = Math.min(1, Math.max(0, (left + (cropW / 2)) / width))
+  const posY = Math.min(1, Math.max(0, (top + (cropH / 2)) / height))
+  const img = createCanvasElementWithData(new ImageData(sourceImg, width, height), cropW, cropH, -left, -top).toDataURL('image/jpeg')
+
+  return {
+    posX,
+    posY,
+    img
+  }
 }
 
 export default useDeepLabModelForSegmentation
