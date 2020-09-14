@@ -1,6 +1,5 @@
 // @flow
 import React, { useState, useEffect } from 'react'
-
 import FastMask from 'src/components/FastMask/FastMask'
 import SimpleLivePalette from 'src/components/LivePalette/SimpleLivePalette'
 import { useDispatch } from 'react-redux'
@@ -16,21 +15,22 @@ import zip from 'lodash/zip'
 import { type Color } from 'src/shared/types/Colors.js.flow'
 import { activate, replaceLpColors, empty } from '../../../../../store/actions/live-palette'
 import { FurnitureDetail } from '../ResultsPage/FurnitureDetail'
+import { type RoomType } from 'src/components/Facets/JumpStartFacet/JumpStartFacet'
+
 const HOW_MANY_ROOM_OBJECTS = 3
 const HOW_MANY_TOTAL_COLORS = 7 // this can probably be pulled from a LivePalette const
 
 const baseClass = 'JSFResultsPage'
 
 type ResultsPageProps = {
-  roomData: SegmentationResults
+  roomData: SegmentationResults,
+  roomTypeProbabilities: [RoomType, number][]
 }
 
-function ResultsPage (props: ResultsPageProps) {
-  const { roomData = {} } = props
+function ResultsPage ({ roomData = {}, roomTypeProbabilities }: ResultsPageProps) {
   const dispatch = useDispatch()
-  const roomType = getRoomTypeFromRoomData(roomData)
+  const roomType = getRoomTypeFromRoomData(roomData.relevantLabels, roomTypeProbabilities)
   const [isFastMaskComplete, setFastMaskComplete] = useState(false)
-  // const [colorsByRoomObject, setColorsByRoomObject] = useState({})
   const [roomObjects, setRoomObjects] = useState([])
   const [furnitureInfo, setFurnitureInfo] = useState([])
 
