@@ -11,7 +11,6 @@ type FurnitureDetailProps = {
 
 export const FurnitureDetail = (props: FurnitureDetailProps) => {
   const intl = useIntl()
-  console.log(props.furnitureInfo)
   return (
     <>
       {
