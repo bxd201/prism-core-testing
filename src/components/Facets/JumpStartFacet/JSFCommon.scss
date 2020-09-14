@@ -1,20 +1,28 @@
 @import './constants';
 
+:root {
+  background-color: #f7f7f7;
+  font-family: sans-serif;
+}
+
 .JSFCommon {
+  background-color: #f7f7f7;
   &__title {
     font-size: 2rem;
     font-weight: bold;
     margin: 0 0 .75em 0;
     padding: 0;
     text-align: center;
-    color: getVar("colors.primary") !important;
+    color: map-get($jsf-color, primary) !important;
 
     @include respond-above(sm) {
-      font-size: 4rem;
+      font-size: 2rem;
     }
   }
   &__description {
     text-align: center;
+    font-family: sans-serif;
+    font-weight: bold;
   }
 
   &__text {
@@ -33,7 +41,7 @@
     width: 100%;
     p {
       line-height: 1.5em;
-      color: #7e7e7e ;
+      color: #454545;
     }
 
     &--centered {
@@ -44,6 +52,7 @@
   &__band {
     display: flex;
     justify-content: center;
+    background-color: #f7f7f7;
 
     &--dark {
       background: $jsf-band-bg;

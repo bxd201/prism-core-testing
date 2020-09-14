@@ -24,10 +24,11 @@ const baseClass = 'JSFResultsPage'
 
 type ResultsPageProps = {
   roomData: SegmentationResults,
-  roomTypeProbabilities: [RoomType, number][]
+  roomTypeProbabilities: [RoomType, number][],
+  reset: Function
 }
 
-function ResultsPage ({ roomData = {}, roomTypeProbabilities }: ResultsPageProps) {
+function ResultsPage ({ roomData = {}, roomTypeProbabilities, reset }: ResultsPageProps) {
   const dispatch = useDispatch()
   const roomType = getRoomTypeFromRoomData(roomData.relevantLabels, roomTypeProbabilities)
   const [isFastMaskComplete, setFastMaskComplete] = useState(false)
@@ -89,15 +90,22 @@ function ResultsPage ({ roomData = {}, roomTypeProbabilities }: ResultsPageProps
       console.error('We found no matching colors.')
     }
   }, [roomData])
+
+  const goToStart = (e: SyntheticEvent) => {
+    e.preventDefault()
+    reset()
+  }
+
   return (
     <div className={baseClass}>
       <div className='JSFCommon__band JSFCommon__band--pad'>
         <div className='JSFCommon__content'>
           <div className={`${baseClass}__summary ${baseClass}__cols`}>
             <div className={`${baseClass}__cols__col ${baseClass}__cols__col--content`}>
+              <div className={'jumpstart__logo'}><img onClick={goToStart} src={'src/images/jumpstart/jumpstartlogo.png'} alt='jumpstart logo' /></div>
               <div className={`${baseClass}__summary__text JSFCommon__text`}>
-                <h1 className='JSFCommon__title'>{`Your ${startCase(roomType)}`}</h1>
-                <p className='JSFCommon__description'>Based on your space, our experts recommend trying these colors:</p>
+                <h1 className='JSFCommon__title'>{`Your Custom ${startCase(roomType)} Color Palette`}</h1>
+                <p className='JSFCommon__description'>Based on your room and furnishings:</p>
               </div>
             </div>
           </div>
@@ -121,6 +129,12 @@ function ResultsPage ({ roomData = {}, roomTypeProbabilities }: ResultsPageProps
       <div className='JSFCommon__band JSFCommon__band--pad'>
         <div className='JSFCommon__content'>
           <FurnitureDetail furnitureInfo={furnitureInfo} />
+        </div>
+      </div>
+      <div className={'JSFResultsPage__restart-wrapper'}>
+        <div className={'JSFResultsPage__restart-wrapper__inset'}>
+          <div className={'JSFResultsPage__restart-wrapper__desc'}>Ready to try another room?</div>
+          <div><button onClick={goToStart} className={'JSFResultsPage__restart-wrapper__btn'}>Start Over</button></div>
         </div>
       </div>
     </div>
