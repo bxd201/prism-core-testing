@@ -348,7 +348,9 @@ function cropSourceImgBasedOnMapColor (sourceImg: Uint8ClampedArray, width: numb
   return {
     posX,
     posY,
-    img
+    img,
+    left,
+    top
   }
 }
 
