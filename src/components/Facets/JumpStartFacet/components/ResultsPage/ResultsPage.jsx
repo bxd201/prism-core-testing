@@ -105,7 +105,7 @@ function ResultsPage ({ roomData = {}, reset }: ResultsPageProps) {
             <div className={`${baseClass}__cols__col ${baseClass}__cols__col--content`}>
               <div className={'jumpstart__logo'}><img onClick={goToStart} src={require('src/images/jumpstart/jumpstartlogo.png')} alt='jumpstart logo' /></div>
               <div className={`${baseClass}__summary__text JSFCommon__text`}>
-                <h1 className='JSFCommon__title'>{`Your Custom ${startCase(roomType)} Color Palette`}</h1>
+                <h1 className='JSFCommon__title'>{`Let's Start Your ${startCase(roomType)} Project`}</h1>
                 <p className='JSFCommon__description'>Based on your room and furnishings:</p>
               </div>
             </div>

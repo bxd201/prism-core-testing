@@ -11,8 +11,6 @@ import useDeepLabModelForSegmentation from 'src/shared/hooks/useDeepLabModelForS
 import { uploadImage } from 'src/store/actions/user-uploads'
 import useEffectAfterMount from 'src/shared/hooks/useEffectAfterMount'
 
-import ObjectLoader from './components/ObjectLoader/ObjectLoader'
-
 import './JumpStartFacet.scss'
 import './JSFCommon.scss'
 
@@ -88,9 +86,6 @@ function JumpStartFacet () {
   return (
     <>
       <div className={baseClass}>
-        {irisData ? (
-          <ObjectLoader roomData={irisData} img={uploadedImage} />
-        ) : null}
         {isError ? (
           <GenericMessage type={GenericMessage.TYPES.ERROR}>
             We've encountered a problem.
@@ -98,10 +93,12 @@ function JumpStartFacet () {
           </GenericMessage>
         ) : [PHASES.LOADING, PHASES.PROCESSING].indexOf(status) >= 0 ? (
           <ProcessingPage
+            imgUrl={uploadedImage}
             isLoading={!irisSuccess && status === PHASES.LOADING}
             isProcessing={!irisSuccess && status === PHASES.PROCESSING}
             onBeginInteraction={() => setCompletionBarriers(completionBarriers + 1)}
-            onEndInteraction={() => setCompletionBarriers(completionBarriers - 1)} />
+            onEndInteraction={() => setCompletionBarriers(completionBarriers - 1)}
+            roomData={irisData} />
         ) : (PHASES.RESULTS === status) ? (
           <ResultsPage roomData={irisData} reset={reset} />
         ) : (PHASES.ERROR === status) ? (
