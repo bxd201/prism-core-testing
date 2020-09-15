@@ -2,6 +2,8 @@
   max-width: 100%;
   display: flex;
   overflow: hidden;
+  font-family: sans-serif;
+  color: #454545;
   background-color: getVar( "colors.white" );
   padding: $livePalette__chip-side-margin 0px;
   flex-direction: column;

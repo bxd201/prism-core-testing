@@ -4,6 +4,16 @@
   body { margin: 0; }
 }
 
+.jumpstart__logo {
+  & img {
+    width: 300px !important;
+    margin: 0 auto;
+    display: block;
+    cursor: pointer;
+  }
+  margin-bottom: 20px;
+}
+
 .jumpstart-image-upload {
   width: 100vw;
   min-height: 100vh;
@@ -16,26 +26,34 @@
     margin: auto;
     display: grid;
 
-    h1, h2 { color: getVar("colors.primary") !important; }
+    h1, h2 { color: map-get($jsf-color, primary) }
 
-    h1 { font-size: 4em; }
+    h1 { font-size: 2em; }
 
     h2 {
       font-size: 1.4em;
       margin: 1em;
     }
 
-    p {
+    .jumpstart_intro {
       line-height: 1.5em;
-      color: #7e7e7e ;
+      color: map-get($jsf-color, primary);
+      font-weight: normal;
+      font-family: sans-serif;
     }
 
-    svg { color: getVar("colors.primary"); }
+    p {
+      line-height: 1.5em;
+      color: map-get($jsf-color, primary);
+      font-family: sans-serif;
+    }
+
+    svg { color: $jsf-accent-color; }
 
     img, form { width: 600px; }
 
     form {
-      border: 2px dashed getVar("colors.primary");
+      border: 2px dashed $jsf-accent-color;
       background-color: white;
       text-align: center;
       display: flex;
@@ -77,13 +95,13 @@
     }
 
     .submit-button {
-      background-color: getVar("colors.primary");
       width: 125px;
-      height: 50px;
-      color: white;
-      font-size: 1.1em;
       margin: auto;
       margin-top: 1em;
+      color: #ffffff;
+      padding: 14px 20px;
+      background-color: $jsf-accent-color;
+      font-size: 1.1rem;
     }
   }
 }

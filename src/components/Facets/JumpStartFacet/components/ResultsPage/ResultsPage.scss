@@ -1,3 +1,4 @@
+@import '../../constants';
 @import 'src/scss/convenience/_keyframe-animations.scss';
 
 .JSFResultsPage {
@@ -27,6 +28,9 @@
         flex: 1;
       }
     }
+  }
+  &__logo {
+    width: 300px;
   }
 
   &__summary {
@@ -95,6 +99,32 @@
       margin: 0 1em 1em 0;
       overflow: hidden;
       width: $jsfrpPieceWidth;
+    }
+  }
+  &__restart-wrapper {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 200px;
+    &__inset {
+      display:flex;
+      background-color: #ffffff;
+      width: auto;
+      padding: 20px;
+      align-items: center;
+      justify-content: center;
+    }
+    &__desc {
+      font-family: sans-serif;
+      font-weight: bold;
+      color: map-get($jsf-color, primary) !important;
+      margin-right: 4rem;
+    }
+    &__btn {
+      color: #ffffff;
+      padding: 14px 20px;
+      background-color: $jsf-accent-color;
+      font-size: 1.1rem;
     }
   }
 }

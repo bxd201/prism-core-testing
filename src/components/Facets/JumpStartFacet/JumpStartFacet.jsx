@@ -123,7 +123,7 @@ function JumpStartFacet () {
             onBeginInteraction={() => setCompletionBarriers(completionBarriers + 1)}
             onEndInteraction={() => setCompletionBarriers(completionBarriers - 1)} />
         ) : (PHASES.RESULTS === status) ? (
-          <ResultsPage roomData={irisData} roomTypeProbabilities={roomTypeProbabilities.current} />
+          <ResultsPage roomData={irisData} roomTypeProbabilities={roomTypeProbabilities.current} reset={reset} />
         ) : (PHASES.ERROR === status) ? (
           // TODO: make this real
           <p>There is a problem.</p>
