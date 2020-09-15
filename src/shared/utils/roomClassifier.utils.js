@@ -1,17 +1,20 @@
 // @flow
 import { type RoomType } from 'src/components/Facets/JumpStartFacet/JumpStartFacet'
 
-export const getRoomTypeFromRoomData = (relevantLabels: string[], roomTypeProbabilities: [RoomType, number][]): RoomType => {
-  // default to living room when this function is called with bad data
-  if (roomTypeProbabilities.length < 2 || roomTypeProbabilities[0].length < 2 || roomTypeProbabilities[1].length < 2) { return 'living_room' }
+export const getRoomTypeFromRoomData = (relevantLabels: string[]): RoomType | 'bathroom' => {
+  const livingRoomItems = ['rug', 'table', 'sofa', 'armchair']
+  const bathroomItems = ['bathtub', 'bathing', 'tub', 'bath', 'toilet', 'can', 'commode', 'crapper', 'pot', 'potty', 'stool', 'throne']
+  const kitchenItems = ['refrigerator', 'stove', 'oven', 'cabinet', 'dishwasher', 'sink', 'countertop']
 
-  const predictedRoomType: RoomType = roomTypeProbabilities[0][0]
-  const runnerUp: RoomType = roomTypeProbabilities[1][0]
-
-  // using the algorithm invented by Preston which overrides bedrooms to be living rooms when 3 out of 4 common living room furniture types are detected
-  if (predictedRoomType === 'bedroom' && runnerUp === 'living_room' && relevantLabels.filter(label => ['rug', 'table', 'sofa', 'armchair'].indexOf(label) !== -1).length > 2) {
+  if (relevantLabels.filter(label => bathroomItems.indexOf(label) !== -1).length > 1) { // at least 2 bathroom items makes it a bathroom
+    return 'bathroom'
+  } else if (relevantLabels.filter(label => livingRoomItems.indexOf(label) !== -1).length > 2) { // at least 3 living room items makes it a living room
     return 'living_room'
-  } else {
-    return predictedRoomType
+  } else if (relevantLabels.indexOf('bed') !== -1) { // a bed makes it a bedroom if it wasn't a living room
+    return 'bedroom'
+  } else if (relevantLabels.filter(label => kitchenItems.indexOf(label) !== -1).length > 2) { // at least 3 kitchen items makes it a kitchen
+    return 'kitchen'
+  } else { // default to living room because that is probably most common
+    return 'living_room'
   }
 }
