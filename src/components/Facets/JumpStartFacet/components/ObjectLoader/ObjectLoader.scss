@@ -1,9 +1,14 @@
 .ObjectLoader {
   position: relative;
-
-  &__src {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  height: auto;
+  &__overlay {
+    position: absolute;
+  }
+  &__bg {
     opacity: 0.25;
-    width: 513px;
   }
 
   &__piece {
@@ -11,11 +16,11 @@
   }
 
   .fade-in {
-    animation: fadeIn ease 2s;
-    -webkit-animation: fadeIn ease 2s;
-    -moz-animation: fadeIn ease 2s;
-    -o-animation: fadeIn ease 2s;
-    -ms-animation: fadeIn ease 2s;
+    animation: fadeIn ease 2s 1 backwards;
+    -webkit-animation: fadeIn ease 2s 1 backwards;
+    -moz-animation: fadeIn ease 2s 1 backwards;
+    -o-animation: fadeIn ease 2s 1 backwards;
+    -ms-animation: fadeIn ease 2s 1 backwards;
   }
   @keyframes fadeIn {
     0% {

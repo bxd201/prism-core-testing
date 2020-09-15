@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react'
 // import CircleLoader from 'src/components/Loaders/CircleLoader/CircleLoader'
 
 import './ProcessingPage.scss'
-// import ObjectLoader from '../ObjectLoader/ObjectLoader'
+import ObjectLoader from '../ObjectLoader/ObjectLoader'
 import type { SegmentationResults } from '../../../../../shared/hooks/useDeepLabModelForSegmentation'
 
 type ProcessingPageProps = {
@@ -18,8 +18,6 @@ type ProcessingPageProps = {
   // call onEndInteraction method when interaction ends
   // eslint-disable-line react/no-unused-prop-types,
   onEndInteraction?: Function,
-  // eslint-disable-next-line react/no-unused-prop-types
-  imgUrl: string,
   roomData: SegmentationResults
 }
 
@@ -61,6 +59,7 @@ function ProcessingPage (props: ProcessingPageProps) {
             })}
           </div>
         </div>}
+        <ObjectLoader roomData={roomData} imgSrc={imageSrc} />
         <p>{message}</p>
         <button className='JSFProcessingPage__demo-btn' disabled={isInteracting} onClick={() => {
           setIsInteracting(true)
