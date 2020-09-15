@@ -10,6 +10,7 @@ import useDeepLabModel, { deepLabModels } from 'src/shared/hooks/useDeepLabModel
 import useDeepLabModelForSegmentation from 'src/shared/hooks/useDeepLabModelForSegmentation'
 import { uploadImage } from 'src/store/actions/user-uploads'
 import useEffectAfterMount from 'src/shared/hooks/useEffectAfterMount'
+import HeroLoader from 'src/components/Loaders/HeroLoader/HeroLoader'
 
 import './JumpStartFacet.scss'
 import './JSFCommon.scss'
@@ -42,11 +43,13 @@ function JumpStartFacet () {
   const [deeplabModel, , modelError] = useDeepLabModel(deepLabModels.ADE20K, 4)
   const [irisData, irisSuccess, irisError, , irisProcessing] = useDeepLabModelForSegmentation(deeplabModel, uploadedImage)
   const [completionBarriers, setCompletionBarriers] = useState(1) // default is ALWAYS 1
+  const [isProcessingDone, setProcessingDone] = useState(false)
 
   const reset = () => {
     setIsError(false)
     setStatus(PHASES[PHASE_ORDER[0]])
     setCompletionBarriers(1)
+    setProcessingDone(false)
   }
 
   const decrementCompletionBarriers = useCallback(() => {
@@ -54,10 +57,10 @@ function JumpStartFacet () {
   }, [completionBarriers])
 
   useEffectAfterMount(() => {
-    if (completionBarriers === 0) {
+    if (completionBarriers === 0 && isProcessingDone) {
       setStatus(PHASES.RESULTS)
     }
-  }, [completionBarriers])
+  }, [completionBarriers, isProcessingDone])
 
   useEffect(() => {
     if ([PHASES.LOADING, PHASES.PROCESSING].indexOf(status) > -1 && irisProcessing) {
@@ -82,34 +85,38 @@ function JumpStartFacet () {
     dispatch(uploadImage(file))
     setStatus(PHASES.LOADING)
   }
-
-  return (
-    <>
-      <div className={baseClass}>
-        {isError ? (
-          <GenericMessage type={GenericMessage.TYPES.ERROR}>
-            We've encountered a problem.
-            <p>Let's <button onClick={reset}>try again</button>.</p>
-          </GenericMessage>
-        ) : [PHASES.LOADING, PHASES.PROCESSING].indexOf(status) >= 0 ? (
-          <ProcessingPage
-            imgUrl={uploadedImage}
-            isLoading={!irisSuccess && status === PHASES.LOADING}
-            isProcessing={!irisSuccess && status === PHASES.PROCESSING}
-            onBeginInteraction={() => setCompletionBarriers(completionBarriers + 1)}
-            onEndInteraction={() => setCompletionBarriers(completionBarriers - 1)}
-            roomData={irisData} />
-        ) : (PHASES.RESULTS === status) ? (
-          <ResultsPage roomData={irisData} reset={reset} />
-        ) : (PHASES.ERROR === status) ? (
-          // TODO: make this real
-          <p>There is a problem.</p>
-        ) : (
-          <MainPage onSelectFile={handleFileUpload} />
-        )}
-      </div>
-    </>
-  )
+  if ((!irisSuccess && status === PHASES.LOADING) || (!irisSuccess && status === PHASES.PROCESSING)) {
+    return <HeroLoader />
+  } else {
+    return (
+      <>
+        <div className={baseClass}>
+          {isError ? (
+            <GenericMessage type={GenericMessage.TYPES.ERROR}>
+              We've encountered a problem.
+              <p>Let's <button onClick={reset}>try again</button>.</p>
+            </GenericMessage>
+          ) : [PHASES.LOADING, PHASES.PROCESSING].indexOf(status) >= 0 ? (
+            <ProcessingPage
+              roomData={irisData || []}
+              imageSrc={uploadedImage && uploadedImage}
+              isLoading={!irisSuccess && status === PHASES.LOADING}
+              isProcessing={!irisSuccess && status === PHASES.PROCESSING}
+              isProcessingDone={() => setProcessingDone(true)}
+              onBeginInteraction={() => setCompletionBarriers(completionBarriers + 1)}
+              onEndInteraction={() => setCompletionBarriers(completionBarriers - 1)} />
+          ) : (PHASES.RESULTS === status) ? (
+            <ResultsPage roomData={irisData} reset={reset} />
+          ) : (PHASES.ERROR === status) ? (
+            // TODO: make this real
+            <p>There is a problem.</p>
+          ) : (
+            <MainPage onSelectFile={handleFileUpload} />
+          )}
+        </div>
+      </>
+    )
+  }
 }
 
 export default facetBinder(JumpStartFacet, 'JumpStartFacet')
