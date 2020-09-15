@@ -24,7 +24,7 @@ const HOW_MANY_TOTAL_COLORS = 7 // this can probably be pulled from a LivePalett
 const baseClass = 'JSFResultsPage'
 
 type ResultsPageProps = {
-  roomData: SegmentationResults
+  roomData: SegmentationResults,
   reset: Function
 }
 
