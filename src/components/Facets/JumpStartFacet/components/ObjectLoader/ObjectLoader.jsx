@@ -1,17 +1,22 @@
 // @flow
 import React from 'react'
 
+import { type SegmentationResults } from 'src/shared/hooks/useDeepLabModelForSegmentation'
+
 import './ObjectLoader.scss'
 
-function ObjectLoader ({ roomData, img }) {
+type ObjectLoaderProps = {
+  roomData: SegmentationResults,
+  img: Image
+}
+
+function ObjectLoader ({ roomData, img }: ObjectLoaderProps) {
   const { pieces } = roomData
-  console.log(img, '####')
-  console.log(roomData, '####')
 
   return (
     <div className='ObjectLoader'>
-      {pieces.map(piece => (
-        <div className='ObjectLoader__piece fade-in' style={{ left: `${piece.left}px`, top: `${piece.top}px` }}>
+      {pieces.map((piece, i) => (
+        <div key={i} className='ObjectLoader__piece fade-in' style={{ left: `${piece.left}px`, top: `${piece.top}px` }}>
           <img src={piece.img} alt={piece.label} />
         </div>
       ))}
