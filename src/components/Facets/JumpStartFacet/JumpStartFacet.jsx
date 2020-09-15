@@ -12,6 +12,8 @@ import { uploadImage } from 'src/store/actions/user-uploads'
 import useEffectAfterMount from 'src/shared/hooks/useEffectAfterMount'
 import * as tf from '@tensorflow/tfjs'
 
+import ObjectLoader from './components/ObjectLoader/ObjectLoader'
+
 import './JumpStartFacet.scss'
 import './JSFCommon.scss'
 
@@ -111,6 +113,9 @@ function JumpStartFacet () {
   return (
     <>
       <div className={baseClass}>
+        {irisData ? (
+          <ObjectLoader roomData={irisData} img={uploadedImage} />
+        ) : null}
         {isError ? (
           <GenericMessage type={GenericMessage.TYPES.ERROR}>
             We've encountered a problem.

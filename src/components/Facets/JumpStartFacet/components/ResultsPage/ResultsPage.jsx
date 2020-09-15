@@ -3,15 +3,17 @@ import React, { useState, useEffect } from 'react'
 import FastMask from 'src/components/FastMask/FastMask'
 import SimpleLivePalette from 'src/components/LivePalette/SimpleLivePalette'
 import { useDispatch } from 'react-redux'
-import './ResultsPage.scss'
-import '../../JSFCommon.scss'
-import { getRoomTypeFromRoomData } from 'src/shared/utils/roomClassifier.utils'
-import { type Piece, type SegmentationResults } from 'src/shared/hooks/useDeepLabModelForSegmentation'
 import startCase from 'lodash/startCase'
-
 import flatten from 'lodash/flatten'
 import uniq from 'lodash/uniq'
 import zip from 'lodash/zip'
+
+import './ResultsPage.scss'
+import '../../JSFCommon.scss'
+
+import { getRoomTypeFromRoomData } from 'src/shared/utils/roomClassifier.utils'
+import { type Piece, type SegmentationResults } from 'src/shared/hooks/useDeepLabModelForSegmentation'
+
 import { type Color } from 'src/shared/types/Colors.js.flow'
 import { activate, replaceLpColors, empty } from '../../../../../store/actions/live-palette'
 import { FurnitureDetail } from '../ResultsPage/FurnitureDetail'
@@ -37,6 +39,7 @@ function ResultsPage ({ roomData = {}, roomTypeProbabilities, reset }: ResultsPa
 
   useEffect(() => {
     const { piecesData, pieces } = roomData
+
     const relevantRoomObjects = pieces.slice(0, HOW_MANY_ROOM_OBJECTS)
     const relevantRoomColorData = relevantRoomObjects.map((obj, i) => piecesData[i])
     const colorsPerObject = Math.floor(HOW_MANY_TOTAL_COLORS / HOW_MANY_ROOM_OBJECTS)
