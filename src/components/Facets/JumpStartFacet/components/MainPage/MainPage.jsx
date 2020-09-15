@@ -18,7 +18,7 @@ function MainPage ({ onSelectFile }: MainPageProps) {
     <div className='jumpstart-image-upload'>
       <input className='visually-hidden' type='file' ref={hiddenFileInput} onChange={e => e.target.files.length && setFile(e.target.files[0])} />
       <div className='centered-content'>
-        <div className={'jumpstart__logo'}><img src={'src/images/jumpstart/jumpstartlogo.png'} alt='jumpstart logo' /></div>
+        <div className={'jumpstart__logo'}><img src={require('src/images/jumpstart/jumpstartlogo.png')} alt='jumpstart logo' /></div>
         <p className='jumpstart_intro'>You're just a few moments away from our best product and color recommendations— customized to your space</p>
         <h2>To get started, let's see your space.</h2>
         {file
