@@ -1,13 +1,48 @@
 .JSFProcessingPage {
   &__demo-btn {
-    padding: .5em;
-    margin: .1em;
-    background: rgba(lightblue, .2);
+    padding: 0.5em;
+    margin: 0.1em;
+    background: rgba(lightblue, 0.2);
     cursor: pointer;
 
     &[disabled] {
-      opacity: .4;
+      opacity: 0.4;
       cursor: default;
     }
   }
+  &__loading-details {
+    display: flex;
+    &__left {
+      flex: 1;
+      > img {
+        width: 100%;
+        object-fit: cover;
+        max-height: 200px;
+        animation: fadeIn ease 2s;
+      }
+    }
+    &__right {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+      &__label{
+        width: 50%;
+        margin:0 auto;
+      }
+      > span{
+        animation: fadeIn ease 2s;
+      }
+    }
+  }
 }
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
