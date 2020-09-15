@@ -7,9 +7,9 @@ import { faLongArrowUp } from '@fortawesome/pro-regular-svg-icons'
 import 'src/scss/convenience/visually-hidden.scss'
 import './MainPage.scss'
 
-type MainPageProps = { onSelectFile: Function }
+type MainPageProps = { onSelectFile: Function, imageRef: Ref }
 
-function MainPage ({ onSelectFile }: MainPageProps) {
+function MainPage ({ onSelectFile, imageRef }: MainPageProps) {
   const hiddenFileInput: { current: ?HTMLInputElement } = useRef()
   const [file, setFile] = useState()
   const { getRootProps, getInputProps } = useDropzone({ onDrop: (files = []) => files.length && setFile(files[0]) })

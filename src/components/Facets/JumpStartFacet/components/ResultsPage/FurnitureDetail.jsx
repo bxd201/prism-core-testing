@@ -28,7 +28,9 @@ export const FurnitureDetail = (props: FurnitureDetailProps) => {
                     return (
                       <div className={`${baseClass}__content-container__color__wrapper`} key={idx}>
                         <div className={`${baseClass}__content-container__color__wrapper__palette`} style={{ background: colorInfo.hex }} />
-                        <div className={`${baseClass}__content-container__color__wrapper__name`}><span>{colorInfo.brandKey} {colorInfo.colorNumber} </span><span>{colorInfo.name}</span></div>
+                        <div className={`${baseClass}__content-container__color__wrapper__name`}>
+                          <span className={`${baseClass}__content-container__color__wrapper__name__number`}>{colorInfo.brandKey} {colorInfo.colorNumber} </span>
+                          <span className={`${baseClass}__content-container__color__wrapper__name__desc`}>{colorInfo.name}</span></div>
                       </div>
                     )
                   })}

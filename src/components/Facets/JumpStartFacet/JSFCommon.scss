@@ -10,7 +10,7 @@
   &__title {
     font-size: 2rem;
     font-weight: bold;
-    margin: 0 0 .75em 0;
+    margin: 0 0 .5rem 0;
     padding: 0;
     text-align: center;
     color: map-get($jsf-color, primary) !important;
@@ -63,8 +63,8 @@
       padding-right: 1rem;
 
       @include respond-above(sm) {
-        padding-left: 2rem;
-        padding-right: 2rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
       }
     }
 
