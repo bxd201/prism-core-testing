@@ -48,7 +48,7 @@ function ProcessingPage (props: ProcessingPageProps) {
   return (
     <div className='JSFCommon__band JSFCommon__band--pad'>
       <div className='JSFCommon__content JSFCommon__content--centered JSFCommon__text'>
-
+        <div className={'jumpstart__logo'}><img src={require('src/images/jumpstart/jumpstartlogo.png')} alt='jumpstart logo' /></div>
         {!isLoading && <div className='JSFProcessingPage__loading-details'>
           <div className='JSFProcessingPage__loading-details__left' >
             {!processingContent.length && <img src={imageSrc} alt='' />}

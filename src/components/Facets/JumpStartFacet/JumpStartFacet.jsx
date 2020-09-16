@@ -86,7 +86,7 @@ function JumpStartFacet () {
     setStatus(PHASES.LOADING)
   }
   if ((!irisSuccess && status === PHASES.LOADING) || (!irisSuccess && status === PHASES.PROCESSING)) {
-    return <HeroLoader />
+    return (<><div className={'jumpstart__logo'}><img src={require('src/images/jumpstart/jumpstartlogo.png')} alt='jumpstart logo' /></div><HeroLoader /></>)
   } else {
     return (
       <>
