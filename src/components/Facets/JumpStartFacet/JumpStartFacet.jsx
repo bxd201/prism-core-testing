@@ -48,7 +48,7 @@ function JumpStartFacet () {
 
   const roomTypeProbabilities: { current: [RoomType, number][] } = useRef([])
   const [roomRecognitionModel, setRoomRecognitionModel] = useState()
-  roomRecognitionModel || tf.loadGraphModel('src/shared/model/model.json').then(setRoomRecognitionModel)
+  useEffect(() => { tf.loadGraphModel('src/shared/model/model.json').then(setRoomRecognitionModel) }, [])
 
   useEffect(() => {
     if (!uploadedImage || !roomRecognitionModel) { return }
