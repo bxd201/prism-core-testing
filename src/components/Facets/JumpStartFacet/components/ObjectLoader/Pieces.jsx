@@ -6,14 +6,6 @@ type PiecesProps = {
   roomData: SegmentationResults
 }
 
-const createCSSFilters = (hue: number) => {
-  const css = {
-    filter: `grayscale(100%) brightness(30%) sepia(100%) hue-rotate(${Math.floor(hue)}deg) saturate(700%) contrast(0.8)`
-  }
-
-  return css
-}
-
 const Pieces = (props: PiecesProps) => {
   const { roomData } = props
 
@@ -28,16 +20,11 @@ const Pieces = (props: PiecesProps) => {
   const getPieces = (roomData: SegmentationResults) => {
     return (roomData.pieces.map((piece, i) => {
       const pieceKey = i
-      const dominantColor: TinyColor = roomData.piecesData[i].palette[0]
-      // eslint-disable-next-line no-unused-vars
-      const { h: hue } = dominantColor.toHsl()
-      const cssFilters = createCSSFilters(hue)
 
       const styles = {
         left: `${piece.left}px`,
         top: `${piece.top}px`,
-        animationDelay: `${(i + 1) * 2}s`,
-        ...cssFilters
+        animationDelay: `${(i + 1) * 2}s`
       }
 
       return (
