@@ -86,7 +86,7 @@ function JumpStartFacet () {
       // THIS TIMEOUT GIVE THE LOADER TIME TO RAZZLE DAZZLE WITH PIZZAZZ
       window.setTimeout(() => {
         setStatus(PHASES.RESULTS)
-      }, 8000)
+      }, 2000)
     }
   }, [completionBarriers, isProcessingDone])
 

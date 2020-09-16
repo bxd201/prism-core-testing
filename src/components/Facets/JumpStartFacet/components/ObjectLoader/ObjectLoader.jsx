@@ -45,8 +45,6 @@ function ObjectLoader ({ roomData, imgSrc }: ObjectLoaderProps) {
     return newDims
   }
 
-  // grayscale(100%) brightness(30%) sepia(100%) hue-rotate(-180deg) saturate(700%) contrast(0.8);
-
   return (
     <>
       <img style={{ display: 'none' }} src={imgSrc} ref={imgRef} onLoad={imgLoaded} alt='This is invisible to the user' />

@@ -1,30 +1,18 @@
 // @flow
 import React, { useState, useEffect, useRef } from 'react'
-// import CircleLoader from 'src/components/Loaders/CircleLoader/CircleLoader'
 
 import './ProcessingPage.scss'
 import ObjectLoader from '../ObjectLoader/ObjectLoader'
-import type { SegmentationResults } from '../../../../../shared/hooks/useDeepLabModelForSegmentation'
 
 type ProcessingPageProps = {
   roomData: object,
   isProcessingDone: Function,
   imageSrc: string,
-  isLoading: boolean,
-  isProcessing: boolean,
-  // call onBeginInteraction method when interaction begins
-  // eslint-disable-line react/no-unused-prop-types
-  onBeginInteraction?: Function,
-  // call onEndInteraction method when interaction ends
-  // eslint-disable-line react/no-unused-prop-types,
-  onEndInteraction?: Function,
-  roomData: SegmentationResults
+  isLoading: boolean
 }
 
 function ProcessingPage (props: ProcessingPageProps) {
-  const { isLoading = false, isProcessing = false, onBeginInteraction, onEndInteraction, roomData, imageSrc, isProcessingDone } = props
-  const message = isLoading || isProcessing ? 'Loading image...' : 'Processing image...'
-  const [isInteracting, setIsInteracting] = useState(false)
+  const { isLoading = false, roomData, imageSrc, isProcessingDone } = props
   const [processingContent, setProcessingContent] = useState([])
   let count = useRef(0)
   useEffect(() => {
@@ -60,15 +48,6 @@ function ProcessingPage (props: ProcessingPageProps) {
           </div>
         </div>}
         <ObjectLoader roomData={roomData} imgSrc={imageSrc} />
-        <p>{message}</p>
-        <button className='JSFProcessingPage__demo-btn' disabled={isInteracting} onClick={() => {
-          setIsInteracting(true)
-          onBeginInteraction && onBeginInteraction()
-        }}>Begin</button>
-        <button className='JSFProcessingPage__demo-btn' disabled={!isInteracting} onClick={() => {
-          setIsInteracting(false)
-          onEndInteraction && onEndInteraction()
-        }}>End</button>
       </div>
     </div>
   )
