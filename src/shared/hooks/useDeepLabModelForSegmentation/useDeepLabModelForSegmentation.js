@@ -19,7 +19,7 @@ import createCanvasElementWithData from 'src/shared/utils/createCanvasElementWit
 import determineRelatedHues from 'src/shared/utils/colorRelationship/determineRelatedHues'
 
 const SW_COLOR_MATCH_THRESHHOLD = 8 // 0 = perfect match, 100 = worst possible match
-const VALID_SEGMENT_THRESHHOLD = 0.03
+const VALID_SEGMENT_THRESHHOLD = 0.005
 const DESIRED_LABELS = ['flooring', 'bed', 'cabinet', 'table', 'plant', 'flora', 'plantlife', 'curtain', 'drape', 'drapery', 'mantle', 'pall', 'chair', 'painting', 'picture', 'sofa', 'couch', 'lounge', 'shelf', 'rug', 'carpet', 'carpeting', 'armchair', 'desk', 'wardrobe', 'closet', 'press', 'chestofdrawers', 'chest', 'bureau', 'dresser', 'counter', 'sink', 'fireplace', 'hearth', 'openfireplace', 'refrigerator', 'icebox', 'case', 'displaycase', 'showcase', 'vitrine', 'bookcase', 'coffeetable', 'cocktailtable', 'countertop', 'stove', 'kitchenstove', 'range', 'kitchenrange', 'cookingstove', 'kitchen island', 'ottoman', 'pouf', 'pouffe', 'puff', 'hassock', 'buffet', 'counter', 'sideboard', 'oven', 'dishwasher', 'dishwasher', 'dishwashingmachine']
 const RGB_QUANT_OPTIONS = {
   colors: 100, // how many colors to which to reduce input image

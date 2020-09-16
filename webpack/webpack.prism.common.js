@@ -255,6 +255,10 @@ module.exports = {
       {
         from: 'src/fonts-to-copy',
         to: 'prism/fonts'
+      },
+      {
+        from: 'src/shared/model',
+        to: 'src/shared/model'
       }
     ]),
     new webpack.DefinePlugin(Object.entries(DEFINED_VARS).reduce((last, next) => ({ ...last, [next[0]]: JSON.stringify(next[1]) }), {})),

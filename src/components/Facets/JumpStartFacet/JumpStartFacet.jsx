@@ -1,5 +1,5 @@
 // @flow
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import facetBinder from 'src/facetSupport/facetBinder'
 import MainPage from './components/MainPage/MainPage'
@@ -11,6 +11,7 @@ import useDeepLabModelForSegmentation from 'src/shared/hooks/useDeepLabModelForS
 import { uploadImage } from 'src/store/actions/user-uploads'
 import useEffectAfterMount from 'src/shared/hooks/useEffectAfterMount'
 import HeroLoader from 'src/components/Loaders/HeroLoader/HeroLoader'
+import * as tf from '@tensorflow/tfjs'
 
 import './JumpStartFacet.scss'
 import './JSFCommon.scss'
@@ -44,6 +45,30 @@ function JumpStartFacet () {
   const [irisData, irisSuccess, irisError, , irisProcessing] = useDeepLabModelForSegmentation(deeplabModel, uploadedImage)
   const [completionBarriers, setCompletionBarriers] = useState(1) // default is ALWAYS 1
   const [isProcessingDone, setProcessingDone] = useState(false)
+
+  const roomTypeProbabilities: { current: [RoomType, number][] } = useRef([])
+  const [roomRecognitionModel, setRoomRecognitionModel] = useState()
+  roomRecognitionModel || tf.loadGraphModel('src/shared/model/model.json').then(setRoomRecognitionModel)
+
+  useEffect(() => {
+    if (!uploadedImage || !roomRecognitionModel) { return }
+
+    let img = new Image(224, 224)
+    img.src = uploadedImage
+    img.onload = () => {
+      let imgTensor = tf.browser.fromPixels(img).asType('float32').expandDims()
+      // normalize the img tensor to be between -1 and 1. Formula used on the python side: img = (img - np.mean(img)) / 255
+      imgTensor = imgTensor.sub(imgTensor.mean()).div(255)
+      roomRecognitionModel && roomRecognitionModel.predict(imgTensor).array().then(([results]) => {
+        const roomTypes = ['pantry', 'recreation_room', 'kitchen', 'home_office', 'bedroom', 'patio', 'living_room', 'staircase', 'dining_room', 'attic', 'basement', 'bathroom', 'corridor']
+        roomTypeProbabilities.current = roomTypes
+          // convert to tuples
+          .map((roomType, index): [RoomType, number] => [roomType, results[index]])
+          // sort by decending ranking
+          .sort(([, ranking1], [, ranking2]) => ranking2 - ranking1)
+      })
+    }
+  }, [uploadedImage, roomRecognitionModel])
 
   const reset = () => {
     setIsError(false)
@@ -106,7 +131,7 @@ function JumpStartFacet () {
               onBeginInteraction={() => setCompletionBarriers(completionBarriers + 1)}
               onEndInteraction={() => setCompletionBarriers(completionBarriers - 1)} />
           ) : (PHASES.RESULTS === status) ? (
-            <ResultsPage roomData={irisData} reset={reset} />
+            <ResultsPage roomData={irisData} reset={reset} roomTypeProbabilities={roomTypeProbabilities.current} />
           ) : (PHASES.ERROR === status) ? (
             // TODO: make this real
             <p>There is a problem.</p>

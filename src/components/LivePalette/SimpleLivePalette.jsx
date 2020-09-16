@@ -140,7 +140,7 @@ export class LivePalette extends PureComponent<Props, State> {
     const { spokenWord, isCompareColor } = this.state
     // TODO: abstract below into a class method
     // calculate all the active slots
-    const activeSlots = colors.filter(item => !!item.id).map((color, index) => {
+    const activeSlots = colors.filter(item => item && !!item.id).map((color, index) => {
       if (color && index < LP_MAX_COLORS_ALLOWED) {
         const isActive = checkIsActive(activeColor, color)
         const swatchStyles = isActive ? { height: this.state.swatchSide } : { width: this.state.swatchSide, height: this.state.swatchSide }
