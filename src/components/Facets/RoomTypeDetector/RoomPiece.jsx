@@ -17,7 +17,7 @@ type Props = {
   palette: RGBArr[],
   swPalette: (Color[] | typeof undefined)[],
   swRecommendations: Color[],
-  suggestedColors?: string[],
+  suggestedColors?: Color[],
   legendColor: RGBArr
 }
 
@@ -58,8 +58,8 @@ const RoomPiece = (props: Props) => {
           ) : null}
           {suggestedColors && suggestedColors.length ? (
             <ColorMatches title={`SW ${formatMessage({ id: 'RECOMMENDATIONS' })}`}>
-              {suggestedColors.map((color: string, i) => {
-                return <Swatch key={i} color={color} name={color} onClick={() => handleSetColor(color)} />
+              {suggestedColors.map((color: Color, i) => {
+                return <Swatch key={i} color={color.hex} name={color.name} onClick={() => handleSetColor(color)} />
               })}
             </ColorMatches>
           ) : null}

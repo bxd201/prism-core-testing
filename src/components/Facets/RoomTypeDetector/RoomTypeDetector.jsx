@@ -17,7 +17,7 @@ import { uploadImage } from '../../../store/actions/user-uploads'
 import './RoomTypeDetector.scss'
 import RoomPiece from './RoomPiece'
 import Card from './Card'
-import QRCodeUploader from './QRCodeUploader'
+// import QRCodeUploader from './QRCodeUploader'
 import { activate } from 'src/store/actions/live-palette'
 import useDeepLabModel, { deepLabModels } from 'src/shared/hooks/useDeepLabModel'
 import useDeepLabModelForSegmentation from 'src/shared/hooks/useDeepLabModelForSegmentation'
@@ -76,7 +76,7 @@ const RoomTypeDetector = () => {
 
   return (
     <ColorCollector.Provider value={contextValues}>
-      <QRCodeUploader setUploadedImage={setUploadedImage} />
+      {/* <QRCodeUploader setUploadedImage={setUploadedImage} /> */}
       <FileInput onChange={handleChange} disabled={false} id={FILE_UPLOAD_ID} placeholder={uploadedImage ? `${formatMessage({ id: 'SELECT_NEW_IMAGE' })}` : `${formatMessage({ id: 'SELECT_IMAGE' })}`} />
 
       <div className='RoomTypeDetector__side-by-side'>
