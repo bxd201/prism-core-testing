@@ -17,6 +17,7 @@ import { type Piece, type SegmentationResults } from 'src/shared/hooks/useDeepLa
 import { type Color } from 'src/shared/types/Colors.js.flow'
 import { activate, replaceLpColors, empty } from '../../../../../store/actions/live-palette'
 import { FurnitureDetail } from '../ResultsPage/FurnitureDetail'
+import { type RoomType } from 'src/components/Facets/JumpStartFacet/JumpStartFacet'
 
 const HOW_MANY_ROOM_OBJECTS = 3
 const HOW_MANY_TOTAL_COLORS = 7 // this can probably be pulled from a LivePalette const
@@ -25,12 +26,13 @@ const baseClass = 'JSFResultsPage'
 
 type ResultsPageProps = {
   roomData: SegmentationResults,
-  reset: Function
+  reset: Function,
+  roomTypeProbabilities: [RoomType, number][]
 }
 
-function ResultsPage ({ roomData = {}, reset }: ResultsPageProps) {
+function ResultsPage ({ roomData = {}, reset, roomTypeProbabilities }: ResultsPageProps) {
   const dispatch = useDispatch()
-  const roomType = getRoomTypeFromRoomData(roomData.relevantLabels)
+  const roomType = getRoomTypeFromRoomData(roomData.relevantLabels, roomTypeProbabilities)
   const [isFastMaskComplete, setFastMaskComplete] = useState(false)
   const [roomObjects, setRoomObjects] = useState([])
   const [furnitureInfo, setFurnitureInfo] = useState([])
