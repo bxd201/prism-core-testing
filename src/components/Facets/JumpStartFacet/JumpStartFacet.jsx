@@ -83,7 +83,10 @@ function JumpStartFacet () {
 
   useEffectAfterMount(() => {
     if (completionBarriers === 0 && isProcessingDone) {
-      setStatus(PHASES.RESULTS)
+      // THIS TIMEOUT GIVE THE LOADER TIME TO RAZZLE DAZZLE WITH PIZZAZZ
+      window.setTimeout(() => {
+        setStatus(PHASES.RESULTS)
+      }, 8000)
     }
   }, [completionBarriers, isProcessingDone])
 
@@ -124,7 +127,7 @@ function JumpStartFacet () {
           ) : [PHASES.LOADING, PHASES.PROCESSING].indexOf(status) >= 0 ? (
             <ProcessingPage
               roomData={irisData || []}
-              imageSrc={uploadedImage && uploadedImage}
+              imageSrc={uploadedImage}
               isLoading={!irisSuccess && status === PHASES.LOADING}
               isProcessing={!irisSuccess && status === PHASES.PROCESSING}
               isProcessingDone={() => setProcessingDone(true)}
