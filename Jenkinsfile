@@ -316,23 +316,13 @@ pipeline {
     always {
       script {
         currentBuild.result = currentBuild.result ?: 'SUCCESS'
-
         emailext (
           to: 'brendan.do@sherwin.com,cody.richmond@sherwin.com,prwilliams@sherwin.com,cc:jonathan.l.gnagy@sherwin.com',
           subject: "${env.JOB_NAME} #${env.BUILD_NUMBER} [${currentBuild.result}]",
           body: "Build URL: ${env.BUILD_URL}.\n\n",
           attachLog: true,
         )
-
-        sparkSend(
-          credentialsId: 'jenkins-webex-bot',
-          message: "**BUILD ${currentBuild.result}**: $JOB_NAME [build ${BUILD_NUMBER}](${JOB_URL}${BUILD_NUMBER}/)",
-          messageType: 'markdown',
-          spaceList: [[
-            spaceId: '148571b0-7585-11e8-9a3a-a75b99388ff0',
-            spaceName: 'JenkinsNotifications'
-          ]]
-        )
+        office365ConnectorSend webhookUrl: "${env.MS_TEAM_WEBHOOK}"
       }
     }
   }
