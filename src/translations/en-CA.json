@@ -15,10 +15,12 @@
   "ERROR_LOADING_COLORS": "We're unable to load colours right now.",
   "EXTERIOR": "Exterior",
   "FIND_COLORS_IN_CW": "FIND COLOURS IN THE DIGITAL COLOR WALL",
+  "HEX_VALUE": "Hex Value",
   "HIDE_SCENE_PAINTER": "Hide the Scene Painter",
   "IMAGE_INVISIBLE": "This image is invisible to the user.",
   "INTERIOR": "Interior",
   "LOCATION_NUMBER": "Location Number",
+  "LRV": "LRV",
   "MAXIMIZE_COLOR_SWATCH": "Maximize the Colour Swatch",
   "NO_COLORS_AVAILABLE": "No colours available.",
   "PAINT_TOOLS": {

@@ -36,14 +36,18 @@ function ColorInfo ({ color, familyLink }: Props) {
           </li>
           <li className='color-info__visual-specification'>
             <dl>
-              <dt className='color-info__description-term'>Hex Value:</dt>
+              <dt className='color-info__description-term'>
+                <FormattedMessage id='HEX_VALUE' />:
+              </dt>
               <dd className='color-info__description-definition'>{color.hex}</dd>
             </dl>
           </li>
           {color.lrv &&
             <li className='color-info__visual-specification'>
               <dl>
-                <dt className='color-info__description-term'>LRV:</dt>
+                <dt className='color-info__description-term'>
+                  <FormattedMessage id='LRV' />:
+                </dt>
                 <dd className='color-info__description-definition'>{Math.round(color.lrv)}</dd>
               </dl>
             </li>}

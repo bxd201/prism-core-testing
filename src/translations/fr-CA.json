@@ -15,10 +15,12 @@
   "ERROR_LOADING_COLORS": "Erreur lors du chargement des couleurs.",
   "EXTERIOR": "Extérieur",
   "FIND_COLORS_IN_CW": "TROUVER DES COULEURS DANS LE MUR DE COULEUR NUMÉRIQUE",
+  "HEX_VALUE": "Code Hex",
   "HIDE_SCENE_PAINTER": "Masquer la fonction Peindre une scène",
   "IMAGE_INVISIBLE": "This image is invisible to the user.",
   "INTERIOR": "Intérieur",
   "LOCATION_NUMBER": "Numéro de localisation",
+  "LRV": "IRL",
   "MAXIMIZE_COLOR_SWATCH": "Maximiser l'échantillon de couleur",
   "NO_COLORS_AVAILABLE": "Aucune couleur disponible.",
   "PAINT_TOOLS": {

@@ -191,6 +191,7 @@ pipeline {
             image 'docker.cpartdc01.sherwin.com/ecomm/utils/buoy:latest'
             reuseNode true
             alwaysPull true
+            args '-u buoy'
         }
       }
       environment {
@@ -314,7 +315,7 @@ pipeline {
         currentBuild.result = currentBuild.result ?: 'SUCCESS'
 
         emailext (
-          to: 'brendan.do@sherwin.com,cody.richmond@sherwin.com,prwilliams@sherwin.com,brandon.chartier@sherwin.com,cc:jonathan.l.gnagy@sherwin.com',
+          to: 'brendan.do@sherwin.com,cody.richmond@sherwin.com,prwilliams@sherwin.com,cc:jonathan.l.gnagy@sherwin.com',
           subject: "${env.JOB_NAME} #${env.BUILD_NUMBER} [${currentBuild.result}]",
           body: "Build URL: ${env.BUILD_URL}.\n\n",
           attachLog: true,
