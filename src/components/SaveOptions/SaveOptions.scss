@@ -6,6 +6,9 @@
   justify-content: center;
   margin-right: 0.5em;
   & > button {
+    display: flex;
+    justify-content: center;
+    align-content: center;
     &:focus {
       outline-style: solid;
       outline-color: #2cabe2;

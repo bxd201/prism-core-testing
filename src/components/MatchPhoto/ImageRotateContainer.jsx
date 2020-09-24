@@ -383,20 +383,22 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
       }
     })
 
-    const surfaces = [...uploads.masks]
+    // @todo keep an eye on this this is new functionality that could break compatibility and has not been fully tested -RS
+    const surfaces = data.imageDataUrls ? [...data.imageDataUrls] : [...uploads.masks]
     const b64ImageUrl = canvasRef.current.toDataURL()
+
     const workspace = createPaintSceneWorkspace(b64ImageUrl, data.imageData, colors, data.width, data.height, WORKSPACE_TYPES.smartMask, 0, uploads.sceneName, surfaces)
     // add dummy data for test will remove before merge
-    const copyData = workspace.layers[0].data
-    const modifiedData = copyData.map((item, idx) => {
-      if (item === 0) {
-        return 255
-      }
-      return 0
-    })
+    // const copyData = workspace.layers[0].data
+    // const modifiedData = copyData.map((item, idx) => {
+    //   if (item === 0) {
+    //     return 255
+    //   }
+    //   return 0
+    // })
 
-    const dummyImageData = new ImageData(new Uint8ClampedArray(modifiedData), data.width, data.height)
-    data.imageData.push(dummyImageData)
+    // const dummyImageData = new ImageData(new Uint8ClampedArray(modifiedData), data.width, data.height)
+    // data.imageData.push(dummyImageData)
     dispatch(setLayersForPaintScene(imageUrl, data.imageData, colors, data.width, data.height, WORKSPACE_TYPES.smartMask))
     setIsLoadingSmartMask(false)
     dispatch(clearUploads())
@@ -421,6 +423,7 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
     <div className={`${cancelClass}`}><FontAwesomeIcon className={``} icon={['fa', 'times']} /></div>
   </button>
   const selectedMaskIndex = paintSceneWorkspaceState ? paintSceneWorkspaceState.selectIndex : null
+
   return (
     <>
       {imageUrl && imageHeight && imageWidth && uploads && uploads.source && isLoadingSmartMask ? <MergeCanvas
@@ -429,8 +432,7 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
         ref={smartMaskRef}
         width={imageWidth}
         height={imageHeight}
-        rotationAngle={imageRotationAngle}
-      /> : null }
+        rotationAngle={imageRotationAngle} /> : null }
       <div style={{ display: `${showPaintScene ? 'block' : 'none'}` }}>
         {/* This preloads the uploaded image for the canvas */ }
         <PrismImage ref={imageRef} source={blobUrl} loadedCallback={handleImageLoaded} shouldResample={hasLoaded} scalingWidth={scalingWidth} />
@@ -478,7 +480,7 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
                       referenceDimensions={imageDims}
                       selectedMaskIndex={selectedMaskIndex}
                       width={wrapperWidth} />
-                    : <CustomSceneTinterContainer workspace={paintSceneWorkspaceState} allowEdit />}
+                    : <CustomSceneTinterContainer workspace={paintSceneWorkspaceState} wrapperWidth={wrapperWidth} angle={imageRotationAngle} originalIsPortrait={imageDims.originalIsPortrait} allowEdit />}
                 </>)
                 : null
             }
@@ -491,7 +493,7 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
         </div>
         <hr />
       </div>
-      {isImageRotate && <LiveMessage message={formatMessage({ id: 'LIVE_MESSAGE.IMAGE_ANGLE' }, { imageRotationAngle: imageRotationAngle })} aria-live='assertive' clearOnUnmount='true' />}
+      {isImageRotate && <LiveMessage message={formatMessage({ id: 'LIVE_MESSAGE_IMAGE_ANGLE' }, { imageRotationAngle: imageRotationAngle })} aria-live='assertive' clearOnUnmount='true' />}
     </>
   )
 }

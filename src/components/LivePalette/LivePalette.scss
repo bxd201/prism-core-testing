@@ -75,6 +75,7 @@
     }
     &__color-number {
       display: block;
+      font-weight: normal;
     }
     &__color-name {
       display: block;
@@ -299,6 +300,7 @@
   &__color-number {
     font-size: 0.8rem;
     display: none;
+    font-weight: normal;
     color: inherit;
     @include respond-above(sm) {
       display: block;

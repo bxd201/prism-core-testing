@@ -1,6 +1,5 @@
 // @flow strict
 import React, { useState, useCallback } from 'react'
-import ButtonBar from '../GeneralButtons/ButtonBar/ButtonBar'
 import { FormattedMessage, useIntl } from 'react-intl'
 import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 import Jimp from 'jimp'
@@ -54,17 +53,23 @@ export default (props: Props) => {
     <ul>
       {!isCreatingDownload && <li style={{ display: 'inline-block', verticalAlign: 'top' }}>
         <ul>
-          <ButtonBar.Button
+          <button
             onClick={onDownloadClick}
             disabled={isCreatingDownload}
             style={{ flexDirection: 'column' }}
           >
-            <FontAwesomeIcon
-              title={intl.formatMessage({ id: 'DOWNLOAD_MASK' })}
-              icon={['fal', 'download']}
-              size='2x' />
-            <FormattedMessage id={buttonCaption} />
-          </ButtonBar.Button>
+            <div className='save-options__items'>
+              <div>
+                <FontAwesomeIcon
+                  title={intl.formatMessage({ id: 'DOWNLOAD_MASK' })}
+                  icon={['fal', 'download']}
+                  size='2x' />
+              </div>
+              <div>
+                <FormattedMessage id={buttonCaption} />
+              </div>
+            </div>
+          </button>
         </ul>
       </li>}
       {isCreatingDownload && (

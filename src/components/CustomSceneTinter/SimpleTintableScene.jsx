@@ -3,13 +3,13 @@ import React, { useState } from 'react'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import type { Scene } from '../../shared/types/Scene'
 import type { Color } from '../../shared/types/Colors'
-import TintableSceneSurface from './TintableSceneSurface'
-import TintableSceneSVGDefs from './TintableSceneSVGDefs'
+import TintableSceneSurface from '../SceneManager/TintableSceneSurface'
+import TintableSceneSVGDefs from '../SceneManager/TintableSceneSVGDefs'
 import ensureFullyQualifiedAssetUrl from '../../shared/utils/ensureFullyQualifiedAssetUrl.util'
 import { LiveMessage } from 'react-aria-live'
 import { getFilterId, getMaskId } from '../../shared/utils/tintableSceneUtils'
 import uniqueId from 'lodash/uniqueId'
-import { baseClassName, getTintColorBySurface, transitionClassName } from './TintableScene'
+import { baseClassName, getTintColorBySurface, transitionClassName } from '../SceneManager/TintableScene'
 
 type SimpleTintableSceneProps = {
   // eslint-disable-next-line react/no-unused-prop-types
@@ -60,7 +60,7 @@ const SimpleTintableScene = (props: SimpleTintableSceneProps) => {
 
   return (
     <>
-      <div className={`${simpleTintableClassName}-wrapper`}>
+      <div style={{ width, height }} className={`${simpleTintableClassName}-wrapper`}>
         <img className={`${baseClassName}__natural`} src={background} alt={sceneName} />
         <TransitionGroup className={`${transitionClassName}__colors`}>
           {surfaceUrls.map((surface: string, i) => {
@@ -75,6 +75,7 @@ const SimpleTintableScene = (props: SimpleTintableSceneProps) => {
                   mountOnEnter
                   classNames={`${transitionClassName}__colors__color-`} >
                   <TintableSceneSurface
+                    scaleSvg
                     type={sceneType}
                     image={background}
                     width={width}
