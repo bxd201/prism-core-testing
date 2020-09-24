@@ -191,6 +191,7 @@ pipeline {
             image 'docker.cpartdc01.sherwin.com/ecomm/utils/buoy:latest'
             reuseNode true
             alwaysPull true
+            args '-u buoy'
         }
       }
       environment {
