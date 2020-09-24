@@ -220,13 +220,14 @@ module.exports = {
     ]
   },
   optimization: {
-    minimize: flags.production,
+    checkWasmTypes: flags.production,
+    chunkIds: 'named',
     concatenateModules: flags.production,
     flagIncludedChunks: flags.production,
-    checkWasmTypes: flags.production,
     mangleWasmImports: false,
     mergeDuplicateChunks: true,
-    moduleIds: flags.production ? 'hashed' : 'named',
+    minimize: flags.production,
+    moduleIds: 'named',
     namedChunks: !flags.production,
     namedModules: !flags.production,
     nodeEnv: flags.mode,
