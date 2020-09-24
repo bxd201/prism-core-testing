@@ -1,6 +1,6 @@
 {
   "name": "prism",
-  "version": "1.4.1",
+  "version": "1.4.0",
   "scripts": {
     "precleanstart": "node build-scripts/utilities/clear-build-cache.js",
     "cleanstart": "npm start",
@@ -148,10 +148,10 @@
     "object-hash": "2.0.3",
     "postcss-loader": "3.0.0",
     "postcss-wrapper-loader-w-exclude": "0.0.2",
-    "react": "16.13.1",
-    "react-dom": "16.13.1",
+    "react": "16.10.2",
+    "react-dom": "16.10.2",
     "react-hooks-testing-library": "0.6.0",
-    "react-test-renderer": "16.13.1",
+    "react-test-renderer": "16.10.2",
     "redux-mock-store": "1.5.3",
     "require-context": "1.1.0",
     "sass-loader": "8.0.0",
