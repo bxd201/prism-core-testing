@@ -39,7 +39,14 @@ function MainPage ({ onSelectFile, imageRef }: MainPageProps) {
                   <FontAwesomeIcon icon={faLongArrowUp} size='3x' transform='shrink-7' mask={faCircle} />
                   <p><strong>Drag and drop your image here</strong></p>
                   <p>or</p>
-                  <button onClick={() => hiddenFileInput.current && hiddenFileInput.current.click()}><strong>Select a file</strong></button>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault()
+                      hiddenFileInput.current && hiddenFileInput.current.click()
+                    }}
+                  >
+                    <strong>Select a file</strong>
+                  </button>
                 </div>
               </form>
               <p className='note'><strong>Note:</strong> Jumpstart performs best on photos with ample, even lighting</p>
