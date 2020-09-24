@@ -80,9 +80,12 @@ const ColorWall = () => {
           if (params.colorId && document.activeElement === cellRefs.current[params.colorId] && !e.shiftKey) { return }
 
           const nextCoords = (e.shiftKey
-            ? rangeRight(column + 1).flatMap((c: number) => rangeRight(0, c === column ? row : chunkGrid.length).map(r => [r, c]))
-            : range(column, chunkGrid[row].length).flatMap((c: number) => range(c === column ? row + 1 : 0, chunkGrid.length).map(r => [r, c]))
-          ).find(([r, c]) => flatten(chunkGrid[r][c]).some(cell => cell !== undefined))
+            // generate coordinate pairs [[row, col], ...] starting from currently focused chunk going top -> bottom, right -> left
+            ? rangeRight(column + 1).flatMap(c => rangeRight(c === column ? row + 1 : chunkGrid.length).map(r => [r, c]))
+            // generate coordinate pairs [[row, col], ...] starting from currently focused chunk going bottom -> top, left -> right
+            : range(column, lengthOfLongestChunkRow).flatMap(c => range(c === column ? row + 1 : 0, chunkGrid.length).map(r => [r, c]))
+          // find the first chunk that isn't the currently focused chunk and exists in the chunkGrid
+          ).find(([r, c]) => !(r === row && c === column) && chunkGrid[r] && chunkGrid[r][c])
 
           if (nextCoords !== undefined) {
             e.preventDefault()
