@@ -20,6 +20,7 @@
 |---|---|---|
 | `PRISM/out/colorsLoaded` | `ColorMap`<sup><a href="#data-types">1</a></sup> | Publishes a `ColorMap` object when colors have loaded. This is useful for decorating color data. |
 | `PRISM/out/emitColor` | `Color`<sup><a href="#data-types">1</a></sup> | Publishes currently selected color object if `swatchShouldEmit` is true. |
+| `PRISM/out/selectedGroup` | `{ section: string, family: string }` | Publishes currently selected section and, if applicable, family. |
 
 
 ## Subscribed events

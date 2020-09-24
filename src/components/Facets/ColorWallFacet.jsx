@@ -33,9 +33,10 @@ type Props = FacetPubSubMethods & FacetBinderMethods & {
 }
 
 export const EVENTS = {
-  emitColor: 'PRISM/out/emitColor',
   colorsLoaded: 'PRISM/out/colorsLoaded',
   decorateColors: 'PRISM/in/decorateColors',
+  emitColor: 'PRISM/out/emitColor',
+  selectedGroup: 'PRISM/out/selectedGroup',
   loading: 'PRISM/in/loading'
 }
 
@@ -74,6 +75,7 @@ export const ColorWallPage = (props: Props) => {
   useEffect(() => subscribe(EVENTS.decorateColors, handleColorDecoration), [])
   const handleColorDecoration = useCallback((decoratedColors) => dispatch(updateColorStatuses(decoratedColors)), [])
   const colorMap = useSelector(state => at(state, 'colors.items.colorMap')[0])
+  const { section, family } = useSelector(state => at(state, 'colors')[0])
   useEffect(() => { colorMap && publish(EVENTS.colorsLoaded, colorMap) }, [colorMap])
 
   // -----------------------------------------------------
@@ -87,6 +89,10 @@ export const ColorWallPage = (props: Props) => {
       publish(EVENTS.emitColor, color)
     }
   }, [(emitColor && emitColor.timestamp)])
+
+  useEffect(() => {
+    publish(EVENTS.selectedGroup, { family: family, section: section })
+  }, [section, family])
 
   // -----------------------------------------------------
   // handle host demanding appearance of loading

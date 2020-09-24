@@ -140,6 +140,7 @@
     },
     "TITLE": "Helpful Hints"
   },
+  "HEX_VALUE": "Hex Value",
   "HIDE_SCENE_PAINTER": "Hide the Scene Painter",
   "I_ACCEPT": "I accept",
   "IDENTIFIED_COLORS": "Identified Colors",
@@ -168,6 +169,7 @@
   "LOCATION_NUMBER": "Location Number",
   "LOG_IN": "LOG IN",
   "MATCHES": "Matches",
+  "LRV": "LRV",
   "MAXIMIZE_COLOR_SWATCH": "Maximize the Colour Swatch",
   "MY_IDEAS": {
     "ARIA_LABEL_ADD": "Add {colorName} to palette",
