@@ -13,8 +13,7 @@ import {
 import { repaintImageByPath, pointInsideCircle,
   getImageCordinateByPixel, canvasDimensionFactors, applyDimensionFactorsByCanvas,
   getActiveColorRGB, hexToRGB, colorMatch, shouldCanvasResize,
-  drawImagePixelByPath, getColorAtPixel, getCanvasWrapperOffset,
-  copyImageList, createImagePathItem, drawPaintBrushPoint, applyDimensionFactorsToCanvas,
+  drawImagePixelByPath, getColorAtPixel, copyImageList, createImagePathItem, drawPaintBrushPoint, applyDimensionFactorsToCanvas,
   getPaintBrushActiveClass, getEraseBrushActiveClass, compareArraysOfObjects, objectsEqual, getColorsForMergeColors, maskingPink } from './utils'
 import { toolNames, groupToolNames, brushLargeSize, brushRoundShape, setTooltipShownLocalStorage, getTooltipShownLocalStorage } from './data'
 import { getScaledPortraitHeight, getScaledLandscapeHeight } from '../../shared/helpers/ImageUtils'
@@ -42,6 +41,7 @@ import { setActiveScenePolluted, unsetActiveScenePolluted, setWarningModalImgPre
 import { group, ungroup, deleteGroup, selectArea, bucketPaint, applyZoom,
   createOrDeletePolygon, createPolygonPin, eraseOrPaintMouseUp, eraseOrPaintMouseDown } from './toolFunction'
 import { LiveMessage } from 'react-aria-live'
+import { BrushPaintCursor } from './BrushPaintCursor'
 
 const baseClass = 'paint__scene__wrapper'
 const canvasClass = `${baseClass}__canvas`
@@ -172,6 +172,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.CFIImage2 = React.createRef()
     this.mergeCanvasRef = React.createRef()
     this.mergeCanvasRefModal = React.createRef()
+    this.paintCursorRef = React.createRef()
     this.wrapperDimensions = {}
     this.canvasDimensions = {}
     this.canvasOriginalDimensions = {}
@@ -191,7 +192,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       position: { left: 0, top: 0, isHidden: false },
       paintBrushWidth: brushLargeSize,
       isDragging: false,
-      drawCoordinates: [],
+      prevPoint: null,
       paintBrushShape: brushRoundShape,
       eraseBrushShape: brushRoundShape,
       eraseBrushWidth: brushLargeSize,
@@ -692,16 +693,10 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   throttledMouseMove = throttle((e: Object) => {
     const { clientX, clientY } = e
     const ref = { CFICanvas2: this.CFICanvas2, canvasOriginalDimensions: this.canvasOriginalDimensions, CFICanvasContextPaint: this.CFICanvasContextPaint, CFICanvasContext2: this.CFICanvasContext2 }
-    const { activeTool, paintBrushWidth, isDragging, drawCoordinates, eraseBrushWidth, paintBrushShape } = this.state
+    const { activeTool, paintBrushWidth, isDragging, paintBrushShape, prevPoint } = this.state
     const { lpActiveColor } = this.props
     const canvasClientOffset = this.CFICanvas2.current.getBoundingClientRect()
-    const canvasWrapperOffset = getCanvasWrapperOffset(this.CFIWrapper)
-    const paintBrushHalfWidth = (activeTool === toolNames.PAINTBRUSH) ? paintBrushWidth / 2 : eraseBrushWidth / 2
-    const leftOffset = clientX - canvasWrapperOffset.x - paintBrushHalfWidth
-    const topOffset = clientY - canvasWrapperOffset.y - paintBrushHalfWidth
-    const position = { left: leftOffset, top: topOffset, isHidden: this.state.position.isHidden }
-
-    this.setState({ position })
+    this.paintCursorRef.current && this.paintCursorRef.current.handleMouseMove(clientX, clientY)
     if ((lpActiveColor === null || (lpActiveColor.constructor === Object && Object.keys(lpActiveColor).length === 0)) && activeTool === toolNames.PAINTBRUSH) return
     if ((lpActiveColor && activeTool === toolNames.PAINTBRUSH) || activeTool === toolNames.ERASE) {
       const lpActiveColorRGB = (activeTool === toolNames.ERASE) ? `rgba(255, 255, 255, 1)` : `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})`
@@ -712,19 +707,15 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
           x: (clientX - canvasClientOffset.left) * scale,
           y: (clientY - canvasClientOffset.top) * scale
         }
-        const drawCoordinatesCloned = copyImageList(drawCoordinates)
-        drawCoordinatesCloned.push(currentPoint)
-        const drawCoordinatesLength = drawCoordinates.length
-        const lastPoint = { x: drawCoordinates[drawCoordinatesLength - 1].x, y: drawCoordinates[drawCoordinatesLength - 1].y }
         if ((activeTool === toolNames.PAINTBRUSH) || (activeTool === toolNames.ERASE)) {
-          drawPaintBrushPoint(currentPoint, drawCoordinates[drawCoordinatesLength - 1], this.state, this.props, ref)
+          drawPaintBrushPoint(currentPoint, prevPoint, this.state, this.props, ref)
         } else {
           this.CFICanvasContextPaint.beginPath()
           if (activeTool === toolNames.PAINTBRUSH) {
-            this.drawPaintBrushPathUsingLine(this.CFICanvasContextPaint, currentPoint, lastPoint, paintBrushWidth, paintBrushShape, false, lpActiveColorRGB)
+            this.drawPaintBrushPathUsingLine(this.CFICanvasContextPaint, currentPoint, prevPoint, paintBrushWidth, paintBrushShape, false, lpActiveColorRGB)
           }
         }
-        this.setState({ drawCoordinates: drawCoordinatesCloned })
+        this.setState({ prevPoint: currentPoint })
       }
     }
   }, 10)
@@ -732,8 +723,8 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   mouseDownHandler = (e: Object) => {
     window.addEventListener('mouseup', this.mouseUpHandler)
     const ref = { CFICanvas2: this.CFICanvas2, canvasOriginalDimensions: this.canvasOriginalDimensions, CFICanvasContextPaint: this.CFICanvasContextPaint, CFICanvasContext2: this.CFICanvasContext2 }
-    let drawCoordinates = eraseOrPaintMouseDown(e, this.state, this.props, ref)
-    this.setState({ drawCoordinates })
+    let prevPoint = eraseOrPaintMouseDown(e, this.state, this.props, ref)
+    this.setState({ prevPoint })
   }
 
   dragStartHandler = (e: Object) => {
@@ -1112,7 +1103,6 @@ canvasHeight
     const workspaceType = workspace ? workspace.workspaceType : WORKSPACE_TYPES.generic
     const { activeTool, position, paintBrushShape, paintBrushWidth, eraseBrushShape, eraseBrushWidth, undoIsEnabled, redoIsEnabled, showOriginalCanvas, isAddGroup, isDeleteGroup, isUngroup, paintCursor, isInfoToolActive, loading, showAnimatePin, showNonAnimatePin, pinX, pinY, currPinX, currPinY, canvasWidth, canvasHeight, showSelectPaletteModal, canvasHasBeenInitialized } = this.state
     const lpActiveColorRGB = (lpActiveColor) ? `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})` : ``
-    const backgroundColorBrush = (activeTool === toolNames.ERASE) ? `rgba(255, 255, 255, 0.7)` : lpActiveColorRGB
     const { paintBrushActiveClass, paintBrushCircleActiveClass } = getPaintBrushActiveClass(this.state)
     const { eraseBrushActiveClass, eraseBrushCircleActiveClass } = getEraseBrushActiveClass(this.state)
     const { selectPaletteActions, selectPaletteTitle, selectPaletteDescription } = this.getSelectPaletteModalConfig()
@@ -1201,14 +1191,22 @@ canvasHeight
             isInfoToolActive={isInfoToolActive}
           />
           {
-            ((activeTool === toolNames.PAINTBRUSH || activeTool === toolNames.ERASE) && (position.isHidden === false) && !isInfoToolActive)
-              ? <div
-                className={`${paintBrushClass} ${activeTool === toolNames.PAINTBRUSH ? `${paintBrushActiveClass} ${paintBrushCircleActiveClass}` : activeTool === toolNames.ERASE ? `${eraseBrushActiveClass} ${eraseBrushCircleActiveClass}` : ``}`}
-                role='presentation'
-                draggable
-                onMouseDown={this.mouseDownHandler} onDragStart={this.dragStartHandler}
-                style={{ backgroundColor: backgroundColorBrush, top: position.top, left: position.left }}
-              /> : ''
+            ((activeTool === toolNames.PAINTBRUSH || activeTool === toolNames.ERASE) && (position.isHidden === false) && !isInfoToolActive) &&
+            <BrushPaintCursor
+              lpActiveColorRGB={lpActiveColorRGB}
+              activeTool={activeTool}
+              position={position}
+              canvasRef={this.CFIWrapper}
+              eraseBrushWidth={eraseBrushWidth}
+              paintBrushWidth={paintBrushWidth}
+              eraseBrushActiveClass={eraseBrushActiveClass}
+              eraseBrushCircleActiveClass={eraseBrushCircleActiveClass}
+              mouseDownHandler={this.mouseDownHandler}
+              dragStartHandler={this.dragStartHandler}
+              paintBrushActiveClass={paintBrushActiveClass}
+              paintBrushCircleActiveClass={paintBrushCircleActiveClass}
+              ref={this.paintCursorRef}
+            />
           }
           {showAnimatePin && (activeTool === toolNames.DEFINEAREA || activeTool === toolNames.REMOVEAREA) && <div className={`${animationPin}`} style={{ top: pinY, left: pinX }}>
             <div className={`${animationPin}__outer`}>

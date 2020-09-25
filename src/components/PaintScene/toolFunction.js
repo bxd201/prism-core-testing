@@ -510,7 +510,7 @@ export const createPolygonPin = (e, state, props, ref, coordinate, pointList) =>
 }
 
 export const eraseOrPaintMouseUp = (state, props, ref) => {
-  const { drawCoordinates, imagePathList, activeTool, deleteAreaList } = state
+  const { prevPoint, imagePathList, activeTool, deleteAreaList } = state
   const { lpActiveColor } = props
   const { CFICanvasPaint, CFICanvas2, canvasOffsetWidth, canvasOffsetHeight, CFICanvasContextPaint } = ref
   let newDeleteAreaList = copyImageList(deleteAreaList)
@@ -523,7 +523,7 @@ export const eraseOrPaintMouseUp = (state, props, ref) => {
   }
   let newImagePathList
   const { newGroupSelectList, newGroupAreaList } = breakGroupIfhasIntersection(state, ref)
-  if (lpActiveColor && activeTool === toolNames.PAINTBRUSH && drawCoordinates.length > 0) {
+  if (lpActiveColor && activeTool === toolNames.PAINTBRUSH && prevPoint !== null) {
     const paintData = getPaintAreaPath(imagePathList, CFICanvasPaint, canvasOffsetWidth, canvasOffsetHeight, lpActiveColor)
     newImagePathList = paintData.newImagePathList
     paintPath = paintData.paintPath
@@ -531,7 +531,7 @@ export const eraseOrPaintMouseUp = (state, props, ref) => {
     repaintImageByPath(newImagePathList, CFICanvas2, canvasOffsetWidth, canvasOffsetHeight, false)
   }
 
-  if (activeTool === toolNames.ERASE && drawCoordinates.length > 0) {
+  if (activeTool === toolNames.ERASE && prevPoint !== null) {
     const RGB = getActiveColorRGB({ red: 255, blue: 255, green: 255 })
     const erasePathWithAlpha = getImageCordinateByPixel(CFICanvasPaint, RGB, canvasOffsetWidth, canvasOffsetHeight, true)
     let erasePath = []
@@ -567,14 +567,12 @@ export const eraseOrPaintMouseDown = (e, state, props, ref) => {
   const lpActiveColorRGB = (activeTool === toolNames.ERASE) ? `rgba(255, 255, 255, 1)` : `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})`
   const { clientX, clientY } = e
   const canvasClientOffset = CFICanvas2.current.getBoundingClientRect()
-  const drawCoordinates = []
   const scale = canvasOriginalDimensions.width / canvasClientOffset.width
   const currentPoint = {
     x: (clientX - canvasClientOffset.left) * scale,
     y: (clientY - canvasClientOffset.top) * scale
   }
   const lastPoint = { x: currentPoint.x - 1, y: currentPoint.y }
-  drawCoordinates.push(currentPoint)
   CFICanvasContextPaint.beginPath()
   if (isDragging === false) {
     if ((activeTool === toolNames.PAINTBRUSH) || (activeTool === toolNames.ERASE)) {
@@ -585,7 +583,7 @@ export const eraseOrPaintMouseDown = (e, state, props, ref) => {
       }
     }
   }
-  return drawCoordinates
+  return currentPoint
 }
 
 export const applyZoom = (zoomNumber, ref) => {
