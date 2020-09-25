@@ -11,6 +11,7 @@ export const PaintSceneMaskingWrapper = () => {
   const childRef = useRef()
   const dispatch = useDispatch()
   const paintSceneWorkspace = useSelector(store => store.paintSceneWorkspace)
+  const [reMountPaintScene, setResized] = useState(0)
   const [paintSceneWorkspaceState, setPaintSceneWorkspaceState] = useState(paintSceneWorkspace)
   const sendImageData = useCallback((data) => {
     childRef.current.sendImageData(data)
@@ -20,16 +21,25 @@ export const PaintSceneMaskingWrapper = () => {
     setPaintSceneWorkspaceState(workspace)
   }
 
+  const resizeHandler = () => {
+    paintSceneWorkspaceState && dispatch(setLayersForPaintScene(paintSceneWorkspaceState))
+    setResized(Date.now())
+  }
+
   useEffect(() => {
+    window.addEventListener('resize', resizeHandler)
     paintSceneWorkspaceState && dispatch(setInitialWorkspace(paintSceneWorkspaceState))
+    return function cleanup () {
+      window.removeEventListener('resize', resizeHandler)
+    }
   }, [])
 
   const selectedMaskIndex = paintSceneWorkspaceState ? paintSceneWorkspaceState.selectIndex : null
   const imageDimensions = paintSceneWorkspaceState ? { imageWidth: paintSceneWorkspaceState.width, imageHeight: paintSceneWorkspaceState.height } : { imageWidth: null, imageHeight: null }
-
   return (
     <>
       <PaintScene
+        key={reMountPaintScene}
         checkIsPaintSceneUpdate={false}
         workspace={paintSceneWorkspaceState}
         referenceDimensions={imageDimensions}
@@ -64,6 +74,7 @@ const PaintSceneMasking = forwardRef((props: paintSceneMaskingProps, ref) => {
         return data
       })
       const workspace = createPaintSceneWorkspace(bgImageUrl, currLayers, palette, width, height, workspaceType, selectIndex)
+      props.reloadPaintScene(workspace)
       setPaintSceneWorkspaceState(workspace)
     }
   }))

@@ -15,7 +15,7 @@ import { repaintImageByPath, pointInsideCircle,
   getActiveColorRGB, hexToRGB, colorMatch, shouldCanvasResize,
   drawImagePixelByPath, getColorAtPixel, getCanvasWrapperOffset,
   copyImageList, createImagePathItem, drawPaintBrushPoint, applyDimensionFactorsToCanvas,
-  getPaintBrushActiveClass, getEraseBrushActiveClass, compareArraysOfObjects, objectsEqual, getColorsForMergeColors } from './utils'
+  getPaintBrushActiveClass, getEraseBrushActiveClass, compareArraysOfObjects, objectsEqual, getColorsForMergeColors, maskingPink } from './utils'
 import { toolNames, groupToolNames, brushLargeSize, brushRoundShape, setTooltipShownLocalStorage, getTooltipShownLocalStorage } from './data'
 import { getScaledPortraitHeight, getScaledLandscapeHeight } from '../../shared/helpers/ImageUtils'
 import throttle from 'lodash/throttle'
@@ -42,7 +42,6 @@ import { setActiveScenePolluted, unsetActiveScenePolluted, setWarningModalImgPre
 import { group, ungroup, deleteGroup, selectArea, bucketPaint, applyZoom,
   createOrDeletePolygon, createPolygonPin, eraseOrPaintMouseUp, eraseOrPaintMouseDown } from './toolFunction'
 import { LiveMessage } from 'react-aria-live'
-import { maskingPink } from './sampleData.js'
 
 const baseClass = 'paint__scene__wrapper'
 const canvasClass = `${baseClass}__canvas`
@@ -1229,9 +1228,9 @@ canvasHeight
 }
 
 const mapStateToProps = (state: Object, props: Object) => {
-  const { lp, savingMasks, selectedSavedSceneId, scenesAndRegions, showSaveSceneModal, saveSceneName, paintSceneWorkspace } = state
+  const { lp, savingMasks, selectedSavedSceneId, scenesAndRegions, showSaveSceneModal, saveSceneName } = state
   const selectedScene = scenesAndRegions.find(item => item.id === selectedSavedSceneId)
-  const activeColor = paintSceneWorkspace && paintSceneWorkspace.workspaceType === WORKSPACE_TYPES.smartMask ? maskingPink : lp.activeColor
+  const activeColor = props.workspace && props.workspace.workspaceType === WORKSPACE_TYPES.smartMask ? maskingPink : lp.activeColor
   return {
     lpColors: lp.colors,
     lpActiveColor: activeColor,
