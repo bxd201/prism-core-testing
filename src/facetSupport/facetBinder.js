@@ -20,6 +20,7 @@ import embedBundleStyles from './styles/embedBundleStyles'
 import { HAS_BOUND_CLASS, TO_BIND_CLASS } from './facetConstants'
 import { facetMasterWrapper } from './facetMasterWrapper'
 import dressUpForPrism from './utils/dressUpForPrism'
+import updateGlobalPrismObject from './utils/updateGlobalPrismObject'
 
 let [addToEmbedQueue, embedQueue] = [(facetName) => {
   embedQueue.push(facetName)
@@ -199,16 +200,12 @@ export default function facetBinder (FacetDeclaration: BoundFacet, facetName: st
     throw new Error(`Prism version mismatch. Attempting to bind ${facetName}@${APP_VERSION} in an ${oldVersion} environment.`)
   }
 
-  window.PRISM = {
-    ...(window.PRISM || {
-      version: APP_VERSION // eslint-disable-line no-undef,
-    }),
-    at: getInstance,
-    facets: {
-      ...(oldFacets || {}),
-      [facetName]: BF
-    }
-  }
+  updateGlobalPrismObject('version', APP_VERSION)
+  updateGlobalPrismObject('at', getInstance)
+  updateGlobalPrismObject('facets', {
+    ...(oldFacets || {}),
+    [facetName]: BF
+  })
 
   // make this facet available to be embedded
   addToEmbedQueue(facetName)
