@@ -5,6 +5,7 @@ import dressUpForPrism from './facetSupport/utils/dressUpForPrism'
 import embedGlobalStyles from './facetSupport/styles/embedGlobalStyles'
 import embedBundleStyles from './facetSupport/styles/embedBundleStyles'
 import embedScript from './facetSupport/scripts/embedScript'
+import updateGlobalPrismObject from './facetSupport/utils/updateGlobalPrismObject'
 
 function injectRoot () {
   // TODO: deprecate #prism-root in favor of class- or attr-based identifier
@@ -23,44 +24,64 @@ function injectRoot () {
   allRoots.forEach(dressUpForPrism)
 }
 
-embedGlobalStyles()
-injectRoot()
+// eslint-disable-next-line promise/param-names
+const prismPromise = new Promise((resolvePrism, rejectPrism) => {
+  const embedQueue = new function () {
+    let embedRequests = [] // will gather all calls to embed and their props
+    let hasExecuted = false
+    let embedMethod
 
-const dependencies = Promise.all([
-  embedScript(ensureFullyQualifiedAssetUrl(`${WEBPACK_CONSTANTS.chunkReactName}.js`)),
-  embedScript(ensureFullyQualifiedAssetUrl(`${WEBPACK_CONSTANTS.chunkNonReactName}.js`)),
-  embedScript(ensureFullyQualifiedAssetUrl(`${WEBPACK_CONSTANTS.mainEntryPointName}.js`))
-])
-  .then(() => new Promise((resolve, reject) => {
-    const timeout = Date.now() + 10000 // 10s timeout to locate embed method
-    const checkForEmbedMethod = () => {
-      const method = window.PRISM && window.PRISM.embed
-      if (typeof method === 'function') resolve()
-      if (Date.now() > timeout) return reject(new Error('Prism embed method not found'))
-      setTimeout(checkForEmbedMethod, 100)
+    this.add = (...args) => {
+      if (hasExecuted) return embedMethod.apply(undefined, args)
+      embedRequests.push(args)
+      return prismPromise
     }
 
-    checkForEmbedMethod()
-  }))
-  .then(() => (window.PRISM = {
-    ...(window.PRISM || {}),
-    status: 200 // OK
-  }))
-  .catch(err => {
-    console.warn(err)
+    this.execute = (method) => {
+      if (typeof method !== 'function') {
+        throw new Error('Attempting to execute Prism embed queue without valid embed function.')
+      }
 
-    window.PRISM = {
-      ...(window.PRISM || {}),
-      status: 500 // Error
+      embedMethod = method
+      hasExecuted = true
+      embedRequests.forEach(props => embedMethod.apply(undefined, props))
     }
 
-    return Promise.reject(window.PRISM)
-  })
+    return this
+  }()
 
-window.PRISM = {
-  ...(window.PRISM || {}),
-  status: 202, // Processing
-  ready: dependencies
-}
+  updateGlobalPrismObject('status', 202)
+  updateGlobalPrismObject('embed', embedQueue.add)
 
-embedBundleStyles(WEBPACK_CONSTANTS.mainEntryPointName)
+  embedGlobalStyles()
+  injectRoot()
+
+  Promise.all([
+    embedScript(ensureFullyQualifiedAssetUrl(`${WEBPACK_CONSTANTS.chunkReactName}.js`)),
+    embedScript(ensureFullyQualifiedAssetUrl(`${WEBPACK_CONSTANTS.chunkNonReactName}.js`)),
+    embedScript(ensureFullyQualifiedAssetUrl(`${WEBPACK_CONSTANTS.mainEntryPointName}.js`))
+  ])
+    .then(() => new Promise((resolve, reject) => {
+      const timeout = Date.now() + 10000 // 10s timeout to locate embed method
+      const checkForEmbedMethod = () => {
+        const method = window.PRISM && window.PRISM.__embed // look for internal embed method created by bundle.js
+        if (typeof method === 'function') resolve()
+        if (Date.now() > timeout) return reject(new Error('Prism embed method not found'))
+        setTimeout(checkForEmbedMethod, 100)
+      }
+
+      checkForEmbedMethod()
+    }))
+    .then(() => updateGlobalPrismObject('status', 200))
+    .then(p => {
+      embedQueue.execute(p.__embed)
+      resolvePrism(p)
+    })
+    .catch(err => {
+      console.warn(err)
+      updateGlobalPrismObject('status', 500)
+      rejectPrism(err)
+    })
+
+  embedBundleStyles(WEBPACK_CONSTANTS.mainEntryPointName)
+})
