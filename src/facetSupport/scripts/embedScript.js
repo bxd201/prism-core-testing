@@ -28,7 +28,7 @@ export default (path: string) => {
     script.onload = onloadHander
     script.onreadystatechange = onloadHander
 
-    script.src = `${path}?v=${APP_VERSION}`
+    script.src = path
     appendToBodyUtil(script)
   })
 

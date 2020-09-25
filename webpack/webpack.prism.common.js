@@ -21,8 +21,8 @@ const envVars = require('./constants.env-vars')
 const DEFAULT_ENTRY = `${flags.embedEntryPointName},${flags.mainEntryPointName}` // will build the bundle entry points by default
 
 // create constants that correlate to environment variables to be injected
-const APP_VERSION = process.env[envVars.npm_package_version]
-const APP_NAME = process.env[envVars.npm_package_name]
+const APP_VERSION = process.env.npm_package_version
+const APP_NAME = process.env.npm_package_name
 
 const ENV = process.env[envVars.NODE_ENV] ? process.env[envVars.NODE_ENV] : 'development'
 const API_PATH = (process.env[envVars.API_URL]) ? process.env[envVars.API_URL] : '$API_URL'
