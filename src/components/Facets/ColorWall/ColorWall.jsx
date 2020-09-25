@@ -68,6 +68,7 @@ const ColorWall = () => {
   useEffect(() => {
     const handleKeyDown = e => {
       if (!focusedChunkCoords.current) { return }
+      // prevent default behavior for arrow keys
       if (e.keyCode >= 37 && e.keyCode <= 40) { e.preventDefault() }
 
       const [row: number, column: number] = focusedChunkCoords.current
@@ -94,6 +95,13 @@ const ColorWall = () => {
             // if bloomed cell exists in newly focused chunk, focus on that. Otherwise focuse on top left cell
             cellRefs.current[params.colorId && getCoords(nextChunk, params.colorId)[0] !== -1 ? params.colorId : nextChunk[0][0]].focus()
           } else {
+            (e.shiftKey
+              // when pressing shift tab on the first chunk, first set focus to first cell so that the default action will set focus to the element immediately before the color wall
+              ? cellRefs.current[chunk[0][0]]
+              // when pressing tab on the last chunk, first set focus to last cell so that the default action will set focus to the first element after the color wall
+              : cellRefs.current[chunk[chunk.length - 1][chunk[chunk.length - 1].length - 1]]
+            ).focus()
+
             focusedChunkCoords.current = null
             focusedCell.current = null
           }
