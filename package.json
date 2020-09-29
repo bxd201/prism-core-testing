@@ -1,6 +1,6 @@
 {
   "name": "prism",
-  "version": "1.4.0-b",
+  "version": "1.4.0-c",
   "scripts": {
     "precleanstart": "node build-scripts/utilities/clear-build-cache.js",
     "cleanstart": "npm start",

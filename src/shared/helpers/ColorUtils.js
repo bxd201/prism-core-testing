@@ -44,7 +44,7 @@ export const fullColorName = memoizee(function fullColorName ({ brandKey, colorN
 // creates a CDP URL, this is used anywhere a CDP URL is needed so we're able to change the path of it in one location
 export const generateColorDetailsPageUrl = memoizee(function generateColorDetailsPageUrl (color: Color): string {
   const colorNumber = kebabCase(fullColorNumber(color.brandKey, color.colorNumber))
-  const colorName = kebabCase(color.name)
+  const colorName = cleanColorNameForURL(color.name)
 
   return '/' + compact([
     ROUTE_PARAMS.ACTIVE,
@@ -68,3 +68,9 @@ export const generateColorWallPageUrl = memoizee((sectionName = '', familyName =
 export const getContrastYIQ = memoizee((hexcolor: string) => {
   return mostReadable(hexcolor, [ '#000', '#FFF' ]).toHexString()
 }, { primitive: true, length: 1 })
+
+export const cleanColorNameForURL = (name: string = ''): string => kebabCase(name.split('-').map((v = '') => {
+  const v1 = v.slice(0, 1)
+  const v2 = v.slice(1)
+  return `${v1.toLowerCase()}${v2}`
+}).join(''))
