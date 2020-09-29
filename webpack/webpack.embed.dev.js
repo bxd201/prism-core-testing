@@ -32,6 +32,9 @@ module.exports = merge.smart(common, {
     },
     compress: true,
     writeToDisk: true,
-    disableHostCheck: true
+    disableHostCheck: true,
+    stats: {
+      ...require('./partial.devServer.stats')
+    }
   }
 })

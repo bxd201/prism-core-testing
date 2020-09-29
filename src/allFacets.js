@@ -4,25 +4,23 @@
  */
 
 import ColorDetailsFacet from 'src/components/Facets/ColorDetailsFacet'
-import ColorListingPage from 'src/components/Facets/ColorListingPage/ColorListingPage'
-import ColorWallFacet from 'src/components/Facets/ColorWallFacet'
 import ColorFamilyFacet from 'src/components/Facets/ColorFamilyFacet/ColorFamilyFacet'
+import ColorListingPage from 'src/components/Facets/ColorListingPage/ColorListingPage'
 import ColorVisualizer from 'src/components/Facets/ColorVisualizerWrapper/ColorVisualizerWrapper'
+import ColorWallFacet from 'src/components/Facets/ColorWallFacet'
 import FastMaskSimple from 'src/components/Facets/FastMaskSimple/FastMaskSimple'
 import JumpStartFacet from 'src/components/Facets/JumpStartFacet/JumpStartFacet'
-import Prism from 'src/components/Facets/Prism/Prism'
-import Tinter from 'src/components/Facets/Tinter/Tinter'
 import RoomTypeDetector from 'src/components/Facets/RoomTypeDetector/RoomTypeDetector'
+import Tinter from 'src/components/Facets/Tinter/Tinter'
 
 export const allFacets = {
   ColorDetailsFacet,
-  ColorListingPage,
-  ColorWallFacet,
   ColorFamilyFacet,
+  ColorListingPage,
   ColorVisualizer,
+  ColorWallFacet,
   FastMaskSimple,
   JumpStartFacet,
-  Prism,
-  Tinter,
-  RoomTypeDetector
+  RoomTypeDetector,
+  Tinter
 }

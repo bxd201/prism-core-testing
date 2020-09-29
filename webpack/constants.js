@@ -30,25 +30,20 @@ const publicPath = path.join(rootPath, 'public')
 const appIndexPath = path.join(srcPath, 'bundle.js')
 const authorPath = path.join(srcPath, 'author.js')
 const embedPath = path.join(srcEmbedPath, 'embed.js')
-const exportPath = path.join(srcPath, 'export.js')
-const cleanslatePath = path.join(srcPath, '/cleanslate/cleanslate.js')
+// const exportPath = path.join(srcPath, 'export.js')
 
 const mainEntryPointName = 'bundle'
 const embedEntryPointName = 'embed'
 const authorEntryPointName = 'author'
 const cleanslateEntryPointName = 'cleanslate'
-const exportEntryPointName = 'index'
+// const exportEntryPointName = 'index'
 const runtimeNamePrism = 'prismRuntime'
 const manifestNamePrism = 'prismManifest.json'
 
-const fixedEntryPoints = {
-  [cleanslateEntryPointName]: cleanslatePath
-}
-
 const mainEntryPoints = {
-  [authorEntryPointName]: authorPath,
-  [mainEntryPointName]: appIndexPath,
-  [exportEntryPointName]: exportPath
+  // [authorEntryPointName]: authorPath,
+  [mainEntryPointName]: appIndexPath
+  // [exportEntryPointName]: exportPath
 }
 
 /**
@@ -56,15 +51,15 @@ const mainEntryPoints = {
  * The facets imported here need to match what is in allFacets.js until further notice
  */
 const facetEntryPoints = {
-  // colorListingPage: path.join(srcPath, 'components/Facets/ColorListingPage/ColorListingPage.jsx'),
-  // colorWallFacet: path.join(srcPath, 'components/Facets/ColorWallFacet.jsx'),
-  // colorFamilyFacet: path.join(srcPath, 'components/Facets/ColorFamilyFacet/ColorFamilyFacet.jsx'),
-  // FastMaskSimple: path.join(srcPath, 'components/Facets/FastMaskSimple/FastMaskSimple.jsx'),
-  // tinter: path.join(srcPath, 'components/Facets/Tinter/Tinter.jsx'),
-  // colorVisualizer: path.join(srcPath, 'components/Facets/ColorVisualizerWrapper/ColorVisualizerWrapper.jsx'),
-  // prism: path.join(srcPath, 'components/Facets/Prism/Prism.jsx'),
-  // colorDetailsFacet: path.join(srcPath, 'components/Facets/ColorDetailsFacet.jsx'),
-  // RoomTypeDetector: path.join(srcPath, 'components/Facets/RoomTypeDetector/RoomTypeDetector.jsx')
+  ColorDetailsFacet: path.join(srcPath, 'components/Facets/ColorDetailsFacet.jsx'),
+  ColorFamilyFacet: path.join(srcPath, 'components/Facets/ColorFamilyFacet/ColorFamilyFacet.jsx'),
+  ColorListingPage: path.join(srcPath, 'components/Facets/ColorListingPage/ColorListingPage.jsx'),
+  ColorVisualizer: path.join(srcPath, 'components/Facets/ColorVisualizerWrapper/ColorVisualizerWrapper.jsx'),
+  ColorWallFacet: path.join(srcPath, 'components/Facets/ColorWallFacet.jsx'),
+  FastMaskSimple: path.join(srcPath, 'components/Facets/FastMaskSimple/FastMaskSimple.jsx'),
+  JumpStartFacet: path.join(srcPath, 'components/Facets/JumpStartFacet/JumpStartFacet.jsx'),
+  RoomTypeDetector: path.join(srcPath, 'components/Facets/RoomTypeDetector/RoomTypeDetector.jsx'),
+  Tinter: path.join(srcPath, 'components/Facets/Tinter/Tinter.jsx')
 }
 
 module.exports = {
@@ -72,7 +67,6 @@ module.exports = {
   authorEntryPointName,
   authorPath,
   cleanslateEntryPointName,
-  cleanslatePath,
   cleanslateWrappingClass,
   dev,
   dirNameDist,
@@ -83,9 +77,8 @@ module.exports = {
   embedOutputPath,
   embedPath,
   embedWorkingPath,
-  exportEntryPointName,
+  // exportEntryPointName,
   facetEntryPoints,
-  fixedEntryPoints,
   mainEntryPointName,
   mainEntryPoints,
   manifestNamePrism,

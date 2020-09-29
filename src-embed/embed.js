@@ -4,48 +4,84 @@ import addHideStyles from 'src/facetSupport/styles/addHideStyles'
 import dressUpForPrism from 'src/facetSupport/utils/dressUpForPrism'
 import embedScript from 'src/facetSupport/scripts/embedScript'
 import embedStyle from 'src/facetSupport/styles/embedStyle'
+import mapValues from 'lodash/mapValues'
 import updateGlobalPrismObject from 'src/facetSupport/utils/updateGlobalPrismObject'
 
 const prismManifest = require('embedWorking/prismManifest.json') // eslint-disable-line
 
-function injectRoot () {
-  // TODO: deprecate #prism-root in favor of class- or attr-based identifier
-  const prismRootLegacy = Array.from(document.querySelectorAll(EMBED_ROOT_SELECTOR_DEPRECATED))
-  const prismRootModern = Array.from(document.querySelectorAll(EMBED_ROOT_SELECTOR))
-  const allRoots = [
-    ...prismRootLegacy,
-    ...prismRootModern
-  ]
+const promiseFor = {}
+const getPromiseFor = (facetName: string) => {
+  if (promiseFor[facetName]) return promiseFor[facetName]
 
-  if (allRoots.length === 0) {
-    console.info('Missing PRISM root mounting element. Please add a container with id="prism-root" or [prism-auto-embed] and try again.')
-    return
+  const scriptPromises = []
+  const targetedDependencies = prismManifest.filter(mod => {
+    // if GENERATE_FACET_ASSETS global is true, try to load provided facet by name
+    if (GENERATE_FACET_ASSETS) {
+      return mod.name === facetName
+    }
+    // otherwise just load the main bundle
+    return mod.main
+  }).map(mod => mod.dependencies).reduce((accum, next) => next, undefined)
+
+  if (!targetedDependencies) {
+    throw new Error(`Invalid embed attempted for unknown Prism facet '${facetName}'.`)
   }
 
-  allRoots.forEach(dressUpForPrism)
-}
-
-// eslint-disable-next-line promise/param-names
-const prismPromise = new Promise((resolvePrism, rejectPrism) => {
-  const embedQueue = new function () {
-    let embedRequests = [] // will gather all calls to embed and their props
-    let hasExecuted = false
-    let embedMethod
-
-    this.add = (...args) => {
-      if (hasExecuted) return embedMethod.apply(undefined, args)
-      embedRequests.push(args)
-      return prismPromise
+  targetedDependencies.forEach(dep => {
+    if (dep.match(/\.css$/)) {
+      embedStyle(dep)
+    } else if (dep.match(/\.js$/)) {
+      scriptPromises.push(embedScript(dep))
     }
+  })
 
-    this.execute = (method) => {
-      if (typeof method !== 'function') {
-        throw new Error('Attempting to execute Prism embed queue without valid embed function.')
+  promiseFor[facetName] = Promise.all(scriptPromises)
+    .then(() => new Promise((resolve, reject) => {
+      const timeout = Date.now() + 10000 // 10s timeout to locate embed method
+      const checkForEmbedMethod = () => {
+        const method = window.PRISM && window.PRISM.facets && window.PRISM.facets[facetName] // look for internal embed method created by bundle.js
+        if (typeof method === 'function') resolve(method)
+        if (Date.now() > timeout) return reject(new Error(`Prism embed method not found for facet '${facetName}'.`))
+        setTimeout(checkForEmbedMethod, 100)
       }
 
-      embedMethod = method
-      hasExecuted = true
-      embedRequests.forEach(props => embedMethod.apply(undefined, props))
+      checkForEmbedMethod()
+    }))
+
+  return promiseFor[facetName]
+}
+
+// eslint-disable-next-line
+const prismPromise = new Promise((resolvePrism, rejectPrism) => {
+  const embedQueue = new function () {
+    const embedMethodFor = {}
+    const embedRequestsFor = {}
+
+    this.add = (...args) => {
+      const [el, props = {}] = args
+
+      if (!el) {
+        throw new Error('no element')
+      }
+
+      // targeted Prism Facet should be identified by either dataset.prismFacet or props.prismFacet
+      // if not, I guess we can drop this particular request?
+      const attrProps: {[key: string]: string} = mapValues(Object.assign({}, el.dataset), v => v === '' ? true : v)
+      const { reactComponent, prismFacet } = attrProps
+      // eslint-disable-next-line
+      const chosenFacet: string | typeof undefined = props.prismFacet || prismFacet || reactComponent
+
+      if (!chosenFacet) {
+        throw new Error('no facet')
+      }
+      if (typeof embedMethodFor[chosenFacet] === 'function') return embedMethodFor[chosenFacet].apply(undefined, args)
+      if (!embedRequestsFor[chosenFacet]) embedRequestsFor[chosenFacet] = []
+      embedRequestsFor[chosenFacet].push(args)
+
+      getPromiseFor(chosenFacet).then(embedMethod => {
+        embedMethodFor[chosenFacet] = embedMethod
+        embedMethod.apply(undefined, args)
+      })
     }
 
     return this
@@ -54,43 +90,16 @@ const prismPromise = new Promise((resolvePrism, rejectPrism) => {
   updateGlobalPrismObject('status', 202)
   updateGlobalPrismObject('embed', embedQueue.add)
 
-  injectRoot()
   addHideStyles()
 
-  let scriptPromises = []
-  // loop over CSS and JS and embed it
-  prismManifest.forEach(entry => {
-    if (entry && entry.dependencies) {
-      entry.dependencies.forEach(dep => {
-        if (dep.match(/\.css$/)) {
-          embedStyle(dep)
-        } else if (dep.match(/\.js$/)) {
-          scriptPromises.push(embedScript(dep))
-        }
-      })
-    }
-  })
+  const prismRootLegacy = Array.from(document.querySelectorAll(EMBED_ROOT_SELECTOR_DEPRECATED))
+  const prismRootModern = Array.from(document.querySelectorAll(EMBED_ROOT_SELECTOR))
+  const allRoots = [
+    ...prismRootLegacy,
+    ...prismRootModern
+  ]
 
-  Promise.all(scriptPromises)
-    .then(() => new Promise((resolve, reject) => {
-      const timeout = Date.now() + 10000 // 10s timeout to locate embed method
-      const checkForEmbedMethod = () => {
-        const method = window.PRISM && window.PRISM.__embed // look for internal embed method created by bundle.js
-        if (typeof method === 'function') resolve()
-        if (Date.now() > timeout) return reject(new Error('Prism embed method not found'))
-        setTimeout(checkForEmbedMethod, 100)
-      }
-
-      checkForEmbedMethod()
-    }))
-    .then(() => updateGlobalPrismObject('status', 200))
-    .then(p => {
-      embedQueue.execute(p.__embed)
-      resolvePrism(p)
-    })
-    .catch(err => {
-      console.warn(err)
-      updateGlobalPrismObject('status', 500)
-      rejectPrism(err)
-    })
+  if (allRoots.length > 0) {
+    allRoots.map(el => dressUpForPrism(el)).map(el => embedQueue.add(el))
+  }
 })

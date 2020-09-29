@@ -4,7 +4,6 @@ const path = require('path')
 const webpack = require('webpack')
 const isEmpty = require('lodash/isEmpty')
 const omit = require('lodash/omit')
-const pick = require('lodash/pick')
 const WebpackBar = require('webpackbar')
 const WebpackManifestPlugin = require('webpack-manifest-plugin')
 const flags = require('./constants')
@@ -15,41 +14,27 @@ const alias = require('./partial.resolve.alias')
 const stats = require('./partial.stats')
 const optimization = require('./partial.optimization')
 const moduleRuleJsx = require('./partial.module.rules.jsx')
-const moduleRuleSass = require('./partial.module.rules.sass')
+const { sassModuleRules, sassRules } = require('./partial.module.rules.sass')
 const envVars = require('./constants.env-vars')
-
-const DEFAULT_ENTRY = `${flags.embedEntryPointName},${flags.mainEntryPointName}` // will build the bundle entry points by default
+const NameAllModulesPlugin = require('name-all-modules-plugin')
+const AsyncChunkNames = require('webpack-async-chunk-names-plugin')
+const { contractString } = require('./utils')
 
 // create constants that correlate to environment variables to be injected
 const APP_VERSION = process.env.npm_package_version
 const APP_NAME = process.env.npm_package_name
 
 const ENV = process.env[envVars.NODE_ENV] ? process.env[envVars.NODE_ENV] : 'development'
+const GENERATE_FACET_ASSETS = (!!process.env[envVars.GENERATE_FACET_ASSETS] || ENV === 'production')
 const API_PATH = (ENV === 'development') ? process.env[envVars.API_URL] : '$API_URL'
 const ML_API_URL = (process.env[envVars.ML_API_URL]) ? process.env[envVars.ML_API_URL] : '$ML_API_URL'
 const BASE_PATH = (ENV === 'development') ? process.env[envVars.PRISM_LOCAL_ORIGIN] : (process.env[envVars.WEB_URL]) ? process.env[envVars.WEB_URL] : '$WEB_URL'
-const SPECIFIED_ENTRIES = process.env[envVars.ENTRY] ? process.env[envVars.ENTRY] : (ENV === 'development') ? DEFAULT_ENTRY : undefined
 // This flag if positive will use Firebase anonymous login instead of MySherwin. If value is sticky, clear all cached build files.
 const FIREBASE_AUTH_ENABLED = !!parseInt(process.env[envVars.FIREBASE_AUTH_ENABLED])
 const SMARTMASK_ENABLED = !!parseInt(process.env[envVars.SMARTMASK_ENABLED])
 
 let allEntryPoints = {
-  ...flags.mainEntryPoints,
-  ...flags.facetEntryPoints
-}
-
-// if an ENTRY value has been passed...
-if (SPECIFIED_ENTRIES) {
-  // ... split it by comma
-  const entries = SPECIFIED_ENTRIES.split(',')
-  // keep only entry points specified by ENTRY
-  allEntryPoints = pick(allEntryPoints, entries)
-}
-
-allEntryPoints = {
-  ...allEntryPoints,
-  // adding back in everything necessary after ENTRY filtering has been considered
-  ...flags.fixedEntryPoints
+  ...(GENERATE_FACET_ASSETS ? flags.facetEntryPoints : flags.mainEntryPoints)
 }
 
 // if we do not have any valid entry points...
@@ -71,12 +56,15 @@ const DEFINED_VARS = {
   'APP_VERSION': APP_VERSION,
   'BASE_PATH': BASE_PATH,
   'ENV': ENV,
-  'ML_API_URL': ML_API_URL,
   'FIREBASE_AUTH_ENABLED': FIREBASE_AUTH_ENABLED,
+  'GENERATE_FACET_ASSETS': GENERATE_FACET_ASSETS,
+  'IS_DEVELOPMENT': ENV === 'development',
+  'IS_PRODUCTION': ENV !== 'development',
+  'ML_API_URL': ML_API_URL,
   'SMARTMASK_ENABLED': SMARTMASK_ENABLED,
-  'WEBPACK_CONSTANTS': flags,
   'VAR_NAMES': ALL_VARS.varNames,
-  'VAR_VALUES': ALL_VARS.varValues
+  'VAR_VALUES': ALL_VARS.varValues,
+  'WEBPACK_CONSTANTS': flags
 }
 
 module.exports = {
@@ -91,8 +79,9 @@ module.exports = {
   entry: allEntryPoints,
   output: {
     path: flags.distPath,
-    filename: flags.production ? `${flags.dirNameDistJs}/[name].[contenthash].js` : `${flags.dirNameDistJs}/[name].js`,
-    globalObject: 'self'
+    filename: flags.production ? `${flags.dirNameDistJs}/[name].[contenthash:4].js` : `${flags.dirNameDistJs}/[name].js`,
+    globalObject: 'self',
+    publicPath: `${BASE_PATH}/`
   },
   resolve: {
     symlinks: false,
@@ -107,7 +96,8 @@ module.exports = {
           mainFields: ['module', 'jsnext:main', 'browser', 'main']
         }
       },
-      moduleRuleSass,
+      sassModuleRules,
+      sassRules,
       {
         test: /\.(png|jpe?g|gif|svg)$/i,
         use: [
@@ -118,7 +108,7 @@ module.exports = {
               limit: 8192,
               esModule: false,
               // the following options get passed to fallback file-loader
-              name: flags.production ? '[name].[contenthash].[ext]' : '[name].[ext]',
+              name: flags.production ? '[name].[contenthash:4].[ext]' : '[name].[ext]',
               outputPath: 'images',
               publicPath: `${BASE_PATH}/images/`
             }
@@ -196,48 +186,100 @@ module.exports = {
       name: flags.runtimeNamePrism
     },
     splitChunks: {
-      minSize: 0,
-      maxInitialRequests: Infinity,
-      cacheGroups: [
-        {
-          name: (module, chunks, cacheGroupKey) => {
-            const moduleFileName = module.identifier().split('/').reduceRight(item => item).replace(/[aeiouy]/gi, '')
-            const allChunksNames = chunks.map((item) => item.name).join('~').replace(/[aeiouy]/gi, '')
-            return `${allChunksNames}-${moduleFileName}`
+      ...(GENERATE_FACET_ASSETS ? {
+        chunks: 'initial',
+        name: (module, chunks, cacheGroupKey) => {
+          const moduleFileName = module.identifier().split('/').reduceRight(item => contractString(item.replace(/\.js$/g, '')))
+          const allChunksNames = chunks.map((item) => contractString(item.name)).join('')
+          return `_${contractString(cacheGroupKey)}_${allChunksNames}_${moduleFileName}`
+        },
+        minSize: 100000,
+        maxSize: 1250000,
+        maxInitialRequests: Infinity,
+        cacheGroups: {
+          workers: {
+            filename: `${flags.dirNameDistJs}/[name].[contenthash:4].js`,
+            test: /\.worker\.js$/,
+            name: (module, chunks, cacheGroupKey) => {
+              const moduleFileName = module.identifier().split('/').reduceRight(item => contractString(item.replace(/\.js$/g, '')))
+              return `_${contractString(cacheGroupKey)}_${moduleFileName}`
+            }
           },
-          test: /\.worker\.js$/
-        },
-        {
-          name: 'nonR',
-          test: /[\\/]node_modules[\\/](?!(react|react-dom|@firebase|@tensorflow|jimp))/
-        },
-        {
-          name: 'ai',
-          test: /[\\/]node_modules[\\/](@tensorflow)/
-        },
-        {
-          name: 'imgMan',
-          test: /[\\/]node_modules[\\/](jimp)/
-        },
-        {
-          name: 'fb',
-          test: /[\\/]node_modules[\\/](@firebase)/
-        },
-        {
-          name: 'r',
-          test: /[\\/]node_modules[\\/](react|react-dom)/
+          cleanslate: {
+            filename: `${flags.dirNameDistJs}/[name].[contenthash:4].js`,
+            test: /cleanslate/,
+            name: 'cleanslate',
+            reuseExistingChunk: true,
+            enforce: true
+          },
+          vendors: {
+            filename: `${flags.dirNameDistJs}/[name].[contenthash:4].js`,
+            test: /[\\/]node_modules[\\/]/,
+            priority: -10,
+            reuseExistingChunk: true
+          },
+          default: {
+            filename: `${flags.dirNameDistJs}/[name].[contenthash:4].js`,
+            minChunks: 2,
+            priority: -20,
+            reuseExistingChunk: true
+          },
+          async: {
+            chunks: 'async',
+            name: false,
+            enforce: true,
+            priority: 1,
+            minSize: 100000,
+            maxSize: 1250000,
+            reuseExistingChunk: true
+          }
         }
-      ].map(v => ({
-        ...v,
-        filename: flags.production ? `${flags.dirNameDistJs}/[name].[contenthash].js` : `${flags.dirNameDistJs}/[name].js`,
-        chunks: 'all'
-      })).reduce((accum, next) => ({
-        ...accum,
-        [next.name]: next
-      }), {})
+      } : {
+        chunks: 'initial',
+        cacheGroups: {
+          workers: {
+            filename: `${flags.dirNameDistJs}/[name].js`,
+            test: /\.worker\.js$/,
+            name: (module, chunks, cacheGroupKey) => {
+              const moduleFileName = module.identifier().split('/').reduceRight(item => contractString(item.replace(/\.js$/g, '')))
+              return `_${contractString(cacheGroupKey)}_${moduleFileName}`
+            }
+          },
+          cleanslate: {
+            filename: `${flags.dirNameDistJs}/[name].js`,
+            test: /cleanslate/,
+            name: 'cleanslate',
+            reuseExistingChunk: true,
+            enforce: true
+          },
+          vendors: {
+            filename: `${flags.dirNameDistJs}/[name].js`,
+            test: /[\\/]node_modules[\\/]/,
+            priority: -10,
+            reuseExistingChunk: true
+          }
+        }
+      })
     }
   },
   plugins: [
+    ...(GENERATE_FACET_ASSETS ? [
+      new webpack.HashedModuleIdsPlugin(),
+      new webpack.NamedChunksPlugin((chunk) => {
+        if (chunk.name) {
+          return chunk.name
+        }
+        try {
+          return chunk.modules.map(m => path.relative(m.context, m.request)).join('_')
+        } catch (err) {
+          console.warn('Warning! Unnamed chunk discovdered here:', chunk)
+          return 'nameless'
+        }
+      }),
+      new webpack.NamedModulesPlugin(),
+      new NameAllModulesPlugin(),
+      new AsyncChunkNames()
+    ] : []),
     new WebpackManifestPlugin({
       fileName: '../embed-working/' + flags.manifestNamePrism,
       writeToFileEmit: true,
@@ -245,6 +287,7 @@ module.exports = {
         // exclude author.js and export.js (index) from this; everything else should  be good to consume in the manifest
         return Object.keys(omit(entrypoints, [flags.authorEntryPointName, flags.exportEntryPointName])).map(depName => ({
           name: depName,
+          main: depName === flags.mainEntryPointName, // flags the main bundle in case we need to identify it
           // exclude any sourcemap (.map) files
           dependencies: entrypoints[depName].filter(filename => !filename.match(/\.map$/))
         }))
@@ -252,7 +295,7 @@ module.exports = {
     }),
     new WebpackBar(),
     new MiniCssExtractPlugin({
-      filename: flags.production ? `${flags.dirNameDistCss}/[name].[contenthash].css` : `${flags.dirNameDistCss}/[name].css`
+      filename: flags.production ? `${flags.dirNameDistCss}/[name].[contenthash:4].css` : `${flags.dirNameDistCss}/[name].css`
     }),
     // NOTE: This is ONLY for copying over scene SVG masks, which webpack otherwise has no way of knowing about
     new CopyWebpackPlugin([
@@ -274,8 +317,8 @@ module.exports = {
       configHash: CACHE_HASH,
       cacheDirectory: path.join(flags.rootPath, '.cache/hard-source/[confighash]'),
       info: {
-        mode: 'test',
-        level: 'debug'
+        mode: 'none',
+        level: 'warn'
       },
       environmentHash: {
         root: flags.rootPath,
