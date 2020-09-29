@@ -353,6 +353,6 @@ def trigger_smoke_job(branch){
           echo "can strictly run smoke job for develop/qa/stage/release branches only"
           return
       }
-      build job: 'Automated_SmokeTests/TAG/SWPrism_SmokeTests', parameters: [string(name: 'TARGET_URL', value: target_swprism_url)], wait: false
-      build job: 'Automated_SmokeTests/TAG/PrismCanada_SmokeTests', parameters: [string(name: 'TARGET_URL', value: target_caprism_url)], wait: false
+      build job: 'Automated_SmokeTests/PRISM/SWPrism_SmokeTests', parameters: [string(name: 'TARGET_URL', value: target_swprism_url)], wait: false
+      build job: 'Automated_SmokeTests/PRISM/PrismCanada_SmokeTests', parameters: [string(name: 'TARGET_URL', value: target_caprism_url)], wait: false
   }
