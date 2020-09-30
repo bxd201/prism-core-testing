@@ -336,7 +336,7 @@ def trigger_smoke_job(branch){
       def QA_CAPRISM_URL = "https://qa-sherwin-williams-ca.ebus.swaws/en/colour/active/color-wall/section/sherwin-williams-colours"
       def STAGE_SWPRISM_URL = "https://stagev9-www.sherwin-williams.com/painting-contractors"
       def STAGE_CAPRISM_URL = "https://stage-sherwin-williams-ca.ebus.swaws/en/colour/active/color-wall/section/sherwin-williams-colours"
-      def PROD_SWPRISM_URL = "https://v9-www.sherwin-williams.com/painting-contractors"
+      def PROD_SWPRISM_URL = "https://www.sherwin-williams.com/painting-contractors"
       def PROD_CAPRISM_URL = "https://www.sherwin-williams.ca/en/colour/active/color-wall"
       if (branch == 'develop') {
           target_swprism_url = DEV_SWPRISM_URL
