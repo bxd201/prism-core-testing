@@ -5,12 +5,15 @@ import { copyImageList, getColorAtPixel, getSelectArea,
   eraseIntersection, getPaintAreaPath, updateDeleteAreaList, createPolygon,
   repaintCircleLine, drawLine, getCanvasWrapperOffset, dropPin, repaintImageByPath,
   filterErasePath, breakGroupIfhasIntersection, drawPaintBrushPoint, drawPaintBrushPathUsingLine,
-  canvasDimensionFactors, applyDimensionFactorsToCanvas
+  canvasDimensionFactors, applyDimensionFactorsToCanvas, pointInsideCircle
 } from './utils'
 import { toolNames } from './data'
 import remove from 'lodash/remove'
 import { checkUndoIsEnabled } from './UndoRedoUtil'
 import uniqueId from 'lodash/uniqueId'
+
+const baseClass = 'paint__scene__wrapper'
+const canvasClass = `${baseClass}__canvas`
 
 export const bucketPaint = (e, state, props, ref) => {
   const { CFICanvas2, canvasOriginalDimensions, CFICanvasContext2, mergeCanvasRef, canvasOffsetWidth, canvasOffsetHeight } = ref
@@ -600,4 +603,188 @@ export const applyZoom = (zoomNumber, ref) => {
 
   const factors = canvasDimensionFactors(options)
   applyDimensionFactorsToCanvas(factors, ref)
+}
+
+export const getActiveToolState = (state: Object, ref: Object, paintSceneMethod: Function, activeTool: string) => {
+  const { imagePathList } = state
+  let newImagePathList = copyImageList(imagePathList)
+
+  const updateState = {
+    paintCursor: `${canvasClass}--${activeTool}`,
+    lineStart: [],
+    BeginPointList: [],
+    polyList: [],
+    presentPolyList: [],
+    showAnimatePin: false,
+    showNonAnimatePin: false
+  }
+
+  if (activeTool === '') {
+    return ({
+      ...updateState,
+      isInfoToolActive: false,
+      paintCursor: `${canvasClass}--${state.activeTool}`
+    })
+  }
+  if (activeTool === state.activeTool) {
+    return updateState
+  }
+  if (activeTool === toolNames.INFO) {
+    return ({ ...updateState, isInfoToolActive: true })
+  }
+  if (activeTool !== toolNames.UNDO || activeTool !== toolNames.REDO) {
+    newImagePathList = newImagePathList.filter(item => { return (item.type === 'paint' || item.type === 'delete' || item.type === 'delete-group') })
+  }
+  paintSceneMethod()
+  repaintImageByPath(newImagePathList, ref.CFICanvas2, ref.canvasOffsetWidth, ref.canvasOffsetHeight, false, [], true)
+  return ({ ...updateState, activeTool, selectedArea: [], canvasImageUrls: getLayers(ref), imagePathList: newImagePathList })
+}
+
+export const getLayers = (ref: Object) => {
+  if (!ref.CFICanvas.current || !ref.CFICanvas2.current) {
+    return []
+  }
+  const imageUrls = [ref.CFICanvas.current.toDataURL(), ref.CFICanvas2.current.toDataURL()]
+  return imageUrls
+}
+
+export const getBrushShapeSize = (brushShape: string, brushWidth: number, state: Object) => {
+  const { activeTool } = state
+
+  switch (activeTool) {
+    case toolNames.PAINTBRUSH:
+      return {
+        paintBrushShape: brushShape,
+        paintBrushWidth: brushWidth
+      }
+    case toolNames.ERASE:
+      return {
+        eraseBrushShape: brushShape,
+        eraseBrushWidth: brushWidth
+      }
+    default:
+      break
+  }
+}
+
+export const getActiveGroupTool = (state: Object) => {
+  const { selectedArea, groupSelectList } = state
+  let isDeleteGroup = false
+  let isAddGroup = false
+  let isUngroup = false
+  if (selectedArea.length > 0 || groupSelectList.length > 0) { isDeleteGroup = true }
+  if (selectedArea.length > 1 || (selectedArea.length > 0 && groupSelectList.length > 0) || (groupSelectList.length > 1)) { isAddGroup = true }
+  if (groupSelectList.length > 0) { isUngroup = true }
+  return { isDeleteGroup: isDeleteGroup, isAddGroup: isAddGroup, isUngroup: isUngroup }
+}
+
+export const panMove = (event, state, ref) => {
+  let { canvasOriginalDimensions, wrapperOriginalDimensions, canvasPanStart, lastPanPoint } = ref
+  const { canvasZoom, canvasMouseDown } = state
+  if (canvasZoom <= 1 || canvasZoom >= 8) return
+  if (!canvasMouseDown) return
+  const MIN_PAN = -0.1
+  const MAX_PAN = 1.1
+  const { body }: Object = document
+  const { clientWidth, clientHeight } = body
+  const dx = (event.pageX - lastPanPoint.x) / clientWidth
+  const dy = (event.pageY - lastPanPoint.y) / clientHeight
+  const panX = canvasPanStart.x - dx
+  const panY = canvasPanStart.y - dy
+  canvasPanStart = { x: Math.max(MIN_PAN, Math.min(MAX_PAN, panX)), y: Math.max(MIN_PAN, Math.min(MAX_PAN, panY)) }
+  lastPanPoint = { x: event.pageX, y: event.pageY }
+  const options = {
+    containerWidth: wrapperOriginalDimensions.width,
+    containerHeight: wrapperOriginalDimensions.height,
+    canvasWidth: canvasOriginalDimensions.width,
+    canvasHeight: canvasOriginalDimensions.height,
+    zoom: canvasZoom,
+    panX: canvasPanStart.x,
+    panY: canvasPanStart.y
+  }
+  const factors = canvasDimensionFactors(options)
+  applyDimensionFactorsToCanvas(factors, ref)
+}
+
+export const getDefinedPolygon = (e, state, props, ref, isAddArea, clearCanvasCallback) => {
+  const { BeginPointList, polyList, presentPolyList } = state
+  const { CFICanvas2, CFICanvas4, canvasOriginalDimensions, CFICanvasContext4, canvasOffsetWidth, canvasOffsetHeight } = ref
+  const { clientX, clientY } = e
+  const canvasClientOffset = CFICanvas2.current.getBoundingClientRect()
+  const canvasClientOffset4 = CFICanvas4.current.getBoundingClientRect()
+  const scale = canvasOriginalDimensions.width / canvasClientOffset.width
+  const cursorX = (clientX - canvasClientOffset.left) * scale
+  const cursorY = (clientY - canvasClientOffset.top) * scale
+  const X = clientX - canvasClientOffset4.left
+  const Y = clientY - canvasClientOffset4.top
+  const poly = [...polyList]
+  const presentPoly = [...presentPolyList]
+  poly.push([cursorX, cursorY])
+  presentPoly.push([X, Y])
+
+  let isBackToStart = false
+  if (BeginPointList.length > 0) {
+    isBackToStart = pointInsideCircle(X, Y, BeginPointList, 10)
+  }
+  if (isBackToStart) {
+    clearCanvasCallback()
+    let newState = createOrDeletePolygon(isAddArea, state, props, ref)
+    clearCanvasCallback()
+    CFICanvasContext4.clearRect(0, 0, canvasOffsetWidth, canvasOffsetHeight)
+    repaintImageByPath(newState.imagePathList, CFICanvas2, canvasOffsetWidth, canvasOffsetHeight)
+    return newState
+  } else {
+    let newState = createPolygonPin(e, state, props, ref, [X, Y], presentPoly)
+    return { ...newState,
+      lineStart: [X, Y],
+      polyList: poly,
+      presentPolyList: presentPoly
+    }
+  }
+}
+
+export const getEmptyCanvas = (state, ref, clearCanvasDrawing) => {
+  const { imagePathList } = state
+  const undolist = copyImageList(imagePathList)
+  const { CFICanvasContext2, canvasOffsetWidth, canvasOffsetHeight } = ref
+  CFICanvasContext2.clearRect(0, 0, canvasOffsetWidth, canvasOffsetHeight)
+  if (clearCanvasDrawing) {
+    return {
+      imagePathList: [],
+      selectedArea: [],
+      clearUndoList: undolist,
+      redoPathList: [],
+      redoIsEnabled: false
+    }
+  }
+}
+
+export const handleMouseMove = (e, state, props, ref) => {
+  const { clientX, clientY } = e
+  const { paintCursorRef, CFICanvasContextPaint, CFICanvas2, canvasOriginalDimensions } = ref
+  const { activeTool, paintBrushWidth, isDragging, paintBrushShape, prevPoint } = state
+  const { lpActiveColor } = props
+  const canvasClientOffset = CFICanvas2.current.getBoundingClientRect()
+  paintCursorRef.current && ref.paintCursorRef.current.handleMouseMove(clientX, clientY)
+  if ((lpActiveColor === null || (lpActiveColor.constructor === Object && Object.keys(lpActiveColor).length === 0)) && activeTool === toolNames.PAINTBRUSH) return
+  if ((lpActiveColor && activeTool === toolNames.PAINTBRUSH) || activeTool === toolNames.ERASE) {
+    const lpActiveColorRGB = (activeTool === toolNames.ERASE) ? `rgba(255, 255, 255, 1)` : `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})`
+
+    const scale = canvasOriginalDimensions.width / canvasClientOffset.width
+    if (isDragging) {
+      const currentPoint = {
+        x: (clientX - canvasClientOffset.left) * scale,
+        y: (clientY - canvasClientOffset.top) * scale
+      }
+      if ((activeTool === toolNames.PAINTBRUSH) || (activeTool === toolNames.ERASE)) {
+        drawPaintBrushPoint(currentPoint, prevPoint, state, props, ref)
+      } else {
+        CFICanvasContextPaint.beginPath()
+        if (activeTool === toolNames.PAINTBRUSH) {
+          drawPaintBrushPathUsingLine(CFICanvasContextPaint, currentPoint, prevPoint, paintBrushWidth, paintBrushShape, false, lpActiveColorRGB)
+        }
+      }
+      return { prevPoint: currentPoint }
+    }
+  }
 }
