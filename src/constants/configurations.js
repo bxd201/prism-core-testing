@@ -45,3 +45,24 @@ export const FIREBASE_CONFIG: FirebaseConfig = {
   appId: '1:486817725266:web:7825d0124632d801b0588b',
   measurementId: 'G-281S2DNW0Q'
 }
+
+export type FeatureExclusionsType = {
+  [key: string]: string
+}
+export const FEATURE_EXCLUSIONS: FeatureExclusionsType = {
+  editPhotos: 'editPhotos', // this determines if  the paintscene component can be accessed
+  fastMask: 'fastMask', // this will exclude
+  documentSaving: 'documentSaving', // this will exclude myideas and the save button
+  download: 'download', // this removes the download feature from the app
+  inspirationalPhotos: 'inspirationalPhotos', // this excludes inspirational photos from get inspired
+  expertColorPicks: 'expertColorPicks', // this excludes expert color picks from get inspired
+  paintedPhotos: 'paintedPhotos', // this excludes expert color picks from get inspired
+  getInspired: 'getInspired', // removes get inspired from the nav
+  exploreColors: 'exploreColors', //  removes explore colors from the nav
+  paintAPhoto: 'paintAPhoto', // removes paint a photo from the nav
+  useOurPhotos: 'useOurPhotos', // remove use our photos from the paint a photo submenu
+  uploadYourPhoto: 'uploadYourPhoto', // remove upload your photos from the paint a photo submenu
+  colorWall: 'colorWall', // removes color wall from explore colors submenu
+  colorCollections: 'colorCollection', // this will exclude color collections from explore colors
+  matchAPhoto: 'matchAPhoto' // removes match a photo from explore colors submenu
+}

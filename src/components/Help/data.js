@@ -1,3 +1,7 @@
+// @flow
+import { shouldAllowFeature } from '../../shared/utils/featureSwitch.util'
+import { FEATURE_EXCLUSIONS } from '../../constants/configurations'
+
 export const helpTabs = [
   {
     id: 0,
@@ -309,3 +313,17 @@ export const helpTabs = [
 ]
 
 export const helpHeader = 'HELPFUL_HINTS.TITLE'
+
+export const filterHelpItems = (featureExclusions: string[]) => {
+  return helpTabs.filter((item) => {
+    if (item.header === 'HELPFUL_HINTS.HEADER.PAINTING_MY_OWN_PHOTO') {
+      return shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.uploadYourPhoto) && shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.paintAPhoto)
+    }
+
+    if (item.header === 'HELPFUL_HINTS.HEADER.SAVING_MY_WORK') {
+      return shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.documentSaving)
+    }
+
+    return true
+  })
+}

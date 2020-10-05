@@ -21,8 +21,10 @@ import MergeCanvas from '../MergeCanvas/MergeCanvas'
 import { createPaintSceneWorkspace, setLayersForPaintScene, WORKSPACE_TYPES } from '../../store/actions/paintScene'
 import { getTransformParams } from '../../shared/utils/rotationUtil'
 import CustomSceneTinterContainer from '../CustomSceneTinter/CustomSceneTinterContainer'
-import { shouldShowPaintScene } from '../../shared/utils/devUtils'
+import { shouldAllowFeature } from '../../shared/utils/featureSwitch.util'
 import { objectsEqual } from '../PaintScene/utils'
+import WithConfigurationContext from '../../contexts/ConfigurationContext/WithConfigurationContext'
+import { FEATURE_EXCLUSIONS } from '../../constants/configurations'
 const baseClass = 'match-photo'
 const wrapperClass = `${baseClass}__wrapper`
 const previewClass = `${wrapperClass}--preview`
@@ -55,7 +57,8 @@ type Props = {
   showPaintScene: boolean,
   checkIsPaintSceneUpdate: boolean,
   isFromMyIdeas?: boolean,
-  sendImageData?: Function
+  sendImageData?: Function,
+  config: any
 }
 
 type OrientationDimension = {
@@ -67,7 +70,7 @@ type OrientationDimension = {
   originalImageHeight: number
 }
 
-export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaintScene, checkIsPaintSceneUpdate, isFromMyIdeas, sendImageData }: Props) {
+export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaintScene, checkIsPaintSceneUpdate, isFromMyIdeas, sendImageData, config: { featureExclusions } }: Props) {
   const canvasRef: RefObject = useRef()
   const wrapperRef: RefObject = useRef()
   const [imageUrl, setImageUrl] = useState(imgUrl)
@@ -471,16 +474,24 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
               ((imageUrl && isPaintScene && pins.length > 0 && !isLoadingSmartMask) || (isFromMyIdeas && paintSceneWorkspaceState && paintSceneWorkspaceState.bgImageUrl !== undefined))
                 ? (<>
                   {/* @todo Remove dev function -RS */}
-                  {shouldShowPaintScene()
-                    ? <PaintScene
+                  {
+                    shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.editPhotos) && shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.fastMask) ? <PaintScene
                       checkIsPaintSceneUpdate={checkIsPaintSceneUpdate}
                       imageUrl={imageUrl}
                       workspace={paintSceneWorkspaceState}
                       imageRotationAngle={imageRotationAngle}
                       referenceDimensions={imageDims}
                       selectedMaskIndex={selectedMaskIndex}
-                      width={wrapperWidth} />
-                    : <CustomSceneTinterContainer workspace={paintSceneWorkspaceState} wrapperWidth={wrapperWidth} angle={imageRotationAngle} originalIsPortrait={imageDims.originalIsPortrait} allowEdit />}
+                      width={wrapperWidth} /> : null
+                  }
+                  {
+                    shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.fastMask) && shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.editPhotos) ? <CustomSceneTinterContainer
+                      workspace={paintSceneWorkspaceState}
+                      wrapperWidth={wrapperWidth}
+                      angle={imageRotationAngle}
+                      originalIsPortrait={imageDims.originalIsPortrait}
+                      allowEdit /> : null
+                  }
                 </>)
                 : null
             }
@@ -498,4 +509,4 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
   )
 }
 
-export default withRouter(ImageRotateContainer)
+export default withRouter(WithConfigurationContext(ImageRotateContainer))
