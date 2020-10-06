@@ -77,6 +77,9 @@ export function doReceiveColors (state: ColorsState, { payload: { unorderedColor
   sections.filter(({ name }) => ['Timeless Colors', 'Timeless Colours'].includes(name)).forEach(section => (
     section.chunkGridParams = { gridWidth: 2, chunkWidth: 7, wrappingEnabled: true }
   ))
+  sections.filter(({ name }) => ['Living Well'].includes(name)).forEach(section => (
+    section.chunkGridParams = { gridWidth: 6, chunkWidth: 6, wrappingEnabled: true }
+  ))
 
   return sections.length ? {
     ...state,
