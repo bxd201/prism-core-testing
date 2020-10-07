@@ -366,7 +366,7 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
   }
 
   const handleDismiss = () => {
-    if (imageUrl && queuedImageUpload) {
+    if (imageUrl && queuedImageUpload && shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.fastMask)) {
       setIsLoadingSmartMask(true)
       dispatch(uploadImage(queuedImageUpload))
     } else {
@@ -473,9 +473,8 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
             {
               ((imageUrl && isPaintScene && pins.length > 0 && !isLoadingSmartMask) || (isFromMyIdeas && paintSceneWorkspaceState && paintSceneWorkspaceState.bgImageUrl !== undefined))
                 ? (<>
-                  {/* @todo Remove dev function -RS */}
                   {
-                    shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.editPhotos) && shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.fastMask) ? <PaintScene
+                    shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.editPhotos) ? <PaintScene
                       checkIsPaintSceneUpdate={checkIsPaintSceneUpdate}
                       imageUrl={imageUrl}
                       workspace={paintSceneWorkspaceState}
@@ -485,7 +484,7 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
                       width={wrapperWidth} /> : null
                   }
                   {
-                    shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.fastMask) && shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.editPhotos) ? <CustomSceneTinterContainer
+                    shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.fastMask) ? <CustomSceneTinterContainer
                       workspace={paintSceneWorkspaceState}
                       wrapperWidth={wrapperWidth}
                       angle={imageRotationAngle}

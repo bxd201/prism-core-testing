@@ -3,7 +3,7 @@ import { FEATURE_EXCLUSIONS } from '../../constants/configurations'
 
 export const shouldAllowFeature = (featureExclusions, feature) => {
   // uncomment line below to debug
-  // if (FEATURE_EXCLUSIONS.paintAPhoto === feature) return false
+  // if (FEATURE_EXCLUSIONS.fastMask === feature) return false
   if (!featureExclusions) {
     return true
   }
