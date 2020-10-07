@@ -79,11 +79,32 @@ const SaveOptions = (props: SaveOptionsProps) => {
     }
   }, [pathname])
 
-  // @todo [IMPLEMENT] determine if implementation should have use usecallback -RS
-  const handleDownload = (e: SyntheticEvent) => {
-    e.preventDefault()
-    // @todo integrate download -RS
-    console.log('Downloading Scene...')
+  const getFlatImage = (ctx1, ctx2) => {
+    const { width, height } = ctx1.canvas
+    const bgData = ctx1.canvas.toDataURL(0, 0, width, height)
+    const paintData = ctx2.canvas.toDataURL(0, 0, width, height)
+    let tmpImg = document.createElement('img')
+    tmpImg.style.display = 'none'
+
+    const workCanvas = document.createElement('canvas')
+    workCanvas.setAttribute('width', width)
+    workCanvas.setAttribute('height', height)
+    const workCtx = workCanvas.getContext('2d')
+    tmpImg.src = bgData
+    workCtx.drawImage(tmpImg, 0, 0)
+    tmpImg.src = paintData
+    workCtx.drawImage(tmpImg, 0, 0)
+    tmpImg.src = bgData
+    const miniImgWidth = Math.floor(width / 3)
+    const miniImgHeight = Math.floor(height / 3)
+    workCtx.drawImage(tmpImg, width - miniImgWidth, height - miniImgHeight, miniImgWidth, miniImgHeight)
+    const promise = new Promise((resolve) => {
+      workCanvas.toBlob((blob) => {
+        const url = URL.createObjectURL(blob)
+        resolve(url)
+      }, 'image/png')
+    })
+    return promise
   }
 
   const saveLivePaletteColorsFromModal = (e: SyntheticEvent, inputValue: string) => {
@@ -120,7 +141,6 @@ const SaveOptions = (props: SaveOptionsProps) => {
       <div style={{ display: 'flex', marginTop: '1px', height: '84px' }}>{livePaletteColorsDiv}</div>
     </>
   }
-
   return (
     <div className={saveOptionsBaseClassName}>
       {showLivePaletteSaveModal && lpColors.length > 0 ? <DynamicModal
@@ -144,35 +164,26 @@ const SaveOptions = (props: SaveOptionsProps) => {
         ]}
         description={formatMessage({ id: 'SAVE_LIVE_PALETTE_MODAL.LP_SAVED' })}
         height={document.documentElement.clientHeight + window.pageYOffset} /> : null}
-      {activeComponent === PAINT_SCENE_COMPONENT && shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.download)
-        ? <button onClick={handleDownload}>
+      {shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.download)
+        ? (activeComponent === PAINT_SCENE_COMPONENT
+          ? <div>
+            <SceneDownload {...{ buttonCaption: 'DOWNLOAD_MASK', getFlatImage: getFlatImage, activeComponent: props.activeComponent }} />
+          </div>
+          : <div>
+            <SceneDownload {...{ buttonCaption: 'DOWNLOAD_MASK', sceneInfo: firstActiveSceneInfo, activeComponent: props.activeComponent }} />
+          </div>) : null}
+      { shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.documentSaving)
+        ? <button onClick={handleSave}>
           <div className={saveOptionsItemsClassName}>
             <div>
               <FontAwesomeIcon
-                title={formatMessage({ id: 'DOWNLOAD_MASK' })}
-                icon={['fal', 'download']}
+                title={formatMessage({ id: 'SAVE_MASKS' })}
+                icon={['fal', 'folder']}
                 size='2x' />
             </div>
-            <div><FormattedMessage id='DOWNLOAD_MASK' /></div>
+            <div><FormattedMessage id='SAVE_MASKS' /></div>
           </div>
-        </button> : shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.download)
-          ? <div>
-            <SceneDownload {...{ buttonCaption: 'DOWNLOAD_MASK', sceneInfo: firstActiveSceneInfo }} />
-          </div> : null}
-      {
-        shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.documentSaving)
-          ? <button onClick={handleSave}>
-            <div className={saveOptionsItemsClassName}>
-              <div>
-                <FontAwesomeIcon
-                  title={formatMessage({ id: 'SAVE_MASKS' })}
-                  icon={['fal', 'folder']}
-                  size='2x' />
-              </div>
-              <div><FormattedMessage id='SAVE_MASKS' /></div>
-            </div>
-          </button> : null
-      }
+        </button> : null}
     </div>
   )
 }

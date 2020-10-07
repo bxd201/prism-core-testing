@@ -656,7 +656,10 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     const ref = { CFICanvasPaint: this.CFICanvasPaint, canvasOffsetWidth: this.canvasOffsetWidth, canvasOffsetHeight: this.canvasOffsetHeight, CFICanvas2: this.CFICanvas2, CFICanvasContextPaint: this.CFICanvasContextPaint }
     window.removeEventListener('mouseup', this.mouseUpHandler)
     let newState = eraseOrPaintMouseUp(this.state, this.props, ref)
-    this.setState(newState)
+    this.setState(newState, () => {
+      // TO Do: apply new paint on paintCanvas not using this way
+      this.redrawCanvas(newState.imagePathList)
+    })
   }
 
   clearCanvas = (clearCanvasDrawing: boolean = false) => {

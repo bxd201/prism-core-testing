@@ -6,16 +6,21 @@ import Jimp from 'jimp'
 import type { SceneInfo } from '../../shared/types/Scene'
 import { generateImage } from '../../shared/services/sceneDownload'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-
 type Props = {
   buttonCaption: string,
-  sceneInfo: void | SceneInfo
+  sceneInfo: void | SceneInfo,
+  activeComponent: string,
+  getFlatImage: Function
 }
+
+const PAINT_SCENE_COMPONENT = 'PaintScene'
+const BACKGROUND_IMG = 'paint-scene-canvas-first'
+const PAINT_LAYER = 'paint-scene-canvas-second'
 
 export default (props: Props) => {
   const [isCreatingDownload, setIsCreatingDownload] = useState(false)
   const [finalImageUrl, setFinalImageUrl] = useState()
-  const { buttonCaption, sceneInfo } = props
+  const { buttonCaption, sceneInfo, activeComponent, getFlatImage } = props
   const intl = useIntl()
 
   const downloadLinkRef = useCallback(link => {
@@ -25,16 +30,17 @@ export default (props: Props) => {
     }
   })
 
-  const onDownloadClick = () => {
-    if (!sceneInfo) {
-      return
-    }
-
+  const onDownloadClick = async () => {
     setIsCreatingDownload(true)
+    let imageSrc = ''
+    if (activeComponent === PAINT_SCENE_COMPONENT) {
+      const backgroundImg = document.getElementsByName(BACKGROUND_IMG)[0].getContext('2d')
+      const paintLayer = document.getElementsByName(PAINT_LAYER)[0].getContext('2d')
+      await getFlatImage(backgroundImg, paintLayer).then((url) => { imageSrc = url })
+    }
+    const scene = activeComponent === PAINT_SCENE_COMPONENT ? imageSrc : sceneInfo
 
-    console.time('processing image')
-
-    generateImage(sceneInfo).then(image => image.getBufferAsync(Jimp.MIME_JPEG))
+    generateImage(scene, activeComponent).then(image => image.getBufferAsync(Jimp.MIME_JPEG))
       .then(buffer => {
         const blob = new Blob([buffer], { type: 'img/jpg' })
         const urlCreator = window.URL || window.webkitURL
@@ -45,7 +51,6 @@ export default (props: Props) => {
         if (navigator.msSaveBlob) {
           navigator.msSaveBlob(blob, 'download.jpg')
         }
-        console.timeEnd('processing image')
       })
   }
 
