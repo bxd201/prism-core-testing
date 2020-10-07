@@ -16,9 +16,13 @@ import DynamicModal from '../DynamicModal/DynamicModal'
 import SceneDownload from '../SceneDownload/SceneDownload'
 import { createUniqueSceneId } from '../../shared/utils/legacyProfileFormatUtil'
 import find from 'lodash/find'
+import { shouldAllowFeature } from '../../shared/utils/featureSwitch.util'
+import { FEATURE_EXCLUSIONS } from '../../constants/configurations'
+import WithConfigurationContext from '../../contexts/ConfigurationContext/WithConfigurationContext'
 
 type SaveOptionsProps = {
-  activeComponent: string
+  activeComponent: string,
+  config: any
 }
 
 const saveOptionsBaseClassName = 'save-options'
@@ -27,6 +31,7 @@ const saveOptionsItemsClassName = `${saveOptionsBaseClassName}__items`
 const PAINT_SCENE_COMPONENT = 'PaintScene'
 
 const SaveOptions = (props: SaveOptionsProps) => {
+  const { activeComponent, config: { featureExclusions } } = props
   const { formatMessage } = useIntl()
   const [showLivePaletteSaveModal, setShowLivePaletteSaveModal] = useState(false)
   const [showSavedConfirmModalFlag, setShowSavedConfirmModalFlag] = useState(false)
@@ -139,32 +144,37 @@ const SaveOptions = (props: SaveOptionsProps) => {
         ]}
         description={formatMessage({ id: 'SAVE_LIVE_PALETTE_MODAL.LP_SAVED' })}
         height={document.documentElement.clientHeight + window.pageYOffset} /> : null}
-      {props.activeComponent === PAINT_SCENE_COMPONENT ? <button onClick={handleDownload}>
-        <div className={saveOptionsItemsClassName}>
-          <div>
-            <FontAwesomeIcon
-              title={formatMessage({ id: 'DOWNLOAD_MASK' })}
-              icon={['fal', 'download']}
-              size='2x' />
+      {activeComponent === PAINT_SCENE_COMPONENT && shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.download)
+        ? <button onClick={handleDownload}>
+          <div className={saveOptionsItemsClassName}>
+            <div>
+              <FontAwesomeIcon
+                title={formatMessage({ id: 'DOWNLOAD_MASK' })}
+                icon={['fal', 'download']}
+                size='2x' />
+            </div>
+            <div><FormattedMessage id='DOWNLOAD_MASK' /></div>
           </div>
-          <div><FormattedMessage id='DOWNLOAD_MASK' /></div>
-        </div>
-      </button> : <div>
-        <SceneDownload {...{ buttonCaption: 'DOWNLOAD_MASK', sceneInfo: firstActiveSceneInfo }} />
-      </div>}
-      <button onClick={handleSave}>
-        <div className={saveOptionsItemsClassName}>
-          <div>
-            <FontAwesomeIcon
-              title={formatMessage({ id: 'SAVE_MASKS' })}
-              icon={['fal', 'folder']}
-              size='2x' />
-          </div>
-          <div><FormattedMessage id='SAVE_MASKS' /></div>
-        </div>
-      </button>
+        </button> : shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.download)
+          ? <div>
+            <SceneDownload {...{ buttonCaption: 'DOWNLOAD_MASK', sceneInfo: firstActiveSceneInfo }} />
+          </div> : null}
+      {
+        shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.documentSaving)
+          ? <button onClick={handleSave}>
+            <div className={saveOptionsItemsClassName}>
+              <div>
+                <FontAwesomeIcon
+                  title={formatMessage({ id: 'SAVE_MASKS' })}
+                  icon={['fal', 'folder']}
+                  size='2x' />
+              </div>
+              <div><FormattedMessage id='SAVE_MASKS' /></div>
+            </div>
+          </button> : null
+      }
     </div>
   )
 }
 
-export default SaveOptions
+export default WithConfigurationContext(SaveOptions)

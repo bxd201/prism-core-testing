@@ -1,7 +1,7 @@
 // @flow
 import React, { useState } from 'react'
 import CardMenu from 'src/components/CardMenu/CardMenu'
-import { helpTabs, helpHeader } from './data'
+import { helpTabs, helpHeader, filterHelpItems } from './data'
 import './Help.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import debounce from 'lodash/debounce'
@@ -9,6 +9,8 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import at from 'lodash/at'
 import * as scroll from 'scroll'
 import { KEY_CODES } from 'src/constants/globals'
+import WithConfigurationContext from '../../contexts/ConfigurationContext/WithConfigurationContext'
+import { FEATURE_EXCLUSIONS } from '../../constants/configurations'
 
 const baseClass = `help`
 const wrapper = `${baseClass}__wrapper`
@@ -33,8 +35,8 @@ const secondIcon = `${baseClass}__second-icon`
 
 let isTabClick: boolean = false
 
-const helpTabsHeaderList = (activeTabIndex: number, setActiveTabIndex: Function, handleClick: Function) => {
-  return helpTabs.map((tab: Object, index: number) => {
+const helpTabsHeaderList = (activeTabIndex: number, setActiveTabIndex: Function, handleClick: Function, featureExclusions: string[]) => {
+  return filterHelpItems(featureExclusions).map((tab: Object, index: number) => {
     return (
       <li
         key={`hints-tab-${index}`}
@@ -51,8 +53,10 @@ const helpTabsHeaderList = (activeTabIndex: number, setActiveTabIndex: Function,
   })
 }
 
-const helpTabsContentList = (refs: Object, messages: Object) => {
-  return helpTabs.map((tab: Object, index: number) => {
+const helpTabsContentList = (refs: Object, messages: Object, featureExclusions: string[]) => {
+  console.table(FEATURE_EXCLUSIONS)
+
+  return filterHelpItems(featureExclusions).map((tab: Object, index: number) => {
     const tabContent = tab.content
     const imageList = tab.imageList
     const tabSubContent = tab.subContent
@@ -159,10 +163,15 @@ const getElementWindowTop = (elem: RefObject, contentWrapperRef: RefObject) => {
   return elem && typeof elem.getBoundingClientRect === 'function' ? elem.getBoundingClientRect().top - contentWrapperRef.current.getBoundingClientRect().top : 0
 }
 
-const Help = () => {
+type HelpProps = {
+  config: any
+}
+
+const Help = (props: HelpProps) => {
   const [activeTabIndex, setActiveTabIndex] = useState(0)
   const contentWrapperRef = React.createRef()
   const { messages = {} } = useIntl()
+  const { config: { featureExclusions } } = props
 
   const refs = helpTabs.reduce((acc, value) => {
     acc[value.id] = React.createRef()
@@ -206,7 +215,7 @@ const Help = () => {
             </ul>
           </div>
           <div role='tab' tabIndex='0' ref={contentWrapperRef} className={`${contentWrapper}`} onScroll={contentWrapperScrollHandler}>
-            {helpTabsContentList(refs, messages)}
+            {helpTabsContentList(refs, messages, featureExclusions)}
           </div>
         </div>
       )}
@@ -214,4 +223,4 @@ const Help = () => {
   )
 }
 
-export default Help
+export default WithConfigurationContext(Help)
