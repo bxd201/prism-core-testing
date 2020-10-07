@@ -590,7 +590,7 @@ export const eraseOrPaintMouseDown = (e, state, props, ref) => {
 }
 
 export const applyZoom = (zoomNumber, ref) => {
-  const { wrapperOriginalDimensions, canvasOriginalDimensions, canvasPanStart } = ref
+  const { wrapperOriginalDimensions, canvasOriginalDimensions, canvasPanStart, canvasDisplayWidth, canvasDisplayHeight } = ref
   const options = {
     containerWidth: wrapperOriginalDimensions.width,
     containerHeight: wrapperOriginalDimensions.height,
@@ -598,7 +598,9 @@ export const applyZoom = (zoomNumber, ref) => {
     canvasHeight: canvasOriginalDimensions.height,
     zoom: zoomNumber,
     panX: canvasPanStart.x,
-    panY: canvasPanStart.y
+    panY: canvasPanStart.y,
+    canvasDisplayWidth,
+    canvasDisplayHeight
   }
 
   const factors = canvasDimensionFactors(options)
@@ -769,8 +771,7 @@ export const handleMouseMove = (e, state, props, ref) => {
   if ((lpActiveColor === null || (lpActiveColor.constructor === Object && Object.keys(lpActiveColor).length === 0)) && activeTool === toolNames.PAINTBRUSH) return
   if ((lpActiveColor && activeTool === toolNames.PAINTBRUSH) || activeTool === toolNames.ERASE) {
     const lpActiveColorRGB = (activeTool === toolNames.ERASE) ? `rgba(255, 255, 255, 1)` : `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})`
-
-    const scale = canvasOriginalDimensions.width / canvasClientOffset.width
+    const scale = canvasOriginalDimensions.width / Math.ceil(canvasClientOffset.width)
     if (isDragging) {
       const currentPoint = {
         x: (clientX - canvasClientOffset.left) * scale,
