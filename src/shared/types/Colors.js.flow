@@ -128,17 +128,7 @@ export type ColorStatuses = {
   [ key: ColorId ]: ColorStatus
 }
 
-type LayoutRow = ColorId[][]
-type LayoutChunkRow = LayoutRow[]
-export type Layout = LayoutChunkRow[]
-
-type LayoutObj = {
-  name: string,
-  layout: Layout
+export type RGBArr = [number, number, number]
+export type RGBObj = {
+  r: number, g: number, b: number
 }
-
-export type Layouts = [
-  LayoutObj & {
-    families: LayoutObj[]
-  }
-]
