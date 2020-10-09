@@ -59,7 +59,7 @@ $bloom-duration: 200ms;
     animation: fadeIn $bloom-duration;
     text-align: left;
 
-    &--focus, &:focus { outline: 5.5px solid getVar('colors.primary') !important; }
+    &--focus, &:focus { outline: 5.5px solid var(getThemeColor('primary')) !important; }
 
     &__name {
       font-weight: bold;

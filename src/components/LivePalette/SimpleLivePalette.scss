@@ -64,7 +64,7 @@
       line-height: 1.2em;
       padding: 0.5em;
       &--dark {
-        color: getVar( "colors.white" );
+        color: var(getThemeColor('white'));
       }
     }
     &__info-button {
@@ -121,7 +121,7 @@
     }
 
     &--add {
-      background-color: getVar( "colors.white" );
+      background-color: var(getThemeColor('white'));
     }
 
     &--add-empty {
@@ -286,7 +286,7 @@
     padding: 0em;
 
     &--dark {
-      color: getVar( "colors.white" );
+      color: var(getThemeColor('white'));
     }
   }
 
@@ -387,8 +387,8 @@
       outline-width: 2px;
     }
     &:hover {
-      border-color: getVar("colors.summerSkyBlue");
-      color: getVar("colors.summerSkyBlue");
+      border-color: var(getThemeColor('secondary'));
+      color: var(getThemeColor('secondary'));
     }
   }
 }

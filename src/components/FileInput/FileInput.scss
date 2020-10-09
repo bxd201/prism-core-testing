@@ -17,7 +17,7 @@
 
     &:hover,
     #{$_self}__file:focus ~ & {
-      border: 1px solid getVar("colors.primary");;
+      border: 1px solid var(getThemeColor('primary'));
     }
 
     #{$_self}__file[disabled] ~ & {

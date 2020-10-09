@@ -1,7 +1,7 @@
 .color-wall {
   font-size: $base;
 
-  *:focus { outline: 2px solid var(getVarName('theme.colors.primary')); }
+  *:focus { outline: 2px solid var(getThemeColor('primary')); }
 
   &.enter, &.exit {
     opacity: 0;
@@ -55,7 +55,7 @@
   position: absolute;
   top: 0;
   right: 0;
-  color: var(getVarName('theme.colors.primary'));
+  color: var(getThemeColor('primary'));
   background: white;
   margin: .25em;
   border-radius: 50%;

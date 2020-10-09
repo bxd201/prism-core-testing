@@ -5,7 +5,7 @@ const webpack = require('webpack')
 const WebpackBar = require('webpackbar')
 const flags = require('./constants')
 const envVars = require('./constants.env-vars')
-const ALL_VARS = require('../src/shared/variableDefs')
+const ALL_VARS = require('../src/shared/withBuild/variableDefs')
 
 const alias = require('./partial.resolve.alias')
 const stats = require('./partial.stats')

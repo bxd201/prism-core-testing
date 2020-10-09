@@ -20,7 +20,7 @@ import InfoButton from 'src/components/InfoButton/InfoButton'
 import { activate, reorder, toggleCompareColor, deactivateTemporaryColor, empty } from '../../store/actions/live-palette'
 import { arrayToSpacedString } from '../../shared/helpers/StringUtils'
 
-import { varValues } from 'src/shared/variableDefs'
+import { varValues } from 'src/shared/withBuild/variableDefs'
 
 import EmptySlot from './EmptySlot'
 import ActiveSlot from './ActiveSlot'
@@ -174,7 +174,7 @@ export class LivePalette extends PureComponent<Props, State> {
           <div className='prism-live-palette__list'>
             {activeSlots}
             {colors.length < LP_MAX_COLORS_ALLOWED && <Link to={`/active/color-wall`} className={`prism-live-palette__slot prism-live-palette__slot--${COLOR_TRAY_CLASS_MODIFIERS}`}>
-              <FontAwesomeIcon className='prism-live-palette__icon' icon={['fal', 'plus-circle']} size='2x' color={varValues.colors.swBlue} />
+              <FontAwesomeIcon className='prism-live-palette__icon' icon={['fal', 'plus-circle']} size='2x' color={varValues._colors.primary} />
               <FormattedMessage id={ADD_COLOR_TEXT}>
                 {(msg: string) => <span className='prism-live-palette__slot__copy'>{msg}</span>}
               </FormattedMessage>

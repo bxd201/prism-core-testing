@@ -2,11 +2,11 @@
   max-width: 100%;
   display: flex;
   overflow: hidden;
-  background-color: getVar( "colors.white" );
+  background-color: var(getThemeColor('white'));
   padding: $livePalette__chip-side-margin;
   flex-direction: column;
   @include respond-above(sm) {
-    border: 1px solid getVar( "colors.grey" );
+    border: 1px solid $color-grey;
     flex-direction: row;
   }
   &__header {
@@ -65,7 +65,7 @@
       line-height: 1.2em;
       padding: 0.5em;
       &--dark {
-        color: getVar( "colors.white" );
+        color: var(getThemeColor('white'));
       }
     }
     &__info-button {
@@ -124,7 +124,7 @@
     }
 
     &--add {
-      background-color: getVar( "colors.white" );
+      background-color: var(getThemeColor('white'));
     }
 
     &--add-empty {
@@ -293,7 +293,7 @@
     }
 
     &--dark {
-      color: getVar( "colors.white" );
+      color: var(getThemeColor('white'));
     }
   }
 
@@ -396,8 +396,8 @@
       outline-width: 2px;
     }
     &:hover {
-      border-color: getVar("colors.summerSkyBlue");
-      color: getVar("colors.summerSkyBlue");
+      border-color: var(getThemeColor('secondary'));
+      color: var(getThemeColor('secondary'));
     }
   }
 }

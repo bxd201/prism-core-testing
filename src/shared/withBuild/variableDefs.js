@@ -1,3 +1,7 @@
+const themeColors = require('./themeColors').themeColors
+
+// code here to build out structure of theme color object
+
 module.exports.varValues = {
   base: '16px',
   spacing: '1rem',
@@ -14,21 +18,34 @@ module.exports.varValues = {
     text: '1rem',
     title: '2rem'
   },
-  colors: {
+  // ----------------------------------------------
+  // BEGIN DEPRECATED THEME COLORS WARNING
+  // These colors are being deprecated in favor of an all-CSS custom prop approach.
+  // TODO: search for instances of varValues._colors in JS(X) and replace
+  // ----------------------------------------------
+  _colors: {
     primary: '#0069af',
-    secondary: '#4f5967',
+    secondary: '#2cabe2',
     warning: '#f2c500',
     success: '#1fce6d',
+    info: '#2cabe2',
     danger: '#e94b35',
-    error: '#e94b35',
     grey: '#cccccc',
     lightGrey: '#dddddd',
     nearBlack: '#2e2e2e',
     black: '#000000',
-    white: '#ffffff',
-    swBlue: '#0069af',
-    summerSkyBlue: '#2cabe2'
+    white: '#ffffff'
   },
+  // ----------------------------------------------
+  // END THEME COLOR DEPRECATION
+  // ----------------------------------------------
+  // ----------------------------------------------
+  // BEGIN NEW THEME COLORS
+  // ----------------------------------------------
+  themeColors: themeColors,
+  // ----------------------------------------------
+  // END NEW THEME COLORS
+  // ----------------------------------------------
   colorWall: {
     swatchColumns: 56, // default SW color chunks
     exitTransitionMS: 200,
@@ -58,7 +75,7 @@ module.exports.varValues = {
  */
 module.exports.varNames = {
   theme: {
-    colors: {
+    _colors: {
       primary: '--prism-color-primary',
       secondary: '--prism-color-secondary',
       warning: '--prism-color-warning',
@@ -69,8 +86,7 @@ module.exports.varNames = {
       lightGrey: '--prism-color-light-grey',
       nearBlack: '--prism-color-near-black',
       black: '--prism-color-black',
-      white: '--prism-color-white',
-      summerSkyBlue: '--prism-color-summer-sky-blue'
+      white: '--prism-color-white'
     }
   },
   globalCornerRadius: '--sw-global-corner-radius',

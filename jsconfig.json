@@ -8,7 +8,7 @@
       "embedOutput": ["embed-output"],
       "embedWorking": ["embed-working"],
       "src": ["src"],
-      "variables": ["src/shared/variableDefs.js"],
+      "variables": ["src/shared/withBuild/variableDefs.js"],
     }
   },
   "exclude": [

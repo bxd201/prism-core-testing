@@ -1,18 +1,21 @@
-$btn-bg: white;
+$btn-bg: var(getThemeColor('white'));
+$btn-text-color: var(getThemeColor('white.contrast'));
 $btn-radius: $ui-radius;
 $btn-height: $ui-height-min;
 $btn-height--mobile: $ui-height-min--mobile;
 $btn-border-thickness: 1px;
 
 %color-wall-mode-btns-btn {
+  $focus-shadow: inset 0 0 0 $btn-border-thickness var(getThemeColor('primary'));
+
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border: $btn-border-thickness solid getVar("colors.primary");
+  border: $btn-border-thickness solid var(getThemeColor('primary'));
   background: $btn-bg;
   font-size: 1em;
   padding: .25em .75em;
-  color: pick-text-color($btn-bg);
+  color: $btn-text-color;
   text-decoration: none;
   text-align: center;
   border-radius: $btn-radius;
@@ -37,22 +40,28 @@ $btn-border-thickness: 1px;
   }
 
   &:focus {
-    box-shadow: inset 0 0 0 $btn-border-thickness getVar("colors.primary");
+    box-shadow: $focus-shadow;
   }
 
   &:hover {
-    $hover-bg: mix($btn-bg, getVar("colors.primary"), 90%);
-    background: $hover-bg;
-    color: pick-text-color($hover-bg);
+    background: var(getThemeColor('primary.lightest'));
+    color: var(getThemeColor('primary.lightest.contrast'));
   }
 }
 
 %color-wall-mode-btns-btn--active {
-  background: getVar("colors.primary") !important;
-  color: pick-text-color(getVar("colors.primary")) !important;
+  $focus-shadow: inset 0 0 0 $btn-border-thickness var(getThemeColor('primary.contrast.trans'));
+
+  background: var(getThemeColor('primary')) !important;
+  color: var(getThemeColor('primary.contrast')) !important;
 
   &:focus {
-    box-shadow: inset 0 0 0 $btn-border-thickness pick-text-color(getVar("colors.primary")) !important;
+    box-shadow: $focus-shadow !important;
+  }
+
+  &:hover {
+    background: var(getThemeColor('primary.darker')) !important;
+    color: var(getThemeColor('primary.darker.contrast')) !important;
   }
 }
 
@@ -66,7 +75,7 @@ $btn-border-thickness: 1px;
   }
 
   &__option-container {
-    border: $btn-border-thickness solid getVar("colors.primary");
+    border: $btn-border-thickness solid var(getThemeColor('primary'));
     border-radius: $btn-radius;
     height: $btn-height--mobile;
 
@@ -88,7 +97,7 @@ $btn-border-thickness: 1px;
       justify-content: center;
       padding: 0;
       margin: 0;
-      border-left: $btn-border-thickness solid getVar("colors.primary");
+      border-left: $btn-border-thickness solid var(getThemeColor('primary'));
 
       &:first-child {
         border-left: none;

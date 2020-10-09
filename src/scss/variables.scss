@@ -1,18 +1,13 @@
 $base: getVar("base") !default;
 $spacing: getVar("spacing") !default;
 $breakpoints: getVar("breakpoints") !default;
-$colors: getVar("colors") !default;
 
+$color-grey: #ccc;
+$color-light-grey: #ddd;
 $color-near-opacity: 0.9;
-$color-near-black: rgba(0, 0, 0, $color-near-opacity);
-$color-black: getVar( "colors.black" );
-$color-near-white: rgba(255, 255, 255, $color-near-opacity);
-$color-white: getVar( "colors.white" );
-$color-light-grey: getVar( "colors.lightGrey" );
-$color-swBlue: getVar( "colors.swBlue" );
 
 // FOCUS OUTLINE DEFAULTS
-$outline-color: var(getVarName('theme.colors.primary'));
+$outline-color: var(getThemeColor('primary'));
 $outline-size: 2px;
 $outline-style: solid;
 
