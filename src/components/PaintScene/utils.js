@@ -855,7 +855,7 @@ export const canvasDimensionFactors = (options: Object) => {
   const yFactor = clampedPanY * (1 - heightFactor)
 
   return {
-    widthFactor, heightFactor, xFactor, yFactor
+    widthFactor, heightFactor, xFactor, yFactor, ...options
   }
 }
 
@@ -874,10 +874,19 @@ export const applyDimensionFactorsToCanvas = (factors: Object, ref: Object) => {
 }
 
 export const applyDimensionFactorsByCanvas = (factors: Object, canvas: RefObject) => {
-  canvas.current.style.width = `${Math.floor(factors.widthFactor * 100)}%`
-  canvas.current.style.height = `${Math.floor(factors.heightFactor * 100)}%`
-  canvas.current.style.left = `${Math.floor(factors.xFactor * 100)}%`
-  canvas.current.style.top = `${Math.floor(factors.yFactor * 100)}%`
+  if (factors.zoom > 1) {
+    // While these percentages work well for zooming, they pollute the styles for resize, the else block is a reset.
+    // Obliterate the left style prop to allow css to do the math for you!!!
+    canvas.current.style.width = `${Math.floor(factors.widthFactor * 100)}%`
+    canvas.current.style.height = `${Math.floor(factors.heightFactor * 100)}%`
+    canvas.current.style.left = `${Math.floor(factors.xFactor * 100)}%`
+    canvas.current.style.top = `${Math.floor(factors.yFactor * 100)}%`
+  } else {
+    canvas.current.style.width = `${factors.canvasDisplayWidth}px`
+    canvas.current.style.height = `${factors.canvasDisplayHeight}px`
+    canvas.current.style.left = null
+    canvas.current.style.top = 0
+  }
 }
 
 export const compareArraysOfObjects = (a1, a2) => {

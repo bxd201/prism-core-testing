@@ -8,7 +8,6 @@ import ColorPinsGenerationByHue from './workers/colorPinsGenerationByHue.worker'
 import useEffectAfterMount from '../../shared/hooks/useEffectAfterMount'
 // eslint-disable-next-line no-unused-vars
 import PaintScene from '../PaintScene/PaintScene'
-import { getScaledPortraitHeight } from '../../shared/helpers/ImageUtils'
 import PrismImage from '../PrismImage/PrismImage'
 import { useSelector, useDispatch } from 'react-redux'
 import './MatchPhoto.scss'
@@ -25,6 +24,7 @@ import { shouldAllowFeature } from '../../shared/utils/featureSwitch.util'
 import { objectsEqual } from '../PaintScene/utils'
 import WithConfigurationContext from '../../contexts/ConfigurationContext/WithConfigurationContext'
 import { FEATURE_EXCLUSIONS } from '../../constants/configurations'
+import { calcOrientationDimensions } from '../../shared/utils/scale.util'
 const baseClass = 'match-photo'
 const wrapperClass = `${baseClass}__wrapper`
 const previewClass = `${wrapperClass}--preview`
@@ -61,16 +61,7 @@ type Props = {
   config: any
 }
 
-type OrientationDimension = {
-  portraitWidth: number,
-  portraitHeight: number,
-  landscapeWidth: number,
-  landscapeHeight: number,
-  originalImageWidth: number,
-  originalImageHeight: number
-}
-
-export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaintScene, checkIsPaintSceneUpdate, isFromMyIdeas, sendImageData, config: { featureExclusions } }: Props) {
+export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaintScene, checkIsPaintSceneUpdate, isFromMyIdeas, sendImageData, config: { featureExclusions, maxSceneViewerHeight } }: Props) {
   const canvasRef: RefObject = useRef()
   const wrapperRef: RefObject = useRef()
   const [imageUrl, setImageUrl] = useState(imgUrl)
@@ -113,6 +104,7 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
   const brandColors = useSelector(state => state.brandColors.data)
   const uploads = useSelector(state => state.uploads)
   const dispatch = useDispatch()
+  const maxSceneHeight = maxSceneViewerHeight || 500
   useEffect(() => { dispatch(loadBrandColors()) }, [])
 
   useEffect(() => {
@@ -135,7 +127,8 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
       return
     }
     const { portraitWidth, portraitHeight, landscapeWidth, landscapeHeight, originalIsPortrait, originalImageWidth, originalImageHeight } = prevOrientationRef.current
-    const newOrientationDims = calcOrientationDimensions(originalImageWidth, originalImageHeight, originalIsPortrait)
+    const currentDims = wrapperRef.current.getBoundingClientRect()
+    const newOrientationDims = calcOrientationDimensions(originalImageWidth, originalImageHeight, originalIsPortrait, currentDims.width, maxSceneHeight)
 
     const oldWidth = isPortrait ? landscapeWidth : portraitWidth
     const oldHeight = isPortrait ? landscapeHeight : portraitHeight
@@ -223,46 +216,6 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
     setWrapperWidth(wrapperRef.current.getBoundingClientRect().width)
   }
 
-  const calcOrientationDimensions = (width: number, height: number, orientationIsPortrait: boolean): OrientationDimension => {
-    const currentWrapperDims = wrapperRef.current.getBoundingClientRect()
-    const wrapperWidth = currentWrapperDims.width
-    const dimensions = {}
-    let fixedHeight = 0
-
-    if (orientationIsPortrait) {
-      // Height should not change on rotate, so use the portrait height as the fixed height
-      fixedHeight = Math.round(getScaledPortraitHeight(width, height)(wrapperWidth / 2))
-
-      dimensions.portraitWidth = Math.round(wrapperWidth / 2)
-      dimensions.portraitHeight = fixedHeight
-
-      dimensions.landscapeWidth = Math.round(height / width * fixedHeight)
-      dimensions.landscapeHeight = fixedHeight
-
-      // some proportions will need to be recalculated
-      if (dimensions.landscapeWidth > wrapperWidth) {
-        dimensions.landscapeWidth = wrapperWidth
-        fixedHeight = Math.round(width / height * wrapperWidth)
-        dimensions.landscapeHeight = fixedHeight
-
-        dimensions.portraitHeight = fixedHeight
-        dimensions.portraitWidth = Math.round(width / height * fixedHeight)
-      }
-    } else {
-      fixedHeight = Math.round(height / width * wrapperWidth)
-      dimensions.landscapeWidth = wrapperWidth
-      dimensions.landscapeHeight = fixedHeight
-
-      dimensions.portraitHeight = fixedHeight
-      dimensions.portraitWidth = Math.round(fixedHeight * height / width)
-    }
-
-    dimensions.originalImageWidth = width
-    dimensions.originalImageHeight = height
-    dimensions.originalIsPortrait = orientationIsPortrait
-
-    return dimensions
-  }
   const initCanvas = (image: Object, dimensions: Object, orientationIsPortrait: booelan) => {
     const { portraitWidth, portraitHeight, landscapeWidth, landscapeHeight } = dimensions
     const width = orientationIsPortrait ? portraitWidth : landscapeWidth
@@ -336,7 +289,8 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
 
   const handleImageLoaded = (payload) => {
     const image = imageRef.current
-    const dimensions = calcOrientationDimensions(image.width, image.height, payload.isPortrait)
+    const currentDims = wrapperRef.current.getBoundingClientRect()
+    const dimensions = calcOrientationDimensions(image.width, image.height, payload.isPortrait, currentDims.width, maxSceneHeight)
     const width = dimensions.originalIsPortrait ? dimensions.portraitWidth : dimensions.landscapeWidth
     const height = dimensions.originalIsPortrait ? dimensions.portraitHeight : dimensions.landscapeHeight
 
@@ -481,7 +435,8 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
                       imageRotationAngle={imageRotationAngle}
                       referenceDimensions={imageDims}
                       selectedMaskIndex={selectedMaskIndex}
-                      width={wrapperWidth} /> : null
+                      width={wrapperWidth}
+                      maxSceneHeight={maxSceneHeight} /> : null
                   }
                   {
                     shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.fastMask) ? <CustomSceneTinterContainer

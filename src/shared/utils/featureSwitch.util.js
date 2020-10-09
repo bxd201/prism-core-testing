@@ -3,12 +3,13 @@ import { FEATURE_EXCLUSIONS } from '../../constants/configurations'
 
 export const shouldAllowFeature = (featureExclusions, feature) => {
   // uncomment line below to debug
-  // if (FEATURE_EXCLUSIONS.fastMask === feature) return false
+  // @hack @todo COMMENT OUT BEFORE DEPLOY!!!!!!!!! -RS
+  if (FEATURE_EXCLUSIONS.fastMask === feature) return false
   if (!featureExclusions) {
     return true
   }
 
-  return featureExclusions.indexOf(feature) < -1
+  return featureExclusions.indexOf(feature) === -1
 }
 
 // @todo This validator allows us to understand the configuration rules and get ahead of configuration problems. This really needs a better home... -RS

@@ -15,7 +15,6 @@ import { repaintImageByPath, getImageCordinateByPixel, canvasDimensionFactors, a
   drawImagePixelByPath, getColorAtPixel, copyImageList, createImagePathItem,
   getPaintBrushActiveClass, getEraseBrushActiveClass, compareArraysOfObjects, objectsEqual, getColorsForMergeColors, maskingPink } from './utils'
 import { toolNames, groupToolNames, brushLargeSize, brushRoundShape, setTooltipShownLocalStorage, getTooltipShownLocalStorage } from './data'
-import { getScaledPortraitHeight, getScaledLandscapeHeight } from '../../shared/helpers/ImageUtils'
 import throttle from 'lodash/throttle'
 import { redo, undo } from './UndoRedoUtil'
 import MergeCanvas from '../MergeCanvas/MergeCanvas'
@@ -40,6 +39,7 @@ import { setActiveScenePolluted, unsetActiveScenePolluted, setWarningModalImgPre
 import { group, ungroup, deleteGroup, selectArea, bucketPaint, applyZoom, getActiveGroupTool, panMove, getDefinedPolygon, eraseOrPaintMouseUp, eraseOrPaintMouseDown, getActiveToolState, getBrushShapeSize, getEmptyCanvas, handleMouseMove } from './toolFunction'
 import { LiveMessage } from 'react-aria-live'
 import { BrushPaintCursor } from './BrushPaintCursor'
+import { calcOrientationDimensions } from '../../shared/utils/scale.util'
 
 const baseClass = 'paint__scene__wrapper'
 const canvasClass = `${baseClass}__canvas`
@@ -85,7 +85,8 @@ type ComponentProps = {
   setActiveScenePolluted: () => void,
   unsetActiveScenePolluted: () => void,
   setWarningModalImgPreview: ({}) => void,
-  sendImageData?: Function
+  sendImageData?: Function,
+  maxSceneHeight: number
 }
 
 type ComponentState = {
@@ -182,6 +183,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.lastPanPoint = { x: 0, y: 0 }
     this.originalImageWidth = props.referenceDimensions.originalImageWidth
     this.originalImageHeight = props.referenceDimensions.originalImageHeight
+    this.maxSceneHeigth = props.maxSceneHeight || 500 // @todo put this in a constant
 
     this.state = {
       activeTool: toolNames.PAINTAREA,
@@ -413,33 +415,17 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.setForegroundImage(this.state.canvasWidth, this.state.canvasHeight)
   }
 
-  /*:: calcCanvasNewDimensions(newWidth: number) => Object */
-  calcCanvasNewDimensions = (newWidth: number, oldWidth: number) => {
+  /*:: calcCanvasNewDimensions(newWidth: number, oldWidth: number) => Object */
+  calcCanvasNewDimensions = (newWidth: number, oldWidth: number, maxHeight: number) => {
     const originalImageWidth = this.originalIsPortrait === this.isPortrait ? this.originalImageWidth : this.originalImageHeight
     const originalImageHeight = this.originalIsPortrait === this.isPortrait ? this.originalImageHeight : this.originalImageWidth
-    let canvasWidth = 0
     const wrapperWidth = newWidth || this.wrapperDimensions.width
 
-    const scaleRatio = newWidth / oldWidth
-
-    if (this.isPortrait) {
-      canvasWidth = Math.floor(this.state.canvasWidth * scaleRatio)
-    } else {
-      // Landscape
-      canvasWidth = Math.floor(wrapperWidth)
-    }
-
-    let canvasHeight = 0
-
-    if (this.isPortrait) {
-      canvasHeight = Math.floor(getScaledPortraitHeight(originalImageWidth, originalImageHeight)(canvasWidth))
-    } else {
-      canvasHeight = Math.floor(getScaledLandscapeHeight(originalImageHeight, originalImageWidth)(canvasWidth))
-    }
+    const newDims = calcOrientationDimensions(originalImageWidth, originalImageHeight, this.isPortrait, wrapperWidth, this.maxSceneHeigth)
 
     return {
-      canvasWidth,
-      canvasHeight
+      canvasWidth: this.isPortrait ? newDims.portraitWidth : newDims.landscapeWidth,
+      canvasHeight: this.isPortrait ? newDims.portraitHeight : newDims.landscapeHeight
     }
   }
 
@@ -474,8 +460,12 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
 
     this.CFICanvas.current.style.width = `${canvasWidth}px`
     this.CFICanvas.current.style.height = `${canvasHeight}px`
+    // Clear out zoom cruft
+    this.CFICanvas.current.style.left = null
     this.CFICanvas2.current.style.width = `${canvasWidth}px`
     this.CFICanvas2.current.style.height = `${canvasHeight}px`
+    // Clear out zoom cruft
+    this.CFICanvasPaint.current.style.left = null
     this.CFICanvasPaint.current.style.width = `${canvasWidth}px`
     this.CFICanvasPaint.current.style.height = `${canvasHeight}px`
     // this.CFICanvas4.current.style.width = `${canvasWidth}px`
@@ -547,8 +537,6 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     }
     this.initCanvas()
     this.tryToMergeColors()
-    window.addEventListener('resize', this.resizeHandler)
-    // @todo [IMPROVEMENT] candidate for redux -RS
     if (storageAvailable('localStorage') && getTooltipShownLocalStorage() === null) {
       setTooltipShownLocalStorage()
     } else {
@@ -560,17 +548,11 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     if (this.props.workspace) {
       this.props.clearSceneWorkspace()
     }
-    this.applyZoom(this.state.canvasZoom)
   }
 
   componentWillUnmount () {
-    window.removeEventListener('resize', this.resizeHandler)
     this.props.selectSavedScene(null)
     this.props.unsetActiveScenePolluted()
-  }
-
-  resizeHandler = () => {
-    this.applyZoom(this.state.canvasZoom)
   }
 
   updateWindowDimensions = () => {
@@ -752,7 +734,17 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   }
 
   applyZoom = (zoomNumber: number) => {
-    const ref = { wrapperOriginalDimensions: this.wrapperOriginalDimensions, canvasOriginalDimensions: this.canvasOriginalDimensions, CFICanvas: this.CFICanvas, CFICanvas2: this.CFICanvas2, CFICanvasPaint: this.CFICanvasPaint, canvasPanStart: this.canvasPanStart }
+    const ref = {
+      wrapperOriginalDimensions: this.wrapperOriginalDimensions,
+      canvasOriginalDimensions: this.canvasOriginalDimensions,
+      CFICanvas: this.CFICanvas,
+      CFICanvas2: this.CFICanvas2,
+      CFICanvasPaint: this.CFICanvasPaint,
+      canvasPanStart: this.canvasPanStart,
+      canvasDisplayWidth: this.state.canvasWidth, // this is the width of the canvas style prop, it controls the onscreen size
+      canvasDisplayHeight: this.state.canvasHeight // this is the height of the canvas style prop, it controls the onscreen size
+    }
+
     applyZoom(zoomNumber, ref)
     this.setState({ canvasZoom: zoomNumber })
   }
@@ -867,7 +859,17 @@ canvasHeight
   }
 
   applyZoomPan = (ref: RefObject) => {
-    const options = { containerWidth: this.wrapperOriginalDimensions.width, containerHeight: this.wrapperOriginalDimensions.height, canvasWidth: this.canvasOriginalDimensions.width, canvasHeight: this.canvasOriginalDimensions.height, zoom: this.state.canvasZoom, panX: this.canvasPanStart.x, panY: this.canvasPanStart.y }
+    const options = {
+      containerWidth: this.wrapperOriginalDimensions.width,
+      containerHeight: this.wrapperOriginalDimensions.height,
+      canvasWidth: this.canvasOriginalDimensions.width,
+      canvasHeight: this.canvasOriginalDimensions.height,
+      zoom: this.state.canvasZoom,
+      panX: this.canvasPanStart.x,
+      panY: this.canvasPanStart.y,
+      canvasDisplayWidth: this.state.canvasWidth, // this is the width of the canvas style prop, it controls the onscreen size
+      canvasDisplayHeight: this.state.canvasHeight // this is the height of the canvas style prop, it controls the onscreen size
+    }
     const factors = canvasDimensionFactors(options)
     applyDimensionFactorsByCanvas(factors, ref)
   }
