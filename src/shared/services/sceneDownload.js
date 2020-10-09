@@ -2,19 +2,21 @@
 import Jimp from 'jimp'
 import type { Color } from '../../shared/types/Colors'
 import type { SceneInfo } from '../types/Scene'
+const PAINT_SCENE_COMPONENT = 'PaintScene'
 
-const generateImage = async (scene: SceneInfo): Jimp => {
+const generateImage = async (scene: SceneInfo, activeComponent: string): Jimp => {
   // Load base image, logos, and text
+  const isPaintScene = activeComponent === PAINT_SCENE_COMPONENT
   const [image, logo, bottomLogo, smallBlackFont] = await Promise.all([
-    Jimp.read(scene.variant.image),
+    isPaintScene ? Jimp.read(scene) : Jimp.read(scene.variant.image),
     Jimp.read(require('src/images/scene-download/colorsnap.jpg')),
     Jimp.read(require('src/images/scene-download/swlogo.jpg')),
     Jimp.loadFont(`${BASE_PATH}/prism/fonts/scene-download/open-sans-16-black.fnt`)
-
   ])
 
   const downloadDisclaimer1 = 'Actual color may vary from on-screen representation. To confirm your color choices prior to purchase, please view a physical color chip, color card, or painted sample.'
   const downloadDisclaimer2 = 'Sherwin-Williams is not responsible for the content and photos shared by users of their color selection tools.'
+  const originText = 'ORIGINAL'
 
   // Create array of colored surfaces
   const useBlackText = (hexColor: string) => {
@@ -25,22 +27,27 @@ const generateImage = async (scene: SceneInfo): Jimp => {
     const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000
     return yiq >= 128
   }
-  const coloredSurfaces = scene.status.surfaces.filter(surface => surface.color)
+
+  const coloredSurfaces = !isPaintScene && scene.status.surfaces.filter(surface => surface.color)
   const livePaletteColors: Color[] = JSON.parse(window.localStorage.getItem('lp')).colors
   const blackFontsArray: boolean[] = livePaletteColors.map(color => useBlackText(color.hex))
 
   let blackFonts = {
     regular: undefined,
     small: smallBlackFont,
-    bold: undefined }
+    bold: undefined,
+    smallBold: undefined
+  }
   if (blackFontsArray.includes(true)) {
     const [font, boldFont] = await Promise.all([
       Jimp.loadFont(`${BASE_PATH}/prism/fonts/scene-download/open-sans-32-black.fnt`),
       Jimp.loadFont(`${BASE_PATH}/prism/fonts/scene-download/open-sans-bold-32-black.fnt`)
+      // Jimp.loadFont(`${BASE_PATH}/prism/fonts/scene-download/open-sans-bold-16-black.fnt`)
     ])
 
     blackFonts.regular = font
     blackFonts.bold = boldFont
+    // blackFonts.smallBold = smallBoldFont
   }
 
   let whiteFonts = {}
@@ -58,26 +65,46 @@ const generateImage = async (scene: SceneInfo): Jimp => {
     }
   }
 
-  const masks: Jimp[] = coloredSurfaces.map(surface => {
-    const maskPath = scene.surfaces.find(surf => surf.id === surface.id).mask._load
-    return Jimp.read(maskPath)
-  })
-
-  // Resolve Jimp promises into array of Jimp images
-  const maskImages = []
-  await Promise.all(masks).then(resultArray => resultArray.forEach(result => maskImages.push(result)))
-
-  // Iterate through Jimp images and apply each mask to base image
-  coloredSurfaces.forEach((surface, idx) => {
-    const colorHex = surface.color.hex
-    maskImages[idx].mask(maskImages[idx], 0, 0).color([{ apply: 'mix', params: [colorHex, 100] }])
-
-    image.composite(maskImages[idx], 0, 0, {
-      mode: Jimp.BLEND_MULTIPLY,
-      opacitySource: 1,
-      opacityDest: 1
+  if (!isPaintScene) {
+    const masks: Jimp[] = coloredSurfaces.map(surface => {
+      const maskPath = scene.surfaces.find(surf => surf.id === surface.id).mask._load
+      return Jimp.read(maskPath)
     })
-  })
+
+    // Resolve Jimp promises into array of Jimp images
+    const maskImages = []
+    await Promise.all(masks).then(resultArray => resultArray.forEach(result => maskImages.push(result)))
+
+    // Iterate through Jimp images and apply each mask to base image
+    coloredSurfaces.forEach((surface, idx) => {
+      const colorHex = surface.color.hex
+      maskImages[idx].mask(maskImages[idx], 0, 0).color([{ apply: 'mix', params: [colorHex, 100] }])
+
+      image.composite(maskImages[idx], 0, 0, {
+        mode: Jimp.BLEND_MULTIPLY,
+        opacitySource: 1,
+        opacityDest: 1
+      })
+    })
+  } else {
+    const currWidth = image.bitmap.width
+    const currHeight = image.bitmap.height
+    const properWidth = 1280
+    const borderWidth = 10
+    const textWidth = 80
+    const textHeight = 20
+
+    const miniImgBorderLeft = new Jimp(borderWidth, (1 / 3) * currHeight, '#fff')
+    image.composite(miniImgBorderLeft, (2 / 3) * currWidth - borderWidth, (2 / 3) * currHeight)
+
+    const miniImgBorderTop = new Jimp((1 / 3) * currWidth, borderWidth, '#fff')
+    image.composite(miniImgBorderTop, (2 / 3) * currWidth, (2 / 3) * currHeight)
+
+    const textBackground = new Jimp(textWidth, textHeight, '#fff')
+    textBackground.print(blackFonts.small, 0, 0, originText)
+    image.composite(textBackground, currWidth - textWidth, (2 / 3) * currHeight + borderWidth)
+    image.resize(properWidth, Jimp.AUTO)
+  }
 
   // Brochure composition settings
   const swatchRows = Math.ceil(livePaletteColors.length / 2)
@@ -125,8 +152,6 @@ const generateImage = async (scene: SceneInfo): Jimp => {
     image.print(blackFonts.small, disclaimerX, y + 16, downloadDisclaimer2, maxDisclaimerWidth)
   })
 
-  const featuredColorNumbers: string[] = coloredSurfaces.map(surface => surface.color.colorNumber)
-
   // Generate array of swatch images from colors in Live Palette
   const swatchImages = livePaletteColors.map(color => {
     const colorHex = color.hex
@@ -154,8 +179,12 @@ const generateImage = async (scene: SceneInfo): Jimp => {
     })
 
     // Print featured text
-    if (featuredColorNumbers.includes(color.colorNumber)) {
-      swatchImage.print(smallContrastFont, 10, 10, 'FEATURED IN SCENE')
+
+    if (!isPaintScene) {
+      const featuredColorNumbers: string[] = coloredSurfaces.map(surface => surface.color.colorNumber)
+      if (featuredColorNumbers.includes(color.colorNumber)) {
+        swatchImage.print(smallContrastFont, 10, 10, 'FEATURED IN SCENE')
+      }
     }
 
     return swatchImage

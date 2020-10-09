@@ -50,6 +50,7 @@ export const CVW = () => {
       dispatch(unpaintSceneSurfaces(id))
       dispatch(activateOnlyScene(id))
       setActiveScene(<SceneManager expertColorPicks hideSceneSelector />)
+      setLastActiveComponent('stockScene')
       history.push('/active')
     }
     isActiveScenePolluted ? dispatch(showWarningModal(activate)) : activate()
@@ -67,7 +68,7 @@ export const CVW = () => {
         ? <CompareColor />
         : (
           <div className='cvw__root-wrapper'>
-            <ColorVisualizerNav setPaintScene={setActiveScene} setMatchPhotoScene={setMatchPhotoScene} />
+            <ColorVisualizerNav setPaintScene={setActiveScene} setLastActiveComponent={setLastActiveComponent} setMatchPhotoScene={setMatchPhotoScene} />
             <ColorDetailsModal />
             <CVWWarningModal />
             <Switch>

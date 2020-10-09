@@ -33,7 +33,8 @@ type DropDownMenuProps = {
 type ColorVisualizerNavProps = {
   config: any,
   setPaintScene: Function,
-  setMatchPhotoScene: Function
+  setMatchPhotoScene: Function,
+  setLastActiveComponent: Function
 }
 
 const isSupportedImageFormat = (file: Object, exts: string[] = ['jpeg', 'jpg', 'png']) => {
@@ -79,7 +80,7 @@ export const DropDownMenu = ({ title, items }: DropDownMenuProps) => {
 }
 
 const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
-  const { config: { featureExclusions }, setMatchPhotoScene, setPaintScene } = props
+  const { config: { featureExclusions }, setMatchPhotoScene, setPaintScene, setLastActiveComponent } = props
   console.log('CONFIG::', props.config)
   const { messages } = useIntl()
   const history = useHistory()
@@ -174,7 +175,7 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
               hiddenImageUploadInput.current.click() // uploads image
             }
           }
-
+          setLastActiveComponent('PaintScene')
           isActiveScenePolluted ? dispatch(showWarningModal(activate)) : activate()
         }
       }
