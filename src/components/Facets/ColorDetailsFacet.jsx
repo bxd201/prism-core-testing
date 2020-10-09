@@ -11,15 +11,14 @@ import GenericMessage from '../Messages/GenericMessage'
 import { FormattedMessage } from 'react-intl'
 import type { ColorMap, Color, ColorId } from 'src/shared/types/Colors.js.flow'
 import findKey from 'lodash/findKey'
-import kebabCase from 'lodash/kebabCase'
 import { loadColors } from 'src/store/actions/loadColors'
 import HeroLoader from '../Loaders/HeroLoader/HeroLoader'
-import { generateColorDetailsPageUrl } from 'src/shared/helpers/ColorUtils'
+import { cleanColorNameForURL, generateColorDetailsPageUrl } from 'src/shared/helpers/ColorUtils'
 
 const colorDetailsBaseUrl = `/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_DETAIL}`
 
 type Props = {
-  colorSEO: ?string, // ${brandKey}-${colorNumber}-${kebabCase(name)}
+  colorSEO?: string, // ${brandKey}-${colorNumber}-${cleanColorNameForURL(name)}
   publish: (string, any) => void,
   subscribe: (string, Function) => void,
 }
@@ -41,7 +40,7 @@ export const ColorDetailsPage = ({ colorSEO, publish, subscribe }: Props) => {
   return (colorId && color
     ? (
       <>
-        <Redirect to={`${colorDetailsBaseUrl}/${colorId}/${color.brandKey}-${color.colorNumber}-${kebabCase(color.name)}`} />
+        <Redirect to={`${colorDetailsBaseUrl}/${colorId}/${color.brandKey}-${color.colorNumber}-${cleanColorNameForURL(color.name)}`} />
         {location.pathname !== '/' && (
           <Route path={`${colorDetailsBaseUrl}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`}>
             <ColorDetails
