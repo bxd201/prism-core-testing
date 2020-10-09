@@ -7,12 +7,11 @@ import { add } from 'src/store/actions/live-palette'
 import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import ColorWallContext, { type ColorWallContextProps } from 'src/components/Facets/ColorWall/ColorWallContext'
 import InfoButton from 'src/components/InfoButton/InfoButton'
-import { generateColorDetailsPageUrl, generateColorWallPageUrl, fullColorName, fullColorNumber } from 'src/shared/helpers/ColorUtils'
+import { generateColorDetailsPageUrl, generateColorWallPageUrl, fullColorName, fullColorNumber, cleanColorNameForURL } from 'src/shared/helpers/ColorUtils'
 import { numToAlphaString } from 'src/shared/helpers/StringUtils'
 import { type Color, type ColorStatus } from 'src/shared/types/Colors.js.flow'
 import { useIntl } from 'react-intl'
 import at from 'lodash/at'
-import kebabCase from 'lodash/kebabCase'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
 import './ColorSwatch.scss'
@@ -42,7 +41,7 @@ const Content = ({ msg, color }: ContentProps) => {
         colorDetailPageRoot
           ? (
             <a
-              href={`${colorDetailPageRoot}/${color.brandKey}${color.colorNumber}-${kebabCase(color.name)}`}
+              href={`${colorDetailPageRoot}/${color.brandKey}${color.colorNumber}-${cleanColorNameForURL(color.name)}`}
               title={(at(messages, 'VIEW_DETAILS_FOR')[0] || '').replace('{name}', fullColorName(color))}
               className='OmniButton color-swatch__content__cta color-swatch__content__cta--l'
             >

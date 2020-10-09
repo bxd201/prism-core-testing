@@ -85,34 +85,49 @@ export default () => {
   ), [section, family, families, handleColorFamilySelection, isFamilyView])
 
   return (
-    <div className={MODE_CLASS_NAMES.BASE}>
-      <div className={MODE_CLASS_NAMES.COL}>
-        {colorFamiliesAndSearch}
-        <Wrapper
-          className={`${MODE_CLASS_NAMES.CELL} ${MODE_CLASS_NAMES.RIGHT} ${menuBarPrefix} ${menuBarPrefix}--${menuOpen ? 'open' : 'closed'}`}
-          onMenuToggle={handleMenuToggle}>
-          <Button className={`${menuBarPrefix}__button`} tag='div'>
-            <span className={`${menuBarPrefix}__button-copy`}>{currentFamily}</span>
-            <FontAwesomeIcon className='close-icon-svg' icon={['fa', 'angle-down']} pull='right' />
-          </Button>
-          <Menu className={`${menuBarPrefix}__menu`}>
-            {(isFamilyView || family ? families : visibleSections).map(name =>
-              <MenuItem
-                className={`${menuBarPrefix}__menu-item`}
-                key={name}
-                text={name}
-                value={name}>
-                <NavLink
-                  className={`${menuBarPrefix}__menu-link`}
-                  to={isFamilyView ? generateColorWallPageUrl(section, name) : generateColorWallPageUrl(name)}
-                >
-                  <span className={MODE_CLASS_NAMES.DESC}>{name}</span>
-                </NavLink>
-              </MenuItem>
-            )}
-          </Menu>
-        </Wrapper>
-      </div>
-    </div>
+    <AutoSizer disableHeight style={{ width: '100%' }}>
+      {({ width }) => (
+        <div className={MODE_CLASS_NAMES.BASE}>
+          <div className={MODE_CLASS_NAMES.COL}>
+            {colorFamiliesAndSearch}
+            {isFamilyView && width > 768
+              ? (
+                <div className={`${MODE_CLASS_NAMES.CELL} ${MODE_CLASS_NAMES.RIGHT}`}>
+                  <ButtonBar.Bar>
+                    {families.map(name =>
+                      <ButtonBar.Button key={name} to={generateColorWallPageUrl(section, name)}>
+                        <span className={MODE_CLASS_NAMES.DESC}>{name}</span>
+                      </ButtonBar.Button>
+                    )}
+                  </ButtonBar.Bar>
+                </div>
+              )
+              : (
+                <Wrapper
+                  className={`${MODE_CLASS_NAMES.CELL} ${MODE_CLASS_NAMES.RIGHT} ${menuBarPrefix} ${menuBarPrefix}--${menuOpen ? 'open' : 'closed'}`}
+                  onMenuToggle={handleMenuToggle}>
+                  <Button className={`${menuBarPrefix}__button`} tag='div'>
+                    <span className={`${menuBarPrefix}__button-copy`}>{currentFamily}</span>
+                    <FontAwesomeIcon className='close-icon-svg' icon={['fa', 'angle-down']} pull='right' />
+                  </Button>
+                  <Menu className={`${menuBarPrefix}__menu`}>
+                    {(isFamilyView || family ? families : visibleSections).map(name =>
+                      <MenuItem className={`${menuBarPrefix}__menu-item`} key={name} text={name} value={name}>
+                        <NavLink
+                          className={`${menuBarPrefix}__menu-link`}
+                          to={isFamilyView ? generateColorWallPageUrl(section, name) : generateColorWallPageUrl(name)}
+                        >
+                          <span className={MODE_CLASS_NAMES.DESC}>{name}</span>
+                        </NavLink>
+                      </MenuItem>
+                    )}
+                  </Menu>
+                </Wrapper>
+              )
+            }
+          </div>
+        </div>
+      )}
+    </AutoSizer>
   )
 }
