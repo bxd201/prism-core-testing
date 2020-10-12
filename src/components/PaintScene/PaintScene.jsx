@@ -468,8 +468,8 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.CFICanvasPaint.current.style.left = null
     this.CFICanvasPaint.current.style.width = `${canvasWidth}px`
     this.CFICanvasPaint.current.style.height = `${canvasHeight}px`
-    // this.CFICanvas4.current.style.width = `${canvasWidth}px`
-    // this.CFICanvas4.current.style.height = `${canvasHeight}px`
+    this.mergeCanvasRef.current.width = `${canvasWidth}px`
+    this.mergeCanvasRef.current.height = `${canvasHeight}px`
     this.CFIWrapper.current.style.height = `${canvasHeight}px`
     this.setState({ canvasWidth, canvasHeight })
   }
