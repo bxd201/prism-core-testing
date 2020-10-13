@@ -558,7 +558,8 @@ export const eraseOrPaintMouseUp = (state, props, ref) => {
     groupSelectList: newGroupSelectList,
     redoPathList: [],
     undoIsEnabled: checkUndoIsEnabled(newImagePathList),
-    redoIsEnabled: false
+    redoIsEnabled: false,
+    mergeCanvasKey: Date.now()
   }
 }
 
