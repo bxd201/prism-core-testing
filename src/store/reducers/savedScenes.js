@@ -75,10 +75,9 @@ export const scenesAndRegions = (state: Object[] = [], action: {type: string, pa
     const existingItem = state.find(item => item.id === action.payload.id)
     if (existingItem) {
       newState = state.filter(item => item.id !== existingItem.id)
-      newState.push(action.payload)
-    } else {
-      newState.push(action.payload)
     }
+
+    newState.push(action.payload)
 
     return newState
   }

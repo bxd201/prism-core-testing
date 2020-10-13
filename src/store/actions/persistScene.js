@@ -142,7 +142,7 @@ const mapSceneResponseToCustomSceneRequests = (data: object[]) => {
   return requests
 }
 
-export const loadSavedScenes = (brandId: string) => {
+export const loadSavedScenes = (brandId: string, exclusions: string[]) => {
   return (dispatch, getState) => {
     dispatch({
       type: LOADING_SAVED_MASKS,
@@ -150,19 +150,19 @@ export const loadSavedScenes = (brandId: string) => {
     })
 
     if (FIREBASE_AUTH_ENABLED) {
-      loadSavedSceneFromFirebase(brandId, dispatch, getState)
+      loadSavedSceneFromFirebase(brandId, exclusions, dispatch, getState)
     } else {
-      loadSavedScenesFromMySherwin(brandId, dispatch, getState)
+      loadSavedScenesFromMySherwin(brandId, exclusions, dispatch, getState)
     }
   }
 }
 
-export const loadSavedSceneFromFirebase = (brandId: string, dispatch: Function, getState: Function) => {
+export const loadSavedSceneFromFirebase = (brandId: string, exclusions: string[], dispatch: Function, getState: Function) => {
   const user = firebase.auth().currentUser
   const colorsHaveLoaded = checkColorsHaveLoaded(getState())
 
   if (colorsHaveLoaded) {
-    getSavedScenesFromFirebase(!!user, dispatch, getState)
+    getSavedScenesFromFirebase(!!user, exclusions, dispatch, getState)
   } else {
     const colorsRequests = getColorsRequests(brandId)
 
@@ -174,7 +174,7 @@ export const loadSavedSceneFromFirebase = (brandId: string, dispatch: Function, 
         payload: mapColorDataToPayload(colorData)
       })
 
-      getSavedScenesFromFirebase(!!user, dispatch, getState)
+      getSavedScenesFromFirebase(!!user, exclusions, dispatch, getState)
     }).catch(err => {
       dispatch(addSystemMessage('', SYSTEM_MESSAGE_TYPES.danger, 'ERROR_GETTING_ANON_SCENE'))
       // @todo [IMPROVEMENT] Log this error -RS
@@ -183,10 +183,11 @@ export const loadSavedSceneFromFirebase = (brandId: string, dispatch: Function, 
   }
 }
 
-const getSavedScenesFromFirebase = (isLoggedIn: boolean, dispatch, getState) => {
+const getSavedScenesFromFirebase = (isLoggedIn: boolean, exclusions: string[], dispatch, getState) => {
+  // @todo implement exclusion list - RS
   if (isLoggedIn) {
     const { user, sceneMetadata } = getState()
-    const firebaseFileIds = sceneMetadata.filter(item => item.sceneType === SCENE_TYPE.anonCustom)
+    const firebaseFileIds = sceneMetadata.filter(item => item.sceneType === SCENE_TYPE.anonCustom).filter(item => exclusions.indexOf(getSceneIdFromSceneMetaData(item)) === -1)
     if (firebaseFileIds.length) {
       const metadata = getMatchingScenesForFirebase(user.uid, firebaseFileIds)
       fetchSavedScenesFromFirebase(metadata, dispatch, getState)
@@ -655,4 +656,13 @@ export const showDeleteConfirmModal = (shouldShow: boolean = false) => {
     type: SHOW_DELETE_CONFIRM,
     payload: shouldShow
   }
+}
+
+const getSceneIdFromSceneMetaData = (item: any) => {
+  const { scene: sceneUrl } = item
+  const sceneUrlFrags = sceneUrl.split('/') || []
+  const fileName = sceneUrlFrags.pop()
+  const id = fileName ? fileName.replace(`-${SCENE_JSON}`, '') : null
+
+  return id
 }
