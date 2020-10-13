@@ -72,9 +72,11 @@ export const saveMasks = (colorList: Array<number[]>, imageData: ImageData | Ima
     })
 
     // Separate the colors if passed an imagedata object
-    let imageDataList = imageData && imageData.data ? separateColors(colorList, imageData, 1.5) : null
+    let imageDataList = imageData?.data ? separateColors(colorList, imageData, 1.5) : null
     // If there is an array assume it is an array of imagedata members
-    imageDataList = !imageDataList && imageData.length ? imageData.map(layer => layer.data) : null
+    if (!imageDataList && imageData?.length) {
+      imageDataList = imageData.map(layer => layer.data)
+    }
     // This call only needs a 2d array like structure (reg array or clamped) of pixel data
     const sceneXML = createSceneXML(imageDataList, metadata)
     // @todo needed for my sherwin persist, this is a usage reminder -RS
