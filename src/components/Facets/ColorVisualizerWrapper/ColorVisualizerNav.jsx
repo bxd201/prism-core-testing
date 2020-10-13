@@ -94,9 +94,12 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
 
   useEffect(() => {
     if (imgUrl) {
-      location.pathname === '/active/match-photo'
-        ? setMatchPhotoScene(<ImageRotateContainer key={imgUrl + 'mp'} showPaintScene isFromMyIdeas={false} isPaintScene={false} imgUrl={imgUrl} />)
-        : setPaintScene(<ImageRotateContainer key={imgUrl} showPaintScene isFromMyIdeas={false} isPaintScene imgUrl={imgUrl} />)
+      if (location.pathname === '/upload/match-photo') {
+        history.push('/active/match-photo')
+        setMatchPhotoScene(<ImageRotateContainer key={imgUrl + 'mp'} showPaintScene isFromMyIdeas={false} isPaintScene={false} imgUrl={imgUrl} />)
+      } else {
+        setPaintScene(<ImageRotateContainer key={imgUrl} showPaintScene isFromMyIdeas={false} isPaintScene imgUrl={imgUrl} />)
+      }
     }
   }, [imgUrl])
 
@@ -215,7 +218,7 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
         onClick: () => {
           const activate = () => {
             dispatch(unsetActiveScenePolluted())
-            history.push('/active/match-photo')
+            history.push('/upload/match-photo')
             if (hiddenImageUploadInput.current) {
               hiddenImageUploadInput.current.value = ''
               hiddenImageUploadInput.current.click()
@@ -325,6 +328,12 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
           <DropDownMenu
             title={messages['NAV_DROPDOWN_TITLE.PAINT_A_PHOTO']}
             items={getDropDownItemsForPaintAPhoto()}
+          />
+        </Route>
+        <Route path='/upload/match-photo'>
+          <DropDownMenu
+            title={messages['NAV_DROPDOWN_TITLE.GET_INSPIRED']}
+            items={getDropDownItemsForExploreColors()}
           />
         </Route>
       </Switch>

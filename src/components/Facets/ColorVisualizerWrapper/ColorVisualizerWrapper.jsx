@@ -75,6 +75,7 @@ export const CVW = () => {
               <Route path='/active/color/:colorId/:colorSEO' render={() => <ColorDetails />} />
               <Route path='/active/color-wall(/.*)?' render={() => <ColorWallPage displayAddButton displayInfoButton displayDetailsLink={false} />} />
               <Route path='/active/color-collections' render={() => <ColorCollections isExpertColor={false} {...location.state} />} />
+              <Route path='/upload/match-photo'>{activeScene}</Route>
               <Route path='/active/match-photo'>{matchPhotoScene}</Route>
               <Route path='/active/use-our-image' render={() => <SampleScenesWrapper isColorTinted activateScene={activateStockScene} />} />
               <Route path='/active/expert-colors' render={() => <ExpertColorPicks isExpertColor />} />
