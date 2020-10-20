@@ -58,10 +58,12 @@ type Props = {
   checkIsPaintSceneUpdate: boolean,
   isFromMyIdeas?: boolean,
   sendImageData?: Function,
-  config: any
+  activePaintScene?: Function,
+  config: any,
+  setLastActiveComponent?: Function
 }
 
-export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaintScene, checkIsPaintSceneUpdate, isFromMyIdeas, sendImageData, config: { featureExclusions, maxSceneViewerHeight } }: Props) {
+export function ImageRotateContainer ({ setLastActiveComponent, activePaintScene, history, isPaintScene, imgUrl, showPaintScene, checkIsPaintSceneUpdate, isFromMyIdeas, sendImageData, config: { featureExclusions, maxSceneViewerHeight } }: Props) {
   const canvasRef: RefObject = useRef()
   const wrapperRef: RefObject = useRef()
   const [imageUrl, setImageUrl] = useState(imgUrl)
@@ -320,6 +322,18 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
   }
 
   const handleDismiss = () => {
+    if (isPaintScene) {
+      setLastActiveComponent('PaintScene')
+      activePaintScene(<PaintScene
+        checkIsPaintSceneUpdate={checkIsPaintSceneUpdate}
+        imageUrl={imageUrl}
+        workspace={paintSceneWorkspaceState}
+        imageRotationAngle={imageRotationAngle}
+        referenceDimensions={imageDims}
+        selectedMaskIndex={selectedMaskIndex}
+        width={wrapperWidth}
+        maxSceneHeight={maxSceneHeight} />)
+    }
     if (imageUrl && queuedImageUpload && shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.fastMask)) {
       setIsLoadingSmartMask(true)
       dispatch(uploadImage(queuedImageUpload))
@@ -401,7 +415,7 @@ export function ImageRotateContainer ({ history, isPaintScene, imgUrl, showPaint
                 <div><FontAwesomeIcon className={``} icon={['fa', 'angle-left']} />&nbsp;<span className={`${buttonLeftTextClass}`}><FormattedMessage id='BACK' /></span></div>
               </button> : ''}
               {
-                (imageUrl && pins.length === 0 && !isPaintScene)
+                (imageUrl && pins.length === 0)
                   ? <Link to={`/active`} tabIndex='-1'>
                     {closeButton}
                   </Link>
