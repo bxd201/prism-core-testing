@@ -754,6 +754,7 @@ export const drawPaintBrushPathUsingLine = (ctx: Object, currentPoint: Object, l
   ctx.strokeStyle = color
   ctx.moveTo(lastPoint.x, lastPoint.y)
   ctx.lineTo(currentPoint.x, currentPoint.y)
+
   if (clip) {
     ctx.clip()
   } else {
@@ -835,9 +836,9 @@ export const canvasDimensionFactors = (options: Object) => {
   const xFactor = clampedPanX * (1 - widthFactor)
   const yFactor = clampedPanY * (1 - heightFactor)
 
-  return {
-    widthFactor, heightFactor, xFactor, yFactor, ...options
-  }
+  const values = { widthFactor, heightFactor, xFactor, yFactor, ...options }
+
+  return values
 }
 
 export const shouldCanvasResize = (prevWidth: number, newWidth: number) => {

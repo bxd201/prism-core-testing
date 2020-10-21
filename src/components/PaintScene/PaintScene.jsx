@@ -856,7 +856,8 @@ canvasHeight
       height={this.canvasOriginalDimensions.height}
       ref={this.mergeCanvasRef}
       applyZoomPan={this.applyZoomPan}
-      layers={imageUrls} />)
+      layers={imageUrls}
+      hideCanvas />)
   }
 
   // This Method sorts the imagePathList by color to trigger the MergeColor component to instantiate and generate a flat (jpg) mask per color
@@ -891,7 +892,8 @@ canvasHeight
       panX: this.canvasPanStart.x,
       panY: this.canvasPanStart.y,
       canvasDisplayWidth: this.state.canvasWidth, // this is the width of the canvas style prop, it controls the onscreen size
-      canvasDisplayHeight: this.state.canvasHeight // this is the height of the canvas style prop, it controls the onscreen size
+      canvasDisplayHeight: this.state.canvasHeight, // this is the height of the canvas style prop, it controls the onscreen size
+      currentWrapperDimensions: this.CFIWrapper.current.getBoundingClientRect()
     }
     const factors = canvasDimensionFactors(options)
     applyDimensionFactorsByCanvas(factors, ref)
@@ -924,7 +926,7 @@ canvasHeight
   }
 
   render () {
-    const { lpActiveColor, intl, showSaveSceneModal, lpColors, workspace, selectedMaskIndex } = this.props
+    const { lpActiveColor, intl, showSaveSceneModal, lpColors, workspace, selectedMaskIndex, width } = this.props
     const livePaletteColorCount = (lpColors && lpColors.length) || 0
     const bgImageUrl = workspace ? workspace.bgImageUrl : this.props.imageUrl
     const layers = workspace && workspace.workspaceType !== WORKSPACE_TYPES.smartMask ? workspace.layers : null
@@ -1018,6 +1020,7 @@ canvasHeight
             isDeleteGroup={isDeleteGroup}
             isUngroup={isUngroup}
             isInfoToolActive={isInfoToolActive}
+            containerWidth={width}
           />
           {
             ((activeTool === toolNames.PAINTBRUSH || activeTool === toolNames.ERASE) && (position.isHidden === false) && !isInfoToolActive) &&
