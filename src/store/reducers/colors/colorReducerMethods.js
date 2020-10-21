@@ -64,22 +64,6 @@ export function doReceiveColors (state: ColorsState, { payload: { unorderedColor
 
   // convert the 4 timeless color chunks recieved by the API to be 8 chunks
   colors['Timeless Color'] = chunk(sortBy(flattenDeep(colors['Timeless Color']), id => colorMap[id].storeStripLocator), 21)
-  // set chunkGridParams which aren't currently being set by the API
-  sections.filter(({ name }) => ['Emerald Designer Edition'].includes(name)).forEach(section => (
-    section.chunkGridParams = { gridWidth: 5, chunkWidth: 5, wrappingEnabled: true }
-  ))
-  sections.filter(({ name }) => ['Historic Colors', 'Historic Colours'].includes(name)).forEach(section => (
-    section.chunkGridParams = { gridWidth: 2, chunkHeight: 10, wrappingEnabled: true }
-  ))
-  sections.filter(({ name }) => ['Sherwin-Williams Colors', 'Sherwin-Williams Colours'].includes(name)).forEach(section => (
-    section.chunkGridParams = { gridWidth: 8, chunkWidth: 7, wrappingEnabled: false }
-  ))
-  sections.filter(({ name }) => ['Timeless Colors', 'Timeless Colours'].includes(name)).forEach(section => (
-    section.chunkGridParams = { gridWidth: 2, chunkWidth: 7, wrappingEnabled: true }
-  ))
-  sections.filter(({ name }) => ['Living Well'].includes(name)).forEach(section => (
-    section.chunkGridParams = { gridWidth: 6, chunkWidth: 6, wrappingEnabled: true }
-  ))
 
   return sections.length ? {
     ...state,
