@@ -1,34 +1,44 @@
 // @flow
 import memoizee from 'memoizee'
 import flatten from 'lodash/flatten'
+import chunk from 'lodash/chunk'
+import take from 'lodash/take'
+import drop from 'lodash/drop'
+import clamp from 'lodash/clamp'
+import rangeRight from 'lodash/rangeRight'
+import { type ChunkGridParams, type ScrollPosition } from 'src/shared/types/Actions.js.flow'
 
-export const getWidthOf2dArray = memoizee((arr: any[][]): number => arr.reduce((widest, arr) => Math.max(widest, arr.length), 0))
-
-export const getWidthOf3dArray = memoizee((arr: any[][][]): number => arr.reduce((widest, arr) => Math.max(widest, getWidthOf2dArray(arr)), 0))
-
-export const getWidthOf4dArray = memoizee((arr: any[][][][]): number => arr.reduce((widest, arr) => Math.max(widest, arr.length * getWidthOf3dArray(arr)), 0))
-
-export const findIndexIn2dArray = memoizee((id: ?any, arr: any[][]): [number, number] => {
-  let column: number = -1
-  let row: number = arr.findIndex((row: any[]): boolean => (column = row.indexOf(id)) !== -1)
-  return [row, column]
+// returns coordinates of a value in a balanced multi-dimensional array
+export const getCoords = memoizee((arr: any[], val): number[] => {
+  if (!Array.isArray(arr)) {
+    return [-1]
+  } else if (arr.every(Array.isArray)) {
+    return arr.map((subArr: any[], i: number): number[] => [i, ...getCoords(subArr, val)]).find(coords => coords[1] !== -1) || [-1]
+  } else {
+    return [arr.indexOf(val)]
+  }
 })
 
-export const convertToChunkArray = memoizee((layout: string[][][][]): string[][][][] => {
-  return layout.map((chunkRow: string[][][]) => {
-    const chunks: string[][][] = chunkRow[0].map(() => [])
-    chunkRow.forEach((row: string[][]) => {
-      row.forEach((r: string[], chunkIndex: number) => chunks[chunkIndex].push(r))
-    })
-    return chunks
-  })
+export const getLongestArrayIn2dArray = memoizee((arr: any[][]): number => arr ? arr.reduce((n, arr) => Math.max(n, arr.length), 0) : 0)
+
+// return the total width (in cells) of a chunk row
+const getWidthOfChunkRow = (chunkRow: string[][][]): number => chunkRow.reduce((width, chunk) => width + getLongestArrayIn2dArray(chunk), 0)
+
+// return the height (in cells) of the tallest chunk in a chunkRow
+export const getHeightOfChunkRow = memoizee((chunkRow: string[][][]): number => {
+  return chunkRow ? chunkRow.reduce((highest, chunk) => Math.max(highest, chunk.length), 0) : 0
+})
+
+// return the width (in cells) of the widestChunk in a chunk grid
+export const getWidthOfWidestChunkRowInChunkGrid = memoizee((grid: ?string[][][][]): number => {
+  return grid ? grid.reduce((widest, chunkRow) => Math.max(widest, getWidthOfChunkRow(chunkRow)), 0) : 0
 })
 
 export const getLevelMap = memoizee((chunkGrid: string[][][][], centerId: ?string): { [string]: number } => {
   if (!centerId) return {}
   // find chunk with active centerId
   for (const chunk of flatten(chunkGrid)) {
-    const [row: number, column: number] = findIndexIn2dArray(centerId, chunk)
+    const [row: number, column: number] = getCoords(chunk, centerId)
     if (row === -1) { continue }
 
     let levelMap: { [string]: number } = {}
@@ -54,35 +64,57 @@ export const getLevelMap = memoizee((chunkGrid: string[][][][], centerId: ?strin
   return {}
 })
 
-const getMaxWidth = memoizee((chunks: string[][][][], marginSize: number, cellSize: number, gridWidth: number): number => {
-  return chunks[0].reduce((widthSoFar, chunk) => widthSoFar + marginSize + chunk[0].length * cellSize, 2 * cellSize) - gridWidth
+// reports on whether there are any labels defined for a specific row in a grid
+export const rowHasLabels = memoizee((grid: string[][][][], rowIndex: number, labels: ?(?string)[]): boolean => {
+  if (grid === undefined || labels === undefined || grid.length <= rowIndex) { return false }
+  const numElementsBeforeRow: number = flatten(take(grid, rowIndex)).length
+  return labels.length > numElementsBeforeRow && take(drop(labels, numElementsBeforeRow), grid[rowIndex].length).some(label => label !== undefined)
 })
 
-const getMaxHeight = memoizee((chunks: string[][][][], marginSize: number, cellSize: number, gridHeight: number): number => {
-  return chunks.map(chunkRow => chunkRow[0]).reduce((heightSoFar, chunk) => heightSoFar + marginSize + chunk.length * cellSize, 2 * cellSize) - gridHeight
-})
+// return scroll offsets (in pixels) for a specific grid, color, and container dimensions
+export const computeFinalScrollPosition = memoizee((grid: string[][][][], color: string, containerWidth: number, containerHeight: number, labels: (?string)[]): ScrollPosition => {
+  const [chunkRow: number, chunkColumn: number, row: number, column: number] = getCoords(grid, color)
 
-export const getScrollPosition = memoizee((activeColor: string, chunks: string[][][][], marginSize: number, cellSize: number, gridWidth: number, gridHeight: number): { scrollLeft: number, scrollTop: number } => {
-  let scrollLeft = 0
-  let scrollTop = 0
-  chunks.findIndex((chunkRow: string[][][]): boolean => {
-    scrollLeft = 0
-    scrollTop += chunkRow[0].length * cellSize + marginSize
-    return chunkRow.findIndex((chunk: string[][]): boolean => {
-      const [row: number, column: number] = findIndexIn2dArray(activeColor, chunk)
-      row !== -1 && (scrollTop += (row - chunk.length) * cellSize)
-      scrollLeft += marginSize + (column === -1 ? chunk[0].length : column) * cellSize
-      return row !== -1
-    }) !== -1
-  })
+  const widthOfChunksToTheLeft = take(grid[chunkRow], chunkColumn).reduce((w, chunk) => w + 0.4 + getLongestArrayIn2dArray(chunk), 0)
+  const heightOfChunksAbove = take(grid, chunkRow).reduce((h, chunkRow, i) => h + 0.4 + getHeightOfChunkRow(chunkRow) + (rowHasLabels(grid, i, labels) ? 1 : 0), 0)
+
+  const totalGridWidth = (grid.reduce((w, chunkRow) => Math.max(w, getWidthOfChunkRow(chunkRow) + 0.4 * chunkRow.length), 0) + 2) * 50 - containerWidth
+  const totalGridHeight = (grid.reduce((h, chunkRow, i) => h + 0.4 + getHeightOfChunkRow(chunkRow) + (rowHasLabels(grid, i, labels) ? 1 : 0), 0) + 2) * 50 - containerHeight / 2
 
   return {
-    scrollLeft: Math.max(0, Math.min(getMaxWidth(chunks, marginSize, cellSize, gridWidth), scrollLeft - gridWidth * 0.5)),
-    scrollTop: Math.max(0, Math.min(getMaxHeight(chunks, marginSize, cellSize, gridHeight), scrollTop - gridHeight * 0.5))
+    scrollLeft: clamp((widthOfChunksToTheLeft + column) * 50 - containerWidth / 2, 0, totalGridWidth),
+    scrollTop: clamp((heightOfChunksAbove + row) * 50, 0, totalGridHeight)
   }
 })
 
-export const getScrollStep = memoizee((start: { scrollLeft: number, scrollTop: number }, end: { scrollLeft: number, scrollTop: number }, elapsed: number): { scrollLeft: number, scrollTop: number} => {
+export const getScrollStep = memoizee((start: ScrollPosition, end: ScrollPosition, elapsed: number): ScrollPosition => {
   const getVal = (start: number, end: number): number => elapsed > 500 ? end : start + (end - start) * (elapsed / 500)
-  return { scrollLeft: getVal(start.scrollLeft, end.scrollLeft), scrollTop: getVal(start.scrollTop, end.scrollTop) }
+  return {
+    scrollLeft: getVal(start.scrollLeft, end.scrollLeft),
+    scrollTop: getVal(start.scrollTop, end.scrollTop)
+  }
+})
+
+//
+export const makeChunkGrid = memoizee((unChunkedChunks: number[][], chunkGridParams: ChunkGridParams, containerWidth: number): string[][][][] => {
+  const { gridWidth, chunkWidth, chunkHeight, firstRowLength, wrappingEnabled } = chunkGridParams
+
+  const chunkedChunks: string[][][] = unChunkedChunks
+    // convert chunk to strings because that is what the color wall currently expects
+    .map((unChunkedChunk: number[]): string[] => unChunkedChunk.map(id => id.toString()))
+    .map((unChunkedChunk: string[]): string[][] => {
+      const chunkRowLength: ?number = chunkHeight ? unChunkedChunk.length / chunkHeight : chunkWidth
+      return chunk(unChunkedChunk, chunkRowLength)
+    })
+
+  const wrapChunks = (chunkedChunks: string[][][]): string[][][][] => {
+    return wrappingEnabled
+      // determine gridWidth by decreasing it until it is less than the containerWidth
+      ? chunk(chunkedChunks, rangeRight(gridWidth + 1).find(w => getWidthOfWidestChunkRowInChunkGrid(chunk(chunkedChunks, w)) < containerWidth - 3))
+      : chunk(chunkedChunks, gridWidth)
+  }
+
+  return firstRowLength
+    ? [take(chunkedChunks, firstRowLength), ...wrapChunks(drop(chunkedChunks, firstRowLength))]
+    : wrapChunks(chunkedChunks)
 })

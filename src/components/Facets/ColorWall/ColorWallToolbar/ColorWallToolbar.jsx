@@ -87,32 +87,23 @@ export default () => {
 
   return (
     <AutoSizer disableHeight style={{ width: '100%' }}>
-      {({ width }) => {
-        if (width > 768) {
-          return (
-            <div className={MODE_CLASS_NAMES.BASE}>
-              <div className={MODE_CLASS_NAMES.COL}>
-                {colorFamiliesAndSearch}
+      {({ width }) => (
+        <div className={MODE_CLASS_NAMES.BASE}>
+          <div className={MODE_CLASS_NAMES.COL}>
+            {colorFamiliesAndSearch}
+            {isFamilyView && width > 768
+              ? (
                 <div className={`${MODE_CLASS_NAMES.CELL} ${MODE_CLASS_NAMES.RIGHT}`}>
                   <ButtonBar.Bar>
-                    {(isFamilyView ? families : visibleSections).map(name =>
-                      <ButtonBar.Button
-                        key={name}
-                        to={isFamilyView ? generateColorWallPageUrl(section, name) : generateColorWallPageUrl(name)}
-                      >
+                    {families.map(name =>
+                      <ButtonBar.Button key={name} to={generateColorWallPageUrl(section, name)}>
                         <span className={MODE_CLASS_NAMES.DESC}>{name}</span>
                       </ButtonBar.Button>
                     )}
                   </ButtonBar.Bar>
                 </div>
-              </div>
-            </div>
-          )
-        } else {
-          return (
-            <div className={MODE_CLASS_NAMES.BASE}>
-              <div className={MODE_CLASS_NAMES.COL}>
-                {colorFamiliesAndSearch}
+              )
+              : (
                 <Wrapper
                   className={`${MODE_CLASS_NAMES.CELL} ${MODE_CLASS_NAMES.RIGHT} ${menuBarPrefix} ${menuBarPrefix}--${menuOpen ? 'open' : 'closed'}`}
                   onMenuToggle={handleMenuToggle}>
@@ -122,11 +113,7 @@ export default () => {
                   </Button>
                   <Menu className={`${menuBarPrefix}__menu`}>
                     {(isFamilyView || family ? families : visibleSections).map(name =>
-                      <MenuItem
-                        className={`${menuBarPrefix}__menu-item`}
-                        key={name}
-                        text={name}
-                        value={name}>
+                      <MenuItem className={`${menuBarPrefix}__menu-item`} key={name} text={name} value={name}>
                         <NavLink
                           className={`${menuBarPrefix}__menu-link`}
                           to={isFamilyView ? generateColorWallPageUrl(section, name) : generateColorWallPageUrl(name)}
@@ -137,11 +124,11 @@ export default () => {
                     )}
                   </Menu>
                 </Wrapper>
-              </div>
-            </div>
-          )
-        }
-      }}
+              )
+            }
+          </div>
+        </div>
+      )}
     </AutoSizer>
   )
 }
