@@ -65,28 +65,33 @@ export function doReceiveColors (state: ColorsState, { payload: { unorderedColor
   // convert the 4 timeless color chunks recieved by the API to be 8 chunks
   colors['Timeless Color'] = chunk(sortBy(flattenDeep(colors['Timeless Color']), id => colorMap[id].storeStripLocator), 21)
 
-  return sections.length ? {
-    ...state,
-    items: { colors, brights, unorderedColors: unorderedColors.map((c: Color) => c.id), sectionLabels: colorLabels, colorMap },
-    layouts: sections.map(({ name, families, chunkGridParams }) => ({
-      name,
-      unChunkedChunks: [
-        // bright chunks go first
-        ...families.flatMap((family: string): string[] => brights[family]),
-        // normal chunks go next but transposed so that each family will be in it's own column
-        ...flatten(transpose(families.map((family: string): string[] => colors[family])))
-      ],
-      chunkGridParams,
-      families: families.map(family => ({
-        name: family,
-        unChunkedChunks: [...brights[family], ...colors[family]],
-        chunkGridParams: { gridWidth: 3, chunkWidth: 7, firstRowLength: 1, wrappingEnabled: true }
-      }))
-    })),
-    status: { ...state.status, activeRequest: false, error: false, loading: false, requestComplete: true },
-    structure: sections,
-    sections: sections.map(section => section.name)
-  } : getErrorState(state)
+  const primeColorWall = sections.find(section => section.prime)
+
+  return sections.length
+    ? {
+      ...state,
+      items: { colors, brights, unorderedColors: unorderedColors.map((c: Color) => c.id), sectionLabels: colorLabels, colorMap },
+      layouts: sections.map(({ name, families, chunkGridParams }) => ({
+        name,
+        unChunkedChunks: [
+          // bright chunks go first
+          ...families.flatMap((family: string): string[] => brights[family]),
+          // normal chunks go next but transposed so that each family will be in it's own column
+          ...flatten(transpose(families.map((family: string): string[] => colors[family])))
+        ],
+        chunkGridParams,
+        families: families.map(family => ({
+          name: family,
+          unChunkedChunks: [...brights[family], ...colors[family]],
+          chunkGridParams: { gridWidth: 3, chunkWidth: 7, firstRowLength: 1, wrappingEnabled: true }
+        }))
+      })),
+      status: { ...state.status, activeRequest: false, error: false, loading: false, requestComplete: true },
+      structure: sections,
+      sections: sections.map(section => section.name),
+      primeColorWall: primeColorWall && primeColorWall.name
+    }
+    : getErrorState(state)
 }
 
 export function doFilterBySection (state: ColorsState, action: ReduxAction) {
