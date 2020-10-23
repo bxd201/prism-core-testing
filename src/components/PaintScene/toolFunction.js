@@ -591,17 +591,18 @@ export const eraseOrPaintMouseDown = (e, state, props, ref) => {
 }
 
 export const applyZoom = (zoomNumber, ref) => {
-  const { wrapperOriginalDimensions, canvasOriginalDimensions, canvasPanStart, canvasDisplayWidth, canvasDisplayHeight } = ref
+  const { wrapperOriginalDimensions, canvasOriginalDimensions, canvasPanStart, canvasDisplayWidth, canvasDisplayHeight, newWrapperWidth } = ref
   const options = {
-    containerWidth: wrapperOriginalDimensions.width,
-    containerHeight: wrapperOriginalDimensions.height,
     canvasWidth: canvasOriginalDimensions.width,
     canvasHeight: canvasOriginalDimensions.height,
     zoom: zoomNumber,
     panX: canvasPanStart.x,
     panY: canvasPanStart.y,
     canvasDisplayWidth,
-    canvasDisplayHeight
+    canvasDisplayHeight,
+    currentContainerHeight: wrapperOriginalDimensions.height,
+    currentContainerWidth: wrapperOriginalDimensions.width,
+    newWrapperWidth
   }
 
   const factors = canvasDimensionFactors(options)
