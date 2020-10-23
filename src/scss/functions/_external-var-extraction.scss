@@ -19,7 +19,7 @@
 }
 
 // accepts dot.separated.string that resolves to a value within variables.js -> varValues
-// ex: getVarName( "typography.font" ) will resolve to the value of varValues.typography.font
+// ex: getVar( "typography.font" ) will resolve to the value of varValues.typography.font
 @function getVar( $values ) {
   // differentiated via the name of the external method (_getVar) created in webpack Sass config
   $resolved: _getVarWorker( $values, "_getVar" );
@@ -36,6 +36,19 @@
 @function getVarName( $values ) {
   // differentiated via the name of the external method (_getVarName) created in webpack Sass config
   $resolved: _getVarWorker( $values, "_getVarName" );
+
+  @if $resolved == null {
+    @error "\"#{ $values }\" cannot be resolved to an external variable name";
+  }
+
+  @return $resolved;
+}
+
+// accepts dot.separated.string that resolves to a CSS Variable name derived from available theme colors in themeColors.js
+// ex: getThemeColor( "primary.lighter" ) will resolve to --prism-theme-color-primary-lighter
+@function getThemeColor( $values ) {
+  // differentiated via the name of the external method (_getVarName) created in webpack Sass config
+  $resolved: _getVarWorker( $values, "_getThemeColor" );
 
   @if $resolved == null {
     @error "\"#{ $values }\" cannot be resolved to an external variable name";

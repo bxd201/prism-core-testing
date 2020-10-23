@@ -56,7 +56,7 @@
     margin: -0.313em auto;
     outline: none;
     &:hover {
-      color: getVar("colors.summerSkyBlue");
+      color: var(getThemeColor('secondary'));
     }
     &:focus {
       outline-style: solid;
@@ -70,7 +70,7 @@
     width: 0;
     height: 0;
     border: .5em solid transparent;
-    border-top-color: getVar("colors.summerSkyBlue");
+    border-top-color: var(getThemeColor('secondary'));
     border-top-style: solid;
     display: block;
     outline: none;
@@ -86,7 +86,7 @@
       // z-index: 100;
     }
     &--up {
-      border-bottom-color: getVar("colors.summerSkyBlue");
+      border-bottom-color: var(getThemeColor('secondary'));
       border-bottom-style: solid;
       border-top: 0;
     }
@@ -234,7 +234,7 @@
     padding: 0.7em;
     text-align: left;
     &__link {
-      color: getVar("colors.summerSkyBlue");
+      color: var(getThemeColor('secondary'));
       font-size: 0.7rem;
       font-weight: 600;
       margin: 0.7em 0 0 0;

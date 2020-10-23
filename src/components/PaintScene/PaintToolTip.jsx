@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FormattedMessage, injectIntl } from 'react-intl'
 import 'src/providers/fontawesome/fontawesome'
 import { divTranslateFactor, divTranslateMultiplier, downPointerDivTranslateFactor, downPointerDivTranslateMultiplie, addColorsTooltipNumber, hidePaintTooltipNumber, hintsTooltipNumber, paintAreaTooltipNumber, undoTooltipNumber } from './data'
-import { varValues } from 'src/shared/variableDefs'
+import { varValues } from 'src/shared/withBuild/variableDefs'
 import { LiveMessage } from 'react-aria-live'
 
 type Props = {

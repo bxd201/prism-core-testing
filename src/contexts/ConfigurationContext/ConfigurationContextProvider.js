@@ -6,12 +6,15 @@ import toLower from 'lodash/toLower'
 import { loadConfiguration } from '../../store/actions/configurations'
 
 import CSSVariableApplicator from '../../helpers/CSSVariableApplicator'
-import { varNames } from 'src/shared/variableDefs'
+import { varNames } from 'src/shared/withBuild/variableDefs'
+import { getThemeColorsObj, themeColors, defaultThemeColors, extractThemeData } from 'src/shared/withBuild/themeColors'
 
 import ConfigurationContext from './ConfigurationContext'
 
 import { type Configuration, type EmbeddedConfiguration } from '../../shared/types/Configuration'
 import * as GA from 'src/analytics/GoogleAnalytics'
+import flattenDeep from 'lodash/flattenDeep'
+import { tinycolor } from '@ctrl/tinycolor'
 
 type ReduxStateProps = {
   fetchedConfig: Configuration
@@ -23,6 +26,13 @@ type ReduxDispatchProps = {
 
 type Props = ReduxStateProps & ReduxDispatchProps & EmbeddedConfiguration & {
   children: any
+}
+
+type ThemeColorObj = {
+  prop: string,
+  color: string,
+  contrast?: ThemeColorObj,
+  trans?: ThemeColorObj
 }
 
 function ConfigurationContextProvider (props: Props) {
@@ -66,23 +76,64 @@ function ConfigurationContextProvider (props: Props) {
   // }
 
   // construct the theme object with expliciteness
-  const cssVariableApplicatorValues = useMemo(() => ({
+  const cssVariableApplicatorValues = useMemo(() => {
+    let customProps = {}
+
     // theme
-    [varNames.theme.colors.primary]: theme.primary,
-    [varNames.theme.colors.secondary]: theme.secondary,
-    [varNames.theme.colors.warning]: theme.warning,
-    [varNames.theme.colors.success]: theme.success,
-    [varNames.theme.colors.danger]: theme.danger,
-    [varNames.theme.colors.error]: theme.error,
-    [varNames.theme.colors.grey]: theme.grey,
-    [varNames.theme.colors.lightGrey]: theme.lightGrey,
-    [varNames.theme.colors.nearBlack]: theme.nearBlack,
-    [varNames.theme.colors.black]: theme.black,
-    [varNames.theme.colors.white]: theme.white,
+    if (theme) {
+      // TODO: Little magic in here to map a few deprecated `theme` values over to their new names
+      const newThemeVars: { [key: string]: ThemeColorObj } = getThemeColorsObj(themeColors, {
+        ...defaultThemeColors,
+        // TODO: remove this next chunk once API is returning correct V2 theme colors
+        // PRISM-360 | begin deprecated theme color mapping
+        secondary: theme.primary,
+        dark: theme.nearBlack,
+        light: theme.lightGrey,
+        link: theme.primary,
+        danger: theme.error,
+        active: ((color) => {
+          if (!color) return undefined
+          const tc = tinycolor(color)
+          return (tc.isDark() ? tc.tint(15) : tc.shade(15)).toHexString()
+        })(theme.link || theme.primary),
+        // TODO: end deprecated theme color mapping
+        ...theme
+      })
+
+      const flat = flattenDeep(extractThemeData(newThemeVars)).reduce((accum, { prop, color }) => ({
+        ...accum,
+        [prop]: color
+      }), {})
+
+      customProps = {
+        ...customProps,
+        // new theme props
+        ...flat,
+        // deprecated props below
+        [varNames.theme._colors.primary]: theme.primary,
+        [varNames.theme._colors.secondary]: theme.secondary,
+        [varNames.theme._colors.warning]: theme.warning,
+        [varNames.theme._colors.success]: theme.success,
+        [varNames.theme._colors.danger]: theme.danger,
+        [varNames.theme._colors.grey]: theme.grey,
+        [varNames.theme._colors.lightGrey]: theme.lightGrey,
+        [varNames.theme._colors.nearBlack]: theme.nearBlack,
+        [varNames.theme._colors.black]: theme.black,
+        [varNames.theme._colors.white]: theme.white
+      }
+    }
+
     // typography
-    [varNames.typography.bodyFontFamily]: typography.bodyFontFamily,
-    [varNames.typography.titleFontFamily]: typography.titleFontFamily
-  }), [typography, theme])
+    if (typography) {
+      customProps = {
+        ...customProps,
+        [varNames.typography.bodyFontFamily]: typography.bodyFontFamily,
+        [varNames.typography.titleFontFamily]: typography.titleFontFamily
+      }
+    }
+
+    return customProps
+  }, [typography, theme])
 
   // add brand to the configuration object
   // TODO: remove this when we have moved the data around in the database to be returned by the brandId

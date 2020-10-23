@@ -7,7 +7,7 @@ import { LiveMessage } from 'react-aria-live'
 import * as GA from 'src/analytics/GoogleAnalytics'
 
 import { type Color } from '../../../shared/types/Colors.js.flow'
-import { varValues } from 'src/shared/variableDefs'
+import { varValues } from 'src/shared/withBuild/variableDefs'
 
 import 'src/scss/convenience/visually-hidden.scss'
 
@@ -31,7 +31,7 @@ export function ColorChipMaximizer ({ color, intl, onToggle }: Props) {
     setMaximized(!isMaximized)
   }
 
-  const contrastingTextColor = (color.isDark) ? varValues.colors.white : varValues.colors.black
+  const contrastingTextColor = (color.isDark) ? varValues._colors.white : varValues._colors.black
 
   const CHIP_CLASS = [
     `${BASE_CLASS}__max-chip`

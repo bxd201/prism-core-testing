@@ -4,7 +4,7 @@ $btn-border-thickness: 1px;
 $menu-bar-width: 14em;
 
 .menu-bar {
-  border: $btn-border-thickness solid getVar("colors.primary");
+  border: $btn-border-thickness solid var(getThemeColor('primary'));
   border-radius: $btn-radius;
   cursor: default;
   height: auto;
@@ -56,7 +56,7 @@ $menu-bar-width: 14em;
   }
 
   &__menu-link.active {
-    background: getVar( "colors.swBlue" );
+    background: var(getThemeColor('primary'));
     color: $btn-bg;
     height: auto;
   }

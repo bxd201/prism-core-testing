@@ -10,10 +10,10 @@
   // hardcoding magenta as an outline color for now
   $hit-area-outline-color: magenta;
 
-  $btn-active-color: $color-near-black;
-  $btn-active-color-text: $color-white;
-  $btn-focus-color: getVar('colors.primary');
-  $btn-focus-color-text: $color-near-white;
+  $btn-active-color: var(getThemeColor('dark'));
+  $btn-active-color-text: var(getThemeColor('dark.contrast'));
+  $btn-focus-color: var(getThemeColor('primary'));
+  $btn-focus-color-text: var(getThemeColor('primary.contrast.trans'));
   $btn-border-size: 2px;
 
   $icon-size: round($base * .7);

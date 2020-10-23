@@ -75,7 +75,7 @@
   &__color-info {
     padding: 1em;
     &--dark {
-      color: getVar( "colors.white" );
+      color: var(getThemeColor('white'));
     }
     &__name {
       display: block;

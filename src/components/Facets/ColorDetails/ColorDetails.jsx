@@ -14,7 +14,7 @@ import CoordinatingColors from './CoordinatingColors'
 import SimilarColors from './SimilarColors'
 import SceneManager from '../../SceneManager/SceneManager'
 import { paintAllMainSurfaces, toggleColorDetailsPage } from '../../../store/actions/scenes'
-import { varValues } from 'src/shared/variableDefs'
+import { varValues } from 'src/shared/withBuild/variableDefs'
 import type { Color } from '../../../shared/types/Colors.js.flow'
 import 'src/scss/convenience/visually-hidden.scss'
 import './ColorDetails.scss'
@@ -62,7 +62,7 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
   }
 
   // perform some css class logic & scaffolding instead of within the DOM itself
-  let contrastingTextColor = varValues.colors.black
+  let contrastingTextColor = varValues._colors.black
   const MAIN_INFO_CLASSES = [`${baseClass}__main-info`]
   const SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES = [`${baseClass}__display-toggle-button`, `${baseClass}__scene-display-toggle-button`]
   const ALT_SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES = SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES
@@ -70,7 +70,7 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
   SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.push(`${baseClass}__display-toggle-button--active`)
   ALT_SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.push(`${baseClass}__display-toggle-button--active`)
   if (color.isDark) {
-    contrastingTextColor = varValues.colors.white
+    contrastingTextColor = varValues._colors.white
     SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.push(`${baseClass}__display-toggle-button--dark-color`)
     ALT_SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.push(`${baseClass}__display-toggle-button--dark-color`)
     MAIN_INFO_CLASSES.push(`${baseClass}__main-info--dark-color`)

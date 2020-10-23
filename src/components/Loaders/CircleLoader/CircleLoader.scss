@@ -58,9 +58,9 @@
   }
 
   &__circle {
-    color: var(getVarName('theme.colors.primary'));
+    color: var(getThemeColor('primary'));
     animation: strokeColor $strokeColorDuration infinite cubic-bezier(0.075, 0.820, 0.165, 1.000), dashAdjust $dashDuration infinite alternate cubic-bezier(0.390, 0.575, 0.565, 1.000);
-    stroke: var(getVarName('theme.colors.primary'));
+    stroke: var(getThemeColor('primary'));
     stroke-linecap: round;
   }
 }

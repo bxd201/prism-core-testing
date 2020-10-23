@@ -7,7 +7,7 @@ import without from 'lodash/without'
 import concat from 'lodash/concat'
 import find from 'lodash/find'
 import { LiveMessage } from 'react-aria-live'
-import { varValues } from 'src/shared/variableDefs'
+import { varValues } from 'src/shared/withBuild/variableDefs'
 import { TransitionGroup, CSSTransition } from 'react-transition-group'
 
 import ensureFullyQualifiedAssetUrl from 'src/shared/utils/ensureFullyQualifiedAssetUrl.util'

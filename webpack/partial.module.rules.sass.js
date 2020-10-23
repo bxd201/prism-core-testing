@@ -3,11 +3,13 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const PrefixWrap = require('postcss-prefixwrap')
 const sass = require('node-sass')
 const sassUtils = require('node-sass-utils')(sass)
-const ALL_VARS = require('../src/shared/variableDefs.js')
+const { themeColors, getThemeColorsObj } = require('../src/shared/withBuild/themeColors.js')
+const ALL_VARS = require('../src/shared/withBuild/variableDefs.js')
 const varNames = Object.freeze(ALL_VARS.varNames)
 const varValues = Object.freeze(ALL_VARS.varValues)
 const path = require('path')
 const flags = require('./constants')
+const at = require('lodash/at')
 const getVarGenerator = (function () {
   const cssUnits = [
     'rem',
@@ -93,6 +95,19 @@ const getVarGenerator = (function () {
   }
 })()
 
+const getThemeColor = ((themeColorData) => {
+  return (whatever) => {
+    const path = whatever.getValue()
+    const val = at(themeColorData, path)[0]
+
+    if (val && val.prop) {
+      return sassUtils.castToSass(val.prop)
+    }
+
+    throw new Error(`Unable to locate ${path} in theme colors data`)
+  }
+})(getThemeColorsObj(themeColors))
+
 const sassRules = [
   MiniCssExtractPlugin.loader,
   'css-loader',
@@ -119,7 +134,8 @@ const sassRules = [
         return {
           functions: {
             '_getVar($keys)': getVarGenerator(varValues),
-            '_getVarName($keys)': getVarGenerator(varNames)
+            '_getVarName($keys)': getVarGenerator(varNames),
+            '_getThemeColor($keys)': getThemeColor
           }
         }
       }
