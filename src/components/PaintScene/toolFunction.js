@@ -681,8 +681,8 @@ export const getActiveGroupTool = (state: Object) => {
   return { isDeleteGroup: isDeleteGroup, isAddGroup: isAddGroup, isUngroup: isUngroup }
 }
 
-export const panMove = (event, state, ref) => {
-  let { canvasOriginalDimensions, wrapperOriginalDimensions, canvasPanStart, lastPanPoint } = ref
+export const panMove = (event, state, ref, context) => {
+  let { canvasOriginalDimensions, wrapperOriginalDimensions } = ref
   const { canvasZoom, canvasMouseDown } = state
   if (canvasZoom <= 1 || canvasZoom >= 8) return
   if (!canvasMouseDown) return
@@ -690,20 +690,20 @@ export const panMove = (event, state, ref) => {
   const MAX_PAN = 1.1
   const { body }: Object = document
   const { clientWidth, clientHeight } = body
-  const dx = (event.pageX - lastPanPoint.x) / clientWidth
-  const dy = (event.pageY - lastPanPoint.y) / clientHeight
-  const panX = canvasPanStart.x - dx
-  const panY = canvasPanStart.y - dy
-  canvasPanStart = { x: Math.max(MIN_PAN, Math.min(MAX_PAN, panX)), y: Math.max(MIN_PAN, Math.min(MAX_PAN, panY)) }
-  lastPanPoint = { x: event.pageX, y: event.pageY }
+  const dx = (event.pageX - context.lastPanPoint.x) / clientWidth
+  const dy = (event.pageY - context.lastPanPoint.y) / clientHeight
+  const panX = context.canvasPanStart.x - dx
+  const panY = context.canvasPanStart.y - dy
+  context.canvasPanStart = { x: Math.max(MIN_PAN, Math.min(MAX_PAN, panX)), y: Math.max(MIN_PAN, Math.min(MAX_PAN, panY)) }
+  context.lastPanPoint = { x: event.pageX, y: event.pageY }
   const options = {
     containerWidth: wrapperOriginalDimensions.width,
     containerHeight: wrapperOriginalDimensions.height,
     canvasWidth: canvasOriginalDimensions.width,
     canvasHeight: canvasOriginalDimensions.height,
     zoom: canvasZoom,
-    panX: canvasPanStart.x,
-    panY: canvasPanStart.y
+    panX: context.canvasPanStart.x,
+    panY: context.canvasPanStart.y
   }
   const factors = canvasDimensionFactors(options)
   applyDimensionFactorsToCanvas(factors, ref)
