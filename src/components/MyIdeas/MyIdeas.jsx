@@ -56,12 +56,11 @@ const MyIdeas = (props: MyIdeasProps) => {
   const wrapperRef = useRef(null)
   const [isReadyToRenderFlag, setIsReadyToRenderFlag] = useState(false)
   const [initPosition, setPosition] = useState(0)
+  const [sceneCount, setSceneCount] = useState(0)
 
   useEffect(() => {
-    if (!savedScenes.length) {
-      // Fetch saved scenes if none have been saved
-      dispatch(loadSavedScenes(props.brandId))
-    }
+    const excludeFromLoad = savedScenes?.map(item => item.id).filter(item => !!item) || []
+    dispatch(loadSavedScenes(props.brandId, excludeFromLoad))
   }, [])
 
   useEffect(() => {
@@ -75,6 +74,10 @@ const MyIdeas = (props: MyIdeasProps) => {
       setIsReadyToRenderFlag(true)
     }
   }, [sceneMetadata, savedScenes, stockScenes, isLoadingSavedScenes])
+
+  useEffect(() => {
+    setSceneCount(sceneMetadata.length)
+  }, [sceneMetadata])
 
   const enableEdit = (e: SyntheticEvent) => {
     e.preventDefault()
@@ -140,7 +143,7 @@ const MyIdeas = (props: MyIdeasProps) => {
     if (expectCustomData && !expectStockData) {
       // handle only custom data
       if (customSceneData && !isLoadingSavedScenes) {
-        return true
+        return customSceneData.length > 0
       }
     }
 
@@ -154,7 +157,7 @@ const MyIdeas = (props: MyIdeasProps) => {
     if (expectStockData && expectCustomData) {
       // handle both
       if (stockSceneData && customSceneData && !isLoadingSavedScenes) {
-        return true
+        return customSceneData.length > 0
       }
     }
 
@@ -206,7 +209,7 @@ const MyIdeas = (props: MyIdeasProps) => {
       return (<div className={baseClassName}>
         <div className={sectionNoIdeasMessage}>
           <h3><FormattedMessage id='MY_IDEAS.NO_IDEAS_TITLE' /></h3>
-          <p><FormattedMessage id='MY_IDEAS.NO_IDEAS_TITLE' /></p>
+          <p><FormattedMessage id='MY_IDEAS.NO_IDEAS_DESC' /></p>
         </div>
       </div>)
     }
@@ -238,7 +241,7 @@ const MyIdeas = (props: MyIdeasProps) => {
 
   return (
     <>
-      {isReadyToRenderFlag ? <div className={baseClassName} ref={wrapperRef}>
+      {isReadyToRenderFlag && sceneCount ? <div className={baseClassName} ref={wrapperRef}>
         { showDeleteConfirmModalFlag
           ? (
             <DynamicModal

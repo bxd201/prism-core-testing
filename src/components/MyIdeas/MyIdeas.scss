@@ -71,6 +71,10 @@
       flex-direction: column;
       justify-content: center;
       text-align: center;
+
+      h3 {
+        font-weight: 900;
+      }
     }
   }
   &__saved-scenes-wrapper {
