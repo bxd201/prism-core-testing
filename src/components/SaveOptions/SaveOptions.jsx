@@ -79,30 +79,40 @@ const SaveOptions = (props: SaveOptionsProps) => {
     }
   }, [pathname])
 
+  const loadAndDrawImage = (url, ctx, w = 0, h = 0, x = 0, y = 0) => {
+    var image = new Image()
+    const promise = new Promise((resolve) => {
+      image.onload = () => {
+        ctx.drawImage(image, w, h, x, y)
+        resolve(ctx)
+      }
+    })
+    image.src = url
+    return promise
+  }
+
   const getFlatImage = (ctx1, ctx2) => {
     const { width, height } = ctx1.canvas
     const bgData = ctx1.canvas.toDataURL(0, 0, width, height)
     const paintData = ctx2.canvas.toDataURL(0, 0, width, height)
-    let tmpImg = document.createElement('img')
-    tmpImg.style.display = 'none'
-
-    const workCanvas = document.createElement('canvas')
-    workCanvas.setAttribute('width', width)
-    workCanvas.setAttribute('height', height)
-    const workCtx = workCanvas.getContext('2d')
-    tmpImg.src = bgData
-    workCtx.drawImage(tmpImg, 0, 0)
-    tmpImg.src = paintData
-    workCtx.drawImage(tmpImg, 0, 0)
-    tmpImg.src = bgData
-    const miniImgWidth = Math.floor(width / 3)
-    const miniImgHeight = Math.floor(height / 3)
-    workCtx.drawImage(tmpImg, width - miniImgWidth, height - miniImgHeight, miniImgWidth, miniImgHeight)
     const promise = new Promise((resolve) => {
-      workCanvas.toBlob((blob) => {
-        const url = URL.createObjectURL(blob)
-        resolve(url)
-      }, 'image/png')
+      const workCanvas = document.createElement('canvas')
+      workCanvas.setAttribute('width', width)
+      workCanvas.setAttribute('height', height)
+      const workCtx = workCanvas.getContext('2d')
+      loadAndDrawImage(bgData, workCtx, 0, 0, width, height)
+      loadAndDrawImage(paintData, workCtx, 0, 0, width, height)
+      const miniImgWidth = Math.floor(width / 3)
+      const miniImgHeight = Math.floor(height / 3)
+      loadAndDrawImage(bgData, workCtx, width - miniImgWidth, height - miniImgHeight, miniImgWidth, miniImgHeight).then((ctx) => {
+        const promise = new Promise((resolve) => {
+          ctx.canvas.toBlob((blob) => {
+            const url = URL.createObjectURL(blob)
+            resolve(url)
+          }, 'image/png')
+        })
+        resolve(promise)
+      })
     })
     return promise
   }
