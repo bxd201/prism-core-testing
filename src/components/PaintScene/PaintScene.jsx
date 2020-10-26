@@ -768,8 +768,8 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   }
 
   onPanMove = throttle((event: Object) => {
-    const ref = { CFICanvas: this.CFICanvas, CFICanvas2: this.CFICanvas2, CFICanvasPaint: this.CFICanvasPaint, lastPanPoint: this.lastPanPoint, canvasPanStart: this.canvasPanStart, wrapperOriginalDimensions: this.wrapperOriginalDimensions, canvasOriginalDimensions: this.canvasOriginalDimensions }
-    return panMove(event, this.state, ref)
+    const ref = { CFICanvas: this.CFICanvas, CFICanvas2: this.CFICanvas2, CFICanvasPaint: this.CFICanvasPaint, wrapperOriginalDimensions: this.wrapperOriginalDimensions, canvasOriginalDimensions: this.canvasOriginalDimensions }
+    return panMove(event, this.state, ref, this)
   }, 10)
 
   onPanEnd = () => {
