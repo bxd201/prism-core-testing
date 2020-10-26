@@ -32,7 +32,8 @@ type DropDownMenuProps = {
 
 type ColorVisualizerNavProps = {
   config: any,
-  setPaintScene: Function,
+  uploadPaintScene: Function,
+  activePaintScene: string,
   setMatchPhotoScene: Function,
   setLastActiveComponent: Function
 }
@@ -80,8 +81,8 @@ export const DropDownMenu = ({ title, items }: DropDownMenuProps) => {
 }
 
 const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
-  const { config: { featureExclusions }, setMatchPhotoScene, setPaintScene, setLastActiveComponent } = props
-  console.log('CONFIG::', props.config)
+  const { config: { featureExclusions }, setMatchPhotoScene, activePaintScene, uploadPaintScene, setLastActiveComponent } = props
+  // console.log('CONFIG::', props.config)
   const { messages } = useIntl()
   const history = useHistory()
   const location = useLocation()
@@ -94,9 +95,13 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
 
   useEffect(() => {
     if (imgUrl) {
-      location.pathname === '/active/match-photo'
-        ? setMatchPhotoScene(<ImageRotateContainer key={imgUrl + 'mp'} showPaintScene isFromMyIdeas={false} isPaintScene={false} imgUrl={imgUrl} />)
-        : setPaintScene(<ImageRotateContainer key={imgUrl} showPaintScene isFromMyIdeas={false} isPaintScene imgUrl={imgUrl} />)
+      if (location.pathname === '/upload/match-photo') {
+        history.push('/active/match-photo')
+        setMatchPhotoScene(<ImageRotateContainer key={imgUrl + 'mp'} showPaintScene isFromMyIdeas={false} isPaintScene={false} imgUrl={imgUrl} />)
+      } else if (location.pathname === '/upload/paint-scene') {
+        history.push('/active/paint-scene')
+        uploadPaintScene(<ImageRotateContainer showPaintScene isFromMyIdeas={false} isPaintScene imgUrl={imgUrl} setLastActiveComponent={setLastActiveComponent} activePaintScene={activePaintScene} />)
+      }
     }
   }, [imgUrl])
 
@@ -164,7 +169,7 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
             dispatch(unsetActiveScenePolluted())
             const selectDevice = (web, iPhone = web, android = web, iPad = web) => (isMobileOnly ? (isIOS ? iPhone : android) : (isTablet ? iPad : web)) || web
             history.push(selectDevice(
-              '/active/paint-scene',
+              '/upload/paint-scene',
               'https://play.google.com/store/apps/details?id=com.colorsnap',
               'https://itunes.apple.com/us/app/colorsnap-visualizer-iphone/id316256242?mt=8',
               'https://itunes.apple.com/us/app/colorsnap-studio/id555300600?mt=8'
@@ -175,7 +180,6 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
               hiddenImageUploadInput.current.click() // uploads image
             }
           }
-          setLastActiveComponent('PaintScene')
           isActiveScenePolluted ? dispatch(showWarningModal(activate)) : activate()
         }
       }
@@ -215,7 +219,7 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
         onClick: () => {
           const activate = () => {
             dispatch(unsetActiveScenePolluted())
-            history.push('/active/match-photo')
+            history.push('/upload/match-photo')
             if (hiddenImageUploadInput.current) {
               hiddenImageUploadInput.current.value = ''
               hiddenImageUploadInput.current.click()
@@ -324,6 +328,18 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
         <Route path='/active/scenes'>
           <DropDownMenu
             title={messages['NAV_DROPDOWN_TITLE.PAINT_A_PHOTO']}
+            items={getDropDownItemsForPaintAPhoto()}
+          />
+        </Route>
+        <Route path='/upload/match-photo'>
+          <DropDownMenu
+            title={messages['NAV_DROPDOWN_TITLE.GET_INSPIRED']}
+            items={getDropDownItemsForExploreColors()}
+          />
+        </Route>
+        <Route path='/upload/paint-scene'>
+          <DropDownMenu
+            title={messages['NAV_DROPDOWN_TITLE.GET_INSPIRED']}
             items={getDropDownItemsForPaintAPhoto()}
           />
         </Route>

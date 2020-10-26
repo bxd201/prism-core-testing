@@ -2,7 +2,6 @@
 import React, { useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useIntl, FormattedMessage } from 'react-intl'
-import { useHistory } from 'react-router-dom'
 import MergeCanvas from '../../MergeCanvas/MergeCanvas'
 import { mouseDownPreventDefault } from 'src/shared/helpers/MiscUtils'
 import type { Scene, SceneStatus } from 'src/shared/types/Scene'
@@ -14,7 +13,6 @@ import { hideWarningModal } from 'src/store/actions/scenes'
 export default () => {
   const intl = useIntl()
   const dispatch = useDispatch()
-  const history = useHistory()
   const showing: boolean = useSelector(store => store.scenes.warningModal.showing)
   const openFn: () => void = useSelector(store => store.scenes.warningModal.openFn)
   let miniImage: ?{} = useSelector(store => store.scenes.warningModal.miniImg)
@@ -70,7 +68,6 @@ export default () => {
             onClick={() => {
               dispatch(hideWarningModal())
               openFn()
-              history.push('/active')
             }}
           >
             <FormattedMessage id='YES' />

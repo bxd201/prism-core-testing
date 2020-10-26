@@ -2,7 +2,7 @@
 import React, { useState } from 'react'
 import type { Element } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { Switch, Route, Redirect, useLocation, useHistory } from 'react-router-dom'
+import { Switch, Route, useLocation, useHistory } from 'react-router-dom'
 import { ColorCollections } from '../../ColorCollections/ColorCollections'
 import ExpertColorPicks from '../../ExpertColorPicks/ExpertColorPicks'
 import { ColorWallPage } from '../ColorWallFacet'
@@ -32,17 +32,26 @@ export const CVW = () => {
   const dispatch = useDispatch()
   const location = useLocation()
   const history = useHistory()
-
   const toggleCompareColor: boolean = useSelector(store => store.lp.toggleCompareColor)
   const colorDetailsModalShowing: boolean = useSelector(store => store.colors.colorDetailsModal.showing)
   const isActiveScenePolluted: boolean = useSelector(store => store.scenes.isActiveScenePolluted)
 
-  const [activeScene: Element, setActiveScene: (Element) => void] = useState(<SceneManager expertColorPicks hideSceneSelector />)
+  const [activeStockScene: Element, setActiveScene: (Element) => void] = useState(<SceneManager expertColorPicks hideSceneSelector />)
+  const [activePaintScene: Element, setActivePaintSceneState: (Element) => void] = useState()
   const [lastActiveComponent: string, setLastActiveComponent: (string) => void] = useState('StockScene')
   const [isLoading: boolean, setIsLoading: boolean => void] = useState(true)
   const [matchPhotoScene: Element, setMatchPhotoScene: (Element) => void] = useState()
+  const [ImageRotateScene: Element, setUploadPaintSceneState: (Element) => void] = useState()
   const isShowFooter = location.pathname.match(/active\/masking$/) === null
   setTimeout(() => setIsLoading(false), 1000)
+
+  const setActivePaintScene = (element) => {
+    setActivePaintSceneState(element)
+  }
+
+  const setUploadPaintScene = (element) => {
+    setUploadPaintSceneState(element)
+  }
 
   const activateStockScene = (id) => {
     const activate = () => {
@@ -50,7 +59,7 @@ export const CVW = () => {
       dispatch(unpaintSceneSurfaces(id))
       dispatch(activateOnlyScene(id))
       setActiveScene(<SceneManager expertColorPicks hideSceneSelector />)
-      setLastActiveComponent('stockScene')
+      setLastActiveComponent('StockScene')
       history.push('/active')
     }
     isActiveScenePolluted ? dispatch(showWarningModal(activate)) : activate()
@@ -62,19 +71,31 @@ export const CVW = () => {
     return <LandingPage />
   }
 
+  const getActiveScene = () => {
+    if (lastActiveComponent === 'StockScene') {
+      return activeStockScene
+    }
+    if (lastActiveComponent === 'PaintScene') {
+      return activePaintScene || activeStockScene
+    }
+  }
+
   return (
     <div className='cvw__root-container'>
       {toggleCompareColor
         ? <CompareColor />
         : (
           <div className='cvw__root-wrapper'>
-            <ColorVisualizerNav setPaintScene={setActiveScene} setLastActiveComponent={setLastActiveComponent} setMatchPhotoScene={setMatchPhotoScene} />
+            <ColorVisualizerNav uploadPaintScene={setUploadPaintScene} activePaintScene={setActivePaintScene} setLastActiveComponent={setLastActiveComponent} setMatchPhotoScene={setMatchPhotoScene} />
             <ColorDetailsModal />
             <CVWWarningModal />
             <Switch>
               <Route path='/active/color/:colorId/:colorSEO' render={() => <ColorDetails />} />
               <Route path='/active/color-wall(/.*)?' render={() => <ColorWallPage displayAddButton displayInfoButton displayDetailsLink={false} />} />
               <Route path='/active/color-collections' render={() => <ColorCollections isExpertColor={false} {...location.state} />} />
+              <Route path='/upload/match-photo'>{getActiveScene()}</Route>
+              <Route path='/upload/paint-scene'>{getActiveScene()}</Route>
+              <Route path='/active/paint-scene'>{ImageRotateScene}</Route>
               <Route path='/active/match-photo'>{matchPhotoScene}</Route>
               <Route path='/active/use-our-image' render={() => <SampleScenesWrapper isColorTinted activateScene={activateStockScene} />} />
               <Route path='/active/expert-colors' render={() => <ExpertColorPicks isExpertColor />} />
@@ -87,13 +108,13 @@ export const CVW = () => {
               <Route path='/active/masking' render={() => <PaintSceneMaskingWrapper />} />
               <Route path='/active/my-ideas' render={() => <MyIdeasContainer />} />
               <Route path='/active/help' render={() => <Help />} />
-              <Route render={() => <Redirect to='/active' />} />
             </Switch>
             <div
-              style={{ display: location.pathname.match(/(active|paint-scene|active\/colors|inspiration|scenes)$/) === null ? 'none' : 'block' }}
+              style={{ display: (location.pathname.match(/(active|active\/colors|inspiration|scenes)$/) === null) ? 'none' : 'block' }}
               className={colorDetailsModalShowing ? 'hide-on-small-screens' : ''}
             >
-              {activeScene}
+              {lastActiveComponent === 'StockScene' && activeStockScene}
+              {lastActiveComponent === 'PaintScene' && activePaintScene}
             </div>
           </div>
         )
