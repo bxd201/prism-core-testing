@@ -1,23 +1,13 @@
 const envVars = require('./constants.env-vars')
-const envVarDefaults = require('./constants.env-var-defaults')
 
 // define prism dev server origin
-process.env[envVars.PRISM_LOCAL_PROTOCOL] = process.env[envVars.PRISM_LOCAL_PROTOCOL] || envVarDefaults.PRISM_LOCAL_PROTOCOL
-process.env[envVars.PRISM_LOCAL_HOST] = process.env[envVars.PRISM_LOCAL_HOST] || envVarDefaults.PRISM_LOCAL_HOST
-process.env[envVars.PRISM_LOCAL_PORT] = process.env[envVars.PRISM_LOCAL_PORT] || envVarDefaults.PRISM_LOCAL_PORT
-process.env[envVars.PRISM_LOCAL_ORIGIN] = `${process.env[envVars.PRISM_LOCAL_PROTOCOL]}://${process.env[envVars.PRISM_LOCAL_HOST]}${process.env[envVars.PRISM_LOCAL_PORT] ? `:${process.env[envVars.PRISM_LOCAL_PORT]}` : ''}`// default local URL to localhost
+require('./partial.setup.defineLocalPaths.prism')
 
 // define embed dev server origin
-process.env[envVars.EMBED_LOCAL_PROTOCOL] = process.env[envVars.EMBED_LOCAL_PROTOCOL] || envVarDefaults.EMBED_LOCAL_PROTOCOL
-process.env[envVars.EMBED_LOCAL_HOST] = process.env[envVars.EMBED_LOCAL_HOST] || envVarDefaults.EMBED_LOCAL_HOST
-process.env[envVars.EMBED_LOCAL_PORT] = process.env[envVars.EMBED_LOCAL_PORT] || envVarDefaults.EMBED_LOCAL_PORT
-process.env[envVars.EMBED_LOCAL_ORIGIN] = `${process.env[envVars.EMBED_LOCAL_PROTOCOL]}://${process.env[envVars.EMBED_LOCAL_HOST]}${process.env[envVars.EMBED_LOCAL_PORT] ? `:${process.env[envVars.EMBED_LOCAL_PORT]}` : ''}`// default local URL to localhost
+require('./partial.setup.defineLocalPaths.embed')
 
-// define embed dev server origin
-process.env[envVars.TEMPLATES_LOCAL_PROTOCOL] = process.env[envVars.TEMPLATES_LOCAL_PROTOCOL] || envVarDefaults.TEMPLATES_LOCAL_PROTOCOL
-process.env[envVars.TEMPLATES_LOCAL_HOST] = process.env[envVars.TEMPLATES_LOCAL_HOST] || envVarDefaults.TEMPLATES_LOCAL_HOST
-process.env[envVars.TEMPLATES_LOCAL_PORT] = process.env[envVars.TEMPLATES_LOCAL_PORT] || envVarDefaults.TEMPLATES_LOCAL_PORT
-process.env[envVars.TEMPLATES_LOCAL_ORIGIN] = `${process.env[envVars.TEMPLATES_LOCAL_PROTOCOL]}://${process.env[envVars.TEMPLATES_LOCAL_HOST]}${process.env[envVars.TEMPLATES_LOCAL_PORT] ? `:${process.env[envVars.TEMPLATES_LOCAL_PORT]}` : ''}`// default local URL to localhost
+// define templates dev server origin
+require('./partial.setup.defineLocalPaths.templates')
 
 console.assert(process.env[envVars.PRISM_LOCAL_ORIGIN] !== process.env[envVars.EMBED_LOCAL_ORIGIN], 'ERROR: Prism and Prism Embed local dev servers must not be identical.')
 

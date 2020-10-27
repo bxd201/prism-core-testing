@@ -9,20 +9,18 @@ const moduleRuleJsx = require('./partial.module.rules.jsx')
 const envVars = require('./constants.env-vars')
 
 // define embed dev server origin
-process.env[envVars.EMBED_LOCAL_PROTOCOL] = process.env[envVars.EMBED_LOCAL_PROTOCOL] || 'https'
-process.env[envVars.EMBED_LOCAL_HOST] = process.env[envVars.EMBED_LOCAL_HOST] || 'localhost'
-process.env[envVars.EMBED_LOCAL_PORT] = process.env[envVars.EMBED_LOCAL_PORT] || '8081'
-process.env[envVars.EMBED_LOCAL_ORIGIN] = `${process.env[envVars.EMBED_LOCAL_PROTOCOL]}://${process.env[envVars.EMBED_LOCAL_HOST]}${process.env[envVars.EMBED_LOCAL_PORT] ? `:${process.env[envVars.EMBED_LOCAL_PORT]}` : ''}`// default local URL to localhost
+require('./partial.setup.defineLocalPaths.embed')
 
 // create constants that correlate to environment variables to be injected
 const ENV = process.env[envVars.NODE_ENV] ? process.env[envVars.NODE_ENV] : 'development'
 const APP_VERSION = process.env.npm_package_version
 const APP_NAME = process.env.npm_package_name
+const BASE_PATH = (ENV === 'development') ? process.env[envVars.PRISM_LOCAL_ORIGIN] : (process.env[envVars.WEB_URL]) ? process.env[envVars.WEB_URL] : '$WEB_URL'
 
 const DEFINED_VARS = {
   'APP_NAME': APP_NAME,
   'APP_VERSION': APP_VERSION,
-  'BASE_PATH': '',
+  'BASE_PATH': BASE_PATH,
   'ENV': ENV,
   'WEBPACK_CONSTANTS': flags
 }
