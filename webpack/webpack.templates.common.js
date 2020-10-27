@@ -1,10 +1,7 @@
 const envVars = require('./constants.env-vars')
 
 // define templates dev server origin
-process.env[envVars.TEMPLATES_LOCAL_PROTOCOL] = process.env[envVars.TEMPLATES_LOCAL_PROTOCOL] || 'https'
-process.env[envVars.TEMPLATES_LOCAL_HOST] = process.env[envVars.TEMPLATES_LOCAL_HOST] || 'localhost'
-process.env[envVars.TEMPLATES_LOCAL_PORT] = process.env[envVars.TEMPLATES_LOCAL_PORT] || '8082'
-process.env[envVars.TEMPLATES_LOCAL_ORIGIN] = `${process.env[envVars.TEMPLATES_LOCAL_PROTOCOL]}://${process.env[envVars.TEMPLATES_LOCAL_HOST]}${process.env[envVars.TEMPLATES_LOCAL_PORT] ? `:${process.env[envVars.TEMPLATES_LOCAL_PORT]}` : ''}`// default local URL to localhost
+require('./partial.setup.defineLocalPaths.templates')
 
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')

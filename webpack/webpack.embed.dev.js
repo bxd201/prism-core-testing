@@ -1,11 +1,10 @@
 const envVars = require('./constants.env-vars')
-const envVarDefaults = require('./constants.env-var-defaults')
+
+// define embed prism server origin
+require('./partial.setup.defineLocalPaths.prism')
 
 // define embed dev server origin
-process.env[envVars.EMBED_LOCAL_PROTOCOL] = process.env[envVars.EMBED_LOCAL_PROTOCOL] || envVarDefaults.EMBED_LOCAL_PROTOCOL
-process.env[envVars.EMBED_LOCAL_HOST] = process.env[envVars.EMBED_LOCAL_HOST] || envVarDefaults.EMBED_LOCAL_HOST
-process.env[envVars.EMBED_LOCAL_PORT] = process.env[envVars.EMBED_LOCAL_PORT] || envVarDefaults.EMBED_LOCAL_PORT
-process.env[envVars.EMBED_LOCAL_ORIGIN] = `${process.env[envVars.EMBED_LOCAL_PROTOCOL]}://${process.env[envVars.EMBED_LOCAL_HOST]}${process.env[envVars.EMBED_LOCAL_PORT] ? `:${process.env[envVars.EMBED_LOCAL_PORT]}` : ''}`// default local URL to localhost
+require('./partial.setup.defineLocalPaths.embed')
 
 console.assert(process.env[envVars.PRISM_LOCAL_ORIGIN] !== process.env[envVars.EMBED_LOCAL_ORIGIN], 'ERROR: Prism and Prism Embed local dev servers must not be identical.')
 

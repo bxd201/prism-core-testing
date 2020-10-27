@@ -1,6 +1,7 @@
 // @flow
 import camelCase from 'lodash/camelCase'
 import appendToBodyUtil from 'src/shared/utils/appendToBody.util'
+import ensureFullyQualifiedAssetUrl from 'src/shared/utils/ensureFullyQualifiedAssetUrl.util'
 
 const promises = {}
 
@@ -28,7 +29,7 @@ export default (path: string) => {
     script.onload = onloadHander
     script.onreadystatechange = onloadHander
 
-    script.src = path
+    script.src = ensureFullyQualifiedAssetUrl(path)
     appendToBodyUtil(script)
   })
 

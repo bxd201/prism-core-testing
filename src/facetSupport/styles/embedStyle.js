@@ -1,6 +1,7 @@
 // @flow
 import camelCase from 'lodash/camelCase'
 import appendToBodyUtil from 'src/shared/utils/appendToBody.util'
+import ensureFullyQualifiedAssetUrl from 'src/shared/utils/ensureFullyQualifiedAssetUrl.util'
 
 export default (path: string) => {
   const id = camelCase(path)
@@ -13,6 +14,6 @@ export default (path: string) => {
   css.rel = 'stylesheet'
   css.type = 'text/css'
   css.crossOrigin = 'anonymous'
-  css.href = path
+  css.href = ensureFullyQualifiedAssetUrl(path)
   appendToBodyUtil(css)
 }
