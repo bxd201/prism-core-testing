@@ -83,7 +83,7 @@ export function doReceiveColors (state: ColorsState, { payload: { unorderedColor
         families: families.map(family => ({
           name: family,
           unChunkedChunks: [...brights[family], ...colors[family]],
-          chunkGridParams: { gridWidth: 3, chunkWidth: 7, firstRowLength: 1, wrappingEnabled: true }
+          chunkGridParams: { gridWidth: 3, chunkWidth: 7, firstRowLength: 1, wrappingEnabled: false }
         }))
       })),
       status: { ...state.status, activeRequest: false, error: false, loading: false, requestComplete: true },
