@@ -66,7 +66,8 @@ type ComponentProps = {
   isAddGroup: boolean,
   isDeleteGroup: boolean,
   isInfoToolActive: boolean,
-  intl: any
+  intl: any,
+  containerWidth: number
 }
 
 type ComponentState = {
@@ -372,7 +373,7 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
 
   render () {
     const { showToolBar, showPaintBrushTypes, showEraseBrushTypes, showTooltip, tooltipToolActiveNumber, zoomSliderHide } = this.state
-    const { activeTool, paintBrushShape, paintBrushWidth, eraseBrushShape, eraseBrushWidth, setBrushShapeSize, applyZoom, intl } = this.props
+    const { activeTool, paintBrushShape, paintBrushWidth, eraseBrushShape, eraseBrushWidth, setBrushShapeSize, applyZoom, intl, containerWidth } = this.props
     const paintBrushTypesRender = (!showTooltip && (activeTool === toolNames.PAINTBRUSH && showPaintBrushTypes)) ? <div
       onMouseLeave={this.hidePaintBrushTypes}
       className={`${brushTypesClass} ${(!showTooltip && (activeTool === toolNames.PAINTBRUSH && showPaintBrushTypes)) ? `${brushTypesShowClass}` : `${brushTypesHideClass}`} ${brushTypesPaintClass} ${showToolBar ? `${brushTypesShowByOpacityClass}` : `${brushTypesHideByOpacityClass}`} `}
@@ -424,7 +425,7 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
                   parentDivRef={this.tooltipDivRef} />
               </div>}
               <div className={`${zoomToolClass} ${activeTool === toolNames.ZOOM && !showTooltip && zoomSliderHide === -1 ? `${zoomToolShowClass}` : activeTool !== toolNames.ZOOM ? `${zoomToolHideClass}` : ``} ${activeTool === toolNames.ZOOM && zoomSliderHide === 0 && !showTooltip ? `${zoomToolShowByOpacityClass}` : activeTool === toolNames.ZOOM && zoomSliderHide === 1 && !showTooltip ? `${zoomToolHideByOpacityClass}` : ``}`}>
-                <ZoomTool applyZoom={applyZoom} />
+                <ZoomTool applyZoom={applyZoom} containerWidth={containerWidth} />
               </div>
             </div>
             <div className={`${toolbarToggleClass}`}>

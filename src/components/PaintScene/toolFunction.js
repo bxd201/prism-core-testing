@@ -58,11 +58,9 @@ export const bucketPaint = (e, state, props, ref) => {
 export const selectArea = (e, state, ref) => {
   const { imagePathList, selectedArea, groupAreaList, groupSelectList } = state
   const { CFICanvas2, canvasOriginalDimensions, CFICanvasContext2, canvasOffsetWidth, canvasOffsetHeight } = ref
-  const canvasClientOffset = CFICanvas2.current.getBoundingClientRect()
-  const scale = canvasOriginalDimensions.width / canvasClientOffset.width
+  const canvasDims = CFICanvas2.current.getBoundingClientRect()
   const { clientX, clientY } = e
-  const cursorX = parseInt((clientX - canvasClientOffset.left) * scale)
-  const cursorY = parseInt((clientY - canvasClientOffset.top) * scale)
+  const { x: cursorX, y: cursorY } = getTranslatedCoords(canvasDims, canvasOriginalDimensions.width, canvasOriginalDimensions.height, clientX, clientY)
   const imageData = CFICanvasContext2.getImageData(0, 0, canvasOffsetWidth, canvasOffsetHeight)
   let newImagePathList = copyImageList(imagePathList)
   const index = (cursorX + cursorY * canvasOffsetWidth) * 4
@@ -563,6 +561,29 @@ export const eraseOrPaintMouseUp = (state, props, ref) => {
   }
 }
 
+export const getTranslatedCoords = (canvasDims: DOMRect, ogWidth: number, ogHeight: number, clientX: number, clientY: number) => {
+  const { x, y, width, height } = canvasDims
+
+  const localX = clientX - x
+  const localY = clientY - y
+
+  // Use a separate scale for height and width since we want to minimize the effects of precision loss
+  const widthScaleFactor = width / ogWidth
+  const heightScaleFactor = height / ogHeight
+  let newX = 0
+  let newY = 0
+
+  newX = localX / widthScaleFactor
+  newY = localY / heightScaleFactor
+
+  const coords = {
+    x: Math.floor(newX),
+    y: Math.floor(newY)
+  }
+
+  return coords
+}
+
 export const eraseOrPaintMouseDown = (e, state, props, ref) => {
   const { isDragging, paintBrushWidth, paintBrushShape, activeTool } = state
   const { lpActiveColor } = props
@@ -570,12 +591,8 @@ export const eraseOrPaintMouseDown = (e, state, props, ref) => {
   if ((lpActiveColor === null || (lpActiveColor.constructor === Object && Object.keys(lpActiveColor).length === 0)) && activeTool === toolNames.PAINTBRUSH) return
   const lpActiveColorRGB = (activeTool === toolNames.ERASE) ? `rgba(255, 255, 255, 1)` : `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})`
   const { clientX, clientY } = e
-  const canvasClientOffset = CFICanvas2.current.getBoundingClientRect()
-  const scale = canvasOriginalDimensions.width / canvasClientOffset.width
-  const currentPoint = {
-    x: (clientX - canvasClientOffset.left) * scale,
-    y: (clientY - canvasClientOffset.top) * scale
-  }
+  const canvasDims = CFICanvas2.current.getBoundingClientRect()
+  const currentPoint = getTranslatedCoords(canvasDims, canvasOriginalDimensions.width, canvasOriginalDimensions.height, clientX, clientY)
   const lastPoint = { x: currentPoint.x - 1, y: currentPoint.y }
   CFICanvasContextPaint.beginPath()
   if (isDragging === false) {
@@ -714,13 +731,11 @@ export const getDefinedPolygon = (e, state, props, ref, isAddArea, clearCanvasCa
   const { BeginPointList, polyList, presentPolyList } = state
   const { CFICanvas2, CFICanvas4, canvasOriginalDimensions, CFICanvasContext4, canvasOffsetWidth, canvasOffsetHeight } = ref
   const { clientX, clientY } = e
-  const canvasClientOffset = CFICanvas2.current.getBoundingClientRect()
-  const canvasClientOffset4 = CFICanvas4.current.getBoundingClientRect()
-  const scale = canvasOriginalDimensions.width / canvasClientOffset.width
-  const cursorX = (clientX - canvasClientOffset.left) * scale
-  const cursorY = (clientY - canvasClientOffset.top) * scale
-  const X = clientX - canvasClientOffset4.left
-  const Y = clientY - canvasClientOffset4.top
+  const canvasDims = CFICanvas2.current.getBoundingClientRect()
+  const canvas4Dims = CFICanvas4.current.getBoundingClientRect()
+  const X = clientX - canvas4Dims.left
+  const Y = clientY - canvas4Dims.top
+  const { x: cursorX, y: cursorY } = getTranslatedCoords(canvasDims, canvasOriginalDimensions.width, canvasOriginalDimensions.height, clientX, clientY)
   const poly = [...polyList]
   const presentPoly = [...presentPolyList]
   poly.push([cursorX, cursorY])
@@ -768,17 +783,13 @@ export const handleMouseMove = (e, state, props, ref) => {
   const { paintCursorRef, CFICanvasContextPaint, CFICanvas2, canvasOriginalDimensions } = ref
   const { activeTool, paintBrushWidth, isDragging, paintBrushShape, prevPoint } = state
   const { lpActiveColor } = props
-  const canvasClientOffset = CFICanvas2.current.getBoundingClientRect()
+  const canvasDims = CFICanvas2.current.getBoundingClientRect()
   paintCursorRef.current && ref.paintCursorRef.current.handleMouseMove(clientX, clientY)
   if ((lpActiveColor === null || (lpActiveColor.constructor === Object && Object.keys(lpActiveColor).length === 0)) && activeTool === toolNames.PAINTBRUSH) return
   if ((lpActiveColor && activeTool === toolNames.PAINTBRUSH) || activeTool === toolNames.ERASE) {
     const lpActiveColorRGB = (activeTool === toolNames.ERASE) ? `rgba(255, 255, 255, 1)` : `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})`
-    const scale = canvasOriginalDimensions.width / Math.ceil(canvasClientOffset.width)
     if (isDragging) {
-      const currentPoint = {
-        x: (clientX - canvasClientOffset.left) * scale,
-        y: (clientY - canvasClientOffset.top) * scale
-      }
+      const currentPoint = getTranslatedCoords(canvasDims, canvasOriginalDimensions.width, canvasOriginalDimensions.height, clientX, clientY)
       if ((activeTool === toolNames.PAINTBRUSH) || (activeTool === toolNames.ERASE)) {
         drawPaintBrushPoint(currentPoint, prevPoint, state, props, ref)
       } else {

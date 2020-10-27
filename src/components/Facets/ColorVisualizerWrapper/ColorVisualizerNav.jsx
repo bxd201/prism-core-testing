@@ -82,7 +82,6 @@ export const DropDownMenu = ({ title, items }: DropDownMenuProps) => {
 
 const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
   const { config: { featureExclusions }, setMatchPhotoScene, activePaintScene, uploadPaintScene, setLastActiveComponent } = props
-  // console.log('CONFIG::', props.config)
   const { messages } = useIntl()
   const history = useHistory()
   const location = useLocation()

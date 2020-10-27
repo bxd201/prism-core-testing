@@ -10,6 +10,7 @@ const zoomSliderCircleClass = `${baseClass}__zoom-slider-circle`
 
 type ComponentProps = {
   applyZoom: Function,
+  containerWidth: number
 }
 
 type ComponentState = {
@@ -55,7 +56,7 @@ export class ZoomTool extends PureComponent<ComponentProps, ComponentState> {
   }
 
   setLeftPosition = throttle((e: Object) => {
-    const { applyZoom } = this.props
+    const { applyZoom, containerWidth } = this.props
     const mouseX = e.clientX - this.zoomSliderCircleMouseX
     const zoomSliderClientOffset = this.zoomSlider.current.getBoundingClientRect()
     const zoomSliderCircleClientOffset = this.zoomSliderCircle.current.getBoundingClientRect()
@@ -66,7 +67,7 @@ export class ZoomTool extends PureComponent<ComponentProps, ComponentState> {
     const leftPosition = Math.max(0, Math.min(mouseX - zoomSliderX, endPosition))
 
     const zoomFactor = (leftPosition / endPosition) * 5 + 1
-    if (zoomFactor > 0) applyZoom(zoomFactor)
+    if (zoomFactor > 0) applyZoom(zoomFactor, containerWidth)
     this.setState({
       leftPosition: leftPosition
     })
