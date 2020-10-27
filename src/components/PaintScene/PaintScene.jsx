@@ -10,10 +10,26 @@ import {
   createImageDataAndAlphaPixelMapFromImageData,
   getColorsFromImagePathList, getInitialDims, getLABFromColor
 } from './PaintSceneUtils'
-import { repaintImageByPath, getImageCordinateByPixel, canvasDimensionFactors, applyDimensionFactorsByCanvas,
-  getActiveColorRGB, hexToRGB, colorMatch, shouldCanvasResize,
-  drawImagePixelByPath, getColorAtPixel, copyImageList, createImagePathItem,
-  getPaintBrushActiveClass, getEraseBrushActiveClass, compareArraysOfObjects, objectsEqual, getColorsForMergeColors, maskingPink } from './utils'
+import {
+  repaintImageByPath,
+  getImageCordinateByPixel,
+  canvasDimensionFactors,
+  applyDimensionFactorsByCanvas,
+  getActiveColorRGB,
+  hexToRGB,
+  colorMatch,
+  shouldCanvasResize,
+  drawImagePixelByPath,
+  getColorAtPixel,
+  copyImageList,
+  createImagePathItem,
+  getPaintBrushActiveClass,
+  getEraseBrushActiveClass,
+  compareArraysOfObjects,
+  objectsEqual,
+  getColorsForMergeColors,
+  maskingPink
+} from './utils'
 import { toolNames, groupToolNames, brushLargeSize, brushRoundShape, setTooltipShownLocalStorage, getTooltipShownLocalStorage } from './data'
 import throttle from 'lodash/throttle'
 import { redo, undo } from './UndoRedoUtil'
@@ -348,6 +364,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     const newWidth = shouldCanvasResize(prevProps.width, this.props.width)
     if (newWidth) {
       this.scaleCanvases(newWidth, prevProps.width)
+      this.applyZoom(this.state.canvasZoom, newWidth)
     }
     const { imagePathList, selectedArea, groupSelectList } = this.state
     let copyImagePathList = copyImageList(imagePathList)
@@ -454,6 +471,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.setBackgroundImage(canvasWidth, canvasHeight)
   }
 
+  // This method is invoked when the parent container passes in the a new wrapperWidth
   /*:: scaleCanvases: (newWidth: number) => void */
   scaleCanvases = (newWidth: number, oldWidth: number) => {
     const { canvasWidth, canvasHeight } = this.calcCanvasNewDimensions(newWidth, oldWidth)
@@ -736,7 +754,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     }
   }
 
-  applyZoom = (zoomNumber: number) => {
+  applyZoom = (zoomNumber: number, newWrapperWidth?: number) => {
     const ref = {
       wrapperOriginalDimensions: this.wrapperOriginalDimensions,
       canvasOriginalDimensions: this.canvasOriginalDimensions,
@@ -745,7 +763,9 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       CFICanvasPaint: this.CFICanvasPaint,
       canvasPanStart: this.canvasPanStart,
       canvasDisplayWidth: this.state.canvasWidth, // this is the width of the canvas style prop, it controls the onscreen size
-      canvasDisplayHeight: this.state.canvasHeight // this is the height of the canvas style prop, it controls the onscreen size
+      canvasDisplayHeight: this.state.canvasHeight, // this is the height of the canvas style prop, it controls the onscreen size
+      currentWrapperDimensions: this.CFIWrapper.current.getBoundingClientRect(),
+      newWrapperWidth
     }
 
     applyZoom(zoomNumber, ref)

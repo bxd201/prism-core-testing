@@ -823,32 +823,13 @@ export const getEraseBrushActiveClass = (state) => {
 }
 
 export const canvasDimensionFactors = (options: Object) => {
-  const { canvasWidth, canvasHeight, containerWidth, containerHeight, panX, panY, zoom } = options
-  let canvasScaleX = canvasWidth / containerWidth
-  let canvasScaleY = canvasHeight / containerHeight
-  let shouldFitWidth = false
-  let shouldFitHeight = false
-  let width = 0
-  let height = 0
-
-  if (canvasScaleX > canvasScaleY) {
-    // image is wider than it is tall
-    shouldFitWidth = true
-  } else {
-    // image is taller than it is wide
-    shouldFitHeight = true
-  }
-
-  if (shouldFitWidth) {
-    width = containerWidth * zoom
-    height = width * canvasHeight / canvasWidth
-  } else if (shouldFitHeight) {
-    height = containerHeight * zoom
-    width = height * canvasWidth / canvasHeight
-  }
-
-  const widthFactor = width / containerWidth
-  const heightFactor = height / containerHeight
+  const { canvasWidth, canvasHeight, currentContainerWidth, currentContainerHeight, panX, panY, zoom, newWrapperWidth } = options
+  const width = canvasWidth * zoom
+  const height = canvasHeight * zoom
+  // This is the value represents what the width SHOULD be.  This fixes a very tricky bug where we would know what the width should be mathematically before updated properly
+  const widthFactor = width / (newWrapperWidth || currentContainerWidth)
+  // This value should be fine since the height is determined by the canvas height which may conform to a fixed height limit.
+  const heightFactor = height / currentContainerHeight
   const clampedPanX = (widthFactor < 1) ? 0.5 : panX
   const clampedPanY = (heightFactor < 1) ? 0.5 : panY
   const xFactor = clampedPanX * (1 - widthFactor)
