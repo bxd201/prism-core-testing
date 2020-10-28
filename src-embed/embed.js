@@ -8,6 +8,8 @@ import updateGlobalPrismObject from 'src/facetSupport/utils/updateGlobalPrismObj
 
 const prismManifest = require('embedWorking/prismManifest.json') // eslint-disable-line
 
+console.info('test BASE_URL value in embed:', BASE_PATH)
+
 function injectRoot () {
   // TODO: deprecate #prism-root in favor of class- or attr-based identifier
   const prismRootLegacy = Array.from(document.querySelectorAll(EMBED_ROOT_SELECTOR_DEPRECATED))
