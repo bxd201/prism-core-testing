@@ -10,9 +10,8 @@
     background-color: white;
     background-image: linear-gradient(to top, #fff 50%, #2cabe2 50%);
     background-size: 100% 200%;
-    background-position: 0 -100%;
-    -webkit-transition: background-position 0.2s;
-    -moz-transition: background-position 0.2s;
+    background-repeat: no-repeat;
+    background-position: 0 -102%; // vertical offset of >100% to make sure there are no rendering issues with <1px pct issues
     transition: background-position 0.2s;
     margin-right: 2px;
     padding: 13% 6% 5%;
