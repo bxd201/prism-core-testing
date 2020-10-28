@@ -92,6 +92,9 @@ export function ImageRotateContainer ({ setLastActiveComponent, activePaintScene
   const imageRef = useRef()
   const prevBlobUrlRef = useRef()
   const [scalingWidth, setScalingWidth] = useState(0)
+  // this reprsents a value related to the wrapper width that an image width will be based on.
+  const [baseWidth, setBaseWidth] = useState(0)
+  // Pure wrapper width, only updated by resize after initalized with the rendered wrapper value.
   const [wrapperWidth, setWrapperWidth] = useState(0)
   const [hasLoaded, setHasLoaded] = useState(false)
   const hasLoadedRef = useRef()
@@ -175,8 +178,10 @@ export function ImageRotateContainer ({ setLastActiveComponent, activePaintScene
   }, [resized, imageRotationAngle])
 
   useEffect(() => {
-    const wrapperWidth = wrapperRef.current.getBoundingClientRect().width
-    setScalingWidth(wrapperWidth)
+    const { width } = wrapperRef.current.getBoundingClientRect()
+    setWrapperWidth(width)
+    setScalingWidth(width)
+    setBaseWidth(width)
     window.addEventListener('resize', resizeHandler)
 
     return function cleanup () {
@@ -215,7 +220,9 @@ export function ImageRotateContainer ({ setLastActiveComponent, activePaintScene
 
   const resizeHandler = (e: Event) => {
     setResized(Date.now())
-    setWrapperWidth(wrapperRef.current.getBoundingClientRect().width)
+    const { width } = wrapperRef.current.getBoundingClientRect()
+    setWrapperWidth(width)
+    setBaseWidth(width)
   }
 
   const initCanvas = (image: Object, dimensions: Object, orientationIsPortrait: booelan) => {
@@ -309,8 +316,7 @@ export function ImageRotateContainer ({ setLastActiveComponent, activePaintScene
     setOrientationDimensions(dimensions)
     setIsPortrait(dimensions.originalIsPortrait)
     setImageDims(imageDims)
-
-    setWrapperWidth(dimensions.landscapeWidth)
+    setBaseWidth(dimensions.landscapeWidth)
     setImageWidth(width)
     setImageHeight(height)
     setIsPortrait(height > width)
@@ -331,7 +337,7 @@ export function ImageRotateContainer ({ setLastActiveComponent, activePaintScene
         imageRotationAngle={imageRotationAngle}
         referenceDimensions={imageDims}
         selectedMaskIndex={selectedMaskIndex}
-        width={wrapperWidth}
+        width={baseWidth}
         maxSceneHeight={maxSceneHeight} />)
     }
     if (imageUrl && queuedImageUpload && shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.fastMask)) {
@@ -426,7 +432,7 @@ export function ImageRotateContainer ({ setLastActiveComponent, activePaintScene
             {
               (imageUrl && pins.length > 0 && !isPaintScene)
                 ? (<>
-                  <MatchPhoto isConfirmationModalActive={isConfirmationModalActive} imageUrl={imageUrl} wrapperWidth={wrapperWidth} isPortrait={isPortrait} imageDims={imageDims} pins={pins} onClickNo={setConfirmationModal} />
+                  <MatchPhoto isConfirmationModalActive={isConfirmationModalActive} imageUrl={imageUrl} wrapperWidth={baseWidth} isPortrait={isPortrait} imageDims={imageDims} pins={pins} onClickNo={setConfirmationModal} />
                 </>)
                 : null
             }

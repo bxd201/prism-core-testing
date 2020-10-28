@@ -35,6 +35,19 @@ export class ZoomTool extends PureComponent<ComponentProps, ComponentState> {
     this.dragStartHandler = this.dragStartHandler.bind(this)
     this.handleMouseMove = this.handleMouseMove.bind(this)
     this.handleDragStop = this.handleDragStop.bind(this)
+    this.calculatePos = this.calculatePos.bind(this)
+  }
+
+  componentDidUpdate () {
+    const { leftPosition, sliderWidth } = this.calculatePos(null, this.zoomSlider)
+
+    if (sliderWidth !== this.state.sliderWidth) {
+      // eslint-disable-next-line react/no-did-update-set-state
+      this.setState({
+        leftPosition,
+        sliderWidth
+      })
+    }
   }
 
   /*:: mouseDownHandler: (e: Object) => void */
@@ -50,15 +63,11 @@ export class ZoomTool extends PureComponent<ComponentProps, ComponentState> {
     window.addEventListener('mousemove', this.handleMouseMove)
     window.addEventListener('mouseup', this.handleDragStop)
   }
-  /*:: handleMouseMove: (e: Object) => void */
-  handleMouseMove (e: Object) {
-    this.setLeftPosition(e)
-  }
 
-  setLeftPosition = throttle((e: Object) => {
-    const { applyZoom, containerWidth } = this.props
-    const mouseX = e.clientX - this.zoomSliderCircleMouseX
-    const zoomSliderClientOffset = this.zoomSlider.current.getBoundingClientRect()
+  calculatePos (clientX?: number, zoomSlider: Ref) {
+    // @todo need to add a mode that calculates based on zoom and width ignoring clientx for resize
+    const mouseX = clientX - this.zoomSliderCircleMouseX
+    const zoomSliderClientOffset = zoomSlider.current.getBoundingClientRect()
     const zoomSliderCircleClientOffset = this.zoomSliderCircle.current.getBoundingClientRect()
     const zoomSliderX = zoomSliderClientOffset.left
     const zoomSliderWidth = zoomSliderClientOffset.width
@@ -66,10 +75,30 @@ export class ZoomTool extends PureComponent<ComponentProps, ComponentState> {
     const endPosition = zoomSliderWidth - zoomSliderCircleWidth
     const leftPosition = Math.max(0, Math.min(mouseX - zoomSliderX, endPosition))
 
+    return {
+      leftPosition,
+      endPosition,
+      sliderWidth: zoomSliderWidth
+    }
+  }
+
+  /*:: handleMouseMove: (e: Object) => void */
+  handleMouseMove (e: Object) {
+    this.setLeftPosition(e.clientX, this)
+  }
+
+  setLeftPosition = throttle((clientX: number) => {
+    const { applyZoom, containerWidth } = this.props
+    const { leftPosition, endPosition, sliderWidth } = this.calculatePos(clientX, this.zoomSlider)
+
     const zoomFactor = (leftPosition / endPosition) * 5 + 1
-    if (zoomFactor > 0) applyZoom(zoomFactor, containerWidth)
+    if (zoomFactor > 0) {
+      applyZoom(zoomFactor, containerWidth)
+    }
     this.setState({
-      leftPosition: leftPosition
+      leftPosition,
+      clientX,
+      sliderWidth
     })
   }, 10)
   /*:: handleDragStop: (e: Object) => void */
