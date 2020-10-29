@@ -278,6 +278,7 @@
   &__footer {
     display: flex;
     flex-direction: row;
+    flex-flow: column-reverse;
     justify-content: space-between;
     @include respond-above(sm) {
       flex-flow: row;
