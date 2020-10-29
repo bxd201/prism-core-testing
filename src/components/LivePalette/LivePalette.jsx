@@ -74,6 +74,8 @@ export class LivePalette extends PureComponent<Props, State> {
     if (pathName.split('/').slice(-1)[0] === PATH__NAME) {
       this.setState({ isFastMaskPage: true })
     }
+    // FIXME: Store should never be subscribed to by a component like this, it's non-uni-directional data flow.
+    // FIXME: middleware can be used to respond to actions, specifically something testable like redux-saga
     store.subscribe(() => {
       const { lp } = store.getState()
       if (storageAvailable('localStorage')) {
