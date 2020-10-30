@@ -45,13 +45,21 @@ const handleUndo = (itemId, redos, imagePathList, selectedArea, groupSelectList,
     }
 
     if (item.type === 'delete') {
-      const toggleItem = history.filter(historyItem => historyItem.id === toggleSelect)[0]
-      updateSelectArea.push({
-        id: toggleItem.id,
-        edgeList: toggleItem.data,
-        selectPath: item.data
+      const deleteItemsWithoutLast = history.filter(historyItem => historyItem.deleteId === item.deleteId)
+      const deleteItems = [...deleteItemsWithoutLast, item]
+      deleteItemsWithoutLast.forEach(item => {
+        redoList.push(item)
       })
-      deleteAreaList.pop()
+      deleteItems.forEach((item) => {
+        const toggleItem = history.filter(historyItem => historyItem.id === item.toggleSelectId)[0]
+        updateSelectArea.push({
+          id: toggleItem.id,
+          edgeList: toggleItem.data,
+          selectPath: item.data
+        })
+        deleteAreaList.pop()
+      })
+      history = history.filter(historyItem => historyItem.deleteId !== item.deleteId)
     }
 
     if (item.type === 'select') {
@@ -259,9 +267,14 @@ const handleRedo = (itemId, redoPathList, imagePathList, selectedArea, groupSele
     }
 
     if (item.type === 'delete') {
-      deleteAreaList.push({
-        id: item.id,
-        data: item.data
+      redoList.push(item)
+      redoList.forEach((redoItem) => {
+        history.push(redoItem)
+        deleteAreaList.push({
+          id: redoItem.id,
+          data: redoItem.data
+        })
+        selectedArea.pop()
       })
     }
 
