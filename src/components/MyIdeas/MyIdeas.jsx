@@ -161,11 +161,8 @@ const MyIdeas = (props: MyIdeasProps) => {
       }
     }
 
-    if (expectLpData) {
-      return true
-    }
-
-    return false
+    // handle only loading saved palettes
+    return expectLpData && !expectStockData && !expectCustomData
   }
 
   /**

@@ -84,7 +84,7 @@ const SavedScene = (props: SavedSceneProps, ref: RefObject | null) => {
   const imageRef = useRef()
   const { items: { colorMap } }: ColorMap = useSelector(state => state.colors)
 
-  const getStockSceneVariant = (useTinableScene: booelan, sceneData: Object) => {
+  const getStockSceneVariant = (useTinableScene: boolean, sceneData: Object) => {
     if (useTinableScene) {
       const variant = sceneData.sceneMetadata.scene.variant
       const sceneVariant = sceneData.scene.variants.find(item => item.variant_name === variant)
@@ -103,9 +103,6 @@ const SavedScene = (props: SavedSceneProps, ref: RefObject | null) => {
     const stockSceneBackgroundUrl = variant ? variant.image : null
 
     if (props.sceneData.renderingBaseUrl) {
-      // @todo props approach, having CORS issues in dev... -RS
-      // imageEndpoint = `${CUSTOM_SCENE_IMAGE_ENDPOINT}/${props.sceneData.renderingBaseUrl}?w=${props.width || 120}`
-      // @todo - This is a dev approach to stub out the endpoints
       backgroundImageUrl = ((renderingBaseUrl) => {
         const splitUrl = renderingBaseUrl.split('/')
         return `/public/${splitUrl[splitUrl.length - 1]}.jpg`

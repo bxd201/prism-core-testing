@@ -1,5 +1,5 @@
 // @flow
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import type { Element } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Switch, Route, useLocation, useHistory } from 'react-router-dom'
@@ -27,6 +27,9 @@ import { PreLoadingSVG } from './PreLoadingSVG'
 import LandingPage from '../../LandingPage/LandingPage'
 import './ColorVisualizer.scss'
 import PaintSceneMaskingWrapper from 'src/components/PaintScene/PaintSceneMask'
+import { shouldAllowFeature } from '../../../shared/utils/featureSwitch.util'
+import { FEATURE_EXCLUSIONS } from '../../../constants/configurations'
+import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
 
 export const CVW = () => {
   const dispatch = useDispatch()
@@ -43,6 +46,7 @@ export const CVW = () => {
   const [matchPhotoScene: Element, setMatchPhotoScene: (Element) => void] = useState()
   const [ImageRotateScene: Element, setUploadPaintSceneState: (Element) => void] = useState()
   const isShowFooter = location.pathname.match(/active\/masking$/) === null
+  const { featureExclusions } = useContext(ConfigurationContext)
   setTimeout(() => setIsLoading(false), 1000)
 
   const setActivePaintScene = (element) => {
@@ -67,7 +71,7 @@ export const CVW = () => {
 
   if (isLoading) {
     return <PreLoadingSVG />
-  } else if (!window.localStorage.getItem('landingPageShownSession')) {
+  } else if (!window.localStorage.getItem('landingPageShownSession') && shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.splashScreen)) {
     return <LandingPage />
   }
 
