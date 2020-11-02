@@ -47,10 +47,23 @@ export const CVW = () => {
 
   const setActivePaintScene = (element) => {
     setActivePaintSceneState(element)
+    setUploadPaintSceneState(null)
+    history.push('/active')
   }
 
   const setUploadPaintScene = (element) => {
     setUploadPaintSceneState(element)
+  }
+
+  const openSceneFromPreview = (scene, type) => {
+    if (type === 'StockScene') {
+      setActiveScene(scene)
+      setLastActiveComponent(type)
+    }
+    if (type === 'PaintScene') {
+      setActivePaintSceneState(scene)
+      setLastActiveComponent(type)
+    }
   }
 
   const activateStockScene = (id) => {
@@ -101,10 +114,7 @@ export const CVW = () => {
               <Route path='/active/expert-colors' render={() => <ExpertColorPicks isExpertColor />} />
               <Route path='/active/color-from-image' render={() => <InspiredScene />} />
               <Route path='/active/paint-photo' render={() => <SampleScenesWrapper activateScene={activateStockScene} />} />
-              <Route path='/my-ideas-preview' render={() => <MyIdeaPreview openScene={(scene, type) => {
-                setActiveScene(scene)
-                setLastActiveComponent(type)
-              }} />} />
+              <Route path='/my-ideas-preview' render={() => <MyIdeaPreview openScene={openSceneFromPreview} />} />
               <Route path='/active/masking' render={() => <PaintSceneMaskingWrapper />} />
               <Route path='/active/my-ideas' render={() => <MyIdeasContainer />} />
               <Route path='/active/help' render={() => <Help />} />

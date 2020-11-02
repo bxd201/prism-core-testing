@@ -325,6 +325,7 @@ export function ImageRotateContainer ({ setLastActiveComponent, activePaintScene
     if (isPaintScene) {
       setLastActiveComponent('PaintScene')
       activePaintScene(<PaintScene
+        key={Date.now()}
         checkIsPaintSceneUpdate={checkIsPaintSceneUpdate}
         imageUrl={imageUrl}
         workspace={paintSceneWorkspaceState}
