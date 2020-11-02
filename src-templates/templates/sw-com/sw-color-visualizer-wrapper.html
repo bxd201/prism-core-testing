@@ -19,12 +19,6 @@
         data-selected-color-family="red"></div>
 
   <script>
-    (function() {
-      var pathSplit = window.location.href.split(/#\/?/g);
-      var currentHashPath = pathSplit.length === 2 ? pathSplit[1] : '';
-      if (!currentHashPath)
-        window.location.assign(window.location.pathname + '/#/cvw/active')
-    })()
     (function(d, s, id) {
       var js, fjs = d.getElementsByTagName(s)[0];
       if (d.getElementById(id)) return;
