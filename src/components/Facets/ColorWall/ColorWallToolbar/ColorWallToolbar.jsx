@@ -1,6 +1,6 @@
 // @flow
 /* eslint-disable react/jsx-no-bind */
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { shallowEqual, useSelector } from 'react-redux'
 import { useRouteMatch, NavLink } from 'react-router-dom'
 import { FormattedMessage, useIntl } from 'react-intl'
@@ -24,11 +24,9 @@ export default () => {
   const { path, params: { section, family } } = useRouteMatch()
   const { sections = [], families = [], section: activeSection, family: activeFamily, primeColorWall } = useSelector(state => state.colors, shallowEqual)
 
-  // pretend this came from redux
-  // const primeColorWall: string = 'Sherwin-Williams Colors'
-
   const isFamilyView: boolean = !!family || path.endsWith(PATH_END_FAMILY)
   const visibleSections: string[] = sections && sections.length && hiddenSections && hiddenSections.length ? difference(sections, hiddenSections) : sections
+  const [wallSelectionMenuOpen, setWallSelectionMenuOpen] = useState(false)
 
   return (
     <AutoSizer disableHeight style={{ width: '100%' }}>
@@ -62,7 +60,6 @@ export default () => {
                 }
               </ButtonBar.Bar>
             </div>
-            {/* Wall selector or Family selector */}
             {isFamilyView && width > 768
               ? (
                 <div className={`${MODE_CLASS_NAMES.CELL} ${MODE_CLASS_NAMES.RIGHT}`}>
@@ -75,8 +72,8 @@ export default () => {
                   </ButtonBar.Bar>
                 </div>
               )
-              : (!isFamilyView && visibleSections.length > 0 &&
-                <Wrapper className={`${MODE_CLASS_NAMES.CELL} ${MODE_CLASS_NAMES.RIGHT} ${menuBarPrefix}`}>
+              : (
+                <Wrapper className={`${MODE_CLASS_NAMES.CELL} ${MODE_CLASS_NAMES.RIGHT} ${menuBarPrefix}`} onMenuToggle={({ isOpen }) => setWallSelectionMenuOpen(isOpen)}>
                   {primeColorWall && width > 768 && (
                     <NavLink
                       className={`${menuBarPrefix}__prime-color-wall-button ${primeColorWall === activeSection ? 'disabled' : ''}`}
@@ -87,13 +84,16 @@ export default () => {
                   )}
                   <Button className={`${menuBarPrefix}__button`} tag='div'>
                     <span className={`${menuBarPrefix}__button-copy`}>
-                      {activeFamily || (primeColorWall === activeSection && width > 768) ? at(messages, 'SELECT_COLLECTION')[0] : activeSection}
+                      {isFamilyView
+                        ? (activeFamily && !wallSelectionMenuOpen) ? activeFamily : at(messages, 'ALL_COLORS')[0]
+                        : (primeColorWall === activeSection) || wallSelectionMenuOpen ? at(messages, 'SELECT_COLLECTION')[0] : activeSection
+                      }
                     </span>
                     <FontAwesomeIcon className='close-icon-svg' icon={['fa', 'angle-down']} pull='right' />
                   </Button>
                   <Menu className={`${menuBarPrefix}__menu ${primeColorWall ? 'shift-left' : ''}`}>
                     {(isFamilyView || family ? families : visibleSections)
-                      .filter((name: string) => !primeColorWall || width < 768 || primeColorWall !== name)
+                      .filter((name: string) => activeFamily !== name && activeSection !== name && (width <= 768 || !primeColorWall || primeColorWall !== name))
                       .map((name: string) => (
                         <MenuItem className={`${menuBarPrefix}__menu-item`} key={name} text={name} value={name}>
                           <NavLink

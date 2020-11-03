@@ -48,7 +48,7 @@ $menu-bar-width: 27em;
     left: 0;
     margin-top: 2px;
     position: absolute;
-    top: auto;
+    top: 43.59px;
     z-index: 3;
     @include respond-above(sm) {
       &.shift-left {
@@ -60,6 +60,7 @@ $menu-bar-width: 27em;
   &__menu-item {
     height: auto;
     width: $menu-bar-width / 2;
+    margin: 3px;
   }
 
   &__menu-link {
