@@ -10,13 +10,17 @@ const zoomSliderCircleClass = `${baseClass}__zoom-slider-circle`
 
 type ComponentProps = {
   applyZoom: Function,
-  containerWidth: number
+  containerWidth: number,
+  zoomValue: number
 }
 
 type ComponentState = {
   leftPosition: number,
   isMouseDown: boolean
 }
+
+const getNormalizedValue = (value: number, min: number, max: number) => (value - min) / (max - min)
+
 export class ZoomTool extends PureComponent<ComponentProps, ComponentState> {
   zoomSlider: RefObject
   zoomSliderCircle: RefObject
@@ -39,9 +43,15 @@ export class ZoomTool extends PureComponent<ComponentProps, ComponentState> {
   }
 
   componentDidUpdate () {
-    const { leftPosition, sliderWidth } = this.calculatePos(null, this.zoomSlider)
+    const { width: sliderWidth } = this.zoomSlider.current.getBoundingClientRect()
+    const { width: circleWidth } = this.zoomSliderCircle.current.getBoundingClientRect()
+    const normalizedZoom = getNormalizedValue(this.props.zoomValue, 1, 6)
 
     if (sliderWidth !== this.state.sliderWidth) {
+      let leftPosition = (normalizedZoom * sliderWidth)
+      if (normalizedZoom === 1) {
+        leftPosition -= circleWidth // The circle width should approx the slider padding
+      }
       // eslint-disable-next-line react/no-did-update-set-state
       this.setState({
         leftPosition,

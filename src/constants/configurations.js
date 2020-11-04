@@ -56,7 +56,7 @@ export const FEATURE_EXCLUSIONS: FeatureExclusionsType = {
   download: 'download', // this removes the download feature from the app
   inspirationalPhotos: 'inspirationalPhotos', // this excludes inspirational photos from get inspired
   expertColorPicks: 'expertColorPicks', // this excludes expert color picks from get inspired
-  paintedPhotos: 'paintedPhotos', // this excludes expert color picks from get inspired
+  paintedPhotos: 'paintedPhotos', // this excludes the painted photos from get inspired
   getInspired: 'getInspired', // removes get inspired from the nav
   exploreColors: 'exploreColors', //  removes explore colors from the nav
   paintAPhoto: 'paintAPhoto', // removes paint a photo from the nav
@@ -64,5 +64,7 @@ export const FEATURE_EXCLUSIONS: FeatureExclusionsType = {
   uploadYourPhoto: 'uploadYourPhoto', // remove upload your photos from the paint a photo submenu
   colorWall: 'colorWall', // removes color wall from explore colors submenu
   colorCollections: 'colorCollection', // this will exclude color collections from explore colors
-  matchAPhoto: 'matchAPhoto' // removes match a photo from explore colors submenu
+  matchAPhoto: 'matchAPhoto', // removes match a photo from explore colors submenu,
+  splashScreen: 'splashScreen', // Excluded the animated splash page,
+  paletteSaving: 'paletteSaving' // disable saving of color palettes
 }
