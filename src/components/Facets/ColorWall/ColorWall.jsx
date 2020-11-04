@@ -17,6 +17,7 @@ import range from 'lodash/range'
 import rangeRight from 'lodash/rangeRight'
 import flatten from 'lodash/flatten'
 import clamp from 'lodash/clamp'
+import isEmpty from 'lodash/isEmpty'
 import take from 'lodash/take'
 import { generateColorWallPageUrl, fullColorName } from 'src/shared/helpers/ColorUtils'
 import 'src/scss/externalComponentSupport/AutoSizer.scss'
@@ -59,7 +60,7 @@ const ColorWall = () => {
 
   // build the chunkGrid based on color wall container width
   useEffect(() => {
-    if (unChunkedChunks && chunkGridParams) {
+    if (!isEmpty(unChunkedChunks) && !isEmpty(chunkGridParams)) {
       setChunkGrid(makeChunkGrid(unChunkedChunks, chunkGridParams, Math.ceil(containerWidth / swatchSizeUnzoomed)))
     }
   }, [unChunkedChunks, chunkGridParams, containerWidth])

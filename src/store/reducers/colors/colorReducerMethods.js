@@ -63,7 +63,14 @@ export function doReceiveColors (state: ColorsState, { payload: { unorderedColor
   const transpose = (matrix: any[][]): any[][] => matrix[0].map((_, col) => matrix.map(row => row[col]))
 
   // convert the 4 timeless color chunks recieved by the API to be 8 chunks
-  colors['Timeless Color'] = chunk(sortBy(flattenDeep(colors['Timeless Color']), id => colorMap[id].storeStripLocator), 21)
+  colors = Object.keys(colors).map(key => {
+    const targetKeys = ['Timeless Color', 'Timeless Colour', 'Couleur Intemporelle']
+    const targetedKey = targetKeys.filter(tKey => key === tKey)[0]
+
+    if (!targetedKey) return [key, colors[key]]
+
+    return [key, chunk(sortBy(flattenDeep(colors[targetedKey]), id => colorMap[id].storeStripLocator), 21)]
+  }).reduce((prev, cur) => ({ ...prev, [cur[0]]: cur[1] }), {})
 
   const primeColorWall = sections.find(section => section.prime)
 
