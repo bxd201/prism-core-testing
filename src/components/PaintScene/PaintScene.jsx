@@ -857,7 +857,8 @@ canvasHeight
       ref={this.mergeCanvasRef}
       applyZoomPan={this.applyZoomPan}
       layers={imageUrls}
-      hideCanvas />)
+      hideCanvas
+    />)
   }
 
   // This Method sorts the imagePathList by color to trigger the MergeColor component to instantiate and generate a flat (jpg) mask per color
@@ -883,17 +884,17 @@ canvasHeight
   }
 
   applyZoomPan = (ref: RefObject) => {
+    const currentWrapperDims = this.CFIWrapper.current.getBoundingClientRect()
     const options = {
-      containerWidth: this.wrapperOriginalDimensions.width,
-      containerHeight: this.wrapperOriginalDimensions.height,
       canvasWidth: this.canvasOriginalDimensions.width,
       canvasHeight: this.canvasOriginalDimensions.height,
+      currentContainerWidth: currentWrapperDims.width,
+      currentContainerHeight: currentWrapperDims.height,
       zoom: this.state.canvasZoom,
       panX: this.canvasPanStart.x,
       panY: this.canvasPanStart.y,
       canvasDisplayWidth: this.state.canvasWidth, // this is the width of the canvas style prop, it controls the onscreen size
-      canvasDisplayHeight: this.state.canvasHeight, // this is the height of the canvas style prop, it controls the onscreen size
-      currentWrapperDimensions: this.CFIWrapper.current.getBoundingClientRect()
+      canvasDisplayHeight: this.state.canvasHeight // this is the height of the canvas style prop, it controls the onscreen size
     }
     const factors = canvasDimensionFactors(options)
     applyDimensionFactorsByCanvas(factors, ref)

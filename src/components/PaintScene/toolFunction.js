@@ -716,8 +716,8 @@ export const panMove = (event, state, ref, context) => {
   context.canvasPanStart = { x: Math.max(MIN_PAN, Math.min(MAX_PAN, panX)), y: Math.max(MIN_PAN, Math.min(MAX_PAN, panY)) }
   context.lastPanPoint = { x: event.pageX, y: event.pageY }
   const options = {
-    containerWidth: wrapperOriginalDimensions.width,
-    containerHeight: wrapperOriginalDimensions.height,
+    currentContainerWidth: wrapperOriginalDimensions.width,
+    currentContainerHeight: wrapperOriginalDimensions.height,
     canvasWidth: canvasOriginalDimensions.width,
     canvasHeight: canvasOriginalDimensions.height,
     zoom: canvasZoom,
