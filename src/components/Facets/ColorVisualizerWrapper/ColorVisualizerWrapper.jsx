@@ -149,4 +149,4 @@ export const CVW = () => {
 
 CVW.defaultProps = { ...facetPubSubDefaultProps, ...facetBinderDefaultProps }
 
-export default facetBinder(CVW, 'ColorVisualizerWrapper')
+export default facetBinder(CVW, 'ColorVisualizer')
