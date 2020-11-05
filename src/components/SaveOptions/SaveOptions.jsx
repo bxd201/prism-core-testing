@@ -151,6 +151,17 @@ const SaveOptions = (props: SaveOptionsProps) => {
       <div style={{ display: 'flex', marginTop: '1px', height: '84px' }}>{livePaletteColorsDiv}</div>
     </>
   }
+
+  const getDownloadStaticResourcesPath = (config) => {
+    return {
+      // to do: headerImage, downloadDisclaimer1, downloadDisclaimer2 also should be configurable
+      headerLogo: 'colorsnap.jpg',
+      bottomLogo: `${config.brandId}logo.jpg`,
+      downloadDisclaimer1: 'Actual color may vary from on-screen representation. To confirm your color choices prior to purchase, please view a physical color chip, color card, or painted sample.',
+      downloadDisclaimer2: 'Sherwin-Williams is not responsible for the content and photos shared by users of their color selection tools.'
+    }
+  }
+
   return (
     <div className={saveOptionsBaseClassName}>
       {showLivePaletteSaveModal && lpColors.length > 0 ? <DynamicModal
@@ -177,10 +188,10 @@ const SaveOptions = (props: SaveOptionsProps) => {
       {shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.download)
         ? (activeComponent === PAINT_SCENE_COMPONENT
           ? <div>
-            <SceneDownload {...{ buttonCaption: 'DOWNLOAD_MASK', getFlatImage: getFlatImage, activeComponent: props.activeComponent }} />
+            <SceneDownload {...{ buttonCaption: 'DOWNLOAD_MASK', getFlatImage: getFlatImage, activeComponent: props.activeComponent, config: getDownloadStaticResourcesPath(props.config) }} />
           </div>
           : <div>
-            <SceneDownload {...{ buttonCaption: 'DOWNLOAD_MASK', sceneInfo: firstActiveSceneInfo, activeComponent: props.activeComponent }} />
+            <SceneDownload {...{ buttonCaption: 'DOWNLOAD_MASK', sceneInfo: firstActiveSceneInfo, activeComponent: props.activeComponent, config: getDownloadStaticResourcesPath(props.config) }} />
           </div>) : null}
       { shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.documentSaving)
         ? <button onClick={handleSave}>

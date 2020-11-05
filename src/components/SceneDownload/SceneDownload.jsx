@@ -10,7 +10,8 @@ type Props = {
   buttonCaption: string,
   sceneInfo: void | SceneInfo,
   activeComponent: string,
-  getFlatImage: Function
+  getFlatImage: Function,
+  config: object
 }
 
 const PAINT_SCENE_COMPONENT = 'PaintScene'
@@ -20,7 +21,7 @@ const PAINT_LAYER = 'paint-scene-canvas-second'
 export default (props: Props) => {
   const [isCreatingDownload, setIsCreatingDownload] = useState(false)
   const [finalImageUrl, setFinalImageUrl] = useState()
-  const { buttonCaption, sceneInfo, activeComponent, getFlatImage } = props
+  const { buttonCaption, sceneInfo, activeComponent, getFlatImage, config } = props
   const intl = useIntl()
 
   const downloadLinkRef = useCallback(link => {
@@ -40,7 +41,7 @@ export default (props: Props) => {
     }
     const scene = activeComponent === PAINT_SCENE_COMPONENT ? imageSrc : sceneInfo
 
-    generateImage(scene, activeComponent).then(image => image.getBufferAsync(Jimp.MIME_JPEG))
+    generateImage(scene, activeComponent, config).then(image => image.getBufferAsync(Jimp.MIME_JPEG))
       .then(buffer => {
         const blob = new Blob([buffer], { type: 'img/jpg' })
         const urlCreator = window.URL || window.webkitURL

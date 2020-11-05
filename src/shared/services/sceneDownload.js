@@ -4,18 +4,18 @@ import type { Color } from '../../shared/types/Colors'
 import type { SceneInfo } from '../types/Scene'
 const PAINT_SCENE_COMPONENT = 'PaintScene'
 
-const generateImage = async (scene: SceneInfo, activeComponent: string): Jimp => {
+const generateImage = async (scene: SceneInfo, activeComponent: string, config: Object): Jimp => {
   // Load base image, logos, and text
   const isPaintScene = activeComponent === PAINT_SCENE_COMPONENT
   const [image, logo, bottomLogo, smallBlackFont] = await Promise.all([
     isPaintScene ? Jimp.read(scene) : Jimp.read(scene.variant.image),
-    Jimp.read(require('src/images/scene-download/colorsnap.jpg')),
-    Jimp.read(require('src/images/scene-download/swlogo.jpg')),
+    Jimp.read(require(`src/images/scene-download/${config.headerLogo}`)),
+    Jimp.read(require(`src/images/scene-download/${config.bottomLogo}`)),
     Jimp.loadFont(`${BASE_PATH}/prism/fonts/scene-download/open-sans-16-black.fnt`)
   ])
 
-  const downloadDisclaimer1 = 'Actual color may vary from on-screen representation. To confirm your color choices prior to purchase, please view a physical color chip, color card, or painted sample.'
-  const downloadDisclaimer2 = 'Sherwin-Williams is not responsible for the content and photos shared by users of their color selection tools.'
+  const downloadDisclaimer1 = config.downloadDisclaimer1
+  const downloadDisclaimer2 = config.downloadDisclaimer2
   const originText = 'ORIGINAL'
 
   // Create array of colored surfaces
@@ -112,6 +112,7 @@ const generateImage = async (scene: SceneInfo, activeComponent: string): Jimp =>
   const footerHeight = 200
   const padding = 20
   const swatchHeight = 200
+  const bottomLogoResizeWith = 420
   const swatchWidth = (image.bitmap.width - padding) / 2
   const bottomMargin = footerHeight + ((swatchHeight + padding) * swatchRows)
 
@@ -132,8 +133,8 @@ const generateImage = async (scene: SceneInfo, activeComponent: string): Jimp =>
   // Add white space below image and add logo
   const finalHeight = image.bitmap.height + bottomMargin
   image.contain(image.bitmap.width, finalHeight, Jimp.HORIZONTAL_ALIGN_CENTER | Jimp.VERTICAL_ALIGN_TOP)
-
-  const bottomLogoX = 40
+  bottomLogo.resize(bottomLogoResizeWith, Jimp.AUTO)
+  const bottomLogoX = (swatchWidth - bottomLogoResizeWith) / 2
   const bottomLogoY = image.bitmap.height - footerHeight + (footerHeight - bottomLogo.bitmap.height) / 2
   image.composite(bottomLogo, bottomLogoX, bottomLogoY, {
     mode: Jimp.BLEND_SOURCE_OVER,
@@ -142,7 +143,7 @@ const generateImage = async (scene: SceneInfo, activeComponent: string): Jimp =>
   })
 
   const maxDisclaimerWidth = 600
-  const disclaimerX = bottomLogo.bitmap.width + bottomLogoX + 40
+  const disclaimerX = bottomLogo.bitmap.width + 2 * bottomLogoX
   const disclaimerY = bottomLogoY + 40
   image.print(blackFonts.small, disclaimerX, disclaimerY, downloadDisclaimer1, maxDisclaimerWidth, (err, image, { x, y }) => {
     if (err) {
