@@ -64,19 +64,15 @@ export const hideColorDetailsModal = () => ({ type: HIDE_COLOR_DETAILS_MODAL })
 export const UPDATE_COLOR_STATUSES: string = 'UPDATE_COLOR_STATUSES'
 export const updateColorStatuses = (statuses: ColorStatuses) => ({ type: UPDATE_COLOR_STATUSES, payload: statuses })
 
-export const mapColorDataToPayload = (colorData: Object) => {
-  // adds canadian spellings of sections TODO: remove this when the API is correct
-  Object.entries(colorData.colors.names).forEach(([key, value]) => { colorData.colors.names[key.replace('Colors', 'Colours')] = value })
-  return {
-    loading: false,
-    activeRequest: false,
-    unorderedColors: colorData.unorderedColors,
-    colors: colorData.colors.values,
-    colorLabels: colorData.colors.names,
-    brights: colorData.brights,
-    sections: colorData.sections
-  }
-}
+export const mapColorDataToPayload = (colorData: Object) => ({
+  loading: false,
+  activeRequest: false,
+  unorderedColors: colorData.unorderedColors,
+  colors: colorData.colors.values,
+  colorLabels: colorData.colors.names,
+  brights: colorData.brights,
+  sections: colorData.sections
+})
 
 export const getColorsRequests = (brandId: string, options?: any) => {
   return [
