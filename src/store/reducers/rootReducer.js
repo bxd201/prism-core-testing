@@ -43,6 +43,7 @@ import { reducerWithLocalStorage } from '../withStorage'
 import { SCENE_METADATA } from '../storageProperties'
 import brandColors from './brandColors'
 import { systemMessages } from './systemMessages'
+import { maxSceneHeight } from './system'
 
 export default combineReducers({
   brandColors,
@@ -84,5 +85,6 @@ export default combineReducers({
   useSmartMask,
   queuedImageUpload,
   systemMessages,
-  showEditCustomScene
+  showEditCustomScene,
+  maxSceneHeight
 })

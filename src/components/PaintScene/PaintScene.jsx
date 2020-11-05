@@ -199,7 +199,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.lastPanPoint = { x: 0, y: 0 }
     this.originalImageWidth = props.referenceDimensions.originalImageWidth
     this.originalImageHeight = props.referenceDimensions.originalImageHeight
-    this.maxSceneHeigth = props.maxSceneHeight || 500 // @todo put this in a constant
+    this.maxSceneHeight = props.maxSceneHeight
 
     this.state = {
       activeTool: toolNames.PAINTAREA,
@@ -433,12 +433,12 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   }
 
   /*:: calcCanvasNewDimensions(newWidth: number, oldWidth: number) => Object */
-  calcCanvasNewDimensions = (newWidth: number, oldWidth: number, maxHeight: number) => {
+  calcCanvasNewDimensions = (newWidth: number, oldWidth: number) => {
     const originalImageWidth = this.originalIsPortrait === this.isPortrait ? this.originalImageWidth : this.originalImageHeight
     const originalImageHeight = this.originalIsPortrait === this.isPortrait ? this.originalImageHeight : this.originalImageWidth
     const wrapperWidth = newWidth || this.wrapperDimensions.width
 
-    const newDims = calcOrientationDimensions(originalImageWidth, originalImageHeight, this.isPortrait, wrapperWidth, this.maxSceneHeigth)
+    const newDims = calcOrientationDimensions(originalImageWidth, originalImageHeight, this.isPortrait, wrapperWidth, this.maxSceneHeight)
 
     return {
       canvasWidth: this.isPortrait ? newDims.portraitWidth : newDims.landscapeWidth,

@@ -1,12 +1,12 @@
 // @flow
 import React, { PureComponent, createRef } from 'react'
 import ColorsFromImagePin from './ColorsFromImagePin'
-import { getScaledLandscapeHeight, getScaledPortraitHeight } from '../../shared/helpers/ImageUtils'
 import { activedPinsHalfWidth, findBrandColor, renderingPins } from './data'
 import ColorFromImageIndicator from './ColorFromImageIndicator'
 import ColorFromImageDeleteButton from './ColorFromImageDeleteButton'
 import throttle from 'lodash/throttle'
 import { injectIntl } from 'react-intl'
+import { calcOrientationDimensions } from '../../shared/utils/scale.util'
 
 type ColorFromImageState = {
   canvasX: number,
@@ -42,7 +42,8 @@ type ColorFromImageProps = {
   isActive: boolean,
   pins: Object[],
   intl: any,
-  brandColors: Array
+  brandColors: Array,
+  maxHeight: number
 }
 
 const shouldShowDelete = (pins) => {
@@ -166,37 +167,17 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
 
   /*:: updateCanvasWithNewDimensions: (newWidth: number) => void */
   updateCanvasWithNewDimensions (newWidth: number): Object {
-    let canvasWidth = 0
-    const wrapperWidth = newWidth
+    const { isPortrait, originalIsPortrait, originalImageWidth, originalImageHeight, maxHeight } = this.props
+    const ogImageWidth = originalIsPortrait === isPortrait ? originalImageWidth : originalImageHeight
+    const ogImageHeight = originalIsPortrait === isPortrait ? originalImageHeight : originalImageWidth
 
-    if (this.props.isPortrait) {
-      canvasWidth = wrapperWidth / 2
-    } else {
-      // Landscape
-      canvasWidth = wrapperWidth
-    }
-    // Rounding via bitwise or since this could be called A LOT
-    canvasWidth = canvasWidth | 0
+    const newDims = calcOrientationDimensions(ogImageWidth, ogImageHeight, isPortrait, newWidth, maxHeight)
 
-    let canvasHeight = 0
+    let canvasWidth = isPortrait ? newDims.portraitWidth : newDims.landscapeWidth
+    let canvasHeight = isPortrait ? newDims.portraitHeight : newDims.landscapeHeight
 
-    if (this.props.isPortrait) {
-      if (this.props.originalIsPortrait) {
-        canvasHeight = Math.floor(getScaledPortraitHeight(this.props.originalImageWidth, this.props.originalImageHeight)(canvasWidth))
-      } else {
-        canvasHeight = Math.floor(getScaledPortraitHeight(this.props.originalImageHeight, this.props.originalImageWidth)(canvasWidth))
-      }
-    } else {
-      if (this.props.originalIsPortrait) {
-        canvasHeight = Math.floor(getScaledLandscapeHeight(this.props.originalImageWidth, this.props.originalImageHeight)(canvasWidth))
-      } else {
-        // Swap width and height for photos that are originally landscape
-        canvasHeight = Math.floor(getScaledLandscapeHeight(this.props.originalImageHeight, this.props.originalImageWidth)(canvasWidth))
-      }
-    }
     const imageData = this.setBackgroundImage(canvasWidth, canvasHeight)
     this.setCanvasOffset(imageData)
-
     return { width: canvasWidth, height: canvasHeight }
   }
   /*:: setBackgroundImage: (width: number, height: number) => void */

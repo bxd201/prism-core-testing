@@ -1,3 +1,16 @@
+@mixin hover-style {
+  background: #fff;
+  border-color: #2cabe2;
+  cursor: pointer;
+  color: #2cabe2;
+}
+
+@mixin focus-style {
+  outline-style: solid;
+  outline-color: #2cabe2;
+  outline-width: 2px;
+}
+
 .match-photo {
   &__wrapper {
     display: flex;
@@ -47,22 +60,31 @@
     top: .875rem;
     width: auto;
     z-index: 1000;
+
     &:focus {
-      outline-style: solid;
-      outline-color: #2cabe2;
-      outline-width: 2px;
+      @include focus-style
     }
     &:hover {
-      background: #fff;
-      border-color: #2cabe2;
-      cursor: pointer;
-      color: #2cabe2;
+      @include hover-style
     }
     &--left {
       left: .875rem;
     }
     &--right {
       right: .875rem;
+
+      &.dark-button {
+        background-color: #FFFFFF;
+        color: #000000;
+        border: 1px #000000 solid;
+
+        &:focus {
+          @include focus-style
+        }
+        &:hover {
+          @include hover-style
+        }
+      }
     }
     @include respond-above(sm) {
       border: 1px solid #f2f2f2;

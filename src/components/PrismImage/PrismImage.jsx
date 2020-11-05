@@ -2,7 +2,6 @@
 import React, { forwardRef, useRef } from 'react'
 import { useIntl } from 'react-intl'
 import './PrismImage.scss'
-import { getScaledLandscapeHeight, getScaledPortraitHeight } from '../../shared/helpers/ImageUtils'
 
 type PrismImageProps = {
   shouldResample: boolean,
@@ -25,10 +24,14 @@ const PrismImage = forwardRef((props: PrismImageProps, ref) => {
     const ctx = canvas.getContext('2d')
     let canvasWidth = props.width
     let canvasHeight = props.height
+    const isPortrait = ref.current.height > ref.current.width
     if (props.shouldResample || (!canvasWidth && !canvasHeight)) {
       canvasWidth = props.scalingWidth
-      canvasHeight = ref.current.height > ref.current.width ? getScaledPortraitHeight(ref.current.width, ref.current.height)(canvasWidth) : getScaledLandscapeHeight(ref.current.width, ref.current.height)(canvasWidth)
+      const currentWidth = isPortrait ? Math.min(ref.current.width, ref.current.height) : Math.max(ref.current.width, ref.current.height)
+      const currentHeight = isPortrait ? Math.max(ref.current.width, ref.current.height) : Math.min(ref.current.width, ref.current.height)
+      canvasHeight = canvasWidth * (currentWidth / currentHeight)
     }
+
     canvas.width = canvasWidth
     canvas.height = canvasHeight
     ctx.drawImage(ref.current, 0, 0, canvasWidth, canvasHeight)

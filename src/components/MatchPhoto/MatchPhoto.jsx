@@ -12,10 +12,11 @@ type Props = {
   imageDims: Object,
   pins: Array<Object>,
   isConfirmationModalActive: boolean,
-  onClickNo: Function
+  onClickNo: Function,
+  maxHeight: number
 }
 
-export function MatchPhoto ({ imageUrl, wrapperWidth, isPortrait, imageDims, pins, isConfirmationModalActive, onClickNo }: Props) {
+export function MatchPhoto ({ imageUrl, wrapperWidth, isPortrait, imageDims, pins, isConfirmationModalActive, onClickNo, maxHeight }: Props) {
   const dispatch = useDispatch()
   useEffect(() => { dispatch(loadBrandColors()) }, [])
 
@@ -33,6 +34,7 @@ export function MatchPhoto ({ imageUrl, wrapperWidth, isPortrait, imageDims, pin
               originalIsPortrait={imageDims.originalIsPortrait}
               imageUrl={imageUrl}
               width={wrapperWidth}
+              maxHeight={maxHeight}
               isPortrait={isPortrait}
               pins={pins}
               isActive />
