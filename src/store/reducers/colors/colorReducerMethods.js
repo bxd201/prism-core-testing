@@ -1,9 +1,6 @@
 // @flow
-import chunk from 'lodash/chunk'
-import flattenDeep from 'lodash/flattenDeep'
 import flatten from 'lodash/flatten'
 import kebabCase from 'lodash/kebabCase'
-import sortBy from 'lodash/sortBy'
 import { convertUnorderedColorsToColorMap, convertUnorderedColorsToClasses } from '../../../shared/helpers/ColorDataUtils'
 import { compareKebabs } from '../../../shared/helpers/StringUtils'
 import { type ColorsState, type ReduxAction } from '../../../shared/types/Actions.js.flow'
@@ -61,16 +58,6 @@ export function doReceiveColors (state: ColorsState, { payload: { unorderedColor
   // adding toString methods to all Color objects
   const colorMap = convertUnorderedColorsToColorMap(convertUnorderedColorsToClasses(unorderedColors))
   const transpose = (matrix: any[][]): any[][] => matrix[0].map((_, col) => matrix.map(row => row[col]))
-
-  // convert the 4 timeless color chunks recieved by the API to be 8 chunks
-  colors = Object.keys(colors).map(key => {
-    const targetKeys = ['Timeless Color', 'Timeless Colour', 'Couleur Intemporelle']
-    const targetedKey = targetKeys.filter(tKey => key === tKey)[0]
-
-    if (!targetedKey) return [key, colors[key]]
-
-    return [key, chunk(sortBy(flattenDeep(colors[targetedKey]), id => colorMap[id].storeStripLocator), 21)]
-  }).reduce((prev, cur) => ({ ...prev, [cur[0]]: cur[1] }), {})
 
   const primeColorWall = sections.find(section => section.prime)
 
