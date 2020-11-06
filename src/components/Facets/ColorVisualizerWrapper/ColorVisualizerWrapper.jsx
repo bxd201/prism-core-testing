@@ -1,5 +1,5 @@
 // @flow
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import type { Element } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Switch, Route, useLocation, useHistory } from 'react-router-dom'
@@ -30,8 +30,14 @@ import PaintSceneMaskingWrapper from 'src/components/PaintScene/PaintSceneMask'
 import { shouldAllowFeature } from '../../../shared/utils/featureSwitch.util'
 import { FEATURE_EXCLUSIONS } from '../../../constants/configurations'
 import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
+import { setMaxSceneHeight } from '../../../store/actions/system'
 
-export const CVW = () => {
+type CVWPropsType = {
+  maxSceneHeight: number
+}
+
+export const CVW = (props: CVWPropsType) => {
+  const { maxSceneHeight } = props
   const dispatch = useDispatch()
   const location = useLocation()
   const history = useHistory()
@@ -47,6 +53,12 @@ export const CVW = () => {
   const [ImageRotateScene: Element, setUploadPaintSceneState: (Element) => void] = useState()
   const isShowFooter = location.pathname.match(/active\/masking$/) === null
   const { featureExclusions } = useContext(ConfigurationContext)
+
+  useEffect(() => {
+    // Use this hook to push any facet level embeded data to redux
+    dispatch(setMaxSceneHeight(maxSceneHeight))
+  }, [])
+
   setTimeout(() => setIsLoading(false), 1000)
 
   const setActivePaintScene = (element) => {

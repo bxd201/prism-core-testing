@@ -37,6 +37,7 @@ const buttonRightClass = `${buttonClass}--right`
 const closeClass = `${baseClass}__close`
 const cancelClass = `${baseClass}__cancel`
 const canvasBaseClass = `${baseClass}__canvas`
+const buttonDarkClass = 'dark-button'
 
 const getWrapperClassName = (imageUrl, pins, hasPaintSceneWorkspace) => {
   if (hasPaintSceneWorkspace) {
@@ -92,9 +93,9 @@ export function ImageRotateContainer ({ setLastActiveComponent, activePaintScene
   const imageRef = useRef()
   const prevBlobUrlRef = useRef()
   const [scalingWidth, setScalingWidth] = useState(0)
-  // this reprsents a value related to the wrapper width that an image width will be based on.
+  // this represents a value related to the wrapper width that an image width will be based on.
   const [baseWidth, setBaseWidth] = useState(0)
-  // Pure wrapper width, only updated by resize after initalized with the rendered wrapper value.
+  // Pure wrapper width, only updated by resize after initialized with the rendered wrapper value.
   const [wrapperWidth, setWrapperWidth] = useState(0)
   const [hasLoaded, setHasLoaded] = useState(false)
   const hasLoadedRef = useRef()
@@ -109,7 +110,8 @@ export function ImageRotateContainer ({ setLastActiveComponent, activePaintScene
   const brandColors = useSelector(state => state.brandColors.data)
   const uploads = useSelector(state => state.uploads)
   const dispatch = useDispatch()
-  const maxSceneHeight = maxSceneViewerHeight || 500
+  const globalMaxSceneHeight = useSelector(state => state.maxSceneHeight)
+  const maxSceneHeight = maxSceneViewerHeight || globalMaxSceneHeight
   useEffect(() => { dispatch(loadBrandColors()) }, [])
 
   useEffect(() => {
@@ -396,7 +398,7 @@ export function ImageRotateContainer ({ setLastActiveComponent, activePaintScene
         history.push('/active')
       }
     }
-  }} className={`${buttonClass} ${buttonRightClass}`}>
+  }} className={`${buttonClass} ${buttonRightClass} ${imageUrl && pins.length > 0 && !isPaintScene ? buttonDarkClass : ''}`}>
     <div className={`${closeClass}`}><span><FormattedMessage id='CLOSE' /></span>&nbsp;<FontAwesomeIcon className={``} icon={['fa', 'chevron-up']} /></div>
     <div className={`${cancelClass}`}><FontAwesomeIcon className={``} icon={['fa', 'times']} /></div>
   </button>
@@ -433,7 +435,15 @@ export function ImageRotateContainer ({ setLastActiveComponent, activePaintScene
             {
               (imageUrl && pins.length > 0 && !isPaintScene)
                 ? (<>
-                  <MatchPhoto isConfirmationModalActive={isConfirmationModalActive} imageUrl={imageUrl} wrapperWidth={baseWidth} isPortrait={isPortrait} imageDims={imageDims} pins={pins} onClickNo={setConfirmationModal} />
+                  <MatchPhoto
+                    isConfirmationModalActive={isConfirmationModalActive}
+                    imageUrl={imageUrl}
+                    wrapperWidth={baseWidth}
+                    isPortrait={isPortrait}
+                    imageDims={imageDims}
+                    pins={pins}
+                    onClickNo={setConfirmationModal}
+                    maxHeight={maxSceneHeight} />
                 </>)
                 : null
             }

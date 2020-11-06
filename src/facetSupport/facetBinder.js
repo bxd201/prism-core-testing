@@ -67,8 +67,22 @@ const renderAppInElement = (el: HTMLElement, explicitProps: Object = {}) => {
   // give all necessary default attributes and classnames
   dressUpForPrism(el)
 
+  // convert strings to floats if they are numeric strings
+  const getValueType = (value: any) => {
+    const convertedVal = parseFloat(value)
+    // this is intentional loose equality to allow values like "1.00" to equal 1
+    // eslint-disable-next-line eqeqeq
+    if (`${convertedVal}` == value) {
+      return convertedVal
+    }
+
+    return value
+  }
+
   // get props from elements data attribute, like the post_id
-  const attrProps = mapValues(Object.assign({}, el.dataset), v => v === '' ? true : v)
+  const attrProps = mapValues(Object.assign({}, el.dataset), v => {
+    return v === '' ? true : getValueType(v)
+  })
   const { reactComponent, prismFacet, bindCallback, ...props }: {
     reactComponent: string,
     prismFacet: string,
