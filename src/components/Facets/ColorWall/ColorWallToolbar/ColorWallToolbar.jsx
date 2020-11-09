@@ -26,6 +26,7 @@ export default () => {
 
   const isFamilyView: boolean = !!family || path.endsWith(PATH_END_FAMILY)
   const visibleSections: string[] = sections && sections.length && hiddenSections && hiddenSections.length ? difference(sections, hiddenSections) : sections
+
   const [wallSelectionMenuOpen, setWallSelectionMenuOpen] = useState(false)
 
   return (
@@ -72,7 +73,7 @@ export default () => {
                   </ButtonBar.Bar>
                 </div>
               )
-              : (
+              : ((isFamilyView || visibleSections.length > 1) &&
                 <Wrapper className={`${MODE_CLASS_NAMES.CELL} ${MODE_CLASS_NAMES.RIGHT} ${menuBarPrefix}`} onMenuToggle={({ isOpen }) => setWallSelectionMenuOpen(isOpen)}>
                   {primeColorWall && width > 768 && (
                     <NavLink
