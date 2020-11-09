@@ -181,7 +181,7 @@ const ColorWall = () => {
           className='inner-grid'
           cellRenderer={({ rowIndex, columnIndex, key, style }) => {
             const colorId: string = chunk[rowIndex][columnIndex]
-            return (colorId &&
+            return (colorId && colorMap[colorId] &&
               <ColorSwatch
                 ref={ref => { cellRefs.current[colorId] = ref }}
                 onFocus={() => {
