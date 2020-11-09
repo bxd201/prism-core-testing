@@ -1,9 +1,6 @@
 // @flow
-import chunk from 'lodash/chunk'
-import flattenDeep from 'lodash/flattenDeep'
 import flatten from 'lodash/flatten'
 import kebabCase from 'lodash/kebabCase'
-import sortBy from 'lodash/sortBy'
 import { convertUnorderedColorsToColorMap, convertUnorderedColorsToClasses } from '../../../shared/helpers/ColorDataUtils'
 import { compareKebabs } from '../../../shared/helpers/StringUtils'
 import { type ColorsState, type ReduxAction } from '../../../shared/types/Actions.js.flow'
@@ -62,47 +59,33 @@ export function doReceiveColors (state: ColorsState, { payload: { unorderedColor
   const colorMap = convertUnorderedColorsToColorMap(convertUnorderedColorsToClasses(unorderedColors))
   const transpose = (matrix: any[][]): any[][] => matrix[0].map((_, col) => matrix.map(row => row[col]))
 
-  // convert the 4 timeless color chunks recieved by the API to be 8 chunks
-  colors['Timeless Color'] = chunk(sortBy(flattenDeep(colors['Timeless Color']), id => colorMap[id].storeStripLocator), 21)
-  // set chunkGridParams which aren't currently being set by the API
-  sections.filter(({ name }) => ['Emerald Designer Edition'].includes(name)).forEach(section => (
-    section.chunkGridParams = { gridWidth: 5, chunkWidth: 5, wrappingEnabled: true }
-  ))
-  sections.filter(({ name }) => ['Historic Colors', 'Historic Colours'].includes(name)).forEach(section => (
-    section.chunkGridParams = { gridWidth: 2, chunkHeight: 10, wrappingEnabled: true }
-  ))
-  sections.filter(({ name }) => ['Sherwin-Williams Colors', 'Sherwin-Williams Colours'].includes(name)).forEach(section => (
-    section.chunkGridParams = { gridWidth: 8, chunkWidth: 7, wrappingEnabled: false }
-  ))
-  sections.filter(({ name }) => ['Timeless Colors', 'Timeless Colours'].includes(name)).forEach(section => (
-    section.chunkGridParams = { gridWidth: 2, chunkWidth: 7, wrappingEnabled: true }
-  ))
-  sections.filter(({ name }) => ['Living Well'].includes(name)).forEach(section => (
-    section.chunkGridParams = { gridWidth: 6, chunkWidth: 6, wrappingEnabled: true }
-  ))
+  const primeColorWall = sections.find(section => section.prime)
 
-  return sections.length ? {
-    ...state,
-    items: { colors, brights, unorderedColors: unorderedColors.map((c: Color) => c.id), sectionLabels: colorLabels, colorMap },
-    layouts: sections.map(({ name, families, chunkGridParams }) => ({
-      name,
-      unChunkedChunks: [
-        // bright chunks go first
-        ...families.flatMap((family: string): string[] => brights[family]),
-        // normal chunks go next but transposed so that each family will be in it's own column
-        ...flatten(transpose(families.map((family: string): string[] => colors[family])))
-      ],
-      chunkGridParams,
-      families: families.map(family => ({
-        name: family,
-        unChunkedChunks: [...brights[family], ...colors[family]],
-        chunkGridParams: { gridWidth: 3, chunkWidth: 7, firstRowLength: 1, wrappingEnabled: true }
-      }))
-    })),
-    status: { ...state.status, activeRequest: false, error: false, loading: false, requestComplete: true },
-    structure: sections,
-    sections: sections.map(section => section.name)
-  } : getErrorState(state)
+  return sections.length
+    ? {
+      ...state,
+      items: { colors, brights, unorderedColors: unorderedColors.map((c: Color) => c.id), sectionLabels: colorLabels, colorMap },
+      layouts: sections.map(({ name, families, chunkGridParams }) => ({
+        name,
+        unChunkedChunks: [
+          // bright chunks go first
+          ...families.flatMap((family: string): string[] => brights[family]),
+          // normal chunks go next but transposed so that each family will be in it's own column
+          ...flatten(transpose(families.map((family: string): string[] => colors[family])))
+        ],
+        chunkGridParams,
+        families: families.map(family => ({
+          name: family,
+          unChunkedChunks: [...brights[family], ...colors[family]],
+          chunkGridParams: { gridWidth: 3, chunkWidth: 7, firstRowLength: 1, wrappingEnabled: false }
+        }))
+      })),
+      status: { ...state.status, activeRequest: false, error: false, loading: false, requestComplete: true },
+      structure: sections,
+      sections: sections.map(section => section.name),
+      primeColorWall: primeColorWall && primeColorWall.name
+    }
+    : getErrorState(state)
 }
 
 export function doFilterBySection (state: ColorsState, action: ReduxAction) {
