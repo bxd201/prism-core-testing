@@ -147,7 +147,6 @@ const ColorWall = () => {
 
     const startTime: number = window.performance.now()
     const end = computeFinalScrollPosition(chunkGrid, params.colorId, containerWidth, WALL_HEIGHT, sectionLabels[section], gapsBetweenChunks ? 0.4 : 0)
-    console.log(end)
 
     ;(function scroll () {
       window.requestAnimationFrame((timestamp: DOMHighResTimeStamp) => {
