@@ -1,15 +1,13 @@
 $btn-bg: white;
-$btn-radius: $ui-radius;
 $btn-border-thickness: 1px;
-$menu-bar-width: 14em;
+$menu-bar-width: 27em;
 
 .menu-bar {
-  border: $btn-border-thickness solid var(getThemeColor('primary'));
-  border-radius: $btn-radius;
+  border: $btn-border-thickness solid getVar("colors.primary");
   cursor: default;
   height: auto;
   position: relative;
-  width: $menu-bar-width;
+  display: flex;
 
   @include respond-below(xs) {
     padding: 0 0.3em;
@@ -20,6 +18,8 @@ $menu-bar-width: 14em;
     display: flex;
     height: 100%;
     justify-content: center;
+    padding:  0.8em;
+    width: ($menu-bar-width / 2) + 0.4em;
   }
 
   &__button-copy {
@@ -29,6 +29,18 @@ $menu-bar-width: 14em;
     text-transform: uppercase;
   }
 
+  &__prime-color-wall-button {
+    background-color: white;
+    color: getVar("colors.primary");
+    padding:  0.8em;
+    border: $btn-border-thickness solid getVar("colors.primary");
+    text-decoration: none;
+    &.disabled {
+      background-color: getVar("colors.primary");
+      color: white;
+    }
+  }
+
   &__menu {
     background: $btn-bg;
     box-shadow: 0 2px 5px -1px rgba(black, .65);
@@ -36,13 +48,19 @@ $menu-bar-width: 14em;
     left: 0;
     margin-top: 2px;
     position: absolute;
-    top: auto;
+    top: 43.59px;
     z-index: 3;
+    @include respond-above(sm) {
+      &.shift-left {
+        left: ($menu-bar-width / 2) - 0.4em;
+      }
+    }
   }
 
   &__menu-item {
     height: auto;
-    width: $menu-bar-width;
+    width: $menu-bar-width / 2;
+    margin: 3px;
   }
 
   &__menu-link {
