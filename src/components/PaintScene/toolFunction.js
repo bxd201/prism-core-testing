@@ -32,7 +32,7 @@ export const bucketPaint = (e, state, props, ref) => {
   const RGB = getActiveColorRGB(hexToRGB(lpActiveColor.hex))
   const ctx = CFICanvas2.current.getContext('2d')
   const performance = window.performance.now()
-  const imagePath = floodFillScanLineStack(imageData, RGB, cursorX, cursorY, 94, performance)
+  const imagePath = floodFillScanLineStack(imageData, RGB, cursorX, cursorY, 100, performance)
   CFICanvasContext2.clearRect(0, 0, canvasOffsetWidth, canvasOffsetHeight)
   drawImagePixelByPath(ctx, canvasOffsetWidth, canvasOffsetHeight, RGB, imagePath)
   const [pixelArray, pixelIndexAlphaMap] = getImageCordinateByPixel(CFICanvas2, RGB, canvasOffsetWidth, canvasOffsetHeight, true)

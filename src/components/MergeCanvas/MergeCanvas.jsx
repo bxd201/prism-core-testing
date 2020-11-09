@@ -104,7 +104,6 @@ const MergeCanvas = (props: MergeCanvasProp, ref: RefObject) => {
     // Prevent memory leaks
     imageDataList.length = 0
     imageDataUrls.length = 0
-    images.length = 0
   }, [images])
 
   const addToQueue = (e: SyntheticEvent, i: number) => {
