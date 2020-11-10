@@ -1,9 +1,6 @@
 // @flow
-import chunk from 'lodash/chunk'
-import flattenDeep from 'lodash/flattenDeep'
 import flatten from 'lodash/flatten'
 import kebabCase from 'lodash/kebabCase'
-import sortBy from 'lodash/sortBy'
 import { convertUnorderedColorsToColorMap, convertUnorderedColorsToClasses } from '../../../shared/helpers/ColorDataUtils'
 import { compareKebabs } from '../../../shared/helpers/StringUtils'
 import { type ColorsState, type ReduxAction } from '../../../shared/types/Actions.js.flow'
@@ -62,9 +59,6 @@ export function doReceiveColors (state: ColorsState, { payload: { unorderedColor
   const colorMap = convertUnorderedColorsToColorMap(convertUnorderedColorsToClasses(unorderedColors))
   const transpose = (matrix: any[][]): any[][] => matrix[0].map((_, col) => matrix.map(row => row[col]))
 
-  // convert the 4 timeless color chunks recieved by the API to be 8 chunks
-  colors['Timeless Color'] = chunk(sortBy(flattenDeep(colors['Timeless Color']), id => colorMap[id].storeStripLocator), 21)
-
   const primeColorWall = sections.find(section => section.prime)
 
   return sections.length
@@ -83,7 +77,7 @@ export function doReceiveColors (state: ColorsState, { payload: { unorderedColor
         families: families.map(family => ({
           name: family,
           unChunkedChunks: [...brights[family], ...colors[family]],
-          chunkGridParams: { gridWidth: 3, chunkWidth: 7, firstRowLength: 1, wrappingEnabled: true }
+          chunkGridParams: { gridWidth: 3, chunkWidth: 7, firstRowLength: 1, wrappingEnabled: false }
         }))
       })),
       status: { ...state.status, activeRequest: false, error: false, loading: false, requestComplete: true },
