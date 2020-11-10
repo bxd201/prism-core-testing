@@ -86,10 +86,10 @@ export const computeFinalScrollPosition = memoizee((
   const [chunkRow: number, chunkColumn: number, row: number, column: number] = getCoords(grid, color)
 
   const widthOfChunksToTheLeft = take(grid[chunkRow], chunkColumn).reduce((w, chunk) => w + paddingBetweenChunks + getLongestArrayIn2dArray(chunk), 0)
-  const heightOfChunksAbove = take(grid, chunkRow).reduce((h, chunkRow, i) => h + paddingBetweenChunks + getHeightOfChunkRow(chunkRow) + (rowHasLabels(grid, i, labels) ? 1 : 0), 0)
+  const heightOfChunksAbove = take(grid, chunkRow).reduce((h, chunkRow, i) => h + paddingBetweenChunks + getHeightOfChunkRow(chunkRow) + (rowHasLabels(grid, i, labels) ? 2 : 0), 0) + 2
 
   const totalGridWidth = (grid.reduce((w, chunkRow) => Math.max(w, getWidthOfChunkRow(chunkRow) + paddingBetweenChunks * chunkRow.length), 0) + 2) * 50 - containerWidth
-  const totalGridHeight = (grid.reduce((h, chunkRow, i) => h + paddingBetweenChunks + getHeightOfChunkRow(chunkRow) + (rowHasLabels(grid, i, labels) ? 1 : 0), 0) + 2) * 50 - containerHeight / 2
+  const totalGridHeight = (grid.reduce((h, chunkRow, i) => h + paddingBetweenChunks + getHeightOfChunkRow(chunkRow) + (rowHasLabels(grid, i, labels) ? 2 : 0), 0) + 2) * 50 - containerHeight
 
   return {
     scrollLeft: clamp((widthOfChunksToTheLeft + column) * 50 - containerWidth / 2, 0, totalGridWidth),
