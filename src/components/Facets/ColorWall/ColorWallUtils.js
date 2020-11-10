@@ -34,7 +34,7 @@ export const getWidthOfWidestChunkRowInChunkGrid = memoizee((grid: ?string[][][]
   return grid ? grid.reduce((widest, chunkRow) => Math.max(widest, getWidthOfChunkRow(chunkRow)), 0) : 0
 })
 
-export const getLevelMap = memoizee((chunkGrid: string[][][][], centerId: ?string): { [string]: number } => {
+export const getLevelMap = memoizee((chunkGrid: string[][][][], bloomEnabled: boolean, centerId: ?string): { [string]: number } => {
   if (!centerId) return {}
   // find chunk with active centerId
   for (const chunk of flatten(chunkGrid)) {
@@ -49,6 +49,9 @@ export const getLevelMap = memoizee((chunkGrid: string[][][][], centerId: ?strin
 
     // center is 0
     levelMap[centerId] = 0
+
+    if (!bloomEnabled) { return levelMap }
+
     // close above/below/left/right is -0.5
     setLevels(-0.5, [[row + 1, column], [row - 1, column], [row, column + 1], [row, column - 1]])
     // close diagonals gets -1
@@ -72,18 +75,25 @@ export const rowHasLabels = memoizee((grid: string[][][][], rowIndex: number, la
 })
 
 // return scroll offsets (in pixels) for a specific grid, color, and container dimensions
-export const computeFinalScrollPosition = memoizee((grid: string[][][][], color: string, containerWidth: number, containerHeight: number, labels: (?string)[]): ScrollPosition => {
+export const computeFinalScrollPosition = memoizee((
+  grid: string[][][][],
+  color: string,
+  containerWidth: number,
+  containerHeight: number,
+  labels: (?string)[],
+  paddingBetweenChunks?: number = 0.4
+): ScrollPosition => {
   const [chunkRow: number, chunkColumn: number, row: number, column: number] = getCoords(grid, color)
 
-  const widthOfChunksToTheLeft = take(grid[chunkRow], chunkColumn).reduce((w, chunk) => w + 0.4 + getLongestArrayIn2dArray(chunk), 0)
-  const heightOfChunksAbove = take(grid, chunkRow).reduce((h, chunkRow, i) => h + 0.4 + getHeightOfChunkRow(chunkRow) + (rowHasLabels(grid, i, labels) ? 1 : 0), 0)
+  const widthOfChunksToTheLeft = take(grid[chunkRow], chunkColumn).reduce((w, chunk) => w + paddingBetweenChunks + getLongestArrayIn2dArray(chunk), 0)
+  const heightOfChunksAbove = take(grid, chunkRow).reduce((h, chunkRow, i) => h + paddingBetweenChunks + getHeightOfChunkRow(chunkRow) + (rowHasLabels(grid, i, labels) ? 2 : 0), 0) + 2
 
-  const totalGridWidth = (grid.reduce((w, chunkRow) => Math.max(w, getWidthOfChunkRow(chunkRow) + 0.4 * chunkRow.length), 0) + 2) * 50 - containerWidth
-  const totalGridHeight = (grid.reduce((h, chunkRow, i) => h + 0.4 + getHeightOfChunkRow(chunkRow) + (rowHasLabels(grid, i, labels) ? 1 : 0), 0) + 2) * 50 - containerHeight / 2
+  const totalGridWidth = (grid.reduce((w, chunkRow) => Math.max(w, getWidthOfChunkRow(chunkRow) + paddingBetweenChunks * chunkRow.length), 0) + 2) * 50 - containerWidth
+  const totalGridHeight = (grid.reduce((h, chunkRow, i) => h + paddingBetweenChunks + getHeightOfChunkRow(chunkRow) + (rowHasLabels(grid, i, labels) ? 2 : 0), 0) + 2) * 50 - containerHeight
 
   return {
     scrollLeft: clamp((widthOfChunksToTheLeft + column) * 50 - containerWidth / 2, 0, totalGridWidth),
-    scrollTop: clamp((heightOfChunksAbove + row) * 50, 0, totalGridHeight)
+    scrollTop: clamp((heightOfChunksAbove + row) * 50 - containerHeight / 2, 0, totalGridHeight)
   }
 })
 

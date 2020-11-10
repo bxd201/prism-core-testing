@@ -8,8 +8,8 @@ import { Grid, AutoSizer } from 'react-virtualized'
 import { filterBySection, filterByFamily } from 'src/store/actions/loadColors'
 import { type ColorsState, type GridRefState } from 'src/shared/types/Actions.js.flow'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import ColorWallContext from './ColorWallContext'
-import type { ColorWallContextProps } from './ColorWallContext'
+import ColorWallContext, { type ColorWallContextProps } from './ColorWallContext'
+import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import { getLevelMap, getScrollStep, getCoords, getLongestArrayIn2dArray, getWidthOfWidestChunkRowInChunkGrid, makeChunkGrid, computeFinalScrollPosition, getHeightOfChunkRow, rowHasLabels } from './ColorWallUtils'
 import ColorSwatch from './ColorSwatch/ColorSwatch'
 import { compareKebabs } from 'src/shared/helpers/StringUtils'
@@ -30,6 +30,7 @@ const WALL_HEIGHT = 475
 
 const ColorWall = () => {
   const { swatchMinSize, swatchMaxSize, swatchSizeZoomed, colorWallBgColor }: ColorWallContextProps = useContext(ColorWallContext)
+  const { colorWall: { bloomEnabled = true, gapsBetweenChunks = true } }: ConfigurationContextType = useContext(ConfigurationContext)
   const dispatch: { type: string, payload: {} } => void = useDispatch()
   const { url, params }: { url: string, params: { section: ?string, family?: ?string, colorId?: ?string } } = useRouteMatch()
   const history = useHistory()
@@ -52,7 +53,7 @@ const ColorWall = () => {
     ? swatchMaxSize
     : clamp(containerWidth / (getWidthOfWidestChunkRowInChunkGrid(chunkGrid) + lengthOfLongestChunkRow + 1), swatchMinSize, swatchMaxSize)
   const cellSize: number = isZoomedIn ? swatchSizeZoomed : swatchSizeUnzoomed
-  const levelMap: { [string]: number } = getLevelMap(chunkGrid, params.colorId)
+  const levelMap: { [string]: number } = getLevelMap(chunkGrid, bloomEnabled, params.colorId)
 
   // keeps redux store and url in sync for family and section data
   useEffect(() => { params.section && dispatch(filterBySection(params.section)) }, [compareKebabs(params.section, section)])
@@ -145,7 +146,7 @@ const ColorWall = () => {
     cellRefs.current[params.colorId] && cellRefs.current[params.colorId].focus()
 
     const startTime: number = window.performance.now()
-    const end = computeFinalScrollPosition(chunkGrid, params.colorId, containerWidth, WALL_HEIGHT, sectionLabels[section])
+    const end = computeFinalScrollPosition(chunkGrid, params.colorId, containerWidth, WALL_HEIGHT, sectionLabels[section], gapsBetweenChunks ? 0.4 : 0)
 
     ;(function scroll () {
       window.requestAnimationFrame((timestamp: DOMHighResTimeStamp) => {
@@ -165,7 +166,7 @@ const ColorWall = () => {
     const isLargeLabel: boolean = cellSize * lengthOfLongestRow > 120 // magic number breakpoint for choosing between small and large font
 
     return (flatten(chunk).some(cell => cell !== undefined) &&
-      <div key={key} className='color-wall-chunk' style={{ ...style, padding: cellSize / 5, zIndex: containsBloomedCell ? 1 : 'auto' }}>
+      <div key={key} className='color-wall-chunk' style={{ ...style, padding: gapsBetweenChunks ? cellSize / 5 : 0, zIndex: containsBloomedCell ? 1 : 'auto' }}>
         {sectionLabels[section] && sectionLabels[section][chunkNum] !== undefined && (
           <div className='color-wall-section-label' style={{ width: style.width - cellSize * 0.4, height: cellSize, marginBottom: isZoomedIn ? 30 : 10 }}>
             <div className={`color-wall-section-label__text ${isLargeLabel ? 'color-wall-section-label__text--large' : ''}`}>
@@ -226,10 +227,13 @@ const ColorWall = () => {
               rowCount={chunkGrid ? chunkGrid.length : 0}
               rowHeight={({ index }): number => {
                 const hasLabel: boolean = sectionLabels && rowHasLabels(chunkGrid, index, sectionLabels[section])
-                return ((getHeightOfChunkRow(chunkGrid[index]) + 0.4) * cellSize) + (hasLabel ? cellSize + (isZoomedIn ? 30 : 10) : 0)
+                return ((getHeightOfChunkRow(chunkGrid[index]) + (gapsBetweenChunks ? 0.4 : 0)) * cellSize) + (hasLabel ? cellSize + (isZoomedIn ? 30 : 10) : 0)
               }}
               columnCount={lengthOfLongestChunkRow}
-              columnWidth={({ index }) => cellSize * chunkGrid.map(chunkRow => chunkRow[index]).reduce((w, chunk) => Math.max(w, getLongestArrayIn2dArray(chunk) + 0.4), 0)}
+              columnWidth={({ index }) => {
+                const chunkColumn: string[][][] = chunkGrid.map(chunkRow => chunkRow[index])
+                return cellSize * chunkColumn.reduce((w, chunk) => Math.max(w, getLongestArrayIn2dArray(chunk) + (gapsBetweenChunks ? 0.4 : 0)), 0)
+              }}
             />
           )}
         </AutoSizer>
