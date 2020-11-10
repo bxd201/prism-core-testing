@@ -3,6 +3,7 @@
   display: flex;
   overflow: hidden;
   font-family: sans-serif;
+  // @todo theme
   color: #454545;
   padding: $livePalette__chip-side-margin 0px;
   flex-direction: column;
@@ -42,7 +43,7 @@
       font-size: 16px;
       outline:none;
       &:hover{
-        background-color: #2cabe2;
+        background-color: var(getThemeColor('secondary'));
         color: #fff;
         cursor: pointer;
       }
@@ -96,7 +97,7 @@
     padding-bottom: 0px;
     &:focus {
       outline-style: solid;
-      outline-color: #2cabe2;
+      outline-color: var(getThemeColor('secondary'));
       outline-width: 2px;
     }
     @include respond-above(sm) {
@@ -110,7 +111,7 @@
       justify-content: center;
       &:focus {
         outline-style: solid;
-        outline-color: #2cabe2;
+        outline-color: var(getThemeColor('secondary'));
         outline-width: 2px;
         z-index: 100;
       }
@@ -245,7 +246,7 @@
   &__icon {
     top: 50%;
     position: absolute;
-    color: #000000;
+    color: var(getThemeColor('black'));
     transform: translateY(-50%);
   }
 
@@ -274,7 +275,7 @@
     }
     &:focus {
       outline-style: solid;
-      outline-color: #2cabe2;
+      outline-color: var(getThemeColor('secondary'));
       outline-width: 2px;
       z-index: 100;
     }
@@ -329,7 +330,7 @@
 .live-palette-modal {
   &__wrapper {
     align-items: center;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: var(getThemeColor('dark.lighter'));
     bottom: 0;
     display: flex;
     flex-direction: column;
@@ -350,6 +351,7 @@
   &__container {
     background-color: #f0f0f0;
     box-sizing: border-box;
+    // @todo theme
     color: #333;
     font-size: 1em;
     font-weight: bold;
@@ -372,7 +374,8 @@
     margin: 0.5em 0;
   }
   &__button {
-    background: #fff;
+    background: var(getThemeColor('white'));
+    // @todo theme
     color: #333;
     display: inline-block;
     margin: 1em 0px 0px 1em;
@@ -383,7 +386,7 @@
     min-width: 140px;
     &:focus {
       outline-style: solid;
-      outline-color: #2cabe2;
+      outline-color: var(getThemeColor('secondary'));
       outline-width: 2px;
     }
     &:hover {

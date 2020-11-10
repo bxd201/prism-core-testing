@@ -6,7 +6,7 @@
 
   .prism-nav-btn {
     border: none;
-    background: #eee;
+    background: var(getThemeColor('light'));
     display: inline-block;
     color: black;
     padding: 1em;
@@ -16,12 +16,12 @@
     font-size: small;
 
     &:hover, &:focus {
-      background: #ddd;
+      background: var(getThemeColor('light'));
     }
 
     &--active {
       &, &:focus {
-        background: #222;
+        background: var(getThemeColor('dark'));
         color: white;
       }
     }

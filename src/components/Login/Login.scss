@@ -21,15 +21,15 @@
       // line-height: 0;
       // margin: 0.5rem;
       // width: 100%;
-      background-color: #fff;
-      color: #333;
+      background-color: var(getThemeColor('white'));
+      color: var(getThemeColor('dark'));
       margin-right: 10px;
       min-width: 120px;
       padding: 1em 2em;
       text-decoration: none;
       &:focus {
         outline-style: solid;
-        outline-color: #2cabe2;
+        outline-color: var(getThemeColor('secondary'));
         outline-width: 2px;
         z-index: 100;
       }

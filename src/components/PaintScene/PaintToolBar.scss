@@ -26,9 +26,9 @@
   }
   &__toolbar-button {
     background: white;
-    border: 1px solid #f2f2f2;
-    color: black;
-    fill: black;
+    border: 1px solid var(getThemeColor('light.lighter'));
+    color: var(getThemeColor('black'));
+    fill: var(getThemeColor('black'));
     height: 2em;
     outline: none;
     padding: 0em;
@@ -41,19 +41,19 @@
       width: 4em;
     }
     &:hover {
-      border-color: #2cabe2;
-      color: #2cabe2;
+      border-color: var(getThemeColor('secondary'));
+      color: var(getThemeColor('secondary'));
       cursor: pointer;
-      fill: #2cabe2;
+      fill: var(getThemeColor('secondary'));
     }
     &:focus {
       outline-style: solid;
-      outline-color: #2cabe2;
+      outline-color: var(getThemeColor('secondary'));
       outline-width: 2px;
       z-index: 100;
     }
     &:before {
-      background: #2cabe2;
+      background: var(getThemeColor('secondary'));
       content: '';
       display: inline-block;
       height: 0;
@@ -66,11 +66,11 @@
     &--active {
       border-width: 0;
       cursor: default;
-      fill: white;
+      fill: var(getThemeColor('white'));
       overflow: visible;
       outline: none;
       &:hover {
-        color: #000;
+        color: var(getThemeColor('black'));
         cursor: default;
         fill: none;
       }
@@ -90,18 +90,18 @@
       }
     }
     &--disabled {
-      border-color: #fff;
-      color: #e1e1e1;
+      border-color: var(getThemeColor('white'));
+      color: var(getThemeColor('light'));
       cursor: default;
-      fill: #e1e1e1;
+      fill: var(getThemeColor('light'));
       &:before {
         display: none;
       }
       &:hover {
-        border-color: #fff;
-        color: #e1e1e1;
+        border-color: var(getThemeColor('white'));
+        color: var(getThemeColor('light'));
         cursor: default;
-        fill: #e1e1e1;
+        fill: var(getThemeColor('light'));
       }
     }
   }
@@ -122,11 +122,11 @@
       left: -1.1em;
     }
     &--active {
-      color: #000;
+      color: var(getThemeColor('black'));
       transition: color .7s;
     }
     &--disabled {
-      color: #e1e1e1;
+      color: var(getThemeColor('light'));
     }
   }
   &__toolbar-toggle {
@@ -135,7 +135,7 @@
   }
   &__toolbar-toggle-button {
     background: white;
-    border: 1px solid #f2f2f2;
+    border: 1px solid var(getThemeColor('light'));
     color: black;
     display: block;
     fill: black;
@@ -148,19 +148,19 @@
       width: auto;
     }
     &:hover {
-      border-color: #2cabe2;
-      color: #2cabe2;
+      border-color: var(getThemeColor('secondary'));
+      color: var(getThemeColor('secondary'));
       cursor: pointer;
-      fill: #2cabe2;
+      fill: var(getThemeColor('secondary'));
     }
     &:focus {
       outline-style: solid;
-      outline-color: #2cabe2;
+      outline-color: var(getThemeColor('secondary'));
       outline-width: 2px;
     }
     &:before {
       border: 6px solid transparent;
-      border-left-color: #333333;
+      border-left-color: var(getThemeColor('dark'));
       border-left-style: solid;
       content: '';
       display: inline-block;
@@ -178,7 +178,7 @@
     }
     &:after {
       border: 6px solid transparent;
-      border-right-color: #333333;
+      border-right-color: var(getThemeColor('dark'));
       border-right-style: solid;
       content: '';
       display: inline-block;
@@ -238,7 +238,7 @@
     }
   }
   &__brush-types-erase {
-    background: #f2f2f2;
+    background: var(getThemeColor('light.lightest'));
     bottom: 32px;
     left: 4px;
     @include respond-above(sm) {
@@ -247,9 +247,9 @@
     }
   }
   &__clear-all {
-    background: white;
-    border: 1px solid #f2f2f2;
-    color: black;
+    background: var(getThemeColor('white'));
+    border: 1px solid var(getThemeColor('light'));
+    color: var(getThemeColor('black'));
     display: flex;
     font-size: .75em;
     margin: 0 auto 12px;
@@ -257,12 +257,12 @@
     padding: 0.3em 1.2em;
     width: auto;
     &:hover {
-      border-color: #2cabe2;
-      color: #2cabe2;
+      border-color: var(getThemeColor('secondary'));
+      color: var(getThemeColor('secondary'));
     }
     &:focus {
       outline-style: solid;
-      outline-color: #2cabe2;
+      outline-color: var(getThemeColor('secondary'));
       outline-width: 2px;
     }
   }
@@ -315,7 +315,7 @@
     }
   }
   &__zoom-tool {
-    background: #f2f2f2;
+    background: var(getThemeColor('light.lightest'));
     bottom: 32px;
     display: flex;
     right: 0px;
@@ -329,7 +329,7 @@
     }
     &:after {
       border: 4px solid transparent;
-      border-top-color: #f2f2f2;
+      border-top-color: var(getThemeColor('light.lighter'));
       border-top-style: solid;
       content: '';
       display: inline-block;

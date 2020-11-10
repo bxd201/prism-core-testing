@@ -11,7 +11,7 @@
   z-index: 10001;
   width: 100%;
   &__inner-box {
-    background-color: #f0f0f0;
+    background-color: var(getThemeColor('light.lightest'));
     border: 1px solid $color-grey;
     width: auto;
     height: auto;
@@ -24,14 +24,14 @@
     color: #333333;
     cursor: auto;
     &.primary {
-      background-color: #f0f0f0;
+      background-color: var(getThemeColor('light.lightest'));
     }
     &.secondary {
 
     }
     &.danger {
       color: #ffffff;
-      background-color: #d40000;
+      background-color: var(getThemeColor('danger'));
       border: none;
     }
     &.success {
@@ -72,20 +72,21 @@
   }
   &__text-input {
     padding: 2px;
-    background-color: #ffffff;
+    background-color: var(getThemeColor('white'));
     &:focus {
       outline-style: solid;
-      outline-color: #2cabe2;
+      outline-color: var(getThemeColor('secondary'));
       outline-width: 2px;
     }
   }
   &__input-label {
+    // @theme
     background-color: #666;
     border-radius: 1.3em;
-    color: #fff;
+    color: var(getThemeColor('white'));
     cursor: pointer;
     display: block;
-    fill: #fff;
+    fill: var(getThemeColor('white'));
     height: 1.3em;
     line-height: 1.3em;
     position: absolute;
@@ -95,7 +96,7 @@
     width: 1.3em;
     &:focus {
       outline-style: solid;
-      outline-color: #2cabe2;
+      outline-color: var(getThemeColor('secondary'));
       outline-width: 2px;
     }
   }
@@ -110,22 +111,22 @@
       margin: 0 0.4rem;
       &:focus {
         outline-style: solid;
-        outline-color: #2cabe2;
+        outline-color: var(getThemeColor('secondary'));
         outline-width: 2px;
       }
       &--primary {
-        background-color: #ffffff;
+        background-color: var(getThemeColor('white'));
       }
       &--secondary {
 
       }
       &--danger {
-        background-color: #d40000;
+        background-color: var(getThemeColor('light.lightest'));
         border: #f2f2f2 solid 1px;
         color: #ffffff;
         &:hover {
-          background-color: rgba(255, 255, 255, 0.8);
-          color: #d40000;
+          background-color: var(getThemeColor('primary.contrast.trans'));
+          color: var(getThemeColor('danger'));
         }
       }
       &--success {

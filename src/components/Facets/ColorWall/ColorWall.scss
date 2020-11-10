@@ -67,12 +67,12 @@
   z-index: 1;
 
   &:hover, &:focus {
-    background: #eaeaea;
+    background: var(getThemeColor('light'));
   }
 
   &:active {
-    background: #222;
-    color: white;
+    background: var(getThemeColor('dark'));
+    color: var(getThemeColor('white'));
   }
 }
 

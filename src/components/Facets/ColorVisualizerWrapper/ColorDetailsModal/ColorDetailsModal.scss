@@ -20,9 +20,10 @@
 
     .color-details-modal-content {
         position: relative;
-        background-color: #fefefe;
+        background-color: var(getThemeColor('light.lightest'));
         margin: auto;
-        border: 1px solid #888;
+        // @todo theme
+        border: 1px solid var(getThemeColor('light.darker'));
         padding: 0;
         animation: slidein 0.4s;
 
@@ -38,7 +39,7 @@
         right: 0px;
         z-index: 3;
         color: #aaaaaa;
-        background: white;
+        background: var(getThemeColor('white'));
         font-size: 28px;
         font-weight: bold;
         text-align: center;
@@ -51,7 +52,7 @@
 
   .color-details-modal-close:hover,
   .color-details-modal-close:focus {
-    color: #000;
+    color: var(getThemeColor('black'));
     text-decoration: none;
     cursor: pointer;
   }

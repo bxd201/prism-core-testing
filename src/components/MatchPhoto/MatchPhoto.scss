@@ -1,13 +1,13 @@
 @mixin hover-style {
-  background: #fff;
-  border-color: #2cabe2;
+  background: var(getThemeColor('white'));
+  border-color: var(getThemeColor('secondary'));
   cursor: pointer;
-  color: #2cabe2;
+  color: var(getThemeColor('secondary'));
 }
 
 @mixin focus-style {
   outline-style: solid;
-  outline-color: #2cabe2;
+  outline-color: var(getThemeColor('secondary'));
   outline-width: 2px;
 }
 
@@ -26,7 +26,7 @@
       padding: 0em;
     }
     &--preview {
-      background: #c8c8c8;
+      background: var(getThemeColor('light.lightest'));
       /* This prevents extra space to the bottom of the wrapper without it. */
       line-height: 0px;
       &::before {
@@ -48,10 +48,10 @@
   &__button {
     background: transparent;
     border: none;
-    color: white;
+    color: var(getThemeColor('white'));
     cursor: pointer;
     display: inline-block;
-    fill: #000;
+    fill: var(getThemeColor('black'));
     outline: none;
     padding: 0;
     position: absolute;
@@ -74,9 +74,9 @@
       right: .875rem;
 
       &.dark-button {
-        background-color: #FFFFFF;
-        color: #000000;
-        border: 1px #000000 solid;
+        background-color: var(getThemeColor('white'));
+        color: var(getThemeColor('black'));
+        border: 1px var(getThemeColor('black')) solid;
 
         &:focus {
           @include focus-style
@@ -87,7 +87,7 @@
       }
     }
     @include respond-above(sm) {
-      border: 1px solid #f2f2f2;
+      border: 1px solid var(getThemeColor('light'));
       padding: .75em 1.75em;
     }
   }
@@ -144,7 +144,7 @@
     width: 19rem;
     z-index: 1000;
     &__container {
-      background: #f0f0f0;
+      background: var(getThemeColor('light.lightest'));
       display: flex;
       flex-direction: column;
       line-height: 1.2em;
@@ -154,7 +154,7 @@
       }
     }
     &__loader {
-      color: #2cabe1;
+      color: var(getThemeColor('secondary'));
       display: block;
       line-height: 1.2em;
       margin-top: 6px;
@@ -162,13 +162,12 @@
     &__tools {
       margin-top: 6px;
       &__message {
-        background: #f0f0f0;
-        color: black;
+        color: var(getThemeColor('black'));
         margin-bottom: 6px;
         padding: .75em;
       }
       &__rotate-arrow {
-        background: white;
+        background: var(getThemeColor('white'));
         border: 1px solid transparent;
         display: inline-block;
         font-size: 3em;
@@ -178,7 +177,7 @@
         padding: 0;
         width: 48px;
         &:focus {
-          outline-color: #2cabe2;
+          outline-color: var(getThemeColor('secondary'));
           outline-style: solid;
           outline-width: 2px;
         }
@@ -193,21 +192,20 @@
         cursor: pointer;
         outline: none;
         &:focus {
-          outline-color: #2cabe2;
+          outline-color: var(getThemeColor('secondary'));
           outline-style: solid;
           outline-width: 2px;
         }
       }
       &__text {
-        background: #f0f0f0;
         border: none;
         flex: 1 0 auto;
         width: 62%;
       }
       &__accept {
-        background: white;
-        border: 1px solid #e1e1e1;
-        color: #e1e1e1;
+        background: var(getThemeColor('white'));
+        border: 1px solid var(getThemeColor('light'));
+        color: var(getThemeColor('light'));
         cursor: default;
         display: inline-block;
         flex: 1 0 auto;
@@ -218,12 +216,12 @@
         text-align: center;
         width: auto;
         &--active {
-          border: 1px solid #2cabe2;
-          color: #2cabe2;
+          border: 1px solid var(getThemeColor('secondary'));
+          color: var(getThemeColor('secondary'));
           cursor: pointer;
           &:focus {
             outline-style: solid;
-            outline-color: #2cabe2;
+            outline-color: var(getThemeColor('secondary'));
             outline-width: 2px;
           }
         }
@@ -235,7 +233,7 @@
 .confirmation-modal {
   &__wrapper {
     align-items: center;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: var(getThemeColor('dark.lighter.trans'));;
     bottom: 0;
     display: flex;
     flex-direction: column;
@@ -251,9 +249,9 @@
     }
   }
   &__container {
-    background-color: #d40000;
+    background-color: var(getThemeColor('danger'));
     box-sizing: border-box;
-    color: white;
+    color: var(getThemeColor('white'));
     font-size: 1em;
     font-weight: bold;
     height: auto;
@@ -273,8 +271,8 @@
   }
   &__button {
     background: transparent;
-    border: 1px solid #f2f2f2;
-    color: white;
+    border: 1px solid var(getThemeColor('light.lighter'));
+    color: var(getThemeColor('white'));
     display: inline-block;
     margin: 0 2px;
     outline: none;
@@ -284,13 +282,13 @@
     width: auto;
     &:focus {
       outline-style: solid;
-      outline-color: #2cabe2;
+      outline-color: var(getThemeColor('secondary'));
       outline-width: 2px;
     }
     &:hover {
-      background: rgba(255, 255, 255, 0.8);
-      border-color: white;
-      color: #d40000;
+      background: var(getThemeColor('white.lighter.trans'));
+      border-color: var(getThemeColor('white'));
+      color: var(getThemeColor('danger'));
     }
   }
 }

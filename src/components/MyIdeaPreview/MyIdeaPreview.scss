@@ -19,26 +19,26 @@
   }
 
   &__button {
-    border: 1px solid #f2f2f2;
+    border: 1px solid var(getThemeColor('light'));
     display: inline-block;
     text-align: center;
     text-transform: uppercase;
     width: auto;
-    background: #fff;
-    color: #000;
-    fill: #000;
+    background: var(getThemeColor('white'));
+    color: var(getThemeColor('black'));
+    fill: var(getThemeColor('black'));
     padding: .75em 1.75em;
     font-size: .75em;
     margin: .5em;
     font-weight: 700;
     &:focus {
       outline-style: solid;
-      outline-color: #2cabe2;
+      outline-color: var(getThemeColor('secondary'));
       outline-width: 2px;
     }
     &:hover {
-      border-color: #2cabe2;
-      color: #2cabe2;
+      border-color: var(getThemeColor('secondary'));
+      color: var(getThemeColor('secondary'));
       cursor: pointer;
     }
   }
@@ -75,22 +75,22 @@
     margin: 4px auto;
     &:focus {
       outline-style: solid;
-      outline-color: #2cabe2;
+      outline-color: var(getThemeColor('secondary'));
       outline-width: 2px;
     }
     &:hover {
       outline-style: solid;
-      outline-color: #2cabe2;
+      outline-color: var(getThemeColor('secondary'));
       outline-width: 2px;
     }
     @include respond-above(sm) {
-      border: 1px solid #f2f2f2;
+      border: 1px solid var(getThemeColor('light'));
       font-size: .85em;
       margin: 0;
       position: absolute;
       right: 17%;
       top: -4rem;
-      background: #fff;
+      background: var(getThemeColor('white'));
     }
     @include respond-above(md) {
       right: 13%;

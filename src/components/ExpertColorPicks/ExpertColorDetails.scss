@@ -22,7 +22,7 @@
       text-align: center;
     }
     &__link {
-      color: #2cabe2;
+      color: var(getThemeColor('secondary'));
       font-size: 0.7rem;
       font-weight: 600;
       margin: 0.7em 0 0 0;
@@ -30,7 +30,7 @@
     }
   }
   &__bottom__section {
-    border-top: 1px solid #ffffff;
+    border-top: 1px solid var(getThemeColor('white'));
     display: flex;
   }
   &__top__section &__content__wrapper {
@@ -51,7 +51,7 @@
       transform: translate(-50%, -50%);
       &:focus {
         outline-style: solid;
-        outline-color: #2cabe2;
+        outline-color: var(getThemeColor('secondary'));
         outline-width: 2px;
         z-index: 100;
       }

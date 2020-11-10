@@ -90,7 +90,7 @@
 
   &__slot {
     @include chip-attributes($distribution: even);
-    background-color: #ebebeb;
+    background-color: var(getThemeColor('light'));
     position: relative;
     cursor: pointer;
     transition: width .4s ease-out, opacity .1s ease-out;
@@ -99,7 +99,7 @@
     outline: none;
     &:focus {
       outline-style: solid;
-      outline-color: #2cabe2;
+      outline-color: var(getThemeColor('secondary'));
       outline-width: 2px;
     }
     @include respond-above(sm) {
@@ -113,7 +113,7 @@
       justify-content: center;
       &:focus {
         outline-style: solid;
-        outline-color: #2cabe2;
+        outline-color: var(getThemeColor('secondary'));
         outline-width: 2px;
         z-index: 100;
       }
@@ -248,7 +248,7 @@
   &__icon {
     top: 50%;
     position: absolute;
-    color: #000000;
+    color: var(getThemeColor('black'));
     transform: translateY(-50%);
   }
 
@@ -277,7 +277,7 @@
     }
     &:focus {
       outline-style: solid;
-      outline-color: #2cabe2;
+      outline-color: var(getThemeColor('secondary'));
       outline-width: 2px;
       z-index: 100;
     }
@@ -337,7 +337,7 @@
 .live-palette-modal {
   &__wrapper {
     align-items: center;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: var(getThemeColor('dark.lighter.trans'));
     bottom: 0;
     display: flex;
     flex-direction: column;
@@ -356,7 +356,7 @@
     }
   }
   &__container {
-    background-color: #f0f0f0;
+    background-color: var(getThemeColor('light'));
     box-sizing: border-box;
     color: #333;
     font-size: 1em;
@@ -381,8 +381,8 @@
   }
   &__button {
     background: #fff;
-    border: 1px solid #f2f2f2;
-    color: #333;
+    border: 1px solid var(getThemeColor('light'));
+    color: var(getThemeColor('dark'));
     display: inline-block;
     margin: 1em 0px 0px 1em;
     outline: none;
@@ -392,7 +392,7 @@
     min-width: 140px;
     &:focus {
       outline-style: solid;
-      outline-color: #2cabe2;
+      outline-color: var(getThemeColor('secondary'));
       outline-width: 2px;
     }
     &:hover {
