@@ -696,7 +696,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     if (this.props.lpActiveColor === null || (this.props.lpActiveColor.constructor === Object && Object.keys(this.props.lpActiveColor).length === 0)) return
     const ref = { CFICanvasContext4: this.CFICanvasContext4, CFICanvas2: this.CFICanvas2, CFICanvas4: this.CFICanvas4, canvasOriginalDimensions: this.canvasOriginalDimensions, canvasOffsetWidth: this.canvasOffsetWidth, canvasOffsetHeight: this.canvasOffsetHeight, CFICanvasPaint: this.CFICanvasPaint, CFICanvasContextPaint: this.CFICanvasContextPaint, CFIWrapper: this.CFIWrapper }
     const updateState = getDefinedPolygon(e, this.state, this.props, ref, isAddArea, this.clearCanvas)
-    this.setState(updateState)
+    this.setState({ ...updateState, canvasImageUrls: this.getLayers() })
   }
 
   handlePaintArea = throttle((e: Object) => {
