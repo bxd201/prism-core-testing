@@ -24,16 +24,16 @@
     margin: 1em 0;
   }
   &__painting-btn {
-    background-color: #2cabe2;
+    background-color: var(getThemeColor('secondary'));
     padding: 1em;
     color: #fff;
-    border: 1px solid #2cabe2;
+    border: 1px solid var(getThemeColor('secondary'));
     margin-top: 10px;
     & > span {
       padding: 10px;
     }
     &:hover {
-      border: 1px solid #fff;
+      border: 1px solid var(getThemeColor('white'));
       cursor: pointer;
     }
   }
@@ -45,7 +45,7 @@
     align-items: center;
     justify-content: center;
     &__line {
-      background-color: #fff;
+      background-color: var(getThemeColor('white'));
       width: 100px;
       @include respond-above(sm) {
         width: 259px;
@@ -64,17 +64,17 @@
         flex-direction: row;
     }
     &>:hover{
-        border:1px solid #2cabe2;
+        border:1px solid var(getThemeColor('secondary'));
         color:#2cabe2;
     }
     &__intro-buttons {
-      border: 1px solid #f2f2f2;
+      border: 1px solid var(getThemeColor('light'));
       display: inline-block;
       text-align: center;
       width: auto;
-      background: #fff;
-      color: #000;
-      fill: #000;
+      background: var(getThemeColor('white'));
+      color: var(getThemeColor('black'));
+      fill: var(getThemeColor('black'));
       margin: 0.25em 1em;
       min-height: calc(3 * 1em);
       padding: 1.2em 0.8em;

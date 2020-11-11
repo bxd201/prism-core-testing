@@ -3,7 +3,7 @@ import { FEATURE_EXCLUSIONS } from '../../constants/configurations'
 
 export const shouldAllowFeature = (featureExclusions, feature) => {
   // uncomment line below and hard code feature to debug
-  // if (FEATURE_EXCLUSIONS.fastMask === feature) return false
+  if (FEATURE_EXCLUSIONS.fastMask === feature) return false
   if (!featureExclusions?.length) {
     return true
   }

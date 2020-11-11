@@ -43,7 +43,7 @@
     &:focus {
       outline-style: solid;
       outline-width: 2px;
-      outline-color: #2cabe2;
+      outline-color: var(getThemeColor('secondary'));
     }
   }
 }

@@ -1,3 +1,4 @@
+
 .card-menu {
   &__wrapper {
     font-size: 1em;
@@ -6,7 +7,7 @@
     line-height: 1.2em;
     height: 100%;
     user-select: none;
-    background: #f0f0f0;
+    background: var(getThemeColor('light.lightest'));
     width: 100%;
     max-width: 100%;
     position: relative;
@@ -21,7 +22,7 @@
   &__heading {
     font-size: 1.125em;
     line-height: 1.350em;
-    background: #fff;
+    background: var(getThemeColor('white'));
     display: block;
     overflow: hidden;
     padding: 3% 16% 1.25em;
@@ -31,7 +32,7 @@
     z-index: 2;
     text-align: center;
     @include respond-above(sm) {
-      background: #f0f0f0;
+      background: var(getThemeColor('light.lightest'));
     }
   }
   &__button {
@@ -48,13 +49,13 @@
     position: absolute;
     z-index: 3;
     &:hover {
-      border-color: #2cabe2;
+      border-color: var(getThemeColor('secondary'));
       cursor: pointer;
       color: #2cabe2;
     }
     &:focus {
       outline-style: solid;
-      outline-color: #2cabe2;
+      outline-color: var(getThemeColor('secondary'));
       outline-width: 2px;
       z-index: 100;
     }
@@ -65,8 +66,8 @@
       right: .875rem;
     }
     @include respond-above(sm) {
-      background: #fff;
-      border: 1px solid #f2f2f2;
+      background: var(getThemeColor('white'));
+      border: 1px solid var(getThemeColor('light.lighter'));
       padding: .75em 1.75em;
     }
   }

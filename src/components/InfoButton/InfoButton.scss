@@ -8,13 +8,13 @@
     justify-content: center;
     &:focus {
       outline-style: solid;
-      outline-color: #2cabe2;
+      outline-color: var(getThemeColor('dark'));
       outline-width: 2px;
       z-index: 100;
     }
 
     .info-button-color-strip {
-        border: 1px solid #333;
+        border: 1px solid var(getThemeColor('dark.lighter'));
         width: inherit;
         flex: 1 1 0;
     }

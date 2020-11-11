@@ -1,5 +1,5 @@
 .SearchBar {
-  $input-bg: white;
+  $input-bg: var(getThemeColor('white'));
   $input-padding: .5em;
   $clear-size: 1em;
 

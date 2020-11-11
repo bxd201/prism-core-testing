@@ -6,20 +6,20 @@
   justify-content: space-around;
   min-height: $myideas-min-height;
   &__button {
-    border: 1px solid #f2f2f2;
-    background: #fff;
-    color:  #000;
-    fill: #000;
+    border: 1px solid var(getThemeColor('light'));
+    background: var(getThemeColor('white'));
+    color:  var(getThemeColor('black'));
+    fill: var(getThemeColor('black'));
     padding: .75em 1.75em;
     text-transform: uppercase;
     &:hover {
-      border-color: #2cabe2;
-      color: #2cabe2;
+      border-color: var(getThemeColor('secondary'));
+      color: var(getThemeColor('secondary'));
       cursor: pointer;
     }
     &:focus {
       outline-style: solid;
-      outline-color: #2cabe2;
+      outline-color: var(getThemeColor('secondary'));
       outline-width: 2px;
     }
     &__button-svg {
@@ -32,8 +32,8 @@
     padding: 0;
     margin-top: -126px;
     @include respond-above(sm) {
-      background: #fff;
-      border: 1px solid #f2f2f2;
+      background: var(getThemeColor('white'));
+      border: 1px solid var(getThemeColor('light'));
       padding: .75em 1.75em;
       margin-top: 0;
     }
@@ -105,8 +105,8 @@
       width: 100%;
     }
     &__frame {
-      box-shadow: 0 5px 6px -4px rgba(0, 0, 0, 120);
-      border-color: #ffffff;
+      box-shadow: 0 5px 6px -4px var(getThemeColor('black'));
+      border-color: var(getThemeColor('white'));
       border-width: 2px;
       border-style: solid;
       &__pane {
@@ -114,18 +114,18 @@
           overflow: hidden;
           /*height: 60px;
           width: 120px;*/
-          border-bottom: 1px solid #ffffff;
+          border-bottom: 1px solid var(getThemeColor('white'));
         }
 
       }
       &:hover {
         outline-style: solid;
-        outline-color: #2cabe2;
+        outline-color: var(getThemeColor('secondary'));
         outline-width: 2px;
       }
       &:focus {
         outline-style: solid;
-        outline-color: #2cabe2;
+        outline-color: var(getThemeColor('secondary'));
         outline-width: 2px;
       }
     }
@@ -141,13 +141,13 @@
       z-index: 1000;
 
       button {
-        background-color: #ffffff;
+        background-color: var(getThemeColor('white'));
         width: 20px;
         height: 20px;
         border-radius: 20px;
         &:focus {
           outline-style: solid;
-          outline-color: #2cabe2;
+          outline-color: var(getThemeColor('secondary'));
           outline-width: 2px;
         }
       }
@@ -156,7 +156,7 @@
       text-align: center;
       padding: 8px 4px 4px 4px;
       font-size: 0.8rem;
-      color: #333333;
+      color: var(getThemeColor('dark.lighter'));
     }
     &__colors {
       width: 100%;
@@ -168,7 +168,7 @@
         height: 25px;
         flex-grow: 1;
         display: flex;
-        border-left: 1px solid #ffffff;
+        border-left: 1px solid var(getThemeColor('white'));
         border-collapse: collapse;
         &:first-child {
           border: none;

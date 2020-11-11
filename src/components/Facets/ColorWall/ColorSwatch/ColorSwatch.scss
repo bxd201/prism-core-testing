@@ -102,10 +102,10 @@ $bloom-duration: 200ms;
     }
 
     &__message {
-      background: white;
+      background: var(getThemeColor('white'));
       bottom: 3px;
       border-radius: 2px;
-      color: black;
+      color: var(getThemeColor('black'));
       font-size: 0.5em;
       font-weight: bold;
       left: 3px;
@@ -117,7 +117,7 @@ $bloom-duration: 200ms;
       @include respond-above(sm) { font-size: 0.625em; }
     }
 
-    &--dark-color { color: rgba(white, .9); }
+    &--dark-color { color: var(getThemeColor('primary.contrast.trans')); }
 
     .add-icon {
       width: 22px;

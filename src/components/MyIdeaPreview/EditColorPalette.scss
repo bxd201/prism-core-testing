@@ -10,48 +10,48 @@
     padding: 1em 0em;
   }
   &__scene-name-input {
-    background:#fff;
+    background: var(getThemeColor('white'));
     text-align: center;
     width: 100%;
     border: 0;
     border-radius: 0;
-    color: #333;
+    color: var(getThemeColor('dark'));
     height: 2.5em;
     margin-bottom: 10px;
     padding: 10px;
     &:focus {
       outline-style: solid;
-      outline-color: #2cabe2;
+      outline-color: var(getThemeColor('secondary'));
       outline-width: 2px;
     }
   }
   &__save-button {
-    border: 1px solid #f2f2f2;
-    background: #fff;
-    color:  #000;
+    border: 1px solid var(getThemeColor('light'));
+    background: var(getThemeColor('white'));
+    color:  var(getThemeColor('black'));
     display: block;
-    fill: #000;
+    fill: var(getThemeColor('black'));
     margin: 0 auto;
     padding: .75em 1.75em;
     text-transform: uppercase;
     &:hover {
-      border-color: #2cabe2;
-      color: #2cabe2;
+      border-color: var(getThemeColor('secondary'));
+      color: var(getThemeColor('secondary'));
       cursor: pointer;
     }
     &:focus {
       outline-style: solid;
-      outline-color: #2cabe2;
+      outline-color: var(getThemeColor('secondary'));
       outline-width: 2px;
     }
   }
   &__input-label {
-    background-color: #666;
+    background-color: var(getThemeColor('dark.lighter'));
     border-radius: 1.3em;
-    color: #fff;
+    color: var(getThemeColor('white'));
     cursor: pointer;
     display: block;
-    fill: #fff;
+    fill: var(getThemeColor('white'));
     height: 1.3em;
     line-height: 1.3em;
     margin-left: -2em;
@@ -62,12 +62,12 @@
     width: 1.3em;
     &:focus {
       outline-style: solid;
-      outline-color: #2cabe2;
+      outline-color: var(getThemeColor('secondary'));
       outline-width: 2px;
     }
   }
   &__scene-name-error {
-    color: #d40000;
+    color: var(getThemeColor('danger'));
     display: flex;
     font-size: 1em;
     justify-content: center;

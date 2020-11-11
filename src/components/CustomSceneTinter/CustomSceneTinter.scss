@@ -17,6 +17,7 @@
   }
   &__modal {
     color: #ffffff;
+    // @todo theme
     background-color: rgba(0, 0, 0, 0.5);
     position: absolute;
     bottom: 0;
@@ -32,12 +33,12 @@
     }
     &__btn {
       padding: 8px;
-      color: #000000;
-      background-color: #ffffff;
+      color: var(getThemeColor('black'));
+      background-color: var(getThemeColor('white'));
       margin: 6px;
     }
   }
   &__surface-selector {
-    border-top: 1px solid #cccccc;
+    border-top: 1px solid var(getThemeColor('light.lighter'));
   }
 }

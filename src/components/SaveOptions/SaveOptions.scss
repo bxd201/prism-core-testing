@@ -11,7 +11,7 @@
     align-content: center;
     &:focus {
       outline-style: solid;
-      outline-color: #2cabe2;
+      outline-color: var(getThemeColor('secondary'));
       outline-width: 2px;
       z-index: 100;
     }
@@ -27,7 +27,7 @@
     justify-content: space-between;
     padding: 4px;
     &:hover {
-      color: #2cabe2;
+      color: var(getThemeColor('secondary'));
     }
   }
 }

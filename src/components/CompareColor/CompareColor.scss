@@ -10,7 +10,7 @@
       align-self: center;
     }
     &__button {
-      border: 1px solid #f2f2f2;
+      border: 1px solid var(getThemeColor('light'));
       text-align: center;
       text-transform: uppercase;
       fill: #000;
@@ -21,8 +21,8 @@
       right:0;
       transform: translateY(-50%);
       &:hover {
-        border: 1px solid #2cabe2;
-        color: #2cabe2;
+        border: 1px solid var(getThemeColor('secondary'));
+        color: var(getThemeColor('secondary'));
       }
     }
   }
@@ -71,18 +71,18 @@
     z-index: 1000;
   }
   &__buttons {
-    border: 1px solid #f2f2f2;
+    border: 1px solid var(getThemeColor('light'));
     cursor: pointer;
     font-size: 1em;
     outline: none;
     padding: 1em;
     visibility: visible;
-    background-color: #ffffff;
+    background-color: var(getThemeColor('white'));
     &--visible {
       visibility: hidden;
     }
     &:hover {
-      border: 1px solid #2cabe2;
+      border: 1px solid var(getThemeColor('secondary'));
     }
   }
   &__color__info {
