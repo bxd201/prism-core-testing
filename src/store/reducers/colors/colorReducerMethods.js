@@ -65,21 +65,27 @@ export function doReceiveColors (state: ColorsState, { payload: { unorderedColor
     ? {
       ...state,
       items: { colors, brights, unorderedColors: unorderedColors.map((c: Color) => c.id), sectionLabels: colorLabels, colorMap },
-      layouts: sections.map(({ name, families, chunkGridParams }) => ({
-        name,
-        unChunkedChunks: [
+      layouts: sections.map(({ name, families, chunkGridParams }) => {
+        const unChunkedChunks = [
           // bright chunks go first
           ...families.flatMap((family: string): string[] => brights[family]),
           // normal chunks go next but transposed so that each family will be in it's own column
           ...flatten(transpose(families.map((family: string): string[] => colors[family])))
-        ],
-        chunkGridParams,
-        families: families.map(family => ({
-          name: family,
-          unChunkedChunks: [...brights[family], ...colors[family]],
-          chunkGridParams: { gridWidth: 3, chunkWidth: 7, firstRowLength: 1, wrappingEnabled: false }
-        }))
-      })),
+        ]
+
+        return {
+          name,
+          unChunkedChunks,
+          chunkGridParams,
+          families: families.map(family => ({
+            name: family,
+            unChunkedChunks: families.length > 1 ? [...brights[family], ...colors[family]] : unChunkedChunks,
+            chunkGridParams: families.length > 1
+              ? { gridWidth: 3, chunkWidth: 7, firstRowLength: 1, wrappingEnabled: false }
+              : { ...chunkGridParams, wrappingEnabled: false }
+          }))
+        }
+      }),
       status: { ...state.status, activeRequest: false, error: false, loading: false, requestComplete: true },
       structure: sections,
       sections: sections.map(section => section.name),
