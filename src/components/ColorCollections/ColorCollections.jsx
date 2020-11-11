@@ -14,12 +14,15 @@ import './ColorCollections.scss'
 
 export function ColorCollections () {
   const dispatch = useDispatch()
-  const { formatMessage } = useIntl()
-  useEffect(() => { loadCollectionSummaries(dispatch) }, [])
-  useEffect(() => { loadColors(brandId)(dispatch) }, [])
+  const { formatMessage, locale } = useIntl()
+  const { brandId } = useContext(ConfigurationContext)
+
   const { summaries, categories } = useSelector(state => state.collectionSummaries, shallowEqual)
   const colorMap = useSelector(state => state.colors.items.colorMap, shallowEqual)
-  const { brandId } = useContext(ConfigurationContext)
+
+  useEffect(() => { loadCollectionSummaries(brandId, { language: locale })(dispatch) }, [])
+  useEffect(() => { loadColors(brandId)(dispatch) }, [])
+
   const [tabId, setTabId] = useState(1)
 
   const category = categories.data[categories.idToIndexHash[tabId]]

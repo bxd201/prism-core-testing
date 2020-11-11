@@ -1,5 +1,5 @@
 // @flow
-import React, { useCallback, useMemo, useState, useEffect } from 'react'
+import React, { useCallback, useMemo, useState, useEffect, useContext } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import CardMenu from 'src/components/CardMenu/CardMenu'
 import ExpertColorDetails from './ExpertColorDetails'
@@ -7,13 +7,16 @@ import ColorStripButton from 'src/components/ColorStripButton/ColorStripButton'
 import Carousel from '../Carousel/Carousel'
 import { loadExpertColorPicks } from 'src/store/actions/expertColorPicks'
 import { fullColorNumber, getContrastYIQ } from 'src/shared/helpers/ColorUtils'
-import './ExpertColorPicks.scss'
 import { useIntl } from 'react-intl'
 import at from 'lodash/at'
+import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
+import './ExpertColorPicks.scss'
 
 const ExpertColorPicks = () => {
   const dispatch = useDispatch()
-  React.useEffect(() => { loadExpertColorPicks(dispatch) }, [])
+  const { locale } = useIntl()
+  const { brandId } = useContext(ConfigurationContext)
+  React.useEffect(() => { loadExpertColorPicks(brandId, { language: locale })(dispatch) }, [])
 
   const { messages = {} } = useIntl()
   const [initPosition, setPosition] = useState(0)
