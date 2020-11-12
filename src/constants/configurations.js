@@ -63,7 +63,7 @@ export const FEATURE_EXCLUSIONS: FeatureExclusionsType = {
   useOurPhotos: 'useOurPhotos', // remove use our photos from the paint a photo submenu
   uploadYourPhoto: 'uploadYourPhoto', // remove upload your photos from the paint a photo submenu
   colorWall: 'colorWall', // removes color wall from explore colors submenu
-  colorCollections: 'colorCollection', // this will exclude color collections from explore colors
+  colorCollections: 'colorCollections', // this will exclude color collections from explore colors
   matchAPhoto: 'matchAPhoto', // removes match a photo from explore colors submenu,
   splashScreen: 'splashScreen', // Excluded the animated splash page,
   paletteSaving: 'paletteSaving' // disable saving of color palettes
