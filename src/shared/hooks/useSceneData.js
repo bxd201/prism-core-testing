@@ -1,9 +1,11 @@
 // @flow
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useContext } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
+import { useIntl } from 'react-intl'
 import { loadScenes } from '../../store/actions/scenes'
 import { SCENE_TYPES } from '../../constants/globals'
 import cloneDeep from 'lodash/cloneDeep'
+import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
 
 const ALL_SCENE_TYPES = ((items) => {
   const types = []
@@ -35,10 +37,12 @@ export default function useSceneData (sceneTypes: string[]) {
   const _scenes = useSelector(state => state.scenes)
   const dispatch = useDispatch()
   const [scenes, setScenes] = useState(null)
+  const { brandId } = useContext(ConfigurationContext)
+  const { locale } = useIntl()
 
   useEffect(() => {
     _sceneTypes.forEach(sceneType => {
-      dispatch(loadScenes(sceneType))
+      dispatch(loadScenes(sceneType, brandId, { language: locale }))
     })
   }, [])
 

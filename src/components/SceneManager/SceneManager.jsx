@@ -11,6 +11,7 @@ import 'src/providers/fontawesome/fontawesome'
 import { DndProvider } from 'react-dnd-cjs'
 import HTML5Backend from 'react-dnd-html5-backend-cjs'
 import { injectIntl } from 'react-intl'
+import WithConfigurationContext from 'src/contexts/ConfigurationContext/WithConfigurationContext'
 
 import { SCENE_TYPES, SCENE_VARIANTS } from 'constants/globals'
 import {
@@ -31,7 +32,6 @@ import TintableScene from './TintableScene'
 import SceneVariantSwitch from './SceneVariantSwitch'
 import ImagePreloader from '../../helpers/ImagePreloader'
 import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
-import ConfigurationContext from '../../contexts/ConfigurationContext/ConfigurationContext'
 import ColorPickerSlide from '../ColorPickerSlide/ColorPickerSlide'
 import type { Color } from '../../shared/types/Colors.js.flow'
 import type { Scene, SceneStatus, SceneWorkspace, Surface, Variant } from '../../shared/types/Scene'
@@ -132,7 +132,13 @@ type Props = {
   replaceLpColors: Function,
   colorMap: ColorMap | null,
   setSelectedScenePaletteLoaded: Function,
-  selectedScenePaletteLoaded: boolean
+  selectedScenePaletteLoaded: boolean,
+  config: {
+    brandId: string
+  },
+  intl: {
+    locale: string
+  }
 }
 
 type State = {
@@ -145,7 +151,6 @@ type State = {
 
 export class SceneManager extends PureComponent<Props, State> {
   static baseClass = 'prism-scene-manager'
-  static contextType = ConfigurationContext
   static defaultProps = {
     expertColorPicks: false,
     interactive: true,
@@ -179,7 +184,7 @@ export class SceneManager extends PureComponent<Props, State> {
   }
 
   componentDidMount () {
-    this.props.loadScenes(this.props.type)
+    this.props.loadScenes(this.props.type, this.props.config.brandId, { language: this.props.intl.locale })
     if (!this.props.isColorDetail && this.props.selectedSceneStatusActiveScene && !this.props.selectedScenePaletteLoaded) {
       this.tryToMergeColors()
       this.props.setSelectedScenePaletteLoaded()
@@ -686,8 +691,8 @@ const mapStateToProps = (state, props) => {
 
 const mapDispatchToProps = (dispatch: Function) => {
   return {
-    loadScenes: (type: string) => {
-      dispatch(loadScenes(type))
+    loadScenes: (type: string, brandId: string, options?: {}) => {
+      dispatch(loadScenes(type, brandId, options))
     },
     paintSceneSurface: (sceneId, surfaceId, color) => {
       dispatch(paintSceneSurface(sceneId, surfaceId, color))
@@ -743,4 +748,4 @@ export function getSceneInfoById (scene: Scene, sceneStatus: SceneStatus[]): {
   return void (0)
 }
 
-export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(SceneManager))
+export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(WithConfigurationContext(SceneManager)))
