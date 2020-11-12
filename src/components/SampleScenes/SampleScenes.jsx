@@ -1,5 +1,5 @@
 // @flow
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import Carousel from '../Carousel/Carousel'
 import ColorCollectionsTab from '../Shared/ColorCollectionsTab'
@@ -9,7 +9,8 @@ import { groupScenesByCategory } from './utils.js'
 import { loadScenes } from '../../store/actions/scenes'
 import { SCENE_TYPES } from 'constants/globals'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { FormattedMessage } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
+import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import './SampleScenes.scss'
 
 const baseClass = 'color-collections'
@@ -18,6 +19,8 @@ type ComponentProps = { isColorTinted: boolean, setHeader: Function, activateSce
 export const SampleScenesWrapper = ({ isColorTinted, setHeader, activateScene }: ComponentProps) => {
   const [tabId: string, setTabId: string => void] = useState('tab0')
   const dispatch = useDispatch()
+  const { locale } = useIntl()
+  const { brandId } = useContext(ConfigurationContext)
   const scenes = useSelector(state => {
     if (state.scenes.sceneCollection) {
       let collections = Object.values(state.scenes.sceneCollection).flat()
@@ -32,11 +35,11 @@ export const SampleScenesWrapper = ({ isColorTinted, setHeader, activateScene }:
   const fetchData = (type = null) => {
     /** load specific type of collection */
     if (type) {
-      (scenes.groupScenes.length === 0) && dispatch(loadScenes(type))
+      (scenes.groupScenes.length === 0) && dispatch(loadScenes(type, brandId, { language: locale }))
     } else {
       /** load all types */
       Object.values(SCENE_TYPES).forEach((type) => {
-        (scenes.groupScenes.length === 0) && dispatch(loadScenes(type))
+        (scenes.groupScenes.length === 0) && dispatch(loadScenes(type, brandId, { language: locale }))
       })
     }
   }
