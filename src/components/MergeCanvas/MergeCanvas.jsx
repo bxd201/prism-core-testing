@@ -3,12 +3,20 @@
  * It will do this in the order that they are specified instead of the order they load in.
  */
 // @flow
-import React, { useState, useEffect, forwardRef } from 'react'
+import React, { useState, useEffect, forwardRef, useRef } from 'react'
 import { FormattedMessage } from 'react-intl'
 
 import './MergeCanvas.scss'
 import ImageQueue from './ImageQueue'
 import { getTransformParams } from '../../shared/utils/rotationUtil'
+import uniqueId from 'lodash/uniqueId'
+
+export type MergeCanvasPayload = {
+  imageData: Uint8ClampedArray[],
+  imageDataUrls: string[],
+  width: number,
+  height: number
+}
 
 type MergeCanvasProp = {
   layers: string[],
@@ -22,17 +30,22 @@ type MergeCanvasProp = {
 }
 
 const MergeCanvas = (props: MergeCanvasProp, ref: RefObject) => {
-  const [images, setImages] = useState([])
+  const { layers } = props
+  // Creat sparse array to hold images
+  const dangerousImageRefs = useRef(layers.map(x => null))
+  const dangerousImageDataUrls = useRef([])
+  const dangerousImageData = useRef([])
+  // Use this to track and trigger state updates for when new images load.
+  // Ones that have already loaded will be caused and this ensures that a full redraw will happen so long as 1 new image loads.
+  const [imageRefId, setImageRefId] = useState(0)
   const opacity = props.colorOpacity !== void (0) ? props.colorOpacity : 1
   // The height  and width of the transformed input image
   const { width, height, rotationAngle } = props
 
   useEffect(() => {
-    const imageDataList = []
-    const imageDataUrls = []
-    if (images.length && images.length === props.layers.length) {
+    if (imageRefId.length && imageRefId.length === props.layers.length) {
       // This check should ensure that this fires after the images have been loaded
-      images.forEach((img, i) => {
+      dangerousImageRefs.current.forEach((img, i) => {
         const ctx = ref.current.getContext('2d')
         ctx.save()
         if (opacity && i > 0) {
@@ -76,21 +89,21 @@ const MergeCanvas = (props: MergeCanvasProp, ref: RefObject) => {
         ctx.drawImage(img, 0, 0, imageWidth, imageHeight)
 
         if (props.handleLayersLoaded) {
-          const imgData = ctx.getImageData(0, 0, width, height)
-          imageDataList.push(imgData)
-          const imgDataUrl = ctx.canvas.toDataURL()
-          imageDataUrls.push(imgDataUrl)
+          const imgDatum = ctx.getImageData(0, 0, width, height)
+          dangerousImageData.current.push(imgDatum)
+          const imgDatumUrl = ctx.canvas.toDataURL()
+          dangerousImageDataUrls.current.push(imgDatumUrl)
         }
         ctx.restore()
       })
 
-      if (props.handleLayersLoaded && imageDataList.length) {
+      if (props.handleLayersLoaded) {
         const ctx = ref.current.getContext('2d')
         const { width, height } = ctx.canvas
 
         props.handleLayersLoaded({
-          imageData: [...imageDataList],
-          imageDataUrls: [...imageDataUrls],
+          imageData: [...dangerousImageData.current],
+          imageDataUrls: [...dangerousImageDataUrls.current],
           width,
           height
         })
@@ -100,18 +113,22 @@ const MergeCanvas = (props: MergeCanvasProp, ref: RefObject) => {
         props.applyZoomPan(ref)
       }
     }
+  }, [imageRefId])
 
-    // Prevent memory leaks
-    imageDataList.length = 0
-    imageDataUrls.length = 0
-  }, [images])
+  useEffect(() => {
+    return () => {
+      // Clean up potential memory leak
+      dangerousImageRefs.current.length = 0
+      dangerousImageData.current.length = 0
+      dangerousImageDataUrls.current.length = 0
+    }
+  }, [])
 
   const addToQueue = (e: SyntheticEvent, i: number) => {
-    const queue = [...images]
     e.target.onLoad = null
-    queue.splice(i, 1, e.target)
-
-    setImages(queue)
+    dangerousImageRefs.current.splice(i, 1, e.target)
+    const imageCount = dangerousImageRefs.current.filter(x => !!x).map(x => uniqueId('layer_'))
+    setImageRefId(imageCount)
   }
 
   return (
