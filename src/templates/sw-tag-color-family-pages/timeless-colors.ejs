@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <base href="/">
+  <title>Sherwin-Williams Color Family Page</title>
+</head>
+
+<body>
+
+  <div prism-auto-embed
+    data-prism-facet="ColorFamilyFacet"
+    data-selected-color-family="timeless-color"
+    data-language="en-US"
+    data-color-detail-page-root="https://www.sherwin-williams.com/homeowners/color/find-and-explore-colors/paint-colors-by-family"
+    data-route-type="memory"></div>
+
+  <script>
+    (function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "/embed.js";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'prism-widget'));
+  </script>
+
+</body>
+
+</html>
