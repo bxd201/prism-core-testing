@@ -155,10 +155,10 @@ const SaveOptions = (props: SaveOptionsProps) => {
   const getDownloadStaticResourcesPath = (config) => {
     return {
       // to do: headerImage, downloadDisclaimer1, downloadDisclaimer2 also should be configurable
-      headerLogo: 'colorsnap.jpg',
-      bottomLogo: `${config.brandId}logo.jpg`,
-      downloadDisclaimer1: 'Actual color may vary from on-screen representation. To confirm your color choices prior to purchase, please view a physical color chip, color card, or painted sample.',
-      downloadDisclaimer2: 'Sherwin-Williams is not responsible for the content and photos shared by users of their color selection tools.'
+      headerLogo: config.cvw.downloadSceneHeaderImage,
+      bottomLogo: config.cvw.downloadSceneFooterImage,
+      downloadDisclaimer1: config.cvw.downloadSceneDisclaimer1,
+      downloadDisclaimer2: config.cvw.downloadSceneDisclaimer2
     }
   }
 
