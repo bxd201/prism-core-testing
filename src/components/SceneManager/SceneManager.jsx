@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import find from 'lodash/find'
 import flattenDeep from 'lodash/flattenDeep'
 import includes from 'lodash/includes'
+import sortBy from 'lodash/sortBy'
 import memoizee from 'memoizee'
 import * as GA from 'src/analytics/GoogleAnalytics'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -656,8 +657,29 @@ const mapStateToProps = (state, props) => {
 
   const selectedScenedVariant = (!props.isColorDetail && state.selectedSceneStatus) ? state.selectedSceneStatus.expectStockData.scene.variant : null
 
+  const sceneOptions = ((scenes, isColorDetail) => {
+    if (!isColorDetail) return scenes
+
+    const sceneIds = sortBy(scenes, scene => sortBy(scene.category).toString()).reduce((accum = [], next) => {
+      const last = accum[accum.length - 1]
+
+      if (!last) return [next]
+
+      if (sortBy(last.category).toString() !== sortBy(next.category).toString()) {
+        return [
+          ...accum,
+          next
+        ]
+      }
+
+      return accum
+    }, []).map(scene => scene.id)
+
+    return scenes.filter(({ id }) => sceneIds.indexOf(id) > -1)
+  })(scenes.sceneCollection[state.scenes.type] || [], props.isColorDetail)
+
   return {
-    scenes: scenes.sceneCollection[state.scenes.type],
+    scenes: sceneOptions,
     sceneStatus: sceneStatus,
     selectedSceneStatusActiveScene: selectedSceneStatusActiveScene,
     sceneStatusActiveSceneStore: sceneStatusActiveSceneStore,
