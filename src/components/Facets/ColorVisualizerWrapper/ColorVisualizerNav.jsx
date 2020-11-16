@@ -130,9 +130,8 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
       if (item.title === messages['NAV_LINKS.INSPIRATIONAL_PHOTOS']) {
         return shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.inspirationalPhotos)
       }
-
       if (item.title === messages['NAV_LINKS.EXPERT_COLOR_PICKS']) {
-        return shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.experColorPicks)
+        return shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.expertColorPicks)
       }
 
       if (item.title === messages['NAV_LINKS.PAINTED_PHOTOS']) {
