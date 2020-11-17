@@ -4,6 +4,7 @@
 # Node modules should be added by npm install and not included in source
 node_modules
 package-lock.json
+yarn.lock
 
 # Compiled assets
 dist
