@@ -9,8 +9,8 @@ const generateImage = async (scene: SceneInfo, activeComponent: string, config: 
   const isPaintScene = activeComponent === PAINT_SCENE_COMPONENT
   const [image, logo, bottomLogo, smallBlackFont] = await Promise.all([
     isPaintScene ? Jimp.read(scene) : Jimp.read(scene.variant.image),
-    Jimp.read(require(`src/images/scene-download/${config.headerLogo}`)),
-    Jimp.read(require(`src/images/scene-download/${config.bottomLogo}`)),
+    config.headerLogo && Jimp.read(config.headerLogo),
+    config.bottomLogo && Jimp.read(config.bottomLogo),
     Jimp.loadFont(`${BASE_PATH}/prism/fonts/scene-download/open-sans-16-black.fnt`)
   ])
 
@@ -108,43 +108,51 @@ const generateImage = async (scene: SceneInfo, activeComponent: string, config: 
 
   // Brochure composition settings
   const swatchRows = Math.ceil(livePaletteColors.length / 2)
-  const topMargin = 200
+  const topMargin = logo ? 200 : 0
   const footerHeight = 200
   const padding = 20
   const swatchHeight = 200
-  const bottomLogoResizeWith = 420
   const swatchWidth = (image.bitmap.width - padding) / 2
   const bottomMargin = footerHeight + ((swatchHeight + padding) * swatchRows)
+  let bottomLogoResizeWith = 400
 
   // Add white space above image and add logo
   const newHeight = image.bitmap.height + topMargin
   image.background(0xFFFFFFFF)
   image.contain(image.bitmap.width, newHeight, Jimp.HORIZONTAL_ALIGN_CENTER | Jimp.VERTICAL_ALIGN_BOTTOM)
+  if (logo) {
+    const logoX = (image.bitmap.width - logo.bitmap.width) / 2
+    const logoY = (topMargin - logo.bitmap.height) / 2
 
-  const logoX = (image.bitmap.width - logo.bitmap.width) / 2
-  const logoY = (topMargin - logo.bitmap.height) / 2
-
-  image.composite(logo, logoX, logoY, {
-    mode: Jimp.BLEND_SOURCE_OVER,
-    opacitySource: 1,
-    opacityDest: 1
-  })
+    image.composite(logo, logoX, logoY, {
+      mode: Jimp.BLEND_SOURCE_OVER,
+      opacitySource: 1,
+      opacityDest: 1
+    })
+  }
 
   // Add white space below image and add logo
   const finalHeight = image.bitmap.height + bottomMargin
-  image.contain(image.bitmap.width, finalHeight, Jimp.HORIZONTAL_ALIGN_CENTER | Jimp.VERTICAL_ALIGN_TOP)
-  bottomLogo.resize(bottomLogoResizeWith, Jimp.AUTO)
-  const bottomLogoX = (swatchWidth - bottomLogoResizeWith) / 2
-  const bottomLogoY = image.bitmap.height - footerHeight + (footerHeight - bottomLogo.bitmap.height) / 2
-  image.composite(bottomLogo, bottomLogoX, bottomLogoY, {
-    mode: Jimp.BLEND_SOURCE_OVER,
-    opacitySource: 1,
-    opacityDest: 1
-  })
-
   const maxDisclaimerWidth = 600
-  const disclaimerX = bottomLogo.bitmap.width + 2 * bottomLogoX
-  const disclaimerY = bottomLogoY + 40
+  let disclaimerX = 0
+  let disclaimerY = 0
+  image.contain(image.bitmap.width, finalHeight, Jimp.HORIZONTAL_ALIGN_CENTER | Jimp.VERTICAL_ALIGN_TOP)
+  if (bottomLogo) {
+    if (bottomLogo.bitmap.width === bottomLogo.bitmap.height) {
+      bottomLogoResizeWith = 200
+    }
+    bottomLogo.resize(bottomLogoResizeWith, Jimp.AUTO)
+    const bottomLogoX = (swatchWidth - bottomLogoResizeWith) / 2
+    const bottomLogoY = image.bitmap.height - footerHeight + (footerHeight - bottomLogo.bitmap.height) / 2
+    image.composite(bottomLogo, bottomLogoX, bottomLogoY, {
+      mode: Jimp.BLEND_SOURCE_OVER,
+      opacitySource: 1,
+      opacityDest: 1
+    })
+    disclaimerX = bottomLogo.bitmap.width + 2 * bottomLogoX
+    disclaimerY = bottomLogoY
+  }
+
   image.print(blackFonts.small, disclaimerX, disclaimerY, downloadDisclaimer1, maxDisclaimerWidth, (err, image, { x, y }) => {
     if (err) {
       console.warn(err)
