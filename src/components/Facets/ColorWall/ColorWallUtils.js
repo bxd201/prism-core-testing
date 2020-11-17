@@ -120,7 +120,7 @@ export const makeChunkGrid = memoizee((unChunkedChunks: number[][], chunkGridPar
   const wrapChunks = (chunkedChunks: string[][][]): string[][][][] => {
     return wrappingEnabled
       // determine gridWidth by decreasing it until it is less than the containerWidth
-      ? chunk(chunkedChunks, rangeRight(gridWidth + 1).find(w => getWidthOfWidestChunkRowInChunkGrid(chunk(chunkedChunks, w)) < containerWidth - 3))
+      ? chunk(chunkedChunks, rangeRight(1, gridWidth + 1).find(w => getWidthOfWidestChunkRowInChunkGrid(chunk(chunkedChunks, w)) < containerWidth - 3))
       : chunk(chunkedChunks, gridWidth)
   }
 
