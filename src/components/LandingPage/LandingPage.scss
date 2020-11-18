@@ -5,7 +5,6 @@
   flex-direction: column;
   height: 100vh;
   justify-content: center;
-  background-image: url("~src/images/intro_bg.jpg");
   background-repeat: no-repeat;
   background-position: center;
   background-size: 100% 100%;
@@ -20,7 +19,6 @@
     background-size: 300px;
     background-repeat: no-repeat;
     background-position: center;
-    background-image: url("~src/images/intro_logo_whiteglow.png");
     margin: 1em 0;
   }
   &__painting-btn {

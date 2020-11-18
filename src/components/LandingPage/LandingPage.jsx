@@ -1,12 +1,14 @@
 // @flow
 
-import React from 'react'
+import React, { useContext } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import './LandingPage.scss'
 import { useHistory } from 'react-router-dom'
 import { FormattedMessage } from 'react-intl'
+import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
 
 const LandingPage = () => {
+  const { cvw = {} } = useContext(ConfigurationContext)
   const history = useHistory()
 
   const redirect = (url) => {
@@ -15,8 +17,8 @@ const LandingPage = () => {
   }
 
   return (
-    <div className='cvw-landing-page-wrapper'>
-      <div className='cvw-landing-page-wrapper__image' />
+    <div className='cvw-landing-page-wrapper' style={{ 'backgroundImage': cvw.introBg }}>
+      <div className='cvw-landing-page-wrapper__image' style={{ 'backgroundImage': cvw.introLogo }} />
       <button className='cvw-landing-page-wrapper__painting-btn' onClick={() => redirect('/active')}>
         <FormattedMessage id='START_PAINTING_NOW' />
         <FontAwesomeIcon icon={['fa', 'chevron-right']} />

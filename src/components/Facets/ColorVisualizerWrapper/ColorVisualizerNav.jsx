@@ -81,7 +81,7 @@ export const DropDownMenu = ({ title, items }: DropDownMenuProps) => {
 }
 
 const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
-  const { config: { featureExclusions }, setMatchPhotoScene, activePaintScene, uploadPaintScene, setLastActiveComponent } = props
+  const { config: { featureExclusions, cvw = {} }, setMatchPhotoScene, activePaintScene, uploadPaintScene, setLastActiveComponent } = props
   const { messages } = useIntl()
   const history = useHistory()
   const location = useLocation()
@@ -107,19 +107,19 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
   const getDropDownItemsForGetInspired = () => {
     const items = [
       {
-        img: require('src/images/color-visualizer-wrapper/inspiration-submenu__thumbnail--painted-scenes.png'),
+        img: cvw.navPaintedScenes,
         title: messages['NAV_LINKS.PAINTED_PHOTOS'],
         content: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.PAINTED_PHOTOS'],
         onClick: () => history.push('/active/use-our-image')
       },
       {
-        img: require('src/images/color-visualizer-wrapper/inspiration-submenu__thumbnail--expert-color-picks.png'),
+        img: cvw.navExpertColorPicks,
         title: messages['NAV_LINKS.EXPERT_COLOR_PICKS'],
         content: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.EXPERT_COLOR_PICKS'],
         onClick: () => history.push('/active/expert-colors')
       },
       {
-        img: require('src/images/color-visualizer-wrapper/inspiration-submenu__thumbnail--sample-photos.png'),
+        img: cvw.navSamplePhotos,
         title: messages['NAV_LINKS.INSPIRATIONAL_PHOTOS'],
         content: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.INSPIRATIONAL_PHOTOS'],
         onClick: () => history.push('/active/color-from-image')
@@ -145,16 +145,16 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
   const getDropDownItemsForPaintAPhoto = () => {
     const items = [
       {
-        img: require('src/images/color-visualizer-wrapper/scene-submenu__thumbnail--sample-scenes.png'),
+        img: cvw.navSampleScenes,
         title: messages['NAV_LINKS.USE_OUR_PHOTOS'],
         content: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.USE_OUR_PHOTOS'],
         onClick: () => history.push('/active/paint-photo')
       },
       {
-        img: require('src/images/color-visualizer-wrapper/scene-submenu__thumbnail--my-photos.png'),
-        imgiPhone: require('src/images/color-visualizer-wrapper/scene-submenu__thumbnail--iphone.png'),
-        imgiPad: require('src/images/color-visualizer-wrapper/scene-submenu__thumbnail--ipad.png'),
-        imgAndroid: require('src/images/color-visualizer-wrapper/scene-submenu__thumbnail--android.png'),
+        img: cvw.navThumbMyPhotos,
+        imgiPhone: cvw.navThumbIphone,
+        imgiPad: cvw.navThumbIpad,
+        imgAndroid: cvw.navThumbAndroid,
         title: messages['NAV_LINKS.UPLOAD_YOUR_PHOTO'],
         titleMobile: messages['NAV_LINKS.GET_THE_APP'],
         content: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.UPLOAD_YOUR_PHOTO'],
@@ -199,19 +199,19 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
   const getDropDownItemsForExploreColors = () => {
     const items = [
       {
-        img: require('src/images/color-visualizer-wrapper/color-submenu__thumbnail--explore-color.png'),
+        img: cvw.navExploreColor,
         title: messages['NAV_LINKS.DIGITAL_COLOR_WALL'],
         content: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.DIGITAL_COLOR_WALL'],
         onClick: () => history.push('/active/color-wall/section/sherwin-williams-colors')
       },
       {
-        img: require('src/images/color-visualizer-wrapper/color-submenu__thumbnail--color-collections.png'),
+        img: cvw.navColorCollections,
         title: messages['NAV_LINKS.COLOR_COLLECTIONS'],
         content: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.COLOR_COLLECTIONS'],
         onClick: () => history.push('/active/color-collections')
       },
       {
-        img: require('src/images/color-visualizer-wrapper/color-submenu__thumbnail--match-photo.png'),
+        img: cvw.navMatchPhoto,
         title: messages['NAV_LINKS.MATCH_A_PHOTO'],
         content: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.MATCH_A_PHOTO'],
         onClick: () => {
