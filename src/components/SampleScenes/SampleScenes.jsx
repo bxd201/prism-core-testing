@@ -1,5 +1,5 @@
 // @flow
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect, useContext, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import Carousel from '../Carousel/Carousel'
 import ColorCollectionsTab from '../Shared/ColorCollectionsTab'
@@ -18,6 +18,7 @@ type ComponentProps = { isColorTinted: boolean, setHeader: Function, activateSce
 
 export const SampleScenesWrapper = ({ isColorTinted, setHeader, activateScene }: ComponentProps) => {
   const [tabId: string, setTabId: string => void] = useState('tab0')
+  const [maxHeight, setMaxHeight] = useState(Number.MAX_SAFE_INTEGER)
   const dispatch = useDispatch()
   const { locale } = useIntl()
   const { brandId } = useContext(ConfigurationContext)
@@ -27,6 +28,11 @@ export const SampleScenesWrapper = ({ isColorTinted, setHeader, activateScene }:
       return groupScenesByCategory(collections)
     }
   })
+
+  const getClientMinHeight = (height) => {
+    const minHeight = Math.min(maxHeight, height)
+    setMaxHeight(minHeight)
+  }
 
   useEffect(() => {
     fetchData(SCENE_TYPES.ROOM)
@@ -43,7 +49,6 @@ export const SampleScenesWrapper = ({ isColorTinted, setHeader, activateScene }:
       })
     }
   }
-
   return (
     <CardMenu menuTitle={'Use Our Photo'}>
       {() => (<div className={`${baseClass}__wrapper`}>
@@ -51,6 +56,8 @@ export const SampleScenesWrapper = ({ isColorTinted, setHeader, activateScene }:
         <div className={`${baseClass}__collections-list`}>
           {scenes && scenes.groupScenes && scenes.tabMap && <Carousel
             BaseComponent={StaticTintSceneWrapper}
+            getClientHeight={getClientMinHeight}
+            maxHeight={maxHeight}
             data={scenes.groupScenes}
             defaultItemsPerView={1}
             tabId={tabId}
@@ -67,8 +74,9 @@ export const SampleScenesWrapper = ({ isColorTinted, setHeader, activateScene }:
   )
 }
 
-type Props = { data: Object, isColorTinted: boolean, activateScene: Function, isActivedPage?: boolean}
-const StaticTintSceneWrapper = ({ data, isColorTinted, activateScene, isActivedPage }: Props) => {
+type Props = { data: Object, isColorTinted: boolean, activateScene: Function, getClientHeight: Function, isActivedPage?: boolean, maxHeight: Number}
+const StaticTintSceneWrapper = ({ data, isColorTinted, activateScene, isActivedPage, getClientHeight, maxHeight }: Props) => {
+  const sceneWrapperRef: RefObject = useRef()
   let props = isColorTinted ? {
     color: void (0),
     scene: data,
@@ -81,9 +89,13 @@ const StaticTintSceneWrapper = ({ data, isColorTinted, activateScene, isActivedP
     scene: data
   }
 
+  useEffect(() => {
+    sceneWrapperRef.current && getClientHeight(sceneWrapperRef.current.clientHeight)
+  }, [sceneWrapperRef])
+
   return (
     <>
-      <div className='static__scene__image__wrapper'>
+      <div className='static__scene__image__wrapper' ref={sceneWrapperRef} style={{ maxHeight: maxHeight }}>
         <StaticTintScene {...props} />
       </div>
       <button tabIndex={(isActivedPage) ? '0' : '-1'} className='static__scene__paint__btn' onClick={() => activateScene(data.id)}>
