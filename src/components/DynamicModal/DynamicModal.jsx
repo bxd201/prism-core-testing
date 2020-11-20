@@ -1,7 +1,10 @@
 // @flow
 import React, { useState, useEffect } from 'react'
+import { useDispatch } from 'react-redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { KEY_CODES } from 'src/constants/globals'
+import { mouseDownPreventDefault } from 'src/shared/helpers/MiscUtils'
+import { useIntl, FormattedMessage } from 'react-intl'
 import './DynamicModal.scss'
 
 export const DYNAMIC_MODAL_STYLE = {
@@ -38,22 +41,25 @@ type DynamicModalProps = {
   allowInput?: boolean,
   inputDefault?: string,
   modalStyle?: string,
-  previewData?: HTMLElement
+  previewData?: HTMLElement,
+  showWillDestoryWarning?: boolean
 }
 
 const getDymanicModalClassName = (baseName: string, modalStyle) => modalStyle ? `${baseName} ${modalStyle}` : baseName
 
 const DynamicModal = (props: DynamicModalProps) => {
   const defaultName = props.inputDefault ? props.inputDefault : ''
+  const dispatch = useDispatch()
   const [inputValue, setInputValue] = useState(defaultName)
   const { actions, height = '100%' } = props
+  const intl = useIntl()
   const btnRefs = actions && actions.reduce((acc: {}, value) => {
     acc[value.text] = React.createRef()
     return acc
   }, {})
 
   useEffect(() => {
-    if (actions && actions.length) {
+    if (actions && actions.length && !props.showWillDestoryWarning) {
       btnRefs[actions[0].text].current.focus()
     }
   }, [actions])
@@ -98,7 +104,7 @@ const DynamicModal = (props: DynamicModalProps) => {
 
   return (
     <div className={dynamicModalClassName} style={{ height: height }}>
-      <div className={getDymanicModalClassName(dynamicModalInnerClassName, props.modalStyle)}>
+      {!props.showWillDestoryWarning && <div className={getDymanicModalClassName(dynamicModalInnerClassName, props.modalStyle)}>
         {props.previewData ? <div className={dynamicModalPreviewImageClassName}>{props.previewData}</div> : null}
         <div>
           {props.title ? <div className={dynamicModalTitleClassName}>{props.title}</div> : null}
@@ -115,7 +121,26 @@ const DynamicModal = (props: DynamicModalProps) => {
             {props.actions && createButtonsFromActions(props.actions)}
           </div>
         </div>
-      </div>
+      </div>}
+      {props.showWillDestoryWarning && <div className='cvw__modal' role='presentation' onMouseDown={mouseDownPreventDefault}>
+        <div className='cvw__modal__title'>{intl.messages['CVW.WARNING_REPLACEMENT']}</div>
+        <div className='cvw__modal__mini-image'>
+          {props.previewData ? <div className={dynamicModalPreviewImageClassName}>{props.previewData}</div> : null}
+        </div>
+        <div className='cvw__modal__action-wrapper'>
+          <button
+            className='cvw__modal__action-btn'
+            onClick={() => {
+              dispatch()
+            }}
+          >
+            <FormattedMessage id='YES' />
+          </button>
+          <button className='cvw__modal__action-btn' onClick={() => dispatch()}>
+            <FormattedMessage id='NO' />
+          </button>
+        </div>
+      </div>}
     </div>
   )
 }

@@ -102,7 +102,8 @@ type ComponentProps = {
   unsetActiveScenePolluted: () => void,
   setWarningModalImgPreview: ({}) => void,
   sendImageData?: Function,
-  maxSceneHeight: number
+  maxSceneHeight: number,
+  showWillDestoryWarning: boolean
 }
 
 type ComponentState = {
@@ -143,7 +144,7 @@ type ComponentState = {
   canvasHasBeenInitialized: boolean,
   hideSelectPaletteModal: boolean,
   uniqueSceneId: string,
-  prevWorkspace: Object
+  prevWorkspace: Object,
 }
 
 export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
@@ -900,7 +901,7 @@ canvasHeight
     applyDimensionFactorsByCanvas(factors, ref)
   }
 
-  getPreviewData = () => {
+  getPreviewData = (isShowLivePalette = true) => {
     const livePaletteColorsDiv = this.props.lpColors.filter(color => !!color).map((color, i) => {
       const { red, green, blue } = color
       return (
@@ -922,7 +923,7 @@ canvasHeight
           colorOpacity={0.8}
         />
       </div>
-      <div style={{ display: 'flex', marginTop: '1px' }}>{livePaletteColorsDiv}</div>
+      {isShowLivePalette && <div style={{ display: 'flex', marginTop: '1px' }}>{livePaletteColorsDiv}</div>}
     </>
   }
 
@@ -954,6 +955,16 @@ canvasHeight
               { text: intl.formatMessage({ id: 'SAVE_SCENE_MODAL.CANCEL' }), callback: this.hideSaveSceneModal }
             ]}
             previewData={this.getPreviewData()}
+            height={canvasHeight}
+            allowInput
+            inputDefault={`${intl.formatMessage({ id: 'SAVE_SCENE_MODAL.DEFAULT_DESCRIPTION' })} ${this.props.sceneCount}`} /> : null}
+          {this.props.showWillDestoryWarning ? <DynamicModal
+            actions={[
+              { text: intl.formatMessage({ id: 'SAVE_SCENE_MODAL.SAVE' }), callback: this.saveSceneFromModal },
+              { text: intl.formatMessage({ id: 'SAVE_SCENE_MODAL.CANCEL' }), callback: this.hideSaveSceneModal }
+            ]}
+            showWillDestoryWarning
+            previewData={this.getPreviewData(false)}
             height={canvasHeight}
             allowInput
             inputDefault={`${intl.formatMessage({ id: 'SAVE_SCENE_MODAL.DEFAULT_DESCRIPTION' })} ${this.props.sceneCount}`} /> : null}
