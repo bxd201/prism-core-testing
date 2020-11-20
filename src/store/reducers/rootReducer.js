@@ -44,6 +44,7 @@ import { SCENE_METADATA } from '../storageProperties'
 import brandColors from './brandColors'
 import { systemMessages } from './systemMessages'
 import { maxSceneHeight } from './system'
+import { allowNavigateToIntendedDestination, navigationIntent, scenePolluted } from './navigation'
 
 export default combineReducers({
   brandColors,
@@ -86,5 +87,8 @@ export default combineReducers({
   queuedImageUpload,
   systemMessages,
   showEditCustomScene,
-  maxSceneHeight
+  maxSceneHeight,
+  navigationIntent,
+  scenePolluted,
+  allowNavigateToIntendedDestination
 })

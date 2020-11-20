@@ -91,7 +91,7 @@ export function ActiveSlot (props: Props) {
     }
   }
 
-  const hanleToggle = () => {
+  const handleToggle = () => {
     setToggleAddedColor(!isColorAdded)
     props.handleCompareColor(color.id)
   }
@@ -136,7 +136,7 @@ export function ActiveSlot (props: Props) {
           <button aria-label={intl.formatMessage({ id: 'LIVE_PALETTE_REMOVE' }, { colorName: color.name })} className='prism-live-palette__trash' onClick={remove}><FontAwesomeIcon icon={['fa', 'trash']} size='1x' /></button>
         </div>
       </div>}
-      {toggleCompareColor && <button style={{ color: getContrastYIQ(color.hex) }} className={`${baseClass}__button`} onClick={() => hanleToggle()}>
+      {toggleCompareColor && <button style={{ color: getContrastYIQ(color.hex) }} className={`${baseClass}__button`} onClick={() => handleToggle()}>
         <div className={`${baseClass}__${displayArea}`} style={{ backgroundColor: color.hex }}>
           { isColorAdded && <FontAwesomeIcon className={`${baseClass}__${icons} ${toggleCompareColor ? `${baseClass}__${icons}--show` : `${baseClass}__${icons}--hide`}`} icon={['fa', 'check-circle']} size='1x' /> }
           { !isColorAdded && <FontAwesomeIcon className={`${baseClass}__${icons} ${toggleCompareColor ? `${baseClass}__${icons}--show` : `${baseClass}__${icons}--hide`}`} icon={['fal', 'plus-circle']} size='1x' /> }

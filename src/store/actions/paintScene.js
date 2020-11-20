@@ -9,7 +9,7 @@ export const WORKSPACE_TYPES = {
 }
 
 export const SAVED_SCENE_READY_FOR_PAINT = 'SAVED_SCENE_READY_FOR_PAINT'
-export const setLayersForPaintScene = (bgImageUrl: string, layers: ImageData[], palette: Object[], width: number, height: number, type: string, selectIndex: number = 0, sceneName?: string = '', surfaces?: string[] = []) => {
+export const setLayersForPaintScene = (bgImageUrl: string, layers: ImageData[], palette: Object[], width: number, height: number, type: string, selectIndex: number = 0, sceneName: string = '', surfaces: string[] = []) => {
   const payload = {
     type: SAVED_SCENE_READY_FOR_PAINT,
     payload: createPaintSceneWorkspace(bgImageUrl, layers, palette, width, height, type, selectIndex, sceneName, surfaces)

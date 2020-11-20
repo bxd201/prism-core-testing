@@ -199,7 +199,8 @@ export const checkIntersection = (areaA, areaB, getIntersectionData = false) => 
   }
 }
 
-export const repaintImageByPath = (imagePathList, canvas, width, height, isEraseRepaint = false, groupIds = [], isSwitchTool = false) => {
+export const repaintImageByPath = (imagePathList = [], canvas, width, height, isEraseRepaint = false, groupIds = [], isSwitchTool = false) => {
+  // PRISM-969: FIXME: we should really add UX to let the user know why painting doesn't do anything when you have no colors in your live palette
   const ctx = canvas.current.getContext('2d')
   let imageData = ctx.getImageData(0, 0, width, height)
   let data = imageData.data

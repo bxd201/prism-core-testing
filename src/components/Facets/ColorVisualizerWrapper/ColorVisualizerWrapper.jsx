@@ -16,10 +16,12 @@ import SampleScenesWrapper from '../../SampleScenes/SampleScenes'
 import facetBinder from 'src/facetSupport/facetBinder'
 import { facetBinderDefaultProps } from 'src/facetSupport/facetInstance'
 import { facetPubSubDefaultProps } from 'src/facetSupport/facetPubSub'
-import { activateOnlyScene, unpaintSceneSurfaces, showWarningModal, unsetActiveScenePolluted } from '../../../store/actions/scenes'
+import { activateOnlyScene, unpaintSceneSurfaces, showWarningModal } from '../../../store/actions/scenes'
 import MyIdeasContainer from '../../MyIdeasContainer/MyIdeasContainer'
 import MyIdeaPreview from '../../MyIdeaPreview/MyIdeaPreview'
 import Help from '../../Help/Help'
+// @todo delete this module, I don't think we need it anymore -RS
+// eslint-disable-next-line no-unused-vars
 import CVWWarningModal from './WarningModal'
 import SaveOptions from '../../SaveOptions/SaveOptions'
 import ColorDetailsModal from './ColorDetailsModal/ColorDetailsModal'
@@ -31,6 +33,7 @@ import { shouldAllowFeature } from '../../../shared/utils/featureSwitch.util'
 import { FEATURE_EXCLUSIONS } from '../../../constants/configurations'
 import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import { setMaxSceneHeight } from '../../../store/actions/system'
+import { setIsScenePolluted } from '../../../store/actions/navigation'
 
 type CVWPropsType = {
   maxSceneHeight: number
@@ -43,7 +46,7 @@ export const CVW = (props: CVWPropsType) => {
   const history = useHistory()
   const toggleCompareColor: boolean = useSelector(store => store.lp.toggleCompareColor)
   const colorDetailsModalShowing: boolean = useSelector(store => store.colors.colorDetailsModal.showing)
-  const isActiveScenePolluted: boolean = useSelector(store => store.scenes.isActiveScenePolluted)
+  const isActiveScenePolluted: string = useSelector(store => store.scenePolluted)
 
   const [activeStockScene: Element, setActiveScene: (Element) => void] = useState(<SceneManager expertColorPicks hideSceneSelector />)
   const [activePaintScene: Element, setActivePaintSceneState: (Element) => void] = useState()
@@ -84,7 +87,7 @@ export const CVW = (props: CVWPropsType) => {
 
   const activateStockScene = (id) => {
     const activate = () => {
-      dispatch(unsetActiveScenePolluted())
+      dispatch(setIsScenePolluted())
       dispatch(unpaintSceneSurfaces(id))
       dispatch(activateOnlyScene(id))
       setActiveScene(<SceneManager expertColorPicks hideSceneSelector />)
@@ -117,7 +120,6 @@ export const CVW = (props: CVWPropsType) => {
           <div className='cvw__root-wrapper'>
             <ColorVisualizerNav uploadPaintScene={setUploadPaintScene} activePaintScene={setActivePaintScene} setLastActiveComponent={setLastActiveComponent} setMatchPhotoScene={setMatchPhotoScene} />
             <ColorDetailsModal />
-            <CVWWarningModal />
             <Switch>
               <Route path='/active/color/:colorId/:colorSEO' render={() => <ColorDetails />} />
               <Route path='/active/color-wall(/.*)?' render={() => <ColorWallPage displayAddButton displayInfoButton displayDetailsLink={false} />} />

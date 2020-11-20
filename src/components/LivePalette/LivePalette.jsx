@@ -175,6 +175,7 @@ export class LivePalette extends PureComponent<Props, State> {
           </div>}
           <div className='prism-live-palette__list'>
             {activeSlots}
+            { /* @todo refactor to use imperative approach so that we can block based on state, for cases when this link should be disabled -RS Thsi is needed for cases where modality -RS */}
             {colors.length < LP_MAX_COLORS_ALLOWED && <Link to={`/active/color-wall`} className={`prism-live-palette__slot prism-live-palette__slot--${COLOR_TRAY_CLASS_MODIFIERS}`}>
               <FontAwesomeIcon className='prism-live-palette__icon' icon={['fal', 'plus-circle']} size='2x' color={varValues._colors.primary} />
               <FormattedMessage id={ADD_COLOR_TEXT}>
