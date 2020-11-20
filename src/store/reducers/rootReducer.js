@@ -41,12 +41,10 @@ import { paintSceneWorkspace } from './paintSceneWorkspace'
 // eslint-disable-next-line no-unused-vars
 import { reducerWithLocalStorage } from '../withStorage'
 import { SCENE_METADATA } from '../storageProperties'
-import brandColors from './brandColors'
 import { systemMessages } from './systemMessages'
 import { maxSceneHeight } from './system'
 
 export default combineReducers({
-  brandColors,
   collectionSummaries,
   colors,
   configurations,

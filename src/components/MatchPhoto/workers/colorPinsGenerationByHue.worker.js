@@ -4,12 +4,12 @@ import random from 'lodash/random'
 import sampleSize from 'lodash/sampleSize'
 import groupBy from 'lodash/groupBy'
 import toArray from 'lodash/toArray'
-import { findBrandColor } from '../../InspirationPhotos/data'
+import { findClosestColor } from '../../InspirationPhotos/data'
 
 declare var self: DedicatedWorkerGlobalScope
 
 self.addEventListener('message', (e: Object) => {
-  const { imageData, imageDimensions, brandColors } = e.data
+  const { imageData, imageDimensions, colors: brandColors } = e.data
   const colorTally = createColorTallies(imageData.data, imageDimensions.width, imageDimensions.height)
   const colorTallyGroupByHue = toArray(groupBy(colorTally, (color) => color.hueRangeNumber))
 
@@ -30,8 +30,8 @@ self.addEventListener('message', (e: Object) => {
       const r = color.value.r
       const g = color.value.g
       const b = color.value.b
-      const arrayIndex = findBrandColor([r, g, b], brandColors)
-      const sherwinRgb = `rgb(${brandColors[arrayIndex + 2]})`
+      const { red, green, blue } = findClosestColor([r, g, b], brandColors)
+      const sherwinRgb = `rgb(${red},${green},${blue})`
 
       const key = sherwinRgb
       if (!colorMap.hasOwnProperty(key) && pixelPosition.x >= 0.15 && pixelPosition.y >= 0.15 && pixelPosition.x <= 0.85 && pixelPosition.y <= 0.85) {
