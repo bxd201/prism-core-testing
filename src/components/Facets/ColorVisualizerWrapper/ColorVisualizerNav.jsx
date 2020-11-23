@@ -100,6 +100,7 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
   const hiddenImageUploadInput: { current: ?HTMLElement } = useRef()
   const [imgUrl: string, setImgUrl: (string) => void] = useState()
 
+  // @todo all pull route values into const...perhaps routesEnum? -RS
   useEffect(() => {
     if (imgUrl) {
       if (location.pathname === '/upload/match-photo') {
@@ -112,12 +113,16 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
     }
   }, [imgUrl])
 
+  // This is an observer that determines if programmatic navigation should occur
+  // @todo, in a perfect world there would be a complete navigation abstraction layer, see the useeffect hook in the CVWWrapper to find another vital part -RS
   useEffect(() => {
     if (allowNavigateToIntendedDestination && navigationIntent) {
       history.push(navigationIntent)
       dispatch(cleanupNavigationIntent())
     }
   }, [allowNavigateToIntendedDestination, navigationIntent])
+
+  // @todo maybe a hook can handle determining if a modal needs to be shown to warn a user of destruction. -RS
 
   const getDropDownItemsForGetInspired = () => {
     const items = [

@@ -59,11 +59,14 @@ import { LiveMessage } from 'react-aria-live'
 import { BrushPaintCursor } from './BrushPaintCursor'
 import { calcOrientationDimensions } from '../../shared/utils/scale.util'
 import {
+  ACTIVE_SCENE_LABELS_ENUM,
+  cachePaintScene,
   clearNavigationIntent,
   navigateToIntendedDestination,
-  POLLUTED_ENUM,
+  POLLUTED_ENUM, setActiveSceneLabel,
   setIsScenePolluted
 } from '../../store/actions/navigation'
+import { TOP_LEVEL_ROUTES, ROUTES_ENUM } from '../Facets/ColorVisualizerWrapper/routeValueCollections'
 
 const baseClass = 'paint__scene__wrapper'
 const canvasClass = `${baseClass}__canvas`
@@ -115,7 +118,9 @@ type ComponentProps = {
   isActiveScenePolluted: string,
   navigateToIntendedDestination: Function,
   clearNavigationIntent: Function,
-  cachedPaintScene: Object,
+  paintSceneCache: any,
+  cachePaintScene: Function,
+  setActiveSceneLabel: Function,
   shouldRestoreFromCache: boolean
 }
 
@@ -271,7 +276,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       isSceneOpend: false,
       imageUrl: ''
     }
-    this.state = props.shouldRestoreFromCache && checkCachedPaintScene(state, props.cachedPaintScene) ? props.cachedPaintScene : state
+    this.state = props.shouldRestoreFromCache && checkCachedPaintScene(state, props.paintSceneCache) ? props.paintSceneCache : state
   }
 
   hideSaveSceneModal = (e: SyntheticEvent) => {
@@ -367,6 +372,14 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   }
 
   componentDidUpdate (prevProps: Object, prevState: Object) {
+    const { navigationIntent, paintSceneCache } = this.props
+    // handle case when paint scene needs to cache data to navigate to the color wall
+    console.log('Navigation intent:', navigationIntent)
+    console.log('Paint Scene Cache:', paintSceneCache)
+    if (navigationIntent === ROUTES_ENUM.COLOR_WALL && !paintSceneCache) {
+      this.prepareDataCache(this.state)
+    }
+
     const checkImageListIfUpdate = !compareArraysOfObjects(this.state.imagePathList, prevState.imagePathList)
     if (checkImageListIfUpdate) {
       const imageData = this.CFICanvas2.current.getContext('2d').getImageData(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
@@ -585,11 +598,15 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     if (this.props.workspace) {
       this.props.clearSceneWorkspace()
     }
+    // @todo this is an app level concern and should happen outside of here, that said, it is a safe and stable place to do it now, lift when imagerotatecontainer refactor occurs -RS
+    this.props.setActiveSceneLabel(ACTIVE_SCENE_LABELS_ENUM.PAINT_SCENE)
   }
 
   componentWillUnmount () {
     this.props.selectSavedScene(null)
     this.props.unsetActiveScenePolluted()
+    // @todo this is an app level concern and should happen outside of here, that said, it is a safe and stable place to do it now, lift when imagerotatecontainer refactor occurs -RS
+    this.props.setActiveSceneLabel()
   }
 
   updateWindowDimensions = () => {
@@ -955,6 +972,13 @@ canvasHeight
     this.props.clearNavigationIntent()
   }
 
+  prepareDataCache = (state: ComponentState) => {
+    // @todo add undo redo and image path list
+    // const { imagePathList } = state
+    console.log('BIG STATE:', state)
+    this.props.cachePaintScene(state)
+  }
+
   render () {
     const { lpActiveColor, intl, showSaveSceneModal, lpColors, workspace, selectedMaskIndex, width, navigationIntent, isActiveScenePolluted } = this.props
     const livePaletteColorCount = (lpColors && lpColors.length) || 0
@@ -989,7 +1013,7 @@ canvasHeight
             allowInput
             inputDefault={`${intl.formatMessage({ id: 'SAVE_SCENE_MODAL.DEFAULT_DESCRIPTION' })} ${this.props.sceneCount}`} /> : null}
           { /* ---------- Will destroy work warning modal ---------- */ }
-          {navigationIntent && isActiveScenePolluted ? <DynamicModal
+          {TOP_LEVEL_ROUTES.indexOf(navigationIntent) > -1 && isActiveScenePolluted ? <DynamicModal
             description={intl.formatMessage({ id: 'CVW.WARNING_REPLACEMENT' })}
             actions={[
               { text: intl.formatMessage({ id: 'YES' }), callback: this.handleNavigationIntentConfirm },
@@ -1103,7 +1127,7 @@ canvasHeight
 }
 
 const mapStateToProps = (state: Object, props: Object) => {
-  const { lp, savingMasks, selectedSavedSceneId, scenesAndRegions, showSaveSceneModal, saveSceneName, navigationIntent, scenePolluted } = state
+  const { lp, savingMasks, selectedSavedSceneId, scenesAndRegions, showSaveSceneModal, saveSceneName, navigationIntent, scenePolluted, paintSceneCache } = state
   const selectedScene = scenesAndRegions.find(item => item.id === selectedSavedSceneId)
   const activeColor = props.workspace && props.workspace.workspaceType === WORKSPACE_TYPES.smartMask ? maskingPink : lp.activeColor
   return {
@@ -1116,7 +1140,8 @@ const mapStateToProps = (state: Object, props: Object) => {
     sceneCount: state.sceneMetadata.length + 1,
     showSavedConfirmModalFlag: state.showSavedCustomSceneSuccess,
     navigationIntent,
-    isActiveScenePolluted: scenePolluted
+    isActiveScenePolluted: scenePolluted,
+    paintSceneCache
   }
 }
 
@@ -1139,7 +1164,10 @@ const mapDispatchToProps = (dispatch: Function) => {
     unsetActiveScenePolluted: () => dispatch(setIsScenePolluted()),
     setWarningModalImgPreview: (data) => dispatch(setWarningModalImgPreview(data)),
     navigateToIntendedDestination: () => dispatch(navigateToIntendedDestination()),
-    clearNavigationIntent: () => dispatch(clearNavigationIntent())
+    clearNavigationIntent: () => dispatch(clearNavigationIntent()),
+    cachePaintScene: (data: any) => dispatch(cachePaintScene(data)),
+    setActiveSceneLabel: (label: string) => dispatch(setActiveSceneLabel(label))
+
   }
 }
 

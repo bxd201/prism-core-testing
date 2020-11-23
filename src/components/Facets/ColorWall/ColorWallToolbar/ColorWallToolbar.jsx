@@ -1,7 +1,7 @@
 // @flow
 /* eslint-disable react/jsx-no-bind */
 import React, { useContext, useState } from 'react'
-import { shallowEqual, useSelector } from 'react-redux'
+import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { useRouteMatch, NavLink } from 'react-router-dom'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Menu, MenuItem, Wrapper, Button } from 'react-aria-menubutton'
@@ -14,6 +14,7 @@ import ButtonBar from 'src/components/GeneralButtons/ButtonBar/ButtonBar'
 import { generateColorWallPageUrl } from 'src/shared/helpers/ColorUtils'
 import ColorWallContext from '../ColorWallContext'
 import './ColorWallMenuBar.scss'
+import { navigateToIntendedDestination, setImageRotateBypass } from '../../../../store/actions/navigation'
 
 const PATH_END_FAMILY = 'family/'
 const menuBarPrefix = 'menu-bar'
@@ -23,11 +24,17 @@ export default () => {
   const { hiddenSections } = useContext(ColorWallContext)
   const { path, params: { section, family } } = useRouteMatch()
   const { sections = [], families = [], section: activeSection, family: activeFamily, primeColorWall } = useSelector(state => state.colors, shallowEqual)
+  const dispatch = useDispatch()
 
   const isFamilyView: boolean = !!family || path.endsWith(PATH_END_FAMILY)
   const visibleSections: string[] = sections && sections.length && hiddenSections && hiddenSections.length ? difference(sections, hiddenSections) : sections
 
   const [wallSelectionMenuOpen, setWallSelectionMenuOpen] = useState(false)
+  // This should have been set by staging action...
+  const imageRotateBypassValue = useSelector(store => store.navigationIntent)
+  const shouldShowCloseButton = useSelector(store => {
+    return !!(store.paintSceneCache || store.stockSceneCache)
+  })
 
   return (
     <AutoSizer disableHeight style={{ width: '100%' }}>
@@ -56,6 +63,14 @@ export default () => {
                           <span className={MODE_CLASS_NAMES.DESC}><FormattedMessage id='COLOR_FAMILIES' /></span>
                         </ButtonBar.Button>
                       )}
+                      {shouldShowCloseButton ? <ButtonBar.Button onClick={(e: SyntheticEvent) => {
+                        e.preventDefault()
+                        dispatch(navigateToIntendedDestination())
+                        dispatch(setImageRotateBypass(imageRotateBypassValue))
+                      }}>
+                        <FontAwesomeIcon className='color-families-svg' icon={['fa', 'times']} pull='left' />
+                        <span className={MODE_CLASS_NAMES.DESC}><FormattedMessage id='CLOSE' /></span>
+                      </ButtonBar.Button> : null}
                     </>
                   )
                 }

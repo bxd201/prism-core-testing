@@ -26,7 +26,8 @@ import WithConfigurationContext from '../../contexts/ConfigurationContext/WithCo
 import { FEATURE_EXCLUSIONS } from '../../constants/configurations'
 import { calcOrientationDimensions } from '../../shared/utils/scale.util'
 import { paintSceneState } from './data.js'
-
+import { ROUTES_ENUM } from '../Facets/ColorVisualizerWrapper/routeValueCollections'
+import { clearImageRotateBypass } from '../../store/actions/navigation'
 const baseClass = 'match-photo'
 const wrapperClass = `${baseClass}__wrapper`
 const previewClass = `${wrapperClass}--preview`
@@ -120,6 +121,9 @@ export function ImageRotateContainer ({ setLastActiveComponent, activePaintScene
   const maxSceneHeight = maxSceneViewerHeight || globalMaxSceneHeight
   const shouldRestoreFromCache = false
   const paintSceneUrl = shouldRestoreFromCache ? (paintSceneState.imageUrl && dataUrlToBlobUrl(paintSceneState.imageUrl)) : imageUrl
+  // This flag tells app to ignore the OG logic and to just trust that the data is there to render accordingly
+  const bypassValue = useSelector(store => store.imageRotateBypass)
+
   useEffect(() => { dispatch(loadColors(brandId, { language: locale })) }, [])
 
   useEffect(() => {
@@ -200,8 +204,14 @@ export function ImageRotateContainer ({ setLastActiveComponent, activePaintScene
         colorPinsGenerationByHueWorker.removeEventListener('message', messageHandler)
         colorPinsGenerationByHueWorker.terminate()
       }
+
+      dispatch(clearImageRotateBypass())
     }
   }, [])
+
+  useEffect(() => {
+    console.log('Bypass from effect:', bypassValue)
+  }, [bypassValue])
 
   const swapWidthAndHeight = (width, height, originalImageIsPortrait, currentlyIsPortrait) => {
     let relWidth = width
@@ -401,7 +411,7 @@ export function ImageRotateContainer ({ setLastActiveComponent, activePaintScene
 
   return (
     <>
-      {imageUrl && imageHeight && imageWidth && uploads && uploads.source && isLoadingSmartMask ? <MergeCanvas
+      {!bypassValue && imageUrl && imageHeight && imageWidth && uploads && uploads.source && isLoadingSmartMask ? <MergeCanvas
         handleLayersLoaded={HandleSmartMaskLoaded}
         layers={uploads.masks}
         ref={smartMaskRef}
@@ -415,20 +425,20 @@ export function ImageRotateContainer ({ setLastActiveComponent, activePaintScene
           <div className={`${containerClass}`}>
 
             <div className={`${headerClass}`}>
-              {(imageUrl && pins.length === 0) ? <button className={`${buttonClass} ${buttonLeftClass}`} onClick={() => history.goBack()}>
+              {(!bypassValue && imageUrl && pins.length === 0) ? <button className={`${buttonClass} ${buttonLeftClass}`} onClick={() => history.goBack()}>
                 <div><FontAwesomeIcon className={``} icon={['fa', 'angle-left']} />&nbsp;<span className={`${buttonLeftTextClass}`}><FormattedMessage id='BACK' /></span></div>
-              </button> : ''}
+              </button> : null}
               {
-                (imageUrl && pins.length === 0)
+                (!bypassValue && imageUrl && pins.length === 0)
                   ? <Link to={`/active`} tabIndex='-1'>
                     {closeButton}
                   </Link>
 
-                  : (imageUrl && pins.length > 0 && !isPaintScene) ? <Link to={`/active`} tabIndex='-1'>{closeButton}</Link> : ''
+                  : (!bypassValue && imageUrl && pins.length > 0 && !isPaintScene) ? <Link to={`/active`} tabIndex='-1'>{closeButton}</Link> : ''
               }
             </div>
             {
-              (imageUrl && pins.length > 0 && !isPaintScene)
+              (!bypassValue && imageUrl && pins.length > 0 && !isPaintScene)
                 ? (<>
                   <MatchPhoto
                     isConfirmationModalActive={isConfirmationModalActive}
@@ -443,7 +453,7 @@ export function ImageRotateContainer ({ setLastActiveComponent, activePaintScene
                 : null
             }
             {
-              (imageUrl && (pins.length === 0 || isLoadingSmartMask) && !isFromMyIdeas)
+              (!bypassValue && imageUrl && (pins.length === 0 || isLoadingSmartMask) && !isFromMyIdeas)
                 ? (<>
                   <canvas className={canvasBaseClass} name='canvas' ref={canvasRef} />
                   <ImageRotateTerms rotateImage={rotateImage} createColorPins={createColorPins} imageData={imageData} handleDismiss={handleDismiss} />
@@ -451,12 +461,11 @@ export function ImageRotateContainer ({ setLastActiveComponent, activePaintScene
                 : null
             }
             {
-              ((imageUrl && isPaintScene && pins.length > 0 && !isLoadingSmartMask) || (isFromMyIdeas && paintSceneWorkspaceState && paintSceneWorkspaceState.bgImageUrl !== undefined))
+              (bypassValue === ROUTES_ENUM.PAINT_SCENE || (imageUrl && isPaintScene && pins.length > 0 && !isLoadingSmartMask) || (isFromMyIdeas && paintSceneWorkspaceState && paintSceneWorkspaceState.bgImageUrl !== undefined))
                 ? (<>
                   {
                     shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.editPhotos) ? <PaintScene
-                      shouldRestoreFromCache={shouldRestoreFromCache}
-                      cachedPaintScene={paintSceneState}
+                      shouldRestoreFromCache={bypassValue}
                       checkIsPaintSceneUpdate={checkIsPaintSceneUpdate}
                       imageUrl={paintSceneUrl}
                       workspace={paintSceneWorkspaceState}
@@ -478,7 +487,7 @@ export function ImageRotateContainer ({ setLastActiveComponent, activePaintScene
                 : null
             }
             {
-              ((!imageUrl && !isPaintScene && paintSceneWorkspaceState && paintSceneWorkspaceState.bgImageUrl === undefined) || (!imageUrl && !isPaintScene && !paintSceneWorkspaceState))
+              (!bypassValue && ((!imageUrl && !isPaintScene && paintSceneWorkspaceState && paintSceneWorkspaceState.bgImageUrl === undefined) || (!imageUrl && !isPaintScene && !paintSceneWorkspaceState)))
                 ? (<canvas className={canvasBaseClass} name='canvas' width='600' height='600' />)
                 : null
             }
@@ -486,7 +495,7 @@ export function ImageRotateContainer ({ setLastActiveComponent, activePaintScene
         </div>
         <hr />
       </div>
-      {isImageRotate && <LiveMessage message={formatMessage({ id: 'LIVE_MESSAGE_IMAGE_ANGLE' }, { imageRotationAngle: imageRotationAngle })} aria-live='assertive' clearOnUnmount='true' />}
+      {!bypassValue && isImageRotate && <LiveMessage message={formatMessage({ id: 'LIVE_MESSAGE_IMAGE_ANGLE' }, { imageRotationAngle: imageRotationAngle })} aria-live='assertive' clearOnUnmount='true' />}
     </>
   )
 }

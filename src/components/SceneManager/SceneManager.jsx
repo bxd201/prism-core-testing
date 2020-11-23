@@ -37,9 +37,10 @@ import type { Color } from '../../shared/types/Colors.js.flow'
 import type { Scene, SceneStatus, SceneWorkspace, Surface, Variant } from '../../shared/types/Scene'
 import type { ColorMap } from 'src/shared/types/Colors.js.flow'
 import {
+  ACTIVE_SCENE_LABELS_ENUM, cacheStockScene,
   clearNavigationIntent,
   navigateToIntendedDestination,
-  POLLUTED_ENUM,
+  POLLUTED_ENUM, setActiveSceneLabel,
   setIsScenePolluted
 } from '../../store/actions/navigation'
 
@@ -53,6 +54,7 @@ import { replaceSceneStatus } from '../../shared/utils/sceneUtil'
 import { LP_MAX_COLORS_ALLOWED } from 'constants/configurations'
 import { checkCanMergeColors, shouldPromptToReplacePalette, getColorInstances } from '../LivePalette/livePaletteUtility'
 import { mergeLpColors, replaceLpColors } from '../../store/actions/live-palette'
+import { ROUTES_ENUM, TOP_LEVEL_ROUTES } from '../Facets/ColorVisualizerWrapper/routeValueCollections'
 
 const getThumbnailAssetArrayByScene = memoizee((sceneVariant: Variant, surfaces: Surface[]): string[] => {
   return flattenDeep([
@@ -148,7 +150,11 @@ type Props = {
   clearNavigationIntent: Function,
   navigateToIntendedDestination: Function,
   isActiveScenePolluted: string,
-  navigationIntent: string
+  navigationIntent: string,
+  setActiveSceneLabel: Function,
+  stockSceneCache: any,
+  cacheStockScene: Function,
+  activeSceneLabel: string
 }
 
 type State = {
@@ -202,6 +208,28 @@ export class SceneManager extends PureComponent<Props, State> {
     // @todo uncomment the two immediate lines below to add custom mask data for manual test.
     // this.props.addNewMask(1, 2, window.localStorage.getItem('sampleMask'))
     // this.props.toggleEditMode(false)
+    // Redux uses this to be aware if paint scene or stock scene is active
+    // eslint-disable-next-line no-debugger
+  }
+
+  componentDidUpdate (prevProps: Object, prevState: Object) {
+    const { navigationIntent, stockSceneCache, activeSceneLabel } = this.props
+    if (navigationIntent === ROUTES_ENUM.COLOR_WALL && !stockSceneCache) {
+      // @todo in the future this should set aside the data that tells which surfaces are painted, right now it is just a flag -RS
+      this.prepareDataCache(true)
+    }
+
+    // @todo this is a very loose approach, it assumes that an unset label means this is presented, which may be true,
+    //  but this component stays mounted and it probably should either dependably unmount or a redux flag higher up should know if its presented to the user, this is a refactor for another day -RS
+    if (!activeSceneLabel) {
+      this.props.setActiveSceneLabel(ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE)
+    }
+  }
+
+  componentWillUnmount () {
+    // @todo this was put here to follow the pattern that works in paintscene this should be tested as we haven't really depended on scenemanager unmounting, theoretic vs practical... -RS
+    // This causes a useful side effect in that it dependably allows the bypass to be cleared
+    this.props.setActiveSceneLabel()
   }
 
   static getDerivedStateFromProps (props: Props, state: State) {
@@ -428,6 +456,11 @@ export class SceneManager extends PureComponent<Props, State> {
     this.props.clearNavigationIntent()
   }
 
+  prepareDataCache = (state: ComponentState) => {
+    // @todo this is a stub for any future cache prep
+    this.props.cacheStockScene(state)
+  }
+
   render () {
     // eslint-disable-next-line no-unused-vars
     const { scenes,
@@ -497,7 +530,7 @@ export class SceneManager extends PureComponent<Props, State> {
             description={intl.formatMessage({ id: 'SCENE_MANAGER.SCENE_SAVED' })}
             height={getRefDimension(this.wrapperRef, 'height')} /> : null}
           { /* ---------- Will destroy work modal ---------- */ }
-          {navigationIntent && isActiveScenePolluted ? <DynamicModal
+          {TOP_LEVEL_ROUTES.indexOf(navigationIntent) > -1 && isActiveScenePolluted ? <DynamicModal
             description={intl.formatMessage({ id: 'CVW.WARNING_REPLACEMENT' })}
             actions={[
               { text: intl.formatMessage({ id: 'YES' }), callback: this.handleNavigationIntentConfirm },
@@ -709,7 +742,7 @@ const mapStateToProps = (state, props) => {
     return scenes.filter(({ id }) => sceneIds.indexOf(id) > -1)
   })(scenes.sceneCollection[state.scenes.type] || [], props.isColorDetail)
 
-  const { navigationIntent, scenePolluted } = state
+  const { navigationIntent, scenePolluted, stockSceneCache, activeSceneLabel } = state
 
   return {
     scenes: sceneOptions,
@@ -736,7 +769,9 @@ const mapStateToProps = (state, props) => {
     colorMap: (state.colors && state.colors.items && state.colors.items.colorMap) ? state.colors.items.colorMap : null,
     selectedScenePaletteLoaded: state.scenes.selectedScenePaletteLoaded,
     navigationIntent,
-    isActiveScenePolluted: scenePolluted
+    isActiveScenePolluted: scenePolluted,
+    stockSceneCache,
+    activeSceneLabel
     // NOTE: uncommenting this will sync scene type with redux data
     // we may not want that in case there are multiple instances with different scene collections running at once
     // type: state.scenes.type
@@ -779,7 +814,9 @@ const mapDispatchToProps = (dispatch: Function) => {
     replaceLpColors: (colors: Object[]) => dispatch(replaceLpColors(colors)),
     setSelectedScenePaletteLoaded: () => dispatch(setSelectedScenePaletteLoaded()),
     navigateToIntendedDestination: () => dispatch(navigateToIntendedDestination()),
-    clearNavigationIntent: () => dispatch(clearNavigationIntent())
+    clearNavigationIntent: () => dispatch(clearNavigationIntent()),
+    setActiveSceneLabel: (label: string) => dispatch(setActiveSceneLabel(label)),
+    cacheStockScene: (data: any) => dispatch(cacheStockScene(data))
   }
 }
 
