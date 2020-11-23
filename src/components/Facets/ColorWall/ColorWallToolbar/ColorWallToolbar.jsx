@@ -92,6 +92,9 @@ export default () => {
                     </span>
                     <FontAwesomeIcon className='close-icon-svg' icon={['fa', 'angle-down']} pull='right' />
                   </Button>
+                  <ButtonBar.Button to={'/active'}>
+                    <span className={MODE_CLASS_NAMES.DESC}><FormattedMessage id='CLOSE' /></span>
+                  </ButtonBar.Button>
                   <Menu className={`${menuBarPrefix}__menu ${primeColorWall ? 'shift-left' : ''}`}>
                     {(isFamilyView || family ? families : visibleSections)
                       .filter((name: string) => activeFamily !== name && activeSection !== name && (width <= 768 || !primeColorWall || primeColorWall !== name))
