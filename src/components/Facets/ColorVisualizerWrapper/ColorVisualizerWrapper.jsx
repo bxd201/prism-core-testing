@@ -137,7 +137,7 @@ export const CVW = (props: CVWPropsType) => {
             </Switch>
             <div
               /* This div has multiple responsibilities in the DOM tree. It cannot be removed, moved, or changed without causing regressions. */
-              style={{ display: (location.pathname.match(/(active|active\/colors|inspiration|scenes|\/)$/) === null) ? 'none' : 'block' }}
+              style={{ display: (location.pathname.match(/(active|active\/colors|inspiration|scenes|active\/color-wall\/)$/) === null) ? 'none' : 'block' }}
               className={colorDetailsModalShowing ? 'hide-on-small-screens' : ''}
             >
               {lastActiveComponent === 'StockScene' && activeStockScene}
