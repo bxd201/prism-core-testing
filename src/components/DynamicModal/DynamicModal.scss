@@ -30,7 +30,7 @@
 
     }
     &.danger {
-      color: #ffffff;
+      color: var(getThemeColor('white'));
       background-color: var(getThemeColor('danger'));
       border: none;
     }
@@ -121,11 +121,11 @@
 
       }
       &--danger {
-        background-color: var(getThemeColor('light.lightest'));
-        border: #f2f2f2 solid 1px;
-        color: #ffffff;
+        background-color: var(getThemeColor('danger'));
+        color: var(getThemeColor('white'));
+        border: var(getThemeColor('white')) solid 1px;
         &:hover {
-          background-color: var(getThemeColor('primary.contrast.trans'));
+          background-color: var(getThemeColor('white'));
           color: var(getThemeColor('danger'));
         }
       }

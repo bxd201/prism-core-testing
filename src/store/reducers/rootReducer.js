@@ -43,6 +43,7 @@ import { reducerWithLocalStorage } from '../withStorage'
 import { SCENE_METADATA } from '../storageProperties'
 import { systemMessages } from './systemMessages'
 import { maxSceneHeight } from './system'
+import { allowNavigateToIntendedDestination, navigationIntent, scenePolluted } from './navigation'
 
 export default combineReducers({
   collectionSummaries,
@@ -84,5 +85,8 @@ export default combineReducers({
   queuedImageUpload,
   systemMessages,
   showEditCustomScene,
-  maxSceneHeight
+  maxSceneHeight,
+  navigationIntent,
+  scenePolluted,
+  allowNavigateToIntendedDestination
 })

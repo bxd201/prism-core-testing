@@ -230,12 +230,6 @@ export const editMask = (sceneWorkspace: SceneWorkspace) => ({ type: EDIT_MASK, 
 export const TOGGLE_COLOR_DETAILS_PAGE = 'TOGGLE_COLOR_DETAILS_PAGE'
 export const toggleColorDetailsPage = () => ({ type: TOGGLE_COLOR_DETAILS_PAGE })
 
-export const SET_ACTIVE_SCENE_POLLUTED = 'SET_ACTIVE_SCENE_POLLUTED '
-export const setActiveScenePolluted = () => ({ type: SET_ACTIVE_SCENE_POLLUTED })
-
-export const UNSET_ACTIVE_SCENE_POLLUTED = 'UNSET_ACTIVE_SCENE_POLLUTED '
-export const unsetActiveScenePolluted = () => ({ type: UNSET_ACTIVE_SCENE_POLLUTED })
-
 export const SET_SELECTED_SCENE_VARIANT_CHANGED = 'SET_SELECTED_SCENE_VARIANT_CHANGED'
 export const setSelectedSceneVariantChanged = () => ({ type: SET_SELECTED_SCENE_VARIANT_CHANGED })
 
@@ -252,7 +246,7 @@ export const SET_WARNING_MODAL_IMG_PREVIEW = 'SET_WARNING_MODAL_IMG_PREVIEW '
 export const setWarningModalImgPreview = (miniImg) => ({ type: SET_WARNING_MODAL_IMG_PREVIEW, payload: miniImg })
 
 export const SHOW_WARNING_MODAL = 'SHOW_WARNING_MODAL'
-export const showWarningModal = (openFn: () => void) => ({ type: SHOW_WARNING_MODAL, payload: openFn })
+export const showWarningModal = () => ({ type: SHOW_WARNING_MODAL, payload: true })
 
 export const HIDE_WARNING_MODAL = 'HIDE_WARNING_MODAL'
 export const hideWarningModal = () => ({ type: HIDE_WARNING_MODAL })

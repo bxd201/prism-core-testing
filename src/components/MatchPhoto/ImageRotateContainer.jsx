@@ -190,7 +190,7 @@ export function ImageRotateContainer ({ setLastActiveComponent, activePaintScene
     setBaseWidth(width)
     window.addEventListener('resize', resizeHandler)
 
-    return function cleanup () {
+    return () => {
       window.removeEventListener('resize', resizeHandler)
       if (colorPinsGenerationByHueWorker) {
         colorPinsGenerationByHueWorker.removeEventListener('message', messageHandler)
@@ -334,19 +334,6 @@ export function ImageRotateContainer ({ setLastActiveComponent, activePaintScene
   }
 
   const handleDismiss = () => {
-    if (isPaintScene) {
-      setLastActiveComponent('PaintScene')
-      activePaintScene(<PaintScene
-        key={Date.now()}
-        checkIsPaintSceneUpdate={checkIsPaintSceneUpdate}
-        imageUrl={imageUrl}
-        workspace={paintSceneWorkspaceState}
-        imageRotationAngle={imageRotationAngle}
-        referenceDimensions={imageDims}
-        selectedMaskIndex={selectedMaskIndex}
-        width={baseWidth}
-        maxSceneHeight={maxSceneHeight} />)
-    }
     if (imageUrl && queuedImageUpload && shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.fastMask)) {
       setIsLoadingSmartMask(true)
       dispatch(uploadImage(queuedImageUpload))

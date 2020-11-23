@@ -51,11 +51,17 @@ import { checkCanMergeColors, shouldPromptToReplacePalette } from '../LivePalett
 import { LP_MAX_COLORS_ALLOWED } from '../../constants/configurations'
 import { mergeLpColors, replaceLpColors } from '../../store/actions/live-palette'
 import { clearSceneWorkspace, WORKSPACE_TYPES } from '../../store/actions/paintScene'
-import { setActiveScenePolluted, unsetActiveScenePolluted, setWarningModalImgPreview } from 'src/store/actions/scenes'
+import { setWarningModalImgPreview } from 'src/store/actions/scenes'
 import { group, ungroup, deleteGroup, selectArea, bucketPaint, applyZoom, getActiveGroupTool, panMove, getDefinedPolygon, eraseOrPaintMouseUp, eraseOrPaintMouseDown, getActiveToolState, getBrushShapeSize, getEmptyCanvas, handleMouseMove } from './toolFunction'
 import { LiveMessage } from 'react-aria-live'
 import { BrushPaintCursor } from './BrushPaintCursor'
 import { calcOrientationDimensions } from '../../shared/utils/scale.util'
+import {
+  clearNavigationIntent,
+  navigateToIntendedDestination,
+  POLLUTED_ENUM,
+  setIsScenePolluted
+} from '../../store/actions/navigation'
 
 const baseClass = 'paint__scene__wrapper'
 const canvasClass = `${baseClass}__canvas`
@@ -102,7 +108,11 @@ type ComponentProps = {
   unsetActiveScenePolluted: () => void,
   setWarningModalImgPreview: ({}) => void,
   sendImageData?: Function,
-  maxSceneHeight: number
+  maxSceneHeight: number,
+  navigationIntent: string,
+  isActiveScenePolluted: string,
+  navigateToIntendedDestination: Function,
+  clearNavigationIntent: Function
 }
 
 type ComponentState = {
@@ -900,7 +910,7 @@ canvasHeight
     applyDimensionFactorsByCanvas(factors, ref)
   }
 
-  getPreviewData = () => {
+  getPreviewData = (showLivePalette) => {
     const livePaletteColorsDiv = this.props.lpColors.filter(color => !!color).map((color, i) => {
       const { red, green, blue } = color
       return (
@@ -922,12 +932,22 @@ canvasHeight
           colorOpacity={0.8}
         />
       </div>
-      <div style={{ display: 'flex', marginTop: '1px' }}>{livePaletteColorsDiv}</div>
+      {showLivePalette && <div style={{ display: 'flex', marginTop: '1px' }}>{livePaletteColorsDiv}</div>}
     </>
   }
 
+  handleNavigationIntentConfirm = (e: SyntheticEvent) => {
+    e.stopPropagation()
+    this.props.navigateToIntendedDestination()
+  }
+
+  handleNavigationIntentCancel = (e: SyntheticEvent) => {
+    e.stopPropagation()
+    this.props.clearNavigationIntent()
+  }
+
   render () {
-    const { lpActiveColor, intl, showSaveSceneModal, lpColors, workspace, selectedMaskIndex, width } = this.props
+    const { lpActiveColor, intl, showSaveSceneModal, lpColors, workspace, selectedMaskIndex, width, navigationIntent, isActiveScenePolluted } = this.props
     const livePaletteColorCount = (lpColors && lpColors.length) || 0
     const bgImageUrl = workspace ? workspace.bgImageUrl : this.props.imageUrl
     const layers = workspace && workspace.workspaceType !== WORKSPACE_TYPES.smartMask ? workspace.layers : null
@@ -943,20 +963,34 @@ canvasHeight
       <>
         {loading ? <div className={`${animationLoader} ${animationLoader}--load`} /> : null}
         <div role='presentation' className={`${baseClass} ${isInfoToolActive ? `${disableTextSelect} ${showCursor}` : ``} ${activeTool === toolNames.PAINTBRUSH || activeTool === toolNames.ERASE ? `${disableTextSelect} ${hideCursor}` : ``} ${(loading) ? disableClick : ``}`} onClick={this.handleClick} onMouseMove={this.mouseMoveHandler} ref={this.CFIWrapper} style={{ height: this.state.wrapperHeight }} onMouseLeave={this.mouseLeaveHandler} onMouseEnter={this.mouseEnterHandler}>
+          { /* ----------  modal ---------- */ }
           {showSelectPaletteModal ? <DynamicModal
             actions={selectPaletteActions}
             title={selectPaletteTitle}
             height={canvasHeight}
             description={selectPaletteDescription} /> : null}
+          { /* ----------  modal ---------- */ }
           {showSaveSceneModal && livePaletteColorCount !== 0 ? <DynamicModal
             actions={[
               { text: intl.formatMessage({ id: 'SAVE_SCENE_MODAL.SAVE' }), callback: this.saveSceneFromModal },
               { text: intl.formatMessage({ id: 'SAVE_SCENE_MODAL.CANCEL' }), callback: this.hideSaveSceneModal }
             ]}
-            previewData={this.getPreviewData()}
+            previewData={this.getPreviewData(true)}
             height={canvasHeight}
             allowInput
             inputDefault={`${intl.formatMessage({ id: 'SAVE_SCENE_MODAL.DEFAULT_DESCRIPTION' })} ${this.props.sceneCount}`} /> : null}
+          { /* ---------- Will destroy work warning modal ---------- */ }
+          {navigationIntent && isActiveScenePolluted ? <DynamicModal
+            description={intl.formatMessage({ id: 'CVW.WARNING_REPLACEMENT' })}
+            actions={[
+              { text: intl.formatMessage({ id: 'YES' }), callback: this.handleNavigationIntentConfirm },
+              { text: intl.formatMessage({ id: 'NO' }), callback: this.handleNavigationIntentCancel }
+            ]}
+            previewData={this.getPreviewData(false)}
+            height={canvasHeight}
+            modalStyle={DYNAMIC_MODAL_STYLE.danger}
+          /> : null}
+          { /* ---------- Save scene modal ---------- */ }
           {showSaveSceneModal && livePaletteColorCount === 0 ? <DynamicModal
             actions={[
               { text: intl.formatMessage({ id: 'SAVE_SCENE_MODAL.CANCEL' }), callback: this.hideSaveSceneModal }
@@ -1060,7 +1094,7 @@ canvasHeight
 }
 
 const mapStateToProps = (state: Object, props: Object) => {
-  const { lp, savingMasks, selectedSavedSceneId, scenesAndRegions, showSaveSceneModal, saveSceneName } = state
+  const { lp, savingMasks, selectedSavedSceneId, scenesAndRegions, showSaveSceneModal, saveSceneName, navigationIntent, scenePolluted } = state
   const selectedScene = scenesAndRegions.find(item => item.id === selectedSavedSceneId)
   const activeColor = props.workspace && props.workspace.workspaceType === WORKSPACE_TYPES.smartMask ? maskingPink : lp.activeColor
   return {
@@ -1071,7 +1105,9 @@ const mapStateToProps = (state: Object, props: Object) => {
     showSaveSceneModal,
     saveSceneName,
     sceneCount: state.sceneMetadata.length + 1,
-    showSavedConfirmModalFlag: state.showSavedCustomSceneSuccess
+    showSavedConfirmModalFlag: state.showSavedCustomSceneSuccess,
+    navigationIntent,
+    isActiveScenePolluted: scenePolluted
   }
 }
 
@@ -1090,9 +1126,11 @@ const mapDispatchToProps = (dispatch: Function) => {
       e.stopPropagation()
       dispatch(showSavedCustomSceneSuccessModal(false))
     },
-    setActiveScenePolluted: () => dispatch(setActiveScenePolluted()),
-    unsetActiveScenePolluted: () => dispatch(unsetActiveScenePolluted()),
-    setWarningModalImgPreview: (data) => dispatch(setWarningModalImgPreview(data))
+    setActiveScenePolluted: () => dispatch(setIsScenePolluted(POLLUTED_ENUM.POLLUTED_PAINT_SCENE)),
+    unsetActiveScenePolluted: () => dispatch(setIsScenePolluted()),
+    setWarningModalImgPreview: (data) => dispatch(setWarningModalImgPreview(data)),
+    navigateToIntendedDestination: () => dispatch(navigateToIntendedDestination()),
+    clearNavigationIntent: () => dispatch(clearNavigationIntent())
   }
 }
 

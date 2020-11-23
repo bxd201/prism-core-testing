@@ -38,7 +38,8 @@ type DynamicModalProps = {
   allowInput?: boolean,
   inputDefault?: string,
   modalStyle?: string,
-  previewData?: HTMLElement
+  previewData?: HTMLElement,
+  showWillDestoryWarning?: boolean
 }
 
 const getDymanicModalClassName = (baseName: string, modalStyle) => modalStyle ? `${baseName} ${modalStyle}` : baseName
@@ -53,7 +54,7 @@ const DynamicModal = (props: DynamicModalProps) => {
   }, {})
 
   useEffect(() => {
-    if (actions && actions.length) {
+    if (actions && actions.length && !props.showWillDestoryWarning) {
       btnRefs[actions[0].text].current.focus()
     }
   }, [actions])

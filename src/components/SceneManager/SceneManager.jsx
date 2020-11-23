@@ -24,7 +24,6 @@ import {
   addNewMask,
   toggleEditMode,
   updateCurrentSceneInfo,
-  setActiveScenePolluted,
   setSelectedSceneVariantChanged,
   setSelectedScenePaletteLoaded
 } from '../../store/actions/scenes'
@@ -37,6 +36,12 @@ import ColorPickerSlide from '../ColorPickerSlide/ColorPickerSlide'
 import type { Color } from '../../shared/types/Colors.js.flow'
 import type { Scene, SceneStatus, SceneWorkspace, Surface, Variant } from '../../shared/types/Scene'
 import type { ColorMap } from 'src/shared/types/Colors.js.flow'
+import {
+  clearNavigationIntent,
+  navigateToIntendedDestination,
+  POLLUTED_ENUM,
+  setIsScenePolluted
+} from '../../store/actions/navigation'
 
 import './SceneManager.scss'
 import 'src/scss/convenience/visually-hidden.scss'
@@ -139,7 +144,11 @@ type Props = {
   },
   intl: {
     locale: string
-  }
+  },
+  clearNavigationIntent: Function,
+  navigateToIntendedDestination: Function,
+  isActiveScenePolluted: string,
+  navigationIntent: string
 }
 
 type State = {
@@ -389,7 +398,7 @@ export class SceneManager extends PureComponent<Props, State> {
     this.props.replaceLpColors(colorInstances.slice(0, 8))
   }
 
-  getPreviewData = () => {
+  getPreviewData = (showLivePalette) => {
     const currentSceneData = this.props.sceneStatus.find(item => item.id === this.props.activeScenes[0])
     const currentSceneMetaData = this.props.scenes.find(scene => scene.id === this.props.activeScenes[0])
     const livePaletteColorsDiv = this.props.lpColors.filter(color => !!color).map((color, i) => {
@@ -405,8 +414,18 @@ export class SceneManager extends PureComponent<Props, State> {
 
     return <>
       <StaticTintScene scene={currentSceneMetaData} statuses={currentSceneData.surfaces} config={{ isNightScene: currentSceneData.variant === SCENE_VARIANTS.NIGHT }} />
-      <div style={{ display: 'flex', marginTop: '1px' }}>{livePaletteColorsDiv}</div>
+      {showLivePalette && <div style={{ display: 'flex', marginTop: '1px' }}>{livePaletteColorsDiv}</div>}
     </>
+  }
+
+  handleNavigationIntentConfirm = (e: SyntheticEvent) => {
+    e.stopPropagation()
+    this.props.navigateToIntendedDestination()
+  }
+
+  handleNavigationIntentCancel = (e: SyntheticEvent) => {
+    e.stopPropagation()
+    this.props.clearNavigationIntent()
   }
 
   render () {
@@ -425,7 +444,9 @@ export class SceneManager extends PureComponent<Props, State> {
       intl,
       showSaveSceneModalFlag,
       showSavedConfirmModalFlag,
-      hideSceneSelector } = this.props
+      hideSceneSelector,
+      navigationIntent,
+      isActiveScenePolluted } = this.props
 
     const { activeSceneStatus, showSelectPaletteModal } = this.state
     const { selectPaletteActions, selectPaletteTitle, selectPaletteDescription } = this.getSelectPaletteModalConfig()
@@ -458,7 +479,7 @@ export class SceneManager extends PureComponent<Props, State> {
               { text: intl.formatMessage({ id: 'SAVE_SCENE_MODAL.SAVE' }), callback: this.saveSceneFromModal },
               { text: intl.formatMessage({ id: 'SAVE_SCENE_MODAL.CANCEL' }), callback: this.hideSaveSceneModal }
             ]}
-            previewData={this.getPreviewData()}
+            previewData={this.getPreviewData(true)}
             height={getRefDimension(this.wrapperRef, 'height')}
             allowInput
             inputDefault={`${intl.formatMessage({ id: 'SAVE_SCENE_MODAL.DEFAULT_DESCRIPTION' })} ${this.props.sceneCount}`} /> : null}
@@ -468,12 +489,22 @@ export class SceneManager extends PureComponent<Props, State> {
             ]}
             description={intl.formatMessage({ id: 'SAVE_SCENE_MODAL.UNABLE_TO_SAVE_WARNING' })}
             height={getRefDimension(this.wrapperRef, 'height')} /> : null}
-          { /* ----------Confirm modal ---------- */ }
+          { /* ---------- Confirm modal ---------- */ }
           {showSavedConfirmModalFlag ? <DynamicModal
             actions={[
               { text: intl.formatMessage({ id: 'SCENE_MANAGER.OK' }), callback: this.hideSavedConfirmModal }
             ]}
             description={intl.formatMessage({ id: 'SCENE_MANAGER.SCENE_SAVED' })}
+            height={getRefDimension(this.wrapperRef, 'height')} /> : null}
+          { /* ---------- Will destroy work modal ---------- */ }
+          {navigationIntent && isActiveScenePolluted ? <DynamicModal
+            description={intl.formatMessage({ id: 'CVW.WARNING_REPLACEMENT' })}
+            actions={[
+              { text: intl.formatMessage({ id: 'YES' }), callback: this.handleNavigationIntentConfirm },
+              { text: intl.formatMessage({ id: 'NO' }), callback: this.handleNavigationIntentCancel }
+            ]}
+            previewData={this.getPreviewData(false)}
+            modalStyle={DYNAMIC_MODAL_STYLE.danger}
             height={getRefDimension(this.wrapperRef, 'height')} /> : null}
           {activeScenes.length === 1 && expertColorPicks ? <ColorPickerSlide {...getSceneInfoById(find(scenes, { 'id': activeScenes[0] }), sceneStatus).variant} /> : null}
           {!hideSceneSelector && <div className={`${SceneManager.baseClass}__block ${SceneManager.baseClass}__block--tabs`} role='radiogroup' aria-label='scene selector'>
@@ -678,6 +709,8 @@ const mapStateToProps = (state, props) => {
     return scenes.filter(({ id }) => sceneIds.indexOf(id) > -1)
   })(scenes.sceneCollection[state.scenes.type] || [], props.isColorDetail)
 
+  const { navigationIntent, scenePolluted } = state
+
   return {
     scenes: sceneOptions,
     sceneStatus: sceneStatus,
@@ -688,7 +721,6 @@ const mapStateToProps = (state, props) => {
     loadingScenes: scenes.loadingScenes,
     activeColor: activeColor,
     previewColor: previewColor,
-    // @todo - the idea is the scene workspace is the data object created by the mask editor.
     sceneWorkspaces: state.sceneWorkspaces,
     isEditMode: state.isEditMode,
     sceneCount: state.sceneMetadata.length + 1,
@@ -698,12 +730,13 @@ const mapStateToProps = (state, props) => {
     saveSceneName: state.saveSceneName,
     selectedSceneStatus: state.selectedSceneStatus,
     showSavedConfirmModalFlag: state.showSavedConfirmModal,
-    isActiveStockScenePolluted: state.scenes.isActiveStockScenePolluted,
     selectedScenedVariant: selectedScenedVariant,
     selectedSceneVariantChanged: state.scenes.selectedSceneVariantChanged,
     lpColors: state.lp.colors,
     colorMap: (state.colors && state.colors.items && state.colors.items.colorMap) ? state.colors.items.colorMap : null,
-    selectedScenePaletteLoaded: state.scenes.selectedScenePaletteLoaded
+    selectedScenePaletteLoaded: state.scenes.selectedScenePaletteLoaded,
+    navigationIntent,
+    isActiveScenePolluted: scenePolluted
     // NOTE: uncommenting this will sync scene type with redux data
     // we may not want that in case there are multiple instances with different scene collections running at once
     // type: state.scenes.type
@@ -740,11 +773,13 @@ const mapDispatchToProps = (dispatch: Function) => {
     showSaveSceneModalAction: (shouldShow) => dispatch(showSaveSceneModal(shouldShow)),
     saveStockScene: (id: string, sceneName: string, sceneData: Object, sceneType: string, livePaletteColorsIdArray: Array<string>) => dispatch(saveStockScene(id, sceneName, sceneData, sceneType, livePaletteColorsIdArray)),
     showSavedConfirmModal: (shouldShow: boolean) => dispatch(showSavedConfirmModal(shouldShow)),
-    setActiveScenePolluted: () => dispatch(setActiveScenePolluted()),
+    setActiveScenePolluted: () => dispatch(setIsScenePolluted(POLLUTED_ENUM.POLLUTED_STOCK_SCENE)),
     setSelectedSceneVariantChanged: () => dispatch(setSelectedSceneVariantChanged()),
     mergeLpColors: (colors: Object[]) => dispatch(mergeLpColors(colors)),
     replaceLpColors: (colors: Object[]) => dispatch(replaceLpColors(colors)),
-    setSelectedScenePaletteLoaded: () => dispatch(setSelectedScenePaletteLoaded())
+    setSelectedScenePaletteLoaded: () => dispatch(setSelectedScenePaletteLoaded()),
+    navigateToIntendedDestination: () => dispatch(navigateToIntendedDestination()),
+    clearNavigationIntent: () => dispatch(clearNavigationIntent())
   }
 }
 

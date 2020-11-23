@@ -27,15 +27,10 @@ import {
   UPDATE_MASK,
   UNPAINT_SCENE_SURFACES,
   TOGGLE_COLOR_DETAILS_PAGE,
-  SET_ACTIVE_SCENE_POLLUTED,
-  UNSET_ACTIVE_SCENE_POLLUTED,
   SET_SELECTED_SCENE_VARIANT_CHANGED,
   UNSET_SELECTED_SCENE_VARIANT_CHANGED,
   SET_SELECTED_SCENE_PALETTE_LOADED,
   UNSET_SELECTED_SCENE_PALETTE_LOADED,
-  SET_WARNING_MODAL_IMG_PREVIEW,
-  SHOW_WARNING_MODAL,
-  HIDE_WARNING_MODAL,
   SET_USE_SMART_MASK, SET_SHOW_EDIT_CUSTOM_SCENE
 } from '../actions/scenes'
 import { registerMask, updateMask } from '../masks/store'
@@ -56,10 +51,8 @@ type State = {
   activeScenes: number[],
   activeScenesColorDetails: number[],
   isColorDetailsPage: boolean,
-  isActiveScenePolluted: boolean,
   selectedSceneVariantChanged: boolean,
   selectedScenePaletteLoaded: boolean,
-  warningModal: { showing: boolean, openFn: () => void }
 }
 
 export const initialState: State = {
@@ -72,10 +65,8 @@ export const initialState: State = {
   activeScenes: [],
   activeScenesColorDetails: [],
   isColorDetailsPage: false,
-  isActiveScenePolluted: false,
   selectedSceneVariantChanged: false,
-  selectedScenePaletteLoaded: false,
-  warningModal: { showing: false, openFn: () => {} }
+  selectedScenePaletteLoaded: false
 }
 
 export const scenes = (state: Object = initialState, action: { type: string, payload: Object }) => {
@@ -444,15 +435,10 @@ export const scenes = (state: Object = initialState, action: { type: string, pay
         isColorDetailsPage: !state.isColorDetailsPage
       })
 
-    case SET_ACTIVE_SCENE_POLLUTED: return { ...state, isActiveScenePolluted: true }
-    case UNSET_ACTIVE_SCENE_POLLUTED: return { ...state, isActiveScenePolluted: false }
     case SET_SELECTED_SCENE_VARIANT_CHANGED: return { ...state, selectedSceneVariantChanged: true }
     case UNSET_SELECTED_SCENE_VARIANT_CHANGED: return { ...state, selectedSceneVariantChanged: false }
     case SET_SELECTED_SCENE_PALETTE_LOADED: return { ...state, selectedScenePaletteLoaded: true }
     case UNSET_SELECTED_SCENE_PALETTE_LOADED: return { ...state, selectedScenePaletteLoaded: false }
-    case SET_WARNING_MODAL_IMG_PREVIEW: return { ...state, warningModal: { ...state.warningModal, miniImg: action.payload } }
-    case SHOW_WARNING_MODAL: return { ...state, warningModal: { ...state.warningModal, showing: true, openFn: action.payload } }
-    case HIDE_WARNING_MODAL: return { ...state, warningModal: { showing: false } }
     default: return state
   }
 }
