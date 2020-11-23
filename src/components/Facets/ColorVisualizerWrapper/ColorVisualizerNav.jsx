@@ -12,7 +12,12 @@ import './ColorVisualizerNav.scss'
 import { FEATURE_EXCLUSIONS } from '../../../constants/configurations'
 import { shouldAllowFeature } from '../../../shared/utils/featureSwitch.util'
 import WithConfigurationContext from '../../../contexts/ConfigurationContext/WithConfigurationContext'
-import { cleanupNavigationIntent, setIsScenePolluted, setNavigationIntent } from '../../../store/actions/navigation'
+import {
+  cleanupNavigationIntent,
+  setIsScenePolluted,
+  setNavigationIntent,
+  setShouldShowGlobalDestroyWarning
+} from '../../../store/actions/navigation'
 
 type DropDownMenuProps = {
   title: string,
@@ -96,6 +101,7 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
   const useSmartMask = useSelector(state => state.useSmartMask)
   const allowNavigateToIntendedDestination = useSelector(state => state.allowNavigateToIntendedDestination)
   const navigationIntent = useSelector(state => state.navigationIntent)
+  const isColorwallModallyPresented = useSelector(store => store.isColorwallModallyPresented)
 
   const hiddenImageUploadInput: { current: ?HTMLElement } = useRef()
   const [imgUrl: string, setImgUrl: (string) => void] = useState()
@@ -116,11 +122,13 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
   // This is an observer that determines if programmatic navigation should occur
   // @todo, in a perfect world there would be a complete navigation abstraction layer, see the useeffect hook in the CVWWrapper to find another vital part -RS
   useEffect(() => {
-    if (allowNavigateToIntendedDestination && navigationIntent) {
+    if (allowNavigateToIntendedDestination && navigationIntent && !isColorwallModallyPresented) {
       history.push(navigationIntent)
       dispatch(cleanupNavigationIntent())
     }
-  }, [allowNavigateToIntendedDestination, navigationIntent])
+  }, [allowNavigateToIntendedDestination, navigationIntent, isColorwallModallyPresented])
+
+  // @todo maybe a hook can handle determining if a modal needs to be shown to warn a user of destruction. -RS
 
   // @todo maybe a hook can handle determining if a modal needs to be shown to warn a user of destruction. -RS
 
@@ -288,7 +296,18 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
       <ul className='cvw-navigation-wrapper__center' role='presentation'>
         { shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.exploreColors)
           ? <li>
-            <button className={`cvw-nav-btn ${location.pathname === '/active/colors' ? 'cvw-nav-btn--active' : ''}`} onClick={() => isActiveScenePolluted ? dispatch(setNavigationIntent('/active/colors')) : history.push('/active/colors')}>
+            <button className={`cvw-nav-btn ${location.pathname === '/active/colors' ? 'cvw-nav-btn--active' : ''}`} onClick={() => {
+              if (isColorwallModallyPresented) {
+                dispatch(setShouldShowGlobalDestroyWarning(true))
+                return
+              }
+              if (isActiveScenePolluted) {
+                dispatch(setNavigationIntent('/active/colors'))
+                return
+              }
+              // default action
+              history.push('/active/colors')
+            }}>
               <span className='fa-layers fa-fw cvw-nav-btn-icon'>
                 <FontAwesomeIcon icon={['fal', 'square-full']} size='xs' transform={{ rotate: 10 }} />
                 <FontAwesomeIcon icon={['fal', 'square-full']} size='sm' transform={{ rotate: 0 }} />

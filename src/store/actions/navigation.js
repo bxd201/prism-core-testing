@@ -132,13 +132,19 @@ export const clearStockSceneCache = () => {
 }
 
 export const IS_COLOR_WALL_MODALLY_PRESENTED = 'IS_COLOR_WALL_MODALLY_PRESENTED'
-// It is a modal if there is a return path at time of mount
+// It is a modal if there is a return path at time of mount, this tells the app if the users sees the color wall
 export const setIsColorWallModallyPresented = (returnPath: string) => {
   const isModal = COLORWALL_MODAL_PRESENTERS.indexOf(returnPath) > -1
-  // eslint-disable-next-line no-debugger
-  debugger
   return {
     type: IS_COLOR_WALL_MODALLY_PRESENTED,
     payload: isModal
+  }
+}
+
+export const SHOULD_SHOW_GLOBAL_DESTROY_WARNING = 'SHOULD_SHOW_GLOBAL_DESTROY_WARNING'
+export const setShouldShowGlobalDestroyWarning = (shouldShow: boolean = false) => {
+  return {
+    type: SHOULD_SHOW_GLOBAL_DESTROY_WARNING,
+    payload: shouldShow
   }
 }

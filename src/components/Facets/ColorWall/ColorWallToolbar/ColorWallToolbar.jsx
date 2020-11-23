@@ -14,7 +14,11 @@ import ButtonBar from 'src/components/GeneralButtons/ButtonBar/ButtonBar'
 import { generateColorWallPageUrl } from 'src/shared/helpers/ColorUtils'
 import ColorWallContext from '../ColorWallContext'
 import './ColorWallMenuBar.scss'
-import { navigateToIntendedDestination, setImageRotateBypass } from '../../../../store/actions/navigation'
+import {
+  navigateToIntendedDestination,
+  setImageRotateBypass,
+  setIsColorWallModallyPresented
+} from '../../../../store/actions/navigation'
 
 const PATH_END_FAMILY = 'family/'
 const menuBarPrefix = 'menu-bar'
@@ -65,6 +69,7 @@ export default () => {
                       )}
                       {shouldShowCloseButton ? <ButtonBar.Button onClick={(e: SyntheticEvent) => {
                         e.preventDefault()
+                        dispatch(setIsColorWallModallyPresented(false))
                         dispatch(navigateToIntendedDestination())
                         dispatch(setImageRotateBypass(imageRotateBypassValue))
                       }}>

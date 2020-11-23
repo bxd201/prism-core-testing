@@ -48,7 +48,7 @@ import {
   allowNavigateToIntendedDestination, imageRotateBypass, isColorwallModallyPresented,
   navigationIntent, navigationReturnIntent,
   paintSceneCache,
-  scenePolluted, stockSceneCache
+  scenePolluted, shouldShowGlobalDestroyWarning, stockSceneCache
 } from './navigation'
 
 export default combineReducers({
@@ -100,5 +100,6 @@ export default combineReducers({
   navigationReturnIntent,
   imageRotateBypass,
   stockSceneCache,
-  isColorwallModallyPresented
+  isColorwallModallyPresented,
+  shouldShowGlobalDestroyWarning
 })

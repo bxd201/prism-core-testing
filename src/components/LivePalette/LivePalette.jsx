@@ -48,7 +48,8 @@ type Props = {
   empty: Function,
   temporaryActiveColor: Color | null,
   setNavigationIntents: Function,
-  activeSceneLabel: string
+  activeSceneLabel: string,
+  isColorwallModallyPresented: boolean
 }
 
 type State = {
@@ -136,6 +137,10 @@ export class LivePalette extends PureComponent<Props, State> {
   }
   handleAddColor = (e: SyntheticEvent) => {
     e.preventDefault()
+    if (this.props.isColorwallModallyPresented) {
+      return
+    }
+
     let returnPath = null
 
     if (this.props.activeSceneLabel === ACTIVE_SCENE_LABELS_ENUM.PAINT_SCENE) {
@@ -233,14 +238,15 @@ export class LivePalette extends PureComponent<Props, State> {
 }
 
 const mapStateToProps = (state, props) => {
-  const { lp, activeSceneLabel } = state
+  const { lp, activeSceneLabel, isColorwallModallyPresented } = state
   return {
     colors: lp.colors,
     activeColor: lp.activeColor,
     // previousActiveColor: lp.previousActiveColor,
     removedColor: lp.removedColor,
     temporaryActiveColor: lp.temporaryActiveColor,
-    activeSceneLabel
+    activeSceneLabel,
+    isColorwallModallyPresented
   }
 }
 

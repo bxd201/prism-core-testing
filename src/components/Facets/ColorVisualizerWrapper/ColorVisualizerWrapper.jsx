@@ -36,7 +36,7 @@ import { setMaxSceneHeight } from '../../../store/actions/system'
 import { SHOW_LOADER_ONLY_BRANDS } from '../../../constants/globals'
 import {
   ACTIVE_SCENE_LABELS_ENUM, clearImageRotateBypass, setIsColorWallModallyPresented,
-  setIsScenePolluted,
+  setIsScenePolluted, setShouldShowGlobalDestroyWarning,
   stageNavigationReturnIntent
 } from '../../../store/actions/navigation'
 import { ROUTES_ENUM } from './routeValueCollections'
@@ -70,25 +70,24 @@ export const CVW = (props: CVWPropsType) => {
   const isShowFooter = location.pathname.match(/active\/masking$/) === null
   const { featureExclusions } = useContext(ConfigurationContext)
   const activeSceneLabel = useSelector(store => store.activeSceneLabel)
-  const [shouldShowDestroyWarning, setShouldShowDestroyWarning] = useState(false)
+  const shouldShowGlobalDestroyWarning = useSelector(store => store.shouldShowGlobalDestroyWarning)
   const intl = useIntl()
   const wrapperRef = useRef()
-  const isColorwallModallyPresented = useSelector(store => store.isColorwallModallyPresented)
+  // const isColorwallModallyPresented = useSelector(store => store.isColorwallModallyPresented)
 
   // Use this hook to push any facet level embedded data to redux
   useEffect(() => {
     dispatch(setMaxSceneHeight(maxSceneHeight))
   }, [])
-
+  // @todo remove -RS
   // this hook determines if user should be warned of a navigation that will destroy work.
-  useEffect(() => {
-    if ((isStockSceneCached || isPaintSceneCached) && isColorwallModallyPresented) {
-      // eslint-disable-next-line no-debugger
-      debugger
-      setShouldShowDestroyWarning(true)
-    }
-    setShouldShowDestroyWarning(false)
-  }, [isStockSceneCached, isPaintSceneCached, isColorwallModallyPresented])
+  // useEffect(() => {
+  //   if ((isStockSceneCached || isPaintSceneCached) && isColorwallModallyPresented) {
+  //     setShouldShowDestroyWarning(true)
+  //   } else {
+  //     setShouldShowDestroyWarning(false)
+  //   }
+  // }, [isStockSceneCached, isPaintSceneCached, isColorwallModallyPresented])
 
   // this logic is the app level observer of paintscene cache, used to help direct navigation to the color wall and set it up to return
   // THIS IS ONLY UTILIZED BY FLOWS THAT HAVE RETURN PATHS!!!!!!!
@@ -97,7 +96,6 @@ export const CVW = (props: CVWPropsType) => {
     if (navigationIntent === ROUTES_ENUM.COLOR_WALL && (isPaintSceneCached || isStockSceneCached) && navigationReturnIntent) {
       history.push(navigationIntent)
       // tell app that color wall is visible modally, the parent condition assures this will evaluate to true in the action
-      // @todo THIS IS NOT WORKING< the flag is not set ptoperly check out the action and the design!!!!!! -RS
       dispatch(setIsColorWallModallyPresented(navigationReturnIntent))
       // Return intent should be set already, if not something is violating the data lifecycle
       dispatch(stageNavigationReturnIntent(navigationReturnIntent))
@@ -165,12 +163,12 @@ export const CVW = (props: CVWPropsType) => {
 
   const handleNavigationIntentConfirm = (e: SyntheticEvent) => {
     e.stopPropagation()
-    window.alert('confirmed!')
+    dispatch(setShouldShowGlobalDestroyWarning(false))
   }
 
   const handleNavigationIntentCancel = (e: SyntheticEvent) => {
     e.stopPropagation()
-    window.alert('denied!')
+    dispatch(setShouldShowGlobalDestroyWarning(false))
   }
 
   // @todo this will be unnecessary in the future, when the way scene management is done is readdressed -RS
@@ -187,7 +185,15 @@ export const CVW = (props: CVWPropsType) => {
       {toggleCompareColor
         ? <CompareColor />
         : (
-          <div className='cvw__root-wrapper'>
+          <div className='cvw__root-wrapper' ref={wrapperRef}>
+            { shouldShowGlobalDestroyWarning ? <DynamicModal
+              description={intl.formatMessage({ id: 'CVW.WARNING_REPLACEMENT' })}
+              actions={[
+                { text: intl.formatMessage({ id: 'YES' }), callback: handleNavigationIntentConfirm },
+                { text: intl.formatMessage({ id: 'NO' }), callback: handleNavigationIntentCancel }
+              ]}
+              modalStyle={DYNAMIC_MODAL_STYLE.danger}
+              height={getRefDimension(wrapperRef, 'height')} /> : null}
             <ColorVisualizerNav uploadPaintScene={setUploadPaintScene} activePaintScene={setActivePaintScene} setLastActiveComponent={setLastActiveComponent} setMatchPhotoScene={setMatchPhotoScene} />
             <ColorDetailsModal />
             <Switch>
@@ -207,19 +213,11 @@ export const CVW = (props: CVWPropsType) => {
               <Route path='/active/my-ideas' render={() => <MyIdeasContainer />} />
               <Route path='/active/help' render={() => <Help />} />
             </Switch>
-            <div ref={wrapperRef}
+            <div
               /* This div has multiple responsibilities in the DOM tree. It cannot be removed, moved, or changed without causing regressions. */
               style={{ display: shouldHideSceneManagerDiv(location.pathname) ? 'none' : 'block' }}
               className={colorDetailsModalShowing ? 'hide-on-small-screens' : ''}
             >
-              { shouldShowDestroyWarning ? <DynamicModal
-                description={intl.formatMessage({ id: 'CVW.WARNING_REPLACEMENT' })}
-                actions={[
-                  { text: intl.formatMessage({ id: 'YES' }), callback: handleNavigationIntentConfirm },
-                  { text: intl.formatMessage({ id: 'NO' }), callback: handleNavigationIntentCancel }
-                ]}
-                modalStyle={DYNAMIC_MODAL_STYLE.danger}
-                height={getRefDimension(wrapperRef, 'height')} /> : null}
               {lastActiveComponent === 'StockScene' && activeStockScene}
               {lastActiveComponent === 'PaintScene' && activePaintScene}
             </div>

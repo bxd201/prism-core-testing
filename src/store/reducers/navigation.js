@@ -12,7 +12,7 @@ import {
   NAVIGATE_TO_INTENDED_DESTINATION,
   NAVIGATION_INTENT_WITH_RETURN,
   SCENE_POLLUTED,
-  SET_NAVIGATION_INTENT,
+  SET_NAVIGATION_INTENT, SHOULD_SHOW_GLOBAL_DESTROY_WARNING,
   STAGE_NAVIGATION_RETURN_INTENT
 } from '../actions/navigation'
 import cloneDeep from 'lodash/cloneDeep'
@@ -124,6 +124,14 @@ export const stockSceneCache = (state: any = false, action: { type: string, payl
 
 export const isColorwallModallyPresented = (state: boolean = false, action: {type: string, payload: boolean}) => {
   if (action.type === IS_COLOR_WALL_MODALLY_PRESENTED) {
+    return action.payload
+  }
+
+  return state
+}
+
+export const shouldShowGlobalDestroyWarning = (state: boolean = false, action: {type: string, payload: boolean}) => {
+  if (action.type === SHOULD_SHOW_GLOBAL_DESTROY_WARNING) {
     return action.payload
   }
 
