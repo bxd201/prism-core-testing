@@ -12,7 +12,7 @@ import PrismImage from '../PrismImage/PrismImage'
 import { useSelector, useDispatch } from 'react-redux'
 import './MatchPhoto.scss'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { loadBrandColors } from '../../store/actions/brandColors'
+import { loadColors } from 'src/store/actions/loadColors'
 import MatchPhoto from './MatchPhoto'
 import { LiveMessage } from 'react-aria-live'
 import { clearUploads, uploadImage } from '../../store/actions/user-uploads'
@@ -60,11 +60,15 @@ type Props = {
   isFromMyIdeas?: boolean,
   sendImageData?: Function,
   activePaintScene?: Function,
-  config: any,
+  config: {
+    brandId: string,
+    featureExclusions: any,
+    maxSceneViewerHeight: any
+  },
   setLastActiveComponent?: Function
 }
 
-export function ImageRotateContainer ({ setLastActiveComponent, activePaintScene, history, isPaintScene, imgUrl, showPaintScene, checkIsPaintSceneUpdate, isFromMyIdeas, sendImageData, config: { featureExclusions, maxSceneViewerHeight } }: Props) {
+export function ImageRotateContainer ({ setLastActiveComponent, activePaintScene, history, isPaintScene, imgUrl, showPaintScene, checkIsPaintSceneUpdate, isFromMyIdeas, sendImageData, config: { brandId, featureExclusions, maxSceneViewerHeight } }: Props) {
   const canvasRef: RefObject = useRef()
   const wrapperRef: RefObject = useRef()
   const [imageUrl, setImageUrl] = useState(imgUrl)
@@ -104,15 +108,15 @@ export function ImageRotateContainer ({ setLastActiveComponent, activePaintScene
   const [paintSceneWorkspaceState, setPaintSceneWorkspaceState] = useState(paintSceneWorkspace)
   const [isConfirmationModalShown, setConfirmationModalShown] = useState(false)
   const [isImageRotate, setIsImageRotate] = useState(false)
-  const { formatMessage } = useIntl()
+  const { formatMessage, locale } = useIntl()
   const queuedImageUpload = useSelector(state => state.queuedImageUpload)
   const [isLoadingSmartMask, setIsLoadingSmartMask] = useState(false)
-  const brandColors = useSelector(state => state.brandColors.data)
+  const colors = useSelector(state => state.colors.unorderedColors)
   const uploads = useSelector(state => state.uploads)
   const dispatch = useDispatch()
   const globalMaxSceneHeight = useSelector(state => state.maxSceneHeight)
   const maxSceneHeight = maxSceneViewerHeight || globalMaxSceneHeight
-  useEffect(() => { dispatch(loadBrandColors()) }, [])
+  useEffect(() => { dispatch(loadColors(brandId, { language: locale })) }, [])
 
   useEffect(() => {
     if (paintSceneWorkspace && paintSceneWorkspaceState &&
@@ -257,7 +261,7 @@ export function ImageRotateContainer ({ setLastActiveComponent, activePaintScene
       // $FlowIgnore - flow can't understand how the worker is being used since it's not exporting anything
       colorPinsGenerationByHueWorker = new ColorPinsGenerationByHue()
       colorPinsGenerationByHueWorker.addEventListener('message', messageHandler)
-      colorPinsGenerationByHueWorker.postMessage({ imageData: imageData, imageDimensions: { width: imageWidth, height: imageHeight }, brandColors: brandColors })
+      colorPinsGenerationByHueWorker.postMessage({ imageData: imageData, imageDimensions: { width: imageWidth, height: imageHeight }, colors })
     }
   }
 

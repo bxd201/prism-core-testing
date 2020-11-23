@@ -1,9 +1,7 @@
 // @flow
-import React, { useEffect } from 'react'
+import React from 'react'
 import ConfirmationModal from './ConfirmationModal'
 import DynamicColorFromImage from '../InspirationPhotos/DynamicColorFromImage'
-import { useSelector, useDispatch } from 'react-redux'
-import { loadBrandColors } from '../../store/actions/brandColors'
 
 type Props = {
   imageUrl: string,
@@ -17,32 +15,29 @@ type Props = {
 }
 
 export function MatchPhoto ({ imageUrl, wrapperWidth, isPortrait, imageDims, pins, isConfirmationModalActive, onClickNo, maxHeight }: Props) {
-  const dispatch = useDispatch()
-  useEffect(() => { dispatch(loadBrandColors()) }, [])
-
-  const brandColors = useSelector(state => state.brandColors.data)
-
   return (
-    <React.Fragment>
+    <>
       {
         (imageUrl && pins.length > 0)
-          ? (<React.Fragment>
-            <DynamicColorFromImage
-              brandColors={brandColors}
-              originalImageWidth={imageDims.originalImageWidth}
-              originalImageHeight={imageDims.originalImageHeight}
-              originalIsPortrait={imageDims.originalIsPortrait}
-              imageUrl={imageUrl}
-              width={wrapperWidth}
-              maxHeight={maxHeight}
-              isPortrait={isPortrait}
-              pins={pins}
-              isActive />
-            {isConfirmationModalActive && <ConfirmationModal onClickNo={onClickNo} />}
-          </React.Fragment>)
+          ? (
+            <>
+              <DynamicColorFromImage
+                originalImageWidth={imageDims.originalImageWidth}
+                originalImageHeight={imageDims.originalImageHeight}
+                originalIsPortrait={imageDims.originalIsPortrait}
+                imageUrl={imageUrl}
+                width={wrapperWidth}
+                maxHeight={maxHeight}
+                isPortrait={isPortrait}
+                pins={pins}
+                isActive
+              />
+              {isConfirmationModalActive && <ConfirmationModal onClickNo={onClickNo} />}
+            </>
+          )
           : ''
       }
-    </React.Fragment>
+    </>
   )
 }
 

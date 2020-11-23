@@ -83,7 +83,8 @@ export function doReceiveColors (state: ColorsState, { payload: { unorderedColor
       status: { ...state.status, activeRequest: false, error: false, loading: false, requestComplete: true },
       structure: sections,
       sections: sections.map(section => section.name),
-      primeColorWall: primeColorWall && primeColorWall.name
+      primeColorWall: primeColorWall && primeColorWall.name,
+      unorderedColors
     }
     : getErrorState(state)
 }

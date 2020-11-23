@@ -1,6 +1,6 @@
 // @flow
-import { getDeltaE00 } from 'delta-e'
 import tinycolor from '@ctrl/tinycolor'
+import { type Color } from 'src/shared/types/Colors.js.flow'
 
 export const throttleDragTime = 5
 // we need this two const to make sure cursor always point to the center of preview circle
@@ -42,65 +42,45 @@ export const rgb2lab = (rgb: Array<any>) => {
   return [(116 * y) - 16, 500 * (x - y), 200 * (y - z)]
 }
 
-export const renderingPins = (initPins: Array<Object>, canvasOffsetWidth: number, canvasOffsetHeight: number, brandColors: Array) => {
-  const RGBinitPins = getRGBInitPins(initPins)
-  const maxHeight = canvasOffsetHeight - 2 * activedPinsHalfWidth
-  const maxWidth = canvasOffsetWidth - 2 * activedPinsHalfWidth
-  return RGBinitPins.map<Object>((acgColor: any, index: number): Object => {
+export type RenderingPin = {
+  isActiveFlag: boolean,
+  name: string,
+  colorNumber: number,
+  rgbValue: string,
+  pinNumber: number,
+  isContentLeft: boolean,
+  translateX: number,
+  translateValueY: number
+}
+
+export const renderingPins = (initPins: Array<Object>, canvasOffsetWidth: number, canvasOffsetHeight: number, colors: Color[]): RenderingPin[] => {
+  return getRGBInitPins(initPins).map<Object>((acgColor: any, index: number): Object => {
+    const color: Color = findClosestColor(acgColor.rgbArray, colors)
     const calculateTranslateX = acgColor.translateValueX * canvasOffsetWidth
     const calculateTranslateY = acgColor.translateValueY * canvasOffsetHeight
-    const arrayIndex = findBrandColor(acgColor.rgbArray, brandColors)
-    const rgbValueBrandColor = 'rgb(' + brandColors[arrayIndex + 2] + ')'
-    let isContentLeft = false
-    if (calculateTranslateX < canvasOffsetWidth / 2) {
-      isContentLeft = true
-    }
+
     return {
+      ...color,
       isActiveFlag: (initPins.length - 1 === index),
-      colorName: brandColors[arrayIndex],
-      colorNumber: brandColors[arrayIndex + 1],
-      rgbValue: rgbValueBrandColor,
+      rgbValue: `rgb(${color.red},${color.green},${color.blue})`,
       pinNumber: index,
-      isContentLeft: isContentLeft,
-      translateX: calculateTranslateX > maxWidth ? maxWidth : calculateTranslateX,
-      translateY: calculateTranslateY > maxHeight ? maxHeight : calculateTranslateY
+      isContentLeft: calculateTranslateX < canvasOffsetWidth / 2,
+      translateX: Math.min(canvasOffsetWidth - 2 * activedPinsHalfWidth, calculateTranslateX),
+      translateY: Math.min(canvasOffsetHeight - 2 * activedPinsHalfWidth, calculateTranslateY)
     }
   })
 }
 
-export const findBrandColorWithDeltaE00 = (currentPixelRGB: Array<number>, brandColors: Array) => {
-  let currentPixelInLABarray = rgb2lab(currentPixelRGB)
-  let theMostCloseDistance = 100
-  let index = 0
-  let currentPixelInLAB = { L: currentPixelInLABarray[0], A: currentPixelInLABarray[1], B: currentPixelInLABarray[2] }
-  for (let arrayIndex = 0; arrayIndex < brandColors.length; arrayIndex += 6) {
-    let thisSWinLAB = { L: brandColors[arrayIndex + 3], A: brandColors[arrayIndex + 4], B: brandColors[arrayIndex + 5] }
-    let colorDistance = getDeltaE00(currentPixelInLAB, thisSWinLAB)
-    if (colorDistance < theMostCloseDistance) {
-      theMostCloseDistance = colorDistance
-      index = arrayIndex
-    }
-  }
-  return index
+export const findClosestColor = ([red, green, blue]: [number, number, number], colors: Color[]): Color => {
+  const currentPixelHex: string = tinycolor(`rgb (${red}, ${green}, ${blue})`).toHex()
+
+  return colors.reduce(([closestColor, smallestDistanceSoFar], color): [Color, number] => {
+    const colorDistance: number = measureDistance(currentPixelHex, tinycolor(`rgb(${color.red},${color.green},${color.blue})`).toHex())
+    return colorDistance < smallestDistanceSoFar ? [color, colorDistance] : [closestColor, smallestDistanceSoFar]
+  }, [colors[0], 99999])[0]
 }
 
-export const findBrandColor = (currentPixelRGB: Array<number>, brandColors: Array) => {
-  const currentPixelHex = tinycolor(`rgb (${currentPixelRGB[0]}, ${currentPixelRGB[1]}, ${currentPixelRGB[2]})`).toHex()
-  let minDistance
-  const n = brandColors.length
-  let index = 0
-  for (let brandColorsIndex = 0; brandColorsIndex < n; brandColorsIndex += 6) {
-    const brandColorHex = tinycolor(`rgb (${brandColors[brandColorsIndex + 2]})`).toHex()
-    const distance = measureDistance(currentPixelHex, brandColorHex)
-    if (typeof minDistance === 'undefined' || distance < minDistance) {
-      minDistance = distance
-      index = brandColorsIndex
-    }
-  }
-  return index
-}
-
-export const measureDistance = (color1: string, color2: string) => {
+export const measureDistance = (color1: string, color2: string): number => {
   const position1 = getChromaLuma(color1)
   const position2 = getChromaLuma(color2)
   const redDelta = position1[0] - position2[0]
