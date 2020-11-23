@@ -185,7 +185,7 @@ export default (props: Props) => {
           </div>
           <div className={`pin__content ${color.isContentLeft ? 'pin__content--left' : ''}`}>
             <div className={`pin__name__wrapper ${color.isActiveFlag ? `pin__name__wrapper--active` : `pin__name__wrapper--inactive`}`}>
-              <span className='pin__copy pin__number'>{(color.colorNumber) ? `SW${color.colorNumber}` : ''}</span>
+              <span className='pin__copy pin__number'>{(color.colorNumber) ? `${color.brandKey}${color.colorNumber}` : ''}</span>
               <span className='pin__copy pin__name'>{color.name}</span>
             </div>
             <div
