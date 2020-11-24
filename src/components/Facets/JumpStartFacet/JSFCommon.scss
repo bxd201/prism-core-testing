@@ -1,0 +1,85 @@
+@import './constants';
+
+:root {
+  body {
+    &.jumpstart-bd {
+      background-color: $jsf-page-bg !important;
+      margin: 0 !important;
+    }
+  }
+}
+
+.JSFCommon {
+  background-color: $jsf-page-bg;
+  &__title {
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 0 0 .5rem 0;
+    padding: 0;
+    text-align: center;
+    color: map-get($jsf-color, primary) !important;
+
+    @include respond-above(sm) {
+      font-size: 2rem;
+    }
+  }
+  &__description {
+    text-align: center;
+    font-family: sans-serif;
+    font-weight: bold;
+  }
+
+  &__text {
+    line-height: 1.4;
+
+    p, ul, li, hr {
+      margin-top: .5em;
+      margin-bottom: .5em;
+    }
+  }
+
+  &__content {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: $jsf-content-max-width;
+    width: 100%;
+    p {
+      line-height: 1.5em;
+      color: #454545;
+    }
+
+    &--centered {
+      text-align: center;
+    }
+  }
+
+  &__band {
+    display: flex;
+    justify-content: center;
+    background-color: $jsf-page-bg;
+
+    &--dark {
+      background: $jsf-band-bg;
+    }
+
+    &--pad-h, &--pad {
+      padding-left: 1rem;
+      padding-right: 1rem;
+
+      @include respond-above(sm) {
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+    }
+
+    &--pad-v, &--pad {
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+
+      @include respond-above(sm) {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+      }
+    }
+  }
+}

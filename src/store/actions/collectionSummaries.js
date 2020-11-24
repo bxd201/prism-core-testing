@@ -1,5 +1,6 @@
 // @flow
 import axios from 'axios'
+import { generateBrandedEndpoint } from 'src/shared/helpers/DataUtils'
 import { COLLECTION_SUMMARIES_ENDPOINT } from 'constants/endpoints'
 
 export const REQUEST_CS: string = 'REQUEST_COLLECTION_SUMMARIES'
@@ -24,12 +25,16 @@ export function handleGetCollectionSummaries (collectionSummaries: any) {
       {}
     )
   }
-
   return { categories, summaries }
 }
 
-export const loadCollectionSummaries = (dispatch: Function) => {
-  axios
-    .get(COLLECTION_SUMMARIES_ENDPOINT)
-    .then(res => dispatch({ type: RECEIVED_CS, payload: { ...handleGetCollectionSummaries(res.data) } }))
+export const requestCollectionSummaries = () => ({ type: REQUEST_CS, payload: { loadingCS: true } })
+
+export const receivedCollectionSummaries = (res: { data: any }) => ({ type: RECEIVED_CS, payload: { loadingCS: false, ...handleGetCollectionSummaries(res.data) } })
+
+export const loadCollectionSummaries = (brandId: string, options?: {}) => {
+  return (dispatch: Function) => {
+    dispatch(requestCollectionSummaries)
+    axios.get(generateBrandedEndpoint(COLLECTION_SUMMARIES_ENDPOINT, brandId, options)).then(res => dispatch(receivedCollectionSummaries(res)))
+  }
 }

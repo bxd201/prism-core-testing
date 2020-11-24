@@ -1,0 +1,34 @@
+.save-options {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-right: 0.5em;
+  & > button {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    &:focus {
+      outline-style: solid;
+      outline-color: var(getThemeColor('secondary'));
+      outline-width: 2px;
+      z-index: 100;
+    }
+  }
+  @include respond-above(sm) {
+    margin-right: 0;
+  }
+  &__items {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 4px;
+    &:hover {
+      color: var(getThemeColor('secondary'));
+    }
+  }
+}
+

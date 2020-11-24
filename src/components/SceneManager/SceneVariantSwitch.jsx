@@ -55,6 +55,7 @@ function DayNight (props: SwitchProps) {
           htmlFor={checkboxName}
         >
           <input
+            aria-label={txt}
             className={CLASSES.CHECKBOX}
             type='checkbox'
             checked={!isDay}

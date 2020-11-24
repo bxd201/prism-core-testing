@@ -3,7 +3,7 @@ $btn-border-thickness: 1px;
 $menu-bar-width: 27em;
 
 .menu-bar {
-  border: $btn-border-thickness solid getVar("colors.primary");
+  border: $btn-border-thickness solid var(getThemeColor('primary'));
   cursor: default;
   height: auto;
   position: relative;
@@ -31,18 +31,19 @@ $menu-bar-width: 27em;
 
   &__prime-color-wall-button {
     background-color: white;
-    color: getVar("colors.primary");
+    color: var(getThemeColor('primary'));
     padding:  0.8em;
-    border: $btn-border-thickness solid getVar("colors.primary");
+    border: $btn-border-thickness solid var(getThemeColor('primary'));
     text-decoration: none;
     &.disabled {
-      background-color: getVar("colors.primary");
+      background-color: var(getThemeColor('primary'));
       color: white;
     }
   }
 
   &__menu {
     background: $btn-bg;
+    // @todo theme
     box-shadow: 0 2px 5px -1px rgba(black, .65);
     height: auto;
     left: 0;
@@ -74,7 +75,7 @@ $menu-bar-width: 27em;
   }
 
   &__menu-link.active {
-    background: getVar( "colors.swBlue" );
+    background: var(getThemeColor('primary'));
     color: $btn-bg;
     height: auto;
   }

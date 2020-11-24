@@ -17,7 +17,7 @@ const ColorFromImageDeleteButton = (props: ColorFromImageDeleteButtonProps) => {
       className='scene__image__wrapper__delete-pin'
       onClick={props.clickHandler}>
       <FontAwesomeIcon
-        title={props.intl.messages.DELETE_PIN}
+        title={props.intl.formatMessage({ id: 'DELETE_PIN' })}
         icon='trash' size='1x' />
     </button> : null
   )

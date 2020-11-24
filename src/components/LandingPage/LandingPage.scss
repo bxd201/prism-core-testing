@@ -1,0 +1,87 @@
+.cvw-landing-page-wrapper {
+  align-items: center;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  justify-content: center;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  overflow:hidden;
+  &__image {
+    width: 267px;
+    height: 268px;
+    @include respond-above(sm) {
+        width: 348px;
+    }
+    background-size: 300px;
+    background-repeat: no-repeat;
+    background-position: center;
+    margin: 1em 0;
+  }
+  &__painting-btn {
+    background-color: var(getThemeColor('secondary'));
+    padding: 1em;
+    color: #fff;
+    border: 1px solid var(getThemeColor('secondary'));
+    margin-top: 10px;
+    & > span {
+      padding: 10px;
+    }
+    &:hover {
+      border: 1px solid var(getThemeColor('white'));
+      cursor: pointer;
+    }
+  }
+  &__intro-divider {
+    display: flex;
+    min-height: 1em;
+    padding: 2em;
+    color: #fff;
+    align-items: center;
+    justify-content: center;
+    &__line {
+      background-color: var(getThemeColor('white'));
+      width: 100px;
+      @include respond-above(sm) {
+        width: 259px;
+      }
+      height: 1px;
+      margin: 0 1em;
+    }
+  }
+  &__intro-button-container {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    align-items: center;
+    width: 600px;
+    @include respond-above(sm) {
+        flex-direction: row;
+    }
+    &>:hover{
+        border:1px solid var(getThemeColor('secondary'));
+        color:#2cabe2;
+    }
+    &__intro-buttons {
+      border: 1px solid var(getThemeColor('light'));
+      display: inline-block;
+      text-align: center;
+      width: auto;
+      background: var(getThemeColor('white'));
+      color: var(getThemeColor('black'));
+      fill: var(getThemeColor('black'));
+      margin: 0.25em 1em;
+      min-height: calc(3 * 1em);
+      padding: 1.2em 0.8em;
+      text-decoration: none;
+      text-transform: none;
+      width: calc(600px / 3 - 2em);
+      &>span{
+        padding:10px;
+        font-size:14px;
+      }
+    }
+  }
+}

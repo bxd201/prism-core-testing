@@ -15,6 +15,8 @@ declare var APP_NAME: string
 declare var APP_VERSION: string
 declare var BASE_PATH: string
 declare var ENV: string
+declare var FIREBASE_AUTH_ENABLED: boolean
+declare var SMARTMASK_ENABLED: boolean
 declare var ML_API_URL: string
 declare var WEBPACK_CONSTANTS: { [key: string]: any }
 declare var VAR_NAMES: { [key: string]: string }

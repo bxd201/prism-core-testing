@@ -13,23 +13,18 @@ import docReady from 'src/shared/helpers/docReady'
 import { type EmbeddedConfiguration } from 'src/shared/types/Configuration.js.flow'
 import facetPubSub from './facetPubSub'
 import { addInstance, getInstance, unmount, type BoundFacet } from './facetInstance'
+import { initFirebaseOnce } from './facetFirebase'
 
 // import the redux store
-import embedGlobalStyles from './styles/embedGlobalStyles'
-import embedBundleStyles from './styles/embedBundleStyles'
 import { HAS_BOUND_CLASS, TO_BIND_CLASS } from './facetConstants'
 import { facetMasterWrapper } from './facetMasterWrapper'
+import { FIREBASE_CONFIG } from 'constants/configurations'
 import dressUpForPrism from './utils/dressUpForPrism'
 import updateGlobalPrismObject from './utils/updateGlobalPrismObject'
 
 let [addToEmbedQueue, embedQueue] = [(facetName) => {
   embedQueue.push(facetName)
 }, []]
-
-let [flagAsMainBundle, IS_MAIN_BUNDLE] = [() => {
-  console.info('This instance of Prism has been flagged as main bundle rather than an individual Facet.')
-  IS_MAIN_BUNDLE = true
-}, false]
 
 // returns Facet instance if it exists in this bundle
 const getAppIfAvailable = (facetName) => {
@@ -72,8 +67,22 @@ const renderAppInElement = (el: HTMLElement, explicitProps: Object = {}) => {
   // give all necessary default attributes and classnames
   dressUpForPrism(el)
 
+  // convert strings to floats if they are numeric strings
+  const getValueType = (value: any) => {
+    const convertedVal = parseFloat(value)
+    // this is intentional loose equality to allow values like "1.00" to equal 1
+    // eslint-disable-next-line eqeqeq
+    if (`${convertedVal}` == value) {
+      return convertedVal
+    }
+
+    return value
+  }
+
   // get props from elements data attribute, like the post_id
-  const attrProps = mapValues(Object.assign({}, el.dataset), v => v === '' ? true : v)
+  const attrProps = mapValues(Object.assign({}, el.dataset), v => {
+    return v === '' ? true : getValueType(v)
+  })
   const { reactComponent, prismFacet, bindCallback, ...props }: {
     reactComponent: string,
     prismFacet: string,
@@ -100,8 +109,6 @@ const renderAppInElement = (el: HTMLElement, explicitProps: Object = {}) => {
     el,
     bindCallback // a callback which will be passed a (FacetPubSubMethods & FacetBinderMethods) object on bind
   }
-
-  _embedBundleStyles(facet)
 
   const Component = facetMasterWrapper(facetPubSub(App))
 
@@ -132,34 +139,17 @@ function gatherReactRoots (facetName?: string, root: Document = document): any[]
 }
 
 function embedAtRoots (override: boolean = false) {
-  if (IS_MAIN_BUNDLE) {
-    _embedBundleStyles(WEBPACK_CONSTANTS.mainEntryPointName)
-    if (!override) {
-      return
-    }
+  if (!override) {
+    return
   }
 
   docReady(bindReactToDOM)
 }
 
 function embedAtElement (el: HTMLElement, props: Object = {}) {
-  if (IS_MAIN_BUNDLE) {
-    _embedBundleStyles(WEBPACK_CONSTANTS.mainEntryPointName)
-  }
-
   docReady(() => {
     renderAppInElement(el, props)
   })
-}
-
-// embeds styles for provided facet OR main bundle (internal switch); passes work off to memoized function
-// can be safely called multiple times due to downstream embedding
-const _embedBundleStyles = (bundleName: string) => {
-  if (IS_MAIN_BUNDLE) {
-    embedBundleStyles(WEBPACK_CONSTANTS.mainEntryPointName)
-  } else {
-    embedBundleStyles(bundleName)
-  }
 }
 
 // loops over all react roots and attempts to render facet in each -- debounced
@@ -171,7 +161,6 @@ export {
   bindReactToDOM,
   embedAtElement,
   embedAtRoots,
-  flagAsMainBundle,
   gatherReactRoots
 }
 
@@ -209,8 +198,8 @@ export default function facetBinder (FacetDeclaration: BoundFacet, facetName: st
 
   // make this facet available to be embedded
   addToEmbedQueue(facetName)
-  // this will load global styles immediately
-  embedGlobalStyles()
+
+  initFirebaseOnce(FIREBASE_CONFIG)
 
   embedAtRoots()
 

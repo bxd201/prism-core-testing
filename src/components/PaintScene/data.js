@@ -14,6 +14,14 @@ export const toolBarButtons = [
   { id: 11, name: 'info', displayName: 'HINTS', fontAwesomeIcon: { variant: 'fal', icon: 'info-circle', rotate: 0 } }
 ]
 
+export const addColorsTooltip = { name: 'addColors', displayName: 'ADD COLORS' }
+
+export const paintAreaTooltipNumber = 1
+export const undoTooltipNumber = 8
+export const hidePaintTooltipNumber = 10
+export const hintsTooltipNumber = 11
+export const addColorsTooltipNumber = 12
+
 export const selectGroupButtons = [
   { id: 1, name: 'deleteGroup', displayName: 'DELETE', fontAwesomeIcon: { variant: 'fal', icon: 'trash-alt', rotate: 0 } },
   { id: 2, name: 'group', displayName: 'GROUP', fontAwesomeIcon: { variant: 'fal', icon: 'object-group', rotate: 0 } },
@@ -52,3 +60,35 @@ export const brushSquareShape = 'square'
 export const brushTypes = [
   brushLargeSize, brushMediumSize, brushSmallSize, brushTinySize
 ]
+export const brushShapesTypes = [
+  { id: 0, shape: brushRoundShape, size: brushLargeSize },
+  { id: 1, shape: brushRoundShape, size: brushMediumSize },
+  { id: 2, shape: brushRoundShape, size: brushSmallSize },
+  { id: 3, shape: brushRoundShape, size: brushTinySize },
+  { id: 4, shape: brushSquareShape, size: brushLargeSize },
+  { id: 5, shape: brushSquareShape, size: brushMediumSize },
+  { id: 6, shape: brushSquareShape, size: brushSmallSize },
+  { id: 7, shape: brushSquareShape, size: brushTinySize }
+]
+
+export const divTranslateFactor = -152
+export const divTranslateMultiplier = 52
+export const downPointerDivTranslateFactor = -158
+export const downPointerDivTranslateMultiplie = 26
+export const tooltipShownSession = { key: 'tooltipShown', value: 1 }
+export const setTooltipShownLocalStorage = () => {
+  window.localStorage.setItem(tooltipShownSession.key, tooltipShownSession.value)
+}
+export const getTooltipShownLocalStorage = () => {
+  return window.localStorage.getItem(tooltipShownSession.key)
+}
+const baseClass = 'paint__scene__wrapper'
+const paintBrushClass = `${baseClass}__paint-brush`
+export const paintBrushLargeClass = `${paintBrushClass}--large`
+export const paintBrushMediumClass = `${paintBrushClass}--medium`
+export const paintBrushSmallClass = `${paintBrushClass}--small`
+export const paintBrushTinyClass = `${paintBrushClass}--tiny`
+export const paintBrushLargeCircleClass = `${paintBrushClass}--large-circle`
+export const paintBrushMediumCircleClass = `${paintBrushClass}--medium-circle`
+export const paintBrushSmallCircleClass = `${paintBrushClass}--small-circle`
+export const paintBrushTinyCircleClass = `${paintBrushClass}--tiny-circle`

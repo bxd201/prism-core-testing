@@ -7,7 +7,7 @@ import { LiveMessage } from 'react-aria-live'
 import * as GA from 'src/analytics/GoogleAnalytics'
 
 import { type Color } from '../../../shared/types/Colors.js.flow'
-import { varValues } from 'src/shared/variableDefs'
+import { varValues } from 'src/shared/withBuild/variableDefs'
 
 import 'src/scss/convenience/visually-hidden.scss'
 
@@ -31,7 +31,7 @@ export function ColorChipMaximizer ({ color, intl, onToggle }: Props) {
     setMaximized(!isMaximized)
   }
 
-  const contrastingTextColor = (color.isDark) ? varValues.colors.white : varValues.colors.black
+  const contrastingTextColor = (color.isDark) ? varValues._colors.white : varValues._colors.black
 
   const CHIP_CLASS = [
     `${BASE_CLASS}__max-chip`
@@ -69,7 +69,7 @@ export function ColorChipMaximizer ({ color, intl, onToggle }: Props) {
     if (isMaximized === true) {
       minimizeChipBtn.current && minimizeChipBtn.current.focus()
       setTimeout(() => {
-        setLiveRegionMessage(intl.messages.CHIP_MAXIMIZED)
+        setLiveRegionMessage(intl.formatMessage({ id: 'CHIP_MAXIMIZED' }))
       }, 500)
       GA.event({
         category: 'Color Detail',
@@ -80,7 +80,7 @@ export function ColorChipMaximizer ({ color, intl, onToggle }: Props) {
     if (isMaximized === false) {
       maximizeChipBtn.current && maximizeChipBtn.current.focus()
       setTimeout(() => {
-        setLiveRegionMessage(intl.messages.CHIP_MINIMIZED)
+        setLiveRegionMessage(intl.formatMessage({ id: 'CHIP_MAXIMIZED' }))
       }, 500)
     }
   }, [isMaximized])

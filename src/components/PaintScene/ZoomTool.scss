@@ -19,8 +19,8 @@
   position: relative;
   width: 70%;
   &:before {
-    background: white;
-    border: 1px solid #c8c8c8;
+    background: var(getThemeColor('white'));
+    border: 1px solid var(getThemeColor('light.lighter'));
     content: '';
     display: block;
     height: 6px;
@@ -31,10 +31,10 @@
   }
   }
   &__zoom-slider-circle {
-    background: #2cabe2;
-    border: 1px solid #2cabe2;
+    background: var(getThemeColor('secondary'));
+    border: 1px solid var(getThemeColor('secondary'));
     border-radius: 50%;
-    color: white;
+    color: var(getThemeColor('white'));
     display: inline-block;
     line-height: 15px;
     position: relative;

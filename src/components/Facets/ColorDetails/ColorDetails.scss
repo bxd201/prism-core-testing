@@ -1,6 +1,6 @@
 $top-level-class-string: '.color-info';
-$neutral-background-color: #fff;
-$neutral-foreground-color: $color-near-black;
+$neutral-background-color: var(getThemeColor('white'));
+$neutral-foreground-color: var(getThemeColor('dark'));
 $strip-chip-size: 2rem;
 $strip-chip-margin: $strip-chip-size * 0.1;
 $width-thin: 0.125rem;
@@ -16,10 +16,12 @@ $details-tab-padding: 1rem;
   flex-direction: column;
   justify-content: flex-end;
   position: relative;
+  width: 100vw;
 
   @include respond-above(sm) {
     flex-direction: row;
     margin-bottom: $width-small;
+    width: auto;
   }
 }
 
@@ -79,10 +81,10 @@ $details-tab-padding: 1rem;
 
   &__main-info {
     padding: 2rem $width-medium;
-    color: $color-black;
+    color: var(getThemeColor('black'));
 
     &--dark-color {
-      color: $color-white;
+      color: var(getThemeColor('white'));
     }
   }
 
@@ -160,7 +162,7 @@ $details-tab-padding: 1rem;
 
   &__strip-color-name {
     &--dark-color {
-      color: var(getVarName('theme.colors.white'));
+      color: var(getThemeColor('white'));
     }
   }
 
@@ -172,7 +174,7 @@ $details-tab-padding: 1rem;
   }
 
   &__strip-location-name {
-    color: $color-near-black;
+    color: var(getThemeColor('dark'));
     font-size: 0.9rem;
   }
 
@@ -313,7 +315,7 @@ $details-tab-padding: 1rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: $color-near-black;
+    color: var(getThemeColor('dark'));
     cursor: pointer;
     font-size: 0.85rem;
     height: $tab-btn-height;
@@ -399,7 +401,7 @@ $details-tab-padding: 1rem;
   &__coord-color {
     background: #bbc;
     border-bottom: $width-small solid $neutral-background-color;
-    color: $color-black;
+    color: var(getThemeColor('black'));
     display: flex;
     flex-direction: column;
     flex-grow: 1;
@@ -422,7 +424,7 @@ $details-tab-padding: 1rem;
     }
 
     &--dark-color {
-      color: $color-white;
+      color: var(getThemeColor('white'));
     }
 
     &:last-child {

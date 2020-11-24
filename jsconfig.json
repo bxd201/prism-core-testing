@@ -2,13 +2,19 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "constants": ["src/constants"],
+      "__mocks__": ["src/__mocks"],
       "config": ["src/config"],
-      "variables": ["src/shared/variableDefs.js"],
+      "constants": ["src/constants"],
+      "embedOutput": ["embed-output"],
+      "embedWorking": ["embed-working"],
+      "src": ["src"],
+      "variables": ["src/shared/withBuild/variableDefs.js"],
     }
   },
   "exclude": [
     "node_modules",
+    "embed-output",
+    "embed-working",
     "dist",
     ".config",
     "__mocks__/data",

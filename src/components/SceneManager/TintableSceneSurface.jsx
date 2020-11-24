@@ -10,7 +10,9 @@ type Props = {
   filterId: string,
   width: string | number,
   height: string | number,
-  type: string
+  type: string,
+  children: any,
+  scaleSvg?: booelan
 }
 
 class TintableSceneSurface extends PureComponent<Props> {
@@ -32,15 +34,16 @@ class TintableSceneSurface extends PureComponent<Props> {
   }
 
   render () {
-    const { width, height } = this.props
+    const { width, height, scaleSvg } = this.props
 
     return (
-      <svg className={TintableSceneSurface.baseClass}
+      <svg style={scaleSvg ? { width, height } : null} className={TintableSceneSurface.baseClass}
         viewBox={`0 0 ${width} ${height}`}
         version='1.1'
         xmlns='http://www.w3.org/2000/svg'
         xmlnsXlink='http://www.w3.org/1999/xlink'
         preserveAspectRatio='none'>
+        {this.props.children}
         {this.getSvgContents()}
       </svg>
     )

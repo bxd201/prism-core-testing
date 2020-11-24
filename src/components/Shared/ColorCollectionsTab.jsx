@@ -1,7 +1,10 @@
 // @flow
 //
-import React, { useState } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import type { ColorCollectionsTabs } from '../../shared/types/Colors.js.flow'
+import { KEY_CODES } from 'src/constants/globals'
+import { FormattedMessage, useIntl } from 'react-intl'
+import at from 'lodash/at'
 
 type Props = {
   collectionTabs: ColorCollectionsTabs,
@@ -22,35 +25,87 @@ const tabListItemActive = `${baseClass}__tab-list-item--active`
 function ColorCollectionsTab (props: Props) {
   const { collectionTabs, showTab, tabIdShow } = props
   const [tabListMobileShow, showTabListMobile] = useState(false)
-  const tabFind = collectionTabs.find(tab => tab.id === tabIdShow)
+  const tabFind = collectionTabs.find(tab => tabIdShow && tab.id.toString() === tabIdShow.toString())
   const tabActive = (tabFind) ? tabFind.tabName : undefined
-  const tabShowName = (tabActive !== undefined) ? tabActive : 'Choose collection'
+  const { messages = {} } = useIntl()
+  const tabShowName = (tabActive !== undefined) ? tabActive : at(messages, 'CHOOSE_A_COLLECTION')[0]
+
+  const tabRefs = collectionTabs.reduce((acc, value) => {
+    acc[value.id.toString()] = React.createRef()
+    return acc
+  }, {})
+
+  useEffect(() => {
+    if (collectionTabs && collectionTabs.length) {
+      tabRefs[collectionTabs[0].id.toString()].current.focus()
+    }
+  }, [])
+
+  useEffect(() => {
+    if (tabRefs[tabIdShow] && tabRefs[tabIdShow].current) {
+      tabRefs[tabIdShow].current.focus()
+    }
+  }, [tabIdShow])
+
+  const handleKeyDownSpan = useCallback((e: SyntheticEvent) => {
+    if (e.keyCode === KEY_CODES.KEY_CODE_ENTER || e.keyCode === KEY_CODES.KEY_CODE_SPACE) {
+      showTabListMobile(!tabListMobileShow)
+    }
+  }, [showTabListMobile, tabListMobileShow])
+
+  const handleClickSpan = useCallback(() => {
+    showTabListMobile(!tabListMobileShow)
+  }, [showTabListMobile, tabListMobileShow])
+
+  const handleKeyDownLiTab = useCallback((e: SyntheticEvent) => {
+    if (e.keyCode === KEY_CODES.KEY_CODE_SPACE || e.keyCode === KEY_CODES.KEY_CODE_ENTER) {
+      if (e.currentTarget.dataset.tabid !== tabIdShow) {
+        showTab(e.currentTarget.dataset.tabid, true)
+      }
+      showTabListMobile(!tabListMobileShow)
+    }
+  }, [showTabListMobile, tabListMobileShow])
+
+  const handleClickLiTab = useCallback((e: SyntheticEvent) => {
+    if (e.currentTarget.dataset.tabid !== tabIdShow) {
+      showTab(e.currentTarget.dataset.tabid, true)
+    }
+    showTabListMobile(!tabListMobileShow)
+  }, [showTabListMobile, tabListMobileShow])
+
+  const mouseDownHandler = (e: SyntheticEvent) => {
+    e.preventDefault()
+  }
 
   return (
-    <div className={tabListSelect} >
-      <span className={`${tabListHeading}`}>Choose a Collection</span>
+    <div className={tabListSelect} role='tablist'>
+      <span className={`${tabListHeading}`}><FormattedMessage id='CHOOSE_A_COLLECTION' /></span>
+
       <span
         className={`${tabListDropdownMobile}`}
-        tabIndex='-1'
+        tabIndex='0'
         role='button'
-        onKeyDown={() => {}}
-        onClick={() => showTabListMobile(!tabListMobileShow)}>{tabShowName}
+        onKeyDown={handleKeyDownSpan}
+        onClick={handleClickSpan}
+      >
+        {tabShowName}
       </span>
+
       <ul className={`${tabList} ${(tabListMobileShow) ? `${tabListActive}` : `${tabListInactive}`}`} role='tablist'>
         {collectionTabs.map((tab, id) => {
           return (
             <li
+              ref={tabRefs[tab.id.toString()]}
+              data-testid={`${tab.id}`}
+              data-tabid={tab.id}
               role='tab'
-              aria-selected={tab.id === tabIdShow}
-              onKeyDown={() => {}}
-              className={`${tabListItem} ${(tab.id === tabIdShow) ? `${tabListItemActive}` : ''}`}
+              tabIndex='0'
+              aria-selected={tabIdShow && tab.id.toString() === tabIdShow.toString()}
+              onKeyDown={handleKeyDownLiTab}
+              className={`${tabListItem} ${(tabIdShow && tab.id.toString() === tabIdShow.toString()) ? `${tabListItemActive}` : ''}`}
               key={tab.id}
-              onClick={() => {
-                if (tab.id !== tabIdShow) {
-                  showTab(tab.id, true)
-                }
-                showTabListMobile(!tabListMobileShow)
-              }}
+              onClick={handleClickLiTab}
+              onMouseDown={mouseDownHandler}
             >
               {tab.tabName}
             </li>

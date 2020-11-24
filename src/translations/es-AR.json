@@ -1,0 +1,390 @@
+{
+    "ACCEPT_TERM": "Aceptar término",
+    "ADD_A_COLOR": "AGREGAR UN COLOR",
+    "ADD_ALL": "Agregar todo",
+    "ADD_COLOR_TO_PALETTE": "Agregar {colorName} a la paleta",
+    "ADD_TO_PALETTE": "Agregar {name} a la paleta",
+    "ALL_COLORS": "Todos los colores",
+    "BACK": "Volver",
+    "BACK_TO_COLOR_WALL": "Volver al muro de colores",
+    "CANCEL": "Cancelar",
+    "CANVAS_UNSUPPORTED": "Tu navegador no soporta el elemento Lienzo.",
+    "CHIP_MAXIMIZED": "Se ha maximizado el chip de color",
+    "CHIP_MINIMIZED": "Se ha minimizado el chip de color",
+    "CHOOSE_A_COLLECTION": "Elige una colección",
+    "CHOOSE_COLLECTION": "Elige colección",
+    "CLEAR_ALL": "LIMPIAR TODO",
+    "CLEAR_TEXT": "Borrar texto",
+    "CLOSE": "CERRAR",
+    "COLOR_COLLECTIONS": "Colecciones de colores",
+    "COLOR_DETAILS": "detalles de color",
+    "COLOR_FAMILIES": "Familias de colores",
+    "COMPARE_COLORS": "Comparar colores",
+    "CONFIRMATION_DIALOG_MATCH_A_PHOTO_EXIT": "El contenido de la foto se perderá si cierras. Asegúrate de que los colores que deseas conservar se hayan agregado a tu paleta. ¿Todavía quieres cerrar?",
+    "COORDINATING_COLORS": "Colores para combinar",
+    "CVW": {
+        "WARNING_REPLACEMENT": "Abrir esta escena reemplazará la escena actual en la que estás trabajando. ¿Te gustaría continuar?"
+    },
+    "DELETE": "ELIMINAR",
+    "DELETE_COLOR": "Eliminar color",
+    "DELETE_PIN": "Eliminar pin",
+    "DETAILS": "Detalles",
+    "DETECTED_REGIONS": "Regiones detectadas",
+    "DETECTING": "Detectando",
+    "DISPLAY_SCENE_PAINTER": "Mostrar Pintor de Escenas",
+    "DONE": "HECHO",
+    "DOWNLOAD_MASK": "Descargar",
+    "DOWNLOAD_SCENE": "Descargar escena",
+    "EDIT": "EDITAR",
+    "EMAIL_ADDRESS": "Dirección de correo electrónico",
+    "ERR_IDEA_NAME_REQUIRED": "Por favor, nombra esta idea.",
+    "ERROR_BOUNDARY": {
+        "ERROR_DETAILS": "Error de detalles",
+        "MESSAGE": "Encontramos un error que nos impide renderizar este componente en este momento.",
+        "SHOW_DETAILS": "Mostrar detalles del error",
+        "TITLE": "Error de la herramienta de color Sherwin-Williams"
+    },
+    "ERROR_ENCOUNTERED": "Hemos encontrado un error.",
+    "ERROR_LOADING_COLORS": "No podemos cargar colores en este momento.",
+    "EXPERT_COLOR_PICKS": "Selección de colores por expertos",
+    "Explora_COLOR": "Explora el color",
+    "EXTERIOR": "Exterior",
+    "FIND_COLORS_IN_CW": "ENCUENTRA COLORES EN EL MURO DIGITAL DE COLORES",
+    "HELPFUL_HINTS": {
+        "CONTENT": {
+            "ICONS_&_BUTTONS": {
+                "ICON_INFO_CONTENT": {
+                    "ADD_COLOR": "En una muestra de color, al tocar este icono se agregará el color a Mi paleta de colores. En Mi paleta de colores, al tocar este icono se abrirá el muro digital de color.",
+                    "COLOR_DETAILS": "Al tocar este icono, se expandirá la información sobre el color, incluidos los colores para combinar, colores similares y detalles de color.",
+                    "GRAB_&_REORDER": "Toca y arrastra este icono para reordenar los colores dentro de Mi paleta de colores.",
+                    "MORE_SCENES": "Este icono abre las opciones de escena de ambiente interior y exterior. Explora diferentes escenas para encontrar tu favorito y comienza a pintar.",
+                    "SAVE": "toca este icono para guardar tu inspiración e ideas. Accede a ellos en Mis ideas cada vez que inicies sesión en mySW.",
+                    "TRASH_A_COLOR": "Toca este icono para eliminar un color de Mi paleta de colores. Arrastrar un punto de color inspirador sobre este icono lo eliminará de tus opciones de color inspirador."
+                },
+                "ICON_INFO_NAME": {
+                    "ADD_COLOR": "Agrega color",
+                    "COLOR_DETAILS": "Detalles de color",
+                    "GRAB_&_REORDER": "Agarrar y reordenar",
+                    "MORE_SCENES": "Más escenas",
+                    "SAVE": "Guardar",
+                    "TRASH_A_COLOR": "Eliminar un color"
+                }
+            },
+            "PAINTING_MY_OWN_PHOTO": {
+                "ICON_INFO_CONTENT": {
+                    "DEFINE_AREA": "Delinea un área para pintarla. Asegúrate de encerrar el área comenzando y terminando en el mismo punto.",
+                    "ERASE": "Elimina rápidamente la pintura de tu foto.",
+                    "PAINT_AREA": "Utiliza la función pintar área para detectar y pintar automáticamente áreas de superficie. Simplemente haz clic o toca una superficie para resaltarla, luego haz clic o toca nuevamente para pintar.",
+                    "PAINTBRUSH": "Selecciona este icono para pintar tu foto a mano alzada. Simplemente apunta, haz clic o toca y arrastra para agregar color a cualquier área.",
+                    "REMOVE_AREA": "Utiliza esta herramienta para seleccionar y quitar pintura de un área definida.",
+                    "SELECT": "Selecciona un área, luego usa la barra de herramientas para pintar, editar el color de la pintura o quitar la pintura de tu foto.",
+                    "UNDO_&_REDO": "Elimina o repite fácilmente tu última acción.",
+                    "ZOOM": "Amplía y desplázate por tu foto para pintar áreas pequeñas con mayor precisión."
+                },
+                "ICON_INFO_NAME": {
+                    "DEFINE_AREA": "Definir área",
+                    "ERASE": "Borrar",
+                    "PAINT_AREA": "Área de pintura",
+                    "PAINTBRUSH": "Brocha",
+                    "REMOVE_AREA": "Eliminar área",
+                    "SELECT": "Selecciona",
+                    "UNDO_&_REDO": "Deshacer y rehacer",
+                    "ZOOM": "Enfocar"
+                }
+            }
+        },
+        "HEADER": {
+            "ADDING_COLORS": "Agregar colores",
+            "COLOR_DETAILS": "Detalles de color",
+            "ICONS_&_BUTTONS": "Iconos y botones",
+            "MY_COLOR_PALETTE": "Mi paleta de colores",
+            "PAINTING_MY_OWN_PHOTO": "Pintar mi propia foto",
+            "SAVING_MY_WORK": "Salvando mi trabajo"
+        },
+        "IMAGE_ALT": {
+            "ADDING_COLORS": {
+                "CLICK_ADD_A_COLOR_ICON_IN_A_COLOR_TILE_TO": "Al hacer clic en el icono de agregar un color, dentro de un mosaico de color, se agregará un color a la paleta de colores",
+                "CLICK_THE_ADD_COLOR_ICON_TO": "Haz clic en el icono de agregar un color de la paleta de colores para iniciar el muro digital de color y explorar el color en cualquier momento durante tu experiencia",
+                "START_A_NEW_PALETTE_TO_ADD_MORE_THAN_EIGHT_COLORS": "Mi paleta de colores puedes contener hasta 8 colores a la vez. Para agregar más, simplemente guarda tu paleta actual y comience una nueva."
+            },
+            "COLOR_DETAILS": {
+                "CLICK_THE_COLOR_DETAILS_ICON_TO": "Haz clic en el icono de detalles de color para ver los detalles de un color",
+                "PREVIEW_A_COLOR_IN_COLOR_DETAILS": "Obtiene una vista previa de un color en 5 fotos diferentes para decidir si deseas agregarlo a tu paleta"
+            },
+            "MY_COLOR_PALETTE": {
+                "AN_ACTIVE_COLOR_STATE": "Un estado de color activo muestra el color de pintura que se aplicará a la escena",
+                "CLICK_THE_ADD_COLOR_ICON_TO": "Haz clic en el icono de agregar un color de la paleta de colores para iniciar el muro digital de color y explorar el color en cualquier momento durante tu experiencia",
+                "CLICK_THE_COLOR_DETAILS_ICON_TO": "Haz clic en el icono de detalles de color para ver los detalles de un color",
+                "CLICK_THE_COLOR_DETAILS_ICON_TRASH_ICON_TO": "Haz clic en el icono de detalles de color para ver los detalles de un color, haz clic en el icono de la papelera para eliminar una muestra de color",
+                "CLICK_THE_TRASH_ICON_TO": "Haz clic en el icono de la papelera para eliminar una muestra de color",
+                "TAP_AND_HOLD_THE_BOTTOM_EDGE_OF_A_COLOR_SWATCH_TO": "Toca y mantiene presionado el borde inferior de una muestra de color para reorganizar tu paleta"
+            },
+            "SAVING_MY_WORK": {
+                "CLICK_SAVE_ICON_TO": "Toca el icono de guardar en la parte inferior de la página.",
+                "NAME_YOUR_CURRENT_PHOTO": "Nombra tu foto o paleta actual para uso futuro"
+            }
+        },
+        "SUB_CONTENT_DESCRIPTION": {
+            "ADDING_COLORS": "En el teclado, usa las teclas de flecha \"arriba\",\"abajo\",\"izquierda\" y  derecha\"(â † â †“ â † ‘â †’) para navegar dentro de las cuadrículas de color.",
+            "MY_COLOR_PALETTE": "En tu teclado, usa las teclas de flecha \"arriba\" y \"abajo\" (â †‘ â † “) para cambiar el enfoque entre la paleta en vivo y las regiones pintables de la escena."
+        },
+        "SUB_CONTENT_HEADER": {
+            "ADDING_COLORS": "Navegación de teclado personalizada para accesibilidad",
+            "MY_COLOR_PALETTE": "Navegación de teclado personalizada para accesibilidad"
+        },
+        "SUB_HEADER": {
+            "ADDING_COLORS": "Agrega colores a tu paleta siempre que veas un ícono más.",
+            "COLOR_DETAILS": "Proporciona una vista previa de la escena de color, colores coordinados, colores similares e información adicional.",
+            "ICONS_&_BUTTONS": "Utiliza estos iconos y botones para ayudar a reducir tus opciones finales.",
+            "MY_COLOR_PALETTE": "Mi paleta de colores se utiliza para recopilar y comparar colores para pintar.",
+            "PAINTING_MY_OWN_PHOTO": "Uutiliza estas herramientas para ver cómo se verá el color en tu espacio.",
+            "SAVING_MY_WORK": "Cuando registras una cuenta en mySW, puedess acceder a las paletas de colores guardadas desde cualquier dispositivo."
+        },
+        "TITLE": "Consejos útiles"
+    },
+    "HEX_VALUE": "Valor hexadecimal",
+    "HIDE_SCENE_PAINTER": "Ocultar Pintor de Escenas",
+    "I_ACCEPT": "Acepto",
+    "IDENTIFIED_COLORS": "Colores identificados",
+    "IMAGE_INVISIBLE": "Esta imagen es invisible para el usuario.",
+    "INSPIRATIONAL_PHOTOS": "Fotos Inspiracionales",
+    "INTERIOR": "Interior",
+    "LANDING_PAGES": {
+        "EXPLORE_COLOR": "Explora el color",
+        "GET_INSPIRED": "Inspírate",
+        "OR": "O",
+        "PAINT_A_PHOTO": "Pintar una foto",
+        "PAINTING_BUTTON": "Empieza a pintar ahora"
+    },
+    "LIVE_MESSAGE_COLOR_NAME": "El color {previewColorName} está activo. Presiona la pestaña para ir a otros pines de color",
+    "LIVE_MESSAGE_IMAGE_ANGLE": "Imagen rotada {imageRotationAngle} grado",
+    "LIVE_MESSAGE_MOVE_PIN": "Usa las teclas de flecha en tu teclado para mover tu color elegido. Mantiene pulsado el cambio para un movimiento fino.",
+    "LIVE_MESSAGE_REMOVE": "Eliminar el color {colorName} de la paleta en vivo",
+    "LIVE_PALETTE_MODAL": {
+        "DELETE_COLOR": "Elimina un color a continuación antes de agregar uno nuevo o crea una nueva paleta.",
+        "NEW_PALETTE": "Paleta nueva",
+        "PALETTE_FULL": "Esta paleta está llena"
+    },
+    "LIVE_PALETTE_REMOVE": "Eliminar el color {colorName} de la paleta en vivo",
+    "LOADING": "Cargando",
+    "LOADING_MODEL": "Cargando modelo",
+    "LOCATION_NUMBER": "Número de ubicación",
+    "LOG_IN": "INICIAR SESIÓN",
+    "MATCHES": "Capturas",
+    "LRV": "LRV",
+    "MAXIMIZE_COLOR_SWATCH": "Maximizar la muestra de color",
+    "MY_IDEAS": {
+        "ARIA_LABEL_ADD": "Agregar {colorName} a la paleta",
+        "ARIA_LABEL_DONE": "terminado de editar las ideas guardadas",
+        "ARIA_LABEL_EDIT": "editar ideas guardadas",
+        "DELETE_CONFIRM": "¿Está seguro de que deseas eliminar este elemento?",
+        "MY_IDEAS_CONTENT": "Inicia sesión o regístrate para obtener una cuenta mySW para guardar todas tus ideas y verlas en cualquiera de tus dispositivos.",
+        "MY_IDEAS_HEADER": "Ver y editar tus ideas guardadas",
+        "NO": "NO",
+        "NO_IDEAS_DESC": "Guarda aquí toda tu inspiración e ideas y haz referencia a ellas cuando estés listo para comenzar a pintar. Edítalos en cualquier momento.",
+        "NO_IDEAS_TITLE": "No has guardado ninguna idea.",
+        "OPEN_PROJECT": "Abrir este proyecto",
+        "OPEN_UNPAINTED": "Escena abierta sin pintar",
+        "PREVIEW": "Vista previa de",
+        "SCENE_EXPIRATION": "Las escenas guardadas se eliminarán 30 días después de tu última actualización.",
+        "TITLE": "Ver y editar tus ideas",
+        "YES": "SI"
+    },
+    "NAV_DROPDOWN_LINK_SUB_CONTENT": {
+        "COLOR_COLLECTIONS": "Encuentra colores que combinen a la perfección en toda tu casa.",
+        "DIGITAL_COLOR_WALL": "Busca colores de pintura Sherwin-Williams para agregar a tu paleta u obtener información sobre colores.",
+        "EXPERT_COLOR_PICKS": "Encuentra paletas de colores diseñadas por expertos para usar en tu espacio.",
+        "INSPIRATIONAL_PHOTOS": "Utiliza nuestras imágenes para descubrir colores de todo el mundo.",
+        "MATCH_A_PHOTO": "Captura colores de cualquier foto y combínalos con colores de pintura reales.",
+        "PAINTED_PHOTOS": "Mira los colores en contexto para comenzar a desarrollar tu confianza en el color.",
+        "UPLOAD_YOUR_PHOTO": "Pinta virtualmente tu propia foto.",
+        "UPLOAD_YOUR_PHOTO_ANDROID": "Pinta virtualmente tu propia foto descargando la aplicación ColorSnap Visualizer para Android.",
+        "UPLOAD_YOUR_PHOTO_IPAD": "Pinta virtualmente tu propia foto descargando la aplicación ColorSnap Visualizer para iPad.",
+        "UPLOAD_YOUR_PHOTO_IPHONE": "Pinta virtualmente tu propia foto descargando la aplicación ColorSnap Visualizer para iPhone.",
+        "USE_OUR_PHOTOS": "Pinta virtualmente una foto de muestra."
+    },
+    "NAV_DROPDOWN_LINK_TIP_DESCRIPTION": {
+        "UPLOAD_YOUR_PHOTO": "Consejos para tomar fotografías: para obtener los mejores resultados, asegúrate de que tu habitación esté bien iluminada. La luz natural funciona mejor."
+    },
+    "NAV_DROPDOWN_TITLE": {
+        "EXPLORE_COLORS": "Explora todas las formas de comenzar a construir Mi paleta de colores.",
+        "GET_INSPIRED": "Encuentra inspiración para tu próximo proyecto de pintura.",
+        "PAINT_A_PHOTO": "Empieza a pintar."
+    },
+    "NAV_LINKS": {
+        "COLOR_COLLECTIONS": "COLECCIONES DE COLORES",
+        "DIGITAL_COLOR_WALL": "MURO DIGITAL DE COLOR ",
+        "EXPERT_COLOR_PICKS": "SELECCIÓN DE COLORES POR EXPERTOS",
+        "EXPLORE_COLORS": "Explorar colores",
+        "GET_INSPIRED": "Inspírate",
+        "GET_THE_APP": "OBTENER LA APLICACIÓN",
+        "HELP": "Ayuda",
+        "INSPIRATIONAL_PHOTOS": "FOTOS INSPIRACIONALES",
+        "MATCH_A_PHOTO": "CAPTURAR COLORES DE UNA FOTO",
+        "MY_IDEAS": "Mis ideas",
+        "PAINT_A_PHOTO": "Pintar una foto",
+        "PAINTED_PHOTOS": "FOTOS PINTADAS",
+        "UPLOAD_YOUR_PHOTO": "SUBE TU FOTO",
+        "USE_OUR_PHOTOS": "Utiliza NUESTRAS FOTOS"
+    },
+    "NEXT": "Próximo",
+    "NO": "No",
+    "NO_COLORS_AVAILABLE": "No hay colores disponibles.",
+    "NO_COLORS_FOUND": "No se encontraron colores adecuados.",
+    "OR": "O",
+    "ORIGINAL_IMAGE": "Imagen original",
+    "PAINT_COLORS": "colores de pintura",
+    "PAINT_SCENE": {
+        "CANCEL": "CANCELAR",
+        "OK": "CARGANDO PALETA",
+        "OK_DISMISS": "OK",
+        "SCENE_SAVED": "Guardado",
+        "SELECT_PALETTE_DESC": "¿Te gustaría cargar estos colores guardados en esta paleta? Esto reemplazará cualquier color que haya actualmente.",
+        "SELECT_PALETTE_TITLE": "¿Trabajas con esta paleta?"
+    },
+    "PAINT_THIS_SCENE": "Pintar esta escena",
+    "PAINT_TOOLS": {
+        "BACK": "Regresa",
+        "CLOSE": "Cerrar descripción emergente",
+        "DEFINEAREA": "Crea un polígono para rellenar",
+        "DELETEGROUP": "Eliminar el grupo",
+        "ERASE": "Quitar pintura borrando",
+        "FORWARD": "Avanzar",
+        "GROUP": "Agrupar las selecciones",
+        "HIDEPAINT": "Ocultar el área pintada",
+        "ICON_SELECTED_INFO": "el {Tipodelbrocha} píxel de ancho, {Formadelbrocha} {NombredelTipodelbrocha} brocha",
+        "INFO": "Alternar la información sobre herramientas",
+        "PAINTAREA": "llenar un área continua con color",
+        "PAINTBRUSH": "Pintar con un brocha",
+        "REDO": "Rehacer una acción",
+        "REMOVEAREA": "Borrar un área creando un polígono",
+        "SELECTAREA": "Selecciona un área para manipular",
+        "TOOLS_NAME": {
+            "DEFINEAREA": "DEFINIR AREA",
+            "DELETEGROUP": "ELIMINAR",
+            "ERASE": "BORRAR",
+            "GROUP": "GRUPO",
+            "HIDEPAINT": "OCULTAR PINTURA",
+            "INFO": "CONSEJOS",
+            "PAINTAREA": "AREA DE PINTURA",
+            "PAINTBRUSH": "BROCHA",
+            "REDO": "REHACER",
+            "REMOVEAREA": "QUITAR AREA",
+            "SELECTAREA": "SELECCIONA",
+            "UNDO": "DESHACER",
+            "UNGROUP": "DESAGRUPAR",
+            "ZOOM": "ENFOCAR"
+        },
+        "TOOLTIPS": {
+            "ADDCOLORS": "Haz clic o toca aquí para agregar colores a tu paleta.",
+            "DEFINEAREA": "Delinea un área para pintarla. Asegúrate de encerrar el área comenzando y terminando en el mismo punto.",
+            "ERASE": "Quita la pintura de tu escena.",
+            "HIDEPAINT": "Utiliza esta herramienta para ver la escena original dela ambiente",
+            "INFO": "Haz clic aquí para volver a visitar la información sobre herramientas.",
+            "PAINTAREA": "Utiliza la función pintar área para detectar y pintar automáticamente áreas de superficie. Simplemente haz clic o toca una superficie para resaltarla, luego haz clic o toca nuevamente.",
+            "PAINTBRUSH": "Permite pintar a mano alzada la escena seleccionada. Simplemente apunta, haz clic o toca y arrastra para agregar color a cualquier área.",
+            "REDO": "Da un paso adelante desde tu última acción.",
+            "REMOVEAREA": "Utiliza esta herramienta para seleccionar y quitar pintura de un área definida.",
+            "SELECTAREA": "Selecciona un área, luego usa la barra de herramientas para pintar, editar colores de pintura o quitar pintura de tu escena.",
+            "SELECTGROUP": "Utiliza esta herramienta para agrupar y editar varias áreas al mismo tiempo. Utiliza la herramienta Eliminar para eliminar áreas de tu escena.",
+            "UNDO": "Da un paso atrás desde tu última acción.",
+            "ZOOM": "Amplía y desplázate por la escena para pintar áreas pequeñas con mayor precisión."
+        },
+        "UNDO": "Deshacer una acción",
+        "UNGROUP": "Desagrupar las selecciones",
+        "ZOOM": "Ajustar el nivel de zoom"
+    },
+    "PALETTE_TITLE": "Mi paleta de colores",
+    "PASSWORD": "Contraseña",
+    "PREVIEW_ROTATE_SCALE": "Utiliza estas flechas para rotar tu imagen.",
+    "PREVIOUS": "Anterior",
+    "PROCESSING": "Procesando",
+    "RECOMMENDATIONS": "Recomendaciones",
+    "REGISTER": "REGISTRARSE",
+    "RENAME": "Renombrar",
+    "RENAME_SAVED_IDEA": "Cambiar el nombre de la idea guardada",
+    "RESTORE_COLOR_SWATCH_TO_DEFAULT_SIZE": "Restaurar la muestra de color al tamaño predeterminado",
+    "SAVE_LIVE_PALETTE_MODAL": {
+        "CANCEL": "CERRAR",
+        "DEFAULT_DESCRIPTION": "Mi idea guardada",
+        "DESCRIPTION": "Ingrese un nombre para la paleta en vivo.",
+        "LP_SAVED": "Guardado",
+        "OK": "Ok",
+        "SAVE": "GUARDAR",
+        "UNABLE_TO_SAVE_WARNING": "La paleta de colores debe tener al menos un color para guardar."
+    },
+    "SAVE_MASKS": "Guardar",
+    "SAVE_SCENE_MODAL": {
+        "CANCEL": "CERRAR",
+        "DEFAULT_DESCRIPTION": "Mi idea guardada",
+        "DESCRIPTION": "Introduzca un nombre para la escena.",
+        "SAVE": "GUARDAR",
+        "UNABLE_TO_SAVE_WARNING": "Esta escena no se puede guardar en tu cuenta. Puedes descargar la imagen haciendo clic en el icono a la derecha de tu paleta."
+    },
+    "SCENE_DISPLAYED": "Se muestra la escena",
+    "SCENE_HIDDEN": "La escena está escondida",
+    "SCENE_MANAGER": {
+        "OK": "Ok",
+        "SCENE_SAVED": "Guardado"
+    },
+    "SCENE_TINTER": {
+        "FEEDBACK_CANCEL": "se ve bien",
+        "FEEDBACK_CONFIRM": "Déjame editar",
+        "FEEDBACK_MESSAGE": "¿Te gustaría retocar el trabajo de pintura?"
+    },
+    "SEARCH": {
+        "ERROR": {
+            "GENERIC": "No pudimos realizar tu búsqueda.",
+            "HEADLINE": "Algo salió mal."
+        },
+        "FIND_A_COLOR": "Encuentra un color",
+        "NO_RESULTS": "Lo sentimos, no se encontraron coincidencias de color.",
+        "PROMPT": "Ingrese un nombre de color, número o familia en el campo de texto de arriba.",
+        "SEARCH": "Buscar",
+        "SEARCH_BY": "Buscar por nombre o número de color",
+        "SEARCH_COLOR": "Buscar color",
+        "SEARCHING": "Buscando",
+        "SUGGESTIONS": "Algunos ejemplos de cosas que puedes buscar son {suggestions}"
+    },
+    "SELECT_COLLECTION": "Seleccionar colección de colores",
+    "SELECT_IMAGE": "Seleccionar una imagen",
+    "SELECT_NEW_IMAGE": "Seleccionar nueva imagen",
+    "SELECTED_FROM": "Seleccionado desde",
+    "SHOW": "Mostrar",
+    "SIGN_IN": "REGISTRARSE",
+    "SIMILAR_COLORS": "Colores similares",
+    "START_PAINTING": "Empezar a pintar",
+    "START_PAINTING_NOW": "Empieza a pintar ahora",
+    "SWATCH_ACTIVATED_DETAILS": "{color} está seleccionado. Presiona Entrar para ver los detalles.",
+    "SWATCH_FOCUS": "{color}. Presiona Entrar para seleccionar.",
+    "SYSTEM": {
+        "ERROR_ANON_LOGIN": "Uh-oh, algo salió mal.",
+        "ERROR_DELETING_ANON_SCENE": "Se produjo un error al eliminar la escena guardada.",
+        "ERROR_DOWNLOADING_ANON_SCENE": "Hubo un problema al descargar tu escena.",
+        "ERROR_GETTING_ANON_SCENE": "No se pudieron recuperar los datos de la escena.",
+        "ERROR_GETTING_SCENE": "No se pudieron recuperar los datos de la escena de MySherwin.",
+        "ERROR_SAVING_ANON_SCENE": "Oh-oh, hubo un error al guardar tu escena.",
+        "ERROR_SAVING_SCENE": "Oh-oh, hubo un error al guardar tu escena en MySherwin.",
+        "ERROR_UPDATING_ANON_SCENE": "Hubo un problema al actualizar tu escena.",
+        "IMAGE_FORMAT_ERROR": "El tipo de imagen que has cargado no es compatible. Asegúrate de cargar un archivo JPG o PNG."
+    },
+    "TERMS_OF_USE": "Términos de Uso",
+    "TO_DAY_VIEW": "Cambiar a vista diurna",
+    "TO_NIGHT_VIEW": "Cambiar a vista nocturna",
+    "TOGGLE_EXPERT_PICKS": "Alternar selecciones de expertos",
+    "TOOL_TIPS": "CONSEJOS DE HERRAMIENTAS",
+    "UNSPECIFIED_COLOR": "Los detalles de color se cargaron sin especificar un color",
+    "VIEW_ALL": "Ver todo",
+    "VIEW_DETAILS": "Ver Detalles",
+    "VIEW_DETAILS_FOR": "Ver detalles de {nombre}",
+    "VIEW_FULL_COLLECTION": "VER COLECCIÓN COMPLETA",
+    "YES": "Sí",
+    "ZOOM_IN": "Acercarse",
+    "ZOOM_OUT": "Alejarse",
+    "FURNITURE_NAME": "COLORES SUGERIDOS QUE FUNCIONARÁN BIEN CON tu {NombreDeMueble}",
+    "FURNITURE_IMAGE": "  Este es un marcador de posición de imagen para tu {NombreDeMueble}",
+    "DOWNLOAD_DISCLAIMER_1": "El color real puede variar de la representación en pantalla. Para confirmar sus opciones de color antes de la compra, vea un chip de color físico, una tarjeta de color o una muestra pintada.",
+    "DOWNLOAD_DISCLAIMER_2": "Sherwin-Williams no es responsable del contenido y las fotos compartidas por los usuarios de sus herramientas de selección de color.",
+    "ORIGIN_TEXT": "ORIGINAL",
+    "FEATURED_IN_SCENE": "EXPUESTO EN ESCENA"
+  }

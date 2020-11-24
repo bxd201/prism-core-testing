@@ -1,0 +1,131 @@
+@import '../../constants';
+@import 'src/scss/convenience/_keyframe-animations.scss';
+
+.JSFResultsPage {
+  background-color: $jsf-page-bg;
+  &__cols {
+    $jsf-res-col-spacing: 1rem;
+
+    display: flex;
+    flex-direction: column;
+    margin: 0 -($jsf-res-col-spacing / 2);
+
+    @include respond-above(sm) {
+      flex-direction: row;
+    }
+
+    &__col {
+      padding-left: $jsf-res-col-spacing / 2;
+      padding-right: $jsf-res-col-spacing / 2;
+      margin-bottom: $jsf-res-col-spacing;
+
+      &--media {
+        @include respond-above(sm) {
+          width: 25%;
+        }
+      }
+
+      &--content {
+        flex: 1;
+      }
+    }
+  }
+  &__logo {
+    width: 300px;
+  }
+
+  &__summary {
+    &__media {
+      position: relative;
+
+      &__image {
+        max-width: 100%;
+        display: block;
+      }
+
+      &__caption {
+        background: rgba(black, .7);
+        bottom: 0;
+        color: white;
+        font-style: italic;
+        left: 0;
+        padding: .5em .25em;
+        position: absolute;
+        text-align: center;
+        width: 100%;
+      }
+    }
+  }
+
+  &__pin {
+    $jsfrpPinSize: 50px;
+    $jsfrpFadeInDuration: .2s;
+    $jsfrpFadeInDelay: .5s;
+
+    animation: fadeOpacityIn $jsfrpFadeInDuration ease-out ($jsfrpFadeInDelay + $jsfrpFadeInDuration * 3) 1 both;
+    background: rgba(white, .1);
+    border-radius: $jsfrpPinSize / 2;
+    box-shadow: inset 0 0 0 2px white, inset 0 0 .5em 2px rgba(white, .1), 0 0 0 .5px rgba(black, .5), 0 0 1em 0 rgba(black, .5);
+    display: block;
+    height: $jsfrpPinSize;
+    overflow: hidden;
+    position: absolute;
+    text-indent: -99em;
+    transform: translate(-50%, -50%);
+    width: $jsfrpPinSize;
+    z-index: 1;
+
+    &--0 {
+      animation-delay: $jsfrpFadeInDelay;
+    }
+    &--1 {
+      animation-delay: $jsfrpFadeInDelay + $jsfrpFadeInDuration;
+    }
+    &--2 {
+      animation-delay: $jsfrpFadeInDelay + $jsfrpFadeInDuration * 2;
+    }
+  }
+
+  &__found-piece {
+    margin-bottom: 1em;
+
+    &__img {
+      $jsfrpPieceWidth: 6em;
+      $jsfrpPieceHeight: 4em;
+
+      background-position: center center;
+      background-size: cover;
+      display: block;
+      height: $jsfrpPieceHeight;
+      margin: 0 1em 1em 0;
+      overflow: hidden;
+      width: $jsfrpPieceWidth;
+    }
+  }
+  &__restart-wrapper {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 200px;
+    &__inset {
+      display:flex;
+      background-color: #ffffff;
+      width: auto;
+      padding: 20px;
+      align-items: center;
+      justify-content: center;
+    }
+    &__desc {
+      font-family: sans-serif;
+      font-weight: bold;
+      color: map-get($jsf-color, primary) !important;
+      margin-right: 4rem;
+    }
+    &__btn {
+      color: #ffffff;
+      padding: 14px 20px;
+      background-color: $jsf-accent-color;
+      font-size: 1.1rem;
+    }
+  }
+}

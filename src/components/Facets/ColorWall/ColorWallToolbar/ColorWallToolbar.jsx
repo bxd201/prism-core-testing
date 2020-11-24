@@ -4,11 +4,11 @@ import React, { useContext, useState } from 'react'
 import { shallowEqual, useSelector } from 'react-redux'
 import { useRouteMatch, NavLink } from 'react-router-dom'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { AutoSizer } from 'react-virtualized'
 import { Menu, MenuItem, Wrapper, Button } from 'react-aria-menubutton'
 import at from 'lodash/at'
 import difference from 'lodash/difference'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { AutoSizer } from 'react-virtualized'
 import { MODE_CLASS_NAMES } from '../shared'
 import ButtonBar from 'src/components/GeneralButtons/ButtonBar/ButtonBar'
 import { generateColorWallPageUrl } from 'src/shared/helpers/ColorUtils'
@@ -26,6 +26,7 @@ export default () => {
 
   const isFamilyView: boolean = !!family || path.endsWith(PATH_END_FAMILY)
   const visibleSections: string[] = sections && sections.length && hiddenSections && hiddenSections.length ? difference(sections, hiddenSections) : sections
+
   const [wallSelectionMenuOpen, setWallSelectionMenuOpen] = useState(false)
 
   return (
@@ -72,7 +73,7 @@ export default () => {
                   </ButtonBar.Bar>
                 </div>
               )
-              : (
+              : ((isFamilyView || visibleSections.length > 1) &&
                 <Wrapper className={`${MODE_CLASS_NAMES.CELL} ${MODE_CLASS_NAMES.RIGHT} ${menuBarPrefix}`} onMenuToggle={({ isOpen }) => setWallSelectionMenuOpen(isOpen)}>
                   {primeColorWall && width > 768 && (
                     <NavLink
@@ -91,6 +92,9 @@ export default () => {
                     </span>
                     <FontAwesomeIcon className='close-icon-svg' icon={['fa', 'angle-down']} pull='right' />
                   </Button>
+                  <ButtonBar.Button to={'/active'}>
+                    <span className={MODE_CLASS_NAMES.DESC}><FormattedMessage id='CLOSE' /></span>
+                  </ButtonBar.Button>
                   <Menu className={`${menuBarPrefix}__menu ${primeColorWall ? 'shift-left' : ''}`}>
                     {(isFamilyView || family ? families : visibleSections)
                       .filter((name: string) => activeFamily !== name && activeSection !== name && (width <= 768 || !primeColorWall || primeColorWall !== name))

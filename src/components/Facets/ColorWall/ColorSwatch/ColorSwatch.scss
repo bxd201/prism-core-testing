@@ -59,7 +59,7 @@ $bloom-duration: 200ms;
     animation: fadeIn $bloom-duration;
     text-align: left;
 
-    &--focus, &:focus { outline: 5.5px solid getVar('colors.primary') !important; }
+    &--focus, &:focus { outline: 5.5px solid var(getThemeColor('primary')) !important; }
 
     &__name {
       font-weight: bold;
@@ -102,10 +102,10 @@ $bloom-duration: 200ms;
     }
 
     &__message {
-      background: white;
+      background: var(getThemeColor('white'));
       bottom: 3px;
       border-radius: 2px;
-      color: black;
+      color: var(getThemeColor('black'));
       font-size: 0.5em;
       font-weight: bold;
       left: 3px;
@@ -117,23 +117,21 @@ $bloom-duration: 200ms;
       @include respond-above(sm) { font-size: 0.625em; }
     }
 
-    &--dark-color { color: rgba(white, .9); }
+    &--dark-color { color: var(getThemeColor('primary.contrast.trans')); }
 
-    .OmniButton {
-      display: flex;
-      align-items: center;
-      max-width: 100%;
-
-      &__icon { flex-shrink: 0; }
-
-      &__content {
-        padding-left: .25em;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 100%;
-        white-space: nowrap;
-        text-align: left;
-      }
+    .add-icon {
+      width: 22px;
+      height: 22px;
     }
+  }
+
+  &__button-group {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px;
   }
 }

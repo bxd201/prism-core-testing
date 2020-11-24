@@ -1,6 +1,7 @@
 // @flow
 import axios from 'axios'
-import { INSPIRATIONAL_PHOTOS_ENDPOINT as IPE } from 'constants/endpoints'
+import { generateBrandedEndpoint } from 'src/shared/helpers/DataUtils'
+import { INSPIRATIONAL_PHOTOS_ENDPOINT } from 'constants/endpoints'
 
 export const REQUEST: string = 'REQUEST_INSPIRATIONAL_PHOTOS'
 export const RECEIVED: string = 'RECEIVE_INSPIRATIONAL_PHOTOS'
@@ -13,6 +14,6 @@ export const received = (data: any) => {
   }
 }
 
-export const loadInspirationalPhotos = () => {
-  return (dispatch: Function) => axios.get(IPE).then(res => { dispatch(received(res.data)) })
+export const loadInspirationalPhotos = (brandId: string, options?: {}) => {
+  return (dispatch: Function) => axios.get(generateBrandedEndpoint(INSPIRATIONAL_PHOTOS_ENDPOINT, brandId, options)).then(res => { dispatch(received(res.data)) })
 }

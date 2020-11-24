@@ -1,0 +1,3 @@
+import useDeepLabModelForSegmentation from './useDeepLabModelForSegmentation'
+
+export default useDeepLabModelForSegmentation
