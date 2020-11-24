@@ -1,6 +1,6 @@
 {
   "name": "prism",
-  "version": "1.5.0",
+  "version": "1.5.0-c",
   "scripts": {
     "postinstall": "npm run create-empty-prism-manifest && npm run create-empty-embed-file",
     "create-empty-prism-manifest": "node build-scripts/utilities/create-empty-prism-manifest.js",
