@@ -21,10 +21,12 @@ import { createPaintSceneWorkspace, setLayersForPaintScene, WORKSPACE_TYPES } fr
 import { getTransformParams } from '../../shared/utils/rotationUtil'
 import CustomSceneTinterContainer from '../CustomSceneTinter/CustomSceneTinterContainer'
 import { shouldAllowFeature } from '../../shared/utils/featureSwitch.util'
-import { objectsEqual } from '../PaintScene/utils'
+import { objectsEqual, dataUrlToBlobUrl } from '../PaintScene/utils'
 import WithConfigurationContext from '../../contexts/ConfigurationContext/WithConfigurationContext'
 import { FEATURE_EXCLUSIONS } from '../../constants/configurations'
 import { calcOrientationDimensions } from '../../shared/utils/scale.util'
+import { paintSceneState } from './data.js'
+
 const baseClass = 'match-photo'
 const wrapperClass = `${baseClass}__wrapper`
 const previewClass = `${wrapperClass}--preview`
@@ -116,6 +118,8 @@ export function ImageRotateContainer ({ setLastActiveComponent, activePaintScene
   const dispatch = useDispatch()
   const globalMaxSceneHeight = useSelector(state => state.maxSceneHeight)
   const maxSceneHeight = maxSceneViewerHeight || globalMaxSceneHeight
+  const shouldRestoreFromCache = false
+  const paintSceneUrl = shouldRestoreFromCache ? (paintSceneState.imageUrl && dataUrlToBlobUrl(paintSceneState.imageUrl)) : imageUrl
   useEffect(() => { dispatch(loadColors(brandId, { language: locale })) }, [])
 
   useEffect(() => {
@@ -451,8 +455,10 @@ export function ImageRotateContainer ({ setLastActiveComponent, activePaintScene
                 ? (<>
                   {
                     shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.editPhotos) ? <PaintScene
+                      shouldRestoreFromCache={shouldRestoreFromCache}
+                      cachedPaintScene={paintSceneState}
                       checkIsPaintSceneUpdate={checkIsPaintSceneUpdate}
-                      imageUrl={imageUrl}
+                      imageUrl={paintSceneUrl}
                       workspace={paintSceneWorkspaceState}
                       imageRotationAngle={imageRotationAngle}
                       referenceDimensions={imageDims}

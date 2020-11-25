@@ -28,7 +28,9 @@ import {
   compareArraysOfObjects,
   objectsEqual,
   getColorsForMergeColors,
-  maskingPink
+  maskingPink,
+  checkCachedPaintScene,
+  blobUrlToDataUrl
 } from './utils'
 import { toolNames, groupToolNames, brushLargeSize, brushRoundShape, setTooltipShownLocalStorage, getTooltipShownLocalStorage } from './data'
 import throttle from 'lodash/throttle'
@@ -112,7 +114,9 @@ type ComponentProps = {
   navigationIntent: string,
   isActiveScenePolluted: string,
   navigateToIntendedDestination: Function,
-  clearNavigationIntent: Function
+  clearNavigationIntent: Function,
+  cachedPaintScene: Object,
+  shouldRestoreFromCache: boolean
 }
 
 type ComponentState = {
@@ -211,7 +215,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.originalImageHeight = props.referenceDimensions.originalImageHeight
     this.maxSceneHeight = props.maxSceneHeight
 
-    this.state = {
+    const state = {
       activeTool: toolNames.PAINTAREA,
       position: { left: 0, top: 0, isHidden: false },
       paintBrushWidth: brushLargeSize,
@@ -264,8 +268,10 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       showSelectPaletteModal: false,
       checkIsPaintSceneUpdate: false,
       uniqueSceneId: createUniqueSceneId(),
-      isSceneOpend: false
+      isSceneOpend: false,
+      imageUrl: ''
     }
+    this.state = props.shouldRestoreFromCache && checkCachedPaintScene(state, props.cachedPaintScene) ? props.cachedPaintScene : state
   }
 
   hideSaveSceneModal = (e: SyntheticEvent) => {
@@ -507,13 +513,16 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.CFICanvasContext.drawImage(this.CFIImage.current, 0, 0, canvasWidth, canvasHeight)
     this.CFICanvasContext2.clearRect(0, 0, canvasWidth, canvasHeight)
     this.CFICanvasContextPaint.clearRect(0, 0, canvasWidth, canvasHeight)
-
-    this.setState({
-      wrapperHeight: canvasHeight,
-      canvasHeight,
-      canvasWidth,
-      canvasImageUrls: this.getLayers(),
-      canvasHasBeenInitialized: true })
+    this.redrawCanvas(this.state.imagePathList)
+    blobUrlToDataUrl(this.props.imageUrl).then(url => {
+      this.setState({
+        imageUrl: url,
+        wrapperHeight: canvasHeight,
+        canvasHeight,
+        canvasWidth,
+        canvasImageUrls: this.getLayers(),
+        canvasHasBeenInitialized: true })
+    })
   }
 
   /*:: importLayers: (payload: Object) => void */
