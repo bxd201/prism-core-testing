@@ -38,7 +38,7 @@ import type { Scene, SceneStatus, SceneWorkspace, Surface, Variant } from '../..
 import type { ColorMap } from 'src/shared/types/Colors.js.flow'
 import {
   ACTIVE_SCENE_LABELS_ENUM, cacheStockScene,
-  clearNavigationIntent,
+  clearNavigationIntent, clearStockSceneCache,
   navigateToIntendedDestination,
   POLLUTED_ENUM, setActiveSceneLabel,
   setIsScenePolluted
@@ -154,7 +154,8 @@ type Props = {
   setActiveSceneLabel: Function,
   stockSceneCache: any,
   cacheStockScene: Function,
-  activeSceneLabel: string
+  activeSceneLabel: string,
+  clearStockSceneCache: Function
 }
 
 type State = {
@@ -204,6 +205,11 @@ export class SceneManager extends PureComponent<Props, State> {
     if (!this.props.isColorDetail && this.props.selectedSceneStatusActiveScene && !this.props.selectedScenePaletteLoaded) {
       this.tryToMergeColors()
       this.props.setSelectedScenePaletteLoaded()
+    }
+
+    if (this.props.stockSceneCache) {
+      this.props.setActiveScenePolluted()
+      this.props.clearStockSceneCache()
     }
     // @todo uncomment the two immediate lines below to add custom mask data for manual test.
     // this.props.addNewMask(1, 2, window.localStorage.getItem('sampleMask'))
@@ -816,7 +822,8 @@ const mapDispatchToProps = (dispatch: Function) => {
     navigateToIntendedDestination: () => dispatch(navigateToIntendedDestination()),
     clearNavigationIntent: () => dispatch(clearNavigationIntent()),
     setActiveSceneLabel: (label: string) => dispatch(setActiveSceneLabel(label)),
-    cacheStockScene: (data: any) => dispatch(cacheStockScene(data))
+    cacheStockScene: (data: any) => dispatch(cacheStockScene(data)),
+    clearStockSceneCache: () => dispatch(clearStockSceneCache())
   }
 }
 

@@ -36,10 +36,10 @@ export const POLLUTED_ENUM = {
   POLLUTED_STOCK_SCENE: 'POLLUTED_STOCK_SCENE'
 }
 
-export const SCENE_POLLUTED = 'SCENE_POLLUTED'
+export const SET_SCENE_POLLUTED = 'SET_SCENE_POLLUTED'
 export const setIsScenePolluted = (pollutedSceneType: string = '') => {
   return {
-    type: SCENE_POLLUTED,
+    type: SET_SCENE_POLLUTED,
     payload: pollutedSceneType
   }
 }
@@ -74,19 +74,19 @@ export const ACTIVE_SCENE_LABELS_ENUM = {
   PAINT_SCENE: 'PAINT_SCENE',
   STOCK_SCENE: 'STOCK_SCENE'
 }
-export const ACTIVE_SCENE_LABEL = 'ACTIVE_SCENE_LABEL'
+export const SET_ACTIVE_SCENE_LABEL = 'SET_ACTIVE_SCENE_LABEL'
 export const setActiveSceneLabel = (sceneType: string = '') => {
   return {
-    type: ACTIVE_SCENE_LABEL,
+    type: SET_ACTIVE_SCENE_LABEL,
     payload: sceneType
   }
 }
 
 // this action tells a programmatic navigation where to go back to, should be set when navigation intent is set
-export const NAVIGATION_INTENT_WITH_RETURN = 'NAVIGATION_INTENT_WITH_RETURN'
+export const SET_NAVIGATION_INTENT_WITH_RETURN = 'SET_NAVIGATION_INTENT_WITH_RETURN'
 export const setNavigationIntentWithReturn = (shouldGoHere: string, shouldReturnHere: string) => {
   return {
-    type: NAVIGATION_INTENT_WITH_RETURN,
+    type: SET_NAVIGATION_INTENT_WITH_RETURN,
     navigationIntentPayload: shouldGoHere,
     navigationReturnIntentPayload: shouldReturnHere
   }
@@ -104,10 +104,10 @@ export const stageNavigationReturnIntent = (urlFrag: string) => {
   }
 }
 
-export const IMAGE_ROTATE_BYPASS = 'IMAGE_ROTATE_BYPASS'
+export const SET_IMAGE_ROTATE_BYPASS = 'SET_IMAGE_ROTATE_BYPASS'
 export const setImageRotateBypass = (bypass: string) => {
   return {
-    type: IMAGE_ROTATE_BYPASS,
+    type: SET_IMAGE_ROTATE_BYPASS,
     payload: bypass
   }
 }
@@ -131,12 +131,12 @@ export const clearStockSceneCache = () => {
   }
 }
 
-export const IS_COLOR_WALL_MODALLY_PRESENTED = 'IS_COLOR_WALL_MODALLY_PRESENTED'
+export const SET_IS_COLOR_WALL_MODALLY_PRESENTED = 'SET_IS_COLOR_WALL_MODALLY_PRESENTED'
 // It is a modal if there is a return path at time of mount, this tells the app if the users sees the color wall
 export const setIsColorWallModallyPresented = (returnPath: string) => {
   const isModal = COLORWALL_MODAL_PRESENTERS.indexOf(returnPath) > -1
   return {
-    type: IS_COLOR_WALL_MODALLY_PRESENTED,
+    type: SET_IS_COLOR_WALL_MODALLY_PRESENTED,
     payload: isModal
   }
 }
@@ -146,5 +146,14 @@ export const setShouldShowGlobalDestroyWarning = (shouldShow: boolean = false) =
   return {
     type: SHOULD_SHOW_GLOBAL_DESTROY_WARNING,
     payload: shouldShow
+  }
+}
+
+// This holds the value of a path a user wants to go to when a programmatic intent has already been declared, they need to resolve via a modal action
+export const SET_DIRTY_NAVIGATION_INTENT = 'SET_DIRTY_NAVIGATION_INTENT'
+export const setDirtyNavigationIntent = (urlFrag: string = '') => {
+  return {
+    type: SET_DIRTY_NAVIGATION_INTENT,
+    payload: urlFrag
   }
 }

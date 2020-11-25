@@ -26,7 +26,7 @@ import WithConfigurationContext from '../../contexts/ConfigurationContext/WithCo
 import { FEATURE_EXCLUSIONS } from '../../constants/configurations'
 import { calcOrientationDimensions } from '../../shared/utils/scale.util'
 import { ROUTES_ENUM } from '../Facets/ColorVisualizerWrapper/routeValueCollections'
-import { clearImageRotateBypass } from '../../store/actions/navigation'
+
 const baseClass = 'match-photo'
 const wrapperClass = `${baseClass}__wrapper`
 const previewClass = `${wrapperClass}--preview`
@@ -201,14 +201,8 @@ export function ImageRotateContainer ({ setLastActiveComponent, activePaintScene
         colorPinsGenerationByHueWorker.removeEventListener('message', messageHandler)
         colorPinsGenerationByHueWorker.terminate()
       }
-
-      dispatch(clearImageRotateBypass())
     }
   }, [])
-
-  useEffect(() => {
-    console.log('Bypass from effect:', bypassValue)
-  }, [bypassValue])
 
   const swapWidthAndHeight = (width, height, originalImageIsPortrait, currentlyIsPortrait) => {
     let relWidth = width
@@ -417,7 +411,7 @@ export function ImageRotateContainer ({ setLastActiveComponent, activePaintScene
         rotationAngle={imageRotationAngle} /> : null }
       <div style={{ display: `${showPaintScene ? 'block' : 'none'}` }}>
         {/* This preloads the uploaded image for the canvas */ }
-        <PrismImage ref={imageRef} source={blobUrl} loadedCallback={handleImageLoaded} shouldResample={hasLoaded} scalingWidth={scalingWidth} />
+        {!bypassValue ? <PrismImage ref={imageRef} source={blobUrl} loadedCallback={handleImageLoaded} shouldResample={hasLoaded} scalingWidth={scalingWidth} /> : null}
         <div className={`${getWrapperClassName(imageUrl, pins, !!paintSceneWorkspaceState)}`} ref={wrapperRef}>
           <div className={`${containerClass}`}>
 
@@ -450,7 +444,7 @@ export function ImageRotateContainer ({ setLastActiveComponent, activePaintScene
                 : null
             }
             {
-              (!bypassValue && imageUrl && (pins.length === 0 || isLoadingSmartMask) && !isFromMyIdeas)
+              (!bypassValue && (imageUrl && (pins.length === 0 || isLoadingSmartMask) && !isFromMyIdeas))
                 ? (<>
                   <canvas className={canvasBaseClass} name='canvas' ref={canvasRef} />
                   <ImageRotateTerms rotateImage={rotateImage} createColorPins={createColorPins} imageData={imageData} handleDismiss={handleDismiss} />
@@ -458,7 +452,7 @@ export function ImageRotateContainer ({ setLastActiveComponent, activePaintScene
                 : null
             }
             {
-              (bypassValue === ROUTES_ENUM.PAINT_SCENE || (imageUrl && isPaintScene && pins.length > 0 && !isLoadingSmartMask) || (isFromMyIdeas && paintSceneWorkspaceState && paintSceneWorkspaceState.bgImageUrl !== undefined))
+              (bypassValue === ROUTES_ENUM.PAINT_SCENE || ((imageUrl && isPaintScene && pins.length > 0 && !isLoadingSmartMask) || (isFromMyIdeas && paintSceneWorkspaceState && paintSceneWorkspaceState.bgImageUrl !== undefined)))
                 ? (<>
                   {
                     shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.editPhotos) ? <PaintScene

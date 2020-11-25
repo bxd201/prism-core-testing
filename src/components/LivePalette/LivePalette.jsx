@@ -52,6 +52,7 @@ type Props = {
   isColorwallModallyPresented: boolean
 }
 
+// @todo refactor to put state init in constructor and also bind handleAddColor, removing anon func call in render ...better yet this is a good hooks candidate... -RS
 type State = {
   spokenWord: string,
   isCompareColor: boolean,
@@ -150,7 +151,6 @@ export class LivePalette extends PureComponent<Props, State> {
     if (this.props.activeSceneLabel === ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE) {
       returnPath = ROUTES_ENUM.STOCK_SCENE
     }
-    console.log(`setting navigation intent to: ${returnPath}  from live palette`)
     this.props.setNavigationIntents(ROUTES_ENUM.COLOR_WALL, returnPath)
   }
 

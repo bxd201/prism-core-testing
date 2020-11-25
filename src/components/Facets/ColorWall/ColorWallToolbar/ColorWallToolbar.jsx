@@ -36,9 +36,7 @@ export default () => {
   const [wallSelectionMenuOpen, setWallSelectionMenuOpen] = useState(false)
   // This should have been set by staging action...
   const imageRotateBypassValue = useSelector(store => store.navigationIntent)
-  const shouldShowCloseButton = useSelector(store => {
-    return !!(store.paintSceneCache || store.stockSceneCache)
-  })
+  const shouldShowCloseButton = useSelector(store => store.isColorwallModallyPresented)
 
   return (
     <AutoSizer disableHeight style={{ width: '100%' }}>

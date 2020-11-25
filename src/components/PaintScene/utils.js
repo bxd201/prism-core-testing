@@ -890,6 +890,7 @@ export const getColorsForMergeColors = (workspace: PaintSceneWorkspace) => {
 
 export const maskingPink = { red: '255', green: '44', blue: '180', hex: '#fc2cb3' }
 
+// This is used to validate the paintscene object shape.
 export const checkCachedPaintScene = (srcObj, obj) => {
   let isAllKeySame = true
   if (!obj) return false
@@ -899,27 +900,4 @@ export const checkCachedPaintScene = (srcObj, obj) => {
     }
   })
   return isAllKeySame
-}
-
-export const blobUrlToDataUrl = async (url) => {
-  // eslint-disable-next-line no-undef
-  const promise = await fetch(url).then(r => r.blob()).then((blob) => {
-    var file = new FileReader()
-    const promise = new Promise((resolve) => {
-      file.onload = (e) => { resolve(e.target.result) }
-    })
-    file.readAsDataURL(blob)
-    return promise
-  })
-  return promise
-}
-
-export const dataUrlToBlobUrl = (dataUrl) => {
-  let arr = dataUrl.split(','); let mime = arr[0].match(/:(.*?);/)[1]
-  let bstr = window.atob(arr[1]); let n = bstr.length; let u8arr = new Uint8Array(n)
-  while (n--) {
-    u8arr[n] = bstr.charCodeAt(n)
-  }
-  const blob = new Blob([u8arr], { type: mime })
-  return URL.createObjectURL(blob)
 }

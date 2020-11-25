@@ -375,8 +375,6 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   componentDidUpdate (prevProps: Object, prevState: Object) {
     const { navigationIntent, paintSceneCache } = this.props
     // handle case when paint scene needs to cache data to navigate to the color wall
-    console.log('Navigation intent:', navigationIntent)
-    console.log('Paint Scene Cache:', paintSceneCache)
     if (navigationIntent === ROUTES_ENUM.COLOR_WALL && !paintSceneCache) {
       this.prepareDataCache(this.state)
     }
@@ -530,7 +528,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.redrawCanvas(this.state.imagePathList)
     this.setState({
       wrapperHeight: canvasHeight,
-      canvasHeight: canvasHeight,
+      canvasHeight,
       canvasWidth: canvasWidth,
       canvasImageUrls: this.getLayers(),
       canvasHasBeenInitialized: true })
@@ -597,6 +595,9 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       this.props.clearSceneWorkspace()
     }
     // @todo this is an app level concern and should happen outside of here, that said, it is a safe and stable place to do it now, lift when imagerotatecontainer refactor occurs -RS
+    if (this.props.shouldRestoreFromCache) {
+      this.props.setActiveScenePolluted()
+    }
     this.setState({ imageUrl: this.props.imageUrl })
     this.props.clearPaintSceneCache()
     this.props.setActiveSceneLabel(ACTIVE_SCENE_LABELS_ENUM.PAINT_SCENE)
@@ -973,9 +974,6 @@ canvasHeight
   }
 
   prepareDataCache = (state: ComponentState) => {
-    // @todo add undo redo and image path list
-    // const { imagePathList } = state
-    console.log('BIG STATE:', state)
     this.props.cachePaintScene(state)
   }
 

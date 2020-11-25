@@ -45,7 +45,7 @@ import { systemMessages } from './systemMessages'
 import { maxSceneHeight } from './system'
 import {
   activeSceneLabel,
-  allowNavigateToIntendedDestination, imageRotateBypass, isColorwallModallyPresented,
+  allowNavigateToIntendedDestination, dirtyNavigationIntent, imageRotateBypass, isColorwallModallyPresented,
   navigationIntent, navigationReturnIntent,
   paintSceneCache,
   scenePolluted, shouldShowGlobalDestroyWarning, stockSceneCache
@@ -101,5 +101,6 @@ export default combineReducers({
   imageRotateBypass,
   stockSceneCache,
   isColorwallModallyPresented,
-  shouldShowGlobalDestroyWarning
+  shouldShowGlobalDestroyWarning,
+  dirtyNavigationIntent
 })

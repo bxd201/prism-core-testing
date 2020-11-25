@@ -1,17 +1,17 @@
 // @flow
 import {
-  ACTIVE_SCENE_LABEL,
+  SET_ACTIVE_SCENE_LABEL,
   CACHE_PAINT_SCENE,
   CACHE_STOCK_SCENE,
   CLEANUP_NAVIGATION_INTENT,
   CLEAR_NAVIGATION_INTENT,
   CLEAR_PAINT_SCENE_CACHE,
-  CLEAR_STOCK_SCENE_CACHE,
-  IMAGE_ROTATE_BYPASS,
-  IS_COLOR_WALL_MODALLY_PRESENTED,
+  CLEAR_STOCK_SCENE_CACHE, SET_DIRTY_NAVIGATION_INTENT,
+  SET_IMAGE_ROTATE_BYPASS,
+  SET_IS_COLOR_WALL_MODALLY_PRESENTED,
   NAVIGATE_TO_INTENDED_DESTINATION,
-  NAVIGATION_INTENT_WITH_RETURN,
-  SCENE_POLLUTED,
+  SET_NAVIGATION_INTENT_WITH_RETURN,
+  SET_SCENE_POLLUTED,
   SET_NAVIGATION_INTENT, SHOULD_SHOW_GLOBAL_DESTROY_WARNING,
   STAGE_NAVIGATION_RETURN_INTENT
 } from '../actions/navigation'
@@ -30,7 +30,7 @@ export const navigationIntent = (state: string | void = null, action: any) => {
     return action.navigationIntentPayload
   }
 
-  if (action.type === NAVIGATION_INTENT_WITH_RETURN) {
+  if (action.type === SET_NAVIGATION_INTENT_WITH_RETURN) {
     return action.navigationIntentPayload
   }
 
@@ -38,7 +38,7 @@ export const navigationIntent = (state: string | void = null, action: any) => {
 }
 
 export const scenePolluted = (state: string = '', action: any) => {
-  if (action.type === SCENE_POLLUTED) {
+  if (action.type === SET_SCENE_POLLUTED) {
     return action.payload
   }
 
@@ -64,7 +64,6 @@ export const allowNavigateToIntendedDestination = (state: boolean = false, actio
 export const paintSceneCache = (state: any = null, action: { type: string, payload: any | void }) => {
   if (action.type === CACHE_PAINT_SCENE) {
     const newState = cloneDeep(action.payload)
-    console.log('NEW STATE COPY:::', newState)
     return newState
   }
 
@@ -75,9 +74,9 @@ export const paintSceneCache = (state: any = null, action: { type: string, paylo
   return state
 }
 
-// this is the path forward for managing active sceen, this flag will be used to mediate which scene type to display
+// this is the path forward for managing active scene, this flag will be used to mediate which scene type to display
 export const activeSceneLabel = (state: string = '', action: { type: string, payload: string }) => {
-  if (action.type === ACTIVE_SCENE_LABEL) {
+  if (action.type === SET_ACTIVE_SCENE_LABEL) {
     return action.payload
   }
 
@@ -85,11 +84,7 @@ export const activeSceneLabel = (state: string = '', action: { type: string, pay
 }
 
 export const navigationReturnIntent = (state: string | void = null, action: any) => {
-  if (action.type === NAVIGATION_INTENT_WITH_RETURN) {
-    return action.navigationReturnIntentPayload
-  }
-
-  if (action.type === STAGE_NAVIGATION_RETURN_INTENT) {
+  if (action.type === SET_NAVIGATION_INTENT_WITH_RETURN || action.type === STAGE_NAVIGATION_RETURN_INTENT) {
     return action.navigationReturnIntentPayload
   }
 
@@ -97,18 +92,14 @@ export const navigationReturnIntent = (state: string | void = null, action: any)
 }
 
 export const imageRotateBypass = (state: string = '', action: { type: string, payload: string }) => {
-  if (action.type === IMAGE_ROTATE_BYPASS) {
+  if (action.type === SET_IMAGE_ROTATE_BYPASS) {
     return action.payload
-  }
-
-  if (action.type === SET_NAVIGATION_INTENT) {
-    return ''
   }
 
   return state
 }
 
-// @todo This will eventually be a cahce for now it is a boolean flag, when refactored default state should be null!!! -RS
+// @todo This will eventually be a cache for now it is a boolean flag, when refactored default state should be null!!! -RS
 export const stockSceneCache = (state: any = false, action: { type: string, payload: any }) => {
   if (action.type === CACHE_STOCK_SCENE) {
     return action.payload
@@ -123,7 +114,7 @@ export const stockSceneCache = (state: any = false, action: { type: string, payl
 }
 
 export const isColorwallModallyPresented = (state: boolean = false, action: {type: string, payload: boolean}) => {
-  if (action.type === IS_COLOR_WALL_MODALLY_PRESENTED) {
+  if (action.type === SET_IS_COLOR_WALL_MODALLY_PRESENTED) {
     return action.payload
   }
 
@@ -132,6 +123,14 @@ export const isColorwallModallyPresented = (state: boolean = false, action: {typ
 
 export const shouldShowGlobalDestroyWarning = (state: boolean = false, action: {type: string, payload: boolean}) => {
   if (action.type === SHOULD_SHOW_GLOBAL_DESTROY_WARNING) {
+    return action.payload
+  }
+
+  return state
+}
+
+export const dirtyNavigationIntent = (state: string = '', action: { type: string, payload: string}) => {
+  if (action.type === SET_DIRTY_NAVIGATION_INTENT) {
     return action.payload
   }
 

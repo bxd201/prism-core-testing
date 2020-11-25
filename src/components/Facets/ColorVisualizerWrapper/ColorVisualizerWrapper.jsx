@@ -35,8 +35,13 @@ import ConfigurationContext from 'src/contexts/ConfigurationContext/Configuratio
 import { setMaxSceneHeight } from '../../../store/actions/system'
 import { SHOW_LOADER_ONLY_BRANDS } from '../../../constants/globals'
 import {
-  ACTIVE_SCENE_LABELS_ENUM, clearImageRotateBypass, setIsColorWallModallyPresented,
-  setIsScenePolluted, setShouldShowGlobalDestroyWarning,
+  ACTIVE_SCENE_LABELS_ENUM,
+  clearImageRotateBypass,
+  clearNavigationIntent,
+  setDirtyNavigationIntent,
+  setIsColorWallModallyPresented,
+  setIsScenePolluted,
+  setShouldShowGlobalDestroyWarning,
   stageNavigationReturnIntent
 } from '../../../store/actions/navigation'
 import { ROUTES_ENUM } from './routeValueCollections'
@@ -56,10 +61,10 @@ export const CVW = (props: CVWPropsType) => {
   const toggleCompareColor: boolean = useSelector(store => store.lp.toggleCompareColor)
   const colorDetailsModalShowing: boolean = useSelector(store => store.colors.colorDetailsModal.showing)
   const isActiveScenePolluted: string = useSelector(store => store.scenePolluted)
-  const isPaintSceneCached = useSelector(store => !!store.paintSceneCache)
-  const isStockSceneCached = useSelector(store => !!store.stockSceneCache)
-  const navigationIntent = useSelector(store => store.navigationIntent)
-  const navigationReturnIntent = useSelector(store => store.navigationReturnIntent)
+  const isPaintSceneCached: boolean = useSelector(store => !!store.paintSceneCache)
+  const isStockSceneCached: boolean = useSelector(store => !!store.stockSceneCache)
+  const navigationIntent: string = useSelector(store => store.navigationIntent)
+  const navigationReturnIntent: string = useSelector(store => store.navigationReturnIntent)
 
   const [activeStockScene: Element, setActiveScene: (Element) => void] = useState(<SceneManager expertColorPicks hideSceneSelector />)
   const [activePaintScene: Element, setActivePaintSceneState: (Element) => void] = useState()
@@ -73,21 +78,12 @@ export const CVW = (props: CVWPropsType) => {
   const shouldShowGlobalDestroyWarning = useSelector(store => store.shouldShowGlobalDestroyWarning)
   const intl = useIntl()
   const wrapperRef = useRef()
-  // const isColorwallModallyPresented = useSelector(store => store.isColorwallModallyPresented)
+  const dirtyNavIntent = useSelector(store => store.dirtyNavigationIntent)
 
   // Use this hook to push any facet level embedded data to redux
   useEffect(() => {
     dispatch(setMaxSceneHeight(maxSceneHeight))
   }, [])
-  // @todo remove -RS
-  // this hook determines if user should be warned of a navigation that will destroy work.
-  // useEffect(() => {
-  //   if ((isStockSceneCached || isPaintSceneCached) && isColorwallModallyPresented) {
-  //     setShouldShowDestroyWarning(true)
-  //   } else {
-  //     setShouldShowDestroyWarning(false)
-  //   }
-  // }, [isStockSceneCached, isPaintSceneCached, isColorwallModallyPresented])
 
   // this logic is the app level observer of paintscene cache, used to help direct navigation to the color wall and set it up to return
   // THIS IS ONLY UTILIZED BY FLOWS THAT HAVE RETURN PATHS!!!!!!!
@@ -105,7 +101,7 @@ export const CVW = (props: CVWPropsType) => {
   // This hook will clear the image rotate bypass if paintscene not active
   useEffect(() => {
     if (activeSceneLabel !== ACTIVE_SCENE_LABELS_ENUM.PAINT_SCENE) {
-      // @todo This largely works bc of a trick and I don't like it.  When a user clicks through to upload a paint scene, scenemanager loads and unloads thus clearing the activeScenelabel and causes the bypass to clean up.
+      // @todo This largely works bc of a trick and I don't like it.  When a user clicks through to upload a paint scene, scenemanager loads and unloads thus clearing the activeSceneLabel and causes the bypass to clean up.
       // I'd like this to be more deterministically clean. -RS
       dispatch(clearImageRotateBypass())
     }
@@ -164,11 +160,19 @@ export const CVW = (props: CVWPropsType) => {
   const handleNavigationIntentConfirm = (e: SyntheticEvent) => {
     e.stopPropagation()
     dispatch(setShouldShowGlobalDestroyWarning(false))
+    history.push(dirtyNavIntent)
+    // clean up the one set by the nav click when one was already set
+    dispatch(setDirtyNavigationIntent())
+    // clean up the original, this should be the value set from the return path
+    dispatch(clearNavigationIntent())
+    // Allow add color button to respond again
+    dispatch(setIsColorWallModallyPresented(false))
   }
 
   const handleNavigationIntentCancel = (e: SyntheticEvent) => {
     e.stopPropagation()
     dispatch(setShouldShowGlobalDestroyWarning(false))
+    dispatch(setDirtyNavigationIntent())
   }
 
   // @todo this will be unnecessary in the future, when the way scene management is done is readdressed -RS

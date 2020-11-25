@@ -10,7 +10,6 @@ import at from 'lodash/at'
 import * as scroll from 'scroll'
 import { KEY_CODES } from 'src/constants/globals'
 import WithConfigurationContext from '../../contexts/ConfigurationContext/WithConfigurationContext'
-import { FEATURE_EXCLUSIONS } from '../../constants/configurations'
 
 const baseClass = `help`
 const wrapper = `${baseClass}__wrapper`
@@ -54,8 +53,6 @@ const helpTabsHeaderList = (activeTabIndex: number, setActiveTabIndex: Function,
 }
 
 const helpTabsContentList = (refs: Object, messages: Object, featureExclusions: string[]) => {
-  console.table(FEATURE_EXCLUSIONS)
-
   return filterHelpItems(featureExclusions).map((tab: Object, index: number) => {
     const tabContent = tab.content
     const imageList = tab.imageList
