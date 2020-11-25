@@ -21,11 +21,10 @@ import { createPaintSceneWorkspace, setLayersForPaintScene, WORKSPACE_TYPES } fr
 import { getTransformParams } from '../../shared/utils/rotationUtil'
 import CustomSceneTinterContainer from '../CustomSceneTinter/CustomSceneTinterContainer'
 import { shouldAllowFeature } from '../../shared/utils/featureSwitch.util'
-import { objectsEqual, dataUrlToBlobUrl } from '../PaintScene/utils'
+import { objectsEqual } from '../PaintScene/utils'
 import WithConfigurationContext from '../../contexts/ConfigurationContext/WithConfigurationContext'
 import { FEATURE_EXCLUSIONS } from '../../constants/configurations'
 import { calcOrientationDimensions } from '../../shared/utils/scale.util'
-import { paintSceneState } from './data.js'
 import { ROUTES_ENUM } from '../Facets/ColorVisualizerWrapper/routeValueCollections'
 import { clearImageRotateBypass } from '../../store/actions/navigation'
 const baseClass = 'match-photo'
@@ -119,8 +118,6 @@ export function ImageRotateContainer ({ setLastActiveComponent, activePaintScene
   const dispatch = useDispatch()
   const globalMaxSceneHeight = useSelector(state => state.maxSceneHeight)
   const maxSceneHeight = maxSceneViewerHeight || globalMaxSceneHeight
-  const shouldRestoreFromCache = false
-  const paintSceneUrl = shouldRestoreFromCache ? (paintSceneState.imageUrl && dataUrlToBlobUrl(paintSceneState.imageUrl)) : imageUrl
   // This flag tells app to ignore the OG logic and to just trust that the data is there to render accordingly
   const bypassValue = useSelector(store => store.imageRotateBypass)
 
@@ -467,7 +464,7 @@ export function ImageRotateContainer ({ setLastActiveComponent, activePaintScene
                     shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.editPhotos) ? <PaintScene
                       shouldRestoreFromCache={bypassValue}
                       checkIsPaintSceneUpdate={checkIsPaintSceneUpdate}
-                      imageUrl={paintSceneUrl}
+                      imageUrl={imageUrl}
                       workspace={paintSceneWorkspaceState}
                       imageRotationAngle={imageRotationAngle}
                       referenceDimensions={imageDims}

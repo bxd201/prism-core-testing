@@ -61,6 +61,7 @@ import { calcOrientationDimensions } from '../../shared/utils/scale.util'
 import {
   ACTIVE_SCENE_LABELS_ENUM,
   cachePaintScene,
+  clearPaintSceneCache,
   clearNavigationIntent,
   navigateToIntendedDestination,
   POLLUTED_ENUM, setActiveSceneLabel,
@@ -121,7 +122,8 @@ type ComponentProps = {
   paintSceneCache: any,
   cachePaintScene: Function,
   setActiveSceneLabel: Function,
-  shouldRestoreFromCache: boolean
+  shouldRestoreFromCache: boolean,
+  clearPaintSceneCache: Function
 }
 
 type ComponentState = {
@@ -599,6 +601,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       this.props.clearSceneWorkspace()
     }
     // @todo this is an app level concern and should happen outside of here, that said, it is a safe and stable place to do it now, lift when imagerotatecontainer refactor occurs -RS
+    this.props.clearPaintSceneCache()
     this.props.setActiveSceneLabel(ACTIVE_SCENE_LABELS_ENUM.PAINT_SCENE)
   }
 
@@ -982,7 +985,7 @@ canvasHeight
   render () {
     const { lpActiveColor, intl, showSaveSceneModal, lpColors, workspace, selectedMaskIndex, width, navigationIntent, isActiveScenePolluted } = this.props
     const livePaletteColorCount = (lpColors && lpColors.length) || 0
-    const bgImageUrl = workspace ? workspace.bgImageUrl : this.props.imageUrl
+    const bgImageUrl = workspace ? workspace.bgImageUrl : (this.props.shouldRestoreFromCache ? this.props.imageUrl : this.state.imageUrl)
     const layers = workspace && workspace.workspaceType !== WORKSPACE_TYPES.smartMask ? workspace.layers : null
     const workspaceImageData = workspace && workspace.workspaceType === WORKSPACE_TYPES.smartMask ? workspace.layers : null
     const workspaceType = workspace ? workspace.workspaceType : WORKSPACE_TYPES.generic
@@ -1166,6 +1169,7 @@ const mapDispatchToProps = (dispatch: Function) => {
     navigateToIntendedDestination: () => dispatch(navigateToIntendedDestination()),
     clearNavigationIntent: () => dispatch(clearNavigationIntent()),
     cachePaintScene: (data: any) => dispatch(cachePaintScene(data)),
+    clearPaintSceneCache: () => dispatch(clearPaintSceneCache()),
     setActiveSceneLabel: (label: string) => dispatch(setActiveSceneLabel(label))
 
   }
