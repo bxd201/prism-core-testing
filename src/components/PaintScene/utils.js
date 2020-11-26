@@ -892,6 +892,7 @@ export const maskingPink = { red: '255', green: '44', blue: '180', hex: '#fc2cb3
 
 export const checkCachedPaintScene = (srcObj, obj) => {
   let isAllKeySame = true
+  if (!obj) return false
   Object.keys(srcObj).forEach((key) => {
     if (!obj.hasOwnProperty(`${key}`)) {
       isAllKeySame = false

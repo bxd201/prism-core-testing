@@ -29,8 +29,7 @@ import {
   objectsEqual,
   getColorsForMergeColors,
   maskingPink,
-  checkCachedPaintScene,
-  blobUrlToDataUrl
+  checkCachedPaintScene
 } from './utils'
 import { toolNames, groupToolNames, brushLargeSize, brushRoundShape, setTooltipShownLocalStorage, getTooltipShownLocalStorage } from './data'
 import throttle from 'lodash/throttle'
@@ -393,7 +392,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       return
     }
     const newWidth = shouldCanvasResize(prevProps.width, this.props.width)
-    if (newWidth) {
+    if (newWidth && !this.props.shouldRestoreFromCache) {
       this.scaleCanvases(newWidth, prevProps.width)
       this.applyZoom(this.state.canvasZoom, newWidth)
     }
@@ -529,15 +528,12 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.CFICanvasContext2.clearRect(0, 0, canvasWidth, canvasHeight)
     this.CFICanvasContextPaint.clearRect(0, 0, canvasWidth, canvasHeight)
     this.redrawCanvas(this.state.imagePathList)
-    blobUrlToDataUrl(this.props.imageUrl).then(url => {
-      this.setState({
-        imageUrl: url,
-        wrapperHeight: canvasHeight,
-        canvasHeight,
-        canvasWidth,
-        canvasImageUrls: this.getLayers(),
-        canvasHasBeenInitialized: true })
-    })
+    this.setState({
+      wrapperHeight: canvasHeight,
+      canvasHeight: canvasHeight,
+      canvasWidth: canvasWidth,
+      canvasImageUrls: this.getLayers(),
+      canvasHasBeenInitialized: true })
   }
 
   /*:: importLayers: (payload: Object) => void */
@@ -601,6 +597,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       this.props.clearSceneWorkspace()
     }
     // @todo this is an app level concern and should happen outside of here, that said, it is a safe and stable place to do it now, lift when imagerotatecontainer refactor occurs -RS
+    this.setState({ imageUrl: this.props.imageUrl })
     this.props.clearPaintSceneCache()
     this.props.setActiveSceneLabel(ACTIVE_SCENE_LABELS_ENUM.PAINT_SCENE)
   }
@@ -985,7 +982,7 @@ canvasHeight
   render () {
     const { lpActiveColor, intl, showSaveSceneModal, lpColors, workspace, selectedMaskIndex, width, navigationIntent, isActiveScenePolluted } = this.props
     const livePaletteColorCount = (lpColors && lpColors.length) || 0
-    const bgImageUrl = workspace ? workspace.bgImageUrl : (this.props.shouldRestoreFromCache ? this.props.imageUrl : this.state.imageUrl)
+    const bgImageUrl = workspace ? workspace.bgImageUrl : (this.props.shouldRestoreFromCache === '' ? this.props.imageUrl : this.state.imageUrl)
     const layers = workspace && workspace.workspaceType !== WORKSPACE_TYPES.smartMask ? workspace.layers : null
     const workspaceImageData = workspace && workspace.workspaceType === WORKSPACE_TYPES.smartMask ? workspace.layers : null
     const workspaceType = workspace ? workspace.workspaceType : WORKSPACE_TYPES.generic
