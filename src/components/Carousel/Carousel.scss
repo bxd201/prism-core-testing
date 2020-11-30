@@ -24,14 +24,20 @@
         z-index:1000;
       }
       &__buttons {
-        border: 1px solid #f2f2f2;
+        border: 1px solid var(getThemeColor('light.lighter'));
         cursor: pointer;
         font-size: 1em;
         outline: none;
         padding: 1em;
-        background-color:#ffffff;
+        background-color: var(getThemeColor('white'));
         &:hover {
           border: 1px solid #2cabe2;
+        }
+        &:focus {
+          outline-style: solid;
+          outline-color: var(getThemeColor('secondary'));
+          outline-width: 2px;
+          z-index: 100;
         }
       }
       &__list__wrapper {
@@ -57,10 +63,10 @@
       &__icons {
         margin: 0 5px;
         &--active {
-          color: #2cabe2;
+          color: var(getThemeColor('secondary'));
         }
         &--unactive {
-          color: #c8c8c8;
+          color: var(getThemeColor('light'));
         }
       }
     }
@@ -73,6 +79,7 @@
     flex-wrap: wrap;
     justify-content: center;
     width: 100%;
+    vertical-align: top;
   }
   &__container{
     white-space: nowrap;

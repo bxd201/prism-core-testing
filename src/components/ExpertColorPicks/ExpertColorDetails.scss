@@ -22,7 +22,7 @@
       text-align: center;
     }
     &__link {
-      color: #2cabe2;
+      color: var(getThemeColor('secondary'));
       font-size: 0.7rem;
       font-weight: 600;
       margin: 0.7em 0 0 0;
@@ -30,14 +30,14 @@
     }
   }
   &__bottom__section {
-    border-top: 1px solid #ffffff;
+    border-top: 1px solid var(getThemeColor('white'));
     display: flex;
   }
   &__top__section &__content__wrapper {
-    padding-bottom: 200px;
+    padding-bottom: 30%;
   }
   &__bottom__section &__content__wrapper {
-    padding-bottom: 100px;
+    padding-bottom: 15%;
   }
   &__content__wrapper {
     flex: 50% 0 0;
@@ -49,6 +49,12 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
+      &:focus {
+        outline-style: solid;
+        outline-color: var(getThemeColor('secondary'));
+        outline-width: 2px;
+        z-index: 100;
+      }
     }
     &__color-name {
       font-weight: 700;

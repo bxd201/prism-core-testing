@@ -1,0 +1,29 @@
+.static__scene__image__wrapper {
+  height: 100%;
+  width: 100%;
+  border-right:4px solid var(getThemeColor('white'));
+  position: relative;
+}
+
+.static__scene__paint__btn{
+  border: 1px solid var(getThemeColor('light'));
+  display: inline-block;
+  text-align: center;
+  width: 17em;
+  background: var(getThemeColor('white'));
+  color: var(getThemeColor('black'));
+  fill: var(getThemeColor('black'));
+  padding: 1em 1.75em;
+  bottom: 4em;
+  position: absolute;
+  text-transform: uppercase;
+  &:hover{
+    color:var(getThemeColor('secondary'));
+    border: 1px solid var(getThemeColor('secondary'));
+  }
+  &:focus {
+    outline-style: solid;
+    outline-color: var(getThemeColor('secondary'));
+    outline-width: 2px;
+  }
+}

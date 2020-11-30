@@ -5,7 +5,7 @@ import at from 'lodash/at'
 import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
 
 import { getColors } from '../functions'
-import { varNames } from 'src/shared/variableDefs'
+import { varNames } from 'src/shared/withBuild/variableDefs'
 
 import './HeroLoader.scss'
 import CircleLoader from '../CircleLoader/CircleLoader'

@@ -1,12 +1,13 @@
 .prism-color-picker {
   &__wrapper {
     background-color: #ffffff;
+    // @todo theme
+    border-bottom: 1px solid rgba(0,0,0,.13);
     color: rgba(0, 0, 0, 0.7);
     font-size: 0.85rem;
     font-weight: 600;
     height: auto;
     position: relative;
-    right: 2.9em;
     width: 100%;
     transition: all ease 0.3s;
     z-index: 1000;
@@ -14,8 +15,14 @@
     &__border {
       padding: 0.15rem 0.15rem 0.15rem 0.3rem;
       float: right;
+      margin-right: 2.9em;
+      &:focus {
+        outline: none;
+      }
       @include respond-above(sm) {
         float: none;
+        margin-right: 0;
+        right: 2.9em;
       }
     }
     @include respond-above(sm) {
@@ -27,8 +34,15 @@
         width: 175px;
       }
       &--hide {
-        right: -8.1em;
+        right: 0;
+        transform: translateX(75%)
       }
+    }
+    &:focus {
+      outline-style: solid;
+      outline-color: var(getThemeColor('secondary'));
+      outline-width: 2px;
+      z-index: 100;
     }
   }
 }
@@ -43,7 +57,13 @@
     margin: -0.313em auto;
     outline: none;
     &:hover {
-      color: getVar("colors.summerSkyBlue");
+      color: var(getThemeColor('secondary'));
+    }
+    &:focus {
+      outline-style: solid;
+      outline-color: var(getThemeColor('secondary'));
+      outline-width: 2px;
+      z-index: 100;
     }
   }
   &__mobile-toggle-arrow {
@@ -51,15 +71,23 @@
     width: 0;
     height: 0;
     border: .5em solid transparent;
-    border-top-color: getVar("colors.summerSkyBlue");
+    border-top-color: var(getThemeColor('secondary'));
     border-top-style: solid;
     display: block;
+    outline: none;
     position: absolute;
-    right: -2.05em;
-    top: 50%;
+    right: 0.95em;
+    top: 2.3em;
     transform:translate(0,-50%);
+    z-index: 10000;
+    &:focus {
+      outline-style: solid;
+      outline-color: var(getThemeColor('secondary'));
+      outline-width: 2px;
+      // z-index: 100;
+    }
     &--up {
-      border-bottom-color: getVar("colors.summerSkyBlue");
+      border-bottom-color: var(getThemeColor('secondary'));
       border-bottom-style: solid;
       border-top: 0;
     }
@@ -69,7 +97,7 @@
   }
   @include respond-above(sm) {
     display: block;
-    margin: 0 0.4em;
+    margin: 0 0.8em;
   }
   &--show {
     display: none;
@@ -103,6 +131,12 @@
     // width: 100%;
     &__button {
       outline: none;
+      &:focus {
+        outline-style: solid;
+        outline-color: var(getThemeColor('secondary'));
+        outline-width: 2px;
+        z-index: 100;
+      }
     }
     &__color-display-area {
       align-items: center;
@@ -166,9 +200,15 @@
     padding: 1.5em 0.2em;
     text-align: left;
     position: absolute;
-    left: 3.375em;
+    left: 1em;
     top: -0.25em;
     width: 40%;
+    @include respond-above(sm) {
+      display: none;
+    }
+  }
+  &__wrapper-mobile {
+    display: flex;
     @include respond-above(sm) {
       display: none;
     }
@@ -182,10 +222,12 @@
       display: flex;
       flex-direction: column;
       width: 100%;
+      // @todo theme
       box-shadow: inset 0 0 5px 0 rgba(0,0,0,.13);
     }
   }
   &__header {
+    // @todo theme
     border-top: 1px solid rgba(0, 0, 0, 0.13);
     border-bottom: 1px solid rgba(0, 0, 0, 0.13);
     display: flex;
@@ -195,12 +237,18 @@
     padding: 0.7em;
     text-align: left;
     &__link {
-      color: getVar("colors.summerSkyBlue");
+      color: var(getThemeColor('secondary'));
       font-size: 0.7rem;
       font-weight: 600;
       margin: 0.7em 0 0 0;
       outline: none;
       text-align: left;
+      &:focus {
+        outline-style: solid;
+        outline-color: var(getThemeColor('secondary'));
+        outline-width: 2px;
+        z-index: 100;
+      }
     }
   }
   &__collapse__button {
@@ -210,6 +258,15 @@
     cursor: pointer;
     &--open {
       border: none;
+    }
+    &:focus {
+      outline-style: solid;
+      outline-color: var(getThemeColor('secondary'));
+      outline-width: 2px;
+      z-index: 100;
+    }
+    & > span {
+      text-transform: uppercase;
     }
   }
   &__toggle-carets {
@@ -224,31 +281,65 @@
     position: absolute;
     z-index: 2;
     padding: 1em;
-    background: rgba(255,255,255,.9);
+    background: var(getThemeColor('primary.contrast.trans'));
+    top: 3em;
     width: 100%;
     &__left {
       float: left;
       width: 60%;
+      & > ul {
+        list-style-type: none;
+      }
+      & > ul > li {
+        display: flex;
+      }
     }
     &__right {
       float: right;
       width: 40%;
+      &__link {
+        color: var(getThemeColor('secondary'));
+        font-size: .7rem;
+        font-weight: 700;
+        line-height: .84rem;
+        margin: 0.5em 0;
+        text-decoration: none;
+        text-transform: uppercase;
+        user-select: none;
+        &:focus {
+          outline-style: solid;
+          outline-color: var(getThemeColor('secondary'));
+          outline-width: 2px;
+        }
+      }
     }
     @include respond-above(sm) {
       display: none;
     }
   }
   &__container {
+    margin-bottom: 1%;
+    @include respond-above(sm) {
+      margin-bottom: 0;
+    }
     &__color {
       float: left;
       height: 50px;
       width: 50px;
     }
     &__color-details {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
       padding: 0em 0.6em;
-      vertical-align: middle;
-      height: 50px;
-      display: table-cell;
+    }
+    &__color-number {
+      font-size: .85em;
+    }
+    &__color-name {
+      font-size: .9em;
+      font-weight: 600;
+      line-height: 1;
     }
   }
 }

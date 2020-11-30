@@ -16,24 +16,32 @@
   }
 
   &__inner {
-    background: rgba(pick-visible-color($color-near-black, $color-black, $color-white), $color-near-opacity);
+    background: var(getThemeColor('white.trans'));
     border-radius: .25em;
-    color: $color-near-black;
+    color: var(getThemeColor('white.contrast'));
     display: inline-block;
     padding: .5em;
+    width: 100%;
+    font-weight: normal;
+    font-size: 0.8rem;
 
     @include respond-above(sm) {
       padding: 1em;
     }
 
     &--error {
-      background: rgba(getVar('colors.error'), $color-near-opacity);
-      color: pick-visible-color(getVar('colors.error'), $color-black, $color-white);
+      background: var(getThemeColor('danger.trans'));
+      color: var(getThemeColor('danger.contrast'));
     }
 
     &--warning {
-      background: rgba(getVar('colors.warning'), $color-near-opacity);
-      color: pick-visible-color(getVar('colors.warning'), $color-black, $color-white);
+      background: var(getThemeColor('warning.trans'));
+      color: var(getThemeColor('warning.contrast'));
+    }
+
+    &--success {
+      background: var(getThemeColor('success.trans'));
+      color: var(getThemeColor('success.contrast'));
     }
   }
 

@@ -1,28 +1,47 @@
 // @flow
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useRef, useCallback, useEffect } from 'react'
+import { Link, useHistory } from 'react-router-dom'
+import { FormattedMessage } from 'react-intl'
 
 const baseClass = 'confirmation-modal'
 const wrapperClass = `${baseClass}__wrapper`
-const wrapperActiveClass = `${wrapperClass}--active`
 const containerClass = `${baseClass}__container`
 const contentClass = `${baseClass}__content`
 const buttonClass = `${baseClass}__button`
 
 type Props = {
-  onClickNo: Function,
-  isActive: boolean
+  onClickNo: Function
 }
 
-const ConfirmationModal = ({ onClickNo, isActive }: Props) => {
+const ConfirmationModal = ({ onClickNo }: Props) => {
+  const btnYesRef = useRef()
+  const btnNoRef = useRef()
+  const history = useHistory()
+
+  useEffect(() => {
+    if (btnYesRef && btnYesRef.current) btnYesRef.current.focus()
+  }, [])
+
+  const blurHandler = useCallback((ref: any) => {
+    if (ref.current === btnYesRef.current) {
+      btnNoRef.current.focus()
+    } else if (ref.current === btnNoRef.current) {
+      btnYesRef.current.focus()
+    }
+  }, [btnYesRef, btnNoRef])
+
   return (
-    <div className={`${wrapperClass} ${isActive ? `${wrapperActiveClass}` : ''}`}>
+    <div className={`${wrapperClass}`}>
       <div className={`${containerClass}`}>
         <p className={`${contentClass}`}>
-          The photo content will be lost if you close. Make sure the colors you want to keep have been added to your palette. Do you still want to close?
+          <FormattedMessage id='CONFIRMATION_DIALOG_MATCH_A_PHOTO_EXIT' />
         </p>
-        <Link to={`/active`}><button className={`${buttonClass}`}>YES</button></Link>
-        <button className={`${buttonClass}`} onClick={onClickNo}>NO</button>
+        <Link tabIndex='-1' to={`/active`}>
+          <button ref={btnYesRef} onBlur={() => blurHandler(btnYesRef)} className={`${buttonClass}`} onClick={() => history.push('/active')}>
+            <FormattedMessage id='YES' />
+          </button>
+        </Link>
+        <button ref={btnNoRef} onBlur={() => blurHandler(btnNoRef)} className={`${buttonClass}`} onClick={onClickNo}><FormattedMessage id='NO' /></button>
       </div>
     </div>
   )

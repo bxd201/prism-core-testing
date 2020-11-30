@@ -15,11 +15,12 @@ import store from '../../store/store'
 import { LP_MAX_COLORS_ALLOWED, MIN_COMPARE_COLORS_ALLOWED } from 'constants/configurations'
 import { DndProvider } from 'react-dnd-cjs'
 import HTML5Backend from 'react-dnd-html5-backend-cjs'
+import InfoButton from 'src/components/InfoButton/InfoButton'
 
-import { activate, reorder, toggleCompareColor, cancel, empty } from '../../store/actions/live-palette'
+import { activate, reorder, toggleCompareColor, deactivateTemporaryColor, empty } from '../../store/actions/live-palette'
 import { arrayToSpacedString } from '../../shared/helpers/StringUtils'
 
-import { varValues } from 'src/shared/variableDefs'
+import { varValues } from 'src/shared/withBuild/variableDefs'
 
 import EmptySlot from './EmptySlot'
 import ActiveSlot from './ActiveSlot'
@@ -27,6 +28,9 @@ import ActiveSlot from './ActiveSlot'
 import type { Color } from '../../shared/types/Colors.js.flow'
 
 import './LivePalette.scss'
+import storageAvailable from '../../shared/utils/browserStorageCheck.util'
+import { fullColorNumber } from '../../shared/helpers/ColorUtils'
+const PATH__NAME = 'fast-mask-simple.html'
 
 type Props = {
   colors: Array<Color>,
@@ -35,19 +39,30 @@ type Props = {
   toggleCompareColor: Function,
   activeColor: Color,
   removedColor: Color,
-  cancel: Function,
-  empty: Function
+  deactivateTemporaryColor: Function,
+  empty: Function,
+  temporaryActiveColor: Color | null
 }
 
 type State = {
   spokenWord: string,
-  isCompareColor: boolean
+  isCompareColor: boolean,
+  isFastMaskPage: boolean
+}
+
+const checkIsActive = (activeColor, color) => {
+  if (!activeColor) {
+    return false
+  }
+
+  return activeColor.id === color.id
 }
 
 export class LivePalette extends PureComponent<Props, State> {
   state = {
     spokenWord: '',
-    isCompareColor: false
+    isCompareColor: false,
+    isFastMaskPage: false
   }
 
   pendingUpdateFn: any
@@ -55,9 +70,17 @@ export class LivePalette extends PureComponent<Props, State> {
   activeSlotRef: ?RefObject = void (0)
 
   componentDidMount () {
+    const pathName = window.location.pathname
+    if (pathName.split('/').slice(-1)[0] === PATH__NAME) {
+      this.setState({ isFastMaskPage: true })
+    }
+    // FIXME: Store should never be subscribed to by a component like this, it's non-uni-directional data flow.
+    // FIXME: middleware can be used to respond to actions, specifically something testable like redux-saga
     store.subscribe(() => {
       const { lp } = store.getState()
-      window.localStorage.setItem('lp', JSON.stringify(lp))
+      if (storageAvailable('localStorage')) {
+        window.localStorage.setItem('lp', JSON.stringify(lp))
+      }
     })
   }
   // $FlowIgnore
@@ -106,9 +129,8 @@ export class LivePalette extends PureComponent<Props, State> {
   }
 
   render () {
-    const { colors, activeColor, cancel, empty } = this.props
-
-    const { spokenWord, isCompareColor } = this.state
+    const { colors, activeColor, deactivateTemporaryColor, empty, temporaryActiveColor } = this.props
+    const { spokenWord, isCompareColor, isFastMaskPage } = this.state
     // TODO: abstract below into a class method
     // calculate all the active slots
     const activeSlots = colors.map((color, index) => {
@@ -119,7 +141,7 @@ export class LivePalette extends PureComponent<Props, State> {
           color={color}
           onClick={this.activateColor}
           moveColor={this.moveColor}
-          active={(activeColor.id === color.id)}
+          active={(checkIsActive(activeColor, color))}
           isCompareColor={isCompareColor}
         />)
       }
@@ -137,15 +159,25 @@ export class LivePalette extends PureComponent<Props, State> {
     return (
       <DndProvider backend={HTML5Backend}>
         <div className='prism-live-palette'>
-          <LivePaletteModal cancel={cancel} empty={empty} isActive={colors.length > LP_MAX_COLORS_ALLOWED} />
+          <LivePaletteModal cancel={deactivateTemporaryColor} empty={empty} isActive={temporaryActiveColor !== null} />
           <div className='prism-live-palette__header'>
             <span className='prism-live-palette__header__name'><FormattedMessage id='PALETTE_TITLE' /></span>
-            {colors.length >= MIN_COMPARE_COLORS_ALLOWED && <button className='prism-live-palette__header__compare-button' onClick={this.toggleCompareColor}>Compare Color</button>}
+            {colors.length >= MIN_COMPARE_COLORS_ALLOWED && <button tabIndex='-1' className={!isFastMaskPage ? 'prism-live-palette__header__compare-button' : 'prism-live-palette__header__compare-button--hide'} onClick={this.toggleCompareColor}>Compare Color</button>}
           </div>
+          {activeColor && <div className='prism-live-palette__active-color' style={{ backgroundColor: activeColor.hex }}>
+            <div className={`prism-live-palette__active-color__details ${(activeColor.isDark) ? `prism-live-palette__active-color__details--dark` : ``}`}>
+              <span className='prism-live-palette__active-color__color-number'>{fullColorNumber(activeColor.brandKey, activeColor.colorNumber)}</span>
+              <span className='prism-live-palette__active-color__color-name'>{ activeColor.name }</span>
+            </div>
+            <div className='prism-live-palette__active-color__info-button'>
+              <InfoButton color={activeColor} />
+            </div>
+          </div>}
           <div className='prism-live-palette__list'>
             {activeSlots}
+            { /* @todo refactor to use imperative approach so that we can block based on state, for cases when this link should be disabled -RS Thsi is needed for cases where modality -RS */}
             {colors.length < LP_MAX_COLORS_ALLOWED && <Link to={`/active/color-wall`} className={`prism-live-palette__slot prism-live-palette__slot--${COLOR_TRAY_CLASS_MODIFIERS}`}>
-              <FontAwesomeIcon className='prism-live-palette__icon' icon={['fal', 'plus-circle']} size='2x' color={varValues.colors.swBlue} />
+              <FontAwesomeIcon className='prism-live-palette__icon' icon={['fal', 'plus-circle']} size='2x' color={varValues._colors.primary} />
               <FormattedMessage id={ADD_COLOR_TEXT}>
                 {(msg: string) => <span className='prism-live-palette__slot__copy'>{msg}</span>}
               </FormattedMessage>
@@ -184,7 +216,8 @@ const mapStateToProps = (state, props) => {
     colors: lp.colors,
     activeColor: lp.activeColor,
     // previousActiveColor: lp.previousActiveColor,
-    removedColor: lp.removedColor
+    removedColor: lp.removedColor,
+    temporaryActiveColor: lp.temporaryActiveColor
   }
 }
 
@@ -199,8 +232,8 @@ const mapDispatchToProps = (dispatch: Function) => {
     reorderColors: (colors) => {
       dispatch(reorder(colors))
     },
-    cancel: () => {
-      dispatch(cancel())
+    deactivateTemporaryColor: () => {
+      dispatch(deactivateTemporaryColor())
     },
     empty: () => {
       dispatch(empty())

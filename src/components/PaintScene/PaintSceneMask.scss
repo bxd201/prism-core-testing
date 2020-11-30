@@ -1,0 +1,25 @@
+.paint-scene{
+    &__mask-list-wrapper{
+        display: flex;
+    }
+    &__mini-mask-image{
+        margin-right:1em;
+        &:hover{
+            cursor: pointer;
+        }
+        & > img{
+            width:120px;
+        }
+    }
+    &__button-wrapper{
+        display: flex;
+        flex-direction: column;
+        right: 0;
+        position: absolute;
+        & > button{
+            padding: 0.9em;
+            margin: 0px 0em 0.5em 0em;
+            border: 1px solid;
+        }
+    }
+}

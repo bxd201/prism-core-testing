@@ -8,8 +8,6 @@ type Props = {
   maskId: string,
   filterId: string,
   type: string,
-  width: number,
-  height: number,
   filterColor?: string,
   highlightMap?: string,
   shadowMap?: string,
@@ -18,7 +16,7 @@ type Props = {
 
 class TintableSceneSurface extends PureComponent<Props> {
   render () {
-    const { width, height, filterId, maskId, maskImage, filterColor, type, highlightMap, shadowMap, filterImageValueCurve } = this.props
+    const { filterId, maskId, maskImage, filterColor, type, highlightMap, shadowMap, filterImageValueCurve } = this.props
     let content = void (0)
 
     switch (type) {
@@ -26,13 +24,13 @@ class TintableSceneSurface extends PureComponent<Props> {
         content = (
           <Fragment>
             <filter id={filterId} x='0' y='0' width='100%' height='100%' filterUnits='objectBoundingBox' primitiveUnits='objectBoundingBox' colorInterpolationFilters='sRGB'>
-              {filterImageValueCurve ? (
-                <feComponentTransfer in='SourceGraphic' result='adjustedHistogram'>
+              <feComponentTransfer in='SourceGraphic' result='adjustedHistogram'>
+                {filterImageValueCurve ? <>
                   <feFuncR type='table' tableValues={filterImageValueCurve} />
                   <feFuncG type='table' tableValues={filterImageValueCurve} />
                   <feFuncB type='table' tableValues={filterImageValueCurve} />
-                </feComponentTransfer>
-              ) : null}
+                </> : null}
+              </feComponentTransfer>
 
               <feFlood floodColor={filterColor} result='tintHue' />
               <feBlend mode='multiply' in2='tintHue' in='adjustedHistogram' />
@@ -70,11 +68,9 @@ class TintableSceneSurface extends PureComponent<Props> {
     }
 
     return (
-      <svg x='0' y='0' width='0' height='0' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlnsXlink='http://www.w3.org/1999/xlink' viewBox={`0 0 ${width} ${height}`}>
-        <defs>
-          {content}
-        </defs>
-      </svg>
+      <defs>
+        {content}
+      </defs>
     )
   }
 }

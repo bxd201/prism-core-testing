@@ -1,0 +1,58 @@
+@import '../../constants';
+
+.FurnitureDetail{
+    display: flex;
+    flex-direction: column;
+    padding-top: 2em;
+    font-family: sans-serif;
+    color: map-get($jsf-color, primary);
+    &__title{
+        text-align: left;
+        text-transform: uppercase;
+        font-weight: bold;
+    }
+    &__line{
+        border-top:1px solid map-get($jsf-color, primary) !important;
+    }
+    &__content-container{
+        display: flex;
+        justify-content: center;
+        align-content: center;
+        &__image{
+            display: flex;
+            flex:1;
+            > img{
+                width: 10rem;
+                height:10rem;
+                object-fit: cover;
+            }
+        }
+        &__color{
+            display: flex;
+            flex:1;
+            font-size: 0.8rem;
+            &__wrapper{
+                display: flex;
+                flex-direction: column;
+                margin: 10px;
+                &__palette{
+                    width: 95px;
+                    height: 95px;
+                }
+                &__name{
+                    display: flex;
+                    flex-direction: column;
+                    > span:first-child{
+                        margin: 0.1rem;
+                        font-weight: normal;
+                    }
+                    > span:last-child{
+                        display: block;
+                        width: 4em;
+                        font-weight: bold;
+                    }
+                }
+            }
+        }
+    }
+}

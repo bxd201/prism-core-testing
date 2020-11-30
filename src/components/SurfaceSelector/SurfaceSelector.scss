@@ -1,0 +1,12 @@
+.surface-selector {
+  display: block;
+  height: auto;
+  width: 100%;
+  &__list {
+    display: flex;
+    align-content: center;
+    justify-content: left;
+    margin: 4px 4px 4px 0px;
+    cursor: pointer;
+  }
+}

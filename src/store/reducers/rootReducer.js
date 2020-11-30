@@ -10,12 +10,40 @@ import {
   currentVariant,
   isEditMode,
   sceneWorkspaces,
-  currentWorkspace
+  currentWorkspace,
+  useSmartMask,
+  showEditCustomScene
 } from './scenes'
-import { uploads } from './uploads'
+import { queuedImageUpload, uploads } from './uploads'
 import collectionSummaries from './collectionSummaries'
 import expertColorPicks from './expertColorPicks'
 import inspirationalPhotos from './inspirationalPhotos'
+import { savingMasks } from './masks'
+import {
+  legacySavedScenesMetadata,
+  scenesAndRegions,
+  selectedSavedSceneId,
+  sceneMetadata,
+  isWaitingToFetchSavedScenes,
+  cachedSceneData,
+  isLoadingSavedScene,
+  showSaveSceneModal,
+  saveSceneName,
+  selectedStockSceneId,
+  selectedSceneStatus,
+  showSavedConfirmModal,
+  showSavedCustomSceneSuccess,
+  showDeleteConfirmModal,
+  selectedSavedLivePaletteId
+} from './savedScenes'
+import { user } from './user'
+import { paintSceneWorkspace } from './paintSceneWorkspace'
+// eslint-disable-next-line no-unused-vars
+import { reducerWithLocalStorage } from '../withStorage'
+import { SCENE_METADATA } from '../storageProperties'
+import { systemMessages } from './systemMessages'
+import { maxSceneHeight } from './system'
+import { allowNavigateToIntendedDestination, navigationIntent, scenePolluted } from './navigation'
 
 export default combineReducers({
   collectionSummaries,
@@ -32,5 +60,33 @@ export default combineReducers({
   lp,
   scenes,
   sceneWorkspaces,
-  uploads
+  uploads,
+  savingMasks,
+  legacySavedScenesMetadata,
+  scenesAndRegions,
+  user,
+  selectedSavedSceneId,
+  selectedSavedLivePaletteId,
+  paintSceneWorkspace,
+  sceneMetadata: reducerWithLocalStorage(sceneMetadata, SCENE_METADATA),
+  isWaitingToFetchSavedScenes,
+  cachedSceneData,
+  isLoadingSavedScene,
+  showSaveSceneModal,
+  saveSceneName,
+  selectedStockSceneId,
+  selectedSceneStatus,
+  // For scene manager
+  showSavedConfirmModal,
+  // For paint scene
+  showSavedCustomSceneSuccess,
+  showDeleteConfirmModal,
+  useSmartMask,
+  queuedImageUpload,
+  systemMessages,
+  showEditCustomScene,
+  maxSceneHeight,
+  navigationIntent,
+  scenePolluted,
+  allowNavigateToIntendedDestination
 })

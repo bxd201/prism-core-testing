@@ -1,3 +1,16 @@
+@mixin hover-style {
+  background: var(getThemeColor('white'));
+  border-color: var(getThemeColor('secondary'));
+  cursor: pointer;
+  color: var(getThemeColor('secondary'));
+}
+
+@mixin focus-style {
+  outline-style: solid;
+  outline-color: var(getThemeColor('secondary'));
+  outline-width: 2px;
+}
+
 .match-photo {
   &__wrapper {
     display: flex;
@@ -5,19 +18,20 @@
     justify-content: center;
     height: 100%;
     margin: 0 auto;
-    max-width: 1050px;
+    // max-width: 1050px;
     overflow: hidden;
     /*padding: 3em 0;*/
+    width: 100%;
     @include respond-above(sm) {
       padding: 0em;
     }
     &--preview {
-      background: #c8c8c8;
+      background: var(getThemeColor('light.lightest'));
       /* This prevents extra space to the bottom of the wrapper without it. */
       line-height: 0px;
       &::before {
         display: block;
-        content: url('../../images/ghost-gradient.svg');
+        content: url('~src/images/ghost-gradient.svg');
         position: absolute;
         left: 0;
         right: 0;
@@ -34,10 +48,10 @@
   &__button {
     background: transparent;
     border: none;
-    color: white;
+    color: var(getThemeColor('white'));
     cursor: pointer;
     display: inline-block;
-    fill: #000;
+    fill: var(getThemeColor('black'));
     outline: none;
     padding: 0;
     position: absolute;
@@ -46,25 +60,40 @@
     top: .875rem;
     width: auto;
     z-index: 1000;
+
+    &:focus {
+      @include focus-style
+    }
     &:hover {
-      background: #fff;
-      border-color: #2cabe2;
-      cursor: pointer;
-      color: #2cabe2;
+      @include hover-style
     }
     &--left {
       left: .875rem;
     }
     &--right {
       right: .875rem;
+
+      &.dark-button {
+        background-color: var(getThemeColor('white'));
+        color: var(getThemeColor('black'));
+        border: 1px var(getThemeColor('black')) solid;
+
+        &:focus {
+          @include focus-style
+        }
+        &:hover {
+          @include hover-style
+        }
+      }
     }
     @include respond-above(sm) {
-      border: 1px solid #f2f2f2;
+      border: 1px solid var(getThemeColor('light'));
       padding: .75em 1.75em;
     }
   }
   &__button-left-text {
     display: none;
+    text-transform: uppercase;
     @include respond-above(sm) {
       display: inline-block;
     }
@@ -86,14 +115,6 @@
     text-align: center;
     margin: 0 auto;
     display: block;
-    /*min-height: 266px;
-    width:100%;
-    @include respond-above(xs) {
-        min-height:366px;
-    }
-    @include respond-above(md){
-        min-height:540px;
-    }*/
   }
   &__image {
     height: 0;
@@ -121,8 +142,9 @@
     text-align: center;
     top: 0;
     width: 19rem;
+    z-index: 1000;
     &__container {
-      background: #f0f0f0;
+      background: var(getThemeColor('light.lightest'));
       display: flex;
       flex-direction: column;
       line-height: 1.2em;
@@ -132,7 +154,7 @@
       }
     }
     &__loader {
-      color: #2cabe1;
+      color: var(getThemeColor('secondary'));
       display: block;
       line-height: 1.2em;
       margin-top: 6px;
@@ -140,13 +162,12 @@
     &__tools {
       margin-top: 6px;
       &__message {
-        background: #f0f0f0;
-        color: black;
+        color: var(getThemeColor('black'));
         margin-bottom: 6px;
         padding: .75em;
       }
       &__rotate-arrow {
-        background: white;
+        background: var(getThemeColor('white'));
         border: 1px solid transparent;
         display: inline-block;
         font-size: 3em;
@@ -156,7 +177,7 @@
         padding: 0;
         width: 48px;
         &:focus {
-          outline-color: #2cabe2;
+          outline-color: var(getThemeColor('secondary'));
           outline-style: solid;
           outline-width: 2px;
         }
@@ -171,21 +192,20 @@
         cursor: pointer;
         outline: none;
         &:focus {
-          outline-color: #2cabe2;
+          outline-color: var(getThemeColor('secondary'));
           outline-style: solid;
           outline-width: 2px;
         }
       }
       &__text {
-        background: #f0f0f0;
         border: none;
         flex: 1 0 auto;
         width: 62%;
       }
       &__accept {
-        background: white;
-        border: 1px solid #e1e1e1;
-        color: #e1e1e1;
+        background: var(getThemeColor('white'));
+        border: 1px solid var(getThemeColor('light'));
+        color: var(getThemeColor('light'));
         cursor: default;
         display: inline-block;
         flex: 1 0 auto;
@@ -196,9 +216,14 @@
         text-align: center;
         width: auto;
         &--active {
-          border: 1px solid #2cabe2;
-          color: #2cabe2;
+          border: 1px solid var(getThemeColor('secondary'));
+          color: var(getThemeColor('secondary'));
           cursor: pointer;
+          &:focus {
+            outline-style: solid;
+            outline-color: var(getThemeColor('secondary'));
+            outline-width: 2px;
+          }
         }
       }
     }
@@ -208,9 +233,9 @@
 .confirmation-modal {
   &__wrapper {
     align-items: center;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: var(getThemeColor('dark.lighter.trans'));;
     bottom: 0;
-    display: none;
+    display: flex;
     flex-direction: column;
     justify-content: center;
     left: 0;
@@ -219,17 +244,14 @@
     right: 0;
     top: 0;
     z-index: 10000;
-    &--active {
-      display: flex;
-    }
     @include respond-above(md){
       overflow: visible;
     }
   }
   &__container {
-    background-color: #d40000;
+    background-color: var(getThemeColor('danger'));
     box-sizing: border-box;
-    color: white;
+    color: var(getThemeColor('white'));
     font-size: 1em;
     font-weight: bold;
     height: auto;
@@ -249,8 +271,8 @@
   }
   &__button {
     background: transparent;
-    border: 1px solid #f2f2f2;
-    color: white;
+    border: 1px solid var(getThemeColor('light.lighter'));
+    color: var(getThemeColor('white'));
     display: inline-block;
     margin: 0 2px;
     outline: none;
@@ -258,10 +280,15 @@
     text-align: center;
     text-transform: uppercase;
     width: auto;
+    &:focus {
+      outline-style: solid;
+      outline-color: var(getThemeColor('secondary'));
+      outline-width: 2px;
+    }
     &:hover {
-      background: rgba(255, 255, 255, 0.8);
-      border-color: white;
-      color: #d40000;
+      background: var(getThemeColor('white.lighter.trans'));
+      border-color: var(getThemeColor('white'));
+      color: var(getThemeColor('danger'));
     }
   }
 }

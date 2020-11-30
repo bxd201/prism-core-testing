@@ -18,7 +18,7 @@ import { cleanColorNameForURL, generateColorDetailsPageUrl } from 'src/shared/he
 const colorDetailsBaseUrl = `/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_DETAIL}`
 
 type Props = {
-  colorSEO: string, // ${brandKey}-${colorNumber}-${cleanColorNameForURL(name)}
+  colorSEO?: string, // ${brandKey}-${colorNumber}-${cleanColorNameForURL(name)}
   publish: (string, any) => void,
   subscribe: (string, Function) => void,
 }

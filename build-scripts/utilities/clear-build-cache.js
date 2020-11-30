@@ -1,23 +1,5 @@
-var fs = require('fs')
-
-function deleteFolderRecursive (path) {
-  if (fs.existsSync(path) && fs.lstatSync(path).isDirectory()) {
-    fs.readdirSync(path).forEach(function (file, index) {
-      var curPath = path + '/' + file
-
-      if (fs.lstatSync(curPath).isDirectory()) { // recurse
-        deleteFolderRecursive(curPath)
-      } else { // delete file
-        fs.unlinkSync(curPath)
-      }
-    })
-
-    console.log(`Deleting directory "${path}"...`)
-    fs.rmdirSync(path)
-  } else {
-    console.log('(nothing to delete)')
-  }
-};
+const deleteFolderRecursive = require('./fs-utils').deleteFolderRecursive
+const constants = require('../../webpack/constants')
 
 console.log('Clearing hard-source cache...')
 deleteFolderRecursive('./.cache/hard-source')
@@ -28,5 +10,5 @@ deleteFolderRecursive('./node_modules/.cache')
 console.log('Successfully cleared terser cache!')
 
 console.log('Emptying dist...')
-deleteFolderRecursive('./dist')
+deleteFolderRecursive(constants.distPath)
 console.log('Successfully emptied dist directory!')

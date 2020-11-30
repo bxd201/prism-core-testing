@@ -1,0 +1,56 @@
+@import '../../constants';
+
+.JSFProcessingPage {
+  background-color: $jsf-page-bg;
+  &__demo-btn {
+    padding: 0.5em;
+    margin: 0.1em;
+    background: rgba(lightblue, 0.2);
+    cursor: pointer;
+
+    &[disabled] {
+      opacity: 0.4;
+      cursor: default;
+    }
+  }
+  &__loading-details {
+    display: flex;
+    margin: auto;
+    width: 513px;
+    padding-top:1em;
+    &__left {
+      width: 10em;
+      > img {
+        width: 100%;
+        object-fit: cover;
+        height: 8em;
+        animation: fadeIn ease 2s;
+      }
+    }
+    &__right {
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+      margin-left: auto;
+      &__label{
+        font-weight: bold;
+        &--light{
+          font-weight: normal;
+        }
+      }
+      > span{
+        animation: fadeIn ease 2s;
+      }
+    }
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+

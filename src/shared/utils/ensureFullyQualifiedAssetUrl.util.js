@@ -7,6 +7,10 @@ export const normalizeSlashes = (input: string = ''): string => input.replace(/^
 
 function ensureFullyQualifiedAssetUrl (url: string): string {
   if (typeof url === 'string') {
+    if (url.indexOf('blob:') === 0 || url.indexOf('data:image') === 0) {
+      return url
+    }
+
     const matches = url.match(urlPattern)
 
     if (matches && matches[0].trim().length > 0) {

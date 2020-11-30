@@ -2,6 +2,10 @@
   $_self: &;
   position: relative;
 
+  &--inline {
+    display: inline-block;
+  }
+
   &__label {
     border: 1px solid grey;
     border-radius: $ui-radius;
@@ -13,7 +17,7 @@
 
     &:hover,
     #{$_self}__file:focus ~ & {
-      border: 1px solid getVar("colors.primary");;
+      border: 1px solid var(getThemeColor('primary'));
     }
 
     #{$_self}__file[disabled] ~ & {
@@ -26,6 +30,5 @@
     font-weight: bold;
     display: block;
     white-space: nowrap;
-
   }
 }

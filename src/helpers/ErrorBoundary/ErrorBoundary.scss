@@ -7,7 +7,7 @@
   padding: 10px;
 
   &__title {
-    color: getVar('colors.error') !important;
+    color: var(getThemeColor('danger')) !important;
     font-size: 1.2em;
     margin: 0 0 .5em;
     padding: 0;

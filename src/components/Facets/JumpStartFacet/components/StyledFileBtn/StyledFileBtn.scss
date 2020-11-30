@@ -1,0 +1,11 @@
+@import '../../constants';
+
+.StyledFileBtn {
+  display: inline-block;
+  padding: 4px 6px;
+  background: map-get($jsf-color, 'primary');
+  font-weight: bold;
+  color: white;
+  border-radius: 3px;
+  line-height: 1.1;
+}

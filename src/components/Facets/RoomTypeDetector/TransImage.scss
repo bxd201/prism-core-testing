@@ -1,0 +1,10 @@
+.TransImage {
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAHElEQVQoU2NkIA5IMRKnjmFUId6AAgePFDFhCQDKdwEPC2NLaQAAAABJRU5ErkJggg==');
+  background-size: 5px 5px;
+
+  &__fill {
+    display: block;
+    max-width: 100%;
+    width: 100%;
+  }
+}

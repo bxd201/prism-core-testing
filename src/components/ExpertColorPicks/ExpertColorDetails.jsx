@@ -12,6 +12,7 @@ import 'src/providers/fontawesome/fontawesome'
 import { add } from '../../store/actions/live-palette'
 import some from 'lodash/some'
 import './ExpertColorDetails.scss'
+import { FormattedMessage } from 'react-intl'
 
 type Props = { expertColors: Color[] }
 const baseClass = 'prism-expert-color-details'
@@ -33,10 +34,9 @@ export default function ExpertColorDetails ({ expertColors }: Props) {
         <div className={`${baseClass}__content__wrapper__color-name`}>
           {color.name}
         </div>
-        <button onClick={() => dispatch(add(color))}>
+        <button aria-label={`Add ${color.name} to palette`} className={`${baseClass}__content__wrapper__toggle-check-icons`} tabIndex={some(colorsCurrentlyInLivePalette, color) ? -1 : 0} onClick={() => dispatch(add(color))} onMouseDown={(e) => e.preventDefault()}>
           <FontAwesomeIcon
             style={{ color: getContrastYIQ(color.hex) }}
-            className={`${baseClass}__content__wrapper__toggle-check-icons`}
             icon={some(colorsCurrentlyInLivePalette, color) ? ['fa', 'check-circle'] : ['fal', 'plus-circle']}
           />
         </button>
@@ -47,7 +47,7 @@ export default function ExpertColorDetails ({ expertColors }: Props) {
     <div className={`${baseClass}`}>
       <div className={`${baseClass}__header`}>
         <div className={`${baseClass}__header__title`}>
-          Seleted from {expertColors.name}
+          <FormattedMessage id='SELECTED_FROM' /> {expertColors.name}
         </div>
       </div>
       <div className={`${baseClass}__top__section`}>

@@ -1,0 +1,59 @@
+
+@keyframes slidein {
+  from {top:-300px; opacity:0}
+  to {top:0; opacity:1}
+}
+
+.color-details-modal {
+    position: relative;
+    z-index: 10002;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4);
+
+    @include respond-above(sm) {
+      position: absolute;
+      padding-top: 100px;
+    }
+
+    .color-details-modal-content {
+        position: relative;
+        background-color: var(getThemeColor('light.lightest'));
+        margin: auto;
+        // @todo theme
+        border: 1px solid var(getThemeColor('light.darker'));
+        padding: 0;
+        animation: slidein 0.4s;
+
+        @include respond-above(sm) {
+          width: 95%;
+          max-width: 900px;
+        }
+    }
+
+    .color-details-modal-close {
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        z-index: 3;
+        color: #aaaaaa;
+        background: var(getThemeColor('white'));
+        font-size: 28px;
+        font-weight: bold;
+        text-align: center;
+        width: 28px;
+
+        @include respond-above(sm) {
+          right: -28px;
+        }
+    }
+
+  .color-details-modal-close:hover,
+  .color-details-modal-close:focus {
+    color: var(getThemeColor('black'));
+    text-decoration: none;
+    cursor: pointer;
+  }
+}

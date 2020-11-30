@@ -17,8 +17,8 @@
     padding: 0;
     position: relative;
     text-align: right;
-    border-top: 1px solid #c8c8c8;
-    background: #fff;
+    border-top: 1px solid var(getThemeColor('light.darker'));
+    background: var(getThemeColor('white'));
     display: table;
     width: 100%;
     &:before {
@@ -44,7 +44,7 @@
   }
   &__tab-list-dropdown-mobile {
     font-weight: 700;
-    color: #2cabe2;
+    color: var(getThemeColor('secondary'));
     cursor: pointer;
     display: inline-block;
     font-size: .85em;
@@ -59,18 +59,24 @@
       width: 0;
       height: 0;
       border: .55em solid transparent;
-      border-top-color: #2cabe2;
+      border-top-color: var(getThemeColor('secondary'));
       border-top-style: solid;
       margin-left: 1.5em;
       position: relative;
       top: .35em;
+    }
+    &:focus {
+      outline-style: solid;
+      outline-color: var(getThemeColor('secondary'));
+      outline-width: 2px;
+      z-index: 100;
     }
     @include respond-above(sm) {
       display: none;
     }
   }
   &__tab-list {
-    background: rgba(255,255,255,.9);
+    background: var(getThemeColor('primary.contrast.trans'));
     display: block;
     position: absolute;
     margin: 0;
@@ -100,8 +106,8 @@
     font-weight: 700;
     background: none;
     border: none;
-    color: #000;
-    fill: #000;
+    color: var(getThemeColor('black'));
+    fill: var(getThemeColor('black'));
     cursor: pointer;
     display: inline-block;
     font-size: .65em;
@@ -115,33 +121,39 @@
     margin-bottom: .5em;
     flex: 1 1 auto;
     @include respond-above(sm) {
-      background: #fff;
-      border: 1px solid #f2f2f2;
+      background: var(getThemeColor('white'));
+      border: 1px solid var(getThemeColor('light'));
       width: auto;
 
     }
     &:hover {
       border: none;
-      color: #2cabe2;
+      color: var(getThemeColor('secondary'));
       cursor: pointer;
       @include respond-above(sm) {
-        border: 1px solid #2cabe2;
+        border: 1px solid var(getThemeColor('secondary'));
       }
+    }
+    &:focus {
+      outline-style: solid;
+      outline-color: var(getThemeColor('secondary'));
+      outline-width: 2px;
+      z-index: 100;
     }
     &--active {
       background: none;
-      color: #2cabe2;
+      color: var(getThemeColor('secondary'));
       &:hover {
-        border-color: #f2f2f2;
-        color: #2cabe2;
+        border-color: var(getThemeColor('light'));
+        color: var(getThemeColor('secondary'));
         cursor: auto;
         @include respond-above(sm) {
-          color: #fff;
+          color: var(getThemeColor('white'));
         }
       }
       @include respond-above(sm) {
-        background: #2cabe2;
-        color: #fff;
+        background: var(getThemeColor('secondary'));
+        color: var(getThemeColor('white'));
       }
     }
   }
