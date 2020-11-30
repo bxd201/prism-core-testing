@@ -220,7 +220,8 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
       pinnedColors: [
         ...newPins,
         {
-          ...color,
+          name: color.name,
+          colorNumber: color.colorNumber,
           rgbValue: `rgb(${currentPixelRGB})`,
           translateX: cursorX - activedPinsHalfWidth,
           translateY: cursorY - activedPinsHalfWidth,

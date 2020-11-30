@@ -1,5 +1,5 @@
 // @flow
-import React, { useRef, useState, useEffect, ReactChildren } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Switch, Route, useHistory, useLocation } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -50,10 +50,6 @@ const isSupportedImageFormat = (file: Object, exts: string[] = ['jpeg', 'jpg', '
   return false
 }
 
-type WrapperProps = {
-  children: ReactChildren
-}
-
 export const DropDownMenu = ({ title, items }: DropDownMenuProps) => {
   const history = useHistory()
   const selectDevice = (web, iPhone = web, android = web, iPad = web) => (isMobileOnly ? (isIOS ? iPhone : android) : (isTablet ? iPad : web)) || web
@@ -68,15 +64,14 @@ export const DropDownMenu = ({ title, items }: DropDownMenuProps) => {
         <h1 className='dashboard-submenu__header'>{title}</h1>
         <ul className='dashboard-submenu__content'>
           {items.map(({ img, imgiPhone, imgiPad, imgAndroid, title, titleMobile, content, contentAndroid, contentiPhone, description, onClick }, i) => {
-            const Wrapper = ({ children }: WrapperProps) => onClick ? <button onClick={onClick}>{children}</button> : <div>{children}</div>
             return (
               <li key={i}>
-                <Wrapper>
+                <button onClick={onClick}>
                   <img className='dashboard-submenu-image' src={selectDevice(img, imgiPhone, imgAndroid, imgiPad)} alt='' />
                   <h3 className='dashboard-submenu__content__title'>{selectDevice(title, titleMobile)}</h3>
                   <p className='dashboard-submenu__content__content'>{selectDevice(content, contentiPhone, contentAndroid)}</p>
                   {description && <p className='dashboard-submenu__content__tip'>{description}</p>}
-                </Wrapper>
+                </button>
               </li>
             )
           })}
@@ -177,7 +172,7 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
         contentiPad: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.UPLOAD_YOUR_PHOTO_IPAD'],
         contentiPhone: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.UPLOAD_YOUR_PHOTO_IPHONE'],
         description: messages['NAV_DROPDOWN_LINK_TIP_DESCRIPTION.UPLOAD_YOUR_PHOTO'],
-        onClick: !(isMobileOnly || isTablet) ? () => {
+        onClick: () => {
           const activate = () => {
             dispatch(setIsScenePolluted())
             const selectDevice = (web, iPhone = web, android = web, iPad = web) => (isMobileOnly ? (isIOS ? iPhone : android) : (isTablet ? iPad : web)) || web
@@ -195,7 +190,7 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
           }
           // @todo activate should not be calle don every click, we should only have to set the value for this once when the app is bootstrapped.  -RS
           isActiveScenePolluted ? dispatch(showWarningModal(true)) : activate()
-        } : undefined
+        }
       }
     ]
 
