@@ -34,13 +34,14 @@ import { FEATURE_EXCLUSIONS } from '../../../constants/configurations'
 import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import { setMaxSceneHeight } from '../../../store/actions/system'
 import { setIsScenePolluted } from '../../../store/actions/navigation'
+import { SHOW_LOADER_ONLY_BRANDS } from '../../../constants/globals'
 
 type CVWPropsType = {
   maxSceneHeight: number
 }
 
 export const CVW = (props: CVWPropsType) => {
-  const { maxSceneHeight } = props
+  const { maxSceneHeight, brand } = props
   const dispatch = useDispatch()
   const location = useLocation()
   const history = useHistory()
@@ -98,7 +99,7 @@ export const CVW = (props: CVWPropsType) => {
   }
 
   if (isLoading) {
-    return <PreLoadingSVG />
+    return <PreLoadingSVG hideSVG={SHOW_LOADER_ONLY_BRANDS.indexOf(brand) > -1} />
   } else if (!window.localStorage.getItem('landingPageShownSession') && shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.splashScreen)) {
     return <LandingPage />
   }
