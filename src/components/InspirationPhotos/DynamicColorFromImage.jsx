@@ -297,8 +297,7 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
       pinnedColors: [
         ...newPins,
         {
-          colorName: color.colorName,
-          colorNumber: color.colorNumber,
+          ...color,
           rgbValue: `rgb(${currentPixelRGB})`,
           // The translated values are calculated this way due to resize.
           // To keep the logic simpler the pin generator always calcs the scale factor and the new pins translate values are always in reference to the initial canvas size.
