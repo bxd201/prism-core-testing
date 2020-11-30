@@ -10,14 +10,14 @@ export const LOAD_ERROR: string = 'LOAD_ERROR'
 export function handleGetCollectionSummaries (collectionSummaries: any) {
   const categories: { idToIndexHash: Object, data?: any[] } = { idToIndexHash: {} }
 
-  categories.data = collectionSummaries.categories && collectionSummaries.categories.map(({ id, label: tabName, summaryIds }, i) => {
+  categories.data = collectionSummaries.categories.map(({ id, label: tabName, summaryIds }, i) => {
     categories.idToIndexHash[id] = i
     return { id, tabName, summaryIds }
   })
 
   const summaries = {
     data: collectionSummaries.summaries,
-    idToIndexHash: collectionSummaries.summaries && collectionSummaries.summaries.reduce(
+    idToIndexHash: collectionSummaries.summaries.reduce(
       (indexes, curSummary, i) => {
         indexes[curSummary.id] = i
         return indexes
