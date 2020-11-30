@@ -1,5 +1,6 @@
 // @flow
 import axios from 'axios'
+import isEmpty from 'lodash/isEmpty'
 import { generateBrandedEndpoint } from 'src/shared/helpers/DataUtils'
 import { COLLECTION_SUMMARIES_ENDPOINT } from 'constants/endpoints'
 
@@ -8,8 +9,8 @@ export const RECEIVED_CS: string = 'RECEIVE_COLLECTION_SUMMARIES'
 export const LOAD_ERROR: string = 'LOAD_ERROR'
 
 export function handleGetCollectionSummaries (collectionSummaries: any) {
+  if (isEmpty(collectionSummaries)) { return {} }
   const categories: { idToIndexHash: Object, data?: any[] } = { idToIndexHash: {} }
-
   categories.data = collectionSummaries.categories.map(({ id, label: tabName, summaryIds }, i) => {
     categories.idToIndexHash[id] = i
     return { id, tabName, summaryIds }
