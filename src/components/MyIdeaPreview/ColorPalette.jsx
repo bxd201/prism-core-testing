@@ -96,8 +96,8 @@ const ColorPalette = ({ palette, isMyIdeaLivePalette, isMyIdeaPreview, isMyIdeaP
               return (
                 <li className={`${colorLi}`} key={`color-${index}`} style={{ backgroundColor: `rgb(${color.red},${color.green},${color.blue})` }}>
                   {!isMyIdeaLivePalette && <div className={`${colorInfo} ${color.isDark ? `${colorInfoDark}` : ``}`}>
-                    <span className={`${colorInfoNumber}`}>SW {color.colorNumber}</span>
-                    <span className={`${colorInfoName}`}>SW {color.name}</span>
+                    <span className={`${colorInfoNumber}`}>{color.brandKey} {color.colorNumber}</span>
+                    <span className={`${colorInfoName}`}>{color.brandKey} {color.name}</span>
                   </div>}
                   {!isMyIdeaLivePalette && <div className={`${checkCircle}`}>
                     <button data-colornumber={`${color.colorNumber}`} aria-label={`Add ${color.name} to palette`} className={`${toggleCheckIcons}`} tabIndex={some(colorsCurrentlyInLivePalette, color) ? -1 : 0} onClick={clickHandler} onMouseDown={mouseDownHandler}>
