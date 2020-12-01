@@ -57,7 +57,16 @@ export const CVW = (props: CVWPropsType) => {
   const [matchPhotoScene: Element, setMatchPhotoScene: (Element) => void] = useState()
   const [ImageRotateScene: Element, setUploadPaintSceneState: (Element) => void] = useState()
   const isShowFooter = location.pathname.match(/active\/masking$/) === null
-  const { featureExclusions } = useContext(ConfigurationContext)
+  // @todo remove and uncomment below!!! -RS
+  const cvw = useContext(ConfigurationContext)
+  // const { featureExclusions } = useContext(ConfigurationContext)
+
+  // @todo remove !!!!! -RS
+  useEffect(() => {
+    console.log('CVW config', cvw)
+    // eslint-disable-next-line no-debugger
+    debugger
+  }, [cvw])
 
   useEffect(() => {
     // Use this hook to push any facet level embeded data to redux
