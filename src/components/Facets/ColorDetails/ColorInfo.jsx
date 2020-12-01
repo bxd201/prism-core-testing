@@ -1,15 +1,17 @@
 // @flow
-import React from 'react'
+import React, { useContext } from 'react'
 import { useSelector } from 'react-redux'
 import { FormattedMessage } from 'react-intl'
 import type { Color, FamilyStructure } from '../../../shared/types/Colors.js.flow'
 import flattenDeep from 'lodash/flattenDeep'
 import intersection from 'lodash/intersection'
 import 'src/scss/convenience/visually-hidden.scss'
+import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
 
 type Props = { color: Color, familyLink?: string }
 function ColorInfo ({ color, familyLink }: Props) {
   const structure: FamilyStructure = useSelector(state => state.colors.structure)
+  const { featureExclusions = [] }: ConfigurationContextType = useContext(ConfigurationContext)
 
   return (
     <div className='color-info__details-tab-wrapper'>
@@ -53,7 +55,7 @@ function ColorInfo ({ color, familyLink }: Props) {
             </li>}
         </ul>
       </div>
-      {color.brandedCollectionNames && (color.brandedCollectionNames.length > 0) && (
+      {!featureExclusions.includes('colorCollections') && color.brandedCollectionNames && (color.brandedCollectionNames.length > 0) && (
         <div className='color-info__chunk'>
           <dl>
             <dt className='color-info__description-term'><FormattedMessage id='COLOR_COLLECTIONS' />:</dt>
