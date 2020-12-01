@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/label-has-for */
 // @flow
-import React, { useState, useEffect, useCallback, useRef } from 'react'
+import React, { useState, useEffect, useCallback, useRef, useContext } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -15,6 +15,7 @@ import { loadSearchResults, MIN_SEARCH_LENGTH } from 'src/store/actions/loadSear
 import at from 'lodash/at'
 import { compareKebabs } from 'src/shared/helpers/StringUtils'
 import recursiveDecodeURIComponent from 'src/shared/utils/recursiveDecodeURIComponent.util'
+import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
 
 type Props = {
   label: string,
@@ -35,13 +36,14 @@ const SearchBar = (props: Props) => {
   const [id] = useState(uniqueId('SearchBarInput'))
   const [inputValue, setInputValue] = useState<string>('')
   const [newSearchParam, setNewSearchParam] = useState<string>('')
-  const { messages = {} } = useIntl()
+  const { messages = {}, locale } = useIntl()
   const { section, family, query = '' } = useParams()
   const { structure } = useSelector(state => state.colors)
   const currentSearchParam = useRef('')
   const dispatch = useDispatch()
   const history = useHistory()
   const inputRef = useRef()
+  const { brandId } = useContext(ConfigurationContext)
 
   useEffect(() => {
     // recursively decode incoming query and use it to update input value
@@ -98,7 +100,7 @@ const SearchBar = (props: Props) => {
     // at this point we're now sending off the search based on a set of conditions
     if (limitSearchToFamily) {
       if (family) {
-        dispatch(loadSearchResults(newSearchParam, family))
+        dispatch(loadSearchResults(brandId, { language: locale }, newSearchParam, family))
         return
       }
 
@@ -106,13 +108,13 @@ const SearchBar = (props: Props) => {
         const familiesFromSection = structure.filter(v => compareKebabs(v.name, section)).map(v => v.families)
 
         if (familiesFromSection && familiesFromSection.length === 1) {
-          dispatch(loadSearchResults(newSearchParam, familiesFromSection[0]))
+          dispatch(loadSearchResults(newSearchParam, { language: locale }, familiesFromSection[0]))
           return
         }
       }
     }
 
-    dispatch(loadSearchResults(newSearchParam))
+    dispatch(loadSearchResults(brandId, { language: locale }, newSearchParam))
   }, [newSearchParam, family, section, limitSearchToFamily])
 
   return (
