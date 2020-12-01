@@ -36,7 +36,8 @@ import { setMaxSceneHeight } from '../../../store/actions/system'
 import { setIsScenePolluted } from '../../../store/actions/navigation'
 
 type CVWPropsType = {
-  maxSceneHeight: number
+  maxSceneHeight: number,
+  brand: string
 }
 
 export const CVW = (props: CVWPropsType) => {
@@ -112,6 +113,15 @@ export const CVW = (props: CVWPropsType) => {
     }
   }
 
+  // @todo this will be unnecessary in the future, when the way scene management is done is readdressed -RS
+  const shouldHideSceneManagerDiv = (path: string) => {
+    if (path === '/') {
+      return false
+    }
+    const cleanedPath = path[path.length - 1] === '/' ? path.substring(0, path.length - 1) : path
+    return !cleanedPath.match(/(active|active\/colors|inspiration|scenes|active\/color-wall\/)$/)
+  }
+
   return (
     <div className='cvw__root-container'>
       {toggleCompareColor
@@ -139,7 +149,7 @@ export const CVW = (props: CVWPropsType) => {
             </Switch>
             <div
               /* This div has multiple responsibilities in the DOM tree. It cannot be removed, moved, or changed without causing regressions. */
-              style={{ display: (location.pathname.match(/(active|active\/colors|inspiration|scenes|active\/color-wall\/)$/) === null) ? 'none' : 'block' }}
+              style={{ display: shouldHideSceneManagerDiv(location.pathname) ? 'none' : 'block' }}
               className={colorDetailsModalShowing ? 'hide-on-small-screens' : ''}
             >
               {lastActiveComponent === 'StockScene' && activeStockScene}
