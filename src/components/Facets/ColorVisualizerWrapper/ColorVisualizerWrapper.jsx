@@ -101,7 +101,7 @@ export const CVW = (props: CVWPropsType) => {
 
   if (isLoading) {
     return <PreLoadingSVG hideSVG={SHOW_LOADER_ONLY_BRANDS.indexOf(brand) > -1} />
-  } else if (!window.localStorage.getItem('landingPageShownSession') && shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.splashScreen)) {
+  } else if (!window.localStorage.getItem('landingPageShownSession') && shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.splashScreen) && SHOW_LOADER_ONLY_BRANDS.indexOf(brand) < 0) {
     return <LandingPage />
   }
 
