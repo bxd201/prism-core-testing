@@ -12,7 +12,7 @@ export function getTotalWidthOf2dArray (arr: any[][]): number {
   return (!arr || !arr[0]) ? 0 : arr.reduce((total: number, cur: any[]) => Math.max(total, cur.length), 0)
 }
 
-export const generateBrandedEndpoint = memoizee((basePath, brand, options = {}) => {
+export const generateBrandedEndpoint = (basePath: string, brand: string, options: {} = {}) => {
   const { language = undefined, params = {} } = options
   const queryParams = {
     ...params,
@@ -28,7 +28,7 @@ export const generateBrandedEndpoint = memoizee((basePath, brand, options = {}) 
   }
 
   return url
-})
+}
 
 export type GridShape = {
   cols: number,
