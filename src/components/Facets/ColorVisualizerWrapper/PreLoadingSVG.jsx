@@ -1,10 +1,15 @@
+// @flow
 import React from 'react'
-import CircleLoader from '../../Loaders/CircleLoader/CircleLoader'
+import HeroLoaderExpanded from '../../Loaders/HeroLoader/HeroLoaderExpanded'
 
-export const PreLoadingSVG = () => {
+type PreLoadingSVGProps = {
+  hideSVG: boolean
+}
+
+export const PreLoadingSVG = (props: PreLoadingSVGProps) => {
   return (
     <div className='PreLoadingSVG'>
-      <svg className='PreLoadingSVG__loader' version='1.1' baseProfile='tiny' id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlnsXlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 1200 1200' xmlSpace='preserve'>
+      {!props.hideSVG ? <svg className='PreLoadingSVG__loader' version='1.1' baseProfile='tiny' id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlnsXlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 1200 1200' xmlSpace='preserve'>
         <g id='flower-container' data-svg-origin='610.2215728759766 492.3915252685547' style={{ transform: 'matrix(1, 0, 0, 1, 0, 0)' }}>
           <polygon className='PreLoadingSVG__loader__outer-rect PreLoadingSVG__loader__outer-rect--1' fill='#E17000' path='' points='600,386 691,452 691,186 509,186 509,452' />
           <polygon className='PreLoadingSVG__loader__outer-rect PreLoadingSVG__loader__outer-rect--2' fill='#B71234' path='' points='691,452 656,560 910,478 854,304 600,386' />
@@ -22,8 +27,8 @@ export const PreLoadingSVG = () => {
           <path id='colorSnap' fill='#565A5C' d='M172.7,1012.6c-34.8,0-59.1-24.5-59.1-55.4s23.4-55.3,59.1-55.3c8.5,0,18.5,1.1,25.8,3.4l-1.6,7.9c-7.9-1.9-16.8-2.9-24.5-2.9c-28.5,0-49,18.7-49,46.9c0,28.2,20.8,47.1,49,47.1c7.1,0,15.5-0.8,24.2-2.9l1.9,7.7C190.6,1011.3,181.4,1012.6,172.7,1012.6z M265.2,1012.6c-30.1,0-50.6-25.1-50.6-55.3c0-30.1,20.5-55.4,50.6-55.4c30.1,0,50.6,25.3,50.6,55.4C315.8,987.5,295.4,1012.6,265.2,1012.6z M265.2,910.3c-24.2,0-40.9,20.1-40.9,47.1c0,26.9,16.8,46.9,40.9,46.9c24.2,0,40.9-20,40.9-46.9C306.2,930.4,289.4,910.3,265.2,910.3z M340.8,1010.8V903.5h9.7v98.9h56.4v8.4H340.8z M467.1,1012.6c-30.1,0-50.6-25.1-50.6-55.3c0-30.1,20.5-55.4,50.6-55.4c30.1,0,50.6,25.3,50.6,55.4C517.7,987.5,497.3,1012.6,467.1,1012.6z M467.1,910.3c-24.2,0-40.9,20.1-40.9,47.1c0,26.9,16.8,46.9,40.9,46.9c24.2,0,40.9-20,40.9-46.9C508.1,930.4,491.3,910.3,467.1,910.3z M624.1,1010.8l-34.3-46.6h-37.4v46.6h-9.7V903.5h48.5c20.8,0,32.6,14.7,32.6,30.5c0,13.4-8.5,25.9-23.9,29.3l35.1,47.5H624.1z M591.2,911.9h-38.8v44.3h38.8c14.3,0,22.9-8.9,22.9-22.2C614.1,920.6,603.4,911.9,591.2,911.9z M836.4,1010.8l-51.9-70.9v70.9h-23.9V903.5h23.5l51.9,71.1v-71.1H860v107.3H836.4z M956,1010.8l-8.2-22.1h-39.6l-8.4,22.1h-23.7l40.8-107.3h22.2l40.6,107.3H956z M928,927.7l-14,42.9h27.9L928,927.7z M1052.2,974.3h-32.4v36.6h-24V903.5h56.4c21.4,0,36.3,16,36.3,35.1C1088.5,957.8,1073.6,974.3,1052.2,974.3z M1048.2,922.8H1020l-0.2,31.9h28.4c8.4,0,15.5-7.1,15.5-16.1C1063.6,929.6,1056.6,922.8,1048.2,922.8z M739.4,986.2c7.9-44.8-63.2-30.4-59.2-53c3.1-17.4,53.5-3.9,53.5-3.9l3.7-22.2c0,0-77-20.7-84.4,21.3c-7.4,41.8,63.1,29.9,59.2,53c-2.9,17.5-59.2,0.6-59.2,0.6l-5.2,21.3C647.9,1003.3,731.2,1032.7,739.4,986.2z M1102.8,927.9c-6.3,0-10.6-5-10.6-11c0-6,4.4-11,10.6-11s10.6,5,10.6,11C1113.4,922.9,1109.1,927.9,1102.8,927.9z M1102.8,907.9c-5.2,0-8.4,4.4-8.4,9c0,4.5,3.2,9,8.4,9s8.4-4.5,8.4-9C1111.2,912.4,1108.1,907.9,1102.8,907.9z M1105.6,922.3l-2.7-3.7h-1.9v3.7h-2.8v-10.8h6.1c2.1,0,3.6,1.6,3.6,3.6c0,1.3-0.8,2.5-1.9,3.1l3,4.1H1105.6z M1103.8,913.8h-2.7v2.8h2.7c0.7,0,1.3-0.6,1.3-1.4C1105.1,914.3,1104.5,913.8,1103.8,913.8z' />
         </g>
         <path id='trademark' fill='#00B9E4' d='M747.1,759.9v10.4h-1.6v-10.4h-4v-1.4h9.6v1.4H747.1z M763.3,770.4v-8.9l-3.7,7.1h-1l-3.6-7.1v8.9h-1.6v-11.8h1.6l4.2,7.9l4.2-7.9h1.6v11.8H763.3z' style={{ opacity: '0.989601' }} />
-      </svg>
-      <CircleLoader style={{ maxHeight: 'none', marginBottom: '5em' }} />
+      </svg> : null}
+      <HeroLoaderExpanded />
     </div>
   )
 }
