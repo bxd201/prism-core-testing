@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useContext, useEffect } from 'react'
+import React, { useContext } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import './LandingPage.scss'
 import { useHistory } from 'react-router-dom'
@@ -15,13 +15,6 @@ const LandingPage = () => {
     window.localStorage.setItem('landingPageShownSession', 1)
     history.push(url)
   }
-
-  // @todo remove !!!!! -RS
-  useEffect(() => {
-    console.log('landing config', cvw)
-    // eslint-disable-next-line no-debugger
-    debugger
-  }, [cvw])
 
   return (
     <div className='cvw-landing-page-wrapper' style={{ 'backgroundImage': `url('${cvw.introBg}')` }}>
