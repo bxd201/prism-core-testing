@@ -66,3 +66,5 @@ export const IS_IE = (() => {
 // 30 days in
 export const ANON_STOCK_SCENE_LIFETIME = 1000 * 60 * 24 * 30
 export const TAU = 2 * Math.PI
+
+export const SHOW_LOADER_ONLY_BRANDS = ['condor', 'easy']
