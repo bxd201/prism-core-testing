@@ -171,7 +171,7 @@ const generateImage = async (scene: SceneInfo, activeComponent: string, config: 
     const boldContrastFont = useBlackText(colorHex) ? blackFonts.bold : whiteFonts.bold
 
     // Print swatch details
-    swatchImage.print(contrastFont, 10, textYStart, `SW ${color.colorNumber}`, (err, image, { x, y }) => {
+    swatchImage.print(contrastFont, 10, textYStart, `${color.brandKey} ${color.colorNumber}`, (err, image, { x, y }) => {
       if (err) {
         console.warn(err)
         return
