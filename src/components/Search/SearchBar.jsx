@@ -108,7 +108,7 @@ const SearchBar = (props: Props) => {
         const familiesFromSection = structure.filter(v => compareKebabs(v.name, section)).map(v => v.families)
 
         if (familiesFromSection && familiesFromSection.length === 1) {
-          dispatch(loadSearchResults(newSearchParam, { language: locale }, familiesFromSection[0]))
+          dispatch(loadSearchResults(brandId, { language: locale }, newSearchParam, familiesFromSection[0]))
           return
         }
       }
