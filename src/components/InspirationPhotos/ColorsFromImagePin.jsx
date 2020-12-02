@@ -25,6 +25,9 @@ type Props = {
     isMovingPin: boolean,
     hide: boolean
   },
+  useTranslateProps: boolean,
+  translateX: number,
+  translateY: number,
   activatePin: Function,
   handleDrag: Function,
   deleteCurrentPin: Function,
@@ -139,6 +142,8 @@ export default (props: Props) => {
     window.addEventListener('mouseup', handleDragStop)
   }
 
+  const translateX = props.useTranslateProps ? props.translateX : color.translateX
+  const translateY = props.useTranslateProps ? props.translateY : color.translateY
   return (
     <>
       <label
@@ -151,7 +156,7 @@ export default (props: Props) => {
           e.stopPropagation()
           activatePin(color.pinNumber)
         }}
-        style={{ transform: `translate(${color.translateX - 360}px, ${color.translateY}px)`, overflow: 'visible', display: (color.hide) ? 'none' : 'flex' }}
+        style={{ transform: `translate(${translateX - 360}px, ${translateY}px)`, overflow: 'visible', display: (color.hide) ? 'none' : 'flex' }}
         className={`pin__wrapper ${color.isActiveFlag ? 'pin__wrapper--active' : ''}`}
       >
         <div className='pin__content__wrapper'>

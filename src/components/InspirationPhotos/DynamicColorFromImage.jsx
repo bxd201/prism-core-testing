@@ -224,13 +224,16 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
   generatePins (pins: Object[]) {
     return pins.map((pinnedColor, index) => {
       // Bitwise rounding since this can be called alot...every little BIT helps
-      pinnedColor.translateX = (pinnedColor.translateX * this.state.canvasWidth / this.state.initialWidth + this.canvasRef.current.offsetLeft) | 0
-      pinnedColor.translateY = (pinnedColor.translateY * this.state.canvasHeight / this.state.initialHeight) | 0
+      const translateX = pinnedColor.translateX * (this.state.canvasWidth / this.state.initialWidth) + this.canvasRef.current.offsetLeft
+      const translateY = pinnedColor.translateY * (this.state.canvasHeight / this.state.initialHeight)
 
       return (
         <ColorsFromImagePin
           key={`push${index}`}
           color={pinnedColor}
+          translateX={translateX}
+          translateY={translateY}
+          useTranslateProps
           handlePinMoveByKeyboard={this.handlePinMoveByKeyboard}
           handleKeyUpAfterPinMove={this.handleKeyUpAfterPinMove}
           handleDrag={this.handleDrag}
