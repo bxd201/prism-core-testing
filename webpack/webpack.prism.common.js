@@ -120,7 +120,7 @@ module.exports = {
               // the following options get passed to fallback file-loader
               name: flags.production ? '[name].[contenthash].[ext]' : '[name].[ext]',
               outputPath: 'images',
-              publicPath: '/images/'
+              publicPath: `${BASE_PATH}/images/`
             }
           },
           {
@@ -153,7 +153,7 @@ module.exports = {
           options: {
             name: '[name].[ext]',
             outputPath: 'fonts',
-            publicPath: '/fonts/'
+            publicPath: `${BASE_PATH}/fonts/`
           }
         }]
       },
@@ -166,7 +166,8 @@ module.exports = {
             loader: 'worker-loader',
             options: {
               filename: flags.production ? `${flags.dirNameDistJs}/[name].[contenthash].js` : `${flags.dirNameDistJs}/[name].js`,
-              chunkFilename: flags.production ? `${flags.dirNameDistJs}/[id].[contenthash].worker.js` : `${flags.dirNameDistJs}/[id].worker.js`
+              chunkFilename: flags.production ? `${flags.dirNameDistJs}/[id].[contenthash].worker.js` : `${flags.dirNameDistJs}/[id].worker.js`,
+              publicPath: `${BASE_PATH}/js/`
             }
           },
           {
