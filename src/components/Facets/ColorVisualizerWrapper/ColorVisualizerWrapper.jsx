@@ -1,5 +1,5 @@
 // @flow
-import React, { useContext, useState, useEffect } from 'react'
+import React, { useContext, useState, useEffect, useRef } from 'react'
 import type { Element } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Switch, Route, useLocation, useHistory } from 'react-router-dom'
@@ -33,8 +33,20 @@ import { shouldAllowFeature } from '../../../shared/utils/featureSwitch.util'
 import { FEATURE_EXCLUSIONS } from '../../../constants/configurations'
 import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import { setMaxSceneHeight } from '../../../store/actions/system'
-import { setIsScenePolluted } from '../../../store/actions/navigation'
 import { SHOW_LOADER_ONLY_BRANDS } from '../../../constants/globals'
+import {
+  ACTIVE_SCENE_LABELS_ENUM,
+  clearImageRotateBypass,
+  clearNavigationIntent,
+  setDirtyNavigationIntent,
+  setIsColorWallModallyPresented,
+  setIsScenePolluted,
+  setShouldShowGlobalDestroyWarning,
+  stageNavigationReturnIntent
+} from '../../../store/actions/navigation'
+import { ROUTES_ENUM } from './routeValueCollections'
+import DynamicModal, { DYNAMIC_MODAL_STYLE, getRefDimension } from '../../DynamicModal/DynamicModal'
+import { useIntl } from 'react-intl'
 
 type CVWPropsType = {
   maxSceneHeight: number,
@@ -49,6 +61,10 @@ export const CVW = (props: CVWPropsType) => {
   const toggleCompareColor: boolean = useSelector(store => store.lp.toggleCompareColor)
   const colorDetailsModalShowing: boolean = useSelector(store => store.colors.colorDetailsModal.showing)
   const isActiveScenePolluted: string = useSelector(store => store.scenePolluted)
+  const isPaintSceneCached: boolean = useSelector(store => !!store.paintSceneCache)
+  const isStockSceneCached: boolean = useSelector(store => !!store.stockSceneCache)
+  const navigationIntent: string = useSelector(store => store.navigationIntent)
+  const navigationReturnIntent: string = useSelector(store => store.navigationReturnIntent)
 
   const [activeStockScene: Element, setActiveScene: (Element) => void] = useState(<SceneManager expertColorPicks hideSceneSelector />)
   const [activePaintScene: Element, setActivePaintSceneState: (Element) => void] = useState()
@@ -58,11 +74,38 @@ export const CVW = (props: CVWPropsType) => {
   const [ImageRotateScene: Element, setUploadPaintSceneState: (Element) => void] = useState()
   const isShowFooter = location.pathname.match(/active\/masking$/) === null
   const { featureExclusions } = useContext(ConfigurationContext)
+  const activeSceneLabel = useSelector(store => store.activeSceneLabel)
+  const shouldShowGlobalDestroyWarning = useSelector(store => store.shouldShowGlobalDestroyWarning)
+  const intl = useIntl()
+  const wrapperRef = useRef()
+  const dirtyNavIntent = useSelector(store => store.dirtyNavigationIntent)
 
+  // Use this hook to push any facet level embedded data to redux
   useEffect(() => {
-    // Use this hook to push any facet level embeded data to redux
     dispatch(setMaxSceneHeight(maxSceneHeight))
   }, [])
+
+  // this logic is the app level observer of paintscene cache, used to help direct navigation to the color wall and set it up to return
+  // THIS IS ONLY UTILIZED BY FLOWS THAT HAVE RETURN PATHS!!!!!!!
+  useEffect(() => {
+    // @todo is it overkill to check ACTIVE_SCENE from redux? -RS
+    if (navigationIntent === ROUTES_ENUM.COLOR_WALL && (isPaintSceneCached || isStockSceneCached) && navigationReturnIntent) {
+      history.push(navigationIntent)
+      // tell app that color wall is visible modally, the parent condition assures this will evaluate to true in the action
+      dispatch(setIsColorWallModallyPresented(navigationReturnIntent))
+      // Return intent should be set already, if not something is violating the data lifecycle
+      dispatch(stageNavigationReturnIntent(navigationReturnIntent))
+    }
+  }, [isPaintSceneCached, isStockSceneCached, navigationIntent, navigationReturnIntent])
+
+  // This hook will clear the image rotate bypass if paintscene not active
+  useEffect(() => {
+    if (activeSceneLabel !== ACTIVE_SCENE_LABELS_ENUM.PAINT_SCENE) {
+      // @todo This largely works bc of a trick and I don't like it.  When a user clicks through to upload a paint scene, scenemanager loads and unloads thus clearing the activeSceneLabel and causes the bypass to clean up.
+      // I'd like this to be more deterministically clean. -RS
+      dispatch(clearImageRotateBypass())
+    }
+  }, [activeSceneLabel])
 
   setTimeout(() => setIsLoading(false), 1000)
 
@@ -114,6 +157,24 @@ export const CVW = (props: CVWPropsType) => {
     }
   }
 
+  const handleNavigationIntentConfirm = (e: SyntheticEvent) => {
+    e.stopPropagation()
+    dispatch(setShouldShowGlobalDestroyWarning(false))
+    history.push(dirtyNavIntent)
+    // clean up the one set by the nav click when one was already set
+    dispatch(setDirtyNavigationIntent())
+    // clean up the original, this should be the value set from the return path
+    dispatch(clearNavigationIntent())
+    // Allow add color button to respond again
+    dispatch(setIsColorWallModallyPresented(false))
+  }
+
+  const handleNavigationIntentCancel = (e: SyntheticEvent) => {
+    e.stopPropagation()
+    dispatch(setShouldShowGlobalDestroyWarning(false))
+    dispatch(setDirtyNavigationIntent())
+  }
+
   // @todo this will be unnecessary in the future, when the way scene management is done is readdressed -RS
   const shouldHideSceneManagerDiv = (path: string) => {
     if (path === '/') {
@@ -128,7 +189,15 @@ export const CVW = (props: CVWPropsType) => {
       {toggleCompareColor
         ? <CompareColor />
         : (
-          <div className='cvw__root-wrapper'>
+          <div className='cvw__root-wrapper' ref={wrapperRef}>
+            { shouldShowGlobalDestroyWarning ? <DynamicModal
+              description={intl.formatMessage({ id: 'CVW.WARNING_REPLACEMENT' })}
+              actions={[
+                { text: intl.formatMessage({ id: 'YES' }), callback: handleNavigationIntentConfirm },
+                { text: intl.formatMessage({ id: 'NO' }), callback: handleNavigationIntentCancel }
+              ]}
+              modalStyle={DYNAMIC_MODAL_STYLE.danger}
+              height={getRefDimension(wrapperRef, 'height')} /> : null}
             <ColorVisualizerNav uploadPaintScene={setUploadPaintScene} activePaintScene={setActivePaintScene} setLastActiveComponent={setLastActiveComponent} setMatchPhotoScene={setMatchPhotoScene} />
             <ColorDetailsModal />
             <Switch>

@@ -28,7 +28,8 @@ import {
   compareArraysOfObjects,
   objectsEqual,
   getColorsForMergeColors,
-  maskingPink
+  maskingPink,
+  checkCachedPaintScene
 } from './utils'
 import { toolNames, groupToolNames, brushLargeSize, brushRoundShape, setTooltipShownLocalStorage, getTooltipShownLocalStorage } from './data'
 import throttle from 'lodash/throttle'
@@ -57,11 +58,15 @@ import { LiveMessage } from 'react-aria-live'
 import { BrushPaintCursor } from './BrushPaintCursor'
 import { calcOrientationDimensions } from '../../shared/utils/scale.util'
 import {
+  ACTIVE_SCENE_LABELS_ENUM,
+  cachePaintScene,
+  clearPaintSceneCache,
   clearNavigationIntent,
   navigateToIntendedDestination,
-  POLLUTED_ENUM,
+  POLLUTED_ENUM, setActiveSceneLabel,
   setIsScenePolluted
 } from '../../store/actions/navigation'
+import { TOP_LEVEL_ROUTES, ROUTES_ENUM } from '../Facets/ColorVisualizerWrapper/routeValueCollections'
 
 const baseClass = 'paint__scene__wrapper'
 const canvasClass = `${baseClass}__canvas`
@@ -112,7 +117,12 @@ type ComponentProps = {
   navigationIntent: string,
   isActiveScenePolluted: string,
   navigateToIntendedDestination: Function,
-  clearNavigationIntent: Function
+  clearNavigationIntent: Function,
+  paintSceneCache: any,
+  cachePaintScene: Function,
+  setActiveSceneLabel: Function,
+  shouldRestoreFromCache: boolean,
+  clearPaintSceneCache: Function
 }
 
 type ComponentState = {
@@ -211,7 +221,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.originalImageHeight = props.referenceDimensions.originalImageHeight
     this.maxSceneHeight = props.maxSceneHeight
 
-    this.state = {
+    const state = {
       activeTool: toolNames.PAINTAREA,
       position: { left: 0, top: 0, isHidden: false },
       paintBrushWidth: brushLargeSize,
@@ -264,8 +274,10 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       showSelectPaletteModal: false,
       checkIsPaintSceneUpdate: false,
       uniqueSceneId: createUniqueSceneId(),
-      isSceneOpend: false
+      isSceneOpend: false,
+      imageUrl: ''
     }
+    this.state = props.shouldRestoreFromCache && checkCachedPaintScene(state, props.paintSceneCache) ? props.paintSceneCache : state
   }
 
   hideSaveSceneModal = (e: SyntheticEvent) => {
@@ -361,6 +373,12 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   }
 
   componentDidUpdate (prevProps: Object, prevState: Object) {
+    const { navigationIntent, paintSceneCache } = this.props
+    // handle case when paint scene needs to cache data to navigate to the color wall
+    if (navigationIntent === ROUTES_ENUM.COLOR_WALL && !paintSceneCache) {
+      this.prepareDataCache(this.state)
+    }
+
     const checkImageListIfUpdate = !compareArraysOfObjects(this.state.imagePathList, prevState.imagePathList)
     if (checkImageListIfUpdate) {
       const imageData = this.CFICanvas2.current.getContext('2d').getImageData(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
@@ -372,7 +390,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       return
     }
     const newWidth = shouldCanvasResize(prevProps.width, this.props.width)
-    if (newWidth) {
+    if (newWidth && !this.props.shouldRestoreFromCache) {
       this.scaleCanvases(newWidth, prevProps.width)
       this.applyZoom(this.state.canvasZoom, newWidth)
     }
@@ -507,11 +525,11 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.CFICanvasContext.drawImage(this.CFIImage.current, 0, 0, canvasWidth, canvasHeight)
     this.CFICanvasContext2.clearRect(0, 0, canvasWidth, canvasHeight)
     this.CFICanvasContextPaint.clearRect(0, 0, canvasWidth, canvasHeight)
-
+    this.redrawCanvas(this.state.imagePathList)
     this.setState({
       wrapperHeight: canvasHeight,
       canvasHeight,
-      canvasWidth,
+      canvasWidth: canvasWidth,
       canvasImageUrls: this.getLayers(),
       canvasHasBeenInitialized: true })
   }
@@ -576,11 +594,20 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     if (this.props.workspace) {
       this.props.clearSceneWorkspace()
     }
+    // @todo this is an app level concern and should happen outside of here, that said, it is a safe and stable place to do it now, lift when imagerotatecontainer refactor occurs -RS
+    if (this.props.shouldRestoreFromCache) {
+      this.props.setActiveScenePolluted()
+    }
+    this.setState({ imageUrl: this.props.imageUrl })
+    this.props.clearPaintSceneCache()
+    this.props.setActiveSceneLabel(ACTIVE_SCENE_LABELS_ENUM.PAINT_SCENE)
   }
 
   componentWillUnmount () {
     this.props.selectSavedScene(null)
     this.props.unsetActiveScenePolluted()
+    // @todo this is an app level concern and should happen outside of here, that said, it is a safe and stable place to do it now, lift when imagerotatecontainer refactor occurs -RS
+    this.props.setActiveSceneLabel()
   }
 
   updateWindowDimensions = () => {
@@ -946,10 +973,14 @@ canvasHeight
     this.props.clearNavigationIntent()
   }
 
+  prepareDataCache = (state: ComponentState) => {
+    this.props.cachePaintScene(state)
+  }
+
   render () {
     const { lpActiveColor, intl, showSaveSceneModal, lpColors, workspace, selectedMaskIndex, width, navigationIntent, isActiveScenePolluted } = this.props
     const livePaletteColorCount = (lpColors && lpColors.length) || 0
-    const bgImageUrl = workspace ? workspace.bgImageUrl : this.props.imageUrl
+    const bgImageUrl = workspace ? workspace.bgImageUrl : (this.props.shouldRestoreFromCache === '' ? this.props.imageUrl : this.state.imageUrl)
     const layers = workspace && workspace.workspaceType !== WORKSPACE_TYPES.smartMask ? workspace.layers : null
     const workspaceImageData = workspace && workspace.workspaceType === WORKSPACE_TYPES.smartMask ? workspace.layers : null
     const workspaceType = workspace ? workspace.workspaceType : WORKSPACE_TYPES.generic
@@ -980,7 +1011,7 @@ canvasHeight
             allowInput
             inputDefault={`${intl.formatMessage({ id: 'SAVE_SCENE_MODAL.DEFAULT_DESCRIPTION' })} ${this.props.sceneCount}`} /> : null}
           { /* ---------- Will destroy work warning modal ---------- */ }
-          {navigationIntent && isActiveScenePolluted ? <DynamicModal
+          {TOP_LEVEL_ROUTES.indexOf(navigationIntent) > -1 && isActiveScenePolluted ? <DynamicModal
             description={intl.formatMessage({ id: 'CVW.WARNING_REPLACEMENT' })}
             actions={[
               { text: intl.formatMessage({ id: 'YES' }), callback: this.handleNavigationIntentConfirm },
@@ -1094,7 +1125,7 @@ canvasHeight
 }
 
 const mapStateToProps = (state: Object, props: Object) => {
-  const { lp, savingMasks, selectedSavedSceneId, scenesAndRegions, showSaveSceneModal, saveSceneName, navigationIntent, scenePolluted } = state
+  const { lp, savingMasks, selectedSavedSceneId, scenesAndRegions, showSaveSceneModal, saveSceneName, navigationIntent, scenePolluted, paintSceneCache } = state
   const selectedScene = scenesAndRegions.find(item => item.id === selectedSavedSceneId)
   const activeColor = props.workspace && props.workspace.workspaceType === WORKSPACE_TYPES.smartMask ? maskingPink : lp.activeColor
   return {
@@ -1107,7 +1138,8 @@ const mapStateToProps = (state: Object, props: Object) => {
     sceneCount: state.sceneMetadata.length + 1,
     showSavedConfirmModalFlag: state.showSavedCustomSceneSuccess,
     navigationIntent,
-    isActiveScenePolluted: scenePolluted
+    isActiveScenePolluted: scenePolluted,
+    paintSceneCache
   }
 }
 
@@ -1130,7 +1162,11 @@ const mapDispatchToProps = (dispatch: Function) => {
     unsetActiveScenePolluted: () => dispatch(setIsScenePolluted()),
     setWarningModalImgPreview: (data) => dispatch(setWarningModalImgPreview(data)),
     navigateToIntendedDestination: () => dispatch(navigateToIntendedDestination()),
-    clearNavigationIntent: () => dispatch(clearNavigationIntent())
+    clearNavigationIntent: () => dispatch(clearNavigationIntent()),
+    cachePaintScene: (data: any) => dispatch(cachePaintScene(data)),
+    clearPaintSceneCache: () => dispatch(clearPaintSceneCache()),
+    setActiveSceneLabel: (label: string) => dispatch(setActiveSceneLabel(label))
+
   }
 }
 

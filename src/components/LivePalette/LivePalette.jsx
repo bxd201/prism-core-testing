@@ -9,7 +9,6 @@ import times from 'lodash/times'
 import flatMap from 'lodash/flatMap'
 import intersection from 'lodash/intersection'
 import update from 'immutability-helper'
-import { Link } from 'react-router-dom'
 import LivePaletteModal from './LivePaletteModal'
 import store from '../../store/store'
 import { LP_MAX_COLORS_ALLOWED, MIN_COMPARE_COLORS_ALLOWED } from 'constants/configurations'
@@ -30,6 +29,12 @@ import type { Color } from '../../shared/types/Colors.js.flow'
 import './LivePalette.scss'
 import storageAvailable from '../../shared/utils/browserStorageCheck.util'
 import { fullColorNumber } from '../../shared/helpers/ColorUtils'
+import {
+  ACTIVE_SCENE_LABELS_ENUM,
+  setNavigationIntent,
+  setNavigationIntentWithReturn
+} from '../../store/actions/navigation'
+import { ROUTES_ENUM } from '../Facets/ColorVisualizerWrapper/routeValueCollections'
 const PATH__NAME = 'fast-mask-simple.html'
 
 type Props = {
@@ -41,9 +46,13 @@ type Props = {
   removedColor: Color,
   deactivateTemporaryColor: Function,
   empty: Function,
-  temporaryActiveColor: Color | null
+  temporaryActiveColor: Color | null,
+  setNavigationIntents: Function,
+  activeSceneLabel: string,
+  isColorwallModallyPresented: boolean
 }
 
+// @todo refactor to put state init in constructor and also bind handleAddColor, removing anon func call in render ...better yet this is a good hooks candidate... -RS
 type State = {
   spokenWord: string,
   isCompareColor: boolean,
@@ -127,6 +136,23 @@ export class LivePalette extends PureComponent<Props, State> {
     this.setState({ isCompareColor: !this.state.isCompareColor })
     this.props.toggleCompareColor()
   }
+  handleAddColor = (e: SyntheticEvent) => {
+    e.preventDefault()
+    if (this.props.isColorwallModallyPresented) {
+      return
+    }
+
+    let returnPath = null
+
+    if (this.props.activeSceneLabel === ACTIVE_SCENE_LABELS_ENUM.PAINT_SCENE) {
+      returnPath = ROUTES_ENUM.PAINT_SCENE
+    }
+
+    if (this.props.activeSceneLabel === ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE) {
+      returnPath = ROUTES_ENUM.STOCK_SCENE
+    }
+    this.props.setNavigationIntents(ROUTES_ENUM.COLOR_WALL, returnPath)
+  }
 
   render () {
     const { colors, activeColor, deactivateTemporaryColor, empty, temporaryActiveColor } = this.props
@@ -175,13 +201,14 @@ export class LivePalette extends PureComponent<Props, State> {
           </div>}
           <div className='prism-live-palette__list'>
             {activeSlots}
-            { /* @todo refactor to use imperative approach so that we can block based on state, for cases when this link should be disabled -RS Thsi is needed for cases where modality -RS */}
-            {colors.length < LP_MAX_COLORS_ALLOWED && <Link to={`/active/color-wall`} className={`prism-live-palette__slot prism-live-palette__slot--${COLOR_TRAY_CLASS_MODIFIERS}`}>
+            {colors.length < LP_MAX_COLORS_ALLOWED && <button onClick={(e) => {
+              this.handleAddColor(e)
+            }} className={`prism-live-palette__slot prism-live-palette__slot--${COLOR_TRAY_CLASS_MODIFIERS}`}>
               <FontAwesomeIcon className='prism-live-palette__icon' icon={['fal', 'plus-circle']} size='2x' color={varValues._colors.primary} />
               <FormattedMessage id={ADD_COLOR_TEXT}>
                 {(msg: string) => <span className='prism-live-palette__slot__copy'>{msg}</span>}
               </FormattedMessage>
-            </Link>}
+            </button>}
             {disabledSlots}
           </div>
           {/* This will speak the current and removed color, as well as some color-delta info. */}
@@ -211,13 +238,15 @@ export class LivePalette extends PureComponent<Props, State> {
 }
 
 const mapStateToProps = (state, props) => {
-  const { lp } = state
+  const { lp, activeSceneLabel, isColorwallModallyPresented } = state
   return {
     colors: lp.colors,
     activeColor: lp.activeColor,
     // previousActiveColor: lp.previousActiveColor,
     removedColor: lp.removedColor,
-    temporaryActiveColor: lp.temporaryActiveColor
+    temporaryActiveColor: lp.temporaryActiveColor,
+    activeSceneLabel,
+    isColorwallModallyPresented
   }
 }
 
@@ -237,6 +266,13 @@ const mapDispatchToProps = (dispatch: Function) => {
     },
     empty: () => {
       dispatch(empty())
+    },
+    setNavigationIntents: (shouldGoTo: string, shouldReturnTo: string | void) => {
+      if (shouldGoTo && shouldReturnTo) {
+        dispatch(setNavigationIntentWithReturn(shouldGoTo, shouldReturnTo))
+        return
+      }
+      dispatch(setNavigationIntent(shouldGoTo))
     }
   }
 }

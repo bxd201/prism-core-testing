@@ -25,6 +25,8 @@ import { objectsEqual } from '../PaintScene/utils'
 import WithConfigurationContext from '../../contexts/ConfigurationContext/WithConfigurationContext'
 import { FEATURE_EXCLUSIONS } from '../../constants/configurations'
 import { calcOrientationDimensions } from '../../shared/utils/scale.util'
+import { ROUTES_ENUM } from '../Facets/ColorVisualizerWrapper/routeValueCollections'
+
 const baseClass = 'match-photo'
 const wrapperClass = `${baseClass}__wrapper`
 const previewClass = `${wrapperClass}--preview`
@@ -116,6 +118,9 @@ export function ImageRotateContainer ({ setLastActiveComponent, activePaintScene
   const dispatch = useDispatch()
   const globalMaxSceneHeight = useSelector(state => state.maxSceneHeight)
   const maxSceneHeight = maxSceneViewerHeight || globalMaxSceneHeight
+  // This flag tells app to ignore the OG logic and to just trust that the data is there to render accordingly
+  const bypassValue = useSelector(store => store.imageRotateBypass)
+
   useEffect(() => { dispatch(loadColors(brandId, { language: locale })) }, [])
 
   useEffect(() => {
@@ -397,7 +402,7 @@ export function ImageRotateContainer ({ setLastActiveComponent, activePaintScene
 
   return (
     <>
-      {imageUrl && imageHeight && imageWidth && uploads && uploads.source && isLoadingSmartMask ? <MergeCanvas
+      {!bypassValue && imageUrl && imageHeight && imageWidth && uploads && uploads.source && isLoadingSmartMask ? <MergeCanvas
         handleLayersLoaded={HandleSmartMaskLoaded}
         layers={uploads.masks}
         ref={smartMaskRef}
@@ -406,25 +411,25 @@ export function ImageRotateContainer ({ setLastActiveComponent, activePaintScene
         rotationAngle={imageRotationAngle} /> : null }
       <div style={{ display: `${showPaintScene ? 'block' : 'none'}` }}>
         {/* This preloads the uploaded image for the canvas */ }
-        <PrismImage ref={imageRef} source={blobUrl} loadedCallback={handleImageLoaded} shouldResample={hasLoaded} scalingWidth={scalingWidth} />
+        {!bypassValue ? <PrismImage ref={imageRef} source={blobUrl} loadedCallback={handleImageLoaded} shouldResample={hasLoaded} scalingWidth={scalingWidth} /> : null}
         <div className={`${getWrapperClassName(imageUrl, pins, !!paintSceneWorkspaceState)}`} ref={wrapperRef}>
           <div className={`${containerClass}`}>
 
             <div className={`${headerClass}`}>
-              {(imageUrl && pins.length === 0) ? <button className={`${buttonClass} ${buttonLeftClass}`} onClick={() => history.goBack()}>
+              {(!bypassValue && imageUrl && pins.length === 0) ? <button className={`${buttonClass} ${buttonLeftClass}`} onClick={() => history.goBack()}>
                 <div><FontAwesomeIcon className={``} icon={['fa', 'angle-left']} />&nbsp;<span className={`${buttonLeftTextClass}`}><FormattedMessage id='BACK' /></span></div>
-              </button> : ''}
+              </button> : null}
               {
-                (imageUrl && pins.length === 0)
+                (!bypassValue && imageUrl && pins.length === 0)
                   ? <Link to={`/active`} tabIndex='-1'>
                     {closeButton}
                   </Link>
 
-                  : (imageUrl && pins.length > 0 && !isPaintScene) ? <Link to={`/active`} tabIndex='-1'>{closeButton}</Link> : ''
+                  : (!bypassValue && imageUrl && pins.length > 0 && !isPaintScene) ? <Link to={`/active`} tabIndex='-1'>{closeButton}</Link> : ''
               }
             </div>
             {
-              (imageUrl && pins.length > 0 && !isPaintScene)
+              (!bypassValue && imageUrl && pins.length > 0 && !isPaintScene)
                 ? (<>
                   <MatchPhoto
                     isConfirmationModalActive={isConfirmationModalActive}
@@ -439,7 +444,7 @@ export function ImageRotateContainer ({ setLastActiveComponent, activePaintScene
                 : null
             }
             {
-              (imageUrl && (pins.length === 0 || isLoadingSmartMask) && !isFromMyIdeas)
+              (!bypassValue && (imageUrl && (pins.length === 0 || isLoadingSmartMask) && !isFromMyIdeas))
                 ? (<>
                   <canvas className={canvasBaseClass} name='canvas' ref={canvasRef} />
                   <ImageRotateTerms rotateImage={rotateImage} createColorPins={createColorPins} imageData={imageData} handleDismiss={handleDismiss} />
@@ -447,10 +452,11 @@ export function ImageRotateContainer ({ setLastActiveComponent, activePaintScene
                 : null
             }
             {
-              ((imageUrl && isPaintScene && pins.length > 0 && !isLoadingSmartMask) || (isFromMyIdeas && paintSceneWorkspaceState && paintSceneWorkspaceState.bgImageUrl !== undefined))
+              (bypassValue === ROUTES_ENUM.PAINT_SCENE || ((imageUrl && isPaintScene && pins.length > 0 && !isLoadingSmartMask) || (isFromMyIdeas && paintSceneWorkspaceState && paintSceneWorkspaceState.bgImageUrl !== undefined)))
                 ? (<>
                   {
                     shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.editPhotos) ? <PaintScene
+                      shouldRestoreFromCache={bypassValue}
                       checkIsPaintSceneUpdate={checkIsPaintSceneUpdate}
                       imageUrl={imageUrl}
                       workspace={paintSceneWorkspaceState}
@@ -472,7 +478,7 @@ export function ImageRotateContainer ({ setLastActiveComponent, activePaintScene
                 : null
             }
             {
-              ((!imageUrl && !isPaintScene && paintSceneWorkspaceState && paintSceneWorkspaceState.bgImageUrl === undefined) || (!imageUrl && !isPaintScene && !paintSceneWorkspaceState))
+              (!bypassValue && ((!imageUrl && !isPaintScene && paintSceneWorkspaceState && paintSceneWorkspaceState.bgImageUrl === undefined) || (!imageUrl && !isPaintScene && !paintSceneWorkspaceState)))
                 ? (<canvas className={canvasBaseClass} name='canvas' width='600' height='600' />)
                 : null
             }
@@ -480,7 +486,7 @@ export function ImageRotateContainer ({ setLastActiveComponent, activePaintScene
         </div>
         <hr />
       </div>
-      {isImageRotate && <LiveMessage message={formatMessage({ id: 'LIVE_MESSAGE_IMAGE_ANGLE' }, { imageRotationAngle: imageRotationAngle })} aria-live='assertive' clearOnUnmount='true' />}
+      {!bypassValue && isImageRotate && <LiveMessage message={formatMessage({ id: 'LIVE_MESSAGE_IMAGE_ANGLE' }, { imageRotationAngle: imageRotationAngle })} aria-live='assertive' clearOnUnmount='true' />}
     </>
   )
 }

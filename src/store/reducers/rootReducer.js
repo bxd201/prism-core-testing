@@ -43,7 +43,13 @@ import { reducerWithLocalStorage } from '../withStorage'
 import { SCENE_METADATA } from '../storageProperties'
 import { systemMessages } from './systemMessages'
 import { maxSceneHeight } from './system'
-import { allowNavigateToIntendedDestination, navigationIntent, scenePolluted } from './navigation'
+import {
+  activeSceneLabel,
+  allowNavigateToIntendedDestination, dirtyNavigationIntent, imageRotateBypass, isColorwallModallyPresented,
+  navigationIntent, navigationReturnIntent,
+  paintSceneCache,
+  scenePolluted, shouldShowGlobalDestroyWarning, stockSceneCache
+} from './navigation'
 
 export default combineReducers({
   collectionSummaries,
@@ -88,5 +94,13 @@ export default combineReducers({
   maxSceneHeight,
   navigationIntent,
   scenePolluted,
-  allowNavigateToIntendedDestination
+  allowNavigateToIntendedDestination,
+  paintSceneCache,
+  activeSceneLabel,
+  navigationReturnIntent,
+  imageRotateBypass,
+  stockSceneCache,
+  isColorwallModallyPresented,
+  shouldShowGlobalDestroyWarning,
+  dirtyNavigationIntent
 })

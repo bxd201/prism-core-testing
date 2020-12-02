@@ -12,7 +12,12 @@ import './ColorVisualizerNav.scss'
 import { FEATURE_EXCLUSIONS } from '../../../constants/configurations'
 import { shouldAllowFeature } from '../../../shared/utils/featureSwitch.util'
 import WithConfigurationContext from '../../../contexts/ConfigurationContext/WithConfigurationContext'
-import { cleanupNavigationIntent, setIsScenePolluted, setNavigationIntent } from '../../../store/actions/navigation'
+import {
+  cleanupNavigationIntent, setDirtyNavigationIntent,
+  setIsScenePolluted,
+  setNavigationIntent,
+  setShouldShowGlobalDestroyWarning
+} from '../../../store/actions/navigation'
 
 type DropDownMenuProps = {
   title: string,
@@ -96,10 +101,12 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
   const useSmartMask = useSelector(state => state.useSmartMask)
   const allowNavigateToIntendedDestination = useSelector(state => state.allowNavigateToIntendedDestination)
   const navigationIntent = useSelector(state => state.navigationIntent)
+  const isColorwallModallyPresented = useSelector(store => store.isColorwallModallyPresented)
 
   const hiddenImageUploadInput: { current: ?HTMLElement } = useRef()
   const [imgUrl: string, setImgUrl: (string) => void] = useState()
 
+  // @todo all pull route values into const...perhaps routesEnum? -RS
   useEffect(() => {
     if (imgUrl) {
       if (location.pathname === '/upload/match-photo') {
@@ -112,13 +119,16 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
     }
   }, [imgUrl])
 
+  // This is an observer that determines if programmatic navigation should occur
+  // @todo, in a perfect world there would be a complete navigation abstraction layer, see the useeffect hook in the CVWWrapper to find another vital part -RS
   useEffect(() => {
-    if (allowNavigateToIntendedDestination && navigationIntent) {
+    if (allowNavigateToIntendedDestination && navigationIntent && !isColorwallModallyPresented) {
       history.push(navigationIntent)
       dispatch(cleanupNavigationIntent())
     }
-  }, [allowNavigateToIntendedDestination, navigationIntent])
+  }, [allowNavigateToIntendedDestination, navigationIntent, isColorwallModallyPresented])
 
+  // @todo maybe a hook can handle determining if a modal needs to be shown to warn a user of destruction. -RS
   const getDropDownItemsForGetInspired = () => {
     const items = [
       {
@@ -193,7 +203,7 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
               hiddenImageUploadInput.current.click() // uploads image
             }
           }
-          // @todo activate should not be calle don every click, we should only have to set the value for this once when the app is bootstrapped.  -RS
+          // @todo activate should not be called on every click, we should only have to set the value for this once when the app is bootstrapped.  -RS
           isActiveScenePolluted ? dispatch(showWarningModal(true)) : activate()
         } : undefined
       }
@@ -239,7 +249,7 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
               hiddenImageUploadInput.current.click()
             }
           }
-          // @todo activate should not be calle don every click, we should only have to set the value for this once when the app is bootstrapped.  -RS
+          // @todo activate should not be called on every click, we should only have to set the value for this once when the app is bootstrapped.  -RS
           isActiveScenePolluted ? dispatch(showWarningModal(activate)) : activate()
         }
       }
@@ -262,6 +272,7 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
     })
   }
 
+  // @todo refactor buttons into their own component -RS
   return (
     <nav className='cvw-navigation-wrapper'>
       <input ref={hiddenImageUploadInput} style={{ display: 'none' }} type='file' onChange={e => {
@@ -283,7 +294,19 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
       <ul className='cvw-navigation-wrapper__center' role='presentation'>
         { shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.exploreColors)
           ? <li>
-            <button className={`cvw-nav-btn ${location.pathname === '/active/colors' ? 'cvw-nav-btn--active' : ''}`} onClick={() => isActiveScenePolluted ? dispatch(setNavigationIntent('/active/colors')) : history.push('/active/colors')}>
+            <button className={`cvw-nav-btn ${location.pathname === '/active/colors' ? 'cvw-nav-btn--active' : ''}`} onClick={() => {
+              if (isColorwallModallyPresented) {
+                dispatch(setShouldShowGlobalDestroyWarning(true))
+                dispatch(setDirtyNavigationIntent('/active/colors'))
+                return
+              }
+              if (isActiveScenePolluted) {
+                dispatch(setNavigationIntent('/active/colors'))
+                return
+              }
+              // default action
+              history.push('/active/colors')
+            }}>
               <span className='fa-layers fa-fw cvw-nav-btn-icon'>
                 <FontAwesomeIcon icon={['fal', 'square-full']} size='xs' transform={{ rotate: 10 }} />
                 <FontAwesomeIcon icon={['fal', 'square-full']} size='sm' transform={{ rotate: 0 }} />
@@ -295,14 +318,38 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
           </li> : null }
         { shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.getInspired)
           ? <li>
-            <button className={`cvw-nav-btn ${location.pathname === '/active/inspiration' ? 'cvw-nav-btn--active' : ''}`} onClick={() => isActiveScenePolluted ? dispatch(setNavigationIntent('/active/inspiration')) : history.push('/active/inspiration')}>
+            <button className={`cvw-nav-btn ${location.pathname === '/active/inspiration' ? 'cvw-nav-btn--active' : ''}`} onClick={() => {
+              if (isColorwallModallyPresented) {
+                dispatch(setShouldShowGlobalDestroyWarning(true))
+                dispatch(setDirtyNavigationIntent('/active/inspiration'))
+                return
+              }
+              if (isActiveScenePolluted) {
+                dispatch(setNavigationIntent('/active/inspiration'))
+                return
+              }
+              // default action
+              history.push('/active/inspiration')
+            }}>
               <FontAwesomeIcon className='cvw-nav-btn-icon' icon={['fal', 'lightbulb']} size='1x' />
               <FormattedMessage id='NAV_LINKS.GET_INSPIRED' />
             </button>
           </li> : null }
         { shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.paintAPhoto)
           ? <li>
-            <button className={`cvw-nav-btn ${location.pathname === '/active/scenes' ? 'cvw-nav-btn--active' : ''}`} onClick={() => isActiveScenePolluted ? dispatch(setNavigationIntent('/active/scenes')) : history.push('/active/scenes')}>
+            <button className={`cvw-nav-btn ${location.pathname === '/active/scenes' ? 'cvw-nav-btn--active' : ''}`} onClick={() => {
+              if (isColorwallModallyPresented) {
+                dispatch(setShouldShowGlobalDestroyWarning(true))
+                dispatch(setDirtyNavigationIntent('/active/scenes'))
+                return
+              }
+              if (isActiveScenePolluted) {
+                dispatch(setNavigationIntent('/active/scenes'))
+                return
+              }
+              // default action
+              history.push('/active/scenes')
+            }}>
               <span className='fa-layers fa-fw cvw-nav-btn-icon'>
                 <FontAwesomeIcon icon={['fal', 'square-full']} />
                 <FontAwesomeIcon icon={['fa', 'brush']} size='sm' transform={{ rotate: 320 }} />
@@ -315,13 +362,37 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
         {
           shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.documentSaving)
             ? <li>
-              <button className={`cvw-nav-btn ${location.pathname === '/active/my-ideas' ? 'cvw-nav-btn--active' : ''}`} onClick={() => isActiveScenePolluted ? dispatch(setNavigationIntent('/active/my-ideas')) : history.push('/active/my-ideas')}>
+              <button className={`cvw-nav-btn ${location.pathname === '/active/my-ideas' ? 'cvw-nav-btn--active' : ''}`} onClick={() => {
+                if (isColorwallModallyPresented) {
+                  dispatch(setShouldShowGlobalDestroyWarning(true))
+                  dispatch(setDirtyNavigationIntent('/active/my-ideas'))
+                  return
+                }
+                if (isActiveScenePolluted) {
+                  dispatch(setNavigationIntent('/active/my-ideas'))
+                  return
+                }
+                // default action
+                history.push('/active/my-ideas')
+              }}>
                 <FormattedMessage id='NAV_LINKS.MY_IDEAS' />
               </button>
             </li> : null
         }
         <li>
-          <button className={`cvw-nav-btn ${location.pathname === '/active/help' ? 'cvw-nav-btn--active' : ''}`} onClick={() => isActiveScenePolluted ? dispatch(setNavigationIntent('/active/help')) : history.push('/active/help')}>
+          <button className={`cvw-nav-btn ${location.pathname === '/active/help' ? 'cvw-nav-btn--active' : ''}`} onClick={() => {
+            if (isColorwallModallyPresented) {
+              dispatch(setShouldShowGlobalDestroyWarning(true))
+              dispatch(setDirtyNavigationIntent('/active/help'))
+              return
+            }
+            if (isActiveScenePolluted) {
+              dispatch(setNavigationIntent('/active/help'))
+              return
+            }
+            // default action
+            history.push('/active/help')
+          }}>
             <FormattedMessage id='NAV_LINKS.HELP' />
           </button>
         </li>

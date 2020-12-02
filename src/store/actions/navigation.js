@@ -1,4 +1,6 @@
 // @flow
+import { COLORWALL_MODAL_PRESENTERS } from '../../components/Facets/ColorVisualizerWrapper/routeValueCollections'
+
 export const SET_NAVIGATION_INTENT = 'SET_NAVIGATION_INTENT'
 export const setNavigationIntent = (urlFrag: string) => {
   return {
@@ -34,19 +36,124 @@ export const POLLUTED_ENUM = {
   POLLUTED_STOCK_SCENE: 'POLLUTED_STOCK_SCENE'
 }
 
-export const SCENE_POLLUTED = 'SCENE_POLLUTED'
+export const SET_SCENE_POLLUTED = 'SET_SCENE_POLLUTED'
 export const setIsScenePolluted = (pollutedSceneType: string = '') => {
   return {
-    type: SCENE_POLLUTED,
+    type: SET_SCENE_POLLUTED,
     payload: pollutedSceneType
   }
 }
 
 export const NAVIGATE_TO_INTENDED_DESTINATION = 'NAVIGATE_TO_INTENDED_DESTINATION'
-// This method will trigger a url cached in redux to
+// This method will trigger a url cached in redux to navigate
 export const navigateToIntendedDestination = () => {
   return {
     type: NAVIGATE_TO_INTENDED_DESTINATION,
     payload: true
+  }
+}
+
+// Again, don't let the name fool you, this action is needed bc of navigation
+export const CACHE_PAINT_SCENE = 'CACHE_PAINT_SCENE'
+// @todo type this param -RS
+export const cachePaintScene = (paintSceneData: any) => {
+  return {
+    type: CACHE_PAINT_SCENE,
+    payload: paintSceneData
+  }
+}
+
+export const CLEAR_PAINT_SCENE_CACHE = 'CLEAR_PAINT_SCENE_CACHE'
+export const clearPaintSceneCache = () => {
+  return {
+    type: CLEAR_PAINT_SCENE_CACHE
+  }
+}
+
+export const ACTIVE_SCENE_LABELS_ENUM = {
+  PAINT_SCENE: 'PAINT_SCENE',
+  STOCK_SCENE: 'STOCK_SCENE'
+}
+export const SET_ACTIVE_SCENE_LABEL = 'SET_ACTIVE_SCENE_LABEL'
+export const setActiveSceneLabel = (sceneType: string = '') => {
+  return {
+    type: SET_ACTIVE_SCENE_LABEL,
+    payload: sceneType
+  }
+}
+
+// this action tells a programmatic navigation where to go back to, should be set when navigation intent is set
+export const SET_NAVIGATION_INTENT_WITH_RETURN = 'SET_NAVIGATION_INTENT_WITH_RETURN'
+export const setNavigationIntentWithReturn = (shouldGoHere: string, shouldReturnHere: string) => {
+  return {
+    type: SET_NAVIGATION_INTENT_WITH_RETURN,
+    navigationIntentPayload: shouldGoHere,
+    navigationReturnIntentPayload: shouldReturnHere
+  }
+}
+
+// this will push the return path to the navigation intent
+export const STAGE_NAVIGATION_RETURN_INTENT = 'STAGE_NAVIGATION_RETURN_INTENT'
+export const stageNavigationReturnIntent = (urlFrag: string) => {
+  return {
+    type: STAGE_NAVIGATION_RETURN_INTENT,
+    // this puts the return intent into the stage position
+    navigationIntentPayload: urlFrag,
+    // this clears out the staged return intent
+    navigationReturnIntentPayload: null
+  }
+}
+
+export const SET_IMAGE_ROTATE_BYPASS = 'SET_IMAGE_ROTATE_BYPASS'
+export const setImageRotateBypass = (bypass: string) => {
+  return {
+    type: SET_IMAGE_ROTATE_BYPASS,
+    payload: bypass
+  }
+}
+
+// for semantics
+export const clearImageRotateBypass = () => setImageRotateBypass('')
+
+// @todo This action DOES NOT currently cache, it is just a flag, it has this name bc ideally it would cache data in the near future -RS
+export const CACHE_STOCK_SCENE = 'CACHE_STOCK_SCENE'
+export const cacheStockScene = (stockSceneData: any) => {
+  return {
+    type: CACHE_STOCK_SCENE,
+    payload: stockSceneData
+  }
+}
+
+export const CLEAR_STOCK_SCENE_CACHE = 'CLEAR_STOCK_SCENE_CACHE'
+export const clearStockSceneCache = () => {
+  return {
+    type: CLEAR_STOCK_SCENE_CACHE
+  }
+}
+
+export const SET_IS_COLOR_WALL_MODALLY_PRESENTED = 'SET_IS_COLOR_WALL_MODALLY_PRESENTED'
+// It is a modal if there is a return path at time of mount, this tells the app if the users sees the color wall
+export const setIsColorWallModallyPresented = (returnPath: string) => {
+  const isModal = COLORWALL_MODAL_PRESENTERS.indexOf(returnPath) > -1
+  return {
+    type: SET_IS_COLOR_WALL_MODALLY_PRESENTED,
+    payload: isModal
+  }
+}
+
+export const SHOULD_SHOW_GLOBAL_DESTROY_WARNING = 'SHOULD_SHOW_GLOBAL_DESTROY_WARNING'
+export const setShouldShowGlobalDestroyWarning = (shouldShow: boolean = false) => {
+  return {
+    type: SHOULD_SHOW_GLOBAL_DESTROY_WARNING,
+    payload: shouldShow
+  }
+}
+
+// This holds the value of a path a user wants to go to when a programmatic intent has already been declared, they need to resolve via a modal action
+export const SET_DIRTY_NAVIGATION_INTENT = 'SET_DIRTY_NAVIGATION_INTENT'
+export const setDirtyNavigationIntent = (urlFrag: string = '') => {
+  return {
+    type: SET_DIRTY_NAVIGATION_INTENT,
+    payload: urlFrag
   }
 }

@@ -3,6 +3,7 @@ import { getDeltaE00 } from 'delta-e'
 import difference from 'lodash/difference'
 import uniqueId from 'lodash/uniqueId'
 import cloneDeep from 'lodash/cloneDeep'
+
 import { toolNames, brushSquareShape, paintBrushMediumCircleClass,
   brushRoundShape, brushMediumSize, paintBrushMediumClass,
   brushSmallSize, brushTinySize, paintBrushLargeCircleClass,
@@ -888,3 +889,15 @@ export const getColorsForMergeColors = (workspace: PaintSceneWorkspace) => {
 }
 
 export const maskingPink = { red: '255', green: '44', blue: '180', hex: '#fc2cb3' }
+
+// This is used to validate the paintscene object shape.
+export const checkCachedPaintScene = (srcObj, obj) => {
+  let isAllKeySame = true
+  if (!obj) return false
+  Object.keys(srcObj).forEach((key) => {
+    if (!obj.hasOwnProperty(`${key}`)) {
+      isAllKeySame = false
+    }
+  })
+  return isAllKeySame
+}
