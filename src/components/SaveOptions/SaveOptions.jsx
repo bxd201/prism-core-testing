@@ -1,5 +1,5 @@
 // @flow
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
@@ -19,6 +19,7 @@ import find from 'lodash/find'
 import { shouldAllowFeature } from '../../shared/utils/featureSwitch.util'
 import { FEATURE_EXCLUSIONS } from '../../constants/configurations'
 import WithConfigurationContext from '../../contexts/ConfigurationContext/WithConfigurationContext'
+import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 
 type SaveOptionsProps = {
   activeComponent: string,
@@ -37,6 +38,14 @@ const SaveOptions = (props: SaveOptionsProps) => {
   const [showSavedConfirmModalFlag, setShowSavedConfirmModalFlag] = useState(false)
   const dispatch = useDispatch()
   const { location: { pathname } } = useHistory()
+  const { cvw } = props.config
+  const [cvwFromConfig, setCvwFromConfig] = useState(null)
+
+  useEffect(() => {
+    if (cvw) {
+      setCvwFromConfig(cvw)
+    }
+  }, [cvw])
 
   const scenesDownloadData = useSelector(state => {
     const scenes = state.selectedSceneStatus && !state.selectedSceneStatus.openUnpaintedStockScene ? replaceSceneStatus(state.scenes, state.selectedSceneStatus) : state.scenes
@@ -152,13 +161,13 @@ const SaveOptions = (props: SaveOptionsProps) => {
     </>
   }
 
-  const getDownloadStaticResourcesPath = (config) => {
+  const getDownloadStaticResourcesPath = (data) => {
     return {
       // to do: headerImage, downloadDisclaimer1, downloadDisclaimer2 also should be configurable
-      headerLogo: config.cvw.downloadSceneHeaderImage,
-      bottomLogo: config.cvw.downloadSceneFooterImage,
-      downloadDisclaimer1: config.cvw.downloadSceneDisclaimer1,
-      downloadDisclaimer2: config.cvw.downloadSceneDisclaimer2
+      headerLogo: data.downloadSceneHeaderImage,
+      bottomLogo: data.downloadSceneFooterImage,
+      downloadDisclaimer1: data.downloadSceneDisclaimer1,
+      downloadDisclaimer2: data.downloadSceneDisclaimer2
     }
   }
 
@@ -188,10 +197,10 @@ const SaveOptions = (props: SaveOptionsProps) => {
       {shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.download)
         ? (activeComponent === PAINT_SCENE_COMPONENT
           ? <div>
-            <SceneDownload {...{ buttonCaption: 'DOWNLOAD_MASK', getFlatImage: getFlatImage, activeComponent: props.activeComponent, config: getDownloadStaticResourcesPath(props.config) }} />
+            {cvwFromConfig ? <SceneDownload {...{ buttonCaption: 'DOWNLOAD_MASK', getFlatImage: getFlatImage, activeComponent: props.activeComponent, config: getDownloadStaticResourcesPath(cvwFromConfig) }} /> : <CircleLoader />}
           </div>
           : <div>
-            <SceneDownload {...{ buttonCaption: 'DOWNLOAD_MASK', sceneInfo: firstActiveSceneInfo, activeComponent: props.activeComponent, config: getDownloadStaticResourcesPath(props.config) }} />
+            {cvwFromConfig ? <SceneDownload {...{ buttonCaption: 'DOWNLOAD_MASK', sceneInfo: firstActiveSceneInfo, activeComponent: props.activeComponent, config: getDownloadStaticResourcesPath(cvwFromConfig) }} /> : <CircleLoader />}
           </div>) : null}
       { shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.documentSaving)
         ? <button onClick={handleSave}>

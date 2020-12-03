@@ -17,8 +17,8 @@ const LandingPage = () => {
   }
 
   return (
-    <div className='cvw-landing-page-wrapper' style={{ 'backgroundImage': `url('${cvw.introBg}')` }}>
-      {cvw.introLogo ? <div className='cvw-landing-page-wrapper__image' style={{ 'backgroundImage': `url('${cvw.introLogo}')` }} /> : null}
+    <div className='cvw-landing-page-wrapper' style={cvw?.introBg ? { 'backgroundImage': `url('${cvw.introBg}')` } : null}>
+      {cvw?.introLogo ? <div className='cvw-landing-page-wrapper__image' style={{ 'backgroundImage': `url('${cvw.introLogo}')` }} /> : null}
       <button className='cvw-landing-page-wrapper__painting-btn' onClick={() => redirect('/active')}>
         <FormattedMessage id='START_PAINTING_NOW' />
         <FontAwesomeIcon icon={['fa', 'chevron-right']} />
