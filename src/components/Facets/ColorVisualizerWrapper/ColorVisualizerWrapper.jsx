@@ -189,7 +189,7 @@ export const CVW = (props: CVWPropsType) => {
       {toggleCompareColor
         ? <CompareColor />
         : (
-          <div className='cvw__root-wrapper' ref={wrapperRef}>
+          <div className={`cvw__root-wrapper ${colorDetailsModalShowing ? 'hide-on-small-screens' : ''}`} ref={wrapperRef}>
             { shouldShowGlobalDestroyWarning ? <DynamicModal
               description={intl.formatMessage({ id: 'CVW.WARNING_REPLACEMENT' })}
               actions={[
@@ -220,7 +220,6 @@ export const CVW = (props: CVWPropsType) => {
             <div
               /* This div has multiple responsibilities in the DOM tree. It cannot be removed, moved, or changed without causing regressions. */
               style={{ display: shouldHideSceneManagerDiv(location.pathname) ? 'none' : 'block' }}
-              className={colorDetailsModalShowing ? 'hide-on-small-screens' : ''}
             >
               {lastActiveComponent === 'StockScene' && activeStockScene}
               {lastActiveComponent === 'PaintScene' && activePaintScene}
