@@ -1,10 +1,11 @@
 // @flow strict
 import Jimp from 'jimp'
+import { IntlShape } from 'react-intl'
 import type { Color } from '../../shared/types/Colors'
 import type { SceneInfo } from '../types/Scene'
 const PAINT_SCENE_COMPONENT = 'PaintScene'
 
-const generateImage = async (scene: SceneInfo, activeComponent: string, config: Object): Jimp => {
+const generateImage = async (scene: SceneInfo, activeComponent: string, config: Object, intl: IntlShape): Jimp => {
   // Load base image, logos, and text
   const isPaintScene = activeComponent === PAINT_SCENE_COMPONENT
   const [image, logo, bottomLogo, smallBlackFont] = await Promise.all([
@@ -192,7 +193,7 @@ const generateImage = async (scene: SceneInfo, activeComponent: string, config: 
     if (!isPaintScene) {
       const featuredColorNumbers: string[] = coloredSurfaces.map(surface => surface.color.colorNumber)
       if (featuredColorNumbers.includes(color.colorNumber)) {
-        swatchImage.print(smallContrastFont, 10, 10, 'FEATURED IN SCENE')
+        swatchImage.print(smallContrastFont, 10, 10, intl.formatMessage({ id: 'FEATURED_IN_SCENE' }))
       }
     }
 

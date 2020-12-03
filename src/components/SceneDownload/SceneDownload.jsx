@@ -41,7 +41,7 @@ export default (props: Props) => {
     }
     const scene = activeComponent === PAINT_SCENE_COMPONENT ? imageSrc : sceneInfo
 
-    generateImage(scene, activeComponent, config).then(image => image.getBufferAsync(Jimp.MIME_JPEG))
+    generateImage(scene, activeComponent, config, intl).then(image => image.getBufferAsync(Jimp.MIME_JPEG))
       .then(buffer => {
         const blob = new Blob([buffer], { type: 'img/jpg' })
         const urlCreator = window.URL || window.webkitURL
