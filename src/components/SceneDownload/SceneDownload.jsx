@@ -6,6 +6,7 @@ import Jimp from 'jimp'
 import type { SceneInfo } from '../../shared/types/Scene'
 import { generateImage } from '../../shared/services/sceneDownload'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { ACTIVE_SCENE_LABELS_ENUM } from '../../store/actions/navigation'
 type Props = {
   buttonCaption: string,
   sceneInfo: void | SceneInfo,
@@ -14,7 +15,7 @@ type Props = {
   config: object
 }
 
-const PAINT_SCENE_COMPONENT = 'PaintScene'
+const PAINT_SCENE_COMPONENT = ACTIVE_SCENE_LABELS_ENUM.PAINT_SCENE
 const BACKGROUND_IMG = 'paint-scene-canvas-first'
 const PAINT_LAYER = 'paint-scene-canvas-second'
 

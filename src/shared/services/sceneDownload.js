@@ -3,11 +3,11 @@ import Jimp from 'jimp'
 import { IntlShape } from 'react-intl'
 import type { Color } from '../../shared/types/Colors'
 import type { SceneInfo } from '../types/Scene'
-const PAINT_SCENE_COMPONENT = 'PaintScene'
+import { ACTIVE_SCENE_LABELS_ENUM } from '../../store/actions/navigation'
 
 const generateImage = async (scene: SceneInfo, activeComponent: string, config: Object, intl: IntlShape): Jimp => {
   // Load base image, logos, and text
-  const isPaintScene = activeComponent === PAINT_SCENE_COMPONENT
+  const isPaintScene = activeComponent === ACTIVE_SCENE_LABELS_ENUM.PAINT_SCENE
   const [image, logo, bottomLogo, smallBlackFont] = await Promise.all([
     isPaintScene ? Jimp.read(scene) : Jimp.read(scene.variant.image),
     config.headerLogo && Jimp.read(config.headerLogo),
