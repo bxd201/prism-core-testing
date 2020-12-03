@@ -1,12 +1,13 @@
 /* eslint-disable jsx-a11y/label-has-for */
 // @flow
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, useContext } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
 import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 import { FormattedMessage, useIntl } from 'react-intl'
 import 'src/scss/convenience/visually-hidden.scss'
 import { KEY_CODES } from 'src/constants/globals'
+import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
 
 const baseClass = 'image-rotate-terms-modal'
 const wrapperClass = `${baseClass}__wrapper`
@@ -35,6 +36,7 @@ const ImageRotateTerms = ({ rotateImage, createColorPins, imageData, handleDismi
   let mouseDown = false
   const btnRef = useRef()
   const intl = useIntl()
+  const { cvw: { termsOfUseLink = 'https://www.sherwin-williams.com/terms-of-use' } }: ConfigurationContextType = useContext(ConfigurationContext)
 
   useEffect(() => {
     btnRef.current.focus()
@@ -113,7 +115,10 @@ const ImageRotateTerms = ({ rotateImage, createColorPins, imageData, handleDismi
                 }
                 <input tabIndex='-1' className='visually-hidden' type='checkbox' value='terms' checked={acceptTerms} onChange={handleChange} />
               </label>
-            </span> <span className={`${wrapperAgreeTermsTextClass}`}><FormattedMessage id='I_ACCEPT' /> <FormattedMessage id='TERMS_OF_USE' /></span>
+            </span>
+            <span className={`${wrapperAgreeTermsTextClass}`}>
+              <FormattedMessage id='I_ACCEPT' /> <a href={termsOfUseLink}><FormattedMessage id='TERMS_OF_USE' /></a>
+            </span>
           </div>
         </div>
         <button

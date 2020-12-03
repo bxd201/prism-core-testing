@@ -201,6 +201,11 @@
         border: none;
         flex: 1 0 auto;
         width: 62%;
+        padding: 0 0.5em;
+        a {
+          text-decoration: underline;
+          color: var(getThemeColor('primary'))
+        }
       }
       &__accept {
         background: var(getThemeColor('white'));

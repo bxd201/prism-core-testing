@@ -24,7 +24,27 @@ export type ConfigurationContextType = {
         bodyFontFamily: string,
         titleFontFamily: string
     },
-    featureExclusions: string[]
+    featureExclusions: string[],
+    cvw: {
+        termsOfUseLink?: string,
+        downloadSceneDisclaimer1?: string,
+        downloadSceneDisclaimer2?: string,
+        downloadSceneFooterImage?: string,
+        downloadSceneHeaderImage?: string,
+        introBG?: string,
+        introLogo?: string,
+        navColorCollections?: string,
+        navExpertColorPicks?: string,
+        navExploreColors?: string,
+        navMatchPhoto?: string,
+        navPaintedScenes?: string,
+        navSamplePhoto?: string,
+        navSampleScenes?: string,
+        navThumbAndroid?: string,
+        navThumbIpad?: string,
+        navThumbIphone?: string,
+        navThumbMyPhotos?: string
+    }
 }
 
 const ConfigurationContext: ConfigurationContextType = React.createContext<ConfigurationContextType>()
