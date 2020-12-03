@@ -21,17 +21,17 @@ import storageAvailable from '../../shared/utils/browserStorageCheck.util'
 
 type State = {
   colors: Color[],
-  activeColor: Color,
+  activeColor: ?Color,
   toggleCompareColor: boolean,
   temporaryActiveColor: Color | null
 }
 
 const lpFromLocalStorage = storageAvailable('localStorage') && JSON.parse(window.localStorage.getItem('lp'))
-const initialLpState = { colors: [], activeColor: {} }
+const initialLpState = { colors: [], activeColor: null }
 const { colors, activeColor } = lpFromLocalStorage || initialLpState
 export const initialState: State = {
-  colors: colors,
-  activeColor: activeColor,
+  colors,
+  activeColor,
   toggleCompareColor: false,
   temporaryActiveColor: null
 }
