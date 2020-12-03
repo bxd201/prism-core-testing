@@ -1,6 +1,6 @@
 // @flow
 import React, { useContext } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { Link, useRouteMatch, useHistory } from 'react-router-dom'
 import { emitColor } from 'src/store/actions/loadColors'
 import { add } from 'src/store/actions/live-palette'
@@ -23,19 +23,26 @@ const Content = ({ msg, color }: ContentProps) => {
   const { swatchShouldEmit } = useContext(ConfigurationContext)
   const { messages = {} } = useIntl()
 
+  const colorIsInLivePalette: boolean = useSelector(store => store.lp.colors.some(({ colorNumber }) => colorNumber === color.colorNumber))
+
   if (msg) {
     return (<p className='color-swatch__message'>{msg}</p>)
   }
   return (
     <div className='color-swatch__button-group'>
-      {displayAddButton && (
-        <button
-          title={(addButtonText || at(messages, 'ADD_TO_PALETTE')[0] || '').replace('{name}', fullColorName(color))}
-          onClick={() => dispatch(swatchShouldEmit ? emitColor(color) : add(color))}
-        >
-          <FontAwesomeIcon className='add-icon' icon={['fal', 'plus-circle']} size='2x' />
-        </button>
-      )}
+      {displayAddButton &&
+        (colorIsInLivePalette
+          ? (<FontAwesomeIcon className='check-icon' icon={['fa', 'check-circle']} size='2x' />)
+          : (
+            <button
+              title={(addButtonText || at(messages, 'ADD_TO_PALETTE')[0] || '').replace('{name}', fullColorName(color))}
+              onClick={() => dispatch(swatchShouldEmit ? emitColor(color) : add(color))}
+            >
+              <FontAwesomeIcon className='add-icon' icon={['fal', 'plus-circle']} size='2x' />
+            </button>
+          )
+        )
+      }
       {displayInfoButton && <InfoButton color={color} />}
       {displayDetailsLink && (
         colorDetailPageRoot
