@@ -11,13 +11,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
 import { DndProvider } from 'react-dnd-cjs'
 import HTML5Backend from 'react-dnd-html5-backend-cjs'
-import { injectIntl } from 'react-intl'
+import { injectIntl, FormattedMessage } from 'react-intl'
 import WithConfigurationContext from 'src/contexts/ConfigurationContext/WithConfigurationContext'
 
 import { SCENE_TYPES, SCENE_VARIANTS } from 'constants/globals'
 import {
   loadScenes,
   paintSceneSurface,
+  unpaintSceneSurfaces,
   activateScene,
   deactivateScene,
   changeSceneVariant,
@@ -155,7 +156,9 @@ type Props = {
   stockSceneCache: any,
   cacheStockScene: Function,
   activeSceneLabel: string,
-  clearStockSceneCache: Function
+  clearStockSceneCache: Function,
+  unpaintSceneSurfaces: Function,
+  unsetActiveScenePolluted: Function
 }
 
 type State = {
@@ -432,6 +435,14 @@ export class SceneManager extends PureComponent<Props, State> {
     this.props.replaceLpColors(colorInstances.slice(0, 8))
   }
 
+  unPaintAlSurfaces = () => {
+    const { scenes, unpaintSceneSurfaces, unsetActiveScenePolluted } = this.props
+    scenes.forEach((scene) => {
+      unpaintSceneSurfaces(scene.id)
+    })
+    unsetActiveScenePolluted()
+  }
+
   getPreviewData = (showLivePalette) => {
     const currentSceneData = this.props.sceneStatus.find(item => item.id === this.props.activeScenes[0])
     const currentSceneMetaData = this.props.scenes.find(scene => scene.id === this.props.activeScenes[0])
@@ -546,6 +557,10 @@ export class SceneManager extends PureComponent<Props, State> {
             modalStyle={DYNAMIC_MODAL_STYLE.danger}
             height={getRefDimension(this.wrapperRef, 'height')} /> : null}
           {activeScenes.length === 1 && expertColorPicks ? <ColorPickerSlide {...getSceneInfoById(find(scenes, { 'id': activeScenes[0] }), sceneStatus).variant} /> : null}
+          {isActiveScenePolluted && <button className={`${SceneManager.baseClass}__clear-areas-btn`} onClick={this.unPaintAlSurfaces}>
+            <div className={`${SceneManager.baseClass}__clear-areas-btn__icon`}><FontAwesomeIcon size='lg' icon={['fa', 'eraser']} /></div>
+            <div className={`${SceneManager.baseClass}__clear-areas-btn__text`}><FormattedMessage id='CLEAR_AREAS' /></div>
+          </button>}
           {!hideSceneSelector && <div className={`${SceneManager.baseClass}__block ${SceneManager.baseClass}__block--tabs`} role='radiogroup' aria-label='scene selector'>
             {scenes.map((scene, index) => {
               const sceneInfo = getSceneInfoById(scene, sceneStatus)
@@ -611,7 +626,6 @@ export class SceneManager extends PureComponent<Props, State> {
               )
             })}
           </div>}
-
           <div className={`${SceneManager.baseClass}__block ${SceneManager.baseClass}__block--scenes`} role='main'>
             {activeScenes.map((sceneId, index) => {
               const scene: Scene = scenes.filter(
@@ -793,6 +807,9 @@ const mapDispatchToProps = (dispatch: Function) => {
     paintSceneSurface: (sceneId, surfaceId, color) => {
       dispatch(paintSceneSurface(sceneId, surfaceId, color))
     },
+    unpaintSceneSurfaces: (sceneId) => {
+      dispatch(unpaintSceneSurfaces(sceneId))
+    },
     activateScene: (sceneId) => {
       dispatch(activateScene(sceneId))
     },
@@ -815,6 +832,7 @@ const mapDispatchToProps = (dispatch: Function) => {
     saveStockScene: (id: string, sceneName: string, sceneData: Object, sceneType: string, livePaletteColorsIdArray: Array<string>) => dispatch(saveStockScene(id, sceneName, sceneData, sceneType, livePaletteColorsIdArray)),
     showSavedConfirmModal: (shouldShow: boolean) => dispatch(showSavedConfirmModal(shouldShow)),
     setActiveScenePolluted: () => dispatch(setIsScenePolluted(POLLUTED_ENUM.POLLUTED_STOCK_SCENE)),
+    unsetActiveScenePolluted: () => dispatch(setIsScenePolluted()),
     setSelectedSceneVariantChanged: () => dispatch(setSelectedSceneVariantChanged()),
     mergeLpColors: (colors: Object[]) => dispatch(mergeLpColors(colors)),
     replaceLpColors: (colors: Object[]) => dispatch(replaceLpColors(colors)),
