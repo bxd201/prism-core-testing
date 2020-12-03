@@ -94,7 +94,7 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
       showToolBar: true,
       showPaintBrushTypes: false,
       showEraseBrushTypes: false,
-      showTooltip: true,
+      showTooltip: false,
       tooltipToolActiveNumber: 1,
       isHidePaint: false,
       zoomSliderHide: -1
