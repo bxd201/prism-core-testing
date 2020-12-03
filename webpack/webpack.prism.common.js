@@ -165,9 +165,8 @@ module.exports = {
           {
             loader: 'worker-loader',
             options: {
-              filename: flags.production ? `${flags.dirNameDistJs}/[name].[contenthash].js` : `${flags.dirNameDistJs}/[name].js`,
-              chunkFilename: flags.production ? `${flags.dirNameDistJs}/[id].[contenthash].worker.js` : `${flags.dirNameDistJs}/[id].worker.js`,
-              publicPath: `${BASE_PATH}/js/`
+              inline: true,
+              fallback: false
             }
           },
           {
@@ -200,6 +199,14 @@ module.exports = {
       minSize: 0,
       maxInitialRequests: Infinity,
       cacheGroups: [
+        {
+          name: (module, chunks, cacheGroupKey) => {
+            const moduleFileName = module.identifier().split('/').reduceRight(item => item).replace(/[aeiouy]/gi, '')
+            const allChunksNames = chunks.map((item) => item.name).join('~').replace(/[aeiouy]/gi, '')
+            return `${allChunksNames}-${moduleFileName}`
+          },
+          test: /\.worker\.js$/
+        },
         {
           name: 'nonR',
           test: /[\\/]node_modules[\\/](?!(react|react-dom|@firebase|@tensorflow|jimp))/
