@@ -94,7 +94,7 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
       showToolBar: true,
       showPaintBrushTypes: false,
       showEraseBrushTypes: false,
-      showTooltip: false,
+      showTooltip: true,
       tooltipToolActiveNumber: 1,
       isHidePaint: false,
       zoomSliderHide: -1
@@ -397,7 +397,7 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
             { this.generateSelectGroupTools() }
             {showTooltip && tooltipToolActiveNumber > 0 && tooltipToolActiveNumber === toolNumbers.SELECTAREA && <PaintToolTip
               isSelectGroup
-              tooltipToolActiveName={selectGroupTooltipData[0].displayName}
+              tooltipToolActiveName={intl.formatMessage({ id: selectGroupTooltipData[0].translationId })}
               tooltipToolActiveNumber={toolNumbers.SELECTAREA}
               tooltipContent={intl.formatMessage({ id: 'PAINT_TOOLS.TOOLTIPS.SELECTGROUP' })}
               toolsCount={toolBarButtons.length}
@@ -414,7 +414,7 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
               { this.generateTools(paintBrushTypesRender, eraseBrushTypesRender) }
               {showTooltip && tooltipToolActiveNumber < addColorsTooltipNumber && <div className={`${paintTooltipClass} ${paintTooltipActiveClass}`}>
                 <PaintToolTip
-                  tooltipToolActiveName={toolBarButtons[tooltipToolActiveNumber - 1].displayName}
+                  tooltipToolActiveName={intl.formatMessage({ id: toolBarButtons[tooltipToolActiveNumber - 1].translationId })}
                   tooltipToolActiveNumber={tooltipToolActiveNumber}
                   tooltipContent={intl.formatMessage({ id: `PAINT_TOOLS.TOOLTIPS.${toolBarButtons[tooltipToolActiveNumber - 1].name.toUpperCase()}` })}
                   toolsCount={toolBarButtons.length + 1}
@@ -436,7 +436,7 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
         </div>
         {showTooltip && tooltipToolActiveNumber === addColorsTooltipNumber && <div className={`${paintTooltipClass} ${paintTooltipActiveClass}`} style={{ left: '0px' }}>
           <PaintToolTip
-            tooltipToolActiveName={addColorsTooltip.displayName}
+            tooltipToolActiveName={intl.formatMessage({ id: 'PAINT_TOOLS.TOOLTIPS.ADDCOLORS' })}
             tooltipToolActiveNumber={tooltipToolActiveNumber}
             tooltipContent={intl.formatMessage({ id: `PAINT_TOOLS.TOOLTIPS.${addColorsTooltip.name.toUpperCase()}` })}
             toolsCount={toolBarButtons.length + 1}

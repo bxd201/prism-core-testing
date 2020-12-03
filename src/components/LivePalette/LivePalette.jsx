@@ -155,6 +155,7 @@ export class LivePalette extends PureComponent<Props, State> {
     }
 
     const ADD_COLOR_TEXT = (colors.length) ? 'ADD_A_COLOR' : 'FIND_COLORS_IN_CW'
+    const COMPARE_COLORS_TEXT = 'COMPARE_COLORS'
     const COLOR_TRAY_CLASS_MODIFIERS = (colors.length) ? 'add' : 'add-empty'
     return (
       <DndProvider backend={HTML5Backend}>
@@ -162,7 +163,25 @@ export class LivePalette extends PureComponent<Props, State> {
           <LivePaletteModal cancel={deactivateTemporaryColor} empty={empty} isActive={temporaryActiveColor !== null} />
           <div className='prism-live-palette__header'>
             <span className='prism-live-palette__header__name'><FormattedMessage id='PALETTE_TITLE' /></span>
-            {colors.length >= MIN_COMPARE_COLORS_ALLOWED && <button tabIndex='-1' className={!isFastMaskPage ? 'prism-live-palette__header__compare-button' : 'prism-live-palette__header__compare-button--hide'} onClick={this.toggleCompareColor}>Compare Color</button>}
+            {
+              colors.length >= MIN_COMPARE_COLORS_ALLOWED &&
+              <FormattedMessage id={COMPARE_COLORS_TEXT}>
+                {
+                  (msg: string) =>
+                    <button
+                      tabIndex='-1'
+                      className={
+                        !isFastMaskPage
+                          ? 'prism-live-palette__header__compare-button'
+                          : 'prism-live-palette__header__compare-button--hide'
+                      }
+                      onClick={this.toggleCompareColor}
+                    >
+                      {msg}
+                    </button>
+                }
+              </FormattedMessage>
+            }
           </div>
           {activeColor && <div className='prism-live-palette__active-color' style={{ backgroundColor: activeColor.hex }}>
             <div className={`prism-live-palette__active-color__details ${(activeColor.isDark) ? `prism-live-palette__active-color__details--dark` : ``}`}>

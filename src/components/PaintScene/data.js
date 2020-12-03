@@ -1,17 +1,17 @@
 // @flow
 
 export const toolBarButtons = [
-  { id: 1, name: 'paintArea', displayName: 'PAINT AREA', fontAwesomeIcon: { variant: 'fa', icon: 'fill-drip', rotate: 0, flip: 'horizontal' } },
-  { id: 2, name: 'paintBrush', displayName: 'PAINTBRUSH', fontAwesomeIcon: { variant: 'fa', icon: 'brush', rotate: 45 } },
-  { id: 3, name: 'selectArea', displayName: 'SELECT', fontAwesomeIcon: { variant: 'fa', icon: 'mouse-pointer', rotate: -20, flip: 'horizontal' } },
-  { id: 4, name: 'erase', displayName: 'ERASE', fontAwesomeIcon: { variant: 'fa', icon: 'eraser', rotate: 0 } },
-  { id: 5, name: 'defineArea', displayName: 'DEFINE AREA', fontAwesomeIcon: { variant: 'fal', icon: 'draw-polygon', rotate: 10 } },
-  { id: 6, name: 'removeArea', displayName: 'REMOVE AREA', fontAwesomeIcon: { variant: 'fal', icon: 'draw-polygon', rotate: 10 } },
-  { id: 7, name: 'zoom', displayName: 'ZOOM', fontAwesomeIcon: { variant: 'fal', icon: 'search-plus', rotate: 0 } },
-  { id: 8, name: 'undo', displayName: 'UNDO', fontAwesomeIcon: { variant: 'fa', icon: 'undo-alt', rotate: 0 } },
-  { id: 9, name: 'redo', displayName: 'REDO', fontAwesomeIcon: { variant: 'fa', icon: 'redo-alt', rotate: 0 } },
-  { id: 10, name: 'hidePaint', displayName: 'HIDE PAINT', fontAwesomeIcon: { variant: 'fa', icon: 'eye', rotate: 0, flip: 'horizontal' } },
-  { id: 11, name: 'info', displayName: 'HINTS', fontAwesomeIcon: { variant: 'fal', icon: 'info-circle', rotate: 0 } }
+  { id: 1, name: 'paintArea', displayName: 'PAINT AREA', translationId: 'HELPFUL_HINTS.CONTENT.PAINTING_MY_OWN_PHOTO.ICON_INFO_NAME.PAINT_AREA', fontAwesomeIcon: { variant: 'fa', icon: 'fill-drip', rotate: 0, flip: 'horizontal' } },
+  { id: 2, name: 'paintBrush', displayName: 'PAINTBRUSH', translationId: 'HELPFUL_HINTS.CONTENT.PAINTING_MY_OWN_PHOTO.ICON_INFO_NAME.PAINTBRUSH', fontAwesomeIcon: { variant: 'fa', icon: 'brush', rotate: 45 } },
+  { id: 3, name: 'selectArea', displayName: 'SELECT', translationId: 'HELPFUL_HINTS.CONTENT.PAINTING_MY_OWN_PHOTO.ICON_INFO_NAME.SELECT', fontAwesomeIcon: { variant: 'fa', icon: 'mouse-pointer', rotate: -20, flip: 'horizontal' } },
+  { id: 4, name: 'erase', displayName: 'ERASE', translationId: 'HELPFUL_HINTS.CONTENT.PAINTING_MY_OWN_PHOTO.ICON_INFO_NAME.ERASE', fontAwesomeIcon: { variant: 'fa', icon: 'eraser', rotate: 0 } },
+  { id: 5, name: 'defineArea', displayName: 'DEFINE AREA', translationId: 'HELPFUL_HINTS.CONTENT.PAINTING_MY_OWN_PHOTO.ICON_INFO_NAME.DEFINE_AREA', fontAwesomeIcon: { variant: 'fal', icon: 'draw-polygon', rotate: 10 } },
+  { id: 6, name: 'removeArea', displayName: 'REMOVE AREA', translationId: 'HELPFUL_HINTS.CONTENT.PAINTING_MY_OWN_PHOTO.ICON_INFO_NAME.REMOVE_AREA', fontAwesomeIcon: { variant: 'fal', icon: 'draw-polygon', rotate: 10 } },
+  { id: 7, name: 'zoom', displayName: 'ZOOM', translationId: 'HELPFUL_HINTS.CONTENT.PAINTING_MY_OWN_PHOTO.ICON_INFO_NAME.ZOOM', fontAwesomeIcon: { variant: 'fal', icon: 'search-plus', rotate: 0 } },
+  { id: 8, name: 'undo', displayName: 'UNDO', translationId: 'HELPFUL_HINTS.CONTENT.PAINTING_MY_OWN_PHOTO.ICON_INFO_NAME.UNDO_&_REDO', fontAwesomeIcon: { variant: 'fa', icon: 'undo-alt', rotate: 0 } },
+  { id: 9, name: 'redo', displayName: 'REDO', translationId: 'HELPFUL_HINTS.CONTENT.PAINTING_MY_OWN_PHOTO.ICON_INFO_NAME.UNDO_&_REDO', fontAwesomeIcon: { variant: 'fa', icon: 'redo-alt', rotate: 0 } },
+  { id: 10, name: 'hidePaint', displayName: 'HIDE PAINT', translationId: 'PAINT_TOOLS.TOOLS_NAME.HIDEPAINT', fontAwesomeIcon: { variant: 'fa', icon: 'eye', rotate: 0, flip: 'horizontal' } },
+  { id: 11, name: 'info', displayName: 'HINTS', translationId: 'PAINT_TOOLS.TOOLS_NAME.INFO', fontAwesomeIcon: { variant: 'fal', icon: 'info-circle', rotate: 0 } }
 ]
 
 export const addColorsTooltip = { name: 'addColors', displayName: 'ADD COLORS' }
@@ -30,7 +30,8 @@ export const selectGroupButtons = [
 
 export const selectGroupTooltipData = [
   {
-    displayName: 'GROUP AND UNGROUP'
+    displayName: 'GROUP AND UNGROUP',
+    translationId: 'PAINT_TOOLS.GROUP'
   }
 ]
 
