@@ -9,6 +9,7 @@ import { useHistory } from 'react-router-dom'
 import './SaveOptions.scss'
 import { showSaveSceneModal } from '../../store/actions/persistScene'
 import { saveLivePalette } from '../../store/actions/saveLivePalette'
+import { ACTIVE_SCENE_LABELS_ENUM } from '../../store/actions/navigation'
 import { replaceSceneStatus } from '../../shared/utils/sceneUtil'
 import { fullColorNumber } from '../../shared/helpers/ColorUtils'
 import { getSceneInfoById } from '../SceneManager/SceneManager'
@@ -22,20 +23,19 @@ import WithConfigurationContext from '../../contexts/ConfigurationContext/WithCo
 import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 
 type SaveOptionsProps = {
-  activeComponent: string,
   config: any
 }
 
 const saveOptionsBaseClassName = 'save-options'
 const saveOptionsItemsClassName = `${saveOptionsBaseClassName}__items`
 
-const PAINT_SCENE_COMPONENT = 'PaintScene'
-
 const SaveOptions = (props: SaveOptionsProps) => {
-  const { activeComponent, config: { featureExclusions } } = props
+  const { config: { featureExclusions } } = props
   const { formatMessage } = useIntl()
   const [showLivePaletteSaveModal, setShowLivePaletteSaveModal] = useState(false)
   const [showSavedConfirmModalFlag, setShowSavedConfirmModalFlag] = useState(false)
+  const activeSceneLabel = useSelector(store => store.activeSceneLabel)
+
   const dispatch = useDispatch()
   const { location: { pathname } } = useHistory()
   const { cvw } = props.config
@@ -195,12 +195,12 @@ const SaveOptions = (props: SaveOptionsProps) => {
         description={formatMessage({ id: 'SAVE_LIVE_PALETTE_MODAL.LP_SAVED' })}
         height={document.documentElement.clientHeight + window.pageYOffset} /> : null}
       {shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.download)
-        ? (activeComponent === PAINT_SCENE_COMPONENT
+        ? (activeSceneLabel === ACTIVE_SCENE_LABELS_ENUM.PAINT_SCENE
           ? <div>
-            {cvwFromConfig ? <SceneDownload {...{ buttonCaption: 'DOWNLOAD_MASK', getFlatImage: getFlatImage, activeComponent: props.activeComponent, config: getDownloadStaticResourcesPath(cvwFromConfig) }} /> : <CircleLoader />}
+            {cvwFromConfig ? <SceneDownload {...{ buttonCaption: 'DOWNLOAD_MASK', getFlatImage: getFlatImage, activeComponent: activeSceneLabel, config: getDownloadStaticResourcesPath(cvwFromConfig) }} /> : <CircleLoader />}
           </div>
           : <div>
-            {cvwFromConfig ? <SceneDownload {...{ buttonCaption: 'DOWNLOAD_MASK', sceneInfo: firstActiveSceneInfo, activeComponent: props.activeComponent, config: getDownloadStaticResourcesPath(cvwFromConfig) }} /> : <CircleLoader />}
+            {cvwFromConfig ? <SceneDownload {...{ buttonCaption: 'DOWNLOAD_MASK', sceneInfo: firstActiveSceneInfo, activeComponent: activeSceneLabel, config: getDownloadStaticResourcesPath(cvwFromConfig) }} /> : <CircleLoader />}
           </div>) : null}
       { shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.documentSaving)
         ? <button onClick={handleSave}>

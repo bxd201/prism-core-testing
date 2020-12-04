@@ -233,7 +233,7 @@ export const CVW = (props: CVWPropsType) => {
             <LivePalette />
           </div>
           <div className='cvw__root-container__footer--secondary'>
-            <SaveOptions activeComponent={lastActiveComponent} />
+            <SaveOptions />
           </div>
         </div>
       }
