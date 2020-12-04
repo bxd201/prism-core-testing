@@ -86,7 +86,7 @@ export default (props: Props) => {
       {/* $FlowIgnore */}
       {!isCreatingDownload && finalImageUrl && !navigator.msSaveBlob && (
         <li style={{ display: 'inline-block' }}>
-          <a href={`${finalImageUrl}`} download='ColorSnapImage.jpg' ref={downloadLinkRef} hidden>Click to download</a>
+          <a href={`${finalImageUrl}`} download='SceneImage.jpg' ref={downloadLinkRef} hidden>Click to download</a>
         </li>
       )}
     </ul>
