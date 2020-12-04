@@ -109,7 +109,9 @@ const generateImage = async (scene: SceneInfo, activeComponent: string, config: 
 
   // Brochure composition settings
   const swatchRows = Math.ceil(livePaletteColors.length / 2)
-  const topMargin = logo ? 200 : 0
+  const headerHeight = 200
+  const headerLogoHeight = Math.floor(headerHeight * 0.9)
+  const topMargin = logo ? headerHeight : 0
   const footerHeight = 200
   const padding = 20
   const swatchHeight = 200
@@ -122,6 +124,10 @@ const generateImage = async (scene: SceneInfo, activeComponent: string, config: 
   image.background(0xFFFFFFFF)
   image.contain(image.bitmap.width, newHeight, Jimp.HORIZONTAL_ALIGN_CENTER | Jimp.VERTICAL_ALIGN_BOTTOM)
   if (logo) {
+    if (logo.bitmap.height > headerLogoHeight) {
+      logo.resize(Jimp.AUTO, headerLogoHeight)
+    }
+
     const logoX = (image.bitmap.width - logo.bitmap.width) / 2
     const logoY = (topMargin - logo.bitmap.height) / 2
 
