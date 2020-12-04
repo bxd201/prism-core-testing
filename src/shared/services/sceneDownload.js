@@ -17,7 +17,6 @@ const generateImage = async (scene: SceneInfo, activeComponent: string, config: 
 
   const downloadDisclaimer1 = config.downloadDisclaimer1
   const downloadDisclaimer2 = config.downloadDisclaimer2
-  const originText = 'ORIGINAL'
 
   // Create array of colored surfaces
   const useBlackText = (hexColor: string) => {
@@ -102,7 +101,7 @@ const generateImage = async (scene: SceneInfo, activeComponent: string, config: 
     image.composite(miniImgBorderTop, (2 / 3) * currWidth, (2 / 3) * currHeight)
 
     const textBackground = new Jimp(textWidth, textHeight, '#fff')
-    textBackground.print(blackFonts.small, 0, 0, originText)
+    textBackground.print(blackFonts.small, 0, 0, intl.formatMessage({ id: 'ORIGIN_TEXT' }))
     image.composite(textBackground, currWidth - textWidth, (2 / 3) * currHeight + borderWidth)
     image.resize(properWidth, Jimp.AUTO)
   }
