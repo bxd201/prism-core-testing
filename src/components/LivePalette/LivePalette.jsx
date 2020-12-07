@@ -180,9 +180,10 @@ export class LivePalette extends PureComponent<Props, State> {
       disabledSlots = times(additionalSlots, (index) => <EmptySlot key={index} />)
     }
 
-    const ADD_COLOR_TEXT = (colors.length) ? 'ADD_A_COLOR' : 'FIND_COLORS_IN_CW'
+    const IS_EMPTY = !colors.length
+    const ADD_COLOR_TEXT = IS_EMPTY ? 'FIND_COLORS_IN_CW' : 'ADD_A_COLOR'
     const COMPARE_COLORS_TEXT = 'COMPARE_COLORS'
-    const COLOR_TRAY_CLASS_MODIFIERS = (colors.length) ? 'add' : 'add-empty'
+
     return (
       <DndProvider backend={HTML5Backend}>
         <div className='prism-live-palette'>
@@ -222,11 +223,13 @@ export class LivePalette extends PureComponent<Props, State> {
             {activeSlots}
             {colors.length < LP_MAX_COLORS_ALLOWED && <button onClick={(e) => {
               this.handleAddColor(e)
-            }} className={`prism-live-palette__slot prism-live-palette__slot--${COLOR_TRAY_CLASS_MODIFIERS}`}>
-              <FontAwesomeIcon className='prism-live-palette__icon' icon={['fal', 'plus-circle']} size='2x' color={varValues._colors.primary} />
-              <FormattedMessage id={ADD_COLOR_TEXT}>
-                {(msg: string) => <span className='prism-live-palette__slot__copy'>{msg}</span>}
-              </FormattedMessage>
+            }} className={`prism-live-palette__slot prism-live-palette__slot--${IS_EMPTY ? 'add-big' : 'add'}`}>
+              <div className={`prism-live-palette__slot__guts ${IS_EMPTY ? 'prism-live-palette__slot__guts--hrzntl' : ''}`}>
+                <FontAwesomeIcon className={`prism-live-palette__slot__icon ${IS_EMPTY ? 'prism-live-palette__slot__icon--left' : 'prism-live-palette__slot__icon--top'}`} icon={['fal', 'plus-circle']} size='2x' color={varValues._colors.primary} />
+                <FormattedMessage id={ADD_COLOR_TEXT}>
+                  {(msg: string) => <span className={`prism-live-palette__slot__copy ${IS_EMPTY ? 'prism-live-palette__slot__copy--right' : 'prism-live-palette__slot__copy--btm'}`}>{msg}</span>}
+                </FormattedMessage>
+              </div>
             </button>}
             {disabledSlots}
           </div>
