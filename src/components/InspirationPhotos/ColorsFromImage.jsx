@@ -202,6 +202,7 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
     const activePinIndex = this.state.pinnedColors.findIndex((colors) => {
       return colors.isActiveFlag === true
     })
+
     if (activePinIndex !== -1) {
       clonePins[activePinIndex].isActiveFlag = false
     }
@@ -220,8 +221,7 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
       pinnedColors: [
         ...newPins,
         {
-          name: color.name,
-          colorNumber: color.colorNumber,
+          ...color,
           rgbValue: `rgb(${currentPixelRGB})`,
           translateX: cursorX - activedPinsHalfWidth,
           translateY: cursorY - activedPinsHalfWidth,
