@@ -4,20 +4,29 @@
 
 ### Running Local Instance
 ```
-# will generate assets for the embed and bundle entrypoints
-# and start a server at localhost:8080
+# will generate assets for the embed.js and all other Prism app code
+# and start 3 webpack-dev-server instances for embed, templates, and app serving
 npm start
 ```
 
-or, to build one or more specific entrypoint assets, pass the desired entrypoints to the `ENTRY` var as a comma-delimited list:
-```
-# this will build bundle.js, css/bundle.css, and css/cleanslate.css
-ENTRY=bundle npm start
-```
+#### Specifying local host, port, and protocol for Prism, embed, or template webpck dev servers
+Since we have 3 parallell webpack dev server instances running (one for the embed script, one for templates, and a third for the main Prism app), the best way to configure hosts or work around port conflicts is not immediately apparent. 
 
-Refer to `webpack/constants.js` for all available entrypoint names in the `facetEntryPoints` and `mainEntryPoints` exports.
+There are 9 vars you can set to configure hosts, ports, and protocols for the three separate server instances. They are (including default values):
 
-#### Specifying local host
+- EMBED_LOCAL_HOST = 'localhost'
+- EMBED_LOCAL_PORT = '8085'
+- EMBED_LOCAL_PROTOCOL = 'https'
+- PRISM_LOCAL_HOST = 'localhost'
+- PRISM_LOCAL_PORT = '8080'
+- PRISM_LOCAL_PROTOCOL = 'https'
+- TEMPLATES_LOCAL_HOST = 'localhost'
+- TEMPLATES_LOCAL_PORT = '8082'
+- TEMPLATES_LOCAL_PROTOCOL = 'https'
+
+(refer to constants.env-vars.js for var names, and constants-env-var-defaults.js for default values)
+
+
 The local dev server will typically run from `localhost`, but if you need to specify a different host you can do so by passing a var like so:
 ```
 URL=https://0.0.0.0:8080 npm start
