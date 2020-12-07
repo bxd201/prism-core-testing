@@ -10,26 +10,29 @@ npm start
 ```
 
 #### Specifying local host, port, and protocol for Prism, embed, or template webpck dev servers
-Since we have 3 parallell webpack dev server instances running (one for the embed script, one for templates, and a third for the main Prism app), the best way to configure hosts or work around port conflicts is not immediately apparent. 
+Since we have 3 parallell webpack dev server instances running (one for the embed script, one for templates, and a third for the main Prism app), the best way to configure hosts or work around port conflicts is not immediately apparent.
 
 There are 9 vars you can set to configure hosts, ports, and protocols for the three separate server instances. They are (including default values):
 
-- EMBED_LOCAL_HOST = 'localhost'
-- EMBED_LOCAL_PORT = '8085'
-- EMBED_LOCAL_PROTOCOL = 'https'
-- PRISM_LOCAL_HOST = 'localhost'
-- PRISM_LOCAL_PORT = '8080'
-- PRISM_LOCAL_PROTOCOL = 'https'
-- TEMPLATES_LOCAL_HOST = 'localhost'
-- TEMPLATES_LOCAL_PORT = '8082'
-- TEMPLATES_LOCAL_PROTOCOL = 'https'
+|Env var|Default value|
+|---|---|
+|EMBED_LOCAL_HOST|'localhost'|
+|EMBED_LOCAL_PORT|'8085'|
+|EMBED_LOCAL_PROTOCOL|'https'|
+|PRISM_LOCAL_HOST|'localhost'|
+|PRISM_LOCAL_PORT|'8080'|
+|PRISM_LOCAL_PROTOCOL|'https'|
+|TEMPLATES_LOCAL_HOST|'localhost'|
+|TEMPLATES_LOCAL_PORT|'8082'|
+|TEMPLATES_LOCAL_PROTOCOL|'https'|
 
 (refer to constants.env-vars.js for var names, and constants-env-var-defaults.js for default values)
 
+To specify changes to these defaults when starting the server, follow this format: `VAR_NAME=value npm start`
 
-The local dev server will typically run from `localhost`, but if you need to specify a different host you can do so by passing a var like so:
+For example, to update the Prism server to run at `prism-local.sherwin-williams.com`, and for the embed server port to `8087`, you would do the following:
 ```
-URL=https://0.0.0.0:8080 npm start
+PRISM_LOCAL_HOST=prism-local.sherwin-williams.com EMBED_LOCAL_PORT=8087 npm start
 ```
 
 ### Deploy
