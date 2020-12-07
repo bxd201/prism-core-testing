@@ -18,7 +18,7 @@
     "preprism-cleanstart": "npm run clear-prism-build-cache",
     "prism-cleanstart": "npm start",
     "preprism-start": "npm run create-empty-prism-manifest",
-    "prism-start": "cross-env NODE_ENV=development SMARTMASK_ENABLED=1 FIREBASE_AUTH_ENABLED=1 API_URL=https://integration-prism-api.ebus.swaws ML_API_URL=https://develop-prism-ml-api.ebus.swaws ENTRY=$ENTRY webpack-dev-server --mode development --open --hot --config webpack/webpack.prism.dev.js",
+    "prism-start": "cross-env NODE_ENV=development SMARTMASK_ENABLED=1 FIREBASE_AUTH_ENABLED=1 API_URL=https://develop-prism-api.ebus.swaws ML_API_URL=https://develop-prism-ml-api.ebus.swaws ENTRY=$ENTRY webpack-dev-server --mode development --open --hot --config webpack/webpack.prism.dev.js",
     "precleanstart": "npm run clear-embed-output && npm run clear-prism-build-cache && npm run create-empty-prism-manifest",
     "cleanstart": "npm run start",
     "start": "cross-env npm run prism-start & npm run embed-start & npm run templates-start",
