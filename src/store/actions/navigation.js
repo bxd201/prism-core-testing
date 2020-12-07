@@ -63,6 +63,14 @@ export const cachePaintScene = (paintSceneData: any) => {
   }
 }
 
+export const CACHE_CAROUSEL = 'CACHE_CAROUSEL'
+export const cacheCarousel = (carouselInfo: any) => {
+  return {
+    type: CACHE_CAROUSEL,
+    payload: carouselInfo
+  }
+}
+
 export const CLEAR_PAINT_SCENE_CACHE = 'CLEAR_PAINT_SCENE_CACHE'
 export const clearPaintSceneCache = () => {
   return {

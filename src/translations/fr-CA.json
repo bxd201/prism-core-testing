@@ -172,6 +172,7 @@
   "MATCHES": "Matches",
   "LRV": "IRL",
   "MAXIMIZE_COLOR_SWATCH": "Maximiser l'échantillon de couleur",
+  "MORE_SCENES":"MORE SCENES",
   "MY_IDEAS": {
     "ARIA_LABEL_ADD": "Add {colorName} to palette",
     "ARIA_LABEL_DONE": "done editing saved ideas",

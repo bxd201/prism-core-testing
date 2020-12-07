@@ -47,7 +47,7 @@ import {
   activeSceneLabel,
   allowNavigateToIntendedDestination, dirtyNavigationIntent, imageRotateBypass, isColorwallModallyPresented,
   navigationIntent, navigationReturnIntent,
-  paintSceneCache,
+  paintSceneCache, carouselCache,
   scenePolluted, shouldShowGlobalDestroyWarning, stockSceneCache
 } from './navigation'
 
@@ -96,6 +96,7 @@ export default combineReducers({
   scenePolluted,
   allowNavigateToIntendedDestination,
   paintSceneCache,
+  carouselCache,
   activeSceneLabel,
   navigationReturnIntent,
   imageRotateBypass,
