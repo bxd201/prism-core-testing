@@ -29,6 +29,15 @@ $menu-bar-width: 27em;
     text-transform: uppercase;
   }
 
+  &__button-close {
+    border-radius: 4px;
+    background-color: var(getThemeColor('primary'));
+    color: var(getThemeColor('primary.contrast'));
+    padding: 3px 9px;
+    height: 38px;
+    @include respond-below(xs) { min-height: 44px; }
+  }
+
   &__prime-color-wall-button {
     background-color: white;
     color: var(getThemeColor('primary'));
@@ -79,4 +88,9 @@ $menu-bar-width: 27em;
     color: $btn-bg;
     height: auto;
   }
+}
+
+.color-wall-mode-btns__col {
+  padding: $ui-spacing;
+  .color-wall-mode-btns__cell { margin: 0; }
 }

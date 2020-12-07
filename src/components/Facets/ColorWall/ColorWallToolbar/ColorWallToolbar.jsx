@@ -13,12 +13,8 @@ import { MODE_CLASS_NAMES } from '../shared'
 import ButtonBar from 'src/components/GeneralButtons/ButtonBar/ButtonBar'
 import { generateColorWallPageUrl } from 'src/shared/helpers/ColorUtils'
 import ColorWallContext from '../ColorWallContext'
+import { navigateToIntendedDestination, setImageRotateBypass, setIsColorWallModallyPresented } from 'src/store/actions/navigation'
 import './ColorWallMenuBar.scss'
-import {
-  navigateToIntendedDestination,
-  setImageRotateBypass,
-  setIsColorWallModallyPresented
-} from '../../../../store/actions/navigation'
 
 const PATH_END_FAMILY = 'family/'
 const menuBarPrefix = 'menu-bar'
@@ -65,15 +61,6 @@ export default () => {
                           <span className={MODE_CLASS_NAMES.DESC}><FormattedMessage id='COLOR_FAMILIES' /></span>
                         </ButtonBar.Button>
                       )}
-                      {shouldShowCloseButton ? <ButtonBar.Button onClick={(e: SyntheticEvent) => {
-                        e.preventDefault()
-                        dispatch(setIsColorWallModallyPresented(false))
-                        dispatch(navigateToIntendedDestination())
-                        dispatch(setImageRotateBypass(imageRotateBypassValue))
-                      }}>
-                        <FontAwesomeIcon className='color-families-svg' icon={['fa', 'times']} pull='left' />
-                        <span className={MODE_CLASS_NAMES.DESC}><FormattedMessage id='CLOSE' /></span>
-                      </ButtonBar.Button> : null}
                     </>
                   )
                 }
@@ -110,9 +97,6 @@ export default () => {
                     </span>
                     <FontAwesomeIcon className='close-icon-svg' icon={['fa', 'angle-down']} pull='right' />
                   </Button>
-                  <ButtonBar.Button to={'/active'}>
-                    <span className={MODE_CLASS_NAMES.DESC}><FormattedMessage id='CLOSE' /></span>
-                  </ButtonBar.Button>
                   <Menu className={`${menuBarPrefix}__menu ${primeColorWall ? 'shift-left' : ''}`}>
                     {(isFamilyView || family ? families : visibleSections)
                       .filter((name: string) => activeFamily !== name && activeSection !== name && (width <= 768 || !primeColorWall || primeColorWall !== name))
@@ -131,6 +115,20 @@ export default () => {
                 </Wrapper>
               )
             }
+            {shouldShowCloseButton && (
+              <button
+                className='menu-bar__button-close'
+                onClick={e => {
+                  e.preventDefault()
+                  dispatch(setIsColorWallModallyPresented(false))
+                  dispatch(navigateToIntendedDestination())
+                  dispatch(setImageRotateBypass(imageRotateBypassValue))
+                }}
+              >
+                <FontAwesomeIcon className='color-families-svg' icon={['fa', 'times']} pull='left' />
+                <span className={MODE_CLASS_NAMES.DESC}><FormattedMessage id='CLOSE' /></span>
+              </button>
+            )}
           </div>
         </div>
       )}
