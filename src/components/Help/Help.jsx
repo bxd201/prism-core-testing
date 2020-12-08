@@ -1,5 +1,5 @@
 // @flow
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import CardMenu from 'src/components/CardMenu/CardMenu'
 import { helpTabs, helpHeader, filterHelpItems } from './data'
 import './Help.scss'
@@ -10,6 +10,7 @@ import at from 'lodash/at'
 import * as scroll from 'scroll'
 import { KEY_CODES } from 'src/constants/globals'
 import WithConfigurationContext from '../../contexts/ConfigurationContext/WithConfigurationContext'
+import uniqueId from 'lodash/uniqueId'
 
 const baseClass = `help`
 const wrapper = `${baseClass}__wrapper`
@@ -34,11 +35,13 @@ const secondIcon = `${baseClass}__second-icon`
 
 let isTabClick: boolean = false
 
-const helpTabsHeaderList = (activeTabIndex: number, setActiveTabIndex: Function, handleClick: Function, featureExclusions: string[]) => {
-  return filterHelpItems(featureExclusions).map((tab: Object, index: number) => {
+const helpTabsHeaderList = (helpItems: any[], activeTabIndex: number, setActiveTabIndex: Function, handleClick: Function, featureExclusions: string[]) => {
+  return helpItems.map((tab: Object, index: number) => {
+    const itemKey = uniqueId('hints-tab-')
+
     return (
       <li
-        key={`hints-tab-${index}`}
+        key={itemKey}
         className={(index === activeTabIndex) ? activeLi : inactiveLi}
         onMouseDown={(e) => e.preventDefault()}
         onClick={(e) => showTabContent(e, index, setActiveTabIndex, false, handleClick)}
@@ -52,14 +55,16 @@ const helpTabsHeaderList = (activeTabIndex: number, setActiveTabIndex: Function,
   })
 }
 
-const helpTabsContentList = (refs: Object, messages: Object, featureExclusions: string[]) => {
-  return filterHelpItems(featureExclusions).map((tab: Object, index: number) => {
+const helpTabsContentList = (helpItems: any[], refs: Object, messages: Object, featureExclusions: string[], cvw: any) => {
+  return helpItems.map((tab: Object, index: number) => {
     const tabContent = tab.content
     const imageList = tab.imageList
     const tabSubContent = tab.subContent
     const imageListMobile = tab.imageListMobile
+    const itemKey = uniqueId('content-')
+
     return (
-      <div ref={refs[index]} key={`content-${index}`} className={`${helpContent} ${tab.isHiddenMobile ? helpContentHide : ''}`}>
+      <div ref={refs[index]} key={itemKey} className={`${helpContent} ${tab.isHiddenMobile ? helpContentHide : ''}`}>
         <div className={`${contentHeader}`}>
           <h2><FormattedMessage id={`${tab.header}`} /></h2>
           <span><FormattedMessage id={`${tab.subHeader}`} /></span>
@@ -104,9 +109,9 @@ const helpTabsContentList = (refs: Object, messages: Object, featureExclusions: 
               }
             </ul> : (imageList) ? <ul className={`${helpImages}`}>
               {
-                imageList && imageList.map((imageData, index) => {
+                imageList && imageList.map((item, index) => {
                   return <li key={`li-${index}`} className={`${(index > 0) ? `cel cel-${index}` : ``}`}>
-                    <img src={`${imageData.imagePath}`} alt={`${(imageData.alt) ? at(messages, imageData.alt)[0] : ''}`} />
+                    {cvw?.help ? <img src={cvw.help[item.imagePathKey]} alt={`${(item.alt) ? at(messages, item.alt)[0] : ''}`} /> : null}
                   </li>
                 })
               }
@@ -115,9 +120,9 @@ const helpTabsContentList = (refs: Object, messages: Object, featureExclusions: 
           {
             imageListMobile && <ul className={`${helpImagesMobile}`}>
               {
-                imageListMobile.map((list, index) => {
+                imageListMobile.map((item, index) => {
                   return <li key={`li-mobile-image-${index}`} className={`cel`}>
-                    <img src={`${list.imagePath}`} alt={`${(list.alt) ? at(messages, list.alt)[0] : ''}`} />
+                    {cvw?.help ? <img src={cvw.help[item.imagePathKey]} alt={`${(item.alt) ? at(messages, item.alt)[0] : ''}`} /> : null}
                   </li>
                 })
               }
@@ -168,12 +173,19 @@ const Help = (props: HelpProps) => {
   const [activeTabIndex, setActiveTabIndex] = useState(0)
   const contentWrapperRef = React.createRef()
   const { messages = {} } = useIntl()
-  const { config: { featureExclusions } } = props
+  const { config: { featureExclusions, cvw } } = props
+  const [filteredHelpItems, setFilteredHelpItems] = useState([])
 
   const refs = helpTabs.reduce((acc, value) => {
     acc[value.id] = React.createRef()
     return acc
   }, {})
+
+  useEffect(() => {
+    if (featureExclusions) {
+      setFilteredHelpItems(filterHelpItems(featureExclusions))
+    }
+  }, [featureExclusions])
 
   const handleClick = (id: number) => {
     const elementsFirstChildTop = refs[id].current.firstChild.getBoundingClientRect().top
@@ -208,11 +220,11 @@ const Help = (props: HelpProps) => {
         <div className={`${wrapper}`}>
           <div className={`${tabsContainer}`}>
             <ul>
-              {helpTabsHeaderList(activeTabIndex, setActiveTabIndex, handleClick)}
+              {helpTabsHeaderList(filteredHelpItems, activeTabIndex, setActiveTabIndex, handleClick)}
             </ul>
           </div>
           <div role='tab' tabIndex='0' ref={contentWrapperRef} className={`${contentWrapper}`} onScroll={contentWrapperScrollHandler}>
-            {helpTabsContentList(refs, messages, featureExclusions)}
+            {helpTabsContentList(filteredHelpItems, refs, messages, featureExclusions, cvw)}
           </div>
         </div>
       )}
