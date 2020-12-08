@@ -189,42 +189,47 @@ export const CVW = (props: CVWPropsType) => {
       {toggleCompareColor
         ? <CompareColor />
         : (
-          <div className={`cvw__root-wrapper ${colorDetailsModalShowing ? 'hide-on-small-screens' : ''}`} ref={wrapperRef}>
-            { shouldShowGlobalDestroyWarning ? <DynamicModal
-              description={intl.formatMessage({ id: 'CVW.WARNING_REPLACEMENT' })}
-              actions={[
-                { text: intl.formatMessage({ id: 'YES' }), callback: handleNavigationIntentConfirm },
-                { text: intl.formatMessage({ id: 'NO' }), callback: handleNavigationIntentCancel }
-              ]}
-              modalStyle={DYNAMIC_MODAL_STYLE.danger}
-              height={getRefDimension(wrapperRef, 'height')} /> : null}
-            <ColorVisualizerNav uploadPaintScene={setUploadPaintScene} activePaintScene={setActivePaintScene} setLastActiveComponent={setLastActiveComponent} setMatchPhotoScene={setMatchPhotoScene} />
+          <>
+            {shouldShowGlobalDestroyWarning && (
+              <DynamicModal
+                description={intl.formatMessage({ id: 'CVW.WARNING_REPLACEMENT' })}
+                actions={[
+                  { text: intl.formatMessage({ id: 'YES' }), callback: handleNavigationIntentConfirm },
+                  { text: intl.formatMessage({ id: 'NO' }), callback: handleNavigationIntentCancel }
+                ]}
+                modalStyle={DYNAMIC_MODAL_STYLE.danger}
+                height={getRefDimension(wrapperRef, 'height')}
+              />
+            )}
             <ColorDetailsModal />
-            <Switch>
-              <Route path='/active/color/:colorId/:colorSEO' render={() => <ColorDetails />} />
-              <Route path='/active/color-wall(/.*)?' render={() => <ColorWallPage displayAddButton displayInfoButton displayDetailsLink={false} />} />
-              <Route path='/active/color-collections' render={() => <ColorCollections isExpertColor={false} {...location.state} />} />
-              <Route path='/upload/match-photo'>{getActiveScene()}</Route>
-              <Route path='/upload/paint-scene'>{getActiveScene()}</Route>
-              <Route path='/active/paint-scene'>{ImageRotateScene}</Route>
-              <Route path='/active/match-photo'>{matchPhotoScene}</Route>
-              <Route path='/active/use-our-image' render={() => <SampleScenesWrapper isColorTinted activateScene={activateStockScene} />} />
-              <Route path='/active/expert-colors' render={() => <ExpertColorPicks isExpertColor />} />
-              <Route path='/active/color-from-image' render={() => <InspiredScene />} />
-              <Route path='/active/paint-photo' render={() => <SampleScenesWrapper activateScene={activateStockScene} />} />
-              <Route path='/my-ideas-preview' render={() => <MyIdeaPreview openScene={openSceneFromPreview} />} />
-              <Route path='/active/masking' render={() => <PaintSceneMaskingWrapper />} />
-              <Route path='/active/my-ideas' render={() => <MyIdeasContainer />} />
-              <Route path='/active/help' render={() => <Help />} />
-            </Switch>
-            <div
+            <div className={`cvw__root-wrapper ${colorDetailsModalShowing ? 'hide-on-small-screens' : ''}`} ref={wrapperRef}>
+              <ColorVisualizerNav uploadPaintScene={setUploadPaintScene} activePaintScene={setActivePaintScene} setLastActiveComponent={setLastActiveComponent} setMatchPhotoScene={setMatchPhotoScene} />
+              <Switch>
+                <Route path='/active/color/:colorId/:colorSEO' render={() => <ColorDetails />} />
+                <Route path='/active/color-wall(/.*)?' render={() => <ColorWallPage displayAddButton displayInfoButton displayDetailsLink={false} />} />
+                <Route path='/active/color-collections' render={() => <ColorCollections isExpertColor={false} {...location.state} />} />
+                <Route path='/upload/match-photo'>{getActiveScene()}</Route>
+                <Route path='/upload/paint-scene'>{getActiveScene()}</Route>
+                <Route path='/active/paint-scene'>{ImageRotateScene}</Route>
+                <Route path='/active/match-photo'>{matchPhotoScene}</Route>
+                <Route path='/active/use-our-image' render={() => <SampleScenesWrapper isColorTinted activateScene={activateStockScene} />} />
+                <Route path='/active/expert-colors' render={() => <ExpertColorPicks isExpertColor />} />
+                <Route path='/active/color-from-image' render={() => <InspiredScene />} />
+                <Route path='/active/paint-photo' render={() => <SampleScenesWrapper activateScene={activateStockScene} />} />
+                <Route path='/my-ideas-preview' render={() => <MyIdeaPreview openScene={openSceneFromPreview} />} />
+                <Route path='/active/masking' render={() => <PaintSceneMaskingWrapper />} />
+                <Route path='/active/my-ideas' render={() => <MyIdeasContainer />} />
+                <Route path='/active/help' render={() => <Help />} />
+              </Switch>
+              <div
               /* This div has multiple responsibilities in the DOM tree. It cannot be removed, moved, or changed without causing regressions. */
-              style={{ display: shouldHideSceneManagerDiv(location.pathname) ? 'none' : 'block' }}
-            >
-              {lastActiveComponent === 'StockScene' && activeStockScene}
-              {lastActiveComponent === 'PaintScene' && activePaintScene}
+                style={{ display: shouldHideSceneManagerDiv(location.pathname) ? 'none' : 'block' }}
+              >
+                {lastActiveComponent === 'StockScene' && activeStockScene}
+                {lastActiveComponent === 'PaintScene' && activePaintScene}
+              </div>
             </div>
-          </div>
+          </>
         )
       }
       {
