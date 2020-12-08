@@ -436,7 +436,7 @@ export class SceneManager extends PureComponent<Props, State> {
     this.props.replaceLpColors(colorInstances.slice(0, 8))
   }
 
-  unPaintAlSurfaces = () => {
+  unPaintAllSurfaces = () => {
     const { scenes, unpaintSceneSurfaces, unsetActiveScenePolluted } = this.props
     scenes.forEach((scene) => {
       unpaintSceneSurfaces(scene.id)
@@ -498,7 +498,8 @@ export class SceneManager extends PureComponent<Props, State> {
       hideSceneSelector,
       navigationIntent,
       isActiveScenePolluted,
-      config } = this.props
+      config,
+      unsetActiveScenePolluted } = this.props
 
     const { activeSceneStatus, showSelectPaletteModal } = this.state
     const { selectPaletteActions, selectPaletteTitle, selectPaletteDescription } = this.getSelectPaletteModalConfig()
@@ -561,11 +562,11 @@ export class SceneManager extends PureComponent<Props, State> {
           {activeScenes.length === 1 && expertColorPicks && (!config.featureExclusions || !config.featureExclusions.includes('expertColorPicks')) && (
             <ColorPickerSlide {...getSceneInfoById(find(scenes, { 'id': activeScenes[0] }), sceneStatus).variant} />
           )}
-          {isActiveScenePolluted && <button className={`${SceneManager.baseClass}__clear-areas-btn`} onClick={this.unPaintAlSurfaces}>
+          {isActiveScenePolluted && <button className={`${SceneManager.baseClass}__clear-areas-btn`} onClick={this.unPaintAllSurfaces}>
             <div className={`${SceneManager.baseClass}__clear-areas-btn__icon`}><FontAwesomeIcon size='lg' icon={['fa', 'eraser']} /></div>
             <div className={`${SceneManager.baseClass}__clear-areas-btn__text`}><FormattedMessage id='CLEAR_AREAS' /></div>
           </button>}
-          {<Link className={`${SceneManager.baseClass}__more-area-btn`} to={`/active/use-our-image`} tabIndex='-1'>
+          {<Link className={`${SceneManager.baseClass}__more-area-btn`} to={`/active/use-our-image`} onClick={() => unsetActiveScenePolluted()} tabIndex='-1'>
             <span className={`${SceneManager.baseClass}__more-area-btn__icon`}>
               <FontAwesomeIcon className={`${SceneManager.baseClass}__more-area-btn__icon-1`} icon={['fal', 'square-full']} size='sm' />
               <FontAwesomeIcon className={`${SceneManager.baseClass}__more-area-btn__icon-2`} icon={['fal', 'square-full']} size='sm' />
