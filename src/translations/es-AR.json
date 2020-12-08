@@ -75,8 +75,8 @@
                 "ICON_INFO_CONTENT": {
                     "DEFINE_AREA": "Delinea un área para pintarla. Asegúrate de encerrar el área comenzando y terminando en el mismo punto.",
                     "ERASE": "Elimina rápidamente la pintura de tu foto.",
-                    "PAINT_AREA": "Utiliza la función pintar área para detectar y pintar automáticamente áreas de superficie. Simplemente haz clic o toca una superficie para resaltarla, luego haz clic o toca nuevamente para pintar.",
-                    "PAINTBRUSH": "Selecciona este icono para pintar tu foto a mano alzada. Simplemente apunta, haz clic o toca y arrastra para agregar color a cualquier área.",
+                    "PAINT_AREA": "Utiliza la función pintar área para detectar y pintar automáticamente áreas de superficie. Simplemente haz click o toca una superficie para resaltarla, luego haz click o toca nuevamente para pintar.",
+                    "PAINTBRUSH": "Selecciona este icono para pintar tu foto a mano alzada. Simplemente apunta, haz click o toca y arrastra para agregar color a cualquier área.",
                     "REMOVE_AREA": "Utiliza esta herramienta para seleccionar y quitar pintura de un área definida.",
                     "SELECT": "Selecciona un área, luego usa la barra de herramientas para pintar, editar el color de la pintura o quitar la pintura de tu foto.",
                     "UNDO_&_REDO": "Elimina o repite fácilmente tu última acción.",
@@ -104,20 +104,20 @@
         },
         "IMAGE_ALT": {
             "ADDING_COLORS": {
-                "CLICK_ADD_A_COLOR_ICON_IN_A_COLOR_TILE_TO": "Al hacer clic en el icono de agregar un color, dentro de un mosaico de color, se agregará un color a la paleta de colores",
-                "CLICK_THE_ADD_COLOR_ICON_TO": "Haz clic en el icono de agregar un color de la paleta de colores para iniciar el muro digital de color y explorar el color en cualquier momento durante tu experiencia",
+                "CLICK_ADD_A_COLOR_ICON_IN_A_COLOR_TILE_TO": "Al hacer click en el icono de agregar un color, dentro de un mosaico de color, se agregará un color a la paleta de colores",
+                "CLICK_THE_ADD_COLOR_ICON_TO": "Haz click en el icono de agregar un color de la paleta de colores para iniciar el muro digital de color y explorar el color en cualquier momento durante tu experiencia",
                 "START_A_NEW_PALETTE_TO_ADD_MORE_THAN_EIGHT_COLORS": "Mi paleta de colores puedes contener hasta 8 colores a la vez. Para agregar más, simplemente guarda tu paleta actual y comience una nueva."
             },
             "COLOR_DETAILS": {
-                "CLICK_THE_COLOR_DETAILS_ICON_TO": "Haz clic en el icono de detalles de color para ver los detalles de un color",
+                "CLICK_THE_COLOR_DETAILS_ICON_TO": "Haz click en el icono de detalles de color para ver los detalles de un color",
                 "PREVIEW_A_COLOR_IN_COLOR_DETAILS": "Obtiene una vista previa de un color en 5 fotos diferentes para decidir si deseas agregarlo a tu paleta"
             },
             "MY_COLOR_PALETTE": {
                 "AN_ACTIVE_COLOR_STATE": "Un estado de color activo muestra el color de pintura que se aplicará a la escena",
-                "CLICK_THE_ADD_COLOR_ICON_TO": "Haz clic en el icono de agregar un color de la paleta de colores para iniciar el muro digital de color y explorar el color en cualquier momento durante tu experiencia",
-                "CLICK_THE_COLOR_DETAILS_ICON_TO": "Haz clic en el icono de detalles de color para ver los detalles de un color",
-                "CLICK_THE_COLOR_DETAILS_ICON_TRASH_ICON_TO": "Haz clic en el icono de detalles de color para ver los detalles de un color, haz clic en el icono de la papelera para eliminar una muestra de color",
-                "CLICK_THE_TRASH_ICON_TO": "Haz clic en el icono de la papelera para eliminar una muestra de color",
+                "CLICK_THE_ADD_COLOR_ICON_TO": "Haz click en el icono de agregar un color de la paleta de colores para iniciar el muro digital de color y explorar el color en cualquier momento durante tu experiencia",
+                "CLICK_THE_COLOR_DETAILS_ICON_TO": "Haz click en el icono de detalles de color para ver los detalles de un color",
+                "CLICK_THE_COLOR_DETAILS_ICON_TRASH_ICON_TO": "Haz click en el icono de detalles de color para ver los detalles de un color, haz click en el icono de la papelera para eliminar una muestra de color",
+                "CLICK_THE_TRASH_ICON_TO": "Haz click en el icono de la papelera para eliminar una muestra de color",
                 "TAP_AND_HOLD_THE_BOTTOM_EDGE_OF_A_COLOR_SWATCH_TO": "Toca y mantiene presionado el borde inferior de una muestra de color para reorganizar tu paleta"
             },
             "SAVING_MY_WORK": {
@@ -193,7 +193,7 @@
     },
     "NAV_DROPDOWN_LINK_SUB_CONTENT": {
         "COLOR_COLLECTIONS": "Encuentra colores que combinen a la perfección en toda tu casa.",
-        "DIGITAL_COLOR_WALL": "Busca colores de pintura Sherwin-Williams para agregar a tu paleta u obtener información sobre colores.",
+        "DIGITAL_COLOR_WALL": "Busca colores de pintura {brand} para agregar a tu paleta u obtener información sobre colores.",
         "EXPERT_COLOR_PICKS": "Encuentra paletas de colores diseñadas por expertos para usar en tu espacio.",
         "INSPIRATIONAL_PHOTOS": "Utiliza nuestras imágenes para descubrir colores de todo el mundo.",
         "MATCH_A_PHOTO": "Captura colores de cualquier foto y combínalos con colores de pintura reales.",
@@ -277,13 +277,13 @@
             "ZOOM": "ENFOCAR"
         },
         "TOOLTIPS": {
-            "ADDCOLORS": "Haz clic o toca aquí para agregar colores a tu paleta.",
+            "ADDCOLORS": "Haz click o toca aquí para agregar colores a tu paleta.",
             "DEFINEAREA": "Delinea un área para pintarla. Asegúrate de encerrar el área comenzando y terminando en el mismo punto.",
             "ERASE": "Quita la pintura de tu escena.",
-            "HIDEPAINT": "Utiliza esta herramienta para ver la escena original dela ambiente",
-            "INFO": "Haz clic aquí para volver a visitar la información sobre herramientas.",
-            "PAINTAREA": "Utiliza la función pintar área para detectar y pintar automáticamente áreas de superficie. Simplemente haz clic o toca una superficie para resaltarla, luego haz clic o toca nuevamente.",
-            "PAINTBRUSH": "Permite pintar a mano alzada la escena seleccionada. Simplemente apunta, haz clic o toca y arrastra para agregar color a cualquier área.",
+            "HIDEPAINT": "Utiliza esta herramienta para ver la escena original del ambiente",
+            "INFO": "Haz click aquí para volver a visitar la información sobre herramientas.",
+            "PAINTAREA": "Utiliza la función pintar área para detectar y pintar automáticamente áreas de superficie. Simplemente haz click o toca una superficie para resaltarla, luego haz click o toca nuevamente.",
+            "PAINTBRUSH": "Permite pintar a mano alzada la escena seleccionada. Simplemente apunta, haz click o toca y arrastra para agregar color a cualquier área.",
             "REDO": "Da un paso adelante desde tu última acción.",
             "REMOVEAREA": "Utiliza esta herramienta para seleccionar y quitar pintura de un área definida.",
             "SELECTAREA": "Selecciona un área, luego usa la barra de herramientas para pintar, editar colores de pintura o quitar pintura de tu escena.",
@@ -320,7 +320,7 @@
         "DEFAULT_DESCRIPTION": "Mi idea guardada",
         "DESCRIPTION": "Introduzca un nombre para la escena.",
         "SAVE": "GUARDAR",
-        "UNABLE_TO_SAVE_WARNING": "Esta escena no se puede guardar en tu cuenta. Puedes descargar la imagen haciendo clic en el icono a la derecha de tu paleta."
+        "UNABLE_TO_SAVE_WARNING": "Esta escena no se puede guardar en tu cuenta. Puedes descargar la imagen haciendo click en el icono a la derecha de tu paleta."
     },
     "SCENE_DISPLAYED": "Se muestra la escena",
     "SCENE_HIDDEN": "La escena está escondida",

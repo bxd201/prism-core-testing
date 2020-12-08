@@ -193,7 +193,7 @@
   },
   "NAV_DROPDOWN_LINK_SUB_CONTENT": {
     "COLOR_COLLECTIONS": "Find colors that work together seamlessly throughout your home.",
-    "DIGITAL_COLOR_WALL": "Search Sherwin-Williams paint colors to add to your palette or get color info.",
+    "DIGITAL_COLOR_WALL": "Search {brand} paint colors to add to your palette or get color info.",
     "EXPERT_COLOR_PICKS": "Find expertly designed color palettes to use in your space.",
     "INSPIRATIONAL_PHOTOS": "Use our images to discover colors from around the world.",
     "MATCH_A_PHOTO": "Capture colors from any photo and match them to real paint colors.",

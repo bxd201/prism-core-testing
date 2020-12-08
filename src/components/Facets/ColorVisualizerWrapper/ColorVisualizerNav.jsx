@@ -88,8 +88,8 @@ export const DropDownMenu = ({ title, items }: DropDownMenuProps) => {
 }
 
 const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
-  const { config: { featureExclusions, cvw }, setMatchPhotoScene, activePaintScene, uploadPaintScene, setLastActiveComponent } = props
-  const { messages } = useIntl()
+  const { config: { featureExclusions, cvw, brand }, setMatchPhotoScene, activePaintScene, uploadPaintScene, setLastActiveComponent } = props
+  const { messages, formatMessage } = useIntl()
   const history = useHistory()
   const location = useLocation()
   const dispatch = useDispatch()
@@ -218,12 +218,13 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
     })
   }
 
-  const getDropDownItemsForExploreColors = () => {
+  const getDropDownItemsForExploreColors = () => { // PRISM-1016: FIX HERE
+    const message = formatMessage({ id: 'LIVE_MESSAGE_COLOR_NAME' }, { previewColorName: 'hello world!' })
     const items = [
       {
         img: cvw?.navExploreColor,
         title: messages['NAV_LINKS.DIGITAL_COLOR_WALL'],
-        content: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.DIGITAL_COLOR_WALL'],
+        content: formatMessage({ id: 'NAV_DROPDOWN_LINK_SUB_CONTENT.DIGITAL_COLOR_WALL' }, { brand }),
         onClick: () => history.push('/active/color-wall/section/sherwin-williams-colors')
       },
       {
