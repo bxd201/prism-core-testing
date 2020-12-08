@@ -56,9 +56,10 @@ const List = ({ title, directory }: ListProps) => <>
           </li>))}
         </Fragment>
       } else {
-        return <li key={i}>
+        const title = keyName
+        return <li key={i} className={title ? 'no-list-style' : ''}>
           {/* $FlowIgnore -- flow thinks this isn't a Directory, but it is */}
-          <List title={keyName} directory={_this} />
+          <List title={title} directory={_this} />
         </li>
       }
     })}
