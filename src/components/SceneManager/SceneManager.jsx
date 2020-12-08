@@ -143,7 +143,8 @@ type Props = {
   setSelectedScenePaletteLoaded: Function,
   selectedScenePaletteLoaded: boolean,
   config: {
-    brandId: string
+    brandId: string,
+    featureExclusions?: string[]
   },
   intl: {
     locale: string
@@ -496,7 +497,8 @@ export class SceneManager extends PureComponent<Props, State> {
       showSavedConfirmModalFlag,
       hideSceneSelector,
       navigationIntent,
-      isActiveScenePolluted } = this.props
+      isActiveScenePolluted,
+      config } = this.props
 
     const { activeSceneStatus, showSelectPaletteModal } = this.state
     const { selectPaletteActions, selectPaletteTitle, selectPaletteDescription } = this.getSelectPaletteModalConfig()
@@ -556,7 +558,9 @@ export class SceneManager extends PureComponent<Props, State> {
             previewData={this.getPreviewData(false)}
             modalStyle={DYNAMIC_MODAL_STYLE.danger}
             height={getRefDimension(this.wrapperRef, 'height')} /> : null}
-          {activeScenes.length === 1 && expertColorPicks ? <ColorPickerSlide {...getSceneInfoById(find(scenes, { 'id': activeScenes[0] }), sceneStatus).variant} /> : null}
+          {activeScenes.length === 1 && expertColorPicks && (!config.featureExclusions || !config.featureExclusions.includes('expertColorPicks')) && (
+            <ColorPickerSlide {...getSceneInfoById(find(scenes, { 'id': activeScenes[0] }), sceneStatus).variant} />
+          )}
           {isActiveScenePolluted && <button className={`${SceneManager.baseClass}__clear-areas-btn`} onClick={this.unPaintAlSurfaces}>
             <div className={`${SceneManager.baseClass}__clear-areas-btn__icon`}><FontAwesomeIcon size='lg' icon={['fa', 'eraser']} /></div>
             <div className={`${SceneManager.baseClass}__clear-areas-btn__text`}><FormattedMessage id='CLEAR_AREAS' /></div>
