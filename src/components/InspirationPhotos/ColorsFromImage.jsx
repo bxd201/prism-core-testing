@@ -142,7 +142,6 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
   }
 
   initCanvas = () => {
-    this.CFIImage.current.crossOrigin = 'Anonymous'
     this.setCanvasOffset()
     this.CFICanvasContext = this.CFICanvas.current.getContext('2d')
     this.canvasOffset = this.CFICanvas.current.getBoundingClientRect()
@@ -424,7 +423,7 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
     return (
       <div role='presentation' className='scene__image__wrapper' onClick={isActivedPage ? this.handleClick : null} ref={this.CFIWrapper}>
         <canvas className='scene__image__wrapper__canvas' name='canvas' ref={this.CFICanvas} />
-        <img className='scene__image__wrapper__image' ref={this.CFIImage} onLoad={this.handleImageLoaded} onError={this.handleImageErrored} src={img} alt='' />
+        <img crossOrigin='anonymous' className='scene__image__wrapper__image' ref={this.CFIImage} onLoad={this.handleImageLoaded} onError={this.handleImageErrored} src={img} alt='' />
         {
           isActivedPage && pinnedColors && pinnedColors.map((pinnedColor, index) => {
             if (pinnedColor.isActiveFlag) {
