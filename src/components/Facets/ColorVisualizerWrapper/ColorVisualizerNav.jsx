@@ -218,8 +218,7 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
     })
   }
 
-  const getDropDownItemsForExploreColors = () => { // PRISM-1016: FIX HERE
-    const message = formatMessage({ id: 'LIVE_MESSAGE_COLOR_NAME' }, { previewColorName: 'hello world!' })
+  const getDropDownItemsForExploreColors = () => {
     const items = [
       {
         img: cvw?.navExploreColor,
