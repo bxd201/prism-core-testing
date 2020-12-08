@@ -117,7 +117,7 @@ const ImageRotateTerms = ({ rotateImage, createColorPins, imageData, handleDismi
               </label>
             </span>
             <span className={`${wrapperAgreeTermsTextClass}`}>
-              <FormattedMessage id='I_ACCEPT' /> <a href={termsOfUseLink}><FormattedMessage id='TERMS_OF_USE' /></a>
+              <FormattedMessage id='I_ACCEPT' /> <a href={termsOfUseLink} target='_blank'><FormattedMessage id='TERMS_OF_USE' /></a>
             </span>
           </div>
         </div>
