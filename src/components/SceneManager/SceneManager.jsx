@@ -11,9 +11,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
 import { DndProvider } from 'react-dnd-cjs'
 import HTML5Backend from 'react-dnd-html5-backend-cjs'
+import { Link } from 'react-router-dom'
 import { injectIntl, FormattedMessage } from 'react-intl'
 import WithConfigurationContext from 'src/contexts/ConfigurationContext/WithConfigurationContext'
-
 import { SCENE_TYPES, SCENE_VARIANTS } from 'constants/globals'
 import {
   loadScenes,
@@ -565,6 +565,14 @@ export class SceneManager extends PureComponent<Props, State> {
             <div className={`${SceneManager.baseClass}__clear-areas-btn__icon`}><FontAwesomeIcon size='lg' icon={['fa', 'eraser']} /></div>
             <div className={`${SceneManager.baseClass}__clear-areas-btn__text`}><FormattedMessage id='CLEAR_AREAS' /></div>
           </button>}
+          {<Link className={`${SceneManager.baseClass}__more-area-btn`} to={`/active/use-our-image`} tabIndex='-1'>
+            <span className={`${SceneManager.baseClass}__more-area-btn__icon`}>
+              <FontAwesomeIcon className={`${SceneManager.baseClass}__more-area-btn__icon-1`} icon={['fal', 'square-full']} size='sm' />
+              <FontAwesomeIcon className={`${SceneManager.baseClass}__more-area-btn__icon-2`} icon={['fal', 'square-full']} size='sm' />
+              <FontAwesomeIcon className={`${SceneManager.baseClass}__more-area-btn__icon-3`} icon={['fal', 'square-full']} size='sm' />
+            </span>
+            <div className={`${SceneManager.baseClass}__more-area-btn__text`}><FormattedMessage id='MORE_SCENES' /></div>
+          </Link>}
           {!hideSceneSelector && <div className={`${SceneManager.baseClass}__block ${SceneManager.baseClass}__block--tabs`} role='radiogroup' aria-label='scene selector'>
             {scenes.map((scene, index) => {
               const sceneInfo = getSceneInfoById(scene, sceneStatus)

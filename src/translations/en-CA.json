@@ -172,6 +172,7 @@
   "MATCHES": "Matches",
   "LRV": "LRV",
   "MAXIMIZE_COLOR_SWATCH": "Maximize the Colour Swatch",
+  "MORE_SCENES": "More scenes",
   "MY_IDEAS": {
     "ARIA_LABEL_ADD": "Add {colorName} to palette",
     "ARIA_LABEL_DONE": "done editing saved ideas",

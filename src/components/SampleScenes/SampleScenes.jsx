@@ -7,6 +7,7 @@ import { StaticTintScene } from '../CompareColor/StaticTintScene'
 import CardMenu from 'src/components/CardMenu/CardMenu'
 import { groupScenesByCategory } from './utils.js'
 import { loadScenes } from '../../store/actions/scenes'
+import { cacheCarousel } from '../../store/actions/navigation'
 import { SCENE_TYPES } from 'constants/globals'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FormattedMessage, useIntl } from 'react-intl'
@@ -17,8 +18,9 @@ const baseClass = 'color-collections'
 type ComponentProps = { isColorTinted: boolean, setHeader: Function, activateScene: Function }
 
 export const SampleScenesWrapper = ({ isColorTinted, setHeader, activateScene }: ComponentProps) => {
-  const [tabId: string, setTabId: string => void] = useState('tab0')
-  const [maxHeight, setMaxHeight] = useState(Number.MAX_SAFE_INTEGER)
+  const carouselCache = useSelector(state => ({ initPosition: state.carouselCache?.[0], tabId: state.carouselCache?.[1] }))
+  const [tabId: string, setTabId: string => void] = useState(carouselCache?.tabId)
+  const maxHeight = useRef(Number.MAX_SAFE_INTEGER)
   const dispatch = useDispatch()
   const { locale } = useIntl()
   const { brandId } = useContext(ConfigurationContext)
@@ -29,9 +31,17 @@ export const SampleScenesWrapper = ({ isColorTinted, setHeader, activateScene }:
     }
   })
 
+  const activateSceneWithCacheState = (id: string) => {
+    const initPosition = scenes.groupScenes.findIndex((item) => {
+      return item.id === id
+    })
+    dispatch(cacheCarousel([initPosition, tabId]))
+    activateScene(id)
+  }
+
   const getClientMinHeight = (height) => {
-    const minHeight = Math.min(maxHeight, height)
-    setMaxHeight(minHeight)
+    const minHeight = Math.min(maxHeight.current, height)
+    maxHeight.current = minHeight
   }
 
   useEffect(() => {
@@ -57,15 +67,16 @@ export const SampleScenesWrapper = ({ isColorTinted, setHeader, activateScene }:
           {scenes && scenes.groupScenes && scenes.tabMap && <Carousel
             BaseComponent={StaticTintSceneWrapper}
             getClientHeight={getClientMinHeight}
-            maxHeight={maxHeight}
+            maxHeight={maxHeight.current}
             data={scenes.groupScenes}
             defaultItemsPerView={1}
             tabId={tabId}
+            initPosition={carouselCache?.initPosition}
             setTabId={setTabId}
             tabMap={scenes.tabMap}
             isInfinity
             isColorTinted={isColorTinted}
-            activateScene={activateScene}
+            activateSceneWithCacheState={activateSceneWithCacheState}
           />}
         </div>
       </div>
@@ -74,8 +85,8 @@ export const SampleScenesWrapper = ({ isColorTinted, setHeader, activateScene }:
   )
 }
 
-type Props = { data: Object, isColorTinted: boolean, activateScene: Function, getClientHeight: Function, isActivedPage?: boolean, maxHeight: Number}
-const StaticTintSceneWrapper = ({ data, isColorTinted, activateScene, isActivedPage, getClientHeight, maxHeight }: Props) => {
+type Props = { data: Object, isColorTinted: boolean, activateSceneWithCacheState: Function, getClientHeight: Function, isActivedPage?: boolean, maxHeight: Number}
+const StaticTintSceneWrapper = ({ data, isColorTinted, activateSceneWithCacheState, isActivedPage, getClientHeight, maxHeight }: Props) => {
   const sceneWrapperRef: RefObject = useRef()
   let props = isColorTinted ? {
     color: void (0),
@@ -98,7 +109,7 @@ const StaticTintSceneWrapper = ({ data, isColorTinted, activateScene, isActivedP
       <div className='static__scene__image__wrapper' ref={sceneWrapperRef} style={{ maxHeight: maxHeight }}>
         <StaticTintScene {...props} />
       </div>
-      <button tabIndex={(isActivedPage) ? '0' : '-1'} className='static__scene__paint__btn' onClick={() => activateScene(data.id)}>
+      <button tabIndex={(isActivedPage) ? '0' : '-1'} className='static__scene__paint__btn' onClick={() => activateSceneWithCacheState(data.id)}>
         <FontAwesomeIcon className={`cvw__btn-overlay__svg`} size='lg' icon={['fal', 'square-full']} />
         <FontAwesomeIcon className={`cvw__btn-overlay__svg cvw__btn-overlay__svg--brush`} icon={['fa', 'brush']} size='lg' transform={{ rotate: 320 }} style={{ transform: 'translateX(-10px)' }} />
         <FormattedMessage id='PAINT_THIS_SCENE' />

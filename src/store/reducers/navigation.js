@@ -3,6 +3,7 @@ import {
   SET_ACTIVE_SCENE_LABEL,
   CACHE_PAINT_SCENE,
   CACHE_STOCK_SCENE,
+  CACHE_CAROUSEL,
   CLEANUP_NAVIGATION_INTENT,
   CLEAR_NAVIGATION_INTENT,
   CLEAR_PAINT_SCENE_CACHE,
@@ -32,6 +33,14 @@ export const navigationIntent = (state: string | void = null, action: any) => {
 
   if (action.type === SET_NAVIGATION_INTENT_WITH_RETURN) {
     return action.navigationIntentPayload
+  }
+
+  return state
+}
+
+export const carouselCache = (state: Array = [0, 'tab0'], action: any) => {
+  if (action.type === CACHE_CAROUSEL) {
+    return action.payload
   }
 
   return state
