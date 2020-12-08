@@ -32,6 +32,13 @@ export const facetMasterWrapper = (Component: ComponentType<any>) => {
       basename: pageRoot
     }), [pageRoot])
 
+    const configurationProps = {
+      ...props,
+      language,
+      pageRoot,
+      routeType
+    }
+
     const { b: BrowserRouterRender, h: HashRouterRender, m: MemoryRouterRender } = useMemo(() => ({
       b: (
         <BrowserRouter {...routerProps}>
@@ -75,10 +82,10 @@ export const facetMasterWrapper = (Component: ComponentType<any>) => {
     return (
       <div lang={language}>
         <ErrorBoundary translated={false}>
-          <IntlProvider locale={language} messages={flatLanguages} textComponent={React.Fragment}>
+          <IntlProvider locale={language} defaultLocale={language} messages={flatLanguages} textComponent={React.Fragment}>
             <ErrorBoundary>
               <Provider store={store}>
-                <ConfigurationContextProvider {...props}>
+                <ConfigurationContextProvider {...configurationProps}>
                   <LiveAnnouncer>
                     <LiveMessenger>
                       {({ announcePolite, announceAssertive }) => {
