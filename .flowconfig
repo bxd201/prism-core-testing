@@ -22,5 +22,6 @@ module.name_mapper='^embedOuput\/\(.*\)$' -> '<PROJECT_ROOT>/embed-output/\1'
 module.name_mapper='^embedWorking\/\(.*\)$' -> '<PROJECT_ROOT>/embed-working/\1'
 module.name_mapper='^__mocks__\/\(.*\)$' -> '<PROJECT_ROOT>/__mocks__/\1'
 suppress_comment= \\(.\\|\n\\)*\\$FlowIgnore
+esproposal.optional_chaining=enable
 
 [strict]
