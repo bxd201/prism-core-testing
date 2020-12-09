@@ -1,6 +1,7 @@
 // @flow
 import tinycolor from '@ctrl/tinycolor'
 import { type Color } from 'src/shared/types/Colors.js.flow'
+import uniqueId from 'lodash/uniqueId'
 
 export const throttleDragTime = 5
 // we need this two const to make sure cursor always point to the center of preview circle
@@ -50,7 +51,8 @@ export type RenderingPin = {
   pinNumber: number,
   isContentLeft: boolean,
   translateX: number,
-  translateValueY: number
+  translateValueY: number,
+  pinId: string
 }
 
 export const renderingPins = (initPins: Array<Object>, canvasOffsetWidth: number, canvasOffsetHeight: number, colors: Color[]): RenderingPin[] => {
@@ -64,6 +66,7 @@ export const renderingPins = (initPins: Array<Object>, canvasOffsetWidth: number
       isActiveFlag: (initPins.length - 1 === index),
       rgbValue: `rgb(${color.red},${color.green},${color.blue})`,
       pinNumber: index,
+      pinId: uniqueId('pin_'),
       isContentLeft: calculateTranslateX < canvasOffsetWidth / 2,
       translateX: Math.min(canvasOffsetWidth - 2 * activedPinsHalfWidth, calculateTranslateX),
       translateY: Math.min(canvasOffsetHeight - 2 * activedPinsHalfWidth, calculateTranslateY)

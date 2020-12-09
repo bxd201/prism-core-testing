@@ -248,7 +248,6 @@
   max-width: 1080px;
   margin: 0 auto;
   position: relative;
-
   .hide-on-small-screens {
     @include respond-below(sm) {
       display: none;
@@ -314,7 +313,6 @@
     justify-content: flex-start;
     font-weight: normal;
     font-size: 1rem;
-    width: 100%;
     &__message {
       flex: 8 1;
     }
