@@ -1,5 +1,5 @@
 // @flow
-import React, { useRef, useState, useEffect } from 'react'
+import React, { useRef, useState, useEffect, ReactChildren } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Switch, Route, useHistory, useLocation } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -53,6 +53,10 @@ const isSupportedImageFormat = (file: Object, exts: string[] = ['jpeg', 'jpg', '
   }
 
   return false
+}
+
+type WrapperProps = {
+  children: ReactChildren
 }
 
 export const DropDownMenu = ({ title, items }: DropDownMenuProps) => {
@@ -183,7 +187,7 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
         contentiPad: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.UPLOAD_YOUR_PHOTO_IPAD'],
         contentiPhone: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.UPLOAD_YOUR_PHOTO_IPHONE'],
         description: messages['NAV_DROPDOWN_LINK_TIP_DESCRIPTION.UPLOAD_YOUR_PHOTO'],
-        onClick: () => {
+        onClick: !(isMobileOnly || isTablet) ? () => {
           const activate = () => {
             dispatch(setIsScenePolluted())
             const selectDevice = (web, iPhone = web, android = web, iPad = web) => (isMobileOnly ? (isIOS ? iPhone : android) : (isTablet ? iPad : web)) || web
@@ -201,7 +205,7 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
           }
           // @todo activate should not be called on every click, we should only have to set the value for this once when the app is bootstrapped.  -RS
           isActiveScenePolluted ? dispatch(showWarningModal(true)) : activate()
-        }
+        } : undefined
       }
     ]
 
