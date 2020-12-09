@@ -22,7 +22,7 @@ export const SampleScenesWrapper = ({ isColorTinted, setHeader, activateScene }:
   const [tabId: string, setTabId: string => void] = useState(carouselCache?.tabId)
   const maxHeight = useRef(Number.MAX_SAFE_INTEGER)
   const dispatch = useDispatch()
-  const { locale } = useIntl()
+  const { locale, formatMessage } = useIntl()
   const { brandId } = useContext(ConfigurationContext)
   const scenes = useSelector(state => {
     if (state.scenes.sceneCollection) {
@@ -60,7 +60,7 @@ export const SampleScenesWrapper = ({ isColorTinted, setHeader, activateScene }:
     }
   }
   return (
-    <CardMenu menuTitle={'Use Our Photo'}>
+    <CardMenu menuTitle={formatMessage({ id: 'USE_OUR_PHOTO' })}>
       {() => (<div className={`${baseClass}__wrapper`}>
         {scenes && scenes.collectionTabs && <ColorCollectionsTab collectionTabs={scenes.collectionTabs} tabIdShow={tabId} showTab={setTabId} />}
         <div className={`${baseClass}__collections-list`}>
