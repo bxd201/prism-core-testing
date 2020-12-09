@@ -275,7 +275,8 @@
       "SELECTAREA": "SELECT",
       "UNDO": "UNDO",
       "UNGROUP": "UNGROUP",
-      "ZOOM": "ZOOM"
+      "ZOOM": "ZOOM",
+      "ADDCOLORS":"ADD COLORS"
     },
     "TOOLTIPS": {
       "ADDCOLORS": "Click or tap here to add colors to your palette.",

@@ -42,7 +42,7 @@ import { paintSceneWorkspace } from './paintSceneWorkspace'
 import { reducerWithLocalStorage } from '../withStorage'
 import { SCENE_METADATA } from '../storageProperties'
 import { systemMessages } from './systemMessages'
-import { maxSceneHeight } from './system'
+import { maxSceneHeight, toolTipsPosition } from './system'
 import {
   activeSceneLabel,
   allowNavigateToIntendedDestination, dirtyNavigationIntent, imageRotateBypass, isColorwallModallyPresented,
@@ -92,6 +92,7 @@ export default combineReducers({
   systemMessages,
   showEditCustomScene,
   maxSceneHeight,
+  toolTipsPosition,
   navigationIntent,
   scenePolluted,
   allowNavigateToIntendedDestination,

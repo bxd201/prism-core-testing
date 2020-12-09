@@ -275,7 +275,8 @@
             "SELECTAREA": "SELECCIONA",
             "UNDO": "DESHACER",
             "UNGROUP": "DESAGRUPAR",
-            "ZOOM": "ENFOCAR"
+            "ZOOM": "ENFOCAR",
+            "ADDCOLORS":"AGREGAR COLORES"
         },
         "TOOLTIPS": {
             "ADDCOLORS": "Haz click o toca aquí para agregar colores a tu paleta.",

@@ -286,7 +286,7 @@
     }
   }
   &__paint-tooltip {
-    bottom: calc(100% + 0.5rem);
+    bottom: 100%;
     // TODO: remove following comments after adding tooltip for Color Wall
     // bottom: calc(100% + 22rem);
     // right: calc(100% + 8rem);
