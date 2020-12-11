@@ -40,27 +40,27 @@ export const helpTabs = [{
   'imageList': [{
     'alt': '',
     'role': '',
-    'imagePathkey': 'myColorPaletteBg'
+    'imagePathKey': 'myColorPaletteBg'
   }, {
     'alt': 'HELPFUL_HINTS.IMAGE_ALT.MY_COLOR_PALETTE.CLICK_THE_COLOR_DETAILS_ICON_TO',
     'role': 'text',
-    'imagePathkey': 'myColorPalette1'
+    'imagePathKey': 'myColorPalette1'
   }, {
     'alt': 'HELPFUL_HINTS.IMAGE_ALT.MY_COLOR_PALETTE.CLICK_THE_TRASH_ICON_TO',
     'role': 'text',
-    'imagePathkey': 'myColorPalette2'
+    'imagePathKey': 'myColorPalette2'
   }, {
     'alt': 'HELPFUL_HINTS.IMAGE_ALT.MY_COLOR_PALETTE.AN_ACTIVE_COLOR_STATE',
     'role': 'text',
-    'imagePathkey': 'myColorPalette3'
+    'imagePathKey': 'myColorPalette3'
   }, {
     'alt': 'HELPFUL_HINTS.IMAGE_ALT.MY_COLOR_PALETTE.TAP_AND_HOLD_THE_BOTTOM_EDGE_OF_A_COLOR_SWATCH_TO',
     'role': 'text',
-    'imagePathkey': 'myColorPalette4'
+    'imagePathKey': 'myColorPalette4'
   }, {
     'alt': 'HELPFUL_HINTS.IMAGE_ALT.MY_COLOR_PALETTE.CLICK_THE_ADD_COLOR_ICON_TO',
     'role': 'text',
-    'imagePathkey': 'myColorPalette5'
+    'imagePathKey': 'myColorPalette5'
   }],
   'subContent': [{
     'header': 'HELPFUL_HINTS.SUB_CONTENT_HEADER.MY_COLOR_PALETTE',
@@ -69,15 +69,15 @@ export const helpTabs = [{
   'imageListMobile': [{
     'alt': 'HELPFUL_HINTS.IMAGE_ALT.MY_COLOR_PALETTE.CLICK_THE_COLOR_DETAILS_ICON_TRASH_ICON_TO',
     'role': 'text',
-    'imagePathkey': 'myColorPaletteMobile1'
+    'imagePathKey': 'myColorPaletteMobile1'
   }, {
     'alt': 'HELPFUL_HINTS.IMAGE_ALT.MY_COLOR_PALETTE.AN_ACTIVE_COLOR_STATE',
     'role': 'text',
-    'imagePathkey': 'myColorPaletteMobile2'
+    'imagePathKey': 'myColorPaletteMobile2'
   }, {
     'alt': 'HELPFUL_HINTS.IMAGE_ALT.MY_COLOR_PALETTE.CLICK_THE_ADD_COLOR_ICON_TO',
     'role': 'text',
-    'imagePathkey': 'myColorPaletteMobile3'
+    'imagePathKey': 'myColorPaletteMobile3'
   }]
 }, {
   'id': 2,
@@ -87,19 +87,19 @@ export const helpTabs = [{
   'imageList': [{
     'alt': '',
     'role': '',
-    'imagePathkey': 'addColorBg'
+    'imagePathKey': 'addColorBg'
   }, {
     'alt': 'HELPFUL_HINTS.IMAGE_ALT.ADDING_COLORS.CLICK_ADD_A_COLOR_ICON_IN_A_COLOR_TILE_TO',
     'role': 'text',
-    'imagePathkey': 'addColor1'
+    'imagePathKey': 'addColor1'
   }, {
     'alt': 'HELPFUL_HINTS.IMAGE_ALT.ADDING_COLORS.CLICK_THE_ADD_COLOR_ICON_TO',
     'role': 'text',
-    'imagePathkey': 'addColor2'
+    'imagePathKey': 'addColor2'
   }, {
     'alt': 'HELPFUL_HINTS.IMAGE_ALT.ADDING_COLORS.START_A_NEW_PALETTE_TO_ADD_MORE_THAN_EIGHT_COLORS',
     'role': 'text',
-    'imagePathkey': 'addColor3'
+    'imagePathKey': 'addColor3'
   }],
   'subContent': [{
     'header': 'HELPFUL_HINTS.SUB_CONTENT_HEADER.ADDING_COLORS',
@@ -108,15 +108,15 @@ export const helpTabs = [{
   'imageListMobile': [{
     'alt': 'HELPFUL_HINTS.IMAGE_ALT.ADDING_COLORS.CLICK_ADD_A_COLOR_ICON_IN_A_COLOR_TILE_TO',
     'role': 'text',
-    'imagePathkey': 'addColorMobile1'
+    'imagePathKey': 'addColorMobile1'
   }, {
     'alt': 'HELPFUL_HINTS.IMAGE_ALT.ADDING_COLORS.CLICK_THE_ADD_COLOR_ICON_TO',
     'role': 'text',
-    'imagePathkey': 'addColorMobile2'
+    'imagePathKey': 'addColorMobile2'
   }, {
     'alt': 'HELPFUL_HINTS.IMAGE_ALT.ADDING_COLORS.START_A_NEW_PALETTE_TO_ADD_MORE_THAN_EIGHT_COLORS',
     'role': 'text',
-    'imagePathkey': 'addColorMobile3'
+    'imagePathKey': 'addColorMobile3'
   }]
 }, {
   'id': 3,
@@ -126,24 +126,24 @@ export const helpTabs = [{
   'imageList': [{
     'alt': '',
     'role': '',
-    'imagePathkey': 'colorDetailBg'
+    'imagePathKey': 'colorDetailBg'
   }, {
     'alt': 'HELPFUL_HINTS.IMAGE_ALT.COLOR_DETAILS.CLICK_THE_COLOR_DETAILS_ICON_TO',
     'role': 'text',
-    'imagePathkey': 'colorDetail1'
+    'imagePathKey': 'colorDetail1'
   }, {
     'alt': 'HELPFUL_HINTS.IMAGE_ALT.COLOR_DETAILS.PREVIEW_A_COLOR_IN_COLOR_DETAILS',
     'role': 'text',
-    'imagePathkey': 'colorDetail2'
+    'imagePathKey': 'colorDetail2'
   }],
   'imageListMobile': [{
     'alt': 'HELPFUL_HINTS.IMAGE_ALT.COLOR_DETAILS.CLICK_THE_COLOR_DETAILS_ICON_TO',
     'role': 'text',
-    'imagePathkey': 'colorDetailMobile1'
+    'imagePathKey': 'colorDetailMobile1'
   }, {
     'alt': 'HELPFUL_HINTS.IMAGE_ALT.COLOR_DETAILS.PREVIEW_A_COLOR_IN_COLOR_DETAILS',
     'role': 'text',
-    'imagePathkey': 'colorDetailMobile2'
+    'imagePathKey': 'colorDetailMobile2'
   }]
 }, {
   'id': 4,
@@ -207,20 +207,20 @@ export const helpTabs = [{
   'imageList': [{
     'alt': '',
     'role': '',
-    'imagePathkey': 'savingBg'
+    'imagePathKey': 'savingBg'
   }, {
     'alt': 'HELPFUL_HINTS.IMAGE_ALT.SAVING_MY_WORK.NAME_YOUR_CURRENT_PHOTO',
     'role': 'text',
-    'imagePathkey': 'saving1'
-  }, { 'alt': 'HELPFUL_HINTS.IMAGE_ALT.SAVING_MY_WORK.CLICK_SAVE_ICON_TO', 'role': 'text', 'imagePathkey': 'saving3' }],
+    'imagePathKey': 'saving1'
+  }, { 'alt': 'HELPFUL_HINTS.IMAGE_ALT.SAVING_MY_WORK.CLICK_SAVE_ICON_TO', 'role': 'text', 'imagePathKey': 'saving3' }],
   'imageListMobile': [{
     'alt': 'HELPFUL_HINTS.IMAGE_ALT.SAVING_MY_WORK.CLICK_SAVE_ICON_TO',
     'role': 'text',
-    'imagePathkey': 'savingMobile1'
+    'imagePathKey': 'savingMobile1'
   }, {
     'alt': 'HELPFUL_HINTS.IMAGE_ALT.SAVING_MY_WORK.NAME_YOUR_CURRENT_PHOTO',
     'role': 'text',
-    'imagePathkey': 'savingMobile2'
+    'imagePathKey': 'savingMobile2'
   }]
 }]
 
