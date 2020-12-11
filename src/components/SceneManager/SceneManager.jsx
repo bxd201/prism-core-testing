@@ -498,6 +498,7 @@ export class SceneManager extends PureComponent<Props, State> {
       hideSceneSelector,
       navigationIntent,
       isActiveScenePolluted,
+      isColorDetail,
       config,
       unsetActiveScenePolluted } = this.props
 
@@ -562,11 +563,11 @@ export class SceneManager extends PureComponent<Props, State> {
           {activeScenes.length === 1 && expertColorPicks && (!config.featureExclusions || !config.featureExclusions.includes('expertColorPicks')) && (
             <ColorPickerSlide {...getSceneInfoById(find(scenes, { 'id': activeScenes[0] }), sceneStatus).variant} />
           )}
-          {isActiveScenePolluted && <button className={`${SceneManager.baseClass}__clear-areas-btn`} onClick={this.unPaintAllSurfaces}>
+          {isActiveScenePolluted && !isColorDetail && <button className={`${SceneManager.baseClass}__clear-areas-btn`} onClick={this.unPaintAllSurfaces}>
             <div className={`${SceneManager.baseClass}__clear-areas-btn__icon`}><FontAwesomeIcon size='lg' icon={['fa', 'eraser']} /></div>
             <div className={`${SceneManager.baseClass}__clear-areas-btn__text`}><FormattedMessage id='CLEAR_AREAS' /></div>
           </button>}
-          {<Link className={`${SceneManager.baseClass}__more-area-btn`} to={`/active/use-our-image`} onClick={() => unsetActiveScenePolluted()} tabIndex='-1'>
+          {!isColorDetail && <Link className={`${SceneManager.baseClass}__more-area-btn`} to={`/active/use-our-image`} onClick={() => unsetActiveScenePolluted()} tabIndex='-1'>
             <span className={`${SceneManager.baseClass}__more-area-btn__icon`}>
               <FontAwesomeIcon className={`${SceneManager.baseClass}__more-area-btn__icon-1`} icon={['fal', 'square-full']} size='sm' />
               <FontAwesomeIcon className={`${SceneManager.baseClass}__more-area-btn__icon-2`} icon={['fal', 'square-full']} size='sm' />
