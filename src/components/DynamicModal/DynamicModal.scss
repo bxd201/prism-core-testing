@@ -21,16 +21,17 @@
     align-items: center;
     align-content: center;
     justify-content: center;
-    color: #333333;
+    color: var(getThemeColor('light.lightest.contrast'));
     cursor: auto;
     &.primary {
       background-color: var(getThemeColor('light.lightest'));
+      color: var(getThemeColor('light.lightest.contrast'));
     }
     &.secondary {
 
     }
     &.danger {
-      color: var(getThemeColor('white'));
+      color: var(getThemeColor('danger.contrast'));
       background-color: var(getThemeColor('danger'));
       border: none;
     }
@@ -123,10 +124,10 @@
       }
       &--danger {
         background-color: var(getThemeColor('danger'));
-        color: var(getThemeColor('white'));
-        border: var(getThemeColor('white')) solid 1px;
+        color: var(getThemeColor('danger.contrast'));
+        border: var(getThemeColor('danger.contrast')) solid 1px;
         &:hover {
-          background-color: var(getThemeColor('white'));
+          background-color: var(getThemeColor('danger.contrast'));
           color: var(getThemeColor('danger'));
         }
       }

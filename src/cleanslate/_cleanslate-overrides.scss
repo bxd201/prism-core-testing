@@ -14,6 +14,10 @@
     }
   }
 
+  button, input[type=submit] {
+    font-family: var(getVarName('typography.bodyFontFamily'));
+  }
+
   h1 {
     color: inherit !important
   }
