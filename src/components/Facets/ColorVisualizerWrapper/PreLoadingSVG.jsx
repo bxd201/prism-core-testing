@@ -9,7 +9,7 @@ type PreLoadingSVGProps = {
 
 export const PreLoadingSVG = (props: PreLoadingSVGProps) => {
   return (
-    <div className='PreLoadingSVG'>
+    <div className='PreLoadingSVG' style={props.hideSVG ? { width: '100%' } : null}>
       {!props.hideSVG ? <svg className='PreLoadingSVG__loader' version='1.1' baseProfile='tiny' id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlnsXlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 1200 1200' xmlSpace='preserve'>
         <g id='flower-container' data-svg-origin='610.2215728759766 492.3915252685547' style={{ transform: 'matrix(1, 0, 0, 1, 0, 0)' }}>
           <polygon className='PreLoadingSVG__loader__outer-rect PreLoadingSVG__loader__outer-rect--1' fill='#E17000' path='' points='600,386 691,452 691,186 509,186 509,452' />
