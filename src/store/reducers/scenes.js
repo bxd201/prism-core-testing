@@ -14,6 +14,7 @@ import {
   REQUEST_SCENES,
   ACTIVATE_ONLY_SCENE,
   ACTIVATE_SCENE,
+  ACTIVATE_COLOR_DETAILS_SCENE,
   CHANGE_SCENE_VARIANT,
   DEACTIVATE_SCENE,
   PAINT_SCENE_SURFACE,
@@ -161,6 +162,11 @@ export const scenes = (state: Object = initialState, action: { type: string, pay
         // combines activeScenes[] with one or more additional scene IDs, removes dupes, removes null/undefined
         activeScenes: uniq(concat(state.activeScenes, action.payload.id))
           .filter(val => (!isNull(val) && !isUndefined(val)))
+      })
+
+    case ACTIVATE_COLOR_DETAILS_SCENE:
+      return Object.assign({}, state, {
+        activeScenesColorDetails: [action.payload.id]
       })
 
     case CHANGE_SCENE_VARIANT:
