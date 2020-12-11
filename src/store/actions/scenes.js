@@ -52,6 +52,16 @@ export const activateScene = (id: string | number | Array<string | number>) => {
   }
 }
 
+export const ACTIVATE_COLOR_DETAILS_SCENE = 'ACTIVATE_COLOR_DETAILS_SCENE'
+export const activateColorDetailsScene = (id: string | number | Array<string | number>) => {
+  return {
+    type: ACTIVATE_COLOR_DETAILS_SCENE,
+    payload: {
+      id
+    }
+  }
+}
+
 export const CHANGE_SCENE_VARIANT = 'CHANGE_SCENE_VARIANT'
 export const changeSceneVariant = (sceneId: number, variant: string) => {
   return {
