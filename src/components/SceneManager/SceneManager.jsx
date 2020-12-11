@@ -172,6 +172,7 @@ type State = {
 
 export class SceneManager extends PureComponent<Props, State> {
   static baseClass = 'prism-scene-manager'
+  static bottomBtnClass = 'prism-scene-manager__bottom-btn'
   static defaultProps = {
     expertColorPicks: false,
     interactive: true,
@@ -567,14 +568,6 @@ export class SceneManager extends PureComponent<Props, State> {
             <div className={`${SceneManager.baseClass}__clear-areas-btn__icon`}><FontAwesomeIcon size='lg' icon={['fa', 'eraser']} /></div>
             <div className={`${SceneManager.baseClass}__clear-areas-btn__text`}><FormattedMessage id='CLEAR_AREAS' /></div>
           </button>}
-          {!isColorDetail && <Link className={`${SceneManager.baseClass}__more-area-btn`} to={`/active/use-our-image`} onClick={() => unsetActiveScenePolluted()} tabIndex='-1'>
-            <span className={`${SceneManager.baseClass}__more-area-btn__icon`}>
-              <FontAwesomeIcon className={`${SceneManager.baseClass}__more-area-btn__icon-1`} icon={['fal', 'square-full']} size='sm' />
-              <FontAwesomeIcon className={`${SceneManager.baseClass}__more-area-btn__icon-2`} icon={['fal', 'square-full']} size='sm' />
-              <FontAwesomeIcon className={`${SceneManager.baseClass}__more-area-btn__icon-3`} icon={['fal', 'square-full']} size='sm' />
-            </span>
-            <div className={`${SceneManager.baseClass}__more-area-btn__text`}><FormattedMessage id='MORE_SCENES' /></div>
-          </Link>}
           {!hideSceneSelector && <div className={`${SceneManager.baseClass}__block ${SceneManager.baseClass}__block--tabs`} role='radiogroup' aria-label='scene selector'>
             {scenes.map((scene, index) => {
               const sceneInfo = getSceneInfoById(scene, sceneStatus)
@@ -713,7 +706,19 @@ export class SceneManager extends PureComponent<Props, State> {
                       />
                     )}
                   </ImagePreloader>
-                  {variantSwitch}
+                  <div className={SceneManager.bottomBtnClass}>
+                    <div className={`${SceneManager.bottomBtnClass}__btn-wrapper`}>
+                      {variantSwitch}
+                      {!isColorDetail && <Link className={`${SceneManager.bottomBtnClass}__btn-wrapper__more-area-btn`} to={`/active/use-our-image`} onClick={() => unsetActiveScenePolluted()} tabIndex='-1'>
+                        <span className={`${SceneManager.bottomBtnClass}__btn-wrapper__more-area-btn__icon`}>
+                          <FontAwesomeIcon className={`${SceneManager.bottomBtnClass}__btn-wrapper__more-area-btn__icon-1`} icon={['fal', 'square-full']} size='sm' />
+                          <FontAwesomeIcon className={`${SceneManager.bottomBtnClass}__btn-wrapper__more-area-btn__icon-2`} icon={['fal', 'square-full']} size='sm' />
+                          <FontAwesomeIcon className={`${SceneManager.bottomBtnClass}__btn-wrapper__more-area-btn__icon-3`} icon={['fal', 'square-full']} size='sm' />
+                        </span>
+                        <div className={`${SceneManager.bottomBtnClass}__btn-wrapper__more-area-btn__text`}><FormattedMessage id='MORE_SCENES' /></div>
+                      </Link>}
+                    </div>
+                  </div>
                 </div>
               )
             })}
