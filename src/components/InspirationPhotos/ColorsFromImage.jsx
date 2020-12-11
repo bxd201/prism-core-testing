@@ -419,7 +419,6 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
     const { pinnedColors, currentPixelRGBstring, position, isDragging, isDeleting } = this.state
     const { img } = this.props.data
     const { isActivedPage, intl } = this.props
-    let showDeletePin = false
 
     return (
       <div role='presentation' className='scene__image__wrapper' onClick={isActivedPage ? this.handleClick : null} ref={this.CFIWrapper}>
@@ -427,9 +426,6 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
         <img className='scene__image__wrapper__image' ref={this.CFIImage} onLoad={this.handleImageLoaded} onError={this.handleImageErrored} src={img} alt='' />
         {
           isActivedPage && pinnedColors && pinnedColors.map((pinnedColor, index) => {
-            if (pinnedColor.isActiveFlag) {
-              showDeletePin = true
-            }
             return (
               <ColorsFromImagePin
                 key={`push${index}`}
@@ -454,7 +450,15 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
             right: position.right
           }} />
         }
-        {<button ref={this.deleteButtonRef} title={`${intl.formatMessage({ id: 'DELETE_COLOR' })}`} className={`scene__image__wrapper__delete-pin ${isDeleting ? 'scene__image__wrapper__delete-pin--active' : ''} ${!showDeletePin ? 'scene__image__wrapper__delete-pin--display' : ''}`} onClick={this.pinRemove}><FontAwesomeIcon icon='trash' size='1x' /></button>}
+        <button
+          ref={this.deleteButtonRef}
+          title={`${intl.formatMessage({ id: 'DELETE_COLOR' })}`}
+          className={`scene__image__wrapper__delete-pin ${isDeleting ? 'scene__image__wrapper__delete-pin--active' : ''}`}
+          style={{ display: isDragging || pinnedColors.some(c => c.isActiveFlag) ? 'flex' : 'none' }}
+          onClick={this.pinRemove}
+        >
+          <FontAwesomeIcon icon='trash' size='1x' />
+        </button>
       </div>
     )
   }

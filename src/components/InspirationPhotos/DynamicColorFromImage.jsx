@@ -7,10 +7,10 @@ import { loadColors } from 'src/store/actions/loadColors'
 import WithConfigurationContext from 'src/contexts/ConfigurationContext/WithConfigurationContext'
 import { type Color } from 'src/shared/types/Colors.js.flow'
 import ColorFromImageIndicator from './ColorFromImageIndicator'
-import ColorFromImageDeleteButton from './ColorFromImageDeleteButton'
 import throttle from 'lodash/throttle'
 import { injectIntl } from 'react-intl'
 import { calcOrientationDimensions } from '../../shared/utils/scale.util'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 type ColorFromImageState = {
   canvasX: number,
@@ -33,7 +33,8 @@ type ColorFromImageState = {
   indicatorLeft: number,
   indicatorRight: number,
   initialWidth: number,
-  initialHeight: number
+  initialHeight: number,
+  isDeleting: false
 }
 
 type ColorFromImageProps = {
@@ -50,22 +51,6 @@ type ColorFromImageProps = {
   config: { brandId: string },
   loadColors: (brandId: string, options?: {}) => void,
   colors: Color[]
-}
-
-const shouldShowDelete = (pins) => {
-  let shouldShow = false
-  if (!pins) {
-    return false
-  }
-
-  pins.some(pin => {
-    if (pin.isActiveFlag) {
-      shouldShow = true
-      return shouldShow
-    }
-  })
-
-  return shouldShow
 }
 
 const pinsHalfWidthWithBorder = 26
@@ -95,12 +80,14 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
       indicatorLeft: 0,
       indicatorRight: 0,
       initialWidth: 0,
-      initialHeight: 0
+      initialHeight: 0,
+      isDeleting: false
     }
 
     this.canvasRef = createRef()
     this.imageRef = createRef()
     this.wrapperRef = createRef()
+    this.deleteButtonRef = createRef()
 
     this.handleImageLoaded = this.handleImageLoaded.bind(this)
     this.handleImageLoadError = this.handleImageLoadError.bind(this)
@@ -479,6 +466,14 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
   }
   /*:: handleDrag: (x: number, y: number) => void */
   handleDrag (x: number, y: number) {
+    // determine if mouse is above the deleteBtn
+    const deleteButtonOffset = this.deleteButtonRef.current.getBoundingClientRect()
+    const deleteButtonR = deleteButtonOffset.width / 2
+    const deleteButtonX = deleteButtonOffset.x + deleteButtonR
+    const deleteButtonY = deleteButtonOffset.y + deleteButtonR
+    const circleDistance = Math.sqrt(Math.pow((deleteButtonX - x), 2) + Math.pow((deleteButtonY - y), 2))
+    const isDeleting = circleDistance < (activedPinsHalfWidth + deleteButtonR)
+
     const position = this.borderChecking(x, y)
     const canvasDims = this.canvasRef.current.getBoundingClientRect()
     // Bitwise rounding, since this happens pretty often
@@ -504,7 +499,9 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
       indicatorLeft: position.left,
       indicatorRight: position.right,
       currentPixelRGBstring,
-      isDragging: true })
+      isDragging: true,
+      isDeleting
+    })
   }
   /*:: handleDragStop: (e: SyntheticEvent) => */
   handleDragStop (e: SyntheticEvent) {
@@ -532,13 +529,17 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
       }
       const mappedCanvasIndex = (offsetY * this.state.imageData.width + offsetX) * 4
 
-      this.setState({
-        currentPixelRGB: [this.state.imageData.data[mappedCanvasIndex], this.state.imageData.data[mappedCanvasIndex + 1], this.state.imageData.data[mappedCanvasIndex + 2]],
-        currentPixelRGBstring: `rgb(${this.state.imageData.data[mappedCanvasIndex]},${this.state.imageData.data[mappedCanvasIndex + 1]},${this.state.imageData.data[mappedCanvasIndex + 2]})`,
-        isDragging: false
-      }, () => {
-        this.addNewPin(pinX, pinY)
-      })
+      if (this.state.isDeleting) {
+        this.setState({ isDragging: false, isDeleting: false })
+      } else {
+        this.setState({
+          currentPixelRGB: [this.state.imageData.data[mappedCanvasIndex], this.state.imageData.data[mappedCanvasIndex + 1], this.state.imageData.data[mappedCanvasIndex + 2]],
+          currentPixelRGBstring: `rgb(${this.state.imageData.data[mappedCanvasIndex]},${this.state.imageData.data[mappedCanvasIndex + 1]},${this.state.imageData.data[mappedCanvasIndex + 2]})`,
+          isDragging: false
+        }, () => {
+          this.addNewPin(pinX, pinY)
+        })
+      }
     }
   }
 
@@ -564,7 +565,15 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
             left={this.state.indicatorLeft}
             right={this.state.indicatorRight}
             currentPixelRGBstring={this.state.currentPixelRGBstring} /> : null}
-          <ColorFromImageDeleteButton isVisible={shouldShowDelete(this.state.pinnedColors)} clickHandler={this.removePin} />
+          <button
+            ref={this.deleteButtonRef}
+            title={`${this.props.intl.formatMessage({ id: 'DELETE_COLOR' })}`}
+            className={`scene__image__wrapper__delete-pin ${this.state.isDeleting ? 'scene__image__wrapper__delete-pin--active' : ''}`}
+            style={{ display: this.state.isDragging || (this.state.pinnedColors && this.state.pinnedColors.some(c => c.isActiveFlag)) ? 'flex' : 'none' }}
+            onClick={this.pinRemove}
+          >
+            <FontAwesomeIcon icon='trash' size='1x' />
+          </button>
         </div>
       </>
     )
