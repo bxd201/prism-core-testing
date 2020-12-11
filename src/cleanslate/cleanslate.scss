@@ -289,11 +289,15 @@
 .#{$cleanslateWrappingClass} a {
     color: blue;
 }
-.#{$cleanslateWrappingClass} a:active
+.#{$cleanslateWrappingClass} a:active,
 .#{$cleanslateWrappingClass} a:focus,
 .#{$cleanslateWrappingClass} a:hover {
-    @include browser-highlight();
     text-decoration: underline;
+}
+
+.#{$cleanslateWrappingClass} a:active,
+.#{$cleanslateWrappingClass} a:focus {
+    @include browser-highlight();
 }
 .#{$cleanslateWrappingClass} a:visited {
     color: blueviolet;
