@@ -13,13 +13,14 @@ import ColorStrip from './ColorStrip'
 import CoordinatingColors from './CoordinatingColors'
 import SimilarColors from './SimilarColors'
 import SceneManager from '../../SceneManager/SceneManager'
-import { paintAllMainSurfaces, toggleColorDetailsPage } from '../../../store/actions/scenes'
+import { activateColorDetailsScene, paintAllMainSurfaces, toggleColorDetailsPage } from '../../../store/actions/scenes'
 import { varValues } from 'src/shared/withBuild/variableDefs'
 import type { Color } from '../../../shared/types/Colors.js.flow'
 import 'src/scss/convenience/visually-hidden.scss'
 import './ColorDetails.scss'
 import ColorDataWrapper from 'src/helpers/ColorDataWrapper/ColorDataWrapper'
 import HeroLoader from 'src/components/Loaders/HeroLoader/HeroLoader'
+import sortBy from 'lodash/sortBy'
 
 const baseClass = 'color-info'
 
@@ -38,6 +39,7 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
   const toggleSceneDisplayScene = useRef(null)
   const toggleSceneHideScene = useRef(null)
   const scenesLoaded: boolean = useSelector(state => !state.scenes.loadingScenes)
+  const scenes = useSelector(state => state.scenes.sceneCollection[state.scenes.type])
 
   const [color: Color, setColor: Color => void] = useState(initialColor)
   const [tabIndex: number, setTabIndex: number => void] = useState(0)
@@ -56,6 +58,23 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
 
   // paint all the main surfaces on load of the CDP
   useEffect(() => { scenesLoaded && color && dispatch(paintAllMainSurfaces(color)) }, [scenesLoaded, color])
+
+  // activates the first "ImagePreloader" scene on the color detail modal when the scenes list changes
+  useEffect(() => {
+    const sceneIds = sortBy(scenes, scene => sortBy(scene.category).toString()).reduce((accum = [], next) => {
+      const last = accum[accum.length - 1]
+      if (!last) return [next]
+      if (sortBy(last.category).toString() !== sortBy(next.category).toString()) {
+        return [
+          ...accum,
+          next
+        ]
+      }
+      return accum
+    }, []).map(scene => scene.id)
+    const categoryScenes = scenes.filter(({ id }) => sceneIds.includes(id))
+    dispatch(activateColorDetailsScene(categoryScenes[0]?.id))
+  }, [scenes])
 
   if (loading) {
     return <HeroLoader />

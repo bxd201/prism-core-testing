@@ -10,7 +10,6 @@ import filter from 'lodash/filter'
 import values from 'lodash/values'
 import isEmpty from 'lodash/isEmpty'
 import './InfoButton.scss'
-import { activateColorDetailsScene } from 'src/store/actions/scenes'
 
 type InfoButtonProps = { color: Color }
 
@@ -21,7 +20,6 @@ export default ({ color }: InfoButtonProps) => {
 
   const onClick = () => {
     dispatch(showColorDetailsModal(color))
-    dispatch(activateColorDetailsScene(1))
   }
 
   if (isEmpty(colorMap)) {
