@@ -7,6 +7,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { isMobileOnly, isTablet, isIOS } from 'react-device-detect'
 import ImageRotateContainer from '../../MatchPhoto/ImageRotateContainer'
 import { showWarningModal } from 'src/store/actions/scenes'
+import { setTooltipsPosition } from 'src/store/actions/system'
 import { queueImageUpload } from 'src/store/actions/user-uploads'
 import './ColorVisualizerNav.scss'
 import { FEATURE_EXCLUSIONS } from '../../../constants/configurations'
@@ -104,6 +105,8 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
   const isColorwallModallyPresented = useSelector(store => store.isColorwallModallyPresented)
 
   const hiddenImageUploadInput: { current: ?HTMLElement } = useRef()
+  const navBtnRef: {current: ?HTMLElement} = useRef()
+  const navRef: {current: ?HTMLElement} = useRef()
   const [imgUrl: string, setImgUrl: (string) => void] = useState()
 
   // @todo all pull route values into const...perhaps routesEnum? -RS
@@ -117,6 +120,8 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
         uploadPaintScene(<ImageRotateContainer showPaintScene isFromMyIdeas={false} isPaintScene imgUrl={imgUrl} setLastActiveComponent={setLastActiveComponent} activePaintScene={activePaintScene} />)
       }
     }
+    const tooltipsPosition = navBtnRef.current.getClientRects()[0].x - navRef.current.getClientRects()[0].x - ((navBtnRef.current.getClientRects()[0].width - 48) / 2)
+    dispatch(setTooltipsPosition(tooltipsPosition))
   }, [imgUrl])
 
   // This is an observer that determines if programmatic navigation should occur
@@ -274,7 +279,7 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
 
   // @todo refactor buttons into their own component -RS
   return (
-    <nav className='cvw-navigation-wrapper'>
+    <nav className='cvw-navigation-wrapper' ref={navRef}>
       <input ref={hiddenImageUploadInput} style={{ display: 'none' }} type='file' onChange={e => {
         if (!isMobileOnly && !isTablet) {
           const userImg = e.target.files && e.target.files.length ? e.target.files[0] : null
@@ -294,7 +299,7 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
       <ul className='cvw-navigation-wrapper__center' role='presentation'>
         { shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.exploreColors)
           ? <li>
-            <button className={`cvw-nav-btn ${location.pathname === '/active/colors' ? 'cvw-nav-btn--active' : ''}`} onClick={() => {
+            <button ref={navBtnRef} className={`cvw-nav-btn ${location.pathname === '/active/colors' ? 'cvw-nav-btn--active' : ''}`} onClick={() => {
               if (isColorwallModallyPresented) {
                 dispatch(setShouldShowGlobalDestroyWarning(true))
                 dispatch(setDirtyNavigationIntent('/active/colors'))

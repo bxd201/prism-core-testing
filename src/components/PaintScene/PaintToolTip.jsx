@@ -49,9 +49,9 @@ export function PaintToolTip ({ tooltipToolActiveName, closeTooltip, backButtonC
   const downPointerTranslateValue = downPointerDivTranslateFactor + (tooltipToolActiveNumber * downPointerDivTranslateMultiplie)
 
   const wrapperStyle = (window.outerWidth < varValues.slick.tablet && tooltipToolActiveNumber === addColorsTooltipNumber)
-    ? { transform: `translate(20px, 138px)` }
+    ? { transform: `translate(0px, 150px)` }
     : (tooltipToolActiveNumber === addColorsTooltipNumber)
-      ? { transform: `translate(140px, 138px)` }
+      ? { transform: `translate(0px, 150px)` }
       : (window.outerWidth >= varValues.slick.tablet)
         ? { transform: `translate(${divTranslateValue}px)` }
         : { transform: `translate(0px)` }

@@ -21,5 +21,6 @@ export const paintSceneWorkspace = (state: Object | null = null, action: { type:
   if (action.type === SAVE_INIT_WORKSPACE) {
     return { ...state, originWorkspace: action.payload }
   }
+
   return state
 }

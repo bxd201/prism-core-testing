@@ -6,3 +6,12 @@ export const setMaxSceneHeight = (height: number) => {
     payload: height
   }
 }
+
+export const SET_TOOLTIPS_POSITION = 'SET_TOOLTIPS_POSITION'
+export const setTooltipsPosition = (tipsPosition: number) => {
+  const payload = {
+    type: SET_TOOLTIPS_POSITION,
+    payload: tipsPosition
+  }
+  return payload
+}

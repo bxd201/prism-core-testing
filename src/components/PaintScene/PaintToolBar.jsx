@@ -1,5 +1,6 @@
 // @flow
 import React, { PureComponent } from 'react'
+import { connect } from 'react-redux'
 import './PaintToolBar.scss'
 import { toolBarButtons, selectGroupButtons, selectGroupTooltipData, toolNames, toolNumbers, groupToolNames, getTooltipShownLocalStorage, addColorsTooltip, addColorsTooltipNumber } from './data'
 import BrushTypes from './BrushTypes'
@@ -68,7 +69,8 @@ type ComponentProps = {
   isInfoToolActive: boolean,
   intl: any,
   containerWidth: number,
-  zoomValue: number
+  zoomValue: number,
+  toolTipsPosition: number
 }
 
 type ComponentState = {
@@ -434,9 +436,9 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
             </div>
           </div>
         </div>
-        {showTooltip && tooltipToolActiveNumber === addColorsTooltipNumber && <div className={`${paintTooltipClass} ${paintTooltipActiveClass}`} style={{ left: '0px' }}>
+        {showTooltip && tooltipToolActiveNumber === addColorsTooltipNumber && <div className={`${paintTooltipClass} ${paintTooltipActiveClass}`} style={{ left: this.props.toolTipsPosition }}>
           <PaintToolTip
-            tooltipToolActiveName={intl.formatMessage({ id: 'PAINT_TOOLS.TOOLTIPS.ADDCOLORS' })}
+            tooltipToolActiveName={intl.formatMessage({ id: 'PAINT_TOOLS.TOOLS_NAME.ADDCOLORS' })}
             tooltipToolActiveNumber={tooltipToolActiveNumber}
             tooltipContent={intl.formatMessage({ id: `PAINT_TOOLS.TOOLTIPS.${addColorsTooltip.name.toUpperCase()}` })}
             toolsCount={toolBarButtons.length + 1}
@@ -452,4 +454,11 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
   }
 }
 
-export default injectIntl(PaintToolBar)
+const mapStateToProps = (state: Object, props: Object) => {
+  const { toolTipsPosition } = state
+  return {
+    toolTipsPosition: toolTipsPosition
+  }
+}
+
+export default connect(mapStateToProps, null)(injectIntl(PaintToolBar))
