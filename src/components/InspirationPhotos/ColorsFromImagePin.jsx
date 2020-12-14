@@ -1,5 +1,5 @@
 // @flow
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useIntl } from 'react-intl'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -23,7 +23,8 @@ type Props = {
     rgbValue: string,
     pinNumber: number,
     isMovingPin: boolean,
-    hide: boolean
+    hide: boolean,
+    pinId: string
   },
   useTranslateProps: boolean,
   translateX: number,
@@ -33,7 +34,8 @@ type Props = {
   deleteCurrentPin: Function,
   handleDragStop: Function,
   handlePinMoveByKeyboard: Function,
-  handleKeyUpAfterPinMove: Function
+  handleKeyUpAfterPinMove: Function,
+  handleTouchEnd: Function
 }
 
 export const CLASSES = { BASE: 'pin__wrapper', CHECKBOX: 'visually-hidden' }
@@ -42,17 +44,19 @@ const PIN_MOVEMENT_INTERVAL = 10
 const PIN_MOVEMENT_SHIFT_KEY_INTERVAL = 1
 
 export default (props: Props) => {
-  const { color, activatePin, handlePinMoveByKeyboard, handleKeyUpAfterPinMove, deleteCurrentPin, handleDrag } = props
+  const { color, activatePin, handlePinMoveByKeyboard, handleKeyUpAfterPinMove, deleteCurrentPin, handleDrag, handleDragStop, handleTouchEnd } = props
 
   const dispatch = useDispatch()
   const { formatMessage } = useIntl()
   const livePaletteColors = useSelector(store => store.lp.colors)
-
   const colorDivRef: { current?: HTMLDivElement } = useRef()
-
   const [isColorDivFocused: boolean, setIsColorDivFocused: boolean => void] = useState()
-
   const isColorAdded = livePaletteColors.some(paletteColor => paletteColor.colorNumber === color.colorNumber)
+  const [isHidden, setIsHidden] = useState(false)
+
+  useEffect(() => {
+    setIsHidden(color.hide)
+  }, [color])
 
   const focusHandler = () => {
     colorDivRef.current && colorDivRef.current.focus()
@@ -122,24 +126,40 @@ export default (props: Props) => {
     }
   }
 
-  const handleMouseMove = (e) => {
-    e.stopPropagation()
-    handleDrag(e.clientX, e.clientY)
+  const handleMouseMove = (e: SyntheticEvent, isMobile: booleam = false) => {
+    if (e.target) {
+      e.stopPropagation()
+    }
+
+    handleDrag(e.clientX, e.clientY, isMobile)
   }
 
-  const handleDragStop = (e) => {
+  const handlePinDragStop = (e: SyntheticEvent) => {
     e.stopPropagation()
-    props.handleDragStop(e)
+    handleDragStop(e)
     window.removeEventListener('mousemove', handleMouseMove)
-    window.removeEventListener('mouseup', handleDragStop)
+    window.removeEventListener('mouseup', handlePinDragStop)
   }
 
-  const handleDragStart = (e) => {
-    e.stopPropagation()
-    e.preventDefault()
+  const handlePinDragStart = (e) => {
     deleteCurrentPin(color.pinNumber)
     window.addEventListener('mousemove', handleMouseMove)
-    window.addEventListener('mouseup', handleDragStop)
+    window.addEventListener('mouseup', handlePinDragStop)
+  }
+
+  const handleTouchStart = (e: SyntheticEvent) => {
+    setIsColorDivFocused(false)
+    setIsHidden(true)
+  }
+
+  const handleTouchStop = (e: SyntheticEvent) => {
+    const dims = colorDivRef.current.getBoundingClientRect()
+    handleTouchEnd(dims, color.pinId)
+  }
+
+  const handleTouchMove = (e: SyntheticEvent) => {
+    // @todo this gets drag working on mobile but color is off, this is index math issue.  I should build a translator...
+    handleMouseMove({ clientX: e.targetTouches[0].clientX, clientY: e.targetTouches[0].clientY }, true)
   }
 
   const translateX = props.useTranslateProps ? props.translateX : color.translateX
@@ -156,7 +176,7 @@ export default (props: Props) => {
           e.stopPropagation()
           activatePin(color.pinNumber)
         }}
-        style={{ transform: `translate(${translateX - 360}px, ${translateY}px)`, overflow: 'visible', display: (color.hide) ? 'none' : 'flex' }}
+        style={{ transform: `translate(${translateX - 360}px, ${translateY}px)`, overflow: 'visible', display: isHidden ? 'none' : 'flex' }}
         className={`pin__wrapper ${color.isActiveFlag ? 'pin__wrapper--active' : ''}`}
       >
         <div className='pin__content__wrapper'>
@@ -173,7 +193,10 @@ export default (props: Props) => {
               colorDivRef.current.style.outline = 'none'
             }}
             onMouseDown={() => setIsColorDivFocused(false)}
-            onDragStart={handleDragStart}
+            onDragStart={handlePinDragStart}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchStop}
             className={`pin__chip ${(color.isActiveFlag) ? `pin__chip--active` : ''}`}
             style={{ background: color.rgbValue }}
           >

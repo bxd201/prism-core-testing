@@ -12,6 +12,7 @@ import { loadColors } from 'src/store/actions/loadColors'
 import { type Color } from 'src/shared/types/Colors.js.flow'
 import WithConfigurationContext from 'src/contexts/ConfigurationContext/WithConfigurationContext'
 import 'src/providers/fontawesome/fontawesome'
+import uniqueId from 'lodash/uniqueId'
 
 type ComponentProps = {
   data: any,
@@ -73,6 +74,7 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
     this.deleteButtonRef = React.createRef()
     this.canvasOffsetWidth = 0
     this.canvasOffsetHeight = 0
+    this.indicatorRef = React.createRef()
   }
 
   handleImageLoaded =() => {
@@ -111,6 +113,8 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
     this.updateWindowDimensions()
     window.addEventListener('resize', this.updateWindowDimensions)
     window.addEventListener('scroll', this.setCanvasOffset)
+    // @todo remove this
+    window.canvasRef = this.CFICanvas
   }
 
   componentWillUnmount () {
@@ -120,8 +124,9 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
 
   componentDidUpdate (prevProps: ComponentProps) {
     if (prevProps.unorderedColors !== this.props.unorderedColors) {
+      const pinnedColors = renderingPins(this.props.data.initPins, this.canvasOffsetWidth, this.canvasOffsetHeight, this.props.unorderedColors)
       // eslint-disable-next-line react/no-did-update-set-state
-      this.setState({ pinnedColors: renderingPins(this.props.data.initPins, this.canvasOffsetWidth, this.canvasOffsetHeight, this.props.unorderedColors) })
+      this.setState({ pinnedColors })
     }
   }
 
@@ -194,7 +199,8 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
     }
   }
 
-  addNewPin = (cursorX: number, cursorY: number) => {
+  addNewPin = (cursorX: number, cursorY: number, ignoreRadius: boolean = false) => {
+    const pinRadius = ignoreRadius ? 0 : activedPinsHalfWidth
     const color = findClosestColor(this.state.currentPixelRGB, this.props.unorderedColors)
     const currentPixelRGB = `${color.red},${color.green},${color.blue}`
     const clonePins = cloneColorPinsArr(this.state.pinnedColors)
@@ -222,11 +228,12 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
         {
           ...color,
           rgbValue: `rgb(${currentPixelRGB})`,
-          translateX: cursorX - activedPinsHalfWidth,
-          translateY: cursorY - activedPinsHalfWidth,
+          translateX: cursorX - pinRadius,
+          translateY: cursorY - pinRadius,
           pinNumber: newPins.length,
           isActiveFlag: true,
-          isContentLeft: isContentLeft
+          isContentLeft: isContentLeft,
+          pinId: uniqueId('pin_')
         }
       ]
     })
@@ -269,6 +276,7 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
     }
   }
 
+  // @todo This method is called at the beginning of a mouse drag and at the end of a touch drag.  Touch hides and then deletes, me thinks this should be the universal technique. -RS
   deleteCurrentPin = (pinNumber: number) => {
     const clonePins = cloneColorPinsArr(this.state.pinnedColors)
     clonePins.splice(pinNumber, 1)
@@ -279,13 +287,20 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
     this.setState({ pinnedColors: newPins })
   }
 
+  // Added this to delete for touch
+  deletePinById = (pinId: string) => {
+    const pinnedColors = cloneColorPinsArr(this.state.pinnedColors.filter(pin => pin.pinId !== pinId))
+    this.setState({ pinnedColors })
+  }
+
   borderChecking = (x: number, y: number) => {
-    /* position Object is refered to the position of dragging pins
+    /* position Object is referred to the position of dragging pins
        it includes attribute top, bottom, left, right, x, y
        #1. position.x and position.y is only used for calculate the position
        when pin dropped on the canvas
        #2. top, bottom, left, right make sure pins only be rendering inside of canvas
        */
+
     let position = {}
     const canvasOffset = this.getCanvasOffset()
     if (x < canvasOffset.x + activedPinsHalfWidth) {
@@ -313,7 +328,15 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
     return position
   }
 
-  handleDrag = throttle((x: number, y: number) => {
+  handleTouchEnd = (dims: any, pinId: string) => {
+    const shouldDelete = this.handleDragStop(dims)
+
+    if (shouldDelete) {
+      this.deletePinById(pinId)
+    }
+  }
+
+  handleDrag = throttle((x: number, y: number, isMobile: boolean) => {
     const canvasOffset = this.getCanvasOffset()
     const position = this.borderChecking(x, y)
     let isDeleting = false
@@ -323,28 +346,72 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
     }
     const offsetY = x - canvasOffset.x
     const offsetX = y - canvasOffset.y
-    const mappedCanvasIndex = (offsetX * this.canvasOffsetWidth + offsetY) * 4
+
+    const mappedCanvasIndex = Math.floor((offsetX * this.canvasOffsetWidth + offsetY) * 4)
     const currentPixelRGBstring = `rgb(${this.imageDataData[mappedCanvasIndex]},${this.imageDataData[mappedCanvasIndex + 1]},${this.imageDataData[mappedCanvasIndex + 2]})`
-    this.setState({ position: position, currentPixelRGBstring: currentPixelRGBstring, isDragging: true, isDeleting: isDeleting })
+    const newState = { position: position, currentPixelRGBstring: currentPixelRGBstring, isDragging: true, isDeleting: isDeleting }
+
+    this.setState(newState)
   }, throttleDragTime)
 
-  handleDragStop = (e: Object) => {
+  isInHitArea = (pointerPos: any) => {
+    const targetDims = this.deleteButtonRef.current.getBoundingClientRect()
+    const indicatorDims = this.indicatorRef.current.getBoundingClientRect()
+
+    return indicatorDims.right > targetDims.left &&
+       indicatorDims.left <= targetDims.right &&
+       indicatorDims.bottom > targetDims.top &&
+      indicatorDims.bottom <= targetDims.bottom
+  }
+
+  checkCircleDistance = (x1: number, y1: number, x2: number, y2: number, r1: number, r2: number) => {
+    return Math.sqrt(Math.pow((x1 - x2), 2) + Math.pow((y1 - y2), 2)) < (r1 + r2)
+  }
+
+  // This method is used by mobile browsers to get the pointer  (by proxy) location when input coords are unavailable
+  getCoordsFromIndicator = () => {
+    const indicatorDims = this.indicatorRef.current.getBoundingClientRect()
+    const indicatorRadius = indicatorDims.width / 2
+    const x = Math.floor(indicatorDims.top + indicatorRadius)
+    const y = Math.floor(indicatorDims.left + indicatorRadius)
+
+    return { x, y }
+  }
+
+  handleDragStop = (e: any) => {
+    const isTouchEvent = e.clientX === void (0)
     const { previewPinIsUpdating, isDragging } = this.state
+    let x = e.clientX
+    let y = e.clientY
+
+    // @todo recheck this code, not sure it is helpful -RS
+    if (isTouchEvent) {
+      const touchCoords = this.getCoordsFromIndicator()
+      x = touchCoords.x
+      y = touchCoords.y
+    }
+
     if (!previewPinIsUpdating && isDragging) {
-      const position = this.borderChecking(e.clientX, e.clientY)
+      const position = this.borderChecking(x, y)
       const offsetX = position.x + activedPinsHalfWidth
       const offsetY = position.y + activedPinsHalfWidth
       const mappedCanvasIndex = (offsetY * this.canvasOffsetWidth + offsetX) * 4
-      const circleDistance = Math.sqrt(Math.pow((this.deleteButtonX - e.clientX), 2) + Math.pow((this.deleteButtonY - e.clientY), 2))
-      if (circleDistance < (activedPinsHalfWidth + this.deleteButtonR)) {
+
+      const shouldDelete = e.clientX ? this.checkCircleDistance(this.deleteButtonX, x, this.deleteButtonY, y, this.deleteButtonR, activedPinsHalfWidth) : this.isInHitArea({ x, y })
+
+      if (shouldDelete) {
         this.setState({ isDragging: false, isDeleting: false })
+        return true
       } else {
         this.setState({
           currentPixelRGB: [this.imageDataData[mappedCanvasIndex], this.imageDataData[mappedCanvasIndex + 1], this.imageDataData[mappedCanvasIndex + 2]],
           currentPixelRGBstring: `rgb(${this.imageDataData[mappedCanvasIndex]},${this.imageDataData[mappedCanvasIndex + 1]},${this.imageDataData[mappedCanvasIndex + 2]})`,
           isDragging: false
         }, () => {
-          this.addNewPin(offsetX, offsetY)
+          const pinX = isTouchEvent ? this.state.position.x : offsetX
+          const pinY = isTouchEvent ? this.state.position.y : offsetY
+
+          this.addNewPin(pinX, pinY, isTouchEvent)
         })
       }
     }
@@ -435,12 +502,13 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
                 deleteCurrentPin={this.deleteCurrentPin}
                 handleDragStop={this.handleDragStop}
                 activatePin={this.activatePin}
+                handleTouchEnd={this.handleTouchEnd}
               />
             )
           })
         }
         {isActivedPage && isDragging &&
-        <div className='scene__image__wrapper__indicator'
+        <div ref={this.indicatorRef} className='scene__image__wrapper__indicator'
           style={{
             backgroundColor: currentPixelRGBstring,
             top: position.top,
