@@ -39,7 +39,7 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
   const toggleSceneDisplayScene = useRef(null)
   const toggleSceneHideScene = useRef(null)
   const scenesLoaded: boolean = useSelector(state => !state.scenes.loadingScenes)
-  const scenes = useSelector(state => state.scenes.sceneCollection[state.scenes.type])
+  const scenes = useSelector(state => state?.scenes?.sceneCollection[state?.scenes?.type] || [])
 
   const [color: Color, setColor: Color => void] = useState(initialColor)
   const [tabIndex: number, setTabIndex: number => void] = useState(0)
