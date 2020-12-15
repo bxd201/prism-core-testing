@@ -454,12 +454,6 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.initCanvasWithDimensions()
   }
 
-  /*:: initCanvas2: () => void */
-  initCanvas2 = () => {
-    // const { canvasWidth, canvasHeight } = this.calcCanvasNewDimensions()
-    this.setForegroundImage(this.state.canvasWidth, this.state.canvasHeight)
-  }
-
   /*:: calcCanvasNewDimensions(newWidth: number, oldWidth: number) => Object */
   calcCanvasNewDimensions = (newWidth: number, oldWidth: number) => {
     const originalImageWidth = this.originalIsPortrait === this.isPortrait ? this.originalImageWidth : this.originalImageHeight
@@ -474,10 +468,11 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     }
   }
 
-  /*:: initCanvasWithNewDimensions: (newWidth?: number) => void */
-  initCanvasWithDimensions = (newWidth?: number) => {
-    const canvasWidth = this.state.canvasWidth
-    const canvasHeight = this.state.canvasHeight
+  /*:: initCanvasWithNewDimensions: () => void */
+  initCanvasWithDimensions = () => {
+    // use initial params when out of order behavior occurs
+    const canvasWidth = this.state.canvasWidth || this.backgroundImageWidth
+    const canvasHeight = this.state.canvasHeight || this.backgroundImageHeight
 
     this.CFICanvas.current.width = canvasWidth
     this.CFICanvas.current.height = canvasHeight
@@ -494,8 +489,9 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.CFICanvas4.current.height = this.canvasOriginalDimensions.height
     this.canvasOffsetWidth = canvasWidth
     this.canvasOffsetHeight = canvasHeight
-    // this.canvasOriginalDimensions = { width: canvasWidth, height: canvasHeight }
     this.wrapperOriginalDimensions = { width: this.CFIWrapper.current.getBoundingClientRect().width, height: canvasHeight }
+    // INTENTIONAL LOG
+    console.table({ ...this.props.referenceDimensions, backgroundImageWidth: this.backgroundImageWidth, backgroundImageHeight: this.backgroundImageHeight, canvasWidth, canvasHeight })
     this.setBackgroundImage(canvasWidth, canvasHeight)
   }
 
