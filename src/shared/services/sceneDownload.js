@@ -116,6 +116,7 @@ const generateImage = async (scene: SceneInfo, activeComponent: string, config: 
   const swatchHeight = 200
   const swatchWidth = (image.bitmap.width - padding) / 2
   const bottomMargin = footerHeight + ((swatchHeight + padding) * swatchRows)
+  const withoutLogoBottomMargin = 35
   let bottomLogoResizeWith = 400
 
   // Add white space above image and add logo
@@ -156,7 +157,7 @@ const generateImage = async (scene: SceneInfo, activeComponent: string, config: 
       opacityDest: 1
     })
     disclaimerX = bottomLogo.bitmap.width + 2 * bottomLogoX
-    disclaimerY = bottomLogoY
+    disclaimerY = bottomLogoY + (!logo ? withoutLogoBottomMargin : 0)
   }
 
   image.print(blackFonts.small, disclaimerX, disclaimerY, downloadDisclaimer1, maxDisclaimerWidth, (err, image, { x, y }) => {
