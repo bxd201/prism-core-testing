@@ -73,6 +73,7 @@ const renderAppInElement = (el: HTMLElement, explicitProps: Object = {}) => {
     // this is intentional loose equality to allow values like "1.00" to equal 1
     // eslint-disable-next-line eqeqeq
     if (`${convertedVal}` == value) {
+      console.info('converted embed value to numeric:', convertedVal)
       return convertedVal
     }
 
