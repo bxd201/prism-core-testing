@@ -16,8 +16,6 @@ const tabsContainer = `${baseClass}__tabs-container`
 const contentWrapper = `${baseClass}__content-wrapper`
 const helpContent = `${baseClass}__help-content`
 const helpContentHide = `${helpContent}--hide`
-const activeLi = `active`
-const inactiveLi = `inactive`
 const contentHeader = `${baseClass}__content-header`
 const contentDetails = `${baseClass}__content-details`
 const subContent = `${baseClass}__subcontent`
@@ -90,7 +88,7 @@ const HelpInterior = () => {
   return (
     <div className={`${wrapper}`}>
       <div className={`${tabsContainer}`}>
-        <ul>
+        <ul className={`${tabsContainer}__list`}>
           {filteredHelpItems.map((tab: Object, index: number) => <HelpItemHeader messageId={tab.header} key={index} isActive={index === visualactiveTabIndex} onClick={handleNavClick(index)} onKeyDown={handleNavKeyDown(index)} />)}
         </ul>
       </div>
@@ -109,7 +107,7 @@ type HelpItemHeaderProps = {
 }
 
 const HelpItemHeader = ({ onClick, onKeyDown, isActive, messageId }: HelpItemHeaderProps) => <li
-  className={isActive ? activeLi : inactiveLi}
+  className={`${tabsContainer}__list__item ${isActive ? `${tabsContainer}__list__item--active` : `${tabsContainer}__list__item--inactive`}`}
   onMouseDown={(e) => e.preventDefault()}
   onClick={onClick}
   onKeyDown={onKeyDown}
@@ -188,7 +186,7 @@ const HelpItemContent = forwardRef((props: HelpItemContentProps, ref) => {
       {
         imageListMobile && <ul className={`${helpImagesMobile}`}>
           {
-            imageListMobile.map((item, index) => <li key={`li-mobile-image-${index}`} className={`${helpImages}__cell`}>
+            imageListMobile.map((item, index) => <li key={`li-mobile-image-${index}`} className={`${helpImages}__cell ${(index > 0) ? `${helpImages}__cell--overlay ${helpImages}__cell--${index}` : `${helpImages}__cell--base`}`}>
               {help ? <img className={`${helpImages}__i`} src={help[item.imagePathKey]} alt={item.alt ? formatMessage({ id: item.alt }) : ''} /> : null}
             </li>)
           }
