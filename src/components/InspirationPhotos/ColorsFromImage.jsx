@@ -397,7 +397,7 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
       const offsetY = position.y + activedPinsHalfWidth
       const mappedCanvasIndex = (offsetY * this.canvasOffsetWidth + offsetX) * 4
 
-      const shouldDelete = e.clientX ? this.checkCircleDistance(this.deleteButtonX, x, this.deleteButtonY, y, this.deleteButtonR, activedPinsHalfWidth) : this.isInHitArea({ x, y })
+      const shouldDelete = this.isInHitArea({ x, y })
 
       if (shouldDelete) {
         this.setState({ isDragging: false, isDeleting: false })
