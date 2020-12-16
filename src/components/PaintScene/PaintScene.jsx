@@ -513,7 +513,8 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.mergeCanvasRef.current.width = `${canvasWidth}px`
     this.mergeCanvasRef.current.height = `${canvasHeight}px`
     this.CFIWrapper.current.style.height = `${canvasHeight}px`
-    this.setState({ canvasWidth, canvasHeight })
+    // added to force rerender of merge canvas
+    this.setState({ canvasWidth, canvasHeight, canvasImageUrls: this.getLayers(), mergeCanvasKey: uniqueId('_mercan') })
   }
 
   /*:: setBackgroundImage: (canvasWidth: number, canvasHeight: number) => void */
@@ -631,7 +632,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     } else {
       const stateFragment = undo(this.state)
       // Create a new key to ensure a new merge canvas component instance is created
-      stateFragment.mergeCanvasKey = `${Date.now()}`
+      stateFragment.mergeCanvasKey = uniqueId('_mercan')
       this.setState(stateFragment, () => {
         this.redrawCanvas(stateFragment.imagePathList)
       })
