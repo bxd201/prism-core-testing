@@ -68,22 +68,28 @@ const renderAppInElement = (el: HTMLElement, explicitProps: Object = {}) => {
   dressUpForPrism(el)
 
   // convert strings to floats if they are numeric strings
-  const getValueType = (value: any) => {
+  const getTypedValue = (value: any) => {
     const convertedVal = parseFloat(value)
+    if (value === '') {
+      return true
+    }
     // this is intentional loose equality to allow values like "1.00" to equal 1
     // eslint-disable-next-line eqeqeq
     if (`${convertedVal}` == value) {
-      console.info('converted embed value to numeric:', convertedVal)
       return convertedVal
     }
 
     return value
   }
 
+  const valueMapHandler = v => getTypedValue(v)
+
+  // make sure numeric string are converted to ints/floats do this both for embedded data attributes and js props
+  const jsProps = mapValues({ ...explicitProps }, valueMapHandler)
+
   // get props from elements data attribute, like the post_id
-  const attrProps = mapValues(Object.assign({}, el.dataset), v => {
-    return v === '' ? true : getValueType(v)
-  })
+  const attrProps = mapValues(Object.assign({}, el.dataset), valueMapHandler)
+
   const { reactComponent, prismFacet, bindCallback, ...props }: {
     reactComponent: string,
     prismFacet: string,
@@ -91,7 +97,7 @@ const renderAppInElement = (el: HTMLElement, explicitProps: Object = {}) => {
     props: EmbeddedConfiguration
   } = {
     ...attrProps,
-    ...explicitProps
+    ...jsProps
   }
   const facet = prismFacet || reactComponent // TODO: deprecate "reactComponent" in favor of "prismFacet"
   const App = getAppIfAvailable(facet)
