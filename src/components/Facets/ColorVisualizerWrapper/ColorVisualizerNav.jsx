@@ -60,9 +60,39 @@ type WrapperProps = {
   children: ReactChildren
 }
 
+const HASH_LOCATION_SIZE_MAP = {
+  '#/active/scenes': '800px',
+  '#/active/inspiration': '600px',
+  '#/active/colors': '600px',
+  '#/upload/match-photo': '600px'
+}
+
+const CONTAINER_SELECTORS = [
+  '.dashboard-submenu__content',
+  '.cvw__root-container'
+]
+
+const resizeRootContainer = () => {
+  const hashLocationRequiresResize = Object.keys(HASH_LOCATION_SIZE_MAP).includes(window.location.hash)
+  CONTAINER_SELECTORS
+    .map(selector => document.querySelector(selector))
+    .filter(identity => !!identity)
+    .forEach(element => {
+      element.style.height = hashLocationRequiresResize ? HASH_LOCATION_SIZE_MAP[window.location.hash] : ''
+    })
+  if (!hashLocationRequiresResize) {
+    window.removeEventListener('hashchange', resizeRootContainer)
+  }
+}
+
 export const DropDownMenu = ({ title, items }: DropDownMenuProps) => {
   const history = useHistory()
   const selectDevice = (web, iPhone = web, android = web, iPad = web) => (isMobileOnly ? (isIOS ? iPhone : android) : (isTablet ? iPad : web)) || web
+  useEffect(() => {
+    if (!(isMobileOnly || isTablet)) return
+    resizeRootContainer()
+    window.addEventListener('hashchange', resizeRootContainer)
+  }, [isMobileOnly, isTablet])
   return (
     <>
       <button className='overlay' onClick={() => history.push('/active')} />
