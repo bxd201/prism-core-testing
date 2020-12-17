@@ -98,7 +98,7 @@ export const DropDownMenu = ({ title, items }: DropDownMenuProps) => {
     if (!(isMobileOnly || isTablet)) return
     resizeRootContainer()
     window.addEventListener('hashchange', resizeRootContainer)
-  })
+  }, [isMobileOnly, isTablet])
   return (
     <>
       <button className='overlay' onClick={() => history.push('/active')} />
