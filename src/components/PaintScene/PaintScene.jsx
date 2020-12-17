@@ -490,8 +490,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.canvasOffsetWidth = canvasWidth
     this.canvasOffsetHeight = canvasHeight
     this.wrapperOriginalDimensions = { width: this.CFIWrapper.current.getBoundingClientRect().width, height: canvasHeight }
-    // INTENTIONAL LOG
-    console.table({ ...this.props.referenceDimensions, backgroundImageWidth: this.backgroundImageWidth, backgroundImageHeight: this.backgroundImageHeight, canvasWidth, canvasHeight })
+
     this.setBackgroundImage(canvasWidth, canvasHeight)
   }
 
