@@ -73,20 +73,14 @@ const CONTAINER_SELECTORS = [
 ]
 
 const resizeRootContainer = () => {
-  if (Object.keys(HASH_LOCATION_SIZE_MAP).includes(window.location.hash)) {
-    CONTAINER_SELECTORS
-      .map(selector => document.querySelector(selector))
-      .filter(identity => !!identity)
-      .forEach(element => {
-        element.style.height = HASH_LOCATION_SIZE_MAP[window.location.hash]
-      })
-  } else {
-    CONTAINER_SELECTORS
-      .map(selector => document.querySelector(selector))
-      .filter(identity => !!identity)
-      .forEach(element => {
-        element.style.height = ''
-      })
+  const hashLocationRequiresResize = Object.keys(HASH_LOCATION_SIZE_MAP).includes(window.location.hash)
+  CONTAINER_SELECTORS
+    .map(selector => document.querySelector(selector))
+    .filter(identity => !!identity)
+    .forEach(element => {
+      element.style.height = hashLocationRequiresResize ? HASH_LOCATION_SIZE_MAP[window.location.hash] : ''
+    })
+  if (!hashLocationRequiresResize) {
     window.removeEventListener('hashchange', resizeRootContainer)
   }
 }
