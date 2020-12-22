@@ -104,13 +104,13 @@ const SaveOptions = (props: SaveOptionsProps) => {
     const { width, height } = ctx1.canvas
     const bgData = ctx1.canvas.toDataURL(0, 0, width, height)
     const paintData = ctx2.canvas.toDataURL(0, 0, width, height)
-    const promise = new Promise((resolve) => {
+    const promise = new Promise(async (resolve) => {
       const workCanvas = document.createElement('canvas')
       workCanvas.setAttribute('width', width)
       workCanvas.setAttribute('height', height)
       const workCtx = workCanvas.getContext('2d')
-      loadAndDrawImage(bgData, workCtx, 0, 0, width, height)
-      loadAndDrawImage(paintData, workCtx, 0, 0, width, height)
+      await loadAndDrawImage(bgData, workCtx, 0, 0, width, height)
+      await loadAndDrawImage(paintData, workCtx, 0, 0, width, height)
       const miniImgWidth = Math.floor(width / 3)
       const miniImgHeight = Math.floor(height / 3)
       loadAndDrawImage(bgData, workCtx, width - miniImgWidth, height - miniImgHeight, miniImgWidth, miniImgHeight).then((ctx) => {
