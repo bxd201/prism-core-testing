@@ -311,19 +311,17 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
   return (
     <nav className='cvw-navigation-wrapper' ref={navRef}>
       <input ref={hiddenImageUploadInput} style={{ display: 'none' }} type='file' onChange={e => {
-        if (!isMobileOnly && !isTablet) {
-          const userImg = e.target.files && e.target.files.length ? e.target.files[0] : null
+        const userImg = e.target.files && e.target.files.length ? e.target.files[0] : null
 
-          if (userImg && isSupportedImageFormat(userImg)) {
-            if (useSmartMask) {
-              dispatch(queueImageUpload(userImg))
-            }
-            const imageUrl = URL.createObjectURL(userImg)
-            // @todo In the old code base this action aroused suspicious of race conditions edge cases... this needs to be revisited -RS
-            setImgUrl(imageUrl)
-          } else {
-            // @todo implement notification of failed format. -RS
+        if (userImg && isSupportedImageFormat(userImg)) {
+          if (useSmartMask) {
+            dispatch(queueImageUpload(userImg))
           }
+          const imageUrl = URL.createObjectURL(userImg)
+          // @todo In the old code base this action aroused suspicious of race conditions edge cases... this needs to be revisited -RS
+          setImgUrl(imageUrl)
+        } else {
+          // @todo implement notification of failed format. -RS
         }
       }} />
       <ul className='cvw-navigation-wrapper__center' role='presentation'>

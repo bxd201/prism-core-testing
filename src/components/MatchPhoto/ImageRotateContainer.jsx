@@ -477,11 +477,6 @@ export function ImageRotateContainer ({ setLastActiveComponent, activePaintScene
                 </>)
                 : null
             }
-            {
-              (!bypassValue && ((!imageUrl && !isPaintScene && paintSceneWorkspaceState && paintSceneWorkspaceState.bgImageUrl === undefined) || (!imageUrl && !isPaintScene && !paintSceneWorkspaceState)))
-                ? (<canvas className={canvasBaseClass} name='canvas' width='600' height='600' />)
-                : null
-            }
           </div>
         </div>
         <hr />
