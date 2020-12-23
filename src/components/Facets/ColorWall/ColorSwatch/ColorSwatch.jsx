@@ -24,6 +24,7 @@ const Content = ({ msg, color }: ContentProps) => {
   const { messages = {} } = useIntl()
 
   const colorIsInLivePalette: boolean = useSelector(store => store.lp.colors.some(({ colorNumber }) => colorNumber === color.colorNumber))
+  const title = (addButtonText || at(messages, 'ADD_TO_PALETTE')[0] || '').replace('{name}', fullColorName(color))
 
   if (msg) {
     return (<p className='color-swatch__message'>{msg}</p>)
@@ -39,6 +40,7 @@ const Content = ({ msg, color }: ContentProps) => {
               onClick={() => dispatch(swatchShouldEmit ? emitColor(color) : add(color))}
             >
               <FontAwesomeIcon className='add-icon' icon={['fal', 'plus-circle']} size='2x' />
+              {addButtonText && <span className='OmniButton__content'>{title}</span>}
             </button>
           )
         )

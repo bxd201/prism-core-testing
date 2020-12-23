@@ -133,5 +133,19 @@ $bloom-duration: 200ms;
     justify-content: space-between;
     width: 100%;
     padding: 10px;
+
+    button {
+      display: flex;
+      align-items: center;
+    }
   }
 }
+
+.OmniButton__content {
+  padding-left: .3em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  white-space: nowrap;
+}
+
