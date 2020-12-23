@@ -11,6 +11,7 @@ import throttle from 'lodash/throttle'
 import { injectIntl } from 'react-intl'
 import { calcOrientationDimensions } from '../../shared/utils/scale.util'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import uniqueId from 'lodash/uniqueId'
 
 type ColorFromImageState = {
   canvasX: number,
@@ -88,6 +89,7 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
     this.imageRef = createRef()
     this.wrapperRef = createRef()
     this.deleteButtonRef = createRef()
+    this.indicatorRef = React.createRef()
 
     this.handleImageLoaded = this.handleImageLoaded.bind(this)
     this.handleImageLoadError = this.handleImageLoadError.bind(this)
@@ -107,6 +109,8 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
     this.removePin = this.removePin.bind(this)
     this.handleResize = throttle(this.handleResize.bind(this))
     this.deleteCurrentPin = this.deleteCurrentPin.bind(this)
+    this.handleTouchEnd = this.handleTouchEnd.bind(this)
+    this.getCoordsFromIndicator = this.getCoordsFromIndicator.bind(this)
   }
 
   componentDidMount () { this.props.loadColors(this.props.config.brandId, { language: this.props.intl.locale }) }
@@ -136,8 +140,9 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
       const { offsetLeft } = this.canvasRef.current
       const canvasDims = this.canvasRef.current.getBoundingClientRect()
       const position = this.borderChecking(e.clientX, e.clientY)
-      const pinX = position.x - offsetLeft + activedPinsHalfWidth
-      const pinY = position.y + activedPinsHalfWidth
+
+      let pinX = position.x - offsetLeft + activedPinsHalfWidth
+      let pinY = position.y + activedPinsHalfWidth
       let offsetX = Math.floor(e.clientX - canvasDims.x)
       let offsetY = Math.floor(e.clientY - canvasDims.y)
 
@@ -207,6 +212,11 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
 
     this.setState(newState)
   }
+
+  handleTouchEnd (dims: any, pinId: string) {
+    this.handleDragStop(dims, pinId)
+  }
+
   /*:: generatePins: (pins: Object[]) => void */
   generatePins (pins: Object[]) {
     return pins.map((pinnedColor, index) => {
@@ -227,6 +237,7 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
           deleteCurrentPin={this.deleteCurrentPin}
           handleDragStop={this.handleDragStop}
           activatePin={this.activatePin}
+          handleTouchEnd={this.handleTouchEnd}
         />
       )
     })
@@ -277,6 +288,7 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
       isContentLeft = true
     }
     const newPins = this.removeSameColorPin(clonePins, color)
+
     this.setState({
       color,
       currentPixelRGB,
@@ -296,7 +308,8 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
           translateY: (cursorY - activedPinsHalfWidth) * this.state.initialHeight / this.state.canvasHeight,
           pinNumber: newPins.length,
           isActiveFlag: true,
-          isContentLeft: isContentLeft
+          isContentLeft: isContentLeft,
+          pinId: uniqueId('pin_')
         }
       ]
     })
@@ -503,34 +516,57 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
       isDeleting
     })
   }
-  /*:: handleDragStop: (e: SyntheticEvent) => */
-  handleDragStop (e: SyntheticEvent) {
+
+  // This method is used by mobile browsers to get the pointer  (by proxy) location when input coords are unavailable
+  getCoordsFromIndicator () {
+    const x = Math.floor(this.state.indicatorLeft + activedPinsHalfWidth)
+    const y = Math.floor(this.state.indicatorTop + activedPinsHalfWidth)
+
+    return { x, y }
+  }
+
+  /*:: handleDragStop: (e: SyntheticEvent, pinId: string) => */
+  handleDragStop (e: SyntheticEvent, pinId: string) {
+    const isTouchEvent = e.clientX === void (0)
     const { previewPinIsUpdating, isDragging } = this.state
+
     if (!previewPinIsUpdating && isDragging) {
       const { offsetLeft } = this.canvasRef.current
       const canvasDims = this.canvasRef.current.getBoundingClientRect()
       const position = this.borderChecking(e.clientX, e.clientY)
-      const pinX = position.x - offsetLeft + activedPinsHalfWidth
-      const pinY = position.y + activedPinsHalfWidth
+      let pinX = position.x - offsetLeft + activedPinsHalfWidth
+      let pinY = position.y + activedPinsHalfWidth
       // Bitwise rounding, since this happens pretty often
       let offsetX = e.clientX - canvasDims.x | 0
-      if (offsetX < 0) {
-        offsetX = 0
-      }
-      if (offsetX > canvasDims.width - 1) {
-        offsetX = canvasDims.width - 1
-      }
       let offsetY = e.clientY - canvasDims.y | 0
-      if (offsetY < 0) {
-        offsetY = 0
+
+      if (isTouchEvent) {
+        const touchCoords = this.getCoordsFromIndicator()
+        offsetX = touchCoords.x
+        offsetY = touchCoords.y
+
+        pinX = touchCoords.x - offsetLeft
+        pinY = touchCoords.y
+      } else {
+        if (offsetX < 0) {
+          offsetX = 0
+        }
+        if (offsetX > canvasDims.width - 1) {
+          offsetX = canvasDims.width - 1
+        }
+        if (offsetY < 0) {
+          offsetY = 0
+        }
+        if (offsetY > canvasDims.height - 1) {
+          offsetY = canvasDims.height - 1
+        }
       }
-      if (offsetY > canvasDims.height - 1) {
-        offsetY = canvasDims.height - 1
-      }
+
       const mappedCanvasIndex = (offsetY * this.state.imageData.width + offsetX) * 4
 
       if (this.state.isDeleting) {
-        this.setState({ isDragging: false, isDeleting: false })
+        const pinnedColors = this.state.pinnedColors.filter(item => item.pinId !== pinId)
+        this.setState({ isDragging: false, isDeleting: false, pinnedColors })
       } else {
         this.setState({
           currentPixelRGB: [this.state.imageData.data[mappedCanvasIndex], this.state.imageData.data[mappedCanvasIndex + 1], this.state.imageData.data[mappedCanvasIndex + 2]],
@@ -541,6 +577,9 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
         })
       }
     }
+  }
+  pinRemove () {
+
   }
 
   render () {
@@ -570,7 +609,7 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
             title={`${this.props.intl.formatMessage({ id: 'DELETE_COLOR' })}`}
             className={`scene__image__wrapper__delete-pin ${this.state.isDeleting ? 'scene__image__wrapper__delete-pin--active' : ''}`}
             style={{ display: this.state.isDragging || (this.state.pinnedColors && this.state.pinnedColors.some(c => c.isActiveFlag)) ? 'flex' : 'none' }}
-            onClick={this.pinRemove}
+            onClick={this.removePin}
           >
             <FontAwesomeIcon icon='trash' size='1x' />
           </button>

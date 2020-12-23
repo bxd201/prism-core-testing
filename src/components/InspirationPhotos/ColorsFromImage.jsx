@@ -329,8 +329,9 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
   }
 
   handleTouchEnd = (dims: any, pinId: string) => {
-    const shouldDelete = this.handleDragStop(dims)
+    const shouldDelete = this.handleDragStop(dims, pinId)
 
+    // @todo this deleteByPinId may be unneeded, test after release -RS
     if (shouldDelete) {
       this.deletePinById(pinId)
     }
@@ -370,7 +371,13 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
 
   // This method is used by mobile browsers to get the pointer  (by proxy) location when input coords are unavailable
   getCoordsFromIndicator = () => {
-    const indicatorDims = this.indicatorRef.current.getBoundingClientRect()
+    const indicatorRef = this.indicatorRef.current
+    // This suppresses a console error
+    if (!indicatorRef) {
+      return
+    }
+
+    const indicatorDims = indicatorRef.getBoundingClientRect()
     const indicatorRadius = indicatorDims.width / 2
     const x = Math.floor(indicatorDims.top + indicatorRadius)
     const y = Math.floor(indicatorDims.left + indicatorRadius)
@@ -464,7 +471,7 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
     })
   }
 
-  pinRemove = (e: Object) => {
+  removePin = (e: Object) => {
     e.stopPropagation()
     const clonedPins = cloneColorPinsArr(this.state.pinnedColors)
     const pinsWithoutActiveFlag = clonedPins.filter((colors, index) => {
@@ -522,7 +529,7 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
           title={`${intl.formatMessage({ id: 'DELETE_COLOR' })}`}
           className={`scene__image__wrapper__delete-pin ${isDeleting ? 'scene__image__wrapper__delete-pin--active' : ''}`}
           style={{ display: isDragging || pinnedColors.some(c => c.isActiveFlag) ? 'flex' : 'none' }}
-          onClick={this.pinRemove}
+          onClick={this.removePin}
         >
           <FontAwesomeIcon icon='trash' size='1x' />
         </button>

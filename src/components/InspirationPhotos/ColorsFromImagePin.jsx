@@ -136,7 +136,7 @@ export default (props: Props) => {
 
   const handlePinDragStop = (e: SyntheticEvent) => {
     e.stopPropagation()
-    handleDragStop(e)
+    handleDragStop(e, color.pinId)
     window.removeEventListener('mousemove', handleMouseMove)
     window.removeEventListener('mouseup', handlePinDragStop)
   }
