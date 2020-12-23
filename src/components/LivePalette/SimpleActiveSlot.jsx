@@ -12,11 +12,11 @@ type Props = {
   color: Color,
   onClick: Function,
   toggleCompareColor: boolean,
-  swatchStyles: any
+  swatchSize: number
 }
 
 export function SimpleActiveSlot (props: Props) {
-  const { color, active, toggleCompareColor, swatchStyles } = props
+  const { color, active, toggleCompareColor, swatchSize } = props
 
   const activeSlotRef = useRef(null)
   const [isToggleCompareColor, setPrevToggle] = useState(null)
@@ -35,6 +35,8 @@ export function SimpleActiveSlot (props: Props) {
   if (toggleCompareColor !== isToggleCompareColor) {
     setPrevToggle(toggleCompareColor)
   }
+
+  const swatchStyles = active ? { height: swatchSize } : { width: swatchSize, height: swatchSize }
 
   const customSwatchStyles = {
     backgroundColor: color.hex,

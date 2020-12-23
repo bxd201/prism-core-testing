@@ -16,6 +16,7 @@ import InfoButton from 'src/components/InfoButton/InfoButton'
 import { activate, reorder, toggleCompareColor, deactivateTemporaryColor, empty } from '../../store/actions/live-palette'
 import { arrayToSpacedString } from '../../shared/helpers/StringUtils'
 
+import ActiveSlots from './ActiveSlots'
 import SimpleActiveSlot from './SimpleActiveSlot'
 
 import type { Color } from '../../shared/types/Colors.js.flow'
@@ -43,15 +44,7 @@ type State = {
   spokenWord: string,
   isCompareColor: boolean,
   isFastMaskPage: boolean,
-  sideSwatch: number
-}
-
-const checkIsActive = (activeColor, color) => {
-  if (!activeColor) {
-    return false
-  }
-
-  return activeColor.id === color.id
+  swatchSize: number
 }
 
 export class LivePalette extends PureComponent<Props, State> {
@@ -66,7 +59,7 @@ export class LivePalette extends PureComponent<Props, State> {
       spokenWord: '',
       isCompareColor: false,
       isFastMaskPage: false,
-      swatchSide: 0
+      swatchSize: 0
     }
 
     this.wrapperRef = createRef()
@@ -75,9 +68,9 @@ export class LivePalette extends PureComponent<Props, State> {
   componentDidMount () {
     const { width } = this.wrapperRef.current.getBoundingClientRect()
     const swatchMax = LP_MAX_COLORS_ALLOWED || 7
-    const side = Math.floor(width / swatchMax)
+    const size = Math.floor(width / swatchMax)
 
-    this.setState({ swatchSide: side })
+    this.setState({ swatchSize: size })
 
     const pathName = window.location.pathname
     if (pathName.split('/').slice(-1)[0] === PATH__NAME) {
@@ -137,25 +130,7 @@ export class LivePalette extends PureComponent<Props, State> {
 
   render () {
     const { colors, activeColor, deactivateTemporaryColor, empty, temporaryActiveColor } = this.props
-    const { spokenWord, isCompareColor } = this.state
-    // TODO: abstract below into a class method
-    // calculate all the active slots
-    const activeSlots = colors.filter(item => item && !!item.id).map((color, index) => {
-      if (color && index < LP_MAX_COLORS_ALLOWED) {
-        const isActive = checkIsActive(activeColor, color)
-        const swatchStyles = isActive ? { height: this.state.swatchSide } : { width: this.state.swatchSide, height: this.state.swatchSide }
-        return (<SimpleActiveSlot
-          index={index}
-          key={color.id}
-          color={color}
-          onClick={this.activateColor}
-          moveColor={this.moveColor}
-          active={isActive}
-          isCompareColor={isCompareColor}
-          swatchStyles={swatchStyles}
-        />)
-      }
-    })
+    const { spokenWord } = this.state
 
     return (
       <DndProvider backend={HTML5Backend}>
@@ -171,7 +146,9 @@ export class LivePalette extends PureComponent<Props, State> {
             </div>
           </div>}
           <div className='simple-prism-live-palette__list'>
-            {activeSlots}
+            <ActiveSlots colors={colors} activeColor={activeColor}>
+              <SimpleActiveSlot onClick={this.activateColor} moveColor={this.moveColor} swatchSize={this.state.swatchSize} />
+            </ActiveSlots>
           </div>
           {/* This will speak the current and removed color, as well as some color-delta info. */}
           <aside aria-live='assertive' className='simple-prism-live-palette__color-description'>{spokenWord}</aside>

@@ -21,8 +21,9 @@ import { arrayToSpacedString } from '../../shared/helpers/StringUtils'
 
 import { varValues } from 'src/shared/withBuild/variableDefs'
 
-import EmptySlot from './EmptySlot'
 import ActiveSlot from './ActiveSlot'
+import ActiveSlots from './ActiveSlots'
+import EmptySlot from './EmptySlot'
 
 import type { Color } from '../../shared/types/Colors.js.flow'
 
@@ -57,14 +58,6 @@ type State = {
   spokenWord: string,
   isCompareColor: boolean,
   isFastMaskPage: boolean
-}
-
-const checkIsActive = (activeColor, color) => {
-  if (!activeColor) {
-    return false
-  }
-
-  return activeColor.id === color.id
 }
 
 export class LivePalette extends PureComponent<Props, State> {
@@ -156,26 +149,11 @@ export class LivePalette extends PureComponent<Props, State> {
 
   render () {
     const { colors, activeColor, deactivateTemporaryColor, empty, temporaryActiveColor } = this.props
-    const { spokenWord, isCompareColor, isFastMaskPage } = this.state
-    // TODO: abstract below into a class method
-    // calculate all the active slots
-    const activeSlots = colors.map((color, index) => {
-      if (color && index < LP_MAX_COLORS_ALLOWED) {
-        return (<ActiveSlot
-          index={index}
-          key={color.id}
-          color={color}
-          onClick={this.activateColor}
-          moveColor={this.moveColor}
-          active={(checkIsActive(activeColor, color))}
-          isCompareColor={isCompareColor}
-        />)
-      }
-    })
+    const { spokenWord, isFastMaskPage } = this.state
 
-    // after determining active slots, determine how many empty ones there should be
+    // determine how many empty slots there should be
     let disabledSlots = []
-    const additionalSlots = (LP_MAX_COLORS_ALLOWED - 1) - activeSlots.length
+    const additionalSlots = (LP_MAX_COLORS_ALLOWED - 1) - colors.length
     if (additionalSlots > 0) {
       disabledSlots = times(additionalSlots, (index) => <EmptySlot key={index} />)
     }
@@ -220,7 +198,9 @@ export class LivePalette extends PureComponent<Props, State> {
             </div>
           </div>}
           <div className='prism-live-palette__list'>
-            {activeSlots}
+            <ActiveSlots colors={colors} activeColor={activeColor}>
+              <ActiveSlot onClick={this.activateColor} moveColor={this.moveColor} />
+            </ActiveSlots>
             {colors.length < LP_MAX_COLORS_ALLOWED && <button onClick={(e) => {
               this.handleAddColor(e)
             }} className={`prism-live-palette__slot prism-live-palette__slot--${IS_EMPTY ? 'add-big' : 'add'}`}>
