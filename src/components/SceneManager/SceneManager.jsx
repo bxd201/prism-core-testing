@@ -115,7 +115,7 @@ type Props = {
   toggleEditMode: Function,
   type: string,
   updateCurrentSceneInfo: Function,
-  onSceneChanged?: number => void,
+  onSceneChanged?: SceneStatus => void,
   onVariantChanged?: string => void,
   sceneCount: number,
   showSaveSceneModalFlag: boolean,
@@ -224,7 +224,7 @@ export class SceneManager extends PureComponent<Props, State> {
   }
 
   componentDidUpdate (prevProps: Object, prevState: Object) {
-    const { navigationIntent, stockSceneCache, activeSceneLabel } = this.props
+    const { navigationIntent, stockSceneCache, activeSceneLabel, activeScenes, sceneStatus, onSceneChanged } = this.props
     if (navigationIntent === ROUTES_ENUM.COLOR_WALL && !stockSceneCache) {
       // @todo in the future this should set aside the data that tells which surfaces are painted, right now it is just a flag -RS
       this.prepareDataCache(true)
@@ -235,6 +235,8 @@ export class SceneManager extends PureComponent<Props, State> {
     if (!activeSceneLabel) {
       this.props.setActiveSceneLabel(ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE)
     }
+
+    activeScenes && activeScenes[0] && sceneStatus && onSceneChanged && onSceneChanged(sceneStatus[activeScenes[0]])
   }
 
   componentWillUnmount () {
@@ -335,7 +337,6 @@ export class SceneManager extends PureComponent<Props, State> {
       this.deactivateScene(id)
     } else {
       // ... otherwise activate this scene
-      this.props.onSceneChanged && this.props.onSceneChanged(id)
       this.activateScene(id)
       GA.event({
         category: 'Scene Manager',

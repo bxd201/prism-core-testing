@@ -10,6 +10,7 @@ import { facetPubSubDefaultProps } from 'src/facetSupport/facetPubSub'
 import GenericMessage from '../Messages/GenericMessage'
 import { FormattedMessage } from 'react-intl'
 import type { ColorMap, Color, ColorId } from 'src/shared/types/Colors.js.flow'
+import type { SceneStatus } from 'src/shared/types/Scene'
 import findKey from 'lodash/findKey'
 import { loadColors } from 'src/store/actions/loadColors'
 import HeroLoader from '../Loaders/HeroLoader/HeroLoader'
@@ -50,7 +51,7 @@ export const ColorDetailsPage = ({ colorSEO, publish, subscribe }: Props) => {
                 publish('prism-new-color', newColor)
                 history.push(generateColorDetailsPageUrl(newColor))
               }}
-              onSceneChanged={newScene => publish('prism-new-scene', newScene)}
+              onSceneChanged={(newScene: SceneStatus) => publish('prism-new-scene', newScene)}
               onVariantChanged={newVariant => publish('prism-new-variant', newVariant)}
               onColorChipToggled={newPosition => publish('prism-color-chip-toggled', newPosition)}
             />
