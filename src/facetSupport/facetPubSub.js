@@ -44,7 +44,13 @@ export const subscribeToAnEvent = memoizee((el: HTMLElement) => {
       subscribers.push({
         el: el,
         event: e,
-        handler: handler
+        handler: (...args) => {
+          try {
+            handler(...args)
+          } catch (err) {
+            console.error(`Error in event handler for "${e}" published by following Prism embed root:`, el, 'ORIGINAL ERROR:', err)
+          }
+        }
       })
     }
   }
