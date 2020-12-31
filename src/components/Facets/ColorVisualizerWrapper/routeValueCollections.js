@@ -1,13 +1,24 @@
 export const ROUTES_ENUM = {
+  COLOR_DETAILS: '/active/color/:colorId/:colorSEO',
   COLOR_WALL: '/active/color-wall',
-  PAINT_SCENE: '/active/paint-scene',
+  ACTIVE_PAINT_SCENE: '/active/paint-scene',
   COLORS: '/active/colors',
+  COLOR_COLLECTION: '/active/color-collections',
   INSPIRATION: '/active/inspiration',
   MYIDEAS: '/active/my-ideas',
   HELP: '/active/help',
-  // Thi sis the dropdown from paint a photo
+  // This is the dropdown from paint a photo
   SCENES: '/active/scenes',
-  STOCK_SCENE: '/active'
+  STOCK_SCENE: '/active',
+  UPLOAD_MATCH_PHOTO: '/upload/match-photo',
+  UPLOAD_PAINT_SCENE: '/upload/paint-scene',
+  ACTIVE_MATCH_PHOTO: '/active/match-photo',
+  USE_OUR_IMAGE: '/active/use-our-image',
+  EXPERT_COLORS: '/active/expert-colors',
+  COLOR_FORM_IMAGE: '/active/color-from-image',
+  PAINT_PHOTO: '/active/paint-photo',
+  MY_IDEAS_PREVIEW: '/my-ideas-preview',
+  MASKING: '/active/masking'
 }
 
 // @todo help should likely come out of here, and should only be presented modally.
