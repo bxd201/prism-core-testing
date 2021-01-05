@@ -30,6 +30,7 @@ export const ColorDetailsPage = ({ colorSEO, publish, subscribe }: Props) => {
   const history = useHistory()
   const [familyLink: string, setFamilyLink: string => void] = useState('')
   const colorMap: ColorMap = useSelector(store => store.colors.items.colorMap)
+  const scenes = useSelector(store => store.scenes.sceneCollection.rooms)
 
   if (!colorMap) { return <HeroLoader /> }
 
@@ -51,7 +52,9 @@ export const ColorDetailsPage = ({ colorSEO, publish, subscribe }: Props) => {
                 publish('prism-new-color', newColor)
                 history.push(generateColorDetailsPageUrl(newColor))
               }}
-              onSceneChanged={(newScene: SceneStatus) => publish('prism-new-scene', newScene)}
+              onSceneChanged={({ id, variant }: SceneStatus) =>
+                publish('prism-new-scene', { category: scenes[id].category[0], variant })
+              }
               onVariantChanged={newVariant => publish('prism-new-variant', newVariant)}
               onColorChipToggled={newPosition => publish('prism-color-chip-toggled', newPosition)}
             />
