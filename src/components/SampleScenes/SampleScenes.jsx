@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import Carousel from '../Carousel/Carousel'
 import ColorCollectionsTab from '../Shared/ColorCollectionsTab'
 import { StaticTintScene } from '../CompareColor/StaticTintScene'
+import flatten from 'lodash/flatten'
 import CardMenu from 'src/components/CardMenu/CardMenu'
 import { groupScenesByCategory } from './utils.js'
 import { loadScenes } from '../../store/actions/scenes'
@@ -26,7 +27,7 @@ export const SampleScenesWrapper = ({ isColorTinted, setHeader, activateScene }:
   const { brandId } = useContext(ConfigurationContext)
   const scenes = useSelector(state => {
     if (state.scenes.sceneCollection) {
-      let collections = Object.values(state.scenes.sceneCollection).flat()
+      let collections = flatten(Object.values(state.scenes.sceneCollection))
       return groupScenesByCategory(collections)
     }
   })
