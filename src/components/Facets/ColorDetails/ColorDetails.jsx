@@ -16,6 +16,7 @@ import SceneManager from '../../SceneManager/SceneManager'
 import { activateColorDetailsScene, paintAllMainSurfaces, toggleColorDetailsPage } from '../../../store/actions/scenes'
 import { varValues } from 'src/shared/withBuild/variableDefs'
 import type { Color } from '../../../shared/types/Colors.js.flow'
+import type { SceneStatus } from 'src/shared/types/Scene'
 import 'src/scss/convenience/visually-hidden.scss'
 import './ColorDetails.scss'
 import ColorDataWrapper from 'src/helpers/ColorDataWrapper/ColorDataWrapper'
@@ -26,7 +27,7 @@ const baseClass = 'color-info'
 
 type Props = {
   onColorChanged?: Color => void,
-  onSceneChanged?: string => void,
+  onSceneChanged?: SceneStatus => void,
   onVariantChanged?: string => void,
   onColorChipToggled?: boolean => void,
   familyLink?: string,
