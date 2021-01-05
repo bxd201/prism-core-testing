@@ -236,7 +236,7 @@ export class SceneManager extends PureComponent<Props, State> {
       this.props.setActiveSceneLabel(ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE)
     }
 
-    activeScenes && activeScenes[0] && sceneStatus && onSceneChanged && onSceneChanged(sceneStatus[activeScenes[0]])
+    activeScenes && (prevProps.activeScenes !== activeScenes) && activeScenes[0] && sceneStatus && onSceneChanged && onSceneChanged(sceneStatus[activeScenes[0]])
   }
 
   componentWillUnmount () {
