@@ -159,7 +159,7 @@ module.exports = {
       },
       {
         test: /\.worker\.js$/,
-        exclude: /node_modules\/(?!(react-intl|intl-messageformat|intl-messageformat-parser))/,
+        exclude: /node_modules\/(?!(react-intl|intl-messageformat|intl-messageformat-parser|@firebase))/,
         include: flags.srcPath,
         use: [
           {
