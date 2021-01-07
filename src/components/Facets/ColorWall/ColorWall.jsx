@@ -168,7 +168,13 @@ const ColorWall = () => {
     return (flatten(chunk).some(cell => cell !== undefined) &&
       <div key={key} className='color-wall-chunk' style={{ ...style, padding: gapsBetweenChunks ? cellSize / 5 : 0, zIndex: containsBloomedCell ? 1 : 'auto' }}>
         {sectionLabels[section] && sectionLabels[section][chunkNum] !== undefined && (
-          <div className='color-wall-section-label' style={{ width: style.width - cellSize * 0.4, height: cellSize, marginBottom: isZoomedIn ? 30 : 10 }}>
+          <div
+            className='color-wall-section-label'
+            style={{
+              width: style.width - cellSize * 0.4,
+              height: cellSize,
+              marginBottom: isZoomedIn ? cellSize * 0.6 : cellSize * 0.2
+            }}>
             <div className={`color-wall-section-label__text ${isLargeLabel ? 'color-wall-section-label__text--large' : ''}`}>
               {sectionLabels[section][chunkNum]}
             </div>
