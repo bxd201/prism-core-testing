@@ -1,6 +1,9 @@
 const tinycolor = require('@ctrl/tinycolor').default
 const mostReadable = require('@ctrl/tinycolor').mostReadable
 const kebabCase = require('lodash/kebabCase')
+const flattenDeep = require('lodash/flattenDeep')
+
+const themeColorPrefix = '--prism-theme-color-'
 
 const defaultThemeColors = {
   active: '#369', // focused UI element color
@@ -43,7 +46,7 @@ const getThemeColorsObj = (colorNames, colorValuesObj = {}) => {
     return colorNames.map((colorName) => {
       const color = colorValuesObj[colorName]
       const maybeTc = color ? tinycolor(color) : undefined
-      const modName = `--prism-theme-color-${kebabCase(colorName)}`
+      const modName = `${themeColorPrefix}${kebabCase(colorName)}`
 
       return [colorName, {
         ...getOneThemeColorObj(modName, color || undefined, true, true),
@@ -80,9 +83,15 @@ const extractThemeData = (obj) => {
   })
 }
 
+const mapVarsToColors = baseColors => flattenDeep(extractThemeData(baseColors)).reduce((accum, { prop, color }) => ({
+  ...accum,
+  [prop]: color
+}), {})
+
 module.exports = {
   defaultThemeColors,
-  extractThemeData,
   getThemeColorsObj,
+  mapVarsToColors,
+  themeColorPrefix,
   themeColors
 }
