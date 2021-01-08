@@ -226,6 +226,7 @@ const ColorWall = () => {
               role='presentation'
               tabIndex={-1}
               ref={gridRef}
+              className='outer-grid'
               style={{ backgroundColor: colorWallBgColor, padding: cellSize }}
               cellRenderer={chunkRenderer}
               height={height}

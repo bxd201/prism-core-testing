@@ -44,6 +44,10 @@
     overflow: visible !important;
   }
 
+  .outer-grid{
+    overflow: scroll !important;
+  }
+
   .ReactVirtualized__Grid__innerScrollContainer {
     overflow: visible !important;
     margin: auto;
