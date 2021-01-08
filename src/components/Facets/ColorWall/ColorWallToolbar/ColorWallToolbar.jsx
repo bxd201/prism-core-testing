@@ -97,7 +97,7 @@ export default () => {
                     </span>
                     <FontAwesomeIcon className='close-icon-svg' icon={['fa', 'angle-down']} pull='right' />
                   </Button>
-                  <Menu className={`${menuBarPrefix}__menu ${primeColorWall ? 'shift-left' : ''}`}>
+                  <Menu className={`${menuBarPrefix}__menu ${primeColorWall && width > 768 ? 'shift-left' : ''}`}>
                     {(isFamilyView || family ? families : visibleSections)
                       .filter((name: string) => activeFamily !== name && activeSection !== name && (width <= 768 || !primeColorWall || primeColorWall !== name))
                       .map((name: string) => (
