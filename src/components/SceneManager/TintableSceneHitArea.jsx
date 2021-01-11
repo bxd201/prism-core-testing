@@ -15,7 +15,7 @@ type Props = {
   isOver: Boolean,
   id: string,
   onDrop: Function, // eslint-disable-line
-  onClick: Function,
+  interactionHandler: Function,
   onOver: Function,
   onOut: Function,
   onLoadingSuccess?: Function,
@@ -53,7 +53,7 @@ export class TintableSceneHitArea extends PureComponent<Props> {
   constructor (props) {
     super(props)
 
-    this.handleClick = this.handleClick.bind(this)
+    this.handleInteraction = this.handleInteraction.bind(this)
   }
   // $FlowIgnore
   componentDidUpdate (prevProps, prevState) {
@@ -66,8 +66,8 @@ export class TintableSceneHitArea extends PureComponent<Props> {
     }
   }
 
-  handleClick = function handleClick (e: any) {
-    this.props.onClick(this.props.id)
+  handleInteraction = (e: any) => {
+    this.props.interactionHandler(this.props.id)
   }
 
   render () {
@@ -97,7 +97,7 @@ export class TintableSceneHitArea extends PureComponent<Props> {
         <svg className={TintableSceneHitArea.classNames.hitArea}>
           <use className={`${TintableSceneHitArea.classNames.hitAreaMask} ${isOver ? `${TintableSceneHitArea.classNames.hitAreaMask}--hover` : ''}`}
             xlinkHref={`${getBeforeHash(window.location.href)}#mask___${maskId}`}
-            onClick={this.handleClick} />
+            onClick={this.handleInteraction} onTouchStart={this.handleInteraction} />
         </svg>
       </div>
     )
