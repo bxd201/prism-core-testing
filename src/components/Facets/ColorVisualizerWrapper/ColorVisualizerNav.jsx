@@ -390,44 +390,46 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
               <FormattedMessage id='NAV_LINKS.PAINT_A_PHOTO' />
             </button>
           </li> : null }
-      </ul>
-      <ul className='cvw-navigation-wrapper__right' role='presentation'>
-        {
-          shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.documentSaving)
-            ? <li>
-              <button className={`cvw-nav-btn ${location.pathname === '/active/my-ideas' ? 'cvw-nav-btn--active' : ''}`} onClick={() => {
+        <li>
+          <ul className='cvw-navigation-wrapper__right' role='presentation'>
+            {
+              shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.documentSaving)
+                ? <li>
+                  <button className={`cvw-nav-btn ${location.pathname === '/active/my-ideas' ? 'cvw-nav-btn--active' : ''}`} onClick={() => {
+                    if (isColorwallModallyPresented) {
+                      dispatch(setShouldShowGlobalDestroyWarning(true))
+                      dispatch(setDirtyNavigationIntent('/active/my-ideas'))
+                      return
+                    }
+                    if (isActiveScenePolluted) {
+                      dispatch(setNavigationIntent('/active/my-ideas'))
+                      return
+                    }
+                    // default action
+                    history.push('/active/my-ideas')
+                  }}>
+                    <FormattedMessage id='NAV_LINKS.MY_IDEAS' />
+                  </button>
+                </li> : null
+            }
+            <li>
+              <button className={`cvw-nav-btn ${location.pathname === '/active/help' ? 'cvw-nav-btn--active' : ''}`} onClick={() => {
                 if (isColorwallModallyPresented) {
                   dispatch(setShouldShowGlobalDestroyWarning(true))
-                  dispatch(setDirtyNavigationIntent('/active/my-ideas'))
+                  dispatch(setDirtyNavigationIntent('/active/help'))
                   return
                 }
                 if (isActiveScenePolluted) {
-                  dispatch(setNavigationIntent('/active/my-ideas'))
+                  dispatch(setNavigationIntent('/active/help'))
                   return
                 }
                 // default action
-                history.push('/active/my-ideas')
+                history.push('/active/help')
               }}>
-                <FormattedMessage id='NAV_LINKS.MY_IDEAS' />
+                <FormattedMessage id='NAV_LINKS.HELP' />
               </button>
-            </li> : null
-        }
-        <li>
-          <button className={`cvw-nav-btn ${location.pathname === '/active/help' ? 'cvw-nav-btn--active' : ''}`} onClick={() => {
-            if (isColorwallModallyPresented) {
-              dispatch(setShouldShowGlobalDestroyWarning(true))
-              dispatch(setDirtyNavigationIntent('/active/help'))
-              return
-            }
-            if (isActiveScenePolluted) {
-              dispatch(setNavigationIntent('/active/help'))
-              return
-            }
-            // default action
-            history.push('/active/help')
-          }}>
-            <FormattedMessage id='NAV_LINKS.HELP' />
-          </button>
+            </li>
+          </ul>
         </li>
       </ul>
       <Switch>

@@ -50,8 +50,20 @@
 
   &__right {
     display: flex;
-    position: absolute;
-    right: 1em;
+    list-style-type: none;
+    @include respond-below(xs) {
+      height: 96%;
+    }
+    @include respond-above(xs) {
+      position: absolute;
+      right: 1em;
+    }
+
+    & .cvw-nav-btn {
+      @include respond-below(xs) {
+        padding: 0 0.5em;
+      }
+    }
   }
 
   .overlay {
