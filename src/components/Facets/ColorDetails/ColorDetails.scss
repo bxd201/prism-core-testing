@@ -16,7 +16,7 @@ $details-tab-padding: 1rem;
   flex-direction: column;
   justify-content: flex-end;
   position: relative;
-  width: 100vw;
+  width: 100%;
 
   @include respond-above(sm) {
     flex-direction: row;
