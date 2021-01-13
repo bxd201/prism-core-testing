@@ -324,7 +324,7 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
           // @todo implement notification of failed format. -RS
         }
       }} />
-      <ul className='cvw-navigation-wrapper__center' role='presentation'>
+      <ul className='cvw-navigation-wrapper__structure cvw-navigation-wrapper__structure--center' role='presentation'>
         { shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.exploreColors)
           ? <li>
             <button ref={navBtnRef} className={`cvw-nav-btn ${location.pathname === '/active/colors' ? 'cvw-nav-btn--active' : ''}`} onClick={() => {
@@ -391,7 +391,7 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
             </button>
           </li> : null }
         <li>
-          <ul className='cvw-navigation-wrapper__right' role='presentation'>
+          <ul className='cvw-navigation-wrapper__structure cvw-navigation-wrapper__structure--right' role='presentation'>
             {
               shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.documentSaving)
                 ? <li>
