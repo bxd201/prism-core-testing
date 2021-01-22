@@ -25,7 +25,7 @@ const APP_VERSION = process.env.npm_package_version
 const APP_NAME = process.env.npm_package_name
 
 const ENV = process.env[envVars.NODE_ENV] ? process.env[envVars.NODE_ENV] : 'development'
-const API_PATH = (process.env[envVars.API_URL]) ? process.env[envVars.API_URL] : '$API_URL'
+const API_PATH = (ENV === 'development') ? process.env[envVars.API_URL] : '$API_URL'
 const ML_API_URL = (process.env[envVars.ML_API_URL]) ? process.env[envVars.ML_API_URL] : '$ML_API_URL'
 const BASE_PATH = (ENV === 'development') ? process.env[envVars.PRISM_LOCAL_ORIGIN] : (process.env[envVars.WEB_URL]) ? process.env[envVars.WEB_URL] : '$WEB_URL'
 const SPECIFIED_ENTRIES = process.env[envVars.ENTRY] ? process.env[envVars.ENTRY] : (ENV === 'development') ? DEFAULT_ENTRY : undefined
