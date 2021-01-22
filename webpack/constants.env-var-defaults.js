@@ -1,3 +1,4 @@
+const API_URL = 'https://develop-prism-api.ebus.swaws/'
 const EMBED_LOCAL_HOST = 'localhost'
 const EMBED_LOCAL_PORT = '8085'
 const EMBED_LOCAL_PROTOCOL = 'https'
@@ -9,6 +10,7 @@ const TEMPLATES_LOCAL_PORT = '8082'
 const TEMPLATES_LOCAL_PROTOCOL = 'https'
 
 module.exports = {
+  API_URL,
   EMBED_LOCAL_HOST,
   EMBED_LOCAL_PORT,
   EMBED_LOCAL_PROTOCOL,
