@@ -13,8 +13,14 @@
     transition: background-position 0.2s;
     margin-right: 2px;
     padding: 0 .3em;
-    @include respond-above(xs) { padding-left: .7em; padding-right: .7em; }
-    @include respond-above(sm) { padding-left: 1em; padding-right: 1em; }
+    @include respond-above(xs) {
+      padding-left: .7em;
+      padding-right: .7em;
+    }
+    @include respond-above(sm) {
+      padding-left: 1em;
+      padding-right: 1em;
+    }
 
     &:hover {
       color: var(getThemeColor('secondary'));
@@ -25,6 +31,7 @@
       color: var(getThemeColor('white'));
       background-position: 0 0;
       background-color: var(getThemeColor('secondary'));
+
       &:hover {
         color: var(getThemeColor('white'));
         background-position: 0 0;
@@ -89,35 +96,76 @@
     font-weight: 500;
     width: 100%;
 
+    @include respond-below(sm) {
+      padding-top: 0.4em;
+    }
+
     &__close {
       position: absolute;
       right: 1em;
       background-color: white;
       padding: .75em 1.75em;
-      svg.fa-chevron-up { margin-left: 0.5em; }
+
+      svg.fa-chevron-up {
+        margin-left: 0.5em;
+      }
     }
 
     &__header {
       margin-top: 1.1em;
       font-size: 1.7em;
+      @include respond-below(sm) {
+        margin-top: 1.5em;
+        font-size: 1.0em;
+      }
     }
 
     &__content {
       display: flex;
       justify-content: center;
       padding: 1em;
+      @include respond-below(sm) {
+        padding: 0.4em;
+      }
+
+      &__title {
+        @include respond-below(sm) {
+          font-size: 1em;
+          padding: 0.4em;
+        }
+      }
+
+      &__content {
+        @include respond-below(sm) {
+          font-weight: normal;
+          padding-top: 0.2em;
+        }
+      }
+
       li {
         width: 28%;
         margin: 1.5em;
+        @include respond-below(sm) {
+          margin: 0.4em;
+          width: 45%;
+          font-size: 0.8em;
+        }
       }
+
       img {
         width: 100%;
         height: auto;
         border: 3px solid #fff
       }
+
       button:hover {
-        img { border-color: var(getThemeColor('secondary')); }
-        .dashboard-submenu__content__title { color: var(getThemeColor('secondary')); }
+        img {
+          border-color: var(getThemeColor('secondary'));
+        }
+
+        .dashboard-submenu__content__title {
+          color: var(getThemeColor('secondary'));
+        }
       }
     }
   }
