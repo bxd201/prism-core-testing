@@ -1,9 +1,11 @@
 const memoizee = require('memoizee')
+const autoprefixer = require('autoprefixer')
+const cssCustomPropsFallback = require('./plugins/postCSS/cssCustomPropsFallback')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const PrefixWrap = require('postcss-prefixwrap')
 const sass = require('node-sass')
 const sassUtils = require('node-sass-utils')(sass)
-const { themeColors, getThemeColorsObj } = require('../src/shared/withBuild/themeColors.js')
+const { themeColors, getThemeColorsObj, defaultThemeColors, themeColorPrefix, mapVarsToColors } = require('../src/shared/withBuild/themeColors.js')
 const ALL_VARS = require('../src/shared/withBuild/variableDefs.js')
 const varNames = Object.freeze(ALL_VARS.varNames)
 const varValues = Object.freeze(ALL_VARS.varValues)
@@ -95,7 +97,9 @@ const getVarGenerator = (function () {
   }
 })()
 
-const getThemeColor = ((themeColorData) => {
+const themeColorStructure = getThemeColorsObj(themeColors, defaultThemeColors)
+
+const getThemeColorByPath = ((themeColorData) => {
   return (whatever) => {
     const path = whatever.getValue()
     const val = at(themeColorData, path)[0]
@@ -106,7 +110,7 @@ const getThemeColor = ((themeColorData) => {
 
     throw new Error(`Unable to locate ${path} in theme colors data`)
   }
-})(getThemeColorsObj(themeColors))
+})(themeColorStructure)
 
 const sassRules = [
   MiniCssExtractPlugin.loader,
@@ -115,6 +119,13 @@ const sassRules = [
     loader: 'postcss-loader',
     options: {
       plugins: [
+        cssCustomPropsFallback([
+          {
+            varPrefix: themeColorPrefix,
+            varFallbackMap: mapVarsToColors(themeColorStructure)
+          }
+        ]),
+        autoprefixer(),
         PrefixWrap(`.${flags.prismWrappingClass}.${flags.cleanslateWrappingClass}`, {
           ignoredSelectors: [/^:root/],
           blacklist: [flags.cleanslateEntryPointName]
@@ -135,7 +146,7 @@ const sassRules = [
           functions: {
             '_getVar($keys)': getVarGenerator(varValues),
             '_getVarName($keys)': getVarGenerator(varNames),
-            '_getThemeColor($keys)': getThemeColor
+            '_getThemeColor($keys)': getThemeColorByPath
           }
         }
       }

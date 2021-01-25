@@ -1,2 +1,5 @@
-last 2 versions
+defaults
 IE >= 11
+EDGE >= 16
+# when it's time to stop supporting IE, uncomment this next line
+# not IE 11

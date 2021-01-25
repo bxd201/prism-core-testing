@@ -7,13 +7,12 @@ import { loadConfiguration } from '../../store/actions/configurations'
 
 import CSSVariableApplicator from '../../helpers/CSSVariableApplicator'
 import { varNames } from 'src/shared/withBuild/variableDefs'
-import { getThemeColorsObj, themeColors, defaultThemeColors, extractThemeData } from 'src/shared/withBuild/themeColors'
+import { getThemeColorsObj, themeColors, defaultThemeColors, mapVarsToColors } from 'src/shared/withBuild/themeColors'
 
 import ConfigurationContext from './ConfigurationContext'
 
 import { type Configuration, type EmbeddedConfiguration } from '../../shared/types/Configuration'
 import * as GA from 'src/analytics/GoogleAnalytics'
-import flattenDeep from 'lodash/flattenDeep'
 import { tinycolor } from '@ctrl/tinycolor'
 
 type ReduxStateProps = {
@@ -100,15 +99,10 @@ function ConfigurationContextProvider (props: Props) {
         ...theme
       })
 
-      const flat = flattenDeep(extractThemeData(newThemeVars)).reduce((accum, { prop, color }) => ({
-        ...accum,
-        [prop]: color
-      }), {})
-
       customProps = {
         ...customProps,
         // new theme props
-        ...flat,
+        ...mapVarsToColors(newThemeVars),
         // deprecated props below
         [varNames.theme._colors.primary]: theme.primary,
         [varNames.theme._colors.secondary]: theme.secondary,
