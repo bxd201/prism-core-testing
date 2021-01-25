@@ -27,7 +27,7 @@ const Content = ({ msg, color }: ContentProps) => {
   const title = (addButtonText || at(messages, 'ADD_TO_PALETTE')[0] || '').replace('{name}', fullColorName(color))
 
   if (msg) {
-    return (<p className='color-swatch__message'>{msg}</p>)
+    return (<p className='color-swatch__content-message'>{msg}</p>)
   }
   return (
     <div className='color-swatch__button-group'>

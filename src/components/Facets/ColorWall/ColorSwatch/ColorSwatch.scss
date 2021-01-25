@@ -101,7 +101,7 @@ $bloom-duration: 200ms;
       &--r { right: 0.5em; }
     }
 
-    &__message {
+    &-message {
       background: var(getThemeColor('white'));
       bottom: 3px;
       border-radius: 2px;
