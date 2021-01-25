@@ -167,6 +167,7 @@ export const CVW = (props: CVWPropsType) => {
     dispatch(clearNavigationIntent())
     // Allow add color button to respond again
     dispatch(setIsColorWallModallyPresented(false))
+    dispatch(setIsScenePolluted())
   }
 
   const handleNavigationIntentCancel = (e: SyntheticEvent) => {
