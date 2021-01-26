@@ -1,18 +1,18 @@
 const flags = require('./constants')
 
 module.exports = {
-  minimize: flags.production,
+  checkWasmTypes: flags.production,
   concatenateModules: flags.production,
   flagIncludedChunks: flags.production,
-  checkWasmTypes: flags.production,
   mangleWasmImports: false,
   mergeDuplicateChunks: true,
+  minimize: flags.production,
   moduleIds: flags.production ? 'hashed' : 'named',
   namedChunks: !flags.production,
   namedModules: !flags.production,
   nodeEnv: flags.mode,
   noEmitOnErrors: flags.production,
-  occurrenceOrder: false, // <-- KEEP THIS OFF. it can cause a race condition that fails app initialization.
+  occurrenceOrder: true,
   portableRecords: false,
   providedExports: true,
   removeAvailableModules: true,

@@ -16,4 +16,6 @@ export default memoize((prismRoot) => {
   })
 
   prismRoot.className = dedupePatternedString(`${prismRoot.className} ${TO_BIND_CLASS} ${CLEANSLATE_CLASS} ${PRISM_CLASS}`, ' ')
+
+  return prismRoot
 })

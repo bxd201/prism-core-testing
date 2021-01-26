@@ -15,9 +15,7 @@ module.exports = merge.smart(
     mode: flags.mode,
     devtool: 'cheap-source-map',
     plugins: [
-      new CleanWebpackPlugin(),
-      new webpack.HashedModuleIdsPlugin(),
-      new webpack.NamedChunksPlugin()
+      new CleanWebpackPlugin()
     ],
     optimization: {
       minimizer: [

@@ -72,6 +72,9 @@ module.exports = merge.smart(common, {
 
         return req.url
       }
-    }]
+    }],
+    stats: {
+      ...require('./partial.devServer.stats')
+    }
   }
 })

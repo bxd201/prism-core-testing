@@ -10,7 +10,7 @@ const ALL_VARS = require('../src/shared/withBuild/variableDefs')
 const alias = require('./partial.resolve.alias')
 const stats = require('./partial.stats')
 const moduleRuleJsx = require('./partial.module.rules.jsx')
-const moduleRuleSass = require('./partial.module.rules.sass')
+const { sassModuleRules, sassRules } = require('./partial.module.rules.sass')
 
 // create constants that correlate to environment variables to be injected
 const APP_VERSION = process.env.npm_package_version
@@ -88,7 +88,8 @@ module.exports = {
           mainFields: ['module', 'jsnext:main', 'browser', 'main']
         }
       },
-      moduleRuleSass,
+      sassModuleRules,
+      sassRules,
       {
         test: /\.(png|jpe?g|gif|svg)$/i,
         use: [

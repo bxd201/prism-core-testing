@@ -16,6 +16,11 @@ import { setLanguage } from 'src/store/actions/language'
 import { flattenNestedObject } from '../shared/helpers/DataUtils'
 import AuthObserver from '../components/AuthObserver/AuthObserver'
 
+// import cleanslate styles, overrides, and defaults
+import 'src/cleanslate/cleanslate.scss'
+import 'src/cleanslate/_default-styles.scss'
+import 'src/cleanslate/_cleanslate-overrides.scss'
+
 // wraps a react component with the required PRISM HOCs
 export const facetMasterWrapper = (Component: ComponentType<any>) => {
   return (props: EmbeddedConfiguration) => {

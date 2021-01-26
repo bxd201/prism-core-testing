@@ -7,8 +7,8 @@ import ConfigurationContext from 'src/contexts/ConfigurationContext/Configuratio
 import { getColors } from '../functions'
 import { varNames } from 'src/shared/withBuild/variableDefs'
 
-import './HeroLoader.scss'
 import CircleLoader from '../CircleLoader/CircleLoader'
+import './HeroLoader.scss'
 
 type Props = {
   color?: string,

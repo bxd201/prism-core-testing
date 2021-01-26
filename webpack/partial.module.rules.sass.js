@@ -112,59 +112,76 @@ const getThemeColorByPath = ((themeColorData) => {
   }
 })(themeColorStructure)
 
-const sassRules = [
-  MiniCssExtractPlugin.loader,
-  'css-loader',
-  {
-    loader: 'postcss-loader',
-    options: {
-      plugins: [
-        cssCustomPropsFallback([
-          {
-            varPrefix: themeColorPrefix,
-            varFallbackMap: mapVarsToColors(themeColorStructure)
-          }
-        ]),
-        autoprefixer(),
-        PrefixWrap(`.${flags.prismWrappingClass}.${flags.cleanslateWrappingClass}`, {
-          ignoredSelectors: [/^:root/],
-          blacklist: [flags.cleanslateEntryPointName]
-        })
-      ]
-    }
-  },
-  {
-    loader: 'sass-loader',
-    options: {
-      prependData: [
-        '$cleanslateWrappingClass: ' + flags.cleanslateWrappingClass,
-        '$env: ' + flags.mode,
-        '$prismWrappingClass: ' + flags.prismWrappingClass
-      ].join(';') + ';',
-      sassOptions: (loaderContext) => {
-        return {
-          functions: {
-            '_getVar($keys)': getVarGenerator(varValues),
-            '_getVarName($keys)': getVarGenerator(varNames),
-            '_getThemeColor($keys)': getThemeColorByPath
+const getRules = (cssLoaderOpts = {}) => {
+  return [
+    MiniCssExtractPlugin.loader,
+    {
+      loader: 'css-loader',
+      options: cssLoaderOpts
+    },
+    {
+      loader: 'postcss-loader',
+      options: {
+        plugins: [
+          cssCustomPropsFallback([
+            {
+              varPrefix: themeColorPrefix,
+              varFallbackMap: mapVarsToColors(themeColorStructure)
+            }
+          ]),
+          autoprefixer(),
+          PrefixWrap(`.${flags.prismWrappingClass}.${flags.cleanslateWrappingClass}`, {
+            ignoredSelectors: [/^:root/],
+            blacklist: [flags.cleanslateEntryPointName]
+          })
+        ]
+      }
+    },
+    {
+      loader: 'sass-loader',
+      options: {
+        prependData: [
+          '$cleanslateWrappingClass: ' + flags.cleanslateWrappingClass,
+          '$env: ' + flags.mode,
+          '$prismWrappingClass: ' + flags.prismWrappingClass
+        ].join(';') + ';',
+        sassOptions: (loaderContext) => {
+          return {
+            functions: {
+              '_getVar($keys)': getVarGenerator(varValues),
+              '_getVarName($keys)': getVarGenerator(varNames),
+              '_getThemeColor($keys)': getThemeColorByPath
+            }
           }
         }
       }
+    },
+    {
+      loader: 'sass-resources-loader',
+      options: {
+        resources: [
+          path.resolve(__dirname, '../src/scss/mixins/mixins.scss'),
+          path.resolve(__dirname, '../src/scss/functions/functions.scss'),
+          path.resolve(__dirname, '../src/scss/variables.scss')
+        ]
+      }
     }
-  },
-  {
-    loader: 'sass-resources-loader',
-    options: {
-      resources: [
-        path.resolve(__dirname, '../src/scss/mixins/mixins.scss'),
-        path.resolve(__dirname, '../src/scss/functions/functions.scss'),
-        path.resolve(__dirname, '../src/scss/variables.scss')
-      ]
-    }
-  }
-]
+  ]
+}
+
+const sassRules = {
+  test: /\.(sc|sa|c)ss$/,
+  use: getRules(),
+  exclude: /\.module\.(sc|sa|c)ss$/
+}
+
+const sassModuleRules = {
+  test: /\.(sc|sa|c)ss$/,
+  use: getRules({ importLoaders: 1, modules: true }),
+  include: /\.module\.(sc|sa|c)ss$/
+}
 
 module.exports = {
-  test: /\.(sc|sa|c)ss$/,
-  use: sassRules
+  sassModuleRules,
+  sassRules
 }
