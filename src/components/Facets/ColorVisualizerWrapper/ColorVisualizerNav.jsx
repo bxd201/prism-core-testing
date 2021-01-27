@@ -96,22 +96,23 @@ export const DropDownMenu = ({ title, items }: DropDownMenuProps) => {
   return (
     <>
       <button className='overlay' onClick={() => history.push('/active')} />
-      <div className='dashboard-submenu'>
-        <button className='dashboard-submenu__close' onClick={() => history.push('/active')}>
+      <div className='cvw-dashboard-submenu'>
+        <button className='cvw-dashboard-submenu__close' onClick={() => history.push('/active')}>
           <FormattedMessage id='CLOSE' />
-          <FontAwesomeIcon icon={['fa', 'chevron-up']} />
+          <FontAwesomeIcon className='cvw-dashboard-submenu__close__ico' icon={['fa', 'chevron-up']} />
         </button>
-        <h1 className='dashboard-submenu__header'>{title}</h1>
-        <ul className='dashboard-submenu__content'>
-          {items.map(({ img, imgiPhone, imgiPad, imgAndroid, title, titleMobile, content, contentAndroid, contentiPhone, description, onClick }, i) => {
-            const Wrapper = ({ children }: WrapperProps) => onClick ? <button onClick={onClick}>{children}</button> : <div>{children}</div>
+        <h1 className='cvw-dashboard-submenu__header'>{title}</h1>
+        <ul className='cvw-dashboard-submenu__content'>
+          {items.map(({ img, imgiPhone, imgiPad, imgAndroid, title, titleMobile, content, contentAndroid, contentiPhone, description, onClick }, i, arr) => {
+            const Wrapper = ({ children }: WrapperProps) => onClick ? <button className='cvw-dashboard-submenu__content__btn' onClick={onClick}>{children}</button> : <div>{children}</div>
+            const isWide = (arr.length > 2 && i === 0)
             return (
-              <li key={i}>
+              <li key={i} className={`cvw-dashboard-submenu__content__item ${isWide ? 'cvw-dashboard-submenu__content__item--wide' : ''}`}>
                 <Wrapper>
-                  {img ? <img className='dashboard-submenu-image' src={selectDevice(img, imgiPhone, imgAndroid, imgiPad)} alt='' /> : null}
-                  <h3 className='dashboard-submenu__content__title'>{selectDevice(title, titleMobile)}</h3>
-                  <p className='dashboard-submenu__content__content'>{selectDevice(content, contentiPhone, contentAndroid)}</p>
-                  {description && <p className='dashboard-submenu__content__tip'>{description}</p>}
+                  {img ? <div className={`cvw-dashboard-submenu__content__image ${isWide ? 'cvw-dashboard-submenu__content__image--wide' : ''}`} style={{ 'backgroundImage': `url(${selectDevice(img, imgiPhone, imgAndroid, imgiPad)})` }} alt='' /> : null}
+                  <h3 className='cvw-dashboard-submenu__content__title'>{selectDevice(title, titleMobile)}</h3>
+                  <p className='cvw-dashboard-submenu__content__content'>{selectDevice(content, contentiPhone, contentAndroid)}</p>
+                  {description && <p className='cvw-dashboard-submenu__content__tip'>{description}</p>}
                 </Wrapper>
               </li>
             )
