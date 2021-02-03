@@ -104,7 +104,7 @@ export const DropDownMenu = ({ title, items }: DropDownMenuProps) => {
         <h1 className='cvw-dashboard-submenu__header'>{title}</h1>
         <ul className='cvw-dashboard-submenu__content'>
           {items.map(({ img, imgiPhone, imgiPad, imgAndroid, title, titleMobile, content, contentAndroid, contentiPhone, description, onClick }, i, arr) => {
-            const Wrapper = ({ children }: WrapperProps) => onClick ? <button className='cvw-dashboard-submenu__content__btn' onClick={onClick}>{children}</button> : <div>{children}</div>
+            const Wrapper = ({ children }: WrapperProps) => <button className={`${onClick ? 'cvw-dashboard-submenu__content__btn' : ''}`} disabled={!onClick} onClick={onClick}>{children}</button>
             const isWide = (arr.length > 2 && i === 0)
             return (
               <li key={i} className={`cvw-dashboard-submenu__content__item ${isWide ? 'cvw-dashboard-submenu__content__item--wide' : ''}`}>
