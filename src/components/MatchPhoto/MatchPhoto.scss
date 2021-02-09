@@ -31,7 +31,6 @@
       line-height: 0px;
       &::before {
         display: block;
-        content: url('~src/images/ghost-gradient.svg');
         position: absolute;
         left: 0;
         right: 0;
@@ -48,7 +47,7 @@
   &__button {
     background: transparent;
     border: none;
-    color: var(getThemeColor('white'));
+    color: var(getThemeColor('white.contrast'));
     cursor: pointer;
     display: inline-block;
     fill: var(getThemeColor('black'));
