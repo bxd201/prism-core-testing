@@ -13,7 +13,7 @@ import SceneManager from '../../SceneManager/SceneManager'
 import ColorInfo from './ColorInfo'
 import CoordinatingColors from './CoordinatingColors'
 import SimilarColors from './SimilarColors'
-import { activateColorDetailsScene, paintAllMainSurfaces, toggleColorDetailsPage } from '../../../store/actions/scenes'
+import { activateColorDetailsScene, paintAllMainSurfaces, resetScenesVariant, toggleColorDetailsPage } from '../../../store/actions/scenes'
 import { varValues } from 'src/shared/withBuild/variableDefs'
 import type { Color } from '../../../shared/types/Colors.js.flow'
 import type { SceneStatus } from 'src/shared/types/Scene'
@@ -49,6 +49,8 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
     dispatch(toggleColorDetailsPage())
     return () => { dispatch(toggleColorDetailsPage()) }
   }, [])
+
+  useEffect(() => { scenesLoaded && dispatch(resetScenesVariant()) }, [scenesLoaded])
 
   useEffect(() => {
     color && GA.pageView(`color-detail/${color.brandKey} ${color.colorNumber} - ${color.name}`)
