@@ -10,7 +10,7 @@ import { type ColorsState, type GridRefState } from 'src/shared/types/Actions.js
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import ColorWallContext, { type ColorWallContextProps } from './ColorWallContext'
 import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
-import { getLevelMap, getScrollStep, getCoords, getLongestArrayIn2dArray, getWidthOfWidestChunkRowInChunkGrid, makeChunkGrid, computeFinalScrollPosition, getHeightOfChunkRow, rowHasLabels } from './ColorWallUtils'
+import { getLevelMap, getScrollStep, getCoords, getLongestArrayIn2dArray, getWidthOfWidestChunkRowInChunkGrid, makeChunkGrid, computeFinalScrollPosition, getHeightOfChunkRow, rowHasLabels, calculateLabelHeight, calculateLabelMarginBottom } from './ColorWallUtils'
 import ColorSwatch from './ColorSwatch/ColorSwatch'
 import { compareKebabs } from 'src/shared/helpers/StringUtils'
 import range from 'lodash/range'
@@ -172,8 +172,8 @@ const ColorWall = () => {
             className='color-wall-section-label'
             style={{
               width: style.width - cellSize * 0.4,
-              height: cellSize,
-              marginBottom: isZoomedIn ? cellSize * 0.6 : cellSize * 0.2
+              height: calculateLabelHeight(cellSize),
+              marginBottom: calculateLabelMarginBottom(isZoomedIn, cellSize)
             }}>
             <div className={`color-wall-section-label__text ${isLargeLabel ? 'color-wall-section-label__text--large' : ''}`}>
               {sectionLabels[section][chunkNum]}
