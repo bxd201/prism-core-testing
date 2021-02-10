@@ -16,6 +16,7 @@ import {
   ACTIVATE_SCENE,
   ACTIVATE_COLOR_DETAILS_SCENE,
   CHANGE_SCENE_VARIANT,
+  RESET_SCENES_VARIANT,
   DEACTIVATE_SCENE,
   PAINT_SCENE_SURFACE,
   PAINT_ALL_SCENE_SURFACES,
@@ -35,6 +36,7 @@ import {
   SET_USE_SMART_MASK, SET_SHOW_EDIT_CUSTOM_SCENE
 } from '../actions/scenes'
 import { registerMask, updateMask } from '../masks/store'
+import { SCENE_VARIANTS } from 'constants/globals'
 
 type State = {
   sceneCollection: {
@@ -195,6 +197,17 @@ export const scenes = (state: Object = initialState, action: { type: string, pay
             }
 
             return _surface
+          })
+        })
+      })
+
+    case RESET_SCENES_VARIANT:
+      return Object.assign({}, state, {
+        sceneStatusColorDetails: Object.assign({}, state.sceneStatusColorDetails, {
+          [state.type]: state.sceneStatusColorDetails[state.type].map((_surface: SceneStatus) => {
+            return Object.assign({}, _surface, {
+              variant: SCENE_VARIANTS.DAY
+            })
           })
         })
       })
