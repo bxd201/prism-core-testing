@@ -56,7 +56,13 @@ const ColorWall = () => {
   const levelMap: { [string]: number } = getLevelMap(chunkGrid, bloomEnabled, params.colorId)
 
   // keeps redux store and url in sync for family and section data
-  useEffect(() => { params.section && dispatch(filterBySection(params.section)) }, [compareKebabs(params.section, section)])
+  useEffect(() => {
+    if (params.section) {
+      setChunkGrid([])
+      dispatch(filterBySection(params.section))
+    }
+  },
+  [compareKebabs(params.section, section)])
   useEffect(() => { dispatch(filterByFamily(params.family)) }, [compareKebabs(params.family, family)])
 
   // build the chunkGrid based on color wall container width
