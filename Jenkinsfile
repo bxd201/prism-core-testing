@@ -10,6 +10,9 @@ pipeline {
   agent any
   environment {
     IMAGE_NAME = "prism-core"
+
+    // Get Current PRISM Version from package.json
+    PRISM_VERSION = sh(script: "cat package.json | grep version | head -1 | awk -F: '{ print \$2 }' | sed 's/[\", ]//g' ", returnStdout: true).trim()
   }
   stages {
     stage('builder') {
@@ -19,6 +22,8 @@ pipeline {
         }
       }
       steps {
+        echo "Current PRISM Version: ${PRISM_VERSION}"
+
         sh """
         #!/bin/bash
 
@@ -58,6 +63,8 @@ pipeline {
         }
       }
       steps {
+        echo "Current PRISM Version: ${PRISM_VERSION}"
+
         unstash 'static'
         sh """
         # Clean up any old image archive files
