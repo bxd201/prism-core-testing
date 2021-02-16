@@ -10,6 +10,9 @@ pipeline {
   agent any
   environment {
     IMAGE_NAME = "prism-core"
+
+    // Get Current PRISM Version from package.json
+    PRISM_VERSION = sh(script: "cat package.json | grep version | head -1 | awk -F: '{ print \$2 }' | sed 's/[\", ]//g' ", returnStdout: true).trim()
   }
   stages {
     stage('builder') {
@@ -19,6 +22,8 @@ pipeline {
         }
       }
       steps {
+        echo "Current PRISM Version: ${PRISM_VERSION}"
+
         sh """
         #!/bin/bash
 
@@ -51,6 +56,26 @@ pipeline {
         stash includes: 'dist/**/*', name: 'static'
       }
     }
+    stage('s3-upload') {
+      agent {
+        docker {
+          image 'docker.cpartdc01.sherwin.com/amazon/aws-cli:2.1.26'
+          args "--entrypoint=''"
+        }
+      }
+      when {
+        branch 'develop'
+      }
+      steps {
+        echo "Current PRISM Version: ${PRISM_VERSION}"
+
+        unstash 'static'
+
+        sh """
+        aws s3 cp dist/ s3://sw-prism-web/${PRISM_VERSION}/ --recursive
+        """
+      }
+    }
     stage('build') {
       when {
         not {
@@ -58,6 +83,8 @@ pipeline {
         }
       }
       steps {
+        echo "Current PRISM Version: ${PRISM_VERSION}"
+
         unstash 'static'
         sh """
         # Clean up any old image archive files
