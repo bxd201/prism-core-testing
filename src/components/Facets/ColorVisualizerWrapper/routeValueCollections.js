@@ -1,7 +1,7 @@
 export const ROUTES_ENUM = {
   COLOR_DETAILS: '/active/color/:colorId/:colorSEO',
   COLOR_WALL: '/active/color-wall',
-  ACTIVE_PAINT_SCENE: '/active/paint-scene',
+  PAINT_SCENE: '/active/paint-scene',
   COLORS: '/active/colors',
   COLOR_COLLECTION: '/active/color-collections',
   INSPIRATION: '/active/inspiration',
