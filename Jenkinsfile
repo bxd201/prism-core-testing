@@ -10,6 +10,7 @@ pipeline {
   agent any
   environment {
     IMAGE_NAME = "prism-core"
+
   }
   stages {
     stage('builder') {
@@ -19,6 +20,7 @@ pipeline {
         }
       }
       steps {
+
         sh """
         #!/bin/bash
 
@@ -47,8 +49,48 @@ pipeline {
 
         # Remove the build container
         docker rm -f ${IMAGE_NAME}-build-${BUILD_NUMBER}
+
+        # Echo Version to file
+        cat package.json | grep version | head -1 | awk -F: '{ print \$2 }' | sed 's/[\", ]//g' > dist/VERSION
         """
         stash includes: 'dist/**/*', name: 'static'
+      }
+    }
+    stage('s3-upload') {
+      agent {
+        docker {
+          image 'docker.cpartdc01.sherwin.com/amazon/aws-cli:2.1.26'
+          args "--entrypoint=''"
+        }
+      }
+      when {
+        branch 'develop'
+      }
+      steps {
+        unstash 'static'
+
+        sh """
+        VERSION="\$(cat dist/VERSION)"
+
+        aws s3 cp dist/ s3://sw-prism-web/"\$VERSION"/ --recursive
+        """
+      }
+    }
+    stage('s3-upload-release') {
+      agent {
+        docker {
+          image 'docker.cpartdc01.sherwin.com/amazon/aws-cli:2.1.26'
+          args "--entrypoint=''"
+        }
+      }
+      when {
+        branch 'release'
+      }
+      steps {
+        sh """
+        VERSION="\$(cat dist/VERSION)"
+        aws s3 sync s3://sw-prism-web/"\$VERSION"/ s3://sw-prism-web/latest/ --delete
+        """
       }
     }
     stage('build') {
@@ -58,6 +100,7 @@ pipeline {
         }
       }
       steps {
+
         unstash 'static'
         sh """
         # Clean up any old image archive files
