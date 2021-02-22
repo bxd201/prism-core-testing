@@ -11,8 +11,6 @@ pipeline {
   environment {
     IMAGE_NAME = "prism-core"
 
-    // Get Current PRISM Version from package.json
-    PRISM_VERSION = sh(script: "cat package.json | grep version | head -1 | awk -F: '{ print \$2 }' | sed 's/[\", ]//g' ", returnStdout: true).trim()
   }
   stages {
     stage('builder') {
@@ -22,7 +20,6 @@ pipeline {
         }
       }
       steps {
-        echo "Current PRISM Version: ${PRISM_VERSION}"
 
         sh """
         #!/bin/bash
@@ -52,6 +49,9 @@ pipeline {
 
         # Remove the build container
         docker rm -f ${IMAGE_NAME}-build-${BUILD_NUMBER}
+
+        # Echo Version to file
+        cat package.json | grep version | head -1 | awk -F: '{ print \$2 }' | sed 's/[\", ]//g' > dist/VERSION
         """
         stash includes: 'dist/**/*', name: 'static'
       }
@@ -67,12 +67,29 @@ pipeline {
         branch 'develop'
       }
       steps {
-        echo "Current PRISM Version: ${PRISM_VERSION}"
-
         unstash 'static'
 
         sh """
-        aws s3 cp dist/ s3://sw-prism-web/${PRISM_VERSION}/ --recursive
+        VERSION="\$(cat dist/VERSION)"
+
+        aws s3 cp dist/ s3://sw-prism-web/"\$VERSION"/ --recursive
+        """
+      }
+    }
+    stage('s3-upload-release') {
+      agent {
+        docker {
+          image 'docker.cpartdc01.sherwin.com/amazon/aws-cli:2.1.26'
+          args "--entrypoint=''"
+        }
+      }
+      when {
+        branch 'release'
+      }
+      steps {
+        sh """
+        VERSION="\$(cat dist/VERSION)"
+        aws s3 sync s3://sw-prism-web/"\$VERSION"/ s3://sw-prism-web/latest/ --delete
         """
       }
     }
@@ -83,7 +100,6 @@ pipeline {
         }
       }
       steps {
-        echo "Current PRISM Version: ${PRISM_VERSION}"
 
         unstash 'static'
         sh """
