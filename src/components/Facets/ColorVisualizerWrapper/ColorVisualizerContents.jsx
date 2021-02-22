@@ -199,7 +199,7 @@ export const CVW = (props: CVWPropsType) => {
                 <Route path={ROUTES_ENUM.COLOR_COLLECTION} render={() => <ColorCollections isExpertColor={false} {...location.state} />} />
                 <Route path={ROUTES_ENUM.UPLOAD_MATCH_PHOTO}>{getActiveScene()}</Route>
                 <Route path={ROUTES_ENUM.UPLOAD_PAINT_SCENE}>{getActiveScene()}</Route>
-                <Route path={ROUTES_ENUM.ACTIVE_PAINT_SCENE}>{ImageRotateScene}</Route>
+                <Route path={ROUTES_ENUM.PAINT_SCENE}>{ImageRotateScene}</Route>
                 <Route path={ROUTES_ENUM.ACTIVE_MATCH_PHOTO}>{matchPhotoScene}</Route>
                 <Route path={ROUTES_ENUM.USE_OUR_IMAGE} render={() => <SampleScenesWrapper isColorTinted activateScene={activateStockScene} />} />
                 <Route path={ROUTES_ENUM.EXPERT_COLORS} render={() => <ExpertColorPicks isExpertColor />} />
