@@ -492,7 +492,6 @@ export class SceneManager extends PureComponent<Props, State> {
       activeScenes,
       type,
       interactive,
-      sceneWorkspaces,
       expertColorPicks,
       intl,
       showSaveSceneModalFlag,
@@ -643,6 +642,10 @@ export class SceneManager extends PureComponent<Props, State> {
               if (!scene) {
                 return null
               }
+
+              const sceneWorkspaces = this.props.sceneWorkspaces.filter(
+                workspace => workspace.sceneId === scene.id
+              )
 
               const sceneInfo = getSceneInfoById(scene, sceneStatus)
 
