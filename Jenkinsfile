@@ -76,7 +76,7 @@ pipeline {
         """
       }
     }
-    stage('s3-upload-release') {
+/*     stage('s3-upload-release') {
       agent {
         docker {
           image 'docker.cpartdc01.sherwin.com/amazon/aws-cli:2.1.26'
@@ -92,7 +92,7 @@ pipeline {
         aws s3 sync s3://sw-prism-web/"\$VERSION"/ s3://sw-prism-web/latest/ --delete
         """
       }
-    }
+    } */
     stage('build') {
       when {
         not {
