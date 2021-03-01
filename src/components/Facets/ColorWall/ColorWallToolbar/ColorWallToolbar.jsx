@@ -115,7 +115,7 @@ export default () => {
                 </Wrapper>
               )
             }
-            {shouldShowCloseButton && (
+            {shouldShowCloseButton && !isFamilyView && (
               <button
                 className='menu-bar__button-close'
                 onClick={e => {

@@ -133,3 +133,22 @@ export const makeChunkGrid = memoizee((unChunkedChunks: number[][], chunkGridPar
     ? [take(chunkedChunks, firstRowLength), ...wrapChunks(drop(chunkedChunks, firstRowLength))]
     : wrapChunks(chunkedChunks)
 })
+
+// Calculate the height of the color wall section label depending on the size of cell size
+export const calculateLabelHeight = (cellSize: number): number => {
+  if (cellSize > 29.20 || (cellSize <= 24 && cellSize > 20.90)) {
+    return cellSize * 1
+  } else if (cellSize < 20.89) {
+    return cellSize * 2.1
+  } else {
+    return cellSize * 1.5
+  }
+}
+
+// Calculate the bottom margin of the color wall section label depending on the size of cell size
+export const calculateLabelMarginBottom = (isZoomedIn: Boolean, cellSize: number): number => {
+  if (isZoomedIn) {
+    return cellSize * 0.6
+  }
+  return cellSize * 0.2
+}
