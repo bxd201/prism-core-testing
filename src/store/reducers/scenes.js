@@ -467,7 +467,6 @@ export const scenes = (state: Object = initialState, action: { type: string, pay
       return Object.assign({}, state, {
         isColorDetailsPage: !state.isColorDetailsPage
       })
-
     case SET_SELECTED_SCENE_VARIANT_CHANGED: return { ...state, selectedSceneVariantChanged: true }
     case UNSET_SELECTED_SCENE_VARIANT_CHANGED: return { ...state, selectedSceneVariantChanged: false }
     case SET_SELECTED_SCENE_PALETTE_LOADED: return { ...state, selectedScenePaletteLoaded: true }

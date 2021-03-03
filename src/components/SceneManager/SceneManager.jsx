@@ -28,7 +28,7 @@ import {
   setSelectedSceneVariantChanged,
   setSelectedScenePaletteLoaded
 } from '../../store/actions/scenes'
-import { StaticTintScene } from '../CompareColor/StaticTintScene'
+// import { StaticTintScene } from '../CompareColor/StaticTintScene'
 import TintableScene from './TintableScene'
 import SceneVariantSwitch from './SceneVariantSwitch'
 import ImagePreloader from '../../helpers/ImagePreloader'
@@ -47,7 +47,6 @@ import {
 
 import './SceneManager.scss'
 import 'src/scss/convenience/visually-hidden.scss'
-import DynamicModal, { getRefDimension, DYNAMIC_MODAL_STYLE } from '../DynamicModal/DynamicModal'
 import { saveStockScene } from '../../store/actions/stockScenes'
 import { showSavedConfirmModal, showSaveSceneModal } from '../../store/actions/persistScene'
 import { createUniqueSceneId } from '../../shared/utils/legacyProfileFormatUtil'
@@ -55,7 +54,7 @@ import { replaceSceneStatus } from '../../shared/utils/sceneUtil'
 import { LP_MAX_COLORS_ALLOWED } from 'constants/configurations'
 import { checkCanMergeColors, shouldPromptToReplacePalette, getColorInstances } from '../LivePalette/livePaletteUtility'
 import { mergeLpColors, replaceLpColors } from '../../store/actions/live-palette'
-import { ROUTES_ENUM, TOP_LEVEL_ROUTES } from '../Facets/ColorVisualizerWrapper/routeValueCollections'
+import { ROUTES_ENUM } from '../Facets/ColorVisualizerWrapper/routeValueCollections'
 import {
   fetchRemoteScenes,
   handleScenesFetchedForCVW,
@@ -170,7 +169,8 @@ type Props = {
   // new stuff
   fetchRemoteScenes: Function,
   scenesCollection: any[] | null,
-  variantsCollection: FlatVariant[] | null
+  variantsCollection: FlatVariant[] | null,
+  setModalInfo: Function
 }
 
 type State = {
@@ -216,12 +216,8 @@ export class SceneManager extends PureComponent<Props, State> {
     this.changeVariant = this.changeVariant.bind(this)
     this.changeVariant = memoizee(this.changeVariant, { primitive: true, length: 1 })
     this.updateCurrentSceneInfo = this.updateCurrentSceneInfo.bind(this)
-    this.saveSceneFromModal = this.saveSceneFromModal.bind(this)
-    this.hideSaveSceneModal = this.hideSaveSceneModal.bind(this)
-    this.hideSavedConfirmModal = this.hideSavedConfirmModal.bind(this)
     this.tryToMergeColors = this.tryToMergeColors.bind(this)
     this.loadPalette = this.loadPalette.bind(this)
-    this.getSelectPaletteModalConfig = this.getSelectPaletteModalConfig.bind(this)
     this.wrapperRef = createRef()
     this.loaderWrapperRef = createRef()
   }
@@ -325,32 +321,6 @@ export class SceneManager extends PureComponent<Props, State> {
     }
 
     return derivedState
-  }
-
-  saveSceneFromModal (e: SyntheticEvent, saveSceneName: string) {
-    e.preventDefault()
-    e.stopPropagation()
-    if (saveSceneName.trim() === '') {
-      return false
-    }
-    if (this.props.sceneStatus && this.props.activeScenes) {
-      // @todo should I throw an error if no active scene or is this over kill? -RS
-      const currentSceneData = this.props.sceneStatus.find(item => item.id === this.props.activeScenes[0])
-      let livePaletteColorsIdArray = []
-      this.props.lpColors && this.props.lpColors.map(color => {
-        livePaletteColorsIdArray.push(color.id)
-      })
-      this.props.saveStockScene(this.state.uniqueSceneId, saveSceneName, currentSceneData, this.props.currentSceneType, livePaletteColorsIdArray)
-      this.props.showSavedConfirmModal(true)
-    }
-  }
-
-  hideSaveSceneModal () {
-    this.props.showSaveSceneModalAction(false)
-  }
-
-  hideSavedConfirmModal () {
-    this.props.showSavedConfirmModal(false)
   }
 
   // @todo deprecate the surfaceid, its is uncessary now. The scenemanager tracks the active variant and just needs to update the positional.
@@ -485,32 +455,6 @@ export class SceneManager extends PureComponent<Props, State> {
     }
   }
 
-  getSelectPaletteModalConfig () {
-    const { intl } = this.props
-
-    const selectPaletteActions = [{ callback: (e) => {
-      e.preventDefault()
-      e.stopPropagation()
-      this.setState({ showSelectPaletteModal: false })
-    },
-    text: intl.formatMessage({ id: 'PAINT_SCENE.CANCEL' }),
-    type: DYNAMIC_MODAL_STYLE.primary },
-    { callback: (e) => {
-      e.preventDefault()
-      e.stopPropagation()
-      this.loadPalette()
-      this.setState({ showSelectPaletteModal: false })
-    },
-    text: intl.formatMessage({ id: 'PAINT_SCENE.OK' }),
-    type: DYNAMIC_MODAL_STYLE.primary }]
-
-    return {
-      selectPaletteActions,
-      selectPaletteTitle: intl.formatMessage({ id: 'PAINT_SCENE.SELECT_PALETTE_TITLE' }),
-      selectPaletteDescription: intl.formatMessage({ id: 'PAINT_SCENE.SELECT_PALETTE_DESC' })
-    }
-  }
-
   loadPalette () {
     const { selectedSceneStatus, colorMap } = this.props
     const colorInstances = getColorInstances(selectedSceneStatus.palette, selectedSceneStatus.expectStockData.livePaletteColorsIdArray, colorMap)
@@ -523,26 +467,6 @@ export class SceneManager extends PureComponent<Props, State> {
       unpaintSceneSurfaces(scene.id)
     })
     unsetActiveScenePolluted()
-  }
-
-  getPreviewData = (showLivePalette) => {
-    const currentSceneData = this.props.sceneStatus.find(item => item.id === this.props.activeScenes[0])
-    const currentSceneMetaData = this.props.scenes.find(scene => scene.id === this.props.activeScenes[0])
-    const livePaletteColorsDiv = this.props.lpColors.filter(color => !!color).map((color, i) => {
-      const { red, green, blue } = color
-      return (
-        <div
-          key={i}
-          style={{ backgroundColor: `rgb(${red},${green},${blue})`, flexGrow: '1', borderLeft: (i > 0) ? '1px solid #ffffff' : 'none' }}>
-          &nbsp;
-        </div>
-      )
-    })
-
-    return <>
-      <StaticTintScene scene={currentSceneMetaData} statuses={currentSceneData.surfaces} config={{ isNightScene: currentSceneData.variant === SCENE_VARIANTS.NIGHT }} />
-      {showLivePalette && <div style={{ display: 'flex', marginTop: '1px' }}>{livePaletteColorsDiv}</div>}
-    </>
   }
 
   handleNavigationIntentConfirm = (e: SyntheticEvent) => {
@@ -577,11 +501,7 @@ export class SceneManager extends PureComponent<Props, State> {
       interactive,
       sceneWorkspaces,
       expertColorPicks,
-      intl,
-      showSaveSceneModalFlag,
-      showSavedConfirmModalFlag,
       hideSceneSelector,
-      navigationIntent,
       isActiveScenePolluted,
       isColorDetail,
       config,
@@ -589,9 +509,9 @@ export class SceneManager extends PureComponent<Props, State> {
       scenesCollection
     } = this.props
 
-    const { activeSceneStatus, showSelectPaletteModal } = this.state
-    const { selectPaletteActions, selectPaletteTitle, selectPaletteDescription } = this.getSelectPaletteModalConfig()
-    const livePaletteColorCount = (this.props.lpColors && this.props.lpColors.length) || 0
+    const { activeSceneStatus } = this.state
+    // const { selectPaletteActions, selectPaletteTitle, selectPaletteDescription } = this.getSelectPaletteModalConfig()
+    // const livePaletteColorCount = (this.props.lpColors && this.props.lpColors.length) || 0
     if (isLoadingScenes) {
       return <div ref={this.loaderWrapperRef} style={{ 'minHeight': getMinHeightFromRef(this.loaderWrapperRef) }} className={`${SceneManager.baseClass}__loader`}><CircleLoader /></div>
     }
@@ -616,44 +536,6 @@ export class SceneManager extends PureComponent<Props, State> {
     return (
       <DndProvider backend={HTML5Backend}>
         <div className={SceneManager.baseClass} ref={this.wrapperRef}>
-          {/* Do not use scene height for modal, use the sceneManager wrapper */}
-          {showSelectPaletteModal ? <DynamicModal
-            actions={selectPaletteActions}
-            title={selectPaletteTitle}
-            height={getRefDimension(this.wrapperRef, 'height')}
-            description={selectPaletteDescription} /> : null}
-          {showSaveSceneModalFlag && livePaletteColorCount !== 0 ? <DynamicModal
-            actions={[
-              { text: intl.formatMessage({ id: 'SAVE_SCENE_MODAL.SAVE' }), callback: this.saveSceneFromModal },
-              { text: intl.formatMessage({ id: 'SAVE_SCENE_MODAL.CANCEL' }), callback: this.hideSaveSceneModal }
-            ]}
-            previewData={this.getPreviewData(true)}
-            height={getRefDimension(this.wrapperRef, 'height')}
-            allowInput
-            inputDefault={`${intl.formatMessage({ id: 'SAVE_SCENE_MODAL.DEFAULT_DESCRIPTION' })} ${this.props.sceneCount}`} /> : null}
-          {showSaveSceneModalFlag && livePaletteColorCount === 0 ? <DynamicModal
-            actions={[
-              { text: intl.formatMessage({ id: 'SAVE_SCENE_MODAL.CANCEL' }), callback: this.hideSaveSceneModal }
-            ]}
-            description={intl.formatMessage({ id: 'SAVE_SCENE_MODAL.UNABLE_TO_SAVE_WARNING' })}
-            height={getRefDimension(this.wrapperRef, 'height')} /> : null}
-          { /* ---------- Confirm modal ---------- */ }
-          {showSavedConfirmModalFlag ? <DynamicModal
-            actions={[
-              { text: intl.formatMessage({ id: 'SCENE_MANAGER.OK' }), callback: this.hideSavedConfirmModal }
-            ]}
-            description={intl.formatMessage({ id: 'SCENE_MANAGER.SCENE_SAVED' })}
-            height={getRefDimension(this.wrapperRef, 'height')} /> : null}
-          { /* ---------- Will destroy work modal ---------- */ }
-          {TOP_LEVEL_ROUTES.indexOf(navigationIntent) > -1 && isActiveScenePolluted ? <DynamicModal
-            description={intl.formatMessage({ id: 'CVW.WARNING_REPLACEMENT' })}
-            actions={[
-              { text: intl.formatMessage({ id: 'YES' }), callback: this.handleNavigationIntentConfirm },
-              { text: intl.formatMessage({ id: 'NO' }), callback: this.handleNavigationIntentCancel }
-            ]}
-            previewData={this.getPreviewData(false)}
-            modalStyle={DYNAMIC_MODAL_STYLE.danger}
-            height={getRefDimension(this.wrapperRef, 'height')} /> : null}
           {activeScenes.length === 1 && expertColorPicks && (!config.featureExclusions || !config.featureExclusions.includes('expertColorPicks')) && (
             <ColorPickerSlide {...getSceneInfoById(find(scenes, { 'id': activeScenes[0] }), sceneStatus).variant} />
           )}

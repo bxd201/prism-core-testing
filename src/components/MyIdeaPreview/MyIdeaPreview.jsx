@@ -15,10 +15,10 @@ import { SCENE_VARIANTS } from 'src/constants/globals'
 import { getColorInstances, checkCanMergeColors, shouldPromptToReplacePalette } from '../LivePalette/livePaletteUtility'
 import type { ColorMap } from 'src/shared/types/Colors.js.flow'
 import { selectedSavedLivePalette } from 'src/store/actions/saveLivePalette'
-import { mergeLpColors, replaceLpColors } from 'src/store/actions/live-palette'
+import { mergeLpColors } from 'src/store/actions/live-palette'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { LP_MAX_COLORS_ALLOWED } from 'constants/configurations'
-import DynamicModal, { DYNAMIC_MODAL_STYLE } from '../DynamicModal/DynamicModal'
+import { createSelectPaletteModal } from '../CVWModalManager/createModal'
 import { unsetSelectedScenePaletteLoaded, showWarningModal, activateOnlyScene, unpaintSceneSurfaces } from '../../store/actions/scenes'
 import ImageRotateContainer from 'src/components/MatchPhoto/ImageRotateContainer'
 import SceneManager from 'src/components/SceneManager/SceneManager'
@@ -66,6 +66,7 @@ type MyIdeaPreviewProps = { openScene: Function }
 const MyIdeaPreview = ({ openScene }: MyIdeaPreviewProps) => {
   const dispatch = useDispatch()
   const { formatMessage } = useIntl()
+  const intl = useIntl()
   const history = useHistory()
   const backgroundCanvasRef = useRef()
   const foregroundCanvasRef = useRef()
@@ -104,7 +105,6 @@ const MyIdeaPreview = ({ openScene }: MyIdeaPreviewProps) => {
 
   const paintSceneWorkSpace = useSelector(state => state.paintSceneWorkspace)
   const lpColors = useSelector(state => state.lp.colors)
-  const [showSelectPaletteModal, setShowSelectPaletteModal] = useState(false)
 
   const { renderingBaseUrl, backgroundImageUrl } = selectedScene || {}
   const initialWidth = selectedScene && selectedScene.savedSceneType === SCENE_TYPE.anonCustom ? selectedScene.surfaceMasks.width : 0
@@ -208,52 +208,17 @@ const MyIdeaPreview = ({ openScene }: MyIdeaPreviewProps) => {
         dispatch(mergeLpColors(selectedScene.livePalette))
       } else {
         if (shouldPromptToReplacePalette(lpColors, selectedScene.livePalette, LP_MAX_COLORS_ALLOWED)) {
-          setShowSelectPaletteModal(true)
+          createSelectPaletteModal(intl, dispatch, 'EMPTY_SCENE')
         }
       }
     }
   }
-
-  const loadPalette = () => {
-    dispatch(replaceLpColors(selectedScene.livePalette))
-  }
-
-  const getSelectPaletteModalConfig = () => {
-    const selectPaletteActions = [{ callback: (e) => {
-      e.preventDefault()
-      e.stopPropagation()
-      setShowSelectPaletteModal(false)
-    },
-    text: formatMessage({ id: 'PAINT_SCENE.CANCEL' }),
-    type: DYNAMIC_MODAL_STYLE.primary },
-    { callback: (e) => {
-      e.preventDefault()
-      e.stopPropagation()
-      loadPalette()
-      setShowSelectPaletteModal(false)
-    },
-    text: formatMessage({ id: 'PAINT_SCENE.OK' }),
-    type: DYNAMIC_MODAL_STYLE.primary }]
-
-    return {
-      selectPaletteActions,
-      selectPaletteTitle: formatMessage({ id: 'PAINT_SCENE.SELECT_PALETTE_TITLE' }),
-      selectPaletteDescription: formatMessage({ id: 'PAINT_SCENE.SELECT_PALETTE_DESC' })
-    }
-  }
-
-  const { selectPaletteActions, selectPaletteTitle, selectPaletteDescription } = getSelectPaletteModalConfig()
 
   return (
     <>
       {/* eslint-disable-next-line no-constant-condition */}
       { selectedScene ? null : <Redirect to='/active/my-ideas' /> }
       { paintSceneWorkSpace ? <RedirectMyIdeas /> : null}
-      {showSelectPaletteModal ? <DynamicModal
-        actions={selectPaletteActions}
-        title={selectPaletteTitle}
-        height={document.documentElement.clientHeight + window.pageYOffset}
-        description={selectPaletteDescription} /> : null}
       <CardMenu menuTitle={`${(selectedScene && selectedScene.name) ? selectedScene.name : ``}`} showBackByDefault backPath='/active/my-ideas'>
         {() => (
           <div ref={wrapperRef} className={wrapperClass} style={{ minHeight: Math.round(height * heightCrop) }}>

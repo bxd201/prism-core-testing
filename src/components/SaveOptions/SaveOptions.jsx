@@ -7,21 +7,17 @@ import { useIntl, FormattedMessage } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 
 import './SaveOptions.scss'
-import { showSaveSceneModal } from '../../store/actions/persistScene'
-import { saveLivePalette } from '../../store/actions/saveLivePalette'
 import { ACTIVE_SCENE_LABELS_ENUM } from '../../store/actions/navigation'
 import { replaceSceneStatus } from '../../shared/utils/sceneUtil'
-import { fullColorNumber } from '../../shared/helpers/ColorUtils'
 import { getSceneInfoById } from '../SceneManager/SceneManager'
-import DynamicModal from '../DynamicModal/DynamicModal'
 import SceneDownload from '../SceneDownload/SceneDownload'
-import { createUniqueSceneId } from '../../shared/utils/legacyProfileFormatUtil'
 import find from 'lodash/find'
 import { shouldAllowFeature } from '../../shared/utils/featureSwitch.util'
 import { FEATURE_EXCLUSIONS } from '../../constants/configurations'
 import WithConfigurationContext from '../../contexts/ConfigurationContext/WithConfigurationContext'
 import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
-
+import { createSaveSceneModal, createModalForEmptyLivePalette } from '../CVWModalManager/createModal'
+import { SAVE_OPTION } from '../CVWModalManager/constants.js'
 type SaveOptionsProps = {
   config: any
 }
@@ -32,14 +28,14 @@ const saveOptionsItemsClassName = `${saveOptionsBaseClassName}__items`
 const SaveOptions = (props: SaveOptionsProps) => {
   const { config: { featureExclusions } } = props
   const { formatMessage } = useIntl()
-  const [showLivePaletteSaveModal, setShowLivePaletteSaveModal] = useState(false)
-  const [showSavedConfirmModalFlag, setShowSavedConfirmModalFlag] = useState(false)
+  const intl = useIntl()
   const activeSceneLabel = useSelector(store => store.activeSceneLabel)
-
+  const toggleCompareColor: boolean = useSelector(store => store.lp.toggleCompareColor)
   const dispatch = useDispatch()
   const { location: { pathname } } = useHistory()
   const { cvw } = props.config
   const [cvwFromConfig, setCvwFromConfig] = useState(null)
+  const lpColors = useSelector(state => state.lp.colors)
 
   useEffect(() => {
     if (cvw) {
@@ -61,10 +57,6 @@ const SaveOptions = (props: SaveOptionsProps) => {
     }
   })
 
-  const lpColors = useSelector(state => state.lp.colors)
-
-  const sceneCount = useSelector(state => state.sceneMetadata.length + 1)
-
   const firstActiveScene = scenesDownloadData.sceneCollection && scenesDownloadData.sceneCollection.filter(scene => (scene.id === scenesDownloadData.scenes.activeScenes[0]))[0]
   const firstActiveSceneInfo = firstActiveScene && firstActiveScene.id ? getSceneInfoById(firstActiveScene, scenesDownloadData.sceneStatus) : null
   const selectedScenedVariant = scenesDownloadData.selectedSceneStatus && !scenesDownloadData.selectedSceneVariantChanged ? scenesDownloadData.selectedSceneStatus.expectStockData.scene.variant : null
@@ -81,12 +73,21 @@ const SaveOptions = (props: SaveOptionsProps) => {
 
   const handleSave = useCallback((e: SyntheticEvent) => {
     e.preventDefault()
-    if ((pathname === '/active') || (pathname === '/active/paint-scene')) {
-      dispatch(showSaveSceneModal(true))
+    if (((pathname === '/active') || (pathname === '/active/paint-scene')) && !toggleCompareColor) {
+      if (lpColors.length !== 0) {
+        const saveType = ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE === activeSceneLabel ? SAVE_OPTION.SAVE_STOCK_SCENE : SAVE_OPTION.SAVE_PAINT_SCENE
+        createSaveSceneModal(intl, dispatch, activeSceneLabel, saveType)
+      } else {
+        createModalForEmptyLivePalette(intl, dispatch, SAVE_OPTION.EMPTY_SCENE, true)
+      }
     } else {
-      setShowLivePaletteSaveModal(true)
+      if (lpColors.length !== 0) {
+        createSaveSceneModal(intl, dispatch, ACTIVE_SCENE_LABELS_ENUM.LIVE_PALETTE, SAVE_OPTION.SAVE_LIVE_PALETTE)
+      } else {
+        createModalForEmptyLivePalette(intl, dispatch, SAVE_OPTION.EMPTY_SCENE, false)
+      }
     }
-  }, [pathname])
+  }, [pathname, activeSceneLabel])
 
   const loadAndDrawImage = (url, ctx, w = 0, h = 0, x = 0, y = 0) => {
     var image = new Image()
@@ -126,41 +127,6 @@ const SaveOptions = (props: SaveOptionsProps) => {
     return promise
   }
 
-  const saveLivePaletteColorsFromModal = (e: SyntheticEvent, inputValue: string) => {
-    let livePaletteColorsIdArray = []
-    lpColors && lpColors.map(color => {
-      livePaletteColorsIdArray.push(color.id)
-    })
-    dispatch(saveLivePalette(createUniqueSceneId(), inputValue, livePaletteColorsIdArray))
-    setShowLivePaletteSaveModal(false)
-    setShowSavedConfirmModalFlag(true)
-  }
-
-  const hideSaveLivePaletteColorsModal = () => {
-    setShowLivePaletteSaveModal(false)
-  }
-
-  const hideSavedConfirmModal = () => {
-    setShowSavedConfirmModalFlag(false)
-  }
-
-  const getPreviewData = () => {
-    const livePaletteColorsDiv = lpColors.filter(color => !!color).map((color, i) => {
-      const { red, green, blue } = color
-      return (
-        <div
-          key={i}
-          style={{ backgroundColor: `rgb(${red},${green},${blue})`, flexGrow: '1', borderLeft: (i > 0) ? '1px solid #ffffff' : 'none' }}>
-          &nbsp;
-        </div>
-      )
-    })
-
-    return <>
-      <div style={{ display: 'flex', marginTop: '1px', height: '84px' }}>{livePaletteColorsDiv}</div>
-    </>
-  }
-
   const getDownloadStaticResourcesPath = (data) => {
     return {
       // to do: headerImage, downloadDisclaimer1, downloadDisclaimer2 also should be configurable
@@ -173,27 +139,6 @@ const SaveOptions = (props: SaveOptionsProps) => {
 
   return (
     <div className={saveOptionsBaseClassName}>
-      {showLivePaletteSaveModal && lpColors.length > 0 ? <DynamicModal
-        actions={[
-          { text: formatMessage({ id: 'SAVE_LIVE_PALETTE_MODAL.SAVE' }), callback: saveLivePaletteColorsFromModal },
-          { text: formatMessage({ id: 'SAVE_LIVE_PALETTE_MODAL.CANCEL' }), callback: hideSaveLivePaletteColorsModal }
-        ]}
-        previewData={getPreviewData()}
-        height={document.documentElement.clientHeight + window.pageYOffset}
-        allowInput
-        inputDefault={`${(lpColors.length === 1) ? `${fullColorNumber(lpColors[0].brandKey, lpColors[0].colorNumber).trim()} ${lpColors[0].name}` : `${formatMessage({ id: 'SAVE_LIVE_PALETTE_MODAL.DEFAULT_DESCRIPTION' })} ${sceneCount}`}`} /> : null}
-      {showLivePaletteSaveModal && lpColors.length === 0 ? <DynamicModal
-        actions={[
-          { text: formatMessage({ id: 'SAVE_LIVE_PALETTE_MODAL.CANCEL' }), callback: hideSaveLivePaletteColorsModal }
-        ]}
-        description={formatMessage({ id: 'SAVE_LIVE_PALETTE_MODAL.UNABLE_TO_SAVE_WARNING' })}
-        height={document.documentElement.clientHeight + window.pageYOffset} /> : null}
-      {showSavedConfirmModalFlag ? <DynamicModal
-        actions={[
-          { text: formatMessage({ id: 'SAVE_LIVE_PALETTE_MODAL.OK' }), callback: hideSavedConfirmModal }
-        ]}
-        description={formatMessage({ id: 'SAVE_LIVE_PALETTE_MODAL.LP_SAVED' })}
-        height={document.documentElement.clientHeight + window.pageYOffset} /> : null}
       {shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.download)
         ? (activeSceneLabel === ACTIVE_SCENE_LABELS_ENUM.PAINT_SCENE
           ? <div>

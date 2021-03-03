@@ -3,8 +3,8 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useIntl, FormattedMessage } from 'react-intl'
-import { deleteSavedScene, selectSavedScene, loadSavedScenes, showDeleteConfirmModal, SCENE_TYPE } from '../../store/actions/persistScene'
-import { deleteSavedLivePalette, updateLivePalette, selectedSavedLivePalette } from '../../store/actions/saveLivePalette'
+import { selectSavedScene, loadSavedScenes, SCENE_TYPE } from '../../store/actions/persistScene'
+import { updateLivePalette, selectedSavedLivePalette } from '../../store/actions/saveLivePalette'
 import SavedScene from './SavedScene'
 import useSceneData from '../../shared/hooks/useSceneData'
 import Carousel from '../Carousel/Carousel'
@@ -12,11 +12,11 @@ import './MyIdeas.scss'
 import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import EditSavedScene from './EditSavedScene'
-import { deleteStockScene, selectSavedAnonStockScene } from '../../store/actions/stockScenes'
-import DynamicModal, { DYNAMIC_MODAL_STYLE } from '../DynamicModal/DynamicModal'
+import { selectSavedAnonStockScene } from '../../store/actions/stockScenes'
 import ColorPalette from '../MyIdeaPreview/ColorPalette'
 import { getColorInstances } from '../LivePalette/livePaletteUtility'
 import EditColorPalette from '../MyIdeaPreview/EditColorPalette'
+import { createDeleteMyIdeasModal } from '../CVWModalManager/createModal'
 
 const baseClassName = 'myideas-wrapper'
 const buttonClassName = `${baseClassName}__button`
@@ -44,6 +44,7 @@ const MyIdeas = (props: MyIdeasProps) => {
   const colorMap = useSelector(state => state.colors.items.colorMap)
   const dispatch = useDispatch()
   const { formatMessage } = useIntl()
+  const intl = useIntl()
   const [editEnabled, setEditEnabled] = useState(false)
   const [editedIndividualScene, setEditedIndividualScene] = useState(null)
   const [showBack, setShowBack] = useState(false)
@@ -51,8 +52,7 @@ const MyIdeas = (props: MyIdeasProps) => {
   const sceneFetchTypes = Array.from(_sceneFetchTypes)
   const sceneData = useSceneData(sceneFetchTypes)
   const [editedTintableIndividualScene, setEditedTintableIndividualScene] = useState(false)
-  const showDeleteConfirmModalFlag = useSelector(state => state.showDeleteConfirmModal)
-  const [deleteCandidate, setDeleteCandidate] = useState(null)
+  // const [deleteCandidate, setDeleteCandidate] = useState(null)
   const wrapperRef = useRef(null)
   const [isReadyToRenderFlag, setIsReadyToRenderFlag] = useState(false)
   const [initPosition, setPosition] = useState(0)
@@ -89,19 +89,6 @@ const MyIdeas = (props: MyIdeasProps) => {
     setEditEnabled(false)
   }
 
-  const deleteScene = (id: number | string) => {
-    if (deleteCandidate) {
-      if (deleteCandidate.isLivePaletteIdea) {
-        deleteLivePaletteIdea(deleteCandidate.id)
-      } else if (deleteCandidate.isStockScene) {
-        dispatch(deleteStockScene(deleteCandidate.id))
-      } else {
-        dispatch(deleteSavedScene(deleteCandidate.id))
-      }
-    }
-    dispatch(showDeleteConfirmModal(false))
-  }
-
   const selectScene = (sceneId: number | string, isLivePaletteIdea: boolean = false) => {
     if (isLivePaletteIdea) {
       dispatch(selectedSavedLivePalette(sceneId))
@@ -110,29 +97,12 @@ const MyIdeas = (props: MyIdeasProps) => {
     }
   }
 
-  const deleteLivePaletteIdea = (id: number | string) => {
-    dispatch(deleteSavedLivePalette(id))
-  }
-
   const selectAnonStockScene = (sceneId: number | string) => {
     dispatch(selectSavedAnonStockScene(sceneId))
   }
 
-  const closeDeleteSceneConfirm = (e: SyntheticEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-
-    dispatch(showDeleteConfirmModal(false))
-  }
-
   const showDeleteConfirm = (sceneId: string | number, isStockScene: boolean, isLivePaletteIdea?: boolean) => {
-    setDeleteCandidate({
-      id: sceneId,
-      isStockScene,
-      isLivePaletteIdea
-    })
-
-    dispatch(showDeleteConfirmModal(true))
+    createDeleteMyIdeasModal(intl, dispatch, 'EMPTY_SCENE', { isStockScene: isStockScene, isLivePaletteIdea: isLivePaletteIdea, sceneId: sceneId })
   }
 
   const isReadyToRender = (sceneMetadata: Object[], customSceneData, stockSceneData, isLoadingSavedScenes) => {
@@ -239,19 +209,6 @@ const MyIdeas = (props: MyIdeasProps) => {
   return (
     <>
       {isReadyToRenderFlag && sceneCount ? <div className={baseClassName} ref={wrapperRef}>
-        { showDeleteConfirmModalFlag
-          ? (
-            <DynamicModal
-              modalStyle={DYNAMIC_MODAL_STYLE.danger}
-              actions={[
-                { text: formatMessage({ id: 'MY_IDEAS.YES' }), callback: deleteScene },
-                { text: formatMessage({ id: 'MY_IDEAS.NO' }), callback: closeDeleteSceneConfirm }
-              ]}
-              description={formatMessage({ id: 'MY_IDEAS.DELETE_CONFIRM' })}
-            />
-          )
-          : null
-        }
         <div className={sectionLeftClassName}>
           {showBack
             ? <button className={`${buttonClassName} ${buttonBack}`} onClick={showMyIdeas} onMouseDown={mouseDownHandler}>
