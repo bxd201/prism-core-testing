@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import MyIdeas from '../MyIdeas/MyIdeas'
 import Login from '../Login/Login'
 import WithConfigurationContext from '../../contexts/ConfigurationContext/WithConfigurationContext'
-import { MY_IDEAS_PREVIEW } from '../Facets/Prism/Prism'
+import { ROUTES_ENUM } from 'src/components/Facets/ColorVisualizerWrapper/routeValueCollections'
 import { clearSceneWorkspace } from '../../store/actions/paintScene'
 import { selectSavedScene } from '../../store/actions/persistScene'
 import AnonLogin from '../AnonLogin/AnonLogin'
@@ -46,7 +46,7 @@ const MyIdeasContainer = (props: MyIdeasContainerProps) => {
 
   if (shouldRedirect) {
     return (
-      <Redirect to={MY_IDEAS_PREVIEW} />
+      <Redirect to={ROUTES_ENUM.MY_IDEAS_PREVIEW} />
     )
   }
 
