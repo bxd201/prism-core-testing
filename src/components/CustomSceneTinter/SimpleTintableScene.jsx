@@ -41,6 +41,7 @@ export const reorderColors = (colors: Color[], activeColorId?: string) => {
   }).filter(item => !!item)
 }
 
+// @todo deprecate the workspace should be adapted to the array based surface model higher up and passed as props to simple tintablescene -RS
 const getTintColorBySurfaceAdapter = (isUsingWorkspace: boolean, surface: any, surfaceIndex: number, colors: Color[], activeColorId?: string) => {
   if (isUsingWorkspace) {
     const colours = reorderColors(colors, activeColorId)

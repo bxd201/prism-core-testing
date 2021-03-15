@@ -20,7 +20,8 @@ type Props = {
   onOut: Function,
   onLoadingSuccess?: Function,
   onLoadingError?: Function,
-  svgSource: string
+  svgSource: string,
+  surfaceIndex: number
 }
 
 const TintableSceneHitAreaSpec = {
@@ -67,7 +68,7 @@ export class TintableSceneHitArea extends PureComponent<Props> {
   }
 
   handleInteraction = (e: any) => {
-    this.props.interactionHandler(this.props.id)
+    this.props.interactionHandler(this.props.id, this.props.surfaceIndex)
   }
 
   render () {

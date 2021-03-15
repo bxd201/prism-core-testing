@@ -31,7 +31,7 @@ const receiveScenes = (sceneResponse: ScenePayload) => {
     }
   }
 }
-
+// @todo deprecate with scene tinter modularization -rs
 export const ACTIVATE_ONLY_SCENE = 'ACTIVATE_ONLY_SCENE'
 export const activateOnlyScene = (id: string | number) => {
   return {
@@ -41,7 +41,7 @@ export const activateOnlyScene = (id: string | number) => {
     }
   }
 }
-
+// @todo deprecate with scene tinter modularization -rs
 export const ACTIVATE_SCENE = 'ACTIVATE_SCENE'
 export const activateScene = (id: string | number | Array<string | number>) => {
   return {
@@ -51,7 +51,7 @@ export const activateScene = (id: string | number | Array<string | number>) => {
     }
   }
 }
-
+// @todo deprecate with scene tinter modularization -rs
 export const ACTIVATE_COLOR_DETAILS_SCENE = 'ACTIVATE_COLOR_DETAILS_SCENE'
 export const activateColorDetailsScene = (id: string | number | Array<string | number>) => {
   return {
@@ -61,7 +61,7 @@ export const activateColorDetailsScene = (id: string | number | Array<string | n
     }
   }
 }
-
+// @todo deprecate with scene tinter modularization -rs
 export const CHANGE_SCENE_VARIANT = 'CHANGE_SCENE_VARIANT'
 export const changeSceneVariant = (sceneId: number, variant: string) => {
   return {

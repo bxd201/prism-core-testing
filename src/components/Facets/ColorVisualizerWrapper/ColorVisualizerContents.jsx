@@ -40,6 +40,8 @@ import {
 import { ROUTES_ENUM } from './routeValueCollections'
 import DynamicModal, { DYNAMIC_MODAL_STYLE, getRefDimension } from '../../DynamicModal/DynamicModal'
 import { useIntl } from 'react-intl'
+import SceneBlobLoader from '../../SceneManager/SceneBlobLoader'
+import { setVariantsCollection, setVariantsLoading } from '../../../store/actions/loadScenes'
 
 type CVWPropsType = {
   maxSceneHeight: number,
@@ -58,6 +60,8 @@ export const CVW = (props: CVWPropsType) => {
   const isStockSceneCached: boolean = useSelector(store => !!store.stockSceneCache)
   const navigationIntent: string = useSelector(store => store.navigationIntent)
   const navigationReturnIntent: string = useSelector(store => store.navigationReturnIntent)
+  const scenes = useSelector(store => store.scenesCollection)
+  const variants = useSelector(store => store.variantsCollection)
 
   const [activeStockScene: Element, setActiveScene: (Element) => void] = useState(<SceneManager expertColorPicks hideSceneSelector />)
   const [activePaintScene: Element, setActivePaintSceneState: (Element) => void] = useState()
@@ -173,8 +177,22 @@ export const CVW = (props: CVWPropsType) => {
     return !cleanedPath.match(/(active|active\/colors|inspiration|scenes|active\/color-wall\/)$/)
   }
 
+  const handleSceneSurfacesLoaded = (variants) => {
+    dispatch(setVariantsCollection(variants))
+    dispatch(setVariantsLoading(false))
+  }
+
+  const handleSceneBlobLoaderError = (err) => {
+    dispatch(err)
+  }
+
+  const handleBlobLoaderInit = () => {
+    dispatch(setVariantsLoading(true))
+  }
+
   return (
     <>
+      {scenes ? <SceneBlobLoader scenes={scenes} variants={variants} initHandler={handleBlobLoaderInit} handleBlobsLoaded={handleSceneSurfacesLoaded} handleError={handleSceneBlobLoaderError} /> : null}
       {toggleCompareColor
         ? <CompareColor />
         : (

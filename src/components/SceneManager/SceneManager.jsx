@@ -56,6 +56,13 @@ import { LP_MAX_COLORS_ALLOWED } from 'constants/configurations'
 import { checkCanMergeColors, shouldPromptToReplacePalette, getColorInstances } from '../LivePalette/livePaletteUtility'
 import { mergeLpColors, replaceLpColors } from '../../store/actions/live-palette'
 import { ROUTES_ENUM, TOP_LEVEL_ROUTES } from '../Facets/ColorVisualizerWrapper/routeValueCollections'
+import {
+  fetchRemoteScenes,
+  handleScenesFetchedForCVW,
+  handleScenesFetchErrorForCVW
+} from '../../store/actions/loadScenes'
+import { SCENES_ENDPOINT } from 'constants/endpoints'
+import type { FlatVariant } from '../../store/actions/loadScenes'
 
 const getThumbnailAssetArrayByScene = memoizee((sceneVariant: Variant, surfaces: Surface[]): string[] => {
   return flattenDeep([
@@ -102,7 +109,7 @@ type Props = {
   expertColorPicks: boolean,
   interactive: boolean,
   isEditMode: boolean,
-  loadingScenes: boolean,
+  isLoadingScenes: boolean,
   loadScenes: Function,
   mainColor: Color | void,
   maxActiveScenes: number,
@@ -159,7 +166,11 @@ type Props = {
   activeSceneLabel: string,
   clearStockSceneCache: Function,
   unpaintSceneSurfaces: Function,
-  unsetActiveScenePolluted: Function
+  unsetActiveScenePolluted: Function,
+  // new stuff
+  fetchRemoteScenes: Function,
+  scenesCollection: any[] | null,
+  variantsCollection: FlatVariant[] | null
 }
 
 type State = {
@@ -167,7 +178,10 @@ type State = {
   uniqueSceneId: string,
   activeSceneStatus: Object | null,
   isChangeVariantCalled: boolean,
-  showSelectPaletteModal: boolean
+  showSelectPaletteModal: boolean,
+  activeScenesId: string[] | null,
+  activeVariants: FlatVariant[] | null,
+  sceneVariants: string[] | null
 }
 
 export class SceneManager extends PureComponent<Props, State> {
@@ -188,8 +202,15 @@ export class SceneManager extends PureComponent<Props, State> {
       uniqueSceneId: createUniqueSceneId(),
       activeSceneStatus: props.sceneStatusActiveSceneStore || null,
       isChangeVariantCalled: false,
-      showSelectPaletteModal: false
+      showSelectPaletteModal: false,
+      activeScenesId: null,
+      activeVariants: null,
+      sceneVariants: null,
+      presentedVariant: null,
+      presentedSceneUid: null,
+      surfaceColorsByVariant: []
     }
+
     this.handleColorUpdate = this.handleColorUpdate.bind(this)
     this.handleClickSceneToggle = this.handleClickSceneToggle.bind(this)
     this.changeVariant = this.changeVariant.bind(this)
@@ -206,7 +227,11 @@ export class SceneManager extends PureComponent<Props, State> {
   }
 
   componentDidMount () {
-    this.props.loadScenes(this.props.type, this.props.config.brandId, { language: this.props.intl.locale })
+    // load initial scene data
+    // this.props.loadScenes(this.props.type, this.props.config.brandId, { language: this.props.intl.locale })
+    const { type: sceneType, config: { brandId }, intl: { locale } } = this.props
+    this.props.fetchRemoteScenes(sceneType, brandId, { language: locale }, SCENES_ENDPOINT, handleScenesFetchedForCVW, handleScenesFetchErrorForCVW)
+    // This code loads saved scenes
     if (!this.props.isColorDetail && this.props.selectedSceneStatusActiveScene && !this.props.selectedScenePaletteLoaded) {
       this.tryToMergeColors()
       this.props.setSelectedScenePaletteLoaded()
@@ -216,14 +241,14 @@ export class SceneManager extends PureComponent<Props, State> {
       this.props.setActiveScenePolluted()
       this.props.clearStockSceneCache()
     }
-    // @todo uncomment the two immediate lines below to add custom mask data for manual test.
+    // @todo uncomment the two immediate lines below to add custom mask data for manual test. DEPRECATED -RS
     // this.props.addNewMask(1, 2, window.localStorage.getItem('sampleMask'))
     // this.props.toggleEditMode(false)
     // Redux uses this to be aware if paint scene or stock scene is active
     // eslint-disable-next-line no-debugger
   }
 
-  componentDidUpdate (prevProps: Object, prevState: Object) {
+  componentDidUpdate (prevProps: any, prevState: any) {
     const { navigationIntent, stockSceneCache, activeSceneLabel, activeScenes, sceneStatus, onSceneChanged } = this.props
     if (navigationIntent === ROUTES_ENUM.COLOR_WALL && !stockSceneCache) {
       // @todo in the future this should set aside the data that tells which surfaces are painted, right now it is just a flag -RS
@@ -237,6 +262,12 @@ export class SceneManager extends PureComponent<Props, State> {
     }
 
     activeScenes && (prevProps.activeScenes !== activeScenes) && activeScenes[0] && sceneStatus && onSceneChanged && onSceneChanged(sceneStatus[activeScenes[0]])
+    // update variants when blobs are added to the surfaces
+    if (prevProps.variantsCollection !== this.props.variantsCollection && this.props.variantsCollection) {
+      const activeVariants = this.props.variantsCollection.filter(variant => variant.sceneUid === this.state.activeScenesUid)
+      // eslint-disable-next-line react/no-did-update-set-state
+      this.setState({ activeVariants })
+    }
   }
 
   componentWillUnmount () {
@@ -267,6 +298,32 @@ export class SceneManager extends PureComponent<Props, State> {
         activeSceneStatus: derivedState.activeSceneStatus
       }
     }
+
+    // update local state with redux store values ounce they have been fetched and loaded
+    if (!state.activeScenesId && !state.activeVariants && props.scenesCollection && props.variantsCollection) {
+      const { scenesCollection, variantsCollection, type } = props
+      const activeScene = scenesCollection.filter(scene => scene.sceneType === type)[0]
+      const activeSceneUid = activeScene.uid
+      // @ todo refactor to activeScenesUid -RS
+
+      derivedState.activeScenesId = [activeSceneUid]
+      // @todo this is partially redundant and only works for a single scene scenario, right now it is used to select updated active variants when the blobs load -RS
+      derivedState.activeScenesUid = activeSceneUid
+      derivedState.activeVariants = variantsCollection.filter(variant => variant.sceneUid === activeSceneUid)
+      derivedState.sceneVariants = [...activeScene.variantNames]
+      derivedState.presentedVariant = derivedState.sceneVariants[0]
+      derivedState.surfaceColorsByVariant = flattenDeep(derivedState.activeVariants?.map(variant => {
+        return variant.surfaces.map(surface => {
+          return {
+            id: null,
+            hex: null,
+            colorNumber: null,
+            variantName: variant.variantName
+          }
+        })
+      }), 2)
+    }
+
     return derivedState
   }
 
@@ -294,6 +351,28 @@ export class SceneManager extends PureComponent<Props, State> {
 
   hideSavedConfirmModal () {
     this.props.showSavedConfirmModal(false)
+  }
+
+  // @todo deprecate the surfaceid, its is uncessary now. The scenemanager tracks the active variant and just needs to update the positional.
+  // rerender will flow set color to tintable scene.
+  applyColorToSurface = (surfaceId: string, color: Color, surfaceIndex: number) => {
+    const variantName = this.state.presentedVariant
+    const newSurfaceColors = {
+      // added id for referential integrity, ignored others to avoid deep clone since we can look up colors easily and cheaply
+      id: color.id,
+      hex: color.hex,
+      colorNumber: color.colorNumber,
+      variantName
+    }
+    const surfaceColors = this.state.surfaceColorsByVariant.map((surfaceColor, i) => {
+      if (i !== surfaceIndex) {
+        return { ...surfaceColor }
+      }
+
+      return newSurfaceColors
+    })
+
+    this.setState({ surfaceColorsByVariant: surfaceColors })
   }
 
   handleColorUpdate = function handleColorUpdate (sceneId: string, surfaceId: string, color: Color) {
@@ -481,11 +560,15 @@ export class SceneManager extends PureComponent<Props, State> {
     this.props.cacheStockScene(state)
   }
 
+  handleVariantThumbLoaded = (e: SyntheticTouchEvent, i: number) => {
+
+  }
+
   render () {
     // eslint-disable-next-line no-unused-vars
     const { scenes,
       sceneStatus,
-      loadingScenes,
+      isLoadingScenes,
       activeColor,
       previewColor,
       mainColor,
@@ -502,12 +585,14 @@ export class SceneManager extends PureComponent<Props, State> {
       isActiveScenePolluted,
       isColorDetail,
       config,
-      unsetActiveScenePolluted } = this.props
+      unsetActiveScenePolluted,
+      scenesCollection
+    } = this.props
 
     const { activeSceneStatus, showSelectPaletteModal } = this.state
     const { selectPaletteActions, selectPaletteTitle, selectPaletteDescription } = this.getSelectPaletteModalConfig()
     const livePaletteColorCount = (this.props.lpColors && this.props.lpColors.length) || 0
-    if (loadingScenes) {
+    if (isLoadingScenes) {
       return <div ref={this.loaderWrapperRef} style={{ 'minHeight': getMinHeightFromRef(this.loaderWrapperRef) }} className={`${SceneManager.baseClass}__loader`}><CircleLoader /></div>
     }
 
@@ -520,6 +605,13 @@ export class SceneManager extends PureComponent<Props, State> {
       const sceneStatusIndexActiveScene = sceneStatus.findIndex(scene => scene.id === activeScenes[0])
       sceneStatus[sceneStatusIndexActiveScene].variant = this.props.selectedScenedVariant
     }
+
+    // data adapter
+    const { activeVariants, presentedVariant, presentedSceneUid, surfaceColorsByVariant } = this.state
+    const currentVariant = activeVariants?.find(variant => variant.variantName === presentedVariant)
+    let colors = surfaceColorsByVariant.filter(color => color?.variantName === presentedVariant)
+    const activeScene = scenesCollection?.find(scene => scene.uid === currentVariant.sceneUid)
+    const backgroundImageUrl = currentVariant?.image
 
     return (
       <DndProvider backend={HTML5Backend}>
@@ -569,6 +661,7 @@ export class SceneManager extends PureComponent<Props, State> {
             <div className={`${SceneManager.baseClass}__clear-areas-btn__icon`}><FontAwesomeIcon size='lg' icon={['fa', 'eraser']} /></div>
             <div className={`${SceneManager.baseClass}__clear-areas-btn__text`}><FormattedMessage id='CLEAR_AREAS' /></div>
           </button>}
+          {/* RENDERING FOR COLOR DETAIL SELECTOR */}
           {!hideSceneSelector && <div className={`${SceneManager.baseClass}__block ${SceneManager.baseClass}__block--tabs`} role='radiogroup' aria-label='scene selector'>
             {scenes.map((scene, index) => {
               const sceneInfo = getSceneInfoById(scene, sceneStatus)
@@ -610,7 +703,7 @@ export class SceneManager extends PureComponent<Props, State> {
                           background={sceneVariant.thumb}
                           clickToPaintColor={activeColor}
                           error={error}
-                          height={scene.height}
+                          height={activeScene.height}
                           imageValueCurve={sceneVariant.normalizedImageValueCurve}
                           interactive={false}
                           isEditMode={this.props.isEditMode}
@@ -618,13 +711,14 @@ export class SceneManager extends PureComponent<Props, State> {
                           mainColor={mainColor}
                           onUpdateColor={this.handleColorUpdate}
                           previewColor={previewColor}
-                          sceneId={scene.id}
+                          sceneId={activeScene.uid}
                           sceneName={sceneVariant.name}
                           sceneWorkspaces={sceneWorkspaces}
                           surfaces={surfaces}
+                          surfaceColors={colors}
                           surfaceStatus={status.surfaces}
                           type={type}
-                          width={scene.width}
+                          width={activeScene.width}
                         />
                       )}
                     </ImagePreloader>
@@ -634,79 +728,81 @@ export class SceneManager extends PureComponent<Props, State> {
               )
             })}
           </div>}
+          {/* RENDERING FOR  SCENE TINTER */}
           <div className={`${SceneManager.baseClass}__block ${SceneManager.baseClass}__block--scenes`} role='main'>
-            {activeScenes.map((sceneId, index) => {
-              const scene: Scene = scenes.filter(
-                scene => scene.id === sceneId
-              )[0]
-
-              if (!scene) {
-                return null
-              }
-
-              const sceneInfo = getSceneInfoById(scene, sceneStatus)
-
-              if (!sceneInfo) {
-                console.warn(
-                  `Cannot find scene variant based on id ${scene.id}`
-                )
-                return void 0
-              }
-
-              const status: SceneStatus = sceneInfo.status
-              const sceneVariant: Variant = sceneInfo.variant
-              const surfaces: Surface[] = sceneInfo.surfaces
-
+            {activeVariants?.filter(variant => variant.variantName === presentedVariant).map((variant, index) => {
+              // const scene: Scene = scenes.filter(
+              //   scene => scene.id === sceneId
+              // )[0]
+              //
+              // if (!scene) {
+              //   return null
+              // }
+              //
+              // const sceneInfo = getSceneInfoById(scene, sceneStatus)
+              //
+              // if (!sceneInfo) {
+              //   console.warn(
+              //     `Cannot find scene variant based on id ${scene.id}`
+              //   )
+              //   return void 0
+              // }
+              //
+              // const status: SceneStatus = sceneInfo.status
+              // const sceneVariant: Variant = sceneInfo.variant
+              // const surfaces: Surface[] = sceneInfo.surfaces
+              //
               let variantSwitch = null
 
               // if we have more than one variant for this scene...
-              if (scene.variant_names.length > 1) {
+              if (activeVariants.length > 1) {
+                // @todo we will rewrite this logic to pass the variant names & values into variant swith comp -RS
                 // if we have day and night variants...
                 // TODO: Remove this dayNightToggle check, this is for demonstration purposes
                 if (
-                  SceneVariantSwitch.DayNight.isCompatible(scene.variant_names)
+                  SceneVariantSwitch.DayNight.isCompatible(activeVariants.map(variant => variant.variantName))
                 ) {
+                  // @todo this is just to keep code rolling -RS
+                  const sceneId = null
                   // ... then create a day/night variant switch
                   variantSwitch = (
                     <SceneVariantSwitch.DayNight
-                      currentVariant={status.variant}
+                      currentVariant={presentedVariant}
                       variants={[SCENE_VARIANTS.DAY, SCENE_VARIANTS.NIGHT]}
                       onChange={this.changeVariant(sceneId)}
-                      sceneId={scene.id}
+                      sceneId={sceneId} // was scene.id
                     />
                   )
                 }
               }
 
               return (
-                <div className={`${SceneManager.baseClass}__scene-wrapper`} key={sceneId}>
-                  <ImagePreloader preload={getFullSizeAssetArrayByScene(scene)}>
-                    {({ loading, error }) => (
-                      <TintableScene
-                        background={sceneVariant.image}
-                        clickToPaintColor={activeColor}
-                        el={TintableScene}
-                        error={error}
-                        height={scene.height}
-                        imageValueCurve={sceneVariant.normalizedImageValueCurve}
-                        interactive={interactive}
-                        isEditMode={this.props.isEditMode}
-                        loading={loading}
-                        mainColor={mainColor}
-                        onUpdateColor={this.handleColorUpdate}
-                        previewColor={previewColor}
-                        sceneId={sceneId}
-                        sceneName={sceneVariant.name}
-                        /* eslint-disable-next-line no-undef */
-                        sceneWorkspaces={sceneWorkspaces}
-                        surfaces={surfaces}
-                        surfaceStatus={status.surfaces}
-                        type={type}
-                        updateCurrentSceneInfo={this.updateCurrentSceneInfo}
-                        width={scene.width}
-                      />
-                    )}
-                  </ImagePreloader>
+                <div className={`${SceneManager.baseClass}__scene-wrapper`} key={`${presentedSceneUid}-${currentVariant.variantName}`}>
+                  {/* preload bg image to improve ux */}
+                  {backgroundImageUrl ? <TintableScene
+                    background={backgroundImageUrl}
+                    clickToPaintColor={activeColor}
+                    el={TintableScene}
+                    error={false}
+                    height={activeScene.height}
+                    imageValueCurve={currentVariant.normalizedImageValueCurve}
+                    interactive={interactive}
+                    isEditMode={this.props.isEditMode}
+                    // @todo removed from simple api -RS
+                    loading={false}
+                    mainColor={mainColor}
+                    applyColorToSurface={this.applyColorToSurface}
+                    previewColor={previewColor}
+                    sceneId={activeScene.uid}
+                    sceneName={currentVariant.variantName}
+                    sceneWorkspaces={sceneWorkspaces}
+                    surfaces={currentVariant.surfaces}
+                    surfaceColors={colors}
+                    type={type}
+                    updateCurrentSceneInfo={this.updateCurrentSceneInfo}
+                    width={activeScene.width}
+                    useAdapter
+                  /> : null}
                   <div className={SceneManager.bottomBtnClass}>
                     <div className={`${SceneManager.bottomBtnClass}__btn-wrapper`}>
                       {variantSwitch}
@@ -782,7 +878,7 @@ const mapStateToProps = (state, props) => {
     return scenes.filter(({ id }) => sceneIds.indexOf(id) > -1)
   })(scenes.sceneCollection[state.scenes.type] || [], props.isColorDetail)
 
-  const { navigationIntent, scenePolluted, stockSceneCache, activeSceneLabel } = state
+  const { navigationIntent, scenePolluted, stockSceneCache, activeSceneLabel, variantsLoading, scenesCollection, variantsCollection } = state
 
   return {
     scenes: sceneOptions,
@@ -791,7 +887,7 @@ const mapStateToProps = (state, props) => {
     sceneStatusActiveSceneStore: sceneStatusActiveSceneStore,
     numScenes: scenes.numScenes,
     activeScenes: (props.isColorDetail) ? scenes.activeScenesColorDetails : scenes.activeScenes,
-    loadingScenes: scenes.loadingScenes,
+    isLoadingScenes: variantsLoading, // @todo may need more robust flag check to see if we need to add flag for bg image -RS
     activeColor: activeColor,
     previewColor: previewColor,
     sceneWorkspaces: state.sceneWorkspaces,
@@ -811,7 +907,9 @@ const mapStateToProps = (state, props) => {
     navigationIntent,
     isActiveScenePolluted: scenePolluted,
     stockSceneCache,
-    activeSceneLabel
+    activeSceneLabel,
+    scenesCollection,
+    variantsCollection
     // NOTE: uncommenting this will sync scene type with redux data
     // we may not want that in case there are multiple instances with different scene collections running at once
     // type: state.scenes.type
@@ -821,8 +919,12 @@ const mapStateToProps = (state, props) => {
 
 const mapDispatchToProps = (dispatch: Function) => {
   return {
+    // @todo deprecate -RS
     loadScenes: (type: string, brandId: string, options?: {}) => {
       dispatch(loadScenes(type, brandId, options))
+    },
+    fetchRemoteScenes: (sceneType: string, brandId: string, options: any, sceneEndPoint: string, handleSuccess: Function, handleFailure: Function) => {
+      fetchRemoteScenes(sceneType, brandId, options, sceneEndPoint, handleSuccess, handleFailure, dispatch)
     },
     paintSceneSurface: (sceneId, surfaceId, color) => {
       dispatch(paintSceneSurface(sceneId, surfaceId, color))

@@ -35,6 +35,9 @@ import {
   SET_USE_SMART_MASK, SET_SHOW_EDIT_CUSTOM_SCENE
 } from '../actions/scenes'
 import { registerMask, updateMask } from '../masks/store'
+import { SCENE_VARIANTS } from 'constants/globals'
+import { SCENES_DATA_FETCHED, SET_VARIANTS_COLLECTION, SET_VARIANTS_LOADING } from '../actions/loadScenes'
+import type { FlatScene, FlatVariant } from '../actions/loadScenes'
 
 type State = {
   sceneCollection: {
@@ -73,6 +76,7 @@ export const initialState: State = {
 export const scenes = (state: Object = initialState, action: { type: string, payload: Object }) => {
   switch (action.type) {
     case RECEIVE_SCENES:
+      console.log(action.payload)
       const sceneType = action.payload.type
 
       const _sceneCollection = state.sceneCollection.hasOwnProperty(sceneType) ? state.sceneCollection : Object.assign({}, state.sceneCollection, {
@@ -527,6 +531,34 @@ export const useSmartMask = (state: boolean = SMARTMASK_ENABLED, action: {type: 
 
 export const showEditCustomScene = (state: boolean = false, action: {type: string, payload: boolean}) => {
   if (action.type === SET_SHOW_EDIT_CUSTOM_SCENE) {
+    return action.payload
+  }
+
+  return state
+}
+
+export const scenesCollection = (state: FlatScene[] | null = null, action: {type: string, scenesPayload: FlatScene[] | null}) => {
+  if (action.type === SCENES_DATA_FETCHED) {
+    return action.scenesPayload
+  }
+
+  return state
+}
+
+export const variantsCollection = (state: FlatVariant[] | null = null, action: { type: string, payload?: FlatVariant[] | null, variantsPayload?: FlatVariant[] | null }): FlatVariant[] | null => {
+  if (action.type === SCENES_DATA_FETCHED) {
+    return action.variantsPayload
+  }
+
+  if (action.type === SET_VARIANTS_COLLECTION) {
+    return action.payload
+  }
+
+  return state
+}
+
+export const variantsLoading = (state: boolean = false, action: { type: string, payload: boolean }): boolean => {
+  if (action.type === SET_VARIANTS_LOADING) {
     return action.payload
   }
 
