@@ -88,6 +88,7 @@ export const createPseudoSceneMetaData = (scene, lpColors: Color[], variant: str
         color: lpColors.find((color) => color.id === surface.colorId)
       }
     }).filter((item, i) => {
+      // This basically splits a multi surface scene into multiple single surface scenes
       if (singleSurfaceIndex !== void (0)) {
         return i === singleSurfaceIndex
       }

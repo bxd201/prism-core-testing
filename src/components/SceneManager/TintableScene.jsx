@@ -29,7 +29,10 @@ type Props = {
   isEditMode?: boolean,
   loading?: boolean,
   mainColor?: Color | void, // eslint-disable-line
+  // @todo deprecate -RS
   onUpdateColor?: Function,
+  // supercedes onUpdateColor
+  applyColorToSurface?: Function,
   // eslint-disable-next-line react/no-unused-prop-types
   previewColor?: Color | void,
   render: boolean,
@@ -41,7 +44,9 @@ type Props = {
   surfaces: Surface[],
   type: string,
   updateCurrentSceneInfo?: Function,
-  width: number
+  width: number,
+  useAdapter?: boolean,
+  surfaceColors: Color[]
 }
 
 type State = {
@@ -106,11 +111,19 @@ class TintableScene extends PureComponent<Props, State> {
       instanceId: uniqueId('TS'),
       hitAreaError: false,
       hitAreaLoaded: props.surfaces.length === 0,
-      currentSurface: null
+      currentSurface: null,
+      surfaceColors: this.props.surfaceColors
     }
 
     // set non-state property of this instance for tracking how many hit areas have loaded -- we don't need to rerender as this changes
     this.hitAreaLoadingCount = this.props.surfaces.length
+  }
+
+  componentDidUpdate (prevProps, State) {
+    if (this.props.surfaceColors !== prevProps.surfaceColors) {
+      // eslint-disable-next-line react/no-did-update-set-state
+      this.setState({ surfaceColors: this.props.surfaceColors })
+    }
   }
 
   handleHitAreaLoadingSuccess = function handleHitAreaLoadingSuccess () {
@@ -128,8 +141,9 @@ class TintableScene extends PureComponent<Props, State> {
     this.setState({ hitAreaError: true })
   }
 
-  handleClickSurface = function handleClickSurface (surfaceId: string) {
+  handleClickSurface = function handleClickSurface (surfaceId: string, surfaceIndex: number) {
     const { clickToPaintColor } = this.props
+
     if (this.props.updateCurrentSceneInfo && this.props.isEditMode) {
       this.props.updateCurrentSceneInfo(this.props.sceneId, surfaceId)
 
@@ -137,7 +151,7 @@ class TintableScene extends PureComponent<Props, State> {
     }
 
     if (clickToPaintColor) {
-      this.updateSurfaceColor(surfaceId, clickToPaintColor)
+      this.updateSurfaceColor(surfaceId, clickToPaintColor, surfaceIndex)
     }
   }
 
@@ -169,8 +183,15 @@ class TintableScene extends PureComponent<Props, State> {
     })
   }
 
-  updateSurfaceColor = function updateSurfaceColor (surfaceId: string, color: Color) {
-    this.props.onUpdateColor && this.props.onUpdateColor(this.props.sceneId, surfaceId, color)
+  updateSurfaceColor = function updateSurfaceColor (surfaceId: string, color: Color, surfaceIndex: number) {
+    // @todo deprecate in favor of applyColorToSurface -RS
+    if (this.props.onUpdateColor && !this.props.applyColorToSurface) {
+      this.props.onUpdateColor(this.props.sceneId, surfaceId, color)
+
+      return
+    }
+
+    this.props.applyColorToSurface(surfaceId, color, surfaceIndex)
   }
 
   setCurrentSurface = function setCurrentSurface (surfaceId: number) {
@@ -178,7 +199,7 @@ class TintableScene extends PureComponent<Props, State> {
   }
 
   render () {
-    const { surfaces, sceneName, background, width, height, render, interactive, type, loading, error, sceneId, imageValueCurve } = this.props
+    const { surfaces, sceneName, background, width, height, render, interactive, type, loading, error, sceneId, imageValueCurve, surfaceColors } = this.props
     const { instanceId, hitAreaError, hitAreaLoaded } = this.state
     const ratio = height / width
 
@@ -208,8 +229,9 @@ class TintableScene extends PureComponent<Props, State> {
                 <TransitionGroup className={`${transitionClassName}__colors`}>
                   {surfaces.map((surface: Surface, index) => {
                     const { highlights, shadows, id } = surface
-                    const tintColor: ?Color = getTintColorBySurface(surface, this.props, this.state)
-                    if (tintColor) {
+                    // @todo deprecated, getTintColorBySurface should be phased out just use index -RS
+                    const tintColor: ?Color = this.props.useAdapter ? surfaceColors[index] : getTintColorBySurface(surface, this.props, this.state)
+                    if (tintColor?.hex) {
                       return (
                         <CSSTransition
                           key={`${surface.id}_${tintColor.hex}`}
@@ -257,7 +279,10 @@ class TintableScene extends PureComponent<Props, State> {
                   onLoadingSuccess={this.handleHitAreaLoadingSuccess}
                   onLoadingError={this.handleHitAreaLoadingError}
                   interactionHandler={this.handleClickSurface}
-                  svgSource={surface.hitArea} />
+                  svgSource={surface.hitArea}
+                  // @todo implement in functional version of component -RS
+                  surfaceIndex={index}
+                />
               ))}
             </div>
           )}

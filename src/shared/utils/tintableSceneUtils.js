@@ -20,5 +20,7 @@ export const getMaskImage = (surface: Surface, sceneWorkspaces: SceneWorkspace[]
       return workspaces.imageData
     }
   }
-  return surface.mask.path
+
+  // @todo deprecated approach -RS
+  return surface.mask.path ? surface.mask.path : surface.surfaceBlobUrl
 }

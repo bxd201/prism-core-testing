@@ -9,7 +9,8 @@ export type Surface = {
   mask: MaskObj,
   hitArea: string,
   shadows?: string,
-  highlights?: string
+  highlights?: string,
+  blobUrl?: string
 }
 
 export type Variant = {

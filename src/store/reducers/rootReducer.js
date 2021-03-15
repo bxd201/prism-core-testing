@@ -12,7 +12,7 @@ import {
   sceneWorkspaces,
   currentWorkspace,
   useSmartMask,
-  showEditCustomScene
+  showEditCustomScene, scenesCollection, variantsCollection, variantsLoading
 } from './scenes'
 import { queuedImageUpload, uploads } from './uploads'
 import collectionSummaries from './collectionSummaries'
@@ -104,5 +104,9 @@ export default combineReducers({
   stockSceneCache,
   isColorwallModallyPresented,
   shouldShowGlobalDestroyWarning,
-  dirtyNavigationIntent
+  dirtyNavigationIntent,
+  // @todo experimental scene data
+  scenesCollection,
+  variantsLoading,
+  variantsCollection
 })
