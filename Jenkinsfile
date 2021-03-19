@@ -73,6 +73,7 @@ pipeline {
         VERSION="\$(cat dist/VERSION)"
 
         aws s3 cp dist/ s3://sw-prism-web/"\$VERSION"/ --recursive
+        aws s3 cp dist/prism/ s3://sw-prism-web/assets --recursive
         """
       }
     }
