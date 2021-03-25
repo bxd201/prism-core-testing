@@ -76,7 +76,7 @@ pipeline {
         aws s3 cp dist/prism/ s3://sw-prism-web/assets --recursive
         """
       }
-    }
+/*     }
      stage('s3-upload-release') {
       agent {
         docker {
@@ -93,7 +93,7 @@ pipeline {
         aws s3 sync s3://sw-prism-web/"\$VERSION"/ s3://sw-prism-web/latest/ --delete
         """
       }
-    }
+    } */
     stage('build') {
       when {
         not {
