@@ -76,8 +76,8 @@ pipeline {
         aws s3 cp dist/prism/ s3://sw-prism-web/assets --recursive
         """
       }
-/*     }
-     stage('s3-upload-release') {
+   }
+/*      stage('s3-upload-release') {
       agent {
         docker {
           image 'docker.cpartdc01.sherwin.com/amazon/aws-cli:2.1.26'
