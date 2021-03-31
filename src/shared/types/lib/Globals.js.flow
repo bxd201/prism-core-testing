@@ -20,7 +20,7 @@ declare var GENERATE_FACET_ASSETS: boolean
 declare var IS_DEVELOPMENT: boolean
 declare var IS_PRODUCTION: boolean
 declare var SMARTMASK_ENABLED: boolean
-declare var STATIC_TEMPLATES: string
+declare var STATIC_TEMPLATES: string[]
 declare var VAR_NAMES: { [key: string]: string }
 declare var VAR_VALUES: { [key: string]: number | string }
 declare var WEBPACK_CONSTANTS: { [key: string]: any }

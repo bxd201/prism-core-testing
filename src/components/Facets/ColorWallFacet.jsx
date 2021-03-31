@@ -1,6 +1,6 @@
 // @flow
 import React, { useEffect, useState, useCallback, useMemo } from 'react'
-import { Switch, Route } from 'react-router-dom'
+import { Switch, Route, useHistory } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import ColorWallRouter from './ColorWall/ColorWallRouter'
 import Search from 'src/components/Search/Search'
@@ -19,6 +19,7 @@ import { updateColorStatuses } from 'src/store/actions/loadColors'
 import { facetBinderDefaultProps, type FacetBinderMethods } from 'src/facetSupport/facetInstance'
 import { FormattedMessage } from 'react-intl'
 import translateBooleanFlexibly from 'src/shared/utils/translateBooleanFlexibly.util'
+import { generateColorWallPageUrl } from 'src/shared/helpers/ColorUtils'
 
 type Props = FacetPubSubMethods & FacetBinderMethods & {
   addButtonText?: string,
@@ -37,6 +38,7 @@ export const EVENTS = {
   decorateColors: 'PRISM/in/decorateColors',
   emitColor: 'PRISM/out/emitColor',
   selectedGroup: 'PRISM/out/selectedGroup',
+  selectGroup: 'PRISM/in/selectGroup',
   loading: 'PRISM/in/loading'
 }
 
@@ -69,6 +71,7 @@ export const ColorWallPage = (props: Props) => {
     hiddenSections
   } = props
   const dispatch = useDispatch()
+  const history = useHistory()
 
   // -----------------------------------------------------
   // accept and process color decoration from host
@@ -99,6 +102,15 @@ export const ColorWallPage = (props: Props) => {
   const [isLoading, updateLoading] = useState(false)
   useEffect(() => {
     subscribe(EVENTS.loading, updateLoading)
+    return unsubscribeAll
+  }, [])
+
+  // -----------------------------------------------------
+  // handle host changing section/family after initial load
+  useEffect(() => {
+    subscribe(EVENTS.selectGroup, ({ section, family }) => {
+      history.push(generateColorWallPageUrl(section, family))
+    })
     return unsubscribeAll
   }, [])
 
