@@ -39,6 +39,7 @@ export const EVENTS = {
   emitColor: 'PRISM/out/emitColor',
   selectedGroup: 'PRISM/out/selectedGroup',
   selectGroup: 'PRISM/in/selectGroup',
+  clearSection: 'PRISM/in/clearSection',
   loading: 'PRISM/in/loading'
 }
 
@@ -112,6 +113,14 @@ export const ColorWallPage = (props: Props) => {
       history.push(generateColorWallPageUrl(section, family))
     })
     return unsubscribeAll
+  }, [])
+
+  // -----------------------------------------------------
+  // handle reseting section/family to defaults
+  useEffect(() => {
+    subscribe(EVENTS.clearSection, () => {
+      history.push(generateColorWallPageUrl(defaultSection))
+    })
   }, [])
 
   // -----------------------------------------------------

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <base href="/">
+  <title>selectGroup template</title>
+</head>
+
+<body>
+
+  <div
+    id="prism-embed-root"
+    class="prism-color-wall"
+    data-prism-facet="ColorWallFacet"
+    data-route-type="hash"
+    data-language="en-US"
+  ></div>
+
+  <div style='border: 2px dotted black; padding: 4%; margin: 10px; width: fit-content; display: flex; flex-direction: column'>
+    <p>----- non prism controls -----</p>
+    <button onclick="reset()">reset section and family to default</button>
+  </div>
+
+  <script src='/embed.js'></script>
+  <script>
+    let reset
+    window.PRISM.embed(document.getElementById( 'prism-embed-root' ), {
+      bindCallback: ({ publish, subscribe }) => {
+        reset = () => publish('PRISM/in/clearSection')
+      }
+    })
+  </script>
+
+</body>
+
+</html>
