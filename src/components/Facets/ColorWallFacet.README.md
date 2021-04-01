@@ -29,7 +29,8 @@
 |---|---|---|
 | `PRISM/in/decorateColors` | `ColorStatuses`<sup><a href="#data-types">1</a></sup> | Feeds data into redux providing messaging and status<sup><a href="#data-types">1</a></sup> numbers for each color. |
 | `PRISM/in/loading` | `boolean` | Toggles loading overlay on/off over Facet. |
-
+| `PRISM/in/selectGroup` | `{ section: string, family?: string }` | allows changing section/family after initial load |
+| `PRISM/in/clearSection` | `` | deselect any current section and family, and instead select the default section (and family, if applicable) |
 
 ## ColorStatus.status values
 | Status | Description |

@@ -1,11 +1,10 @@
 // @flow
-import React, { useMemo, Fragment } from 'react'
+import React, { Fragment } from 'react'
 import { render } from 'react-dom'
-import at from 'lodash/at'
+import set from 'lodash/set'
 import flatten from 'lodash/flatten'
 import isArray from 'lodash/isArray'
-import set from 'lodash/set'
-import sortBy from 'lodash/sortBy'
+import result from 'lodash/result'
 
 import { getContrastYIQ } from 'src/shared/helpers/ColorUtils'
 import './index.scss'
@@ -66,44 +65,30 @@ const List = ({ title, directory }: ListProps) => <>
   </ul>
 </>
 
-const Index = () => {
-  const result = useMemo(() => {
-    const result = {}
-
-    sortBy(STATIC_TEMPLATES).forEach(fullPath => {
-      // removing leading slash for consistency -- we're going to assume EVERYTHING is from root
-      const splits = stripLeadingSlash(fullPath).split('/')
-      const path = splits.slice(0, -1)
-      const filePath = path.join('/')
-      const fileName = splits.slice(-1)[0]
-      const plucked = at(result, path.join('.'))[0]
-
-      if (plucked) {
-        plucked[PAGES].push(`${filePath}/${fileName}`)
-      } else {
-        set(result, path, {
-          [PAGES]: [
-            `${filePath}/${fileName}`
-          ]
-        })
-      }
-    })
-
-    return result
-  }, [])
-
-  return <div className='template-index'>
-    <h1 className='template-index__title'>Prism <span className='template-index__pill' style={{ color: appVersionContrastHex, backgroundColor: appVersionHex }}>{APP_VERSION}</span></h1>
-    <List directory={result} />
+const Index = () => (
+  <div className='template-index'>
+    <h1 className='template-index__title'>
+      Prism
+      <span className='template-index__pill' style={{ color: appVersionContrastHex, backgroundColor: appVersionHex }}>
+        {APP_VERSION}
+      </span>
+    </h1>
+    <List
+      directory={STATIC_TEMPLATES
+        .sort((first, second) => first.split('/').length - second.split('/').length)
+        .reduce((acc, cur) => {
+          const path = cur.split('/').slice(0, -1).join('.')
+          return set(acc, path, {
+            ...result(acc, path),
+            '__pages': [...(result(acc, `${path}.__pages`) || []), cur]
+          })
+        }, {})}
+    />
   </div>
-}
+)
 
 function stripExtension (file: string): string {
   return file.split('.')[0]
-}
-
-function stripLeadingSlash (path: string): string {
-  return path.replace(/(\/*)?(.*)/, '$2')
 }
 
 // $FlowIgnore -- flow doesn't know document exists

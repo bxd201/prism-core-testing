@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <base href="/">
+  <title>selectGroup template</title>
+</head>
+
+<body>
+
+  <div
+    id="prism-embed-root"
+    class="prism-color-wall"
+    data-prism-facet="ColorWallFacet"
+    data-route-type="hash"
+    data-language="en-US"
+  ></div>
+  <!-- Sherwin-Williams Colors, Living Well Colors -->
+
+  <script src='/embed.js'></script>
+  <script>
+    (() => {
+      window.PRISM.embed(document.getElementById( 'prism-embed-root' ), {
+        bindCallback: ({ publish, subscribe }) => {
+          setInterval(() => {
+            publish('PRISM/in/selectGroup', [
+              {section: 'emerald-designer-edition' },
+              {section: 'sherwin-williams-colors', family: ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'white-pastel', 'neutral'][Math.floor(Math.random() * 8)] },
+              {section: 'living-well-colors' },
+              {section: 'timeless-colors' },
+            ][Math.floor(Math.random() * 4)]
+            )
+          }, 5000);
+        }
+      })
+    })()
+  </script>
+
+</body>
+
+</html>
