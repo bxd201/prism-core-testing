@@ -1,5 +1,5 @@
 // @flow
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import type { Scene } from '../../shared/types/Scene'
 import type { Color } from '../../shared/types/Colors'
@@ -9,16 +9,22 @@ import ensureFullyQualifiedAssetUrl from '../../shared/utils/ensureFullyQualifie
 import { LiveMessage } from 'react-aria-live'
 import { getFilterId, getMaskId } from '../../shared/utils/tintableSceneUtils'
 import uniqueId from 'lodash/uniqueId'
+import uniq from 'lodash/uniq'
+import concat from 'lodash/concat'
+import without from 'lodash/without'
+import GenericOverlay from '../Overlays/GenericOverlay/GenericOverlay'
 import { baseClassName, getTintColorBySurface, transitionClassName } from '../SceneManager/TintableScene'
-
+import SimpleTintableSceneHitArea from './SimpleTintableSceneHitArea'
 type SimpleTintableSceneProps = {
   // eslint-disable-next-line react/no-unused-prop-types
   scene?: Scene,
+  sceneId?: number,
   sceneType: string,
   sceneName: string,
   background: string,
   surfaceUrls: string[],
   surfaceIds: number[],
+  surfaceHitAreas: string[],
   highlights?: any[],
   shadows?: any[],
   colors: Color[],
@@ -26,7 +32,11 @@ type SimpleTintableSceneProps = {
   height: number,
   imageValueCurve?: any,
   isUsingWorkspace: boolean,
-  activeColorId?: string
+  activeColorId?: string,
+  interactive?: boolean,
+  onUpdateColor?: Function,
+  updateCurrentSceneInfo?: Function,
+  allowEdit?: boolean
 }
 
 export const reorderColors = (colors: Color[], activeColorId?: string) => {
@@ -56,8 +66,41 @@ const simpleTintableClassName = 'simple-tintable'
 
 const SimpleTintableScene = (props: SimpleTintableSceneProps) => {
   // @todo the scene prop is here for posterity, this component can be used as an adapter -RS
-  const { sceneType, background, sceneName, width, height, imageValueCurve, surfaceUrls, isUsingWorkspace, surfaceIds, highlights, shadows, colors, activeColorId } = props
+  const { sceneType, background, sceneName, width, height, imageValueCurve, surfaceUrls, isUsingWorkspace, surfaceIds, highlights, shadows, colors, activeColorId, sceneId, surfaceHitAreas, interactive, onUpdateColor, updateCurrentSceneInfo, allowEdit } = props
+  const activeColor = colors.filter((color) => color.id === activeColorId)[0]
   const [instanceId] = useState(uniqueId('TS'))
+  const [activePreviewSurfaces, setActivePreviewSurfaces] = useState([])
+  const [hitAreaLoadingCount, setHitAreaLoadingCount] = useState(0)
+  const [hitAreaError, setHitAreaError] = useState(false)
+  const [hitAreaLoaded, setHitAreaLoaded] = useState(props.surfaceUrls.length === 0)
+
+  useEffect(() => setHitAreaLoadingCount(surfaceHitAreas && surfaceHitAreas.length - 1), surfaceHitAreas)
+
+  const handleColorDrop = (surfaceId: string, color: Color) => {
+    setActivePreviewSurfaces([])
+    onUpdateColor && onUpdateColor(sceneId, surfaceId, color)
+  }
+  const handleOver = (surfaceId: string) => { setActivePreviewSurfaces(uniq(concat(activePreviewSurfaces, surfaceId))) }
+  const handleOut = (surfaceId: string) => { setActivePreviewSurfaces(without(activePreviewSurfaces, surfaceId)) }
+  const handleHitAreaLoadingSuccess = () => {
+    setHitAreaLoadingCount(hitAreaLoadingCount + 1)
+    if (hitAreaLoadingCount <= 0) {
+      setHitAreaLoaded(true)
+    }
+  }
+  const handleHitAreaLoadingError = () => { setHitAreaError(true) }
+  const handleClickSurface = (surfaceId: string) => {
+    if (updateCurrentSceneInfo && allowEdit) {
+      updateCurrentSceneInfo(sceneId, surfaceId)
+      return
+    }
+    if (activeColor) {
+      updateSurfaceColor(surfaceId, activeColor)
+    }
+  }
+  const updateSurfaceColor = (surfaceId: string, color: Color) => {
+    props.onUpdateColor && props.onUpdateColor(props.sceneId, surfaceId, color)
+  }
 
   return (
     <>
@@ -101,6 +144,28 @@ const SimpleTintableScene = (props: SimpleTintableSceneProps) => {
           })}
         </TransitionGroup>
       </div>
+
+      {interactive && (
+        <div className={`${baseClassName}__hit-wrapper`}>
+          {surfaceHitAreas && surfaceHitAreas.map((surface, i) => (
+            <SimpleTintableSceneHitArea
+              key={surfaceIds[i]}
+              onDrop={handleColorDrop}
+              onOver={handleOver}
+              onOut={handleOut}
+              onLoadingSuccess={handleHitAreaLoadingSuccess}
+              onLoadingError={handleHitAreaLoadingError}
+              interactionHandler={() => handleClickSurface(surfaceIds[i])}
+              svgSource={surface} />
+          ))}
+        </div>
+      )}
+
+      {hitAreaError ? (
+        <GenericOverlay type={GenericOverlay.TYPES.ERROR} message='Error loading paintable surfaces' />
+      ) : (interactive && !hitAreaLoaded) ? (
+        <GenericOverlay type={GenericOverlay.TYPES.LOADING} />
+      ) : null}
 
       {sceneName && (<LiveMessage message={`${sceneName} scene has been loaded`} aria-live='polite' />)}
     </>
