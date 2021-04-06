@@ -76,7 +76,8 @@ export type ConfigurationContextType = {
             savingMobile1?: string,
             savingMobile2?: string
         }
-    }
+    },
+    uiStyle: 'default' | 'minimal'
 }
 
 const ConfigurationContext: ConfigurationContextType = React.createContext<ConfigurationContextType>()

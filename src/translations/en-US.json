@@ -14,7 +14,7 @@
   "CHOOSE_A_COLLECTION": "Choose a Collection",
   "CHOOSE_COLLECTION": "Choose collection",
   "CLEAR_ALL": "CLEAR ALL",
-  "CLEAR_AREAS":"CLEAR AREAS",
+  "CLEAR_AREAS": "CLEAR AREAS",
   "CLEAR_TEXT": "clear text",
   "CLOSE": "CLOSE",
   "COLOR_COLLECTIONS": "Color Collections",
@@ -49,6 +49,8 @@
   "ERROR_LOADING_COLORS": "We're unable to load colors right now.",
   "EXPERT_COLOR_PICKS": "Expert Color Picks",
   "EXPLORE_COLOR": "Explore Color",
+  "EXPLORE_COLLECTIONS": "Explore collections",
+  "EXPLORE_COLOR_FAMILIES": "Explore color families",
   "EXTERIOR": "Exterior",
   "FIND_COLORS_IN_CW": "FIND COLORS IN THE DIGITAL COLOR WALL",
   "HELPFUL_HINTS": {
@@ -277,7 +279,7 @@
       "UNDO": "UNDO",
       "UNGROUP": "UNGROUP",
       "ZOOM": "ZOOM",
-      "ADDCOLORS":"ADD COLORS"
+      "ADDCOLORS": "ADD COLORS"
     },
     "TOOLTIPS": {
       "ADDCOLORS": "Click or tap here to add colors to your palette.",
@@ -347,6 +349,7 @@
     "SEARCH": "Search",
     "SEARCH_BY": "Search by color name or number",
     "SEARCH_COLOR": "Search color",
+    "SEARCH_FOR_A_COLOR": "Search for a color",
     "SEARCHING": "Searching",
     "SUGGESTIONS": "Some examples of things you can search for are {suggestions}"
   },
@@ -379,6 +382,7 @@
   "TOOL_TIPS": "TOOL TIPS",
   "UNSPECIFIED_COLOR": "Color details was loaded without specifying a color",
   "VIEW_ALL": "View all",
+  "VIEW_ENTIRE_COLOR_WALL": "View entire color wall",
   "VIEW_DETAILS": "View Details",
   "VIEW_DETAILS_FOR": "View details for {name}",
   "VIEW_FULL_COLLECTION": "VIEW FULL COLLECTION",
