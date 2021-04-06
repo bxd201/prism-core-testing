@@ -1,14 +1,5 @@
 {
-  "extends": [
-    "standard",
-    "standard-react",
-    "plugin:flowtype/recommended",
-    "plugin:jsx-a11y/recommended"
-  ],
   "plugins": [
-    "flowtype",
-    "jsx-a11y",
-    "react-hooks",
     "jest",
     "formatjs"
   ],
