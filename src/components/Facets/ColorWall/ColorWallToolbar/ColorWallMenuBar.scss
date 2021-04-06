@@ -2,12 +2,56 @@ $btn-bg: white;
 $btn-border-thickness: 1px;
 $menu-bar-width: 27em;
 
+.menu-bar__border {
+  border: $btn-border-thickness solid var(getThemeColor("primary"));
+}
+
 .menu-bar {
-  border: $btn-border-thickness solid var(getThemeColor('primary'));
   cursor: default;
   height: auto;
   position: relative;
   display: flex;
+
+  &-minimal {
+    height: 54px;
+
+    .menu-bar__button-copy,
+    button {
+      font-size: 17px;
+      line-height: 24px;
+      font-weight: 600;
+      text-transform: none;
+    }
+
+    .menu-bar__button,
+    .menu-bar__menu-item {
+      min-width: 260px;
+      svg {
+        margin-left: 10px;
+      }
+    }
+
+    span[aria-disabled="true"],
+    button[disabled] {
+      opacity: 0.2;
+    }
+
+    button {
+      // padding: 0 0.8em;
+      margin-left: 2px;
+      display: flex;
+      align-items: center;
+
+      svg {
+        height: 21.328 !important;
+        width: 21.328 !important;
+      }
+    }
+
+    &__left {
+      display: flex;
+    }
+  }
 
   @include respond-below(xs) {
     padding: 0 0.3em;
@@ -18,7 +62,7 @@ $menu-bar-width: 27em;
     display: flex;
     height: 100%;
     justify-content: center;
-    padding:  0.8em;
+    padding: 0.8em;
     width: ($menu-bar-width / 2) + 0.4em;
   }
 
@@ -31,21 +75,23 @@ $menu-bar-width: 27em;
 
   &__button-close {
     border-radius: 4px;
-    background-color: var(getThemeColor('primary'));
-    color: var(getThemeColor('primary.contrast'));
+    background-color: var(getThemeColor("primary"));
+    color: var(getThemeColor("primary.contrast"));
     padding: 3px 9px;
     height: 38px;
-    @include respond-below(xs) { min-height: 44px; }
+    @include respond-below(xs) {
+      min-height: 44px;
+    }
   }
 
   &__prime-color-wall-button {
     background-color: white;
-    color: var(getThemeColor('primary'));
-    padding:  0.8em;
-    border: $btn-border-thickness solid var(getThemeColor('primary'));
+    color: var(getThemeColor("primary"));
+    padding: 0.8em;
+    border: $btn-border-thickness solid var(getThemeColor("primary"));
     text-decoration: none;
     &.disabled {
-      background-color: var(getThemeColor('primary'));
+      background-color: var(getThemeColor("primary"));
       color: white;
     }
   }
@@ -53,7 +99,7 @@ $menu-bar-width: 27em;
   &__menu {
     background: $btn-bg;
     // @todo theme
-    box-shadow: 0 2px 5px -1px rgba(black, .65);
+    box-shadow: 0 2px 5px -1px rgba(black, 0.65);
     height: auto;
     left: 0;
     margin-top: 2px;
@@ -78,13 +124,13 @@ $menu-bar-width: 27em;
     font-size: 0.6875em;
     font-weight: bold;
     height: auto;
-    padding:  0.8em;
+    padding: 0.8em;
     text-transform: uppercase;
     width: 100%;
   }
 
   &__menu-link.active {
-    background: var(getThemeColor('primary'));
+    background: var(getThemeColor("primary"));
     color: $btn-bg;
     height: auto;
   }
@@ -92,5 +138,7 @@ $menu-bar-width: 27em;
 
 .color-wall-mode-btns__col {
   padding: $ui-spacing;
-  .color-wall-mode-btns__cell { margin: 0; }
+  .color-wall-mode-btns__cell {
+    margin: 0;
+  }
 }

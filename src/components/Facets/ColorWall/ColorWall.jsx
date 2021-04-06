@@ -30,7 +30,7 @@ const WALL_HEIGHT = 475
 
 const ColorWall = () => {
   const { swatchMinSize, swatchMaxSize, swatchSizeZoomed, colorWallBgColor }: ColorWallContextProps = useContext(ColorWallContext)
-  const { colorWall: { bloomEnabled = true, gapsBetweenChunks = true } }: ConfigurationContextType = useContext(ConfigurationContext)
+  const { colorWall: { bloomEnabled = true, gapsBetweenChunks = true }, uiStyle }: ConfigurationContextType = useContext(ConfigurationContext)
   const dispatch: { type: string, payload: {} } => void = useDispatch()
   const { url, params }: { url: string, params: { section: ?string, family?: ?string, colorId?: ?string } } = useRouteMatch()
   const history = useHistory()
@@ -175,7 +175,10 @@ const ColorWall = () => {
               height: calculateLabelHeight(cellSize),
               marginBottom: calculateLabelMarginBottom(isZoomedIn, cellSize)
             }}>
-            <div className={`color-wall-section-label__text ${isLargeLabel ? 'color-wall-section-label__text--large' : ''}`}>
+            <div
+              className={`color-wall-section-label__text ${isLargeLabel ? 'color-wall-section-label__text--large' : ''}`}
+              style={{ textAlign: uiStyle === 'minimal' ? 'left' : 'center' }}
+            >
               {sectionLabels[section][chunkNum]}
             </div>
           </div>
