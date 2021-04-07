@@ -1,6 +1,6 @@
 .SearchBar {
-  $input-bg: var(getThemeColor('white'));
-  $input-padding: .5em;
+  $input-bg: var(getThemeColor("white"));
+  $input-padding: 0.5em;
   $clear-size: 1em;
 
   &__search-form {
@@ -10,9 +10,9 @@
   &__label {
     cursor: default;
     display: inline-block;
-    font-size: .9em;
+    font-size: 0.9em;
     font-weight: bold;
-    margin-bottom: .25em;
+    margin-bottom: 0.25em;
   }
 
   &__icon {
@@ -47,8 +47,8 @@
     }
 
     &--with-outline {
-      border: 1px solid var(getThemeColor('primary'));
-      box-shadow: inset 0 0 0 1px var(getThemeColor('primary'));
+      border: 1px solid var(getThemeColor("primary"));
+      box-shadow: inset 0 0 0 1px var(getThemeColor("primary"));
     }
   }
 
@@ -77,10 +77,31 @@
     height: $clear-size * 1.5;
     border-radius: 50%;
 
-    &:hover, &:focus {
-      box-shadow: inset 999em 0 0 0 rgba(white, .9);
-      background: var(getThemeColor('primary'));
-      color: var(getThemeColor('dark'));
+    &:hover,
+    &:focus {
+      box-shadow: inset 999em 0 0 0 rgba(white, 0.9);
+      background: var(getThemeColor("primary"));
+      color: var(getThemeColor("dark"));
     }
   }
+}
+
+.SearchBar.SearchBar-Minimal {
+  .button-bar__options__option__btn {
+    background: none !important;
+    color: black !important;
+    text-transform: none;
+  }
+
+  .button-bar__options__option__btn,
+  .SearchBar__input {
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 24px;
+  }
+
+  .button-bar__option-container {
+    border: none !important;
+  }
+  // .SearchBar__input { }
 }

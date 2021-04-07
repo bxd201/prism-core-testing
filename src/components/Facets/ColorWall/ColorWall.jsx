@@ -30,7 +30,7 @@ const WALL_HEIGHT = 475
 
 const ColorWall = () => {
   const { swatchMinSize, swatchMaxSize, swatchSizeZoomed, colorWallBgColor }: ColorWallContextProps = useContext(ColorWallContext)
-  const { colorWall: { bloomEnabled = true, gapsBetweenChunks = true } }: ConfigurationContextType = useContext(ConfigurationContext)
+  const { colorWall: { bloomEnabled = true, gapsBetweenChunks = true }, uiStyle }: ConfigurationContextType = useContext(ConfigurationContext)
   const dispatch: { type: string, payload: {} } => void = useDispatch()
   const { url, params }: { url: string, params: { section: ?string, family?: ?string, colorId?: ?string } } = useRouteMatch()
   const history = useHistory()
@@ -56,7 +56,13 @@ const ColorWall = () => {
   const levelMap: { [string]: number } = getLevelMap(chunkGrid, bloomEnabled, params.colorId)
 
   // keeps redux store and url in sync for family and section data
-  useEffect(() => { params.section && dispatch(filterBySection(params.section)) }, [compareKebabs(params.section, section)])
+  useEffect(() => {
+    if (params.section) {
+      setChunkGrid([])
+      dispatch(filterBySection(params.section))
+    }
+  },
+  [compareKebabs(params.section, section)])
   useEffect(() => { dispatch(filterByFamily(params.family)) }, [compareKebabs(params.family, family)])
 
   // build the chunkGrid based on color wall container width
@@ -175,7 +181,10 @@ const ColorWall = () => {
               height: calculateLabelHeight(cellSize),
               marginBottom: calculateLabelMarginBottom(isZoomedIn, cellSize)
             }}>
-            <div className={`color-wall-section-label__text ${isLargeLabel ? 'color-wall-section-label__text--large' : ''}`}>
+            <div
+              className={`color-wall-section-label__text ${isLargeLabel ? 'color-wall-section-label__text--large' : ''}`}
+              style={{ textAlign: uiStyle === 'minimal' ? 'left' : 'center' }}
+            >
               {sectionLabels[section][chunkNum]}
             </div>
           </div>

@@ -73,6 +73,9 @@ export const changeSceneVariant = (sceneId: number, variant: string) => {
   }
 }
 
+export const RESET_SCENES_VARIANT = 'RESET_SCENES_VARIANT'
+export const resetScenesVariant = () => ({ type: RESET_SCENES_VARIANT })
+
 export const DEACTIVATE_SCENE = 'DEACTIVATE_SCENE'
 export const deactivateScene = (id: string | number | Array<string | number>) => {
   return {

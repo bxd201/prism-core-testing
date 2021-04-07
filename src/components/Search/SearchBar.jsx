@@ -12,7 +12,6 @@ import debounce from 'lodash/debounce'
 import './SearchBar.scss'
 import 'src/scss/convenience/visually-hidden.scss'
 import { loadSearchResults, MIN_SEARCH_LENGTH } from 'src/store/actions/loadSearchResults'
-import at from 'lodash/at'
 import { compareKebabs } from 'src/shared/helpers/StringUtils'
 import recursiveDecodeURIComponent from 'src/shared/utils/recursiveDecodeURIComponent.util'
 import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
@@ -22,7 +21,7 @@ type Props = {
   limitSearchToFamily?: boolean,
   showCancelButton?: boolean,
   showIcon?: boolean,
-  showLabel?: boolean
+  showLabel?: boolean,
 }
 
 const SearchBar = (props: Props) => {
@@ -43,7 +42,7 @@ const SearchBar = (props: Props) => {
   const dispatch = useDispatch()
   const history = useHistory()
   const inputRef = useRef()
-  const { brandId } = useContext(ConfigurationContext)
+  const { brandId, uiStyle } = useContext(ConfigurationContext)
 
   useEffect(() => {
     // recursively decode incoming query and use it to update input value
@@ -118,19 +117,23 @@ const SearchBar = (props: Props) => {
   }, [newSearchParam, family, section, limitSearchToFamily])
 
   return (
-    <div className='SearchBar'>
+    <div className={uiStyle === 'minimal' ? 'SearchBar SearchBar-Minimal' : 'SearchBar'}>
       <form onSubmit={e => e.preventDefault()} className='SearchBar__search-form'>
         <label className={`SearchBar__label ${!showLabel ? 'visually-hidden' : ''}`} htmlFor={id}>{label}</label>
         <div className='SearchBar__inner'>
-          {showIcon && (<label htmlFor={id} className='SearchBar__icon'>
-            <FontAwesomeIcon icon={['fal', 'search']} size='lg' />
-          </label>)}
+          {showIcon && (
+            <label htmlFor={id} className='SearchBar__icon'>
+              <FontAwesomeIcon icon={['fal', 'search']} size='lg' />
+            </label>
+          )}
           <div className={`SearchBar__wrapper SearchBar__wrapper--with${query ? '-outline' : 'out-outline'}`}>
             <input
+              // eslint-disable-next-line jsx-a11y/no-autofocus
+              autoFocus
               className='SearchBar__input'
               id={id}
               onChange={e => setInputValue(e.target.value)}
-              placeholder={at(messages, 'SEARCH.SEARCH_BY')[0]}
+              placeholder={messages[uiStyle === 'minimal' ? 'SEARCH.SEARCH_FOR_A_COLOR' : 'SEARCH.SEARCH_BY']}
               ref={inputRef}
               value={inputValue}
             />

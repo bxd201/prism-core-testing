@@ -16,6 +16,7 @@ import {
   ACTIVATE_SCENE,
   ACTIVATE_COLOR_DETAILS_SCENE,
   CHANGE_SCENE_VARIANT,
+  RESET_SCENES_VARIANT,
   DEACTIVATE_SCENE,
   PAINT_SCENE_SURFACE,
   PAINT_ALL_SCENE_SURFACES,
@@ -199,6 +200,17 @@ export const scenes = (state: Object = initialState, action: { type: string, pay
             }
 
             return _surface
+          })
+        })
+      })
+
+    case RESET_SCENES_VARIANT:
+      return Object.assign({}, state, {
+        sceneStatusColorDetails: Object.assign({}, state.sceneStatusColorDetails, {
+          [state.type]: state.sceneStatusColorDetails[state.type].map((_surface: SceneStatus) => {
+            return Object.assign({}, _surface, {
+              variant: SCENE_VARIANTS.DAY
+            })
           })
         })
       })
