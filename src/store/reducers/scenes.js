@@ -35,6 +35,7 @@ import {
   SET_USE_SMART_MASK, SET_SHOW_EDIT_CUSTOM_SCENE
 } from '../actions/scenes'
 import { registerMask, updateMask } from '../masks/store'
+import { SCENE_VARIANTS } from 'constants/globals'
 import { SCENES_DATA_FETCHED, SET_VARIANTS_COLLECTION, SET_VARIANTS_LOADING } from '../actions/loadScenes'
 import type { FlatScene, FlatVariant } from '../actions/loadScenes'
 

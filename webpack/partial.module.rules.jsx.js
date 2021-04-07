@@ -9,7 +9,8 @@ module.exports = {
       options: {
         configFile: path.resolve(__dirname, '../.babelrc')
       }
-    }
+    },
+    'eslint-loader'
   ],
   resolve: { extensions: [ '.js', '.jsx' ] }
 }
