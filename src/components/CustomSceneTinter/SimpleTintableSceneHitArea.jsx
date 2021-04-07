@@ -6,11 +6,11 @@ import uniqueId from 'lodash/uniqueId'
 import SVG from 'react-inlinesvg'
 import { DRAG_TYPES } from 'constants/globals'
 import { DropTarget } from 'react-dnd-cjs'
-
-import ensureFullyQualifiedAssetUrl from 'src/shared/utils/ensureFullyQualifiedAssetUrl.util'
 import getBeforeHash from 'src/shared/utils/getBeforeHash.util'
+
 type Props = {
     connectDropTarget: Function,
+  // isOver is provided by dnd
     isOver: any,
     id: string,
     onDrop: Function,
@@ -47,14 +47,22 @@ function collect (connect, monitor) {
 }
 
 const SimpleTintableSceneHitArea = ({ connectDropTarget, isOver, id, onDrop, interactionHandler, onOver, onOut, onLoadingSuccess, onLoadingError, svgSource }: Props) => {
-  useEffect(() => isOver ? onOver(id) : onOut(id), isOver)
+  useEffect(() => {
+    if (isOver) {
+      // eslint-disable-next-line no-debugger
+      debugger
+      onOver(id)
+      return
+    }
+    onOut(id)
+  }, [isOver, id])
   const maskIdMap = memoizee(path => uniqueId('TSHA'), { length: 1, primitive: true })
-  const maskId = maskIdMap(ensureFullyQualifiedAssetUrl(svgSource))
+  const maskId = maskIdMap(svgSource)
   return connectDropTarget && connectDropTarget(
     <div className={classNames.hitAreaWrapper}>
       <SVG
         className={classNames.hitAreaMaskLoader}
-        src={ensureFullyQualifiedAssetUrl(svgSource)}
+        src={svgSource}
         cacheRequests
         uniqueHash={maskId}
         onLoad={(src) => {

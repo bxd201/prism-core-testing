@@ -74,6 +74,8 @@ export const initialState: State = {
   selectedScenePaletteLoaded: false
 }
 
+export const SET_SELECTED_SCENE_UID = 'SET_SELECTED_SCENE_UID'
+
 export const scenes = (state: Object = initialState, action: { type: string, payload: Object }) => {
   switch (action.type) {
     case RECEIVE_SCENES:
@@ -571,6 +573,14 @@ export const variantsCollection = (state: FlatVariant[] | null = null, action: {
 
 export const variantsLoading = (state: boolean = false, action: { type: string, payload: boolean }): boolean => {
   if (action.type === SET_VARIANTS_LOADING) {
+    return action.payload
+  }
+
+  return state
+}
+
+export const selectedSceneUid = (state: string | null = null, action: {type: string, payload: string | null}) => {
+  if (action.type === SET_SELECTED_SCENE_UID) {
     return action.payload
   }
 

@@ -7,6 +7,8 @@ import { SCENE_TYPES } from '../../constants/globals'
 import flatten from 'lodash/flatten'
 import flattenDeep from 'lodash/flattenDeep'
 import cloneDeep from 'lodash/cloneDeep'
+import { SET_SELECTED_SCENE_UID } from '../reducers/scenes'
+import ensureFullyQualifiedAssetUrl from '../../shared/utils/ensureFullyQualifiedAssetUrl.util'
 
 export const SYSTEM_ERROR = 'SYSTEM_ERROR'
 export const SCENES_DATA_FETCHED = 'SCENES_DATA_FETCHED'
@@ -36,7 +38,8 @@ export const handleScenesFetchedForCVW = (sceneType: string, data: ScenePayload)
         variants: datum.variants,
         variantNames: datum.variant_names,
         sceneType: curr,
-        uid: createUniqueSceneId()
+        uid: createUniqueSceneId(),
+        categories: datum.category ? [...datum.category] : null
       }
     })]
   }, [])
@@ -51,7 +54,8 @@ export const handleScenesFetchedForCVW = (sceneType: string, data: ScenePayload)
       height: datum.height,
       variantNames: datum.variantNames,
       sceneType: datum.sceneType,
-      uid: datum.uid
+      uid: datum.uid,
+      categories: datum.categories
     }
   })
 
@@ -88,12 +92,14 @@ export type FlatVariant = {
   surfaceId: number,
   sceneId: number,
   variantName: string,
+  sceneType: string,
   // blob urls are not currently set when initialized but after they have been loaded
   surfaces: Surface[],
   image: string,
   thumb: string,
   description: string,
-  normalizedImageValueCurve: string
+  normalizedImageValueCurve: string,
+  sceneCategories?: string[] | null
 }
 // This method gets a flat array of variants the are referential to the scene they belong to.
 export const getFlatVariants = (scenes): FlatVariant => {
@@ -101,12 +107,19 @@ export const getFlatVariants = (scenes): FlatVariant => {
   // eslint-disable-next-line camelcase
   const variantsCollection = scenes.map(scene => {
     // eslint-disable-next-line no-unused-vars
-    const { id: sceneId, sceneType, uid: sceneUid } = scene
+    const { id: sceneId, sceneType, uid: sceneUid, categories } = scene
     return scene.variants.map(variant => {
       const surfaces = variant.surfaces.map(surface => {
-        return { ...surface }
-      })
+        const newSurface = { ...surface }
+        if (newSurface.hitArea) {
+          newSurface.hitArea = ensureFullyQualifiedAssetUrl(newSurface.hitArea)
+        }
+        if (newSurface.highlights) {
+          newSurface.highlights = ensureFullyQualifiedAssetUrl(newSurface.highlights)
+        }
 
+        return newSurface
+      })
       const { variant_name: variantName, image, thumb, normalizedImageValueCurve, name: description } = variant
 
       return {
@@ -118,12 +131,28 @@ export const getFlatVariants = (scenes): FlatVariant => {
         sceneUid,
         variantName,
         surfaces,
-        normalizedImageValueCurve
+        normalizedImageValueCurve,
+        sceneCategories: categories ? [...categories] : null
       }
     })
   })
 
-  return flattenDeep(variantsCollection, 2)
+  // Handle any preprocessing required of all variants
+  const variants = flattenDeep(variantsCollection, 2)
+  const roomTypes = []
+  variants.forEach((variant, i) => {
+    const category = variant.sceneCategories ? variant.sceneCategories[0] : null
+    if (variant.sceneType === SCENE_TYPES.ROOM && category && roomTypes.indexOf(category) === -1) {
+      variant.isFirstOfKind = true
+      roomTypes.push(category)
+      return
+    }
+
+    variant.isFirstOfKind = false
+  })
+
+  roomTypes.length = 0
+  return variants
 }
 
 export const setVariantsCollection = (variants: FlatVariant[]) => {
@@ -154,4 +183,11 @@ export const updateVariantsCollectionSurfaces = (variants: FlatVariant, surfaceD
   })
 
   return newVariants
+}
+
+export const setSelectedSceneUid = (sceneUid: string | null = null) => {
+  return {
+    type: SET_SELECTED_SCENE_UID,
+    payload: sceneUid
+  }
 }
