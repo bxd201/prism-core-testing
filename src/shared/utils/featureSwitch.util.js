@@ -6,13 +6,6 @@ export const shouldAllowFeature = (featureExclusions, feature) => {
     return true
   }
 
-  if (feature === FEATURE_EXCLUSIONS.editPhotos) {
-    return false
-  }
-  if (feature === FEATURE_EXCLUSIONS.fastMask) {
-    return true
-  }
-
   return featureExclusions.indexOf(feature) === -1
 }
 

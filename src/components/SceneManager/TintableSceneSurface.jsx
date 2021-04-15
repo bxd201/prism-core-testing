@@ -8,10 +8,11 @@ type Props = {
   image: string,
   maskId: string,
   filterId: string,
-  width: string | number,
-  height: string | number,
+  width?: string | number,
+  height?: string | number,
   type: string,
   children: any,
+  // This prop will hardcode the width and height, use this when you need to programtically resize.
   scaleSvg?: booelan
 }
 

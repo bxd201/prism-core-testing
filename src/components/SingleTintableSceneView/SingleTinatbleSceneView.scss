@@ -1,0 +1,14 @@
+.tintable-view-wrapper {
+  width: 100%;
+  height: auto;
+  position: relative;
+}
+
+.tintable-view-loader-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  // this is arbitrary
+  min-height: 400px;
+}

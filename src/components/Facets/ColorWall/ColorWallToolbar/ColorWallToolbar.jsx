@@ -88,14 +88,14 @@ export default () => {
               onOptionSelected={option => history.push(generateColorWallPageUrl(section, option))}
             />
             <Select
-              disabled={sections.length < 2}
+              disabled={visibleSections.length < 2}
               placeholderText={activeSection === primeColorWall ? messages['EXPLORE_COLLECTIONS'] : activeSection}
-              options={sections.filter(s => s !== activeSection)}
+              options={visibleSections.filter(s => s !== activeSection)}
               onOptionSelected={option => history.push(generateColorWallPageUrl(option))}
             />
           </div>
           <button
-            disabled={primeColorWall === activeSection && !activeFamily}
+            disabled={!visibleSections.includes(primeColorWall) || (primeColorWall === activeSection && !activeFamily)}
             onClick={() => history.push(generateColorWallPageUrl(primeColorWall))}
             style={{ margin: '0 20px' }}
           >
@@ -152,7 +152,7 @@ export default () => {
               )
               : ((isFamilyView || visibleSections.length > 1) && (
                 <div style={{ display: 'flex' }} className='menu-bar__border'>
-                  {primeColorWall && width > 768 && (
+                  {primeColorWall && visibleSections.includes(primeColorWall) && width > 768 && (
                     <NavLink
                       className={`${menuBarPrefix}__prime-color-wall-button ${primeColorWall === activeSection ? 'disabled' : ''}`}
                       to={generateColorWallPageUrl(primeColorWall)}

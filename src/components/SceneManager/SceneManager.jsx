@@ -72,21 +72,21 @@ const getThumbnailAssetArrayByScene = memoizee((sceneVariant: Variant, surfaces:
     surfaces.map(surface => surface.highlights)
   ])
 })
-
-const getFullSizeAssetArrayByScene = memoizee((scene: Scene): string[] => {
-  return flattenDeep([
-    scene.variants.map((v: Variant) => [
-      v.image,
-      v.thumb,
-      v.surfaces.map((s: Surface) => [
-        s.mask,
-        s.hitArea,
-        s.shadows,
-        s.highlights
-      ])
-    ])
-  ])
-})
+// @todo deprecate -RS
+// const getFullSizeAssetArrayByScene = memoizee((scene: Scene): string[] => {
+//   return flattenDeep([
+//     scene.variants.map((v: Variant) => [
+//       v.image,
+//       v.thumb,
+//       v.surfaces.map((s: Surface) => [
+//         s.mask,
+//         s.hitArea,
+//         s.shadows,
+//         s.highlights
+//       ])
+//     ])
+//   ])
+// })
 
 const getMinHeightFromRef = (ref: React$Ref, aspectRatio: number = 0.75) => {
   // This default value is the same as the myideas wrapper
