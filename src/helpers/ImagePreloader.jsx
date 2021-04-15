@@ -22,6 +22,8 @@ const ImagePreloader = (props: Props) => {
   const [error, setError] = useState(false)
   const [loading, setLoading] = useState(false)
   useEffect(() => {
+    // eslint-disable-next-line no-debugger
+    debugger
     //* https://reactjs.org/docs/hooks-effect.html#effects-with-cleanup/
     let cancelSubscription = false
     if (!isEmpty(preload)) {

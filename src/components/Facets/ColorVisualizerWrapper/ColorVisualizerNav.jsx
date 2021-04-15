@@ -19,6 +19,7 @@ import {
   setNavigationIntent,
   setShouldShowGlobalDestroyWarning
 } from '../../../store/actions/navigation'
+import { ROUTES_ENUM } from './routeValueCollections'
 
 type DropDownMenuProps = {
   title: string,
@@ -140,14 +141,13 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
   const navRef: {current: ?HTMLElement} = useRef()
   const [imgUrl: string, setImgUrl: (string) => void] = useState()
 
-  // @todo all pull route values into const...perhaps routesEnum? -RS
   useEffect(() => {
     if (imgUrl) {
-      if (location.pathname === '/upload/match-photo') {
-        history.push('/active/match-photo')
+      if (location.pathname === ROUTES_ENUM.UPLOAD_MATCH_PHOTO) {
+        history.push(ROUTES_ENUM.ACTIVE_MATCH_PHOTO)
         setMatchPhotoScene(<ImageRotateContainer key={imgUrl + 'mp'} showPaintScene isFromMyIdeas={false} isPaintScene={false} imgUrl={imgUrl} />)
-      } else if (location.pathname === '/upload/paint-scene') {
-        history.push('/active/paint-scene')
+      } else if (location.pathname === ROUTES_ENUM.UPLOAD_PAINT_SCENE) {
+        history.push(ROUTES_ENUM.PAINT_SCENE)
         uploadPaintScene(<ImageRotateContainer showPaintScene isFromMyIdeas={false} isPaintScene imgUrl={imgUrl} setLastActiveComponent={setLastActiveComponent} activePaintScene={activePaintScene} />)
       }
     }

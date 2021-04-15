@@ -1,21 +1,20 @@
 /* eslint-disable jsx-a11y/label-has-for */
 // @flow
-import React from 'react'
+import React, { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import './ToggleSwitch.scss'
+import uniqueId from 'lodash/uniqueId'
 
 type ToggleSwitchProps = {
     isOn: Boolean,
     handleToggle: Function,
-    sceneId: number,
-    currentColor: string,
+    currentColor?: string,
     variantsList: Array,
-    textColor: string,
+    textColor?: string,
     iconType: string
 }
 
-export const NAME = 'toggle-switch'
 export const CLASSES = {
   MAIN: 'toggle-switch',
   WRAPPER: 'toggle-switch__wrapper',
@@ -27,14 +26,14 @@ export const CLASSES = {
 }
 
 const ToggleSwitch = (props: ToggleSwitchProps) => {
-  const { isOn, sceneId, handleToggle, currentColor, variantsList, textColor, iconType } = props
-  const checkboxName = `${NAME}${sceneId}`
+  const { isOn, handleToggle, currentColor, variantsList, textColor, iconType } = props
+  const [checkboxName] = useState(uniqueId('toggle-switch'))
 
   return (
-    <div className={CLASSES.MAIN} style={{ background: currentColor, color: `${textColor}` }}>
+    <div className={CLASSES.MAIN} style={currentColor && textColor ? { background: currentColor, color: `${textColor}` } : null}>
       <div className={`${CLASSES.WRAPPER} ${CLASSES.LEFT_ICON}`}>
-        {variantsList?.length === 2 && variantsList[0].icon && <FontAwesomeIcon icon={[`${iconType}`, `${variantsList[0].icon}`]} size='lg' style={{ color: `${textColor}` }} />}
-        {variantsList?.length === 2 && variantsList[0].label}
+        {variantsList?.length === 2 && variantsList[0]?.icon && <FontAwesomeIcon icon={[`${iconType}`, `${variantsList[0].icon}`]} size='lg' style={textColor ? { color: `${textColor}` } : null} />}
+        {variantsList?.length === 2 && variantsList[0]?.label}
       </div>
       <input
         checked={isOn}
@@ -52,11 +51,11 @@ const ToggleSwitch = (props: ToggleSwitchProps) => {
         style={{ background: !isOn ? currentColor : textColor, borderColor: textColor }}
         htmlFor={checkboxName}
       >
-        <span className={`${CLASSES.BUTTON}`} style={{ background: isOn ? `${currentColor}` : `${textColor}` }} />
+        <span className={`${CLASSES.BUTTON}`} style={currentColor && textColor ? { background: currentColor, color: `${textColor}` } : null} />
       </label>
       <div className={`${CLASSES.WRAPPER} ${CLASSES.RIGHT_ICON}`}>
-        {variantsList?.length === 2 && variantsList[1].icon && <FontAwesomeIcon icon={[`${iconType}`, `${variantsList[1].icon}`]} size='lg' style={{ color: `${textColor}` }} />}
-        {variantsList?.length === 2 && variantsList[1].label}
+        {variantsList?.length === 2 && variantsList[1]?.icon && <FontAwesomeIcon icon={[`${iconType}`, `${variantsList[1].icon}`]} size='lg' style={textColor ? { color: `${textColor}` } : null} />}
+        {variantsList?.length === 2 && variantsList[1]?.label}
       </div>
     </div>
   )

@@ -6,16 +6,15 @@ import { mostReadable } from '@ctrl/tinycolor'
 
 type SwitchProps = {
   onChange: Function,
-  sceneId: number,
   activeVariantIndex: Number,
-  currentColor: string,
+  currentColor?: string,
   iconType: String,
   variantsList: Array
 }
 
-const MultipleVariantSwitcher = (props: SwitchProps) => {
+const MultipleVariantSwitch = (props: SwitchProps) => {
   const [isToggled, setIsToggled] = useState(false)
-  const { currentColor, sceneId, activeVariantIndex, onChange, iconType, variantsList } = props
+  const { currentColor, activeVariantIndex, onChange, iconType, variantsList } = props
 
   useEffect(() => {
     if (variantsList?.length === 2) {
@@ -24,11 +23,8 @@ const MultipleVariantSwitcher = (props: SwitchProps) => {
   }, [activeVariantIndex])
 
   const isToggle = () => {
-    // ToDO also check if icons valid or not
-    if (variantsList?.length === 2) {
-      return true
-    }
-    return false
+    // TODO also check if icons valid or not
+    return variantsList?.length === 2
   }
 
   const handleToggle = () => {
@@ -44,14 +40,12 @@ const MultipleVariantSwitcher = (props: SwitchProps) => {
     if (currentColor) {
       return mostReadable(currentColor, [ 'white', 'black' ])
     }
-    return 'white'
   }, [ currentColor ])
 
   return (
     <>
       {isToggle()
         ? <ToggleSwitch
-          sceneId={sceneId}
           isOn={isToggled}
           variantsList={variantsList}
           iconType={iconType}
@@ -72,4 +66,4 @@ const MultipleVariantSwitcher = (props: SwitchProps) => {
   )
 }
 
-export default MultipleVariantSwitcher
+export default MultipleVariantSwitch

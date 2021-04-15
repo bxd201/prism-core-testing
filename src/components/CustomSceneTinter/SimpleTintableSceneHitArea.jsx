@@ -1,5 +1,5 @@
 // @flow
-import React, { useEffect } from 'react'
+import React from 'react'
 import memoizee from 'memoizee'
 import uniqueId from 'lodash/uniqueId'
 
@@ -12,7 +12,7 @@ type Props = {
     connectDropTarget: Function,
   // isOver is provided by dnd
     isOver: any,
-    id: string,
+    surfaceIndex: number,
     onDrop: Function,
     interactionHandler: Function,
     onOver: Function,
@@ -33,8 +33,8 @@ const SimpleTintableSceneHitAreaSpec = {
   drop (props: Props, monitor) {
     const droppedItem = monitor.getItem()
 
-    if (droppedItem && droppedItem.color) {
-      props.onDrop(props.id, droppedItem.color)
+    if (droppedItem?.color) {
+      props.onDrop(props.surfaceIndex, droppedItem.color)
     }
   }
 }
@@ -46,16 +46,7 @@ function collect (connect, monitor) {
   }
 }
 
-const SimpleTintableSceneHitArea = ({ connectDropTarget, isOver, id, onDrop, interactionHandler, onOver, onOut, onLoadingSuccess, onLoadingError, svgSource }: Props) => {
-  useEffect(() => {
-    if (isOver) {
-      // eslint-disable-next-line no-debugger
-      debugger
-      onOver(id)
-      return
-    }
-    onOut(id)
-  }, [isOver, id])
+const SimpleTintableSceneHitArea = ({ connectDropTarget, isOver, onDrop, interactionHandler, onOver, onOut, dropItem, onLoadingSuccess, onLoadingError, svgSource }: Props) => {
   const maskIdMap = memoizee(path => uniqueId('TSHA'), { length: 1, primitive: true })
   const maskId = maskIdMap(svgSource)
   return connectDropTarget && connectDropTarget(
