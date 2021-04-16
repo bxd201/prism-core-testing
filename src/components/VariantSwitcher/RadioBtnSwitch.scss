@@ -1,0 +1,96 @@
+.radio-btn-switch {
+	box-sizing: border-box;
+	position: relative;
+	display: block;
+	justify-content: center;
+	align-items: center;
+
+	&__variants-list {
+		border-radius: 4px;
+		bottom: 1;
+		right: 0;
+		width: auto;
+		margin-left: auto;
+		min-height: 100px;
+		max-height: 250px;
+		overflow: auto;
+		box-shadow: 0 1px 8px rgba(0, 0, 0, 0.3);
+		opacity: 0;
+		visibility: hidden;
+		transition: all 0.2s ease;
+		ul {
+			list-style: none;
+			padding: 0;
+			margin: 0;
+		}
+		li {
+			a {
+				text-decoration: none;
+				color: #333333;
+				padding: 15px 20px;
+				display: block;
+			}
+		}
+	}
+
+	&__variants-active {
+		opacity: 1;
+		padding: 5px;
+		visibility: visible;
+		margin-bottom: 10px;
+	}
+
+	&__variant-wrapper {
+		position: relative;
+		display: flex;
+		flex-direction: row;
+		padding: 5px;
+		justify-content: space-evenly;
+		align-items: center;
+		cursor: pointer;
+		& > input[type="radio"] {
+			top: 0;
+			left: 0;
+			width: 100%;
+			cursor: inherit;
+			height: 100%;
+			margin: 0;
+			opacity: 0;
+			padding: 0;
+			z-index: 1;
+			position: absolute;
+		}
+		& > label {
+			margin: 5px;
+		}
+	}
+
+	&__button {
+		background: #ffffff;
+		border-radius: 4px;
+		cursor: pointer;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 6px 6px;
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+		vertical-align: middle;
+		transition: box-shadow 0.4s ease;
+		margin-left: auto;
+		outline: none;
+		border: none;
+		&:hover {
+			box-shadow: 0 1px 8px rgba(0, 0, 0, 0.3);
+		}
+		& > span {
+			font-weight: 700;
+			vertical-align: middle;
+			font-size: 14px;
+			margin: 0 10px;
+		}
+		&--icon {
+			margin-right: 10px;
+			transition: transform 0.2s ease-in-out;
+		}
+	}
+}
