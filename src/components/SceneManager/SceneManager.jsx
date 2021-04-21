@@ -972,7 +972,7 @@ export function getSceneInfoById (scene: Scene, sceneStatus: SceneStatus[]): {
   variant: Variant,
   surfaces: Surface[]
 } | void {
-  const status: SceneStatus | void = find(sceneStatus, { 'id': scene.id })
+  const status: SceneStatus | void = find(sceneStatus, { 'id': scene && scene.id })
 
   if (typeof status !== 'undefined') {
     const sceneVariant: Variant | void = find(scene.variants, { 'variant_name': status.variant })

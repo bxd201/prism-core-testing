@@ -14,7 +14,6 @@ import WithConfigurationContext from 'src/contexts/ConfigurationContext/WithConf
 import SimpleTintableScene from '../../CustomSceneTinter/SimpleTintableScene'
 import './ColorDetailsScenes.scss'
 import MultipleVariantSwitch from '../../VariantSwitcher/MultipleVariantSwitch'
-
 type Props = {
     config: {
       brandId: string,
