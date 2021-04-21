@@ -1,0 +1,47 @@
+.scene-selector-nav-btn {
+  position: relative;
+  display: flex;
+  padding: 0.5rem;
+  align-content: center;
+  justify-content: center;
+  background-color: var(getThemeColor('light'));
+  color: var(getThemeColor('light.contrast'));
+  &__icon {
+    font-size: 1em;
+    position: relative;
+    width: 20px;
+    height: 20px;
+    align-content: center;
+    justify-content: center;
+    flex-direction: row;
+    padding: 0.125rem;
+    &-1 {
+      position: absolute;
+      bottom: 0px;
+      left: 0px;
+      transform: translate(3px, -2px);
+      z-index: 100;
+      background-color: var(getThemeColor('light'));
+    }
+
+    &-2 {
+      position: absolute;
+      bottom: 0px;
+      left: 0px;
+      z-index: 1000;
+      background-color: var(getThemeColor('light'));
+    }
+
+    &-3 {
+      position: absolute;
+      bottom: 0px;
+      left: 0px;
+      transform: translate(6px, -4px);
+      z-index: 1;
+      background-color: var(getThemeColor('light'));
+    }
+  }
+  &__text {
+    padding: 0.5rem 0.125rem;
+  }
+}

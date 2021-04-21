@@ -1,19 +1,19 @@
 // @flow
 import React, { useState } from 'react'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
-import type { Scene } from '../../shared/types/Scene'
+import type { Scene, Surface, SurfaceStatus } from '../../shared/types/Scene'
 import type { Color } from '../../shared/types/Colors'
 import TintableSceneSurface from '../SceneManager/TintableSceneSurface'
 import TintableSceneSVGDefs from '../SceneManager/TintableSceneSVGDefs'
 import { LiveMessage } from 'react-aria-live'
 import { getFilterId, getMaskId } from '../../shared/utils/tintableSceneUtils'
 import uniqueId from 'lodash/uniqueId'
-import uniq from 'lodash/uniq'
-import concat from 'lodash/concat'
-import without from 'lodash/without'
 import GenericOverlay from '../Overlays/GenericOverlay/GenericOverlay'
-import { baseClassName, getTintColorBySurface, transitionClassName } from '../SceneManager/TintableScene'
 import SimpleTintableSceneHitArea from './SimpleTintableSceneHitArea'
+
+import './SimpleTintableScene.scss'
+import find from 'lodash/find'
+import includes from 'lodash/includes'
 
 export type FlatColor = {
   brandKey: string,
@@ -31,7 +31,6 @@ export type FlatColor = {
 type SimpleTintableSceneProps = {
   // eslint-disable-next-line react/no-unused-prop-types
   scene?: Scene,
-  sceneId?: number,
   sceneType: string,
   sceneName: string,
   background: string,
@@ -46,12 +45,28 @@ type SimpleTintableSceneProps = {
   imageValueCurve?: any,
   isUsingWorkspace: boolean,
   interactive?: boolean,
-  onUpdateColor?: Function,
   handleSurfaceInteraction?: Function,
+  handleColorDrop?: Function,
   activeColorId?: string,
   surfaceColors?: Color[]
 }
 
+// @todo deprecate, this should not be needed when we fully replace the scene manager and the use of surface status
+export const getTintColorBySurface = (surface: Surface, props: any, state: State): ?Color => {
+  const { previewColor, surfaceStatus } = props
+  const { activePreviewSurfaces } = state
+  // get the SurfaceStatus object associated with the provided Surface
+  const status: ?SurfaceStatus = surface ? find(surfaceStatus, { 'id': surface.id }) : void (0)
+  // if this surface is one of the active preview surfaces...
+  if (includes(activePreviewSurfaces, surface.id)) {
+    // ... use the previewColor prop for this surface's color
+    return previewColor
+  }
+
+  return status?.color
+}
+
+// @todo deprecate, this was used to adapt scene status to vector based data of simple tintable scene before we arrayified everything -RS
 export const reorderColors = (colors: Color[], activeColorId?: string) => {
   return colors.map((color, i) => {
     if (i === 0 && activeColorId) {
@@ -80,21 +95,12 @@ const simpleTintableClassName = 'simple-tintable'
 
 const SimpleTintableScene = (props: SimpleTintableSceneProps) => {
   // @todo the scene prop is here for posterity, this component can be used as an adapter -RS
-  const { sceneType, background, sceneName, width, height, imageValueCurve, surfaceUrls, isUsingWorkspace, surfaceIds, highlights, shadows, colors, activeColorId, sceneId, surfaceHitAreas, interactive, onUpdateColor, handleSurfaceInteraction, surfaceColors } = props
+  const { sceneType, background, sceneName, width, height, imageValueCurve, surfaceUrls, isUsingWorkspace, surfaceIds, highlights, shadows, colors, activeColorId, surfaceHitAreas, interactive, handleColorDrop, handleSurfaceInteraction, surfaceColors } = props
   const [instanceId] = useState(uniqueId('TS'))
-  const [activePreviewSurfaces, setActivePreviewSurfaces] = useState([])
   const [hitAreaLoadingCount, setHitAreaLoadingCount] = useState(0)
   const [hitAreaError, setHitAreaError] = useState(false)
   const [hitAreaLoaded, setHitAreaLoaded] = useState(props.surfaceUrls.length === 0)
 
-  // useEffect(() => setHitAreaLoadingCount(surfaceHitAreas && surfaceHitAreas.length - 1), surfaceHitAreas)
-
-  const handleColorDrop = (surfaceId: string, color: Color) => {
-    setActivePreviewSurfaces([])
-    onUpdateColor && onUpdateColor(sceneId, surfaceId, color)
-  }
-  const handleOver = (surfaceId: string) => { setActivePreviewSurfaces(uniq(concat(activePreviewSurfaces, surfaceId))) }
-  const handleOut = (surfaceId: string) => { setActivePreviewSurfaces(without(activePreviewSurfaces, surfaceId)) }
   const handleHitAreaLoadingSuccess = () => {
     setHitAreaLoadingCount(hitAreaLoadingCount + 1)
     if (hitAreaLoadingCount <= 0) {
@@ -113,8 +119,8 @@ const SimpleTintableScene = (props: SimpleTintableSceneProps) => {
     <>
       {/* The transitions group will assume the calculated height of the ROOT DIV and not necessarily the specified height of the parent div */}
       <div className={`${simpleTintableClassName}-wrapper`}>
-        <img className={`${baseClassName}__natural`} src={background} alt={sceneName} />
-        <TransitionGroup className={`${transitionClassName}__colors`}>
+        <img className={`${simpleTintableClassName}__natural`} src={background} alt={sceneName} />
+        <TransitionGroup className={`${simpleTintableClassName}__colors`}>
           {surfaceUrls.map((surface: string, i) => {
             const highlight: ?string = highlights && surfaceUrls.length === highlights.length ? highlights[i] : null
             const shadow: ?string = shadows && surfaceUrls.length === shadows.length ? shadows[i] : null
@@ -126,7 +132,7 @@ const SimpleTintableScene = (props: SimpleTintableSceneProps) => {
                     surfaceIds[i]}_${tintColor.hex}`}
                   timeout={1}
                   mountOnEnter
-                  classNames={`${transitionClassName}__colors__color-`} >
+                  classNames={`${simpleTintableClassName}__colors__color-`} >
                   <TintableSceneSurface
                     type={sceneType}
                     image={background}
@@ -154,13 +160,12 @@ const SimpleTintableScene = (props: SimpleTintableSceneProps) => {
       </div>
 
       {interactive && (
-        <div className={`${baseClassName}__hit-wrapper`}>
+        <div className={`${simpleTintableClassName}__hit-wrapper`}>
           {surfaceHitAreas && surfaceHitAreas.map((surface, i) => (
             <SimpleTintableSceneHitArea
               key={surface}
+              surfaceIndex={i}
               onDrop={handleColorDrop}
-              onOver={handleOver}
-              onOut={handleOut}
               onLoadingSuccess={handleHitAreaLoadingSuccess}
               onLoadingError={handleHitAreaLoadingError}
               interactionHandler={() => handleClickSurface(i)}

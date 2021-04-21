@@ -1,7 +1,9 @@
 .toggle-switch {
     display: flex;
-    border-radius: 5px;
     padding: 6px 15px;
+    background-color: var(getThemeColor('light'));
+    color: var(getThemeColor('light.contrast'));
+    margin: 0 4px;
 
     &__wrapper {
         display: flex;
@@ -26,9 +28,11 @@
         width: 45px;
         height: 27px;
         margin: auto;
-        background: white;
+        background-color: var(getThemeColor('light'));
         border-radius: 100px;
-        border: solid #2cabe2 1px;
+        border-width: 1px;
+        border-style: solid;
+        border-color: var(getThemeColor('light.contrast'));
         position: relative;
         transition: background-color 0.4s;
     }
@@ -43,7 +47,11 @@
         border-radius: 45px;
         // border: solid #2cabe2 1px;
         transition: 0.4s;
-        background: #fff;
+        background-color: var(getThemeColor('light'));
+        border-radius: 100px;
+        border-width: 1px;
+        border-style: solid;
+        border-color: var(getThemeColor('light.contrast'));
         box-shadow: 0 0 10px 0 rgba(10, 10, 10, 0.29);
     }
 

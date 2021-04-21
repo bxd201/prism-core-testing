@@ -33,7 +33,7 @@ import {
   clearNavigationIntent,
   setDirtyNavigationIntent,
   setIsColorWallModallyPresented,
-  setIsScenePolluted,
+  setIsScenePolluted, setNavigationIntent,
   setShouldShowGlobalDestroyWarning,
   stageNavigationReturnIntent
 } from '../../../store/actions/navigation'
@@ -43,6 +43,7 @@ import { useIntl } from 'react-intl'
 import SceneBlobLoader from '../../SceneManager/SceneBlobLoader'
 import { setSelectedSceneUid, setVariantsCollection, setVariantsLoading } from '../../../store/actions/loadScenes'
 import SingleTintableSceneView from '../../SingleTintableSceneView/SingleTintableSceneView'
+import SceneSelectorNavButton from '../../SingleTintableSceneView/SceneSelectorNavButton'
 
 type CVWPropsType = {
   maxSceneHeight: number,
@@ -169,6 +170,10 @@ export const CVW = (props: CVWPropsType) => {
     dispatch(setDirtyNavigationIntent())
   }
 
+  const handleSurfacePaintedState = (isPolluted: boolean) => {
+    dispatch(setIsScenePolluted(isPolluted ? 'POLLUTED_STOCK_SCENE' : ''))
+  }
+
   // @todo this will be unnecessary in the future, when the way scene management is done is readdressed -RS
   const shouldHideSceneManagerDiv = (path: string) => {
     if (path === '/') {
@@ -192,6 +197,10 @@ export const CVW = (props: CVWPropsType) => {
 
   const handleBlobLoaderInit = () => {
     dispatch(setVariantsLoading(true))
+  }
+
+  const navigateToSceneSelector = (e: SyntheticEvent) => {
+    dispatch(setNavigationIntent(ROUTES_ENUM.USE_OUR_IMAGE))
   }
 
   return (
@@ -231,7 +240,11 @@ export const CVW = (props: CVWPropsType) => {
                 <Route path={ROUTES_ENUM.MASKING} render={() => <PaintSceneMaskingWrapper />} />
                 <Route path={ROUTES_ENUM.MYIDEAS} render={() => <MyIdeasContainer />} />
                 <Route path={ROUTES_ENUM.HELP} render={() => <Help />} />
-                <Route path={'/test'} render={() => <SingleTintableSceneView />} />
+                <Route path={'/test'} render={() => <SingleTintableSceneView
+                  allowVariantSwitch
+                  showClearButton
+                  handleSurfacePaintedState={handleSurfacePaintedState}
+                  customButton={<SceneSelectorNavButton clickHandler={navigateToSceneSelector} />} />} />
               </Switch>
               <div
               /* This div has multiple responsibilities in the DOM tree. It cannot be removed, moved, or changed without causing regressions. */
