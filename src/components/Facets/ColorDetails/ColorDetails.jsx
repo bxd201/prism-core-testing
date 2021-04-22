@@ -9,11 +9,11 @@ import * as GA from 'src/analytics/GoogleAnalytics'
 import ColorChipMaximizer from './ColorChipMaximizer'
 import ColorViewer from './ColorViewer'
 import ColorStrip from './ColorStrip'
-import SceneManager from '../../SceneManager/SceneManager'
+import ColorDetailsScenes from './ColorDetailsScenes'
 import ColorInfo from './ColorInfo'
 import CoordinatingColors from './CoordinatingColors'
 import SimilarColors from './SimilarColors'
-import { activateColorDetailsScene, paintAllMainSurfaces, resetScenesVariant, toggleColorDetailsPage } from '../../../store/actions/scenes'
+import { activateColorDetailsScene, toggleColorDetailsPage, setColorForCDP } from '../../../store/actions/scenes'
 import { varValues } from 'src/shared/withBuild/variableDefs'
 import type { Color } from '../../../shared/types/Colors.js.flow'
 import type { SceneStatus } from 'src/shared/types/Scene'
@@ -21,7 +21,6 @@ import 'src/scss/convenience/visually-hidden.scss'
 import './ColorDetails.scss'
 import ColorDataWrapper from 'src/helpers/ColorDataWrapper/ColorDataWrapper'
 import HeroLoader from 'src/components/Loaders/HeroLoader/HeroLoader'
-import sortBy from 'lodash/sortBy'
 
 const baseClass = 'color-info'
 
@@ -39,9 +38,9 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
   const dispatch = useDispatch()
   const toggleSceneDisplayScene = useRef(null)
   const toggleSceneHideScene = useRef(null)
-  const scenesLoaded: boolean = useSelector(state => !state.scenes.loadingScenes)
-  const scenes = useSelector(state => state?.scenes?.sceneCollection[state?.scenes?.type] || [])
+  const scenesLoaded: boolean = useSelector(state => !state.variantsLoading)
 
+  const scenesCollection = useSelector(state => state?.scenesCollection || [])
   const [color: Color, setColor: Color => void] = useState(initialColor)
   const [tabIndex: number, setTabIndex: number => void] = useState(0)
 
@@ -50,7 +49,7 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
     return () => { dispatch(toggleColorDetailsPage()) }
   }, [])
 
-  useEffect(() => { scenesLoaded && dispatch(resetScenesVariant()) }, [scenesLoaded])
+  // useEffect(() => { scenesLoaded && dispatch(resetScenesVariant()) }, [scenesLoaded])
 
   useEffect(() => {
     color && GA.pageView(`color-detail/${color.brandKey} ${color.colorNumber} - ${color.name}`)
@@ -60,24 +59,12 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
   }, [color])
 
   // paint all the main surfaces on load of the CDP
-  useEffect(() => { scenesLoaded && color && dispatch(paintAllMainSurfaces(color)) }, [scenesLoaded, color])
+  useEffect(() => { scenesLoaded && color && dispatch((setColorForCDP(color))) }, [scenesLoaded, color])
 
   // activates the first "ImagePreloader" scene on the color detail modal when the scenes list changes
   useEffect(() => {
-    const sceneIds = sortBy(scenes, scene => sortBy(scene.category).toString()).reduce((accum = [], next) => {
-      const last = accum[accum.length - 1]
-      if (!last) return [next]
-      if (sortBy(last.category).toString() !== sortBy(next.category).toString()) {
-        return [
-          ...accum,
-          next
-        ]
-      }
-      return accum
-    }, []).map(scene => scene.id)
-    const categoryScenes = scenes.filter(({ id }) => sceneIds.includes(id))
-    dispatch(activateColorDetailsScene(categoryScenes[0]?.id))
-  }, [scenes])
+    dispatch(activateColorDetailsScene(scenesCollection[0]?.uid))
+  }, [scenesCollection])
 
   if (loading) {
     return <HeroLoader />
@@ -103,14 +90,7 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
       <div className='color-detail-view'>
         <ColorChipMaximizer color={color} onToggle={onColorChipToggled} />
         <div className={`color-detail__scene-wrapper color-detail__scene-wrapper--displayed`}>
-          <SceneManager
-            maxActiveScenes={1}
-            interactive={false}
-            mainColor={color}
-            onSceneChanged={onSceneChanged}
-            onVariantChanged={onVariantChanged}
-            isColorDetail
-          />
+          <ColorDetailsScenes />
         </div>
         <div className='color-detail__info-wrapper'>
           <button className={SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.join(' ')} ref={toggleSceneDisplayScene}>
