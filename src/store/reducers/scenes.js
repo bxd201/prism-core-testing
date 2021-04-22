@@ -33,7 +33,8 @@ import {
   UNSET_SELECTED_SCENE_VARIANT_CHANGED,
   SET_SELECTED_SCENE_PALETTE_LOADED,
   UNSET_SELECTED_SCENE_PALETTE_LOADED,
-  SET_USE_SMART_MASK, SET_SHOW_EDIT_CUSTOM_SCENE
+  SET_USE_SMART_MASK, SET_SHOW_EDIT_CUSTOM_SCENE,
+  SET_CDP_COLOR
 } from '../actions/scenes'
 import { registerMask, updateMask } from '../masks/store'
 import { SCENE_VARIANTS } from 'constants/globals'
@@ -58,6 +59,7 @@ type State = {
   isColorDetailsPage: boolean,
   selectedSceneVariantChanged: boolean,
   selectedScenePaletteLoaded: boolean,
+  colorDetailsPageColorList: Object
 }
 
 export const initialState: State = {
@@ -71,7 +73,8 @@ export const initialState: State = {
   activeScenesColorDetails: [],
   isColorDetailsPage: false,
   selectedSceneVariantChanged: false,
-  selectedScenePaletteLoaded: false
+  selectedScenePaletteLoaded: false,
+  colorDetailsPageColor: {}
 }
 
 export const SET_SELECTED_SCENE_UID = 'SET_SELECTED_SCENE_UID'
@@ -350,6 +353,12 @@ export const scenes = (state: Object = initialState, action: { type: string, pay
           })
         })
       })
+    case SET_CDP_COLOR:
+      if (state.isColorDetailsPage) {
+        return Object.assign({}, state, {
+          colorDetailsPageColor: action.payload
+        })
+      }
 
     case PAINT_ALL_MAIN_SURFACES:
     case PAINT_SCENE_MAIN_SURFACE:

@@ -279,3 +279,11 @@ export const setShowEditCustomScene = (shouldShow: boolean) => {
     payload: shouldShow
   }
 }
+
+export const SET_CDP_COLOR = 'SET_CDP_COLOR'
+export const setColorForCDP = (color) => {
+  return {
+    type: SET_CDP_COLOR,
+    payload: color
+  }
+}
