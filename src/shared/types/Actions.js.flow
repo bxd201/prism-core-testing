@@ -38,7 +38,14 @@ export type ColorsStateStatus = {
   activeRequest: boolean
 }
 
-export type ChunkGridParams = { gridWidth: number, chunkWidth?: number, chunkHeight?: number, firstRowLength?: number, wrappingEnabled: boolean }
+export type ChunkGridParams = {
+  gridWidth: number,
+  chunkWidth?: number,
+  chunkHeight?: number,
+  firstRowLength?: number,
+  wrappingEnabled: boolean,
+  dynamicCellSizingEnabled: boolean
+}
 
 export type ScrollPosition = { scrollLeft: number, scrollTop: number }
 

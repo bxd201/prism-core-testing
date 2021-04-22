@@ -10,7 +10,21 @@ import { type ColorsState, type GridRefState } from 'src/shared/types/Actions.js
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import ColorWallContext, { type ColorWallContextProps } from './ColorWallContext'
 import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
-import { getLevelMap, getScrollStep, getCoords, getLongestArrayIn2dArray, getWidthOfWidestChunkRowInChunkGrid, makeChunkGrid, computeFinalScrollPosition, getHeightOfChunkRow, rowHasLabels, calculateLabelHeight, calculateLabelMarginBottom } from './ColorWallUtils'
+import {
+  getLevelMap,
+  getScrollStep,
+  getCoords,
+  getLongestArrayIn2dArray,
+  getWidthOfWidestChunkRowInChunkGrid,
+  makeChunkGrid,
+  computeFinalScrollPosition,
+  getHeightOfChunkRow,
+  rowHasLabels,
+  calculateLabelHeight,
+  calculateLabelMarginBottom,
+  getTotalGridWidth,
+  getTotalGridHeight
+} from './ColorWallUtils'
 import ColorSwatch from './ColorSwatch/ColorSwatch'
 import { compareKebabs } from 'src/shared/helpers/StringUtils'
 import range from 'lodash/range'
@@ -29,7 +43,7 @@ import 'focus-within-polyfill'
 const WALL_HEIGHT = 475
 
 const ColorWall = () => {
-  const { swatchMinSize, swatchMaxSize, swatchSizeZoomed, colorWallBgColor }: ColorWallContextProps = useContext(ColorWallContext)
+  const { swatchMinSize, swatchMaxSize: globalSwatchMaxSize, swatchSizeZoomed, colorWallBgColor }: ColorWallContextProps = useContext(ColorWallContext)
   const { colorWall: { bloomEnabled = true, gapsBetweenChunks = true }, uiStyle }: ConfigurationContextType = useContext(ConfigurationContext)
   const dispatch: { type: string, payload: {} } => void = useDispatch()
   const { url, params }: { url: string, params: { section: ?string, family?: ?string, colorId?: ?string } } = useRouteMatch()
@@ -48,10 +62,20 @@ const ColorWall = () => {
   const isZoomedIn = !!params.colorId
   const lengthOfLongestChunkRow: number = getLongestArrayIn2dArray(chunkGrid)
 
+  // when dynamic cell sizing is enabled, adjust maxCellSize to be 90% as big as when zoomed or 90% as big as it can be without showing a scrollbar, whatever is smallest
+  const swatchMaxSize = chunkGridParams.dynamicCellSizingEnabled
+    ? 0.9 * Math.min(
+      containerWidth / getTotalGridWidth(chunkGrid, 0.4),
+      WALL_HEIGHT / getTotalGridHeight(chunkGrid, 0.4, sectionLabels[section]),
+      swatchSizeZoomed
+    )
+    : globalSwatchMaxSize
+
   // when chunkGrid resize is enabled
   const swatchSizeUnzoomed: number = chunkGridParams.wrappingEnabled
     ? swatchMaxSize
     : clamp(containerWidth / (getWidthOfWidestChunkRowInChunkGrid(chunkGrid) + lengthOfLongestChunkRow + 1), swatchMinSize, swatchMaxSize)
+
   const cellSize: number = isZoomedIn ? swatchSizeZoomed : swatchSizeUnzoomed
   const levelMap: { [string]: number } = getLevelMap(chunkGrid, bloomEnabled, params.colorId)
 
