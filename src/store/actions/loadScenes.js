@@ -39,7 +39,8 @@ export const handleScenesFetchedForCVW = (sceneType: string, data: ScenePayload)
         variantNames: datum.variant_names,
         sceneType: curr,
         uid: createUniqueSceneId(),
-        categories: datum.category ? [...datum.category] : null
+        categories: datum.category ? [...datum.category] : null,
+        expertColorPicks: datum.expertColorPicks ? [...datum.expertColorPicks] : null
       }
     })]
   }, [])
@@ -99,7 +100,8 @@ export type FlatVariant = {
   thumb: string,
   description: string,
   normalizedImageValueCurve: string,
-  sceneCategories?: string[] | null
+  sceneCategories?: string[] | null,
+  expertColorPicks: number[] | null
 }
 // This method gets a flat array of variants the are referential to the scene they belong to.
 export const getFlatVariants = (scenes): FlatVariant => {
@@ -120,7 +122,7 @@ export const getFlatVariants = (scenes): FlatVariant => {
 
         return newSurface
       })
-      const { variant_name: variantName, image, thumb, normalizedImageValueCurve, name: description } = variant
+      const { variant_name: variantName, image, thumb, normalizedImageValueCurve, name: description, expertColorPicks } = variant
 
       return {
         description,
@@ -132,7 +134,8 @@ export const getFlatVariants = (scenes): FlatVariant => {
         variantName,
         surfaces,
         normalizedImageValueCurve,
-        sceneCategories: categories ? [...categories] : null
+        sceneCategories: categories ? [...categories] : null,
+        expertColorPicks: expertColorPicks ? [...expertColorPicks] : null
       }
     })
   })

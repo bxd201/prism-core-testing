@@ -94,7 +94,6 @@ const getTintColorBySurfaceAdapter = (isUsingWorkspace: boolean, surface: any, s
 const simpleTintableClassName = 'simple-tintable'
 
 const SimpleTintableScene = (props: SimpleTintableSceneProps) => {
-  // @todo the scene prop is here for posterity, this component can be used as an adapter -RS
   const { sceneType, background, sceneName, width, height, imageValueCurve, surfaceUrls, isUsingWorkspace, surfaceIds, highlights, shadows, colors, activeColorId, surfaceHitAreas, interactive, handleColorDrop, handleSurfaceInteraction, surfaceColors } = props
   const [instanceId] = useState(uniqueId('TS'))
   const [hitAreaLoadingCount, setHitAreaLoadingCount] = useState(0)
