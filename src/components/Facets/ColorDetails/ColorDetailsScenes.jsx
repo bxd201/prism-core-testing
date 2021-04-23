@@ -1,5 +1,5 @@
 // @flow
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useEffect, useState, useCallback, useMemo } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import flattenDeep from 'lodash/flattenDeep'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -40,7 +40,7 @@ const ColorDetailsScene = (props: Props) => {
     }
   })
 
-  const activedSceneVariants = variantsCollection.filter((sceneVariants) => sceneVariants.sceneUid === selectedSceneId)
+  const activedSceneVariants = useMemo(() => variantsCollection.filter((sceneVariants) => sceneVariants.sceneUid === selectedSceneId), [selectedSceneId])
   const surfacesColors = (() => {
     const colorDetailsVariants = variantsCollection.filter(variant => variant.variantName === SCENE_VARIANTS.DAY).filter((variant) => variant.sceneId === 1)
     const surfaceColorsByVariant = flattenDeep(colorDetailsVariants?.map(variant => {
@@ -95,9 +95,15 @@ const ColorDetailsScene = (props: Props) => {
     )
   }, [selectedSceneId])
 
-  const getColorDetailSceneList = () => {
-    return variantsCollection.filter(variant => variant.isFirstOfKind)
-  }
+  const colorDetailSceneList = useMemo(() => {
+    const currVariants = activedSceneVariants[selectedVariantIndex]
+    return variantsCollection.filter((item) => item.isFirstOfKind).map((item) => {
+      if (item.sceneId === currVariants.sceneId) {
+        return currVariants
+      }
+      return item
+    })
+  }, [selectedVariantIndex])
 
   const changeVariant = () => {
     if (activedSceneVariants?.length && selectedVariantIndex + 1 < activedSceneVariants.length) {
@@ -127,7 +133,7 @@ const ColorDetailsScene = (props: Props) => {
       </div>
       {
         <div className={`${baseClass}__block ${baseClass}__block--tabs`} role='radiogroup' aria-label='scene selector'>
-          {getColorDetailSceneList().map((scene, index) => {
+          {colorDetailSceneList.map((scene, index) => {
             const activeMarker = activedSceneVariants[selectedVariantIndex].sceneUid === scene.sceneUid ? (
               <FontAwesomeIcon
                 icon={['fa', 'check']}
