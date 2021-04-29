@@ -6,8 +6,8 @@ import {
   SYSTEM_ERROR, updateVariantsCollectionSurfaces
 } from '../../store/actions/loadScenes'
 import * as axios from 'axios'
-import type { FlatScene, FlatVariant } from '../../store/actions/loadScenes'
 import flattenDeep from 'lodash/flattenDeep'
+import type { FlatScene, FlatVariant } from '../../shared/types/Scene'
 
 type SceneBlobLoaderProps = {
   // @todo update this to be typed to the new scene structure

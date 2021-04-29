@@ -16,6 +16,7 @@ type CVWPropsType = {
 
 export const ColorVisualizerWrapper = (props: CVWPropsType) => {
   const { brand } = props
+
   return (
     <div className='cvw__root-container'>
       {/* display PreLoadingSVG while CVW contents of CVW load */}

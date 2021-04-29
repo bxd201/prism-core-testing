@@ -53,3 +53,45 @@ export type SceneWorkspace = {
   imageData: string,
   variant: string
 }
+
+// New types form PRISM 3.0
+export type MiniColor = {
+  brandKey: string,
+  id: string | number,
+  colorNumber: string | number,
+  red: number,
+  blue: number,
+  green: number,
+  L: number,
+  A: number,
+  B: number,
+  hex: string
+}
+
+export type FlatScene = {
+  id: number,
+  width: number,
+  height: number,
+  variantNames: string[],
+  // variants prop is only used during transformation and should not be used at rest!
+  variants?: any[] | null,
+  sceneType: string,
+  uid: string
+}
+
+export type FlatVariant = {
+  surfaceMask: string,
+  surfaceId: number,
+  sceneId: number,
+  variantName: string,
+  sceneType: string,
+  // blob urls are not currently set when initialized but after they have been loaded
+  surfaces: Surface[],
+  image: string,
+  thumb: string,
+  description: string,
+  normalizedImageValueCurve: string,
+  sceneCategories?: string[] | null,
+  expertColorPicks: number[] | null,
+  isFirstOfKind?: boolean
+}

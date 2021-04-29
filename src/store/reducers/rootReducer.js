@@ -98,6 +98,8 @@ export default combineReducers({
   allowNavigateToIntendedDestination,
   paintSceneCache,
   carouselCache,
+  // This is a typed flag that tells the app if the active scene is paint scene, use ours or unset (though I am not sure
+  // it can be unset only while the app is bootstrapping.
   activeSceneLabel,
   navigationReturnIntent,
   imageRotateBypass,

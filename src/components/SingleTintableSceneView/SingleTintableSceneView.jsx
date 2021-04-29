@@ -9,7 +9,6 @@
  */
 
 import React, { useEffect, useState, ComponentType } from 'react'
-import type { FlatScene, FlatVariant } from '../../store/actions/loadScenes'
 import type { Color } from '../../shared/types/Colors'
 import SimpleTintableScene from '../CustomSceneTinter/SimpleTintableScene'
 import MultipleVariantSwitch from '../VariantSwitcher/MultipleVariantSwitch'
@@ -22,6 +21,8 @@ import './SingleTinatbleSceneView.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { SCENE_VARIANTS } from '../../constants/globals'
 import BatchImageLoader from '../MergeCanvas/BatchImageLoader'
+import { isScenePolluted } from './util'
+import type { FlatScene, FlatVariant } from '../../shared/types/Scene'
 
 export type SingleTintableSceneViewProps = {
   // sceneVariants: FlatVariant[],
@@ -47,10 +48,6 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
   const [backgroundUrls, setBackgroundUrls] = useState([])
   const livePaletteColors = useSelector(state => state['lp'])
 
-  const isScenePolluted = (paintedSurfaces) => {
-    return !!paintedSurfaces.reduce((acc, curr) => (curr ? 1 : 0) + acc, 0)
-  }
-
   useEffect(() => {
     // Set up defaults after we have ensured they have loaded
     if (selectedSceneUid && !sceneVariants.length) {
@@ -65,11 +62,14 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
 
   useEffect(() => {
     // if there are any painted surfaces the scene is considered polluted
-    if (handleSurfacePaintedState) {
-      const isPolluted = isScenePolluted(surfaceColors)
-      handleSurfacePaintedState(isPolluted)
+    if (handleSurfacePaintedState && sceneVariants.length) {
+      const colors = surfaceColors.map(color => {
+        return { ...color }
+      })
+      const selectedVariant = sceneVariants[selectedVariantIndex].variantName
+      handleSurfacePaintedState(selectedSceneUid, selectedVariant, colors)
     }
-  }, [surfaceColors])
+  }, [surfaceColors, sceneVariants, selectedSceneUid])
 
   const getTintableScene = (backgroundImageUrl: string, variant: FlatVariant, scene: FlatScene, colors: Color[], lpColors) => {
     const surfaceUrls = []
@@ -88,6 +88,7 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
     })
 
     const updateSurfaceColor = (surfaceIndex: number, color: Color) => {
+      console.table('color', color)
       const { brandKey, id, colorNumber, red, blue, green, hex, lab: { L, A, B } } = color
       const newSurfaceColors = surfaceColors.map((color, i) => {
         const newColor = color ? { ...color } : null
