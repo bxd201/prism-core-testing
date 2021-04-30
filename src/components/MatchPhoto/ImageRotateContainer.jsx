@@ -1,4 +1,5 @@
 // @flow
+/** deprecated -remove at end of work stream -RS */
 import React, { useState, useEffect, useRef } from 'react'
 import ImageRotateTerms from './ImageRotateTerms.jsx'
 import { Link, withRouter, type RouterHistory } from 'react-router-dom'
@@ -452,7 +453,7 @@ export function ImageRotateContainer ({ setLastActiveComponent, activePaintScene
                 : null
             }
             {
-              (bypassValue === ROUTES_ENUM.PAINT_SCENE || ((imageUrl && isPaintScene && pins.length > 0 && !isLoadingSmartMask) || (isFromMyIdeas && paintSceneWorkspaceState && paintSceneWorkspaceState.bgImageUrl !== undefined)))
+              (bypassValue === ROUTES_ENUM.ACTIVE_PAINT_SCENE || ((imageUrl && isPaintScene && pins.length > 0 && !isLoadingSmartMask) || (isFromMyIdeas && paintSceneWorkspaceState && paintSceneWorkspaceState.bgImageUrl !== undefined)))
                 ? (<>
                   {
                     shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.editPhotos) ? <PaintScene

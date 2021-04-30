@@ -229,3 +229,11 @@ export const uploadIrisImage = (file: File) => {
       })
   }
 }
+
+export const INGESTED_IMAGE_URL = 'INGESTED_IMAGE_URL'
+export const setIngestedImage = (imageUrl: string = '') => {
+  return {
+    type: INGESTED_IMAGE_URL,
+    payload: imageUrl
+  }
+}

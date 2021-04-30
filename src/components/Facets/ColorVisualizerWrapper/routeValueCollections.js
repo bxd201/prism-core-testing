@@ -1,7 +1,7 @@
 export const ROUTES_ENUM = {
   COLOR_DETAILS: '/active/color/:colorId/:colorSEO',
   COLOR_WALL: '/active/color-wall',
-  PAINT_SCENE: '/active/paint-scene',
+  ACTIVE_PAINT_SCENE: '/active/paint-scene',
   COLORS: '/active/colors',
   COLOR_COLLECTION: '/active/color-collections',
   INSPIRATION: '/active/inspiration',
@@ -9,7 +9,7 @@ export const ROUTES_ENUM = {
   HELP: '/active/help',
   // This is the dropdown from paint a photo
   SCENES: '/active/scenes',
-  STOCK_SCENE: '/active',
+  ACTIVE: '/active',
   UPLOAD_MATCH_PHOTO: '/upload/match-photo',
   UPLOAD_PAINT_SCENE: '/upload/paint-scene',
   ACTIVE_MATCH_PHOTO: '/active/match-photo',
@@ -26,6 +26,6 @@ export const ROUTES_ENUM = {
 export const TOP_LEVEL_ROUTES = [ROUTES_ENUM.SCENES, ROUTES_ENUM.COLORS, ROUTES_ENUM.INSPIRATION, ROUTES_ENUM.MYIDEAS, ROUTES_ENUM.HELP]
 
 // Routes in here will trigger image rotate container to just render the proper item
-export const IMAGE_ROTATE_BYPASS_ROUTES = [ROUTES_ENUM.PAINT_SCENE]
+export const IMAGE_ROTATE_BYPASS_ROUTES = [ROUTES_ENUM.ACTIVE_PAINT_SCENE]
 // This collection confirms which screens can modally present the color wall
-export const COLORWALL_MODAL_PRESENTERS = [ROUTES_ENUM.PAINT_SCENE, ROUTES_ENUM.STOCK_SCENE]
+export const COLORWALL_MODAL_PRESENTERS = [ROUTES_ENUM.ACTIVE_PAINT_SCENE, ROUTES_ENUM.ACTIVE]
