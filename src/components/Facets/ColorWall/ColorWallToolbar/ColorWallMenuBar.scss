@@ -11,9 +11,39 @@ $menu-bar-width: 27em;
   height: auto;
   position: relative;
   display: flex;
+  min-height: 54px;
 
   &-minimal {
-    height: 54px;
+    flex-wrap: wrap;
+    min-width: 300px;
+
+    @media (max-width: 473px) {
+      justify-content: center;
+    }
+
+    .search {
+      min-height: 54px;
+      min-width: 200px;
+      // increase width at 883 to force 2nd select to wrap to second line
+      @media (max-width: 883px) {
+        min-width: 400px;
+      }
+      // reset width at 670, by this point the 2nd select is naturally wrapped to second line
+      @media (max-width: 670px) {
+        min-width: 200px;
+      }
+    }
+
+    .viewEntire {
+      display: inline-block;
+      text-align: right;
+      margin: 0 20px 0 auto;
+      min-height: 54px;
+
+      @media (max-width: 473px) {
+        margin: 0 20px;
+      }
+    }
 
     .menu-bar__button-copy,
     button {
@@ -25,7 +55,12 @@ $menu-bar-width: 27em;
 
     .menu-bar__button,
     .menu-bar__menu-item {
-      min-width: 260px;
+      justify-content: left;
+
+      @media (max-width: 473px) {
+        justify-content: center;
+      }
+
       svg {
         margin-left: 10px;
       }
@@ -37,7 +72,6 @@ $menu-bar-width: 27em;
     }
 
     button {
-      // padding: 0 0.8em;
       margin-left: 2px;
       display: flex;
       align-items: center;
@@ -46,10 +80,6 @@ $menu-bar-width: 27em;
         height: 21.328 !important;
         width: 21.328 !important;
       }
-    }
-
-    &__left {
-      display: flex;
     }
   }
 
@@ -101,7 +131,6 @@ $menu-bar-width: 27em;
     // @todo theme
     box-shadow: 0 2px 5px -1px rgba(black, 0.65);
     height: auto;
-    left: 0;
     margin-top: 2px;
     position: absolute;
     top: 43.59px;

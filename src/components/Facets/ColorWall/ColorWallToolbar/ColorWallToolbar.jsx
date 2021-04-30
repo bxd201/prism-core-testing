@@ -70,34 +70,35 @@ export default () => {
     return (
       <div className={MODE_CLASS_NAMES.BASE}>
         <div className={`${MODE_CLASS_NAMES.COL} ${menuBarPrefix}-minimal`}>
-          <div className={`${menuBarPrefix}-minimal__left`}>
-            <button onClick={() => history.push(`${generateColorWallPageUrl(section, family)}search/`)}>
-              <FontAwesomeIcon icon={['fal', 'search']} size='lg' />
-              <span style={{ opacity: '0.5', marginLeft: '15px' }}>
-                <FormattedMessage id='SEARCH.SEARCH_FOR_A_COLOR' />
-              </span>
-            </button>
-            <Select
-              disabled={families.length < 2}
-              placeholderText={activeFamily || messages['EXPLORE_COLOR_FAMILIES']}
-              options={families
-                .filter(f => f !== activeFamily)
-                .map(label => ({ label, link: generateColorWallPageUrl(section, label) }))
-              }
-            />
-            <Select
-              disabled={visibleSections.length < 2}
-              placeholderText={activeSection === primeColorWall ? messages['EXPLORE_COLLECTIONS'] : activeSection}
-              options={visibleSections
-                .filter(s => s !== activeSection)
-                .map(label => ({ label, link: generateColorWallPageUrl(label) }))
-              }
-            />
-          </div>
           <button
+            className='search'
+            onClick={() => history.push(`${generateColorWallPageUrl(section, family)}search/`)}
+          >
+            <FontAwesomeIcon icon={['fal', 'search']} size='lg' />
+            <span style={{ opacity: '0.5', marginLeft: '15px' }}>
+              <FormattedMessage id='SEARCH.SEARCH_FOR_A_COLOR' />
+            </span>
+          </button>
+          <Select
+            disabled={families.length < 2}
+            placeholderText={activeFamily || messages['EXPLORE_COLOR_FAMILIES']}
+            options={families
+              .filter(f => f !== activeFamily)
+              .map(label => ({ label, link: generateColorWallPageUrl(section, label) }))
+            }
+          />
+          <Select
+            disabled={visibleSections.length < 2}
+            placeholderText={activeSection === primeColorWall ? messages['EXPLORE_COLLECTIONS'] : activeSection}
+            options={visibleSections
+              .filter(s => s !== activeSection)
+              .map(label => ({ label, link: generateColorWallPageUrl(label) }))
+            }
+          />
+          <button
+            className='viewEntire'
             disabled={!visibleSections.includes(primeColorWall) || (primeColorWall === activeSection && !activeFamily)}
             onClick={() => history.push(generateColorWallPageUrl(primeColorWall))}
-            style={{ margin: '0 20px' }}
           >
             <FormattedMessage id='VIEW_ENTIRE_COLOR_WALL' />
           </button>
