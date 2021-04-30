@@ -4,7 +4,6 @@ import memoizee from 'memoizee'
 import noop from 'lodash/noop'
 
 import { publishAnEvent, subscribeToAnEvent, unsubscribeFromAnEvent, unsubscribeFromAllEvents, type FacetPubSubMethods } from './facetPubSub'
-import dressDownFromPrism from './utils/dressDownFromPrism'
 
 export type BoundFacet = any
 
@@ -102,10 +101,9 @@ export const getInstance = memoizee((seekingEl: HTMLElement): Promise<Instance> 
   return makeInstancePromise(seekingEl).promise
 })
 
-export const unmount = (el: HTMLElement) => {
+export const unmount = memoizee((el: HTMLElement) => {
   return !el ? noop : () => {
     unsubscribeFromAllEvents(el)()
-    unmountComponentAtNode(el)
-    dressDownFromPrism(el)
+    return unmountComponentAtNode(el)
   }
-}
+})
