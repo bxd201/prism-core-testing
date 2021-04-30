@@ -187,7 +187,7 @@ const ColorWall = () => {
     const chunkNum: number = take(chunkGrid, chunkRow).reduce((num, chunkRow) => num + chunkRow.length, 0) + chunkColumn
     const lengthOfLongestRow: number = getLongestArrayIn2dArray(chunk)
     const containsBloomedCell: boolean = getCoords(chunk, params.colorId)[0] !== -1
-    const isLargeLabel: boolean = cellSize * lengthOfLongestRow > 120 // magic number breakpoint for choosing between small and large font
+    const isLargeLabel: boolean = cellSize * lengthOfLongestRow > 255 // magic number breakpoint for choosing between small and large font
 
     return (flatten(chunk).some(cell => cell !== undefined) &&
       <div key={key} className='color-wall-chunk' style={{ ...style, padding: gapsBetweenChunks ? cellSize / 5 : 0, zIndex: containsBloomedCell ? 1 : 'auto' }}>

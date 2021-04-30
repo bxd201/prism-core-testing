@@ -159,9 +159,6 @@ export const calculateLabelHeight = (cellSize: number): number => {
 }
 
 // Calculate the bottom margin of the color wall section label depending on the size of cell size
-export const calculateLabelMarginBottom = (isZoomedIn: Boolean, cellSize: number): number => {
-  if (isZoomedIn) {
-    return cellSize * 0.6
-  }
-  return cellSize * 0.2
-}
+export const calculateLabelMarginBottom = (isZoomedIn: Boolean, cellSize: number): number => (
+  cellSize * (isZoomedIn ? 0.6 : 0.2)
+)
