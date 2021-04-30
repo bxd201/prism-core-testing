@@ -30,16 +30,19 @@ export type SingleTintableSceneViewProps = {
   showClearButton?: boolean,
   customButton?: ComponentType,
   handleSurfacePaintedState?: Function,
-  allowVariantSwitch?: boolean
+  allowVariantSwitch?: boolean,
+  fallbackSelectedSceneUID?: string,
+  surfaceColors?: Color[],
+  interactive?: boolean
 }
 
 const tintableViewBaseClassName = 'tintable-view'
 
 const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
   // By default use the first variant
-  const { showClearButton, customButton, handleSurfacePaintedState, allowVariantSwitch } = props
+  const { showClearButton, customButton, handleSurfacePaintedState, allowVariantSwitch, interactive } = props
 
-  const [variantsCollection, scenesCollection, selectedSceneUid] = useSelector(store => [store.variantsCollection, store.scenesCollection, store.selectedSceneUid])
+  const [variantsCollection, scenesCollection, fallbackSelectedSceneUID] = useSelector(store => [store.variantsCollection, store.scenesCollection, store.selectedSceneUid])
   const [selectedScene, setSelectedScene] = useState(null)
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0)
   const [sceneVariants, setSceneVariants] = useState([])
@@ -47,6 +50,8 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
   const [surfaceColors, setSurfaceColors] = useState([])
   const [backgroundUrls, setBackgroundUrls] = useState([])
   const livePaletteColors = useSelector(state => state['lp'])
+  // ToDo : The following condition is for test purposes only, will be removed for the final version - PM
+  const selectedSceneUid = props.fallbackSelectedSceneUID ? props.fallbackSelectedSceneUID : fallbackSelectedSceneUID
 
   useEffect(() => {
     // Set up defaults after we have ensured they have loaded
@@ -118,7 +123,7 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
       <SimpleTintableScene
         sceneType={variant.sceneType}
         background={backgroundImageUrl}
-        surfaceColors={surfaceColors}
+        surfaceColors={props.surfaceColors ? props.surfaceColors : surfaceColors}
         surfaceIds={surfaceIds}
         surfaceHitAreas={surfaceHitAreas}
         surfaceUrls={surfaceUrls}
@@ -129,7 +134,7 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
         sceneName={description}
         width={width}
         height={height}
-        interactive
+        interactive={interactive}
         handleSurfaceInteraction={handleSurfaceInteraction}
         handleColorDrop={handleColorDrop}
       />
@@ -176,7 +181,8 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
           <div className={`${tintableViewBaseClassName}__clear-areas-btn__icon`}><FontAwesomeIcon size='lg' icon={['fa', 'eraser']} /></div>
           <div className={`${tintableViewBaseClassName}__clear-areas-btn__text`}><FormattedMessage id='CLEAR_AREAS' /></div>
         </button> : null}
-        {backgroundLoaded ? getCustomButtons(customButton, allowVariantSwitch, sceneVariants, selectedVariantIndex) : null}
+        {/* The second parameter will change to allowVariantSwitch in the final version - PM */}
+        {backgroundLoaded ? getCustomButtons(customButton, allowVariantSwitch && sceneVariants?.length > 1, sceneVariants, selectedVariantIndex) : null}
       </div>
     </DndProvider>
   )

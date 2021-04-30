@@ -172,6 +172,7 @@ export const CVW = (props: CVWPropsType) => {
 
   const navigateToSceneSelector = (e: SyntheticEvent) => {
     dispatch(setNavigationIntent(ROUTES_ENUM.USE_OUR_IMAGE))
+    // ToDo : Navigate to the more scenes screen - PM
   }
 
   // @todo implement handler for sample sceneWrapper -RS
@@ -228,6 +229,12 @@ export const CVW = (props: CVWPropsType) => {
                 <Route path={ROUTES_ENUM.MASKING} render={() => <PaintSceneMaskingWrapper />} />
                 <Route path={ROUTES_ENUM.MYIDEAS} render={() => <MyIdeasContainer />} />
                 <Route path={ROUTES_ENUM.HELP} render={() => <Help />} />
+                <Route path={'/test'} render={() => <SingleTintableSceneView
+                  allowVariantSwitch
+                  showClearButton
+                  interactive
+                  handleSurfacePaintedState={handleSurfacePaintedState}
+                  customButton={<SceneSelectorNavButton clickHandler={navigateToSceneSelector} />} />} />
               </Switch>
               <div
               /* This div has multiple responsibilities in the DOM tree. It cannot be removed, moved, or changed without causing regressions. */
