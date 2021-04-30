@@ -12,9 +12,7 @@ import CompareColor from '../../CompareColor/CompareColor'
 import InspiredScene from '../../InspirationPhotos/InspiredSceneNavigator'
 import LivePalette from '../../LivePalette/LivePalette'
 import ColorVisualizerNav from './ColorVisualizerNav'
-import SceneManager from '../../SceneManager/SceneManager'
 import SampleScenesWrapper from '../../SampleScenes/SampleScenes'
-import { activateOnlyScene, unpaintSceneSurfaces, showWarningModal } from '../../../store/actions/scenes'
 import MyIdeasContainer from '../../MyIdeasContainer/MyIdeasContainer'
 import MyIdeaPreview from '../../MyIdeaPreview/MyIdeaPreview'
 import SaveOptions from '../../SaveOptions/SaveOptions'
@@ -30,7 +28,7 @@ import { SCENE_TYPES, SHOW_LOADER_ONLY_BRANDS } from '../../../constants/globals
 import {
   ACTIVE_SCENE_LABELS_ENUM,
   clearImageRotateBypass,
-  clearNavigationIntent,
+  clearNavigationIntent, setActiveSceneLabel,
   setDirtyNavigationIntent,
   setIsColorWallModallyPresented,
   setIsScenePolluted, setNavigationIntent,
@@ -41,46 +39,52 @@ import { ROUTES_ENUM } from './routeValueCollections'
 import DynamicModal, { DYNAMIC_MODAL_STYLE, getRefDimension } from '../../DynamicModal/DynamicModal'
 import { useIntl } from 'react-intl'
 import SceneBlobLoader from '../../SceneManager/SceneBlobLoader'
-import { setSelectedSceneUid, setVariantsCollection, setVariantsLoading } from '../../../store/actions/loadScenes'
+import {
+  fetchRemoteScenes, handleScenesFetchedForCVW, handleScenesFetchErrorForCVW,
+  setSelectedSceneUid,
+  setVariantsCollection,
+  setVariantsLoading
+} from '../../../store/actions/loadScenes'
 import SingleTintableSceneView from '../../SingleTintableSceneView/SingleTintableSceneView'
 import SceneSelectorNavButton from '../../SingleTintableSceneView/SceneSelectorNavButton'
+import { SCENES_ENDPOINT } from '../../../constants/endpoints'
+import { isScenePolluted } from '../../SingleTintableSceneView/util'
+import type { MiniColor } from '../../../shared/types/Scene'
 
 type CVWPropsType = {
   maxSceneHeight: number,
-  brand: string
+  language: string
 }
 
 export const CVW = (props: CVWPropsType) => {
-  const { maxSceneHeight, brand } = props
+  const { maxSceneHeight, language } = props
   const dispatch = useDispatch()
   const location = useLocation()
   const history = useHistory()
   const toggleCompareColor: boolean = useSelector(store => store.lp.toggleCompareColor)
   const colorDetailsModalShowing: boolean = useSelector(store => store.colors.colorDetailsModal.showing)
-  const isActiveScenePolluted: string = useSelector(store => store.scenePolluted)
+  // const isActiveScenePolluted: string = useSelector(store => store.scenePolluted)
   const isPaintSceneCached: boolean = useSelector(store => !!store.paintSceneCache)
   const isStockSceneCached: boolean = useSelector(store => !!store.stockSceneCache)
   const navigationIntent: string = useSelector(store => store.navigationIntent)
   const navigationReturnIntent: string = useSelector(store => store.navigationReturnIntent)
   const scenes = useSelector(store => store.scenesCollection)
   const variants = useSelector(store => store.variantsCollection)
-
-  const [activeStockScene: Element, setActiveScene: (Element) => void] = useState(<SceneManager expertColorPicks hideSceneSelector />)
-  const [activePaintScene: Element, setActivePaintSceneState: (Element) => void] = useState()
-  const [lastActiveComponent: string, setLastActiveComponent: (string) => void] = useState('StockScene')
   const [matchPhotoScene: Element, setMatchPhotoScene: (Element) => void] = useState()
   const [ImageRotateScene: Element, setUploadPaintSceneState: (Element) => void] = useState()
   const isShowFooter = location.pathname.match(/active\/masking$/) === null
-  const { featureExclusions } = useContext(ConfigurationContext)
+  const { featureExclusions, brandId } = useContext(ConfigurationContext)
   const activeSceneLabel = useSelector(store => store.activeSceneLabel)
   const shouldShowGlobalDestroyWarning = useSelector(store => store.shouldShowGlobalDestroyWarning)
   const intl = useIntl()
   const wrapperRef = useRef()
   const dirtyNavIntent = useSelector(store => store.dirtyNavigationIntent)
 
-  // Use this hook to push any facet level embedded data to redux
+  // Use this hook to push any facet level embedded data to redux and handle any initialization
   useEffect(() => {
     dispatch(setMaxSceneHeight(maxSceneHeight))
+    dispatch(setActiveSceneLabel(ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE))
+    fetchRemoteScenes(SCENE_TYPES.ROOM, brandId, { language }, SCENES_ENDPOINT, handleScenesFetchedForCVW, handleScenesFetchErrorForCVW, dispatch)
   }, [])
 
   // this logic is the app level observer of paintscene cache, used to help direct navigation to the color wall and set it up to return
@@ -106,7 +110,6 @@ export const CVW = (props: CVWPropsType) => {
   }, [activeSceneLabel])
 
   const setActivePaintScene = (element) => {
-    setActivePaintSceneState(element)
     setUploadPaintSceneState(null)
     history.push('/active')
   }
@@ -115,40 +118,8 @@ export const CVW = (props: CVWPropsType) => {
     setUploadPaintSceneState(element)
   }
 
-  const openSceneFromPreview = (scene, type) => {
-    if (type === 'StockScene') {
-      setActiveScene(scene)
-      setLastActiveComponent(type)
-    }
-    if (type === 'PaintScene') {
-      setActivePaintSceneState(scene)
-      setLastActiveComponent(type)
-    }
-  }
-
-  const activateStockScene = (id) => {
-    const activate = () => {
-      dispatch(setIsScenePolluted())
-      dispatch(unpaintSceneSurfaces(id))
-      dispatch(activateOnlyScene(id))
-      setActiveScene(<SceneManager expertColorPicks hideSceneSelector />)
-      setLastActiveComponent('StockScene')
-      history.push('/active')
-    }
-    isActiveScenePolluted ? dispatch(showWarningModal(activate)) : activate()
-  }
-
-  if (!window.localStorage.getItem('landingPageShownSession') && shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.splashScreen) && SHOW_LOADER_ONLY_BRANDS.indexOf(brand) < 0) {
+  if (!window.localStorage.getItem('landingPageShownSession') && shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.splashScreen) && SHOW_LOADER_ONLY_BRANDS.indexOf(brandId) < 0) {
     return <LandingPage />
-  }
-
-  const getActiveScene = () => {
-    if (lastActiveComponent === 'StockScene') {
-      return activeStockScene
-    }
-    if (lastActiveComponent === 'PaintScene') {
-      return activePaintScene || activeStockScene
-    }
   }
 
   const handleNavigationIntentConfirm = (e: SyntheticEvent) => {
@@ -170,8 +141,8 @@ export const CVW = (props: CVWPropsType) => {
     dispatch(setDirtyNavigationIntent())
   }
 
-  const handleSurfacePaintedState = (isPolluted: boolean) => {
-    dispatch(setIsScenePolluted(isPolluted ? 'POLLUTED_STOCK_SCENE' : ''))
+  const handleSurfacePaintedState = (selectedSceneUid: string, selectedVariantName: string, surfaceColors: MiniColor[]) => {
+    dispatch(setIsScenePolluted(isScenePolluted(surfaceColors) ? 'POLLUTED_STOCK_SCENE' : ''))
   }
 
   // @todo this will be unnecessary in the future, when the way scene management is done is readdressed -RS
@@ -203,6 +174,21 @@ export const CVW = (props: CVWPropsType) => {
     dispatch(setNavigationIntent(ROUTES_ENUM.USE_OUR_IMAGE))
   }
 
+  // @todo implement handler for sample sceneWrapper -RS
+  const handleSceneSelection = (payload) => {
+    console.log('handling scene selection:', payload)
+  }
+
+  // @todo reimplement -RS
+  const openSceneFromPreview = (payload) => {
+    console.log('opening scene from preview:', payload)
+  }
+
+  // @todo reimplement -RS
+  const handleActiveSceneChange = (payload) => {
+    console.log('handle active scene change:', payload)
+  }
+
   return (
     <>
       {scenes ? <SceneBlobLoader scenes={scenes} variants={variants} initHandler={handleBlobLoaderInit} handleBlobsLoaded={handleSceneSurfacesLoaded} handleError={handleSceneBlobLoaderError} /> : null}
@@ -223,35 +209,36 @@ export const CVW = (props: CVWPropsType) => {
             )}
             <ColorDetailsModal />
             <div className={`cvw__root-wrapper ${colorDetailsModalShowing ? 'hide-on-small-screens' : ''}`} ref={wrapperRef}>
-              <ColorVisualizerNav uploadPaintScene={setUploadPaintScene} activePaintScene={setActivePaintScene} setLastActiveComponent={setLastActiveComponent} setMatchPhotoScene={setMatchPhotoScene} />
+              {/* @todo rename setLastActiveComponent prop scene need to rethink it right now it will do nothing -RS */ }
+              <ColorVisualizerNav uploadPaintScene={setUploadPaintScene} activePaintScene={setActivePaintScene} setLastActiveComponent={handleActiveSceneChange} setMatchPhotoScene={setMatchPhotoScene} />
               <Switch>
                 <Route path={ROUTES_ENUM.COLOR_DETAILS} render={() => <ColorDetails />} />
                 <Route path={`${ROUTES_ENUM.COLOR_WALL}(/.*)?`} render={() => <ColorWallPage displayAddButton displayInfoButton displayDetailsLink={false} />} />
                 <Route path={ROUTES_ENUM.COLOR_COLLECTION} render={() => <ColorCollections isExpertColor={false} {...location.state} />} />
-                <Route path={ROUTES_ENUM.UPLOAD_MATCH_PHOTO}>{getActiveScene()}</Route>
-                <Route path={ROUTES_ENUM.UPLOAD_PAINT_SCENE}>{getActiveScene()}</Route>
+                <Route path={ROUTES_ENUM.UPLOAD_MATCH_PHOTO} />
+                <Route path={ROUTES_ENUM.UPLOAD_PAINT_SCENE} />
                 <Route path={ROUTES_ENUM.PAINT_SCENE}>{ImageRotateScene}</Route>
                 <Route path={ROUTES_ENUM.ACTIVE_MATCH_PHOTO}>{matchPhotoScene}</Route>
-                <Route path={ROUTES_ENUM.USE_OUR_IMAGE} render={() => <SampleScenesWrapper isColorTinted activateScene={activateStockScene} />} />
+                <Route path={ROUTES_ENUM.USE_OUR_IMAGE} render={() => <SampleScenesWrapper isColorTinted activateScene={handleSceneSelection} />} />
                 <Route path={ROUTES_ENUM.EXPERT_COLORS} render={() => <ExpertColorPicks isExpertColor />} />
                 <Route path={ROUTES_ENUM.COLOR_FORM_IMAGE} render={() => <InspiredScene />} />
-                <Route path={ROUTES_ENUM.PAINT_PHOTO} render={() => <SampleScenesWrapper activateScene={activateStockScene} />} />
+                {/* @todo rename activateScene prop scene to handleSceneSelection should set selectedSceneId and navigate active, useEffect may be need to rerender -RS */ }
+                <Route path={ROUTES_ENUM.PAINT_PHOTO} render={() => <SampleScenesWrapper activateScene={handleSceneSelection} />} />
                 <Route path={ROUTES_ENUM.MY_IDEAS_PREVIEW} render={() => <MyIdeaPreview openScene={openSceneFromPreview} />} />
                 <Route path={ROUTES_ENUM.MASKING} render={() => <PaintSceneMaskingWrapper />} />
                 <Route path={ROUTES_ENUM.MYIDEAS} render={() => <MyIdeasContainer />} />
                 <Route path={ROUTES_ENUM.HELP} render={() => <Help />} />
-                <Route path={'/test'} render={() => <SingleTintableSceneView
-                  allowVariantSwitch
-                  showClearButton
-                  handleSurfacePaintedState={handleSurfacePaintedState}
-                  customButton={<SceneSelectorNavButton clickHandler={navigateToSceneSelector} />} />} />
               </Switch>
               <div
               /* This div has multiple responsibilities in the DOM tree. It cannot be removed, moved, or changed without causing regressions. */
                 style={{ display: shouldHideSceneManagerDiv(location.pathname) ? 'none' : 'block' }}
               >
-                {lastActiveComponent === 'StockScene' && activeStockScene}
-                {lastActiveComponent === 'PaintScene' && activePaintScene}
+                {/* @todo when this is not a stock scene it should render paint scene, MUST REWRITE IMAGEROTATECONTAINER!!!  -RS */}
+                {activeSceneLabel === ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE ? <SingleTintableSceneView
+                  allowVariantSwitch
+                  showClearButton
+                  handleSurfacePaintedState={handleSurfacePaintedState}
+                  customButton={<SceneSelectorNavButton clickHandler={navigateToSceneSelector} />} /> : null}
               </div>
             </div>
           </>

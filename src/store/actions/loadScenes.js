@@ -1,7 +1,7 @@
 // @flow
 import { generateBrandedEndpoint } from '../../shared/helpers/DataUtils'
 import * as axios from 'axios'
-import type { ScenePayload, Surface } from '../../shared/types/Scene'
+import type { FlatVariant, ScenePayload } from '../../shared/types/Scene'
 import { createUniqueSceneId } from '../../shared/utils/legacyProfileFormatUtil'
 import { SCENE_TYPES } from '../../constants/globals'
 import flatten from 'lodash/flatten'
@@ -77,32 +77,6 @@ export const handleScenesFetchErrorForCVW = (err: any) => {
   }
 }
 
-export type FlatScene = {
-  id: number,
-  width: number,
-  height: number,
-  variantNames: string[],
-  // variants prop is only used during transformation and should not be used at rest!
-  variants?: any[] | null,
-  sceneType: string,
-  uid: string
-}
-
-export type FlatVariant = {
-  surfaceMask: string,
-  surfaceId: number,
-  sceneId: number,
-  variantName: string,
-  sceneType: string,
-  // blob urls are not currently set when initialized but after they have been loaded
-  surfaces: Surface[],
-  image: string,
-  thumb: string,
-  description: string,
-  normalizedImageValueCurve: string,
-  sceneCategories?: string[] | null,
-  expertColorPicks: number[] | null
-}
 // This method gets a flat array of variants the are referential to the scene they belong to.
 export const getFlatVariants = (scenes): FlatVariant => {
   // sort variant keys by abc  to ensure order

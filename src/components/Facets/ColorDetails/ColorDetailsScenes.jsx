@@ -12,8 +12,8 @@ import { SCENES_ENDPOINT } from 'constants/endpoints'
 import { SCENE_TYPES, SCENE_VARIANTS } from 'constants/globals'
 import WithConfigurationContext from 'src/contexts/ConfigurationContext/WithConfigurationContext'
 import SimpleTintableScene from '../../CustomSceneTinter/SimpleTintableScene'
-import MultipleVariantSwitch from '../../VariantSwitcher/MultipleVariantSwitcher'
 import './ColorDetailsScenes.scss'
+import MultipleVariantSwitch from '../../VariantSwitcher/MultipleVariantSwitch'
 
 type Props = {
     config: {
