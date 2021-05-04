@@ -159,7 +159,6 @@ export const lp = (state: any = initialState, action: any) => {
 
     case REPLACE_LP_COLORS:
       const activeColor = action.payload.length ? { ...action.payload[0] } : null
-
       return {
         ...state,
         colors: action.payload,

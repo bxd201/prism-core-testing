@@ -21,26 +21,23 @@ import './SingleTinatbleSceneView.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { SCENE_VARIANTS } from '../../constants/globals'
 import BatchImageLoader from '../MergeCanvas/BatchImageLoader'
-import { isScenePolluted } from './util'
-import type { FlatScene, FlatVariant } from '../../shared/types/Scene'
-
 export type SingleTintableSceneViewProps = {
   // sceneVariants: FlatVariant[],
   // palette: Color[]
+  surfaceColorsFromParents: [],
   showClearButton?: boolean,
   customButton?: ComponentType,
   handleSurfacePaintedState?: Function,
   allowVariantSwitch?: boolean,
-  fallbackSelectedSceneUID?: string,
-  surfaceColors?: Color[],
-  interactive?: boolean
+  interactive?: boolean,
+  fallbackSelectedSceneUID: string
 }
 
 const tintableViewBaseClassName = 'tintable-view'
 
 const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
   // By default use the first variant
-  const { showClearButton, customButton, handleSurfacePaintedState, allowVariantSwitch, interactive } = props
+  const { showClearButton, customButton, handleSurfacePaintedState, allowVariantSwitch, interactive, surfaceColorsFromParents } = props
 
   const [variantsCollection, scenesCollection, fallbackSelectedSceneUID] = useSelector(store => [store.variantsCollection, store.scenesCollection, store.selectedSceneUid])
   const [selectedScene, setSelectedScene] = useState(null)
@@ -52,6 +49,9 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
   const livePaletteColors = useSelector(state => state['lp'])
   // ToDo : The following condition is for test purposes only, will be removed for the final version - PM
   const selectedSceneUid = props.fallbackSelectedSceneUID ? props.fallbackSelectedSceneUID : fallbackSelectedSceneUID
+  const isScenePolluted = (paintedSurfaces) => {
+    return !!paintedSurfaces.reduce((acc, curr) => (curr ? 1 : 0) + acc, 0)
+  }
 
   useEffect(() => {
     // Set up defaults after we have ensured they have loaded
@@ -67,12 +67,8 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
 
   useEffect(() => {
     // if there are any painted surfaces the scene is considered polluted
-    if (handleSurfacePaintedState && sceneVariants.length) {
-      const colors = surfaceColors.map(color => {
-        return { ...color }
-      })
-      const selectedVariant = sceneVariants[selectedVariantIndex].variantName
-      handleSurfacePaintedState(selectedSceneUid, selectedVariant, colors)
+    if (handleSurfacePaintedState) {
+      handleSurfacePaintedState(surfaceColors)
     }
   }, [surfaceColors, sceneVariants, selectedSceneUid])
 
@@ -118,12 +114,11 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
 
     const { width, height, description } = scene
     const activeColorId = lpColors?.activeColor?.id
-
     return (
       <SimpleTintableScene
         sceneType={variant.sceneType}
         background={backgroundImageUrl}
-        surfaceColors={props.surfaceColors ? props.surfaceColors : surfaceColors}
+        surfaceColors={surfaceColorsFromParents || surfaceColors}
         surfaceIds={surfaceIds}
         surfaceHitAreas={surfaceHitAreas}
         surfaceUrls={surfaceUrls}

@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import type { PaintSceneWorkspace } from '../../store/actions/paintScene'
 import type { Color } from '../../shared/types/Colors'
-import { FormattedMessage, useIntl } from 'react-intl'
+import { FormattedMessage } from 'react-intl'
 import SimpleTintableScene from './SimpleTintableScene'
 import { SCENE_TYPES, SCENE_VARIANTS } from '../../constants/globals'
 import useColors from '../../shared/hooks/useColors'
@@ -13,16 +13,6 @@ import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 import uniqueId from 'lodash/uniqueId'
 import { setShowEditCustomScene } from '../../store/actions/scenes'
 import { useHistory } from 'react-router-dom'
-import DynamicModal from '../DynamicModal/DynamicModal'
-import {
-  saveMasks,
-  showSavedCustomSceneSuccessModal,
-  showSaveSceneModal,
-  startSavingMasks
-} from '../../store/actions/persistScene'
-import { StaticTintScene } from '../CompareColor/StaticTintScene'
-import { getLABFromColor } from '../PaintScene/PaintSceneUtils'
-import { createCustomSceneMetadata } from '../../shared/utils/legacyProfileFormatUtil'
 import { SurfaceSelector } from '../SurfaceSelector/SurfaceSelector'
 
 import './CustomSceneTinter.scss'
@@ -101,7 +91,6 @@ export const createPseudoSceneMetaData = (scene, lpColors: Color[], variant: str
 }
 
 const CustomSceneTinterContainer = (props: CustomSceneTinterContainerProps) => {
-  const intl = useIntl()
   const dispatch = useDispatch()
   const history = useHistory()
   const [imagesLoaded, setImagesLoaded] = useState(0)
@@ -109,11 +98,8 @@ const CustomSceneTinterContainer = (props: CustomSceneTinterContainerProps) => {
   const [colors] = useColors()
   const livePaletteColors = useSelector(state => state['lp'])
   const maskImageRef = useRef([])
-  const showSaveSceneModalFlag = useSelector(state => state['showSaveSceneModal'])
-  const [livePaletteColorCount, setLivePaletteColorCount] = useState(0)
   const isSavingMask = useSelector(state => state['savingMasks'])
   // @todo get actual value -RS
-  const sceneCount = useSelector(state => state['sceneMetadata'].length + 1)
   // @todo - needed for surface selector comp -RS
   // eslint-disable-next-line no-unused-vars
   const previewRef = useRef()
@@ -121,7 +107,6 @@ const CustomSceneTinterContainer = (props: CustomSceneTinterContainerProps) => {
   // @todo - needed for surface selector comp -RS
   // eslint-disable-next-line no-unused-vars
   const [currentSurfaceIndex, setCurrentSurfaceIndex] = useState(0)
-  const showSavedConfirmModalFlag = useSelector(state => state['showSavedCustomSceneSuccess'])
   const { workspace, allowEdit, wrapperWidth, angle, originalIsPortrait } = props
 
   const [wrapperWidthVal, setWrapperWidthVal] = useState(wrapperWidth)
@@ -160,7 +145,6 @@ const CustomSceneTinterContainer = (props: CustomSceneTinterContainerProps) => {
 
   useEffect(() => {
     if (livePaletteColors) {
-      setLivePaletteColorCount(livePaletteColors.length)
       const colorMap = {}
       for (let i = 0; i < props.workspace.layers.length; i++) {
         // This absolutely needs to be rethought after the color selector flow is designed. -RS
@@ -207,81 +191,12 @@ const CustomSceneTinterContainer = (props: CustomSceneTinterContainerProps) => {
     history.push('/active/masking')
   }
 
-  const hideSaveSceneModal = () => {
-    dispatch(showSaveSceneModal(false))
-  }
-
-  const saveSceneFromModal = (e: SyntheticEvent, sceneName: string) => {
-    const { bgImageUrl, width, height, layers, uid } = workspace
-    console.log('event', e)
-    if (sceneName.trim() === '') {
-      return false
-    }
-
-    hideSaveSceneModal(sceneName)
-    dispatch(startSavingMasks(sceneName))
-    const colorList = Object.keys(colorSurfaceMap).sort().map(colorKey => livePaletteColors.colors.find(color => color.id === colorSurfaceMap[colorKey]))
-    const labColorList = colorList.map(color => getLABFromColor(color))
-    const lpColorIds = livePaletteColors.colors.map(color => color.id)
-    const metaData = createCustomSceneMetadata('TEMP_NAME', sceneName, uid, colorList, width, height, lpColorIds)
-    dispatch(saveMasks(labColorList, layers, bgImageUrl, metaData))
-  }
-
-  const hideSavedConfirmModal = (e: SyntheticEvent) => {
-    e.preventDefault()
-    dispatch(showSavedCustomSceneSuccessModal(false))
-  }
-
-  const getPreviewData = (workspace: PaintSceneWorkspace, maskRef: any[], lpColors: Color[]) => {
-    const { bgImageUrl, width, height } = workspace
-    const scene = createPseudoScene(bgImageUrl, maskRef, colorSurfaceMap, width, height)
-    const { surfaces: sceneStatus } = createPseudoSceneMetaData(scene, lpColors, SCENE_VARIANTS.DAY)
-    const livePaletteColorsDiv = lpColors.filter(color => !!color).map((color, i) => {
-      const { red, green, blue } = color
-      return (
-        <div
-          key={i}
-          style={{ backgroundColor: `rgb(${red},${green},${blue})`, flexGrow: '1', borderLeft: (i > 0) ? '1px solid #ffffff' : 'none' }}>
-          &nbsp;
-        </div>
-      )
-    })
-
-    return <>
-      <StaticTintScene scene={scene} statuses={sceneStatus} config={{ isNightScene: false }} />
-      <div style={{ display: 'flex', marginTop: '1px' }}>{livePaletteColorsDiv}</div>
-    </>
-  }
-
   return (
     <div>
       <ImageQueue dataUrls={surfaces} addToQueue={handleSurfaceLoaded} />
       <div className={customSceneTinterClass}>
         {isSavingMask ? <div className={customSceneTinterSpinnerClass}><CircleLoader /></div> : null}
         {/* this is the loader that appears when saving a mask */}
-        {/* Save scene confirm modal */}
-        {showSaveSceneModalFlag && livePaletteColorCount !== 0 ? <DynamicModal
-          actions={[
-            { text: intl.formatMessage({ id: 'SAVE_SCENE_MODAL.SAVE' }), callback: saveSceneFromModal },
-            { text: intl.formatMessage({ id: 'SAVE_SCENE_MODAL.CANCEL' }), callback: hideSaveSceneModal }
-          ]}
-          previewData={getPreviewData(workspace, maskImageRef, livePaletteColors.colors)}
-          height={imageHeight}
-          allowInput
-          inputDefault={`${intl.formatMessage({ id: 'SAVE_SCENE_MODAL.DEFAULT_DESCRIPTION' })} ${sceneCount}`} /> : null}
-        {showSaveSceneModalFlag && livePaletteColorCount === 0 ? <DynamicModal
-          actions={[
-            { text: intl.formatMessage({ id: 'SAVE_SCENE_MODAL.CANCEL' }), callback: hideSaveSceneModal }
-          ]}
-          description={intl.formatMessage({ id: 'SAVE_SCENE_MODAL.UNABLE_TO_SAVE_WARNING' })}
-          height={imageHeight} /> : null}
-        { /* ---------- Saved notification modal ---------- */ }
-        { showSavedConfirmModalFlag ? <DynamicModal
-          actions={[
-            { text: intl.formatMessage({ id: 'PAINT_SCENE.OK_DISMISS' }), callback: hideSavedConfirmModal }
-          ]}
-          description={intl.formatMessage({ id: 'PAINT_SCENE.SCENE_SAVED' })}
-          height={imageHeight} /> : null}
         { isReadyToTint(imagesLoaded, livePaletteColors, surfaces)
           ? <SimpleTintableScene
             colors={livePaletteColors.colors}

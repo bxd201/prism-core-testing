@@ -47,7 +47,6 @@ import SaveMasks from './SaveMasks'
 import { createCustomSceneMetadata, createUniqueSceneId } from '../../shared/utils/legacyProfileFormatUtil'
 import MergeColors from '../MergeCanvas/MergeColors'
 import storageAvailable from '../../shared/utils/browserStorageCheck.util'
-import DynamicModal, { DYNAMIC_MODAL_STYLE } from '../DynamicModal/DynamicModal'
 import { checkCanMergeColors, shouldPromptToReplacePalette } from '../LivePalette/livePaletteUtility'
 import { LP_MAX_COLORS_ALLOWED } from '../../constants/configurations'
 import { mergeLpColors, replaceLpColors } from '../../store/actions/live-palette'
@@ -66,7 +65,8 @@ import {
   POLLUTED_ENUM, setActiveSceneLabel,
   setIsScenePolluted
 } from '../../store/actions/navigation'
-import { TOP_LEVEL_ROUTES, ROUTES_ENUM } from '../Facets/ColorVisualizerWrapper/routeValueCollections'
+import { ROUTES_ENUM } from '../Facets/ColorVisualizerWrapper/routeValueCollections'
+import { setModalInfo, updatePaintScenePreview } from '../../store/actions/globalModal'
 
 const baseClass = 'paint__scene__wrapper'
 const canvasClass = `${baseClass}__canvas`
@@ -103,26 +103,22 @@ type ComponentProps = {
   replaceLpColors: Function,
   selectSavedScene: Function,
   clearSceneWorkspace: Function,
-  showSaveSceneModal: boolean,
   showSaveSceneModalAction: Function,
   saveSceneName: string,
-  sceneCount: number,
-  showSavedConfirmModalFlag: boolean,
-  hideSavedConfirmModal: Function,
   setActiveScenePolluted: () => void,
   unsetActiveScenePolluted: () => void,
   setWarningModalImgPreview: ({}) => void,
   sendImageData?: Function,
   maxSceneHeight: number,
   navigationIntent: string,
-  isActiveScenePolluted: string,
   navigateToIntendedDestination: Function,
   clearNavigationIntent: Function,
   paintSceneCache: any,
   cachePaintScene: Function,
   setActiveSceneLabel: Function,
   shouldRestoreFromCache: boolean,
-  clearPaintSceneCache: Function
+  clearPaintSceneCache: Function,
+  updatePaintScenePreview: Function
 }
 
 type ComponentState = {
@@ -311,32 +307,6 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     }
   }
 
-  getSelectPaletteModalConfig = () => {
-    const { intl } = this.props
-
-    const selectPaletteActions = [{ callback: (e) => {
-      e.preventDefault()
-      e.stopPropagation()
-      this.setState({ showSelectPaletteModal: false })
-    },
-    text: intl.formatMessage({ id: 'PAINT_SCENE.CANCEL' }),
-    type: DYNAMIC_MODAL_STYLE.primary },
-    { callback: (e) => {
-      e.preventDefault()
-      e.stopPropagation()
-      this.loadPalette()
-      this.setState({ showSelectPaletteModal: false })
-    },
-    text: intl.formatMessage({ id: 'PAINT_SCENE.OK' }),
-    type: DYNAMIC_MODAL_STYLE.primary }]
-
-    return {
-      selectPaletteActions,
-      selectPaletteTitle: intl.formatMessage({ id: 'PAINT_SCENE.SELECT_PALETTE_TITLE' }),
-      selectPaletteDescription: intl.formatMessage({ id: 'PAINT_SCENE.SELECT_PALETTE_DESC' })
-    }
-  }
-
   loadPalette = () => {
     const { workspace: { palette } } = this.props
     this.props.replaceLpColors(palette)
@@ -384,6 +354,8 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       const imageData = this.CFICanvas2.current.getContext('2d').getImageData(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
       this.props.sendImageData && this.props.sendImageData(imageData)
       this.props.setActiveScenePolluted()
+      this.props.updatePaintScenePreview({ layers: this.getLayers() })
+      // might dont need line 392
       this.props.setWarningModalImgPreview({ dataUrls: this.getLayers(), width: this.backgroundImageWidth, height: this.backgroundImageHeight })
     }
     if (prevState.loading) {
@@ -760,7 +732,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   handleClick = (e: Object) => {
     const { activeTool, isInfoToolActive } = this.state
     // showSaveSceneModal prevents click from painting when modal is open
-    if (isInfoToolActive || this.props.showSaveSceneModal || this.props.showSavedConfirmModalFlag) {
+    if (isInfoToolActive) {
       return
     }
     switch (activeTool) {
@@ -974,64 +946,20 @@ canvasHeight
   }
 
   render () {
-    const { lpActiveColor, intl, showSaveSceneModal, lpColors, workspace, selectedMaskIndex, width, navigationIntent, isActiveScenePolluted } = this.props
-    const livePaletteColorCount = (lpColors && lpColors.length) || 0
+    const { lpActiveColor, intl, workspace, selectedMaskIndex, width } = this.props
     const bgImageUrl = workspace ? workspace.bgImageUrl : (this.props.shouldRestoreFromCache === '' ? this.props.imageUrl : this.state.imageUrl)
     const layers = workspace && workspace.workspaceType !== WORKSPACE_TYPES.smartMask ? workspace.layers : null
     const workspaceImageData = workspace && workspace.workspaceType === WORKSPACE_TYPES.smartMask ? workspace.layers : null
     const workspaceType = workspace ? workspace.workspaceType : WORKSPACE_TYPES.generic
-    const { activeTool, position, paintBrushShape, paintBrushWidth, eraseBrushShape, eraseBrushWidth, undoIsEnabled, redoIsEnabled, showOriginalCanvas, isAddGroup, isDeleteGroup, isUngroup, paintCursor, isInfoToolActive, loading, showAnimatePin, showNonAnimatePin, pinX, pinY, currPinX, currPinY, canvasWidth, canvasHeight, showSelectPaletteModal, canvasHasBeenInitialized, canvasZoom } = this.state
+    const { activeTool, position, paintBrushShape, paintBrushWidth, eraseBrushShape, eraseBrushWidth, undoIsEnabled, redoIsEnabled, showOriginalCanvas, isAddGroup, isDeleteGroup, isUngroup, paintCursor, isInfoToolActive, loading, showAnimatePin, showNonAnimatePin, pinX, pinY, currPinX, currPinY, canvasWidth, canvasHeight, canvasHasBeenInitialized, canvasZoom } = this.state
     const lpActiveColorRGB = (lpActiveColor) ? `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})` : ``
     const { paintBrushActiveClass, paintBrushCircleActiveClass } = getPaintBrushActiveClass(this.state)
     const { eraseBrushActiveClass, eraseBrushCircleActiveClass } = getEraseBrushActiveClass(this.state)
-    const { selectPaletteActions, selectPaletteTitle, selectPaletteDescription } = this.getSelectPaletteModalConfig()
     const imageDataList = workspaceType === WORKSPACE_TYPES.smartMask ? [workspaceImageData[selectedMaskIndex]] : null
     return (
       <>
         {loading ? <div className={`${animationLoader} ${animationLoader}--load`} /> : null}
         <div role='presentation' className={`${baseClass} ${isInfoToolActive ? `${disableTextSelect} ${showCursor}` : ``} ${activeTool === toolNames.PAINTBRUSH || activeTool === toolNames.ERASE ? `${disableTextSelect} ${hideCursor}` : ``} ${(loading) ? disableClick : ``}`} onClick={this.handleClick} onMouseMove={this.mouseMoveHandler} ref={this.CFIWrapper} style={{ height: this.state.wrapperHeight }} onMouseLeave={this.mouseLeaveHandler} onMouseEnter={this.mouseEnterHandler}>
-          { /* ----------  modal ---------- */ }
-          {showSelectPaletteModal ? <DynamicModal
-            actions={selectPaletteActions}
-            title={selectPaletteTitle}
-            height={canvasHeight}
-            description={selectPaletteDescription} /> : null}
-          { /* ----------  modal ---------- */ }
-          {showSaveSceneModal && livePaletteColorCount !== 0 ? <DynamicModal
-            actions={[
-              { text: intl.formatMessage({ id: 'SAVE_SCENE_MODAL.SAVE' }), callback: this.saveSceneFromModal },
-              { text: intl.formatMessage({ id: 'SAVE_SCENE_MODAL.CANCEL' }), callback: this.hideSaveSceneModal }
-            ]}
-            previewData={this.getPreviewData(true)}
-            height={canvasHeight}
-            allowInput
-            inputDefault={`${intl.formatMessage({ id: 'SAVE_SCENE_MODAL.DEFAULT_DESCRIPTION' })} ${this.props.sceneCount}`} /> : null}
-          { /* ---------- Will destroy work warning modal ---------- */ }
-          {TOP_LEVEL_ROUTES.indexOf(navigationIntent) > -1 && isActiveScenePolluted ? <DynamicModal
-            description={intl.formatMessage({ id: 'CVW.WARNING_REPLACEMENT' })}
-            actions={[
-              { text: intl.formatMessage({ id: 'YES' }), callback: this.handleNavigationIntentConfirm },
-              { text: intl.formatMessage({ id: 'NO' }), callback: this.handleNavigationIntentCancel }
-            ]}
-            previewData={this.getPreviewData(false)}
-            height={canvasHeight}
-            modalStyle={DYNAMIC_MODAL_STYLE.danger}
-          /> : null}
-          { /* ---------- Save scene modal ---------- */ }
-          {showSaveSceneModal && livePaletteColorCount === 0 ? <DynamicModal
-            actions={[
-              { text: intl.formatMessage({ id: 'SAVE_SCENE_MODAL.CANCEL' }), callback: this.hideSaveSceneModal }
-            ]}
-            description={intl.formatMessage({ id: 'SAVE_SCENE_MODAL.UNABLE_TO_SAVE_WARNING' })}
-            height={canvasHeight} /> : null}
-          { /* ---------- Saved notification modal ---------- */ }
-          { this.props.showSavedConfirmModalFlag ? <DynamicModal
-            actions={[
-              { text: intl.formatMessage({ id: 'PAINT_SCENE.OK_DISMISS' }), callback: this.props.hideSavedConfirmModal }
-            ]}
-            description={intl.formatMessage({ id: 'PAINT_SCENE.SCENE_SAVED' })}
-            height={canvasHeight} /> : null}
-          {/* the 35 in the padding is the radius of the circle loader. Note the bitwise rounding */}
           {this.props.savingMasks || this.state.loadingMasks ? <div style={{ height: canvasHeight }} className='spinner'><div style={{ padding: ((canvasHeight / 2) | 0) - 35 }}><CircleLoader /></div></div> : null}
           {this.props.savingMasks ? <SaveMasks processMasks={this.processMasks} /> : null }
           <canvas className={`${canvasClass} ${showOriginalCanvas ? `${canvasShowByZindex}` : `${canvasHideByZindex}`} ${this.isPortrait ? portraitOrientation : ''}`} name='paint-scene-canvas-first' ref={this.CFICanvas}>{intl.formatMessage({ id: 'CANVAS_UNSUPPORTED' })}</canvas>
@@ -1141,6 +1069,12 @@ const mapStateToProps = (state: Object, props: Object) => {
 
 const mapDispatchToProps = (dispatch: Function) => {
   return {
+    setModalInfo: (modalInfo) => {
+      dispatch(setModalInfo(modalInfo))
+    },
+    updatePaintScenePreview: (layers) => {
+      dispatch(updatePaintScenePreview(layers))
+    },
     saveMasks: (colorList: Array<number[]>, imageData: Object, backgroundImageUrl: string, metaData: Object) =>
       dispatch(saveMasks(colorList, imageData, backgroundImageUrl, metaData)),
     startSavingMasks: (sceneName) => dispatch(startSavingMasks(sceneName)),

@@ -9,15 +9,17 @@ import ImageRotateContainer from '../../MatchPhoto/ImageRotateContainer'
 import { showWarningModal } from 'src/store/actions/scenes'
 import { setTooltipsPosition } from 'src/store/actions/system'
 import { queueImageUpload } from 'src/store/actions/user-uploads'
+import { ACTIVE_SCENE_LABELS_ENUM } from 'src/store/actions/navigation'
 import './ColorVisualizerNav.scss'
 import { FEATURE_EXCLUSIONS } from '../../../constants/configurations'
 import { shouldAllowFeature } from '../../../shared/utils/featureSwitch.util'
 import WithConfigurationContext from '../../../contexts/ConfigurationContext/WithConfigurationContext'
+import { createNavigationWarningModal } from '../../CVWModalManager/createModal'
 import {
-  cleanupNavigationIntent, setDirtyNavigationIntent,
+  cleanupNavigationIntent,
   setIsScenePolluted,
   setNavigationIntent,
-  setShouldShowGlobalDestroyWarning
+  setDirtyNavigationIntent
 } from '../../../store/actions/navigation'
 import { ROUTES_ENUM } from './routeValueCollections'
 
@@ -127,9 +129,11 @@ export const DropDownMenu = ({ title, items }: DropDownMenuProps) => {
 const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
   const { config: { featureExclusions, cvw, brand }, setMatchPhotoScene, activePaintScene, uploadPaintScene, setLastActiveComponent } = props
   const { messages, formatMessage } = useIntl()
+  const intl = useIntl()
   const history = useHistory()
   const location = useLocation()
   const dispatch = useDispatch()
+  const activeSceneLabel = useSelector(store => store.activeSceneLabel)
   const isActiveScenePolluted: string = useSelector(store => store.scenePolluted)
   const useSmartMask = useSelector(state => state.useSmartMask)
   const allowNavigateToIntendedDestination = useSelector(state => state.allowNavigateToIntendedDestination)
@@ -308,6 +312,21 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
     })
   }
 
+  const handleNavigation = (url) => {
+    if (isColorwallModallyPresented) {
+      dispatch(setDirtyNavigationIntent(url))
+      createNavigationWarningModal(intl, dispatch, ACTIVE_SCENE_LABELS_ENUM.EMPTY_SCENE, true)
+      return
+    }
+    if (isActiveScenePolluted) {
+      dispatch(setNavigationIntent(url))
+      createNavigationWarningModal(intl, dispatch, activeSceneLabel, false)
+      return
+    }
+    // default action
+    history.push(url)
+  }
+
   // @todo refactor buttons into their own component -RS
   return (
     <nav className='cvw-navigation-wrapper' ref={navRef}>
@@ -329,17 +348,7 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
         { shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.exploreColors)
           ? <li>
             <button ref={navBtnRef} className={`cvw-nav-btn ${location.pathname === '/active/colors' ? 'cvw-nav-btn--active' : ''}`} onClick={() => {
-              if (isColorwallModallyPresented) {
-                dispatch(setShouldShowGlobalDestroyWarning(true))
-                dispatch(setDirtyNavigationIntent('/active/colors'))
-                return
-              }
-              if (isActiveScenePolluted) {
-                dispatch(setNavigationIntent('/active/colors'))
-                return
-              }
-              // default action
-              history.push('/active/colors')
+              handleNavigation('/active/colors')
             }}>
               <span className='fa-layers fa-fw cvw-nav-btn-icon'>
                 <FontAwesomeIcon icon={['fal', 'square-full']} size='xs' transform={{ rotate: 10 }} />
@@ -353,17 +362,7 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
         { shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.getInspired)
           ? <li>
             <button className={`cvw-nav-btn ${location.pathname === '/active/inspiration' ? 'cvw-nav-btn--active' : ''}`} onClick={() => {
-              if (isColorwallModallyPresented) {
-                dispatch(setShouldShowGlobalDestroyWarning(true))
-                dispatch(setDirtyNavigationIntent('/active/inspiration'))
-                return
-              }
-              if (isActiveScenePolluted) {
-                dispatch(setNavigationIntent('/active/inspiration'))
-                return
-              }
-              // default action
-              history.push('/active/inspiration')
+              handleNavigation('/active/inspiration')
             }}>
               <FontAwesomeIcon className='cvw-nav-btn-icon' icon={['fal', 'lightbulb']} size='1x' />
               <FormattedMessage id='NAV_LINKS.GET_INSPIRED' />
@@ -372,17 +371,7 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
         { shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.paintAPhoto)
           ? <li>
             <button className={`cvw-nav-btn ${location.pathname === '/active/scenes' ? 'cvw-nav-btn--active' : ''}`} onClick={() => {
-              if (isColorwallModallyPresented) {
-                dispatch(setShouldShowGlobalDestroyWarning(true))
-                dispatch(setDirtyNavigationIntent('/active/scenes'))
-                return
-              }
-              if (isActiveScenePolluted) {
-                dispatch(setNavigationIntent('/active/scenes'))
-                return
-              }
-              // default action
-              history.push('/active/scenes')
+              handleNavigation('/active/scenes')
             }}>
               <span className='fa-layers fa-fw cvw-nav-btn-icon'>
                 <FontAwesomeIcon icon={['fal', 'square-full']} />
@@ -397,17 +386,7 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
               shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.documentSaving)
                 ? <li>
                   <button className={`cvw-nav-btn ${location.pathname === '/active/my-ideas' ? 'cvw-nav-btn--active' : ''}`} onClick={() => {
-                    if (isColorwallModallyPresented) {
-                      dispatch(setShouldShowGlobalDestroyWarning(true))
-                      dispatch(setDirtyNavigationIntent('/active/my-ideas'))
-                      return
-                    }
-                    if (isActiveScenePolluted) {
-                      dispatch(setNavigationIntent('/active/my-ideas'))
-                      return
-                    }
-                    // default action
-                    history.push('/active/my-ideas')
+                    handleNavigation('/active/my-ideas')
                   }}>
                     <FormattedMessage id='NAV_LINKS.MY_IDEAS' />
                   </button>
@@ -415,17 +394,7 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
             }
             <li>
               <button className={`cvw-nav-btn ${location.pathname === '/active/help' ? 'cvw-nav-btn--active' : ''}`} onClick={() => {
-                if (isColorwallModallyPresented) {
-                  dispatch(setShouldShowGlobalDestroyWarning(true))
-                  dispatch(setDirtyNavigationIntent('/active/help'))
-                  return
-                }
-                if (isActiveScenePolluted) {
-                  dispatch(setNavigationIntent('/active/help'))
-                  return
-                }
-                // default action
-                history.push('/active/help')
+                handleNavigation('/active/help')
               }}>
                 <FormattedMessage id='NAV_LINKS.HELP' />
               </button>

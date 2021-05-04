@@ -80,7 +80,9 @@ export const clearPaintSceneCache = () => {
 
 export const ACTIVE_SCENE_LABELS_ENUM = {
   PAINT_SCENE: 'PAINT_SCENE',
-  STOCK_SCENE: 'STOCK_SCENE'
+  STOCK_SCENE: 'STOCK_SCENE',
+  LIVE_PALETTE: 'LIVE_PALETTE',
+  EMPTY_SCENE: 'EMPTY_SCENE'
 }
 export const SET_ACTIVE_SCENE_LABEL = 'SET_ACTIVE_SCENE_LABEL'
 export const setActiveSceneLabel = (sceneType: string = '') => {

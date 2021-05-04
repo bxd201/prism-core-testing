@@ -50,6 +50,7 @@ import {
   paintSceneCache, carouselCache,
   scenePolluted, shouldShowGlobalDestroyWarning, stockSceneCache
 } from './navigation'
+import { modalInfo, modalThumbnailColor } from './globalModal'
 
 export default combineReducers({
   collectionSummaries,
@@ -111,5 +112,7 @@ export default combineReducers({
   scenesCollection,
   variantsLoading,
   variantsCollection,
-  selectedSceneUid
+  selectedSceneUid,
+  modalInfo,
+  modalThumbnailColor
 })

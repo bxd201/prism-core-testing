@@ -13,11 +13,13 @@ import InspiredScene from '../../InspirationPhotos/InspiredSceneNavigator'
 import LivePalette from '../../LivePalette/LivePalette'
 import ColorVisualizerNav from './ColorVisualizerNav'
 import SampleScenesWrapper from '../../SampleScenes/SampleScenes'
+import { setModalThumbnailColor } from '../../../store/actions/globalModal'
 import MyIdeasContainer from '../../MyIdeasContainer/MyIdeasContainer'
 import MyIdeaPreview from '../../MyIdeaPreview/MyIdeaPreview'
 import SaveOptions from '../../SaveOptions/SaveOptions'
 import ColorDetailsModal from './ColorDetailsModal/ColorDetailsModal'
 import LandingPage from '../../LandingPage/LandingPage'
+import { CVWModalManager } from '../../CVWModalManager/CVWModalManager'
 import './ColorVisualizer.scss'
 import PaintSceneMaskingWrapper from 'src/components/PaintScene/PaintSceneMask'
 import { shouldAllowFeature } from '../../../shared/utils/featureSwitch.util'
@@ -28,16 +30,13 @@ import { SCENE_TYPES, SHOW_LOADER_ONLY_BRANDS } from '../../../constants/globals
 import {
   ACTIVE_SCENE_LABELS_ENUM,
   clearImageRotateBypass,
-  clearNavigationIntent, setActiveSceneLabel,
-  setDirtyNavigationIntent,
+  setActiveSceneLabel,
   setIsColorWallModallyPresented,
-  setIsScenePolluted, setNavigationIntent,
-  setShouldShowGlobalDestroyWarning,
-  stageNavigationReturnIntent
+  setIsScenePolluted,
+  stageNavigationReturnIntent,
+  setNavigationIntent
 } from '../../../store/actions/navigation'
 import { ROUTES_ENUM } from './routeValueCollections'
-import DynamicModal, { DYNAMIC_MODAL_STYLE, getRefDimension } from '../../DynamicModal/DynamicModal'
-import { useIntl } from 'react-intl'
 import SceneBlobLoader from '../../SceneManager/SceneBlobLoader'
 import {
   fetchRemoteScenes, handleScenesFetchedForCVW, handleScenesFetchErrorForCVW,
@@ -48,9 +47,6 @@ import {
 import SingleTintableSceneView from '../../SingleTintableSceneView/SingleTintableSceneView'
 import SceneSelectorNavButton from '../../SingleTintableSceneView/SceneSelectorNavButton'
 import { SCENES_ENDPOINT } from '../../../constants/endpoints'
-import { isScenePolluted } from '../../SingleTintableSceneView/util'
-import type { MiniColor } from '../../../shared/types/Scene'
-
 type CVWPropsType = {
   maxSceneHeight: number,
   language: string
@@ -75,10 +71,7 @@ export const CVW = (props: CVWPropsType) => {
   const isShowFooter = location.pathname.match(/active\/masking$/) === null
   const { featureExclusions, brandId } = useContext(ConfigurationContext)
   const activeSceneLabel = useSelector(store => store.activeSceneLabel)
-  const shouldShowGlobalDestroyWarning = useSelector(store => store.shouldShowGlobalDestroyWarning)
-  const intl = useIntl()
   const wrapperRef = useRef()
-  const dirtyNavIntent = useSelector(store => store.dirtyNavigationIntent)
 
   // Use this hook to push any facet level embedded data to redux and handle any initialization
   useEffect(() => {
@@ -122,29 +115,11 @@ export const CVW = (props: CVWPropsType) => {
     return <LandingPage />
   }
 
-  const handleNavigationIntentConfirm = (e: SyntheticEvent) => {
-    e.stopPropagation()
-    dispatch(setShouldShowGlobalDestroyWarning(false))
-    history.push(dirtyNavIntent)
-    // clean up the one set by the nav click when one was already set
-    dispatch(setDirtyNavigationIntent())
-    // clean up the original, this should be the value set from the return path
-    dispatch(clearNavigationIntent())
-    // Allow add color button to respond again
-    dispatch(setIsColorWallModallyPresented(false))
-    dispatch(setIsScenePolluted())
+  const handleSurfacePaintedState = (surfacesColor: boolean) => {
+    const isScenePolluted = !!surfacesColor.reduce((acc, curr) => (curr ? 1 : 0) + acc, 0)
+    dispatch(setIsScenePolluted(isScenePolluted ? 'POLLUTED_STOCK_SCENE' : ''))
+    dispatch(setModalThumbnailColor(surfacesColor))
   }
-
-  const handleNavigationIntentCancel = (e: SyntheticEvent) => {
-    e.stopPropagation()
-    dispatch(setShouldShowGlobalDestroyWarning(false))
-    dispatch(setDirtyNavigationIntent())
-  }
-
-  const handleSurfacePaintedState = (selectedSceneUid: string, selectedVariantName: string, surfaceColors: MiniColor[]) => {
-    dispatch(setIsScenePolluted(isScenePolluted(surfaceColors) ? 'POLLUTED_STOCK_SCENE' : ''))
-  }
-
   // @todo this will be unnecessary in the future, when the way scene management is done is readdressed -RS
   const shouldHideSceneManagerDiv = (path: string) => {
     if (path === '/') {
@@ -197,17 +172,7 @@ export const CVW = (props: CVWPropsType) => {
         ? <CompareColor />
         : (
           <>
-            {shouldShowGlobalDestroyWarning && (
-              <DynamicModal
-                description={intl.formatMessage({ id: 'CVW.WARNING_REPLACEMENT' })}
-                actions={[
-                  { text: intl.formatMessage({ id: 'YES' }), callback: handleNavigationIntentConfirm },
-                  { text: intl.formatMessage({ id: 'NO' }), callback: handleNavigationIntentCancel }
-                ]}
-                modalStyle={DYNAMIC_MODAL_STYLE.danger}
-                height={getRefDimension(wrapperRef, 'height')}
-              />
-            )}
+            <CVWModalManager />
             <ColorDetailsModal />
             <div className={`cvw__root-wrapper ${colorDetailsModalShowing ? 'hide-on-small-screens' : ''}`} ref={wrapperRef}>
               {/* @todo rename setLastActiveComponent prop scene need to rethink it right now it will do nothing -RS */ }
