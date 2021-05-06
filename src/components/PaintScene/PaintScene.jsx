@@ -88,37 +88,67 @@ const showCursor = `${baseClass}--show-cursor`
 const hideCursor = `${baseClass}--hide-cursor`
 
 type ComponentProps = {
+  // @todo deprecate -RS
   imageUrl: string,
+  // @todo still need -RS
   lpActiveColor: Object,
+  // @todo deprecate... I think -RS
   referenceDimensions: Object,
+  // @todo deprecate -RS
   width: number,
-  selectedMaskIndex: number,
+  // @todo do we still need ? -RS
+  selectedMaskIndex?: number,
+  // @todo still needed -RS
   intl: any,
+  // @todo still need -RS
   saveMasks: Function,
-  savingMasks: boolean,
-  startSavingMasks: Function,
+  // @todo do we still need? -RS
+  savingMasks?: boolean,
+  // @todo do we still need? -RS
+  startSavingMasks?: Function,
+  // @todo def need -RS
   workspace: Object,
+  // @todo do we still need? -RS
   lpColors: Object[],
+  // @todo do we still need? Probably -RS
   mergeLpColors: Function,
+  // @todo do we still need? Probably -RS
   replaceLpColors: Function,
+  // @todo do we still need? -RS
   selectSavedScene: Function,
+  // @todo do we still need?  -RS
   clearSceneWorkspace: Function,
+  // @todo do we still need? Probably -RS
   showSaveSceneModalAction: Function,
   saveSceneName: string,
+  // @todo still needed -RS
   setActiveScenePolluted: () => void,
+  // @todo still needed -RS
   unsetActiveScenePolluted: () => void,
+  // @todo do we still need?  -RS
   setWarningModalImgPreview: ({}) => void,
+  // @todo do we still need?  -RS
   sendImageData?: Function,
+  // @todo Still need -RS
   maxSceneHeight: number,
+  // @todo do we still need?  -RS
   navigationIntent: string,
+  // @todo do we still need?  -RS
   navigateToIntendedDestination: Function,
+  // @todo do we still need?  -RS
   clearNavigationIntent: Function,
+  // @todo i don't think we still need -RS
   paintSceneCache: any,
+  // @todo probably still need -RS
   cachePaintScene: Function,
+  // @todo do we still need?  -RS
   setActiveSceneLabel: Function,
+  // @todo do we still need?  -RS
   shouldRestoreFromCache: boolean,
+  // @todo do we still need?  -RS
   clearPaintSceneCache: Function,
-  updatePaintScenePreview: Function
+  // @todo probably still need  -RS
+  updatePaintScenePreview?: Function
 }
 
 type ComponentState = {
@@ -213,8 +243,8 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.originalIsPortrait = props.workspace ? (props.workspace.height > props.workspace.width) : props.referenceDimensions.originalIsPortrait
     this.canvasPanStart = { x: 0.5, y: 0.5 }
     this.lastPanPoint = { x: 0, y: 0 }
-    this.originalImageWidth = props.referenceDimensions.originalImageWidth
-    this.originalImageHeight = props.referenceDimensions.originalImageHeight
+    this.originalImageWidth = props.workspace ? props.workspace.width : props.referenceDimensions.originalImageWidth
+    this.originalImageHeight = props.workspace ? props.workspace.height : props.referenceDimensions.originalImageHeight
     this.maxSceneHeight = props.maxSceneHeight
 
     const state = {
@@ -352,11 +382,21 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     const checkImageListIfUpdate = !compareArraysOfObjects(this.state.imagePathList, prevState.imagePathList)
     if (checkImageListIfUpdate) {
       const imageData = this.CFICanvas2.current.getContext('2d').getImageData(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
-      this.props.sendImageData && this.props.sendImageData(imageData)
-      this.props.setActiveScenePolluted()
-      this.props.updatePaintScenePreview({ layers: this.getLayers() })
-      // might dont need line 392
-      this.props.setWarningModalImgPreview({ dataUrls: this.getLayers(), width: this.backgroundImageWidth, height: this.backgroundImageHeight })
+      if (this.props.sendImageData) {
+        this.props.sendImageData(imageData)
+      }
+
+      if (this.props.setActiveScenePolluted) {
+        this.props.setActiveScenePolluted()
+      }
+
+      if (this.props.updatePaintScenePreview) {
+        this.props.updatePaintScenePreview({ layers: this.getLayers() })
+      }
+      // might dont need line
+      if (this.props.setWarningModalImgPreview) {
+        this.props.setWarningModalImgPreview({ dataUrls: this.getLayers(), width: this.backgroundImageWidth, height: this.backgroundImageHeight })
+      }
     }
     if (prevState.loading) {
       return
@@ -559,23 +599,25 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
         paintCursor: `${canvasClass}--${toolNames.PAINTAREA}`
       })
     }
-    if (this.props.workspace) {
+    if (this.props.workspace && this.props.clearSceneWorkspace) {
+      // @todo we may still need this  REVISIT -RS
       this.props.clearSceneWorkspace()
     }
-    // @todo this is an app level concern and should happen outside of here, that said, it is a safe and stable place to do it now, lift when imagerotatecontainer refactor occurs -RS
-    if (this.props.shouldRestoreFromCache) {
-      this.props.setActiveScenePolluted()
-    }
+
     this.setState({ imageUrl: this.props.imageUrl })
-    this.props.clearPaintSceneCache()
-    this.props.setActiveSceneLabel(ACTIVE_SCENE_LABELS_ENUM.PAINT_SCENE)
+    // @todo These methods may not be needed anymore due to how the component is rendered -RS
+    if (this.props.clearPaintSceneCache && this.props.setActiveSceneLabel) {
+      this.props.clearPaintSceneCache()
+      this.props.setActiveSceneLabel(ACTIVE_SCENE_LABELS_ENUM.PAINT_SCENE)
+    }
   }
 
   componentWillUnmount () {
-    this.props.selectSavedScene(null)
-    this.props.unsetActiveScenePolluted()
-    // @todo this is an app level concern and should happen outside of here, that said, it is a safe and stable place to do it now, lift when imagerotatecontainer refactor occurs -RS
-    this.props.setActiveSceneLabel()
+    // @todo These methods may not be needed anymore due to how the component is rendered -RS
+    if (this.props.selectSavedScene && this.props.unsetActiveScenePolluted) {
+      this.props.selectSavedScene(null)
+      this.props.unsetActiveScenePolluted()
+    }
   }
 
   updateWindowDimensions = () => {

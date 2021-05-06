@@ -17,13 +17,14 @@ import { getTransformParams } from '../../shared/utils/rotationUtil'
 
 type ImageIngestViewProps = {
   imageUrl: string,
-  maxSceneHeight: number
+  maxSceneHeight: number,
+  handleDismissCallback: Function
 }
 
 const baseClassName = 'image-ingest-view'
 
 const ImageIngestView = (props: ImageIngestViewProps) => {
-  const { imageUrl, maxSceneHeight } = props
+  const { imageUrl, maxSceneHeight, handleDismissCallback } = props
   const blobUrl = imageUrl
   const history = useHistory()
   const wrapperRef = useRef()
@@ -174,9 +175,11 @@ const ImageIngestView = (props: ImageIngestViewProps) => {
   }
 
   const handleDismissTerms = (e: SyntheticEvent) => {
-    // @tod implement -RS
     e.preventDefault()
-    console.log('Dismissing terms:', e)
+
+    const rotatedImageUrl = canvasRef.current.toDataURL()
+    const { width, height } = canvasRef.current
+    handleDismissCallback(rotatedImageUrl, width, height)
   }
 
   const drawToCanvas = (image, width, height) => {

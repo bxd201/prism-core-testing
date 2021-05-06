@@ -95,3 +95,12 @@ export type FlatVariant = {
   expertColorPicks: number[] | null,
   isFirstOfKind?: boolean
 }
+
+export type ReferenceDimensions = {
+  originalImageWidth: number,
+    originalImageHeight: number,
+  imageWidth: number,
+  imageHeight: number,
+  isPortrait: boolean,
+  originalIsPortrait: boolean
+}
