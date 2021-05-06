@@ -14,11 +14,11 @@ import {
   SET_NAVIGATION_INTENT_WITH_RETURN,
   SET_SCENE_POLLUTED,
   SET_NAVIGATION_INTENT, SHOULD_SHOW_GLOBAL_DESTROY_WARNING,
-  STAGE_NAVIGATION_RETURN_INTENT
+  STAGE_NAVIGATION_RETURN_INTENT, SET_NAVIGATION_WITH_FORWARD, CLEAR_FORWARD_AND_NAVIGATION_INTENT
 } from '../actions/navigation'
 import cloneDeep from 'lodash/cloneDeep'
 
-export const navigationIntent = (state: string | void = null, action: any) => {
+export const navigationIntent = (state: string = '', action: any) => {
   if (action.type === SET_NAVIGATION_INTENT || action.type === CLEAR_NAVIGATION_INTENT) {
     return action.payload
   }
@@ -32,6 +32,14 @@ export const navigationIntent = (state: string | void = null, action: any) => {
   }
 
   if (action.type === SET_NAVIGATION_INTENT_WITH_RETURN) {
+    return action.navigationIntentPayload
+  }
+
+  if (action.type === SET_NAVIGATION_WITH_FORWARD) {
+    return action.navigationIntentPayload
+  }
+
+  if (action.type === CLEAR_FORWARD_AND_NAVIGATION_INTENT) {
     return action.navigationIntentPayload
   }
 
@@ -141,6 +149,18 @@ export const shouldShowGlobalDestroyWarning = (state: boolean = false, action: {
 export const dirtyNavigationIntent = (state: string = '', action: { type: string, payload: string}) => {
   if (action.type === SET_DIRTY_NAVIGATION_INTENT) {
     return action.payload
+  }
+
+  return state
+}
+
+export const forwardIntent = (state: string = '', action: any) => {
+  if (action.type === SET_NAVIGATION_WITH_FORWARD) {
+    return action.navigationForwardIntentPayload
+  }
+
+  if (action.type === CLEAR_FORWARD_AND_NAVIGATION_INTENT) {
+    return action.navigationForwardIntentPayload
   }
 
   return state

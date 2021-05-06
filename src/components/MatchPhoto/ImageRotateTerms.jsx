@@ -25,13 +25,13 @@ const wrapperLoaderClass = `${wrapperClass}__loader`
 
 type Props = {
   rotateImage: Function,
-  createColorPins: Function,
   imageData: Object,
   handleDismiss: Function
 }
 
-const ImageRotateTerms = ({ rotateImage, createColorPins, imageData, handleDismiss }: Props) => {
+const ImageRotateTerms = ({ rotateImage, imageData, handleDismiss }: Props) => {
   const [acceptTerms, setAcceptTerms] = useState(false)
+  // eslint-disable-next-line no-unused-vars
   const [hideModal, setHideModal] = useState(false)
   let mouseDown = false
   const btnRef = useRef()
@@ -66,15 +66,6 @@ const ImageRotateTerms = ({ rotateImage, createColorPins, imageData, handleDismi
     if (e.keyCode && (e.keyCode === KEY_CODES.KEY_CODE_ENTER || e.keyCode === KEY_CODES.KEY_CODE_SPACE)) {
       e.preventDefault()
       handleChange()
-    }
-  }
-
-  function clickHandler (callback) {
-    setHideModal(true)
-    createColorPins(imageData)
-
-    if (callback) {
-      callback()
     }
   }
 
@@ -125,7 +116,7 @@ const ImageRotateTerms = ({ rotateImage, createColorPins, imageData, handleDismi
           aria-label={acceptTerms ? 'done' : ''}
           tabIndex={acceptTerms ? '0' : '-1'}
           className={`${wrapperAgreeTermsAcceptClass} ${acceptTerms ? `${wrapperAgreeTermsAcceptActiveClass}` : ``}`}
-          onClick={() => (acceptTerms) ? clickHandler(handleDismiss) : {}}><FormattedMessage id='DONE' /></button>
+          onClick={handleDismiss}><FormattedMessage id='DONE' /></button>
       </div>
       { hideModal && <div className={`${wrapperLoaderClass}`}><CircleLoader /></div> }
     </div>

@@ -138,11 +138,11 @@ export class LivePalette extends PureComponent<Props, State> {
     let returnPath = null
 
     if (this.props.activeSceneLabel === ACTIVE_SCENE_LABELS_ENUM.PAINT_SCENE) {
-      returnPath = ROUTES_ENUM.PAINT_SCENE
+      returnPath = ROUTES_ENUM.ACTIVE_PAINT_SCENE
     }
 
     if (this.props.activeSceneLabel === ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE) {
-      returnPath = ROUTES_ENUM.STOCK_SCENE
+      returnPath = ROUTES_ENUM.ACTIVE
     }
     this.props.setNavigationIntents(ROUTES_ENUM.COLOR_WALL, returnPath)
   }

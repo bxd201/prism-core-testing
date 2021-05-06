@@ -1,0 +1,97 @@
+@mixin hover-style {
+  background: var(getThemeColor('white'));
+  border-color: var(getThemeColor('secondary'));
+  cursor: pointer;
+  color: var(getThemeColor('secondary'));
+}
+
+@mixin focus-style {
+  outline-style: solid;
+  outline-color: var(getThemeColor('secondary'));
+  outline-width: 2px;
+}
+
+.image-ingest-view {
+  &__wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    height: 100%;
+    margin: 0 auto;
+    // max-width: 1050px;
+    overflow: hidden;
+    /*padding: 3em 0;*/
+    width: 100%;
+    @include respond-above(sm) {
+      padding: 0em;
+    }
+  }
+  &__container {
+    display: block;
+    min-height: 100%;
+    position: relative;
+    width: 100%;
+  }
+  &__canvas {
+    margin: 0 auto;
+    text-align: center;
+    display: block;
+  }
+  &__header {
+    display: block;
+    position: relative;
+  }
+  &__button {
+     background: transparent;
+     border: none;
+     color: var(getThemeColor('white.contrast'));
+     cursor: pointer;
+     display: inline-block;
+     fill: var(getThemeColor('white.contrast'));
+     outline: none;
+     padding: 0;
+     position: absolute;
+     text-align: center;
+     text-transform: uppercase;
+     top: .875rem;
+     width: auto;
+     z-index: 1000;
+
+     &:focus {
+       @include focus-style
+     }
+     &:hover {
+       @include hover-style
+     }
+     &--left {
+       left: .875rem;
+     }
+     &--right {
+       right: .875rem;
+
+       &.dark-button {
+         background-color: var(getThemeColor('white'));
+         color: var(getThemeColor('black'));
+         border: 1px var(getThemeColor('black')) solid;
+
+         &:focus {
+           @include focus-style
+         }
+         &:hover {
+           @include hover-style
+         }
+       }
+     }
+     @include respond-above(sm) {
+       border: 1px solid var(getThemeColor('light'));
+       padding: .75em 1.75em;
+     }
+   }
+  &__button-left-text {
+    display: none;
+    text-transform: uppercase;
+    @include respond-above(sm) {
+      display: inline-block;
+    }
+  }
+}

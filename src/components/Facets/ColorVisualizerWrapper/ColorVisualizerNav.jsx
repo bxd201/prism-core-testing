@@ -1,15 +1,13 @@
 // @flow
+// eslint-disable-next-line no-unused-vars
 import React, { useRef, useState, useEffect, ReactChildren } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Switch, Route, useHistory, useLocation } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { isMobileOnly, isTablet, isIOS } from 'react-device-detect'
-import ImageRotateContainer from '../../MatchPhoto/ImageRotateContainer'
 import { showWarningModal } from 'src/store/actions/scenes'
-import { setTooltipsPosition } from 'src/store/actions/system'
-import { queueImageUpload } from 'src/store/actions/user-uploads'
-import { ACTIVE_SCENE_LABELS_ENUM } from 'src/store/actions/navigation'
+import { queueImageUpload, setIngestedImage } from 'src/store/actions/user-uploads'
 import './ColorVisualizerNav.scss'
 import { FEATURE_EXCLUSIONS } from '../../../constants/configurations'
 import { shouldAllowFeature } from '../../../shared/utils/featureSwitch.util'
@@ -19,7 +17,7 @@ import {
   cleanupNavigationIntent,
   setIsScenePolluted,
   setNavigationIntent,
-  setDirtyNavigationIntent
+  setDirtyNavigationIntent, ACTIVE_SCENE_LABELS_ENUM
 } from '../../../store/actions/navigation'
 import { ROUTES_ENUM } from './routeValueCollections'
 
@@ -41,11 +39,7 @@ type DropDownMenuProps = {
 }
 
 type ColorVisualizerNavProps = {
-  config: any,
-  uploadPaintScene: Function,
-  activePaintScene: string,
-  setMatchPhotoScene: Function,
-  setLastActiveComponent: Function
+  config: any
 }
 
 const isSupportedImageFormat = (file: Object, exts: string[] = ['jpeg', 'jpg', 'png']) => {
@@ -127,7 +121,7 @@ export const DropDownMenu = ({ title, items }: DropDownMenuProps) => {
 }
 
 const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
-  const { config: { featureExclusions, cvw, brand }, setMatchPhotoScene, activePaintScene, uploadPaintScene, setLastActiveComponent } = props
+  const { config: { featureExclusions, cvw, brand } } = props
   const { messages, formatMessage } = useIntl()
   const intl = useIntl()
   const history = useHistory()
@@ -143,21 +137,20 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
   const hiddenImageUploadInput: { current: ?HTMLElement } = useRef()
   const navBtnRef: {current: ?HTMLElement} = useRef()
   const navRef: {current: ?HTMLElement} = useRef()
-  const [imgUrl: string, setImgUrl: (string) => void] = useState()
 
-  useEffect(() => {
-    if (imgUrl) {
-      if (location.pathname === ROUTES_ENUM.UPLOAD_MATCH_PHOTO) {
-        history.push(ROUTES_ENUM.ACTIVE_MATCH_PHOTO)
-        setMatchPhotoScene(<ImageRotateContainer key={imgUrl + 'mp'} showPaintScene isFromMyIdeas={false} isPaintScene={false} imgUrl={imgUrl} />)
-      } else if (location.pathname === ROUTES_ENUM.UPLOAD_PAINT_SCENE) {
-        history.push(ROUTES_ENUM.PAINT_SCENE)
-        uploadPaintScene(<ImageRotateContainer showPaintScene isFromMyIdeas={false} isPaintScene imgUrl={imgUrl} setLastActiveComponent={setLastActiveComponent} activePaintScene={activePaintScene} />)
-      }
-    }
-    const tooltipsPosition = navBtnRef.current.getClientRects()[0].x - navRef.current.getClientRects()[0].x - ((navBtnRef.current.getClientRects()[0].width - 48) / 2)
-    dispatch(setTooltipsPosition(tooltipsPosition))
-  }, [imgUrl])
+  // useEffect(() => {
+  //   if (imgUrl) {
+  //     if (location.pathname === ROUTES_ENUM.UPLOAD_MATCH_PHOTO) {
+  //       history.push(ROUTES_ENUM.ACTIVE_MATCH_PHOTO)
+  //       setMatchPhotoScene(<ImageRotateContainer key={imgUrl + 'mp'} showPaintScene isFromMyIdeas={false} isPaintScene={false} imgUrl={imgUrl} />)
+  //     } else if (location.pathname === ROUTES_ENUM.UPLOAD_PAINT_SCENE) {
+  //       history.push(ROUTES_ENUM.PAINT_SCENE)
+  //       uploadPaintScene(<ImageRotateContainer showPaintScene isFromMyIdeas={false} isPaintScene imgUrl={imgUrl} setLastActiveComponent={setLastActiveComponent} activePaintScene={activePaintScene} />)
+  //     }
+  //   }
+  //   const tooltipsPosition = navBtnRef.current.getClientRects()[0].x - navRef.current.getClientRects()[0].x - ((navBtnRef.current.getClientRects()[0].width - 48) / 2)
+  //   dispatch(setTooltipsPosition(tooltipsPosition))
+  // }, [imgUrl])
 
   // This is an observer that determines if programmatic navigation should occur
   // @todo, in a perfect world there would be a complete navigation abstraction layer, see the useeffect hook in the CVWWrapper to find another vital part -RS
@@ -228,23 +221,20 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
         contentiPhone: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.UPLOAD_YOUR_PHOTO_IPHONE'],
         description: messages['NAV_DROPDOWN_LINK_TIP_DESCRIPTION.UPLOAD_YOUR_PHOTO'],
         onClick: !(isMobileOnly || isTablet) ? () => {
-          const activate = () => {
-            dispatch(setIsScenePolluted())
-            const selectDevice = (web, iPhone = web, android = web, iPad = web) => (isMobileOnly ? (isIOS ? iPhone : android) : (isTablet ? iPad : web)) || web
-            history.push(selectDevice(
-              '/upload/paint-scene',
-              'https://play.google.com/store/apps/details?id=com.colorsnap',
-              'https://itunes.apple.com/us/app/colorsnap-visualizer-iphone/id316256242?mt=8',
-              'https://itunes.apple.com/us/app/colorsnap-studio/id555300600?mt=8'
-            ))
+          const selectDevice = (web, iPhone = web, android = web, iPad = web) => (isMobileOnly ? (isIOS ? iPhone : android) : (isTablet ? iPad : web)) || web
+          history.push(selectDevice(
+            '/upload/paint-scene',
+            'https://play.google.com/store/apps/details?id=com.colorsnap',
+            'https://itunes.apple.com/us/app/colorsnap-visualizer-iphone/id316256242?mt=8',
+            'https://itunes.apple.com/us/app/colorsnap-studio/id555300600?mt=8'
+          ))
 
-            if (hiddenImageUploadInput.current) {
-              hiddenImageUploadInput.current.value = ''
-              hiddenImageUploadInput.current.click() // uploads image
-            }
+          if (hiddenImageUploadInput.current) {
+            hiddenImageUploadInput.current.value = ''
+            // trigger upload image system modal
+            dispatch(setNavigationIntent(ROUTES_ENUM.ACTIVE_PAINT_SCENE))
+            hiddenImageUploadInput.current.click()
           }
-          // @todo activate should not be called on every click, we should only have to set the value for this once when the app is bootstrapped.  -RS
-          isActiveScenePolluted ? dispatch(showWarningModal(true)) : activate()
         } : undefined
       }
     ]
@@ -315,6 +305,7 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
   const handleNavigation = (url) => {
     if (isColorwallModallyPresented) {
       dispatch(setDirtyNavigationIntent(url))
+      // @todo IMPORTANT: we need to talk about active scene labels.  I think these should only be STOCK_SCENE or PAINT_SCENE -RS
       createNavigationWarningModal(intl, dispatch, ACTIVE_SCENE_LABELS_ENUM.EMPTY_SCENE, true)
       return
     }
@@ -338,8 +329,7 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
             dispatch(queueImageUpload(userImg))
           }
           const imageUrl = URL.createObjectURL(userImg)
-          // @todo In the old code base this action aroused suspicious of race conditions edge cases... this needs to be revisited -RS
-          setImgUrl(imageUrl)
+          dispatch(setIngestedImage(imageUrl))
         } else {
           // @todo implement notification of failed format. -RS
         }

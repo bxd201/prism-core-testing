@@ -8,7 +8,7 @@ import {
   IRIS_PROCESSING_COMPLETE,
   IRIS_PROCESSING_BEGIN,
   IRIS_LOADING_BEGIN,
-  IRIS_LOADING_COMPLETE
+  IRIS_LOADING_COMPLETE, INGESTED_IMAGE_URL
 } from '../actions/user-uploads'
 
 const initialState: Object = {
@@ -71,6 +71,14 @@ export const queuedImageUpload = (state: File | null = null, action: {type: stri
 
   if ([UPLOAD_COMPLETE, ERROR_UPLOADING, STOP_UPLOADING].indexOf(action.type) > -1) {
     return null
+  }
+
+  return state
+}
+
+export const ingestedImageUrl = (state: string = '', action: { type: string, payload: string }) => {
+  if (action.type === INGESTED_IMAGE_URL) {
+    return action.payload
   }
 
   return state

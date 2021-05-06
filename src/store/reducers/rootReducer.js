@@ -14,7 +14,7 @@ import {
   useSmartMask,
   showEditCustomScene, scenesCollection, variantsCollection, variantsLoading, selectedSceneUid
 } from './scenes'
-import { queuedImageUpload, uploads } from './uploads'
+import { ingestedImageUrl, queuedImageUpload, uploads } from './uploads'
 import collectionSummaries from './collectionSummaries'
 import expertColorPicks from './expertColorPicks'
 import inspirationalPhotos from './inspirationalPhotos'
@@ -48,7 +48,7 @@ import {
   allowNavigateToIntendedDestination, dirtyNavigationIntent, imageRotateBypass, isColorwallModallyPresented,
   navigationIntent, navigationReturnIntent,
   paintSceneCache, carouselCache,
-  scenePolluted, shouldShowGlobalDestroyWarning, stockSceneCache
+  scenePolluted, shouldShowGlobalDestroyWarning, stockSceneCache, forwardIntent
 } from './navigation'
 import { modalInfo, modalThumbnailColor } from './globalModal'
 
@@ -108,11 +108,13 @@ export default combineReducers({
   isColorwallModallyPresented,
   shouldShowGlobalDestroyWarning,
   dirtyNavigationIntent,
-  // @todo experimental scene data
+  // new style scene data
   scenesCollection,
   variantsLoading,
   variantsCollection,
   selectedSceneUid,
+  ingestedImageUrl,
+  forwardIntent,
   modalInfo,
   modalThumbnailColor
 })
