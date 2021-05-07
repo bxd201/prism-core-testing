@@ -24,6 +24,7 @@ const baseClassName = 'image-ingest-view'
 
 const ImageIngestView = (props: ImageIngestViewProps) => {
   const { imageUrl, maxSceneHeight } = props
+  const blobUrl = imageUrl
   const history = useHistory()
   const wrapperRef = useRef()
   const canvasRef = useRef()
@@ -257,7 +258,7 @@ const ImageIngestView = (props: ImageIngestViewProps) => {
   return (
     <>
       <div className={`${baseClassName}__wrapper`} ref={wrapperRef}>
-        {uploadedImageUrl ? <PrismImage ref={imageRef} source={uploadedImageUrl} loadedCallback={handleImageLoaded} shouldResample={hasLoaded} scalingWidth={scalingWidth} /> : null}
+        {uploadedImageUrl ? <PrismImage ref={imageRef} source={blobUrl} loadedCallback={handleImageLoaded} shouldResample={hasLoaded} scalingWidth={scalingWidth} /> : null}
         <div className={`${baseClassName}__container`}>
           {hasLoaded ? <div className={`${baseClassName}__header`}>
             <button className={`${baseClassName}__button ${baseClassName}__button--left`} onClick={() => history.goBack()}>
