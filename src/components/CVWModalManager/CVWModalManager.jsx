@@ -106,9 +106,11 @@ export const PreviewImage = () => {
 
 export const CVWModalManager = () => {
   const modalInfo = useSelector((store) => store.modalInfo)
-  const storeScenes = useSelector((store) => store.scenes)
   const lpColors = useSelector((store) => store.lp.colors)
   const dirtyNavIntent = useSelector(store => store.dirtyNavigationIntent)
+  const storeScenes = useSelector((store) => store.variantsCollection)
+  const selectedSceneUid = useSelector((store) => store.selectedSceneUid)
+  const currentSceneData = storeScenes?.find(item => item.sceneUid === selectedSceneUid)
   const selectedScenes = useSelector(store => {
     const { items: { colorMap } }: ColorMap = store.colors
     if (store.selectedSavedLivePaletteId) {
@@ -117,7 +119,6 @@ export const CVWModalManager = () => {
       return { ...expectSavedLivePaletteData, livePalette, savedSceneType: SCENE_TYPE.livePalette }
     }
   })
-  const sceneStatus = storeScenes.sceneStatus[storeScenes.type]
   const intl = useIntl()
   const dispatch = useDispatch()
   const btnRefList = useRef([])
@@ -185,15 +186,15 @@ export const CVWModalManager = () => {
     if (saveSceneName.trim() === '') {
       return false
     }
-    if (sceneStatus && storeScenes?.activeScenes) {
+    if (currentSceneData) {
       // @todo should I throw an error if no active scene or is this over kill? -RS
-      const currentSceneData = sceneStatus.find(item => item.id === storeScenes.activeScenes[0])
       let livePaletteColorsIdArray = []
       lpColors && lpColors.map(color => {
         livePaletteColorsIdArray.push(color.id)
       })
       hideModal()
-      dispatch(saveStockScene(uniqId, saveSceneName, currentSceneData, storeScenes.type, livePaletteColorsIdArray))
+      // @to do we may need to change ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE to another variable, the variable was store.scene.type from redux.
+      dispatch(saveStockScene(uniqId, saveSceneName, currentSceneData, ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE, livePaletteColorsIdArray))
       createConfirmSavedModal(intl, dispatch)
     }
   }
