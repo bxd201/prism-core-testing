@@ -12,7 +12,8 @@ import {
   sceneWorkspaces,
   currentWorkspace,
   useSmartMask,
-  showEditCustomScene, scenesCollection, variantsCollection, variantsLoading, selectedSceneUid
+  showEditCustomScene, scenesCollection, variantsCollection, variantsLoading, selectedSceneUid,
+  selectedVariantName
 } from './scenes'
 import { ingestedImageUrl, queuedImageUpload, uploads } from './uploads'
 import collectionSummaries from './collectionSummaries'
@@ -118,5 +119,6 @@ export default combineReducers({
   modalThumbnailColor,
   matchPhotoImage,
   matchPhotoImageDims,
-  colorsForSurfacesFromSavedScene
+  colorsForSurfacesFromSavedScene,
+  selectedVariantName
 })

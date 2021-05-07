@@ -23,8 +23,6 @@ import { SCENE_VARIANTS } from '../../constants/globals'
 import BatchImageLoader from '../MergeCanvas/BatchImageLoader'
 import type { FlatScene, FlatVariant } from '../../shared/types/Scene'
 export type SingleTintableSceneViewProps = {
-  // sceneVariants: FlatVariant[],
-  // palette: Color[]
   surfaceColorsFromParents: [],
   showClearButton?: boolean,
   customButton?: ComponentType,
@@ -40,7 +38,6 @@ export type SingleTintableSceneViewProps = {
 const tintableViewBaseClassName = 'tintable-view'
 
 const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
-  // By default use the first variant
   const { showClearButton, customButton, handleSurfacePaintedState, allowVariantSwitch, interactive,
     surfaceColorsFromParents, selectedSceneUid, scenesCollection, variantsCollection, selectedVarName } = props
 
@@ -52,7 +49,6 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
   const [backgroundUrls, setBackgroundUrls] = useState([])
   const livePaletteColors = useSelector(state => state['lp'])
   // ToDo : The following condition is for test purposes only, will be removed for the final version - PM
-  // const selectedSceneUid = props.fallbackSelectedSceneUID ? props.fallbackSelectedSceneUID : fallbackSelectedSceneUID
   const isScenePolluted = (paintedSurfaces) => {
     return !!paintedSurfaces.reduce((acc, curr) => (curr ? 1 : 0) + acc, 0)
   }
@@ -73,16 +69,13 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
   }, [scenesCollection, variantsCollection, selectedSceneUid])
 
   useEffect(() => {
-    // if there are any painted surfaces the scene is considered polluted
-    if (handleSurfacePaintedState && selectedSceneUid && variantsCollection?.length) {
+    if (handleSurfacePaintedState && selectedSceneUid && variantsCollection?.length && sceneVariants.length) {
       const colors = surfaceColors.map(color => {
-        // surface colors is a sparse vector, this copies a value if there is a color otherwise it passes null through -RS
         return color ? { ...color } : color
       })
-      const variantName = variantsCollection.filter(variant => variant.sceneUid === selectedSceneUid)[selectedVariantIndex].variantName
-      handleSurfacePaintedState(selectedSceneUid, variantName, colors)
+      handleSurfacePaintedState(selectedSceneUid, sceneVariants[selectedVariantIndex].variantName, colors)
     }
-  }, [surfaceColors, sceneVariants, selectedSceneUid, selectedVariantIndex, variantsCollection])
+  }, [surfaceColors, sceneVariants, selectedSceneUid, selectedVariantIndex])
 
   const getTintableScene = (backgroundImageUrl: string, variant: FlatVariant, scene: FlatScene, colors: Color[], lpColors) => {
     const surfaceUrls = []
@@ -152,7 +145,6 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
 
   const clearSurfaces = (e: SyntheticEvent) => {
     e.preventDefault()
-    // prevent click from tinting surface
     e.stopPropagation()
     setSurfaceColors(sceneVariants[selectedVariantIndex].surfaces.map(surface => null))
   }

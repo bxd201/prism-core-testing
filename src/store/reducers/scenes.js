@@ -37,8 +37,7 @@ import {
 } from '../actions/scenes'
 import { registerMask, updateMask } from '../masks/store'
 import { SCENE_VARIANTS } from 'constants/globals'
-import { SCENES_DATA_FETCHED, SET_VARIANTS_COLLECTION, SET_VARIANTS_LOADING } from '../actions/loadScenes'
-import type { FlatScene, FlatVariant } from '../actions/loadScenes'
+import { FlatScene, FlatVariant, SET_SELECTED_VARIANT_NAME, SCENES_DATA_FETCHED, SET_VARIANTS_COLLECTION, SET_VARIANTS_LOADING } from '../actions/loadScenes'
 
 type State = {
   sceneCollection: {
@@ -547,5 +546,12 @@ export const selectedSceneUid = (state: string | null = null, action: {type: str
     return action.payload
   }
 
+  return state
+}
+
+export const selectedVariantName = (state: string = '', action: {type: string, payload: string}) => {
+  if (action.type === SET_SELECTED_VARIANT_NAME) {
+    return action.payload
+  }
   return state
 }

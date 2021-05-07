@@ -8,7 +8,6 @@ export const shouldAllowFeature = (featureExclusions, feature) => {
 
   return featureExclusions.indexOf(feature) === -1
 }
-
 // @todo This validator allows us to understand the configuration rules and get ahead of configuration problems. This really needs a better home... -RS
 export const featureExclusionsConfigIsInValid = (featureExclusions) => {
   let violations = []
@@ -24,7 +23,7 @@ export const featureExclusionsConfigIsInValid = (featureExclusions) => {
   if (featureExclusions.indexOf(FEATURE_EXCLUSIONS.inspirationalPhotos) > -1 &&
     featureExclusions.indexOf(FEATURE_EXCLUSIONS.expertColorPicks) > -1 &&
     featureExclusions.indexOf(FEATURE_EXCLUSIONS.paintedPhotos) > -1) {
-    violations.push(`${FEATURE_EXCLUSIONS.inspirationalPhotos}, ${FEATURE_EXCLUSIONS.expertColorPicks} and ${FEATURE_EXCLUSIONS.paintedPhotos} creates an empty get inspired feature. 
+    violations.push(`${FEATURE_EXCLUSIONS.inspirationalPhotos}, ${FEATURE_EXCLUSIONS.expertColorPicks} and ${FEATURE_EXCLUSIONS.paintedPhotos} creates an empty get inspired feature.
     To disable all of these features remove the individual values and specify "getInspired" in the configuration.`)
   }
 

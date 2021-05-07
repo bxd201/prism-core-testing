@@ -5,7 +5,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
 import { useIntl, FormattedMessage } from 'react-intl'
 import { useHistory } from 'react-router-dom'
-
 import './SaveOptions.scss'
 import { ACTIVE_SCENE_LABELS_ENUM } from '../../store/actions/navigation'
 import SceneDownload from '../SceneDownload/SceneDownload'
@@ -15,14 +14,18 @@ import WithConfigurationContext from '../../contexts/ConfigurationContext/WithCo
 import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 import { createSaveSceneModal, createModalForEmptyLivePalette } from '../CVWModalManager/createModal'
 import { SAVE_OPTION } from '../CVWModalManager/constants.js'
+
 type SaveOptionsProps = {
-  config: any
+  config: any,
 }
 
 const saveOptionsBaseClassName = 'save-options'
 const saveOptionsItemsClassName = `${saveOptionsBaseClassName}__items`
 
 const SaveOptions = (props: SaveOptionsProps) => {
+  const [selectedSceneUid, variantsCollection, selectedVariantName, surfaceColors] = useSelector(store => {
+    return [store.selectedSceneUid, store.variantsCollection, store.selectedVariantName, store.modalThumbnailColor]
+  })
   const { config: { featureExclusions } } = props
   const { formatMessage } = useIntl()
   const intl = useIntl()
@@ -117,8 +120,14 @@ const SaveOptions = (props: SaveOptionsProps) => {
             {cvwFromConfig ? <SceneDownload {...{ buttonCaption: 'DOWNLOAD_MASK', getFlatImage: getFlatImage, activeComponent: activeSceneLabel, config: getDownloadStaticResourcesPath(cvwFromConfig) }} /> : <CircleLoader />}
           </div>
           : <div>
-            {/* scene info is deprecated -RS */ }
-            {cvwFromConfig ? <SceneDownload {...{ buttonCaption: 'DOWNLOAD_MASK', sceneInfo: null, activeComponent: activeSceneLabel, config: getDownloadStaticResourcesPath(cvwFromConfig) }} /> : <CircleLoader />}
+            {cvwFromConfig ? <SceneDownload {...{
+              selectedSceneUid: selectedSceneUid,
+              variantsCollection: variantsCollection,
+              selectedVariantName: selectedVariantName,
+              surfaceColors: surfaceColors,
+              buttonCaption: 'DOWNLOAD_MASK',
+              activeComponent: activeSceneLabel,
+              config: getDownloadStaticResourcesPath(cvwFromConfig) }} /> : <CircleLoader />}
           </div>) : null}
       { shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.documentSaving)
         ? <button onClick={handleSave}>
