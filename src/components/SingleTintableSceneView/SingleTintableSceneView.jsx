@@ -21,6 +21,7 @@ import './SingleTinatbleSceneView.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { SCENE_VARIANTS } from '../../constants/globals'
 import BatchImageLoader from '../MergeCanvas/BatchImageLoader'
+import type { FlatScene, FlatVariant } from '../../shared/types/Scene'
 export type SingleTintableSceneViewProps = {
   // sceneVariants: FlatVariant[],
   // palette: Color[]
@@ -30,16 +31,18 @@ export type SingleTintableSceneViewProps = {
   handleSurfacePaintedState?: Function,
   allowVariantSwitch?: boolean,
   interactive?: boolean,
-  fallbackSelectedSceneUID: string
+  selectedSceneUid: string,
+  scenesCollection: FlatScene,
+  variantsCollection: FlatVariant
 }
 
 const tintableViewBaseClassName = 'tintable-view'
 
 const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
   // By default use the first variant
-  const { showClearButton, customButton, handleSurfacePaintedState, allowVariantSwitch, interactive, surfaceColorsFromParents } = props
+  const { showClearButton, customButton, handleSurfacePaintedState, allowVariantSwitch, interactive,
+    surfaceColorsFromParents, selectedSceneUid, scenesCollection, variantsCollection } = props
 
-  const [variantsCollection, scenesCollection, fallbackSelectedSceneUID] = useSelector(store => [store.variantsCollection, store.scenesCollection, store.selectedSceneUid])
   const [selectedScene, setSelectedScene] = useState(null)
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0)
   const [sceneVariants, setSceneVariants] = useState([])
@@ -48,22 +51,23 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
   const [backgroundUrls, setBackgroundUrls] = useState([])
   const livePaletteColors = useSelector(state => state['lp'])
   // ToDo : The following condition is for test purposes only, will be removed for the final version - PM
-  const selectedSceneUid = props.fallbackSelectedSceneUID ? props.fallbackSelectedSceneUID : fallbackSelectedSceneUID
+  // const selectedSceneUid = props.fallbackSelectedSceneUID ? props.fallbackSelectedSceneUID : fallbackSelectedSceneUID
   const isScenePolluted = (paintedSurfaces) => {
     return !!paintedSurfaces.reduce((acc, curr) => (curr ? 1 : 0) + acc, 0)
   }
 
   useEffect(() => {
-    // Set up defaults after we have ensured they have loaded
-    if (selectedSceneUid && !sceneVariants.length) {
+    if (selectedSceneUid && variantsCollection) {
+      setBackgroundLoaded(false)
       const variants = variantsCollection.filter(variant => variant.sceneUid === selectedSceneUid)
       const { surfaces } = variants[selectedVariantIndex]
       setSelectedScene(scenesCollection.find(scene => scene.uid === selectedSceneUid))
       setSceneVariants(variants)
       setSurfaceColors(surfaces.map((surface, i) => null))
+      console.table(variants.map(variant => variant.image))
       setBackgroundUrls(variants.map(variant => variant.image))
     }
-  }, [variantsCollection, selectedSceneUid])
+  }, [scenesCollection, variantsCollection, selectedSceneUid])
 
   useEffect(() => {
     // if there are any painted surfaces the scene is considered polluted
@@ -170,7 +174,7 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
   return (
     <DndProvider backend={HTML5Backend}>
       <div className={`${tintableViewBaseClassName}__wrapper`}>
-        {<BatchImageLoader urls={backgroundUrls} handleImagesLoaded={handleImagesLoaded} />}
+        <BatchImageLoader key={selectedSceneUid} urls={backgroundUrls} handleImagesLoaded={handleImagesLoaded} />
         {backgroundLoaded ? getTintableScene(backgroundUrls[selectedVariantIndex], sceneVariants[selectedVariantIndex], selectedScene, surfaceColors, livePaletteColors) : <div className={`${tintableViewBaseClassName}__loader-wrapper`}><CircleLoader /></div>}
         {backgroundLoaded && showClearButton && isScenePolluted(surfaceColors) ? <button className={`${tintableViewBaseClassName}__clear-areas-btn`} onClick={clearSurfaces}>
           <div className={`${tintableViewBaseClassName}__clear-areas-btn__icon`}><FontAwesomeIcon size='lg' icon={['fa', 'eraser']} /></div>

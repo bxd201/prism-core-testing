@@ -47,6 +47,11 @@ import SingleTintableSceneView from '../../SingleTintableSceneView/SingleTintabl
 import SceneSelectorNavButton from '../../SingleTintableSceneView/SceneSelectorNavButton'
 import { SCENES_ENDPOINT } from '../../../constants/endpoints'
 import ImageIngestView from '../../MatchPhoto/ImageIngestView'
+import { setIngestedImage } from '../../../store/actions/user-uploads'
+import { PaintScene } from '../../PaintScene/PaintScene'
+import { setLayersForPaintScene, WORKSPACE_TYPES } from '../../../store/actions/paintScene'
+import type { ReferenceDimensions } from '../../../shared/types/Scene'
+import { useIntl } from 'react-intl'
 
 type CVWPropsType = {
   maxSceneHeight: number,
@@ -72,6 +77,10 @@ export const CVW = (props: CVWPropsType) => {
   const wrapperRef = useRef()
   const ingestedImageUrl = useSelector(store => store.ingestedImageUrl)
   const shouldShowGlobalDestroyWarning = useSelector(store => store.shouldShowGlobalDestroyWarning)
+  const paintSceneWorkspace = useSelector(store => store.paintSceneWorkspace)
+  const activeColor = useSelector(store => store.lp.activeColor)
+  const intl = useIntl()
+  const [variantsCollection, scenesCollection, selectedSceneUid] = useSelector(store => [store.variantsCollection, store.scenesCollection, store.selectedSceneUid])
 
   // Use this hook to push any facet level embedded data to redux and handle any initialization
   useEffect(() => {
@@ -133,6 +142,10 @@ export const CVW = (props: CVWPropsType) => {
     dispatch(setModalThumbnailColor(surfacesColor))
   }
 
+  const setPaintScenePolluted = () => {
+    dispatch(setIsScenePolluted('POLLUTED_PAINT_SCENE'))
+  }
+
   // @todo this will be unnecessary in the future, when the way scene management is done is readdressed -RS
   const shouldHideSceneManagerDiv = (path: string) => {
     if (path === '/') {
@@ -173,6 +186,22 @@ export const CVW = (props: CVWPropsType) => {
     console.log('opening scene from preview:', payload)
   }
 
+  const goToPaintScene = (imageUrl: string, width: number, height: number, refDims: ReferenceDimensions) => {
+    try {
+      URL.revokeObjectURL(ingestedImageUrl)
+      dispatch(setIngestedImage())
+      dispatch(setLayersForPaintScene(imageUrl, [], [], width, height, WORKSPACE_TYPES.generic, 0, '', []))
+      dispatch(setActiveSceneLabel(ACTIVE_SCENE_LABELS_ENUM.PAINT_SCENE))
+      history.push(ROUTES_ENUM.ACTIVE)
+    } catch (e) {
+      console.warn(`Url specified could not be revoked: ${e.message}`)
+    }
+  }
+
+  const goToMatchPhoto = (imageUrl: string, width: number, height: number, refDims: ReferenceDimensions) => {
+    console.log(`url:: ${imageUrl} width ::${width} height::${height}`, refDims)
+  }
+
   return (
     <>
       {scenes ? <SceneBlobLoader scenes={scenes} variants={variants} initHandler={handleBlobLoaderInit} handleBlobsLoaded={handleSceneSurfacesLoaded} handleError={handleSceneBlobLoaderError} /> : null}
@@ -189,10 +218,10 @@ export const CVW = (props: CVWPropsType) => {
                 <Route path={ROUTES_ENUM.COLOR_DETAILS} render={() => <ColorDetails />} />
                 <Route path={`${ROUTES_ENUM.COLOR_WALL}(/.*)?`} render={() => <ColorWallPage displayAddButton displayInfoButton displayDetailsLink={false} />} />
                 <Route path={ROUTES_ENUM.COLOR_COLLECTION} render={() => <ColorCollections isExpertColor={false} {...location.state} />} />
-                <Route path={ROUTES_ENUM.UPLOAD_MATCH_PHOTO} />
+                {/* <Route path={ROUTES_ENUM.UPLOAD_MATCH_PHOTO} /> */}
                 {/* <Route path={ROUTES_ENUM.UPLOAD_PAINT_SCENE} render={() => <ImageIngestView imageUrl={imageUrl} />} /> */}
-                <Route path={ROUTES_ENUM.ACTIVE_PAINT_SCENE} render={() => <ImageIngestView imageUrl={ingestedImageUrl} maxSceneHeight={maxSceneHeight} />} />
-                {/* <Route path={ROUTES_ENUM.ACTIVE_MATCH_PHOTO}></Route> */}
+                <Route path={ROUTES_ENUM.ACTIVE_PAINT_SCENE} render={() => <ImageIngestView handleDismissCallback={goToPaintScene} imageUrl={ingestedImageUrl} maxSceneHeight={maxSceneHeight} />} />
+                <Route path={ROUTES_ENUM.ACTIVE_MATCH_PHOTO} render={() => <ImageIngestView handleDismissCallback={goToMatchPhoto} imageUrl={ingestedImageUrl} maxSceneHeight={maxSceneHeight} />} />
                 <Route path={ROUTES_ENUM.USE_OUR_IMAGE} render={() => <SampleScenesWrapper isColorTinted activateScene={handleSceneSelection} />} />
                 <Route path={ROUTES_ENUM.EXPERT_COLORS} render={() => <ExpertColorPicks isExpertColor />} />
                 <Route path={ROUTES_ENUM.COLOR_FORM_IMAGE} render={() => <InspiredScene />} />
@@ -207,13 +236,21 @@ export const CVW = (props: CVWPropsType) => {
               /* This div has multiple responsibilities in the DOM tree. It cannot be removed, moved, or changed without causing regressions. */
                 style={{ display: shouldHideSceneManagerDiv(location.pathname) ? 'none' : 'block' }}
               >
-                {/* @todo when this is not a stock scene it should render paint scene, MUST REWRITE IMAGEROTATECONTAINER!!!  -RS */}
                 {activeSceneLabel === ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE ? <SingleTintableSceneView
                   allowVariantSwitch
                   showClearButton
                   interactive
+                  selectedSceneUid={selectedSceneUid}
+                  variantsCollection={variantsCollection}
+                  scenesCollection={scenesCollection}
                   handleSurfacePaintedState={handleSurfacePaintedState}
-                  customButton={<SceneSelectorNavButton clickHandler={navigateToSceneSelector} />} /> : null}
+                  customButton={<SceneSelectorNavButton clickHandler={navigateToSceneSelector} />} /> : paintSceneWorkspace
+                  ? <PaintScene
+                    maxSceneHeight={maxSceneHeight}
+                    workspace={paintSceneWorkspace}
+                    lpActiveColor={activeColor}
+                    intl={intl}
+                    setActiveScenePolluted={setPaintScenePolluted} /> : null}
               </div>
             </div>
           </>

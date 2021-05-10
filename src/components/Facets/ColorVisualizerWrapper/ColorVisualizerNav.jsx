@@ -15,7 +15,6 @@ import WithConfigurationContext from '../../../contexts/ConfigurationContext/Wit
 import { createNavigationWarningModal } from '../../CVWModalManager/createModal'
 import {
   cleanupNavigationIntent,
-  setIsScenePolluted,
   setNavigationIntent,
   setDirtyNavigationIntent, ACTIVE_SCENE_LABELS_ENUM
 } from '../../../store/actions/navigation'
@@ -271,16 +270,15 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
         title: messages['NAV_LINKS.MATCH_A_PHOTO'],
         content: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.MATCH_A_PHOTO'],
         onClick: () => {
-          const activate = () => {
-            dispatch(setIsScenePolluted())
-            history.push('/upload/match-photo')
+          dispatch(setNavigationIntent(ROUTES_ENUM.ACTIVE_MATCH_PHOTO))
+          if (isActiveScenePolluted) {
+            dispatch(showWarningModal())
+          } else {
             if (hiddenImageUploadInput.current) {
               hiddenImageUploadInput.current.value = ''
               hiddenImageUploadInput.current.click()
             }
           }
-          // @todo activate should not be called on every click, we should only have to set the value for this once when the app is bootstrapped.  -RS
-          isActiveScenePolluted ? dispatch(showWarningModal(activate)) : activate()
         }
       }
     ]

@@ -199,6 +199,7 @@ const MyIdeaPreview = ({ openScene }: MyIdeaPreviewProps) => {
       }
       history.push('/active')
     }
+    // @todo I think this api no longer accepts a callback -RS
     isActivePaintScenePolluted ? dispatch(showWarningModal(open)) : open()
   }
 
