@@ -64,7 +64,6 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
       setSelectedScene(scenesCollection.find(scene => scene.uid === selectedSceneUid))
       setSceneVariants(variants)
       setSurfaceColors(surfaces.map((surface, i) => null))
-      console.table(variants.map(variant => variant.image))
       setBackgroundUrls(variants.map(variant => variant.image))
     }
   }, [scenesCollection, variantsCollection, selectedSceneUid])
