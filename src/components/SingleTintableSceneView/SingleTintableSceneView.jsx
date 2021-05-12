@@ -64,17 +64,20 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
       setSelectedScene(scenesCollection.find(scene => scene.uid === selectedSceneUid))
       setSceneVariants(variants)
       setSurfaceColors(surfaces.map((surface, i) => null))
-      console.table(variants.map(variant => variant.image))
       setBackgroundUrls(variants.map(variant => variant.image))
     }
   }, [scenesCollection, variantsCollection, selectedSceneUid])
 
   useEffect(() => {
     // if there are any painted surfaces the scene is considered polluted
-    if (handleSurfacePaintedState) {
-      handleSurfacePaintedState(surfaceColors)
+    if (handleSurfacePaintedState && selectedSceneUid && variantsCollection?.length) {
+      const colors = surfaceColors.map(color => {
+        // surface colors is a sparse vector, this copies a value if there is a color otherwise it passes null through -RS
+        return color ? { ...color } : color
+      })
+      handleSurfacePaintedState(selectedSceneUid, variantsCollection[selectedVariantIndex].variantName, colors)
     }
-  }, [surfaceColors, sceneVariants, selectedSceneUid])
+  }, [surfaceColors, sceneVariants, selectedSceneUid, selectedVariantIndex, variantsCollection])
 
   const getTintableScene = (backgroundImageUrl: string, variant: FlatVariant, scene: FlatScene, colors: Color[], lpColors) => {
     const surfaceUrls = []
@@ -92,13 +95,15 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
       shadows.push(shadow || null)
     })
 
-    const updateSurfaceColor = (surfaceIndex: number, color: Color) => {
-      console.table('color', color)
-      const { brandKey, id, colorNumber, red, blue, green, hex, lab: { L, A, B } } = color
+    const updateSurfaceColor = (surfaceIndex: number, selectedColor: Color) => {
+      const { brandKey, id, colorNumber, red, blue, green, hex, lab: { L, A, B } } = selectedColor
       const newSurfaceColors = surfaceColors.map((color, i) => {
-        const newColor = color ? { ...color } : null
-        return surfaceIndex === i ? { brandKey, id, colorNumber, red, blue, green, L, A, B, hex } : newColor
+        if (surfaceIndex === i) {
+          return selectedColor ? { brandKey, id, colorNumber, red, blue, green, L, A, B, hex } : null
+        }
+        return color
       })
+
       setSurfaceColors(newSurfaceColors)
     }
 
