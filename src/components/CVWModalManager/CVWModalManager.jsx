@@ -190,12 +190,17 @@ export const CVWModalManager = () => {
     if (currentSceneData) {
       // @todo should I throw an error if no active scene or is this over kill? -RS
       let livePaletteColorsIdArray = []
+      const saveSceneData = {}
+      const { sceneUid, variantName, surfaces } = currentSceneData
+      saveSceneData.id = sceneUid
+      saveSceneData.variant = variantName
+      saveSceneData.surfaces = surfaces
       lpColors && lpColors.map(color => {
         livePaletteColorsIdArray.push(color.id)
       })
       hideModal()
       // @to do we may need to change ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE to another variable, the variable was store.scene.type from redux.
-      dispatch(saveStockScene(uniqId, saveSceneName, currentSceneData, ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE, livePaletteColorsIdArray))
+      dispatch(saveStockScene(uniqId, saveSceneName, saveSceneData, ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE, livePaletteColorsIdArray))
       createConfirmSavedModal(intl, dispatch)
     }
   }

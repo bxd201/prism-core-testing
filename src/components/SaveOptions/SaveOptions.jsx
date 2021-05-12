@@ -73,7 +73,7 @@ const SaveOptions = (props: SaveOptionsProps) => {
 
   const handleSave = useCallback((e: SyntheticEvent) => {
     e.preventDefault()
-    if (((pathname === '/test') || (pathname === '/active/paint-scene')) && !toggleCompareColor) {
+    if (((pathname === '/active') || (pathname === '/active/paint-scene')) && !toggleCompareColor) {
       if (lpColors.length !== 0) {
         const saveType = ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE === activeSceneLabel ? SAVE_OPTION.SAVE_STOCK_SCENE : SAVE_OPTION.SAVE_PAINT_SCENE
         createSaveSceneModal(intl, dispatch, activeSceneLabel, saveType)
