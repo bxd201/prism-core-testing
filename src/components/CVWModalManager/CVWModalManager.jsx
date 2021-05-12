@@ -29,6 +29,7 @@ export const globalModalPreviewImageClassName = `${globalModalClassName}__previe
 export const PreviewImage = () => {
   const modalInfo = useSelector((store) => store.modalInfo)
   const selectedSceneUid = useSelector((store) => store.selectedSceneUid)
+  const scenesCollection = useSelector((store) => store.scenesCollection)
   const surfaceColors = useSelector(state => state.modalThumbnailColor)
   const lpColors = useSelector((store) => store.lp.colors)
   const scenes = useSelector((store) => store.variantsCollection)
@@ -48,7 +49,7 @@ export const PreviewImage = () => {
     })
 
     return <>
-      {currentSceneData && <div style={{ maxHeight: '66px' }}><SingleTintableSceneView surfaceColorsFromParents={surfaceColors} selectedSceneUID={selectedSceneUid} allowVariantSwitch={false} interactive={false} /></div>}
+      {currentSceneData && <div style={{ maxHeight: '66px' }}><SingleTintableSceneView surfaceColorsFromParents={surfaceColors} variantsCollection={scenes} scenesCollection={scenesCollection} selectedSceneUid={selectedSceneUid} allowVariantSwitch={false} interactive={false} /></div>}
       {showLivePalette && <div style={{ display: 'flex', marginTop: '1px' }}>{livePaletteColorsDiv}</div>}
     </>
   }
