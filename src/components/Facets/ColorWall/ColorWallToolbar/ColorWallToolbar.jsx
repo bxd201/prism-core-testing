@@ -89,7 +89,7 @@ export default () => {
           />
           <Select
             disabled={visibleSections.length < 2}
-            placeholderText={activeSection === primeColorWall ? messages['EXPLORE_COLLECTIONS'] : activeSection}
+            placeholderText={(activeSection === primeColorWall || !visibleSections.includes(activeSection)) ? messages['EXPLORE_COLLECTIONS'] : activeSection}
             options={visibleSections
               .filter(s => s !== activeSection)
               .map(label => ({ label, link: generateColorWallPageUrl(label) }))
