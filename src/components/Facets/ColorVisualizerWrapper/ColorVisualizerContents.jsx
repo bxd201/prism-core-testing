@@ -50,7 +50,7 @@ import ImageIngestView from '../../MatchPhoto/ImageIngestView'
 import { setIngestedImage } from '../../../store/actions/user-uploads'
 import { PaintScene } from '../../PaintScene/PaintScene'
 import { setLayersForPaintScene, WORKSPACE_TYPES } from '../../../store/actions/paintScene'
-import type { ReferenceDimensions } from '../../../shared/types/Scene'
+import type { MiniColor, ReferenceDimensions } from '../../../shared/types/Scene'
 import { useIntl } from 'react-intl'
 
 type CVWPropsType = {
@@ -136,10 +136,11 @@ export const CVW = (props: CVWPropsType) => {
     return <LandingPage />
   }
 
-  const handleSurfacePaintedState = (surfacesColor: boolean) => {
-    const isScenePolluted = !!surfacesColor.reduce((acc, curr) => (curr ? 1 : 0) + acc, 0)
+  const handleSurfacePaintedState = (selectedSceneUid: string, variantName: string, surfaceColors: MiniColor[]) => {
+    // @todo These params can be used for download and save. State can be local to this component -RS
+    const isScenePolluted = !!surfaceColors.reduce((acc, curr) => (curr ? 1 : 0) + acc, 0)
     dispatch(setIsScenePolluted(isScenePolluted ? 'POLLUTED_STOCK_SCENE' : ''))
-    dispatch(setModalThumbnailColor(surfacesColor))
+    dispatch(setModalThumbnailColor(surfaceColors))
   }
 
   const setPaintScenePolluted = () => {
@@ -176,14 +177,12 @@ export const CVW = (props: CVWPropsType) => {
     // ToDo : Navigate to the more scenes screen - PM
   }
 
-  // @todo implement handler for sample sceneWrapper -RS
   const handleSceneSelection = (payload) => {
-    console.log('handling scene selection:', payload)
+    // @todo implement handler for sample sceneWrapper -RS
   }
 
-  // @todo reimplement -RS
   const openSceneFromPreview = (payload) => {
-    console.log('opening scene from preview:', payload)
+    // @todo reimplement -RS
   }
 
   const goToPaintScene = (imageUrl: string, width: number, height: number, refDims: ReferenceDimensions) => {
@@ -199,7 +198,7 @@ export const CVW = (props: CVWPropsType) => {
   }
 
   const goToMatchPhoto = (imageUrl: string, width: number, height: number, refDims: ReferenceDimensions) => {
-    console.log(`url:: ${imageUrl} width ::${width} height::${height}`, refDims)
+    // @todo - implement route handling -RS
   }
 
   return (
@@ -262,6 +261,7 @@ export const CVW = (props: CVWPropsType) => {
             <LivePalette />
           </div>
           <div className='cvw__root-container__footer--secondary'>
+            {/* @todo params could be passed in for save and download -RS */}
             <SaveOptions />
           </div>
         </div>

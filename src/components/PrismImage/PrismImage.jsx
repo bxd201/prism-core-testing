@@ -11,6 +11,13 @@ type PrismImageProps = {
   scalingWidth: number
 }
 
+export type PrismImageData = {
+  data: ImageData,
+  width: number,
+  height: number,
+  isPortrait: boolean
+}
+
 const PrismImage = forwardRef((props: PrismImageProps, ref) => {
   const intl = useIntl()
   const canvasRef = useRef()
