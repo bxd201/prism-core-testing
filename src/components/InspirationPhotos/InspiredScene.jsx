@@ -7,9 +7,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheckCircle, faTrash } from '@fortawesome/pro-solid-svg-icons'
 import { faPlusCircle } from '@fortawesome/pro-light-svg-icons'
 
-type InspiredProps = { data: Object, isActivedPage: boolean }
+type InspiredSceneProps = {
+ data: { img: string, initPins: { x: number, y: number }[]}
+}
 
-export default ({ isActivedPage, data }: InspiredProps) => {
+const InspiredScene = ({ data: { img, initPins } }: InspiredSceneProps) => {
   const dispatch = useDispatch()
 
   const livePaletteColors = useSelector(store => store.lp.colors)
@@ -21,7 +23,7 @@ export default ({ isActivedPage, data }: InspiredProps) => {
     <Prism style={{ padding: '0.125rem', marginBottom: '0.75rem' }}>
       <ImageColorPicker
         colors={colors}
-        initialPinLocations={data.initPins.map(pin => ({ x: pin.x * 100, y: pin.y * 100 }))}
+        initialPinLocations={initPins.map(pin => ({ x: pin.x * 100, y: pin.y * 100 }))}
         removeButtonContent={<FontAwesomeIcon icon={faTrash} style={{ display: 'inline-block' }} />}
         pinTemplate={
           <ColorPin
@@ -32,8 +34,10 @@ export default ({ isActivedPage, data }: InspiredProps) => {
           />
         }
       >
-        <img src={data.img} alt='' />
+        <img src={img} alt='' />
       </ImageColorPicker>
     </Prism>
   )
 }
+
+export default InspiredScene
