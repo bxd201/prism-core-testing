@@ -1,0 +1,106 @@
+.image-rotate-terms-modal {
+  &__wrapper {
+    align-content: center;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    left: 50%;
+    margin-left: -9.5rem;
+    position: absolute;
+    right: 0;
+    text-align: center;
+    top: 0;
+    width: 19rem;
+    z-index: 1000;
+    &__container {
+      background: var(getThemeColor('light.lightest'));
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2em;
+      margin-top: 6px;
+      &--inactive {
+        display: none;
+      }
+    }
+    &__loader {
+      color: var(getThemeColor('secondary'));
+      display: block;
+      line-height: 1.2em;
+      margin-top: 6px;
+    }
+    &__tools {
+      margin-top: 6px;
+      &__message {
+        color: var(getThemeColor('black'));
+        margin-bottom: 6px;
+        padding: .75em;
+      }
+      &__rotate-arrow {
+        background: var(getThemeColor('white'));
+        border: 1px solid transparent;
+        display: inline-block;
+        font-size: 3em;
+        height: 48px;
+        margin-right: 10px;
+        outline: none;
+        padding: 0;
+        width: 48px;
+        &:focus {
+          outline-color: var(getThemeColor('secondary'));
+          outline-style: solid;
+          outline-width: 2px;
+        }
+      }
+    }
+    &__agree-terms {
+      height: 4em;
+      padding: 1em;
+      text-align: center;
+      vertical-align: middle;
+      &__checkbox-label {
+        cursor: pointer;
+        outline: none;
+        &:focus {
+          outline-color: var(getThemeColor('secondary'));
+          outline-style: solid;
+          outline-width: 2px;
+        }
+      }
+      &__text {
+        border: none;
+        flex: 1 0 auto;
+        width: 62%;
+        padding: 0 0.5em;
+        a {
+          text-decoration: underline;
+          color: var(getThemeColor('primary'))
+        }
+      }
+      &__accept {
+        background: var(getThemeColor('white'));
+        border: 1px solid var(getThemeColor('light'));
+        color: var(getThemeColor('light'));
+        cursor: default;
+        display: inline-block;
+        flex: 1 0 auto;
+        line-height: 1.25em;
+        margin: -1em auto 1.75em;
+        outline: none;
+        padding: .75em 1.75em;
+        text-align: center;
+        width: auto;
+        &--active {
+          border: 1px solid var(getThemeColor('secondary'));
+          color: var(getThemeColor('secondary'));
+          cursor: pointer;
+          &:focus {
+            outline-style: solid;
+            outline-color: var(getThemeColor('secondary'));
+            outline-width: 2px;
+          }
+        }
+      }
+    }
+  }
+}

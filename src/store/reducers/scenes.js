@@ -27,7 +27,6 @@ import {
   TOGGLE_EDIT_MODE,
   EDIT_MASK,
   UPDATE_MASK,
-  UNPAINT_SCENE_SURFACES,
   TOGGLE_COLOR_DETAILS_PAGE,
   SET_SELECTED_SCENE_VARIANT_CHANGED,
   UNSET_SELECTED_SCENE_VARIANT_CHANGED,
@@ -279,50 +278,6 @@ export const scenes = (state: Object = initialState, action: { type: string, pay
         })
       })
       return newState
-
-    case UNPAINT_SCENE_SURFACES:
-      if (state.isColorDetailsPage) {
-        return Object.assign({}, state, {
-          sceneStatusColorDetails: Object.assign({}, state.sceneStatusColorDetails, {
-            [state.type]: state.sceneStatusColorDetails[state.type].map((_scene: SceneStatus) => {
-              if (_scene.id === action.payload.sceneId) {
-                return Object.assign({}, _scene, {
-                  surfaces: _scene.surfaces.map((_surface: SurfaceStatus) => {
-                    const newSurface = Object.assign({}, _surface)
-                    if (_surface.color) {
-                      delete newSurface.color
-                    }
-
-                    return newSurface
-                  })
-                })
-              }
-
-              return _scene
-            })
-          })
-        })
-      }
-      return Object.assign({}, state, {
-        sceneStatus: Object.assign({}, state.sceneStatus, {
-          [state.type]: state.sceneStatus[state.type].map((_scene: SceneStatus) => {
-            if (_scene.id === action.payload.sceneId) {
-              return Object.assign({}, _scene, {
-                surfaces: _scene.surfaces.map((_surface: SurfaceStatus) => {
-                  const newSurface = Object.assign({}, _surface)
-                  if (_surface.color) {
-                    delete newSurface.color
-                  }
-
-                  return newSurface
-                })
-              })
-            }
-
-            return _scene
-          })
-        })
-      })
 
     case PAINT_ALL_SCENE_SURFACES:
       if (state.isColorDetailsPage) {

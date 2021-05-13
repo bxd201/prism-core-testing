@@ -2,7 +2,6 @@
 import React from 'react'
 
 import LivePalette from '../../LivePalette/LivePalette'
-import SceneManager from '../../SceneManager/SceneManager'
 import facetBinder from 'src/facetSupport/facetBinder'
 import { facetBinderDefaultProps, type FacetBinderMethods } from 'src/facetSupport/facetInstance'
 import { type FacetPubSubMethods, facetPubSubDefaultProps } from 'src/facetSupport/facetPubSub'
@@ -14,7 +13,7 @@ type Props = FacetBinderMethods & FacetPubSubMethods & {
 export function Tinter ({ sceneSet }: Props) {
   return (
     <React.Fragment>
-      <SceneManager type={sceneSet} />
+      {/* @todo replace with singletintablesceneview -RS */}
       <LivePalette />
     </React.Fragment>
   )

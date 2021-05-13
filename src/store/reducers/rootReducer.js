@@ -30,11 +30,10 @@ import {
   showSaveSceneModal,
   saveSceneName,
   selectedStockSceneId,
-  selectedSceneStatus,
   showSavedConfirmModal,
   showSavedCustomSceneSuccess,
   showDeleteConfirmModal,
-  selectedSavedLivePaletteId
+  selectedSavedLivePaletteId, colorsForSurfacesFromSavedScene
 } from './savedScenes'
 import { user } from './user'
 import { paintSceneWorkspace } from './paintSceneWorkspace'
@@ -51,6 +50,7 @@ import {
   scenePolluted, shouldShowGlobalDestroyWarning, stockSceneCache, forwardIntent
 } from './navigation'
 import { modalInfo, modalThumbnailColor } from './globalModal'
+import { matchPhotoImage, matchPhotoImageDims } from './matchPhoto'
 
 export default combineReducers({
   collectionSummaries,
@@ -82,7 +82,6 @@ export default combineReducers({
   showSaveSceneModal,
   saveSceneName,
   selectedStockSceneId,
-  selectedSceneStatus,
   // For scene manager
   showSavedConfirmModal,
   // For paint scene
@@ -116,5 +115,8 @@ export default combineReducers({
   ingestedImageUrl,
   forwardIntent,
   modalInfo,
-  modalThumbnailColor
+  modalThumbnailColor,
+  matchPhotoImage,
+  matchPhotoImageDims,
+  colorsForSurfacesFromSavedScene
 })
