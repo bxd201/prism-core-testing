@@ -1,5 +1,5 @@
 // @flow
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, ComponentType } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { GLOBAL_MODAL_STYLE, DANGER, PRIMARY } from './constants.js'
 import { KEY_CODES } from 'src/constants/globals'
@@ -27,10 +27,12 @@ const getGlobalModalClass = (type) => {
   }
 }
 
-type ModalProps = { shouldDisplayModal: boolean, previewImage: Component, styleType: String, title: String, description: String, allowInput: boolean, actions: Array, fn: Function, setInputValue: Function }
+type ModalProps = { shouldDisplayModal: boolean, previewImage: ComponentType, styleType: String, title: String, description: String, allowInput: boolean, actions: Array, fn: Function, setInputValue: Function, inputValue: string, resetInputValue: Function}
 export const Modal = (props: ModalProps) => {
-  const { shouldDisplayModal, previewImage, styleType, title, description, allowInput, actions, fn, setInputValue } = props
+  const { shouldDisplayModal, previewImage, styleType, title, description, allowInput, actions, fn, setInputValue, inputValue, resetInputValue } = props
   const btnRefList = useRef([])
+
+  useEffect(() => resetInputValue(), [shouldDisplayModal])
 
   useEffect(() => {
     if (btnRefList.current && btnRefList.current.length) {
@@ -78,7 +80,7 @@ export const Modal = (props: ModalProps) => {
           <div className={`${globalModalInnerClassName}__content`}>
             {title ? <div className={globalModalTitleClassName}>{title}</div> : null}
             {description ? <div className={globalModalDescriptionClassName}>{description}</div> : null}
-            {allowInput ? <div className={globalModalInputWrapperClassName}><input className={`${globalModalTextInputClassName}`} onChange={setInputVal} />
+            {allowInput ? <div className={globalModalInputWrapperClassName}><input className={`${globalModalTextInputClassName}`} onChange={setInputVal} value={inputValue} />
               <label aria-label='clear text' className={`${globalModalInputLabelClassName}`} tabIndex='0' role='button' htmlFor='clearModalInput' onClick={clearInputVal} onKeyDown={clearInputVal} onMouseDown={(e: SyntheticEvent) => e.preventDefault()}>
                 <div>
                   <input id='clearModalInput' tabIndex='-1' className='visually-hidden' />

@@ -1,0 +1,28 @@
+// @flow
+import type { MiniColor } from './Scene'
+
+export type SavesStockSceneMetaData = {
+    // A UID to select this data by when filtering in my ideas
+    id: string,
+    // The name of the scene in myideas
+    name: string,
+    // @todo used to load scenes, may not be needed anymore -RS
+    sceneFetchType: string,
+    // Used by my ideas to determine the hydration path
+    sceneType: string,
+    // Used to hydrate the live palette
+    livePaletteColorsIdArray: string[],
+    // used to purge data during bootstrap
+    updated: number,
+    // Data needed to hydrate the stock scene
+    scene: {
+      // The id of the scene from the api
+      sceneDataId: number | string,
+      // scene type to which the scene belongs, with the sceneDataId this make s a unique compound key
+      sceneDataType: string,
+      // colors needed to hydrate the stock scene
+      surfaceColors: MiniColor[],
+      // This is used to filter out the variant to display
+      variantName: string
+    }
+  }
