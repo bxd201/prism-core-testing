@@ -37,7 +37,7 @@ export const SampleScenesWrapper = ({ isColorTinted, setHeader, activateScene }:
     dispatch(cacheCarousel([initPosition, tabId]))
     dispatch(setSelectedSceneUid(uid))
     dispatch(setActiveSceneLabel(ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE))
-    history.push('/test')
+    history.push('/active')
   }
 
   const getClientMinHeight = (height) => {
@@ -91,6 +91,7 @@ const StaticTintSceneWrapper = ({ data, isColorTinted, handleSelectedSceneUid, i
   const sceneWrapperRef: RefObject = useRef()
   const tintColor = isColorTinted ? void (0) : null
   const allColors = useSelector(state => state?.colors?.items?.colorMap)
+  const [variantsCollection, scenesCollection] = useSelector(store => [store.variantsCollection, store.scenesCollection])
   const sceneSurfaces = data.surfaces
   const surfaceColors: SurfaceStatus[] = sceneSurfaces.map((surface: Surface) => {
     const key = surface.colorId && ((surface.colorId).toString())
@@ -106,7 +107,7 @@ const StaticTintSceneWrapper = ({ data, isColorTinted, handleSelectedSceneUid, i
   return (
     <>
       <div className='static__scene__image__wrapper' ref={sceneWrapperRef}>
-        <SingleTintableSceneView surfaceColors={surfaceColors} fallbackSelectedSceneUID={data?.sceneUid} allowVariantSwitch={false} interactive={false} />
+        <SingleTintableSceneView surfaceColorsFromParents={surfaceColors} selectedSceneUid={data?.sceneUid} variantsCollection={variantsCollection} scenesCollection={scenesCollection} allowVariantSwitch={false} interactive={false} />
       </div>
       <button tabIndex={(isActivedPage) ? '0' : '-1'} className='static__scene__paint__btn' onClick={() => handleSelectedSceneUid(data?.sceneUid)}>
         <FontAwesomeIcon className={`cvw__btn-overlay__svg`} size='lg' icon={['fal', 'square-full']} />

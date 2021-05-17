@@ -1,5 +1,5 @@
 // @flow
-import React, { useContext, useEffect, useRef } from 'react'
+import React, { useState, useContext, useEffect, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Switch, Route, useLocation, useHistory } from 'react-router-dom'
 import { ColorCollections } from '../../ColorCollections/ColorCollections'
@@ -81,6 +81,7 @@ export const CVW = (props: CVWPropsType) => {
   const activeColor = useSelector(store => store.lp.activeColor)
   const intl = useIntl()
   const [variantsCollection, scenesCollection, selectedSceneUid] = useSelector(store => [store.variantsCollection, store.scenesCollection, store.selectedSceneUid])
+  const [selectedVarName, setSelectedVarName] = useState('')
 
   // Use this hook to push any facet level embedded data to redux and handle any initialization
   useEffect(() => {
@@ -141,6 +142,7 @@ export const CVW = (props: CVWPropsType) => {
     const isScenePolluted = !!surfaceColors.reduce((acc, curr) => (curr ? 1 : 0) + acc, 0)
     dispatch(setIsScenePolluted(isScenePolluted ? 'POLLUTED_STOCK_SCENE' : ''))
     dispatch(setModalThumbnailColor(surfaceColors))
+    setSelectedVarName(variantName)
   }
 
   const setPaintScenePolluted = () => {
@@ -208,7 +210,7 @@ export const CVW = (props: CVWPropsType) => {
         ? <CompareColor />
         : (
           <>
-            <CVWModalManager />
+            <CVWModalManager selectedVarName={selectedVarName} />
             <ColorDetailsModal />
             <div className={`cvw__root-wrapper ${colorDetailsModalShowing ? 'hide-on-small-screens' : ''}`} ref={wrapperRef}>
               {/* @todo rename setLastActiveComponent prop scene need to rethink it right now it will do nothing -RS */ }

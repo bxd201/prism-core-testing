@@ -1,5 +1,6 @@
 // @flow
 import { SCENE_TYPE } from './persistScene'
+import type { SavesStockSceneMetaData } from '../../shared/types/CVWTypes.js.flow'
 
 export const SAVING_STOCK_SCENE = 'SAVING_STOCK_SCENE'
 export const SAVE_ANON_STOCK_SCENE = 'SAVE_ANON_STOCK_SCENE'
@@ -32,7 +33,7 @@ export const saveStockScene = (id: string, sceneName: string, sceneData: object,
  * @param sceneFetchType - This is used in in cases where scenes need to be loaded
  * @returns {{payload: {sceneType: string, id: string, sceneFetchType: string, scene: Object}, type: string}}
  */
-const anonSaveStockScene = (id: string, sceneName: string, sceneData: Object, sceneFetchType: string, livePaletteColorsIdArray: Array<string>) => {
+const anonSaveStockScene = (id: string, sceneName: string, sceneData: Object, sceneFetchType: string, livePaletteColorsIdArray: Array<string>): ({type: string, payload: SavesStockSceneMetaData}) => {
   const payload = {
     type: SAVE_ANON_STOCK_SCENE,
     payload: {

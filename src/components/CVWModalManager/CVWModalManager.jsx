@@ -25,8 +25,9 @@ import { useIntl } from 'react-intl'
 
 export const globalModalClassName = 'global-modal'
 export const globalModalPreviewImageClassName = `${globalModalClassName}__preview-image`
+const saveScenedefaultName = 'My Saved Scene'
 
-export const PreviewImage = () => {
+export const PreviewImage = ({ selectedVarName }: { selectedVarName: string }) => {
   const modalInfo = useSelector((store) => store.modalInfo)
   const selectedSceneUid = useSelector((store) => store.selectedSceneUid)
   const scenesCollection = useSelector((store) => store.scenesCollection)
@@ -49,7 +50,7 @@ export const PreviewImage = () => {
     })
 
     return <>
-      {currentSceneData && <div style={{ maxHeight: '66px' }}><SingleTintableSceneView surfaceColorsFromParents={surfaceColors} variantsCollection={scenes} scenesCollection={scenesCollection} selectedSceneUid={selectedSceneUid} allowVariantSwitch={false} interactive={false} /></div>}
+      {currentSceneData && <div style={{ maxHeight: '66px' }}><SingleTintableSceneView surfaceColorsFromParents={surfaceColors} variantsCollection={scenes} scenesCollection={scenesCollection} selectedVarName={selectedVarName} selectedSceneUid={selectedSceneUid} allowVariantSwitch={false} interactive={false} /></div>}
       {showLivePalette && <div style={{ display: 'flex', marginTop: '1px' }}>{livePaletteColorsDiv}</div>}
     </>
   }
@@ -105,13 +106,15 @@ export const PreviewImage = () => {
     </>)
 }
 
-export const CVWModalManager = () => {
+export const CVWModalManager = ({ selectedVarName }: { selectedVarName: string }) => {
   const modalInfo = useSelector((store) => store.modalInfo)
   const lpColors = useSelector((store) => store.lp.colors)
   const dirtyNavIntent = useSelector(store => store.dirtyNavigationIntent)
   const storeScenes = useSelector((store) => store.variantsCollection)
   const selectedSceneUid = useSelector((store) => store.selectedSceneUid)
-  const currentSceneData = storeScenes?.find(item => item.sceneUid === selectedSceneUid)
+  const sceneCount = useSelector(state => state.sceneMetadata).length + 1
+  const currentSceneData = selectedVarName ? storeScenes?.find(item => item.sceneUid === selectedSceneUid && item.variantName === selectedVarName) : storeScenes?.find(item => item.sceneUid === selectedSceneUid)
+  const surfaceColors = useSelector(state => state.modalThumbnailColor)
   const selectedScenes = useSelector(store => {
     const { items: { colorMap } }: ColorMap = store.colors
     if (store.selectedSavedLivePaletteId) {
@@ -126,7 +129,10 @@ export const CVWModalManager = () => {
   const history = useHistory()
   btnRefList.current = []
   const { shouldDisplayModal, actions, styleType, title, description, allowInput } = modalInfo
-  const [inputValue, setInputValue] = useState('')
+  const [inputValue, setInputValue] = useState(`${saveScenedefaultName} ${sceneCount}`)
+  // The following function is needed for a particular use case where if a user clear the default name of the scene being saved,
+  // and close the modal, this function will reset the state with the default name
+  const resetInputValue = () => setInputValue(`${saveScenedefaultName} ${sceneCount}`)
 
   const createCallbackFromActionName = (callbackName) => {
     switch (callbackName) {
@@ -191,10 +197,11 @@ export const CVWModalManager = () => {
       // @todo should I throw an error if no active scene or is this over kill? -RS
       let livePaletteColorsIdArray = []
       const saveSceneData = {}
-      const { sceneUid, variantName, surfaces } = currentSceneData
-      saveSceneData.id = sceneUid
-      saveSceneData.variant = variantName
-      saveSceneData.surfaces = surfaces
+      const { variantName, sceneType, sceneId } = currentSceneData
+      saveSceneData.sceneDataId = sceneId
+      saveSceneData.variantName = variantName
+      saveSceneData.sceneDataType = sceneType
+      saveSceneData.surfaceColors = surfaceColors
       lpColors && lpColors.map(color => {
         livePaletteColorsIdArray.push(color.id)
       })
@@ -272,12 +279,14 @@ export const CVWModalManager = () => {
     <React.Fragment>
       <Modal
         shouldDisplayModal={shouldDisplayModal}
-        previewImage={modalInfo?.modalType !== ACTIVE_SCENE_LABELS_ENUM.EMPTY_SCENE ? <PreviewImage /> : null}
+        previewImage={modalInfo?.modalType !== ACTIVE_SCENE_LABELS_ENUM.EMPTY_SCENE ? <PreviewImage selectedVarName={selectedVarName} /> : null}
         styleType={styleType}
         title={title}
         description={description}
         allowInput={allowInput}
         actions={actions}
+        inputValue={inputValue}
+        resetInputValue={resetInputValue}
         fn={createCallbackFromActionName}
         setInputValue={setInputValue}
       />

@@ -33,7 +33,8 @@ export type SingleTintableSceneViewProps = {
   interactive?: boolean,
   selectedSceneUid: string,
   scenesCollection: FlatScene,
-  variantsCollection: FlatVariant
+  variantsCollection: FlatVariant,
+  selectedVarName?: string
 }
 
 const tintableViewBaseClassName = 'tintable-view'
@@ -41,7 +42,7 @@ const tintableViewBaseClassName = 'tintable-view'
 const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
   // By default use the first variant
   const { showClearButton, customButton, handleSurfacePaintedState, allowVariantSwitch, interactive,
-    surfaceColorsFromParents, selectedSceneUid, scenesCollection, variantsCollection } = props
+    surfaceColorsFromParents, selectedSceneUid, scenesCollection, variantsCollection, selectedVarName } = props
 
   const [selectedScene, setSelectedScene] = useState(null)
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0)
@@ -59,7 +60,10 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
   useEffect(() => {
     if (selectedSceneUid && variantsCollection) {
       setBackgroundLoaded(false)
-      const variants = variantsCollection.filter(variant => variant.sceneUid === selectedSceneUid)
+      let variants = variantsCollection.filter(variant => variant.sceneUid === selectedSceneUid)
+      if (selectedVarName) {
+        variants = variantsCollection.filter(variant => variant.sceneUid === selectedSceneUid && variant.variantName === selectedVarName)
+      }
       const { surfaces } = variants[selectedVariantIndex]
       setSelectedScene(scenesCollection.find(scene => scene.uid === selectedSceneUid))
       setSceneVariants(variants)
@@ -75,7 +79,8 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
         // surface colors is a sparse vector, this copies a value if there is a color otherwise it passes null through -RS
         return color ? { ...color } : color
       })
-      handleSurfacePaintedState(selectedSceneUid, variantsCollection[selectedVariantIndex].variantName, colors)
+      const variantName = variantsCollection.filter(variant => variant.sceneUid === selectedSceneUid)[selectedVariantIndex].variantName
+      handleSurfacePaintedState(selectedSceneUid, variantName, colors)
     }
   }, [surfaceColors, sceneVariants, selectedSceneUid, selectedVariantIndex, variantsCollection])
 
