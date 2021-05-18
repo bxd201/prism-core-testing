@@ -137,20 +137,6 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
   const navBtnRef: {current: ?HTMLElement} = useRef()
   const navRef: {current: ?HTMLElement} = useRef()
 
-  // useEffect(() => {
-  //   if (imgUrl) {
-  //     if (location.pathname === ROUTES_ENUM.UPLOAD_MATCH_PHOTO) {
-  //       history.push(ROUTES_ENUM.ACTIVE_MATCH_PHOTO)
-  //       setMatchPhotoScene(<ImageRotateContainer key={imgUrl + 'mp'} showPaintScene isFromMyIdeas={false} isPaintScene={false} imgUrl={imgUrl} />)
-  //     } else if (location.pathname === ROUTES_ENUM.UPLOAD_PAINT_SCENE) {
-  //       history.push(ROUTES_ENUM.PAINT_SCENE)
-  //       uploadPaintScene(<ImageRotateContainer showPaintScene isFromMyIdeas={false} isPaintScene imgUrl={imgUrl} setLastActiveComponent={setLastActiveComponent} activePaintScene={activePaintScene} />)
-  //     }
-  //   }
-  //   const tooltipsPosition = navBtnRef.current.getClientRects()[0].x - navRef.current.getClientRects()[0].x - ((navBtnRef.current.getClientRects()[0].width - 48) / 2)
-  //   dispatch(setTooltipsPosition(tooltipsPosition))
-  // }, [imgUrl])
-
   // This is an observer that determines if programmatic navigation should occur
   // @todo, in a perfect world there would be a complete navigation abstraction layer, see the useeffect hook in the CVWWrapper to find another vital part -RS
   useEffect(() => {
@@ -270,12 +256,13 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
         title: messages['NAV_LINKS.MATCH_A_PHOTO'],
         content: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.MATCH_A_PHOTO'],
         onClick: () => {
-          dispatch(setNavigationIntent(ROUTES_ENUM.ACTIVE_MATCH_PHOTO))
           if (isActiveScenePolluted) {
+            // @todo this check can go in the hook in the colorvisualizercontent -RS
             dispatch(showWarningModal())
           } else {
             if (hiddenImageUploadInput.current) {
               hiddenImageUploadInput.current.value = ''
+              dispatch(setNavigationIntent(ROUTES_ENUM.UPLOAD_MATCH_PHOTO))
               hiddenImageUploadInput.current.click()
             }
           }
@@ -320,8 +307,8 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
   return (
     <nav className='cvw-navigation-wrapper' ref={navRef}>
       <input ref={hiddenImageUploadInput} style={{ display: 'none' }} type='file' onChange={e => {
+        // If you are looking to clear the uploaded image here, do not, you will face very strange render bugs.
         const userImg = e.target.files && e.target.files.length ? e.target.files[0] : null
-
         if (userImg && isSupportedImageFormat(userImg)) {
           if (useSmartMask) {
             dispatch(queueImageUpload(userImg))
@@ -409,7 +396,7 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
             items={getDropDownItemsForPaintAPhoto()}
           />
         </Route>
-        <Route path='/upload/match-photo'>
+        <Route path={ROUTES_ENUM.ACTIVE_COLORS}>
           <DropDownMenu
             title={messages['NAV_DROPDOWN_TITLE.GET_INSPIRED']}
             items={getDropDownItemsForExploreColors()}

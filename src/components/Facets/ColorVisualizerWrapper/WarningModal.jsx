@@ -1,4 +1,5 @@
 // @flow
+// @todo Deprecate this, I think the modal manager succeeds this -RS
 import React, { useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useIntl, FormattedMessage } from 'react-intl'

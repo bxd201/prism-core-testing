@@ -24,6 +24,7 @@ const PrismImage = forwardRef((props: PrismImageProps, ref) => {
   const handleCallback = (e) => {
     // eslint-disable-next-line react/prop-types
     if (props.shouldResample) {
+      // this api works with a forward ref...
       console.log('Prism image has loaded.')
       return
     }

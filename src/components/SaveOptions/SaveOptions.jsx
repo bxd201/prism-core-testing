@@ -8,10 +8,7 @@ import { useHistory } from 'react-router-dom'
 
 import './SaveOptions.scss'
 import { ACTIVE_SCENE_LABELS_ENUM } from '../../store/actions/navigation'
-import { replaceSceneStatus } from '../../shared/utils/sceneUtil'
-import { getSceneInfoById } from '../SceneManager/SceneManager'
 import SceneDownload from '../SceneDownload/SceneDownload'
-import find from 'lodash/find'
 import { shouldAllowFeature } from '../../shared/utils/featureSwitch.util'
 import { FEATURE_EXCLUSIONS } from '../../constants/configurations'
 import WithConfigurationContext from '../../contexts/ConfigurationContext/WithConfigurationContext'
@@ -43,33 +40,8 @@ const SaveOptions = (props: SaveOptionsProps) => {
     }
   }, [cvw])
 
-  const scenesDownloadData = useSelector(state => {
-    const scenes = state.selectedSceneStatus && !state.selectedSceneStatus.openUnpaintedStockScene ? replaceSceneStatus(state.scenes, state.selectedSceneStatus) : state.scenes
-    return {
-      originalScenes: state.scenes,
-      originalSceneCollection: state.scenes.sceneCollection[state.scenes.type] || null,
-      originalSceneStatus: state.scenes.sceneStatus[state.scenes.type],
-      scenes: scenes,
-      selectedSceneStatus: state.selectedSceneStatus,
-      sceneStatus: scenes.sceneStatus[state.scenes.type],
-      sceneCollection: scenes.sceneCollection[state.scenes.type] || null,
-      selectedSceneVariantChanged: state.scenes.selectedSceneVariantChanged
-    }
-  })
-
-  const firstActiveScene = scenesDownloadData.sceneCollection && scenesDownloadData.sceneCollection.filter(scene => (scene.id === scenesDownloadData.scenes.activeScenes[0]))[0]
-  const firstActiveSceneInfo = firstActiveScene && firstActiveScene.id ? getSceneInfoById(firstActiveScene, scenesDownloadData.sceneStatus) : null
-  const selectedScenedVariant = scenesDownloadData.selectedSceneStatus && !scenesDownloadData.selectedSceneVariantChanged ? scenesDownloadData.selectedSceneStatus.expectStockData.scene.variant : null
-  if (selectedScenedVariant) {
-    const sceneVariant = find(firstActiveScene.variants, { 'variant_name': selectedScenedVariant })
-    firstActiveSceneInfo.variant = sceneVariant
-  } else {
-    const sceneVariantData = scenesDownloadData.originalSceneStatus && find(scenesDownloadData.originalSceneStatus, { 'id': scenesDownloadData.scenes.activeScenes[0] }).variant
-    const sceneVariant = sceneVariantData && find(firstActiveScene.variants, { 'variant_name': sceneVariantData })
-    if (sceneVariant) {
-      firstActiveSceneInfo.variant = sceneVariant
-    }
-  }
+  // @todo I deleted a bunch of logic here that selected the first active scene and variant, i think the way that we handle
+  // data makes this less necessary, need to to test -RS
 
   const handleSave = useCallback((e: SyntheticEvent) => {
     e.preventDefault()
@@ -145,7 +117,8 @@ const SaveOptions = (props: SaveOptionsProps) => {
             {cvwFromConfig ? <SceneDownload {...{ buttonCaption: 'DOWNLOAD_MASK', getFlatImage: getFlatImage, activeComponent: activeSceneLabel, config: getDownloadStaticResourcesPath(cvwFromConfig) }} /> : <CircleLoader />}
           </div>
           : <div>
-            {cvwFromConfig ? <SceneDownload {...{ buttonCaption: 'DOWNLOAD_MASK', sceneInfo: firstActiveSceneInfo, activeComponent: activeSceneLabel, config: getDownloadStaticResourcesPath(cvwFromConfig) }} /> : <CircleLoader />}
+            {/* scene info is deprecated -RS */ }
+            {cvwFromConfig ? <SceneDownload {...{ buttonCaption: 'DOWNLOAD_MASK', sceneInfo: null, activeComponent: activeSceneLabel, config: getDownloadStaticResourcesPath(cvwFromConfig) }} /> : <CircleLoader />}
           </div>) : null}
       { shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.documentSaving)
         ? <button onClick={handleSave}>
