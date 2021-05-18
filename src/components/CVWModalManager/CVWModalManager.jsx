@@ -31,6 +31,8 @@ const saveScenedefaultName = 'My Saved Scene'
 export const PreviewImage = ({ modalInfo, lpColors, surfaceColors, scenes, selectedSceneUid, selectedVariantName }: PreviewImageProps) => {
   const scenesCollection = useSelector((store) => store.scenesCollection)
   const mergeCanvasRef = useRef(null)
+  // get the layers for paint scene save
+  const paintSceneLayers = useSelector(store => store.paintSceneLayersForSave) ?? []
 
   const getStockScenePreviewData = (showLivePalette) => {
     const livePaletteColorsDiv = lpColors.filter(color => !!color).map((color, i) => {
@@ -50,7 +52,7 @@ export const PreviewImage = ({ modalInfo, lpColors, surfaceColors, scenes, selec
     </>
   }
 
-  const getPaintScenePreviewData = (showLivePalette) => {
+  const getPaintScenePreviewData = (showLivePalette, layers) => {
     const livePaletteColorsDiv = lpColors.filter(color => !!color).map((color, i) => {
       const { red, green, blue } = color
       return (
@@ -66,7 +68,7 @@ export const PreviewImage = ({ modalInfo, lpColors, surfaceColors, scenes, selec
       <div style={{ height: '64px' }}>
         <MergeCanvas
           ref={mergeCanvasRef}
-          layers={modalInfo?.layers}
+          layers={layers}
           width={110}
           height={64}
           colorOpacity={0.8}
@@ -96,7 +98,7 @@ export const PreviewImage = ({ modalInfo, lpColors, surfaceColors, scenes, selec
   return (
     <>
       {modalInfo?.modalType === ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE && <div className={globalModalPreviewImageClassName}>{getStockScenePreviewData(modalInfo?.showLivePalette)}</div>}
-      {modalInfo?.modalType === ACTIVE_SCENE_LABELS_ENUM.PAINT_SCENE && <div className={globalModalPreviewImageClassName}>{getPaintScenePreviewData(modalInfo?.showLivePalette)}</div>}
+      {modalInfo?.modalType === ACTIVE_SCENE_LABELS_ENUM.PAINT_SCENE && <div className={globalModalPreviewImageClassName}>{getPaintScenePreviewData(modalInfo?.showLivePalette, paintSceneLayers)}</div>}
       {modalInfo?.modalType === ACTIVE_SCENE_LABELS_ENUM.LIVE_PALETTE && <div className={globalModalPreviewImageClassName}>{getLivePalettePreviewData(modalInfo?.showLivePalette)}</div>}
     </>)
 }
@@ -272,7 +274,7 @@ export const CVWModalManager = () => {
   }
 
   return (
-    <React.Fragment>
+    <>
       <Modal
         shouldDisplayModal={shouldDisplayModal}
         previewImage={modalInfo?.modalType !== ACTIVE_SCENE_LABELS_ENUM.EMPTY_SCENE
@@ -294,6 +296,6 @@ export const CVWModalManager = () => {
         fn={createCallbackFromActionName}
         setInputValue={setInputValue}
       />
-    </React.Fragment>
+    </>
   )
 }

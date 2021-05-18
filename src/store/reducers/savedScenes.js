@@ -35,6 +35,7 @@ import {
 import { SCENE_TYPES } from '../../constants/globals'
 import cloneDeep from 'lodash/cloneDeep'
 import type { MiniColor } from '../../shared/types/Scene'
+import { SET_PAINT_SCENE_SAVE_DATA, TRIGGER_PAINT_SCENE_LAYER_PUBLISH } from '../actions/paintScene'
 export const legacySavedScenesMetadata = (state: Object[] = [], action: { type: string, payload: Object }) => {
   if (action.type === DELETE_SAVED_SCENE) {
     const newState = state.filter(scene => scene.id !== action.payload)
@@ -297,6 +298,22 @@ export const colorsForSurfacesFromSavedScene = (state: MiniColor[] | null = null
     return action.payload ? action.payload.surfaces.map(surfaceColor => {
       return { ...surfaceColor }
     }) : null
+  }
+
+  return state
+}
+
+export const paintSceneLayersForSave = (state: string[] | null = null, action: {type: string, payload: string[]}) => {
+  if (action.type === SET_PAINT_SCENE_SAVE_DATA) {
+    return action.payload
+  }
+
+  return state
+}
+
+export const shouldTriggerPaintScenePublishLayers = (state: boolean = false, action: { type: string, payload: boolean}) => {
+  if (action.type === TRIGGER_PAINT_SCENE_LAYER_PUBLISH) {
+    return action.payload
   }
 
   return state

@@ -19,6 +19,9 @@ export const createNavigationWarningModal = (intl, dispatch, modalType, isDirtyN
   }))
 }
 
+// deprecate and push logic into save option to encapsulate. We need slightly different logic.
+// for paintscene this should trigger a signal to publish the layers and flow into show modal,
+// @todo refactor to only include needed data: button messages, savetype and modal type.  This object can be constructed in the component -RS
 export const createSaveSceneModal = (intl, dispatch, modalType, saveType) => {
   dispatch(setModalInfo({
     shouldDisplayModal: true,
