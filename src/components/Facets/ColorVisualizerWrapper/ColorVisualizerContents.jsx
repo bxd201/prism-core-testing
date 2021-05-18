@@ -40,6 +40,7 @@ import {
   fetchRemoteScenes, handleScenesFetchedForCVW, handleScenesFetchErrorForCVW,
   setSelectedSceneUid,
   setVariantsCollection,
+  setSelectedVariantName,
   setVariantsLoading
 } from '../../../store/actions/loadScenes'
 import SingleTintableSceneView from '../../SingleTintableSceneView/SingleTintableSceneView'
@@ -67,7 +68,6 @@ export const CVW = (props: CVWPropsType) => {
   const history = useHistory()
   const toggleCompareColor: boolean = useSelector(store => store.lp.toggleCompareColor)
   const colorDetailsModalShowing: boolean = useSelector(store => store.colors.colorDetailsModal.showing)
-  // const isActiveScenePolluted: string = useSelector(store => store.scenePolluted)
   const isPaintSceneCached: boolean = useSelector(store => !!store.paintSceneCache)
   const navigationIntent: string = useSelector(store => store.navigationIntent)
   const navigationReturnIntent: string = useSelector(store => store.navigationReturnIntent)
@@ -82,6 +82,7 @@ export const CVW = (props: CVWPropsType) => {
   const paintSceneWorkspace = useSelector(store => store.paintSceneWorkspace)
   const activeColor = useSelector(store => store.lp.activeColor)
   const intl = useIntl()
+  // to do reafactor
   const [variantsCollection, scenesCollection, selectedSceneUid] = useSelector(store => [store.variantsCollection, store.scenesCollection, store.selectedSceneUid])
   const [selectedVarName, setSelectedVarName] = useState('')
   const unorderedColors = useSelector(state => state.colors.unorderedColors)
@@ -152,6 +153,7 @@ export const CVW = (props: CVWPropsType) => {
     dispatch(setIsScenePolluted(isScenePolluted ? 'POLLUTED_STOCK_SCENE' : ''))
     dispatch(setModalThumbnailColor(surfaceColors))
     setSelectedVarName(variantName)
+    dispatch(setSelectedVariantName(variantName))
   }
 
   const setPaintScenePolluted = () => {
@@ -171,7 +173,9 @@ export const CVW = (props: CVWPropsType) => {
   const handleSceneSurfacesLoaded = (variants) => {
     dispatch(setVariantsCollection(variants))
     // Default to the first room type for the CVW.
-    dispatch(setSelectedSceneUid(variants.filter(variant => variant.sceneType === SCENE_TYPES.ROOM)[0].sceneUid))
+    const variant = variants.filter(variant => variant.sceneType === SCENE_TYPES.ROOM)[0]
+    dispatch(setSelectedSceneUid(variant.sceneUid))
+    dispatch(setSelectedVariantName(variant.variantName))
     dispatch(setVariantsLoading(false))
   }
 
@@ -297,7 +301,6 @@ export const CVW = (props: CVWPropsType) => {
             <LivePalette />
           </div>
           <div className='cvw__root-container__footer--secondary'>
-            {/* @todo params could be passed in for save and download -RS */}
             <SaveOptions />
           </div>
         </div>
