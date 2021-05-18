@@ -7,6 +7,7 @@ import SVG from 'react-inlinesvg'
 import { DRAG_TYPES } from 'constants/globals'
 import { DropTarget } from 'react-dnd-cjs'
 import getBeforeHash from 'src/shared/utils/getBeforeHash.util'
+import './SimpleTintableSceneHitArea.scss'
 
 type Props = {
     connectDropTarget: Function,
@@ -23,10 +24,10 @@ type Props = {
 }
 
 const classNames = {
-  hitArea: 'prism-scene-manager__scene__hit-area',
-  hitAreaWrapper: 'prism-scene-manager__scene__hit-area-wrapper',
-  hitAreaMask: 'prism-scene-manager__scene__hit-area__mask',
-  hitAreaMaskLoader: 'prism-scene-manager__scene__hit-area__mask-loader'
+  hitArea: 'simple-tintable-scene__scene__hit-area',
+  hitAreaWrapper: 'simple-tintable-scene__scene__hit-area-wrapper',
+  hitAreaMask: 'simple-tintable-scene__scene__hit-area__mask',
+  hitAreaMaskLoader: 'simple-tintable-scene__scene__hit-area__mask-loader'
 }
 
 const SimpleTintableSceneHitAreaSpec = {

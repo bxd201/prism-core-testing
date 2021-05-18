@@ -84,7 +84,6 @@ export const CVW = (props: CVWPropsType) => {
   const intl = useIntl()
   // to do reafactor
   const [variantsCollection, scenesCollection, selectedSceneUid] = useSelector(store => [store.variantsCollection, store.scenesCollection, store.selectedSceneUid])
-  const [selectedVarName, setSelectedVarName] = useState('')
   const unorderedColors = useSelector(state => state.colors.unorderedColors)
   const matchPhotoImage = useSelector(store => store.matchPhotoImage)
   const [wrapperDims, setWrapperDims] = useState(0)
@@ -152,7 +151,6 @@ export const CVW = (props: CVWPropsType) => {
     const isScenePolluted = !!surfaceColors.reduce((acc, curr) => (curr ? 1 : 0) + acc, 0)
     dispatch(setIsScenePolluted(isScenePolluted ? 'POLLUTED_STOCK_SCENE' : ''))
     dispatch(setModalThumbnailColor(surfaceColors))
-    setSelectedVarName(variantName)
     dispatch(setSelectedVariantName(variantName))
   }
 
@@ -248,7 +246,7 @@ export const CVW = (props: CVWPropsType) => {
         ? <CompareColor />
         : (
           <>
-            <CVWModalManager selectedVarName={selectedVarName} />
+            <CVWModalManager />
             <ColorDetailsModal />
             <div className={`cvw__root-wrapper ${colorDetailsModalShowing ? 'hide-on-small-screens' : ''}`} ref={wrapperRef}>
               {/* @todo rename setLastActiveComponent prop scene need to rethink it right now it will do nothing -RS */ }

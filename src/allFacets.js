@@ -11,7 +11,6 @@ import ColorWallFacet from 'src/components/Facets/ColorWallFacet'
 import FastMaskSimple from 'src/components/Facets/FastMaskSimple/FastMaskSimple'
 import JumpStartFacet from 'src/components/Facets/JumpStartFacet/JumpStartFacet'
 import RoomTypeDetector from 'src/components/Facets/RoomTypeDetector/RoomTypeDetector'
-import Tinter from 'src/components/Facets/Tinter/Tinter'
 
 export const allFacets = {
   ColorDetailsFacet,
@@ -21,6 +20,5 @@ export const allFacets = {
   ColorWallFacet,
   FastMaskSimple,
   JumpStartFacet,
-  RoomTypeDetector,
-  Tinter
+  RoomTypeDetector
 }

@@ -32,14 +32,14 @@ export type SingleTintableSceneViewProps = {
   selectedSceneUid: string,
   scenesCollection: FlatScene,
   variantsCollection: FlatVariant,
-  selectedVarName?: string
+  selectedVariantName?: string
 }
 
 const tintableViewBaseClassName = 'tintable-view'
 
 const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
   const { showClearButton, customButton, handleSurfacePaintedState, allowVariantSwitch, interactive,
-    surfaceColorsFromParents, selectedSceneUid, scenesCollection, variantsCollection, selectedVarName } = props
+    surfaceColorsFromParents, selectedSceneUid, scenesCollection, variantsCollection, selectedVariantName } = props
 
   const [selectedScene, setSelectedScene] = useState(null)
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0)
@@ -57,8 +57,8 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
     if (selectedSceneUid && variantsCollection) {
       setBackgroundLoaded(false)
       let variants = variantsCollection.filter(variant => variant.sceneUid === selectedSceneUid)
-      if (selectedVarName) {
-        variants = variantsCollection.filter(variant => variant.sceneUid === selectedSceneUid && variant.variantName === selectedVarName)
+      if (selectedVariantName) {
+        variants = variantsCollection.filter(variant => variant.sceneUid === selectedSceneUid && variant.variantName === selectedVariantName)
       }
       const { surfaces } = variants[selectedVariantIndex]
       setSelectedScene(scenesCollection.find(scene => scene.uid === selectedSceneUid))

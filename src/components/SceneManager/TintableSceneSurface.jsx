@@ -13,11 +13,11 @@ type Props = {
   type: string,
   children: any,
   // This prop will hardcode the width and height, use this when you need to programtically resize.
-  scaleSvg?: booelan
+  scaleSvg?: boolean
 }
 
 class TintableSceneSurface extends PureComponent<Props> {
-  static baseClass = 'prism-scene-manager__scene__surface'
+  static baseClass = 'simple-tintable-scene__scene__surface'
 
   getSvgContents () {
     const { image, maskId, filterId, type } = this.props
