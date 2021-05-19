@@ -1,5 +1,6 @@
 // @flow
-import type { MiniColor } from './Scene'
+import type { MiniColor, FlatVariant } from './Scene'
+import type { ColorList } from './Colors'
 
 export type SavesStockSceneMetaData = {
     // A UID to select this data by when filtering in my ideas
@@ -26,3 +27,26 @@ export type SavesStockSceneMetaData = {
       variantName: string
     }
   }
+
+export type Actionstype = {
+  text: string,
+  callback: string
+}
+export type ModalInfoType = {
+  actions: Actionstype[],
+  shouldDisplayModal: boolean,
+  modalType: string,
+  showLivePalette: boolean,
+  layers: Array,
+  allowInput: boolean,
+  styleType: string
+}
+
+export type PreviewImageProps = {
+  modalInfo: ModalInfoType,
+  lpColors: ColorList,
+  surfaceColors: MiniColor[],
+  scenes: FlatVariant[],
+  selectedSceneUid: string,
+  selectedVariantName: string
+}

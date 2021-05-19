@@ -22,22 +22,17 @@ import { SAVE_OPTION, HIDE_MODAL, HANDLE_NAVIGATION_INTENT_CONFIRM,
 import { getColorInstances } from '../LivePalette/livePaletteUtility'
 import { createConfirmSavedModal } from './createModal'
 import { useIntl } from 'react-intl'
+import type { PreviewImageProps } from '../../shared/types/CVWTypes'
 
 export const globalModalClassName = 'global-modal'
 export const globalModalPreviewImageClassName = `${globalModalClassName}__preview-image`
 const saveScenedefaultName = 'My Saved Scene'
 
-export const PreviewImage = ({ selectedVarName }: { selectedVarName: string }) => {
-  const modalInfo = useSelector((store) => store.modalInfo)
-  const selectedSceneUid = useSelector((store) => store.selectedSceneUid)
+export const PreviewImage = ({ modalInfo, lpColors, surfaceColors, scenes, selectedSceneUid, selectedVariantName }: PreviewImageProps) => {
   const scenesCollection = useSelector((store) => store.scenesCollection)
-  const surfaceColors = useSelector(state => state.modalThumbnailColor)
-  const lpColors = useSelector((store) => store.lp.colors)
-  const scenes = useSelector((store) => store.variantsCollection)
   const mergeCanvasRef = useRef(null)
 
   const getStockScenePreviewData = (showLivePalette) => {
-    const currentSceneData = scenes?.find(item => item.sceneUid === selectedSceneUid)
     const livePaletteColorsDiv = lpColors.filter(color => !!color).map((color, i) => {
       const { red, green, blue } = color
       return (
@@ -50,7 +45,7 @@ export const PreviewImage = ({ selectedVarName }: { selectedVarName: string }) =
     })
 
     return <>
-      {currentSceneData && <div style={{ maxHeight: '66px' }}><SingleTintableSceneView surfaceColorsFromParents={surfaceColors} variantsCollection={scenes} scenesCollection={scenesCollection} selectedVarName={selectedVarName} selectedSceneUid={selectedSceneUid} allowVariantSwitch={false} interactive={false} /></div>}
+      {scenes && selectedSceneUid && selectedVariantName && <div style={{ maxHeight: '66px' }}><SingleTintableSceneView surfaceColorsFromParents={surfaceColors} variantsCollection={scenes} scenesCollection={scenesCollection} selectedVariantName={selectedVariantName} selectedSceneUid={selectedSceneUid} allowVariantSwitch={false} interactive={false} /></div>}
       {showLivePalette && <div style={{ display: 'flex', marginTop: '1px' }}>{livePaletteColorsDiv}</div>}
     </>
   }
@@ -106,14 +101,15 @@ export const PreviewImage = ({ selectedVarName }: { selectedVarName: string }) =
     </>)
 }
 
-export const CVWModalManager = ({ selectedVarName }: { selectedVarName: string }) => {
+export const CVWModalManager = () => {
   const modalInfo = useSelector((store) => store.modalInfo)
   const lpColors = useSelector((store) => store.lp.colors)
   const dirtyNavIntent = useSelector(store => store.dirtyNavigationIntent)
   const storeScenes = useSelector((store) => store.variantsCollection)
   const selectedSceneUid = useSelector((store) => store.selectedSceneUid)
   const sceneCount = useSelector(state => state.sceneMetadata).length + 1
-  const currentSceneData = selectedVarName ? storeScenes?.find(item => item.sceneUid === selectedSceneUid && item.variantName === selectedVarName) : storeScenes?.find(item => item.sceneUid === selectedSceneUid)
+  const selectedVariantName = useSelector(state => state.selectedVariantName)
+  const currentSceneData = selectedVariantName ? storeScenes?.find(item => item.sceneUid === selectedSceneUid && item.variantName === selectedVariantName) : storeScenes?.find(item => item.sceneUid === selectedSceneUid)
   const surfaceColors = useSelector(state => state.modalThumbnailColor)
   const selectedScenes = useSelector(store => {
     const { items: { colorMap } }: ColorMap = store.colors
@@ -279,7 +275,15 @@ export const CVWModalManager = ({ selectedVarName }: { selectedVarName: string }
     <React.Fragment>
       <Modal
         shouldDisplayModal={shouldDisplayModal}
-        previewImage={modalInfo?.modalType !== ACTIVE_SCENE_LABELS_ENUM.EMPTY_SCENE ? <PreviewImage selectedVarName={selectedVarName} /> : null}
+        previewImage={modalInfo?.modalType !== ACTIVE_SCENE_LABELS_ENUM.EMPTY_SCENE
+          ? <PreviewImage
+            modalInfo={modalInfo}
+            lpColors={lpColors}
+            surfaceColors={surfaceColors}
+            scenes={storeScenes}
+            selectedSceneUid={selectedSceneUid}
+            selectedVariantName={selectedVariantName}
+          /> : null}
         styleType={styleType}
         title={title}
         description={description}
