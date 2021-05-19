@@ -2,6 +2,7 @@
 import React, { useRef, useEffect, useCallback } from 'react'
 import { mouseDownPreventDefault } from 'src/shared/helpers/MiscUtils'
 import { FormattedMessage } from 'react-intl'
+import './LivePaletteModal.scss'
 
 type Props = {
     empty: Function,
