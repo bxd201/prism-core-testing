@@ -50,7 +50,12 @@ import storageAvailable from '../../shared/utils/browserStorageCheck.util'
 import { checkCanMergeColors, shouldPromptToReplacePalette } from '../LivePalette/livePaletteUtility'
 import { LP_MAX_COLORS_ALLOWED } from '../../constants/configurations'
 import { mergeLpColors, replaceLpColors } from '../../store/actions/live-palette'
-import { clearSceneWorkspace, WORKSPACE_TYPES } from '../../store/actions/paintScene'
+import {
+  clearSceneWorkspace,
+  setPaintSceneSaveData,
+  triggerPaintSceneLayerPublish,
+  WORKSPACE_TYPES
+} from '../../store/actions/paintScene'
 import { setWarningModalImgPreview } from 'src/store/actions/scenes'
 import { group, ungroup, deleteGroup, selectArea, bucketPaint, applyZoom, getActiveGroupTool, panMove, getDefinedPolygon, eraseOrPaintMouseUp, eraseOrPaintMouseDown, getActiveToolState, getBrushShapeSize, getEmptyCanvas, handleMouseMove } from './toolFunction'
 import { LiveMessage } from 'react-aria-live'
@@ -147,8 +152,11 @@ type ComponentProps = {
   shouldRestoreFromCache: boolean,
   // @todo do we still need?  -RS
   clearPaintSceneCache: Function,
-  // @todo probably still need  -RS
-  updatePaintScenePreview?: Function
+  // eslint-disable-next-line react/no-unused-prop-types
+  publishLayers: Function,
+  triggerPublish: boolean,
+  // eslint-disable-next-line react/no-unused-prop-types
+  killPublishFlag: Function
 }
 
 type ComponentState = {
@@ -375,8 +383,15 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   componentDidUpdate (prevProps: Object, prevState: Object) {
     const { navigationIntent, paintSceneCache } = this.props
     // handle case when paint scene needs to cache data to navigate to the color wall
+    // @todo Revisit this 5/17/21 -RS
     if (navigationIntent === ROUTES_ENUM.COLOR_WALL && !paintSceneCache) {
       this.prepareDataCache(this.state)
+    }
+    // publish layers for save  if flag present
+    if (this.props.triggerPublish) {
+      this.props.publishLayers(this.getLayers())
+      // Ensure that the publish is only done once per flow
+      this.props.killPublishFlag()
     }
 
     const checkImageListIfUpdate = !compareArraysOfObjects(this.state.imagePathList, prevState.imagePathList)
@@ -389,10 +404,10 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       if (this.props.setActiveScenePolluted) {
         this.props.setActiveScenePolluted()
       }
-
-      if (this.props.updatePaintScenePreview) {
-        this.props.updatePaintScenePreview({ layers: this.getLayers() })
-      }
+      // @todo we cannot call this here, we need this component to react to a signal to publish the layers data.
+      // if (this.props.setPaintSceneSaveData) {
+      //   this.props.setPaintSceneSaveData(this.getLayers())
+      // }
       // might dont need line
       if (this.props.setWarningModalImgPreview) {
         this.props.setWarningModalImgPreview({ dataUrls: this.getLayers(), width: this.backgroundImageWidth, height: this.backgroundImageHeight })
@@ -617,6 +632,8 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     if (this.props.selectSavedScene && this.props.unsetActiveScenePolluted) {
       this.props.selectSavedScene(null)
       this.props.unsetActiveScenePolluted()
+      // clean up the save data on unmount
+      this.props.publishLayers()
     }
   }
 
@@ -1091,7 +1108,7 @@ canvasHeight
 }
 
 const mapStateToProps = (state: Object, props: Object) => {
-  const { lp, savingMasks, selectedSavedSceneId, scenesAndRegions, showSaveSceneModal, saveSceneName, navigationIntent, scenePolluted, paintSceneCache } = state
+  const { lp, savingMasks, selectedSavedSceneId, scenesAndRegions, showSaveSceneModal, saveSceneName, navigationIntent, scenePolluted, paintSceneCache, shouldTriggerPaintScenePublishLayers } = state
   const selectedScene = scenesAndRegions.find(item => item.id === selectedSavedSceneId)
   const activeColor = props.workspace && props.workspace.workspaceType === WORKSPACE_TYPES.smartMask ? maskingPink : lp.activeColor
   return {
@@ -1105,7 +1122,8 @@ const mapStateToProps = (state: Object, props: Object) => {
     showSavedConfirmModalFlag: state.showSavedCustomSceneSuccess,
     navigationIntent,
     isActiveScenePolluted: scenePolluted,
-    paintSceneCache
+    paintSceneCache,
+    triggerPublish: shouldTriggerPaintScenePublishLayers
   }
 }
 
@@ -1137,8 +1155,9 @@ const mapDispatchToProps = (dispatch: Function) => {
     clearNavigationIntent: () => dispatch(clearNavigationIntent()),
     cachePaintScene: (data: any) => dispatch(cachePaintScene(data)),
     clearPaintSceneCache: () => dispatch(clearPaintSceneCache()),
-    setActiveSceneLabel: (label: string) => dispatch(setActiveSceneLabel(label))
-
+    setActiveSceneLabel: (label: string) => dispatch(setActiveSceneLabel(label)),
+    publishLayers: (layers: string[]) => dispatch(setPaintSceneSaveData(layers)),
+    killPublishFlag: () => dispatch(triggerPaintSceneLayerPublish())
   }
 }
 

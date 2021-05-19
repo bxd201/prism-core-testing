@@ -47,10 +47,9 @@ import SingleTintableSceneView from '../../SingleTintableSceneView/SingleTintabl
 import SceneSelectorNavButton from '../../SingleTintableSceneView/SceneSelectorNavButton'
 import { SCENES_ENDPOINT } from '../../../constants/endpoints'
 import ImageIngestView from '../../MatchPhoto/ImageIngestView'
-import { PaintScene } from '../../PaintScene/PaintScene'
+import PaintScene from '../../PaintScene/PaintScene'
 import { setLayersForPaintScene, WORKSPACE_TYPES } from '../../../store/actions/paintScene'
 import type { MiniColor, ReferenceDimensions } from '../../../shared/types/Scene'
-import { useIntl } from 'react-intl'
 import MatchPhotoContainer from '../../MatchPhoto/MatchPhotoContainer'
 import { setImageForMatchPhoto, setImageDimsForMatchPhoto } from '../../../store/actions/matchPhoto'
 import { setIngestedImage } from '../../../store/actions/user-uploads'
@@ -81,7 +80,6 @@ export const CVW = (props: CVWPropsType) => {
   const shouldShowGlobalDestroyWarning = useSelector(store => store.shouldShowGlobalDestroyWarning)
   const paintSceneWorkspace = useSelector(store => store.paintSceneWorkspace)
   const activeColor = useSelector(store => store.lp.activeColor)
-  const intl = useIntl()
   // to do reafactor
   const [variantsCollection, scenesCollection, selectedSceneUid] = useSelector(store => [store.variantsCollection, store.scenesCollection, store.selectedSceneUid])
   const unorderedColors = useSelector(state => state.colors.unorderedColors)
@@ -239,6 +237,10 @@ export const CVW = (props: CVWPropsType) => {
     }
   }
 
+  const setPaintSceneData = (paintSceneLayers: any) => {
+
+  }
+
   return (
     <>
       {scenes ? <SceneBlobLoader scenes={scenes} variants={variants} initHandler={handleBlobLoaderInit} handleBlobsLoaded={handleSceneSurfacesLoaded} handleError={handleSceneBlobLoaderError} /> : null}
@@ -286,7 +288,7 @@ export const CVW = (props: CVWPropsType) => {
                     maxSceneHeight={maxSceneHeight}
                     workspace={paintSceneWorkspace}
                     lpActiveColor={activeColor}
-                    intl={intl}
+                    setPaintSceneSaveData={setPaintSceneData}
                     setActiveScenePolluted={setPaintScenePolluted} /> : null}
               </div>
             </div>

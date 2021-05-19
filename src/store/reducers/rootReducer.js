@@ -34,7 +34,10 @@ import {
   showSavedConfirmModal,
   showSavedCustomSceneSuccess,
   showDeleteConfirmModal,
-  selectedSavedLivePaletteId, colorsForSurfacesFromSavedScene
+  selectedSavedLivePaletteId,
+  colorsForSurfacesFromSavedScene,
+  shouldTriggerPaintScenePublishLayers,
+  paintSceneLayersForSave
 } from './savedScenes'
 import { user } from './user'
 import { paintSceneWorkspace } from './paintSceneWorkspace'
@@ -120,5 +123,8 @@ export default combineReducers({
   matchPhotoImage,
   matchPhotoImageDims,
   colorsForSurfacesFromSavedScene,
-  selectedVariantName
+  selectedVariantName,
+  // this is so that paint scene knows to publish its layers for save
+  shouldTriggerPaintScenePublishLayers,
+  paintSceneLayersForSave
 })

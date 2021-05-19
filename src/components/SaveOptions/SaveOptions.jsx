@@ -14,6 +14,7 @@ import WithConfigurationContext from '../../contexts/ConfigurationContext/WithCo
 import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 import { createSaveSceneModal, createModalForEmptyLivePalette } from '../CVWModalManager/createModal'
 import { SAVE_OPTION } from '../CVWModalManager/constants.js'
+import { triggerPaintSceneLayerPublish } from '../../store/actions/paintScene'
 
 type SaveOptionsProps = {
   config: any,
@@ -51,6 +52,11 @@ const SaveOptions = (props: SaveOptionsProps) => {
     if (((pathname === '/active') || (pathname === '/active/paint-scene')) && !toggleCompareColor) {
       if (lpColors.length !== 0) {
         const saveType = ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE === activeSceneLabel ? SAVE_OPTION.SAVE_STOCK_SCENE : SAVE_OPTION.SAVE_PAINT_SCENE
+        if (activeSceneLabel === ACTIVE_SCENE_LABELS_ENUM.PAINT_SCENE) {
+          // We handle paint scene reactively, we tell it via redux, hey its time to globally set your data for save.
+          dispatch(triggerPaintSceneLayerPublish(true))
+        }
+        // @todo refactor this, we shouldn't need to pass dispatch here and maybe specialize to stock scene save since paint scene download is handled reactively by the facet -RS
         createSaveSceneModal(intl, dispatch, activeSceneLabel, saveType)
       } else {
         createModalForEmptyLivePalette(intl, dispatch, SAVE_OPTION.EMPTY_SCENE, true)
