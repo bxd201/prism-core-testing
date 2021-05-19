@@ -158,6 +158,7 @@ export const updateVariantsCollectionSurfaces = (variants: FlatVariant, surfaceD
   return newVariants
 }
 
+// ALWAYS CALL THIS BEFORE hydrateStockSceneFromSavedData
 export const setSelectedSceneUid = (sceneUid: string | null = null) => {
   return {
     type: SET_SELECTED_SCENE_UID,

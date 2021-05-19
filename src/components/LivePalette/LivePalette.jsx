@@ -31,7 +31,6 @@ import './LivePalette.scss'
 import storageAvailable from '../../shared/utils/browserStorageCheck.util'
 import { fullColorNumber } from '../../shared/helpers/ColorUtils'
 import {
-  ACTIVE_SCENE_LABELS_ENUM,
   setNavigationIntent,
   setNavigationIntentWithReturn
 } from '../../store/actions/navigation'
@@ -49,7 +48,6 @@ type Props = {
   empty: Function,
   temporaryActiveColor: Color | null,
   setNavigationIntents: Function,
-  activeSceneLabel: string,
   isColorwallModallyPresented: boolean
 }
 
@@ -135,16 +133,7 @@ export class LivePalette extends PureComponent<Props, State> {
       return
     }
 
-    let returnPath = null
-
-    if (this.props.activeSceneLabel === ACTIVE_SCENE_LABELS_ENUM.PAINT_SCENE) {
-      returnPath = ROUTES_ENUM.ACTIVE_PAINT_SCENE
-    }
-
-    if (this.props.activeSceneLabel === ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE) {
-      returnPath = ROUTES_ENUM.ACTIVE
-    }
-    this.props.setNavigationIntents(ROUTES_ENUM.COLOR_WALL, returnPath)
+    this.props.setNavigationIntents(ROUTES_ENUM.COLOR_WALL, ROUTES_ENUM.ACTIVE)
   }
 
   render () {

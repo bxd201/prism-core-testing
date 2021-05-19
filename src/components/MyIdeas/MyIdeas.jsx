@@ -6,7 +6,6 @@ import { useIntl, FormattedMessage } from 'react-intl'
 import { selectSavedScene, loadSavedScenes, SCENE_TYPE } from '../../store/actions/persistScene'
 import { updateLivePalette, selectedSavedLivePalette } from '../../store/actions/saveLivePalette'
 import SavedScene from './SavedScene'
-import useSceneData from '../../shared/hooks/useSceneData'
 import Carousel from '../Carousel/Carousel'
 import './MyIdeas.scss'
 import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
@@ -17,6 +16,7 @@ import ColorPalette from '../MyIdeaPreview/ColorPalette'
 import { getColorInstances } from '../LivePalette/livePaletteUtility'
 import EditColorPalette from '../MyIdeaPreview/EditColorPalette'
 import { createDeleteMyIdeasModal } from '../CVWModalManager/createModal'
+import type { FlatScene, FlatVariant } from '../../shared/types/Scene'
 
 const baseClassName = 'myideas-wrapper'
 const buttonClassName = `${baseClassName}__button`
@@ -38,6 +38,7 @@ type MyIdeasProps = {
 
 const MyIdeas = (props: MyIdeasProps) => {
   const savedScenes = useSelector(state => state.scenesAndRegions)
+  // eslint-disable-next-line no-unused-vars
   const [stockScenes, setStockScenes] = useState(null)
   const sceneMetadata = useSelector(state => state.sceneMetadata)
   const isLoadingSavedScenes = useSelector(state => state.isLoadingSavedScene)
@@ -48,15 +49,13 @@ const MyIdeas = (props: MyIdeasProps) => {
   const [editEnabled, setEditEnabled] = useState(false)
   const [editedIndividualScene, setEditedIndividualScene] = useState(null)
   const [showBack, setShowBack] = useState(false)
-  const _sceneFetchTypes = new Set(sceneMetadata.filter(item => item.sceneFetchType).map(item => item.sceneFetchType))
-  const sceneFetchTypes = Array.from(_sceneFetchTypes)
-  const sceneData = useSceneData(sceneFetchTypes)
   const [editedTintableIndividualScene, setEditedTintableIndividualScene] = useState(false)
-  // const [deleteCandidate, setDeleteCandidate] = useState(null)
   const wrapperRef = useRef(null)
   const [isReadyToRenderFlag, setIsReadyToRenderFlag] = useState(false)
   const [initPosition, setPosition] = useState(0)
   const [sceneCount, setSceneCount] = useState(0)
+  // if set this means that the scenes and variants, including surfaces have loaded.
+  const [selectedSceneUid, scenesCollection, variantsCollection] = useSelector(store => [store.selectedSceneUid, store.scenesCollection, store.variantsCollection])
 
   useEffect(() => {
     const excludeFromLoad = savedScenes?.map(item => item.id).filter(item => !!item) || []
@@ -64,16 +63,10 @@ const MyIdeas = (props: MyIdeasProps) => {
   }, [])
 
   useEffect(() => {
-    if (!stockScenes) {
-      setStockScenes(sceneData)
-    }
-  }, [sceneData])
-
-  useEffect(() => {
-    if (isReadyToRender(sceneMetadata, savedScenes, stockScenes, isLoadingSavedScenes)) {
+    if (isReadyToRender(sceneMetadata, savedScenes, selectedSceneUid, isLoadingSavedScenes)) {
       setIsReadyToRenderFlag(true)
     }
-  }, [sceneMetadata, savedScenes, stockScenes, isLoadingSavedScenes])
+  }, [sceneMetadata, savedScenes, isLoadingSavedScenes, selectedSceneUid])
 
   useEffect(() => {
     setSceneCount(sceneMetadata.length)
@@ -102,10 +95,10 @@ const MyIdeas = (props: MyIdeasProps) => {
   }
 
   const showDeleteConfirm = (sceneId: string | number, isStockScene: boolean, isLivePaletteIdea?: boolean) => {
-    createDeleteMyIdeasModal(intl, dispatch, 'EMPTY_SCENE', { isStockScene: isStockScene, isLivePaletteIdea: isLivePaletteIdea, sceneId: sceneId })
+    dispatch(createDeleteMyIdeasModal(intl, 'EMPTY_SCENE', { isStockScene: isStockScene, isLivePaletteIdea: isLivePaletteIdea, sceneId: sceneId }))
   }
 
-  const isReadyToRender = (sceneMetadata: Object[], customSceneData, stockSceneData, isLoadingSavedScenes) => {
+  const isReadyToRender = (sceneMetadata: Object[], customSceneData, stockScenesLoaded, isLoadingSavedScenes) => {
     const expectCustomData = !!sceneMetadata.find(item => item.sceneType === SCENE_TYPE.anonCustom)
     const expectStockData = !!sceneMetadata.find(item => item.sceneType === SCENE_TYPE.anonStock)
     const expectLpData = !!sceneMetadata.find(item => item.sceneType === SCENE_TYPE.livePalette)
@@ -119,14 +112,14 @@ const MyIdeas = (props: MyIdeasProps) => {
 
     if (expectStockData && !expectCustomData) {
       // handle only stock data
-      if (stockSceneData) {
+      if (stockScenesLoaded) {
         return true
       }
     }
 
     if (expectStockData && expectCustomData) {
       // handle both
-      if (stockSceneData && customSceneData && !isLoadingSavedScenes) {
+      if (stockScenesLoaded && customSceneData && !isLoadingSavedScenes) {
         return customSceneData.length > 0
       }
     }
@@ -137,17 +130,14 @@ const MyIdeas = (props: MyIdeasProps) => {
 
   /**
    * @todo This approach will need to be rethought for use beyond anon persistence -RS
-   * @param sceneData - the data from the custom saved scenes
-   * @param stockSceneData - the data from saved stock scenes
+   * @param customSceneData - the data from the custom saved scenes
+   * @param scenes - the loaded scenesCollection from redux
+   * @param variants the loaded variantsCollections from redux
    * @param sceneMetadata - this is a list of ids and other related data used to order and commingle the custom and stock scenes
    * @param editIsEnabled
    * @returns {*[]}
    */
-  const generateSavedScenes = (sceneData: Object[], stockSceneData: any, sceneMetadata: Object[], editIsEnabled: boolean) => {
-    const baseSceneData = {
-      stockScenes: stockSceneData,
-      customScenes: sceneData
-    }
+  const generateSavedScenes = (customSceneData: Object[], scenes: FlatScene[], variants: FlatVariant[], sceneMetadata: Object[], editIsEnabled: boolean) => {
     return <Carousel
       BaseComponent={SavedSceneWrapper}
       btnRefList={[]}
@@ -156,8 +146,10 @@ const MyIdeas = (props: MyIdeasProps) => {
       defaultItemsPerView={8}
       isInfinity={false}
       key='myideas'
-      baseSceneData={baseSceneData}
       data={sceneMetadata}
+      customSceneData={customSceneData}
+      variants={variants}
+      scenes={scenes}
       editIsEnabled={editIsEnabled}
       deleteScene={showDeleteConfirm}
       selectScene={selectScene}
@@ -246,7 +238,7 @@ const MyIdeas = (props: MyIdeasProps) => {
               )}
             </EditColorPalette>
           }
-          <div className={`${(editedIndividualScene) ? savedScenesWrapperHide : savedScenesWrapperShow}`}>{generateSavedScenes(savedScenes, stockScenes, sceneMetadata, editEnabled)}</div>
+          <div className={`${(editedIndividualScene) ? savedScenesWrapperHide : savedScenesWrapperShow}`}>{generateSavedScenes(savedScenes, scenesCollection, variantsCollection, sceneMetadata, editEnabled)}</div>
         </div>
       </div>
         : renderNoScenes(isLoadingSavedScenes)}
@@ -255,18 +247,20 @@ const MyIdeas = (props: MyIdeasProps) => {
 }
 
 const SavedSceneWrapper = (props: any) => {
-  let scene = null
-  const { itemNumber, itemsPerView, totalItems, btnRefList } = props
+  const { itemNumber, itemsPerView, totalItems, btnRefList, scenes, variants, data } = props
   btnRefList[itemNumber] = React.useRef()
-  if (props.data.sceneType === SCENE_TYPE.anonStock && props.baseSceneData.stockScenes) {
+  const variant = props.data.sceneType === SCENE_TYPE.anonStock
+    ? variants.find(item => item.variantName === data.scene.variantName &&
+      item.sceneType === data.scene.sceneDataType && item.sceneId === data.scene.sceneDataId) : null
+
+  if (variant) {
     // handle stock scenes
-    const stockSceneMetadata = props.data
-    const sceneType = props.baseSceneData.stockScenes.sceneCollection[stockSceneMetadata.sceneFetchType]
+    const stockSceneMetadata = data
+    const scene = scenes.find(item => item.uid === variant.sceneUid)
 
-    const sceneDatum = sceneType.find(item => item.id === stockSceneMetadata.scene.id)
-
-    scene = {
-      scene: sceneDatum,
+    const sceneData = {
+      variant,
+      scene,
       sceneMetadata: stockSceneMetadata
     }
 
@@ -274,7 +268,7 @@ const SavedSceneWrapper = (props: any) => {
       width={100}
       height={90}
       sceneId={stockSceneMetadata.id}
-      sceneData={scene}
+      sceneData={sceneData}
       editEnabled={props.editIsEnabled}
       key={stockSceneMetadata.id}
       deleteScene={props.deleteScene}
@@ -287,15 +281,15 @@ const SavedSceneWrapper = (props: any) => {
       ref={btnRefList[itemNumber]} />
   } else if (props.data.sceneType === SCENE_TYPE.anonCustom) {
     // Handle custom scenes
-    scene = props.baseSceneData.customScenes.find(item => props.data.scene.indexOf(item.id) > -1)
-    if (scene) {
+    const customScene = props.customSceneData.find(item => props.data.scene.indexOf(item.id) > -1)
+    if (customScene) {
       return <SavedScene
         width={100}
         height={90}
-        sceneData={scene}
+        sceneData={customScene}
         editEnabled={props.editIsEnabled}
-        key={scene.id}
-        sceneId={scene.id}
+        key={customScene.id}
+        sceneId={customScene.id}
         deleteScene={props.deleteScene}
         selectScene={props.selectScene}
         editIndividualScene={props.editIndividualScene}

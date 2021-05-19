@@ -39,12 +39,13 @@ export default (props: Props) => {
   const onDownloadClick = async () => {
     setIsCreatingDownload(true)
     let imageSrc = ''
-    if (activeComponent === PAINT_SCENE_COMPONENT) {
+    const isPaintScene = activeComponent === PAINT_SCENE_COMPONENT
+    if (isPaintScene) {
       const backgroundImg = document.getElementsByName(BACKGROUND_IMG)[0].getContext('2d')
       const paintLayer = document.getElementsByName(PAINT_LAYER)[0].getContext('2d')
       await getFlatImage(backgroundImg, paintLayer).then((url) => { imageSrc = url })
     }
-    const variant = variantsCollection.find(variant => variant.sceneUid === selectedSceneUid && variant.variantName === selectedVariantName)
+    const variant = !isPaintScene ? variantsCollection.find(variant => variant.sceneUid === selectedSceneUid && variant.variantName === selectedVariantName) : null
     const data = activeComponent === PAINT_SCENE_COMPONENT ? imageSrc : variant
     generateImage(data, surfaceColors, config, intl).then(image => image.getBufferAsync(Jimp.MIME_JPEG))
       .then(buffer => {

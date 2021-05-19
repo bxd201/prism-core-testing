@@ -33,7 +33,7 @@ import {
   SET_SELECTED_SCENE_PALETTE_LOADED,
   UNSET_SELECTED_SCENE_PALETTE_LOADED,
   SET_USE_SMART_MASK, SET_SHOW_EDIT_CUSTOM_SCENE,
-  SET_CDP_COLOR
+  SET_CDP_COLOR, SET_ACTIVE_SCENE_KEY
 } from '../actions/scenes'
 import { registerMask, updateMask } from '../masks/store'
 import { SCENE_VARIANTS } from 'constants/globals'
@@ -80,7 +80,6 @@ export const SET_SELECTED_SCENE_UID = 'SET_SELECTED_SCENE_UID'
 export const scenes = (state: Object = initialState, action: { type: string, payload: Object }) => {
   switch (action.type) {
     case RECEIVE_SCENES:
-      console.log(action.payload)
       const sceneType = action.payload.type
 
       const _sceneCollection = state.sceneCollection.hasOwnProperty(sceneType) ? state.sceneCollection : Object.assign({}, state.sceneCollection, {
@@ -553,5 +552,13 @@ export const selectedVariantName = (state: string = '', action: {type: string, p
   if (action.type === SET_SELECTED_VARIANT_NAME) {
     return action.payload
   }
+  return state
+}
+
+export const activeSceneKey = (state: string = '', action: { type: string, payload: string }) => {
+  if (action.type === SET_ACTIVE_SCENE_KEY) {
+    return action.payload
+  }
+
   return state
 }

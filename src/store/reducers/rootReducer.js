@@ -13,7 +13,7 @@ import {
   currentWorkspace,
   useSmartMask,
   showEditCustomScene, scenesCollection, variantsCollection, variantsLoading, selectedSceneUid,
-  selectedVariantName
+  selectedVariantName, activeSceneKey
 } from './scenes'
 import { ingestedImageUrl, queuedImageUpload, uploads } from './uploads'
 import collectionSummaries from './collectionSummaries'
@@ -37,7 +37,7 @@ import {
   selectedSavedLivePaletteId,
   colorsForSurfacesFromSavedScene,
   shouldTriggerPaintScenePublishLayers,
-  paintSceneLayersForSave
+  paintSceneLayersForSave, shouldShowPaintSceneSavedModal, variantStockSceneNameFromSave
 } from './savedScenes'
 import { user } from './user'
 import { paintSceneWorkspace } from './paintSceneWorkspace'
@@ -51,7 +51,7 @@ import {
   allowNavigateToIntendedDestination, dirtyNavigationIntent, imageRotateBypass, isColorwallModallyPresented,
   navigationIntent, navigationReturnIntent,
   paintSceneCache, carouselCache,
-  scenePolluted, shouldShowGlobalDestroyWarning, stockSceneCache, forwardIntent
+  scenePolluted, shouldShowGlobalDestroyWarning, stockSceneCache, forwardIntent, isMatchPhotoPresented
 } from './navigation'
 import { modalInfo, modalThumbnailColor } from './globalModal'
 import { matchPhotoImage, matchPhotoImageDims } from './matchPhoto'
@@ -122,9 +122,16 @@ export default combineReducers({
   modalThumbnailColor,
   matchPhotoImage,
   matchPhotoImageDims,
-  colorsForSurfacesFromSavedScene,
   selectedVariantName,
   // this is so that paint scene knows to publish its layers for save
   shouldTriggerPaintScenePublishLayers,
-  paintSceneLayersForSave
+  paintSceneLayersForSave,
+  // used to show match photo warning
+  // @todo modal logic could be simplified by 'screen presented concept' refactor to know what screen is shown. -RS
+  isMatchPhotoPresented,
+  shouldShowPaintSceneSavedModal,
+  variantStockSceneNameFromSave,
+  colorsForSurfacesFromSavedScene,
+  // needed to ensure data reflow to active scene
+  activeSceneKey
 })

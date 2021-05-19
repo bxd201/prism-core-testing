@@ -13,7 +13,7 @@ import { FEATURE_EXCLUSIONS } from '../../constants/configurations'
 import WithConfigurationContext from '../../contexts/ConfigurationContext/WithConfigurationContext'
 import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 import { createSaveSceneModal, createModalForEmptyLivePalette } from '../CVWModalManager/createModal'
-import { SAVE_OPTION } from '../CVWModalManager/constants.js'
+import { MODAL_TYPE_ENUM, SAVE_OPTION } from '../CVWModalManager/constants.js'
 import { ROUTES_ENUM } from '../Facets/ColorVisualizerWrapper/routeValueCollections'
 import { triggerPaintSceneLayerPublish } from '../../store/actions/paintScene'
 
@@ -45,9 +45,6 @@ const SaveOptions = (props: SaveOptionsProps) => {
     }
   }, [cvw])
 
-  // @todo I deleted a bunch of logic here that selected the first active scene and variant, i think the way that we handle
-  // data makes this less necessary, need to to test -RS
-
   const handleSave = useCallback((e: SyntheticEvent) => {
     e.preventDefault()
     if (((pathname === '/active') || (pathname === ROUTES_ENUM.ACTIVE_PAINT_SCENE)) && !toggleCompareColor) {
@@ -58,15 +55,16 @@ const SaveOptions = (props: SaveOptionsProps) => {
           dispatch(triggerPaintSceneLayerPublish(true))
         }
         // @todo refactor this, we shouldn't need to pass dispatch here and maybe specialize to stock scene save since paint scene download is handled reactively by the facet -RS
-        createSaveSceneModal(intl, dispatch, activeSceneLabel, saveType)
+        const modalType = activeSceneLabel === ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE ? MODAL_TYPE_ENUM.STOCK_SCENE : MODAL_TYPE_ENUM.PAINT_SCENE
+        dispatch(createSaveSceneModal(intl, modalType, saveType))
       } else {
-        createModalForEmptyLivePalette(intl, dispatch, SAVE_OPTION.EMPTY_SCENE, true)
+        dispatch(createModalForEmptyLivePalette(intl, SAVE_OPTION.EMPTY_SCENE, true))
       }
     } else {
       if (lpColors.length !== 0) {
-        createSaveSceneModal(intl, dispatch, ACTIVE_SCENE_LABELS_ENUM.LIVE_PALETTE, SAVE_OPTION.SAVE_LIVE_PALETTE)
+        dispatch(createSaveSceneModal(intl, MODAL_TYPE_ENUM.LIVE_PALETTE, SAVE_OPTION.SAVE_LIVE_PALETTE))
       } else {
-        createModalForEmptyLivePalette(intl, dispatch, SAVE_OPTION.EMPTY_SCENE, false)
+        dispatch(createModalForEmptyLivePalette(intl, MODAL_TYPE_ENUM.EMPTY_SCENE, false))
       }
     }
   }, [pathname, activeSceneLabel])

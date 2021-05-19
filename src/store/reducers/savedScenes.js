@@ -18,7 +18,7 @@ import {
   SHOW_SAVED_CONFIRM_MODAL,
   SHOW_SAVED_CUSTOM_SUCCESS,
   SHOW_DELETE_CONFIRM,
-  PURGE_METADATA
+  PURGE_METADATA, SET_SHOULD_SHOW_PAINT_SCENE_SAVED_MODAL
 } from '../actions/persistScene'
 import {
   DELETE_ANON_STOCK_SCENE,
@@ -36,6 +36,7 @@ import { SCENE_TYPES } from '../../constants/globals'
 import cloneDeep from 'lodash/cloneDeep'
 import type { MiniColor } from '../../shared/types/Scene'
 import { SET_PAINT_SCENE_SAVE_DATA, TRIGGER_PAINT_SCENE_LAYER_PUBLISH } from '../actions/paintScene'
+import { copySurfaceColors } from '../../components/SingleTintableSceneView/util'
 export const legacySavedScenesMetadata = (state: Object[] = [], action: { type: string, payload: Object }) => {
   if (action.type === DELETE_SAVED_SCENE) {
     const newState = state.filter(scene => scene.id !== action.payload)
@@ -292,12 +293,17 @@ export const showDeleteConfirmModal = (state: boolean = false, action: { type: s
   return state
 }
 
-// @todo 5/17/21 need to add type for new savescene data -RS
-export const colorsForSurfacesFromSavedScene = (state: MiniColor[] | null = null, action: { type: string, payload: any | null}) => {
+export const colorsForSurfacesFromSavedScene = (state: MiniColor[] | null = null, action: { type: string, payload: { surfaceColors: MiniColor[] | null }}) => {
   if (action.type === HYDRATE_STOCK_SCENE_FROM_SAVE) {
-    return action.payload ? action.payload.surfaces.map(surfaceColor => {
-      return { ...surfaceColor }
-    }) : null
+    return copySurfaceColors(action.payload.surfaceColors)
+  }
+
+  return state
+}
+
+export const variantStockSceneNameFromSave = (state: string | null = null, action: { type: string, payload: { variantName: string | null }}) => {
+  if (action.type === HYDRATE_STOCK_SCENE_FROM_SAVE) {
+    return action.payload.variantName
   }
 
   return state
@@ -313,6 +319,18 @@ export const paintSceneLayersForSave = (state: string[] | null = null, action: {
 
 export const shouldTriggerPaintScenePublishLayers = (state: boolean = false, action: { type: string, payload: boolean}) => {
   if (action.type === TRIGGER_PAINT_SCENE_LAYER_PUBLISH) {
+    return action.payload
+  }
+
+  return state
+}
+
+export const shouldShowPaintSceneSavedModal = (state: boolean = false, action: {type: string, payload: boolean, data: any | void}) => {
+  if (action.type === SAVING_MASKS && !action.payload && action.data) {
+    return true
+  }
+
+  if (action.type === SET_SHOULD_SHOW_PAINT_SCENE_SAVED_MODAL) {
     return action.payload
   }
 

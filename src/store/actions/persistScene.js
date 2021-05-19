@@ -666,3 +666,11 @@ const getSceneIdFromSceneMetaData = (item: any) => {
 
   return id
 }
+
+export const SET_SHOULD_SHOW_PAINT_SCENE_SAVED_MODAL = 'SET_SHOULD_SHOW_PAINT_SCENE_SAVED_MODAL'
+export const setShouldShowPaintSceneSavedModal = (shouldShow: boolean = false) => {
+  return {
+    type: SET_SHOULD_SHOW_PAINT_SCENE_SAVED_MODAL,
+    payload: shouldShow
+  }
+}
