@@ -1,6 +1,5 @@
 // @flow
 import React from 'react'
-import ConfirmationModal from './ConfirmationModal'
 import DynamicColorFromImage from '../InspirationPhotos/DynamicColorFromImage'
 
 type Props = {
@@ -9,12 +8,10 @@ type Props = {
   isPortrait: boolean,
   imageDims: Object,
   pins: Array<Object>,
-  isConfirmationModalActive: boolean,
-  onClickNo: Function,
   maxHeight: number
 }
 
-export function MatchPhoto ({ imageUrl, wrapperWidth, isPortrait, imageDims, pins, isConfirmationModalActive, onClickNo, maxHeight }: Props) {
+export function MatchPhoto ({ imageUrl, wrapperWidth, isPortrait, imageDims, pins, maxHeight }: Props) {
   return (
     <>
       {
@@ -32,7 +29,6 @@ export function MatchPhoto ({ imageUrl, wrapperWidth, isPortrait, imageDims, pin
                 pins={pins}
                 isActive
               />
-              {isConfirmationModalActive && <ConfirmationModal onClickNo={onClickNo} />}
             </>
           )
           : ''

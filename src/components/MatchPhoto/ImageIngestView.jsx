@@ -5,7 +5,7 @@
 // @flow
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { FormattedMessage } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { Link, useHistory } from 'react-router-dom'
 import ImageRotateTerms from './ImageRotateTerms'
 import React, { useEffect, useRef, useState } from 'react'
@@ -14,16 +14,20 @@ import { calcOrientationDimensions } from '../../shared/utils/scale.util'
 
 import './ImageIngestView.scss'
 import { getTransformParams } from '../../shared/utils/rotationUtil'
+import { LiveMessage } from 'react-aria-live'
 
 type ImageIngestViewProps = {
+  cleanupCallback?: Function,
   imageUrl: string,
-  maxSceneHeight: number
+  maxSceneHeight: number,
+  handleDismissCallback: Function
 }
 
 const baseClassName = 'image-ingest-view'
 
 const ImageIngestView = (props: ImageIngestViewProps) => {
-  const { imageUrl, maxSceneHeight } = props
+  const { imageUrl, maxSceneHeight, handleDismissCallback, cleanupCallback } = props
+  const blobUrl = imageUrl
   const history = useHistory()
   const wrapperRef = useRef()
   const canvasRef = useRef()
@@ -44,34 +48,19 @@ const ImageIngestView = (props: ImageIngestViewProps) => {
   })
   const [imageDims, setImageDims] = useState({ width: 0, height: 0 })
   const [isPortrait, setIsPortrait] = useState(false)
-  // eslint-disable-next-line no-unused-vars
-  const [imageWidth, setImageWidth] = useState(0)
-  // eslint-disable-next-line no-unused-vars
-  const [imageHeight, setImageHeight] = useState(0)
-  // this represents a value related to the wrapper width that an image width will be based on.
-  // eslint-disable-next-line no-unused-vars
-  const [baseWidth, setBaseWidth] = useState(0)
-  // Pure wrapper width, only updated by resize after initialized with the rendered wrapper value.
-  // eslint-disable-next-line no-unused-vars
-  const [wrapperWidth, setWrapperWidth] = useState(0)
   const [scalingWidth, setScalingWidth] = useState(0)
-  // eslint-disable-next-line no-unused-vars
   const [imageRotationAngle, setImageRotationAngle] = useState(0)
-  // eslint-disable-next-line no-unused-vars
-  const [isImageRotated, setIsImageRotated] = useState(false)
-  const [resized, setResized] = useState(0)
   // @todo I think we should be able to safely use state for these -RS
   const prevOrientationRef = useRef()
   const prevRotationRef = useRef()
   const previousIsPortraitRef = useRef()
+  const { formatMessage } = useIntl()
 
-  // I don't think we need this approach to set these values like this anymore -RS
+  // @todo I don't think we need this approach to set these values like this anymore -RS
   useEffect(() => {
     prevOrientationRef.current = orientationDimensions
     prevRotationRef.current = imageRotationAngle
     previousIsPortraitRef.current = isPortrait
-    // prevBlobUrlRef.current = blobUrl
-    // hasLoadedRef.current = hasLoaded
   })
 
   useEffect(() => {
@@ -80,10 +69,13 @@ const ImageIngestView = (props: ImageIngestViewProps) => {
 
   useEffect(() => {
     const { width } = wrapperRef.current.getBoundingClientRect()
-    setWrapperWidth(width)
     setScalingWidth(width)
-    setBaseWidth(width)
-    window.addEventListener('resize', resizeHandler)
+
+    return () => {
+      if (cleanupCallback) {
+        cleanupCallback()
+      }
+    }
   }, [])
 
   useEffect(() => {
@@ -134,7 +126,7 @@ const ImageIngestView = (props: ImageIngestViewProps) => {
     // Set the image data used by the match color component
     const newImageData = canvasWidth && ctx.getImageData(0, 0, canvasWidth, canvasHeight)
     setImageData(newImageData)
-  }, [resized, imageRotationAngle])
+  }, [imageRotationAngle])
 
   const swapWidthAndHeight = (width, height, originalImageIsPortrait, currentlyIsPortrait) => {
     let relWidth = width
@@ -161,21 +153,16 @@ const ImageIngestView = (props: ImageIngestViewProps) => {
     return [relWidth, relHeight]
   }
 
-  const resizeHandler = (e: Event) => {
-    setResized(Date.now())
-    const { width } = wrapperRef.current.getBoundingClientRect()
-    setWrapperWidth(width)
-    setBaseWidth(width)
-  }
-
   const handleCloseButton = (e: SyntheticEvent) => {
     history.push('/active')
   }
 
   const handleDismissTerms = (e: SyntheticEvent) => {
-    // @tod implement -RS
     e.preventDefault()
-    console.log('Dismissing terms:', e)
+
+    const rotatedImageUrl = canvasRef.current.toDataURL()
+    const { width, height } = canvasRef.current
+    handleDismissCallback(rotatedImageUrl, width, height, orientationDimensions)
   }
 
   const drawToCanvas = (image, width, height) => {
@@ -219,9 +206,6 @@ const ImageIngestView = (props: ImageIngestViewProps) => {
     setOrientationDimensions(dimensions)
     setIsPortrait(dimensions.originalIsPortrait)
     setImageDims(imageDims)
-    setBaseWidth(dimensions.landscapeWidth)
-    setImageWidth(width)
-    setImageHeight(height)
     setIsPortrait(height > width)
     initCanvas(image, dimensions, dimensions.originalIsPortrait)
   }
@@ -232,8 +216,6 @@ const ImageIngestView = (props: ImageIngestViewProps) => {
     const width = orientation ? portraitWidth : landscapeWidth
     const height = orientation ? portraitHeight : landscapeHeight
     setIsPortrait(orientation)
-    setImageHeight(height)
-    setImageWidth(width)
 
     if (isRightRotation) {
       if (imageRotationAngle === 270) {
@@ -251,13 +233,12 @@ const ImageIngestView = (props: ImageIngestViewProps) => {
 
     const newDims = { ...imageDims, imageWidth: width, imageHeight: height, isPortrait: orientation }
     setImageDims(newDims)
-    setIsImageRotated(true)
   }
 
   return (
     <>
       <div className={`${baseClassName}__wrapper`} ref={wrapperRef}>
-        {uploadedImageUrl ? <PrismImage ref={imageRef} source={uploadedImageUrl} loadedCallback={handleImageLoaded} shouldResample={hasLoaded} scalingWidth={scalingWidth} /> : null}
+        {uploadedImageUrl ? <PrismImage ref={imageRef} source={blobUrl} loadedCallback={handleImageLoaded} shouldResample={hasLoaded} scalingWidth={scalingWidth} /> : null}
         <div className={`${baseClassName}__container`}>
           {hasLoaded ? <div className={`${baseClassName}__header`}>
             <button className={`${baseClassName}__button ${baseClassName}__button--left`} onClick={() => history.goBack()}>
@@ -275,6 +256,7 @@ const ImageIngestView = (props: ImageIngestViewProps) => {
           {hasLoaded ? <ImageRotateTerms rotateImage={rotateImage} imageData={imageData} handleDismiss={handleDismissTerms} /> : null}
         </div>
       </div>
+      <LiveMessage message={formatMessage({ id: 'LIVE_MESSAGE_IMAGE_ANGLE' }, { imageRotationAngle: imageRotationAngle })} aria-live='assertive' clearOnUnmount='true' />
     </>
   )
 }

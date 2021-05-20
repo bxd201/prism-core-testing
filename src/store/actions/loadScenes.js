@@ -79,10 +79,7 @@ export const handleScenesFetchErrorForCVW = (err: any) => {
 
 // This method gets a flat array of variants the are referential to the scene they belong to.
 export const getFlatVariants = (scenes): FlatVariant => {
-  // sort variant keys by abc  to ensure order
-  // eslint-disable-next-line camelcase
   const variantsCollection = scenes.map(scene => {
-    // eslint-disable-next-line no-unused-vars
     const { id: sceneId, sceneType, uid: sceneUid, categories } = scene
     return scene.variants.map(variant => {
       const surfaces = variant.surfaces.map(surface => {
@@ -102,7 +99,7 @@ export const getFlatVariants = (scenes): FlatVariant => {
         description,
         image,
         thumb,
-        sceneId, // scene ID are not unique, they can repeat by sceneType, sceneType + sceneId creates a compound key
+        sceneId,
         sceneType,
         sceneUid,
         variantName,
@@ -114,7 +111,6 @@ export const getFlatVariants = (scenes): FlatVariant => {
     })
   })
 
-  // Handle any preprocessing required of all variants
   const variants = flattenDeep(variantsCollection, 2)
   const roomTypes = []
   variants.forEach((variant, i) => {
@@ -166,5 +162,13 @@ export const setSelectedSceneUid = (sceneUid: string | null = null) => {
   return {
     type: SET_SELECTED_SCENE_UID,
     payload: sceneUid
+  }
+}
+
+export const SET_SELECTED_VARIANT_NAME = 'SET_SELECTED_VARIANT_NAME'
+export const setSelectedVariantName = (variantName: string = '') => {
+  return {
+    type: SET_SELECTED_VARIANT_NAME,
+    payload: variantName
   }
 }

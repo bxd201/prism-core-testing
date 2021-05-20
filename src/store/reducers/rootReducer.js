@@ -12,7 +12,8 @@ import {
   sceneWorkspaces,
   currentWorkspace,
   useSmartMask,
-  showEditCustomScene, scenesCollection, variantsCollection, variantsLoading, selectedSceneUid
+  showEditCustomScene, scenesCollection, variantsCollection, variantsLoading, selectedSceneUid,
+  selectedVariantName
 } from './scenes'
 import { ingestedImageUrl, queuedImageUpload, uploads } from './uploads'
 import collectionSummaries from './collectionSummaries'
@@ -30,11 +31,13 @@ import {
   showSaveSceneModal,
   saveSceneName,
   selectedStockSceneId,
-  selectedSceneStatus,
   showSavedConfirmModal,
   showSavedCustomSceneSuccess,
   showDeleteConfirmModal,
-  selectedSavedLivePaletteId
+  selectedSavedLivePaletteId,
+  colorsForSurfacesFromSavedScene,
+  shouldTriggerPaintScenePublishLayers,
+  paintSceneLayersForSave
 } from './savedScenes'
 import { user } from './user'
 import { paintSceneWorkspace } from './paintSceneWorkspace'
@@ -51,6 +54,7 @@ import {
   scenePolluted, shouldShowGlobalDestroyWarning, stockSceneCache, forwardIntent
 } from './navigation'
 import { modalInfo, modalThumbnailColor } from './globalModal'
+import { matchPhotoImage, matchPhotoImageDims } from './matchPhoto'
 
 export default combineReducers({
   collectionSummaries,
@@ -82,7 +86,6 @@ export default combineReducers({
   showSaveSceneModal,
   saveSceneName,
   selectedStockSceneId,
-  selectedSceneStatus,
   // For scene manager
   showSavedConfirmModal,
   // For paint scene
@@ -116,5 +119,12 @@ export default combineReducers({
   ingestedImageUrl,
   forwardIntent,
   modalInfo,
-  modalThumbnailColor
+  modalThumbnailColor,
+  matchPhotoImage,
+  matchPhotoImageDims,
+  colorsForSurfacesFromSavedScene,
+  selectedVariantName,
+  // this is so that paint scene knows to publish its layers for save
+  shouldTriggerPaintScenePublishLayers,
+  paintSceneLayersForSave
 })

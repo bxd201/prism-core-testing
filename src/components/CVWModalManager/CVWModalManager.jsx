@@ -22,20 +22,19 @@ import { SAVE_OPTION, HIDE_MODAL, HANDLE_NAVIGATION_INTENT_CONFIRM,
 import { getColorInstances } from '../LivePalette/livePaletteUtility'
 import { createConfirmSavedModal } from './createModal'
 import { useIntl } from 'react-intl'
+import type { PreviewImageProps } from '../../shared/types/CVWTypes'
 
 export const globalModalClassName = 'global-modal'
 export const globalModalPreviewImageClassName = `${globalModalClassName}__preview-image`
+const saveScenedefaultName = 'My Saved Scene'
 
-export const PreviewImage = () => {
-  const modalInfo = useSelector((store) => store.modalInfo)
-  const selectedSceneUid = useSelector((store) => store.selectedSceneUid)
-  const surfaceColors = useSelector(state => state.modalThumbnailColor)
-  const lpColors = useSelector((store) => store.lp.colors)
-  const scenes = useSelector((store) => store.variantsCollection)
+export const PreviewImage = ({ modalInfo, lpColors, surfaceColors, scenes, selectedSceneUid, selectedVariantName }: PreviewImageProps) => {
+  const scenesCollection = useSelector((store) => store.scenesCollection)
   const mergeCanvasRef = useRef(null)
+  // get the layers for paint scene save
+  const paintSceneLayers = useSelector(store => store.paintSceneLayersForSave) ?? []
 
   const getStockScenePreviewData = (showLivePalette) => {
-    const currentSceneData = scenes?.find(item => item.sceneUid === selectedSceneUid)
     const livePaletteColorsDiv = lpColors.filter(color => !!color).map((color, i) => {
       const { red, green, blue } = color
       return (
@@ -48,12 +47,12 @@ export const PreviewImage = () => {
     })
 
     return <>
-      {currentSceneData && <div style={{ maxHeight: '66px' }}><SingleTintableSceneView surfaceColorsFromParents={surfaceColors} selectedSceneUID={selectedSceneUid} allowVariantSwitch={false} interactive={false} /></div>}
+      {scenes && selectedSceneUid && selectedVariantName && <div style={{ maxHeight: '66px' }}><SingleTintableSceneView surfaceColorsFromParents={surfaceColors} variantsCollection={scenes} scenesCollection={scenesCollection} selectedVariantName={selectedVariantName} selectedSceneUid={selectedSceneUid} allowVariantSwitch={false} interactive={false} /></div>}
       {showLivePalette && <div style={{ display: 'flex', marginTop: '1px' }}>{livePaletteColorsDiv}</div>}
     </>
   }
 
-  const getPaintScenePreviewData = (showLivePalette) => {
+  const getPaintScenePreviewData = (showLivePalette, layers) => {
     const livePaletteColorsDiv = lpColors.filter(color => !!color).map((color, i) => {
       const { red, green, blue } = color
       return (
@@ -69,7 +68,7 @@ export const PreviewImage = () => {
       <div style={{ height: '64px' }}>
         <MergeCanvas
           ref={mergeCanvasRef}
-          layers={modalInfo?.layers}
+          layers={layers}
           width={110}
           height={64}
           colorOpacity={0.8}
@@ -99,7 +98,7 @@ export const PreviewImage = () => {
   return (
     <>
       {modalInfo?.modalType === ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE && <div className={globalModalPreviewImageClassName}>{getStockScenePreviewData(modalInfo?.showLivePalette)}</div>}
-      {modalInfo?.modalType === ACTIVE_SCENE_LABELS_ENUM.PAINT_SCENE && <div className={globalModalPreviewImageClassName}>{getPaintScenePreviewData(modalInfo?.showLivePalette)}</div>}
+      {modalInfo?.modalType === ACTIVE_SCENE_LABELS_ENUM.PAINT_SCENE && <div className={globalModalPreviewImageClassName}>{getPaintScenePreviewData(modalInfo?.showLivePalette, paintSceneLayers)}</div>}
       {modalInfo?.modalType === ACTIVE_SCENE_LABELS_ENUM.LIVE_PALETTE && <div className={globalModalPreviewImageClassName}>{getLivePalettePreviewData(modalInfo?.showLivePalette)}</div>}
     </>)
 }
@@ -110,7 +109,10 @@ export const CVWModalManager = () => {
   const dirtyNavIntent = useSelector(store => store.dirtyNavigationIntent)
   const storeScenes = useSelector((store) => store.variantsCollection)
   const selectedSceneUid = useSelector((store) => store.selectedSceneUid)
-  const currentSceneData = storeScenes?.find(item => item.sceneUid === selectedSceneUid)
+  const sceneCount = useSelector(state => state.sceneMetadata).length + 1
+  const selectedVariantName = useSelector(state => state.selectedVariantName)
+  const currentSceneData = selectedVariantName ? storeScenes?.find(item => item.sceneUid === selectedSceneUid && item.variantName === selectedVariantName) : storeScenes?.find(item => item.sceneUid === selectedSceneUid)
+  const surfaceColors = useSelector(state => state.modalThumbnailColor)
   const selectedScenes = useSelector(store => {
     const { items: { colorMap } }: ColorMap = store.colors
     if (store.selectedSavedLivePaletteId) {
@@ -125,7 +127,10 @@ export const CVWModalManager = () => {
   const history = useHistory()
   btnRefList.current = []
   const { shouldDisplayModal, actions, styleType, title, description, allowInput } = modalInfo
-  const [inputValue, setInputValue] = useState('')
+  const [inputValue, setInputValue] = useState(`${saveScenedefaultName} ${sceneCount}`)
+  // The following function is needed for a particular use case where if a user clear the default name of the scene being saved,
+  // and close the modal, this function will reset the state with the default name
+  const resetInputValue = () => setInputValue(`${saveScenedefaultName} ${sceneCount}`)
 
   const createCallbackFromActionName = (callbackName) => {
     switch (callbackName) {
@@ -189,12 +194,18 @@ export const CVWModalManager = () => {
     if (currentSceneData) {
       // @todo should I throw an error if no active scene or is this over kill? -RS
       let livePaletteColorsIdArray = []
+      const saveSceneData = {}
+      const { variantName, sceneType, sceneId } = currentSceneData
+      saveSceneData.sceneDataId = sceneId
+      saveSceneData.variantName = variantName
+      saveSceneData.sceneDataType = sceneType
+      saveSceneData.surfaceColors = surfaceColors
       lpColors && lpColors.map(color => {
         livePaletteColorsIdArray.push(color.id)
       })
       hideModal()
       // @to do we may need to change ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE to another variable, the variable was store.scene.type from redux.
-      dispatch(saveStockScene(uniqId, saveSceneName, currentSceneData, ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE, livePaletteColorsIdArray))
+      dispatch(saveStockScene(uniqId, saveSceneName, saveSceneData, ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE, livePaletteColorsIdArray))
       createConfirmSavedModal(intl, dispatch)
     }
   }
@@ -263,18 +274,28 @@ export const CVWModalManager = () => {
   }
 
   return (
-    <React.Fragment>
+    <>
       <Modal
         shouldDisplayModal={shouldDisplayModal}
-        previewImage={modalInfo?.modalType !== ACTIVE_SCENE_LABELS_ENUM.EMPTY_SCENE ? <PreviewImage /> : null}
+        previewImage={modalInfo?.modalType !== ACTIVE_SCENE_LABELS_ENUM.EMPTY_SCENE
+          ? <PreviewImage
+            modalInfo={modalInfo}
+            lpColors={lpColors}
+            surfaceColors={surfaceColors}
+            scenes={storeScenes}
+            selectedSceneUid={selectedSceneUid}
+            selectedVariantName={selectedVariantName}
+          /> : null}
         styleType={styleType}
         title={title}
         description={description}
         allowInput={allowInput}
         actions={actions}
+        inputValue={inputValue}
+        resetInputValue={resetInputValue}
         fn={createCallbackFromActionName}
         setInputValue={setInputValue}
       />
-    </React.Fragment>
+    </>
   )
 }

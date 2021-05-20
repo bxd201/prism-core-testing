@@ -9,7 +9,7 @@ import { Redirect, useHistory } from 'react-router-dom'
 import ColorPalette from './ColorPalette'
 import CardMenu from 'src/components/CardMenu/CardMenu'
 import { selectSavedScene, SCENE_TYPE } from '../../store/actions/persistScene'
-import { selectSavedAnonStockScene, setSelectedSceneStatus } from '../../store/actions/stockScenes'
+import { selectSavedAnonStockScene, hydrateStockSceneFromSavedData } from '../../store/actions/stockScenes'
 import { StaticTintScene } from '../CompareColor/StaticTintScene'
 import { SCENE_VARIANTS } from 'src/constants/globals'
 import { getColorInstances, checkCanMergeColors, shouldPromptToReplacePalette } from '../LivePalette/livePaletteUtility'
@@ -19,10 +19,9 @@ import { mergeLpColors } from 'src/store/actions/live-palette'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { LP_MAX_COLORS_ALLOWED } from 'constants/configurations'
 import { createSelectPaletteModal } from '../CVWModalManager/createModal'
-import { unsetSelectedScenePaletteLoaded, showWarningModal, activateOnlyScene, unpaintSceneSurfaces } from '../../store/actions/scenes'
-import ImageRotateContainer from 'src/components/MatchPhoto/ImageRotateContainer'
-import SceneManager from 'src/components/SceneManager/SceneManager'
+import { unsetSelectedScenePaletteLoaded, showWarningModal } from '../../store/actions/scenes'
 import './MyIdeaPreview.scss'
+import { setSelectedSceneUid } from '../../store/actions/loadScenes'
 // @todo for mysherwin feature -RS
 // import { CUSTOM_SCENE_IMAGE_ENDPOINT } from '../../constants/endpoints'
 
@@ -67,7 +66,6 @@ const MyIdeaPreview = ({ openScene }: MyIdeaPreviewProps) => {
   const dispatch = useDispatch()
   const { formatMessage } = useIntl()
   const intl = useIntl()
-  const history = useHistory()
   const backgroundCanvasRef = useRef()
   const foregroundCanvasRef = useRef()
   const wrapperRef = useRef()
@@ -83,11 +81,12 @@ const MyIdeaPreview = ({ openScene }: MyIdeaPreviewProps) => {
     if (state.selectedStockSceneId) {
       const expectStockData = state.sceneMetadata.find(item => item.sceneType === SCENE_TYPE.anonStock && item.id === state.selectedStockSceneId)
       if (expectStockData) {
-        const stockSceneData = state.scenes.sceneCollection[expectStockData.sceneFetchType].find(item => item.id === expectStockData.scene.id)
+        // const stockSceneData = state.scenes.sceneCollection[expectStockData.sceneFetchType].find(item => item.id === expectStockData.scene.id)
+        const uid = state.scenesCollection.find(scene => scene.id === expectStockData.scene.sceneId ? scene.uid : null)
         const palette = expectStockData.scene.surfaces.map(surface => surface.color).filter(color => color !== undefined)
         const livePaletteColorsIdArray = (expectStockData.hasOwnProperty('livePaletteColorsIdArray')) ? expectStockData.livePaletteColorsIdArray : null
         const colorInstances = getColorInstances(palette, livePaletteColorsIdArray, colorMap)
-        return { name: expectStockData.name, palette: colorInstances, savedSceneType: SCENE_TYPE.anonStock, stockSceneData: stockSceneData, expectStockData: expectStockData }
+        return { name: expectStockData.name, palette: colorInstances, savedSceneType: SCENE_TYPE.anonStock, uid, expectStockData }
       }
     }
     if (state.selectedSavedSceneId) {
@@ -186,19 +185,18 @@ const MyIdeaPreview = ({ openScene }: MyIdeaPreviewProps) => {
     const openPaintedProject = e.currentTarget.dataset.buttonid === 'painted' && true
     const open = () => {
       dispatch(unsetSelectedScenePaletteLoaded())
-      dispatch(setSelectedSceneStatus(null))
+      dispatch(hydrateStockSceneFromSavedData(null))
       if (selectedScene.savedSceneType === SCENE_TYPE.anonCustom) {
-        dispatch(setLayersForPaintScene(backgroundCanvasRef.current.toDataURL(), openPaintedProject ? layersRef.current : null, selectedScene.palette, initialWidth, initialHeight, WORKSPACE_TYPES.savedScene))
-        openScene(<ImageRotateContainer key={Date.now()} isFromMyIdeas isPaintScene checkIsPaintSceneUpdate={false} showPaintScene imgUrl='' />, 'PaintScene')
+        dispatch(setLayersForPaintScene(backgroundCanvasRef.current.toDataURL(), openPaintedProject
+          ? layersRef.current : null, selectedScene.palette, initialWidth, initialHeight, WORKSPACE_TYPES.savedScene))
       } else if (selectedScene.savedSceneType === SCENE_TYPE.anonStock) {
         selectedScene.openUnpaintedStockScene = !openPaintedProject
-        dispatch(unpaintSceneSurfaces(selectedScene.stockSceneData.id))
-        dispatch(activateOnlyScene(selectedScene.stockSceneData.id))
-        dispatch(setSelectedSceneStatus(selectedScene))
-        openScene(<SceneManager expertColorPicks hideSceneSelector scenes={[selectedScene]} />, 'StockScene')
+        dispatch(setSelectedSceneUid(selectedScene.uid))
+        dispatch(hydrateStockSceneFromSavedData(selectedScene))
       }
-      history.push('/active')
+      openScene(selectedScene.savedSceneType)
     }
+    // @todo I think this api no longer accepts a callback -RS
     isActivePaintScenePolluted ? dispatch(showWarningModal(open)) : open()
   }
 

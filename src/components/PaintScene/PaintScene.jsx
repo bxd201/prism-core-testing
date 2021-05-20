@@ -50,7 +50,12 @@ import storageAvailable from '../../shared/utils/browserStorageCheck.util'
 import { checkCanMergeColors, shouldPromptToReplacePalette } from '../LivePalette/livePaletteUtility'
 import { LP_MAX_COLORS_ALLOWED } from '../../constants/configurations'
 import { mergeLpColors, replaceLpColors } from '../../store/actions/live-palette'
-import { clearSceneWorkspace, WORKSPACE_TYPES } from '../../store/actions/paintScene'
+import {
+  clearSceneWorkspace,
+  setPaintSceneSaveData,
+  triggerPaintSceneLayerPublish,
+  WORKSPACE_TYPES
+} from '../../store/actions/paintScene'
 import { setWarningModalImgPreview } from 'src/store/actions/scenes'
 import { group, ungroup, deleteGroup, selectArea, bucketPaint, applyZoom, getActiveGroupTool, panMove, getDefinedPolygon, eraseOrPaintMouseUp, eraseOrPaintMouseDown, getActiveToolState, getBrushShapeSize, getEmptyCanvas, handleMouseMove } from './toolFunction'
 import { LiveMessage } from 'react-aria-live'
@@ -88,37 +93,70 @@ const showCursor = `${baseClass}--show-cursor`
 const hideCursor = `${baseClass}--hide-cursor`
 
 type ComponentProps = {
+  // @todo deprecate -RS
   imageUrl: string,
+  // @todo still need -RS
   lpActiveColor: Object,
+  // @todo deprecate... I think -RS
   referenceDimensions: Object,
+  // @todo deprecate -RS
   width: number,
-  selectedMaskIndex: number,
+  // @todo do we still need ? -RS
+  selectedMaskIndex?: number,
+  // @todo still needed -RS
   intl: any,
+  // @todo still need -RS
   saveMasks: Function,
-  savingMasks: boolean,
-  startSavingMasks: Function,
+  // @todo do we still need? -RS
+  savingMasks?: boolean,
+  // @todo do we still need? -RS
+  startSavingMasks?: Function,
+  // @todo def need -RS
   workspace: Object,
+  // @todo do we still need? -RS
   lpColors: Object[],
+  // @todo do we still need? Probably -RS
   mergeLpColors: Function,
+  // @todo do we still need? Probably -RS
   replaceLpColors: Function,
+  // @todo do we still need? -RS
   selectSavedScene: Function,
+  // @todo do we still need?  -RS
   clearSceneWorkspace: Function,
+  // @todo do we still need? Probably -RS
   showSaveSceneModalAction: Function,
   saveSceneName: string,
+  // @todo still needed -RS
   setActiveScenePolluted: () => void,
+  // @todo still needed -RS
   unsetActiveScenePolluted: () => void,
+  // @todo do we still need?  -RS
   setWarningModalImgPreview: ({}) => void,
+  // @todo do we still need?  -RS
   sendImageData?: Function,
+  // @todo Still need -RS
   maxSceneHeight: number,
+  // @todo do we still need?  -RS
   navigationIntent: string,
+  // @todo do we still need?  -RS
   navigateToIntendedDestination: Function,
+  // @todo do we still need?  -RS
   clearNavigationIntent: Function,
+  // @todo i don't think we still need -RS
   paintSceneCache: any,
+  // @todo probably still need -RS
   cachePaintScene: Function,
+  // @todo do we still need?  -RS
   setActiveSceneLabel: Function,
+  // @todo do we still need?  -RS
   shouldRestoreFromCache: boolean,
+  // @todo do we still need?  -RS
   clearPaintSceneCache: Function,
-  updatePaintScenePreview: Function
+  // eslint-disable-next-line react/no-unused-prop-types
+  publishLayers: Function,
+  triggerPublish: boolean,
+  // eslint-disable-next-line react/no-unused-prop-types
+  killPublishFlag: Function
 }
 
 type ComponentState = {
@@ -213,8 +251,8 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.originalIsPortrait = props.workspace ? (props.workspace.height > props.workspace.width) : props.referenceDimensions.originalIsPortrait
     this.canvasPanStart = { x: 0.5, y: 0.5 }
     this.lastPanPoint = { x: 0, y: 0 }
-    this.originalImageWidth = props.referenceDimensions.originalImageWidth
-    this.originalImageHeight = props.referenceDimensions.originalImageHeight
+    this.originalImageWidth = props.workspace ? props.workspace.width : props.referenceDimensions.originalImageWidth
+    this.originalImageHeight = props.workspace ? props.workspace.height : props.referenceDimensions.originalImageHeight
     this.maxSceneHeight = props.maxSceneHeight
 
     const state = {
@@ -345,18 +383,35 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   componentDidUpdate (prevProps: Object, prevState: Object) {
     const { navigationIntent, paintSceneCache } = this.props
     // handle case when paint scene needs to cache data to navigate to the color wall
+    // @todo Revisit this 5/17/21 -RS
     if (navigationIntent === ROUTES_ENUM.COLOR_WALL && !paintSceneCache) {
       this.prepareDataCache(this.state)
+    }
+    // publish layers for save  if flag present
+    if (this.props.triggerPublish) {
+      this.props.publishLayers(this.getLayers())
+      // Ensure that the publish is only done once per flow
+      this.props.killPublishFlag()
     }
 
     const checkImageListIfUpdate = !compareArraysOfObjects(this.state.imagePathList, prevState.imagePathList)
     if (checkImageListIfUpdate) {
       const imageData = this.CFICanvas2.current.getContext('2d').getImageData(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
-      this.props.sendImageData && this.props.sendImageData(imageData)
-      this.props.setActiveScenePolluted()
-      this.props.updatePaintScenePreview({ layers: this.getLayers() })
-      // might dont need line 392
-      this.props.setWarningModalImgPreview({ dataUrls: this.getLayers(), width: this.backgroundImageWidth, height: this.backgroundImageHeight })
+      if (this.props.sendImageData) {
+        this.props.sendImageData(imageData)
+      }
+
+      if (this.props.setActiveScenePolluted) {
+        this.props.setActiveScenePolluted()
+      }
+      // @todo we cannot call this here, we need this component to react to a signal to publish the layers data.
+      // if (this.props.setPaintSceneSaveData) {
+      //   this.props.setPaintSceneSaveData(this.getLayers())
+      // }
+      // might dont need line
+      if (this.props.setWarningModalImgPreview) {
+        this.props.setWarningModalImgPreview({ dataUrls: this.getLayers(), width: this.backgroundImageWidth, height: this.backgroundImageHeight })
+      }
     }
     if (prevState.loading) {
       return
@@ -559,23 +614,27 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
         paintCursor: `${canvasClass}--${toolNames.PAINTAREA}`
       })
     }
-    if (this.props.workspace) {
+    if (this.props.workspace && this.props.clearSceneWorkspace) {
+      // @todo we may still need this  REVISIT -RS
       this.props.clearSceneWorkspace()
     }
-    // @todo this is an app level concern and should happen outside of here, that said, it is a safe and stable place to do it now, lift when imagerotatecontainer refactor occurs -RS
-    if (this.props.shouldRestoreFromCache) {
-      this.props.setActiveScenePolluted()
-    }
+
     this.setState({ imageUrl: this.props.imageUrl })
-    this.props.clearPaintSceneCache()
-    this.props.setActiveSceneLabel(ACTIVE_SCENE_LABELS_ENUM.PAINT_SCENE)
+    // @todo These methods may not be needed anymore due to how the component is rendered -RS
+    if (this.props.clearPaintSceneCache && this.props.setActiveSceneLabel) {
+      this.props.clearPaintSceneCache()
+      this.props.setActiveSceneLabel(ACTIVE_SCENE_LABELS_ENUM.PAINT_SCENE)
+    }
   }
 
   componentWillUnmount () {
-    this.props.selectSavedScene(null)
-    this.props.unsetActiveScenePolluted()
-    // @todo this is an app level concern and should happen outside of here, that said, it is a safe and stable place to do it now, lift when imagerotatecontainer refactor occurs -RS
-    this.props.setActiveSceneLabel()
+    // @todo These methods may not be needed anymore due to how the component is rendered -RS
+    if (this.props.selectSavedScene && this.props.unsetActiveScenePolluted) {
+      this.props.selectSavedScene(null)
+      this.props.unsetActiveScenePolluted()
+      // clean up the save data on unmount
+      this.props.publishLayers()
+    }
   }
 
   updateWindowDimensions = () => {
@@ -1049,7 +1108,7 @@ canvasHeight
 }
 
 const mapStateToProps = (state: Object, props: Object) => {
-  const { lp, savingMasks, selectedSavedSceneId, scenesAndRegions, showSaveSceneModal, saveSceneName, navigationIntent, scenePolluted, paintSceneCache } = state
+  const { lp, savingMasks, selectedSavedSceneId, scenesAndRegions, showSaveSceneModal, saveSceneName, navigationIntent, scenePolluted, paintSceneCache, shouldTriggerPaintScenePublishLayers } = state
   const selectedScene = scenesAndRegions.find(item => item.id === selectedSavedSceneId)
   const activeColor = props.workspace && props.workspace.workspaceType === WORKSPACE_TYPES.smartMask ? maskingPink : lp.activeColor
   return {
@@ -1063,7 +1122,8 @@ const mapStateToProps = (state: Object, props: Object) => {
     showSavedConfirmModalFlag: state.showSavedCustomSceneSuccess,
     navigationIntent,
     isActiveScenePolluted: scenePolluted,
-    paintSceneCache
+    paintSceneCache,
+    triggerPublish: shouldTriggerPaintScenePublishLayers
   }
 }
 
@@ -1095,8 +1155,9 @@ const mapDispatchToProps = (dispatch: Function) => {
     clearNavigationIntent: () => dispatch(clearNavigationIntent()),
     cachePaintScene: (data: any) => dispatch(cachePaintScene(data)),
     clearPaintSceneCache: () => dispatch(clearPaintSceneCache()),
-    setActiveSceneLabel: (label: string) => dispatch(setActiveSceneLabel(label))
-
+    setActiveSceneLabel: (label: string) => dispatch(setActiveSceneLabel(label)),
+    publishLayers: (layers: string[]) => dispatch(setPaintSceneSaveData(layers)),
+    killPublishFlag: () => dispatch(triggerPaintSceneLayerPublish())
   }
 }
 

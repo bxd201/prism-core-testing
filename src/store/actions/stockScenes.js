@@ -1,5 +1,6 @@
 // @flow
 import { SCENE_TYPE } from './persistScene'
+import type { SavesStockSceneMetaData } from '../../shared/types/CVWTypes.js.flow'
 
 export const SAVING_STOCK_SCENE = 'SAVING_STOCK_SCENE'
 export const SAVE_ANON_STOCK_SCENE = 'SAVE_ANON_STOCK_SCENE'
@@ -8,7 +9,7 @@ export const SELECT_ANON_STOCK_SCENE = 'SELECT_ANON_STOCK_SCENE'
 export const DELETE_ANON_STOCK_SCENE = 'DELETE_ANON_STOCK_SCENE'
 export const DELETE_STOCK_SCENE = 'DELETE_STOCK_SCENE'
 export const UPDATE_STOCK_SAVED_SCENE_NAME = 'UPDATE_STOCK_SAVED_SCENE_NAME'
-export const SELECT_SCENE_STATUS = 'SELECT_SCENE_STATUS'
+export const HYDRATE_STOCK_SCENE_FROM_SAVE = 'HYDRATE_STOCK_SCENE_FROM_SAVE'
 
 export const saveStockScene = (id: string, sceneName: string, sceneData: object, sceneType: string, livePaletteColorsIdArray: Array<string>) => {
   return (dispatch, getState) => {
@@ -32,7 +33,7 @@ export const saveStockScene = (id: string, sceneName: string, sceneData: object,
  * @param sceneFetchType - This is used in in cases where scenes need to be loaded
  * @returns {{payload: {sceneType: string, id: string, sceneFetchType: string, scene: Object}, type: string}}
  */
-const anonSaveStockScene = (id: string, sceneName: string, sceneData: Object, sceneFetchType: string, livePaletteColorsIdArray: Array<string>) => {
+const anonSaveStockScene = (id: string, sceneName: string, sceneData: Object, sceneFetchType: string, livePaletteColorsIdArray: Array<string>): ({type: string, payload: SavesStockSceneMetaData}) => {
   const payload = {
     type: SAVE_ANON_STOCK_SCENE,
     payload: {
@@ -93,9 +94,9 @@ export const updateSavedStockSceneName = (sceneId: number | string, updatedScene
   }
 }
 
-export const setSelectedSceneStatus = (status: Object | null = null) => {
+export const hydrateStockSceneFromSavedData = (status: Object | null = null) => {
   return {
-    type: SELECT_SCENE_STATUS,
+    type: HYDRATE_STOCK_SCENE_FROM_SAVE,
     payload: status
   }
 }

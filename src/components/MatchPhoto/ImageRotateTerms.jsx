@@ -9,6 +9,8 @@ import 'src/scss/convenience/visually-hidden.scss'
 import { KEY_CODES } from 'src/constants/globals'
 import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
 
+import './ImageRotateTerms.scss'
+
 const baseClass = 'image-rotate-terms-modal'
 const wrapperClass = `${baseClass}__wrapper`
 const wrapperContainerClass = `${wrapperClass}__container`

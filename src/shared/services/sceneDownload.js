@@ -1,24 +1,19 @@
 // @flow strict
 import Jimp from 'jimp'
 import { IntlShape } from 'react-intl'
-import type { Color } from '../../shared/types/Colors'
-import type { SceneInfo } from '../types/Scene'
-import { ACTIVE_SCENE_LABELS_ENUM } from '../../store/actions/navigation'
+import type { MiniColor } from '../types/Scene'
 
-const generateImage = async (scene: SceneInfo, activeComponent: string, config: Object, intl: IntlShape): Jimp => {
-  // Load base image, logos, and text
-  const isPaintScene = activeComponent === ACTIVE_SCENE_LABELS_ENUM.PAINT_SCENE
+const generateImage = async (data: any, surfaceColors: MiniColor[], config: Object, intl: IntlShape): Jimp => {
+  const isPaintScene = !data.variantName
   const [image, logo, bottomLogo, smallBlackFont] = await Promise.all([
-    isPaintScene ? Jimp.read(scene) : Jimp.read(scene.variant.image),
+    isPaintScene ? Jimp.read(data) : Jimp.read(data.image),
     config.headerLogo && Jimp.read(config.headerLogo),
     config.bottomLogo && Jimp.read(config.bottomLogo),
     Jimp.loadFont(`${BASE_PATH}/prism/fonts/scene-download/open-sans-16-black.fnt`)
   ])
-
   const downloadDisclaimer1 = config.downloadDisclaimer1
   const downloadDisclaimer2 = config.downloadDisclaimer2
 
-  // Create array of colored surfaces
   const useBlackText = (hexColor: string) => {
     const hexString = hexColor.replace('#', '')
     const r = parseInt(hexString.substr(0, 2), 16)
@@ -28,7 +23,7 @@ const generateImage = async (scene: SceneInfo, activeComponent: string, config: 
     return yiq >= 128
   }
 
-  const coloredSurfaces = !isPaintScene && scene.status.surfaces.filter(surface => surface.color)
+  const coloredSurfaces = !isPaintScene && surfaceColors
   const livePaletteColors: Color[] = JSON.parse(window.localStorage.getItem('lp')).colors
   const blackFontsArray: boolean[] = livePaletteColors.map(color => useBlackText(color.hex))
 
@@ -42,7 +37,6 @@ const generateImage = async (scene: SceneInfo, activeComponent: string, config: 
     const [font, boldFont] = await Promise.all([
       Jimp.loadFont(`${BASE_PATH}/prism/fonts/scene-download/open-sans-32-black.fnt`),
       Jimp.loadFont(`${BASE_PATH}/prism/fonts/scene-download/open-sans-bold-32-black.fnt`)
-      // Jimp.loadFont(`${BASE_PATH}/prism/fonts/scene-download/open-sans-bold-16-black.fnt`)
     ])
 
     blackFonts.regular = font
@@ -66,25 +60,24 @@ const generateImage = async (scene: SceneInfo, activeComponent: string, config: 
   }
 
   if (!isPaintScene) {
-    const masks: Jimp[] = coloredSurfaces.map(surface => {
-      const maskPath = scene.surfaces.find(surf => surf.id === surface.id).mask._load
-      return Jimp.read(maskPath)
+    const masks: Jimp[] = data.surfaces.map(surface => {
+      return Jimp.read(surface.surfaceBlobUrl)
     })
 
-    // Resolve Jimp promises into array of Jimp images
     const maskImages = []
     await Promise.all(masks).then(resultArray => resultArray.forEach(result => maskImages.push(result)))
 
-    // Iterate through Jimp images and apply each mask to base image
-    coloredSurfaces.forEach((surface, idx) => {
-      const colorHex = surface.color.hex
-      maskImages[idx].mask(maskImages[idx], 0, 0).color([{ apply: 'mix', params: [colorHex, 100] }])
+    surfaceColors.forEach((color, idx) => {
+      if (color) {
+        const colorHex = color.hex
+        maskImages[idx].mask(maskImages[idx], 0, 0).color([{ apply: 'mix', params: [colorHex, 100] }])
 
-      image.composite(maskImages[idx], 0, 0, {
-        mode: Jimp.BLEND_MULTIPLY,
-        opacitySource: 1,
-        opacityDest: 1
-      })
+        image.composite(maskImages[idx], 0, 0, {
+          mode: Jimp.BLEND_MULTIPLY,
+          opacitySource: 1,
+          opacityDest: 1
+        })
+      }
     })
   } else {
     const currWidth = image.bitmap.width
@@ -194,10 +187,8 @@ const generateImage = async (scene: SceneInfo, activeComponent: string, config: 
       })
     })
 
-    // Print featured text
-
     if (!isPaintScene) {
-      const featuredColorNumbers: string[] = coloredSurfaces.map(surface => surface.color.colorNumber)
+      const featuredColorNumbers: string[] = coloredSurfaces.map(color => color?.colorNumber)
       if (featuredColorNumbers.includes(color.colorNumber)) {
         swatchImage.print(smallContrastFont, 10, 10, intl.formatMessage({ id: 'FEATURED_IN_SCENE' }))
       }

@@ -23,7 +23,7 @@ import {
 import {
   DELETE_ANON_STOCK_SCENE,
   SAVE_ANON_STOCK_SCENE,
-  SELECT_ANON_STOCK_SCENE, SELECT_SCENE_STATUS,
+  SELECT_ANON_STOCK_SCENE, HYDRATE_STOCK_SCENE_FROM_SAVE,
   UPDATE_STOCK_SAVED_SCENE_NAME
 } from '../actions/stockScenes'
 import {
@@ -34,7 +34,8 @@ import {
 } from '../actions/saveLivePalette'
 import { SCENE_TYPES } from '../../constants/globals'
 import cloneDeep from 'lodash/cloneDeep'
-import { PAINT_SCENE_SURFACE } from '../actions/scenes'
+import type { MiniColor } from '../../shared/types/Scene'
+import { SET_PAINT_SCENE_SAVE_DATA, TRIGGER_PAINT_SCENE_LAYER_PUBLISH } from '../actions/paintScene'
 export const legacySavedScenesMetadata = (state: Object[] = [], action: { type: string, payload: Object }) => {
   if (action.type === DELETE_SAVED_SCENE) {
     const newState = state.filter(scene => scene.id !== action.payload)
@@ -263,28 +264,6 @@ export const selectedStockSceneId = (state: string | null = null, action: { type
   return state
 }
 
-export const selectedSceneStatus = (state: Object | null = null, action: { type: string, payload: Object }) => {
-  if (action.type === SELECT_SCENE_STATUS) {
-    return cloneDeep(action.payload)
-  }
-
-  if (action.type === PAINT_SCENE_SURFACE && state) {
-    const newState = cloneDeep(state)
-
-    newState.expectStockData.scene.surfaces.some(surface => {
-      if (surface.id === action.payload.surfaceId) {
-        surface.color = cloneDeep(action.payload.color)
-
-        return true
-      }
-    })
-
-    return newState
-  }
-
-  return state
-}
-
 export const showSavedConfirmModal = (state: boolean = false, action: {type: string, payload: boolean}) => {
   if (action.type === SHOW_SAVED_CONFIRM_MODAL) {
     return action.payload
@@ -307,6 +286,33 @@ export const showSavedCustomSceneSuccess = (state: boolean = false, action: { ty
 
 export const showDeleteConfirmModal = (state: boolean = false, action: { type: string, payload: boolean }) => {
   if (action.type === SHOW_DELETE_CONFIRM) {
+    return action.payload
+  }
+
+  return state
+}
+
+// @todo 5/17/21 need to add type for new savescene data -RS
+export const colorsForSurfacesFromSavedScene = (state: MiniColor[] | null = null, action: { type: string, payload: any | null}) => {
+  if (action.type === HYDRATE_STOCK_SCENE_FROM_SAVE) {
+    return action.payload ? action.payload.surfaces.map(surfaceColor => {
+      return { ...surfaceColor }
+    }) : null
+  }
+
+  return state
+}
+
+export const paintSceneLayersForSave = (state: string[] | null = null, action: {type: string, payload: string[]}) => {
+  if (action.type === SET_PAINT_SCENE_SAVE_DATA) {
+    return action.payload
+  }
+
+  return state
+}
+
+export const shouldTriggerPaintScenePublishLayers = (state: boolean = false, action: { type: string, payload: boolean}) => {
+  if (action.type === TRIGGER_PAINT_SCENE_LAYER_PUBLISH) {
     return action.payload
   }
 

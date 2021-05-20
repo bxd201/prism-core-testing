@@ -14,6 +14,7 @@ import uniqueId from 'lodash/uniqueId'
 import { setShowEditCustomScene } from '../../store/actions/scenes'
 import { useHistory } from 'react-router-dom'
 import { SurfaceSelector } from '../SurfaceSelector/SurfaceSelector'
+import { ROUTES_ENUM } from './Facets/ColorVisualizerWrapper/routeValueCollections'
 
 import './CustomSceneTinter.scss'
 
@@ -188,7 +189,7 @@ const CustomSceneTinterContainer = (props: CustomSceneTinterContainerProps) => {
   const editMask = (e: SyntheticEvent) => {
     e.preventDefault()
     dispatch(setShowEditCustomScene(false))
-    history.push('/active/masking')
+    history.push(ROUTES_ENUM.MASKING)
   }
 
   return (

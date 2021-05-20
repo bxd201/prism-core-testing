@@ -66,3 +66,21 @@ export const setInitialWorkspace = (workspace: Object = {}) => {
   }
   return payload
 }
+
+// this stores the paint scene data so that the modal manager can access it to call the save function that persists it in firebase
+export const SET_PAINT_SCENE_SAVE_DATA = 'SET_PAINT_SCENE_SAVE_DATA'
+export const setPaintSceneSaveData = (layers: string[] | null = null) => {
+  return {
+    type: SET_PAINT_SCENE_SAVE_DATA,
+    payload: layers
+  }
+}
+
+// This is used to tell the paint scene component to shoot its state to redux.
+export const TRIGGER_PAINT_SCENE_LAYER_PUBLISH = 'TRIGGER_PAINT_SCENE_LAYER_PUBLISH'
+export const triggerPaintSceneLayerPublish = (shouldTrigger: boolean = false) => {
+  return {
+    type: TRIGGER_PAINT_SCENE_LAYER_PUBLISH,
+    payload: shouldTrigger
+  }
+}

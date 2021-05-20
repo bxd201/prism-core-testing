@@ -3,16 +3,20 @@ import React, { useState, useCallback } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 import Jimp from 'jimp'
-import type { SceneInfo } from '../../shared/types/Scene'
 import { generateImage } from '../../shared/services/sceneDownload'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ACTIVE_SCENE_LABELS_ENUM } from '../../store/actions/navigation'
+import type { FlatVariant, MiniColor } from '../../shared/types/Scene'
+
 type Props = {
   buttonCaption: string,
-  sceneInfo: void | SceneInfo,
   activeComponent: string,
   getFlatImage: Function,
-  config: object
+  config: object,
+  selectedSceneUid: string | null,
+  variantsCollection: FlatVariant[],
+  selectedVariantName: string,
+  surfaceColors: MiniColor[]
 }
 
 const PAINT_SCENE_COMPONENT = ACTIVE_SCENE_LABELS_ENUM.PAINT_SCENE
@@ -22,7 +26,7 @@ const PAINT_LAYER = 'paint-scene-canvas-second'
 export default (props: Props) => {
   const [isCreatingDownload, setIsCreatingDownload] = useState(false)
   const [finalImageUrl, setFinalImageUrl] = useState()
-  const { buttonCaption, sceneInfo, activeComponent, getFlatImage, config } = props
+  const { buttonCaption, activeComponent, getFlatImage, config, variantsCollection, selectedSceneUid, selectedVariantName, surfaceColors } = props
   const intl = useIntl()
 
   const downloadLinkRef = useCallback(link => {
@@ -40,9 +44,9 @@ export default (props: Props) => {
       const paintLayer = document.getElementsByName(PAINT_LAYER)[0].getContext('2d')
       await getFlatImage(backgroundImg, paintLayer).then((url) => { imageSrc = url })
     }
-    const scene = activeComponent === PAINT_SCENE_COMPONENT ? imageSrc : sceneInfo
-
-    generateImage(scene, activeComponent, config, intl).then(image => image.getBufferAsync(Jimp.MIME_JPEG))
+    const variant = variantsCollection.find(variant => variant.sceneUid === selectedSceneUid && variant.variantName === selectedVariantName)
+    const data = activeComponent === PAINT_SCENE_COMPONENT ? imageSrc : variant
+    generateImage(data, surfaceColors, config, intl).then(image => image.getBufferAsync(Jimp.MIME_JPEG))
       .then(buffer => {
         const blob = new Blob([buffer], { type: 'img/jpg' })
         const urlCreator = window.URL || window.webkitURL
