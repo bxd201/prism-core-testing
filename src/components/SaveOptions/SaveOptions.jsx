@@ -50,7 +50,11 @@ const SaveOptions = (props: SaveOptionsProps) => {
 
   const handleSave = useCallback((e: SyntheticEvent) => {
     e.preventDefault()
+<<<<<<< HEAD
     if (((pathname === '/active') || (pathname === ROUTES_ENUM.ACTIVE_PAINT_SCENE)) && !toggleCompareColor) {
+=======
+    if (((pathname === '/active') || (pathname === '/active/paint-scene')) && !toggleCompareColor) {
+>>>>>>> e3e9d2090dc2eca13f38bc5b72eca9d388f30cf9
       if (lpColors.length !== 0) {
         const saveType = ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE === activeSceneLabel ? SAVE_OPTION.SAVE_STOCK_SCENE : SAVE_OPTION.SAVE_PAINT_SCENE
         if (activeSceneLabel === ACTIVE_SCENE_LABELS_ENUM.PAINT_SCENE) {
