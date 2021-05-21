@@ -51,7 +51,7 @@ const List = ({ title, directory }: ListProps) => <>
         // this is an array // loop over and output <li><a>name</a></li>
         return <Fragment key={i}>
           {flatten(_this.map((path, i) => <li key={i}>
-            <a href={`/${path}`}>{stripExtension(path.split('/').slice(-1)[0])}</a>
+            <a href={`${BASE_PATH || ''}/${path}`}>{stripExtension(path.split('/').slice(-1)[0])}</a>
           </li>))}
         </Fragment>
       } else {
