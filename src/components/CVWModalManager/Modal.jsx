@@ -1,7 +1,7 @@
 // @flow
 import React, { useEffect, useRef, ComponentType } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { GLOBAL_MODAL_STYLE, DANGER, PRIMARY } from './constants.js'
+import { GLOBAL_MODAL_STYLE, DANGER, PRIMARY, SAVED, ACTION_SAVE } from './constants.js'
 import { KEY_CODES } from 'src/constants/globals'
 import './GlobalModal.scss'
 
@@ -15,6 +15,8 @@ export const globalModalInputLabelClassName = `${globalModalClassName}__input-la
 export const globalModalTextInputClassName = `${globalModalClassName}__text-input`
 export const globalModalButtonsClassName = `${globalModalClassName}__button-row`
 export const globalModalButtonBaseClassName = `${globalModalButtonsClassName}__button`
+export const globalModalEmptyInputClassName = `${globalModalClassName}__empty-input`
+export const globalModalSavedClassName = `${globalModalInnerClassName}__saved`
 
 const getGlobalModalClass = (type) => {
   switch (type) {
@@ -27,9 +29,9 @@ const getGlobalModalClass = (type) => {
   }
 }
 
-type ModalProps = { shouldDisplayModal: boolean, previewImage: ComponentType, styleType: String, title: String, description: String, allowInput: boolean, actions: Array, fn: Function, setInputValue: Function, inputValue: string, resetInputValue: Function}
+type ModalProps = { shouldDisplayModal: boolean, previewImage: ComponentType, intl: Object, styleType: String, title: String, description: String, allowInput: boolean, actions: Array, fn: Function, setInputValue: Function, inputValue: string, resetInputValue: Function}
 export const Modal = (props: ModalProps) => {
-  const { shouldDisplayModal, previewImage, styleType, title, description, allowInput, actions, fn, setInputValue, inputValue, resetInputValue } = props
+  const { shouldDisplayModal, previewImage, styleType, title, description, allowInput, actions, fn, setInputValue, inputValue, resetInputValue, intl } = props
   const btnRefList = useRef([])
 
   useEffect(() => resetInputValue(), [shouldDisplayModal])
@@ -46,6 +48,10 @@ export const Modal = (props: ModalProps) => {
     }
   }
 
+  const hidePreviewImage = !!(description && description === SAVED)
+
+  const disabledSave = allowInput && !inputValue
+
   const setInputVal = (e: SyntheticEvent) => setInputValue(e.target.value)
 
   const clearInputVal = (e: SyntheticEvent) => {
@@ -55,7 +61,7 @@ export const Modal = (props: ModalProps) => {
     }
   }
 
-  const createButtonsFromActions = (actions, fn) => {
+  const createButtonsFromActions = (actions, fn, disabledSave) => {
     const buttons = actions.map((action, i) => {
       const callback = fn(action.callback)
       return (
@@ -64,6 +70,7 @@ export const Modal = (props: ModalProps) => {
           ref={el => { if (el && !btnRefList.current.includes(el)) { btnRefList.current[i] = el } }}
           className={globalModalButtonBaseClassName}
           onClick={callback}
+          disabled={action.text === ACTION_SAVE && disabledSave}
           key={`${i}`}>
           {action.text}
         </button>)
@@ -75,8 +82,8 @@ export const Modal = (props: ModalProps) => {
     <React.Fragment>
       {shouldDisplayModal &&
       <div className={globalModalClassName}>
-        <div className={`${globalModalInnerClassName} ${getGlobalModalClass(styleType)}`}>
-          {previewImage && <div className={`${globalModalInnerClassName}__preview-image`}>{previewImage}</div>}
+        <div className={`${globalModalInnerClassName} ${getGlobalModalClass(styleType)} ${hidePreviewImage && globalModalSavedClassName}`}>
+          {!hidePreviewImage && previewImage && <div className={`${globalModalInnerClassName}__preview-image`}>{previewImage}</div>}
           <div className={`${globalModalInnerClassName}__content`}>
             {title ? <div className={globalModalTitleClassName}>{title}</div> : null}
             {description ? <div className={globalModalDescriptionClassName}>{description}</div> : null}
@@ -88,8 +95,9 @@ export const Modal = (props: ModalProps) => {
                 </div>
               </label>
             </div> : null}
+            {disabledSave && <div className={globalModalEmptyInputClassName}>{intl.formatMessage({ id: 'SAVE_SCENE_MODAL.EMPTY_INPUT' })}</div>}
             <div className={globalModalButtonsClassName}>
-              {actions && createButtonsFromActions(actions, fn)}
+              {actions && createButtonsFromActions(actions, fn, disabledSave)}
             </div>
           </div>
         </div>

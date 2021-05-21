@@ -38,7 +38,6 @@ import { setActiveSceneKey } from '../../store/actions/scenes'
 
 export const globalModalClassName = 'global-modal'
 export const globalModalPreviewImageClassName = `${globalModalClassName}__preview-image`
-const saveScenedefaultName = 'My Saved Scene'
 
 export const PreviewImage = ({ modalInfo, lpColors, surfaceColors, scenes, selectedSceneUid, selectedVariantName }: PreviewImageProps) => {
   const scenesCollection = useSelector((store) => store.scenesCollection)
@@ -139,11 +138,11 @@ export const CVWModalManager = () => {
   const history = useHistory()
   btnRefList.current = []
   const { shouldDisplayModal, actions, styleType, title, description, allowInput } = modalInfo
-  const [inputValue, setInputValue] = useState(`${saveScenedefaultName} ${sceneCount}`)
+  const [inputValue, setInputValue] = useState(`${intl.formatMessage({ id: 'SAVE_SCENE_MODAL.DEFAULT_DESCRIPTION' })} ${sceneCount}`)
   // The following function is needed for a particular use case where if a user clear the default name of the scene being saved,
   // and close the modal, this function will reset the state with the default name
-  const resetInputValue = () => setInputValue(`${saveScenedefaultName} ${sceneCount}`)
   const navigationIntent = useSelector(store => store.navigationIntent)
+  const resetInputValue = () => setInputValue(`${intl.formatMessage({ id: 'SAVE_SCENE_MODAL.DEFAULT_DESCRIPTION' })} ${sceneCount}`)
 
   const createCallbackFromActionName = (callbackName) => {
     switch (callbackName) {
@@ -315,6 +314,7 @@ export const CVWModalManager = () => {
         allowInput={allowInput}
         actions={actions}
         inputValue={inputValue}
+        intl={intl}
         resetInputValue={resetInputValue}
         fn={createCallbackFromActionName}
         setInputValue={setInputValue}
