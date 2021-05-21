@@ -91,9 +91,9 @@ export const DropDownMenu = ({ title, items }: DropDownMenuProps) => {
   }, [isMobileOnly, isTablet])
   return (
     <>
-      <button className='overlay' onClick={() => history.push('/active')} />
+      <button className='overlay' onClick={() => history.push(ROUTES_ENUM.ACTIVE)} />
       <div className='cvw-dashboard-submenu'>
-        <button className='cvw-dashboard-submenu__close' onClick={() => history.push('/active')}>
+        <button className='cvw-dashboard-submenu__close' onClick={() => history.push(ROUTES_ENUM.ACTIVE)}>
           <FormattedMessage id='CLOSE' />
           <FontAwesomeIcon className='cvw-dashboard-submenu__close__ico' icon={['fa', 'chevron-up']} />
         </button>
@@ -153,19 +153,19 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
         img: cvw?.navPaintedScenes,
         title: messages['NAV_LINKS.PAINTED_PHOTOS'],
         content: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.PAINTED_PHOTOS'],
-        onClick: () => history.push('/active/use-our-image')
+        onClick: () => history.push(ROUTES_ENUM.USE_OUR_IMAGE)
       },
       {
         img: cvw?.navExpertColorPicks,
         title: messages['NAV_LINKS.EXPERT_COLOR_PICKS'],
         content: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.EXPERT_COLOR_PICKS'],
-        onClick: () => history.push('/active/expert-colors')
+        onClick: () => history.push(ROUTES_ENUM.EXPERT_COLORS)
       },
       {
         img: cvw?.navSamplePhotos,
         title: messages['NAV_LINKS.INSPIRATIONAL_PHOTOS'],
         content: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.INSPIRATIONAL_PHOTOS'],
-        onClick: () => history.push('/active/color-from-image')
+        onClick: () => history.push(ROUTES_ENUM.COLOR_FROM_IMAGE)
       }
     ]
 
@@ -191,7 +191,7 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
         img: cvw?.navSampleScenes,
         title: messages['NAV_LINKS.USE_OUR_PHOTOS'],
         content: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.USE_OUR_PHOTOS'],
-        onClick: () => history.push('/active/paint-photo')
+        onClick: () => history.push(ROUTES_ENUM.PAINT_PHOTO)
       },
       {
         img: cvw?.navThumbMyPhotos,
@@ -243,13 +243,13 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
         img: cvw?.navExploreColor,
         title: messages['NAV_LINKS.DIGITAL_COLOR_WALL'],
         content: formatMessage({ id: 'NAV_DROPDOWN_LINK_SUB_CONTENT.DIGITAL_COLOR_WALL' }, { brand }),
-        onClick: () => history.push('/active/color-wall/section/sherwin-williams-colors')
+        onClick: () => history.push(ROUTES_ENUM.COLOR_WALL + '/section/sherwin-williams-colors')
       },
       {
         img: cvw?.navColorCollections,
         title: messages['NAV_LINKS.COLOR_COLLECTIONS'],
         content: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.COLOR_COLLECTIONS'],
-        onClick: () => history.push('/active/color-collections')
+        onClick: () => history.push(ROUTES_ENUM.COLOR_COLLECTION)
       },
       {
         img: cvw?.navMatchPhoto,
@@ -322,8 +322,8 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
       <ul className='cvw-navigation-wrapper__structure cvw-navigation-wrapper__structure--center' role='presentation'>
         { shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.exploreColors)
           ? <li>
-            <button ref={navBtnRef} className={`cvw-nav-btn ${location.pathname === '/active/colors' ? 'cvw-nav-btn--active' : ''}`} onClick={() => {
-              handleNavigation('/active/colors')
+            <button ref={navBtnRef} className={`cvw-nav-btn ${location.pathname === ROUTES_ENUM.ACTIVE_COLORS ? 'cvw-nav-btn--active' : ''}`} onClick={() => {
+              handleNavigation(ROUTES_ENUM.ACTIVE_COLORS)
             }}>
               <span className='fa-layers fa-fw cvw-nav-btn-icon'>
                 <FontAwesomeIcon icon={['fal', 'square-full']} size='xs' transform={{ rotate: 10 }} />
@@ -336,8 +336,8 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
           </li> : null }
         { shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.getInspired)
           ? <li>
-            <button className={`cvw-nav-btn ${location.pathname === '/active/inspiration' ? 'cvw-nav-btn--active' : ''}`} onClick={() => {
-              handleNavigation('/active/inspiration')
+            <button className={`cvw-nav-btn ${location.pathname === ROUTES_ENUM.INSPIRATION ? 'cvw-nav-btn--active' : ''}`} onClick={() => {
+              handleNavigation(ROUTES_ENUM.INSPIRATION)
             }}>
               <FontAwesomeIcon className='cvw-nav-btn-icon' icon={['fal', 'lightbulb']} size='1x' />
               <FormattedMessage id='NAV_LINKS.GET_INSPIRED' />
@@ -345,8 +345,8 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
           </li> : null }
         { shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.paintAPhoto)
           ? <li>
-            <button className={`cvw-nav-btn ${location.pathname === '/active/scenes' ? 'cvw-nav-btn--active' : ''}`} onClick={() => {
-              handleNavigation('/active/scenes')
+            <button className={`cvw-nav-btn ${location.pathname === ROUTES_ENUM.SCENES ? 'cvw-nav-btn--active' : ''}`} onClick={() => {
+              handleNavigation(ROUTES_ENUM.SCENES)
             }}>
               <span className='fa-layers fa-fw cvw-nav-btn-icon'>
                 <FontAwesomeIcon icon={['fal', 'square-full']} />
@@ -360,16 +360,16 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
             {
               shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.documentSaving)
                 ? <li>
-                  <button className={`cvw-nav-btn ${location.pathname === '/active/my-ideas' ? 'cvw-nav-btn--active' : ''}`} onClick={() => {
-                    handleNavigation('/active/my-ideas')
+                  <button className={`cvw-nav-btn ${location.pathname === ROUTES_ENUM.MYIDEAS ? 'cvw-nav-btn--active' : ''}`} onClick={() => {
+                    handleNavigation(ROUTES_ENUM.MYIDEAS)
                   }}>
                     <FormattedMessage id='NAV_LINKS.MY_IDEAS' />
                   </button>
                 </li> : null
             }
             <li>
-              <button className={`cvw-nav-btn ${location.pathname === '/active/help' ? 'cvw-nav-btn--active' : ''}`} onClick={() => {
-                handleNavigation('/active/help')
+              <button className={`cvw-nav-btn ${location.pathname === ROUTES_ENUM.HELP ? 'cvw-nav-btn--active' : ''}`} onClick={() => {
+                handleNavigation(ROUTES_ENUM.HELP)
               }}>
                 <FormattedMessage id='NAV_LINKS.HELP' />
               </button>
@@ -378,19 +378,19 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
         </li>
       </ul>
       <Switch>
-        <Route path='/active/colors'>
+        <Route path={ROUTES_ENUM.ACTIVE_COLORS}>
           <DropDownMenu
             title={messages['NAV_DROPDOWN_TITLE.EXPLORE_COLORS']}
             items={getDropDownItemsForExploreColors()}
           />
         </Route>
-        <Route path='/active/inspiration'>
+        <Route path={ROUTES_ENUM.INSPIRATION}>
           <DropDownMenu
             title={messages['NAV_DROPDOWN_TITLE.GET_INSPIRED']}
             items={getDropDownItemsForGetInspired()}
           />
         </Route>
-        <Route path='/active/scenes'>
+        <Route path={ROUTES_ENUM.SCENES}>
           <DropDownMenu
             title={messages['NAV_DROPDOWN_TITLE.PAINT_A_PHOTO']}
             items={getDropDownItemsForPaintAPhoto()}
@@ -402,7 +402,7 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
             items={getDropDownItemsForExploreColors()}
           />
         </Route>
-        <Route path='/upload/paint-scene'>
+        <Route path={ROUTES_ENUM.ACTIVE_PAINT_SCENE}>
           <DropDownMenu
             title={messages['NAV_DROPDOWN_TITLE.GET_INSPIRED']}
             items={getDropDownItemsForPaintAPhoto()}

@@ -14,6 +14,7 @@ import WithConfigurationContext from '../../contexts/ConfigurationContext/WithCo
 import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 import { createSaveSceneModal, createModalForEmptyLivePalette } from '../CVWModalManager/createModal'
 import { SAVE_OPTION } from '../CVWModalManager/constants.js'
+import { ROUTES_ENUM } from '../Facets/ColorVisualizerWrapper/routeValueCollections'
 import { triggerPaintSceneLayerPublish } from '../../store/actions/paintScene'
 
 type SaveOptionsProps = {
@@ -49,7 +50,7 @@ const SaveOptions = (props: SaveOptionsProps) => {
 
   const handleSave = useCallback((e: SyntheticEvent) => {
     e.preventDefault()
-    if (((pathname === '/active') || (pathname === '/active/paint-scene')) && !toggleCompareColor) {
+    if (((pathname === '/active') || (pathname === ROUTES_ENUM.ACTIVE_PAINT_SCENE)) && !toggleCompareColor) {
       if (lpColors.length !== 0) {
         const saveType = ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE === activeSceneLabel ? SAVE_OPTION.SAVE_STOCK_SCENE : SAVE_OPTION.SAVE_PAINT_SCENE
         if (activeSceneLabel === ACTIVE_SCENE_LABELS_ENUM.PAINT_SCENE) {

@@ -6,6 +6,7 @@ import './LandingPage.scss'
 import { useHistory } from 'react-router-dom'
 import { FormattedMessage } from 'react-intl'
 import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
+import { ROUTES_ENUM } from '../Facets/ColorVisualizerWrapper/routeValueCollections'
 
 const LandingPage = () => {
   const { cvw = {} } = useContext(ConfigurationContext)
@@ -29,7 +30,7 @@ const LandingPage = () => {
         <div className='cvw-landing-page-wrapper__intro-divider__line' />
       </div>
       <div className='cvw-landing-page-wrapper__intro-button-container'>
-        <button className='cvw-landing-page-wrapper__intro-button-container__intro-buttons' onClick={() => redirect('/active/colors')}>
+        <button className='cvw-landing-page-wrapper__intro-button-container__intro-buttons' onClick={() => redirect(ROUTES_ENUM.ACTIVE_COLORS)}>
           <span className='fa-layers fa-fw cvw-nav-btn-icon'>
             <FontAwesomeIcon icon={['fal', 'square-full']} size='xs' transform={{ rotate: 10 }} />
             <FontAwesomeIcon icon={['fal', 'square-full']} size='sm' transform={{ rotate: 0 }} />
@@ -38,11 +39,11 @@ const LandingPage = () => {
           </span>
           <FormattedMessage id='EXPLORE_COLOR' />
         </button>
-        <button className='cvw-landing-page-wrapper__intro-button-container__intro-buttons' onClick={() => redirect('/active/inspiration')}>
+        <button className='cvw-landing-page-wrapper__intro-button-container__intro-buttons' onClick={() => redirect(ROUTES_ENUM.INSPIRATION)}>
           <FontAwesomeIcon className='cvw-nav-btn-icon' icon={['fal', 'lightbulb']} size='1x' />
           <FormattedMessage id='NAV_LINKS.GET_INSPIRED' />
         </button>
-        <button className='cvw-landing-page-wrapper__intro-button-container__intro-buttons' onClick={() => redirect('/active/scenes')}>
+        <button className='cvw-landing-page-wrapper__intro-button-container__intro-buttons' onClick={() => redirect(ROUTES_ENUM.SCENES)}>
           <span className='fa-layers fa-fw cvw-nav-btn-icon'>
             <FontAwesomeIcon icon={['fal', 'square-full']} />
             <FontAwesomeIcon icon={['fa', 'brush']} size='sm' transform={{ rotate: 320 }} />
