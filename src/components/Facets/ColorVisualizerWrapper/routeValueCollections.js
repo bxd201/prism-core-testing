@@ -15,7 +15,7 @@ export const ROUTES_ENUM = {
   ACTIVE_MATCH_PHOTO: '/active/match-photo',
   USE_OUR_IMAGE: '/active/use-our-image',
   EXPERT_COLORS: '/active/expert-colors',
-  COLOR_FORM_IMAGE: '/active/color-from-image',
+  COLOR_FROM_IMAGE: '/active/color-from-image',
   PAINT_PHOTO: '/active/paint-photo',
   MY_IDEAS_PREVIEW: '/my-ideas-preview',
   MASKING: '/active/masking'
