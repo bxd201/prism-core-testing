@@ -9,6 +9,7 @@ import MaskObj from '../masks/MaskObj'
 import { generateBrandedEndpoint } from '../../shared/helpers/DataUtils'
 
 import { SCENES_ENDPOINT } from 'constants/endpoints'
+import { createUniqueSceneId } from '../../shared/utils/legacyProfileFormatUtil'
 export const SET_USE_SMART_MASK = 'SET_USE_SMART_MASK'
 
 export const REQUEST_SCENES = 'REQUEST_SCENES'
@@ -164,7 +165,7 @@ export const loadScenes = (type: string, brandId: string, options?: {}) => {
         if (!data[type]) {
           // TODO: create a scene loading ERROR method and handle appropriately -- for now it will just show no scenes
 
-          console.error('No scene type defined. Unable to fetch scenes for unknown scene type.')
+          console.error(`No scene type defined. Unable to fetch scenes for unknown scene type: ${type}`)
 
           dispatch(receiveScenes({
             scenes: [],
@@ -275,5 +276,14 @@ export const setColorForCDP = (color) => {
   return {
     type: SET_CDP_COLOR,
     payload: color
+  }
+}
+
+// only call on things resolved by a user input
+export const SET_ACTIVE_SCENE_KEY = 'SET_ACTIVE_SCENE_KEY'
+export const setActiveSceneKey = () => {
+  return {
+    type: SET_ACTIVE_SCENE_KEY,
+    payload: createUniqueSceneId()
   }
 }

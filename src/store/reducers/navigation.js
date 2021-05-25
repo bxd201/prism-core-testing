@@ -7,14 +7,19 @@ import {
   CLEANUP_NAVIGATION_INTENT,
   CLEAR_NAVIGATION_INTENT,
   CLEAR_PAINT_SCENE_CACHE,
-  CLEAR_STOCK_SCENE_CACHE, SET_DIRTY_NAVIGATION_INTENT,
+  CLEAR_STOCK_SCENE_CACHE,
+  SET_DIRTY_NAVIGATION_INTENT,
   SET_IMAGE_ROTATE_BYPASS,
   SET_IS_COLOR_WALL_MODALLY_PRESENTED,
   NAVIGATE_TO_INTENDED_DESTINATION,
   SET_NAVIGATION_INTENT_WITH_RETURN,
   SET_SCENE_POLLUTED,
-  SET_NAVIGATION_INTENT, SHOULD_SHOW_GLOBAL_DESTROY_WARNING,
-  STAGE_NAVIGATION_RETURN_INTENT, SET_NAVIGATION_WITH_FORWARD, CLEAR_FORWARD_AND_NAVIGATION_INTENT
+  SET_NAVIGATION_INTENT,
+  SHOULD_SHOW_GLOBAL_DESTROY_WARNING,
+  STAGE_NAVIGATION_RETURN_INTENT,
+  SET_NAVIGATION_WITH_FORWARD,
+  CLEAR_FORWARD_AND_NAVIGATION_INTENT,
+  SET_IS_MATCH_PHOTO_PRESENTED
 } from '../actions/navigation'
 import cloneDeep from 'lodash/cloneDeep'
 
@@ -161,6 +166,14 @@ export const forwardIntent = (state: string = '', action: any) => {
 
   if (action.type === CLEAR_FORWARD_AND_NAVIGATION_INTENT) {
     return action.navigationForwardIntentPayload
+  }
+
+  return state
+}
+
+export const isMatchPhotoPresented = (state: boolean = false, action: {type: string, payload: boolean }) => {
+  if (action.type === SET_IS_MATCH_PHOTO_PRESENTED) {
+    return action.payload
   }
 
   return state

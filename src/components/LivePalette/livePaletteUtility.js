@@ -44,7 +44,7 @@ export const getDupeColorCount = (currentColors: Object[], newColors: Object[]) 
 
 export const getColorInstances = (colors: Array<Object>, livePaletteColorsIdArray: Array<string>, colorMap: ColorMap) => {
   let uniqueColorIdsWithSavedLivePalette = new Set()
-  colors && colors.map(color => {
+  colors && colors.filter(color => color).map(color => {
     uniqueColorIdsWithSavedLivePalette.add(color.id)
   })
   livePaletteColorsIdArray && livePaletteColorsIdArray.map(colorId => {

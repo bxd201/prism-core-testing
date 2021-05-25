@@ -1,6 +1,6 @@
 // @flow
 import { SCENE_TYPE } from './persistScene'
-import type { SavesStockSceneMetaData } from '../../shared/types/CVWTypes.js.flow'
+import type { MiniColor } from '../../shared/types/Scene'
 
 export const SAVING_STOCK_SCENE = 'SAVING_STOCK_SCENE'
 export const SAVE_ANON_STOCK_SCENE = 'SAVE_ANON_STOCK_SCENE'
@@ -29,11 +29,13 @@ export const saveStockScene = (id: string, sceneName: string, sceneData: object,
 /**
  *
  * @param id - used to uniquely identify items specifically for updates
+ * @param sceneName - the name of the saved scene
  * @param sceneData - this is used to determine if this is a type of stock or custom scene
- * @param sceneFetchType - This is used in in cases where scenes need to be loaded
+ * @param sceneFetchType - This is used in in cases where scenes need to be loaded: room. object, etc
+ * @param livePaletteColorsIdArray - An array of live palette colors to save
  * @returns {{payload: {sceneType: string, id: string, sceneFetchType: string, scene: Object}, type: string}}
  */
-const anonSaveStockScene = (id: string, sceneName: string, sceneData: Object, sceneFetchType: string, livePaletteColorsIdArray: Array<string>): ({type: string, payload: SavesStockSceneMetaData}) => {
+const anonSaveStockScene = (id: string, sceneName: string, sceneData: Object, sceneFetchType: string, livePaletteColorsIdArray: string[]) => {
   const payload = {
     type: SAVE_ANON_STOCK_SCENE,
     payload: {
@@ -94,9 +96,12 @@ export const updateSavedStockSceneName = (sceneId: number | string, updatedScene
   }
 }
 
-export const hydrateStockSceneFromSavedData = (status: Object | null = null) => {
+export const hydrateStockSceneFromSavedData = (variantName: string | null = null, surfaceColors: MiniColor[] | null = null) => {
   return {
     type: HYDRATE_STOCK_SCENE_FROM_SAVE,
-    payload: status
+    payload: {
+      surfaceColors,
+      variantName
+    }
   }
 }

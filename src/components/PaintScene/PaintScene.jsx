@@ -62,16 +62,15 @@ import { LiveMessage } from 'react-aria-live'
 import { BrushPaintCursor } from './BrushPaintCursor'
 import { calcOrientationDimensions } from '../../shared/utils/scale.util'
 import {
-  ACTIVE_SCENE_LABELS_ENUM,
   cachePaintScene,
   clearPaintSceneCache,
   clearNavigationIntent,
   navigateToIntendedDestination,
-  POLLUTED_ENUM, setActiveSceneLabel,
+  POLLUTED_ENUM,
   setIsScenePolluted
 } from '../../store/actions/navigation'
 import { ROUTES_ENUM } from '../Facets/ColorVisualizerWrapper/routeValueCollections'
-import { setModalInfo, updatePaintScenePreview } from '../../store/actions/globalModal'
+import { updatePaintScenePreview } from '../../store/actions/globalModal'
 
 const baseClass = 'paint__scene__wrapper'
 const canvasClass = `${baseClass}__canvas`
@@ -147,15 +146,11 @@ type ComponentProps = {
   // @todo probably still need -RS
   cachePaintScene: Function,
   // @todo do we still need?  -RS
-  setActiveSceneLabel: Function,
-  // @todo do we still need?  -RS
   shouldRestoreFromCache: boolean,
   // @todo do we still need?  -RS
   clearPaintSceneCache: Function,
-  // eslint-disable-next-line react/no-unused-prop-types
   publishLayers: Function,
   triggerPublish: boolean,
-  // eslint-disable-next-line react/no-unused-prop-types
   killPublishFlag: Function
 }
 
@@ -614,27 +609,16 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
         paintCursor: `${canvasClass}--${toolNames.PAINTAREA}`
       })
     }
-    if (this.props.workspace && this.props.clearSceneWorkspace) {
-      // @todo we may still need this  REVISIT -RS
-      this.props.clearSceneWorkspace()
-    }
 
     this.setState({ imageUrl: this.props.imageUrl })
-    // @todo These methods may not be needed anymore due to how the component is rendered -RS
-    if (this.props.clearPaintSceneCache && this.props.setActiveSceneLabel) {
-      this.props.clearPaintSceneCache()
-      this.props.setActiveSceneLabel(ACTIVE_SCENE_LABELS_ENUM.PAINT_SCENE)
-    }
   }
 
   componentWillUnmount () {
-    // @todo These methods may not be needed anymore due to how the component is rendered -RS
-    if (this.props.selectSavedScene && this.props.unsetActiveScenePolluted) {
-      this.props.selectSavedScene(null)
-      this.props.unsetActiveScenePolluted()
-      // clean up the save data on unmount
-      this.props.publishLayers()
-    }
+    this.props.selectSavedScene && this.props.selectSavedScene(null)
+    this.props.unsetActiveScenePolluted && this.props.unsetActiveScenePolluted()
+    this.props.clearPaintSceneCache && this.props.clearPaintSceneCache()
+    this.props.publishLayers && this.props.publishLayers()
+    this.props.clearSceneWorkspace && this.props.clearSceneWorkspace()
   }
 
   updateWindowDimensions = () => {
@@ -1129,9 +1113,6 @@ const mapStateToProps = (state: Object, props: Object) => {
 
 const mapDispatchToProps = (dispatch: Function) => {
   return {
-    setModalInfo: (modalInfo) => {
-      dispatch(setModalInfo(modalInfo))
-    },
     updatePaintScenePreview: (layers) => {
       dispatch(updatePaintScenePreview(layers))
     },
@@ -1155,7 +1136,6 @@ const mapDispatchToProps = (dispatch: Function) => {
     clearNavigationIntent: () => dispatch(clearNavigationIntent()),
     cachePaintScene: (data: any) => dispatch(cachePaintScene(data)),
     clearPaintSceneCache: () => dispatch(clearPaintSceneCache()),
-    setActiveSceneLabel: (label: string) => dispatch(setActiveSceneLabel(label)),
     publishLayers: (layers: string[]) => dispatch(setPaintSceneSaveData(layers)),
     killPublishFlag: () => dispatch(triggerPaintSceneLayerPublish())
   }

@@ -7,6 +7,7 @@ import './Carousel.scss'
 import times from 'lodash/times'
 import isFunction from 'lodash/isFunction'
 import { KEY_CODES } from 'src/constants/globals'
+import type { FlatScene, FlatVariant } from '../../shared/types/Scene'
 
 type ComponentProps = {
   BaseComponent: any,
@@ -20,14 +21,17 @@ type ComponentProps = {
   setInitialPosition?: number => void,
   btnRefList?: Object[],
   getSummaryData?: object=> void,
-   // eslint-disable-next-line react/no-unused-prop-types
-  baseSceneData?: Object,
+  // These props are automagically passed hence the need for comments to silence them
   // eslint-disable-next-line react/no-unused-prop-types
   deleteSavedScene?: Function,
   // eslint-disable-next-line react/no-unused-prop-types
   selectSavedScene?: Function,
   // eslint-disable-next-line react/no-unused-prop-types
-  selectAnonStockScene?: Function
+  selectAnonStockScene?: Function,
+  // eslint-disable-next-line react/no-unused-prop-types
+  variants?: FlatVariant[],
+  // eslint-disable-next-line react/no-unused-prop-types
+  scenes?: FlatScene[]
 }
 
 const baseClass = 'prism-slick-carousel'

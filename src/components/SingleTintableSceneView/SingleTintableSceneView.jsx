@@ -22,6 +22,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { SCENE_VARIANTS } from '../../constants/globals'
 import BatchImageLoader from '../MergeCanvas/BatchImageLoader'
 import type { FlatScene, FlatVariant } from '../../shared/types/Scene'
+import { copySurfaceColors } from './util'
 export type SingleTintableSceneViewProps = {
   surfaceColorsFromParents: [],
   showClearButton?: boolean,
@@ -40,12 +41,13 @@ const tintableViewBaseClassName = 'tintable-view'
 const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
   const { showClearButton, customButton, handleSurfacePaintedState, allowVariantSwitch, interactive,
     surfaceColorsFromParents, selectedSceneUid, scenesCollection, variantsCollection, selectedVariantName } = props
-
   const [selectedScene, setSelectedScene] = useState(null)
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0)
   const [sceneVariants, setSceneVariants] = useState([])
   const [backgroundLoaded, setBackgroundLoaded] = useState(false)
-  const [surfaceColors, setSurfaceColors] = useState([])
+  const [surfaceColors, setSurfaceColors] = useState(surfaceColorsFromParents?.map(color => {
+    return color ? { ...color } : null
+  }) || [])
   const [backgroundUrls, setBackgroundUrls] = useState([])
   const livePaletteColors = useSelector(state => state['lp'])
   // ToDo : The following condition is for test purposes only, will be removed for the final version - PM
@@ -54,6 +56,13 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
   }
 
   useEffect(() => {
+    if (surfaceColorsFromParents) {
+      setSurfaceColors(copySurfaceColors(surfaceColorsFromParents) ?? [])
+    }
+  }, [surfaceColorsFromParents])
+
+  useEffect(() => {
+    // Inti component internal state
     if (selectedSceneUid && variantsCollection) {
       setBackgroundLoaded(false)
       let variants = variantsCollection.filter(variant => variant.sceneUid === selectedSceneUid)
@@ -63,16 +72,16 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
       const { surfaces } = variants[selectedVariantIndex]
       setSelectedScene(scenesCollection.find(scene => scene.uid === selectedSceneUid))
       setSceneVariants(variants)
-      setSurfaceColors(surfaces.map((surface, i) => null))
+      if (!surfaceColors.length) {
+        setSurfaceColors(surfaces.map((surface, i) => null))
+      }
       setBackgroundUrls(variants.map(variant => variant.image))
     }
   }, [scenesCollection, variantsCollection, selectedSceneUid])
 
   useEffect(() => {
     if (handleSurfacePaintedState && selectedSceneUid && variantsCollection?.length && sceneVariants.length) {
-      const colors = surfaceColors.map(color => {
-        return color ? { ...color } : color
-      })
+      const colors = copySurfaceColors(surfaceColors) ?? []
       handleSurfacePaintedState(selectedSceneUid, sceneVariants[selectedVariantIndex].variantName, colors)
     }
   }, [surfaceColors, sceneVariants, selectedSceneUid, selectedVariantIndex])
@@ -125,7 +134,7 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
       <SimpleTintableScene
         sceneType={variant.sceneType}
         background={backgroundImageUrl}
-        surfaceColors={surfaceColorsFromParents || surfaceColors}
+        surfaceColors={surfaceColors}
         surfaceIds={surfaceIds}
         surfaceHitAreas={surfaceHitAreas}
         surfaceUrls={surfaceUrls}
