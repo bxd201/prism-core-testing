@@ -41,17 +41,6 @@ type ColorVisualizerNavProps = {
   config: any
 }
 
-const isSupportedImageFormat = (file: Object, exts: string[] = ['jpeg', 'jpg', 'png']) => {
-  if (file && file.name) {
-    const fileName = file.name.toLowerCase().split('.')
-    if (fileName.length > 1) {
-      return exts.indexOf(fileName[fileName.length - 1]) > -1
-    }
-  }
-
-  return false
-}
-
 type WrapperProps = {
   children: ReactChildren
 }
@@ -109,6 +98,7 @@ export const DropDownMenu = ({ title, items }: DropDownMenuProps) => {
                   <h3 className='cvw-dashboard-submenu__content__title'>{selectDevice(title, titleMobile)}</h3>
                   <p className='cvw-dashboard-submenu__content__content'>{selectDevice(content, contentiPhone, contentAndroid)}</p>
                   {description && <p className='cvw-dashboard-submenu__content__tip'>{description}</p>}
+                  {(i === 1) && <p className='cvw-dashboard-submenu__content__tip'>Please select a PNG or JPG file</p>}
                 </Wrapper>
               </li>
             )
@@ -309,14 +299,12 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
       <input ref={hiddenImageUploadInput} style={{ display: 'none' }} type='file' onChange={e => {
         // If you are looking to clear the uploaded image here, do not, you will face very strange render bugs.
         const userImg = e.target.files && e.target.files.length ? e.target.files[0] : null
-        if (userImg && isSupportedImageFormat(userImg)) {
+        if (userImg && userImg.name.match(/.(jpg|jpeg|png)$/i)) {
           if (useSmartMask) {
             dispatch(queueImageUpload(userImg))
           }
           const imageUrl = URL.createObjectURL(userImg)
           dispatch(setIngestedImage(imageUrl))
-        } else {
-          // @todo implement notification of failed format. -RS
         }
       }} />
       <ul className='cvw-navigation-wrapper__structure cvw-navigation-wrapper__structure--center' role='presentation'>
