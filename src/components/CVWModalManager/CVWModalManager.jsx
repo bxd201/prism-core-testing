@@ -5,24 +5,36 @@ import { useHistory } from 'react-router-dom'
 import SingleTintableSceneView from '../SingleTintableSceneView/SingleTintableSceneView'
 import MergeCanvas from '../MergeCanvas/MergeCanvas'
 import { createUniqueSceneId } from '../../shared/utils/legacyProfileFormatUtil'
-import { clearNavigationIntent, navigateToIntendedDestination,
-  ACTIVE_SCENE_LABELS_ENUM, setDirtyNavigationIntent,
+import {
+  clearNavigationIntent,
+  ACTIVE_SCENE_LABELS_ENUM,
+  setDirtyNavigationIntent,
   setIsColorWallModallyPresented,
-  setIsScenePolluted } from '../../store/actions/navigation'
+  setIsScenePolluted, setActiveSceneLabel, setIsMatchPhotoPresented
+} from '../../store/actions/navigation'
 import { saveStockScene, deleteStockScene } from '../../store/actions/stockScenes'
-import { startSavingMasks, deleteSavedScene, SCENE_TYPE } from '../../store/actions/persistScene'
+import {
+  startSavingMasks,
+  deleteSavedScene,
+  SCENE_TYPE,
+  setShouldShowPaintSceneSavedModal
+} from '../../store/actions/persistScene'
 import { saveLivePalette, deleteSavedLivePalette } from '../../store/actions/saveLivePalette'
 import { hideGlobalModal } from '../../store/actions/globalModal'
 import { replaceLpColors } from '../../store/actions/live-palette'
 import { Modal } from './Modal'
-import { SAVE_OPTION, HIDE_MODAL, HANDLE_NAVIGATION_INTENT_CONFIRM,
+import {
+  SAVE_OPTION, HIDE_MODAL, HANDLE_NAVIGATION_INTENT_CONFIRM,
   HANDLE_NAVIGATION_INTENT_CANCEL, HANDLE_DIRTY_NAVIGATION_INTENT_CONFIRM,
   HANDLE_DIRTY_NAVIGATION_INTENT_CANCEL, HANDLE_SELECT_PALETTE_CONFIRM,
-  HANDLE_DELETE_MY_PREVIEW_CONFIRM } from './constants.js'
+  HANDLE_DELETE_MY_PREVIEW_CONFIRM, MODAL_TYPE_ENUM
+} from './constants.js'
 import { getColorInstances } from '../LivePalette/livePaletteUtility'
-import { createConfirmSavedModal } from './createModal'
+import { createSavedNotificationModal } from './createModal'
 import { useIntl } from 'react-intl'
 import type { PreviewImageProps } from '../../shared/types/CVWTypes'
+import { clearSceneWorkspace } from '../../store/actions/paintScene'
+import { setActiveSceneKey } from '../../store/actions/scenes'
 
 export const globalModalClassName = 'global-modal'
 export const globalModalPreviewImageClassName = `${globalModalClassName}__preview-image`
@@ -97,9 +109,9 @@ export const PreviewImage = ({ modalInfo, lpColors, surfaceColors, scenes, selec
 
   return (
     <>
-      {modalInfo?.modalType === ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE && <div className={globalModalPreviewImageClassName}>{getStockScenePreviewData(modalInfo?.showLivePalette)}</div>}
-      {modalInfo?.modalType === ACTIVE_SCENE_LABELS_ENUM.PAINT_SCENE && <div className={globalModalPreviewImageClassName}>{getPaintScenePreviewData(modalInfo?.showLivePalette, paintSceneLayers)}</div>}
-      {modalInfo?.modalType === ACTIVE_SCENE_LABELS_ENUM.LIVE_PALETTE && <div className={globalModalPreviewImageClassName}>{getLivePalettePreviewData(modalInfo?.showLivePalette)}</div>}
+      {modalInfo?.modalType === MODAL_TYPE_ENUM.STOCK_SCENE && <div className={globalModalPreviewImageClassName}>{getStockScenePreviewData(modalInfo?.showLivePalette)}</div>}
+      {modalInfo?.modalType === MODAL_TYPE_ENUM.PAINT_SCENE && <div className={globalModalPreviewImageClassName}>{getPaintScenePreviewData(modalInfo?.showLivePalette, paintSceneLayers)}</div>}
+      {modalInfo?.modalType === MODAL_TYPE_ENUM.LIVE_PALETTE && <div className={globalModalPreviewImageClassName}>{getLivePalettePreviewData(modalInfo?.showLivePalette)}</div>}
     </>)
 }
 
@@ -131,6 +143,7 @@ export const CVWModalManager = () => {
   // The following function is needed for a particular use case where if a user clear the default name of the scene being saved,
   // and close the modal, this function will reset the state with the default name
   const resetInputValue = () => setInputValue(`${saveScenedefaultName} ${sceneCount}`)
+  const navigationIntent = useSelector(store => store.navigationIntent)
 
   const createCallbackFromActionName = (callbackName) => {
     switch (callbackName) {
@@ -181,7 +194,7 @@ export const CVWModalManager = () => {
     })
     hideModal()
     dispatch(saveLivePalette(createUniqueSceneId(), inputValue, livePaletteColorsIdArray))
-    createConfirmSavedModal(intl, dispatch)
+    dispatch(createSavedNotificationModal(intl))
   }
 
   const saveStockSceneFromModal = (e: SyntheticEvent, saveSceneName: string) => {
@@ -192,7 +205,6 @@ export const CVWModalManager = () => {
       return false
     }
     if (currentSceneData) {
-      // @todo should I throw an error if no active scene or is this over kill? -RS
       let livePaletteColorsIdArray = []
       const saveSceneData = {}
       const { variantName, sceneType, sceneId } = currentSceneData
@@ -204,9 +216,8 @@ export const CVWModalManager = () => {
         livePaletteColorsIdArray.push(color.id)
       })
       hideModal()
-      // @to do we may need to change ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE to another variable, the variable was store.scene.type from redux.
-      dispatch(saveStockScene(uniqId, saveSceneName, saveSceneData, ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE, livePaletteColorsIdArray))
-      createConfirmSavedModal(intl, dispatch)
+      dispatch(saveStockScene(uniqId, saveSceneName, saveSceneData, sceneType, livePaletteColorsIdArray))
+      dispatch(createSavedNotificationModal(intl))
     }
   }
 
@@ -218,7 +229,6 @@ export const CVWModalManager = () => {
     }
     hideModal()
     dispatch(startSavingMasks(sceneName))
-    createConfirmSavedModal(intl, dispatch)
   }
 
   const handleDirtyNavigationIntentConfirm = (e: SyntheticEvent) => {
@@ -243,7 +253,16 @@ export const CVWModalManager = () => {
   const handleNavigationIntentConfirm = (e: SyntheticEvent) => {
     e.stopPropagation()
     hideModal()
-    dispatch(navigateToIntendedDestination())
+    // remove any paint scene workspaces, this will unmount a mounted paint scene and force it to re-render as it should.
+    dispatch(clearSceneWorkspace())
+    dispatch(setActiveSceneKey())
+    // replace by push to history and clearing
+    history.push(navigationIntent)
+    dispatch(clearNavigationIntent())
+    dispatch(setIsScenePolluted())
+    dispatch(setIsMatchPhotoPresented())
+    // Setting this tells the cvw to show the stock scenes so the bottom layer isn't empty on navigate
+    dispatch(setActiveSceneLabel(ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE))
   }
 
   const handleNavigationIntentCancel = (e: SyntheticEvent) => {
@@ -270,14 +289,18 @@ export const CVWModalManager = () => {
   }
 
   const hideModal = () => {
+    // this cleans up the redux store that programmatically tells the modal to show
+    dispatch(setShouldShowPaintSceneSavedModal())
     dispatch(hideGlobalModal())
   }
+
+  const SCREENS_WITH_PREVIEW = [MODAL_TYPE_ENUM.STOCK_SCENE, MODAL_TYPE_ENUM.PAINT_SCENE, MODAL_TYPE_ENUM.LIVE_PALETTE]
 
   return (
     <>
       <Modal
         shouldDisplayModal={shouldDisplayModal}
-        previewImage={modalInfo?.modalType !== ACTIVE_SCENE_LABELS_ENUM.EMPTY_SCENE
+        previewImage={modalInfo.modalType && SCREENS_WITH_PREVIEW.indexOf(modalInfo.modalType) > -1
           ? <PreviewImage
             modalInfo={modalInfo}
             lpColors={lpColors}

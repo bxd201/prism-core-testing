@@ -15,7 +15,6 @@ const AuthObserver = (props: authObserverProps) => {
 
   useEffect(() => {
     firebase.auth().onAuthStateChanged(user => {
-      console.log('Firebase User:', user)
       if (user) {
         dispatch(setUser(user))
         dispatch(tryToPersistCachedSceneData())

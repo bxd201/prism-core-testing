@@ -45,6 +45,8 @@ export const setIsScenePolluted = (pollutedSceneType: string = '') => {
   }
 }
 
+// @todo look into deprecating this and all things triggered by it. 5/20/21 -RS
+// me thinks it can be supeceded by imperatively pushing the nav intent and calling a func to clean up
 export const NAVIGATE_TO_INTENDED_DESTINATION = 'NAVIGATE_TO_INTENDED_DESTINATION'
 // This method will trigger a url cached in redux to navigate
 export const navigateToIntendedDestination = () => {
@@ -193,5 +195,13 @@ export const clearForwardAndNavigationIntent = () => {
     navigationIntentPayload: '',
     navigationForwardIntentPayload: ''
 
+  }
+}
+
+export const SET_IS_MATCH_PHOTO_PRESENTED = 'SET_IS_MATCH_PHOTO_PRESENTED'
+export const setIsMatchPhotoPresented = (isShown: boolean = false) => {
+  return {
+    type: SET_IS_MATCH_PHOTO_PRESENTED,
+    payload: isShown
   }
 }

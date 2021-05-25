@@ -12,13 +12,15 @@ import './ColorVisualizerNav.scss'
 import { FEATURE_EXCLUSIONS } from '../../../constants/configurations'
 import { shouldAllowFeature } from '../../../shared/utils/featureSwitch.util'
 import WithConfigurationContext from '../../../contexts/ConfigurationContext/WithConfigurationContext'
-import { createNavigationWarningModal } from '../../CVWModalManager/createModal'
+import { createMatchPhotoNavigationWarningModal, createNavigationWarningModal } from '../../CVWModalManager/createModal'
 import {
-  cleanupNavigationIntent,
+  // cleanupNavigationIntent,
   setNavigationIntent,
   setDirtyNavigationIntent, ACTIVE_SCENE_LABELS_ENUM
 } from '../../../store/actions/navigation'
 import { ROUTES_ENUM } from './routeValueCollections'
+import { MODAL_TYPE_ENUM } from '../../CVWModalManager/constants'
+import { triggerPaintSceneLayerPublish } from '../../../store/actions/paintScene'
 
 type DropDownMenuProps = {
   title: string,
@@ -119,24 +121,13 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
   const activeSceneLabel = useSelector(store => store.activeSceneLabel)
   const isActiveScenePolluted: string = useSelector(store => store.scenePolluted)
   const useSmartMask = useSelector(state => state.useSmartMask)
-  const allowNavigateToIntendedDestination = useSelector(state => state.allowNavigateToIntendedDestination)
-  const navigationIntent = useSelector(state => state.navigationIntent)
   const isColorwallModallyPresented = useSelector(store => store.isColorwallModallyPresented)
 
   const hiddenImageUploadInput: { current: ?HTMLElement } = useRef()
   const navBtnRef: {current: ?HTMLElement} = useRef()
   const navRef: {current: ?HTMLElement} = useRef()
+  const matchPhotoShown = useSelector(store => store.isMatchPhotoPresented)
 
-  // This is an observer that determines if programmatic navigation should occur
-  // @todo, in a perfect world there would be a complete navigation abstraction layer, see the useeffect hook in the CVWWrapper to find another vital part -RS
-  useEffect(() => {
-    if (allowNavigateToIntendedDestination && navigationIntent && !isColorwallModallyPresented) {
-      history.push(navigationIntent)
-      dispatch(cleanupNavigationIntent())
-    }
-  }, [allowNavigateToIntendedDestination, navigationIntent, isColorwallModallyPresented])
-
-  // @todo maybe a hook can handle determining if a modal needs to be shown to warn a user of destruction. -RS
   const getDropDownItemsForGetInspired = () => {
     const items = [
       {
@@ -207,7 +198,7 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
           if (hiddenImageUploadInput.current) {
             hiddenImageUploadInput.current.value = ''
             // trigger upload image system modal
-            dispatch(setNavigationIntent(ROUTES_ENUM.ACTIVE_PAINT_SCENE))
+            dispatch(setNavigationIntent(ROUTES_ENUM.UPLOAD_PAINT_SCENE))
             hiddenImageUploadInput.current.click()
           }
         } : undefined
@@ -247,7 +238,7 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
         content: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.MATCH_A_PHOTO'],
         onClick: () => {
           if (isActiveScenePolluted) {
-            // @todo this check can go in the hook in the colorvisualizercontent -RS
+            // @todo trace what this dispatch does, may not be needed, should be able to just use if (hiddenImageUploadInput.current)  -RS
             dispatch(showWarningModal())
           } else {
             if (hiddenImageUploadInput.current) {
@@ -277,20 +268,28 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
     })
   }
 
-  const handleNavigation = (url) => {
+  const handleNavigation = (urlFrag: string) => {
     if (isColorwallModallyPresented) {
-      dispatch(setDirtyNavigationIntent(url))
-      // @todo IMPORTANT: we need to talk about active scene labels.  I think these should only be STOCK_SCENE or PAINT_SCENE -RS
-      createNavigationWarningModal(intl, dispatch, ACTIVE_SCENE_LABELS_ENUM.EMPTY_SCENE, true)
+      dispatch(setDirtyNavigationIntent(urlFrag))
       return
     }
     if (isActiveScenePolluted) {
-      dispatch(setNavigationIntent(url))
-      createNavigationWarningModal(intl, dispatch, activeSceneLabel, false)
+      dispatch(setNavigationIntent(urlFrag))
+      const modalType = activeSceneLabel === ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE ? MODAL_TYPE_ENUM.STOCK_SCENE : MODAL_TYPE_ENUM.PAINT_SCENE
+      if (activeSceneLabel === MODAL_TYPE_ENUM.PAINT_SCENE) {
+        dispatch(triggerPaintSceneLayerPublish(true))
+      }
+      dispatch(createNavigationWarningModal(intl, modalType, false))
+      return
+    }
+
+    if (matchPhotoShown) {
+      dispatch(setNavigationIntent(urlFrag))
+      dispatch(createMatchPhotoNavigationWarningModal(intl, false))
       return
     }
     // default action
-    history.push(url)
+    history.push(urlFrag)
   }
 
   // @todo refactor buttons into their own component -RS
@@ -348,8 +347,8 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
             {
               shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.documentSaving)
                 ? <li>
-                  <button className={`cvw-nav-btn ${location.pathname === ROUTES_ENUM.MYIDEAS ? 'cvw-nav-btn--active' : ''}`} onClick={() => {
-                    handleNavigation(ROUTES_ENUM.MYIDEAS)
+                  <button className={`cvw-nav-btn ${location.pathname === ROUTES_ENUM.ACTIVE_MYIDEAS ? 'cvw-nav-btn--active' : ''}`} onClick={() => {
+                    handleNavigation(ROUTES_ENUM.ACTIVE_MYIDEAS)
                   }}>
                     <FormattedMessage id='NAV_LINKS.MY_IDEAS' />
                   </button>

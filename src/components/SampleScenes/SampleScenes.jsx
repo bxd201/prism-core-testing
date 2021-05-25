@@ -1,21 +1,14 @@
 // @flow
-import React, { useState, useEffect, useContext, useRef, useMemo } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { useHistory } from 'react-router-dom'
+import React, { useState, useEffect, useRef, useMemo } from 'react'
+import { useSelector } from 'react-redux'
 import Carousel from '../Carousel/Carousel'
 import ColorCollectionsTab from '../Shared/ColorCollectionsTab'
-import { ACTIVE_SCENE_LABELS_ENUM } from 'src/store/actions/navigation'
 import SingleTintableSceneView from '../SingleTintableSceneView/SingleTintableSceneView'
 import CardMenu from 'src/components/CardMenu/CardMenu'
 import { groupVariantsByCarouselTabs } from './utils.js'
-import { loadScenes } from '../../store/actions/scenes'
-import { cacheCarousel, setActiveSceneLabel } from '../../store/actions/navigation'
-import { setSelectedSceneUid } from '../../store/actions/loadScenes'
-import { SCENE_TYPES } from 'constants/globals'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { FormattedMessage, useIntl } from 'react-intl'
-import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import './SampleScenes.scss'
+import { useIntl } from 'react-intl'
 
 const baseClass = 'color-collections'
 type ComponentProps = { isColorTinted: boolean, setHeader: Function, activateScene: Function }
@@ -24,20 +17,14 @@ export const SampleScenesWrapper = ({ isColorTinted, setHeader, activateScene }:
   const carouselCache = useSelector(state => ({ initPosition: state.carouselCache?.[0], tabId: state.carouselCache?.[1] }))
   const filteredVariants = useSelector(state => state.variantsCollection)?.filter((scene) => scene?.sceneCategories?.length && scene?.variantName === 'day')
   const [tabId: string, setTabId: string => void] = useState(carouselCache?.tabId)
-  const history = useHistory()
   const maxHeight = useRef(Number.MAX_SAFE_INTEGER)
-  const dispatch = useDispatch()
-  const { locale, formatMessage } = useIntl()
-  const { brandId } = useContext(ConfigurationContext)
   const variantsCarouselTabsData = useMemo(() => filteredVariants ? groupVariantsByCarouselTabs(filteredVariants) : undefined, [filteredVariants])
   const handleSelectedSceneUid = (uid: string) => {
     const initPosition = filteredVariants.findIndex((item) => {
       return item.sceneUid === uid
     })
-    dispatch(cacheCarousel([initPosition, tabId]))
-    dispatch(setSelectedSceneUid(uid))
-    dispatch(setActiveSceneLabel(ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE))
-    history.push('/active')
+    console.log('TAB ID::', tabId)
+    activateScene(uid, [initPosition, tabId])
   }
 
   const getClientMinHeight = (height) => {
@@ -45,23 +32,10 @@ export const SampleScenesWrapper = ({ isColorTinted, setHeader, activateScene }:
     maxHeight.current = minHeight
   }
 
-  useEffect(() => {
-    fetchData(SCENE_TYPES.ROOM)
-  }, [])
+  const intl = useIntl()
 
-  const fetchData = (type = null) => {
-    /** load specific type of collection */
-    if (type) {
-      (filteredVariants?.length === 0) && dispatch(loadScenes(type, brandId, { language: locale }))
-    } else {
-      /** load all types */
-      Object.values(SCENE_TYPES).forEach((type) => {
-        (filteredVariants?.length === 0) && dispatch(loadScenes(type, brandId, { language: locale }))
-      })
-    }
-  }
   return (
-    <CardMenu menuTitle={formatMessage({ id: 'USE_OUR_PHOTO' })}>
+    <CardMenu menuTitle={intl.formatMessage({ id: 'USE_OUR_PHOTO' })}>
       {() => (<div className={`${baseClass}__wrapper`}>
         {variantsCarouselTabsData && variantsCarouselTabsData.collectionTabs && <ColorCollectionsTab collectionTabs={variantsCarouselTabsData.collectionTabs} tabIdShow={tabId} showTab={setTabId} />}
         <div className={`${baseClass}__collections-list`}>
@@ -100,6 +74,8 @@ const StaticTintSceneWrapper = ({ data, isColorTinted, handleSelectedSceneUid, i
     }
   })
 
+  const intl = useIntl()
+
   useEffect(() => {
     sceneWrapperRef.current && getClientHeight(sceneWrapperRef.current.clientHeight)
   }, [sceneWrapperRef])
@@ -112,7 +88,7 @@ const StaticTintSceneWrapper = ({ data, isColorTinted, handleSelectedSceneUid, i
       <button tabIndex={(isActivedPage) ? '0' : '-1'} className='static__scene__paint__btn' onClick={() => handleSelectedSceneUid(data?.sceneUid)}>
         <FontAwesomeIcon className={`cvw__btn-overlay__svg`} size='lg' icon={['fal', 'square-full']} />
         <FontAwesomeIcon className={`cvw__btn-overlay__svg cvw__btn-overlay__svg--brush`} icon={['fa', 'brush']} size='lg' transform={{ rotate: 320 }} style={{ transform: 'translateX(-10px)' }} />
-        <FormattedMessage id='PAINT_THIS_SCENE' />
+        <span>{intl.formatMessage({ id: 'PAINT_THIS_SCENE' })}</span>
       </button>
     </>
   )

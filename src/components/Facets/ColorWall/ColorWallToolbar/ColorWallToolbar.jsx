@@ -14,7 +14,7 @@ import ButtonBar from 'src/components/GeneralButtons/ButtonBar/ButtonBar'
 import { generateColorWallPageUrl } from 'src/shared/helpers/ColorUtils'
 import ColorWallContext from '../ColorWallContext'
 import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
-import { navigateToIntendedDestination, setImageRotateBypass, setIsColorWallModallyPresented } from 'src/store/actions/navigation'
+import { navigateToIntendedDestination, setIsColorWallModallyPresented } from 'src/store/actions/navigation'
 import './ColorWallMenuBar.scss'
 
 const PATH_END_FAMILY = 'family/'
@@ -67,7 +67,6 @@ export default () => {
 
   const [wallSelectionMenuOpen, setWallSelectionMenuOpen] = useState(false)
   // This should have been set by staging action...
-  const imageRotateBypassValue = useSelector(store => store.navigationIntent)
   const shouldShowCloseButton = useSelector(store => store.isColorwallModallyPresented)
 
   if (uiStyle === 'minimal') {
@@ -180,9 +179,8 @@ export default () => {
                 className='menu-bar__button-close'
                 onClick={e => {
                   e.preventDefault()
-                  dispatch(setIsColorWallModallyPresented(false))
+                  dispatch(setIsColorWallModallyPresented())
                   dispatch(navigateToIntendedDestination())
-                  dispatch(setImageRotateBypass(imageRotateBypassValue))
                 }}
               >
                 <FontAwesomeIcon className='color-families-svg' icon={['fa', 'times']} pull='left' />

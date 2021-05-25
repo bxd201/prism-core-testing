@@ -32,7 +32,7 @@ import {
   setIsColorWallModallyPresented,
   setIsScenePolluted,
   stageNavigationReturnIntent,
-  setNavigationIntent, clearNavigationIntent
+  setNavigationIntent, clearNavigationIntent, setIsMatchPhotoPresented, cacheCarousel
 } from '../../../store/actions/navigation'
 import { ROUTES_ENUM } from './routeValueCollections'
 import SceneBlobLoader from '../../SceneManager/SceneBlobLoader'
@@ -54,6 +54,11 @@ import MatchPhotoContainer from '../../MatchPhoto/MatchPhotoContainer'
 import { setImageForMatchPhoto, setImageDimsForMatchPhoto } from '../../../store/actions/matchPhoto'
 import { setIngestedImage } from '../../../store/actions/user-uploads'
 import { SCENE_TYPE } from '../../../store/actions/persistScene'
+import { createNavigationWarningModal, createSavedNotificationModal } from '../../CVWModalManager/createModal'
+import { useIntl } from 'react-intl'
+import { MODAL_TYPE_ENUM } from '../../CVWModalManager/constants'
+import { hydrateStockSceneFromSavedData } from '../../../store/actions/stockScenes'
+import { setActiveSceneKey } from '../../../store/actions/scenes'
 
 type CVWPropsType = {
   maxSceneHeight: number,
@@ -87,6 +92,14 @@ export const CVW = (props: CVWPropsType) => {
   const [wrapperDims, setWrapperDims] = useState(0)
   const matchPhotoImageDims = useSelector(store => store.matchPhotoImageDims)
   const savedSurfaceColors = useSelector(store => store.colorsForSurfacesFromSavedScene)
+  const allowNavigateToIntendedDestination = useSelector(store => store.allowNavigateToIntendedDestination)
+  const isColorwallModallyPresented = useSelector(store => store.isColorwallModallyPresented)
+  const isActiveScenePolluted = useSelector(store => store.scenePolluted)
+  const isMatchPhotoPresented = useSelector(store => store.isMatchPhotoPresented)
+  const shouldShowPaintSceneSavedModal = useSelector(store => store.shouldShowPaintSceneSavedModal)
+  const [activeStockSceneColorsFromSave, activeVariantStockSceneNameFromSave] = useSelector(store => [store.colorsForSurfacesFromSavedScene, store.variantStockSceneNameFromSave])
+  const intl = useIntl()
+  const activeSceneKey = useSelector(store => store.activeSceneKey)
 
   // Use this hook to push any facet level embedded data to redux and handle any initialization
   useEffect(() => {
@@ -94,6 +107,13 @@ export const CVW = (props: CVWPropsType) => {
     dispatch(setActiveSceneLabel(ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE))
     fetchRemoteScenes(SCENE_TYPES.ROOM, brandId, { language }, SCENES_ENDPOINT, handleScenesFetchedForCVW, handleScenesFetchErrorForCVW, dispatch)
   }, [])
+
+  // used to programmatically show modals
+  useEffect(() => {
+    if (shouldShowPaintSceneSavedModal) {
+      dispatch(createSavedNotificationModal(intl))
+    }
+  }, [shouldShowPaintSceneSavedModal])
 
   // this logic is the app level observer of paintscene cache, used to help direct navigation to the color wall and set it up to return
   // THIS IS ONLY UTILIZED BY FLOWS THAT HAVE RETURN PATHS!!!!!!!
@@ -104,14 +124,21 @@ export const CVW = (props: CVWPropsType) => {
       const wrapperDims = wrapperRef.current.getBoundingClientRect()
       setWrapperDims(wrapperDims)
     }
+
+    if (isActiveScenePolluted || isMatchPhotoPresented) {
+      // exit out of this programmatic navigation, user must resolve via a modal action
+      return
+    }
+
     // Set return intent for color wall rule
     if (navigationIntent === ROUTES_ENUM.COLOR_WALL &&
-      ((activeSceneLabel === ACTIVE_SCENE_LABELS_ENUM.PAINT_SCENE && isPaintSceneCached) ||
+      ((activeSceneLabel === ACTIVE_SCENE_LABELS_ENUM.PAINT_SCENE) ||
         activeSceneLabel === ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE) && navigationReturnIntent) {
       history.push(navigationIntent)
       // tell app that color wall is visible modally, the parent condition assures this will evaluate to true in the action
       dispatch(setIsColorWallModallyPresented(navigationReturnIntent))
       // Return intent should be set already, if not something is violating the data lifecycle
+      // this pushed the return intent into the nav intent slot
       dispatch(stageNavigationReturnIntent(navigationReturnIntent))
       return
     }
@@ -126,27 +153,43 @@ export const CVW = (props: CVWPropsType) => {
         }
         history.push(navigationIntent)
       }
+      return
     }
 
     if (navigationIntent === ROUTES_ENUM.ACTIVE_PAINT_SCENE) {
       // navigate from upload screen to image rotate screen
       history.push(navigationIntent)
       dispatch(clearNavigationIntent())
+      return
     }
 
     if (navigationIntent === ROUTES_ENUM.UPLOAD_MATCH_PHOTO) {
       history.push(navigationIntent)
       dispatch(clearNavigationIntent())
     }
-  }, [isPaintSceneCached, navigationIntent, navigationReturnIntent, activeSceneLabel, shouldShowGlobalDestroyWarning, ingestedImageUrl])
+    // This handles routing back from the color wall.
+    if (allowNavigateToIntendedDestination && navigationIntent && !isColorwallModallyPresented) {
+      history.push(navigationIntent)
+      dispatch(clearNavigationIntent())
+    }
+  }, [isPaintSceneCached,
+    navigationIntent,
+    navigationReturnIntent,
+    activeSceneLabel,
+    shouldShowGlobalDestroyWarning,
+    ingestedImageUrl,
+    allowNavigateToIntendedDestination,
+    isColorwallModallyPresented,
+    isMatchPhotoPresented,
+    isActiveScenePolluted])
 
   if (!window.localStorage.getItem('landingPageShownSession') && shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.splashScreen) && SHOW_LOADER_ONLY_BRANDS.indexOf(brandId) < 0) {
     return <LandingPage />
   }
 
   const handleSurfacePaintedState = (selectedSceneUid: string, variantName: string, surfaceColors: MiniColor[]) => {
-    // @todo These params can be used for download and save. State can be local to this component -RS
     const isScenePolluted = !!surfaceColors.reduce((acc, curr) => (curr ? 1 : 0) + acc, 0)
+    dispatch(hydrateStockSceneFromSavedData())
     dispatch(setIsScenePolluted(isScenePolluted ? 'POLLUTED_STOCK_SCENE' : ''))
     dispatch(setModalThumbnailColor(surfaceColors))
     dispatch(setSelectedVariantName(variantName))
@@ -156,12 +199,12 @@ export const CVW = (props: CVWPropsType) => {
     dispatch(setIsScenePolluted('POLLUTED_PAINT_SCENE'))
   }
 
-  // @todo this will be unnecessary in the future, when the way scene management is done is readdressed -RS
   const shouldHideSceneManagerDiv = (path: string) => {
     if (path === '/') {
       return false
     }
     const cleanedPath = path[path.length - 1] === '/' ? path.substring(0, path.length - 1) : path
+    // @todo we need to address this, split into discrete rules instead of regex -RS
     return !cleanedPath.match(/(active|active\/colors|inspiration|scenes|active\/color-wall\/)$/)
   }
 
@@ -170,6 +213,7 @@ export const CVW = (props: CVWPropsType) => {
     dispatch(setVariantsCollection(variants))
     // Default to the first room type for the CVW.
     const variant = variants.filter(variant => variant.sceneType === SCENE_TYPES.ROOM)[0]
+    // When this value is set it can be used as a flag that the cvw has initialized the scene data
     dispatch(setSelectedSceneUid(variant.sceneUid))
     dispatch(setSelectedVariantName(variant.variantName))
     dispatch(setVariantsLoading(false))
@@ -184,12 +228,21 @@ export const CVW = (props: CVWPropsType) => {
   }
 
   const navigateToSceneSelector = (e: SyntheticEvent) => {
-    dispatch(setNavigationIntent(ROUTES_ENUM.USE_OUR_IMAGE))
-    // ToDo : Navigate to the more scenes screen - PM
+    if (isActiveScenePolluted) {
+      dispatch(setNavigationIntent(ROUTES_ENUM.USE_OUR_IMAGE))
+      dispatch(createNavigationWarningModal(intl, MODAL_TYPE_ENUM.STOCK_SCENE, false))
+      return
+    }
+
+    history.push(ROUTES_ENUM.USE_OUR_IMAGE)
   }
 
-  const handleSceneSelection = (payload) => {
-    // @todo implement handler for sample sceneWrapper -RS
+  const handleSceneSelection = (sceneUid: string, carouselCacheData: number[]) => {
+    dispatch(setActiveSceneKey())
+    dispatch(cacheCarousel(carouselCacheData))
+    dispatch(setSelectedSceneUid(sceneUid))
+    dispatch(setActiveSceneLabel(ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE))
+    history.push('/active')
   }
 
   const openSceneFromMyIdeasPreview = (sceneType: string) => {
@@ -221,6 +274,7 @@ export const CVW = (props: CVWPropsType) => {
     try {
       dispatch(setImageForMatchPhoto(imageUrl))
       dispatch(setImageDimsForMatchPhoto(refDims))
+      dispatch(setIsMatchPhotoPresented(true))
       history.push(ROUTES_ENUM.ACTIVE_MATCH_PHOTO)
     } catch (e) {
       console.warn(`Url specified could not be revoked: ${e.message}`)
@@ -258,16 +312,16 @@ export const CVW = (props: CVWPropsType) => {
                 <Route path={`${ROUTES_ENUM.COLOR_WALL}(/.*)?`} render={() => <ColorWallPage displayAddButton displayInfoButton displayDetailsLink={false} />} />
                 <Route path={ROUTES_ENUM.COLOR_COLLECTION} render={() => <ColorCollections isExpertColor={false} {...location.state} />} />
                 <Route path={ROUTES_ENUM.UPLOAD_MATCH_PHOTO} render={() => <ImageIngestView cleanupCallback={cleanupStaleIngestedImage} handleDismissCallback={goToMatchPhoto} imageUrl={ingestedImageUrl} maxSceneHeight={maxSceneHeight} />} />
-                <Route path={ROUTES_ENUM.ACTIVE_PAINT_SCENE} render={() => <ImageIngestView cleanupCallback={cleanupStaleIngestedImage} handleDismissCallback={goToPaintScene} imageUrl={ingestedImageUrl} maxSceneHeight={maxSceneHeight} />} />
+                <Route path={ROUTES_ENUM.UPLOAD_PAINT_SCENE} render={() => <ImageIngestView cleanupCallback={cleanupStaleIngestedImage} handleDismissCallback={goToPaintScene} imageUrl={ingestedImageUrl} maxSceneHeight={maxSceneHeight} />} />
                 <Route path={ROUTES_ENUM.ACTIVE_MATCH_PHOTO} render={() => <MatchPhotoContainer colors={unorderedColors} imageUrl={matchPhotoImage} imageDims={matchPhotoImageDims} maxSceneHeight={maxSceneHeight} scalingWidth={wrapperDims.width} />} />
-                <Route path={ROUTES_ENUM.USE_OUR_IMAGE} render={() => <SampleScenesWrapper isColorTinted activateScene={handleSceneSelection} />} />
+                <Route path={ROUTES_ENUM.USE_OUR_IMAGE} render={() => <SampleScenesWrapper activateScene={handleSceneSelection} />} />
                 <Route path={ROUTES_ENUM.EXPERT_COLORS} render={() => <ExpertColorPicks isExpertColor />} />
-                <Route path={ROUTES_ENUM.COLOR_FORM_IMAGE} render={() => <InspiredScene />} />
+                <Route path={ROUTES_ENUM.COLOR_FROM_IMAGE} render={() => <InspiredScene />} />
                 {/* @todo rename activateScene prop scene to handleSceneSelection should set selectedSceneId and navigate active, useEffect may be need to rerender -RS */ }
-                <Route path={ROUTES_ENUM.PAINT_PHOTO} render={() => <SampleScenesWrapper activateScene={handleSceneSelection} />} />
+                <Route path={ROUTES_ENUM.PAINT_PHOTO} render={() => <SampleScenesWrapper isColorTinted activateScene={handleSceneSelection} />} />
                 <Route path={ROUTES_ENUM.MY_IDEAS_PREVIEW} render={() => <MyIdeaPreview openScene={openSceneFromMyIdeasPreview} />} />
                 <Route path={ROUTES_ENUM.MASKING} render={() => <PaintSceneMaskingWrapper />} />
-                <Route path={ROUTES_ENUM.MYIDEAS} render={() => <MyIdeasContainer />} />
+                <Route path={ROUTES_ENUM.ACTIVE_MYIDEAS} render={() => <MyIdeasContainer />} />
                 <Route path={ROUTES_ENUM.HELP} render={() => <Help />} />
               </Switch>
               <div
@@ -275,6 +329,7 @@ export const CVW = (props: CVWPropsType) => {
                 style={{ display: shouldHideSceneManagerDiv(location.pathname) ? 'none' : 'block' }}
               >
                 {activeSceneLabel === ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE ? <SingleTintableSceneView
+                  key={activeSceneKey}
                   allowVariantSwitch
                   showClearButton
                   interactive
@@ -282,9 +337,13 @@ export const CVW = (props: CVWPropsType) => {
                   selectedSceneUid={selectedSceneUid}
                   variantsCollection={variantsCollection}
                   scenesCollection={scenesCollection}
+                  selectedVariantName={activeVariantStockSceneNameFromSave}
+                  surfaceColorsFromParent={activeStockSceneColorsFromSave}
                   handleSurfacePaintedState={handleSurfacePaintedState}
-                  customButton={<SceneSelectorNavButton clickHandler={navigateToSceneSelector} />} /> : paintSceneWorkspace
+                  customButton={<SceneSelectorNavButton clickHandler={navigateToSceneSelector} />} /> : paintSceneWorkspace // workspace should be cleared on unmount!
                   ? <PaintScene
+                    // This ensures that the comp remounts and doesn't try to rerender with dirty data!
+                    key={paintSceneWorkspace.uid}
                     maxSceneHeight={maxSceneHeight}
                     workspace={paintSceneWorkspace}
                     lpActiveColor={activeColor}
