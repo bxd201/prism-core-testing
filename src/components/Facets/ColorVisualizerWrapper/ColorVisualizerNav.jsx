@@ -208,7 +208,7 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
           if (hiddenImageUploadInput.current) {
             hiddenImageUploadInput.current.value = ''
             // trigger upload image system modal
-            dispatch(setNavigationIntent(ROUTES_ENUM.ACTIVE_PAINT_SCENE))
+            dispatch(setNavigationIntent(ROUTES_ENUM.UPLOAD_PAINT_SCENE))
             hiddenImageUploadInput.current.click()
           }
         } : undefined
@@ -359,8 +359,8 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
             {
               shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.documentSaving)
                 ? <li>
-                  <button className={`cvw-nav-btn ${location.pathname === ROUTES_ENUM.MYIDEAS ? 'cvw-nav-btn--active' : ''}`} onClick={() => {
-                    handleNavigation(ROUTES_ENUM.MYIDEAS)
+                  <button className={`cvw-nav-btn ${location.pathname === ROUTES_ENUM.ACTIVE_MYIDEAS ? 'cvw-nav-btn--active' : ''}`} onClick={() => {
+                    handleNavigation(ROUTES_ENUM.ACTIVE_MYIDEAS)
                   }}>
                     <FormattedMessage id='NAV_LINKS.MY_IDEAS' />
                   </button>
