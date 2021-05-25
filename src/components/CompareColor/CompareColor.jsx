@@ -1,15 +1,14 @@
 // @flow
 import React from 'react'
-import { connect } from 'react-redux'
 import { fullColorNumber, getContrastYIQ } from '../../../src/shared/helpers/ColorUtils'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
 import type { Color } from '../../shared/types/Colors.js.flow'
-import type { Scene } from '../../shared/types/Scene'
-import { toggleCompareColor } from '../../store/actions/live-palette'
+import type { FlatScene, FlatVariant } from '../../shared/types/Scene'
 import './CompareColor.scss'
-import { StaticTintScene } from './StaticTintScene'
 import { FormattedMessage } from 'react-intl'
+import SingleTintableSceneView from '../SingleTintableSceneView/SingleTintableSceneView'
+import { createMiniColorFromColor } from '../SingleTintableSceneView/util'
 
 const baseClass = 'color__comparison'
 const containerClass = `${baseClass}__container`
@@ -32,13 +31,16 @@ const offset = 1
 type CompareColorProps = {
   colors: Color[],
   toggleCompareColor: Function,
-  colorsId: string[],
-  scene: Scene | undefined
+  colorIds: string[],
+  scenesCollection: FlatScene[],
+  variantsCollection: FlatVariant[],
+  selectedSceneUid: string,
+  selectedVariantName: string
 }
 
 type CompareColorState = {
   colors: Color[],
-  colorsId: string[],
+  colorIds: string[],
   renderColors: Color[],
   curr: number,
   isHideNextButton: boolean,
@@ -47,11 +49,13 @@ type CompareColorState = {
 export class CompareColor extends React.Component<CompareColorProps, CompareColorState> {
     state = {
       colors: this.props.colors,
-      colorsId: this.props.colorsId,
+      colorIds: this.props.colorIds,
       renderColors: [],
       curr: 0,
       isHidePrevButton: true,
-      isHideNextButton: true
+      isHideNextButton: true,
+      selectedSceneUid: this.props.selectedSceneUid,
+      selectedVariantName: this.props.selectedVariantName
     };
 
     static getDerivedStateFromProps (props: CompareColorProps, state: CompareColorState) {
@@ -60,63 +64,82 @@ export class CompareColor extends React.Component<CompareColorProps, CompareColo
           colors: props.colors
         }
       }
-      if (props.colorsId !== state.colorsId) {
-        if (props.colorsId.length === state.colors.length - 1) {
+      if (props.colorIds !== state.colorIds) {
+        if (props.colorIds.length === state.colors.length - 1) {
           props.toggleCompareColor()
           return null
         }
         let currPointer = state.curr
-        // when remove compared color id from color pallate
-        if (props.colorsId.length > state.colorsId.length) {
-          if (state.colors.length - props.colorsId.length <= defaultViewItem || currPointer === 0) {
+        // when remove compared color id from color paltete
+        if (props.colorIds.length > state.colorIds.length) {
+          if (state.colors.length - props.colorIds.length <= defaultViewItem || currPointer === 0) {
             currPointer = 0
           } else {
             currPointer = currPointer - offset
           }
         }
         // when add compared color id from color pallate
-        if (props.colorsId.length < state.colorsId.length) {
-          if (state.colors.length - props.colorsId.length - 1 <= defaultViewItem) {
+        if (props.colorIds.length < state.colorIds.length) {
+          if (state.colors.length - props.colorIds.length - 1 <= defaultViewItem) {
             currPointer = 0
           } else {
             currPointer = currPointer + 1
           }
         }
         return {
-          colorsId: props.colorsId,
+          colorIds: props.colorIds,
           curr: currPointer
         }
       }
       return null
     }
 
-    renderContent = () => {
-      const { curr, colors } = this.state
-      const { scene } = this.props
-      const renderColors = colors.filter((color: Color) => {
-        return !this.props.colorsId.includes(color.id)
-      })
-      return renderColors && renderColors.map<Object>((color, key) => {
-        return (
-          <div key={key} style={{ backgroundColor: color.hex, transform: `translateX(-${curr * 100}%)` }} className={`${queueWrapperClass}`}>
-            <div className={`${backgroundColorClass}`} />
-            <StaticTintScene
-              color={color}
-              scene={scene}
-              isCompareColor
-            />
-            <div style={{ color: getContrastYIQ(color.hex) }} className={`${colorInfoClass}`} >
-              <span className={`${colorInfoNumberClass}`}>{fullColorNumber(color.brandKey, color.colorNumber)}</span>
-              <span className={`${colorInfoNameClass}`}>{color.name}</span>
-            </div>
-          </div>
-        )
-      })
+    componentDidUpdate (prevProps, prevState) {
+      if (prevProps.selectedSceneUid !== this.props.selectedSceneUid ||
+        prevProps.selectedVariantName !== this.props.selectedVariantName) {
+        // eslint-disable-next-line react/no-did-update-set-state
+        this.setState({
+          selectedSceneUid: this.props.selectedSceneUid,
+          selectedVariantName: this.props.selectedVariantName
+        })
+      }
     }
 
+  renderContent = (curr: number, colors: Colors[], colorIds: string, selectedSceneUid: string, selectedVariantName: string, scenesCollection: FlatScene[], variantsCollection: FlatVariant[]) => {
+    const renderColors = colors.filter((color: Color) => {
+      return !colorIds.includes(color.id)
+    })
+    return renderColors && renderColors.map((color, index) => {
+      const selectedVariant = variantsCollection.find(variant => variant.sceneUid === selectedSceneUid && variant.variantName === selectedVariantName)
+      const selectedScene = scenesCollection.find(scene => scene.uid === selectedSceneUid)
+      const colorDataTemplate = selectedVariant.surfaces.map(surface => null)
+      const fillFirstSurfaceColor = (template, color) => {
+        const miniColor = createMiniColorFromColor(color)
+        return template.map((placeholder, i) => {
+          return i ? null : miniColor
+        })
+      }
+      const colorsForView = fillFirstSurfaceColor(colorDataTemplate, color)
+      return (
+        <div key={index} style={{ backgroundColor: color.hex, transform: `translateX(-${curr * 100}%)` }} className={`${queueWrapperClass}`}>
+          <div className={`${backgroundColorClass}`} />
+          <SingleTintableSceneView
+            surfaceColorsFromParents={colorsForView}
+            selectedSceneUid={selectedSceneUid}
+            scenesCollection={[selectedScene]}
+            variantsCollection={[selectedVariant]} />
+          <div style={{ color: getContrastYIQ(color.hex) }} className={`${colorInfoClass}`} >
+            <span className={`${colorInfoNumberClass}`}>{fullColorNumber(color.brandKey, color.colorNumber)}</span>
+            <span className={`${colorInfoNameClass}`}>{color.name}</span>
+          </div>
+        </div>
+      )
+    })
+  }
+
     isShowSlideButton = () => {
-      const { curr, colors, colorsId } = this.state
-      const itemsCount = colors.length - colorsId.length
+      const { curr, colors, colorIds } = this.state
+      const itemsCount = colors.length - colorIds.length
       let buttonVisibility = {
         isHidePrevButton: true,
         isHideNextButton: true
@@ -138,8 +161,8 @@ export class CompareColor extends React.Component<CompareColorProps, CompareColo
     }
 
     handlePrev = () => {
-      const { colors, curr, colorsId } = this.state
-      const itemsCount = colors.length - colorsId.length
+      const { colors, curr, colorIds } = this.state
+      const itemsCount = colors.length - colorIds.length
       if (itemsCount > defaultViewItem) {
         if (curr === (offset / 2)) {
           this.setState({ curr: curr - offset / 2 })
@@ -150,8 +173,8 @@ export class CompareColor extends React.Component<CompareColorProps, CompareColo
     }
 
     handleNext = () => {
-      const { colors, curr, colorsId } = this.state
-      const itemsCount = colors.length - colorsId.length
+      const { colors, curr, colorIds } = this.state
+      const itemsCount = colors.length - colorIds.length
       if (itemsCount > defaultViewItem) {
         if (curr === itemsCount - defaultViewItem - 1) {
           this.setState({ curr: curr + offset / 2 })
@@ -162,7 +185,9 @@ export class CompareColor extends React.Component<CompareColorProps, CompareColo
     }
 
     render () {
-      const content = this.renderContent()
+      const { curr, colors, colorIds, selectedSceneUid, selectedVariantName } = this.state
+      const { variantsCollection, scenesCollection } = this.props
+      const content = this.renderContent(curr, colors, colorIds, selectedSceneUid, selectedVariantName, scenesCollection, variantsCollection)
       const { isHidePrevButton, isHideNextButton } = this.isShowSlideButton()
       return (
         <div className={`${containerClass}`}>
@@ -191,24 +216,6 @@ export class CompareColor extends React.Component<CompareColorProps, CompareColo
     }
 }
 
-const mapDispatchToProps = (dispatch: Function) => {
-  return {
-    toggleCompareColor: () => {
-      dispatch(toggleCompareColor())
-    }
-  }
-}
-const mapStateToProps = (state: Object, props: Object) => {
-  const { lp, scenes } = state
-  const sceneType = scenes ? scenes.type : undefined
-
-  return {
-    colors: lp.colors,
-    colorsId: lp.compareColorsId,
-    scene: sceneType ? scenes.sceneCollection[sceneType][0] : undefined
-  }
-}
-
 export {
   containerClass,
   containerHeaderClass,
@@ -225,4 +232,4 @@ export {
   colorInfoNameClass
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(CompareColor)
+export default CompareColor
