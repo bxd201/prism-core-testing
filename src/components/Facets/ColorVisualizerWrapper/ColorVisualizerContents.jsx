@@ -54,7 +54,11 @@ import MatchPhotoContainer from '../../MatchPhoto/MatchPhotoContainer'
 import { setImageForMatchPhoto, setImageDimsForMatchPhoto } from '../../../store/actions/matchPhoto'
 import { setIngestedImage } from '../../../store/actions/user-uploads'
 import { SCENE_TYPE } from '../../../store/actions/persistScene'
-import { createNavigationWarningModal, createSavedNotificationModal } from '../../CVWModalManager/createModal'
+import {
+  createMatchPhotoNavigationWarningModal,
+  createNavigationWarningModal,
+  createSavedNotificationModal
+} from '../../CVWModalManager/createModal'
 import { useIntl } from 'react-intl'
 import { MODAL_TYPE_ENUM } from '../../CVWModalManager/constants'
 import { hydrateStockSceneFromSavedData } from '../../../store/actions/stockScenes'
@@ -136,9 +140,11 @@ const CVW = (props: CVWPropsType) => {
         return
       }
     }
-
-    if (isMatchPhotoPresented) {
-      // if the color wall is open ...
+    // This covers when add a color is clicked from match photo
+    if (isMatchPhotoPresented && navigationIntent) {
+      dispatch(setNavigationIntent(navigationIntent))
+      dispatch(createMatchPhotoNavigationWarningModal(intl, false))
+      return
     }
 
     // Set return intent for color wall rule
