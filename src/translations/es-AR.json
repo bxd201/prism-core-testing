@@ -323,7 +323,8 @@
         "DEFAULT_DESCRIPTION": "Mi idea guardada",
         "DESCRIPTION": "Introduzca un nombre para la escena.",
         "SAVE": "GUARDAR",
-        "UNABLE_TO_SAVE_WARNING": "Esta escena no se puede guardar en tu cuenta. Puedes descargar la imagen haciendo click en el icono a la derecha de tu paleta."
+        "UNABLE_TO_SAVE_WARNING": "Esta escena no se puede guardar en tu cuenta. Puedes descargar la imagen haciendo click en el icono a la derecha de tu paleta.",
+        "EMPTY_INPUT": "Por favor, nombre esta idea."
     },
     "SCENE_DISPLAYED": "Se muestra la escena",
     "SCENE_HIDDEN": "La escena está escondida",

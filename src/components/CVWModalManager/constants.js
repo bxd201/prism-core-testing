@@ -15,6 +15,8 @@ export const HANDLE_DELETE_MY_PREVIEW_CONFIRM = 'HANDLE_DELETE_MY_PREVIEW_CONFIR
 export const HIDE_MODAL = 'HIDE_MODAL'
 export const DANGER = 'DANGER'
 export const PRIMARY = 'PRIMARY'
+export const SAVED = 'Saved'
+export const ACTION_SAVE = 'SAVE'
 
 export const SAVE_OPTION = {
   SAVE_STOCK_SCENE: 'SAVE_STOCK_SCENE_FROM_MODAL',

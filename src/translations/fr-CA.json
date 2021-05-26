@@ -319,7 +319,8 @@
     "DEFAULT_DESCRIPTION": "My Saved Idea",
     "DESCRIPTION": "Please enter a name for the scene.",
     "SAVE": "SAVE",
-    "UNABLE_TO_SAVE_WARNING": "This scene cannot be saved to your account. You can download the image by clicking the icon to the right of your palette."
+    "UNABLE_TO_SAVE_WARNING": "This scene cannot be saved to your account. You can download the image by clicking the icon to the right of your palette.",
+    "EMPTY_INPUT": "Veuillez nommer cette idée."
   },
   "SCENE_DISPLAYED": "La Scène est affichée",
   "SCENE_HIDDEN": "La Scène est cachée",
