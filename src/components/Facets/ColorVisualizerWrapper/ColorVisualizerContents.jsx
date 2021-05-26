@@ -59,6 +59,7 @@ import { useIntl } from 'react-intl'
 import { MODAL_TYPE_ENUM } from '../../CVWModalManager/constants'
 import { hydrateStockSceneFromSavedData } from '../../../store/actions/stockScenes'
 import { setActiveSceneKey } from '../../../store/actions/scenes'
+import { toggleCompareColor } from '../../../store/actions/live-palette'
 
 type CVWPropsType = {
   maxSceneHeight: number,
@@ -70,7 +71,7 @@ export const CVW = (props: CVWPropsType) => {
   const dispatch = useDispatch()
   const location = useLocation()
   const history = useHistory()
-  const toggleCompareColor: boolean = useSelector(store => store.lp.toggleCompareColor)
+  const toggleCompareColorFlag: boolean = useSelector(store => store.lp.toggleCompareColor)
   const colorDetailsModalShowing: boolean = useSelector(store => store.colors.colorDetailsModal.showing)
   const isPaintSceneCached: boolean = useSelector(store => !!store.paintSceneCache)
   const navigationIntent: string = useSelector(store => store.navigationIntent)
@@ -100,6 +101,9 @@ export const CVW = (props: CVWPropsType) => {
   const [activeStockSceneColorsFromSave, activeVariantStockSceneNameFromSave] = useSelector(store => [store.colorsForSurfacesFromSavedScene, store.variantStockSceneNameFromSave])
   const intl = useIntl()
   const activeSceneKey = useSelector(store => store.activeSceneKey)
+  const lpColors = useSelector(store => store.lp.colors)
+  const lpCompareColorIds = useSelector(store => store.lp.compareColorsId)
+  const selectedVariantName = useSelector(store => store.selectedVariantName)
 
   // Use this hook to push any facet level embedded data to redux and handle any initialization
   useEffect(() => {
@@ -291,21 +295,32 @@ export const CVW = (props: CVWPropsType) => {
     }
   }
 
-  const setPaintSceneData = (paintSceneLayers: any) => {
+  const handleToggleCompare = () => {
+    dispatch(toggleCompareColor())
+  }
 
+  const setPaintSceneData = (data: any) => {
+    // @todo determine if this is still needed -RS
+    console.table(data)
   }
 
   return (
     <>
       {scenes ? <SceneBlobLoader scenes={scenes} variants={variants} initHandler={handleBlobLoaderInit} handleBlobsLoaded={handleSceneSurfacesLoaded} handleError={handleSceneBlobLoaderError} /> : null}
-      {toggleCompareColor
-        ? <CompareColor />
+      {toggleCompareColorFlag
+        ? <CompareColor
+          toggleCompareColor={handleToggleCompare}
+          colors={lpColors}
+          colorIds={lpCompareColorIds}
+          scenesCollection={scenesCollection}
+          variantsCollection={variantsCollection}
+          selectedSceneUid={selectedSceneUid}
+          selectedVariantName={selectedVariantName} />
         : (
           <>
             <CVWModalManager />
             <ColorDetailsModal />
             <div className={`cvw__root-wrapper ${colorDetailsModalShowing ? 'hide-on-small-screens' : ''}`} ref={wrapperRef}>
-              {/* @todo rename setLastActiveComponent prop scene need to rethink it right now it will do nothing -RS */ }
               <ColorVisualizerNav />
               <Switch>
                 <Route path={ROUTES_ENUM.COLOR_DETAILS} render={() => <ColorDetails />} />
@@ -317,7 +332,6 @@ export const CVW = (props: CVWPropsType) => {
                 <Route path={ROUTES_ENUM.USE_OUR_IMAGE} render={() => <SampleScenesWrapper activateScene={handleSceneSelection} />} />
                 <Route path={ROUTES_ENUM.EXPERT_COLORS} render={() => <ExpertColorPicks isExpertColor />} />
                 <Route path={ROUTES_ENUM.COLOR_FROM_IMAGE} render={() => <InspiredScene />} />
-                {/* @todo rename activateScene prop scene to handleSceneSelection should set selectedSceneId and navigate active, useEffect may be need to rerender -RS */ }
                 <Route path={ROUTES_ENUM.PAINT_PHOTO} render={() => <SampleScenesWrapper isColorTinted activateScene={handleSceneSelection} />} />
                 <Route path={ROUTES_ENUM.MY_IDEAS_PREVIEW} render={() => <MyIdeaPreview openScene={openSceneFromMyIdeasPreview} />} />
                 <Route path={ROUTES_ENUM.MASKING} render={() => <PaintSceneMaskingWrapper />} />

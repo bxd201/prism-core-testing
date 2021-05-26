@@ -2,10 +2,7 @@
 /**
  * This component renders a single variant at a time and allows a user to paint the surfaces of the image.
  * If multiple variants are specified it will display a variant selector that will allow a user to switch between them.
- */
-
-/**
- * @todo this component still needs app level integration so that it can retint when a user adds a new color. -RS
+ * This comp preloads comps based in a given scene.
  */
 
 import React, { useEffect, useState, ComponentType } from 'react'
@@ -22,7 +19,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { SCENE_VARIANTS } from '../../constants/globals'
 import BatchImageLoader from '../MergeCanvas/BatchImageLoader'
 import type { FlatScene, FlatVariant } from '../../shared/types/Scene'
-import { copySurfaceColors } from './util'
+import { copySurfaceColors, createMiniColorFromColor } from './util'
 export type SingleTintableSceneViewProps = {
   surfaceColorsFromParents: [],
   showClearButton?: boolean,
@@ -63,7 +60,7 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
 
   useEffect(() => {
     // Inti component internal state
-    if (selectedSceneUid && variantsCollection) {
+    if (selectedSceneUid && variantsCollection && !backgroundUrls.length) {
       setBackgroundLoaded(false)
       let variants = variantsCollection.filter(variant => variant.sceneUid === selectedSceneUid)
       if (selectedVariantName) {
@@ -103,10 +100,9 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
     })
 
     const updateSurfaceColor = (surfaceIndex: number, selectedColor: Color) => {
-      const { brandKey, id, colorNumber, red, blue, green, hex, lab: { L, A, B } } = selectedColor
       const newSurfaceColors = surfaceColors.map((color, i) => {
         if (surfaceIndex === i) {
-          return selectedColor ? { brandKey, id, colorNumber, red, blue, green, L, A, B, hex } : null
+          return selectedColor ? createMiniColorFromColor(selectedColor) : null
         }
         return color
       })
