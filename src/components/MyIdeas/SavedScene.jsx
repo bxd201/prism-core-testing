@@ -175,7 +175,9 @@ const SavedScene = (props: SavedSceneProps, ref: RefObject | null) => {
                 surfaceColorsFromParents={props.sceneData.sceneMetadata.scene.surfaceColors}
                 selectedSceneUid={props.sceneData.variant.sceneUid}
                 scenesCollection={[props.sceneData.scene]}
-                variantsCollection={[props.sceneData.variant]} />
+                variantsCollection={[props.sceneData.variant]}
+                showThumbnail
+              />
             </div> : null}
             <div className={colorsClassName}>
               {createColors(props.sceneData, props.useTintableScene, colorMap)}

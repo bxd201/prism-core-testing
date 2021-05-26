@@ -58,7 +58,16 @@ export const PreviewImage = ({ modalInfo, lpColors, surfaceColors, scenes, selec
     })
 
     return <>
-      {scenes && selectedSceneUid && selectedVariantName && <div style={{ maxHeight: '66px' }}><SingleTintableSceneView surfaceColorsFromParents={surfaceColors} variantsCollection={scenes} scenesCollection={scenesCollection} selectedVariantName={selectedVariantName} selectedSceneUid={selectedSceneUid} allowVariantSwitch={false} interactive={false} /></div>}
+      {scenes && selectedSceneUid && selectedVariantName && <div style={{ maxHeight: '66px' }}><SingleTintableSceneView
+        surfaceColorsFromParents={surfaceColors}
+        variantsCollection={scenes}
+        scenesCollection={scenesCollection}
+        selectedVariantName={selectedVariantName}
+        selectedSceneUid={selectedSceneUid}
+        allowVariantSwitch={false}
+        interactive={false}
+        showThumbnail
+      /></div>}
       {showLivePalette && <div style={{ display: 'flex', marginTop: '1px' }}>{livePaletteColorsDiv}</div>}
     </>
   }

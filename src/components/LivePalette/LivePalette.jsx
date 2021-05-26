@@ -48,7 +48,8 @@ type Props = {
   empty: Function,
   temporaryActiveColor: Color | null,
   setNavigationIntents: Function,
-  isColorwallModallyPresented: boolean
+  isColorwallModallyPresented: boolean,
+  isCompareColorShown: boolean
 }
 
 // @todo refactor to put state init in constructor and also bind handleAddColor, removing anon func call in render ...better yet this is a good hooks candidate... -RS
@@ -137,7 +138,7 @@ export class LivePalette extends PureComponent<Props, State> {
   }
 
   render () {
-    const { colors, activeColor, deactivateTemporaryColor, empty, temporaryActiveColor } = this.props
+    const { colors, activeColor, deactivateTemporaryColor, empty, temporaryActiveColor, isCompareColorShown } = this.props
     const { spokenWord, isFastMaskPage } = this.state
 
     // determine how many empty slots there should be
@@ -190,7 +191,7 @@ export class LivePalette extends PureComponent<Props, State> {
             <ActiveSlots colors={colors} activeColor={activeColor}>
               <ActiveSlot onClick={this.activateColor} moveColor={this.moveColor} />
             </ActiveSlots>
-            {colors.length < LP_MAX_COLORS_ALLOWED && <button onClick={(e) => {
+            {colors.length < LP_MAX_COLORS_ALLOWED && !isCompareColorShown && <button onClick={(e) => {
               this.handleAddColor(e)
             }} className={`prism-live-palette__slot prism-live-palette__slot--${IS_EMPTY ? 'add-big' : 'add'}`}>
               <div className={`prism-live-palette__slot__guts ${IS_EMPTY ? 'prism-live-palette__slot__guts--hrzntl' : ''}`}>
@@ -237,7 +238,8 @@ const mapStateToProps = (state, props) => {
     removedColor: lp.removedColor,
     temporaryActiveColor: lp.temporaryActiveColor,
     activeSceneLabel,
-    isColorwallModallyPresented
+    isColorwallModallyPresented,
+    isCompareColorShown: lp.toggleCompareColor
   }
 }
 
