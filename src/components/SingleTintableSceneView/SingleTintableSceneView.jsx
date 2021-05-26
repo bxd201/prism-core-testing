@@ -30,14 +30,15 @@ export type SingleTintableSceneViewProps = {
   selectedSceneUid: string,
   scenesCollection: FlatScene,
   variantsCollection: FlatVariant,
-  selectedVariantName?: string
+  selectedVariantName?: string,
+  showThumbnail?: boolean
 }
 
 const tintableViewBaseClassName = 'tintable-view'
 
 const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
   const { showClearButton, customButton, handleSurfacePaintedState, allowVariantSwitch, interactive,
-    surfaceColorsFromParents, selectedSceneUid, scenesCollection, variantsCollection, selectedVariantName } = props
+    surfaceColorsFromParents, selectedSceneUid, scenesCollection, variantsCollection, selectedVariantName, showThumbnail } = props
   const [selectedScene, setSelectedScene] = useState(null)
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0)
   const [sceneVariants, setSceneVariants] = useState([])
@@ -72,7 +73,8 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
       if (!surfaceColors.length) {
         setSurfaceColors(surfaces.map((surface, i) => null))
       }
-      setBackgroundUrls(variants.map(variant => variant.image))
+      const imageUrls = showThumbnail ? variants.map(variant => variant.thumb) : variants.map(variant => variant.image)
+      setBackgroundUrls(imageUrls)
     }
   }, [scenesCollection, variantsCollection, selectedSceneUid])
 

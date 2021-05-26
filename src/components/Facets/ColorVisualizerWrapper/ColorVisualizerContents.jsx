@@ -54,7 +54,11 @@ import MatchPhotoContainer from '../../MatchPhoto/MatchPhotoContainer'
 import { setImageForMatchPhoto, setImageDimsForMatchPhoto } from '../../../store/actions/matchPhoto'
 import { setIngestedImage } from '../../../store/actions/user-uploads'
 import { SCENE_TYPE } from '../../../store/actions/persistScene'
-import { createNavigationWarningModal, createSavedNotificationModal } from '../../CVWModalManager/createModal'
+import {
+  createMatchPhotoNavigationWarningModal,
+  createNavigationWarningModal,
+  createSavedNotificationModal
+} from '../../CVWModalManager/createModal'
 import { useIntl } from 'react-intl'
 import { MODAL_TYPE_ENUM } from '../../CVWModalManager/constants'
 import { hydrateStockSceneFromSavedData } from '../../../store/actions/stockScenes'
@@ -66,7 +70,7 @@ type CVWPropsType = {
   language: string
 }
 
-export const CVW = (props: CVWPropsType) => {
+const CVW = (props: CVWPropsType) => {
   const { maxSceneHeight, language } = props
   const dispatch = useDispatch()
   const location = useLocation()
@@ -129,8 +133,17 @@ export const CVW = (props: CVWPropsType) => {
       setWrapperDims(wrapperDims)
     }
 
-    if (isActiveScenePolluted || isMatchPhotoPresented) {
-      // exit out of this programmatic navigation, user must resolve via a modal action
+    // THE ORDER OF THESE RULES MATTERS!!!
+    if (isActiveScenePolluted) {
+      // We can only programmatically navigate if we are going to the colorwall... when scene is polluted
+      if ([ROUTES_ENUM.COLOR_WALL, ROUTES_ENUM.ACTIVE].indexOf(navigationIntent) === -1) {
+        return
+      }
+    }
+    // This covers when add a color is clicked from match photo
+    if (isMatchPhotoPresented && navigationIntent) {
+      dispatch(setNavigationIntent(navigationIntent))
+      dispatch(createMatchPhotoNavigationWarningModal(intl, false))
       return
     }
 
@@ -207,6 +220,7 @@ export const CVW = (props: CVWPropsType) => {
     if (path === '/') {
       return false
     }
+
     const cleanedPath = path[path.length - 1] === '/' ? path.substring(0, path.length - 1) : path
     // @todo we need to address this, split into discrete rules instead of regex -RS
     return !cleanedPath.match(/(active|active\/colors|inspiration|scenes|active\/color-wall\/)$/)
@@ -306,68 +320,66 @@ export const CVW = (props: CVWPropsType) => {
 
   return (
     <>
-      {scenes ? <SceneBlobLoader scenes={scenes} variants={variants} initHandler={handleBlobLoaderInit} handleBlobsLoaded={handleSceneSurfacesLoaded} handleError={handleSceneBlobLoaderError} /> : null}
-      {toggleCompareColorFlag
-        ? <CompareColor
-          toggleCompareColor={handleToggleCompare}
-          colors={lpColors}
-          colorIds={lpCompareColorIds}
-          scenesCollection={scenesCollection}
-          variantsCollection={variantsCollection}
-          selectedSceneUid={selectedSceneUid}
-          selectedVariantName={selectedVariantName} />
-        : (
-          <>
-            <CVWModalManager />
-            <ColorDetailsModal />
-            <div className={`cvw__root-wrapper ${colorDetailsModalShowing ? 'hide-on-small-screens' : ''}`} ref={wrapperRef}>
-              <ColorVisualizerNav />
-              <Switch>
-                <Route path={ROUTES_ENUM.COLOR_DETAILS} render={() => <ColorDetails />} />
-                <Route path={`${ROUTES_ENUM.COLOR_WALL}(/.*)?`} render={() => <ColorWallPage displayAddButton displayInfoButton displayDetailsLink={false} />} />
-                <Route path={ROUTES_ENUM.COLOR_COLLECTION} render={() => <ColorCollections isExpertColor={false} {...location.state} />} />
-                <Route path={ROUTES_ENUM.UPLOAD_MATCH_PHOTO} render={() => <ImageIngestView cleanupCallback={cleanupStaleIngestedImage} handleDismissCallback={goToMatchPhoto} imageUrl={ingestedImageUrl} maxSceneHeight={maxSceneHeight} />} />
-                <Route path={ROUTES_ENUM.UPLOAD_PAINT_SCENE} render={() => <ImageIngestView cleanupCallback={cleanupStaleIngestedImage} handleDismissCallback={goToPaintScene} imageUrl={ingestedImageUrl} maxSceneHeight={maxSceneHeight} />} />
-                <Route path={ROUTES_ENUM.ACTIVE_MATCH_PHOTO} render={() => <MatchPhotoContainer colors={unorderedColors} imageUrl={matchPhotoImage} imageDims={matchPhotoImageDims} maxSceneHeight={maxSceneHeight} scalingWidth={wrapperDims.width} />} />
-                <Route path={ROUTES_ENUM.USE_OUR_IMAGE} render={() => <SampleScenesWrapper activateScene={handleSceneSelection} />} />
-                <Route path={ROUTES_ENUM.EXPERT_COLORS} render={() => <ExpertColorPicks isExpertColor />} />
-                <Route path={ROUTES_ENUM.COLOR_FROM_IMAGE} render={() => <InspiredScene />} />
-                <Route path={ROUTES_ENUM.PAINT_PHOTO} render={() => <SampleScenesWrapper isColorTinted activateScene={handleSceneSelection} />} />
-                <Route path={ROUTES_ENUM.MY_IDEAS_PREVIEW} render={() => <MyIdeaPreview openScene={openSceneFromMyIdeasPreview} />} />
-                <Route path={ROUTES_ENUM.MASKING} render={() => <PaintSceneMaskingWrapper />} />
-                <Route path={ROUTES_ENUM.ACTIVE_MYIDEAS} render={() => <MyIdeasContainer />} />
-                <Route path={ROUTES_ENUM.HELP} render={() => <Help />} />
-              </Switch>
-              <div
-              /* This div has multiple responsibilities in the DOM tree. It cannot be removed, moved, or changed without causing regressions. */
-                style={{ display: shouldHideSceneManagerDiv(location.pathname) ? 'none' : 'block' }}
-              >
-                {activeSceneLabel === ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE ? <SingleTintableSceneView
-                  key={activeSceneKey}
-                  allowVariantSwitch
-                  showClearButton
-                  interactive
-                  surfaceColorsFromParents={savedSurfaceColors}
-                  selectedSceneUid={selectedSceneUid}
-                  variantsCollection={variantsCollection}
-                  scenesCollection={scenesCollection}
-                  selectedVariantName={activeVariantStockSceneNameFromSave}
-                  surfaceColorsFromParent={activeStockSceneColorsFromSave}
-                  handleSurfacePaintedState={handleSurfacePaintedState}
-                  customButton={<SceneSelectorNavButton clickHandler={navigateToSceneSelector} />} /> : paintSceneWorkspace // workspace should be cleared on unmount!
-                  ? <PaintScene
-                    // This ensures that the comp remounts and doesn't try to rerender with dirty data!
-                    key={paintSceneWorkspace.uid}
-                    maxSceneHeight={maxSceneHeight}
-                    workspace={paintSceneWorkspace}
-                    lpActiveColor={activeColor}
-                    setPaintSceneSaveData={setPaintSceneData}
-                    setActiveScenePolluted={setPaintScenePolluted} /> : null}
-              </div>
-            </div>
-          </>
-        )
-      }
+      <>
+        {scenes ? <SceneBlobLoader scenes={scenes} variants={variants} initHandler={handleBlobLoaderInit} handleBlobsLoaded={handleSceneSurfacesLoaded} handleError={handleSceneBlobLoaderError} /> : null}
+        <CVWModalManager />
+        <ColorDetailsModal />
+        <div style={{ display: toggleCompareColorFlag ? 'block' : 'none' }}>
+          {toggleCompareColorFlag && <CompareColor
+            toggleCompareColor={handleToggleCompare}
+            colors={lpColors}
+            colorIds={lpCompareColorIds}
+            scenesCollection={scenesCollection}
+            variantsCollection={variantsCollection}
+            selectedSceneUid={selectedSceneUid}
+            selectedVariantName={selectedVariantName} />}
+        </div>
+        <div style={{ display: toggleCompareColorFlag ? 'none' : 'block' }} className={`cvw__root-wrapper ${colorDetailsModalShowing ? 'hide-on-small-screens' : ''}`} ref={wrapperRef}>
+          <ColorVisualizerNav />
+          <Switch>
+            <Route path={ROUTES_ENUM.COLOR_DETAILS} render={() => <ColorDetails />} />
+            <Route path={`${ROUTES_ENUM.COLOR_WALL}(/.*)?`} render={() => <ColorWallPage displayAddButton displayInfoButton displayDetailsLink={false} />} />
+            <Route path={ROUTES_ENUM.COLOR_COLLECTION} render={() => <ColorCollections isExpertColor={false} {...location.state} />} />
+            <Route path={ROUTES_ENUM.UPLOAD_MATCH_PHOTO} render={() => <ImageIngestView cleanupCallback={cleanupStaleIngestedImage} handleDismissCallback={goToMatchPhoto} imageUrl={ingestedImageUrl} maxSceneHeight={maxSceneHeight} />} />
+            <Route path={ROUTES_ENUM.UPLOAD_PAINT_SCENE} render={() => <ImageIngestView cleanupCallback={cleanupStaleIngestedImage} handleDismissCallback={goToPaintScene} imageUrl={ingestedImageUrl} maxSceneHeight={maxSceneHeight} />} />
+            <Route path={ROUTES_ENUM.ACTIVE_MATCH_PHOTO} render={() => <MatchPhotoContainer colors={unorderedColors} imageUrl={matchPhotoImage} imageDims={matchPhotoImageDims} maxSceneHeight={maxSceneHeight} scalingWidth={wrapperDims.width} />} />
+            <Route path={ROUTES_ENUM.USE_OUR_IMAGE} render={() => <SampleScenesWrapper activateScene={handleSceneSelection} />} />
+            <Route path={ROUTES_ENUM.EXPERT_COLORS} render={() => <ExpertColorPicks isExpertColor />} />
+            <Route path={ROUTES_ENUM.COLOR_FROM_IMAGE} render={() => <InspiredScene />} />
+            <Route path={ROUTES_ENUM.PAINT_PHOTO} render={() => <SampleScenesWrapper isColorTinted activateScene={handleSceneSelection} />} />
+            <Route path={ROUTES_ENUM.MY_IDEAS_PREVIEW} render={() => <MyIdeaPreview openScene={openSceneFromMyIdeasPreview} />} />
+            <Route path={ROUTES_ENUM.MASKING} render={() => <PaintSceneMaskingWrapper />} />
+            <Route path={ROUTES_ENUM.ACTIVE_MYIDEAS} render={() => <MyIdeasContainer />} />
+            <Route path={ROUTES_ENUM.HELP} render={() => <Help />} />
+          </Switch>
+          <div
+            /* This div has multiple responsibilities in the DOM tree. It cannot be removed, moved, or changed without causing regressions. */
+            style={{ display: shouldHideSceneManagerDiv(location.pathname) ? 'none' : 'block' }}
+          >
+            {activeSceneLabel === ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE ? <SingleTintableSceneView
+              key={activeSceneKey}
+              allowVariantSwitch
+              showClearButton
+              interactive
+              surfaceColorsFromParents={savedSurfaceColors}
+              selectedSceneUid={selectedSceneUid}
+              variantsCollection={variantsCollection}
+              scenesCollection={scenesCollection}
+              selectedVariantName={activeVariantStockSceneNameFromSave}
+              surfaceColorsFromParent={activeStockSceneColorsFromSave}
+              handleSurfacePaintedState={handleSurfacePaintedState}
+              customButton={<SceneSelectorNavButton clickHandler={navigateToSceneSelector} />} /> : paintSceneWorkspace // workspace should be cleared on unmount!
+              ? <PaintScene
+                // This ensures that the comp remounts and doesn't try to rerender with dirty data!
+                key={paintSceneWorkspace.uid}
+                maxSceneHeight={maxSceneHeight}
+                workspace={paintSceneWorkspace}
+                lpActiveColor={activeColor}
+                setPaintSceneSaveData={setPaintSceneData}
+                setActiveScenePolluted={setPaintScenePolluted} /> : null}
+          </div>
+        </div>
+      </>
       {
         isShowFooter && <div className='cvw__root-container__footer'>
           <div className='cvw__root-container__footer--priority'>

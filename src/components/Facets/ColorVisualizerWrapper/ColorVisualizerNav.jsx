@@ -295,10 +295,11 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
   // @todo refactor buttons into their own component -RS
   return (
     <nav className='cvw-navigation-wrapper' ref={navRef}>
-      <input ref={hiddenImageUploadInput} style={{ display: 'none' }} type='file' onChange={e => {
+      <input ref={hiddenImageUploadInput} style={{ display: 'none' }} type='file' accept={'.jpeg, .jpg, .png'} onChange={e => {
         // If you are looking to clear the uploaded image here, do not, you will face very strange render bugs.
+        // @todo replace regex check with accept param in input -RSß
         const userImg = e.target.files && e.target.files.length ? e.target.files[0] : null
-        if (userImg && userImg.name.match(/.(jpg|jpeg|png)$/i)) {
+        if (userImg) {
           if (useSmartMask) {
             dispatch(queueImageUpload(userImg))
           }
