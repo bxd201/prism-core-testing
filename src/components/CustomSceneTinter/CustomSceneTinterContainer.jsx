@@ -1,16 +1,17 @@
 // @flow
+/** @todo this module should be able to be replaced largely my the single tintable scene
+ * and should only need the fastmask specific logic. -RS */
 // eslint-disable-next-line no-unused-vars
 import React, { useEffect, useRef, useState } from 'react'
 import type { PaintSceneWorkspace } from '../../store/actions/paintScene'
 import type { Color } from '../../shared/types/Colors'
 import { FormattedMessage } from 'react-intl'
 import SimpleTintableScene from './SimpleTintableScene'
-import { SCENE_TYPES, SCENE_VARIANTS } from '../../constants/globals'
+import { SCENE_TYPES } from '../../constants/globals'
 import useColors from '../../shared/hooks/useColors'
 import { useDispatch, useSelector } from 'react-redux'
 import ImageQueue from '../MergeCanvas/ImageQueue'
 import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
-import uniqueId from 'lodash/uniqueId'
 import { setShowEditCustomScene } from '../../store/actions/scenes'
 import { useHistory } from 'react-router-dom'
 import { SurfaceSelector } from '../SurfaceSelector/SurfaceSelector'
@@ -33,63 +34,6 @@ const customSceneTinterModalClass = `${customSceneTinterClass}__modal`
 const customSceneTinterModalButtonClass = `${customSceneTinterModalClass}__btn`
 const customSceneTinterModalTextClass = `${customSceneTinterModalClass}__text`
 const customSceneTinterSurfaceSelectorWrapper = `${customSceneTinterClass}__surface-selector`
-
-export const createPseudoScene = (bgImage: string, maskRef: any[], colorMap: any, width: number, height: number) => {
-  let surfacePaths = maskRef && maskRef.current ? maskRef.current.map(item => item.src) : []
-  const surfaces = surfacePaths.map((sp: string, i: number) => {
-    const surface = {
-      id: i,
-      mask: {
-        path: sp
-      },
-      colorId: colorMap[`${i}`]
-    }
-
-    return surface
-  })
-  const scene = {
-    // Default to day
-    variant_names: [SCENE_VARIANTS.DAY],
-    variants: [{
-      surfaces,
-      variant_name: SCENE_VARIANTS.DAY,
-      // @todo make this a const maybe? -RS
-      name: '',
-      normalizedImageValueCurve: '',
-      image: bgImage,
-      // @todo may not need thumb -RS
-      thumb: bgImage
-    }],
-    id: uniqueId('cs_'),
-    width,
-    height
-  }
-
-  return scene
-}
-
-export const createPseudoSceneMetaData = (scene, lpColors: Color[], variant: string, singleSurfaceIndex?: number) => {
-  const variantId = scene.variant_names.findIndex(item => item === variant)
-  const sceneMetaData = {
-    variant,
-    id: scene.id,
-    surfaces: scene.variants[variantId].surfaces.map((surface, i) => {
-      return {
-        id: surface.id,
-        color: lpColors.find((color) => color.id === surface.colorId)
-      }
-    }).filter((item, i) => {
-      // This basically splits a multi surface scene into multiple single surface scenes
-      if (singleSurfaceIndex !== void (0)) {
-        return i === singleSurfaceIndex
-      }
-
-      return true
-    })
-  }
-
-  return sceneMetaData
-}
 
 const CustomSceneTinterContainer = (props: CustomSceneTinterContainerProps) => {
   const dispatch = useDispatch()

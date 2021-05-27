@@ -1,37 +1,10 @@
 // @flow
-import axios from 'axios'
-import isEmpty from 'lodash/isEmpty'
-
-import { type ScenePayload, type SceneWorkspace } from '../../shared/types/Scene'
+import { type SceneWorkspace } from '../../shared/types/Scene'
 import { type Color } from '../../shared/types/Colors.js.flow'
-import MaskObj from '../masks/MaskObj'
-
-import { generateBrandedEndpoint } from '../../shared/helpers/DataUtils'
-
-import { SCENES_ENDPOINT } from 'constants/endpoints'
 import { createUniqueSceneId } from '../../shared/utils/legacyProfileFormatUtil'
 export const SET_USE_SMART_MASK = 'SET_USE_SMART_MASK'
 
 export const REQUEST_SCENES = 'REQUEST_SCENES'
-const requestScenes = () => {
-  return {
-    type: REQUEST_SCENES,
-    payload: { loadingScenes: true }
-  }
-}
-
-export const RECEIVE_SCENES = 'RECEIVE_SCENES'
-const receiveScenes = (sceneResponse: ScenePayload) => {
-  return {
-    type: RECEIVE_SCENES,
-    payload: {
-      loadingScenes: false,
-      scenes: sceneResponse.scenes || [],
-      numScenes: sceneResponse.count || 0,
-      type: sceneResponse.type
-    }
-  }
-}
 // @todo deprecate with scene tinter modularization -rs
 export const ACTIVATE_ONLY_SCENE = 'ACTIVATE_ONLY_SCENE'
 export const activateOnlyScene = (id: string | number) => {
@@ -39,37 +12,6 @@ export const activateOnlyScene = (id: string | number) => {
     type: ACTIVATE_ONLY_SCENE,
     payload: {
       id: id
-    }
-  }
-}
-// @todo deprecate with scene tinter modularization -rs
-export const ACTIVATE_SCENE = 'ACTIVATE_SCENE'
-export const activateScene = (id: string | number | Array<string | number>) => {
-  return {
-    type: ACTIVATE_SCENE,
-    payload: {
-      id: id
-    }
-  }
-}
-// @todo deprecate with scene tinter modularization -rs
-export const ACTIVATE_COLOR_DETAILS_SCENE = 'ACTIVATE_COLOR_DETAILS_SCENE'
-export const activateColorDetailsScene = (id: string | number | Array<string | number>) => {
-  return {
-    type: ACTIVATE_COLOR_DETAILS_SCENE,
-    payload: {
-      id
-    }
-  }
-}
-// @todo deprecate with scene tinter modularization -rs
-export const CHANGE_SCENE_VARIANT = 'CHANGE_SCENE_VARIANT'
-export const changeSceneVariant = (sceneId: number, variant: string) => {
-  return {
-    type: CHANGE_SCENE_VARIANT,
-    payload: {
-      id: sceneId,
-      variant
     }
   }
 }
@@ -127,65 +69,6 @@ export const paintAllSceneSurfaces = (color: Color) => {
     payload: {
       color
     }
-  }
-}
-
-export const loadScenes = (type: string, brandId: string, options?: {}) => {
-  return (dispatch: Function, getState: Function) => {
-    const { sceneCollection, type: oldType } = getState().scenes
-
-    const SCENES_URL = generateBrandedEndpoint(SCENES_ENDPOINT, brandId, options)
-
-    let scenes = !isEmpty(sceneCollection) && !isEmpty(sceneCollection[type]) && sceneCollection[type]
-
-    // if we already have scene data...
-    if (scenes) {
-      // ... and if our type has changed...
-      if (type !== oldType) {
-        // ... then dispatch an update for our received scenes
-        dispatch(receiveScenes({
-          count: scenes.length,
-          scenes: scenes,
-          type
-        }))
-
-        // ... then activate the first scene of this new set of scene data
-        dispatch(activateOnlyScene(scenes[0].id))
-      }
-
-      // ... otherwise just get out of here; we already have all the scene data we need
-      return
-    }
-
-    dispatch(requestScenes())
-
-    return axios.get(SCENES_URL)
-      .then(r => r.data)
-      .then(data => {
-        if (!data[type]) {
-          // TODO: create a scene loading ERROR method and handle appropriately -- for now it will just show no scenes
-
-          console.error(`No scene type defined. Unable to fetch scenes for unknown scene type: ${type}`)
-
-          dispatch(receiveScenes({
-            scenes: [],
-            count: 0,
-            type: type
-          }))
-
-          return
-        }
-
-        if (data[type].scenes && data[type].scenes.length) {
-          dispatch(activateOnlyScene(data[type].scenes[0].id))
-        }
-
-        dispatch(receiveScenes({
-          scenes: data[type].scenes,
-          count: data[type].count,
-          type: type
-        }))
-      })
   }
 }
 
@@ -268,14 +151,6 @@ export const setShowEditCustomScene = (shouldShow: boolean) => {
   return {
     type: SET_SHOW_EDIT_CUSTOM_SCENE,
     payload: shouldShow
-  }
-}
-
-export const SET_CDP_COLOR = 'SET_CDP_COLOR'
-export const setColorForCDP = (color) => {
-  return {
-    type: SET_CDP_COLOR,
-    payload: color
   }
 }
 

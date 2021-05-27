@@ -273,7 +273,8 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
       dispatch(setDirtyNavigationIntent(urlFrag))
       return
     }
-    if (isActiveScenePolluted) {
+    // Show help modally for "active scenes"
+    if (isActiveScenePolluted && urlFrag !== ROUTES_ENUM.HELP) {
       dispatch(setNavigationIntent(urlFrag))
       const modalType = activeSceneLabel === ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE ? MODAL_TYPE_ENUM.STOCK_SCENE : MODAL_TYPE_ENUM.PAINT_SCENE
       if (activeSceneLabel === MODAL_TYPE_ENUM.PAINT_SCENE) {
@@ -282,7 +283,7 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
       dispatch(createNavigationWarningModal(intl, modalType, false))
       return
     }
-
+    // Match photo should show help modally... BUT this is a BIG exception to the rule that only "active scenes" allow this.
     if (matchPhotoShown) {
       dispatch(setNavigationIntent(urlFrag))
       dispatch(createMatchPhotoNavigationWarningModal(intl, false))

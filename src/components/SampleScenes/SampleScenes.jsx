@@ -40,7 +40,7 @@ export const SampleScenesWrapper = ({ isColorTinted, setHeader, activateScene }:
         {variantsCarouselTabsData && variantsCarouselTabsData.collectionTabs && <ColorCollectionsTab collectionTabs={variantsCarouselTabsData.collectionTabs} tabIdShow={tabId} showTab={setTabId} />}
         <div className={`${baseClass}__collections-list`}>
           {variantsCarouselTabsData && filteredVariants && variantsCarouselTabsData.tabMap && <Carousel
-            BaseComponent={StaticTintSceneWrapper}
+            BaseComponent={TintSceneWrapper}
             getClientHeight={getClientMinHeight}
             maxHeight={maxHeight.current}
             data={filteredVariants}
@@ -61,7 +61,7 @@ export const SampleScenesWrapper = ({ isColorTinted, setHeader, activateScene }:
 }
 
 type Props = { data: Object, isColorTinted: boolean, handleSelectedSceneUid: Function, getClientHeight: Function, isActivedPage?: boolean, maxHeight: Number}
-const StaticTintSceneWrapper = ({ data, isColorTinted, handleSelectedSceneUid, isActivedPage, getClientHeight, maxHeight }: Props) => {
+const TintSceneWrapper = ({ data, isColorTinted, handleSelectedSceneUid, isActivedPage, getClientHeight, maxHeight }: Props) => {
   const sceneWrapperRef: RefObject = useRef()
   const tintColor = isColorTinted ? void (0) : null
   const allColors = useSelector(state => state?.colors?.items?.colorMap)
