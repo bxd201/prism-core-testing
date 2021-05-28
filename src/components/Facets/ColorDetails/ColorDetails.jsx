@@ -2,7 +2,7 @@
 import React, { useRef, useEffect, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
-import { useSelector, useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import { FormattedMessage } from 'react-intl'
 import * as GA from 'src/analytics/GoogleAnalytics'
@@ -13,7 +13,7 @@ import ColorDetailsScenes from './ColorDetailsScenes'
 import ColorInfo from './ColorInfo'
 import CoordinatingColors from './CoordinatingColors'
 import SimilarColors from './SimilarColors'
-import { activateColorDetailsScene, toggleColorDetailsPage, setColorForCDP } from '../../../store/actions/scenes'
+import { toggleColorDetailsPage } from '../../../store/actions/scenes'
 import { varValues } from 'src/shared/withBuild/variableDefs'
 import type { Color } from '../../../shared/types/Colors.js.flow'
 import type { SceneStatus } from 'src/shared/types/Scene'
@@ -38,9 +38,6 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
   const dispatch = useDispatch()
   const toggleSceneDisplayScene = useRef(null)
   const toggleSceneHideScene = useRef(null)
-  const scenesLoaded: boolean = useSelector(state => !state.variantsLoading)
-
-  const scenesCollection = useSelector(state => state?.scenesCollection || [])
   const [color: Color, setColor: Color => void] = useState(initialColor)
   const [tabIndex: number, setTabIndex: number => void] = useState(0)
 
@@ -49,22 +46,12 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
     return () => { dispatch(toggleColorDetailsPage()) }
   }, [])
 
-  // useEffect(() => { scenesLoaded && dispatch(resetScenesVariant()) }, [scenesLoaded])
-
   useEffect(() => {
     color && GA.pageView(`color-detail/${color.brandKey} ${color.colorNumber} - ${color.name}`)
     onColorChanged && onColorChanged(color)
     // force tab change to first tab if there is no coordinating colors tab
     color.coordinatingColors || setTabIndex(0)
   }, [color])
-
-  // paint all the main surfaces on load of the CDP
-  useEffect(() => { scenesLoaded && color && dispatch((setColorForCDP(color))) }, [scenesLoaded, color])
-
-  // activates the first "ImagePreloader" scene on the color detail modal when the scenes list changes
-  useEffect(() => {
-    dispatch(activateColorDetailsScene(scenesCollection[0]?.uid))
-  }, [scenesCollection])
 
   if (loading) {
     return <HeroLoader />

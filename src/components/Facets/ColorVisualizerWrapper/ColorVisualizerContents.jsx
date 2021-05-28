@@ -164,8 +164,6 @@ const CVW = (props: CVWPropsType) => {
     if (navigationIntent === ROUTES_ENUM.SCENES) {
       if (activeSceneLabel === ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE) {
         if (shouldShowGlobalDestroyWarning) {
-          // @todo show warning modal
-          console.log('SHOW WARNING MODAL')
           return
         }
         history.push(navigationIntent)

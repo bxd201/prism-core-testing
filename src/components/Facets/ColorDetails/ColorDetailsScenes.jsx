@@ -29,7 +29,9 @@ const ColorDetailsScene = (props: Props) => {
   const dispatch = useDispatch()
   const scenesCollection = useSelector((state) => state.scenesCollection)
   const variantsCollection = useSelector((state) => state.variantsCollection)
-  const colorDetailsPageColor = useSelector((state) => state.scenes.colorDetailsPageColor)
+
+  // @todo talk with Cody about if this should be localized -RS
+  const colorDetailsPageColor = useSelector((state) => state.globalColorDetailColor)
   const [selectedSceneId, setSelectedSceneSceneId] = useState(() => scenesCollection.filter(scene => scene.sceneType === SCENE_TYPES.ROOM)[0].uid)
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0)
   const livePaletteColors = useSelector(state => state['lp'])

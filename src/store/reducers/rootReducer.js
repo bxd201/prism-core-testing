@@ -4,16 +4,14 @@ import { configurations } from './configurations'
 import { lp } from './live-palette'
 import { language } from './language'
 import {
-  scenes,
   currentActiveSceneId,
   currentSurfaceId,
-  currentVariant,
   isEditMode,
   sceneWorkspaces,
   currentWorkspace,
   useSmartMask,
   showEditCustomScene, scenesCollection, variantsCollection, variantsLoading, selectedSceneUid,
-  selectedVariantName, activeSceneKey
+  selectedVariantName, activeSceneKey, globalColorDetailColor
 } from './scenes'
 import { ingestedImageUrl, queuedImageUpload, uploads } from './uploads'
 import collectionSummaries from './collectionSummaries'
@@ -62,14 +60,12 @@ export default combineReducers({
   configurations,
   currentActiveSceneId,
   currentSurfaceId,
-  currentVariant,
   currentWorkspace,
   expertColorPicks,
   inspirationalPhotos,
   isEditMode,
   language,
   lp,
-  scenes,
   sceneWorkspaces,
   uploads,
   savingMasks,
@@ -133,5 +129,6 @@ export default combineReducers({
   variantStockSceneNameFromSave,
   colorsForSurfacesFromSavedScene,
   // needed to ensure data reflow to active scene
-  activeSceneKey
+  activeSceneKey,
+  globalColorDetailColor
 })
