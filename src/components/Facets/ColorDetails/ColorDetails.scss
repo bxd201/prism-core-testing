@@ -370,6 +370,7 @@ $details-tab-padding: 1rem;
 
       @include respond-above(sm) {
         height: calc(100% - #{$tab-btn-height});
+        overflow:hidden;
       }
     }
   }
