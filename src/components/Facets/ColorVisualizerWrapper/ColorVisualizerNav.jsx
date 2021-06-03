@@ -6,7 +6,6 @@ import { Switch, Route, useHistory, useLocation } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { isMobileOnly, isTablet, isIOS } from 'react-device-detect'
-import { showWarningModal } from 'src/store/actions/scenes'
 import { queueImageUpload, setIngestedImage } from 'src/store/actions/user-uploads'
 import './ColorVisualizerNav.scss'
 import { FEATURE_EXCLUSIONS } from '../../../constants/configurations'
@@ -120,13 +119,18 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
   const dispatch = useDispatch()
   const activeSceneLabel = useSelector(store => store.activeSceneLabel)
   const isActiveScenePolluted: string = useSelector(store => store.scenePolluted)
-  const useSmartMask = useSelector(state => state.useSmartMask)
   const isColorwallModallyPresented = useSelector(store => store.isColorwallModallyPresented)
 
   const hiddenImageUploadInput: { current: ?HTMLElement } = useRef()
   const navBtnRef: {current: ?HTMLElement} = useRef()
   const navRef: {current: ?HTMLElement} = useRef()
   const matchPhotoShown = useSelector(store => store.isMatchPhotoPresented)
+
+  const NAV_ITEM_IDS = {
+    UPLOAD_YOUR_OWN: 'UPLOAD_YOUR_OWN',
+    USE_OUR_PHOTO: 'USE_OUR_PHOTO',
+    FAST_MASK: 'FAST_MASK'
+  }
 
   const getDropDownItemsForGetInspired = () => {
     const items = [
@@ -169,12 +173,14 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
   const getDropDownItemsForPaintAPhoto = () => {
     const items = [
       {
+        id: NAV_ITEM_IDS.USE_OUR_PHOTO,
         img: cvw?.navSampleScenes,
         title: messages['NAV_LINKS.USE_OUR_PHOTOS'],
         content: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.USE_OUR_PHOTOS'],
         onClick: () => history.push(ROUTES_ENUM.PAINT_PHOTO)
       },
       {
+        id: NAV_ITEM_IDS.UPLOAD_YOUR_OWN,
         img: cvw?.navThumbMyPhotos,
         imgiPhone: cvw?.navThumbIphone,
         imgiPad: cvw?.navThumbIpad,
@@ -189,7 +195,7 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
         onClick: !(isMobileOnly || isTablet) ? () => {
           const selectDevice = (web, iPhone = web, android = web, iPad = web) => (isMobileOnly ? (isIOS ? iPhone : android) : (isTablet ? iPad : web)) || web
           history.push(selectDevice(
-            '/upload/paint-scene',
+            ROUTES_ENUM.UPLOAD_PAINT_SCENE,
             'https://play.google.com/store/apps/details?id=com.colorsnap',
             'https://itunes.apple.com/us/app/colorsnap-visualizer-iphone/id316256242?mt=8',
             'https://itunes.apple.com/us/app/colorsnap-studio/id555300600?mt=8'
@@ -202,6 +208,36 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
             hiddenImageUploadInput.current.click()
           }
         } : undefined
+      },
+      { // @todo while excessive to dupe this, the future design of nav should be declarative and we need to exclude as much logic as possible from the nav declaration -RS
+        id: NAV_ITEM_IDS.FAST_MASK,
+        img: cvw?.navThumbMyPhotos,
+        imgiPhone: cvw?.navThumbIphone,
+        imgiPad: cvw?.navThumbIpad,
+        imgAndroid: cvw?.navThumbAndroid,
+        title: messages['NAV_LINKS.UPLOAD_YOUR_PHOTO'],
+        titleMobile: messages['NAV_LINKS.GET_THE_APP'],
+        content: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.UPLOAD_YOUR_PHOTO'],
+        contentAndroid: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.UPLOAD_YOUR_PHOTO_ANDROID'],
+        contentiPad: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.UPLOAD_YOUR_PHOTO_IPAD'],
+        contentiPhone: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.UPLOAD_YOUR_PHOTO_IPHONE'],
+        description: messages['NAV_DROPDOWN_LINK_TIP_DESCRIPTION.UPLOAD_YOUR_PHOTO'],
+        onClick: !(isMobileOnly || isTablet) ? () => {
+          const selectDevice = (web, iPhone = web, android = web, iPad = web) => (isMobileOnly ? (isIOS ? iPhone : android) : (isTablet ? iPad : web)) || web
+          history.push(selectDevice(
+            ROUTES_ENUM.UPLOAD_FAST_MASK,
+            'https://play.google.com/store/apps/details?id=com.colorsnap',
+            'https://itunes.apple.com/us/app/colorsnap-visualizer-iphone/id316256242?mt=8',
+            'https://itunes.apple.com/us/app/colorsnap-studio/id555300600?mt=8'
+          ))
+
+          if (hiddenImageUploadInput.current) {
+            hiddenImageUploadInput.current.value = ''
+            // trigger upload image system modal
+            dispatch(setNavigationIntent(ROUTES_ENUM.UPLOAD_FAST_MASK))
+            hiddenImageUploadInput.current.click()
+          }
+        } : undefined
       }
     ]
 
@@ -210,8 +246,12 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
         return shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.useOurPhotos)
       }
 
-      if (item.title === messages['NAV_LINKS.UPLOAD_YOUR_PHOTO']) {
+      if (item.id === NAV_ITEM_IDS.UPLOAD_YOUR_OWN) {
         return shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.uploadYourPhoto)
+      }
+
+      if (item.id === NAV_ITEM_IDS.FAST_MASK) {
+        return shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.fastMask)
       }
 
       return true
@@ -237,15 +277,10 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
         title: messages['NAV_LINKS.MATCH_A_PHOTO'],
         content: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.MATCH_A_PHOTO'],
         onClick: () => {
-          if (isActiveScenePolluted) {
-            // @todo trace what this dispatch does, may not be needed, should be able to just use if (hiddenImageUploadInput.current)  -RS
-            dispatch(showWarningModal())
-          } else {
-            if (hiddenImageUploadInput.current) {
-              hiddenImageUploadInput.current.value = ''
-              dispatch(setNavigationIntent(ROUTES_ENUM.UPLOAD_MATCH_PHOTO))
-              hiddenImageUploadInput.current.click()
-            }
+          if (hiddenImageUploadInput.current && !isActiveScenePolluted) {
+            hiddenImageUploadInput.current.value = ''
+            dispatch(setNavigationIntent(ROUTES_ENUM.UPLOAD_MATCH_PHOTO))
+            hiddenImageUploadInput.current.click()
           }
         }
       }
@@ -301,7 +336,7 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
         // @todo replace regex check with accept param in input -RSß
         const userImg = e.target.files && e.target.files.length ? e.target.files[0] : null
         if (userImg) {
-          if (useSmartMask) {
+          if (shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.fastMask)) {
             dispatch(queueImageUpload(userImg))
           }
           const imageUrl = URL.createObjectURL(userImg)

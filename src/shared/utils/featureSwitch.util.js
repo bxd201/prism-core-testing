@@ -12,12 +12,12 @@ export const shouldAllowFeature = (featureExclusions, feature) => {
 export const featureExclusionsConfigIsInValid = (featureExclusions) => {
   let violations = []
 
-  if (featureExclusions.indexOf(FEATURE_EXCLUSIONS.editPhotos) > -1 && featureExclusions.indexOf(FEATURE_EXCLUSIONS.fastMask) > -1) {
-    violations.push(`${FEATURE_EXCLUSIONS.fastMask} and ${FEATURE_EXCLUSIONS.editPhotos} are not allowed together.`)
+  if (featureExclusions.indexOf(FEATURE_EXCLUSIONS.uploadYourPhoto) > -1 && featureExclusions.indexOf(FEATURE_EXCLUSIONS.fastMask) > -1) {
+    violations.push(`${FEATURE_EXCLUSIONS.fastMask} and ${FEATURE_EXCLUSIONS.uploadYourPhoto} are not allowed together.`)
   }
 
-  if (featureExclusions.indexOf(FEATURE_EXCLUSIONS.editPhotos) === -1 && featureExclusions.indexOf(FEATURE_EXCLUSIONS.fastMask) === -1) {
-    violations.push(`${FEATURE_EXCLUSIONS.fastMask} or ${FEATURE_EXCLUSIONS.editPhotos} must be specified to prevent double trouble (both being presented) display error.`)
+  if (featureExclusions.indexOf(FEATURE_EXCLUSIONS.uploadYourPhoto) === -1 && featureExclusions.indexOf(FEATURE_EXCLUSIONS.fastMask) === -1) {
+    violations.push(`${FEATURE_EXCLUSIONS.fastMask} or ${FEATURE_EXCLUSIONS.uploadYourPhoto} must be specified to prevent double trouble (both being presented) display error.`)
   }
 
   if (featureExclusions.indexOf(FEATURE_EXCLUSIONS.inspirationalPhotos) > -1 &&

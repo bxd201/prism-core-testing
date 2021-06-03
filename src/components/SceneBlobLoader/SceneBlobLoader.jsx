@@ -1,7 +1,6 @@
 // @flow
 // This component takes scene objects and loads the blob image
 import React, { useEffect, useState } from 'react'
-import ImageQueue from '../MergeCanvas/ImageQueue'
 import {
   SYSTEM_ERROR, updateVariantsCollectionSurfaces
 } from '../../store/actions/loadScenes'
@@ -10,7 +9,6 @@ import flattenDeep from 'lodash/flattenDeep'
 import type { FlatScene, FlatVariant } from '../../shared/types/Scene'
 
 type SceneBlobLoaderProps = {
-  // @todo update this to be typed to the new scene structure
   scenes: FlatScene[],
   variants: FlatVariant[],
   initHandler?: Function,
@@ -21,7 +19,6 @@ type SceneBlobLoaderProps = {
 const SceneBlobLoader = (props: SceneBlobLoaderProps) => {
   const { scenes, variants, initHandler, handleBlobsLoaded, handleError } = props
   const [blobUrls, setBlobUrls] = useState(null)
-  const [loadCounter, setLoadCounter] = useState([])
 
   useEffect(() => {
     initHandler()
@@ -46,7 +43,7 @@ const SceneBlobLoader = (props: SceneBlobLoaderProps) => {
           } catch {
             handleError({
               type: SYSTEM_ERROR,
-              err: `Blob url not creation error`
+              err: `Blob url not created error`
             })
           }
         })
@@ -61,20 +58,12 @@ const SceneBlobLoader = (props: SceneBlobLoaderProps) => {
 
   useEffect(() => {
     if (blobUrls?.length) {
-      if (loadCounter.length === blobUrls.length) {
-        console.warn('Use event DOM references safely in the handleBlobsLoaded callback of SceneBlobLoader, do not hold on to them.')
-        const variantsCollection = updateVariantsCollectionSurfaces(variants, blobUrls, 'surfaceBlobUrl')
-        handleBlobsLoaded(variantsCollection)
-      }
+      const variantsCollection = updateVariantsCollectionSurfaces(variants, blobUrls, 'surfaceBlobUrl')
+      handleBlobsLoaded(variantsCollection)
     }
-  }, [blobUrls, loadCounter])
+  }, [blobUrls])
 
-  // The index returned is the position of the original url, so that loaded urls can vbe organized irrespective of load order
-  const loadImageAsBlobUrl = (e: SyntheticEvent, i: number) => {
-    setLoadCounter([...loadCounter, i])
-  }
-
-  return (blobUrls?.length && blobUrls.length !== variants.length ? <ImageQueue dataUrls={blobUrls} addToQueue={loadImageAsBlobUrl} /> : null)
+  return (<></>)
 }
 
 export default SceneBlobLoader

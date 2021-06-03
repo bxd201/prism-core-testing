@@ -7,7 +7,7 @@
 
 import React, { useEffect, useState, ComponentType } from 'react'
 import type { Color } from '../../shared/types/Colors'
-import SimpleTintableScene from '../CustomSceneTinter/SimpleTintableScene'
+import SimpleTintableScene from '../SimpleTintableScene/SimpleTintableScene'
 import MultipleVariantSwitch from '../VariantSwitcher/MultipleVariantSwitch'
 import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 import { useSelector } from 'react-redux'
@@ -48,7 +48,6 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
   }) || [])
   const [backgroundUrls, setBackgroundUrls] = useState([])
   const livePaletteColors = useSelector(state => state['lp'])
-  // ToDo : The following condition is for test purposes only, will be removed for the final version - PM
   const isScenePolluted = (paintedSurfaces) => {
     return !!paintedSurfaces.reduce((acc, curr) => (curr ? 1 : 0) + acc, 0)
   }

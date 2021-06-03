@@ -25,7 +25,6 @@ export const SAVE_OPTION = {
   EMPTY_SCENE: 'EMPTY_SCENE'
 }
 
-// @todo add other modal types here -RS
 export const MODAL_TYPE_ENUM = {
   MATCH_PHOTO: 'MATCH_PHOTO',
   STOCK_SCENE: 'STOCK_SCENE',

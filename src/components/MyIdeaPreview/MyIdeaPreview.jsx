@@ -17,14 +17,12 @@ import { mergeLpColors } from 'src/store/actions/live-palette'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { LP_MAX_COLORS_ALLOWED } from 'constants/configurations'
 import { createSelectPaletteModal } from '../CVWModalManager/createModal'
-import { unsetSelectedScenePaletteLoaded, showWarningModal } from '../../store/actions/scenes'
+import { unsetSelectedScenePaletteLoaded } from '../../store/actions/scenes'
 import './MyIdeaPreview.scss'
 import { setSelectedSceneUid } from '../../store/actions/loadScenes'
 import { MODAL_TYPE_ENUM } from '../CVWModalManager/constants'
 import { ROUTES_ENUM } from '../Facets/ColorVisualizerWrapper/routeValueCollections'
 import SingleTintableSceneView from '../SingleTintableSceneView/SingleTintableSceneView'
-// @todo for mysherwin feature -RS
-// import { CUSTOM_SCENE_IMAGE_ENDPOINT } from '../../constants/endpoints'
 
 const wrapperClass = 'my-ideas-preview-wrapper'
 const addAllBtn = `${wrapperClass}__add-all-btn`
@@ -65,7 +63,6 @@ const MyIdeaPreview = ({ openScene }: MyIdeaPreviewProps) => {
   const backgroundCanvasRef = useRef()
   const foregroundCanvasRef = useRef()
   const wrapperRef = useRef()
-  const isActivePaintScenePolluted: boolean = useSelector(store => store.scenes.isActiveScenePolluted)
 
   const selectedScene = useSelector(store => {
     const { items: { colorMap } }: ColorMap = store.colors
@@ -197,21 +194,17 @@ const MyIdeaPreview = ({ openScene }: MyIdeaPreviewProps) => {
   const openProject = (e: SyntheticEvent) => {
     e.preventDefault()
     const openPaintedProject = e.currentTarget.dataset.buttonid === 'painted' && true
-    const open = () => {
-      dispatch(unsetSelectedScenePaletteLoaded())
-      if (selectedScene.savedSceneType === SCENE_TYPE.anonCustom) {
-        dispatch(setLayersForPaintScene(backgroundCanvasRef.current.toDataURL(), openPaintedProject
-          ? layersRef.current : null, selectedScene.palette, initialWidth, initialHeight, WORKSPACE_TYPES.savedScene))
-      } else if (selectedScene.savedSceneType === SCENE_TYPE.anonStock) {
-        selectedScene.openUnpaintedStockScene = !openPaintedProject
-        const surfaceColors = openPaintedProject ? selectedScene.surfaceColors : selectedScene.surfaceColors.map(color => null)
-        dispatch(setSelectedSceneUid(selectedScene.scene.uid))
-        dispatch(hydrateStockSceneFromSavedData(selectedScene.variant.variantName, surfaceColors))
-      }
-      openScene(selectedScene.savedSceneType)
+    dispatch(unsetSelectedScenePaletteLoaded())
+    if (selectedScene.savedSceneType === SCENE_TYPE.anonCustom) {
+      dispatch(setLayersForPaintScene(backgroundCanvasRef.current.toDataURL(), openPaintedProject
+        ? layersRef.current : null, selectedScene.palette, initialWidth, initialHeight, WORKSPACE_TYPES.savedScene))
+    } else if (selectedScene.savedSceneType === SCENE_TYPE.anonStock) {
+      selectedScene.openUnpaintedStockScene = !openPaintedProject
+      const surfaceColors = openPaintedProject ? selectedScene.surfaceColors : selectedScene.surfaceColors.map(color => null)
+      dispatch(setSelectedSceneUid(selectedScene.scene.uid))
+      dispatch(hydrateStockSceneFromSavedData(selectedScene.variant.variantName, surfaceColors))
     }
-    // @todo I think this api no longer accepts a callback -RS
-    isActivePaintScenePolluted ? dispatch(showWarningModal()) : open()
+    openScene(selectedScene.savedSceneType)
   }
 
   const addAllColorsToLp = () => {

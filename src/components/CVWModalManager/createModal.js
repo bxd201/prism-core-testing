@@ -13,7 +13,7 @@ import {
   MODAL_TYPE_ENUM
 } from './constants.js'
 
-// @todo these methods can be refactored tro be more generic -RS
+// @todo these methods can be refactored to be more generic -RS
 export const createNavigationWarningModal = (intl, modalType, isDirtyNavigation) => {
   const CONFIRM_CALLBACK = isDirtyNavigation ? HANDLE_DIRTY_NAVIGATION_INTENT_CONFIRM : HANDLE_NAVIGATION_INTENT_CONFIRM
   const CANCEL_CALLBACK = isDirtyNavigation ? HANDLE_DIRTY_NAVIGATION_INTENT_CANCEL : HANDLE_NAVIGATION_INTENT_CANCEL

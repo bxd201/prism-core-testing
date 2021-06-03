@@ -10,8 +10,12 @@ export const DRAG_TYPES = Object.freeze({
 export const SCENE_TYPES = Object.freeze({
   OBJECT: 'objects',
   ROOM: 'rooms',
-  AUTOMOTIVE: 'automotive'
+  AUTOMOTIVE: 'automotive',
+  FAST_MASK: 'fastmask'
 })
+
+// There are scene types that don't originate from the api.
+export const FRONT_END_SCENE_TYPES = [SCENE_TYPES.FAST_MASK]
 
 export const SCENE_VARIANTS = Object.freeze({
   DAY: 'day',

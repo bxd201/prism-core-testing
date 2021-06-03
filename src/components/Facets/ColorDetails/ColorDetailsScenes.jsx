@@ -1,19 +1,15 @@
 // @flow
-import React, { useEffect, useState, useCallback, useMemo } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import flattenDeep from 'lodash/flattenDeep'
+// @todo I think we can remove redux (useSelector can go bye bye) from this comp, all of what it needs looks like it could comp in as a prop passed
+//  by a parent that is connected to redux or has knowledge of the data. -RS
+import React, { useState, useCallback, useMemo } from 'react'
+import { useSelector } from 'react-redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  fetchRemoteScenes,
-  handleScenesFetchedForCVW,
-  handleScenesFetchErrorForCVW
-} from 'src/store/actions/loadScenes'
-import { SCENES_ENDPOINT } from 'constants/endpoints'
 import { SCENE_TYPES, SCENE_VARIANTS } from 'constants/globals'
 import WithConfigurationContext from 'src/contexts/ConfigurationContext/WithConfigurationContext'
-import SimpleTintableScene from '../../CustomSceneTinter/SimpleTintableScene'
+import SimpleTintableScene from '../../SimpleTintableScene/SimpleTintableScene'
 import MultipleVariantSwitch from '../../VariantSwitcher/MultipleVariantSwitch'
 import './ColorDetailsScenes.scss'
+import type { Color } from '../../../shared/types/Colors'
 type Props = {
     config: {
       brandId: string,
@@ -21,42 +17,29 @@ type Props = {
     },
     intl: {
       locale: string
-    }
+    },
+    color?: Color,
 }
 const baseClass = 'color-details-scenes'
 const ColorDetailsScene = (props: Props) => {
-  const { config: { brandId, language } } = props
-  const dispatch = useDispatch()
   const scenesCollection = useSelector((state) => state.scenesCollection)
   const variantsCollection = useSelector((state) => state.variantsCollection)
-
-  // @todo talk with Cody about if this should be localized -RS
-  const colorDetailsPageColor = useSelector((state) => state.globalColorDetailColor)
+  const globalCDPColor = useSelector((state) => state.globalColorDetailColor)
+  const colorDetailsPageColor = props.color || globalCDPColor
   const [selectedSceneId, setSelectedSceneSceneId] = useState(() => scenesCollection.filter(scene => scene.sceneType === SCENE_TYPES.ROOM)[0].uid)
-  const [selectedVariantIndex, setSelectedVariantIndex] = useState(0)
   const livePaletteColors = useSelector(state => state['lp'])
-  useEffect(() => {
-    if (!scenesCollection) {
-      fetchRemoteScenes(SCENE_TYPES.ROOM, brandId, { language: language }, SCENES_ENDPOINT, handleScenesFetchedForCVW, handleScenesFetchErrorForCVW, dispatch)
+  const activatedSceneVariants = useMemo(() => variantsCollection.filter((sceneVariants) => sceneVariants.sceneUid === selectedSceneId), [selectedSceneId])
+  const selectedVariantName = useSelector(store => store.selectedVariantName)
+  const [selectedVariantIndex, setSelectedVariantIndex] = useState(activatedSceneVariants.findIndex(variant => variant.variantName === selectedVariantName))
+  const surfacesColors = activatedSceneVariants[selectedVariantIndex].surfaces.map(surface => {
+    return {
+      id: colorDetailsPageColor.id,
+      hex: colorDetailsPageColor.hex,
+      colorNumber: colorDetailsPageColor.colorNumber,
+      name: colorDetailsPageColor.name,
+      variantName: selectedVariantName
     }
   })
-
-  const activedSceneVariants = useMemo(() => variantsCollection.filter((sceneVariants) => sceneVariants.sceneUid === selectedSceneId), [selectedSceneId])
-  const surfacesColors = (() => {
-    const colorDetailsVariants = variantsCollection.filter(variant => variant.variantName === SCENE_VARIANTS.DAY).filter((variant) => variant.sceneId === 1)
-    const surfaceColorsByVariant = flattenDeep(colorDetailsVariants?.map(variant => {
-      return variant.surfaces.map(surface => {
-        return {
-          id: colorDetailsPageColor.id,
-          hex: colorDetailsPageColor.hex,
-          colorNumber: colorDetailsPageColor.colorNumber,
-          name: colorDetailsPageColor.name,
-          variantName: variant.variantName
-        }
-      })
-    }))
-    return surfaceColorsByVariant
-  })()
 
   const getTintableScene = useCallback((variant: FlatVariant, selectedSceneId: FlatScene, colors: Color[], lpColors) => {
     const surfaceUrls = []
@@ -97,7 +80,7 @@ const ColorDetailsScene = (props: Props) => {
   }, [selectedSceneId])
 
   const colorDetailSceneList = useMemo(() => {
-    const currVariants = activedSceneVariants[selectedVariantIndex]
+    const currVariants = activatedSceneVariants[selectedVariantIndex]
     return variantsCollection.filter((item) => item.isFirstOfKind).map((item) => {
       if (item.sceneId === currVariants.sceneId) {
         return currVariants
@@ -107,7 +90,7 @@ const ColorDetailsScene = (props: Props) => {
   }, [selectedVariantIndex])
 
   const changeVariant = () => {
-    if (activedSceneVariants?.length && selectedVariantIndex + 1 < activedSceneVariants.length) {
+    if (activatedSceneVariants?.length && selectedVariantIndex + 1 < activatedSceneVariants.length) {
       return setSelectedVariantIndex(selectedVariantIndex + 1)
     }
     return setSelectedVariantIndex(0)
@@ -127,7 +110,7 @@ const ColorDetailsScene = (props: Props) => {
   return (
     <>
       <div className={`${baseClass}__scene`}>
-        {getTintableScene(activedSceneVariants[selectedVariantIndex], selectedSceneId, surfacesColors, livePaletteColors)}
+        {getTintableScene(activatedSceneVariants[selectedVariantIndex], selectedSceneId, surfacesColors, livePaletteColors)}
         <div className={`${baseClass}__variants-btn`}>
           {getCustomButtons(selectedVariantIndex)}
         </div>
@@ -135,7 +118,7 @@ const ColorDetailsScene = (props: Props) => {
       {
         <div className={`${baseClass}__block ${baseClass}__block--tabs`} role='radiogroup' aria-label='scene selector'>
           {colorDetailSceneList.map((scene, index) => {
-            const activeMarker = activedSceneVariants[selectedVariantIndex].sceneUid === scene.sceneUid ? (
+            const activeMarker = activatedSceneVariants[selectedVariantIndex].sceneUid === scene.sceneUid ? (
               <FontAwesomeIcon
                 icon={['fa', 'check']}
                 className={`${baseClass}__flag`}
@@ -145,8 +128,8 @@ const ColorDetailsScene = (props: Props) => {
               <button
                 key={scene.sceneUid}
                 role='radio'
-                aria-checked={activedSceneVariants[selectedVariantIndex].sceneUid === scene.sceneUid}
-                className={`${baseClass}__btn ${activedSceneVariants[selectedVariantIndex].sceneUid === scene.sceneUid ? `${baseClass}__btn--active` : ''}`}
+                aria-checked={activatedSceneVariants[selectedVariantIndex].sceneUid === scene.sceneUid}
+                className={`${baseClass}__btn ${activatedSceneVariants[selectedVariantIndex].sceneUid === scene.sceneUid ? `${baseClass}__btn--active` : ''}`}
                 onClick={() => {
                   setSelectedSceneSceneId(scene.sceneUid)
                   setSelectedVariantIndex(0)

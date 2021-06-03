@@ -18,7 +18,9 @@ export const ROUTES_ENUM = {
   COLOR_FROM_IMAGE: '/active/color-from-image',
   PAINT_PHOTO: '/active/paint-photo',
   MY_IDEAS_PREVIEW: '/my-ideas-preview',
-  MASKING: '/active/masking'
+  MASKING: '/active/masking',
+  UPLOAD_FAST_MASK: '/upload/fast-mask',
+  ACTIVE_FAST_MASK: '/active/fast-mask'
 }
 
 // @todo help should likely come out of here, and should only be presented modally.

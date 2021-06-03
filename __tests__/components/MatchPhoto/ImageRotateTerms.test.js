@@ -1,5 +1,5 @@
 import React from 'react'
-import ImageRotateTerms from 'src/components/MatchPhoto/ImageRotateTerms'
+import ImageRotateTerms from 'src/components/ImageIngestView/ImageRotateTerms'
 import { fireEvent } from '@testing-library/dom'
 
 test('ImageRotateTerms', async () => {

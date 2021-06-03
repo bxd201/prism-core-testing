@@ -50,7 +50,6 @@ export type FeatureExclusionsType = {
   [key: string]: string
 }
 export const FEATURE_EXCLUSIONS: FeatureExclusionsType = {
-  editPhotos: 'editPhotos', // this determines if  the paintscene component can be accessed
   fastMask: 'fastMask', // this will exclude
   documentSaving: 'documentSaving', // this will exclude myideas and the save button
   download: 'download', // this removes the download feature from the app

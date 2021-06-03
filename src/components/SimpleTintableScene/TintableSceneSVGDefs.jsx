@@ -20,6 +20,7 @@ class TintableSceneSurface extends PureComponent<Props> {
     let content = void (0)
 
     switch (type) {
+      case SCENE_TYPES.FAST_MASK:
       case SCENE_TYPES.ROOM: {
         content = (
           <Fragment>

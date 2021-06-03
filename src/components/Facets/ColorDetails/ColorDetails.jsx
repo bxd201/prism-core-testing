@@ -31,10 +31,11 @@ type Props = {
   onColorChipToggled?: boolean => void,
   familyLink?: string,
   loading?: boolean,
-  initialColor: Color
+  initialColor?: Color,
+  initialVariantName?: string
 }
 
-export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged, onColorChipToggled, familyLink, loading, initialColor }: Props) => {
+export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged, onColorChipToggled, familyLink, loading, initialColor, initialVariantName }: Props) => {
   const dispatch = useDispatch()
   const toggleSceneDisplayScene = useRef(null)
   const toggleSceneHideScene = useRef(null)
@@ -77,7 +78,7 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
       <div className='color-detail-view'>
         <ColorChipMaximizer color={color} onToggle={onColorChipToggled} />
         <div className={`color-detail__scene-wrapper color-detail__scene-wrapper--displayed`}>
-          <ColorDetailsScenes />
+          <ColorDetailsScenes color={color} intitialVariantName={initialVariantName} />
         </div>
         <div className='color-detail__info-wrapper'>
           <button className={SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.join(' ')} ref={toggleSceneDisplayScene}>

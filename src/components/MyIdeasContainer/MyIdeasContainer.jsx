@@ -6,6 +6,7 @@ import MyIdeas from '../MyIdeas/MyIdeas'
 import Login from '../Login/Login'
 import WithConfigurationContext from '../../contexts/ConfigurationContext/WithConfigurationContext'
 import { ROUTES_ENUM } from 'src/components/Facets/ColorVisualizerWrapper/routeValueCollections'
+// eslint-disable-next-line no-unused-vars
 import { clearSceneWorkspace } from '../../store/actions/paintScene'
 import { selectSavedScene } from '../../store/actions/persistScene'
 import AnonLogin from '../AnonLogin/AnonLogin'
@@ -39,7 +40,6 @@ const MyIdeasContainer = (props: MyIdeasContainerProps) => {
     // Reset state related to pushing data to paintscene
     dispatch(selectSavedScene(null))
     setInitialSceneId(null)
-    dispatch(clearSceneWorkspace())
   }, [])
 
   const isLoggedIn = useSelector(state => state.user)

@@ -142,13 +142,6 @@ export const cacheStockScene = (sceneUid: string, variantName: string, surfaceCo
   }
 }
 
-export const CLEAR_STOCK_SCENE_CACHE = 'CLEAR_STOCK_SCENE_CACHE'
-export const clearStockSceneCache = () => {
-  return {
-    type: CLEAR_STOCK_SCENE_CACHE
-  }
-}
-
 export const SET_IS_COLOR_WALL_MODALLY_PRESENTED = 'SET_IS_COLOR_WALL_MODALLY_PRESENTED'
 // It is a modal if there is a return path at time of mount, this tells the app if the users sees the color wall
 export const setIsColorWallModallyPresented = (returnPath: string) => {
