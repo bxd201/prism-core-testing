@@ -14,11 +14,11 @@ pipeline {
   }
   stages {
     stage('builder') {
-      when {
-        not {
-          expression { BRANCH_NAME ==~ /^(qa|release)$/ }
-        }
-      }
+      // when {
+      //   not {
+      //     expression { BRANCH_NAME ==~ /^(qa|release)$/ }
+      //   }
+      // }
       steps {
         sh """
         #!/bin/bash
