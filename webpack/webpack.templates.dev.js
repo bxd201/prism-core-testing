@@ -11,8 +11,9 @@ const common = require('./webpack.templates.common.js')
 module.exports = merge.smart(common, {
   mode: flags.mode,
   plugins: [
+    require('./partial.plugins.analyzeBundle').analyzeBundle,
     new WebpackBar()
-  ],
+  ].filter(Boolean),
   devServer: {
     index: 'index.html',
     host: process.env[envVars.TEMPLATES_LOCAL_HOST],

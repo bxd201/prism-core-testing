@@ -9,7 +9,6 @@ require('./partial.setup.defineLocalPaths.embed')
 console.assert(process.env[envVars.PRISM_LOCAL_ORIGIN] !== process.env[envVars.EMBED_LOCAL_ORIGIN], 'ERROR: Prism and Prism Embed local dev servers must not be identical.')
 
 const WebpackBar = require('webpackbar')
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 const merge = require('webpack-merge')
 const flags = require('./constants')
 const common = require('./webpack.embed.common.js')
@@ -17,11 +16,9 @@ const common = require('./webpack.embed.common.js')
 module.exports = merge.smart(common, {
   mode: flags.mode,
   plugins: [
-    new WebpackBar(),
-    flags.dev && new BundleAnalyzerPlugin({
-      analyzerPort: 'auto'
-    })
-  ],
+    require('./partial.plugins.analyzeBundle').analyzeBundle,
+    new WebpackBar()
+  ].filter(Boolean),
   devServer: {
     index: '',
     host: process.env[envVars.EMBED_LOCAL_HOST],
