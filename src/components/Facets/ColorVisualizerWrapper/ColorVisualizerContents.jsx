@@ -35,7 +35,7 @@ import {
   setNavigationIntent, clearNavigationIntent, setIsMatchPhotoPresented, cacheCarousel
 } from '../../../store/actions/navigation'
 import { ROUTES_ENUM } from './routeValueCollections'
-import SceneBlobLoader from '../../SceneManager/SceneBlobLoader'
+import SceneBlobLoader from '../../SceneBlobLoader/SceneBlobLoader'
 import {
   fetchRemoteScenes, handleScenesFetchedForCVW, handleScenesFetchErrorForCVW,
   setSelectedSceneUid,
@@ -46,7 +46,7 @@ import {
 import SingleTintableSceneView from '../../SingleTintableSceneView/SingleTintableSceneView'
 import SceneSelectorNavButton from '../../SingleTintableSceneView/SceneSelectorNavButton'
 import { SCENES_ENDPOINT } from '../../../constants/endpoints'
-import ImageIngestView from '../../MatchPhoto/ImageIngestView'
+import ImageIngestView from '../../ImageIngestView/ImageIngestView'
 import PaintScene from '../../PaintScene/PaintScene'
 import { setLayersForPaintScene, WORKSPACE_TYPES } from '../../../store/actions/paintScene'
 import type { MiniColor, ReferenceDimensions } from '../../../shared/types/Scene'
@@ -64,6 +64,8 @@ import { MODAL_TYPE_ENUM } from '../../CVWModalManager/constants'
 import { hydrateStockSceneFromSavedData } from '../../../store/actions/stockScenes'
 import { setActiveSceneKey } from '../../../store/actions/scenes'
 import { toggleCompareColor } from '../../../store/actions/live-palette'
+import { setImageForFastMask, setRefsDimsForFastMask } from '../../../store/actions/fastMask'
+import FastMaskView from '../../FastMask/FastMaskView'
 
 type CVWPropsType = {
   maxSceneHeight: number,
@@ -108,12 +110,14 @@ const CVW = (props: CVWPropsType) => {
   const lpColors = useSelector(store => store.lp.colors)
   const lpCompareColorIds = useSelector(store => store.lp.compareColorsId)
   const selectedVariantName = useSelector(store => store.selectedVariantName)
+  const fastMaskRefDims = useSelector(store => store.fastMaskRefDims)
+  const fastMaskImageUrl = useSelector(store => store.fastMaskImageUrl)
 
   // Use this hook to push any facet level embedded data to redux and handle any initialization
   useEffect(() => {
     dispatch(setMaxSceneHeight(maxSceneHeight))
     dispatch(setActiveSceneLabel(ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE))
-    fetchRemoteScenes(SCENE_TYPES.ROOM, brandId, { language }, SCENES_ENDPOINT, handleScenesFetchedForCVW, handleScenesFetchErrorForCVW, dispatch)
+    fetchRemoteScenes(brandId, { language }, SCENES_ENDPOINT, handleScenesFetchedForCVW, handleScenesFetchErrorForCVW, dispatch)
   }, [])
 
   // used to programmatically show modals
@@ -128,7 +132,7 @@ const CVW = (props: CVWPropsType) => {
   useEffect(() => {
     // Whenever we navigate update the wrapper dimensions
     if (wrapperRef.current) {
-      // @todo this should allow us to pass by prop drilling to any comps that need to do math base don the box dims _RS
+      // @todo this should allow us to pass by prop drilling to any comps that need to do math base don the box dims -RS
       const wrapperDims = wrapperRef.current.getBoundingClientRect()
       setWrapperDims(wrapperDims)
     }
@@ -277,24 +281,16 @@ const CVW = (props: CVWPropsType) => {
   }
 
   const goToPaintScene = (imageUrl: string, width: number, height: number, refDims: ReferenceDimensions) => {
-    try {
-      dispatch(setLayersForPaintScene(imageUrl, [], [], width, height, WORKSPACE_TYPES.generic, 0, '', []))
-      dispatch(setActiveSceneLabel(ACTIVE_SCENE_LABELS_ENUM.PAINT_SCENE))
-      history.push(ROUTES_ENUM.ACTIVE)
-    } catch (e) {
-      console.warn(`Url specified could not be revoked: ${e.message}`)
-    }
+    dispatch(setLayersForPaintScene(imageUrl, [], [], width, height, WORKSPACE_TYPES.generic, 0, '', []))
+    dispatch(setActiveSceneLabel(ACTIVE_SCENE_LABELS_ENUM.PAINT_SCENE))
+    history.push(ROUTES_ENUM.ACTIVE)
   }
 
   const goToMatchPhoto = (imageUrl: string, width: number, height: number, refDims: ReferenceDimensions) => {
-    try {
-      dispatch(setImageForMatchPhoto(imageUrl))
-      dispatch(setImageDimsForMatchPhoto(refDims))
-      dispatch(setIsMatchPhotoPresented(true))
-      history.push(ROUTES_ENUM.ACTIVE_MATCH_PHOTO)
-    } catch (e) {
-      console.warn(`Url specified could not be revoked: ${e.message}`)
-    }
+    dispatch(setImageForMatchPhoto(imageUrl))
+    dispatch(setImageDimsForMatchPhoto(refDims))
+    dispatch(setIsMatchPhotoPresented(true))
+    history.push(ROUTES_ENUM.ACTIVE_MATCH_PHOTO)
   }
 
   const cleanupStaleIngestedImage = () => {
@@ -313,7 +309,12 @@ const CVW = (props: CVWPropsType) => {
 
   const setPaintSceneData = (data: any) => {
     // @todo determine if this is still needed -RS
-    console.table(data)
+  }
+
+  const goToFastMask = (imageUrl: string, width: number, height: number, refDims: ReferenceDimensions) => {
+    dispatch(setImageForFastMask(imageUrl))
+    dispatch(setRefsDimsForFastMask(refDims))
+    history.push(ROUTES_ENUM.ACTIVE_FAST_MASK)
   }
 
   return (
@@ -338,6 +339,7 @@ const CVW = (props: CVWPropsType) => {
             <Route path={ROUTES_ENUM.COLOR_DETAILS} render={() => <ColorDetails />} />
             <Route path={`${ROUTES_ENUM.COLOR_WALL}(/.*)?`} render={() => <ColorWallPage displayAddButton displayInfoButton displayDetailsLink={false} />} />
             <Route path={ROUTES_ENUM.COLOR_COLLECTION} render={() => <ColorCollections isExpertColor={false} {...location.state} />} />
+            <Route path={ROUTES_ENUM.UPLOAD_FAST_MASK} render={() => <ImageIngestView cleanupCallback={cleanupStaleIngestedImage} handleDismissCallback={goToFastMask} imageUrl={ingestedImageUrl} maxSceneHeight={maxSceneHeight} />} />
             <Route path={ROUTES_ENUM.UPLOAD_MATCH_PHOTO} render={() => <ImageIngestView cleanupCallback={cleanupStaleIngestedImage} handleDismissCallback={goToMatchPhoto} imageUrl={ingestedImageUrl} maxSceneHeight={maxSceneHeight} />} />
             <Route path={ROUTES_ENUM.UPLOAD_PAINT_SCENE} render={() => <ImageIngestView cleanupCallback={cleanupStaleIngestedImage} handleDismissCallback={goToPaintScene} imageUrl={ingestedImageUrl} maxSceneHeight={maxSceneHeight} />} />
             <Route path={ROUTES_ENUM.ACTIVE_MATCH_PHOTO} render={() => <MatchPhotoContainer colors={unorderedColors} imageUrl={matchPhotoImage} imageDims={matchPhotoImageDims} maxSceneHeight={maxSceneHeight} scalingWidth={wrapperDims.width} />} />
@@ -349,6 +351,11 @@ const CVW = (props: CVWPropsType) => {
             <Route path={ROUTES_ENUM.MASKING} render={() => <PaintSceneMaskingWrapper />} />
             <Route path={ROUTES_ENUM.ACTIVE_MYIDEAS} render={() => <MyIdeasContainer />} />
             <Route path={ROUTES_ENUM.HELP} render={() => <Help />} />
+            <Route path={ROUTES_ENUM.ACTIVE_FAST_MASK} render={() => <FastMaskView
+              handleBlobLoaderError={handleSceneBlobLoaderError}
+              refDims={fastMaskRefDims}
+              imageUrl={fastMaskImageUrl}
+              activeColor={activeColor} />} />
           </Switch>
           <div
             /* This div has multiple responsibilities in the DOM tree. It cannot be removed, moved, or changed without causing regressions. */

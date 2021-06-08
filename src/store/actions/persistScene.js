@@ -41,7 +41,7 @@ export const SHOW_SAVED_CUSTOM_SUCCESS = 'SHOW_SAVED_CUSTOM_SUCCESS'
 export const SHOW_DELETE_CONFIRM = 'SHOW_DELETE_CONFIRM'
 export const RECEIVED_FIREBASE_FILE_LIST = 'RECEIVED_FIREBASE_FILE_LIST'
 export const PURGE_METADATA = 'PURGE_METADATA'
-// File name consts
+// File name constants
 const SCENE_JSON = 'scene.json'
 
 export const SCENE_TYPE = {

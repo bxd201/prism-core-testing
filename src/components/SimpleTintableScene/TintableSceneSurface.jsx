@@ -26,6 +26,7 @@ class TintableSceneSurface extends PureComponent<Props> {
     const filter = `url("${baseUrl}#${filterId}")`
 
     switch (type) {
+      case SCENE_TYPES.FAST_MASK:
       case SCENE_TYPES.ROOM:
         return <image xlinkHref={image} width='100%' height='100%' mask={mask} filter={filter} />
       case SCENE_TYPES.OBJECT:

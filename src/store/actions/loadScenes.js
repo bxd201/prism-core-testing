@@ -3,7 +3,7 @@ import { generateBrandedEndpoint } from '../../shared/helpers/DataUtils'
 import * as axios from 'axios'
 import type { FlatVariant, ScenePayload } from '../../shared/types/Scene'
 import { createUniqueSceneId } from '../../shared/utils/legacyProfileFormatUtil'
-import { SCENE_TYPES } from '../../constants/globals'
+import { FRONT_END_SCENE_TYPES, SCENE_TYPES } from '../../constants/globals'
 import flatten from 'lodash/flatten'
 import flattenDeep from 'lodash/flattenDeep'
 import cloneDeep from 'lodash/cloneDeep'
@@ -15,20 +15,22 @@ export const SCENES_DATA_FETCHED = 'SCENES_DATA_FETCHED'
 export const SET_VARIANTS_COLLECTION = 'SET_VARIANTS_COLLECTION'
 export const SET_VARIANTS_LOADING = 'SET_VARIANTS_LOADING'
 
-export const fetchRemoteScenes = (sceneType: string, brandId: string, options: any, sceneEndPoint: string, handleSuccess: Function, handleFailure: Function, dispatch?: Function) => {
+export const fetchRemoteScenes = (brandId: string, options: any, sceneEndPoint: string, handleSuccess: Function, handleFailure: Function, dispatch?: Function) => {
   const SCENES_URL = generateBrandedEndpoint(sceneEndPoint, brandId, options)
 
   if (dispatch) {
-    axios.get(SCENES_URL).then(res => dispatch(handleSuccess(sceneType, res.data))).catch(err => dispatch(handleFailure(err)))
+    axios.get(SCENES_URL).then(res => dispatch(handleSuccess(res.data))).catch(err => dispatch(handleFailure(err)))
     return
   }
 
-  axios.get(SCENES_URL).then(res => handleSuccess(sceneType, res.data)).catch(err => handleFailure(err))
+  axios.get(SCENES_URL).then(res => handleSuccess(res.data)).catch(err => handleFailure(err))
 }
 
-// @todo may not need the scene type since i vectorize the scene maps. -RS
-export const handleScenesFetchedForCVW = (sceneType: string, data: ScenePayload) => {
-  const sceneTypes = Object.keys(SCENE_TYPES).map((sceneKey) => SCENE_TYPES[sceneKey])
+export const handleScenesFetchedForCVW = (data: ScenePayload) => {
+  const sceneTypes = Object.keys(SCENE_TYPES)
+    .map((sceneKey) => SCENE_TYPES[sceneKey])
+    .filter(val => FRONT_END_SCENE_TYPES.indexOf(val) === -1) // fast mask scenes are only created on the frontend so filter out
+
   const vectorizedScenes = sceneTypes.reduce((acc, curr) => {
     return [...acc, data[curr].scenes.map(datum => {
       return {

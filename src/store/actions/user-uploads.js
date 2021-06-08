@@ -106,12 +106,12 @@ const completeIrisUploading = () => {
 // const NANONETS_PREDICTION_ENDPOINT = 'https://customer.nanonets.com/sherwinWilliams/predict/rgbamask'
 // const NANONETS_AUTH_KEY = 'wrusnuj4vDg14jcrXOxmIirV6p33U8Az'
 
-export const uploadImage = (file: File) => {
-  // TODO: remove this when we no longer hvae to deal with https://None showing up in the API results
-  const deNoneify = (str: string = ''): string => {
-    return `${ML_API_URL}/${str.replace(/^(https?:\/\/None)?\//, '')}`
-  }
+// TODO: remove this when we no longer hvae to deal with https://None showing up in the API results
+export const deNoneify = (str: string = ''): string => {
+  return `${ML_API_URL}/${str.replace(/^(https?:\/\/None)?\//, '')}`
+}
 
+export const uploadImage = (file: File) => {
   return (dispatch: Function) => {
     // const imageUrl = URL.createObjectURL(file)
     const uploadForm = new FormData()
@@ -151,6 +151,7 @@ export const uploadImage = (file: File) => {
   }
 }
 
+// @todo check to see if we need the queuing logic. I think this is related to fast mask old way. new way is simpler.
 export const QUEUE_IMAGE_UPLOAD = 'QUEUE_IMAGE_UPLOAD'
 export const queueImageUpload = (file: File) => {
   return (dispatch: Function) => {
@@ -230,6 +231,7 @@ export const uploadIrisImage = (file: File) => {
   }
 }
 
+// @todo I suspect this can be removed to, this me thinks is related to the old fast mask
 export const INGESTED_IMAGE_URL = 'INGESTED_IMAGE_URL'
 export const setIngestedImage = (imageUrl: string = '') => {
   return {

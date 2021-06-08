@@ -1,16 +1,13 @@
 // @flow
-import { type Color } from './Colors'
-import MaskObj from '../../store/masks/MaskObj'
 
 export type Surface = {
   id: number,
-  role: string,
-  thumb: string,
-  mask: MaskObj,
-  hitArea: string,
+  role?: string,
+  thumb?: string,
+  hitArea?: string,
   shadows?: string,
   highlights?: string,
-  blobUrl?: string
+  surfaceBlobUrl?: string
 }
 
 export type Variant = {
@@ -20,38 +17,6 @@ export type Variant = {
   name: string,
   surfaces: Surface[],
   normalizedImageValueCurve: string
-}
-
-export type Scene = {
-  id: number,
-  width: number,
-  height: number,
-  variant_names: string[],
-  variants: Variant[]
-}
-
-export type ScenePayload = {
-  count: number,
-  scenes: Scene[],
-  type: string
-}
-
-export type SurfaceStatus = {
-  id: number,
-  color?: Color
-}
-
-export type SceneStatus = {
-  id: number,
-  variant: string,
-  surfaces: SurfaceStatus[]
-}
-
-export type SceneWorkspace = {
-  sceneId: number,
-  surfaceId: number,
-  imageData: string,
-  variant: string
 }
 
 // New types form PRISM 3.0
@@ -76,12 +41,12 @@ export type FlatScene = {
   // variants prop is only used during transformation and should not be used at rest!
   variants?: any[] | null,
   sceneType: string,
-  uid: string
+  uid: string,
+  description: string
 }
 
 export type FlatVariant = {
-  surfaceMask: string,
-  surfaceId: number,
+  sceneUid: string,
   sceneId: number,
   variantName: string,
   sceneType: string,
@@ -89,7 +54,6 @@ export type FlatVariant = {
   surfaces: Surface[],
   image: string,
   thumb: string,
-  description: string,
   normalizedImageValueCurve: string,
   sceneCategories?: string[] | null,
   expertColorPicks: number[] | null,
@@ -98,9 +62,11 @@ export type FlatVariant = {
 
 export type ReferenceDimensions = {
   originalImageWidth: number,
-    originalImageHeight: number,
-  imageWidth: number,
-  imageHeight: number,
+  originalImageHeight: number,
+  portraitWidth: number,
+  portraitHeight: number,
+  landscapeWidth: number,
+  landscapeHeight: number,
   isPortrait: boolean,
   originalIsPortrait: boolean
 }

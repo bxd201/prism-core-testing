@@ -1,10 +1,10 @@
 // @flow
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Route, Redirect, useLocation, useHistory } from 'react-router-dom'
 import facetBinder from 'src/facetSupport/facetBinder'
 import ColorDetails from 'src/components/Facets/ColorDetails/ColorDetails'
-import { ROUTE_PARAMS, ROUTE_PARAM_NAMES } from 'src/constants/globals'
+import { ROUTE_PARAMS, ROUTE_PARAM_NAMES, SCENE_TYPES } from 'src/constants/globals'
 import { facetBinderDefaultProps } from 'src/facetSupport/facetInstance'
 import { facetPubSubDefaultProps } from 'src/facetSupport/facetPubSub'
 import GenericMessage from '../Messages/GenericMessage'
@@ -14,59 +14,115 @@ import findKey from 'lodash/findKey'
 import { loadColors } from 'src/store/actions/loadColors'
 import HeroLoader from '../Loaders/HeroLoader/HeroLoader'
 import { cleanColorNameForURL, generateColorDetailsPageUrl } from 'src/shared/helpers/ColorUtils'
+import uniqueId from 'lodash/uniqueId'
+import { setInitializingFacetId } from '../../store/actions/system'
+import {
+  fetchRemoteScenes, handleScenesFetchedForCVW, handleScenesFetchErrorForCVW,
+  setSelectedSceneUid, setSelectedVariantName,
+  setVariantsCollection,
+  setVariantsLoading
+} from '../../store/actions/loadScenes'
+import SceneBlobLoader from '../SceneBlobLoader/SceneBlobLoader'
+import { SCENES_ENDPOINT } from '../../constants/endpoints'
 
 const colorDetailsBaseUrl = `/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_DETAIL}`
 
 type Props = {
   colorSEO?: string, // ${brandKey}-${colorNumber}-${cleanColorNameForURL(name)}
-  publish: (string, any) => void,
-  subscribe: (string, Function) => void,
+  publish?: (string, any) => void,
+  subscribe?: (string, Function) => void,
+  brand: string,
+  language: string
 }
 
-export const ColorDetailsPage = ({ colorSEO, publish, subscribe }: Props) => {
-  loadColors('sherwin')(useDispatch())
+export const ColorDetailsPage = (props: Props) => {
+  const { colorSEO, publish, subscribe, brand, language } = props
+  const dispatch = useDispatch()
+  loadColors(brand)(dispatch)
   const location = useLocation()
   const history = useHistory()
   const [familyLink: string, setFamilyLink: string => void] = useState('')
   const colorMap: ColorMap = useSelector(store => store.colors.items.colorMap)
-
-  if (!colorMap) { return <HeroLoader /> }
-
   const colorId: ?ColorId = findKey(colorMap, { colorNumber: colorSEO.match(/\d+/)[0] })
   const color: ?Color = colorId ? colorMap[colorId] : undefined
+  const [facetId] = useState(uniqueId('cdp-facet_'))
+  const initializingFacetId = useSelector(store => store.initializingFacetId)
+  const scenesCollection = useSelector(store => store.scenesCollection)
+  const variantsCollection = useSelector(store => store.variantsCollection)
+  const selectedSceneUid = useSelector(store => store.selectedSceneUid)
+  const [scenesFetchCalled, setScenesFetchCalled] = useState(false)
+  const initialSelectedVariantName = useSelector(store => store.selectedVariantName)
 
+  // @todo should this go in a useEffect hook? -RS
   subscribe('prism-family-link', setFamilyLink)
 
-  return (colorId && color
-    ? (
-      <>
-        <Redirect to={`${colorDetailsBaseUrl}/${colorId}/${color.brandKey}-${color.colorNumber}-${cleanColorNameForURL(color.name)}`} />
-        {location.pathname !== '/' && (
-          <Route path={`${colorDetailsBaseUrl}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`}>
-            <ColorDetails
-              familyLink={familyLink}
-              initialColor={color}
-              onColorChanged={newColor => {
-                publish('prism-new-color', newColor)
-                history.push(generateColorDetailsPageUrl(newColor))
-              }}
-              // @todo these arent currently used in color detail comp, investigate -RS
-              // onSceneChanged={({ id, variant }: SceneStatus) => {
-              //   publish('prism-new-scene', { category: scenes[id].category[0], variant })
-              // }
-              // }
-              // onVariantChanged={newVariant => publish('prism-new-variant', newVariant)}
-              onColorChipToggled={newPosition => publish('prism-color-chip-toggled', newPosition)}
-            />
-          </Route>
-        )}
-      </>
-    )
-    : (
-      <GenericMessage type={GenericMessage.TYPES.ERROR}>
-        <FormattedMessage id='UNSPECIFIED_COLOR' />
-      </GenericMessage>
-    )
+  // This hook is used to control loading of the scene data
+  useEffect(() => {
+    if (!initializingFacetId) {
+      dispatch(setInitializingFacetId(facetId))
+    }
+
+    if (initializingFacetId && initializingFacetId === facetId && !scenesFetchCalled) {
+      // @todo scene type should probably be a facet prop -RS
+      fetchRemoteScenes(brand, { language }, SCENES_ENDPOINT, handleScenesFetchedForCVW, handleScenesFetchErrorForCVW, dispatch)
+      setScenesFetchCalled(true)
+    }
+  }, [initializingFacetId, facetId, scenesFetchCalled])
+
+  const handleBlobLoaderInit = () => {
+    dispatch(setVariantsLoading(true))
+  }
+
+  const handleSceneBlobLoaderError = (err) => {
+    dispatch(err)
+  }
+
+  // This callback initializes all of the scene data
+  const handleSceneSurfacesLoaded = (variants) => {
+    dispatch(setVariantsCollection(variants))
+    // Default to the first room type for the CVW.
+    const variant = variants.filter(variant => variant.sceneType === SCENE_TYPES.ROOM)[0]
+    // When this value is set it can be used as a flag that the cvw has initialized the scene data
+    dispatch(setSelectedSceneUid(variant.sceneUid))
+    dispatch(setSelectedVariantName(variant.variantName))
+    dispatch(setVariantsLoading(false))
+  }
+
+  return (
+    <>
+      {scenesCollection && <SceneBlobLoader
+        scenes={scenesCollection}
+        variants={variantsCollection}
+        handleBlobsLoaded={handleSceneSurfacesLoaded}
+        handleError={handleSceneBlobLoaderError}
+        initHandler={handleBlobLoaderInit} />}
+      {!colorMap || !selectedSceneUid ? <HeroLoader /> : (colorId && color
+        ? (
+          <>
+            <Redirect to={`${colorDetailsBaseUrl}/${colorId}/${color.brandKey}-${color.colorNumber}-${cleanColorNameForURL(color.name)}`} />
+            {location.pathname !== '/' && (
+              <Route path={`${colorDetailsBaseUrl}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`}>
+                <ColorDetails
+                  familyLink={familyLink}
+                  initialColor={color}
+                  intitialVariantName={initialSelectedVariantName}
+                  onColorChanged={newColor => {
+                    publish('prism-new-color', newColor)
+                    history.push(generateColorDetailsPageUrl(newColor))
+                  }}
+                  onColorChipToggled={newPosition => publish('prism-color-chip-toggled', newPosition)}
+                />
+              </Route>
+            )}
+          </>
+        )
+        : (
+          <GenericMessage type={GenericMessage.TYPES.ERROR}>
+            <FormattedMessage id='UNSPECIFIED_COLOR' />
+          </GenericMessage>
+        )
+      )}
+    </>
   )
 }
 

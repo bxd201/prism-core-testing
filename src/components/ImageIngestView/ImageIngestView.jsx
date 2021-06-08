@@ -50,13 +50,11 @@ const ImageIngestView = (props: ImageIngestViewProps) => {
   const [isPortrait, setIsPortrait] = useState(false)
   const [scalingWidth, setScalingWidth] = useState(0)
   const [imageRotationAngle, setImageRotationAngle] = useState(0)
-  // @todo I think we should be able to safely use state for these -RS
   const prevOrientationRef = useRef()
   const prevRotationRef = useRef()
   const previousIsPortraitRef = useRef()
   const { formatMessage } = useIntl()
 
-  // @todo I don't think we need this approach to set these values like this anymore -RS
   useEffect(() => {
     prevOrientationRef.current = orientationDimensions
     prevRotationRef.current = imageRotationAngle
@@ -162,7 +160,8 @@ const ImageIngestView = (props: ImageIngestViewProps) => {
 
     const rotatedImageUrl = canvasRef.current.toDataURL()
     const { width, height } = canvasRef.current
-    handleDismissCallback(rotatedImageUrl, width, height, orientationDimensions)
+    const dims = { ...orientationDimensions, isPortrait }
+    handleDismissCallback(rotatedImageUrl, width, height, dims)
   }
 
   const drawToCanvas = (image, width, height) => {
@@ -247,8 +246,6 @@ const ImageIngestView = (props: ImageIngestViewProps) => {
             <Link to={`/active`} tabIndex='-1'>
               <button onClick={handleCloseButton} className={`${baseClassName}__button ${baseClassName}__button--right dark-button`}>
                 <div className={`${baseClassName}__close`}><span><FormattedMessage id='CLOSE' /></span>&nbsp;<FontAwesomeIcon className={``} icon={['fa', 'chevron-up']} /></div>
-                {/* @todo I have no idea why this is here, but I will leave it here for a little while, bc I have a feeling it has a purpose... -RS */}
-                {/* <div className={`${baseClassName}__cancel`}><FontAwesomeIcon className={``} icon={['fa', 'times']} /></div> */}
               </button>
             </Link>
           </div> : null}

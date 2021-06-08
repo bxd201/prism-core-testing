@@ -4,13 +4,7 @@ import { configurations } from './configurations'
 import { lp } from './live-palette'
 import { language } from './language'
 import {
-  currentActiveSceneId,
-  currentSurfaceId,
-  isEditMode,
-  sceneWorkspaces,
-  currentWorkspace,
-  useSmartMask,
-  showEditCustomScene, scenesCollection, variantsCollection, variantsLoading, selectedSceneUid,
+  scenesCollection, variantsCollection, variantsLoading, selectedSceneUid,
   selectedVariantName, activeSceneKey, globalColorDetailColor
 } from './scenes'
 import { ingestedImageUrl, queuedImageUpload, uploads } from './uploads'
@@ -43,30 +37,26 @@ import { paintSceneWorkspace } from './paintSceneWorkspace'
 import { reducerWithLocalStorage } from '../withStorage'
 import { SCENE_METADATA } from '../storageProperties'
 import { systemMessages } from './systemMessages'
-import { maxSceneHeight, toolTipsPosition } from './system'
+import { initializingFacetId, maxSceneHeight } from './system'
 import {
   activeSceneLabel,
   allowNavigateToIntendedDestination, dirtyNavigationIntent, imageRotateBypass, isColorwallModallyPresented,
   navigationIntent, navigationReturnIntent,
   paintSceneCache, carouselCache,
-  scenePolluted, shouldShowGlobalDestroyWarning, stockSceneCache, forwardIntent, isMatchPhotoPresented
+  scenePolluted, shouldShowGlobalDestroyWarning, forwardIntent, isMatchPhotoPresented
 } from './navigation'
 import { modalInfo, modalThumbnailColor } from './globalModal'
 import { matchPhotoImage, matchPhotoImageDims } from './matchPhoto'
+import { fastMaskImageUrl, fastMaskRefDims } from './fastMask'
 
 export default combineReducers({
   collectionSummaries,
   colors,
   configurations,
-  currentActiveSceneId,
-  currentSurfaceId,
-  currentWorkspace,
   expertColorPicks,
   inspirationalPhotos,
-  isEditMode,
   language,
   lp,
-  sceneWorkspaces,
   uploads,
   savingMasks,
   legacySavedScenesMetadata,
@@ -87,12 +77,9 @@ export default combineReducers({
   // For paint scene
   showSavedCustomSceneSuccess,
   showDeleteConfirmModal,
-  useSmartMask,
   queuedImageUpload,
   systemMessages,
-  showEditCustomScene,
   maxSceneHeight,
-  toolTipsPosition,
   navigationIntent,
   scenePolluted,
   allowNavigateToIntendedDestination,
@@ -103,7 +90,6 @@ export default combineReducers({
   activeSceneLabel,
   navigationReturnIntent,
   imageRotateBypass,
-  stockSceneCache,
   isColorwallModallyPresented,
   shouldShowGlobalDestroyWarning,
   dirtyNavigationIntent,
@@ -130,5 +116,9 @@ export default combineReducers({
   colorsForSurfacesFromSavedScene,
   // needed to ensure data reflow to active scene
   activeSceneKey,
-  globalColorDetailColor
+  globalColorDetailColor,
+  // used to determine which facet should handle loading
+  initializingFacetId,
+  fastMaskImageUrl,
+  fastMaskRefDims
 })
