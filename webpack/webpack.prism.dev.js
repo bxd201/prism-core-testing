@@ -14,15 +14,12 @@ console.assert(process.env[envVars.PRISM_LOCAL_ORIGIN] !== process.env[envVars.E
 const merge = require('webpack-merge')
 const flags = require('./constants')
 const webpack = require('webpack')
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 const common = require('./webpack.prism.common.js')
 
 module.exports = merge.smart(common, {
   mode: flags.mode,
   plugins: [
-    new BundleAnalyzerPlugin({
-      analyzerPort: 'auto'
-    }),
+    require('./partial.plugins.analyzeBundle').analyzeBundle,
     new webpack.EvalSourceMapDevToolPlugin({
       exclude: /vendor|node_modules/,
       sourceURLTemplate: module => `/${module.identifier}`,
@@ -31,7 +28,7 @@ module.exports = merge.smart(common, {
       columns: false,
       module: true
     })
-  ],
+  ].filter(Boolean),
   devServer: {
     host: process.env[envVars.PRISM_LOCAL_HOST],
     port: process.env[envVars.PRISM_LOCAL_PORT],

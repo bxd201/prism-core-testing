@@ -1,5 +1,6 @@
 // @flow
-import * as firebase from 'firebase'
+import * as firebase from 'firebase/app'
+import 'firebase/auth'
 import { addSystemMessage, SYSTEM_MESSAGE_TYPES } from './systemMessages'
 
 export const LOGGING_IN = 'LOGGING_IN'

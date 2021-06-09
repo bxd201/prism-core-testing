@@ -74,6 +74,25 @@ export const rowHasLabels = memoizee((grid: string[][][][], rowIndex: number, la
   return labels.length > numElementsBeforeRow && take(drop(labels, numElementsBeforeRow), grid[rowIndex].length).some(label => label !== undefined)
 })
 
+/**
+ * @param {*} grid
+ * @param {*} paddingBetweenChunks spacing between chunks in cells
+ * @param {*} labels the labels array, when a chunkrow has a label it is considered to be 1.6 cells taller
+ * @returns total grid height in cells
+ */
+export const getTotalGridHeight = (grid: string[][][][], paddingBetweenChunks: number, labels: (?string)[]) => (
+  grid.reduce((h, chunkRow, i) => h + paddingBetweenChunks + getHeightOfChunkRow(chunkRow) + (rowHasLabels(grid, i, labels) ? 1.6 : 0), 0) + 2
+)
+
+/**
+ * @param {*} grid
+ * @param {*} paddingBetweenChunks spacing between chunks in cells
+ * @returns total grid width in cells
+ */
+export const getTotalGridWidth = (grid: string[][][][], paddingBetweenChunks: number) => (
+  grid.reduce((w, chunkRow) => Math.max(w, getWidthOfChunkRow(chunkRow) + paddingBetweenChunks * chunkRow.length), 0) + 2
+)
+
 // return scroll offsets (in pixels) for a specific grid, color, and container dimensions
 export const computeFinalScrollPosition = (
   grid: string[][][][],
@@ -87,14 +106,8 @@ export const computeFinalScrollPosition = (
 
   const widthOfChunksToTheLeft = take(grid[chunkRow], chunkColumn).reduce((w, chunk) => w + paddingBetweenChunks + getLongestArrayIn2dArray(chunk), 0)
   const heightOfChunksAbove = take(grid, chunkRow).reduce((h, chunkRow, i) => h + paddingBetweenChunks + getHeightOfChunkRow(chunkRow) + (rowHasLabels(grid, i, labels) ? 2 : 0), 0) + 2
-
-  const totalGridWidth = (grid.reduce((w, chunkRow) => {
-    return Math.max(w, getWidthOfChunkRow(chunkRow) + paddingBetweenChunks * chunkRow.length)
-  }, 0) + 2) * 50 - containerWidth
-
-  const totalGridHeight = (grid.reduce((h, chunkRow, i) => {
-    return h + paddingBetweenChunks + getHeightOfChunkRow(chunkRow) + (rowHasLabels(grid, i, labels) ? 1.6 : 0)
-  }, 0) + 2) * 50 - containerHeight
+  const totalGridWidth = getTotalGridWidth(grid, paddingBetweenChunks) * 50 - containerWidth
+  const totalGridHeight = getTotalGridHeight(grid, paddingBetweenChunks, labels) * 50 - containerHeight
 
   return {
     scrollLeft: clamp((widthOfChunksToTheLeft + column) * 50 - containerWidth / 2, 0, totalGridWidth),
@@ -146,9 +159,6 @@ export const calculateLabelHeight = (cellSize: number): number => {
 }
 
 // Calculate the bottom margin of the color wall section label depending on the size of cell size
-export const calculateLabelMarginBottom = (isZoomedIn: Boolean, cellSize: number): number => {
-  if (isZoomedIn) {
-    return cellSize * 0.6
-  }
-  return cellSize * 0.2
-}
+export const calculateLabelMarginBottom = (isZoomedIn: Boolean, cellSize: number): number => (
+  cellSize * (isZoomedIn ? 0.6 : 0.2)
+)
