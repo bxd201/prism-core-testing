@@ -18,6 +18,7 @@ const common = require('./webpack.prism.common.js')
 
 module.exports = merge.smart(common, {
   mode: flags.mode,
+  stats: 'errors-warnings',
   plugins: [
     require('./partial.plugins.analyzeBundle').analyzeBundle,
     new webpack.EvalSourceMapDevToolPlugin({
