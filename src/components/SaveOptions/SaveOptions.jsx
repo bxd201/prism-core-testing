@@ -47,6 +47,11 @@ const SaveOptions = (props: SaveOptionsProps) => {
 
   const handleSave = useCallback((e: SyntheticEvent) => {
     e.preventDefault()
+    // Don't muddle th ealready complex save logic and giv efast mask its own block
+    if (pathname === ROUTES_ENUM.ACTIVE_FAST_MASK) {
+
+    }
+
     if (((pathname === '/active') || (pathname === ROUTES_ENUM.ACTIVE_PAINT_SCENE)) && !toggleCompareColor) {
       if (lpColors.length !== 0) {
         const saveType = ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE === activeSceneLabel ? SAVE_OPTION.SAVE_STOCK_SCENE : SAVE_OPTION.SAVE_PAINT_SCENE

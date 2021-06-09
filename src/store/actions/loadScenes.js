@@ -27,9 +27,12 @@ export const fetchRemoteScenes = (brandId: string, options: any, sceneEndPoint: 
 }
 
 export const handleScenesFetchedForCVW = (data: ScenePayload) => {
+  const dataKeys = Object.keys(data) // we have to filter these against the constants we have here to remove extraneous data
   const sceneTypes = Object.keys(SCENE_TYPES)
     .map((sceneKey) => SCENE_TYPES[sceneKey])
-    .filter(val => FRONT_END_SCENE_TYPES.indexOf(val) === -1) // fast mask scenes are only created on the frontend so filter out
+    .filter(sceneKey => FRONT_END_SCENE_TYPES.indexOf(sceneKey) === -1) // fast mask scenes are only created on the frontend so filter out
+    .map(sceneType => dataKeys.indexOf(sceneType) > -1 ? sceneType : null) // check if the data key a known key
+    .filter(sceneType => sceneType) // tranform sparse array to a dense one
 
   const vectorizedScenes = sceneTypes.reduce((acc, curr) => {
     return [...acc, data[curr].scenes.map(datum => {
