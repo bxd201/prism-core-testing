@@ -9,6 +9,12 @@
 npm start
 ```
 
+### Running Bundle Analysis
+```
+# will run normal Prism startup proces, and launch additional tabs for visual bundle analysis
+ANALYZE_BUNDLES=true npm start
+```
+
 #### Specifying local host, port, and protocol for Prism, embed, or template webpck dev servers
 Since we have 3 parallell webpack dev server instances running (one for the embed script, one for templates, and a third for the main Prism app), the best way to configure hosts or work around port conflicts is not immediately apparent.
 

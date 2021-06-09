@@ -2,7 +2,7 @@
 /* eslint-disable react/jsx-no-bind */
 import React, { useContext, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useRouteMatch, NavLink, useHistory } from 'react-router-dom'
+import { useRouteMatch, NavLink, useHistory, Link } from 'react-router-dom'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Menu, MenuItem, Wrapper, Button } from 'react-aria-menubutton'
 import at from 'lodash/at'
@@ -22,13 +22,12 @@ const menuBarPrefix = 'menu-bar'
 
 type SelectPropsT = {
   placeholderText: string,
-  options: string[],
+  options: { label: string, link: string }[],
   disabled?: boolean,
-  onOptionSelected: (string) => void,
   onSelectOpened?: (boolean) => void
 }
 
-const Select = ({ placeholderText, options, disabled = false, onOptionSelected, onSelectOpened }: SelectPropsT) => (
+const Select = ({ placeholderText, options, disabled = false, onSelectOpened }: SelectPropsT) => (
   <Wrapper
     className={`${MODE_CLASS_NAMES.CELL} ${MODE_CLASS_NAMES.RIGHT} ${menuBarPrefix}`}
     onMenuToggle={({ isOpen }) => onSelectOpened?.(isOpen)}
@@ -38,15 +37,11 @@ const Select = ({ placeholderText, options, disabled = false, onOptionSelected, 
       <FontAwesomeIcon className='close-icon-svg' icon={['fa', 'angle-down']} pull='right' />
     </Button>
     <Menu className={`${menuBarPrefix}__menu`}>
-      {options.map(option => (
-        <MenuItem className={`${menuBarPrefix}__menu-item`} key={option} text={option} value={option}>
-          <button
-            className={`${menuBarPrefix}__menu-link`}
-            onClick={() => onOptionSelected(option)}
-            onKeyDown={() => onOptionSelected(option)}
-          >
-            <span className={MODE_CLASS_NAMES.DESC}>{option}</span>
-          </button>
+      {options.map(({ label, link }) => (
+        <MenuItem className={`${menuBarPrefix}__menu-item`} key={label} text={label} value={label}>
+          <Link className={`${menuBarPrefix}__menu-link`} to={link}>
+            <span className={MODE_CLASS_NAMES.DESC}>{label}</span>
+          </Link>
         </MenuItem>
       ))}
     </Menu>
@@ -73,30 +68,35 @@ export default () => {
     return (
       <div className={MODE_CLASS_NAMES.BASE}>
         <div className={`${MODE_CLASS_NAMES.COL} ${menuBarPrefix}-minimal`}>
-          <div className={`${menuBarPrefix}-minimal__left`}>
-            <button onClick={() => history.push(`${generateColorWallPageUrl(section, family)}search/`)}>
-              <FontAwesomeIcon icon={['fal', 'search']} size='lg' />
-              <span style={{ opacity: '0.5', marginLeft: '15px' }}>
-                <FormattedMessage id='SEARCH.SEARCH_FOR_A_COLOR' />
-              </span>
-            </button>
-            <Select
-              disabled={families.length < 2}
-              placeholderText={activeFamily || messages['EXPLORE_COLOR_FAMILIES']}
-              options={families.filter(f => f !== activeFamily)}
-              onOptionSelected={option => history.push(generateColorWallPageUrl(section, option))}
-            />
-            <Select
-              disabled={visibleSections.length < 2}
-              placeholderText={activeSection === primeColorWall ? messages['EXPLORE_COLLECTIONS'] : activeSection}
-              options={visibleSections.filter(s => s !== activeSection)}
-              onOptionSelected={option => history.push(generateColorWallPageUrl(option))}
-            />
-          </div>
           <button
+            className='search'
+            onClick={() => history.push(`${generateColorWallPageUrl(section, family)}search/`)}
+          >
+            <FontAwesomeIcon icon={['fal', 'search']} size='lg' />
+            <span style={{ opacity: '0.5', marginLeft: '15px' }}>
+              <FormattedMessage id='SEARCH.SEARCH_FOR_A_COLOR' />
+            </span>
+          </button>
+          <Select
+            disabled={families.length < 2}
+            placeholderText={activeFamily || messages['EXPLORE_COLOR_FAMILIES']}
+            options={families
+              .filter(f => f !== activeFamily)
+              .map(label => ({ label, link: generateColorWallPageUrl(section, label) }))
+            }
+          />
+          <Select
+            disabled={visibleSections.length < 2}
+            placeholderText={(activeSection === primeColorWall || !visibleSections.includes(activeSection)) ? messages['EXPLORE_COLLECTIONS'] : activeSection}
+            options={visibleSections
+              .filter(s => s !== activeSection)
+              .map(label => ({ label, link: generateColorWallPageUrl(label) }))
+            }
+          />
+          <button
+            className='viewEntire'
             disabled={!visibleSections.includes(primeColorWall) || (primeColorWall === activeSection && !activeFamily)}
             onClick={() => history.push(generateColorWallPageUrl(primeColorWall))}
-            style={{ margin: '0 20px' }}
           >
             <FormattedMessage id='VIEW_ENTIRE_COLOR_WALL' />
           </button>
@@ -165,10 +165,13 @@ export default () => {
                         ? (activeFamily && !wallSelectionMenuOpen) ? activeFamily : at(messages, 'ALL_COLORS')[0]
                         : (primeColorWall === activeSection) || wallSelectionMenuOpen ? at(messages, 'SELECT_COLLECTION')[0] : activeSection
                     }
-                    options={
-                      (isFamilyView || family ? families : visibleSections).filter(name => activeFamily !== name && activeSection !== name && (width <= 768 || !primeColorWall || primeColorWall !== name))
+                    options={(isFamilyView || family ? families : visibleSections)
+                      .filter(name => activeFamily !== name && activeSection !== name && (width <= 768 || !primeColorWall || primeColorWall !== name))
+                      .map(label => ({
+                        label,
+                        link: isFamilyView ? generateColorWallPageUrl(section, label) : generateColorWallPageUrl(label)
+                      }))
                     }
-                    onOptionSelected={option => history.push(isFamilyView ? generateColorWallPageUrl(section, option) : generateColorWallPageUrl(option))}
                     onSelectOpened={setWallSelectionMenuOpen}
                   />
                 </div>
