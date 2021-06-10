@@ -34,13 +34,13 @@ export default ({ children, redirect = true, defaultSection }: Props) => {
         <Route path={ROUTES_ENUM.COLOR_WALL + '/section/:section/family/:family/color/:colorId/:colorName/search/'}>{children}</Route>
         <Route path={ROUTES_ENUM.COLOR_WALL + '/section/:section/family/:family/color/:colorId/:colorName'}>{children}</Route>
         <Route path={ROUTES_ENUM.COLOR_WALL + '/section/:section/family/:family/search/'}>{children}</Route>
+        <Route path={ROUTES_ENUM.COLOR_WALL + '/section/:section/family/:family'}>{children}</Route>
         <Route path={ROUTES_ENUM.COLOR_WALL + '/section/:section/family'}>{children}</Route>
         <Route path={ROUTES_ENUM.COLOR_WALL + '/section/:section/color/:colorId/:colorName/family/'}>{children}</Route>
         <Route path={ROUTES_ENUM.COLOR_WALL + '/section/:section/color/:colorId/:colorName/search/'}>{children}</Route>
         <Route path={ROUTES_ENUM.COLOR_WALL + '/section/:section/color/:colorId/:colorName'}>{children}</Route>
         <Route path={ROUTES_ENUM.COLOR_WALL + '/section/:section/search/'}>{children}</Route>
         <Route path={ROUTES_ENUM.COLOR_WALL + '/section/:section'}>{children}</Route>
-        <Route path={ROUTES_ENUM.COLOR_WALL + '/section/:section/family/:family'}>{children}</Route>
         {redirect && <Redirect to={ROUTES_ENUM.COLOR_WALL + `/section/${kebabCase(defaultSection === undefined ? reduxSection.name : defaultSection)}`} />}
       </Switch>
     )
