@@ -94,6 +94,9 @@ pipeline {
         if [ "$BRANCH_NAME" == "release" ]
         then
           S3_FOLDER_NAME="\$VERSION"
+
+          # Copy latest version to root
+          aws s3 cp dist/ s3://sw-prism-web/" --recursive
         fi
 
         aws s3 cp dist/ s3://sw-prism-web/"\$S3_FOLDER_NAME"/ --recursive
