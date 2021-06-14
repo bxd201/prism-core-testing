@@ -34,7 +34,7 @@ import {
   stageNavigationReturnIntent,
   setNavigationIntent, clearNavigationIntent, setIsMatchPhotoPresented, cacheCarousel
 } from '../../../store/actions/navigation'
-import { ROUTES_ENUM } from './routeValueCollections'
+import { ROUTES_ENUM, SHOW_ACTIVE_SCENE } from './routeValueCollections'
 import SceneBlobLoader from '../../SceneBlobLoader/SceneBlobLoader'
 import {
   fetchRemoteScenes, handleScenesFetchedForCVW, handleScenesFetchErrorForCVW,
@@ -64,8 +64,14 @@ import { MODAL_TYPE_ENUM } from '../../CVWModalManager/constants'
 import { hydrateStockSceneFromSavedData } from '../../../store/actions/stockScenes'
 import { setActiveSceneKey } from '../../../store/actions/scenes'
 import { toggleCompareColor } from '../../../store/actions/live-palette'
-import { setImageForFastMask, setRefsDimsForFastMask } from '../../../store/actions/fastMask'
+import {
+  setFastMaskOpenCache,
+  setFastMaskSaveCache,
+  setImageForFastMask,
+  setRefsDimsForFastMask
+} from '../../../store/actions/fastMask'
 import FastMaskView from '../../FastMask/FastMaskView'
+import type { FastMaskWorkspace } from '../../FastMask/FastMaskView'
 
 export type CVWPropsType = {
   alwaysShowColorFamilies?: boolean,
@@ -115,6 +121,8 @@ const CVW = (props: CVWPropsType) => {
   const selectedVariantName = useSelector(store => store.selectedVariantName)
   const fastMaskRefDims = useSelector(store => store.fastMaskRefDims)
   const fastMaskImageUrl = useSelector(store => store.fastMaskImageUrl)
+  const fastMaskSaveCache = useSelector(store => store.fastMaskSaveCache)
+  const fastMaskOpenCache = useSelector(store => store.fastMaskOpenCache)
 
   // Use this hook to push any facet level embedded data to redux and handle any initialization
   useEffect(() => {
@@ -223,13 +231,7 @@ const CVW = (props: CVWPropsType) => {
   }
 
   const shouldHideSceneManagerDiv = (path: string) => {
-    if (path === '/') {
-      return false
-    }
-
-    const cleanedPath = path[path.length - 1] === '/' ? path.substring(0, path.length - 1) : path
-    // @todo we need to address this, split into discrete rules instead of regex -RS
-    return !cleanedPath.match(/(active|active\/colors|inspiration|scenes|active\/color-wall\/)$/)
+    return SHOW_ACTIVE_SCENE.indexOf(path) === -1
   }
 
   // This callback initializes all of the scene data
@@ -270,27 +272,38 @@ const CVW = (props: CVWPropsType) => {
   }
 
   const openSceneFromMyIdeasPreview = (sceneType: string) => {
-    let sceneLabel = ''
-
-    if (sceneType === SCENE_TYPE.anonStock) {
-      sceneLabel = ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE
-    }
+    let sceneLabel = ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE
+    let route = ROUTES_ENUM.ACTIVE
 
     if (sceneType === SCENE_TYPE.anonCustom) {
       sceneLabel = ACTIVE_SCENE_LABELS_ENUM.PAINT_SCENE
     }
 
+    if (sceneType === SCENE_TYPE.anonFastMask) {
+      route = ROUTES_ENUM.ACTIVE_FAST_MASK
+    }
+
     dispatch(setActiveSceneLabel(sceneLabel))
-    history.push(ROUTES_ENUM.ACTIVE)
+    history.push(route)
   }
 
   const goToPaintScene = (imageUrl: string, width: number, height: number, refDims: ReferenceDimensions) => {
+    if (!imageUrl) {
+      history.push(ROUTES_ENUM.ACTIVE)
+      return
+    }
+
     dispatch(setLayersForPaintScene(imageUrl, [], [], width, height, WORKSPACE_TYPES.generic, 0, '', []))
     dispatch(setActiveSceneLabel(ACTIVE_SCENE_LABELS_ENUM.PAINT_SCENE))
     history.push(ROUTES_ENUM.ACTIVE)
   }
 
   const goToMatchPhoto = (imageUrl: string, width: number, height: number, refDims: ReferenceDimensions) => {
+    if (!imageUrl) {
+      history.push(ROUTES_ENUM.ACTIVE)
+      return
+    }
+
     dispatch(setImageForMatchPhoto(imageUrl))
     dispatch(setImageDimsForMatchPhoto(refDims))
     dispatch(setIsMatchPhotoPresented(true))
@@ -316,15 +329,41 @@ const CVW = (props: CVWPropsType) => {
   }
 
   const goToFastMask = (imageUrl: string, width: number, height: number, refDims: ReferenceDimensions) => {
+    if (!imageUrl) {
+      history.push(ROUTES_ENUM.ACTIVE)
+      return
+    }
+
     dispatch(setImageForFastMask(imageUrl))
     dispatch(setRefsDimsForFastMask(refDims))
     history.push(ROUTES_ENUM.ACTIVE_FAST_MASK)
   }
 
+  const handleFastMaskData = (data: FastMaskWorkspace) => {
+    dispatch(setFastMaskSaveCache(data))
+  }
+
+  const cleanupFastMask = () => {
+    if (fastMaskSaveCache) {
+      URL.revokeObjectURL(fastMaskSaveCache.image)
+      fastMaskSaveCache.surfaces.forEach(surface => URL.revokeObjectURL(surface))
+      dispatch(setFastMaskSaveCache())
+    }
+
+    if (fastMaskOpenCache) {
+      dispatch(setFastMaskOpenCache())
+    }
+  }
+
   return (
     <>
       <>
-        {scenes ? <SceneBlobLoader scenes={scenes} variants={variants} initHandler={handleBlobLoaderInit} handleBlobsLoaded={handleSceneSurfacesLoaded} handleError={handleSceneBlobLoaderError} /> : null}
+        {scenes ? <SceneBlobLoader
+          scenes={scenes}
+          variants={variants}
+          initHandler={handleBlobLoaderInit}
+          handleBlobsLoaded={handleSceneSurfacesLoaded}
+          handleError={handleSceneBlobLoaderError} /> : null}
         <CVWModalManager />
         <ColorDetailsModal />
         <div style={{ display: toggleCompareColorFlag ? 'block' : 'none' }}>
@@ -343,15 +382,15 @@ const CVW = (props: CVWPropsType) => {
             <Route path={ROUTES_ENUM.COLOR_DETAILS} render={() => <ColorDetails />} />
             <Route path={`${ROUTES_ENUM.COLOR_WALL}(/.*)?`} render={() => <ColorWallPage alwaysShowColorFamilies={alwaysShowColorFamilies} displayAddButton displayInfoButton displayDetailsLink={false} />} />
             <Route path={ROUTES_ENUM.COLOR_COLLECTION} render={() => <ColorCollections isExpertColor={false} {...location.state} />} />
-            <Route path={ROUTES_ENUM.UPLOAD_FAST_MASK} render={() => <ImageIngestView cleanupCallback={cleanupStaleIngestedImage} handleDismissCallback={goToFastMask} imageUrl={ingestedImageUrl} maxSceneHeight={maxSceneHeight} />} />
-            <Route path={ROUTES_ENUM.UPLOAD_MATCH_PHOTO} render={() => <ImageIngestView cleanupCallback={cleanupStaleIngestedImage} handleDismissCallback={goToMatchPhoto} imageUrl={ingestedImageUrl} maxSceneHeight={maxSceneHeight} />} />
-            <Route path={ROUTES_ENUM.UPLOAD_PAINT_SCENE} render={() => <ImageIngestView cleanupCallback={cleanupStaleIngestedImage} handleDismissCallback={goToPaintScene} imageUrl={ingestedImageUrl} maxSceneHeight={maxSceneHeight} />} />
+            <Route path={ROUTES_ENUM.UPLOAD_FAST_MASK} render={() => <ImageIngestView cleanupCallback={cleanupStaleIngestedImage} handleDismissCallback={goToFastMask} imageUrl={ingestedImageUrl} maxSceneHeight={maxSceneHeight} closeLink={ROUTES_ENUM.ACTIVE} />} />
+            <Route path={ROUTES_ENUM.UPLOAD_MATCH_PHOTO} render={() => <ImageIngestView cleanupCallback={cleanupStaleIngestedImage} handleDismissCallback={goToMatchPhoto} imageUrl={ingestedImageUrl} maxSceneHeight={maxSceneHeight} closeLink={ROUTES_ENUM.ACTIVE} />} />
+            <Route path={ROUTES_ENUM.UPLOAD_PAINT_SCENE} render={() => <ImageIngestView cleanupCallback={cleanupStaleIngestedImage} handleDismissCallback={goToPaintScene} imageUrl={ingestedImageUrl} maxSceneHeight={maxSceneHeight} closeLink={ROUTES_ENUM.ACTIVE} />} />
             <Route path={ROUTES_ENUM.ACTIVE_MATCH_PHOTO} render={() => <MatchPhotoContainer colors={unorderedColors} imageUrl={matchPhotoImage} imageDims={matchPhotoImageDims} maxSceneHeight={maxSceneHeight} scalingWidth={wrapperDims.width} />} />
             <Route path={ROUTES_ENUM.USE_OUR_IMAGE} render={() => <SampleScenesWrapper activateScene={handleSceneSelection} />} />
             <Route path={ROUTES_ENUM.EXPERT_COLORS} render={() => <ExpertColorPicks isExpertColor />} />
             <Route path={ROUTES_ENUM.COLOR_FROM_IMAGE} render={() => <InspiredScene />} />
             <Route path={ROUTES_ENUM.PAINT_PHOTO} render={() => <SampleScenesWrapper isColorTinted activateScene={handleSceneSelection} />} />
-            <Route path={ROUTES_ENUM.MY_IDEAS_PREVIEW} render={() => <MyIdeaPreview openScene={openSceneFromMyIdeasPreview} />} />
+            <Route path={ROUTES_ENUM.MY_IDEAS_PREVIEW} render={() => <MyIdeaPreview maxSceneHeight={maxSceneHeight} openScene={openSceneFromMyIdeasPreview} />} />
             <Route path={ROUTES_ENUM.MASKING} render={() => <PaintSceneMaskingWrapper />} />
             <Route path={ROUTES_ENUM.ACTIVE_MYIDEAS} render={() => <MyIdeasContainer />} />
             <Route path={ROUTES_ENUM.HELP} render={() => <Help />} />
@@ -359,7 +398,10 @@ const CVW = (props: CVWPropsType) => {
               handleBlobLoaderError={handleSceneBlobLoaderError}
               refDims={fastMaskRefDims}
               imageUrl={fastMaskImageUrl}
-              activeColor={activeColor} />} />
+              activeColor={activeColor}
+              savedData={fastMaskOpenCache}
+              cleanupCallback={cleanupFastMask}
+              handleUpdates={handleFastMaskData} />} />
             {initialRender && defaultRoute ? <Redirect to={defaultRoute} /> : null}
           </Switch>
           <div

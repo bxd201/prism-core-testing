@@ -118,7 +118,7 @@ export const createDeleteMyIdeasModal = (intl, modalType, params) => {
     shouldDisplayModal: true,
     description: intl.formatMessage({ id: 'MY_IDEAS.DELETE_CONFIRM' }),
     actions: [
-      { text: intl.formatMessage({ id: 'MY_IDEAS.YES' }), callback: HANDLE_DELETE_MY_PREVIEW_CONFIRM, params: params },
+      { text: intl.formatMessage({ id: 'MY_IDEAS.YES' }), callback: HANDLE_DELETE_MY_PREVIEW_CONFIRM, params: { ...params } },
       { text: intl.formatMessage({ id: 'MY_IDEAS.NO' }), callback: HIDE_MODAL }
     ],
     allowInput: false,

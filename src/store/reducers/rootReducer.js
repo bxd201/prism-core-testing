@@ -47,7 +47,7 @@ import {
 } from './navigation'
 import { modalInfo, modalThumbnailColor } from './globalModal'
 import { matchPhotoImage, matchPhotoImageDims } from './matchPhoto'
-import { fastMaskImageUrl, fastMaskRefDims } from './fastMask'
+import { fastMaskSaveCache, fastMaskImageUrl, fastMaskRefDims, fastMaskOpenCache } from './fastMask'
 
 export default combineReducers({
   collectionSummaries,
@@ -120,5 +120,7 @@ export default combineReducers({
   // used to determine which facet should handle loading
   initializingFacetId,
   fastMaskImageUrl,
-  fastMaskRefDims
+  fastMaskRefDims,
+  fastMaskSaveCache,
+  fastMaskOpenCache
 })

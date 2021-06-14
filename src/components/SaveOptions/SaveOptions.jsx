@@ -49,7 +49,9 @@ const SaveOptions = (props: SaveOptionsProps) => {
     e.preventDefault()
     // Don't muddle th ealready complex save logic and giv efast mask its own block
     if (pathname === ROUTES_ENUM.ACTIVE_FAST_MASK) {
+      dispatch(createSaveSceneModal(intl, MODAL_TYPE_ENUM.FAST_MASK, SAVE_OPTION.SAVE_FAST_MASK))
 
+      return
     }
 
     if (((pathname === '/active') || (pathname === ROUTES_ENUM.ACTIVE_PAINT_SCENE)) && !toggleCompareColor) {

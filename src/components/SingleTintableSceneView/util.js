@@ -17,6 +17,9 @@ export const copySurfaceColors = (surfaceColors: MiniColor[] | null) => {
 }
 
 export const createMiniColorFromColor = (color: Color) => {
+  if (!color) {
+    return null
+  }
   const { brandKey, id, colorNumber, red, blue, green, hex, lab: { L, A, B } } = color
   return { brandKey, id, colorNumber, red, blue, green, L, A, B, hex }
 }

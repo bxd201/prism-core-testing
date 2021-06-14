@@ -336,7 +336,6 @@ const ColorVisualizerNav = () => {
     <nav className='cvw-navigation-wrapper' ref={navRef}>
       <input ref={hiddenImageUploadInput} style={{ display: 'none' }} type='file' accept={'.jpeg, .jpg, .png'} onChange={e => {
         // If you are looking to clear the uploaded image here, do not, you will face very strange render bugs.
-        // @todo replace regex check with accept param in input -RSß
         const userImg = e.target.files && e.target.files.length ? e.target.files[0] : null
         if (userImg) {
           if (shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.fastMask)) {

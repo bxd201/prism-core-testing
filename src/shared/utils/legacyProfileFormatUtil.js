@@ -1,6 +1,7 @@
 // @flow
 import pako from 'pako'
 import uniqueId from 'lodash/uniqueId'
+import { SCENE_TYPE } from '../../store/actions/persistScene'
 
 export const getDataFromFirebaseXML = (xmlString: string, colors) => {
   return getDataFromXML(xmlString, null, colors, true)
@@ -135,7 +136,7 @@ const unpackAndColorizeMask = (surface: any, sceneData: Object[], colors: Object
   }
 }
 
-export const createCustomSceneMetadata = (imageBaseName: string, description: string, uniqueId: string, colors: Object[], width: number, height: number, livePaletteColorsIdArray: Array<Object>) => {
+export const createCustomSceneMetadata = (imageBaseName: string, description: string, uniqueId: string, colors: Object[], width: number, height: number, livePaletteColorsIdArray: Array<Object>, sceneType: string = SCENE_TYPE.anonCustom) => {
   return {
     imageBaseName,
     description,
@@ -145,7 +146,8 @@ export const createCustomSceneMetadata = (imageBaseName: string, description: st
     colors: colors.map(color => {
       return { ...color }
     }),
-    livePaletteColorsIdArray: livePaletteColorsIdArray
+    livePaletteColorsIdArray: livePaletteColorsIdArray,
+    sceneType
   }
 }
 

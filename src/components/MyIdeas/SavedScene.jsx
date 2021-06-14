@@ -13,6 +13,8 @@ import type { ColorMap } from 'src/shared/types/Colors.js.flow'
 import SingleTintableSceneView from '../SingleTintableSceneView/SingleTintableSceneView'
 
 import './MyIdeas.scss'
+import { SCENE_TYPE } from '../../store/actions/persistScene'
+import { createScenesAndVariantsFromFastMaskWorkSpace } from '../../store/actions/fastMask'
 
 type SavedSceneProps = {
   sceneData: Object,
@@ -23,9 +25,9 @@ type SavedSceneProps = {
   height: number,
   editIndividualScene: Function,
   hideSceneName?: boolean,
-  useTintableScene?: boolean,
   sceneId: string,
-  isImgWidthPixel?: boolean
+  isImgWidthPixel?: boolean,
+  sceneType: string
 }
 
 const FIXED_WIDTH = 120
@@ -44,8 +46,17 @@ const colorClassName = `${colorsClassName}__color`
 const thumbnailClassName = `${paneClassName}__thumb`
 const editButtonClassName = `${sceneClassName}__edit`
 
-const createColors = (sceneData: any, isTintableScene: boolean, colorMap: ColorMap) => {
-  const colors = isTintableScene ? sceneData.sceneMetadata.scene.surfaceColors : sceneData.palette
+const USE_TINTABLE_SCENE_TYPES = [SCENE_TYPE.anonStock, SCENE_TYPE.anonFastMask]
+
+const createColors = (sceneData: any, sceneType: string, colorMap: ColorMap) => {
+  const getColorsBySceneType = (data: any, sceneType: string) => {
+    if (sceneType === SCENE_TYPE.anonStock) {
+      return data.sceneMetadata.scene.surfaceColors
+    }
+    // anon-stock scenes and anon fast mask use same data api but fast mask uses same tinting api as anon stock...
+    return data.palette
+  }
+  const colors = getColorsBySceneType(sceneData, sceneType)
   const livePaletteColorsIdArray = (sceneData.sceneMetadata && sceneData.sceneMetadata.hasOwnProperty('livePaletteColorsIdArray'))
     ? sceneData.sceneMetadata.livePaletteColorsIdArray
     : sceneData.hasOwnProperty('livePaletteColorsIdArray') ? sceneData.livePaletteColorsIdArray
@@ -69,8 +80,24 @@ const createColors = (sceneData: any, isTintableScene: boolean, colorMap: ColorM
 }
 
 const SavedScene = (props: SavedSceneProps, ref: RefObject | null) => {
+  const useTintableScene = USE_TINTABLE_SCENE_TYPES.indexOf(props.sceneType) > -1
   const intl = useIntl()
-  const { width, height } = props.useTintableScene ? props.sceneData.scene : props.sceneData.surfaceMasks
+  let width = 0
+  let height = 0
+  if (props.sceneType === SCENE_TYPE.anonStock) {
+    width = props.sceneData.scene.width
+    height = props.sceneData.scene.height
+  }
+
+  if (props.sceneType === SCENE_TYPE.anonCustom) {
+    width = props.sceneData.surfaceMasks.width
+    height = props.sceneData.surfaceMasks.height
+  }
+
+  if (props.sceneType === SCENE_TYPE.anonFastMask) {
+    width = props.sceneData.width
+    height = props.sceneData.height
+  }
 
   const [thumbnailUrl, setThumbnailUrl] = useState(null)
   const [backgroundImageData, setBackgroundImageData] = useState(null)
@@ -78,12 +105,15 @@ const SavedScene = (props: SavedSceneProps, ref: RefObject | null) => {
   const imageRef = useRef()
   const { items: { colorMap } }: ColorMap = useSelector(state => state.colors)
 
+  const fastMaskSceneAndVariant = props.sceneType === SCENE_TYPE.anonFastMask ? createScenesAndVariantsFromFastMaskWorkSpace(props.sceneData) : null
+
   useEffect(() => {
     let backgroundImageUrl = ''
-    const variant = props.useTintableScene && props.sceneData.variant ? props.sceneData.variant : null
+    const variant = useTintableScene && props.sceneData.variant ? props.sceneData.variant : null
     const stockSceneBackgroundUrl = variant ? variant.image : null
 
     if (props.sceneData.renderingBaseUrl) {
+      // @todo I thought I removed this self invoking function, rewrite this -RS
       backgroundImageUrl = ((renderingBaseUrl) => {
         const splitUrl = renderingBaseUrl.split('/')
         return `/public/${splitUrl[splitUrl.length - 1]}.jpg`
@@ -100,13 +130,12 @@ const SavedScene = (props: SavedSceneProps, ref: RefObject | null) => {
   const deleteScene = (e: SyntheticEvent) => {
     e.preventDefault()
     e.stopPropagation()
-    // useTinableScene infers scene type
-    props.deleteScene(props.sceneId, !!props.useTintableScene)
+    props.deleteScene(props.sceneId, props.sceneType)
   }
 
   const selectScene = (e: SyntheticEvent) => {
     if (props.editEnabled) {
-      props.editIndividualScene(props.sceneData, !!props.useTintableScene)
+      props.editIndividualScene(props.sceneData)
       return
     }
 
@@ -126,7 +155,7 @@ const SavedScene = (props: SavedSceneProps, ref: RefObject | null) => {
   const handleKeyDown = (e: SyntheticEvent) => {
     if (e.keyCode === KEY_CODES.KEY_CODE_ENTER || e.keyCode === KEY_CODES.KEY_CODE_SPACE) {
       if (props.editEnabled) {
-        props.editIndividualScene(props.sceneData, !!props.useTintableScene)
+        props.editIndividualScene(props.sceneData)
       } else selectScene(e)
     }
   }
@@ -135,9 +164,17 @@ const SavedScene = (props: SavedSceneProps, ref: RefObject | null) => {
     e.preventDefault()
   }
 
+  const getSceneName = (data: any, sceneType: string) => {
+    if (sceneType === SCENE_TYPE.anonStock) {
+      return data.sceneMetadata.name
+    }
+
+    return data.name
+  }
+
   return (
     <div className={`${sceneClassName} ${(props.isImgWidthPixel) ? sceneIndividual : sceneCarousel}`}>
-      {backgroundImageSrc && !props.useTintableScene ? <PrismImage
+      {backgroundImageSrc && !useTintableScene ? <PrismImage
         ref={imageRef}
         source={backgroundImageSrc}
         loadedCallback={handleBackgroundImageLoaded}
@@ -145,7 +182,7 @@ const SavedScene = (props: SavedSceneProps, ref: RefObject | null) => {
         scalingWidth={width}
         width={width}
         height={height} /> : null}
-      {backgroundImageData && !props.useTintableScene ? <MergeColors
+      {backgroundImageData && !useTintableScene ? <MergeColors
         shouldTint
         colorOpacity={0.8}
         imageDataList={[backgroundImageData, ...props.sceneData.surfaceMasks.surfaces.map(surface => surface.surfaceMaskImageData)]}
@@ -160,32 +197,32 @@ const SavedScene = (props: SavedSceneProps, ref: RefObject | null) => {
           ? <div className={editButtonClassName}>
             <button onClick={deleteScene}>
               <FontAwesomeIcon
-                title={`${intl.formatMessage({ id: 'DELETE' })} ${props.useTintableScene ? props.sceneData.sceneMetadata.name : props.sceneData.name}`}
+                title={`${intl.formatMessage({ id: 'DELETE' })} ${getSceneName(props.sceneData, props.sceneType)}`}
                 icon={['fal', 'trash-alt']}
                 size='sm' />
             </button>
           </div> : null}
-        <div aria-label={props.useTintableScene ? `${props.editEnabled ? intl.formatMessage({ id: 'RENAME' }) : intl.formatMessage({ id: 'SHOW' })}${props.sceneData.sceneMetadata.name}` : `${props.editEnabled ? intl.formatMessage({ id: 'RENAME' }) : intl.formatMessage({ id: 'SHOW' })}${props.sceneData.name}`} ref={ref} role='button' tabIndex='0' className={sceneFrameClassName} onClick={selectScene} onKeyDown={handleKeyDown} onMouseDown={mouseDownHandler} >
+        <div aria-label={`${props.editEnabled ? intl.formatMessage({ id: 'RENAME' }) : intl.formatMessage({ id: 'SHOW' })}${getSceneName(props.sceneData, props.sceneType)}`} ref={ref} role='button' tabIndex='0' className={sceneFrameClassName} onClick={selectScene} onKeyDown={handleKeyDown} onMouseDown={mouseDownHandler} >
           <div className={paneClassName}>
-            {!props.useTintableScene ? <div className={thumbnailClassName} style={{ width: `${props.width || FIXED_WIDTH}${props.isImgWidthPixel ? `px` : `%`}`, height: `${props.height || FIXED_HEIGHT}px` }}>
+            {!useTintableScene ? <div className={thumbnailClassName} style={{ width: `${props.width || FIXED_WIDTH}${props.isImgWidthPixel ? `px` : `%`}`, height: `${props.height || FIXED_HEIGHT}px` }}>
               {thumbnailUrl ? <img style={{ width: `${props.width || FIXED_WIDTH}${props.isImgWidthPixel ? `px` : `%`}` }} src={thumbnailUrl} alt={`${intl.formatMessage({ id: 'MY_IDEAS.PREVIEW' })}: ${props.sceneData.name}`} /> : <CircleLoader />}
             </div> : null}
-            {props.useTintableScene ? <div className={thumbnailClassName} style={{ width: `${props.width || FIXED_WIDTH}${props.isImgWidthPixel ? `px` : `%`}`, height: `${props.height || FIXED_HEIGHT}px` }}>
+            {useTintableScene && (props.sceneData?.variant || fastMaskSceneAndVariant?.variant) ? <div className={thumbnailClassName} style={{ width: `${props.width || FIXED_WIDTH}${props.isImgWidthPixel ? `px` : `%`}`, height: `${props.height || FIXED_HEIGHT}px` }}>
               <SingleTintableSceneView
-                surfaceColorsFromParents={props.sceneData.sceneMetadata.scene.surfaceColors}
-                selectedSceneUid={props.sceneData.variant.sceneUid}
-                scenesCollection={[props.sceneData.scene]}
-                variantsCollection={[props.sceneData.variant]}
+                surfaceColorsFromParents={props.sceneType === SCENE_TYPE.anonStock ? props.sceneData.sceneMetadata.scene.surfaceColors : props.sceneData.palette}
+                selectedSceneUid={props.sceneType === SCENE_TYPE.anonStock ? props.sceneData.variant.sceneUid : fastMaskSceneAndVariant.scene.uid}
+                scenesCollection={props.sceneType === SCENE_TYPE.anonStock ? [props.sceneData.scene] : [fastMaskSceneAndVariant.scene]}
+                variantsCollection={props.sceneType === SCENE_TYPE.anonStock ? [props.sceneData.variant] : [fastMaskSceneAndVariant.variant]}
                 showThumbnail
               />
             </div> : null}
             <div className={colorsClassName}>
-              {createColors(props.sceneData, props.useTintableScene, colorMap)}
+              {createColors(props.sceneData, props.sceneType, colorMap)}
             </div>
           </div>
         </div>
         {!props.hideSceneName ? <div className={sceneLabelClassName}>
-          {props.useTintableScene ? props.sceneData.sceneMetadata.name : props.sceneData.name}
+          {getSceneName(props.sceneData, props.sceneType)}
         </div> : null}
       </div>
     </div>

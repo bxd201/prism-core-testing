@@ -20,7 +20,8 @@ export const ROUTES_ENUM = {
   MY_IDEAS_PREVIEW: '/my-ideas-preview',
   MASKING: '/active/masking',
   UPLOAD_FAST_MASK: '/upload/fast-mask',
-  ACTIVE_FAST_MASK: '/active/fast-mask'
+  ACTIVE_FAST_MASK: '/active/fast-mask',
+  ROOT: '/'
 }
 
 // @todo help should likely come out of here, and should only be presented modally.
@@ -31,3 +32,12 @@ export const TOP_LEVEL_ROUTES = [ROUTES_ENUM.SCENES, ROUTES_ENUM.ACTIVE_COLORS, 
 export const IMAGE_ROTATE_BYPASS_ROUTES = [ROUTES_ENUM.ACTIVE_PAINT_SCENE]
 // This collection confirms which screens can modally present the color wall
 export const COLORWALL_MODAL_PRESENTERS = [ROUTES_ENUM.ACTIVE_PAINT_SCENE, ROUTES_ENUM.ACTIVE]
+
+export const SHOW_ACTIVE_SCENE = [
+  ROUTES_ENUM.ROOT,
+  ROUTES_ENUM.ACTIVE,
+  ROUTES_ENUM.ACTIVE_PAINT_SCENE,
+  ROUTES_ENUM.SCENES,
+  ROUTES_ENUM.INSPIRATION,
+  ROUTES_ENUM.ACTIVE_COLORS
+]
