@@ -47,6 +47,10 @@ export type ConfigurationContextType = {
         navThumbIpad?: string,
         navThumbIphone?: string,
         navThumbMyPhotos?: string,
+        palette?: {
+            title?: string,
+            compare?: string
+        },
         termsOfUseLink?: string,
         help?: {
             addColor1?: string,

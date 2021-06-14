@@ -28,6 +28,7 @@ import EmptySlot from './EmptySlot'
 import type { Color } from '../../shared/types/Colors.js.flow'
 
 import './LivePalette.scss'
+import WithConfigurationContext from '../../contexts/ConfigurationContext/WithConfigurationContext'
 import storageAvailable from '../../shared/utils/browserStorageCheck.util'
 import { fullColorNumber } from '../../shared/helpers/ColorUtils'
 import {
@@ -49,7 +50,8 @@ type Props = {
   temporaryActiveColor: Color | null,
   setNavigationIntents: Function,
   isColorwallModallyPresented: boolean,
-  isCompareColorShown: boolean
+  isCompareColorShown: boolean,
+  config: any
 }
 
 // @todo refactor to put state init in constructor and also bind handleAddColor, removing anon func call in render ...better yet this is a good hooks candidate... -RS
@@ -140,6 +142,7 @@ export class LivePalette extends PureComponent<Props, State> {
   render () {
     const { colors, activeColor, deactivateTemporaryColor, empty, temporaryActiveColor, isCompareColorShown } = this.props
     const { spokenWord, isFastMaskPage } = this.state
+    const { compare, title } = this.props.config.cvw?.palette ?? {}
 
     // determine how many empty slots there should be
     let disabledSlots = []
@@ -157,10 +160,10 @@ export class LivePalette extends PureComponent<Props, State> {
         <div className='prism-live-palette'>
           <LivePaletteModal cancel={deactivateTemporaryColor} empty={empty} isActive={temporaryActiveColor !== null} />
           <div className='prism-live-palette__header'>
-            <span className='prism-live-palette__header__name'><FormattedMessage id='PALETTE_TITLE' /></span>
+            <span className='prism-live-palette__header__name'>{title ?? <FormattedMessage id='PALETTE_TITLE' />}</span>
             {
               colors.length >= MIN_COMPARE_COLORS_ALLOWED &&
-              <FormattedMessage id={COMPARE_COLORS_TEXT}>
+              (compare ?? <FormattedMessage id={COMPARE_COLORS_TEXT}>
                 {
                   (msg: string) =>
                     <button
@@ -175,7 +178,7 @@ export class LivePalette extends PureComponent<Props, State> {
                       {msg}
                     </button>
                 }
-              </FormattedMessage>
+              </FormattedMessage>)
             }
           </div>
           {activeColor && <div className='prism-live-palette__active-color' style={{ backgroundColor: activeColor.hex }}>
@@ -270,4 +273,4 @@ const mapDispatchToProps = (dispatch: Function) => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(LivePalette)
+export default connect(mapStateToProps, mapDispatchToProps)(WithConfigurationContext(LivePalette))
