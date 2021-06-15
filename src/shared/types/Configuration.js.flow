@@ -37,6 +37,7 @@ export type Configuration = {
 export type EmbeddedConfiguration = {
   brand?: string,
   colorDetailPageRoot?: string,
+  defaultRoute?: string,
   displayAddButton?: boolean,
   displayDetailsLink?: boolean,
   displayInfoButton?: boolean,
