@@ -1,2 +1,48 @@
 .ColorDetailsCTAs {
+  padding: 1em;
+
+  &__title {
+    font-size: .8em;
+    text-align: center;
+    font-weight: 600;
+    text-transform: uppercase;
+    padding: 0;
+  }
+
+  &__list {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    list-style: none;
+    margin-top: .5em;
+    margin: none;
+    padding: none;
+  }
+
+  &__cta {
+    $basicShadow: inset 0 0 0 1px rgba(#999, .5);
+
+    background: var(getThemeColor('primary.contrast'));
+    border: none;
+    box-shadow: $basicShadow;
+    color: var(getThemeColor('primary'));
+    display: inline-block;
+    font-size: .8em;
+    font-weight: 500;
+    line-height: 1;
+    margin: .5em .2em 0;
+    padding: .75em 1em;
+    text-decoration: none !important;
+    text-transform: uppercase;
+
+    &:focus {
+      box-shadow: $basicShadow, 0 0 0 1px var(getThemeColor('primary'));
+    }
+
+    &:hover, &:active {
+      color: var(getThemeColor('primary.darker'));
+      background: var(getThemeColor('primary.darker.contrast'));
+    }
+  }
 }

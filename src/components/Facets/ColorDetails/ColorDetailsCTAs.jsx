@@ -1,7 +1,8 @@
-/* eslint-disable */
 // @flow
 import React from 'react'
 import './ColorDetailsCTAs.scss'
+import { FormattedMessage } from 'react-intl'
+import withUniqueId from '../../../shared/HOCs/withUniqueId'
 
 export type ColorDetailsCTAData = {
   text: string,
@@ -12,7 +13,7 @@ export type ColorDetailsCTAData = {
 }
 
 const ColorDetailsCTABtn = function ColorDetailsCTABtn ({ text, link, attributes = {} }: ColorDetailsCTAData) {
-  return <a href={link} {...attributes}>{text}</a>
+  return <a className='ColorDetailsCTAs__cta' href={link} {...attributes}>{text}</a>
 }
 
 type ColorDetailsCTAsProps = {
@@ -20,15 +21,13 @@ type ColorDetailsCTAsProps = {
   className?: string
 }
 
-export const ColorDetailsCTAs = function ColorDetailsCTAs ({ data, className = '' }: ColorDetailsCTAsProps) {
-  return null
-
-  // return (
-  //   <div className={`ColorDetailsCTAs ${className}`}>
-  //     Like this color? Buy a product below
-  //     <ul>
-  //       {data.map((btnData, i) => <li key={i}><ColorDetailsCTABtn {...btnData} /></li>)}
-  //     </ul>
-  //   </div>
-  // )
-}
+export const ColorDetailsCTAs = withUniqueId(function ColorDetailsCTAs ({ data, uid, className = '' }: ColorDetailsCTAsProps) {
+  return (
+    <section tabIndex={0} className={`ColorDetailsCTAs ${className}`} aria-labelledby={uid}>
+      <h2 className='ColorDetailsCTAs__title' id={uid}><FormattedMessage id='COLOR_DETAILS_CALL_TO_ACTION_HEADING' /></h2>
+      <ul className='ColorDetailsCTAs__list'>
+        {data.map((btnData, i) => <li key={i}><ColorDetailsCTABtn {...btnData} /></li>)}
+      </ul>
+    </section>
+  )
+})

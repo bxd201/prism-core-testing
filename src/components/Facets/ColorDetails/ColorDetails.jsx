@@ -100,7 +100,7 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
             <ColorStrip key={color.id} color={color} onColorChanged={setColor} />
           </div>
 
-          <ColorDetailsCTAs data={callsToAction} />
+          {callsToAction?.length ? <ColorDetailsCTAs className='color-detail__ctas color-detail__ctas--mobile' data={callsToAction} /> : null}
 
           <div className={`${baseClass}__additional-info`}>
             <Tabs
@@ -146,7 +146,7 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
         </div>
       </div>
 
-      <ColorDetailsCTAs data={callsToAction} />
+      {callsToAction?.length ? <ColorDetailsCTAs className='color-detail__ctas color-detail__ctas--desktop' data={callsToAction} /> : null}
     </>
   )
 }
