@@ -1,12 +1,12 @@
 // @flow
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Route, Redirect, useLocation, useHistory } from 'react-router-dom'
 import facetBinder from 'src/facetSupport/facetBinder'
 import ColorDetails from 'src/components/Facets/ColorDetails/ColorDetails'
 import { ROUTE_PARAMS, ROUTE_PARAM_NAMES, SCENE_TYPES } from 'src/constants/globals'
 import { facetBinderDefaultProps } from 'src/facetSupport/facetInstance'
-import { facetPubSubDefaultProps } from 'src/facetSupport/facetPubSub'
+import { facetPubSubDefaultProps, PubSubCtx } from 'src/facetSupport/facetPubSub'
 import GenericMessage from '../Messages/GenericMessage'
 import { FormattedMessage } from 'react-intl'
 import type { ColorMap, Color, ColorId } from 'src/shared/types/Colors.js.flow'
@@ -29,14 +29,12 @@ const colorDetailsBaseUrl = `/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_DETAIL
 
 type Props = {
   colorSEO?: string, // ${brandKey}-${colorNumber}-${cleanColorNameForURL(name)}
-  publish?: (string, any) => void,
-  subscribe?: (string, Function) => void,
   brand: string,
   language: string
 }
 
-export const ColorDetailsPage = (props: Props) => {
-  const { colorSEO, publish, subscribe, brand, language } = props
+export const ColorDetailsPage = function ColorDetailsPage (props: Props) {
+  const { colorSEO, brand, language } = props
   const dispatch = useDispatch()
   loadColors(brand)(dispatch)
   const location = useLocation()
@@ -52,9 +50,22 @@ export const ColorDetailsPage = (props: Props) => {
   const selectedSceneUid = useSelector(store => store.selectedSceneUid)
   const [scenesFetchCalled, setScenesFetchCalled] = useState(false)
   const initialSelectedVariantName = useSelector(store => store.selectedVariantName)
+  const { subscribe, unsubscribe, publish } = useContext(PubSubCtx)
+  const [CTAs, setCTAs] = useState()
 
-  // @todo should this go in a useEffect hook? -RS
-  subscribe('prism-family-link', setFamilyLink)
+  const handleNewCTAs = function handleNewCTAs (newCTAs) {
+    setCTAs(newCTAs)
+  }
+
+  useEffect(() => {
+    subscribe('PRISM/in/update-color-ctas', handleNewCTAs)
+    return () => unsubscribe('PRISM/in/update-color-ctas', handleNewCTAs)
+  }, [])
+
+  useEffect(() => {
+    subscribe('prism-family-link', setFamilyLink)
+    return () => unsubscribe('prism-family-link', setFamilyLink)
+  }, [])
 
   // This hook is used to control loading of the scene data
   useEffect(() => {
@@ -111,6 +122,7 @@ export const ColorDetailsPage = (props: Props) => {
                     history.push(generateColorDetailsPageUrl(newColor))
                   }}
                   onColorChipToggled={newPosition => publish('prism-color-chip-toggled', newPosition)}
+                  callsToAction={CTAs}
                 />
               </Route>
             )}

@@ -21,6 +21,7 @@ import 'src/scss/convenience/visually-hidden.scss'
 import './ColorDetails.scss'
 import ColorDataWrapper from 'src/helpers/ColorDataWrapper/ColorDataWrapper'
 import HeroLoader from 'src/components/Loaders/HeroLoader/HeroLoader'
+import { ColorDetailsCTAs, type ColorDetailsCTAData } from './ColorDetailsCTAs'
 
 const baseClass = 'color-info'
 
@@ -32,10 +33,11 @@ type Props = {
   familyLink?: string,
   loading?: boolean,
   initialColor?: Color,
-  initialVariantName?: string
+  initialVariantName?: string,
+  callsToAction?: ColorDetailsCTAData[]
 }
 
-export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged, onColorChipToggled, familyLink, loading, initialColor, initialVariantName }: Props) => {
+export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged, onColorChipToggled, familyLink, loading, initialColor, initialVariantName, callsToAction = [] }: Props) => {
   const dispatch = useDispatch()
   const toggleSceneDisplayScene = useRef(null)
   const toggleSceneHideScene = useRef(null)
@@ -97,6 +99,9 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
             <ColorViewer color={color} />
             <ColorStrip key={color.id} color={color} onColorChanged={setColor} />
           </div>
+
+          {callsToAction?.length ? <ColorDetailsCTAs className='color-detail__ctas color-detail__ctas--mobile' data={callsToAction} /> : null}
+
           <div className={`${baseClass}__additional-info`}>
             <Tabs
               selectedIndex={tabIndex}
@@ -140,6 +145,8 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
           </div>
         </div>
       </div>
+
+      {callsToAction?.length ? <ColorDetailsCTAs className='color-detail__ctas color-detail__ctas--desktop' data={callsToAction} /> : null}
     </>
   )
 }

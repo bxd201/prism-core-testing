@@ -44,6 +44,24 @@ $details-tab-padding: 1rem;
     }
   }
 
+  &__ctas {
+    &--mobile {
+      display: block;
+
+      @include respond-above(sm) {
+        display: none;
+      }
+    }
+
+    &--desktop {
+      display: none;
+
+      @include respond-above(sm) {
+        display: block;
+      }
+    }
+  }
+
   @include respond-above(sm) {
     &__info-wrapper,
     &__scene-wrapper {
