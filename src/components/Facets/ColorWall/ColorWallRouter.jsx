@@ -9,7 +9,6 @@ import { loadColors } from '../../../store/actions/loadColors'
 import kebabCase from 'lodash/kebabCase'
 import HeroLoaderExpanded from 'src/components/Loaders/HeroLoader/HeroLoaderExpanded'
 import Propper from 'src/components/Propper/Propper'
-import { ROUTES_ENUM } from '../ColorVisualizerWrapper/routeValueCollections'
 
 // kind of a magic number for the time being
 // the color wall is fixed at 475px at the moment, with a max width of 990 on SW.com

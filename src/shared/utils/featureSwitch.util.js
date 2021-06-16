@@ -6,6 +6,14 @@ export const shouldAllowFeature = (featureExclusions, feature) => {
     return true
   }
 
+  // @todo Comment this out before going to prod THIS!!!!!!!!!!!!!!!!!!!!!!!! -RS
+  // if (feature === FEATURE_EXCLUSIONS.uploadYourPhoto) {
+  //   return false
+  // }
+  // if (feature === FEATURE_EXCLUSIONS.fastMask) {
+  //   return true
+  // }
+
   return featureExclusions.indexOf(feature) === -1
 }
 // @todo This validator allows us to understand the configuration rules and get ahead of configuration problems. This really needs a better home... -RS
