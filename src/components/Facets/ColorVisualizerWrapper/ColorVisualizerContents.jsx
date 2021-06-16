@@ -1,7 +1,7 @@
 // @flow
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { Switch, Route, useLocation, useHistory } from 'react-router-dom'
+import { Switch, Route, Redirect, useLocation, useHistory } from 'react-router-dom'
 import { ColorCollections } from '../../ColorCollections/ColorCollections'
 import ExpertColorPicks from '../../ExpertColorPicks/ExpertColorPicks'
 import Help from '../../Help/Help'
@@ -69,14 +69,16 @@ import FastMaskView from '../../FastMask/FastMaskView'
 
 type CVWPropsType = {
   maxSceneHeight: number,
-  language: string
+  language: string,
+  defaultRoute?: string
 }
 
 const CVW = (props: CVWPropsType) => {
-  const { maxSceneHeight, language } = props
+  const { defaultRoute, language, maxSceneHeight } = props
   const dispatch = useDispatch()
   const location = useLocation()
   const history = useHistory()
+  const [initialRender, setInitialRender] = useState(false)
   const toggleCompareColorFlag: boolean = useSelector(store => store.lp.toggleCompareColor)
   const colorDetailsModalShowing: boolean = useSelector(store => store.colors.colorDetailsModal.showing)
   const isPaintSceneCached: boolean = useSelector(store => !!store.paintSceneCache)
@@ -118,6 +120,7 @@ const CVW = (props: CVWPropsType) => {
     dispatch(setMaxSceneHeight(maxSceneHeight))
     dispatch(setActiveSceneLabel(ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE))
     fetchRemoteScenes(brandId, { language }, SCENES_ENDPOINT, handleScenesFetchedForCVW, handleScenesFetchErrorForCVW, dispatch)
+    setInitialRender(location.pathname === '/')
   }, [])
 
   // used to programmatically show modals
@@ -356,6 +359,7 @@ const CVW = (props: CVWPropsType) => {
               refDims={fastMaskRefDims}
               imageUrl={fastMaskImageUrl}
               activeColor={activeColor} />} />
+            {initialRender && defaultRoute ? <Redirect to={defaultRoute} /> : null}
           </Switch>
           <div
             /* This div has multiple responsibilities in the DOM tree. It cannot be removed, moved, or changed without causing regressions. */
