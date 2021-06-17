@@ -65,5 +65,6 @@ export const FEATURE_EXCLUSIONS: FeatureExclusionsType = {
   colorCollections: 'colorCollections', // this will exclude color collections from explore colors
   matchAPhoto: 'matchAPhoto', // removes match a photo from explore colors submenu,
   splashScreen: 'splashScreen', // Excluded the animated splash page,
-  paletteSaving: 'paletteSaving' // disable saving of color palettes
+  paletteSaving: 'paletteSaving', // disable saving of color palettes
+  colorDetailsSubtitles: 'colorDetailsSubtitles' // disable subtitles Interior / Exterior and Location Number of color details viewer
 }

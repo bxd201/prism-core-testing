@@ -28,7 +28,7 @@ import EmptySlot from './EmptySlot'
 import type { Color } from '../../shared/types/Colors.js.flow'
 
 import './LivePalette.scss'
-import WithConfigurationContext from '../../contexts/ConfigurationContext/WithConfigurationContext'
+import WithConfigurationContext, { type ConfigurationContextType } from '../../contexts/ConfigurationContext/WithConfigurationContext'
 import storageAvailable from '../../shared/utils/browserStorageCheck.util'
 import { fullColorNumber } from '../../shared/helpers/ColorUtils'
 import {
@@ -51,7 +51,7 @@ type Props = {
   setNavigationIntents: Function,
   isColorwallModallyPresented: boolean,
   isCompareColorShown: boolean,
-  config: any
+  config: ConfigurationContextType
 }
 
 // @todo refactor to put state init in constructor and also bind handleAddColor, removing anon func call in render ...better yet this is a good hooks candidate... -RS
