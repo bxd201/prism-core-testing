@@ -107,6 +107,7 @@ $cvw-nav-btn-height: 3rem; // TODO: make better
     background-color: var(getThemeColor('white'));
     border: 1px solid var(getThemeColor('white.contrast'));
     padding: .75em 1.75em;
+    text-transform: uppercase;
 
     &__ico { margin-left: 0.5em; }
 
@@ -165,6 +166,7 @@ $cvw-nav-btn-height: 3rem; // TODO: make better
       padding: 0;
       transition: color .2s ease-out;
       font-size: 1em;
+      text-transform: uppercase;
 
       @include respond-above(md) {
         font-size: 1.1em;

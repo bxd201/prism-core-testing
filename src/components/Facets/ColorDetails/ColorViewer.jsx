@@ -1,18 +1,18 @@
 // @flow
-import React from 'react'
+import React, { useContext } from 'react'
 import { FormattedMessage } from 'react-intl'
 import type { Color } from '../../../shared/types/Colors.js.flow'
 import { fullColorNumber } from '../../../shared/helpers/ColorUtils'
-import WithConfigurationContext, { type ConfigurationContextType } from '../../../contexts/ConfigurationContext/WithConfigurationContext'
+import ConfigurationContext, { type ConfigurationContextType } from '../../../contexts/ConfigurationContext/ConfigurationContext'
 import { shouldAllowFeature } from '../../../shared/utils/featureSwitch.util'
 import { FEATURE_EXCLUSIONS } from '../../../constants/configurations'
 
 type Props = {
-  color: Color,
-  config: ConfigurationContextType,
+  color: Color
 }
 
-function ColorViewer ({ color, config }: Props) {
+function ColorViewer ({ color }: Props) {
+  const { featureExclusions } = useContext<ConfigurationContextType>(ConfigurationContext)
   const BASE_CLASS = 'color-info'
 
   return (
@@ -21,7 +21,7 @@ function ColorViewer ({ color, config }: Props) {
         <span className={`${BASE_CLASS}__number`}>{fullColorNumber(color.brandKey, color.colorNumber)}</span>
         <span className={`${BASE_CLASS}__name`}>{color.name}</span>
       </h1>
-      {shouldAllowFeature(config.featureExclusions, FEATURE_EXCLUSIONS.colorDetailsSubtitles) && (
+      {shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.colorDetailsSubtitles) && (
         <>
           <h2 className={`${BASE_CLASS}__type`}>
             {(color.isInterior) ? <FormattedMessage id='INTERIOR' /> : ''}
@@ -39,4 +39,4 @@ function ColorViewer ({ color, config }: Props) {
   )
 }
 
-export default WithConfigurationContext(ColorViewer)
+export default ColorViewer

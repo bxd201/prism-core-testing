@@ -51,7 +51,7 @@ const Select = ({ placeholderText, options, disabled = false, onSelectOpened }: 
 export default () => {
   const { messages = {} } = useIntl()
   const { hiddenSections } = useContext(ColorWallContext)
-  const { uiStyle }: ConfigurationContextType = useContext(ConfigurationContext)
+  const { uiStyle, cvw } = useContext<ConfigurationContextType>(ConfigurationContext)
   const { path, params: { section, family } } = useRouteMatch()
   const { sections = [], families = [], section: activeSection, family: activeFamily, primeColorWall } = useSelector(state => state.colors)
   const dispatch = useDispatch()
@@ -124,7 +124,7 @@ export default () => {
                     <>
                       <ButtonBar.Button to={`${generateColorWallPageUrl(section, family)}search/`}>
                         <FontAwesomeIcon className='color-families-svg' icon={['fa', 'search']} pull='left' />
-                        <span className={MODE_CLASS_NAMES.DESC}><FormattedMessage id='SEARCH.SEARCH_COLOR' /></span>
+                        <span className={MODE_CLASS_NAMES.DESC}>{cvw.colorWall?.searchColor ?? <FormattedMessage id='SEARCH.SEARCH_COLOR' />}</span>
                       </ButtonBar.Button>
                       {families.length > 0 && (
                         <ButtonBar.Button disabled={families.length <= 1} to={`${generateColorWallPageUrl(section)}${PATH_END_FAMILY}`}>
