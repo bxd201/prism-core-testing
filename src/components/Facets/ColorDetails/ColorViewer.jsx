@@ -3,13 +3,13 @@ import React from 'react'
 import { FormattedMessage } from 'react-intl'
 import type { Color } from '../../../shared/types/Colors.js.flow'
 import { fullColorNumber } from '../../../shared/helpers/ColorUtils'
-import WithConfigurationContext from '../../../contexts/ConfigurationContext/WithConfigurationContext'
+import WithConfigurationContext, { type ConfigurationContextType } from '../../../contexts/ConfigurationContext/WithConfigurationContext'
 import { shouldAllowFeature } from '../../../shared/utils/featureSwitch.util'
 import { FEATURE_EXCLUSIONS } from '../../../constants/configurations'
 
 type Props = {
   color: Color,
-  config: { featureExclusions?: string[] },
+  config: ConfigurationContextType,
 }
 
 function ColorViewer ({ color, config }: Props) {
