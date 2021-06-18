@@ -1,6 +1,6 @@
 // @flow
 // eslint-disable-next-line no-unused-vars
-import React, { useRef, useState, useEffect, ReactChildren } from 'react'
+import React, { useContext, useRef, useState, useEffect, ReactChildren } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Switch, Route, useHistory, useLocation } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -10,12 +10,13 @@ import { queueImageUpload, setIngestedImage } from 'src/store/actions/user-uploa
 import './ColorVisualizerNav.scss'
 import { FEATURE_EXCLUSIONS } from '../../../constants/configurations'
 import { shouldAllowFeature } from '../../../shared/utils/featureSwitch.util'
-import WithConfigurationContext from '../../../contexts/ConfigurationContext/WithConfigurationContext'
+import ConfigurationContext, { type ConfigurationContextType } from '../../../contexts/ConfigurationContext/ConfigurationContext'
 import { createMatchPhotoNavigationWarningModal, createNavigationWarningModal } from '../../CVWModalManager/createModal'
 import {
   // cleanupNavigationIntent,
   setNavigationIntent,
-  setDirtyNavigationIntent, ACTIVE_SCENE_LABELS_ENUM
+  setDirtyNavigationIntent,
+  ACTIVE_SCENE_LABELS_ENUM
 } from '../../../store/actions/navigation'
 import { ROUTES_ENUM } from './routeValueCollections'
 import { MODAL_TYPE_ENUM } from '../../CVWModalManager/constants'
@@ -36,10 +37,6 @@ type DropDownMenuProps = {
     description?: string,
     onClick: () => void
   }[]
-}
-
-type ColorVisualizerNavProps = {
-  config: any
 }
 
 type WrapperProps = {
@@ -73,18 +70,21 @@ const resizeRootContainer = () => {
 
 export const DropDownMenu = ({ title, items }: DropDownMenuProps) => {
   const history = useHistory()
+  const { cvw } = useContext<ConfigurationContextType>(ConfigurationContext)
   const selectDevice = (web, iPhone = web, android = web, iPad = web) => (isMobileOnly ? (isIOS ? iPhone : android) : (isTablet ? iPad : web)) || web
+
   useEffect(() => {
     if (!(isMobileOnly || isTablet)) return
     resizeRootContainer()
     window.addEventListener('hashchange', resizeRootContainer)
   }, [isMobileOnly, isTablet])
+
   return (
     <>
       <button className='overlay' onClick={() => history.push(ROUTES_ENUM.ACTIVE)} />
       <div className='cvw-dashboard-submenu'>
         <button className='cvw-dashboard-submenu__close' onClick={() => history.push(ROUTES_ENUM.ACTIVE)}>
-          <FormattedMessage id='CLOSE' />
+          {cvw?.menu?.close ?? <FormattedMessage id='CLOSE' />}
           <FontAwesomeIcon className='cvw-dashboard-submenu__close__ico' icon={['fa', 'chevron-up']} />
         </button>
         <h1 className='cvw-dashboard-submenu__header'>{title}</h1>
@@ -110,8 +110,9 @@ export const DropDownMenu = ({ title, items }: DropDownMenuProps) => {
   )
 }
 
-const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
-  const { config: { featureExclusions, cvw, brand } } = props
+const ColorVisualizerNav = () => {
+  const { featureExclusions, cvw, brand } = useContext<ConfigurationContextType>(ConfigurationContext)
+  const { exploreColors, getInspired, paintAPhoto } = cvw?.menu ?? {}
   const { messages, formatMessage } = useIntl()
   const intl = useIntl()
   const history = useHistory()
@@ -133,23 +134,24 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
   }
 
   const getDropDownItemsForGetInspired = () => {
+    const { expertColorPicks, inspirationalPhotos, paintedPhotos } = getInspired ?? {}
     const items = [
       {
         img: cvw?.navPaintedScenes,
-        title: messages['NAV_LINKS.PAINTED_PHOTOS'],
-        content: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.PAINTED_PHOTOS'],
+        title: paintedPhotos?.title ?? messages['NAV_LINKS.PAINTED_PHOTOS'],
+        content: paintedPhotos?.content ?? messages['NAV_DROPDOWN_LINK_SUB_CONTENT.PAINTED_PHOTOS'],
         onClick: () => history.push(ROUTES_ENUM.USE_OUR_IMAGE)
       },
       {
         img: cvw?.navExpertColorPicks,
-        title: messages['NAV_LINKS.EXPERT_COLOR_PICKS'],
-        content: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.EXPERT_COLOR_PICKS'],
+        title: expertColorPicks?.title ?? messages['NAV_LINKS.EXPERT_COLOR_PICKS'],
+        content: expertColorPicks?.content ?? messages['NAV_DROPDOWN_LINK_SUB_CONTENT.EXPERT_COLOR_PICKS'],
         onClick: () => history.push(ROUTES_ENUM.EXPERT_COLORS)
       },
       {
         img: cvw?.navSamplePhotos,
-        title: messages['NAV_LINKS.INSPIRATIONAL_PHOTOS'],
-        content: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.INSPIRATIONAL_PHOTOS'],
+        title: inspirationalPhotos?.title ?? messages['NAV_LINKS.INSPIRATIONAL_PHOTOS'],
+        content: inspirationalPhotos?.content ?? messages['NAV_DROPDOWN_LINK_SUB_CONTENT.INSPIRATIONAL_PHOTOS'],
         onClick: () => history.push(ROUTES_ENUM.COLOR_FROM_IMAGE)
       }
     ]
@@ -171,12 +173,13 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
   }
 
   const getDropDownItemsForPaintAPhoto = () => {
+    const { uploadYourPhoto, useOurPhotos } = paintAPhoto ?? {}
     const items = [
       {
         id: NAV_ITEM_IDS.USE_OUR_PHOTO,
         img: cvw?.navSampleScenes,
-        title: messages['NAV_LINKS.USE_OUR_PHOTOS'],
-        content: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.USE_OUR_PHOTOS'],
+        title: useOurPhotos?.title ?? messages['NAV_LINKS.USE_OUR_PHOTOS'],
+        content: useOurPhotos?.content ?? messages['NAV_DROPDOWN_LINK_SUB_CONTENT.USE_OUR_PHOTOS'],
         onClick: () => history.push(ROUTES_ENUM.PAINT_PHOTO)
       },
       {
@@ -185,13 +188,13 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
         imgiPhone: cvw?.navThumbIphone,
         imgiPad: cvw?.navThumbIpad,
         imgAndroid: cvw?.navThumbAndroid,
-        title: messages['NAV_LINKS.UPLOAD_YOUR_PHOTO'],
+        title: uploadYourPhoto?.title ?? messages['NAV_LINKS.UPLOAD_YOUR_PHOTO'],
         titleMobile: messages['NAV_LINKS.GET_THE_APP'],
-        content: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.UPLOAD_YOUR_PHOTO'],
+        content: uploadYourPhoto?.content ?? messages['NAV_DROPDOWN_LINK_SUB_CONTENT.UPLOAD_YOUR_PHOTO'],
         contentAndroid: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.UPLOAD_YOUR_PHOTO_ANDROID'],
         contentiPad: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.UPLOAD_YOUR_PHOTO_IPAD'],
         contentiPhone: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.UPLOAD_YOUR_PHOTO_IPHONE'],
-        description: messages['NAV_DROPDOWN_LINK_TIP_DESCRIPTION.UPLOAD_YOUR_PHOTO'],
+        description: uploadYourPhoto?.footnote ?? messages['NAV_DROPDOWN_LINK_TIP_DESCRIPTION.UPLOAD_YOUR_PHOTO'],
         onClick: !(isMobileOnly || isTablet) ? () => {
           const selectDevice = (web, iPhone = web, android = web, iPad = web) => (isMobileOnly ? (isIOS ? iPhone : android) : (isTablet ? iPad : web)) || web
           history.push(selectDevice(
@@ -259,23 +262,24 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
   }
 
   const getDropDownItemsForExploreColors = () => {
+    const { colorCollections, digitalColorWall, matchAPhoto } = exploreColors ?? {}
     const items = [
       {
         img: cvw?.navExploreColor,
-        title: messages['NAV_LINKS.DIGITAL_COLOR_WALL'],
-        content: formatMessage({ id: 'NAV_DROPDOWN_LINK_SUB_CONTENT.DIGITAL_COLOR_WALL' }, { brand }),
+        title: digitalColorWall?.title ?? messages['NAV_LINKS.DIGITAL_COLOR_WALL'],
+        content: digitalColorWall?.content ?? formatMessage({ id: 'NAV_DROPDOWN_LINK_SUB_CONTENT.DIGITAL_COLOR_WALL' }, { brand }),
         onClick: () => history.push(ROUTES_ENUM.COLOR_WALL + '/section/sherwin-williams-colors')
       },
       {
         img: cvw?.navColorCollections,
-        title: messages['NAV_LINKS.COLOR_COLLECTIONS'],
-        content: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.COLOR_COLLECTIONS'],
+        title: colorCollections?.title ?? messages['NAV_LINKS.COLOR_COLLECTIONS'],
+        content: colorCollections?.content ?? messages['NAV_DROPDOWN_LINK_SUB_CONTENT.COLOR_COLLECTIONS'],
         onClick: () => history.push(ROUTES_ENUM.COLOR_COLLECTION)
       },
       {
         img: cvw?.navMatchPhoto,
-        title: messages['NAV_LINKS.MATCH_A_PHOTO'],
-        content: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.MATCH_A_PHOTO'],
+        title: matchAPhoto?.title ?? messages['NAV_LINKS.MATCH_A_PHOTO'],
+        content: matchAPhoto?.content ?? messages['NAV_DROPDOWN_LINK_SUB_CONTENT.MATCH_A_PHOTO'],
         onClick: () => {
           if (hiddenImageUploadInput.current && !isActiveScenePolluted) {
             hiddenImageUploadInput.current.value = ''
@@ -355,7 +359,7 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
                 <FontAwesomeIcon icon={['fal', 'square-full']} size='1x' transform={{ rotate: 350 }} />
                 <FontAwesomeIcon icon={['fal', 'plus-circle']} size='xs' />
               </span>
-              <FormattedMessage id='NAV_LINKS.EXPLORE_COLORS' />
+              {exploreColors?.tab ?? <FormattedMessage id='NAV_LINKS.EXPLORE_COLORS' />}
             </button>
           </li> : null }
         { shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.getInspired)
@@ -364,7 +368,7 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
               handleNavigation(ROUTES_ENUM.INSPIRATION)
             }}>
               <FontAwesomeIcon className='cvw-nav-btn-icon' icon={['fal', 'lightbulb']} size='1x' />
-              <FormattedMessage id='NAV_LINKS.GET_INSPIRED' />
+              {getInspired?.tab ?? <FormattedMessage id='NAV_LINKS.GET_INSPIRED' />}
             </button>
           </li> : null }
         { shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.paintAPhoto)
@@ -376,7 +380,7 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
                 <FontAwesomeIcon icon={['fal', 'square-full']} />
                 <FontAwesomeIcon icon={['fa', 'brush']} size='sm' transform={{ rotate: 320 }} />
               </span>
-              <FormattedMessage id='NAV_LINKS.PAINT_A_PHOTO' />
+              {paintAPhoto?.tab ?? <FormattedMessage id='NAV_LINKS.PAINT_A_PHOTO' />}
             </button>
           </li> : null }
         <li>
@@ -404,31 +408,31 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
       <Switch>
         <Route path={ROUTES_ENUM.ACTIVE_COLORS}>
           <DropDownMenu
-            title={messages['NAV_DROPDOWN_TITLE.EXPLORE_COLORS']}
+            title={exploreColors?.title ?? messages['NAV_DROPDOWN_TITLE.EXPLORE_COLORS']}
             items={getDropDownItemsForExploreColors()}
           />
         </Route>
         <Route path={ROUTES_ENUM.INSPIRATION}>
           <DropDownMenu
-            title={messages['NAV_DROPDOWN_TITLE.GET_INSPIRED']}
+            title={getInspired?.title ?? messages['NAV_DROPDOWN_TITLE.GET_INSPIRED']}
             items={getDropDownItemsForGetInspired()}
           />
         </Route>
         <Route path={ROUTES_ENUM.SCENES}>
           <DropDownMenu
-            title={messages['NAV_DROPDOWN_TITLE.PAINT_A_PHOTO']}
+            title={paintAPhoto?.title ?? messages['NAV_DROPDOWN_TITLE.PAINT_A_PHOTO']}
             items={getDropDownItemsForPaintAPhoto()}
           />
         </Route>
         <Route path={ROUTES_ENUM.ACTIVE_COLORS}>
           <DropDownMenu
-            title={messages['NAV_DROPDOWN_TITLE.GET_INSPIRED']}
+            title={exploreColors?.title ?? messages['NAV_DROPDOWN_TITLE.GET_INSPIRED']}
             items={getDropDownItemsForExploreColors()}
           />
         </Route>
         <Route path={ROUTES_ENUM.ACTIVE_PAINT_SCENE}>
           <DropDownMenu
-            title={messages['NAV_DROPDOWN_TITLE.GET_INSPIRED']}
+            title={paintAPhoto?.title ?? messages['NAV_DROPDOWN_TITLE.GET_INSPIRED']}
             items={getDropDownItemsForPaintAPhoto()}
           />
         </Route>
@@ -437,4 +441,4 @@ const ColorVisualizerNav = (props: ColorVisualizerNavProps) => {
   )
 }
 
-export default WithConfigurationContext(ColorVisualizerNav)
+export default ColorVisualizerNav
