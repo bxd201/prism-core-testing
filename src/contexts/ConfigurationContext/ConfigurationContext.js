@@ -11,6 +11,7 @@ type MenuItem = {
   content?: string,
   footnote?: string
 }
+export type UIStyle = 'alwaysShowColorFamilies' | 'default' | 'minimal'
 
 export type ConfigurationContextType = {
   brand: string,
@@ -39,7 +40,8 @@ export type ConfigurationContextType = {
   featureExclusions: string[],
   cvw: {
     colorWall?: {
-      searchColor?: string,
+      close?: string,
+      searchColor?: string
     },
     downloadSceneDisclaimer1?: string,
     downloadSceneDisclaimer1?: string,
@@ -116,7 +118,7 @@ export type ConfigurationContextType = {
       savingMobile2?: string
     }
   },
-  uiStyle: 'default' | 'minimal'
+  uiStyle: UIStyle
 }
 
 const ConfigurationContext = React.createContext<ConfigurationContextType>({})
