@@ -99,7 +99,7 @@ export const DropDownMenu = ({ title, items }: DropDownMenuProps) => {
                   <h3 className='cvw-dashboard-submenu__content__title'>{selectDevice(title, titleMobile)}</h3>
                   <p className='cvw-dashboard-submenu__content__content'>{selectDevice(content, contentiPhone, contentAndroid)}</p>
                   {description && <p className='cvw-dashboard-submenu__content__tip'>{description}</p>}
-                  {(i === 1) && <p className='cvw-dashboard-submenu__content__tip'>Please select a PNG or JPG file</p>}
+                  {title === 'UPLOAD YOUR PHOTO' && <p className='cvw-dashboard-submenu__content__tip'>Please select a PNG or JPG file</p>}
                 </Wrapper>
               </li>
             )
