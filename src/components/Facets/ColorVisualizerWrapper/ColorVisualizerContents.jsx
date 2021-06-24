@@ -68,13 +68,14 @@ import { setImageForFastMask, setRefsDimsForFastMask } from '../../../store/acti
 import FastMaskView from '../../FastMask/FastMaskView'
 
 type CVWPropsType = {
-  maxSceneHeight: number,
+  alwaysShowColorFamilies?: boolean,
+  defaultRoute?: string,
   language: string,
-  defaultRoute?: string
+  maxSceneHeight: number
 }
 
 const CVW = (props: CVWPropsType) => {
-  const { defaultRoute, language, maxSceneHeight } = props
+  const { alwaysShowColorFamilies, defaultRoute, language, maxSceneHeight } = props
   const dispatch = useDispatch()
   const location = useLocation()
   const history = useHistory()
@@ -340,7 +341,7 @@ const CVW = (props: CVWPropsType) => {
           <ColorVisualizerNav />
           <Switch>
             <Route path={ROUTES_ENUM.COLOR_DETAILS} render={() => <ColorDetails />} />
-            <Route path={`${ROUTES_ENUM.COLOR_WALL}(/.*)?`} render={() => <ColorWallPage displayAddButton displayInfoButton displayDetailsLink={false} />} />
+            <Route path={`${ROUTES_ENUM.COLOR_WALL}(/.*)?`} render={() => <ColorWallPage alwaysShowColorFamilies={alwaysShowColorFamilies} displayAddButton displayInfoButton displayDetailsLink={false} />} />
             <Route path={ROUTES_ENUM.COLOR_COLLECTION} render={() => <ColorCollections isExpertColor={false} {...location.state} />} />
             <Route path={ROUTES_ENUM.UPLOAD_FAST_MASK} render={() => <ImageIngestView cleanupCallback={cleanupStaleIngestedImage} handleDismissCallback={goToFastMask} imageUrl={ingestedImageUrl} maxSceneHeight={maxSceneHeight} />} />
             <Route path={ROUTES_ENUM.UPLOAD_MATCH_PHOTO} render={() => <ImageIngestView cleanupCallback={cleanupStaleIngestedImage} handleDismissCallback={goToMatchPhoto} imageUrl={ingestedImageUrl} maxSceneHeight={maxSceneHeight} />} />

@@ -14,7 +14,7 @@ import { ROUTES_ENUM } from '../../ColorVisualizerWrapper/routeValueCollections'
 import ButtonBar from 'src/components/GeneralButtons/ButtonBar/ButtonBar'
 import { generateColorWallPageUrl } from 'src/shared/helpers/ColorUtils'
 import ColorWallContext from '../ColorWallContext'
-import ConfigurationContext, { type ConfigurationContextType, type UIStyle } from 'src/contexts/ConfigurationContext/ConfigurationContext'
+import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import { navigateToIntendedDestination, setIsColorWallModallyPresented } from 'src/store/actions/navigation'
 import './ColorWallMenuBar.scss'
 import '../../../GeneralButtons/ButtonBar/ButtonBar.scss'
@@ -50,10 +50,10 @@ const Select = ({ placeholderText, options, disabled = false, onSelectOpened }: 
   </Wrapper>
 )
 
-export default () => {
+const ColorWallToolbar = (props: { alwaysShowColorFamilies?: boolean }) => {
   const { messages = {} } = useIntl()
   const { hiddenSections } = useContext(ColorWallContext)
-  const { cvw, uiStyle = 'default' } = useContext<ConfigurationContextType>(ConfigurationContext)
+  const { cvw, uiStyle } = useContext<ConfigurationContextType>(ConfigurationContext)
   const { path, params: { section, family } } = useRouteMatch()
   const { sections = [], families = [], section: activeSection, family: activeFamily, primeColorWall } = useSelector(state => state.colors)
   const dispatch = useDispatch()
@@ -83,8 +83,8 @@ export default () => {
     )
   )
 
-  const uiStyleElements: { [key: UIStyle]: Element<any> } = {
-    alwaysShowColorFamilies: (
+  if (props.alwaysShowColorFamilies) {
+    return (
       <AutoSizer disableHeight style={{ width: '100%' }}>
         {({ width }) => (
           <div className={MODE_CLASS_NAMES.BASE}>
@@ -137,91 +137,11 @@ export default () => {
           </div>
         )}
       </AutoSizer>
-    ),
-    default: (
-      <AutoSizer disableHeight style={{ width: '100%' }}>
-        {({ width }) => (
-          <div className={MODE_CLASS_NAMES.BASE}>
-            <div className={MODE_CLASS_NAMES.COL}>
-              {/* Search and Family Button */}
-              <div className={MODE_CLASS_NAMES.CELL}>
-                <ButtonBar.Bar>
-                  {isFamilyView
-                    ? (
-                      <ButtonBar.Button to={generateColorWallPageUrl(section)}>
-                        <FontAwesomeIcon className='close-icon-svg' icon={['fa', 'times']} pull='left' />
-                        <span className={MODE_CLASS_NAMES.DESC}><FormattedMessage id='CANCEL' /></span>
-                      </ButtonBar.Button>
-                    )
-                    : (
-                      <>
-                        {searchColorBtn}
-                        {families.length > 0 && (
-                          <ButtonBar.Button disabled={families.length <= 1} to={`${generateColorWallPageUrl(section)}${PATH_END_FAMILY}`}>
-                            <FontAwesomeIcon className='color-families-svg' icon={['fa', 'palette']} pull='left' />
-                            <span className={MODE_CLASS_NAMES.DESC}><FormattedMessage id='COLOR_FAMILIES' /></span>
-                          </ButtonBar.Button>
-                        )}
-                      </>
-                    )
-                  }
-                </ButtonBar.Bar>
-              </div>
-              {isFamilyView && width > 768
-                ? (
-                  <div className={`${MODE_CLASS_NAMES.CELL} ${MODE_CLASS_NAMES.RIGHT}`}>
-                    <ButtonBar.Bar>
-                      {colorFamilyMenuBtns}
-                    </ButtonBar.Bar>
-                  </div>
-                )
-                : ((isFamilyView || visibleSections.length > 1) && (
-                  <div style={{ display: 'flex' }} className='menu-bar__border'>
-                    {primeColorWall && visibleSections.includes(primeColorWall) && width > 768 && (
-                      <NavLink
-                        className={`${menuBarPrefix}__prime-color-wall-button ${primeColorWall === activeSection ? 'disabled' : ''}`}
-                        to={generateColorWallPageUrl(primeColorWall)}
-                      >
-                        {primeColorWall}
-                      </NavLink>
-                    )}
-                    <Select
-                      placeholderText={
-                        isFamilyView
-                          ? (activeFamily && !wallSelectionMenuOpen) ? activeFamily : at(messages, 'ALL_COLORS')[0]
-                          : (primeColorWall === activeSection) || wallSelectionMenuOpen ? at(messages, 'SELECT_COLLECTION')[0] : activeSection
-                      }
-                      options={(isFamilyView || family ? families : visibleSections)
-                        .filter(name => activeFamily !== name && activeSection !== name && (width <= 768 || !primeColorWall || primeColorWall !== name))
-                        .map(label => ({
-                          label,
-                          link: isFamilyView ? generateColorWallPageUrl(section, label) : generateColorWallPageUrl(label)
-                        }))
-                      }
-                      onSelectOpened={setWallSelectionMenuOpen}
-                    />
-                  </div>
-                ))
-              }
-              {shouldShowCloseButton && !isFamilyView && (
-                <button
-                  className='menu-bar__button-close'
-                  onClick={e => {
-                    e.preventDefault()
-                    dispatch(setIsColorWallModallyPresented())
-                    dispatch(navigateToIntendedDestination())
-                  }}
-                >
-                  <FontAwesomeIcon className='color-families-svg' icon={['fa', 'times']} pull='left' />
-                  <span className={MODE_CLASS_NAMES.DESC}><FormattedMessage id='CLOSE' /></span>
-                </button>
-              )}
-            </div>
-          </div>
-        )}
-      </AutoSizer>
-    ),
-    minimal: (
+    )
+  }
+
+  if (uiStyle === 'minimal') {
+    return (
       <div className={MODE_CLASS_NAMES.BASE}>
         <div className={`${MODE_CLASS_NAMES.COL} ${menuBarPrefix}-minimal`}>
           <button
@@ -261,5 +181,89 @@ export default () => {
     )
   }
 
-  return uiStyleElements[uiStyle]
+  return (
+    <AutoSizer disableHeight style={{ width: '100%' }}>
+      {({ width }) => (
+        <div className={MODE_CLASS_NAMES.BASE}>
+          <div className={MODE_CLASS_NAMES.COL}>
+            {/* Search and Family Button */}
+            <div className={MODE_CLASS_NAMES.CELL}>
+              <ButtonBar.Bar>
+                {isFamilyView
+                  ? (
+                    <ButtonBar.Button to={generateColorWallPageUrl(section)}>
+                      <FontAwesomeIcon className='close-icon-svg' icon={['fa', 'times']} pull='left' />
+                      <span className={MODE_CLASS_NAMES.DESC}><FormattedMessage id='CANCEL' /></span>
+                    </ButtonBar.Button>
+                  )
+                  : (
+                    <>
+                      {searchColorBtn}
+                      {families.length > 0 && (
+                        <ButtonBar.Button disabled={families.length <= 1} to={`${generateColorWallPageUrl(section)}${PATH_END_FAMILY}`}>
+                          <FontAwesomeIcon className='color-families-svg' icon={['fa', 'palette']} pull='left' />
+                          <span className={MODE_CLASS_NAMES.DESC}><FormattedMessage id='COLOR_FAMILIES' /></span>
+                        </ButtonBar.Button>
+                      )}
+                    </>
+                  )
+                }
+              </ButtonBar.Bar>
+            </div>
+            {isFamilyView && width > 768
+              ? (
+                <div className={`${MODE_CLASS_NAMES.CELL} ${MODE_CLASS_NAMES.RIGHT}`}>
+                  <ButtonBar.Bar>
+                    {colorFamilyMenuBtns}
+                  </ButtonBar.Bar>
+                </div>
+              )
+              : ((isFamilyView || visibleSections.length > 1) && (
+                <div style={{ display: 'flex' }} className='menu-bar__border'>
+                  {primeColorWall && visibleSections.includes(primeColorWall) && width > 768 && (
+                    <NavLink
+                      className={`${menuBarPrefix}__prime-color-wall-button ${primeColorWall === activeSection ? 'disabled' : ''}`}
+                      to={generateColorWallPageUrl(primeColorWall)}
+                    >
+                      {primeColorWall}
+                    </NavLink>
+                  )}
+                  <Select
+                    placeholderText={
+                      isFamilyView
+                        ? (activeFamily && !wallSelectionMenuOpen) ? activeFamily : at(messages, 'ALL_COLORS')[0]
+                        : (primeColorWall === activeSection) || wallSelectionMenuOpen ? at(messages, 'SELECT_COLLECTION')[0] : activeSection
+                    }
+                    options={(isFamilyView || family ? families : visibleSections)
+                      .filter(name => activeFamily !== name && activeSection !== name && (width <= 768 || !primeColorWall || primeColorWall !== name))
+                      .map(label => ({
+                        label,
+                        link: isFamilyView ? generateColorWallPageUrl(section, label) : generateColorWallPageUrl(label)
+                      }))
+                    }
+                    onSelectOpened={setWallSelectionMenuOpen}
+                  />
+                </div>
+              ))
+            }
+            {shouldShowCloseButton && !isFamilyView && (
+              <button
+                className='menu-bar__button-close'
+                onClick={e => {
+                  e.preventDefault()
+                  dispatch(setIsColorWallModallyPresented())
+                  dispatch(navigateToIntendedDestination())
+                }}
+              >
+                <FontAwesomeIcon className='color-families-svg' icon={['fa', 'times']} pull='left' />
+                <span className={MODE_CLASS_NAMES.DESC}><FormattedMessage id='CLOSE' /></span>
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+    </AutoSizer>
+  )
 }
+
+export default ColorWallToolbar

@@ -11,7 +11,6 @@ type MenuItem = {
   content?: string,
   footnote?: string
 }
-export type UIStyle = 'alwaysShowColorFamilies' | 'default' | 'minimal'
 
 export type ConfigurationContextType = {
   brand: string,
@@ -118,7 +117,7 @@ export type ConfigurationContextType = {
       savingMobile2?: string
     }
   },
-  uiStyle: UIStyle
+  uiStyle: 'default' | 'minimal'
 }
 
 const ConfigurationContext = React.createContext<ConfigurationContextType>({})
