@@ -1,6 +1,6 @@
 // @flow
 // eslint-disable-next-line no-unused-vars
-import React, { useContext, useRef, useState, useEffect, ReactChildren } from 'react'
+import React, { useContext, useRef, useState, useEffect, useMemo, ReactChildren } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Switch, Route, useHistory, useLocation } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -8,19 +8,20 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { isMobileOnly, isTablet, isIOS } from 'react-device-detect'
 import { queueImageUpload, setIngestedImage } from 'src/store/actions/user-uploads'
 import './ColorVisualizerNav.scss'
-import { FEATURE_EXCLUSIONS } from '../../../constants/configurations'
-import { shouldAllowFeature } from '../../../shared/utils/featureSwitch.util'
-import ConfigurationContext, { type ConfigurationContextType } from '../../../contexts/ConfigurationContext/ConfigurationContext'
-import { createMatchPhotoNavigationWarningModal, createNavigationWarningModal } from '../../CVWModalManager/createModal'
+import { FEATURE_EXCLUSIONS } from 'src/constants/configurations'
+import { shouldAllowFeature } from 'src/shared/utils/featureSwitch.util'
+import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
+import { createMatchPhotoNavigationWarningModal, createNavigationWarningModal } from 'src/components/CVWModalManager/createModal'
 import {
   // cleanupNavigationIntent,
   setNavigationIntent,
   setDirtyNavigationIntent,
   ACTIVE_SCENE_LABELS_ENUM
-} from '../../../store/actions/navigation'
-import { ROUTES_ENUM } from './routeValueCollections'
-import { MODAL_TYPE_ENUM } from '../../CVWModalManager/constants'
-import { triggerPaintSceneLayerPublish } from '../../../store/actions/paintScene'
+} from 'src/store/actions/navigation'
+import { ROUTES_ENUM } from '../routeValueCollections'
+import { MODAL_TYPE_ENUM } from 'src/components/CVWModalManager/constants'
+import { triggerPaintSceneLayerPublish } from 'src/store/actions/paintScene'
+import { DEFAULT_NAV_STRUCTURE, type NavHierarchyType } from './navStructure'
 
 type DropDownMenuProps = {
   title: string,
@@ -127,185 +128,165 @@ const ColorVisualizerNav = () => {
   const navRef: {current: ?HTMLElement} = useRef()
   const matchPhotoShown = useSelector(store => store.isMatchPhotoPresented)
 
-  const NAV_ITEM_IDS = {
-    UPLOAD_YOUR_OWN: 'UPLOAD_YOUR_OWN',
-    USE_OUR_PHOTO: 'USE_OUR_PHOTO',
-    FAST_MASK: 'FAST_MASK'
-  }
-
-  const getDropDownItemsForGetInspired = () => {
+  const [NAV_HIERARCHY] = useState<NavHierarchyType>((() => {
     const { expertColorPicks, inspirationalPhotos, paintedPhotos } = getInspired ?? {}
-    const items = [
-      {
-        img: cvw?.navPaintedScenes,
-        title: paintedPhotos?.title ?? messages['NAV_LINKS.PAINTED_PHOTOS'],
-        content: paintedPhotos?.content ?? messages['NAV_DROPDOWN_LINK_SUB_CONTENT.PAINTED_PHOTOS'],
-        onClick: () => history.push(ROUTES_ENUM.USE_OUR_IMAGE)
-      },
-      {
-        img: cvw?.navExpertColorPicks,
-        title: expertColorPicks?.title ?? messages['NAV_LINKS.EXPERT_COLOR_PICKS'],
-        content: expertColorPicks?.content ?? messages['NAV_DROPDOWN_LINK_SUB_CONTENT.EXPERT_COLOR_PICKS'],
-        onClick: () => history.push(ROUTES_ENUM.EXPERT_COLORS)
-      },
-      {
-        img: cvw?.navSamplePhotos,
-        title: inspirationalPhotos?.title ?? messages['NAV_LINKS.INSPIRATIONAL_PHOTOS'],
-        content: inspirationalPhotos?.content ?? messages['NAV_DROPDOWN_LINK_SUB_CONTENT.INSPIRATIONAL_PHOTOS'],
-        onClick: () => history.push(ROUTES_ENUM.COLOR_FROM_IMAGE)
-      }
-    ]
-
-    return items.filter((item) => {
-      if (item.title === messages['NAV_LINKS.INSPIRATIONAL_PHOTOS']) {
-        return shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.inspirationalPhotos)
-      }
-      if (item.title === messages['NAV_LINKS.EXPERT_COLOR_PICKS']) {
-        return shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.expertColorPicks)
-      }
-
-      if (item.title === messages['NAV_LINKS.PAINTED_PHOTOS']) {
-        return shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.paintedPhotos)
-      }
-
-      return true
-    })
-  }
-
-  const getDropDownItemsForPaintAPhoto = () => {
     const { uploadYourPhoto, useOurPhotos } = paintAPhoto ?? {}
-    const items = [
-      {
-        id: NAV_ITEM_IDS.USE_OUR_PHOTO,
-        img: cvw?.navSampleScenes,
-        title: useOurPhotos?.title ?? messages['NAV_LINKS.USE_OUR_PHOTOS'],
-        content: useOurPhotos?.content ?? messages['NAV_DROPDOWN_LINK_SUB_CONTENT.USE_OUR_PHOTOS'],
-        onClick: () => history.push(ROUTES_ENUM.PAINT_PHOTO)
-      },
-      {
-        id: NAV_ITEM_IDS.UPLOAD_YOUR_OWN,
-        img: cvw?.navThumbMyPhotos,
-        imgiPhone: cvw?.navThumbIphone,
-        imgiPad: cvw?.navThumbIpad,
-        imgAndroid: cvw?.navThumbAndroid,
-        title: uploadYourPhoto?.title ?? messages['NAV_LINKS.UPLOAD_YOUR_PHOTO'],
-        titleMobile: messages['NAV_LINKS.GET_THE_APP'],
-        content: uploadYourPhoto?.content ?? messages['NAV_DROPDOWN_LINK_SUB_CONTENT.UPLOAD_YOUR_PHOTO'],
-        contentAndroid: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.UPLOAD_YOUR_PHOTO_ANDROID'],
-        contentiPad: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.UPLOAD_YOUR_PHOTO_IPAD'],
-        contentiPhone: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.UPLOAD_YOUR_PHOTO_IPHONE'],
-        description: uploadYourPhoto?.footnote ?? messages['NAV_DROPDOWN_LINK_TIP_DESCRIPTION.UPLOAD_YOUR_PHOTO'],
-        onClick: !(isMobileOnly || isTablet) ? () => {
-          const selectDevice = (web, iPhone = web, android = web, iPad = web) => (isMobileOnly ? (isIOS ? iPhone : android) : (isTablet ? iPad : web)) || web
-          history.push(selectDevice(
-            ROUTES_ENUM.UPLOAD_PAINT_SCENE,
-            'https://play.google.com/store/apps/details?id=com.colorsnap',
-            'https://itunes.apple.com/us/app/colorsnap-visualizer-iphone/id316256242?mt=8',
-            'https://itunes.apple.com/us/app/colorsnap-studio/id555300600?mt=8'
-          ))
-
-          if (hiddenImageUploadInput.current) {
-            hiddenImageUploadInput.current.value = ''
-            // trigger upload image system modal
-            dispatch(setNavigationIntent(ROUTES_ENUM.UPLOAD_PAINT_SCENE))
-            hiddenImageUploadInput.current.click()
-          }
-        } : undefined
-      },
-      { // @todo while excessive to dupe this, the future design of nav should be declarative and we need to exclude as much logic as possible from the nav declaration -RS
-        id: NAV_ITEM_IDS.FAST_MASK,
-        img: cvw?.navThumbMyPhotos,
-        imgiPhone: cvw?.navThumbIphone,
-        imgiPad: cvw?.navThumbIpad,
-        imgAndroid: cvw?.navThumbAndroid,
-        title: messages['NAV_LINKS.UPLOAD_YOUR_PHOTO'],
-        titleMobile: messages['NAV_LINKS.GET_THE_APP'],
-        content: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.UPLOAD_YOUR_PHOTO'],
-        contentAndroid: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.UPLOAD_YOUR_PHOTO_ANDROID'],
-        contentiPad: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.UPLOAD_YOUR_PHOTO_IPAD'],
-        contentiPhone: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.UPLOAD_YOUR_PHOTO_IPHONE'],
-        description: messages['NAV_DROPDOWN_LINK_TIP_DESCRIPTION.UPLOAD_YOUR_PHOTO'],
-        onClick: !(isMobileOnly || isTablet) ? () => {
-          const selectDevice = (web, iPhone = web, android = web, iPad = web) => (isMobileOnly ? (isIOS ? iPhone : android) : (isTablet ? iPad : web)) || web
-          history.push(selectDevice(
-            ROUTES_ENUM.UPLOAD_FAST_MASK,
-            'https://play.google.com/store/apps/details?id=com.colorsnap',
-            'https://itunes.apple.com/us/app/colorsnap-visualizer-iphone/id316256242?mt=8',
-            'https://itunes.apple.com/us/app/colorsnap-studio/id555300600?mt=8'
-          ))
-
-          if (hiddenImageUploadInput.current) {
-            hiddenImageUploadInput.current.value = ''
-            // trigger upload image system modal
-            dispatch(setNavigationIntent(ROUTES_ENUM.UPLOAD_FAST_MASK))
-            hiddenImageUploadInput.current.click()
-          }
-        } : undefined
-      }
-    ]
-
-    return items.filter((item) => {
-      if (item.title === messages['NAV_LINKS.USE_OUR_PHOTOS']) {
-        return shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.useOurPhotos)
-      }
-
-      if (item.id === NAV_ITEM_IDS.UPLOAD_YOUR_OWN) {
-        return shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.uploadYourPhoto)
-      }
-
-      if (item.id === NAV_ITEM_IDS.FAST_MASK) {
-        return shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.fastMask)
-      }
-
-      return true
-    })
-  }
-
-  const getDropDownItemsForExploreColors = () => {
     const { colorCollections, digitalColorWall, matchAPhoto } = exploreColors ?? {}
-    const items = [
+
+    const all = [
       {
-        img: cvw?.navExploreColor,
-        title: digitalColorWall?.title ?? messages['NAV_LINKS.DIGITAL_COLOR_WALL'],
-        content: digitalColorWall?.content ?? formatMessage({ id: 'NAV_DROPDOWN_LINK_SUB_CONTENT.DIGITAL_COLOR_WALL' }, { brand }),
-        onClick: () => history.push(ROUTES_ENUM.COLOR_WALL + '/section/sherwin-williams-colors')
+        name: 'COLOR_WALL',
+        data: {
+          img: cvw?.navExploreColor,
+          title: digitalColorWall?.title ?? messages['NAV_LINKS.DIGITAL_COLOR_WALL'],
+          content: digitalColorWall?.content ?? formatMessage({ id: 'NAV_DROPDOWN_LINK_SUB_CONTENT.DIGITAL_COLOR_WALL' }, { brand }),
+          onClick: () => history.push(ROUTES_ENUM.COLOR_WALL + '/section/sherwin-williams-colors')
+        },
+        allowed: () => shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.colorWall)
       },
       {
-        img: cvw?.navColorCollections,
-        title: colorCollections?.title ?? messages['NAV_LINKS.COLOR_COLLECTIONS'],
-        content: colorCollections?.content ?? messages['NAV_DROPDOWN_LINK_SUB_CONTENT.COLOR_COLLECTIONS'],
-        onClick: () => history.push(ROUTES_ENUM.COLOR_COLLECTION)
+        name: 'COLOR_COLLECTIONS',
+        data: {
+          img: cvw?.navColorCollections,
+          title: colorCollections?.title ?? messages['NAV_LINKS.COLOR_COLLECTIONS'],
+          content: colorCollections?.content ?? messages['NAV_DROPDOWN_LINK_SUB_CONTENT.COLOR_COLLECTIONS'],
+          onClick: () => history.push(ROUTES_ENUM.COLOR_COLLECTION)
+        },
+        allowed: () => shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.colorCollections)
       },
       {
-        img: cvw?.navMatchPhoto,
-        title: matchAPhoto?.title ?? messages['NAV_LINKS.MATCH_A_PHOTO'],
-        content: matchAPhoto?.content ?? messages['NAV_DROPDOWN_LINK_SUB_CONTENT.MATCH_A_PHOTO'],
-        onClick: () => {
-          if (hiddenImageUploadInput.current && !isActiveScenePolluted) {
-            hiddenImageUploadInput.current.value = ''
-            dispatch(setNavigationIntent(ROUTES_ENUM.UPLOAD_MATCH_PHOTO))
-            hiddenImageUploadInput.current.click()
+        name: 'MATCH_PHOTO',
+        data: {
+          img: cvw?.navMatchPhoto,
+          title: matchAPhoto?.title ?? messages['NAV_LINKS.MATCH_A_PHOTO'],
+          content: matchAPhoto?.content ?? messages['NAV_DROPDOWN_LINK_SUB_CONTENT.MATCH_A_PHOTO'],
+          onClick: () => {
+            if (hiddenImageUploadInput.current && !isActiveScenePolluted) {
+              hiddenImageUploadInput.current.value = ''
+              dispatch(setNavigationIntent(ROUTES_ENUM.UPLOAD_MATCH_PHOTO))
+              hiddenImageUploadInput.current.click()
+            }
           }
-        }
+        },
+        allowed: () => shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.matchAPhoto)
+      },
+      {
+        name: 'PAINTED_PHOTOS',
+        data: {
+          img: cvw?.navPaintedScenes,
+          title: paintedPhotos?.title ?? messages['NAV_LINKS.PAINTED_PHOTOS'],
+          content: paintedPhotos?.content ?? messages['NAV_DROPDOWN_LINK_SUB_CONTENT.PAINTED_PHOTOS'],
+          onClick: () => history.push(ROUTES_ENUM.USE_OUR_IMAGE)
+        },
+        allowed: () => shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.paintedPhotos)
+      },
+      {
+        name: 'EXPERT_COLOR_PICKS',
+        data: {
+          img: cvw?.navExpertColorPicks,
+          title: expertColorPicks?.title ?? messages['NAV_LINKS.EXPERT_COLOR_PICKS'],
+          content: expertColorPicks?.content ?? messages['NAV_DROPDOWN_LINK_SUB_CONTENT.EXPERT_COLOR_PICKS'],
+          onClick: () => history.push(ROUTES_ENUM.EXPERT_COLORS)
+        },
+        allowed: () => shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.expertColorPicks)
+      },
+      {
+        name: 'INSPIRATIONAL_PHOTOS',
+        data: {
+          img: cvw?.navSamplePhotos,
+          title: inspirationalPhotos?.title ?? messages['NAV_LINKS.INSPIRATIONAL_PHOTOS'],
+          content: inspirationalPhotos?.content ?? messages['NAV_DROPDOWN_LINK_SUB_CONTENT.INSPIRATIONAL_PHOTOS'],
+          onClick: () => history.push(ROUTES_ENUM.COLOR_FROM_IMAGE)
+        },
+        allowed: () => shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.inspirationalPhotos)
+      },
+      {
+        name: 'OUR_PHOTOS',
+        data: {
+          img: cvw?.navSampleScenes,
+          title: useOurPhotos?.title ?? messages['NAV_LINKS.USE_OUR_PHOTOS'],
+          content: useOurPhotos?.content ?? messages['NAV_DROPDOWN_LINK_SUB_CONTENT.USE_OUR_PHOTOS'],
+          onClick: () => history.push(ROUTES_ENUM.PAINT_PHOTO)
+        },
+        allowed: () => shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.useOurPhotos)
+      },
+      {
+        name: 'UPLOAD_YOUR_OWN',
+        data: {
+          img: cvw?.navThumbMyPhotos,
+          imgiPhone: cvw?.navThumbIphone,
+          imgiPad: cvw?.navThumbIpad,
+          imgAndroid: cvw?.navThumbAndroid,
+          title: uploadYourPhoto?.title ?? messages['NAV_LINKS.UPLOAD_YOUR_PHOTO'],
+          titleMobile: messages['NAV_LINKS.GET_THE_APP'],
+          content: uploadYourPhoto?.content ?? messages['NAV_DROPDOWN_LINK_SUB_CONTENT.UPLOAD_YOUR_PHOTO'],
+          contentAndroid: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.UPLOAD_YOUR_PHOTO_ANDROID'],
+          contentiPad: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.UPLOAD_YOUR_PHOTO_IPAD'],
+          contentiPhone: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.UPLOAD_YOUR_PHOTO_IPHONE'],
+          description: uploadYourPhoto?.footnote ?? messages['NAV_DROPDOWN_LINK_TIP_DESCRIPTION.UPLOAD_YOUR_PHOTO'],
+          onClick: !(isMobileOnly || isTablet) ? () => {
+            const selectDevice = (web, iPhone = web, android = web, iPad = web) => (isMobileOnly ? (isIOS ? iPhone : android) : (isTablet ? iPad : web)) || web
+            history.push(selectDevice(
+              ROUTES_ENUM.UPLOAD_PAINT_SCENE,
+              'https://play.google.com/store/apps/details?id=com.colorsnap',
+              'https://itunes.apple.com/us/app/colorsnap-visualizer-iphone/id316256242?mt=8',
+              'https://itunes.apple.com/us/app/colorsnap-studio/id555300600?mt=8'
+            ))
+
+            if (hiddenImageUploadInput.current) {
+              hiddenImageUploadInput.current.value = ''
+              // trigger upload image system modal
+              dispatch(setNavigationIntent(ROUTES_ENUM.UPLOAD_PAINT_SCENE))
+              hiddenImageUploadInput.current.click()
+            }
+          } : undefined
+        },
+        allowed: () => shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.uploadYourPhoto)
+      },
+      {
+        name: 'FAST_MASK',
+        data: { // @todo while excessive to dupe this, the future design of nav should be declarative and we need to exclude as much logic as possible from the nav declaration -RS
+          img: cvw?.navThumbMyPhotos,
+          imgiPhone: cvw?.navThumbIphone,
+          imgiPad: cvw?.navThumbIpad,
+          imgAndroid: cvw?.navThumbAndroid,
+          title: messages['NAV_LINKS.UPLOAD_YOUR_PHOTO'],
+          titleMobile: messages['NAV_LINKS.GET_THE_APP'],
+          content: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.UPLOAD_YOUR_PHOTO'],
+          contentAndroid: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.UPLOAD_YOUR_PHOTO_ANDROID'],
+          contentiPad: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.UPLOAD_YOUR_PHOTO_IPAD'],
+          contentiPhone: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.UPLOAD_YOUR_PHOTO_IPHONE'],
+          description: messages['NAV_DROPDOWN_LINK_TIP_DESCRIPTION.UPLOAD_YOUR_PHOTO'],
+          onClick: !(isMobileOnly || isTablet) ? () => {
+            const selectDevice = (web, iPhone = web, android = web, iPad = web) => (isMobileOnly ? (isIOS ? iPhone : android) : (isTablet ? iPad : web)) || web
+            history.push(selectDevice(
+              ROUTES_ENUM.UPLOAD_FAST_MASK,
+              'https://play.google.com/store/apps/details?id=com.colorsnap',
+              'https://itunes.apple.com/us/app/colorsnap-visualizer-iphone/id316256242?mt=8',
+              'https://itunes.apple.com/us/app/colorsnap-studio/id555300600?mt=8'
+            ))
+
+            if (hiddenImageUploadInput.current) {
+              hiddenImageUploadInput.current.value = ''
+              // trigger upload image system modal
+              dispatch(setNavigationIntent(ROUTES_ENUM.UPLOAD_FAST_MASK))
+              hiddenImageUploadInput.current.click()
+            }
+          } : undefined
+        },
+        allowed: () => shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.fastMask)
       }
     ]
 
-    return items.filter((item) => {
-      if (item.title === messages['NAV_LINKS.DIGITAL_COLOR_WALL']) {
-        return shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.colorWall)
-      }
+    return (cvw?.navStructure ?? DEFAULT_NAV_STRUCTURE).map(section => ({
+      name: section.name,
+      children: section.children.map(navItem => all.filter(({ name, allowed }) => name === navItem && allowed()).map(v => v.data)[0]).filter(Boolean)
+    }))
+  })())
 
-      if (item.title === messages['NAV_LINKS.COLOR_COLLECTIONS']) {
-        return shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.colorCollections)
-      }
-
-      if (item.title === messages['NAV_LINKS.MATCH_A_PHOTO']) {
-        return shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.matchAPhoto)
-      }
-
-      return true
-    })
-  }
+  const [getDropDownItemsForExploreColors] = useState(NAV_HIERARCHY.filter(({ name }) => name === 'EXPLORE_COLORS')[0].children)
+  const [getDropDownItemsForGetInspired] = useState(NAV_HIERARCHY.filter(({ name }) => name === 'GET_INSPIRED')[0].children)
+  const [getDropDownItemsForPaintAPhoto] = useState(NAV_HIERARCHY.filter(({ name }) => name === 'PAINT_A_PHOTO')[0].children)
 
   const handleNavigation = (urlFrag: string) => {
     if (isColorwallModallyPresented) {
@@ -409,31 +390,31 @@ const ColorVisualizerNav = () => {
         <Route path={ROUTES_ENUM.ACTIVE_COLORS}>
           <DropDownMenu
             title={exploreColors?.title ?? messages['NAV_DROPDOWN_TITLE.EXPLORE_COLORS']}
-            items={getDropDownItemsForExploreColors()}
+            items={getDropDownItemsForExploreColors}
           />
         </Route>
         <Route path={ROUTES_ENUM.INSPIRATION}>
           <DropDownMenu
             title={getInspired?.title ?? messages['NAV_DROPDOWN_TITLE.GET_INSPIRED']}
-            items={getDropDownItemsForGetInspired()}
+            items={getDropDownItemsForGetInspired}
           />
         </Route>
         <Route path={ROUTES_ENUM.SCENES}>
           <DropDownMenu
             title={paintAPhoto?.title ?? messages['NAV_DROPDOWN_TITLE.PAINT_A_PHOTO']}
-            items={getDropDownItemsForPaintAPhoto()}
+            items={getDropDownItemsForPaintAPhoto}
           />
         </Route>
         <Route path={ROUTES_ENUM.ACTIVE_COLORS}>
           <DropDownMenu
             title={exploreColors?.title ?? messages['NAV_DROPDOWN_TITLE.GET_INSPIRED']}
-            items={getDropDownItemsForExploreColors()}
+            items={getDropDownItemsForExploreColors}
           />
         </Route>
         <Route path={ROUTES_ENUM.ACTIVE_PAINT_SCENE}>
           <DropDownMenu
             title={paintAPhoto?.title ?? messages['NAV_DROPDOWN_TITLE.GET_INSPIRED']}
-            items={getDropDownItemsForPaintAPhoto()}
+            items={getDropDownItemsForPaintAPhoto}
           />
         </Route>
       </Switch>

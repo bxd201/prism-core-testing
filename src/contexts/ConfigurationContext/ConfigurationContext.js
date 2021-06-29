@@ -1,5 +1,6 @@
 // @flow
 import React from 'react'
+import { type VisualizerNavStructure } from 'src/components/Facets/ColorVisualizerWrapper/ColorVisualizerNav/navStructure'
 
 type Menu = {
   tab?: string,
@@ -14,6 +15,7 @@ type MenuItem = {
 
 export type ConfigurationContextType = {
   brand: string,
+  brandId: string,
   ga_domain_id: string,
   theme: {
     primary: string,
@@ -78,6 +80,7 @@ export type ConfigurationContextType = {
     navPaintedScenes?: string,
     navSamplePhotos?: string,
     navSampleScenes?: string,
+    navStructure?: VisualizerNavStructure,
     navThumbAndroid?: string,
     navThumbIpad?: string,
     navThumbIphone?: string,
