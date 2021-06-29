@@ -92,6 +92,7 @@ $btn-border-thickness: 1px;
     flex-shrink: 1;
 
     &__option {
+      flex: auto;
       display: flex;
       align-content: center;
       justify-content: center;

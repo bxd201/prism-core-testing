@@ -35,6 +35,7 @@ export type Configuration = {
  * @description These are the embeddable properties that can be transferred to configuration values
  */
 export type EmbeddedConfiguration = {
+  alwaysShowColorFamilies?: boolean,
   brand?: string,
   colorDetailPageRoot?: string,
   defaultRoute?: string,

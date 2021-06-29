@@ -4,6 +4,15 @@ $menu-bar-width: 27em;
 
 .menu-bar__border {
   border: $btn-border-thickness solid var(getThemeColor('primary'));
+
+  &--flex {
+    display: flex;
+
+    @media (max-width: 473px) {
+      flex: 1;
+      margin: 0 5px;
+    }
+  }
 }
 
 .menu-bar {
@@ -157,6 +166,28 @@ $menu-bar-width: 27em;
     background: var(getThemeColor('primary'));
     color: $btn-bg;
     height: auto;
+  }
+}
+
+.color-family-menu {
+  display: flex;
+  margin: 0.5rem -0.5rem;
+  border: 1px solid var(getThemeColor('primary'));
+  opacity: 0;
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  animation: fadeIn 250ms;
+  animation-delay: 300ms;
+  animation-fill-mode: forwards;
+
+  &__width-size {
+    position: absolute;
+    visibility: hidden;
+    z-index: -1;
+    width: fit-content;
   }
 }
 

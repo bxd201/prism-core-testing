@@ -41,7 +41,8 @@ export type ConfigurationContextType = {
   featureExclusions: string[],
   cvw: {
     colorWall?: {
-      searchColor?: string,
+      close?: string,
+      searchColor?: string
     },
     downloadSceneDisclaimer1?: string,
     downloadSceneDisclaimer1?: string,
