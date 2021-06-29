@@ -132,6 +132,7 @@ export class LivePalette extends PureComponent<Props, State> {
   }
   handleAddColor = (e: SyntheticEvent) => {
     e.preventDefault()
+    // @todo this flag ios likely still true when non-dirty nav intent nav happens and then a user uses the close button -RS
     if (this.props.isColorwallModallyPresented) {
       return
     }

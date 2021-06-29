@@ -123,6 +123,7 @@ const CVW = (props: CVWPropsType) => {
   const fastMaskImageUrl = useSelector(store => store.fastMaskImageUrl)
   const fastMaskSaveCache = useSelector(store => store.fastMaskSaveCache)
   const fastMaskOpenCache = useSelector(store => store.fastMaskOpenCache)
+  const dirtyNavigationIntent = useSelector(store => store.dirtyNavigationIntent)
 
   // Use this hook to push any facet level embedded data to redux and handle any initialization
   useEffect(() => {
@@ -151,6 +152,11 @@ const CVW = (props: CVWPropsType) => {
 
     // THE ORDER OF THESE RULES MATTERS!!!
     if (isActiveScenePolluted) {
+      // This prevents unimpeded navigation when the colorwall is modally presented over a polluted scene.
+      if (dirtyNavigationIntent) {
+        dispatch(createNavigationWarningModal(intl, MODAL_TYPE_ENUM.NULL, true))
+        return
+      }
       // We can only programmatically navigate if we are going to the colorwall... when scene is polluted
       if ([ROUTES_ENUM.COLOR_WALL, ROUTES_ENUM.ACTIVE].indexOf(navigationIntent) === -1) {
         return
@@ -205,6 +211,7 @@ const CVW = (props: CVWPropsType) => {
     }
   }, [isPaintSceneCached,
     navigationIntent,
+    dirtyNavigationIntent,
     navigationReturnIntent,
     activeSceneLabel,
     shouldShowGlobalDestroyWarning,

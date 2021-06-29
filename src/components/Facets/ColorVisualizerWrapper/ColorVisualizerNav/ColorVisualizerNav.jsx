@@ -17,7 +17,7 @@ import {
   // cleanupNavigationIntent,
   setNavigationIntent,
   setDirtyNavigationIntent,
-  ACTIVE_SCENE_LABELS_ENUM
+  ACTIVE_SCENE_LABELS_ENUM, setIsColorWallModallyPresented, clearNavigationIntent
 } from 'src/store/actions/navigation'
 import { ROUTES_ENUM } from '../routeValueCollections'
 import { MODAL_TYPE_ENUM } from 'src/components/CVWModalManager/constants'
@@ -81,11 +81,16 @@ export const DropDownMenu = ({ title, items }: DropDownMenuProps) => {
     window.addEventListener('hashchange', resizeRootContainer)
   }, [isMobileOnly, isTablet])
 
+  const handleClose = (e: SyntheticEvent) => {
+    e.preventDefault()
+    history.push(ROUTES_ENUM.ACTIVE)
+  }
+
   return (
     <>
       <button className='overlay' onClick={() => history.push(ROUTES_ENUM.ACTIVE)} />
       <div className='cvw-dashboard-submenu'>
-        <button className='cvw-dashboard-submenu__close' onClick={() => history.push(ROUTES_ENUM.ACTIVE)}>
+        <button className='cvw-dashboard-submenu__close' onClick={handleClose}>
           {cvw?.menu?.close ?? <FormattedMessage id='CLOSE' />}
           <FontAwesomeIcon className='cvw-dashboard-submenu__close__ico' icon={['fa', 'chevron-up']} />
         </button>
@@ -303,7 +308,7 @@ const ColorVisualizerNav = () => {
   }, [navStructure, getInspired, paintAPhoto, exploreColors, isLoadingCVWConfig])
 
   const handleNavigation = (urlFrag: string) => {
-    if (isColorwallModallyPresented) {
+    if (isColorwallModallyPresented && isActiveScenePolluted) {
       dispatch(setDirtyNavigationIntent(urlFrag))
       return
     }
@@ -325,6 +330,8 @@ const ColorVisualizerNav = () => {
     }
     // default action
     history.push(urlFrag)
+    dispatch(clearNavigationIntent())
+    dispatch(setIsColorWallModallyPresented())
   }
 
   if (isLoadingCVWConfig) {

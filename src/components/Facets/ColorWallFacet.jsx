@@ -20,6 +20,7 @@ import { facetBinderDefaultProps, type FacetBinderMethods } from 'src/facetSuppo
 import { FormattedMessage } from 'react-intl'
 import translateBooleanFlexibly from 'src/shared/utils/translateBooleanFlexibly.util'
 import { generateColorWallPageUrl } from 'src/shared/helpers/ColorUtils'
+import { setIsColorWallModallyPresented } from '../../store/actions/navigation'
 
 type Props = FacetPubSubMethods & FacetBinderMethods & {
   addButtonText?: string,
@@ -152,6 +153,7 @@ export const ColorWallPage = (props: Props) => {
   // handle unmounting
   useEffect(() => () => {
     // unsubscribe from everything on unmount
+    dispatch(setIsColorWallModallyPresented())
     unsubscribeAll()
   }, [])
 

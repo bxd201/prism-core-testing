@@ -313,7 +313,7 @@ export const CVWModalManager = () => {
     // clean up the original, this should be the value set from the return path
     dispatch(clearNavigationIntent())
     // Allow add color button to respond again
-    dispatch(setIsColorWallModallyPresented(false))
+    dispatch(setIsColorWallModallyPresented())
     dispatch(setIsScenePolluted())
   }
 
