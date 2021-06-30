@@ -30,7 +30,7 @@ import {
   HANDLE_DELETE_MY_PREVIEW_CONFIRM, MODAL_TYPE_ENUM
 } from './constants.js'
 import { getColorInstances } from '../LivePalette/livePaletteUtility'
-import { createSavedNotificationModal } from './createModal'
+import { createSavedNotificationModal, showLoadingModal } from './createModal'
 import { useIntl } from 'react-intl'
 import type { PreviewImageProps } from '../../shared/types/CVWTypes'
 import { clearSceneWorkspace } from '../../store/actions/paintScene'
@@ -127,7 +127,7 @@ export const PreviewImage = ({ modalInfo, lpColors, surfaceColors, scenes, selec
 }
 
 export const CVWModalManager = () => {
-  const modalInfo = useSelector((store) => store.modalInfo)
+  const modalInfo = useSelector((store) => store?.modalInfo ?? null)
   const lpColors = useSelector((store) => store.lp.colors)
   const dirtyNavIntent = useSelector(store => store.dirtyNavigationIntent)
   const storeScenes = useSelector((store) => store.variantsCollection)
@@ -149,7 +149,6 @@ export const CVWModalManager = () => {
   const btnRefList = useRef([])
   const history = useHistory()
   btnRefList.current = []
-  const { shouldDisplayModal, actions, styleType, title, description, allowInput } = modalInfo
   const [inputValue, setInputValue] = useState(`${intl.formatMessage({ id: 'SAVE_SCENE_MODAL.DEFAULT_DESCRIPTION' })} ${sceneCount}`)
   // The following function is needed for a particular use case where if a user clear the default name of the scene being saved,
   // and close the modal, this function will reset the state with the default name
@@ -243,9 +242,9 @@ export const CVWModalManager = () => {
     if (sceneName.trim() === '') {
       return false
     }
-
     dispatch(startSavingMasks(sceneName, isFastMask))
     hideModal()
+    dispatch(showLoadingModal(true))
   }
 
   const saveFastMaskFromModal = (e: SyntheticEvent, sceneName: string) => {
@@ -350,7 +349,7 @@ export const CVWModalManager = () => {
   }
 
   const handleDeleteMyPreviewConfirm = (e: SyntheticEvent) => {
-    const { sceneType, sceneId } = actions[0].params
+    const { sceneType, sceneId } = modalInfo.actions[0].params
     if (sceneType === SCENE_TYPE.livePalette) {
       dispatch(deleteSavedLivePalette(sceneId))
     } else if (sceneType === SCENE_TYPE.anonStock) {
@@ -372,8 +371,9 @@ export const CVWModalManager = () => {
   return (
     <>
       {fastMaskImageUrls ? <BatchImageLoader urls={fastMaskImageUrls} handleImagesLoaded={saveFastMask} /> : null}
-      <Modal
-        shouldDisplayModal={shouldDisplayModal}
+      {modalInfo && <Modal
+        key={modalInfo.uid}
+        shouldDisplayModal={modalInfo.shouldDisplayModal}
         previewImage={modalInfo.modalType && SCREENS_WITH_PREVIEW.indexOf(modalInfo.modalType) > -1
           ? <PreviewImage
             modalInfo={modalInfo}
@@ -383,17 +383,18 @@ export const CVWModalManager = () => {
             selectedSceneUid={selectedSceneUid}
             selectedVariantName={selectedVariantName}
           /> : null}
-        styleType={styleType}
-        title={title}
-        description={description}
-        allowInput={allowInput}
-        actions={actions}
+        styleType={modalInfo.styleType}
+        title={modalInfo.title}
+        description={modalInfo.description}
+        allowInput={modalInfo.allowInput}
+        actions={modalInfo.actions}
         inputValue={inputValue}
         intl={intl}
         resetInputValue={resetInputValue}
         fn={createCallbackFromActionName}
         setInputValue={setInputValue}
-      />
+        loadingMode={modalInfo.modalType === MODAL_TYPE_ENUM.LOADING}
+      />}
     </>
   )
 }

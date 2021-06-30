@@ -12,7 +12,7 @@ import InspiredScene from '../../InspirationPhotos/InspiredSceneNavigator'
 import LivePalette from '../../LivePalette/LivePalette'
 import ColorVisualizerNav from './ColorVisualizerNav/ColorVisualizerNav'
 import SampleScenesWrapper from '../../SampleScenes/SampleScenes'
-import { setModalThumbnailColor } from '../../../store/actions/globalModal'
+import { hideGlobalModal, setModalThumbnailColor } from '../../../store/actions/globalModal'
 import MyIdeasContainer from '../../MyIdeasContainer/MyIdeasContainer'
 import MyIdeaPreview from '../../MyIdeaPreview/MyIdeaPreview'
 import SaveOptions from '../../SaveOptions/SaveOptions'
@@ -136,6 +136,7 @@ const CVW = (props: CVWPropsType) => {
   // used to programmatically show modals
   useEffect(() => {
     if (shouldShowPaintSceneSavedModal) {
+      dispatch(hideGlobalModal())
       dispatch(createSavedNotificationModal(intl))
     }
   }, [shouldShowPaintSceneSavedModal])

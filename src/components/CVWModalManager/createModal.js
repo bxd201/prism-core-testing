@@ -1,4 +1,4 @@
-
+// @flow
 import { setModalInfo } from '../../store/actions/globalModal'
 import {
   HANDLE_NAVIGATION_INTENT_CONFIRM,
@@ -12,6 +12,7 @@ import {
   PRIMARY,
   MODAL_TYPE_ENUM
 } from './constants.js'
+import uniqueId from 'lodash/uniqueId'
 
 // @todo these methods can be refactored to be more generic -RS
 export const createNavigationWarningModal = (intl, modalType, isDirtyNavigation) => {
@@ -26,7 +27,8 @@ export const createNavigationWarningModal = (intl, modalType, isDirtyNavigation)
     ],
     allowInput: false,
     modalType: modalType,
-    styleType: DANGER
+    styleType: DANGER,
+    uid: uniqueId('modal-')
   })
 }
 
@@ -43,7 +45,8 @@ export const createMatchPhotoNavigationWarningModal = (intl, isDirtyNavigation) 
     ],
     allowInput: false,
     modalType: MODAL_TYPE_ENUM.MATCH_PHOTO,
-    styleType: DANGER
+    styleType: DANGER,
+    uid: uniqueId('modal-')
   })
 }
 
@@ -61,7 +64,8 @@ export const createSaveSceneModal = (intl, modalType, saveType) => {
     layers: [],
     showLivePalette: true,
     modalType: modalType,
-    styleType: PRIMARY
+    styleType: PRIMARY,
+    uid: uniqueId('modal-')
   })
 }
 
@@ -76,7 +80,8 @@ export const createSavedNotificationModal = (intl) => {
     allowInput: false,
     layers: [],
     showLivePalette: false,
-    styleType: PRIMARY
+    styleType: PRIMARY,
+    uid: uniqueId('modal-')
   })
 }
 
@@ -93,7 +98,8 @@ export const createModalForEmptyLivePalette = (intl, modalType, isScenePage) => 
     layers: [],
     showLivePalette: false,
     modalType: modalType,
-    styleType: PRIMARY
+    styleType: PRIMARY,
+    uid: uniqueId('modal-')
   })
 }
 
@@ -109,7 +115,8 @@ export const createSelectPaletteModal = (intl, modalType) => {
     layers: [],
     showLivePalette: false,
     modalType: modalType,
-    styleType: PRIMARY
+    styleType: PRIMARY,
+    uid: uniqueId('modal-')
   })
 }
 
@@ -123,6 +130,18 @@ export const createDeleteMyIdeasModal = (intl, modalType, params) => {
     ],
     allowInput: false,
     modalType: modalType,
-    styleType: DANGER
+    styleType: DANGER,
+    uid: uniqueId('modal-')
+  })
+}
+
+export const showLoadingModal = (shouldShow: boolean = false) => {
+  return setModalInfo({
+    shouldDisplayModal: shouldShow,
+    description: null,
+    actions: null,
+    allowInput: false,
+    modalType: MODAL_TYPE_ENUM.LOADING,
+    uid: uniqueId('modal-')
   })
 }

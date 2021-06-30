@@ -24,6 +24,9 @@
       justify-content: center;
       color: var(getThemeColor('light.lightest.contrast'));
       cursor: auto;
+      &--clear {
+        background-color: transparent;
+      }
       &__content{
         position: relative;
         flex:3;
