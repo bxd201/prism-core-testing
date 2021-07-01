@@ -67,7 +67,7 @@ import { toggleCompareColor } from '../../../store/actions/live-palette'
 import { setImageForFastMask, setRefsDimsForFastMask } from '../../../store/actions/fastMask'
 import FastMaskView from '../../FastMask/FastMaskView'
 
-type CVWPropsType = {
+export type CVWPropsType = {
   alwaysShowColorFamilies?: boolean,
   defaultRoute?: string,
   language: string,
