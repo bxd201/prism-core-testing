@@ -12,7 +12,7 @@ import {
 } from './PaintSceneUtils'
 import {
   repaintImageByPath,
-  getImageCordinateByPixel,
+  getImageCoordinateByPixel,
   canvasDimensionFactors,
   applyDimensionFactorsByCanvas,
   getActiveColorRGB,
@@ -427,7 +427,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       groupSelectList.forEach(selectItem => {
         this.clearCanvas()
         drawImagePixelByPath(ctx, this.canvasOffsetWidth, this.canvasOffsetHeight, RGB, selectItem.selectPath)
-        const [ newPath, pixelIndexAlphaMap ] = getImageCordinateByPixel(this.CFICanvas2, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight, true)
+        const [ newPath, pixelIndexAlphaMap ] = getImageCoordinateByPixel(this.CFICanvas2, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight, true)
         copyImagePathList.push({
           type: 'paint',
           id: uniqueId(),
@@ -444,7 +444,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       selectedArea.forEach(selectItem => {
         this.clearCanvas()
         drawImagePixelByPath(ctx, this.canvasOffsetWidth, this.canvasOffsetHeight, RGB, selectItem.selectPath)
-        const [ newPath, pixelIndexAlphaMap ] = getImageCordinateByPixel(this.CFICanvas2, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight, true)
+        const [ newPath, pixelIndexAlphaMap ] = getImageCoordinateByPixel(this.CFICanvas2, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight, true)
         copyImagePathList.push({
           type: 'paint',
           id: uniqueId(),
@@ -512,7 +512,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.canvasOffsetHeight = canvasHeight
     this.wrapperOriginalDimensions = { width: this.CFIWrapper.current.getBoundingClientRect().width, height: canvasHeight }
 
-    this.setBackgroundImage(canvasWidth, canvasHeight)
+    this.setBackgroundImage(canvasWidth, canvasHeight, true)
   }
 
   // This method is invoked when the parent container passes in the a new wrapperWidth
@@ -538,8 +538,12 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   }
 
   /*:: setBackgroundImage: (canvasWidth: number, canvasHeight: number) => void */
-  setBackgroundImage = (canvasWidth: number, canvasHeight: number) => {
+  setBackgroundImage = (canvasWidth: number, canvasHeight: number, isInit: boolean = false) => {
     this.CFICanvasContext.drawImage(this.CFIImage.current, 0, 0, canvasWidth, canvasHeight)
+    if (isInit) {
+      const mergeCtx = this.mergeCanvasRef.current.getContext('2d')
+      mergeCtx.drawImage(this.CFIImage.current, 0, 0, canvasWidth, canvasHeight)
+    }
     this.CFICanvasContext2.clearRect(0, 0, canvasWidth, canvasHeight)
     this.CFICanvasContextPaint.clearRect(0, 0, canvasWidth, canvasHeight)
     this.redrawCanvas(this.state.imagePathList)
