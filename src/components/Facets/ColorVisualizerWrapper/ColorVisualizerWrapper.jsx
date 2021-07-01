@@ -4,11 +4,12 @@ import facetBinder from 'src/facetSupport/facetBinder'
 import { facetBinderDefaultProps } from 'src/facetSupport/facetInstance'
 import { facetPubSubDefaultProps } from 'src/facetSupport/facetPubSub'
 import { PreLoadingSVG } from './PreLoadingSVG'
+import { type CVWPropsType as CVWContentsPropsType } from './ColorVisualizerContents'
 
 // lazy-load the contents of the CVW
 const ColorVisualizerContents = React.lazy(() => import('./ColorVisualizerContents'))
 
-type CVWPropsType = {
+type CVWPropsType = CVWContentsPropsType & {
   maxSceneHeight: number,
   brand: string
 }

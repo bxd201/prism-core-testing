@@ -2,10 +2,10 @@
 export type VisualizerSectionName = 'EXPLORE_COLORS' | 'GET_INSPIRED' | 'PAINT_A_PHOTO'
 export type VisualizerPageName = 'COLOR_WALL' | 'COLOR_COLLECTIONS' | 'MATCH_PHOTO' | 'PAINTED_PHOTOS' | 'EXPERT_COLOR_PICKS' | 'INSPIRATIONAL_PHOTOS' | 'OUR_PHOTOS' | 'UPLOAD_YOUR_OWN' | 'FAST_MASK'
 
-export type VisualizerNavStructure = ({
+export type VisualizerNavStructure = ({|
   name: VisualizerSectionName,
   children: VisualizerPageName[]
-})[]
+|})[]
 
 export const DEFAULT_NAV_STRUCTURE: VisualizerNavStructure = [
   {
@@ -34,7 +34,7 @@ export const DEFAULT_NAV_STRUCTURE: VisualizerNavStructure = [
   }
 ]
 
-export type NavHierarchyItemType = {
+export type NavHierarchyItemType = {|
   name: VisualizerPageName,
   allowed: Function => boolean,
   data: {
@@ -50,8 +50,9 @@ export type NavHierarchyItemType = {
     title?: string,
     titleMobile?: any
   }
-}
+|}
 
-export type NavHierarchyType = (VisualizerNavStructure & {
+export type NavHierarchyType = {|
+  name: VisualizerSectionName,
   children: NavHierarchyItemType[]
-})[]
+|}[]

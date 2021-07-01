@@ -11,6 +11,7 @@ import './ColorVisualizerNav.scss'
 import { FEATURE_EXCLUSIONS } from 'src/constants/configurations'
 import { shouldAllowFeature } from 'src/shared/utils/featureSwitch.util'
 import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
+import isEmpty from 'lodash/isEmpty'
 import { createMatchPhotoNavigationWarningModal, createNavigationWarningModal } from 'src/components/CVWModalManager/createModal'
 import {
   // cleanupNavigationIntent,
@@ -21,7 +22,7 @@ import {
 import { ROUTES_ENUM } from '../routeValueCollections'
 import { MODAL_TYPE_ENUM } from 'src/components/CVWModalManager/constants'
 import { triggerPaintSceneLayerPublish } from 'src/store/actions/paintScene'
-import { DEFAULT_NAV_STRUCTURE, type NavHierarchyType } from './navStructure'
+import { DEFAULT_NAV_STRUCTURE } from './navStructure'
 
 type DropDownMenuProps = {
   title: string,
@@ -114,6 +115,8 @@ export const DropDownMenu = ({ title, items }: DropDownMenuProps) => {
 const ColorVisualizerNav = () => {
   const { featureExclusions, cvw, brand } = useContext<ConfigurationContextType>(ConfigurationContext)
   const { exploreColors, getInspired, paintAPhoto } = cvw?.menu ?? {}
+  const { navStructure = DEFAULT_NAV_STRUCTURE } = cvw ?? {}
+  const [isLoadingCVWConfig, setIsLoadingCVWConfig] = useState(isEmpty(cvw))
   const { messages, formatMessage } = useIntl()
   const intl = useIntl()
   const history = useHistory()
@@ -127,13 +130,24 @@ const ColorVisualizerNav = () => {
   const navBtnRef: {current: ?HTMLElement} = useRef()
   const navRef: {current: ?HTMLElement} = useRef()
   const matchPhotoShown = useSelector(store => store.isMatchPhotoPresented)
+  const [dropDownItemsForExploreColors, setDropDownItemsForExploreColors] = useState([])
+  const [dropDownItemsForGetInspired, setDropDownItemsForGetInspired] = useState([])
+  const [dropDownItemsForPaintAPhoto, setDropDownItemsForPaintAPhoto] = useState([])
 
-  const [NAV_HIERARCHY] = useState<NavHierarchyType>((() => {
+  useEffect(() => setIsLoadingCVWConfig(isEmpty(cvw)), [cvw])
+
+  /**
+   * This builds out navigation based on configuration values.
+   */
+  useEffect(() => {
+    // do not proceed in building out nav until CVW config has loaded
+    if (isLoadingCVWConfig) return
+
     const { expertColorPicks, inspirationalPhotos, paintedPhotos } = getInspired ?? {}
     const { uploadYourPhoto, useOurPhotos } = paintAPhoto ?? {}
     const { colorCollections, digitalColorWall, matchAPhoto } = exploreColors ?? {}
 
-    const all = [
+    const allNavItems = [
       {
         name: 'COLOR_WALL',
         data: {
@@ -278,15 +292,15 @@ const ColorVisualizerNav = () => {
       }
     ]
 
-    return (cvw?.navStructure ?? DEFAULT_NAV_STRUCTURE).map(section => ({
+    const navHierarchy = navStructure.map(section => ({
       name: section.name,
-      children: section.children.map(navItem => all.filter(({ name, allowed }) => name === navItem && allowed()).map(v => v.data)[0]).filter(Boolean)
+      children: section.children.map(navItem => allNavItems.filter(({ name, allowed }) => name === navItem && allowed()).map(v => v.data)[0]).filter(Boolean)
     }))
-  })())
 
-  const [getDropDownItemsForExploreColors] = useState(NAV_HIERARCHY.filter(({ name }) => name === 'EXPLORE_COLORS')[0].children)
-  const [getDropDownItemsForGetInspired] = useState(NAV_HIERARCHY.filter(({ name }) => name === 'GET_INSPIRED')[0].children)
-  const [getDropDownItemsForPaintAPhoto] = useState(NAV_HIERARCHY.filter(({ name }) => name === 'PAINT_A_PHOTO')[0].children)
+    setDropDownItemsForExploreColors(navHierarchy.filter(({ name }) => name === 'EXPLORE_COLORS')[0]?.children ?? [])
+    setDropDownItemsForGetInspired(navHierarchy.filter(({ name }) => name === 'GET_INSPIRED')[0]?.children ?? [])
+    setDropDownItemsForPaintAPhoto(navHierarchy.filter(({ name }) => name === 'PAINT_A_PHOTO')[0]?.children ?? [])
+  }, [navStructure, getInspired, paintAPhoto, exploreColors, isLoadingCVWConfig])
 
   const handleNavigation = (urlFrag: string) => {
     if (isColorwallModallyPresented) {
@@ -313,6 +327,10 @@ const ColorVisualizerNav = () => {
     history.push(urlFrag)
   }
 
+  if (isLoadingCVWConfig) {
+    return <nav className='cvw-navigation-wrapper' ref={navRef} />
+  }
+
   // @todo refactor buttons into their own component -RS
   return (
     <nav className='cvw-navigation-wrapper' ref={navRef}>
@@ -329,7 +347,7 @@ const ColorVisualizerNav = () => {
         }
       }} />
       <ul className='cvw-navigation-wrapper__structure cvw-navigation-wrapper__structure--center' role='presentation'>
-        { shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.exploreColors)
+        { dropDownItemsForExploreColors.length && shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.exploreColors)
           ? <li>
             <button ref={navBtnRef} className={`cvw-nav-btn ${location.pathname === ROUTES_ENUM.ACTIVE_COLORS ? 'cvw-nav-btn--active' : ''}`} onClick={() => {
               handleNavigation(ROUTES_ENUM.ACTIVE_COLORS)
@@ -343,7 +361,7 @@ const ColorVisualizerNav = () => {
               {exploreColors?.tab ?? <FormattedMessage id='NAV_LINKS.EXPLORE_COLORS' />}
             </button>
           </li> : null }
-        { shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.getInspired)
+        { dropDownItemsForGetInspired.length && shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.getInspired)
           ? <li>
             <button className={`cvw-nav-btn ${location.pathname === ROUTES_ENUM.INSPIRATION ? 'cvw-nav-btn--active' : ''}`} onClick={() => {
               handleNavigation(ROUTES_ENUM.INSPIRATION)
@@ -352,7 +370,7 @@ const ColorVisualizerNav = () => {
               {getInspired?.tab ?? <FormattedMessage id='NAV_LINKS.GET_INSPIRED' />}
             </button>
           </li> : null }
-        { shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.paintAPhoto)
+        { dropDownItemsForPaintAPhoto.length && shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.paintAPhoto)
           ? <li>
             <button className={`cvw-nav-btn ${location.pathname === ROUTES_ENUM.SCENES ? 'cvw-nav-btn--active' : ''}`} onClick={() => {
               handleNavigation(ROUTES_ENUM.SCENES)
@@ -387,36 +405,51 @@ const ColorVisualizerNav = () => {
         </li>
       </ul>
       <Switch>
-        <Route path={ROUTES_ENUM.ACTIVE_COLORS}>
-          <DropDownMenu
-            title={exploreColors?.title ?? messages['NAV_DROPDOWN_TITLE.EXPLORE_COLORS']}
-            items={getDropDownItemsForExploreColors}
-          />
-        </Route>
-        <Route path={ROUTES_ENUM.INSPIRATION}>
-          <DropDownMenu
-            title={getInspired?.title ?? messages['NAV_DROPDOWN_TITLE.GET_INSPIRED']}
-            items={getDropDownItemsForGetInspired}
-          />
-        </Route>
-        <Route path={ROUTES_ENUM.SCENES}>
-          <DropDownMenu
-            title={paintAPhoto?.title ?? messages['NAV_DROPDOWN_TITLE.PAINT_A_PHOTO']}
-            items={getDropDownItemsForPaintAPhoto}
-          />
-        </Route>
-        <Route path={ROUTES_ENUM.ACTIVE_COLORS}>
-          <DropDownMenu
-            title={exploreColors?.title ?? messages['NAV_DROPDOWN_TITLE.GET_INSPIRED']}
-            items={getDropDownItemsForExploreColors}
-          />
-        </Route>
-        <Route path={ROUTES_ENUM.ACTIVE_PAINT_SCENE}>
-          <DropDownMenu
-            title={paintAPhoto?.title ?? messages['NAV_DROPDOWN_TITLE.GET_INSPIRED']}
-            items={getDropDownItemsForPaintAPhoto}
-          />
-        </Route>
+        {dropDownItemsForExploreColors.length
+          ? <Route path={ROUTES_ENUM.ACTIVE_COLORS}>
+            <DropDownMenu
+              title={exploreColors?.title ?? messages['NAV_DROPDOWN_TITLE.EXPLORE_COLORS']}
+              items={dropDownItemsForExploreColors}
+            />
+          </Route>
+          : null
+        }
+        {dropDownItemsForGetInspired.length
+          ? <Route path={ROUTES_ENUM.INSPIRATION}>
+            <DropDownMenu
+              title={getInspired?.title ?? messages['NAV_DROPDOWN_TITLE.GET_INSPIRED']}
+              items={dropDownItemsForGetInspired}
+            />
+          </Route>
+          : null
+        }
+        {dropDownItemsForPaintAPhoto.length
+          ? <Route path={ROUTES_ENUM.SCENES}>
+            <DropDownMenu
+              title={paintAPhoto?.title ?? messages['NAV_DROPDOWN_TITLE.PAINT_A_PHOTO']}
+              items={dropDownItemsForPaintAPhoto}
+            />
+          </Route>
+          : null
+        }
+        {dropDownItemsForExploreColors.length
+          ? <Route path={ROUTES_ENUM.ACTIVE_COLORS}>
+            <DropDownMenu
+              title={exploreColors?.title ?? messages['NAV_DROPDOWN_TITLE.GET_INSPIRED']}
+              items={dropDownItemsForExploreColors}
+            />
+          </Route>
+          : null
+        }
+        {dropDownItemsForPaintAPhoto.length
+          ? <Route path={ROUTES_ENUM.ACTIVE_PAINT_SCENE}>
+            <DropDownMenu
+              title={paintAPhoto?.title ?? messages['NAV_DROPDOWN_TITLE.GET_INSPIRED']}
+              items={dropDownItemsForPaintAPhoto}
+            />
+          </Route>
+          : null
+        }
       </Switch>
     </nav>
   )
