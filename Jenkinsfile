@@ -1,3 +1,19 @@
+def S3_FOLDER_VERSION(branch, prism_version) {
+  if (branch == 'release') {
+    "$prism_version"
+  } else {
+    "$prism_version-${branch.toLowerCase()}"
+  }
+}
+
+def GET_API_URL(branch) {
+  if (branch == 'release') {
+    "https://api.sherwin-williams.com/prism"
+  } else {
+    "https://${branch.toLowerCase()}-api.sherwin-williams.com/prism"
+  }
+}
+
 pipeline {
   options {
     buildDiscarder(
@@ -10,16 +26,19 @@ pipeline {
   agent any
   environment {
     IMAGE_NAME = "prism-core"
-    PRISM_VERSION = sh(script: "cat package.json | jq -r .version | xargs",, returnStdout: true)
+    PRISM_VERSION = sh(returnStdout: true, script: "cat package.json | jq -r .version").trim()
+    S3_FOLDER_NAME = "${S3_FOLDER_VERSION(env.BRANCH_NAME, PRISM_VERSION)}"
+    API_URL = "${GET_API_URL(env.BRANCH_NAME)}"
   }
   stages {
     stage('builder') {
-      // when {
-      //   not {
-      //     expression { BRANCH_NAME ==~ /^(qa|release)$/ }
-      //   }
-      // }
+      when {
+        not {
+          expression { BRANCH_NAME ==~ /^(qa|release)$/ }
+        }
+      }
       steps {
+
         sh """
         #!/bin/bash
 
@@ -33,43 +52,21 @@ pipeline {
         # Clean up any old image archive files
         rm -rf dist
 
-        # Echo Version to file
-        mkdir dist
-        cat package.json | grep version | head -1 | awk -F: '{ print \$2 }' | sed 's/[\", ]//g' > dist/VERSION
-        VERSION="\$(cat dist/VERSION)"
-
         # Make sure the build container has been removed
         docker stop ${IMAGE_NAME}-build-${BUILD_NUMBER} || true
         docker rm ${IMAGE_NAME}-build-${BUILD_NUMBER} || true
 
-        # Add branch names to the folder name in S3 except for production
-        S3_FOLDER_NAME="\$VERSION-${BRANCH_NAME}"
-        if [ "\$BRANCH_NAME" == "release" ]
-        then
-          S3_FOLDER_NAME="\$VERSION"
-        fi
-
-        # Conditionally determine API endpoint per environment
-        API_URL="https://develop-prism-api.ebus.swaws"
-        if [ "\$BRANCH_NAME" == "release" ]
-        then
-          API_URL="https://api.sherwin-williams.com/prism"
-        fi
-        if [ "\$BRANCH_NAME" == "qa" ]
-        then
-          API_URL="https://qa-api.sherwin-williams.com/prism"
-        fi
-
         # Mount the volumes from Jenkins and run the deploy
         docker run \
-          --env WEB_URL="https://sw-prism-web.s3.us-east-2.amazonaws.com/\$S3_FOLDER_NAME" \
-          --env API_URL="\$API_URL" \
+          -e WEB_URL=https://sw-prism-web-testing.s3.us-east-2.amazonaws.com/${PRISM_VERSION} \
+          --env API_URL="$API_URL" \
           --name ${IMAGE_NAME}-build-${BUILD_NUMBER} \
           ${IMAGE_NAME}-build:latest
 
         docker cp ${IMAGE_NAME}-build-${BUILD_NUMBER}:/app/dist.tgz ./
         tar zxf dist.tgz
         rm dist.tgz
+        echo "$PRISM_VERSION" > dist/VERSION
 
         # Remove the build container
         docker rm -f ${IMAGE_NAME}-build-${BUILD_NUMBER}
@@ -78,6 +75,9 @@ pipeline {
       }
     }
     stage('s3-upload') {
+      when {
+          expression { BRANCH_NAME ==~ /^(develop|qa|release)$/ }
+        }
       agent {
         docker {
           image 'docker.cpartdc01.sherwin.com/amazon/aws-cli:2.1.26'
@@ -88,18 +88,8 @@ pipeline {
         unstash 'static'
 
         sh """
-        VERSION="\$(cat dist/VERSION)"
-        S3_FOLDER_NAME="\$VERSION-$BRANCH_NAME"
-
-        if [ "$BRANCH_NAME" == "release" ]
-        then
-          S3_FOLDER_NAME="\$VERSION"
-
-          # Copy latest version to root
-          aws s3 cp dist/ s3://sw-prism-web/" --recursive
-        fi
-
-        aws s3 cp dist/ s3://sw-prism-web/"\$S3_FOLDER_NAME"/ --recursive
+        aws s3 cp dist/ s3://sw-prism-web/ --recursive
+        aws s3 cp dist/ s3://sw-prism-web/"${S3_FOLDER_NAME}"/ --recursive
         """
       }
    }
@@ -371,7 +361,7 @@ pipeline {
       script {
         currentBuild.result = currentBuild.result ?: 'SUCCESS'
         emailext (
-          to: 'brendan.do@sherwin.com,cody.richmond@sherwin.com,prwilliams@sherwin.com,cc:jonathan.l.gnagy@sherwin.com',
+          to: 'brendan.do@sherwin.com,cody.richmond@sherwin.com,prwilliams@sherwin.com,cc:abhilash.reddy@sherwin.com',
           subject: "${env.JOB_NAME} #${env.BUILD_NUMBER} [${currentBuild.result}]",
           body: "Build URL: ${env.BUILD_URL}.\n\n",
           attachLog: true,
