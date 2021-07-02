@@ -9,8 +9,10 @@ def S3_FOLDER_VERSION(branch, prism_version) {
 def GET_API_URL(branch) {
   if (branch == 'release') {
     "https://api.sherwin-williams.com/prism"
-  } else {
+  } else if (branch == 'qa') {
     "https://${branch.toLowerCase()}-api.sherwin-williams.com/prism"
+  } else {
+    'https://develop-prism-api.ebus.swaws'
   }
 }
 
