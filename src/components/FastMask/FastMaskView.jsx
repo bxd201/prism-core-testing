@@ -229,7 +229,7 @@ const FastMaskView = (props: FastMaskProps) => {
   return (
     <div className={baseClassName}>
       {variantsCollection.length
-        ? <div className={tintWrapperClassName} style={{ width, height }}>
+        ? <div className={tintWrapperClassName}>
           <SingleTintableSceneView
             key={sceneUid}
             surfaceColorsFromParents={surfaceColors}
