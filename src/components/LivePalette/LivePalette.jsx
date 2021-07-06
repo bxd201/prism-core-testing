@@ -153,7 +153,6 @@ export class LivePalette extends PureComponent<Props, State> {
 
     const IS_EMPTY = !colors.length
     const ADD_COLOR_TEXT = IS_EMPTY ? 'FIND_COLORS_IN_CW' : 'ADD_A_COLOR'
-    const COMPARE_COLORS_TEXT = 'COMPARE_COLORS'
 
     return (
       <DndProvider backend={HTML5Backend}>
@@ -161,25 +160,15 @@ export class LivePalette extends PureComponent<Props, State> {
           <LivePaletteModal cancel={deactivateTemporaryColor} empty={empty} isActive={temporaryActiveColor !== null} />
           <div className='prism-live-palette__header'>
             <span className='prism-live-palette__header__name'>{title ?? <FormattedMessage id='PALETTE_TITLE' />}</span>
-            {
-              colors.length >= MIN_COMPARE_COLORS_ALLOWED &&
-              (compare ?? <FormattedMessage id={COMPARE_COLORS_TEXT}>
-                {
-                  (msg: string) =>
-                    <button
-                      tabIndex='-1'
-                      className={
-                        !isFastMaskPage
-                          ? 'prism-live-palette__header__compare-button'
-                          : 'prism-live-palette__header__compare-button--hide'
-                      }
-                      onClick={this.toggleCompareColor}
-                    >
-                      {msg}
-                    </button>
-                }
-              </FormattedMessage>)
-            }
+            {colors.length >= MIN_COMPARE_COLORS_ALLOWED && (
+              <button
+                tabIndex='-1'
+                className={`prism-live-palette__header__compare-button${isFastMaskPage ? '--hide' : ''}`}
+                onClick={this.toggleCompareColor}
+              >
+                {compare ?? <FormattedMessage id='COMPARE_COLORS' />}
+              </button>
+            )}
           </div>
           {activeColor && <div className='prism-live-palette__active-color' style={{ backgroundColor: activeColor.hex }}>
             <div className={`prism-live-palette__active-color__details ${(activeColor.isDark) ? `prism-live-palette__active-color__details--dark` : ``}`}>
