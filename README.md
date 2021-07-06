@@ -90,6 +90,9 @@ Below are all the availabe theme colors we have at the moment, as well as their 
 |link|`--prism-theme-color-link`|![#3273DC](https://via.placeholder.com/15/3273DC/000000?text=+) `#3273DC`|
 |light|`--prism-theme-color-light`|![#DDD](https://via.placeholder.com/15/DDD/000000?text=+) `#DDD`|
 |dark|`--prism-theme-color-dark`|![#2E2E2E](https://via.placeholder.com/15/2E2E2E/000000?text=+) `#2E2E2E`|
+|menuBg|`--prism-theme-color-menu-bg`|![#FFF](https://via.placeholder.com/15/FFF/000000?text=+) `#FFF`|
+|menuTxt|`--prism-theme-color-menu-txt`|![#000](https://via.placeholder.com/15/000/000000?text=+) `#000`|
+|menuTxtHover|`--prism-theme-color-menu-txt-hover`|![#2CABE2](https://via.placeholder.com/15/2CABE2/000000?text=+) `#2CABE2`|
 |primary|`--prism-theme-color-primary`|![#0069AF](https://via.placeholder.com/15/0069AF/000000?text=+) `#0069AF`|
 |secondary|`--prism-theme-color-secondary`|![#2CABE2](https://via.placeholder.com/15/2CABE2/000000?text=+) `#2CABE2`|
 |success|`--prism-theme-color-success`|![#1FCE6C](https://via.placeholder.com/15/1FCE6C/000000?text=+) `#1FCE6C`|
