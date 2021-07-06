@@ -287,13 +287,17 @@ export const CVWModalManager = () => {
 
     const surfaceData = imageData.length > 1 ? imageData.slice(1) : null
     const livePaletteColorsIdArray = lpColors?.map(color => color.id) ?? []
+    // all surfaces should be the same size.
+    const saveWidth = surfaceData ? surfaceData[0].width : width
+    const saveHeight = surfaceData ? surfaceData[0].height : height
+
     const metaData = createCustomSceneMetadata(
       'TEMP_NAME',
       sceneName,
       createUniqueSceneId(),
       surfaceColors,
-      width,
-      height,
+      saveWidth,
+      saveHeight,
       livePaletteColorsIdArray,
       SCENE_TYPE.anonFastMask)
 
