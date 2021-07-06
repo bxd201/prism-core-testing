@@ -135,6 +135,7 @@ const ColorVisualizerNav = () => {
   const navBtnRef: {current: ?HTMLElement} = useRef()
   const navRef: {current: ?HTMLElement} = useRef()
   const matchPhotoShown = useSelector(store => store.isMatchPhotoPresented)
+  const fastMaskIsPolluted = useSelector(store => store.fastMaskIsPolluted)
   const [dropDownItemsForExploreColors, setDropDownItemsForExploreColors] = useState([])
   const [dropDownItemsForGetInspired, setDropDownItemsForGetInspired] = useState([])
   const [dropDownItemsForPaintAPhoto, setDropDownItemsForPaintAPhoto] = useState([])
@@ -312,10 +313,19 @@ const ColorVisualizerNav = () => {
       dispatch(setDirtyNavigationIntent(urlFrag))
       return
     }
-    // Show help modally for "active scenes"
-    if (isActiveScenePolluted && urlFrag !== ROUTES_ENUM.HELP) {
+    // Show help modally for "active scenes and fast mask"
+    if ((isActiveScenePolluted && urlFrag !== ROUTES_ENUM.HELP) || fastMaskIsPolluted) {
       dispatch(setNavigationIntent(urlFrag))
-      const modalType = activeSceneLabel === ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE ? MODAL_TYPE_ENUM.STOCK_SCENE : MODAL_TYPE_ENUM.PAINT_SCENE
+
+      const getModalType = (sceneLabel: string, isFastMaskPolluted: boolean) => {
+        if (isFastMaskPolluted) {
+          return MODAL_TYPE_ENUM.FAST_MASK
+        }
+
+        return activeSceneLabel === ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE ? MODAL_TYPE_ENUM.STOCK_SCENE : MODAL_TYPE_ENUM.PAINT_SCENE
+      }
+
+      const modalType = getModalType(activeSceneLabel, fastMaskIsPolluted)
       if (activeSceneLabel === MODAL_TYPE_ENUM.PAINT_SCENE) {
         dispatch(triggerPaintSceneLayerPublish(true))
       }

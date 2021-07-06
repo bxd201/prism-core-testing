@@ -89,3 +89,11 @@ export const setFastMaskOpenCache = (data: FastMaskOpenCache | null = null) => {
     payload: newData
   }
 }
+
+export const SET_FAST_MASK_IS_POLLUTED = 'SET_FAST_MASK_IS_POLLUTED'
+export const setFastMaskIsPolluted = (isPolluted: boolean = false) => {
+  return {
+    type: SET_FAST_MASK_IS_POLLUTED,
+    payload: isPolluted
+  }
+}

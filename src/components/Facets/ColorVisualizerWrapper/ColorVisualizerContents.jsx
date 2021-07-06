@@ -65,6 +65,7 @@ import { hydrateStockSceneFromSavedData } from '../../../store/actions/stockScen
 import { setActiveSceneKey } from '../../../store/actions/scenes'
 import { toggleCompareColor } from '../../../store/actions/live-palette'
 import {
+  setFastMaskIsPolluted,
   setFastMaskOpenCache,
   setFastMaskSaveCache,
   setImageForFastMask,
@@ -124,6 +125,7 @@ const CVW = (props: CVWPropsType) => {
   const fastMaskSaveCache = useSelector(store => store.fastMaskSaveCache)
   const fastMaskOpenCache = useSelector(store => store.fastMaskOpenCache)
   const dirtyNavigationIntent = useSelector(store => store.dirtyNavigationIntent)
+  const isFastMaskPolluted = useSelector(store => store.fastMaskIsPolluted)
 
   // Use this hook to push any facet level embedded data to redux and handle any initialization
   useEffect(() => {
@@ -143,7 +145,16 @@ const CVW = (props: CVWPropsType) => {
 
   // this logic is the app level observer of paintscene cache, used to help direct navigation to the color wall and set it up to return
   // THIS IS ONLY UTILIZED BY FLOWS THAT HAVE RETURN PATHS!!!!!!!
+
+  // Exit here if fast mask is present, should use modal to resolve
   useEffect(() => {
+    if (isFastMaskPolluted) {
+      if (navigationIntent === ROUTES_ENUM.COLOR_WALL) {
+        dispatch(createNavigationWarningModal(intl, MODAL_TYPE_ENUM.FAST_MASK, false))
+      }
+      return
+    }
+
     // Whenever we navigate update the wrapper dimensions
     if (wrapperRef.current) {
       // @todo this should allow us to pass by prop drilling to any comps that need to do math base don the box dims -RS
@@ -361,6 +372,12 @@ const CVW = (props: CVWPropsType) => {
     if (fastMaskOpenCache) {
       dispatch(setFastMaskOpenCache())
     }
+
+    dispatch(setFastMaskIsPolluted())
+  }
+
+  const fastMaskInit = () => {
+    dispatch(setFastMaskIsPolluted(!!fastMaskImageUrl))
   }
 
   return (
@@ -404,6 +421,7 @@ const CVW = (props: CVWPropsType) => {
             <Route path={ROUTES_ENUM.HELP} render={() => <Help />} />
             <Route path={ROUTES_ENUM.ACTIVE_FAST_MASK} render={() => <FastMaskView
               handleBlobLoaderError={handleSceneBlobLoaderError}
+              initHandler={fastMaskInit}
               refDims={fastMaskRefDims}
               imageUrl={fastMaskImageUrl}
               activeColor={activeColor}

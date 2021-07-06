@@ -37,7 +37,8 @@ type FastMaskProps = {
   activeColor: Color,
   handleUpdates: Function,
   cleanupCallback: Function,
-  savedData?: FastMaskOpenCache
+  savedData?: FastMaskOpenCache,
+  initHandler?: Function
 }
 
 const baseClassName = 'fast-mask-view'
@@ -46,7 +47,7 @@ const backgroundWrapperClassName = `${baseClassName}__background-wrapper`
 const loaderWrapperClassName = `${baseClassName}__loader-wrapper`
 
 const FastMaskView = (props: FastMaskProps) => {
-  const { handleSceneBlobLoaderError, refDims, imageUrl, activeColor, savedData } = props
+  const { handleSceneBlobLoaderError, refDims, imageUrl, activeColor, savedData, initHandler } = props
   const intl = useIntl()
   const [blobData, setBlobData] = useState(null)
   const [surfaceColors, setSurfaceColors] = useState([])
@@ -133,6 +134,10 @@ const FastMaskView = (props: FastMaskProps) => {
   }, [activeColor, variantsCollection, scenesCollection])
 
   useEffect(() => {
+    if (initHandler) {
+      initHandler()
+    }
+
     if (refDims) {
       setWidth(refDims.isPortrait ? refDims.portraitWidth : refDims.landscapeWidth)
       setHeight(refDims.isPortrait ? refDims.portraitHeight : refDims.landscapeHeight)

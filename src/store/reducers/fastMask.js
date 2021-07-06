@@ -1,5 +1,6 @@
 // @flow
 import {
+  SET_FAST_MASK_IS_POLLUTED,
   SET_FAST_MASK_OPEN_CACHE,
   SET_FAST_MASK_SAVE_CACHE,
   SET_IMAGE_FOR_FAST_MASK,
@@ -34,6 +35,14 @@ export const fastMaskSaveCache = (state: FastMaskWorkspace | null = null, action
 
 export const fastMaskOpenCache = (state: FastMaskOpenCache | null = null, action: { type: string, payload: FastMaskOpenCache }) => {
   if (action.type === SET_FAST_MASK_OPEN_CACHE) {
+    return action.payload
+  }
+
+  return state
+}
+
+export const fastMaskIsPolluted = (state: boolean = false, action: { type: string, payload: boolean }) => {
+  if (action.type === SET_FAST_MASK_IS_POLLUTED) {
     return action.payload
   }
 

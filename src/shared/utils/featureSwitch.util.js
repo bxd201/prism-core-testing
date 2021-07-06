@@ -7,12 +7,12 @@ export const shouldAllowFeature = (featureExclusions, feature) => {
   }
 
   // Uncomment below to test fast mask
-  // if (feature === FEATURE_EXCLUSIONS.uploadYourPhoto) {
-  //   return false
-  // }
-  // if (feature === FEATURE_EXCLUSIONS.fastMask) {
-  //   return true
-  // }
+  if (feature === FEATURE_EXCLUSIONS.uploadYourPhoto) {
+    return false
+  }
+  if (feature === FEATURE_EXCLUSIONS.fastMask) {
+    return true
+  }
 
   return featureExclusions.indexOf(feature) === -1
 }

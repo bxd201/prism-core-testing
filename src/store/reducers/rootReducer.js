@@ -47,7 +47,7 @@ import {
 } from './navigation'
 import { modalInfo, modalThumbnailColor } from './globalModal'
 import { matchPhotoImage, matchPhotoImageDims } from './matchPhoto'
-import { fastMaskSaveCache, fastMaskImageUrl, fastMaskRefDims, fastMaskOpenCache } from './fastMask'
+import { fastMaskSaveCache, fastMaskImageUrl, fastMaskRefDims, fastMaskOpenCache, fastMaskIsPolluted } from './fastMask'
 
 export default combineReducers({
   collectionSummaries,
@@ -122,5 +122,6 @@ export default combineReducers({
   fastMaskImageUrl,
   fastMaskRefDims,
   fastMaskSaveCache,
-  fastMaskOpenCache
+  fastMaskOpenCache,
+  fastMaskIsPolluted
 })
