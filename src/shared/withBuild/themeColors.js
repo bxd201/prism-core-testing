@@ -13,6 +13,9 @@ const defaultThemeColors = {
   link: '#3273dc', // hyperlink color (maps over from primary if not set in config)
   light: '#dddddd', // nearly white
   dark: '#2e2e2e', // nearly black
+  menuBg: '#FFF', // menu background color
+  menuTxt: '#000', // menu text color
+  menuTxtHover: '#2CABE2', // menu text color on hover
   primary: '#0069af', // main button/UI color
   secondary: '#2cabe2', // secondary button/UI color
   success: '#1fce6d', // success color (usually green)

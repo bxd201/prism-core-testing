@@ -5,11 +5,12 @@ $cvw-nav-btn-height: 3rem; // TODO: make better
 
   .cvw-nav-btn {
     height: $cvw-nav-btn-height;
-    background-color: white;
+    background-color: var(getThemeColor('menuBg'));
     background-image: linear-gradient(to top, var(getThemeColor('white')) 50%, var(getThemeColor('secondary')) 50%);
     background-size: 100% 200%;
     background-repeat: no-repeat;
     background-position: 0 -102%; // vertical offset of >100% to make sure there are no rendering issues with <1px pct issues
+    color: var(getThemeColor('menuTxt'));
     transition: background-position 0.2s;
     margin-right: 2px;
     padding: 0 .3em;
@@ -23,7 +24,7 @@ $cvw-nav-btn-height: 3rem; // TODO: make better
     }
 
     &:hover {
-      color: var(getThemeColor('secondary'));
+      color: var(getThemeColor('menuTxtHover'));
       background-position: 0 -80%;
     }
 
@@ -49,6 +50,7 @@ $cvw-nav-btn-height: 3rem; // TODO: make better
   &__structure {
     display: flex;
     font-size: .8125rem; // sets base font size for top nav items
+    background-color: var(getThemeColor('menuBg'));
 
     &--center {
       justify-content: center;
