@@ -73,6 +73,7 @@ import {
 } from '../../../store/actions/fastMask'
 import FastMaskView from '../../FastMask/FastMaskView'
 import type { FastMaskWorkspace } from '../../FastMask/FastMaskView'
+import debounce from 'lodash/debounce'
 
 export type CVWPropsType = {
   alwaysShowColorFamilies?: boolean,
@@ -127,12 +128,26 @@ const CVW = (props: CVWPropsType) => {
   const dirtyNavigationIntent = useSelector(store => store.dirtyNavigationIntent)
   const isFastMaskPolluted = useSelector(store => store.fastMaskIsPolluted)
 
+  const getAndSetWrapperDims = () => {
+    const dims = wrapperRef.current.getBoundingClientRect()
+    setWrapperDims(dims)
+  }
+
+  const resizeHandler = debounce((e: SyntheticEvent) => {
+    getAndSetWrapperDims()
+  }, 50)
+
   // Use this hook to push any facet level embedded data to redux and handle any initialization
   useEffect(() => {
     dispatch(setMaxSceneHeight(maxSceneHeight))
     dispatch(setActiveSceneLabel(ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE))
     fetchRemoteScenes(brandId, { language }, SCENES_ENDPOINT, handleScenesFetchedForCVW, handleScenesFetchErrorForCVW, dispatch)
     setInitialRender(location.pathname === '/')
+
+    // handle resize for components that need to manually scale/resize elements
+    window.addEventListener('resize', resizeHandler)
+
+    return () => window.removeEventListener('resize', resizeHandler)
   }, [])
 
   // used to programmatically show modals
@@ -157,9 +172,8 @@ const CVW = (props: CVWPropsType) => {
 
     // Whenever we navigate update the wrapper dimensions
     if (wrapperRef.current) {
-      // @todo this should allow us to pass by prop drilling to any comps that need to do math base don the box dims -RS
-      const wrapperDims = wrapperRef.current.getBoundingClientRect()
-      setWrapperDims(wrapperDims)
+      // this should allow us to pass by prop drilling to any comps that need to do math base don the box dims
+      getAndSetWrapperDims()
     }
 
     // THE ORDER OF THESE RULES MATTERS!!!
@@ -454,6 +468,7 @@ const CVW = (props: CVWPropsType) => {
                 workspace={paintSceneWorkspace}
                 lpActiveColor={activeColor}
                 setPaintSceneSaveData={setPaintSceneData}
+                width={wrapperDims.width}
                 setActiveScenePolluted={setPaintScenePolluted} /> : null}
           </div>
         </div>
