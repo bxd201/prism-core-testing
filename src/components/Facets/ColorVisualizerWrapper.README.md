@@ -3,7 +3,9 @@
 ## Available props
 | Prop | Type | HTML Attribute Example | React Prop Example | Description |
 |--------------------|-------|---------|---|-------------|
-| (value) | `string` | `data-value="example"` | `value="example"` | Description. |
+| alwaysShowColorFamilies | `boolean` | `data-always-show-color-families` | `alwaysShowColorFamilies` | Always shows Color Families menu if its width doesn't exceed the container width. |
+| colorWallBgColor | `string` | `data-color-wall-bg-color="#FFF"` | `colorWallBgColor="#FFF"` | Defines background color for color wall. |
+| defaultRoute | `string` | `data-default-route="/active/color-wall/"` | `defaultRoute="/active/color-wall/"` | Sets initial route to be opened as root url. |
 
 ## Published events
 
