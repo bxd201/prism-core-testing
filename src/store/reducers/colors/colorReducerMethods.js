@@ -79,7 +79,9 @@ export function doReceiveColors (state: ColorsState, { payload: { unorderedColor
           chunkGridParams,
           families: families.map(family => ({
             name: family,
-            unChunkedChunks: families.length > 1 ? [...brights[family], ...colors[family]] : unChunkedChunks,
+            unChunkedChunks: families.length > 1
+              ? [...(brights[family] ?? [[]]), ...(colors[family] ?? [[]])]
+              : unChunkedChunks,
             chunkGridParams: families.length > 1
               ? { gridWidth: 3, chunkWidth: 7, firstRowLength: 1, wrappingEnabled: false }
               : { ...chunkGridParams, wrappingEnabled: false }
