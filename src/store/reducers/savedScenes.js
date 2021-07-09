@@ -18,7 +18,7 @@ import {
   SHOW_SAVED_CONFIRM_MODAL,
   SHOW_SAVED_CUSTOM_SUCCESS,
   SHOW_DELETE_CONFIRM,
-  PURGE_METADATA, SET_SHOULD_SHOW_PAINT_SCENE_SAVED_MODAL
+  PURGE_METADATA, SET_SHOULD_SHOW_PAINT_SCENE_SAVED_MODAL, ANON_SCENE_TYPES
 } from '../actions/persistScene'
 import {
   DELETE_ANON_STOCK_SCENE,
@@ -73,30 +73,23 @@ export const scenesAndRegions = (state: Object[] = [], action: {type: string, pa
   }
 
   if (action.type === SAVED_SCENE_LOCAL) {
-    let newState = [...state]
-    const existingItem = state.find(item => item.id === action.payload.id)
-    if (existingItem) {
-      newState = state.filter(item => item.id !== existingItem.id)
-    }
-
-    newState.push(action.payload)
-
-    return newState
+    return state.map(item => cloneDeep(item))
   }
 
   if (action.type === DELETE_ANON_SAVED_SCENE) {
-    return state.filter(item => item.id !== action.payload)
+    return state.filter(item => item.id !== action.payload).map(item => cloneDeep(item))
   }
 
   if (action.type === UPDATE_ANON_SAVED_SCENE_NAME) {
-    const sceneDataFromState = state.find(item => item.id === action.payload.id)
-    if (sceneDataFromState) {
-      const newState = state.filter(item => item.id !== action.payload.id)
-      newState.push({ ...sceneDataFromState, name: action.payload.name, updated: Date.now() })
-      return newState
-    }
+    return state.map(item => {
+      const itemCopy = cloneDeep(item)
+      if (item.id === action.payload.id) {
+        itemCopy.name = action.payload.name
+        itemCopy.updated = Date.now()
+      }
 
-    return state
+      return itemCopy
+    })
   }
 
   return state
@@ -129,7 +122,7 @@ export const sceneMetadata = (state: Object[] = [], action: {type: string, paylo
   }
 
   if (action.type === DELETE_ANON_SAVED_SCENE) {
-    return state.filter(item => item.sceneType !== SCENE_TYPE.anonCustom || item.scene.indexOf(action.payload) === -1)
+    return state.filter(item => ANON_SCENE_TYPES.indexOf(item.sceneType) === -1 || item.scene.indexOf(action.payload) === -1)
   }
 
   if (action.type === SAVE_ANON_STOCK_SCENE && action.payload) {
@@ -150,12 +143,16 @@ export const sceneMetadata = (state: Object[] = [], action: {type: string, paylo
   }
 
   if (action.type === UPDATE_STOCK_SAVED_SCENE_NAME) {
-    const sceneDataFromState = state.find(item => item.id === action.payload.id)
-    if (sceneDataFromState) {
-      const newState = state.filter(item => item.id !== action.payload.id)
-      newState.push({ ...sceneDataFromState, name: action.payload.name })
-      return newState
-    }
+    newState = state.map(item => {
+      const itemCopy = cloneDeep(item)
+      if (item.id === action.payload.id) {
+        itemCopy.name = action.payload.name
+      }
+
+      return itemCopy
+    })
+
+    return newState
   }
 
   if (action.type === SAVED_REGIONS_UNPICKLED || action.type === PURGE_METADATA) {
@@ -169,7 +166,7 @@ export const sceneMetadata = (state: Object[] = [], action: {type: string, paylo
         return { ...item }
       }
 
-      if (item.sceneType === SCENE_TYPE.anonCustom) {
+      if (ANON_SCENE_TYPES.indexOf(item.sceneType) > -1) {
         // If the storage location structure/ id generation is changed this will need to be
         let id = item.scene.match(/\/([0-9]+-)+/)
 
@@ -188,24 +185,21 @@ export const sceneMetadata = (state: Object[] = [], action: {type: string, paylo
 
   if (action.type === SAVE_LIVE_PALETTE) {
     const dataCopy = cloneDeep(action.payload)
-    if (state.find(item => item.sceneType === SCENE_TYPE.livePalette && item.id === action.payload.id)) {
-      newState = state.filter(item => item.id !== action.payload.id)
-      newState.push(dataCopy)
+    const stateCopy = cloneDeep(state)
+    stateCopy.push(dataCopy)
 
-      return newState
-    } else {
-      return [...state, dataCopy]
-    }
+    return stateCopy
   }
 
   if (action.type === UPDATE_LIVE_PALETTE) {
-    const livePaletteData = state.find(item => item.sceneType === SCENE_TYPE.livePalette && item.id === action.payload.id)
-    if (livePaletteData) {
-      newState = state.filter(item => item.id !== action.payload.id)
-      newState.push({ ...livePaletteData, name: action.payload.name })
+    return state.map(item => {
+      const itemCopy = cloneDeep(item)
+      if (item.id === action.payload.id) {
+        itemCopy.name = action.payload.name
+      }
 
-      return newState
-    }
+      return itemCopy
+    })
   }
 
   if (action.type === DELETE_SAVED_LIVE_PALETTE) {

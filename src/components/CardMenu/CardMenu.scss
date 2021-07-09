@@ -21,6 +21,7 @@
   }
   &__heading {
     font-size: 1.125em;
+    min-height: 1.125em;
     line-height: 1.350em;
     background: var(getThemeColor('white'));
     display: block;

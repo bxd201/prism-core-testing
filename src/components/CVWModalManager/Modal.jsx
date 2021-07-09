@@ -4,9 +4,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { GLOBAL_MODAL_STYLE, DANGER, PRIMARY, SAVED, ACTION_SAVE } from './constants.js'
 import { KEY_CODES } from 'src/constants/globals'
 import './GlobalModal.scss'
+import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 
 export const globalModalClassName = 'global-modal'
 export const globalModalInnerClassName = `${globalModalClassName}__inner-box`
+export const globalModalInnerClearClassName = `${globalModalInnerClassName}--clear`
 export const globalModalTitleClassName = `${globalModalClassName}__title`
 export const globalModalPreviewImageClassName = `${globalModalClassName}__preview-image`
 export const globalModalDescriptionClassName = `${globalModalClassName}__description`
@@ -29,9 +31,39 @@ const getGlobalModalClass = (type) => {
   }
 }
 
-type ModalProps = { shouldDisplayModal: boolean, previewImage: ComponentType, intl: Object, styleType: String, title: String, description: String, allowInput: boolean, actions: Array, fn: Function, setInputValue: Function, inputValue: string, resetInputValue: Function}
+type ModalProps = {
+  shouldDisplayModal: boolean,
+  previewImage: ComponentType,
+  intl: Object,
+  styleType: String,
+  title: String,
+  description: String,
+  allowInput: boolean,
+  actions: Array,
+  fn: Function,
+  setInputValue: Function,
+  inputValue: string,
+  resetInputValue: Function,
+  loadingMode?: boolean
+}
+
 export const Modal = (props: ModalProps) => {
-  const { shouldDisplayModal, previewImage, styleType, title, description, allowInput, actions, fn, setInputValue, inputValue, resetInputValue, intl } = props
+  const {
+    shouldDisplayModal,
+    previewImage,
+    styleType,
+    title,
+    description,
+    allowInput,
+    actions,
+    fn,
+    setInputValue,
+    inputValue,
+    resetInputValue,
+    intl,
+    loadingMode
+  } = props
+
   const btnRefList = useRef([])
 
   useEffect(() => resetInputValue(), [shouldDisplayModal])
@@ -82,7 +114,7 @@ export const Modal = (props: ModalProps) => {
     <React.Fragment>
       {shouldDisplayModal &&
       <div className={globalModalClassName}>
-        <div className={`${globalModalInnerClassName} ${getGlobalModalClass(styleType)} ${hidePreviewImage && globalModalSavedClassName}`}>
+        <div className={`${loadingMode ? globalModalInnerClearClassName : globalModalInnerClassName} ${getGlobalModalClass(styleType)} ${hidePreviewImage && globalModalSavedClassName}`}>
           {!hidePreviewImage && previewImage && <div className={`${globalModalInnerClassName}__preview-image`}>{previewImage}</div>}
           <div className={`${globalModalInnerClassName}__content`}>
             {title ? <div className={globalModalTitleClassName}>{title}</div> : null}
@@ -95,6 +127,7 @@ export const Modal = (props: ModalProps) => {
                 </div>
               </label>
             </div> : null}
+            {loadingMode ? <CircleLoader /> : null}
             {disabledSave && <div className={globalModalEmptyInputClassName}>{intl.formatMessage({ id: 'SAVE_SCENE_MODAL.EMPTY_INPUT' })}</div>}
             <div className={globalModalButtonsClassName}>
               {actions && createButtonsFromActions(actions, fn, disabledSave)}

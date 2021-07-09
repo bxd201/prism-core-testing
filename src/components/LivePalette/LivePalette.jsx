@@ -36,6 +36,8 @@ import {
   setNavigationIntentWithReturn
 } from '../../store/actions/navigation'
 import { ROUTES_ENUM } from '../Facets/ColorVisualizerWrapper/routeValueCollections'
+import { withRouter } from 'react-router-dom'
+
 const PATH__NAME = 'fast-mask-simple.html'
 
 type Props = {
@@ -49,9 +51,10 @@ type Props = {
   empty: Function,
   temporaryActiveColor: Color | null,
   setNavigationIntents: Function,
-  isColorwallModallyPresented: boolean,
   isCompareColorShown: boolean,
-  config: ConfigurationContextType
+  config: ConfigurationContextType,
+  isFastMaskPolluted: boolean,
+  location: any
 }
 
 // @todo refactor to put state init in constructor and also bind handleAddColor, removing anon func call in render ...better yet this is a good hooks candidate... -RS
@@ -132,7 +135,13 @@ export class LivePalette extends PureComponent<Props, State> {
   }
   handleAddColor = (e: SyntheticEvent) => {
     e.preventDefault()
-    if (this.props.isColorwallModallyPresented) {
+
+    if (this.props.location.pathname.indexOf(ROUTES_ENUM.COLOR_WALL) > -1) {
+      return
+    }
+
+    if (this.props.isFastMaskPolluted) {
+      this.props.setNavigationIntents(ROUTES_ENUM.COLOR_WALL)
       return
     }
 
@@ -222,7 +231,7 @@ export class LivePalette extends PureComponent<Props, State> {
 }
 
 const mapStateToProps = (state, props) => {
-  const { lp, activeSceneLabel, isColorwallModallyPresented } = state
+  const { lp, activeSceneLabel, fastMaskIsPolluted } = state
   return {
     colors: lp.colors,
     activeColor: lp.activeColor,
@@ -230,8 +239,8 @@ const mapStateToProps = (state, props) => {
     removedColor: lp.removedColor,
     temporaryActiveColor: lp.temporaryActiveColor,
     activeSceneLabel,
-    isColorwallModallyPresented,
-    isCompareColorShown: lp.toggleCompareColor
+    isCompareColorShown: lp.toggleCompareColor,
+    isFastMaskPolluted: fastMaskIsPolluted
   }
 }
 
@@ -262,4 +271,4 @@ const mapDispatchToProps = (dispatch: Function) => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(WithConfigurationContext(LivePalette))
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(WithConfigurationContext(LivePalette)))

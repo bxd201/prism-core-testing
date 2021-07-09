@@ -2,6 +2,7 @@
 import Jimp from 'jimp'
 import { IntlShape } from 'react-intl'
 import type { MiniColor } from '../types/Scene'
+import { SCENE_TYPES } from '../../constants/globals'
 
 const generateImage = async (data: any, surfaceColors: MiniColor[], config: Object, intl: IntlShape): Jimp => {
   const isPaintScene = !data.variantName
@@ -59,6 +60,11 @@ const generateImage = async (data: any, surfaceColors: MiniColor[], config: Obje
     }
   }
 
+  const properWidth = 1280
+  const borderWidth = 10
+  const textWidth = 80
+  const textHeight = 20
+
   if (!isPaintScene) {
     const masks: Jimp[] = data.surfaces.map(surface => {
       return Jimp.read(surface.surfaceBlobUrl)
@@ -79,13 +85,12 @@ const generateImage = async (data: any, surfaceColors: MiniColor[], config: Obje
         })
       }
     })
+    if (data?.sceneType === SCENE_TYPES.FAST_MASK) {
+      image.resize(properWidth, Jimp.AUTO)
+    }
   } else {
     const currWidth = image.bitmap.width
     const currHeight = image.bitmap.height
-    const properWidth = 1280
-    const borderWidth = 10
-    const textWidth = 80
-    const textHeight = 20
 
     const miniImgBorderLeft = new Jimp(borderWidth, (1 / 3) * currHeight, '#fff')
     image.composite(miniImgBorderLeft, (2 / 3) * currWidth - borderWidth, (2 / 3) * currHeight)

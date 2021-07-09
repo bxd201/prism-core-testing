@@ -1,45 +1,61 @@
 // @flow
 import { SET_MODAL_INFO, UPDATE_PAINT_SCENE_PREVIEW, HIDE_GLOBAL_MODAL, DISPLAY_GLOBAL_MODAL, SET_MODAL_THUMBNAIL_COLOR } from '../actions/globalModal'
+import cloneDeep from 'lodash/cloneDeep'
 
 type State = {
   actions: Array
 }
 
+// eslint-disable-next-line no-unused-vars
 const initialState: State = {
-  actions: [],
+  actions: null,
   shouldDisplayModal: false,
   title: '',
   description: '',
   modalType: '',
   showLivePalette: false,
-  layers: []
+  layers: null
 }
 
-export const modalInfo = (state: Object = initialState, action: { type: string, payload: Object }) => {
+// @todo revisit this, i think we need to make modals rerender always.  Investigate the iuupdate paint scene preview... -RS
+export const modalInfo = (state: Object | null = null, action: { type: string, payload: Object }) => {
   switch (action.type) {
     case SET_MODAL_INFO:
-      return Object.assign({}, state, {
-        actions: action.payload?.actions,
-        shouldDisplayModal: action.payload?.shouldDisplayModal,
-        description: action.payload.description,
-        title: action.payload?.title,
-        modalType: action.payload?.modalType ? action.payload?.modalType : state.modalType,
-        showLivePalette: action.payload?.showLivePalette,
-        allowInput: action.payload?.allowInput,
-        styleType: action.payload?.styleType
-      })
+      const {
+        uid,
+        actions,
+        shouldDisplayModal,
+        description,
+        title,
+        modalType,
+        showLivePalette,
+        allowInput,
+        styleType,
+        layers
+      } = action.payload
+
+      return { ...initialState,
+        uid,
+        actions,
+        shouldDisplayModal,
+        description,
+        title,
+        modalType,
+        showLivePalette,
+        allowInput,
+        styleType,
+        layers
+      }
     case UPDATE_PAINT_SCENE_PREVIEW:
-      return Object.assign({}, state, {
-        layers: action.payload?.layers
-      })
+      const stateCopyForLayers = cloneDeep(state)
+      stateCopyForLayers.layers = action.payload.layers
+      return stateCopyForLayers
     case HIDE_GLOBAL_MODAL:
-      return Object.assign({}, state, {
-        shouldDisplayModal: false
-      })
+      return null
     case DISPLAY_GLOBAL_MODAL:
-      return Object.assign({}, state, {
-        shouldDisplayModal: true
-      })
+      const newState = cloneDeep(state)
+      newState.shouldDisplayModal = action.payload.shouldDisplayModal
+      return newState
     default:
       return state
   }

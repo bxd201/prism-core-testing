@@ -63,7 +63,7 @@ const MatchPhotoContainer = (props: MatchPhotoContainerProps) => {
     {imageUrl ? <PrismImage ref={imageRef} source={imageUrl} loadedCallback={handleImageLoaded} scalingWidth={scalingWidth} /> : null }
     { pins ? <MatchPhoto
       imageUrl={imageUrl}
-      wrapperWidth={width}
+      wrapperWidth={scalingWidth}
       isPortrait={imageIsPortrait}
       imageDims={imageDims}
       pins={pins}
