@@ -228,7 +228,7 @@ pipeline {
     }
     stage('Deploy') {
       when {
-        expression { BRANCH_NAME ==~ /^(develop|integration|hotfix|qa|release|replatform)$/ }
+        expression { BRANCH_NAME ==~ /^(develop|integration|hotfix|qa|release|replatform|lowes-cvw)$/ }
       }
       agent {
         docker {
