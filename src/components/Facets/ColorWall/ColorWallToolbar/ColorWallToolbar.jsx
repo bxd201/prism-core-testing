@@ -60,7 +60,7 @@ const Select = ({ placeholderText, options, disabled = false, onSelectOpened }: 
 const ColorWallToolbar = (props: { alwaysShowColorFamilies?: boolean }) => {
   const { messages = {} } = useIntl()
   const { hiddenSections } = useContext(ColorWallContext)
-  const { cvw, uiStyle } = useContext<ConfigurationContextType>(ConfigurationContext)
+  const { cvw = {}, uiStyle } = useContext<ConfigurationContextType>(ConfigurationContext)
   const { path, params: { section, family } } = useRouteMatch()
   const { sections = [], families = [], section: activeSection, family: activeFamily, primeColorWall } = useSelector(state => state.colors)
   const dispatch = useDispatch()
