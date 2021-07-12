@@ -350,6 +350,7 @@
     "SUGGESTIONS": "Quelques exemples de choses que vous pouvez rechercher sont {suggestions}"
   },
   "SELECT_COLLECTION": "Sélectionnez une collection de couleurs",
+  "SELECT_FAMILY": "Sélectionnez une famille de couleurs",
   "SELECT_IMAGE": "Select an image",
   "SELECT_NEW_IMAGE": "Select new image",
   "SELECTED_FROM": "Selected from",
