@@ -22,6 +22,13 @@ import '../../../GeneralButtons/ButtonBar/ButtonBar.scss'
 const PATH_END_FAMILY = 'family/'
 const menuBarPrefix = 'menu-bar'
 
+const omitPrefix = function omitPrefix (str: string = ''): string {
+  if (typeof str === 'string') {
+    return str.replace(/@\|@.*@\|@/g, '')
+  }
+  return ''
+}
+
 type SelectPropsT = {
   placeholderText: string,
   options: { label: string, link: string }[],
@@ -35,14 +42,14 @@ const Select = ({ placeholderText, options, disabled = false, onSelectOpened }: 
     onMenuToggle={({ isOpen }) => onSelectOpened?.(isOpen)}
   >
     <Button className={`${menuBarPrefix}__button`} disabled={disabled}>
-      <span className={`${menuBarPrefix}__button-copy`}>{placeholderText}</span>
+      <span className={`${menuBarPrefix}__button-copy`}>{omitPrefix(placeholderText)}</span>
       <FontAwesomeIcon className='close-icon-svg' icon={['fa', 'angle-down']} pull='right' />
     </Button>
     <Menu className={`${menuBarPrefix}__menu`}>
       {options.map(({ label, link }) => (
-        <MenuItem className={`${menuBarPrefix}__menu-item`} key={label} text={label} value={label}>
+        <MenuItem className={`${menuBarPrefix}__menu-item`} key={label} text={omitPrefix(label)} value={label}>
           <Link className={`${menuBarPrefix}__menu-link`} to={link}>
-            <span className={MODE_CLASS_NAMES.DESC}>{label}</span>
+            <span className={MODE_CLASS_NAMES.DESC}>{omitPrefix(label)}</span>
           </Link>
         </MenuItem>
       ))}
@@ -78,7 +85,7 @@ const ColorWallToolbar = (props: { alwaysShowColorFamilies?: boolean }) => {
   const colorFamilyMenuBtns: Element<any>[] = (
     families.map(name =>
       <ButtonBar.Button style={{ justifyContent: 'center', width: '100%' }} key={name} to={generateColorWallPageUrl(section, name)}>
-        <span className={MODE_CLASS_NAMES.DESC}>{name}</span>
+        <span className={MODE_CLASS_NAMES.DESC}>{omitPrefix(name)}</span>
       </ButtonBar.Button>
     )
   )
