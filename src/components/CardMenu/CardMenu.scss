@@ -51,7 +51,9 @@
     &:hover {
       border-color: var(getThemeColor('secondary'));
       cursor: pointer;
-      color: #2cabe2;
+      color: var(getThemeColor('secondary'));
+      fill: var(getThemeColor('secondary'));
+      background: var(getThemeColor('secondary.contrast'));
     }
     &:focus {
       outline-style: solid;
