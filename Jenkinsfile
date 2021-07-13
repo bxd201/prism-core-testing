@@ -37,7 +37,6 @@ pipeline {
       when {
           expression { BRANCH_NAME ==~ /^(PR-*|develop|integration|hotfix|qa|release)$/ }
         }
-      }
       steps {
 
         sh """
@@ -228,7 +227,7 @@ pipeline {
     }
     stage('Deploy') {
       when {
-        expression { BRANCH_NAME ==~ /^(develop|integration|hotfix|qa|release|replatform)$/ }
+        expression { BRANCH_NAME ==~ /^(develop|integration|hotfix|replatform)$/ }
       }
       agent {
         docker {
