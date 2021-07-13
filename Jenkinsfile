@@ -35,7 +35,7 @@ pipeline {
   stages {
     stage('builder') {
       when {
-          expression { BRANCH_NAME ==~ /^(PR-*|develop|integration|hotfix|qa|release)$/ }
+          expression { BRANCH_NAME ==~ /^((PR-.+|develop|integration|hotfix|qa|release)$/ }
         }
       steps {
 
@@ -351,10 +351,10 @@ pipeline {
       }
     }
     stage('trigger_smoke_job') {
-            steps {
-                trigger_smoke_job(BRANCH_NAME)
-            }
-          }
+      steps {
+          trigger_smoke_job(BRANCH_NAME)
+      }
+    }
   }
   post {
     always {
