@@ -154,7 +154,7 @@ const ColorVisualizerNav = () => {
           img: cvw?.navExploreColor,
           title: digitalColorWall?.title ?? messages['NAV_LINKS.DIGITAL_COLOR_WALL'],
           content: digitalColorWall?.content ?? formatMessage({ id: 'NAV_DROPDOWN_LINK_SUB_CONTENT.DIGITAL_COLOR_WALL' }, { brand }),
-          onClick: () => history.push(ROUTES_ENUM.COLOR_WALL + '/section/sherwin-williams-colors')
+          onClick: () => history.push(ROUTES_ENUM.COLOR_WALL)
         },
         allowed: () => shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.colorWall)
       },

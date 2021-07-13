@@ -79,8 +79,8 @@ const CVW = (props: CVWPropsType) => {
   const { alwaysShowColorFamilies, colorWallBgColor, defaultRoute, language, maxSceneHeight } = props
   const dispatch = useDispatch()
   const location = useLocation()
+  const { pathname } = location
   const history = useHistory()
-  const [initialRender, setInitialRender] = useState(false)
   const toggleCompareColorFlag: boolean = useSelector(store => store.lp.toggleCompareColor)
   const colorDetailsModalShowing: boolean = useSelector(store => store.colors.colorDetailsModal.showing)
   const isPaintSceneCached: boolean = useSelector(store => !!store.paintSceneCache)
@@ -88,7 +88,7 @@ const CVW = (props: CVWPropsType) => {
   const navigationReturnIntent: string = useSelector(store => store.navigationReturnIntent)
   const scenes = useSelector(store => store.scenesCollection)
   const variants = useSelector(store => store.variantsCollection)
-  const isShowFooter = location.pathname.match(/active\/masking$/) === null
+  const isShowFooter = pathname.match(/active\/masking$/) === null
   const { featureExclusions, brandId } = useContext(ConfigurationContext)
   const activeSceneLabel = useSelector(store => store.activeSceneLabel)
   const wrapperRef = useRef()
@@ -122,7 +122,6 @@ const CVW = (props: CVWPropsType) => {
     dispatch(setMaxSceneHeight(maxSceneHeight))
     dispatch(setActiveSceneLabel(ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE))
     fetchRemoteScenes(brandId, { language }, SCENES_ENDPOINT, handleScenesFetchedForCVW, handleScenesFetchErrorForCVW, dispatch)
-    setInitialRender(location.pathname === '/')
   }, [])
 
   // used to programmatically show modals
@@ -361,7 +360,7 @@ const CVW = (props: CVWPropsType) => {
               refDims={fastMaskRefDims}
               imageUrl={fastMaskImageUrl}
               activeColor={activeColor} />} />
-            {initialRender && defaultRoute ? <Redirect to={defaultRoute} /> : null}
+            {defaultRoute && (!pathname || pathname === '/') ? <Redirect to={defaultRoute} /> : null}
           </Switch>
           <div
             /* This div has multiple responsibilities in the DOM tree. It cannot be removed, moved, or changed without causing regressions. */
