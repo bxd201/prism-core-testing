@@ -27,13 +27,7 @@ export const brightenAbsolute = alterLuminosity // alias
 export const darkenAbsolute = alterLuminosity // alias
 
 export const fullColorNumber = memoizee(function fullColorNumber (brandKey: string | void, colorNumber: string | void): string {
-  let colorNamePrefix = colorNumber ? colorNumber + ' ' : ''
-
-  if (colorNamePrefix && brandKey) {
-    colorNamePrefix = brandKey + ' ' + colorNamePrefix
-  }
-
-  return colorNamePrefix
+  return [brandKey, colorNumber].filter(Boolean).join(' ')
 }, { primitive: true, length: 2 })
 
 type fullColorNameProps = { brandKey: string | void, colorNumber: string | void, name: string }
