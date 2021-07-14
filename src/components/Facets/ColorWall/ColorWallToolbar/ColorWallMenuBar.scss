@@ -3,15 +3,11 @@ $btn-border-thickness: 1px;
 $menu-bar-width: 27em;
 
 .menu-bar__border {
+  display: flex;
   border: $btn-border-thickness solid var(getThemeColor('primary'));
 
-  &--flex {
-    display: flex;
-
-    @media (max-width: 473px) {
-      flex: 1;
-      margin: 0 5px;
-    }
+  @media (max-width: 473px) {
+    flex: 1;
   }
 }
 
