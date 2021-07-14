@@ -47,8 +47,8 @@ function collect (connect, monitor) {
   }
 }
 
+const maskIdMap = memoizee(path => uniqueId('TSHA'), { length: 1, primitive: true })
 const SimpleTintableSceneHitArea = ({ connectDropTarget, isOver, onDrop, interactionHandler, onOver, onOut, dropItem, onLoadingSuccess, onLoadingError, svgSource }: Props) => {
-  const maskIdMap = memoizee(path => uniqueId('TSHA'), { length: 1, primitive: true })
   const maskId = maskIdMap(svgSource)
   return connectDropTarget && connectDropTarget(
     <div className={classNames.hitAreaWrapper}>

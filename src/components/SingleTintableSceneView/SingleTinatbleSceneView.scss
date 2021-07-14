@@ -4,14 +4,6 @@
     height: auto;
     position: relative;
   }
-  &__loader-wrapper {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-content: center;
-    /* this is arbitrary */
-    min-height: 400px;
-  }
   &__clear-areas-btn {
     display: flex;
     align-content: center;

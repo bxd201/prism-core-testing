@@ -20,6 +20,7 @@ import { SCENE_VARIANTS } from '../../constants/globals'
 import BatchImageLoader from '../MergeCanvas/BatchImageLoader'
 import type { FlatScene, FlatVariant } from '../../shared/types/Scene'
 import { copySurfaceColors, createMiniColorFromColor } from './util'
+import Propper from '../Propper/Propper'
 export type SingleTintableSceneViewProps = {
   surfaceColorsFromParents: [],
   showClearButton?: boolean,
@@ -40,6 +41,7 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
   const { showClearButton, customButton, handleSurfacePaintedState, allowVariantSwitch, interactive,
     surfaceColorsFromParents, selectedSceneUid, scenesCollection, variantsCollection, selectedVariantName, showThumbnail } = props
   const [selectedScene, setSelectedScene] = useState(null)
+  const [sceneDims, setSceneDims] = useState({ sceneWidth: 1200, sceneHeight: 725 })
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0)
   const [sceneVariants, setSceneVariants] = useState([])
   const [backgroundLoaded, setBackgroundLoaded] = useState(false)
@@ -51,6 +53,15 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
   const isScenePolluted = (paintedSurfaces) => {
     return !!paintedSurfaces.reduce((acc, curr) => (curr ? 1 : 0) + acc, 0)
   }
+
+  useEffect(() => {
+    if (selectedScene) {
+      setSceneDims({
+        sceneWidth: selectedScene.width,
+        sceneHeight: selectedScene.height
+      })
+    }
+  }, [selectedScene])
 
   useEffect(() => {
     if (surfaceColorsFromParents) {
@@ -183,7 +194,11 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
     <DndProvider backend={HTML5Backend}>
       <div className={`${tintableViewBaseClassName}__wrapper`}>
         <BatchImageLoader key={selectedSceneUid} urls={backgroundUrls} handleImagesLoaded={handleImagesLoaded} />
-        {backgroundLoaded ? getTintableScene(backgroundUrls[selectedVariantIndex], sceneVariants[selectedVariantIndex], selectedScene, surfaceColors, livePaletteColors) : <div className={`${tintableViewBaseClassName}__loader-wrapper`}><CircleLoader /></div>}
+        {backgroundLoaded
+          ? getTintableScene(backgroundUrls[selectedVariantIndex], sceneVariants[selectedVariantIndex], selectedScene, surfaceColors, livePaletteColors)
+          : <Propper vPosition={Propper.V_POSITION.CENTER} propSize={`${sceneDims.sceneHeight / sceneDims.sceneWidth * 100}%`}>
+            <CircleLoader />
+          </Propper>}
         {backgroundLoaded && showClearButton && isScenePolluted(surfaceColors) ? <button className={`${tintableViewBaseClassName}__clear-areas-btn`} onClick={clearSurfaces}>
           <div className={`${tintableViewBaseClassName}__clear-areas-btn__icon`}><FontAwesomeIcon size='lg' icon={['fa', 'eraser']} /></div>
           <div className={`${tintableViewBaseClassName}__clear-areas-btn__text`}><FormattedMessage id='CLEAR_AREAS' /></div>
