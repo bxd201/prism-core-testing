@@ -11,17 +11,34 @@ import { deNoneify } from '../../store/actions/user-uploads'
 import { SYSTEM_ERROR } from '../../store/actions/loadScenes'
 import { SCENE_TYPES, SCENE_VARIANTS } from '../../constants/globals'
 import uniqueId from 'lodash/uniqueId'
-import type { ReferenceDimensions } from '../../shared/types/Scene'
+import type { MiniColor, ReferenceDimensions } from '../../shared/types/Scene'
 import type { Color } from '../../shared/types/Colors'
 import { createMiniColorFromColor } from '../SingleTintableSceneView/util'
+import cloneDeep from 'lodash/cloneDeep'
 
 import './FastMaskView.scss'
+import type { FastMaskOpenCache } from '../../store/actions/fastMask'
+
+export type FastMaskWorkspace = {
+  palette: Color[],
+  width: number,
+  height: number,
+  image: string,
+  surfaces: string[],
+  surfaceColors: MiniColor[],
+  variantName: string,
+  sceneType: string
+}
 
 type FastMaskProps = {
   handleSceneBlobLoaderError: Function,
   refDims: ReferenceDimensions,
   imageUrl: string,
-  activeColor: Color
+  activeColor: Color,
+  handleUpdates: Function,
+  cleanupCallback: Function,
+  savedData?: FastMaskOpenCache,
+  initHandler?: Function
 }
 
 const baseClassName = 'fast-mask-view'
@@ -30,7 +47,7 @@ const backgroundWrapperClassName = `${baseClassName}__background-wrapper`
 const loaderWrapperClassName = `${baseClassName}__loader-wrapper`
 
 const FastMaskView = (props: FastMaskProps) => {
-  const { handleSceneBlobLoaderError, refDims, imageUrl, activeColor } = props
+  const { handleSceneBlobLoaderError, refDims, imageUrl, activeColor, savedData, initHandler } = props
   const intl = useIntl()
   const [blobData, setBlobData] = useState(null)
   const [surfaceColors, setSurfaceColors] = useState([])
@@ -39,9 +56,9 @@ const FastMaskView = (props: FastMaskProps) => {
   const [blobUrls, setBlobUrls] = useState([])
   const [sceneUid, setSceneUid] = useState(null)
   const [tintingColor, setTintingColor] = useState(createMiniColorFromColor(activeColor))
+  // @todo for resize, we should probably use refs for width and height to avoid rerenders -RS
   const [width, setWidth] = useState(0)
   const [height, setHeight] = useState(0)
-  // @todo for resize, we should probably use refs for width and height to avoid rerenders -RS
 
   /**
    * @param assets: string[][] - a matrix of variants where the inner vector being an order collection where
@@ -89,24 +106,63 @@ const FastMaskView = (props: FastMaskProps) => {
     }
   }
 
-  useEffect(() => {
-    setTintingColor(createMiniColorFromColor(activeColor))
-  }, [activeColor])
+  const prepareData = (assets: string[], width: number, height: number, surfaceColors, variantName) => {
+    return {
+      image: assets[0],
+      surfaces: assets.slice(1),
+      width,
+      height,
+      surfaceColors: surfaceColors.map(color => {
+        return { ...color }
+      }),
+      variantName,
+      sceneType: SCENE_TYPES.FAST_MASK
+    }
+  }
 
   useEffect(() => {
+    const newColor = createMiniColorFromColor(activeColor)
+    if (variantsCollection.length) {
+      // theres only 1 variant for fast mask
+      const { width: sceneWidth, height: sceneHeight } = scenesCollection[0]
+      const variant = variantsCollection[0]
+      const newSurfaceColors = variant.surfaces.map(surface => newColor)
+      setSurfaceColors(newSurfaceColors)
+      props.handleUpdates(prepareData([variant.image, ...variant.surfaces], sceneWidth, sceneHeight, newSurfaceColors, variant.variantName))
+    }
+    setTintingColor(newColor)
+  }, [activeColor, variantsCollection, scenesCollection])
+
+  useEffect(() => {
+    if (initHandler) {
+      initHandler()
+    }
+
     if (refDims) {
       setWidth(refDims.isPortrait ? refDims.portraitWidth : refDims.landscapeWidth)
       setHeight(refDims.isPortrait ? refDims.portraitHeight : refDims.landscapeHeight)
     }
-    // convert base 64 from possible rotation into a blob for upload to nanonets
-    axios.get(imageUrl, { responseType: 'blob' }).then(res => {
-      setBlobData(res.data)
-    })
-      .catch(err => console.warn(`Error loading user image ${err}`))
+
+    if (savedData) {
+      const { width: sceneWidth, height: sceneHeight } = savedData.scene
+      setWidth(sceneWidth)
+      setHeight(sceneHeight)
+      setSceneUid(savedData.scene.uid)
+      setScenesCollection([cloneDeep(savedData.scene)])
+      setSurfaceColors(savedData.surfaceColors)
+      setVariantsCollection([cloneDeep(savedData.variant)])
+    } else {
+      // convert base 64 from possible rotation into a blob for upload to nanonets
+      axios.get(imageUrl, { responseType: 'blob' }).then(res => {
+        setBlobData(res.data)
+      })
+        .catch(err => console.warn(`Error loading user image ${err}`))
+    }
+    return () => props.cleanupCallback()
   }, [])
 
   useEffect(() => {
-    // use this to prevent ajax call from holdin on to refs when this unmounts
+    // use this to prevent ajax call from holding on to refs when this unmounts
     let isLive = true
     if (blobData && !variantsCollection.length) {
       const uploadForm = new FormData()
@@ -173,8 +229,9 @@ const FastMaskView = (props: FastMaskProps) => {
   return (
     <div className={baseClassName}>
       {variantsCollection.length
-        ? <div className={tintWrapperClassName} style={{ width, height }}>
+        ? <div className={tintWrapperClassName}>
           <SingleTintableSceneView
+            key={sceneUid}
             surfaceColorsFromParents={surfaceColors}
             selectedSceneUid={sceneUid}
             scenesCollection={scenesCollection}

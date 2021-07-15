@@ -20,13 +20,14 @@ type ImageIngestViewProps = {
   cleanupCallback?: Function,
   imageUrl: string,
   maxSceneHeight: number,
-  handleDismissCallback: Function
+  handleDismissCallback: Function,
+  closeLink: string
 }
 
 const baseClassName = 'image-ingest-view'
 
 const ImageIngestView = (props: ImageIngestViewProps) => {
-  const { imageUrl, maxSceneHeight, handleDismissCallback, cleanupCallback } = props
+  const { imageUrl, maxSceneHeight, handleDismissCallback, cleanupCallback, closeLink } = props
   const blobUrl = imageUrl
   const history = useHistory()
   const wrapperRef = useRef()
@@ -152,7 +153,8 @@ const ImageIngestView = (props: ImageIngestViewProps) => {
   }
 
   const handleCloseButton = (e: SyntheticEvent) => {
-    history.push('/active')
+    e.preventDefault()
+    handleDismissCallback()
   }
 
   const handleDismissTerms = (e: SyntheticEvent) => {
@@ -243,7 +245,7 @@ const ImageIngestView = (props: ImageIngestViewProps) => {
             <button className={`${baseClassName}__button ${baseClassName}__button--left`} onClick={() => history.goBack()}>
               <div><FontAwesomeIcon className={``} icon={['fa', 'angle-left']} />&nbsp;<span className={`${baseClassName}__button-left-text`}><FormattedMessage id='BACK' /></span></div>
             </button>
-            <Link to={`/active`} tabIndex='-1'>
+            <Link to={closeLink} tabIndex='-1'>
               <button onClick={handleCloseButton} className={`${baseClassName}__button ${baseClassName}__button--right dark-button`}>
                 <div className={`${baseClassName}__close`}><span><FormattedMessage id='CLOSE' /></span>&nbsp;<FontAwesomeIcon className={``} icon={['fa', 'chevron-up']} /></div>
               </button>

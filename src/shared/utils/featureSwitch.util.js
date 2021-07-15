@@ -6,7 +6,7 @@ export const shouldAllowFeature = (featureExclusions, feature) => {
     return true
   }
 
-  // @todo Comment this out before going to prod THIS!!!!!!!!!!!!!!!!!!!!!!!! -RS
+  // Uncomment below to test fast mask
   // if (feature === FEATURE_EXCLUSIONS.uploadYourPhoto) {
   //   return false
   // }

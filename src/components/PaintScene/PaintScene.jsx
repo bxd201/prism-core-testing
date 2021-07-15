@@ -12,7 +12,7 @@ import {
 } from './PaintSceneUtils'
 import {
   repaintImageByPath,
-  getImageCordinateByPixel,
+  getImageCoordinateByPixel,
   canvasDimensionFactors,
   applyDimensionFactorsByCanvas,
   getActiveColorRGB,
@@ -42,7 +42,6 @@ import {
   showSaveSceneModal,
   startSavingMasks
 } from '../../store/actions/persistScene'
-import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 import SaveMasks from './SaveMasks'
 import { createCustomSceneMetadata, createUniqueSceneId } from '../../shared/utils/legacyProfileFormatUtil'
 import MergeColors from '../MergeCanvas/MergeColors'
@@ -428,7 +427,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       groupSelectList.forEach(selectItem => {
         this.clearCanvas()
         drawImagePixelByPath(ctx, this.canvasOffsetWidth, this.canvasOffsetHeight, RGB, selectItem.selectPath)
-        const [ newPath, pixelIndexAlphaMap ] = getImageCordinateByPixel(this.CFICanvas2, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight, true)
+        const [ newPath, pixelIndexAlphaMap ] = getImageCoordinateByPixel(this.CFICanvas2, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight, true)
         copyImagePathList.push({
           type: 'paint',
           id: uniqueId(),
@@ -445,7 +444,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       selectedArea.forEach(selectItem => {
         this.clearCanvas()
         drawImagePixelByPath(ctx, this.canvasOffsetWidth, this.canvasOffsetHeight, RGB, selectItem.selectPath)
-        const [ newPath, pixelIndexAlphaMap ] = getImageCordinateByPixel(this.CFICanvas2, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight, true)
+        const [ newPath, pixelIndexAlphaMap ] = getImageCoordinateByPixel(this.CFICanvas2, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight, true)
         copyImagePathList.push({
           type: 'paint',
           id: uniqueId(),
@@ -513,7 +512,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.canvasOffsetHeight = canvasHeight
     this.wrapperOriginalDimensions = { width: this.CFIWrapper.current.getBoundingClientRect().width, height: canvasHeight }
 
-    this.setBackgroundImage(canvasWidth, canvasHeight)
+    this.setBackgroundImage(canvasWidth, canvasHeight, true)
   }
 
   // This method is invoked when the parent container passes in the a new wrapperWidth
@@ -539,8 +538,12 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   }
 
   /*:: setBackgroundImage: (canvasWidth: number, canvasHeight: number) => void */
-  setBackgroundImage = (canvasWidth: number, canvasHeight: number) => {
+  setBackgroundImage = (canvasWidth: number, canvasHeight: number, isInit: boolean = false) => {
     this.CFICanvasContext.drawImage(this.CFIImage.current, 0, 0, canvasWidth, canvasHeight)
+    if (isInit) {
+      const mergeCtx = this.mergeCanvasRef.current.getContext('2d')
+      mergeCtx.drawImage(this.CFIImage.current, 0, 0, canvasWidth, canvasHeight)
+    }
     this.CFICanvasContext2.clearRect(0, 0, canvasWidth, canvasHeight)
     this.CFICanvasContextPaint.clearRect(0, 0, canvasWidth, canvasHeight)
     this.redrawCanvas(this.state.imagePathList)
@@ -1003,7 +1006,6 @@ canvasHeight
       <>
         {loading ? <div className={`${animationLoader} ${animationLoader}--load`} /> : null}
         <div role='presentation' className={`${baseClass} ${isInfoToolActive ? `${disableTextSelect} ${showCursor}` : ``} ${activeTool === toolNames.PAINTBRUSH || activeTool === toolNames.ERASE ? `${disableTextSelect} ${hideCursor}` : ``} ${(loading) ? disableClick : ``}`} onClick={this.handleClick} onMouseMove={this.mouseMoveHandler} ref={this.CFIWrapper} style={{ height: this.state.wrapperHeight }} onMouseLeave={this.mouseLeaveHandler} onMouseEnter={this.mouseEnterHandler}>
-          {this.props.savingMasks || this.state.loadingMasks ? <div style={{ height: canvasHeight }} className='spinner'><div style={{ padding: ((canvasHeight / 2) | 0) - 35 }}><CircleLoader /></div></div> : null}
           {this.props.savingMasks ? <SaveMasks processMasks={this.processMasks} /> : null }
           <canvas className={`${canvasClass} ${showOriginalCanvas ? `${canvasShowByZindex}` : `${canvasHideByZindex}`} ${this.isPortrait ? portraitOrientation : ''}`} name='paint-scene-canvas-first' ref={this.CFICanvas}>{intl.formatMessage({ id: 'CANVAS_UNSUPPORTED' })}</canvas>
           <canvas style={{ opacity: showOriginalCanvas ? 1 : 0.8 }} className={`${canvasClass} ${paintCursor} ${canvasSecondClass} ${this.isPortrait ? portraitOrientation : ''}`} name='paint-scene-canvas-second' ref={this.CFICanvas2}>{intl.formatMessage({ id: 'CANVAS_UNSUPPORTED' })}</canvas>

@@ -436,7 +436,7 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
     const { offsetLeft, offsetTop } = this.canvasRef.current
 
     // Assume everything is fine, this is the default case
-    let top = y - canvasDims.top - activedPinsHalfWidth
+    let top = y - activedPinsHalfWidth
     let bottom = 0
     let left = x - canvasDims.left - activedPinsHalfWidth + offsetLeft
 

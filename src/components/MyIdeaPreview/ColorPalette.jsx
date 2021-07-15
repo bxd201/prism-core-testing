@@ -57,7 +57,7 @@ const ColorPalette = ({ palette, isMyIdeaLivePalette, isMyIdeaPreview, isMyIdeaP
   const deleteLivePaletteIdeaHandler = (e: SyntheticEvent) => {
     e.preventDefault()
     e.stopPropagation()
-    deleteLivePaletteIdea(savedLivePaletteId, false, true)
+    deleteLivePaletteIdea(savedLivePaletteId, SCENE_TYPE.livePalette)
   }
 
   const selectLivePaletteIdeaWrapper = (e: SyntheticEvent) => {
