@@ -115,6 +115,7 @@ const ImageRotateTerms = ({ rotateImage, imageData, handleDismiss }: Props) => {
           </div>
         </div>
         <button
+          disabled={!acceptTerms}
           aria-label={acceptTerms ? 'done' : ''}
           tabIndex={acceptTerms ? '0' : '-1'}
           className={`${wrapperAgreeTermsAcceptClass} ${acceptTerms ? `${wrapperAgreeTermsAcceptActiveClass}` : ``}`}

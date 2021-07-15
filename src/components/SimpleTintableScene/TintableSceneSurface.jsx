@@ -13,7 +13,8 @@ type Props = {
   type: string,
   children: any,
   // This prop will hardcode the width and height, use this when you need to programtically resize.
-  scaleSvg?: boolean
+  scaleSvg?: boolean,
+  adjustSvgHeight?: boolean
 }
 
 class TintableSceneSurface extends PureComponent<Props> {
@@ -36,10 +37,28 @@ class TintableSceneSurface extends PureComponent<Props> {
   }
 
   render () {
-    const { width, height, scaleSvg } = this.props
+    const { width, height, scaleSvg, adjustSvgHeight } = this.props
+    const getStyleValues = (shouldScale: boolean, shouldAdjustSvgHeight: boolean, scalingWidth: number, scalingHeight: number) => {
+      if (!shouldScale && !shouldAdjustSvgHeight) {
+        return null
+      }
+
+      const styles = {}
+
+      if (shouldScale) {
+        styles.width = scalingWidth
+        styles.height = scalingHeight
+      }
+
+      if (adjustSvgHeight) {
+        styles.height = 'auto'
+      }
+
+      return styles
+    }
 
     return (
-      <svg style={scaleSvg ? { width, height } : null} className={TintableSceneSurface.baseClass}
+      <svg style={getStyleValues(scaleSvg, adjustSvgHeight, width, height)} className={TintableSceneSurface.baseClass}
         viewBox={`0 0 ${width} ${height}`}
         version='1.1'
         xmlns='http://www.w3.org/2000/svg'

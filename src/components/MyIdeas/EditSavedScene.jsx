@@ -2,7 +2,7 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import SavedScene from './SavedScene'
-import { updateSavedSceneName } from '../../store/actions/persistScene'
+import { SCENE_TYPE, updateSavedSceneName } from '../../store/actions/persistScene'
 import { updateSavedStockSceneName } from '../../store/actions/stockScenes'
 // import { createCustomSceneMetadata } from '../../shared/utils/legacyProfileFormatUtil'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -16,7 +16,7 @@ type editSavedSceneProps = {
   sceneData: Object,
   selectScene: Function,
   showMyIdeas: Function,
-  editedTintableIndividualScene: boolean
+  editSceneType: boolean
 }
 
 const baseClass = 'edit-saved-scene'
@@ -27,8 +27,10 @@ const sceneNameError = `${baseClass}__scene-name-error`
 const saveButton = `${baseClass}__save-button`
 const sceneNameInput = `${baseClass}__scene-name-input`
 
-const EditSavedScene = ({ width, height, sceneData, selectScene, showMyIdeas, editedTintableIndividualScene }: editSavedSceneProps) => {
-  const [savedSceneName, setSavedSceneName] = useState((editedTintableIndividualScene) ? sceneData.sceneMetadata.name : sceneData.name)
+const getSceneName = (data: any, sceneType: string) => sceneType === SCENE_TYPE.anonStock ? data.sceneMetadata.name : data.name
+
+const EditSavedScene = ({ width, height, sceneData, selectScene, showMyIdeas, editSceneType }: editSavedSceneProps) => {
+  const [savedSceneName, setSavedSceneName] = useState(getSceneName(sceneData, editSceneType))
   const dispatch = useDispatch()
   const intl = useIntl()
   const savedSceneFrameRef = useRef()
@@ -41,14 +43,14 @@ const EditSavedScene = ({ width, height, sceneData, selectScene, showMyIdeas, ed
 
   const clickHandler = useCallback(() => {
     if (savedSceneName) {
-      if (editedTintableIndividualScene) {
+      if (editSceneType === SCENE_TYPE.anonStock) {
         dispatch(updateSavedStockSceneName(sceneData.sceneMetadata.id, savedSceneName))
       } else {
         dispatch(updateSavedSceneName(sceneData.id, savedSceneName))
       }
       showMyIdeas()
     }
-  }, [dispatch, updateSavedSceneName, sceneData, savedSceneName, showMyIdeas])
+  }, [dispatch, sceneData, savedSceneName])
 
   const changeHandler = useCallback((e: SyntheticEvent) => {
     if (e.target.value.length < 26) setSavedSceneName(e.target.value)
@@ -68,12 +70,13 @@ const EditSavedScene = ({ width, height, sceneData, selectScene, showMyIdeas, ed
           width={width}
           height={height}
           sceneData={sceneData}
-          sceneId={editedTintableIndividualScene ? sceneData.sceneMetadata.id : sceneData.id}
+          sceneId={editSceneType === SCENE_TYPE.anonStock ? sceneData.sceneMetadata.id : sceneData.id}
           selectScene={selectScene}
           hideSceneName
           isImgWidthPixel
-          useTintableScene={editedTintableIndividualScene}
+          useTintableScene={editSceneType === SCENE_TYPE.anonStock || editSceneType === SCENE_TYPE.anonFastMask}
           ref={savedSceneFrameRef}
+          sceneType={editSceneType}
         />
       </div>
       <div className={`${inputWrapper}`}>

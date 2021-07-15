@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import SingleTintableSceneView from '../SingleTintableSceneView/SingleTintableSceneView'
 import MergeCanvas from '../MergeCanvas/MergeCanvas'
-import { createUniqueSceneId } from '../../shared/utils/legacyProfileFormatUtil'
+import { createCustomSceneMetadata, createUniqueSceneId } from '../../shared/utils/legacyProfileFormatUtil'
 import {
   clearNavigationIntent,
   ACTIVE_SCENE_LABELS_ENUM,
@@ -17,7 +17,7 @@ import {
   startSavingMasks,
   deleteSavedScene,
   SCENE_TYPE,
-  setShouldShowPaintSceneSavedModal
+  setShouldShowPaintSceneSavedModal, saveMasks
 } from '../../store/actions/persistScene'
 import { saveLivePalette, deleteSavedLivePalette } from '../../store/actions/saveLivePalette'
 import { hideGlobalModal } from '../../store/actions/globalModal'
@@ -30,11 +30,12 @@ import {
   HANDLE_DELETE_MY_PREVIEW_CONFIRM, MODAL_TYPE_ENUM
 } from './constants.js'
 import { getColorInstances } from '../LivePalette/livePaletteUtility'
-import { createSavedNotificationModal } from './createModal'
+import { createSavedNotificationModal, showLoadingModal } from './createModal'
 import { useIntl } from 'react-intl'
 import type { PreviewImageProps } from '../../shared/types/CVWTypes'
 import { clearSceneWorkspace } from '../../store/actions/paintScene'
 import { setActiveSceneKey } from '../../store/actions/scenes'
+import BatchImageLoader from '../MergeCanvas/BatchImageLoader'
 
 export const globalModalClassName = 'global-modal'
 export const globalModalPreviewImageClassName = `${globalModalClassName}__preview-image`
@@ -44,6 +45,8 @@ export const PreviewImage = ({ modalInfo, lpColors, surfaceColors, scenes, selec
   const mergeCanvasRef = useRef(null)
   // get the layers for paint scene save
   const paintSceneLayers = useSelector(store => store.paintSceneLayersForSave) ?? []
+  // eslint-disable-next-line no-unused-vars
+  const fastMaskSaveCache = useSelector(store => store.fastMaskSaveCache)
 
   const getStockScenePreviewData = (showLivePalette) => {
     const livePaletteColorsDiv = lpColors.filter(color => !!color).map((color, i) => {
@@ -124,7 +127,7 @@ export const PreviewImage = ({ modalInfo, lpColors, surfaceColors, scenes, selec
 }
 
 export const CVWModalManager = () => {
-  const modalInfo = useSelector((store) => store.modalInfo)
+  const modalInfo = useSelector((store) => store?.modalInfo ?? null)
   const lpColors = useSelector((store) => store.lp.colors)
   const dirtyNavIntent = useSelector(store => store.dirtyNavigationIntent)
   const storeScenes = useSelector((store) => store.variantsCollection)
@@ -146,12 +149,14 @@ export const CVWModalManager = () => {
   const btnRefList = useRef([])
   const history = useHistory()
   btnRefList.current = []
-  const { shouldDisplayModal, actions, styleType, title, description, allowInput } = modalInfo
   const [inputValue, setInputValue] = useState(`${intl.formatMessage({ id: 'SAVE_SCENE_MODAL.DEFAULT_DESCRIPTION' })} ${sceneCount}`)
   // The following function is needed for a particular use case where if a user clear the default name of the scene being saved,
   // and close the modal, this function will reset the state with the default name
   const navigationIntent = useSelector(store => store.navigationIntent)
   const resetInputValue = () => setInputValue(`${intl.formatMessage({ id: 'SAVE_SCENE_MODAL.DEFAULT_DESCRIPTION' })} ${sceneCount}`)
+  const [fastMaskImageUrls, setFastMaskImageUrls] = useState(null)
+  const fastMaskSaveCache = useSelector(store => store.fastMaskSaveCache)
+  const [sceneName, setSceneName] = useState('')
 
   const createCallbackFromActionName = (callbackName) => {
     switch (callbackName) {
@@ -159,37 +164,40 @@ export const CVWModalManager = () => {
         if (modalInfo?.allowInput) {
           return (e: SyntheticEvent) => saveStockSceneFromModal(e, inputValue)
         }
-      case SAVE_OPTION.SAVE_PAINT_SCENE: {
+      case SAVE_OPTION.SAVE_PAINT_SCENE:
         if (modalInfo?.allowInput) {
           return (e: SyntheticEvent) => savePaintSceneFromModal(e, inputValue)
         }
-      }
-      case SAVE_OPTION.SAVE_LIVE_PALETTE: {
+
+      case SAVE_OPTION.SAVE_LIVE_PALETTE:
         if (modalInfo?.allowInput) {
           return (e: SyntheticEvent) => saveLivePaletteColorsFromModal(e, inputValue)
         }
-      }
-      case HANDLE_NAVIGATION_INTENT_CONFIRM: {
+
+      case SAVE_OPTION.SAVE_FAST_MASK:
+        if (modalInfo?.allowInput) { return (e: SyntheticEvent) => saveFastMaskFromModal(e, inputValue) }
+
+      case HANDLE_NAVIGATION_INTENT_CONFIRM:
         return (e) => handleNavigationIntentConfirm(e)
-      }
-      case HANDLE_NAVIGATION_INTENT_CANCEL: {
+
+      case HANDLE_NAVIGATION_INTENT_CANCEL:
         return (e) => handleNavigationIntentCancel(e)
-      }
-      case HANDLE_DIRTY_NAVIGATION_INTENT_CONFIRM: {
+
+      case HANDLE_DIRTY_NAVIGATION_INTENT_CONFIRM:
         return (e) => handleDirtyNavigationIntentConfirm(e)
-      }
-      case HANDLE_DIRTY_NAVIGATION_INTENT_CANCEL: {
+
+      case HANDLE_DIRTY_NAVIGATION_INTENT_CANCEL:
         return (e) => handleDirtyNavigationIntentCancel(e)
-      }
-      case HANDLE_SELECT_PALETTE_CONFIRM: {
+
+      case HANDLE_SELECT_PALETTE_CONFIRM:
         return (e) => handleSelectPaletteConfrim(e)
-      }
-      case HANDLE_DELETE_MY_PREVIEW_CONFIRM: {
-        return (e) => handleDeleteMyPreviewConfrim(e)
-      }
-      case HIDE_MODAL: {
+
+      case HANDLE_DELETE_MY_PREVIEW_CONFIRM:
+        return (e) => handleDeleteMyPreviewConfirm(e)
+
+      case HIDE_MODAL:
         return () => hideModal()
-      }
+
       default:
         return () => {}
     }
@@ -213,30 +221,90 @@ export const CVWModalManager = () => {
       return false
     }
     if (currentSceneData) {
-      let livePaletteColorsIdArray = []
       const saveSceneData = {}
       const { variantName, sceneType, sceneId } = currentSceneData
+      const livePaletteColorsIdArray = lpColors?.map(color => color.id) ?? []
+
       saveSceneData.sceneDataId = sceneId
       saveSceneData.variantName = variantName
       saveSceneData.sceneDataType = sceneType
       saveSceneData.surfaceColors = surfaceColors
-      lpColors && lpColors.map(color => {
-        livePaletteColorsIdArray.push(color.id)
-      })
       hideModal()
       dispatch(saveStockScene(uniqId, saveSceneName, saveSceneData, sceneType, livePaletteColorsIdArray))
       dispatch(createSavedNotificationModal(intl))
     }
   }
 
-  const savePaintSceneFromModal = (e: SyntheticEvent, sceneName: string) => {
+  const savePaintSceneFromModal = (e: SyntheticEvent, sceneName: string, isFastMask?: boolean) => {
     e.preventDefault()
     e.stopPropagation()
+
     if (sceneName.trim() === '') {
       return false
     }
+    dispatch(startSavingMasks(sceneName, isFastMask))
     hideModal()
-    dispatch(startSavingMasks(sceneName))
+    dispatch(showLoadingModal(true))
+  }
+
+  const saveFastMaskFromModal = (e: SyntheticEvent, sceneName: string) => {
+    const surfaceUrls = fastMaskSaveCache.surfaces.map(surface => surface.surfaceBlobUrl)
+    setFastMaskImageUrls([fastMaskSaveCache.image, ...surfaceUrls])
+    setSceneName(sceneName)
+    // @todo show loading modal -RS
+  }
+
+  const saveFastMask = (data: SyntheticEvent[]) => {
+    const { width, height, surfaceColors } = fastMaskSaveCache
+    const colors = fastMaskSaveCache.surfaceColors.map(color => {
+      const { L, A, B } = color
+      return { L, A, B }
+    })
+    const imageData = data.sort((a, b) => {
+      if (a.index < b.index) {
+        return -1
+      }
+
+      if (a.index > b.index) {
+        return 1
+      }
+
+      return 0
+    }).map((item, i) => {
+      const { naturalWidth: width, naturalHeight: height } = item.target
+      const canvas = document.createElement('canvas')
+      canvas.width = width
+      canvas.height = height
+      const ctx = canvas.getContext('2d')
+      ctx.drawImage(item.target, 0, 0, width, height)
+
+      if (i === 0) {
+        return canvas.toDataURL()
+      }
+
+      return ctx.getImageData(0, 0, width, height)
+    })
+
+    const surfaceData = imageData.length > 1 ? imageData.slice(1) : null
+    const livePaletteColorsIdArray = lpColors?.map(color => color.id) ?? []
+    // all surfaces should be the same size.
+    const saveWidth = surfaceData ? surfaceData[0].width : width
+    const saveHeight = surfaceData ? surfaceData[0].height : height
+
+    const metaData = createCustomSceneMetadata(
+      'TEMP_NAME',
+      sceneName,
+      createUniqueSceneId(),
+      surfaceColors,
+      saveWidth,
+      saveHeight,
+      livePaletteColorsIdArray,
+      SCENE_TYPE.anonFastMask)
+
+    dispatch(saveMasks(colors, surfaceData, imageData[0], metaData))
+
+    setFastMaskImageUrls(null)
+    hideModal()
   }
 
   const handleDirtyNavigationIntentConfirm = (e: SyntheticEvent) => {
@@ -248,7 +316,7 @@ export const CVWModalManager = () => {
     // clean up the original, this should be the value set from the return path
     dispatch(clearNavigationIntent())
     // Allow add color button to respond again
-    dispatch(setIsColorWallModallyPresented(false))
+    dispatch(setIsColorWallModallyPresented())
     dispatch(setIsScenePolluted())
   }
 
@@ -284,11 +352,11 @@ export const CVWModalManager = () => {
     hideModal()
   }
 
-  const handleDeleteMyPreviewConfrim = (e: SyntheticEvent) => {
-    const { isLivePaletteIdea, isStockScene, sceneId } = actions[0].params
-    if (isLivePaletteIdea) {
+  const handleDeleteMyPreviewConfirm = (e: SyntheticEvent) => {
+    const { sceneType, sceneId } = modalInfo.actions[0].params
+    if (sceneType === SCENE_TYPE.livePalette) {
       dispatch(deleteSavedLivePalette(sceneId))
-    } else if (isStockScene) {
+    } else if (sceneType === SCENE_TYPE.anonStock) {
       dispatch(deleteStockScene(sceneId))
     } else {
       dispatch(deleteSavedScene(sceneId))
@@ -306,8 +374,10 @@ export const CVWModalManager = () => {
 
   return (
     <>
-      <Modal
-        shouldDisplayModal={shouldDisplayModal}
+      {fastMaskImageUrls ? <BatchImageLoader urls={fastMaskImageUrls} handleImagesLoaded={saveFastMask} /> : null}
+      {modalInfo && <Modal
+        key={modalInfo.uid}
+        shouldDisplayModal={modalInfo.shouldDisplayModal}
         previewImage={modalInfo.modalType && SCREENS_WITH_PREVIEW.indexOf(modalInfo.modalType) > -1
           ? <PreviewImage
             modalInfo={modalInfo}
@@ -317,17 +387,18 @@ export const CVWModalManager = () => {
             selectedSceneUid={selectedSceneUid}
             selectedVariantName={selectedVariantName}
           /> : null}
-        styleType={styleType}
-        title={title}
-        description={description}
-        allowInput={allowInput}
-        actions={actions}
+        styleType={modalInfo.styleType}
+        title={modalInfo.title}
+        description={modalInfo.description}
+        allowInput={modalInfo.allowInput}
+        actions={modalInfo.actions}
         inputValue={inputValue}
         intl={intl}
         resetInputValue={resetInputValue}
         fn={createCallbackFromActionName}
         setInputValue={setInputValue}
-      />
+        loadingMode={modalInfo.modalType === MODAL_TYPE_ENUM.LOADING}
+      />}
     </>
   )
 }

@@ -30,13 +30,31 @@ type SimpleTintableSceneProps = {
   interactive?: boolean,
   handleSurfaceInteraction?: Function,
   handleColorDrop?: Function,
-  surfaceColors?: Color[]
+  surfaceColors?: Color[],
+  adjustSvgHeight?: boolean
 }
 
 const simpleTintableClassName = 'simple-tintable'
 
 const SimpleTintableScene = (props: SimpleTintableSceneProps) => {
-  const { sceneType, background, sceneName, width, height, imageValueCurve, surfaceUrls, surfaceIds, highlights, shadows, surfaceHitAreas, interactive, handleColorDrop, handleSurfaceInteraction, surfaceColors } = props
+  const {
+    sceneType,
+    background,
+    sceneName,
+    width,
+    height,
+    imageValueCurve,
+    surfaceUrls,
+    surfaceIds,
+    highlights,
+    shadows,
+    surfaceHitAreas,
+    interactive,
+    handleColorDrop,
+    handleSurfaceInteraction,
+    surfaceColors,
+    adjustSvgHeight
+  } = props
   const [instanceId] = useState(uniqueId('TS'))
   const [hitAreaLoadingCount, setHitAreaLoadingCount] = useState(0)
   const [hitAreaError, setHitAreaError] = useState(false)
@@ -75,6 +93,7 @@ const SimpleTintableScene = (props: SimpleTintableSceneProps) => {
                   mountOnEnter
                   classNames={`${simpleTintableClassName}__colors__color-`} >
                   <TintableSceneSurface
+                    adjustSvgHeight={adjustSvgHeight}
                     type={sceneType}
                     image={background}
                     width={width}

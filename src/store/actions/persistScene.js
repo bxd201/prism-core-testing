@@ -49,8 +49,12 @@ export const SCENE_TYPE = {
   stock: 'stock',
   anonCustom: 'anon-custom',
   anonStock: 'anon-stock',
-  livePalette: 'live-palette'
+  livePalette: 'live-palette',
+  anonFastMask: 'anon-fastmask',
+  fastMask: 'fastmask'
 }
+
+export const ANON_SCENE_TYPES = [SCENE_TYPE.anonCustom, SCENE_TYPE.anonFastMask]
 
 export const startSavingMasks = (sceneName: string) => {
   return {
@@ -82,7 +86,8 @@ export const saveMasks = (colorList: Array<number[]>, imageData: ImageData | Ima
     // @todo needed for my sherwin persist, this is a usage reminder -RS
     // const imageUploadPayload = createImageUploadPayload(backgroundImageUrl, metadata.uniqueId)
     if (FIREBASE_AUTH_ENABLED) {
-      persistSceneToFirebase(backgroundImageUrl, sceneXML, metadata.colors, metadata.uniqueId, metadata.description, dispatch, metadata.livePaletteColorsIdArray)
+      const { colors, uniqueId, description, livePaletteColorsIdArray, sceneType } = metadata
+      persistSceneToFirebase(backgroundImageUrl, sceneXML, colors, uniqueId, description, livePaletteColorsIdArray, sceneType, dispatch)
       return
     }
     // @todo REVIEW not sure color info is persisted in current code -RS
@@ -187,7 +192,7 @@ const getSavedScenesFromFirebase = (isLoggedIn: boolean, exclusions: string[], d
   // @todo implement exclusion list - RS
   if (isLoggedIn) {
     const { user, sceneMetadata } = getState()
-    const firebaseFileIds = sceneMetadata.filter(item => item.sceneType === SCENE_TYPE.anonCustom).filter(item => exclusions.indexOf(getSceneIdFromSceneMetaData(item)) === -1)
+    const firebaseFileIds = sceneMetadata.filter(item => ANON_SCENE_TYPES.indexOf(item.sceneType) > -1).filter(item => exclusions.indexOf(getSceneIdFromSceneMetaData(item)) === -1)
     if (firebaseFileIds.length) {
       const metadata = getMatchingScenesForFirebase(user.uid, firebaseFileIds)
       fetchSavedScenesFromFirebase(metadata, dispatch, getState)
@@ -283,7 +288,7 @@ const mungeRegionAndSceneData = (regionData: Object, sceneData: Object, colors: 
 
 // This is firebase equivalent  of mungeRegionAndSceneData
 const processFileFromFirebase = (file: Object, i: number, sceneCustomMetadata: Array<Object>) => {
-  const { regionsXml, uniqueSceneId, image, colors, name, livePaletteColorsIdArray } = file
+  const { regionsXml, uniqueSceneId, image, colors, name, livePaletteColorsIdArray, sceneType } = file
   const surfaceMasks = getDataFromFirebaseXML(regionsXml, colors)
   const sceneDefinitionId = uniqueSceneId
   // This is here for consistency
@@ -303,7 +308,7 @@ const processFileFromFirebase = (file: Object, i: number, sceneCustomMetadata: A
     renderingBaseUrl: null,
     // The existence of this prop too duck types this as a payload from firebase
     backgroundImageUrl: image,
-    sceneType: SCENE_TYPE.anonCustom,
+    sceneType,
     livePaletteColorsIdArray
   }
 }
@@ -350,7 +355,6 @@ const createImageUploadPayload = (imageDataUrl: string, uniqueSceneId: string) =
 export const tryToPersistCachedSceneData = () => {
   return (dispatch, getState) => {
     const { cachedSceneData: data } = getState()
-
     if (!data) {
       // This is here to prevent a theoretical edge case
       dispatch({
@@ -361,11 +365,11 @@ export const tryToPersistCachedSceneData = () => {
       return
     }
 
-    persistSceneToFirebase(data.background, data.sceneXml, data.colors, data.uniqueSceneId, data.description, dispatch)
+    persistSceneToFirebase(data.background, data.sceneXml, data.colors, data.uniqueSceneId, data.description, null, data.sceneType, dispatch)
   }
 }
 
-const persistSceneToFirebase = (backgroundImageData: string, sceneDataXml: any, colors: number[], uniqueSceneId: string, description: string, dispatch: Function, livePaletteColorsIdArray?: Array<Object>) => {
+const persistSceneToFirebase = (backgroundImageData: string, sceneDataXml: any, colors: number[], uniqueSceneId: string, description: string, livePaletteColorsIdArray?: Array<Object>, sceneType: string, dispatch: Function) => {
   const user = firebase.auth().currentUser
   if (!user) {
     dispatch({
@@ -376,7 +380,8 @@ const persistSceneToFirebase = (backgroundImageData: string, sceneDataXml: any, 
         colors,
         uniqueSceneId,
         name: description,
-        livePaletteColorsIdArray
+        livePaletteColorsIdArray,
+        sceneType
       }
     })
 
@@ -397,7 +402,8 @@ const persistSceneToFirebase = (backgroundImageData: string, sceneDataXml: any, 
     image: backgroundImageData,
     colors,
     name: description,
-    livePaletteColorsIdArray
+    livePaletteColorsIdArray,
+    sceneType
   }
 
   const customMetaData = {
@@ -409,11 +415,11 @@ const persistSceneToFirebase = (backgroundImageData: string, sceneDataXml: any, 
   const scenePromise = sceneRef.putString(window.JSON.stringify(sceneData), 'raw', customMetaData)
 
   scenePromise.then(response => {
-    const sceneMetadata = { scene: response.metadata.fullPath, sceneType: SCENE_TYPE.anonCustom }
+    const sceneMetadata = { scene: response.metadata.fullPath, sceneType }
     dispatch(doneSavingMask(sceneMetadata))
 
     // This is expensive so we do it after we save the id, that way it appears faster
-    // Any changes to the returned object will likely need to be made in processFileFromFirebase
+    // Any changes to the returned object here will likely need to be made in processFileFromFirebase too
     const localSceneData = {
       surfaceMasks: getDataFromFirebaseXML(xmlString, colors),
       palette: colors,
@@ -425,7 +431,8 @@ const persistSceneToFirebase = (backgroundImageData: string, sceneDataXml: any, 
       renderingBaseUrl: null,
       // The existence of this prop too duck types this as a payload from firebase
       backgroundImageUrl: backgroundImageData,
-      livePaletteColorsIdArray
+      livePaletteColorsIdArray,
+      sceneType
     }
 
     dispatch({

@@ -32,14 +32,16 @@ export type SingleTintableSceneViewProps = {
   scenesCollection: FlatScene,
   variantsCollection: FlatVariant,
   selectedVariantName?: string,
-  showThumbnail?: boolean
+  showThumbnail?: boolean,
+  // this was added to address a css edge case where the svg needs to be auto height instead of 100%
+  adjustSvgHeight?: boolean
 }
 
 const tintableViewBaseClassName = 'tintable-view'
 
 const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
   const { showClearButton, customButton, handleSurfacePaintedState, allowVariantSwitch, interactive,
-    surfaceColorsFromParents, selectedSceneUid, scenesCollection, variantsCollection, selectedVariantName, showThumbnail } = props
+    surfaceColorsFromParents, selectedSceneUid, scenesCollection, variantsCollection, selectedVariantName, showThumbnail, adjustSvgHeight } = props
   const [selectedScene, setSelectedScene] = useState(null)
   const [sceneDims, setSceneDims] = useState({ sceneWidth: 1200, sceneHeight: 725 })
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0)
@@ -70,7 +72,7 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
   }, [surfaceColorsFromParents])
 
   useEffect(() => {
-    // Inti component internal state
+    // Init component internal state
     if (selectedSceneUid && variantsCollection && !backgroundUrls.length) {
       setBackgroundLoaded(false)
       let variants = variantsCollection.filter(variant => variant.sceneUid === selectedSceneUid)
@@ -80,7 +82,9 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
       const { surfaces } = variants[selectedVariantIndex]
       setSelectedScene(scenesCollection.find(scene => scene.uid === selectedSceneUid))
       setSceneVariants(variants)
-      if (!surfaceColors.length) {
+      if (surfaceColors.length) {
+        setSurfaceColors(surfaceColorsFromParents)
+      } else {
         setSurfaceColors(surfaces.map((surface, i) => null))
       }
       const imageUrls = showThumbnail ? variants.map(variant => variant.thumb) : variants.map(variant => variant.image)
@@ -95,7 +99,7 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
     }
   }, [surfaceColors, sceneVariants, selectedSceneUid, selectedVariantIndex])
 
-  const getTintableScene = (backgroundImageUrl: string, variant: FlatVariant, scene: FlatScene, colors: Color[], lpColors) => {
+  const getTintableScene = (backgroundImageUrl: string, variant: FlatVariant, scene: FlatScene, colors: Color[], lpColors, adjustSvg: boolean) => {
     const surfaceUrls = []
     const surfaceIds = []
     const highlights = []
@@ -156,6 +160,7 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
         interactive={interactive}
         handleSurfaceInteraction={handleSurfaceInteraction}
         handleColorDrop={handleColorDrop}
+        adjustSvgHeight={adjustSvg}
       />
     )
   }
@@ -195,7 +200,7 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
       <div className={`${tintableViewBaseClassName}__wrapper`}>
         <BatchImageLoader key={selectedSceneUid} urls={backgroundUrls} handleImagesLoaded={handleImagesLoaded} />
         {backgroundLoaded
-          ? getTintableScene(backgroundUrls[selectedVariantIndex], sceneVariants[selectedVariantIndex], selectedScene, surfaceColors, livePaletteColors)
+          ? getTintableScene(backgroundUrls[selectedVariantIndex], sceneVariants[selectedVariantIndex], selectedScene, surfaceColors, livePaletteColors, adjustSvgHeight)
           : <Propper vPosition={Propper.V_POSITION.CENTER} propSize={`${sceneDims.sceneHeight / sceneDims.sceneWidth * 100}%`}>
             <CircleLoader />
           </Propper>}

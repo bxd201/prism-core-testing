@@ -17,7 +17,7 @@ import {
   // cleanupNavigationIntent,
   setNavigationIntent,
   setDirtyNavigationIntent,
-  ACTIVE_SCENE_LABELS_ENUM
+  ACTIVE_SCENE_LABELS_ENUM, setIsColorWallModallyPresented, clearNavigationIntent
 } from 'src/store/actions/navigation'
 import { ROUTES_ENUM } from '../routeValueCollections'
 import { MODAL_TYPE_ENUM } from 'src/components/CVWModalManager/constants'
@@ -81,11 +81,16 @@ export const DropDownMenu = ({ title, items }: DropDownMenuProps) => {
     window.addEventListener('hashchange', resizeRootContainer)
   }, [isMobileOnly, isTablet])
 
+  const handleClose = (e: SyntheticEvent) => {
+    e.preventDefault()
+    history.push(ROUTES_ENUM.ACTIVE)
+  }
+
   return (
     <>
       <button className='overlay' onClick={() => history.push(ROUTES_ENUM.ACTIVE)} />
       <div className='cvw-dashboard-submenu'>
-        <button className='cvw-dashboard-submenu__close' onClick={() => history.push(ROUTES_ENUM.ACTIVE)}>
+        <button className='cvw-dashboard-submenu__close' onClick={handleClose}>
           {cvw?.menu?.close ?? <FormattedMessage id='CLOSE' />}
           <FontAwesomeIcon className='cvw-dashboard-submenu__close__ico' icon={['fa', 'chevron-up']} />
         </button>
@@ -130,6 +135,7 @@ const ColorVisualizerNav = () => {
   const navBtnRef: {current: ?HTMLElement} = useRef()
   const navRef: {current: ?HTMLElement} = useRef()
   const matchPhotoShown = useSelector(store => store.isMatchPhotoPresented)
+  const fastMaskIsPolluted = useSelector(store => store.fastMaskIsPolluted)
   const [dropDownItemsForExploreColors, setDropDownItemsForExploreColors] = useState([])
   const [dropDownItemsForGetInspired, setDropDownItemsForGetInspired] = useState([])
   const [dropDownItemsForPaintAPhoto, setDropDownItemsForPaintAPhoto] = useState([])
@@ -303,14 +309,23 @@ const ColorVisualizerNav = () => {
   }, [navStructure, getInspired, paintAPhoto, exploreColors, isLoadingCVWConfig])
 
   const handleNavigation = (urlFrag: string) => {
-    if (isColorwallModallyPresented) {
+    if (isColorwallModallyPresented && isActiveScenePolluted) {
       dispatch(setDirtyNavigationIntent(urlFrag))
       return
     }
-    // Show help modally for "active scenes"
-    if (isActiveScenePolluted && urlFrag !== ROUTES_ENUM.HELP) {
+    // Show help modally for "active scenes and fast mask"
+    if ((isActiveScenePolluted && urlFrag !== ROUTES_ENUM.HELP) || fastMaskIsPolluted) {
       dispatch(setNavigationIntent(urlFrag))
-      const modalType = activeSceneLabel === ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE ? MODAL_TYPE_ENUM.STOCK_SCENE : MODAL_TYPE_ENUM.PAINT_SCENE
+
+      const getModalType = (sceneLabel: string, isFastMaskPolluted: boolean) => {
+        if (isFastMaskPolluted) {
+          return MODAL_TYPE_ENUM.FAST_MASK
+        }
+
+        return activeSceneLabel === ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE ? MODAL_TYPE_ENUM.STOCK_SCENE : MODAL_TYPE_ENUM.PAINT_SCENE
+      }
+
+      const modalType = getModalType(activeSceneLabel, fastMaskIsPolluted)
       if (activeSceneLabel === MODAL_TYPE_ENUM.PAINT_SCENE) {
         dispatch(triggerPaintSceneLayerPublish(true))
       }
@@ -325,6 +340,8 @@ const ColorVisualizerNav = () => {
     }
     // default action
     history.push(urlFrag)
+    dispatch(clearNavigationIntent())
+    dispatch(setIsColorWallModallyPresented())
   }
 
   if (isLoadingCVWConfig) {
@@ -336,7 +353,6 @@ const ColorVisualizerNav = () => {
     <nav className='cvw-navigation-wrapper' ref={navRef}>
       <input ref={hiddenImageUploadInput} style={{ display: 'none' }} type='file' accept={'.jpeg, .jpg, .png'} onChange={e => {
         // If you are looking to clear the uploaded image here, do not, you will face very strange render bugs.
-        // @todo replace regex check with accept param in input -RSß
         const userImg = e.target.files && e.target.files.length ? e.target.files[0] : null
         if (userImg) {
           if (shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.fastMask)) {

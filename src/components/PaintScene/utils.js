@@ -39,7 +39,7 @@ export const getPaintAreaPath = (imagePathList, canvas, width, height, color) =>
   return { newImagePathList: copyImagePathList, paintPath: array }
 }
 
-export const getImageCordinateByPixel = (canvas, color, width, height, returnPixelIndexAlphaMap = true) => {
+export const getImageCoordinateByPixel = (canvas, color, width, height, returnPixelIndexAlphaMap = true) => {
   const ctx = canvas.current.getContext('2d')
   let imageData = ctx.getImageData(0, 0, width, height)
   let data = imageData.data
