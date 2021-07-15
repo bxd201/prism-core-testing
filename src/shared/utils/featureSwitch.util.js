@@ -57,3 +57,8 @@ export const featureExclusionsConfigIsInValid = (featureExclusions) => {
 
   return ''
 }
+
+// added group utils here since theyu are related
+export function hasGroupAccess (facetGroups: string[] = [], groupToCheck: string) {
+  return !!facetGroups.find((item) => item.toLowerCase() === groupToCheck.toLowerCase())
+}

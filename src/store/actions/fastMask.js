@@ -14,6 +14,7 @@ export const setImageForFastMask = (imageUrl: string | null = null) => {
   }
 }
 
+// ONLY CALL THIS FROM CVW FACETS, THIS IS NOT INSTANCE SAFE
 export const SET_REFERENCE_DIMENSIONS_FOR_FAST_MASK = 'SET_REFERENCE_DIMENSIONS_FOR_FAST_MASK'
 export const setRefsDimsForFastMask = (data: ReferenceDimensions) => {
   return {

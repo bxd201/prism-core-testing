@@ -14,6 +14,9 @@ import { compareKebabs } from './StringUtils'
 import { ZOOMED_VIEW_GRID_PADDING } from '../../constants/globals'
 import { formToGridWithAspectRatio, type GridShape } from './DataUtils'
 import type { CategorizedColorIdGrid, CategorizedColorGrid, ProbablyColor, ColorIdGrid, ColorIdLine, BlankColor, Color, ColorMap, ColorIdList, ColorList } from '../types/Colors'
+import { mapItemsToList } from '../utils/tintableSceneUtils'
+import { createMiniColorFromColor } from '../../components/SingleTintableSceneView/util'
+import type { Surface } from '../types/Scene'
 
 function ColorInstance (color: Object | Color) {
   for (let prop in color) {
@@ -235,3 +238,22 @@ export const getDegreeDistance = memoizee((h1, h2) => {
   const diff2 = diff > 180 ? 360 - diff : diff
   return diff2
 }, { primitive: true, length: 2 })
+
+export const getColorByBrandAndColorNumber = (brand: string, colorNumber: string, colors: any) => {
+  const foundId = Object.keys(colors.colorMap)
+    .find(colorId => {
+      const result = colors.colorMap[colorId].colorNumber === colorNumber &&
+        colors.colorMap[colorId].brandKey.toLowerCase() === brand.toLowerCase()
+
+      return result
+    })
+
+  return foundId ? colors.colorMap[foundId] : null
+}
+
+export const getMiniColorForSurfacesFromColorStrings = (defColors: string[], surfaces: Surface[], colors: any) => {
+  return mapItemsToList(defColors, surfaces).map(colorKey => {
+    const [brand, colorId] = colorKey?.split('-') ?? [null, null]
+    return colorId ? getColorByBrandAndColorNumber(brand, colorId, colors) : null
+  }).map(color => color ? createMiniColorFromColor(color) : null)
+}

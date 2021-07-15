@@ -21,7 +21,7 @@ type SimpleTintableSceneProps = {
   background: string,
   surfaceUrls: string[],
   surfaceIds: number[],
-  surfaceHitAreas: string[],
+  surfaceHitAreas?: string[],
   highlights?: any[],
   shadows?: any[],
   width: number,

@@ -34,8 +34,28 @@ const renderAppInElement = (el: HTMLElement, explicitProps: Object = {}, App) =>
   // give all necessary default attributes and classnames
   dressUpForPrism(el)
 
-  // convert strings to floats if they are numeric strings
+  const getArrayFromString = (value: any) => {
+    if (value?.length > 1 && value[0] === '[' && value[value.length - 1] === ']') {
+      return value.length > 2 ? value.substring(1, value.length - 1)
+        .split(',').map(item => typeof item === 'string' ? item.trim() : item) : []
+    }
+    return value
+  }
+
+  /*
+  getTypedValue uses the value's formatting to infer type.
+  supported types:
+  numeric - any string representation of a number ie: "1.00" "42" "7.548" will be converted to a float or int
+  array - any string value that begins with "['" and ends with "]" will return an array using a comma as a delimiter.
+  It will also trim any string spacing
+   */
   const getTypedValue = (value: any) => {
+    // convert string to array
+    const arrayVal = getArrayFromString(value)
+    if (arrayVal !== value) {
+      return arrayVal
+    }
+    // convert strings to floats if they are numeric strings
     const convertedVal = parseFloat(value)
     if (value === '') {
       return true

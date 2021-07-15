@@ -24,11 +24,21 @@
     padding: 0.5rem 0.125rem;
   }
   &__custom-btn {
-    display: flex;
-    align-content: center;
-    justify-content: center;
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
+    &--bottom {
+      display: flex;
+      align-content: center;
+      justify-content: center;
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+    }
+    &--top {
+      display: flex;
+      align-content: center;
+      justify-content: center;
+      position: absolute;
+      top: 20px;
+      right: 20px;
+    }
   }
 }

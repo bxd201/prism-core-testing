@@ -78,3 +78,13 @@ export const ANON_STOCK_SCENE_LIFETIME = 1000 * 60 * 24 * 30
 export const TAU = 2 * Math.PI
 
 export const SHOW_LOADER_ONLY_BRANDS = ['condor', 'easy', 'lowes']
+
+export const GROUP_NAMES = {
+  SCENES: 'scenes', // this groupname means it will share scene data in redux
+  COLORS: 'colors' // this groupname means it will share livepalette data via redux
+}
+
+export const BUTTON_POSITIONS = {
+  TOP: 'top',
+  BOTTOM: 'bottom'
+}

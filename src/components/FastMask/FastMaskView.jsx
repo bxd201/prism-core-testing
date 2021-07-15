@@ -38,16 +38,38 @@ type FastMaskProps = {
   handleUpdates: Function,
   cleanupCallback: Function,
   savedData?: FastMaskOpenCache,
-  initHandler?: Function
+  initHandler?: Function,
+  isForCVW?: boolean,
+  showSpinner?: boolean,
+  // this maps to multiple divs
+  loadingMessage?: string[],
+  spinner?: any
 }
 
 const baseClassName = 'fast-mask-view'
+const cvwBaseClassName = `${baseClassName}--cvw`
 const tintWrapperClassName = `${baseClassName}__tint-wrapper`
 const backgroundWrapperClassName = `${baseClassName}__background-wrapper`
+const cvwBackgroundWrapperClassName = `${backgroundWrapperClassName}--cvw`
 const loaderWrapperClassName = `${baseClassName}__loader-wrapper`
+const backgroundImageClassName = `${backgroundWrapperClassName}__image`
+const loadingMessageWrapperClassName = `${loaderWrapperClassName}__msg`
+const loadingMessageItemsClassName = `${loadingMessageWrapperClassName}__item`
+const altSpinnerClassName = `${loaderWrapperClassName}__spinner`
 
 const FastMaskView = (props: FastMaskProps) => {
-  const { handleSceneBlobLoaderError, refDims, imageUrl, activeColor, savedData, initHandler } = props
+  const {
+    handleSceneBlobLoaderError,
+    refDims,
+    imageUrl,
+    activeColor,
+    savedData,
+    initHandler,
+    isForCVW,
+    showSpinner,
+    loadingMessage,
+    spinner
+  } = props
   const intl = useIntl()
   const [blobData, setBlobData] = useState(null)
   const [surfaceColors, setSurfaceColors] = useState([])
@@ -226,25 +248,29 @@ const FastMaskView = (props: FastMaskProps) => {
     }
   }, [blobUrls])
 
-  return (
-    <div className={baseClassName}>
-      {variantsCollection.length
-        ? <div className={tintWrapperClassName}>
-          <SingleTintableSceneView
-            key={sceneUid}
-            surfaceColorsFromParents={surfaceColors}
-            selectedSceneUid={sceneUid}
-            scenesCollection={scenesCollection}
-            variantsCollection={variantsCollection} />
+  return (<>
+    {variantsCollection.length && !showSpinner ? <div className={isForCVW ? cvwBaseClassName : baseClassName}>
+      <div className={tintWrapperClassName}>
+        <SingleTintableSceneView
+          spinner={spinner}
+          key={sceneUid}
+          surfaceColorsFromParents={surfaceColors}
+          selectedSceneUid={sceneUid}
+          scenesCollection={scenesCollection}
+          variantsCollection={variantsCollection} />
+      </div>
+    </div> : <div className={baseClassName}>
+      <div className={isForCVW ? cvwBackgroundWrapperClassName : backgroundWrapperClassName}>
+        {imageUrl && <img src={imageUrl} className={backgroundImageClassName} alt={intl.formatMessage({ id: 'USER_UPLOAD' })} />}
+        <div className={loaderWrapperClassName}>
+          {<div className={altSpinnerClassName}>{spinner}</div> || <CircleLoader />}
+          {loadingMessage?.length ? <div className={loadingMessageWrapperClassName}>{loadingMessage.map(msg => {
+            return (<div className={loadingMessageItemsClassName} key={msg}>{msg}</div>)
+          })}</div> : null}
         </div>
-        : <>
-          <div className={backgroundWrapperClassName}>
-            {imageUrl && <img src={imageUrl} alt={intl.formatMessage({ id: 'USER_UPLOAD' })} />}
-          </div>
-          <div className={loaderWrapperClassName}><CircleLoader /></div>
-        </>}
-    </div>
-  )
+      </div>
+    </div>}
+  </>)
 }
 
 export default FastMaskView
