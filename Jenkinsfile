@@ -211,6 +211,11 @@ pipeline {
     }
 
     stage('publish') {
+    when {
+      not {
+          expression { BRANCH_NAME ==~ /^(qa|release)$/ }
+      }
+    }
       agent {
         docker {
           image 'docker.cpartdc01.sherwin.com/ecomm/utils/barge'
