@@ -96,8 +96,9 @@ $menu-bar-width: 27em;
     display: flex;
     height: 100%;
     justify-content: center;
-    padding: 0.8em;
+    padding: 0 0.8em;
     width: ($menu-bar-width / 2) + 0.4em;
+    cursor: pointer;
   }
 
   &__button-copy {
@@ -112,18 +113,26 @@ $menu-bar-width: 27em;
     background-color: var(getThemeColor('primary'));
     color: var(getThemeColor('primary.contrast'));
     padding: 3px 9px;
-    height: 38px;
+    height: $ui-height-min;
     @include respond-below(xs) {
-      min-height: 44px;
+      min-height: $ui-height-min--mobile;
     }
   }
 
   &__prime-color-wall-button {
     background-color: white;
     color: var(getThemeColor('primary'));
-    padding: 0.8em;
-    border: $btn-border-thickness solid var(getThemeColor('primary'));
+    padding: 0 0.8em;
+    border-right: $btn-border-thickness solid var(getThemeColor('primary'));
     text-decoration: none;
+    min-height: $ui-height-min;
+    line-height: $ui-height-min;
+
+    @include respond-below(xs) {
+      min-height: $ui-height-min--mobile;
+      line-height: $ui-height-min--mobile;
+    }
+
     &.disabled {
       background-color: var(getThemeColor('primary'));
       color: white;
@@ -137,8 +146,12 @@ $menu-bar-width: 27em;
     height: auto;
     margin-top: 2px;
     position: absolute;
-    top: 43.59px;
     z-index: 3;
+    top: $ui-height-min;
+
+    @include respond-below(xs) {
+      top: $ui-height-min--mobile;
+    }
   }
 
   &__menu-item {
