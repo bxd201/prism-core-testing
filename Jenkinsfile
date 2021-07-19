@@ -88,7 +88,6 @@ pipeline {
         unstash 'static'
 
         sh """
-        aws s3 cp dist/ s3://sw-prism-web/ --recursive
         aws s3 cp dist/ s3://sw-prism-web/"${S3_FOLDER_NAME}"/ --recursive
         """
       }
