@@ -52,7 +52,6 @@
      padding: 0;
      position: absolute;
      text-align: center;
-     text-transform: uppercase;
      top: .875rem;
      width: auto;
      z-index: 1000;
@@ -93,5 +92,8 @@
     @include respond-above(sm) {
       display: inline-block;
     }
+  }
+  &__close {
+    text-transform: uppercase;
   }
 }

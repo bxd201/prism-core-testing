@@ -8,10 +8,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Link, useHistory } from 'react-router-dom'
 import ImageRotateTerms from './ImageRotateTerms'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import PrismImage from '../PrismImage/PrismImage'
 import { calcOrientationDimensions } from '../../shared/utils/scale.util'
-
+import ConfigurationContext, { type ConfigurationContextType } from '../../contexts/ConfigurationContext/ConfigurationContext'
 import './ImageIngestView.scss'
 import { getTransformParams } from '../../shared/utils/rotationUtil'
 import { LiveMessage } from 'react-aria-live'
@@ -32,6 +32,7 @@ const ImageIngestView = (props: ImageIngestViewProps) => {
   const history = useHistory()
   const wrapperRef = useRef()
   const canvasRef = useRef()
+  const { cvw = {} } = useContext<ConfigurationContextType>(ConfigurationContext)
   // eslint-disable-next-line no-unused-vars
   const [imageData, setImageData] = useState(null)
   // eslint-disable-next-line no-unused-vars
@@ -247,7 +248,7 @@ const ImageIngestView = (props: ImageIngestViewProps) => {
             </button>
             <Link to={closeLink} tabIndex='-1'>
               <button onClick={handleCloseButton} className={`${baseClassName}__button ${baseClassName}__button--right dark-button`}>
-                <div className={`${baseClassName}__close`}><span><FormattedMessage id='CLOSE' /></span>&nbsp;<FontAwesomeIcon className={``} icon={['fa', 'chevron-up']} /></div>
+                <div className={`${baseClassName}__close`}>{cvw.closeBtn ?? <FormattedMessage id='CLOSE' />}&nbsp;&nbsp;<FontAwesomeIcon className={``} icon={['fa', 'chevron-up']} /></div>
               </button>
             </Link>
           </div> : null}

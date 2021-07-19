@@ -83,6 +83,7 @@
   }
   &__close {
     display: none;
+    text-transform: uppercase;
     @include respond-above(sm) {
       display: block;
     }

@@ -44,8 +44,8 @@ export type ConfigurationContextType = {
   },
   featureExclusions: string[],
   cvw: {
+    closeBtn?: string,
     colorWall?: {
-      close?: string,
       searchColor?: string
     },
     downloadSceneDisclaimer1?: string,
@@ -59,7 +59,6 @@ export type ConfigurationContextType = {
     introBg?: string,
     introLogo?: string,
     menu?: {
-      close?: string,
       exploreColors?: {
         ...Menu,
         colorCollections?: MenuItem,
