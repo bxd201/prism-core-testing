@@ -8,6 +8,7 @@ import { getColors } from '../functions'
 import { varNames } from 'src/shared/withBuild/variableDefs'
 
 import CircleLoader from '../CircleLoader/CircleLoader'
+import SpinnerLoader from '../../Loaders/SpinnerLoader/SpinnerLoader'
 import './HeroLoader.scss'
 
 type Props = {
@@ -18,7 +19,7 @@ type Props = {
 
 function HeroLoader (props: Props) {
   const { color, className, size, ...other } = props
-  const { theme } = React.useContext(ConfigurationContext)
+  const { brandId, theme } = React.useContext(ConfigurationContext)
   const finalColor = color || at(theme, 'primary')[0] || null
 
   const cssVars = useMemo(() => {
@@ -36,16 +37,20 @@ function HeroLoader (props: Props) {
   return (
     <CSSVariableApplicator variables={cssVars}>
       <div className={`hero-loader ${size ? `hero-loader--${size}` : ''} ${className || ''}`} {...other}>
-        <CircleLoader className='hero-loader__circle-loader' inheritSize />
-        <div className='hero-loader__wrapper'>
-          <div className='hero-loader__bar-spinner'>
-            <div className='hero-loader__bar hero-loader__bar--1' />
-            <div className='hero-loader__bar hero-loader__bar--2' />
-            <div className='hero-loader__bar hero-loader__bar--3' />
-            <div className='hero-loader__bar hero-loader__bar--4' />
-            <div className='hero-loader__bar hero-loader__bar--5' />
-          </div>
-        </div>
+        {brandId === 'lowes'
+          ? <SpinnerLoader />
+          : <>
+            <CircleLoader className='hero-loader__circle-loader' inheritSize />
+            <div className='hero-loader__wrapper'>
+              <div className='hero-loader__bar-spinner'>
+                <div className='hero-loader__bar hero-loader__bar--1' />
+                <div className='hero-loader__bar hero-loader__bar--2' />
+                <div className='hero-loader__bar hero-loader__bar--3' />
+                <div className='hero-loader__bar hero-loader__bar--4' />
+                <div className='hero-loader__bar hero-loader__bar--5' />
+              </div>
+            </div>
+          </>}
       </div>
     </CSSVariableApplicator>
   )

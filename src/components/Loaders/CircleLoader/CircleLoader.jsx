@@ -7,6 +7,7 @@ import ConfigurationContext from 'src/contexts/ConfigurationContext/Configuratio
 import { getColors } from '../functions'
 import { varNames } from 'src/shared/withBuild/variableDefs'
 
+import SpinnerLoader from '../../Loaders/SpinnerLoader/SpinnerLoader'
 import './CircleLoader.scss'
 
 const SIZE = 100
@@ -24,7 +25,7 @@ type Props = {
 
 function CircleLoader (props: Props) {
   const { color, className, circleProps, inheritSize = false, strokeWidth = DEFAULT_STROKE_WIDTH, ...other } = props
-  const { theme } = React.useContext(ConfigurationContext)
+  const { brandId, theme } = React.useContext(ConfigurationContext)
   const finalColor = color || at(theme, 'primary')[0] || null
   const cssVars = useMemo(() => {
     let colors = getColors(color, 20)
@@ -56,9 +57,12 @@ function CircleLoader (props: Props) {
 
   return (
     <CSSVariableApplicator variables={cssVars}>
-      <svg className={`prism-loader-circle ${inheritSize ? 'prism-loader-circle--inherit' : ''} ${typeof className === 'string' ? className : ''}`} {...other} xmlns='http://www.w3.org/2000/svg' viewBox={`0 0 ${SIZE} ${SIZE}`} preserveAspectRatio='xMidYMid'>
-        <circle className='prism-loader-circle__circle' cx={RADIUS} cy={RADIUS} {...circleProps} fill='none' strokeWidth={strokeWidth} r={RADIUS} strokeDasharray='164.93361431346415 56.97787143782138' transform={`rotate(143.836 ${RADIUS} ${RADIUS})`} />
-      </svg>
+      {brandId === 'lowes'
+        ? <SpinnerLoader />
+        : <svg className={`prism-loader-circle ${inheritSize ? 'prism-loader-circle--inherit' : ''} ${typeof className === 'string' ? className : ''}`} {...other} xmlns='http://www.w3.org/2000/svg' viewBox={`0 0 ${SIZE} ${SIZE}`} preserveAspectRatio='xMidYMid'>
+          <circle className='prism-loader-circle__circle' cx={RADIUS} cy={RADIUS} {...circleProps} fill='none' strokeWidth={strokeWidth} r={RADIUS} strokeDasharray='164.93361431346415 56.97787143782138' transform={`rotate(143.836 ${RADIUS} ${RADIUS})`} />
+        </svg>}
+
     </CSSVariableApplicator>
   )
 }
