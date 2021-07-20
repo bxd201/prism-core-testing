@@ -224,7 +224,7 @@ const ColorWallToolbar = () => {
                 style={alwaysShowColorFamilies ? { borderRadius: '0', textTransform: 'uppercase' } : {}}
               >
                 <FontAwesomeIcon className='color-families-svg' icon={['fa', 'times']} pull='left' />
-                <span className={MODE_CLASS_NAMES.DESC}>{cvw.colorWall?.close ?? <FormattedMessage id='CLOSE' />}</span>
+                <span className={MODE_CLASS_NAMES.DESC}>{cvw.closeBtn ?? <FormattedMessage id='CLOSE' />}</span>
               </button>
             )}
           </div>

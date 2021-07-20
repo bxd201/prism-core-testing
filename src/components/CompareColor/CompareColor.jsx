@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
 import type { Color } from '../../shared/types/Colors.js.flow'
 import type { FlatScene, FlatVariant } from '../../shared/types/Scene'
+import WithConfigurationContext, { type ConfigurationContextType } from '../../contexts/ConfigurationContext/WithConfigurationContext'
 import './CompareColor.scss'
 import { FormattedMessage } from 'react-intl'
 import SingleTintableSceneView from '../SingleTintableSceneView/SingleTintableSceneView'
@@ -30,6 +31,7 @@ const offset = 1
 
 type CompareColorProps = {
   colors: Color[],
+  config: ConfigurationContextType,
   toggleCompareColor: Function,
   colorIds: string[],
   scenesCollection: FlatScene[],
@@ -186,14 +188,16 @@ export class CompareColor extends React.Component<CompareColorProps, CompareColo
 
     render () {
       const { curr, colors, colorIds, selectedSceneUid, selectedVariantName } = this.state
-      const { variantsCollection, scenesCollection } = this.props
+      const { config, variantsCollection, scenesCollection } = this.props
+      const { cvw = {} } = config
       const content = this.renderContent(curr, colors, colorIds, selectedSceneUid, selectedVariantName, scenesCollection, variantsCollection)
       const { isHidePrevButton, isHideNextButton } = this.isShowSlideButton()
+
       return (
         <div className={`${containerClass}`}>
           <div className={`${containerHeaderClass}`}>
             <span><FormattedMessage id='COMPARE_COLORS' /></span>
-            <button className={`${containerHeaderButtonClass}`} onClick={this.props.toggleCompareColor}><FormattedMessage id='CLOSE' /> &nbsp;<FontAwesomeIcon className={``} icon={['fa', 'chevron-up']} /></button>
+            <button className={`${containerHeaderButtonClass}`} onClick={this.props.toggleCompareColor}>{cvw.closeBtn ?? <FormattedMessage id='CLOSE' />}&nbsp;&nbsp;<FontAwesomeIcon className={``} icon={['fa', 'chevron-up']} /></button>
           </div>
           <div className={`${wrapperClass}`} >
             <div className={`${prevBtnWrapperClass}`}>
@@ -232,4 +236,4 @@ export {
   colorInfoNameClass
 }
 
-export default CompareColor
+export default WithConfigurationContext(CompareColor)

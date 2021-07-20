@@ -1,13 +1,14 @@
 // @flow
-import * as React from 'react'
+import React, { type Node, useContext, useState } from 'react'
 import './CardMenu.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
 import { useHistory } from 'react-router-dom'
 import { FormattedMessage } from 'react-intl'
+import ConfigurationContext, { type ConfigurationContextType } from '../../contexts/ConfigurationContext/ConfigurationContext'
 
 type CardMenuProps = {
-  children: (setCardShowing: (React.Node) => void, setTitle: (string) => void) => React.Node,
+  children: (setCardShowing: (Node) => void, setTitle: (string) => void) => Node,
   menuTitle?: string,
   showBackByDefault?: boolean,
   backPath?: string
@@ -21,9 +22,10 @@ type CardMenuProps = {
  * the original state when clicked.
  */
 const CardMenu = ({ children, menuTitle = '', showBackByDefault = false, backPath = '' }: CardMenuProps) => {
-  const [cardShowing: React.Node, setCardShowing: (React.Node) => void] = React.useState(null)
-  const [cardTitle: string, setCardTitle] = React.useState(menuTitle)
+  const [cardShowing: Node, setCardShowing: (Node) => void] = useState(null)
+  const [cardTitle: string, setCardTitle] = useState(menuTitle)
   const history = useHistory()
+  const { cvw = {} } = useContext<ConfigurationContextType>(ConfigurationContext)
 
   return (
     <div className='card-menu__wrapper'>
@@ -41,7 +43,7 @@ const CardMenu = ({ children, menuTitle = '', showBackByDefault = false, backPat
         </button>}
         <button className='card-menu__button card-menu__button--right' onClick={() => history.push('/active')}>
           <div className='card-menu__close'>
-            <span><FormattedMessage id='CLOSE' /></span>&nbsp;<FontAwesomeIcon className={``} icon={['fa', 'chevron-up']} />
+            {cvw.closeBtn ?? <FormattedMessage id='CLOSE' />}&nbsp;&nbsp;<FontAwesomeIcon className={``} icon={['fa', 'chevron-up']} />
           </div>
           <div className='card-menu__cancel'>
             <FontAwesomeIcon size='lg' icon={['fa', 'times']} />
