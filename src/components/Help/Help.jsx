@@ -5,10 +5,12 @@ import { helpHeader, filterHelpItems } from './data'
 import './Help.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import debounce from 'lodash/debounce'
+import camelCase from 'lodash/camelCase'
 import { FormattedMessage, useIntl } from 'react-intl'
 import * as scroll from 'scroll'
 import { KEY_CODES } from 'src/constants/globals'
 import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
+import '../SingleTintableSceneView/SceneSelectorNavButton.scss'
 
 const baseClass = `cvw-help`
 const wrapper = `${baseClass}__wrapper`
@@ -31,7 +33,7 @@ const secondIcon = `${baseClass}__second-icon`
 const SCROLL_SPEED = 500
 
 const HelpInterior = () => {
-  const { featureExclusions = [] }: ConfigurationContextType = useContext(ConfigurationContext)
+  const { brandId, featureExclusions = [] }: ConfigurationContextType = useContext(ConfigurationContext)
   const contentWrapperRef = React.createRef()
   const [contentRefs, setContentRefs] = useState([])
   const [filteredHelpItems, setFilteredHelpItems] = useState([])
@@ -80,10 +82,10 @@ const HelpInterior = () => {
   }
 
   useEffect(() => {
-    const filtered = filterHelpItems(featureExclusions)
+    const filtered = filterHelpItems(featureExclusions, brandId)
     setFilteredHelpItems(filtered)
     setContentRefs(filtered.map((item, index) => React.createRef()))
-  }, [featureExclusions])
+  }, [featureExclusions, brandId])
 
   return (
     <div className={`${wrapper}`}>
@@ -126,11 +128,42 @@ const HelpItemContent = forwardRef((props: HelpItemContentProps, ref) => {
   const { formatMessage } = useIntl()
   const { cvw = {} }: ConfigurationContextType = useContext(ConfigurationContext)
   const { help = {} } = cvw
+  const { iconsButtons = {} } = help
 
   const tabContent = data.content
   const imageList = data.imageList
   const tabSubContent = data.subContent
   const imageListMobile = data.imageListMobile
+
+  const getIcons = {
+    moreScenes: (
+      <div className={`${baseClass}__get-icons`}>
+        <FontAwesomeIcon className='scene-selector-nav-btn__icon-1' icon={['fal', 'square-full']} size='sm' />
+        <FontAwesomeIcon className='scene-selector-nav-btn__icon-2' icon={['fal', 'square-full']} size='sm' />
+        <FontAwesomeIcon className='scene-selector-nav-btn__icon-3' icon={['fal', 'square-full']} size='sm' />
+      </div>
+    ),
+    colorDetails: (
+      <div className={`${baseClass}__get-icons ${baseClass}__get-icons--color-details-icon`}>
+        <FontAwesomeIcon icon={['fas', 'info']} />
+      </div>
+    ),
+    grabReorder: (
+      <svg>
+        <line strokeWidth='1px' x1={18} y1='0' x2='0' y2={18} />
+        <line strokeWidth='1px' x1={18} y1={Math.floor(18 / 3)} x2={Math.floor(18 / 3)} y2={18} />
+        <line strokeWidth='1px' x1={18} y1={2 * Math.floor(18 / 3)} x2={2 * Math.floor(18 / 3)} y2={18} />
+      </svg>
+    ),
+    paintScene: (
+      <div className={`${baseClass}__get-icons ${baseClass}__get-icons--paint-scene-icon`}>
+        <div>
+          <FontAwesomeIcon className={`cvw__btn-overlay__svg`} icon={['fal', 'square-full']} />
+          <FontAwesomeIcon className={`cvw__btn-overlay__svg cvw__btn-overlay__svg--brush`} icon={['fa', 'brush']} transform={{ rotate: 320 }} style={{ transform: 'translateX(-10px)' }} />
+        </div>
+      </div>
+    )
+  }
 
   return <div ref={ref} className={`${helpContent} ${data.isHiddenMobile ? helpContentHide : ''}`}>
     <div className={`${contentHeader}`}>
@@ -149,30 +182,33 @@ const HelpItemContent = forwardRef((props: HelpItemContentProps, ref) => {
               if (!Array.isArray(tab.fontAwesomeIcon) && tab.fontAwesomeIcon.size) {
                 iconProps.size = `${tab.fontAwesomeIcon.size}`
               }
-              return <li key={`li-${index}`}>
-                <div className={`${iconWrap} ${(tab.isUndoRedo) ? `${iconWrapUndoRedo}` : ``}`}>
-                  {
-                    (Array.isArray(tab.fontAwesomeIcon))
-                      ? tab.fontAwesomeIcon.map((fontIcon, index) => {
-                        if (fontIcon.flip) {
-                          iconProps.flip = fontIcon.flip
-                        }
-                        if (fontIcon.size) {
-                          iconProps.size = `${fontIcon.size}`
-                        }
-                        return <FontAwesomeIcon key={`icon-${index}`} className={`${(index > 0 && !tab.isUndoRedo) ? secondIcon : ``}`} icon={[fontIcon.variant, fontIcon.icon]} size='lg' transform={{ rotate: fontIcon.rotate }} {...iconProps} />
-                      }) : <FontAwesomeIcon className={``} icon={[tab.fontAwesomeIcon.variant, tab.fontAwesomeIcon.icon]} size='lg' transform={{ rotate: tab.fontAwesomeIcon.rotate }} {...iconProps} />
-                  }
-                </div>
-                <div className={`${iconInfo}`}>
-                  <h3>
-                    <FormattedMessage id={`${tab.iconInfoName}`} />
-                  </h3>
-                  <p>
-                    <FormattedMessage id={`${tab.iconInfoContent[0]}`} />
-                  </p>
-                </div>
-              </li>
+              const iconsButtonsItem = iconsButtons[camelCase(tab.iconInfoName.split('.').pop())]
+              return (tab.iconInfoContent[0] || iconsButtonsItem) && (
+                <li key={`li-${index}`}>
+                  <div className={`${iconWrap} ${(tab.isUndoRedo) ? `${iconWrapUndoRedo}` : ``}`}>
+                    {
+                      (Array.isArray(tab.fontAwesomeIcon))
+                        ? tab.fontAwesomeIcon.map((fontIcon, index) => {
+                          if (fontIcon.flip) {
+                            iconProps.flip = fontIcon.flip
+                          }
+                          if (fontIcon.size) {
+                            iconProps.size = `${fontIcon.size}`
+                          }
+                          return <FontAwesomeIcon key={`icon-${index}`} className={`${(index > 0 && !tab.isUndoRedo) ? secondIcon : ``}`} icon={[fontIcon.variant, fontIcon.icon]} size='lg' transform={{ rotate: fontIcon.rotate }} {...iconProps} />
+                        }) : getIcons[iconsButtonsItem?.icon] ?? <FontAwesomeIcon className={``} icon={[tab.fontAwesomeIcon.variant, tab.fontAwesomeIcon.icon]} size='lg' transform={{ rotate: tab.fontAwesomeIcon.rotate }} {...iconProps} />
+                    }
+                  </div>
+                  <div className={`${iconInfo}`}>
+                    <h3>
+                      {iconsButtonsItem?.title ?? <FormattedMessage id={`${tab.iconInfoName}`} />}
+                    </h3>
+                    <p>
+                      {iconsButtonsItem?.content ?? <FormattedMessage id={`${tab.iconInfoContent[0]}`} />}
+                    </p>
+                  </div>
+                </li>
+              )
             })
           }
         </ul> : (imageList) ? <ul className={`${helpImages}`}>
