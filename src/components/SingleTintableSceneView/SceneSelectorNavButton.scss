@@ -8,6 +8,7 @@
   color: var(getThemeColor('light.contrast'));
   &__icon {
     font-size: 1em;
+    background-color: var(getThemeColor('light'));
     position: relative;
     width: 20px;
     height: 20px;
@@ -21,7 +22,7 @@
       left: 0px;
       transform: translate(3px, -2px);
       z-index: 100;
-      background-color: var(getThemeColor('light'));
+      background-color: inherit;
     }
 
     &-2 {
@@ -29,7 +30,7 @@
       bottom: 0px;
       left: 0px;
       z-index: 1000;
-      background-color: var(getThemeColor('light'));
+      background-color: inherit;
     }
 
     &-3 {
@@ -38,7 +39,7 @@
       left: 0px;
       transform: translate(6px, -4px);
       z-index: 1;
-      background-color: var(getThemeColor('light'));
+      background-color: inherit;
     }
   }
   &__text {

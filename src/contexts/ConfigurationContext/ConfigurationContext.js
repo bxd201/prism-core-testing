@@ -2,6 +2,11 @@
 import React from 'react'
 import { type VisualizerNavStructure } from 'src/components/Facets/ColorVisualizerWrapper/ColorVisualizerNav/navStructure'
 
+type HelpIconsButtonsItems = {
+  icon?: string,
+  title?: string,
+  content?: string
+}
 type Menu = {
   tab?: string,
   title?: string
@@ -107,6 +112,14 @@ export type ConfigurationContextType = {
       colorDetailBg?: string,
       colorDetailMobile1?: string,
       colorDetailMobile2?: string,
+      iconsButtons?: {
+        addColor?: HelpIconsButtonsItems,
+        trashAColor?: HelpIconsButtonsItems,
+        moreScenes?: HelpIconsButtonsItems,
+        colorDetails?: HelpIconsButtonsItems,
+        grabReorder?: HelpIconsButtonsItems,
+        paintScene?: HelpIconsButtonsItems
+      },
       myColorPalette1?: string,
       myColorPalette2?: string,
       myColorPalette3?: string,
