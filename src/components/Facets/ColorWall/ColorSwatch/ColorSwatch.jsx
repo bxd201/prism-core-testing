@@ -71,8 +71,8 @@ const Content = ({ msg, color }: ContentProps) => {
   )
 }
 
-type ColorSwatchProps = { color: Color, level?: number, status?: ColorStatus, style?: {}, showContents?: boolean, onFocus?: () => void }
-const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, level, status, style, showContents = (level === 0), onFocus }: ColorSwatchProps, ref) => {
+type ColorSwatchProps = { color: Color, level?: number, status?: ColorStatus, style?: {}, showContents?: boolean, onFocus?: () => void, outline: boolean }
+const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, level, status, style, showContents = (level === 0), onFocus, outline = true }: ColorSwatchProps, ref) => {
   const { url, params: { section, family } } = useRouteMatch()
   const history = useHistory()
   const isDisabled = at(status, 'status')[0] === 0
@@ -83,6 +83,7 @@ const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, le
         className={'color-swatch color-swatch-' + (level === undefined ? 'flat' : numToAlphaString(level))}
         style={{ ...style, background: color.hex }}
         ref={ref}
+        tabIndex={outline ? 0 : -1}
         onFocus={onFocus}
         onClick={() => history.push(generateColorWallPageUrl(section, family, color.id, fullColorName(color)) + (url.endsWith('family/') ? 'family/' : url.endsWith('search/') ? 'search/' : ''))}
         aria-label={fullColorName(color)}
@@ -94,7 +95,7 @@ const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, le
         ref={ref}
         onFocus={onFocus}
         aria-label={fullColorName(color)}
-        className={'color-swatch__content' + (color.isDark ? ' color-swatch__content--dark-color' : '')}
+        className={`color-swatch__content ${color.isDark ? ' color-swatch__content--dark-color' : ''}${outline ? ' color-swatch__content--focus' : ''}`}
         style={style}
       >
         <p className='color-swatch__content__number'>{fullColorNumber(color.brandKey, color.colorNumber)}</p>
