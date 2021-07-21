@@ -24,6 +24,8 @@ import { MODAL_TYPE_ENUM } from 'src/components/CVWModalManager/constants'
 import { triggerPaintSceneLayerPublish } from 'src/store/actions/paintScene'
 import { DEFAULT_NAV_STRUCTURE } from './navStructure'
 
+const selectDevice = (web, iPhone = web, android = web, iPad = web) => (isMobileOnly ? (isIOS ? iPhone : android) : (isTablet ? iPad : web)) || web
+
 type DropDownMenuProps = {
   title: string,
   items: {
@@ -72,8 +74,7 @@ const resizeRootContainer = () => {
 
 export const DropDownMenu = ({ title, items }: DropDownMenuProps) => {
   const history = useHistory()
-  const { cvw } = useContext<ConfigurationContextType>(ConfigurationContext)
-  const selectDevice = (web, iPhone = web, android = web, iPad = web) => (isMobileOnly ? (isIOS ? iPhone : android) : (isTablet ? iPad : web)) || web
+  const { cvw, brandId } = useContext<ConfigurationContextType>(ConfigurationContext)
 
   useEffect(() => {
     if (!(isMobileOnly || isTablet)) return
@@ -102,9 +103,9 @@ export const DropDownMenu = ({ title, items }: DropDownMenuProps) => {
             return (
               <li key={i} className={`cvw-dashboard-submenu__content__item ${isWide ? 'cvw-dashboard-submenu__content__item--wide' : ''}`}>
                 <Wrapper>
-                  {img ? <div className={`cvw-dashboard-submenu__content__image ${isWide ? 'cvw-dashboard-submenu__content__image--wide' : ''}`} style={{ 'backgroundImage': `url(${selectDevice(img, imgiPhone, imgAndroid, imgiPad)})` }} alt='' /> : null}
-                  <h3 className='cvw-dashboard-submenu__content__title'>{selectDevice(title, titleMobile)}</h3>
-                  <p className='cvw-dashboard-submenu__content__content'>{selectDevice(content, contentiPhone, contentAndroid)}</p>
+                  {img ? <div className={`cvw-dashboard-submenu__content__image ${isWide ? 'cvw-dashboard-submenu__content__image--wide' : ''}`} style={{ 'backgroundImage': `url(${brandId === 'sherwin' ? selectDevice(img, imgiPhone, imgAndroid, imgiPad) : img})` }} alt='' /> : null}
+                  <h3 className='cvw-dashboard-submenu__content__title'>{brandId === 'sherwin' ? selectDevice(title, titleMobile) : title}</h3>
+                  <p className='cvw-dashboard-submenu__content__content'>{brandId === 'sherwin' ? selectDevice(content, contentiPhone, contentAndroid) : content}</p>
                   {description && <p className='cvw-dashboard-submenu__content__tip'>{description}</p>}
                   {title === 'UPLOAD YOUR PHOTO' && <p className='cvw-dashboard-submenu__content__tip'>Please select a PNG or JPG file</p>}
                 </Wrapper>
@@ -118,7 +119,7 @@ export const DropDownMenu = ({ title, items }: DropDownMenuProps) => {
 }
 
 const ColorVisualizerNav = () => {
-  const { featureExclusions, cvw, brand } = useContext<ConfigurationContextType>(ConfigurationContext)
+  const { featureExclusions, cvw, brand, brandId } = useContext<ConfigurationContextType>(ConfigurationContext)
   const { exploreColors, getInspired, paintAPhoto } = cvw?.menu ?? {}
   const { navStructure = DEFAULT_NAV_STRUCTURE } = cvw ?? {}
   const [isLoadingCVWConfig, setIsLoadingCVWConfig] = useState(isEmpty(cvw))
@@ -244,14 +245,15 @@ const ColorVisualizerNav = () => {
           contentiPad: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.UPLOAD_YOUR_PHOTO_IPAD'],
           contentiPhone: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.UPLOAD_YOUR_PHOTO_IPHONE'],
           description: uploadYourPhoto?.footnote ?? messages['NAV_DROPDOWN_LINK_TIP_DESCRIPTION.UPLOAD_YOUR_PHOTO'],
-          onClick: !(isMobileOnly || isTablet) ? () => {
-            const selectDevice = (web, iPhone = web, android = web, iPad = web) => (isMobileOnly ? (isIOS ? iPhone : android) : (isTablet ? iPad : web)) || web
-            history.push(selectDevice(
-              ROUTES_ENUM.UPLOAD_PAINT_SCENE,
-              'https://play.google.com/store/apps/details?id=com.colorsnap',
-              'https://itunes.apple.com/us/app/colorsnap-visualizer-iphone/id316256242?mt=8',
-              'https://itunes.apple.com/us/app/colorsnap-studio/id555300600?mt=8'
-            ))
+          onClick: () => {
+            history.push(brandId === 'sherwin'
+              ? selectDevice(
+                ROUTES_ENUM.UPLOAD_PAINT_SCENE,
+                'https://play.google.com/store/apps/details?id=com.colorsnap',
+                'https://itunes.apple.com/us/app/colorsnap-visualizer-iphone/id316256242?mt=8',
+                'https://itunes.apple.com/us/app/colorsnap-studio/id555300600?mt=8'
+              )
+              : ROUTES_ENUM.UPLOAD_PAINT_SCENE)
 
             if (hiddenImageUploadInput.current) {
               hiddenImageUploadInput.current.value = ''
@@ -259,7 +261,7 @@ const ColorVisualizerNav = () => {
               dispatch(setNavigationIntent(ROUTES_ENUM.UPLOAD_PAINT_SCENE))
               hiddenImageUploadInput.current.click()
             }
-          } : undefined
+          }
         },
         allowed: () => shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.uploadYourPhoto)
       },
@@ -278,13 +280,14 @@ const ColorVisualizerNav = () => {
           contentiPhone: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.UPLOAD_YOUR_PHOTO_IPHONE'],
           description: messages['NAV_DROPDOWN_LINK_TIP_DESCRIPTION.UPLOAD_YOUR_PHOTO'],
           onClick: !(isMobileOnly || isTablet) ? () => {
-            const selectDevice = (web, iPhone = web, android = web, iPad = web) => (isMobileOnly ? (isIOS ? iPhone : android) : (isTablet ? iPad : web)) || web
-            history.push(selectDevice(
-              ROUTES_ENUM.UPLOAD_FAST_MASK,
-              'https://play.google.com/store/apps/details?id=com.colorsnap',
-              'https://itunes.apple.com/us/app/colorsnap-visualizer-iphone/id316256242?mt=8',
-              'https://itunes.apple.com/us/app/colorsnap-studio/id555300600?mt=8'
-            ))
+            history.push(brandId === 'sherwin'
+              ? selectDevice(
+                ROUTES_ENUM.UPLOAD_FAST_MASK,
+                'https://play.google.com/store/apps/details?id=com.colorsnap',
+                'https://itunes.apple.com/us/app/colorsnap-visualizer-iphone/id316256242?mt=8',
+                'https://itunes.apple.com/us/app/colorsnap-studio/id555300600?mt=8'
+              )
+              : ROUTES_ENUM.UPLOAD_FAST_MASK)
 
             if (hiddenImageUploadInput.current) {
               hiddenImageUploadInput.current.value = ''
