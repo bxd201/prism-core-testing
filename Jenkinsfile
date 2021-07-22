@@ -58,7 +58,7 @@ pipeline {
 
         # Mount the volumes from Jenkins and run the deploy
         docker run \
-          -e WEB_URL=https://sw-prism-web.s3.us-east-2.amazonaws.com/${S3_FOLDER_NAME} \
+          -e WEB_URL=https://prism.sherwin-williams.com/${S3_FOLDER_NAME} \
           --env API_URL="$API_URL" \
           --name ${IMAGE_NAME}-build-${BUILD_NUMBER} \
           ${IMAGE_NAME}-build:latest
