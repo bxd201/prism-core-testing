@@ -24,8 +24,9 @@ export function ColorCollections () {
   useEffect(() => { loadColors(brandId)(dispatch) }, [])
 
   const [tabId, setTabId] = useState(1)
-
+  useEffect(() => { brandId === 'lowes' ? setTabId(Object.keys(categories.idToIndexHash)[0]) : setTabId(1) }, [])
   const category = categories.data[categories.idToIndexHash[tabId]]
+
   const collectionData = colorMap && category ? category.summaryIds.map(summaryId => {
     const { name, thumbUrl: img, description, colorIds } = summaries.data[summaries.idToIndexHash[summaryId]]
     return { description, img, name, collections: colorIds.map(id => colorMap[id]) }
