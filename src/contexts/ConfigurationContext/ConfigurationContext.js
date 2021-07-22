@@ -2,7 +2,7 @@
 import React from 'react'
 import { type VisualizerNavStructure } from 'src/components/Facets/ColorVisualizerWrapper/ColorVisualizerNav/navStructure'
 
-type HelpIconsButtonsItems = {
+type HelpSectionItems = {
   icon?: string,
   title?: string,
   content?: string
@@ -113,12 +113,12 @@ export type ConfigurationContextType = {
       colorDetailMobile1?: string,
       colorDetailMobile2?: string,
       iconsButtons?: {
-        addColor?: HelpIconsButtonsItems,
-        trashAColor?: HelpIconsButtonsItems,
-        moreScenes?: HelpIconsButtonsItems,
-        colorDetails?: HelpIconsButtonsItems,
-        grabReorder?: HelpIconsButtonsItems,
-        paintScene?: HelpIconsButtonsItems
+        addColor?: HelpSectionItems,
+        trashAColor?: HelpSectionItems,
+        moreScenes?: HelpSectionItems,
+        colorDetails?: HelpSectionItems,
+        grabReorder?: HelpSectionItems,
+        paintScene?: HelpSectionItems
       },
       myColorPalette1?: string,
       myColorPalette2?: string,
@@ -129,6 +129,24 @@ export type ConfigurationContextType = {
       myColorPaletteMobile1?: string,
       myColorPaletteMobile2?: string,
       myColorPaletteMobile3?: string,
+      paintingMyOwnPhoto?: {
+        title?: string,
+        subtitle?: string,
+        paintArea?: HelpSectionItems,
+        paintbrush?: HelpSectionItems,
+        select?: HelpSectionItems,
+        erase?: HelpSectionItems,
+        defineArea?: HelpSectionItems,
+        removeArea?: HelpSectionItems,
+        zoom?: HelpSectionItems,
+        undoRedo?: HelpSectionItems,
+        redo?: HelpSectionItems,
+        hidePaint?: HelpSectionItems,
+        info?: HelpSectionItems,
+        deleteGroup?: HelpSectionItems,
+        group?: HelpSectionItems,
+        ungroup?: HelpSectionItems
+      },
       saving1?: string,
       saving3?: string,
       savingBg?: string,

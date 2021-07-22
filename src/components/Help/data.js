@@ -200,6 +200,30 @@ export const helpTabs = [{
     'iconInfoName': 'HELPFUL_HINTS.CONTENT.PAINTING_MY_OWN_PHOTO.ICON_INFO_NAME.UNDO_&_REDO',
     'iconInfoContent': ['HELPFUL_HINTS.CONTENT.PAINTING_MY_OWN_PHOTO.ICON_INFO_CONTENT.UNDO_&_REDO'],
     'isUndoRedo': true
+  }, {
+    'fontAwesomeIcon': [{ 'variant': 'fa', 'icon': 'redo-alt' }],
+    'iconInfoName': 'HELPFUL_HINTS.CONTENT.PAINTING_MY_OWN_PHOTO.ICON_INFO_NAME.REDO',
+    'iconInfoContent': []
+  }, {
+    'fontAwesomeIcon': [{ 'variant': 'fa', 'icon': 'eye', 'flip': 'horizontal' }],
+    'iconInfoName': 'HELPFUL_HINTS.CONTENT.PAINTING_MY_OWN_PHOTO.ICON_INFO_NAME.HIDE_PAINT',
+    'iconInfoContent': []
+  }, {
+    'fontAwesomeIcon': [{ 'variant': 'fal', 'icon': 'info-circle' }],
+    'iconInfoName': 'HELPFUL_HINTS.CONTENT.PAINTING_MY_OWN_PHOTO.ICON_INFO_NAME.INFO',
+    'iconInfoContent': []
+  }, {
+    'fontAwesomeIcon': [{ 'variant': 'fal', 'icon': 'trash-alt' }],
+    'iconInfoName': 'HELPFUL_HINTS.CONTENT.PAINTING_MY_OWN_PHOTO.ICON_INFO_NAME.DELETE_GROUP',
+    'iconInfoContent': []
+  }, {
+    'fontAwesomeIcon': [{ 'variant': 'fal', 'icon': 'object-group' }],
+    'iconInfoName': 'HELPFUL_HINTS.CONTENT.PAINTING_MY_OWN_PHOTO.ICON_INFO_NAME.GROUP',
+    'iconInfoContent': []
+  }, {
+    'fontAwesomeIcon': [{ 'variant': 'fal', 'icon': 'object-ungroup' }],
+    'iconInfoName': 'HELPFUL_HINTS.CONTENT.PAINTING_MY_OWN_PHOTO.ICON_INFO_NAME.UNGROUP',
+    'iconInfoContent': []
   }],
   'imageList': '',
   'isHiddenMobile': true
