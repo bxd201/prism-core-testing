@@ -4,7 +4,7 @@ $menu-bar-width: 27em;
 
 .menu-bar__border {
   display: flex;
-  border: $btn-border-thickness solid var(getThemeColor('primary'));
+  border: $btn-border-thickness solid var(getThemeColor('buttonBorder'));
 
   @media (max-width: 473px) {
     flex: 1;
@@ -120,10 +120,10 @@ $menu-bar-width: 27em;
   }
 
   &__prime-color-wall-button {
-    background-color: white;
-    color: var(getThemeColor('primary'));
+    background-color: var(getThemeColor('buttonBgColor'));
+    color: var(getThemeColor('buttonColor'));
     padding: 0 0.8em;
-    border-right: $btn-border-thickness solid var(getThemeColor('primary'));
+    border-right: $btn-border-thickness solid var(getThemeColor('buttonBorder'));
     text-decoration: none;
     min-height: $ui-height-min;
     line-height: $ui-height-min;
@@ -133,9 +133,14 @@ $menu-bar-width: 27em;
       line-height: $ui-height-min--mobile;
     }
 
+    &:hover {
+      background-color: var(getThemeColor('buttonHoverBgColor'));
+      color: var(getThemeColor('buttonHoverColor'));
+    }
+
     &.disabled {
-      background-color: var(getThemeColor('primary'));
-      color: white;
+      background-color: var(getThemeColor('buttonActiveBgColor'));
+      color: var(getThemeColor('buttonActiveColor'));
     }
   }
 
@@ -181,7 +186,7 @@ $menu-bar-width: 27em;
 .color-family-menu {
   display: flex;
   margin: 0.5rem 0;
-  border: 1px solid var(getThemeColor('primary'));
+  border: 1px solid var(getThemeColor('buttonBorder'));
   opacity: 0;
 
   @keyframes fadeIn {

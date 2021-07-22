@@ -37,24 +37,23 @@
     }
   }
   &__button {
-    background: none;
+    background-color: none;
     border: none;
     display: inline-block;
     text-align: center;
-    text-transform: uppercase;
+    text-transform: var(getVarName('typography.buttonTextTransform'));
+    font-weight: var(getVarName('typography.buttonFontWeight'));
     width: auto;
-    color: #000;
-    fill: #000;
-    padding: 0;
-    top: .875rem;
+    color: var(getThemeColor('light.lightest.contrast'));
+    fill: currentColor;
+    padding: 1em;
+    top: 50%;
+    transform: translateY(-50%);
     position: absolute;
     z-index: 3;
     &:hover {
-      border-color: var(getThemeColor('secondary'));
       cursor: pointer;
-      color: var(getThemeColor('secondary'));
-      fill: var(getThemeColor('secondary'));
-      background: var(getThemeColor('secondary.contrast'));
+      color: var(getThemeColor('light.lightest.contrast.transer'));
     }
     &:focus {
       outline-style: solid;
@@ -63,15 +62,29 @@
       z-index: 100;
     }
     &--left {
-      left: .875rem;
+      left: 0;
     }
     &--right {
-      right: .875rem;
+      right: 0;
     }
     @include respond-above(sm) {
-      background: var(getThemeColor('white'));
-      border: 1px solid var(getThemeColor('light.lighter'));
+      color: var(getThemeColor('buttonColor'));
+      background-color: var(getThemeColor('buttonBgColor'));
+      border: 1px solid var(getThemeColor('buttonBorder'));
       padding: .75em 1.75em;
+
+      &--left {
+        left: .875rem;
+      }
+      &--right {
+        right: .875rem;
+      }
+
+      &:hover {
+        border-color: var(getThemeColor('buttonHoverBorder'));
+        background-color: var(getThemeColor('buttonHoverBgColor'));
+        color: var(getThemeColor('buttonHoverColor'));
+      }
     }
   }
   &__button-left-text {

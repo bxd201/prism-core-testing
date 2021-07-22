@@ -95,6 +95,18 @@ function ConfigurationContextProvider (props: Props) {
           const tc = tinycolor(color)
           return (tc.isDark() ? tc.tint(15) : tc.shade(15)).toHexString()
         })(theme.link || theme.primary),
+        menuBg: theme.primary,
+        menuTxt: theme.white,
+        menuTxtHover: theme.white,
+        buttonBgColor: theme.white,
+        buttonBorder: theme.grey,
+        buttonColor: theme.primary,
+        buttonHoverBgColor: '#F2F2F2',
+        buttonHoverBorder: theme.grey,
+        buttonHoverColor: theme.primary,
+        buttonActiveBgColor: theme.primary,
+        buttonActiveBorder: theme.grey,
+        buttonActiveColor: theme.white,
         // TODO: end deprecated theme color mapping
         ...theme
       })
@@ -122,7 +134,9 @@ function ConfigurationContextProvider (props: Props) {
       customProps = {
         ...customProps,
         [varNames.typography.bodyFontFamily]: typography.bodyFontFamily,
-        [varNames.typography.titleFontFamily]: typography.titleFontFamily
+        [varNames.typography.titleFontFamily]: typography.titleFontFamily,
+        [varNames.typography.buttonTextTransform]: typography.buttonTextTransform,
+        [varNames.typography.buttonFontWeight]: typography.buttonFontWeight
       }
     }
 

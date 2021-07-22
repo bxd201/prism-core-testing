@@ -28,7 +28,9 @@ export const DEFAULT_CONFIGURATION = {
   },
   typography: {
     bodyFontFamily: varValues.typography.bodyFontFamily,
-    titleFontFamily: varValues.typography.titleFontFamily
+    titleFontFamily: varValues.typography.titleFontFamily,
+    buttonTextTransform: varValues.typography.buttonTextTransform,
+    buttonFontWeight: varValues.typography.buttonFontWeight
   },
   loadingConfiguration: false,
   error: false

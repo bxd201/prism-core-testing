@@ -24,14 +24,18 @@
         z-index:1000;
       }
       &__buttons {
-        border: 1px solid var(getThemeColor('light.lighter'));
+        border: 1px solid var(getThemeColor('buttonBorder'));
+        fill: currentColor;
         cursor: pointer;
         font-size: 1em;
         outline: none;
         padding: 1em;
-        background-color: var(getThemeColor('white'));
+        background-color: var(getThemeColor('buttonBgColor'));
+        color: var(getThemeColor('buttonColor'));
         &:hover {
-          border: 1px solid #2cabe2;
+          border: 1px solid var(getThemeColor('buttonHoverBorder'));
+          color: var(getThemeColor('buttonHoverColor'));
+          background-color: var(getThemeColor('buttonHoverBgColor'));
         }
         &:focus {
           outline-style: solid;

@@ -21,28 +21,34 @@
   }
 
   &__cta {
-    $basicShadow: inset 0 0 0 1px rgba(#999, .5);
-
-    background: var(getThemeColor('primary.contrast'));
-    border: none;
-    box-shadow: $basicShadow;
-    color: var(getThemeColor('primary'));
+    text-transform: var(getVarName('typography.buttonTextTransform'));
+    font-weight: var(getVarName('typography.buttonFontWeight'));
+    background: var(getThemeColor('buttonBgColor'));
+    border: 1px solid var(getThemeColor('buttonBorder'));
+    color: var(getThemeColor('buttonColor'));
+    fill: currentColor;
     display: inline-block;
     font-size: .8em;
-    font-weight: 500;
     line-height: 1;
     margin: .5em .2em 0;
     padding: .75em 1em;
     text-decoration: none !important;
-    text-transform: uppercase;
 
     &:focus {
-      box-shadow: $basicShadow, 0 0 0 1px var(getThemeColor('primary'));
+      outline-style: solid;
+      outline-color: var(getThemeColor('secondary'));
+      outline-width: 2px;
     }
 
-    &:hover, &:active {
-      color: var(getThemeColor('primary.darker'));
-      background: var(getThemeColor('primary.darker.contrast'));
+    &:hover {
+      background: var(getThemeColor('buttonHoverBgColor'));
+      border: 1px solid var(getThemeColor('buttonHoverBorder'));
+      color: var(getThemeColor('buttonHoverColor'));
+    }
+    &:active {
+      background: var(getThemeColor('buttonActiveBgColor'));
+      border: 1px solid var(getThemeColor('buttonActiveBorder'));
+      color: var(getThemeColor('buttonActiveColor'));
     }
   }
 }
