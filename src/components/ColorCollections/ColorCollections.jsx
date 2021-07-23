@@ -23,14 +23,25 @@ export function ColorCollections () {
   useEffect(() => { loadCollectionSummaries(brandId, { language: locale })(dispatch) }, [])
   useEffect(() => { loadColors(brandId)(dispatch) }, [])
 
-  const [tabId, setTabId] = useState(1)
-  useEffect(() => { brandId === 'lowes' ? setTabId(Object.keys(categories.idToIndexHash)[0]) : setTabId(1) }, [])
-  const category = categories.data[categories.idToIndexHash[tabId]]
+  const [tabId, setTabId] = useState()
+  const [collectionData, setCollectionData] = useState([])
 
-  const collectionData = colorMap && category ? category.summaryIds.map(summaryId => {
-    const { name, thumbUrl: img, description, colorIds } = summaries.data[summaries.idToIndexHash[summaryId]]
-    return { description, img, name, collections: colorIds.map(id => colorMap[id]) }
-  }) : []
+  useEffect(() => {
+    if (typeof tabId !== 'undefined') {
+      const category = categories.data.filter(({ id }) => `${id}` === `${tabId}`)[0]
+      const collectionData = colorMap && category ? category.summaryIds.map(summaryId => {
+        const { name, thumbUrl: img, description, colorIds } = summaries.data[summaries.idToIndexHash[summaryId]]
+        return { description, img, name, collections: colorIds.map(id => colorMap[id]) }
+      }) : []
+      setCollectionData(collectionData)
+    }
+  }, [tabId, colorMap])
+
+  useEffect(() => {
+    if (categories.data.length) {
+      setTabId(categories.data[0].id)
+    }
+  }, [categories])
 
   return (
     <CardMenu menuTitle={formatMessage({ id: 'COLOR_COLLECTIONS' })}>
