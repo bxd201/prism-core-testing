@@ -106,15 +106,18 @@ $cvw-nav-btn-height: 3rem; // TODO: make better
   &__close {
     position: absolute;
     right: 1em;
-    background-color: var(getThemeColor('white'));
-    border: 1px solid var(getThemeColor('white.contrast'));
+    background-color: var(getThemeColor('buttonBgColor'));
+    border: 1px solid var(getThemeColor('buttonBorder'));
+    color: var(getThemeColor('buttonColor'));
     padding: .75em 1.75em;
     text-transform: uppercase;
 
     &__ico { margin-left: 0.5em; }
 
     &:hover, &:focus {
-      border-color: var(getThemeColor('secondary'));
+      background-color: var(getThemeColor('buttonHoverBgColor'));
+      color: var(getThemeColor('buttonHoverColor'));
+      border-color: var(getThemeColor('buttonHoverBorder'));
     }
   }
 

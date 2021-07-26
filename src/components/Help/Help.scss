@@ -25,6 +25,8 @@
         outline-style: none;
         padding: 0;
         text-align: center;
+        position: relative;
+        border-right: 1px solid var(getThemeColor('light'));
 
         &:focus {
           outline-color: var(getThemeColor('secondary'));
@@ -49,9 +51,9 @@
             content: '';
             display: inline-block;
             height: 0;
-            left: 20%;
+            right: 1px;
+            transform: translateX(100%);
             position: absolute;
-            // top: calc(51% - 4em);
             width: 0;
             z-index: 1;
           }

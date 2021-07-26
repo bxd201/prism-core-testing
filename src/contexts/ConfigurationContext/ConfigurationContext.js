@@ -37,7 +37,16 @@ export type ConfigurationContextType = {
     menuTxt: string,
     menuTxtHover: string,
     black: string,
-    white: string
+    white: string,
+    buttonBgColor: string,
+    buttonBorder: string,
+    buttonColor: string,
+    buttonHoverBgColor: string,
+    buttonHoverBorder: string,
+    buttonHoverColor: string,
+    buttonActiveBgColor: string,
+    buttonActiveBorder: string,
+    buttonActiveColor: string
   },
   colorWall: {
     bloomEnabled: boolean,
@@ -45,7 +54,9 @@ export type ConfigurationContextType = {
   },
   typography: {
     bodyFontFamily: string,
-    titleFontFamily: string
+    titleFontFamily: string,
+    buttonFontWeight: string,
+    buttonTextTransform: string
   },
   featureExclusions: string[],
   cvw: {

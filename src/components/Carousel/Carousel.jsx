@@ -149,7 +149,7 @@ export default (props: ComponentProps) => {
                     return (
                       <BaseComponent
                         className='collection-list__component'
-                        key={`slide-${item.itemIndex}`}
+                        key={`slide-${item.img}`}
                         itemNumber={item.itemIndex}
                         {...props}
                         data={item}

@@ -12,7 +12,7 @@
   &__header {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-end;
     display: none;
     @include respond-above(sm) {
       display: flex;
@@ -22,10 +22,7 @@
       text-align: center;
       @include respond-above(sm) {
         display: block;
-        margin: 0.2em 0.5em;
-      }
-      @include respond-above(md) {
-        margin: 0.5em;
+        margin: auto 0.5em;
       }
     }
     &__compare-button{
@@ -34,17 +31,18 @@
       }
       padding: 0.5em 1em;
       margin-right: 5px;
-      border-top: 1px solid #ebebeb;
-      font-weight: 600;
-      font-size: 16px;
+      font-size: .8em;
       outline:none;
-      border-top: 1px solid #ebebeb;
-      @include respond-above(md) {
-        border-top: 1px solid #ebebeb;
-      }
+      text-transform: var(getVarName('typography.buttonTextTransform'));
+      font-weight: var(getVarName('typography.buttonFontWeight'));
+      border: 1px solid var(getThemeColor('buttonBorder'));
+      background-color: var(getThemeColor('buttonBgColor'));
+      color: var(getThemeColor('buttonColor'));
+
       &:hover{
-        background-color: #2cabe2;
-        color: #fff;
+        border: 1px solid var(getThemeColor('buttonHoverBorder'));
+        background-color: var(getThemeColor('buttonHoverBgColor'));
+        color: var(getThemeColor('buttonHoverColor'));
         cursor: pointer;
       }
     }
@@ -217,7 +215,7 @@
     &__copy {
       bottom: 0;
       display: none;
-      font-size: 7px;
+      font-size: #{(9/16)}rem;
       text-align: center;
 
       @include respond-above(sm) {

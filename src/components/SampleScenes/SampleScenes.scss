@@ -6,24 +6,30 @@
 }
 
 .static__scene__paint__btn{
-  border: 1px solid var(getThemeColor('light'));
+  border: 1px solid var(getThemeColor('buttonBorder'));
   display: inline-block;
   text-align: center;
   width: 17em;
-  background: var(getThemeColor('white'));
-  color: var(getThemeColor('black'));
-  fill: var(getThemeColor('black'));
+  background: var(getThemeColor('buttonBgColor'));
+  color: var(getThemeColor('buttonColor'));
+  fill: currentColor;
   padding: 1em 1.75em;
   bottom: 4em;
   position: absolute;
-  text-transform: uppercase;
+
   &:hover{
-    color:var(getThemeColor('secondary'));
-    border: 1px solid var(getThemeColor('secondary'));
+    color:var(getThemeColor('buttonHoverColor'));
+    border: 1px solid var(getThemeColor('buttonHoverBorder'));
+    background: var(getThemeColor('buttonHoverBgColor'));
   }
   &:focus {
     outline-style: solid;
     outline-color: var(getThemeColor('secondary'));
     outline-width: 2px;
+  }
+
+  &__contents {
+    text-transform: var(getVarName('typography.buttonTextTransform'));
+    font-weight: var(getVarName('typography.buttonFontWeight'));
   }
 }

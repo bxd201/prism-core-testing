@@ -20,7 +20,16 @@ const defaultThemeColors = {
   secondary: '#2cabe2', // secondary button/UI color
   success: '#1fce6d', // success color (usually green)
   warning: '#f2c500', // warning color (usually orange or yellow)
-  white: '#FFF' // #FFF
+  white: '#FFF', // #FFF,
+  buttonBgColor: '#FFF',
+  buttonBorder: '#CCC',
+  buttonColor: '#0069af',
+  buttonHoverBgColor: '#F2F2F2',
+  buttonHoverBorder: '#CCC',
+  buttonHoverColor: '#0069af',
+  buttonActiveBgColor: '#0069af',
+  buttonActiveBorder: '#CCC',
+  buttonActiveColor: '#FFF'
 }
 
 const themeColors = Object.keys(defaultThemeColors)
@@ -39,6 +48,7 @@ const getOneThemeColorObj = (name = '', color = undefined, injectTransparent = f
 
   if (injectTransparent) {
     obj.trans = getOneThemeColorObj(`${modName}-trans`, color ? tinycolor(color).setAlpha(0.9).toRgbString() : undefined, false, false)
+    obj.transer = getOneThemeColorObj(`${modName}-transer`, color ? tinycolor(color).setAlpha(0.6).toRgbString() : undefined, false, false)
   }
 
   return obj
