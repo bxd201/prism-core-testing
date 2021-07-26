@@ -32,6 +32,8 @@ const iconInfo = `${baseClass}__icon-info`
 const secondIcon = `${baseClass}__second-icon`
 const SCROLL_SPEED = 500
 
+const getDataElement = (data: string) => camelCase(data.split('.').pop())
+
 const HelpInterior = () => {
   const { brandId, featureExclusions = [] }: ConfigurationContextType = useContext(ConfigurationContext)
   const contentWrapperRef = React.createRef()
@@ -108,16 +110,22 @@ type HelpItemHeaderProps = {
   messageId: string
 }
 
-const HelpItemHeader = ({ onClick, onKeyDown, isActive, messageId }: HelpItemHeaderProps) => <li
-  className={`${tabsContainer}__list__item ${isActive ? `${tabsContainer}__list__item--active` : `${tabsContainer}__list__item--inactive`}`}
-  onMouseDown={(e) => e.preventDefault()}
-  onClick={onClick}
-  onKeyDown={onKeyDown}
-  role='tab'
-  tabIndex='0'
->
-  <FormattedMessage id={messageId} />
-</li>
+const HelpItemHeader = ({ onClick, onKeyDown, isActive, messageId }: HelpItemHeaderProps) => {
+  const { cvw = {} }: ConfigurationContextType = useContext(ConfigurationContext)
+
+  return (
+    <li
+      className={`${tabsContainer}__list__item ${isActive ? `${tabsContainer}__list__item--active` : `${tabsContainer}__list__item--inactive`}`}
+      onMouseDown={(e) => e.preventDefault()}
+      onClick={onClick}
+      onKeyDown={onKeyDown}
+      role='tab'
+      tabIndex='0'
+    >
+      {cvw.help?.[getDataElement(messageId)]?.title ?? <FormattedMessage id={messageId} />}
+    </li>
+  )
+}
 
 type HelpItemContentProps = {
   data: Object
@@ -128,47 +136,51 @@ const HelpItemContent = forwardRef((props: HelpItemContentProps, ref) => {
   const { formatMessage } = useIntl()
   const { cvw = {} }: ConfigurationContextType = useContext(ConfigurationContext)
   const { help = {} } = cvw
-  const { iconsButtons = {} } = help
 
   const tabContent = data.content
   const imageList = data.imageList
   const tabSubContent = data.subContent
   const imageListMobile = data.imageListMobile
 
-  const getIcons = {
-    moreScenes: (
-      <div className={`${baseClass}__get-icons`}>
-        <FontAwesomeIcon className='scene-selector-nav-btn__icon-1' icon={['fal', 'square-full']} size='sm' />
-        <FontAwesomeIcon className='scene-selector-nav-btn__icon-2' icon={['fal', 'square-full']} size='sm' />
-        <FontAwesomeIcon className='scene-selector-nav-btn__icon-3' icon={['fal', 'square-full']} size='sm' />
-      </div>
-    ),
-    colorDetails: (
-      <div className={`${baseClass}__get-icons ${baseClass}__get-icons--color-details-icon`}>
-        <FontAwesomeIcon icon={['fas', 'info']} />
-      </div>
-    ),
-    grabReorder: (
-      <svg>
-        <line strokeWidth='1px' x1={18} y1='0' x2='0' y2={18} />
-        <line strokeWidth='1px' x1={18} y1={Math.floor(18 / 3)} x2={Math.floor(18 / 3)} y2={18} />
-        <line strokeWidth='1px' x1={18} y1={2 * Math.floor(18 / 3)} x2={2 * Math.floor(18 / 3)} y2={18} />
-      </svg>
-    ),
-    paintScene: (
-      <div className={`${baseClass}__get-icons ${baseClass}__get-icons--paint-scene-icon`}>
-        <div>
-          <FontAwesomeIcon className={`cvw__btn-overlay__svg`} icon={['fal', 'square-full']} />
-          <FontAwesomeIcon className={`cvw__btn-overlay__svg cvw__btn-overlay__svg--brush`} icon={['fa', 'brush']} transform={{ rotate: 320 }} style={{ transform: 'translateX(-10px)' }} />
+  const getIcons = (name: string, index?: number) => {
+    const icons = {
+      moreScenes: (
+        <div className={`${baseClass}__get-icons`}>
+          <FontAwesomeIcon className='scene-selector-nav-btn__icon-1' icon={['fal', 'square-full']} size='sm' />
+          <FontAwesomeIcon className='scene-selector-nav-btn__icon-2' icon={['fal', 'square-full']} size='sm' />
+          <FontAwesomeIcon className='scene-selector-nav-btn__icon-3' icon={['fal', 'square-full']} size='sm' />
         </div>
-      </div>
-    )
+      ),
+      colorDetails: (
+        <div className={`${baseClass}__get-icons ${baseClass}__get-icons--color-details-icon`}>
+          <FontAwesomeIcon icon={['fas', 'info']} />
+        </div>
+      ),
+      grabReorder: (
+        <svg>
+          <line strokeWidth='1px' x1={18} y1='0' x2='0' y2={18} />
+          <line strokeWidth='1px' x1={18} y1={Math.floor(18 / 3)} x2={Math.floor(18 / 3)} y2={18} />
+          <line strokeWidth='1px' x1={18} y1={2 * Math.floor(18 / 3)} x2={2 * Math.floor(18 / 3)} y2={18} />
+        </svg>
+      ),
+      paintScene: (
+        <div className={`${baseClass}__get-icons ${baseClass}__get-icons--paint-scene-icon`}>
+          <div>
+            <FontAwesomeIcon className={`cvw__btn-overlay__svg`} icon={['fal', 'square-full']} />
+            <FontAwesomeIcon className={`cvw__btn-overlay__svg cvw__btn-overlay__svg--brush`} icon={['fa', 'brush']} transform={{ rotate: 320 }} style={{ transform: 'translateX(-10px)' }} />
+          </div>
+        </div>
+      ),
+      undo: index === 0 && <FontAwesomeIcon key='icon-0' icon={['fa', 'undo-alt']} size='lg' style={{ marginLeft: '.75em' }} />
+    }
+
+    return icons[name]
   }
 
   return <div ref={ref} className={`${helpContent} ${data.isHiddenMobile ? helpContentHide : ''}`}>
     <div className={`${contentHeader}`}>
-      <h2><FormattedMessage id={`${data.header}`} /></h2>
-      <span><FormattedMessage id={`${data.subHeader}`} /></span>
+      <h2>{help[getDataElement(data.header)]?.title ?? <FormattedMessage id={`${data.header}`} />}</h2>
+      <span>{help[getDataElement(data.subHeader)]?.title ?? <FormattedMessage id={`${data.subHeader}`} />}</span>
     </div>
     <div className={`${contentDetails}`}>
       {
@@ -182,8 +194,8 @@ const HelpItemContent = forwardRef((props: HelpItemContentProps, ref) => {
               if (!Array.isArray(tab.fontAwesomeIcon) && tab.fontAwesomeIcon.size) {
                 iconProps.size = `${tab.fontAwesomeIcon.size}`
               }
-              const iconsButtonsItem = iconsButtons[camelCase(tab.iconInfoName.split('.').pop())]
-              return (tab.iconInfoContent[0] || iconsButtonsItem) && (
+              const sectionItem = help[getDataElement(data.header)]?.[getDataElement(tab.iconInfoName)]
+              return (tab.iconInfoContent[0] || sectionItem) && (
                 <li key={`li-${index}`}>
                   <div className={`${iconWrap} ${(tab.isUndoRedo) ? `${iconWrapUndoRedo}` : ``}`}>
                     {
@@ -195,16 +207,16 @@ const HelpItemContent = forwardRef((props: HelpItemContentProps, ref) => {
                           if (fontIcon.size) {
                             iconProps.size = `${fontIcon.size}`
                           }
-                          return <FontAwesomeIcon key={`icon-${index}`} className={`${(index > 0 && !tab.isUndoRedo) ? secondIcon : ``}`} icon={[fontIcon.variant, fontIcon.icon]} size='lg' transform={{ rotate: fontIcon.rotate }} {...iconProps} />
-                        }) : getIcons[iconsButtonsItem?.icon] ?? <FontAwesomeIcon className={``} icon={[tab.fontAwesomeIcon.variant, tab.fontAwesomeIcon.icon]} size='lg' transform={{ rotate: tab.fontAwesomeIcon.rotate }} {...iconProps} />
+                          return getIcons(sectionItem?.icon, index) ?? <FontAwesomeIcon key={`icon-${index}`} className={`${(index > 0 && !tab.isUndoRedo) ? secondIcon : ``}`} icon={[fontIcon.variant, fontIcon.icon]} size='lg' transform={{ rotate: fontIcon.rotate }} {...iconProps} />
+                        }) : getIcons(sectionItem?.icon) ?? <FontAwesomeIcon className={``} icon={[tab.fontAwesomeIcon.variant, tab.fontAwesomeIcon.icon]} size='lg' transform={{ rotate: tab.fontAwesomeIcon.rotate }} {...iconProps} />
                     }
                   </div>
                   <div className={`${iconInfo}`}>
                     <h3>
-                      {iconsButtonsItem?.title ?? <FormattedMessage id={`${tab.iconInfoName}`} />}
+                      {sectionItem?.title ?? <FormattedMessage id={`${tab.iconInfoName}`} />}
                     </h3>
                     <p>
-                      {iconsButtonsItem?.content ?? <FormattedMessage id={`${tab.iconInfoContent[0]}`} />}
+                      {sectionItem?.content ?? <FormattedMessage id={`${tab.iconInfoContent[0]}`} />}
                     </p>
                   </div>
                 </li>
