@@ -28,7 +28,6 @@ const ExpertColorPicks = () => {
   const expertColorPicks = useSelector(state => state.expertColorPicks.data)
   const categories = expertColorPicks.map((ecp) => ecp.category?.[0]).filter((category, index, self) => category && self.indexOf(category) === index)
   const expertColorPicksByCategory = expertColorPicks.filter((ecp) => ecp.category?.[0] === categories[tabId.slice(3)])
-  console.log(expertColorPicksByCategory)
   const tabs = categories.map((category, index) => ({ id: `tab${index}`, tabName: category }))
 
   return (
