@@ -180,7 +180,7 @@ const HelpItemContent = forwardRef((props: HelpItemContentProps, ref) => {
   return <div ref={ref} className={`${helpContent} ${data.isHiddenMobile ? helpContentHide : ''}`}>
     <div className={`${contentHeader}`}>
       <h2>{help[getDataElement(data.header)]?.title ?? <FormattedMessage id={`${data.header}`} />}</h2>
-      <span>{help[getDataElement(data.subHeader)]?.title ?? <FormattedMessage id={`${data.subHeader}`} />}</span>
+      <span>{help[getDataElement(data.subHeader)]?.subtitle ?? <FormattedMessage id={`${data.subHeader}`} />}</span>
     </div>
     <div className={`${contentDetails}`}>
       {
