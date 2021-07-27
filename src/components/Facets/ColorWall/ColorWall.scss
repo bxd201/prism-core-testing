@@ -59,8 +59,8 @@
   position: absolute;
   top: 0;
   right: 0;
-  color: var(getThemeColor('primary'));
-  background: white;
+  color: var(getThemeColor('buttonColor'));
+  background: var(getThemeColor('buttonBgColor'));
   margin: .25em;
   border-radius: 50%;
   width: 2.5em;
@@ -69,14 +69,16 @@
   align-items: center;
   justify-content: center;
   z-index: 1;
+  box-shadow: 0 1px 5px -1px rgba(black, .2);
 
   &:hover, &:focus {
-    background: var(getThemeColor('light'));
+    color: var(getThemeColor('buttonHoverColor'));
+    background: var(getThemeColor('buttonHoverBgColor'));
   }
 
   &:active {
-    background: var(getThemeColor('dark'));
-    color: var(getThemeColor('white'));
+    color: var(getThemeColor('buttonActiveColor'));
+    background: var(getThemeColor('buttonActiveBgColor'));
   }
 }
 
