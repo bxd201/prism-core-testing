@@ -85,10 +85,18 @@ $menu-bar-width: 27em;
         width: 21.328 !important;
       }
     }
-  }
 
-  @include respond-below(xs) {
-    padding: 0 0.3em;
+    .menu-bar__button {
+      color: var(getThemeColor('dark'));
+
+      &, &:hover, &:active {
+        background: transparent;
+      }
+
+      &:hover, &:active {
+        color: var(getThemeColor('dark.lighter'));
+      }
+    }
   }
 
   &__button {
@@ -99,13 +107,26 @@ $menu-bar-width: 27em;
     padding: 0 0.8em;
     width: ($menu-bar-width / 2) + 0.4em;
     cursor: pointer;
+    background: var(getThemeColor('buttonBgColor'));
+    color: var(getThemeColor('buttonColor'));
+
+    &:hover {
+      background: var(getThemeColor('buttonHoverBgColor'));
+      color: var(getThemeColor('buttonHoverColor'));
+    }
+
+    &:active {
+      background: var(getThemeColor('buttonActiveBgColor'));
+      color: var(getThemeColor('buttonActiveColor'));
+    }
   }
 
   &__button-copy {
     font-size: 0.6875em;
-    font-weight: bold;
     height: auto;
-    text-transform: uppercase;
+    text-transform: var(getVarName('typography.buttonTextTransform'));
+    font-weight: var(getVarName('typography.buttonFontWeight'));
+    color: inherit;
   }
 
   &__button-close {

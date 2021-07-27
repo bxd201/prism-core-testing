@@ -59,7 +59,7 @@ const Select = ({ placeholderText, options, disabled = false, onSelectOpened }: 
 const ColorWallToolbar = () => {
   const { messages = {} } = useIntl()
   const { hiddenSections } = useContext(ColorWallContext)
-  const { alwaysShowColorFamilies, cvw = {}, uiStyle } = useContext<ConfigurationContextType>(ConfigurationContext)
+  const { alwaysShowColorFamilies, colorWall = {}, cvw = {}, uiStyle } = useContext<ConfigurationContextType>(ConfigurationContext)
   const { path, params: { section, family } } = useRouteMatch()
   const { sections = [], families = [], section: activeSection, family: activeFamily, primeColorWall } = useSelector(state => state.colors)
   const dispatch = useDispatch()
@@ -76,7 +76,7 @@ const ColorWallToolbar = () => {
   const searchColorBtn: Element<any> = (
     <ButtonBar.Button to={`${generateColorWallPageUrl(section, family)}search/`}>
       <FontAwesomeIcon className='color-families-svg' icon={['fa', 'search']} pull='left' />
-      <span className={MODE_CLASS_NAMES.DESC}>{cvw.colorWall?.searchColor ?? <FormattedMessage id='SEARCH.SEARCH_COLOR' />}</span>
+      <span className={MODE_CLASS_NAMES.DESC}>{colorWall.searchColor ?? <FormattedMessage id='SEARCH.SEARCH_COLOR' />}</span>
     </ButtonBar.Button>
   )
 
@@ -113,7 +113,7 @@ const ColorWallToolbar = () => {
           />
           <Select
             disabled={visibleSections.length < 2}
-            placeholderText={(activeSection === primeColorWall || !visibleSections.includes(activeSection)) ? messages['EXPLORE_COLLECTIONS'] : activeSection}
+            placeholderText={(activeSection === primeColorWall || !visibleSections.includes(activeSection)) ? (colorWall.selectSectionText ?? messages['EXPLORE_COLLECTIONS']) : activeSection}
             options={visibleSections
               .filter(s => s !== activeSection)
               .map(label => ({ label, link: generateColorWallPageUrl(label) }))
@@ -182,7 +182,7 @@ const ColorWallToolbar = () => {
                     placeholderText={
                       isFamilyView && !alwaysShowColorFamilies
                         ? (activeFamily && !collectionSelectionMenuOpen) ? activeFamily : at(messages, 'ALL_COLORS')[0]
-                        : (primeColorWall === activeSection) || collectionSelectionMenuOpen ? at(messages, 'SELECT_COLLECTION')[0] : activeSection
+                        : (primeColorWall === activeSection) || collectionSelectionMenuOpen ? (colorWall.selectSectionText ?? at(messages, 'SELECT_COLLECTION')[0]) : activeSection
                     }
                     options={((isFamilyView || family) && !alwaysShowColorFamilies ? families : visibleSections)
                       .filter(name => activeFamily !== name && activeSection !== name && (width <= 768 || !primeColorWall || primeColorWall !== name))
