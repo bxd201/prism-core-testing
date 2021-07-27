@@ -252,7 +252,7 @@
   min-height: 500px;
   .hide-on-small-screens {
     @include respond-below(sm) {
-      display: none;
+      display: none !important;
     }
   }
 
