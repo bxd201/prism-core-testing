@@ -187,15 +187,15 @@ $menu-bar-width: 27em;
   display: flex;
   margin: 0.5rem 0;
   border: 1px solid var(getThemeColor('buttonBorder'));
-  opacity: 0;
+  // opacity: 0;
 
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-  animation: fadeIn 250ms;
-  animation-delay: 300ms;
-  animation-fill-mode: forwards;
+  // @keyframes fadeIn {
+  //   from { opacity: 0; }
+  //   to { opacity: 1; }
+  // }
+  // animation: fadeIn 250ms;
+  // animation-delay: 300ms;
+  // animation-fill-mode: forwards;
 
   &__width-size {
     position: absolute;

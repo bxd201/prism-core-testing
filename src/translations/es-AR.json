@@ -52,7 +52,7 @@
     "EXPERT_COLOR_PICKS": "Selección de colores por expertos",
     "Explora_COLOR": "Explora el color",
     "EXTERIOR": "Exterior",
-    "FIND_COLORS_IN_CW": "ENCUENTRA COLORES EN EL MURO DIGITAL DE COLORES",
+    "FIND_COLORS_IN_CW": "<line>ENCUENTRA COLORES EN </line><line>EL MURO DIGITAL DE COLORES</line>",
     "HELPFUL_HINTS": {
         "CONTENT": {
             "ICONS_&_BUTTONS": {

@@ -49,7 +49,7 @@
   "ERROR_LOADING_COLORS": "We're unable to load colours right now.",
   "EXPERT_COLOR_PICKS": "Expert Color Picks",
   "EXTERIOR": "Exterior",
-  "FIND_COLORS_IN_CW": "FIND COLOURS IN THE DIGITAL COLOR WALL",
+  "FIND_COLORS_IN_CW": "<line>FIND COLOURS IN </line><line>THE DIGITAL COLOR WALL</line>",
   "HELPFUL_HINTS": {
     "CONTENT": {
       "ICONS_&_BUTTONS": {

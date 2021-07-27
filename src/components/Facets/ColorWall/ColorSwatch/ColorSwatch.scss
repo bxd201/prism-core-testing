@@ -1,4 +1,11 @@
 $bloom-duration: 200ms;
+$swatch-edge-padding-value: .4rem;
+$swatch-border-size: 1px;
+$swatch-base-size: 50px;
+$bloom-scale-main-sm: 2.66;
+$bloom-scale-main-lg: 3.00;
+$swatch-edge-padding-sm: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-main-lg * $swatch-border-size});
+$swatch-edge-padding-lg: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-main-lg * $swatch-border-size});
 
 @keyframes fadeIn { from { opacity: 0; } 50% { opacity: 0; } to { opacity: 1;} }
 
@@ -10,21 +17,24 @@ $bloom-duration: 200ms;
 }
 
 .color-swatch {
-  border: 1px solid #fff;
+  border: $swatch-border-size solid #fff;
   outline-offset: 0px;
 
   &--focus, &:focus { z-index: 2; }
 
-  &-0 { @include bloom(2.50, 2.75, 900); }
+  &-0 {
+    @include bloom($bloom-scale-main-sm, $bloom-scale-main-lg, 900);
 
-  &-0 + .color-swatch__content {
-    transform: translate3d(-36px, -36px, 0);
-    height: 123px !important;
-    width: 123px !important;
-    @include respond-above(sm) {
-      transform: translate3d(-42px, -42px, 0);
-      height: 135px !important;
-      width: 135px !important;
+    + .color-swatch__content {
+      transform: translate3d(-(($swatch-base-size * ($bloom-scale-main-sm - 1)) / 2), -(($swatch-base-size * ($bloom-scale-main-sm - 1)) / 2), 0);
+      height: $swatch-base-size * $bloom-scale-main-sm !important;
+      width: $swatch-base-size * $bloom-scale-main-sm !important;
+
+      @include respond-above(sm) {
+        transform: translate3d(-(($swatch-base-size * ($bloom-scale-main-lg - 1)) / 2), -(($swatch-base-size * ($bloom-scale-main-lg - 1)) / 2), 0);
+        height: $swatch-base-size * $bloom-scale-main-lg !important;
+        width: $swatch-base-size * $bloom-scale-main-lg !important;
+      }
     }
   }
 
@@ -55,9 +65,13 @@ $bloom-duration: 200ms;
 
   &__content {
     z-index: 950 !important;
-    padding: 0.6em;
-    animation: fadeIn $bloom-duration;
+    padding: $swatch-edge-padding-sm;
+    animation: fadeIn $bloom-duration $bloom-duration;
     text-align: left;
+
+    @include respond-above(sm) {
+      padding: $swatch-edge-padding-lg;
+    }
 
     &--focus:focus { outline: 5.5px solid var(getThemeColor('primary')) !important; }
 
@@ -66,6 +80,11 @@ $bloom-duration: 200ms;
       max-width: 100%;
       overflow-wrap: break-word;
       hyphens: auto;
+      font-size: .9em;
+
+      @include respond-above(sm) {
+        font-size: 1em;
+      }
     }
 
     &__number {
@@ -103,18 +122,23 @@ $bloom-duration: 200ms;
 
     &-message {
       background: var(getThemeColor('white'));
-      bottom: 3px;
       border-radius: 2px;
+      bottom: $swatch-edge-padding-sm;
       color: var(getThemeColor('black'));
       font-size: 0.5em;
       font-weight: bold;
-      left: 3px;
+      left: $swatch-edge-padding-sm;
+      line-height: 1.2;
       padding: 3px 4px;
       position: absolute;
-      right: 3px;
-      line-height: 1.2;
+      right: $swatch-edge-padding-sm;
 
-      @include respond-above(sm) { font-size: 0.625em; }
+      @include respond-above(sm) {
+        bottom: $swatch-edge-padding-lg;
+        font-size: 0.625em;
+        left: $swatch-edge-padding-lg;
+        right: $swatch-edge-padding-lg;
+      }
     }
 
     &--dark-color { color: var(getThemeColor('primary.contrast.trans')); }
@@ -126,13 +150,17 @@ $bloom-duration: 200ms;
   }
 
   &__button-group {
-    position: absolute;
-    left: 0;
     bottom: 0;
     display: flex;
     justify-content: space-between;
+    left: 0;
+    padding: $swatch-edge-padding-sm;
+    position: absolute;
     width: 100%;
-    padding: 10px;
+
+    @include respond-above(sm) {
+      padding: $swatch-edge-padding-lg;
+    }
 
     button {
       display: flex;

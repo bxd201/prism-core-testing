@@ -50,7 +50,7 @@
   "ERROR_LOADING_COLORS": "Erreur lors du chargement des couleurs.",
   "EXPERT_COLOR_PICKS": "Expert Color Picks",
   "EXTERIOR": "Extérieur",
-  "FIND_COLORS_IN_CW": "TROUVER DES COULEURS DANS LE MUR DE COULEUR NUMÉRIQUE",
+  "FIND_COLORS_IN_CW": "<line>TROUVER DES COULEURS DANS </line><line>LE MUR DE COULEUR NUMÉRIQUE</line>",
   "HELPFUL_HINTS": {
     "CONTENT": {
       "ICONS_&_BUTTONS": {
