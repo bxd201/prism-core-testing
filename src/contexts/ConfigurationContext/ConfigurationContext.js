@@ -50,7 +50,8 @@ export type ConfigurationContextType = {
   },
   colorWall: {
     bloomEnabled: boolean,
-    gapsBetweenChunks: boolean
+    gapsBetweenChunks: boolean,
+    searchColor?: string
   },
   typography: {
     bodyFontFamily: string,
@@ -61,9 +62,6 @@ export type ConfigurationContextType = {
   featureExclusions: string[],
   cvw: {
     closeBtn?: string,
-    colorWall?: {
-      searchColor?: string
-    },
     downloadSceneDisclaimer1?: string,
     downloadSceneDisclaimer1?: string,
     downloadSceneDisclaimer2?: string,
