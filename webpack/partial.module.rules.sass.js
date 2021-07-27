@@ -1,4 +1,5 @@
 const memoizee = require('memoizee')
+const tailwindcss = require('tailwindcss')
 const autoprefixer = require('autoprefixer')
 const cssCustomPropsFallback = require('./plugins/postCSS/cssCustomPropsFallback')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
@@ -123,6 +124,7 @@ const getRules = (cssLoaderOpts = {}) => {
       loader: 'postcss-loader',
       options: {
         plugins: [
+          tailwindcss(),
           cssCustomPropsFallback([
             {
               varPrefix: themeColorPrefix,
