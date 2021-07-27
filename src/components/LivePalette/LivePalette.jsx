@@ -197,9 +197,11 @@ export class LivePalette extends PureComponent<Props, State> {
             }} className={`prism-live-palette__slot prism-live-palette__slot--${IS_EMPTY ? 'add-big' : 'add'}`}>
               <div className={`prism-live-palette__slot__guts ${IS_EMPTY ? 'prism-live-palette__slot__guts--hrzntl' : ''}`}>
                 <FontAwesomeIcon className={`prism-live-palette__slot__icon ${IS_EMPTY ? 'prism-live-palette__slot__icon--left' : 'prism-live-palette__slot__icon--top'}`} icon={['fal', 'plus-circle']} size='2x' color={varValues._colors.primary} />
-                <FormattedMessage id={ADD_COLOR_TEXT}>
-                  {(msg: string) => <span className={`prism-live-palette__slot__copy ${IS_EMPTY ? 'prism-live-palette__slot__copy--right' : 'prism-live-palette__slot__copy--btm'}`}>{msg}</span>}
-                </FormattedMessage>
+                <span className={`prism-live-palette__slot__copy ${IS_EMPTY ? 'prism-live-palette__slot__copy--right' : 'prism-live-palette__slot__copy--btm'}`}>
+                  <FormattedMessage id={ADD_COLOR_TEXT} values={{
+                    line: chunk => <span style={{ display: 'inline-block' }}>{chunk}</span>
+                  }} />
+                </span>
               </div>
             </button>}
             {disabledSlots}
