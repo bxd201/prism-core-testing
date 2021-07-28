@@ -1,4 +1,4 @@
-FROM docker.cpartdc01.sherwin.com/node:10
+FROM docker.cpartdc01.sherwin.com/node:12
 
 ENV NODE_ENV=production
 
