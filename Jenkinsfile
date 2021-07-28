@@ -1,3 +1,23 @@
+def S3_FOLDER_VERSION(branch, prism_version) {
+  if (branch == 'release') {
+    "$prism_version"
+  } else {
+    "$prism_version-${branch.toLowerCase()}"
+  }
+}
+
+def GET_API_URL(branch) {
+  if (branch == 'release') {
+    "https://api.sherwin-williams.com/prism"
+  } else if (branch == 'qa') {
+    "https://${branch.toLowerCase()}-api.sherwin-williams.com/prism"
+  } else if (branch == 'lowes-cvw') {
+    "https://qa-api.sherwin-williams.com/prism"
+  } else {
+    'https://develop-prism-api.ebus.swaws'
+  }
+}
+
 pipeline {
   options {
     buildDiscarder(
@@ -10,15 +30,15 @@ pipeline {
   agent any
   environment {
     IMAGE_NAME = "prism-core"
-
+    PRISM_VERSION = sh(returnStdout: true, script: "cat package.json | jq -r .version").trim()
+    S3_FOLDER_NAME = "${S3_FOLDER_VERSION(env.BRANCH_NAME, PRISM_VERSION)}"
+    API_URL = "${GET_API_URL(env.BRANCH_NAME)}"
   }
   stages {
     stage('builder') {
       when {
-        not {
-          expression { BRANCH_NAME ==~ /^(qa|release)$/ }
+          expression { BRANCH_NAME ==~ /^(PR-.+|develop|integration|hotfix|qa|release|lowes-cvw)$/ }
         }
-      }
       steps {
 
         sh """
@@ -40,60 +60,40 @@ pipeline {
 
         # Mount the volumes from Jenkins and run the deploy
         docker run \
+          -e WEB_URL=https://prism.sherwin-williams.com/${S3_FOLDER_NAME} \
+          --env API_URL="$API_URL" \
           --name ${IMAGE_NAME}-build-${BUILD_NUMBER} \
           ${IMAGE_NAME}-build:latest
 
         docker cp ${IMAGE_NAME}-build-${BUILD_NUMBER}:/app/dist.tgz ./
         tar zxf dist.tgz
         rm dist.tgz
+        echo "$PRISM_VERSION" > dist/VERSION
 
         # Remove the build container
         docker rm -f ${IMAGE_NAME}-build-${BUILD_NUMBER}
-
-        # Echo Version to file
-        cat package.json | grep version | head -1 | awk -F: '{ print \$2 }' | sed 's/[\", ]//g' > dist/VERSION
         """
         stash includes: 'dist/**/*', name: 'static'
       }
     }
     stage('s3-upload') {
+      when {
+          expression { BRANCH_NAME ==~ /^(develop|hotfix|integration|qa|release|lowes-cvw)$/ }
+        }
       agent {
         docker {
           image 'docker.cpartdc01.sherwin.com/amazon/aws-cli:2.1.26'
           args "--entrypoint=''"
         }
-      }
-      when {
-        branch 'develop'
       }
       steps {
         unstash 'static'
 
         sh """
-        VERSION="\$(cat dist/VERSION)"
-
-        aws s3 cp dist/ s3://sw-prism-web/"\$VERSION"/ --recursive
-        aws s3 cp dist/prism/ s3://sw-prism-web/assets --recursive
+        aws s3 cp dist/ s3://sw-prism-web/"${S3_FOLDER_NAME}"/ --recursive
         """
       }
    }
-/*      stage('s3-upload-release') {
-      agent {
-        docker {
-          image 'docker.cpartdc01.sherwin.com/amazon/aws-cli:2.1.26'
-          args "--entrypoint=''"
-        }
-      }
-      when {
-        branch 'release'
-      }
-      steps {
-        sh """
-        VERSION="\$(cat /usr/share/nginx/html/VERSION)"
-        aws s3 sync s3://sw-prism-web/"\$VERSION"/ s3://sw-prism-web/latest/ --delete
-        """
-      }
-    } */
     stage('build') {
       when {
         not {
@@ -212,6 +212,11 @@ pipeline {
     }
 
     stage('publish') {
+    when {
+      not {
+          expression { BRANCH_NAME ==~ /^(qa|release)$/ }
+      }
+    }
       agent {
         docker {
           image 'docker.cpartdc01.sherwin.com/ecomm/utils/barge'
@@ -352,17 +357,17 @@ pipeline {
       }
     }
     stage('trigger_smoke_job') {
-            steps {
-                trigger_smoke_job(BRANCH_NAME)
-            }
-          }
+      steps {
+          trigger_smoke_job(BRANCH_NAME)
+      }
+    }
   }
   post {
     always {
       script {
         currentBuild.result = currentBuild.result ?: 'SUCCESS'
         emailext (
-          to: 'brendan.do@sherwin.com,cody.richmond@sherwin.com,prwilliams@sherwin.com,cc:jonathan.l.gnagy@sherwin.com',
+          to: 'brendan.do@sherwin.com,cody.richmond@sherwin.com,prwilliams@sherwin.com,cc:abhilash.reddy@sherwin.com',
           subject: "${env.JOB_NAME} #${env.BUILD_NUMBER} [${currentBuild.result}]",
           body: "Build URL: ${env.BUILD_URL}.\n\n",
           attachLog: true,
@@ -373,31 +378,31 @@ pipeline {
   }
 }
 def trigger_smoke_job(branch){
-      def target_url = ""
-      def DEV_SWPRISM_URL = "https://devv9-www.sherwin-williams.com/painting-contractors"
-      def DEV_CAPRISM_URL = "https://develop-sherwin-williams-ca.ebus.swaws/en/colour/active/color-wall/section/sherwin-williams-colours"
-      def QA_SWPRISM_URL = "https://qav9-www.sherwin-williams.com/painting-contractors"
-      def QA_CAPRISM_URL = "https://qa-sherwin-williams-ca.ebus.swaws/en/colour/active/color-wall/section/sherwin-williams-colours"
-      def STAGE_SWPRISM_URL = "https://stagev9-www.sherwin-williams.com/painting-contractors"
-      def STAGE_CAPRISM_URL = "https://stage-sherwin-williams-ca.ebus.swaws/en/colour/active/color-wall/section/sherwin-williams-colours"
-      def PROD_SWPRISM_URL = "https://www.sherwin-williams.com/painting-contractors"
-      def PROD_CAPRISM_URL = "https://www.sherwin-williams.ca/en/colour/active/color-wall"
-      if (branch == 'develop') {
-          target_swprism_url = DEV_SWPRISM_URL
-          target_caprism_url = DEV_CAPRISM_URL
-      } else if (branch == 'qa') {
-          target_swprism_url = QA_SWPRISM_URL
-          target_caprism_url = QA_CAPRISM_URL
-      } else if (branch == 'stage') {
-        target_swprism_url = STAGE_SWPRISM_URL
-        target_caprism_url = STAGE_CAPRISM_URL
-      } else if (branch == 'release') {
-        target_swprism_url = PROD_SWPRISM_URL
-        target_caprism_url = PROD_CAPRISM_URL
-      } else {
-          echo "can strictly run smoke job for develop/qa/stage/release branches only"
-          return
-      }
-      build job: 'Automated_SmokeTests/PRISM/SWPrism_SmokeTests', parameters: [string(name: 'TARGET_URL', value: target_swprism_url)], wait: false
-      build job: 'Automated_SmokeTests/PRISM/PrismCanada_SmokeTests', parameters: [string(name: 'TARGET_URL', value: target_caprism_url)], wait: false
+  def target_url = ""
+  def DEV_SWPRISM_URL = "https://devv9-www.sherwin-williams.com/painting-contractors"
+  def DEV_CAPRISM_URL = "https://develop-sherwin-williams-ca.ebus.swaws/en/colour/active/color-wall/section/sherwin-williams-colours"
+  def QA_SWPRISM_URL = "https://qav9-www.sherwin-williams.com/painting-contractors"
+  def QA_CAPRISM_URL = "https://qa-sherwin-williams-ca.ebus.swaws/en/colour/active/color-wall/section/sherwin-williams-colours"
+  def STAGE_SWPRISM_URL = "https://stagev9-www.sherwin-williams.com/painting-contractors"
+  def STAGE_CAPRISM_URL = "https://stage-sherwin-williams-ca.ebus.swaws/en/colour/active/color-wall/section/sherwin-williams-colours"
+  def PROD_SWPRISM_URL = "https://www.sherwin-williams.com/painting-contractors"
+  def PROD_CAPRISM_URL = "https://www.sherwin-williams.ca/en/colour/active/color-wall"
+  if (branch == 'develop') {
+      target_swprism_url = DEV_SWPRISM_URL
+      target_caprism_url = DEV_CAPRISM_URL
+  } else if (branch == 'qa') {
+      target_swprism_url = QA_SWPRISM_URL
+      target_caprism_url = QA_CAPRISM_URL
+  } else if (branch == 'stage') {
+    target_swprism_url = STAGE_SWPRISM_URL
+    target_caprism_url = STAGE_CAPRISM_URL
+  } else if (branch == 'release') {
+    target_swprism_url = PROD_SWPRISM_URL
+    target_caprism_url = PROD_CAPRISM_URL
+  } else {
+      echo "can strictly run smoke job for develop/qa/stage/release branches only"
+      return
   }
+  build job: 'Automated_SmokeTests/PRISM/SWPrism_SmokeTests', parameters: [string(name: 'TARGET_URL', value: target_swprism_url)], wait: false
+  build job: 'Automated_SmokeTests/PRISM/PrismCanada_SmokeTests', parameters: [string(name: 'TARGET_URL', value: target_caprism_url)], wait: false
+}
