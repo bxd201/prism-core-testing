@@ -19,6 +19,7 @@ declare var FIREBASE_AUTH_ENABLED: boolean
 declare var GENERATE_FACET_ASSETS: boolean
 declare var IS_DEVELOPMENT: boolean
 declare var IS_PRODUCTION: boolean
+declare var S3_PATH: string
 declare var SMARTMASK_ENABLED: boolean
 declare var STATIC_TEMPLATES: string[]
 declare var VAR_NAMES: { [key: string]: string }

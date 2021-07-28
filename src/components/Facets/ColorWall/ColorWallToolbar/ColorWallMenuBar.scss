@@ -169,6 +169,7 @@ $menu-bar-width: 27em;
     background: $btn-bg;
     // @todo theme
     box-shadow: 0 2px 5px -1px rgba(black, 0.65);
+    width: 100%;
     height: auto;
     margin-top: 2px;
     position: absolute;
@@ -177,12 +178,12 @@ $menu-bar-width: 27em;
 
     @include respond-below(xs) {
       top: $ui-height-min--mobile;
+      left: 0;
     }
   }
 
   &__menu-item {
     height: auto;
-    width: $menu-bar-width / 2;
     margin: 3px;
   }
 
@@ -190,6 +191,7 @@ $menu-bar-width: 27em;
     display: inline-block;
     font-size: 0.6875em;
     font-weight: bold;
+    line-height: normal;
     height: auto;
     padding: 0.8em;
     text-transform: uppercase;

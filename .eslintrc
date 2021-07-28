@@ -29,6 +29,7 @@
     "render": "readonly",
     "SMARTMASK_ENABLED": "readonly",
     "STATIC_TEMPLATES": "readonly",
+    "S3_PATH": "readonly",
     "URL": "readonly",
     "VAR_NAMES": "readonly",
     "VAR_VALUES": "readonly",
