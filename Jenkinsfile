@@ -11,6 +11,8 @@ def GET_API_URL(branch) {
     "https://api.sherwin-williams.com/prism"
   } else if (branch == 'qa') {
     "https://${branch.toLowerCase()}-api.sherwin-williams.com/prism"
+  } else if (branch == 'lowes-cvw') {
+    "https://qa-api.sherwin-williams.com/prism"
   } else {
     'https://develop-prism-api.ebus.swaws'
   }
@@ -35,7 +37,7 @@ pipeline {
   stages {
     stage('builder') {
       when {
-          expression { BRANCH_NAME ==~ /^(PR-.+|develop|integration|hotfix|qa|release)$/ }
+          expression { BRANCH_NAME ==~ /^(PR-.+|develop|integration|hotfix|qa|release|lowes-cvw)$/ }
         }
       steps {
 
@@ -76,7 +78,7 @@ pipeline {
     }
     stage('s3-upload') {
       when {
-          expression { BRANCH_NAME ==~ /^(develop|hotfix|integration|qa|release)$/ }
+          expression { BRANCH_NAME ==~ /^(develop|hotfix|integration|qa|release|lowes-cvw)$/ }
         }
       agent {
         docker {
