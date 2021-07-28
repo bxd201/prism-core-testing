@@ -1,8 +1,8 @@
 @mixin hover-style {
-  background: var(getThemeColor('white'));
-  border-color: var(getThemeColor('secondary'));
+  background: var(getThemeColor('buttonHoverBgColor'));
+  border-color: var(getThemeColor('buttonHoverBorder'));
   cursor: pointer;
-  color: var(getThemeColor('secondary'));
+  color: var(getThemeColor('buttonHoverColor'));
 }
 
 @mixin focus-style {
@@ -42,19 +42,19 @@
     position: relative;
   }
   &__button {
-     background: transparent;
-     border: none;
-     color: var(getThemeColor('white.contrast'));
+     background: var(getThemeColor('buttonBgColor'));
+     border: 1px solid var(getThemeColor('buttonBorder'));
+     color: var(getThemeColor('buttonColor'));
      cursor: pointer;
      display: inline-block;
-     fill: var(getThemeColor('white.contrast'));
+     fill: currentColor;
      outline: none;
-     padding: 0;
      position: absolute;
      text-align: center;
-     top: .875rem;
+     top: .25rem;
      width: auto;
      z-index: 1000;
+     padding: .25em;
 
      &:focus {
        @include focus-style
@@ -67,23 +67,10 @@
      }
      &--right {
        right: .875rem;
-
-       &.dark-button {
-         background-color: var(getThemeColor('white'));
-         color: var(getThemeColor('black'));
-         border: 1px var(getThemeColor('black')) solid;
-
-         &:focus {
-           @include focus-style
-         }
-         &:hover {
-           @include hover-style
-         }
-       }
      }
      @include respond-above(sm) {
-       border: 1px solid var(getThemeColor('light'));
-       padding: .75em 1.75em;
+      padding: .75em 1.75em;
+      top: .875rem;
      }
    }
   &__button-left-text {
