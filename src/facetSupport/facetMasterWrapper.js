@@ -20,7 +20,6 @@ import AuthObserver from '../components/AuthObserver/AuthObserver'
 import 'src/cleanslate/cleanslate.scss'
 import 'src/cleanslate/_default-styles.scss'
 import 'src/cleanslate/_cleanslate-overrides.scss'
-import 'prism-lib/dist/index.css'
 
 import 'tailwindcss/tailwind.css'
 
