@@ -12,7 +12,6 @@ import { injectIntl } from 'react-intl'
 import { calcOrientationDimensions } from '../../shared/utils/scale.util'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import uniqueId from 'lodash/uniqueId'
-import './InspiredScene.scss'
 
 type ColorFromImageState = {
   canvasX: number,
