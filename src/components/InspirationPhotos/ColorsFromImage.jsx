@@ -359,10 +359,12 @@ export class ColorsFromImage extends PureComponent<ComponentProps, ComponentStat
     const targetDims = this.deleteButtonRef.current.getBoundingClientRect()
     const indicatorDims = this.indicatorRef.current.getBoundingClientRect()
 
-    return indicatorDims.right > targetDims.left &&
-       indicatorDims.left <= targetDims.right &&
-       indicatorDims.bottom > targetDims.top &&
-      indicatorDims.bottom <= targetDims.bottom
+    return (
+      indicatorDims.top < targetDims.bottom &&
+      indicatorDims.right - 3 > targetDims.left &&
+      indicatorDims.bottom - 3 > targetDims.top &&
+      indicatorDims.left + 3 < targetDims.right
+    )
   }
 
   checkCircleDistance = (x1: number, y1: number, x2: number, y2: number, r1: number, r2: number) => {
