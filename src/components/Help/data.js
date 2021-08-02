@@ -255,15 +255,17 @@ export const helpTabs = [{
 export const helpHeader = 'HELPFUL_HINTS.TITLE'
 
 export const filterHelpItems = (featureExclusions: string[], brandId: string): typeof helpTabs => {
-  // Filtering Help - Icons & Buttons - Save hint
+  // Filtering Help Section details:
+  // Icons & Buttons - Save hint
   !shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.documentSaving) && helpTabs[0].content.forEach((icon, index) => {
     icon.iconInfoName === 'HELPFUL_HINTS.CONTENT.ICONS_&_BUTTONS.ICON_INFO_NAME.SAVE' && helpTabs[0].content.splice(index, 1)
   })
+  // Painting My Own Photo - isHiddenMobile
+  helpTabs[4].isHiddenMobile = brandId !== 'lowes'
 
   return helpTabs.filter((item) => {
     // TEMPORARY: hiding sections My Color Palette, Adding Colors, and Color Details for Lowe's
     // TO BE ADJUSTED: on 2nd phase of Lowe's migration to prism project
-    // TODO: when removing these, also remove brandId from the function
     if (item.header === 'HELPFUL_HINTS.HEADER.MY_COLOR_PALETTE') return brandId !== 'lowes'
     if (item.header === 'HELPFUL_HINTS.HEADER.ADDING_COLORS') return brandId !== 'lowes'
     if (item.header === 'HELPFUL_HINTS.HEADER.COLOR_DETAILS') return brandId !== 'lowes'
