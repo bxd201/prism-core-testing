@@ -10,10 +10,12 @@ export const PreLoadingSVG = (props: { brand: string }) => {
     easy: <HeroLoaderExpanded />,
     condor: <HeroLoaderExpanded />,
     lowes: (
-      <>
-        <img src={lowesLogo} style={{ width: '100%', maxWidth: '370px', padding: '0 2.7rem 1.75rem' }} alt="Lowe's" />
-        <SpinnerLoader />
-      </>
+      <div className='PreLoadingSVG__lowes'>
+        <span>
+          <img src={lowesLogo} style={{ width: '100%', maxWidth: '370px', padding: '0 2.7rem 1.75rem' }} alt="Lowe's" />
+          <SpinnerLoader />
+        </span>
+      </div>
     )
   }
 

@@ -243,6 +243,16 @@
       animation: fade_in_text 0.5s linear;
     }
   }
+
+  &__lowes {
+    @include respond-above(md) {
+      position: absolute;
+      top: 0;
+      height: 650px;
+      display: flex;
+      align-items: center;
+    }
+  }
 }
 
 .cvw__root-container {
