@@ -14,8 +14,9 @@ const defaultThemeColors = {
   light: '#dddddd', // nearly white
   dark: '#2e2e2e', // nearly black
   menuBg: '#FFF', // menu background color
+  menuContentTitle: '#000', // menu/submenu content title color of each item
   menuTxt: '#000', // menu text color
-  menuTxtHover: '#2CABE2', // menu text color on hover
+  menuTxtHover: '#2cabe2', // menu text color on hover
   primary: '#0069af', // main button/UI color
   secondary: '#2cabe2', // secondary button/UI color
   success: '#1fce6d', // success color (usually green)
