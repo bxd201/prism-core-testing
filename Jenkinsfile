@@ -231,7 +231,7 @@ pipeline {
     }
     stage('Deploy') {
       when {
-        expression { BRANCH_NAME ==~ /^(develop|integration|hotfix|replatform)$/ }
+        expression { BRANCH_NAME ==~ /^(develop|integration|replatform)$/ }
       }
       agent {
         docker {
@@ -284,6 +284,33 @@ pipeline {
                 string(name: 'BUILD_JOB_NUMBER', value: "${BUILD_NUMBER}")
               ],
               wait: false
+      }
+    }
+
+    stage('Akamai Cache') {
+      when {
+        expression { BRANCH_NAME ==~ /^(develop|qa)$/ }
+      }
+      agent {
+        docker {
+          image 'docker.cpartdc01.sherwin.com/ecomm/utils/brume:latest'
+          alwaysPull true
+          reuseNode true
+          args "--entrypoint='' -w ${PWD}"
+        }
+      }
+      steps {
+        script{
+          withCredentials([string(credentialsId: 'ccu_client_secret', variable: 'CLIENT_SECRET'),
+            string(credentialsId: 'ccu_access_token', variable: 'ACCESS_TOKEN'),
+            string(credentialsId: 'cccu_client_token', variable: 'CLIENT_TOKEN'),
+            string(credentialsId: 'ccu_host', variable: 'HOST')]) {
+            sh """
+            #!/bin/bash
+              brume ccu invalidate --objects https://prism.sherwin-williams.com/"${S3_FOLDER_NAME}" --type url
+            """
+          }
+        }
       }
     }
     stage('QA: QualysScan') {
