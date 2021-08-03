@@ -18,6 +18,7 @@ export const DEFAULT_CONFIGURATION = {
     lightGrey: varValues._colors.lightGrey,
     nearBlack: varValues._colors.nearBlack,
     menuBg: varValues._colors.menuBg,
+    menuContentTitle: varValues._colors.menuContentTitle,
     menuTxt: varValues._colors.menuTxt,
     menuTxtHover: varValues._colors.menuTxtHover,
     primary: varValues._colors.primary,

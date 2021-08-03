@@ -34,6 +34,7 @@ export type ConfigurationContextType = {
     lightGrey: string,
     nearBlack: string,
     menuBg: string,
+    menuContentTitle: string,
     menuTxt: string,
     menuTxtHover: string,
     black: string,

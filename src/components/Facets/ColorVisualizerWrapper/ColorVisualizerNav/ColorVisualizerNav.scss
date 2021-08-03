@@ -219,7 +219,7 @@ $cvw-nav-btn-height: 3rem; // TODO: make better
 
     &__btn {
       width: 100%;
-      color: $color;
+      color: var(getThemeColor('menuContentTitle'));
 
       &:hover {
         color: var(getThemeColor('secondary'));

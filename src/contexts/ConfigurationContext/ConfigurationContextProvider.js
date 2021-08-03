@@ -95,9 +95,10 @@ function ConfigurationContextProvider (props: Props) {
           const tc = tinycolor(color)
           return (tc.isDark() ? tc.tint(15) : tc.shade(15)).toHexString()
         })(theme.link || theme.primary),
-        menuBg: theme.primary,
-        menuTxt: theme.white,
-        menuTxtHover: theme.white,
+        menuBg: theme.white,
+        menuContentTitle: theme.black,
+        menuTxt: theme.black,
+        menuTxtHover: theme.secondary,
         buttonBgColor: theme.white,
         buttonBorder: theme.grey,
         buttonColor: theme.primary,
