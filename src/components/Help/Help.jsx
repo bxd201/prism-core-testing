@@ -171,7 +171,7 @@ const HelpItemContent = forwardRef((props: HelpItemContentProps, ref) => {
           </div>
         </div>
       ),
-      undo: index === 0 && <FontAwesomeIcon key='icon-0' icon={['fa', 'undo-alt']} size='lg' style={{ marginLeft: '.75em' }} />
+      undo: index === 0 && <FontAwesomeIcon className={`${baseClass}__get-icons--undo`} key='icon-0' icon={['fa', 'undo-alt']} size='lg' />
     }
 
     return icons[name]

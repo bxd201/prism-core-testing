@@ -268,5 +268,11 @@
       width: 32px;
       font-size: large;
     }
+    &--undo {
+      margin-right: .75em;
+      @include respond-above(sm){
+        margin-left: .75em;
+      }
+    }
   }
 }
