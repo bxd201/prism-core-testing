@@ -97,7 +97,8 @@ const CVW = (props: CVWPropsType) => {
   const scenes = useSelector(store => store.scenesCollection)
   const variants = useSelector(store => store.variantsCollection)
   const isShowFooter = pathname.match(/active\/masking$/) === null
-  const { featureExclusions, brandId } = useContext(ConfigurationContext)
+  const { brandId, cvw, featureExclusions } = useContext(ConfigurationContext)
+  const { title } = cvw?.palette ?? {}
   const activeSceneLabel = useSelector(store => store.activeSceneLabel)
   const wrapperRef = useRef()
   const ingestedImageUrl = useSelector(store => store.ingestedImageUrl)
@@ -479,6 +480,7 @@ const CVW = (props: CVWPropsType) => {
             <LivePalette />
           </div>
           <div className='cvw__root-container__footer--secondary'>
+            {title && <div className='cvw__root-container__footer--secondary--title'>{title}</div>}
             <SaveOptions />
           </div>
         </div>
