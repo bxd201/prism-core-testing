@@ -140,6 +140,7 @@ const ColorVisualizerNav = () => {
   const [dropDownItemsForExploreColors, setDropDownItemsForExploreColors] = useState([])
   const [dropDownItemsForGetInspired, setDropDownItemsForGetInspired] = useState([])
   const [dropDownItemsForPaintAPhoto, setDropDownItemsForPaintAPhoto] = useState([])
+  const doAfterSelectFile = useRef()
 
   useEffect(() => setIsLoadingCVWConfig(isEmpty(cvw)), [cvw])
 
@@ -182,10 +183,14 @@ const ColorVisualizerNav = () => {
           title: matchAPhoto?.title ?? messages['NAV_LINKS.MATCH_A_PHOTO'],
           content: matchAPhoto?.content ?? messages['NAV_DROPDOWN_LINK_SUB_CONTENT.MATCH_A_PHOTO'],
           onClick: () => {
+            const navTo = ROUTES_ENUM.UPLOAD_MATCH_PHOTO
             if (hiddenImageUploadInput.current && !isActiveScenePolluted) {
               hiddenImageUploadInput.current.value = ''
-              dispatch(setNavigationIntent(ROUTES_ENUM.UPLOAD_MATCH_PHOTO))
+              // trigger upload image system modal
               hiddenImageUploadInput.current.click()
+              doAfterSelectFile.current = () => {
+                dispatch(setNavigationIntent(navTo))
+              }
             }
           }
         },
@@ -246,20 +251,29 @@ const ColorVisualizerNav = () => {
           contentiPhone: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.UPLOAD_YOUR_PHOTO_IPHONE'],
           description: uploadYourPhoto?.footnote ?? messages['NAV_DROPDOWN_LINK_TIP_DESCRIPTION.UPLOAD_YOUR_PHOTO'],
           onClick: () => {
-            history.push(brandId === 'sherwin'
+            const appNavTarget = ROUTES_ENUM.UPLOAD_PAINT_SCENE
+            const navTo = brandId === 'sherwin'
               ? selectDevice(
-                ROUTES_ENUM.UPLOAD_PAINT_SCENE,
+                appNavTarget,
                 'https://play.google.com/store/apps/details?id=com.colorsnap',
                 'https://itunes.apple.com/us/app/colorsnap-visualizer-iphone/id316256242?mt=8',
                 'https://itunes.apple.com/us/app/colorsnap-studio/id555300600?mt=8'
               )
-              : ROUTES_ENUM.UPLOAD_PAINT_SCENE)
+              : appNavTarget
 
-            if (hiddenImageUploadInput.current) {
-              hiddenImageUploadInput.current.value = ''
-              // trigger upload image system modal
-              dispatch(setNavigationIntent(ROUTES_ENUM.UPLOAD_PAINT_SCENE))
-              hiddenImageUploadInput.current.click()
+            if (navTo !== appNavTarget) {
+              return history.push(navTo)
+            } else {
+              if (hiddenImageUploadInput.current) {
+                hiddenImageUploadInput.current.value = ''
+                // trigger upload image system modal
+                hiddenImageUploadInput.current.click()
+
+                doAfterSelectFile.current = () => {
+                  dispatch(setNavigationIntent(navTo))
+                  history.push(navTo)
+                }
+              }
             }
           }
         },
@@ -280,20 +294,29 @@ const ColorVisualizerNav = () => {
           contentiPhone: messages['NAV_DROPDOWN_LINK_SUB_CONTENT.UPLOAD_YOUR_PHOTO_IPHONE'],
           description: messages['NAV_DROPDOWN_LINK_TIP_DESCRIPTION.UPLOAD_YOUR_PHOTO'],
           onClick: !(isMobileOnly || isTablet) ? () => {
-            history.push(brandId === 'sherwin'
+            const appNavTarget = ROUTES_ENUM.FAST_MASK
+            const navTo = brandId === 'sherwin'
               ? selectDevice(
-                ROUTES_ENUM.UPLOAD_FAST_MASK,
+                appNavTarget,
                 'https://play.google.com/store/apps/details?id=com.colorsnap',
                 'https://itunes.apple.com/us/app/colorsnap-visualizer-iphone/id316256242?mt=8',
                 'https://itunes.apple.com/us/app/colorsnap-studio/id555300600?mt=8'
               )
-              : ROUTES_ENUM.UPLOAD_FAST_MASK)
+              : appNavTarget
 
-            if (hiddenImageUploadInput.current) {
-              hiddenImageUploadInput.current.value = ''
-              // trigger upload image system modal
-              dispatch(setNavigationIntent(ROUTES_ENUM.UPLOAD_FAST_MASK))
-              hiddenImageUploadInput.current.click()
+            if (navTo !== appNavTarget) {
+              return history.push(navTo)
+            } else {
+              if (hiddenImageUploadInput.current) {
+                hiddenImageUploadInput.current.value = ''
+                // trigger upload image system modal
+                hiddenImageUploadInput.current.click()
+
+                doAfterSelectFile.current = () => {
+                  dispatch(setNavigationIntent(navTo))
+                  history.push(navTo)
+                }
+              }
             }
           } : undefined
         },
@@ -363,6 +386,10 @@ const ColorVisualizerNav = () => {
           }
           const imageUrl = URL.createObjectURL(userImg)
           dispatch(setIngestedImage(imageUrl))
+          if (doAfterSelectFile.current) {
+            doAfterSelectFile.current()
+            doAfterSelectFile.current = null
+          }
         }
       }} />
       <ul className='cvw-navigation-wrapper__structure cvw-navigation-wrapper__structure--center' role='presentation'>
