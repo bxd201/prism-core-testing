@@ -56,6 +56,35 @@ const Select = ({ placeholderText, options, disabled = false, onSelectOpened }: 
   </Wrapper>
 )
 
+type ColorFamilyMenuBtnsT = {
+  showAll: boolean,
+  section: string,
+  families: string[]
+}
+
+const ColorFamilyMenuBtns = ({ showAll = false, section, families = [] }: ColorFamilyMenuBtnsT) => {
+  if (families.length) {
+    return <>
+      {showAll
+        ? <ButtonBar.Button isActive={(match, location) => {
+          if (!match) {
+            return false
+          }
+
+          return !!location.pathname.match(new RegExp(`${match.url}/?(/color/.*)?/?$`))
+        }} style={{ justifyContent: 'center', width: '100%' }} to={generateColorWallPageUrl(section)}><span className={MODE_CLASS_NAMES.DESC}>All</span></ButtonBar.Button>
+        : null}
+      {families.map(name =>
+        <ButtonBar.Button style={{ justifyContent: 'center', width: '100%' }} key={name} to={generateColorWallPageUrl(section, name)}>
+          <span className={MODE_CLASS_NAMES.DESC}>{omitPrefix(name)}</span>
+        </ButtonBar.Button>
+      )}
+    </>
+  }
+
+  return null
+}
+
 const ColorWallToolbar = () => {
   const { messages = {} } = useIntl()
   const { hiddenSections } = useContext(ColorWallContext)
@@ -81,14 +110,6 @@ const ColorWallToolbar = () => {
   )
 
   const colorFamilyMenu = useRef(null)
-
-  const colorFamilyMenuBtns: Element<any>[] = (
-    families.map(name =>
-      <ButtonBar.Button style={{ justifyContent: 'center', width: '100%' }} key={name} to={generateColorWallPageUrl(section, name)}>
-        <span className={MODE_CLASS_NAMES.DESC}>{omitPrefix(name)}</span>
-      </ButtonBar.Button>
-    )
-  )
 
   if (uiStyle === 'minimal') {
     return (
@@ -164,7 +185,8 @@ const ColorWallToolbar = () => {
               ? (
                 <div className={`${MODE_CLASS_NAMES.CELL} ${MODE_CLASS_NAMES.RIGHT}`}>
                   <ButtonBar.Bar>
-                    {colorFamilyMenuBtns}
+                    {/* {colorFamilyMenuBtns} */}
+                    <ColorFamilyMenuBtns families={families} section={section} />
                   </ButtonBar.Bar>
                 </div>
               )
@@ -197,14 +219,19 @@ const ColorWallToolbar = () => {
                     <>
                       <span className='menu-bar__border' />
                       <Select
-                        placeholderText={(activeFamily && !familySelectionMenuOpen) ? activeFamily : at(messages, 'SELECT_FAMILY')[0]}
+                        placeholderText={(activeFamily && !familySelectionMenuOpen) ? activeFamily : 'All'}
                         disabled={families.length < 1}
-                        options={families
-                          .filter(name => activeFamily !== name)
-                          .map(label => ({
-                            label,
-                            link: generateColorWallPageUrl(section, label)
-                          }))
+                        options={
+                          [
+                            { label: 'All', link: generateColorWallPageUrl(section) },
+                            ...families
+                              .filter(name => activeFamily !== name)
+                              .map(label => ({
+                                label,
+                                link: generateColorWallPageUrl(section, label)
+                              }))
+                          ]
+
                         }
                         onSelectOpened={setFamilySelectionMenuOpen}
                       />
@@ -232,10 +259,10 @@ const ColorWallToolbar = () => {
             <>
               {/* Color family menu measurer ref - hidden */}
               <div className='color-family-menu color-family-menu__width-size' ref={colorFamilyMenu}>
-                {colorFamilyMenuBtns}
+                <ColorFamilyMenuBtns showAll families={families} section={section} />
               </div>
               {families && colorFamilyMenu.current?.clientWidth < width && (
-                <div className='color-family-menu'>{colorFamilyMenuBtns}</div>
+                <div className='color-family-menu'><ColorFamilyMenuBtns showAll families={families} section={section} /></div>
               )}
             </>
           )}
