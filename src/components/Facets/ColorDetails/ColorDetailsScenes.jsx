@@ -5,6 +5,7 @@ import React, { useState, useCallback, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { SCENE_TYPES, SCENE_VARIANTS } from 'constants/globals'
+import intersection from 'lodash/intersection'
 import WithConfigurationContext from 'src/contexts/ConfigurationContext/WithConfigurationContext'
 import SimpleTintableScene from '../../SimpleTintableScene/SimpleTintableScene'
 import MultipleVariantSwitch from '../../VariantSwitcher/MultipleVariantSwitch'
@@ -96,15 +97,22 @@ const ColorDetailsScene = (props: Props) => {
     return setSelectedVariantIndex(0)
   }
 
-  const getCustomButtons = (variantIndex: number) => {
-    const variantsList = [SCENE_VARIANTS.DAY, SCENE_VARIANTS.NIGHT].map(variant => {
-      return {
-        icon: variant === SCENE_VARIANTS.DAY ? 'sun' : 'moon-stars'
-      }
-    })
-    return (
-      <MultipleVariantSwitch onChange={changeVariant} activeVariantIndex={variantIndex} iconType={'fa'} variantsList={variantsList} />
-    )
+  const getCustomButtons = (activatedSceneVariants: any[], variantIndex: number) => {
+    const availableVariants = activatedSceneVariants.map(scene => scene.variantName)
+    const variantsDayNight = [SCENE_VARIANTS.DAY, SCENE_VARIANTS.NIGHT]
+
+    if (intersection(availableVariants, variantsDayNight).length === variantsDayNight.length) {
+      const variantsList = [SCENE_VARIANTS.DAY, SCENE_VARIANTS.NIGHT].map(variant => {
+        return {
+          icon: variant === SCENE_VARIANTS.DAY ? 'sun' : 'moon-stars'
+        }
+      })
+      return (
+        <MultipleVariantSwitch onChange={changeVariant} activeVariantIndex={variantIndex} iconType={'fa'} variantsList={variantsList} />
+      )
+    }
+
+    return null
   }
 
   return (
@@ -112,7 +120,7 @@ const ColorDetailsScene = (props: Props) => {
       <div className={`${baseClass}__scene`}>
         {getTintableScene(activatedSceneVariants[selectedVariantIndex], selectedSceneId, surfacesColors, livePaletteColors)}
         <div className={`${baseClass}__variants-btn`}>
-          {getCustomButtons(selectedVariantIndex)}
+          {getCustomButtons(activatedSceneVariants, selectedVariantIndex)}
         </div>
       </div>
       {
