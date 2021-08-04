@@ -182,7 +182,7 @@ const ColorWallToolbar = () => {
                     placeholderText={
                       isFamilyView && !alwaysShowColorFamilies
                         ? (activeFamily && !collectionSelectionMenuOpen) ? activeFamily : at(messages, 'ALL_COLORS')[0]
-                        : (primeColorWall === activeSection) || collectionSelectionMenuOpen ? (colorWall.selectSectionText ?? at(messages, 'SELECT_COLLECTION')[0]) : activeSection
+                        : (primeColorWall === activeSection) || collectionSelectionMenuOpen ? (width > 768 ? colorWall.selectSectionText ?? at(messages, 'SELECT_COLLECTION')[0] : primeColorWall) : activeSection
                     }
                     options={((isFamilyView || family) && !alwaysShowColorFamilies ? families : visibleSections)
                       .filter(name => activeFamily !== name && activeSection !== name && (width <= 768 || !primeColorWall || primeColorWall !== name))
