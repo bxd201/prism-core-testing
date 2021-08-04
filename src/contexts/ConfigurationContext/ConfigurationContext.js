@@ -52,7 +52,8 @@ export type ConfigurationContextType = {
   colorWall: {
     bloomEnabled: boolean,
     gapsBetweenChunks: boolean,
-    searchColor?: string
+    searchColor?: string,
+    selectSectionText?: string
   },
   typography: {
     bodyFontFamily: string,
