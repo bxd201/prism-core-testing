@@ -1,7 +1,7 @@
 .collection-detail {
   &__wrapper {
     display: flex;
-    background: var(getThemeColor('light.lighter'));
+    background: var(getThemeColor('secondaryBg'));
     height: 100%;
     flex-direction: column;
     @include respond-above(sm) {

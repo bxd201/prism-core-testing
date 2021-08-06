@@ -86,6 +86,8 @@ function ConfigurationContextProvider (props: Props) {
         // TODO: remove this next chunk once API is returning correct V2 theme colors
         // PRISM-360 | begin deprecated theme color mapping
         secondary: theme.primary,
+        primaryBg: '#fafafa', // light.lightest
+        secondaryBg: '#e2e2e2', // light.lighter
         dark: theme.nearBlack,
         light: theme.lightGrey,
         link: theme.primary,

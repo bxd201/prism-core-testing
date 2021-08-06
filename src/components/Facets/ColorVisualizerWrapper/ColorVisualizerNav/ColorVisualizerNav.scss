@@ -89,7 +89,7 @@ $cvw-nav-btn-height: 3rem; // TODO: make better
 }
 
 .cvw-dashboard-submenu {
-  $bg: var(getThemeColor('light.lightest'));
+  $bg: var(getThemeColor('primaryBg'));
   $color: var(getThemeColor('light.lightest.contrast'));
 
   position: absolute;

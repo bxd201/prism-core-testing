@@ -26,6 +26,8 @@ export type ConfigurationContextType = {
   theme: {
     primary: string,
     secondary: string,
+    primaryBg: string,
+    secondaryBg: string,
     warning: string,
     success: string,
     danger: string,

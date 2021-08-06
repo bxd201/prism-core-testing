@@ -7,7 +7,7 @@
     line-height: 1.2em;
     height: 100%;
     user-select: none;
-    background: var(getThemeColor('light.lightest'));
+    background: var(getThemeColor('primaryBg'));
     width: 100%;
     max-width: 100%;
     position: relative;
@@ -33,7 +33,7 @@
     z-index: 2;
     text-align: center;
     @include respond-above(sm) {
-      background: var(getThemeColor('light.lightest'));
+      background: var(getThemeColor('primaryBg'));
     }
   }
   &__button {

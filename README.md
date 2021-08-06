@@ -96,6 +96,8 @@ Below are all the availabe theme colors we have at the moment, as well as their 
 |menuTxtHover|`--prism-theme-color-menu-txt-hover`|![#2CABE2](https://via.placeholder.com/15/2CABE2/000000?text=+) `#2CABE2`|
 |primary|`--prism-theme-color-primary`|![#0069AF](https://via.placeholder.com/15/0069AF/000000?text=+) `#0069AF`|
 |secondary|`--prism-theme-color-secondary`|![#2CABE2](https://via.placeholder.com/15/2CABE2/000000?text=+) `#2CABE2`|
+|primaryBg|`--prism-theme-color-primary-bg`|![#FAFAFA](https://via.placeholder.com/15/FAFAFA/000000?text=+) `#FAFAFA`|
+|secondaryBg|`--prism-theme-color-secondary-bg`|![#E2E2E2](https://via.placeholder.com/15/E2E2E2/000000?text=+) `#E2E2E2`|
 |success|`--prism-theme-color-success`|![#1FCE6C](https://via.placeholder.com/15/1FCE6C/000000?text=+) `#1FCE6C`|
 |warning|`--prism-theme-color-warning`|![#F2C500](https://via.placeholder.com/15/F2C500/000000?text=+) `#F2C500`|
 |white|`--prism-theme-color-white`|![#FFF](https://via.placeholder.com/15/FFF/000000?text=+) `#FFF`|

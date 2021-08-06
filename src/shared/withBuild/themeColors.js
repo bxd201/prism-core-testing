@@ -19,6 +19,8 @@ const defaultThemeColors = {
   menuTxtHover: '#2cabe2', // menu text color on hover
   primary: '#0069af', // main button/UI color
   secondary: '#2cabe2', // secondary button/UI color
+  primaryBg: '#fafafa', // main background color
+  secondaryBg: '#e2e2e2', // secondary background color
   success: '#1fce6d', // success color (usually green)
   warning: '#f2c500', // warning color (usually orange or yellow)
   white: '#FFF', // #FFF,
