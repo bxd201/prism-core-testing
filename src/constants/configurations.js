@@ -23,6 +23,8 @@ export const DEFAULT_CONFIGURATION = {
     menuTxtHover: varValues._colors.menuTxtHover,
     primary: varValues._colors.primary,
     secondary: varValues._colors.secondary,
+    primaryBg: varValues._colors.primaryBg,
+    secondaryBg: varValues._colors.secondaryBg,
     success: varValues._colors.success,
     warning: varValues._colors.warning,
     white: varValues._colors.white
