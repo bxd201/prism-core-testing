@@ -4,7 +4,7 @@ import React, { useRef } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useDetectOutsideClick } from './useDetectOutsideClick'
 import './RadioBtnSwitch.scss'
-import { capitalize } from 'lodash'
+import capitalize from 'lodash/capitalize'
 
 type RadioBtnSwitchProps = {
     currentColor: String,
