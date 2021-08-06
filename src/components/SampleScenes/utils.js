@@ -1,5 +1,7 @@
 // @flow
-import { flatten, uniq, find } from 'lodash'
+import flatten from 'lodash/flatten'
+import uniq from 'lodash/uniq'
+import find from 'lodash/find'
 import { FlatVariant } from '../../store/actions/loadScenes'
 
 export const groupScenesByCategory = (data: Array<Object>): Object => {
