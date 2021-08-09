@@ -30,6 +30,9 @@
         color: var(getThemeColor('buttonHoverColor'));
       }
     }
+    &--icon {
+      margin-left: .4rem;
+    }
   }
   &__wrapper {
     max-height: 725px;

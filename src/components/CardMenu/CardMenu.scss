@@ -101,6 +101,9 @@
     @include respond-above(sm) {
       display: block;
     }
+    &--icon {
+      margin-left: .4rem;
+    }
   }
   &__cancel {
     display: block;

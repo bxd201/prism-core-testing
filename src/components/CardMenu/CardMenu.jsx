@@ -26,6 +26,8 @@ const CardMenu = ({ children, menuTitle = '', showBackByDefault = false, backPat
   const [cardTitle: string, setCardTitle] = useState(menuTitle)
   const history = useHistory()
   const { cvw = {} } = useContext<ConfigurationContextType>(ConfigurationContext)
+  const { closeBtn = {} } = cvw
+  const { showArrow: closeBtnShowArrow = true, text: closeBtnText = <FormattedMessage id='CLOSE' /> } = closeBtn
 
   return (
     <div className='card-menu__wrapper'>
@@ -43,7 +45,7 @@ const CardMenu = ({ children, menuTitle = '', showBackByDefault = false, backPat
         </button>}
         <button className='card-menu__button card-menu__button--right' onClick={() => history.push('/active')}>
           <div className='card-menu__close'>
-            {cvw.closeBtn ?? <FormattedMessage id='CLOSE' />}&nbsp;&nbsp;<FontAwesomeIcon className={``} icon={['fa', 'chevron-up']} />
+            {closeBtnText ?? <FormattedMessage id='CLOSE' />}{closeBtnShowArrow && <FontAwesomeIcon className='card-menu__close--icon' icon={['fa', 'chevron-up']} />}
           </div>
           <div className='card-menu__cancel'>
             <FontAwesomeIcon size='lg' icon={['fa', 'times']} />

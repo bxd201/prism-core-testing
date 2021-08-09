@@ -190,6 +190,8 @@ export class CompareColor extends React.Component<CompareColorProps, CompareColo
       const { curr, colors, colorIds, selectedSceneUid, selectedVariantName } = this.state
       const { config, variantsCollection, scenesCollection } = this.props
       const { cvw = {} } = config
+      const { closeBtn = {} } = cvw
+      const { showArrow: closeBtnShowArrow = true, text: closeBtnText = <FormattedMessage id='CLOSE' /> } = closeBtn
       const content = this.renderContent(curr, colors, colorIds, selectedSceneUid, selectedVariantName, scenesCollection, variantsCollection)
       const { isHidePrevButton, isHideNextButton } = this.isShowSlideButton()
 
@@ -197,7 +199,7 @@ export class CompareColor extends React.Component<CompareColorProps, CompareColo
         <div className={`${containerClass}`}>
           <div className={`${containerHeaderClass}`}>
             <span><FormattedMessage id='COMPARE_COLORS' /></span>
-            <button className={`${containerHeaderButtonClass}`} onClick={this.props.toggleCompareColor}>{cvw.closeBtn ?? <FormattedMessage id='CLOSE' />}&nbsp;&nbsp;<FontAwesomeIcon className={``} icon={['fa', 'chevron-up']} /></button>
+            <button className={`${containerHeaderButtonClass}`} onClick={this.props.toggleCompareColor}> {closeBtnText ?? <FormattedMessage id='CLOSE' />}{closeBtnShowArrow && <FontAwesomeIcon className={`${containerHeaderClass}--icon`} icon={['fa', 'chevron-up']} />}</button>
           </div>
           <div className={`${wrapperClass}`} >
             <div className={`${prevBtnWrapperClass}`}>
