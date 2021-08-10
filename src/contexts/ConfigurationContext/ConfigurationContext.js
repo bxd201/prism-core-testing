@@ -66,6 +66,9 @@ export type ConfigurationContextType = {
   featureExclusions: string[],
   cvw: {
     closeBtn?: string,
+    colorCollections?: {
+      scrollArrows?: boolean
+    },
     downloadSceneDisclaimer1?: string,
     downloadSceneDisclaimer1?: string,
     downloadSceneDisclaimer2?: string,
