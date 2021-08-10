@@ -33,7 +33,8 @@ export type Configuration = {
   },
   typography: {
     bodyFontFamily: string,
-    titleFontFamily: string
+    titleFontFamily: string,
+    titleTextTransform: string
   }
 }
 
