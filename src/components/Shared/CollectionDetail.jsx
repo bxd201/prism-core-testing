@@ -1,11 +1,12 @@
 // @flow
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 // $FlowIgnore -- no defs for react-virtualized
 import { Grid, AutoSizer } from 'react-virtualized'
 import ColorSwatch from 'src/components/Facets/ColorWall/ColorSwatch/ColorSwatch'
 import ColorWallContext, { colorWallContextDefault } from '../Facets/ColorWall/ColorWallContext'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
+import ConfigurationContext, { type ConfigurationContextType } from '../../contexts/ConfigurationContext/ConfigurationContext'
 import * as scroll from 'scroll'
 import './CollectionDetail.scss'
 import 'src/scss/externalComponentSupport/AutoSizer.scss'
@@ -26,6 +27,9 @@ const triggerNext = `${baseClass}__next-trigger`
 
 type Props = { collectionDetailData: ColorCollectionDetail, addToLivePalette: Function }
 const CollectionDetail = ({ addToLivePalette, collectionDetailData }: Props) => {
+  const { cvw = {} } = useContext<ConfigurationContextType>(ConfigurationContext)
+  const { colorCollections = {} } = cvw
+  const { scrollArrows: showScrollArrows = true } = colorCollections
   const [showTopScrollControl, setShowTopScrollControl] = useState<boolean>(false)
   const [showBottomScrollControl, setShowBottomScrollControl] = useState<boolean>(false)
   const [gridHeight, setGridHeight] = useState<number>(0)
@@ -110,12 +114,14 @@ const CollectionDetail = ({ addToLivePalette, collectionDetailData }: Props) => 
               }}
             </AutoSizer>
           </div>
-          {showTopScrollControl && <div role='presentation' onClick={() => verticalScroll(_gridWrapperRef, 'top', gridHeight, _cellSize)} className={`${verticalControlsTrigger} ${triggerPrevious}`}>
-            <FontAwesomeIcon className={``} icon={['fa', 'angle-up']} />
-          </div>}
-          {showBottomScrollControl && <div role='presentation' onClick={() => verticalScroll(_gridWrapperRef, 'bottom', gridHeight, _cellSize)} className={`${verticalControlsTrigger} ${triggerNext}`}>
-            <FontAwesomeIcon className={``} icon={['fa', 'angle-down']} />
-          </div>}
+          {showScrollArrows && <>
+            {showTopScrollControl && <div role='presentation' onClick={() => verticalScroll(_gridWrapperRef, 'top', gridHeight, _cellSize)} className={`${verticalControlsTrigger} ${triggerPrevious}`}>
+              <FontAwesomeIcon className={``} icon={['fa', 'angle-up']} />
+            </div>}
+            {showBottomScrollControl && <div role='presentation' onClick={() => verticalScroll(_gridWrapperRef, 'bottom', gridHeight, _cellSize)} className={`${verticalControlsTrigger} ${triggerNext}`}>
+              <FontAwesomeIcon className={``} icon={['fa', 'angle-down']} />
+            </div>}
+          </>}
         </div>
       </div>
     </ColorWallContext.Provider>
