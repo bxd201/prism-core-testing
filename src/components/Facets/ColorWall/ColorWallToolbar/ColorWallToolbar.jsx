@@ -89,6 +89,8 @@ const ColorWallToolbar = () => {
   const { messages = {} } = useIntl()
   const { hiddenSections } = useContext(ColorWallContext)
   const { alwaysShowColorFamilies, colorWall = {}, cvw = {}, uiStyle } = useContext<ConfigurationContextType>(ConfigurationContext)
+  const { closeBtn = {} } = cvw
+  const { showArrow: closeBtnShowArrow = true, text: closeBtnText = <FormattedMessage id='CLOSE' /> } = closeBtn
   const { path, params: { section, family } } = useRouteMatch()
   const { sections = [], families = [], section: activeSection, family: activeFamily, primeColorWall } = useSelector(state => state.colors)
   const dispatch = useDispatch()
@@ -250,8 +252,8 @@ const ColorWallToolbar = () => {
                 }}
                 style={alwaysShowColorFamilies ? { borderRadius: '0', textTransform: 'uppercase' } : {}}
               >
-                <FontAwesomeIcon className='color-families-svg' icon={['fa', 'times']} pull='left' />
-                <span className={MODE_CLASS_NAMES.DESC}>{cvw.closeBtn ?? <FormattedMessage id='CLOSE' />}</span>
+                {closeBtnShowArrow && <FontAwesomeIcon className='color-families-svg' icon={['fa', 'times']} pull='left' />}
+                <span className={MODE_CLASS_NAMES.DESC}>{closeBtnText ?? <FormattedMessage id='CLOSE' />}</span>
               </button>
             )}
           </div>

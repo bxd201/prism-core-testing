@@ -33,6 +33,8 @@ const ImageIngestView = (props: ImageIngestViewProps) => {
   const wrapperRef = useRef()
   const canvasRef = useRef()
   const { cvw = {} } = useContext<ConfigurationContextType>(ConfigurationContext)
+  const { closeBtn = {} } = cvw
+  const { showArrow: closeBtnShowArrow = true, text: closeBtnText = <FormattedMessage id='CLOSE' /> } = closeBtn
   // eslint-disable-next-line no-unused-vars
   const [imageData, setImageData] = useState(null)
   // eslint-disable-next-line no-unused-vars
@@ -248,7 +250,8 @@ const ImageIngestView = (props: ImageIngestViewProps) => {
             </button>
             <Link to={closeLink} tabIndex='-1'>
               <button onClick={handleCloseButton} className={`${baseClassName}__button ${baseClassName}__button--right dark-button`}>
-                <div className={`${baseClassName}__close`}>{cvw.closeBtn ?? <FormattedMessage id='CLOSE' />}&nbsp;&nbsp;<FontAwesomeIcon className={``} icon={['fa', 'chevron-up']} /></div>
+                <div className={`${baseClassName}__close`}>{closeBtnText ?? <FormattedMessage id='CLOSE' />}{closeBtnShowArrow && <FontAwesomeIcon className={`${baseClassName}__close--icon`} icon={['fa', 'chevron-up']} />}</div>
+                <div className={`${baseClassName}__cancel`}><FontAwesomeIcon icon={['fa', 'times']} /></div>
               </button>
             </Link>
           </div> : null}

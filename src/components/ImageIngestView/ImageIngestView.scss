@@ -54,7 +54,7 @@
      top: .25rem;
      width: auto;
      z-index: 1000;
-     padding: .25em;
+     padding: .45em;
 
      &:focus {
        @include focus-style
@@ -81,6 +81,19 @@
     }
   }
   &__close {
+    display: none;
     text-transform: uppercase;
+    @include respond-above(sm) {
+      display: block;
+    }
+    &--icon {
+      margin-left: .4rem;
+    }
+  }
+  &__cancel {
+    display: block;
+    @include respond-above(sm) {
+      display: none;
+    }
   }
 }

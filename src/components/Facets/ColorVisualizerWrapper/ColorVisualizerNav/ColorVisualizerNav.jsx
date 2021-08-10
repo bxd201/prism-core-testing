@@ -74,7 +74,9 @@ const resizeRootContainer = () => {
 
 export const DropDownMenu = ({ title, items }: DropDownMenuProps) => {
   const history = useHistory()
-  const { cvw, brandId } = useContext<ConfigurationContextType>(ConfigurationContext)
+  const { cvw = {}, brandId } = useContext<ConfigurationContextType>(ConfigurationContext)
+  const { closeBtn = {} } = cvw
+  const { showArrow: closeBtnShowArrow = true, text: closeBtnText = <FormattedMessage id='CLOSE' /> } = closeBtn
 
   useEffect(() => {
     if (!(isMobileOnly || isTablet)) return
@@ -92,8 +94,7 @@ export const DropDownMenu = ({ title, items }: DropDownMenuProps) => {
       <button className='overlay' onClick={() => history.push(ROUTES_ENUM.ACTIVE)} />
       <div className='cvw-dashboard-submenu'>
         <button className='cvw-dashboard-submenu__close' onClick={handleClose}>
-          {cvw?.closeBtn ?? <FormattedMessage id='CLOSE' />}
-          <FontAwesomeIcon className='cvw-dashboard-submenu__close__ico' icon={['fa', 'chevron-up']} />
+          {closeBtnText ?? <FormattedMessage id='CLOSE' />}{closeBtnShowArrow && <FontAwesomeIcon className='cvw-dashboard-submenu__close__ico' icon={['fa', 'chevron-up']} />}
         </button>
         <h1 className='cvw-dashboard-submenu__header'>{title}</h1>
         <ul className='cvw-dashboard-submenu__content'>

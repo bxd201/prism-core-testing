@@ -66,7 +66,10 @@ export type ConfigurationContextType = {
   },
   featureExclusions: string[],
   cvw: {
-    closeBtn?: string,
+    closeBtn?: {
+      showArrow?: boolean,
+      text?: string
+    },
     colorCollections?: {
       scrollArrows?: boolean
     },
