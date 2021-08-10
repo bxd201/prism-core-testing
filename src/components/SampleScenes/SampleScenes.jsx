@@ -1,5 +1,5 @@
 // @flow
-import React, { useState, useEffect, useRef, useMemo } from 'react'
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import Carousel from '../Carousel/Carousel'
 import ColorCollectionsTab from '../Shared/ColorCollectionsTab'
@@ -9,11 +9,13 @@ import { groupVariantsByCarouselTabs } from './utils.js'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import './SampleScenes.scss'
 import { useIntl } from 'react-intl'
+import ConfigurationContext, { type ConfigurationContextType } from '../../contexts/ConfigurationContext/ConfigurationContext'
 
 const baseClass = 'color-collections'
 type ComponentProps = { isColorTinted: boolean, setHeader: Function, activateScene: Function }
 
 export const SampleScenesWrapper = ({ isColorTinted, setHeader, activateScene }: ComponentProps) => {
+  const { cvw = {} } = useContext<ConfigurationContextType>(ConfigurationContext)
   const carouselCache = useSelector(state => ({ initPosition: state.carouselCache?.[0], tabId: state.carouselCache?.[1] }))
   const filteredVariants = useSelector(state => state.variantsCollection)?.filter((scene) => scene?.sceneCategories?.length && scene?.variantName === 'day')
   const [tabId: string, setTabId: string => void] = useState(carouselCache?.tabId)
@@ -35,7 +37,7 @@ export const SampleScenesWrapper = ({ isColorTinted, setHeader, activateScene }:
   const intl = useIntl()
 
   return (
-    <CardMenu menuTitle={intl.formatMessage({ id: 'USE_OUR_PHOTO' })}>
+    <CardMenu menuTitle={cvw.useOurPhotos?.title ?? intl.formatMessage({ id: 'USE_OUR_PHOTO' })}>
       {() => (<div className={`${baseClass}__wrapper`}>
         {variantsCarouselTabsData && variantsCarouselTabsData.collectionTabs && <ColorCollectionsTab collectionTabs={variantsCarouselTabsData.collectionTabs} tabIdShow={tabId} showTab={setTabId} />}
         <div className={`${baseClass}__collections-list`}>

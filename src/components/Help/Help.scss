@@ -106,6 +106,7 @@
     text-align: center;
     & > h2 {
       color: var(getThemeColor('secondary'));
+      text-transform: var(getVarName('typography.titleTextTransform'));
       display: block;
       font-size: 1.75em;
       font-weight: 400;

@@ -60,6 +60,7 @@ export type ConfigurationContextType = {
   typography: {
     bodyFontFamily: string,
     titleFontFamily: string,
+    titleTextTransform: string,
     buttonFontWeight: string,
     buttonTextTransform: string
   },
@@ -74,44 +75,6 @@ export type ConfigurationContextType = {
     downloadSceneFooterImage?: string,
     downloadSceneHeaderImage?: string,
     downloadSceneHeaderImage?: string,
-    introBg?: string,
-    introLogo?: string,
-    menu?: {
-      exploreColors?: {
-        ...Menu,
-        colorCollections?: MenuItem,
-        digitalColorWall?: MenuItem,
-        matchAPhoto?: MenuItem
-      },
-      getInspired?: {
-        ...Menu,
-        expertColorPicks?: MenuItem,
-        inspirationalPhotos?: MenuItem,
-        paintedPhotos?: MenuItem
-      },
-      paintAPhoto?: {
-        ...Menu,
-        uploadYourPhoto?: MenuItem,
-        useOurPhotos?: MenuItem
-      }
-    },
-    navColorCollections?: string,
-    navExpertColorPicks?: string,
-    navExploreColor?: string,
-    navMatchPhoto?: string,
-    navPaintedScenes?: string,
-    navSamplePhotos?: string,
-    navSampleScenes?: string,
-    navStructure?: VisualizerNavStructure,
-    navThumbAndroid?: string,
-    navThumbIpad?: string,
-    navThumbIphone?: string,
-    navThumbMyPhotos?: string,
-    palette?: {
-      title?: string,
-      compare?: string
-    },
-    termsOfUseLink?: string,
     help?: {
       addColor1?: string,
       addColor2?: string,
@@ -165,6 +128,47 @@ export type ConfigurationContextType = {
       savingBg?: string,
       savingMobile1?: string,
       savingMobile2?: string
+    },
+    introBg?: string,
+    introLogo?: string,
+    menu?: {
+      exploreColors?: {
+        ...Menu,
+        colorCollections?: MenuItem,
+        digitalColorWall?: MenuItem,
+        matchAPhoto?: MenuItem
+      },
+      getInspired?: {
+        ...Menu,
+        expertColorPicks?: MenuItem,
+        inspirationalPhotos?: MenuItem,
+        paintedPhotos?: MenuItem
+      },
+      paintAPhoto?: {
+        ...Menu,
+        uploadYourPhoto?: MenuItem,
+        useOurPhotos?: MenuItem
+      }
+    },
+    navColorCollections?: string,
+    navExpertColorPicks?: string,
+    navExploreColor?: string,
+    navMatchPhoto?: string,
+    navPaintedScenes?: string,
+    navSamplePhotos?: string,
+    navSampleScenes?: string,
+    navStructure?: VisualizerNavStructure,
+    navThumbAndroid?: string,
+    navThumbIpad?: string,
+    navThumbIphone?: string,
+    navThumbMyPhotos?: string,
+    palette?: {
+      title?: string,
+      compare?: string
+    },
+    termsOfUseLink?: string,
+    useOurPhotos?: {
+      title?: string
     }
   },
   uiStyle: 'default' | 'minimal'
