@@ -17,7 +17,7 @@ import 'src/providers/fontawesome/fontawesome'
 import './ColorSwatch.scss'
 
 type ContentProps = { msg: string, color: Color }
-const Content = ({ msg, color }: ContentProps) => {
+export const Content = ({ msg, color }: ContentProps) => {
   const dispatch = useDispatch()
   const { addButtonText, displayAddButton, displayInfoButton, displayDetailsLink, colorDetailPageRoot }: ColorWallContextProps = useContext(ColorWallContext)
   const { swatchShouldEmit } = useContext(ConfigurationContext)
