@@ -16,8 +16,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
 import './ColorSwatch.scss'
 
-type ContentProps = { msg: string, color: Color }
-const Content = ({ msg, color }: ContentProps) => {
+type ContentProps = { msg: string, color: Color, style?: {}}
+export const Content = ({ msg, color, style }: ContentProps) => {
   const dispatch = useDispatch()
   const { addButtonText, displayAddButton, displayInfoButton, displayDetailsLink, colorDetailPageRoot }: ColorWallContextProps = useContext(ColorWallContext)
   const { swatchShouldEmit } = useContext(ConfigurationContext)
@@ -30,7 +30,7 @@ const Content = ({ msg, color }: ContentProps) => {
     return (<p className='color-swatch__content-message'>{msg}</p>)
   }
   return (
-    <div className='color-swatch__button-group'>
+    <div className='color-swatch__button-group' style={style}>
       {displayAddButton &&
         (colorIsInLivePalette
           ? (<FontAwesomeIcon className='check-icon' icon={['fa', 'check-circle']} size='2x' />)

@@ -44,6 +44,7 @@ export type Configuration = {
 export type EmbeddedConfiguration = {
   alwaysShowColorFamilies?: boolean,
   brand?: string,
+  colorDetailsAddColor?: boolean,
   colorDetailPageRoot?: string,
   defaultRoute?: string,
   displayAddButton?: boolean,

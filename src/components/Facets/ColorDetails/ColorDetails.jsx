@@ -1,8 +1,10 @@
 // @flow
-import React, { useRef, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
 import { useDispatch } from 'react-redux'
+import ColorWallContext from 'src/components/Facets/ColorWall/ColorWallContext'
+import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import { FormattedMessage } from 'react-intl'
 import * as GA from 'src/analytics/GoogleAnalytics'
@@ -13,6 +15,7 @@ import ColorDetailsScenes from './ColorDetailsScenes'
 import ColorInfo from './ColorInfo'
 import CoordinatingColors from './CoordinatingColors'
 import SimilarColors from './SimilarColors'
+import { Content } from '../ColorWall/ColorSwatch/ColorSwatch'
 import { toggleColorDetailsPage } from '../../../store/actions/scenes'
 import { varValues } from 'src/shared/withBuild/variableDefs'
 import type { Color } from '../../../shared/types/Colors.js.flow'
@@ -39,6 +42,7 @@ type Props = {
 
 export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged, onColorChipToggled, familyLink, loading, initialColor, initialVariantName, callsToAction = [] }: Props) => {
   const dispatch = useDispatch()
+  const { colorDetailsAddColor } = useContext<ConfigurationContextType>(ConfigurationContext)
   const toggleSceneDisplayScene = useRef(null)
   const toggleSceneHideScene = useRef(null)
   const [color: Color, setColor: Color => void] = useState(initialColor)
@@ -98,6 +102,11 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
           <div className={MAIN_INFO_CLASSES.join(' ')} style={{ backgroundColor: color.hex }}>
             <ColorViewer color={color} />
             <ColorStrip key={color.id} color={color} onColorChanged={setColor} />
+            {colorDetailsAddColor && <div className={`${baseClass}__main-info--add`}>
+              <ColorWallContext.Provider value={{ displayAddButton: true }}>
+                <Content msg='' color={color} style={{ position: 'relative' }} />
+              </ColorWallContext.Provider>
+            </div>}
           </div>
 
           {callsToAction?.length ? <ColorDetailsCTAs className='color-detail__ctas color-detail__ctas--mobile' data={callsToAction} /> : null}

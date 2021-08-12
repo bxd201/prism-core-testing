@@ -98,11 +98,20 @@ $details-tab-padding: 1rem;
   background-color: $neutral-background-color;
 
   &__main-info {
+    position: relative;
     padding: 2rem $width-medium;
     color: var(getThemeColor('black'));
 
     &--dark-color {
       color: var(getThemeColor('white'));
+    }
+
+    &--add {
+      position: absolute;
+      right: 50%;
+      bottom: 50%;
+      transform: translate(50%, 50%);
+      font-size: 16px;
     }
   }
 

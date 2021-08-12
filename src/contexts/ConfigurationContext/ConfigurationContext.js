@@ -22,6 +22,7 @@ export type ConfigurationContextType = {
   alwaysShowColorFamilies?: boolean,
   brand: string,
   brandId: string,
+  colorDetailsAddColor?: boolean,
   ga_domain_id: string,
   theme: {
     primary: string,
