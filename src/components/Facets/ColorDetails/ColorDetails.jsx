@@ -104,7 +104,7 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
             <ColorStrip key={color.id} color={color} onColorChanged={setColor} />
             {colorDetailsAddColor && <div className={`${baseClass}__main-info--add`}>
               <ColorWallContext.Provider value={{ displayAddButton: true }}>
-                <Content msg='' color={color} />
+                <Content msg='' color={color} style={{ position: 'relative' }} />
               </ColorWallContext.Provider>
             </div>}
           </div>
