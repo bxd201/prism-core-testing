@@ -352,16 +352,6 @@
   }
 }
 
-.cvw-nav-btn-icon {
-  background-color: inherit;
-  display: inline-block;
-  margin-right: 1em;
-  svg { background-color: inherit; }
-  .fa-square-full.fa-sm { margin-right: -1px; }
-  .fa-square-full.fa-xs { margin-right: -3px; }
-  &--brush { margin-left: -22px; }
-}
-
 .cvw__modal {
   position: absolute;
   top: 40%;

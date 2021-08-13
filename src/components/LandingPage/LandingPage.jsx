@@ -22,7 +22,7 @@ const LandingPage = () => {
       {cvw?.introLogo ? <div className='cvw-landing-page-wrapper__image' style={{ 'backgroundImage': `url('${cvw.introLogo}')` }} /> : null}
       <button className='cvw-landing-page-wrapper__painting-btn' onClick={() => redirect('/active')}>
         <FormattedMessage id='START_PAINTING_NOW' />
-        <FontAwesomeIcon icon={['fa', 'chevron-right']} />
+        <FontAwesomeIcon icon={['fa', 'chevron-right']} style={{ marginLeft: '1em' }} />
       </button>
       <div className='cvw-landing-page-wrapper__intro-divider'>
         <div className='cvw-landing-page-wrapper__intro-divider__line' />
@@ -30,21 +30,21 @@ const LandingPage = () => {
         <div className='cvw-landing-page-wrapper__intro-divider__line' />
       </div>
       <div className='cvw-landing-page-wrapper__intro-button-container'>
-        <button className='cvw-landing-page-wrapper__intro-button-container__intro-buttons' onClick={() => redirect(ROUTES_ENUM.ACTIVE_COLORS)}>
-          <span className='fa-layers fa-fw cvw-nav-btn-icon'>
-            <FontAwesomeIcon icon={['fal', 'square-full']} size='xs' transform={{ rotate: 10 }} />
-            <FontAwesomeIcon icon={['fal', 'square-full']} size='sm' transform={{ rotate: 0 }} />
-            <FontAwesomeIcon icon={['fal', 'square-full']} size='1x' transform={{ rotate: 350 }} />
-            <FontAwesomeIcon icon={['fal', 'plus-circle']} size='xs' />
+        <button className='cvw-landing-page-wrapper__intro-button-container__intro-buttons' >
+          <span className='fa-layers fa-fw' style={{ marginRight: '1em' }}>
+            <FontAwesomeIcon style={{ backgroundColor: 'white', marginRight: '-3px' }} icon={['fal', 'square-full']} size='xs' transform={{ rotate: 10 }} />
+            <FontAwesomeIcon style={{ backgroundColor: 'white', marginRight: '-1px' }} icon={['fal', 'square-full']} size='sm' transform={{ rotate: 0 }} />
+            <FontAwesomeIcon style={{ backgroundColor: 'white' }} icon={['fal', 'square-full']} size='1x' transform={{ rotate: 350 }} />
+            <FontAwesomeIcon style={{ backgroundColor: 'white' }} icon={['fal', 'plus-circle']} size='xs' />
           </span>
           <FormattedMessage id='EXPLORE_COLOR' />
         </button>
         <button className='cvw-landing-page-wrapper__intro-button-container__intro-buttons' onClick={() => redirect(ROUTES_ENUM.INSPIRATION)}>
-          <FontAwesomeIcon className='cvw-nav-btn-icon' icon={['fal', 'lightbulb']} size='1x' />
+          <FontAwesomeIcon style={{ marginRight: '1em' }} icon={['fal', 'lightbulb']} size='1x' />
           <FormattedMessage id='NAV_LINKS.GET_INSPIRED' />
         </button>
         <button className='cvw-landing-page-wrapper__intro-button-container__intro-buttons' onClick={() => redirect(ROUTES_ENUM.SCENES)}>
-          <span className='fa-layers fa-fw cvw-nav-btn-icon'>
+          <span className='fa-layers fa-fw' style={{ marginRight: '1em' }}>
             <FontAwesomeIcon icon={['fal', 'square-full']} />
             <FontAwesomeIcon icon={['fa', 'brush']} size='sm' transform={{ rotate: 320 }} />
           </span>

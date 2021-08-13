@@ -23,6 +23,7 @@ import { ROUTES_ENUM } from '../routeValueCollections'
 import { MODAL_TYPE_ENUM } from 'src/components/CVWModalManager/constants'
 import { triggerPaintSceneLayerPublish } from 'src/store/actions/paintScene'
 import { DEFAULT_NAV_STRUCTURE } from './navStructure'
+import { CVWNavBtn } from '../CVWNavBtn/CVWNavBtn'
 
 const selectDevice = (web, iPhone = web, android = web, iPad = web) => (isMobileOnly ? (isIOS ? iPhone : android) : (isTablet ? iPad : web)) || web
 
@@ -80,8 +81,13 @@ export const DropDownMenu = ({ title, items }: DropDownMenuProps) => {
 
   useEffect(() => {
     if (!(isMobileOnly || isTablet)) return
+
     resizeRootContainer()
     window.addEventListener('hashchange', resizeRootContainer)
+
+    return () => {
+      window.removeEventListener('hashchange', resizeRootContainer)
+    }
   }, [isMobileOnly, isTablet])
 
   const handleClose = (e: SyntheticEvent) => {
@@ -396,57 +402,53 @@ const ColorVisualizerNav = () => {
       <ul className='cvw-navigation-wrapper__structure cvw-navigation-wrapper__structure--center' role='presentation'>
         { dropDownItemsForExploreColors.length && shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.exploreColors)
           ? <li>
-            <button ref={navBtnRef} className={`cvw-nav-btn ${location.pathname === ROUTES_ENUM.ACTIVE_COLORS ? 'cvw-nav-btn--active' : ''}`} onClick={() => {
-              handleNavigation(ROUTES_ENUM.ACTIVE_COLORS)
-            }}>
-              <span className='fa-layers fa-fw cvw-nav-btn-icon'>
+            <CVWNavBtn
+              ref={navBtnRef}
+              active={location.pathname === ROUTES_ENUM.ACTIVE_COLORS}
+              onClick={() => handleNavigation(ROUTES_ENUM.ACTIVE_COLORS)}
+              iconRenderer={({ className }) => <span className={`fa-layers fa-fw ${className}`}>
                 <FontAwesomeIcon icon={['fal', 'square-full']} size='xs' transform={{ rotate: 10 }} />
                 <FontAwesomeIcon icon={['fal', 'square-full']} size='sm' transform={{ rotate: 0 }} />
                 <FontAwesomeIcon icon={['fal', 'square-full']} size='1x' transform={{ rotate: 350 }} />
                 <FontAwesomeIcon icon={['fal', 'plus-circle']} size='xs' />
-              </span>
-              {exploreColors?.tab ?? <FormattedMessage id='NAV_LINKS.EXPLORE_COLORS' />}
-            </button>
+              </span>}
+              textRenderer={() => exploreColors?.tab ?? <FormattedMessage id='NAV_LINKS.EXPLORE_COLORS' />} />
           </li> : null }
         { dropDownItemsForGetInspired.length && shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.getInspired)
           ? <li>
-            <button className={`cvw-nav-btn ${location.pathname === ROUTES_ENUM.INSPIRATION ? 'cvw-nav-btn--active' : ''}`} onClick={() => {
-              handleNavigation(ROUTES_ENUM.INSPIRATION)
-            }}>
-              <FontAwesomeIcon className='cvw-nav-btn-icon' icon={['fal', 'lightbulb']} size='1x' />
-              {getInspired?.tab ?? <FormattedMessage id='NAV_LINKS.GET_INSPIRED' />}
-            </button>
+            <CVWNavBtn
+              active={location.pathname === ROUTES_ENUM.INSPIRATION}
+              onClick={() => handleNavigation(ROUTES_ENUM.INSPIRATION)}
+              iconRenderer={({ className }) => <span className={`${className}`}>
+                <FontAwesomeIcon icon={['fal', 'lightbulb']} size='1x' />
+              </span>}
+              textRenderer={() => getInspired?.tab ?? <FormattedMessage id='NAV_LINKS.GET_INSPIRED' />} />
           </li> : null }
         { dropDownItemsForPaintAPhoto.length && shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.paintAPhoto)
           ? <li>
-            <button className={`cvw-nav-btn ${location.pathname === ROUTES_ENUM.SCENES ? 'cvw-nav-btn--active' : ''}`} onClick={() => {
-              handleNavigation(ROUTES_ENUM.SCENES)
-            }}>
-              <span className='fa-layers fa-fw cvw-nav-btn-icon'>
+            <CVWNavBtn
+              active={location.pathname === ROUTES_ENUM.SCENES}
+              onClick={() => handleNavigation(ROUTES_ENUM.SCENES)}
+              iconRenderer={({ className }) => <span className={`fa-layers fa-fw ${className}`}>
                 <FontAwesomeIcon icon={['fal', 'square-full']} />
                 <FontAwesomeIcon icon={['fa', 'brush']} size='sm' transform={{ rotate: 320 }} />
-              </span>
-              {paintAPhoto?.tab ?? <FormattedMessage id='NAV_LINKS.PAINT_A_PHOTO' />}
-            </button>
+              </span>}
+              textRenderer={() => paintAPhoto?.tab ?? <FormattedMessage id='NAV_LINKS.PAINT_A_PHOTO' />} />
           </li> : null }
-        <li>
-          <ul className='cvw-navigation-wrapper__structure cvw-navigation-wrapper__structure--right' role='presentation'>
-            {
-              shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.documentSaving)
-                ? <li>
-                  <button className={`cvw-nav-btn ${location.pathname === ROUTES_ENUM.ACTIVE_MYIDEAS ? 'cvw-nav-btn--active' : ''}`} onClick={() => {
-                    handleNavigation(ROUTES_ENUM.ACTIVE_MYIDEAS)
-                  }}>
-                    <FormattedMessage id='NAV_LINKS.MY_IDEAS' />
-                  </button>
-                </li> : null
-            }
+        <li className='cvw-navigation-wrapper__structure__child cvw-navigation-wrapper__structure__child--right'>
+          <ul className='cvw-navigation-wrapper__structure cvw-navigation-wrapper__structure--right'>
+            { shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.documentSaving)
+              ? <li>
+                <CVWNavBtn
+                  active={location.pathname === ROUTES_ENUM.ACTIVE_MYIDEAS}
+                  onClick={() => handleNavigation(ROUTES_ENUM.ACTIVE_MYIDEAS)}
+                  textRenderer={() => <FormattedMessage id='NAV_LINKS.MY_IDEAS' />} />
+              </li> : null }
             <li>
-              <button className={`cvw-nav-btn ${location.pathname === ROUTES_ENUM.HELP ? 'cvw-nav-btn--active' : ''}`} onClick={() => {
-                handleNavigation(ROUTES_ENUM.HELP)
-              }}>
-                <FormattedMessage id='NAV_LINKS.HELP' />
-              </button>
+              <CVWNavBtn
+                active={location.pathname === ROUTES_ENUM.HELP}
+                onClick={() => handleNavigation(ROUTES_ENUM.HELP)}
+                textRenderer={() => <FormattedMessage id='NAV_LINKS.HELP' />} />
             </li>
           </ul>
         </li>
