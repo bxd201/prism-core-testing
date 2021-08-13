@@ -67,6 +67,18 @@
     }
   }
 
+  @media (max-width: 420px) {
+    .SearchBar__input::placeholder {
+      font-size: 0.8em;
+   }
+  }
+
+  @media (max-width: 380px) {
+    .SearchBar__input::placeholder {
+      font-size: 0.5em;
+   }
+  }
+
   &__clean {
     position: absolute;
     right: ($clear-size / 2) + $input-padding;
