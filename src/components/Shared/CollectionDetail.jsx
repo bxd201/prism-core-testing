@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
 import ConfigurationContext, { type ConfigurationContextType } from '../../contexts/ConfigurationContext/ConfigurationContext'
 import * as scroll from 'scroll'
+import { varValues } from 'src/shared/withBuild/variableDefs'
 import './CollectionDetail.scss'
 import 'src/scss/externalComponentSupport/AutoSizer.scss'
 import type { ColorCollectionDetail } from '../../shared/types/Colors.js.flow'
@@ -92,7 +93,7 @@ const CollectionDetail = ({ addToLivePalette, collectionDetailData }: Props) => 
             <AutoSizer onResize={handleGridResize}>
               {({ height, width }) => {
                 const collectionSize = collectionDetailData.collections.length
-                const columnCount = Math.max(1, Math.round(width / resultSwatchSize))
+                const columnCount = window.innerWidth < varValues.breakpoints.xs.slice(0, -2) ? 3 : Math.max(1, Math.round(width / resultSwatchSize))
                 const rowCount = Math.ceil(collectionSize / columnCount)
                 const newSize = width / columnCount
                 _cellSize = newSize
