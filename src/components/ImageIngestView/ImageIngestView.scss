@@ -36,6 +36,7 @@
     margin: 0 auto;
     text-align: center;
     display: block;
+    min-height: 14.3rem;
   }
   &__header {
     display: block;
@@ -51,7 +52,7 @@
      outline: none;
      position: absolute;
      text-align: center;
-     top: .25rem;
+     top: .35rem;
      width: auto;
      z-index: 1000;
      padding: .45em;
@@ -63,14 +64,20 @@
        @include hover-style
      }
      &--left {
-       left: .875rem;
+       left: .35rem;
      }
      &--right {
-       right: .875rem;
+       right: .35rem;
      }
      @include respond-above(sm) {
       padding: .75em 1.75em;
       top: .875rem;
+      &--left {
+        left: .875rem;
+      }
+      &--right {
+        right: .875rem;
+      }
      }
    }
   &__button-left-text {
