@@ -103,6 +103,10 @@ $cvw-nav-btn-height: 3rem; // TODO: make better
   font-weight: 400;
   width: 100%;
 
+  @include respond-below(sm) {
+    height: 100vh;
+  }
+
   &__close {
     position: absolute;
     right: 1em;
