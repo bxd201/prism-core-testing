@@ -14,7 +14,7 @@
     width: 19rem;
     z-index: 1000;
     &__container {
-      background: var(getThemeColor('light.lightest'));
+      background: var(getThemeColor('primaryBg'));
       display: flex;
       flex-direction: column;
       line-height: 1.2em;
@@ -36,7 +36,7 @@
         padding: .75em;
       }
       &__rotate-arrow {
-        background: var(getThemeColor('white'));
+        background: var(getThemeColor('primaryBg'));
         border: 1px solid transparent;
         display: inline-block;
         font-size: 3em;
