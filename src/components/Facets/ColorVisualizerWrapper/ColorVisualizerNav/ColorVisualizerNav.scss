@@ -1,56 +1,13 @@
-$cvw-nav-btn-height: 3rem; // TODO: make better
+@import '../shared-vars.scss';
 
 .cvw-navigation-wrapper {
   height: $cvw-nav-btn-height;
-
-  .cvw-nav-btn {
-    height: $cvw-nav-btn-height;
-    background-color: var(getThemeColor('menuBg'));
-    background-image: linear-gradient(to top, var(getThemeColor('white')) 50%, var(getThemeColor('secondary')) 50%);
-    background-size: 100% 200%;
-    background-repeat: no-repeat;
-    background-position: 0 -102%; // vertical offset of >100% to make sure there are no rendering issues with <1px pct issues
-    color: var(getThemeColor('menuTxt'));
-    transition: background-position 0.2s;
-    margin-right: 2px;
-    padding: 0 .3em;
-    @include respond-above(xs) {
-      padding-left: .7em;
-      padding-right: .7em;
-    }
-    @include respond-above(sm) {
-      padding-left: 1em;
-      padding-right: 1em;
-    }
-
-    &:hover {
-      color: var(getThemeColor('menuTxtHover'));
-      background-position: 0 -80%;
-    }
-
-    &--active {
-      color: var(getThemeColor('white'));
-      background-position: 0 0;
-      background-color: var(getThemeColor('secondary'));
-
-      &:hover {
-        color: var(getThemeColor('white'));
-        background-position: 0 0;
-      }
-    }
-
-    &:focus {
-      outline-style: solid;
-      outline-color: var(getThemeColor('secondary'));
-      outline-width: 2px;
-      z-index: 100;
-    }
-  }
 
   &__structure {
     display: flex;
     font-size: .8125rem; // sets base font size for top nav items
     background-color: var(getThemeColor('menuBg'));
+    list-style-type: none;
 
     &--center {
       justify-content: center;
@@ -58,20 +15,18 @@ $cvw-nav-btn-height: 3rem; // TODO: make better
       border-bottom: 1px solid var(getThemeColor('light'));
     }
 
-    &--right {
-      list-style-type: none;
-      @include respond-below(xs) {
-        height: 96%;
+    &__child {
+      &--right {
+        @include respond-below(sm) {
+          margin-left: auto;
+        }
       }
-      @include respond-above(xs) {
+    }
+
+    &--right {
+      @include respond-above(sm) {
         position: absolute;
         right: 1em;
-      }
-
-      & .cvw-nav-btn {
-        @include respond-below(xs) {
-          padding: 0 0.5em;
-        }
       }
     }
   }
