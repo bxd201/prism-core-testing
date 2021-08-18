@@ -33,6 +33,19 @@
       display: block;
     }
   }
+  &__button {
+    color: var(getThemeColor('buttonColor'));
+    background-color: var(getThemeColor('buttonBgColor'));
+    border: 1px solid var(getThemeColor('buttonBorder'));
+    text-transform: var(getVarName('typography.buttonTextTransform'));
+    font-weight: var(getVarName('typography.buttonFontWeight'));
+    padding: 10px 20px;
+  &:hover {
+    border-color: var(getThemeColor('buttonHoverBorder'));
+    background-color: var(getThemeColor('buttonHoverBgColor'));
+    color: var(getThemeColor('buttonHoverColor'));
+  }
+}
   &__learn-more {
     display: inline-block;
     text-align: center;
