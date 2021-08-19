@@ -83,10 +83,9 @@ const CollectionDetail = ({ addToLivePalette, collectionDetailData }: Props) => 
     }
   }
   // TODO test that this works for https://develop-lowescvw.ebus.swaws in PROD env
-  const lowesCBGPath = 'https://develop-lowescvw.ebus.swaws'
   const downloadPDF = (imagePath) => {
     axios({
-      url: lowesCBGPath + imagePath,
+      url: imagePath,
       method: 'GET',
       responseType: 'blob'
     }).then((response) => {
