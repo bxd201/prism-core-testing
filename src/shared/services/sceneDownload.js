@@ -2,9 +2,11 @@
 import Jimp from 'jimp'
 import { IntlShape } from 'react-intl'
 import type { MiniColor } from '../types/Scene'
+import { type Color } from 'src/shared/types/Colors'
 import { SCENE_TYPES } from '../../constants/globals'
+import { fullColorNumber } from 'src/shared/helpers/ColorUtils'
 
-const generateImage = async (data: any, surfaceColors: MiniColor[], config: Object, intl: IntlShape): Jimp => {
+const generateImage = async (data: any, surfaceColors: MiniColor[], config: Object, intl: IntlShape, swatchColors: Color[], swatchSections: string[] = []): Jimp => {
   const isPaintScene = !data.variantName
   const [image, logo, bottomLogo, smallBlackFont] = await Promise.all([
     isPaintScene ? Jimp.read(data) : Jimp.read(data.image),
@@ -25,8 +27,7 @@ const generateImage = async (data: any, surfaceColors: MiniColor[], config: Obje
   }
 
   const coloredSurfaces = !isPaintScene && surfaceColors
-  const livePaletteColors: Color[] = JSON.parse(window.localStorage.getItem('lp')).colors
-  const blackFontsArray: boolean[] = livePaletteColors.map(color => useBlackText(color.hex))
+  const blackFontsArray: boolean[] = swatchColors.map(color => useBlackText(color.hex))
 
   let blackFonts = {
     regular: undefined,
@@ -105,7 +106,7 @@ const generateImage = async (data: any, surfaceColors: MiniColor[], config: Obje
   }
 
   // Brochure composition settings
-  const swatchRows = Math.ceil(livePaletteColors.length / 2)
+  const swatchRows = Math.ceil(swatchColors.length / 2)
   const headerHeight = 200
   const headerLogoHeight = Math.floor(headerHeight * 0.9)
   const topMargin = logo ? headerHeight : 0
@@ -114,7 +115,6 @@ const generateImage = async (data: any, surfaceColors: MiniColor[], config: Obje
   const swatchHeight = 200
   const swatchWidth = (image.bitmap.width - padding) / 2
   const bottomMargin = footerHeight + ((swatchHeight + padding) * swatchRows)
-  const withoutLogoBottomMargin = 35
   let bottomLogoResizeWith = 400
 
   // Add white space above image and add logo
@@ -155,8 +155,10 @@ const generateImage = async (data: any, surfaceColors: MiniColor[], config: Obje
       opacityDest: 1
     })
     disclaimerX = bottomLogo.bitmap.width + 2 * bottomLogoX
-    disclaimerY = bottomLogoY + (!logo ? withoutLogoBottomMargin : 0)
+  } else {
+    disclaimerX = padding
   }
+  disclaimerY = finalHeight - footerHeight + padding
 
   image.print(blackFonts.small, disclaimerX, disclaimerY, downloadDisclaimer1, maxDisclaimerWidth, (err, image, { x, y }) => {
     if (err) {
@@ -167,27 +169,31 @@ const generateImage = async (data: any, surfaceColors: MiniColor[], config: Obje
   })
 
   // Generate array of swatch images from colors in Live Palette
-  const swatchImages = livePaletteColors.map(color => {
+  const swatchImages = swatchColors.map((color, i) => {
     const colorHex = color.hex
     const swatchImage = new Jimp(swatchWidth, swatchHeight, colorHex)
     const textYStart = swatchHeight - 32 * 3 - 20
     const contrastFont = useBlackText(colorHex) ? blackFonts.regular : whiteFonts.regular
     const smallContrastFont = useBlackText(colorHex) ? blackFonts.small : whiteFonts.small
     const boldContrastFont = useBlackText(colorHex) ? blackFonts.bold : whiteFonts.bold
+    const nextLineOffset = -7 // tighten up space between lines
 
     // Print swatch details
-    swatchImage.print(contrastFont, 10, textYStart, `${color.brandKey} ${color.colorNumber}`, (err, image, { x, y }) => {
+    swatchImage.print(contrastFont, 10, textYStart, fullColorNumber(color.brandKey, color.colorNumber), (err, image, { x, y }) => {
       if (err) {
         console.warn(err)
         return
       }
-      image.print(boldContrastFont, 10, y, color.name, (err, image, { x, y }) => {
+      image.print(boldContrastFont, 10, y + nextLineOffset, color.name, (err, image, { x, y }) => {
         if (err) {
           console.warn(err)
           return
         }
+
         if (color.storeStripLocator) {
-          image.print(contrastFont, 10, y, `Locator Number: ${color.storeStripLocator}`)
+          image.print(contrastFont, 10, y + nextLineOffset, `Locator Number: ${color.storeStripLocator}`)
+        } else if (swatchSections[i]) {
+          image.print(contrastFont, 10, y + nextLineOffset, swatchSections[i])
         }
       })
     })

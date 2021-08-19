@@ -45,7 +45,7 @@ export default (props: Props) => {
   const [finalImageUrl, setFinalImageUrl] = useState()
   const { buttonCaption, activeComponent, getFlatImage, config, variantsCollection, selectedSceneUid, selectedVariantName, surfaceColors } = props
   const intl = useIntl()
-  const fastMaskData = useSelector(store => store.fastMaskSaveCache)
+  const [fastMaskData, structure] = useSelector(store => ([store.fastMaskSaveCache, store.colors?.structure]))
 
   const downloadLinkRef = useCallback(link => {
     if (link !== null) {
@@ -65,11 +65,17 @@ export default (props: Props) => {
       await getFlatImage(backgroundImg, paintLayer).then((url) => { imageSrc = url })
     }
     const variant = !isPaintScene ? variantsCollection.find(variant => variant.sceneUid === selectedSceneUid && variant.variantName === selectedVariantName) : null
-
     const data = getDownloadData(activeComponent, location, imageSrc, variant, fastMaskData)
     const colors = data.surfaceColors ? data.surfaceColors : surfaceColors
+    const swatchColors = JSON.parse(window.localStorage.getItem('lp')).colors
+    const sectionNameMapping = swatchColors.map(({ colorFamilyNames = [] }) => {
+      const fam = colorFamilyNames[0]
+      if (!fam) return null
 
-    generateImage(data, colors, config, intl).then(image => image.getBufferAsync(Jimp.MIME_JPEG))
+      return structure.filter(s => s.families.indexOf(fam) > -1).map(s => s?.name ?? null).reduce((accum, next) => accum || next, null)
+    })
+
+    generateImage(data, colors, config, intl, swatchColors, sectionNameMapping).then(image => image.getBufferAsync(Jimp.MIME_JPEG))
       .then(buffer => {
         const blob = new Blob([buffer], { type: 'img/jpg' })
         const urlCreator = window.URL || window.webkitURL
