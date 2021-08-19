@@ -1,6 +1,7 @@
 // @flow
 import React, { useContext, useEffect, useRef, useState } from 'react'
 // $FlowIgnore -- no defs for react-virtualized
+import axios from 'axios'
 import { Grid, AutoSizer } from 'react-virtualized'
 import ColorSwatch from 'src/components/Facets/ColorWall/ColorSwatch/ColorSwatch'
 import ColorWallContext, { colorWallContextDefault } from '../Facets/ColorWall/ColorWallContext'
@@ -20,6 +21,7 @@ const wrapper = `${baseClass}__wrapper`
 const collectionInfo = `${baseClass}__info`
 const collectionCover = `${baseClass}__cover`
 const collectionDescription = `${baseClass}__description`
+const collectionButton = `${baseClass}__button`
 const collectionColorList = `${baseClass}__color-list`
 const collectionColorListVertical = `${baseClass}__color-list-vertical`
 const verticalControlsTrigger = `${baseClass}__trigger`
@@ -80,6 +82,21 @@ const CollectionDetail = ({ addToLivePalette, collectionDetailData }: Props) => 
       setShowBottomScrollControl((scrollToY + gridEl.clientHeight) < gridEl.scrollHeight)
     }
   }
+  // TODO test that this works for https://develop-lowescvw.ebus.swaws in PROD env
+  const downloadPDF = (imagePath) => {
+    axios({
+      url: imagePath,
+      method: 'GET',
+      responseType: 'blob'
+    }).then((response) => {
+      const url = window.URL.createObjectURL(new Blob([response.data]))
+      const link = document.createElement('a')
+      link.href = url
+      link.setAttribute('download', 'collection.pdf')
+      document.body.appendChild(link)
+      link.click()
+    })
+  }
 
   return (
     <ColorWallContext.Provider value={{ ...colorWallContextDefault, displayDetailsLink: false, displayInfoButton: true, displayAddButton: true }}>
@@ -87,6 +104,7 @@ const CollectionDetail = ({ addToLivePalette, collectionDetailData }: Props) => 
         <div className={`${collectionInfo}`}>
           <img className={`${collectionCover}`} alt='' src={`${collectionDetailData.img}`} />
           <div className={`${collectionDescription}`}>{collectionDetailData.description}</div>
+          <button className={`${collectionButton}`} onClick={() => downloadPDF(collectionDetailData.pdfUrl)}>Download PDF</button>
         </div>
         <div className={`${collectionColorList}`}>
           <div ref={_gridWrapperRef} className={`${collectionColorListVertical}`}>

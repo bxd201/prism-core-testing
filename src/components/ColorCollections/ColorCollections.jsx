@@ -19,7 +19,6 @@ export function ColorCollections () {
 
   const { summaries, categories } = useSelector(state => state.collectionSummaries, shallowEqual)
   const colorMap = useSelector(state => state.colors.items.colorMap, shallowEqual)
-
   useEffect(() => { loadCollectionSummaries(brandId, { language: locale })(dispatch) }, [])
   useEffect(() => { loadColors(brandId)(dispatch) }, [])
 
@@ -30,8 +29,8 @@ export function ColorCollections () {
     if (typeof tabId !== 'undefined') {
       const category = categories.data.filter(({ id }) => `${id}` === `${tabId}`)[0]
       const collectionData = colorMap && category ? category.summaryIds.map(summaryId => {
-        const { name, thumbUrl: img, description, colorIds } = summaries.data[summaries.idToIndexHash[summaryId]]
-        return { description, img, name, collections: colorIds.map(id => colorMap[id]) }
+        const { name, thumbUrl: img, description, colorIds, pdfUrl } = summaries.data[summaries.idToIndexHash[summaryId]]
+        return { description, img, name, collections: colorIds.map(id => colorMap[id]), pdfUrl }
       }) : []
       setCollectionData(collectionData)
     }
