@@ -48,47 +48,29 @@ type WrapperProps = {
   children: ReactChildren
 }
 
-const HASH_LOCATION_SIZE_MAP = {
-  '#/active/scenes': '800px',
-  '#/active/inspiration': '600px',
-  '#/active/colors': '600px',
-  '#/upload/match-photo': '600px'
-}
-
-const CONTAINER_SELECTORS = [
-  '.dashboard-submenu__content',
-  '.cvw__root-container'
-]
-
-const resizeRootContainer = () => {
-  const hashLocationRequiresResize = Object.keys(HASH_LOCATION_SIZE_MAP).includes(window.location.hash)
-  CONTAINER_SELECTORS
-    .map(selector => document.querySelector(selector))
-    .filter(identity => !!identity)
-    .forEach(element => {
-      element.style.height = hashLocationRequiresResize ? HASH_LOCATION_SIZE_MAP[window.location.hash] : ''
-    })
-  if (!hashLocationRequiresResize) {
-    window.removeEventListener('hashchange', resizeRootContainer)
-  }
-}
-
 export const DropDownMenu = ({ title, items }: DropDownMenuProps) => {
+  const submenu = useRef(null)
   const history = useHistory()
   const { cvw = {}, brandId } = useContext<ConfigurationContextType>(ConfigurationContext)
   const { closeBtn = {} } = cvw
   const { showArrow: closeBtnShowArrow = true, text: closeBtnText = <FormattedMessage id='CLOSE' /> } = closeBtn
+  const rootContainer = document.querySelector('.cvw__root-container')
+
+  const resizeRootContainer = () => {
+    rootContainer && (rootContainer.style.height = (49 + submenu.current?.clientHeight - 1) + 'px') // menu height + submenu height - round up
+  }
 
   useEffect(() => {
-    if (!(isMobileOnly || isTablet)) return
+    if (!isMobileOnly) return
 
     resizeRootContainer()
     window.addEventListener('hashchange', resizeRootContainer)
 
     return () => {
+      rootContainer && (rootContainer.style.height = 'auto')
       window.removeEventListener('hashchange', resizeRootContainer)
     }
-  }, [isMobileOnly, isTablet])
+  }, [isMobileOnly])
 
   const handleClose = (e: SyntheticEvent) => {
     e.preventDefault()
@@ -98,7 +80,7 @@ export const DropDownMenu = ({ title, items }: DropDownMenuProps) => {
   return (
     <>
       <button className='overlay' onClick={() => history.push(ROUTES_ENUM.ACTIVE)} />
-      <div className='cvw-dashboard-submenu'>
+      <div className='cvw-dashboard-submenu' ref={submenu}>
         <button className='cvw-dashboard-submenu__close' onClick={handleClose}>
           {closeBtnText ?? <FormattedMessage id='CLOSE' />}{closeBtnShowArrow && <FontAwesomeIcon className='cvw-dashboard-submenu__close__ico' icon={['fa', 'chevron-up']} />}
         </button>

@@ -259,7 +259,6 @@
   max-width: 1080px;
   margin: 0 auto;
   position: relative;
-  min-height: 500px;
   .hide-on-small-screens {
     @include respond-below(sm) {
       display: none !important;
