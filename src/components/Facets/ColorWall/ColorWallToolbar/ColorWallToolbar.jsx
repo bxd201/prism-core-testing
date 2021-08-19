@@ -1,6 +1,6 @@
 // @flow
 /* eslint-disable react/jsx-no-bind */
-import React, { type Element, useContext, useRef, useState } from 'react'
+import React, { type Element, useContext, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRouteMatch, NavLink, useHistory, Link } from 'react-router-dom'
 import { FormattedMessage, useIntl } from 'react-intl'
@@ -57,7 +57,7 @@ const Select = ({ placeholderText, options, disabled = false, onSelectOpened }: 
 )
 
 type ColorFamilyMenuBtnsT = {
-  showAll: boolean,
+  showAll?: boolean,
   section: string,
   families: string[]
 }
@@ -98,9 +98,6 @@ const ColorWallToolbar = () => {
 
   const isFamilyView: boolean = !!family || path.endsWith(PATH_END_FAMILY)
   const visibleSections: string[] = sections && sections.length && hiddenSections && hiddenSections.length ? difference(sections, hiddenSections) : sections
-
-  const [collectionSelectionMenuOpen, setCollectionSelectionMenuOpen] = useState(false)
-  const [familySelectionMenuOpen, setFamilySelectionMenuOpen] = useState(false)
   // This should have been set by staging action...
   const shouldShowCloseButton = useSelector(store => store.isColorwallModallyPresented)
 
@@ -187,7 +184,6 @@ const ColorWallToolbar = () => {
               ? (
                 <div className={`${MODE_CLASS_NAMES.CELL} ${MODE_CLASS_NAMES.RIGHT}`}>
                   <ButtonBar.Bar>
-                    {/* {colorFamilyMenuBtns} */}
                     <ColorFamilyMenuBtns families={families} section={section} />
                   </ButtonBar.Bar>
                 </div>
@@ -205,8 +201,10 @@ const ColorWallToolbar = () => {
                   <Select
                     placeholderText={
                       isFamilyView && !alwaysShowColorFamilies
-                        ? (activeFamily && !collectionSelectionMenuOpen) ? activeFamily : at(messages, 'ALL_COLORS')[0]
-                        : (primeColorWall === activeSection) || collectionSelectionMenuOpen ? (width > 768 ? colorWall.selectSectionText ?? at(messages, 'SELECT_COLLECTION')[0] : primeColorWall) : activeSection
+                        ? activeFamily ?? at(messages, 'ALL_COLORS')[0]
+                        : width > 768
+                          ? activeSection === primeColorWall ? colorWall.selectSectionText ?? at(messages, 'SELECT_COLLECTION')[0] : activeSection
+                          : activeSection
                     }
                     options={((isFamilyView || family) && !alwaysShowColorFamilies ? families : visibleSections)
                       .filter(name => activeFamily !== name && activeSection !== name && (width <= 768 || !primeColorWall || primeColorWall !== name))
@@ -215,13 +213,12 @@ const ColorWallToolbar = () => {
                         link: isFamilyView && !alwaysShowColorFamilies ? generateColorWallPageUrl(section, label) : generateColorWallPageUrl(label)
                       }))
                     }
-                    onSelectOpened={setCollectionSelectionMenuOpen}
                   />
                   {alwaysShowColorFamilies && colorFamilyMenu.current?.clientWidth > width && (
                     <>
                       <span className='menu-bar__border' />
                       <Select
-                        placeholderText={(activeFamily && !familySelectionMenuOpen) ? activeFamily : 'All'}
+                        placeholderText={activeFamily ?? 'All'}
                         disabled={families.length < 1}
                         options={
                           [
@@ -235,7 +232,6 @@ const ColorWallToolbar = () => {
                           ]
 
                         }
-                        onSelectOpened={setFamilySelectionMenuOpen}
                       />
                     </>
                   )}
