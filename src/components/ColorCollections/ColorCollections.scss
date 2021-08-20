@@ -54,6 +54,9 @@
       position: relative;
       top: .20em;
     }
+    &:focus {
+      outline-style: none;
+    }
     &:focus-visible {
       outline-style: solid;
       outline-color: var(getThemeColor('secondary'));
