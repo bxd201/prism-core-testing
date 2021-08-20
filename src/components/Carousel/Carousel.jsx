@@ -3,11 +3,12 @@ import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useIntl } from 'react-intl'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
-import './Carousel.scss'
-import times from 'lodash/times'
 import isFunction from 'lodash/isFunction'
 import { KEY_CODES } from 'src/constants/globals'
 import type { FlatScene, FlatVariant } from '../../shared/types/Scene'
+
+import './Carousel.scss'
+import 'src/scss/convenience/visually-hidden.scss'
 
 type ComponentProps = {
   BaseComponent: any,
@@ -16,7 +17,7 @@ type ComponentProps = {
   isInfinity: boolean,
   tabId?: string,
   setTabId?: string => void,
-  tabMap?: string[],
+  tabMap: string[],
   initPosition?: number,
   setInitialPosition?: number => void,
   btnRefList?: Object[],
@@ -40,7 +41,7 @@ const indicators = `${baseClass}__wrapper__indicators`
 let nonTransition = false
 
 export default (props: ComponentProps) => {
-  const { BaseComponent, defaultItemsPerView, data, isInfinity, tabId, setTabId, tabMap, setInitialPosition, initPosition, btnRefList, getSummaryData } = props
+  const { BaseComponent, defaultItemsPerView, data, isInfinity, tabId, setTabId, tabMap = [], setInitialPosition, initPosition, btnRefList, getSummaryData } = props
   const [position, setPosition] = useState(initPosition || 0)
   const [focusIndex, setCurrentFocusItem] = useState(1)
   // tracks the previous position
@@ -166,6 +167,20 @@ export default (props: ComponentProps) => {
               )
             })}
           </div>
+          {slideList && slideList.length > 1 && <div className={indicators}>
+            {slideList.map((slide, i: number) => {
+              const activeTab = tabMap[pageNumber - 1]
+              const isActivePage = pageNumber === i + 1
+
+              if (activeTab === tabMap[i]) {
+                return <span key={i} className={`${indicators}__indicator ${isActivePage ? `${indicators}__indicator--active` : ''}`}>
+                  <span className='visually-hidden'>Page {i + 1}</span>
+                </span>
+              }
+
+              return null
+            })}
+          </div>}
         </div>
         <div className={`${contentWrapper}__next-btn__wrapper`}>
           {(isInfinity || position + defaultItemsPerView < data.length) && <button className={`${contentWrapper}__buttons`} onClick={handleNext} aria-label={formatMessage({ id: 'NEXT' })}>
@@ -173,15 +188,6 @@ export default (props: ComponentProps) => {
           </button>}
         </div>
       </div>
-      {isInfinity || <div className={`${indicators}`}>
-        {times(data.length <= defaultItemsPerView ? 0 : Math.ceil(data.length / defaultItemsPerView), i => (
-          <FontAwesomeIcon
-            key={i}
-            className={`${indicators}__icons ${indicators}__icons--${i === Math.floor(position / defaultItemsPerView) ? '' : 'un'}active`}
-            icon={['fa', 'circle']}
-          />
-        ))}
-      </div>}
     </div>
   )
 }
