@@ -21,7 +21,7 @@
   .color-wall-section-label {
     text-align: center;
     display: flex;
-    align-items: flex-end;
+    align-items: center;
 
     &__text {
       font-size: .75em;
@@ -29,8 +29,11 @@
       max-width: 100%;
       overflow-wrap: break-word;
       width: 100%;
-      margin: auto;
-      height: 50%;
+      margin-bottom: .6em;
+
+      @include respond-above(sm) {
+        margin: auto;
+      }
 
       &--large {
         font-size: 0.875em;
