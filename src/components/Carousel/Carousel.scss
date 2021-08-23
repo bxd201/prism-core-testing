@@ -1,7 +1,36 @@
 .prism-slick-carousel {
   &__wrapper {
-   position: relative;
-   width:100%;
+    position: relative;
+    width:100%;
+
+    &__indicators {
+      $size: 10px;
+
+      position: absolute;
+      bottom: $size;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      line-height: 0;
+
+      &__indicator {
+        display: inline-block;
+        border-radius: 50%;
+        width: $size;
+        height: $size;
+        background: var(getThemeColor('buttonBgColor.trans'));
+        box-shadow: 0 0 1px 0 var(getThemeColor('buttonBgColor.contrast.transer'));
+        transition: all .1s ease-out;
+        margin: 0 ($size / 2);
+
+        &--active {
+          background: var(getThemeColor('buttonColor'));
+          box-shadow: 0 0 0 0.5px var(getThemeColor('buttonColor.contrast.transer'));
+          transition: none;
+        }
+      }
+    }
+
     &__content {
       display: flex;
       justify-content: space-between;
@@ -49,28 +78,12 @@
         padding: 3em 0;
         width: 100%;
         overflow: hidden;
+
         &--loop{
           padding: 0;
           @include respond-above(sm) {
             padding: 1em 5em 0em 5em;
           }
-        }
-      }
-    }
-    &__indicators {
-      bottom: 0;
-      display: flex;
-      justify-content: center;
-      margin: 10px auto;
-      position: absolute;
-      width: 100%;
-      &__icons {
-        margin: 0 5px;
-        &--active {
-          color: var(getThemeColor('secondary'));
-        }
-        &--unactive {
-          color: var(getThemeColor('light'));
         }
       }
     }

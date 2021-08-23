@@ -185,7 +185,10 @@ const ColorWall = () => {
 
     ;(function scroll () {
       window.requestAnimationFrame((timestamp: DOMHighResTimeStamp) => {
+        if (!gridRef.current) return
+
         gridRef.current.scrollToPosition(getScrollStep(gridRef.current.state, end, timestamp - startTime))
+
         if (gridRef.current.state.scrollLeft !== end.scrollLeft || gridRef.current.state.scrollTop !== end.scrollTop) {
           scroll()
         }
