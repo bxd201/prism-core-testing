@@ -28,6 +28,21 @@ const verticalControlsTrigger = `${baseClass}__trigger`
 const triggerPrevious = `${baseClass}__previous-trigger`
 const triggerNext = `${baseClass}__next-trigger`
 
+const downloadPDF = (imagePath) => {
+  axios({
+    url: imagePath,
+    method: 'GET',
+    responseType: 'blob'
+  }).then((response) => {
+    const url = window.URL.createObjectURL(new Blob([response.data]))
+    const link = document.createElement('a')
+    link.href = url
+    link.setAttribute('download', 'collection.pdf')
+    document.body.appendChild(link)
+    link.click()
+  })
+}
+
 type Props = { collectionDetailData: ColorCollectionDetail, addToLivePalette: Function }
 const CollectionDetail = ({ addToLivePalette, collectionDetailData }: Props) => {
   const { cvw = {} } = useContext<ConfigurationContextType>(ConfigurationContext)
@@ -82,21 +97,6 @@ const CollectionDetail = ({ addToLivePalette, collectionDetailData }: Props) => 
       setShowBottomScrollControl((scrollToY + gridEl.clientHeight) < gridEl.scrollHeight)
     }
   }
-  // TODO test that this works for https://develop-lowescvw.ebus.swaws in PROD env
-  const downloadPDF = (imagePath) => {
-    axios({
-      url: imagePath,
-      method: 'GET',
-      responseType: 'blob'
-    }).then((response) => {
-      const url = window.URL.createObjectURL(new Blob([response.data]))
-      const link = document.createElement('a')
-      link.href = url
-      link.setAttribute('download', 'collection.pdf')
-      document.body.appendChild(link)
-      link.click()
-    })
-  }
 
   return (
     <ColorWallContext.Provider value={{ ...colorWallContextDefault, displayDetailsLink: false, displayInfoButton: true, displayAddButton: true }}>
@@ -104,7 +104,9 @@ const CollectionDetail = ({ addToLivePalette, collectionDetailData }: Props) => 
         <div className={`${collectionInfo}`}>
           <img className={`${collectionCover}`} alt='' src={`${collectionDetailData.img}`} />
           <div className={`${collectionDescription}`}>{collectionDetailData.description}</div>
-          <button className={`${collectionButton}`} onClick={() => downloadPDF(collectionDetailData.pdfUrl)}>Download PDF</button>
+          {collectionDetailData.pdfUrl
+            ? <button className={`${collectionButton}`} onClick={() => downloadPDF(collectionDetailData.pdfUrl)}>Download PDF</button>
+            : null}
         </div>
         <div className={`${collectionColorList}`}>
           <div ref={_gridWrapperRef} className={`${collectionColorListVertical}`}>
