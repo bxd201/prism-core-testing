@@ -4,6 +4,7 @@ import { useIntl } from 'react-intl'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
 import isFunction from 'lodash/isFunction'
+import noop from 'lodash/noop'
 import { KEY_CODES } from 'src/constants/globals'
 import type { FlatScene, FlatVariant } from '../../shared/types/Scene'
 
@@ -17,11 +18,11 @@ type ComponentProps = {
   isInfinity: boolean,
   tabId?: string,
   setTabId?: string => void,
-  tabMap: string[],
+  tabMap?: string[],
   initPosition?: number,
   setInitialPosition?: number => void,
   btnRefList?: Object[],
-  getSummaryData?: object=> void,
+  getSummaryData?: Object => void,
   // These props are automagically passed hence the need for comments to silence them
   // eslint-disable-next-line react/no-unused-prop-types
   deleteSavedScene?: Function,
@@ -29,6 +30,7 @@ type ComponentProps = {
   selectSavedScene?: Function,
   // eslint-disable-next-line react/no-unused-prop-types
   selectAnonStockScene?: Function,
+  showPageIndicators?: boolean,
   // eslint-disable-next-line react/no-unused-prop-types
   variants?: FlatVariant[],
   // eslint-disable-next-line react/no-unused-prop-types
@@ -41,7 +43,20 @@ const indicators = `${baseClass}__wrapper__indicators`
 let nonTransition = false
 
 export default (props: ComponentProps) => {
-  const { BaseComponent, defaultItemsPerView, data, isInfinity, tabId, setTabId, tabMap = [], setInitialPosition, initPosition, btnRefList, getSummaryData } = props
+  const {
+    BaseComponent,
+    btnRefList = [],
+    data,
+    defaultItemsPerView,
+    getSummaryData = noop,
+    initPosition,
+    isInfinity,
+    setInitialPosition,
+    setTabId,
+    showPageIndicators = false,
+    tabId,
+    tabMap = []
+  } = props
   const [position, setPosition] = useState(initPosition || 0)
   const [focusIndex, setCurrentFocusItem] = useState(1)
   // tracks the previous position
@@ -167,20 +182,32 @@ export default (props: ComponentProps) => {
               )
             })}
           </div>
-          {slideList && slideList.length > 1 && <div className={indicators}>
-            {slideList.map((slide, i: number) => {
-              const activeTab = tabMap[pageNumber - 1] ?? tabMap[tabMap.length - 1]
-              const isActivePage = pageNumber === i + 1
+          {showPageIndicators && slideList && slideList.length > 1 ? (
+            <div className={indicators}>
+              {slideList.map((slide, i: number) => {
+                debugger // eslint-disable-line
 
-              if (activeTab && activeTab === tabMap[i]) {
-                return <span key={i} className={`${indicators}__indicator ${isActivePage ? `${indicators}__indicator--active` : ''}`}>
-                  <span className='visually-hidden'>Page {i + 1}</span>
-                </span>
-              }
+                if (tabMap.length > 0) {
+                  const activeTab = tabMap[pageNumber - 1] ?? tabMap[tabMap.length - 1]
+                  const isActivePage = pageNumber === i + 1
 
-              return null
-            })}
-          </div>}
+                  if (activeTab && activeTab === tabMap[i]) {
+                    return <span key={i} className={`${indicators}__indicator ${isActivePage ? `${indicators}__indicator--active` : ''}`}>
+                      <span className='visually-hidden'>Page {i + 1}</span>
+                    </span>
+                  }
+
+                  return null
+                } else {
+                  const isActivePage = pageNumber === i
+
+                  return <span key={i} className={`${indicators}__indicator ${isActivePage ? `${indicators}__indicator--active` : ''}`}>
+                    <span className='visually-hidden'>Page {i + 1}</span>
+                  </span>
+                }
+              })}
+            </div>
+          ) : null}
         </div>
         <div className={`${contentWrapper}__next-btn__wrapper`}>
           {(isInfinity || position + defaultItemsPerView < data.length) && <button className={`${contentWrapper}__buttons`} onClick={handleNext} aria-label={formatMessage({ id: 'NEXT' })}>

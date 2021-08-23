@@ -49,6 +49,7 @@ export function ColorCollections () {
           <ColorCollectionsTab collectionTabs={categories.data} showTab={setTabId} tabIdShow={tabId} />
           <div className='color-collections__collections-list' role='main'>
             <Carousel
+              showPageIndicators
               BaseComponent={ColorStripButtonWrapper}
               btnRefList={[]}
               defaultItemsPerView={8}
