@@ -18,8 +18,8 @@
         border-radius: 50%;
         width: $size;
         height: $size;
-        background: var(getThemeColor('buttonBgColor.trans'));
-        box-shadow: 0 0 1px 0 var(getThemeColor('buttonBgColor.contrast.transer'));
+        background: var(getThemeColor('buttonBgColor.darker.trans'));
+        box-shadow: 0 0 1px 0 var(getThemeColor('buttonBgColor.darker.contrast.transer'));
         transition: all .1s ease-out;
         margin: 0 ($size / 2);
 

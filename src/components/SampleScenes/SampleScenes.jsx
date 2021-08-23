@@ -43,17 +43,18 @@ export const SampleScenesWrapper = ({ isColorTinted, setHeader, activateScene }:
         <div className={`${baseClass}__collections-list`}>
           {variantsCarouselTabsData && filteredVariants && variantsCarouselTabsData.tabMap && <Carousel
             BaseComponent={TintSceneWrapper}
-            getClientHeight={getClientMinHeight}
-            maxHeight={maxHeight.current}
             data={filteredVariants}
             defaultItemsPerView={1}
-            tabId={tabId}
-            initPosition={carouselCache?.initPosition}
-            setTabId={setTabId}
-            tabMap={variantsCarouselTabsData.tabMap}
-            isInfinity
-            isColorTinted={isColorTinted}
+            getClientHeight={getClientMinHeight}
             handleSelectedSceneUid={handleSelectedSceneUid}
+            initPosition={carouselCache?.initPosition}
+            isColorTinted={isColorTinted}
+            isInfinity
+            maxHeight={maxHeight.current}
+            setTabId={setTabId}
+            showPageIndicators
+            tabId={tabId}
+            tabMap={variantsCarouselTabsData.tabMap}
           />}
         </div>
       </div>
