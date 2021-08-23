@@ -185,8 +185,6 @@ export default (props: ComponentProps) => {
           {showPageIndicators && slideList && slideList.length > 1 ? (
             <div className={indicators}>
               {slideList.map((slide, i: number) => {
-                debugger // eslint-disable-line
-
                 if (tabMap.length > 0) {
                   const activeTab = tabMap[pageNumber - 1] ?? tabMap[tabMap.length - 1]
                   const isActivePage = pageNumber === i + 1
