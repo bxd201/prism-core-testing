@@ -169,10 +169,10 @@ export default (props: ComponentProps) => {
           </div>
           {slideList && slideList.length > 1 && <div className={indicators}>
             {slideList.map((slide, i: number) => {
-              const activeTab = tabMap[pageNumber - 1]
+              const activeTab = tabMap[pageNumber - 1] ?? tabMap[tabMap.length - 1]
               const isActivePage = pageNumber === i + 1
 
-              if (activeTab === tabMap[i]) {
+              if (activeTab && activeTab === tabMap[i]) {
                 return <span key={i} className={`${indicators}__indicator ${isActivePage ? `${indicators}__indicator--active` : ''}`}>
                   <span className='visually-hidden'>Page {i + 1}</span>
                 </span>
