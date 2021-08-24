@@ -13,6 +13,7 @@ import { varValues } from 'src/shared/withBuild/variableDefs'
 import './CollectionDetail.scss'
 import 'src/scss/externalComponentSupport/AutoSizer.scss'
 import type { ColorCollectionDetail } from '../../shared/types/Colors.js.flow'
+import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 
 const GRID_AUTOSCROLL_SPEED: number = 300
 
@@ -29,7 +30,7 @@ const triggerPrevious = `${baseClass}__previous-trigger`
 const triggerNext = `${baseClass}__next-trigger`
 
 const downloadPDF = (imagePath) => {
-  axios({
+  return axios({
     url: imagePath,
     method: 'GET',
     responseType: 'blob'
@@ -51,6 +52,7 @@ const CollectionDetail = ({ addToLivePalette, collectionDetailData }: Props) => 
   const [showTopScrollControl, setShowTopScrollControl] = useState<boolean>(false)
   const [showBottomScrollControl, setShowBottomScrollControl] = useState<boolean>(false)
   const [gridHeight, setGridHeight] = useState<number>(0)
+  const [isDownloading, setIsDownloading] = useState(false)
   const _gridWrapperRef: ?RefObject = useRef(null)
   const resultSwatchSize = 175
   let _cellSize = 0
@@ -62,6 +64,13 @@ const CollectionDetail = ({ addToLivePalette, collectionDetailData }: Props) => 
     }
   }, [gridHeight])
 
+  const handleDownloadPdf = (path) => {
+    setIsDownloading(true)
+
+    downloadPDF(path)
+      .catch(err => console.warn('error downloading PDF', err))
+      .then(() => setIsDownloading(false))
+  }
   const handleGridResize = ({ width, height }) => { setGridHeight(height) }
 
   const cellRenderer = ({ columnIndex, isScrolling, isVisible, key, parent, rowIndex, style }) => {
@@ -105,7 +114,12 @@ const CollectionDetail = ({ addToLivePalette, collectionDetailData }: Props) => 
           <img className={`${collectionCover}`} alt='' src={`${collectionDetailData.img}`} />
           <div className={`${collectionDescription}`}>{collectionDetailData.description}</div>
           {collectionDetailData.pdfUrl
-            ? <button className={`${collectionButton}`} onClick={() => downloadPDF(collectionDetailData.pdfUrl)}>Download PDF</button>
+            ? <button disabled={isDownloading} className={`${collectionButton}`} onClick={() => handleDownloadPdf(collectionDetailData.pdfUrl)}>
+              Download PDF
+              <span className={`${collectionButton}__loader`} style={{ opacity: isDownloading ? 1 : 0 }}>
+                <CircleLoader inheritSize />
+              </span>
+            </button>
             : null}
         </div>
         <div className={`${collectionColorList}`}>

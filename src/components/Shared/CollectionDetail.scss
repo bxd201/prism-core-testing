@@ -40,12 +40,29 @@
     text-transform: var(getVarName('typography.buttonTextTransform'));
     font-weight: var(getVarName('typography.buttonFontWeight'));
     padding: 10px 20px;
-  &:hover {
-    border-color: var(getThemeColor('buttonHoverBorder'));
-    background-color: var(getThemeColor('buttonHoverBgColor'));
-    color: var(getThemeColor('buttonHoverColor'));
+    transition: all .2s;
+    position: relative;
+
+    &:hover {
+      border-color: var(getThemeColor('buttonHoverBorder'));
+      background-color: var(getThemeColor('buttonHoverBgColor'));
+      color: var(getThemeColor('buttonHoverColor'));
+    }
+
+    &__loader {
+      transition: all .2s;
+      position: absolute;
+      font-size: 2em;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(getThemeColor('buttonBgColor.trans'));
+    }
   }
-}
   &__learn-more {
     display: inline-block;
     text-align: center;

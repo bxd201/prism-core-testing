@@ -2,8 +2,12 @@
 import React from 'react'
 import './SpinnerLoader.scss'
 
-const SpinnerLoader = () =>
-  <svg className='prism-loader-spinner' version='1.1' baseProfile='tiny' id='Layer_1' xmlns='http://www.w3.org/2000/svg' x='0px' y='0px' viewBox='0 0 40 40'>
+type SpinnerLoaderT = {
+  inheritSize?: boolean
+}
+
+const SpinnerLoader = ({ inheritSize = false }: SpinnerLoaderT) =>
+  <svg className={`prism-loader-spinner ${inheritSize ? 'prism-loader-spinner--inherit' : ''}`} version='1.1' baseProfile='tiny' id='Layer_1' xmlns='http://www.w3.org/2000/svg' x='0px' y='0px' viewBox='0 0 40 40'>
     <g stroke='none'>
       <path style={{ fill: '#E7E7E7' }} d='M20,4L20,4c0.9,0,1.6,0.9,1.6,2v4c0,1.1-0.7,2-1.6,2l0,0c-0.9,0-1.6-0.9-1.6-2V6  C18.4,4.9,19.1,4,20,4z' />
       <path style={{ fill: '#D2D2D2' }} d='M28,6.1L28,6.1c0.8,0.4,0.9,1.6,0.4,2.5l-2,3.5c-0.6,1-1.6,1.4-2.4,0.9l0,0c-0.8-0.4-0.9-1.6-0.4-2.5  l2-3.5C26.2,6.1,27.2,5.7,28,6.1z' />

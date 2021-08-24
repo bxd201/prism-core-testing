@@ -58,7 +58,7 @@ function CircleLoader (props: Props) {
   return (
     <CSSVariableApplicator variables={cssVars}>
       {brandId === 'lowes'
-        ? <SpinnerLoader />
+        ? <SpinnerLoader inheritSize={inheritSize} />
         : <svg className={`prism-loader-circle ${inheritSize ? 'prism-loader-circle--inherit' : ''} ${typeof className === 'string' ? className : ''}`} {...other} xmlns='http://www.w3.org/2000/svg' viewBox={`0 0 ${SIZE} ${SIZE}`} preserveAspectRatio='xMidYMid'>
           <circle className='prism-loader-circle__circle' cx={RADIUS} cy={RADIUS} {...circleProps} fill='none' strokeWidth={strokeWidth} r={RADIUS} strokeDasharray='164.93361431346415 56.97787143782138' transform={`rotate(143.836 ${RADIUS} ${RADIUS})`} />
         </svg>}
