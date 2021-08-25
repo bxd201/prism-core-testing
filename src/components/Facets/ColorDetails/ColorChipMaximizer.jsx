@@ -1,25 +1,24 @@
 // @flow
-import React, { useState, useEffect } from 'react'
+import React, { type Element, useState, useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
 import { FormattedMessage, injectIntl } from 'react-intl'
 import { LiveMessage } from 'react-aria-live'
 import * as GA from 'src/analytics/GoogleAnalytics'
-
 import { type Color } from '../../../shared/types/Colors.js.flow'
 import { varValues } from 'src/shared/withBuild/variableDefs'
-
 import 'src/scss/convenience/visually-hidden.scss'
 
 const BASE_CLASS = 'color-info'
 
 type Props = {
+  addColorBtn: ({}) => Element<any>,
   color: Color,
   intl: any,
   onToggle?: boolean => void,
 }
 
-export function ColorChipMaximizer ({ color, intl, onToggle }: Props) {
+export function ColorChipMaximizer ({ addColorBtn, color, intl, onToggle }: Props) {
   const [isMaximized, setMaximized] = useState(false)
   const [liveRegionMessage, setLiveRegionMessage] = useState('')
 
@@ -59,6 +58,7 @@ export function ColorChipMaximizer ({ color, intl, onToggle }: Props) {
   }
 
   if (color.isDark) {
+    CHIP_CLASS.push(`${BASE_CLASS}__max-chip--dark-color`)
     ALT_SWATCH_SIZE_TOGGLE_BUTTON_CLASSES.push(`${BASE_CLASS}__display-toggle-button--dark-color`)
     SWATCH_SIZE_TOGGLE_BUTTON_CLASSES.push(`${BASE_CLASS}__display-toggle-button--dark-color`)
     SWATCH_SIZE_WRAPPER_CLASSES.push(`${BASE_CLASS}__display-toggles-wrapper--dark-color`)
@@ -86,8 +86,10 @@ export function ColorChipMaximizer ({ color, intl, onToggle }: Props) {
   }, [isMaximized])
 
   return (
-    <React.Fragment>
-      <div className={CHIP_CLASS.join(' ')} style={{ backgroundColor: color.hex }} />
+    <>
+      <div className={CHIP_CLASS.join(' ')} style={{ backgroundColor: color.hex, zIndex: isMaximized ? 3 : 2 }}>
+        {addColorBtn(isMaximized ? {} : { display: 'none' })}
+      </div>
       <div className={SWATCH_SIZE_WRAPPER_CLASSES.join(' ')}>
         <button className={SWATCH_SIZE_TOGGLE_BUTTON_CLASSES.join(' ')} onClick={toggleChipMaximized} ref={maximizeChipBtn}>
           <FontAwesomeIcon className={`${BASE_CLASS}__display-toggles-icon`} icon={['fal', 'expand-alt']} color={contrastingTextColor} size={'2x'} />
@@ -102,8 +104,9 @@ export function ColorChipMaximizer ({ color, intl, onToggle }: Props) {
           </div>
         </button>
       </div>
+
       <LiveMessage message={liveRegionMessage} aria-live='polite' clearOnUnmount='true' />
-    </React.Fragment>
+    </>
   )
 }
 
