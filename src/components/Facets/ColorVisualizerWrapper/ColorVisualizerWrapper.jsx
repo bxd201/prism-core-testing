@@ -1,5 +1,5 @@
 // @flow
-import React, { Suspense } from 'react'
+import React, { lazy, Suspense, type Element, useEffect, useState } from 'react'
 import facetBinder from 'src/facetSupport/facetBinder'
 import { facetBinderDefaultProps } from 'src/facetSupport/facetInstance'
 import { facetPubSubDefaultProps } from 'src/facetSupport/facetPubSub'
@@ -7,20 +7,29 @@ import { PreLoadingSVG } from './PreLoadingSVG'
 import { type CVWPropsType as CVWContentsPropsType } from './ColorVisualizerContents'
 
 // lazy-load the contents of the CVW
-const ColorVisualizerContents = React.lazy(() => import('./ColorVisualizerContents'))
+const ColorVisualizerContents = lazy(() => import('./ColorVisualizerContents'))
 
 type CVWPropsType = CVWContentsPropsType & {
-  maxSceneHeight: number,
-  brand: string
+  brand: string,
+  language: string,
+  maxSceneHeight: number
 }
 
-export const ColorVisualizerWrapper = (props: CVWPropsType) =>
-  <div className='cvw__root-container'>
-    {/* display PreLoadingSVG while CVW contents of CVW load */}
-    <Suspense fallback={<PreLoadingSVG brand={props.brand} />}>
-      <ColorVisualizerContents {...props} />
-    </Suspense>
-  </div>
+export const ColorVisualizerWrapper = (props: CVWPropsType) => {
+  const [loading, setLoading] = useState<Element<typeof PreLoadingSVG> | null>(null)
+
+  useEffect(() => {
+    setLoading(<PreLoadingSVG brand={props.brand} />)
+  }, [])
+
+  return (
+    <div className='cvw__root-container'>
+      <Suspense fallback={loading}>
+        <ColorVisualizerContents {...props} />
+      </Suspense>
+    </div>
+  )
+}
 
 ColorVisualizerWrapper.defaultProps = { ...facetPubSubDefaultProps, ...facetBinderDefaultProps }
 
