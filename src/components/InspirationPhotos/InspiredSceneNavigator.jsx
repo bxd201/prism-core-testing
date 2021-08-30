@@ -7,7 +7,7 @@ import InspiredScene from './InspiredScene'
 import Carousel from '../Carousel/Carousel'
 import { useIntl } from 'react-intl'
 import { loadInspirationalPhotos } from '../../store/actions/inspirationalPhotos'
-import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
+import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import '../ColorCollections/ColorCollections.scss'
 
 const baseClass = 'color-collections'
@@ -15,7 +15,7 @@ const baseClass = 'color-collections'
 const InspiredSceneNavigator = () => {
   const dispatch = useDispatch()
   const { formatMessage, locale } = useIntl()
-  const { brandId } = useContext(ConfigurationContext)
+  const { brandId, cvw = {} } = useContext<ConfigurationContextType>(ConfigurationContext)
 
   useEffect(() => { loadInspirationalPhotos(brandId, { language: locale })(dispatch) }, [])
 
@@ -33,7 +33,7 @@ const InspiredSceneNavigator = () => {
     <CardMenu menuTitle={`${formatMessage({ id: 'INSPIRATIONAL_PHOTOS' })}`}>
       {() => (
         <div className={`${baseClass}__wrapper`}>
-          <ColorCollectionsTab collectionTabs={collectionTabs} tabIdShow={tabId} showTab={setTabId} />
+          <ColorCollectionsTab collectionsSelectLabel={cvw.inspirationalPhotos?.collectionsSelectLabel} collectionTabs={collectionTabs} tabIdShow={tabId} showTab={setTabId} />
           <div className={`${baseClass}__collections-list`} role='main'>
             <Carousel
               BaseComponent={InspiredScene}

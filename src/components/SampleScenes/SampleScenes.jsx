@@ -16,6 +16,7 @@ type ComponentProps = { isColorTinted: boolean, setHeader: Function, activateSce
 
 export const SampleScenesWrapper = ({ isColorTinted, setHeader, activateScene }: ComponentProps) => {
   const { cvw = {} } = useContext<ConfigurationContextType>(ConfigurationContext)
+  const { useOurPhotos = {} } = cvw
   const carouselCache = useSelector(state => ({ initPosition: state.carouselCache?.[0], tabId: state.carouselCache?.[1] }))
   const filteredVariants = useSelector(state => state.variantsCollection)?.filter((scene) => scene?.sceneCategories?.length && scene?.variantName === 'day')
   const [tabId: string, setTabId: string => void] = useState(carouselCache?.tabId)
@@ -37,9 +38,9 @@ export const SampleScenesWrapper = ({ isColorTinted, setHeader, activateScene }:
   const intl = useIntl()
 
   return (
-    <CardMenu menuTitle={cvw.useOurPhotos?.title ?? intl.formatMessage({ id: 'USE_OUR_PHOTO' })}>
+    <CardMenu menuTitle={useOurPhotos.title ?? intl.formatMessage({ id: 'USE_OUR_PHOTO' })}>
       {() => (<div className={`${baseClass}__wrapper`}>
-        {variantsCarouselTabsData && variantsCarouselTabsData.collectionTabs && <ColorCollectionsTab collectionTabs={variantsCarouselTabsData.collectionTabs} tabIdShow={tabId} showTab={setTabId} />}
+        {variantsCarouselTabsData && variantsCarouselTabsData.collectionTabs && <ColorCollectionsTab collectionsSelectLabel={useOurPhotos.collectionsSelectLabel} collectionTabs={variantsCarouselTabsData.collectionTabs} tabIdShow={tabId} showTab={setTabId} />}
         <div className={`${baseClass}__collections-list`}>
           {variantsCarouselTabsData && filteredVariants && variantsCarouselTabsData.tabMap && <Carousel
             BaseComponent={TintSceneWrapper}
