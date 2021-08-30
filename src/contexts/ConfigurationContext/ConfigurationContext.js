@@ -82,6 +82,9 @@ export type ConfigurationContextType = {
     downloadSceneFooterImage?: string,
     downloadSceneHeaderImage?: string,
     downloadSceneHeaderImage?: string,
+    expertColorPicks?: {
+      collectionsSelectLabel?: string
+    },
     help?: {
       addColor1?: string,
       addColor2?: string,
@@ -136,6 +139,9 @@ export type ConfigurationContextType = {
       savingMobile1?: string,
       savingMobile2?: string
     },
+    inspirationalPhotos?: {
+      collectionsSelectLabel?: string
+    },
     introBg?: string,
     introLogo?: string,
     menu?: {
@@ -175,6 +181,7 @@ export type ConfigurationContextType = {
     },
     termsOfUseLink?: string,
     useOurPhotos?: {
+      collectionsSelectLabel?: string,
       title?: string
     }
   },

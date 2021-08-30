@@ -11,7 +11,7 @@ import { loadExpertColorPicks } from 'src/store/actions/expertColorPicks'
 import { fullColorNumber, getContrastYIQ } from 'src/shared/helpers/ColorUtils'
 import { useIntl } from 'react-intl'
 import at from 'lodash/at'
-import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
+import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import ColorWallContext from '../Facets/ColorWall/ColorWallContext'
 import './ExpertColorPicks.scss'
 import '../ColorStripButton/ColorStripButton.scss'
@@ -19,7 +19,7 @@ import '../ColorStripButton/ColorStripButton.scss'
 const ExpertColorPicks = () => {
   const dispatch = useDispatch()
   const { locale } = useIntl()
-  const { brandId } = useContext(ConfigurationContext)
+  const { brandId, cvw = {} } = useContext<ConfigurationContextType>(ConfigurationContext)
   useEffect(() => { loadExpertColorPicks(brandId, { language: locale })(dispatch) }, [])
 
   const { messages = {} } = useIntl()
@@ -34,7 +34,7 @@ const ExpertColorPicks = () => {
     <CardMenu menuTitle={at(messages, 'EXPERT_COLOR_PICKS')[0]}>
       {(setCardShowing) => (
         <div className='expert-color-picks__wrapper'>
-          {categories.length > 0 && <ColorCollectionsTab collectionTabs={tabs} tabIdShow={tabId} showTab={setTabId} />}
+          {categories.length > 0 && <ColorCollectionsTab collectionsSelectLabel={cvw.expertColorPicks?.collectionsSelectLabel} collectionTabs={tabs} tabIdShow={tabId} showTab={setTabId} />}
           <div className='expert-color-picks__collections-list'>
             {expertColorPicks.length > 0 && <Carousel
               BaseComponent={expertColorPicks[0].colorDefs.length === 1 ? ColorSwatchWrapper : ColorStripButtonWrapper}
