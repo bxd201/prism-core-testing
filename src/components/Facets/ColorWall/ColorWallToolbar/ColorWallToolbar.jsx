@@ -44,7 +44,6 @@ type SelectPropsT = {
 }
 
 const Select = ({ placeholderText, options, disabled = false, onSelectOpened, purpose, mobileClick, setMobileClick, brandClick, setBrandClick }: SelectPropsT) => {
-
   return (
     <Wrapper
       className={`${MODE_CLASS_NAMES.CELL} ${MODE_CLASS_NAMES.RIGHT} ${menuBarPrefix}`}
