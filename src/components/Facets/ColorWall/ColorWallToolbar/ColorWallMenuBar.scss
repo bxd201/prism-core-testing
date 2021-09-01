@@ -183,6 +183,11 @@ $menu-bar-width: 27em;
 
   &__menu-item {
     height: auto;
+
+    &--active {
+      background: var(getThemeColor('buttonActiveBgColor')) !important;
+      color: var(getThemeColor('buttonActiveColor')) !important;
+    }
   }
 
   &__menu-link {

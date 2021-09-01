@@ -157,9 +157,15 @@ export const ColorWallPage = (props: Props) => {
     unsubscribeAll()
   }, [])
 
-  const CWToolbar = () => <div className='color-wall-wrap__chunk'>
-    <ColorWallToolbar alwaysShowColorFamilies={alwaysShowColorFamilies} />
-  </div>
+  const CWToolbar = (prop) => {
+    const [mobileClick, setMobileClick] = useState((prop.location.state) || 'All')
+    const [brandClick, setBrandClick] = useState((prop.location.data) || 'All Colors')
+    return (
+      <div className='color-wall-wrap__chunk'>
+        <ColorWallToolbar setMobileClick={setMobileClick} mobileClick={mobileClick} brandClick={brandClick} setBrandClick={setBrandClick} alwaysShowColorFamilies={alwaysShowColorFamilies} />
+      </div>
+    )
+  }
 
   return (
     <ColorWallContext.Provider value={cwContext}>
