@@ -35,7 +35,7 @@ const downloadPDF = (imagePath) => {
     method: 'GET',
     responseType: 'blob'
   }).then((response) => {
-    const url = window.URL.createObjectURL(new Blob([response.data]))
+    const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }))
     window.open(url)
   })
 }
