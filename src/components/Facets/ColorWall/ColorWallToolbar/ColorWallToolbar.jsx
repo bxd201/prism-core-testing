@@ -21,8 +21,8 @@ import '../../../GeneralButtons/ButtonBar/ButtonBar.scss'
 const PATH_END_FAMILY = 'family/'
 const menuBarPrefix = 'menu-bar'
 const menuBarItemList = `${menuBarPrefix}__menu-item`
-const menuBarActiveList = `${menuBarItemList}-active`
-const menuBarInactive = `${menuBarItemList}-inactive`
+const menuBarActiveList = `${menuBarItemList}--active`
+const menuBarInactive = `${menuBarItemList}--inactive`
 
 const omitPrefix = function omitPrefix (str: string = ''): string {
   if (typeof str === 'string') {

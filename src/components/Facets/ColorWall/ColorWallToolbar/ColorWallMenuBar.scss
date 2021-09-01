@@ -184,7 +184,7 @@ $menu-bar-width: 27em;
   &__menu-item {
     height: auto;
 
-    &-active {
+    &--active {
       background: var(getThemeColor('buttonActiveBgColor')) !important;
       color: var(getThemeColor('buttonActiveColor')) !important;
     }
