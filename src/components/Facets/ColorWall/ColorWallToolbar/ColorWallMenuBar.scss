@@ -165,7 +165,6 @@ $menu-bar-width: 27em;
   }
 
   &__menu {
-    background: var(getThemeColor('white'));
     // @todo theme
     box-shadow: 0 2px 5px -1px rgba(black, 0.65);
     width: 100%;
@@ -183,8 +182,9 @@ $menu-bar-width: 27em;
 
   &__menu-item {
     height: auto;
-
+    opacity: 0.95;
     &--active {
+      opacity: 1.0;
       background: var(getThemeColor('buttonActiveBgColor')) !important;
       color: var(getThemeColor('buttonActiveColor')) !important;
     }
