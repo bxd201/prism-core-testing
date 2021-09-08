@@ -33,9 +33,10 @@ const downloadPDF = (imagePath) => {
   return axios({
     url: imagePath,
     method: 'GET',
-    responseType: 'blob'
+    responseType: 'arraybuffer'
   }).then((response) => {
-    const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }))
+    let blob = new Blob([response.data], { type: 'application/pdf' })
+    let url = window.URL.createObjectURL(blob)
     window.open(url)
   })
 }
