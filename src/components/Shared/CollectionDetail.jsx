@@ -1,7 +1,6 @@
 // @flow
 import React, { useContext, useEffect, useRef, useState } from 'react'
 // $FlowIgnore -- no defs for react-virtualized
-import axios from 'axios'
 import { Grid, AutoSizer } from 'react-virtualized'
 import ColorSwatch from 'src/components/Facets/ColorWall/ColorSwatch/ColorSwatch'
 import ColorWallContext, { colorWallContextDefault } from '../Facets/ColorWall/ColorWallContext'
@@ -22,24 +21,13 @@ const wrapper = `${baseClass}__wrapper`
 const collectionInfo = `${baseClass}__info`
 const collectionCover = `${baseClass}__cover`
 const collectionDescription = `${baseClass}__description`
+const collectionDiv = `${baseClass}__border`
 const collectionButton = `${baseClass}__button`
 const collectionColorList = `${baseClass}__color-list`
 const collectionColorListVertical = `${baseClass}__color-list-vertical`
 const verticalControlsTrigger = `${baseClass}__trigger`
 const triggerPrevious = `${baseClass}__previous-trigger`
 const triggerNext = `${baseClass}__next-trigger`
-
-const downloadPDF = (imagePath) => {
-  return axios({
-    url: imagePath,
-    method: 'GET',
-    responseType: 'arraybuffer'
-  }).then((response) => {
-    let blob = new Blob([response.data], { type: 'application/pdf' })
-    let url = window.URL.createObjectURL(blob)
-    window.open(url)
-  })
-}
 
 type Props = { collectionDetailData: ColorCollectionDetail, addToLivePalette: Function }
 const CollectionDetail = ({ addToLivePalette, collectionDetailData }: Props) => {
@@ -49,7 +37,6 @@ const CollectionDetail = ({ addToLivePalette, collectionDetailData }: Props) => 
   const [showTopScrollControl, setShowTopScrollControl] = useState<boolean>(false)
   const [showBottomScrollControl, setShowBottomScrollControl] = useState<boolean>(false)
   const [gridHeight, setGridHeight] = useState<number>(0)
-  const [isDownloading, setIsDownloading] = useState(false)
   const _gridWrapperRef: ?RefObject = useRef(null)
   const resultSwatchSize = 175
   let _cellSize = 0
@@ -61,13 +48,6 @@ const CollectionDetail = ({ addToLivePalette, collectionDetailData }: Props) => 
     }
   }, [gridHeight])
 
-  const handleDownloadPdf = (path) => {
-    setIsDownloading(true)
-
-    downloadPDF(path)
-      .catch(err => console.warn('error downloading PDF', err))
-      .then(() => setIsDownloading(false))
-  }
   const handleGridResize = ({ width, height }) => { setGridHeight(height) }
 
   const cellRenderer = ({ columnIndex, isScrolling, isVisible, key, parent, rowIndex, style }) => {
@@ -111,13 +91,14 @@ const CollectionDetail = ({ addToLivePalette, collectionDetailData }: Props) => 
           <img className={`${collectionCover}`} alt='' src={`${collectionDetailData.img}`} />
           <div className={`${collectionDescription}`}>{collectionDetailData.description}</div>
           {collectionDetailData.pdfUrl
-            ? <button disabled={isDownloading} className={`${collectionButton}`} onClick={() => handleDownloadPdf(collectionDetailData.pdfUrl)}>
-              Download PDF
-              <span className={`${collectionButton}__loader`} style={{ opacity: isDownloading ? 1 : 0 }}>
-                <CircleLoader inheritSize />
-              </span>
-            </button>
-            : null}
+            ? <div className={`${collectionDiv}`}>
+              <a className={`${collectionButton}`} href={collectionDetailData.pdfUrl}>
+                Download PDF
+                <span className={`${collectionButton}__loader`} style={{ opacity: 0 }}>
+                  <CircleLoader inheritSize />
+                </span>
+              </a>
+            </div> : null}
         </div>
         <div className={`${collectionColorList}`}>
           <div ref={_gridWrapperRef} className={`${collectionColorListVertical}`}>

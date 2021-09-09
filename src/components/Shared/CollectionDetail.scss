@@ -33,15 +33,23 @@
       display: block;
     }
   }
+  &__border {
+    margin: 15px 0px 0px 0px;
+    @include respond-below(sm) {
+      margin: 0px 0px 30px 0px;
+    }
+  }
   &__button {
     color: var(getThemeColor('buttonColor'));
     background-color: var(getThemeColor('buttonBgColor'));
     border: 1px solid var(getThemeColor('buttonBorder'));
     text-transform: var(getVarName('typography.buttonTextTransform'));
     font-weight: var(getVarName('typography.buttonFontWeight'));
-    padding: 10px 20px;
+    padding: 10px 25px;
+    font-size: 0.9em;
     transition: all .2s;
     position: relative;
+    text-decoration: none;
     @include respond-below(sm) {
       margin-bottom: 20px;
     }
