@@ -12,7 +12,6 @@ import { varValues } from 'src/shared/withBuild/variableDefs'
 import './CollectionDetail.scss'
 import 'src/scss/externalComponentSupport/AutoSizer.scss'
 import type { ColorCollectionDetail } from '../../shared/types/Colors.js.flow'
-import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 
 const GRID_AUTOSCROLL_SPEED: number = 300
 
