@@ -14,12 +14,12 @@
   "CHOOSE_A_COLLECTION": "Choose a Collection",
   "CHOOSE_COLLECTION": "Choose collection",
   "CLEAR_ALL": "CLEAR ALL",
-  "CLEAR_AREAS":"CLEAR AREAS",
+  "CLEAR_AREAS": "CLEAR AREAS",
   "CLEAR_TEXT": "clear text",
   "CLOSE": "CLOSE",
   "COLOR_COLLECTIONS": "Colour Collections",
   "COLOR_DETAILS": "color details",
-  "COLOR_DETAILS_CALL_TO_ACTION_HEADING": "Like this colour? Buy a product below",
+  "COLOR_DETAILS_CALL_TO_ACTION_HEADING": "Like this colour?",
   "COLOR_FAMILIES": "Colour Families",
   "COMPARE_COLORS": "Compare Colors",
   "CONFIRMATION_DIALOG_MATCH_A_PHOTO_EXIT": "The photo content will be lost if you close. Make sure the colors you want to keep have been added to your palette. Do you still want to close?",
@@ -274,7 +274,7 @@
       "UNDO": "UNDO",
       "UNGROUP": "UNGROUP",
       "ZOOM": "ZOOM",
-      "ADDCOLORS":"ADD COLORS"
+      "ADDCOLORS": "ADD COLORS"
     },
     "TOOLTIPS": {
       "ADDCOLORS": "Click or tap here to add colors to your palette.",
