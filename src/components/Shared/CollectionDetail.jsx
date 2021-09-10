@@ -92,7 +92,7 @@ const CollectionDetail = ({ addToLivePalette, collectionDetailData }: Props) => 
           <div className={`${collectionDescription}`}>{collectionDetailData.description}</div>
           {collectionDetailData.pdfUrl
             ? <div className={`${collectionDiv}`}>
-              <a className={`${collectionButton}`} href={collectionDetailData.pdfUrl}>
+              <a className={`${collectionButton}`} href={collectionDetailData.pdfUrl} target='_blank'>
                 Download PDF
                 <span className={`${collectionButton}__loader`} style={{ opacity: 0 }}>
                   <CircleLoader inheritSize />
