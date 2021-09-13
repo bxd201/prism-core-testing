@@ -1,43 +1,33 @@
 // @flow
-import React, { useState, useEffect, useContext, useRef } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { useSelector } from 'react-redux'
 import Carousel from '../Carousel/Carousel'
 import ColorCollectionsTab from '../Shared/ColorCollectionsTab'
-import { StaticTintScene } from '../CompareColor/StaticTintScene'
-import flatten from 'lodash/flatten'
+import SingleTintableSceneView from '../SingleTintableSceneView/SingleTintableSceneView'
 import CardMenu from 'src/components/CardMenu/CardMenu'
-import { groupScenesByCategory } from './utils.js'
-import { loadScenes } from '../../store/actions/scenes'
-import { cacheCarousel } from '../../store/actions/navigation'
-import { SCENE_TYPES } from 'constants/globals'
+import { groupVariantsByCarouselTabs } from './utils.js'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { FormattedMessage, useIntl } from 'react-intl'
-import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import './SampleScenes.scss'
+import { useIntl } from 'react-intl'
+import ConfigurationContext, { type ConfigurationContextType } from '../../contexts/ConfigurationContext/ConfigurationContext'
 
 const baseClass = 'color-collections'
 type ComponentProps = { isColorTinted: boolean, setHeader: Function, activateScene: Function }
 
 export const SampleScenesWrapper = ({ isColorTinted, setHeader, activateScene }: ComponentProps) => {
+  const { cvw = {} } = useContext<ConfigurationContextType>(ConfigurationContext)
+  const { useOurPhotos = {} } = cvw
   const carouselCache = useSelector(state => ({ initPosition: state.carouselCache?.[0], tabId: state.carouselCache?.[1] }))
+  const filteredVariants = useSelector(state => state.variantsCollection)?.filter((scene) => scene?.sceneCategories?.length && scene?.variantName === 'day')
   const [tabId: string, setTabId: string => void] = useState(carouselCache?.tabId)
   const maxHeight = useRef(Number.MAX_SAFE_INTEGER)
-  const dispatch = useDispatch()
-  const { locale, formatMessage } = useIntl()
-  const { brandId } = useContext(ConfigurationContext)
-  const scenes = useSelector(state => {
-    if (state.scenes.sceneCollection) {
-      let collections = flatten(Object.values(state.scenes.sceneCollection))
-      return groupScenesByCategory(collections)
-    }
-  })
-
-  const activateSceneWithCacheState = (id: string) => {
-    const initPosition = scenes.groupScenes.findIndex((item) => {
-      return item.id === id
+  const variantsCarouselTabsData = useMemo(() => filteredVariants ? groupVariantsByCarouselTabs(filteredVariants) : undefined, [filteredVariants])
+  const handleSelectedSceneUid = (uid: string) => {
+    const initPosition = filteredVariants.findIndex((item) => {
+      return item.sceneUid === uid
     })
-    dispatch(cacheCarousel([initPosition, tabId]))
-    activateScene(id)
+    console.log('TAB ID::', tabId)
+    activateScene(uid, [initPosition, tabId])
   }
 
   const getClientMinHeight = (height) => {
@@ -45,39 +35,27 @@ export const SampleScenesWrapper = ({ isColorTinted, setHeader, activateScene }:
     maxHeight.current = minHeight
   }
 
-  useEffect(() => {
-    fetchData(SCENE_TYPES.ROOM)
-  }, [])
+  const intl = useIntl()
 
-  const fetchData = (type = null) => {
-    /** load specific type of collection */
-    if (type) {
-      (scenes.groupScenes.length === 0) && dispatch(loadScenes(type, brandId, { language: locale }))
-    } else {
-      /** load all types */
-      Object.values(SCENE_TYPES).forEach((type) => {
-        (scenes.groupScenes.length === 0) && dispatch(loadScenes(type, brandId, { language: locale }))
-      })
-    }
-  }
   return (
-    <CardMenu menuTitle={formatMessage({ id: 'USE_OUR_PHOTO' })}>
+    <CardMenu menuTitle={useOurPhotos.title ?? intl.formatMessage({ id: 'USE_OUR_PHOTO' })}>
       {() => (<div className={`${baseClass}__wrapper`}>
-        {scenes && scenes.collectionTabs && <ColorCollectionsTab collectionTabs={scenes.collectionTabs} tabIdShow={tabId} showTab={setTabId} />}
+        {variantsCarouselTabsData && variantsCarouselTabsData.collectionTabs && <ColorCollectionsTab collectionsSelectLabel={useOurPhotos.collectionsSelectLabel} collectionTabs={variantsCarouselTabsData.collectionTabs} tabIdShow={tabId} showTab={setTabId} />}
         <div className={`${baseClass}__collections-list`}>
-          {scenes && scenes.groupScenes && scenes.tabMap && <Carousel
-            BaseComponent={StaticTintSceneWrapper}
-            getClientHeight={getClientMinHeight}
-            maxHeight={maxHeight.current}
-            data={scenes.groupScenes}
+          {variantsCarouselTabsData && filteredVariants && variantsCarouselTabsData.tabMap && <Carousel
+            BaseComponent={TintSceneWrapper}
+            data={filteredVariants}
             defaultItemsPerView={1}
-            tabId={tabId}
+            getClientHeight={getClientMinHeight}
+            handleSelectedSceneUid={handleSelectedSceneUid}
             initPosition={carouselCache?.initPosition}
-            setTabId={setTabId}
-            tabMap={scenes.tabMap}
-            isInfinity
             isColorTinted={isColorTinted}
-            activateSceneWithCacheState={activateSceneWithCacheState}
+            isInfinity
+            maxHeight={maxHeight.current}
+            setTabId={setTabId}
+            showPageIndicators
+            tabId={tabId}
+            tabMap={variantsCarouselTabsData.tabMap}
           />}
         </div>
       </div>
@@ -86,20 +64,21 @@ export const SampleScenesWrapper = ({ isColorTinted, setHeader, activateScene }:
   )
 }
 
-type Props = { data: Object, isColorTinted: boolean, activateSceneWithCacheState: Function, getClientHeight: Function, isActivedPage?: boolean, maxHeight: Number}
-const StaticTintSceneWrapper = ({ data, isColorTinted, activateSceneWithCacheState, isActivedPage, getClientHeight, maxHeight }: Props) => {
+type Props = { data: Object, isColorTinted: boolean, handleSelectedSceneUid: Function, getClientHeight: Function, isActivedPage?: boolean, maxHeight: Number}
+const TintSceneWrapper = ({ data, isColorTinted, handleSelectedSceneUid, isActivedPage, getClientHeight, maxHeight }: Props) => {
   const sceneWrapperRef: RefObject = useRef()
-  let props = isColorTinted ? {
-    color: void (0),
-    scene: data,
-    config: {
-      isNightScene: false,
-      type: SCENE_TYPES.ROOM
+  const tintColor = isColorTinted ? void (0) : null
+  const allColors = useSelector(state => state?.colors?.items?.colorMap)
+  const [variantsCollection, scenesCollection] = useSelector(store => [store.variantsCollection, store.scenesCollection])
+  const sceneSurfaces = data.surfaces
+  const surfaceColors: SurfaceStatus[] = sceneSurfaces.map((surface: Surface) => {
+    const key = surface.colorId && ((surface.colorId).toString())
+    if (allColors) {
+      return tintColor || (tintColor === void (0) ? allColors[key] : '')
     }
-  } : {
-    color: null,
-    scene: data
-  }
+  })
+
+  const intl = useIntl()
 
   useEffect(() => {
     sceneWrapperRef.current && getClientHeight(sceneWrapperRef.current.clientHeight)
@@ -107,13 +86,13 @@ const StaticTintSceneWrapper = ({ data, isColorTinted, activateSceneWithCacheSta
 
   return (
     <>
-      <div className='static__scene__image__wrapper' ref={sceneWrapperRef} style={{ maxHeight: maxHeight }}>
-        <StaticTintScene {...props} />
+      <div className='static__scene__image__wrapper' ref={sceneWrapperRef}>
+        <SingleTintableSceneView surfaceColorsFromParents={surfaceColors} selectedSceneUid={data?.sceneUid} variantsCollection={variantsCollection} scenesCollection={scenesCollection} allowVariantSwitch={false} interactive={false} />
       </div>
-      <button tabIndex={(isActivedPage) ? '0' : '-1'} className='static__scene__paint__btn' onClick={() => activateSceneWithCacheState(data.id)}>
+      <button tabIndex={(isActivedPage) ? '0' : '-1'} className='static__scene__paint__btn' onClick={() => handleSelectedSceneUid(data?.sceneUid)}>
         <FontAwesomeIcon className={`cvw__btn-overlay__svg`} size='lg' icon={['fal', 'square-full']} />
         <FontAwesomeIcon className={`cvw__btn-overlay__svg cvw__btn-overlay__svg--brush`} icon={['fa', 'brush']} size='lg' transform={{ rotate: 320 }} style={{ transform: 'translateX(-10px)' }} />
-        <FormattedMessage id='PAINT_THIS_SCENE' />
+        <span className='static__scene__paint__btn__contents'>{intl.formatMessage({ id: 'PAINT_THIS_SCENE' })}</span>
       </button>
     </>
   )

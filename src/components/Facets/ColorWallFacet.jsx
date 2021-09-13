@@ -20,9 +20,11 @@ import { facetBinderDefaultProps, type FacetBinderMethods } from 'src/facetSuppo
 import { FormattedMessage } from 'react-intl'
 import translateBooleanFlexibly from 'src/shared/utils/translateBooleanFlexibly.util'
 import { generateColorWallPageUrl } from 'src/shared/helpers/ColorUtils'
+import { setIsColorWallModallyPresented } from '../../store/actions/navigation'
 
 type Props = FacetPubSubMethods & FacetBinderMethods & {
   addButtonText?: string,
+  alwaysShowColorFamilies?: boolean,
   colorDetailPageRoot?: string,
   colorWallBgColor?: string,
   displayAddButton?: boolean,
@@ -52,13 +54,11 @@ const searchBarNoLabel = () => <div className='color-wall-wrap__chunk'>
 </div>
 
 const SearchContain = () => <Search contain />
-const CWToolbar = () => <div className='color-wall-wrap__chunk'>
-  <ColorWallToolbar isFamilyPage={false} />
-</div>
 
 export const ColorWallPage = (props: Props) => {
   const {
     addButtonText,
+    alwaysShowColorFamilies,
     defaultSection,
     displayAddButton = false,
     displayAddButtonText,
@@ -153,8 +153,19 @@ export const ColorWallPage = (props: Props) => {
   // handle unmounting
   useEffect(() => () => {
     // unsubscribe from everything on unmount
+    dispatch(setIsColorWallModallyPresented())
     unsubscribeAll()
   }, [])
+
+  const CWToolbar = (prop) => {
+    const [mobileClick, setMobileClick] = useState((prop.location.state) || 'All')
+    const [brandClick, setBrandClick] = useState((prop.location.data) || 'All Colors')
+    return (
+      <div className='color-wall-wrap__chunk'>
+        <ColorWallToolbar setMobileClick={setMobileClick} mobileClick={mobileClick} brandClick={brandClick} setBrandClick={setBrandClick} alwaysShowColorFamilies={alwaysShowColorFamilies} />
+      </div>
+    )
+  }
 
   return (
     <ColorWallContext.Provider value={cwContext}>

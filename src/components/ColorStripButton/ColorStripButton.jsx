@@ -19,16 +19,18 @@ export default React.forwardRef<Props, HTMLElement>(({ children, onClick, colors
     <div className='color-strip-button'>
       <div className='color-strip-button__wrapper' ref={ref} role='button' tabIndex='0' onClick={onClick} onKeyDown={onKeyDown}>
         {children}
-        <div className='color-strip-button__bottom-list' role='img'>
-          {colors && colors.map((color, key) =>
-            <div
-              key={key}
-              style={{ backgroundColor: color.hex }}
-              className={`color-strip-button__bottom-item color-strip-button__bottom-item--${colors.length > 2 ? 'thin' : 'thick'}-border`}
-              data-testid='color-square'
-            />
-          )}
-        </div>
+        {colors && colors.length > 0 && (
+          <div className='color-strip-button__bottom-list' role='img'>
+            {colors.map((color, key) => (
+              <div
+                key={key}
+                style={{ backgroundColor: color.hex }}
+                className={`color-strip-button__bottom-item color-strip-button__bottom-item--${colors.length > 2 ? 'thin' : 'thick'}-border`}
+                data-testid='color-square'
+              />
+            ))}
+          </div>
+        )}
       </div>
       {bottomLabel && <div className='color-strip-button__label'>{bottomLabel}</div>}
     </div>

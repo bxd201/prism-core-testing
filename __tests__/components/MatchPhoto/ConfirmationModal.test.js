@@ -1,5 +1,5 @@
 import React from 'react'
-import ConfirmationModal from 'src/components/MatchPhoto/ConfirmationModal'
+import ConfirmationModal from 'src/components/ImageIngestView/ConfirmationModal'
 import { fireEvent } from '@testing-library/dom'
 import { RouteContext } from 'src/contexts/RouteContext/RouteContext'
 

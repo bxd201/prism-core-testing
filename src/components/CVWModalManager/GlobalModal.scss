@@ -1,0 +1,167 @@
+.global-modal {
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+    top: 0;
+    left: 0;
+    z-index: 10001;
+    width: 100%;
+    height: 100%;
+    &__inner-box {
+      background-color: var(getThemeColor('light.lightest'));
+      width: auto;
+      white-space: nowrap;
+      height: auto;
+      padding: 15px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      align-content: center;
+      justify-content: center;
+      color: var(getThemeColor('light.lightest.contrast'));
+      cursor: auto;
+      &--clear {
+        background-color: transparent;
+      }
+      &__content{
+        position: relative;
+        flex:3;
+      }
+      &.primary {
+        background-color: var(getThemeColor('light.lightest'));
+        color: var(getThemeColor('light.lightest.contrast'));
+      }
+      &.secondary {
+
+      }
+      &.danger {
+        color: var(getThemeColor('danger.contrast'));
+        background-color: var(getThemeColor('danger'));
+        border: none;
+      }
+      &.success {
+
+      }
+      &.warning {
+
+      }
+      @include respond-above(sm) {
+        width: 50%;
+      }
+      &__saved {
+        padding: 20px 50px;
+        width: 11rem;
+      }
+    }
+    &__title {
+      margin-bottom: 1.1rem;
+      font-weight: 600;
+      font-size: 1rem;
+      text-align: center;
+    }
+    &__preview-image {
+      width: 112px;
+      flex: 2;
+      margin: 0 1em 0 0;
+      background: white;
+      padding: 1px;
+      position: relative;
+    }
+    &__description {
+      margin-bottom: 1rem;
+      font-size: 1rem;
+      font-weight: 500;
+      text-align: center;
+      line-height: normal;
+    }
+    &__input-wrapper {
+      font-size: 1rem;
+      text-align: center;
+      width: 100%;
+      position: relative;
+      display: flex;
+      border: 1px solid #ccc;
+      margin-bottom: 1rem;
+      @include respond-above(sm) {
+        width: 13rem;
+        justify-content: space-between;
+        margin: 0 auto 1rem;
+      }
+    }
+    &__text-input {
+      outline: none;
+      box-shadow: none !important;
+      border: none !important;
+    }
+    &__input-label {
+      // @theme
+      background-color: #666;
+      border-radius: 1.3em;
+      color: var(getThemeColor('white'));
+      cursor: pointer;
+      display: block;
+      fill: var(getThemeColor('white'));
+      height: 1.3em;
+      line-height: 1.3em;
+      margin: 2px;
+      text-align: center;
+      width: 1.3em;
+      &:focus {
+        outline-style: solid;
+        outline-color: var(getThemeColor('secondary'));
+        outline-width: 2px;
+      }
+    }
+    &__button-row {
+      display: flex;
+      justify-content: center;
+      &__button {
+        padding: 0.8rem;
+        font-size: 0.9rem;
+        text-transform: capitalize;
+        font-weight: 600;
+        margin: 0 0.4rem;
+        &:focus {
+          outline-style: solid;
+          outline-color: var(getThemeColor('secondary'));
+          outline-width: 2px;
+        }
+        &:disabled {
+          color: gray
+        }
+        &--primary {
+          background-color: var(getThemeColor('white'));
+        }
+        &--secondary {
+
+        }
+        &--danger {
+          background-color: var(getThemeColor('danger'));
+          color: var(getThemeColor('danger.contrast'));
+          border: var(getThemeColor('danger.contrast')) solid 1px;
+          &:hover {
+            background-color: var(getThemeColor('danger.contrast'));
+            color: var(getThemeColor('danger'));
+          }
+        }
+        &--success {
+
+        }
+        &--warning {
+
+        }
+      }
+    }
+    &__empty-input {
+      position: absolute;
+      top: 30px;
+      width: 100%;
+      color: red;
+      text-align: center;
+      font-size: 0.8rem;
+    }
+  }

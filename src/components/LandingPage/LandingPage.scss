@@ -21,11 +21,17 @@
     margin: 1em 0;
   }
   &__painting-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-color: var(getThemeColor('secondary'));
-    padding: 1em;
+    padding: 0.2em 0.8em;
+    min-height: 4em;
     color: #fff;
     border: 1px solid var(getThemeColor('secondary'));
     margin-top: 10px;
+    min-width: calc(600px / 3 - 2em);
+
     & > span {
       padding: 10px;
     }
@@ -66,19 +72,20 @@
     }
     &__intro-buttons {
       border: 1px solid var(getThemeColor('light'));
-      display: inline-block;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       text-align: center;
-      width: auto;
       background: var(getThemeColor('white'));
       color: var(getThemeColor('black'));
       fill: var(getThemeColor('black'));
       margin: 0.25em 1em;
-      min-height: calc(3 * 1em);
-      padding: 1.2em 0.8em;
+      min-height: 4em;
+      padding: 0.2em 0.8em;
       text-decoration: none;
       text-transform: none;
-      width: calc(600px / 3 - 2em);
-      &>span{
+      min-width: calc(600px / 3 - 2em);
+      & > span{
         padding:10px;
         font-size:14px;
       }

@@ -5,26 +5,27 @@ import MergeColors from '../MergeCanvas/MergeColors'
 import PrismImage from '../PrismImage/PrismImage'
 import { useIntl, FormattedMessage } from 'react-intl'
 import { setLayersForPaintScene, WORKSPACE_TYPES } from '../../store/actions/paintScene'
-import { Redirect, useHistory } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 import ColorPalette from './ColorPalette'
 import CardMenu from 'src/components/CardMenu/CardMenu'
 import { selectSavedScene, SCENE_TYPE } from '../../store/actions/persistScene'
-import { selectSavedAnonStockScene, setSelectedSceneStatus } from '../../store/actions/stockScenes'
-import { StaticTintScene } from '../CompareColor/StaticTintScene'
-import { SCENE_VARIANTS } from 'src/constants/globals'
+import { selectSavedAnonStockScene, hydrateStockSceneFromSavedData } from '../../store/actions/stockScenes'
 import { getColorInstances, checkCanMergeColors, shouldPromptToReplacePalette } from '../LivePalette/livePaletteUtility'
 import type { ColorMap } from 'src/shared/types/Colors.js.flow'
 import { selectedSavedLivePalette } from 'src/store/actions/saveLivePalette'
-import { mergeLpColors, replaceLpColors } from 'src/store/actions/live-palette'
+import { activate, mergeLpColors } from 'src/store/actions/live-palette'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { LP_MAX_COLORS_ALLOWED } from 'constants/configurations'
-import DynamicModal, { DYNAMIC_MODAL_STYLE } from '../DynamicModal/DynamicModal'
-import { unsetSelectedScenePaletteLoaded, showWarningModal, activateOnlyScene, unpaintSceneSurfaces } from '../../store/actions/scenes'
-import ImageRotateContainer from 'src/components/MatchPhoto/ImageRotateContainer'
-import SceneManager from 'src/components/SceneManager/SceneManager'
+import { createSelectPaletteModal } from '../CVWModalManager/createModal'
+import { unsetSelectedScenePaletteLoaded } from '../../store/actions/scenes'
 import './MyIdeaPreview.scss'
-// @todo for mysherwin feature -RS
-// import { CUSTOM_SCENE_IMAGE_ENDPOINT } from '../../constants/endpoints'
+import { setSelectedSceneUid } from '../../store/actions/loadScenes'
+import { MODAL_TYPE_ENUM } from '../CVWModalManager/constants'
+import { ROUTES_ENUM } from '../Facets/ColorVisualizerWrapper/routeValueCollections'
+import SingleTintableSceneView from '../SingleTintableSceneView/SingleTintableSceneView'
+import { createScenesAndVariantsFromFastMaskWorkSpace, setFastMaskOpenCache } from '../../store/actions/fastMask'
+import { SCENE_TYPES } from '../../constants/globals'
+import useColors from '../../shared/hooks/useColors'
 
 const wrapperClass = 'my-ideas-preview-wrapper'
 const addAllBtn = `${wrapperClass}__add-all-btn`
@@ -57,54 +58,62 @@ const getZoomWidthAndHeight = (dimensions, width, height) => {
   return widthAndHeight
 }
 
-export const RedirectMyIdeas = () => {
-  const history = useHistory()
-  history.push('/active')
+type MyIdeaPreviewProps = {
+  openScene: Function,
+  maxSceneHeight: number
 }
-
-type MyIdeaPreviewProps = { openScene: Function }
-const MyIdeaPreview = ({ openScene }: MyIdeaPreviewProps) => {
+const MyIdeaPreview = ({ openScene, maxSceneHeight }: MyIdeaPreviewProps) => {
+  const [colors] = useColors()
   const dispatch = useDispatch()
   const { formatMessage } = useIntl()
-  const history = useHistory()
+  const intl = useIntl()
   const backgroundCanvasRef = useRef()
   const foregroundCanvasRef = useRef()
   const wrapperRef = useRef()
-  const isActivePaintScenePolluted: boolean = useSelector(store => store.scenes.isActiveScenePolluted)
 
-  const selectedScene = useSelector(state => {
-    const { items: { colorMap } }: ColorMap = state.colors
-    if (state.selectedSavedLivePaletteId) {
-      const expectSavedLivePaletteData = state.sceneMetadata.find(item => item.sceneType === SCENE_TYPE.livePalette && item.id === state.selectedSavedLivePaletteId)
+  const selectedScene = useSelector(store => {
+    const { items: { colorMap } }: ColorMap = store.colors
+    if (store.selectedSavedLivePaletteId) {
+      const expectSavedLivePaletteData = store.sceneMetadata.find(item => item.sceneType === SCENE_TYPE.livePalette && item.id === store.selectedSavedLivePaletteId)
       const livePalette = getColorInstances(null, expectSavedLivePaletteData.livePaletteColorsIdArray, colorMap)
       return { ...expectSavedLivePaletteData, livePalette, savedSceneType: SCENE_TYPE.livePalette }
     }
-    if (state.selectedStockSceneId) {
-      const expectStockData = state.sceneMetadata.find(item => item.sceneType === SCENE_TYPE.anonStock && item.id === state.selectedStockSceneId)
-      if (expectStockData) {
-        const stockSceneData = state.scenes.sceneCollection[expectStockData.sceneFetchType].find(item => item.id === expectStockData.scene.id)
-        const palette = expectStockData.scene.surfaces.map(surface => surface.color).filter(color => color !== undefined)
-        const livePaletteColorsIdArray = (expectStockData.hasOwnProperty('livePaletteColorsIdArray')) ? expectStockData.livePaletteColorsIdArray : null
+    if (store.selectedStockSceneId) {
+      const expectedStockData = store.sceneMetadata.find(item => item.sceneType === SCENE_TYPE.anonStock && item.id === store.selectedStockSceneId)
+      if (expectedStockData) {
+        // const stockSceneData = store.scenes.sceneCollection[expectStockData.sceneFetchType].find(item => item.id === expectStockData.scene.id)
+        const expectedStockScene = store.scenesCollection.find(scene => scene.id === expectedStockData.scene.sceneDataId && scene.sceneType === expectedStockData.scene.sceneDataType)
+        const expectedVariant = store.variantsCollection.find(variant => variant.sceneUid === expectedStockScene.uid && variant.variantName === expectedStockData.scene.variantName)
+        const palette = expectedStockData.scene.surfaceColors.filter(color => color)
+        const livePaletteColorsIdArray = (expectedStockData.hasOwnProperty('livePaletteColorsIdArray')) ? expectedStockData.livePaletteColorsIdArray : null
         const colorInstances = getColorInstances(palette, livePaletteColorsIdArray, colorMap)
-        return { name: expectStockData.name, palette: colorInstances, savedSceneType: SCENE_TYPE.anonStock, stockSceneData: stockSceneData, expectStockData: expectStockData }
+        const surfaceColors = expectedStockData.scene.surfaceColors
+        return { name: expectedStockData.name,
+          palette: colorInstances,
+          savedSceneType: SCENE_TYPE.anonStock,
+          scene: expectedStockScene,
+          variant: expectedVariant,
+          expectedStockData:
+          expectedStockData,
+          surfaceColors }
       }
     }
-    if (state.selectedSavedSceneId) {
-      const selectedScene = state.scenesAndRegions.filter(scene => scene.id === state.selectedSavedSceneId)
-      if (selectedScene.length) {
-        selectedScene[0].savedSceneType = SCENE_TYPE.anonCustom
-        const livePaletteColorsIdArray = selectedScene[0].livePaletteColorsIdArray
-        const colorInstances = getColorInstances(selectedScene[0].palette, livePaletteColorsIdArray, colorMap)
-        selectedScene[0].palette = colorInstances
-        return selectedScene[0]
+    if (store.selectedSavedSceneId) {
+      const selectedSavedScene = store.scenesAndRegions.filter(scene => scene.id === store.selectedSavedSceneId)
+      if (selectedSavedScene.length) {
+        selectedSavedScene[0].savedSceneType = selectedSavedScene[0].sceneType
+        const livePaletteColorsIdArray = selectedSavedScene[0].livePaletteColorsIdArray
+        const colorInstances = getColorInstances(selectedSavedScene[0].palette, livePaletteColorsIdArray, colorMap)
+        selectedSavedScene[0].palette = colorInstances
+        return selectedSavedScene[0].sceneType === SCENE_TYPE.anonFastMask ? createScenesAndVariantsFromFastMaskWorkSpace(selectedSavedScene[0]) : selectedSavedScene[0]
       }
     }
     return null
   })
 
+  // eslint-disable-next-line no-unused-vars
   const paintSceneWorkSpace = useSelector(state => state.paintSceneWorkspace)
   const lpColors = useSelector(state => state.lp.colors)
-  const [showSelectPaletteModal, setShowSelectPaletteModal] = useState(false)
 
   const { renderingBaseUrl, backgroundImageUrl } = selectedScene || {}
   const initialWidth = selectedScene && selectedScene.savedSceneType === SCENE_TYPE.anonCustom ? selectedScene.surfaceMasks.width : 0
@@ -119,6 +128,7 @@ const MyIdeaPreview = ({ openScene }: MyIdeaPreviewProps) => {
   const foregroundImageRef = useRef()
   const utilityCanvasRef = useRef()
   const layersRef = useRef([])
+  const history = useHistory()
 
   const resizeHandler = (e: SyntheticEvent) => {
     const wrapperDimensions = wrapperRef.current.getBoundingClientRect()
@@ -126,6 +136,13 @@ const MyIdeaPreview = ({ openScene }: MyIdeaPreviewProps) => {
     setWidth(newWidth)
     setHeight(newHeight)
   }
+
+  useEffect(() => {
+    // Redirect if this page has be navigated to via back button.
+    if (!selectedScene && !backgroundImageUrl) {
+      history.push(ROUTES_ENUM.ACTIVE_MYIDEAS)
+    }
+  }, [selectedScene])
 
   useEffect(() => {
     const wrapperDimensions = wrapperRef.current.getBoundingClientRect()
@@ -184,22 +201,25 @@ const MyIdeaPreview = ({ openScene }: MyIdeaPreviewProps) => {
   const openProject = (e: SyntheticEvent) => {
     e.preventDefault()
     const openPaintedProject = e.currentTarget.dataset.buttonid === 'painted' && true
-    const open = () => {
-      dispatch(unsetSelectedScenePaletteLoaded())
-      dispatch(setSelectedSceneStatus(null))
-      if (selectedScene.savedSceneType === SCENE_TYPE.anonCustom) {
-        dispatch(setLayersForPaintScene(backgroundCanvasRef.current.toDataURL(), openPaintedProject ? layersRef.current : null, selectedScene.palette, initialWidth, initialHeight, WORKSPACE_TYPES.savedScene))
-        openScene(<ImageRotateContainer key={Date.now()} isFromMyIdeas isPaintScene checkIsPaintSceneUpdate={false} showPaintScene imgUrl='' />, 'PaintScene')
-      } else if (selectedScene.savedSceneType === SCENE_TYPE.anonStock) {
-        selectedScene.openUnpaintedStockScene = !openPaintedProject
-        dispatch(unpaintSceneSurfaces(selectedScene.stockSceneData.id))
-        dispatch(activateOnlyScene(selectedScene.stockSceneData.id))
-        dispatch(setSelectedSceneStatus(selectedScene))
-        openScene(<SceneManager expertColorPicks hideSceneSelector scenes={[selectedScene]} />, 'StockScene')
-      }
-      history.push('/active')
+    dispatch(unsetSelectedScenePaletteLoaded())
+    if (selectedScene.savedSceneType === SCENE_TYPE.anonCustom) {
+      dispatch(setLayersForPaintScene(backgroundCanvasRef.current.toDataURL(), openPaintedProject
+        ? layersRef.current : null, selectedScene.palette, initialWidth, initialHeight, WORKSPACE_TYPES.savedScene))
+    } else if (selectedScene.savedSceneType === SCENE_TYPE.anonStock) {
+      selectedScene.openUnpaintedStockScene = !openPaintedProject
+      const surfaceColors = openPaintedProject ? selectedScene.surfaceColors : selectedScene.surfaceColors.map(color => null)
+      dispatch(setSelectedSceneUid(selectedScene.scene.uid))
+      dispatch(hydrateStockSceneFromSavedData(selectedScene.variant.variantName, surfaceColors))
+    } else if (selectedScene?.scene.sceneType === SCENE_TYPES.FAST_MASK) {
+      const colorId = selectedScene.surfaceColors[0].id
+      const newActiveColor = colors.colorMap[colorId]
+      // @todo We can do this now since there is only one fastmask surface, more surfaces will need a new design. -RS
+      dispatch(activate(newActiveColor))
+      dispatch(setFastMaskOpenCache(selectedScene))
+      history.push(ROUTES_ENUM.ACTIVE_FAST_MASK)
+      return
     }
-    isActivePaintScenePolluted ? dispatch(showWarningModal(open)) : open()
+    openScene(selectedScene.savedSceneType)
   }
 
   const addAllColorsToLp = () => {
@@ -208,55 +228,29 @@ const MyIdeaPreview = ({ openScene }: MyIdeaPreviewProps) => {
         dispatch(mergeLpColors(selectedScene.livePalette))
       } else {
         if (shouldPromptToReplacePalette(lpColors, selectedScene.livePalette, LP_MAX_COLORS_ALLOWED)) {
-          setShowSelectPaletteModal(true)
+          dispatch(createSelectPaletteModal(intl, MODAL_TYPE_ENUM.EMPTY_SCENE))
         }
       }
     }
   }
 
-  const loadPalette = () => {
-    dispatch(replaceLpColors(selectedScene.livePalette))
-  }
-
-  const getSelectPaletteModalConfig = () => {
-    const selectPaletteActions = [{ callback: (e) => {
-      e.preventDefault()
-      e.stopPropagation()
-      setShowSelectPaletteModal(false)
-    },
-    text: formatMessage({ id: 'PAINT_SCENE.CANCEL' }),
-    type: DYNAMIC_MODAL_STYLE.primary },
-    { callback: (e) => {
-      e.preventDefault()
-      e.stopPropagation()
-      loadPalette()
-      setShowSelectPaletteModal(false)
-    },
-    text: formatMessage({ id: 'PAINT_SCENE.OK' }),
-    type: DYNAMIC_MODAL_STYLE.primary }]
-
-    return {
-      selectPaletteActions,
-      selectPaletteTitle: formatMessage({ id: 'PAINT_SCENE.SELECT_PALETTE_TITLE' }),
-      selectPaletteDescription: formatMessage({ id: 'PAINT_SCENE.SELECT_PALETTE_DESC' })
+  const getSceneName = (data: any) => {
+    if (data?.name) {
+      return data.name
     }
-  }
 
-  const { selectPaletteActions, selectPaletteTitle, selectPaletteDescription } = getSelectPaletteModalConfig()
+    if (data?.scene) {
+      return data.scene?.description ?? ' '
+    }
+
+    return ' '
+  }
 
   return (
-    <>
-      {/* eslint-disable-next-line no-constant-condition */}
-      { selectedScene ? null : <Redirect to='/active/my-ideas' /> }
-      { paintSceneWorkSpace ? <RedirectMyIdeas /> : null}
-      {showSelectPaletteModal ? <DynamicModal
-        actions={selectPaletteActions}
-        title={selectPaletteTitle}
-        height={document.documentElement.clientHeight + window.pageYOffset}
-        description={selectPaletteDescription} /> : null}
-      <CardMenu menuTitle={`${(selectedScene && selectedScene.name) ? selectedScene.name : ``}`} showBackByDefault backPath='/active/my-ideas'>
+    <div>
+      <CardMenu menuTitle={getSceneName(selectedScene)} showBackByDefault backPath='/active/my-ideas'>
         {() => (
-          <div ref={wrapperRef} className={wrapperClass} style={{ minHeight: Math.round(height * heightCrop) }}>
+          <div ref={wrapperRef} className={wrapperClass} style={{ minHeight: Math.round(height * heightCrop), maxHeight: maxSceneHeight }}>
             {selectedScene && selectedScene.savedSceneType === SCENE_TYPE.livePalette && <button className={addAllBtn} onClick={addAllColorsToLp}>
               <span className={addAllText}><FormattedMessage id='ADD_ALL' /></span>
               <FontAwesomeIcon icon={['fal', 'plus-circle']} size='1x' />
@@ -275,14 +269,15 @@ const MyIdeaPreview = ({ openScene }: MyIdeaPreviewProps) => {
               <canvas ref={foregroundCanvasRef} width={initialWidth} height={initialHeight} style={{ width, height }} className={overlayedCanvas} />
               <canvas ref={backgroundCanvasRef} width={initialWidth} height={initialHeight} style={{ width, height, opacity: 0.8 }} />
               <canvas ref={utilityCanvasRef} width={initialWidth} height={initialHeight} style={{ width, height, opacity: 0, visibility: 'hidden', display: 'none' }} />
-            </div> : (selectedScene && selectedScene.savedSceneType === SCENE_TYPE.anonStock) ? <StaticTintScene
-              colors={selectedScene.palette}
-              scene={selectedScene.stockSceneData}
-              statuses={selectedScene.expectStockData.scene.surfaces}
-              config={{
-                isNightScene: selectedScene.expectStockData.scene.variant === SCENE_VARIANTS.NIGHT,
-                type: selectedScene.expectStockData.scene.sceneFetchType
-              }} /> : null}
+            </div> : (selectedScene &&
+            (selectedScene.variant))
+              ? <SingleTintableSceneView
+                adjustSvgHeight
+                scenesCollection={[selectedScene.scene]}
+                selectedSceneUid={selectedScene.scene.uid}
+                surfaceColorsFromParents={selectedScene.surfaceColors}
+                variantsCollection={[selectedScene.variant]}
+              /> : null}
             {backgroundImageSrc ? <PrismImage
               ref={backgroundImageRef}
               source={backgroundImageSrc}
@@ -302,7 +297,7 @@ const MyIdeaPreview = ({ openScene }: MyIdeaPreviewProps) => {
             {selectedScene && selectedScene.savedSceneType !== SCENE_TYPE.livePalette && <div className={actionButtonWrapperClassName}>
               <div className={actionButtonInnerWrapperClassName}>
                 <button data-buttonid='painted' className={buttonClassName} onClick={openProject}>{formatMessage({ id: 'MY_IDEAS.OPEN_PROJECT' }).toUpperCase()}</button>
-                <button data-buttonid='unpainted' className={buttonClassName} onClick={openProject}>{formatMessage({ id: 'MY_IDEAS.OPEN_UNPAINTED' }).toUpperCase()}</button>
+                {selectedScene?.scene?.sceneType !== SCENE_TYPES.FAST_MASK ? <button data-buttonid='unpainted' className={buttonClassName} onClick={openProject}>{formatMessage({ id: 'MY_IDEAS.OPEN_UNPAINTED' }).toUpperCase()}</button> : null}
               </div>
             </div>}
             {selectedScene && selectedScene.palette && <ColorPalette palette={selectedScene.palette.slice(0, 8)} isMyIdeaPreview />}
@@ -310,7 +305,7 @@ const MyIdeaPreview = ({ openScene }: MyIdeaPreviewProps) => {
           </div>
         )}
       </CardMenu>
-    </>
+    </div>
   )
 }
 

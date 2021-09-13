@@ -1,29 +1,31 @@
 // @flow
-import React, { useRef, useEffect, useState } from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import React, { useContext, useEffect, useState } from 'react'
 import 'src/providers/fontawesome/fontawesome'
-import { useSelector, useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux'
+import ColorWallContext from 'src/components/Facets/ColorWall/ColorWallContext'
+import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import { FormattedMessage } from 'react-intl'
 import * as GA from 'src/analytics/GoogleAnalytics'
 import ColorChipMaximizer from './ColorChipMaximizer'
 import ColorViewer from './ColorViewer'
 import ColorStrip from './ColorStrip'
-import SceneManager from '../../SceneManager/SceneManager'
+import ColorDetailsScenes from './ColorDetailsScenes'
 import ColorInfo from './ColorInfo'
 import CoordinatingColors from './CoordinatingColors'
 import SimilarColors from './SimilarColors'
-import { activateColorDetailsScene, paintAllMainSurfaces, resetScenesVariant, toggleColorDetailsPage } from '../../../store/actions/scenes'
-import { varValues } from 'src/shared/withBuild/variableDefs'
+import { Content } from '../ColorWall/ColorSwatch/ColorSwatch'
+import { toggleColorDetailsPage } from '../../../store/actions/scenes'
 import type { Color } from '../../../shared/types/Colors.js.flow'
 import type { SceneStatus } from 'src/shared/types/Scene'
 import 'src/scss/convenience/visually-hidden.scss'
 import './ColorDetails.scss'
 import ColorDataWrapper from 'src/helpers/ColorDataWrapper/ColorDataWrapper'
 import HeroLoader from 'src/components/Loaders/HeroLoader/HeroLoader'
-import sortBy from 'lodash/sortBy'
+import { ColorDetailsCTAs, type ColorDetailsCTAData } from './ColorDetailsCTAs'
 
 const baseClass = 'color-info'
+const mainInfoClass = `${baseClass}__main-info`
 
 type Props = {
   onColorChanged?: Color => void,
@@ -32,25 +34,20 @@ type Props = {
   onColorChipToggled?: boolean => void,
   familyLink?: string,
   loading?: boolean,
-  initialColor: Color
+  initialColor?: Color,
+  initialVariantName?: string,
+  callsToAction?: ColorDetailsCTAData[]
 }
 
-export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged, onColorChipToggled, familyLink, loading, initialColor }: Props) => {
+export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged, onColorChipToggled, familyLink, loading, initialColor = {}, initialVariantName, callsToAction = [] }: Props) => {
   const dispatch = useDispatch()
-  const toggleSceneDisplayScene = useRef(null)
-  const toggleSceneHideScene = useRef(null)
-  const scenesLoaded: boolean = useSelector(state => !state.scenes.loadingScenes)
-  const scenes = useSelector(state => state?.scenes?.sceneCollection[state?.scenes?.type] || [])
-
-  const [color: Color, setColor: Color => void] = useState(initialColor)
-  const [tabIndex: number, setTabIndex: number => void] = useState(0)
+  const [color, setColor] = useState<Color>(initialColor)
+  const [tabIndex, setTabIndex] = useState<number>(0)
 
   useEffect(() => {
     dispatch(toggleColorDetailsPage())
     return () => { dispatch(toggleColorDetailsPage()) }
   }, [])
-
-  useEffect(() => { scenesLoaded && dispatch(resetScenesVariant()) }, [scenesLoaded])
 
   useEffect(() => {
     color && GA.pageView(`color-detail/${color.brandKey} ${color.colorNumber} - ${color.name}`)
@@ -59,76 +56,38 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
     color.coordinatingColors || setTabIndex(0)
   }, [color])
 
-  // paint all the main surfaces on load of the CDP
-  useEffect(() => { scenesLoaded && color && dispatch(paintAllMainSurfaces(color)) }, [scenesLoaded, color])
+  const AddColorBtn = ({ style }: { style?: {} }) => {
+    const { colorDetailsAddColor } = useContext<ConfigurationContextType>(ConfigurationContext)
 
-  // activates the first "ImagePreloader" scene on the color detail modal when the scenes list changes
-  useEffect(() => {
-    const sceneIds = sortBy(scenes, scene => sortBy(scene.category).toString()).reduce((accum = [], next) => {
-      const last = accum[accum.length - 1]
-      if (!last) return [next]
-      if (sortBy(last.category).toString() !== sortBy(next.category).toString()) {
-        return [
-          ...accum,
-          next
-        ]
-      }
-      return accum
-    }, []).map(scene => scene.id)
-    const categoryScenes = scenes.filter(({ id }) => sceneIds.includes(id))
-    dispatch(activateColorDetailsScene(categoryScenes[0]?.id))
-  }, [scenes])
+    if (!colorDetailsAddColor) return null
+
+    return <div className={`${mainInfoClass}--add`} style={style}>
+      <ColorWallContext.Provider value={{ displayAddButton: true }}>
+        <Content msg='' color={color} style={{ position: 'relative' }} />
+      </ColorWallContext.Provider>
+    </div>
+  }
 
   if (loading) {
     return <HeroLoader />
   }
 
-  // perform some css class logic & scaffolding instead of within the DOM itself
-  let contrastingTextColor = varValues._colors.black
-  const MAIN_INFO_CLASSES = [`${baseClass}__main-info`]
-  const SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES = [`${baseClass}__display-toggle-button`, `${baseClass}__scene-display-toggle-button`]
-  const ALT_SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES = SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES
-  ALT_SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.push(`${baseClass}__scene-display-toggle-button--alt`)
-  SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.push(`${baseClass}__display-toggle-button--active`)
-  ALT_SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.push(`${baseClass}__display-toggle-button--active`)
-  if (color.isDark) {
-    contrastingTextColor = varValues._colors.white
-    SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.push(`${baseClass}__display-toggle-button--dark-color`)
-    ALT_SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.push(`${baseClass}__display-toggle-button--dark-color`)
-    MAIN_INFO_CLASSES.push(`${baseClass}__main-info--dark-color`)
-  }
-
   return (
     <>
       <div className='color-detail-view'>
-        <ColorChipMaximizer color={color} onToggle={onColorChipToggled} />
+        <ColorChipMaximizer addColorBtn={(style) => <AddColorBtn style={style} />} color={color} onToggle={onColorChipToggled} />
         <div className={`color-detail__scene-wrapper color-detail__scene-wrapper--displayed`}>
-          <SceneManager
-            maxActiveScenes={1}
-            interactive={false}
-            mainColor={color}
-            onSceneChanged={onSceneChanged}
-            onVariantChanged={onVariantChanged}
-            isColorDetail
-          />
+          <ColorDetailsScenes color={color} intitialVariantName={initialVariantName} />
         </div>
         <div className='color-detail__info-wrapper'>
-          <button className={SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.join(' ')} ref={toggleSceneDisplayScene}>
-            <FontAwesomeIcon className={`${baseClass}__display-toggles-icon ${baseClass}__display-toggles-icon--scene`} icon={['fal', 'home']} color={contrastingTextColor} />
-            <div className={`${baseClass}__scene-toggle-copy visually-hidden`}>
-              <FormattedMessage id='DISPLAY_SCENE_PAINTER' />
-            </div>
-          </button>
-          <button className={ALT_SCENE_DISPLAY_TOGGLE_BUTTON_CLASSES.join(' ')} ref={toggleSceneHideScene}>
-            <FontAwesomeIcon className={`${baseClass}__display-toggles-icon ${baseClass}__display-toggles-icon--scene`} icon={['fas', 'home']} color={contrastingTextColor} />
-            <div className={`${baseClass}__scene-toggle-copy visually-hidden`}>
-              <FormattedMessage id='HIDE_SCENE_PAINTER' />
-            </div>
-          </button>
-          <div className={MAIN_INFO_CLASSES.join(' ')} style={{ backgroundColor: color.hex }}>
+          <div className={`${mainInfoClass}${color.isDark ? ` ${mainInfoClass}--dark-color` : ''}`} style={{ backgroundColor: color.hex }}>
             <ColorViewer color={color} />
             <ColorStrip key={color.id} color={color} onColorChanged={setColor} />
+            <AddColorBtn />
           </div>
+
+          {callsToAction?.length ? <ColorDetailsCTAs className='color-detail__ctas color-detail__ctas--mobile' data={callsToAction} /> : null}
+
           <div className={`${baseClass}__additional-info`}>
             <Tabs
               selectedIndex={tabIndex}
@@ -172,6 +131,8 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
           </div>
         </div>
       </div>
+
+      {callsToAction?.length ? <ColorDetailsCTAs className='color-detail__ctas color-detail__ctas--desktop' data={callsToAction} /> : null}
     </>
   )
 }

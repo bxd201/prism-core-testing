@@ -21,7 +21,7 @@
   .color-wall-section-label {
     text-align: center;
     display: flex;
-    align-items: flex-end;
+    align-items: center;
 
     &__text {
       font-size: .75em;
@@ -29,8 +29,11 @@
       max-width: 100%;
       overflow-wrap: break-word;
       width: 100%;
-      margin: auto;
-      height: 50%;
+      margin-bottom: .6em;
+
+      @include respond-above(sm) {
+        margin: auto;
+      }
 
       &--large {
         font-size: 0.875em;
@@ -59,9 +62,9 @@
   position: absolute;
   top: 0;
   right: 0;
-  color: var(getThemeColor('primary'));
-  background: white;
-  margin: .25em;
+  color: var(getThemeColor('buttonColor'));
+  background: var(getThemeColor('buttonBgColor'));
+  margin: 10px 20px; // to clear scrollbars
   border-radius: 50%;
   width: 2.5em;
   height: 2.5em;
@@ -69,14 +72,16 @@
   align-items: center;
   justify-content: center;
   z-index: 1;
+  box-shadow: 0 1px 5px -1px rgba(black, .2);
 
   &:hover, &:focus {
-    background: var(getThemeColor('light'));
+    color: var(getThemeColor('buttonHoverColor'));
+    background: var(getThemeColor('buttonHoverBgColor'));
   }
 
   &:active {
-    background: var(getThemeColor('dark'));
-    color: var(getThemeColor('white'));
+    color: var(getThemeColor('buttonActiveColor'));
+    background: var(getThemeColor('buttonActiveBgColor'));
   }
 }
 

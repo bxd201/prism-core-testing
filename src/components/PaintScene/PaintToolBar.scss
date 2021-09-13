@@ -25,7 +25,7 @@
     }
   }
   &__toolbar-button {
-    background: white;
+    background: var(getThemeColor('black.contrast'));;
     border: 1px solid var(getThemeColor('light.lighter'));
     color: var(getThemeColor('black'));
     fill: var(getThemeColor('black'));
@@ -66,13 +66,12 @@
     &--active {
       border-width: 0;
       cursor: default;
-      fill: var(getThemeColor('white'));
+      fill: var(getThemeColor('secondary.contrast')) !important;
+      color: var(getThemeColor('secondary.contrast')) !important;
       overflow: visible;
       outline: none;
       &:hover {
-        color: var(getThemeColor('black'));
         cursor: default;
-        fill: none;
       }
       &:before {
         display: inline-block;
@@ -122,7 +121,8 @@
       left: -1.1em;
     }
     &--active {
-      color: var(getThemeColor('black'));
+      fill: var(getThemeColor('secondary.contrast')) !important;
+      color: var(getThemeColor('secondary.contrast')) !important;
       transition: color .7s;
     }
     &--disabled {

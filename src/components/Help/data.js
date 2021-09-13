@@ -30,6 +30,10 @@ export const helpTabs = [{
     'fontAwesomeIcon': { 'variant': 'fal', 'icon': 'signal-3', 'rotate': 235, 'size': 'lg' },
     'iconInfoName': 'HELPFUL_HINTS.CONTENT.ICONS_&_BUTTONS.ICON_INFO_NAME.GRAB_&_REORDER',
     'iconInfoContent': ['HELPFUL_HINTS.CONTENT.ICONS_&_BUTTONS.ICON_INFO_CONTENT.GRAB_&_REORDER']
+  }, {
+    'fontAwesomeIcon': {},
+    'iconInfoName': 'HELPFUL_HINTS.CONTENT.ICONS_&_BUTTONS.ICON_INFO_NAME.PAINT_SCENE',
+    'iconInfoContent': []
   }],
   'imageList': ''
 }, {
@@ -196,6 +200,30 @@ export const helpTabs = [{
     'iconInfoName': 'HELPFUL_HINTS.CONTENT.PAINTING_MY_OWN_PHOTO.ICON_INFO_NAME.UNDO_&_REDO',
     'iconInfoContent': ['HELPFUL_HINTS.CONTENT.PAINTING_MY_OWN_PHOTO.ICON_INFO_CONTENT.UNDO_&_REDO'],
     'isUndoRedo': true
+  }, {
+    'fontAwesomeIcon': [{ 'variant': 'fa', 'icon': 'redo-alt' }],
+    'iconInfoName': 'HELPFUL_HINTS.CONTENT.PAINTING_MY_OWN_PHOTO.ICON_INFO_NAME.REDO',
+    'iconInfoContent': []
+  }, {
+    'fontAwesomeIcon': [{ 'variant': 'fa', 'icon': 'eye', 'flip': 'horizontal' }],
+    'iconInfoName': 'HELPFUL_HINTS.CONTENT.PAINTING_MY_OWN_PHOTO.ICON_INFO_NAME.HIDE_PAINT',
+    'iconInfoContent': []
+  }, {
+    'fontAwesomeIcon': [{ 'variant': 'fal', 'icon': 'info-circle' }],
+    'iconInfoName': 'HELPFUL_HINTS.CONTENT.PAINTING_MY_OWN_PHOTO.ICON_INFO_NAME.INFO',
+    'iconInfoContent': []
+  }, {
+    'fontAwesomeIcon': [{ 'variant': 'fal', 'icon': 'trash-alt' }],
+    'iconInfoName': 'HELPFUL_HINTS.CONTENT.PAINTING_MY_OWN_PHOTO.ICON_INFO_NAME.DELETE_GROUP',
+    'iconInfoContent': []
+  }, {
+    'fontAwesomeIcon': [{ 'variant': 'fal', 'icon': 'object-group' }],
+    'iconInfoName': 'HELPFUL_HINTS.CONTENT.PAINTING_MY_OWN_PHOTO.ICON_INFO_NAME.GROUP',
+    'iconInfoContent': []
+  }, {
+    'fontAwesomeIcon': [{ 'variant': 'fal', 'icon': 'object-ungroup' }],
+    'iconInfoName': 'HELPFUL_HINTS.CONTENT.PAINTING_MY_OWN_PHOTO.ICON_INFO_NAME.UNGROUP',
+    'iconInfoContent': []
   }],
   'imageList': '',
   'isHiddenMobile': true
@@ -226,8 +254,22 @@ export const helpTabs = [{
 
 export const helpHeader = 'HELPFUL_HINTS.TITLE'
 
-export const filterHelpItems = (featureExclusions: string[]) => {
+export const filterHelpItems = (featureExclusions: string[], brandId: string): typeof helpTabs => {
+  // Filtering Help Section details:
+  // Icons & Buttons - Save hint
+  !shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.documentSaving) && helpTabs[0].content.forEach((icon, index) => {
+    icon.iconInfoName === 'HELPFUL_HINTS.CONTENT.ICONS_&_BUTTONS.ICON_INFO_NAME.SAVE' && helpTabs[0].content.splice(index, 1)
+  })
+  // Painting My Own Photo - isHiddenMobile
+  helpTabs[4].isHiddenMobile = brandId !== 'lowes'
+
   return helpTabs.filter((item) => {
+    // TEMPORARY: hiding sections My Color Palette, Adding Colors, and Color Details for Lowe's
+    // TO BE ADJUSTED: on 2nd phase of Lowe's migration to prism project
+    if (item.header === 'HELPFUL_HINTS.HEADER.MY_COLOR_PALETTE') return brandId !== 'lowes'
+    if (item.header === 'HELPFUL_HINTS.HEADER.ADDING_COLORS') return brandId !== 'lowes'
+    if (item.header === 'HELPFUL_HINTS.HEADER.COLOR_DETAILS') return brandId !== 'lowes'
+
     if (item.header === 'HELPFUL_HINTS.HEADER.PAINTING_MY_OWN_PHOTO') {
       return shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.uploadYourPhoto) &&
         shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.paintAPhoto)

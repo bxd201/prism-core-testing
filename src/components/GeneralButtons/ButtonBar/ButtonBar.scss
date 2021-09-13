@@ -1,5 +1,5 @@
-$btn-bg: var(getThemeColor('white'));
-$btn-text-color: var(getThemeColor('white.contrast'));
+$btn-bg: var(getThemeColor('buttonBgColor'));
+$btn-text-color: var(getThemeColor('buttonColor'));
 $btn-radius: $ui-radius;
 $btn-height: $ui-height-min;
 $btn-height--mobile: $ui-height-min--mobile;
@@ -11,7 +11,7 @@ $btn-border-thickness: 1px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border: $btn-border-thickness solid var(getThemeColor('primary'));
+  border: $btn-border-thickness solid var(getThemeColor('buttonBorder'));
   background: $btn-bg;
   font-size: 1em;
   padding: .25em .75em;
@@ -19,12 +19,12 @@ $btn-border-thickness: 1px;
   text-decoration: none;
   text-align: center;
   border-radius: $btn-radius;
-  font-weight: bold;
   font-size: em(10);
-  text-transform: uppercase;
   overflow: hidden;
   min-height: $btn-height--mobile;
   white-space: nowrap;
+  text-transform: var(getVarName('typography.buttonTextTransform'));
+  font-weight: var(getVarName('typography.buttonFontWeight'));
 
   @include respond-above(xs) {
     font-size: em(11);
@@ -44,24 +44,24 @@ $btn-border-thickness: 1px;
   }
 
   &:hover {
-    background: var(getThemeColor('primary.lightest'));
-    color: var(getThemeColor('primary.lightest.contrast'));
+    background: var(getThemeColor('buttonHoverBgColor'));
+    color: var(getThemeColor('buttonHoverColor'));
   }
 }
 
 %color-wall-mode-btns-btn--active {
   $focus-shadow: inset 0 0 0 $btn-border-thickness var(getThemeColor('primary.contrast.trans'));
 
-  background: var(getThemeColor('primary')) !important;
-  color: var(getThemeColor('primary.contrast')) !important;
+  background: var(getThemeColor('buttonActiveBgColor')) !important;
+  color: var(getThemeColor('buttonActiveColor')) !important;
 
   &:focus {
     box-shadow: $focus-shadow !important;
   }
 
   &:hover {
-    background: var(getThemeColor('primary.darker')) !important;
-    color: var(getThemeColor('primary.darker.contrast')) !important;
+    background: var(getThemeColor('buttonActiveBgColor')) !important;
+    color: var(getThemeColor('buttonActiveColor')) !important;
   }
 }
 
@@ -75,7 +75,7 @@ $btn-border-thickness: 1px;
   }
 
   &__option-container {
-    border: $btn-border-thickness solid var(getThemeColor('primary'));
+    border: $btn-border-thickness solid var(getThemeColor('buttonBorder'));
     border-radius: $btn-radius;
     height: $btn-height--mobile;
 
@@ -92,12 +92,13 @@ $btn-border-thickness: 1px;
     flex-shrink: 1;
 
     &__option {
+      flex: auto;
       display: flex;
       align-content: center;
       justify-content: center;
       padding: 0;
       margin: 0;
-      border-left: $btn-border-thickness solid var(getThemeColor('primary'));
+      border-left: $btn-border-thickness solid var(getThemeColor('buttonBorder'));
 
       &:first-child {
         border-left: none;

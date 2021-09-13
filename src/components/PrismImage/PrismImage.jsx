@@ -11,12 +11,20 @@ type PrismImageProps = {
   scalingWidth: number
 }
 
+export type PrismImageData = {
+  data: ImageData,
+  width: number,
+  height: number,
+  isPortrait: boolean
+}
+
 const PrismImage = forwardRef((props: PrismImageProps, ref) => {
   const intl = useIntl()
   const canvasRef = useRef()
   const handleCallback = (e) => {
     // eslint-disable-next-line react/prop-types
     if (props.shouldResample) {
+      // this api works with a forward ref...
       console.log('Prism image has loaded.')
       return
     }

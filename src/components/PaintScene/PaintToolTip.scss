@@ -8,8 +8,8 @@
     }
   }
   &__container {
-    background: #2cabe2;
-    color: #fff;
+    background: var(getThemeColor('primary'));
+    color: var(getThemeColor('primary.contrast'));
     font-weight: normal;
     line-height: 21.6px;
     padding: 0.5em 1.5em 0.5em 1.5em;

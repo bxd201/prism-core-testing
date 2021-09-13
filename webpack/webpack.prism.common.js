@@ -254,6 +254,13 @@ module.exports = {
             reuseExistingChunk: true,
             enforce: true
           },
+          tailwind: {
+            filename: `${flags.dirNameDistJs}/[name].js`,
+            test: /tailwindcss/,
+            name: 'tailwind',
+            reuseExistingChunk: true,
+            enforce: true
+          },
           vendors: {
             filename: `${flags.dirNameDistJs}/[name].js`,
             test: /[\\/]node_modules[\\/]/,

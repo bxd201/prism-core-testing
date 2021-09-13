@@ -1,4 +1,5 @@
 {
+  "USER_UPLOAD": "Image uploaded by user.",
   "ACCEPT_TERM": "Accept term",
   "ADD_A_COLOR": "ADD A COLOR",
   "ADD_ALL": "Add All",
@@ -19,6 +20,7 @@
   "CLOSE": "CLOSE",
   "COLOR_COLLECTIONS": "Color Collections",
   "COLOR_DETAILS": "color details",
+  "COLOR_DETAILS_CALL_TO_ACTION_HEADING": "Like this color?",
   "COLOR_FAMILIES": "Color Families",
   "COMPARE_COLORS": "Compare Colors",
   "CONFIRMATION_DIALOG_MATCH_A_PHOTO_EXIT": "The photo content will be lost if you close. Make sure the colors you want to keep have been added to your palette. Do you still want to close?",
@@ -52,7 +54,7 @@
   "EXPLORE_COLLECTIONS": "Explore collections",
   "EXPLORE_COLOR_FAMILIES": "Explore color families",
   "EXTERIOR": "Exterior",
-  "FIND_COLORS_IN_CW": "FIND COLORS IN THE DIGITAL COLOR WALL",
+  "FIND_COLORS_IN_CW": "<line>FIND COLORS IN </line><line>THE DIGITAL COLOR WALL</line>",
   "HELPFUL_HINTS": {
     "CONTENT": {
       "ICONS_&_BUTTONS": {
@@ -325,7 +327,8 @@
     "DEFAULT_DESCRIPTION": "My Saved Idea",
     "DESCRIPTION": "Please enter a name for the scene.",
     "SAVE": "SAVE",
-    "UNABLE_TO_SAVE_WARNING": "This scene cannot be saved to your account. You can download the image by clicking the icon to the right of your palette."
+    "UNABLE_TO_SAVE_WARNING": "This scene cannot be saved to your account. You can download the image by clicking the icon to the right of your palette.",
+    "EMPTY_INPUT": "Please name this idea."
   },
   "SCENE_DISPLAYED": "Scene is displayed",
   "SCENE_HIDDEN": "Scene is hidden",
@@ -354,6 +357,7 @@
     "SUGGESTIONS": "Some examples of things you can search for are {suggestions}"
   },
   "SELECT_COLLECTION": "Select Color Collection",
+  "SELECT_FAMILY": "Select Color Family",
   "SELECT_IMAGE": "Select an image",
   "SELECT_NEW_IMAGE": "Select new image",
   "SELECTED_FROM": "Selected from",

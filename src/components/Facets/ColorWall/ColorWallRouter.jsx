@@ -9,6 +9,7 @@ import { loadColors } from '../../../store/actions/loadColors'
 import kebabCase from 'lodash/kebabCase'
 import HeroLoaderExpanded from 'src/components/Loaders/HeroLoader/HeroLoaderExpanded'
 import Propper from 'src/components/Propper/Propper'
+import { ROUTES_ENUM } from '../ColorVisualizerWrapper/routeValueCollections'
 
 // kind of a magic number for the time being
 // the color wall is fixed at 475px at the moment, with a max width of 990 on SW.com
@@ -30,17 +31,17 @@ export default ({ children, redirect = true, defaultSection }: Props) => {
   return (reduxSection
     ? (
       <Switch>
-        <Route path='/active/color-wall/section/:section/family/:family/color/:colorId/:colorName/search/'>{children}</Route>
-        <Route path='/active/color-wall/section/:section/family/:family/color/:colorId/:colorName'>{children}</Route>
-        <Route path='/active/color-wall/section/:section/family/:family/search/'>{children}</Route>
-        <Route path='/active/color-wall/section/:section/family/:family'>{children}</Route>
-        <Route path='/active/color-wall/section/:section/family'>{children}</Route>
-        <Route path='/active/color-wall/section/:section/color/:colorId/:colorName/family/'>{children}</Route>
-        <Route path='/active/color-wall/section/:section/color/:colorId/:colorName/search/'>{children}</Route>
-        <Route path='/active/color-wall/section/:section/color/:colorId/:colorName'>{children}</Route>
-        <Route path='/active/color-wall/section/:section/search/'>{children}</Route>
-        <Route path='/active/color-wall/section/:section'>{children}</Route>
-        {redirect && <Redirect to={`/active/color-wall/section/${kebabCase(defaultSection === undefined ? reduxSection.name : defaultSection)}`} />}
+        <Route path={ROUTES_ENUM.COLOR_WALL + '/section/:section/family/:family/color/:colorId/:colorName/search/'}>{children}</Route>
+        <Route path={ROUTES_ENUM.COLOR_WALL + '/section/:section/family/:family/color/:colorId/:colorName'}>{children}</Route>
+        <Route path={ROUTES_ENUM.COLOR_WALL + '/section/:section/family/:family/search/'}>{children}</Route>
+        <Route path={ROUTES_ENUM.COLOR_WALL + '/section/:section/family/:family'}>{children}</Route>
+        <Route path={ROUTES_ENUM.COLOR_WALL + '/section/:section/family'}>{children}</Route>
+        <Route path={ROUTES_ENUM.COLOR_WALL + '/section/:section/color/:colorId/:colorName/family/'}>{children}</Route>
+        <Route path={ROUTES_ENUM.COLOR_WALL + '/section/:section/color/:colorId/:colorName/search/'}>{children}</Route>
+        <Route path={ROUTES_ENUM.COLOR_WALL + '/section/:section/color/:colorId/:colorName'}>{children}</Route>
+        <Route path={ROUTES_ENUM.COLOR_WALL + '/section/:section/search/'}>{children}</Route>
+        <Route path={ROUTES_ENUM.COLOR_WALL + '/section/:section'}>{children}</Route>
+        {redirect && <Redirect to={ROUTES_ENUM.COLOR_WALL + `/section/${kebabCase(defaultSection === undefined ? reduxSection.name : defaultSection)}`} />}
       </Switch>
     )
     : <Propper vPosition={Propper.V_POSITION.CENTER} propSize={`${proppingPct}%`}>

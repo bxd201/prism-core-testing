@@ -1,0 +1,9 @@
+image:
+  tag: lowes-cvw
+
+ingress:
+  host: lowes-cvw-prism-web.ebus.swaws
+
+env:
+  API_URL: "https://develop-prism-api.ebus.swaws"
+  WEB_URL: "https://lowes-cvw-prism-web.ebus.swaws"

@@ -5,41 +5,47 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
 import { useIntl, FormattedMessage } from 'react-intl'
 import { useHistory } from 'react-router-dom'
-
 import './SaveOptions.scss'
-import { showSaveSceneModal } from '../../store/actions/persistScene'
-import { saveLivePalette } from '../../store/actions/saveLivePalette'
 import { ACTIVE_SCENE_LABELS_ENUM } from '../../store/actions/navigation'
-import { replaceSceneStatus } from '../../shared/utils/sceneUtil'
-import { fullColorNumber } from '../../shared/helpers/ColorUtils'
-import { getSceneInfoById } from '../SceneManager/SceneManager'
-import DynamicModal from '../DynamicModal/DynamicModal'
 import SceneDownload from '../SceneDownload/SceneDownload'
-import { createUniqueSceneId } from '../../shared/utils/legacyProfileFormatUtil'
-import find from 'lodash/find'
 import { shouldAllowFeature } from '../../shared/utils/featureSwitch.util'
 import { FEATURE_EXCLUSIONS } from '../../constants/configurations'
 import WithConfigurationContext from '../../contexts/ConfigurationContext/WithConfigurationContext'
 import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
+import { createSaveSceneModal, createModalForEmptyLivePalette } from '../CVWModalManager/createModal'
+import { MODAL_TYPE_ENUM, SAVE_OPTION } from '../CVWModalManager/constants.js'
+import { ROUTES_ENUM } from '../Facets/ColorVisualizerWrapper/routeValueCollections'
+import { triggerPaintSceneLayerPublish } from '../../store/actions/paintScene'
 
 type SaveOptionsProps = {
-  config: any
+  config: any,
 }
 
 const saveOptionsBaseClassName = 'save-options'
 const saveOptionsItemsClassName = `${saveOptionsBaseClassName}__items`
 
 const SaveOptions = (props: SaveOptionsProps) => {
+  const [
+    selectedSceneUid,
+    variantsCollection,
+    selectedVariantName,
+    surfaceColors
+  ] = useSelector(store => ([
+    store.selectedSceneUid,
+    store.variantsCollection,
+    store.selectedVariantName,
+    store.modalThumbnailColor
+  ]))
   const { config: { featureExclusions } } = props
   const { formatMessage } = useIntl()
-  const [showLivePaletteSaveModal, setShowLivePaletteSaveModal] = useState(false)
-  const [showSavedConfirmModalFlag, setShowSavedConfirmModalFlag] = useState(false)
+  const intl = useIntl()
   const activeSceneLabel = useSelector(store => store.activeSceneLabel)
-
+  const toggleCompareColor: boolean = useSelector(store => store.lp.toggleCompareColor)
   const dispatch = useDispatch()
   const { location: { pathname } } = useHistory()
   const { cvw } = props.config
   const [cvwFromConfig, setCvwFromConfig] = useState(null)
+  const lpColors = useSelector(state => state.lp.colors)
 
   useEffect(() => {
     if (cvw) {
@@ -47,46 +53,36 @@ const SaveOptions = (props: SaveOptionsProps) => {
     }
   }, [cvw])
 
-  const scenesDownloadData = useSelector(state => {
-    const scenes = state.selectedSceneStatus && !state.selectedSceneStatus.openUnpaintedStockScene ? replaceSceneStatus(state.scenes, state.selectedSceneStatus) : state.scenes
-    return {
-      originalScenes: state.scenes,
-      originalSceneCollection: state.scenes.sceneCollection[state.scenes.type] || null,
-      originalSceneStatus: state.scenes.sceneStatus[state.scenes.type],
-      scenes: scenes,
-      selectedSceneStatus: state.selectedSceneStatus,
-      sceneStatus: scenes.sceneStatus[state.scenes.type],
-      sceneCollection: scenes.sceneCollection[state.scenes.type] || null,
-      selectedSceneVariantChanged: state.scenes.selectedSceneVariantChanged
-    }
-  })
-
-  const lpColors = useSelector(state => state.lp.colors)
-
-  const sceneCount = useSelector(state => state.sceneMetadata.length + 1)
-
-  const firstActiveScene = scenesDownloadData.sceneCollection && scenesDownloadData.sceneCollection.filter(scene => (scene.id === scenesDownloadData.scenes.activeScenes[0]))[0]
-  const firstActiveSceneInfo = firstActiveScene && firstActiveScene.id ? getSceneInfoById(firstActiveScene, scenesDownloadData.sceneStatus) : null
-  const selectedScenedVariant = scenesDownloadData.selectedSceneStatus && !scenesDownloadData.selectedSceneVariantChanged ? scenesDownloadData.selectedSceneStatus.expectStockData.scene.variant : null
-  if (selectedScenedVariant) {
-    const sceneVariant = find(firstActiveScene.variants, { 'variant_name': selectedScenedVariant })
-    firstActiveSceneInfo.variant = sceneVariant
-  } else {
-    const sceneVariantData = scenesDownloadData.originalSceneStatus && find(scenesDownloadData.originalSceneStatus, { 'id': scenesDownloadData.scenes.activeScenes[0] }).variant
-    const sceneVariant = sceneVariantData && find(firstActiveScene.variants, { 'variant_name': sceneVariantData })
-    if (sceneVariant) {
-      firstActiveSceneInfo.variant = sceneVariant
-    }
-  }
-
   const handleSave = useCallback((e: SyntheticEvent) => {
     e.preventDefault()
-    if ((pathname === '/active') || (pathname === '/active/paint-scene')) {
-      dispatch(showSaveSceneModal(true))
-    } else {
-      setShowLivePaletteSaveModal(true)
+    // Don't muddle th ealready complex save logic and giv efast mask its own block
+    if (pathname === ROUTES_ENUM.ACTIVE_FAST_MASK) {
+      dispatch(createSaveSceneModal(intl, MODAL_TYPE_ENUM.FAST_MASK, SAVE_OPTION.SAVE_FAST_MASK))
+
+      return
     }
-  }, [pathname])
+
+    if (((pathname === '/active') || (pathname === ROUTES_ENUM.ACTIVE_PAINT_SCENE)) && !toggleCompareColor) {
+      if (lpColors.length !== 0) {
+        const saveType = ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE === activeSceneLabel ? SAVE_OPTION.SAVE_STOCK_SCENE : SAVE_OPTION.SAVE_PAINT_SCENE
+        if (activeSceneLabel === ACTIVE_SCENE_LABELS_ENUM.PAINT_SCENE) {
+          // We handle paint scene reactively, we tell it via redux, hey its time to globally set your data for save.
+          dispatch(triggerPaintSceneLayerPublish(true))
+        }
+        // @todo refactor this, we shouldn't need to pass dispatch here and maybe specialize to stock scene save since paint scene download is handled reactively by the facet -RS
+        const modalType = activeSceneLabel === ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE ? MODAL_TYPE_ENUM.STOCK_SCENE : MODAL_TYPE_ENUM.PAINT_SCENE
+        dispatch(createSaveSceneModal(intl, modalType, saveType))
+      } else {
+        dispatch(createModalForEmptyLivePalette(intl, SAVE_OPTION.EMPTY_SCENE, true))
+      }
+    } else {
+      if (lpColors.length !== 0) {
+        dispatch(createSaveSceneModal(intl, MODAL_TYPE_ENUM.LIVE_PALETTE, SAVE_OPTION.SAVE_LIVE_PALETTE))
+      } else {
+        dispatch(createModalForEmptyLivePalette(intl, MODAL_TYPE_ENUM.EMPTY_SCENE, false))
+      }
+    }
+  }, [pathname, activeSceneLabel])
 
   const loadAndDrawImage = (url, ctx, w = 0, h = 0, x = 0, y = 0) => {
     var image = new Image()
@@ -126,41 +122,6 @@ const SaveOptions = (props: SaveOptionsProps) => {
     return promise
   }
 
-  const saveLivePaletteColorsFromModal = (e: SyntheticEvent, inputValue: string) => {
-    let livePaletteColorsIdArray = []
-    lpColors && lpColors.map(color => {
-      livePaletteColorsIdArray.push(color.id)
-    })
-    dispatch(saveLivePalette(createUniqueSceneId(), inputValue, livePaletteColorsIdArray))
-    setShowLivePaletteSaveModal(false)
-    setShowSavedConfirmModalFlag(true)
-  }
-
-  const hideSaveLivePaletteColorsModal = () => {
-    setShowLivePaletteSaveModal(false)
-  }
-
-  const hideSavedConfirmModal = () => {
-    setShowSavedConfirmModalFlag(false)
-  }
-
-  const getPreviewData = () => {
-    const livePaletteColorsDiv = lpColors.filter(color => !!color).map((color, i) => {
-      const { red, green, blue } = color
-      return (
-        <div
-          key={i}
-          style={{ backgroundColor: `rgb(${red},${green},${blue})`, flexGrow: '1', borderLeft: (i > 0) ? '1px solid #ffffff' : 'none' }}>
-          &nbsp;
-        </div>
-      )
-    })
-
-    return <>
-      <div style={{ display: 'flex', marginTop: '1px', height: '84px' }}>{livePaletteColorsDiv}</div>
-    </>
-  }
-
   const getDownloadStaticResourcesPath = (data) => {
     return {
       // to do: headerImage, downloadDisclaimer1, downloadDisclaimer2 also should be configurable
@@ -173,34 +134,24 @@ const SaveOptions = (props: SaveOptionsProps) => {
 
   return (
     <div className={saveOptionsBaseClassName}>
-      {showLivePaletteSaveModal && lpColors.length > 0 ? <DynamicModal
-        actions={[
-          { text: formatMessage({ id: 'SAVE_LIVE_PALETTE_MODAL.SAVE' }), callback: saveLivePaletteColorsFromModal },
-          { text: formatMessage({ id: 'SAVE_LIVE_PALETTE_MODAL.CANCEL' }), callback: hideSaveLivePaletteColorsModal }
-        ]}
-        previewData={getPreviewData()}
-        height={document.documentElement.clientHeight + window.pageYOffset}
-        allowInput
-        inputDefault={`${(lpColors.length === 1) ? `${fullColorNumber(lpColors[0].brandKey, lpColors[0].colorNumber).trim()} ${lpColors[0].name}` : `${formatMessage({ id: 'SAVE_LIVE_PALETTE_MODAL.DEFAULT_DESCRIPTION' })} ${sceneCount}`}`} /> : null}
-      {showLivePaletteSaveModal && lpColors.length === 0 ? <DynamicModal
-        actions={[
-          { text: formatMessage({ id: 'SAVE_LIVE_PALETTE_MODAL.CANCEL' }), callback: hideSaveLivePaletteColorsModal }
-        ]}
-        description={formatMessage({ id: 'SAVE_LIVE_PALETTE_MODAL.UNABLE_TO_SAVE_WARNING' })}
-        height={document.documentElement.clientHeight + window.pageYOffset} /> : null}
-      {showSavedConfirmModalFlag ? <DynamicModal
-        actions={[
-          { text: formatMessage({ id: 'SAVE_LIVE_PALETTE_MODAL.OK' }), callback: hideSavedConfirmModal }
-        ]}
-        description={formatMessage({ id: 'SAVE_LIVE_PALETTE_MODAL.LP_SAVED' })}
-        height={document.documentElement.clientHeight + window.pageYOffset} /> : null}
       {shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.download)
         ? (activeSceneLabel === ACTIVE_SCENE_LABELS_ENUM.PAINT_SCENE
           ? <div>
-            {cvwFromConfig ? <SceneDownload {...{ buttonCaption: 'DOWNLOAD_MASK', getFlatImage: getFlatImage, activeComponent: activeSceneLabel, config: getDownloadStaticResourcesPath(cvwFromConfig) }} /> : <CircleLoader />}
+            {cvwFromConfig ? <SceneDownload
+              buttonCaption={'DOWNLOAD_MASK'}
+              getFlatImage={getFlatImage}
+              activeComponent={activeSceneLabel}
+              config={getDownloadStaticResourcesPath(cvwFromConfig)} /> : <CircleLoader />}
           </div>
           : <div>
-            {cvwFromConfig ? <SceneDownload {...{ buttonCaption: 'DOWNLOAD_MASK', sceneInfo: firstActiveSceneInfo, activeComponent: activeSceneLabel, config: getDownloadStaticResourcesPath(cvwFromConfig) }} /> : <CircleLoader />}
+            {cvwFromConfig ? <SceneDownload
+              selectedSceneUid={selectedSceneUid}
+              variantsCollection={variantsCollection}
+              selectedVariantName={selectedVariantName}
+              surfaceColors={surfaceColors}
+              buttonCaption={'DOWNLOAD_MASK'}
+              activeComponent={activeSceneLabel}
+              config={getDownloadStaticResourcesPath(cvwFromConfig)} /> : <CircleLoader />}
           </div>) : null}
       { shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.documentSaving)
         ? <button onClick={handleSave}>

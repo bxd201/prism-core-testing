@@ -7,6 +7,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import at from 'lodash/at'
 
 type Props = {
+  collectionsSelectLabel?: string,
   collectionTabs: ColorCollectionsTabs,
   showTab: Function,
   tabIdShow: string
@@ -23,7 +24,7 @@ const tabListItem = `${baseClass}__tab-list-item`
 const tabListItemActive = `${baseClass}__tab-list-item--active`
 
 function ColorCollectionsTab (props: Props) {
-  const { collectionTabs, showTab, tabIdShow } = props
+  const { collectionsSelectLabel, collectionTabs, showTab, tabIdShow } = props
   const [tabListMobileShow, showTabListMobile] = useState(false)
   const tabFind = collectionTabs.find(tab => tabIdShow && tab.id.toString() === tabIdShow.toString())
   const tabActive = (tabFind) ? tabFind.tabName : undefined
@@ -78,19 +79,19 @@ function ColorCollectionsTab (props: Props) {
   }
 
   return (
-    <div className={tabListSelect} role='tablist'>
-      <span className={`${tabListHeading}`}><FormattedMessage id='CHOOSE_A_COLLECTION' /></span>
-
-      <span
-        className={`${tabListDropdownMobile}`}
-        tabIndex='0'
-        role='button'
-        onKeyDown={handleKeyDownSpan}
-        onClick={handleClickSpan}
-      >
-        {tabShowName}
-      </span>
-
+    <>
+      <div className={tabListSelect}>
+        <span className={`${tabListHeading}`}>{collectionsSelectLabel ?? <FormattedMessage id='CHOOSE_A_COLLECTION' />}</span>
+        <span
+          className={`${tabListDropdownMobile}`}
+          tabIndex='0'
+          role='button'
+          onKeyDown={handleKeyDownSpan}
+          onClick={handleClickSpan}
+        >
+          {tabShowName}
+        </span>
+      </div>
       <ul className={`${tabList} ${(tabListMobileShow) ? `${tabListActive}` : `${tabListInactive}`}`} role='tablist'>
         {collectionTabs.map((tab, id) => {
           return (
@@ -112,7 +113,7 @@ function ColorCollectionsTab (props: Props) {
           )
         })}
       </ul>
-    </div>
+    </>
   )
 }
 

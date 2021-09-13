@@ -6,25 +6,32 @@ export const shouldAllowFeature = (featureExclusions, feature) => {
     return true
   }
 
+  // Uncomment below to test fast mask
+  // if (feature === FEATURE_EXCLUSIONS.uploadYourPhoto) {
+  //   return false
+  // }
+  // if (feature === FEATURE_EXCLUSIONS.fastMask) {
+  //   return true
+  // }
+
   return featureExclusions.indexOf(feature) === -1
 }
-
 // @todo This validator allows us to understand the configuration rules and get ahead of configuration problems. This really needs a better home... -RS
 export const featureExclusionsConfigIsInValid = (featureExclusions) => {
   let violations = []
 
-  if (featureExclusions.indexOf(FEATURE_EXCLUSIONS.editPhotos) > -1 && featureExclusions.indexOf(FEATURE_EXCLUSIONS.fastMask) > -1) {
-    violations.push(`${FEATURE_EXCLUSIONS.fastMask} and ${FEATURE_EXCLUSIONS.editPhotos} are not allowed together.`)
+  if (featureExclusions.indexOf(FEATURE_EXCLUSIONS.uploadYourPhoto) > -1 && featureExclusions.indexOf(FEATURE_EXCLUSIONS.fastMask) > -1) {
+    violations.push(`${FEATURE_EXCLUSIONS.fastMask} and ${FEATURE_EXCLUSIONS.uploadYourPhoto} are not allowed together.`)
   }
 
-  if (featureExclusions.indexOf(FEATURE_EXCLUSIONS.editPhotos) === -1 && featureExclusions.indexOf(FEATURE_EXCLUSIONS.fastMask) === -1) {
-    violations.push(`${FEATURE_EXCLUSIONS.fastMask} or ${FEATURE_EXCLUSIONS.editPhotos} must be specified to prevent double trouble (both being presented) display error.`)
+  if (featureExclusions.indexOf(FEATURE_EXCLUSIONS.uploadYourPhoto) === -1 && featureExclusions.indexOf(FEATURE_EXCLUSIONS.fastMask) === -1) {
+    violations.push(`${FEATURE_EXCLUSIONS.fastMask} or ${FEATURE_EXCLUSIONS.uploadYourPhoto} must be specified to prevent double trouble (both being presented) display error.`)
   }
 
   if (featureExclusions.indexOf(FEATURE_EXCLUSIONS.inspirationalPhotos) > -1 &&
     featureExclusions.indexOf(FEATURE_EXCLUSIONS.expertColorPicks) > -1 &&
     featureExclusions.indexOf(FEATURE_EXCLUSIONS.paintedPhotos) > -1) {
-    violations.push(`${FEATURE_EXCLUSIONS.inspirationalPhotos}, ${FEATURE_EXCLUSIONS.expertColorPicks} and ${FEATURE_EXCLUSIONS.paintedPhotos} creates an empty get inspired feature. 
+    violations.push(`${FEATURE_EXCLUSIONS.inspirationalPhotos}, ${FEATURE_EXCLUSIONS.expertColorPicks} and ${FEATURE_EXCLUSIONS.paintedPhotos} creates an empty get inspired feature.
     To disable all of these features remove the individual values and specify "getInspired" in the configuration.`)
   }
 

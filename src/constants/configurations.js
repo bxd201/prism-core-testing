@@ -17,15 +17,24 @@ export const DEFAULT_CONFIGURATION = {
     info: varValues._colors.info,
     lightGrey: varValues._colors.lightGrey,
     nearBlack: varValues._colors.nearBlack,
+    menuBg: varValues._colors.menuBg,
+    menuContentTitle: varValues._colors.menuContentTitle,
+    menuTxt: varValues._colors.menuTxt,
+    menuTxtHover: varValues._colors.menuTxtHover,
     primary: varValues._colors.primary,
     secondary: varValues._colors.secondary,
+    primaryBg: varValues._colors.primaryBg,
+    secondaryBg: varValues._colors.secondaryBg,
     success: varValues._colors.success,
     warning: varValues._colors.warning,
     white: varValues._colors.white
   },
   typography: {
     bodyFontFamily: varValues.typography.bodyFontFamily,
-    titleFontFamily: varValues.typography.titleFontFamily
+    titleFontFamily: varValues.typography.titleFontFamily,
+    titleTextTransform: varValues.typography.titleTextTransform,
+    buttonTextTransform: varValues.typography.buttonTextTransform,
+    buttonFontWeight: varValues.typography.buttonFontWeight
   },
   loadingConfiguration: false,
   error: false
@@ -50,7 +59,6 @@ export type FeatureExclusionsType = {
   [key: string]: string
 }
 export const FEATURE_EXCLUSIONS: FeatureExclusionsType = {
-  editPhotos: 'editPhotos', // this determines if  the paintscene component can be accessed
   fastMask: 'fastMask', // this will exclude
   documentSaving: 'documentSaving', // this will exclude myideas and the save button
   download: 'download', // this removes the download feature from the app
@@ -66,5 +74,6 @@ export const FEATURE_EXCLUSIONS: FeatureExclusionsType = {
   colorCollections: 'colorCollections', // this will exclude color collections from explore colors
   matchAPhoto: 'matchAPhoto', // removes match a photo from explore colors submenu,
   splashScreen: 'splashScreen', // Excluded the animated splash page,
-  paletteSaving: 'paletteSaving' // disable saving of color palettes
+  paletteSaving: 'paletteSaving', // disable saving of color palettes
+  colorDetailsSubtitles: 'colorDetailsSubtitles' // disable subtitles Interior / Exterior and Location Number of color details viewer
 }

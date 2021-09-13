@@ -1,5 +1,5 @@
 // @flow
-import React, { Component, type ComponentType } from 'react'
+import React, { useState, type ComponentType } from 'react'
 import noop from 'lodash/noop'
 import memoizee from 'memoizee'
 
@@ -79,17 +79,24 @@ type InProps = { el: HTMLElement }
 
 type OutProps = any & FacetPubSubMethods
 
-const facetPubSub = (WrappedComponent: ComponentType<InProps>): ComponentType<OutProps> => class FacetPubSub extends Component<InProps> {
-  render () {
-    const { el, ...other } = this.props
+export const PubSubCtx = React.createContext<FacetPubSubMethods>(facetPubSubDefaultProps)
+PubSubCtx.displayName = 'PubSubContext'
 
-    return <WrappedComponent
-      publish={publishAnEvent(el)}
-      subscribe={subscribeToAnEvent(el)}
-      unsubscribe={unsubscribeFromAnEvent(el)}
-      unsubscribeAll={unsubscribeFromAllEvents(el)}
-      el={el}
-      {...other} />
+const facetPubSub = function facetPubSub (WrappedComponent: ComponentType<InProps>): ComponentType<OutProps> {
+  return function FacetPubSubRenderer ({ el, ...other }: OutProps) {
+    const [pubSubMethods] = useState({
+      publish: publishAnEvent(el),
+      subscribe: subscribeToAnEvent(el),
+      unsubscribe: unsubscribeFromAnEvent(el),
+      unsubscribeAll: unsubscribeFromAllEvents(el)
+    })
+
+    return <PubSubCtx.Provider value={pubSubMethods}>
+      <WrappedComponent
+        el={el}
+        {...pubSubMethods}
+        {...other} />
+    </PubSubCtx.Provider>
   }
 }
 

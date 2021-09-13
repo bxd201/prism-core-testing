@@ -205,15 +205,27 @@
 }
 
 .PreLoadingSVG {
-  align-items: center;
-  background-color: white;
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  width: 100vw;
+  align-items: center;
   justify-content: center;
+  background-color: white;
+  width: 100%;
+  margin: 6rem auto;
+
+  @include respond-above(sm) {
+    margin: 12rem auto;
+  }
+
   &__loader {
-    transform: scale(30) translateY(10px);
+    transform: scale(15);
+    margin: 6rem auto;
+
+    @include respond-above(sm) {
+      transform: scale(30);
+      margin: 12rem auto;
+    }
+
     &__inner-rect {
       transform-origin: 50% 40%;
       animation: cv-preloading-spin-inner  0.5s linear;
@@ -248,10 +260,9 @@
   max-width: 1080px;
   margin: 0 auto;
   position: relative;
-  min-height: 500px;
   .hide-on-small-screens {
     @include respond-below(sm) {
-      display: none;
+      display: none !important;
     }
   }
 
@@ -294,6 +305,13 @@
       @include respond-above(sm) {
         justify-content: space-around;
       }
+      &--title {
+        margin: 0.75rem 0.5rem;
+        font-size: small;
+        @include respond-above(sm) {
+          display: none;
+        }
+      }
       &__text {
         display: block;
         padding: 0.5em;
@@ -332,16 +350,6 @@
   &--hide {
     display: none;
   }
-}
-
-.cvw-nav-btn-icon {
-  background-color: inherit;
-  display: inline-block;
-  margin-right: 1em;
-  svg { background-color: inherit; }
-  .fa-square-full.fa-sm { margin-right: -1px; }
-  .fa-square-full.fa-xs { margin-right: -3px; }
-  &--brush { margin-left: -22px; }
 }
 
 .cvw__modal {

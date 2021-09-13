@@ -1,0 +1,122 @@
+.color-details-scenes {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+
+    $btn-active-color: var(getThemeColor("dark"));
+    $btn-active-color-text: var(getThemeColor("dark.contrast"));
+    $btn-focus-color: var(getThemeColor("primary"));
+    $btn-focus-color-text: var(getThemeColor("primary.contrast.trans"));
+    $btn-border-size: 2px;
+
+    $icon-size: round($base * 0.7);
+    $icon-spacing: round($base * 0.125);
+
+    $self: &;
+    &__scene {
+      position: relative;
+    }
+    &__variants-btn{
+      position:absolute;
+      bottom: 0.5rem;
+      right:0.5rem;
+      z-index: 1000;
+    }
+    &__thumbnails-list {
+      position: relative;
+    }
+    &__block {
+      align-items: center;
+      position: relative;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      & > * {
+        flex: 1 1;
+      }
+      &--scenes {
+        order: -1;
+      }
+
+      &--tabs {
+        padding: 5px 0 0;
+        justify-content: flex-start;
+      }
+    }
+    &__flag {
+      color: inherit;
+      fill: currentColor;
+      position: absolute;
+      font-size: $icon-size;
+      top: $icon-spacing;
+      left: $icon-spacing;
+      z-index: 1001;
+    }
+
+    &__btn {
+      float: left;
+      margin: 0 0 0 $btn-border-size;
+      max-width: 110px;
+      padding: 0;
+      position: relative;
+      z-index: 1001;
+      color: $btn-active-color-text;
+
+      &:first-child {
+        margin-left: 0;
+      }
+
+      &::before {
+        content: "";
+        position: absolute;
+        display: block;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1001;
+      }
+
+      &:hover,
+      &:focus {
+        color: $btn-focus-color-text;
+
+        &::after {
+          border-top-color: $btn-focus-color;
+          border-left-color: $btn-focus-color;
+        }
+
+        &::before {
+          box-shadow: inset 0 0 0 $btn-border-size $btn-focus-color;
+        }
+      }
+
+      img {
+        display: block;
+        max-width: 100%;
+      }
+
+      &--active {
+        &::after {
+          content: "";
+          z-index: 1000;
+          top: 0;
+          display: block;
+          width: 0;
+          height: 0;
+          position: absolute;
+          left: 0;
+          border-top: $icon-size solid $btn-active-color;
+          border-left: $icon-size solid $btn-active-color;
+          border-bottom: $icon-size solid transparent;
+          border-right: $icon-size solid transparent;
+        }
+      }
+
+      &--disabled {
+        opacity: 0.2;
+      }
+    }
+  }

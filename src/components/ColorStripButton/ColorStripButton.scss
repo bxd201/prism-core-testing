@@ -19,6 +19,16 @@
       z-index: 100;
     }
   }
+  &__swatch {
+    position: relative;
+    height: 106px;
+    border: 3px solid var(getThemeColor('white'));
+  }
+  &__desc {
+    margin: .65rem .65rem 0;
+    font-size: .85rem;
+    font-style: italic;
+  }
   &__bottom-item {
     flex: 1 1 0;
     border-top: 3px solid var(getThemeColor('white'));

@@ -28,14 +28,16 @@ import EmptySlot from './EmptySlot'
 import type { Color } from '../../shared/types/Colors.js.flow'
 
 import './LivePalette.scss'
+import WithConfigurationContext, { type ConfigurationContextType } from '../../contexts/ConfigurationContext/WithConfigurationContext'
 import storageAvailable from '../../shared/utils/browserStorageCheck.util'
 import { fullColorNumber } from '../../shared/helpers/ColorUtils'
 import {
-  ACTIVE_SCENE_LABELS_ENUM,
   setNavigationIntent,
   setNavigationIntentWithReturn
 } from '../../store/actions/navigation'
 import { ROUTES_ENUM } from '../Facets/ColorVisualizerWrapper/routeValueCollections'
+import { withRouter } from 'react-router-dom'
+
 const PATH__NAME = 'fast-mask-simple.html'
 
 type Props = {
@@ -49,8 +51,10 @@ type Props = {
   empty: Function,
   temporaryActiveColor: Color | null,
   setNavigationIntents: Function,
-  activeSceneLabel: string,
-  isColorwallModallyPresented: boolean
+  isCompareColorShown: boolean,
+  config: ConfigurationContextType,
+  isFastMaskPolluted: boolean,
+  location: any
 }
 
 // @todo refactor to put state init in constructor and also bind handleAddColor, removing anon func call in render ...better yet this is a good hooks candidate... -RS
@@ -131,25 +135,23 @@ export class LivePalette extends PureComponent<Props, State> {
   }
   handleAddColor = (e: SyntheticEvent) => {
     e.preventDefault()
-    if (this.props.isColorwallModallyPresented) {
+
+    if (this.props.location.pathname.indexOf(ROUTES_ENUM.COLOR_WALL) > -1) {
       return
     }
 
-    let returnPath = null
-
-    if (this.props.activeSceneLabel === ACTIVE_SCENE_LABELS_ENUM.PAINT_SCENE) {
-      returnPath = ROUTES_ENUM.PAINT_SCENE
+    if (this.props.isFastMaskPolluted) {
+      this.props.setNavigationIntents(ROUTES_ENUM.COLOR_WALL)
+      return
     }
 
-    if (this.props.activeSceneLabel === ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE) {
-      returnPath = ROUTES_ENUM.STOCK_SCENE
-    }
-    this.props.setNavigationIntents(ROUTES_ENUM.COLOR_WALL, returnPath)
+    this.props.setNavigationIntents(ROUTES_ENUM.COLOR_WALL, ROUTES_ENUM.ACTIVE)
   }
 
   render () {
-    const { colors, activeColor, deactivateTemporaryColor, empty, temporaryActiveColor } = this.props
+    const { colors, activeColor, deactivateTemporaryColor, empty, temporaryActiveColor, isCompareColorShown } = this.props
     const { spokenWord, isFastMaskPage } = this.state
+    const { compare, title } = this.props.config.cvw?.palette ?? {}
 
     // determine how many empty slots there should be
     let disabledSlots = []
@@ -160,33 +162,22 @@ export class LivePalette extends PureComponent<Props, State> {
 
     const IS_EMPTY = !colors.length
     const ADD_COLOR_TEXT = IS_EMPTY ? 'FIND_COLORS_IN_CW' : 'ADD_A_COLOR'
-    const COMPARE_COLORS_TEXT = 'COMPARE_COLORS'
 
     return (
       <DndProvider backend={HTML5Backend}>
         <div className='prism-live-palette'>
           <LivePaletteModal cancel={deactivateTemporaryColor} empty={empty} isActive={temporaryActiveColor !== null} />
           <div className='prism-live-palette__header'>
-            <span className='prism-live-palette__header__name'><FormattedMessage id='PALETTE_TITLE' /></span>
-            {
-              colors.length >= MIN_COMPARE_COLORS_ALLOWED &&
-              <FormattedMessage id={COMPARE_COLORS_TEXT}>
-                {
-                  (msg: string) =>
-                    <button
-                      tabIndex='-1'
-                      className={
-                        !isFastMaskPage
-                          ? 'prism-live-palette__header__compare-button'
-                          : 'prism-live-palette__header__compare-button--hide'
-                      }
-                      onClick={this.toggleCompareColor}
-                    >
-                      {msg}
-                    </button>
-                }
-              </FormattedMessage>
-            }
+            <span className='prism-live-palette__header__name'>{title ?? <FormattedMessage id='PALETTE_TITLE' />}</span>
+            {colors.length >= MIN_COMPARE_COLORS_ALLOWED && (
+              <button
+                tabIndex='-1'
+                className={`prism-live-palette__header__compare-button${isFastMaskPage ? '--hide' : ''}`}
+                onClick={this.toggleCompareColor}
+              >
+                {compare ?? <FormattedMessage id='COMPARE_COLORS' />}
+              </button>
+            )}
           </div>
           {activeColor && <div className='prism-live-palette__active-color' style={{ backgroundColor: activeColor.hex }}>
             <div className={`prism-live-palette__active-color__details ${(activeColor.isDark) ? `prism-live-palette__active-color__details--dark` : ``}`}>
@@ -201,14 +192,16 @@ export class LivePalette extends PureComponent<Props, State> {
             <ActiveSlots colors={colors} activeColor={activeColor}>
               <ActiveSlot onClick={this.activateColor} moveColor={this.moveColor} />
             </ActiveSlots>
-            {colors.length < LP_MAX_COLORS_ALLOWED && <button onClick={(e) => {
+            {colors.length < LP_MAX_COLORS_ALLOWED && !isCompareColorShown && <button onClick={(e) => {
               this.handleAddColor(e)
             }} className={`prism-live-palette__slot prism-live-palette__slot--${IS_EMPTY ? 'add-big' : 'add'}`}>
               <div className={`prism-live-palette__slot__guts ${IS_EMPTY ? 'prism-live-palette__slot__guts--hrzntl' : ''}`}>
                 <FontAwesomeIcon className={`prism-live-palette__slot__icon ${IS_EMPTY ? 'prism-live-palette__slot__icon--left' : 'prism-live-palette__slot__icon--top'}`} icon={['fal', 'plus-circle']} size='2x' color={varValues._colors.primary} />
-                <FormattedMessage id={ADD_COLOR_TEXT}>
-                  {(msg: string) => <span className={`prism-live-palette__slot__copy ${IS_EMPTY ? 'prism-live-palette__slot__copy--right' : 'prism-live-palette__slot__copy--btm'}`}>{msg}</span>}
-                </FormattedMessage>
+                <span className={`prism-live-palette__slot__copy ${IS_EMPTY ? 'prism-live-palette__slot__copy--right' : 'prism-live-palette__slot__copy--btm'}`}>
+                  <FormattedMessage id={ADD_COLOR_TEXT} values={{
+                    line: chunk => <span style={{ display: 'inline-block' }}>{chunk}</span>
+                  }} />
+                </span>
               </div>
             </button>}
             {disabledSlots}
@@ -240,7 +233,7 @@ export class LivePalette extends PureComponent<Props, State> {
 }
 
 const mapStateToProps = (state, props) => {
-  const { lp, activeSceneLabel, isColorwallModallyPresented } = state
+  const { lp, activeSceneLabel, fastMaskIsPolluted } = state
   return {
     colors: lp.colors,
     activeColor: lp.activeColor,
@@ -248,7 +241,8 @@ const mapStateToProps = (state, props) => {
     removedColor: lp.removedColor,
     temporaryActiveColor: lp.temporaryActiveColor,
     activeSceneLabel,
-    isColorwallModallyPresented
+    isCompareColorShown: lp.toggleCompareColor,
+    isFastMaskPolluted: fastMaskIsPolluted
   }
 }
 
@@ -279,4 +273,4 @@ const mapDispatchToProps = (dispatch: Function) => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(LivePalette)
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(WithConfigurationContext(LivePalette)))

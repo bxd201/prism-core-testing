@@ -3,10 +3,13 @@ import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useIntl } from 'react-intl'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
-import './Carousel.scss'
-import times from 'lodash/times'
 import isFunction from 'lodash/isFunction'
+import noop from 'lodash/noop'
 import { KEY_CODES } from 'src/constants/globals'
+import type { FlatScene, FlatVariant } from '../../shared/types/Scene'
+
+import './Carousel.scss'
+import 'src/scss/convenience/visually-hidden.scss'
 
 type ComponentProps = {
   BaseComponent: any,
@@ -19,15 +22,19 @@ type ComponentProps = {
   initPosition?: number,
   setInitialPosition?: number => void,
   btnRefList?: Object[],
-  getSummaryData?: object=> void,
-   // eslint-disable-next-line react/no-unused-prop-types
-  baseSceneData?: Object,
+  getSummaryData?: Object => void,
+  // These props are automagically passed hence the need for comments to silence them
   // eslint-disable-next-line react/no-unused-prop-types
   deleteSavedScene?: Function,
   // eslint-disable-next-line react/no-unused-prop-types
   selectSavedScene?: Function,
   // eslint-disable-next-line react/no-unused-prop-types
-  selectAnonStockScene?: Function
+  selectAnonStockScene?: Function,
+  showPageIndicators?: boolean,
+  // eslint-disable-next-line react/no-unused-prop-types
+  variants?: FlatVariant[],
+  // eslint-disable-next-line react/no-unused-prop-types
+  scenes?: FlatScene[]
 }
 
 const baseClass = 'prism-slick-carousel'
@@ -36,7 +43,20 @@ const indicators = `${baseClass}__wrapper__indicators`
 let nonTransition = false
 
 export default (props: ComponentProps) => {
-  const { BaseComponent, defaultItemsPerView, data, isInfinity, tabId, setTabId, tabMap, setInitialPosition, initPosition, btnRefList, getSummaryData } = props
+  const {
+    BaseComponent,
+    btnRefList = [],
+    data,
+    defaultItemsPerView,
+    getSummaryData = noop,
+    initPosition,
+    isInfinity,
+    setInitialPosition,
+    setTabId,
+    showPageIndicators = false,
+    tabId,
+    tabMap = []
+  } = props
   const [position, setPosition] = useState(initPosition || 0)
   const [focusIndex, setCurrentFocusItem] = useState(1)
   // tracks the previous position
@@ -145,7 +165,7 @@ export default (props: ComponentProps) => {
                     return (
                       <BaseComponent
                         className='collection-list__component'
-                        key={`slide-${item.itemIndex}`}
+                        key={`slide-${item.img || key}`}
                         itemNumber={item.itemIndex}
                         {...props}
                         data={item}
@@ -162,6 +182,30 @@ export default (props: ComponentProps) => {
               )
             })}
           </div>
+          {showPageIndicators && slideList && slideList.length > 1 ? (
+            <div className={indicators}>
+              {slideList.map((slide, i: number) => {
+                if (tabMap.length > 0) {
+                  const activeTab = tabMap[pageNumber - 1] ?? tabMap[tabMap.length - 1]
+                  const isActivePage = pageNumber === i + 1
+
+                  if (activeTab && activeTab === tabMap[i]) {
+                    return <span key={i} className={`${indicators}__indicator ${isActivePage ? `${indicators}__indicator--active` : ''}`}>
+                      <span className='visually-hidden'>Page {i + 1}</span>
+                    </span>
+                  }
+
+                  return null
+                } else {
+                  const isActivePage = pageNumber === i
+
+                  return <span key={i} className={`${indicators}__indicator ${isActivePage ? `${indicators}__indicator--active` : ''}`}>
+                    <span className='visually-hidden'>Page {i + 1}</span>
+                  </span>
+                }
+              })}
+            </div>
+          ) : null}
         </div>
         <div className={`${contentWrapper}__next-btn__wrapper`}>
           {(isInfinity || position + defaultItemsPerView < data.length) && <button className={`${contentWrapper}__buttons`} onClick={handleNext} aria-label={formatMessage({ id: 'NEXT' })}>
@@ -169,15 +213,6 @@ export default (props: ComponentProps) => {
           </button>}
         </div>
       </div>
-      {isInfinity || <div className={`${indicators}`}>
-        {times(data.length <= defaultItemsPerView ? 0 : Math.ceil(data.length / defaultItemsPerView), i => (
-          <FontAwesomeIcon
-            key={i}
-            className={`${indicators}__icons ${indicators}__icons--${i === Math.floor(position / defaultItemsPerView) ? '' : 'un'}active`}
-            icon={['fa', 'circle']}
-          />
-        ))}
-      </div>}
     </div>
   )
 }

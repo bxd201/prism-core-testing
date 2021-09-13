@@ -58,8 +58,7 @@ const facetEntryPoints = {
   ColorWallFacet: path.join(srcPath, 'components/Facets/ColorWallFacet.jsx'),
   FastMaskSimple: path.join(srcPath, 'components/Facets/FastMaskSimple/FastMaskSimple.jsx'),
   JumpStartFacet: path.join(srcPath, 'components/Facets/JumpStartFacet/JumpStartFacet.jsx'),
-  RoomTypeDetector: path.join(srcPath, 'components/Facets/RoomTypeDetector/RoomTypeDetector.jsx'),
-  Tinter: path.join(srcPath, 'components/Facets/Tinter/Tinter.jsx')
+  RoomTypeDetector: path.join(srcPath, 'components/Facets/RoomTypeDetector/RoomTypeDetector.jsx')
 }
 
 module.exports = {

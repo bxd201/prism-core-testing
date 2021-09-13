@@ -90,8 +90,14 @@ Below are all the availabe theme colors we have at the moment, as well as their 
 |link|`--prism-theme-color-link`|![#3273DC](https://via.placeholder.com/15/3273DC/000000?text=+) `#3273DC`|
 |light|`--prism-theme-color-light`|![#DDD](https://via.placeholder.com/15/DDD/000000?text=+) `#DDD`|
 |dark|`--prism-theme-color-dark`|![#2E2E2E](https://via.placeholder.com/15/2E2E2E/000000?text=+) `#2E2E2E`|
+|menuBg|`--prism-theme-color-menu-bg`|![#FFF](https://via.placeholder.com/15/FFF/000000?text=+) `#FFF`|
+|menuContentTitle|`--prism-theme-color-menu-content-title`|![#000](https://via.placeholder.com/15/000/000000?text=+) `#000`|
+|menuTxt|`--prism-theme-color-menu-txt`|![#000](https://via.placeholder.com/15/000/000000?text=+) `#000`|
+|menuTxtHover|`--prism-theme-color-menu-txt-hover`|![#2CABE2](https://via.placeholder.com/15/2CABE2/000000?text=+) `#2CABE2`|
 |primary|`--prism-theme-color-primary`|![#0069AF](https://via.placeholder.com/15/0069AF/000000?text=+) `#0069AF`|
 |secondary|`--prism-theme-color-secondary`|![#2CABE2](https://via.placeholder.com/15/2CABE2/000000?text=+) `#2CABE2`|
+|primaryBg|`--prism-theme-color-primary-bg`|![#FAFAFA](https://via.placeholder.com/15/FAFAFA/000000?text=+) `#FAFAFA`|
+|secondaryBg|`--prism-theme-color-secondary-bg`|![#E2E2E2](https://via.placeholder.com/15/E2E2E2/000000?text=+) `#E2E2E2`|
 |success|`--prism-theme-color-success`|![#1FCE6C](https://via.placeholder.com/15/1FCE6C/000000?text=+) `#1FCE6C`|
 |warning|`--prism-theme-color-warning`|![#F2C500](https://via.placeholder.com/15/F2C500/000000?text=+) `#F2C500`|
 |white|`--prism-theme-color-white`|![#FFF](https://via.placeholder.com/15/FFF/000000?text=+) `#FFF`|
@@ -108,38 +114,51 @@ Each __base__ theme color has a number of available variations. Here are the mai
   - `darkest` 85% darker version of the current color
 - `contrast` Either black or white, whichever is more readable on the current color.
 - `trans` 90% opaque version of the current color.
+- `transer` 60% opaque version of the current color.
 
 In the same vein as the above, each of the "Light/dark variants" has its own following variations:
 - `contrast` Either black or white, whichever is more readable on the lighter/darker color.
 - `trans` 90% opaque version of the lighter/darker color.
+- `transer` 60% opaque version of the lighter/darker color.
 
 Lastly, `contrast` has a single variation:
 - `trans` 90% opaque version of the lighter/darker contrast color.
+- `transer` 60% opaque version of the lighter/darker contrast color.
 
 To clarify the above, the following table will illustrate all variations of each theme color available using the `primary` theme color as an example.
 
 | CSS Custom Prop | Looks Like | To Use |
 |---|---|---|
-| `--prism-theme-color-primary`| ![+](https://via.placeholder.com/15/0069AF/000000?text=+) | `var(getThemeColor('primary'))` |
+|`--prism-theme-color-primary`| ![+](https://via.placeholder.com/15/0069AF/000000?text=+) | `var(getThemeColor('primary'))` |
 |`--prism-theme-color-primary-trans`|![+](https://via.placeholder.com/15/0069AF/000000?text=+) 90% opaque|`var(getThemeColor('primary.trans'))`|
+|`--prism-theme-color-primary-transer`|![+](https://via.placeholder.com/15/0069AF/000000?text=+) 60% opaque|`var(getThemeColor('primary.transer'))`|
 |`--prism-theme-color-primary-contrast`|![+](https://via.placeholder.com/15/ffffff/000000?text=+)|`var(getThemeColor('primary.contrast'))`|
 |`--prism-theme-color-primary-contrast-trans`|![+](https://via.placeholder.com/15/ffffff/000000?text=+) 90% opaque|`var(getThemeColor('primary.contrast.trans'))`|
+|`--prism-theme-color-primary-contrast-transer`|![+](https://via.placeholder.com/15/ffffff/000000?text=+) 60% opaque|`var(getThemeColor('primary.contrast.transer'))`|
 |`--prism-theme-color-primary-lighter`|![+](https://via.placeholder.com/15/2680bb/000000?text=+)|`var(getThemeColor('primary.lighter'))`|
 |`--prism-theme-color-primary-lighter-trans`|![+](https://via.placeholder.com/15/2680bb/000000?text=+) 90% opaque|`var(getThemeColor('primary.lighter.trans'))`|
+|`--prism-theme-color-primary-lighter-transer`|![+](https://via.placeholder.com/15/2680bb/000000?text=+) 60% opaque|`var(getThemeColor('primary.lighter.transer'))`|
 |`--prism-theme-color-primary-lighter-contrast`|![+](https://via.placeholder.com/15/000000/000000?text=+)|`var(getThemeColor('primary.lighter.contrast'))`|
 |`--prism-theme-color-primary-lighter-contrast-trans`|![+](https://via.placeholder.com/15/000000/000000?text=+) 90% opaque|`var(getThemeColor('primary.lighter.contrast.trans'))`|
+|`--prism-theme-color-primary-lighter-contrast-transer`|![+](https://via.placeholder.com/15/000000/000000?text=+) 60% opaque|`var(getThemeColor('primary.lighter.contrast.transer'))`|
 |`--prism-theme-color-primary-lightest`|![+](https://via.placeholder.com/15/d9e9f3/000000?text=+)|`var(getThemeColor('primary.lightest'))`|
 |`--prism-theme-color-primary-lightest-trans`|![+](https://via.placeholder.com/15/d9e9f3/000000?text=+) 90% trans|`var(getThemeColor('primary.lightest.trans'))`|
+|`--prism-theme-color-primary-lightest-transer`|![+](https://via.placeholder.com/15/d9e9f3/000000?text=+) 60% trans|`var(getThemeColor('primary.lightest.transer'))`|
 |`--prism-theme-color-primary-lightest-contrast`|![+](https://via.placeholder.com/15/000000/000000?text=+)|`var(getThemeColor('primary.lightest.contrast'))`|
 |`--prism-theme-color-primary-lightest-contrast-trans`|![+](https://via.placeholder.com/15/000000/000000?text=+) 90% opaque|`var(getThemeColor('primary.lightest.contrast.trans'))`|
+|`--prism-theme-color-primary-lightest-contrast-transer`|![+](https://via.placeholder.com/15/000000/000000?text=+) 60% opaque|`var(getThemeColor('primary.lightest.contrast.transer'))`|
 |`--prism-theme-color-primary-darker`|![+](https://via.placeholder.com/15/005995/000000?text=+)|`var(getThemeColor('primary.darker'))`|
 |`--prism-theme-color-primary-darker-trans`|![+](https://via.placeholder.com/15/005995/000000?text=+) 90% trans|`var(getThemeColor('primary.darker.trans'))`|
+|`--prism-theme-color-primary-darker-transer`|![+](https://via.placeholder.com/15/005995/000000?text=+) 60% trans|`var(getThemeColor('primary.darker.transer'))`|
 |`--prism-theme-color-primary-darker-contrast`|![+](https://via.placeholder.com/15/ffffff/000000?text=+)|`var(getThemeColor('primary.darker.contrast'))`|
 |`--prism-theme-color-primary-darker-contrast-trans`|![+](https://via.placeholder.com/15/ffffff/000000?text=+) 90% opaque|`var(getThemeColor('primary.darker.contrast.trans'))`|
+|`--prism-theme-color-primary-darker-contrast-transer`|![+](https://via.placeholder.com/15/ffffff/000000?text=+) 60% opaque|`var(getThemeColor('primary.darker.contrast.transer'))`|
 |`--prism-theme-color-primary-darkest`|![+](https://via.placeholder.com/15/00101a/000000?text=+)|`var(getThemeColor('primary.darkest'))`|
 |`--prism-theme-color-primary-darkest-trans`|![+](https://via.placeholder.com/15/00101a/000000?text=+) 90% opaque|`var(getThemeColor('primary.darkest.trans'))`|
+|`--prism-theme-color-primary-darkest-transer`|![+](https://via.placeholder.com/15/00101a/000000?text=+) 60% opaque|`var(getThemeColor('primary.darkest.transer'))`|
 |`--prism-theme-color-primary-darkest-contrast`|![+](https://via.placeholder.com/15/ffffff/000000?text=+)|`var(getThemeColor('primary.darkest.contrast'))`|
 |`--prism-theme-color-primary-darkest-contrast-trans`|![+](https://via.placeholder.com/15/ffffff/000000?text=+) 90% opaque|`var(getThemeColor('primary.darkest.contrast.trans'))`|
+|`--prism-theme-color-primary-darkest-contrast-transer`|![+](https://via.placeholder.com/15/ffffff/000000?text=+) 60% opaque|`var(getThemeColor('primary.darkest.contrast.transer'))`|
 
 
 

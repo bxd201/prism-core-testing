@@ -13,46 +13,35 @@
     padding: 0;
   }
   &__tab-list-select {
-    margin: 0 auto 1em;
-    padding: 0;
-    position: relative;
-    text-align: right;
+    display: flex;
+    align-items: baseline;
     border-top: 1px solid var(getThemeColor('light.darker'));
     background: var(getThemeColor('white'));
-    display: table;
-    width: 100%;
-    &:before {
-      content: '';
-      display: table;
-    }
     @include respond-above(sm) {
       border-width: 0;
       background-color: transparent;
     }
   }
   &__tab-list-heading {
-    display: block;
-    float: left;
-    font-size: 1em;
+    flex: 1;
     margin-left: 1em;
     padding: 1em 0;
-    text-align: left;
-    width: 40%;
+    font-size: .9em;
     @include respond-above(sm) {
       display: none;
     }
   }
   &__tab-list-dropdown-mobile {
-    font-weight: 700;
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    margin-right: .2em;
+    padding: 1em;
     color: var(getThemeColor('secondary'));
-    cursor: pointer;
-    display: inline-block;
     font-size: .85em;
+    font-weight: 700;
     line-height: 1;
-    margin-right: 1em;
-    padding: 1em 0;
-    text-align: right;
-    width: 51%;
+    cursor: pointer;
     &:after {
       content: '';
       display: inline-block;
@@ -63,9 +52,12 @@
       border-top-style: solid;
       margin-left: 1.5em;
       position: relative;
-      top: .35em;
+      top: .20em;
     }
     &:focus {
+      outline-style: none;
+    }
+    &:focus-visible {
       outline-style: solid;
       outline-color: var(getThemeColor('secondary'));
       outline-width: 2px;
@@ -76,7 +68,8 @@
     }
   }
   &__tab-list {
-    background: var(getThemeColor('primary.contrast.trans'));
+    background: var(getThemeColor('buttonBgColor.trans'));
+    border: 1px solid var(getThemeColor('buttonBorder'));
     display: block;
     position: absolute;
     margin: 0;
@@ -98,40 +91,52 @@
       background: 0 0;
       display: flex;
       position: relative;
-      margin: 0 .75em;
+      margin: 0 .75em 1em;
       width: calc(100% - 1.5em);
+      border-top: none;
+      border-bottom: none;
     }
   }
   &__tab-list-item {
-    font-weight: 700;
     background: none;
     border: none;
-    color: var(getThemeColor('black'));
-    fill: var(getThemeColor('black'));
+    color: var(getThemeColor('buttonColor'));
+    fill: currentColor;
     cursor: pointer;
-    display: inline-block;
+    display: block;
     font-size: .65em;
     line-height: 1em;
-    padding: .75em .5em;
-    vertical-align: middle;
-    text-transform: uppercase;
+    padding: 1em .5em;
     text-align: center;
-    width: 100%;
     height: auto;
     margin-bottom: .5em;
     flex: 1 1 auto;
-    @include respond-above(sm) {
-      background: var(getThemeColor('white'));
-      border: 1px solid var(getThemeColor('light'));
-      width: auto;
+    text-transform: var(getVarName('typography.buttonTextTransform'));
+    font-weight: var(getVarName('typography.buttonFontWeight'));
+    margin: 1px;
+    z-index: 0;
 
+    @include respond-above(sm) {
+      background: var(getThemeColor('buttonBgColor'));
+      border: 1px solid var(getThemeColor('buttonBorder'));
+      padding: .75em .5em;
+      width: auto;
+      margin: 0 -1px 0 0;
+      display: inline-block;
+
+      &:first-child {
+        margin-left: -1px;
+      }
     }
+
     &:hover {
       border: none;
-      color: var(getThemeColor('secondary'));
+      color: var(getThemeColor('buttonHoverColor'));
+      background: var(getThemeColor('buttonHoverBgColor'));
       cursor: pointer;
       @include respond-above(sm) {
-        border: 1px solid var(getThemeColor('secondary'));
+        border: 1px solid var(getThemeColor('buttonHoverBorder'));
+        z-index: 1;
       }
     }
     &:focus {
@@ -141,19 +146,11 @@
       z-index: 100;
     }
     &--active {
-      background: none;
-      color: var(getThemeColor('secondary'));
+      background: var(getThemeColor('buttonActiveBgColor')) !important;
+      color: var(getThemeColor('buttonActiveColor')) !important;
+
       &:hover {
-        border-color: var(getThemeColor('light'));
-        color: var(getThemeColor('secondary'));
         cursor: auto;
-        @include respond-above(sm) {
-          color: var(getThemeColor('white'));
-        }
-      }
-      @include respond-above(sm) {
-        background: var(getThemeColor('secondary'));
-        color: var(getThemeColor('white'));
       }
     }
   }

@@ -1,4 +1,5 @@
 {
+    "USER_UPLOAD": "Image uploaded by user.",
     "ACCEPT_TERM": "Aceptar término",
     "ADD_A_COLOR": "AGREGAR UN COLOR",
     "ADD_ALL": "Agregar todo",
@@ -19,6 +20,7 @@
     "CLOSE": "CERRAR",
     "COLOR_COLLECTIONS": "Colecciones de colores",
     "COLOR_DETAILS": "detalles de color",
+    "COLOR_DETAILS_CALL_TO_ACTION_HEADING": "¿Te gusta este color? Compre un producto a continuación",
     "COLOR_FAMILIES": "Familias de colores",
     "COMPARE_COLORS": "Comparar colores",
     "CONFIRMATION_DIALOG_MATCH_A_PHOTO_EXIT": "El contenido de la foto se perderá si cierras. Asegúrate de que los colores que deseas conservar se hayan agregado a tu paleta. ¿Todavía quieres cerrar?",
@@ -50,7 +52,7 @@
     "EXPERT_COLOR_PICKS": "Selección de colores por expertos",
     "Explora_COLOR": "Explora el color",
     "EXTERIOR": "Exterior",
-    "FIND_COLORS_IN_CW": "ENCUENTRA COLORES EN EL MURO DIGITAL DE COLORES",
+    "FIND_COLORS_IN_CW": "<line>ENCUENTRA COLORES EN </line><line>EL MURO DIGITAL DE COLORES</line>",
     "HELPFUL_HINTS": {
         "CONTENT": {
             "ICONS_&_BUTTONS": {
@@ -323,7 +325,8 @@
         "DEFAULT_DESCRIPTION": "Mi idea guardada",
         "DESCRIPTION": "Introduzca un nombre para la escena.",
         "SAVE": "GUARDAR",
-        "UNABLE_TO_SAVE_WARNING": "Esta escena no se puede guardar en tu cuenta. Puedes descargar la imagen haciendo click en el icono a la derecha de tu paleta."
+        "UNABLE_TO_SAVE_WARNING": "Esta escena no se puede guardar en tu cuenta. Puedes descargar la imagen haciendo click en el icono a la derecha de tu paleta.",
+        "EMPTY_INPUT": "Por favor, nombre esta idea."
     },
     "SCENE_DISPLAYED": "Se muestra la escena",
     "SCENE_HIDDEN": "La escena está escondida",
@@ -351,6 +354,7 @@
         "SUGGESTIONS": "Algunos ejemplos de cosas que puedes buscar son {suggestions}"
     },
     "SELECT_COLLECTION": "Seleccionar colección de colores",
+    "SELECT_FAMILY": "Seleccionar familia de colores",
     "SELECT_IMAGE": "Seleccionar una imagen",
     "SELECT_NEW_IMAGE": "Seleccionar nueva imagen",
     "SELECTED_FROM": "Seleccionado desde",

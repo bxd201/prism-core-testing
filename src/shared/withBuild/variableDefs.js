@@ -16,7 +16,10 @@ module.exports.varValues = {
     bodyFontFamily: 'inherit',
     titleFontFamily: 'inherit',
     text: '1rem',
-    title: '2rem'
+    title: '2rem',
+    titleTextTransform: 'capitalize',
+    buttonTextTransform: 'uppercase',
+    buttonFontWeight: '600'
   },
   // ----------------------------------------------
   // BEGIN DEPRECATED THEME COLORS WARNING
@@ -94,7 +97,10 @@ module.exports.varNames = {
   typography: {
     globalFontSize: '--sw-global-font-size',
     bodyFontFamily: '--prism-typography-body-font-family',
-    titleFontFamily: '--prism-typography-title-font-family'
+    titleFontFamily: '--prism-typography-title-font-family',
+    titleTextTransform: '--prism-typography-title-text-transform',
+    buttonTextTransform: '--prism-typography-button-text-transform',
+    buttonFontWeight: '--prism-typography-button-font-weight'
   },
   scenes: {
     hitAreaOutlineColor: '--prism-hit-area-outline-color',

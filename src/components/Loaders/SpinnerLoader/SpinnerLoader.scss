@@ -1,0 +1,56 @@
+.prism-loader-spinner {
+  @keyframes staggered-spinning {
+    0% {
+      transform: rotate(0deg);
+    }
+    8.33333% {
+      transform: rotate(30deg);
+    }
+    16.66666% {
+      transform: rotate(60deg);
+    }
+    25% {
+      transform: rotate(90deg);
+    }
+    33.33333% {
+      transform: rotate(120deg);
+    }
+    41.66666% {
+      transform: rotate(150deg);
+    }
+    50% {
+      transform: rotate(180deg);
+    }
+    58.33333% {
+      transform: rotate(210deg);
+    }
+    66.66666% {
+      transform: rotate(240deg);
+    }
+    75% {
+      transform: rotate(270deg);
+    }
+    83.33333% {
+      transform: rotate(300deg);
+    }
+    91.66666% {
+      transform: rotate(330deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  display: block;
+  width: 1em;
+  height: 1em;
+  margin: auto;
+  animation: staggered-spinning 1s step-end infinite;
+  font-size: 40px;
+
+  &--inherit {
+    font-size: inherit;
+  }
+
+
+}

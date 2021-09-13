@@ -7,11 +7,10 @@ export const setMaxSceneHeight = (height: number) => {
   }
 }
 
-export const SET_TOOLTIPS_POSITION = 'SET_TOOLTIPS_POSITION'
-export const setTooltipsPosition = (tipsPosition: number) => {
-  const payload = {
-    type: SET_TOOLTIPS_POSITION,
-    payload: tipsPosition
+export const SET_INITIALIZING_FACET_ID = 'SET_INITIALIZING_FACET_ID'
+export const setInitializingFacetId = (facetId: string | null = null) => {
+  return {
+    type: SET_INITIALIZING_FACET_ID,
+    payload: facetId
   }
-  return payload
 }

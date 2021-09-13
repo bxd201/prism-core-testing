@@ -14,11 +14,12 @@
   "CHOOSE_A_COLLECTION": "Choose a Collection",
   "CHOOSE_COLLECTION": "Choose collection",
   "CLEAR_ALL": "CLEAR ALL",
-  "CLEAR_AREAS":"CLEAR AREAS",
+  "CLEAR_AREAS": "CLEAR AREAS",
   "CLEAR_TEXT": "clear text",
   "CLOSE": "CLOSE",
   "COLOR_COLLECTIONS": "Colour Collections",
   "COLOR_DETAILS": "color details",
+  "COLOR_DETAILS_CALL_TO_ACTION_HEADING": "Like this colour?",
   "COLOR_FAMILIES": "Colour Families",
   "COMPARE_COLORS": "Compare Colors",
   "CONFIRMATION_DIALOG_MATCH_A_PHOTO_EXIT": "The photo content will be lost if you close. Make sure the colors you want to keep have been added to your palette. Do you still want to close?",
@@ -48,7 +49,7 @@
   "ERROR_LOADING_COLORS": "We're unable to load colours right now.",
   "EXPERT_COLOR_PICKS": "Expert Color Picks",
   "EXTERIOR": "Exterior",
-  "FIND_COLORS_IN_CW": "FIND COLOURS IN THE DIGITAL COLOR WALL",
+  "FIND_COLORS_IN_CW": "<line>FIND COLOURS IN </line><line>THE DIGITAL COLOR WALL</line>",
   "HELPFUL_HINTS": {
     "CONTENT": {
       "ICONS_&_BUTTONS": {
@@ -273,7 +274,7 @@
       "UNDO": "UNDO",
       "UNGROUP": "UNGROUP",
       "ZOOM": "ZOOM",
-      "ADDCOLORS":"ADD COLORS"
+      "ADDCOLORS": "ADD COLORS"
     },
     "TOOLTIPS": {
       "ADDCOLORS": "Click or tap here to add colors to your palette.",
@@ -319,7 +320,8 @@
     "DEFAULT_DESCRIPTION": "My Saved Idea",
     "DESCRIPTION": "Please enter a name for the scene.",
     "SAVE": "SAVE",
-    "UNABLE_TO_SAVE_WARNING": "This scene cannot be saved to your account. You can download the image by clicking the icon to the right of your palette."
+    "UNABLE_TO_SAVE_WARNING": "This scene cannot be saved to your account. You can download the image by clicking the icon to the right of your palette.",
+    "EMPTY_INPUT": "Please name this idea."
   },
   "SCENE_DISPLAYED": "Scene is displayed",
   "SCENE_HIDDEN": "Scene is hidden",
@@ -347,6 +349,7 @@
     "SUGGESTIONS": "Some examples of things you can search for are {suggestions}"
   },
   "SELECT_COLLECTION": "Select Colour Collection",
+  "SELECT_FAMILY": "Select Colour Family",
   "SELECT_IMAGE": "Select an image",
   "SELECT_NEW_IMAGE": "Select new image",
   "SELECTED_FROM": "Selected from",

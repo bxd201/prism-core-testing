@@ -10,8 +10,8 @@
 </head>
 
 <body>
-  <div prism-auto-embed
-        data-react-component="ColorVisualizer"
+  <div id="prism-embed-root"
+        data-prism-facet="ColorVisualizer"
         data-color-wall-bg-color="#FFF"
         data-language="en-US"
         data-page-root="/cvw"
@@ -19,14 +19,27 @@
         data-selected-color-family="red"
         data-max-scene-height="640"></div>
 
+        <script src="<%= BASE_PATH %>/embed.js"></script>
   <script>
-    (function(d, s, id) {
-      var js, fjs = d.getElementsByTagName(s)[0];
-      if (d.getElementById(id)) return;
-      js = d.createElement(s); js.id = id;
-      js.src = "<%= BASE_PATH %>/embed.js";
-      fjs.parentNode.insertBefore(js, fjs);
-    }(document, 'script', 'prism-widget'));
+    (() => {
+      window.PRISM.embed(document.getElementById( 'prism-embed-root' ), {
+        bindCallback: ({ publish, subscribe }) => {
+          subscribe('prism-new-color', color => {
+            console.info({ event: 'prism-new-color', data: color })
+            publish('PRISM/in/update-color-ctas', [
+              {
+                text: 'Buy paint in ' + color.name,
+                link: '#test'
+              },
+              {
+                text: 'Buy paint with no color at all',
+                link: '#test'
+              }
+            ])
+          })
+        }
+      })
+    })()
   </script>
 
 </body>

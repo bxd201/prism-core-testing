@@ -18,12 +18,12 @@ import {
   SHOW_SAVED_CONFIRM_MODAL,
   SHOW_SAVED_CUSTOM_SUCCESS,
   SHOW_DELETE_CONFIRM,
-  PURGE_METADATA
+  PURGE_METADATA, SET_SHOULD_SHOW_PAINT_SCENE_SAVED_MODAL, ANON_SCENE_TYPES
 } from '../actions/persistScene'
 import {
   DELETE_ANON_STOCK_SCENE,
   SAVE_ANON_STOCK_SCENE,
-  SELECT_ANON_STOCK_SCENE, SELECT_SCENE_STATUS,
+  SELECT_ANON_STOCK_SCENE, HYDRATE_STOCK_SCENE_FROM_SAVE,
   UPDATE_STOCK_SAVED_SCENE_NAME
 } from '../actions/stockScenes'
 import {
@@ -34,7 +34,9 @@ import {
 } from '../actions/saveLivePalette'
 import { SCENE_TYPES } from '../../constants/globals'
 import cloneDeep from 'lodash/cloneDeep'
-import { PAINT_SCENE_SURFACE } from '../actions/scenes'
+import type { MiniColor } from '../../shared/types/Scene'
+import { SET_PAINT_SCENE_SAVE_DATA, TRIGGER_PAINT_SCENE_LAYER_PUBLISH } from '../actions/paintScene'
+import { copySurfaceColors } from '../../components/SingleTintableSceneView/util'
 export const legacySavedScenesMetadata = (state: Object[] = [], action: { type: string, payload: Object }) => {
   if (action.type === DELETE_SAVED_SCENE) {
     const newState = state.filter(scene => scene.id !== action.payload)
@@ -71,30 +73,23 @@ export const scenesAndRegions = (state: Object[] = [], action: {type: string, pa
   }
 
   if (action.type === SAVED_SCENE_LOCAL) {
-    let newState = [...state]
-    const existingItem = state.find(item => item.id === action.payload.id)
-    if (existingItem) {
-      newState = state.filter(item => item.id !== existingItem.id)
-    }
-
-    newState.push(action.payload)
-
-    return newState
+    return state.map(item => cloneDeep(item))
   }
 
   if (action.type === DELETE_ANON_SAVED_SCENE) {
-    return state.filter(item => item.id !== action.payload)
+    return state.filter(item => item.id !== action.payload).map(item => cloneDeep(item))
   }
 
   if (action.type === UPDATE_ANON_SAVED_SCENE_NAME) {
-    const sceneDataFromState = state.find(item => item.id === action.payload.id)
-    if (sceneDataFromState) {
-      const newState = state.filter(item => item.id !== action.payload.id)
-      newState.push({ ...sceneDataFromState, name: action.payload.name, updated: Date.now() })
-      return newState
-    }
+    return state.map(item => {
+      const itemCopy = cloneDeep(item)
+      if (item.id === action.payload.id) {
+        itemCopy.name = action.payload.name
+        itemCopy.updated = Date.now()
+      }
 
-    return state
+      return itemCopy
+    })
   }
 
   return state
@@ -127,7 +122,7 @@ export const sceneMetadata = (state: Object[] = [], action: {type: string, paylo
   }
 
   if (action.type === DELETE_ANON_SAVED_SCENE) {
-    return state.filter(item => item.sceneType !== SCENE_TYPE.anonCustom || item.scene.indexOf(action.payload) === -1)
+    return state.filter(item => ANON_SCENE_TYPES.indexOf(item.sceneType) === -1 || item.scene.indexOf(action.payload) === -1)
   }
 
   if (action.type === SAVE_ANON_STOCK_SCENE && action.payload) {
@@ -148,12 +143,16 @@ export const sceneMetadata = (state: Object[] = [], action: {type: string, paylo
   }
 
   if (action.type === UPDATE_STOCK_SAVED_SCENE_NAME) {
-    const sceneDataFromState = state.find(item => item.id === action.payload.id)
-    if (sceneDataFromState) {
-      const newState = state.filter(item => item.id !== action.payload.id)
-      newState.push({ ...sceneDataFromState, name: action.payload.name })
-      return newState
-    }
+    newState = state.map(item => {
+      const itemCopy = cloneDeep(item)
+      if (item.id === action.payload.id) {
+        itemCopy.name = action.payload.name
+      }
+
+      return itemCopy
+    })
+
+    return newState
   }
 
   if (action.type === SAVED_REGIONS_UNPICKLED || action.type === PURGE_METADATA) {
@@ -167,7 +166,7 @@ export const sceneMetadata = (state: Object[] = [], action: {type: string, paylo
         return { ...item }
       }
 
-      if (item.sceneType === SCENE_TYPE.anonCustom) {
+      if (ANON_SCENE_TYPES.indexOf(item.sceneType) > -1) {
         // If the storage location structure/ id generation is changed this will need to be
         let id = item.scene.match(/\/([0-9]+-)+/)
 
@@ -186,24 +185,21 @@ export const sceneMetadata = (state: Object[] = [], action: {type: string, paylo
 
   if (action.type === SAVE_LIVE_PALETTE) {
     const dataCopy = cloneDeep(action.payload)
-    if (state.find(item => item.sceneType === SCENE_TYPE.livePalette && item.id === action.payload.id)) {
-      newState = state.filter(item => item.id !== action.payload.id)
-      newState.push(dataCopy)
+    const stateCopy = cloneDeep(state)
+    stateCopy.push(dataCopy)
 
-      return newState
-    } else {
-      return [...state, dataCopy]
-    }
+    return stateCopy
   }
 
   if (action.type === UPDATE_LIVE_PALETTE) {
-    const livePaletteData = state.find(item => item.sceneType === SCENE_TYPE.livePalette && item.id === action.payload.id)
-    if (livePaletteData) {
-      newState = state.filter(item => item.id !== action.payload.id)
-      newState.push({ ...livePaletteData, name: action.payload.name })
+    return state.map(item => {
+      const itemCopy = cloneDeep(item)
+      if (item.id === action.payload.id) {
+        itemCopy.name = action.payload.name
+      }
 
-      return newState
-    }
+      return itemCopy
+    })
   }
 
   if (action.type === DELETE_SAVED_LIVE_PALETTE) {
@@ -263,28 +259,6 @@ export const selectedStockSceneId = (state: string | null = null, action: { type
   return state
 }
 
-export const selectedSceneStatus = (state: Object | null = null, action: { type: string, payload: Object }) => {
-  if (action.type === SELECT_SCENE_STATUS) {
-    return cloneDeep(action.payload)
-  }
-
-  if (action.type === PAINT_SCENE_SURFACE && state) {
-    const newState = cloneDeep(state)
-
-    newState.expectStockData.scene.surfaces.some(surface => {
-      if (surface.id === action.payload.surfaceId) {
-        surface.color = cloneDeep(action.payload.color)
-
-        return true
-      }
-    })
-
-    return newState
-  }
-
-  return state
-}
-
 export const showSavedConfirmModal = (state: boolean = false, action: {type: string, payload: boolean}) => {
   if (action.type === SHOW_SAVED_CONFIRM_MODAL) {
     return action.payload
@@ -307,6 +281,50 @@ export const showSavedCustomSceneSuccess = (state: boolean = false, action: { ty
 
 export const showDeleteConfirmModal = (state: boolean = false, action: { type: string, payload: boolean }) => {
   if (action.type === SHOW_DELETE_CONFIRM) {
+    return action.payload
+  }
+
+  return state
+}
+
+export const colorsForSurfacesFromSavedScene = (state: MiniColor[] | null = null, action: { type: string, payload: { surfaceColors: MiniColor[] | null }}) => {
+  if (action.type === HYDRATE_STOCK_SCENE_FROM_SAVE) {
+    return copySurfaceColors(action.payload.surfaceColors)
+  }
+
+  return state
+}
+
+export const variantStockSceneNameFromSave = (state: string | null = null, action: { type: string, payload: { variantName: string | null }}) => {
+  if (action.type === HYDRATE_STOCK_SCENE_FROM_SAVE) {
+    return action.payload.variantName
+  }
+
+  return state
+}
+
+export const paintSceneLayersForSave = (state: string[] | null = null, action: {type: string, payload: string[]}) => {
+  if (action.type === SET_PAINT_SCENE_SAVE_DATA) {
+    return action.payload
+  }
+
+  return state
+}
+
+export const shouldTriggerPaintScenePublishLayers = (state: boolean = false, action: { type: string, payload: boolean}) => {
+  if (action.type === TRIGGER_PAINT_SCENE_LAYER_PUBLISH) {
+    return action.payload
+  }
+
+  return state
+}
+
+export const shouldShowPaintSceneSavedModal = (state: boolean = false, action: {type: string, payload: boolean, data: any | void}) => {
+  if (action.type === SAVING_MASKS && !action.payload && action.data) {
+    return true
+  }
+
+  if (action.type === SET_SHOULD_SHOW_PAINT_SCENE_SAVED_MODAL) {
     return action.payload
   }
 

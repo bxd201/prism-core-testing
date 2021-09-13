@@ -27,5 +27,17 @@
     &--v-btm {
       align-self: flex-end;
     }
+
+    &--h-center {
+      justify-self: center;
+    }
+
+    &--h-top {
+      justify-self: flex-start;
+    }
+
+    &--h-btm {
+      justify-self: flex-end;
+    }
   }
 }

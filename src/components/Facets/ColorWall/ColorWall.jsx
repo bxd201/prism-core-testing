@@ -1,5 +1,5 @@
 // @flow
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState, useMemo } from 'react'
 import { useHistory, useRouteMatch, Link } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { useIntl } from 'react-intl'
@@ -49,7 +49,12 @@ const ColorWall = () => {
   const { url, params }: { url: string, params: { section: ?string, family?: ?string, colorId?: ?string } } = useRouteMatch()
   const history = useHistory()
   const { messages = {} } = useIntl()
-  const { items: { colorMap = {}, colorStatuses = {}, sectionLabels = {} }, unChunkedChunks, chunkGridParams, section, family }: ColorsState = useSelector(state => state.colors)
+  const { items: { colorMap = {}, colorStatuses = {}, sectionLabels: _sectionLabels = {} }, unChunkedChunks, chunkGridParams, section, family }: ColorsState = useSelector(state => state.colors)
+
+  // if a family is selected, NEVER return section labels (they're only for sections)
+  const sectionLabels = useMemo(() => {
+    return family ? {} : _sectionLabels
+  }, [_sectionLabels, family])
 
   const [chunkGrid: string[][][][], setChunkGrid: (string[][][][]) => void] = useState([])
   const [containerWidth: number, setContainerWidth: (number) => void] = useState(900)
@@ -180,7 +185,10 @@ const ColorWall = () => {
 
     ;(function scroll () {
       window.requestAnimationFrame((timestamp: DOMHighResTimeStamp) => {
+        if (!gridRef.current) return
+
         gridRef.current.scrollToPosition(getScrollStep(gridRef.current.state, end, timestamp - startTime))
+
         if (gridRef.current.state.scrollLeft !== end.scrollLeft || gridRef.current.state.scrollTop !== end.scrollTop) {
           scroll()
         }

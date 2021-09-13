@@ -1,4 +1,5 @@
 {
+  "USER_UPLOAD": "Image uploaded by user.",
   "ACCEPT_TERM": "Accept term",
   "ADD_A_COLOR": "Ajouter une couleur",
   "ADD_ALL": "Add All",
@@ -19,6 +20,7 @@
   "CLOSE": "CLOSE",
   "COLOR_COLLECTIONS": "Couleur Collection",
   "COLOR_DETAILS": "color details",
+  "COLOR_DETAILS_CALL_TO_ACTION_HEADING": "Vous aimez cette couleur ? Achetez un produit ci-dessous",
   "COLOR_FAMILIES": "Familles de Couleurs",
   "COMPARE_COLORS": "Compare Colors",
   "CONFIRMATION_DIALOG_MATCH_A_PHOTO_EXIT": "The photo content will be lost if you close. Make sure the colors you want to keep have been added to your palette. Do you still want to close?",
@@ -48,7 +50,7 @@
   "ERROR_LOADING_COLORS": "Erreur lors du chargement des couleurs.",
   "EXPERT_COLOR_PICKS": "Expert Color Picks",
   "EXTERIOR": "Extérieur",
-  "FIND_COLORS_IN_CW": "TROUVER DES COULEURS DANS LE MUR DE COULEUR NUMÉRIQUE",
+  "FIND_COLORS_IN_CW": "<line>TROUVER DES COULEURS DANS </line><line>LE MUR DE COULEUR NUMÉRIQUE</line>",
   "HELPFUL_HINTS": {
     "CONTENT": {
       "ICONS_&_BUTTONS": {
@@ -319,7 +321,8 @@
     "DEFAULT_DESCRIPTION": "My Saved Idea",
     "DESCRIPTION": "Please enter a name for the scene.",
     "SAVE": "SAVE",
-    "UNABLE_TO_SAVE_WARNING": "This scene cannot be saved to your account. You can download the image by clicking the icon to the right of your palette."
+    "UNABLE_TO_SAVE_WARNING": "This scene cannot be saved to your account. You can download the image by clicking the icon to the right of your palette.",
+    "EMPTY_INPUT": "Veuillez nommer cette idée."
   },
   "SCENE_DISPLAYED": "La Scène est affichée",
   "SCENE_HIDDEN": "La Scène est cachée",
@@ -347,6 +350,7 @@
     "SUGGESTIONS": "Quelques exemples de choses que vous pouvez rechercher sont {suggestions}"
   },
   "SELECT_COLLECTION": "Sélectionnez une collection de couleurs",
+  "SELECT_FAMILY": "Sélectionnez une famille de couleurs",
   "SELECT_IMAGE": "Select an image",
   "SELECT_NEW_IMAGE": "Select new image",
   "SELECTED_FROM": "Selected from",

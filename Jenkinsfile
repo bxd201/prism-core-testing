@@ -11,6 +11,8 @@ def GET_API_URL(branch) {
     "https://api.sherwin-williams.com/prism"
   } else if (branch == 'qa') {
     "https://${branch.toLowerCase()}-api.sherwin-williams.com/prism"
+  } else if (branch == 'lowes-cvw') {
+    "https://qa-api.sherwin-williams.com/prism"
   } else {
     'https://develop-prism-api.ebus.swaws'
   }
@@ -35,7 +37,7 @@ pipeline {
   stages {
     stage('builder') {
       when {
-          expression { BRANCH_NAME ==~ /^(PR-.+|develop|integration|hotfix|qa|release)$/ }
+          expression { BRANCH_NAME ==~ /^(PR-.+|develop|integration|hotfix|qa|release|lowes-cvw)$/ }
         }
       steps {
 
@@ -76,7 +78,7 @@ pipeline {
     }
     stage('s3-upload') {
       when {
-          expression { BRANCH_NAME ==~ /^(develop|hotfix|integration|qa|release)$/ }
+          expression { BRANCH_NAME ==~ /^(develop|hotfix|integration|qa|release|lowes-cvw)$/ }
         }
       agent {
         docker {
@@ -231,7 +233,7 @@ pipeline {
     }
     stage('Deploy') {
       when {
-        expression { BRANCH_NAME ==~ /^(develop|integration|replatform)$/ }
+        expression { BRANCH_NAME ==~ /^(develop|integration|hotfix|qa|release|replatform|lowes-cvw)$/ }
       }
       agent {
         docker {
@@ -289,7 +291,7 @@ pipeline {
 
     stage('Akamai Cache') {
       when {
-        expression { BRANCH_NAME ==~ /^(develop|qa)$/ }
+        expression { BRANCH_NAME ==~ /^(develop|qa|lowes-cvw)$/ }
       }
       agent {
         docker {
@@ -307,7 +309,7 @@ pipeline {
             string(credentialsId: 'ccu_host', variable: 'HOST')]) {
             sh """
             #!/bin/bash
-              brume ccu invalidate --objects https://prism.sherwin-williams.com/"${S3_FOLDER_NAME}/" --type url
+              brume ccu invalidate --objects https://prism.sherwin-williams.com/"${S3_FOLDER_NAME}"/ --type url
             """
           }
         }

@@ -86,6 +86,8 @@ function ConfigurationContextProvider (props: Props) {
         // TODO: remove this next chunk once API is returning correct V2 theme colors
         // PRISM-360 | begin deprecated theme color mapping
         secondary: theme.primary,
+        primaryBg: '#fafafa', // light.lightest
+        secondaryBg: '#e2e2e2', // light.lighter
         dark: theme.nearBlack,
         light: theme.lightGrey,
         link: theme.primary,
@@ -95,6 +97,19 @@ function ConfigurationContextProvider (props: Props) {
           const tc = tinycolor(color)
           return (tc.isDark() ? tc.tint(15) : tc.shade(15)).toHexString()
         })(theme.link || theme.primary),
+        menuBg: theme.white,
+        menuContentTitle: theme.black,
+        menuTxt: theme.black,
+        menuTxtHover: theme.secondary,
+        buttonBgColor: theme.white,
+        buttonBorder: theme.grey,
+        buttonColor: theme.primary,
+        buttonHoverBgColor: '#F2F2F2',
+        buttonHoverBorder: theme.grey,
+        buttonHoverColor: theme.primary,
+        buttonActiveBgColor: theme.primary,
+        buttonActiveBorder: theme.grey,
+        buttonActiveColor: theme.white,
         // TODO: end deprecated theme color mapping
         ...theme
       })
@@ -122,7 +137,10 @@ function ConfigurationContextProvider (props: Props) {
       customProps = {
         ...customProps,
         [varNames.typography.bodyFontFamily]: typography.bodyFontFamily,
-        [varNames.typography.titleFontFamily]: typography.titleFontFamily
+        [varNames.typography.titleFontFamily]: typography.titleFontFamily,
+        [varNames.typography.titleTextTransform]: typography.titleTextTransform,
+        [varNames.typography.buttonTextTransform]: typography.buttonTextTransform,
+        [varNames.typography.buttonFontWeight]: typography.buttonFontWeight
       }
     }
 

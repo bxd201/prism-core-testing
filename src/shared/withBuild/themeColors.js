@@ -13,11 +13,26 @@ const defaultThemeColors = {
   link: '#3273dc', // hyperlink color (maps over from primary if not set in config)
   light: '#dddddd', // nearly white
   dark: '#2e2e2e', // nearly black
+  menuBg: '#FFF', // menu background color
+  menuContentTitle: '#000', // menu/submenu content title color of each item
+  menuTxt: '#000', // menu text color
+  menuTxtHover: '#2cabe2', // menu text color on hover
   primary: '#0069af', // main button/UI color
   secondary: '#2cabe2', // secondary button/UI color
+  primaryBg: '#fafafa', // main background color
+  secondaryBg: '#e2e2e2', // secondary background color
   success: '#1fce6d', // success color (usually green)
   warning: '#f2c500', // warning color (usually orange or yellow)
-  white: '#FFF' // #FFF
+  white: '#FFF', // #FFF,
+  buttonBgColor: '#FFF',
+  buttonBorder: '#CCC',
+  buttonColor: '#0069af',
+  buttonHoverBgColor: '#F2F2F2',
+  buttonHoverBorder: '#CCC',
+  buttonHoverColor: '#0069af',
+  buttonActiveBgColor: '#0069af',
+  buttonActiveBorder: '#CCC',
+  buttonActiveColor: '#FFF'
 }
 
 const themeColors = Object.keys(defaultThemeColors)
@@ -36,6 +51,7 @@ const getOneThemeColorObj = (name = '', color = undefined, injectTransparent = f
 
   if (injectTransparent) {
     obj.trans = getOneThemeColorObj(`${modName}-trans`, color ? tinycolor(color).setAlpha(0.9).toRgbString() : undefined, false, false)
+    obj.transer = getOneThemeColorObj(`${modName}-transer`, color ? tinycolor(color).setAlpha(0.6).toRgbString() : undefined, false, false)
   }
 
   return obj

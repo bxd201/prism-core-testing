@@ -1,0 +1,54 @@
+.ColorDetailsCTAs {
+  padding: 1em;
+
+  &__title {
+    font-size: .8em;
+    text-align: center;
+    font-weight: 600;
+    text-transform: uppercase;
+    padding: 0;
+  }
+
+  &__list {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    list-style: none;
+    margin-top: .5em;
+    margin: none;
+    padding: none;
+  }
+
+  &__cta {
+    text-transform: var(getVarName('typography.buttonTextTransform'));
+    font-weight: var(getVarName('typography.buttonFontWeight'));
+    background: var(getThemeColor('buttonBgColor'));
+    border: 1px solid var(getThemeColor('buttonBorder'));
+    color: var(getThemeColor('buttonColor'));
+    fill: currentColor;
+    display: inline-block;
+    font-size: .8em;
+    line-height: 1;
+    margin: .5em .2em 0;
+    padding: .75em 1em;
+    text-decoration: none !important;
+
+    &:focus {
+      outline-style: solid;
+      outline-color: var(getThemeColor('secondary'));
+      outline-width: 2px;
+    }
+
+    &:hover {
+      background: var(getThemeColor('buttonHoverBgColor'));
+      border: 1px solid var(getThemeColor('buttonHoverBorder'));
+      color: var(getThemeColor('buttonHoverColor'));
+    }
+    &:active {
+      background: var(getThemeColor('buttonActiveBgColor'));
+      border: 1px solid var(getThemeColor('buttonActiveBorder'));
+      color: var(getThemeColor('buttonActiveColor'));
+    }
+  }
+}

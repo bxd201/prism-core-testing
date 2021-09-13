@@ -12,7 +12,7 @@
   &__header {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-end;
     display: none;
     @include respond-above(sm) {
       display: flex;
@@ -22,10 +22,7 @@
       text-align: center;
       @include respond-above(sm) {
         display: block;
-        margin: 0.2em 0.5em;
-      }
-      @include respond-above(md) {
-        margin: 0.5em;
+        margin: auto 0.5em;
       }
     }
     &__compare-button{
@@ -34,17 +31,18 @@
       }
       padding: 0.5em 1em;
       margin-right: 5px;
-      border-top: 1px solid #ebebeb;
-      font-weight: 600;
-      font-size: 16px;
+      font-size: .8em;
       outline:none;
-      border-top: 1px solid #ebebeb;
-      @include respond-above(md) {
-        border-top: 1px solid #ebebeb;
-      }
+      text-transform: var(getVarName('typography.buttonTextTransform'));
+      font-weight: var(getVarName('typography.buttonFontWeight'));
+      border: 1px solid var(getThemeColor('buttonBorder'));
+      background-color: var(getThemeColor('buttonBgColor'));
+      color: var(getThemeColor('buttonColor'));
+
       &:hover{
-        background-color: #2cabe2;
-        color: #fff;
+        border: 1px solid var(getThemeColor('buttonHoverBorder'));
+        background-color: var(getThemeColor('buttonHoverBgColor'));
+        color: var(getThemeColor('buttonHoverColor'));
         cursor: pointer;
       }
     }
@@ -160,11 +158,16 @@
         display: flex;
         flex-direction: row;
         justify-content: center;
-        position: relative;
         align-items: center;
+
+        position: absolute;
+        height: 100%;
+        width: 100%;
+
         @include respond-above(sm) {
           position: static;
           justify-content: space-between;
+          height: auto;
         }
         .prism-live-palette__description {
           width: auto;
@@ -178,13 +181,11 @@
           padding: 0px;
           opacity: 0;
           animation: fadeIn 1s forwards;
-          margin-top: 22%;
+          margin: auto auto;
+
           @include respond-above(sm) {
-            padding: 5px;
-            position: absolute;
-            margin-top: 0;
-            right: 0;
-            top: 0;
+            padding: 0 0 5px 5px;
+            margin: 0 0 auto auto;
           }
         }
       }
@@ -217,7 +218,7 @@
     &__copy {
       bottom: 0;
       display: none;
-      font-size: 7px;
+      font-size: #{(9/16)}rem;
       text-align: center;
 
       @include respond-above(sm) {

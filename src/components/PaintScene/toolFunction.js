@@ -1,7 +1,7 @@
 // @flow
 import { copyImageList, getColorAtPixel, getSelectArea,
   edgeDetect, getActiveColorRGB, hexToRGB,
-  floodFillScanLineStack, drawImagePixelByPath, getImageCordinateByPixel,
+  floodFillScanLineStack, drawImagePixelByPath, getImageCoordinateByPixel,
   eraseIntersection, getPaintAreaPath, updateDeleteAreaList, createPolygon,
   repaintCircleLine, drawLine, getCanvasWrapperOffset, dropPin, repaintImageByPath,
   filterErasePath, breakGroupIfhasIntersection, drawPaintBrushPoint, drawPaintBrushPathUsingLine,
@@ -35,7 +35,7 @@ export const bucketPaint = (e, state, props, ref) => {
   const imagePath = floodFillScanLineStack(imageData, RGB, cursorX, cursorY, 100, performance)
   CFICanvasContext2.clearRect(0, 0, canvasOffsetWidth, canvasOffsetHeight)
   drawImagePixelByPath(ctx, canvasOffsetWidth, canvasOffsetHeight, RGB, imagePath)
-  const [pixelArray, pixelIndexAlphaMap] = getImageCordinateByPixel(CFICanvas2, RGB, canvasOffsetWidth, canvasOffsetHeight, true)
+  const [pixelArray, pixelIndexAlphaMap] = getImageCoordinateByPixel(CFICanvas2, RGB, canvasOffsetWidth, canvasOffsetHeight, true)
   // @todo [IMRPOVEMENT]- candidate for createImagePath factory -RS
   copyImagePathList.push({
     type: 'paint',
@@ -461,7 +461,7 @@ export const createOrDeletePolygon = (isAddArea, state, props, ref) => {
   createPolygon(polyList, CFICanvasPaint, canvasOffsetWidth, canvasOffsetHeight, lpActiveColor.hex, 'source-over')
   if (!isAddArea) {
     const RGB = getActiveColorRGB(hexToRGB(lpActiveColor.hex))
-    const erasePath = getImageCordinateByPixel(CFICanvasPaint, RGB, canvasOffsetWidth, canvasOffsetHeight, false)
+    const erasePath = getImageCoordinateByPixel(CFICanvasPaint, RGB, canvasOffsetWidth, canvasOffsetHeight, false)
     CFICanvasContextPaint.clearRect(0, 0, canvasOffsetWidth, canvasOffsetHeight)
     tmpImagePathList = eraseIntersection(imagePathList, erasePath)
     newImagePathList = remove(tmpImagePathList, (currImagePath) => {
@@ -535,7 +535,7 @@ export const eraseOrPaintMouseUp = (state, props, ref) => {
 
   if (activeTool === toolNames.ERASE && prevPoint !== null) {
     const RGB = getActiveColorRGB({ red: 255, blue: 255, green: 255 })
-    const erasePathWithAlpha = getImageCordinateByPixel(CFICanvasPaint, RGB, canvasOffsetWidth, canvasOffsetHeight, true)
+    const erasePathWithAlpha = getImageCoordinateByPixel(CFICanvasPaint, RGB, canvasOffsetWidth, canvasOffsetHeight, true)
     let erasePath = []
     Object.keys(erasePathWithAlpha[1]).forEach(key => {
       if (erasePathWithAlpha[1][key] > 126) {

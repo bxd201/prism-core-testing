@@ -1,0 +1,65 @@
+.scene-selector-nav-btn {
+  $self: &;
+
+  position: relative;
+  display: flex;
+  padding: 0.5rem;
+  align-content: center;
+  justify-content: center;
+  border: 1px solid var(getThemeColor('buttonBorder'));
+  background-color: var(getThemeColor('buttonBgColor'));
+  color: var(getThemeColor('buttonColor'));
+
+  &:hover {
+    border-color: var(getThemeColor('buttonHoverBorder'));
+    background-color: var(getThemeColor('buttonHoverBgColor'));
+    color: var(getThemeColor('buttonHoverColor'));
+  }
+
+  &__icon {
+    font-size: 1em;
+    background-color: var(getThemeColor('buttonBgColor'));
+    position: relative;
+    width: 20px;
+    height: 20px;
+    align-content: center;
+    justify-content: center;
+    flex-direction: row;
+    padding: 0.125rem;
+
+    #{$self}:hover & {
+      background-color: var(getThemeColor('buttonHoverBgColor'));
+    }
+
+    &-1 {
+      position: absolute;
+      bottom: 0px;
+      left: 0px;
+      transform: translate(3px, -2px);
+      z-index: 100;
+      background-color: inherit;
+    }
+
+    &-2 {
+      position: absolute;
+      bottom: 0px;
+      left: 0px;
+      z-index: 1000;
+      background-color: inherit;
+    }
+
+    &-3 {
+      position: absolute;
+      bottom: 0px;
+      left: 0px;
+      transform: translate(6px, -4px);
+      z-index: 1;
+      background-color: inherit;
+    }
+  }
+  &__text {
+    padding: 0.5rem 0.125rem;
+    text-transform: var(getVarName('typography.buttonTextTransform'));
+    font-weight: var(getVarName('typography.buttonFontWeight'));
+  }
+}

@@ -66,12 +66,14 @@ export function doReceiveColors (state: ColorsState, { payload: { unorderedColor
       ...state,
       items: { colors, brights, unorderedColors: unorderedColors.map((c: Color) => c.id), sectionLabels: colorLabels, colorMap },
       layouts: sections.map(({ name, families, chunkGridParams }) => {
-        const unChunkedChunks = [
-          // bright chunks go first
-          ...families.flatMap((family: string): string[] => brights[family]),
-          // normal chunks go next but transposed so that each family will be in it's own column
-          ...flatten(transpose(families.map((family: string): string[] => colors[family])))
-        ]
+        const unChunkedChunks = (chunkGridParams.familiesDetermineLayout || !colors[name])
+          ? [
+            // bright chunks go first
+            ...families.flatMap((family: string): string[] => brights[family]),
+            // normal chunks go next but transposed so that each family will be in it's own column
+            ...flatten(transpose(families.map((family: string): string[] => colors[family])))
+          ]
+          : colors[name]
 
         return {
           name,
@@ -79,8 +81,10 @@ export function doReceiveColors (state: ColorsState, { payload: { unorderedColor
           chunkGridParams,
           families: families.map(family => ({
             name: family,
-            unChunkedChunks: families.length > 1 ? [...brights[family], ...colors[family]] : unChunkedChunks,
-            chunkGridParams: families.length > 1
+            unChunkedChunks: chunkGridParams.familiesDetermineLayout
+              ? [...(brights[family] ?? [[]]), ...(colors[family] ?? [[]])]
+              : colors[family],
+            chunkGridParams: chunkGridParams.familiesDetermineLayout
               ? { gridWidth: 3, chunkWidth: 7, firstRowLength: 1, wrappingEnabled: false }
               : { ...chunkGridParams, wrappingEnabled: false }
           }))

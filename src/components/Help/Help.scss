@@ -25,6 +25,8 @@
         outline-style: none;
         padding: 0;
         text-align: center;
+        position: relative;
+        border-right: 1px solid var(getThemeColor('light'));
 
         &:focus {
           outline-color: var(getThemeColor('secondary'));
@@ -49,9 +51,9 @@
             content: '';
             display: inline-block;
             height: 0;
-            left: 20%;
+            right: 1px;
+            transform: translateX(100%);
             position: absolute;
-            // top: calc(51% - 4em);
             width: 0;
             z-index: 1;
           }
@@ -104,6 +106,7 @@
     text-align: center;
     & > h2 {
       color: var(getThemeColor('secondary'));
+      text-transform: var(getVarName('typography.titleTextTransform'));
       display: block;
       font-size: 1.75em;
       font-weight: 400;
@@ -247,5 +250,30 @@
   }
   &__second-icon {
     margin-top: 6px;
+  }
+  &__get-icons {
+    position: relative;
+    float: left;
+    width: 20px;
+    height: 20px;
+    background-color: #F9F9F9;
+    &--color-details-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-right: 1px;
+      border: 2px solid;
+      font-size: smaller;
+    }
+    &--paint-scene-icon {
+      width: 32px;
+      font-size: large;
+    }
+    &--undo {
+      margin-right: .75em;
+      @include respond-above(sm){
+        margin-left: .75em;
+      }
+    }
   }
 }

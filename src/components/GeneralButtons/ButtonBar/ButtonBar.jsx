@@ -15,12 +15,13 @@ export const CLASS_NAMES = {
 }
 
 type BarProps = {
-  children: any
+  children: any,
+  style?: { borderRadius?: string }
 }
 
 function Bar (props: BarProps) {
   return (
-    <div className={CLASS_NAMES.OPTION_CONTAINER}>
+    <div className={CLASS_NAMES.OPTION_CONTAINER} style={props.style}>
       <ul className={CLASS_NAMES.OPTIONS}>
         {props.children}
       </ul>

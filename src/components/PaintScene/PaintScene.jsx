@@ -12,7 +12,7 @@ import {
 } from './PaintSceneUtils'
 import {
   repaintImageByPath,
-  getImageCordinateByPixel,
+  getImageCoordinateByPixel,
   canvasDimensionFactors,
   applyDimensionFactorsByCanvas,
   getActiveColorRGB,
@@ -42,31 +42,34 @@ import {
   showSaveSceneModal,
   startSavingMasks
 } from '../../store/actions/persistScene'
-import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 import SaveMasks from './SaveMasks'
 import { createCustomSceneMetadata, createUniqueSceneId } from '../../shared/utils/legacyProfileFormatUtil'
 import MergeColors from '../MergeCanvas/MergeColors'
 import storageAvailable from '../../shared/utils/browserStorageCheck.util'
-import DynamicModal, { DYNAMIC_MODAL_STYLE } from '../DynamicModal/DynamicModal'
 import { checkCanMergeColors, shouldPromptToReplacePalette } from '../LivePalette/livePaletteUtility'
 import { LP_MAX_COLORS_ALLOWED } from '../../constants/configurations'
 import { mergeLpColors, replaceLpColors } from '../../store/actions/live-palette'
-import { clearSceneWorkspace, WORKSPACE_TYPES } from '../../store/actions/paintScene'
+import {
+  clearSceneWorkspace,
+  setPaintSceneSaveData,
+  triggerPaintSceneLayerPublish,
+  WORKSPACE_TYPES
+} from '../../store/actions/paintScene'
 import { setWarningModalImgPreview } from 'src/store/actions/scenes'
 import { group, ungroup, deleteGroup, selectArea, bucketPaint, applyZoom, getActiveGroupTool, panMove, getDefinedPolygon, eraseOrPaintMouseUp, eraseOrPaintMouseDown, getActiveToolState, getBrushShapeSize, getEmptyCanvas, handleMouseMove } from './toolFunction'
 import { LiveMessage } from 'react-aria-live'
 import { BrushPaintCursor } from './BrushPaintCursor'
 import { calcOrientationDimensions } from '../../shared/utils/scale.util'
 import {
-  ACTIVE_SCENE_LABELS_ENUM,
   cachePaintScene,
   clearPaintSceneCache,
   clearNavigationIntent,
   navigateToIntendedDestination,
-  POLLUTED_ENUM, setActiveSceneLabel,
+  POLLUTED_ENUM,
   setIsScenePolluted
 } from '../../store/actions/navigation'
-import { TOP_LEVEL_ROUTES, ROUTES_ENUM } from '../Facets/ColorVisualizerWrapper/routeValueCollections'
+import { ROUTES_ENUM } from '../Facets/ColorVisualizerWrapper/routeValueCollections'
+import { updatePaintScenePreview } from '../../store/actions/globalModal'
 
 const baseClass = 'paint__scene__wrapper'
 const canvasClass = `${baseClass}__canvas`
@@ -88,41 +91,66 @@ const showCursor = `${baseClass}--show-cursor`
 const hideCursor = `${baseClass}--hide-cursor`
 
 type ComponentProps = {
+  // @todo deprecate -RS
   imageUrl: string,
+  // @todo still need -RS
   lpActiveColor: Object,
+  // @todo deprecate... I think -RS
   referenceDimensions: Object,
+  // @todo deprecate -RS
   width: number,
-  selectedMaskIndex: number,
+  // @todo do we still need ? -RS
+  selectedMaskIndex?: number,
+  // @todo still needed -RS
   intl: any,
+  // @todo still need -RS
   saveMasks: Function,
-  savingMasks: boolean,
-  startSavingMasks: Function,
+  // @todo do we still need? -RS
+  savingMasks?: boolean,
+  // @todo do we still need? -RS
+  startSavingMasks?: Function,
+  // @todo def need -RS
   workspace: Object,
+  // @todo do we still need? -RS
   lpColors: Object[],
+  // @todo do we still need? Probably -RS
   mergeLpColors: Function,
+  // @todo do we still need? Probably -RS
   replaceLpColors: Function,
+  // @todo do we still need? -RS
   selectSavedScene: Function,
+  // @todo do we still need?  -RS
   clearSceneWorkspace: Function,
-  showSaveSceneModal: boolean,
+  // @todo do we still need? Probably -RS
   showSaveSceneModalAction: Function,
   saveSceneName: string,
-  sceneCount: number,
-  showSavedConfirmModalFlag: boolean,
-  hideSavedConfirmModal: Function,
+  // @todo still needed -RS
   setActiveScenePolluted: () => void,
+  // @todo still needed -RS
   unsetActiveScenePolluted: () => void,
+  // @todo do we still need?  -RS
   setWarningModalImgPreview: ({}) => void,
+  // @todo do we still need?  -RS
   sendImageData?: Function,
+  // @todo Still need -RS
   maxSceneHeight: number,
+  // @todo do we still need?  -RS
   navigationIntent: string,
-  isActiveScenePolluted: string,
+  // @todo do we still need?  -RS
   navigateToIntendedDestination: Function,
+  // @todo do we still need?  -RS
   clearNavigationIntent: Function,
+  // @todo i don't think we still need -RS
   paintSceneCache: any,
+  // @todo probably still need -RS
   cachePaintScene: Function,
-  setActiveSceneLabel: Function,
+  // @todo do we still need?  -RS
   shouldRestoreFromCache: boolean,
-  clearPaintSceneCache: Function
+  // @todo do we still need?  -RS
+  clearPaintSceneCache: Function,
+  publishLayers: Function,
+  triggerPublish: boolean,
+  killPublishFlag: Function
 }
 
 type ComponentState = {
@@ -217,8 +245,8 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.originalIsPortrait = props.workspace ? (props.workspace.height > props.workspace.width) : props.referenceDimensions.originalIsPortrait
     this.canvasPanStart = { x: 0.5, y: 0.5 }
     this.lastPanPoint = { x: 0, y: 0 }
-    this.originalImageWidth = props.referenceDimensions.originalImageWidth
-    this.originalImageHeight = props.referenceDimensions.originalImageHeight
+    this.originalImageWidth = props.workspace ? props.workspace.width : props.referenceDimensions.originalImageWidth
+    this.originalImageHeight = props.workspace ? props.workspace.height : props.referenceDimensions.originalImageHeight
     this.maxSceneHeight = props.maxSceneHeight
 
     const state = {
@@ -311,32 +339,6 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     }
   }
 
-  getSelectPaletteModalConfig = () => {
-    const { intl } = this.props
-
-    const selectPaletteActions = [{ callback: (e) => {
-      e.preventDefault()
-      e.stopPropagation()
-      this.setState({ showSelectPaletteModal: false })
-    },
-    text: intl.formatMessage({ id: 'PAINT_SCENE.CANCEL' }),
-    type: DYNAMIC_MODAL_STYLE.primary },
-    { callback: (e) => {
-      e.preventDefault()
-      e.stopPropagation()
-      this.loadPalette()
-      this.setState({ showSelectPaletteModal: false })
-    },
-    text: intl.formatMessage({ id: 'PAINT_SCENE.OK' }),
-    type: DYNAMIC_MODAL_STYLE.primary }]
-
-    return {
-      selectPaletteActions,
-      selectPaletteTitle: intl.formatMessage({ id: 'PAINT_SCENE.SELECT_PALETTE_TITLE' }),
-      selectPaletteDescription: intl.formatMessage({ id: 'PAINT_SCENE.SELECT_PALETTE_DESC' })
-    }
-  }
-
   loadPalette = () => {
     const { workspace: { palette } } = this.props
     this.props.replaceLpColors(palette)
@@ -375,16 +377,35 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   componentDidUpdate (prevProps: Object, prevState: Object) {
     const { navigationIntent, paintSceneCache } = this.props
     // handle case when paint scene needs to cache data to navigate to the color wall
+    // @todo Revisit this 5/17/21 -RS
     if (navigationIntent === ROUTES_ENUM.COLOR_WALL && !paintSceneCache) {
       this.prepareDataCache(this.state)
+    }
+    // publish layers for save  if flag present
+    if (this.props.triggerPublish) {
+      this.props.publishLayers(this.getLayers())
+      // Ensure that the publish is only done once per flow
+      this.props.killPublishFlag()
     }
 
     const checkImageListIfUpdate = !compareArraysOfObjects(this.state.imagePathList, prevState.imagePathList)
     if (checkImageListIfUpdate) {
       const imageData = this.CFICanvas2.current.getContext('2d').getImageData(0, 0, this.canvasOffsetWidth, this.canvasOffsetHeight)
-      this.props.sendImageData && this.props.sendImageData(imageData)
-      this.props.setActiveScenePolluted()
-      this.props.setWarningModalImgPreview({ dataUrls: this.getLayers(), width: this.backgroundImageWidth, height: this.backgroundImageHeight })
+      if (this.props.sendImageData) {
+        this.props.sendImageData(imageData)
+      }
+
+      if (this.props.setActiveScenePolluted) {
+        this.props.setActiveScenePolluted()
+      }
+      // @todo we cannot call this here, we need this component to react to a signal to publish the layers data.
+      // if (this.props.setPaintSceneSaveData) {
+      //   this.props.setPaintSceneSaveData(this.getLayers())
+      // }
+      // might dont need line
+      if (this.props.setWarningModalImgPreview) {
+        this.props.setWarningModalImgPreview({ dataUrls: this.getLayers(), width: this.backgroundImageWidth, height: this.backgroundImageHeight })
+      }
     }
     if (prevState.loading) {
       return
@@ -406,7 +427,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       groupSelectList.forEach(selectItem => {
         this.clearCanvas()
         drawImagePixelByPath(ctx, this.canvasOffsetWidth, this.canvasOffsetHeight, RGB, selectItem.selectPath)
-        const [ newPath, pixelIndexAlphaMap ] = getImageCordinateByPixel(this.CFICanvas2, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight, true)
+        const [ newPath, pixelIndexAlphaMap ] = getImageCoordinateByPixel(this.CFICanvas2, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight, true)
         copyImagePathList.push({
           type: 'paint',
           id: uniqueId(),
@@ -423,7 +444,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
       selectedArea.forEach(selectItem => {
         this.clearCanvas()
         drawImagePixelByPath(ctx, this.canvasOffsetWidth, this.canvasOffsetHeight, RGB, selectItem.selectPath)
-        const [ newPath, pixelIndexAlphaMap ] = getImageCordinateByPixel(this.CFICanvas2, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight, true)
+        const [ newPath, pixelIndexAlphaMap ] = getImageCoordinateByPixel(this.CFICanvas2, RGB, this.canvasOffsetWidth, this.canvasOffsetHeight, true)
         copyImagePathList.push({
           type: 'paint',
           id: uniqueId(),
@@ -491,7 +512,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
     this.canvasOffsetHeight = canvasHeight
     this.wrapperOriginalDimensions = { width: this.CFIWrapper.current.getBoundingClientRect().width, height: canvasHeight }
 
-    this.setBackgroundImage(canvasWidth, canvasHeight)
+    this.setBackgroundImage(canvasWidth, canvasHeight, true)
   }
 
   // This method is invoked when the parent container passes in the a new wrapperWidth
@@ -517,8 +538,12 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   }
 
   /*:: setBackgroundImage: (canvasWidth: number, canvasHeight: number) => void */
-  setBackgroundImage = (canvasWidth: number, canvasHeight: number) => {
+  setBackgroundImage = (canvasWidth: number, canvasHeight: number, isInit: boolean = false) => {
     this.CFICanvasContext.drawImage(this.CFIImage.current, 0, 0, canvasWidth, canvasHeight)
+    if (isInit) {
+      const mergeCtx = this.mergeCanvasRef.current.getContext('2d')
+      mergeCtx.drawImage(this.CFIImage.current, 0, 0, canvasWidth, canvasHeight)
+    }
     this.CFICanvasContext2.clearRect(0, 0, canvasWidth, canvasHeight)
     this.CFICanvasContextPaint.clearRect(0, 0, canvasWidth, canvasHeight)
     this.redrawCanvas(this.state.imagePathList)
@@ -587,23 +612,16 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
         paintCursor: `${canvasClass}--${toolNames.PAINTAREA}`
       })
     }
-    if (this.props.workspace) {
-      this.props.clearSceneWorkspace()
-    }
-    // @todo this is an app level concern and should happen outside of here, that said, it is a safe and stable place to do it now, lift when imagerotatecontainer refactor occurs -RS
-    if (this.props.shouldRestoreFromCache) {
-      this.props.setActiveScenePolluted()
-    }
+
     this.setState({ imageUrl: this.props.imageUrl })
-    this.props.clearPaintSceneCache()
-    this.props.setActiveSceneLabel(ACTIVE_SCENE_LABELS_ENUM.PAINT_SCENE)
   }
 
   componentWillUnmount () {
-    this.props.selectSavedScene(null)
-    this.props.unsetActiveScenePolluted()
-    // @todo this is an app level concern and should happen outside of here, that said, it is a safe and stable place to do it now, lift when imagerotatecontainer refactor occurs -RS
-    this.props.setActiveSceneLabel()
+    this.props.selectSavedScene && this.props.selectSavedScene(null)
+    this.props.unsetActiveScenePolluted && this.props.unsetActiveScenePolluted()
+    this.props.clearPaintSceneCache && this.props.clearPaintSceneCache()
+    this.props.publishLayers && this.props.publishLayers()
+    this.props.clearSceneWorkspace && this.props.clearSceneWorkspace()
   }
 
   updateWindowDimensions = () => {
@@ -760,7 +778,7 @@ export class PaintScene extends PureComponent<ComponentProps, ComponentState> {
   handleClick = (e: Object) => {
     const { activeTool, isInfoToolActive } = this.state
     // showSaveSceneModal prevents click from painting when modal is open
-    if (isInfoToolActive || this.props.showSaveSceneModal || this.props.showSavedConfirmModalFlag) {
+    if (isInfoToolActive) {
       return
     }
     switch (activeTool) {
@@ -974,65 +992,20 @@ canvasHeight
   }
 
   render () {
-    const { lpActiveColor, intl, showSaveSceneModal, lpColors, workspace, selectedMaskIndex, width, navigationIntent, isActiveScenePolluted } = this.props
-    const livePaletteColorCount = (lpColors && lpColors.length) || 0
+    const { lpActiveColor, intl, workspace, selectedMaskIndex, width } = this.props
     const bgImageUrl = workspace ? workspace.bgImageUrl : (this.props.shouldRestoreFromCache === '' ? this.props.imageUrl : this.state.imageUrl)
     const layers = workspace && workspace.workspaceType !== WORKSPACE_TYPES.smartMask ? workspace.layers : null
     const workspaceImageData = workspace && workspace.workspaceType === WORKSPACE_TYPES.smartMask ? workspace.layers : null
     const workspaceType = workspace ? workspace.workspaceType : WORKSPACE_TYPES.generic
-    const { activeTool, position, paintBrushShape, paintBrushWidth, eraseBrushShape, eraseBrushWidth, undoIsEnabled, redoIsEnabled, showOriginalCanvas, isAddGroup, isDeleteGroup, isUngroup, paintCursor, isInfoToolActive, loading, showAnimatePin, showNonAnimatePin, pinX, pinY, currPinX, currPinY, canvasWidth, canvasHeight, showSelectPaletteModal, canvasHasBeenInitialized, canvasZoom } = this.state
+    const { activeTool, position, paintBrushShape, paintBrushWidth, eraseBrushShape, eraseBrushWidth, undoIsEnabled, redoIsEnabled, showOriginalCanvas, isAddGroup, isDeleteGroup, isUngroup, paintCursor, isInfoToolActive, loading, showAnimatePin, showNonAnimatePin, pinX, pinY, currPinX, currPinY, canvasWidth, canvasHeight, canvasHasBeenInitialized, canvasZoom } = this.state
     const lpActiveColorRGB = (lpActiveColor) ? `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})` : ``
     const { paintBrushActiveClass, paintBrushCircleActiveClass } = getPaintBrushActiveClass(this.state)
     const { eraseBrushActiveClass, eraseBrushCircleActiveClass } = getEraseBrushActiveClass(this.state)
-    const { selectPaletteActions, selectPaletteTitle, selectPaletteDescription } = this.getSelectPaletteModalConfig()
     const imageDataList = workspaceType === WORKSPACE_TYPES.smartMask ? [workspaceImageData[selectedMaskIndex]] : null
     return (
       <>
         {loading ? <div className={`${animationLoader} ${animationLoader}--load`} /> : null}
         <div role='presentation' className={`${baseClass} ${isInfoToolActive ? `${disableTextSelect} ${showCursor}` : ``} ${activeTool === toolNames.PAINTBRUSH || activeTool === toolNames.ERASE ? `${disableTextSelect} ${hideCursor}` : ``} ${(loading) ? disableClick : ``}`} onClick={this.handleClick} onMouseMove={this.mouseMoveHandler} ref={this.CFIWrapper} style={{ height: this.state.wrapperHeight }} onMouseLeave={this.mouseLeaveHandler} onMouseEnter={this.mouseEnterHandler}>
-          { /* ----------  modal ---------- */ }
-          {showSelectPaletteModal ? <DynamicModal
-            actions={selectPaletteActions}
-            title={selectPaletteTitle}
-            height={canvasHeight}
-            description={selectPaletteDescription} /> : null}
-          { /* ----------  modal ---------- */ }
-          {showSaveSceneModal && livePaletteColorCount !== 0 ? <DynamicModal
-            actions={[
-              { text: intl.formatMessage({ id: 'SAVE_SCENE_MODAL.SAVE' }), callback: this.saveSceneFromModal },
-              { text: intl.formatMessage({ id: 'SAVE_SCENE_MODAL.CANCEL' }), callback: this.hideSaveSceneModal }
-            ]}
-            previewData={this.getPreviewData(true)}
-            height={canvasHeight}
-            allowInput
-            inputDefault={`${intl.formatMessage({ id: 'SAVE_SCENE_MODAL.DEFAULT_DESCRIPTION' })} ${this.props.sceneCount}`} /> : null}
-          { /* ---------- Will destroy work warning modal ---------- */ }
-          {TOP_LEVEL_ROUTES.indexOf(navigationIntent) > -1 && isActiveScenePolluted ? <DynamicModal
-            description={intl.formatMessage({ id: 'CVW.WARNING_REPLACEMENT' })}
-            actions={[
-              { text: intl.formatMessage({ id: 'YES' }), callback: this.handleNavigationIntentConfirm },
-              { text: intl.formatMessage({ id: 'NO' }), callback: this.handleNavigationIntentCancel }
-            ]}
-            previewData={this.getPreviewData(false)}
-            height={canvasHeight}
-            modalStyle={DYNAMIC_MODAL_STYLE.danger}
-          /> : null}
-          { /* ---------- Save scene modal ---------- */ }
-          {showSaveSceneModal && livePaletteColorCount === 0 ? <DynamicModal
-            actions={[
-              { text: intl.formatMessage({ id: 'SAVE_SCENE_MODAL.CANCEL' }), callback: this.hideSaveSceneModal }
-            ]}
-            description={intl.formatMessage({ id: 'SAVE_SCENE_MODAL.UNABLE_TO_SAVE_WARNING' })}
-            height={canvasHeight} /> : null}
-          { /* ---------- Saved notification modal ---------- */ }
-          { this.props.showSavedConfirmModalFlag ? <DynamicModal
-            actions={[
-              { text: intl.formatMessage({ id: 'PAINT_SCENE.OK_DISMISS' }), callback: this.props.hideSavedConfirmModal }
-            ]}
-            description={intl.formatMessage({ id: 'PAINT_SCENE.SCENE_SAVED' })}
-            height={canvasHeight} /> : null}
-          {/* the 35 in the padding is the radius of the circle loader. Note the bitwise rounding */}
-          {this.props.savingMasks || this.state.loadingMasks ? <div style={{ height: canvasHeight }} className='spinner'><div style={{ padding: ((canvasHeight / 2) | 0) - 35 }}><CircleLoader /></div></div> : null}
           {this.props.savingMasks ? <SaveMasks processMasks={this.processMasks} /> : null }
           <canvas className={`${canvasClass} ${showOriginalCanvas ? `${canvasShowByZindex}` : `${canvasHideByZindex}`} ${this.isPortrait ? portraitOrientation : ''}`} name='paint-scene-canvas-first' ref={this.CFICanvas}>{intl.formatMessage({ id: 'CANVAS_UNSUPPORTED' })}</canvas>
           <canvas style={{ opacity: showOriginalCanvas ? 1 : 0.8 }} className={`${canvasClass} ${paintCursor} ${canvasSecondClass} ${this.isPortrait ? portraitOrientation : ''}`} name='paint-scene-canvas-second' ref={this.CFICanvas2}>{intl.formatMessage({ id: 'CANVAS_UNSUPPORTED' })}</canvas>
@@ -1121,7 +1094,7 @@ canvasHeight
 }
 
 const mapStateToProps = (state: Object, props: Object) => {
-  const { lp, savingMasks, selectedSavedSceneId, scenesAndRegions, showSaveSceneModal, saveSceneName, navigationIntent, scenePolluted, paintSceneCache } = state
+  const { lp, savingMasks, selectedSavedSceneId, scenesAndRegions, showSaveSceneModal, saveSceneName, navigationIntent, scenePolluted, paintSceneCache, shouldTriggerPaintScenePublishLayers } = state
   const selectedScene = scenesAndRegions.find(item => item.id === selectedSavedSceneId)
   const activeColor = props.workspace && props.workspace.workspaceType === WORKSPACE_TYPES.smartMask ? maskingPink : lp.activeColor
   return {
@@ -1135,12 +1108,16 @@ const mapStateToProps = (state: Object, props: Object) => {
     showSavedConfirmModalFlag: state.showSavedCustomSceneSuccess,
     navigationIntent,
     isActiveScenePolluted: scenePolluted,
-    paintSceneCache
+    paintSceneCache,
+    triggerPublish: shouldTriggerPaintScenePublishLayers
   }
 }
 
 const mapDispatchToProps = (dispatch: Function) => {
   return {
+    updatePaintScenePreview: (layers) => {
+      dispatch(updatePaintScenePreview(layers))
+    },
     saveMasks: (colorList: Array<number[]>, imageData: Object, backgroundImageUrl: string, metaData: Object) =>
       dispatch(saveMasks(colorList, imageData, backgroundImageUrl, metaData)),
     startSavingMasks: (sceneName) => dispatch(startSavingMasks(sceneName)),
@@ -1161,8 +1138,8 @@ const mapDispatchToProps = (dispatch: Function) => {
     clearNavigationIntent: () => dispatch(clearNavigationIntent()),
     cachePaintScene: (data: any) => dispatch(cachePaintScene(data)),
     clearPaintSceneCache: () => dispatch(clearPaintSceneCache()),
-    setActiveSceneLabel: (label: string) => dispatch(setActiveSceneLabel(label))
-
+    publishLayers: (layers: string[]) => dispatch(setPaintSceneSaveData(layers)),
+    killPublishFlag: () => dispatch(triggerPaintSceneLayerPublish())
   }
 }
 

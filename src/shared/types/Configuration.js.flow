@@ -15,6 +15,8 @@ export type Configuration = {
   theme: {
     primary: string,
     secondary: string,
+    primaryBg: string,
+    secondaryBg: string,
     warning: string,
     success: string,
     danger: string,
@@ -22,12 +24,17 @@ export type Configuration = {
     grey: string,
     lightGrey: string,
     nearBlack: string,
+    menuBg: string,
+    menuContentTitle: string,
+    menuTxt: string,
+    menuTxtHover: string,
     black: string,
     white: string
   },
   typography: {
     bodyFontFamily: string,
-    titleFontFamily: string
+    titleFontFamily: string,
+    titleTextTransform: string
   }
 }
 
@@ -35,8 +42,11 @@ export type Configuration = {
  * @description These are the embeddable properties that can be transferred to configuration values
  */
 export type EmbeddedConfiguration = {
+  alwaysShowColorFamilies?: boolean,
   brand?: string,
+  colorDetailsAddColor?: boolean,
   colorDetailPageRoot?: string,
+  defaultRoute?: string,
   displayAddButton?: boolean,
   displayDetailsLink?: boolean,
   displayInfoButton?: boolean,

@@ -1,15 +1,13 @@
 // @flow
-import { type Color } from './Colors'
-import MaskObj from '../../store/masks/MaskObj'
 
 export type Surface = {
   id: number,
-  role: string,
-  thumb: string,
-  mask: MaskObj,
-  hitArea: string,
+  role?: string,
+  thumb?: string,
+  hitArea?: string,
   shadows?: string,
-  highlights?: string
+  highlights?: string,
+  surfaceBlobUrl?: string
 }
 
 export type Variant = {
@@ -21,34 +19,54 @@ export type Variant = {
   normalizedImageValueCurve: string
 }
 
-export type Scene = {
+// New types form PRISM 3.0
+export type MiniColor = {
+  brandKey: string,
+  id: string | number,
+  colorNumber: string | number,
+  red: number,
+  blue: number,
+  green: number,
+  L: number,
+  A: number,
+  B: number,
+  hex: string
+}
+
+export type FlatScene = {
   id: number,
   width: number,
   height: number,
-  variant_names: string[],
-  variants: Variant[]
+  variantNames: string[],
+  // variants prop is only used during transformation and should not be used at rest!
+  variants?: any[] | null,
+  sceneType: string,
+  uid: string,
+  description: string
 }
 
-export type ScenePayload = {
-  count: number,
-  scenes: Scene[],
-  type: string
-}
-
-export type SurfaceStatus = {
-  id: number,
-  color?: Color
-}
-
-export type SceneStatus = {
-  id: number,
-  variant: string,
-  surfaces: SurfaceStatus[]
-}
-
-export type SceneWorkspace = {
+export type FlatVariant = {
+  sceneUid: string,
   sceneId: number,
-  surfaceId: number,
-  imageData: string,
-  variant: string
+  variantName: string,
+  sceneType: string,
+  // blob urls are not currently set when initialized but after they have been loaded
+  surfaces: Surface[],
+  image: string,
+  thumb: string,
+  normalizedImageValueCurve: string,
+  sceneCategories?: string[] | null,
+  expertColorPicks: number[] | null,
+  isFirstOfKind?: boolean
+}
+
+export type ReferenceDimensions = {
+  originalImageWidth: number,
+  originalImageHeight: number,
+  portraitWidth: number,
+  portraitHeight: number,
+  landscapeWidth: number,
+  landscapeHeight: number,
+  isPortrait: boolean,
+  originalIsPortrait: boolean
 }
