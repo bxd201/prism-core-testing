@@ -16,10 +16,11 @@ type Props = {
   color: Color,
   intl: any,
   onToggle?: boolean => void,
+  isMaximized: boolean,
+  setMaximized: boolean => void
 }
 
-export function ColorChipMaximizer ({ addColorBtn, color, intl, onToggle }: Props) {
-  const [isMaximized, setMaximized] = useState(false)
+export function ColorChipMaximizer ({ addColorBtn, color, intl, onToggle, isMaximized, setMaximized }: Props) {
   const [liveRegionMessage, setLiveRegionMessage] = useState('')
 
   const maximizeChipBtn = React.createRef()

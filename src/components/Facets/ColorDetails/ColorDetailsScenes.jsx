@@ -20,6 +20,7 @@ type Props = {
       locale: string
     },
     color?: Color,
+    isMaximized?: boolean,
 }
 const baseClass = 'color-details-scenes'
 const ColorDetailsScene = (props: Props) => {
@@ -27,6 +28,7 @@ const ColorDetailsScene = (props: Props) => {
   const variantsCollection = useSelector((state) => state.variantsCollection)
   const globalCDPColor = useSelector((state) => state.globalColorDetailColor)
   const colorDetailsPageColor = props.color || globalCDPColor
+  const isMaximized = props.isMaximized
   const [selectedSceneId, setSelectedSceneSceneId] = useState(() => scenesCollection.filter(scene => scene.sceneType === SCENE_TYPES.ROOM)[0].uid)
   const livePaletteColors = useSelector(state => state['lp'])
   const activatedSceneVariants = useMemo(() => variantsCollection.filter((sceneVariants) => sceneVariants.sceneUid === selectedSceneId), [selectedSceneId])
@@ -123,7 +125,7 @@ const ColorDetailsScene = (props: Props) => {
           {getCustomButtons(activatedSceneVariants, selectedVariantIndex)}
         </div>
       </div>
-      {
+      {!isMaximized &&
         <div className={`${baseClass}__block ${baseClass}__block--tabs`} role='radiogroup' aria-label='scene selector'>
           {colorDetailSceneList.map((scene, index) => {
             const activeMarker = activatedSceneVariants[selectedVariantIndex].sceneUid === scene.sceneUid ? (
