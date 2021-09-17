@@ -179,6 +179,11 @@ export type ConfigurationContextType = {
       title?: string,
       compare?: string
     },
+    scene?: {
+      moreScenesBtn?: {
+        showIcon: boolean
+      }
+    },
     termsOfUseLink?: string,
     useOurPhotos?: {
       collectionsSelectLabel?: string,
