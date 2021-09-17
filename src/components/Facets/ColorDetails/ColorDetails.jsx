@@ -43,6 +43,7 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
   const dispatch = useDispatch()
   const [color, setColor] = useState<Color>(initialColor)
   const [tabIndex, setTabIndex] = useState<number>(0)
+  const [isMaximized, setMaximized] = useState(false)
 
   useEffect(() => {
     dispatch(toggleColorDetailsPage())
@@ -75,9 +76,9 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
   return (
     <>
       <div className='color-detail-view'>
-        <ColorChipMaximizer addColorBtn={(style) => <AddColorBtn style={style} />} color={color} onToggle={onColorChipToggled} />
+        <ColorChipMaximizer addColorBtn={(style) => <AddColorBtn style={style} />} color={color} isMaximized={isMaximized} setMaximized={setMaximized} onToggle={onColorChipToggled} />
         <div className={`color-detail__scene-wrapper color-detail__scene-wrapper--displayed`}>
-          <ColorDetailsScenes color={color} intitialVariantName={initialVariantName} />
+          <ColorDetailsScenes color={color} isMaximized={isMaximized} intitialVariantName={initialVariantName} />
         </div>
         <div className='color-detail__info-wrapper'>
           <div className={`${mainInfoClass}${color.isDark ? ` ${mainInfoClass}--dark-color` : ''}`} style={{ backgroundColor: color.hex }}>
