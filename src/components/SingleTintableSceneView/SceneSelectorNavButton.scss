@@ -1,11 +1,9 @@
 .scene-selector-nav-btn {
   $self: &;
 
-  position: relative;
   display: flex;
-  padding: 0.5rem;
-  align-content: center;
-  justify-content: center;
+  padding: 0.875rem;
+  align-items: center;
   border: 1px solid var(getThemeColor('buttonBorder'));
   background-color: var(getThemeColor('buttonBgColor'));
   color: var(getThemeColor('buttonColor'));
@@ -17,15 +15,11 @@
   }
 
   &__icon {
-    font-size: 1em;
     background-color: var(getThemeColor('buttonBgColor'));
     position: relative;
-    width: 20px;
-    height: 20px;
-    align-content: center;
-    justify-content: center;
-    flex-direction: row;
-    padding: 0.125rem;
+    width: 17px;
+    height: 17px;
+    margin-right: 0.6rem;
 
     #{$self}:hover & {
       background-color: var(getThemeColor('buttonHoverBgColor'));
@@ -58,8 +52,9 @@
     }
   }
   &__text {
-    padding: 0.5rem 0.125rem;
     text-transform: var(getVarName('typography.buttonTextTransform'));
     font-weight: var(getVarName('typography.buttonFontWeight'));
+    padding-top: 0.05rem;
+    margin: 0.1rem 0;
   }
 }
