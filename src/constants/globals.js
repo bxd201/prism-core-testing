@@ -23,6 +23,12 @@ export const SCENE_VARIANTS = Object.freeze({
   MAIN: 'main'
 })
 
+export const SCENE_ROLES = Object.freeze({
+  MAIN: 'main',
+  TRIM: 'trim',
+  ACCENT: 'accent'
+})
+
 export const BLANK_SWATCH: BlankColor = void (0)
 
 // this defines the space around the grid when zoomed in
