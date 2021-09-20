@@ -12,6 +12,7 @@ import ColorWallContext from 'src/components/Facets/ColorWall/ColorWallContext'
 import useEffectAfterMount from '../../shared/hooks/useEffectAfterMount'
 import './Search.scss'
 import 'src/scss/externalComponentSupport/AutoSizer.scss'
+import omitPrefix from 'src/shared/utils/omitPrefix.util'
 
 const baseClass = 'Search'
 const EDGE_SIZE = 15
@@ -50,8 +51,8 @@ const Search = ({ contain = false }: SearchProps) => {
                 <>
                   {suggestions.map((suggestion, i, arr) =>
                     <React.Fragment key={i}>
-                      <TextButton to={`./${suggestion}`}>
-                        {suggestion}
+                      <TextButton to={`./${omitPrefix(suggestion)}`}>
+                        {omitPrefix(suggestion)}
                       </TextButton>
                       {i < arr.length - 1 && ', '}
                     </React.Fragment>

@@ -17,19 +17,13 @@ import ConfigurationContext, { type ConfigurationContextType } from 'src/context
 import { navigateToIntendedDestination, setIsColorWallModallyPresented } from 'src/store/actions/navigation'
 import './ColorWallMenuBar.scss'
 import '../../../GeneralButtons/ButtonBar/ButtonBar.scss'
+import omitPrefix from 'src/shared/utils/omitPrefix.util'
 
 const PATH_END_FAMILY = 'family/'
 const menuBarPrefix = 'menu-bar'
 const menuBarItemList = `${menuBarPrefix}__menu-item`
 const menuBarActiveList = `${menuBarItemList}--active`
 const menuBarInactive = `${menuBarItemList}--inactive`
-
-const omitPrefix = function omitPrefix (str: string = ''): string {
-  if (typeof str === 'string') {
-    return str.replace(/@\|@.*@\|@/g, '')
-  }
-  return ''
-}
 
 type SelectPropsT = {
   placeholderText: string,
