@@ -260,11 +260,6 @@
   max-width: 1080px;
   margin: 0 auto;
   position: relative;
-  .hide-on-small-screens {
-    @include respond-below(sm) {
-      display: none !important;
-    }
-  }
 
   &--loading {
     display: none;
