@@ -4,7 +4,7 @@
 import React, { useState, useCallback, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { SCENE_TYPES, SCENE_VARIANTS } from 'constants/globals'
+import { SCENE_TYPES, SCENE_VARIANTS, SCENE_ROLES } from 'constants/globals'
 import intersection from 'lodash/intersection'
 import WithConfigurationContext from 'src/contexts/ConfigurationContext/WithConfigurationContext'
 import SimpleTintableScene from '../../SimpleTintableScene/SimpleTintableScene'
@@ -35,13 +35,17 @@ const ColorDetailsScene = (props: Props) => {
   const selectedVariantName = useSelector(store => store.selectedVariantName)
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(activatedSceneVariants.findIndex(variant => variant.variantName === selectedVariantName))
   const surfacesColors = activatedSceneVariants[selectedVariantIndex].surfaces.map(surface => {
-    return {
-      id: colorDetailsPageColor.id,
-      hex: colorDetailsPageColor.hex,
-      colorNumber: colorDetailsPageColor.colorNumber,
-      name: colorDetailsPageColor.name,
-      variantName: selectedVariantName
+    if (surface.role === SCENE_ROLES.MAIN) {
+      return {
+        id: colorDetailsPageColor.id,
+        hex: colorDetailsPageColor.hex,
+        colorNumber: colorDetailsPageColor.colorNumber,
+        name: colorDetailsPageColor.name,
+        variantName: selectedVariantName
+      }
     }
+
+    return null
   })
 
   const getTintableScene = useCallback((variant: FlatVariant, selectedSceneId: FlatScene, colors: Color[], lpColors) => {
