@@ -35,7 +35,7 @@ const SCROLL_SPEED = 500
 const getDataElement = (data: string) => camelCase(data.split('.').pop())
 
 const HelpInterior = () => {
-  const { brandId, featureExclusions = [] }: ConfigurationContextType = useContext(ConfigurationContext)
+  const { brandId, cvw = {}, featureExclusions = [] }: ConfigurationContextType = useContext(ConfigurationContext)
   const contentWrapperRef = React.createRef()
   const [contentRefs, setContentRefs] = useState([])
   const [filteredHelpItems, setFilteredHelpItems] = useState([])
@@ -60,7 +60,11 @@ const HelpInterior = () => {
   const contentWrapperScrollHandler = useCallback(debounce((e) => {
     if (!contentWrapperRef.current) return
     const tgt = contentRefs.reduce((accum, next, index) => {
-      if (contentWrapperRef.current.scrollTop >= next.current.offsetTop) {
+      const scrollTrigger = {
+        top: contentWrapperRef.current.scrollTop,
+        bottom: contentWrapperRef.current.scrollTop + contentRefs[index - 1]?.current.scrollHeight - 70
+      }
+      if (scrollTrigger[cvw.help?.scrollContentPosition ?? 'top'] >= next.current.offsetTop) {
         return index
       }
       return accum
