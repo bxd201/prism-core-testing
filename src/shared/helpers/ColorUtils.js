@@ -31,7 +31,7 @@ export const fullColorNumber = memoizee(function fullColorNumber (brandKey: stri
 }, { primitive: true, length: 2 })
 
 export const fullColorName = memoizee(function fullColorName (brandKey: string | void, colorNumber: string | void, name: string, brandKeyNumberSeparator: string | void): string {
-  return [fullColorNumber(brandKey, colorNumber, brandKeyNumberSeparator), name].filter(Boolean)
+  return [fullColorNumber(brandKey, colorNumber, brandKeyNumberSeparator), name].filter(Boolean).join(' ')
 }, { primitive: true, length: 3 })
 
 // creates a CDP URL, this is used anywhere a CDP URL is needed so we're able to change the path of it in one location
