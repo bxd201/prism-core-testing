@@ -30,8 +30,7 @@ export const fullColorNumber = memoizee(function fullColorNumber (brandKey: stri
   return [brandKey, colorNumber].filter(Boolean).join(brandKeyNumberSeparator)
 }, { primitive: true, length: 2 })
 
-type fullColorNameProps = { brandKey: string | void, colorNumber: string | void, name: string, brandKeyNumberSeparator: string}
-export const fullColorName = memoizee(function fullColorName (brandKey, colorNumber, name, brandKeyNumberSeparator): fullColorNameProps {
+export const fullColorName = memoizee(function fullColorName (brandKey: string | void, colorNumber: string | void, name: string, brandKeyNumberSeparator: string | void): string {
   return [fullColorNumber(brandKey, colorNumber, brandKeyNumberSeparator), name].filter(Boolean)
 }, { primitive: true, length: 3 })
 
