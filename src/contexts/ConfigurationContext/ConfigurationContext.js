@@ -21,6 +21,7 @@ type MenuItem = {
 export type ConfigurationContextType = {
   alwaysShowColorFamilies?: boolean,
   brand: string,
+  brandKeyNumberSeparator: string,
   brandId: string,
   colorDetailsAddColor?: boolean,
   ga_domain_id: string,

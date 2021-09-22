@@ -22,9 +22,10 @@ export const Content = ({ msg, color, style }: ContentProps) => {
   const { addButtonText, displayAddButton, displayInfoButton, displayDetailsLink, colorDetailPageRoot }: ColorWallContextProps = useContext(ColorWallContext)
   const { swatchShouldEmit } = useContext(ConfigurationContext)
   const { messages = {} } = useIntl()
+  const { brandKeyNumberSeparator }: ConfigurationContextType = useContext(ConfigurationContext)
 
   const colorIsInLivePalette: boolean = useSelector(store => store.lp.colors.some(({ colorNumber }) => colorNumber === color.colorNumber))
-  const title = (addButtonText || at(messages, 'ADD_TO_PALETTE')[0] || '').replace('{name}', fullColorName(color))
+  const title = (addButtonText || at(messages, 'ADD_TO_PALETTE')[0] || '').replace('{name}', fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator))
 
   if (msg) {
     return (<p className='color-swatch__content-message'>{msg}</p>)
@@ -36,7 +37,7 @@ export const Content = ({ msg, color, style }: ContentProps) => {
           ? (<FontAwesomeIcon className='check-icon' icon={['fa', 'check-circle']} size='2x' />)
           : (
             <button
-              title={(addButtonText || at(messages, 'ADD_TO_PALETTE')[0] || '').replace('{name}', fullColorName(color))}
+              title={(addButtonText || at(messages, 'ADD_TO_PALETTE')[0] || '').replace('{name}', fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator))}
               onClick={() => dispatch(swatchShouldEmit ? emitColor(color) : add(color))}
             >
               <FontAwesomeIcon className='add-icon' icon={['fal', 'plus-circle']} size='2x' />
@@ -51,7 +52,7 @@ export const Content = ({ msg, color, style }: ContentProps) => {
           ? (
             <a
               href={`${colorDetailPageRoot}/${color.brandKey}${color.colorNumber}-${cleanColorNameForURL(color.name)}`}
-              title={(at(messages, 'VIEW_DETAILS_FOR')[0] || '').replace('{name}', fullColorName(color))}
+              title={(at(messages, 'VIEW_DETAILS_FOR')[0] || '').replace('{name}', fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator))}
               className='OmniButton color-swatch__content__cta color-swatch__content__cta--l'
             >
               {at(messages, 'VIEW_DETAILS')[0]}
@@ -76,7 +77,7 @@ const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, le
   const { url, params: { section, family } } = useRouteMatch()
   const history = useHistory()
   const isDisabled = at(status, 'status')[0] === 0
-
+  const { brandKeyNumberSeparator }: ConfigurationContextType = useContext(ConfigurationContext)
   return (
     <>
       <button
@@ -85,8 +86,8 @@ const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, le
         ref={ref}
         tabIndex={outline ? 0 : -1}
         onFocus={onFocus}
-        onClick={() => history.push(generateColorWallPageUrl(section, family, color.id, fullColorName(color)) + (url.endsWith('family/') ? 'family/' : url.endsWith('search/') ? 'search/' : ''))}
-        aria-label={fullColorName(color)}
+        onClick={() => history.push(generateColorWallPageUrl(section, family, color.id, fullColorName(color.brandKey, color.colorNumber, color.name)) + (url.endsWith('family/') ? 'family/' : url.endsWith('search/') ? 'search/' : ''))}
+        aria-label={fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator)}
       >
         {isDisabled && <div className='color-swatch__flag' />}
       </button>
@@ -94,11 +95,11 @@ const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, le
         tabIndex={-1}
         ref={ref}
         onFocus={onFocus}
-        aria-label={fullColorName(color)}
+        aria-label={fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator)}
         className={`color-swatch__content ${color.isDark ? ' color-swatch__content--dark-color' : ''}${outline ? ' color-swatch__content--focus' : ''}`}
         style={style}
       >
-        <p className='color-swatch__content__number'>{fullColorNumber(color.brandKey, color.colorNumber)}</p>
+        <p className='color-swatch__content__number'>{fullColorNumber(color.brandKey, color.colorNumber, brandKeyNumberSeparator)}</p>
         <p className='color-swatch__content__name'>{color.name}</p>
         <Content msg={at(status, 'message')[0]} color={color} />
       </section>)}

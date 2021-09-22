@@ -26,13 +26,12 @@ export const alterLuminosity = memoizee(_alterLuminosity, function (colorValue, 
 export const brightenAbsolute = alterLuminosity // alias
 export const darkenAbsolute = alterLuminosity // alias
 
-export const fullColorNumber = memoizee(function fullColorNumber (brandKey: string | void, colorNumber: string | void): string {
-  return [brandKey, colorNumber].filter(Boolean).join(' ')
+export const fullColorNumber = memoizee(function fullColorNumber (brandKey: string | void, colorNumber: string | void, brandKeyNumberSeparator = ' '): string {
+  return [brandKey, colorNumber].filter(Boolean).join(brandKeyNumberSeparator)
 }, { primitive: true, length: 2 })
 
-type fullColorNameProps = { brandKey: string | void, colorNumber: string | void, name: string }
-export const fullColorName = memoizee(function fullColorName ({ brandKey, colorNumber, name }: fullColorNameProps): string {
-  return [fullColorNumber(brandKey, colorNumber), name].filter(Boolean).join(' ')
+export const fullColorName = memoizee(function fullColorName (brandKey: string | void, colorNumber: string | void, name: string, brandKeyNumberSeparator: string | void): string {
+  return [fullColorNumber(brandKey, colorNumber, brandKeyNumberSeparator), name].filter(Boolean).join(' ')
 }, { primitive: true, length: 3 })
 
 // creates a CDP URL, this is used anywhere a CDP URL is needed so we're able to change the path of it in one location
