@@ -90,6 +90,7 @@ const CVW = (props: CVWPropsType) => {
   const { pathname } = location
   const history = useHistory()
   const toggleCompareColorFlag: boolean = useSelector(store => store.lp.toggleCompareColor)
+  const colorDetailsModalShowing: boolean = useSelector(store => store.colors.colorDetailsModal.showing)
   const isPaintSceneCached: boolean = useSelector(store => !!store.paintSceneCache)
   const navigationIntent: string = useSelector(store => store.navigationIntent)
   const navigationReturnIntent: string = useSelector(store => store.navigationReturnIntent)
@@ -415,7 +416,7 @@ const CVW = (props: CVWPropsType) => {
             selectedSceneUid={selectedSceneUid}
             selectedVariantName={selectedVariantName} />}
         </div>
-        <div style={{ display: toggleCompareColorFlag ? 'none' : 'block' }} className='cvw__root-wrapper' ref={wrapperRef}>
+        <div style={{ display: toggleCompareColorFlag ? 'none' : 'block' }} className={`cvw__root-wrapper${colorDetailsModalShowing ? ' hide-on-small-screens' : ''}`} ref={wrapperRef}>
           <ColorVisualizerNav />
           <Switch>
             <Route path={ROUTES_ENUM.COLOR_DETAILS} render={() => <ColorDetails />} />
@@ -474,7 +475,7 @@ const CVW = (props: CVWPropsType) => {
         </div>
       </>
       {
-        isShowFooter && <div className='cvw__root-container__footer'>
+        isShowFooter && <div className={`cvw__root-container__footer${colorDetailsModalShowing ? ' hide-on-small-screens' : ''}`}>
           <div className='cvw__root-container__footer--priority'>
             <LivePalette />
           </div>

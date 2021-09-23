@@ -260,7 +260,6 @@
   max-width: 1080px;
   margin: 0 auto;
   position: relative;
-
   &--loading {
     display: none;
   }
@@ -344,6 +343,12 @@
   }
   &--hide {
     display: none;
+  }
+}
+
+.hide-on-small-screens {
+  @include respond-below(sm) {
+    display: none !important;
   }
 }
 
