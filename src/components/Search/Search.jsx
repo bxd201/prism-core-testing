@@ -19,18 +19,16 @@ const EDGE_SIZE = 15
 
 type SearchProps = { contain?: boolean }
 const Search = ({ contain = false }: SearchProps) => {
-  const { results, count, suggestions, loading } = useSelector(state => state.colors.search)
+  const { results, count, suggestions, suggestionsV2, loading } = useSelector(state => state.colors.search)
   const { items: { colorStatuses = {} } } = useSelector(state => state.colors)
   const { colorWallBgColor } = useContext(ColorWallContext)
   const [hasSearched, updateHasSearched] = useState(typeof count !== 'undefined')
-
+  const suggestV2 = suggestionsV2 ? [suggestionsV2.names[0], suggestionsV2.colorNumber.brandKey + suggestionsV2.colorNumber.colorNumber, suggestionsV2.families[0]] : null
   useEffectAfterMount(() => { updateHasSearched(true) }, [count, results, loading])
-
   const cellRenderer = ({ columnIndex, isScrolling, isVisible, key, parent, rowIndex, style }) => {
     const result = results && results[columnIndex + (rowIndex * parent.props.columnCount)]
     return result && <ColorSwatch key={key} style={style} color={result} status={colorStatuses[result.id]} showContents />
   }
-
   return (
     <div className={baseClass}>
       <div className={`${baseClass}__results-pane`}
@@ -46,7 +44,21 @@ const Search = ({ contain = false }: SearchProps) => {
         ) : !count ? (
           <GenericMessage type={GenericMessage.TYPES.WARNING}>
             <FormattedMessage id='SEARCH.NO_RESULTS' />
-            {suggestions && suggestions.length ? (
+            {suggestionsV2.names && suggestionsV2.colorNumber.brandKey && suggestionsV2.families ? (
+              <FormattedMessage id='SEARCH.SUGGESTIONS' values={{ suggestions: (
+                <>
+                  {suggestV2.map((suggestion, i, arr) =>
+                    <React.Fragment key={i}>
+                      <TextButton to={`./${omitPrefix(suggestV2[i])}`}>
+                        {omitPrefix(suggestV2[i])}
+                      </TextButton>
+                      {i < arr.length - 1 && ', '}
+                    </React.Fragment>
+                  )}
+                </>
+              ) }} />
+            ) : null }
+            {!suggestionsV2 && suggestions && suggestions.length ? (
               <FormattedMessage id='SEARCH.SUGGESTIONS' values={{ suggestions: (
                 <>
                   {suggestions.map((suggestion, i, arr) =>
