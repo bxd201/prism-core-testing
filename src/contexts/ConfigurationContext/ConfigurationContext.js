@@ -138,7 +138,8 @@ export type ConfigurationContextType = {
       saving3?: string,
       savingBg?: string,
       savingMobile1?: string,
-      savingMobile2?: string
+      savingMobile2?: string,
+      scrollContentPosition?: string
     },
     inspirationalPhotos?: {
       collectionsSelectLabel?: string
