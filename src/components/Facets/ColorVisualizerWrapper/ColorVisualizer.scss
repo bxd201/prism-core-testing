@@ -288,6 +288,17 @@
     @include respond-above(sm) {
       flex-flow: row;
     }
+    &--overlay {
+      @include respond-below(sm) {
+        background-color: rgba(0,0,0,0.4);
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 300;
+      }
+    }
     &--priority {
       flex-basis: 84%;
     }

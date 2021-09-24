@@ -475,11 +475,12 @@ const CVW = (props: CVWPropsType) => {
         </div>
       </>
       {
-        isShowFooter && <div className={`cvw__root-container__footer${colorDetailsModalShowing ? ' hide-on-small-screens' : ''}`}>
+        isShowFooter && <div className={`cvw__root-container__footer`}>
+          {colorDetailsModalShowing && <div className='cvw__root-container__footer--overlay' />}
           <div className='cvw__root-container__footer--priority'>
             <LivePalette />
           </div>
-          <div className='cvw__root-container__footer--secondary'>
+          <div className={`cvw__root-container__footer--secondary${colorDetailsModalShowing ? ' hide-on-small-screens' : ''}`}>
             {title && <div className='cvw__root-container__footer--secondary--title'>{title}</div>}
             <SaveOptions />
           </div>
