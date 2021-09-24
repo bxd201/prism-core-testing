@@ -13,6 +13,8 @@ import useEffectAfterMount from '../../shared/hooks/useEffectAfterMount'
 import './Search.scss'
 import 'src/scss/externalComponentSupport/AutoSizer.scss'
 import omitPrefix from 'src/shared/utils/omitPrefix.util'
+import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
+import { fullColorNumber } from 'src/shared/helpers/ColorUtils'
 
 const baseClass = 'Search'
 const EDGE_SIZE = 15
@@ -23,7 +25,8 @@ const Search = ({ contain = false }: SearchProps) => {
   const { items: { colorStatuses = {} } } = useSelector(state => state.colors)
   const { colorWallBgColor } = useContext(ColorWallContext)
   const [hasSearched, updateHasSearched] = useState(typeof count !== 'undefined')
-  const suggestV2 = suggestionsV2 ? [suggestionsV2.names[0], suggestionsV2.colorNumber.brandKey + suggestionsV2.colorNumber.colorNumber, suggestionsV2.families[0]] : null
+  const { brandKeyNumberSeparator }: ConfigurationContextType = useContext(ConfigurationContext)
+  const suggestV2 = suggestionsV2 ? [suggestionsV2.names[0], fullColorNumber(suggestionsV2.colorNumber.brandKey, suggestionsV2.colorNumber.colorNumber, brandKeyNumberSeparator), suggestionsV2.families[0]].filter(Boolean) : null
   useEffectAfterMount(() => { updateHasSearched(true) }, [count, results, loading])
   const cellRenderer = ({ columnIndex, isScrolling, isVisible, key, parent, rowIndex, style }) => {
     const result = results && results[columnIndex + (rowIndex * parent.props.columnCount)]
@@ -44,7 +47,7 @@ const Search = ({ contain = false }: SearchProps) => {
         ) : !count ? (
           <GenericMessage type={GenericMessage.TYPES.WARNING}>
             <FormattedMessage id='SEARCH.NO_RESULTS' />
-            {suggestionsV2.names && suggestionsV2.colorNumber.brandKey && suggestionsV2.families ? (
+            {suggestV2 && suggestV2.length ? (
               <FormattedMessage id='SEARCH.SUGGESTIONS' values={{ suggestions: (
                 <>
                   {suggestV2.map((suggestion, i, arr) =>
@@ -58,7 +61,7 @@ const Search = ({ contain = false }: SearchProps) => {
                 </>
               ) }} />
             ) : null }
-            {!suggestionsV2 && suggestions && suggestions.length ? (
+            {!suggestV2 && !suggestV2.length && suggestions && suggestions.length ? (
               <FormattedMessage id='SEARCH.SUGGESTIONS' values={{ suggestions: (
                 <>
                   {suggestions.map((suggestion, i, arr) =>
