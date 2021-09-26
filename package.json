@@ -38,7 +38,7 @@
     "flow-check-verbose": "flow check --show-all-errors",
     "flow-install": "flow-typed install",
     "__x__prepare": "npm run build:publish",
-    "lint": "eslint src/ --ext .js,.ts,.jsx,.tsx",
+    "lint": "eslint src/ --ext .js,.ts,.jsx,.tsx --quiet",
     "lint-fix": "npm run lint --fix",
     "prepare": "husky install"
   },
