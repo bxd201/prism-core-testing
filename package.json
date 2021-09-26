@@ -39,7 +39,8 @@
     "flow-install": "flow-typed install",
     "__x__prepare": "npm run build:publish",
     "lint": "eslint src/ --ext .js,.ts,.jsx,.tsx",
-    "lint-fix": "npm run lint --fix"
+    "lint-fix": "npm run lint --fix",
+    "prepare": "husky install"
   },
   "main": "dist/index.js",
   "jest": {
@@ -139,6 +140,8 @@
     "@babel/preset-env": "7.8.7",
     "@babel/preset-flow": "7.8.3",
     "@babel/preset-react": "7.8.3",
+    "@commitlint/cli": "^13.1.0",
+    "@commitlint/config-conventional": "^13.1.0",
     "@testing-library/jest-dom": "5.1.1",
     "@testing-library/react": "10.4.3",
     "autoprefixer": "^9.8.6",
@@ -174,7 +177,7 @@
     "hard-source-webpack-plugin": "0.13.1",
     "html-loader": "1.1.0",
     "html-webpack-plugin": "3.2.0",
-    "husky": "4.3.0",
+    "husky": "7.0.0",
     "identity-obj-proxy": "3.0.0",
     "image-webpack-loader": "6.0.0",
     "jest": "25.1.0",
