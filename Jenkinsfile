@@ -231,47 +231,7 @@ pipeline {
         }
       }
     }
-    stage('Deploy') {
-      when {
-        expression { BRANCH_NAME ==~ /^(develop|integration|hotfix|qa|release|replatform|lowes-cvw)$/ }
-      }
-      agent {
-        docker {
-            image 'docker.cpartdc01.sherwin.com/ecomm/utils/buoy:latest'
-            reuseNode true
-            alwaysPull true
-            args '-u buoy'
-        }
-      }
-      environment {
-        RANCHER_PROD_CLUSTER = "prod"
-        RANCHER_NONPROD_CLUSTER = "nonprod"
-        RANCHER_PROJECT = "TAG"
 
-        VERIFY_SECRETS="ebus"
-
-        CHART = "nginx-custom-chart"
-        CHART_REPO = "helm-virtual"
-
-        CHART_VERSION="1.x.x"
-
-        IS_IMAGE_UNIQUE_TAG="true"
-
-        ENVSUBST_VARIABLES='$BRANCH_NAME:$IMAGE_NAME:$IMAGE_UNIQUE_TAG'
-
-        IS_ROLLBACK_ENABLED="true"
-      }
-      steps {
-        withCredentials([
-          string(credentialsId: 'jenkins_rancher2_bearerToken', variable: 'RANCHER_TOKEN'),
-          usernameColonPassword(credentialsId: 'artifactory_credentials', variable: 'ARTIFACTORY_CREDENTIALS'),
-        ]) {
-          sh "/buoy/float.sh"
-
-          archiveArtifacts artifacts: "deploy.tgz", fingerprint: true
-        }
-      }
-    }
     stage('security') {
       when {
         branch 'develop'
@@ -343,32 +303,13 @@ pipeline {
         }
       }
       environment {
-        DEVELOP_DOMAIN = "https://develop-prism-web.ebus.swaws"
-        QA_DOMAIN = "https://qa-prism-web.ebus.swaws"
-        FEATURE_BRANCH = "https://replatform-prism-web.ebus.swaws"
-        INTEGRATION_BRANCH = "https://integration-prism-web.ebus.swaws"
-        RELEASE_DOMAIN = "https://prism.sherwin-williams.com"
-
         LINKS_FILE = "ci/shepherd/links"
         TRUST_CERT = "true"
       }
       steps {
         sh """
-
-        if [ "${BRANCH_NAME}" = "develop" ]; then
-            export DOMAIN="${DEVELOP_DOMAIN}"
-        elif [ "${BRANCH_NAME}" = "qa" ]; then
-            export DOMAIN="${QA_DOMAIN}"
-        elif [ "${BRANCH_NAME}" = "integration" ]; then
-            export DOMAIN="${INTEGRATION_BRANCH}"
-        elif [ "${BRANCH_NAME}" = "replatform" ]; then
-            export DOMAIN="${FEATURE_BRANCH}"
-        elif [ "${BRANCH_NAME}" = "release" ]; then
-            export TRUST_CERT='false'
-            export DOMAIN="${RELEASE_DOMAIN}"
-        fi
-
-        shepherd
+          export DOMAIN = "https://prism.sherwin-williams.com/${S3_FOLDER_NAME}/index.html"
+          shepherd
         """
 
         archiveArtifacts artifacts: "report/report.*", fingerprint: true
