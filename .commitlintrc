@@ -1,6 +1,8 @@
 {
   "extends": ["@commitlint/config-conventional"],
   "rules": {
-    "header-max-length": [0, "always", 125]
+    "header-max-length": [0, "always", 125],
+    "subject-case": [2, "always", "sentence-case"],
+    "type-enum": [2, "always", ["amend", "build", "chore", "ci", "docs", "feat", "fix", "perf", "refactor", "revert", "style", "test"]]
   }
 }
