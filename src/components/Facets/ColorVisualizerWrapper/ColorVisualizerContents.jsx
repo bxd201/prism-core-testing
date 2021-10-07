@@ -419,6 +419,8 @@ const CVW = (props: CVWPropsType) => {
         <div style={{ display: toggleCompareColorFlag ? 'none' : 'block' }} className={`cvw__root-wrapper${colorDetailsModalShowing ? ' hide-on-small-screens' : ''}`} ref={wrapperRef}>
           <ColorVisualizerNav />
           <Switch>
+            {/* this redirects from legacy Angular-style CVW /!/<route> paths */}
+            <Route path={'/!/'} render={() => <Redirect to={location.pathname.replace(new RegExp('^/!/'), '/')} />} />
             <Route path={ROUTES_ENUM.COLOR_DETAILS} render={() => <ColorDetails />} />
             <Route path={`${ROUTES_ENUM.COLOR_WALL}(/.*)?`} render={() => <ColorWallPage alwaysShowColorFamilies={alwaysShowColorFamilies} colorWallBgColor={colorWallBgColor} displayAddButton displayInfoButton displayDetailsLink={false} />} />
             <Route path={ROUTES_ENUM.COLOR_COLLECTION} render={() => <ColorCollections isExpertColor={false} {...location.state} />} />
