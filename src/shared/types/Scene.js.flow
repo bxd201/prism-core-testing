@@ -60,9 +60,12 @@ export type FlatVariant = {
   isFirstOfKind?: boolean
 }
 
+// This is much more like a protocol than a classic type
 export type ReferenceDimensions = {
   originalImageWidth: number,
   originalImageHeight: number,
+  imageWidth: number,
+  imageHeight: number,
   portraitWidth: number,
   portraitHeight: number,
   landscapeWidth: number,

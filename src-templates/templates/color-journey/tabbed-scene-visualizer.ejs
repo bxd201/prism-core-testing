@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <base href="/">
+    <title>Scene Visualizer</title>
+    <style media="all" type="text/css">
+        body {
+            background-color: #757575;
+        }
+        .colors {
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+<div id="prism-embed-root"
+     data-prism-facet="TabbedSceneVisualizerFacet"
+     data-group-names="[colors, scenes]"
+     data-page-root="/tsv"
+     data-default-colors="[SW-9173, SW-6785, SW-6837]"
+     data-max-scene-height="640"></div>
+<div class="colors">
+    <p>Select a color option (null values are ignored).</p>
+    <label for="color_select">Select a Color</label>
+    <select id="color_select">
+        <option value="">Select a color</option>
+        <option value="SW-6792">Minor Blue (SW-6792)</option>
+        <option value="SW-7073">Balanced beige (SW-7073)</option>
+        <option value="SW-6591">Amaryllis (SW-6591)</option>
+    </select>
+</div>
+<!--<div>Use the CVW below to test live palette integration.</div>-->
+<!--<div id="prism-embed-root-2"-->
+<!--     data-prism-facet="ColorVisualizer"-->
+<!--     data-color-wall-bg-color="#FFF"-->
+<!--     data-language="en-US"-->
+<!--     data-page-root="/cvw"-->
+<!--     data-route-type="hash"-->
+<!--     data-selected-color-family="red"-->
+<!--     data-max-scene-height="640"></div>-->
+
+<script src='/embed.js'></script>
+<script>
+  (() => {
+    window.PRISM.embed(document.getElementById( 'prism-embed-root' ), {
+      bindCallback: ({ publish, subscribe }) => {
+        // represents colors changing from elsewhere on the page
+        const colorSelect = document.querySelector('#color_select')
+        colorSelect.addEventListener('change', e => {
+          publish('SV_COLOR_UPDATE', {eventId: window._.uniqueId('tsv_event_id_'),  data: e.target.value})
+        })
+      }
+    })
+  })()
+</script>
+<!--<script>-->
+<!--  (() => {-->
+<!--    window.PRISM.embed(document.getElementById( 'prism-embed-root-2' ), {-->
+<!--      bindCallback: ({ publish, subscribe }) => {-->
+<!--        subscribe('prism-new-color', color => {-->
+<!--          console.info({ event: 'prism-new-color', data: color })-->
+<!--          publish('PRISM/in/update-color-ctas', [-->
+<!--            {-->
+<!--              text: 'Buy paint in ' + color.name,-->
+<!--              link: '#test'-->
+<!--            },-->
+<!--            {-->
+<!--              text: 'Buy paint with no color at all',-->
+<!--              link: '#test'-->
+<!--            }-->
+<!--          ])-->
+<!--        })-->
+<!--      }-->
+<!--    })-->
+<!--  })()-->
+<!--</script>-->
+</body>
+</html>

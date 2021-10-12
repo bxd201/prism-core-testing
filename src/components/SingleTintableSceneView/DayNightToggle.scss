@@ -1,0 +1,74 @@
+.day-night-toggle {
+  $base-font-size: $base; // 16px
+  $icon-size: 1em;
+  $_self: &;
+
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  float: right;
+  font-size: $base-font-size;
+  justify-content: center;
+  max-width: 100%;
+  z-index: 1;
+  &:focus {
+    outline-style: solid;
+    outline-color: #2cabe2;
+    outline-width: 2px;
+    z-index: 100;
+  }
+
+  &__input {
+    &:focus {
+      & ~ #{$_self}__wrapper {
+        @include browser-highlight($outline-size, $outline-style, $outline-color);
+      }
+    }
+  }
+
+  &__wrapper {
+    align-items: center;
+    background: rgba(41, 70, 147, 0.5);
+    border-radius: 50%;
+    color: rgb(250, 232, 186);
+    display: flex;
+    filter: grayscale(100);
+    height: $icon-size * 1.5;
+    justify-content: center;
+    opacity: 0.6;
+    transform: scale(1) translateZ(0);
+    transition: all 0.2s;
+    width: $icon-size * 1.5;
+    z-index: 0;
+
+    &--active {
+      background: rgba(41, 70, 147, 1);
+      filter: grayscale(0);
+      opacity: 1;
+      // translateZ needed here to prevent iOS safari from inadvertantly glitching out and disappearing things after transitions
+      transform: scale(1.35) translateZ(0);
+      z-index: 1;
+    }
+
+    &--night {
+      background: rgba(28, 28, 29, 0.9);
+      color: rgb(208, 237, 255);
+      margin-left: $icon-size * 0.5;
+
+      &--active {
+        background: rgba(28, 28, 29, 0.9);
+      }
+    }
+  }
+
+  &__day {
+    height: $icon-size;
+    width: $icon-size;
+  }
+
+  &__night {
+    height: $icon-size * 0.9;
+    margin: 0 0 $icon-size * 0.1 $icon-size * 0.1;
+    width: $icon-size * 0.9;
+  }
+}

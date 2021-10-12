@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <base href="/">
+    <title>Scene Visualizer</title>
+    <style media="all" type="text/css">
+        body {
+            background-color: #757575;
+        }
+        .colors {
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+<div id="prism-embed-root"
+     data-prism-facet="SceneVisualizerFacet"
+     data-group-names="[colors]"
+     data-force-square="500"
+     data-page-root="/sv"
+     data-show-loader
+     data-default-color="SW-9173"
+     data-scene-name="A lovely living room"
+     data-default-image="https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom2?wid=1200}&qlt=92"
+     data-default-mask="https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom2?wid=1200&req=object&opac=100&fmt=png8&object=wall&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1"
+     data-max-scene-height="640"></div>
+<!-- <div>
+    <button id="sim_btn">Simulate Image Upload</button>
+</div> -->
+<div class="colors">
+    <p>Select a color option (null value) will force facet to consume default color again.</p>
+    <label for="color_select">Select a Color</label>
+    <select id="color_select">
+        <option value="">Select a color</option>
+        <option value="SW-6792">Minor Blue (SW-6792)</option>
+        <option value="SW-7073">Balanced beige (SW-7073)</option>
+        <option value="SW-6591">Amaryllis (SW-6591)</option>
+    </select>
+</div>
+
+
+<script src='/embed.js'></script>
+<script>
+  <!-- Think thru how to import constants at host page level -->
+  (() => {
+    window.PRISM.embed(document.getElementById( 'prism-embed-root' ), {
+      bindCallback: ({ publish, subscribe }) => {
+        subscribe('SV_TRIGGER_IMAGE_UPLOAD', data => {
+          // the data payload has an id it can be used to track who needs to responded to the triggering call. Think of these like PIDs
+          const userInput = window.prompt('Enter yes to upload an image, enter no to cancel', 'yes')
+          if (userInput?.toLowerCase().trim()[0] === 'y') {
+            const uploadElement = document.createElement('input')
+            uploadElement.type = 'file'
+            uploadElement.addEventListener('change', e => {
+              publish('SV_NEW_IMAGE_UPLOAD', {eventId: data.eventId, data: e.target.files[0]})
+            })
+            // programmatically triggering a file dialog is a bit of a hack.  This works bc the browser tracks that this is triggered from a human initiated event.
+            // However, a log press on a prompt ok button seems like it prevents the browser from associating the the click to the invoked one.
+            // We should really design UX around a click directly opening a dialog
+            uploadElement.click()
+          } else {
+            publish('SV_NEW_IMAGE_UPLOAD', {eventId: data.eventId, data: null})
+          }
+        })
+        // An example binding pub/sub to the plain DOM. These methods are only exposed in this callback
+        // const simBtn = document.querySelector('#sim_btn')
+        // simBtn.addEventListener('click', () => {
+        // })
+        // represents colors changing from elsewhere in on the page
+        const colorSelect = document.querySelector('#color_select')
+        colorSelect.addEventListener('change', e => {
+          publish('SV_COLOR_UPDATE', {eventId: window._.uniqueId('sv_event_id_'),  data: e.target.value})
+        })
+      }
+    })
+  })()
+</script>
+</body>
+</html>
