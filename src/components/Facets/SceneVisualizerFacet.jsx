@@ -33,13 +33,11 @@ type SceneVisualizerProps = FacetPubSubMethods & FacetBinderMethods & {
   sceneName: string
 }
 
-// @todo monday notes: the upload photo button should publish a signal telling the page to show a modal.  This will respond to redux and grab the uploaded url and process.
-
 export function SceneVisualizerFacet (props: SceneVisualizerProps) {
   const dispatch = useDispatch()
   const { loadingConfiguration } = useContext(ConfigurationContext)
   // eslint-disable-next-line no-unused-vars
-  const { groupNames, defaultImage, defaultMask, maxSceneHeight, sceneName } = props
+  const { groupNames, defaultMask, maxSceneHeight, sceneName } = props
   const [facetId] = useState(uniqueId('sv-facet_'))
   const [error, setError] = useState(null)
   const [fastMaskLoading, setFastMaskLoading] = useState(false)
@@ -65,6 +63,9 @@ export function SceneVisualizerFacet (props: SceneVisualizerProps) {
     const [brand, colorNo] = colorName?.split('-')
     if (colors?.colorMap && brand) {
       const color = getColorByBrandAndColorNumber(brand, colorNo, colors)
+      if (!color) {
+        throw new Error('No color found. Hint: Make sure the color number and brand code are correct in the embed.')
+      }
       setTintColor(color)
     }
   }
