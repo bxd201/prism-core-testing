@@ -1,5 +1,5 @@
 // @flow
-import React, { useEffect, useState, useCallback, useMemo } from 'react'
+import React, { useContext, useEffect, useState, useCallback, useMemo } from 'react'
 import { Switch, Route, useHistory } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import ColorWallRouter from './ColorWall/ColorWallRouter'
@@ -17,10 +17,11 @@ import isArray from 'lodash/isArray'
 import useEffectAfterMount from 'src/shared/hooks/useEffectAfterMount'
 import { updateColorStatuses } from 'src/store/actions/loadColors'
 import { facetBinderDefaultProps, type FacetBinderMethods } from 'src/facetSupport/facetInstance'
-import { FormattedMessage } from 'react-intl'
+import { useIntl } from 'react-intl'
 import translateBooleanFlexibly from 'src/shared/utils/translateBooleanFlexibly.util'
 import { generateColorWallPageUrl } from 'src/shared/helpers/ColorUtils'
 import { setIsColorWallModallyPresented } from '../../store/actions/navigation'
+import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
 
 type Props = FacetPubSubMethods & FacetBinderMethods & {
   addButtonText?: string,
@@ -45,13 +46,22 @@ export const EVENTS = {
   loading: 'PRISM/in/loading'
 }
 
-const searchBarNoLabel = () => <div className='color-wall-wrap__chunk'>
-  <FormattedMessage id='SEARCH.FIND_A_COLOR'>
-    {(label: string) => (
-      <SearchBar showCancelButton label={label} showLabel={false} />
-    )}
-  </FormattedMessage>
-</div>
+const SearchBarNoLabel = () => {
+  const { messages = {} } = useIntl()
+  const { uiStyle } = useContext(ConfigurationContext)
+
+  return (
+    <div className='color-wall-wrap__chunk'>
+      <SearchBar
+        className={uiStyle === 'minimal' ? 'SearchBarMinimal' : undefined}
+        label={messages['SEARCH.FIND_A_COLOR']}
+        placeholder={messages[uiStyle === 'minimal' ? 'SEARCH.SEARCH_FOR_A_COLOR' : 'SEARCH.SEARCH_BY']}
+        showCancelButton
+        showLabel={false}
+      />
+    </div>
+  )
+}
 
 const SearchContain = () => <Search contain />
 
@@ -173,8 +183,8 @@ export const ColorWallPage = (props: Props) => {
         <div className='color-wall-wrap'>
           <nav>
             <Switch>
-              <Route path='(.*)?/search/:query' component={searchBarNoLabel} />
-              <Route path='(.*)?/search' component={searchBarNoLabel} />
+              <Route path='(.*)?/search/:query' component={SearchBarNoLabel} />
+              <Route path='(.*)?/search' component={SearchBarNoLabel} />
               <Route path='(.*)?/section/:section/family/:family' component={CWToolbar} />
               <Route path='(.*)?/section/:section/family/' component={CWToolbar} />
               <Route path='(.*)?/family/:family/' component={CWToolbar} />

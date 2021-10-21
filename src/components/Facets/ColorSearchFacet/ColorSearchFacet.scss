@@ -1,0 +1,21 @@
+.color-wall-wrap {
+  &__chunk {
+    padding: 0 $ui-spacing;
+  }
+  &__search-bar {
+    border-bottom: 1px solid #ADADAD;
+  }
+}
+
+.ColorSearch {
+  background-color: white;
+  transition: height 2s;
+
+  &__title {
+    margin: 5px 15px 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 2.5rem;
+    border-bottom: 1px solid #ADADAD;
+  }
+}

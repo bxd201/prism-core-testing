@@ -6,6 +6,7 @@
 import ColorDetailsFacet from 'src/components/Facets/ColorDetailsFacet'
 import ColorFamilyFacet from 'src/components/Facets/ColorFamilyFacet/ColorFamilyFacet'
 import ColorListingPage from 'src/components/Facets/ColorListingPage/ColorListingPage'
+import ColorSearchFacet from 'src/components/Facets/ColorSearchFacet/ColorSearchFacet'
 import ColorVisualizer from 'src/components/Facets/ColorVisualizerWrapper/ColorVisualizerWrapper'
 import ColorWallFacet from 'src/components/Facets/ColorWallFacet'
 import ColorWallChunkChipFacet from 'src/components/Facets/ColorWallChunkChipFacet'
@@ -19,6 +20,7 @@ export const allFacets = {
   ColorDetailsFacet,
   ColorFamilyFacet,
   ColorListingPage,
+  ColorSearchFacet,
   ColorVisualizer,
   ColorWallFacet,
   ColorWallChunkChipFacet,
