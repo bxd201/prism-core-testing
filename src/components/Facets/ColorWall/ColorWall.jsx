@@ -57,7 +57,6 @@ const ColorWall = () => {
 
   const [chunkGrid: string[][][][], setChunkGrid: (string[][][][]) => void] = useState([])
   const [containerWidth: number, setContainerWidth: (number) => void] = useState(900)
-  // const [swatchColor, setSwatchColor] = useState('2213')
   const gridRef: GridRefState = useRef()
   const cellRefs: { current: { [string]: HTMLElement } } = useRef({})
   const focusedChunkCoords: { current: ?[number, number] } = useRef()
