@@ -21,10 +21,12 @@ export const colorWallA11yContextDefault: ColorWallA11yContextProps = {
 
 export type ColorWallContextProps = {
   addButtonText?: string,
+  colorNumOnBottom?: boolean,
   colorDetailPageRoot?: string,
   colorWallBgColor: string,
   displayAddButton?: boolean,
   displayAddButtonText?: boolean,
+  viewColorText?: boolean,
   displayDetailsLink?: boolean,
   displayInfoButton?: boolean,
   hiddenSections?: string[],
@@ -38,11 +40,13 @@ export type ColorWallContextProps = {
 
 export const colorWallContextDefault: ColorWallContextProps = {
   addButtonText: undefined,
+  colorNumOnBottom: false,
   colorDetailPageRoot: undefined,
   colorWallBgColor: '#EEEEEE',
   displayAddButton: false,
   displayAddButtonText: false,
   displayDetailsLink: true,
+  viewColorText: false,
   displayInfoButton: false,
   hiddenSections: [],
   loading: false,

@@ -43,14 +43,13 @@ import 'focus-within-polyfill'
 const WALL_HEIGHT = 475
 
 const ColorWall = () => {
-  const { swatchMinSize, swatchMaxSize: globalSwatchMaxSize, swatchSizeZoomed, colorWallBgColor }: ColorWallContextProps = useContext(ColorWallContext)
+  const { swatchMinSize, swatchMaxSize: globalSwatchMaxSize, swatchSizeZoomed, colorWallBgColor, colorNumOnBottom }: ColorWallContextProps = useContext(ColorWallContext)
   const { colorWall: { bloomEnabled = true, gapsBetweenChunks = true }, uiStyle }: ConfigurationContextType = useContext(ConfigurationContext)
   const dispatch: { type: string, payload: {} } => void = useDispatch()
   const { url, params }: { url: string, params: { section: ?string, family?: ?string, colorId?: ?string } } = useRouteMatch()
   const history = useHistory()
   const { messages = {} } = useIntl()
   const { items: { colorMap = {}, colorStatuses = {}, sectionLabels: _sectionLabels = {} }, unChunkedChunks, chunkGridParams, section, family }: ColorsState = useSelector(state => state.colors)
-
   // if a family is selected, NEVER return section labels (they're only for sections)
   const sectionLabels = useMemo(() => {
     return family ? {} : _sectionLabels
@@ -58,7 +57,7 @@ const ColorWall = () => {
 
   const [chunkGrid: string[][][][], setChunkGrid: (string[][][][]) => void] = useState([])
   const [containerWidth: number, setContainerWidth: (number) => void] = useState(900)
-
+  // const [swatchColor, setSwatchColor] = useState('2213')
   const gridRef: GridRefState = useRef()
   const cellRefs: { current: { [string]: HTMLElement } } = useRef({})
   const focusedChunkCoords: { current: ?[number, number] } = useRef()
@@ -66,7 +65,6 @@ const ColorWall = () => {
 
   const isZoomedIn = !!params.colorId
   const lengthOfLongestChunkRow: number = getLongestArrayIn2dArray(chunkGrid)
-
   // when dynamic cell sizing is enabled, adjust maxCellSize to be 90% as big as when zoomed or 90% as big as it can be without showing a scrollbar, whatever is smallest
   const swatchMaxSize = chunkGridParams.dynamicCellSizingEnabled
     ? 0.9 * Math.min(
@@ -285,6 +283,12 @@ const ColorWall = () => {
             />
           )}
         </AutoSizer>
+        {colorNumOnBottom && focusedCell.current && (
+          <ColorWallContext.Provider value={{ viewColorText: true, colorNumOnBottom: true }}>
+            <ColorSwatch style={{ position: 'absolute', paddingTop: 15, overflow: 'visible', height: '200px', width: '100%', fontSize: '20px' }} color={colorMap[focusedCell.current]} showContents outline />
+          </ColorWallContext.Provider>
+        )
+        }
       </div>
     </CSSTransition>
   )

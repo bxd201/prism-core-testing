@@ -11,6 +11,9 @@ import ColorWallFacet from 'src/components/Facets/ColorWallFacet'
 import FastMaskSimple from 'src/components/Facets/FastMaskSimple/FastMaskSimple'
 import JumpStartFacet from 'src/components/Facets/JumpStartFacet/JumpStartFacet'
 import RoomTypeDetector from 'src/components/Facets/RoomTypeDetector/RoomTypeDetector'
+import SceneVisualizerFacet from 'src/components/Facets/SceneVisualizerFacet'
+import TabbedSceneVisualizerFacet from 'src/components/Facets/TabbedSceneVisualizerFacet'
+import ColorWallChip from 'src/components/Facets/ColorWallChip'
 
 export const allFacets = {
   ColorDetailsFacet,
@@ -18,7 +21,10 @@ export const allFacets = {
   ColorListingPage,
   ColorVisualizer,
   ColorWallFacet,
+  ColorWallChip,
   FastMaskSimple,
+  SceneVisualizerFacet,
+  TabbedSceneVisualizerFacet,
   JumpStartFacet,
   RoomTypeDetector
 }

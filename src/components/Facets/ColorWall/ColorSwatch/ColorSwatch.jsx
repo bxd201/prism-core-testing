@@ -19,7 +19,7 @@ import './ColorSwatch.scss'
 type ContentProps = { msg: string, color: Color, style?: {}}
 export const Content = ({ msg, color, style }: ContentProps) => {
   const dispatch = useDispatch()
-  const { addButtonText, displayAddButton, displayInfoButton, displayDetailsLink, colorDetailPageRoot }: ColorWallContextProps = useContext(ColorWallContext)
+  const { addButtonText, displayAddButton, displayInfoButton, displayDetailsLink, colorDetailPageRoot, viewColorText }: ColorWallContextProps = useContext(ColorWallContext)
   const { swatchShouldEmit } = useContext(ConfigurationContext)
   const { messages = {} } = useIntl()
   const { brandKeyNumberSeparator }: ConfigurationContextType = useContext(ConfigurationContext)
@@ -68,6 +68,29 @@ export const Content = ({ msg, color, style }: ContentProps) => {
             </Link>
           )
       )}
+      {viewColorText && (
+        colorDetailPageRoot
+          ? (
+            <a
+              href={`${colorDetailPageRoot}/${color.brandKey}${color.colorNumber}-${cleanColorNameForURL(color.name)}`}
+              title={(at(messages, 'VIEW_DETAILS_FOR')[0] || '').replace('{name}', fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator))}
+              className='OmniButton color-swatch__content__cta color-swatch__content__cta--l'
+            >
+              {at(messages, 'VIEW_DETAILS')[0]}
+            </a>
+          )
+          : (
+            <Link
+              to={generateColorDetailsPageUrl(color)}
+              title={(at(messages, 'VIEW_DETAILS_FOR')[0] || '').replace('{name}', fullColorName(color))}
+              className='OmniButton color-swatch__content__cta color-swatch__content__cta--l'
+              style={{ padding: '10px', borderRadius: '20px', border: '1px solid' }}
+            >
+              {/* ToDO route this to AEM page */}
+              View Colors
+            </Link>
+          )
+      )}
     </div>
   )
 }
@@ -75,6 +98,7 @@ export const Content = ({ msg, color, style }: ContentProps) => {
 type ColorSwatchProps = { color: Color, level?: number, status?: ColorStatus, style?: {}, showContents?: boolean, onFocus?: () => void, outline: boolean }
 const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, level, status, style, showContents = (level === 0), onFocus, outline = true }: ColorSwatchProps, ref) => {
   const { url, params: { section, family } } = useRouteMatch()
+  const { colorNumOnBottom }: ColorWallContextProps = useContext(ColorWallContext)
   const history = useHistory()
   const isDisabled = at(status, 'status')[0] === 0
   const { brandKeyNumberSeparator }: ConfigurationContextType = useContext(ConfigurationContext)
@@ -91,7 +115,7 @@ const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, le
       >
         {isDisabled && <div className='color-swatch__flag' />}
       </button>
-      {showContents && (<section
+      {showContents && !colorNumOnBottom && (<section
         tabIndex={-1}
         ref={ref}
         onFocus={onFocus}
@@ -101,6 +125,18 @@ const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, le
       >
         <p className='color-swatch__content__number'>{fullColorNumber(color.brandKey, color.colorNumber, brandKeyNumberSeparator)}</p>
         <p className='color-swatch__content__name'>{color.name}</p>
+        <Content msg={at(status, 'message')[0]} color={color} />
+      </section>)}
+      {showContents && colorNumOnBottom && (<section
+        tabIndex={-1}
+        ref={ref}
+        onFocus={onFocus}
+        aria-label={fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator)}
+        className={`color-swatch__content ${color.isDark ? ' color-swatch__content--dark-color' : ''}${outline ? ' color-swatch__content--focus' : ''}`}
+        style={style}
+      >
+        <p className='color-swatch__content__name' style={{ marginBottom: '0.4em' }}>{color.name}</p>
+        <p className='color-swatch__content__number'>{fullColorNumber(color.brandKey, color.colorNumber, brandKeyNumberSeparator)}</p>
         <Content msg={at(status, 'message')[0]} color={color} />
       </section>)}
     </>
