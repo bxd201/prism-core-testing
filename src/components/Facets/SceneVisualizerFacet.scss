@@ -44,12 +44,22 @@
     min-height: 20%;
     padding-bottom: 1rem;
     &__btn {
+      display: flex;
       background-color: rgb(246,246,246);
       padding: 0.8rem;
       width: auto;
       max-width: 80%;
       font-weight: bold;
       text-transform: uppercase;
+      align-items: center;
+      &__custom-icon {
+        margin-right: 0.3rem;
+        &__svg {
+          stroke: none;
+          width: 1.2rem;
+          height: 1.2rem;
+        }
+      }
       &__icon {
         margin-right: 0.3rem;
       }

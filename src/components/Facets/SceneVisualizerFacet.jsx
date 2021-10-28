@@ -8,13 +8,18 @@ import { type FacetPubSubMethods } from 'src/facetSupport/facetPubSub'
 import type { FacetBinderMethods } from '../../facetSupport/facetInstance'
 import uniqueId from 'lodash/uniqueId'
 import ConfigurationContext from '../../contexts/ConfigurationContext/ConfigurationContext'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { GROUP_NAMES, SCENE_TYPES } from '../../constants/globals'
 import { useIntl } from 'react-intl'
 
 import './SceneVisualizerFacet.scss'
 import { extractRefDimensions, scaleAndCropImageToSquare, scaleImage } from '../../shared/helpers/imageTools'
-import { SV_COLOR_UPDATE, SV_NEW_IMAGE_UPLOAD, SV_TRIGGER_IMAGE_UPLOAD } from '../../constants/pubSubEventsLabels'
+import {
+  SV_COLOR_UPDATE,
+  SV_ERROR,
+  SV_NEW_IMAGE_UPLOAD,
+  SV_TRIGGER_IMAGE_UPLOAD
+} from '../../constants/pubSubEventsLabels'
 import FastMaskView from '../FastMask/FastMaskView'
 import useColors from '../../shared/hooks/useColors'
 import { getColorByBrandAndColorNumber } from '../../shared/helpers/ColorDataUtils'
@@ -30,14 +35,14 @@ type SceneVisualizerProps = FacetPubSubMethods & FacetBinderMethods & {
   defaultMask: string,
   forceSquare?: number,
   defaultColor: string,
-  sceneName: string
+  sceneName: string,
+  uploadButtonText: string
 }
 
 export function SceneVisualizerFacet (props: SceneVisualizerProps) {
-  const dispatch = useDispatch()
   const { loadingConfiguration } = useContext(ConfigurationContext)
   // eslint-disable-next-line no-unused-vars
-  const { groupNames, defaultMask, maxSceneHeight, sceneName } = props
+  const { groupNames, defaultMask, maxSceneHeight, sceneName, uploadButtonText } = props
   const [facetId] = useState(uniqueId('sv-facet_'))
   const [error, setError] = useState(null)
   const [fastMaskLoading, setFastMaskLoading] = useState(false)
@@ -158,7 +163,11 @@ export function SceneVisualizerFacet (props: SceneVisualizerProps) {
   }
 
   const handleFastMaskLoadError = (err: any) => {
-    dispatch(err)
+    // Reset State
+    setUploadId(null)
+    setTinterRendered(true)
+    setShouldShowInitialImage(true)
+    props.publish(SV_ERROR, { error: err })
   }
 
   const handleFastMaskCleanup = () => {
@@ -188,6 +197,7 @@ export function SceneVisualizerFacet (props: SceneVisualizerProps) {
             tinterRendered={tinterRendered}
             initUpload={initUpload}
             uploadInitiated={uploadInitiated}
+            uploadButtonText={uploadButtonText}
             tinter={<SimpleTintableScene
               spinner={<BallSpinner />}
               sceneType={SCENE_TYPES.ROOM}
@@ -201,7 +211,8 @@ export function SceneVisualizerFacet (props: SceneVisualizerProps) {
     <div className={shouldShowInitialImage ? 'scene-visualizer--hidden' : 'scene-visualizer'}>{
       uploadedImage &&
       uploadedImageRefDims &&
-      tintColor
+      tintColor &&
+      uploadId
         ? <SceneVisualizerContent
           tinterRendered={tinterRendered}
           handleFastMaskClose={handleFastMaskClose}
@@ -212,7 +223,7 @@ export function SceneVisualizerFacet (props: SceneVisualizerProps) {
             spinner={<BallSpinner />}
             key={uploadId}
             showSpinner={fastMaskLoading}
-            handleSceneBlobLoaderError={handleFastMaskLoadError}
+            handleError={handleFastMaskLoadError}
             refDims={uploadedImageRefDims}
             imageUrl={uploadedImage}
             activeColor={tintColor}

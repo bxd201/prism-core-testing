@@ -42,7 +42,7 @@
 <!--     data-selected-color-family="red"-->
 <!--     data-max-scene-height="640"></div>-->
 
-<script src='/embed.js'></script>
+<script src='<%= BASE_PATH %>/embed.js'></script>
 <script>
   (() => {
     window.PRISM.embed(document.getElementById( 'prism-embed-root' ), {
@@ -50,7 +50,8 @@
         // represents colors changing from elsewhere on the page
         const colorSelect = document.querySelector('#color_select')
         colorSelect.addEventListener('change', e => {
-          publish('SV_COLOR_UPDATE', {eventId: window._.uniqueId('tsv_event_id_'),  data: e.target.value})
+          // using timestamp fallback is ok for prism template and also since this is invoked by user input and not programmatically
+          publish('SV_COLOR_UPDATE', {eventId: window._?.uniqueId('tsv_event_id_') ?? `tsv_event_id_${date.now()}`,  data: e.target.value})
         })
       }
     })

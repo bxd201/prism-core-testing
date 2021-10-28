@@ -43,7 +43,8 @@ type FastMaskProps = {
   showSpinner?: boolean,
   // this maps to multiple divs
   loadingMessage?: string[],
-  spinner?: any
+  spinner?: any,
+  handleError: Function
 }
 
 const baseClassName = 'fast-mask-view'
@@ -231,6 +232,9 @@ const FastMaskView = (props: FastMaskProps) => {
         })
         .catch(err => {
           console.error('issue with segmentation: ', err)
+          if (props.handleError) {
+            props.handleError(err)
+          }
         })
     }
     return () => {
