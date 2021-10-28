@@ -18,27 +18,14 @@
      data-max-scene-height="640"
      data-brand="lowes"
      data-always-show-color-families
+     data-color-detail-page-root="https://localhost:8080/qrc-color-chip"
      data-color-details-add-color></div>
 
 <script src="<%= BASE_PATH %>/embed.js"></script>
 <script>
   (() => {
     window.PRISM.embed(document.getElementById( 'prism-embed-root' ), {
-      bindCallback: ({ publish, subscribe }) => {
-        subscribe('prism-new-color', color => {
-          console.info({ event: 'prism-new-color', data: color })
-          publish('PRISM/in/update-color-ctas', [
-            {
-              text: 'Buy paint in ' + color.name,
-              link: '#test'
-            },
-            {
-              text: 'Buy paint with no color at all',
-              link: '#test'
-            }
-          ])
-        })
-      }
+      bindCallback: ({ publish, subscribe }) => {}
     })
   })()
 </script>

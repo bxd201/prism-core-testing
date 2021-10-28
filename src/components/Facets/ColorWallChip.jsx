@@ -51,7 +51,6 @@ export const ColorWallChip = (props: Props) => {
     displayAddButtonText,
     displayInfoButton = false,
     displayDetailsLink = false,
-    viewColorText = false,
     colorWallBgColor,
     subscribe,
     publish,
@@ -136,7 +135,6 @@ export const ColorWallChip = (props: Props) => {
     displayInfoButton: translateBooleanFlexibly(displayInfoButton),
     displayAddButtonText: translateBooleanFlexibly(displayAddButtonText),
     displayDetailsLink: translateBooleanFlexibly(displayDetailsLink),
-    viewColorText: translateBooleanFlexibly(viewColorText),
     hiddenSections: processedHiddenSections
   }), [addButtonText, colorDetailPageRoot, colorWallBgColor, displayAddButton, displayAddButtonText, displayDetailsLink])
 

@@ -26,7 +26,6 @@ export type ColorWallContextProps = {
   colorWallBgColor: string,
   displayAddButton?: boolean,
   displayAddButtonText?: boolean,
-  viewColorText?: boolean,
   displayDetailsLink?: boolean,
   displayInfoButton?: boolean,
   hiddenSections?: string[],

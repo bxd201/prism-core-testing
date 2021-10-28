@@ -33,23 +33,24 @@ import flatten from 'lodash/flatten'
 import clamp from 'lodash/clamp'
 import isEmpty from 'lodash/isEmpty'
 import take from 'lodash/take'
-import { generateColorWallPageUrl, fullColorName } from 'src/shared/helpers/ColorUtils'
+import { generateColorWallPageUrl, fullColorName, fullColorNumber } from 'src/shared/helpers/ColorUtils'
 import 'src/scss/externalComponentSupport/AutoSizer.scss'
 import 'src/scss/convenience/overflow-ellipsis.scss'
 import './ColorWall.scss'
 // polyfill to make focus-within css class work in IE
 import 'focus-within-polyfill'
-
 const WALL_HEIGHT = 475
 
 const ColorWall = () => {
-  const { swatchMinSize, swatchMaxSize: globalSwatchMaxSize, swatchSizeZoomed, colorWallBgColor, colorNumOnBottom }: ColorWallContextProps = useContext(ColorWallContext)
+  const { swatchMinSize, swatchMaxSize: globalSwatchMaxSize, swatchSizeZoomed, colorWallBgColor, colorNumOnBottom, colorDetailPageRoot }: ColorWallContextProps = useContext(ColorWallContext)
   const { colorWall: { bloomEnabled = true, gapsBetweenChunks = true }, uiStyle }: ConfigurationContextType = useContext(ConfigurationContext)
   const dispatch: { type: string, payload: {} } => void = useDispatch()
   const { url, params }: { url: string, params: { section: ?string, family?: ?string, colorId?: ?string } } = useRouteMatch()
   const history = useHistory()
   const { messages = {} } = useIntl()
   const { items: { colorMap = {}, colorStatuses = {}, sectionLabels: _sectionLabels = {} }, unChunkedChunks, chunkGridParams, section, family }: ColorsState = useSelector(state => state.colors)
+  const mobileFlexRowContentClass = 'color-swatch__mobileFlexRowContent'
+  const { brandKeyNumberSeparator }: ConfigurationContextType = useContext(ConfigurationContext)
   // if a family is selected, NEVER return section labels (they're only for sections)
   const sectionLabels = useMemo(() => {
     return family ? {} : _sectionLabels
@@ -199,7 +200,6 @@ const ColorWall = () => {
     const lengthOfLongestRow: number = getLongestArrayIn2dArray(chunk)
     const containsBloomedCell: boolean = getCoords(chunk, params.colorId)[0] !== -1
     const isLargeLabel: boolean = cellSize * lengthOfLongestRow > 255 // magic number breakpoint for choosing between small and large font
-
     return (flatten(chunk).some(cell => cell !== undefined) &&
       <div key={key} className='color-wall-chunk' style={{ ...style, padding: gapsBetweenChunks ? cellSize / 5 : 0, zIndex: containsBloomedCell ? 1 : 'auto' }}>
         {sectionLabels[section] && sectionLabels[section][chunkNum] !== undefined && (
@@ -284,7 +284,23 @@ const ColorWall = () => {
         </AutoSizer>
         {colorNumOnBottom && focusedCell.current && (
           <ColorWallContext.Provider value={{ viewColorText: true, colorNumOnBottom: true }}>
-            <ColorSwatch style={{ position: 'absolute', paddingTop: 15, overflow: 'visible', height: '200px', width: '100%', fontSize: '20px' }} color={colorMap[focusedCell.current]} showContents outline />
+            <ColorSwatch style={{ position: 'absolute', paddingTop: 15, overflow: 'visible', height: '200px', width: '100%', fontSize: '20px' }}
+              color={colorMap[focusedCell.current]}
+              contentRenderer={(defaultContent) => (
+                <div className={mobileFlexRowContentClass}>
+                  <div>
+                    <p className={`color-swatch__content ${mobileFlexRowContentClass}__name`} style={{ padding: '0', marginBottom: '5px' }}>{colorMap[focusedCell.current].name}</p>
+                    <p className={`color-swatch__content ${mobileFlexRowContentClass}__number`} style={{ padding: '0' }}>{fullColorNumber(colorMap[focusedCell.current].brandKey, colorMap[focusedCell.current].colorNumber, brandKeyNumberSeparator)}</p>
+                  </div>
+                  <div className={`${mobileFlexRowContentClass}__buttons`}>
+                    <button className={`${colorMap[focusedCell.current].isDark ? 'dark-color' : ''}`} style={{ padding: '10px', fontSize: '0.7em', borderRadius: '20px', border: '1px solid', position: 'absolute', bottom: '2em' }} onClick={() => { window.location.href = colorDetailPageRoot }}>View Color</button>
+                  </div>
+                </div>
+              )
+              }
+              showContents
+              colorNumOnBottom
+              outline />
           </ColorWallContext.Provider>
         )
         }
