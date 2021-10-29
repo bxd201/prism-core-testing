@@ -1,3 +1,4 @@
+// MOST OF THIS RELATES TO THE CVW, AVOID PUTTING OTHER FACETS IN THIS FILE
 export const ROUTES_ENUM = {
   COLOR_DETAILS: '/active/color/:colorId/:colorSEO',
   COLOR_WALL: '/active/color-wall',

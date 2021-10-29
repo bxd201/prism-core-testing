@@ -394,5 +394,11 @@
     "DOWNLOAD_DISCLAIMER_1": "El color real puede variar de la representación en pantalla. Para confirmar sus opciones de color antes de la compra, vea un chip de color físico, una tarjeta de color o una muestra pintada.",
     "DOWNLOAD_DISCLAIMER_2": "Sherwin-Williams no es responsable del contenido y las fotos compartidas por los usuarios de sus herramientas de selección de color.",
     "ORIGIN_TEXT": "Original",
-    "FEATURED_IN_SCENE": "Expuesto en escena"
+    "FEATURED_IN_SCENE": "Expuesto en escena",
+    "SCENE_VISUALIZER": {
+        "UPLOAD_PHOTO": "Upload a photo",
+        "DEFAULT_IMG": "An image of a comfortable room to get you started on your color journey.",
+        "FASTMASK_LOADING_MSG_1": "Just pulling up the drop",
+        "FASTMASK_LOADING_MSG_2": "cloth before the big reveal"
+    }
   }

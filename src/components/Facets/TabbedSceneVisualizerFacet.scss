@@ -1,0 +1,27 @@
+
+@mixin tab-item {
+  text-align: center;
+  padding: 0.25rem;
+  border-left: 1px solid var(getThemeColor('dark'));
+  width: 100%;
+  color: var(getThemeColor('dark'));
+}
+
+.tabbed-scene-visualizer {
+  &__tabs {
+    background-color: var(getThemeColor('light'));
+    list-style: none;
+    display: flex;
+    justify-content: space-around;
+    text-transform: uppercase;
+    padding: 0.5rem;
+    flex-grow: 1;
+    &__item {
+      @include tab-item;
+      &--first {
+        @include tab-item;
+        border-left: none;
+      }
+    }
+  }
+}

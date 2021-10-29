@@ -38,13 +38,16 @@ import { faTimes } from '@fortawesome/pro-solid-svg-icons/faTimes'
 import { faTrash } from '@fortawesome/pro-solid-svg-icons/faTrash'
 import { faUndoAlt } from '@fortawesome/pro-solid-svg-icons/faUndoAlt'
 import { faWindowClose } from '@fortawesome/pro-solid-svg-icons/faWindowClose'
+import { faUpload } from '@fortawesome/pro-solid-svg-icons/faUpload'
 
 // lights
 import { faAlignJustify as falAlignJustify } from '@fortawesome/pro-light-svg-icons/faAlignJustify'
 import { faCircle as falCircle } from '@fortawesome/pro-light-svg-icons/faCircle'
 import { faClone as falClone } from '@fortawesome/pro-light-svg-icons/faClone'
 import { faCompressAlt as falCompressAlt } from '@fortawesome/pro-light-svg-icons/faCompressAlt'
+import { faDownload as falDownload } from '@fortawesome/pro-light-svg-icons/faDownload'
 import { faDrawPolygon as falDrawPolygon } from '@fortawesome/pro-light-svg-icons/faDrawPolygon'
+import { faEdit as falEdit } from '@fortawesome/pro-light-svg-icons/faEdit'
 import { faExpandAlt as falExpandAlt } from '@fortawesome/pro-light-svg-icons/faExpandAlt'
 import { faFolder as falFolder } from '@fortawesome/pro-light-svg-icons/faFolder'
 import { faHome as falHome } from '@fortawesome/pro-light-svg-icons/faHome'
@@ -68,8 +71,7 @@ import { faThLarge as falThLarge } from '@fortawesome/pro-light-svg-icons/faThLa
 import { faTimes as falTimes } from '@fortawesome/pro-light-svg-icons/faTimes'
 import { faTrashAlt as falTrashAlt } from '@fortawesome/pro-light-svg-icons/faTrashAlt'
 import { faUndo as falUndo } from '@fortawesome/pro-light-svg-icons/faUndo'
-import { faDownload as falDownload } from '@fortawesome/pro-light-svg-icons/faDownload'
-import { faEdit as falEdit } from '@fortawesome/pro-light-svg-icons/faEdit'
+import { faUpload as falUpload } from '@fortawesome/pro-light-svg-icons/faUpload'
 
 // regulars
 // import { fa??? as far??? } from '@fortawesome/pro-regular-svg-icons/fa???'
@@ -112,12 +114,15 @@ const faIcons = [
   faTimes,
   faUndoAlt,
   faWindowClose,
+  faUpload,
   // -------- LIGHTS ---------
   falAlignJustify,
   falCircle,
   falClone,
   falCompressAlt,
+  falDownload,
   falDrawPolygon,
+  falEdit,
   falFolder,
   falHome,
   falInfoCircle,
@@ -142,8 +147,7 @@ const faIcons = [
   falTrashAlt,
   falUndo,
   faTrash,
-  falDownload,
-  falEdit,
+  falUpload,
   // -------- REGULARS ---------
   farPlusCircle
 ]
