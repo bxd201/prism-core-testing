@@ -114,8 +114,7 @@ const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, co
         <p className='color-swatch__content__name'>{color.name}</p>
         <Content msg={at(status, 'message')[0]} color={color} />
       </section>)}
-
-      {showContents && contentRenderer && !colorNumOnBottom && (<section
+      {showContents && (<section
         tabIndex={-1}
         ref={ref}
         onFocus={onFocus}
@@ -125,24 +124,17 @@ const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, co
       >
         {contentRenderer(
           <>
-            <p className='color-swatch__content__number'>{fullColorNumber(color.brandKey, color.colorNumber, brandKeyNumberSeparator)}</p>
-            <p className='color-swatch__content__name'>{color.name}</p>
-            <Content msg={at(status, 'message')[0]} color={color} />
-          </>
-        )}
-      </section>)}
-      {showContents && contentRenderer && colorNumOnBottom && (<section
-        tabIndex={-1}
-        ref={ref}
-        onFocus={onFocus}
-        aria-label={fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator)}
-        className={`color-swatch__content ${color.isDark ? ' color-swatch__content--dark-color' : ''}${outline ? ' color-swatch__content--focus' : ''}`}
-        style={style}
-      >
-        {contentRenderer(
-          <>
-            <p className='color-swatch__content__name'>{color.name}</p>
-            <p className='color-swatch__content__number'>{fullColorNumber(color.brandKey, color.colorNumber, brandKeyNumberSeparator)}</p>
+            {colorNumOnBottom ? (
+              <>
+                <p className='color-swatch__content__name'>{color.name}</p>
+                <p className='color-swatch__content__number'>{fullColorNumber(color.brandKey, color.colorNumber, brandKeyNumberSeparator)}</p>
+              </>
+            ) : (
+              <>
+                <p className='color-swatch__content__number'>{fullColorNumber(color.brandKey, color.colorNumber, brandKeyNumberSeparator)}</p>
+                <p className='color-swatch__content__name'>{color.name}</p>
+              </>
+            )}
             <Content msg={at(status, 'message')[0]} color={color} />
           </>
         )}
