@@ -283,25 +283,23 @@ const ColorWall = () => {
           )}
         </AutoSizer>
         {colorNumOnBottom && focusedCell.current && (
-          <ColorWallContext.Provider value={{ viewColorText: true, colorNumOnBottom: true }}>
-            <ColorSwatch style={{ position: 'absolute', paddingTop: 15, overflow: 'visible', height: '200px', width: '100%', fontSize: '20px' }}
-              color={colorMap[focusedCell.current]}
-              contentRenderer={(defaultContent) => (
-                <div className={mobileFlexRowContentClass}>
-                  <div>
-                    <p className={`color-swatch__content ${mobileFlexRowContentClass}__name`} style={{ padding: '0', marginBottom: '5px' }}>{colorMap[focusedCell.current].name}</p>
-                    <p className={`color-swatch__content ${mobileFlexRowContentClass}__number`} style={{ padding: '0' }}>{fullColorNumber(colorMap[focusedCell.current].brandKey, colorMap[focusedCell.current].colorNumber, brandKeyNumberSeparator)}</p>
-                  </div>
-                  <div className={`${mobileFlexRowContentClass}__buttons`}>
-                    <button className={`${colorMap[focusedCell.current].isDark ? 'dark-color' : ''}`} style={{ padding: '10px', fontSize: '0.7em', borderRadius: '20px', border: '1px solid', position: 'absolute', bottom: '2em' }} onClick={() => { window.location.href = colorDetailPageRoot }}>View Color</button>
-                  </div>
+          <ColorSwatch style={{ position: 'absolute', padding: '1rem', overflow: 'visible', height: '200px', width: '100%', fontSize: '20px' }}
+            color={colorMap[focusedCell.current]}
+            contentRenderer={(defaultContent) => (
+              <div className={mobileFlexRowContentClass}>
+                <div>
+                  <p className={`color-swatch__content ${mobileFlexRowContentClass}__name`} style={{ padding: '0', marginBottom: '5px' }}>{colorMap[focusedCell.current].name}</p>
+                  <p className={`color-swatch__content ${mobileFlexRowContentClass}__number`} style={{ padding: '0' }}>{fullColorNumber(colorMap[focusedCell.current].brandKey, colorMap[focusedCell.current].colorNumber, brandKeyNumberSeparator)}</p>
                 </div>
-              )
-              }
-              showContents
-              colorNumOnBottom
-              outline />
-          </ColorWallContext.Provider>
+                <div className={`${mobileFlexRowContentClass}__buttons`}>
+                  <button className={`${colorMap[focusedCell.current].isDark ? 'dark-color' : ''}`} style={{ padding: '10px', fontSize: '0.7em', borderRadius: '20px', border: '1px solid', position: 'absolute', bottom: '2em' }} onClick={() => { window.location.href = colorDetailPageRoot }}>View Color</button>
+                </div>
+              </div>
+            )
+            }
+            showContents
+            colorNumOnBottom
+            outline />
         )
         }
       </div>
