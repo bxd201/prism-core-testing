@@ -21,9 +21,12 @@ export const colorWallA11yContextDefault: ColorWallA11yContextProps = {
 
 export type ColorWallContextProps = {
   addButtonText?: string,
-  colorNumOnBottom?: boolean,
+  chunkClickable?: boolean,
   colorDetailPageRoot?: string,
+  colorNumOnBottom?: boolean,
   colorWallBgColor: string,
+  colorWallChunkPageRoot?: string,
+  colorWallPageRoot?: string,
   displayAddButton?: boolean,
   displayAddButtonText?: boolean,
   displayDetailsLink?: boolean,
@@ -39,8 +42,11 @@ export type ColorWallContextProps = {
 
 export const colorWallContextDefault: ColorWallContextProps = {
   addButtonText: undefined,
-  colorNumOnBottom: false,
+  chunkClickable: false,
   colorDetailPageRoot: undefined,
+  colorNumOnBottom: false,
+  colorWallChunkPageRoot: undefined,
+  colorWallPageRoot: undefined,
   colorWallBgColor: '#EEEEEE',
   displayAddButton: false,
   displayAddButtonText: false,

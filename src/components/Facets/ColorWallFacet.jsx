@@ -25,14 +25,16 @@ import { setIsColorWallModallyPresented } from '../../store/actions/navigation'
 type Props = FacetPubSubMethods & FacetBinderMethods & {
   addButtonText?: string,
   alwaysShowColorFamilies?: boolean,
+  chunkClickable?: boolean,
   colorDetailPageRoot?: string,
   colorWallBgColor?: string,
+  colorWallChunkPageRoot?: String,
+  defaultSection?: string,
   displayAddButton?: boolean,
   displayInfoButton?: boolean,
   displayAddButtonText?: boolean,
   displayDetailsLink?: boolean,
-  hiddenSections?: string | string[], // as string, "section name 1" or "section name 1|section name 2|etc" will be parsed into an array
-  defaultSection?: string
+  hiddenSections?: string | string[] // as string, "section name 1" or "section name 1|section name 2|etc" will be parsed into an array
 }
 
 export const EVENTS = {
@@ -59,17 +61,19 @@ export const ColorWallPage = (props: Props) => {
   const {
     addButtonText,
     alwaysShowColorFamilies,
+    chunkClickable,
+    colorDetailPageRoot,
+    colorWallBgColor,
+    colorWallChunkPageRoot,
     defaultSection,
     displayAddButton = false,
     displayAddButtonText,
     displayInfoButton = false,
     displayDetailsLink = true,
-    colorWallBgColor,
-    subscribe,
+    hiddenSections,
     publish,
-    unsubscribeAll,
-    colorDetailPageRoot,
-    hiddenSections
+    subscribe,
+    unsubscribeAll
   } = props
   const dispatch = useDispatch()
   const history = useHistory()
@@ -140,14 +144,16 @@ export const ColorWallPage = (props: Props) => {
   // build color wall context and a11y state
   const cwContext = useMemo(() => extendIfDefined({}, colorWallContextDefault, {
     addButtonText,
+    chunkClickable: translateBooleanFlexibly(chunkClickable),
     colorDetailPageRoot,
     colorWallBgColor,
+    colorWallChunkPageRoot,
     displayAddButton: translateBooleanFlexibly(displayAddButton),
     displayInfoButton: translateBooleanFlexibly(displayInfoButton),
     displayAddButtonText: translateBooleanFlexibly(displayAddButtonText),
     displayDetailsLink: translateBooleanFlexibly(displayDetailsLink),
     hiddenSections: processedHiddenSections
-  }), [addButtonText, colorDetailPageRoot, colorWallBgColor, displayAddButton, displayAddButtonText, displayDetailsLink])
+  }), [addButtonText, chunkClickable, colorDetailPageRoot, colorWallBgColor, colorWallChunkPageRoot, displayAddButton, displayAddButtonText, displayDetailsLink])
 
   // -----------------------------------------------------
   // handle unmounting

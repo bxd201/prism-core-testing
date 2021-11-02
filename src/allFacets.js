@@ -8,10 +8,10 @@ import ColorFamilyFacet from 'src/components/Facets/ColorFamilyFacet/ColorFamily
 import ColorListingPage from 'src/components/Facets/ColorListingPage/ColorListingPage'
 import ColorVisualizer from 'src/components/Facets/ColorVisualizerWrapper/ColorVisualizerWrapper'
 import ColorWallFacet from 'src/components/Facets/ColorWallFacet'
+import ColorWallChunkChipFacet from 'src/components/Facets/ColorWallChunkChipFacet'
 import FastMaskSimple from 'src/components/Facets/FastMaskSimple/FastMaskSimple'
 import JumpStartFacet from 'src/components/Facets/JumpStartFacet/JumpStartFacet'
 import RoomTypeDetector from 'src/components/Facets/RoomTypeDetector/RoomTypeDetector'
-import ColorWallChip from 'src/components/Facets/ColorWallChip'
 import SceneVisualizerFacet from 'src/components/Facets/SceneVisualizerFacet'
 import TabbedSceneVisualizerFacet from 'src/components/Facets/TabbedSceneVisualizerFacet'
 
@@ -21,7 +21,7 @@ export const allFacets = {
   ColorListingPage,
   ColorVisualizer,
   ColorWallFacet,
-  ColorWallChip,
+  ColorWallChunkChipFacet,
   FastMaskSimple,
   JumpStartFacet,
   RoomTypeDetector,
