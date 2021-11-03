@@ -8,23 +8,24 @@ import ColorSwatch from 'src/components/Facets/ColorWall/ColorSwatch/ColorSwatch
 import GenericMessage from '../Messages/GenericMessage'
 import TextButton from '../GeneralButtons/TextButton/TextButton'
 import GenericOverlay from '../Overlays/GenericOverlay/GenericOverlay'
-import ColorWallContext from 'src/components/Facets/ColorWall/ColorWallContext'
+import ColorWallContext, { type ColorWallContextProps } from 'src/components/Facets/ColorWall/ColorWallContext'
 import useEffectAfterMount from '../../shared/hooks/useEffectAfterMount'
 import './Search.scss'
 import 'src/scss/externalComponentSupport/AutoSizer.scss'
 import omitPrefix from 'src/shared/utils/omitPrefix.util'
 import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
-import { fullColorNumber } from 'src/shared/helpers/ColorUtils'
+import { fullColorName, fullColorNumber, generateColorWallPageUrl } from 'src/shared/helpers/ColorUtils'
 
 const baseClass = 'Search'
 const EDGE_SIZE = 15
 
-type SearchProps = { contain?: boolean, isMobileFlexRow?: boolean }
+type SearchProps = { contain?: boolean, isChipLocator?: boolean }
 
-const Search = ({ contain = false, isMobileFlexRow }: SearchProps) => {
+const Search = ({ contain = false, isChipLocator }: SearchProps) => {
   const { results, count, suggestions, suggestionsV2, loading } = useSelector(state => state.colors.search)
-  const { items: { colorStatuses = {} } } = useSelector(state => state.colors)
-  const { colorDetailPageRoot, colorWallBgColor, colorWallPageRoot } = useContext(ColorWallContext)
+  const { items: { colorStatuses = {} }, primeColorWall } = useSelector(state => state.colors)
+  const { colorDetailPageRoot, colorWallBgColor, colorWallChunkPageRoot }: ColorWallContextProps = useContext(ColorWallContext)
+
   const [hasSearched, updateHasSearched] = useState(typeof count !== 'undefined')
   const { brandKeyNumberSeparator }: ConfigurationContextType = useContext(ConfigurationContext)
   const suggestV2 = suggestionsV2 ? [suggestionsV2.names[0], fullColorNumber(suggestionsV2.colorNumber.brandKey, suggestionsV2.colorNumber.colorNumber, brandKeyNumberSeparator), suggestionsV2.families[0]].filter(Boolean) : null
@@ -33,20 +34,20 @@ const Search = ({ contain = false, isMobileFlexRow }: SearchProps) => {
 
   const cellRenderer = ({ columnIndex, isScrolling, isVisible, key, parent, rowIndex, style }) => {
     const result = results && results[columnIndex + (rowIndex * parent.props.columnCount)]
-    const mobileFlexRowContentClass = 'color-swatch__mobileFlexRowContent'
 
     return result && <ColorSwatch
       color={result}
-      contentRenderer={(defaultContent) => isMobileFlexRow ? (
-        <div className={mobileFlexRowContentClass}>
-          <div>
-            <p className={`color-swatch__content ${mobileFlexRowContentClass}__name`}>{result.name}</p>
-            <p className={`color-swatch__content ${mobileFlexRowContentClass}__number`}>{fullColorNumber(result.brandKey, result.colorNumber, brandKeyNumberSeparator)}</p>
-          </div>
-          <div className={`${mobileFlexRowContentClass}__buttons`}>
-            <button className={`${result.isDark ? 'dark-color' : ''}`} onClick={() => { window.location.href = colorWallPageRoot }}>Find Chip</button>
-            <button className={`${result.isDark ? 'dark-color' : ''}`} onClick={() => { window.location.href = colorDetailPageRoot }}>View Color</button>
-          </div>
+      contentRenderer={(defaultContent) => isChipLocator ? (
+        <div className='color-swatch__chip-locator--buttons'>
+          <button
+            className={`${result.isDark ? 'dark-color' : ''}`}
+            onClick={() => {
+              colorWallChunkPageRoot && (window.location.href = `${colorWallChunkPageRoot}#${generateColorWallPageUrl(primeColorWall, undefined, result.id, fullColorName(result.brandKey, result.colorNumber, result.name))}`)
+            }}
+          >
+              Find Chip
+          </button>
+          <button className={`${result.isDark ? 'dark-color' : ''}`} onClick={() => { window.location.href = colorDetailPageRoot }}>View Color</button>
         </div>
       ) : defaultContent}
       key={key}
@@ -104,12 +105,11 @@ const Search = ({ contain = false, isMobileFlexRow }: SearchProps) => {
           <div className={`${baseClass}__results-pane__swatches ${contain ? `${baseClass}__results-pane__swatches--cover` : ''}`}>
             <AutoSizer disableHeight={!contain}>
               {({ height = 0, width }) => {
-                const flexRow = width <= 576 && isMobileFlexRow
                 const gridWidth = width - (EDGE_SIZE * 2)
-                const columnCount = flexRow ? 1 : Math.max(1, Math.round(gridWidth / 175))
+                const columnCount = Math.max(1, Math.round(gridWidth / 175))
                 const newSize = gridWidth / columnCount
                 const rowCount = Math.ceil(results.length)
-                const gridHeight = contain ? height : isMobileFlexRow ? window.screen.height - 100 - (EDGE_SIZE * 2) : Math.max(height, rowCount * newSize + (EDGE_SIZE * 2))
+                const gridHeight = contain ? height : Math.max(height, rowCount * newSize + (EDGE_SIZE * 2))
 
                 return (
                   <Grid
@@ -117,11 +117,11 @@ const Search = ({ contain = false, isMobileFlexRow }: SearchProps) => {
                       marginBotom: `${EDGE_SIZE}px`,
                       marginTop: `${EDGE_SIZE}px`
                     }}
-                    cellRenderer={(props: any) => cellRenderer(flexRow ? { ...props, style: { borderWidth: '0 0 11px 0', ...props.style } } : props)}
-                    columnWidth={flexRow ? gridWidth : newSize}
+                    cellRenderer={cellRenderer}
+                    columnWidth={newSize}
                     columnCount={columnCount}
                     height={gridHeight}
-                    rowHeight={flexRow ? 102 : newSize}
+                    rowHeight={newSize}
                     rowCount={Math.ceil(results.length / columnCount)}
                     width={width}
                   />
