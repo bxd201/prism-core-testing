@@ -110,18 +110,22 @@ const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, co
         className={`color-swatch__content ${color.isDark ? ' color-swatch__content--dark-color' : ''}${outline ? ' color-swatch__content--focus' : ''}`}
         style={style}
       >
-        {colorNumOnBottom ? (
-          <>
-            <p className='color-swatch__content__name'>{color.name}</p>
-            <p className='color-swatch__content__number'>{fullColorNumber(color.brandKey, color.colorNumber, brandKeyNumberSeparator)}</p>
-          </>
-        ) : (
-          <>
-            <p className='color-swatch__content__number'>{fullColorNumber(color.brandKey, color.colorNumber, brandKeyNumberSeparator)}</p>
-            <p className='color-swatch__content__name'>{color.name}</p>
-          </>
+        {contentRenderer(
+          <div className='color-swatch__chip-locator'>
+            {colorNumOnBottom ? (
+              <>
+                <p>{color.name}</p>
+                <p className='color-swatch__chip-locator__number'>{fullColorNumber(color.brandKey, color.colorNumber, brandKeyNumberSeparator)}</p>
+              </>
+            ) : (
+              <>
+                <p className='color-swatch__content__number'>{fullColorNumber(color.brandKey, color.colorNumber, brandKeyNumberSeparator)}</p>
+                <p className='color-swatch__content__name'>{color.name}</p>
+              </>
+            )}
+            <Content msg={at(status, 'message')[0]} color={color} />
+          </div>
         )}
-        {contentRenderer(<Content msg={at(status, 'message')[0]} color={color} />)}
       </section>)}
     </>
   )

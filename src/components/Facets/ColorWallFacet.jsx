@@ -25,10 +25,8 @@ import { setIsColorWallModallyPresented } from '../../store/actions/navigation'
 type Props = FacetPubSubMethods & FacetBinderMethods & {
   addButtonText?: string,
   alwaysShowColorFamilies?: boolean,
-  chunkClickable?: boolean,
   colorDetailPageRoot?: string,
   colorWallBgColor?: string,
-  colorWallChunkPageRoot?: String,
   defaultSection?: string,
   displayAddButton?: boolean,
   displayInfoButton?: boolean,
@@ -61,10 +59,8 @@ export const ColorWallPage = (props: Props) => {
   const {
     addButtonText,
     alwaysShowColorFamilies,
-    chunkClickable,
     colorDetailPageRoot,
     colorWallBgColor,
-    colorWallChunkPageRoot,
     defaultSection,
     displayAddButton = false,
     displayAddButtonText,
@@ -144,16 +140,14 @@ export const ColorWallPage = (props: Props) => {
   // build color wall context and a11y state
   const cwContext = useMemo(() => extendIfDefined({}, colorWallContextDefault, {
     addButtonText,
-    chunkClickable: translateBooleanFlexibly(chunkClickable),
     colorDetailPageRoot,
     colorWallBgColor,
-    colorWallChunkPageRoot,
     displayAddButton: translateBooleanFlexibly(displayAddButton),
     displayInfoButton: translateBooleanFlexibly(displayInfoButton),
     displayAddButtonText: translateBooleanFlexibly(displayAddButtonText),
     displayDetailsLink: translateBooleanFlexibly(displayDetailsLink),
     hiddenSections: processedHiddenSections
-  }), [addButtonText, chunkClickable, colorDetailPageRoot, colorWallBgColor, colorWallChunkPageRoot, displayAddButton, displayAddButtonText, displayDetailsLink])
+  }), [addButtonText, colorDetailPageRoot, colorWallBgColor, displayAddButton, displayAddButtonText, displayDetailsLink])
 
   // -----------------------------------------------------
   // handle unmounting

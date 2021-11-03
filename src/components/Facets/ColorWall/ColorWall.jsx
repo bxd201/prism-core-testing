@@ -33,7 +33,7 @@ import flatten from 'lodash/flatten'
 import clamp from 'lodash/clamp'
 import isEmpty from 'lodash/isEmpty'
 import take from 'lodash/take'
-import { generateColorWallPageUrl, fullColorName } from 'src/shared/helpers/ColorUtils'
+import { generateColorWallPageUrl, fullColorName, fullColorNumber } from 'src/shared/helpers/ColorUtils'
 import 'src/scss/externalComponentSupport/AutoSizer.scss'
 import 'src/scss/convenience/overflow-ellipsis.scss'
 import './ColorWall.scss'
@@ -49,7 +49,7 @@ const ColorWall = () => {
   const history = useHistory()
   const { messages = {} } = useIntl()
   const { items: { colorMap = {}, colorStatuses = {}, sectionLabels: _sectionLabels = {} }, unChunkedChunks, chunkGridParams, section = '', family }: ColorsState = useSelector(state => state.colors)
-  const mobileFlexRowContentClass = 'color-swatch__mobileFlexRowContent'
+  const { brandKeyNumberSeparator }: ConfigurationContextType = useContext(ConfigurationContext)
   // if a family is selected, NEVER return section labels (they're only for sections)
   const sectionLabels = useMemo(() => {
     return family ? {} : _sectionLabels
@@ -255,6 +255,8 @@ const ColorWall = () => {
     )
   }
 
+  const currentFocusedCell: ?string = focusedCell.current
+
   return (
     <CSSTransition in={isZoomedIn} timeout={200}>
       <div className='color-wall'>
@@ -287,12 +289,21 @@ const ColorWall = () => {
             />
           )}
         </AutoSizer>
-        {colorNumOnBottom && focusedCell.current && (
-          <ColorSwatch style={{ position: 'absolute', padding: '1rem', overflow: 'visible', height: '200px', width: '100%', fontSize: '20px' }}
-            color={colorMap[focusedCell.current]}
+        {colorNumOnBottom && currentFocusedCell && (
+          <ColorSwatch style={{ position: 'absolute', padding: '1.4rem', overflow: 'visible', height: '195px', width: '100%' }}
+            color={colorMap[currentFocusedCell]}
             contentRenderer={() => (
-              <div className={`${mobileFlexRowContentClass}__buttons`}>
-                <button className={`${colorMap[focusedCell.current].isDark ? 'dark-color' : ''}`} style={{ padding: '10px', fontSize: '0.7em', borderRadius: '20px', border: '1px solid', position: 'absolute', bottom: '2em' }} onClick={() => { window.location.href = colorDetailPageRoot }}>View Color</button>
+              <div className='color-swatch__chip-locator'>
+                <p className='chip__name'>{colorMap[currentFocusedCell].name}</p>
+                <p className='color-swatch__chip-locator__number chip__number'>{fullColorNumber(colorMap[currentFocusedCell].brandKey, colorMap[currentFocusedCell].colorNumber, brandKeyNumberSeparator)}</p>
+                <div className='color-swatch__chip-locator--buttons'>
+                  <button
+                    className={`${colorMap[currentFocusedCell].isDark ? 'dark-color' : ''}`}
+                    onClick={() => { window.location.href = colorDetailPageRoot }}
+                  >
+                    View Color
+                  </button>
+                </div>
               </div>
             )}
             outline={false}
