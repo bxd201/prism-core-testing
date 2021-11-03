@@ -38,16 +38,20 @@ const Search = ({ contain = false, isChipLocator }: SearchProps) => {
     return result && <ColorSwatch
       color={result}
       contentRenderer={(defaultContent) => isChipLocator ? (
-        <div className='color-swatch__chip-locator--buttons'>
-          <button
-            className={`${result.isDark ? 'dark-color' : ''}`}
-            onClick={() => {
-              colorWallChunkPageRoot && (window.location.href = `${colorWallChunkPageRoot}#${generateColorWallPageUrl(primeColorWall, undefined, result.id, fullColorName(result.brandKey, result.colorNumber, result.name))}`)
-            }}
-          >
-              Find Chip
-          </button>
-          <button className={`${result.isDark ? 'dark-color' : ''}`} onClick={() => { window.location.href = colorDetailPageRoot }}>View Color</button>
+        <div className='color-swatch__chip-locator'>
+          <p>{result.name}</p>
+          <p className='color-swatch__chip-locator__number'>{fullColorNumber(result.brandKey, result.colorNumber, brandKeyNumberSeparator)}</p>
+          <div className='color-swatch__chip-locator--buttons' style={{ bottom: '0.6rem' }}>
+            <button
+              className={`${result.isDark ? 'dark-color' : ''}`}
+              onClick={() => {
+                colorWallChunkPageRoot && (window.location.href = `${colorWallChunkPageRoot}#${generateColorWallPageUrl(primeColorWall, undefined, result.id, fullColorName(result.brandKey, result.colorNumber, result.name))}`)
+              }}
+            >
+                Find Chip
+            </button>
+            <button className={`${result.isDark ? 'dark-color' : ''}`} onClick={() => { window.location.href = colorDetailPageRoot }}>View Color</button>
+          </div>
         </div>
       ) : defaultContent}
       key={key}

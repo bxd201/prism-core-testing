@@ -177,6 +177,18 @@ $swatch-edge-padding-lg: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-mai
       }
     }
 
+    .chip {
+      &__name {
+        font-size: 18px;
+        line-height: 1.3rem;
+      }
+
+      &__number {
+        font-size: 16px;
+        line-height: 1.3rem;
+      }
+    }
+
     &--buttons {
       position: absolute;
       bottom: 2.4rem;
@@ -194,7 +206,6 @@ $swatch-edge-padding-lg: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-mai
 
       .dark-color { border-color: white; }
     }
-
   }
 
   &__button-group {
