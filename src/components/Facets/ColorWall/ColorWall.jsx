@@ -200,7 +200,7 @@ const ColorWall = () => {
     const containsBloomedCell: boolean = getCoords(chunk, params.colorId)[0] !== -1
     const isLargeLabel: boolean = cellSize * lengthOfLongestRow > 255 // magic number breakpoint for choosing between small and large font
     const chunkClickableProps = chunkClickable ? {
-      onClick: () => { colorWallChunkPageRoot && (window.location.href = `${colorWallChunkPageRoot}#${generateColorWallPageUrl(sectionLabels[section][chunkNum])}`) },
+      onClick: () => { colorWallChunkPageRoot && (window.location.href = `${colorWallChunkPageRoot}/color-wall.html/#${generateColorWallPageUrl(sectionLabels[section][chunkNum])}`) },
       role: 'button',
       tabIndex: 0
     } : null
@@ -293,18 +293,18 @@ const ColorWall = () => {
           <ColorSwatch style={{ position: 'absolute', padding: '1.4rem', overflow: 'visible', height: '195px', width: '100%' }}
             color={colorMap[currentFocusedCell]}
             contentRenderer={() => (
-              <div className='color-swatch__chip-locator'>
-                <p className='chip__name'>{colorMap[currentFocusedCell].name}</p>
+              <>
+                <p className='color-swatch__chip-locator__name chip__name'>{colorMap[currentFocusedCell].name}</p>
                 <p className='color-swatch__chip-locator__number chip__number'>{fullColorNumber(colorMap[currentFocusedCell].brandKey, colorMap[currentFocusedCell].colorNumber, brandKeyNumberSeparator)}</p>
                 <div className='color-swatch__chip-locator--buttons'>
                   <button
-                    className={`${colorMap[currentFocusedCell].isDark ? 'dark-color' : ''}`}
+                    className={`color-swatch__chip-locator--buttons__button${colorMap[currentFocusedCell].isDark ? ' dark-color' : ''}`}
                     onClick={() => { window.location.href = colorDetailPageRoot }}
                   >
                     View Color
                   </button>
                 </div>
-              </div>
+              </>
             )}
             outline={false}
             showContents

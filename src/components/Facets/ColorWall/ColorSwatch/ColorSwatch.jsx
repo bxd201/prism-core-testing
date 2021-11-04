@@ -111,10 +111,10 @@ const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, co
         style={style}
       >
         {contentRenderer(
-          <div className='color-swatch__chip-locator'>
+          <>
             {colorNumOnBottom ? (
               <>
-                <p>{color.name}</p>
+                <p className='color-swatch__chip-locator__name'>{color.name}</p>
                 <p className='color-swatch__chip-locator__number'>{fullColorNumber(color.brandKey, color.colorNumber, brandKeyNumberSeparator)}</p>
               </>
             ) : (
@@ -124,7 +124,7 @@ const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, co
               </>
             )}
             <Content msg={at(status, 'message')[0]} color={color} />
-          </div>
+          </>
         )}
       </section>)}
     </>

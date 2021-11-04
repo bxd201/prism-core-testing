@@ -20,12 +20,13 @@ type Props = {
 }
 
 export const ColorWallPage = (props: Props) => {
+  const baseHostUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'))
   const {
     chunkClickable,
-    colorDetailPageRoot,
+    colorDetailPageRoot = baseHostUrl,
     colorNumOnBottom = true,
     colorWallBgColor,
-    colorWallChunkPageRoot,
+    colorWallChunkPageRoot = baseHostUrl,
     displayDetailsLink = false,
     hideChunkLabel
   } = props
