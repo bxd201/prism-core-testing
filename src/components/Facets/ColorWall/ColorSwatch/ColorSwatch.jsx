@@ -72,12 +72,23 @@ export const Content = ({ msg, color, style }: ContentProps) => {
   )
 }
 
-type ColorSwatchProps = { color: Color, level?: number, status?: ColorStatus, style?: {}, showContents?: boolean, onFocus?: () => void, outline: boolean }
-const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, level, status, style, showContents = (level === 0), onFocus, outline = true }: ColorSwatchProps, ref) => {
+type ColorSwatchProps = {
+  color: Color,
+  contentRenderer?: (defaultContent: Element<any>) => Element<any>,
+  level?: number,
+  status?: ColorStatus,
+  style?: {},
+  showContents?: boolean,
+  onFocus?: () => void,
+  outline: boolean
+}
+
+const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, contentRenderer = (defaultContent) => defaultContent, level, status, style, showContents = (level === 0), onFocus, outline = true }: ColorSwatchProps, ref) => {
   const { url, params: { section, family } } = useRouteMatch()
   const history = useHistory()
   const isDisabled = at(status, 'status')[0] === 0
   const { brandKeyNumberSeparator }: ConfigurationContextType = useContext(ConfigurationContext)
+  const { colorNumOnBottom }: ColorWallContextProps = useContext(ColorWallContext)
   return (
     <>
       <button
@@ -91,7 +102,7 @@ const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, le
       >
         {isDisabled && <div className='color-swatch__flag' />}
       </button>
-      {showContents && (<section
+      {showContents && !contentRenderer && (<section
         tabIndex={-1}
         ref={ref}
         onFocus={onFocus}
@@ -102,6 +113,31 @@ const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, le
         <p className='color-swatch__content__number'>{fullColorNumber(color.brandKey, color.colorNumber, brandKeyNumberSeparator)}</p>
         <p className='color-swatch__content__name'>{color.name}</p>
         <Content msg={at(status, 'message')[0]} color={color} />
+      </section>)}
+      {showContents && (<section
+        tabIndex={-1}
+        ref={ref}
+        onFocus={onFocus}
+        aria-label={fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator)}
+        className={`color-swatch__content ${color.isDark ? ' color-swatch__content--dark-color' : ''}${outline ? ' color-swatch__content--focus' : ''}`}
+        style={style}
+      >
+        {contentRenderer(
+          <>
+            {colorNumOnBottom ? (
+              <>
+                <p className='color-swatch__content__name'>{color.name}</p>
+                <p className='color-swatch__content__number'>{fullColorNumber(color.brandKey, color.colorNumber, brandKeyNumberSeparator)}</p>
+              </>
+            ) : (
+              <>
+                <p className='color-swatch__content__number'>{fullColorNumber(color.brandKey, color.colorNumber, brandKeyNumberSeparator)}</p>
+                <p className='color-swatch__content__name'>{color.name}</p>
+              </>
+            )}
+            <Content msg={at(status, 'message')[0]} color={color} />
+          </>
+        )}
       </section>)}
     </>
   )

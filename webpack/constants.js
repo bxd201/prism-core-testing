@@ -59,6 +59,7 @@ const facetEntryPoints = {
   FastMaskSimple: path.join(srcPath, 'components/Facets/FastMaskSimple/FastMaskSimple.jsx'),
   JumpStartFacet: path.join(srcPath, 'components/Facets/JumpStartFacet/JumpStartFacet.jsx'),
   RoomTypeDetector: path.join(srcPath, 'components/Facets/RoomTypeDetector/RoomTypeDetector.jsx'),
+  ColorWallChip: path.join(srcPath, 'components/Facets/ColorWallChip.jsx'),
   SceneVisualizerFacet: path.join(srcPath, 'components/Facets/SceneVisualizerFacet.jsx'),
   TabbedSceneVisualizerFacet: path.join(srcPath, 'components/Facets/TabbedSceneVisualizerFacet.jsx')
 }
