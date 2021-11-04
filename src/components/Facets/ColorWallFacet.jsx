@@ -27,12 +27,12 @@ type Props = FacetPubSubMethods & FacetBinderMethods & {
   alwaysShowColorFamilies?: boolean,
   colorDetailPageRoot?: string,
   colorWallBgColor?: string,
+  defaultSection?: string,
   displayAddButton?: boolean,
   displayInfoButton?: boolean,
   displayAddButtonText?: boolean,
   displayDetailsLink?: boolean,
-  hiddenSections?: string | string[], // as string, "section name 1" or "section name 1|section name 2|etc" will be parsed into an array
-  defaultSection?: string
+  hiddenSections?: string | string[] // as string, "section name 1" or "section name 1|section name 2|etc" will be parsed into an array
 }
 
 export const EVENTS = {
@@ -59,17 +59,17 @@ export const ColorWallPage = (props: Props) => {
   const {
     addButtonText,
     alwaysShowColorFamilies,
+    colorDetailPageRoot,
+    colorWallBgColor,
     defaultSection,
     displayAddButton = false,
     displayAddButtonText,
     displayInfoButton = false,
     displayDetailsLink = true,
-    colorWallBgColor,
-    subscribe,
+    hiddenSections,
     publish,
-    unsubscribeAll,
-    colorDetailPageRoot,
-    hiddenSections
+    subscribe,
+    unsubscribeAll
   } = props
   const dispatch = useDispatch()
   const history = useHistory()

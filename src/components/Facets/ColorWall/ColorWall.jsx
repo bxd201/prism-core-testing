@@ -42,14 +42,13 @@ import 'focus-within-polyfill'
 const WALL_HEIGHT = 475
 
 const ColorWall = () => {
-  const { swatchMinSize, swatchMaxSize: globalSwatchMaxSize, swatchSizeZoomed, colorWallBgColor, colorNumOnBottom, colorDetailPageRoot }: ColorWallContextProps = useContext(ColorWallContext)
+  const { chunkClickable, colorDetailPageRoot, colorNumOnBottom, colorWallBgColor, colorWallChunkPageRoot, swatchMaxSize: globalSwatchMaxSize, swatchMinSize, swatchSizeZoomed }: ColorWallContextProps = useContext(ColorWallContext)
   const { colorWall: { bloomEnabled = true, gapsBetweenChunks = true }, uiStyle }: ConfigurationContextType = useContext(ConfigurationContext)
   const dispatch: { type: string, payload: {} } => void = useDispatch()
   const { url, params }: { url: string, params: { section: ?string, family?: ?string, colorId?: ?string } } = useRouteMatch()
   const history = useHistory()
   const { messages = {} } = useIntl()
-  const { items: { colorMap = {}, colorStatuses = {}, sectionLabels: _sectionLabels = {} }, unChunkedChunks, chunkGridParams, section, family }: ColorsState = useSelector(state => state.colors)
-  const mobileFlexRowContentClass = 'color-swatch__mobileFlexRowContent'
+  const { items: { colorMap = {}, colorStatuses = {}, sectionLabels: _sectionLabels = {} }, unChunkedChunks, chunkGridParams, section = '', family }: ColorsState = useSelector(state => state.colors)
   const { brandKeyNumberSeparator }: ConfigurationContextType = useContext(ConfigurationContext)
   // if a family is selected, NEVER return section labels (they're only for sections)
   const sectionLabels = useMemo(() => {
@@ -200,9 +199,15 @@ const ColorWall = () => {
     const lengthOfLongestRow: number = getLongestArrayIn2dArray(chunk)
     const containsBloomedCell: boolean = getCoords(chunk, params.colorId)[0] !== -1
     const isLargeLabel: boolean = cellSize * lengthOfLongestRow > 255 // magic number breakpoint for choosing between small and large font
+    const chunkClickableProps = chunkClickable ? {
+      onClick: () => { colorWallChunkPageRoot && (window.location.href = `${colorWallChunkPageRoot}/color-wall.html/#${generateColorWallPageUrl(sectionLabels[section][chunkNum])}`) },
+      role: 'button',
+      tabIndex: 0
+    } : null
+
     return (flatten(chunk).some(cell => cell !== undefined) &&
-      <div key={key} className='color-wall-chunk' style={{ ...style, padding: gapsBetweenChunks ? cellSize / 5 : 0, zIndex: containsBloomedCell ? 1 : 'auto' }}>
-        {sectionLabels[section] && sectionLabels[section][chunkNum] !== undefined && (
+      <div key={key} className='color-wall-chunk' style={{ ...style, padding: gapsBetweenChunks ? cellSize / 5 : 0, zIndex: containsBloomedCell ? 1 : 'auto' }} {...chunkClickableProps}>
+        {sectionLabels[section] && sectionLabels[section][chunkNum] !== undefined && !chunkClickable && (
           <div
             className='color-wall-section-label'
             style={{
@@ -250,6 +255,8 @@ const ColorWall = () => {
     )
   }
 
+  const currentFocusedCell: ?string = focusedCell.current
+
   return (
     <CSSTransition in={isZoomedIn} timeout={200}>
       <div className='color-wall'>
@@ -282,24 +289,26 @@ const ColorWall = () => {
             />
           )}
         </AutoSizer>
-        {colorNumOnBottom && focusedCell.current && (
-          <ColorSwatch style={{ position: 'absolute', padding: '1rem', overflow: 'visible', height: '200px', width: '100%', fontSize: '20px' }}
-            color={colorMap[focusedCell.current]}
-            contentRenderer={(defaultContent) => (
-              <div className={mobileFlexRowContentClass}>
-                <div>
-                  <p className={`color-swatch__content ${mobileFlexRowContentClass}__name`} style={{ padding: '0', marginBottom: '5px' }}>{colorMap[focusedCell.current].name}</p>
-                  <p className={`color-swatch__content ${mobileFlexRowContentClass}__number`} style={{ padding: '0' }}>{fullColorNumber(colorMap[focusedCell.current].brandKey, colorMap[focusedCell.current].colorNumber, brandKeyNumberSeparator)}</p>
+        {colorNumOnBottom && currentFocusedCell && (
+          <ColorSwatch style={{ position: 'absolute', padding: '1.4rem', overflow: 'visible', height: '195px', width: '100%' }}
+            color={colorMap[currentFocusedCell]}
+            contentRenderer={() => (
+              <>
+                <p className='color-swatch__chip-locator__name chip__name'>{colorMap[currentFocusedCell].name}</p>
+                <p className='color-swatch__chip-locator__number chip__number'>{fullColorNumber(colorMap[currentFocusedCell].brandKey, colorMap[currentFocusedCell].colorNumber, brandKeyNumberSeparator)}</p>
+                <div className='color-swatch__chip-locator--buttons'>
+                  <button
+                    className={`color-swatch__chip-locator--buttons__button${colorMap[currentFocusedCell].isDark ? ' dark-color' : ''}`}
+                    onClick={() => { window.location.href = colorDetailPageRoot }}
+                  >
+                    View Color
+                  </button>
                 </div>
-                <div className={`${mobileFlexRowContentClass}__buttons`}>
-                  <button className={`${colorMap[focusedCell.current].isDark ? 'dark-color' : ''}`} style={{ padding: '10px', fontSize: '0.7em', borderRadius: '20px', border: '1px solid', position: 'absolute', bottom: '2em' }} onClick={() => { window.location.href = colorDetailPageRoot }}>View Color</button>
-                </div>
-              </div>
-            )
-            }
+              </>
+            )}
+            outline={false}
             showContents
-            colorNumOnBottom
-            outline />
+          />
         )
         }
       </div>
