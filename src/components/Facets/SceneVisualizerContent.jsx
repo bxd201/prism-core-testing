@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FormattedMessage } from 'react-intl'
 
 import './SceneVisualizerFacet.scss'
+import PhUploadIcon from '../CustomIcons/PhUploadIcon'
 
 const FACET_CLASS_BASE = 'scene-visualizer'
 const SCENE_BTN_WRAPPER = `${FACET_CLASS_BASE}__btn-wrapper`
@@ -11,13 +12,16 @@ const SCENE_BTN_WRAPPER_BTN = `${SCENE_BTN_WRAPPER}__btn`
 const SCENE_BTN_WRAPPER_BTN_ICON = `${SCENE_BTN_WRAPPER_BTN}__icon`
 const FAST_MASK_WRAPPER = `${FACET_CLASS_BASE}__fastmask-wrapper`
 const FAST_MASK_CLOSE_BTN = `${FAST_MASK_WRAPPER}__close-btn`
+const CUSTOM_ICON = `${SCENE_BTN_WRAPPER_BTN}__custom-icon`
+const ICON_SVG = `${CUSTOM_ICON}__svg`
 
 type SceneVisualizerContentProps = {
   tinterRendered: boolean,
   handleFastMaskClose?: Function,
   initUpload: Function,
   uploadInitiated: boolean,
-  tinter: any
+  tinter: any,
+  uploadButtonText?: string
 }
 
 const SceneVisualizerContent = (props: SceneVisualizerContentProps) => {
@@ -26,7 +30,8 @@ const SceneVisualizerContent = (props: SceneVisualizerContentProps) => {
     handleFastMaskClose,
     initUpload,
     uploadInitiated,
-    tinter
+    tinter,
+    uploadButtonText
   } = props
 
   return (<>
@@ -38,8 +43,8 @@ const SceneVisualizerContent = (props: SceneVisualizerContentProps) => {
         </button>
       </div> : null}
       {tinterRendered ? <div className={SCENE_BTN_WRAPPER}><button onClick={initUpload} className={SCENE_BTN_WRAPPER_BTN} disabled={uploadInitiated}>
-        <FontAwesomeIcon className={SCENE_BTN_WRAPPER_BTN_ICON} icon={['fal', 'upload']} size='1x' />
-        <FormattedMessage id='SCENE_VISUALIZER.UPLOAD_PHOTO' />
+        {uploadButtonText ? <div className={CUSTOM_ICON}><PhUploadIcon classNames={ICON_SVG} /></div> : <FontAwesomeIcon className={SCENE_BTN_WRAPPER_BTN_ICON} icon={['fal', 'upload']} size='1x' />}
+        {uploadButtonText ? <div>{uploadButtonText}</div> : <FormattedMessage id='SCENE_VISUALIZER.UPLOAD_PHOTO' />}
       </button>
       </div> : null}
     </div>

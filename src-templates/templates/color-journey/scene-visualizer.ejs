@@ -26,7 +26,8 @@
      data-scene-name="A lovely living room"
      data-default-image="https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom2?wid=1200}&qlt=92"
      data-default-mask="https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom2?wid=1200&req=object&opac=100&fmt=png8&object=wall&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1"
-     data-max-scene-height="640"></div>
+     data-max-scene-height="640"
+     data-upload-button-text="Pick a Picture"></div>
 <!-- <div>
     <button id="sim_btn">Simulate Image Upload</button>
 </div> -->
@@ -42,12 +43,16 @@
 </div>
 
 
-<script src='/embed.js'></script>
+<script src='<%= BASE_PATH %>/embed.js'></script>
 <script>
   <!-- Think thru how to import constants at host page level -->
   (() => {
     window.PRISM.embed(document.getElementById( 'prism-embed-root' ), {
       bindCallback: ({ publish, subscribe }) => {
+        subscribe('SV_ERROR', (err) => {
+          console.table(err)
+          window.alert('An Error occurred.')
+        })
         subscribe('SV_TRIGGER_IMAGE_UPLOAD', data => {
           // the data payload has an id it can be used to track who needs to responded to the triggering call. Think of these like PIDs
           const userInput = window.prompt('Enter yes to upload an image, enter no to cancel', 'yes')
