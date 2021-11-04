@@ -18,10 +18,10 @@ import ColorDataWrapper, { type ColorDataWrapperProps } from '../../../helpers/C
 import extendIfDefined from '../../../shared/helpers/extendIfDefined'
 
 type Props = FacetBinderMethods & FacetPubSubMethods & ColorDataWrapperProps & {
-  colorDetailPageRoot: string,
+  colorDetailPageRoot?: string,
   colorNumOnBottom?: boolean,
   colorWallBgColor?: string,
-  colorWallChunkPageRoot: string,
+  colorWallChunkPageRoot?: string,
   loading: boolean
 }
 
@@ -46,7 +46,8 @@ const SearchBarLight = ({ hideContainer }: { hideContainer: () => void }) => {
 }
 
 export const ColorSearch = (props: Props) => {
-  const { colorDetailPageRoot, colorNumOnBottom = true, colorWallBgColor, colorWallChunkPageRoot, loading } = props
+  const baseHostUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'))
+  const { colorDetailPageRoot = baseHostUrl, colorNumOnBottom = true, colorWallBgColor, colorWallChunkPageRoot = baseHostUrl, loading } = props
   const { primeColorWall } = useSelector(state => at(state, 'colors')[0])
   const [containerHeight, setContainerHeight] = useState(0)
   const redirectTo = `/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_WALL}/${ROUTE_PARAMS.SECTION}/${kebabCase(primeColorWall)}/${ROUTE_PARAMS.SEARCH}/`
@@ -76,7 +77,7 @@ export const ColorSearch = (props: Props) => {
             <div className='color-wall-wrap__search-bar'>
               <SearchBarLight hideContainer={() => { setContainerHeight(0) }} />
             </div>
-            <Route path='(.*)?/search/:query' render={() => <><h6 className='ColorSearch__title'>{primeColorWall}</h6><Search isChipLocator /></>} />
+            <Route path='(.*)?/search/:query' render={() => <><h6 className='ColorSearch__title'>{primeColorWall} Colors</h6><Search isChipLocator /></>} />
           </div>
         </ColorWallRouter>
       </ColorWallContext.Provider>

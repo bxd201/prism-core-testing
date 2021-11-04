@@ -38,21 +38,21 @@ const Search = ({ contain = false, isChipLocator }: SearchProps) => {
     return result && <ColorSwatch
       color={result}
       contentRenderer={(defaultContent) => isChipLocator ? (
-        <div className='color-swatch__chip-locator'>
-          <p>{result.name}</p>
+        <>
+          <p className='color-swatch__chip-locator__name'>{result.name}</p>
           <p className='color-swatch__chip-locator__number'>{fullColorNumber(result.brandKey, result.colorNumber, brandKeyNumberSeparator)}</p>
           <div className='color-swatch__chip-locator--buttons' style={{ bottom: '0.6rem' }}>
             <button
-              className={`${result.isDark ? 'dark-color' : ''}`}
+              className={`color-swatch__chip-locator--buttons__button${result.isDark ? ' dark-color' : ''}`}
               onClick={() => {
-                colorWallChunkPageRoot && (window.location.href = `${colorWallChunkPageRoot}#${generateColorWallPageUrl(primeColorWall, undefined, result.id, fullColorName(result.brandKey, result.colorNumber, result.name))}`)
+                colorWallChunkPageRoot && (window.location.href = `${colorWallChunkPageRoot}/color-wall.html/#${generateColorWallPageUrl(primeColorWall, undefined, result.id, fullColorName(result.brandKey, result.colorNumber, result.name))}`)
               }}
             >
                 Find Chip
             </button>
-            <button className={`${result.isDark ? 'dark-color' : ''}`} onClick={() => { window.location.href = colorDetailPageRoot }}>View Color</button>
+            <button className={`color-swatch__chip-locator--buttons__button${result.isDark ? ' dark-color' : ''}`} onClick={() => { window.location.href = colorDetailPageRoot }}>View Color</button>
           </div>
-        </div>
+        </>
       ) : defaultContent}
       key={key}
       showContents
@@ -112,8 +112,8 @@ const Search = ({ contain = false, isChipLocator }: SearchProps) => {
                 const gridWidth = width - (EDGE_SIZE * 2)
                 const columnCount = Math.max(1, Math.round(gridWidth / 175))
                 const newSize = gridWidth / columnCount
-                const rowCount = Math.ceil(results.length)
-                const gridHeight = contain ? height : Math.max(height, rowCount * newSize + (EDGE_SIZE * 2))
+                const rowCount = Math.ceil(results.length / columnCount)
+                const gridHeight = contain ? height : isChipLocator ? window.innerHeight - 90 - (EDGE_SIZE * 2) : Math.max(height, rowCount * newSize + (EDGE_SIZE * 2))
 
                 return (
                   <Grid
@@ -126,7 +126,7 @@ const Search = ({ contain = false, isChipLocator }: SearchProps) => {
                     columnCount={columnCount}
                     height={gridHeight}
                     rowHeight={newSize}
-                    rowCount={Math.ceil(results.length / columnCount)}
+                    rowCount={rowCount}
                     width={width}
                   />
                 )

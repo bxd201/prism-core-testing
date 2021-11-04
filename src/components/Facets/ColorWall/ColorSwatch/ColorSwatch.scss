@@ -179,12 +179,12 @@ $swatch-edge-padding-lg: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-mai
 
     .chip {
       &__name {
-        font-size: 18px;
+        font-size: 1.15rem;
         line-height: 1.3rem;
       }
 
       &__number {
-        font-size: 16px;
+        font-size: 1rem;
         line-height: 1.3rem;
       }
     }
@@ -235,4 +235,3 @@ $swatch-edge-padding-lg: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-mai
   max-width: 100%;
   white-space: nowrap;
 }
-
