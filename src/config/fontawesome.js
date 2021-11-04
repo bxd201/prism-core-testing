@@ -42,6 +42,7 @@ import { faUpload } from '@fortawesome/pro-solid-svg-icons/faUpload'
 
 // lights
 import { faAlignJustify as falAlignJustify } from '@fortawesome/pro-light-svg-icons/faAlignJustify'
+import { faAngleLeft as falAngleLeft } from '@fortawesome/pro-light-svg-icons/faAngleLeft'
 import { faCircle as falCircle } from '@fortawesome/pro-light-svg-icons/faCircle'
 import { faClone as falClone } from '@fortawesome/pro-light-svg-icons/faClone'
 import { faCompressAlt as falCompressAlt } from '@fortawesome/pro-light-svg-icons/faCompressAlt'
@@ -117,6 +118,7 @@ const faIcons = [
   faUpload,
   // -------- LIGHTS ---------
   falAlignJustify,
+  falAngleLeft,
   falCircle,
   falClone,
   falCompressAlt,

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <base href="/">
+  <title>Lowes Color Search</title>
+</head>
+
+<body style="margin: 0; background-color: #e8f0fe;">
+
+<div id="prism-color-search-embed-root"
+     data-prism-facet="ColorSearchFacet"
+     data-brand="lowes"
+     data-color-wall-bg-color="#FFF"
+     data-language="en-US"
+     data-route-type="memory"></div>
+
+<script src="<%= BASE_PATH %>/embed.js"></script>
+<script>
+  (() => {
+    window.PRISM.embed(document.getElementById('prism-color-search-embed-root'), {
+      bindCallback: ({ publish, subscribe }) => {
+        subscribe('prism-close-color-search', () => {
+          console.info({ event: 'prism-close-color-search' })
+          // on host site should unmount component
+        })
+      }
+    })
+  })()
+</script>
+
+</body>
+
+</html>

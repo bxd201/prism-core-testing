@@ -98,7 +98,30 @@
   }
 }
 
-.SearchBar.SearchBar-Minimal {
+.SearchBarLight {
+  &__wrapper {
+    border: none;
+    color: #404040;
+  }
+
+  &__input::placeholder {
+    color: #404040;
+    font-size: inherit !important;
+  }
+
+  &__back {
+    font-size: 1rem;
+    margin-right: $ui-spacing;
+  }
+
+  &__icon {
+    font-size: 12px;
+    margin: 0 0 0 $ui-spacing;
+    order: 3;
+  }
+}
+
+.SearchBarMinimal {
   .button-bar__options__option__btn {
     background: none !important;
     color: black !important;
@@ -115,5 +138,4 @@
   .button-bar__option-container {
     border: none !important;
   }
-  // .SearchBar__input { }
 }

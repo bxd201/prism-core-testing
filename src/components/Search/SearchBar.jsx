@@ -17,17 +17,25 @@ import recursiveDecodeURIComponent from 'src/shared/utils/recursiveDecodeURIComp
 import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
 
 type Props = {
-  label: string,
+  className?: 'SearchBarLight' | 'SearchBarMinimal',
+  label?: string,
   limitSearchToFamily?: boolean,
+  onClickBackButton?: () => void,
+  placeholder?: string,
+  showBackButton?: boolean,
   showCancelButton?: boolean,
   showIcon?: boolean,
-  showLabel?: boolean,
+  showLabel?: boolean
 }
 
 const SearchBar = (props: Props) => {
   const {
+    className,
     label,
     limitSearchToFamily = false,
+    onClickBackButton,
+    placeholder,
+    showBackButton = false,
     showCancelButton = true,
     showIcon = true,
     showLabel = true
@@ -35,14 +43,14 @@ const SearchBar = (props: Props) => {
   const [id] = useState(uniqueId('SearchBarInput'))
   const [inputValue, setInputValue] = useState<string>('')
   const [newSearchParam, setNewSearchParam] = useState<string>('')
-  const { messages = {}, locale } = useIntl()
+  const { locale } = useIntl()
   const { section, family, query = '' } = useParams()
   const { structure } = useSelector(state => state.colors)
   const currentSearchParam = useRef('')
   const dispatch = useDispatch()
   const history = useHistory()
   const inputRef = useRef()
-  const { brandId, uiStyle } = useContext(ConfigurationContext)
+  const { brandId } = useContext(ConfigurationContext)
 
   useEffect(() => {
     // recursively decode incoming query and use it to update input value
@@ -116,24 +124,31 @@ const SearchBar = (props: Props) => {
     dispatch(loadSearchResults(brandId, { language: locale }, newSearchParam))
   }, [newSearchParam, family, section, limitSearchToFamily])
 
+  const getClassName = (name, subClass) => name ? name + subClass : ''
+
   return (
-    <div className={uiStyle === 'minimal' ? 'SearchBar SearchBar-Minimal' : 'SearchBar'}>
+    <div className={`SearchBar ${getClassName(className, '')}`}>
       <form onSubmit={e => e.preventDefault()} className='SearchBar__search-form'>
         <label className={`SearchBar__label ${!showLabel ? 'visually-hidden' : ''}`} htmlFor={id}>{label}</label>
         <div className='SearchBar__inner'>
+          {showBackButton && (
+            <button type='button' className={`${getClassName(className, '__back')}`} onClick={onClickBackButton}>
+              <FontAwesomeIcon icon={['fal', 'angle-left']} size='lg' />
+            </button>
+          )}
           {showIcon && (
-            <label htmlFor={id} className='SearchBar__icon'>
+            <label htmlFor={id} className={`SearchBar__icon ${getClassName(className, '__icon')}`}>
               <FontAwesomeIcon icon={['fal', 'search']} size='lg' />
             </label>
           )}
-          <div className={`SearchBar__wrapper SearchBar__wrapper--with${query ? '-outline' : 'out-outline'}`}>
+          <div className={`SearchBar__wrapper SearchBar__wrapper--with${query ? '-outline' : 'out-outline'} ${getClassName(className, '__wrapper')}`}>
             <input
               // eslint-disable-next-line jsx-a11y/no-autofocus
               autoFocus
-              className='SearchBar__input'
+              className={`SearchBar__input ${getClassName(className, '__input')}`}
               id={id}
               onChange={e => setInputValue(e.target.value)}
-              placeholder={messages[uiStyle === 'minimal' ? 'SEARCH.SEARCH_FOR_A_COLOR' : 'SEARCH.SEARCH_BY']}
+              placeholder={placeholder}
               ref={inputRef}
               value={inputValue}
             />
@@ -142,7 +157,7 @@ const SearchBar = (props: Props) => {
                 setInputValue('')
                 inputRef.current && inputRef.current.focus()
               }}>
-                <FontAwesomeIcon icon={['fas', 'times']} />
+                <FontAwesomeIcon icon={['fal', 'times']} />
               </button>}
           </div>
           {showCancelButton && <div className='SearchBar__cancel-button'>

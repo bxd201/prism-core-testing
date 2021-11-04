@@ -54,6 +54,7 @@ const facetEntryPoints = {
   ColorDetailsFacet: path.join(srcPath, 'components/Facets/ColorDetailsFacet.jsx'),
   ColorFamilyFacet: path.join(srcPath, 'components/Facets/ColorFamilyFacet/ColorFamilyFacet.jsx'),
   ColorListingPage: path.join(srcPath, 'components/Facets/ColorListingPage/ColorListingPage.jsx'),
+  ColorSearchFacet: path.join(srcPath, 'components/Facets/ColorSearchFacet/ColorSearchFacet.jsx'),
   ColorVisualizer: path.join(srcPath, 'components/Facets/ColorVisualizerWrapper/ColorVisualizerWrapper.jsx'),
   ColorWallFacet: path.join(srcPath, 'components/Facets/ColorWallFacet.jsx'),
   ColorWallChunkChipFacet: path.join(srcPath, 'components/Facets/ColorWallChunkChipFacet.jsx'),

@@ -21,8 +21,8 @@ type ContentProps = { msg: string, color: Color, style?: {}}
 export const Content = ({ msg, color, style }: ContentProps) => {
   const dispatch = useDispatch()
   const { addButtonText, displayAddButton, displayInfoButton, displayDetailsLink, colorDetailPageRoot }: ColorWallContextProps = useContext(ColorWallContext)
-  const { messages = {} } = useIntl()
   const { brandKeyNumberSeparator, swatchShouldEmit }: ConfigurationContextType = useContext(ConfigurationContext)
+  const { messages = {} } = useIntl()
 
   const colorIsInLivePalette: boolean = useSelector(store => store.lp.colors.some(({ colorNumber }) => colorNumber === color.colorNumber))
   const title = (addButtonText || at(messages, 'ADD_TO_PALETTE')[0] || '').replace('{name}', fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator))
@@ -89,6 +89,7 @@ const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, co
   const isDisabled = at(status, 'status')[0] === 0
   const { chunkClickable, colorNumOnBottom }: ColorWallContextProps = useContext(ColorWallContext)
   const { brandKeyNumberSeparator }: ConfigurationContextType = useContext(ConfigurationContext)
+
   return (
     <>
       <button
