@@ -42,7 +42,7 @@ import 'focus-within-polyfill'
 const WALL_HEIGHT = 475
 
 const ColorWall = () => {
-  const { chunkClickable, colorDetailPageRoot, colorNumOnBottom, colorWallBgColor, colorWallChunkPageRoot, swatchMaxSize: globalSwatchMaxSize, swatchMinSize, swatchSizeZoomed }: ColorWallContextProps = useContext(ColorWallContext)
+  const { chunkClickable, chunkMiniMap, colorDetailPageRoot, colorNumOnBottom, colorWallBgColor, colorWallChunkPageRoot, swatchMaxSize: globalSwatchMaxSize, swatchMinSize, swatchSizeZoomed }: ColorWallContextProps = useContext(ColorWallContext)
   const { colorWall: { bloomEnabled = true, gapsBetweenChunks = true }, uiStyle }: ConfigurationContextType = useContext(ConfigurationContext)
   const dispatch: { type: string, payload: {} } => void = useDispatch()
   const { url, params }: { url: string, params: { section: ?string, family?: ?string, colorId?: ?string } } = useRouteMatch()
@@ -212,14 +212,19 @@ const ColorWall = () => {
             className='color-wall-section-label'
             style={{
               width: style.width - cellSize * 0.4,
-              height: calculateLabelHeight(cellSize),
+              height: calculateLabelHeight(cellSize, chunkMiniMap),
               marginBottom: calculateLabelMarginBottom(isZoomedIn, cellSize)
-            }}>
+            }}
+          >
             <div
               className={`color-wall-section-label__text ${isLargeLabel ? 'color-wall-section-label__text--large' : ''}`}
-              style={{ textAlign: uiStyle === 'minimal' ? 'left' : 'center' }}
+              style={{ justifyContent: chunkMiniMap || uiStyle === 'minimal' ? 'space-between' : 'center' }}
             >
               {sectionLabels[section][chunkNum]}
+              {/* It's just marking an spot for the actual component - <div /> TO BE DELETED */}
+              {chunkMiniMap && <div style={{ width: '108px', height: '63px', backgroundColor: '#DDD', display: 'flex', alignItems: 'center', textAlign: 'center' }}>
+                mini map example
+              </div>}
             </div>
           </div>
         )}

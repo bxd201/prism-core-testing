@@ -11,6 +11,7 @@ import translateBooleanFlexibly from 'src/shared/utils/translateBooleanFlexibly.
 
 type Props = {
   chunkClickable?: boolean,
+  chunkMiniMap?: boolean,
   colorDetailPageRoot?: string,
   colorNumOnBottom?: boolean,
   colorWallBgColor?: string,
@@ -23,6 +24,7 @@ export const ColorWallPage = (props: Props) => {
   const baseHostUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'))
   const {
     chunkClickable,
+    chunkMiniMap,
     colorDetailPageRoot = baseHostUrl,
     colorNumOnBottom = true,
     colorWallBgColor,
@@ -33,13 +35,14 @@ export const ColorWallPage = (props: Props) => {
   const [isLoading] = useState(false)
   const cwContext = useMemo(() => extendIfDefined({}, colorWallContextDefault, {
     chunkClickable: translateBooleanFlexibly(chunkClickable),
+    chunkMiniMap: translateBooleanFlexibly(chunkMiniMap),
     colorDetailPageRoot,
     colorNumOnBottom,
     colorWallBgColor,
     colorWallChunkPageRoot,
     displayDetailsLink: translateBooleanFlexibly(displayDetailsLink),
     hideChunkLabel: translateBooleanFlexibly(hideChunkLabel)
-  }), [chunkClickable, colorDetailPageRoot, colorNumOnBottom, colorWallBgColor, colorWallChunkPageRoot, displayDetailsLink, hideChunkLabel])
+  }), [chunkClickable, chunkMiniMap, colorDetailPageRoot, colorNumOnBottom, colorWallBgColor, colorWallChunkPageRoot, displayDetailsLink, hideChunkLabel])
 
   return (
     <ColorWallContext.Provider value={cwContext}>

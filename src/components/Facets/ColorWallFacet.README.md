@@ -6,6 +6,7 @@
 | addButtonText | `string` | `data-add-button-text="Add to Cart` | `addButtonText="Add to Cart"` | Defines text shown with add button on color swatches. Any instances of the `{name}` keyword in this property will be replaced with the name of the associated color. |
 | alwaysShowColorFamilies | `boolean` | `data-always-show-color-families` | `alwaysShowColorFamilies` | Always shows Color Families menu if its width doesn't exceed the container width. |
 | chunkClickable | `boolean` | `data-chunk-clickable` | `chunkClickable` | Color Wall chuncks are clickable buttons linking to chunk section and color swatch buttons are disabled. |
+| chunkMiniMap | `boolean` | `data-chunk-mini-map` | `chunkMiniMap` | Shows Chunk Mini Map on Color Wall labels. |
 | colorDetailsAddColor | `boolean` | `data-color-details-add-color` | `colorDetailsAddColor` | Shows Add Color to palette button on Color Details. |
 | colorDetailPageRoot | `string` | `data-color-detail-page-root="https://site.com/color-details/"` | `colorDetailPageRoot="https://site.com/color-details/"` | Defines the URL path used for links to color details pages. This will cause CDPs to navigate to a new URL. |
 | colorWallBgColor | `string` | `data-color-wall-bg-color="#FFF"` | `colorWallBgColor="#FFF"` | Defines background color for color wall. |
