@@ -10,6 +10,7 @@ import ColorSearchFacet from 'src/components/Facets/ColorSearchFacet/ColorSearch
 import ColorVisualizer from 'src/components/Facets/ColorVisualizerWrapper/ColorVisualizerWrapper'
 import ColorWallFacet from 'src/components/Facets/ColorWallFacet'
 import ColorWallChunkChipFacet from 'src/components/Facets/ColorWallChunkChipFacet'
+import ColorWallDeux from 'src/components/Facets/ColorWallDeux/ColorWallDeux'
 import FastMaskSimple from 'src/components/Facets/FastMaskSimple/FastMaskSimple'
 import JumpStartFacet from 'src/components/Facets/JumpStartFacet/JumpStartFacet'
 import RoomTypeDetector from 'src/components/Facets/RoomTypeDetector/RoomTypeDetector'
@@ -24,6 +25,7 @@ export const allFacets = {
   ColorVisualizer,
   ColorWallFacet,
   ColorWallChunkChipFacet,
+  ColorWallDeux,
   FastMaskSimple,
   JumpStartFacet,
   RoomTypeDetector,

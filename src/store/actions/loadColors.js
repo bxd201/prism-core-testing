@@ -3,7 +3,7 @@
 import axios from 'axios'
 import { generateBrandedEndpoint } from '../../shared/helpers/DataUtils'
 import { type Color, type FamilyStructure, type ColorStatuses } from '../../shared/types/Colors.js.flow'
-import { COLOR_CHUNKS_ENDPOINT, COLOR_BRIGHTS_ENDPOINT, COLOR_FAMILY_NAMES_ENDPOINT, COLORS_ENDPOINT } from '../../constants/endpoints'
+import { COLOR_CHUNKS_ENDPOINT, COLOR_BRIGHTS_ENDPOINT, COLOR_FAMILY_NAMES_ENDPOINT, COLORS_ENDPOINT, COLOR_CHUNKS_LAYOUT_ENDPOINT } from '../../constants/endpoints'
 import store from 'src/store/store'
 import once from 'lodash/once'
 
@@ -72,7 +72,8 @@ export const mapColorDataToPayload = (colorData: Object) => ({
   colors: colorData.colors.values,
   colorLabels: colorData.colors.names,
   brights: colorData.brights,
-  sections: colorData.sections
+  sections: colorData.sections,
+  chunksLayout: colorData.chunksLayout
 })
 
 export const getColorsRequests = (brandId: string, options?: any) => {
@@ -84,11 +85,12 @@ export const getColorsRequests = (brandId: string, options?: any) => {
     // { data: { default: boolean, families: string[], name: string }[] }
     axios.get(generateBrandedEndpoint(COLOR_FAMILY_NAMES_ENDPOINT, brandId, options)),
     // { data: { archived: boolean, blue: number, brandKey: string, brandedCollectionNames: string[], colorFamilyNames: string[], colorNumber: string, coordinatingColors: {}..... }[] }
-    axios.get(generateBrandedEndpoint(COLORS_ENDPOINT, brandId, options))
+    axios.get(generateBrandedEndpoint(COLORS_ENDPOINT, brandId, options)),
+    axios.get(generateBrandedEndpoint(COLOR_CHUNKS_LAYOUT_ENDPOINT, brandId, options))
   ]
 }
 
 export const mapResponsesToColorData = (responses: any[]) => {
-  const [colors, brights, sections, unorderedColors]: [any, any, FamilyStructure, any] = responses.map(response => response.data)
-  return { colors, brights, sections, unorderedColors }
+  const [colors, brights, sections, unorderedColors, chunksLayout]: [any, any, FamilyStructure, any, any] = responses.map(response => response.data)
+  return { colors, brights, sections, unorderedColors, chunksLayout }
 }

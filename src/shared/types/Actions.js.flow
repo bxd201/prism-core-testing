@@ -27,6 +27,7 @@ export type ColorsStateItems = {
   colors?: CategorizedColorIdGrid,
   colorStatuses?: ColorStatuses,
   unorderedColors?: ColorIdList,
+  chunksLayout?: any,
   sectionLabels?: {
     [key: ?string]: (?string)[]
   }

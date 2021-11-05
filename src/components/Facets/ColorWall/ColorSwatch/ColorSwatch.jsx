@@ -84,14 +84,15 @@ type ColorSwatchProps = {
   style?: {},
   showContents?: boolean,
   onFocus?: () => void,
-  outline?: boolean
+  outline?: boolean,
+  className?: string
 }
 
-const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, contentRenderer = (defaultContent) => defaultContent, level, showContents = (level === 0), status, style, onFocus, outline = true }: ColorSwatchProps, ref) => {
+const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, contentRenderer = (defaultContent) => defaultContent, level, showContents = (level === 0), status, style, onFocus, outline = true, className }: ColorSwatchProps, ref) => {
   const { url, params: { section, family } } = useRouteMatch()
   const history = useHistory()
   const isDisabled = at(status, 'status')[0] === 0
-  const { chunkClickable, colorNumOnBottom }: ColorWallContextProps = useContext(ColorWallContext)
+  const { chunkClickable, colorNumOnBottom, activeColorRouteBuilderRef }: ColorWallContextProps = useContext(ColorWallContext)
   const { brandId, brandKeyNumberSeparator }: ConfigurationContextType = useContext(ConfigurationContext)
   const { primeColorWall }: ColorsState = useSelector(state => state.colors)
 
@@ -106,8 +107,13 @@ const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, co
         onClick={chunkClickable && section === kebabCase(primeColorWall)
           ? noop
           : () => {
-            history.push(generateColorWallPageUrl(section, family, color.id, fullColorName(color.brandKey, color.colorNumber, color.name)) + (url.endsWith('family/') ? 'family/' : url.endsWith('search/') ? 'search/' : ''))
             GA.event({ category: 'Color Wall', action: 'Color Swatch Clicks', label: `${color.name} - ${color.colorNumber}` }, GA_TRACKER_NAME_BRAND[brandId])
+            if (activeColorRouteBuilderRef && activeColorRouteBuilderRef.current) {
+              activeColorRouteBuilderRef.current(color)
+            } else {
+              // TODO: refactor this to use context as well
+              history.push(generateColorWallPageUrl(section, family, color.id, fullColorName(color.brandKey, color.colorNumber, color.name)) + (url.endsWith('family/') ? 'family/' : url.endsWith('search/') ? 'search/' : ''))
+            }
           }
         }
         aria-label={fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator)}

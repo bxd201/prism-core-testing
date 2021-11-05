@@ -48,7 +48,8 @@ if (isEmpty(allEntryPoints)) {
 
 const CACHE_HASH = hash([
   ...flags.mode,
-  ...Object.keys(envVars).map(key => process.env[envVars[key]] || '')
+  ...Object.keys(envVars).map(key => process.env[envVars[key]] || ''),
+  Object.keys(flags.facetEntryPoints).join(',')
 ])
 
 const DEFINED_VARS = {
