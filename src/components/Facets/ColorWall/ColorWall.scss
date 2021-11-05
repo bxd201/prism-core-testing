@@ -24,6 +24,9 @@
     align-items: center;
 
     &__text {
+      display: flex;
+      align-items: flex-end;
+      text-align: left;
       font-size: .75em;
       hyphens: auto;
       max-width: 100%;

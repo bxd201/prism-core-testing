@@ -22,6 +22,7 @@ export const colorWallA11yContextDefault: ColorWallA11yContextProps = {
 export type ColorWallContextProps = {
   addButtonText?: string,
   chunkClickable?: boolean,
+  chunkMiniMap?: boolean,
   colorDetailPageRoot?: string,
   colorNumOnBottom?: boolean,
   colorWallBgColor: string,
@@ -42,6 +43,7 @@ export type ColorWallContextProps = {
 export const colorWallContextDefault: ColorWallContextProps = {
   addButtonText: undefined,
   chunkClickable: false,
+  chunkMiniMap: false,
   colorDetailPageRoot: undefined,
   colorNumOnBottom: false,
   colorWallChunkPageRoot: undefined,
