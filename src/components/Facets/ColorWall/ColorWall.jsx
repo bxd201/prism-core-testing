@@ -27,11 +27,12 @@ import {
 } from './ColorWallUtils'
 import ColorSwatch from './ColorSwatch/ColorSwatch'
 import { compareKebabs } from 'src/shared/helpers/StringUtils'
+import clamp from 'lodash/clamp'
+import flatten from 'lodash/flatten'
+import isEmpty from 'lodash/isEmpty'
+import kebabCase from 'lodash/kebabCase'
 import range from 'lodash/range'
 import rangeRight from 'lodash/rangeRight'
-import flatten from 'lodash/flatten'
-import clamp from 'lodash/clamp'
-import isEmpty from 'lodash/isEmpty'
 import take from 'lodash/take'
 import { generateColorWallPageUrl, fullColorName, fullColorNumber } from 'src/shared/helpers/ColorUtils'
 import 'src/scss/externalComponentSupport/AutoSizer.scss'
@@ -260,7 +261,7 @@ const ColorWall = () => {
     )
   }
 
-  const currentFocusedCell: ?string = focusedCell.current
+  const selectedColor = focusedCell.current && colorMap[focusedCell.current]
 
   return (
     <CSSTransition in={isZoomedIn} timeout={200}>
@@ -294,17 +295,19 @@ const ColorWall = () => {
             />
           )}
         </AutoSizer>
-        {colorNumOnBottom && currentFocusedCell && (
+        {colorNumOnBottom && selectedColor && (
           <ColorSwatch style={{ position: 'absolute', padding: '1.4rem', overflow: 'visible', height: '195px', width: '100%' }}
-            color={colorMap[currentFocusedCell]}
+            color={selectedColor}
             contentRenderer={() => (
               <>
-                <p className='color-swatch__chip-locator__name chip__name'>{colorMap[currentFocusedCell].name}</p>
-                <p className='color-swatch__chip-locator__number chip__number'>{fullColorNumber(colorMap[currentFocusedCell].brandKey, colorMap[currentFocusedCell].colorNumber, brandKeyNumberSeparator)}</p>
+                <p className='color-swatch__chip-locator__name chip__name'>{selectedColor.name}</p>
+                <p className='color-swatch__chip-locator__number chip__number'>{fullColorNumber(selectedColor.brandKey, selectedColor.colorNumber, brandKeyNumberSeparator)}</p>
                 <div className='color-swatch__chip-locator--buttons'>
                   <button
-                    className={`color-swatch__chip-locator--buttons__button${colorMap[currentFocusedCell].isDark ? ' dark-color' : ''}`}
-                    onClick={() => { window.location.href = colorDetailPageRoot }}
+                    className={`color-swatch__chip-locator--buttons__button${selectedColor.isDark ? ' dark-color' : ''}`}
+                    onClick={() => {
+                      colorDetailPageRoot && (window.location.href = `${colorDetailPageRoot}/inspiration/colors/${selectedColor.colorFamilyNames[0]}/${kebabCase(selectedColor.name + selectedColor.brandKey + selectedColor.colorNumber)}`)
+                    }}
                   >
                     View Color
                   </button>

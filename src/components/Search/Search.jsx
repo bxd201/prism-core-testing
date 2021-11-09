@@ -14,6 +14,7 @@ import './Search.scss'
 import 'src/scss/externalComponentSupport/AutoSizer.scss'
 import omitPrefix from 'src/shared/utils/omitPrefix.util'
 import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
+import kebabCase from 'lodash/kebabCase'
 import { fullColorName, fullColorNumber, generateColorWallPageUrl } from 'src/shared/helpers/ColorUtils'
 
 const baseClass = 'Search'
@@ -50,7 +51,14 @@ const Search = ({ contain = false, isChipLocator }: SearchProps) => {
             >
                 Find Chip
             </button>
-            <button className={`color-swatch__chip-locator--buttons__button${result.isDark ? ' dark-color' : ''}`} onClick={() => { window.location.href = colorDetailPageRoot }}>View Color</button>
+            <button
+              className={`color-swatch__chip-locator--buttons__button${result.isDark ? ' dark-color' : ''}`}
+              onClick={() => {
+                colorDetailPageRoot && (window.location.href = `${colorDetailPageRoot}/inspiration/colors/${result.colorFamilyNames[0]}/${kebabCase(result.name + result.brandKey + result.colorNumber)}`)
+              }}
+            >
+                View Color
+            </button>
           </div>
         </>
       ) : defaultContent}
