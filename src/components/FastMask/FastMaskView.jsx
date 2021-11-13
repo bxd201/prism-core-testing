@@ -7,7 +7,6 @@ import { useIntl } from 'react-intl'
 import { createUniqueSceneId } from '../../shared/utils/legacyProfileFormatUtil'
 import axios from 'axios'
 import at from 'lodash/at'
-import { deNoneify } from '../../store/actions/user-uploads'
 import { SYSTEM_ERROR } from '../../store/actions/loadScenes'
 import { SCENE_TYPES, SCENE_VARIANTS } from '../../constants/globals'
 import uniqueId from 'lodash/uniqueId'
@@ -197,8 +196,10 @@ const FastMaskView = (props: FastMaskProps) => {
         .then(data => {
           // eslint-disable-next-line camelcase
           const { mask_path0, original_img_path } = data
-          const mask = deNoneify(mask_path0)
-          const originalImage = deNoneify(original_img_path)
+          // eslint-disable-next-line camelcase
+          const mask = mask_path0
+          // eslint-disable-next-line camelcase
+          const originalImage = original_img_path
 
           return Promise.all([originalImage, mask].map((url) => {
             // Load mask and background
