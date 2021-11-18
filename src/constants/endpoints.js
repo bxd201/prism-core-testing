@@ -17,7 +17,7 @@ export const COLORS_SEARCH_ENDPOINT = endpoint`search`
 export const CONFIG_ENDPOINT = endpoint`configurations`
 export const EXPERT_COLOR_PICKS_ENDPOINT = endpoint`expertcolorpicks`
 export const INSPIRATIONAL_PHOTOS_ENDPOINT = endpoint`inspirationalphotos`
-export const ML_PIPELINE_ENDPOINT = `${ML_API_URL}/pipeline/`
+export const ML_PIPELINE_ENDPOINT = `${ML_API_URL}/prism-ml/`
 export const SCENES_ENDPOINT = endpoint`scenes`
 // @todo - Legacy endpoints proxies to save masks, these do not exists ? -RS
 export const MASK_ENDPOINT = endpoint`masks`
