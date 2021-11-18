@@ -191,7 +191,7 @@ const FastMaskView = (props: FastMaskProps) => {
       uploadForm.append('image', blobData)
 
       axios
-        .post(`${ML_API_URL}/pipeline/`, uploadForm, {})
+        .post(`${ML_API_URL}/prism-ml/`, uploadForm, {})
         .then(res => at(res, 'data.per_img_resp[0][0].payload')[0] || (() => { throw new Error('No relevant data in response') })())
         .then(data => {
           // eslint-disable-next-line camelcase
