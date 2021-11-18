@@ -18,6 +18,16 @@ def GET_API_URL(branch) {
   }
 }
 
+def GET_ML_API_URL(branch) {
+  if (branch == 'release') {
+    "https://api.sherwin-williams.com"
+  } else if (branch == 'qa') {
+    "https://${branch.toLowerCase()}-api.sherwin-williams.com"
+  } else {
+    'https://develop-prism-ml-api.ebus.swaws'
+  }
+}
+
 pipeline {
   options {
     buildDiscarder(
@@ -33,6 +43,7 @@ pipeline {
     PRISM_VERSION = sh(returnStdout: true, script: "cat package.json | jq -r .version").trim()
     S3_FOLDER_NAME = "${S3_FOLDER_VERSION(env.BRANCH_NAME, PRISM_VERSION)}"
     API_URL = "${GET_API_URL(env.BRANCH_NAME)}"
+    ML_API_URL = "${GET_ML_API_URL(env.BRANCH_NAME)}"
   }
   stages {
     stage('builder') {
@@ -62,6 +73,7 @@ pipeline {
         docker run \
           -e WEB_URL=https://prism.sherwin-williams.com/${S3_FOLDER_NAME} \
           --env API_URL="$API_URL" \
+          --env ML_API_URL="$ML_API_URL" \
           --name ${IMAGE_NAME}-build-${BUILD_NUMBER} \
           ${IMAGE_NAME}-build:latest
 
