@@ -48,7 +48,7 @@ const ColorWall = () => {
   const { url, params }: { url: string, params: { section: ?string, family?: ?string, colorId?: ?string } } = useRouteMatch()
   const history = useHistory()
   const { messages = {} } = useIntl()
-  const { items: { colorMap = {}, colorStatuses = {}, sectionLabels: _sectionLabels = {} }, unChunkedChunks, chunkGridParams, section = '', family }: ColorsState = useSelector(state => state.colors)
+  const { items: { colorMap = {}, colorStatuses = {}, sectionLabels: _sectionLabels = {} }, unChunkedChunks, chunkGridParams, section = '', sectionsShortLabel, family }: ColorsState = useSelector(state => state.colors)
   const { brandKeyNumberSeparator }: ConfigurationContextType = useContext(ConfigurationContext)
   // if a family is selected, NEVER return section labels (they're only for sections)
   const sectionLabels = useMemo(() => {
@@ -196,6 +196,7 @@ const ColorWall = () => {
   const chunkRenderer = ({ rowIndex: chunkRow, columnIndex: chunkColumn, key, style }) => {
     const chunk: string[][] = chunkGrid[chunkRow][chunkColumn]
     const chunkNum: number = take(chunkGrid, chunkRow).reduce((num, chunkRow) => num + chunkRow.length, 0) + chunkColumn
+    const { wrappingEnabled, wrappingGaspBetween = 0 } = chunkGridParams
     const lengthOfLongestRow: number = getLongestArrayIn2dArray(chunk)
     const containsBloomedCell: boolean = getCoords(chunk, params.colorId)[0] !== -1
     const isLargeLabel: boolean = cellSize * lengthOfLongestRow > 255 // magic number breakpoint for choosing between small and large font
@@ -206,7 +207,12 @@ const ColorWall = () => {
     } : null
 
     return (flatten(chunk).some(cell => cell !== undefined) &&
-      <div key={key} className='color-wall-chunk' style={{ ...style, padding: gapsBetweenChunks ? cellSize / 5 : 0, zIndex: containsBloomedCell ? 1 : 'auto' }} {...chunkClickableProps}>
+      <div
+        key={key}
+        className='color-wall-chunk'
+        style={{ ...style, padding: gapsBetweenChunks ? cellSize / 5 : 0, marginTop: wrappingEnabled && wrappingGaspBetween && chunkNum > 0 ? `${wrappingGaspBetween}rem` : 'auto', zIndex: containsBloomedCell ? 1 : 'auto' }}
+        {...chunkClickableProps}
+      >
         {sectionLabels[section] && sectionLabels[section][chunkNum] !== undefined && !chunkClickable && (
           <div
             className='color-wall-section-label'
@@ -220,7 +226,7 @@ const ColorWall = () => {
               className={`color-wall-section-label__text ${isLargeLabel ? 'color-wall-section-label__text--large' : ''}`}
               style={{ justifyContent: chunkMiniMap || uiStyle === 'minimal' ? 'space-between' : 'center' }}
             >
-              {sectionLabels[section][chunkNum]}
+              {(sectionsShortLabel && sectionsShortLabel[section]) ?? sectionLabels[section][chunkNum]}
               {/* It's just marking an spot for the actual component - <div /> TO BE DELETED */}
               {chunkMiniMap && <div style={{ width: '108px', height: '63px', backgroundColor: '#DDD', display: 'flex', alignItems: 'center', textAlign: 'center' }}>
                 mini map example
