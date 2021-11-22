@@ -201,8 +201,18 @@ const FastMaskView = (props: FastMaskProps) => {
           // eslint-disable-next-line camelcase
           const originalImage = original_img_path
 
-          return Promise.all([originalImage, mask].map((url) => {
-            // Load mask and background
+          // Load mask and background
+          return Promise.all([originalImage, mask].map((url, index) => {
+            // THIS IS A WORKAROUND FOR THE MISSING original_img_path, since we have it in memory still lets just use it.
+            if (index === 0 && !url) {
+              const bgImagePromise = new Promise((resolve, reject) => {
+                // Wrap the blob in an object that mimics the axios response.
+                // The createScenesAndVariants function expects this form.
+                resolve({ data: blobData })
+              })
+
+              return bgImagePromise
+            }
             return axios.get(url, {
               responseType: 'blob'
             })
