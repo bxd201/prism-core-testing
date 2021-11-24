@@ -25,31 +25,29 @@ type Props = FacetBinderMethods & FacetPubSubMethods & ColorDataWrapperProps & {
   loading: boolean
 }
 
-const SearchBarLight = ({ hideContainer }: { hideContainer: () => void }) => {
-  const { publish } = useContext(PubSubCtx)
-
-  return (
-    <div className='color-wall-wrap__chunk'>
-      <SearchBar
-        className='SearchBarLight'
-        onClickBackButton={() => {
-          hideContainer()
-          publish('prism-close-color-search')
-        }}
-        placeholder='What color are you looking for?'
-        showBackButton
-        showCancelButton={false}
-        showLabel={false}
-      />
-    </div>
-  )
-}
+const SearchBarLight = ({ hideSearchResult }: { hideSearchResult: () => void }) => (
+  <div className='color-wall-wrap__chunk'>
+    <SearchBar
+      className='SearchBarLight'
+      onClickBackButton={hideSearchResult}
+      placeholder='What color are you looking for?'
+      showBackButton
+      showCancelButton={false}
+      showLabel={false}
+    />
+  </div>
+)
 
 export const ColorSearch = (props: Props) => {
-  const baseHostUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'))
-  const { colorDetailPageRoot = baseHostUrl, colorNumOnBottom = true, colorWallBgColor, colorWallChunkPageRoot = baseHostUrl, loading } = props
+  const baseHostUrl = window.location.origin
+  const {
+    colorDetailPageRoot = baseHostUrl + '/inspiration/colors/',
+    colorNumOnBottom = true,
+    colorWallBgColor,
+    colorWallChunkPageRoot = baseHostUrl + '/inspiration/color-wall/',
+    loading
+  } = props
   const { primeColorWall } = useSelector(state => at(state, 'colors')[0])
-  const [containerHeight, setContainerHeight] = useState(0)
   const redirectTo = `/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_WALL}/${ROUTE_PARAMS.SECTION}/${kebabCase(primeColorWall)}/${ROUTE_PARAMS.SEARCH}/`
   const cwContext = useMemo(() => extendIfDefined({}, colorWallContextDefault, {
     colorDetailPageRoot,
@@ -57,31 +55,38 @@ export const ColorSearch = (props: Props) => {
     colorWallBgColor,
     colorWallChunkPageRoot
   }), [colorDetailPageRoot, colorNumOnBottom, colorWallBgColor, colorWallChunkPageRoot])
+  const [mounted, setMounted] = useState(true)
+  const { publish } = useContext(PubSubCtx)
 
   useEffect(() => {
-    setTimeout(() => {
-      setContainerHeight(100)
-    }, 1000)
-  }, [])
+    return () => {
+      setMounted(true)
+    }
+  }, [mounted])
 
   if (loading) {
     return <HeroLoader />
   }
 
   return (
-    <div id='prism-color-search-container' className='ColorSearch' style={{ height: `${containerHeight}vh` }}>
-      <ColorWallContext.Provider value={cwContext}>
-        <Redirect to={redirectTo} />
-        <ColorWallRouter redirect={false}>
-          <div className='color-wall-wrap'>
-            <div className='color-wall-wrap__search-bar'>
-              <SearchBarLight hideContainer={() => { setContainerHeight(0) }} />
+    <>
+      {mounted && <div id='prism-color-search-container' className='ColorSearch'>
+        <ColorWallContext.Provider value={cwContext}>
+          <Redirect to={redirectTo} />
+          <ColorWallRouter redirect={false}>
+            <div className='color-wall-wrap'>
+              <div className='color-wall-wrap__search-bar'>
+                <SearchBarLight hideSearchResult={() => {
+                  publish('prism-close-color-search')
+                  setMounted(false)
+                }} />
+              </div>
+              <Route path='(.*)?/search/:query' render={() => <><h6 className='ColorSearch__title'>{primeColorWall} Colors</h6><Search isChipLocator /></>} />
             </div>
-            <Route path='(.*)?/search/:query' render={() => <><h6 className='ColorSearch__title'>{primeColorWall} Colors</h6><Search isChipLocator /></>} />
-          </div>
-        </ColorWallRouter>
-      </ColorWallContext.Provider>
-    </div>
+          </ColorWallRouter>
+        </ColorWallContext.Provider>
+      </div>}
+    </>
   )
 }
 

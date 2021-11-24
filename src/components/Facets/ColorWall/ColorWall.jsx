@@ -201,7 +201,7 @@ const ColorWall = () => {
     const containsBloomedCell: boolean = getCoords(chunk, params.colorId)[0] !== -1
     const isLargeLabel: boolean = cellSize * lengthOfLongestRow > 255 // magic number breakpoint for choosing between small and large font
     const chunkClickableProps = chunkClickable ? {
-      onClick: () => { colorWallChunkPageRoot && (window.location.href = `${colorWallChunkPageRoot}/color-wall.html/#${generateColorWallPageUrl(sectionLabels[section][chunkNum])}`) },
+      onClick: () => { colorWallChunkPageRoot && (window.location.href = `${colorWallChunkPageRoot}#${generateColorWallPageUrl(sectionLabels[section][chunkNum])}`) },
       role: 'button',
       tabIndex: 0
     } : null
@@ -306,7 +306,7 @@ const ColorWall = () => {
                   <button
                     className={`color-swatch__chip-locator--buttons__button${selectedColor.isDark ? ' dark-color' : ''}`}
                     onClick={() => {
-                      colorDetailPageRoot && (window.location.href = `${colorDetailPageRoot}/inspiration/colors/${selectedColor.colorFamilyNames[0]}/${kebabCase(selectedColor.name + selectedColor.brandKey + selectedColor.colorNumber)}`)
+                      colorDetailPageRoot && (window.location.href = `${colorDetailPageRoot}${selectedColor.colorFamilyNames[0]}/${kebabCase(selectedColor.name + selectedColor.brandKey)}-${selectedColor.colorNumber}`)
                     }}
                   >
                     View Color

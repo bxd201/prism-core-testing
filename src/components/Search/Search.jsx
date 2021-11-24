@@ -24,7 +24,7 @@ type SearchProps = { contain?: boolean, isChipLocator?: boolean }
 
 const Search = ({ contain = false, isChipLocator }: SearchProps) => {
   const { results, count, suggestions, suggestionsV2, loading } = useSelector(state => state.colors.search)
-  const { items: { colorStatuses = {} }, primeColorWall } = useSelector(state => state.colors)
+  const { items: { colorStatuses = {} } } = useSelector(state => state.colors)
   const { colorDetailPageRoot, colorWallBgColor, colorWallChunkPageRoot }: ColorWallContextProps = useContext(ColorWallContext)
 
   const [hasSearched, updateHasSearched] = useState(typeof count !== 'undefined')
@@ -46,7 +46,7 @@ const Search = ({ contain = false, isChipLocator }: SearchProps) => {
             <button
               className={`color-swatch__chip-locator--buttons__button${result.isDark ? ' dark-color' : ''}`}
               onClick={() => {
-                colorWallChunkPageRoot && (window.location.href = `${colorWallChunkPageRoot}/color-wall.html/#${generateColorWallPageUrl(primeColorWall, undefined, result.id, fullColorName(result.brandKey, result.colorNumber, result.name))}`)
+                colorWallChunkPageRoot && (window.location.href = `${colorWallChunkPageRoot}#${generateColorWallPageUrl(result.colorGroup, undefined, result.id, fullColorName(result.brandKey, result.colorNumber, result.name))}`)
               }}
             >
                 Find Chip
@@ -54,7 +54,7 @@ const Search = ({ contain = false, isChipLocator }: SearchProps) => {
             <button
               className={`color-swatch__chip-locator--buttons__button${result.isDark ? ' dark-color' : ''}`}
               onClick={() => {
-                colorDetailPageRoot && (window.location.href = `${colorDetailPageRoot}/inspiration/colors/${result.colorFamilyNames[0]}/${kebabCase(result.name + result.brandKey + result.colorNumber)}`)
+                colorDetailPageRoot && (window.location.href = `${colorDetailPageRoot}${result.colorFamilyNames[0]}/${kebabCase(result.name + result.brandKey)}-${result.colorNumber}`)
               }}
             >
                 View Color
@@ -71,8 +71,7 @@ const Search = ({ contain = false, isChipLocator }: SearchProps) => {
 
   return (
     <div className={baseClass}>
-      <div className={`${baseClass}__results-pane`}
-        style={{ backgroundColor: colorWallBgColor }}>
+      <div className={`${baseClass}__results-pane`} style={{ backgroundColor: colorWallBgColor }}>
         {loading ? (
           <GenericOverlay type={GenericOverlay.TYPES.LOADING} semitransparent>
             <FormattedMessage id='SEARCH.SEARCHING' />
@@ -121,7 +120,7 @@ const Search = ({ contain = false, isChipLocator }: SearchProps) => {
                 const columnCount = Math.max(1, Math.round(gridWidth / 175))
                 const newSize = gridWidth / columnCount
                 const rowCount = Math.ceil(results.length / columnCount)
-                const gridHeight = contain ? height : isChipLocator ? window.innerHeight - 90 - (EDGE_SIZE * 2) : Math.max(height, rowCount * newSize + (EDGE_SIZE * 2))
+                const gridHeight = contain ? height : Math.max(height, rowCount * newSize + (EDGE_SIZE * 2))
 
                 return (
                   <Grid
