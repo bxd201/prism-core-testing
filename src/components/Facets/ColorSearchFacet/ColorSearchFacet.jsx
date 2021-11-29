@@ -16,12 +16,13 @@ import HeroLoader from 'src/components/Loaders/HeroLoader/HeroLoader'
 import './ColorSearchFacet.scss'
 import ColorDataWrapper, { type ColorDataWrapperProps } from '../../../helpers/ColorDataWrapper/ColorDataWrapper'
 import extendIfDefined from '../../../shared/helpers/extendIfDefined'
+import type { Color } from 'src/shared/types/Colors.js.flow'
 
 type Props = FacetBinderMethods & FacetPubSubMethods & ColorDataWrapperProps & {
-  colorDetailPageRoot?: string,
+  colorDetailPageRoot?: (Color) => string,
   colorNumOnBottom?: boolean,
   colorWallBgColor?: string,
-  colorWallChunkPageRoot?: string,
+  colorWallPageRoot?: (Color) => string,
   loading: boolean
 }
 
@@ -39,22 +40,15 @@ const SearchBarLight = ({ hideSearchResult }: { hideSearchResult: () => void }) 
 )
 
 export const ColorSearch = (props: Props) => {
-  const baseHostUrl = window.location.origin
-  const {
-    colorDetailPageRoot = baseHostUrl + '/inspiration/colors/',
-    colorNumOnBottom = true,
-    colorWallBgColor,
-    colorWallChunkPageRoot = baseHostUrl + '/inspiration/color-wall/',
-    loading
-  } = props
+  const { colorDetailPageRoot, colorNumOnBottom = true, colorWallBgColor, colorWallPageRoot, loading } = props
   const { primeColorWall } = useSelector(state => at(state, 'colors')[0])
   const redirectTo = `/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_WALL}/${ROUTE_PARAMS.SECTION}/${kebabCase(primeColorWall)}/${ROUTE_PARAMS.SEARCH}/`
   const cwContext = useMemo(() => extendIfDefined({}, colorWallContextDefault, {
     colorDetailPageRoot,
     colorNumOnBottom,
     colorWallBgColor,
-    colorWallChunkPageRoot
-  }), [colorDetailPageRoot, colorNumOnBottom, colorWallBgColor, colorWallChunkPageRoot])
+    colorWallPageRoot
+  }), [colorDetailPageRoot, colorNumOnBottom, colorWallBgColor, colorWallPageRoot])
   const [mounted, setMounted] = useState(true)
   const { publish } = useContext(PubSubCtx)
 

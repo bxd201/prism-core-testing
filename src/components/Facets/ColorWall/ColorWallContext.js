@@ -1,6 +1,7 @@
 // @flow
 import React from 'react'
 import { type GridBounds } from './ColorWall.flow'
+import type { Color } from 'src/shared/types/Colors.js.flow'
 import noop from 'lodash/noop'
 
 export type ColorWallA11yContextProps = {
@@ -23,10 +24,10 @@ export type ColorWallContextProps = {
   addButtonText?: string,
   chunkClickable?: boolean,
   chunkMiniMap?: boolean,
-  colorDetailPageRoot?: string,
+  colorDetailPageRoot?: (Color) => string | string,
   colorNumOnBottom?: boolean,
   colorWallBgColor: string,
-  colorWallChunkPageRoot?: string,
+  colorWallPageRoot?: (string | Color) => string | string,
   displayAddButton?: boolean,
   displayAddButtonText?: boolean,
   displayDetailsLink?: boolean,
@@ -46,7 +47,7 @@ export const colorWallContextDefault: ColorWallContextProps = {
   chunkMiniMap: false,
   colorDetailPageRoot: undefined,
   colorNumOnBottom: false,
-  colorWallChunkPageRoot: undefined,
+  colorWallPageRoot: undefined,
   colorWallBgColor: '#EEEEEE',
   displayAddButton: false,
   displayAddButtonText: false,

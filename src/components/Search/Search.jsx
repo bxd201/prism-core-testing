@@ -14,8 +14,7 @@ import './Search.scss'
 import 'src/scss/externalComponentSupport/AutoSizer.scss'
 import omitPrefix from 'src/shared/utils/omitPrefix.util'
 import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
-import kebabCase from 'lodash/kebabCase'
-import { fullColorName, fullColorNumber, generateColorWallPageUrl } from 'src/shared/helpers/ColorUtils'
+import { fullColorNumber } from 'src/shared/helpers/ColorUtils'
 
 const baseClass = 'Search'
 const EDGE_SIZE = 15
@@ -25,7 +24,7 @@ type SearchProps = { contain?: boolean, isChipLocator?: boolean }
 const Search = ({ contain = false, isChipLocator }: SearchProps) => {
   const { results, count, suggestions, suggestionsV2, loading } = useSelector(state => state.colors.search)
   const { items: { colorStatuses = {} } } = useSelector(state => state.colors)
-  const { colorDetailPageRoot, colorWallBgColor, colorWallChunkPageRoot }: ColorWallContextProps = useContext(ColorWallContext)
+  const { colorDetailPageRoot, colorWallBgColor, colorWallPageRoot }: ColorWallContextProps = useContext(ColorWallContext)
 
   const [hasSearched, updateHasSearched] = useState(typeof count !== 'undefined')
   const { brandKeyNumberSeparator }: ConfigurationContextType = useContext(ConfigurationContext)
@@ -45,19 +44,15 @@ const Search = ({ contain = false, isChipLocator }: SearchProps) => {
           <div className='color-swatch__chip-locator--buttons' style={{ bottom: '0.6rem' }}>
             <button
               className={`color-swatch__chip-locator--buttons__button${result.isDark ? ' dark-color' : ''}`}
-              onClick={() => {
-                colorWallChunkPageRoot && (window.location.href = `${colorWallChunkPageRoot}#${generateColorWallPageUrl(result.colorGroup, undefined, result.id, fullColorName(result.brandKey, result.colorNumber, result.name))}`)
-              }}
+              onClick={() => { window.location.href = colorWallPageRoot?.(result) }}
             >
-                Find Chip
+              Find Chip
             </button>
             <button
               className={`color-swatch__chip-locator--buttons__button${result.isDark ? ' dark-color' : ''}`}
-              onClick={() => {
-                colorDetailPageRoot && (window.location.href = `${colorDetailPageRoot}${result.colorFamilyNames[0]}/${kebabCase(result.name + result.brandKey)}-${result.colorNumber}`)
-              }}
+              onClick={() => { window.location.href = colorDetailPageRoot?.(result) }}
             >
-                View Color
+              View Color
             </button>
           </div>
         </>
