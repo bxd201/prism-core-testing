@@ -94,6 +94,7 @@ export function doReceiveColors (state: ColorsState, { payload: { unorderedColor
       status: { ...state.status, activeRequest: false, error: false, loading: false, requestComplete: true },
       structure: sections,
       sections: sections.map(section => section.name),
+      sectionsShortLabel: sections.filter(({ shortName }) => shortName).length > 0 ? sections.reduce((accum, { name, shortName }) => ({ ...accum, [name]: shortName }), {}) : undefined,
       primeColorWall: primeColorWall && primeColorWall.name,
       unorderedColors
     }

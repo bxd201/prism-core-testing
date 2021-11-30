@@ -28,7 +28,7 @@ export type ColorsStateItems = {
   colorStatuses?: ColorStatuses,
   unorderedColors?: ColorIdList,
   sectionLabels?: {
-    [?string]: (?string)[]
+    [key: ?string]: (?string)[]
   }
 }
 
@@ -44,6 +44,7 @@ export type ChunkGridParams = {
   chunkHeight?: number,
   firstRowLength?: number,
   wrappingEnabled: boolean,
+  wrappingGaspBetween?: number,
   dynamicCellSizingEnabled: boolean
 }
 
@@ -65,6 +66,7 @@ export type ColorsState = {
   unChunkedChunks: number[][],
   chunkGridParams: ChunkGridParams,
   sections?: string[],
+  sectionsShortLabel?: { [key: string]: ?string },
   section?: string,
   families?: string[],
   family?: string,
