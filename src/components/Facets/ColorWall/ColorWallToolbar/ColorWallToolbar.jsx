@@ -47,7 +47,7 @@ const Select = ({ placeholderText, options, disabled = false, onSelectOpened, pu
         <FontAwesomeIcon className='close-icon-svg' icon={['fa', 'angle-down']} pull='right' />
       </Button>
       <Menu className={`${menuBarPrefix}__menu`}>
-        // @todo We need a comment that explains the role of the flags
+        {/* @todo We need a comment that explains the role of the flags */}
         {purpose === 'brand' && options.map(({ label, link }) => {
           return (<MenuItem className={`${menuBarItemList}`} onClick={() => setBrandClick(label)} key={label} text={omitPrefix(label)} value={label}>
             <Link className={`${menuBarPrefix}__menu-link  ${(brandClick === label) ? `${menuBarActiveList}` : `${menuBarInactive}`}`} to={{ pathname: link, state: 'All', data: label }}>
@@ -55,7 +55,7 @@ const Select = ({ placeholderText, options, disabled = false, onSelectOpened, pu
             </Link>
           </MenuItem>)
         })}
-        // @todo We need a comment that explains the role of the flags
+        {/* @todo We need a comment that explains the role of the flags */}
         {purpose === 'family' && options.map(({ label, link }) => {
           return (
             <MenuItem className={`${menuBarItemList}`} onClick={() => setMobileClick(label)} key={label} text={omitPrefix(label)} value={label}>
