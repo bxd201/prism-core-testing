@@ -262,3 +262,4 @@ fs.writeFileSync(`/tmp/foo-ref-${Date.now()}.png`, canvasImageUrl.split(',')[1],
 ```
 
 As a convenience, reference save code has been left in the tests commented out.
+ 
