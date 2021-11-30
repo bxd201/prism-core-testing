@@ -30,7 +30,6 @@ import { compareKebabs } from 'src/shared/helpers/StringUtils'
 import clamp from 'lodash/clamp'
 import flatten from 'lodash/flatten'
 import isEmpty from 'lodash/isEmpty'
-import kebabCase from 'lodash/kebabCase'
 import range from 'lodash/range'
 import rangeRight from 'lodash/rangeRight'
 import take from 'lodash/take'
@@ -43,7 +42,7 @@ import 'focus-within-polyfill'
 const WALL_HEIGHT = 475
 
 const ColorWall = () => {
-  const { chunkClickable, chunkMiniMap, colorDetailPageRoot, colorNumOnBottom, colorWallBgColor, colorWallChunkPageRoot, swatchMaxSize: globalSwatchMaxSize, swatchMinSize, swatchSizeZoomed }: ColorWallContextProps = useContext(ColorWallContext)
+  const { chunkClickable, chunkMiniMap, colorDetailPageRoot, colorNumOnBottom, colorWallBgColor, colorWallPageRoot, swatchMaxSize: globalSwatchMaxSize, swatchMinSize, swatchSizeZoomed }: ColorWallContextProps = useContext(ColorWallContext)
   const { colorWall: { bloomEnabled = true, gapsBetweenChunks = true }, uiStyle }: ConfigurationContextType = useContext(ConfigurationContext)
   const dispatch: { type: string, payload: {} } => void = useDispatch()
   const { url, params }: { url: string, params: { section: ?string, family?: ?string, colorId?: ?string } } = useRouteMatch()
@@ -201,7 +200,7 @@ const ColorWall = () => {
     const containsBloomedCell: boolean = getCoords(chunk, params.colorId)[0] !== -1
     const isLargeLabel: boolean = cellSize * lengthOfLongestRow > 255 // magic number breakpoint for choosing between small and large font
     const chunkClickableProps = chunkClickable ? {
-      onClick: () => { colorWallChunkPageRoot && (window.location.href = `${colorWallChunkPageRoot}/color-wall.html/#${generateColorWallPageUrl(sectionLabels[section][chunkNum])}`) },
+      onClick: () => { window.location.href = colorWallPageRoot?.(sectionLabels[section][chunkNum] || '') },
       role: 'button',
       tabIndex: 0
     } : null
@@ -305,9 +304,7 @@ const ColorWall = () => {
                 <div className='color-swatch__chip-locator--buttons'>
                   <button
                     className={`color-swatch__chip-locator--buttons__button${selectedColor.isDark ? ' dark-color' : ''}`}
-                    onClick={() => {
-                      colorDetailPageRoot && (window.location.href = `${colorDetailPageRoot}/inspiration/colors/${selectedColor.colorFamilyNames[0]}/${kebabCase(selectedColor.name + selectedColor.brandKey + selectedColor.colorNumber)}`)
-                    }}
+                    onClick={() => { window.location.href = colorDetailPageRoot?.(selectedColor) }}
                   >
                     View Color
                   </button>

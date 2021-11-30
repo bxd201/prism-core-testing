@@ -8,27 +8,27 @@ import ColorWallContext, { colorWallContextDefault } from 'src/components/Facets
 import extendIfDefined from 'src/shared/helpers/extendIfDefined'
 import GenericOverlay from 'src/components/Overlays/GenericOverlay/GenericOverlay'
 import translateBooleanFlexibly from 'src/shared/utils/translateBooleanFlexibly.util'
+import type { Color } from 'src/shared/types/Colors.js.flow'
 
 type Props = {
   chunkClickable?: boolean,
   chunkMiniMap?: boolean,
-  colorDetailPageRoot?: string,
+  colorDetailPageRoot?: (Color) => string,
   colorNumOnBottom?: boolean,
   colorWallBgColor?: string,
-  colorWallChunkPageRoot?: string,
+  colorWallPageRoot?: (string) => string,
   displayDetailsLink?: boolean,
   hideChunkLabel?: boolean
 }
 
 export const ColorWallPage = (props: Props) => {
-  const baseHostUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'))
   const {
     chunkClickable,
     chunkMiniMap,
-    colorDetailPageRoot = baseHostUrl,
+    colorDetailPageRoot,
     colorNumOnBottom = true,
     colorWallBgColor,
-    colorWallChunkPageRoot = baseHostUrl,
+    colorWallPageRoot,
     displayDetailsLink = false,
     hideChunkLabel
   } = props
@@ -39,10 +39,10 @@ export const ColorWallPage = (props: Props) => {
     colorDetailPageRoot,
     colorNumOnBottom,
     colorWallBgColor,
-    colorWallChunkPageRoot,
+    colorWallPageRoot,
     displayDetailsLink: translateBooleanFlexibly(displayDetailsLink),
     hideChunkLabel: translateBooleanFlexibly(hideChunkLabel)
-  }), [chunkClickable, chunkMiniMap, colorDetailPageRoot, colorNumOnBottom, colorWallBgColor, colorWallChunkPageRoot, displayDetailsLink, hideChunkLabel])
+  }), [chunkClickable, chunkMiniMap, colorDetailPageRoot, colorNumOnBottom, colorWallBgColor, colorWallPageRoot, displayDetailsLink, hideChunkLabel])
 
   return (
     <ColorWallContext.Provider value={cwContext}>
