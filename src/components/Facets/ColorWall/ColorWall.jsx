@@ -49,7 +49,6 @@ const ColorWall = () => {
   const history = useHistory()
   const { messages = {} } = useIntl()
   const { items: { colorMap = {}, colorStatuses = {}, sectionLabels: _sectionLabels = {} }, unChunkedChunks, chunkGridParams, section = '', family }: ColorsState = useSelector(state => state.colors)
-  console.log(colorMap)
   const { brandKeyNumberSeparator }: ConfigurationContextType = useContext(ConfigurationContext)
   // if a family is selected, NEVER return section labels (they're only for sections)
   const sectionLabels = useMemo(() => {
