@@ -153,13 +153,32 @@ $swatch-edge-padding-lg: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-mai
 
   &__chip-locator {
     &__name {
-      font-size: 0.9rem;
-      font-weight: 500;
+      margin-top: 0.3rem;
+      font-size: 1rem;
+      font-weight: 550;
       line-height: 1.1rem;
     }
 
+    &__col {
+      margin-top: 1rem;
+      font-size: 1rem;
+      font-weight: 500;
+      line-height: 1.1rem;
+
+      @include respond-above(sm) {
+        margin-top: 2.5rem;
+      }
+    }
+
+    &__row {
+      font-size: 1rem;
+      margin-top: 0.3rem;
+      font-weight: 500;
+      line-height: 1.1rem;
+    }
     &__number {
-      font-size: 0.9rem;
+      font-size: 1rem;
+      margin-top: 0.3rem;
       font-style: italic;
       font-weight: 400;
       line-height: 1.1rem;
@@ -191,12 +210,11 @@ $swatch-edge-padding-lg: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-mai
 
     &--buttons {
       position: absolute;
-      bottom: 2.4rem;
 
       &__button {
-        width: 120px;
+        width: 9.3rem;
         margin-top: 10px;
-        padding: 5px;
+        padding: 0.4rem;
         border: 1px solid black;
         border-radius: 15px;
         font-size: 1rem;
@@ -204,7 +222,17 @@ $swatch-edge-padding-lg: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-mai
         line-height: 1.1rem;
       }
 
-      .dark-color { border-color: white; }
+      &__button--dark-color {
+        width: 9.3rem;
+        margin-top: 10px;
+        padding: 0.4rem;
+        border: 1px solid black;
+        border-radius: 15px;
+        font-size: 1rem;
+        font-weight: 500;
+        border-color: white;
+        line-height: 1.1rem;
+      }
     }
   }
 

@@ -117,6 +117,8 @@ const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, co
               <>
                 <p className='color-swatch__chip-locator__name'>{color.name}</p>
                 <p className='color-swatch__chip-locator__number'>{fullColorNumber(color.brandKey, color.colorNumber, brandKeyNumberSeparator)}</p>
+                <p className='color-swatch__chip-locator__col'>Col: {color.column}</p>
+                <p className='color-swatch__chip-locator__row'>Row: {color.row}</p>
               </>
             ) : (
               <>

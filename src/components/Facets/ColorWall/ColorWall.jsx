@@ -49,6 +49,7 @@ const ColorWall = () => {
   const history = useHistory()
   const { messages = {} } = useIntl()
   const { items: { colorMap = {}, colorStatuses = {}, sectionLabels: _sectionLabels = {} }, unChunkedChunks, chunkGridParams, section = '', family }: ColorsState = useSelector(state => state.colors)
+  console.log(colorMap)
   const { brandKeyNumberSeparator }: ConfigurationContextType = useContext(ConfigurationContext)
   // if a family is selected, NEVER return section labels (they're only for sections)
   const sectionLabels = useMemo(() => {
@@ -294,11 +295,13 @@ const ColorWall = () => {
             color={colorMap[currentFocusedCell]}
             contentRenderer={() => (
               <>
-                <p className='color-swatch__chip-locator__name chip__name'>{colorMap[currentFocusedCell].name}</p>
-                <p className='color-swatch__chip-locator__number chip__number'>{fullColorNumber(colorMap[currentFocusedCell].brandKey, colorMap[currentFocusedCell].colorNumber, brandKeyNumberSeparator)}</p>
-                <div className='color-swatch__chip-locator--buttons'>
+                <p className='color-chip__locator__name chip__name'>{colorMap[currentFocusedCell].name}</p>
+                <p className='color-chip__locator__number chip__number'>{fullColorNumber(colorMap[currentFocusedCell].brandKey, colorMap[currentFocusedCell].colorNumber, brandKeyNumberSeparator)}</p>
+                <div className='color-chip__locator--buttons'>
+                  <p className='color-chip__locator__column'>Col: {colorMap[currentFocusedCell].column}</p>
+                  <p className='color-chip__locator__row'>Row: {colorMap[currentFocusedCell].row}</p>
                   <button
-                    className={`color-swatch__chip-locator--buttons__button${colorMap[currentFocusedCell].isDark ? ' dark-color' : ''}`}
+                    className={`color-swatch__chip-locator--buttons__button${colorMap[currentFocusedCell].isDark ? '--dark-color' : ''}`}
                     onClick={() => { window.location.href = colorDetailPageRoot }}
                   >
                     View Color
