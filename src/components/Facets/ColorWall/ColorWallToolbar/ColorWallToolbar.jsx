@@ -38,6 +38,7 @@ type SelectPropsT = {
 }
 
 const Select = ({ placeholderText, options, disabled = false, onSelectOpened, purpose, mobileClick, setMobileClick, brandClick, setBrandClick }: SelectPropsT) => {
+  // @todo refactor to remove repetitive code and to clarify the role of the purpose param. -RS
   return (
     <Wrapper
       className={`${MODE_CLASS_NAMES.CELL} ${MODE_CLASS_NAMES.RIGHT} ${menuBarPrefix}`}
@@ -47,18 +48,16 @@ const Select = ({ placeholderText, options, disabled = false, onSelectOpened, pu
         <FontAwesomeIcon className='close-icon-svg' icon={['fa', 'angle-down']} pull='right' />
       </Button>
       <Menu className={`${menuBarPrefix}__menu`}>
-        {/* @todo We need a comment that explains the role of the flags */}
         {purpose === 'brand' && options.map(({ label, link }) => {
-          return (<MenuItem className={`${menuBarItemList}`} onClick={() => setBrandClick(label)} key={label} text={omitPrefix(label)} value={label}>
+          return (<MenuItem className={`${menuBarItemList}`} onClick={() => setBrandClick?.(label)} key={label} text={omitPrefix(label)} value={label}>
             <Link className={`${menuBarPrefix}__menu-link  ${(brandClick === label) ? `${menuBarActiveList}` : `${menuBarInactive}`}`} to={{ pathname: link, state: 'All', data: label }}>
               <span className={MODE_CLASS_NAMES.DESC}>{omitPrefix(label)}</span>
             </Link>
           </MenuItem>)
         })}
-        {/* @todo We need a comment that explains the role of the flags */}
         {purpose === 'family' && options.map(({ label, link }) => {
           return (
-            <MenuItem className={`${menuBarItemList}`} onClick={() => setMobileClick(label)} key={label} text={omitPrefix(label)} value={label}>
+            <MenuItem className={`${menuBarItemList}`} onClick={() => setMobileClick?.(label)} key={label} text={omitPrefix(label)} value={label}>
               <Link className={`${menuBarPrefix}__menu-link  ${(mobileClick === label) ? `${menuBarActiveList}` : `${menuBarInactive}`}`} to={{ pathname: link, data: brandClick, state: label }}>
                 <span className={MODE_CLASS_NAMES.DESC}>{omitPrefix(label)}</span>
               </Link>
