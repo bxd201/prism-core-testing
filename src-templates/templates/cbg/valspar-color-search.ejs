@@ -6,14 +6,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <base href="/">
-  <title>Lowes Color Search</title>
+  <title>Valspar Color Search</title>
 </head>
 
-<body style="margin: 0; background-color: #e8f0fe;">
+<body style="margin: 0; background-color: rgba(0, 0, 0, 0.5);">
 
 <div id="prism-color-search-embed-root"
      data-prism-facet="ColorSearchFacet"
-     data-brand="lowes"
+     data-brand="valspar"
      data-color-wall-bg-color="#FFF"
      data-language="en-US"
      data-route-type="memory"></div>
@@ -21,11 +21,15 @@
 <script src="<%= BASE_PATH %>/embed.js"></script>
 <script>
   (() => {
+    const baseHostUrl = window.location.origin
+    const kebabCase = (string) => string.replace(/[\W_]+|(?<=[a-z0-9])(?=[A-Z])/g, '-')
     window.PRISM.embed(document.getElementById('prism-color-search-embed-root'), {
+      colorDetailPageRoot: (color) => `${baseHostUrl}/inspiration/colors/${color.colorFamilyNames[0]}/${kebabCase(color.name)}-${color.colorNumber}`.toLowerCase(), // example
+      colorWallPageRoot: (color) => `${baseHostUrl}/prism-templates/templates/cbg/valspar-qr-color-wall.html#/active/color-wall/section/${kebabCase(color.colorGroup[0])}/color/${color.id}/${color.colorNumber}-${kebabCase(color.name)}`.toLowerCase(),
       bindCallback: ({ publish, subscribe }) => {
         subscribe('prism-close-color-search', () => {
           console.info({ event: 'prism-close-color-search' })
-          // on host site should unmount component
+          // host site should control component display state
         })
       }
     })

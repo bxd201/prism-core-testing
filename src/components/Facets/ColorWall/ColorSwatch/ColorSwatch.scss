@@ -210,7 +210,7 @@ $swatch-edge-padding-lg: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-mai
 
     &--buttons {
       position: absolute;
-
+      bottom: 1rem;
       &__button {
         width: 9.3rem;
         margin-top: 10px;

@@ -27,11 +27,11 @@ import {
 } from './ColorWallUtils'
 import ColorSwatch from './ColorSwatch/ColorSwatch'
 import { compareKebabs } from 'src/shared/helpers/StringUtils'
+import clamp from 'lodash/clamp'
+import flatten from 'lodash/flatten'
+import isEmpty from 'lodash/isEmpty'
 import range from 'lodash/range'
 import rangeRight from 'lodash/rangeRight'
-import flatten from 'lodash/flatten'
-import clamp from 'lodash/clamp'
-import isEmpty from 'lodash/isEmpty'
 import take from 'lodash/take'
 import { generateColorWallPageUrl, fullColorName, fullColorNumber } from 'src/shared/helpers/ColorUtils'
 import 'src/scss/externalComponentSupport/AutoSizer.scss'
@@ -42,13 +42,13 @@ import 'focus-within-polyfill'
 const WALL_HEIGHT = 475
 
 const ColorWall = () => {
-  const { chunkClickable, colorDetailPageRoot, colorNumOnBottom, colorWallBgColor, colorWallChunkPageRoot, swatchMaxSize: globalSwatchMaxSize, swatchMinSize, swatchSizeZoomed }: ColorWallContextProps = useContext(ColorWallContext)
+  const { chunkClickable, chunkMiniMap, colorDetailPageRoot, colorNumOnBottom, colorWallBgColor, colorWallPageRoot, swatchMaxSize: globalSwatchMaxSize, swatchMinSize, swatchSizeZoomed }: ColorWallContextProps = useContext(ColorWallContext)
   const { colorWall: { bloomEnabled = true, gapsBetweenChunks = true }, uiStyle }: ConfigurationContextType = useContext(ConfigurationContext)
   const dispatch: { type: string, payload: {} } => void = useDispatch()
   const { url, params }: { url: string, params: { section: ?string, family?: ?string, colorId?: ?string } } = useRouteMatch()
   const history = useHistory()
   const { messages = {} } = useIntl()
-  const { items: { colorMap = {}, colorStatuses = {}, sectionLabels: _sectionLabels = {} }, unChunkedChunks, chunkGridParams, section = '', family }: ColorsState = useSelector(state => state.colors)
+  const { items: { colorMap = {}, colorStatuses = {}, sectionLabels: _sectionLabels = {} }, unChunkedChunks, chunkGridParams, section = '', sectionsShortLabel, family }: ColorsState = useSelector(state => state.colors)
   const { brandKeyNumberSeparator }: ConfigurationContextType = useContext(ConfigurationContext)
   // if a family is selected, NEVER return section labels (they're only for sections)
   const sectionLabels = useMemo(() => {
@@ -196,30 +196,41 @@ const ColorWall = () => {
   const chunkRenderer = ({ rowIndex: chunkRow, columnIndex: chunkColumn, key, style }) => {
     const chunk: string[][] = chunkGrid[chunkRow][chunkColumn]
     const chunkNum: number = take(chunkGrid, chunkRow).reduce((num, chunkRow) => num + chunkRow.length, 0) + chunkColumn
+    const { wrappingEnabled, wrappingGaspBetween = 0 } = chunkGridParams
     const lengthOfLongestRow: number = getLongestArrayIn2dArray(chunk)
     const containsBloomedCell: boolean = getCoords(chunk, params.colorId)[0] !== -1
     const isLargeLabel: boolean = cellSize * lengthOfLongestRow > 255 // magic number breakpoint for choosing between small and large font
     const chunkClickableProps = chunkClickable ? {
-      onClick: () => { colorWallChunkPageRoot && (window.location.href = `${colorWallChunkPageRoot}/color-wall.html/#${generateColorWallPageUrl(sectionLabels[section][chunkNum])}`) },
+      onClick: () => { window.location.href = colorWallPageRoot?.(sectionLabels[section][chunkNum] || '') },
       role: 'button',
       tabIndex: 0
     } : null
 
     return (flatten(chunk).some(cell => cell !== undefined) &&
-      <div key={key} className='color-wall-chunk' style={{ ...style, padding: gapsBetweenChunks ? cellSize / 5 : 0, zIndex: containsBloomedCell ? 1 : 'auto' }} {...chunkClickableProps}>
+      <div
+        key={key}
+        className='color-wall-chunk'
+        style={{ ...style, padding: gapsBetweenChunks ? cellSize / 5 : 0, marginTop: wrappingEnabled && wrappingGaspBetween && chunkNum > 0 ? `${wrappingGaspBetween}rem` : 'auto', zIndex: containsBloomedCell ? 1 : 'auto' }}
+        {...chunkClickableProps}
+      >
         {sectionLabels[section] && sectionLabels[section][chunkNum] !== undefined && !chunkClickable && (
           <div
             className='color-wall-section-label'
             style={{
               width: style.width - cellSize * 0.4,
-              height: calculateLabelHeight(cellSize),
+              height: calculateLabelHeight(cellSize, chunkMiniMap),
               marginBottom: calculateLabelMarginBottom(isZoomedIn, cellSize)
-            }}>
+            }}
+          >
             <div
               className={`color-wall-section-label__text ${isLargeLabel ? 'color-wall-section-label__text--large' : ''}`}
-              style={{ textAlign: uiStyle === 'minimal' ? 'left' : 'center' }}
+              style={{ justifyContent: chunkMiniMap || uiStyle === 'minimal' ? 'space-between' : 'center' }}
             >
-              {sectionLabels[section][chunkNum]}
+              {(sectionsShortLabel && sectionsShortLabel[section]) ?? sectionLabels[section][chunkNum]}
+              {/* It's just marking an spot for the actual component - <div /> TO BE DELETED */}
+              {chunkMiniMap && <div style={{ width: '108px', height: '63px', backgroundColor: '#DDD', display: 'flex', alignItems: 'center', textAlign: 'center' }}>
+                mini map example
+              </div>}
             </div>
           </div>
         )}
@@ -255,7 +266,7 @@ const ColorWall = () => {
     )
   }
 
-  const currentFocusedCell: ?string = focusedCell.current
+  const selectedColor = focusedCell.current && colorMap[focusedCell.current]
 
   return (
     <CSSTransition in={isZoomedIn} timeout={200}>
@@ -289,19 +300,19 @@ const ColorWall = () => {
             />
           )}
         </AutoSizer>
-        {colorNumOnBottom && currentFocusedCell && (
+        {colorNumOnBottom && selectedColor && (
           <ColorSwatch style={{ position: 'absolute', padding: '1.4rem', overflow: 'visible', height: '195px', width: '100%' }}
-            color={colorMap[currentFocusedCell]}
+            color={selectedColor}
             contentRenderer={() => (
               <>
-                <p className='color-chip__locator__name chip__name'>{colorMap[currentFocusedCell].name}</p>
-                <p className='color-chip__locator__number chip__number'>{fullColorNumber(colorMap[currentFocusedCell].brandKey, colorMap[currentFocusedCell].colorNumber, brandKeyNumberSeparator)}</p>
-                <div className='color-chip__locator--buttons'>
-                  <p className='color-chip__locator__column'>Col: {colorMap[currentFocusedCell].column}</p>
-                  <p className='color-chip__locator__row'>Row: {colorMap[currentFocusedCell].row}</p>
+                <p className='color-chip__locator__name chip__name'>{selectedColor.name}</p>
+                <p className='color-chip__locator__number chip__number'>{fullColorNumber(selectedColor.brandKey, selectedColor.colorNumber, brandKeyNumberSeparator)}</p>
+                <div className='color-swatch__chip-locator--buttons'>
+                  <p className='color-chip__locator__column'>Col: {selectedColor.column}</p>
+                  <p className='color-chip__locator__row'>Row: {selectedColor.row}</p>
                   <button
-                    className={`color-swatch__chip-locator--buttons__button${colorMap[currentFocusedCell].isDark ? '--dark-color' : ''}`}
-                    onClick={() => { window.location.href = colorDetailPageRoot }}
+                    className={`color-swatch__chip-locator--buttons__button${selectedColor.isDark ? '--dark-color' : ''}`}
+                    onClick={() => { window.location.href = colorDetailPageRoot?.(selectedColor) }}
                   >
                     View Color
                   </button>
