@@ -33,6 +33,7 @@ const BASE_PATH = (ENV === 'development') ? process.env[envVars.PRISM_LOCAL_ORIG
 const FIREBASE_AUTH_ENABLED = !!parseInt(process.env[envVars.FIREBASE_AUTH_ENABLED])
 const S3_PATH = (process.env[envVars.S3_PATH]) ? process.env[envVars.S3_PATH] : '$S3_PATH'
 const SMARTMASK_ENABLED = !!parseInt(process.env[envVars.SMARTMASK_ENABLED])
+const MOCK_API = !!process.env[envVars.MOCK_API]
 
 let allEntryPoints = {
   ...(GENERATE_FACET_ASSETS ? flags.facetEntryPoints : flags.mainEntryPoints)
@@ -67,7 +68,8 @@ const DEFINED_VARS = {
   'SMARTMASK_ENABLED': SMARTMASK_ENABLED,
   'VAR_NAMES': ALL_VARS.varNames,
   'VAR_VALUES': ALL_VARS.varValues,
-  'WEBPACK_CONSTANTS': flags
+  'WEBPACK_CONSTANTS': flags,
+  'MOCK_API': MOCK_API
 }
 
 module.exports = {

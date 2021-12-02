@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <base href="/">
-    <title>Scene Visualizer</title>
+    <title>Real Color</title>
     <style media="all" type="text/css">
         body {
             background-color: #757575;
@@ -17,29 +17,30 @@
 </head>
 <body>
 <div id="prism-embed-root"
-     data-prism-facet="SceneVisualizerFacet"
+     data-prism-facet="RealColorFacet"
      data-group-names="[colors]"
      data-force-square="500"
      data-page-root="/sv"
      data-show-loader
-     data-default-color="SW-6780"
+     data-default-color="SW-9173"
      data-scene-name="A lovely living room"
      data-default-image="https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom2?wid=1200}&qlt=92"
      data-default-mask="https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom2?wid=1200&req=object&opac=100&fmt=png8&object=wall&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1"
      data-max-scene-height="640"
-     data-upload-button-text="Pick a Picture"></div>
+     data-upload-button-text="Upload an Image"
+     data-wait-message="Please wait as we pull up the drop cloth. We are just getting everything perfect for you!"></div>
 <!-- <div>
     <button id="sim_btn">Simulate Image Upload</button>
 </div> -->
 <div class="colors">
     <p>Select a color option (null value) will force facet to consume default color again.</p>
+    <p> When using the mock API, Shiitake (default color will throw an error).</p>
     <label for="color_select">Select a Color</label>
     <select id="color_select">
         <option value="">Select a color</option>
-        <option value="SW-6780">Nautilus (SW-6780)</option>
-        <option value="SW-6342">Spice Hue (SW-6342)</option>
-        <option value="SW-6903">Cheerful (SW-6903)</option>
-        <option value="SW-6230">Rainstorm (SW-6230)</option>
+        <option value="SW-6792">Minor Blue (SW-6792)</option>
+        <option value="SW-7037">Balanced beige (SW-7037)</option>
+        <option value="SW-6591">Amaryllis (SW-6591)</option>
     </select>
 </div>
 

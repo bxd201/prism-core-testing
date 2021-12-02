@@ -12,6 +12,7 @@ import GenericOverlay from '../Overlays/GenericOverlay/GenericOverlay'
 import SimpleTintableSceneHitArea from './SimpleTintableSceneHitArea'
 
 import './SimpleTintableScene.scss'
+import ImagePrimer from '../ImagePrimer/ImagePrimer'
 
 type SimpleTintableSceneProps = {
   // eslint-disable-next-line react/no-unused-prop-types
@@ -31,7 +32,8 @@ type SimpleTintableSceneProps = {
   handleSurfaceInteraction?: Function,
   handleColorDrop?: Function,
   surfaceColors?: Color[],
-  adjustSvgHeight?: boolean
+  adjustSvgHeight?: boolean,
+  primeImage?: boolean
 }
 
 const simpleTintableClassName = 'simple-tintable'
@@ -53,12 +55,14 @@ const SimpleTintableScene = (props: SimpleTintableSceneProps) => {
     handleColorDrop,
     handleSurfaceInteraction,
     surfaceColors,
-    adjustSvgHeight
+    adjustSvgHeight,
+    primeImage
   } = props
   const [instanceId] = useState(uniqueId('TS'))
   const [hitAreaLoadingCount, setHitAreaLoadingCount] = useState(0)
   const [hitAreaError, setHitAreaError] = useState(false)
   const [hitAreaLoaded, setHitAreaLoaded] = useState(props.surfaceUrls.length === 0)
+  const [backgroundUrl, setBackgroundUrl] = useState(background)
 
   const handleHitAreaLoadingSuccess = () => {
     setHitAreaLoadingCount(hitAreaLoadingCount + 1)
@@ -74,11 +78,20 @@ const SimpleTintableScene = (props: SimpleTintableSceneProps) => {
     }
   }
 
+  const handlePrimedImageLoaded = (imageUrl: string) => {
+    console.log('primed image: ', imageUrl)
+    setBackgroundUrl(imageUrl)
+  }
+
   return (
     <>
       {/* The transitions group will assume the calculated height of the ROOT DIV and not necessarily the specified height of the parent div */}
       <div className={`${simpleTintableClassName}-wrapper`}>
-        <img className={`${simpleTintableClassName}__natural`} src={background} alt={sceneName} />
+        {primeImage ? <ImagePrimer
+          baseImageUrl={background}
+          surface={surfaceUrls[0]}
+          handleImagesPrimed={handlePrimedImageLoaded} /> : null}
+        <img className={`${simpleTintableClassName}__natural`} src={backgroundUrl} alt={sceneName} />
         <TransitionGroup className={`${simpleTintableClassName}__colors`}>
           {surfaceUrls.map((surface: string, i) => {
             const highlight: ?string = highlights && surfaceUrls.length === highlights.length ? highlights[i] : null
@@ -95,7 +108,7 @@ const SimpleTintableScene = (props: SimpleTintableSceneProps) => {
                   <TintableSceneSurface
                     adjustSvgHeight={adjustSvgHeight}
                     type={sceneType}
-                    image={background}
+                    image={backgroundUrl}
                     width={width}
                     height={height}
                     maskId={getMaskId(instanceId, surfaceIds[i], tintColor.hex)}

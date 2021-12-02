@@ -20,15 +20,15 @@ import {
   SV_NEW_IMAGE_UPLOAD,
   SV_TRIGGER_IMAGE_UPLOAD
 } from '../../constants/pubSubEventsLabels'
-import FastMaskView from '../FastMask/FastMaskView'
 import useColors from '../../shared/hooks/useColors'
 import { getColorByBrandAndColorNumber } from '../../shared/helpers/ColorDataUtils'
 import SceneVisualizerContent from './SceneVisualizerContent'
 import SimpleTintableScene from '../SimpleTintableScene/SimpleTintableScene'
 import { hasGroupAccess } from '../../shared/utils/featureSwitch.util'
 import BallSpinner from '../BallSpinner/BallSpinner'
+import RealColorView from '../RealColor/RealColorView'
 
-type SceneVisualizerProps = FacetPubSubMethods & FacetBinderMethods & {
+type RealColorFacetProps = FacetPubSubMethods & FacetBinderMethods & {
   groupNames: string[],
   maxSceneHeight: number,
   defaultImage: string,
@@ -36,13 +36,14 @@ type SceneVisualizerProps = FacetPubSubMethods & FacetBinderMethods & {
   forceSquare?: number,
   defaultColor: string,
   sceneName: string,
-  uploadButtonText: string
+  uploadButtonText: string,
+  waitMessage?: string
 }
 
-export function SceneVisualizerFacet (props: SceneVisualizerProps) {
+export function RealColorFacet (props: RealColorFacetProps) {
   const { loadingConfiguration } = useContext(ConfigurationContext)
   // eslint-disable-next-line no-unused-vars
-  const { groupNames, defaultMask, maxSceneHeight, sceneName, uploadButtonText } = props
+  const { groupNames, defaultMask, maxSceneHeight, sceneName, uploadButtonText, waitMessage } = props
   const [facetId] = useState(uniqueId('sv-facet_'))
   const [error, setError] = useState(null)
   const [fastMaskLoading, setFastMaskLoading] = useState(false)
@@ -62,6 +63,7 @@ export function SceneVisualizerFacet (props: SceneVisualizerProps) {
   const [shouldShowInitialImage, setShouldShowInitialImage] = useState(true)
   const [initialMaskImageUrl, setInitialMaskImageUrl] = useState(null)
 
+  // eslint-disable-next-line no-unused-vars
   const intl = useIntl()
 
   const setNewTintColor = (colorName: string, colors: any) => {
@@ -162,7 +164,7 @@ export function SceneVisualizerFacet (props: SceneVisualizerProps) {
     props.publish(SV_TRIGGER_IMAGE_UPLOAD, { eventId })
   }
 
-  const handleFastMaskLoadError = (err: any) => {
+  const handleRealColorError = (err: any) => {
     // Reset State
     setUploadId(null)
     setTinterRendered(true)
@@ -170,15 +172,16 @@ export function SceneVisualizerFacet (props: SceneVisualizerProps) {
     props.publish(SV_ERROR, { error: err })
   }
 
-  const handleFastMaskCleanup = () => {
-    setTinterRendered(false)
-  }
-
-  const handleFastMaskUpdates = (data: any) => {
+  const handleRealColorCleanup = () => {
+    // @todo for fastmask this is set to false document why the render lifecycles differ -RS
     setTinterRendered(true)
   }
 
-  const handleFastMaskClose = (e: SyntheticEvent) => {
+  const handleRealColorUpdates = (data: any) => {
+    setTinterRendered(true)
+  }
+
+  const handleRealColorClose = (e: SyntheticEvent) => {
     e.preventDefault()
     setShouldShowInitialImage(true)
   }
@@ -215,29 +218,20 @@ export function SceneVisualizerFacet (props: SceneVisualizerProps) {
       uploadId
         ? <SceneVisualizerContent
           tinterRendered={tinterRendered}
-          handleFastMaskClose={handleFastMaskClose}
+          handleFastMaskClose={handleRealColorClose}
           initUpload={initUpload}
           uploadInitiated={uploadInitiated}
           shouldShowCloseBtn
-          tinter={<FastMaskView
-            primeImage
-            spinner={<BallSpinner />}
-            key={uploadId}
-            showSpinner={fastMaskLoading}
-            handleSceneBlobLoaderError={handleFastMaskLoadError}
-            handleError={handleFastMaskLoadError}
-            refDims={uploadedImageRefDims}
-            imageUrl={uploadedImage}
+          tinter={<RealColorView
             activeColor={tintColor}
-            handleUpdates={handleFastMaskUpdates}
-            cleanupCallback={handleFastMaskCleanup}
-            shouldHide
-            loadingMessage={[
-              intl.formatMessage({ id: 'SCENE_VISUALIZER.FASTMASK_LOADING_MSG_1' }),
-              intl.formatMessage({ id: 'SCENE_VISUALIZER.FASTMASK_LOADING_MSG_2' })
-            ]}
-          />} /> : null}</div>
+            spinner={<BallSpinner />}
+            imageOpacity={0.5}
+            waitMessage={waitMessage}
+            handlerError={handleRealColorError}
+            handleUpdate={handleRealColorUpdates}
+            cleanupCallback={handleRealColorCleanup}
+            imageUrl={uploadedImage} />} /> : null}</div>
   </>)
 }
 
-export default facetBinder(SceneVisualizerFacet, 'SceneVisualizerFacet')
+export default facetBinder(RealColorFacet, 'RealColorFacet')

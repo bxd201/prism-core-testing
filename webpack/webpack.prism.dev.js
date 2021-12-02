@@ -47,6 +47,18 @@ module.exports = merge.smart(common, {
     writeToDisk: true,
     disableHostCheck: true,
     proxy: [{
+      context: () => true,
+      target: 'http://localhost:3000',
+      secure: false,
+      bypass: (req, res, proxyOptions) => {
+        if (req.url.indexOf('/prism-ml') === 0 && process.env[envVars.MOCK_API]) {
+          console.log('MOCKING FAST MASK AND REAL COLOR!')
+          return null
+        }
+
+        return req.url
+      }
+    }, {
       // proxy over to embed.js dev server
       context: () => true,
       target: process.env[envVars.EMBED_LOCAL_ORIGIN],

@@ -3,6 +3,11 @@
 // With great power comes great responsibility! -RS
 const DEV = 'development'
 const DEV_OPTIONS = 'devOptions'
+export const DEV_OPTIONS_ENUM = {
+  MOCK_APIS: 'mockApis',
+  LOADING_ANIMATION: 'showLoadingAnimation',
+  SHOW_PAINTSCENE: 'showPaintScene'
+}
 const getDevOptions = () => JSON.parse(window.localStorage.getItem(DEV_OPTIONS));
 
 (() => {
@@ -12,26 +17,23 @@ const getDevOptions = () => JSON.parse(window.localStorage.getItem(DEV_OPTIONS))
   }
 })()
 
-const LOADING_ANIMATION = 'showLoadingAnimation'
-const SHOW_PAINTSCENE = 'showPaintScene'
-
 export const shouldShowLoadingAnimation = () => {
   if (ENV !== DEV) {
     return true
   }
   const devOptions = getDevOptions()
 
-  return !!devOptions[LOADING_ANIMATION]
+  return !!devOptions[DEV_OPTIONS_ENUM.LOADING_ANIMATION]
 }
 
 export const setDevOption = (itemName, itemValue) => {
-  const devOptions = JSON.parse(window.localStorage.getItem(DEV_OPTIONS))
+  const devOptions = getDevOptions()
   devOptions[itemName] = itemValue
   window.localStorage.setItem('devOptions', JSON.stringify(devOptions))
 }
 
-export const showLoadingAnimation = () => setDevOption(LOADING_ANIMATION, true)
-export const hideLoadingAnimation = () => setDevOption(LOADING_ANIMATION, false)
+export const showLoadingAnimation = () => setDevOption(DEV_OPTIONS_ENUM.LOADING_ANIMATION, true)
+export const hideLoadingAnimation = () => setDevOption(DEV_OPTIONS_ENUM.LOADING_ANIMATION, false)
 
 export const shouldShowPaintScene = () => {
   if (ENV !== DEV) {
@@ -40,11 +42,19 @@ export const shouldShowPaintScene = () => {
 
   const devOptions = getDevOptions()
 
-  return !!devOptions[SHOW_PAINTSCENE]
+  return !!devOptions[DEV_OPTIONS_ENUM.SHOW_PAINTSCENE]
 }
 
-export const showPaintScene = () => setDevOption(SHOW_PAINTSCENE, true)
-export const hidePaintScene = () => setDevOption(SHOW_PAINTSCENE, false)
+export const showPaintScene = () => setDevOption(DEV_OPTIONS_ENUM.SHOW_PAINTSCENE, true)
+export const hidePaintScene = () => setDevOption(DEV_OPTIONS_ENUM.SHOW_PAINTSCENE, false)
+
+export const shouldUseMocks = () => {
+  if (ENV !== DEV) {
+    return false
+  }
+
+  return !!getDevOptions()[DEV_OPTIONS_ENUM.MOCK_APIS]
+}
 
 if (ENV === DEV) {
   window.devutils = {
@@ -52,6 +62,7 @@ if (ENV === DEV) {
     showLoadingAnimation,
     hideLoadingAnimation,
     showPaintScene,
-    hidePaintScene
+    hidePaintScene,
+    DEV_OPTIONS_ENUM
   }
 }
