@@ -47,7 +47,7 @@ export const ColorWallPage = (props: Props) => {
   return (
     <ColorWallContext.Provider value={cwContext}>
       <ColorWallRouter>
-        <div className='color-wall-wrap' style={{ paddingBottom: '50%' }}>
+        <div className='color-wall-wrap' style={{ height: '100%', paddingBottom: '50%' }}>
           <Route component={ColorWall} />
           {isLoading ? <GenericOverlay type={GenericOverlay.TYPES.LOADING} semitransparent /> : null}
         </div>

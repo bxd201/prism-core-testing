@@ -158,9 +158,17 @@ $swatch-edge-padding-lg: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-mai
       font-weight: 550;
       line-height: 1.1rem;
     }
+    &__number {
+      font-size: 1rem;
+      margin-top: 0.3rem;
+      font-style: italic;
+      font-weight: 400;
+      line-height: 1.1rem;
+    }
 
     &__col {
-      margin-top: 1.5rem;
+      position: absolute;
+      bottom: 2rem;
       font-size: 1rem;
       font-weight: 500;
       line-height: 1.1rem;
@@ -171,68 +179,12 @@ $swatch-edge-padding-lg: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-mai
     }
 
     &__row {
+      position: absolute;
+      bottom: 0.8rem;
       font-size: 1rem;
       margin-top: 0.3rem;
       font-weight: 500;
       line-height: 1.1rem;
-    }
-    &__number {
-      font-size: 1rem;
-      margin-top: 0.3rem;
-      font-style: italic;
-      font-weight: 400;
-      line-height: 1.1rem;
-    }
-
-    .chip {
-      &__name {
-        font-size: 1.15rem;
-        line-height: 1.3rem;
-      }
-
-      &__number {
-        font-size: 1rem;
-        line-height: 1.3rem;
-      }
-    }
-
-    .chip {
-      &__name {
-        font-size: 1.15rem;
-        line-height: 1.3rem;
-      }
-
-      &__number {
-        font-size: 1rem;
-        line-height: 1.3rem;
-      }
-    }
-
-    &--buttons {
-      position: absolute;
-      bottom: 1rem;
-      &__button {
-        width: 9.3rem;
-        margin-top: 10px;
-        padding: 0.4rem;
-        border: 1px solid black;
-        border-radius: 15px;
-        font-size: 1rem;
-        font-weight: 500;
-        line-height: 1.1rem;
-      }
-
-      &__button--dark-color {
-        width: 9.3rem;
-        margin-top: 10px;
-        padding: 0.4rem;
-        border: 1px solid black;
-        border-radius: 15px;
-        font-size: 1rem;
-        font-weight: 500;
-        border-color: white;
-        line-height: 1.1rem;
-      }
     }
   }
 

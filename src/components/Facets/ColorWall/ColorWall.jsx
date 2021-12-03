@@ -301,23 +301,21 @@ const ColorWall = () => {
           )}
         </AutoSizer>
         {colorNumOnBottom && selectedColor && (
-          <ColorSwatch style={{ position: 'absolute', padding: '1.4rem', overflow: 'visible', height: '195px', width: '100%' }}
+          <ColorSwatch style={{ padding: '1.4rem', overflow: 'visible', height: '195px', width: '100%' }}
             color={selectedColor}
             contentRenderer={() => (
-              <>
-                <p className='color-chip__locator__name chip__name'>{selectedColor.name}</p>
-                <p className='color-chip__locator__number chip__number'>{fullColorNumber(selectedColor.brandKey, selectedColor.colorNumber, brandKeyNumberSeparator)}</p>
-                <div className='color-swatch__chip-locator--buttons'>
-                  <p className='color-chip__locator__column'>Col: {selectedColor.column}</p>
-                  <p className='color-chip__locator__row'>Row: {selectedColor.row}</p>
-                  <button
-                    className={`color-swatch__chip-locator--buttons__button${selectedColor.isDark ? '--dark-color' : ''}`}
-                    onClick={() => { window.location.href = colorDetailPageRoot?.(selectedColor) }}
-                  >
-                    View Color
-                  </button>
-                </div>
-              </>
+              <div style={{ position: 'absolute', bottom: '12rem', paddingRight: '0.4rem', width: '100%' }}>
+                <p className='color-chip__locator__name'>{selectedColor.name}</p>
+                <p className='color-chip__locator__number'>{fullColorNumber(selectedColor.brandKey, selectedColor.colorNumber, brandKeyNumberSeparator)}</p>
+                <p className='color-chip__locator__column'>Col: {selectedColor.column}</p>
+                <p className='color-chip__locator__row'>Row: {selectedColor.row}</p>
+                <button
+                  className={`color-chip__locator__button${selectedColor.isDark ? ' dark-color' : ''}`}
+                  onClick={() => { window.location.href = colorDetailPageRoot?.(selectedColor) }}
+                >
+                  View Color
+                </button>
+              </div>
             )}
             outline={false}
             showContents
