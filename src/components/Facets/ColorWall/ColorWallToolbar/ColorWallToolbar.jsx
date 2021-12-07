@@ -38,6 +38,7 @@ type SelectPropsT = {
 }
 
 const Select = ({ placeholderText, options, disabled = false, onSelectOpened, purpose, mobileClick, setMobileClick, brandClick, setBrandClick }: SelectPropsT) => {
+  // @todo refactor to remove repetitive code and to clarify the role of the purpose param. -RS
   return (
     <Wrapper
       className={`${MODE_CLASS_NAMES.CELL} ${MODE_CLASS_NAMES.RIGHT} ${menuBarPrefix}`}
@@ -47,20 +48,22 @@ const Select = ({ placeholderText, options, disabled = false, onSelectOpened, pu
         <FontAwesomeIcon className='close-icon-svg' icon={['fa', 'angle-down']} pull='right' />
       </Button>
       <Menu className={`${menuBarPrefix}__menu`}>
-        {purpose === 'brand' && options.map(({ label, link }) => (
-          <MenuItem className={`${menuBarItemList}`} onClick={() => setBrandClick(label)} key={label} text={omitPrefix(label)} value={label}>
+        {purpose === 'brand' && options.map(({ label, link }) => {
+          return (<MenuItem className={`${menuBarItemList}`} onClick={() => setBrandClick?.(label)} key={label} text={omitPrefix(label)} value={label}>
             <Link className={`${menuBarPrefix}__menu-link  ${(brandClick === label) ? `${menuBarActiveList}` : `${menuBarInactive}`}`} to={{ pathname: link, state: 'All', data: label }}>
               <span className={MODE_CLASS_NAMES.DESC}>{omitPrefix(label)}</span>
             </Link>
-          </MenuItem>
-        ))}
-        {purpose === 'family' && options.map(({ label, link }) => (
-          <MenuItem className={`${menuBarItemList}`} onClick={() => setMobileClick(label)} key={label} text={omitPrefix(label)} value={label}>
-            <Link className={`${menuBarPrefix}__menu-link  ${(mobileClick === label) ? `${menuBarActiveList}` : `${menuBarInactive}`}`} to={{ pathname: link, data: brandClick, state: label }}>
-              <span className={MODE_CLASS_NAMES.DESC}>{omitPrefix(label)}</span>
-            </Link>
-          </MenuItem>
-        ))}
+          </MenuItem>)
+        })}
+        {purpose === 'family' && options.map(({ label, link }) => {
+          return (
+            <MenuItem className={`${menuBarItemList}`} onClick={() => setMobileClick?.(label)} key={label} text={omitPrefix(label)} value={label}>
+              <Link className={`${menuBarPrefix}__menu-link  ${(mobileClick === label) ? `${menuBarActiveList}` : `${menuBarInactive}`}`} to={{ pathname: link, data: brandClick, state: label }}>
+                <span className={MODE_CLASS_NAMES.DESC}>{omitPrefix(label)}</span>
+              </Link>
+            </MenuItem>
+          )
+        })}
       </Menu>
     </Wrapper>
   )
@@ -141,6 +144,7 @@ const ColorWallToolbar = ({ mobileClick, setMobileClick, brandClick, setBrandCli
           <Select
             disabled={families.length < 2}
             placeholderText={activeFamily || messages['EXPLORE_COLOR_FAMILIES']}
+            purpose='family'
             options={families
               .filter(f => f !== activeFamily)
               .map(label => ({ label, link: generateColorWallPageUrl(section, label) }))
@@ -148,6 +152,7 @@ const ColorWallToolbar = ({ mobileClick, setMobileClick, brandClick, setBrandCli
           />
           <Select
             disabled={visibleSections.length < 2}
+            purpose='brand'
             placeholderText={(activeSection === primeColorWall || !visibleSections.includes(activeSection)) ? (colorWall.selectSectionText ?? messages['EXPLORE_COLLECTIONS']) : activeSection}
             options={visibleSections
               .filter(s => s !== activeSection)
