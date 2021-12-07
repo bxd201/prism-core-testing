@@ -30,6 +30,7 @@ import { compareKebabs } from 'src/shared/helpers/StringUtils'
 import clamp from 'lodash/clamp'
 import flatten from 'lodash/flatten'
 import isEmpty from 'lodash/isEmpty'
+import kebabCase from 'lodash/kebabCase'
 import range from 'lodash/range'
 import rangeRight from 'lodash/rangeRight'
 import take from 'lodash/take'
@@ -48,7 +49,7 @@ const ColorWall = () => {
   const { url, params }: { url: string, params: { section: ?string, family?: ?string, colorId?: ?string } } = useRouteMatch()
   const history = useHistory()
   const { messages = {} } = useIntl()
-  const { items: { colorMap = {}, colorStatuses = {}, sectionLabels: _sectionLabels = {} }, unChunkedChunks, chunkGridParams, section = '', sectionsShortLabel, family }: ColorsState = useSelector(state => state.colors)
+  const { chunkGridParams, family, items: { colorMap = {}, colorStatuses = {}, sectionLabels: _sectionLabels = {} }, primeColorWall, section = '', sectionsShortLabel, unChunkedChunks }: ColorsState = useSelector(state => state.colors)
   const { brandKeyNumberSeparator }: ConfigurationContextType = useContext(ConfigurationContext)
   // if a family is selected, NEVER return section labels (they're only for sections)
   const sectionLabels = useMemo(() => {
@@ -196,11 +197,11 @@ const ColorWall = () => {
   const chunkRenderer = ({ rowIndex: chunkRow, columnIndex: chunkColumn, key, style }) => {
     const chunk: string[][] = chunkGrid[chunkRow][chunkColumn]
     const chunkNum: number = take(chunkGrid, chunkRow).reduce((num, chunkRow) => num + chunkRow.length, 0) + chunkColumn
-    const { wrappingEnabled, wrappingGaspBetween = 0 } = chunkGridParams
+    const { wrappingGaspBetween = 0 } = chunkGridParams
     const lengthOfLongestRow: number = getLongestArrayIn2dArray(chunk)
     const containsBloomedCell: boolean = getCoords(chunk, params.colorId)[0] !== -1
     const isLargeLabel: boolean = cellSize * lengthOfLongestRow > 255 // magic number breakpoint for choosing between small and large font
-    const chunkClickableProps = chunkClickable ? {
+    const chunkClickableProps = chunkClickable && params.section === kebabCase(primeColorWall) ? {
       onClick: () => { window.location.href = colorWallPageRoot?.(sectionLabels[section][chunkNum] || '') },
       role: 'button',
       tabIndex: 0
@@ -210,10 +211,10 @@ const ColorWall = () => {
       <div
         key={key}
         className='color-wall-chunk'
-        style={{ ...style, padding: gapsBetweenChunks ? cellSize / 5 : 0, marginTop: wrappingEnabled && wrappingGaspBetween && chunkNum > 0 ? `${wrappingGaspBetween}rem` : 'auto', zIndex: containsBloomedCell ? 1 : 'auto' }}
+        style={{ ...style, padding: gapsBetweenChunks ? cellSize / 5 : 0, marginTop: wrappingGaspBetween && chunkNum > 0 ? `${wrappingGaspBetween}rem` : 'auto', zIndex: containsBloomedCell ? 1 : 'auto' }}
         {...chunkClickableProps}
       >
-        {sectionLabels[section] && sectionLabels[section][chunkNum] !== undefined && !chunkClickable && (
+        {sectionLabels[section] && sectionLabels[section][chunkNum] !== undefined && !chunkClickableProps && (
           <div
             className='color-wall-section-label'
             style={{
@@ -266,7 +267,7 @@ const ColorWall = () => {
     )
   }
 
-  const selectedColor = focusedCell.current && colorMap[focusedCell.current]
+  const selectedColor = colorMap[params.colorId || '']
 
   return (
     <CSSTransition in={isZoomedIn} timeout={200}>
@@ -300,7 +301,7 @@ const ColorWall = () => {
             />
           )}
         </AutoSizer>
-        {colorNumOnBottom && selectedColor && (
+        {colorNumOnBottom && params.section === kebabCase(section) && selectedColor && (
           <ColorSwatch style={{ position: 'absolute', padding: '1.4rem', overflow: 'visible', height: '195px', width: '100%' }}
             color={selectedColor}
             contentRenderer={() => (
