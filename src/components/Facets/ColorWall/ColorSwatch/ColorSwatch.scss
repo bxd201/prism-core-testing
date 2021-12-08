@@ -186,6 +186,23 @@ $swatch-edge-padding-lg: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-mai
       font-weight: 500;
       line-height: 1.1rem;
     }
+    
+    &--buttons {
+      position: absolute;
+      bottom: 2.4rem;
+
+      &__button {
+        width: 120px;
+        margin-top: 10px;
+        padding: 5px;
+        border: 1px solid black;
+        border-radius: 15px;
+        font-size: 1rem;
+        font-weight: 500;
+        line-height: 1.1rem;
+      }
+      .dark-color { border-color: white; }
+    }
   }
 
   &__button-group {
