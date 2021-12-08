@@ -77,7 +77,8 @@
         // represents colors changing from elsewhere in on the page
         const colorSelect = document.querySelector('#color_select')
         colorSelect.addEventListener('change', e => {
-          publish('SV_COLOR_UPDATE', {eventId: window._.uniqueId('sv_event_id_'),  data: e.target.value})
+          // using timestamp is ok for prism template and also since this is invoked by user input and not programmatically
+          publish('SV_COLOR_UPDATE', {eventId: `tsv_event_id_${Date.now()}`,  data: e.target.value})
         })
       }
     })

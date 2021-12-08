@@ -44,14 +44,18 @@
     min-height: 20%;
     padding-bottom: 1rem;
     &__btn {
+      border-radius: 2px;
       display: flex;
-      background-color: rgb(246,246,246);
+      background-color: rgb(255,255,255);
       padding: 0.8rem;
       width: auto;
       max-width: 80%;
       font-weight: bold;
       text-transform: uppercase;
       align-items: center;
+      &:hover {
+        background: linear-gradient(0deg, rgba(47, 47, 48, 0.2), rgba(47, 47, 48, 0.2)), #FFFFFF;;
+      }
       &__custom-icon {
         margin-right: 0.3rem;
         &__svg {

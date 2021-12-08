@@ -49,6 +49,9 @@
   "ERROR_ENCOUNTERED": "We've encountered an error.",
   "ERROR_LOADING_COLORS": "Erreur lors du chargement des couleurs.",
   "EXPERT_COLOR_PICKS": "Expert Color Picks",
+  "EXPLORE_COLOR": "Explorer couleurs ",
+  "EXPLORE_COLLECTIONS": "Explorer collections",
+  "EXPLORE_COLOR_FAMILIES": "Explorer une famille de couleurs",
   "EXTERIOR": "Extérieur",
   "FIND_COLORS_IN_CW": "<line>TROUVER DES COULEURS DANS </line><line>LE MUR DE COULEUR NUMÉRIQUE</line>",
   "HELPFUL_HINTS": {
@@ -346,6 +349,7 @@
     "SEARCH": "Chercher",
     "SEARCH_BY": "Recherche par nom ou numéro de couleur",
     "SEARCH_COLOR": "Couleur de recherche",
+    "SEARCH_FOR_A_COLOR": "Chercher une couleur",
     "SEARCHING": "Recherche",
     "SUGGESTIONS": "Quelques exemples de choses que vous pouvez rechercher sont {suggestions}"
   },
@@ -377,6 +381,7 @@
   "TOGGLE_EXPERT_PICKS": "Toggle Expert Picks",
   "TOOL_TIPS": "TOOL TIPS",
   "VIEW_ALL": "View all",
+  "VIEW_ENTIRE_COLOR_WALL": "Voir le mur de couleurs au complet",
   "VIEW_DETAILS": "Voir les détails",
   "VIEW_DETAILS_FOR": "Voir les détails pour {name}",
   "VIEW_FULL_COLLECTION": "VIEW FULL COLLECTION",

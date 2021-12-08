@@ -223,6 +223,7 @@ export function SceneVisualizerFacet (props: SceneVisualizerProps) {
             spinner={<BallSpinner />}
             key={uploadId}
             showSpinner={fastMaskLoading}
+            handleSceneBlobLoaderError={handleFastMaskLoadError}
             handleError={handleFastMaskLoadError}
             refDims={uploadedImageRefDims}
             imageUrl={uploadedImage}

@@ -17,8 +17,7 @@ type Props = {
   colorNumOnBottom?: boolean,
   colorWallBgColor?: string,
   colorWallPageRoot?: (string) => string,
-  displayDetailsLink?: boolean,
-  hideChunkLabel?: boolean
+  displayDetailsLink?: boolean
 }
 
 export const ColorWallPage = (props: Props) => {
@@ -29,8 +28,7 @@ export const ColorWallPage = (props: Props) => {
     colorNumOnBottom = true,
     colorWallBgColor,
     colorWallPageRoot,
-    displayDetailsLink = false,
-    hideChunkLabel
+    displayDetailsLink = false
   } = props
   const [isLoading] = useState(false)
   const cwContext = useMemo(() => extendIfDefined({}, colorWallContextDefault, {
@@ -40,9 +38,8 @@ export const ColorWallPage = (props: Props) => {
     colorNumOnBottom,
     colorWallBgColor,
     colorWallPageRoot,
-    displayDetailsLink: translateBooleanFlexibly(displayDetailsLink),
-    hideChunkLabel: translateBooleanFlexibly(hideChunkLabel)
-  }), [chunkClickable, chunkMiniMap, colorDetailPageRoot, colorNumOnBottom, colorWallBgColor, colorWallPageRoot, displayDetailsLink, hideChunkLabel])
+    displayDetailsLink: translateBooleanFlexibly(displayDetailsLink)
+  }), [chunkClickable, chunkMiniMap, colorDetailPageRoot, colorNumOnBottom, colorWallBgColor, colorWallPageRoot, displayDetailsLink])
 
   return (
     <ColorWallContext.Provider value={cwContext}>

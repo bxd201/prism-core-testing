@@ -103,14 +103,6 @@ const completeIrisUploading = () => {
   }
 }
 
-// const NANONETS_PREDICTION_ENDPOINT = 'https://customer.nanonets.com/sherwinWilliams/predict/rgbamask'
-// const NANONETS_AUTH_KEY = 'wrusnuj4vDg14jcrXOxmIirV6p33U8Az'
-
-// TODO: remove this when we no longer hvae to deal with https://None showing up in the API results
-export const deNoneify = (str: string = ''): string => {
-  return `${ML_API_URL}/${str.replace(/^(https?:\/\/None)?\//, '')}`
-}
-
 export const uploadImage = (file: File) => {
   return (dispatch: Function) => {
     // const imageUrl = URL.createObjectURL(file)
@@ -124,21 +116,16 @@ export const uploadImage = (file: File) => {
     dispatch(startUploading())
 
     axios
-      .post(`${ML_API_URL}/pipeline/`, uploadForm, {})
+      .post(`${ML_API_URL}/prism-ml/`, uploadForm, {})
       .then(res => at(res, 'data.per_img_resp[0][0].payload')[0] || (() => { throw new Error('No relevant data in response') })())
       .then(data => {
         // eslint-disable-next-line camelcase
         const { mask_path0, original_img_path } = data
-        const mask = deNoneify(mask_path0)
-        const originalImage = deNoneify(original_img_path)
-
-        let masks = []
-
-        // this will get the monolithic mask; comment out one or the other
-        masks.push(mask)
+        // eslint-disable-next-line camelcase
+        const masks = [mask_path0]
 
         const images = {
-          source: originalImage,
+          source: original_img_path,
           masks
         }
         dispatch(loadLocalImageUrl(images))

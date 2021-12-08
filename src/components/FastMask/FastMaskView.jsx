@@ -7,7 +7,6 @@ import { useIntl } from 'react-intl'
 import { createUniqueSceneId } from '../../shared/utils/legacyProfileFormatUtil'
 import axios from 'axios'
 import at from 'lodash/at'
-import { deNoneify } from '../../store/actions/user-uploads'
 import { SYSTEM_ERROR } from '../../store/actions/loadScenes'
 import { SCENE_TYPES, SCENE_VARIANTS } from '../../constants/globals'
 import uniqueId from 'lodash/uniqueId'
@@ -192,16 +191,28 @@ const FastMaskView = (props: FastMaskProps) => {
       uploadForm.append('image', blobData)
 
       axios
-        .post(`${ML_API_URL}/pipeline/`, uploadForm, {})
+        .post(`${ML_API_URL}/prism-ml/`, uploadForm, {})
         .then(res => at(res, 'data.per_img_resp[0][0].payload')[0] || (() => { throw new Error('No relevant data in response') })())
         .then(data => {
           // eslint-disable-next-line camelcase
           const { mask_path0, original_img_path } = data
-          const mask = deNoneify(mask_path0)
-          const originalImage = deNoneify(original_img_path)
+          // eslint-disable-next-line camelcase
+          const mask = mask_path0
+          // eslint-disable-next-line camelcase
+          const originalImage = original_img_path
 
-          return Promise.all([originalImage, mask].map((url) => {
-            // Load mask and background
+          // Load mask and background
+          return Promise.all([originalImage, mask].map((url, index) => {
+            // THIS IS A WORKAROUND FOR THE MISSING original_img_path, since we have it in memory still lets just use it.
+            if (index === 0 && !url) {
+              const bgImagePromise = new Promise((resolve, reject) => {
+                // Wrap the blob in an object that mimics the axios response.
+                // The createScenesAndVariants function expects this form.
+                resolve({ data: blobData })
+              })
+
+              return bgImagePromise
+            }
             return axios.get(url, {
               responseType: 'blob'
             })

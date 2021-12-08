@@ -27,7 +27,7 @@ const APP_NAME = process.env.npm_package_name
 const ENV = process.env[envVars.NODE_ENV] ? process.env[envVars.NODE_ENV] : 'development'
 const GENERATE_FACET_ASSETS = (!!process.env[envVars.GENERATE_FACET_ASSETS] || ENV === 'production')
 const API_PATH = process.env[envVars.API_URL]
-const ML_API_URL = (process.env[envVars.ML_API_URL]) ? process.env[envVars.ML_API_URL] : '$ML_API_URL'
+const ML_API_URL = process.env[envVars.ML_API_URL]
 const BASE_PATH = (ENV === 'development') ? process.env[envVars.PRISM_LOCAL_ORIGIN] : (process.env[envVars.WEB_URL]) ? process.env[envVars.WEB_URL] : '$WEB_URL'
 // This flag if positive will use Firebase anonymous login instead of MySherwin. If value is sticky, clear all cached build files.
 const FIREBASE_AUTH_ENABLED = !!parseInt(process.env[envVars.FIREBASE_AUTH_ENABLED])

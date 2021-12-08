@@ -58,26 +58,27 @@ export type Layout = {
 }
 
 export type ColorsState = {
-  emitColor?: { color: Color, timestamp: number },
-  status: ColorsStateStatus,
-  items: ColorsStateItems,
-  structure?: FamilyStructure,
-  layouts?: Layout[],
-  unChunkedChunks: number[][],
   chunkGridParams: ChunkGridParams,
-  sections?: string[],
-  sectionsShortLabel?: { [key: string]: ?string },
-  section?: string,
+  emitColor?: { color: Color, timestamp: number },
   families?: string[],
   family?: string,
+  initializeWith: { family?: string, section?: string },
+  items: ColorsStateItems,
+  layouts?: Layout[],
+  primeColorWall?: string,
   search: {
-    results?: ColorList,
-    suggestions?: string[],
+    active: boolean,
     count?: number,
-    query: string,
-    loading: boolean,
     error: boolean,
-    active: boolean
+    loading: boolean,
+    query: string,
+    results?: ColorList,
+    suggestions?: string[]
   },
-  initializeWith: { section?: string, family?: string },
+  section?: string,
+  sections?: string[],
+  sectionsShortLabel?: { [key: string]: ?string },
+  status: ColorsStateStatus,
+  structure?: FamilyStructure,
+  unChunkedChunks: number[][]
 }
