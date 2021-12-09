@@ -17,6 +17,8 @@ import kebabCase from 'lodash/kebabCase'
 import noop from 'lodash/noop'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
+import * as GA from 'src/analytics/GoogleAnalytics'
+import { GA_TRACKER_NAME_BRAND } from 'src/constants/globals'
 import './ColorSwatch.scss'
 
 type ContentProps = { msg: string, color: Color, style?: {}}
@@ -90,7 +92,7 @@ const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, co
   const history = useHistory()
   const isDisabled = at(status, 'status')[0] === 0
   const { chunkClickable, colorNumOnBottom }: ColorWallContextProps = useContext(ColorWallContext)
-  const { brandKeyNumberSeparator }: ConfigurationContextType = useContext(ConfigurationContext)
+  const { brandId, brandKeyNumberSeparator }: ConfigurationContextType = useContext(ConfigurationContext)
   const { primeColorWall }: ColorsState = useSelector(state => state.colors)
 
   return (
@@ -101,7 +103,13 @@ const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, co
         ref={ref}
         tabIndex={outline ? 0 : -1}
         onFocus={onFocus}
-        onClick={chunkClickable && section === kebabCase(primeColorWall) ? noop : () => history.push(generateColorWallPageUrl(section, family, color.id, fullColorName(color.brandKey, color.colorNumber, color.name)) + (url.endsWith('family/') ? 'family/' : url.endsWith('search/') ? 'search/' : ''))}
+        onClick={chunkClickable && section === kebabCase(primeColorWall)
+          ? noop
+          : () => {
+            history.push(generateColorWallPageUrl(section, family, color.id, fullColorName(color.brandKey, color.colorNumber, color.name)) + (url.endsWith('family/') ? 'family/' : url.endsWith('search/') ? 'search/' : ''))
+            GA.event({ category: 'Color Wall', action: 'Color Swatch Clicks', label: `${color.name} - ${color.colorNumber}` }, GA_TRACKER_NAME_BRAND[brandId])
+          }
+        }
         aria-label={fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator)}
       >
         {isDisabled && <div className='color-swatch__flag' />}

@@ -1,9 +1,11 @@
 // @flow
-import React from 'react'
+import React, { useContext } from 'react'
 import { useSelector } from 'react-redux'
 import { FormattedMessage } from 'react-intl'
 import type { Color, ColorMap } from 'src/shared/types/Colors.js.flow'
+import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import * as GA from 'src/analytics/GoogleAnalytics'
+import { GA_TRACKER_NAME_BRAND } from 'src/constants/globals'
 import 'src/scss/convenience/visually-hidden.scss'
 
 const orderedCoordColorProps = [
@@ -14,6 +16,7 @@ const orderedCoordColorProps = [
 
 type Props = { color: Color, onColorChanged: Color => void }
 function CoordinatingColors ({ color, onColorChanged }: Props) {
+  const { brandId }: ConfigurationContextType = useContext(ConfigurationContext)
   const colorMap: ColorMap = useSelector(store => store.colors.items.colorMap)
   const { coordinatingColors } = color
 
@@ -32,7 +35,7 @@ function CoordinatingColors ({ color, onColorChanged }: Props) {
                 className='color-info__color-swatch-link'
                 onClick={() => {
                   onColorChanged(color)
-                  GA.event({ category: 'Color Detail / Coordinating Color', action: 'View Coord Color', label: color.name })
+                  GA.event({ category: 'Color Detail / Coordinating Color', action: 'View Coord Color', label: color.name }, GA_TRACKER_NAME_BRAND[brandId])
                 }}
               >
                 <p className='color-info__coord-color-number'>
