@@ -303,6 +303,7 @@ pipeline {
         }
       }
     }
+    /*
     stage('Shepherd') {
       when {
         expression { BRANCH_NAME ==~ /^(develop|qa|release|replatform)$/ }
@@ -336,6 +337,7 @@ pipeline {
         ])
       }
     }
+    */
     stage('trigger_smoke_job') {
       steps {
           trigger_smoke_job(BRANCH_NAME)
