@@ -15,6 +15,8 @@ import { loadSearchResults, MIN_SEARCH_LENGTH } from 'src/store/actions/loadSear
 import { compareKebabs } from 'src/shared/helpers/StringUtils'
 import recursiveDecodeURIComponent from 'src/shared/utils/recursiveDecodeURIComponent.util'
 import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
+import * as GA from 'src/analytics/GoogleAnalytics'
+import { GA_TRACKER_NAME_BRAND } from 'src/constants/globals'
 
 type Props = {
   className?: 'SearchBarLight' | 'SearchBarMinimal',
@@ -98,6 +100,8 @@ const SearchBar = (props: Props) => {
 
     // set new search param which we will actually perform a search on
     setNewSearchParam(_value)
+
+    GA.event({ category: 'Search', action: 'Search Queries', label: _value }, GA_TRACKER_NAME_BRAND[brandId])
   }, 500), [])
 
   useEffect(() => {

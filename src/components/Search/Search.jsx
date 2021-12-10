@@ -15,6 +15,8 @@ import 'src/scss/externalComponentSupport/AutoSizer.scss'
 import omitPrefix from 'src/shared/utils/omitPrefix.util'
 import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import { fullColorNumber } from 'src/shared/helpers/ColorUtils'
+import * as GA from 'src/analytics/GoogleAnalytics'
+import { GA_TRACKER_NAME_BRAND } from 'src/constants/globals'
 
 const baseClass = 'Search'
 const EDGE_SIZE = 15
@@ -27,7 +29,7 @@ const Search = ({ contain = false, isChipLocator }: SearchProps) => {
   const { colorDetailPageRoot, colorWallBgColor, colorWallPageRoot }: ColorWallContextProps = useContext(ColorWallContext)
 
   const [hasSearched, updateHasSearched] = useState(typeof count !== 'undefined')
-  const { brandKeyNumberSeparator }: ConfigurationContextType = useContext(ConfigurationContext)
+  const { brandId, brandKeyNumberSeparator }: ConfigurationContextType = useContext(ConfigurationContext)
   const suggestV2 = suggestionsV2 ? [suggestionsV2.names[0], fullColorNumber(suggestionsV2.colorNumber.brandKey, suggestionsV2.colorNumber.colorNumber, brandKeyNumberSeparator), suggestionsV2.families[0]].filter(Boolean) : null
 
   useEffectAfterMount(() => { updateHasSearched(true) }, [count, results, loading])
@@ -44,13 +46,19 @@ const Search = ({ contain = false, isChipLocator }: SearchProps) => {
           <div className='color-swatch__chip-locator--buttons' style={{ bottom: '0.6rem' }}>
             <button
               className={`color-swatch__chip-locator--buttons__button${result.isDark ? ' dark-color' : ''}`}
-              onClick={() => { window.location.href = colorWallPageRoot?.(result) }}
+              onClick={() => {
+                window.location.href = colorWallPageRoot?.(result)
+                GA.event({ category: 'Search', action: 'Find Chip', label: `${result.name} - ${result.colorNumber}` }, GA_TRACKER_NAME_BRAND[brandId])
+              }}
             >
               Find Chip
             </button>
             <button
               className={`color-swatch__chip-locator--buttons__button${result.isDark ? ' dark-color' : ''}`}
-              onClick={() => { window.location.href = colorDetailPageRoot?.(result) }}
+              onClick={() => {
+                window.location.href = colorDetailPageRoot?.(result)
+                GA.event({ category: 'Search', action: 'View Color', label: `${result.name} - ${result.colorNumber}` }, GA_TRACKER_NAME_BRAND[brandId])
+              }}
             >
               View Color
             </button>

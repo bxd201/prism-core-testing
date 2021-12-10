@@ -1,13 +1,16 @@
 // @flow
-import React from 'react'
+import React, { useContext } from 'react'
 import { useSelector } from 'react-redux'
 import { FormattedMessage } from 'react-intl'
 import type { Color, ColorMap } from 'src/shared/types/Colors.js.flow'
+import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import * as GA from 'src/analytics/GoogleAnalytics'
+import { GA_TRACKER_NAME_BRAND } from 'src/constants/globals'
 import 'src/scss/convenience/visually-hidden.scss'
 
 type Props = { color: Color, onColorChanged: Color => void }
 const SimilarColors = ({ color, onColorChanged }: Props) => {
+  const { brandId }: ConfigurationContextType = useContext(ConfigurationContext)
   const colorMap: ColorMap = useSelector(store => store.colors.items.colorMap)
 
   return (
@@ -22,7 +25,7 @@ const SimilarColors = ({ color, onColorChanged }: Props) => {
                 style={{ backgroundColor: color.hex }}
                 onClick={() => {
                   onColorChanged(color)
-                  GA.event({ category: 'Color Detail / Similar Color', action: 'View Similar Color', label: color.name })
+                  GA.event({ category: 'Color Detail / Similar Color', action: 'View Similar Color', label: color.name }, GA_TRACKER_NAME_BRAND[brandId])
                 }}
                 aria-label={`${color.brandKey} ${color.colorNumber} ${color.name}`}
               />

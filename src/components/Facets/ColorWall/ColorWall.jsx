@@ -35,6 +35,8 @@ import range from 'lodash/range'
 import rangeRight from 'lodash/rangeRight'
 import take from 'lodash/take'
 import { generateColorWallPageUrl, fullColorName, fullColorNumber } from 'src/shared/helpers/ColorUtils'
+import * as GA from 'src/analytics/GoogleAnalytics'
+import { GA_TRACKER_NAME_BRAND } from 'src/constants/globals'
 import 'src/scss/externalComponentSupport/AutoSizer.scss'
 import 'src/scss/convenience/overflow-ellipsis.scss'
 import './ColorWall.scss'
@@ -44,7 +46,7 @@ const WALL_HEIGHT = 475
 
 const ColorWall = () => {
   const { chunkClickable, chunkMiniMap, colorDetailPageRoot, colorNumOnBottom, colorWallBgColor, colorWallPageRoot, swatchMaxSize: globalSwatchMaxSize, swatchMinSize, swatchSizeZoomed }: ColorWallContextProps = useContext(ColorWallContext)
-  const { colorWall: { bloomEnabled = true, gapsBetweenChunks = true }, uiStyle }: ConfigurationContextType = useContext(ConfigurationContext)
+  const { brandId, colorWall: { bloomEnabled = true, gapsBetweenChunks = true }, uiStyle }: ConfigurationContextType = useContext(ConfigurationContext)
   const dispatch: { type: string, payload: {} } => void = useDispatch()
   const { url, params }: { url: string, params: { section: ?string, family?: ?string, colorId?: ?string } } = useRouteMatch()
   const history = useHistory()
@@ -202,7 +204,10 @@ const ColorWall = () => {
     const containsBloomedCell: boolean = getCoords(chunk, params.colorId)[0] !== -1
     const isLargeLabel: boolean = cellSize * lengthOfLongestRow > 255 // magic number breakpoint for choosing between small and large font
     const chunkClickableProps = chunkClickable && params.section === kebabCase(primeColorWall) ? {
-      onClick: () => { window.location.href = colorWallPageRoot?.(sectionLabels[section][chunkNum] || '') },
+      onClick: () => {
+        window.location.href = colorWallPageRoot?.(sectionLabels[section][chunkNum] || '')
+        GA.event({ category: 'Color Wall', action: 'Color Family', label: sectionLabels[section][chunkNum] }, GA_TRACKER_NAME_BRAND[brandId])
+      },
       role: 'button',
       tabIndex: 0
     } : null
@@ -312,7 +317,10 @@ const ColorWall = () => {
                 <p className='color-chip__locator__row'>Row: {selectedColor.row}</p>
                 <button
                   className={`color-chip__locator__button${selectedColor.isDark ? ' dark-color' : ''}`}
-                  onClick={() => { window.location.href = colorDetailPageRoot?.(selectedColor) }}
+                  onClick={() => {
+                    window.location.href = colorDetailPageRoot?.(selectedColor)
+                    GA.event({ category: 'Color Wall', action: 'View Color Clicks', label: `${selectedColor.name} - ${selectedColor.colorNumber}` }, GA_TRACKER_NAME_BRAND[brandId])
+                  }}
                 >
                   View Color
                 </button>
