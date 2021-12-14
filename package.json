@@ -114,6 +114,8 @@
     "react-tabs": "3.0.0",
     "react-transition-group": "4.3.0",
     "react-virtualized": "9.21.1",
+    "react-virtualized-auto-sizer": "1.0.6",
+    "react-window": "1.8.6",
     "redux": "4.0.4",
     "redux-thunk": "2.3.0",
     "rgbquant": "git+https://github.com/leeoniya/RgbQuant.js.git",

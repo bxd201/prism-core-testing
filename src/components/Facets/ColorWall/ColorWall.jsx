@@ -1,6 +1,6 @@
 // @flow
 import React, { useContext, useEffect, useRef, useState, useMemo } from 'react'
-import { useHistory, useRouteMatch, Link } from 'react-router-dom'
+import { useHistory, useRouteMatch } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { useIntl } from 'react-intl'
 import { CSSTransition } from 'react-transition-group'
@@ -31,6 +31,7 @@ import clamp from 'lodash/clamp'
 import flatten from 'lodash/flatten'
 import isEmpty from 'lodash/isEmpty'
 import kebabCase from 'lodash/kebabCase'
+import noop from 'lodash/noop'
 import range from 'lodash/range'
 import rangeRight from 'lodash/rangeRight'
 import take from 'lodash/take'
@@ -43,12 +44,27 @@ import './ColorWall.scss'
 // polyfill to make focus-within css class work in IE
 import 'focus-within-polyfill'
 const WALL_HEIGHT = 475
-
-const ColorWall = () => {
-  const { chunkClickable, chunkMiniMap, colorDetailPageRoot, colorNumOnBottom, colorWallBgColor, colorWallPageRoot, swatchMaxSize: globalSwatchMaxSize, swatchMinSize, swatchSizeZoomed }: ColorWallContextProps = useContext(ColorWallContext)
+type ColorWallProps = {
+  section?: string,
+  family?: string,
+  colorId?: string,
+  activeColorRouteBuilder?: Function,
+  inactiveColorRouteBuilder?: Function
+}
+const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: colorIdOverride, activeColorRouteBuilder, inactiveColorRouteBuilder }: ColorWallProps) => {
+  const { chunkClickable, chunkMiniMap, colorDetailPageRoot, colorNumOnBottom, colorWallBgColor, colorWallPageRoot, swatchMaxSize: globalSwatchMaxSize, swatchMinSize, swatchSizeZoomed, inactiveColorRouteBuilderRef, activeColorRouteBuilderRef }: ColorWallContextProps = useContext(ColorWallContext)
   const { brandId, colorWall: { bloomEnabled = true, gapsBetweenChunks = true }, uiStyle }: ConfigurationContextType = useContext(ConfigurationContext)
   const dispatch: { type: string, payload: {} } => void = useDispatch()
-  const { url, params }: { url: string, params: { section: ?string, family?: ?string, colorId?: ?string } } = useRouteMatch()
+  const { url, params: _params }: { url: string, params: { section: ?string, family?: ?string, colorId?: ?string } } = useRouteMatch()
+  // NOTE:  making it possible to override integrated route-based section/family/colorId navigation based on props
+  //        first step in removing the hard-coded route dependency shape. this needs to be separate so we can support different
+  //        route shapes
+  const params = {
+    section: sectionOverride ?? _params.section,
+    family: familyOverride ?? _params.family,
+    colorId: colorIdOverride ?? _params.colorId
+  }
+
   const history = useHistory()
   const { messages = {} } = useIntl()
   const { chunkGridParams, family, items: { colorMap = {}, colorStatuses = {}, sectionLabels: _sectionLabels = {} }, primeColorWall, section = '', sectionsShortLabel, unChunkedChunks }: ColorsState = useSelector(state => state.colors)
@@ -83,6 +99,24 @@ const ColorWall = () => {
 
   const cellSize: number = isZoomedIn ? swatchSizeZoomed : swatchSizeUnzoomed
   const levelMap: { [string]: number } = getLevelMap(chunkGrid, bloomEnabled, params.colorId)
+
+  const createActiveColorRoute = useRef(noop)
+  const createInactiveColorRoute = useRef(noop)
+
+  createActiveColorRoute.current = () => {
+    if (activeColorRouteBuilderRef && activeColorRouteBuilderRef.current) {
+      activeColorRouteBuilderRef.current(colorMap[focusedCell.current])
+    } else {
+      history.push(generateColorWallPageUrl(params.section, params.family, focusedCell.current, fullColorName(colorMap[focusedCell.current])) + (url.endsWith('family/') ? 'family/' : url.endsWith('search/') ? 'search/' : ''))
+    }
+  }
+  createInactiveColorRoute.current = () => {
+    if (inactiveColorRouteBuilderRef && inactiveColorRouteBuilderRef.current) {
+      inactiveColorRouteBuilderRef.current()
+    } else {
+      history.push(generateColorWallPageUrl(section, family))
+    }
+  }
 
   // keeps redux store and url in sync for family and section data
   useEffect(() => {
@@ -145,9 +179,12 @@ const ColorWall = () => {
         },
         '13': () => {
           // directly modifing params.colorId instead of calling history.push will make the react-test-renderer not run the useEffect that depends on params.colorId
-          focusedCell.current && history.push(generateColorWallPageUrl(params.section, params.family, focusedCell.current, fullColorName(colorMap[focusedCell.current])) + (url.endsWith('family/') ? 'family/' : url.endsWith('search/') ? 'search/' : ''))
+          focusedCell.current && createActiveColorRoute.current()
+          // history.push(generateColorWallPageUrl(params.section, params.family, focusedCell.current, fullColorName(colorMap[focusedCell.current])) + (url.endsWith('family/') ? 'family/' : url.endsWith('search/') ? 'search/' : ''))
         },
-        '27': () => { focusedCell.current && history.push(generateColorWallPageUrl(section, family)) },
+        '27': () => {
+          focusedCell.current && createInactiveColorRoute.current()
+        },
         '37': () => { cellColumn > 0 && cellRefs.current[chunk[cellRow][cellColumn - 1]].focus() },
         '38': () => { cellRow > 0 && cellRefs.current[chunk[cellRow - 1][cellColumn]].focus() },
         '39': () => { cellColumn < chunk[cellRow].length - 1 && cellRefs.current[chunk[cellRow][cellColumn + 1]].focus() },
@@ -278,9 +315,9 @@ const ColorWall = () => {
     <CSSTransition in={isZoomedIn} timeout={200}>
       <div className='color-wall'>
         {params.colorId && (
-          <Link to={generateColorWallPageUrl(section, family)} className='zoom-out-btn' title={messages.ZOOM_OUT}>
+          <button onClick={() => createInactiveColorRoute.current()} className='zoom-out-btn' title={messages.ZOOM_OUT}>
             <FontAwesomeIcon icon='search-minus' size='lg' />
-          </Link>
+          </button>
         )}
         <AutoSizer disableHeight onResize={({ width }) => setContainerWidth(width)}>
           {({ height = WALL_HEIGHT, width = 900 }) => (
