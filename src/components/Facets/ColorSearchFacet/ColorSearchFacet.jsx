@@ -75,7 +75,18 @@ export const ColorSearch = (props: Props) => {
                   setMounted(false)
                 }} />
               </div>
-              <Route path='(.*)?/search/:query' render={() => <><h6 className='ColorSearch__title'>{primeColorWall} Colors</h6><Search isChipLocator /></>} />
+              <Route path='(.*)?/search/:query' render={() =>
+                <>
+                  <h6 className='ColorSearch__title'>{primeColorWall} Colors</h6>
+                  <Search
+                    isChipLocator
+                    closeSearch={() => {
+                      publish('prism-close-color-search')
+                      setMounted(false)
+                    }}
+                  />
+                </>}
+              />
             </div>
           </ColorWallRouter>
         </ColorWallContext.Provider>

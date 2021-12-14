@@ -21,12 +21,12 @@ import { GA_TRACKER_NAME_BRAND } from 'src/constants/globals'
 const baseClass = 'Search'
 const EDGE_SIZE = 15
 
-type SearchProps = { contain?: boolean, isChipLocator?: boolean }
+type SearchProps = { closeSearch?: () => void, contain?: boolean, isChipLocator?: boolean }
 
-const Search = ({ contain = false, isChipLocator }: SearchProps) => {
+const Search = ({ closeSearch = () => {}, contain = false, isChipLocator }: SearchProps) => {
   const { results, count, suggestions, suggestionsV2, loading } = useSelector(state => state.colors.search)
   const { items: { colorStatuses = {} } } = useSelector(state => state.colors)
-  const { colorDetailPageRoot, colorWallBgColor, activeColorRouteBuilderRef }: ColorWallContextProps = useContext(ColorWallContext)
+  const { colorDetailPageRoot, colorWallBgColor, colorWallPageRoot }: ColorWallContextProps = useContext(ColorWallContext)
 
   const [hasSearched, updateHasSearched] = useState(typeof count !== 'undefined')
   const { brandId, brandKeyNumberSeparator }: ConfigurationContextType = useContext(ConfigurationContext)
@@ -48,7 +48,8 @@ const Search = ({ contain = false, isChipLocator }: SearchProps) => {
               className={`color-swatch__chip-locator--buttons__button ${result.isDark ? 'dark-color' : ''}`}
               onClick={() => {
                 GA.event({ category: 'QR Color Wall Search', action: 'Find Chip', label: `${result.name} - ${result.colorNumber}` }, GA_TRACKER_NAME_BRAND[brandId])
-                activeColorRouteBuilderRef && activeColorRouteBuilderRef.current && activeColorRouteBuilderRef.current(result)
+                window.location.href = colorWallPageRoot?.(result)
+                closeSearch()
               }}
             >
               Find Chip
