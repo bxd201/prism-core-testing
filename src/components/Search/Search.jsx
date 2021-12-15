@@ -47,7 +47,7 @@ const Search = ({ contain = false, isChipLocator }: SearchProps) => {
             <button
               className={`color-swatch__chip-locator--buttons__button ${result.isDark ? 'dark-color' : ''}`}
               onClick={() => {
-                GA.event({ category: 'Search', action: 'Find Chip', label: `${result.name} - ${result.colorNumber}` }, GA_TRACKER_NAME_BRAND[brandId])
+                GA.event({ category: 'QR Color Wall Search', action: 'Find Chip', label: `${result.name} - ${result.colorNumber}` }, GA_TRACKER_NAME_BRAND[brandId])
                 activeColorRouteBuilderRef && activeColorRouteBuilderRef.current && activeColorRouteBuilderRef.current(result)
               }}
             >
@@ -56,7 +56,7 @@ const Search = ({ contain = false, isChipLocator }: SearchProps) => {
             <button
               className={`color-swatch__chip-locator--buttons__button ${result.isDark ? 'dark-color' : ''}`}
               onClick={() => {
-                GA.event({ category: 'Search', action: 'View Color', label: `${result.name} - ${result.colorNumber}` }, GA_TRACKER_NAME_BRAND[brandId])
+                GA.event({ category: 'QR Color Wall Search', action: 'View Color', label: `${result.name} - ${result.colorNumber}` }, GA_TRACKER_NAME_BRAND[brandId])
                 window.location.href = colorDetailPageRoot?.(result)
               }}
             >
