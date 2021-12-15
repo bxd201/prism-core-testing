@@ -15,6 +15,7 @@ export const COLOR_FAMILY_NAMES_ENDPOINT = endpoint`families`
 export const COLORS_ENDPOINT = endpoint`colors`
 export const COLORS_SEARCH_ENDPOINT = endpoint`search`
 export const CONFIG_ENDPOINT = endpoint`configurations`
+export const DETAILED_COLLECTIONS_ENDPOINT = endpoint`detailedcollections`
 export const EXPERT_COLOR_PICKS_ENDPOINT = endpoint`expertcolorpicks`
 export const INSPIRATIONAL_PHOTOS_ENDPOINT = endpoint`inspirationalphotos`
 export const ML_PIPELINE_ENDPOINT = `${ML_API_URL}/prism-ml/`
