@@ -1,0 +1,57 @@
+.cw2 {
+  $swatch-border-size: .25px;
+
+  &__wall,
+  &__col,
+  &__chunk {
+    position: relative;
+  }
+
+  &__col {
+  }
+
+  &__row {
+  }
+
+  &__chunk {
+    &__row {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    &--clickable {
+      cursor: pointer;
+      background: rgba(0, 0, 0, 0);
+    }
+  }
+
+  &__swatch {
+    // box-shadow: inset 0 0 0 1px black;
+    font-size: 8px;
+    float: left;
+    overflow: hidden;
+
+    &__inner {
+      width: 100%;
+      height: 100%;
+      border: $swatch-border-size solid white;
+
+      @include respond-below(sm) {
+        border-top: none;
+        border-left: none;
+      }
+    }
+  }
+
+  &__title {
+    color: #012169 !important;
+    font-size: 2.125rem;
+    padding-top: 0;
+    text-align: center;
+  }
+  &__subtitle {
+    font-size: 1.125rem;
+    padding: 0 0 1.5em;
+    text-align: center;
+  }
+}

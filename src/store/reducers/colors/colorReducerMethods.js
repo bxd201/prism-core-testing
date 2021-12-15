@@ -55,17 +55,16 @@ export function getErrorState (state: ColorsState, error?: any) {
   }
 }
 
-export function doReceiveColors (state: ColorsState, { payload: { unorderedColors, colors, brights, sections = [], colorLabels } }: ReduxAction): ColorsState {
+export function doReceiveColors (state: ColorsState, { payload: { unorderedColors, colors, brights, sections = [], colorLabels, chunksLayout } }: ReduxAction): ColorsState {
   // adding toString methods to all Color objects
   const colorMap = convertUnorderedColorsToColorMap(convertUnorderedColorsToClasses(unorderedColors))
   const transpose = (matrix: any[][]): any[][] => matrix[0].map((_, col) => matrix.map(row => row[col]))
-
   const primeColorWall = sections.find(section => section.prime)
 
   return sections.length
     ? {
       ...state,
-      items: { colors, brights, unorderedColors: unorderedColors.map((c: Color) => c.id), sectionLabels: colorLabels, colorMap },
+      items: { colors, brights, unorderedColors: unorderedColors.map((c: Color) => c.id), sectionLabels: colorLabels, colorMap, chunksLayout },
       layouts: sections.map(({ name, families, chunkGridParams }) => {
         const unChunkedChunks = (chunkGridParams.familiesDetermineLayout || !colors[name])
           ? [
@@ -94,6 +93,7 @@ export function doReceiveColors (state: ColorsState, { payload: { unorderedColor
       status: { ...state.status, activeRequest: false, error: false, loading: false, requestComplete: true },
       structure: sections,
       sections: sections.map(section => section.name),
+      sectionsShortLabel: sections.filter(({ shortName }) => shortName).length > 0 ? sections.reduce((accum, { name, shortName }) => ({ ...accum, [name]: shortName }), {}) : undefined,
       primeColorWall: primeColorWall && primeColorWall.name,
       unorderedColors
     }

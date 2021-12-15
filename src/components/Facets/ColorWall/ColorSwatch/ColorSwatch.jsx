@@ -10,11 +10,15 @@ import InfoButton from 'src/components/InfoButton/InfoButton'
 import { generateColorDetailsPageUrl, generateColorWallPageUrl, fullColorName, fullColorNumber, cleanColorNameForURL } from 'src/shared/helpers/ColorUtils'
 import { numToAlphaString } from 'src/shared/helpers/StringUtils'
 import { type Color, type ColorStatus } from 'src/shared/types/Colors.js.flow'
+import { type ColorsState } from 'src/shared/types/Actions.js.flow'
 import { useIntl } from 'react-intl'
 import at from 'lodash/at'
+import kebabCase from 'lodash/kebabCase'
 import noop from 'lodash/noop'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
+import * as GA from 'src/analytics/GoogleAnalytics'
+import { GA_TRACKER_NAME_BRAND } from 'src/constants/globals'
 import './ColorSwatch.scss'
 
 type ContentProps = { msg: string, color: Color, style?: {}}
@@ -80,25 +84,38 @@ type ColorSwatchProps = {
   style?: {},
   showContents?: boolean,
   onFocus?: () => void,
-  outline?: boolean
+  outline?: boolean,
+  className?: string
 }
 
-const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, contentRenderer = (defaultContent) => defaultContent, level, showContents = (level === 0), status, style, onFocus, outline = true }: ColorSwatchProps, ref) => {
+const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, contentRenderer = (defaultContent) => defaultContent, level, showContents = (level === 0), status, style, onFocus, outline = true, className }: ColorSwatchProps, ref) => {
   const { url, params: { section, family } } = useRouteMatch()
   const history = useHistory()
   const isDisabled = at(status, 'status')[0] === 0
-  const { chunkClickable, colorNumOnBottom }: ColorWallContextProps = useContext(ColorWallContext)
-  const { brandKeyNumberSeparator }: ConfigurationContextType = useContext(ConfigurationContext)
+  const { chunkClickable, colorNumOnBottom, activeColorRouteBuilderRef }: ColorWallContextProps = useContext(ColorWallContext)
+  const { brandId, brandKeyNumberSeparator }: ConfigurationContextType = useContext(ConfigurationContext)
+  const { primeColorWall }: ColorsState = useSelector(state => state.colors)
 
   return (
     <>
       <button
-        className={`color-swatch color-swatch-${level === undefined ? 'flat' : numToAlphaString(level)}${chunkClickable ? ' color-swatch--no-outline' : ''}`}
+        className={`color-swatch color-swatch-${level === undefined ? 'flat' : numToAlphaString(level)}${chunkClickable && section === kebabCase(primeColorWall) ? ' color-swatch--no-outline' : ''}`}
         style={{ ...style, background: color.hex }}
         ref={ref}
         tabIndex={outline ? 0 : -1}
         onFocus={onFocus}
-        onClick={chunkClickable ? noop : () => history.push(generateColorWallPageUrl(section, family, color.id, fullColorName(color.brandKey, color.colorNumber, color.name)) + (url.endsWith('family/') ? 'family/' : url.endsWith('search/') ? 'search/' : ''))}
+        onClick={chunkClickable && section === kebabCase(primeColorWall)
+          ? noop
+          : () => {
+            GA.event({ category: 'Color Wall', action: 'Color Swatch Clicks', label: `${color.name} - ${color.colorNumber}` }, GA_TRACKER_NAME_BRAND[brandId])
+            if (activeColorRouteBuilderRef && activeColorRouteBuilderRef.current) {
+              activeColorRouteBuilderRef.current(color)
+            } else {
+              // TODO: refactor this to use context as well
+              history.push(generateColorWallPageUrl(section, family, color.id, fullColorName(color.brandKey, color.colorNumber, color.name)) + (url.endsWith('family/') ? 'family/' : url.endsWith('search/') ? 'search/' : ''))
+            }
+          }
+        }
         aria-label={fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator)}
       >
         {isDisabled && <div className='color-swatch__flag' />}
@@ -117,6 +134,8 @@ const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, co
               <>
                 <p className='color-swatch__chip-locator__name'>{color.name}</p>
                 <p className='color-swatch__chip-locator__number'>{fullColorNumber(color.brandKey, color.colorNumber, brandKeyNumberSeparator)}</p>
+                <p className='color-swatch__chip-locator__col'>Col: {color.column}</p>
+                <p className='color-swatch__chip-locator__row'>Row: {color.row}</p>
               </>
             ) : (
               <>

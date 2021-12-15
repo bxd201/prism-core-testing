@@ -11,6 +11,7 @@ function endpoint (str, path = API_PATH, version = API_VERSION) {
 export const COLLECTION_SUMMARIES_ENDPOINT = endpoint`collections`
 export const COLOR_BRIGHTS_ENDPOINT = endpoint`brights`
 export const COLOR_CHUNKS_ENDPOINT = endpoint`chunks`
+export const COLOR_CHUNKS_LAYOUT_ENDPOINT = endpoint`chunkslayout`
 export const COLOR_FAMILY_NAMES_ENDPOINT = endpoint`families`
 export const COLORS_ENDPOINT = endpoint`colors`
 export const COLORS_SEARCH_ENDPOINT = endpoint`search`

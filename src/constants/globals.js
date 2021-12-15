@@ -64,7 +64,23 @@ export const KEY_CODES = Object.freeze({
   KEY_CODE_TAB: 9
 })
 
-export const GOOGLE_ANALYTICS_UID = 'UA-130955316-1'
+export const GOOGLE_ANALYTICS_UID_SW = 'UA-130955316-1'
+export const GOOGLE_ANALYTICS_UID_CBG_HGSW = 'UA-202069194-8'
+export const GOOGLE_ANALYTICS_UID_CBG_VALSPAR = 'UA-202069194-1'
+
+export const GA_TRACKER_NAME_SW = 'GAtrackerPRISM'
+export const GA_TRACKER_NAME_CBG_HGSW = 'GAtrackerPRISMCBGHGSW'
+export const GA_TRACKER_NAME_CBG_VALSPAR = 'GAtrackerPRISMCBGValspar'
+export const GA_TRACKER_NAME_BRAND = Object.freeze({
+  condor: GA_TRACKER_NAME_SW,
+  cscc: GA_TRACKER_NAME_SW,
+  easy: GA_TRACKER_NAME_SW,
+  hgsw: GA_TRACKER_NAME_CBG_HGSW,
+  lowes: GA_TRACKER_NAME_SW,
+  sherwin: GA_TRACKER_NAME_SW,
+  'SW-CA': GA_TRACKER_NAME_SW,
+  valspar: GA_TRACKER_NAME_CBG_VALSPAR
+})
 
 export const IS_IE = (() => {
   if (typeof window !== 'undefined') {

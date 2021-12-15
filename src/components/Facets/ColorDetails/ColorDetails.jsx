@@ -7,6 +7,7 @@ import ConfigurationContext, { type ConfigurationContextType } from 'src/context
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import { FormattedMessage } from 'react-intl'
 import * as GA from 'src/analytics/GoogleAnalytics'
+import { GA_TRACKER_NAME_BRAND } from 'src/constants/globals'
 import ColorChipMaximizer from './ColorChipMaximizer'
 import ColorViewer from './ColorViewer'
 import ColorStrip from './ColorStrip'
@@ -41,6 +42,7 @@ type Props = {
 
 export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged, onColorChipToggled, familyLink, loading, initialColor = {}, initialVariantName, callsToAction = [] }: Props) => {
   const dispatch = useDispatch()
+  const { brandId }: ConfigurationContextType = useContext(ConfigurationContext)
   const [color, setColor] = useState<Color>(initialColor)
   const [tabIndex, setTabIndex] = useState<number>(0)
   const [isMaximized, setMaximized] = useState(false)
@@ -51,7 +53,7 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
   }, [])
 
   useEffect(() => {
-    color && GA.pageView(`color-detail/${color.brandKey} ${color.colorNumber} - ${color.name}`)
+    color && GA.pageView(`color-detail/${color.brandKey} ${color.colorNumber} - ${color.name}`, GA_TRACKER_NAME_BRAND[brandId])
     onColorChanged && onColorChanged(color)
     // force tab change to first tab if there is no coordinating colors tab
     color.coordinatingColors || setTabIndex(0)
@@ -94,7 +96,7 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
               selectedIndex={tabIndex}
               onSelect={index => {
                 const tabNames = ['View Coord Color Section', 'View Similar Color Section', 'View Color Info Section']
-                GA.event({ category: 'Color Detail', action: tabNames[index], label: tabNames[index] })
+                GA.event({ category: 'Color Detail', action: tabNames[index], label: tabNames[index] }, GA_TRACKER_NAME_BRAND[brandId])
                 setTabIndex(index)
               }}
             >

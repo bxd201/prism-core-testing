@@ -1,10 +1,12 @@
 // @flow
-import React, { type Element, useState, useEffect } from 'react'
+import React, { type Element, useContext, useEffect, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
 import { FormattedMessage, injectIntl } from 'react-intl'
 import { LiveMessage } from 'react-aria-live'
+import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import * as GA from 'src/analytics/GoogleAnalytics'
+import { GA_TRACKER_NAME_BRAND } from 'src/constants/globals'
 import { type Color } from '../../../shared/types/Colors.js.flow'
 import { varValues } from 'src/shared/withBuild/variableDefs'
 import 'src/scss/convenience/visually-hidden.scss'
@@ -21,6 +23,7 @@ type Props = {
 }
 
 export function ColorChipMaximizer ({ addColorBtn, color, intl, onToggle, isMaximized, setMaximized }: Props) {
+  const { brandId }: ConfigurationContextType = useContext(ConfigurationContext)
   const [liveRegionMessage, setLiveRegionMessage] = useState('')
 
   const maximizeChipBtn = React.createRef()
@@ -76,7 +79,7 @@ export function ColorChipMaximizer ({ addColorBtn, color, intl, onToggle, isMaxi
         category: 'Color Detail',
         action: 'Maximize Swatch',
         label: 'Maximize Swatch'
-      })
+      }, GA_TRACKER_NAME_BRAND[brandId])
     }
     if (isMaximized === false) {
       maximizeChipBtn.current && maximizeChipBtn.current.focus()

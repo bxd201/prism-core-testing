@@ -1,6 +1,6 @@
 // @flow
 import React, { useContext, useEffect, useRef, useState, useMemo } from 'react'
-import { useHistory, useRouteMatch, Link } from 'react-router-dom'
+import { useHistory, useRouteMatch } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { useIntl } from 'react-intl'
 import { CSSTransition } from 'react-transition-group'
@@ -27,28 +27,46 @@ import {
 } from './ColorWallUtils'
 import ColorSwatch from './ColorSwatch/ColorSwatch'
 import { compareKebabs } from 'src/shared/helpers/StringUtils'
+import clamp from 'lodash/clamp'
+import flatten from 'lodash/flatten'
+import isEmpty from 'lodash/isEmpty'
+import kebabCase from 'lodash/kebabCase'
+import noop from 'lodash/noop'
 import range from 'lodash/range'
 import rangeRight from 'lodash/rangeRight'
-import flatten from 'lodash/flatten'
-import clamp from 'lodash/clamp'
-import isEmpty from 'lodash/isEmpty'
 import take from 'lodash/take'
 import { generateColorWallPageUrl, fullColorName, fullColorNumber } from 'src/shared/helpers/ColorUtils'
+import * as GA from 'src/analytics/GoogleAnalytics'
+import { GA_TRACKER_NAME_BRAND } from 'src/constants/globals'
 import 'src/scss/externalComponentSupport/AutoSizer.scss'
 import 'src/scss/convenience/overflow-ellipsis.scss'
 import './ColorWall.scss'
 // polyfill to make focus-within css class work in IE
 import 'focus-within-polyfill'
+import minimapDict from './minimap-dict'
 const WALL_HEIGHT = 475
-
-const ColorWall = () => {
-  const { chunkClickable, colorDetailPageRoot, colorNumOnBottom, colorWallBgColor, colorWallChunkPageRoot, swatchMaxSize: globalSwatchMaxSize, swatchMinSize, swatchSizeZoomed }: ColorWallContextProps = useContext(ColorWallContext)
-  const { colorWall: { bloomEnabled = true, gapsBetweenChunks = true }, uiStyle }: ConfigurationContextType = useContext(ConfigurationContext)
+type ColorWallProps = {
+  section?: string,
+  family?: string,
+  colorId?: string
+}
+const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: colorIdOverride }: ColorWallProps) => {
+  const { chunkClickable, chunkMiniMap, colorDetailPageRoot, colorNumOnBottom, colorWallBgColor, colorWallPageRoot, swatchMaxSize: globalSwatchMaxSize, swatchMinSize, swatchSizeZoomed, inactiveColorRouteBuilderRef, activeColorRouteBuilderRef }: ColorWallContextProps = useContext(ColorWallContext)
+  const { brandId, colorWall: { bloomEnabled = true, gapsBetweenChunks = true }, uiStyle }: ConfigurationContextType = useContext(ConfigurationContext)
   const dispatch: { type: string, payload: {} } => void = useDispatch()
-  const { url, params }: { url: string, params: { section: ?string, family?: ?string, colorId?: ?string } } = useRouteMatch()
+  const { url, params: _params }: { url: string, params: { section: ?string, family?: ?string, colorId?: ?string } } = useRouteMatch()
+  // NOTE:  making it possible to override integrated route-based section/family/colorId navigation based on props
+  //        first step in removing the hard-coded route dependency shape. this needs to be separate so we can support different
+  //        route shapes
+  const params = {
+    section: sectionOverride ?? _params.section,
+    family: familyOverride ?? _params.family,
+    colorId: colorIdOverride ?? _params.colorId
+  }
+
   const history = useHistory()
   const { messages = {} } = useIntl()
-  const { items: { colorMap = {}, colorStatuses = {}, sectionLabels: _sectionLabels = {} }, unChunkedChunks, chunkGridParams, section = '', family }: ColorsState = useSelector(state => state.colors)
+  const { chunkGridParams, family, items: { colorMap = {}, colorStatuses = {}, sectionLabels: _sectionLabels = {} }, primeColorWall, section = '', sectionsShortLabel, unChunkedChunks }: ColorsState = useSelector(state => state.colors)
   const { brandKeyNumberSeparator }: ConfigurationContextType = useContext(ConfigurationContext)
   // if a family is selected, NEVER return section labels (they're only for sections)
   const sectionLabels = useMemo(() => {
@@ -80,6 +98,25 @@ const ColorWall = () => {
 
   const cellSize: number = isZoomedIn ? swatchSizeZoomed : swatchSizeUnzoomed
   const levelMap: { [string]: number } = getLevelMap(chunkGrid, bloomEnabled, params.colorId)
+
+  const createActiveColorRoute = useRef(noop)
+  const createInactiveColorRoute = useRef(noop)
+
+  // TODO: refactor createActiveColorRoute and createInactiveColorRoute to come in as props from the implementing component
+  createActiveColorRoute.current = () => {
+    if (activeColorRouteBuilderRef && activeColorRouteBuilderRef.current) {
+      activeColorRouteBuilderRef.current(colorMap[focusedCell.current])
+    } else {
+      history.push(generateColorWallPageUrl(params.section, params.family, focusedCell.current, fullColorName(colorMap[focusedCell.current])) + (url.endsWith('family/') ? 'family/' : url.endsWith('search/') ? 'search/' : ''))
+    }
+  }
+  createInactiveColorRoute.current = (color) => {
+    if (inactiveColorRouteBuilderRef && inactiveColorRouteBuilderRef.current) {
+      inactiveColorRouteBuilderRef.current(color)
+    } else {
+      history.push(generateColorWallPageUrl(section, family))
+    }
+  }
 
   // keeps redux store and url in sync for family and section data
   useEffect(() => {
@@ -142,9 +179,11 @@ const ColorWall = () => {
         },
         '13': () => {
           // directly modifing params.colorId instead of calling history.push will make the react-test-renderer not run the useEffect that depends on params.colorId
-          focusedCell.current && history.push(generateColorWallPageUrl(params.section, params.family, focusedCell.current, fullColorName(colorMap[focusedCell.current])) + (url.endsWith('family/') ? 'family/' : url.endsWith('search/') ? 'search/' : ''))
+          focusedCell.current && createActiveColorRoute.current()
         },
-        '27': () => { focusedCell.current && history.push(generateColorWallPageUrl(section, family)) },
+        '27': () => {
+          focusedCell.current && createInactiveColorRoute.current(colorMap[focusedCell.current])
+        },
         '37': () => { cellColumn > 0 && cellRefs.current[chunk[cellRow][cellColumn - 1]].focus() },
         '38': () => { cellRow > 0 && cellRefs.current[chunk[cellRow - 1][cellColumn]].focus() },
         '39': () => { cellColumn < chunk[cellRow].length - 1 && cellRefs.current[chunk[cellRow][cellColumn + 1]].focus() },
@@ -196,30 +235,41 @@ const ColorWall = () => {
   const chunkRenderer = ({ rowIndex: chunkRow, columnIndex: chunkColumn, key, style }) => {
     const chunk: string[][] = chunkGrid[chunkRow][chunkColumn]
     const chunkNum: number = take(chunkGrid, chunkRow).reduce((num, chunkRow) => num + chunkRow.length, 0) + chunkColumn
+    const { wrappingGaspBetween = 0 } = chunkGridParams
     const lengthOfLongestRow: number = getLongestArrayIn2dArray(chunk)
     const containsBloomedCell: boolean = getCoords(chunk, params.colorId)[0] !== -1
     const isLargeLabel: boolean = cellSize * lengthOfLongestRow > 255 // magic number breakpoint for choosing between small and large font
-    const chunkClickableProps = chunkClickable ? {
-      onClick: () => { colorWallChunkPageRoot && (window.location.href = `${colorWallChunkPageRoot}/color-wall.html/#${generateColorWallPageUrl(sectionLabels[section][chunkNum])}`) },
+    const chunkClickableProps = chunkClickable && params.section === kebabCase(primeColorWall) ? {
+      onClick: () => {
+        window.location.href = colorWallPageRoot?.(sectionLabels[section][chunkNum] || '')
+        GA.event({ category: 'Color Wall', action: 'Color Family', label: sectionLabels[section][chunkNum] }, GA_TRACKER_NAME_BRAND[brandId])
+      },
       role: 'button',
       tabIndex: 0
     } : null
 
     return (flatten(chunk).some(cell => cell !== undefined) &&
-      <div key={key} className='color-wall-chunk' style={{ ...style, padding: gapsBetweenChunks ? cellSize / 5 : 0, zIndex: containsBloomedCell ? 1 : 'auto' }} {...chunkClickableProps}>
-        {sectionLabels[section] && sectionLabels[section][chunkNum] !== undefined && !chunkClickable && (
+      <div
+        key={key}
+        className='color-wall-chunk'
+        style={{ ...style, padding: gapsBetweenChunks ? cellSize / 5 : 0, marginTop: wrappingGaspBetween && chunkNum > 0 ? `${wrappingGaspBetween}rem` : 'auto', zIndex: containsBloomedCell ? 1 : 'auto' }}
+        {...chunkClickableProps}
+      >
+        {sectionLabels[section] && sectionLabels[section][chunkNum] !== undefined && !chunkClickableProps && (
           <div
             className='color-wall-section-label'
             style={{
               width: style.width - cellSize * 0.4,
-              height: calculateLabelHeight(cellSize),
+              height: calculateLabelHeight(cellSize, chunkMiniMap),
               marginBottom: calculateLabelMarginBottom(isZoomedIn, cellSize)
-            }}>
+            }}
+          >
             <div
               className={`color-wall-section-label__text ${isLargeLabel ? 'color-wall-section-label__text--large' : ''}`}
-              style={{ textAlign: uiStyle === 'minimal' ? 'left' : 'center' }}
+              style={{ justifyContent: chunkMiniMap || uiStyle === 'minimal' ? 'space-between' : 'center' }}
             >
-              {sectionLabels[section][chunkNum]}
+              {(sectionsShortLabel && sectionsShortLabel[section]) ?? sectionLabels[section][chunkNum]}
+              {chunkMiniMap && <div style={{ width: '108px', height: '63px', display: 'flex', alignItems: 'center', textAlign: 'center', backgroundImage: `url(${minimapDict[brandId][section]})`, backgroundSize: 'contain', backgroundPosition: 'center right' }} />}
             </div>
           </div>
         )}
@@ -255,15 +305,15 @@ const ColorWall = () => {
     )
   }
 
-  const currentFocusedCell: ?string = focusedCell.current
+  const selectedColor = colorMap[params.colorId || '']
 
   return (
     <CSSTransition in={isZoomedIn} timeout={200}>
       <div className='color-wall'>
         {params.colorId && (
-          <Link to={generateColorWallPageUrl(section, family)} className='zoom-out-btn' title={messages.ZOOM_OUT}>
+          <button onClick={() => createInactiveColorRoute.current(selectedColor)} className='zoom-out-btn' title={messages.ZOOM_OUT}>
             <FontAwesomeIcon icon='search-minus' size='lg' />
-          </Link>
+          </button>
         )}
         <AutoSizer disableHeight onResize={({ width }) => setContainerWidth(width)}>
           {({ height = WALL_HEIGHT, width = 900 }) => (
@@ -289,28 +339,32 @@ const ColorWall = () => {
             />
           )}
         </AutoSizer>
-        {colorNumOnBottom && currentFocusedCell && (
-          <ColorSwatch style={{ position: 'absolute', padding: '1.4rem', overflow: 'visible', height: '195px', width: '100%' }}
-            color={colorMap[currentFocusedCell]}
-            contentRenderer={() => (
-              <>
-                <p className='color-swatch__chip-locator__name chip__name'>{colorMap[currentFocusedCell].name}</p>
-                <p className='color-swatch__chip-locator__number chip__number'>{fullColorNumber(colorMap[currentFocusedCell].brandKey, colorMap[currentFocusedCell].colorNumber, brandKeyNumberSeparator)}</p>
-                <div className='color-swatch__chip-locator--buttons'>
+        {colorNumOnBottom && kebabCase(params.section) === kebabCase(sectionOverride) && selectedColor ? (
+          <div style={{ margin: '1em' }}>
+            <ColorSwatch style={{ padding: '1.4rem', overflow: 'visible', height: '195px', width: '100%' }}
+              color={selectedColor}
+              contentRenderer={() => (
+                <div style={{ position: 'absolute', bottom: '12rem', paddingRight: '0.4rem', width: '100%' }}>
+                  <p className='color-chip__locator__name'>{selectedColor.name}</p>
+                  <p className='color-chip__locator__number'>{fullColorNumber(selectedColor.brandKey, selectedColor.colorNumber, brandKeyNumberSeparator)}</p>
+                  <p className='color-chip__locator__column'>Col: {selectedColor.column}</p>
+                  <p className='color-chip__locator__row'>Row: {selectedColor.row}</p>
                   <button
-                    className={`color-swatch__chip-locator--buttons__button${colorMap[currentFocusedCell].isDark ? ' dark-color' : ''}`}
-                    onClick={() => { window.location.href = colorDetailPageRoot }}
+                    className={`color-chip__locator__button${selectedColor.isDark ? ' dark-color' : ''}`}
+                    onClick={() => {
+                      window.location.href = colorDetailPageRoot?.(selectedColor)
+                      GA.event({ category: 'Color Wall', action: 'View Color Clicks', label: `${selectedColor.name} - ${selectedColor.colorNumber}` }, GA_TRACKER_NAME_BRAND[brandId])
+                    }}
                   >
                     View Color
                   </button>
                 </div>
-              </>
-            )}
-            outline={false}
-            showContents
-          />
-        )
-        }
+              )}
+              outline={false}
+              showContents
+            />
+          </div>
+        ) : null}
       </div>
     </CSSTransition>
   )

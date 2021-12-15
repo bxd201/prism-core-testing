@@ -13,6 +13,7 @@ import ConfigurationContext from './ConfigurationContext'
 
 import { type Configuration, type EmbeddedConfiguration } from '../../shared/types/Configuration'
 import * as GA from 'src/analytics/GoogleAnalytics'
+import { GA_TRACKER_NAME_BRAND } from 'src/constants/globals'
 import { tinycolor } from '@ctrl/tinycolor'
 
 type ReduxStateProps = {
@@ -65,7 +66,7 @@ function ConfigurationContextProvider (props: Props) {
   // TODO: extract this into an appropriate location, perhaps an initial bootstrapping step tied into rdx or ctx -@cody.richmond
   useEffect(() => {
     if (otherFetchedConfig.ga_domain_id) {
-      GA.set({ dimension1: otherFetchedConfig.ga_domain_id })
+      GA.set({ dimension1: otherFetchedConfig.ga_domain_id }, GA_TRACKER_NAME_BRAND[userBrand])
     }
   }, [otherFetchedConfig.ga_domain_id])
 

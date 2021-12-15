@@ -14,20 +14,22 @@ import './Search.scss'
 import 'src/scss/externalComponentSupport/AutoSizer.scss'
 import omitPrefix from 'src/shared/utils/omitPrefix.util'
 import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
-import { fullColorName, fullColorNumber, generateColorWallPageUrl } from 'src/shared/helpers/ColorUtils'
+import { fullColorNumber } from 'src/shared/helpers/ColorUtils'
+import * as GA from 'src/analytics/GoogleAnalytics'
+import { GA_TRACKER_NAME_BRAND } from 'src/constants/globals'
 
 const baseClass = 'Search'
 const EDGE_SIZE = 15
 
-type SearchProps = { contain?: boolean, isChipLocator?: boolean }
+type SearchProps = { closeSearch?: () => void, contain?: boolean, isChipLocator?: boolean }
 
-const Search = ({ contain = false, isChipLocator }: SearchProps) => {
+const Search = ({ closeSearch = () => {}, contain = false, isChipLocator }: SearchProps) => {
   const { results, count, suggestions, suggestionsV2, loading } = useSelector(state => state.colors.search)
-  const { items: { colorStatuses = {} }, primeColorWall } = useSelector(state => state.colors)
-  const { colorDetailPageRoot, colorWallBgColor, colorWallChunkPageRoot }: ColorWallContextProps = useContext(ColorWallContext)
+  const { items: { colorStatuses = {} } } = useSelector(state => state.colors)
+  const { colorDetailPageRoot, colorWallBgColor, colorWallPageRoot }: ColorWallContextProps = useContext(ColorWallContext)
 
   const [hasSearched, updateHasSearched] = useState(typeof count !== 'undefined')
-  const { brandKeyNumberSeparator }: ConfigurationContextType = useContext(ConfigurationContext)
+  const { brandId, brandKeyNumberSeparator }: ConfigurationContextType = useContext(ConfigurationContext)
   const suggestV2 = suggestionsV2 ? [suggestionsV2.names[0], fullColorNumber(suggestionsV2.colorNumber.brandKey, suggestionsV2.colorNumber.colorNumber, brandKeyNumberSeparator), suggestionsV2.families[0]].filter(Boolean) : null
 
   useEffectAfterMount(() => { updateHasSearched(true) }, [count, results, loading])
@@ -43,14 +45,24 @@ const Search = ({ contain = false, isChipLocator }: SearchProps) => {
           <p className='color-swatch__chip-locator__number'>{fullColorNumber(result.brandKey, result.colorNumber, brandKeyNumberSeparator)}</p>
           <div className='color-swatch__chip-locator--buttons' style={{ bottom: '0.6rem' }}>
             <button
-              className={`color-swatch__chip-locator--buttons__button${result.isDark ? ' dark-color' : ''}`}
+              className={`color-swatch__chip-locator--buttons__button ${result.isDark ? 'dark-color' : ''}`}
               onClick={() => {
-                colorWallChunkPageRoot && (window.location.href = `${colorWallChunkPageRoot}/color-wall.html/#${generateColorWallPageUrl(primeColorWall, undefined, result.id, fullColorName(result.brandKey, result.colorNumber, result.name))}`)
+                GA.event({ category: 'QR Color Wall Search', action: 'Find Chip', label: `${result.name} - ${result.colorNumber}` }, GA_TRACKER_NAME_BRAND[brandId])
+                window.location.href = colorWallPageRoot?.(result)
+                closeSearch()
               }}
             >
-                Find Chip
+              Find Chip
             </button>
-            <button className={`color-swatch__chip-locator--buttons__button${result.isDark ? ' dark-color' : ''}`} onClick={() => { window.location.href = colorDetailPageRoot }}>View Color</button>
+            <button
+              className={`color-swatch__chip-locator--buttons__button ${result.isDark ? 'dark-color' : ''}`}
+              onClick={() => {
+                GA.event({ category: 'QR Color Wall Search', action: 'View Color', label: `${result.name} - ${result.colorNumber}` }, GA_TRACKER_NAME_BRAND[brandId])
+                window.location.href = colorDetailPageRoot?.(result)
+              }}
+            >
+              View Color
+            </button>
           </div>
         </>
       ) : defaultContent}
@@ -63,8 +75,7 @@ const Search = ({ contain = false, isChipLocator }: SearchProps) => {
 
   return (
     <div className={baseClass}>
-      <div className={`${baseClass}__results-pane`}
-        style={{ backgroundColor: colorWallBgColor }}>
+      <div className={`${baseClass}__results-pane`} style={{ backgroundColor: colorWallBgColor }}>
         {loading ? (
           <GenericOverlay type={GenericOverlay.TYPES.LOADING} semitransparent>
             <FormattedMessage id='SEARCH.SEARCHING' />
@@ -113,7 +124,7 @@ const Search = ({ contain = false, isChipLocator }: SearchProps) => {
                 const columnCount = Math.max(1, Math.round(gridWidth / 175))
                 const newSize = gridWidth / columnCount
                 const rowCount = Math.ceil(results.length / columnCount)
-                const gridHeight = contain ? height : isChipLocator ? window.innerHeight - 90 - (EDGE_SIZE * 2) : Math.max(height, rowCount * newSize + (EDGE_SIZE * 2))
+                const gridHeight = contain ? height : Math.max(height, rowCount * newSize + (EDGE_SIZE * 2))
 
                 return (
                   <Grid
