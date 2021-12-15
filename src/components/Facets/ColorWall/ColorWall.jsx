@@ -26,6 +26,7 @@ import {
   getTotalGridHeight
 } from './ColorWallUtils'
 import ColorSwatch from './ColorSwatch/ColorSwatch'
+import ColorChipLocator from './ColorChipLocator/ColorChipLocator'
 import { compareKebabs } from 'src/shared/helpers/StringUtils'
 import clamp from 'lodash/clamp'
 import flatten from 'lodash/flatten'
@@ -35,7 +36,7 @@ import noop from 'lodash/noop'
 import range from 'lodash/range'
 import rangeRight from 'lodash/rangeRight'
 import take from 'lodash/take'
-import { generateColorWallPageUrl, fullColorName, fullColorNumber } from 'src/shared/helpers/ColorUtils'
+import { generateColorWallPageUrl, fullColorName } from 'src/shared/helpers/ColorUtils'
 import * as GA from 'src/analytics/GoogleAnalytics'
 import { GA_TRACKER_NAME_BRAND } from 'src/constants/globals'
 import 'src/scss/externalComponentSupport/AutoSizer.scss'
@@ -51,7 +52,7 @@ type ColorWallProps = {
   colorId?: string
 }
 const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: colorIdOverride }: ColorWallProps) => {
-  const { autoHeight, chunkClickable, chunkMiniMap, colorDetailPageRoot, colorNumOnBottom, colorWallBgColor, colorWallPageRoot, leftHandDisplay, swatchMaxSize: globalSwatchMaxSize, swatchMinSize, swatchSizeZoomed, inactiveColorRouteBuilderRef, activeColorRouteBuilderRef }: ColorWallContextProps = useContext(ColorWallContext)
+  const { autoHeight, chunkClickable, chunkMiniMap, colorNumOnBottom, colorWallBgColor, colorWallPageRoot, leftHandDisplay, swatchMaxSize: globalSwatchMaxSize, swatchMinSize, swatchSizeZoomed, inactiveColorRouteBuilderRef, activeColorRouteBuilderRef }: ColorWallContextProps = useContext(ColorWallContext)
   const { brandId, colorWall: { bloomEnabled = true, gapsBetweenChunks = true }, uiStyle }: ConfigurationContextType = useContext(ConfigurationContext)
   const dispatch: { type: string, payload: {} } => void = useDispatch()
   const { url, params: _params }: { url: string, params: { section: ?string, family?: ?string, colorId?: ?string } } = useRouteMatch()
@@ -67,7 +68,6 @@ const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: 
   const history = useHistory()
   const { messages = {} } = useIntl()
   const { chunkGridParams, family, items: { colorMap = {}, colorStatuses = {}, sectionLabels: _sectionLabels = {} }, primeColorWall, section = '', sectionsShortLabel, unChunkedChunks }: ColorsState = useSelector(state => state.colors)
-  const { brandKeyNumberSeparator }: ConfigurationContextType = useContext(ConfigurationContext)
   // if a family is selected, NEVER return section labels (they're only for sections)
   const sectionLabels = useMemo(() => {
     return family ? {} : _sectionLabels
@@ -225,7 +225,7 @@ const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: 
 
         gridRef.current.scrollToPosition(getScrollStep(gridRef.current.state, end, timestamp - startTime))
 
-        if (gridRef.current.state.scrollLeft !== end.scrollLeft || gridRef.current.state.scrollTop !== end.scrollTop) {
+        if (gridRef.current?.state.scrollLeft !== end.scrollLeft || gridRef.current?.state.scrollTop !== end.scrollTop) {
           scroll()
         }
       })
@@ -343,32 +343,7 @@ const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: 
             />
           )}
         </AutoSizer>
-        {colorNumOnBottom && kebabCase(params.section) === kebabCase(sectionOverride) && selectedColor ? (
-          <div className='chip-locator'>
-            <ColorSwatch style={{ position: 'absolute', padding: '1.3rem', width: '100%', height: 'inherit' }}
-              color={selectedColor}
-              contentRenderer={() => (
-                <>
-                  <p className='chip-locator__name'>{selectedColor.name}</p>
-                  <p className='chip-locator__number'>{fullColorNumber(selectedColor.brandKey, selectedColor.colorNumber, brandKeyNumberSeparator)}</p>
-                  <p className='chip-locator__column'>Col: {selectedColor.column}</p>
-                  <p className='chip-locator__row'>Row: {selectedColor.row}</p>
-                  <button
-                    className={`chip-locator__button${selectedColor.isDark ? ' dark-color' : ''}`}
-                    onClick={() => {
-                      window.location.href = colorDetailPageRoot?.(selectedColor)
-                      GA.event({ category: 'Color Wall', action: 'View Color Clicks', label: `${selectedColor.name} - ${selectedColor.colorNumber}` }, GA_TRACKER_NAME_BRAND[brandId])
-                    }}
-                  >
-                    View Color
-                  </button>
-                </>
-              )}
-              outline={false}
-              showContents
-            />
-          </div>
-        ) : null}
+        {colorNumOnBottom && kebabCase(params.section) === kebabCase(sectionOverride) && selectedColor ? <ColorChipLocator color={selectedColor} /> : null}
       </div>
     </CSSTransition>
   )
