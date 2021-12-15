@@ -1,23 +1,22 @@
-/* eslint-disable */
-import React, {useState, useEffect, useContext, useRef} from 'react'
+// @flow
+import React, { useState, useEffect, useContext, useRef } from 'react'
 import ColorWallContext, { type ColorWallContextProps } from '../ColorWall/ColorWallContext'
-import { useHistory, useRouteMatch, Link } from 'react-router-dom'
+import { useHistory, useRouteMatch } from 'react-router-dom'
 import { useSelector } from 'react-redux'
-import isEmpty from 'lodash/isEmpty'
 import noop from 'lodash/noop'
 import kebabCase from 'lodash/kebabCase'
 import ColorWall from '../ColorWall/ColorWall'
-import { ColorWallV2 } from '../ColorWallDeux/ColorWallDeux'
+import ColorWallV2 from './ColorWallV2'
 
 type ColorWallAdapterProps = {
   wallBanner?: string
 }
 
 function ColorWallAdapter ({ wallBanner }: ColorWallAdapterProps) {
-  const { url, params = {} }: { url: string, params: { section: ?string, colorNumber?: ?string } } = useRouteMatch()
+  const { params = {} }: { url: string, params: { section: ?string, colorNumber?: ?string } } = useRouteMatch()
   const { section: routeSection, colorNumber: routeColorNumber } = params
   const cwctxtprops: ColorWallContextProps = useContext(ColorWallContext)
-  const { items: { colorMap = {} }, section = '', sections }: ColorsState = useSelector(state => state.colors)
+  const { items: { colorMap = {} }, sections }: ColorsState = useSelector(state => state.colors)
   // look up color ID
   const [displayedSection, setDisplayedSection] = useState()
   const [displayedColorId, setDisplayedColorId] = useState()
@@ -35,14 +34,13 @@ function ColorWallAdapter ({ wallBanner }: ColorWallAdapterProps) {
           if (isMatch) return next
         }, undefined)
 
-        if (!chosenSection) {
+        if (chosenSection) {
+          setDisplayedColorId()
+          setDisplayedSection(chosenSection)
+        } else {
           // there's a problem; no matched section
           // TODO: handle it
         }
-
-        setDisplayedColorId()
-        setDisplayedSection(chosenSection)
-
       } else if (!routeSection && routeColorNumber) {
         // TODO:
         // we have a color number, but no section -- find section and set both states
@@ -52,13 +50,13 @@ function ColorWallAdapter ({ wallBanner }: ColorWallAdapterProps) {
           if (isMatch) return colorMap[key]
         }, undefined)
 
-        if (!matchedColor) {
+        if (matchedColor) {
+          setDisplayedSection(matchedColor?.colorGroup?.[0])
+          setDisplayedColorId(matchedColor?.id)
+        } else {
           // there's a problem, render an error? route to default?
           // TODO: handle it
         }
-
-        setDisplayedSection(matchedColor.colorGroup[0])
-        setDisplayedColorId(matchedColor.id)
       } else {
         // TODO:
         // has nothing; render main wall
@@ -76,8 +74,8 @@ function ColorWallAdapter ({ wallBanner }: ColorWallAdapterProps) {
   activeColorRouteBuilderRef.current = (color) => {
     history.push(`/color-locator/${kebabCase(`${color.brandKey}${color.colorNumber}`)}`)
   }
-  inactiveColorRouteBuilderRef.current = (a,b,c) => {
-    history.push(`/color-chunk/${kebabCase(section)}`)
+  inactiveColorRouteBuilderRef.current = (color) => {
+    history.push(`/color-chunk/${kebabCase(color.colorGroup[0])}`)
   }
 
   return <>
@@ -88,13 +86,13 @@ function ColorWallAdapter ({ wallBanner }: ColorWallAdapterProps) {
     }}>
       {displayedSection
         ? <ColorWall section={displayedSection} colorId={displayedColorId} key={key} />
-        : <div>
+        : <div style={{ margin: '0 1em' }}>
           <h1 className='cw2__title'>Find Chip.</h1>
           <h2 className='cw2__subtitle'>Click on a section to view colors</h2>
           { wallBanner
             ? <img src={wallBanner} style={{ maxWidth: '100%', margin: '0 auto .5em' }} />
             : null }
-          <ColorWallV2 onChunkClicked={color => history.push(`/color-chunk/${kebabCase(color.colorGroup[0])}`)} />
+          <ColorWallV2 onChunkClicked={color => inactiveColorRouteBuilderRef.current(color)} />
         </div>
       }
     </ColorWallContext.Provider>

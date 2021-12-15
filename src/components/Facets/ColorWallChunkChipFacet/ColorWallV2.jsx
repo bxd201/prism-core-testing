@@ -2,10 +2,9 @@
 import React, { useState } from 'react'
 import noop from 'lodash/noop'
 import AutoSizer from 'react-virtualized-auto-sizer'
-import facetBinder from 'src/facetSupport/facetBinder'
 import WallRenderer from './WallRenderer'
 
-import './ColorWallDeux.scss'
+import './ColorWallV2.scss'
 
 type ColorWallV2Props = {
   onChunkClicked?: Function
@@ -22,5 +21,4 @@ function ColorWallV2 ({ onChunkClicked }: ColorWallV2Props) {
   </div>
 }
 
-export { ColorWallV2 }
-export default facetBinder(ColorWallV2, 'ColorWallDeux')
+export default ColorWallV2

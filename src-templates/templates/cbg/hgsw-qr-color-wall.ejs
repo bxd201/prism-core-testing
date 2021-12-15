@@ -16,7 +16,6 @@
     data-prism-facet="ColorWallChunkChipFacet"
     data-brand="hgsw"
     data-color-wall-bg-color="#FFF"
-    data-chunk-clickable
     data-chunk-mini-map
     data-language="en-US"
     data-route-type="hash"
@@ -30,7 +29,7 @@
       window.PRISM.embed(document.getElementById('prism-embed-root'), {
         wallBanner: 'https://sherwin.scene7.com/is/image/sw/hgsw-qr-banner?fmt=png&qlt=95',
         colorDetailPageRoot: (color) => `${baseHostUrl}/inspiration/colors/${color.colorFamilyNames[0]}/${kebabCase(color.name)}-hgsw-${color.colorNumber}`.toLowerCase(), // example
-        colorWallPageRoot: (colorGroup) => `${baseHostUrl}/prism-templates/templates/cbg/hgsw-qr-color-wall.html#/active/color-wall/section/${kebabCase(colorGroup).toLowerCase()}`
+        // colorWallPageRoot: (colorGroup) => `${baseHostUrl}/prism-templates/templates/cbg/hgsw-qr-color-wall.html#/active/color-wall/section/${kebabCase(colorGroup).toLowerCase()}`
       })
     })()
   </script>
