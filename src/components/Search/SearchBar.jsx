@@ -101,7 +101,7 @@ const SearchBar = (props: Props) => {
     // set new search param which we will actually perform a search on
     setNewSearchParam(_value)
 
-    GA.event({ category: 'Search', action: 'Search Queries', label: _value }, GA_TRACKER_NAME_BRAND[brandId])
+    GA.event({ category: 'QR Color Wall Search', action: 'Search Queries', label: _value }, GA_TRACKER_NAME_BRAND[brandId])
   }, 500), [])
 
   useEffect(() => {
