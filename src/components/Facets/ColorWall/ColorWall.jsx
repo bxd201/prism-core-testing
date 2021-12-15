@@ -43,15 +43,14 @@ import 'src/scss/convenience/overflow-ellipsis.scss'
 import './ColorWall.scss'
 // polyfill to make focus-within css class work in IE
 import 'focus-within-polyfill'
+import minimapDict from './minimap-dict'
 const WALL_HEIGHT = 475
 type ColorWallProps = {
   section?: string,
   family?: string,
-  colorId?: string,
-  activeColorRouteBuilder?: Function,
-  inactiveColorRouteBuilder?: Function
+  colorId?: string
 }
-const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: colorIdOverride, activeColorRouteBuilder, inactiveColorRouteBuilder }: ColorWallProps) => {
+const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: colorIdOverride }: ColorWallProps) => {
   const { chunkClickable, chunkMiniMap, colorDetailPageRoot, colorNumOnBottom, colorWallBgColor, colorWallPageRoot, swatchMaxSize: globalSwatchMaxSize, swatchMinSize, swatchSizeZoomed, inactiveColorRouteBuilderRef, activeColorRouteBuilderRef }: ColorWallContextProps = useContext(ColorWallContext)
   const { brandId, colorWall: { bloomEnabled = true, gapsBetweenChunks = true }, uiStyle }: ConfigurationContextType = useContext(ConfigurationContext)
   const dispatch: { type: string, payload: {} } => void = useDispatch()
@@ -103,6 +102,7 @@ const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: 
   const createActiveColorRoute = useRef(noop)
   const createInactiveColorRoute = useRef(noop)
 
+  // TODO: refactor createActiveColorRoute and createInactiveColorRoute to come in as props from the implementing component
   createActiveColorRoute.current = () => {
     if (activeColorRouteBuilderRef && activeColorRouteBuilderRef.current) {
       activeColorRouteBuilderRef.current(colorMap[focusedCell.current])
@@ -110,9 +110,9 @@ const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: 
       history.push(generateColorWallPageUrl(params.section, params.family, focusedCell.current, fullColorName(colorMap[focusedCell.current])) + (url.endsWith('family/') ? 'family/' : url.endsWith('search/') ? 'search/' : ''))
     }
   }
-  createInactiveColorRoute.current = () => {
+  createInactiveColorRoute.current = (color) => {
     if (inactiveColorRouteBuilderRef && inactiveColorRouteBuilderRef.current) {
-      inactiveColorRouteBuilderRef.current()
+      inactiveColorRouteBuilderRef.current(color)
     } else {
       history.push(generateColorWallPageUrl(section, family))
     }
@@ -180,10 +180,9 @@ const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: 
         '13': () => {
           // directly modifing params.colorId instead of calling history.push will make the react-test-renderer not run the useEffect that depends on params.colorId
           focusedCell.current && createActiveColorRoute.current()
-          // history.push(generateColorWallPageUrl(params.section, params.family, focusedCell.current, fullColorName(colorMap[focusedCell.current])) + (url.endsWith('family/') ? 'family/' : url.endsWith('search/') ? 'search/' : ''))
         },
         '27': () => {
-          focusedCell.current && createInactiveColorRoute.current()
+          focusedCell.current && createInactiveColorRoute.current(colorMap[focusedCell.current])
         },
         '37': () => { cellColumn > 0 && cellRefs.current[chunk[cellRow][cellColumn - 1]].focus() },
         '38': () => { cellRow > 0 && cellRefs.current[chunk[cellRow - 1][cellColumn]].focus() },
@@ -270,10 +269,7 @@ const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: 
               style={{ justifyContent: chunkMiniMap || uiStyle === 'minimal' ? 'space-between' : 'center' }}
             >
               {(sectionsShortLabel && sectionsShortLabel[section]) ?? sectionLabels[section][chunkNum]}
-              {/* It's just marking an spot for the actual component - <div /> TO BE DELETED */}
-              {chunkMiniMap && <div style={{ width: '108px', height: '63px', backgroundColor: '#DDD', display: 'flex', alignItems: 'center', textAlign: 'center' }}>
-                mini map example
-              </div>}
+              {chunkMiniMap && <div style={{ width: '108px', height: '63px', display: 'flex', alignItems: 'center', textAlign: 'center', backgroundImage: `url(${minimapDict[brandId][section]})`, backgroundSize: 'contain', backgroundPosition: 'center right' }} />}
             </div>
           </div>
         )}
@@ -315,7 +311,7 @@ const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: 
     <CSSTransition in={isZoomedIn} timeout={200}>
       <div className='color-wall'>
         {params.colorId && (
-          <button onClick={() => createInactiveColorRoute.current()} className='zoom-out-btn' title={messages.ZOOM_OUT}>
+          <button onClick={() => createInactiveColorRoute.current(selectedColor)} className='zoom-out-btn' title={messages.ZOOM_OUT}>
             <FontAwesomeIcon icon='search-minus' size='lg' />
           </button>
         )}
@@ -343,31 +339,32 @@ const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: 
             />
           )}
         </AutoSizer>
-        {colorNumOnBottom && params.section === kebabCase(section) && selectedColor && (
-          <ColorSwatch style={{ padding: '1.4rem', overflow: 'visible', height: '195px', width: '100%' }}
-            color={selectedColor}
-            contentRenderer={() => (
-              <div style={{ position: 'absolute', bottom: '12rem', paddingRight: '0.4rem', width: '100%' }}>
-                <p className='color-chip__locator__name'>{selectedColor.name}</p>
-                <p className='color-chip__locator__number'>{fullColorNumber(selectedColor.brandKey, selectedColor.colorNumber, brandKeyNumberSeparator)}</p>
-                <p className='color-chip__locator__column'>Col: {selectedColor.column}</p>
-                <p className='color-chip__locator__row'>Row: {selectedColor.row}</p>
-                <button
-                  className={`color-chip__locator__button${selectedColor.isDark ? ' dark-color' : ''}`}
-                  onClick={() => {
-                    window.location.href = colorDetailPageRoot?.(selectedColor)
-                    GA.event({ category: 'Color Wall', action: 'View Color Clicks', label: `${selectedColor.name} - ${selectedColor.colorNumber}` }, GA_TRACKER_NAME_BRAND[brandId])
-                  }}
-                >
-                  View Color
-                </button>
-              </div>
-            )}
-            outline={false}
-            showContents
-          />
-        )
-        }
+        {colorNumOnBottom && kebabCase(params.section) === kebabCase(sectionOverride) && selectedColor ? (
+          <div style={{ margin: '1em' }}>
+            <ColorSwatch style={{ padding: '1.4rem', overflow: 'visible', height: '195px', width: '100%' }}
+              color={selectedColor}
+              contentRenderer={() => (
+                <div style={{ position: 'absolute', bottom: '12rem', paddingRight: '0.4rem', width: '100%' }}>
+                  <p className='color-chip__locator__name'>{selectedColor.name}</p>
+                  <p className='color-chip__locator__number'>{fullColorNumber(selectedColor.brandKey, selectedColor.colorNumber, brandKeyNumberSeparator)}</p>
+                  <p className='color-chip__locator__column'>Col: {selectedColor.column}</p>
+                  <p className='color-chip__locator__row'>Row: {selectedColor.row}</p>
+                  <button
+                    className={`color-chip__locator__button${selectedColor.isDark ? ' dark-color' : ''}`}
+                    onClick={() => {
+                      window.location.href = colorDetailPageRoot?.(selectedColor)
+                      GA.event({ category: 'Color Wall', action: 'View Color Clicks', label: `${selectedColor.name} - ${selectedColor.colorNumber}` }, GA_TRACKER_NAME_BRAND[brandId])
+                    }}
+                  >
+                    View Color
+                  </button>
+                </div>
+              )}
+              outline={false}
+              showContents
+            />
+          </div>
+        ) : null}
       </div>
     </CSSTransition>
   )

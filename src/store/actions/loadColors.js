@@ -87,10 +87,16 @@ export const getColorsRequests = (brandId: string, options?: any) => {
     // { data: { archived: boolean, blue: number, brandKey: string, brandedCollectionNames: string[], colorFamilyNames: string[], colorNumber: string, coordinatingColors: {}..... }[] }
     axios.get(generateBrandedEndpoint(COLORS_ENDPOINT, brandId, options)),
     axios.get(generateBrandedEndpoint(COLOR_CHUNKS_LAYOUT_ENDPOINT, brandId, options))
+      .catch(err => {
+        console.info(`Chunk layout data does not exist for ${brandId}. See following error:`, err)
+      })
+      .then(response => {
+        return response || null
+      })
   ]
 }
 
 export const mapResponsesToColorData = (responses: any[]) => {
-  const [colors, brights, sections, unorderedColors, chunksLayout]: [any, any, FamilyStructure, any, any] = responses.map(response => response.data)
+  const [colors, brights, sections, unorderedColors, chunksLayout]: [any, any, FamilyStructure, any, any] = responses.map(response => response?.data)
   return { colors, brights, sections, unorderedColors, chunksLayout }
 }

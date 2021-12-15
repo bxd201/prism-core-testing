@@ -10,9 +10,7 @@ import HeroLoaderExpanded from 'src/components/Loaders/HeroLoader/HeroLoaderExpa
 import Propper from 'src/components/Propper/Propper'
 
 // kind of a magic number for the time being
-// the color wall is fixed at 475px at the moment, with a max width of 990 on SW.com
-// because of that, this gives us a percentage roughly equal to its aspect ratio
-const proppingPct = 475 / 990 * 100
+const proppingPct = 0.5 * 100
 
 type Props = { children: Node, redirect?: boolean, defaultSection?: string }
 export default ({ children, redirect = true, defaultSection }: Props) => {

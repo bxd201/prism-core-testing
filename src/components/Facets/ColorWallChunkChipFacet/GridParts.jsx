@@ -1,7 +1,6 @@
 import React from 'react'
 import uniqueId from 'lodash/uniqueId'
 import isArray from 'lodash/isArray'
-// import once from 'lodash/once'
 import { VariableSizeGrid } from 'react-window'
 import { TYPES } from './constants'
 

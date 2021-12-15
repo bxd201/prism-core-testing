@@ -21,6 +21,7 @@ export const colorWallA11yContextDefault: ColorWallA11yContextProps = {
 }
 
 export type ColorWallContextProps = {
+  activeColorRouteBuilderRef?: { current: (Color) => void },
   addButtonText?: string,
   chunkClickable?: boolean,
   chunkMiniMap?: boolean,
@@ -33,34 +34,37 @@ export type ColorWallContextProps = {
   displayDetailsLink?: boolean,
   displayInfoButton?: boolean,
   hiddenSections?: string[],
+  inactiveColorRouteBuilderRef?: { current: (Color) => void },
   loading: boolean,
   swatchMaxSize: number,
-  swatchSizeZoomed: number,
   swatchMinSize: number,
   swatchMinSizeZoomed: number,
+  swatchSizeZoomed: number,
   updateA11y: Function
 }
 
 export const colorWallContextDefault: ColorWallContextProps = {
+  activeColorRouteBuilderRef: undefined,
   addButtonText: undefined,
   chunkClickable: false,
   chunkMiniMap: false,
   colorDetailPageRoot: undefined,
   colorNumOnBottom: false,
-  colorWallPageRoot: undefined,
   colorWallBgColor: '#EEEEEE',
+  colorWallPageRoot: undefined,
   displayAddButton: false,
   displayAddButtonText: false,
   displayDetailsLink: true,
-  viewColorText: false,
   displayInfoButton: false,
   hiddenSections: [],
+  inactiveColorRouteBuilderRef: undefined,
   loading: false,
   swatchMaxSize: 33,
-  swatchSizeZoomed: 50,
   swatchMinSize: 14,
   swatchMinSizeZoomed: 50,
-  updateA11y: noop
+  swatchSizeZoomed: 50,
+  updateA11y: noop,
+  viewColorText: false
 }
 
 const ColorWallContext = React.createContext<Object>({
