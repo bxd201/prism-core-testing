@@ -24,10 +24,10 @@
 <script>
   (() => {
     const baseHostUrl = window.location.origin
-    const kebabCase = (string) => string.replace(/[\W_]+|(?<=[a-z0-9])(?=[A-Z])/g, '-')
+    const kebabCase = (string) => string.replace(/[\W_]+/g, '-')
     window.PRISM.embed(document.getElementById('prism-color-search-embed-root'), {
       colorDetailPageRoot: (color) => `${baseHostUrl}/inspiration/colors/${color.colorFamilyNames[0]}/${kebabCase(color.name)}-hgsw-${color.colorNumber}`.toLowerCase(), // example
-      colorWallPageRoot: (color) => `${baseHostUrl}/prism-templates/templates/cbg/hgsw-qr-color-wall.html#/active/color-wall/section/${kebabCase(color.colorGroup[0])}/color/${color.id}/hgsw-${color.colorNumber}-${kebabCase(color.name)}`.toLowerCase(),
+      colorWallPageRoot: ({ brandKey, colorNumber }) => `${baseHostUrl}/prism-templates/templates/cbg/hgsw-qr-color-wall.html#/color-locator/${brandKey}${colorNumber}`,
       bindCallback: ({ publish, subscribe }) => {
         subscribe('prism-close-color-search', () => {
           console.info({ event: 'prism-close-color-search' })
