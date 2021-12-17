@@ -2,7 +2,10 @@
 import axios from 'axios'
 import isEmpty from 'lodash/isEmpty'
 import { generateBrandedEndpoint } from 'src/shared/helpers/DataUtils'
-import { COLLECTION_SUMMARIES_ENDPOINT } from 'constants/endpoints'
+import {
+  // COLLECTION_SUMMARIES_ENDPOINT,
+  DETAILED_COLLECTIONS_ENDPOINT
+} from 'constants/endpoints'
 
 export const REQUEST_CS: string = 'REQUEST_COLLECTION_SUMMARIES'
 export const RECEIVED_CS: string = 'RECEIVE_COLLECTION_SUMMARIES'
@@ -36,6 +39,7 @@ export const receivedCollectionSummaries = (res: { data: any }) => ({ type: RECE
 export const loadCollectionSummaries = (brandId: string, options?: {}) => {
   return (dispatch: Function) => {
     dispatch(requestCollectionSummaries)
-    axios.get(generateBrandedEndpoint(COLLECTION_SUMMARIES_ENDPOINT, brandId, options)).then(res => dispatch(receivedCollectionSummaries(res)))
+    // axios.get(generateBrandedEndpoint(COLLECTION_SUMMARIES_ENDPOINT, brandId, options)).then(res => dispatch(receivedCollectionSummaries(res)))
+    axios.get(generateBrandedEndpoint(DETAILED_COLLECTIONS_ENDPOINT, brandId, options)).then(res => dispatch(receivedCollectionSummaries(res)))
   }
 }
