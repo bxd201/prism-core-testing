@@ -235,7 +235,6 @@ const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: 
   const chunkRenderer = ({ rowIndex: chunkRow, columnIndex: chunkColumn, key, style }) => {
     const chunk: string[][] = chunkGrid[chunkRow][chunkColumn]
     const chunkNum: number = take(chunkGrid, chunkRow).reduce((num, chunkRow) => num + chunkRow.length, 0) + chunkColumn
-    const { wrappingGaspBetween = 0 } = chunkGridParams
     const lengthOfLongestRow: number = getLongestArrayIn2dArray(chunk)
     const containsBloomedCell: boolean = getCoords(chunk, params.colorId)[0] !== -1
     const isLargeLabel: boolean = cellSize * lengthOfLongestRow > 255 // magic number breakpoint for choosing between small and large font
@@ -252,24 +251,23 @@ const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: 
       <div
         key={key}
         className='color-wall-chunk'
-        style={{ ...style, padding: gapsBetweenChunks ? cellSize / 5 : 0, marginTop: wrappingGaspBetween && chunkNum > 0 ? `${wrappingGaspBetween}rem` : 'auto', zIndex: containsBloomedCell ? 1 : 'auto' }}
+        style={{ ...style, padding: gapsBetweenChunks && !chunkMiniMap ? cellSize / 5 : 0, zIndex: containsBloomedCell ? 1 : 'auto' }}
         {...chunkClickableProps}
       >
-        {sectionLabels[section] && sectionLabels[section][chunkNum] !== undefined && !chunkClickableProps && (
+        {sectionLabels[section] && sectionLabels[section][chunkNum] !== undefined && !chunkClickableProps && !chunkMiniMap && (
           <div
             className='color-wall-section-label'
             style={{
               width: style.width - cellSize * 0.4,
-              height: calculateLabelHeight(cellSize, chunkMiniMap),
+              height: calculateLabelHeight(cellSize),
               marginBottom: calculateLabelMarginBottom(isZoomedIn, cellSize)
             }}
           >
             <div
               className={`color-wall-section-label__text ${isLargeLabel ? 'color-wall-section-label__text--large' : ''}`}
-              style={{ justifyContent: chunkMiniMap || uiStyle === 'minimal' ? 'space-between' : 'center' }}
+              style={{ justifyContent: uiStyle === 'minimal' ? 'left' : 'center' }}
             >
-              {(sectionsShortLabel && sectionsShortLabel[section]) ?? sectionLabels[section][chunkNum]}
-              {chunkMiniMap && <div style={{ width: '108px', height: '63px', display: 'flex', alignItems: 'center', textAlign: 'center', backgroundImage: `url(${minimapDict[brandId][section]})`, backgroundSize: 'contain', backgroundPosition: 'center right' }} />}
+              {sectionLabels[section][chunkNum]}
             </div>
           </div>
         )}
@@ -310,8 +308,14 @@ const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: 
   return (
     <CSSTransition in={isZoomedIn} timeout={200}>
       <div className='color-wall'>
+        {chunkMiniMap && (
+          <div className='color-wall-section-label__minimap'>
+            {(sectionsShortLabel && sectionsShortLabel[section]) ?? sectionLabels[section]}
+            <div className='color-wall-section-label__minimap--image' style={{ backgroundImage: `url(${minimapDict[brandId][section]})` }} />
+          </div>
+        )}
         {params.colorId && (
-          <button onClick={() => createInactiveColorRoute.current(selectedColor)} className='zoom-out-btn' title={messages.ZOOM_OUT}>
+          <button onClick={() => createInactiveColorRoute.current(selectedColor)} className='zoom-out-btn' style={{ top: chunkMiniMap ? '3.8rem' : 0 }} title={messages.ZOOM_OUT}>
             <FontAwesomeIcon icon='search-minus' size='lg' />
           </button>
         )}
@@ -328,7 +332,7 @@ const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: 
               width={width}
               rowCount={chunkGrid ? chunkGrid.length : 0}
               rowHeight={({ index }): number => {
-                const hasLabel: boolean = sectionLabels && rowHasLabels(chunkGrid, index, sectionLabels[section])
+                const hasLabel: boolean = sectionLabels && rowHasLabels(chunkGrid, index, sectionLabels[section]) && !chunkMiniMap
                 return ((getHeightOfChunkRow(chunkGrid[index]) + (gapsBetweenChunks ? 0.4 : 0)) * cellSize) + (hasLabel ? cellSize + (isZoomedIn ? 30 : 10) : 0)
               }}
               columnCount={lengthOfLongestChunkRow}

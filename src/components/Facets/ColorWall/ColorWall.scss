@@ -26,7 +26,6 @@
     &__text {
       display: flex;
       align-items: flex-end;
-      text-align: left;
       font-size: .75em;
       hyphens: auto;
       max-width: 100%;
@@ -42,6 +41,22 @@
         font-size: 0.875em;
         letter-spacing: 0.1em;
         line-height: 1.1;
+      }
+    }
+
+    &__minimap {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      font-size: 1.1em;
+      font-weight: 500;
+      margin: .8em .8em 0 .9em;
+
+      &--image {
+        width: 108px;
+        height: 63px;
+        background-size: contain;
+        background-position: center right;
       }
     }
   }
