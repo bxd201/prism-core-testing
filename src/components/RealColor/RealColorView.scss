@@ -1,0 +1,31 @@
+.real-color-view {
+  &__wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: auto;
+    background-color: #ffffff;
+  }
+  &__image {
+    width: 100%;
+  }
+  &__spinner-wrapper {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+  &__spinner {
+    display: flex;
+    margin-top: 2rem;
+    justify-content: center;
+    align-items: center;
+  }
+  &__wait-text {
+    width: 80%;
+    font-size: 0.9rem;
+    text-align: center;
+  }
+}

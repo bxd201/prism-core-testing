@@ -21,6 +21,7 @@ import BatchImageLoader from '../MergeCanvas/BatchImageLoader'
 import type { FlatScene, FlatVariant } from '../../shared/types/Scene'
 import { copySurfaceColors, createMiniColorFromColor } from './util'
 import Propper from '../Propper/Propper'
+
 export type SingleTintableSceneViewProps = {
   surfaceColorsFromParents: [],
   showClearButton?: boolean,
@@ -39,7 +40,8 @@ export type SingleTintableSceneViewProps = {
   buttonPosition: string,
   customToggle: Function,
   // If a spinner is present it will not show the circle loader
-  spinner?: any
+  spinner?: any,
+  primeImage?: boolean
 }
 
 const tintableViewBaseClassName = 'tintable-view'
@@ -47,7 +49,7 @@ const tintableViewBaseClassName = 'tintable-view'
 const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
   const { showClearButton, customButton, handleSurfacePaintedState, allowVariantSwitch, interactive,
     surfaceColorsFromParents, selectedSceneUid, scenesCollection, variantsCollection, selectedVariantName, showThumbnail,
-    adjustSvgHeight, buttonPosition, customToggle, spinner } = props
+    adjustSvgHeight, buttonPosition, customToggle, spinner, primeImage } = props
   const [selectedScene, setSelectedScene] = useState(null)
   const [sceneDims, setSceneDims] = useState({ sceneWidth: 1200, sceneHeight: 725 })
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0)
@@ -106,7 +108,7 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
     }
   }, [surfaceColors, sceneVariants, selectedSceneUid, selectedVariantIndex])
 
-  const getTintableScene = (backgroundImageUrl: string, variant: FlatVariant, scene: FlatScene, colors: Color[], lpColors, adjustSvg: boolean) => {
+  const getTintableScene = (backgroundImageUrl: string, variant: FlatVariant, scene: FlatScene, colors: Color[], lpColors, adjustSvg: boolean, primeImage = false) => {
     const surfaceUrls = []
     const surfaceIds = []
     const highlights = []
@@ -151,6 +153,7 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
     const activeColorId = lpColors?.activeColor?.id
     return (
       <SimpleTintableScene
+        primeImage={primeImage}
         sceneType={variant.sceneType}
         background={backgroundImageUrl}
         surfaceColors={surfaceColors}
@@ -218,7 +221,7 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
       <div className={`${tintableViewBaseClassName}__wrapper`}>
         <BatchImageLoader key={selectedSceneUid} urls={backgroundUrls} handleImagesLoaded={handleImagesLoaded} />
         {backgroundLoaded
-          ? getTintableScene(backgroundUrls[selectedVariantIndex], sceneVariants[selectedVariantIndex], selectedScene, surfaceColors, livePaletteColors, adjustSvgHeight)
+          ? getTintableScene(backgroundUrls[selectedVariantIndex], sceneVariants[selectedVariantIndex], selectedScene, surfaceColors, livePaletteColors, adjustSvgHeight, primeImage)
           : <Propper vPosition={Propper.V_POSITION.CENTER} propSize={`${sceneDims.sceneHeight / sceneDims.sceneWidth * 100}%`}>
             {spinner || <CircleLoader />}
           </Propper>}

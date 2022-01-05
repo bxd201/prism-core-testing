@@ -43,7 +43,8 @@ type FastMaskProps = {
   // this maps to multiple divs
   loadingMessage?: string[],
   spinner?: any,
-  handleError: Function
+  handleError: Function,
+  primeImage?: boolean
 }
 
 const baseClassName = 'fast-mask-view'
@@ -68,7 +69,8 @@ const FastMaskView = (props: FastMaskProps) => {
     isForCVW,
     showSpinner,
     loadingMessage,
-    spinner
+    spinner,
+    primeImage
   } = props
   const intl = useIntl()
   const [blobData, setBlobData] = useState(null)
@@ -165,7 +167,7 @@ const FastMaskView = (props: FastMaskProps) => {
       setHeight(refDims.isPortrait ? refDims.portraitHeight : refDims.landscapeHeight)
     }
 
-    if (savedData) {
+    if (savedData) { // This view handles
       const { width: sceneWidth, height: sceneHeight } = savedData.scene
       setWidth(sceneWidth)
       setHeight(sceneHeight)
@@ -267,6 +269,7 @@ const FastMaskView = (props: FastMaskProps) => {
     {variantsCollection.length && !showSpinner ? <div className={isForCVW ? cvwBaseClassName : baseClassName}>
       <div className={tintWrapperClassName}>
         <SingleTintableSceneView
+          primeImage={primeImage}
           spinner={spinner}
           key={sceneUid}
           surfaceColorsFromParents={surfaceColors}
@@ -278,7 +281,7 @@ const FastMaskView = (props: FastMaskProps) => {
       <div className={isForCVW ? cvwBackgroundWrapperClassName : backgroundWrapperClassName}>
         {imageUrl && <img src={imageUrl} className={backgroundImageClassName} alt={intl.formatMessage({ id: 'USER_UPLOAD' })} />}
         <div className={loaderWrapperClassName}>
-          {<div className={altSpinnerClassName}>{spinner}</div> || <CircleLoader />}
+          {spinner ? <div className={altSpinnerClassName}>{spinner}</div> : <CircleLoader />}
           {loadingMessage?.length ? <div className={loadingMessageWrapperClassName}>{loadingMessage.map(msg => {
             return (<div className={loadingMessageItemsClassName} key={msg}>{msg}</div>)
           })}</div> : null}
