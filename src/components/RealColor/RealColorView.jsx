@@ -80,7 +80,11 @@ export default function RealColorView (props: RealColorViewProps) {
     if (realColorPayload) {
       const { tintedImage, realColorId: id, color } = realColorPayload
       realColorId.current = id
-      cachedImages.current[getColorBrandKey(color)] = tintedImage
+      const brandColorKey = getColorBrandKey(color)
+      if (!cachedImages.current[brandColorKey]) {
+        cachedImages.current[brandColorKey] = tintedImage
+      }
+
       setDisplayImage(tintedImage)
       setShowSpinner(false)
     }
@@ -91,6 +95,7 @@ export default function RealColorView (props: RealColorViewProps) {
     const colorBrandKey = getColorBrandKey(color)
     // check for cached image and exit if one found
     const cachedImage = cachedImages.current[colorBrandKey]
+
     if (cachedImage) {
       setDisplayImage(cachedImage)
       setShowSpinner(false)
