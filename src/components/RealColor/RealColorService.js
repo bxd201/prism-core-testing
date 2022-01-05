@@ -24,18 +24,7 @@ const extractPayload = (response: any, color: Mini) => {
   }
 }
 
-const REAL_COLOR_URL = `${MOCK_API ? '' : ML_API_URL}/prism-ml/`
-
-// eslint-disable-next-line no-unused-vars
-const extractSecondaryPayload = (response: any, color: MiniColor, realColorId: string) => {
-  const payload = response.data?.['per_img_resp']?.[0]?.[0]
-
-  return {
-    tintedImage: payload?.['img'],
-    realColorId,
-    color: { ...color }
-  }
-}
+const REAL_COLOR_URL = `${MOCK_API ? '' : ML_API_URL}/prism-ml`
 
 // This function can either return a promise or fire a callback to support different programming styles
 export default function getTintedImage (
@@ -59,7 +48,7 @@ export default function getTintedImage (
       uploadForm.append('image', imageBlob)
       uploadForm.append('color', `${activeColor.red},${activeColor.green},${activeColor.blue}`)
       console.log('machine learning api: ', REAL_COLOR_URL)
-      return axios.post(REAL_COLOR_URL, uploadForm)
+      return axios.post(`${REAL_COLOR_URL}/`, uploadForm)
     }).then((res) => {
       const realColorData = extractPayload(res, activeColor)// @todo format data -RS
       callback ? callback(realColorData) : resolve(realColorData)
@@ -87,7 +76,7 @@ export function getVariantTintedImage (activeColor, realColorId, callback) {
     uploadForm.append('color', `${activeColor.red},${activeColor.green},${activeColor.blue}`)
     return axios.post(`${REAL_COLOR_URL}/realcolorB`, uploadForm)
       .then((res) => {
-        const realColorData = extractSecondaryPayload(res, activeColor, realColorId)
+        const realColorData = extractPayload(res, activeColor)
         callback ? callback(realColorData) : resolve(realColorData)
       })
       .catch((err) => {
