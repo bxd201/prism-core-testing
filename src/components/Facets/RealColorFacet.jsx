@@ -223,6 +223,7 @@ export function RealColorFacet (props: RealColorFacetProps) {
           uploadInitiated={uploadInitiated}
           shouldShowCloseBtn
           tinter={<RealColorView
+            key={uploadId}
             activeColor={tintColor}
             spinner={<BallSpinner />}
             imageOpacity={0.5}
