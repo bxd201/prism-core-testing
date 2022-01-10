@@ -89,6 +89,7 @@ const prismPromise = new Promise((resolvePrism, rejectPrism) => {
 
   updateGlobalPrismObject('status', 202)
   updateGlobalPrismObject('embed', embedQueue.add)
+  updateGlobalPrismObject('verify', 1641840639586)
 
   addHideStyles()
 

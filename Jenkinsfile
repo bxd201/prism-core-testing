@@ -1,8 +1,8 @@
 def S3_FOLDER_VERSION(branch, prism_version) {
   if (branch == 'release') {
-    "$prism_version"
+    "${prism_version}"
   } else {
-    "$prism_version-${branch.toLowerCase()}"
+    "${prism_version}-${branch.toLowerCase()}"
   }
 }
 
