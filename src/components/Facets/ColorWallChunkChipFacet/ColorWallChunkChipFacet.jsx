@@ -13,6 +13,7 @@ import Router from './Router'
 import ColorWallAdapter from './ColorWallAdapter'
 
 type Props = {
+  autoHeight?: boolean,
   chunkClickable?: boolean,
   chunkMiniMap?: boolean,
   colorDetailPageRoot?: (Color) => string,
@@ -26,6 +27,7 @@ type Props = {
 
 export const ColorWallChunkChipFacet = (props: Props) => {
   const {
+    autoHeight,
     chunkClickable,
     chunkMiniMap,
     colorDetailPageRoot,
@@ -37,6 +39,7 @@ export const ColorWallChunkChipFacet = (props: Props) => {
     wallBanner
   } = props
   const cwContext = useMemo(() => extendIfDefined({}, colorWallContextDefault, {
+    autoHeight: translateBooleanFlexibly(autoHeight),
     chunkClickable: translateBooleanFlexibly(chunkClickable),
     chunkMiniMap: translateBooleanFlexibly(chunkMiniMap),
     colorDetailPageRoot,
@@ -45,7 +48,7 @@ export const ColorWallChunkChipFacet = (props: Props) => {
     colorWallPageRoot,
     displayDetailsLink: translateBooleanFlexibly(displayDetailsLink),
     leftHandDisplay: translateBooleanFlexibly(leftHandDisplay)
-  }), [chunkClickable, chunkMiniMap, colorDetailPageRoot, colorNumOnBottom, colorWallBgColor, colorWallPageRoot, displayDetailsLink, leftHandDisplay])
+  }), [autoHeight, chunkClickable, chunkMiniMap, colorDetailPageRoot, colorNumOnBottom, colorWallBgColor, colorWallPageRoot, displayDetailsLink, leftHandDisplay])
 
   const dispatch = useDispatch()
   const { brandId } = useContext(ConfigurationContext)
@@ -60,7 +63,7 @@ export const ColorWallChunkChipFacet = (props: Props) => {
 
   return (
     <ColorWallContext.Provider value={cwContext}>
-      { reduxSection && <Router>
+      {reduxSection && <Router>
         <ColorWallAdapter wallBanner={wallBanner} />
       </Router>}
     </ColorWallContext.Provider>
