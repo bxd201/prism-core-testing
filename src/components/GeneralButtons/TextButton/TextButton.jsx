@@ -23,10 +23,14 @@ function TextButton (props: ButtonProps) {
       <Link className={_className} to={props.to} onClick={onClick || null} {...other}>
         {props.children}
       </Link>
-    ) : (
+    ) : onClick ? (
       <button type='button' className={_className} onClick={onClick} {...other}>
         {props.children}
       </button>
+    ) : (
+      <div className={_className} {...other}>
+        {props.children}
+      </div>
     )
   )
 }
