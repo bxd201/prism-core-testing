@@ -38,7 +38,7 @@ const baseClass = 'JumpStartFacet'
 function JumpStartFacet () {
   const dispatch = useDispatch()
   const [status, setStatus] = useState(PHASES[PHASE_ORDER[0]])
-  const [uploadedImage, setUploadedImage] = useState()
+  const [uploadedImage, setUploadedImage] = useState(null)
   const { error: fmError } = useSelector(state => state.uploads)
   const [isError, setIsError] = useState(false)
   const [deeplabModel, , modelError] = useDeepLabModel(deepLabModels.ADE20K, 4)
@@ -48,6 +48,7 @@ function JumpStartFacet () {
 
   const roomTypeProbabilities: { current: [RoomType, number][] } = useRef([])
   const [roomRecognitionModel, setRoomRecognitionModel] = useState()
+
   useEffect(() => { tf.loadGraphModel('src/shared/model/model.json').then(setRoomRecognitionModel) }, [])
 
   useEffect(() => {
@@ -134,7 +135,11 @@ function JumpStartFacet () {
               onBeginInteraction={() => setCompletionBarriers(completionBarriers + 1)}
               onEndInteraction={() => setCompletionBarriers(completionBarriers - 1)} />
           ) : (PHASES.RESULTS === status) ? (
-            <ResultsPage roomData={irisData} reset={reset} roomTypeProbabilities={roomTypeProbabilities.current} />
+            <ResultsPage
+              uploadedImage={uploadedImage}
+              roomData={irisData}
+              reset={reset}
+              roomTypeProbabilities={roomTypeProbabilities.current} />
           ) : (PHASES.ERROR === status) ? (
             // TODO: make this real
             <p>There is a problem.</p>
