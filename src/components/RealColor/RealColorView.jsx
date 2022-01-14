@@ -41,6 +41,7 @@ export default function RealColorView (props: RealColorViewProps) {
     handleUpdate,
     waitMessage
   } = props
+
   const [showSpinner, setShowSpinner] = useState<boolean>(true)
   const [displayImage, setDisplayImage] = useState<string>(imageUrl)
   const cachedImages = useRef<any>({})
