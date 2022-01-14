@@ -23,7 +23,7 @@ type WallRendererProps = {
 
 function WallRenderer ({ maxWidth = Infinity, maxHeight = Infinity }: WallRendererProps) {
   const dispatch = useDispatch()
-  const { inactiveColorRouteBuilderRef }: ColorWallContextProps = useContext(ColorWallContext)
+  const { inactiveColorRouteBuilderRef, leftHandDisplay }: ColorWallContextProps = useContext(ColorWallContext)
   const { brandId } = useContext(ConfigurationContext)
   const { items: { colorMap, chunksLayout } }: ColorsState = useSelector(state => state.colors)
   const [wall, setWall] = useState(null)
@@ -45,80 +45,28 @@ function WallRenderer ({ maxWidth = Infinity, maxHeight = Infinity }: WallRender
   useEffect(() => {
     if (!colorMap || !chunksLayout) return
 
-    const { chunks } = chunksLayout
+    const { chunks, layout } = chunksLayout
+    const layoutDirection = layout.filter(layout => layout.name.toLowerCase().indexOf(leftHandDisplay ? 'left' : 'right') > -1)
+    const { chunkIdsLayout } = layoutDirection[0]
+
+    const getValsparColRowsByChunkId = (columnIndex: number, columnPad: boolean, gridWidth: number, gridHeight: number) => (
+      new Col(chunkIdsLayout.map(cols => cols[columnIndex].map(rows => (
+        new Row(rows.length > 1 ? rows.map(row => (
+          new Col([
+            new Chunk(makeGrid(gridWidth, gridHeight, (x, y, color) => new Swatch(undefined, color, swatchPropsRef), chunks[row].chunk[0].map(id => colorMap[id])), null, () => onChunkClicked(colorMap[chunks[row].chunk[0][0]]))
+          ], null, true, swatchPropsRef)
+        )) : rows.map(row => (
+          new Chunk(makeGrid(gridWidth, gridHeight, (x, y, color) => new Swatch(undefined, color, swatchPropsRef), chunks[row].chunk[0].map(id => colorMap[id])), null, () => onChunkClicked(colorMap[chunks[row].chunk[0][0]]))
+        )), null, true, swatchPropsRef)
+      )
+      ))[0], null, columnPad, swatchPropsRef)
+    )
 
     if (brandId === 'valspar') {
       const shapeValspar = new Wall([
         new Row([
-          new Col([
-            new Row([
-              new Col([
-                new Chunk(makeGrid(12, 7, (x, y, color) => new Swatch(undefined, color, swatchPropsRef), chunks[1].chunk[0].map(id => colorMap[id])), null, () => onChunkClicked(colorMap[chunks[1].chunk[0][0]]))
-              ], null, true, swatchPropsRef),
-              new Col([
-                new Chunk(makeGrid(12, 7, (x, y, color) => new Swatch(undefined, color, swatchPropsRef), chunks[2].chunk[0].map(id => colorMap[id])), null, () => onChunkClicked(colorMap[chunks[2].chunk[0][0]]))
-              ], null, true, swatchPropsRef),
-              new Col([
-                new Chunk(makeGrid(12, 7, (x, y, color) => new Swatch(undefined, color, swatchPropsRef), chunks[3].chunk[0].map(id => colorMap[id])), null, () => onChunkClicked(colorMap[chunks[3].chunk[0][0]]))
-              ], null, true, swatchPropsRef),
-              new Col([
-                new Chunk(makeGrid(12, 7, (x, y, color) => new Swatch(undefined, color, swatchPropsRef), chunks[4].chunk[0].map(id => colorMap[id])), null, () => onChunkClicked(colorMap[chunks[4].chunk[0][0]]))
-              ], null, true, swatchPropsRef)
-            ], null, true, swatchPropsRef),
-            new Row([
-              new Col([
-                new Chunk(makeGrid(12, 7, (x, y, color) => new Swatch(undefined, color, swatchPropsRef), chunks[5].chunk[0].map(id => colorMap[id])), null, () => onChunkClicked(colorMap[chunks[5].chunk[0][0]]))
-              ], null, true, swatchPropsRef),
-              new Col([
-                new Chunk(makeGrid(12, 7, (x, y, color) => new Swatch(undefined, color, swatchPropsRef), chunks[6].chunk[0].map(id => colorMap[id])), null, () => onChunkClicked(colorMap[chunks[6].chunk[0][0]]))
-              ], null, true, swatchPropsRef),
-              new Col([
-                new Chunk(makeGrid(12, 7, (x, y, color) => new Swatch(undefined, color, swatchPropsRef), chunks[7].chunk[0].map(id => colorMap[id])), null, () => onChunkClicked(colorMap[chunks[7].chunk[0][0]]))
-              ], null, true, swatchPropsRef),
-              new Col([
-                new Chunk(makeGrid(12, 7, (x, y, color) => new Swatch(undefined, color, swatchPropsRef), chunks[8].chunk[0].map(id => colorMap[id])), null, () => onChunkClicked(colorMap[chunks[8].chunk[0][0]]))
-              ], null, true, swatchPropsRef)
-            ], null, true, swatchPropsRef),
-            new Row([
-              new Col([
-                new Chunk(makeGrid(12, 7, (x, y, color) => new Swatch(undefined, color, swatchPropsRef), chunks[9].chunk[0].map(id => colorMap[id])), null, () => onChunkClicked(colorMap[chunks[9].chunk[0][0]]))
-              ], null, true, swatchPropsRef),
-              new Col([
-                new Chunk(makeGrid(12, 7, (x, y, color) => new Swatch(undefined, color, swatchPropsRef), chunks[10].chunk[0].map(id => colorMap[id])), null, () => onChunkClicked(colorMap[chunks[10].chunk[0][0]]))
-              ], null, true, swatchPropsRef),
-              new Col([
-                new Chunk(makeGrid(12, 7, (x, y, color) => new Swatch(undefined, color, swatchPropsRef), chunks[11].chunk[0].map(id => colorMap[id])), null, () => onChunkClicked(colorMap[chunks[11].chunk[0][0]]))
-              ], null, true, swatchPropsRef),
-              new Col([
-                new Chunk(makeGrid(12, 7, (x, y, color) => new Swatch(undefined, color, swatchPropsRef), chunks[12].chunk[0].map(id => colorMap[id])), null, () => onChunkClicked(colorMap[chunks[12].chunk[0][0]]))
-              ], null, true, swatchPropsRef)
-            ], null, true, swatchPropsRef),
-            new Row([
-              new Col([
-                new Chunk(makeGrid(12, 7, (x, y, color) => new Swatch(undefined, color, swatchPropsRef), chunks[13].chunk[0].map(id => colorMap[id])), null, () => onChunkClicked(colorMap[chunks[13].chunk[0][0]]))
-              ], null, true, swatchPropsRef),
-              new Col([
-                new Chunk(makeGrid(12, 7, (x, y, color) => new Swatch(undefined, color, swatchPropsRef), chunks[14].chunk[0].map(id => colorMap[id])), null, () => onChunkClicked(colorMap[chunks[14].chunk[0][0]]))
-              ], null, true, swatchPropsRef),
-              new Col([
-                new Chunk(makeGrid(12, 7, (x, y, color) => new Swatch(undefined, color, swatchPropsRef), chunks[15].chunk[0].map(id => colorMap[id])), null, () => onChunkClicked(colorMap[chunks[15].chunk[0][0]]))
-              ], null, true, swatchPropsRef),
-              new Col([
-                new Chunk(makeGrid(12, 7, (x, y, color) => new Swatch(undefined, color, swatchPropsRef), chunks[16].chunk[0].map(id => colorMap[id])), null, () => onChunkClicked(colorMap[chunks[16].chunk[0][0]]))
-              ], null, true, swatchPropsRef)
-            ], null, true, swatchPropsRef)
-          ], null, false, swatchPropsRef),
-          new Col([
-            new Row([
-              new Chunk(makeGrid(12, 7, (x, y, color) => new Swatch(undefined, color, swatchPropsRef), chunks[17].chunk[0].map(id => colorMap[id])), null, () => onChunkClicked(colorMap[chunks[17].chunk[0][0]]))
-            ], null, true, swatchPropsRef),
-            new Row([
-              new Chunk(makeGrid(12, 7, (x, y, color) => new Swatch(undefined, color, swatchPropsRef), chunks[19].chunk[0].map(id => colorMap[id])), null, () => onChunkClicked(colorMap[chunks[19].chunk[0][0]]))
-            ], null, true, swatchPropsRef),
-            new Row([
-              new Chunk(makeGrid(12, 7, (x, y, color) => new Swatch(undefined, color, swatchPropsRef), chunks[18].chunk[0].map(id => colorMap[id])), null, () => onChunkClicked(colorMap[chunks[18].chunk[0][0]]))
-            ], null, true, swatchPropsRef)
-          ], null, true, swatchPropsRef)
+          getValsparColRowsByChunkId(0, false, 12, 7),
+          getValsparColRowsByChunkId(1, true, 12, 7)
         ], null, false, swatchPropsRef)
       ], swatchPropsRef)
 

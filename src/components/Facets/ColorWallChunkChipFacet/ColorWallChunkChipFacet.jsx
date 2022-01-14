@@ -20,6 +20,7 @@ type Props = {
   colorWallBgColor?: string,
   colorWallPageRoot?: (string) => string,
   displayDetailsLink?: boolean,
+  leftHandDisplay?: boolean,
   wallBanner?: string
 }
 
@@ -32,6 +33,7 @@ export const ColorWallChunkChipFacet = (props: Props) => {
     colorWallBgColor,
     colorWallPageRoot,
     displayDetailsLink = false,
+    leftHandDisplay,
     wallBanner
   } = props
   const cwContext = useMemo(() => extendIfDefined({}, colorWallContextDefault, {
@@ -41,8 +43,9 @@ export const ColorWallChunkChipFacet = (props: Props) => {
     colorNumOnBottom,
     colorWallBgColor,
     colorWallPageRoot,
-    displayDetailsLink: translateBooleanFlexibly(displayDetailsLink)
-  }), [chunkClickable, chunkMiniMap, colorDetailPageRoot, colorNumOnBottom, colorWallBgColor, colorWallPageRoot, displayDetailsLink])
+    displayDetailsLink: translateBooleanFlexibly(displayDetailsLink),
+    leftHandDisplay: translateBooleanFlexibly(leftHandDisplay)
+  }), [chunkClickable, chunkMiniMap, colorDetailPageRoot, colorNumOnBottom, colorWallBgColor, colorWallPageRoot, displayDetailsLink, leftHandDisplay])
 
   const dispatch = useDispatch()
   const { brandId } = useContext(ConfigurationContext)
