@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
 import ButtonBar from '../GeneralButtons/ButtonBar/ButtonBar'
 import { FormattedMessage, useIntl } from 'react-intl'
+import { isIOS } from 'react-device-detect'
 import uniqueId from 'lodash/uniqueId'
 import debounce from 'lodash/debounce'
 import './SearchBar.scss'
@@ -58,7 +59,9 @@ const SearchBar = (props: Props) => {
 
   useEffect(() => {
     subscribe('prism-focus-color-search-bar', () => {
-      setTimeout(() => { inputRef.current && inputRef.current.focus() }, 150)
+      isIOS
+        ? inputRef.current && inputRef.current.focus()
+        : setTimeout(() => { inputRef.current && inputRef.current.focus() }, 150)
     })
   }, [])
 
