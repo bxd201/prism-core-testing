@@ -51,7 +51,7 @@ type ColorWallProps = {
   colorId?: string
 }
 const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: colorIdOverride }: ColorWallProps) => {
-  const { chunkClickable, chunkMiniMap, colorDetailPageRoot, colorNumOnBottom, colorWallBgColor, colorWallPageRoot, swatchMaxSize: globalSwatchMaxSize, swatchMinSize, swatchSizeZoomed, inactiveColorRouteBuilderRef, activeColorRouteBuilderRef }: ColorWallContextProps = useContext(ColorWallContext)
+  const { autoHeight, chunkClickable, chunkMiniMap, colorDetailPageRoot, colorNumOnBottom, colorWallBgColor, colorWallPageRoot, swatchMaxSize: globalSwatchMaxSize, swatchMinSize, swatchSizeZoomed, inactiveColorRouteBuilderRef, activeColorRouteBuilderRef }: ColorWallContextProps = useContext(ColorWallContext)
   const { brandId, colorWall: { bloomEnabled = true, gapsBetweenChunks = true }, uiStyle }: ConfigurationContextType = useContext(ConfigurationContext)
   const dispatch: { type: string, payload: {} } => void = useDispatch()
   const { url, params: _params }: { url: string, params: { section: ?string, family?: ?string, colorId?: ?string } } = useRouteMatch()
@@ -326,7 +326,7 @@ const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: 
               tabIndex={-1}
               ref={gridRef}
               className='outer-grid'
-              style={{ backgroundColor: colorWallBgColor, padding: cellSize }}
+              style={{ backgroundColor: colorWallBgColor, padding: cellSize, ...(autoHeight ? { height: 'auto' } : null) }}
               cellRenderer={chunkRenderer}
               height={height}
               width={width}
@@ -344,17 +344,17 @@ const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: 
           )}
         </AutoSizer>
         {colorNumOnBottom && kebabCase(params.section) === kebabCase(sectionOverride) && selectedColor ? (
-          <div style={{ margin: '1em' }}>
-            <ColorSwatch style={{ padding: '1.4rem', overflow: 'visible', height: '195px', width: '100%' }}
+          <div className='chip-locator'>
+            <ColorSwatch style={{ position: 'absolute', padding: '1.3rem', width: '100%', height: 'inherit' }}
               color={selectedColor}
               contentRenderer={() => (
-                <div style={{ position: 'absolute', bottom: '12rem', paddingRight: '0.4rem', width: '100%' }}>
-                  <p className='color-chip__locator__name'>{selectedColor.name}</p>
-                  <p className='color-chip__locator__number'>{fullColorNumber(selectedColor.brandKey, selectedColor.colorNumber, brandKeyNumberSeparator)}</p>
-                  <p className='color-chip__locator__column'>Col: {selectedColor.column}</p>
-                  <p className='color-chip__locator__row'>Row: {selectedColor.row}</p>
+                <>
+                  <p className='chip-locator__name'>{selectedColor.name}</p>
+                  <p className='chip-locator__number'>{fullColorNumber(selectedColor.brandKey, selectedColor.colorNumber, brandKeyNumberSeparator)}</p>
+                  <p className='chip-locator__column'>Col: {selectedColor.column}</p>
+                  <p className='chip-locator__row'>Row: {selectedColor.row}</p>
                   <button
-                    className={`color-chip__locator__button${selectedColor.isDark ? ' dark-color' : ''}`}
+                    className={`chip-locator__button${selectedColor.isDark ? ' dark-color' : ''}`}
                     onClick={() => {
                       window.location.href = colorDetailPageRoot?.(selectedColor)
                       GA.event({ category: 'Color Wall', action: 'View Color Clicks', label: `${selectedColor.name} - ${selectedColor.colorNumber}` }, GA_TRACKER_NAME_BRAND[brandId])
@@ -362,7 +362,7 @@ const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: 
                   >
                     View Color
                   </button>
-                </div>
+                </>
               )}
               outline={false}
               showContents

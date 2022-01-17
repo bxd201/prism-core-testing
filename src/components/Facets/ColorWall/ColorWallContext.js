@@ -23,6 +23,7 @@ export const colorWallA11yContextDefault: ColorWallA11yContextProps = {
 export type ColorWallContextProps = {
   activeColorRouteBuilderRef?: { current: (Color) => void },
   addButtonText?: string,
+  autoHeight?: boolean,
   chunkClickable?: boolean,
   chunkMiniMap?: boolean,
   colorDetailPageRoot?: (Color) => string | string,
@@ -47,6 +48,7 @@ export type ColorWallContextProps = {
 export const colorWallContextDefault: ColorWallContextProps = {
   activeColorRouteBuilderRef: undefined,
   addButtonText: undefined,
+  autoHeight: false,
   chunkClickable: false,
   chunkMiniMap: false,
   colorDetailPageRoot: undefined,
