@@ -88,7 +88,6 @@ export const colors = (state: ColorsState = initialState, action: ReduxAction) =
           error: false,
           results: action.payload.results,
           suggestions: action.payload.suggestions,
-          suggestionsV2: action.payload.suggestionsV2,
           count: action.payload.count
         }
       })
