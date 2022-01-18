@@ -30,5 +30,26 @@ export default {
     'Slate & Midnight': 'https://sherwin.scene7.com/is/image/sw/Valspar-SlateMidnight-MiniMap-400px?fmt=png8&wid=250',
     'White': 'https://sherwin.scene7.com/is/image/sw/Valspar-White-MiniMap-400px?fmt=png8&wid=250',
     'Wine & Coral': 'https://sherwin.scene7.com/is/image/sw/Valspar-WineCoral-MiniMap-400px?fmt=png8&wid=250'
+  },
+  'valsparLeftHand': {
+    'Bamboo & Seagrass': 'https://sherwin.scene7.com/is/image/sw/Valspar-LeftHand-BambooSeagrass-MiniMap-400px?fmt=png8&wid=250',
+    'Chestnut & Khaki': 'https://sherwin.scene7.com/is/image/sw/Valspar-LeftHand-ChestnutKhaki-MiniMap-400px?fmt=png8&wid=250',
+    'Blue & Violet': 'https://sherwin.scene7.com/is/image/sw/Valspar-LeftHand-BlueViolet-MiniMap-400px?fmt=png8&wid=250',
+    'Fog & Cocoa': 'https://sherwin.scene7.com/is/image/sw/Valspar-LeftHand-FogCocoa-MiniMap-400px?fmt=png8&wid=250',
+    'Gray': 'https://sherwin.scene7.com/is/image/sw/Valspar-LeftHand-Gray-MiniMap-400px?fmt=png8&wid=250',
+    'Green & Teal': 'https://sherwin.scene7.com/is/image/sw/Valspar-LeftHand-GreenTeal-MiniMap-400px?fmt=png8&wid=250',
+    'Iceberg & Indigo': 'https://sherwin.scene7.com/is/image/sw/Valspar-LeftHand-IcebergIndigo-MiniMap-400px?fmt=png8&wid=250',
+    'Moss & Sage': 'https://sherwin.scene7.com/is/image/sw/Valspar-LeftHand-MossSage-MiniMap-400px?fmt=png8&wid=250',
+    'Olive & Pine': 'https://sherwin.scene7.com/is/image/sw/Valspar-LeftHand-OlivePine-MiniMap-400px?fmt=png8&wid=250',
+    'Neutral': 'https://sherwin.scene7.com/is/image/sw/Valspar-LeftHand-Neutral-MiniMap-400px?fmt=png8&wid=250',
+    'Orange & Yellow': 'https://sherwin.scene7.com/is/image/sw/Valspar-LeftHand-OrangeYellow-MiniMap-400px?fmt=png8&wid=250',
+    'Peach & Saffron': 'https://sherwin.scene7.com/is/image/sw/Valspar-LeftHand-PeachSaffron-MiniMap-400px?fmt=png8&wid=250',
+    'Peacock & Sapphire': 'https://sherwin.scene7.com/is/image/sw/Valspar-LeftHand-PeacockSapphire-MiniMap-400px?fmt=png8&wid=250',
+    'Plum & Paprika': 'https://sherwin.scene7.com/is/image/sw/Valspar-LeftHand-PlumPaprika-MiniMap-400px?fmt=png8&wid=250',
+    'Sand & Bronze': 'https://sherwin.scene7.com/is/image/sw/Valspar-LeftHand-SandBronze-MiniMap-400px?fmt=png8&wid=250',
+    'Red & Pink': 'https://sherwin.scene7.com/is/image/sw/Valspar-LeftHand-RedPink-MiniMap-400px?fmt=png8&wid=250',
+    'Slate & Midnight': 'https://sherwin.scene7.com/is/image/sw/Valspar-LeftHand-SlateMidnight-MiniMap-400px?fmt=png8&wid=250',
+    'White': 'https://sherwin.scene7.com/is/image/sw/Valspar-LeftHand-White-MiniMap-400px?fmt=png8&wid=250',
+    'Wine & Coral': 'https://sherwin.scene7.com/is/image/sw/Valspar-LeftHand-WineCoral-MiniMap-400px?fmt=png8&wid=250'
   }
 }
