@@ -1,0 +1,4 @@
+.tabbed-scene-with-color-select-wrapper {
+    display: flex;
+    flex-direction: column-reverse;
+}
