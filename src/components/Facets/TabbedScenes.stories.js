@@ -1,6 +1,7 @@
-import { createTabbedScenesFacet } from './TabbedScenesFacet'
-import { createTabbedScenesWithColorSelect } from './TabbedSceneWithColorSelect'
-import { groupNames, maxSceneHeight, prismVersion } from '../shared/sharedArgTypes'
+import { createTabbedScenesFacet } from '../../stories/TabbedScenes/TabbedScenesFacet'
+import { createTabbedScenesWithColorSelect } from '../../stories/TabbedScenes/TabbedSceneWithColorSelect'
+import { groupNames, maxSceneHeight, prismVersion } from '../../stories/shared/sharedArgTypes'
+import { handlePromptForPRISMVersion } from '../../stories/shared/utils'
 
 export default {
   title: 'Tabbed Scenes/Facet',
@@ -15,7 +16,7 @@ const defaultArgs = {
   groupNames: '[colors, scenes]',
   defaultColors: '[SW-9173, SW-6785, SW-6837]',
   maxSceneHeight: '640',
-  prismVersion: '2.3.1-develop'
+  prismVersion: handlePromptForPRISMVersion('2.3.1-develop')
 }
 
 const Template = (args) => createTabbedScenesFacet(args)

@@ -1,6 +1,7 @@
-import { createFastMaskFacet } from './FastMaskFacet'
-import { createFastMaskWithColorSelect } from './FastMaskFacetWithColorSelect'
-import { maxSceneHeight, groupNames } from '../shared/sharedArgTypes'
+import { createFastMaskFacet } from '../../stories/FastMask/FastMaskFacet'
+import { createFastMaskWithColorSelect } from '../../stories/FastMask/FastMaskFacetWithColorSelect'
+import { maxSceneHeight, groupNames } from '../../stories/shared/sharedArgTypes'
+import { handlePromptForPRISMVersion } from '../../stories/shared/utils'
 
 export default {
   title: 'FastMask/Facet',
@@ -48,7 +49,7 @@ const defaultArgs = {
   maxSceneHeight: '640',
   uploadButtonText: 'Pick a Picture',
   color: 'SW-6903',
-  prismVersion: '2.3.1-develop'
+  prismVersion: handlePromptForPRISMVersion('2.3.1-develop')
 
 }
 

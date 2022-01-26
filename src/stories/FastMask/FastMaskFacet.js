@@ -55,7 +55,6 @@ export function createFastMaskFacet ({ groupNames, forceSquare, showLoader, scen
   div.setAttribute('data-max-scene-height', maxSceneHeight)
   div.setAttribute('data-upload-button-text', uploadButtonText)
 
-  const url = `https://prism.sherwin-williams.com/${prismVersion || '2.3.1-develop'}/embed.js`
   const script = createPrismEmbedScript(embedPrism, prismVersion)
 
   wrapper.appendChild(div)
