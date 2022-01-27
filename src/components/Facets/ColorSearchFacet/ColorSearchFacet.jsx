@@ -18,20 +18,28 @@ import ColorDataWrapper, { type ColorDataWrapperProps } from '../../../helpers/C
 import extendIfDefined from '../../../shared/helpers/extendIfDefined'
 import type { Color } from 'src/shared/types/Colors.js.flow'
 
+export type CrossSearch = {
+  brand: { id: string, name: string },
+  onClickFindChip: (Color) => string,
+  onClickViewColor: (Color) => string,
+  text: string
+}
 type Props = FacetBinderMethods & FacetPubSubMethods & ColorDataWrapperProps & {
   colorDetailPageRoot?: (Color) => string,
   colorNumOnBottom?: boolean,
   colorWallBgColor?: string,
   colorWallPageRoot?: (Color) => string,
+  crossSearchChipLocator?: CrossSearch,
   loading: boolean,
   routeType: string
 }
 
-const SearchBarLight = ({ hideSearchResult }: { hideSearchResult: () => void }) => (
+const SearchBarLight = ({ hideSearchResult, onSearchQuery }: { hideSearchResult: () => void, onSearchQuery: (string) => void }) => (
   <div className='color-wall-wrap__chunk'>
     <SearchBar
       className='SearchBarLight'
       onClickBackButton={hideSearchResult}
+      onSearchQuery={onSearchQuery}
       placeholder='What color are you looking for?'
       showBackButton
       showCancelButton={false}
@@ -41,7 +49,7 @@ const SearchBarLight = ({ hideSearchResult }: { hideSearchResult: () => void }) 
 )
 
 export const ColorSearch = (props: Props) => {
-  const { colorDetailPageRoot, colorNumOnBottom = true, colorWallBgColor, colorWallPageRoot, loading, routeType } = props
+  const { colorDetailPageRoot, colorNumOnBottom = true, colorWallBgColor, colorWallPageRoot, crossSearchChipLocator, loading, routeType } = props
   const { primeColorWall } = useSelector(state => at(state, 'colors')[0])
   const redirectTo = `/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_WALL}/${ROUTE_PARAMS.SECTION}/${kebabCase(primeColorWall)}/${ROUTE_PARAMS.SEARCH}/`
   const cwContext = useMemo(() => extendIfDefined({}, colorWallContextDefault, {
@@ -52,6 +60,7 @@ export const ColorSearch = (props: Props) => {
     routeType
   }), [colorDetailPageRoot, colorNumOnBottom, colorWallBgColor, colorWallPageRoot, routeType])
   const [mounted, setMounted] = useState(true)
+  const [crossSearch, setCrossSearch] = useState({ query: undefined, searching: false })
   const { publish } = useContext(PubSubCtx)
 
   useEffect(() => {
@@ -72,14 +81,17 @@ export const ColorSearch = (props: Props) => {
           <ColorWallRouter redirect={false}>
             <div className='color-wall-wrap'>
               <div className='color-wall-wrap__search-bar'>
-                <SearchBarLight hideSearchResult={() => {
-                  publish('prism-close-color-search')
-                  setMounted(false)
-                }} />
+                <SearchBarLight
+                  hideSearchResult={() => {
+                    publish('prism-close-color-search')
+                    setMounted(false)
+                  }}
+                  onSearchQuery={(value) => { setCrossSearch({ query: value, searching: false }) }}
+                />
               </div>
               <Route path='(.*)?/search/:query' render={() =>
                 <>
-                  <h6 className='color-search__title'>{primeColorWall} Colors</h6>
+                  <h6 className='color-search__title'>{crossSearch.searching ? crossSearchChipLocator?.brand.name : primeColorWall} Colors</h6>
                   <div className='color-search__container'>
                     <Search
                       isChipLocator
@@ -87,6 +99,7 @@ export const ColorSearch = (props: Props) => {
                         publish('prism-close-color-search')
                         setMounted(false)
                       }}
+                      crossSearch={{ onSearch: () => setCrossSearch(prev => ({ query: prev.query, searching: true })), ...crossSearch, ...crossSearchChipLocator }}
                     />
                   </div>
                   <div className='color-search__margin-bottom' />
