@@ -270,8 +270,12 @@ const FastMaskView = (props: FastMaskProps) => {
   }, [blobUrls])
 
   useEffect(() => {
+    let isLive = true
     if (variantsCollection.length && !imageProcessed) {
       const handleImagePrimed = (img, w, h) => {
+        if (!isLive) {
+          return
+        }
         setImageProcessed(true)
         const updatedVariantCollection = cloneDeep(variantsCollection)
         variantsCollection[0].image = img
@@ -282,6 +286,10 @@ const FastMaskView = (props: FastMaskProps) => {
       console.table(variantsCollection)
       const { image, surfaces } = variantsCollection[0]
       primeImage(image, surfaces[0].surfaceBlobUrl, handleImagePrimed)
+    }
+
+    return () => {
+      isLive = false
     }
   }, [variantsCollection, imageProcessed])
 
