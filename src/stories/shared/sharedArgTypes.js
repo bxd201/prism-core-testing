@@ -29,3 +29,8 @@ export const colorWallBgColor = {
   control: 'text',
   description: 'HEX value used to set the background color of the colorwall ie: #FFFFFF'
 }
+
+export const cdpPageRoot = {
+  control: 'text',
+  description: 'A URL for the Color Detail Page root.'
+}
