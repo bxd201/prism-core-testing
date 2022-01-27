@@ -26,7 +26,7 @@
     "preprism-build": "npm run clear-prism-build-cache",
     "prism-build": "cross-env NODE_ENV=production FIREBASE_AUTH_ENABLED=1 webpack --config webpack/webpack.prism.prod.js",
     "prebuild": "npm run clear-embed-output",
-    "build": "npm run prism-build && npm run embed-build && npm run templates-build",
+    "build": "npm run prism-build && npm run embed-build && npm run templates-build && npm run build-storybook",
     "postbuild": "npm run copy-embed-to-dist",
     "build:publish": "cross-env API_URL=https://prism-api.sherwin-williams.com WEB_URL=https://replatform-prism-web.ebus.swaws webpack --config webpack/webpack.prism.publish.js",
     "test": "jest --coverage",
