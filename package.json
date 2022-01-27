@@ -95,7 +95,7 @@
     "core-js": "2.6.5",
     "delta-e": "0.0.7",
     "eslint-plugin-formatjs": "2.3.13",
-    "firebase": "7.6.2",
+    "firebase": "7.23.0",
     "focus-within-polyfill": "5.0.9",
     "immutability-helper": "3.0.1",
     "jimp": "0.9.3",

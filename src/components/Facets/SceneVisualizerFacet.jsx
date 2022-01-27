@@ -220,7 +220,7 @@ export function SceneVisualizerFacet (props: SceneVisualizerProps) {
           uploadInitiated={uploadInitiated}
           shouldShowCloseBtn
           tinter={<FastMaskView
-            primeImage
+            shouldPrimeImage
             spinner={<BallSpinner />}
             key={uploadId}
             showSpinner={fastMaskLoading}
