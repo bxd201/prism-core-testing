@@ -1,4 +1,5 @@
 // @flow
+// @todo this comp needs to be rewritten when we start masking multiple surfaces. -RS
 /* global FormData */
 import React, { useEffect, useState } from 'react'
 import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
@@ -17,6 +18,7 @@ import cloneDeep from 'lodash/cloneDeep'
 
 import './FastMaskView.scss'
 import type { FastMaskOpenCache } from '../../store/actions/fastMask'
+import primeImage from '../../shared/utils/image/primeImage'
 
 export type FastMaskWorkspace = {
   palette: Color[],
@@ -44,7 +46,7 @@ type FastMaskProps = {
   loadingMessage?: string[],
   spinner?: any,
   handleError: Function,
-  primeImage?: boolean
+  shouldPrimeImage?: boolean
 }
 
 const baseClassName = 'fast-mask-view'
@@ -70,7 +72,7 @@ const FastMaskView = (props: FastMaskProps) => {
     showSpinner,
     loadingMessage,
     spinner,
-    primeImage
+    shouldPrimeImage
   } = props
   const intl = useIntl()
   const [blobData, setBlobData] = useState(null)
@@ -83,10 +85,12 @@ const FastMaskView = (props: FastMaskProps) => {
   // @todo for resize, we should probably use refs for width and height to avoid rerenders -RS
   const [width, setWidth] = useState(0)
   const [height, setHeight] = useState(0)
+  // bypass priming logic if there is no shouldPrimeImage flag
+  const [imageProcessed, setImageProcessed] = useState(!shouldPrimeImage)
 
   /**
    * @param assets: string[][] - a matrix of variants where the inner vector being an order collection where
-   * the first item is a the variant image (background) and the following urls are surfaces.
+   * the first item is the variant image (background) and the following urls are surfaces.
    * @param width
    * @param height
    */
@@ -265,11 +269,34 @@ const FastMaskView = (props: FastMaskProps) => {
     }
   }, [blobUrls])
 
+  useEffect(() => {
+    let isLive = true
+    if (variantsCollection.length && !imageProcessed) {
+      const handleImagePrimed = (img, w, h) => {
+        if (!isLive) {
+          return
+        }
+        setImageProcessed(true)
+        const updatedVariantCollection = cloneDeep(variantsCollection)
+        variantsCollection[0].image = img
+        // @todo I don't think we need to update the thumb -RS
+        setVariantsCollection(updatedVariantCollection)
+      }
+
+      console.table(variantsCollection)
+      const { image, surfaces } = variantsCollection[0]
+      primeImage(image, surfaces[0].surfaceBlobUrl, handleImagePrimed)
+    }
+
+    return () => {
+      isLive = false
+    }
+  }, [variantsCollection, imageProcessed])
+
   return (<>
-    {variantsCollection.length && !showSpinner ? <div className={isForCVW ? cvwBaseClassName : baseClassName}>
+    {imageProcessed && variantsCollection.length && !showSpinner ? <div className={isForCVW ? cvwBaseClassName : baseClassName}>
       <div className={tintWrapperClassName}>
         <SingleTintableSceneView
-          primeImage={primeImage}
           spinner={spinner}
           key={sceneUid}
           surfaceColorsFromParents={surfaceColors}
