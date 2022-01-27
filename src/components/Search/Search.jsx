@@ -1,9 +1,10 @@
 // @flow
 import React, { useContext, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 // $FlowIgnore -- no defs for react-virtualized
 import { Grid, AutoSizer } from 'react-virtualized'
-import { FormattedMessage } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { loadSearchResults } from 'src/store/actions/loadSearchResults'
 import ColorSwatch from 'src/components/Facets/ColorWall/ColorSwatch/ColorSwatch'
 import GenericMessage from '../Messages/GenericMessage'
 import TextButton from '../GeneralButtons/TextButton/TextButton'
@@ -15,21 +16,23 @@ import 'src/scss/externalComponentSupport/AutoSizer.scss'
 import omitPrefix from 'src/shared/utils/omitPrefix.util'
 import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import { fullColorNumber } from 'src/shared/helpers/ColorUtils'
+import type { CrossSearch } from '../Facets/ColorSearchFacet/ColorSearchFacet'
 import * as GA from 'src/analytics/GoogleAnalytics'
 import { GA_TRACKER_NAME_BRAND } from 'src/constants/globals'
 
 const baseClass = 'Search'
 const EDGE_SIZE = 15
 
-type SearchProps = { closeSearch?: () => void, contain?: boolean, isChipLocator?: boolean }
+type SearchProps = { closeSearch?: () => void, contain?: boolean, crossSearch?: { query?: string, searching: boolean, onSearch: () => void } & CrossSearch, isChipLocator?: boolean }
 
-const Search = ({ closeSearch = () => {}, contain = false, isChipLocator }: SearchProps) => {
+const Search = ({ closeSearch = () => {}, contain = false, crossSearch, isChipLocator }: SearchProps) => {
   const { results, count, suggestions, loading } = useSelector(state => state.colors.search)
   const { items: { colorStatuses = {} } } = useSelector(state => state.colors)
   const { colorDetailPageRoot, colorWallBgColor, colorWallPageRoot, routeType }: ColorWallContextProps = useContext(ColorWallContext)
-
-  const [hasSearched, updateHasSearched] = useState(typeof count !== 'undefined')
   const { brandId, brandKeyNumberSeparator }: ConfigurationContextType = useContext(ConfigurationContext)
+  const [hasSearched, updateHasSearched] = useState(typeof count !== 'undefined')
+  const dispatch = useDispatch()
+  const { locale } = useIntl()
 
   useEffectAfterMount(() => { updateHasSearched(true) }, [count, results, loading])
 
@@ -47,7 +50,7 @@ const Search = ({ closeSearch = () => {}, contain = false, isChipLocator }: Sear
               className={`color-swatch__chip-locator--buttons__button ${result.isDark ? 'dark-color' : ''}`}
               onClick={() => {
                 GA.event({ category: 'QR Color Wall Search', action: 'Find Chip', label: `${result.name} - ${result.colorNumber}` }, GA_TRACKER_NAME_BRAND[brandId])
-                window.location.href = colorWallPageRoot?.(result)
+                window.location.href = crossSearch && crossSearch.searching ? crossSearch.onClickFindChip(result) : colorWallPageRoot?.(result)
                 closeSearch()
               }}
             >
@@ -57,7 +60,7 @@ const Search = ({ closeSearch = () => {}, contain = false, isChipLocator }: Sear
               className={`color-swatch__chip-locator--buttons__button ${result.isDark ? 'dark-color' : ''}`}
               onClick={() => {
                 GA.event({ category: 'QR Color Wall Search', action: 'View Color', label: `${result.name} - ${result.colorNumber}` }, GA_TRACKER_NAME_BRAND[brandId])
-                window.location.href = colorDetailPageRoot?.(result)
+                window.location.href = crossSearch && crossSearch.searching ? crossSearch.onClickViewColor(result) : colorDetailPageRoot?.(result)
               }}
             >
               View Color
@@ -99,6 +102,14 @@ const Search = ({ closeSearch = () => {}, contain = false, isChipLocator }: Sear
                   )}
                 </>
               ) }} />
+            ) : null}
+            {crossSearch && !crossSearch.searching ? (
+              <strong>
+                {crossSearch.text} <TextButton onClick={() => {
+                  crossSearch.query && dispatch(loadSearchResults(crossSearch.brand.id, { language: locale }, crossSearch.query))
+                  crossSearch.onSearch()
+                }}>Click here</TextButton>.
+              </strong>
             ) : null}
           </GenericMessage>
         ) : (

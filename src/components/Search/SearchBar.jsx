@@ -25,6 +25,7 @@ type Props = {
   label?: string,
   limitSearchToFamily?: boolean,
   onClickBackButton?: () => void,
+  onSearchQuery?: (string) => void,
   placeholder?: string,
   showBackButton?: boolean,
   showCancelButton?: boolean,
@@ -38,6 +39,7 @@ const SearchBar = (props: Props) => {
     label,
     limitSearchToFamily = false,
     onClickBackButton,
+    onSearchQuery,
     placeholder,
     showBackButton = false,
     showCancelButton = true,
@@ -111,6 +113,8 @@ const SearchBar = (props: Props) => {
 
     // set new search param which we will actually perform a search on
     setNewSearchParam(_value)
+
+    onSearchQuery && onSearchQuery(_value)
 
     GA.event({ category: 'QR Color Wall Search', action: 'Search Queries', label: _value }, GA_TRACKER_NAME_BRAND[brandId])
   }, 500), [])
