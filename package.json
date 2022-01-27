@@ -43,7 +43,7 @@
     "lint-fix": "npm run lint --fix",
     "prepare": "husky install",
     "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "build-storybook": "build-storybook -o ./dist/storybook"
   },
   "main": "dist/index.js",
   "jest": {
