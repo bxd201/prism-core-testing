@@ -152,56 +152,31 @@ $swatch-edge-padding-lg: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-mai
   }
 
   &__chip-locator {
-    &__name {
-      margin-top: 0.3rem;
-      font-size: 1rem;
-      font-weight: 550;
-      line-height: 1.1rem;
-    }
+    margin: .1rem;
+    font-size: 1rem;
+    line-height: 1.3rem;
+
+    &__name { font-weight: 550; }
+
     &__number {
-      font-size: 1rem;
-      margin-top: 0.3rem;
       font-style: italic;
       font-weight: 400;
-      line-height: 1.1rem;
+      line-height: 1.3rem;
     }
 
-    &__col {
+    &__location {
       position: absolute;
-      bottom: 2rem;
-      font-size: 1rem;
-      font-weight: 500;
-      line-height: 1.1rem;
-
-      @include respond-above(sm) {
-        margin-top: 2.5rem;
-      }
+      bottom: .5rem;
     }
 
-    &__row {
-      position: absolute;
-      bottom: 0.8rem;
-      font-size: 1rem;
-      margin-top: 0.3rem;
+    &__col-row {
+      font-style: italic;
       font-weight: 500;
-      line-height: 1.1rem;
-    }
-
-    .chip {
-      &__name {
-        font-size: 1.15rem;
-        line-height: 1.3rem;
-      }
-
-      &__number {
-        font-size: 1rem;
-        line-height: 1.3rem;
-      }
     }
 
     &--buttons {
       position: absolute;
-      bottom: 2.4rem;
+      bottom: .8rem;
       width: 120px;
 
       &__button {
@@ -210,10 +185,11 @@ $swatch-edge-padding-lg: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-mai
         padding: 5px;
         border: 1px solid black;
         border-radius: 15px;
-        font-size: 1rem;
+        font-size: inherit;
         font-weight: 500;
         line-height: 1.1rem;
       }
+
       .dark-color { border-color: white; }
     }
   }
