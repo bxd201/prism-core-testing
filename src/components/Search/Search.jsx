@@ -39,10 +39,10 @@ const Search = ({ closeSearch = () => {}, contain = false, isChipLocator }: Sear
     return result && <ColorSwatch
       color={result}
       contentRenderer={(defaultContent) => isChipLocator ? (
-        <>
+        <div className='color-swatch__chip-locator'>
           <p className='color-swatch__chip-locator__name'>{result.name}</p>
           <p className='color-swatch__chip-locator__number'>{fullColorNumber(result.brandKey, result.colorNumber, brandKeyNumberSeparator)}</p>
-          <div className='color-swatch__chip-locator--buttons' style={{ bottom: '0.6rem' }}>
+          <div className='color-swatch__chip-locator--buttons'>
             <button
               className={`color-swatch__chip-locator--buttons__button ${result.isDark ? 'dark-color' : ''}`}
               onClick={() => {
@@ -63,7 +63,7 @@ const Search = ({ closeSearch = () => {}, contain = false, isChipLocator }: Sear
               View Color
             </button>
           </div>
-        </>
+        </div>
       ) : defaultContent}
       key={key}
       showContents
