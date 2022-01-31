@@ -15,6 +15,7 @@ import JumpStartFacet from 'src/components/Facets/JumpStartFacet/JumpStartFacet'
 import RoomTypeDetector from 'src/components/Facets/RoomTypeDetector/RoomTypeDetector'
 import SceneVisualizerFacet from 'src/components/Facets/SceneVisualizerFacet'
 import TabbedSceneVisualizerFacet from 'src/components/Facets/TabbedSceneVisualizerFacet'
+import RealColorFacet from 'src/components/Facets/RealColorFacet'
 
 export const allFacets = {
   ColorDetailsFacet,
@@ -28,5 +29,6 @@ export const allFacets = {
   JumpStartFacet,
   RoomTypeDetector,
   SceneVisualizerFacet,
-  TabbedSceneVisualizerFacet
+  TabbedSceneVisualizerFacet,
+  RealColorFacet
 }

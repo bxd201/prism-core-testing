@@ -13,6 +13,7 @@ import Router from './Router'
 import ColorWallAdapter from './ColorWallAdapter'
 
 type Props = {
+  autoHeight?: boolean,
   chunkClickable?: boolean,
   chunkMiniMap?: boolean,
   colorDetailPageRoot?: (Color) => string,
@@ -20,11 +21,13 @@ type Props = {
   colorWallBgColor?: string,
   colorWallPageRoot?: (string) => string,
   displayDetailsLink?: boolean,
+  leftHandDisplay?: boolean,
   wallBanner?: string
 }
 
 export const ColorWallChunkChipFacet = (props: Props) => {
   const {
+    autoHeight,
     chunkClickable,
     chunkMiniMap,
     colorDetailPageRoot,
@@ -32,17 +35,20 @@ export const ColorWallChunkChipFacet = (props: Props) => {
     colorWallBgColor,
     colorWallPageRoot,
     displayDetailsLink = false,
+    leftHandDisplay,
     wallBanner
   } = props
   const cwContext = useMemo(() => extendIfDefined({}, colorWallContextDefault, {
+    autoHeight: translateBooleanFlexibly(autoHeight),
     chunkClickable: translateBooleanFlexibly(chunkClickable),
     chunkMiniMap: translateBooleanFlexibly(chunkMiniMap),
     colorDetailPageRoot,
     colorNumOnBottom,
     colorWallBgColor,
     colorWallPageRoot,
-    displayDetailsLink: translateBooleanFlexibly(displayDetailsLink)
-  }), [chunkClickable, chunkMiniMap, colorDetailPageRoot, colorNumOnBottom, colorWallBgColor, colorWallPageRoot, displayDetailsLink])
+    displayDetailsLink: translateBooleanFlexibly(displayDetailsLink),
+    leftHandDisplay: translateBooleanFlexibly(leftHandDisplay)
+  }), [autoHeight, chunkClickable, chunkMiniMap, colorDetailPageRoot, colorNumOnBottom, colorWallBgColor, colorWallPageRoot, displayDetailsLink, leftHandDisplay])
 
   const dispatch = useDispatch()
   const { brandId } = useContext(ConfigurationContext)
@@ -57,7 +63,7 @@ export const ColorWallChunkChipFacet = (props: Props) => {
 
   return (
     <ColorWallContext.Provider value={cwContext}>
-      { reduxSection && <Router>
+      {reduxSection && <Router>
         <ColorWallAdapter wallBanner={wallBanner} />
       </Router>}
     </ColorWallContext.Provider>

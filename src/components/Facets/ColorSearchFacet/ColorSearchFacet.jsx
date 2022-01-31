@@ -23,7 +23,8 @@ type Props = FacetBinderMethods & FacetPubSubMethods & ColorDataWrapperProps & {
   colorNumOnBottom?: boolean,
   colorWallBgColor?: string,
   colorWallPageRoot?: (Color) => string,
-  loading: boolean
+  loading: boolean,
+  routeType: string
 }
 
 const SearchBarLight = ({ hideSearchResult }: { hideSearchResult: () => void }) => (
@@ -40,15 +41,16 @@ const SearchBarLight = ({ hideSearchResult }: { hideSearchResult: () => void }) 
 )
 
 export const ColorSearch = (props: Props) => {
-  const { colorDetailPageRoot, colorNumOnBottom = true, colorWallBgColor, colorWallPageRoot, loading } = props
+  const { colorDetailPageRoot, colorNumOnBottom = true, colorWallBgColor, colorWallPageRoot, loading, routeType } = props
   const { primeColorWall } = useSelector(state => at(state, 'colors')[0])
   const redirectTo = `/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_WALL}/${ROUTE_PARAMS.SECTION}/${kebabCase(primeColorWall)}/${ROUTE_PARAMS.SEARCH}/`
   const cwContext = useMemo(() => extendIfDefined({}, colorWallContextDefault, {
     colorDetailPageRoot,
     colorNumOnBottom,
     colorWallBgColor,
-    colorWallPageRoot
-  }), [colorDetailPageRoot, colorNumOnBottom, colorWallBgColor, colorWallPageRoot])
+    colorWallPageRoot,
+    routeType
+  }), [colorDetailPageRoot, colorNumOnBottom, colorWallBgColor, colorWallPageRoot, routeType])
   const [mounted, setMounted] = useState(true)
   const { publish } = useContext(PubSubCtx)
 
@@ -64,7 +66,7 @@ export const ColorSearch = (props: Props) => {
 
   return (
     <>
-      {mounted && <div id='prism-color-search-container' className='ColorSearch'>
+      {mounted && <div id='prism-color-search-container' className='color-search'>
         <ColorWallContext.Provider value={cwContext}>
           <Redirect to={redirectTo} />
           <ColorWallRouter redirect={false}>
@@ -77,14 +79,17 @@ export const ColorSearch = (props: Props) => {
               </div>
               <Route path='(.*)?/search/:query' render={() =>
                 <>
-                  <h6 className='ColorSearch__title'>{primeColorWall} Colors</h6>
-                  <Search
-                    isChipLocator
-                    closeSearch={() => {
-                      publish('prism-close-color-search')
-                      setMounted(false)
-                    }}
-                  />
+                  <h6 className='color-search__title'>{primeColorWall} Colors</h6>
+                  <div className='color-search__container'>
+                    <Search
+                      isChipLocator
+                      closeSearch={() => {
+                        publish('prism-close-color-search')
+                        setMounted(false)
+                      }}
+                    />
+                  </div>
+                  <div className='color-search__margin-bottom' />
                 </>}
               />
             </div>

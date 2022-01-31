@@ -126,7 +126,7 @@ export function SceneVisualizerFacet (props: SceneVisualizerProps) {
         loadAndCrop(payload, props.maxSceneHeight, forceSquare)
       }
     })
-    // @todo wrap this in an if statement and use facet prop to determine if initial images need to be cropped.  Pre cropping loads A LOT faster.
+    // @todo wrap this in an if statement and use facet prop to determine if initial images needs to be cropped.  Pre cropping loads A LOT faster.
     cropDefaultImage(defaultImage, maxSceneHeight, forceSquare, imageScaleCallback)
     // ref dims should be the same as parent...
     cropDefaultImage(defaultMask, maxSceneHeight, forceSquare, (data) => setInitialMaskImageUrl(data.url))
@@ -220,6 +220,7 @@ export function SceneVisualizerFacet (props: SceneVisualizerProps) {
           uploadInitiated={uploadInitiated}
           shouldShowCloseBtn
           tinter={<FastMaskView
+            shouldPrimeImage
             spinner={<BallSpinner />}
             key={uploadId}
             showSpinner={fastMaskLoading}

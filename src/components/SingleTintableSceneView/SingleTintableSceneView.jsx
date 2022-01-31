@@ -21,6 +21,7 @@ import BatchImageLoader from '../MergeCanvas/BatchImageLoader'
 import type { FlatScene, FlatVariant } from '../../shared/types/Scene'
 import { copySurfaceColors, createMiniColorFromColor } from './util'
 import Propper from '../Propper/Propper'
+
 export type SingleTintableSceneViewProps = {
   surfaceColorsFromParents: [],
   showClearButton?: boolean,
@@ -36,8 +37,8 @@ export type SingleTintableSceneViewProps = {
   showThumbnail?: boolean,
   // this was added to address a css edge case where the svg needs to be auto height instead of 100%
   adjustSvgHeight?: boolean,
-  buttonPosition: string,
-  customToggle: Function,
+  buttonPosition?: string,
+  customToggle?: Function,
   // If a spinner is present it will not show the circle loader
   spinner?: any
 }

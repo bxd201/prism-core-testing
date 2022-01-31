@@ -26,6 +26,7 @@ import {
   getTotalGridHeight
 } from './ColorWallUtils'
 import ColorSwatch from './ColorSwatch/ColorSwatch'
+import ColorChipLocator from './ColorChipLocator/ColorChipLocator'
 import { compareKebabs } from 'src/shared/helpers/StringUtils'
 import clamp from 'lodash/clamp'
 import flatten from 'lodash/flatten'
@@ -35,7 +36,7 @@ import noop from 'lodash/noop'
 import range from 'lodash/range'
 import rangeRight from 'lodash/rangeRight'
 import take from 'lodash/take'
-import { generateColorWallPageUrl, fullColorName, fullColorNumber } from 'src/shared/helpers/ColorUtils'
+import { generateColorWallPageUrl, fullColorName } from 'src/shared/helpers/ColorUtils'
 import * as GA from 'src/analytics/GoogleAnalytics'
 import { GA_TRACKER_NAME_BRAND } from 'src/constants/globals'
 import 'src/scss/externalComponentSupport/AutoSizer.scss'
@@ -51,7 +52,7 @@ type ColorWallProps = {
   colorId?: string
 }
 const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: colorIdOverride }: ColorWallProps) => {
-  const { chunkClickable, chunkMiniMap, colorDetailPageRoot, colorNumOnBottom, colorWallBgColor, colorWallPageRoot, swatchMaxSize: globalSwatchMaxSize, swatchMinSize, swatchSizeZoomed, inactiveColorRouteBuilderRef, activeColorRouteBuilderRef }: ColorWallContextProps = useContext(ColorWallContext)
+  const { autoHeight, chunkClickable, chunkMiniMap, colorNumOnBottom, colorWallBgColor, colorWallPageRoot, leftHandDisplay, swatchMaxSize: globalSwatchMaxSize, swatchMinSize, swatchSizeZoomed, inactiveColorRouteBuilderRef, activeColorRouteBuilderRef }: ColorWallContextProps = useContext(ColorWallContext)
   const { brandId, colorWall: { bloomEnabled = true, gapsBetweenChunks = true }, uiStyle }: ConfigurationContextType = useContext(ConfigurationContext)
   const dispatch: { type: string, payload: {} } => void = useDispatch()
   const { url, params: _params }: { url: string, params: { section: ?string, family?: ?string, colorId?: ?string } } = useRouteMatch()
@@ -67,7 +68,6 @@ const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: 
   const history = useHistory()
   const { messages = {} } = useIntl()
   const { chunkGridParams, family, items: { colorMap = {}, colorStatuses = {}, sectionLabels: _sectionLabels = {} }, primeColorWall, section = '', sectionsShortLabel, unChunkedChunks }: ColorsState = useSelector(state => state.colors)
-  const { brandKeyNumberSeparator }: ConfigurationContextType = useContext(ConfigurationContext)
   // if a family is selected, NEVER return section labels (they're only for sections)
   const sectionLabels = useMemo(() => {
     return family ? {} : _sectionLabels
@@ -225,7 +225,7 @@ const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: 
 
         gridRef.current.scrollToPosition(getScrollStep(gridRef.current.state, end, timestamp - startTime))
 
-        if (gridRef.current.state.scrollLeft !== end.scrollLeft || gridRef.current.state.scrollTop !== end.scrollTop) {
+        if (gridRef.current?.state.scrollLeft !== end.scrollLeft || gridRef.current?.state.scrollTop !== end.scrollTop) {
           scroll()
         }
       })
@@ -235,7 +235,6 @@ const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: 
   const chunkRenderer = ({ rowIndex: chunkRow, columnIndex: chunkColumn, key, style }) => {
     const chunk: string[][] = chunkGrid[chunkRow][chunkColumn]
     const chunkNum: number = take(chunkGrid, chunkRow).reduce((num, chunkRow) => num + chunkRow.length, 0) + chunkColumn
-    const { wrappingGaspBetween = 0 } = chunkGridParams
     const lengthOfLongestRow: number = getLongestArrayIn2dArray(chunk)
     const containsBloomedCell: boolean = getCoords(chunk, params.colorId)[0] !== -1
     const isLargeLabel: boolean = cellSize * lengthOfLongestRow > 255 // magic number breakpoint for choosing between small and large font
@@ -252,24 +251,23 @@ const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: 
       <div
         key={key}
         className='color-wall-chunk'
-        style={{ ...style, padding: gapsBetweenChunks ? cellSize / 5 : 0, marginTop: wrappingGaspBetween && chunkNum > 0 ? `${wrappingGaspBetween}rem` : 'auto', zIndex: containsBloomedCell ? 1 : 'auto' }}
+        style={{ ...style, padding: gapsBetweenChunks && !chunkMiniMap ? cellSize / 5 : 0, zIndex: containsBloomedCell ? 1 : 'auto' }}
         {...chunkClickableProps}
       >
-        {sectionLabels[section] && sectionLabels[section][chunkNum] !== undefined && !chunkClickableProps && (
+        {sectionLabels[section] && sectionLabels[section][chunkNum] !== undefined && !chunkClickableProps && !chunkMiniMap && (
           <div
             className='color-wall-section-label'
             style={{
               width: style.width - cellSize * 0.4,
-              height: calculateLabelHeight(cellSize, chunkMiniMap),
+              height: calculateLabelHeight(cellSize),
               marginBottom: calculateLabelMarginBottom(isZoomedIn, cellSize)
             }}
           >
             <div
               className={`color-wall-section-label__text ${isLargeLabel ? 'color-wall-section-label__text--large' : ''}`}
-              style={{ justifyContent: chunkMiniMap || uiStyle === 'minimal' ? 'space-between' : 'center' }}
+              style={{ justifyContent: uiStyle === 'minimal' ? 'left' : 'center' }}
             >
-              {(sectionsShortLabel && sectionsShortLabel[section]) ?? sectionLabels[section][chunkNum]}
-              {chunkMiniMap && <div style={{ width: '108px', height: '63px', display: 'flex', alignItems: 'center', textAlign: 'center', backgroundImage: `url(${minimapDict[brandId][section]})`, backgroundSize: 'contain', backgroundPosition: 'center right' }} />}
+              {sectionLabels[section][chunkNum]}
             </div>
           </div>
         )}
@@ -310,8 +308,14 @@ const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: 
   return (
     <CSSTransition in={isZoomedIn} timeout={200}>
       <div className='color-wall'>
+        {chunkMiniMap && (
+          <div className='color-wall-section-label__minimap'>
+            {(sectionsShortLabel && sectionsShortLabel[section]) ?? sectionLabels[section]}
+            <div className='color-wall-section-label__minimap--image' style={{ backgroundImage: `url(${minimapDict[`${brandId}${leftHandDisplay ? 'LeftHand' : ''}`][section]})` }} />
+          </div>
+        )}
         {params.colorId && (
-          <button onClick={() => createInactiveColorRoute.current(selectedColor)} className='zoom-out-btn' title={messages.ZOOM_OUT}>
+          <button onClick={() => createInactiveColorRoute.current(selectedColor)} className='zoom-out-btn' style={{ top: chunkMiniMap ? '3.8rem' : 0 }} title={messages.ZOOM_OUT}>
             <FontAwesomeIcon icon='search-minus' size='lg' />
           </button>
         )}
@@ -322,13 +326,13 @@ const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: 
               tabIndex={-1}
               ref={gridRef}
               className='outer-grid'
-              style={{ backgroundColor: colorWallBgColor, padding: cellSize }}
+              style={{ backgroundColor: colorWallBgColor, padding: cellSize, ...(autoHeight ? { height: 'auto' } : null) }}
               cellRenderer={chunkRenderer}
               height={height}
               width={width}
               rowCount={chunkGrid ? chunkGrid.length : 0}
               rowHeight={({ index }): number => {
-                const hasLabel: boolean = sectionLabels && rowHasLabels(chunkGrid, index, sectionLabels[section])
+                const hasLabel: boolean = sectionLabels && rowHasLabels(chunkGrid, index, sectionLabels[section]) && !chunkMiniMap
                 return ((getHeightOfChunkRow(chunkGrid[index]) + (gapsBetweenChunks ? 0.4 : 0)) * cellSize) + (hasLabel ? cellSize + (isZoomedIn ? 30 : 10) : 0)
               }}
               columnCount={lengthOfLongestChunkRow}
@@ -339,32 +343,7 @@ const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: 
             />
           )}
         </AutoSizer>
-        {colorNumOnBottom && kebabCase(params.section) === kebabCase(sectionOverride) && selectedColor ? (
-          <div style={{ margin: '1em' }}>
-            <ColorSwatch style={{ padding: '1.4rem', overflow: 'visible', height: '195px', width: '100%' }}
-              color={selectedColor}
-              contentRenderer={() => (
-                <div style={{ position: 'absolute', bottom: '12rem', paddingRight: '0.4rem', width: '100%' }}>
-                  <p className='color-chip__locator__name'>{selectedColor.name}</p>
-                  <p className='color-chip__locator__number'>{fullColorNumber(selectedColor.brandKey, selectedColor.colorNumber, brandKeyNumberSeparator)}</p>
-                  <p className='color-chip__locator__column'>Col: {selectedColor.column}</p>
-                  <p className='color-chip__locator__row'>Row: {selectedColor.row}</p>
-                  <button
-                    className={`color-chip__locator__button${selectedColor.isDark ? ' dark-color' : ''}`}
-                    onClick={() => {
-                      window.location.href = colorDetailPageRoot?.(selectedColor)
-                      GA.event({ category: 'Color Wall', action: 'View Color Clicks', label: `${selectedColor.name} - ${selectedColor.colorNumber}` }, GA_TRACKER_NAME_BRAND[brandId])
-                    }}
-                  >
-                    View Color
-                  </button>
-                </div>
-              )}
-              outline={false}
-              showContents
-            />
-          </div>
-        ) : null}
+        {colorNumOnBottom && kebabCase(params.section) === kebabCase(sectionOverride) && selectedColor ? <ColorChipLocator color={selectedColor} /> : null}
       </div>
     </CSSTransition>
   )

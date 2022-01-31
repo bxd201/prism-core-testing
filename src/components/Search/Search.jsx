@@ -24,13 +24,12 @@ const EDGE_SIZE = 15
 type SearchProps = { closeSearch?: () => void, contain?: boolean, isChipLocator?: boolean }
 
 const Search = ({ closeSearch = () => {}, contain = false, isChipLocator }: SearchProps) => {
-  const { results, count, suggestions, suggestionsV2, loading } = useSelector(state => state.colors.search)
+  const { results, count, suggestions, loading } = useSelector(state => state.colors.search)
   const { items: { colorStatuses = {} } } = useSelector(state => state.colors)
-  const { colorDetailPageRoot, colorWallBgColor, colorWallPageRoot }: ColorWallContextProps = useContext(ColorWallContext)
+  const { colorDetailPageRoot, colorWallBgColor, colorWallPageRoot, routeType }: ColorWallContextProps = useContext(ColorWallContext)
 
   const [hasSearched, updateHasSearched] = useState(typeof count !== 'undefined')
   const { brandId, brandKeyNumberSeparator }: ConfigurationContextType = useContext(ConfigurationContext)
-  const suggestV2 = suggestionsV2 ? [suggestionsV2.names[0], fullColorNumber(suggestionsV2.colorNumber.brandKey, suggestionsV2.colorNumber.colorNumber, brandKeyNumberSeparator), suggestionsV2.families[0]].filter(Boolean) : null
 
   useEffectAfterMount(() => { updateHasSearched(true) }, [count, results, loading])
 
@@ -87,26 +86,12 @@ const Search = ({ closeSearch = () => {}, contain = false, isChipLocator }: Sear
         ) : !count ? (
           <GenericMessage type={GenericMessage.TYPES.WARNING}>
             <FormattedMessage id='SEARCH.NO_RESULTS' />
-            {suggestV2 && suggestV2.length ? (
-              <FormattedMessage id='SEARCH.SUGGESTIONS' values={{ suggestions: (
-                <>
-                  {suggestV2.map((suggestion, i, arr) =>
-                    <React.Fragment key={i}>
-                      <TextButton to={`./${omitPrefix(suggestV2[i])}`}>
-                        {omitPrefix(suggestV2[i])}
-                      </TextButton>
-                      {i < arr.length - 1 && ', '}
-                    </React.Fragment>
-                  )}
-                </>
-              ) }} />
-            ) : null }
-            {!suggestV2 && !suggestV2.length && suggestions && suggestions.length ? (
+            {suggestions && suggestions.length ? (
               <FormattedMessage id='SEARCH.SUGGESTIONS' values={{ suggestions: (
                 <>
                   {suggestions.map((suggestion, i, arr) =>
                     <React.Fragment key={i}>
-                      <TextButton to={`./${omitPrefix(suggestion)}`}>
+                      <TextButton className={routeType === 'memory' ? 'no-underline' : undefined} to={routeType === 'memory' ? undefined : `./${omitPrefix(suggestion)}`}>
                         {omitPrefix(suggestion)}
                       </TextButton>
                       {i < arr.length - 1 && ', '}

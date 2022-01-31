@@ -148,14 +148,13 @@ export const makeChunkGrid = memoizee((unChunkedChunks: number[][], chunkGridPar
 })
 
 // Calculate the height of the color wall section label depending on the size of cell size
-export const calculateLabelHeight = (cellSize: number, chunkMiniMap?: boolean): number => {
-  const miniMap = chunkMiniMap ? 50 : 0
+export const calculateLabelHeight = (cellSize: number): number => {
   if (cellSize > 29.20 || (cellSize <= 24 && cellSize > 20.90)) {
-    return cellSize * 1 + miniMap
+    return cellSize * 1
   } else if (cellSize < 20.89) {
-    return cellSize * 2.1 + miniMap
+    return cellSize * 2.1
   } else {
-    return cellSize * 1.5 + miniMap
+    return cellSize * 1.5
   }
 }
 

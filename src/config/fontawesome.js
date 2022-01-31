@@ -10,6 +10,8 @@ import { faAngleUp } from '@fortawesome/pro-solid-svg-icons/faAngleUp'
 import { faBrush } from '@fortawesome/pro-solid-svg-icons/faBrush'
 import { faCaretDown } from '@fortawesome/pro-solid-svg-icons/faCaretDown'
 import { faCaretUp } from '@fortawesome/pro-solid-svg-icons/faCaretUp'
+import { faCaretRight } from '@fortawesome/pro-solid-svg-icons/faCaretRight'
+import { faCaretLeft } from '@fortawesome/pro-solid-svg-icons/faCaretLeft'
 import { faCheck } from '@fortawesome/pro-solid-svg-icons/faCheck'
 import { faCheckCircle } from '@fortawesome/pro-solid-svg-icons/faCheckCircle'
 import { faChevronLeft } from '@fortawesome/pro-solid-svg-icons/faChevronLeft'
@@ -87,6 +89,8 @@ const faIcons = [
   faBrush,
   faCaretDown,
   faCaretUp,
+  faCaretRight,
+  faCaretLeft,
   faCheck,
   faCheckCircle,
   faChevronLeft,

@@ -23,6 +23,7 @@ export const colorWallA11yContextDefault: ColorWallA11yContextProps = {
 export type ColorWallContextProps = {
   activeColorRouteBuilderRef?: { current: (Color) => void },
   addButtonText?: string,
+  autoHeight?: boolean,
   chunkClickable?: boolean,
   chunkMiniMap?: boolean,
   colorDetailPageRoot?: (Color) => string | string,
@@ -36,6 +37,8 @@ export type ColorWallContextProps = {
   hiddenSections?: string[],
   inactiveColorRouteBuilderRef?: { current: (Color) => void },
   loading: boolean,
+  leftHandDisplay: boolean,
+  routeType: string,
   swatchMaxSize: number,
   swatchMinSize: number,
   swatchMinSizeZoomed: number,
@@ -46,6 +49,7 @@ export type ColorWallContextProps = {
 export const colorWallContextDefault: ColorWallContextProps = {
   activeColorRouteBuilderRef: undefined,
   addButtonText: undefined,
+  autoHeight: false,
   chunkClickable: false,
   chunkMiniMap: false,
   colorDetailPageRoot: undefined,
@@ -59,6 +63,8 @@ export const colorWallContextDefault: ColorWallContextProps = {
   hiddenSections: [],
   inactiveColorRouteBuilderRef: undefined,
   loading: false,
+  leftHandDisplay: false,
+  routeType: 'hash',
   swatchMaxSize: 33,
   swatchMinSize: 14,
   swatchMinSizeZoomed: 50,

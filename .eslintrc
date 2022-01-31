@@ -32,7 +32,8 @@
     "VAR_NAMES": "readonly",
     "VAR_VALUES": "readonly",
     "WEBPACK_CONSTANTS": "readonly",
-    "Worker": "readonly"
+    "Worker": "readonly",
+    "MOCK_API": "readonly"
   },
   "rules": {
     "react-hooks/rules-of-hooks": "error",

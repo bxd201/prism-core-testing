@@ -7,7 +7,7 @@
   }
 }
 
-.ColorSearch {
+.color-search {
   background-color: white;
 
   &__title {
@@ -16,5 +16,26 @@
     font-weight: 700;
     line-height: 2.5rem;
     border-bottom: 1px solid #ADADAD;
+  }
+
+  &__container {
+    height: calc(100vh - 6.7rem);
+    overflow: scroll;
+
+    @include respond-above(sm) {
+      height: calc(100vh - 6.3rem);
+    }
+
+    @include respond-above(md) {
+      height: 650px;
+    }
+  }
+
+  &__margin-bottom {
+    position: absolute;
+    bottom: 0;
+    height: 15px;
+    width: 100%;
+    background-color: white;
   }
 }

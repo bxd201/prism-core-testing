@@ -45,7 +45,6 @@ export type ChunkGridParams = {
   chunkHeight?: number,
   firstRowLength?: number,
   wrappingEnabled: boolean,
-  wrappingGaspBetween?: number,
   dynamicCellSizingEnabled: boolean
 }
 

@@ -5,6 +5,7 @@
 |--------------------|-------|---------|---|-------------|
 | addButtonText | `string` | `data-add-button-text="Add to Cart` | `addButtonText="Add to Cart"` | Defines text shown with add button on color swatches. Any instances of the `{name}` keyword in this property will be replaced with the name of the associated color. |
 | alwaysShowColorFamilies | `boolean` | `data-always-show-color-families` | `alwaysShowColorFamilies` | Always shows Color Families menu if its width doesn't exceed the container width. |
+| autoHeight | `boolean` | `data-auto-height` | `autoHeight` | Sets Color Wall grid height to auto. |
 | chunkClickable | `boolean` | `data-chunk-clickable` | `chunkClickable` | Color Wall chuncks are clickable buttons linking to chunk section and color swatch buttons are disabled. |
 | chunkMiniMap | `boolean` | `data-chunk-mini-map` | `chunkMiniMap` | Shows Chunk Mini Map on Color Wall labels. |
 | colorDetailsAddColor | `boolean` | `data-color-details-add-color` | `colorDetailsAddColor` | Shows Add Color to palette button on Color Details. |
@@ -15,6 +16,7 @@
 | displayAddButton | `boolean` | `data-display-add-button` | `displayAddButton` | Shows an add button on active color swatches. |
 | displayAddButtonText | `boolean` | `data-display-add-button-text` | `displayAddButtonText` | Shows an add button on active color swatches. |
 | displayDetailsLink | `boolean` | `data-display-details-link` | `displayDetailsLink` | Shows a "View Details" link on active color swatches. |
+| leftHandDisplay | `boolean` | `data-left-hand-display` | `leftHandDisplay` | Display Color Wall V2 at left hand direction. |
 | hiddenSections | `string` or `string[]`| `data-hidden-sections='Emerald Designer Edition|Historic'` | `hiddenSections={[ 'Emerald Designer Edition', 'Historic' ]}` | Designates sections to be removed from the UI of the color wall facet. These sections can still be searched for. Bar delimited section names. |
 | resetOnUnmount | `boolean` | `data-reset-on-unmount` | `resetOnUnmount` | If true will reset the active color in redux when the Facet is unmounted. |
 | swatchShouldEmit | `boolean` | `data-swatch-should-emit` | `swatchShouldEmit` | Will cause a selected swatch to publish a `PRISM/out/emitColor` event. |

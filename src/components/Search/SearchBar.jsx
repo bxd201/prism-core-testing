@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
 import ButtonBar from '../GeneralButtons/ButtonBar/ButtonBar'
 import { FormattedMessage, useIntl } from 'react-intl'
+import { isIOS } from 'react-device-detect'
 import uniqueId from 'lodash/uniqueId'
 import debounce from 'lodash/debounce'
 import './SearchBar.scss'
@@ -15,6 +16,7 @@ import { loadSearchResults, MIN_SEARCH_LENGTH } from 'src/store/actions/loadSear
 import { compareKebabs } from 'src/shared/helpers/StringUtils'
 import recursiveDecodeURIComponent from 'src/shared/utils/recursiveDecodeURIComponent.util'
 import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
+import { PubSubCtx } from 'src/facetSupport/facetPubSub'
 import * as GA from 'src/analytics/GoogleAnalytics'
 import { GA_TRACKER_NAME_BRAND } from 'src/constants/globals'
 
@@ -53,6 +55,15 @@ const SearchBar = (props: Props) => {
   const history = useHistory()
   const inputRef = useRef()
   const { brandId } = useContext(ConfigurationContext)
+  const { subscribe } = useContext(PubSubCtx)
+
+  useEffect(() => {
+    subscribe('prism-focus-color-search-bar', () => {
+      isIOS
+        ? inputRef.current && inputRef.current.focus()
+        : setTimeout(() => { inputRef.current && inputRef.current.focus() }, 150)
+    })
+  }, [])
 
   useEffect(() => {
     // recursively decode incoming query and use it to update input value

@@ -7,10 +7,10 @@ import type { ColorList } from '../../shared/types/Colors.js.flow'
 export const CLEAR_SEARCH: string = 'CLEAR_SEARCH'
 export const clearSearch = () => ({ type: CLEAR_SEARCH })
 
-type SearchResults = { count: Number, suggestions: String[], results: ColorList, suggestionsV2: any }
+type SearchResults = { count: Number, suggestions: string[], results: ColorList }
 export const RECEIVE_SEARCH_RESULTS: string = 'RECEIVE_SEARCH_RESULTS'
-const receiveSearchResults = ({ count, suggestions, results, suggestionsV2 }: SearchResults) => (
-  { type: RECEIVE_SEARCH_RESULTS, payload: { results, count, suggestions, suggestionsV2 } }
+const receiveSearchResults = ({ count, suggestions, results }: SearchResults) => (
+  { type: RECEIVE_SEARCH_RESULTS, payload: { results, count, suggestions } }
 )
 
 export const UPDATE_SEARCH_QUERY: string = 'UPDATE_SEARCH_QUERY'

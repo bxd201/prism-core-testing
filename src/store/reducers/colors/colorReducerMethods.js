@@ -28,7 +28,6 @@ export const initialState: ColorsState = {
     error: false,
     count: void (0),
     suggestions: void (0),
-    suggestionsV2: void (0),
     query: '',
     active: false
   },
