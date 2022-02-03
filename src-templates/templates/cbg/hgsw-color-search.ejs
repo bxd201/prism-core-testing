@@ -34,6 +34,12 @@
       window.PRISM.embed(document.getElementById('prism-color-search-embed-root'), {
         colorDetailPageRoot: (color) => `${baseHostUrl}/inspiration/colors/${color.colorFamilyNames[0]}/${kebabCase(color.name)}-hgsw-${color.colorNumber}`.toLowerCase(), // example
         colorWallPageRoot: ({ brandKey, colorNumber }) => `${baseHostUrl}/prism-templates/templates/cbg/hgsw-qr-color-wall.html#/color-locator/${brandKey}${colorNumber}`,
+        crossSearchChipLocator: {
+          brand: { id: 'valspar', name: 'Valspar' },
+          onClickFindChip: ({ brandKey, colorNumber }) => `${baseHostUrl}/prism-templates/templates/cbg/valspar-qr-color-wall.html#/color-locator/${brandKey}${colorNumber}`,
+          onClickViewColor: (color) => `${baseHostUrl}/inspiration/colors/${color.colorFamilyNames[0]}/${kebabCase(color.name)}-${color.colorNumber}`.toLowerCase(), // example
+          text: 'Looking for Valspar colors at Lowe’s?'
+        },
         bindCallback: ({ publish, subscribe }) => {
           focusSearchBar = () => publish('prism-focus-color-search-bar')
           subscribe('prism-close-color-search', () => {
