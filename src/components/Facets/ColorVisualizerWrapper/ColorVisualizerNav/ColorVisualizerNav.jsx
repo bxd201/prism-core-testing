@@ -24,11 +24,16 @@ import { MODAL_TYPE_ENUM } from 'src/components/CVWModalManager/constants'
 import { triggerPaintSceneLayerPublish } from 'src/store/actions/paintScene'
 import { DEFAULT_NAV_STRUCTURE } from './navStructure'
 import { CVWNavBtn } from '../CVWNavBtn/CVWNavBtn'
+// For development purpose, TO BE REMOVED for prod
+import 'src/fonts/ToBeDeleted/SharpSansDispNo1-Book.woff2'
+import 'src/fonts/ToBeDeleted/tiempos-text-web-regular.woff2'
+// end
 
 const selectDevice = (web, iPhone = web, android = web, iPad = web) => (isMobileOnly ? (isIOS ? iPhone : android) : (isTablet ? iPad : web)) || web
 
 type DropDownMenuProps = {
   title: string,
+  subtitle?: string,
   items: {
     img: string,
     imgiPhone?: string,
@@ -48,7 +53,7 @@ type WrapperProps = {
   children: ReactChildren
 }
 
-export const DropDownMenu = ({ title, items }: DropDownMenuProps) => {
+export const DropDownMenu = ({ title, subtitle, items }: DropDownMenuProps) => {
   const submenu = useRef(null)
   const history = useHistory()
   const { cvw = {}, brandId } = useContext<ConfigurationContextType>(ConfigurationContext)
@@ -85,6 +90,7 @@ export const DropDownMenu = ({ title, items }: DropDownMenuProps) => {
           {closeBtnText ?? <FormattedMessage id='CLOSE' />}{closeBtnShowArrow && <FontAwesomeIcon className='cvw-dashboard-submenu__close__ico' icon={['fa', 'chevron-up']} />}
         </button>
         <h1 className='cvw-dashboard-submenu__header'>{title}</h1>
+        {subtitle && <p className='cvw-dashboard-submenu__subtitle'>{subtitle}</p>}
         <ul className='cvw-dashboard-submenu__content'>
           {items.map(({ img, imgiPhone, imgiPad, imgAndroid, title, titleMobile, content, contentAndroid, contentiPhone, description, onClick }, i, arr) => {
             const Wrapper = ({ children }: WrapperProps) => <button className={`${onClick ? 'cvw-dashboard-submenu__content__btn' : ''}`} disabled={!onClick} onClick={onClick}>{children}</button>
@@ -440,6 +446,7 @@ const ColorVisualizerNav = () => {
           ? <Route path={ROUTES_ENUM.ACTIVE_COLORS}>
             <DropDownMenu
               title={exploreColors?.title ?? messages['NAV_DROPDOWN_TITLE.EXPLORE_COLORS']}
+              subtitle={exploreColors?.subtitle}
               items={dropDownItemsForExploreColors}
             />
           </Route>
