@@ -9,7 +9,8 @@ type HelpSectionItems = {
 }
 type Menu = {
   tab?: string,
-  title?: string
+  title?: string,
+  subtitle?: string
 }
 
 type MenuItem = {
