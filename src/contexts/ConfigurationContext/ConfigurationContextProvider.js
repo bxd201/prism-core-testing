@@ -88,7 +88,9 @@ function ConfigurationContextProvider (props: Props) {
         // PRISM-360 | begin deprecated theme color mapping
         secondary: theme.primary,
         primaryBg: '#fafafa', // light.lightest
-        secondaryBg: '#e2e2e2', // light.lighter
+        secondaryBg: '#fafafa', // light.lightest
+        primaryBorder: '#fff',
+        secondaryBorder: 'none',
         dark: theme.nearBlack,
         light: theme.lightGrey,
         link: theme.primary,
@@ -100,6 +102,7 @@ function ConfigurationContextProvider (props: Props) {
         })(theme.link || theme.primary),
         menuBg: theme.white,
         menuContentTitle: theme.black,
+        menuContentDescription: theme.black,
         menuTxt: theme.black,
         menuTxtHover: theme.secondary,
         buttonBgColor: theme.white,

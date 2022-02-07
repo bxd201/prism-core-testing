@@ -99,10 +99,12 @@ export const DropDownMenu = ({ title, subtitle, items }: DropDownMenuProps) => {
               <li key={i} className={`cvw-dashboard-submenu__content__item ${isWide ? 'cvw-dashboard-submenu__content__item--wide' : ''}`}>
                 <Wrapper>
                   {img ? <div className={`cvw-dashboard-submenu__content__image ${isWide ? 'cvw-dashboard-submenu__content__image--wide' : ''}`} style={{ 'backgroundImage': `url(${brandId === 'sherwin' ? selectDevice(img, imgiPhone, imgAndroid, imgiPad) : img})` }} alt='' /> : null}
-                  <h3 className='cvw-dashboard-submenu__content__title'>{brandId === 'sherwin' ? selectDevice(title, titleMobile) : title}</h3>
-                  <p className='cvw-dashboard-submenu__content__content'>{brandId === 'sherwin' ? selectDevice(content, contentiPhone, contentAndroid) : content}</p>
-                  {description && <p className='cvw-dashboard-submenu__content__tip'>{description}</p>}
-                  {title === 'UPLOAD YOUR PHOTO' && <p className='cvw-dashboard-submenu__content__tip'>Please select a PNG or JPG file</p>}
+                  <div className='cvw-dashboard-submenu__content__label'>
+                    <h3 className='cvw-dashboard-submenu__content__label--title'>{brandId === 'sherwin' ? selectDevice(title, titleMobile) : title}</h3>
+                    <p className='cvw-dashboard-submenu__content__label--content'>{brandId === 'sherwin' ? selectDevice(content, contentiPhone, contentAndroid) : content}</p>
+                    {description && <p className='cvw-dashboard-submenu__content__label--tip'>{description}</p>}
+                    {title === 'UPLOAD YOUR PHOTO' && <p className='cvw-dashboard-submenu__content__label--tip'>Please select a PNG or JPG file</p>}
+                  </div>
                 </Wrapper>
               </li>
             )
