@@ -15,12 +15,15 @@ const defaultThemeColors = {
   dark: '#2e2e2e', // nearly black
   menuBg: '#FFF', // menu background color
   menuContentTitle: '#000', // menu/submenu content title color of each item
+  menuContentDescription: '#000', // menu/submenu content description color of each item
   menuTxt: '#000', // menu text color
   menuTxtHover: '#2cabe2', // menu text color on hover
   primary: '#0069af', // main button/UI color
   secondary: '#2cabe2', // secondary button/UI color
   primaryBg: '#fafafa', // main background color
-  secondaryBg: '#e2e2e2', // secondary background color
+  secondaryBg: '#fafafa', // secondary background color
+  primaryBorder: '#fff', // main border color
+  secondaryBorder: 'none', // secondary border color
   success: '#1fce6d', // success color (usually green)
   warning: '#f2c500', // warning color (usually orange or yellow)
   white: '#FFF', // #FFF,
