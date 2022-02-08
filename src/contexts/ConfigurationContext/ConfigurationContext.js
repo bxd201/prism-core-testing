@@ -8,6 +8,7 @@ type HelpSectionItems = {
   content?: string
 }
 type Menu = {
+  showIcon: boolean,
   tab?: string,
   title?: string,
   subtitle?: string

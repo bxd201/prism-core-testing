@@ -394,7 +394,7 @@ const ColorVisualizerNav = () => {
               ref={navBtnRef}
               active={location.pathname === ROUTES_ENUM.ACTIVE_COLORS}
               onClick={() => handleNavigation(ROUTES_ENUM.ACTIVE_COLORS)}
-              iconRenderer={({ className }) => <span className={`fa-layers fa-fw ${className}`}>
+              iconRenderer={({ className }) => exploreColors?.showIcon && <span className={`fa-layers fa-fw ${className}`}>
                 <FontAwesomeIcon icon={['fal', 'square-full']} size='xs' transform={{ rotate: 10 }} />
                 <FontAwesomeIcon icon={['fal', 'square-full']} size='sm' transform={{ rotate: 0 }} />
                 <FontAwesomeIcon icon={['fal', 'square-full']} size='1x' transform={{ rotate: 350 }} />
@@ -407,7 +407,7 @@ const ColorVisualizerNav = () => {
             <CVWNavBtn
               active={location.pathname === ROUTES_ENUM.INSPIRATION}
               onClick={() => handleNavigation(ROUTES_ENUM.INSPIRATION)}
-              iconRenderer={({ className }) => <span className={`${className}`}>
+              iconRenderer={({ className }) => getInspired?.showIcon && <span className={`${className}`}>
                 <FontAwesomeIcon icon={['fal', 'lightbulb']} size='1x' />
               </span>}
               textRenderer={() => getInspired?.tab ?? <FormattedMessage id='NAV_LINKS.GET_INSPIRED' />} />
@@ -417,7 +417,7 @@ const ColorVisualizerNav = () => {
             <CVWNavBtn
               active={location.pathname === ROUTES_ENUM.SCENES}
               onClick={() => handleNavigation(ROUTES_ENUM.SCENES)}
-              iconRenderer={({ className }) => <span className={`fa-layers fa-fw ${className}`}>
+              iconRenderer={({ className }) => paintAPhoto?.showIcon && <span className={`fa-layers fa-fw ${className}`}>
                 <FontAwesomeIcon icon={['fal', 'square-full']} />
                 <FontAwesomeIcon icon={['fa', 'brush']} size='sm' transform={{ rotate: 320 }} />
               </span>}
