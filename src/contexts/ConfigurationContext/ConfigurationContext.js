@@ -73,6 +73,9 @@ export type ConfigurationContextType = {
   },
   featureExclusions: string[],
   cvw: {
+    backBtn?: {
+      icon?: string
+    },
     closeBtn?: {
       showArrow?: boolean,
       text?: string

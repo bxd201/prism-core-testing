@@ -251,29 +251,4 @@
   &__second-icon {
     margin-top: 6px;
   }
-  &__get-icons {
-    position: relative;
-    float: left;
-    width: 20px;
-    height: 20px;
-    background-color: #F9F9F9;
-    &--color-details-icon {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding-right: 1px;
-      border: 2px solid;
-      font-size: smaller;
-    }
-    &--paint-scene-icon {
-      width: 32px;
-      font-size: large;
-    }
-    &--undo {
-      margin-right: .75em;
-      @include respond-above(sm){
-        margin-left: .75em;
-      }
-    }
-  }
 }
