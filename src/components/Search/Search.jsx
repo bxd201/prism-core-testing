@@ -15,7 +15,6 @@ import './Search.scss'
 import 'src/scss/externalComponentSupport/AutoSizer.scss'
 import omitPrefix from 'src/shared/utils/omitPrefix.util'
 import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
-import { fullColorNumber } from 'src/shared/helpers/ColorUtils'
 import type { CrossSearch } from '../Facets/ColorSearchFacet/ColorSearchFacet'
 import * as GA from 'src/analytics/GoogleAnalytics'
 import { GA_TRACKER_NAME_BRAND } from 'src/constants/globals'
@@ -29,7 +28,7 @@ const Search = ({ closeSearch = () => {}, contain = false, crossSearch, isChipLo
   const { results, count, suggestions, loading } = useSelector(state => state.colors.search)
   const { items: { colorStatuses = {} } } = useSelector(state => state.colors)
   const { colorDetailPageRoot, colorWallBgColor, colorWallPageRoot, routeType }: ColorWallContextProps = useContext(ColorWallContext)
-  const { brandId, brandKeyNumberSeparator }: ConfigurationContextType = useContext(ConfigurationContext)
+  const { brandId }: ConfigurationContextType = useContext(ConfigurationContext)
   const [hasSearched, updateHasSearched] = useState(typeof count !== 'undefined')
   const dispatch = useDispatch()
   const { locale } = useIntl()
@@ -43,8 +42,7 @@ const Search = ({ closeSearch = () => {}, contain = false, crossSearch, isChipLo
       color={result}
       contentRenderer={(defaultContent) => isChipLocator ? (
         <div className='color-swatch__chip-locator'>
-          <p className='color-swatch__chip-locator__name'>{result.name}</p>
-          <p className='color-swatch__chip-locator__number'>{fullColorNumber(result.brandKey, result.colorNumber, brandKeyNumberSeparator)}</p>
+          {defaultContent[0]}
           <div className='color-swatch__chip-locator--buttons'>
             <button
               className={`color-swatch__chip-locator--buttons__button ${result.isDark ? 'dark-color' : ''}`}
@@ -54,7 +52,7 @@ const Search = ({ closeSearch = () => {}, contain = false, crossSearch, isChipLo
                 closeSearch()
               }}
             >
-              Find Chip
+                Find Chip
             </button>
             <button
               className={`color-swatch__chip-locator--buttons__button ${result.isDark ? 'dark-color' : ''}`}
@@ -63,11 +61,11 @@ const Search = ({ closeSearch = () => {}, contain = false, crossSearch, isChipLo
                 window.location.href = crossSearch && crossSearch.searching ? crossSearch.onClickViewColor(result) : colorDetailPageRoot?.(result)
               }}
             >
-              View Color
+                View Color
             </button>
           </div>
         </div>
-      ) : defaultContent}
+      ) : <>{defaultContent}</>}
       key={key}
       showContents
       status={colorStatuses[result.id]}

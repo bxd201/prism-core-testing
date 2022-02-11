@@ -52,8 +52,9 @@ type ColorWallProps = {
   colorId?: string
 }
 const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: colorIdOverride }: ColorWallProps) => {
-  const { autoHeight, chunkClickable, chunkMiniMap, colorNumOnBottom, colorWallBgColor, colorWallPageRoot, leftHandDisplay, swatchMaxSize: globalSwatchMaxSize, swatchMinSize, swatchSizeZoomed, inactiveColorRouteBuilderRef, activeColorRouteBuilderRef }: ColorWallContextProps = useContext(ColorWallContext)
-  const { brandId, colorWall: { bloomEnabled = true, gapsBetweenChunks = true }, uiStyle }: ConfigurationContextType = useContext(ConfigurationContext)
+  const { autoHeight, chunkClickable, chunkMiniMap, colorWallBgColor, colorWallPageRoot, isChipLocator, leftHandDisplay, swatchMaxSize: globalSwatchMaxSize, swatchMinSize, swatchSizeZoomed, inactiveColorRouteBuilderRef, activeColorRouteBuilderRef }: ColorWallContextProps = useContext(ColorWallContext)
+  const { brandId, colorWall: { bloomEnabled = true, colorSwatch = {}, gapsBetweenChunks = true }, uiStyle }: ConfigurationContextType = useContext(ConfigurationContext)
+  const { houseShaped = false } = colorSwatch
   const dispatch: { type: string, payload: {} } => void = useDispatch()
   const { url, params: _params }: { url: string, params: { section: ?string, family?: ?string, colorId?: ?string } } = useRouteMatch()
   // NOTE:  making it possible to override integrated route-based section/family/colorId navigation based on props
@@ -131,7 +132,7 @@ const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: 
   // build the chunkGrid based on color wall container width
   useEffect(() => {
     if (!isEmpty(unChunkedChunks) && !isEmpty(chunkGridParams)) {
-      setChunkGrid(makeChunkGrid(unChunkedChunks, chunkGridParams, Math.ceil(containerWidth / swatchSizeUnzoomed)))
+      setChunkGrid(makeChunkGrid(unChunkedChunks, chunkGridParams, Math.ceil(containerWidth / swatchSizeUnzoomed), !!params.family))
     }
   }, [unChunkedChunks, chunkGridParams, containerWidth])
 
@@ -275,9 +276,12 @@ const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: 
           role='presentation'
           tabIndex={-1}
           className='inner-grid'
+          style={houseShaped ? { marginTop: '1rem' } : {}}
           cellRenderer={({ rowIndex, columnIndex, key, style }) => {
             const colorId: string = chunk[rowIndex][columnIndex]
-            return (colorId && colorMap[colorId] &&
+            const color = colorId && colorMap[colorId]
+
+            return color && (
               <ColorSwatch
                 ref={ref => { cellRefs.current[colorId] = ref }}
                 onFocus={() => {
@@ -286,7 +290,16 @@ const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: 
                 }}
                 key={key}
                 style={style}
-                color={colorMap[colorId]}
+                color={color}
+                contentRenderer={(defaultContent) => isChipLocator ? (
+                  <div className='color-swatch__chip-locator'>
+                    {defaultContent[0]}
+                    <div className='color-swatch__chip-locator__location'>
+                      <p className='color-swatch__chip-locator__name'>Location</p>
+                      <p className='color-swatch__chip-locator__col-row'>Col: {color.column}&nbsp;&nbsp;Row: {color.row}</p>
+                    </div>
+                  </div>
+                ) : houseShaped ? <><div className='color-swatch-house-shaped__label'>{defaultContent[0]}</div>{defaultContent[1]}</> : <>{defaultContent}</>}
                 level={levelMap[colorId]}
                 status={colorStatuses[colorId]}
               />
@@ -343,7 +356,7 @@ const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: 
             />
           )}
         </AutoSizer>
-        {colorNumOnBottom && kebabCase(params.section) === kebabCase(sectionOverride) && selectedColor ? <ColorChipLocator color={selectedColor} /> : null}
+        {isChipLocator && kebabCase(params.section) === kebabCase(sectionOverride) && selectedColor ? <ColorChipLocator color={selectedColor} /> : null}
       </div>
     </CSSTransition>
   )
