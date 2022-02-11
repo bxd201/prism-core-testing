@@ -124,14 +124,14 @@ export const getScrollStep = memoizee((start: ScrollPosition, end: ScrollPositio
 })
 
 //
-export const makeChunkGrid = memoizee((unChunkedChunks: number[][], chunkGridParams: ChunkGridParams, containerWidth: number): string[][][][] => {
-  const { gridWidth, chunkWidth, chunkHeight, firstRowLength, wrappingEnabled } = chunkGridParams
+export const makeChunkGrid = memoizee((unChunkedChunks: number[][], chunkGridParams: ChunkGridParams, containerWidth: number, isFamily: boolean): string[][][][] => {
+  const { gridWidth, chunkWidth, chunkHeight, firstRowLength, familyChunkWidth, wrappingEnabled } = chunkGridParams
 
   const chunkedChunks: string[][][] = unChunkedChunks
     // convert chunk to strings because that is what the color wall currently expects
     .map((unChunkedChunk: number[]): string[] => unChunkedChunk.map(id => id.toString()))
     .map((unChunkedChunk: string[]): string[][] => {
-      const chunkRowLength: ?number = chunkHeight ? unChunkedChunk.length / chunkHeight : chunkWidth
+      const chunkRowLength: ?number = chunkHeight ? unChunkedChunk.length / chunkHeight : (isFamily && familyChunkWidth) ? familyChunkWidth : chunkWidth
       return chunk(unChunkedChunk, chunkRowLength)
     })
 

@@ -60,6 +60,10 @@ export type ConfigurationContextType = {
   },
   colorWall: {
     bloomEnabled: boolean,
+    colorSwatch?: {
+      colorNumOnBottom?: boolean,
+      houseShaped?: boolean,
+    },
     gapsBetweenChunks: boolean,
     searchColor?: string,
     selectSectionText?: string

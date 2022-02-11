@@ -78,7 +78,7 @@ export const Content = ({ msg, color, style }: ContentProps) => {
 
 type ColorSwatchProps = {
   color: Color,
-  contentRenderer?: (defaultContent: Element<any>) => Element<any>,
+  contentRenderer?: ([Element<any>, Element<any>]) => Element<any>, // ([Texts, Btns]) => <></>
   level?: number,
   status?: ColorStatus,
   style?: {},
@@ -88,19 +88,24 @@ type ColorSwatchProps = {
   className?: string
 }
 
-const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, contentRenderer = (defaultContent) => defaultContent, level, showContents = (level === 0), status, style, onFocus, outline = true, className }: ColorSwatchProps, ref) => {
+const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, contentRenderer = (defaultContent) => <>{defaultContent}</>, level, showContents = (level === 0), status, style, onFocus, outline = true, className }: ColorSwatchProps, ref) => {
   const { url, params: { section, family } } = useRouteMatch()
   const history = useHistory()
   const isDisabled = at(status, 'status')[0] === 0
-  const { chunkClickable, colorNumOnBottom, activeColorRouteBuilderRef }: ColorWallContextProps = useContext(ColorWallContext)
-  const { brandId, brandKeyNumberSeparator }: ConfigurationContextType = useContext(ConfigurationContext)
+  const { chunkClickable, activeColorRouteBuilderRef }: ColorWallContextProps = useContext(ColorWallContext)
+  const { brandId, brandKeyNumberSeparator, colorWall: { colorSwatch = {} } }: ConfigurationContextType = useContext(ConfigurationContext)
+  const { colorNumOnBottom = false, houseShaped = false } = colorSwatch
   const { primeColorWall }: ColorsState = useSelector(state => state.colors)
+
+  const baseClass = houseShaped ? 'color-swatch-house-shaped' : 'color-swatch'
+  const colorNumOnBottomClass = houseShaped ? 'label' : 'chip-locator'
+  const border = houseShaped && level === 0 ? { border: 'none' } : {}
 
   return (
     <>
       <button
-        className={`color-swatch color-swatch-${level === undefined ? 'flat' : numToAlphaString(level)}${chunkClickable && section === kebabCase(primeColorWall) ? ' color-swatch--no-outline' : ''}`}
-        style={{ ...style, background: color.hex }}
+        className={`${baseClass} ${baseClass}-${level === undefined ? 'flat' : numToAlphaString(level)}${chunkClickable && section === kebabCase(primeColorWall) ? ' color-swatch--no-outline' : ''}`}
+        style={{ ...border, ...style, background: color.hex }}
         ref={ref}
         tabIndex={outline ? 0 : -1}
         onFocus={onFocus}
@@ -118,6 +123,7 @@ const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, co
         }
         aria-label={fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator)}
       >
+        {houseShaped && <div className={`${baseClass}--roof`} style={{ borderBottomColor: color.hex }} />}
         {isDisabled && <div className='color-swatch__flag' />}
       </button>
       {showContents && (<section
@@ -125,29 +131,23 @@ const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, co
         ref={ref}
         onFocus={onFocus}
         aria-label={fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator)}
-        className={`color-swatch__content ${color.isDark ? ' color-swatch__content--dark-color' : ''}${outline ? ' color-swatch__content--focus' : ''}`}
+        className={`${baseClass}__content${color.isDark ? ' color-swatch__content--dark-color' : ''}${outline ? ` ${baseClass}__content--focus` : ''}${houseShaped && level === 0 ? ' color-swatch--no-outline' : ''}`}
         style={style}
       >
-        {contentRenderer(
-          <>
-            {colorNumOnBottom ? (
-              <div className='color-swatch__chip-locator'>
-                <p className='color-swatch__chip-locator__name'>{color.name}</p>
-                <p className='color-swatch__chip-locator__number'>{fullColorNumber(color.brandKey, color.colorNumber, brandKeyNumberSeparator)}</p>
-                <div className='color-swatch__chip-locator__location'>
-                  <p className='color-swatch__chip-locator__name'>Location</p>
-                  <p className='color-swatch__chip-locator__col-row'>Col: {color.column}&nbsp;&nbsp;Row: {color.row}</p>
-                </div>
-              </div>
-            ) : (
-              <>
-                <p className='color-swatch__content__number'>{fullColorNumber(color.brandKey, color.colorNumber, brandKeyNumberSeparator)}</p>
-                <p className='color-swatch__content__name'>{color.name}</p>
-              </>
-            )}
-            <Content msg={at(status, 'message')[0]} color={color} />
-          </>
-        )}
+        {contentRenderer([
+          colorNumOnBottom ? (
+            <div key='0'>
+              <p className={`${baseClass}__${colorNumOnBottomClass}__name`}>{color.name}</p>
+              <p className={`${baseClass}__${colorNumOnBottomClass}__number`}>{fullColorNumber(color.brandKey, color.colorNumber, brandKeyNumberSeparator)}</p>
+            </div>
+          ) : (
+            <div key='0'>
+              <p className='color-swatch__content__number'>{fullColorNumber(color.brandKey, color.colorNumber, brandKeyNumberSeparator)}</p>
+              <p className='color-swatch__content__name'>{color.name}</p>
+            </div>
+          ),
+          <Content msg={at(status, 'message')[0]} color={color} key='1' />
+        ])}
       </section>)}
     </>
   )
