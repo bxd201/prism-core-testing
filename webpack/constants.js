@@ -63,7 +63,8 @@ const facetEntryPoints = {
   RoomTypeDetector: path.join(srcPath, 'components/Facets/RoomTypeDetector/RoomTypeDetector.jsx'),
   SceneVisualizerFacet: path.join(srcPath, 'components/Facets/SceneVisualizerFacet.jsx'),
   TabbedSceneVisualizerFacet: path.join(srcPath, 'components/Facets/TabbedSceneVisualizerFacet.jsx'),
-  RealColorFacet: path.join(srcPath, 'components/Facets/RealColorFacet.jsx')
+  RealColorFacet: path.join(srcPath, 'components/Facets/RealColorFacet.jsx'),
+  ImageColorPickerFacet: path.join(srcPath, 'components/Facets/ImageColorPickerFacet/ImageColorPickerFacet.jsx')
 }
 
 module.exports = {
