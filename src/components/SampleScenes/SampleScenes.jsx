@@ -66,6 +66,7 @@ export const SampleScenesWrapper = ({ isColorTinted, setHeader, activateScene }:
 
 type Props = { data: Object, isColorTinted: boolean, handleSelectedSceneUid: Function, getClientHeight: Function, isActivedPage?: boolean, maxHeight: Number}
 const TintSceneWrapper = ({ data, isColorTinted, handleSelectedSceneUid, isActivedPage, getClientHeight, maxHeight }: Props) => {
+  const { cvw } = useContext<ConfigurationContextType>(ConfigurationContext)
   const sceneWrapperRef: RefObject = useRef()
   const tintColor = isColorTinted ? void (0) : null
   const allColors = useSelector(state => state?.colors?.items?.colorMap)
@@ -90,8 +91,10 @@ const TintSceneWrapper = ({ data, isColorTinted, handleSelectedSceneUid, isActiv
         <SingleTintableSceneView surfaceColorsFromParents={surfaceColors} selectedSceneUid={data?.sceneUid} variantsCollection={variantsCollection} scenesCollection={scenesCollection} allowVariantSwitch={false} interactive={false} />
       </div>
       <button tabIndex={(isActivedPage) ? '0' : '-1'} className='static__scene__paint__btn' onClick={() => handleSelectedSceneUid(data?.sceneUid)}>
-        <FontAwesomeIcon className={`cvw__btn-overlay__svg`} size='lg' icon={['fal', 'square-full']} />
-        <FontAwesomeIcon className={`cvw__btn-overlay__svg cvw__btn-overlay__svg--brush`} icon={['fa', 'brush']} size='lg' transform={{ rotate: 320 }} style={{ transform: 'translateX(-10px)' }} />
+        {cvw.scene?.paintThisSceneBtn?.showIcon && <>
+          <FontAwesomeIcon className={`cvw__btn-overlay__svg`} size='lg' icon={['fal', 'square-full']} />
+          <FontAwesomeIcon className={`cvw__btn-overlay__svg cvw__btn-overlay__svg--brush`} icon={['fa', 'brush']} size='lg' transform={{ rotate: 320 }} style={{ transform: 'translateX(-10px)' }} />
+        </>}
         <span className='static__scene__paint__btn__contents'>{intl.formatMessage({ id: 'PAINT_THIS_SCENE' })}</span>
       </button>
     </>

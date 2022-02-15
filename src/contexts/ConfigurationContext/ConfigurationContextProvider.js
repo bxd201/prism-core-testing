@@ -89,6 +89,7 @@ function ConfigurationContextProvider (props: Props) {
         secondary: theme.primary,
         primaryBg: '#fafafa', // light.lightest
         secondaryBg: '#fafafa', // light.lightest
+        tertiaryBg: '#000', // black
         primaryBorder: '#fff',
         secondaryBorder: 'none',
         dark: theme.nearBlack,

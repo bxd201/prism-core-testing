@@ -22,6 +22,7 @@ const defaultThemeColors = {
   secondary: '#2cabe2', // secondary button/UI color
   primaryBg: '#fafafa', // main background color
   secondaryBg: '#fafafa', // secondary background color
+  tertiaryBg: '#000', // tertiary background color
   primaryBorder: '#fff', // main border color
   secondaryBorder: 'none', // secondary border color
   success: '#1fce6d', // success color (usually green)
