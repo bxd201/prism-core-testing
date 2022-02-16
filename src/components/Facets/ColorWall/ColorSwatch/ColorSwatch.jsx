@@ -123,7 +123,6 @@ const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, co
         }
         aria-label={fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator)}
       >
-        {houseShaped && <div className={`${baseClass}--roof`} style={{ borderBottomColor: color.hex }} />}
         {isDisabled && <div className='color-swatch__flag' />}
       </button>
       {showContents && (<section

@@ -228,6 +228,7 @@ $swatch-edge-padding-lg: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-mai
   &--focus, &:focus { z-index: 2; }
 
   &-0 {
+    outline: none !important;
     @include bloom-house-shaped($bloom-scale-main-sm, $bloom-scale-main-lg, 900);
 
     + .color-swatch-house-shaped__content {
@@ -242,12 +243,15 @@ $swatch-edge-padding-lg: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-mai
       }
     }
 
-    .color-swatch-house-shaped--roof {
+    &::before {
+      content: '';
+      display: block;
       position: absolute;
-      top: -50px;
-      width: 0;
-      height: 0;
-      border: 25px solid transparent;
+      top: -47.5%;
+      width: 100%;
+      height: 47.5%;
+      background-color: inherit;
+      clip-path: polygon(50% 0, 0 100%, 100% 100%);
       cursor: default;
     }
   }
