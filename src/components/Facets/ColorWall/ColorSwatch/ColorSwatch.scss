@@ -16,6 +16,13 @@ $swatch-edge-padding-lg: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-mai
     @include respond-above(sm) { transform: scale($large-screen-scale-amt); }
 }
 
+@mixin bloom-house-shaped($small-screen-scale-amt, $large-screen-scale-amt, $z) {
+  z-index: $z !important;
+  transform: scale($small-screen-scale-amt, $small-screen-scale-amt / 1.5);
+  transition: transform $bloom-duration;
+  @include respond-above(sm) { transform: scale($large-screen-scale-amt, $large-screen-scale-amt / 1.5); }
+}
+
 .color-swatch {
   border: $swatch-border-size solid #fff;
   outline-offset: 0px;
@@ -152,56 +159,31 @@ $swatch-edge-padding-lg: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-mai
   }
 
   &__chip-locator {
-    &__name {
-      margin-top: 0.3rem;
-      font-size: 1rem;
-      font-weight: 550;
-      line-height: 1.1rem;
-    }
+    margin: .1rem;
+    font-size: 1rem;
+    line-height: 1.3rem;
+
+    &__name { font-weight: 550; }
+
     &__number {
-      font-size: 1rem;
-      margin-top: 0.3rem;
       font-style: italic;
       font-weight: 400;
-      line-height: 1.1rem;
+      line-height: 1.3rem;
     }
 
-    &__col {
+    &__location {
       position: absolute;
-      bottom: 2rem;
-      font-size: 1rem;
-      font-weight: 500;
-      line-height: 1.1rem;
-
-      @include respond-above(sm) {
-        margin-top: 2.5rem;
-      }
+      bottom: .5rem;
     }
 
-    &__row {
-      position: absolute;
-      bottom: 0.8rem;
-      font-size: 1rem;
-      margin-top: 0.3rem;
+    &__col-row {
+      font-style: italic;
       font-weight: 500;
-      line-height: 1.1rem;
-    }
-
-    .chip {
-      &__name {
-        font-size: 1.15rem;
-        line-height: 1.3rem;
-      }
-
-      &__number {
-        font-size: 1rem;
-        line-height: 1.3rem;
-      }
     }
 
     &--buttons {
       position: absolute;
-      bottom: 2.4rem;
+      bottom: .8rem;
       width: 120px;
 
       &__button {
@@ -210,10 +192,11 @@ $swatch-edge-padding-lg: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-mai
         padding: 5px;
         border: 1px solid black;
         border-radius: 15px;
-        font-size: 1rem;
+        font-size: inherit;
         font-weight: 500;
         line-height: 1.1rem;
       }
+
       .dark-color { border-color: white; }
     }
   }
@@ -234,6 +217,95 @@ $swatch-edge-padding-lg: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-mai
     button {
       display: flex;
       align-items: center;
+    }
+  }
+}
+
+.color-swatch-house-shaped {
+  border: $swatch-border-size solid #fff;
+  outline-offset: 0px;
+
+  &--focus, &:focus { z-index: 2; }
+
+  &-0 {
+    outline: none !important;
+    @include bloom-house-shaped($bloom-scale-main-sm, $bloom-scale-main-lg, 900);
+
+    + .color-swatch-house-shaped__content {
+      transform: translate3d(-(($swatch-base-size * ($bloom-scale-main-sm - 1)) / 2), -(($swatch-base-size * ($bloom-scale-main-sm - 1)) / 2) / 2, 0);
+      height: ($swatch-base-size * $bloom-scale-main-sm) / 2 !important;
+      width: $swatch-base-size * $bloom-scale-main-sm !important;
+
+      @include respond-above(sm) {
+        transform: translate3d(-(($swatch-base-size * ($bloom-scale-main-lg - 1)) / 2), -(($swatch-base-size * ($bloom-scale-main-lg - 1)) / 2) / 2, 0);
+        height: ($swatch-base-size * $bloom-scale-main-lg) / 1.5 !important;
+        width: $swatch-base-size * $bloom-scale-main-lg !important;
+      }
+    }
+
+    &::before {
+      content: '';
+      display: block;
+      position: absolute;
+      top: -47.5%;
+      width: 100%;
+      height: 47.5%;
+      background-color: inherit;
+      clip-path: polygon(50% 0, 0 100%, 100% 100%);
+      cursor: default;
+    }
+  }
+
+  &-n0-5 { @include bloom(2.00, 2.36, 750); }
+
+  &-n1 { @include bloom(2.00, 2.08, 700); }
+
+  &-n1-5 { @include bloom(1.41, 1.74, 650); }
+
+  &-n2 { @include bloom(1.30, 1.41, 600); }
+
+  &-flat {
+    transform: scale(1);
+    z-index: 1;
+    transition: transform $bloom-duration, z-index 10ms;
+  }
+
+  &__content {
+    z-index: 950 !important;
+    padding: $swatch-edge-padding-sm;
+    animation: fadeIn $bloom-duration $bloom-duration;
+    text-align: left;
+
+    @include respond-above(sm) {
+      padding: $swatch-edge-padding-lg;
+    }
+
+    &--dark-color { color: var(getThemeColor('primary.contrast.trans')); }
+  }
+
+  &__label {
+    position: absolute;
+    top: 5.6rem;
+    left: 0;
+    padding: 0.75rem 0.75rem 0.6rem;
+    width: 100%;
+    background: white;
+    border: 1px solid lightgray;
+    border-top: none;
+    text-align: center;
+    line-height: 1.3rem;
+
+    @include respond-above(sm) { top: 6.2rem; }
+
+    &__name {
+      color: var(getThemeColor('black'));
+      font-style: italic;
+    }
+
+    &__number {
+      color: var(getThemeColor('primary'));
+      font-family: var(getVarName('typography.titleFontFamily'));
+      font-size: .85rem;
     }
   }
 }
