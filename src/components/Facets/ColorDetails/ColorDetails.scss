@@ -17,6 +17,7 @@ $details-tab-padding: 1rem;
   justify-content: flex-end;
   position: relative;
   width: 100%;
+  font-family: var(getVarName('typography.titleFontFamily'));
 
   @include respond-above(sm) {
     flex-direction: row;
@@ -97,6 +98,38 @@ $details-tab-padding: 1rem;
 #{$top-level-class-string} {
   background-color: $neutral-background-color;
 
+  &-house-shaped {
+    &__name-number {
+      display: flex;
+      flex-direction: column-reverse;
+      padding: 0;
+    }
+
+    &__name {
+      display: inline-block;
+      font-family: var(getVarName('typography.bodyFontFamily'));
+      font-style: italic;
+      font-size: 1rem;
+      line-height: 1.4rem;
+    }
+
+    &__number {
+      display: block;
+      font-size: .875rem;
+      line-height: 1.4rem;
+    }
+
+    &__coord-color-name {
+      font-style: italic;
+      font-size: .8125rem;
+    }
+
+    &__coord-color-number {
+      font-family: var(getVarName('typography.titleFontFamily'));
+      font-size: .75rem;
+    }
+  }
+
   &__main-info {
     position: relative;
     padding: 2rem $width-medium;
@@ -127,7 +160,7 @@ $details-tab-padding: 1rem;
     line-height: 1.3;
   }
 
-  &__name-number {
+  &__number-name {
     padding: 0;
     margin: 0;
     line-height: inherit;
