@@ -1,6 +1,6 @@
 // @flow
 import React, { useState, useEffect, useContext } from 'react'
-import { ImageColorPicker, ColorPin } from 'prism-lib'
+import Prism, { ImageColorPicker, ColorPin } from 'prism-lib'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash } from '@fortawesome/pro-solid-svg-icons'
 
@@ -41,7 +41,7 @@ export function ImageColorPickerFacet () {
   }
 
   return (
-    <>
+    <Prism>
       <ImageColorPicker
         imgSrc={img}
         colors={sherwinColors}
@@ -49,7 +49,7 @@ export function ImageColorPickerFacet () {
         pinRenderer={(props) => <ColorPin {...props} />}
         removeButtonContent={<FontAwesomeIcon aria-label='remove' icon={faTrash} style={{ display: 'inline-block' }} />}
       />
-    </>
+    </Prism>
   )
 }
 
