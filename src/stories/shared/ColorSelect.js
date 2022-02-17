@@ -1,4 +1,4 @@
-export function createColorSelect() {
+export function createColorSelect () {
   return `<div class="colors">
     <p>"Select a color" option (null value) will force the facet to consume the default color again.</p>
     <label for="color_select">Select a Color</label>
