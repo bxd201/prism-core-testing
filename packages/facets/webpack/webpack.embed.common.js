@@ -2,7 +2,6 @@ const path = require('path')
 const flags = require('./constants')
 const webpack = require('webpack')
 const alias = require('./partial.resolve.alias')
-const stats = require('./partial.stats')
 const optimization = require('./partial.optimization')
 const moduleRuleJsx = require('./partial.module.rules.jsx')
 const envVars = require('./constants.env-vars')
@@ -29,7 +28,6 @@ const DEFINED_VARS = {
 
 module.exports = {
   name: 'prismEmbed',
-  stats: stats,
   target: 'web',
   watch: false,
   cache: !flags.production,

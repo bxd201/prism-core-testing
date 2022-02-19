@@ -5,7 +5,7 @@ import MaskObj from './MaskObj'
 
 const MASK_ID_PREFIX = 'msk'
 
-let masks: MaskObj[] = []
+const masks: MaskObj[] = []
 
 export const registerMask = (path: string) => {
   const id = uniqueId(MASK_ID_PREFIX)

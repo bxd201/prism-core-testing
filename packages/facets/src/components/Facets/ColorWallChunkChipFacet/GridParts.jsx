@@ -128,7 +128,7 @@ class Col extends Base {
         data-type={this.type}
         data-id={this.id}
         data-container-id='|COL| render container _NO_ GRID'
-        style={{ ...style, width: `100%`, height: `100%`, overflow: 'hidden', padding: `0 ${this._padAmt / 2}px` }}
+        style={{ ...style, width: '100%', height: '100%', overflow: 'hidden', padding: `0 ${this._padAmt / 2}px` }}
         {...props}
       >
         {this.children[0].render()}
@@ -203,7 +203,7 @@ class Row extends Base {
         data-type={this.type}
         data-id={this.id}
         data-container-id='=ROW= render container'
-        style={{ ...style, width: `100%`, height: `100%`, overflow: 'hidden', padding: `${this._padAmt / 2}px 0` }}
+        style={{ ...style, width: '100%', height: '100%', overflow: 'hidden', padding: `${this._padAmt / 2}px 0` }}
         {...props}
       >
         {this.children[0].render()}
@@ -305,11 +305,11 @@ class Chunk extends Base {
       data-type={this.type}
       data-id={this.id}
       data-container-id='chunk render container'
-      style={{ ...style, width: `100%`, height: `100%` }}
+      style={{ ...style, width: '100%', height: '100%' }}
       {...props}
     >
       {this.children.map((c, i) => {
-        return <div key={i} className={`cw2__chunk__row`}>
+        return <div key={i} className={'cw2__chunk__row'}>
           {c.map((cc, ii) => {
             return cc.render({ key: ii })
           })}
@@ -353,12 +353,14 @@ class Swatch {
 
   render = ({ children = null, style = {}, ...props } = {}) => {
     return <div className={this._className} data-id={this.id} style={{ ...style, width: this.width, height: this.height }} {...props}>
-      {this._color ? <>
+      {this._color
+        ? <>
         <div
           className={`${this._className}__inner`}
           style={{ background: this._color.hex }}
         />
-      </> : null}
+      </>
+        : null}
     </div>
   }
 }

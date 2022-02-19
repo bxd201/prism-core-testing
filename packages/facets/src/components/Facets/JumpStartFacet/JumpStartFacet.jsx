@@ -54,7 +54,7 @@ function JumpStartFacet () {
   useEffect(() => {
     if (!uploadedImage || !roomRecognitionModel) { return }
 
-    let img = new Image(224, 224)
+    const img = new Image(224, 224)
     img.src = uploadedImage
     img.onload = () => {
       let imgTensor = tf.browser.fromPixels(img).asType('float32').expandDims()

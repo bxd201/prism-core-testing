@@ -18,7 +18,7 @@ export const shouldAllowFeature = (featureExclusions, feature) => {
 }
 // @todo This validator allows us to understand the configuration rules and get ahead of configuration problems. This really needs a better home... -RS
 export const featureExclusionsConfigIsInValid = (featureExclusions) => {
-  let violations = []
+  const violations = []
 
   if (featureExclusions.indexOf(FEATURE_EXCLUSIONS.uploadYourPhoto) > -1 && featureExclusions.indexOf(FEATURE_EXCLUSIONS.fastMask) > -1) {
     violations.push(`${FEATURE_EXCLUSIONS.fastMask} and ${FEATURE_EXCLUSIONS.uploadYourPhoto} are not allowed together.`)

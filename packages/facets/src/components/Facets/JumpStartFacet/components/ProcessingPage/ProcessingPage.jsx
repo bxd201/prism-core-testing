@@ -14,7 +14,7 @@ type ProcessingPageProps = {
 function ProcessingPage (props: ProcessingPageProps) {
   const { isLoading = false, roomData, imageSrc, isProcessingDone } = props
   const [processingContent, setProcessingContent] = useState([])
-  let count = useRef(0)
+  const count = useRef(0)
   useEffect(() => {
     if (roomData && roomData.pieces) {
       if (processingContent.length !== roomData.pieces.length) {

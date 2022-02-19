@@ -80,7 +80,7 @@ function useDeepLabModelForSegmentation (model: SemanticSegmentation, inputImage
   const [error, setError] = useState<string | typeof undefined>()
   const [loading, setLoading] = useState<boolean>(false)
   const [processing, setProcessing] = useState<boolean>(false)
-  const [ { colorMap = {} }, { loading: loadingColorData } ] = useColors()
+  const [{ colorMap = {} }, { loading: loadingColorData }] = useColors()
 
   const reset = () => {
     setResults()
@@ -260,7 +260,7 @@ function useDeepLabModelForSegmentation (model: SemanticSegmentation, inputImage
         setError('Unable to load the image.')
       })
     }
-  }, [ inputImage, model, loadingColorData ])
+  }, [inputImage, model, loadingColorData])
 
   return [
     results,

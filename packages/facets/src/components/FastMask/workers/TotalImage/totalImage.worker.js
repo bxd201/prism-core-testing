@@ -18,7 +18,8 @@ import {
   LUMINANCE_THRESHOLD_MULTIPLIER,
   IS_LIGHT_MIN_VALUE,
   HUE_NORMALIZATION_STEP,
-  HUE_NORMALIZATION_STEP_DEG } from './totalImage.constants'
+  HUE_NORMALIZATION_STEP_DEG
+} from './totalImage.constants'
 
 declare var self: DedicatedWorkerGlobalScope;
 
@@ -42,13 +43,13 @@ self.addEventListener('message', (e: Object) => {
   let meanLightness = 0
   let medianLightness = 0
   let avgCommonLightness = 0
-  let lightRatio = 0
+  const lightRatio = 0
   const maskBrightnessData: MaskData[] = []
 
-  let brightnessMap: Uint8Array = new Uint8Array(numPixels) // ints
-  let luminanceMap: Float32Array = new Float32Array(numPixels) // floats
-  let lightnessMap: Float32Array = new Float32Array(numPixels) // floats
-  let hueMap: Uint8Array = new Uint8Array(numPixels) // ints
+  const brightnessMap: Uint8Array = new Uint8Array(numPixels) // ints
+  const luminanceMap: Float32Array = new Float32Array(numPixels) // floats
+  const lightnessMap: Float32Array = new Float32Array(numPixels) // floats
+  const hueMap: Uint8Array = new Uint8Array(numPixels) // ints
 
   setStatus(0)
   // gather ALL our image data here; we'll refer to it later on a pixel-by-pixel basis to gather mask info
@@ -95,7 +96,7 @@ self.addEventListener('message', (e: Object) => {
   masks.forEach((mask, i) => {
     let maxLum = 0
     let lumToAlphaMultiplier = 1
-    let maskPxIndices: number[] = []
+    const maskPxIndices: number[] = []
 
     runPerImagePixel(mask, (j) => {
       const alpha = mask[j + 4]
@@ -108,10 +109,10 @@ self.addEventListener('message', (e: Object) => {
 
     const numMaskPx: number = maskPxIndices.length
 
-    let maskBrightnessMap: Uint8Array = new Uint8Array(numMaskPx) // ints
-    let maskLuminanceMap: Float32Array = new Float32Array(numMaskPx) // floats
-    let maskLightnessMap: Float32Array = new Float32Array(numMaskPx) // floats
-    let maskHueMap: Uint8Array = new Uint8Array(numMaskPx) // ints
+    const maskBrightnessMap: Uint8Array = new Uint8Array(numMaskPx) // ints
+    const maskLuminanceMap: Float32Array = new Float32Array(numMaskPx) // floats
+    const maskLightnessMap: Float32Array = new Float32Array(numMaskPx) // floats
+    const maskHueMap: Uint8Array = new Uint8Array(numMaskPx) // ints
 
     masterMaskPxIndices[i] = maskPxIndices
 

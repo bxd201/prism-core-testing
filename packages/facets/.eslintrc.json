@@ -40,7 +40,22 @@
     "jest/prefer-to-have-length": "warn",
     "jest/valid-expect": "error",
     "no-fallthrough": "off",
-    "formatjs/no-offset": "error"
+    "formatjs/no-offset": "error",
+    "no-unused-vars": "off",
+    "no-void": "off",
+    "no-case-declarations": "off",
+    "no-use-before-define": "off",
+    "camelcase": "off",
+    "array-callback-return": "off",
+    "no-prototype-builtins": "off",
+    "react/jsx-no-bind": "off",
+    "multiline-ternary": "off",
+    "react/prop-types": "off",
+    "no-async-promise-executor": "off",
+    "prefer-const": "off",
+    "accessor-pairs": "off",
+    "prefer-regex-literals": "off",
+    "object-shorthand": "off"
   },
   "env": {
     "jest/globals": true

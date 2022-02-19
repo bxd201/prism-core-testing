@@ -61,7 +61,7 @@ function describe (value) {
 
 // eslint-disable-next-line no-unused-vars
 function colorLocationGroup (value) {
-  return `${(value['storeStripLocator'] ?? '').split('-')[0]}`
+  return `${(value.storeStripLocator ?? '').split('-')[0]}`
 }
 
 function rgbIntToValues (value) {
@@ -146,7 +146,7 @@ function ColorToolFacet (props: ColorToolProps) {
   const convertToText = (val) => {
     return ['name, value'].concat(Object.keys(val).map((key) => {
       if (key === 'lab') {
-        return `${key},L:${val[key]['L']};A:${val[key]['A']};B:${val[key]['B']}`
+        return `${key},L:${val[key].L};A:${val[key].A};B:${val[key].B}`
       }
 
       return `${key},${val[key]}`
@@ -155,7 +155,7 @@ function ColorToolFacet (props: ColorToolProps) {
 
   return <div className='container mx-auto p-8 bg-white mt-12 filter drop-shadow-md'>
     <div>
-      {error ? <div className={`bg-red-500 text-white text-center p-4 filter drop-shadow-md mb-4`}>{error}</div> : null}
+      {error ? <div className={'bg-red-500 text-white text-center p-4 filter drop-shadow-md mb-4'}>{error}</div> : null}
       <div className='text-center w-full text-5xl'><FontAwesomeIcon icon={['fa', 'brush']} /></div>
       <div><h1 className='text-center'>Color Value Extractor</h1></div>
       <div className='bg-blue-100 mb-8 filter drop-shadow-md'>
@@ -166,7 +166,8 @@ function ColorToolFacet (props: ColorToolProps) {
         <input className={`${inputClassName} bg-white text-black p-2`} onChange={setUserInputValue} value={userInput} />
       </div>
       <div><button className={`${buttonClassName} pt-4 pb-4 w-36 mt-8 bg-blue-500 text-white`} onClick={calculateValues}>Calculate Values</button></div>
-      {outputVal ? <div>
+      {outputVal
+        ? <div>
         <div>
           <div className='w-full mt-8 flex flex-row-reverse'>
             <div className='w-48 text-xs'><ToggleSwitch currentColor='#ffffff' textColor={'#000000'} handleToggle={toggleOutputType} variantsList={[{ icon: 'code', label: 'JSON' }, { icon: 'typewriter', label: 'CSV' }]} iconType='fa' /></div>
@@ -176,7 +177,8 @@ function ColorToolFacet (props: ColorToolProps) {
           <textarea className={`w-full bg-black text-indigo-400 font-mono mt-8 p-2 filter drop-shadow-md ${outputClassName}`} readOnly value={showJSON ? JSON.stringify(outputVal, null, 2) : convertToText(outputVal)} />
         </div>}
         <div className='w-full mt-8 flex flex-row-reverse text-center text-white text-sm no-underline'><a download={`color-values-${Date.now()}.${showJSON ? 'json' : 'csv'}`} href={blobUrl} className={`${buttonClassName} pt-4 pb-4 w-36 bg-blue-500 text-white`}>{showJSON ? 'Export JSON' : 'Export CSV'}</a></div>
-      </div> : null}
+      </div>
+        : null}
     </div>
   </div>
 }

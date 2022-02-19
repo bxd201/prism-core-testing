@@ -43,7 +43,7 @@ const SceneBlobLoader = (props: SceneBlobLoaderProps) => {
           } catch {
             handleError({
               type: SYSTEM_ERROR,
-              err: `Blob url not created error`
+              err: 'Blob url not created error'
             })
           }
         })

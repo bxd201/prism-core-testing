@@ -16,7 +16,6 @@
     "docs:build": "yarn workspace @prism/prism-docs build",
     "demo:start": "yarn workspace @prism/prism-demo start",
     "demo:build": "yarn workspace @prism/prism-demo build",
-    "facets:storybook": "yarn workspace @prism/facets storybook",
     "facets:test": "yarn workspace @prism/facets test",
     "toolkit:storybook": "yarn workspace @prism/toolkit start",
     "toolkit:test": "yarn workspace @prism/toolkit test",

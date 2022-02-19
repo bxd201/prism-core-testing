@@ -19,19 +19,23 @@ function TextButton (props: ButtonProps) {
   const _className = `${BASE_CLASS} ${className || ''}`
 
   return (
-    props.to ? (
+    props.to
+      ? (
       <Link className={_className} to={props.to} onClick={onClick || null} {...other}>
         {props.children}
       </Link>
-    ) : onClick ? (
+        )
+      : onClick
+        ? (
       <button type='button' className={_className} onClick={onClick} {...other}>
         {props.children}
       </button>
-    ) : (
+          )
+        : (
       <div className={_className} {...other}>
         {props.children}
       </div>
-    )
+          )
   )
 }
 

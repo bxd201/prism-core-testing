@@ -65,7 +65,7 @@ function ColorCollectionsTab (props: Props) {
   const getGAEvent = tabId => {
     GA.event({
       category: startCase(window.location.hash.split('/').filter(hash => HASH_CATEGORIES.indexOf(hash) >= 0)),
-      action: collectionsSelectLabel ?? messages['CHOOSE_A_COLLECTION'],
+      action: collectionsSelectLabel ?? messages.CHOOSE_A_COLLECTION,
       label: startCase(collectionTabs.filter(({ id }) => (typeof id === 'number' ? `${id}` : id) === tabId)[0].tabName.toLowerCase())
     }, GA_TRACKER_NAME_BRAND[brandId])
   }

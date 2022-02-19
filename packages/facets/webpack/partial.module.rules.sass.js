@@ -123,20 +123,22 @@ const getCssRules = (cssLoaderOpts = {}) => {
     {
       loader: 'postcss-loader',
       options: {
-        plugins: [
-          tailwindcss(),
-          cssCustomPropsFallback([
-            {
-              varPrefix: themeColorPrefix,
-              varFallbackMap: mapVarsToColors(themeColorStructure)
-            }
-          ]),
-          autoprefixer(),
-          PrefixWrap(`.${flags.prismWrappingClass}.${flags.cleanslateWrappingClass}`, {
-            ignoredSelectors: [/^:root/],
-            blacklist: [flags.cleanslateEntryPointName]
-          })
-        ]
+        postcssOptions: {
+          plugins: [
+            tailwindcss(),
+            cssCustomPropsFallback([
+              {
+                varPrefix: themeColorPrefix,
+                varFallbackMap: mapVarsToColors(themeColorStructure)
+              }
+            ]),
+            autoprefixer(),
+            PrefixWrap(`.${flags.prismWrappingClass}.${flags.cleanslateWrappingClass}`, {
+              ignoredSelectors: [/^:root/],
+              blacklist: [flags.cleanslateEntryPointName]
+            })
+          ]
+        }
       }
     }
   ]
@@ -148,7 +150,7 @@ const getSassRules = (cssLoaderOpts = {}) => {
     {
       loader: 'sass-loader',
       options: {
-        prependData: [
+        additionalData: [
           '$cleanslateWrappingClass: ' + flags.cleanslateWrappingClass,
           '$env: ' + flags.mode,
           '$prismWrappingClass: ' + flags.prismWrappingClass

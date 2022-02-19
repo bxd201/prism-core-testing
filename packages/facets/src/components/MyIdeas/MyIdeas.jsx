@@ -200,7 +200,8 @@ const MyIdeas = (props: MyIdeasProps) => {
 
   return (
     <>
-      {isReadyToRenderFlag && sceneCount ? <div className={baseClassName} ref={wrapperRef}>
+      {isReadyToRenderFlag && sceneCount
+        ? <div className={baseClassName} ref={wrapperRef}>
         <div className={sectionLeftClassName}>
           {showBack
             ? <button className={`${buttonClassName} ${buttonBack}`} onClick={showMyIdeas} onMouseDown={mouseDownHandler}>
@@ -251,7 +252,8 @@ const SavedSceneWrapper = (props: any) => {
   btnRefList[itemNumber] = React.useRef()
   const variant = props.data.sceneType === SCENE_TYPE.anonStock
     ? variants.find(item => item.variantName === data.scene.variantName &&
-      item.sceneType === data.scene.sceneDataType && item.sceneId === data.scene.sceneDataId) : null
+      item.sceneType === data.scene.sceneDataType && item.sceneId === data.scene.sceneDataId)
+    : null
 
   const getSavedScene = (sceneData: any, parentProps: any, refs: any) => {
     // @todo A LOT OF THESE PROPS COME FROM THE PARENT, AUTOMAGIC IS HARD TO READ... REWRITE THIS -RS

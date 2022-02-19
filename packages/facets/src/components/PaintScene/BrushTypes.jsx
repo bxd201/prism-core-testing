@@ -106,7 +106,7 @@ export function BrushTypes ({ activeWidth, activeShape, setBrushShapeSize, brush
 
   return (
     <div className={`${wrapperClass}`} role='radiogroup' aria-labelledby={`${brushTypeName}BrushType`}>
-      <div className={`visually-hidden`} id={`${brushTypeName}BrushType`}>{`${brushTypeName} Brush Types`}</div>
+      <div className={'visually-hidden'} id={`${brushTypeName}BrushType`}>{`${brushTypeName} Brush Types`}</div>
       <div className={`${shapesContainerClass}`}>
         {getBrushTypes(activeWidth, activeShape)}
       </div>

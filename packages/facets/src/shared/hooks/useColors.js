@@ -21,7 +21,7 @@ function useColors (): Response {
   }, [brandId])
 
   // @todo we should refactor this api to be more comprehensive -RS
-  return [ items, status, shape ]
+  return [items, status, shape]
 }
 
 export default useColors

@@ -38,9 +38,9 @@ const MultipleVariantSwitch = (props: SwitchProps) => {
 
   const color = useMemo(() => {
     if (currentColor) {
-      return mostReadable(currentColor, [ 'white', 'black' ])
+      return mostReadable(currentColor, ['white', 'black'])
     }
-  }, [ currentColor ])
+  }, [currentColor])
 
   return (
     <>

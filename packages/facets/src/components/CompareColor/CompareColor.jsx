@@ -55,7 +55,7 @@ export class CompareColor extends React.Component<CompareColorProps, CompareColo
     isHideNextButton: true,
     selectedSceneUid: this.props.selectedSceneUid,
     selectedVariantName: this.props.selectedVariantName
-  };
+  }
 
   static getDerivedStateFromProps (props: CompareColorProps, state: CompareColorState) {
     if (props.colors !== state.colors) {
@@ -136,65 +136,65 @@ export class CompareColor extends React.Component<CompareColorProps, CompareColo
     })
   }
 
-    isShowSlideButton = () => {
-      const { curr, colors, colorIds } = this.state
-      const itemsCount = colors.length - colorIds.length
-      let buttonVisibility = {
-        isHidePrevButton: true,
-        isHideNextButton: true
-      }
-      if (curr === 0) {
-        buttonVisibility.isHidePrevButton = true
+  isShowSlideButton = () => {
+    const { curr, colors, colorIds } = this.state
+    const itemsCount = colors.length - colorIds.length
+    const buttonVisibility = {
+      isHidePrevButton: true,
+      isHideNextButton: true
+    }
+    if (curr === 0) {
+      buttonVisibility.isHidePrevButton = true
+    } else {
+      buttonVisibility.isHidePrevButton = false
+    }
+
+    if (itemsCount > defaultViewItem && curr < itemsCount - defaultViewItem) {
+      buttonVisibility.isHideNextButton = false
+    }
+
+    if (curr === itemsCount - defaultViewItem - offset / 2) {
+      buttonVisibility.isHideNextButton = true
+    }
+    return buttonVisibility
+  }
+
+  handlePrev = () => {
+    const { colors, curr, colorIds } = this.state
+    const itemsCount = colors.length - colorIds.length
+    if (itemsCount > defaultViewItem) {
+      if (curr === (offset / 2)) {
+        this.setState({ curr: curr - offset / 2 })
       } else {
-        buttonVisibility.isHidePrevButton = false
-      }
-
-      if (itemsCount > defaultViewItem && curr < itemsCount - defaultViewItem) {
-        buttonVisibility.isHideNextButton = false
-      }
-
-      if (curr === itemsCount - defaultViewItem - offset / 2) {
-        buttonVisibility.isHideNextButton = true
-      }
-      return buttonVisibility
-    }
-
-    handlePrev = () => {
-      const { colors, curr, colorIds } = this.state
-      const itemsCount = colors.length - colorIds.length
-      if (itemsCount > defaultViewItem) {
-        if (curr === (offset / 2)) {
-          this.setState({ curr: curr - offset / 2 })
-        } else {
-          this.setState({ curr: curr - offset })
-        }
+        this.setState({ curr: curr - offset })
       }
     }
+  }
 
-    handleNext = () => {
-      const { colors, curr, colorIds } = this.state
-      const itemsCount = colors.length - colorIds.length
-      if (itemsCount > defaultViewItem) {
-        if (curr === itemsCount - defaultViewItem - 1) {
-          this.setState({ curr: curr + offset / 2 })
-        } else {
-          this.setState({ curr: curr + offset })
-        }
+  handleNext = () => {
+    const { colors, curr, colorIds } = this.state
+    const itemsCount = colors.length - colorIds.length
+    if (itemsCount > defaultViewItem) {
+      if (curr === itemsCount - defaultViewItem - 1) {
+        this.setState({ curr: curr + offset / 2 })
+      } else {
+        this.setState({ curr: curr + offset })
       }
     }
+  }
 
-    render () {
-      const { curr, colors, colorIds, selectedSceneUid, selectedVariantName } = this.state
-      const { config, variantsCollection, scenesCollection } = this.props
-      const { colorWall: { colorSwatch = {} }, cvw = {} } = config
-      const { colorNumOnBottom = false, houseShaped = false } = colorSwatch
-      const { closeBtn = {} } = cvw
-      const { showArrow: closeBtnShowArrow = true, text: closeBtnText = <FormattedMessage id='CLOSE' /> } = closeBtn
-      const colorInfoClass = houseShaped ? `${baseClass}-house-shaped` : `${baseClass}__color__info`
-      const content = this.renderContent(curr, colors, colorIds, colorInfoClass, colorNumOnBottom, selectedSceneUid, selectedVariantName, scenesCollection, variantsCollection)
-      const { isHidePrevButton, isHideNextButton } = this.isShowSlideButton()
+  render () {
+    const { curr, colors, colorIds, selectedSceneUid, selectedVariantName } = this.state
+    const { config, variantsCollection, scenesCollection } = this.props
+    const { colorWall: { colorSwatch = {} }, cvw = {} } = config
+    const { colorNumOnBottom = false, houseShaped = false } = colorSwatch
+    const { closeBtn = {} } = cvw
+    const { showArrow: closeBtnShowArrow = true, text: closeBtnText = <FormattedMessage id='CLOSE' /> } = closeBtn
+    const colorInfoClass = houseShaped ? `${baseClass}-house-shaped` : `${baseClass}__color__info`
+    const content = this.renderContent(curr, colors, colorIds, colorInfoClass, colorNumOnBottom, selectedSceneUid, selectedVariantName, scenesCollection, variantsCollection)
+    const { isHidePrevButton, isHideNextButton } = this.isShowSlideButton()
 
-      return (
+    return (
         <div className={`${containerClass}`}>
           <div className={`${containerHeaderClass}`}>
             <span><FormattedMessage id='COMPARE_COLORS' /></span>
@@ -217,8 +217,8 @@ export class CompareColor extends React.Component<CompareColorProps, CompareColo
             </div>
           </div>
         </div>
-      )
-    }
+    )
+  }
 }
 
 export {

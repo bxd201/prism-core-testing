@@ -121,19 +121,23 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
       this.handleResize(prevProps, prevState)
     }
   }
+
   /*:: handleResize: (prevProps: ColorFromImageProps, prevState: ColorFromImageState) => void */
   handleResize (prevProps: ColorFromImageProps, prevState: ColorFromImageState) {
     this.updateCanvasWithNewDimensions(this.props.width)
   }
+
   /*:: handleImageLoaded: (e: SyntheticEvent) => void */
   handleImageLoaded (e) {
     const initialDimensions = this.updateCanvasWithNewDimensions(this.props.width)
     this.setState({ initialWidth: initialDimensions.width, initialHeight: initialDimensions.height })
   }
+
   /*:: handleImageLoadError: () => void */
   handleImageLoadError () {
     this.setState({ imageStatus: 'failed' })
   }
+
   /*:: handleClick: (e: SyntheticEvent) => void */
   handleClick (e: SyntheticEvent) {
     const { isDragging, previewPinIsUpdating } = this.state
@@ -142,8 +146,8 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
       const canvasDims = this.canvasRef.current.getBoundingClientRect()
       const position = this.borderChecking(e.clientX, e.clientY)
 
-      let pinX = position.x - offsetLeft + activedPinsHalfWidth
-      let pinY = position.y + activedPinsHalfWidth
+      const pinX = position.x - offsetLeft + activedPinsHalfWidth
+      const pinY = position.y + activedPinsHalfWidth
       let offsetX = Math.floor(e.clientX - canvasDims.x)
       let offsetY = Math.floor(e.clientY - canvasDims.y)
 
@@ -174,13 +178,14 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
 
     const newDims = calcOrientationDimensions(ogImageWidth, ogImageHeight, isPortrait, newWidth, maxHeight)
 
-    let canvasWidth = isPortrait ? newDims.portraitWidth : newDims.landscapeWidth
-    let canvasHeight = isPortrait ? newDims.portraitHeight : newDims.landscapeHeight
+    const canvasWidth = isPortrait ? newDims.portraitWidth : newDims.landscapeWidth
+    const canvasHeight = isPortrait ? newDims.portraitHeight : newDims.landscapeHeight
 
     const imageData = this.setBackgroundImage(canvasWidth, canvasHeight)
     this.setCanvasOffset(imageData)
     return { width: canvasWidth, height: canvasHeight }
   }
+
   /*:: setBackgroundImage: (width: number, height: number) => void */
   setBackgroundImage (width: number, height: number) {
     this.canvasRef.current.width = width
@@ -190,6 +195,7 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
 
     return ctx.getImageData(0, 0, width, height)
   }
+
   /*:: setCanvasOffset: (imageData: Object) => void */
   setCanvasOffset (imageData: Object) {
     const canvasDimensions = this.canvasRef.current.getBoundingClientRect()
@@ -243,6 +249,7 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
       )
     })
   }
+
   /*:: activatePin: (pinNumber: number) => void */
   activatePin (pinNumber: number) {
     const pinnedColorClicked = this.state.pinnedColors.findIndex((colors) => {
@@ -270,6 +277,7 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
       })
     }
   }
+
   /*:: addNewPin: (cursorX: number, cursorY: number) => void */
   addNewPin (cursorX: number, cursorY: number) {
     const color = findClosestColor(this.state.currentPixelRGB, this.props.colors)
@@ -315,6 +323,7 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
       ]
     })
   }
+
   /*:: removeSameColorPin: (currentPins: Array<any>, index: number) => Object[] */
   removeSameColorPin (currentPins: any[], color: Color) {
     const duplicatePinIndex = currentPins.findIndex((colors) => {
@@ -324,6 +333,7 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
 
     return currentPins.map((pins: Object, index: number): {} => ({ ...pins, pinNumber: index }))
   }
+
   /*:: deleteCurrentPin: (pinNumber: number) => void */
   deleteCurrentPin (pinNumber: number) {
     const clonePins = this.state.pinnedColors.map((pin) => {
@@ -338,6 +348,7 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
 
     this.setState({ pinnedColors: newPins })
   }
+
   /*:: removePin: (e: SyntheticEvent) => */
   removePin (e: SyntheticEvent) {
     e.stopPropagation()
@@ -357,6 +368,7 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
       })
     }
   }
+
   /*:: handlePinMoveByKeyboard: (movingPinData: Object) => */
   handlePinMoveByKeyboard (movingPinData: Object) {
     const canvasOffset = this.canvasRef.current.getBoundingClientRect()
@@ -410,6 +422,7 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
       pinnedColors: clonedPins
     })
   }
+
   /*:: handleKeyUpAfterPinMove: (movingPinNumber: number) => void */
   handleKeyUpAfterPinMove (movingPinNumber: number) {
     const clonedPins = this.state.pinnedColors.map(pin => {
@@ -431,6 +444,7 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
       pinnedColors: newPinsIndexUpdated
     })
   }
+
   /*:: borderChecking: (x: number, y: number) => Object */
   borderChecking (x: number, y: number) {
     const canvasDims = this.canvasRef.current.getBoundingClientRect()
@@ -438,10 +452,10 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
 
     // Assume everything is fine, this is the default case
     let top = y - activedPinsHalfWidth
-    let bottom = 0
+    const bottom = 0
     let left = x - canvasDims.left - activedPinsHalfWidth + offsetLeft
 
-    let right = 0
+    const right = 0
 
     // Too far left
     if (x < canvasDims.left + activedPinsHalfWidth) {
@@ -464,8 +478,8 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
     left = left | 1
     top = top | 1
 
-    let _x = left
-    let _y = top
+    const _x = left
+    const _y = top
 
     const box = {
       top,
@@ -478,6 +492,7 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
 
     return box
   }
+
   /*:: handleDrag: (x: number, y: number) => void */
   handleDrag (x: number, y: number) {
     // determine if mouse is above the deleteBtn
@@ -579,6 +594,7 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
       }
     }
   }
+
   pinRemove () {
 
   }
@@ -599,12 +615,14 @@ class DynamicColorFromImage extends PureComponent <ColorFromImageProps, ColorFro
             src={this.props.imageUrl}
             alt={this.props.intl.formatMessage({ id: 'IMAGE_INVISIBLE' })} />
           {this.props.isActive && (this.state.pinnedColors && this.state.pinnedColors.length) ? this.generatePins(this.state.pinnedColors) : null}
-          {this.props.isActive && this.state.isDragging ? <ColorFromImageIndicator
+          {this.props.isActive && this.state.isDragging
+            ? <ColorFromImageIndicator
             top={this.state.indicatorTop}
             bottom={this.state.indicatorBottom}
             left={this.state.indicatorLeft}
             right={this.state.indicatorRight}
-            currentPixelRGBstring={this.state.currentPixelRGBstring} /> : null}
+            currentPixelRGBstring={this.state.currentPixelRGBstring} />
+            : null}
           <button
             ref={this.deleteButtonRef}
             title={`${this.props.intl.formatMessage({ id: 'DELETE_COLOR' })}`}

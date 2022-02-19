@@ -59,7 +59,7 @@ export const generateColorWallPageUrl = memoizee((sectionName = '', familyName =
 }, { primitive: true, length: 3 })
 
 export const getContrastYIQ = memoizee((hexcolor: string) => {
-  return mostReadable(hexcolor, [ '#000', '#FFF' ]).toHexString()
+  return mostReadable(hexcolor, ['#000', '#FFF']).toHexString()
 }, { primitive: true, length: 1 })
 
 export const cleanColorNameForURL = (name: string = ''): string => kebabCase(name.split('-').map((v = '') => {

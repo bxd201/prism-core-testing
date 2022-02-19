@@ -42,7 +42,7 @@ export function getPerimiterLevelTest (chunkChildren, id, levels = 0) {
       }
 
       return function findPerimeterLevelById (id) {
-        for (let i in perimeterArray) {
+        for (const i in perimeterArray) {
           if (perimeterArray[i].indexOf(id) > -1) {
             return i
           }

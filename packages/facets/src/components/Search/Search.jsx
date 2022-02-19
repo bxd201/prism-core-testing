@@ -93,19 +93,26 @@ const Search = ({ closeSearch = () => {}, contain = false, crossSearch, isChipLo
   return (
     <div className={baseClass}>
       <div className={`${baseClass}__results-pane`} style={{ backgroundColor: colorWallBgColor }}>
-        {loading ? (
+        {loading
+          ? (
           <GenericOverlay type={GenericOverlay.TYPES.LOADING} semitransparent>
             <FormattedMessage id='SEARCH.SEARCHING' />
           </GenericOverlay>
-        ) : !hasSearched ? (
+            )
+          : !hasSearched
+              ? (
           <GenericMessage type={GenericMessage.TYPES.NORMAL}>
             <FormattedMessage id='SEARCH.PROMPT' />
           </GenericMessage>
-        ) : !count ? (
+                )
+              : !count
+                  ? (
           <GenericMessage type={GenericMessage.TYPES.WARNING}>
             <FormattedMessage id='SEARCH.NO_RESULTS' />
-            {suggestions && suggestions.length ? (
-              <FormattedMessage id='SEARCH.SUGGESTIONS' values={{ suggestions: (
+            {suggestions && suggestions.length
+              ? (
+              <FormattedMessage id='SEARCH.SUGGESTIONS' values={{
+                suggestions: (
                 <>
                   {suggestions.map((suggestion, i, arr) =>
                     <React.Fragment key={i}>
@@ -116,15 +123,20 @@ const Search = ({ closeSearch = () => {}, contain = false, crossSearch, isChipLo
                     </React.Fragment>
                   )}
                 </>
-              ) }} />
-            ) : null}
-            {crossSearch && !crossSearch.searching ? (
+                )
+              }} />
+                )
+              : null}
+            {crossSearch && !crossSearch.searching
+              ? (
               <strong>
                 {crossSearch.text} <a className={`${baseClass}__results-pane__subtitle--link`} href={crossSearch.colorWallPageRoot} target='_blank'>Click Here</a>
               </strong>
-            ) : null}
+                )
+              : null}
           </GenericMessage>
-        ) : (
+                    )
+                  : (
           <div className={`${baseClass}__results-pane__swatches ${contain ? `${baseClass}__results-pane__swatches--cover` : ''}`}>
             {crossSearch && <p className={`${baseClass}__results-pane__subtitle`}>
               Looking for more colors? <a className={`${baseClass}__results-pane__subtitle--link`} href={crossSearch.colorWallPageRoot} target='_blank'>
@@ -158,7 +170,7 @@ const Search = ({ closeSearch = () => {}, contain = false, crossSearch, isChipLo
               }}
             </AutoSizer>
           </div>
-        )}
+                    )}
       </div>
     </div>
   )

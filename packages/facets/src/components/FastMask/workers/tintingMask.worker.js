@@ -21,12 +21,12 @@ self.addEventListener('message', (e: Object) => {
   const { imageRGBAdata, imageMaskRgbaData } = e.data
   const len = imageMaskRgbaData.length
 
-  let highlightData = new Uint8ClampedArray(len)
-  let bValues = []
-  let hValues = []
-  let sValues = []
-  let overallBrightnessLevel = 0 // -1 = dark; 0 = normal; 1 = bright
-  let surfaceIsBright = []
+  const highlightData = new Uint8ClampedArray(len)
+  const bValues = []
+  const hValues = []
+  const sValues = []
+  const overallBrightnessLevel = 0 // -1 = dark; 0 = normal; 1 = bright
+  const surfaceIsBright = []
   let surfaceBrightnessLevel = 0 // -1 = dark; 0 = normal; 1 = bright
 
   // gather hue, saturation, and brightness (not lightness... using perceived brightness for now)
@@ -71,7 +71,7 @@ self.addEventListener('message', (e: Object) => {
 
     // overallIsBright.push(isLight)
 
-    const maskAlpha = imageMaskRgbaData[ i + 3 ]
+    const maskAlpha = imageMaskRgbaData[i + 3]
     if (maskAlpha > ALPHA_THRESHOLD) {
       surfaceIsBright.push(isLight)
     }
@@ -120,7 +120,7 @@ self.addEventListener('message', (e: Object) => {
     const len = imageMaskData.length
 
     for (let i = 0; i < len; i += 4) {
-      const maskAlpha = imageMaskData[ i + 3 ]
+      const maskAlpha = imageMaskData[i + 3]
 
       if (maskAlpha > ALPHA_THRESHOLD) {
         cb(i)

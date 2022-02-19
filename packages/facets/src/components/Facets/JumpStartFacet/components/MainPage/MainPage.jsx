@@ -30,7 +30,7 @@ function MainPage ({ onSelectFile, imageRef }: MainPageProps) {
                 <strong>Upload new image</strong>
               </button>
             </>
-          )
+            )
           : (
             <>
               <form {...getRootProps({ onClick: event => event.stopPropagation() })}>
@@ -51,7 +51,7 @@ function MainPage ({ onSelectFile, imageRef }: MainPageProps) {
               </form>
               <p className='note'><strong>Note:</strong> Jumpstart performs best on photos with ample, even lighting</p>
             </>
-          )
+            )
         }
         <button className='submit-button' disabled={file === undefined} onClick={() => onSelectFile(file)}>Submit</button>
       </div>

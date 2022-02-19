@@ -22,10 +22,12 @@ const paintBrushClass = `${baseClass}__paint-brush`
 
 export const BrushPaintCursor = forwardRef((props: ComponentProps, ref) => {
   const [position, setPosition] = useState(props.position)
-  const { activeTool, lpActiveColorRGB, dragStartHandler, mouseDownHandler, paintBrushActiveClass,
+  const {
+    activeTool, lpActiveColorRGB, dragStartHandler, mouseDownHandler, paintBrushActiveClass,
     paintBrushCircleActiveClass, eraseBrushActiveClass, eraseBrushCircleActiveClass,
-    paintBrushWidth, eraseBrushWidth, canvasRef } = props
-  const backgroundColorBrush = (activeTool === toolNames.ERASE) ? `rgba(255, 255, 255, 0.7)` : lpActiveColorRGB
+    paintBrushWidth, eraseBrushWidth, canvasRef
+  } = props
+  const backgroundColorBrush = (activeTool === toolNames.ERASE) ? 'rgba(255, 255, 255, 0.7)' : lpActiveColorRGB
 
   useImperativeHandle(ref, () => ({
     handleMouseMove (clientX, clientY) {
@@ -39,7 +41,7 @@ export const BrushPaintCursor = forwardRef((props: ComponentProps, ref) => {
 
   return (
     <div
-      className={`${paintBrushClass} ${activeTool === toolNames.PAINTBRUSH ? `${paintBrushActiveClass} ${paintBrushCircleActiveClass}` : activeTool === toolNames.ERASE ? `${eraseBrushActiveClass} ${eraseBrushCircleActiveClass}` : ``}`}
+      className={`${paintBrushClass} ${activeTool === toolNames.PAINTBRUSH ? `${paintBrushActiveClass} ${paintBrushCircleActiveClass}` : activeTool === toolNames.ERASE ? `${eraseBrushActiveClass} ${eraseBrushCircleActiveClass}` : ''}`}
       role='presentation'
       draggable
       onDragStart={dragStartHandler}

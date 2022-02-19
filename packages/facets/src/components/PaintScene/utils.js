@@ -4,11 +4,13 @@ import difference from 'lodash/difference'
 import uniqueId from 'lodash/uniqueId'
 import cloneDeep from 'lodash/cloneDeep'
 
-import { toolNames, brushSquareShape, paintBrushMediumCircleClass,
+import {
+  toolNames, brushSquareShape, paintBrushMediumCircleClass,
   brushRoundShape, brushMediumSize, paintBrushMediumClass,
   brushSmallSize, brushTinySize, paintBrushLargeCircleClass,
   paintBrushSmallClass, paintBrushSmallCircleClass, paintBrushTinyClass,
-  brushLargeSize, paintBrushLargeClass, paintBrushTinyCircleClass } from './data'
+  brushLargeSize, paintBrushLargeClass, paintBrushTinyCircleClass
+} from './data'
 import type { PaintSceneWorkspace } from '../../store/actions/paintScene'
 
 const MAX_RES_TIME = 3000
@@ -41,10 +43,10 @@ export const getPaintAreaPath = (imagePathList, canvas, width, height, color) =>
 
 export const getImageCoordinateByPixel = (canvas, color, width, height, returnPixelIndexAlphaMap = true) => {
   const ctx = canvas.current.getContext('2d')
-  let imageData = ctx.getImageData(0, 0, width, height)
-  let data = imageData.data
-  let pixelArray = []
-  let pixelIndexAlphaMap = {}
+  const imageData = ctx.getImageData(0, 0, width, height)
+  const data = imageData.data
+  const pixelArray = []
+  const pixelIndexAlphaMap = {}
   for (let index = 0; index < data.length; index += 4) {
     if (data[index] === color[0] && data[index + 1] === color[1] && data[index + 2] === color[2]) {
       pixelArray.push(index)
@@ -60,10 +62,10 @@ export const getImageCoordinateByPixel = (canvas, color, width, height, returnPi
 
 export const getImageCordinateByPixelPaintBrush = (canvas, width, height, returnPixelIndexAlphaMap = true) => {
   const ctx = canvas.current.getContext('2d')
-  let imageData = ctx.getImageData(0, 0, width, height)
-  let data = imageData.data
-  let pixelArray = []
-  let pixelIndexAlphaMap = {}
+  const imageData = ctx.getImageData(0, 0, width, height)
+  const data = imageData.data
+  const pixelArray = []
+  const pixelIndexAlphaMap = {}
   for (let index = 0; index < data.length; index += 4) {
     if (data[index] !== 0 || data[index + 1] !== 0 || data[index + 2] !== 0) {
       pixelArray.push(index)
@@ -87,7 +89,7 @@ export const getActiveColorRGB = (color) => {
 }
 
 export const drawCircle = (circleObj) => {
-  var ctx = circleObj.ctx
+  let ctx = circleObj.ctx
   ctx.save()
   ctx.beginPath()
   ctx.globalCompositeOperation = circleObj.type
@@ -104,7 +106,7 @@ export const drawCircle = (circleObj) => {
 }
 
 export const Circle = (ctx, x, y, radius, fillStyle, type = 'source-over', pulse) => {
-  let circleObj = {
+  const circleObj = {
     ctx: ctx,
     x: x,
     y: y,
@@ -115,7 +117,7 @@ export const Circle = (ctx, x, y, radius, fillStyle, type = 'source-over', pulse
   }
   circleObj.startAngle = 0
   circleObj.endAngle = Math.PI * 2
-  circleObj.color = `rgba(255, 255, 255, 255)`
+  circleObj.color = 'rgba(255, 255, 255, 255)'
   circleObj.fillStyle = fillStyle
   drawCircle(circleObj)
   return circleObj
@@ -135,8 +137,8 @@ export const repaintCircleLine = (ctx, start, list, scale) => {
 }
 
 export const pointInsideCircle = (x, y, circle, r) => {
-  let dx = circle[0] - x
-  let dy = circle[1] - y
+  const dx = circle[0] - x
+  const dy = circle[1] - y
   return dx * dx + dy * dy <= r * r
 }
 
@@ -203,8 +205,8 @@ export const checkIntersection = (areaA, areaB, getIntersectionData = false) => 
 export const repaintImageByPath = (imagePathList = [], canvas, width, height, isEraseRepaint = false, groupIds = [], isSwitchTool = false) => {
   // PRISM-969: FIXME: we should really add UX to let the user know why painting doesn't do anything when you have no colors in your live palette
   const ctx = canvas.current.getContext('2d')
-  let imageData = ctx.getImageData(0, 0, width, height)
-  let data = imageData.data
+  const imageData = ctx.getImageData(0, 0, width, height)
+  const data = imageData.data
   let maxDrawOrder = 0
   for (let i = 0; i < imagePathList.length; i++) {
     if ((!isEraseRepaint && !imagePathList[i].hasOwnProperty('drawOrder'))) {
@@ -286,8 +288,8 @@ export const createImagePathItem = (
 }
 
 export const drawImagePixelByPath = (ctx, width, height, color, path) => {
-  let imageData = ctx.getImageData(0, 0, width, height)
-  let data = imageData.data
+  const imageData = ctx.getImageData(0, 0, width, height)
+  const data = imageData.data
   if (path) {
     for (let i = 0; i < path.length; i++) {
       data[path[i]] = color[0]
@@ -305,9 +307,9 @@ export const clearCanvas = (canvas, width, height) => {
 }
 
 export const whiteBlack = (ctx, width, height) => {
-  let originPixel = ctx.getImageData(0, 0, width, height)
+  const originPixel = ctx.getImageData(0, 0, width, height)
   for (let i = 0; i < originPixel.data.length; i += 4) {
-    let avg = (originPixel.data[i] + originPixel.data[i + 1] + originPixel.data[i + 2]) / 3
+    const avg = (originPixel.data[i] + originPixel.data[i + 1] + originPixel.data[i + 2]) / 3
     originPixel.data[i] = avg
     originPixel.data[i + 1] = avg
     originPixel.data[i + 2] = avg
@@ -326,15 +328,15 @@ export const edgeDetect = (canvas, targetImagePath, targetImageColor, width, hei
    * unselect use
    * 3.we get the edge list now then we can paint these border into our origin paint canvas
   */
-  let edge = []
+  const edge = []
   const originCtx = canvas.current.getContext('2d')
-  let processingCanvas = document.createElement('canvas')
+  const processingCanvas = document.createElement('canvas')
   processingCanvas.width = width
   processingCanvas.height = height
   const ctx = processingCanvas.getContext('2d')
   drawImagePixelByPath(ctx, width, height, targetImageColor, targetImagePath)
   whiteBlack(ctx, width, height)
-  let pixel = ctx.getImageData(0, 0, width, height)
+  const pixel = ctx.getImageData(0, 0, width, height)
   let index = null
   let currVal = null
   let prevIndexVal = null
@@ -361,7 +363,7 @@ export const edgeDetect = (canvas, targetImagePath, targetImageColor, width, hei
 
 export const eraseIntersection = (imagePathList: Object[], erasePath: any) => {
   const originImagePathList = copyImageList(imagePathList)
-  let siblingList = []
+  const siblingList = []
   for (let i = 0; i < originImagePathList.length; i++) {
     const data = originImagePathList[i].data
     const pixelIndexAlphaMap = originImagePathList[i].pixelIndexAlphaMap
@@ -409,7 +411,7 @@ export const eraseIntersection = (imagePathList: Object[], erasePath: any) => {
  * it is set as 100 by default which you want to paint on the same color.*
 */
 export const getSelectArea = (imageData, newColor, x, y, similar = 100, performance) => {
-  let resultArr = []
+  const resultArr = []
   const { width, height } = imageData
   const stack = []
   const baseColor = getColorAtPixel(imageData, x, y)
@@ -481,8 +483,8 @@ export const floodFillScanLineStack = (imageData, newColor, x, y, similar, perfo
   const visited = new Uint8Array(imageData.width, imageData.height)
   const originColor = getColorAtPixel(imageData, x, y)
   const { width, height } = imageData
-  let resultArr = []
-  let stack = []
+  const resultArr = []
+  const stack = []
   const color = { r: newColor[0], g: newColor[1], b: newColor[2], a: newColor[3] }
   stack.push({ x: x, y: y })
 
@@ -493,9 +495,9 @@ export const floodFillScanLineStack = (imageData, newColor, x, y, similar, perfo
     if (window.performance.now() - performance > MAX_RES_TIME) {
       return resultArr
     }
-    let item = stack.pop()
-    let x1 = item.x
-    let y1 = item.y
+    const item = stack.pop()
+    const x1 = item.x
+    const y1 = item.y
     const currentColor = getColorAtPixel(imageData, x1, y1)
     const index = width * y1 * 4 + x1 * 4
     if (!visited[index] && isColorSimilar(currentColor, originColor)) {
@@ -514,8 +516,8 @@ export const floodFillScanLineStack = (imageData, newColor, x, y, similar, perfo
 export const getColorDistance = (a: RGB, b: RGB) => {
   const colorA = rgb2lab([a.r, a.g, a.b])
   const colorB = rgb2lab([b.r, b.g, b.b])
-  let labA = { L: colorA[0], A: colorA[1], B: colorA[2] }
-  let labB = { L: colorB[0], A: colorB[1], B: colorB[2] }
+  const labA = { L: colorA[0], A: colorA[1], B: colorA[2] }
+  const labB = { L: colorB[0], A: colorB[1], B: colorB[2] }
   return getDeltaE00(labA, labB)
 }
 
@@ -576,11 +578,11 @@ export const hexToRGB = (hex) => {
 }
 
 export const copyImageList = (arr) => {
-  var out = []
-  for (var i = 0, len = arr.length; i < len; i++) {
-    var item = arr[i]
-    var obj = {}
-    for (var k in item) {
+  let out = []
+  for (let i = 0, len = arr.length; i < len; i++) {
+    let item = arr[i]
+    let obj = {}
+    for (let k in item) {
       obj[k] = item[k]
     }
     out.push(obj)
@@ -590,7 +592,7 @@ export const copyImageList = (arr) => {
 
 const rgb2lab = (rgb) => {
   // eslint-disable-next-line one-var
-  var r = rgb[0] / 255,
+  let r = rgb[0] / 255,
     g = rgb[1] / 255,
     b = rgb[2] / 255,
     x, y, z
@@ -634,7 +636,7 @@ export const updateDeleteAreaList = (paintPath, deleteAreaList) => {
 export const breakGroupIfhasIntersection = (state, ref) => {
   const { groupAreaList, groupSelectList } = state
   const { CFICanvasPaint, canvasOffsetWidth, canvasOffsetHeight } = ref
-  let idsToUngroup = []
+  const idsToUngroup = []
   let newGroupSelectList = []
   const drawPath = getImageCordinateByPixelPaintBrush(CFICanvasPaint, canvasOffsetWidth, canvasOffsetHeight, false)
   for (let i = 0; i < groupAreaList.length; i++) {
@@ -653,7 +655,7 @@ export const breakGroupIfhasIntersection = (state, ref) => {
 }
 
 export const getCanvasWrapperOffset = (CFIWrapper) => {
-  let canvasWrapperOffset = {}
+  const canvasWrapperOffset = {}
   if (CFIWrapper.current) {
     const wrapperClientOffset = CFIWrapper.current.getBoundingClientRect()
     canvasWrapperOffset.x = parseInt(wrapperClientOffset.left, 10)
@@ -680,7 +682,7 @@ export const drawAcrossLine = (context: Object, to: Object, from: Object, shapeD
 
     if ((x0 === x1) && (y0 === y1)) { break }
 
-    let e2 = 2 * err
+    const e2 = 2 * err
     if (e2 > -dy) {
       err -= dy
       x0 += sx
@@ -696,7 +698,7 @@ export const drawPaintBrushPath = (context: Object, to: Object, from: Object, wi
   const { lpActiveColor } = props
   const { activeTool } = state
   const { CFICanvas2, canvasOriginalDimensions } = ref
-  const lpActiveColorRGB = (activeTool === toolNames.ERASE) ? `rgba(255, 255, 255, 1)` : `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})`
+  const lpActiveColorRGB = (activeTool === toolNames.ERASE) ? 'rgba(255, 255, 255, 1)' : `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})`
   context.fillStyle = lpActiveColorRGB
   const canvasClientOffset = CFICanvas2.current.getBoundingClientRect()
   const scale = canvasOriginalDimensions.width / canvasClientOffset.width

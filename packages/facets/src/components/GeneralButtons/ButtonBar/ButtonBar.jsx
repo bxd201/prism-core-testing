@@ -51,15 +51,17 @@ function Button (props: ButtonProps) {
   return (
     <li className={CLASS_NAMES.OPTION}>
       {
-        !disabled && props.to ? (
+        !disabled && props.to
+          ? (
           <NavLink className={_className} activeClassName={_activeClassName} to={props.to} onClick={onClick || null} {...other}>
             {props.children}
           </NavLink>
-        ) : (
+            )
+          : (
           <button type='button' className={_className} onClick={onClick} disabled={disabled} {...other}>
             {props.children}
           </button>
-        )
+            )
       }
     </li>
   )

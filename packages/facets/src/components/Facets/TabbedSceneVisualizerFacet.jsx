@@ -217,7 +217,8 @@ export function TabbedSceneVisualizerFacet (props: TabbedSceneVisualizerFacetPro
       defaultColors,
       activeColor,
       hasGroupAccess(groupNames, GROUP_NAMES.COLORS))
-      ? defSurfaceColors : mapItemsToList([createMiniColorFromColor(activeColor)], surfaces)
+      ? defSurfaceColors
+      : mapItemsToList([createMiniColorFromColor(activeColor)], surfaces)
 
     if (hasGroupAccess(groupNames, GROUP_NAMES.SCENES)) {
       dispatch(setVariantsCollection(variants))
@@ -269,10 +270,12 @@ export function TabbedSceneVisualizerFacet (props: TabbedSceneVisualizerFacetPro
     return <li style={{
       backgroundColor: isHighlighted ? localSurfaceColors[0]?.hex : null
     }} className={`${tabItemClassName}${index ? '' : '--first'}`} key={data.sceneUid}>
-      <button style={{ textDecoration: isHighlighted ? 'underline' : null,
+      <button style={{
+        textDecoration: isHighlighted ? 'underline' : null,
         color: isDark && isHighlighted ? '#ffffff' : '#000000',
         textDecorationColor: isHighlighted ? 'rgba(0, 0, 0, 0.45)' : null,
-        textUnderlineOffset: '6px' }} className={tabItemBtnClassname} onClick={(e: SyntheticEvent) => changeScene(e, data.sceneUid)}>{data.label}
+        textUnderlineOffset: '6px'
+      }} className={tabItemBtnClassname} onClick={(e: SyntheticEvent) => changeScene(e, data.sceneUid)}>{data.label}
       </button>
     </li>
   }
@@ -328,12 +331,14 @@ export function TabbedSceneVisualizerFacet (props: TabbedSceneVisualizerFacetPro
   }
 
   return (
-    <>{scenesCollection && colors?.colorMap ? <SceneBlobLoader
+    <>{scenesCollection && colors?.colorMap
+      ? <SceneBlobLoader
       scenes={scenesCollection}
       variants={variantsCollection}
       initHandler={handleBlobLoaderInit}
       handleBlobsLoaded={handleSceneSurfacesLoaded}
-      handleError={handleSceneBlobLoaderError} /> : null}
+      handleError={handleSceneBlobLoaderError} />
+      : null}
       <div className={baseFacetClassName}>
         {categories ? categories.map(category => {
           const { sceneUid } = category
@@ -352,7 +357,8 @@ export function TabbedSceneVisualizerFacet (props: TabbedSceneVisualizerFacetPro
             </div>
           )
         }) : null}
-        {categories ? <div className={wrapper}>
+        {categories
+          ? <div className={wrapper}>
           <div className={mobileNavClassName}>
             <div className={`${mobileNavWrapper}--left`} style={{ visibility: showNav.left ? 'visible' : 'hidden' }} >
               <button onClick={scrollNavLeft} className={`${mobileNavBtnClassName}--left`}><FontAwesomeIcon icon={['fal', 'chevron-circle-left']} size='lg' /></button></div>
@@ -360,7 +366,8 @@ export function TabbedSceneVisualizerFacet (props: TabbedSceneVisualizerFacetPro
               <button onClick={scrollNavRight} className={`${mobileNavBtnClassName}--right`}><FontAwesomeIcon icon={['fal', 'chevron-circle-right']} size='lg' /></button></div>
           </div>
           <ul ref={tabItemListRef} className={tabClassName}>{categories ? categories.map(createTabs) : null}</ul>
-        </div> : null }
+        </div>
+          : null }
       </div>
     </>
   )

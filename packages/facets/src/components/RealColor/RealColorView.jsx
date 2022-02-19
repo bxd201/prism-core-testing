@@ -143,9 +143,11 @@ export default function RealColorView (props: RealColorViewProps) {
       className={imageClassName}
       src={displayImage}
       alt={intl.formatMessage({ id: 'USER_UPLOAD' })} />
-    {showSpinner ? <div className={spinnerWrapperClassName}>
+    {showSpinner
+      ? <div className={spinnerWrapperClassName}>
       {waitMessage ? <div className={waitTextClassName}>{waitMessage}</div> : null}
       <div className={spinnerClassName}>{spinner || <CircleLoader />}</div>
-    </div> : null}
+    </div>
+      : null}
   </div>
 }

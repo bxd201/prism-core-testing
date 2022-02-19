@@ -245,7 +245,8 @@ const ImageIngestView = (props: ImageIngestViewProps) => {
       <div className={`${baseClassName}__wrapper`} ref={wrapperRef}>
         {uploadedImageUrl ? <PrismImage ref={imageRef} source={blobUrl} loadedCallback={handleImageLoaded} shouldResample={hasLoaded} scalingWidth={scalingWidth} /> : null}
         <div className={`${baseClassName}__container`}>
-          {hasLoaded ? <div className={`${baseClassName}__header`}>
+          {hasLoaded
+            ? <div className={`${baseClassName}__header`}>
             <button className={`${baseClassName}__button ${baseClassName}__button--left`} onClick={() => history.goBack()}>
               {backBtn?.icon ? <Iconography name={backBtn?.icon} style={{ width: '.85rem', height: '.85rem' }} /> : <FontAwesomeIcon icon={['fa', 'angle-left']} />}
               <span className={`${baseClassName}__button-left-text`}><FormattedMessage id='BACK' /></span>
@@ -256,7 +257,8 @@ const ImageIngestView = (props: ImageIngestViewProps) => {
                 <div className={`${baseClassName}__cancel`}><FontAwesomeIcon icon={['fa', 'times']} /></div>
               </button>
             </Link>
-          </div> : null}
+          </div>
+            : null}
           <canvas className={`${baseClassName}__canvas`} name='canvas' ref={canvasRef} />
           {hasLoaded ? <ImageRotateTerms rotateImage={rotateImage} imageData={imageData} handleDismiss={handleDismissTerms} /> : null}
         </div>

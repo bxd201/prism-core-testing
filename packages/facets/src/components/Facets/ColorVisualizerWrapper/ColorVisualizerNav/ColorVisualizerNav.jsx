@@ -97,7 +97,7 @@ export const DropDownMenu = ({ title, subtitle, items }: DropDownMenuProps) => {
             return (
               <li key={i} className={`cvw-dashboard-submenu__content__item ${isWide ? 'cvw-dashboard-submenu__content__item--wide' : ''}`}>
                 <Wrapper>
-                  {img ? <div className={`cvw-dashboard-submenu__content__image ${isWide ? 'cvw-dashboard-submenu__content__image--wide' : ''}`} style={{ 'backgroundImage': `url(${brandId === 'sherwin' ? selectDevice(img, imgiPhone, imgAndroid, imgiPad) : img})` }} alt='' /> : null}
+                  {img ? <div className={`cvw-dashboard-submenu__content__image ${isWide ? 'cvw-dashboard-submenu__content__image--wide' : ''}`} style={{ backgroundImage: `url(${brandId === 'sherwin' ? selectDevice(img, imgiPhone, imgAndroid, imgiPad) : img})` }} alt='' /> : null}
                   <div className='cvw-dashboard-submenu__content__label'>
                     <h3 className='cvw-dashboard-submenu__content__label--title'>{brandId === 'sherwin' ? selectDevice(title, titleMobile) : title}</h3>
                     <p className='cvw-dashboard-submenu__content__label--content'>{brandId === 'sherwin' ? selectDevice(content, contentiPhone, contentAndroid) : content}</p>
@@ -430,7 +430,8 @@ const ColorVisualizerNav = () => {
                 <FontAwesomeIcon icon={['fal', 'plus-circle']} size='xs' />
               </span>}
               textRenderer={() => exploreColors?.tab ?? <FormattedMessage id='NAV_LINKS.EXPLORE_COLORS' />} />
-          </li> : null }
+          </li>
+          : null }
         { dropDownItemsForGetInspired.length && shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.getInspired)
           ? <li>
             <CVWNavBtn
@@ -443,7 +444,8 @@ const ColorVisualizerNav = () => {
                 <FontAwesomeIcon icon={['fal', 'lightbulb']} size='1x' />
               </span>}
               textRenderer={() => getInspired?.tab ?? <FormattedMessage id='NAV_LINKS.GET_INSPIRED' />} />
-          </li> : null }
+          </li>
+          : null }
         { dropDownItemsForPaintAPhoto.length && shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.paintAPhoto)
           ? <li>
             <CVWNavBtn
@@ -457,7 +459,8 @@ const ColorVisualizerNav = () => {
                 <FontAwesomeIcon icon={['fa', 'brush']} size='sm' transform={{ rotate: 320 }} />
               </span>}
               textRenderer={() => paintAPhoto?.tab ?? <FormattedMessage id='NAV_LINKS.PAINT_A_PHOTO' />} />
-          </li> : null }
+          </li>
+          : null }
         <li className='cvw-navigation-wrapper__structure__child cvw-navigation-wrapper__structure__child--right'>
           <ul className='cvw-navigation-wrapper__structure cvw-navigation-wrapper__structure--right'>
             { shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.documentSaving)
@@ -466,7 +469,8 @@ const ColorVisualizerNav = () => {
                   active={location.pathname === ROUTES_ENUM.ACTIVE_MYIDEAS}
                   onClick={() => handleNavigation(ROUTES_ENUM.ACTIVE_MYIDEAS)}
                   textRenderer={() => <FormattedMessage id='NAV_LINKS.MY_IDEAS' />} />
-              </li> : null }
+              </li>
+              : null }
             <li>
               <CVWNavBtn
                 active={location.pathname === ROUTES_ENUM.HELP}

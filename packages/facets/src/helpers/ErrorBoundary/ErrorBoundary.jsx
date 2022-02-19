@@ -109,14 +109,16 @@ class ErrorBoundary extends React.PureComponent<Props, State> {
           <div className='ErrorBoundary__message'>
             <p>{this.getMessage('ERROR_BOUNDARY.MESSAGE')}</p>
           </div>
-          {showDetails ? (
+          {showDetails
+            ? (
             <label htmlFor={detailsId}>
               <span className='visually-hidden'>{this.getMessage('ERROR_BOUNDARY.ERROR_DETAILS')}</span>
               <textarea id={detailsId} ref={this.detailsRef} readOnly className='ErrorBoundary__details' value={details} />
             </label>
-          ) : (
+              )
+            : (
             <button className='ErrorBoundary__btn' onClick={this.toggleDetails}>{this.getMessage('ERROR_BOUNDARY.SHOW_DETAILS')}</button>
-          )}
+              )}
         </section>
       )
     }

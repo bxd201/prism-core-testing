@@ -373,10 +373,10 @@ function Wall (props: WallProps) {
         case 40: {
           const ids = getProximalSwatchesBySwatchId(chunks.current, topFocusData?.chunkId, topFocusData?.swatchId)
           const intendedSwatch = {
-            '37': ids?.left,
-            '38': ids?.up,
-            '39': ids?.right,
-            '40': ids?.down
+            37: ids?.left,
+            38: ids?.up,
+            39: ids?.right,
+            40: ids?.down
           }[e.keyCode]
 
           setFocusAndScrollTo({
@@ -440,9 +440,11 @@ function Wall (props: WallProps) {
         <AutoSizer disableHeight style={{ width: '100%' }} onResize={handleViewportResize}>{noop}</AutoSizer>
         {shouldRender ? (
           <>
-            {isZoomed ? <button onClick={() => onActivateColor()} className='zoom-out-btn' title={messages.ZOOM_OUT}>
+            {isZoomed
+              ? <button onClick={() => onActivateColor()} className='zoom-out-btn' title={messages.ZOOM_OUT}>
               <FontAwesomeIcon icon='search-minus' size='lg' />
-            </button> : null}
+            </button>
+              : null}
             <div className='cwv3__wall-scroller' ref={wallContentsRef} style={{
               backgroundColor: colorWallBgColor,
               height: isNaN(height) ? (wallH + OUTER_SPACING * 2) * scale : height,

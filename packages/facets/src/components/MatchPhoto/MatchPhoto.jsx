@@ -30,7 +30,7 @@ export function MatchPhoto ({ imageUrl, wrapperWidth, isPortrait, imageDims, pin
                 isActive
               />
             </>
-          )
+            )
           : ''
       }
     </>

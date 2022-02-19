@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/label-has-for */
 // @flow
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -36,7 +35,6 @@ const FileInput = (props: Props) => {
         id={id}
       />
 
-      {/* eslint-disable-next-line jsx-a11y/label-has-for */}
       <label htmlFor={id}
         tabIndex='-1'
         className={`${baseClass}__label overflow-ellipsis clickable`}>

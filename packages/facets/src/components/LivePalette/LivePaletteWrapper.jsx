@@ -151,7 +151,7 @@ const LivePaletteWrapper = ({ simple = false }: { simple?: boolean }) => {
                         <FontAwesomeIcon className={`${baseClass}__info--outlined-icon`} icon={['fas', 'info']} />
                       </div>}
                     />
-                  )
+                    )
                 }
               </button>
             )

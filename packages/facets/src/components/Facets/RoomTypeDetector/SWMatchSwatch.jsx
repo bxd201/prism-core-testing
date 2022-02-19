@@ -21,16 +21,17 @@ const SWMatchSwatch = (props: SWMatchSwatchProps) => {
 
   const { formatMessage } = useIntl()
   const { colorMap } = useSelector(state => state.colors.items)
-  const hex = useMemo(() => color && color.toHexString(), [ color ])
+  const hex = useMemo(() => color && color.toHexString(), [color])
 
   return (
     <div className='SWMatchSwatch' style={{ background: hex }}>
       <div className='SWMatchSwatch__coordinating'>
         <>
-          {colorMatches ? colorMatches.map((color, i) => {
-            const { hex, name, coordinatingColors = {} } = color
+          {colorMatches
+            ? colorMatches.map((color, i) => {
+              const { hex, name, coordinatingColors = {} } = color
 
-            return (
+              return (
               <ul key={i} className='SWMatchSwatch__coordinating__set'>
                 <li className='SWMatchSwatch__coordinating__set__color SWMatchSwatch__coordinating__set__color--primary' style={{ background: hex }} title={name} />
                 <>
@@ -44,8 +45,9 @@ const SWMatchSwatch = (props: SWMatchSwatchProps) => {
                   })}
                 </>
               </ul>
-            )
-          }) : `${formatMessage({ id: 'PROCESSING' })}...`}
+              )
+            })
+            : `${formatMessage({ id: 'PROCESSING' })}...`}
         </>
       </div>
     </div>

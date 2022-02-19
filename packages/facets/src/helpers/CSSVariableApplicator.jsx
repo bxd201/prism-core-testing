@@ -16,7 +16,7 @@ function CSSVariableApplicator ({ variables, children }: Props) {
       return
     }
 
-    for (let prop in variables) {
+    for (const prop in variables) {
       const value = variables[prop]
 
       // if a value has been defined...

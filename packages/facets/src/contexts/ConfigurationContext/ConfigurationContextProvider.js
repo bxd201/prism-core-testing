@@ -61,7 +61,7 @@ function ConfigurationContextProvider (props: Props) {
     if (error) {
       throw new Error(error)
     }
-  }, [ error ])
+  }, [error])
 
   // TODO: extract this into an appropriate location, perhaps an initial bootstrapping step tied into rdx or ctx -@cody.richmond
   useEffect(() => {

@@ -84,7 +84,7 @@ const EditSavedScene = ({ width, height, sceneData, selectScene, showMyIdeas, ed
         <label aria-label={intl.formatMessage({ id: 'CLEAR_TEXT' })} className={`${inputLabel}`} tabIndex='0' role='button' htmlFor='clearBtn' onClick={clearSceneName} onKeyDown={clearSceneName} onMouseDown={(e: SyntheticEvent) => e.preventDefault()}>
           <div>
             <input id='clearBtn' tabIndex='-1' className='visually-hidden' />
-            <FontAwesomeIcon size='xs' className={``} icon={['fa', 'times']} />
+            <FontAwesomeIcon size='xs' className={''} icon={['fa', 'times']} />
           </div>
         </label>
         {savedSceneName && <button className={`${saveButton}`} onClick={clickHandler}><FormattedMessage id='SAVE_MASKS' /></button>}

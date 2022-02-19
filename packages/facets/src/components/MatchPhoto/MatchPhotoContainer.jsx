@@ -61,13 +61,15 @@ const MatchPhotoContainer = (props: MatchPhotoContainerProps) => {
   }, [imageUrl, imageData, width, height, colors, pins])
   return (<div className={baseClass}>
     {imageUrl ? <PrismImage ref={imageRef} source={imageUrl} loadedCallback={handleImageLoaded} scalingWidth={scalingWidth} /> : null }
-    { pins ? <MatchPhoto
+    { pins
+      ? <MatchPhoto
       imageUrl={imageUrl}
       wrapperWidth={scalingWidth}
       isPortrait={imageIsPortrait}
       imageDims={imageDims}
       pins={pins}
-      maxHeight={maxSceneHeight} /> : <CircleLoader /> }
+      maxHeight={maxSceneHeight} />
+      : <CircleLoader /> }
   </div>)
 }
 

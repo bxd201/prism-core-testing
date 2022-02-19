@@ -11,7 +11,7 @@ type SystemMessage = {
 
 export const systemMessages = (state = [], action: { type: string, payload: SystemMessage[], metadata: ?string }) => {
   if (action.type === ADD_SYSTEM_MESSAGE) {
-    return [ ...state, ...action.payload ]
+    return [...state, ...action.payload]
   }
 
   if (action.type === REMOVE_SYSTEM_MESSAGE) {

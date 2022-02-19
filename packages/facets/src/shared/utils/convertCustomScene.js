@@ -32,8 +32,8 @@ function convertCustomScene ({ customScene, colors, paintedScenes }) {
 
 function convertPalette ({ sceneColorPalette, colors }) {
   const regionColorMap = sceneColorPalette.regionColorMap
-  let map = []
-  for (let regionName in regionColorMap) {
+  const map = []
+  for (const regionName in regionColorMap) {
     const regionColor = regionColorMap[regionName]
     const color = colors.find(color => color.id === regionColor.id)
     if (!color) {
@@ -55,8 +55,8 @@ function convertRegions (regionsXml) {
   const width = parseInt(project.getAttribute('width'))
   const height = parseInt(project.getAttribute('height'))
   const surfaces = project.querySelectorAll('surface')
-  let regions = []
-  for (let surface of surfaces) {
+  const regions = []
+  for (const surface of surfaces) {
     const surfaceCategory = surface.getAttribute('category')
     const surfaceRegion = surface.getAttribute('region')
     const regionName = surfaceCategory.toLowerCase() + '_' + surfaceRegion.toLowerCase()

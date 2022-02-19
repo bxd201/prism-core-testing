@@ -110,27 +110,33 @@ function FastMaskSVGDef (props: Props) {
       <feComposite key={i++} in='lightenedImage' in2='roomImageZero' operator='over' x='0%' y='0%' width='100%' height='100%' result='roomImageZero' />,
       <feComposite key={i++} in='roomImageZero' in2='roomImageZero' operator='over' x='0%' y='0%' width='100%' height='100%' result='roomImage' />,
       <feImage key={i++} xlinkHref={hueMask} x='0' y='0' width='100%' height='100%' result='desaturationMask' />,
-      hasHighlight ? [
+      hasHighlight
+        ? [
         <feImage key={i++} xlinkHref={highlightMask} x='0' y='0' width='100%' height='100%' result='highlightMask' />
-      ] : void (0),
+          ]
+        : void (0),
 
       // =========================================================================
       // BEGIN DESATURATION
-      debug ? [
+      debug
+        ? [
         <feFlood key={i++} floodColor={'chartreuse'} result='desatMaskColor' />,
         <feComposite key={i++} in='desatMaskColor' in2='desaturationMask' operator='in' x='0%' y='0%' width='100%' height='100%' result='desatRoomParts' />,
         <feComponentTransfer key={i++} in='desatRoomParts' result='desatRoomParts'>
           <feFuncA type='linear' slope='0.5' />
         </feComponentTransfer>,
         <feComposite key={i++} in='desatRoomParts' in2='roomImageZero' operator='over' x='0%' y='0%' width='100%' height='100%' result='roomImage' />
-      ] : [
+          ]
+        : [
         <feColorMatrix key={i++} in='roomImageZero' type='saturate' values='0' result='roomImage' />,
         <feComposite key={i++} in='roomImage' in2='desaturationMask' operator='in' x='0%' y='0%' width='100%' height='100%' result='desatRoomParts' />,
-        hasHighlight ? [
+        hasHighlight
+          ? [
           <feComposite key={i++} in='desatRoomParts' in2='highlightMask' operator='out' x='0%' y='0%' width='100%' height='100%' result='desatRoomParts' />
-        ] : void (0),
+            ]
+          : void (0),
         <feComposite key={i++} in='desatRoomParts' in2='roomImageZero' operator='over' x='0%' y='0%' width='100%' height='100%' result='roomImage' />
-      ]
+          ]
     ]
     // END DESATURATION
     // =========================================================================
