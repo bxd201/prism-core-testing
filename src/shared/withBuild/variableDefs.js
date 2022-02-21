@@ -19,7 +19,8 @@ module.exports.varValues = {
     title: '2rem',
     titleTextTransform: 'capitalize',
     buttonTextTransform: 'uppercase',
-    buttonFontWeight: '600'
+    buttonFontWeight: '600',
+    textInputBorderRadius: '4px'
   },
   // ----------------------------------------------
   // BEGIN DEPRECATED THEME COLORS WARNING
@@ -100,7 +101,8 @@ module.exports.varNames = {
     titleFontFamily: '--prism-typography-title-font-family',
     titleTextTransform: '--prism-typography-title-text-transform',
     buttonTextTransform: '--prism-typography-button-text-transform',
-    buttonFontWeight: '--prism-typography-button-font-weight'
+    buttonFontWeight: '--prism-typography-button-font-weight',
+    textInputBorderRadius: '--prism-typography-text-input-border-radius'
   },
   scenes: {
     hitAreaOutlineColor: '--prism-hit-area-outline-color',

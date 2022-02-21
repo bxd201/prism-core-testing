@@ -50,6 +50,7 @@ export type ConfigurationContextType = {
     white: string,
     buttonBgColor: string,
     buttonBorder: string,
+    buttonBorderRadius: string,
     buttonColor: string,
     buttonHoverBgColor: string,
     buttonHoverBorder: string,
@@ -73,7 +74,8 @@ export type ConfigurationContextType = {
     titleFontFamily: string,
     titleTextTransform: string,
     buttonFontWeight: string,
-    buttonTextTransform: string
+    buttonTextTransform: string,
+    textInputBorderRadius: string
   },
   featureExclusions: string[],
   cvw: {

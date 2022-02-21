@@ -79,6 +79,7 @@ export const Content = ({ msg, color, style }: ContentProps) => {
 type ColorSwatchProps = {
   color: Color,
   contentRenderer?: ([Element<any>, Element<any>]) => Element<any>, // ([Texts, Btns]) => <></>
+  gap?: boolean;
   level?: number,
   status?: ColorStatus,
   style?: {},
@@ -88,7 +89,7 @@ type ColorSwatchProps = {
   className?: string
 }
 
-const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, contentRenderer = (defaultContent) => <>{defaultContent}</>, level, showContents = (level === 0), status, style, onFocus, outline = true, className }: ColorSwatchProps, ref) => {
+const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, contentRenderer = (defaultContent) => <>{defaultContent}</>, gap, level, showContents = (level === 0), status, style, onFocus, outline = true, className }: ColorSwatchProps, ref) => {
   const { url, params: { section, family } } = useRouteMatch()
   const history = useHistory()
   const isDisabled = at(status, 'status')[0] === 0
@@ -96,7 +97,6 @@ const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, co
   const { brandId, brandKeyNumberSeparator, colorWall: { colorSwatch = {} } }: ConfigurationContextType = useContext(ConfigurationContext)
   const { colorNumOnBottom = false, houseShaped = false } = colorSwatch
   const { primeColorWall }: ColorsState = useSelector(state => state.colors)
-
   const baseClass = houseShaped ? 'color-swatch-house-shaped' : 'color-swatch'
   const colorNumOnBottomClass = houseShaped ? 'label' : 'chip-locator'
   const border = houseShaped && level === 0 ? { border: 'none' } : {}
@@ -104,7 +104,7 @@ const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, co
   return (
     <>
       <button
-        className={`${baseClass} ${baseClass}-${level === undefined ? 'flat' : numToAlphaString(level)}${chunkClickable && section === kebabCase(primeColorWall) ? ' color-swatch--no-outline' : ''}`}
+        className={`${baseClass} ${baseClass}-${level === undefined ? `flat${gap ? '-gap' : ''}` : numToAlphaString(level)}${chunkClickable && section === kebabCase(primeColorWall) ? ' color-swatch--no-outline' : ''}`}
         style={{ ...border, ...style, background: color.hex }}
         ref={ref}
         tabIndex={outline ? 0 : -1}
