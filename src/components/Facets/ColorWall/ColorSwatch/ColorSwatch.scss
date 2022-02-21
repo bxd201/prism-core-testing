@@ -207,6 +207,7 @@ $swatch-edge-padding-lg: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-mai
     justify-content: space-between;
     left: 0;
     padding: $swatch-edge-padding-sm;
+    font-size: 13px;
     position: absolute;
     width: 100%;
 
@@ -222,6 +223,22 @@ $swatch-edge-padding-lg: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-mai
 }
 
 .color-swatch-house-shaped {
+  $swatch-size: 100px;
+  $swatch-gap: $swatch-size / 10;
+  $swatch-roof-position: 47%;
+
+  @mixin roof() {
+    content: '';
+    display: block;
+    position: absolute;
+    top: -$swatch-roof-position;
+    width: 100%;
+    height: 47.5%;
+    background-color: inherit;
+    clip-path: polygon(50% 0, 0 100%, 100% 100%);
+    cursor: default;
+  }
+
   border: $swatch-border-size solid #fff;
   outline-offset: 0px;
 
@@ -243,17 +260,7 @@ $swatch-edge-padding-lg: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-mai
       }
     }
 
-    &::before {
-      content: '';
-      display: block;
-      position: absolute;
-      top: -47%;
-      width: 100%;
-      height: 47.5%;
-      background-color: inherit;
-      clip-path: polygon(50% 0, 0 100%, 100% 100%);
-      cursor: default;
-    }
+    &::before { @include roof() }
   }
 
   &-n0-5 { @include bloom(2.00, 2.36, 750); }
@@ -268,6 +275,17 @@ $swatch-edge-padding-lg: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-mai
     transform: scale(1);
     z-index: 1;
     transition: transform $bloom-duration, z-index 10ms;
+  }
+
+  &-flat-gap {
+    position: absolute;
+    top: $swatch-roof-position / 2;
+    left: 0;
+    width: calc(100% - #{$swatch-gap * 2});
+    height: $swatch-size;
+    margin: 0 10px;
+
+    &::before { @include roof() }
   }
 
   &__content {
@@ -307,6 +325,19 @@ $swatch-edge-padding-lg: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-mai
       font-family: var(getVarName('typography.titleFontFamily'));
       font-size: .85rem;
     }
+  }
+
+  &__flat-label {
+    margin: $swatch-gap * 1.1;
+    width: calc(100% - #{$swatch-gap * 2.2});
+    top: 9.1rem;
+  }
+
+  &__btns {
+    position: absolute;
+    width: calc(100% - #{$swatch-gap * 1.9});
+    height: calc(#{$swatch-size} * 1.5);
+    bottom: 5.5rem;;
   }
 }
 

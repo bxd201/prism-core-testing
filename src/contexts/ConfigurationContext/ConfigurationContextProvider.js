@@ -107,6 +107,7 @@ function ConfigurationContextProvider (props: Props) {
         menuTxtHover: theme.secondary,
         buttonBgColor: theme.white,
         buttonBorder: theme.grey,
+        buttonBorderRadius: '4px',
         buttonColor: theme.primary,
         buttonHoverBgColor: '#F2F2F2',
         buttonHoverBorder: theme.grey,
@@ -144,7 +145,8 @@ function ConfigurationContextProvider (props: Props) {
         [varNames.typography.titleFontFamily]: typography.titleFontFamily,
         [varNames.typography.titleTextTransform]: typography.titleTextTransform,
         [varNames.typography.buttonTextTransform]: typography.buttonTextTransform,
-        [varNames.typography.buttonFontWeight]: typography.buttonFontWeight
+        [varNames.typography.buttonFontWeight]: typography.buttonFontWeight,
+        [varNames.typography.textInputBorderRadius]: typography.textInputBorderRadius
       }
     }
 
