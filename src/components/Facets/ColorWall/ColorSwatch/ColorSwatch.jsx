@@ -79,7 +79,8 @@ export const Content = ({ msg, color, style }: ContentProps) => {
 type ColorSwatchProps = {
   color: Color,
   contentRenderer?: ([Element<any>, Element<any>]) => Element<any>, // ([Texts, Btns]) => <></>
-  gap?: boolean;
+  gap?: number;
+  isClickable?: boolean;
   level?: number,
   status?: ColorStatus,
   style?: {},
@@ -89,7 +90,7 @@ type ColorSwatchProps = {
   className?: string
 }
 
-const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, contentRenderer = (defaultContent) => <>{defaultContent}</>, gap, level, showContents = (level === 0), status, style, onFocus, outline = true, className }: ColorSwatchProps, ref) => {
+const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, contentRenderer = (defaultContent) => <>{defaultContent}</>, gap, isClickable = true, level, showContents = (level === 0), status, style, onFocus, outline = true, className }: ColorSwatchProps, ref) => {
   const { url, params: { section, family } } = useRouteMatch()
   const history = useHistory()
   const isDisabled = at(status, 'status')[0] === 0
@@ -100,16 +101,17 @@ const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, co
   const baseClass = houseShaped ? 'color-swatch-house-shaped' : 'color-swatch'
   const colorNumOnBottomClass = houseShaped ? 'label' : 'chip-locator'
   const border = houseShaped && level === 0 ? { border: 'none' } : {}
+  const gapStyles = gap ? { width: `calc(100% - ${gap * 2}px)`, margin: gap + 'px' } : {}
 
   return (
     <>
       <button
-        className={`${baseClass} ${baseClass}-${level === undefined ? `flat${gap ? '-gap' : ''}` : numToAlphaString(level)}${chunkClickable && section === kebabCase(primeColorWall) ? ' color-swatch--no-outline' : ''}`}
-        style={{ ...border, ...style, background: color.hex }}
+        className={`${baseClass} ${baseClass}-${level === undefined ? `flat${gap ? '-gap' : ''}` : numToAlphaString(level)}${!isClickable || (chunkClickable && section === kebabCase(primeColorWall)) ? ' color-swatch--no-outline' : ''}`}
+        style={{ ...border, ...gapStyles, ...style, background: color.hex }}
         ref={ref}
         tabIndex={outline ? 0 : -1}
         onFocus={onFocus}
-        onClick={chunkClickable && section === kebabCase(primeColorWall)
+        onClick={!isClickable || (chunkClickable && section === kebabCase(primeColorWall))
           ? noop
           : () => {
             GA.event({ category: 'Color Wall', action: 'Color Swatch Clicks', label: `${color.name} - ${color.colorNumber}` }, GA_TRACKER_NAME_BRAND[brandId])
@@ -131,7 +133,7 @@ const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, co
         onFocus={onFocus}
         aria-label={fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator)}
         className={`${baseClass}__content${color.isDark ? ' color-swatch__content--dark-color' : ''}${outline ? ` ${baseClass}__content--focus` : ''}${houseShaped && level === 0 ? ' color-swatch--no-outline' : ''}`}
-        style={style}
+        style={houseShaped && gap ? { ...style, marginLeft: gap + 1 + 'px', marginRight: gap + 1 + 'px' } : style}
       >
         {contentRenderer([
           colorNumOnBottom ? (

@@ -46,12 +46,14 @@ const Search = ({ closeSearch = () => {}, contain = false, crossSearch, isChipLo
         <ColorSwatch
           color={result}
           contentRenderer={(defaultContent) => <>
-            <div className='color-swatch-house-shaped__label color-swatch-house-shaped__flat-label'>{defaultContent[0]}</div>
-            <div className='color-swatch-house-shaped__btns'>{defaultContent[1]}</div>
+            <div className='color-swatch-house-shaped__btns' style={{ marginTop: '166px' }}>{defaultContent[1]}</div>
+            <div className='color-swatch-house-shaped__label'>{defaultContent[0]}</div>
           </>}
-          gap
+          gap={10}
+          isClickable={false}
           showContents
           status={colorStatuses[result.id]}
+          style={{ height: '100px' }}
         />
       </div>
     ) : (
