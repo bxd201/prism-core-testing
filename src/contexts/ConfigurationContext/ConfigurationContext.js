@@ -64,6 +64,9 @@ export type ConfigurationContextType = {
     colorSwatch?: {
       colorNumOnBottom?: boolean,
       houseShaped?: boolean,
+      infoBtn?: {
+        icon?: string
+      }
     },
     gapsBetweenChunks: boolean,
     searchColor?: string,
@@ -98,7 +101,8 @@ export type ConfigurationContextType = {
     downloadSceneHeaderImage?: string,
     downloadSceneHeaderImage?: string,
     expertColorPicks?: {
-      collectionsSelectLabel?: string
+      collectionsSelectLabel?: string,
+      title?: string
     },
     help?: {
       addColor1?: string,

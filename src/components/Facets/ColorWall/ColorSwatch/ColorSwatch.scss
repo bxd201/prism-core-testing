@@ -29,7 +29,10 @@ $swatch-edge-padding-lg: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-mai
 
   &--focus, &:focus { z-index: 2; }
 
-  &--no-outline { outline: none !important; }
+  &--no-outline {
+    cursor: default;
+    outline: none !important;
+  }
 
   &-0 {
     @include bloom($bloom-scale-main-sm, $bloom-scale-main-lg, 900);
@@ -223,8 +226,6 @@ $swatch-edge-padding-lg: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-mai
 }
 
 .color-swatch-house-shaped {
-  $swatch-size: 100px;
-  $swatch-gap: $swatch-size / 10;
   $swatch-roof-position: 47%;
 
   @mixin roof() {
@@ -281,30 +282,18 @@ $swatch-edge-padding-lg: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-mai
     position: absolute;
     top: $swatch-roof-position / 2;
     left: 0;
-    width: calc(100% - #{$swatch-gap * 2});
-    height: $swatch-size;
-    margin: 0 10px;
+    width: 100%;
 
     &::before { @include roof() }
   }
 
   &__content {
+    position: relative;
     z-index: 950 !important;
-    padding: $swatch-edge-padding-sm;
-    animation: fadeIn $bloom-duration $bloom-duration;
-    text-align: left;
-
-    @include respond-above(sm) {
-      padding: $swatch-edge-padding-lg;
-    }
-
-    &--dark-color { color: var(getThemeColor('primary.contrast.trans')); }
   }
 
   &__label {
-    position: absolute;
-    top: 5.6rem;
-    left: 0;
+    position: relative;
     padding: 0.75rem 0.75rem 0.6rem;
     width: 100%;
     background: white;
@@ -312,8 +301,6 @@ $swatch-edge-padding-lg: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-mai
     border-top: none;
     text-align: center;
     line-height: 1.3rem;
-
-    @include respond-above(sm) { top: 6.2rem; }
 
     &__name {
       color: var(getThemeColor('black'));
@@ -327,17 +314,9 @@ $swatch-edge-padding-lg: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-mai
     }
   }
 
-  &__flat-label {
-    margin: $swatch-gap * 1.1;
-    width: calc(100% - #{$swatch-gap * 2.2});
-    top: 9.1rem;
-  }
-
   &__btns {
-    position: absolute;
-    width: calc(100% - #{$swatch-gap * 1.9});
-    height: calc(#{$swatch-size} * 1.5);
-    bottom: 5.5rem;;
+    position: relative;
+    margin-top: 66%;
   }
 }
 
