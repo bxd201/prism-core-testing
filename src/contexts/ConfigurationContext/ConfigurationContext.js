@@ -57,7 +57,8 @@ export type ConfigurationContextType = {
     buttonHoverColor: string,
     buttonActiveBgColor: string,
     buttonActiveBorder: string,
-    buttonActiveColor: string
+    buttonActiveColor: string,
+    buttonBarBorder: string
   },
   colorWall: {
     bloomEnabled: boolean,
@@ -160,7 +161,8 @@ export type ConfigurationContextType = {
       scrollContentPosition?: string
     },
     inspirationalPhotos?: {
-      collectionsSelectLabel?: string
+      collectionsSelectLabel?: string,
+      title?: string
     },
     introBg?: string,
     introLogo?: string,

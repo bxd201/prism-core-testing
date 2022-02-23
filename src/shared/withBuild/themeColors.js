@@ -36,7 +36,8 @@ const defaultThemeColors = {
   buttonHoverColor: '#0069af',
   buttonActiveBgColor: '#0069af',
   buttonActiveBorder: '#CCC',
-  buttonActiveColor: '#FFF'
+  buttonActiveColor: '#FFF',
+  buttonBarBorder: '#CCC'
 }
 
 const themeColors = Object.keys(defaultThemeColors)
