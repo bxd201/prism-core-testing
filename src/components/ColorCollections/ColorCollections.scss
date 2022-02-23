@@ -69,7 +69,7 @@
   }
   &__tab-list {
     background: var(getThemeColor('buttonBgColor.trans'));
-    border: 1px solid var(getThemeColor('buttonBorder'));
+    border: 1px solid var(getThemeColor('buttonBarBorder'));
     display: block;
     position: absolute;
     margin: 0;
@@ -118,7 +118,7 @@
 
     @include respond-above(sm) {
       background: var(getThemeColor('buttonBgColor'));
-      border: 1px solid var(getThemeColor('buttonBorder'));
+      border: 1px solid var(getThemeColor('buttonBarBorder'));
       padding: .75em .5em;
       width: auto;
       margin: 0 -1px 0 0;
