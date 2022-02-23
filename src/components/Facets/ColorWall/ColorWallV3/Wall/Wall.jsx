@@ -24,21 +24,39 @@ function Wall (props) {
       addChunk: chunk => chunks?.current?.add(chunk),
       hostHasFocus: hasFocus,
       activeSwatchId: topActiveSwatchId,
-      inactiveSwatchRenderer: ({ id, ref }) => ( // eslint-disable-line
-        <button style={{ position: 'absolute', width: '100%', height: '100%', background: 'transparent' }} ref={ref} title={id} onClick={() => {
-          setTopActiveSwatchId(id)
-          setTopFocusData({
-            swatchId: id,
-            chunkId: getProximalChunksBySwatchId(chunks, id)?.current?.id
-          })
-        }}>{id}</button>
-      ),
-      activeSwatchRenderer: ({ id, ref }) => ( // eslint-disable-line
-        <div style={{ position: 'absolute', width: '100%', height: '100%', background: 'red' }}>
-          {id}
-          <button ref={ref}>one action</button>
-          <button>another action</button>
-        </div>
+      swatchRenderer: ({ id, ref, active }) => ( // eslint-disable-line
+        // this should contain a real Swatch component that will render active swatch contents
+        // things like calls to action, background color, all that
+        // NOTE: needs the absolute position wrapper, doesn't need a background color
+        <>
+          <button
+            ref={!active ? ref : null}
+            tabIndex={!active ? 0 : -1}
+            disabled={active}
+            onClick={() => {
+              setTopActiveSwatchId(id)
+              setTopFocusData({
+                swatchId: id,
+                chunkId: getProximalChunksBySwatchId(chunks, id)?.current?.id
+              })
+            }}
+            className={`cwv3__swatch-renderer ${active ? 'cwv3__swatch-renderer--active' : ''}`}
+            style={{
+              // TODO: this should be the color of the swatch
+              background: 'transparent'
+            }}
+            title={id}
+          />
+          {active
+            ? <div
+              className={`cwv3__swatch-renderer__inner ${active ? 'cwv3__swatch-renderer__inner--active' : ''}`}
+            >
+              {id}
+              <button ref={active ? ref : null}>one action</button>
+              <button>another action</button>
+            </div>
+            : null}
+        </>
       )
     }
   }, [topActiveSwatchId, hasFocus])

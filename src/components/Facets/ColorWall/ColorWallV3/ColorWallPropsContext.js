@@ -7,15 +7,14 @@ export const SCALE_ZOOM_OUT = 1
 export const SCALE_ZOOM_IN = 4
 
 export const colorWallPropsDefault = {
-  activeSwatchRenderer: noop,
   activeSwatchId: null,
   addChunk: noop,
   baseSwatchSize: BASE_SWATCH_SIZE,
   display: true,
   hostHasFocus: false,
-  inactiveSwatchRenderer: noop,
   isZoomed: false,
-  scale: 1
+  scale: 1,
+  swatchRenderer: noop
 }
 
 const ColorWallPropsContext = React.createContext<Object>(colorWallPropsDefault)

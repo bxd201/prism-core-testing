@@ -7,7 +7,7 @@ import './Chunk.scss'
 function Chunk (props) {
   const { data = {}, updateWidth, updateHeight, id = '' } = props // eslint-disable-line
   const ctx = useContext(ColorWallPropsContext)
-  const { addChunk, activeSwatchId, inactiveSwatchRenderer, activeSwatchRenderer } = ctx
+  const { addChunk, activeSwatchId, swatchRenderer } = ctx
   const [ width, setWidth ] = useState(0)
   const [ height, setHeight ] = useState(0)
   const [ swatchWidth, setSwatchWidth ] = useState(0)
@@ -74,8 +74,7 @@ function Chunk (props) {
             id={childId}
             ref={_el => addToSwatchRefs(_el, childId)}
             key={`${i}_${ii}`}
-            inactiveRenderer={inactiveSwatchRenderer}
-            activeRenderer={activeSwatchRenderer}
+            renderer={swatchRenderer}
             active={activeSwatchId === childId}
             width={swatchWidth}
             height={swatchHeight} />
