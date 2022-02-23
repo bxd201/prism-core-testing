@@ -299,7 +299,12 @@ const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: 
                       <p className='color-swatch__chip-locator__col-row'>Col: {color.column}&nbsp;&nbsp;Row: {color.row}</p>
                     </div>
                   </div>
-                ) : houseShaped ? <><div className='color-swatch-house-shaped__label'>{defaultContent[0]}</div>{defaultContent[1]}</> : <>{defaultContent}</>}
+                ) : houseShaped ? (
+                  <>
+                    <div className='color-swatch-house-shaped__btns'>{defaultContent[1]}</div>
+                    <div className='color-swatch-house-shaped__label'>{defaultContent[0]}</div>
+                  </>
+                ) : <>{defaultContent}</>}
                 level={levelMap[colorId]}
                 status={colorStatuses[colorId]}
               />

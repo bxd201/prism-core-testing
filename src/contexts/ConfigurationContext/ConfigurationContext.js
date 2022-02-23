@@ -50,6 +50,7 @@ export type ConfigurationContextType = {
     white: string,
     buttonBgColor: string,
     buttonBorder: string,
+    buttonBorderRadius: string,
     buttonColor: string,
     buttonHoverBgColor: string,
     buttonHoverBorder: string,
@@ -63,6 +64,9 @@ export type ConfigurationContextType = {
     colorSwatch?: {
       colorNumOnBottom?: boolean,
       houseShaped?: boolean,
+      infoBtn?: {
+        icon?: string
+      }
     },
     gapsBetweenChunks: boolean,
     searchColor?: string,
@@ -73,7 +77,8 @@ export type ConfigurationContextType = {
     titleFontFamily: string,
     titleTextTransform: string,
     buttonFontWeight: string,
-    buttonTextTransform: string
+    buttonTextTransform: string,
+    textInputBorderRadius: string
   },
   featureExclusions: string[],
   cvw: {
@@ -96,7 +101,8 @@ export type ConfigurationContextType = {
     downloadSceneHeaderImage?: string,
     downloadSceneHeaderImage?: string,
     expertColorPicks?: {
-      collectionsSelectLabel?: string
+      collectionsSelectLabel?: string,
+      title?: string
     },
     help?: {
       addColor1?: string,

@@ -37,7 +37,8 @@ export const DEFAULT_CONFIGURATION = {
     titleFontFamily: varValues.typography.titleFontFamily,
     titleTextTransform: varValues.typography.titleTextTransform,
     buttonTextTransform: varValues.typography.buttonTextTransform,
-    buttonFontWeight: varValues.typography.buttonFontWeight
+    buttonFontWeight: varValues.typography.buttonFontWeight,
+    textInputBorderRadius: varValues.typography.textInputBorderRadius
   },
   loadingConfiguration: false,
   error: false

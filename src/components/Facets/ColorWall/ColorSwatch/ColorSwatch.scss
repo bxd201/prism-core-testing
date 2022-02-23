@@ -29,7 +29,10 @@ $swatch-edge-padding-lg: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-mai
 
   &--focus, &:focus { z-index: 2; }
 
-  &--no-outline { outline: none !important; }
+  &--no-outline {
+    cursor: default;
+    outline: none !important;
+  }
 
   &-0 {
     @include bloom($bloom-scale-main-sm, $bloom-scale-main-lg, 900);
@@ -207,6 +210,7 @@ $swatch-edge-padding-lg: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-mai
     justify-content: space-between;
     left: 0;
     padding: $swatch-edge-padding-sm;
+    font-size: 13px;
     position: absolute;
     width: 100%;
 
@@ -222,6 +226,20 @@ $swatch-edge-padding-lg: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-mai
 }
 
 .color-swatch-house-shaped {
+  $swatch-roof-position: 47%;
+
+  @mixin roof() {
+    content: '';
+    display: block;
+    position: absolute;
+    top: -$swatch-roof-position;
+    width: 100%;
+    height: 47.5%;
+    background-color: inherit;
+    clip-path: polygon(50% 0, 0 100%, 100% 100%);
+    cursor: default;
+  }
+
   border: $swatch-border-size solid #fff;
   outline-offset: 0px;
 
@@ -243,17 +261,7 @@ $swatch-edge-padding-lg: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-mai
       }
     }
 
-    &::before {
-      content: '';
-      display: block;
-      position: absolute;
-      top: -47%;
-      width: 100%;
-      height: 47.5%;
-      background-color: inherit;
-      clip-path: polygon(50% 0, 0 100%, 100% 100%);
-      cursor: default;
-    }
+    &::before { @include roof() }
   }
 
   &-n0-5 { @include bloom(2.00, 2.36, 750); }
@@ -270,23 +278,22 @@ $swatch-edge-padding-lg: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-mai
     transition: transform $bloom-duration, z-index 10ms;
   }
 
+  &-flat-gap {
+    position: absolute;
+    top: $swatch-roof-position / 2;
+    left: 0;
+    width: 100%;
+
+    &::before { @include roof() }
+  }
+
   &__content {
+    position: relative;
     z-index: 950 !important;
-    padding: $swatch-edge-padding-sm;
-    animation: fadeIn $bloom-duration $bloom-duration;
-    text-align: left;
-
-    @include respond-above(sm) {
-      padding: $swatch-edge-padding-lg;
-    }
-
-    &--dark-color { color: var(getThemeColor('primary.contrast.trans')); }
   }
 
   &__label {
-    position: absolute;
-    top: 5.6rem;
-    left: 0;
+    position: relative;
     padding: 0.75rem 0.75rem 0.6rem;
     width: 100%;
     background: white;
@@ -294,8 +301,6 @@ $swatch-edge-padding-lg: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-mai
     border-top: none;
     text-align: center;
     line-height: 1.3rem;
-
-    @include respond-above(sm) { top: 6.2rem; }
 
     &__name {
       color: var(getThemeColor('black'));
@@ -307,6 +312,11 @@ $swatch-edge-padding-lg: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-mai
       font-family: var(getVarName('typography.titleFontFamily'));
       font-size: .85rem;
     }
+  }
+
+  &__btns {
+    position: relative;
+    margin-top: 66%;
   }
 }
 
