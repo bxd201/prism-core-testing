@@ -122,6 +122,8 @@ export type ConfigurationContextType = {
       colorDetailBg?: string,
       colorDetailMobile1?: string,
       colorDetailMobile2?: string,
+      contents?: string[],
+      contentsHiddenMobile?: string[],
       iconsButtons?: {
         addColor?: HelpSectionItems,
         trashAColor?: HelpSectionItems,
