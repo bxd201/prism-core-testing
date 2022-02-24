@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo, useEffect } from 'react'
+import React, { useState, useRef, useMemo, useEffect, useCallback } from 'react'
 import ColorWallPropsContext, { colorWallPropsDefault } from '../ColorWallPropsContext'
 import Column from '../Column/Column'
 import './Wall.scss'
@@ -8,16 +8,56 @@ import 'src/scss/externalComponentSupport/AutoSizer.scss'
 import { computeWall } from '../sharedReducersAndComputers'
 import useEffectAfterMount from 'src/shared/hooks/useEffectAfterMount'
 import { getProximalChunksBySwatchId, getProximalSwatchesBySwatchId } from './wallUtils'
+import getElementRelativeOffset from 'get-element-relative-offset'
 
 function Wall (props) {
   const { data } = props // eslint-disable-line
   const [hasFocus, setHasFocus] = useState(false)
+  const wallContentsRef = useRef()
   const focusOutStartHelper = useRef()
   const focusOutEndHelper = useRef()
   const chunks = useRef(new Set())
-  const thisEl = useRef()
+  const wallRef = useRef()
   const [topFocusData, setTopFocusData] = useState()
   const [topActiveSwatchId, setTopActiveSwatchId] = useState()
+
+  const setFocusAndScrollTo = useCallback((props) => {
+    setTopFocusData(props)
+
+    if (!props) return
+
+    const swatchRefs = Array.from(chunks.current).map(chunk => chunk.swatchesRef?.current ?? []).filter(arr => arr.length)
+    const result = (() => {
+      try {
+        for (let i = swatchRefs.length - 1; i >= 0; i--) {
+          for (let ii = swatchRefs[i].length - 1; ii >= 0; ii--) {
+            if (swatchRefs[i][ii].id === props.swatchId) { return swatchRefs[i][ii].el } // eslint-disable-line
+          }
+        }
+      } catch (err) {
+        return // eslint-disable-line
+      }
+    })()
+
+    if (result) {
+      const { top = 0, left = 0 } = getElementRelativeOffset(result, v => v === wallContentsRef.current)
+      const newTop = top + (wallContentsRef.current.clientHeight / -2)
+      const newLeft = left + (wallContentsRef.current.clientWidth / -2)
+
+      if (typeof wallContentsRef.current.scrollTo === 'function') {
+        wallContentsRef.current.scrollTo({
+          top: newTop,
+          left: newLeft,
+          behavior: 'smooth'
+        })
+      } else {
+        // just for IE and old browser support
+        wallContentsRef.current.scrollTop = newTop
+        wallContentsRef.current.scrollLeft = newLeft
+      }
+    }
+  }, [])
+
   const wallProps = useMemo(() => {
     return {
       ...colorWallPropsDefault,
@@ -35,25 +75,26 @@ function Wall (props) {
             disabled={active}
             onClick={() => {
               setTopActiveSwatchId(id)
-              setTopFocusData({
+              setFocusAndScrollTo({
                 swatchId: id,
                 chunkId: getProximalChunksBySwatchId(chunks, id)?.current?.id
               })
             }}
             className={`cwv3__swatch-renderer ${active ? 'cwv3__swatch-renderer--active' : ''}`}
             style={{
-              // TODO: this should be the color of the swatch
+              // TODO: background should be the color of the swatch
               background: 'transparent'
             }}
-            title={id}
+            title={`TODO: populate with name/number of color swatch`}
           />
           {active
             ? <div
               className={`cwv3__swatch-renderer__inner ${active ? 'cwv3__swatch-renderer__inner--active' : ''}`}
             >
+              {/* Actual swatch contents (buttons, calls to action, links, name and number) go here */}
               {id}
-              <button ref={active ? ref : null}>one action</button>
-              <button>another action</button>
+              <button ref={active ? ref : null}>Click this</button>
+              <button>Do this</button>
             </div>
             : null}
         </>
@@ -70,7 +111,7 @@ function Wall (props) {
     if (first) {
       const newId = first.data?.children?.[0]?.[0] ?? null
       if (typeof newId !== 'undefined' && newId !== null) {
-        setTopFocusData({
+        setFocusAndScrollTo({
           swatchId: newId,
           chunkId: first.id
         })
@@ -89,7 +130,7 @@ function Wall (props) {
       const newId = last.data?.children?.[0]?.[0] ?? null
 
       if (typeof newId !== 'undefined' && newId !== null) {
-        setTopFocusData({
+        setFocusAndScrollTo({
           swatchId: newId,
           chunkId: last.id
         })
@@ -132,7 +173,7 @@ function Wall (props) {
             const newId = intendedChunk.data?.children?.[0]?.[0] ?? null
 
             if (newId !== null) {
-              setTopFocusData({
+              setFocusAndScrollTo({
                 swatchId: newId,
                 chunkId: intendedChunk?.id
               })
@@ -145,7 +186,7 @@ function Wall (props) {
             // the user is trying to tab out of the wall either at the beginning or end
             // must do this BEFORE setting focus state
             (e.shiftKey ? focusOutStartHelper : focusOutEndHelper)?.current?.focus?.() // eslint-disable-line
-            setTopFocusData()
+            setFocusAndScrollTo()
             setHasFocus(false)
           }
           break
@@ -162,7 +203,7 @@ function Wall (props) {
             '40': ids?.down
           }[e.keyCode]
 
-          setTopFocusData({
+          setFocusAndScrollTo({
             ...topFocusData,
             swatchId: intendedSwatch?.id
           })
@@ -181,10 +222,10 @@ function Wall (props) {
   useEffect(() => {
     function handleWallClick (e) {
       setHasFocus(true)
-      thisEl?.current?.removeEventListener('click', handleWallClick) // eslint-disable-line
+      wallRef?.current?.removeEventListener('click', handleWallClick) // eslint-disable-line
     }
     function handleOffWallClick (e) {
-      if (e.path.indexOf(thisEl?.current) >= 0) {
+      if (e.path.indexOf(wallRef?.current) >= 0) {
         return
       }
       setHasFocus(false)
@@ -192,27 +233,27 @@ function Wall (props) {
     }
 
     if (hasFocus) {
-      thisEl?.current?.removeEventListener('click', handleWallClick) // eslint-disable-line
+      wallRef?.current?.removeEventListener('click', handleWallClick) // eslint-disable-line
       window.addEventListener('click', handleOffWallClick)
     } else {
       window.removeEventListener('click', handleOffWallClick)
-      thisEl?.current?.addEventListener('click', handleWallClick) // eslint-disable-line
+      wallRef?.current?.addEventListener('click', handleWallClick) // eslint-disable-line
     }
 
     return () => {
       window.removeEventListener('click', handleOffWallClick)
-      thisEl?.current?.removeEventListener('click', handleWallClick) // eslint-disable-line
+      wallRef?.current?.removeEventListener('click', handleWallClick) // eslint-disable-line
     }
   }, [hasFocus])
 
   return <ColorWallPropsContext.Provider value={wallProps}>
-    <div ref={thisEl} style={{ display: 'block' }}>
+    <div ref={wallRef} className='cwv3__wall'>
       {!hasFocus
         ? <button onFocus={handleTabInBeginning} />
         : <button ref={focusOutStartHelper} onFocus={e => e.target.blur()} />}
       <AutoSizer disableHeight style={{ width: '100%' }} onResize={({ width: thisWidth }) => setContainerWidth(thisWidth)}>{noop}</AutoSizer>
       {shouldRender ? (
-        <div style={{ overflow: 'scroll', width: '100%', height: defaultDimensions?.height * scale }}>
+        <div className='cwv3__wall-scroller' ref={wallContentsRef} style={{ height: defaultDimensions?.height * scale }}>
           <div
             className='cwv3__wall-col'
             style={{ width: defaultDimensions?.width * scale }}

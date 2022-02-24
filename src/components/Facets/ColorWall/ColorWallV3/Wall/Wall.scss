@@ -1,16 +1,28 @@
-.cwv3__wall-col {
-  display: flex;
-  flex-wrap: nowrap;
-  justify-content: center;
-  align-items: stretch;
-}
-
 .cwv3 {
+  &__wall {
+    position: relative;
+    display: block;
+  }
+
+  &__wall-scroller {
+    overflow: scroll;
+    position: relative;
+  }
+
+  &__wall-col {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: stretch;
+    position: relative;
+  }
+
   &__swatch-renderer {
     position: absolute;
     width: 100%;
     height: 100%;
     transition: all .2s;
+    z-index: 1;
 
     &--active {
       transform: scale(3);

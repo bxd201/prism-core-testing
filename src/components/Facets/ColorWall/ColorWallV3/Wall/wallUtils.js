@@ -19,7 +19,6 @@ export const getProximalSwatchesBySwatchId = (chunks, chunkId, swatchId) => {
       }, undefined)
 
       if (coords) {
-        debugger // eslint-disable-line
         const btnRefs = chunk(Array.from(hostChunk.swatchesRef?.current ?? []), children[0].length)
         const coordsUp = [coords[0], Math.max(coords[1] - 1, 0)]
         const coordsDn = [coords[0], Math.min(coords[1] + 1, children.length - 1)]
