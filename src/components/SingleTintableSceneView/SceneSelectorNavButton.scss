@@ -7,6 +7,7 @@
   border: 1px solid var(getThemeColor('buttonBorder'));
   background-color: var(getThemeColor('buttonBgColor'));
   color: var(getThemeColor('buttonColor'));
+  font-family: var(getVarName('typography.titleFontFamily'));;
 
   &:hover {
     border-color: var(getThemeColor('buttonHoverBorder'));

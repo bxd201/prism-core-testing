@@ -32,6 +32,7 @@ export type ConfigurationContextType = {
     secondary: string,
     primaryBg: string,
     secondaryBg: string,
+    tertiaryBg: string,
     primaryBorder: string,
     secondaryBorder: string,
     warning: string,
@@ -84,6 +85,10 @@ export type ConfigurationContextType = {
   cvw: {
     backBtn?: {
       icon?: string
+    },
+    carouselBtn?: {
+      iconLeft?: string,
+      iconRight?: string
     },
     closeBtn?: {
       showArrow?: boolean,
@@ -201,6 +206,9 @@ export type ConfigurationContextType = {
     },
     scene?: {
       moreScenesBtn?: {
+        showIcon: boolean
+      },
+      paintThisSceneBtn?: {
         showIcon: boolean
       }
     },

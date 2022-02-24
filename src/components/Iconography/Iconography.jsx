@@ -18,6 +18,13 @@ const Iconography = ({ name, index, style }: IconographyProps) => {
         </svg>
       </div>
     ),
+    arrowRight: (
+      <div style={{ ...style, transform: 'scale(-1, 1)' }}>
+        <svg width='40' height='42' viewBox='8 6 40 42' fill='none' xmlns='http://www.w3.org/2000/svg'>
+          <path fillRule='evenodd' clipRule='evenodd' d='M12.8972 24.2917H48.5946V28.7083H12.845L25.2325 41.0959L22.1095 44.2189L4.41666 26.5261L22.1095 8.83334L25.2325 11.9564L12.8972 24.2917Z' fill='#060F20' />
+        </svg>
+      </div>
+    ),
     colorDetails: (
       <div className={'iconography iconography--color-details-icon'} style={style}>
         <FontAwesomeIcon icon={['fas', 'info']} />

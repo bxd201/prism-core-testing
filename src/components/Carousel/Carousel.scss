@@ -24,7 +24,7 @@
         margin: 0 ($size / 2);
 
         &--active {
-          background: var(getThemeColor('buttonColor'));
+          background: var(getThemeColor('tertiaryBg'));
           box-shadow: 0 0 0 0.5px var(getThemeColor('buttonColor.contrast.transer'));
           transition: none;
         }
