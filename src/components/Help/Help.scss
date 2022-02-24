@@ -106,14 +106,16 @@
     text-align: center;
     & > h2 {
       color: var(getThemeColor('secondary'));
-      text-transform: var(getVarName('typography.titleTextTransform'));
       display: block;
       font-size: 1.75em;
       font-weight: 400;
-      line-height: 2.1em;
+      line-height: 2.2rem;
+      padding-bottom: 2rem;
+      text-transform: var(getVarName('typography.titleTextTransform'));
     }
     & > span {
       display: block;
+      font-family: var(getVarName('typography.bodyFontFamily'));
     }
   }
   &__content-details {
@@ -246,6 +248,9 @@
       line-height: 1.2em;
       margin-bottom: .5em;
       padding: 0;
+    }
+    & > p {
+      font-family: var(getVarName('typography.bodyFontFamily'));
     }
   }
   &__second-icon {
