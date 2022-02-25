@@ -129,6 +129,7 @@ function Wall (props: WallProps) {
             className={`cwv3__swatch-renderer ${active ? 'cwv3__swatch-renderer--active' : ''}`}
             style={{
               // TODO: background should be the color of the swatch
+              // background: colorMap[id].hex
               background: 'red'
             }}
             title={`TODO: populate with name/number of color swatch`}
@@ -138,8 +139,10 @@ function Wall (props: WallProps) {
               className={`cwv3__swatch-renderer__inner ${active ? 'cwv3__swatch-renderer__inner--active' : ''}`}
             >
               {/* Actual swatch contents (buttons, calls to action, links, name and number) go here */}
-              <button ref={active ? ref : null}>Click this</button>
-              <button>Do this</button>
+              <button onClick={() => {
+                // do anything you need to here with the swatch CTA
+                // doSomething(id)
+              }} ref={active ? ref : null}>Main swatch CTA</button>
             </div>
             : null}
         </>
