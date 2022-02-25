@@ -92,12 +92,15 @@ Below are all the availabe theme colors we have at the moment, as well as their 
 |dark|`--prism-theme-color-dark`|![#2E2E2E](https://via.placeholder.com/15/2E2E2E/000000?text=+) `#2E2E2E`|
 |menuBg|`--prism-theme-color-menu-bg`|![#FFF](https://via.placeholder.com/15/FFF/000000?text=+) `#FFF`|
 |menuContentTitle|`--prism-theme-color-menu-content-title`|![#000](https://via.placeholder.com/15/000/000000?text=+) `#000`|
+|menuContentDescription|`--prism-theme-color-menu-content-description`|![#000](https://via.placeholder.com/15/000/000000?text=+) `#000`|
 |menuTxt|`--prism-theme-color-menu-txt`|![#000](https://via.placeholder.com/15/000/000000?text=+) `#000`|
 |menuTxtHover|`--prism-theme-color-menu-txt-hover`|![#2CABE2](https://via.placeholder.com/15/2CABE2/000000?text=+) `#2CABE2`|
 |primary|`--prism-theme-color-primary`|![#0069AF](https://via.placeholder.com/15/0069AF/000000?text=+) `#0069AF`|
 |secondary|`--prism-theme-color-secondary`|![#2CABE2](https://via.placeholder.com/15/2CABE2/000000?text=+) `#2CABE2`|
 |primaryBg|`--prism-theme-color-primary-bg`|![#FAFAFA](https://via.placeholder.com/15/FAFAFA/000000?text=+) `#FAFAFA`|
-|secondaryBg|`--prism-theme-color-secondary-bg`|![#E2E2E2](https://via.placeholder.com/15/E2E2E2/000000?text=+) `#E2E2E2`|
+|secondaryBg|`--prism-theme-color-secondary-bg`|![#FAFAFA](https://via.placeholder.com/15/E2E2E2/000000?text=+) `#FAFAFA`|
+|primaryBorder|`--prism-theme-color-primary-border`|![#FFF](https://via.placeholder.com/15/FFF/000000?text=+) `#FFF`|
+|secondaryBorder|`--prism-theme-color-secondary-border`|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`none`|
 |success|`--prism-theme-color-success`|![#1FCE6C](https://via.placeholder.com/15/1FCE6C/000000?text=+) `#1FCE6C`|
 |warning|`--prism-theme-color-warning`|![#F2C500](https://via.placeholder.com/15/F2C500/000000?text=+) `#F2C500`|
 |white|`--prism-theme-color-white`|![#FFF](https://via.placeholder.com/15/FFF/000000?text=+) `#FFF`|
@@ -262,4 +265,3 @@ fs.writeFileSync(`/tmp/foo-ref-${Date.now()}.png`, canvasImageUrl.split(',')[1],
 ```
 
 As a convenience, reference save code has been left in the tests commented out.
- 

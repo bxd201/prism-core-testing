@@ -52,4 +52,29 @@
     font-weight: 700;
     margin: 1.5em 0 0;
   }
+
+  &--house-shaped {
+    flex: 50% 0 0;
+    padding-bottom: 22%;
+    outline: none;
+
+    @include respond-above(sm){
+      flex: 25% 0 0;
+      padding: 0 3% 4%;
+    }
+
+    &__swatch {
+      position: relative;
+      border: 3px solid var(getThemeColor('white'));
+    }
+
+    &__desc {
+      margin: .65rem .65rem 0;
+      font-size: .85rem;
+      font-family: var(getVarName('typography.titleFontFamily'));
+      font-style: normal;
+      color: var(getThemeColor('primary'));
+      line-height: 1rem;
+    }
+  }
 }

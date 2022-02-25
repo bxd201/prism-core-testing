@@ -79,6 +79,7 @@ const ColorChipLocator = ({ color = undefined }: ColorChipLocatorProps) => {
           <>
             <p className='chip-locator__name'>{color.name}</p>
             <p className='chip-locator__number'>{fullColorNumber(color.brandKey, color.colorNumber, brandKeyNumberSeparator)}</p>
+            <p className='chip-locator__location'>Location</p>
             <p className='chip-locator__column'>Col: {color.column}</p>
             <p className='chip-locator__row'>Row: {color.row}</p>
             <button

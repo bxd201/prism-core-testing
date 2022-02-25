@@ -17,7 +17,6 @@ type Props = {
   chunkClickable?: boolean,
   chunkMiniMap?: boolean,
   colorDetailPageRoot?: (Color) => string,
-  colorNumOnBottom?: boolean,
   colorWallBgColor?: string,
   colorWallPageRoot?: (string) => string,
   displayDetailsLink?: boolean,
@@ -31,7 +30,6 @@ export const ColorWallChunkChipFacet = (props: Props) => {
     chunkClickable,
     chunkMiniMap,
     colorDetailPageRoot,
-    colorNumOnBottom = true,
     colorWallBgColor,
     colorWallPageRoot,
     displayDetailsLink = false,
@@ -43,12 +41,12 @@ export const ColorWallChunkChipFacet = (props: Props) => {
     chunkClickable: translateBooleanFlexibly(chunkClickable),
     chunkMiniMap: translateBooleanFlexibly(chunkMiniMap),
     colorDetailPageRoot,
-    colorNumOnBottom,
     colorWallBgColor,
     colorWallPageRoot,
     displayDetailsLink: translateBooleanFlexibly(displayDetailsLink),
+    isChipLocator: true,
     leftHandDisplay: translateBooleanFlexibly(leftHandDisplay)
-  }), [autoHeight, chunkClickable, chunkMiniMap, colorDetailPageRoot, colorNumOnBottom, colorWallBgColor, colorWallPageRoot, displayDetailsLink, leftHandDisplay])
+  }), [autoHeight, chunkClickable, chunkMiniMap, colorDetailPageRoot, colorWallBgColor, colorWallPageRoot, displayDetailsLink, leftHandDisplay])
 
   const dispatch = useDispatch()
   const { brandId } = useContext(ConfigurationContext)
