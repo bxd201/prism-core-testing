@@ -1,5 +1,5 @@
 // @flow
-import React, { useState, useRef, useMemo, useEffect, useCallback } from 'react'
+import React, { useState, useRef, useMemo, useEffect, useCallback, useContext } from 'react'
 import ColorWallPropsContext, { BASE_SWATCH_SIZE, colorWallPropsDefault, MIN_SWATCH_SIZE, MAX_SWATCH_SIZE, OUTER_SPACING } from '../ColorWallPropsContext'
 import Column from '../Column/Column'
 import './Wall.scss'
@@ -13,6 +13,7 @@ import getElementRelativeOffset from 'get-element-relative-offset'
 import isSomething from 'src/shared/utils/isSomething.util'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useIntl } from 'react-intl'
+import ColorWallContext, { type ColorWallContextProps } from '../../ColorWallContext'
 
 // MASTER TODO LIST
 // [ ] ingest and display real color data. color data should be delivered as props ({ [colorId]: { colorDataObj } })
@@ -45,6 +46,7 @@ function Wall (props: WallProps) {
     activeColorId,
     height
   } = props
+  const { colorWallBgColor }: ColorWallContextProps = useContext(ColorWallContext)
   const [hasFocus, setHasFocus] = useState(false)
   const wallContentsRef = useRef()
   const focusOutStartHelper = useRef()
@@ -203,7 +205,6 @@ function Wall (props: WallProps) {
       const { width, height, widths, heights } = computeWall(structure) ?? {}
 
       if (!isNaN(width) && !isNaN(height)) {
-        debugger // eslint-disable-line
         const initScale = containerWidth / (width + OUTER_SPACING * 2)
         const initSwatchSize = initScale * BASE_SWATCH_SIZE
         const initSwatchSizeConstrained = Math.min(Math.max(initSwatchSize, MIN_SWATCH_SIZE), MAX_SWATCH_SIZE)
@@ -333,6 +334,7 @@ function Wall (props: WallProps) {
             <FontAwesomeIcon icon='search-minus' size='lg' />
           </button> : null}
           <div className='cwv3__wall-scroller' ref={wallContentsRef} style={{
+            backgroundColor: colorWallBgColor,
             height: isNaN(height) ? (defaultDimensions?.height + OUTER_SPACING * 2) * scale : height
           }}>
             <div style={{

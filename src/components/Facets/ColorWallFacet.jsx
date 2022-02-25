@@ -1,4 +1,3 @@
-/* eslint-disable */
 // @flow
 import React, { useContext, useEffect, useState, useCallback, useMemo } from 'react'
 import { Switch, Route, useHistory } from 'react-router-dom'
@@ -6,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import ColorWallRouter from './ColorWall/ColorWallRouter'
 import Search from 'src/components/Search/Search'
 import SearchBar from 'src/components/Search/SearchBar'
-// import ColorWall from './ColorWall/ColorWall'
+import ColorWall from './ColorWall/ColorWall'
 import ColorWallToolbar from './ColorWall/ColorWallToolbar/ColorWallToolbar'
 import facetBinder from 'src/facetSupport/facetBinder'
 import ColorWallContext, { colorWallContextDefault } from 'src/components/Facets/ColorWall/ColorWallContext'
@@ -23,7 +22,7 @@ import translateBooleanFlexibly from 'src/shared/utils/translateBooleanFlexibly.
 import { generateColorWallPageUrl } from 'src/shared/helpers/ColorUtils'
 import { setIsColorWallModallyPresented } from '../../store/actions/navigation'
 import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
-import ColorWallV3 from './ColorWall/ColorWallV3'
+// import ColorWallV3 from './ColorWall/ColorWallV3'
 
 type Props = FacetPubSubMethods & FacetBinderMethods & {
   addButtonText?: string,
@@ -198,7 +197,8 @@ export const ColorWallPage = (props: Props) => {
           <Switch>
             <Route path='(.*)?/search/:query' component={SearchContain} />
             <Route path='(.*)?/search/' component={SearchContain} />
-            <Route component={ColorWallV3} />
+            <Route component={ColorWall} />
+            {/* <Route component={ColorWallV3} /> */}
           </Switch>
           {isLoading ? <GenericOverlay type={GenericOverlay.TYPES.LOADING} semitransparent /> : null}
         </div>
