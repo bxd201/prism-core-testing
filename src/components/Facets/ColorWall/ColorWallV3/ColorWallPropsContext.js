@@ -2,14 +2,14 @@
 import React from 'react'
 import noop from 'lodash/noop'
 
-export const BASE_SWATCH_SIZE = 20
-export const SCALE_ZOOM_OUT = 1
-export const SCALE_ZOOM_IN = 4
+export const MIN_SWATCH_SIZE = 14
+export const MAX_SWATCH_SIZE = 50
+export const BASE_SWATCH_SIZE = 15
+export const OUTER_SPACING = 20
 
 export const colorWallPropsDefault = {
   activeSwatchId: null,
   addChunk: noop,
-  baseSwatchSize: BASE_SWATCH_SIZE,
   display: true,
   hostHasFocus: false,
   isZoomed: false,

@@ -1,4 +1,4 @@
-import { colorWallPropsDefault } from './ColorWallPropsContext'
+import { colorWallPropsDefault, BASE_SWATCH_SIZE } from './ColorWallPropsContext'
 
 export const initialState = { outerWidth: 0, outerHeight: 0, widths: {}, heights: {} }
 
@@ -6,16 +6,16 @@ export function computeChunk (data = {}, ctx = colorWallPropsDefault) {
   const { props: selfProps = {}, childProps = {}, children } = data
   const { spaceH = 0, spaceV = 0 } = selfProps
   const { height: swatchHeightScale = 1, width: swatchWidthScale = 1 } = childProps
-  const { baseSwatchSize, scale } = ctx
+  const { scale } = ctx
 
-  if (children.length && swatchWidthScale > 0 && swatchHeightScale > 0 && baseSwatchSize > 0 && scale > 0) {
-    const sWidth = swatchWidthScale * baseSwatchSize * scale
-    const thisHorzSpace = spaceH * baseSwatchSize * scale
+  if (children.length && swatchWidthScale > 0 && swatchHeightScale > 0 && BASE_SWATCH_SIZE > 0 && scale > 0) {
+    const sWidth = swatchWidthScale * BASE_SWATCH_SIZE * scale
+    const thisHorzSpace = spaceH * BASE_SWATCH_SIZE * scale
 
     const _width = children.map(c => c.reduce((accum, next) => accum + sWidth, 0)).reduce((accum, next) => Math.max(accum, next), 0)
 
-    const sHeight = swatchHeightScale * baseSwatchSize * scale
-    const thisVertSpace = spaceV * baseSwatchSize * scale
+    const sHeight = swatchHeightScale * BASE_SWATCH_SIZE * scale
+    const thisVertSpace = spaceV * BASE_SWATCH_SIZE * scale
 
     const _height = children.map(c => {
       return c.reduce((accum, next) => Math.max(accum, sHeight), 0)

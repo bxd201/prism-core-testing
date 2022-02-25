@@ -1,9 +1,10 @@
 import flattenDeep from 'lodash/flattenDeep'
 import chunk from 'lodash/chunk'
 import memoizee from 'memoizee'
+import isSomething from 'src/shared/utils/isSomething.util'
 
 export const getProximalSwatchesBySwatchId = (chunks, chunkId, swatchId) => {
-  if (chunks?.current && typeof chunkId !== 'undefined' && chunkId !== null && typeof swatchId !== 'undefined' && swatchId !== null) {
+  if (isSomething(chunks?.current) && chunkId !== null && isSomething(swatchId)) {
     const hostChunk = Array.from(chunks.current).filter(({ id }) => id === chunkId)?.[0]
     const children = hostChunk?.data?.children
 
@@ -56,7 +57,7 @@ export const getProximalSwatchesBySwatchId = (chunks, chunkId, swatchId) => {
 }
 
 export const findPositionInChunks = memoizee((chunks = [], swatchId) => {
-  if (chunks.length && typeof swatchId !== 'undefined' && swatchId !== null) {
+  if (chunks.length && isSomething(swatchId)) {
     const b = chunks.map(({ data }) => data)
     const c = b.map(({ children }) => children)
     const d = c.map(children => flattenDeep(children))

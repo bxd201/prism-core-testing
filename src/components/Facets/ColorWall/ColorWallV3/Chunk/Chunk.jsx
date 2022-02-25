@@ -3,6 +3,7 @@ import ColorWallPropsContext from '../ColorWallPropsContext'
 import { computeChunk } from '../sharedReducersAndComputers'
 import Swatch from './Swatch'
 import './Chunk.scss'
+import isSomething from 'src/shared/utils/isSomething.util'
 
 function Chunk (props) {
   const { data = {}, updateWidth, updateHeight, id = '' } = props // eslint-disable-line
@@ -56,11 +57,11 @@ function Chunk (props) {
   const addToSwatchRefs = (el, id) => {
     const refIndex = swatchRefsMap.current[id]
 
-    if (typeof refIndex === 'undefined') {
+    if (isSomething(refIndex)) {
+      swatchRefs.current[refIndex] = { el, id }
+    } else {
       const newIndex = swatchRefs.current.push({ el, id }) - 1
       swatchRefsMap.current[id] = newIndex
-    } else {
-      swatchRefs.current[refIndex] = { el, id }
     }
   }
 

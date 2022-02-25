@@ -4,8 +4,15 @@
     display: block;
   }
 
+  &__zoom-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 2000;
+  }
+
   &__wall-scroller {
-    overflow: scroll;
+    overflow: auto;
     position: relative;
   }
 
@@ -14,7 +21,7 @@
     flex-wrap: nowrap;
     justify-content: center;
     align-items: stretch;
-    position: relative;
+    position: absolute;
   }
 
   &__swatch-renderer {
@@ -25,20 +32,18 @@
     z-index: 1;
 
     &--active {
-      transform: scale(3);
+      transform: scale(2.9);
       z-index: 1000;
-      background: green !important;
     }
 
     &__inner {
       position: absolute;
-      width: 300%;
-      height: 300%;
+      width: 290%;
+      height: 290%;
       top: 50%;
       z-index: 1001;
       left: 50%;
       transform: translate3d(-50%, -50%, 0);
-      background: rgba(black, .3);
     }
   }
 }
