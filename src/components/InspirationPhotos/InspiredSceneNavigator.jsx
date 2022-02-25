@@ -16,6 +16,7 @@ const InspiredSceneNavigator = () => {
   const dispatch = useDispatch()
   const { formatMessage, locale } = useIntl()
   const { brandId, cvw = {} } = useContext<ConfigurationContextType>(ConfigurationContext)
+  const { inspirationalPhotos } = cvw
 
   useEffect(() => { loadInspirationalPhotos(brandId, { language: locale })(dispatch) }, [])
 
@@ -30,10 +31,10 @@ const InspiredSceneNavigator = () => {
   const [tabId: string, setTabId: string => void] = useState('tab0')
 
   return (
-    <CardMenu menuTitle={`${formatMessage({ id: 'INSPIRATIONAL_PHOTOS' })}`}>
+    <CardMenu menuTitle={inspirationalPhotos?.title ?? formatMessage({ id: 'INSPIRATIONAL_PHOTOS' })}>
       {() => (
         <div className={`${baseClass}__wrapper`}>
-          <ColorCollectionsTab collectionsSelectLabel={cvw.inspirationalPhotos?.collectionsSelectLabel} collectionTabs={collectionTabs} tabIdShow={tabId} showTab={setTabId} />
+          <ColorCollectionsTab collectionsSelectLabel={inspirationalPhotos?.collectionsSelectLabel} collectionTabs={collectionTabs} tabIdShow={tabId} showTab={setTabId} />
           <div className={`${baseClass}__collections-list`} role='main'>
             <Carousel
               BaseComponent={InspiredScene}
