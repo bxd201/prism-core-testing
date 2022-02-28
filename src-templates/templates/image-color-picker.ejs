@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <base href="/">
+    <title>Image Color Picker</title>
+    <style media="all" type="text/css">
+        body {
+            background-color: #757575;
+        }
+        .colors {
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+<div id="prism-embed-root"
+     data-prism-facet="ImageColorPickerFacet"
+     data-page-root="/"
+     data-route-type="hash"></div>
+
+<input id="fileUpload" type="file" />
+
+<script src='<%= BASE_PATH %>/embed.js'></script>
+<script>
+  (() => {
+    window.PRISM.embed(document.getElementById( 'prism-embed-root' ), {
+      bindCallback: ({ publish, subscribe }) => {
+        subscribe('IMAGE_COLOR_PICKER_COLOR_SELECTED', (color) => {
+          console.log('Color has been selected: ', color)
+        })
+
+        const fileUploader = document.querySelector('#fileUpload')
+        fileUploader.addEventListener('change', e => {
+          publish('IMAGE_COLOR_PICKER_IMAGE_UPLOAD', {data: e.target.files[0]})
+        })
+      }
+    })
+  })()
+</script>
+</body>
+</html>

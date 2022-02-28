@@ -7,10 +7,12 @@ export function createTabbedScenesFacet ({ groupNames, defaultColors, maxSceneHe
       bindCallback: ({ publish, subscribe }) => {
         // represents colors changing from elsewhere on the page
         const colorSelect = document.querySelector('#color_select')
-        colorSelect?.addEventListener('change', e => {
-          // using timestamp is ok for prism template and also since this is invoked by user input and not programmatically
-          publish('SV_COLOR_UPDATE', { eventId: `tsv_event_id_${Date.now()}`, data: e.target.value })
-        })
+        if (colorSelect) {
+          colorSelect.addEventListener('change', e => {
+            // using timestamp is ok for prism template and also since this is invoked by user input and not programmatically
+            publish('SV_COLOR_UPDATE', { eventId: `tsv_event_id_${Date.now()}`, data: e.target.value })
+          })
+        }
       }
     })
   }
