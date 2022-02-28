@@ -117,7 +117,7 @@ export const DropDownMenu = ({ title, subtitle, items }: DropDownMenuProps) => {
 
 const ColorVisualizerNav = () => {
   const { featureExclusions, cvw, brand, brandId } = useContext<ConfigurationContextType>(ConfigurationContext)
-  const { exploreColors, getInspired, paintAPhoto } = cvw?.menu ?? {}
+  const { exploreColors, getInspired, help, paintAPhoto } = cvw?.menu ?? {}
   const { navStructure = DEFAULT_NAV_STRUCTURE } = cvw ?? {}
   const [isLoadingCVWConfig, setIsLoadingCVWConfig] = useState(isEmpty(cvw))
   const { messages, formatMessage } = useIntl()
@@ -438,7 +438,7 @@ const ColorVisualizerNav = () => {
               <CVWNavBtn
                 active={location.pathname === ROUTES_ENUM.HELP}
                 onClick={() => handleNavigation(ROUTES_ENUM.HELP)}
-                textRenderer={() => <FormattedMessage id='NAV_LINKS.HELP' />} />
+                textRenderer={() => help?.tab ?? <FormattedMessage id='NAV_LINKS.HELP' />} />
             </li>
           </ul>
         </li>

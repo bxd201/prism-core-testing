@@ -186,6 +186,9 @@ export type ConfigurationContextType = {
         inspirationalPhotos?: MenuItem,
         paintedPhotos?: MenuItem
       },
+      help?: {
+        tab?: string
+      },
       paintAPhoto?: {
         ...Menu,
         uploadYourPhoto?: MenuItem,
