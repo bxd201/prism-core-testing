@@ -19,26 +19,24 @@
     }
   }
   &__cover {
-    display: none;
     width: 100%;
-    @include respond-above(sm) {
-      display: block;
+    &--hidden-mobile {
+      @include respond-below(sm) {
+        display: none;
+      }
     }
   }
   &__description {
     padding: 1em 2em;
     text-align: left;
-    display: none;
-    @include respond-above(sm) {
-      display: block;
+    font-family: var(getVarName('typography.bodyFontFamily'));
+    &--hidden-mobile {
+      @include respond-below(sm) {
+        display: none;
+      }
     }
   }
-  &__border {
-    margin: 15px 0px 0px 0px;
-    @include respond-below(sm) {
-      margin: 0px 0px 30px 0px;
-    }
-  }
+  &__border { margin: 1rem 0 3rem }
   &__button {
     color: var(getThemeColor('buttonColor'));
     background-color: var(getThemeColor('buttonBgColor'));
@@ -99,18 +97,16 @@
   &__color-list {
     float: right;
     width: 100%;
+    height: 400px;
     position: relative;
     overflow: hidden;
 
     @include respond-above(sm) {
       width: 66%;
+      height: 535px;
     }
   }
-  &__color-list-vertical {
-    height: 80vw;
-    max-height: 500px;
-    white-space: wrap;
-  }
+  &__color-list-vertical { height: inherit }
   &__trigger {
     border: 1px solid var(getThemeColor('light.lightest'));
     display: inline-block;

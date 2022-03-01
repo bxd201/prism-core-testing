@@ -9,6 +9,20 @@
 }
 
 .color-collections {
+  &__subtitle {
+    position: relative;
+    margin: -.7rem 0 1.5rem;
+    color: var(getThemeColor('black'));
+    font-family: var(getVarName('typography.bodyFontFamily'));
+    font-size: .875rem;
+    text-align: center;
+    line-height: 1.3rem;
+    @include respond-above(sm) {
+      margin: -0.2rem 22% 1.8rem;
+      font-size: 1rem;
+      line-height: 1.5rem;
+    }
+  }
   &__wrapper {
     padding: 0;
   }
