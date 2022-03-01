@@ -14,7 +14,7 @@ const alias = require('./partial.resolve.alias')
 const stats = require('./partial.stats')
 const optimization = require('./partial.optimization')
 const moduleRuleJsx = require('./partial.module.rules.jsx')
-const { cssModuleRules, cssRules, sassModuleRules, sassRules } = require('./partial.module.rules.sass')
+const { sassModuleRules, sassRules } = require('./partial.module.rules.sass')
 const envVars = require('./constants.env-vars')
 const NameAllModulesPlugin = require('name-all-modules-plugin')
 const AsyncChunkNames = require('webpack-async-chunk-names-plugin')
@@ -101,8 +101,6 @@ module.exports = {
           mainFields: ['module', 'jsnext:main', 'browser', 'main']
         }
       },
-      cssModuleRules,
-      cssRules,
       sassModuleRules,
       sassRules,
       {

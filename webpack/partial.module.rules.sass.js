@@ -113,7 +113,7 @@ const getThemeColorByPath = ((themeColorData) => {
   }
 })(themeColorStructure)
 
-const getCssRules = (cssLoaderOpts = {}) => {
+const getRules = (cssLoaderOpts = {}) => {
   return [
     MiniCssExtractPlugin.loader,
     {
@@ -138,13 +138,7 @@ const getCssRules = (cssLoaderOpts = {}) => {
           })
         ]
       }
-    }
-  ]
-}
-
-const getSassRules = (cssLoaderOpts = {}) => {
-  return [
-    ...getCssRules(cssLoaderOpts),
+    },
     {
       loader: 'sass-loader',
       options: {
@@ -177,33 +171,19 @@ const getSassRules = (cssLoaderOpts = {}) => {
   ]
 }
 
-const cssRules = {
-  test: /\.css$/,
-  use: getCssRules(),
-  exclude: /\.module\.css$/
-}
-
-const cssModuleRules = {
-  test: /\.css$/,
-  use: getCssRules({ importLoaders: 1, modules: true }),
-  include: /\.module\.css$/
-}
-
 const sassRules = {
-  test: /\.(sc|sa)ss$/,
-  use: getSassRules(),
-  exclude: /\.module\.(sc|sa)ss$/
+  test: /\.(sc|sa|c)ss$/,
+  use: getRules(),
+  exclude: /\.module\.(sc|sa|c)ss$/
 }
 
 const sassModuleRules = {
-  test: /\.(sc|sa)ss$/,
-  use: getSassRules({ importLoaders: 1, modules: true }),
-  include: /\.module\.(sc|sa)ss$/
+  test: /\.(sc|sa|c)ss$/,
+  use: getRules({ importLoaders: 1, modules: true }),
+  include: /\.module\.(sc|sa|c)ss$/
 }
 
 module.exports = {
-  cssModuleRules,
-  cssRules,
   sassModuleRules,
   sassRules
 }
