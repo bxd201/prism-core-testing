@@ -11,8 +11,8 @@ def GET_API_URL(branch) {
     "https://api.sherwin-williams.com/prism"
   } else if (branch == 'qa') {
     "https://${branch.toLowerCase()}-api.sherwin-williams.com/prism"
-  // } else if (branch == 'lowes-cvw') {
-  //   "https://qa-api.sherwin-williams.com/prism"
+  } else if (branch == 'lowes-cvw') {
+    "https://qa-api.sherwin-williams.com/prism"
   } else {
     'https://develop-prism-api.ebus.swaws'
   }
