@@ -1,23 +1,5 @@
 @import '../shared-vars.scss';
 
-// For development purpose, TO BE REMOVED for prod
-@mixin output-font($fontFileName, $weight: normal, $style: normal) {
-  src: url('https://prism.sherwin-williams.com/2.3.2-lowes-cvw/fonts/#{$fontFileName}.woff2') format('woff');
-  font-weight: $weight;
-  font-style: $style;
-}
-
-@font-face {
-  font-family: 'Sharp Sans Display No1';
-  @include output-font('SharpSansDispNo1-Book');
-}
-
-@font-face {
-  font-family: 'Tiempos Text';
-  @include output-font('tiempos-text-web-regular');
-}
-// end
-
 .cvw-navigation-wrapper {
   height: $cvw-nav-btn-height;
 
