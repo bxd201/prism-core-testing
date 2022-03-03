@@ -22,6 +22,7 @@ import translateBooleanFlexibly from 'src/shared/utils/translateBooleanFlexibly.
 import { generateColorWallPageUrl } from 'src/shared/helpers/ColorUtils'
 import { setIsColorWallModallyPresented } from '../../store/actions/navigation'
 import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
+// import ColorWallV3 from './ColorWall/ColorWallV3'
 
 type Props = FacetPubSubMethods & FacetBinderMethods & {
   addButtonText?: string,
@@ -197,6 +198,7 @@ export const ColorWallPage = (props: Props) => {
             <Route path='(.*)?/search/:query' component={SearchContain} />
             <Route path='(.*)?/search/' component={SearchContain} />
             <Route component={ColorWall} />
+            {/* <Route component={ColorWallV3} /> */}
           </Switch>
           {isLoading ? <GenericOverlay type={GenericOverlay.TYPES.LOADING} semitransparent /> : null}
         </div>

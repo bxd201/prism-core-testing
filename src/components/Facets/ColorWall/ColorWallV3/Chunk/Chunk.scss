@@ -1,0 +1,21 @@
+.cwv3__chunk {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: stretch;
+  align-items: space-between;
+  position: relative;
+
+  &--focus, &:focus-within {
+    outline: 2px solid var(getThemeColor( "primary" )) !important;
+    z-index: 1;
+  }
+
+  &__row {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    position: relative;
+  }
+}

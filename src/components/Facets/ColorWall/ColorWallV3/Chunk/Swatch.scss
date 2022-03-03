@@ -1,0 +1,29 @@
+.cwv3__swatch {
+  $swatch-white-border: inset 0 0 0 1px white;
+
+  overflow: hidden;
+  position: relative;
+  overflow: visible;
+
+  .cwv3__swatch-renderer {
+    box-shadow: $swatch-white-border;
+
+    &--active {
+      box-shadow: $swatch-white-border, 0 0 4px 0 rgba(black, .5);
+    }
+
+    &:focus {
+      outline: 2px solid var(getThemeColor( "primary" )) !important;
+    }
+  }
+
+  &:focus-within {
+    .cwv3__swatch-renderer__inner {
+      outline: 3px solid var(getThemeColor( "primary" )) !important;
+    }
+
+    .cwv3__swatch-renderer {
+      z-index: 100;
+    }
+  }
+}
