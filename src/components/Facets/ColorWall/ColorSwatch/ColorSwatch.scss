@@ -304,12 +304,12 @@ $swatch-edge-padding-lg: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-mai
 
     &__name {
       color: var(getThemeColor('black'));
+      font-family: var(getVarName('typography.bodyFontFamily'));
       font-style: italic;
     }
 
     &__number {
       color: var(getThemeColor('primary'));
-      font-family: var(getVarName('typography.titleFontFamily'));
       font-size: .85rem;
     }
   }

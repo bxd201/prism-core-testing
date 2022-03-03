@@ -96,7 +96,9 @@ export type ConfigurationContextType = {
       text?: string
     },
     colorCollections?: {
-      scrollArrows?: boolean
+      scrollArrows?: boolean,
+      showDescriptionMobile?: boolean,
+      subtitle?: string
     },
     downloadSceneDisclaimer1?: string,
     downloadSceneDisclaimer1?: string,

@@ -24,10 +24,6 @@ import { MODAL_TYPE_ENUM } from 'src/components/CVWModalManager/constants'
 import { triggerPaintSceneLayerPublish } from 'src/store/actions/paintScene'
 import { DEFAULT_NAV_STRUCTURE } from './navStructure'
 import { CVWNavBtn } from '../CVWNavBtn/CVWNavBtn'
-// For development purpose, TO BE REMOVED for prod
-import 'src/fonts/ToBeDeleted/SharpSansDispNo1-Book.woff2'
-import 'src/fonts/ToBeDeleted/tiempos-text-web-regular.woff2'
-// end
 
 const selectDevice = (web, iPhone = web, android = web, iPad = web) => (isMobileOnly ? (isIOS ? iPhone : android) : (isTablet ? iPad : web)) || web
 

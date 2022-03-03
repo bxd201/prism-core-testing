@@ -16,6 +16,7 @@ import RoomTypeDetector from 'src/components/Facets/RoomTypeDetector/RoomTypeDet
 import SceneVisualizerFacet from 'src/components/Facets/SceneVisualizerFacet'
 import TabbedSceneVisualizerFacet from 'src/components/Facets/TabbedSceneVisualizerFacet'
 import RealColorFacet from 'src/components/Facets/RealColorFacet'
+import ImageColorPickerFacet from './components/Facets/ImageColorPickerFacet/ImageColorPickerFacet'
 
 export const allFacets = {
   ColorDetailsFacet,
@@ -30,5 +31,6 @@ export const allFacets = {
   RoomTypeDetector,
   SceneVisualizerFacet,
   TabbedSceneVisualizerFacet,
-  RealColorFacet
+  RealColorFacet,
+  ImageColorPickerFacet
 }

@@ -11,8 +11,8 @@ def GET_API_URL(branch) {
     "https://api.sherwin-williams.com/prism"
   } else if (branch == 'qa') {
     "https://${branch.toLowerCase()}-api.sherwin-williams.com/prism"
-  // } else if (branch == 'lowes-cvw') {
-  //   "https://qa-api.sherwin-williams.com/prism"
+  } else if (branch == 'lowes-cvw') {
+    "https://qa-api.sherwin-williams.com/prism"
   } else {
     'https://develop-prism-api.ebus.swaws'
   }
@@ -281,7 +281,7 @@ pipeline {
             string(credentialsId: 'ccu_host', variable: 'HOST')]) {
             sh """
             #!/bin/bash
-              brume ccu invalidate --objects https://prism.sherwin-williams.com/"${S3_FOLDER_NAME}"/ --type url
+              brume ccu invalidate --objects https://prism.sherwin-williams.com/"${S3_FOLDER_NAME}"/embed.js --type url
             """
           }
         }
