@@ -26,8 +26,12 @@
     flex-wrap: wrap;
     justify-content: space-between;
     padding: 4px;
+    font-family: var(getVarName('typography.titleFontFamily'));
     &:hover {
       color: var(getThemeColor('secondary'));
+    }
+    &--title {
+      padding-top: .25rem;
     }
   }
 }

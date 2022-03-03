@@ -79,6 +79,7 @@ import { faUpload as falUpload } from '@fortawesome/pro-light-svg-icons/faUpload
 // regulars
 // import { fa??? as far??? } from '@fortawesome/pro-regular-svg-icons/fa???'
 import { faPlusCircle as farPlusCircle } from '@fortawesome/pro-regular-svg-icons/faPlusCircle'
+import { faArrowToBottom as farArrowToBottom } from '@fortawesome/pro-regular-svg-icons/faArrowToBottom'
 
 // populate with all the FontAwesome svg icons we want to use
 const faIcons = [
@@ -155,6 +156,7 @@ const faIcons = [
   faTrash,
   falUpload,
   // -------- REGULARS ---------
+  farArrowToBottom,
   farPlusCircle
 ]
 library.add(...faIcons)

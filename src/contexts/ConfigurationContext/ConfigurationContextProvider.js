@@ -145,6 +145,7 @@ function ConfigurationContextProvider (props: Props) {
         ...customProps,
         [varNames.typography.bodyFontFamily]: typography.bodyFontFamily,
         [varNames.typography.titleFontFamily]: typography.titleFontFamily,
+        [varNames.typography.titleFontStyle]: typography.titleFontStyle,
         [varNames.typography.titleTextTransform]: typography.titleTextTransform,
         [varNames.typography.buttonTextTransform]: typography.buttonTextTransform,
         [varNames.typography.buttonFontWeight]: typography.buttonFontWeight,
