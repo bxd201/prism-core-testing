@@ -1,10 +1,11 @@
 // @flow strict
-import React, { useState, useCallback } from 'react'
+import React, { useContext, useState, useCallback } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 import Jimp from 'jimp'
 import { generateImage } from '../../shared/services/sceneDownload'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import { ACTIVE_SCENE_LABELS_ENUM } from '../../store/actions/navigation'
 import type { FlatVariant, MiniColor } from '../../shared/types/Scene'
 import { useSelector } from 'react-redux'
@@ -41,6 +42,9 @@ const getDownloadData = (activeSceneType: string, location: Location, paintScene
 
 export default (props: Props) => {
   const location = useLocation()
+  const { cvw = {} }: ConfigurationContextType = useContext(ConfigurationContext)
+  const { palette = {} } = cvw
+  const { downloadBtn = {} } = palette
   const [isCreatingDownload, setIsCreatingDownload] = useState(false)
   const [finalImageUrl, setFinalImageUrl] = useState()
   const { buttonCaption, activeComponent, getFlatImage, config, variantsCollection, selectedSceneUid, selectedVariantName, surfaceColors } = props
@@ -102,11 +106,11 @@ export default (props: Props) => {
               <div>
                 <FontAwesomeIcon
                   title={intl.formatMessage({ id: 'DOWNLOAD_MASK' })}
-                  icon={['fal', 'download']}
+                  icon={downloadBtn?.icon ? ['far', downloadBtn.icon] : ['fal', 'download']}
                   size='2x' />
               </div>
-              <div>
-                <FormattedMessage id={buttonCaption} />
+              <div className='save-options__items--title'>
+                {downloadBtn?.title ?? <FormattedMessage id={buttonCaption} />}
               </div>
             </div>
           </button>

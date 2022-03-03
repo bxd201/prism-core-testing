@@ -77,6 +77,7 @@ export type ConfigurationContextType = {
   typography: {
     bodyFontFamily: string,
     titleFontFamily: string,
+    titleFontStyle: string,
     titleTextTransform: string,
     buttonFontWeight: string,
     buttonTextTransform: string,
@@ -208,7 +209,11 @@ export type ConfigurationContextType = {
     navThumbMyPhotos?: string,
     palette?: {
       title?: string,
-      compare?: string
+      downloadBtn?: {
+        title?: string,
+        icon?: string
+      },
+      firstEmptySlot?: string
     },
     scene?: {
       moreScenesBtn?: {

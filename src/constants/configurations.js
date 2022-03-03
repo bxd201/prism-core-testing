@@ -35,6 +35,7 @@ export const DEFAULT_CONFIGURATION = {
   typography: {
     bodyFontFamily: varValues.typography.bodyFontFamily,
     titleFontFamily: varValues.typography.titleFontFamily,
+    titleFontStyle: varValues.typography.titleFontStyle,
     titleTextTransform: varValues.typography.titleTextTransform,
     buttonTextTransform: varValues.typography.buttonTextTransform,
     buttonFontWeight: varValues.typography.buttonFontWeight,

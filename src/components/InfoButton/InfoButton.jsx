@@ -37,7 +37,7 @@ export default ({ color }: InfoButtonProps) => {
         ? <FontAwesomeIcon className='add-icon' icon={['fal', infoBtn?.icon]} size='2x' />
         : relevantColors.length > 0
           ? relevantColors.map((color: Color, index: number) => <span key={index} className='info-button-color-strip' style={{ backgroundColor: color.hex, borderTop: index !== 0 ? 0 : '1px solid #333' }} />)
-          : <FontAwesomeIcon icon={'faInfoCircle' ?? ['fas', 'info']} size='1x' />}
+          : <FontAwesomeIcon icon={infoBtn?.icon ?? ['fas', 'info']} size='1x' />}
     </button>
   )
 }
