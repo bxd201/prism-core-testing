@@ -104,6 +104,7 @@ function ColorToolFacet (props: ColorToolProps) {
 
     const result = rgbIntToValues(parseInt(userInput))
     setOutputVal(result)
+    setupExport(showJSON, result)
   }
 
   const setUserInputValue = (e) => {
@@ -122,19 +123,32 @@ function ColorToolFacet (props: ColorToolProps) {
     setUserInput(e.target.value)
   }
 
+  const setupExport = (isJSON, oVal) => {
+    const mime = showJSON ? 'text/json;charset=utf-8' : 'text/csv;charset=utf-8'
+    const payload = isJSON ? JSON.stringify(oVal, null, 2) : convertToText(oVal)
+    const downloadData = new Blob([payload], { type: mime })
+    const _blobUrl = URL.createObjectURL(downloadData)
+
+    setBlobUrl(_blobUrl)
+  }
+
   const toggleOutputType = (data) => {
     const isJSON = !showJSON
 
-    const mime = showJSON ? 'text/json;charset=utf-8' : 'text/csv;charset=utf-8'
-    const payload = isJSON ? JSON.stringify(outputVal, null, 2) : convertToText(outputVal)
-    const downloadData = new Blob([payload], { type: mime })
-    const _blobUrl = URL.createObjectURL(downloadData)
-    setBlobUrl(_blobUrl)
+    if (blobUrl) {
+      URL.revokeObjectURL(blobUrl)
+    }
+
+    setupExport(isJSON, outputVal)
     setShowJSON(isJSON)
   }
 
   const convertToText = (val) => {
     return ['name, value'].concat(Object.keys(val).map((key) => {
+      if (key === 'lab') {
+        return `${key},L:${val[key]['L']};A:${val[key]['A']};B:${val[key]['B']}`
+      }
+
       return `${key},${val[key]}`
     })).join('\n')
   }
