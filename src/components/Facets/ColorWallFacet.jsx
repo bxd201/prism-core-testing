@@ -21,8 +21,8 @@ import { useIntl } from 'react-intl'
 import translateBooleanFlexibly from 'src/shared/utils/translateBooleanFlexibly.util'
 import { generateColorWallPageUrl } from 'src/shared/helpers/ColorUtils'
 import { setIsColorWallModallyPresented } from '../../store/actions/navigation'
-import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
-// import ColorWallV3 from './ColorWall/ColorWallV3'
+import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
+import ColorWallV3 from './ColorWall/ColorWallV3'
 
 type Props = FacetPubSubMethods & FacetBinderMethods & {
   addButtonText?: string,
@@ -49,7 +49,7 @@ export const EVENTS = {
 
 const SearchBarNoLabel = () => {
   const { messages = {} } = useIntl()
-  const { uiStyle } = useContext(ConfigurationContext)
+  const { uiStyle }: ConfigurationContextType = useContext(ConfigurationContext)
 
   return (
     <div className='color-wall-wrap__chunk'>
@@ -84,6 +84,7 @@ export const ColorWallPage = (props: Props) => {
   } = props
   const dispatch = useDispatch()
   const history = useHistory()
+  const { colorWall: { v3 = false } }: ConfigurationContextType = useContext(ConfigurationContext)
 
   // -----------------------------------------------------
   // accept and process color decoration from host
@@ -197,8 +198,7 @@ export const ColorWallPage = (props: Props) => {
           <Switch>
             <Route path='(.*)?/search/:query' component={SearchContain} />
             <Route path='(.*)?/search/' component={SearchContain} />
-            <Route component={ColorWall} />
-            {/* <Route component={ColorWallV3} /> */}
+            <Route component={v3 ? ColorWallV3 : ColorWall} />
           </Switch>
           {isLoading ? <GenericOverlay type={GenericOverlay.TYPES.LOADING} semitransparent /> : null}
         </div>

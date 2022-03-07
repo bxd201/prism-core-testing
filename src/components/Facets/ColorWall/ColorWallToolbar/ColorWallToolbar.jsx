@@ -300,6 +300,7 @@ const ColorWallToolbar = ({ mobileClick, setMobileClick, brandClick, setBrandCli
               </div>
             )}
           </div>
+          {console.log(families)}
           {/* Color Families Menu Bar Full Size */}
           {alwaysShowColorFamilies && (
             <>

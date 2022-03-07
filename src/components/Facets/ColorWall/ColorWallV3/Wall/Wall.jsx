@@ -1,5 +1,6 @@
 // @flow
 import React, { useState, useRef, useMemo, useEffect, useCallback, useContext } from 'react'
+import { useSelector } from 'react-redux'
 import ColorWallPropsContext, { BASE_SWATCH_SIZE, colorWallPropsDefault, MIN_SWATCH_SIZE, MAX_SWATCH_SIZE, OUTER_SPACING } from '../ColorWallPropsContext'
 import Column from '../Column/Column'
 import './Wall.scss'
@@ -16,7 +17,7 @@ import { useIntl } from 'react-intl'
 import ColorWallContext, { type ColorWallContextProps } from '../../ColorWallContext'
 
 // MASTER TODO LIST
-// [ ] ingest and display real color data. color data should be delivered as props ({ [colorId]: { colorDataObj } })
+// [x] ingest and display real color data. color data should be delivered as props ({ [colorId]: { colorDataObj } })
 // [ ] ingest and display real color structure data. color structure should be delivered as props.
 //     this component should NOT care what family, section, etc., is selected -- only structure
 // [x] ingest and display current active color
@@ -55,6 +56,8 @@ function Wall (props: WallProps) {
   const wallRef = useRef()
   const [topFocusData, setTopFocusData] = useState()
   const { messages = {} } = useIntl()
+
+  const { items: { colorMap } }: ColorsState = useSelector(state => state.colors)
 
   const setFocusAndScrollTo = useCallback((props) => {
     setTopFocusData(props)
@@ -127,11 +130,7 @@ function Wall (props: WallProps) {
               handleMakeActiveSwatchId(id)
             }}
             className={`cwv3__swatch-renderer ${active ? 'cwv3__swatch-renderer--active' : ''}`}
-            style={{
-              // TODO: background should be the color of the swatch
-              // background: colorMap[id].hex
-              background: 'red'
-            }}
+            style={{ background: colorMap[id].hex }}
             title={`TODO: populate with name/number of color swatch`}
           />
           {active
