@@ -10,6 +10,7 @@ import ColorWallToolbar from './ColorWall/ColorWallToolbar/ColorWallToolbar'
 import facetBinder from 'src/facetSupport/facetBinder'
 import ColorWallContext, { colorWallContextDefault } from 'src/components/Facets/ColorWall/ColorWallContext'
 import { type FacetPubSubMethods, facetPubSubDefaultProps } from 'src/facetSupport/facetPubSub'
+import { type ColorsState } from 'src/shared/types/Actions.js.flow'
 import extendIfDefined from 'src/shared/helpers/extendIfDefined'
 import GenericOverlay from 'src/components/Overlays/GenericOverlay/GenericOverlay'
 import at from 'lodash/at'
@@ -84,7 +85,7 @@ export const ColorWallPage = (props: Props) => {
   } = props
   const dispatch = useDispatch()
   const history = useHistory()
-  const { colorWall: { v3 = false } }: ConfigurationContextType = useContext(ConfigurationContext)
+  const { items: { wall } } = useSelector<ColorsState>(state => state.colors)
 
   // -----------------------------------------------------
   // accept and process color decoration from host
@@ -198,7 +199,7 @@ export const ColorWallPage = (props: Props) => {
           <Switch>
             <Route path='(.*)?/search/:query' component={SearchContain} />
             <Route path='(.*)?/search/' component={SearchContain} />
-            <Route component={v3 ? ColorWallV3 : ColorWall} />
+            <Route component={wall && wall.length > 0 ? ColorWallV3 : ColorWall} />
           </Switch>
           {isLoading ? <GenericOverlay type={GenericOverlay.TYPES.LOADING} semitransparent /> : null}
         </div>

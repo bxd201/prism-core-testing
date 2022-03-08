@@ -310,6 +310,7 @@ $swatch-edge-padding-lg: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-mai
 
     &__number {
       color: var(getThemeColor('primary'));
+      font-family: var(getVarName('typography.titleFontFamily'));
       font-size: .85rem;
     }
   }

@@ -17,5 +17,9 @@
     align-items: center;
     width: 100%;
     position: relative;
+
+    &__family {
+      justify-content: flex-start;
+    }
   }
 }
