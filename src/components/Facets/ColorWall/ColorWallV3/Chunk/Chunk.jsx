@@ -1,4 +1,5 @@
 import React, { useContext, useState, useEffect, useRef } from 'react'
+import { useRouteMatch } from 'react-router-dom'
 import ColorWallPropsContext from '../ColorWallPropsContext'
 import { computeChunk } from '../sharedReducersAndComputers'
 import Swatch from './Swatch'
@@ -8,6 +9,7 @@ import isSomething from 'src/shared/utils/isSomething.util'
 function Chunk (props) {
   const { data = {}, updateWidth, updateHeight, id = '' } = props // eslint-disable-line
   const ctx = useContext(ColorWallPropsContext)
+  const { params } = useRouteMatch()
   const { addChunk, activeSwatchId, swatchRenderer } = ctx
   const [ width, setWidth ] = useState(0)
   const [ height, setHeight ] = useState(0)
@@ -69,7 +71,7 @@ function Chunk (props) {
     className={`cwv3__chunk`}
     style={{ padding: `${vertSpace}px ${horzSpace}px` }}>
     {data?.children?.map((row, i) => {
-      return <div className='cwv3__chunk__row' key={i}>
+      return <div className={`cwv3__chunk__row${params.family ? ' cwv3__chunk__row__family' : ''}`} key={i}>
         {row.map((childId, ii) => (
           <Swatch
             id={childId}

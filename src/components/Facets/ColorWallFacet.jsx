@@ -10,6 +10,7 @@ import ColorWallToolbar from './ColorWall/ColorWallToolbar/ColorWallToolbar'
 import facetBinder from 'src/facetSupport/facetBinder'
 import ColorWallContext, { colorWallContextDefault } from 'src/components/Facets/ColorWall/ColorWallContext'
 import { type FacetPubSubMethods, facetPubSubDefaultProps } from 'src/facetSupport/facetPubSub'
+import { type ColorsState } from 'src/shared/types/Actions.js.flow'
 import extendIfDefined from 'src/shared/helpers/extendIfDefined'
 import GenericOverlay from 'src/components/Overlays/GenericOverlay/GenericOverlay'
 import at from 'lodash/at'
@@ -21,8 +22,8 @@ import { useIntl } from 'react-intl'
 import translateBooleanFlexibly from 'src/shared/utils/translateBooleanFlexibly.util'
 import { generateColorWallPageUrl } from 'src/shared/helpers/ColorUtils'
 import { setIsColorWallModallyPresented } from '../../store/actions/navigation'
-import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
-// import ColorWallV3 from './ColorWall/ColorWallV3'
+import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
+import ColorWallV3 from './ColorWall/ColorWallV3'
 
 type Props = FacetPubSubMethods & FacetBinderMethods & {
   addButtonText?: string,
@@ -49,7 +50,7 @@ export const EVENTS = {
 
 const SearchBarNoLabel = () => {
   const { messages = {} } = useIntl()
-  const { uiStyle } = useContext(ConfigurationContext)
+  const { uiStyle }: ConfigurationContextType = useContext(ConfigurationContext)
 
   return (
     <div className='color-wall-wrap__chunk'>
@@ -84,6 +85,7 @@ export const ColorWallPage = (props: Props) => {
   } = props
   const dispatch = useDispatch()
   const history = useHistory()
+  const { items: { wall } } = useSelector<ColorsState>(state => state.colors)
 
   // -----------------------------------------------------
   // accept and process color decoration from host
@@ -197,8 +199,7 @@ export const ColorWallPage = (props: Props) => {
           <Switch>
             <Route path='(.*)?/search/:query' component={SearchContain} />
             <Route path='(.*)?/search/' component={SearchContain} />
-            <Route component={ColorWall} />
-            {/* <Route component={ColorWallV3} /> */}
+            <Route component={wall && wall.length > 0 ? ColorWallV3 : ColorWall} />
           </Switch>
           {isLoading ? <GenericOverlay type={GenericOverlay.TYPES.LOADING} semitransparent /> : null}
         </div>

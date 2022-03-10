@@ -1,23 +1,30 @@
 // @flow
 import React, { useState, useRef, useMemo, useEffect, useCallback, useContext } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { add } from 'src/store/actions/live-palette'
 import ColorWallPropsContext, { BASE_SWATCH_SIZE, colorWallPropsDefault, MIN_SWATCH_SIZE, MAX_SWATCH_SIZE, OUTER_SPACING } from '../ColorWallPropsContext'
+import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import Column from '../Column/Column'
+import InfoButton from 'src/components/InfoButton/InfoButton'
 import './Wall.scss'
+import at from 'lodash/at'
 import noop from 'lodash/noop'
 import { AutoSizer } from 'react-virtualized'
 import 'src/scss/externalComponentSupport/AutoSizer.scss'
 import { computeWall } from '../sharedReducersAndComputers'
 import useEffectAfterMount from 'src/shared/hooks/useEffectAfterMount'
 import { getProximalChunksBySwatchId, getProximalSwatchesBySwatchId } from './wallUtils'
+import { fullColorName, fullColorNumber } from 'src/shared/helpers/ColorUtils'
 import getElementRelativeOffset from 'get-element-relative-offset'
 import isSomething from 'src/shared/utils/isSomething.util'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useIntl } from 'react-intl'
 import ColorWallContext, { type ColorWallContextProps } from '../../ColorWallContext'
+import { type ColorsState } from 'src/shared/types/Actions.js.flow'
 
 // MASTER TODO LIST
-// [ ] ingest and display real color data. color data should be delivered as props ({ [colorId]: { colorDataObj } })
-// [ ] ingest and display real color structure data. color structure should be delivered as props.
+// [x] ingest and display real color data. color data should be delivered as props ({ [colorId]: { colorDataObj } })
+// [x] ingest and display real color structure data. color structure should be delivered as props.
 //     this component should NOT care what family, section, etc., is selected -- only structure
 // [x] ingest and display current active color
 // [x] handle zooming
@@ -46,7 +53,12 @@ function Wall (props: WallProps) {
     activeColorId,
     height
   } = props
+  const dispatch = useDispatch()
   const { colorWallBgColor }: ColorWallContextProps = useContext(ColorWallContext)
+  const { brandKeyNumberSeparator, colorWall: { colorSwatch = {} } }: ConfigurationContextType = useContext(ConfigurationContext)
+  const { houseShaped = false } = colorSwatch
+  const { items: { colorMap } }: ColorsState = useSelector(state => state.colors)
+  const livePaletteColors = useSelector(store => store.lp.colors)
   const [hasFocus, setHasFocus] = useState(false)
   const wallContentsRef = useRef()
   const focusOutStartHelper = useRef()
@@ -114,41 +126,60 @@ function Wall (props: WallProps) {
       activeSwatchId: activeColorId,
       isZoomed: isZoomed,
       scale: isZoomed ? MAX_SWATCH_SIZE / BASE_SWATCH_SIZE : defaultScale,
-      swatchRenderer: ({ id, ref, active }) => ( // eslint-disable-line
+      swatchRenderer: ({ id, ref, active }) => { // eslint-disable-line
+        const color = colorMap[id]
+        const colorIsInLivePalette = livePaletteColors.some(({ colorNumber }) => colorNumber === color.colorNumber)
+        const swatchRendererClass = 'cwv3__swatch-renderer'
+        const swatchClass = houseShaped ? 'color-swatch-house-shaped' : 'color-swatch'
+
+        return (
         // this should contain a real Swatch component that will render active swatch contents
         // things like calls to action, background color, all that
         // NOTE: needs the absolute position wrapper, doesn't need a background color
-        <>
-          <button
-            ref={!active ? ref : null}
-            tabIndex={!active ? 0 : -1}
-            disabled={active}
-            onClick={() => {
-              handleMakeActiveSwatchId(id)
-            }}
-            className={`cwv3__swatch-renderer ${active ? 'cwv3__swatch-renderer--active' : ''}`}
-            style={{
-              // TODO: background should be the color of the swatch
-              // background: colorMap[id].hex
-              background: 'red'
-            }}
-            title={`TODO: populate with name/number of color swatch`}
-          />
-          {active
-            ? <div
-              className={`cwv3__swatch-renderer__inner ${active ? 'cwv3__swatch-renderer__inner--active' : ''}`}
-            >
-              {/* Actual swatch contents (buttons, calls to action, links, name and number) go here */}
-              <button onClick={() => {
-                // do anything you need to here with the swatch CTA
-                // doSomething(id)
-              }} ref={active ? ref : null}>Main swatch CTA</button>
-            </div>
-            : null}
-        </>
-      )
+          <>
+            <button
+              ref={!active ? ref : null}
+              tabIndex={!active ? 0 : -1}
+              disabled={active}
+              onClick={() => {
+                handleMakeActiveSwatchId(id)
+              }}
+              className={`${swatchRendererClass}${active ? ` ${swatchRendererClass}--active${houseShaped ? '-house-shaped' : ''}` : ''}`}
+              style={{ background: color.hex }}
+            />
+            {active
+              ? <div
+                aria-label={fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator)}
+                className={`${swatchRendererClass}__inner${houseShaped ? '-house-shaped' : ''}${color.isDark ? ` ${swatchRendererClass}--dark-color` : ''}`}
+                ref={active ? ref : null}
+                style={{ background: color.hex }}
+                tabIndex={-1}
+              >
+                <div className={`${swatchClass}__btns`}>
+                  <div className='color-swatch__button-group'>
+                    {colorIsInLivePalette
+                      ? <FontAwesomeIcon className='check-icon' icon={['fa', 'check-circle']} size='2x' />
+                      : <button
+                        onClick={() => dispatch(add(color))}
+                        title={at(messages, 'ADD_TO_PALETTE')[0].replace('{name}', fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator))}
+                      >
+                        <FontAwesomeIcon className='add-icon' icon={['fal', 'plus-circle']} size='2x' />
+                      </button>
+                    }
+                    <InfoButton color={color} />
+                  </div>
+                </div>
+                <div className={`${swatchClass}__label`}>
+                  <p className={`${swatchClass}__label__name`}>{color.name}</p>
+                  <p className={`${swatchClass}__label__number`}>{fullColorNumber(color.brandKey, color.colorNumber, brandKeyNumberSeparator)}</p>
+                </div>
+              </div>
+              : null}
+          </>
+        )
+      }
     }
-  }, [activeColorId, hasFocus, defaultScale])
+  }, [activeColorId, hasFocus, defaultScale, livePaletteColors])
 
   const { scale, isZoomed } = wallProps
   const [shouldRender, setShouldRender] = useState(false)

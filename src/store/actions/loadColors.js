@@ -3,7 +3,7 @@
 import axios from 'axios'
 import { generateBrandedEndpoint } from '../../shared/helpers/DataUtils'
 import { type Color, type FamilyStructure, type ColorStatuses } from '../../shared/types/Colors.js.flow'
-import { COLOR_CHUNKS_ENDPOINT, COLOR_BRIGHTS_ENDPOINT, COLOR_FAMILY_NAMES_ENDPOINT, COLORS_ENDPOINT, COLOR_CHUNKS_LAYOUT_ENDPOINT } from '../../constants/endpoints'
+import { COLOR_CHUNKS_ENDPOINT, COLOR_BRIGHTS_ENDPOINT, COLOR_FAMILY_NAMES_ENDPOINT, COLORS_ENDPOINT, COLOR_CHUNKS_LAYOUT_ENDPOINT, COLORS_WALL_ENDPOINT } from '../../constants/endpoints'
 import store from 'src/store/store'
 import once from 'lodash/once'
 
@@ -73,7 +73,8 @@ export const mapColorDataToPayload = (colorData: Object) => ({
   colorLabels: colorData.colors.names,
   brights: colorData.brights,
   sections: colorData.sections,
-  chunksLayout: colorData.chunksLayout
+  chunksLayout: colorData.chunksLayout,
+  wall: colorData.wall
 })
 
 export const getColorsRequests = (brandId: string, options?: any) => {
@@ -86,17 +87,12 @@ export const getColorsRequests = (brandId: string, options?: any) => {
     axios.get(generateBrandedEndpoint(COLOR_FAMILY_NAMES_ENDPOINT, brandId, options)),
     // { data: { archived: boolean, blue: number, brandKey: string, brandedCollectionNames: string[], colorFamilyNames: string[], colorNumber: string, coordinatingColors: {}..... }[] }
     axios.get(generateBrandedEndpoint(COLORS_ENDPOINT, brandId, options)),
-    axios.get(generateBrandedEndpoint(COLOR_CHUNKS_LAYOUT_ENDPOINT, brandId, options))
-      .catch(err => {
-        console.info(`Chunk layout data does not exist for ${brandId}. See following error:`, err)
-      })
-      .then(response => {
-        return response || null
-      })
+    axios.get(generateBrandedEndpoint(COLOR_CHUNKS_LAYOUT_ENDPOINT, brandId, options)),
+    axios.get(generateBrandedEndpoint(COLORS_WALL_ENDPOINT, brandId, options))
   ]
 }
 
 export const mapResponsesToColorData = (responses: any[]) => {
-  const [colors, brights, sections, unorderedColors, chunksLayout]: [any, any, FamilyStructure, any, any] = responses.map(response => response?.data)
-  return { colors, brights, sections, unorderedColors, chunksLayout }
+  const [colors, brights, sections, unorderedColors, chunksLayout, wall]: [any, any, FamilyStructure, any, any, any] = responses.map(response => response?.data)
+  return { colors, brights, sections, unorderedColors, chunksLayout, wall }
 }
