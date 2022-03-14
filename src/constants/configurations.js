@@ -19,15 +19,12 @@ export const DEFAULT_CONFIGURATION = {
     nearBlack: varValues._colors.nearBlack,
     menuBg: varValues._colors.menuBg,
     menuContentTitle: varValues._colors.menuContentTitle,
-    menuContentDescription: varValues._colors.menuContentDescription,
     menuTxt: varValues._colors.menuTxt,
     menuTxtHover: varValues._colors.menuTxtHover,
     primary: varValues._colors.primary,
     secondary: varValues._colors.secondary,
     primaryBg: varValues._colors.primaryBg,
     secondaryBg: varValues._colors.secondaryBg,
-    primaryBorder: varValues._colors.primaryBorder,
-    secondaryBorder: varValues._colors.secondaryBorder,
     success: varValues._colors.success,
     warning: varValues._colors.warning,
     white: varValues._colors.white
@@ -35,11 +32,9 @@ export const DEFAULT_CONFIGURATION = {
   typography: {
     bodyFontFamily: varValues.typography.bodyFontFamily,
     titleFontFamily: varValues.typography.titleFontFamily,
-    titleFontStyle: varValues.typography.titleFontStyle,
     titleTextTransform: varValues.typography.titleTextTransform,
     buttonTextTransform: varValues.typography.buttonTextTransform,
-    buttonFontWeight: varValues.typography.buttonFontWeight,
-    textInputBorderRadius: varValues.typography.textInputBorderRadius
+    buttonFontWeight: varValues.typography.buttonFontWeight
   },
   loadingConfiguration: false,
   error: false

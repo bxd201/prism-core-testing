@@ -1,7 +1,7 @@
 .collection-detail {
   &__wrapper {
     display: flex;
-    background: var(getThemeColor('primaryBg'));
+    background: var(getThemeColor('secondaryBg'));
     height: 100%;
     flex-direction: column;
     @include respond-above(sm) {
@@ -19,24 +19,26 @@
     }
   }
   &__cover {
+    display: none;
     width: 100%;
-    &--hidden-mobile {
-      @include respond-below(sm) {
-        display: none;
-      }
+    @include respond-above(sm) {
+      display: block;
     }
   }
   &__description {
     padding: 1em 2em;
     text-align: left;
-    font-family: var(getVarName('typography.bodyFontFamily'));
-    &--hidden-mobile {
-      @include respond-below(sm) {
-        display: none;
-      }
+    display: none;
+    @include respond-above(sm) {
+      display: block;
     }
   }
-  &__border { margin: 1rem 0 3rem }
+  &__border {
+    margin: 15px 0px 0px 0px;
+    @include respond-below(sm) {
+      margin: 0px 0px 30px 0px;
+    }
+  }
   &__button {
     color: var(getThemeColor('buttonColor'));
     background-color: var(getThemeColor('buttonBgColor'));
@@ -97,16 +99,18 @@
   &__color-list {
     float: right;
     width: 100%;
-    height: 400px;
     position: relative;
     overflow: hidden;
 
     @include respond-above(sm) {
       width: 66%;
-      height: 535px;
     }
   }
-  &__color-list-vertical { height: inherit }
+  &__color-list-vertical {
+    height: 80vw;
+    max-height: 500px;
+    white-space: wrap;
+  }
   &__trigger {
     border: 1px solid var(getThemeColor('light.lightest'));
     display: inline-block;

@@ -77,13 +77,12 @@
         }
       }
       &__accept {
-        background: var(getThemeColor('buttonBgColor'));
+        background: var(getThemeColor('white'));
         border: 1px solid var(getThemeColor('light'));
         color: var(getThemeColor('light'));
         cursor: default;
         display: inline-block;
         flex: 1 0 auto;
-        font-family: inherit;
         line-height: 1.25em;
         margin: -1em auto 1.75em;
         outline: none;
@@ -91,8 +90,8 @@
         text-align: center;
         width: auto;
         &--active {
-          border: 1px solid var(getThemeColor('buttonBorder'));
-          color: var(getThemeColor('buttonColor'));
+          border: 1px solid var(getThemeColor('secondary'));
+          color: var(getThemeColor('secondary'));
           cursor: pointer;
           &:focus {
             outline-style: solid;

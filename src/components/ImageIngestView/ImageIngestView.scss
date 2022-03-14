@@ -22,7 +22,6 @@
     overflow: hidden;
     /*padding: 3em 0;*/
     width: 100%;
-    font-family: var(getVarName('typography.titleFontFamily'));
     @include respond-above(sm) {
       padding: 0em;
     }
@@ -48,15 +47,14 @@
      border: 1px solid var(getThemeColor('buttonBorder'));
      color: var(getThemeColor('buttonColor'));
      cursor: pointer;
-     display: flex;
+     display: inline-block;
      fill: currentColor;
-     font-family: inherit;
      outline: none;
      position: absolute;
      text-align: center;
      top: .35rem;
      width: auto;
-     z-index: 1001;
+     z-index: 1000;
      padding: .45em;
 
      &:focus {
@@ -84,7 +82,6 @@
    }
   &__button-left-text {
     display: none;
-    margin-left: .4rem;
     text-transform: uppercase;
     @include respond-above(sm) {
       display: inline-block;

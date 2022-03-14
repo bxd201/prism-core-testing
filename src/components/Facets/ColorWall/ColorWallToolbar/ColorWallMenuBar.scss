@@ -5,10 +5,8 @@ $menu-bar-width: 27em;
   display: flex;
   border: $btn-border-thickness solid var(getThemeColor('buttonBorder'));
 
-  &--flex {
-    @media (max-width: 473px) {
-      flex: 1;
-    }
+  @media (max-width: 473px) {
+    flex: 1;
   }
 }
 
@@ -221,7 +219,7 @@ $menu-bar-width: 27em;
 .color-family-menu {
   display: flex;
   margin: 0.5rem 0;
-  border: 1px solid var(getThemeColor('buttonBarBorder'));
+  border: 1px solid var(getThemeColor('buttonBorder'));
 
   &__width-size {
     position: absolute;

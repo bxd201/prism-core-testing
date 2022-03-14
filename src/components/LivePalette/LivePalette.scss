@@ -5,7 +5,6 @@
   background-color: var(getThemeColor('white'));
   padding: $livePalette__chip-side-margin;
   flex-direction: column;
-  font-family: var(getVarName('typography.titleFontFamily'));
   @include respond-above(sm) {
     border: 1px solid $color-grey;
     flex-direction: row;
@@ -32,7 +31,6 @@
       }
       padding: 0.5em 1em;
       margin-right: 5px;
-      font-family: var(getVarName('typography.titleFontFamily'));
       font-size: .8em;
       outline:none;
       text-transform: var(getVarName('typography.buttonTextTransform'));
@@ -114,7 +112,6 @@
     &--add-big,
     &--add {
       cursor: pointer;
-      font-family: var(getVarName('typography.titleFontFamily'));
 
       &:focus {
         outline-style: solid;
@@ -172,6 +169,9 @@
           justify-content: space-between;
           height: auto;
         }
+        .prism-live-palette__description {
+          width: auto;
+        }
 
         .prism-live-palette__button-group {
           position: relative;
@@ -227,15 +227,6 @@
 
       &--right {
         text-align: left;
-
-        &-text {
-          width: 9rem;
-          margin: 0.2rem;
-          font-family: var(getVarName('typography.bodyFontFamily'));
-          font-style: var(getVarName('typography.titleFontStyle'));
-          font-size: .875rem;
-          line-height: 1.2rem;
-        }
       }
     }
 
@@ -374,53 +365,6 @@
     color: inherit;
     @include respond-above(sm) {
       display: block;
-    }
-  }
-
-  &-house-shaped {
-    &__active-color__name-number {
-      display: flex;
-      flex-direction: column-reverse;
-      padding: 0.5em;
-      font-size: .875rem;
-      line-height: 1.2em;
-    }
-
-    &__active-color__color-name {
-      font-family: var(getVarName('typography.bodyFontFamily'));
-      font-size: 1rem;
-      font-style: italic;
-    }
-
-    &__name-number {
-      display: flex;
-      flex-direction: column-reverse;
-      padding: 0;
-    }
-
-    &__color-name {
-      font-family: var(getVarName('typography.bodyFontFamily'));
-      font-style: italic;
-      display: none;
-      color: inherit;
-      line-height: 1.2rem;
-      @include respond-above(sm) {
-        display: block;
-        width: 4em;
-      }
-      @include respond-above(md) {
-        width: auto;
-      }
-    }
-
-    &__color-number {
-      font-size: .875rem;
-      display: none;
-      font-weight: normal;
-      color: inherit;
-      @include respond-above(sm) {
-        display: block;
-      }
     }
   }
 }

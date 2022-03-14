@@ -15,6 +15,7 @@ import './Search.scss'
 import 'src/scss/externalComponentSupport/AutoSizer.scss'
 import omitPrefix from 'src/shared/utils/omitPrefix.util'
 import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
+import { fullColorNumber } from 'src/shared/helpers/ColorUtils'
 import type { CrossSearch } from '../Facets/ColorSearchFacet/ColorSearchFacet'
 import * as GA from 'src/analytics/GoogleAnalytics'
 import { GA_TRACKER_NAME_BRAND } from 'src/constants/globals'
@@ -28,69 +29,50 @@ const Search = ({ closeSearch = () => {}, contain = false, crossSearch, isChipLo
   const { results, count, suggestions, loading } = useSelector(state => state.colors.search)
   const { items: { colorStatuses = {} } } = useSelector(state => state.colors)
   const { colorDetailPageRoot, colorWallBgColor, colorWallPageRoot, routeType }: ColorWallContextProps = useContext(ColorWallContext)
-  const { brandId, colorWall: { colorSwatch = {} } }: ConfigurationContextType = useContext(ConfigurationContext)
-  const { houseShaped = false } = colorSwatch
+  const { brandId, brandKeyNumberSeparator }: ConfigurationContextType = useContext(ConfigurationContext)
   const [hasSearched, updateHasSearched] = useState(typeof count !== 'undefined')
   const dispatch = useDispatch()
   const { locale } = useIntl()
 
   useEffectAfterMount(() => { updateHasSearched(true) }, [count, results, loading])
 
-  const cellRenderer = ({ columnIndex, isScrolling, isVisible, key, parent, rowIndex, style }: any) => {
+  const cellRenderer = ({ columnIndex, isScrolling, isVisible, key, parent, rowIndex, style }) => {
     const result = results && results[columnIndex + (rowIndex * parent.props.columnCount)]
 
-    if (!result) return
-
-    return houseShaped ? (
-      <div key={key} style={style}>
-        <ColorSwatch
-          color={result}
-          contentRenderer={(defaultContent) => <>
-            <div className='color-swatch-house-shaped__btns' style={{ marginTop: '166px' }}>{defaultContent[1]}</div>
-            <div className='color-swatch-house-shaped__label'>{defaultContent[0]}</div>
-          </>}
-          gap={10}
-          isClickable={false}
-          showContents
-          status={colorStatuses[result.id]}
-          style={{ height: '100px' }}
-        />
-      </div>
-    ) : (
-      <ColorSwatch
-        color={result}
-        contentRenderer={(defaultContent) => isChipLocator ? (
-          <div className='color-swatch__chip-locator'>
-            {defaultContent[0]}
-            <div className='color-swatch__chip-locator--buttons'>
-              <button
-                className={`color-swatch__chip-locator--buttons__button ${result.isDark ? 'dark-color' : ''}`}
-                onClick={() => {
-                  GA.event({ category: 'QR Color Wall Search', action: 'Find Chip', label: `${result.name} - ${result.colorNumber}` }, GA_TRACKER_NAME_BRAND[brandId])
-                  window.location.href = crossSearch && crossSearch.searching ? crossSearch.onClickFindChip(result) : colorWallPageRoot?.(result)
-                  closeSearch()
-                }}
-              >
-                Find Chip
-              </button>
-              <button
-                className={`color-swatch__chip-locator--buttons__button ${result.isDark ? 'dark-color' : ''}`}
-                onClick={() => {
-                  GA.event({ category: 'QR Color Wall Search', action: 'View Color', label: `${result.name} - ${result.colorNumber}` }, GA_TRACKER_NAME_BRAND[brandId])
-                  window.location.href = crossSearch && crossSearch.searching ? crossSearch.onClickViewColor(result) : colorDetailPageRoot?.(result)
-                }}
-              >
-                View Color
-              </button>
-            </div>
+    return result && <ColorSwatch
+      color={result}
+      contentRenderer={(defaultContent) => isChipLocator ? (
+        <div className='color-swatch__chip-locator'>
+          <p className='color-swatch__chip-locator__name'>{result.name}</p>
+          <p className='color-swatch__chip-locator__number'>{fullColorNumber(result.brandKey, result.colorNumber, brandKeyNumberSeparator)}</p>
+          <div className='color-swatch__chip-locator--buttons'>
+            <button
+              className={`color-swatch__chip-locator--buttons__button ${result.isDark ? 'dark-color' : ''}`}
+              onClick={() => {
+                GA.event({ category: 'QR Color Wall Search', action: 'Find Chip', label: `${result.name} - ${result.colorNumber}` }, GA_TRACKER_NAME_BRAND[brandId])
+                window.location.href = crossSearch && crossSearch.searching ? crossSearch.onClickFindChip(result) : colorWallPageRoot?.(result)
+                closeSearch()
+              }}
+            >
+              Find Chip
+            </button>
+            <button
+              className={`color-swatch__chip-locator--buttons__button ${result.isDark ? 'dark-color' : ''}`}
+              onClick={() => {
+                GA.event({ category: 'QR Color Wall Search', action: 'View Color', label: `${result.name} - ${result.colorNumber}` }, GA_TRACKER_NAME_BRAND[brandId])
+                window.location.href = crossSearch && crossSearch.searching ? crossSearch.onClickViewColor(result) : colorDetailPageRoot?.(result)
+              }}
+            >
+              View Color
+            </button>
           </div>
-        ) : <>{defaultContent}</>}
-        key={key}
-        showContents
-        status={colorStatuses[result.id]}
-        style={style}
-      />
-    )
+        </div>
+      ) : defaultContent}
+      key={key}
+      showContents
+      status={colorStatuses[result.id]}
+      style={style}
+    />
   }
 
   return (
@@ -134,10 +116,9 @@ const Search = ({ closeSearch = () => {}, contain = false, crossSearch, isChipLo
           <div className={`${baseClass}__results-pane__swatches ${contain ? `${baseClass}__results-pane__swatches--cover` : ''}`}>
             <AutoSizer disableHeight={!contain}>
               {({ height = 0, width }) => {
-                const gridWidth = width - (EDGE_SIZE * (houseShaped ? 0.7 : 2))
+                const gridWidth = width - (EDGE_SIZE * 2)
                 const columnCount = Math.max(1, Math.round(gridWidth / 175))
                 const newSize = gridWidth / columnCount
-                const rowHeight = houseShaped ? 245 : newSize
                 const rowCount = Math.ceil(results.length / columnCount)
                 const gridHeight = contain ? height : Math.max(height, rowCount * newSize + (EDGE_SIZE * 2))
 
@@ -151,7 +132,7 @@ const Search = ({ closeSearch = () => {}, contain = false, crossSearch, isChipLo
                     columnWidth={newSize}
                     columnCount={columnCount}
                     height={gridHeight}
-                    rowHeight={rowHeight}
+                    rowHeight={newSize}
                     rowCount={rowCount}
                     width={width}
                   />

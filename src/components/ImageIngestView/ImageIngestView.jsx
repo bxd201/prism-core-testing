@@ -4,13 +4,12 @@
  */
 // @flow
 
-import React, { useContext, useEffect, useRef, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Link, useHistory } from 'react-router-dom'
 import ImageRotateTerms from './ImageRotateTerms'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import PrismImage from '../PrismImage/PrismImage'
-import Iconography from '../Iconography/Iconography'
 import { calcOrientationDimensions } from '../../shared/utils/scale.util'
 import ConfigurationContext, { type ConfigurationContextType } from '../../contexts/ConfigurationContext/ConfigurationContext'
 import './ImageIngestView.scss'
@@ -34,7 +33,7 @@ const ImageIngestView = (props: ImageIngestViewProps) => {
   const wrapperRef = useRef()
   const canvasRef = useRef()
   const { cvw = {} } = useContext<ConfigurationContextType>(ConfigurationContext)
-  const { backBtn, closeBtn = {} } = cvw
+  const { closeBtn = {} } = cvw
   const { showArrow: closeBtnShowArrow = true, text: closeBtnText = <FormattedMessage id='CLOSE' /> } = closeBtn
   // eslint-disable-next-line no-unused-vars
   const [imageData, setImageData] = useState(null)
@@ -247,8 +246,7 @@ const ImageIngestView = (props: ImageIngestViewProps) => {
         <div className={`${baseClassName}__container`}>
           {hasLoaded ? <div className={`${baseClassName}__header`}>
             <button className={`${baseClassName}__button ${baseClassName}__button--left`} onClick={() => history.goBack()}>
-              {backBtn?.icon ? <Iconography name={backBtn?.icon} style={{ width: '.85rem', height: '.85rem' }} /> : <FontAwesomeIcon icon={['fa', 'angle-left']} />}
-              <span className={`${baseClassName}__button-left-text`}><FormattedMessage id='BACK' /></span>
+              <div><FontAwesomeIcon className={``} icon={['fa', 'angle-left']} />&nbsp;<span className={`${baseClassName}__button-left-text`}><FormattedMessage id='BACK' /></span></div>
             </button>
             <Link to={closeLink} tabIndex='-1'>
               <button onClick={handleCloseButton} className={`${baseClassName}__button ${baseClassName}__button--right dark-button`}>

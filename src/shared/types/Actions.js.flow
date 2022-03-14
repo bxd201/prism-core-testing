@@ -30,8 +30,7 @@ export type ColorsStateItems = {
   chunksLayout?: any,
   sectionLabels?: {
     [key: ?string]: (?string)[]
-  },
-  wall?: any
+  }
 }
 
 export type ColorsStateStatus = {

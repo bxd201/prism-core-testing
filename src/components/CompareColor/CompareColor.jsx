@@ -22,6 +22,9 @@ const buttonsVisibleClass = `${baseClass}__buttons--visible`
 const nextBtnWrapperClass = `${baseClass}__next-btn__wrapper`
 const backgroundColorClass = `${baseClass}__background__color`
 const queueWrapperClass = `${baseClass}__queue__wrapper`
+const colorInfoClass = `${baseClass}__color__info`
+const colorInfoNumberClass = `${baseClass}__color__info__number`
+const colorInfoNameClass = `${baseClass}__color__info__name`
 
 const defaultViewItem = 3
 const offset = 1
@@ -46,65 +49,65 @@ type CompareColorState = {
   isHidePrevButton: boolean
 }
 export class CompareColor extends React.Component<CompareColorProps, CompareColorState> {
-  state = {
-    colors: this.props.colors,
-    colorIds: this.props.colorIds,
-    renderColors: [],
-    curr: 0,
-    isHidePrevButton: true,
-    isHideNextButton: true,
-    selectedSceneUid: this.props.selectedSceneUid,
-    selectedVariantName: this.props.selectedVariantName
-  };
+    state = {
+      colors: this.props.colors,
+      colorIds: this.props.colorIds,
+      renderColors: [],
+      curr: 0,
+      isHidePrevButton: true,
+      isHideNextButton: true,
+      selectedSceneUid: this.props.selectedSceneUid,
+      selectedVariantName: this.props.selectedVariantName
+    };
 
-  static getDerivedStateFromProps (props: CompareColorProps, state: CompareColorState) {
-    if (props.colors !== state.colors) {
-      return {
-        colors: props.colors
-      }
-    }
-    if (props.colorIds !== state.colorIds) {
-      if (props.colorIds.length === state.colors.length - 1) {
-        props.toggleCompareColor()
-        return null
-      }
-      let currPointer = state.curr
-      // when remove compared color id from color paltete
-      if (props.colorIds.length > state.colorIds.length) {
-        if (state.colors.length - props.colorIds.length <= defaultViewItem || currPointer === 0) {
-          currPointer = 0
-        } else {
-          currPointer = currPointer - offset
+    static getDerivedStateFromProps (props: CompareColorProps, state: CompareColorState) {
+      if (props.colors !== state.colors) {
+        return {
+          colors: props.colors
         }
       }
-      // when add compared color id from color pallate
-      if (props.colorIds.length < state.colorIds.length) {
-        if (state.colors.length - props.colorIds.length - 1 <= defaultViewItem) {
-          currPointer = 0
-        } else {
-          currPointer = currPointer + 1
+      if (props.colorIds !== state.colorIds) {
+        if (props.colorIds.length === state.colors.length - 1) {
+          props.toggleCompareColor()
+          return null
+        }
+        let currPointer = state.curr
+        // when remove compared color id from color paltete
+        if (props.colorIds.length > state.colorIds.length) {
+          if (state.colors.length - props.colorIds.length <= defaultViewItem || currPointer === 0) {
+            currPointer = 0
+          } else {
+            currPointer = currPointer - offset
+          }
+        }
+        // when add compared color id from color pallate
+        if (props.colorIds.length < state.colorIds.length) {
+          if (state.colors.length - props.colorIds.length - 1 <= defaultViewItem) {
+            currPointer = 0
+          } else {
+            currPointer = currPointer + 1
+          }
+        }
+        return {
+          colorIds: props.colorIds,
+          curr: currPointer
         }
       }
-      return {
-        colorIds: props.colorIds,
-        curr: currPointer
-      }
+      return null
     }
-    return null
-  }
 
-  componentDidUpdate (prevProps, prevState) {
-    if (prevProps.selectedSceneUid !== this.props.selectedSceneUid ||
+    componentDidUpdate (prevProps, prevState) {
+      if (prevProps.selectedSceneUid !== this.props.selectedSceneUid ||
         prevProps.selectedVariantName !== this.props.selectedVariantName) {
-      // eslint-disable-next-line react/no-did-update-set-state
-      this.setState({
-        selectedSceneUid: this.props.selectedSceneUid,
-        selectedVariantName: this.props.selectedVariantName
-      })
+        // eslint-disable-next-line react/no-did-update-set-state
+        this.setState({
+          selectedSceneUid: this.props.selectedSceneUid,
+          selectedVariantName: this.props.selectedVariantName
+        })
+      }
     }
-  }
 
-  renderContent = (curr: number, colors: Colors[], colorIds: string, colorInfoClass: string, colorNumOnBottom: boolean, selectedSceneUid: string, selectedVariantName: string, scenesCollection: FlatScene[], variantsCollection: FlatVariant[]) => {
+  renderContent = (curr: number, colors: Colors[], colorIds: string, selectedSceneUid: string, selectedVariantName: string, scenesCollection: FlatScene[], variantsCollection: FlatVariant[]) => {
     const renderColors = colors.filter((color: Color) => {
       return !colorIds.includes(color.id)
     })
@@ -127,9 +130,9 @@ export class CompareColor extends React.Component<CompareColorProps, CompareColo
             selectedSceneUid={selectedSceneUid}
             scenesCollection={[selectedScene]}
             variantsCollection={[selectedVariant]} />
-          <div style={{ color: getContrastYIQ(color.hex) }} className={`${colorInfoClass}${colorNumOnBottom ? '__name-number' : ''}`} >
-            <span className={`${colorInfoClass}__number`}>{fullColorNumber(color.brandKey, color.colorNumber)}</span>
-            <span className={`${colorInfoClass}__name`}>{color.name}</span>
+          <div style={{ color: getContrastYIQ(color.hex) }} className={`${colorInfoClass}`} >
+            <span className={`${colorInfoNumberClass}`}>{fullColorNumber(color.brandKey, color.colorNumber)}</span>
+            <span className={`${colorInfoNameClass}`}>{color.name}</span>
           </div>
         </div>
       )
@@ -186,12 +189,10 @@ export class CompareColor extends React.Component<CompareColorProps, CompareColo
     render () {
       const { curr, colors, colorIds, selectedSceneUid, selectedVariantName } = this.state
       const { config, variantsCollection, scenesCollection } = this.props
-      const { colorWall: { colorSwatch = {} }, cvw = {} } = config
-      const { colorNumOnBottom = false, houseShaped = false } = colorSwatch
+      const { cvw = {} } = config
       const { closeBtn = {} } = cvw
       const { showArrow: closeBtnShowArrow = true, text: closeBtnText = <FormattedMessage id='CLOSE' /> } = closeBtn
-      const colorInfoClass = houseShaped ? `${baseClass}-house-shaped` : `${baseClass}__color__info`
-      const content = this.renderContent(curr, colors, colorIds, colorInfoClass, colorNumOnBottom, selectedSceneUid, selectedVariantName, scenesCollection, variantsCollection)
+      const content = this.renderContent(curr, colors, colorIds, selectedSceneUid, selectedVariantName, scenesCollection, variantsCollection)
       const { isHidePrevButton, isHideNextButton } = this.isShowSlideButton()
 
       return (
@@ -231,7 +232,10 @@ export {
   buttonsVisibleClass,
   nextBtnWrapperClass,
   backgroundColorClass,
-  queueWrapperClass
+  queueWrapperClass,
+  colorInfoClass,
+  colorInfoNumberClass,
+  colorInfoNameClass
 }
 
 export default WithConfigurationContext(CompareColor)
