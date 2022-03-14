@@ -17,6 +17,8 @@ export type Configuration = {
     secondary: string,
     primaryBg: string,
     secondaryBg: string,
+    primaryBorder: string,
+    secondaryBorder: string,
     warning: string,
     success: string,
     danger: string,
@@ -26,6 +28,7 @@ export type Configuration = {
     nearBlack: string,
     menuBg: string,
     menuContentTitle: string,
+    menuContentDescription: string,
     menuTxt: string,
     menuTxtHover: string,
     black: string,
@@ -34,6 +37,7 @@ export type Configuration = {
   typography: {
     bodyFontFamily: string,
     titleFontFamily: string,
+    titleFontStyle: string,
     titleTextTransform: string
   }
 }

@@ -16,13 +16,23 @@ $swatch-edge-padding-lg: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-mai
     @include respond-above(sm) { transform: scale($large-screen-scale-amt); }
 }
 
+@mixin bloom-house-shaped($small-screen-scale-amt, $large-screen-scale-amt, $z) {
+  z-index: $z !important;
+  transform: scale($small-screen-scale-amt, $small-screen-scale-amt / 1.5);
+  transition: transform $bloom-duration;
+  @include respond-above(sm) { transform: scale($large-screen-scale-amt, $large-screen-scale-amt / 1.5); }
+}
+
 .color-swatch {
   border: $swatch-border-size solid #fff;
   outline-offset: 0px;
 
   &--focus, &:focus { z-index: 2; }
 
-  &--no-outline { outline: none !important; }
+  &--no-outline {
+    cursor: default;
+    outline: none !important;
+  }
 
   &-0 {
     @include bloom($bloom-scale-main-sm, $bloom-scale-main-lg, 900);
@@ -200,6 +210,7 @@ $swatch-edge-padding-lg: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-mai
     justify-content: space-between;
     left: 0;
     padding: $swatch-edge-padding-sm;
+    font-size: 13px;
     position: absolute;
     width: 100%;
 
@@ -211,6 +222,102 @@ $swatch-edge-padding-lg: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-mai
       display: flex;
       align-items: center;
     }
+  }
+}
+
+.color-swatch-house-shaped {
+  $swatch-roof-position: 47%;
+
+  @mixin roof() {
+    content: '';
+    display: block;
+    position: absolute;
+    top: -$swatch-roof-position;
+    width: 100%;
+    height: 47.5%;
+    background-color: inherit;
+    clip-path: polygon(50% 0, 0 100%, 100% 100%);
+    cursor: default;
+  }
+
+  border: $swatch-border-size solid #fff;
+  outline-offset: 0px;
+
+  &--focus, &:focus { z-index: 2; }
+
+  &-0 {
+    outline: none !important;
+    @include bloom-house-shaped($bloom-scale-main-sm, $bloom-scale-main-lg, 900);
+
+    + .color-swatch-house-shaped__content {
+      transform: translate3d(-(($swatch-base-size * ($bloom-scale-main-sm - 1)) / 2), -(($swatch-base-size * ($bloom-scale-main-sm - 1)) / 2) / 2, 0);
+      height: ($swatch-base-size * $bloom-scale-main-sm) / 1.5 !important;
+      width: $swatch-base-size * $bloom-scale-main-sm !important;
+
+      @include respond-above(sm) {
+        transform: translate3d(-(($swatch-base-size * ($bloom-scale-main-lg - 1)) / 2), -(($swatch-base-size * ($bloom-scale-main-lg - 1)) / 2) / 2, 0);
+        height: ($swatch-base-size * $bloom-scale-main-lg) / 1.5 !important;
+        width: $swatch-base-size * $bloom-scale-main-lg !important;
+      }
+    }
+
+    &::before { @include roof() }
+  }
+
+  &-n0-5 { @include bloom(2.00, 2.36, 750); }
+
+  &-n1 { @include bloom(2.00, 2.08, 700); }
+
+  &-n1-5 { @include bloom(1.41, 1.74, 650); }
+
+  &-n2 { @include bloom(1.30, 1.41, 600); }
+
+  &-flat {
+    transform: scale(1);
+    z-index: 1;
+    transition: transform $bloom-duration, z-index 10ms;
+  }
+
+  &-flat-gap {
+    position: absolute;
+    top: $swatch-roof-position / 2;
+    left: 0;
+    width: 100%;
+
+    &::before { @include roof() }
+  }
+
+  &__content {
+    position: relative;
+    z-index: 950 !important;
+  }
+
+  &__label {
+    position: relative;
+    padding: 0.75rem 0.75rem 0.6rem;
+    width: 100%;
+    background: white;
+    border: 1px solid lightgray;
+    border-top: none;
+    text-align: center;
+    line-height: 1.3rem;
+
+    &__name {
+      color: var(getThemeColor('black'));
+      font-family: var(getVarName('typography.bodyFontFamily'));
+      font-style: italic;
+    }
+
+    &__number {
+      color: var(getThemeColor('primary'));
+      font-family: var(getVarName('typography.titleFontFamily'));
+      font-size: .85rem;
+    }
+  }
+
+  &__btns {
+    position: relative;
+    margin-top: 66%;
   }
 }
 

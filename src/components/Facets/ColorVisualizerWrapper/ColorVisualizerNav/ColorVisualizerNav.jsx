@@ -29,6 +29,7 @@ const selectDevice = (web, iPhone = web, android = web, iPad = web) => (isMobile
 
 type DropDownMenuProps = {
   title: string,
+  subtitle?: string,
   items: {
     img: string,
     imgiPhone?: string,
@@ -48,7 +49,7 @@ type WrapperProps = {
   children: ReactChildren
 }
 
-export const DropDownMenu = ({ title, items }: DropDownMenuProps) => {
+export const DropDownMenu = ({ title, subtitle, items }: DropDownMenuProps) => {
   const submenu = useRef(null)
   const history = useHistory()
   const { cvw = {}, brandId } = useContext<ConfigurationContextType>(ConfigurationContext)
@@ -85,6 +86,7 @@ export const DropDownMenu = ({ title, items }: DropDownMenuProps) => {
           {closeBtnText ?? <FormattedMessage id='CLOSE' />}{closeBtnShowArrow && <FontAwesomeIcon className='cvw-dashboard-submenu__close__ico' icon={['fa', 'chevron-up']} />}
         </button>
         <h1 className='cvw-dashboard-submenu__header'>{title}</h1>
+        {subtitle && <p className='cvw-dashboard-submenu__subtitle'>{subtitle}</p>}
         <ul className='cvw-dashboard-submenu__content'>
           {items.map(({ img, imgiPhone, imgiPad, imgAndroid, title, titleMobile, content, contentAndroid, contentiPhone, description, onClick }, i, arr) => {
             const Wrapper = ({ children }: WrapperProps) => <button className={`${onClick ? 'cvw-dashboard-submenu__content__btn' : ''}`} disabled={!onClick} onClick={onClick}>{children}</button>
@@ -93,10 +95,12 @@ export const DropDownMenu = ({ title, items }: DropDownMenuProps) => {
               <li key={i} className={`cvw-dashboard-submenu__content__item ${isWide ? 'cvw-dashboard-submenu__content__item--wide' : ''}`}>
                 <Wrapper>
                   {img ? <div className={`cvw-dashboard-submenu__content__image ${isWide ? 'cvw-dashboard-submenu__content__image--wide' : ''}`} style={{ 'backgroundImage': `url(${brandId === 'sherwin' ? selectDevice(img, imgiPhone, imgAndroid, imgiPad) : img})` }} alt='' /> : null}
-                  <h3 className='cvw-dashboard-submenu__content__title'>{brandId === 'sherwin' ? selectDevice(title, titleMobile) : title}</h3>
-                  <p className='cvw-dashboard-submenu__content__content'>{brandId === 'sherwin' ? selectDevice(content, contentiPhone, contentAndroid) : content}</p>
-                  {description && <p className='cvw-dashboard-submenu__content__tip'>{description}</p>}
-                  {title === 'UPLOAD YOUR PHOTO' && <p className='cvw-dashboard-submenu__content__tip'>Please select a PNG or JPG file</p>}
+                  <div className='cvw-dashboard-submenu__content__label'>
+                    <h3 className='cvw-dashboard-submenu__content__label--title'>{brandId === 'sherwin' ? selectDevice(title, titleMobile) : title}</h3>
+                    <p className='cvw-dashboard-submenu__content__label--content'>{brandId === 'sherwin' ? selectDevice(content, contentiPhone, contentAndroid) : content}</p>
+                    {description && <p className='cvw-dashboard-submenu__content__label--tip'>{description}</p>}
+                    {title === 'UPLOAD YOUR PHOTO' && <p className='cvw-dashboard-submenu__content__label--tip'>Please select a PNG or JPG file</p>}
+                  </div>
                 </Wrapper>
               </li>
             )
@@ -109,7 +113,7 @@ export const DropDownMenu = ({ title, items }: DropDownMenuProps) => {
 
 const ColorVisualizerNav = () => {
   const { featureExclusions, cvw, brand, brandId } = useContext<ConfigurationContextType>(ConfigurationContext)
-  const { exploreColors, getInspired, paintAPhoto } = cvw?.menu ?? {}
+  const { exploreColors, getInspired, help, paintAPhoto } = cvw?.menu ?? {}
   const { navStructure = DEFAULT_NAV_STRUCTURE } = cvw ?? {}
   const [isLoadingCVWConfig, setIsLoadingCVWConfig] = useState(isEmpty(cvw))
   const { messages, formatMessage } = useIntl()
@@ -388,7 +392,7 @@ const ColorVisualizerNav = () => {
               ref={navBtnRef}
               active={location.pathname === ROUTES_ENUM.ACTIVE_COLORS}
               onClick={() => handleNavigation(ROUTES_ENUM.ACTIVE_COLORS)}
-              iconRenderer={({ className }) => <span className={`fa-layers fa-fw ${className}`}>
+              iconRenderer={({ className }) => exploreColors?.showIcon && <span className={`fa-layers fa-fw ${className}`}>
                 <FontAwesomeIcon icon={['fal', 'square-full']} size='xs' transform={{ rotate: 10 }} />
                 <FontAwesomeIcon icon={['fal', 'square-full']} size='sm' transform={{ rotate: 0 }} />
                 <FontAwesomeIcon icon={['fal', 'square-full']} size='1x' transform={{ rotate: 350 }} />
@@ -401,7 +405,7 @@ const ColorVisualizerNav = () => {
             <CVWNavBtn
               active={location.pathname === ROUTES_ENUM.INSPIRATION}
               onClick={() => handleNavigation(ROUTES_ENUM.INSPIRATION)}
-              iconRenderer={({ className }) => <span className={`${className}`}>
+              iconRenderer={({ className }) => getInspired?.showIcon && <span className={`${className}`}>
                 <FontAwesomeIcon icon={['fal', 'lightbulb']} size='1x' />
               </span>}
               textRenderer={() => getInspired?.tab ?? <FormattedMessage id='NAV_LINKS.GET_INSPIRED' />} />
@@ -411,7 +415,7 @@ const ColorVisualizerNav = () => {
             <CVWNavBtn
               active={location.pathname === ROUTES_ENUM.SCENES}
               onClick={() => handleNavigation(ROUTES_ENUM.SCENES)}
-              iconRenderer={({ className }) => <span className={`fa-layers fa-fw ${className}`}>
+              iconRenderer={({ className }) => paintAPhoto?.showIcon && <span className={`fa-layers fa-fw ${className}`}>
                 <FontAwesomeIcon icon={['fal', 'square-full']} />
                 <FontAwesomeIcon icon={['fa', 'brush']} size='sm' transform={{ rotate: 320 }} />
               </span>}
@@ -430,7 +434,7 @@ const ColorVisualizerNav = () => {
               <CVWNavBtn
                 active={location.pathname === ROUTES_ENUM.HELP}
                 onClick={() => handleNavigation(ROUTES_ENUM.HELP)}
-                textRenderer={() => <FormattedMessage id='NAV_LINKS.HELP' />} />
+                textRenderer={() => help?.tab ?? <FormattedMessage id='NAV_LINKS.HELP' />} />
             </li>
           </ul>
         </li>
@@ -440,6 +444,7 @@ const ColorVisualizerNav = () => {
           ? <Route path={ROUTES_ENUM.ACTIVE_COLORS}>
             <DropDownMenu
               title={exploreColors?.title ?? messages['NAV_DROPDOWN_TITLE.EXPLORE_COLORS']}
+              subtitle={exploreColors?.subtitle}
               items={dropDownItemsForExploreColors}
             />
           </Route>

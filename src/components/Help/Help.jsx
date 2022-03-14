@@ -1,6 +1,7 @@
 // @flow
 import React, { useState, useEffect, useCallback, useContext, forwardRef } from 'react'
 import CardMenu from 'src/components/CardMenu/CardMenu'
+import Iconography from '../Iconography/Iconography'
 import { helpHeader, filterHelpItems } from './data'
 import './Help.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -35,7 +36,8 @@ const SCROLL_SPEED = 500
 const getDataElement = (data: string) => camelCase(data.split('.').pop())
 
 const HelpInterior = () => {
-  const { brandId, cvw = {}, featureExclusions = [] }: ConfigurationContextType = useContext(ConfigurationContext)
+  const { cvw = {}, featureExclusions = [] }: ConfigurationContextType = useContext(ConfigurationContext)
+  const { help = {} } = cvw
   const contentWrapperRef = React.createRef()
   const [contentRefs, setContentRefs] = useState([])
   const [filteredHelpItems, setFilteredHelpItems] = useState([])
@@ -64,7 +66,7 @@ const HelpInterior = () => {
         top: contentWrapperRef.current.scrollTop,
         bottom: contentWrapperRef.current.scrollTop + contentRefs[index - 1]?.current.scrollHeight - 70
       }
-      if (scrollTrigger[cvw.help?.scrollContentPosition ?? 'top'] >= next.current.offsetTop) {
+      if (scrollTrigger[help.scrollContentPosition ?? 'top'] >= next.current.offsetTop) {
         return index
       }
       return accum
@@ -88,10 +90,11 @@ const HelpInterior = () => {
   }
 
   useEffect(() => {
-    const filtered = filterHelpItems(featureExclusions, brandId)
+    const { contents = [], contentsHiddenMobile = [] } = help
+    const filtered = filterHelpItems(contents, contentsHiddenMobile, featureExclusions)
     setFilteredHelpItems(filtered)
     setContentRefs(filtered.map((item, index) => React.createRef()))
-  }, [featureExclusions, brandId])
+  }, [featureExclusions, help])
 
   return (
     <div className={`${wrapper}`}>
@@ -146,41 +149,6 @@ const HelpItemContent = forwardRef((props: HelpItemContentProps, ref) => {
   const tabSubContent = data.subContent
   const imageListMobile = data.imageListMobile
 
-  const getIcons = (name: string, index?: number) => {
-    const icons = {
-      moreScenes: (
-        <div className={`${baseClass}__get-icons`}>
-          <FontAwesomeIcon className='scene-selector-nav-btn__icon-1' icon={['fal', 'square-full']} size='sm' />
-          <FontAwesomeIcon className='scene-selector-nav-btn__icon-2' icon={['fal', 'square-full']} size='sm' />
-          <FontAwesomeIcon className='scene-selector-nav-btn__icon-3' icon={['fal', 'square-full']} size='sm' />
-        </div>
-      ),
-      colorDetails: (
-        <div className={`${baseClass}__get-icons ${baseClass}__get-icons--color-details-icon`}>
-          <FontAwesomeIcon icon={['fas', 'info']} />
-        </div>
-      ),
-      grabReorder: (
-        <svg>
-          <line strokeWidth='1px' x1={18} y1='0' x2='0' y2={18} />
-          <line strokeWidth='1px' x1={18} y1={Math.floor(18 / 3)} x2={Math.floor(18 / 3)} y2={18} />
-          <line strokeWidth='1px' x1={18} y1={2 * Math.floor(18 / 3)} x2={2 * Math.floor(18 / 3)} y2={18} />
-        </svg>
-      ),
-      paintScene: (
-        <div className={`${baseClass}__get-icons ${baseClass}__get-icons--paint-scene-icon`}>
-          <div>
-            <FontAwesomeIcon className={`cvw__btn-overlay__svg`} icon={['fal', 'square-full']} />
-            <FontAwesomeIcon className={`cvw__btn-overlay__svg cvw__btn-overlay__svg--brush`} icon={['fa', 'brush']} transform={{ rotate: 320 }} style={{ transform: 'translateX(-10px)' }} />
-          </div>
-        </div>
-      ),
-      undo: index === 0 && <FontAwesomeIcon className={`${baseClass}__get-icons--undo`} key='icon-0' icon={['fa', 'undo-alt']} size='lg' />
-    }
-
-    return icons[name]
-  }
-
   return <div ref={ref} className={`${helpContent} ${data.isHiddenMobile ? helpContentHide : ''}`}>
     <div className={`${contentHeader}`}>
       <h2>{help[getDataElement(data.header)]?.title ?? <FormattedMessage id={`${data.header}`} />}</h2>
@@ -211,8 +179,13 @@ const HelpItemContent = forwardRef((props: HelpItemContentProps, ref) => {
                           if (fontIcon.size) {
                             iconProps.size = `${fontIcon.size}`
                           }
-                          return getIcons(sectionItem?.icon, index) ?? <FontAwesomeIcon key={`icon-${index}`} className={`${(index > 0 && !tab.isUndoRedo) ? secondIcon : ``}`} icon={[fontIcon.variant, fontIcon.icon]} size='lg' transform={{ rotate: fontIcon.rotate }} {...iconProps} />
-                        }) : getIcons(sectionItem?.icon) ?? <FontAwesomeIcon className={``} icon={[tab.fontAwesomeIcon.variant, tab.fontAwesomeIcon.icon]} size='lg' transform={{ rotate: tab.fontAwesomeIcon.rotate }} {...iconProps} />
+                          return sectionItem?.icon
+                            ? <Iconography name={sectionItem?.icon} index={index} key={`icon-${index}`} />
+                            : <FontAwesomeIcon key={`icon-${index}`} className={`${(index > 0 && !tab.isUndoRedo) ? secondIcon : ``}`} icon={[fontIcon.variant, fontIcon.icon]} size='lg' transform={fontIcon.rotate ? { rotate: fontIcon.rotate } : {}} {...iconProps} />
+                        })
+                        : sectionItem?.icon
+                          ? <Iconography name={sectionItem?.icon} style={{ position: 'relative', float: 'left', backgroundColor: 'white' }} />
+                          : <FontAwesomeIcon className={``} icon={[tab.fontAwesomeIcon.variant, tab.fontAwesomeIcon.icon]} size='lg' transform={tab.fontAwesomeIcon.rotate ? { rotate: tab.fontAwesomeIcon.rotate } : {}} {...iconProps} />
                     }
                   </div>
                   <div className={`${iconInfo}`}>

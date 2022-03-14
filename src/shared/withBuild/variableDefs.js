@@ -15,11 +15,13 @@ module.exports.varValues = {
   typography: {
     bodyFontFamily: 'inherit',
     titleFontFamily: 'inherit',
+    titleFontStyle: 'normal',
     text: '1rem',
     title: '2rem',
     titleTextTransform: 'capitalize',
     buttonTextTransform: 'uppercase',
-    buttonFontWeight: '600'
+    buttonFontWeight: '600',
+    textInputBorderRadius: '4px'
   },
   // ----------------------------------------------
   // BEGIN DEPRECATED THEME COLORS WARNING
@@ -98,9 +100,11 @@ module.exports.varNames = {
     globalFontSize: '--sw-global-font-size',
     bodyFontFamily: '--prism-typography-body-font-family',
     titleFontFamily: '--prism-typography-title-font-family',
+    titleFontStyle: '--prism-typography-title-font-style',
     titleTextTransform: '--prism-typography-title-text-transform',
     buttonTextTransform: '--prism-typography-button-text-transform',
-    buttonFontWeight: '--prism-typography-button-font-weight'
+    buttonFontWeight: '--prism-typography-button-font-weight',
+    textInputBorderRadius: '--prism-typography-text-input-border-radius'
   },
   scenes: {
     hitAreaOutlineColor: '--prism-hit-area-outline-color',

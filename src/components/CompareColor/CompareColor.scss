@@ -1,17 +1,22 @@
 .color__comparison {
+  &__container {
+    font-family: var(getVarName('typography.titleFontFamily'));
+  }
   &__container__header {
     display: flex;
     justify-content: space-between;
-    font-size: 1.35rem;
+    font-size: 1.125rem;
     padding: 1em 0;
     position: relative;
     background-color: var(getThemeColor('white'));
     & > span {
       margin: 0 auto;
       align-self: center;
+      text-transform: var(getVarName('typography.titleTextTransform'));
     }
     &__button {
       text-transform: var(getVarName('typography.buttonTextTransform'));
+      font-family: var(getVarName('typography.titleFontFamily'));
       font-weight: var(getVarName('typography.buttonFontWeight'));
       border: 1px solid var(getThemeColor('buttonBorder'));
       background-color: var(getThemeColor('buttonBgColor'));
@@ -95,8 +100,8 @@
   }
   &__color__info {
     display: flex;
-    padding: 1em;
     flex-direction: column;
+    padding: 1em;
     &__name {
       line-height: 1em;
       padding: 0 1em;
@@ -106,6 +111,21 @@
     &__number {
       padding: 0 1em;
       margin-bottom: 0.5rem;
+    }
+  }
+  &-house-shaped {
+    &__name-number {
+    display: flex;
+    flex-direction: column-reverse;
+    padding: 1em;
+    }
+    &__name {
+      font-family: var(getVarName('typography.bodyFontFamily'));
+      font-style: italic;
+      line-height: 1.2rem;
+    }
+    &__number {
+      font-size: .875rem;
     }
   }
 }

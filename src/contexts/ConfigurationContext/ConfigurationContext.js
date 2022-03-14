@@ -8,8 +8,10 @@ type HelpSectionItems = {
   content?: string
 }
 type Menu = {
+  showIcon: boolean,
   tab?: string,
-  title?: string
+  title?: string,
+  subtitle?: string
 }
 
 type MenuItem = {
@@ -30,6 +32,9 @@ export type ConfigurationContextType = {
     secondary: string,
     primaryBg: string,
     secondaryBg: string,
+    tertiaryBg: string,
+    primaryBorder: string,
+    secondaryBorder: string,
     warning: string,
     success: string,
     danger: string,
@@ -39,22 +44,32 @@ export type ConfigurationContextType = {
     nearBlack: string,
     menuBg: string,
     menuContentTitle: string,
+    menuContentDescription: string,
     menuTxt: string,
     menuTxtHover: string,
     black: string,
     white: string,
     buttonBgColor: string,
     buttonBorder: string,
+    buttonBorderRadius: string,
     buttonColor: string,
     buttonHoverBgColor: string,
     buttonHoverBorder: string,
     buttonHoverColor: string,
     buttonActiveBgColor: string,
     buttonActiveBorder: string,
-    buttonActiveColor: string
+    buttonActiveColor: string,
+    buttonBarBorder: string
   },
   colorWall: {
     bloomEnabled: boolean,
+    colorSwatch?: {
+      colorNumOnBottom?: boolean,
+      houseShaped?: boolean,
+      infoBtn?: {
+        icon?: string
+      }
+    },
     gapsBetweenChunks: boolean,
     searchColor?: string,
     selectSectionText?: string
@@ -62,18 +77,29 @@ export type ConfigurationContextType = {
   typography: {
     bodyFontFamily: string,
     titleFontFamily: string,
+    titleFontStyle: string,
     titleTextTransform: string,
     buttonFontWeight: string,
-    buttonTextTransform: string
+    buttonTextTransform: string,
+    textInputBorderRadius: string
   },
   featureExclusions: string[],
   cvw: {
+    backBtn?: {
+      icon?: string
+    },
+    carouselBtn?: {
+      iconLeft?: string,
+      iconRight?: string
+    },
     closeBtn?: {
       showArrow?: boolean,
       text?: string
     },
     colorCollections?: {
-      scrollArrows?: boolean
+      scrollArrows?: boolean,
+      showDescriptionMobile?: boolean,
+      subtitle?: string
     },
     downloadSceneDisclaimer1?: string,
     downloadSceneDisclaimer1?: string,
@@ -84,7 +110,8 @@ export type ConfigurationContextType = {
     downloadSceneHeaderImage?: string,
     downloadSceneHeaderImage?: string,
     expertColorPicks?: {
-      collectionsSelectLabel?: string
+      collectionsSelectLabel?: string,
+      title?: string
     },
     help?: {
       addColor1?: string,
@@ -99,6 +126,8 @@ export type ConfigurationContextType = {
       colorDetailBg?: string,
       colorDetailMobile1?: string,
       colorDetailMobile2?: string,
+      contents?: string[],
+      contentsHiddenMobile?: string[],
       iconsButtons?: {
         addColor?: HelpSectionItems,
         trashAColor?: HelpSectionItems,
@@ -142,7 +171,8 @@ export type ConfigurationContextType = {
       scrollContentPosition?: string
     },
     inspirationalPhotos?: {
-      collectionsSelectLabel?: string
+      collectionsSelectLabel?: string,
+      title?: string
     },
     introBg?: string,
     introLogo?: string,
@@ -158,6 +188,9 @@ export type ConfigurationContextType = {
         expertColorPicks?: MenuItem,
         inspirationalPhotos?: MenuItem,
         paintedPhotos?: MenuItem
+      },
+      help?: {
+        tab?: string
       },
       paintAPhoto?: {
         ...Menu,
@@ -179,10 +212,17 @@ export type ConfigurationContextType = {
     navThumbMyPhotos?: string,
     palette?: {
       title?: string,
-      compare?: string
+      downloadBtn?: {
+        title?: string,
+        icon?: string
+      },
+      firstEmptySlot?: string
     },
     scene?: {
       moreScenesBtn?: {
+        showIcon: boolean
+      },
+      paintThisSceneBtn?: {
         showIcon: boolean
       }
     },

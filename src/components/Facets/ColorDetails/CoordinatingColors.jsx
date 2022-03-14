@@ -8,40 +8,44 @@ import * as GA from 'src/analytics/GoogleAnalytics'
 import { GA_TRACKER_NAME_BRAND } from 'src/constants/globals'
 import 'src/scss/convenience/visually-hidden.scss'
 
+const baseClass = 'color-info'
 const orderedCoordColorProps = [
   'coord1ColorId',
   'coord2ColorId',
+  'coord3ColorId',
   'whiteColorId'
 ]
 
 type Props = { color: Color, onColorChanged: Color => void }
 function CoordinatingColors ({ color, onColorChanged }: Props) {
-  const { brandId }: ConfigurationContextType = useContext(ConfigurationContext)
+  const { brandId, colorWall: { colorSwatch = {} } }: ConfigurationContextType = useContext(ConfigurationContext)
+  const { colorNumOnBottom = false, houseShaped = false } = colorSwatch
   const colorMap: ColorMap = useSelector(store => store.colors.items.colorMap)
   const { coordinatingColors } = color
+  const btnClass = houseShaped ? `${baseClass}-house-shaped` : baseClass
 
   return (
     <>
       <h5 className='visually-hidden'><FormattedMessage id='COORDINATING_COLORS' /></h5>
-      <ul className={`color-info__coord-colors`}>
+      <ul className={`${baseClass}__coord-colors`}>
         {orderedCoordColorProps.map(prop => coordinatingColors && coordinatingColors[prop]).filter(Boolean).map(id => colorMap[id]).filter(Boolean).map((color: Color) => {
           return (
             <li
               key={color.colorNumber}
-              className={`color-info__coord-color ${color.isDark ? `color-info__coord-color--dark-color` : ''}`}
+              className={`${baseClass}__coord-color ${color.isDark ? `${baseClass}__coord-color--dark-color` : ''}`}
               style={{ backgroundColor: color.hex }}
             >
               <button
-                className='color-info__color-swatch-link'
+                className={`${baseClass}__color-swatch-link ${btnClass}${colorNumOnBottom ? '__name-number' : '__number-name'}`}
                 onClick={() => {
                   onColorChanged(color)
                   GA.event({ category: 'Color Detail / Coordinating Color', action: 'View Coord Color', label: color.name }, GA_TRACKER_NAME_BRAND[brandId])
                 }}
               >
-                <p className='color-info__coord-color-number'>
+                <p className={`${btnClass}__coord-color-number`}>
                   {`${color.brandKey} ${color.colorNumber}`}
                 </p>
-                <p className='color-info__coord-color-name'>
+                <p className={`${btnClass}__coord-color-name`}>
                   {color.name}
                 </p>
               </button>
