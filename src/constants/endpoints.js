@@ -15,6 +15,7 @@ export const COLOR_CHUNKS_LAYOUT_ENDPOINT = endpoint`chunkslayout`
 export const COLOR_FAMILY_NAMES_ENDPOINT = endpoint`families`
 export const COLORS_ENDPOINT = endpoint`colors`
 export const COLORS_SEARCH_ENDPOINT = endpoint`search`
+export const COLORS_WALL_ENDPOINT = endpoint`wall`
 export const CONFIG_ENDPOINT = endpoint`configurations`
 export const DETAILED_COLLECTIONS_ENDPOINT = endpoint`detailedcollections`
 export const EXPERT_COLOR_PICKS_ENDPOINT = endpoint`expertcolorpicks`

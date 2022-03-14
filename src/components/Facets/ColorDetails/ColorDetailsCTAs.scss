@@ -1,5 +1,6 @@
 .ColorDetailsCTAs {
   padding: 1em;
+  font-family: var(getVarName('typography.titleFontFamily'));
 
   &__title {
     font-size: .8em;

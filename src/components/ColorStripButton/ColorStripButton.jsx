@@ -1,5 +1,6 @@
 // @flow
-import React from 'react'
+import React, { useContext } from 'react'
+import ConfigurationContext, { type ConfigurationContextType } from '../../contexts/ConfigurationContext/ConfigurationContext'
 import './ColorStripButton.scss'
 
 type Props = {
@@ -15,11 +16,14 @@ type Props = {
  * The button's main content is defined by it's children.
  */
 export default React.forwardRef<Props, HTMLElement>(({ children, onClick, colors, bottomLabel, onKeyDown }: Props, ref) => {
+  const { colorWall: { colorSwatch = {} } } = useContext<ConfigurationContextType>(ConfigurationContext)
+  const { houseShaped = false } = colorSwatch
+
   return (
     <div className='color-strip-button'>
       <div className='color-strip-button__wrapper' ref={ref} role='button' tabIndex='0' onClick={onClick} onKeyDown={onKeyDown}>
         {children}
-        {colors && colors.length > 0 && (
+        {colors && colors.length > 0 && !houseShaped && (
           <div className='color-strip-button__bottom-list' role='img'>
             {colors.map((color, key) => (
               <div
@@ -32,7 +36,7 @@ export default React.forwardRef<Props, HTMLElement>(({ children, onClick, colors
           </div>
         )}
       </div>
-      {bottomLabel && <div className='color-strip-button__label'>{bottomLabel}</div>}
+      {bottomLabel && <div className={`color-strip-button__label${houseShaped ? '-house-shaped' : ''}`}>{bottomLabel}</div>}
     </div>
   )
 })

@@ -54,7 +54,7 @@ export function getErrorState (state: ColorsState, error?: any) {
   }
 }
 
-export function doReceiveColors (state: ColorsState, { payload: { unorderedColors, colors, brights, sections = [], colorLabels, chunksLayout } }: ReduxAction): ColorsState {
+export function doReceiveColors (state: ColorsState, { payload: { unorderedColors, colors, brights, sections = [], colorLabels, chunksLayout, wall } }: ReduxAction): ColorsState {
   // adding toString methods to all Color objects
   const colorMap = convertUnorderedColorsToColorMap(convertUnorderedColorsToClasses(unorderedColors))
   const transpose = (matrix: any[][]): any[][] => matrix[0].map((_, col) => matrix.map(row => row[col]))
@@ -63,7 +63,7 @@ export function doReceiveColors (state: ColorsState, { payload: { unorderedColor
   return sections.length
     ? {
       ...state,
-      items: { colors, brights, unorderedColors: unorderedColors.map((c: Color) => c.id), sectionLabels: colorLabels, colorMap, chunksLayout },
+      items: { colors, brights, unorderedColors: unorderedColors.map((c: Color) => c.id), sectionLabels: colorLabels, colorMap, chunksLayout, wall },
       layouts: sections.map(({ name, families, chunkGridParams }) => {
         const unChunkedChunks = (chunkGridParams.familiesDetermineLayout || !colors[name])
           ? [

@@ -4,6 +4,7 @@ import { FEATURE_EXCLUSIONS } from '../../constants/configurations'
 
 export const helpTabs = [{
   'id': 0,
+  'name': 'ICONS_&_BUTTONS',
   'header': 'HELPFUL_HINTS.HEADER.ICONS_&_BUTTONS',
   'subHeader': 'HELPFUL_HINTS.SUB_HEADER.ICONS_&_BUTTONS',
   'content': [{
@@ -35,9 +36,11 @@ export const helpTabs = [{
     'iconInfoName': 'HELPFUL_HINTS.CONTENT.ICONS_&_BUTTONS.ICON_INFO_NAME.PAINT_SCENE',
     'iconInfoContent': []
   }],
-  'imageList': ''
+  'imageList': '',
+  'isHiddenMobile': false
 }, {
   'id': 1,
+  'name': 'MY_COLOR_PALETTE',
   'header': 'HELPFUL_HINTS.HEADER.MY_COLOR_PALETTE',
   'subHeader': 'HELPFUL_HINTS.SUB_HEADER.MY_COLOR_PALETTE',
   'content': '',
@@ -82,9 +85,11 @@ export const helpTabs = [{
     'alt': 'HELPFUL_HINTS.IMAGE_ALT.MY_COLOR_PALETTE.CLICK_THE_ADD_COLOR_ICON_TO',
     'role': 'text',
     'imagePathKey': 'myColorPaletteMobile3'
-  }]
+  }],
+  'isHiddenMobile': false
 }, {
   'id': 2,
+  'name': 'ADDING_COLORS',
   'header': 'HELPFUL_HINTS.HEADER.ADDING_COLORS',
   'subHeader': 'HELPFUL_HINTS.SUB_HEADER.ADDING_COLORS',
   'content': '',
@@ -121,9 +126,11 @@ export const helpTabs = [{
     'alt': 'HELPFUL_HINTS.IMAGE_ALT.ADDING_COLORS.START_A_NEW_PALETTE_TO_ADD_MORE_THAN_EIGHT_COLORS',
     'role': 'text',
     'imagePathKey': 'addColorMobile3'
-  }]
+  }],
+  'isHiddenMobile': false
 }, {
   'id': 3,
+  'name': 'COLOR_DETAILS',
   'header': 'HELPFUL_HINTS.HEADER.COLOR_DETAILS',
   'subHeader': 'HELPFUL_HINTS.SUB_HEADER.COLOR_DETAILS',
   'content': '',
@@ -148,9 +155,11 @@ export const helpTabs = [{
     'alt': 'HELPFUL_HINTS.IMAGE_ALT.COLOR_DETAILS.PREVIEW_A_COLOR_IN_COLOR_DETAILS',
     'role': 'text',
     'imagePathKey': 'colorDetailMobile2'
-  }]
+  }],
+  'isHiddenMobile': false
 }, {
   'id': 4,
+  'name': 'PAINTING_MY_OWN_PHOTO',
   'header': 'HELPFUL_HINTS.HEADER.PAINTING_MY_OWN_PHOTO',
   'subHeader': 'HELPFUL_HINTS.SUB_HEADER.PAINTING_MY_OWN_PHOTO',
   'content': [{
@@ -226,9 +235,10 @@ export const helpTabs = [{
     'iconInfoContent': []
   }],
   'imageList': '',
-  'isHiddenMobile': true
+  'isHiddenMobile': false
 }, {
   'id': 5,
+  'name': 'SAVING_MY_WORK',
   'header': 'HELPFUL_HINTS.HEADER.SAVING_MY_WORK',
   'subHeader': 'HELPFUL_HINTS.SUB_HEADER.SAVING_MY_WORK',
   'content': '',
@@ -249,36 +259,21 @@ export const helpTabs = [{
     'alt': 'HELPFUL_HINTS.IMAGE_ALT.SAVING_MY_WORK.NAME_YOUR_CURRENT_PHOTO',
     'role': 'text',
     'imagePathKey': 'savingMobile2'
-  }]
+  }],
+  'isHiddenMobile': false
 }]
 
 export const helpHeader = 'HELPFUL_HINTS.TITLE'
 
-export const filterHelpItems = (featureExclusions: string[], brandId: string): typeof helpTabs => {
+export const filterHelpItems = (contents: string[], contentsHiddenMobile: string[], featureExclusions: string[]): typeof helpTabs => {
   // Filtering Help Section details:
   // Icons & Buttons - Save hint
   !shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.documentSaving) && helpTabs[0].content.forEach((icon, index) => {
     icon.iconInfoName === 'HELPFUL_HINTS.CONTENT.ICONS_&_BUTTONS.ICON_INFO_NAME.SAVE' && helpTabs[0].content.splice(index, 1)
   })
-  // Painting My Own Photo - isHiddenMobile
-  helpTabs[4].isHiddenMobile = brandId !== 'lowes'
 
-  return helpTabs.filter((item) => {
-    // TEMPORARY: hiding sections My Color Palette, Adding Colors, and Color Details for Lowe's
-    // TO BE ADJUSTED: on 2nd phase of Lowe's migration to prism project
-    if (item.header === 'HELPFUL_HINTS.HEADER.MY_COLOR_PALETTE') return brandId !== 'lowes'
-    if (item.header === 'HELPFUL_HINTS.HEADER.ADDING_COLORS') return brandId !== 'lowes'
-    if (item.header === 'HELPFUL_HINTS.HEADER.COLOR_DETAILS') return brandId !== 'lowes'
+  const helpTabNames = helpTabs.map(item => item.name)
+  contentsHiddenMobile.forEach(content => { helpTabs[helpTabNames.indexOf(content)].isHiddenMobile = true })
 
-    if (item.header === 'HELPFUL_HINTS.HEADER.PAINTING_MY_OWN_PHOTO') {
-      return shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.uploadYourPhoto) &&
-        shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.paintAPhoto)
-    }
-
-    if (item.header === 'HELPFUL_HINTS.HEADER.SAVING_MY_WORK') {
-      return shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.documentSaving)
-    }
-
-    return true
-  })
+  return helpTabs.filter(item => contents.indexOf(item.name) !== -1)
 }

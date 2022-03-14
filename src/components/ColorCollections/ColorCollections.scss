@@ -9,6 +9,20 @@
 }
 
 .color-collections {
+  &__subtitle {
+    position: relative;
+    margin: -.7rem 0 1.5rem;
+    color: var(getThemeColor('black'));
+    font-family: var(getVarName('typography.bodyFontFamily'));
+    font-size: .875rem;
+    text-align: center;
+    line-height: 1.3rem;
+    @include respond-above(sm) {
+      margin: -0.2rem 22% 1.8rem;
+      font-size: 1rem;
+      line-height: 1.5rem;
+    }
+  }
   &__wrapper {
     padding: 0;
   }
@@ -69,7 +83,7 @@
   }
   &__tab-list {
     background: var(getThemeColor('buttonBgColor.trans'));
-    border: 1px solid var(getThemeColor('buttonBorder'));
+    border: 1px solid var(getThemeColor('buttonBarBorder'));
     display: block;
     position: absolute;
     margin: 0;
@@ -118,7 +132,7 @@
 
     @include respond-above(sm) {
       background: var(getThemeColor('buttonBgColor'));
-      border: 1px solid var(getThemeColor('buttonBorder'));
+      border: 1px solid var(getThemeColor('buttonBarBorder'));
       padding: .75em .5em;
       width: auto;
       margin: 0 -1px 0 0;

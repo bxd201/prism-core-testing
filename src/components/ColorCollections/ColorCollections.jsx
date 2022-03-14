@@ -15,7 +15,8 @@ import './ColorCollections.scss'
 export function ColorCollections () {
   const dispatch = useDispatch()
   const { formatMessage, locale } = useIntl()
-  const { brandId } = useContext(ConfigurationContext)
+  const { brandId, cvw = {} } = useContext(ConfigurationContext)
+  const { colorCollections } = cvw
 
   const { summaries, categories } = useSelector(state => state.collectionSummaries, shallowEqual)
   const colorMap = useSelector(state => state.colors.items.colorMap, shallowEqual)
@@ -29,8 +30,8 @@ export function ColorCollections () {
     if (typeof tabId !== 'undefined') {
       const category = categories.data.filter(({ id }) => `${id}` === `${tabId}`)[0]
       const collectionData = colorMap && category ? category.summaryIds.map(summaryId => {
-        const { name, thumbUrl: img, description, colorIds, pdfUrl } = summaries.data[summaries.idToIndexHash[summaryId]]
-        return { description, img, name, collections: colorIds.map(id => colorMap[id]), pdfUrl }
+        const { name, coverUrl, thumbUrl, description, colorIds, pdfUrl } = summaries.data[summaries.idToIndexHash[summaryId]]
+        return { description, coverUrl, thumbUrl, name, collections: colorIds.map(id => colorMap[id]), pdfUrl }
       }) : []
       setCollectionData(collectionData)
     }
@@ -45,24 +46,27 @@ export function ColorCollections () {
   return (
     <CardMenu menuTitle={formatMessage({ id: 'COLOR_COLLECTIONS' })}>
       {(setCardShowing, setCardTitle) => (
-        <div className='color-collections__wrapper'>
-          <ColorCollectionsTab collectionTabs={categories.data} showTab={setTabId} tabIdShow={tabId} />
-          <div className='color-collections__collections-list' role='main'>
-            <Carousel
-              showPageIndicators
-              BaseComponent={ColorStripButtonWrapper}
-              btnRefList={[]}
-              defaultItemsPerView={8}
-              isInfinity={false}
-              key={tabId}
-              data={collectionData}
-              getSummaryData={(collectionSummaryData) => {
-                setCardShowing(<CollectionDetail collectionDetailData={collectionSummaryData} />)
-                setCardTitle(collectionSummaryData.name)
-              }}
-            />
+        <>
+          {colorCollections?.subtitle && <div className='color-collections__subtitle'>{colorCollections?.subtitle}</div>}
+          <div className='color-collections__wrapper'>
+            <ColorCollectionsTab collectionTabs={categories.data} showTab={setTabId} tabIdShow={tabId} />
+            <div className='color-collections__collections-list' role='main'>
+              <Carousel
+                showPageIndicators
+                BaseComponent={ColorStripButtonWrapper}
+                btnRefList={[]}
+                defaultItemsPerView={8}
+                isInfinity={false}
+                key={tabId}
+                data={collectionData}
+                getSummaryData={(collectionSummaryData) => {
+                  setCardShowing(<CollectionDetail collectionDetailData={collectionSummaryData} />)
+                  setCardTitle(collectionSummaryData.name)
+                }}
+              />
+            </div>
           </div>
-        </div>
+        </>
       )}
     </CardMenu>
   )
@@ -90,7 +94,7 @@ const ColorStripButtonWrapper = (props: any) => {
       bottomLabel={data.name}
       ref={btnRefList[itemNumber]}
     >
-      <img className='collection__summary__top-section__image' alt={imgAltText} src={data.img} />
+      <img className='collection__summary__top-section__image' alt={imgAltText} src={data.thumbUrl} />
     </ColorStripButton>
   )
 }

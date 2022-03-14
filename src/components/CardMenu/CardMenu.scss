@@ -1,6 +1,7 @@
 
 .card-menu {
   &__wrapper {
+    font-family: var(getVarName('typography.titleFontFamily'));
     font-size: 1em;
     font-weight: 400;
     color: #333;
@@ -42,6 +43,7 @@
     display: inline-block;
     text-align: center;
     text-transform: var(getVarName('typography.buttonTextTransform'));
+    font-family: inherit;
     font-weight: var(getVarName('typography.buttonFontWeight'));
     width: auto;
     color: var(getThemeColor('light.lightest.contrast'));
