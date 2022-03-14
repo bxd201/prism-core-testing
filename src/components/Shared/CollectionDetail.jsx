@@ -30,10 +30,9 @@ const triggerNext = `${baseClass}__next-trigger`
 
 type Props = { collectionDetailData: ColorCollectionDetail, addToLivePalette: Function }
 const CollectionDetail = ({ addToLivePalette, collectionDetailData }: Props) => {
-  const { colorWall: { colorSwatch = {} }, cvw = {} } = useContext<ConfigurationContextType>(ConfigurationContext)
-  const { houseShaped = false } = colorSwatch
+  const { cvw = {} } = useContext<ConfigurationContextType>(ConfigurationContext)
   const { colorCollections = {} } = cvw
-  const { scrollArrows: showScrollArrows = true, showDescriptionMobile = false } = colorCollections
+  const { scrollArrows: showScrollArrows = true } = colorCollections
   const [showTopScrollControl, setShowTopScrollControl] = useState<boolean>(false)
   const [showBottomScrollControl, setShowBottomScrollControl] = useState<boolean>(false)
   const [gridHeight, setGridHeight] = useState<number>(0)
@@ -54,26 +53,13 @@ const CollectionDetail = ({ addToLivePalette, collectionDetailData }: Props) => 
     const { columnCount, colors } = parent.props
     const index = columnIndex + (rowIndex * columnCount)
     const pctW = 100 / columnCount
-    const _style = { ...style, width: `${pctW}%`, left: `${pctW * columnIndex}%` }
 
-    return colors && colors[index] && <div key={key}>
-      {houseShaped ? (
-        <div style={_style}>
-          <ColorSwatch
-            color={colors[index]}
-            contentRenderer={(defaultContent) => <>
-              <div className='color-swatch-house-shaped__btns' style={{ marginTop: '112px' }}>{defaultContent[1]}</div>
-              <div className='color-swatch-house-shaped__label'>{defaultContent[0]}</div>
-            </>}
-            gap={5}
-            isClickable={false}
-            showContents
-            style={{ top: '17%', height: '108px' }
-            }
-          />
-        </div>
-      ) : <ColorSwatch style={_style} color={colors[index]} showContents outline />}
-    </div>
+    const _style = {
+      ...style,
+      width: `${pctW}%`,
+      left: `${pctW * columnIndex}%`
+    }
+    return colors && colors[index] && <ColorSwatch key={key} style={_style} color={colors[index]} showContents outline />
   }
 
   const verticalScroll = (_gridWrapperRef, direction, gridHeight, _cellSize) => {
@@ -101,8 +87,8 @@ const CollectionDetail = ({ addToLivePalette, collectionDetailData }: Props) => 
     <ColorWallContext.Provider value={{ ...colorWallContextDefault, displayDetailsLink: false, displayInfoButton: true, displayAddButton: true }}>
       <div className={`${wrapper}`}>
         <div className={`${collectionInfo}`}>
-          <img className={`${collectionCover}${showDescriptionMobile ? '' : ` ${collectionCover}--hidden-mobile`}`} alt='' src={`${collectionDetailData.coverUrl}`} />
-          <div className={`${collectionDescription}${showDescriptionMobile ? '' : ` ${collectionDescription}--hidden-mobile`}`}>{collectionDetailData.description}</div>
+          <img className={`${collectionCover}`} alt='' src={`${collectionDetailData.img}`} />
+          <div className={`${collectionDescription}`}>{collectionDetailData.description}</div>
           {collectionDetailData.pdfUrl
             ? <div className={`${collectionDiv}`}>
               <a className={`${collectionButton}`} href={collectionDetailData.pdfUrl} target='_blank'>
@@ -110,15 +96,14 @@ const CollectionDetail = ({ addToLivePalette, collectionDetailData }: Props) => 
               </a>
             </div> : null}
         </div>
-        <div className={`${collectionColorList}`} style={houseShaped ? { height: '630px' } : {}}>
+        <div className={`${collectionColorList}`}>
           <div ref={_gridWrapperRef} className={`${collectionColorListVertical}`}>
             <AutoSizer onResize={handleGridResize}>
               {({ height, width }) => {
                 const collectionSize = collectionDetailData.collections.length
-                const columnCount = window.innerWidth < varValues.breakpoints.xs.slice(0, -2) ? houseShaped ? 2 : 3 : Math.max(1, Math.round(width / resultSwatchSize))
-                const newSize = width / columnCount
+                const columnCount = window.innerWidth < varValues.breakpoints.xs.slice(0, -2) ? 3 : Math.max(1, Math.round(width / resultSwatchSize))
                 const rowCount = Math.ceil(collectionSize / columnCount)
-                const rowHeight = houseShaped ? 260 : newSize
+                const newSize = width / columnCount
                 _cellSize = newSize
 
                 return (
@@ -128,7 +113,7 @@ const CollectionDetail = ({ addToLivePalette, collectionDetailData }: Props) => 
                     columnWidth={newSize}
                     columnCount={columnCount}
                     height={height}
-                    rowHeight={rowHeight}
+                    rowHeight={newSize}
                     rowCount={rowCount}
                     width={width}
                     autoContainerWidth

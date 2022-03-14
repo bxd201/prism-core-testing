@@ -9,7 +9,6 @@
   background-repeat: no-repeat;
   background-position: 0 -102%; // vertical offset of >100% to make sure there are no rendering issues with <1px pct issues
   color: var(getThemeColor('menuTxt'));
-  font-family: inherit;
   transition: background-position 0.2s, background-color .2s;
   margin-right: 0;
   padding: 0 .5em;

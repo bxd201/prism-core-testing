@@ -151,11 +151,7 @@ export class LivePalette extends PureComponent<Props, State> {
   render () {
     const { colors, activeColor, deactivateTemporaryColor, empty, temporaryActiveColor, isCompareColorShown } = this.props
     const { spokenWord, isFastMaskPage } = this.state
-    const { colorWall: { colorSwatch = {} }, cvw = {} } = this.props.config
-    const { colorNumOnBottom = false, houseShaped = false } = colorSwatch
-    const { compare, firstEmptySlot, title } = cvw.palette ?? {}
-
-    const baseClass = houseShaped ? 'prism-live-palette-house-shaped' : 'prism-live-palette'
+    const { compare, title } = this.props.config.cvw?.palette ?? {}
 
     // determine how many empty slots there should be
     let disabledSlots = []
@@ -184,9 +180,9 @@ export class LivePalette extends PureComponent<Props, State> {
             )}
           </div>
           {activeColor && <div className='prism-live-palette__active-color' style={{ backgroundColor: activeColor.hex }}>
-            <div className={`${baseClass}${colorNumOnBottom ? '__active-color__name-number' : '__active-color__details'} ${(activeColor.isDark) ? `prism-live-palette__active-color__details--dark` : ``}`}>
-              <span className={`${baseClass}__active-color__color-number`}>{fullColorNumber(activeColor.brandKey, activeColor.colorNumber)}</span>
-              <span className={`${baseClass}__active-color__color-name`}>{activeColor.name}</span>
+            <div className={`prism-live-palette__active-color__details ${(activeColor.isDark) ? `prism-live-palette__active-color__details--dark` : ``}`}>
+              <span className='prism-live-palette__active-color__color-number'>{fullColorNumber(activeColor.brandKey, activeColor.colorNumber)}</span>
+              <span className='prism-live-palette__active-color__color-name'>{ activeColor.name }</span>
             </div>
             <div className='prism-live-palette__active-color__info-button'>
               <InfoButton color={activeColor} />
@@ -202,12 +198,9 @@ export class LivePalette extends PureComponent<Props, State> {
               <div className={`prism-live-palette__slot__guts ${IS_EMPTY ? 'prism-live-palette__slot__guts--hrzntl' : ''}`}>
                 <FontAwesomeIcon className={`prism-live-palette__slot__icon ${IS_EMPTY ? 'prism-live-palette__slot__icon--left' : 'prism-live-palette__slot__icon--top'}`} icon={['fal', 'plus-circle']} size='2x' color={varValues._colors.primary} />
                 <span className={`prism-live-palette__slot__copy ${IS_EMPTY ? 'prism-live-palette__slot__copy--right' : 'prism-live-palette__slot__copy--btm'}`}>
-                  {firstEmptySlot && IS_EMPTY
-                    ? <p className='prism-live-palette__slot__copy--right-text'>{firstEmptySlot}</p>
-                    : <FormattedMessage id={ADD_COLOR_TEXT} values={{
-                      line: chunk => <span style={{ display: 'inline-block' }}>{chunk}</span>
-                    }} />
-                  }
+                  <FormattedMessage id={ADD_COLOR_TEXT} values={{
+                    line: chunk => <span style={{ display: 'inline-block' }}>{chunk}</span>
+                  }} />
                 </span>
               </div>
             </button>}

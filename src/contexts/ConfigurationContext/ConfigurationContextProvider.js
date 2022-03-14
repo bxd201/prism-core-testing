@@ -88,10 +88,7 @@ function ConfigurationContextProvider (props: Props) {
         // PRISM-360 | begin deprecated theme color mapping
         secondary: theme.primary,
         primaryBg: '#fafafa', // light.lightest
-        secondaryBg: '#fafafa', // light.lightest
-        tertiaryBg: '#000', // black
-        primaryBorder: '#fff',
-        secondaryBorder: 'none',
+        secondaryBg: '#e2e2e2', // light.lighter
         dark: theme.nearBlack,
         light: theme.lightGrey,
         link: theme.primary,
@@ -103,12 +100,10 @@ function ConfigurationContextProvider (props: Props) {
         })(theme.link || theme.primary),
         menuBg: theme.white,
         menuContentTitle: theme.black,
-        menuContentDescription: theme.black,
         menuTxt: theme.black,
         menuTxtHover: theme.secondary,
         buttonBgColor: theme.white,
         buttonBorder: theme.grey,
-        buttonBorderRadius: '4px',
         buttonColor: theme.primary,
         buttonHoverBgColor: '#F2F2F2',
         buttonHoverBorder: theme.grey,
@@ -116,7 +111,6 @@ function ConfigurationContextProvider (props: Props) {
         buttonActiveBgColor: theme.primary,
         buttonActiveBorder: theme.grey,
         buttonActiveColor: theme.white,
-        buttonBarBorder: theme.buttonBorder,
         // TODO: end deprecated theme color mapping
         ...theme
       })
@@ -145,11 +139,9 @@ function ConfigurationContextProvider (props: Props) {
         ...customProps,
         [varNames.typography.bodyFontFamily]: typography.bodyFontFamily,
         [varNames.typography.titleFontFamily]: typography.titleFontFamily,
-        [varNames.typography.titleFontStyle]: typography.titleFontStyle,
         [varNames.typography.titleTextTransform]: typography.titleTextTransform,
         [varNames.typography.buttonTextTransform]: typography.buttonTextTransform,
-        [varNames.typography.buttonFontWeight]: typography.buttonFontWeight,
-        [varNames.typography.textInputBorderRadius]: typography.textInputBorderRadius
+        [varNames.typography.buttonFontWeight]: typography.buttonFontWeight
       }
     }
 

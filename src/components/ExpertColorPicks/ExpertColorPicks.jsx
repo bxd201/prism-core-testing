@@ -1,7 +1,6 @@
 // @flow
 import React, { useCallback, useMemo, useState, useEffect, useContext } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { AutoSizer } from 'react-virtualized'
 import CardMenu from 'src/components/CardMenu/CardMenu'
 import ExpertColorDetails from './ExpertColorDetails'
 import ColorStripButton from 'src/components/ColorStripButton/ColorStripButton'
@@ -32,28 +31,24 @@ const ExpertColorPicks = () => {
   const tabs = categories.map((category, index) => ({ id: `tab${index}`, tabName: category }))
 
   return (
-    <CardMenu menuTitle={cvw.expertColorPicks?.title ?? at(messages, 'EXPERT_COLOR_PICKS')[0]}>
+    <CardMenu menuTitle={at(messages, 'EXPERT_COLOR_PICKS')[0]}>
       {(setCardShowing) => (
         <div className='expert-color-picks__wrapper'>
           {categories.length > 0 && <ColorCollectionsTab collectionsSelectLabel={cvw.expertColorPicks?.collectionsSelectLabel} collectionTabs={tabs} tabIdShow={tabId} showTab={setTabId} />}
           <div className='expert-color-picks__collections-list'>
-            <AutoSizer disableHeight style={{ width: '100%' }}>
-              {({ width }) => expertColorPicks.length > 0 && <Carousel
-                BaseComponent={expertColorPicks[0].colorDefs.length === 1 ? ColorSwatchWrapper : ColorStripButtonWrapper}
-                btnRefList={[]}
-                defaultItemsPerView={8}
-                isInfinity={false}
-                key='expertcolorpicks'
-                data={expertColorPicksByCategory}
-                tabMap={tabs.map(({ id }) => id)}
-                tabId={tabId}
-                setTabId={setTabId}
-                setInitialPosition={setPosition}
-                initPosition={initPosition}
-                getSummaryData={collectionSummaryData => setCardShowing(<ExpertColorDetails expertColors={collectionSummaryData} />)}
-                width={width}
-              />}
-            </AutoSizer>
+            {expertColorPicks.length > 0 && <Carousel
+              BaseComponent={expertColorPicks[0].colorDefs.length === 1 ? ColorSwatchWrapper : ColorStripButtonWrapper}
+              btnRefList={[]}
+              defaultItemsPerView={8}
+              isInfinity={false}
+              key='expertcolorpicks'
+              data={expertColorPicksByCategory}
+              tabId={tabId}
+              setTabId={setTabId}
+              setInitialPosition={setPosition}
+              initPosition={initPosition}
+              getSummaryData={collectionSummaryData => setCardShowing(<ExpertColorDetails expertColors={collectionSummaryData} />)}
+            />}
           </div>
         </div>
       )}
@@ -98,35 +93,16 @@ const ColorStripButtonWrapper = (props: any) => {
   )
 }
 
-const ColorSwatchWrapper = ({ data, width }: any) => {
+const ColorSwatchWrapper = ({ data }: any) => {
   const color = data.colorDefs[0]
-  const { colorWall: { colorSwatch = {} } }: ConfigurationContextType = useContext(ConfigurationContext)
-  const { houseShaped = false } = colorSwatch
-  const baseClass = houseShaped ? 'color-strip-button--house-shaped' : 'color-strip-button'
-  const smallScreen = width < 768
 
   return (
     <ColorWallContext.Provider value={{ displayAddButton: true, displayInfoButton: true }}>
-      <div className={baseClass}>
-        <div className={`${baseClass}__swatch`} role='button' tabIndex='0'>
-          <ColorSwatch
-            color={color}
-            contentRenderer={(defaultContent) => houseShaped ? <>
-              <div className='color-swatch-house-shaped__btns' style={{ marginTop: smallScreen ? '122px' : '166px' }}>{defaultContent[1]}</div>
-              <div className='color-swatch-house-shaped__label'>{defaultContent[0]}</div>
-              <div className={`${baseClass}__desc`}>{data.description}</div>
-            </> : <>{defaultContent}</>}
-            gap={houseShaped ? 10 : undefined}
-            isClickable={!houseShaped}
-            outline={false}
-            showContents
-            style={houseShaped
-              ? smallScreen ? { top: '5%', height: '102px' } : { top: '17%', height: '115px' }
-              : { position: 'absolute', width: '100%', height: '100px' }
-            }
-          />
+      <div className='color-strip-button'>
+        <div className='color-strip-button__swatch' role='button' tabIndex='0'>
+          <ColorSwatch style={{ position: 'absolute', height: '100px', width: '100%' }} color={color} showContents outline={false} />
         </div>
-        {!houseShaped && <div className={`${baseClass}__desc`}>{data.description}</div>}
+        <div className='color-strip-button__desc'>{data.description}</div>
       </div>
     </ColorWallContext.Provider>
   )
