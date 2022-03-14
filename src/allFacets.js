@@ -17,6 +17,7 @@ import SceneVisualizerFacet from 'src/components/Facets/SceneVisualizerFacet'
 import TabbedSceneVisualizerFacet from 'src/components/Facets/TabbedSceneVisualizerFacet'
 import RealColorFacet from 'src/components/Facets/RealColorFacet'
 import ImageColorPickerFacet from './components/Facets/ImageColorPickerFacet/ImageColorPickerFacet'
+import ColorToolFacet from './components/Facets/ColorToolFacet/ColorToolFacet'
 
 export const allFacets = {
   ColorDetailsFacet,
@@ -32,5 +33,6 @@ export const allFacets = {
   SceneVisualizerFacet,
   TabbedSceneVisualizerFacet,
   RealColorFacet,
-  ImageColorPickerFacet
+  ImageColorPickerFacet,
+  ColorToolFacet
 }
