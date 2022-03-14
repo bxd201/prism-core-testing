@@ -1,16 +1,21 @@
 // @flow
-import React, { useState, useRef } from 'react'
+import React, { useContext, useState, useRef } from 'react'
 import { connect } from 'react-redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import InfoButton from 'src/components/InfoButton/InfoButton'
 import 'src/providers/fontawesome/fontawesome'
 import { useDrag, useDrop } from 'react-dnd-cjs'
 import { fullColorNumber, getContrastYIQ } from '../../shared/helpers/ColorUtils'
+import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import { type Color } from '../../shared/types/Colors.js.flow'
 import { remove, activatePreview, editCompareColor } from '../../store/actions/live-palette'
 import { KEY_CODES } from 'src/constants/globals'
 import { useIntl } from 'react-intl'
 import { DRAG_TYPES } from 'constants/globals'
+
+const baseClass = 'prism-live-palette'
+const baseSlotClass = `${baseClass}__slot`
+const width = 20
 
 type Props = {
   active: boolean,
@@ -22,11 +27,11 @@ type Props = {
   toggleCompareColor: boolean,
   handleCompareColor: Function
 }
-const baseClass = 'prism-live-palette__slot'
-const width = 20
 
 export function ActiveSlot (props: Props) {
   const { color, active, index, toggleCompareColor } = props
+  const { colorWall: { colorSwatch = {} } }: ConfigurationContextType = useContext(ConfigurationContext)
+  const { colorNumOnBottom = false, houseShaped = false, infoBtn = {} } = colorSwatch
 
   const activeSlotRef = useRef(null)
   const dragIcon = useRef(null)
@@ -38,6 +43,7 @@ export function ActiveSlot (props: Props) {
   const REMOVAL_CLASS = 'prism-live-palette__slot--removing'
   const displayArea = 'container__color-display-area'
   const icons = 'container__toggle-check-icons'
+  const baseColorClass = houseShaped ? `${baseClass}-house-shaped` : baseClass
   const LIGHT_DARK_CLASS = color.isDark ? 'prism-live-palette__color-details--dark' : 'prism-live-palette__color-details--dark-color'
   const intl = useIntl()
 
@@ -126,23 +132,23 @@ export function ActiveSlot (props: Props) {
   return (
     <div aria-label={`Expand option for ${color.name} color`} ref={activeSlotRef} className={`prism-live-palette__slot ${(active ? ACTIVE_CLASS : '')} ${(isDeleting ? REMOVAL_CLASS : '')}`} style={{ backgroundColor: color.hex, opacity }} onClick={activateSlot} onKeyDown={activateSlot} role='button' tabIndex={active ? '-1' : '0'}>
       {!toggleCompareColor && <div className={`prism-live-palette__color-details ${LIGHT_DARK_CLASS}`}>
-        <div className='prism-live-palette__description'>
-          <span className='prism-live-palette__color-number'>{fullColorNumber(color.brandKey, color.colorNumber)}</span>
-          <span className='prism-live-palette__color-name'>{ color.name }</span>
-          <span className='prism-live-palette__color-description'>{ color.description.join(', ') }</span>
+        <div className={`${baseColorClass}${colorNumOnBottom ? '__name-number' : '__number-name'}`}>
+          <span className={`${baseColorClass}__color-number`}>{fullColorNumber(color.brandKey, color.colorNumber)}</span>
+          <span className={`${baseColorClass}__color-name`}>{color.name}</span>
+          <span className={`${baseClass}__color-description`}>{color.description.join(', ')}</span>
         </div>
         <div className='prism-live-palette__button-group'>
-          <div className='prism-live-palette__info-button'><InfoButton color={color} /></div>
+          <div className='prism-live-palette__info-button' style={infoBtn?.icon ? { transform: 'scale(0.9) translate(0px, -3px)' } : {}}><InfoButton color={color} /></div>
           <button aria-label={intl.formatMessage({ id: 'LIVE_PALETTE_REMOVE' }, { colorName: color.name })} className='prism-live-palette__trash' onClick={remove}><FontAwesomeIcon icon={['fa', 'trash']} size='1x' /></button>
         </div>
       </div>}
-      {toggleCompareColor && <button style={{ color: getContrastYIQ(color.hex) }} className={`${baseClass}__button`} onClick={() => handleToggle()}>
-        <div className={`${baseClass}__${displayArea}`} style={{ backgroundColor: color.hex }}>
-          { isColorAdded && <FontAwesomeIcon className={`${baseClass}__${icons} ${toggleCompareColor ? `${baseClass}__${icons}--show` : `${baseClass}__${icons}--hide`}`} icon={['fa', 'check-circle']} size='1x' /> }
-          { !isColorAdded && <FontAwesomeIcon className={`${baseClass}__${icons} ${toggleCompareColor ? `${baseClass}__${icons}--show` : `${baseClass}__${icons}--hide`}`} icon={['fal', 'plus-circle']} size='1x' /> }
+      {toggleCompareColor && <button style={{ color: getContrastYIQ(color.hex) }} className={`${baseSlotClass}__button`} onClick={() => handleToggle()}>
+        <div className={`${baseSlotClass}__${displayArea}`} style={{ backgroundColor: color.hex }}>
+          { isColorAdded && <FontAwesomeIcon className={`${baseSlotClass}__${icons} ${toggleCompareColor ? `${baseSlotClass}__${icons}--show` : `${baseSlotClass}__${icons}--hide`}`} icon={['fa', 'check-circle']} size='1x' /> }
+          { !isColorAdded && <FontAwesomeIcon className={`${baseSlotClass}__${icons} ${toggleCompareColor ? `${baseSlotClass}__${icons}--show` : `${baseSlotClass}__${icons}--hide`}`} icon={['fal', 'plus-circle']} size='1x' /> }
         </div>
       </button>}
-      <div ref={dragIcon} className={`${baseClass}__drag-icon-wrapper ${!toggleCompareColor ? `${baseClass}__drag-icon-wrapper--show` : `${baseClass}__drag-icon-wrapper--hide`}`} >
+      <div ref={dragIcon} className={`${baseSlotClass}__drag-icon-wrapper ${!toggleCompareColor ? `${baseSlotClass}__drag-icon-wrapper--show` : `${baseSlotClass}__drag-icon-wrapper--hide`}`} >
         <svg>
           <line strokeWidth='1px' stroke={lineColor} x1={width} y1='0' x2='0' y2={width} />
           <line strokeWidth='1px' stroke={lineColor} x1={width} y1={Math.floor(width / 3)} x2={Math.floor(width / 3)} y2={width} />

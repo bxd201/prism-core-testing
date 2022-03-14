@@ -162,7 +162,7 @@ const SaveOptions = (props: SaveOptionsProps) => {
                 icon={['fal', 'folder']}
                 size='2x' />
             </div>
-            <div><FormattedMessage id='SAVE_MASKS' /></div>
+            <div className={`${saveOptionsItemsClassName}--title`}><FormattedMessage id='SAVE_MASKS' /></div>
           </div>
         </button> : null}
     </div>

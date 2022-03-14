@@ -65,7 +65,8 @@ export type FamilyStructure = {
 export type ColorCollectionDetail = {
   name: string,
   description: string,
-  img: string,
+  coverUrl: string,
+  thumbUrl: string,
   collections: Color[],
   pdfUrl?: string
 }

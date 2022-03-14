@@ -1,10 +1,12 @@
 // @flow
-import React, { useState, useEffect, useRef, useCallback } from 'react'
+import React, { useState, useEffect, useRef, useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
+import Iconography from '../Iconography/Iconography'
 import isFunction from 'lodash/isFunction'
 import noop from 'lodash/noop'
+import ConfigurationContext, { type ConfigurationContextType } from '../../contexts/ConfigurationContext/ConfigurationContext'
 import { KEY_CODES } from 'src/constants/globals'
 import type { FlatScene, FlatVariant } from '../../shared/types/Scene'
 
@@ -59,6 +61,8 @@ export default (props: ComponentProps) => {
   } = props
   const [position, setPosition] = useState(initPosition || 0)
   const [focusIndex, setCurrentFocusItem] = useState(1)
+  const { cvw } = useContext<ConfigurationContextType>(ConfigurationContext)
+  const { carouselBtn = {} } = cvw
   // tracks the previous position
   const prevPositionRef = useRef()
   const prevPosition = prevPositionRef.current
@@ -142,7 +146,7 @@ export default (props: ComponentProps) => {
       <div className={`${contentWrapper}`}>
         <div className={`${contentWrapper}__prev-btn__wrapper`}>
           {(isInfinity || position >= defaultItemsPerView) && <button className={`${contentWrapper}__buttons`} onClick={handlePrev} aria-label={formatMessage({ id: 'PREVIOUS' })}>
-            <FontAwesomeIcon icon={['fa', 'chevron-left']} />
+            {carouselBtn?.iconLeft ? <Iconography name={carouselBtn?.iconLeft} style={{ height: '.95rem' }} /> : <FontAwesomeIcon icon={['fa', 'chevron-left']} />}
           </button>}
         </div>
         <div className={`${contentWrapper}__list__wrapper ${isInfinity ? `${contentWrapper}__list__wrapper--loop` : ''}`}>
@@ -209,7 +213,7 @@ export default (props: ComponentProps) => {
         </div>
         <div className={`${contentWrapper}__next-btn__wrapper`}>
           {(isInfinity || position + defaultItemsPerView < data.length) && <button className={`${contentWrapper}__buttons`} onClick={handleNext} aria-label={formatMessage({ id: 'NEXT' })}>
-            <FontAwesomeIcon icon={['fa', 'chevron-right']} />
+            {carouselBtn?.iconRight ? <Iconography name={carouselBtn?.iconRight} style={{ height: '.95rem' }} /> : <FontAwesomeIcon icon={['fa', 'chevron-right']} />}
           </button>}
         </div>
       </div>

@@ -2,6 +2,7 @@
   $input-bg: var(getThemeColor("white"));
   $input-padding: 0.5em;
   $clear-size: 1em;
+  font-family: var(getVarName('typography.titleFontFamily'));
 
   &__search-form {
     width: 100%;
@@ -36,7 +37,7 @@
     margin: 0;
     flex: 1;
     height: $ui-height-min--mobile;
-    border-radius: $ui-radius;
+    border-radius: var(getVarName('typography.textInputBorderRadius'));
 
     @include respond-above(xs) {
       height: $ui-height-min;

@@ -25,7 +25,7 @@ import { shouldAllowFeature } from '../../../shared/utils/featureSwitch.util'
 import { FEATURE_EXCLUSIONS } from '../../../constants/configurations'
 import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import { setMaxSceneHeight } from '../../../store/actions/system'
-import { SCENE_TYPES, SHOW_LOADER_ONLY_BRANDS } from '../../../constants/globals'
+import { SCENE_TYPES } from '../../../constants/globals'
 import {
   ACTIVE_SCENE_LABELS_ENUM,
   setActiveSceneLabel,
@@ -248,7 +248,7 @@ const CVW = (props: CVWPropsType) => {
     isMatchPhotoPresented,
     isActiveScenePolluted])
 
-  if (!window.localStorage.getItem('landingPageShownSession') && shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.splashScreen) && SHOW_LOADER_ONLY_BRANDS.indexOf(brandId) < 0) {
+  if (!window.localStorage.getItem('landingPageShownSession') && shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.splashScreen)) {
     return <LandingPage />
   }
 

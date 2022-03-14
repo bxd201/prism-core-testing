@@ -26,7 +26,6 @@ export type CrossSearch = {
 }
 type Props = FacetBinderMethods & FacetPubSubMethods & ColorDataWrapperProps & {
   colorDetailPageRoot?: (Color) => string,
-  colorNumOnBottom?: boolean,
   colorWallBgColor?: string,
   colorWallPageRoot?: (Color) => string,
   crossSearchChipLocator?: CrossSearch,
@@ -49,16 +48,15 @@ const SearchBarLight = ({ hideSearchResult, onSearchQuery }: { hideSearchResult:
 )
 
 export const ColorSearch = (props: Props) => {
-  const { colorDetailPageRoot, colorNumOnBottom = true, colorWallBgColor, colorWallPageRoot, crossSearchChipLocator, loading, routeType } = props
+  const { colorDetailPageRoot, colorWallBgColor, colorWallPageRoot, crossSearchChipLocator, loading, routeType } = props
   const { primeColorWall } = useSelector(state => at(state, 'colors')[0])
   const redirectTo = `/${ROUTE_PARAMS.ACTIVE}/${ROUTE_PARAMS.COLOR_WALL}/${ROUTE_PARAMS.SECTION}/${kebabCase(primeColorWall)}/${ROUTE_PARAMS.SEARCH}/`
   const cwContext = useMemo(() => extendIfDefined({}, colorWallContextDefault, {
     colorDetailPageRoot,
-    colorNumOnBottom,
     colorWallBgColor,
     colorWallPageRoot,
     routeType
-  }), [colorDetailPageRoot, colorNumOnBottom, colorWallBgColor, colorWallPageRoot, routeType])
+  }), [colorDetailPageRoot, colorWallBgColor, colorWallPageRoot, routeType])
   const [mounted, setMounted] = useState(true)
   const [crossSearch, setCrossSearch] = useState({ query: undefined, searching: false })
   const { publish } = useContext(PubSubCtx)

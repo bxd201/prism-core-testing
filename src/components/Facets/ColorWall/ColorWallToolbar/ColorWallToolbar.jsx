@@ -128,6 +128,7 @@ const ColorWallToolbar = ({ mobileClick, setMobileClick, brandClick, setBrandCli
   )
 
   const colorFamilyMenu = useRef(null)
+
   if (uiStyle === 'minimal') {
     return (
       <div className={MODE_CLASS_NAMES.BASE}>
@@ -170,12 +171,13 @@ const ColorWallToolbar = ({ mobileClick, setMobileClick, brandClick, setBrandCli
       </div>
     )
   }
+
   return (
     <AutoSizer disableHeight style={{ width: '100%' }}>
       {({ width }) => (
         <div className={MODE_CLASS_NAMES.BASE}>
           <div className={MODE_CLASS_NAMES.COL}>
-            {/* Search and Family Button */}
+            {/* Search and Family Buttons */}
             <div className={MODE_CLASS_NAMES.CELL}>
               <ButtonBar.Bar style={alwaysShowColorFamilies ? { borderRadius: '0' } : {}}>
                 {isFamilyView && !alwaysShowColorFamilies
@@ -199,70 +201,82 @@ const ColorWallToolbar = ({ mobileClick, setMobileClick, brandClick, setBrandCli
                 }
               </ButtonBar.Bar>
             </div>
-            {!alwaysShowColorFamilies && isFamilyView && width > 768
-              ? (
-                <div className={`${MODE_CLASS_NAMES.CELL} ${MODE_CLASS_NAMES.RIGHT}`}>
-                  <ButtonBar.Bar>
-                    <ColorFamilyMenuBtns families={families} section={section} />
-                  </ButtonBar.Bar>
-                </div>
-              )
-              : ((isFamilyView || visibleSections.length > 1) && (
-                <div className='menu-bar__border'>
-                  {primeColorWall && visibleSections.includes(primeColorWall) && width > 768 && (
-                    <NavLink
-                      className={`${menuBarPrefix}__prime-color-wall-button ${primeColorWall === activeSection ? 'disabled' : ''}`}
-                      to={generateColorWallPageUrl(primeColorWall)}
-                    >
-                      {primeColorWall}
-                    </NavLink>
-                  )}
-                  <Select
-                    brandClick={brandClick}
-                    setBrandClick={setBrandClick}
-                    purpose={'brand'}
-                    placeholderText={
-                      isFamilyView && !alwaysShowColorFamilies
-                        ? activeFamily ?? at(messages, 'ALL_COLORS')[0]
-                        : width > 768
-                          ? activeSection === primeColorWall ? colorWall.selectSectionText ?? at(messages, 'SELECT_COLLECTION')[0] : activeSection
-                          : activeSection
-                    }
-                    options={((isFamilyView || family) && !alwaysShowColorFamilies ? families : visibleSections)
-                      .filter(name => activeFamily !== name && (width <= 768 || !primeColorWall || primeColorWall !== name))
-                      .map(label => ({
-                        label,
-                        link: isFamilyView && !alwaysShowColorFamilies ? generateColorWallPageUrl(section, label) : generateColorWallPageUrl(label)
-                      }))
-                    }
-                  />
-                  {alwaysShowColorFamilies && colorFamilyMenu.current?.clientWidth > width && (
-                    <>
-                      <span className='menu-bar__border' />
+            {/* Prime Color Wall and Collections/Families Categories Buttons */}
+            {width > 768 ? (
+              <>
+                {visibleSections.length > 1 && (!isFamilyView || alwaysShowColorFamilies) && (
+                  <div className='menu-bar__border'>
+                    {primeColorWall && visibleSections.includes(primeColorWall) && (
+                      <NavLink
+                        className={`${menuBarPrefix}__prime-color-wall-button ${primeColorWall === activeSection ? 'disabled' : ''}`}
+                        to={generateColorWallPageUrl(primeColorWall)}
+                      >
+                        {primeColorWall}
+                      </NavLink>
+                    )}
+                    {(visibleSections.length > 1 || (isFamilyView && !alwaysShowColorFamilies)) && (
                       <Select
-                        mobileClick={mobileClick}
-                        setMobileClick={setMobileClick}
                         brandClick={brandClick}
-                        purpose={'family'}
-                        placeholderText={activeFamily ?? 'All'}
-                        disabled={families.length < 1}
-                        options={
-                          [
-                            { label: 'All', link: generateColorWallPageUrl(section) },
-                            ...families
-                              .map(label => ({
-                                label,
-                                link: generateColorWallPageUrl(section, label)
-                              }))
-                          ]
-
+                        setBrandClick={setBrandClick}
+                        purpose={'brand'}
+                        placeholderText={activeSection === primeColorWall ? colorWall.selectSectionText ?? at(messages, 'SELECT_COLLECTION')[0] : activeSection}
+                        options={visibleSections
+                          .filter(name => activeFamily !== name && (!primeColorWall || primeColorWall !== name))
+                          .map(label => ({ label, link: generateColorWallPageUrl(label) }))
                         }
                       />
-                    </>
-                  )}
-                </div>
-              ))
-            }
+                    )}
+                  </div>
+                )}
+              </>
+            ) : ( // width <= 768
+              <div className={
+                `menu-bar${visibleSections.length > 1 || isFamilyView || alwaysShowColorFamilies ? '__border' : ''}
+                ${visibleSections.length > 1 && alwaysShowColorFamilies ? ' menu-bar__border--flex' : ''}`
+              }>
+                {/* Collections/Families */}
+                {(visibleSections.length > 1 || (isFamilyView && !alwaysShowColorFamilies)) && <Select
+                  brandClick={brandClick}
+                  setBrandClick={setBrandClick}
+                  purpose={'brand'}
+                  placeholderText={isFamilyView && !alwaysShowColorFamilies
+                    ? activeFamily ?? at(messages, 'ALL_COLORS')[0]
+                    : activeSection
+                  }
+                  options={((isFamilyView || family) && !alwaysShowColorFamilies ? families : visibleSections)
+                    .filter(name => activeFamily !== name && (width <= 768 || !primeColorWall || primeColorWall !== name))
+                    .map(label => ({
+                      label,
+                      link: isFamilyView && !alwaysShowColorFamilies ? generateColorWallPageUrl(section, label) : generateColorWallPageUrl(label)
+                    }))
+                  }
+                />}
+                {/* Families */}
+                {alwaysShowColorFamilies && colorFamilyMenu.current?.clientWidth > width && (
+                  <>
+                    {visibleSections.length > 1 && <span className='menu-bar__border' />}
+                    <Select
+                      mobileClick={mobileClick}
+                      setMobileClick={setMobileClick}
+                      brandClick={brandClick}
+                      purpose={'family'}
+                      placeholderText={activeFamily ?? 'All'}
+                      disabled={families.length < 1}
+                      options={
+                        [
+                          { label: 'All', link: generateColorWallPageUrl(section) },
+                          ...families
+                            .map(label => ({
+                              label,
+                              link: generateColorWallPageUrl(section, label)
+                            }))
+                        ]
+                      }
+                    />
+                  </>
+                )}
+              </div>
+            )}
             {shouldShowCloseButton && (!isFamilyView || alwaysShowColorFamilies) && (
               <button
                 className='menu-bar__button-close'
@@ -277,7 +291,16 @@ const ColorWallToolbar = ({ mobileClick, setMobileClick, brandClick, setBrandCli
                 <span className={MODE_CLASS_NAMES.DESC}>{closeBtnText ?? <FormattedMessage id='CLOSE' />}</span>
               </button>
             )}
+            {/* Color Families Menu Bar Left Side */}
+            {isFamilyView && !alwaysShowColorFamilies && width > 768 && (
+              <div className={`${MODE_CLASS_NAMES.CELL} ${MODE_CLASS_NAMES.RIGHT}`}>
+                <ButtonBar.Bar>
+                  <ColorFamilyMenuBtns families={families} section={section} />
+                </ButtonBar.Bar>
+              </div>
+            )}
           </div>
+          {/* Color Families Menu Bar Full Size */}
           {alwaysShowColorFamilies && (
             <>
               {/* Color family menu measurer ref - hidden */}
