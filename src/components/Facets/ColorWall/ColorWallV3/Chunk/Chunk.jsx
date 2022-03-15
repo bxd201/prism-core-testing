@@ -68,7 +68,7 @@ function Chunk (props) {
   }
 
   return <div ref={thisEl} title={`Chunk, w ${width}, h ${height}`}
-    className={`cwv3__chunk`}
+    className={`cwv3__chunk${activeSwatchId ? 'cwv3__chunk--no-focus' : ''}`}
     style={{ padding: `${vertSpace}px ${horzSpace}px` }}>
     {data?.children?.map((row, i) => {
       return <div className={`cwv3__chunk__row${params.family ? ' cwv3__chunk__row__family' : ''}`} key={i}>

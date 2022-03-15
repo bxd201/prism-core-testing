@@ -23,3 +23,5 @@
     }
   }
 }
+
+.cwv3__chunk--no-focus { &--focus, &:focus-within { outline: none !important } }
