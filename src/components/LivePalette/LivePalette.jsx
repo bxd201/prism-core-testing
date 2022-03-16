@@ -39,6 +39,9 @@ import { ROUTES_ENUM } from '../Facets/ColorVisualizerWrapper/routeValueCollecti
 import { withRouter } from 'react-router-dom'
 
 const PATH__NAME = 'fast-mask-simple.html'
+const baseClass = 'prism-live-palette'
+const activeColorClass = `${baseClass}__active-color`
+const slotClass = `${baseClass}__slot`
 
 type Props = {
   colors: Array<Color>,
@@ -155,7 +158,7 @@ export class LivePalette extends PureComponent<Props, State> {
     const { colorNumOnBottom = false, houseShaped = false } = colorSwatch
     const { compare, firstEmptySlot, title } = cvw.palette ?? {}
 
-    const baseClass = houseShaped ? 'prism-live-palette-house-shaped' : 'prism-live-palette'
+    const condActiveColorClass = houseShaped ? `${baseClass}-house-shaped__active-color` : activeColorClass
 
     // determine how many empty slots there should be
     let disabledSlots = []
@@ -169,41 +172,41 @@ export class LivePalette extends PureComponent<Props, State> {
 
     return (
       <DndProvider backend={HTML5Backend}>
-        <div className='prism-live-palette'>
+        <div className={baseClass}>
           <LivePaletteModal cancel={deactivateTemporaryColor} empty={empty} isActive={temporaryActiveColor !== null} />
-          <div className='prism-live-palette__header'>
-            <span className='prism-live-palette__header__name'>{title ?? <FormattedMessage id='PALETTE_TITLE' />}</span>
+          <div className={`${baseClass}__header`}>
+            <span className={`${baseClass}__header__name`}>{title ?? <FormattedMessage id='PALETTE_TITLE' />}</span>
             {colors.length >= MIN_COMPARE_COLORS_ALLOWED && (
               <button
                 tabIndex='-1'
-                className={`prism-live-palette__header__compare-button${isFastMaskPage ? '--hide' : ''}`}
+                className={`${baseClass}__header__compare-button${isFastMaskPage ? '--hide' : ''}`}
                 onClick={this.toggleCompareColor}
               >
                 {compare ?? <FormattedMessage id='COMPARE_COLORS' />}
               </button>
             )}
           </div>
-          {activeColor && <div className='prism-live-palette__active-color' style={{ backgroundColor: activeColor.hex }}>
-            <div className={`${baseClass}${colorNumOnBottom ? '__active-color__name-number' : '__active-color__details'} ${(activeColor.isDark) ? `prism-live-palette__active-color__details--dark` : ``}`}>
-              <span className={`${baseClass}__active-color__color-number`}>{fullColorNumber(activeColor.brandKey, activeColor.colorNumber)}</span>
-              <span className={`${baseClass}__active-color__color-name`}>{activeColor.name}</span>
+          {activeColor && <div className={activeColorClass} style={{ backgroundColor: activeColor.hex }}>
+            <div className={`${condActiveColorClass}${colorNumOnBottom ? '__name-number' : '__details'}${activeColor.isDark ? ` ${activeColorClass}__details--dark` : ''}`}>
+              <span className={`${condActiveColorClass}__color-number`}>{fullColorNumber(activeColor.brandKey, activeColor.colorNumber)}</span>
+              <span className={`${condActiveColorClass}__color-name`}>{activeColor.name}</span>
             </div>
-            <div className='prism-live-palette__active-color__info-button'>
+            <div className={`${activeColorClass}__info-button${activeColor.isDark ? ` ${activeColorClass}__info-button--dark` : ''}`}>
               <InfoButton color={activeColor} />
             </div>
           </div>}
-          <div className='prism-live-palette__list'>
+          <div className={`${baseClass}__list`}>
             <ActiveSlots colors={colors} activeColor={activeColor}>
               <ActiveSlot onClick={this.activateColor} moveColor={this.moveColor} />
             </ActiveSlots>
             {colors.length < LP_MAX_COLORS_ALLOWED && !isCompareColorShown && <button onClick={(e) => {
               this.handleAddColor(e)
-            }} className={`prism-live-palette__slot prism-live-palette__slot--${IS_EMPTY ? 'add-big' : 'add'}`}>
-              <div className={`prism-live-palette__slot__guts ${IS_EMPTY ? 'prism-live-palette__slot__guts--hrzntl' : ''}`}>
-                <FontAwesomeIcon className={`prism-live-palette__slot__icon ${IS_EMPTY ? 'prism-live-palette__slot__icon--left' : 'prism-live-palette__slot__icon--top'}`} icon={['fal', 'plus-circle']} size='2x' color={varValues._colors.primary} />
-                <span className={`prism-live-palette__slot__copy ${IS_EMPTY ? 'prism-live-palette__slot__copy--right' : 'prism-live-palette__slot__copy--btm'}`}>
+            }} className={`${slotClass} ${slotClass}--${IS_EMPTY ? 'add-big' : 'add'}`}>
+              <div className={`${slotClass}__guts${IS_EMPTY ? ` ${slotClass}__guts--hrzntl` : ''}`}>
+                <FontAwesomeIcon className={`${slotClass}__icon ${slotClass}__icon${IS_EMPTY ? '--left' : '--top'}`} icon={['fal', 'plus-circle']} size='2x' color={varValues._colors.primary} />
+                <span className={`${slotClass}__copy ${slotClass}__copy${IS_EMPTY ? '--right' : '--btm'}`}>
                   {firstEmptySlot && IS_EMPTY
-                    ? <p className='prism-live-palette__slot__copy--right-text'>{firstEmptySlot}</p>
+                    ? <p className={`${slotClass}__copy--right-text`}>{firstEmptySlot}</p>
                     : <FormattedMessage id={ADD_COLOR_TEXT} values={{
                       line: chunk => <span style={{ display: 'inline-block' }}>{chunk}</span>
                     }} />
@@ -214,7 +217,7 @@ export class LivePalette extends PureComponent<Props, State> {
             {disabledSlots}
           </div>
           {/* This will speak the current and removed color, as well as some color-delta info. */}
-          <aside aria-live='assertive' className='prism-live-palette__color-description'>{spokenWord}</aside>
+          <aside aria-live='assertive' className={`${baseClass}__color-description`}>{spokenWord}</aside>
         </div>
       </DndProvider>
     )
