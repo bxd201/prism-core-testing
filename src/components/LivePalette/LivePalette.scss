@@ -72,6 +72,8 @@
       padding: 0.5em;
       display: flex;
       align-items: center;
+
+      &--dark { color: var(getThemeColor('primary.contrast.trans')) }
     }
     &__color-number {
       display: block;
