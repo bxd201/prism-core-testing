@@ -97,6 +97,19 @@ const CollectionDetail = ({ addToLivePalette, collectionDetailData }: Props) => 
     }
   }
 
+  // Supplement needed to handle CBG HGTV cvw pdf storage by url host environment (develop / qa / prod)
+  // TODO: abstract this logic further up the chain
+  const getEnvUrl = url => {
+    const splitUrl = url.split('//')
+    const hostEnv = window.location.hostname.split('-')[0]
+
+    if (splitUrl[0].startsWith('h')) {
+      splitUrl.splice(1, 0, `//${(hostEnv === 'develop' || hostEnv === 'qa') ? `${hostEnv}-` : ''}`)
+    }
+
+    return splitUrl.join('')
+  }
+
   return (
     <ColorWallContext.Provider value={{ ...colorWallContextDefault, displayDetailsLink: false, displayInfoButton: true, displayAddButton: true }}>
       <div className={`${wrapper}`}>
@@ -105,7 +118,7 @@ const CollectionDetail = ({ addToLivePalette, collectionDetailData }: Props) => 
           <div className={`${collectionDescription}${showDescriptionMobile ? '' : ` ${collectionDescription}--hidden-mobile`}`}>{collectionDetailData.description}</div>
           {collectionDetailData.pdfUrl
             ? <div className={`${collectionDiv}`}>
-              <a className={`${collectionButton}`} href={collectionDetailData.pdfUrl} target='_blank'>
+              <a className={`${collectionButton}`} href={getEnvUrl(collectionDetailData.pdfUrl)} target='_blank'>
                 Download PDF
               </a>
             </div> : null}
