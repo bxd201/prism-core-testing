@@ -173,7 +173,7 @@ $menu-bar-width: 27em;
     height: auto;
     margin-top: 2px;
     position: absolute;
-    z-index: 3;
+    z-index: 1002;
     top: 50px;
 
     @include respond-below(xs) {

@@ -52,16 +52,16 @@ $btn-border-thickness: 1px;
 %color-wall-mode-btns-btn--active {
   $focus-shadow: inset 0 0 0 $btn-border-thickness var(getThemeColor('primary.contrast.trans'));
 
-  background: var(getThemeColor('buttonBgColor')) !important;
-  color: var(getThemeColor('buttonColor')) !important;
+  background: var(getThemeColor('buttonActiveBgColor')) !important;
+  color: var(getThemeColor('buttonActiveColor')) !important;
 
   &:focus {
     box-shadow: $focus-shadow !important;
   }
 
   &:hover {
-    background: var(getThemeColor('buttonHoverBgColor')) !important;
-    color: var(getThemeColor('buttonHoverColor')) !important;
+    background: var(getThemeColor('buttonActiveBgColor')) !important;
+    color: var(getThemeColor('buttonActiveColor')) !important;
   }
 }
 

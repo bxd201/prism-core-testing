@@ -2,7 +2,7 @@
 import React, { useState, useRef, useMemo, useEffect, useCallback, useContext } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { add } from 'src/store/actions/live-palette'
-import ColorWallPropsContext, { BASE_SWATCH_SIZE, colorWallPropsDefault, MIN_SWATCH_SIZE, MAX_SWATCH_SIZE, OUTER_SPACING } from '../ColorWallPropsContext'
+import ColorWallPropsContext, { BASE_SWATCH_SIZE, colorWallPropsDefault, MIN_SWATCH_SIZE, MAX_SWATCH_SIZE, MIN_SCROLLER_HEIGHT, OUTER_SPACING } from '../ColorWallPropsContext'
 import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import Column from '../Column/Column'
 import InfoButton from 'src/components/InfoButton/InfoButton'
@@ -369,7 +369,8 @@ function Wall (props: WallProps) {
           </button> : null}
           <div className='cwv3__wall-scroller' ref={wallContentsRef} style={{
             backgroundColor: colorWallBgColor,
-            height: isNaN(height) ? (defaultDimensions?.height + OUTER_SPACING * 2) * scale : height
+            height: isNaN(height) ? (defaultDimensions?.height + OUTER_SPACING * 2) * scale : height,
+            minHeight: !isZoomed && MIN_SCROLLER_HEIGHT
           }}>
             <div style={{
               padding: OUTER_SPACING * scale,

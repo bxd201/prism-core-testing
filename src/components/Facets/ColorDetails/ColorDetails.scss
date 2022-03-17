@@ -226,6 +226,8 @@ $details-tab-padding: 1rem;
   }
 
   &__strip-color-name {
+    font-family: var(getVarName('typography.titleFontFamily'));
+
     &--dark-color {
       color: var(getThemeColor('white'));
     }
