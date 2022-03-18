@@ -16,8 +16,9 @@
 
 // @flow
 import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom'
+import { filterByFamily } from 'src/store/actions/loadColors'
 import Wall from './Wall/Wall'
 import { type ColorsState } from 'src/shared/types/Actions.js.flow'
 import { fullColorName, generateColorWallPageUrl } from 'src/shared/helpers/ColorUtils'
@@ -27,6 +28,7 @@ function ColorWallV3 () {
   // this state allows the implementing component to control active color within Wall
   // Wall itself just calls onActivateColor when a color is chosen; it's up to the host to do
   // something with that data and provide Wall with an updated activeColorId
+  const dispatch = useDispatch()
   const { items: { colorMap, wall } } = useSelector<ColorsState>(state => state.colors)
   const { push } = useHistory()
   const { params } = useRouteMatch()
@@ -38,6 +40,7 @@ function ColorWallV3 () {
     const familyStructure = wall.filter(structure => structure.type.toLowerCase() === family)
     setStructure(familyStructure.length > 0 ? familyStructure : wall.filter(structure => structure.type === 'WALL'))
     setActiveColorId()
+    dispatch(filterByFamily(family))
   }, [family])
 
   useEffect(() => {

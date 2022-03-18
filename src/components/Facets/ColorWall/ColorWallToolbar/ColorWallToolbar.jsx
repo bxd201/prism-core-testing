@@ -1,11 +1,13 @@
 // @flow
 /* eslint-disable react/jsx-no-bind */
-import React, { type Element, useContext, useRef } from 'react'
+import React, { type Element, useContext, useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRouteMatch, NavLink, useHistory, Link } from 'react-router-dom'
+import { filterByFamily, filterBySection } from 'src/store/actions/loadColors'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Menu, MenuItem, Wrapper, Button } from 'react-aria-menubutton'
 import at from 'lodash/at'
+import kebabCase from 'lodash/kebabCase'
 import difference from 'lodash/difference'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { AutoSizer } from 'react-virtualized'
@@ -26,48 +28,33 @@ const menuBarActiveList = `${menuBarItemList}--active`
 const menuBarInactive = `${menuBarItemList}--inactive`
 
 type SelectPropsT = {
-  placeholderText: string,
-  options: { label: string, link: string }[],
+  activeFamily?: string,
+  activeSection?: string,
   disabled?: boolean,
+  options: { label: string, link: string }[],
   onSelectOpened?: (boolean) => void,
-  mobileClick?: string,
-  setMobileClick?: () => string,
-  setBrandClick?: () => string,
-  brandClick?: string,
-  purpose: string,
+  placeholderText: string
 }
 
-const Select = ({ placeholderText, options, disabled = false, onSelectOpened, purpose, mobileClick, setMobileClick, brandClick, setBrandClick }: SelectPropsT) => {
-  // @todo refactor to remove repetitive code and to clarify the role of the purpose param. -RS
-  return (
-    <Wrapper
-      className={`${MODE_CLASS_NAMES.CELL} ${MODE_CLASS_NAMES.RIGHT} ${menuBarPrefix}`}
-      onMenuToggle={({ isOpen }) => onSelectOpened?.(isOpen)} >
-      <Button className={`${menuBarPrefix}__button`} disabled={disabled}>
-        <span className={`${menuBarPrefix}__button-copy`}>{omitPrefix(placeholderText)}</span>
-        <FontAwesomeIcon className='close-icon-svg' icon={['fa', 'angle-down']} pull='right' />
-      </Button>
-      <Menu className={`${menuBarPrefix}__menu`}>
-        {purpose === 'brand' && options.map(({ label, link }) => {
-          return (<MenuItem className={`${menuBarItemList}`} onClick={() => setBrandClick?.(label)} key={label} text={omitPrefix(label)} value={label}>
-            <Link className={`${menuBarPrefix}__menu-link  ${(brandClick === label) ? `${menuBarActiveList}` : `${menuBarInactive}`}`} to={{ pathname: link, state: 'All', data: label }}>
-              <span className={MODE_CLASS_NAMES.DESC}>{omitPrefix(label)}</span>
-            </Link>
-          </MenuItem>)
-        })}
-        {purpose === 'family' && options.map(({ label, link }) => {
-          return (
-            <MenuItem className={`${menuBarItemList}`} onClick={() => setMobileClick?.(label)} key={label} text={omitPrefix(label)} value={label}>
-              <Link className={`${menuBarPrefix}__menu-link  ${(mobileClick === label) ? `${menuBarActiveList}` : `${menuBarInactive}`}`} to={{ pathname: link, data: brandClick, state: label }}>
-                <span className={MODE_CLASS_NAMES.DESC}>{omitPrefix(label)}</span>
-              </Link>
-            </MenuItem>
-          )
-        })}
-      </Menu>
-    </Wrapper>
-  )
-}
+const Select = ({ activeFamily, activeSection, placeholderText, options, disabled = false, onSelectOpened }: SelectPropsT) => (
+  <Wrapper
+    className={`${MODE_CLASS_NAMES.CELL} ${MODE_CLASS_NAMES.RIGHT} ${menuBarPrefix}`}
+    onMenuToggle={({ isOpen }) => onSelectOpened?.(isOpen)}>
+    <Button className={`${menuBarPrefix}__button`} disabled={disabled}>
+      <span className={`${menuBarPrefix}__button-copy`}>{omitPrefix(placeholderText)}</span>
+      <FontAwesomeIcon className='close-icon-svg' icon={['fa', 'angle-down']} pull='right' />
+    </Button>
+    <Menu className={`${menuBarPrefix}__menu`}>
+      {options.map(({ label, link }) => (
+        <MenuItem className={`${menuBarItemList}`} key={label} text={omitPrefix(label)} value={label}>
+          <Link className={`${menuBarPrefix}__menu-link ${((activeSection ?? activeFamily) || 'All') === label ? menuBarActiveList : menuBarInactive}`} to={{ data: activeSection ?? label, pathname: link, state: label }}>
+            <span className={MODE_CLASS_NAMES.DESC}>{omitPrefix(label)}</span>
+          </Link>
+        </MenuItem>
+      ))}
+    </Menu>
+  </Wrapper>
+)
 
 type ColorFamilyMenuBtnsT = {
   showAll?: boolean,
@@ -98,14 +85,7 @@ const ColorFamilyMenuBtns = ({ showAll = false, section, families = [] }: ColorF
   return null
 }
 
-type ColorWallToolsT = {
-  mobileClick?: string,
-  setMobileClick?: () => string,
-  setBrandClick?: () => string,
-  brandClick?: string,
-}
-
-const ColorWallToolbar = ({ mobileClick, setMobileClick, brandClick, setBrandClick }: ColorWallToolsT) => {
+const ColorWallToolbar = () => {
   const { messages = {} } = useIntl()
   const { hiddenSections } = useContext(ColorWallContext)
   const { alwaysShowColorFamilies, colorWall = {}, cvw = {}, uiStyle } = useContext<ConfigurationContextType>(ConfigurationContext)
@@ -119,6 +99,12 @@ const ColorWallToolbar = ({ mobileClick, setMobileClick, brandClick, setBrandCli
   const visibleSections: string[] = sections && sections.length && hiddenSections && hiddenSections.length ? difference(sections, hiddenSections) : sections
   // This should have been set by staging action...
   const shouldShowCloseButton = useSelector(store => store.isColorwallModallyPresented)
+
+  // keeps redux store and url in sync for family and section data
+  useEffect(() => {
+    activeSection === primeColorWall && section && section !== kebabCase(primeColorWall) && dispatch(filterBySection(section))
+    !activeFamily && family && dispatch(filterByFamily(family))
+  }, [])
 
   const searchColorBtn: Element<any> = (
     <ButtonBar.Button to={`${generateColorWallPageUrl(section, family)}search/`}>
@@ -145,7 +131,6 @@ const ColorWallToolbar = ({ mobileClick, setMobileClick, brandClick, setBrandCli
           <Select
             disabled={families.length < 2}
             placeholderText={activeFamily || messages['EXPLORE_COLOR_FAMILIES']}
-            purpose='family'
             options={families
               .filter(f => f !== activeFamily)
               .map(label => ({ label, link: generateColorWallPageUrl(section, label) }))
@@ -153,7 +138,6 @@ const ColorWallToolbar = ({ mobileClick, setMobileClick, brandClick, setBrandCli
           />
           <Select
             disabled={visibleSections.length < 2}
-            purpose='brand'
             placeholderText={(activeSection === primeColorWall || !visibleSections.includes(activeSection)) ? (colorWall.selectSectionText ?? messages['EXPLORE_COLLECTIONS']) : activeSection}
             options={visibleSections
               .filter(s => s !== activeSection)
@@ -216,9 +200,7 @@ const ColorWallToolbar = ({ mobileClick, setMobileClick, brandClick, setBrandCli
                     )}
                     {(visibleSections.length > 1 || (isFamilyView && !alwaysShowColorFamilies)) && (
                       <Select
-                        brandClick={brandClick}
-                        setBrandClick={setBrandClick}
-                        purpose={'brand'}
+                        activeSection={activeSection}
                         placeholderText={activeSection === primeColorWall ? colorWall.selectSectionText ?? at(messages, 'SELECT_COLLECTION')[0] : activeSection}
                         options={visibleSections
                           .filter(name => activeFamily !== name && (!primeColorWall || primeColorWall !== name))
@@ -236,9 +218,7 @@ const ColorWallToolbar = ({ mobileClick, setMobileClick, brandClick, setBrandCli
               }>
                 {/* Collections/Families */}
                 {(visibleSections.length > 1 || (isFamilyView && !alwaysShowColorFamilies)) && <Select
-                  brandClick={brandClick}
-                  setBrandClick={setBrandClick}
-                  purpose={'brand'}
+                  activeSection={activeSection}
                   placeholderText={isFamilyView && !alwaysShowColorFamilies
                     ? activeFamily ?? at(messages, 'ALL_COLORS')[0]
                     : activeSection
@@ -256,20 +236,16 @@ const ColorWallToolbar = ({ mobileClick, setMobileClick, brandClick, setBrandCli
                   <>
                     {visibleSections.length > 1 && <span className='menu-bar__border' />}
                     <Select
-                      mobileClick={mobileClick}
-                      setMobileClick={setMobileClick}
-                      brandClick={brandClick}
-                      purpose={'family'}
+                      activeFamily={activeFamily}
                       placeholderText={activeFamily ?? 'All'}
                       disabled={families.length < 1}
                       options={
                         [
                           { label: 'All', link: generateColorWallPageUrl(section) },
-                          ...families
-                            .map(label => ({
-                              label,
-                              link: generateColorWallPageUrl(section, label)
-                            }))
+                          ...families.map(label => ({
+                            label,
+                            link: generateColorWallPageUrl(section, label)
+                          }))
                         ]
                       }
                     />

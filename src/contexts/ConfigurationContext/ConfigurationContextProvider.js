@@ -116,7 +116,7 @@ function ConfigurationContextProvider (props: Props) {
         buttonActiveBgColor: theme.primary,
         buttonActiveBorder: theme.grey,
         buttonActiveColor: theme.white,
-        buttonBarBorder: theme.buttonBorder,
+        buttonBarBorder: theme.buttonBorder || theme.grey,
         // TODO: end deprecated theme color mapping
         ...theme
       })

@@ -170,16 +170,11 @@ export const ColorWallPage = (props: Props) => {
     unsubscribeAll()
   }, [])
 
-  const CWToolbar = (prop) => {
-    const [mobileClick, setMobileClick] = useState((prop.location.state) || 'All')
-    // @todo refactor this, we are passing through both the setter and the getter for the same value. My guess this is to force a rerender -RS
-    const [brandClick, setBrandClick] = useState((prop.location.data) || 'All Colors')
-    return (
-      <div className='color-wall-wrap__chunk'>
-        <ColorWallToolbar setMobileClick={setMobileClick} mobileClick={mobileClick} brandClick={brandClick} setBrandClick={setBrandClick} alwaysShowColorFamilies={alwaysShowColorFamilies} />
-      </div>
-    )
-  }
+  const CWToolbar = () => (
+    <div className='color-wall-wrap__chunk'>
+      <ColorWallToolbar alwaysShowColorFamilies={alwaysShowColorFamilies} />
+    </div>
+  )
 
   return (
     <ColorWallContext.Provider value={cwContext}>
