@@ -91,7 +91,7 @@ export function ColorChipMaximizer ({ addColorBtn, color, intl, onToggle, isMaxi
 
   return (
     <>
-      <div className={CHIP_CLASS.join(' ')} style={{ backgroundColor: color.hex, zIndex: isMaximized ? 3 : 2 }}>
+      <div className={CHIP_CLASS.join(' ')} style={{ backgroundColor: color.hex, zIndex: isMaximized ? 3 : 0 }}>
         {addColorBtn(isMaximized ? {} : { display: 'none' })}
       </div>
       <div className={SWATCH_SIZE_WRAPPER_CLASSES.join(' ')}>

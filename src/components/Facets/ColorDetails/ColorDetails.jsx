@@ -66,7 +66,7 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
 
     return <div className={`${mainInfoClass}--add`} style={style}>
       <ColorWallContext.Provider value={{ displayAddButton: true }}>
-        <Content msg='' color={color} style={{ position: 'relative' }} />
+        <Content msg='' color={color} isMaximized={isMaximized} style={{ position: 'relative' }} />
       </ColorWallContext.Provider>
     </div>
   }
@@ -78,7 +78,7 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
   return (
     <>
       <div className='color-detail-view'>
-        <ColorChipMaximizer addColorBtn={(style) => <AddColorBtn style={style} />} color={color} isMaximized={isMaximized} setMaximized={setMaximized} onToggle={onColorChipToggled} />
+        <ColorChipMaximizer addColorBtn={(style) => <AddColorBtn style={style} isMaximized={isMaximized} />} color={color} isMaximized={isMaximized} setMaximized={setMaximized} onToggle={onColorChipToggled} />
         <div className={`color-detail__scene-wrapper color-detail__scene-wrapper--displayed`}>
           <ColorDetailsScenes color={color} isMaximized={isMaximized} intitialVariantName={initialVariantName} />
         </div>
@@ -86,7 +86,7 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
           <div className={`${mainInfoClass}${color.isDark ? ` ${mainInfoClass}--dark-color` : ''}`} style={{ backgroundColor: color.hex }}>
             <ColorViewer color={color} />
             <ColorStrip key={color.id} color={color} onColorChanged={setColor} />
-            <AddColorBtn />
+            {!isMaximized ? <AddColorBtn /> : null}
           </div>
 
           {callsToAction?.length ? <ColorDetailsCTAs className='color-detail__ctas color-detail__ctas--mobile' data={callsToAction} /> : null}
