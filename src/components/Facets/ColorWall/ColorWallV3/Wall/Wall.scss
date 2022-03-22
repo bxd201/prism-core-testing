@@ -47,13 +47,6 @@
     }
 
     &__inner-house-shaped {
-      position: absolute;
-      width: 290%;
-      height: 290%;
-      top: 50%;
-      z-index: 1001;
-      left: 50%;
-      transform: translate3d(-50%, -50%, 0);
       outline: none;
 
       &::before {
