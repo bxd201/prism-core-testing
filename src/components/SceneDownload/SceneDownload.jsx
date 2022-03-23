@@ -1,5 +1,5 @@
 // @flow strict
-import React, { useContext, useState, useCallback } from 'react'
+import React, { useContext, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 import Jimp from 'jimp'
@@ -46,17 +46,9 @@ export default (props: Props) => {
   const { palette = {} } = cvw
   const { downloadBtn = {} } = palette
   const [isCreatingDownload, setIsCreatingDownload] = useState(false)
-  const [finalImageUrl, setFinalImageUrl] = useState()
   const { buttonCaption, activeComponent, getFlatImage, config, variantsCollection, selectedSceneUid, selectedVariantName, surfaceColors } = props
   const intl = useIntl()
   const [fastMaskData, structure] = useSelector(store => ([store.fastMaskSaveCache, store.colors?.structure]))
-
-  const downloadLinkRef = useCallback(link => {
-    if (link !== null) {
-      link.click()
-      setFinalImageUrl(null)
-    }
-  })
 
   const onDownloadClick = async () => {
     setIsCreatingDownload(true)
@@ -79,58 +71,50 @@ export default (props: Props) => {
       return structure.filter(s => s.families.indexOf(fam) > -1).map(s => s?.name ?? null).reduce((accum, next) => accum || next, null)
     })
 
-    generateImage(data, colors, config, intl, swatchColors, sectionNameMapping).then(image => image.getBufferAsync(Jimp.MIME_JPEG))
+    generateImage(data, colors, config, intl, swatchColors, sectionNameMapping)
+      .then(image => image.getBufferAsync(Jimp.MIME_JPEG))
       .then(buffer => {
         const blob = new Blob([buffer], { type: 'img/jpg' })
-        const urlCreator = window.URL || window.webkitURL
-        const imgUrl = urlCreator.createObjectURL(blob)
-        setFinalImageUrl(imgUrl)
-        setIsCreatingDownload(false)
-        if (navigator.userAgent.match('CriOS')) { // iOS Chrome
-          const reader = new FileReader()
-          reader.onloadend = () => {
-            window.location.href = reader.result.toString()
-          }
-          reader.readAsDataURL(blob)
-        } else {
-          // $FlowIgnore
-          navigator.msSaveBlob(blob, 'download.jpg')
+        const reader = new FileReader()
+        reader.readAsDataURL(blob)
+        reader.onloadend = () => {
+          const urlCreator = window.URL || window.webkitURL
+          const link = document.createElement('a')
+          link.href = navigator.userAgent.match('CriOS') /* iOS Chrome */ ? reader.result : urlCreator.createObjectURL(blob)
+          link.target = '_blank'
+          link.download = 'SceneImage.jpg'
+          window.document.body.appendChild(link)
+          link.click()
+          window.document.body.removeChild(link)
+          setIsCreatingDownload(false)
         }
       })
   }
 
   return (
     <ul>
-      {!isCreatingDownload && <li style={{ display: 'inline-block', verticalAlign: 'top' }}>
-        <ul>
-          <button
-            onClick={onDownloadClick}
-            disabled={isCreatingDownload}
-            style={{ flexDirection: 'column' }}
-          >
-            <div className='save-options__items'>
-              <div>
-                <FontAwesomeIcon
-                  title={intl.formatMessage({ id: 'DOWNLOAD_MASK' })}
-                  icon={downloadBtn?.icon ? ['far', downloadBtn.icon] : ['fal', 'download']}
-                  size='2x' />
-              </div>
-              <div className='save-options__items--title'>
-                {downloadBtn?.title ?? <FormattedMessage id={buttonCaption} />}
-              </div>
-            </div>
-          </button>
-        </ul>
-      </li>}
-      {isCreatingDownload && (
+      {isCreatingDownload ? (
         <li style={{ display: 'inline-block' }}>
           <CircleLoader color='#0069af' />
         </li>
-      )}
-      {/* $FlowIgnore */}
-      {!isCreatingDownload && finalImageUrl && !navigator.msSaveBlob && (
-        <li style={{ display: 'inline-block' }}>
-          <a href={`${finalImageUrl}`} download='SceneImage.jpg' ref={downloadLinkRef} hidden>Click to download</a>
+      ) : (
+        <li style={{ display: 'inline-block', verticalAlign: 'top' }}>
+          <ul>
+            <button onClick={onDownloadClick} disabled={isCreatingDownload} style={{ flexDirection: 'column' }}>
+              <div className='save-options__items'>
+                <div>
+                  <FontAwesomeIcon
+                    title={intl.formatMessage({ id: 'DOWNLOAD_MASK' })}
+                    icon={downloadBtn?.icon ? ['far', downloadBtn.icon] : ['fal', 'download']}
+                    size='2x'
+                  />
+                </div>
+                <div className='save-options__items--title'>
+                  {downloadBtn?.title ?? <FormattedMessage id={buttonCaption} />}
+                </div>
+              </div>
+            </button>
+          </ul>
         </li>
       )}
     </ul>
