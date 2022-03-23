@@ -16,7 +16,7 @@ type Props = {
   buttonCaption: string,
   activeComponent: string,
   getFlatImage: Function,
-  config: object,
+  config: Object,
   selectedSceneUid: string | null,
   variantsCollection: FlatVariant[],
   selectedVariantName: string,
@@ -86,8 +86,14 @@ export default (props: Props) => {
         const imgUrl = urlCreator.createObjectURL(blob)
         setFinalImageUrl(imgUrl)
         setIsCreatingDownload(false)
-        // $FlowIgnore
-        if (navigator.msSaveBlob) {
+        if (navigator.userAgent.match('CriOS')) { // iOS Chrome
+          const reader = new FileReader()
+          reader.onloadend = () => {
+            window.location.href = reader.result.toString()
+          }
+          reader.readAsDataURL(blob)
+        } else {
+          // $FlowIgnore
           navigator.msSaveBlob(blob, 'download.jpg')
         }
       })
