@@ -2,7 +2,7 @@
 import React, { useState, useRef, useMemo, useEffect, useCallback, useContext } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { add } from 'src/store/actions/live-palette'
-import ColorWallPropsContext, { BASE_SWATCH_SIZE, colorWallPropsDefault, MIN_SWATCH_SIZE, MAX_SWATCH_SIZE, MIN_SCROLLER_HEIGHT, OUTER_SPACING } from '../ColorWallPropsContext'
+import ColorWallPropsContext, { BASE_SWATCH_SIZE, colorWallPropsDefault, MIN_SWATCH_SIZE, MAX_SWATCH_SIZE, MAX_SCROLLER_HEIGHT, MIN_SCROLLER_HEIGHT, OUTER_SPACING } from '../ColorWallPropsContext'
 import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import Column from '../Column/Column'
 import InfoButton from 'src/components/InfoButton/InfoButton'
@@ -116,6 +116,7 @@ function Wall (props: WallProps) {
     onActivateColor(id)
   }
 
+  const [, delayRender] = useState()
   const [defaultScale, setDefaultScale] = useState(1)
   const wallProps = useMemo(() => {
     const isZoomed = isSomething(activeColorId)
@@ -131,6 +132,7 @@ function Wall (props: WallProps) {
         const colorIsInLivePalette = livePaletteColors.some(({ colorNumber }) => colorNumber === color.colorNumber)
         const swatchRendererClass = 'cwv3__swatch-renderer'
         const swatchClass = houseShaped ? 'color-swatch-house-shaped' : 'color-swatch'
+        delayRender(active)
 
         return (
         // this should contain a real Swatch component that will render active swatch contents
@@ -150,7 +152,7 @@ function Wall (props: WallProps) {
             {active
               ? <div
                 aria-label={fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator)}
-                className={`${swatchRendererClass}__inner${houseShaped ? '-house-shaped' : ''}${color.isDark ? ` ${swatchRendererClass}--dark-color` : ''}`}
+                className={`${swatchRendererClass}__inner${houseShaped ? ` ${swatchRendererClass}__inner-house-shaped` : ''}${color.isDark ? ` ${swatchRendererClass}--dark-color` : ''}`}
                 ref={active ? ref : null}
                 style={{ background: color.hex }}
                 tabIndex={-1}
@@ -370,6 +372,7 @@ function Wall (props: WallProps) {
           <div className='cwv3__wall-scroller' ref={wallContentsRef} style={{
             backgroundColor: colorWallBgColor,
             height: isNaN(height) ? (defaultDimensions?.height + OUTER_SPACING * 2) * scale : height,
+            maxHeight: isZoomed && MAX_SCROLLER_HEIGHT,
             minHeight: !isZoomed && MIN_SCROLLER_HEIGHT
           }}>
             <div style={{

@@ -51,7 +51,7 @@ function ColorWallV3 () {
 
   useEffect(() => {
     const { brandKey, colorNumber, name } = colorMap[activeColorId] || {}
-    colorNumber && push(generateColorWallPageUrl(section, family, activeColorId, fullColorName(brandKey, colorNumber, name)))
+    push(generateColorWallPageUrl(section, family, activeColorId, fullColorName(brandKey, colorNumber, name)))
   }, [activeColorId])
 
   const WallComponent = () => <Wall structure={structure[0]} activeColorId={activeColorId} onActivateColor={setActiveColorId} />
