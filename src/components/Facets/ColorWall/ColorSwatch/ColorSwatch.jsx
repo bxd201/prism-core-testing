@@ -15,17 +15,18 @@ import { useIntl } from 'react-intl'
 import at from 'lodash/at'
 import kebabCase from 'lodash/kebabCase'
 import noop from 'lodash/noop'
+import startCase from 'lodash/startCase'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
 import * as GA from 'src/analytics/GoogleAnalytics'
-import { GA_TRACKER_NAME_BRAND } from 'src/constants/globals'
+import { GA_TRACKER_NAME_BRAND, HASH_CATEGORIES } from 'src/constants/globals'
 import './ColorSwatch.scss'
 
 type ContentProps = { msg: string, color: Color, style?: {}}
 export const Content = ({ msg, color, style }: ContentProps) => {
   const dispatch = useDispatch()
   const { addButtonText, displayAddButton, displayInfoButton, displayDetailsLink, colorDetailPageRoot }: ColorWallContextProps = useContext(ColorWallContext)
-  const { brandKeyNumberSeparator, swatchShouldEmit }: ConfigurationContextType = useContext(ConfigurationContext)
+  const { brandId, brandKeyNumberSeparator, swatchShouldEmit }: ConfigurationContextType = useContext(ConfigurationContext)
   const { messages = {} } = useIntl()
 
   const colorIsInLivePalette: boolean = useSelector(store => store.lp.colors.some(({ colorNumber }) => colorNumber === color.colorNumber))
@@ -42,7 +43,14 @@ export const Content = ({ msg, color, style }: ContentProps) => {
           : (
             <button
               title={(addButtonText || at(messages, 'ADD_TO_PALETTE')[0] || '').replace('{name}', fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator))}
-              onClick={() => dispatch(swatchShouldEmit ? emitColor(color) : add(color))}
+              onClick={() => {
+                dispatch(swatchShouldEmit ? emitColor(color) : add(color))
+                GA.event({
+                  category: startCase(window.location.hash.split('/').filter(hash => HASH_CATEGORIES.indexOf(hash) >= 0)),
+                  action: 'Color Swatch Add',
+                  label: fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator)
+                }, GA_TRACKER_NAME_BRAND[brandId])
+              }}
             >
               <FontAwesomeIcon className='add-icon' icon={['fal', 'plus-circle']} size='2x' />
               {addButtonText && <span className='OmniButton__content'>{title}</span>}
@@ -114,7 +122,7 @@ const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, co
         onClick={!isClickable || (chunkClickable && section === kebabCase(primeColorWall))
           ? noop
           : () => {
-            GA.event({ category: 'Color Wall', action: 'Color Swatch Clicks', label: `${color.name} - ${color.colorNumber}` }, GA_TRACKER_NAME_BRAND[brandId])
+            GA.event({ category: 'Color Wall', action: 'Color Swatch Click', label: fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator) }, GA_TRACKER_NAME_BRAND[brandId])
             if (activeColorRouteBuilderRef && activeColorRouteBuilderRef.current) {
               activeColorRouteBuilderRef.current(color)
             } else {

@@ -11,6 +11,8 @@ import type { FlatVariant, MiniColor } from '../../shared/types/Scene'
 import { useSelector } from 'react-redux'
 import { useLocation } from 'react-router-dom'
 import { ROUTES_ENUM } from '../Facets/ColorVisualizerWrapper/routeValueCollections'
+import * as GA from 'src/analytics/GoogleAnalytics'
+import { GA_TRACKER_NAME_BRAND } from 'src/constants/globals'
 
 type Props = {
   buttonCaption: string,
@@ -42,7 +44,7 @@ const getDownloadData = (activeSceneType: string, location: Location, paintScene
 
 export default (props: Props) => {
   const location = useLocation()
-  const { cvw = {} }: ConfigurationContextType = useContext(ConfigurationContext)
+  const { brandId, cvw = {} }: ConfigurationContextType = useContext(ConfigurationContext)
   const { palette = {} } = cvw
   const { downloadBtn = {} } = palette
   const [isCreatingDownload, setIsCreatingDownload] = useState(false)
@@ -89,6 +91,8 @@ export default (props: Props) => {
           setIsCreatingDownload(false)
         }
       })
+
+    GA.event({ category: 'Active Scene', action: 'Download Click', label: 'Download' }, GA_TRACKER_NAME_BRAND[brandId])
   }
 
   return (

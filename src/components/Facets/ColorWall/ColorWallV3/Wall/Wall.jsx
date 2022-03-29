@@ -9,6 +9,7 @@ import InfoButton from 'src/components/InfoButton/InfoButton'
 import './Wall.scss'
 import at from 'lodash/at'
 import noop from 'lodash/noop'
+import startCase from 'lodash/startCase'
 import { AutoSizer } from 'react-virtualized'
 import 'src/scss/externalComponentSupport/AutoSizer.scss'
 import { computeWall } from '../sharedReducersAndComputers'
@@ -21,6 +22,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useIntl } from 'react-intl'
 import ColorWallContext, { type ColorWallContextProps } from '../../ColorWallContext'
 import { type ColorsState } from 'src/shared/types/Actions.js.flow'
+import * as GA from 'src/analytics/GoogleAnalytics'
+import { GA_TRACKER_NAME_BRAND, HASH_CATEGORIES } from 'src/constants/globals'
 
 // MASTER TODO LIST
 // [x] ingest and display real color data. color data should be delivered as props ({ [colorId]: { colorDataObj } })
@@ -55,7 +58,7 @@ function Wall (props: WallProps) {
   } = props
   const dispatch = useDispatch()
   const { colorWallBgColor }: ColorWallContextProps = useContext(ColorWallContext)
-  const { brandKeyNumberSeparator, colorWall: { colorSwatch = {} } }: ConfigurationContextType = useContext(ConfigurationContext)
+  const { brandId, brandKeyNumberSeparator, colorWall: { colorSwatch = {} } }: ConfigurationContextType = useContext(ConfigurationContext)
   const { houseShaped = false } = colorSwatch
   const { items: { colorMap } }: ColorsState = useSelector(state => state.colors)
   const livePaletteColors = useSelector(store => store.lp.colors)
@@ -145,6 +148,7 @@ function Wall (props: WallProps) {
               disabled={active}
               onClick={() => {
                 handleMakeActiveSwatchId(id)
+                GA.event({ category: 'Color Wall', action: 'Color Swatch Click', label: fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator) }, GA_TRACKER_NAME_BRAND[brandId])
               }}
               className={`${swatchRendererClass}${active ? ` ${swatchRendererClass}--active${houseShaped ? '-house-shaped' : ''}` : ''}`}
               style={{ background: color.hex }}
@@ -162,7 +166,14 @@ function Wall (props: WallProps) {
                     {colorIsInLivePalette
                       ? <FontAwesomeIcon className='check-icon' icon={['fa', 'check-circle']} size='2x' />
                       : <button
-                        onClick={() => dispatch(add(color))}
+                        onClick={() => {
+                          dispatch(add(color))
+                          GA.event({
+                            category: startCase(window.location.hash.split('/').filter(hash => HASH_CATEGORIES.indexOf(hash) >= 0)),
+                            action: 'Color Swatch Add',
+                            label: fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator)
+                          }, GA_TRACKER_NAME_BRAND[brandId])
+                        }}
                         title={at(messages, 'ADD_TO_PALETTE')[0].replace('{name}', fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator))}
                       >
                         <FontAwesomeIcon className='add-icon' icon={['fal', 'plus-circle']} size='2x' />
