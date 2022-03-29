@@ -11,6 +11,8 @@ import { loadCollectionSummaries } from 'src/store/actions/collectionSummaries'
 import { loadColors } from 'src/store/actions/loadColors'
 import { useIntl } from 'react-intl'
 import './ColorCollections.scss'
+import * as GA from 'src/analytics/GoogleAnalytics'
+import { GA_TRACKER_NAME_BRAND } from 'src/constants/globals'
 
 export function ColorCollections () {
   const dispatch = useDispatch()
@@ -62,6 +64,7 @@ export function ColorCollections () {
                 getSummaryData={(collectionSummaryData) => {
                   setCardShowing(<CollectionDetail collectionDetailData={collectionSummaryData} />)
                   setCardTitle(collectionSummaryData.name)
+                  GA.event({ category: 'Color Collections', action: 'Collection Click', label: collectionSummaryData.name }, GA_TRACKER_NAME_BRAND[brandId])
                 }}
               />
             </div>

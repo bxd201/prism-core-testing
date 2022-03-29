@@ -74,6 +74,8 @@ import {
 import FastMaskView from '../../FastMask/FastMaskView'
 import type { FastMaskWorkspace } from '../../FastMask/FastMaskView'
 import debounce from 'lodash/debounce'
+import * as GA from 'src/analytics/GoogleAnalytics'
+import { GA_TRACKER_NAME_BRAND } from 'src/constants/globals'
 
 export type CVWPropsType = {
   alwaysShowColorFamilies?: boolean,
@@ -295,6 +297,7 @@ const CVW = (props: CVWPropsType) => {
     }
 
     history.push(ROUTES_ENUM.USE_OUR_IMAGE)
+    GA.event({ category: 'Active Scene', action: 'More Scenes Click', label: 'More Scenes' }, GA_TRACKER_NAME_BRAND[brandId])
   }
 
   const handleSceneSelection = (sceneUid: string, carouselCacheData: number[]) => {

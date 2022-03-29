@@ -116,7 +116,7 @@ const SearchBar = (props: Props) => {
 
     onSearchQuery && onSearchQuery(_value)
 
-    GA.event({ category: 'QR Color Wall Search', action: 'Search Queries', label: _value }, GA_TRACKER_NAME_BRAND[brandId])
+    GA.event({ category: 'Color Wall Search', action: 'Search Query', label: _value }, GA_TRACKER_NAME_BRAND[brandId])
   }, 500), [])
 
   useEffect(() => {

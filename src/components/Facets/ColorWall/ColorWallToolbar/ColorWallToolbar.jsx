@@ -20,6 +20,8 @@ import { navigateToIntendedDestination, setIsColorWallModallyPresented } from 's
 import './ColorWallMenuBar.scss'
 import '../../../GeneralButtons/ButtonBar/ButtonBar.scss'
 import omitPrefix from 'src/shared/utils/omitPrefix.util'
+import * as GA from 'src/analytics/GoogleAnalytics'
+import { GA_TRACKER_NAME_BRAND } from 'src/constants/globals'
 
 const PATH_END_FAMILY = 'family/'
 const menuBarPrefix = 'menu-bar'
@@ -63,19 +65,32 @@ type ColorFamilyMenuBtnsT = {
 }
 
 const ColorFamilyMenuBtns = ({ showAll = false, section, families = [] }: ColorFamilyMenuBtnsT) => {
+  const { brandId }: ConfigurationContextType = useContext(ConfigurationContext)
+
   if (families.length) {
     return <>
       {showAll
-        ? <ButtonBar.Button isActive={(match, location) => {
-          if (!match) {
-            return false
-          }
+        ? <ButtonBar.Button
+          isActive={(match, location) => {
+            if (!match) {
+              return false
+            }
 
-          return !!location.pathname.match(new RegExp(`${match.url}/?(/color/.*)?/?$`))
-        }} style={{ justifyContent: 'center', width: '100%' }} to={generateColorWallPageUrl(section)}><span className={MODE_CLASS_NAMES.DESC}>All</span></ButtonBar.Button>
+            return !!location.pathname.match(new RegExp(`${match.url}/?(/color/.*)?/?$`))
+          }}
+          style={{ justifyContent: 'center', width: '100%' }}
+          to={generateColorWallPageUrl(section)}
+        >
+          <span className={MODE_CLASS_NAMES.DESC}>All</span>
+        </ButtonBar.Button>
         : null}
       {families.map(name =>
-        <ButtonBar.Button style={{ justifyContent: 'center', width: '100%' }} key={name} to={generateColorWallPageUrl(section, name)}>
+        <ButtonBar.Button
+          key={name}
+          onClick={() => GA.event({ category: 'Color Wall', action: 'Color Family Menu Click', label: name }, GA_TRACKER_NAME_BRAND[brandId])}
+          style={{ justifyContent: 'center', width: '100%' }}
+          to={generateColorWallPageUrl(section, name)}
+        >
           <span className={MODE_CLASS_NAMES.DESC}>{omitPrefix(name)}</span>
         </ButtonBar.Button>
       )}

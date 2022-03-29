@@ -76,11 +76,14 @@ export const GA_TRACKER_NAME_BRAND = Object.freeze({
   cscc: GA_TRACKER_NAME_SW,
   easy: GA_TRACKER_NAME_SW,
   hgsw: GA_TRACKER_NAME_CBG_HGSW,
+  hgtv: GA_TRACKER_NAME_CBG_HGSW,
   lowes: GA_TRACKER_NAME_SW,
   sherwin: GA_TRACKER_NAME_SW,
   'SW-CA': GA_TRACKER_NAME_SW,
   valspar: GA_TRACKER_NAME_CBG_VALSPAR
 })
+
+export const HASH_CATEGORIES = ['color-collections', 'color-from-image', 'color-wall', 'expert-colors', 'paint-photo']
 
 export const IS_IE = (() => {
   if (typeof window !== 'undefined') {

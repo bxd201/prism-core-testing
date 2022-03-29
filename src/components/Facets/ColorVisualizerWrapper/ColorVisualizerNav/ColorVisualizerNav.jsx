@@ -1,6 +1,6 @@
 // @flow
 // eslint-disable-next-line no-unused-vars
-import React, { useContext, useRef, useState, useEffect, useMemo, ReactChildren } from 'react'
+import React, { type Element, useContext, useRef, useState, useEffect, useMemo, ReactChildren } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Switch, Route, useHistory, useLocation } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -12,6 +12,7 @@ import { FEATURE_EXCLUSIONS } from 'src/constants/configurations'
 import { shouldAllowFeature } from 'src/shared/utils/featureSwitch.util'
 import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import isEmpty from 'lodash/isEmpty'
+import startCase from 'lodash/startCase'
 import { createMatchPhotoNavigationWarningModal, createNavigationWarningModal } from 'src/components/CVWModalManager/createModal'
 import {
   // cleanupNavigationIntent,
@@ -24,6 +25,8 @@ import { MODAL_TYPE_ENUM } from 'src/components/CVWModalManager/constants'
 import { triggerPaintSceneLayerPublish } from 'src/store/actions/paintScene'
 import { DEFAULT_NAV_STRUCTURE } from './navStructure'
 import { CVWNavBtn } from '../CVWNavBtn/CVWNavBtn'
+import * as GA from 'src/analytics/GoogleAnalytics'
+import { GA_TRACKER_NAME_BRAND } from 'src/constants/globals'
 
 const selectDevice = (web, iPhone = web, android = web, iPad = web) => (isMobileOnly ? (isIOS ? iPhone : android) : (isTablet ? iPad : web)) || web
 
@@ -135,6 +138,11 @@ const ColorVisualizerNav = () => {
   const [dropDownItemsForPaintAPhoto, setDropDownItemsForPaintAPhoto] = useState([])
   const doAfterSelectFile = useRef()
 
+  const setGAEvent = (props: { category?: string, action?: string, label: any }) => {
+    const { category = 'Color Visualizer Menu', action = 'Menu Click', label } = props
+    GA.event({ category, action, label: startCase(label.toLowerCase()) }, GA_TRACKER_NAME_BRAND[brandId])
+  }
+
   useEffect(() => setIsLoadingCVWConfig(isEmpty(cvw)), [cvw])
 
   /**
@@ -155,7 +163,10 @@ const ColorVisualizerNav = () => {
           img: cvw?.navExploreColor,
           title: digitalColorWall?.title ?? messages['NAV_LINKS.DIGITAL_COLOR_WALL'],
           content: digitalColorWall?.content ?? formatMessage({ id: 'NAV_DROPDOWN_LINK_SUB_CONTENT.DIGITAL_COLOR_WALL' }, { brand }),
-          onClick: () => history.push(ROUTES_ENUM.COLOR_WALL)
+          onClick: () => {
+            history.push(ROUTES_ENUM.COLOR_WALL)
+            setGAEvent({ action: 'Submenu Click', label: digitalColorWall?.title ?? messages['NAV_LINKS.DIGITAL_COLOR_WALL'] })
+          }
         },
         allowed: () => shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.colorWall)
       },
@@ -165,7 +176,10 @@ const ColorVisualizerNav = () => {
           img: cvw?.navColorCollections,
           title: colorCollections?.title ?? messages['NAV_LINKS.COLOR_COLLECTIONS'],
           content: colorCollections?.content ?? messages['NAV_DROPDOWN_LINK_SUB_CONTENT.COLOR_COLLECTIONS'],
-          onClick: () => history.push(ROUTES_ENUM.COLOR_COLLECTION)
+          onClick: () => {
+            history.push(ROUTES_ENUM.COLOR_COLLECTION)
+            setGAEvent({ action: 'Submenu Click', label: colorCollections?.title ?? messages['NAV_LINKS.COLOR_COLLECTIONS'] })
+          }
         },
         allowed: () => shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.colorCollections)
       },
@@ -185,6 +199,7 @@ const ColorVisualizerNav = () => {
                 dispatch(setNavigationIntent(navTo))
               }
             }
+            setGAEvent({ action: 'Submenu Click', label: matchAPhoto?.title ?? messages['NAV_LINKS.MATCH_A_PHOTO'] })
           }
         },
         allowed: () => shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.matchAPhoto)
@@ -195,7 +210,10 @@ const ColorVisualizerNav = () => {
           img: cvw?.navPaintedScenes,
           title: paintedPhotos?.title ?? messages['NAV_LINKS.PAINTED_PHOTOS'],
           content: paintedPhotos?.content ?? messages['NAV_DROPDOWN_LINK_SUB_CONTENT.PAINTED_PHOTOS'],
-          onClick: () => history.push(ROUTES_ENUM.USE_OUR_IMAGE)
+          onClick: () => {
+            history.push(ROUTES_ENUM.USE_OUR_IMAGE)
+            setGAEvent({ action: 'Submenu Click', label: paintedPhotos?.title ?? messages['NAV_LINKS.PAINTED_PHOTOS'] })
+          }
         },
         allowed: () => shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.paintedPhotos)
       },
@@ -205,7 +223,10 @@ const ColorVisualizerNav = () => {
           img: cvw?.navExpertColorPicks,
           title: expertColorPicks?.title ?? messages['NAV_LINKS.EXPERT_COLOR_PICKS'],
           content: expertColorPicks?.content ?? messages['NAV_DROPDOWN_LINK_SUB_CONTENT.EXPERT_COLOR_PICKS'],
-          onClick: () => history.push(ROUTES_ENUM.EXPERT_COLORS)
+          onClick: () => {
+            history.push(ROUTES_ENUM.EXPERT_COLORS)
+            setGAEvent({ action: 'Submenu Click', label: expertColorPicks?.title ?? messages['NAV_LINKS.EXPERT_COLOR_PICKS'] })
+          }
         },
         allowed: () => shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.expertColorPicks)
       },
@@ -215,7 +236,10 @@ const ColorVisualizerNav = () => {
           img: cvw?.navSamplePhotos,
           title: inspirationalPhotos?.title ?? messages['NAV_LINKS.INSPIRATIONAL_PHOTOS'],
           content: inspirationalPhotos?.content ?? messages['NAV_DROPDOWN_LINK_SUB_CONTENT.INSPIRATIONAL_PHOTOS'],
-          onClick: () => history.push(ROUTES_ENUM.COLOR_FROM_IMAGE)
+          onClick: () => {
+            history.push(ROUTES_ENUM.COLOR_FROM_IMAGE)
+            setGAEvent({ action: 'Submenu Click', label: inspirationalPhotos?.title ?? messages['NAV_LINKS.INSPIRATIONAL_PHOTOS'] })
+          }
         },
         allowed: () => shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.inspirationalPhotos)
       },
@@ -225,7 +249,10 @@ const ColorVisualizerNav = () => {
           img: cvw?.navSampleScenes,
           title: useOurPhotos?.title ?? messages['NAV_LINKS.USE_OUR_PHOTOS'],
           content: useOurPhotos?.content ?? messages['NAV_DROPDOWN_LINK_SUB_CONTENT.USE_OUR_PHOTOS'],
-          onClick: () => history.push(ROUTES_ENUM.PAINT_PHOTO)
+          onClick: () => {
+            history.push(ROUTES_ENUM.PAINT_PHOTO)
+            setGAEvent({ action: 'Submenu Click', label: useOurPhotos?.title ?? messages['NAV_LINKS.USE_OUR_PHOTOS'] })
+          }
         },
         allowed: () => shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.useOurPhotos)
       },
@@ -268,6 +295,7 @@ const ColorVisualizerNav = () => {
                 }
               }
             }
+            setGAEvent({ action: 'Submenu Click', label: uploadYourPhoto?.title ?? messages['NAV_LINKS.UPLOAD_YOUR_PHOTO'] })
           }
         },
         allowed: () => shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.uploadYourPhoto)
@@ -391,7 +419,10 @@ const ColorVisualizerNav = () => {
             <CVWNavBtn
               ref={navBtnRef}
               active={location.pathname === ROUTES_ENUM.ACTIVE_COLORS}
-              onClick={() => handleNavigation(ROUTES_ENUM.ACTIVE_COLORS)}
+              onClick={() => {
+                handleNavigation(ROUTES_ENUM.ACTIVE_COLORS)
+                setGAEvent({ label: exploreColors?.tab ?? messages['NAV_LINKS.EXPLORE_COLORS'] })
+              }}
               iconRenderer={({ className }) => exploreColors?.showIcon && <span className={`fa-layers fa-fw ${className}`}>
                 <FontAwesomeIcon icon={['fal', 'square-full']} size='xs' transform={{ rotate: 10 }} />
                 <FontAwesomeIcon icon={['fal', 'square-full']} size='sm' transform={{ rotate: 0 }} />
@@ -404,7 +435,10 @@ const ColorVisualizerNav = () => {
           ? <li>
             <CVWNavBtn
               active={location.pathname === ROUTES_ENUM.INSPIRATION}
-              onClick={() => handleNavigation(ROUTES_ENUM.INSPIRATION)}
+              onClick={() => {
+                handleNavigation(ROUTES_ENUM.INSPIRATION)
+                setGAEvent({ label: getInspired?.tab ?? messages['NAV_LINKS.GET_INSPIRED'] })
+              }}
               iconRenderer={({ className }) => getInspired?.showIcon && <span className={`${className}`}>
                 <FontAwesomeIcon icon={['fal', 'lightbulb']} size='1x' />
               </span>}
@@ -414,7 +448,10 @@ const ColorVisualizerNav = () => {
           ? <li>
             <CVWNavBtn
               active={location.pathname === ROUTES_ENUM.SCENES}
-              onClick={() => handleNavigation(ROUTES_ENUM.SCENES)}
+              onClick={() => {
+                handleNavigation(ROUTES_ENUM.SCENES)
+                setGAEvent({ label: paintAPhoto?.tab ?? messages['NAV_LINKS.PAINT_A_PHOTO'] })
+              }}
               iconRenderer={({ className }) => paintAPhoto?.showIcon && <span className={`fa-layers fa-fw ${className}`}>
                 <FontAwesomeIcon icon={['fal', 'square-full']} />
                 <FontAwesomeIcon icon={['fa', 'brush']} size='sm' transform={{ rotate: 320 }} />

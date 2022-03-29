@@ -7,15 +7,19 @@ import { showColorDetailsModal } from 'src/store/actions/loadColors'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import useColors from 'src/shared/hooks/useColors'
+import { fullColorName } from 'src/shared/helpers/ColorUtils'
 import filter from 'lodash/filter'
-import values from 'lodash/values'
 import isEmpty from 'lodash/isEmpty'
+import startCase from 'lodash/startCase'
+import values from 'lodash/values'
 import './InfoButton.scss'
+import * as GA from 'src/analytics/GoogleAnalytics'
+import { GA_TRACKER_NAME_BRAND, HASH_CATEGORIES } from 'src/constants/globals'
 
 type InfoButtonProps = { color: Color }
 
 export default ({ color }: InfoButtonProps) => {
-  const { colorWall: { colorSwatch = {} } }: ConfigurationContextType = useContext(ConfigurationContext)
+  const { brandId, brandKeyNumberSeparator, colorWall: { colorSwatch = {} } }: ConfigurationContextType = useContext(ConfigurationContext)
   const { infoBtn = {} } = colorSwatch
   const dispatch = useDispatch()
   const { formatMessage } = useIntl()
@@ -23,6 +27,11 @@ export default ({ color }: InfoButtonProps) => {
 
   const onClick = () => {
     dispatch(showColorDetailsModal(color))
+    GA.event({
+      category: startCase(window.location.hash.split('/').filter(hash => HASH_CATEGORIES.indexOf(hash) >= 0)),
+      action: 'Color Swatch Info',
+      label: fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator)
+    }, GA_TRACKER_NAME_BRAND[brandId])
   }
 
   if (isEmpty(colorMap)) {

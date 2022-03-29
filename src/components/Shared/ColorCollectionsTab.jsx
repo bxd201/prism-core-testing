@@ -1,10 +1,13 @@
 // @flow
 //
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useContext } from 'react'
 import type { ColorCollectionsTabs } from '../../shared/types/Colors.js.flow'
-import { KEY_CODES } from 'src/constants/globals'
+import { GA_TRACKER_NAME_BRAND, HASH_CATEGORIES, KEY_CODES } from 'src/constants/globals'
 import { FormattedMessage, useIntl } from 'react-intl'
+import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import at from 'lodash/at'
+import startCase from 'lodash/startCase'
+import * as GA from 'src/analytics/GoogleAnalytics'
 
 type Props = {
   collectionsSelectLabel?: string,
@@ -25,6 +28,7 @@ const tabListItemActive = `${baseClass}__tab-list-item--active`
 
 function ColorCollectionsTab (props: Props) {
   const { collectionsSelectLabel, collectionTabs, showTab, tabIdShow } = props
+  const { brandId }: ConfigurationContextType = useContext(ConfigurationContext)
   const [tabListMobileShow, showTabListMobile] = useState(false)
   const tabFind = collectionTabs.find(tab => tabIdShow && tab.id.toString() === tabIdShow.toString())
   const tabActive = (tabFind) ? tabFind.tabName : undefined
@@ -58,12 +62,21 @@ function ColorCollectionsTab (props: Props) {
     showTabListMobile(!tabListMobileShow)
   }, [showTabListMobile, tabListMobileShow])
 
+  const getGAEvent = tabId => {
+    GA.event({
+      category: startCase(window.location.hash.split('/').filter(hash => HASH_CATEGORIES.indexOf(hash) >= 0)),
+      action: collectionsSelectLabel ?? messages['CHOOSE_A_COLLECTION'],
+      label: startCase(collectionTabs.filter(({ id }) => (typeof id === 'number' ? `${id}` : id) === tabId)[0].tabName.toLowerCase())
+    }, GA_TRACKER_NAME_BRAND[brandId])
+  }
+
   const handleKeyDownLiTab = useCallback((e: SyntheticEvent) => {
     if (e.keyCode === KEY_CODES.KEY_CODE_SPACE || e.keyCode === KEY_CODES.KEY_CODE_ENTER) {
       if (e.currentTarget.dataset.tabid !== tabIdShow) {
         showTab(e.currentTarget.dataset.tabid, true)
       }
       showTabListMobile(!tabListMobileShow)
+      getGAEvent(e.currentTarget.dataset.tabid)
     }
   }, [showTabListMobile, tabListMobileShow])
 
@@ -72,6 +85,7 @@ function ColorCollectionsTab (props: Props) {
       showTab(e.currentTarget.dataset.tabid, true)
     }
     showTabListMobile(!tabListMobileShow)
+    getGAEvent(e.currentTarget.dataset.tabid)
   }, [showTabListMobile, tabListMobileShow])
 
   const mouseDownHandler = (e: SyntheticEvent) => {
