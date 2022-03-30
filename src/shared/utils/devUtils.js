@@ -47,16 +47,6 @@ export const shouldShowPaintScene = () => {
 
 export const showPaintScene = () => setDevOption(DEV_OPTIONS_ENUM.SHOW_PAINTSCENE, true)
 export const hidePaintScene = () => setDevOption(DEV_OPTIONS_ENUM.SHOW_PAINTSCENE, false)
-export const getDevOption = (optName) => {
-  if (!optName) {
-    console.error('No dev options name specified.')
-    return
-  }
-
-  const devOpts = getDevOptions() || {}
-
-  return devOpts[optName]
-}
 
 export const shouldUseMocks = () => {
   if (ENV !== DEV) {
@@ -69,7 +59,6 @@ export const shouldUseMocks = () => {
 if (ENV === DEV) {
   window.devutils = {
     setDevOption,
-    getDevOption,
     showLoadingAnimation,
     hideLoadingAnimation,
     showPaintScene,

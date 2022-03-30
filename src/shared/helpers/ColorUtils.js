@@ -19,7 +19,7 @@ function _alterLuminosity (colorValue: any, newLuminosity: number): TinyColor {
 }
 
 export const alterLuminosity = memoizee(_alterLuminosity, function (colorValue, newLuminosity) {
-  // custom hash function so we can have unique memoized results based on both arguments
+  // cusom hash function so we can have unique memoized results based on both arguments
   return `${colorValue}_${newLuminosity}`
 }, { primitive: true, length: 2 })
 
