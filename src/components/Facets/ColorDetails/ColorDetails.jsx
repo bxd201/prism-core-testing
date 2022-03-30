@@ -24,6 +24,7 @@ import './ColorDetails.scss'
 import ColorDataWrapper from 'src/helpers/ColorDataWrapper/ColorDataWrapper'
 import HeroLoader from 'src/components/Loaders/HeroLoader/HeroLoader'
 import { ColorDetailsCTAs, type ColorDetailsCTAData } from './ColorDetailsCTAs'
+import { cloneDeep } from 'lodash/lang'
 
 const baseClass = 'color-info'
 const mainInfoClass = `${baseClass}__main-info`
@@ -35,17 +36,30 @@ type Props = {
   onColorChipToggled?: boolean => void,
   familyLink?: string,
   loading?: boolean,
-  initialColor?: Color,
+  colorFromParent?: Color,
   initialVariantName?: string,
   callsToAction?: ColorDetailsCTAData[]
 }
 
-export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged, onColorChipToggled, familyLink, loading, initialColor = {}, initialVariantName, callsToAction = [] }: Props) => {
+type ColorMessage = {
+  ...Color,
+  doNotBroadcast?: boolean
+}
+
+export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged, onColorChipToggled, familyLink, loading, colorFromParent = {}, initialVariantName, callsToAction = [] }: Props) => {
   const dispatch = useDispatch()
   const { brandId }: ConfigurationContextType = useContext(ConfigurationContext)
-  const [color, setColor] = useState<Color>(initialColor)
+  const [color, setColor] = useState<ColorMessage>(colorFromParent)// in some case we add an extra prop to a color obj that tells the pub method to not fire
   const [tabIndex, setTabIndex] = useState<number>(0)
   const [isMaximized, setMaximized] = useState(false)
+
+  useEffect(() => {
+    if (colorFromParent && colorFromParent.id !== color.id) {
+      const _color = cloneDeep(colorFromParent)
+      _color.doNotBroadcast = true
+      setColor(_color)
+    }
+  }, [colorFromParent])
 
   useEffect(() => {
     dispatch(toggleColorDetailsPage())
@@ -53,8 +67,12 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
   }, [])
 
   useEffect(() => {
-    color && GA.pageView(`color-detail/${color.brandKey} ${color.colorNumber} - ${color.name}`, GA_TRACKER_NAME_BRAND[brandId])
-    onColorChanged && onColorChanged(color)
+    if (color) {
+      GA.pageView(`color-detail/${color.brandKey} ${color.colorNumber} - ${color.name}`, GA_TRACKER_NAME_BRAND[brandId])
+    }
+    if (onColorChanged && !color?.doNotBroadcast) {
+      onColorChanged(color)
+    }
     // force tab change to first tab if there is no coordinating colors tab
     color.coordinatingColors || setTabIndex(0)
   }, [color])

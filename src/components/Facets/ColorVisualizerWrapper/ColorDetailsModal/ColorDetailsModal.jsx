@@ -28,7 +28,7 @@ export default () => {
           &times;
         </button>
         <ColorDetails
-          initialColor={color}
+          colorFromParent={color}
           onColorChanged={newColor => {
             publish('prism-new-color', newColor)
           }}
