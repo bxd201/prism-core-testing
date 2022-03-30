@@ -53,6 +53,10 @@ export const ColorDetailsPage = function ColorDetailsPage (props: Props) {
   const { subscribe, unsubscribe, publish } = useContext(PubSubCtx)
   const [CTAs, setCTAs] = useState()
 
+  // eslint-disable-next-line no-debugger
+  debugger
+  console.log(props)
+
   const handleNewCTAs = function handleNewCTAs (newCTAs) {
     setCTAs(newCTAs)
   }
@@ -110,7 +114,7 @@ export const ColorDetailsPage = function ColorDetailsPage (props: Props) {
       {!colorMap || !selectedSceneUid ? <HeroLoader /> : (colorId && color
         ? (
           <>
-            <Redirect to={`${colorDetailsBaseUrl}/${colorId}/${color.brandKey}-${color.colorNumber}-${cleanColorNameForURL(color.name)}`} />
+            {!window.devutils?.getDevOption('cdp') ? <Redirect to={`${colorDetailsBaseUrl}/${colorId}/${color.brandKey}-${color.colorNumber}-${cleanColorNameForURL(color.name)}`} /> : null}
             {location.pathname !== '/' && (
               <Route path={`${colorDetailsBaseUrl}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`}>
                 <ColorDetails

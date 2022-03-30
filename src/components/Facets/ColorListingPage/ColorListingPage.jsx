@@ -11,6 +11,8 @@ import ConfigurationContext from '../../../contexts/ConfigurationContext/Configu
 import { useIntl } from 'react-intl'
 
 const ColorWallCDP = () => {
+  // eslint-disable-next-line no-debugger
+  debugger
   const { locale } = useIntl()
   const { brandId } = useContext(ConfigurationContext)
   return (
