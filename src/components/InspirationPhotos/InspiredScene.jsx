@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { add } from 'src/store/actions/live-palette'
 import Prism, { ColorPin, ImageColorPicker } from 'prism-lib'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { getContrastYIQ } from '../../../src/shared/helpers/ColorUtils'
+import { fullColorNumber, getContrastYIQ } from 'src/shared/helpers/ColorUtils'
 import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
 
 type InspiredSceneProps = {
@@ -15,7 +15,7 @@ const InspiredScene = ({ data: { img, initPins } }: InspiredSceneProps) => {
   const colors = useSelector((store) => store.colors.unorderedColors)
   const dispatch = useDispatch()
   const livePaletteColors = useSelector((store) => store.lp.colors)
-  const { colorWall: { colorSwatch = {} } } = useContext<ConfigurationContextType>(ConfigurationContext)
+  const { brandKeyNumberSeparator, colorWall: { colorSwatch = {} } } = useContext<ConfigurationContextType>(ConfigurationContext)
   const { colorNumOnBottom = false, houseShaped = false } = colorSwatch
   const baseClass = `image-color-picker${colorNumOnBottom ? `--name-number${houseShaped ? '-house-shaped' : ''}` : '--number-name'}`
 
@@ -40,7 +40,7 @@ const InspiredScene = ({ data: { img, initPins } }: InspiredSceneProps) => {
               )}
               labelContent={(color) => (
                 <div className={baseClass}>
-                  <p className={`${baseClass}__number`}>{`${color.brandKey}${color.colorNumber}`}</p>
+                  <p className={`${baseClass}__number`}>{fullColorNumber(color.brandKey, color.colorNumber, brandKeyNumberSeparator)}</p>
                   <p className={`${baseClass}__name`}>{color.name}</p>
                 </div>
               )}
