@@ -1,7 +1,7 @@
 // @flow
 import React, { useState, useEffect, useContext } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { Route, Redirect, useLocation, useHistory } from 'react-router-dom'
+import { Route, useHistory } from 'react-router-dom'
 import facetBinder from 'src/facetSupport/facetBinder'
 import ColorDetails from 'src/components/Facets/ColorDetails/ColorDetails'
 import { ROUTE_PARAMS, ROUTE_PARAM_NAMES, SCENE_TYPES } from 'src/constants/globals'
@@ -36,8 +36,7 @@ type Props = {
 export const ColorDetailsPage = function ColorDetailsPage (props: Props) {
   const { colorSEO, brand, language } = props
   const dispatch = useDispatch()
-  loadColors(brand)(dispatch)
-  const location = useLocation()
+  loadColors(brand || 'sherwin')(dispatch)
   const history = useHistory()
   const [familyLink: string, setFamilyLink: string => void] = useState('')
   const colorMap: ColorMap = useSelector(store => store.colors.items.colorMap)
@@ -52,10 +51,18 @@ export const ColorDetailsPage = function ColorDetailsPage (props: Props) {
   const initialSelectedVariantName = useSelector(store => store.selectedVariantName)
   const { subscribe, unsubscribe, publish } = useContext(PubSubCtx)
   const [CTAs, setCTAs] = useState()
+  const [hasInitNav, setHasInitNav] = useState(false)
 
   const handleNewCTAs = function handleNewCTAs (newCTAs) {
     setCTAs(newCTAs)
   }
+
+  useEffect(() => {
+    if (colorSEO && colorId && !hasInitNav) {
+      history.push(`${colorDetailsBaseUrl}/${colorId}/${color.brandKey}-${color.colorNumber}-${cleanColorNameForURL(color.name)}`)
+      setHasInitNav(true)
+    }
+  }, [color, colorId])
 
   useEffect(() => {
     subscribe('PRISM/in/update-color-ctas', handleNewCTAs)
@@ -75,7 +82,7 @@ export const ColorDetailsPage = function ColorDetailsPage (props: Props) {
 
     if (initializingFacetId && initializingFacetId === facetId && !scenesFetchCalled) {
       // @todo scene type should probably be a facet prop -RS
-      fetchRemoteScenes(brand, { language }, SCENES_ENDPOINT, handleScenesFetchedForCVW, handleScenesFetchErrorForCVW, dispatch)
+      fetchRemoteScenes(brand || 'sherwin', { language }, SCENES_ENDPOINT, handleScenesFetchedForCVW, handleScenesFetchErrorForCVW, dispatch)
       setScenesFetchCalled(true)
     }
   }, [initializingFacetId, facetId, scenesFetchCalled])
@@ -110,12 +117,11 @@ export const ColorDetailsPage = function ColorDetailsPage (props: Props) {
       {!colorMap || !selectedSceneUid ? <HeroLoader /> : (colorId && color
         ? (
           <>
-            <Redirect to={`${colorDetailsBaseUrl}/${colorId}/${color.brandKey}-${color.colorNumber}-${cleanColorNameForURL(color.name)}`} />
-            {location.pathname !== '/' && (
+            {hasInitNav && (
               <Route path={`${colorDetailsBaseUrl}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`}>
                 <ColorDetails
                   familyLink={familyLink}
-                  initialColor={color}
+                  colorFromParent={color}
                   intitialVariantName={initialSelectedVariantName}
                   onColorChanged={newColor => {
                     publish('prism-new-color', newColor)
