@@ -1,24 +1,78 @@
 import flattenDeep from 'lodash/flattenDeep'
 import chunk from 'lodash/chunk'
-import memoizee from 'memoizee'
 import isSomething from 'src/shared/utils/isSomething.util'
 import sortBy from 'lodash/sortBy'
+import uniq from 'lodash/uniq'
 
-export const getProximalSwatchesBySwatchId = (chunks, chunkId, swatchId) => {
-  if (isSomething(chunks?.current) && chunkId !== null && isSomething(swatchId)) {
-    const hostChunk = Array.from(chunks.current).filter(({ id }) => id === chunkId)?.[0]
+// TODO: this should actually return a memoized function which will return the perimeter level when provided an ID
+export const getPerimiterLevelTest = (chunkChildren, id, levels = 0) => {
+  if (chunkChildren && isSomething(id)) {
+    if (levels === 0) {
+      return () => 0
+    } else {
+      const coords = getIdCoordsInChunk(id, chunkChildren)
+
+      if (!coords) {
+        return () => 0
+      }
+
+      // more than 0 levels...
+
+      const perimeterArray = []
+
+      for (let curLevel = 1; curLevel <= levels; curLevel++) {
+        const north = chunkChildren[coords[1] - curLevel]?.[coords[0]] ?? null
+        const south = chunkChildren[coords[1] + curLevel]?.[coords[0]] ?? null
+        const east = chunkChildren[coords[1]]?.[coords[0] + curLevel] ?? null
+        const west = chunkChildren[coords[1]]?.[coords[0] - curLevel] ?? null
+
+        perimeterArray[curLevel * 2 - 1] = uniq([north, south, east, west].filter(v => v !== null))
+        perimeterArray[curLevel * 2] = uniq([
+          chunkChildren[coords[1] - curLevel]?.[coords[0] - 1] ?? null,
+          chunkChildren[coords[1] - curLevel]?.[coords[0] + 1] ?? null,
+          chunkChildren[coords[1] + curLevel]?.[coords[0] - 1] ?? null,
+          chunkChildren[coords[1] + curLevel]?.[coords[0] + 1] ?? null,
+          chunkChildren[coords[1] + 1]?.[coords[0] + curLevel] ?? null,
+          chunkChildren[coords[1] - 1]?.[coords[0] + curLevel] ?? null,
+          chunkChildren[coords[1] + 1]?.[coords[0] - curLevel] ?? null,
+          chunkChildren[coords[1] - 1]?.[coords[0] - curLevel] ?? null
+        ].filter(v => v !== null))
+      }
+
+      return function findPerimeterLevelById (id) {
+        for (let i in perimeterArray) {
+          if (perimeterArray[i].indexOf(id) > -1) {
+            return i
+          }
+        }
+      }
+    }
+  }
+
+  return () => 0
+}
+
+export const getIdCoordsInChunk = (id, chunk = [[]]) => {
+  const coords = chunk.reduce((accum, next, y) => {
+    if (accum) return accum
+
+    const x = next.indexOf(id)
+
+    if (x >= 0) {
+      return [x, y]
+    }
+  }, undefined)
+
+  return coords
+}
+
+export const getProximalSwatchesBySwatchId = (chunksSet, chunkId, swatchId) => {
+  if (chunksSet && chunksSet.size > 0 && chunkId !== null && isSomething(swatchId)) {
+    const hostChunk = Array.from(chunksSet).filter(({ id }) => id === chunkId)?.[0]
     const children = hostChunk?.data?.children
 
     if (hostChunk && children.length && children[0]?.length) {
-      const coords = children.reduce((accum, next, y) => {
-        if (accum) return accum
-
-        const x = next.indexOf(swatchId)
-
-        if (x >= 0) {
-          return [x, y]
-        }
-      }, undefined)
+      const coords = getIdCoordsInChunk(swatchId, children)
 
       if (coords) {
         const btnRefs = chunk(Array.from(hostChunk.swatchesRef?.current ?? []), children[0].length)
@@ -29,19 +83,19 @@ export const getProximalSwatchesBySwatchId = (chunks, chunkId, swatchId) => {
 
         return {
           up: {
-            id: children[coordsUp[1]]?.[coordsUp[0]] ?? null,
+            id: btnRefs[coordsUp[1]]?.[coordsUp[0]]?.id ?? null,
             ref: btnRefs[coordsUp[1]]?.[coordsUp[0]]?.el ?? null
           },
           down: {
-            id: children[coordsDn[1]]?.[coordsDn[0]] ?? null,
+            id: btnRefs[coordsDn[1]]?.[coordsDn[0]]?.id ?? null,
             ref: btnRefs[coordsDn[1]]?.[coordsDn[0]]?.el ?? null
           },
           left: {
-            id: children[coordsL[1]]?.[coordsL[0]] ?? null,
+            id: btnRefs[coordsL[1]]?.[coordsL[0]]?.id ?? null,
             ref: btnRefs[coordsL[1]]?.[coordsL[0]]?.el ?? null
           },
           right: {
-            id: children[coordsR[1]]?.[coordsR[0]] ?? null,
+            id: btnRefs[coordsR[1]]?.[coordsR[0]]?.id ?? null,
             ref: btnRefs[coordsR[1]]?.[coordsR[0]]?.el ?? null
           }
         }
@@ -57,18 +111,19 @@ export const getProximalSwatchesBySwatchId = (chunks, chunkId, swatchId) => {
   }
 }
 
-export const findPositionInChunks = memoizee((chunks = [], swatchId) => {
-  if (chunks.length && isSomething(swatchId)) {
-    const b = chunks.map(({ data }) => data)
+export const findPositionInChunks = (chunks, swatchId) => {
+  if (chunks?.size && isSomething(swatchId)) {
+    const _chunks = Array.from(chunks)
+    const b = _chunks.map(({ data }) => data)
     const c = b.map(({ children }) => children)
     const d = c.map(children => flattenDeep(children))
     const f = d.map((children, i) => children.indexOf(swatchId) >= 0 ? i : -1)
     const g = f.reduce((accum, next) => Math.max(accum, next))
 
     return {
-      current: chunks[g] ?? null,
-      next: chunks[g + 1] ?? null,
-      previous: chunks[g - 1] ?? null
+      current: _chunks[g] ?? null,
+      next: _chunks[g + 1] ?? null,
+      previous: _chunks[g - 1] ?? null
     }
   }
 
@@ -77,16 +132,16 @@ export const findPositionInChunks = memoizee((chunks = [], swatchId) => {
     next: null,
     previous: null
   }
-}, { length: 2 })
+}
 
-export const getProximalChunksBySwatchId = (chunks, swatchId, forceFirst = false, forceLast = false) => {
-  if (chunks?.current) {
-    const chunkArray = Array.from(chunks.current)
+export const getProximalChunksBySwatchId = (chunksSet, swatchId) => {
+  if (chunksSet && chunksSet.size > 0) {
+    const chunkArray = Array.from(chunksSet)
     const first = chunkArray[0]
     const last = chunkArray[chunkArray.length - 1]
 
     return {
-      ...findPositionInChunks(chunkArray, swatchId),
+      ...findPositionInChunks(chunksSet, swatchId),
       first,
       last
     }

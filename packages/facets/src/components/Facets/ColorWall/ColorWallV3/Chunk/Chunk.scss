@@ -18,6 +18,7 @@
     width: 100%;
     position: relative;
 
+    // TODO: remove this when everything can be handled through data
     &__family {
       justify-content: flex-start;
     }
