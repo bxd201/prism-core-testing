@@ -1,6 +1,11 @@
 {
   "name": "prism",
   "version": "3.0.0",
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
+  },
   "scripts": {
     "prepare": "husky install",
     "start": "yarn workspace @prism/toolkit build-rollup && yarn workspace @prism/facets start",
