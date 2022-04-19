@@ -1,0 +1,18 @@
+# dependencies
+node_modules
+package-lock.json
+
+# misc
+.DS_Store
+.eslintcache
+.vscode
+dist
+dev-public
+public
+*.local
+*.tgz
+.idea
+
+# test
+cypress/downloads
+testReportExecTime.json

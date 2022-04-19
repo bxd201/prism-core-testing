@@ -1,0 +1,53 @@
+[
+  {
+    "name": "Emerald Designer Edition",
+    "default": false,
+    "families": ["Emerald Designer Edition"],
+    "chunkGridParams": {
+      "gridWidth": 5,
+      "chunkWidth": 5,
+      "wrappingEnabled": true
+    }
+  },
+  {
+    "name": "Living Well Colors",
+    "default": false,
+    "families": ["Living Well"],
+    "chunkGridParams": {
+      "gridWidth": 6,
+      "chunkWidth": 4,
+      "wrappingEnabled": true
+    }
+  },
+  {
+    "name": "Historic Colors",
+    "default": false,
+    "families": ["Historic Color"],
+    "chunkGridParams": {
+      "gridWidth": 2,
+      "chunkHeight": 10,
+      "wrappingEnabled": true
+    }
+  },
+  {
+    "name": "Sherwin-Williams Colors",
+    "default": true,
+    "families": ["Red", "Orange", "Yellow", "Green", "Blue", "Purple", "Neutral", "White & Pastel"],
+    "chunkGridParams": {
+      "gridWidth": 8,
+      "chunkWidth": 7,
+      "wrappingEnabled": false
+    },
+    "prime": true
+  },
+  {
+    "name": "Timeless Colors",
+    "default": false,
+    "families": ["Timeless Color"],
+    "chunkGridParams": {
+      "gridWidth": 2,
+      "chunkWidth": 7,
+      "wrappingEnabled": true
+    }
+  }
+]

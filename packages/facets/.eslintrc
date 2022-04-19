@@ -1,0 +1,52 @@
+{
+  "parser": "@babel/eslint-parser",
+  "extends": [
+    "standard",
+    "standard-react",
+    "plugin:flowtype/recommended",
+  ],
+  "plugins": [
+    "flowtype",
+    "react-hooks",
+    "jest",
+    "formatjs"
+  ],
+  "globals" : {
+    "API_PATH": "readonly",
+    "APP_VERSION": "readonly",
+    "BASE_PATH": "readonly",
+    "Blob": "readonly",
+    "ENV": "readonly",
+    "FileReader": "readonly",
+    "FIREBASE_AUTH_ENABLED": "readonly",
+    "GENERATE_FACET_ASSETS": "readonly",
+    "Image": "readonly",
+    "ImageData": "readonly",
+    "IS_DEVELOPMENT": "readonly",
+    "IS_PRODUCTION": "readonly",
+    "ML_API_URL": "readonly",
+    "render": "readonly",
+    "SMARTMASK_ENABLED": "readonly",
+    "STATIC_TEMPLATES": "readonly",
+    "S3_PATH": "readonly",
+    "URL": "readonly",
+    "VAR_NAMES": "readonly",
+    "VAR_VALUES": "readonly",
+    "WEBPACK_CONSTANTS": "readonly",
+    "Worker": "readonly",
+    "MOCK_API": "readonly"
+  },
+  "rules": {
+    "react-hooks/rules-of-hooks": "error",
+    "jest/no-disabled-tests": "warn",
+    "jest/no-focused-tests": "error",
+    "jest/no-identical-title": "error",
+    "jest/prefer-to-have-length": "warn",
+    "jest/valid-expect": "error",
+    "no-fallthrough": "off",
+    "formatjs/no-offset": "error"
+  },
+  "env": {
+    "jest/globals": true
+  }
+}

@@ -1,6 +1,5 @@
 #!/bin/sh
 
-NODE_ENV=development npm install || exit $?
-# npm run test:ci -- -u || exit $?
-npm run build || exit $?
-tar zcf dist.tgz dist
+yarn install || exit $?
+yarn run build || exit $?
+tar zcf dist.tgz packages/facets/dist packages/toolkit/dist packages/toolkit/public

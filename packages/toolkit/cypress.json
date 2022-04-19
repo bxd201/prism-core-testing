@@ -1,0 +1,8 @@
+{
+  "baseUrl": "http://localhost:6006",
+  "integrationFolder": "src/components",
+  "screenshotOnRunFailure": false,
+  "testFiles": "**/*.spec.ts",
+  "videoCompression": false,
+  "videosFolder": "dev-public/static/media/videos"
+}

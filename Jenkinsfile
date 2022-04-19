@@ -48,7 +48,7 @@ pipeline {
   stages {
     stage('builder') {
       when {
-          expression { BRANCH_NAME ==~ /^(PR-.+|develop|integration|hotfix|qa|release|lowes-cvw)$/ }
+          expression { BRANCH_NAME ==~ /^(PR-.+|develop|integration|hotfix|qa|release|monorepo-conversion)$/ }
         }
       steps {
 
@@ -77,8 +77,9 @@ pipeline {
           --name ${IMAGE_NAME}-build-${BUILD_NUMBER} \
           ${IMAGE_NAME}-build:latest
 
+        mkdir dist
         docker cp ${IMAGE_NAME}-build-${BUILD_NUMBER}:/app/dist.tgz ./
-        tar zxf dist.tgz
+        tar zxf dist.tgz -C dist
         rm dist.tgz
         echo "$PRISM_VERSION" > dist/VERSION
 
@@ -90,7 +91,7 @@ pipeline {
     }
     stage('s3-upload') {
       when {
-          expression { BRANCH_NAME ==~ /^(develop|hotfix|integration|qa|release|lowes-cvw)$/ }
+          expression { BRANCH_NAME ==~ /^(develop|hotfix|integration|qa|release|monorepo-conversion)$/ }
         }
       agent {
         docker {
@@ -102,7 +103,9 @@ pipeline {
         unstash 'static'
 
         sh """
-        aws s3 cp dist/ s3://sw-prism-web/"${S3_FOLDER_NAME}"/ --recursive
+        aws s3 cp dist/packages/facets/dist s3://sw-prism-web/"${S3_FOLDER_NAME}"/ --recursive
+        aws s3 cp dist/packages/facets/dist/storybook s3://sw-prism-web/storybook/facets --recursive
+        aws s3 cp dist/packages/toolkit/public s3://sw-prism-web/storybook/toolkit --recursive
         """
       }
    }

@@ -1,0 +1,98 @@
+ul {
+  margin: 0;
+  padding: 0;
+}
+
+p {
+  color: #5b5b5b;
+}
+
+.video {
+  background-color: #f6f6f4;
+  max-height: 585px;
+  position: relative;
+  width: 100%;
+}
+
+.row {
+  align-items: center;
+  background-color: white;
+  border-bottom: 1px solid #e6e6e6;
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  padding: 0 1rem;
+}
+
+.context {
+  padding-left: 1.3rem;
+}
+
+.wrapped {
+  flex-wrap: wrap;
+}
+
+.no-border {
+  border: none;
+}
+
+.npm {
+  background-color: #dddddd;
+  color: #666666;
+  font-family: monospace;
+  margin-left: 0.4rem;
+  padding: 0.3rem 0.45rem;
+}
+
+.cell {
+  align-items: center;
+  display: flex;
+}
+
+.last-cell {
+  flex-basis: 100%;
+}
+
+.title {
+  font-weight: 600;
+  margin-right: 0.5rem;
+}
+
+.subtitle {
+  background-color: #f1f1f1;
+  padding: 0.85rem 1.3rem;
+}
+
+.status {
+  align-items: center;
+  display: flex;
+}
+
+.icon {
+  color: #808080;
+  font-size: 1.15rem;
+  margin: 0 0.4rem;
+}
+
+.passed {
+  color: #57bd90;
+}
+
+.failed {
+  color: #d85a63;
+  margin: 0 0.6rem;
+}
+
+.pending {
+  color: #eee74f;
+  margin-right: 0.6rem;
+}
+
+.error {
+  background-color: #fdf3f4;
+  color: #d85a63;
+  line-height: 1.2rem;
+  margin-top: 0;
+  padding: 0.7rem;
+  width: 100%;
+}

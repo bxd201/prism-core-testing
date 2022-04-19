@@ -1,0 +1,8 @@
+/* prefix all styles with .prism to prevent them from being applied outside of a div.prism context */
+.prism {
+  @tailwind base;
+}
+
+/* already prefixed by `important: '.prism'` config option in tailwind.config.js */
+@tailwind components;
+@tailwind utilities;
