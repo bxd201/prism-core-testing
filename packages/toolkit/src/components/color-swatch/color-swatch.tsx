@@ -1,50 +1,74 @@
-import React from 'react'
+import React, { CSSProperties, forwardRef, ForwardedRef, useEffect, useState } from 'react'
 import { getLuminosity } from '../../utils/utils'
 import { Color } from '../../types'
 
 export interface ColorSwatchProps {
-  color: Color
-  style?: { zIndex: number; width: number; height: number; left: number; top: number }
-  buttonRenderer?: () => JSX.Element
-  onClick?: () => void
+  active?: boolean,
+  activeFocus?: boolean,
+  "aria-label"?: string,
+  className?: string,
+  color: Color,
+  id?: number,
+  onClick?: () => void,
+  renderer?: ({ id, ref }: { id?: number, ref?: ForwardedRef<HTMLButtonElement & HTMLDivElement> }) => JSX.Element
+  style?: CSSProperties
 }
 
 /**
- * Displays info about a color as a stylized swatch.
+ * Renders swatch.
  *
- * @param {Color} color - color this swatch represents
- * @param {{ zIndex: number, width: number, height: number, left: number, top: number }} style - optional style information used to generate animations in the color wall
- * @param {(Color) => Element<'button' | 'div'>} buttonRenderer - optional function for rendering a cta button at the bottom of a swatch
+ * @param {boolean} active - optional swatch active
+ * @param {boolean} activeFocus - optional active swatch focus
+ * @param {Color} color - swatch background color
+ * @param {number} id - optional swatch id
+ * @param {() => void} onClick - optional action when swatch is clicked
+ * @param {(el) => void} ref - optional swatch element reference
+ * @param {({ id, ref }: { id?: number, ref?: ForwardedRef<HTMLElement> }) => JSX.Element} renderer - optional callback function for rendering swatch content
+ * @param {HTMLAttributes} otherProps - optional props like `aria-label`, `className`, and `style` for swatch
  * @example
  * ```JSX
- *     <ColorSwatch color={{ brandKey: 'SW', hex: '#123456', colorNumber: 1234, name: 'blue' }} />
+ *     <ColorSwatch active style={{ height: 160, width: 160 }} />
  * ```
  */
-const ColorSwatch = ({ color, style, buttonRenderer, ...otherProps }: ColorSwatchProps): JSX.Element => (
-  <div {...otherProps} role='button' className='relative'>
-    <div
-      className='absolute w-40 h-40 border-white border-1 transition-transform duration-200 focus:outline-none'
-      style={{ ...style, backgroundColor: color.hex }}
-      aria-label={`${color.brandKey} ${color.colorNumber} ${color.name}`}
-    />
-    {((style == null) || style.zIndex === 40) && (
-      <section
-        className={`${(style != null) ? 'absolute animate-fadeIn' : 'relative'} focus:outline-none z-50 w-40 h-40 p-3 text-left ${
-          color.hex.length > 0 && getLuminosity(color.hex) < 200 ? 'text-white' : 'text-black'
-        }`}
-        style={
-          (style != null)
-            ? { width: style.width * 2.75, height: style.height * 2.75, left: style.left - 41, top: style.top - 41 }
-            : {}
-        }
-        tabIndex={-1}
-      >
-        <p className='text-sm opacity-90'>{`${color.brandKey} ${color.colorNumber}`}</p>
-        <p className='font-bold'>{color.name}</p>
-        <div className='absolute left-0 bottom-0 w-full p-3'>{buttonRenderer?.()}</div>
-      </section>
-    )}
-  </div>
+ const ColorSwatch = forwardRef<HTMLButtonElement & HTMLDivElement, ColorSwatchProps>(
+  ({ active, activeFocus = true, className, color, id, onClick, renderer, ...otherProps }, ref): JSX.Element => {
+    const [fadeContent, setFadeContent] = useState(false)
+
+    useEffect(() => {
+      setFadeContent(active)
+    }, [active])
+
+    return (
+      <div className='relative' tabIndex={-1} {...otherProps}>
+        <button
+          className={`absolute h-full w-full ${className}`}
+          disabled={active}
+          onClick={onClick}
+          ref={!active ? ref : null}
+          style={{ background: color.hex }}
+        />
+        {active && (
+          <div
+            className={
+              `absolute h-full w-full p-2.5 ${getLuminosity(color.hex) < 200 ? 'text-white' : 'text-black'}
+              ${fadeContent ? 'opacity-1' : 'opacity-0'} transition-opacity duration-200
+              ${className}`
+            }
+            ref={ref}
+            style={activeFocus ? {} : { boxShadow: 'none' }}
+            tabIndex={activeFocus ? 0 : -1}
+          >
+            {renderer?.({ id, ref }) ?? (
+              <div className='relative'>
+                <p className='text-sm'>{`${color.brandKey} ${color.colorNumber}`}</p>
+                <p className='font-bold'>{color.name}</p>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    )
+  }
 )
 
 export default ColorSwatch

@@ -121,7 +121,7 @@ describe('ColorFilter', () => {
 
     it('resets "6926" color to default / shows warning', () => {
       // eslint-disable-next-line
-      cy.wait(50)
+      cy.wait(75)
       cy.findByLabelText(luckyGreenAriaLabel).click()
       cy.findByLabelText('reset').click()
       cy.findByText('Color number 6926 is on filterInByColorNumber. It can only be managed from its control.')

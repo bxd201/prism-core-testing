@@ -18,7 +18,7 @@ const Template = ({ bottomLabel, children, colors, numOfColors = 0 }: TemplateAr
 )
 
 const getRandomColor = (): Color => colorOptions[getRandomColorName()] || colorOptions['A La Mode']
-const getColors = (number): string[] => [...Array(number)].map(() => getRandomColor().hex)
+const getColors = (number: number): string[] => [...Array(number)].map(() => getRandomColor().hex)
 
 export const WithImage = Template.bind({})
 WithImage.args = {
@@ -30,7 +30,7 @@ WithImage.args = {
 
 export const WithSwatch = Template.bind({})
 WithSwatch.args = {
-  children: <ColorSwatch color={getRandomColor()} />,
+  children: <ColorSwatch active activeFocus={false} color={getRandomColor()} style={{ height: 100, width: 200 }} />,
   colors: getColors(3),
   numOfColors: 2
 }
