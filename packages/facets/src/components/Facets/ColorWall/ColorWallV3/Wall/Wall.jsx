@@ -144,7 +144,6 @@ function Wall (props: WallProps) {
     }, 100)
   }
 
-  const [, delayRender] = useState()
   const [defaultScale, setDefaultScale] = useState(1)
   const wallProps = useMemo(() => {
     const isZoomed = isSomething(activeColorId)
@@ -159,72 +158,42 @@ function Wall (props: WallProps) {
       isZoomed: isZoomed,
       getPerimeterLevel: getPerimeterLevel,
       scale: isZoomed ? MAX_SWATCH_SIZE / BASE_SWATCH_SIZE : defaultScale,
-      swatchRenderer: ({ id, ref, active, perimeterLevel = 0 }) => { // eslint-disable-line
+      setActiveSwatchId: id => onActivateColor(id),
+      swatchRenderer: ({ id, ref }) => { // eslint-disable-line
         const color = colorMap[id]
         const colorIsInLivePalette = livePaletteColors.some(({ colorNumber }) => colorNumber === color.colorNumber)
-        const swatchRendererClass = 'cwv3__swatch-renderer'
         const swatchClass = houseShaped ? 'color-swatch-house-shaped' : 'color-swatch'
-        const refs = { current: [] }
-
-        delayRender(active)
-        // this passes our makeshift ref array into the ref callback. as our local refs array is populated below it
-        // will become available to outside entitied needing to access things within
-        ref(refs)
 
         return (
-        // this should contain a real Swatch component that will render active swatch contents
-        // things like calls to action, background color, all that
-        // NOTE: needs the absolute position wrapper, doesn't need a background color
           <>
-            <button
-              ref={el => { if (!active) refs.current.push(el) }}
-              tabIndex={!active ? 0 : -1}
-              disabled={active}
-              onClick={() => {
-                handleMakeActiveSwatchId(id)
-                GA.event({ category: 'Color Wall', action: 'Color Swatch Click', label: fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator) }, GA_TRACKER_NAME_BRAND[brandId])
-              }}
-              className={`${swatchRendererClass} ${active ? `${swatchRendererClass}--active${houseShaped ? '-house-shaped' : ''}` : ''} ${perimeterLevel > 0 ? `${swatchRendererClass}--perimeter ${swatchRendererClass}--perimeter--${perimeterLevel}` : ''}`}
-              style={{ background: color.hex }}
-            />
-            {active
-              ? <div
-                aria-label={fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator)}
-                className={`${swatchRendererClass}__inner${houseShaped ? ` ${swatchRendererClass}__inner-house-shaped` : ''}${color.isDark ? ` ${swatchRendererClass}--dark-color` : ''}`}
-                style={{ background: color.hex }}
-                tabIndex={-1}
-              >
-                <div className={`${swatchClass}__btns`}>
-                  <div className='color-swatch__button-group'>
-                    {colorIsInLivePalette
-                      ? <FontAwesomeIcon className='check-icon' icon={['fa', 'check-circle']} size='2x' />
-                      : <button
-                        ref={el => refs.current.push(el)}
-                        onClick={() => {
-                          dispatch(add(color))
-                          GA.event({
-                            category: startCase(window.location.hash.split('/').filter(hash => HASH_CATEGORIES.indexOf(hash) >= 0)),
-                            action: 'Color Swatch Add',
-                            label: fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator)
-                          }, GA_TRACKER_NAME_BRAND[brandId])
-                        }}
-                        title={at(messages, 'ADD_TO_PALETTE')[0].replace('{name}', fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator))}
-                      >
-                        <FontAwesomeIcon className='add-icon' icon={['fal', 'plus-circle']} size='2x' />
-                      </button>
-                    }
-                    <InfoButton
-                      ref={el => refs.current.push(el)}
-                      color={color}
-                    />
-                  </div>
-                </div>
-                <div className={`${swatchClass}__label`}>
-                  <p className={`${swatchClass}__label__name`}>{color.name}</p>
-                  <p className={`${swatchClass}__label__number`}>{fullColorNumber(color.brandKey, color.colorNumber, brandKeyNumberSeparator)}</p>
-                </div>
+            <div className={`${swatchClass}__btns`}>
+              <div className='color-swatch__button-group'>
+                {colorIsInLivePalette
+                  ? <FontAwesomeIcon className='check-icon' icon={['fa', 'check-circle']} size='2x' />
+                  : <button
+                    onClick={() => {
+                      dispatch(add(color))
+                      GA.event({
+                        category: startCase(window.location.hash.split('/').filter(hash => HASH_CATEGORIES.indexOf(hash) >= 0)),
+                        action: 'Color Swatch Add',
+                        label: fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator)
+                      }, GA_TRACKER_NAME_BRAND[brandId])
+                    }}
+                    title={at(messages, 'ADD_TO_PALETTE')[0].replace('{name}', fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator))}
+                  >
+                    <FontAwesomeIcon className='add-icon' icon={['fal', 'plus-circle']} size='2x' />
+                  </button>
+                }
+                <InfoButton
+                  ref={el => refs.current.push(el)}
+                  color={color}
+                />
               </div>
-              : null}
+            </div>
+            <div className={`${swatchClass}__label`}>
+              <p className={`${swatchClass}__label__name`}>{color.name}</p>
+              <p className={`${swatchClass}__label__number`}>{fullColorNumber(color.brandKey, color.colorNumber, brandKeyNumberSeparator)}</p>
+            </div>
           </>
         )
       }

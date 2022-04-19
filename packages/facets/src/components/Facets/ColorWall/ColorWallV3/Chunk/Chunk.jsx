@@ -1,16 +1,34 @@
+// @flow
 import React, { useContext, useState, useEffect, useRef } from 'react'
+import { useSelector } from 'react-redux'
 import { useRouteMatch } from 'react-router-dom'
 import ColorWallPropsContext from '../ColorWallPropsContext'
 import { computeChunk } from '../sharedReducersAndComputers'
-import Swatch from './Swatch'
-import './Chunk.scss'
+import { ColorSwatch } from '@prism/toolkit'
+import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
+import { type ColorsState } from 'src/shared/types/Actions.js.flow'
 import isSomething from 'src/shared/utils/isSomething.util'
+import { fullColorName } from 'src/shared/helpers/ColorUtils'
+import './Chunk.scss'
+import * as GA from 'src/analytics/GoogleAnalytics'
+import { GA_TRACKER_NAME_BRAND } from 'src/constants/globals'
 
-function Chunk (props) {
-  const { data = {}, updateWidth, updateHeight, id = '' } = props // eslint-disable-line
+const swatchClass = 'cwv3__swatch'
+
+type ChunkProps = {
+  data: { children: any },
+  id: string,
+  updateHeight: any => void,
+  updateWidth: any => void,
+}
+
+function Chunk ({ data = {}, id = '', updateHeight, updateWidth }: ChunkProps) {
   const ctx = useContext(ColorWallPropsContext)
+  const { brandId, brandKeyNumberSeparator, colorWall: { colorSwatch = {} } }: ConfigurationContextType = useContext(ConfigurationContext)
+  const { houseShaped = false } = colorSwatch
+  const { items: { colorMap } }: ColorsState = useSelector(state => state.colors)
   const { params } = useRouteMatch()
-  const { addChunk, activeSwatchId, swatchRenderer, getPerimeterLevel } = ctx
+  const { addChunk, activeSwatchId, getPerimeterLevel, isZoomed, setActiveSwatchId, swatchRenderer } = ctx
   const [ , setWidth ] = useState(0)
   const [ , setHeight ] = useState(0)
   const [ swatchWidth, setSwatchWidth ] = useState(0)
@@ -67,26 +85,43 @@ function Chunk (props) {
     }
   }
 
-  return <div ref={thisEl}
-    className={`cwv3__chunk${activeSwatchId ? 'cwv3__chunk--no-focus' : ''}`}
-    style={{ padding: `${vertSpace}px ${horzSpace}px` }}>
-    {data?.children?.map((row, i) => {
-      // TODO: remove dependence on route matching; all display variation should be handled through the API and data
-      return <div className={`cwv3__chunk__row ${params.family ? 'cwv3__chunk__row__family' : ''}`} key={i}>
-        {row.map((childId, ii) => (
-          <Swatch
-            id={childId}
-            ref={_el => addToSwatchRefs(_el, childId)}
-            key={`${i}_${ii}`}
-            perimeterLevel={getPerimeterLevel(childId)}
-            renderer={swatchRenderer}
-            active={activeSwatchId === childId}
-            width={swatchWidth}
-            height={swatchHeight} />
-        ))}
-      </div>
-    })}
-  </div>
+  return (
+    <div
+      ref={thisEl}
+      className={`cwv3__chunk${houseShaped && isZoomed ? ' cwv3__chunk--no-focus' : ''}`}
+      style={{ padding: `${vertSpace}px ${horzSpace}px` }}
+    >
+      {data.children.map((row, i) => (
+        // TODO: remove dependence on route matching; all display variation should be handled through the API and data
+        <div className={`cwv3__chunk__row${params.family ? ' cwv3__chunk__row__family' : ''}`} key={i}>
+          {row.map((childId, ii) => {
+            const active = activeSwatchId === childId
+            const color = colorMap[childId]
+
+            return (
+              <ColorSwatch
+                active={active}
+                activeFocus={!houseShaped}
+                aria-label={fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator)}
+                color={color}
+                className={`${swatchClass}${active ? ` ${swatchClass}--active${houseShaped ? ` ${swatchClass}--house-shaped` : ''}` : ''}`}
+                id={childId}
+                key={`${i}_${ii}`}
+                onClick={() => {
+                  setActiveSwatchId(childId)
+                  GA.event({ category: 'Color Wall', action: 'Color Swatch Click', label: fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator) }, GA_TRACKER_NAME_BRAND[brandId])
+                }}
+                perimeterLevel={getPerimeterLevel(childId)}
+                ref={_el => addToSwatchRefs(_el, childId)}
+                renderer={swatchRenderer}
+                style={{ height: swatchHeight, width: swatchWidth }}
+              />
+            )
+          })}
+        </div>
+      ))}
+    </div>
+  )
 }
 
 export default Chunk
