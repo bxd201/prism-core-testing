@@ -1,0 +1,99 @@
+$bloom-duration: 200ms;
+$swatch-edge-padding-value: .4rem;
+$swatch-border-size: 1px;
+$swatch-base-size: 50px;
+$bloom-scale-main-sm: 2.66;
+$bloom-scale-main-lg: 3.00;
+$swatch-edge-padding-sm: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-main-lg * $swatch-border-size});
+$swatch-edge-padding-lg: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-main-lg * $swatch-border-size});
+$swatch-white-border: inset 0 0 0 1px white;
+
+.swatch-content {
+  box-shadow: $swatch-white-border;
+
+  &:focus {
+    outline: 5.5px solid var(getThemeColor('primary'));
+    z-index: 950;
+  }
+
+  &__name-number {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+
+  &__label {
+    &--name {
+      font-weight: bold;
+      max-width: 100%;
+      overflow-wrap: break-word;
+      hyphens: auto;
+      font-size: .9em;
+
+      @include respond-above(sm) {
+        font-size: 1em;
+      }
+    }
+
+    &--number {
+      opacity: $color-near-opacity;
+      font-size: .7em;
+      margin-bottom: 0.3em;
+
+      @include respond-above(sm) {
+        font-size: .8em;
+        margin-bottom: 0.4em;
+      }
+    }
+  }
+
+  &__button-group {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    padding: $swatch-edge-padding-sm;
+    font-size: 13px;
+
+    @include respond-above(sm) {
+      padding: $swatch-edge-padding-lg;
+    }
+
+    button {
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  &--house-shaped {
+    &__btns {
+      position: relative;
+      margin-top: 64%;
+    }
+
+    &__label {
+      position: relative;
+      padding: 0.75rem 0.75rem 0.6rem;
+      width: 100%;
+      background: white;
+      border: 1px solid lightgray;
+      border-top: none;
+      text-align: center;
+      line-height: 1.3rem;
+
+      &--name {
+        color: var(getThemeColor('black'));
+        font-family: var(getVarName('typography.bodyFontFamily'));
+        font-style: italic;
+      }
+
+      &--number {
+        color: var(getThemeColor('primary'));
+        font-family: var(getVarName('typography.titleFontFamily'));
+        font-size: .85rem;
+      }
+    }
+  }
+}

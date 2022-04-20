@@ -1,28 +1,22 @@
 // @flow
 import React, { useState, useRef, useMemo, useEffect, useCallback, useContext } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { add } from 'src/store/actions/live-palette'
+import { useSelector } from 'react-redux'
 import ColorWallPropsContext, { BASE_SWATCH_SIZE, colorWallPropsDefault, MIN_SWATCH_SIZE, MAX_SWATCH_SIZE, MAX_SCROLLER_HEIGHT, MIN_SCROLLER_HEIGHT, OUTER_SPACING } from '../ColorWallPropsContext'
-import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
+import ColorSwatchContent from 'src/components/ColorSwatchContent/ColorSwatchContent'
 import Column from '../Column/Column'
-import InfoButton from 'src/components/InfoButton/InfoButton'
-import at from 'lodash/at'
+import './Wall.scss'
 import noop from 'lodash/noop'
-import startCase from 'lodash/startCase'
 import sortBy from 'lodash/sortBy'
 import { AutoSizer } from 'react-virtualized'
 import { computeWall } from '../sharedReducersAndComputers'
 import useEffectAfterMount from 'src/shared/hooks/useEffectAfterMount'
 import { findPositionInChunks, getInitialSwatchInChunk, getInTabOrder, getPerimiterLevelTest, getProximalChunksBySwatchId, getProximalSwatchesBySwatchId } from './wallUtils'
-import { fullColorName, fullColorNumber } from 'src/shared/helpers/ColorUtils'
 import getElementRelativeOffset from 'get-element-relative-offset'
 import isSomething from 'src/shared/utils/isSomething.util'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useIntl } from 'react-intl'
 import ColorWallContext, { type ColorWallContextProps } from '../../ColorWallContext'
 import { type ColorsState } from 'src/shared/types/Actions.js.flow'
-import * as GA from 'src/analytics/GoogleAnalytics'
-import { GA_TRACKER_NAME_BRAND, HASH_CATEGORIES } from 'src/constants/globals'
 
 import './Wall.scss'
 import 'src/scss/convenience/visually-hidden.scss'
@@ -59,10 +53,8 @@ function Wall (props: WallProps) {
     activeColorId,
     height
   } = props
-  const dispatch = useDispatch()
   const { colorWallBgColor }: ColorWallContextProps = useContext(ColorWallContext)
-  const { brandId, brandKeyNumberSeparator, colorWall: { bloomEnabled, colorSwatch = {} } }: ConfigurationContextType = useContext(ConfigurationContext)
-  const { houseShaped = false } = colorSwatch
+  const { colorWall: { bloomEnabled } }: ConfigurationContextType = useContext(ConfigurationContext)
   const { items: { colorMap } }: ColorsState = useSelector(state => state.colors)
   const livePaletteColors = useSelector(store => store.lp.colors)
   const [hasFocus, setHasFocus] = useState(false)
@@ -159,44 +151,7 @@ function Wall (props: WallProps) {
       getPerimeterLevel: getPerimeterLevel,
       scale: isZoomed ? MAX_SWATCH_SIZE / BASE_SWATCH_SIZE : defaultScale,
       setActiveSwatchId: id => onActivateColor(id),
-      swatchRenderer: ({ id, ref }) => { // eslint-disable-line
-        const color = colorMap[id]
-        const colorIsInLivePalette = livePaletteColors.some(({ colorNumber }) => colorNumber === color.colorNumber)
-        const swatchClass = houseShaped ? 'color-swatch-house-shaped' : 'color-swatch'
-
-        return (
-          <>
-            <div className={`${swatchClass}__btns`}>
-              <div className='color-swatch__button-group'>
-                {colorIsInLivePalette
-                  ? <FontAwesomeIcon className='check-icon' icon={['fa', 'check-circle']} size='2x' />
-                  : <button
-                    onClick={() => {
-                      dispatch(add(color))
-                      GA.event({
-                        category: startCase(window.location.hash.split('/').filter(hash => HASH_CATEGORIES.indexOf(hash) >= 0)),
-                        action: 'Color Swatch Add',
-                        label: fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator)
-                      }, GA_TRACKER_NAME_BRAND[brandId])
-                    }}
-                    title={at(messages, 'ADD_TO_PALETTE')[0].replace('{name}', fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator))}
-                  >
-                    <FontAwesomeIcon className='add-icon' icon={['fal', 'plus-circle']} size='2x' />
-                  </button>
-                }
-                <InfoButton
-                  ref={el => refs.current.push(el)}
-                  color={color}
-                />
-              </div>
-            </div>
-            <div className={`${swatchClass}__label`}>
-              <p className={`${swatchClass}__label__name`}>{color.name}</p>
-              <p className={`${swatchClass}__label__number`}>{fullColorNumber(color.brandKey, color.colorNumber, brandKeyNumberSeparator)}</p>
-            </div>
-          </>
-        )
-      }
+      swatchRenderer: ({ id }) => <ColorSwatchContent color={colorMap[id]} /> // eslint-disable-line
     }
   }, [activeColorId, hasFocus, defaultScale, livePaletteColors])
 

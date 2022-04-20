@@ -2,7 +2,8 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 // $FlowIgnore -- no defs for react-virtualized
 import { Grid, AutoSizer } from 'react-virtualized'
-import ColorSwatch from 'src/components/Facets/ColorWall/ColorSwatch/ColorSwatch'
+import { ColorSwatch } from '@prism/toolkit'
+import { colorSwatchCommonProps } from '../ColorSwatchContent/ColorSwatchContent'
 import ColorWallContext, { colorWallContextDefault } from '../Facets/ColorWall/ColorWallContext'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
@@ -10,6 +11,7 @@ import ConfigurationContext, { type ConfigurationContextType } from '../../conte
 import * as scroll from 'scroll'
 import { varValues } from 'src/shared/withBuild/variableDefs'
 import './CollectionDetail.scss'
+import '../ColorSwatchContent/ColorSwatchContent.scss'
 import 'src/scss/externalComponentSupport/AutoSizer.scss'
 import type { ColorCollectionDetail } from '../../shared/types/Colors.js.flow'
 
@@ -30,7 +32,7 @@ const triggerNext = `${baseClass}__next-trigger`
 
 type Props = { collectionDetailData: ColorCollectionDetail, addToLivePalette: Function }
 const CollectionDetail = ({ addToLivePalette, collectionDetailData }: Props) => {
-  const { colorWall: { colorSwatch = {} }, cvw = {} } = useContext<ConfigurationContextType>(ConfigurationContext)
+  const { brandKeyNumberSeparator, colorWall: { colorSwatch = {} }, cvw = {} } = useContext<ConfigurationContextType>(ConfigurationContext)
   const { houseShaped = false } = colorSwatch
   const { colorCollections = {} } = cvw
   const { scrollArrows: showScrollArrows = true, showDescriptionMobile = false } = colorCollections
@@ -53,26 +55,19 @@ const CollectionDetail = ({ addToLivePalette, collectionDetailData }: Props) => 
   const cellRenderer = ({ columnIndex, isScrolling, isVisible, key, parent, rowIndex, style }) => {
     const { columnCount, colors } = parent.props
     const index = columnIndex + (rowIndex * columnCount)
+    const color = colors && colors[index]
+    const swatchClass = houseShaped ? 'collection-detail--house-shaped' : 'swatch-content'
     const pctW = 100 / columnCount
-    const _style = { ...style, width: `${pctW}%`, left: `${pctW * columnIndex}%` }
+    const _style = houseShaped
+      ? { ...style, width: `calc(${pctW}% - 10px)`, left: `${pctW * columnIndex}%`, padding: '5px' }
+      : { ...style, width: `${pctW}%`, left: `${pctW * columnIndex}%` }
 
-    return colors && colors[index] && <div key={key}>
-      {houseShaped ? (
-        <div style={_style}>
-          <ColorSwatch
-            color={colors[index]}
-            contentRenderer={(defaultContent) => <>
-              <div className='color-swatch-house-shaped__btns' style={{ marginTop: '112px' }}>{defaultContent[1]}</div>
-              <div className='color-swatch-house-shaped__label'>{defaultContent[0]}</div>
-            </>}
-            gap={5}
-            isClickable={false}
-            showContents
-            style={{ top: '17%', height: '108px' }
-            }
-          />
-        </div>
-      ) : <ColorSwatch style={_style} color={colors[index]} showContents outline />}
+    return color && <div key={key}>
+      <ColorSwatch
+        {...colorSwatchCommonProps({ brandKeyNumberSeparator, color })}
+        className={swatchClass}
+        style={_style}
+      />
     </div>
   }
 
