@@ -1,10 +1,10 @@
 // @flow
 import React, { useRef, useState } from 'react'
+import { CircleLoader } from '@prism/toolkit'
 
 import { type SegmentationResults } from 'src/shared/hooks/useDeepLabModelForSegmentation'
 
 import './ObjectLoader.scss'
-import CircleLoader from '../../../../Loaders/CircleLoader/CircleLoader'
 import Pieces from './Pieces'
 
 type ObjectLoaderProps = {

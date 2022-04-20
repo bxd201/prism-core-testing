@@ -1,8 +1,7 @@
 // @flow
 import React from 'react'
+import { CircleLoader, SpinnerLoader } from '@prism/toolkit'
 import HeroLoaderExpanded from '../../Loaders/HeroLoader/HeroLoaderExpanded'
-import CircleLoader from '../../Loaders/CircleLoader/CircleLoader'
-import SpinnerLoader from '../../Loaders/SpinnerLoader/SpinnerLoader'
 import lowesLogo from '../../../images/cbg/lowes-app-logo.png'
 
 export const PreLoadingSVG = (props: { brand: string }) => {

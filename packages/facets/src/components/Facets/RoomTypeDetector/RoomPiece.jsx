@@ -1,7 +1,7 @@
 // @flow
 import React, { useState, useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
-import CircleLoader from 'src/components/Loaders/CircleLoader/CircleLoader'
+import { CircleLoader } from '@prism/toolkit'
 import ColorMatches from './ColorMatches'
 import Card from './Card'
 import SWMatchSwatch from './SWMatchSwatch'

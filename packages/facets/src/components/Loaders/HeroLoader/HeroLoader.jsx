@@ -1,5 +1,6 @@
 // @flow
 import React, { useMemo } from 'react'
+import { CircleLoader, SpinnerLoader } from '@prism/toolkit'
 import CSSVariableApplicator from '../../../helpers/CSSVariableApplicator'
 import at from 'lodash/at'
 import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
@@ -7,8 +8,6 @@ import ConfigurationContext from 'src/contexts/ConfigurationContext/Configuratio
 import { getColors } from '../functions'
 import { varNames } from 'src/shared/withBuild/variableDefs'
 
-import CircleLoader from '../CircleLoader/CircleLoader'
-import SpinnerLoader from '../../Loaders/SpinnerLoader/SpinnerLoader'
 import './HeroLoader.scss'
 
 type Props = {

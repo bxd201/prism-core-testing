@@ -3,13 +3,13 @@ import React, { useState, useCallback, createContext, useMemo } from 'react'
 import { useDispatch } from 'react-redux'
 import { FormattedMessage, useIntl } from 'react-intl'
 import uniqueId from 'lodash/uniqueId'
+import { CircleLoader } from '@prism/toolkit'
 
 import FileInput from '../../FileInput/FileInput'
 import GenericOverlay from '../../Overlays/GenericOverlay/GenericOverlay'
 
 import facetBinder from 'src/facetSupport/facetBinder'
 import GenericMessage from '../../Messages/GenericMessage'
-import CircleLoader from 'src/components/Loaders/CircleLoader/CircleLoader'
 import FastMask from 'src/components/FastMask/FastMask'
 
 import { uploadImage } from '../../../store/actions/user-uploads'
