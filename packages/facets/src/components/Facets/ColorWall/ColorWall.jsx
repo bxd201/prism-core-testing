@@ -323,6 +323,8 @@ const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: 
 
   const selectedColor = colorMap[params.colorId || '']
 
+  if (!section) return null
+
   return (
     <CSSTransition in={isZoomedIn} timeout={200}>
       <div className='color-wall'>
