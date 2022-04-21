@@ -24,16 +24,10 @@ interface PrismProps {
   other?: any
 }
 
-const Prism = ({ children, theme = {}, className, style, ...other }: PrismProps): JSX.Element => {
-  const themeVariablesOverrided = Object.entries(theme)
-    .map(([key, value]) => `${key}: ${String(value)}`)
-    .join(', ')
-  themeVariablesOverrided.length > 0 && console.log('prism theme variables overrided:', themeVariablesOverrided)
-  return (
-      <div className={`prism ${className ?? ''}`} style={{ ...theme, ...style }} {...other}>
-        {children}
-      </div>
-  )
-}
+const Prism = ({ children, theme = {}, className, style, ...other }: PrismProps): JSX.Element => (
+  <div className={`prism ${className ?? ''}`} style={{ ...theme, ...style }} {...other}>
+    {children}
+  </div>
+)
 
 export default Prism
