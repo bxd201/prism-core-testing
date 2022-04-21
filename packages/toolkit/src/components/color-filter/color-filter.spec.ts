@@ -112,7 +112,7 @@ describe('ColorFilter', () => {
     it('filters in by color number "6926"', () => {
       cy.changeArg('filterInByColorNumber', [6926])
       // eslint-disable-next-line
-      cy.wait(75)
+      cy.wait(100)
       cy.findByLabelText('filteredin')
         .findAllByLabelText(/SW/)
         .last()

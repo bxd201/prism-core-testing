@@ -14,8 +14,9 @@
     "storybook:toolkit": "yarn workspace @prism/toolkit start",
     "docs:start": "yarn workspace @prism/prism-docs start",
     "docs:build": "yarn workspace @prism/prism-docs build",
-    "toolkit:test": "yarn workspace @prism/toolkit test",
-    "toolkit:cypress": "yarn workspace @prism/toolkit cypress",
+    "test:facets": "yarn workspace @prism/facets test",
+    "test:toolkit": "yarn workspace @prism/toolkit test",
+    "cypress:toolkit": "yarn workspace @prism/toolkit cypress",
     "publish": "yarn workspace @prism/toolkit build-rollup && cd packages/toolkit && yarn npm publish"
   },
   "devDependencies": {
