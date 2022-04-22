@@ -11,7 +11,8 @@
     "start": "yarn workspace @prism/toolkit build-rollup && yarn workspace @prism/facets start",
     "build": "yarn workspace @prism/toolkit build-rollup && yarn workspace @prism/facets build && yarn workspace @prism/toolkit build",
     "storybook:facets": "yarn workspace @prism/facets storybook",
-    "storybook:toolkit": "yarn workspace @prism/toolkit start"
+    "storybook:toolkit": "yarn workspace @prism/toolkit start",
+    "publish": "yarn workspace @prism/toolkit build-rollup && cd packages/toolkit && yarn npm publish"
   },
   "devDependencies": {
     "@commitlint/cli": "13.1.0",
