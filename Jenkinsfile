@@ -263,32 +263,29 @@ pipeline {
               wait: false
       }
     }
-
     stage('Akamai Cache') {
       when {
         expression { BRANCH_NAME ==~ /^(develop|qa|lowes-cvw)$/ }
       }
+      environment {
+            SECRET = credentials("AKAMAI_SECRETS")
+        }
       agent {
         docker {
-          image 'docker.cpartdc01.sherwin.com/ecomm/utils/brume:latest'
+          image 'docker.cpartdc01.sherwin.com/akamai/shell'
           alwaysPull true
           reuseNode true
-          args "--entrypoint='' -w ${PWD}"
+          args "-u root"
         }
       }
       steps {
         script{
-          withCredentials([string(credentialsId: 'ccu_client_secret', variable: 'CLIENT_SECRET'),
-            string(credentialsId: 'ccu_access_token', variable: 'ACCESS_TOKEN'),
-            string(credentialsId: 'cccu_client_token', variable: 'CLIENT_TOKEN'),
-            string(credentialsId: 'ccu_host', variable: 'HOST')]) {
             sh """
-            #!/bin/bash
-              brume ccu invalidate --objects https://prism.sherwin-williams.com/"${S3_FOLDER_NAME}"/embed.js --type url
+              cp \$SECRET /root/.edgerc
+              akamai purge invalidate https://prism.sherwin-williams.com/"${S3_FOLDER_NAME}"/embed.js https://prism.sherwin-williams.com/storybook/toolkit/index.html https://prism.sherwin-williams.com/storybook/facets/index.html
             """
           }
         }
-      }
     }
     stage('QA: QualysScan') {
       when {
