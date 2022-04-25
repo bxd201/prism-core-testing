@@ -46,6 +46,30 @@ pipeline {
     ML_API_URL = "${GET_ML_API_URL(env.BRANCH_NAME)}"
   }
   stages {
+    stage('Akamai Cache') {
+      when {
+        expression { BRANCH_NAME ==~ /^(develop|qa|lowes-cvw)$/ }
+      }
+      environment {
+            SECRET = credentials("AKAMAI_SECRETS")
+        }
+      agent {
+        docker {
+          image 'docker.cpartdc01.sherwin.com/akamai/shell'
+          alwaysPull true
+          reuseNode true
+          args "-u root"
+        }
+      }
+      steps {
+        script{
+            sh """
+              cp \$SECRET /root/.edgerc
+              akamai purge invalidate https://prism.sherwin-williams.com/"${S3_FOLDER_NAME}"/embed.js --type url https://prism.sherwin-williams.com/storybook/toolkit/index.html https://prism.sherwin-williams.com/storybook/facets/index.html
+            """
+          }
+        }
+    }
     stage('builder') {
       when {
           expression { BRANCH_NAME ==~ /^(PR-.+|develop|integration|hotfix|qa|release|monorepo-conversion)$/ }
@@ -261,33 +285,6 @@ pipeline {
                 string(name: 'BUILD_JOB_NUMBER', value: "${BUILD_NUMBER}")
               ],
               wait: false
-      }
-    }
-
-    stage('Akamai Cache') {
-      when {
-        expression { BRANCH_NAME ==~ /^(develop|qa|lowes-cvw)$/ }
-      }
-      agent {
-        docker {
-          image 'docker.cpartdc01.sherwin.com/ecomm/utils/brume:latest'
-          alwaysPull true
-          reuseNode true
-          args "--entrypoint='' -w ${PWD}"
-        }
-      }
-      steps {
-        script{
-          withCredentials([string(credentialsId: 'ccu_client_secret', variable: 'CLIENT_SECRET'),
-            string(credentialsId: 'ccu_access_token', variable: 'ACCESS_TOKEN'),
-            string(credentialsId: 'cccu_client_token', variable: 'CLIENT_TOKEN'),
-            string(credentialsId: 'ccu_host', variable: 'HOST')]) {
-            sh """
-            #!/bin/bash
-              brume ccu invalidate --objects https://prism.sherwin-williams.com/"${S3_FOLDER_NAME}"/embed.js --type url
-            """
-          }
-        }
       }
     }
     stage('QA: QualysScan') {
