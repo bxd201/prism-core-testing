@@ -46,30 +46,6 @@ pipeline {
     ML_API_URL = "${GET_ML_API_URL(env.BRANCH_NAME)}"
   }
   stages {
-    stage('Akamai Cache') {
-      when {
-        expression { BRANCH_NAME ==~ /^(develop|qa|lowes-cvw)$/ }
-      }
-      environment {
-            SECRET = credentials("AKAMAI_SECRETS")
-        }
-      agent {
-        docker {
-          image 'docker.cpartdc01.sherwin.com/akamai/shell'
-          alwaysPull true
-          reuseNode true
-          args "-u root"
-        }
-      }
-      steps {
-        script{
-            sh """
-              cp \$SECRET /root/.edgerc
-              akamai purge invalidate https://prism.sherwin-williams.com/"${S3_FOLDER_NAME}"/embed.js --type url https://prism.sherwin-williams.com/storybook/toolkit/index.html https://prism.sherwin-williams.com/storybook/facets/index.html
-            """
-          }
-        }
-    }
     stage('builder') {
       when {
           expression { BRANCH_NAME ==~ /^(PR-.+|develop|integration|hotfix|qa|release|monorepo-conversion)$/ }
@@ -286,6 +262,30 @@ pipeline {
               ],
               wait: false
       }
+    }
+    stage('Akamai Cache') {
+      when {
+        expression { BRANCH_NAME ==~ /^(develop|qa|lowes-cvw)$/ }
+      }
+      environment {
+            SECRET = credentials("AKAMAI_SECRETS")
+        }
+      agent {
+        docker {
+          image 'docker.cpartdc01.sherwin.com/akamai/shell'
+          alwaysPull true
+          reuseNode true
+          args "-u root"
+        }
+      }
+      steps {
+        script{
+            sh """
+              cp \$SECRET /root/.edgerc
+              akamai purge invalidate https://prism.sherwin-williams.com/"${S3_FOLDER_NAME}"/embed.js https://prism.sherwin-williams.com/storybook/toolkit/index.html https://prism.sherwin-williams.com/storybook/facets/index.html
+            """
+          }
+        }
     }
     stage('QA: QualysScan') {
       when {
