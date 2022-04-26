@@ -27,6 +27,12 @@ export default ({ color }: InfoButtonProps) => {
 
   const onClick = () => {
     dispatch(showColorDetailsModal(color))
+    // Reset app scroll top position for hosts with big headers
+    setTimeout(() => {
+      const container = document.getElementById('cvw-container')
+      const position = container && container.getBoundingClientRect()
+      window.scroll({ top: position?.top })
+    }, 150)
     GA.event({
       category: startCase(window.location.hash.split('/').filter(hash => HASH_CATEGORIES.indexOf(hash) >= 0)),
       action: 'Color Swatch Info',
