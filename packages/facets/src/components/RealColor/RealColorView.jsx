@@ -5,7 +5,7 @@ import { useIntl } from 'react-intl'
 import './RealColorView.scss'
 import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 import { createMiniColorFromColor } from '../SingleTintableSceneView/util'
-import getTintedImage, { getVariantTintedImage } from './RealColorService'
+import getTintedImage, { EMPTY_RESPONSE_ERR, getVariantTintedImage } from './RealColorService'
 import type { RealColorPayload } from './RealColorService'
 import type { MiniColor } from '../../shared/types/Scene'
 import cloneDeep from 'lodash/cloneDeep'
@@ -48,6 +48,11 @@ export default function RealColorView (props: RealColorViewProps) {
   const realColorId = useRef(null)
   const [realColorPayload, setRealColorPayload] = useState(null)
   const [realColorError, setRealColorError] = useState(null)
+  // This is used to drive the hooks to retry, this value will always reflect the true total number of all retries, this could be useful for tracking/reporting errors
+  const [retryCount, setRetryCount] = useState(0)
+  // This is used to track how many recounts since success. This will reset to zero if a successful req has occurred either initially or for variants
+  const retryCountShadow = useRef(0)
+  const RETRY_LIMIT = 1
 
   const intl = useIntl()
 
@@ -63,18 +68,23 @@ export default function RealColorView (props: RealColorViewProps) {
   }
 
   useEffect(() => {
-    const color = createMiniColorFromColor(activeColor)
-    getTintedImage(
-      color,
-      imageUrl,
-      realColorId.current,
-      handleRealColorUpdate)
+    // This is the initializer, it should only run for the first color,
+    // retryCount drives this hook to be called until it succeeds or hits the retry limit.
+    // the retry limit is enforced by the error handling useEffect
+    if (!realColorId.current && retryCountShadow.current <= RETRY_LIMIT) { // this means the get tint has not succeeded
+      const color = createMiniColorFromColor(activeColor)
+      getTintedImage(
+        color,
+        imageUrl,
+        realColorId.current,
+        handleRealColorUpdate)
+    }
 
     return () => {
       console.log('Cleaning up real color...')
       cleanupCallback()
     }
-  }, [])
+  }, [retryCount])
 
   useEffect(() => {
     // Handle new tinted images
@@ -86,6 +96,7 @@ export default function RealColorView (props: RealColorViewProps) {
         cachedImages.current[brandColorKey] = tintedImage
       }
 
+      retryCountShadow.current = 0
       setDisplayImage(tintedImage)
       setShowSpinner(false)
     }
@@ -104,17 +115,25 @@ export default function RealColorView (props: RealColorViewProps) {
       return
     }
 
-    if (realColorId.current) {
+    if (realColorId.current && retryCountShadow.current <= RETRY_LIMIT) {
       setShowSpinner(true)
       getVariantTintedImage(color, realColorId.current, handleRealColorUpdate)
     }
-  }, [activeColor])
+  }, [activeColor, retryCount])
 
   useEffect(() => {
     if (realColorError) {
+      if (realColorError?.message === EMPTY_RESPONSE_ERR && retryCountShadow.current === 0) {
+        // Added retry logic to call the api again if a 502 or empty response comes back
+        console.log('Retrying realcolor request...')
+        retryCountShadow.current++
+        setRetryCount(retryCount + 1)
+
+        return
+      }
       console.log('Handling real color error...')
       // Errors are handled up the hierarchy and the parent will resolve, probably by rerendering
-      handlerError(realColorError)
+      handlerError(realColorError, retryCount)
     }
   }, [realColorError])
 
