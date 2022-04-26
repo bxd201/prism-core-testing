@@ -23,7 +23,7 @@ export const ColorVisualizerWrapper = (props: CVWPropsType) => {
   }, [])
 
   return (
-    <div className='cvw__root-container' id='container'>
+    <div className='cvw__root-container' id='cvw-container'>
       <Suspense fallback={loading}>
         <ColorVisualizerContents {...props} />
       </Suspense>

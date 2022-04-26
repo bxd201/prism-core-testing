@@ -29,7 +29,7 @@ export default ({ color }: InfoButtonProps) => {
     dispatch(showColorDetailsModal(color))
     // Reset app scroll top position for hosts with big headers
     setTimeout(() => {
-      const container = document.getElementById('container')
+      const container = document.getElementById('cvw-container')
       const position = container && container.getBoundingClientRect()
       window.scroll({ top: position?.top })
     }, 150)
