@@ -100,7 +100,7 @@ export const computeFinalScrollPosition = (
   containerWidth: number,
   containerHeight: number,
   labels: (?string)[],
-  paddingBetweenChunks?: number = 0.4
+  paddingBetweenChunks: number = 0.4
 ): ScrollPosition => {
   const [chunkRow: number, chunkColumn: number, row: number, column: number] = getCoords(grid, color)
 
