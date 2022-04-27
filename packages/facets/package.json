@@ -23,6 +23,7 @@
     "cleanstart": "yarn run start",
     "start": "cross-env yarn run prism-start & yarn run embed-start & yarn run templates-start",
     "start:mock": "MOCK_API=1 yarn run start",
+    "start:local-api": "API_URL=http://localhost:3000 npm run start",
     "preprism-build": "yarn run clear-prism-build-cache",
     "prism-build": "cross-env NODE_ENV=production FIREBASE_AUTH_ENABLED=1 webpack --config webpack/webpack.prism.prod.js",
     "prebuild": "yarn run clear-embed-output",
