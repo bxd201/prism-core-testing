@@ -26,6 +26,11 @@
     grid-row: 2;
   }
 
+  &__swatch {
+    padding: 1.25rem;
+    border: 1px solid #fff;
+  }
+
   &__name {
     padding-bottom: 0.3rem;
     font-size: 1.125rem;
@@ -65,7 +70,6 @@
     border-radius: 15px;
     font-size: 1rem;
     font-weight: 500;
-    outline: none !important;
   }
 
   .dark-color { border-color: white; }

@@ -7,11 +7,13 @@ import { type ColorsStateItems } from 'src/shared/types/Actions.js.flow'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import ColorWallContext, { type ColorWallContextProps } from '../ColorWallContext'
 import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
-import ColorSwatch from '../ColorSwatch/ColorSwatch'
+import { ColorSwatch } from '@prism/toolkit'
+import { colorSwatchCommonProps } from 'src/components/ColorSwatchContent/ColorSwatchContent'
 import { fullColorNumber } from 'src/shared/helpers/ColorUtils'
 import * as GA from 'src/analytics/GoogleAnalytics'
 import { GA_TRACKER_NAME_BRAND } from 'src/constants/globals'
 import './ColorChipLocator.scss'
+import 'src/components/ColorSwatchContent/ColorSwatchContent.scss'
 
 type ColorChipLocatorProps = { color?: Color }
 type NavigatorColors = { top?: Color, right?: Color, bottom?: Color, left?: Color }
@@ -55,9 +57,11 @@ const ColorChipLocator = ({ color = undefined }: ColorChipLocatorProps) => {
   const NavigatorArrow = ({ colors, direction }: NavigatorArrowProps) => {
     const arrowColor = colors[direction]
     const arrow = { top: 'up', right: 'right', bottom: 'down', left: 'left' }
+    const arrowAria = { top: 'color above', right: 'next color', bottom: 'color below', left: 'previous color' }
 
     return (
       <button className={`chip-locator__${direction}-navigator`}
+        aria-label={arrowAria[direction]}
         disabled={!arrowColor}
         onClick={() => { history.push(`/color-locator/${arrowColor.brandKey.toLowerCase()}-${arrowColor.colorNumber}`) }}
         style={{ backgroundColor: arrowColor ? `${arrowColor.hex}` : 'none' }}
@@ -73,9 +77,10 @@ const ColorChipLocator = ({ color = undefined }: ColorChipLocatorProps) => {
       <NavigatorArrow colors={navigator} direction={'right'} />
       <NavigatorArrow colors={navigator} direction={'bottom'} />
       <NavigatorArrow colors={navigator} direction={'left'} />
-      <ColorSwatch style={{ gridColumn: '2', gridRow: '2', padding: '1.3rem' }}
-        color={color}
-        contentRenderer={() => (
+      <ColorSwatch
+        {...colorSwatchCommonProps({ brandKeyNumberSeparator, color })}
+        className='chip-locator__swatch'
+        renderer={() => (
           <>
             <p className='chip-locator__name'>{color.name}</p>
             <p className='chip-locator__number'>{fullColorNumber(color.brandKey, color.colorNumber, brandKeyNumberSeparator)}</p>
@@ -93,8 +98,7 @@ const ColorChipLocator = ({ color = undefined }: ColorChipLocatorProps) => {
             </button>
           </>
         )}
-        outline={false}
-        showContents
+        style={{ gridColumn: '2', gridRow: '2' }}
       />
     </div>
   )
