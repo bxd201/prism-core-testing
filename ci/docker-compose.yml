@@ -26,7 +26,7 @@ services:
     - var-run:/var/run
     - var-cache-nginx:/var/cache/nginx
     - tmp:/tmp
-    image: docker.cpartdc01.sherwin.com/ecomm/apps/prism-core:${IMAGE_TAG}
+    image: docker.artifactory.sherwin.com/ecomm/apps/prism-core:${IMAGE_TAG}
     environment:
     - API_URL=${API_URL}
     - WEB_URL=${WEB_URL}

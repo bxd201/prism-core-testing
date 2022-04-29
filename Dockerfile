@@ -1,4 +1,4 @@
-FROM docker.cpartdc01.sherwin.com/ecomm/utils/moldy-nginx:latest
+FROM docker.artifactory.sherwin.com/ecomm/utils/moldy-nginx:latest
 
 LABEL maintainer="Justis Estell <justis.f.estell@sherwin.com>"
 
