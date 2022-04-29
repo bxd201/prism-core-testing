@@ -95,7 +95,7 @@ pipeline {
         }
       agent {
         docker {
-          image 'docker.cpartdc01.sherwin.com/amazon/aws-cli:2.1.26'
+          image 'docker.artifactory.sherwin.com/amazon/aws-cli:2.1.26'
           args "--entrypoint=''"
         }
       }
@@ -160,7 +160,7 @@ pipeline {
       }
       agent {
         docker {
-          image 'docker.cpartdc01.sherwin.com/ecomm/utils/docker_rspec'
+          image 'docker.artifactory.sherwin.com/ecomm/utils/docker_rspec'
           args '-u root'
           reuseNode true
         }
@@ -181,7 +181,7 @@ pipeline {
       }
       agent {
         docker {
-          image 'docker.cpartdc01.sherwin.com/ecomm/utils/sonar-scanner:latest'
+          image 'docker.artifactory.sherwin.com/ecomm/utils/sonar-scanner:latest'
           reuseNode true
           alwaysPull true
         }
@@ -207,7 +207,7 @@ pipeline {
     }
       agent {
         docker {
-            image 'docker.cpartdc01.sherwin.com/ecomm/utils/trivy-nightly:latest'
+            image 'docker.artifactory.sherwin.com/ecomm/utils/trivy-nightly:latest'
             args "-u root --entrypoint=''"
             reuseNode true
             alwaysPull true
@@ -234,7 +234,7 @@ pipeline {
     }
       agent {
         docker {
-          image 'docker.cpartdc01.sherwin.com/ecomm/utils/barge'
+          image 'docker.artifactory.sherwin.com/ecomm/utils/barge'
           args "-u barge"
           alwaysPull true
           reuseNode true
@@ -272,7 +272,7 @@ pipeline {
         }
       agent {
         docker {
-          image 'docker.cpartdc01.sherwin.com/akamai/shell'
+          image 'docker.artifactory.sherwin.com/akamai/shell'
           alwaysPull true
           reuseNode true
           args "-u root"
@@ -310,7 +310,7 @@ pipeline {
       }
       agent {
         docker {
-          image 'docker.cpartdc01.sherwin.com/ecomm/utils/shepherd:latest'
+          image 'docker.artifactory.sherwin.com/ecomm/utils/shepherd:latest'
           reuseNode true
           alwaysPull true
         }

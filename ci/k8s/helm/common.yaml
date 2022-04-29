@@ -1,5 +1,5 @@
 image:
-  name: docker.cpartdc01.sherwin.com/ecomm/apps/prism-core
+  name: docker.artifactory.sherwin.com/ecomm/apps/prism-core
   resourceMemLimits: 128Mi
   resourceMemRequests: 20Mi
 
