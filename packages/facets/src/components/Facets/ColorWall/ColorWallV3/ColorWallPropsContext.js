@@ -9,6 +9,10 @@ export const OUTER_SPACING = 27
 export const MIN_SCROLLER_HEIGHT = 200
 export const MAX_SCROLLER_HEIGHT = MIN_SCROLLER_HEIGHT * 3
 
+export const MIN_BASE_SIZE = 14
+export const MAX_BASE_SIZE = 33
+export const ZOOMED_BASE_SIZE = 50
+
 export const colorWallPropsDefault = {
   activeSwatchId: null,
   addChunk: noop,

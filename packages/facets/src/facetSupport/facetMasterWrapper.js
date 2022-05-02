@@ -13,6 +13,7 @@ import languages from 'src/translations/translations'
 
 import store from 'src/store/store'
 import { setLanguage } from 'src/store/actions/language'
+import { setCWV3 } from 'src/store/actions/loadColors'
 import { flattenNestedObject } from '../shared/helpers/DataUtils'
 import AuthObserver from '../components/AuthObserver/AuthObserver'
 
@@ -82,6 +83,10 @@ export const facetMasterWrapper = (Component: ComponentType<any>) => {
     // define chosen language within redux -- this is used for API requests
     // this will need to update if language changes in realtime
     store.dispatch(setLanguage(language))
+
+    // set whether or not we are using cwv3 endpoints and structure in this facet
+    // using this on a page with multiple facets WILL result in a race condition
+    store.dispatch(setCWV3(!!props.cwv3))
 
     // Two levels of error boundary here. The vast majority of errors will hit the inner boundary, which will provide translated messaging.
     // If, for some reason, an error occurs in the IntlProvider (or ErrorBoundary) level, the outer boundary will catch it instead and at least display SOMETHING, although

@@ -3,9 +3,22 @@
 import axios from 'axios'
 import { generateBrandedEndpoint } from '../../shared/helpers/DataUtils'
 import { type Color, type FamilyStructure, type ColorStatuses } from '../../shared/types/Colors.js.flow'
-import { COLOR_CHUNKS_ENDPOINT, COLOR_BRIGHTS_ENDPOINT, COLOR_FAMILY_NAMES_ENDPOINT, COLORS_ENDPOINT, COLOR_CHUNKS_LAYOUT_ENDPOINT, COLORS_WALL_ENDPOINT } from '../../constants/endpoints'
+import {
+  COLOR_CHUNKS_ENDPOINT,
+  COLOR_BRIGHTS_ENDPOINT,
+  COLOR_FAMILY_NAMES_ENDPOINT,
+  COLORS_ENDPOINT,
+  COLOR_CHUNKS_LAYOUT_ENDPOINT,
+  COLORS_WALL_ENDPOINT,
+  COLORS_CWV3_GROUPS_ENDPOINT,
+  COLORS_CWV3_SUBGROUPS_ENDPOINT,
+  COLORS_CWV3_SHAPES_ENDPOINT
+} from '../../constants/endpoints'
 import store from 'src/store/store'
 import once from 'lodash/once'
+
+export const SET_CWV3: string = 'SET_CWV3'
+export const setCWV3 = (set: boolean) => ({ type: SET_CWV3, payload: !!set })
 
 export const REQUEST_COLORS: string = 'REQUEST_COLORS'
 const requestColors = () => ({ type: REQUEST_COLORS, payload: { loading: true, activeRequest: true } })
@@ -32,11 +45,12 @@ export const removeColorFilters = () => ({ type: REMOVE_COLOR_FILTERS })
 export const loadColors = once((brandId: string, options: Object = {}) => {
   return (dispatch: Function, getState: Function = store.getState) => {
     // if a request to load is active OR we already have colors loaded return out of here, do not load anything else
-    const { items: { colors }, status: { activeRequest } } = getState().colors
+    const { items: { colors }, status: { activeRequest }, cwv3 } = getState().colors
     const { current } = getState().language
 
     const _options = {
       language: current,
+      cwv3,
       ...options
     }
 
@@ -74,25 +88,34 @@ export const mapColorDataToPayload = (colorData: Object) => ({
   brights: colorData.brights,
   sections: colorData.sections,
   chunksLayout: colorData.chunksLayout,
-  wall: colorData.wall
+  wall: colorData.wall,
+  groups: colorData.groups,
+  subgroups: colorData.subgroups,
+  shapes: colorData.shapes
 })
 
-export const getColorsRequests = (brandId: string, options?: any) => {
+// TODO: modify this to only perform cwv3-related requests if option is toggled on in config
+export const getColorsRequests = (brandId: string, options?: any = {}) => {
+  const { cwv3, ...otherOptions } = options
+
   return [
     // { data: { names: { [string]: string[] }, values: { [string]: number[][] } } }
-    axios.get(generateBrandedEndpoint(COLOR_CHUNKS_ENDPOINT, brandId, options)),
+    axios.get(generateBrandedEndpoint(COLOR_CHUNKS_ENDPOINT, brandId, otherOptions)),
     // { data: { [string]: string[][] } }
-    axios.get(generateBrandedEndpoint(COLOR_BRIGHTS_ENDPOINT, brandId, options)),
+    axios.get(generateBrandedEndpoint(COLOR_BRIGHTS_ENDPOINT, brandId, otherOptions)),
     // { data: { default: boolean, families: string[], name: string }[] }
-    axios.get(generateBrandedEndpoint(COLOR_FAMILY_NAMES_ENDPOINT, brandId, options)),
+    axios.get(generateBrandedEndpoint(COLOR_FAMILY_NAMES_ENDPOINT, brandId, otherOptions)),
     // { data: { archived: boolean, blue: number, brandKey: string, brandedCollectionNames: string[], colorFamilyNames: string[], colorNumber: string, coordinatingColors: {}..... }[] }
-    axios.get(generateBrandedEndpoint(COLORS_ENDPOINT, brandId, options)),
-    axios.get(generateBrandedEndpoint(COLOR_CHUNKS_LAYOUT_ENDPOINT, brandId, options)),
-    axios.get(generateBrandedEndpoint(COLORS_WALL_ENDPOINT, brandId, options))
-  ]
+    axios.get(generateBrandedEndpoint(COLORS_ENDPOINT, brandId, otherOptions)),
+    axios.get(generateBrandedEndpoint(COLOR_CHUNKS_LAYOUT_ENDPOINT, brandId, otherOptions)),
+    axios.get(generateBrandedEndpoint(COLORS_WALL_ENDPOINT, brandId, otherOptions)),
+    cwv3 ? axios.get(generateBrandedEndpoint(COLORS_CWV3_GROUPS_ENDPOINT, brandId, otherOptions)) : null,
+    cwv3 ? axios.get(generateBrandedEndpoint(COLORS_CWV3_SUBGROUPS_ENDPOINT, brandId, otherOptions)) : null,
+    cwv3 ? axios.get(generateBrandedEndpoint(COLORS_CWV3_SHAPES_ENDPOINT, brandId, otherOptions)) : null
+  ].filter(Boolean)
 }
 
 export const mapResponsesToColorData = (responses: any[]) => {
-  const [colors, brights, sections, unorderedColors, chunksLayout, wall]: [any, any, FamilyStructure, any, any, any] = responses.map(response => response?.data)
-  return { colors, brights, sections, unorderedColors, chunksLayout, wall }
+  const [colors, brights, sections, unorderedColors, chunksLayout, wall, groups, subgroups, shapes]: [any, any, FamilyStructure, any, any, any, any, any, any] = responses.map(response => response?.data)
+  return { colors, brights, sections, unorderedColors, chunksLayout, wall, groups, subgroups, shapes }
 }

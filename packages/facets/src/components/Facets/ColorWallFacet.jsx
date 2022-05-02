@@ -85,7 +85,7 @@ export const ColorWallPage = (props: Props) => {
   } = props
   const dispatch = useDispatch()
   const history = useHistory()
-  const { items: { wall } } = useSelector<ColorsState>(state => state.colors)
+  const { cwv3 } = useSelector<ColorsState>(state => state.colors)
 
   // -----------------------------------------------------
   // accept and process color decoration from host
@@ -194,7 +194,7 @@ export const ColorWallPage = (props: Props) => {
           <Switch>
             <Route path='(.*)?/search/:query' component={SearchContain} />
             <Route path='(.*)?/search/' component={SearchContain} />
-            <Route component={wall && wall.length > 0 ? ColorWallV3 : ColorWall} />
+            <Route component={cwv3 ? ColorWallV3 : ColorWall} />
           </Switch>
           {isLoading ? <GenericOverlay type={GenericOverlay.TYPES.LOADING} semitransparent /> : null}
         </div>

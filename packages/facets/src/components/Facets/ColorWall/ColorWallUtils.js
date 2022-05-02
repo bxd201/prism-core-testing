@@ -123,7 +123,7 @@ export const getScrollStep = memoizee((start: ScrollPosition, end: ScrollPositio
   }
 })
 
-export const makeChunkGrid = memoizee((unChunkedChunks: number[][], chunkGridParams: ChunkGridParams, containerWidth: number, isFamily: boolean): string[][][][] => {
+export const makeChunkGrid = memoizee((unChunkedChunks: number[][], chunkGridParams: ChunkGridParams = {}, containerWidth: number, isFamily: boolean): string[][][][] => {
   const { gridWidth, chunkWidth, chunkHeight, firstRowLength, wrappingEnabled } = chunkGridParams
 
   const chunkedChunks: string[][][] = unChunkedChunks

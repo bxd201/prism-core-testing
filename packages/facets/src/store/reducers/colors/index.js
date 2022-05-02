@@ -1,5 +1,5 @@
 // @flow
-import { EMIT_COLOR, FILTER_BY_FAMILY, FILTER_BY_SECTION, LOAD_ERROR, RECEIVE_COLORS, REMOVE_COLOR_FILTERS, UPDATE_COLOR_STATUSES, SHOW_COLOR_DETAILS_MODAL, HIDE_COLOR_DETAILS_MODAL, REQUEST_COLORS } from '../../actions/loadColors'
+import { EMIT_COLOR, FILTER_BY_FAMILY, FILTER_BY_SECTION, LOAD_ERROR, RECEIVE_COLORS, REMOVE_COLOR_FILTERS, UPDATE_COLOR_STATUSES, SHOW_COLOR_DETAILS_MODAL, HIDE_COLOR_DETAILS_MODAL, REQUEST_COLORS, SET_CWV3 } from '../../actions/loadColors'
 import { CLEAR_SEARCH, RECEIVE_SEARCH_RESULTS, SEARCH_RESULTS_ERROR, TOGGLE_SEARCH_MODE, UPDATE_SEARCH_QUERY } from '../../actions/loadSearchResults'
 
 import { type ReduxAction, type ColorsState } from '../../../shared/types/Actions.js.flow'
@@ -9,6 +9,13 @@ export const colors = (state: ColorsState = initialState, action: ReduxAction) =
   switch (action.type) {
     case LOAD_ERROR: {
       return getErrorState(state, action.payload)
+    }
+
+    case SET_CWV3: {
+      return {
+        ...state,
+        cwv3: action.payload
+      }
     }
 
     case REQUEST_COLORS: {
@@ -30,6 +37,8 @@ export const colors = (state: ColorsState = initialState, action: ReduxAction) =
       if (newState) {
         return newState
       }
+
+      return state
     }
 
     case REMOVE_COLOR_FILTERS: {
@@ -47,6 +56,8 @@ export const colors = (state: ColorsState = initialState, action: ReduxAction) =
       if (newState) {
         return newState
       }
+
+      return state
     }
 
     case FILTER_BY_SECTION: {
@@ -55,6 +66,8 @@ export const colors = (state: ColorsState = initialState, action: ReduxAction) =
       if (newState) {
         return newState
       }
+
+      return state
     }
 
     case CLEAR_SEARCH: {

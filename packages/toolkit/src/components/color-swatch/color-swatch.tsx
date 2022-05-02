@@ -43,7 +43,7 @@ export interface ColorSwatchProps {
           className={`absolute h-full w-full ${className}`}
           disabled={active}
           onClick={onClick}
-          ref={ref}
+          ref={!active ? ref : null}
           style={{ background: color.hex }}
         />
         {active && (

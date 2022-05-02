@@ -55,15 +55,17 @@ const ColorDataWrapper = (WrappedComponent: any) => {
 
   const mapStateToProps = (state, props) => {
     return {
+      activeRequest: !!at(state, 'colors.status.activeRequest')[0],
+      brights: state.colors.items.brights,
       colorMap: state.colors.colorMap,
       colors: state.colors.items.colors,
-      brights: state.colors.items.brights,
-      family: state.colors.family,
+      error: !!at(state, 'colors.status.error')[0],
       families: state.colors.families,
+      family: state.colors.family,
+      groups: state.colors.groups,
       loading: !!at(state, 'colors.status.loading')[0],
       requestComplete: !!at(state, 'colors.status.requestComplete')[0],
-      activeRequest: !!at(state, 'colors.status.activeRequest')[0],
-      error: !!at(state, 'colors.status.error')[0]
+      subgroups: state.colors.subgroups
     }
   }
 

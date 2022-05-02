@@ -1,3 +1,4 @@
+/* eslint-disable */
 // @flow
 /* eslint-disable react/jsx-no-bind */
 import React, { type Element, useContext, useEffect, useRef } from 'react'
@@ -22,6 +23,7 @@ import '../../../GeneralButtons/ButtonBar/ButtonBar.scss'
 import omitPrefix from 'src/shared/utils/omitPrefix.util'
 import * as GA from 'src/analytics/GoogleAnalytics'
 import { GA_TRACKER_NAME_BRAND } from 'src/constants/globals'
+import useGroupsAndSubgroups from 'src/shared/hooks/useGroupsAndSubgroups'
 
 const PATH_END_FAMILY = 'family/'
 const menuBarPrefix = 'menu-bar'
@@ -103,22 +105,28 @@ const ColorFamilyMenuBtns = ({ showAll = false, section, families = [] }: ColorF
 const ColorWallToolbar = () => {
   const { messages = {} } = useIntl()
   const { hiddenSections } = useContext(ColorWallContext)
+  const { groups: sections, group: activeSection, subgroups: families, subgroup: activeFamily } = useGroupsAndSubgroups(hiddenSections)
   const { alwaysShowColorFamilies, colorWall = {}, cvw = {}, uiStyle } = useContext<ConfigurationContextType>(ConfigurationContext)
   const { closeBtn = {} } = cvw
   const { showArrow: closeBtnShowArrow = true, text: closeBtnText = <FormattedMessage id='CLOSE' /> } = closeBtn
   const { path, params: { section, family } } = useRouteMatch()
-  const { sections = [], families = [], section: activeSection, family: activeFamily, primeColorWall } = useSelector(state => state.colors)
+  const { primeColorWall } = useSelector(state => state.colors)
   const dispatch = useDispatch()
   const history = useHistory()
   const isFamilyView: boolean = !!family || path.endsWith(PATH_END_FAMILY)
-  const visibleSections: string[] = sections && sections.length && hiddenSections && hiddenSections.length ? difference(sections, hiddenSections) : sections
+  const visibleSections: string[] = sections
+
   // This should have been set by staging action...
   const shouldShowCloseButton = useSelector(store => store.isColorwallModallyPresented)
 
   // keeps redux store and url in sync for family and section data
   useEffect(() => {
-    activeSection === primeColorWall && section && section !== kebabCase(primeColorWall) && dispatch(filterBySection(section))
-    !activeFamily && family && dispatch(filterByFamily(family))
+    if (activeSection === primeColorWall && section && section !== kebabCase(primeColorWall)) {
+      dispatch(filterBySection(section))
+    }
+    if (!activeFamily && family) {
+      dispatch(filterByFamily(family))
+    }
   }, [])
 
   const searchColorBtn: Element<any> = (

@@ -1,3 +1,4 @@
+/* eslint-disable */
 // NOTE
 // Wall does NOT care what family or section is selected.
 // Wall ONLY cares about:
@@ -15,7 +16,7 @@
 // [x] connect ColorWallV3 to react router for determining section, and for setting active color based on the onActivateColor callback
 
 // @flow
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom'
 import { filterByFamily } from 'src/store/actions/loadColors'
@@ -23,47 +24,35 @@ import Wall from './Wall/Wall'
 import { type ColorsState } from 'src/shared/types/Actions.js.flow'
 import { fullColorName, generateColorWallPageUrl } from 'src/shared/helpers/ColorUtils'
 import { ROUTES_ENUM } from '../../ColorVisualizerWrapper/routeValueCollections'
+import useGroupsAndSubgroups from 'src/shared/hooks/useGroupsAndSubgroups'
+import WallRouteReduxConnector from './WallRouteReduxConnector'
+
+const WALL_HEIGHT = 475
 
 function ColorWallV3 () {
   // this state allows the implementing component to control active color within Wall
   // Wall itself just calls onActivateColor when a color is chosen; it's up to the host to do
   // something with that data and provide Wall with an updated activeColorId
   const dispatch = useDispatch()
-  const { items: { colorMap, wall } } = useSelector<ColorsState>(state => state.colors)
+  const { items: { colorMap, wall }, shape = {} } = useSelector<ColorsState>(state => state.colors)
+  const { groups, subgroups, group, subgroup } = useGroupsAndSubgroups()
   const { push } = useHistory()
   const { params } = useRouteMatch()
   const { colorId, family, section } = params
-  const [activeColorId, setActiveColorId] = useState()
   const [structure, setStructure] = useState([])
 
-  useEffect(() => {
-    const familyStructure = wall.filter(structure => structure.type.toLowerCase() === family)
-    setStructure(familyStructure.length > 0 ? familyStructure : wall.filter(structure => structure.type === 'WALL'))
-    setActiveColorId()
-    dispatch(filterByFamily(family))
-  }, [family])
+  const handleActiveColorId = useCallback((id) => {
+    const { brandKey, colorNumber, name } = colorMap[id] || {}
+    push(generateColorWallPageUrl(section, family, id, fullColorName(brandKey, colorNumber, name)))
+  }, [section, family, colorMap])
 
-  useEffect(() => {
-    colorId && setTimeout(() => {
-      setActiveColorId(+colorId)
-    }, 100)
-  }, [])
-
-  useEffect(() => {
-    const { brandKey, colorNumber, name } = colorMap[activeColorId] || {}
-    push(generateColorWallPageUrl(section, family, activeColorId, fullColorName(brandKey, colorNumber, name)))
-  }, [activeColorId])
-
-  const WallComponent = () => <Wall structure={structure[0]} activeColorId={activeColorId} onActivateColor={setActiveColorId} />
 
   return (
-    <>
-      <Switch>
-        <Route exact path={ROUTES_ENUM.COLOR_WALL + '/section/:section'} render={WallComponent} />
-        <Route exact path={ROUTES_ENUM.COLOR_WALL + '/section/:section/color/:color/:colorName'} render={WallComponent} />
-      </Switch>
-      <Route path={ROUTES_ENUM.COLOR_WALL + '/section/:section/family/:family'} render={WallComponent} />
-    </>
+    <div style={{ height: WALL_HEIGHT }}>
+      <WallRouteReduxConnector>
+        <Wall structure={shape.shape} height={WALL_HEIGHT} key={shape.id} activeColorId={colorId} onActivateColor={handleActiveColorId} />
+      </WallRouteReduxConnector>
+    </div>
   )
 }
 
