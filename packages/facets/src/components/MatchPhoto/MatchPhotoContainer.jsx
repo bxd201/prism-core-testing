@@ -3,11 +3,11 @@
  */
 // @flow
 import React, { useEffect, useRef, useState } from 'react'
+import { CircleLoader } from '@prism/toolkit'
 import ColorPinsGenerationByHue from './workers/colorPinsGenerationByHue.worker'
 import PrismImage from '../PrismImage/PrismImage'
 import type { Color } from '../../shared/types/Colors'
 import MatchPhoto from './MatchPhoto'
-import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 
 import './MatchPhotoContainer.scss'
 import type { ImageDimensions } from '../../shared/types/lib/CVWTypes'

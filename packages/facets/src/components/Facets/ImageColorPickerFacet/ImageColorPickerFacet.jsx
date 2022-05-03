@@ -1,6 +1,6 @@
 // @flow
 import React, { useState, useEffect, useContext } from 'react'
-import Prism, { ImageColorPicker, ColorPin } from '@prism/toolkit'
+import { ImageColorPicker, ColorPin } from '@prism/toolkit'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash } from '@fortawesome/pro-solid-svg-icons'
 import { fullColorNumber } from 'src/shared/helpers/ColorUtils'
@@ -43,23 +43,21 @@ export function ImageColorPickerFacet () {
   }
 
   return (
-    <Prism>
-      <ImageColorPicker
-        imgSrc={img}
-        colors={sherwinColors}
-        onColorSelected={onColorSelected}
-        pinRenderer={(props) => (
-          <ColorPin
-            {...props}
-            labelContent={(color) => <>
-              <p style={{ lineHeight: '1.1rem', whiteSpace: 'nowrap' }}>{fullColorNumber(color.brandKey, color.colorNumber, brandKeyNumberSeparator)}</p>
-              <p style={{ fontWeight: 700, whiteSpace: 'nowrap' }}>{color.name}</p>
-            </>}
-          />
-        )}
-        removeButtonContent={<FontAwesomeIcon aria-label='remove' icon={faTrash} style={{ display: 'inline-block' }} />}
-      />
-    </Prism>
+    <ImageColorPicker
+      imgSrc={img}
+      colors={sherwinColors}
+      onColorSelected={onColorSelected}
+      pinRenderer={(props) => (
+        <ColorPin
+          {...props}
+          labelContent={(color) => <>
+            <p style={{ lineHeight: '1.1rem', whiteSpace: 'nowrap' }}>{fullColorNumber(color.brandKey, color.colorNumber, brandKeyNumberSeparator)}</p>
+            <p style={{ fontWeight: 700, whiteSpace: 'nowrap' }}>{color.name}</p>
+          </>}
+        />
+      )}
+      removeButtonContent={<FontAwesomeIcon aria-label='remove' icon={faTrash} style={{ display: 'inline-block' }} />}
+    />
   )
 }
 

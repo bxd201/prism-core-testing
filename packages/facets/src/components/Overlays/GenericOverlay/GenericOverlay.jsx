@@ -1,6 +1,6 @@
 // @flow
 import React, { PureComponent } from 'react'
-import CircleLoader from '../../Loaders/CircleLoader/CircleLoader'
+import { CircleLoader } from '@prism/toolkit'
 
 import './GenericOverlay.scss'
 

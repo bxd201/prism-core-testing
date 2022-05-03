@@ -6,10 +6,10 @@
  */
 
 import React, { useEffect, useState, ComponentType } from 'react'
+import { CircleLoader } from '@prism/toolkit'
 import type { Color } from '../../shared/types/Colors'
 import SimpleTintableScene from '../SimpleTintableScene/SimpleTintableScene'
 import MultipleVariantSwitch from '../VariantSwitcher/MultipleVariantSwitch'
-import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 import { useSelector } from 'react-redux'
 import { DndProvider } from 'react-dnd-cjs'
 import HTML5Backend from 'react-dnd-html5-backend-cjs'

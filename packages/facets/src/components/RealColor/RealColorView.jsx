@@ -1,9 +1,9 @@
 // @flow
 import React, { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { CircleLoader } from '@prism/toolkit'
 
 import './RealColorView.scss'
-import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 import { createMiniColorFromColor } from '../SingleTintableSceneView/util'
 import getTintedImage, { getVariantTintedImage } from './RealColorService'
 import type { RealColorPayload } from './RealColorService'

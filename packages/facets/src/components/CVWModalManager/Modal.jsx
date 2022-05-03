@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { GLOBAL_MODAL_STYLE, DANGER, PRIMARY, SAVED, ACTION_SAVE } from './constants.js'
 import { KEY_CODES } from 'src/constants/globals'
 import './GlobalModal.scss'
-import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
+import { CircleLoader } from '@prism/toolkit'
 
 export const globalModalClassName = 'global-modal'
 export const globalModalInnerClassName = `${globalModalClassName}__inner-box`

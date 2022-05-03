@@ -2,8 +2,8 @@
 // @flow
 import React, { useState, useRef, useEffect, useContext } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { CircleLoader } from '@prism/toolkit'
 import 'src/providers/fontawesome/fontawesome'
-import CircleLoader from '../Loaders/CircleLoader/CircleLoader'
 import { FormattedMessage, useIntl } from 'react-intl'
 import 'src/scss/convenience/visually-hidden.scss'
 import { KEY_CODES } from 'src/constants/globals'

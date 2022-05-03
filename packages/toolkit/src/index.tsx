@@ -9,6 +9,8 @@ export { default as Palette } from './components/palette/palette'
 export { default as Canvas } from './components/canvas/canvas'
 export { default as Select } from './components/select/select'
 export { default as Toggle } from './components/toggle/toggle'
+export { default as CircleLoader } from './components/circle-loader/circle-loader'
+export { default as SpinnerLoader } from './components/spinner-loader/spinner-loader'
 // ----- future component exports -----
 export { default as ColorStripButton } from './components/color-strip-button/color-strip-button'
 export { default as ColorSwatch } from './components/color-swatch/color-swatch'
