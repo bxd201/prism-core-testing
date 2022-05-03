@@ -1,4 +1,4 @@
-FROM docker.artifactory.sherwin.com/node:12
+FROM docker.artifactory.sherwin.com/node:14
 
 ENV NODE_ENV=production
 
