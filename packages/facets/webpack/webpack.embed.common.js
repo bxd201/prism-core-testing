@@ -1,4 +1,3 @@
-const CopyWebpackPlugin = require('copy-webpack-plugin')
 const path = require('path')
 const flags = require('./constants')
 const webpack = require('webpack')
@@ -63,14 +62,6 @@ module.exports = {
   },
   optimization: optimization,
   plugins: [
-    new CopyWebpackPlugin([
-      {
-        from: 'embed-output',
-        to: '../dist',
-        context: flags.rootPath,
-        noErrorOnMissing: true
-      }
-    ]),
     new webpack.DefinePlugin(Object.entries(DEFINED_VARS).reduce((last, next) => ({ ...last, [next[0]]: JSON.stringify(next[1]) }), {}))
   ]
 }
