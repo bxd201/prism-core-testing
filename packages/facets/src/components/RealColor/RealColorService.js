@@ -3,6 +3,9 @@
 import type { MiniColor } from '../../shared/types/Scene'
 import * as axios from 'axios'
 
+// THIS IS HUMAN READABLE APP DATA, use for logging and logic, DO NOT USE TO DISPLAY TO END USERS
+export const EMPTY_RESPONSE_ERR = 'No response from the server.'
+
 export type RealColorPayload = {
   originalImage?: string,
   mask?: string,
@@ -25,6 +28,19 @@ const extractPayload = (response: any, color: Mini) => {
 }
 
 const REAL_COLOR_URL = `${MOCK_API ? '' : ML_API_URL}/prism-ml`
+
+function handleRespError (callback, reject) {
+  return (err) => {
+    let errorMsg = 'Error fetching real color.'
+    if (err.response?.status === 502 || !err.response) {
+      errorMsg = EMPTY_RESPONSE_ERR
+    }
+
+    const error = new Error(errorMsg)
+    console.error(err)
+    callback ? callback(null, error) : reject(error)
+  }
+}
 
 // This function can either return a promise or fire a callback to support different programming styles
 export default function getTintedImage (
@@ -53,11 +69,7 @@ export default function getTintedImage (
       const realColorData = extractPayload(res, activeColor)// @todo format data -RS
       callback ? callback(realColorData) : resolve(realColorData)
     })
-      .catch((err) => {
-        const error = new Error('Error fetching real color.')
-        console.error(err)
-        callback ? callback(null, error) : reject(error)
-      })
+      .catch(handleRespError(callback, reject))
   }
 
   // return a promise if the dev does not specify a callback
@@ -79,11 +91,7 @@ export function getVariantTintedImage (activeColor, realColorId, callback) {
         const realColorData = extractPayload(res, activeColor)
         callback ? callback(realColorData) : resolve(realColorData)
       })
-      .catch((err) => {
-        const error = new Error('Error fetch real color variant.')
-        console.log(err)
-        callback ? callback(null, error) : reject(error)
-      })
+      .catch(handleRespError(callback, reject))
   }
 
   if (!callback) {
