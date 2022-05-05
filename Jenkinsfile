@@ -48,7 +48,7 @@ pipeline {
   stages {
     stage('builder') {
       when {
-          expression { BRANCH_NAME ==~ /^(PR-.+|develop|integration|hotfix|qa|release|monorepo-conversion)$/ }
+          expression { BRANCH_NAME ==~ /^(PR-.+|develop|integration|hotfix|qa|release|docusaurus)$/ }
         }
       steps {
 
@@ -91,7 +91,7 @@ pipeline {
     }
     stage('s3-upload') {
       when {
-          expression { BRANCH_NAME ==~ /^(develop|hotfix|integration|qa|release|monorepo-conversion)$/ }
+          expression { BRANCH_NAME ==~ /^(develop|hotfix|integration|qa|release|docusaurus)$/ }
         }
       agent {
         docker {
