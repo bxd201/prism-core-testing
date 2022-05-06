@@ -1,5 +1,5 @@
 // @flow
-import React, { useContext } from 'react'
+import React, { useContext, forwardRef } from 'react'
 import { useDispatch } from 'react-redux'
 import { useIntl } from 'react-intl'
 import { type Color } from 'src/shared/types/Colors.js.flow'
@@ -18,7 +18,7 @@ import { GA_TRACKER_NAME_BRAND, HASH_CATEGORIES } from 'src/constants/globals'
 
 type InfoButtonProps = { color: Color }
 
-export default ({ color }: InfoButtonProps) => {
+const InfoButton = ({ color }: InfoButtonProps, ref) => {
   const { brandId, brandKeyNumberSeparator, colorWall: { colorSwatch = {} } }: ConfigurationContextType = useContext(ConfigurationContext)
   const { infoBtn = {} } = colorSwatch
   const dispatch = useDispatch()
@@ -47,7 +47,11 @@ export default ({ color }: InfoButtonProps) => {
   const relevantColors: Color[] = filter(colorMap, c => values(color.coordinatingColors).some(id => id === c.id))
 
   return (
-    <button aria-label={`${color.name} ${formatMessage({ id: 'COLOR_DETAILS' })}`} className={infoBtn?.icon ? '' : 'info-button' + (relevantColors.length > 0 ? '' : ' outlined')} onClick={onClick}>
+    <button
+      aria-label={`${color.name} ${formatMessage({ id: 'COLOR_DETAILS' })}`}
+      className={infoBtn?.icon ? '' : 'info-button' + (relevantColors.length > 0 ? '' : ' outlined')}
+      onClick={onClick}
+      ref={ref}>
       {infoBtn?.icon
         ? <FontAwesomeIcon className='add-icon' icon={['fal', infoBtn?.icon]} size='2x' />
         : relevantColors.length > 0
@@ -56,3 +60,6 @@ export default ({ color }: InfoButtonProps) => {
     </button>
   )
 }
+
+// $FlowIgnore
+export default forwardRef(InfoButton)

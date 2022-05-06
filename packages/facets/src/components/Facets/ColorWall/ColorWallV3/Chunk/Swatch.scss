@@ -1,7 +1,6 @@
 .cwv3__swatch {
   $swatch-white-border: inset 0 0 0 1px white;
 
-  overflow: hidden;
   position: relative;
   overflow: visible;
 
@@ -10,6 +9,10 @@
 
     &--active {
       box-shadow: $swatch-white-border, 0 0 4px 0 rgba(black, .5);
+    }
+
+    &__inner {
+      filter: drop-shadow(0px 2px 6px rgba(black, .5));
     }
 
     &:focus {

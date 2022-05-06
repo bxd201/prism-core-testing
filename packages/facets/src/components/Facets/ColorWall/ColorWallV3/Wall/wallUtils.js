@@ -2,6 +2,7 @@ import flattenDeep from 'lodash/flattenDeep'
 import chunk from 'lodash/chunk'
 import memoizee from 'memoizee'
 import isSomething from 'src/shared/utils/isSomething.util'
+import sortBy from 'lodash/sortBy'
 
 export const getProximalSwatchesBySwatchId = (chunks, chunkId, swatchId) => {
   if (isSomething(chunks?.current) && chunkId !== null && isSomething(swatchId)) {
@@ -97,5 +98,25 @@ export const getProximalChunksBySwatchId = (chunks, swatchId, forceFirst = false
     last: null,
     next: null,
     previous: null
+  }
+}
+
+export const getInTabOrder = (list = []) => {
+  return sortBy(list.filter(Boolean).filter(el => el.tabIndex !== -1), el => el.tabIndex)
+}
+
+export const getInitialSwatchInChunk = (chunk = {}, activeColorId) => {
+  const chunkKids = chunk.data?.children
+
+  if (chunkKids && chunkKids.length) {
+    const newId = flattenDeep(chunkKids).indexOf(activeColorId) > -1 ? activeColorId : chunkKids[0]?.[0] ?? null
+    const foundSwatch = chunk.swatchesRef?.current?.filter?.(({ id }) => id === newId)?.[0] // eslint-disable-line
+
+    if (foundSwatch) {
+      return {
+        el: getInTabOrder(foundSwatch.el?.current)[0],
+        id: newId
+      }
+    }
   }
 }

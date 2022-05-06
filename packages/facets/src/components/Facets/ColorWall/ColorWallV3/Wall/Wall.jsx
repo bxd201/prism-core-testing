@@ -6,15 +6,14 @@ import ColorWallPropsContext, { BASE_SWATCH_SIZE, colorWallPropsDefault, MIN_SWA
 import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import Column from '../Column/Column'
 import InfoButton from 'src/components/InfoButton/InfoButton'
-import './Wall.scss'
 import at from 'lodash/at'
 import noop from 'lodash/noop'
 import startCase from 'lodash/startCase'
+import sortBy from 'lodash/sortBy'
 import { AutoSizer } from 'react-virtualized'
-import 'src/scss/externalComponentSupport/AutoSizer.scss'
 import { computeWall } from '../sharedReducersAndComputers'
 import useEffectAfterMount from 'src/shared/hooks/useEffectAfterMount'
-import { getProximalChunksBySwatchId, getProximalSwatchesBySwatchId } from './wallUtils'
+import { getInitialSwatchInChunk, getInTabOrder, getProximalChunksBySwatchId, getProximalSwatchesBySwatchId } from './wallUtils'
 import { fullColorName, fullColorNumber } from 'src/shared/helpers/ColorUtils'
 import getElementRelativeOffset from 'get-element-relative-offset'
 import isSomething from 'src/shared/utils/isSomething.util'
@@ -24,6 +23,10 @@ import ColorWallContext, { type ColorWallContextProps } from '../../ColorWallCon
 import { type ColorsState } from 'src/shared/types/Actions.js.flow'
 import * as GA from 'src/analytics/GoogleAnalytics'
 import { GA_TRACKER_NAME_BRAND, HASH_CATEGORIES } from 'src/constants/globals'
+
+import './Wall.scss'
+import 'src/scss/convenience/visually-hidden.scss'
+import 'src/scss/externalComponentSupport/AutoSizer.scss'
 
 // MASTER TODO LIST
 // [x] ingest and display real color data. color data should be delivered as props ({ [colorId]: { colorDataObj } })
@@ -87,14 +90,13 @@ function Wall (props: WallProps) {
       } catch (err) {
         return // eslint-disable-line
       }
-    })()
+    })()?.current?.[0]
 
     // putting scrolling behavior into a timeout to move it out of the current computational area
     // this helps preserve scrolling smoothness
     setTimeout(() => {
       if (result) {
         if (!wallContentsRef.current) return
-
         const { top = 0, left = 0 } = getElementRelativeOffset(result, v => v === wallContentsRef.current)
         const newTop = top + (wallContentsRef.current.clientHeight / -2)
         const newLeft = left + (wallContentsRef.current.clientWidth / -2)
@@ -115,8 +117,31 @@ function Wall (props: WallProps) {
     }, 0)
   }, [])
 
+  // this is fired from within swatchRenderer to activate a swatch
   const handleMakeActiveSwatchId = (id) => {
     onActivateColor(id)
+
+    setTimeout(() => {
+      // FUTURE TODO: we would really benefit from an id-based map of swatches in here.
+      const { current } = getProximalChunksBySwatchId(chunks, id) // eslint-disable-line
+
+      // $FlowIgnore
+      const ctas = current?.swatchesRef?.current?.reduce?.((accum, next) => { // eslint-disable-line
+        if (accum) {
+          return accum
+        } else if (next?.id === id) {
+          return next.el.current
+        }
+      }, undefined)
+
+      if (ctas) {
+        if (ctas.length === 1) {
+          ctas[0].focus()
+        } else if (ctas.length > 1) {
+          sortBy(ctas, el => el.tabIndex)[0].focus()
+        }
+      }
+    }, 100)
   }
 
   const [, delayRender] = useState()
@@ -135,7 +160,12 @@ function Wall (props: WallProps) {
         const colorIsInLivePalette = livePaletteColors.some(({ colorNumber }) => colorNumber === color.colorNumber)
         const swatchRendererClass = 'cwv3__swatch-renderer'
         const swatchClass = houseShaped ? 'color-swatch-house-shaped' : 'color-swatch'
+        const refs = { current: [] }
+
         delayRender(active)
+        // this passes our makeshift ref array into the ref callback. as our local refs array is populated below it
+        // will become available to outside entitied needing to access things within
+        ref(refs)
 
         return (
         // this should contain a real Swatch component that will render active swatch contents
@@ -143,7 +173,7 @@ function Wall (props: WallProps) {
         // NOTE: needs the absolute position wrapper, doesn't need a background color
           <>
             <button
-              ref={!active ? ref : null}
+              ref={el => { if (!active) refs.current.push(el) }}
               tabIndex={!active ? 0 : -1}
               disabled={active}
               onClick={() => {
@@ -157,7 +187,6 @@ function Wall (props: WallProps) {
               ? <div
                 aria-label={fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator)}
                 className={`${swatchRendererClass}__inner${houseShaped ? ` ${swatchRendererClass}__inner-house-shaped` : ''}${color.isDark ? ` ${swatchRendererClass}--dark-color` : ''}`}
-                ref={active ? ref : null}
                 style={{ background: color.hex }}
                 tabIndex={-1}
               >
@@ -166,6 +195,7 @@ function Wall (props: WallProps) {
                     {colorIsInLivePalette
                       ? <FontAwesomeIcon className='check-icon' icon={['fa', 'check-circle']} size='2x' />
                       : <button
+                        ref={el => refs.current.push(el)}
                         onClick={() => {
                           dispatch(add(color))
                           GA.event({
@@ -179,7 +209,10 @@ function Wall (props: WallProps) {
                         <FontAwesomeIcon className='add-icon' icon={['fal', 'plus-circle']} size='2x' />
                       </button>
                     }
-                    <InfoButton color={color} />
+                    <InfoButton
+                      ref={el => refs.current.push(el)}
+                      color={color}
+                    />
                   </div>
                 </div>
                 <div className={`${swatchClass}__label`}>
@@ -210,40 +243,45 @@ function Wall (props: WallProps) {
 
   const handleTabInBeginning = (e) => {
     const { first } = getProximalChunksBySwatchId(chunks)
-    if (first) {
-      const newId = first.data?.children?.[0]?.[0] ?? null
-      if (isSomething(newId)) {
-        setFocusAndScrollTo({
-          swatchId: newId,
-          chunkId: first.id
-        })
 
-        // $FlowIgnore
-        first.swatchesRef?.current?.[0]?.el?.focus?.() // eslint-disable-line
+    const swatch = getInitialSwatchInChunk(first, activeColorId)
 
-        e.preventDefault()
-      }
+    if (swatch) {
+      const { el, id } = swatch
+
+      setFocusAndScrollTo({
+        swatchId: id,
+        chunkId: first.id
+      })
+
+      // $FlowIgnore
+      el.focus?.() // eslint-disable-line
+
+      e.preventDefault()
     }
+
     setHasFocus(true)
   }
 
   const handleTabInEnd = (e) => {
     const { last } = getProximalChunksBySwatchId(chunks)
-    if (last) {
-      const newId = last.data?.children?.[0]?.[0] ?? null
 
-      if (isSomething(newId)) {
-        setFocusAndScrollTo({
-          swatchId: newId,
-          chunkId: last.id
-        })
+    const swatch = getInitialSwatchInChunk(last, activeColorId)
 
-        // $FlowIgnore
-        last.swatchesRef?.current?.[0]?.el?.focus?.() // eslint-disable-line
+    if (swatch) {
+      const { el, id } = swatch
 
-        e.preventDefault()
-      }
+      setFocusAndScrollTo({
+        swatchId: id,
+        chunkId: last.id
+      })
+
+      // $FlowIgnore
+      el.focus?.() // eslint-disable-line
+
+      e.preventDefault()
     }
+
     setHasFocus(true)
   }
 
@@ -271,6 +309,13 @@ function Wall (props: WallProps) {
 
     const handleKeyDown = e => {
       if (!hasFocus) { return }
+
+      // if the currently-focused element is not within the wall and is not the wall...
+      if (wallRef.current && wallRef.current.contains && !wallRef.current.contains(document.activeElement) && document.activeElement !== wallRef.current) {
+        // ... don't process any keydown handling
+        return
+      }
+
       // prevent default behavior for arrow keys
       if (e.keyCode >= 37 && e.keyCode <= 40) { e.preventDefault() }
 
@@ -279,17 +324,47 @@ function Wall (props: WallProps) {
           const { next, current, previous, first } = getProximalChunksBySwatchId(chunks, topFocusData?.swatchId)
           const intendedChunk = !current ? first : e.shiftKey ? previous : next
 
-          if (intendedChunk) {
-            const newId = intendedChunk.data?.children?.[0]?.[0] ?? null
+          if (topFocusData?.swatchId === activeColorId) {
+            // this means we are on the currently-active swatch
 
-            if (newId !== null) {
+            // $FlowIgnore
+            const availableCTAs = current?.swatchesRef?.current?.reduce?.((accum, next) => { // eslint-disable-line
+              if (accum) {
+                return accum
+              } else if (next?.id === activeColorId) {
+                return next.el.current
+              }
+            }, undefined)
+
+            if (availableCTAs.length) {
+              // $FlowIgnore
+              e.preventDefault?.() // eslint-disable-line
+
+              const sortedCTAs = getInTabOrder(availableCTAs)
+              // if we actually have CTAs in here, proceed...
+              const focusIndexCTA = sortedCTAs.reduce((accum, next, i) => document.activeElement === next ? i : accum, -1)
+              const newFocusIndex = focusIndexCTA + (e.shiftKey ? -1 : 1)
+              if (newFocusIndex >= 0 && newFocusIndex < sortedCTAs.length) {
+                // $FlowIgnore
+                sortedCTAs[newFocusIndex].focus?.()// eslint-disable-line
+                return
+              }
+            }
+          }
+
+          if (intendedChunk) {
+            const intendedSwatch = getInitialSwatchInChunk(intendedChunk, activeColorId)
+
+            if (intendedSwatch) {
+              const { id, el } = intendedSwatch
+
               setFocusAndScrollTo({
-                swatchId: newId,
-                chunkId: intendedChunk?.id
+                swatchId: id,
+                chunkId: intendedChunk.id
               })
 
               // $FlowIgnore
-              intendedChunk.swatchesRef?.current?.[0]?.el?.focus?.() // eslint-disable-line
+              el.focus?.() // eslint-disable-line
 
               // $FlowIgnore
               e.preventDefault?.() // eslint-disable-line
@@ -327,7 +402,7 @@ function Wall (props: WallProps) {
           })
 
           // $FlowIgnore
-          intendedSwatch?.ref?.focus?.() // eslint-disable-line
+          getInTabOrder(intendedSwatch?.ref?.current)[0]?.focus?.() // eslint-disable-line
 
           break
         }
@@ -372,8 +447,8 @@ function Wall (props: WallProps) {
   return <ColorWallPropsContext.Provider value={wallProps}>
     <div ref={wallRef} className='cwv3__wall'>
       {!hasFocus
-        ? <button onFocus={handleTabInBeginning} />
-        : <button ref={focusOutStartHelper} onFocus={e => e.target.blur()} />}
+        ? <button aria-hidden className='visually-hidden' onFocus={handleTabInBeginning} />
+        : <button aria-hidden className='visually-hidden' ref={focusOutStartHelper} onFocus={e => e.target.blur()} />}
       <AutoSizer disableHeight style={{ width: '100%' }} onResize={({ width: thisWidth }) => setContainerWidth(thisWidth)}>{noop}</AutoSizer>
       {shouldRender ? (
         <>
@@ -419,8 +494,8 @@ function Wall (props: WallProps) {
         </>
       ) : null}
       {!hasFocus
-        ? <button onFocus={handleTabInEnd} />
-        : <button ref={focusOutEndHelper} onFocus={e => e.target.blur()} />}
+        ? <button aria-hidden className='visually-hidden' onFocus={handleTabInEnd} />
+        : <button aria-hidden className='visually-hidden' ref={focusOutEndHelper} onFocus={e => e.target.blur()} />}
     </div>
   </ColorWallPropsContext.Provider>
 }
