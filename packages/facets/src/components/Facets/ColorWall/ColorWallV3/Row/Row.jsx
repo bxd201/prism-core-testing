@@ -22,7 +22,7 @@ function Row (props) {
     }
   }, [outerHeight])
 
-  return <div className='cwv3__row' title={`Row, w ${outerWidth}, h ${outerHeight}`} style={{ minWidth: outerWidth, minHeight: outerHeight }}>
+  return <div className='cwv3__row' style={{ minWidth: outerWidth, minHeight: outerHeight }}>
     {data?.children?.map((child, i) => {
       if (child.type === 'ROW') {
         return <Column data={child} id={`${id}_${i}`} key={i} updateWidth={v => dispatch({ type: 'width', amt: v, index: i })} updateHeight={v => dispatch({ type: 'height', amt: v })} />

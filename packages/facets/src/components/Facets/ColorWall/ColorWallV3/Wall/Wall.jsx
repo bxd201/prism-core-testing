@@ -13,7 +13,7 @@ import sortBy from 'lodash/sortBy'
 import { AutoSizer } from 'react-virtualized'
 import { computeWall } from '../sharedReducersAndComputers'
 import useEffectAfterMount from 'src/shared/hooks/useEffectAfterMount'
-import { getInitialSwatchInChunk, getInTabOrder, getProximalChunksBySwatchId, getProximalSwatchesBySwatchId } from './wallUtils'
+import { findPositionInChunks, getInitialSwatchInChunk, getInTabOrder, getPerimiterLevelTest, getProximalChunksBySwatchId, getProximalSwatchesBySwatchId } from './wallUtils'
 import { fullColorName, fullColorNumber } from 'src/shared/helpers/ColorUtils'
 import getElementRelativeOffset from 'get-element-relative-offset'
 import isSomething from 'src/shared/utils/isSomething.util'
@@ -61,7 +61,7 @@ function Wall (props: WallProps) {
   } = props
   const dispatch = useDispatch()
   const { colorWallBgColor }: ColorWallContextProps = useContext(ColorWallContext)
-  const { brandId, brandKeyNumberSeparator, colorWall: { colorSwatch = {} } }: ConfigurationContextType = useContext(ConfigurationContext)
+  const { brandId, brandKeyNumberSeparator, colorWall: { bloomEnabled, colorSwatch = {} } }: ConfigurationContextType = useContext(ConfigurationContext)
   const { houseShaped = false } = colorSwatch
   const { items: { colorMap } }: ColorsState = useSelector(state => state.colors)
   const livePaletteColors = useSelector(store => store.lp.colors)
@@ -123,7 +123,7 @@ function Wall (props: WallProps) {
 
     setTimeout(() => {
       // FUTURE TODO: we would really benefit from an id-based map of swatches in here.
-      const { current } = getProximalChunksBySwatchId(chunks, id) // eslint-disable-line
+      const { current } = getProximalChunksBySwatchId(chunks.current, id) // eslint-disable-line
 
       // $FlowIgnore
       const ctas = current?.swatchesRef?.current?.reduce?.((accum, next) => { // eslint-disable-line
@@ -148,14 +148,18 @@ function Wall (props: WallProps) {
   const [defaultScale, setDefaultScale] = useState(1)
   const wallProps = useMemo(() => {
     const isZoomed = isSomething(activeColorId)
+    const { current } = findPositionInChunks(chunks.current, activeColorId) // eslint-disable-line
+    const getPerimeterLevel = getPerimiterLevelTest(current?.data?.children, activeColorId, bloomEnabled ? 2 : 0) // eslint-disable-line
+
     return {
       ...colorWallPropsDefault,
-      addChunk: chunk => chunks?.current?.add(chunk),
+      addChunk: chunk => chunks.current?.add(chunk),
       hostHasFocus: hasFocus,
       activeSwatchId: activeColorId,
       isZoomed: isZoomed,
+      getPerimeterLevel: getPerimeterLevel,
       scale: isZoomed ? MAX_SWATCH_SIZE / BASE_SWATCH_SIZE : defaultScale,
-      swatchRenderer: ({ id, ref, active }) => { // eslint-disable-line
+      swatchRenderer: ({ id, ref, active, perimeterLevel = 0 }) => { // eslint-disable-line
         const color = colorMap[id]
         const colorIsInLivePalette = livePaletteColors.some(({ colorNumber }) => colorNumber === color.colorNumber)
         const swatchRendererClass = 'cwv3__swatch-renderer'
@@ -180,7 +184,7 @@ function Wall (props: WallProps) {
                 handleMakeActiveSwatchId(id)
                 GA.event({ category: 'Color Wall', action: 'Color Swatch Click', label: fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator) }, GA_TRACKER_NAME_BRAND[brandId])
               }}
-              className={`${swatchRendererClass}${active ? ` ${swatchRendererClass}--active${houseShaped ? '-house-shaped' : ''}` : ''}`}
+              className={`${swatchRendererClass} ${active ? `${swatchRendererClass}--active${houseShaped ? '-house-shaped' : ''}` : ''} ${perimeterLevel > 0 ? `${swatchRendererClass}--perimeter ${swatchRendererClass}--perimeter--${perimeterLevel}` : ''}`}
               style={{ background: color.hex }}
             />
             {active
@@ -236,13 +240,13 @@ function Wall (props: WallProps) {
     if (isSomething(activeColorId)) {
       setFocusAndScrollTo({
         swatchId: activeColorId,
-        chunkId: getProximalChunksBySwatchId(chunks, activeColorId)?.current?.id
+        chunkId: getProximalChunksBySwatchId(chunks.current, activeColorId)?.current?.id
       })
     }
   }, [activeColorId])
 
   const handleTabInBeginning = (e) => {
-    const { first } = getProximalChunksBySwatchId(chunks)
+    const { first } = getProximalChunksBySwatchId(chunks.current)
 
     const swatch = getInitialSwatchInChunk(first, activeColorId)
 
@@ -264,7 +268,7 @@ function Wall (props: WallProps) {
   }
 
   const handleTabInEnd = (e) => {
-    const { last } = getProximalChunksBySwatchId(chunks)
+    const { last } = getProximalChunksBySwatchId(chunks.current)
 
     const swatch = getInitialSwatchInChunk(last, activeColorId)
 
@@ -321,7 +325,7 @@ function Wall (props: WallProps) {
 
       switch (e.keyCode) {
         case 9: {
-          const { next, current, previous, first } = getProximalChunksBySwatchId(chunks, topFocusData?.swatchId)
+          const { next, current, previous, first } = getProximalChunksBySwatchId(chunks.current, topFocusData?.swatchId)
           const intendedChunk = !current ? first : e.shiftKey ? previous : next
 
           if (topFocusData?.swatchId === activeColorId) {
@@ -388,7 +392,7 @@ function Wall (props: WallProps) {
         case 38:
         case 39:
         case 40: {
-          const ids = getProximalSwatchesBySwatchId(chunks, topFocusData?.chunkId, topFocusData?.swatchId)
+          const ids = getProximalSwatchesBySwatchId(chunks.current, topFocusData?.chunkId, topFocusData?.swatchId)
           const intendedSwatch = {
             '37': ids?.left,
             '38': ids?.up,
