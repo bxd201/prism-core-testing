@@ -1,6 +1,6 @@
 // @flow
 import React, { useMemo } from 'react'
-import { CircleLoader, SpinnerLoader } from '@prism/toolkit'
+import { CircleLoader, SpinnerLoader } from '../../ToolkitLoaders'
 import CSSVariableApplicator from '../../../helpers/CSSVariableApplicator'
 import at from 'lodash/at'
 import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
@@ -39,7 +39,7 @@ function HeroLoader (props: Props) {
         {brandId === 'lowes'
           ? <SpinnerLoader />
           : <>
-            <CircleLoader className='hero-loader__circle-loader' inheritSize />
+            <CircleLoader wrapperClassname='hero-loader__circle-loader' inheritSize />
             <div className='hero-loader__wrapper'>
               <div className='hero-loader__bar-spinner'>
                 <div className='hero-loader__bar hero-loader__bar--1' />

@@ -44,7 +44,7 @@ function CircleLoader (props: CircleLoaderProps): JSX.Element {
 
   return (
     <svg
-      className={`overflow-visible animate-spin m-auto h-auto stroke-current} ${typeof className === 'string' ? className : ''}`}
+      className={`overflow-visible animate-spin m-auto h-auto stroke-current ${typeof className === 'string' ? className : ''}`}
       style={svgStyle}
       {...other}
       xmlns='http://www.w3.org/2000/svg'

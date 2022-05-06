@@ -3,7 +3,6 @@ import React, { type ComponentType, useMemo } from 'react'
 import { Provider } from 'react-redux'
 import { IntlProvider } from 'react-intl'
 import { BrowserRouter, HashRouter, MemoryRouter } from 'react-router-dom'
-import Prism from '@prism/toolkit'
 import ErrorBoundary from 'src/helpers/ErrorBoundary/ErrorBoundary'
 import { type EmbeddedConfiguration } from 'src/shared/types/Configuration.js.flow'
 import ConfigurationContextProvider from 'src/contexts/ConfigurationContext/ConfigurationContextProvider'
@@ -90,28 +89,26 @@ export const facetMasterWrapper = (Component: ComponentType<any>) => {
 
     return (
       <div lang={language}>
-        <Prism>
-          <ErrorBoundary translated={false}>
-            <IntlProvider locale={language} defaultLocale={language} messages={flatLanguages} textComponent={React.Fragment}>
-              <ErrorBoundary>
-                <Provider store={store}>
-                  <ConfigurationContextProvider {...configurationProps}>
-                    <LiveAnnouncer>
-                      <LiveMessenger>
-                        {({ announcePolite, announceAssertive }) => {
-                          return <LiveAnnouncerContextProvider announcePolite={announcePolite} announceAssertive={announceAssertive}>
-                            <AuthObserver />
-                            { RouterRender }
-                          </LiveAnnouncerContextProvider>
-                        }}
-                      </LiveMessenger>
-                    </LiveAnnouncer>
-                  </ConfigurationContextProvider>
-                </Provider>
-              </ErrorBoundary>
-            </IntlProvider>
-          </ErrorBoundary>
-        </Prism>
+        <ErrorBoundary translated={false}>
+          <IntlProvider locale={language} defaultLocale={language} messages={flatLanguages} textComponent={React.Fragment}>
+            <ErrorBoundary>
+              <Provider store={store}>
+                <ConfigurationContextProvider {...configurationProps}>
+                  <LiveAnnouncer>
+                    <LiveMessenger>
+                      {({ announcePolite, announceAssertive }) => {
+                        return <LiveAnnouncerContextProvider announcePolite={announcePolite} announceAssertive={announceAssertive}>
+                          <AuthObserver />
+                          { RouterRender }
+                        </LiveAnnouncerContextProvider>
+                      }}
+                    </LiveMessenger>
+                  </LiveAnnouncer>
+                </ConfigurationContextProvider>
+              </Provider>
+            </ErrorBoundary>
+          </IntlProvider>
+        </ErrorBoundary>
       </div>
     )
   }
