@@ -3,7 +3,7 @@ import React, { useState, useCallback, createContext, useMemo } from 'react'
 import { useDispatch } from 'react-redux'
 import { FormattedMessage, useIntl } from 'react-intl'
 import uniqueId from 'lodash/uniqueId'
-import { CircleLoader } from '@prism/toolkit'
+import { CircleLoader } from '../../ToolkitLoaders'
 
 import FileInput from '../../FileInput/FileInput'
 import GenericOverlay from '../../Overlays/GenericOverlay/GenericOverlay'

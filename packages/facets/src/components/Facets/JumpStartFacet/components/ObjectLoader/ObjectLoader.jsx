@@ -1,6 +1,6 @@
 // @flow
 import React, { useRef, useState } from 'react'
-import { CircleLoader } from '@prism/toolkit'
+import { CircleLoader } from '../../../../ToolkitLoaders'
 
 import { type SegmentationResults } from 'src/shared/hooks/useDeepLabModelForSegmentation'
 

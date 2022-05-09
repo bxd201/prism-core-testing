@@ -6,7 +6,7 @@
  */
 
 import React, { useEffect, useState, ComponentType } from 'react'
-import { CircleLoader } from '@prism/toolkit'
+import { CircleLoader } from '../ToolkitLoaders'
 import type { Color } from '../../shared/types/Colors'
 import SimpleTintableScene from '../SimpleTintableScene/SimpleTintableScene'
 import MultipleVariantSwitch from '../VariantSwitcher/MultipleVariantSwitch'
