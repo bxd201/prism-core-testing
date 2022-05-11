@@ -6,20 +6,6 @@ import { Color } from '../types'
  */
 
 /**
- * @description Gets color contrast according to luminosity of a hex color
- * @param {string} hex # + hex color
- * @returns {string} white or black
- */
-export const getColorContrast = (hex: string): string => (getLuminosity(hex) < 200 ? 'white' : 'black')
-
-/**
- * @description Gets color contrast according to luminosity of a hex color
- * @param {string} hex # + hex color
- * @returns {string} tailwindcss class text-white or text-black
- */
-export const getTWColorContrast = (hex: string): string => (getLuminosity(hex) < 200 ? 'text-white' : 'text-black')
-
-/**
  * @description Measures the luminosity of a hex color
  * @param {string} hex # + hex color
  * @returns {number} Range between 0 and 255

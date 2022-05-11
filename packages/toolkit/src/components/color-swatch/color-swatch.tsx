@@ -1,5 +1,4 @@
 import React, { CSSProperties, forwardRef, ForwardedRef, useEffect, useState } from 'react'
-import { getLuminosity } from '../../utils/utils'
 import { Color } from '../../types'
 
 export interface ColorSwatchProps {
@@ -50,7 +49,7 @@ export interface ColorSwatchProps {
         {active && (
           <div
             className={
-              `absolute h-full w-full p-2.5 ${getLuminosity(color.hex) < 200 ? 'text-white' : 'text-black'}
+              `absolute h-full w-full p-2.5 ${color.isDark ? 'text-white' : 'text-black'}
               ${fadeContent ? 'opacity-1' : 'opacity-0'} transition-opacity duration-200
               ${className}`
             }
