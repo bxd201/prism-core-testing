@@ -4,7 +4,6 @@ import { useSelector } from 'react-redux'
 import ColorWallPropsContext, { BASE_SWATCH_SIZE, colorWallPropsDefault, MIN_SWATCH_SIZE, MAX_SWATCH_SIZE, MAX_SCROLLER_HEIGHT, MIN_SCROLLER_HEIGHT, OUTER_SPACING } from '../ColorWallPropsContext'
 import ColorSwatchContent from 'src/components/ColorSwatchContent/ColorSwatchContent'
 import Column from '../Column/Column'
-import './Wall.scss'
 import noop from 'lodash/noop'
 import sortBy from 'lodash/sortBy'
 import { AutoSizer } from 'react-virtualized'
@@ -15,9 +14,9 @@ import getElementRelativeOffset from 'get-element-relative-offset'
 import isSomething from 'src/shared/utils/isSomething.util'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useIntl } from 'react-intl'
+import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import ColorWallContext, { type ColorWallContextProps } from '../../ColorWallContext'
 import { type ColorsState } from 'src/shared/types/Actions.js.flow'
-
 import './Wall.scss'
 import 'src/scss/convenience/visually-hidden.scss'
 import 'src/scss/externalComponentSupport/AutoSizer.scss'
@@ -36,7 +35,7 @@ import 'src/scss/externalComponentSupport/AutoSizer.scss'
 
 // LOW PRIORITY TODOS, NOT NECESSARY RIGHT AWAY
 // [ ] immediate-scroll to focused swatch when zooming in and out instead of smooth scroll to prevent jank
-// [ ] when tabbing into a chunk with an active swatch, auto-focus it instead of the first swatch in the chunk
+// [x] when tabbing into a chunk with an active swatch, auto-focus it instead of the first swatch in the chunk
 // [ ] make swatchRenderer a prop, which will allow us to externalize rendering, link-building, and even color data
 
 type WallProps = {
@@ -47,14 +46,10 @@ type WallProps = {
 }
 
 function Wall (props: WallProps) {
-  const {
-    structure,
-    onActivateColor = noop,
-    activeColorId,
-    height
-  } = props
+  const { activeColorId, height, onActivateColor = noop, structure } = props
   const { colorWallBgColor }: ColorWallContextProps = useContext(ColorWallContext)
-  const { colorWall: { bloomEnabled } }: ConfigurationContextType = useContext(ConfigurationContext)
+  const { colorWall: { bloomEnabled, colorSwatch = {} } }: ConfigurationContextType = useContext(ConfigurationContext)
+  const { houseShaped = false } = colorSwatch
   const { items: { colorMap } }: ColorsState = useSelector(state => state.colors)
   const livePaletteColors = useSelector(store => store.lp.colors)
   const [hasFocus, setHasFocus] = useState(false)
@@ -145,13 +140,18 @@ function Wall (props: WallProps) {
     return {
       ...colorWallPropsDefault,
       addChunk: chunk => chunks.current?.add(chunk),
-      hostHasFocus: hasFocus,
       activeSwatchId: activeColorId,
-      isZoomed: isZoomed,
-      getPerimeterLevel: getPerimeterLevel,
+      getPerimeterLevel,
+      hostHasFocus: hasFocus,
+      isZoomed,
       scale: isZoomed ? MAX_SWATCH_SIZE / BASE_SWATCH_SIZE : defaultScale,
-      setActiveSwatchId: id => onActivateColor(id),
-      swatchRenderer: ({ id }) => <ColorSwatchContent color={colorMap[id]} /> // eslint-disable-line
+      setActiveSwatchId: id => handleMakeActiveSwatchId(id),
+      swatchRenderer: ({ id }) => ( // eslint-disable-line
+        <ColorSwatchContent
+          className={`${houseShaped ? 'swatch-content--house-shaped' : 'swatch-content-size'}`}
+          color={colorMap[id]}
+        />
+      )
     }
   }, [activeColorId, hasFocus, defaultScale, livePaletteColors])
 

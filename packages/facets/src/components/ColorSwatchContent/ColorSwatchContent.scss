@@ -1,19 +1,12 @@
-$bloom-duration: 200ms;
-$swatch-edge-padding-value: .4rem;
-$swatch-border-size: 1px;
-$swatch-base-size: 50px;
-$bloom-scale-main-sm: 2.66;
-$bloom-scale-main-lg: 3.00;
-$swatch-edge-padding-sm: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-main-lg * $swatch-border-size});
-$swatch-edge-padding-lg: calc(#{$swatch-edge-padding-value} + #{$bloom-scale-main-lg * $swatch-border-size});
-$swatch-white-border: inset 0 0 0 1px white;
-
 .swatch-content {
-  box-shadow: $swatch-white-border;
+  border: 1px solid white;
 
-  &:focus {
-    outline: 5.5px solid var(getThemeColor('primary'));
-    z-index: 950;
+  &-size {
+    // Sizes to be revisited/adjusted when replacing ColorWallV1
+    transform: scale(0.4) translate3d(-75%, -75%, 0);
+    width: 250%;
+    height: 250%;
+    padding: 0.5rem;
   }
 
   &__name-number {
@@ -54,12 +47,8 @@ $swatch-white-border: inset 0 0 0 1px white;
     left: 0;
     bottom: 0;
     width: 100%;
-    padding: $swatch-edge-padding-sm;
+    padding: 0.6rem;
     font-size: 13px;
-
-    @include respond-above(sm) {
-      padding: $swatch-edge-padding-lg;
-    }
 
     button {
       display: flex;
@@ -68,6 +57,10 @@ $swatch-white-border: inset 0 0 0 1px white;
   }
 
   &--house-shaped {
+    transform: scale(0.33) translate3d(-102%, -445%, 0);
+    width: 306%;
+    height: 110%;
+
     &__btns {
       position: relative;
       margin-top: 64%;

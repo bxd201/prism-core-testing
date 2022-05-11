@@ -16,7 +16,7 @@ export const colorWallPropsDefault = {
   hostHasFocus: false,
   isZoomed: false,
   scale: 1,
-  setActiveSwatchId: noop,
+  swatchContentRefs: { current: [] },
   swatchRenderer: noop
 }
 

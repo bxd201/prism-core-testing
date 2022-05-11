@@ -28,7 +28,7 @@ function Chunk ({ data = {}, id = '', updateHeight, updateWidth }: ChunkProps) {
   const { houseShaped = false } = colorSwatch
   const { items: { colorMap } }: ColorsState = useSelector(state => state.colors)
   const { params } = useRouteMatch()
-  const { addChunk, activeSwatchId, getPerimeterLevel, isZoomed, setActiveSwatchId, swatchRenderer } = ctx
+  const { addChunk, activeSwatchId, getPerimeterLevel, isZoomed, setActiveSwatchId, swatchContentRefs, swatchRenderer } = ctx
   const [ , setWidth ] = useState(0)
   const [ , setHeight ] = useState(0)
   const [ swatchWidth, setSwatchWidth ] = useState(0)
@@ -97,6 +97,7 @@ function Chunk ({ data = {}, id = '', updateHeight, updateWidth }: ChunkProps) {
           {row.map((childId, ii) => {
             const active = activeSwatchId === childId
             const color = colorMap[childId]
+            const perimeterLevel = getPerimeterLevel(childId)
 
             return (
               <ColorSwatch
@@ -104,15 +105,15 @@ function Chunk ({ data = {}, id = '', updateHeight, updateWidth }: ChunkProps) {
                 activeFocus={!houseShaped}
                 aria-label={fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator)}
                 color={color}
-                className={`${swatchClass}${active ? ` ${swatchClass}--active${houseShaped ? ` ${swatchClass}--house-shaped` : ''}` : ''}`}
+                className={`${swatchClass}${active ? ` ${swatchClass}--active${houseShaped ? ` ${swatchClass}--house-shaped` : ''}` : ''}${perimeterLevel > 0 ? ` ${swatchClass}--perimeter ${swatchClass}--perimeter--${perimeterLevel}` : ''}`}
                 id={childId}
                 key={`${i}_${ii}`}
                 onClick={() => {
                   setActiveSwatchId(childId)
+                  swatchContentRefs.current = []
                   GA.event({ category: 'Color Wall', action: 'Color Swatch Click', label: fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator) }, GA_TRACKER_NAME_BRAND[brandId])
                 }}
-                perimeterLevel={getPerimeterLevel(childId)}
-                ref={_el => addToSwatchRefs(_el, childId)}
+                ref={_el => addToSwatchRefs({ current: [_el, ...swatchContentRefs.current] }, childId)}
                 renderer={swatchRenderer}
                 style={{ height: swatchHeight, width: swatchWidth }}
               />

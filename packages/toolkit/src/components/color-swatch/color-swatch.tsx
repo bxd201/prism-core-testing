@@ -44,7 +44,7 @@ export interface ColorSwatchProps {
           className={`absolute h-full w-full ${className}`}
           disabled={active}
           onClick={onClick}
-          ref={!active ? ref : null}
+          ref={ref}
           style={{ background: color.hex }}
         />
         {active && (
@@ -55,7 +55,7 @@ export interface ColorSwatchProps {
               ${className}`
             }
             ref={ref}
-            style={activeFocus ? {} : { boxShadow: 'none' }}
+            style={activeFocus ? {} : { outline: 'none' }}
             tabIndex={activeFocus ? 0 : -1}
           >
             {renderer?.({ id, ref }) ?? (
