@@ -6,7 +6,7 @@ React components styled with [tailwind](https://tailwindcss.com/). See available
 yarn add @prism/toolkit
 ```
 
-<!-- registry=http://ivy.sherwin.com/artifactory/api/npm/prism-npm-virtual/ -->
+<!-- registry=https://artifactory.sherwin.com/artifactory/api/npm/sherwin-npm-virtual/ -->
 
 ## How to use in tailwind projects
 
