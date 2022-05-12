@@ -4,7 +4,7 @@
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "publishConfig": {
-    "registry": "http://ivy.sherwin.com/artifactory/api/npm/prism-npm-virtual/"
+    "registry": "https://artifactory.sherwin.com/artifactory/api/npm/sherwin-npm-virtual/"
   },
   "files": [
     "dist"
