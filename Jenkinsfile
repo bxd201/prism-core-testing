@@ -106,6 +106,7 @@ pipeline {
         aws s3 cp dist/packages/facets/dist s3://sw-prism-web/"${S3_FOLDER_NAME}"/ --recursive
         aws s3 cp dist/packages/facets/dist/storybook s3://sw-prism-web/storybook/facets --recursive
         aws s3 cp dist/packages/toolkit/public s3://sw-prism-web/storybook/toolkit --recursive
+        aws s3 cp dist/packages/prism-docs/build s3://sw-prism-web/docs --recursive
         """
       }
    }

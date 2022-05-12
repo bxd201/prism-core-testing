@@ -7,6 +7,7 @@ package-lock.json
 
 # Compiled assets
 dist
+packages/prism-docs/build
 
 # Embed output
 embed-output
