@@ -1,26 +1,112 @@
 
 @mixin tab-item {
   text-align: center;
-  padding: 0.25rem;
-  border-left: 1px solid var(getThemeColor('dark'));
   width: 100%;
-  color: var(getThemeColor('dark'));
+  color: #000000;
+  @include respond-below(sm) {
+    width: 145px;
+    padding: 0.25rem;
+  }
+}
+
+@mixin tabs {
+  background-color: #ffffff;;
+  list-style: none;
+  display: flex;
+  justify-content: space-around;
+  text-transform: uppercase;
+  height: 50px;
+  flex-grow: 1;
+  @include respond-below(sm) {
+    padding: 4px 0;
+    height: 34px;
+  }
+}
+
+@mixin navBtn {
+  pointer-events: auto;
+  width: 30px;
+  height: 28px;
+  background-color: rgba(255,255,255, 0.78);
+  &:hover {
+    background-color: #ffffff;
+  }
 }
 
 .tabbed-scene-visualizer {
-  &__tabs {
-    background-color: var(getThemeColor('light'));
-    list-style: none;
+  &__wrapper {
+    @include respond-below(sm) {
+      padding: 4px 0;
+    }
+    background-color: #ffffff;
+  }
+  &__mobile_nav {
+    pointer-events: none;
+    height: 34px;
+    position: absolute;
+    bottom: 4px; // should match the top/bottom padding of .tabbed-scene-visualizer__wrapper
+    left: 0;
+    width: 100%;
     display: flex;
-    justify-content: space-around;
-    text-transform: uppercase;
-    padding: 0.5rem;
-    flex-grow: 1;
+    justify-content: space-between;
+    &__btn {
+      &--left {
+        @include navBtn;
+      }
+      &--right {
+        @include navBtn;
+      }
+      &__wrapper {
+      &--left {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-right: rgb(216, 216, 216) 1px solid;
+        box-shadow: 10px 0px 8px #ffffff;
+
+      }
+        &--right {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          border-left: rgb(216, 216, 216) 1px solid;
+          box-shadow: -10px 0px 8px #ffffff;
+        }
+      }
+    }
+  }
+  &__tabs {
+    @include tabs;
+    @include respond-below(sm) {
+      justify-content: start;
+      overflow-x: hidden;
+    }
     &__item {
       @include tab-item;
       &--first {
         @include tab-item;
-        border-left: none;
+      }
+      &__btn {
+        width: 100%;
+        white-space: nowrap;
+        font-weight: 600;
+        /* This prevents a wierd contoured focus around the button */
+        padding: 3px;
+        @include respond-above(sm) {
+          height: 50px;
+          &::after {
+            content: '';
+            border-left-width: 1px;
+            border-left-color: #000000;
+            border-left-style: solid;
+            height: 34px;
+            margin-left: -4px;
+            margin-top: -24px;
+            float: left;
+            position: absolute;
+            display: block;
+          }
+        }
       }
     }
   }
