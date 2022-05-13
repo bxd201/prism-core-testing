@@ -20,7 +20,7 @@
 | hiddenSections | `string` or `string[]`| `data-hidden-sections='Emerald Designer Edition|Historic'` | `hiddenSections={[ 'Emerald Designer Edition', 'Historic' ]}` | Designates sections to be removed from the UI of the color wall facet. These sections can still be searched for. Bar delimited section names. |
 | resetOnUnmount | `boolean` | `data-reset-on-unmount` | `resetOnUnmount` | If true will reset the active color in redux when the Facet is unmounted. |
 | swatchShouldEmit | `boolean` | `data-swatch-should-emit` | `swatchShouldEmit` | Will cause a selected swatch to publish a `PRISM/out/emitColor` event. |
-| uiStyle | `"minimal" | "default"` | `data-ui-style` | `uiStyle` | controls the style of the UI
+| uiStyle | `"minimal" or "default"` | `data-ui-style` | `uiStyle` | controls the style of the UI
 
 ## Published events
 
