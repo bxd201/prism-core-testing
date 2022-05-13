@@ -11,7 +11,7 @@
 | colorDetailsAddColor | `boolean` | `data-color-details-add-color` | `colorDetailsAddColor` | Shows Add Color to palette button on Color Details. |
 | colorDetailPageRoot | `string` or `(Color) => string` | `data-color-detail-page-root="https://site.com/color-details/"` | `colorDetailPageRoot="https://site.com/color-details/"` | Defines the URL path used for links to color details pages. This will cause CDPs to navigate to a new URL. |
 | colorWallBgColor | `string` | `data-color-wall-bg-color="#FFF"` | `colorWallBgColor="#FFF"` | Defines background color for color wall. |
-| colorWallPageRoot | `string` or `(string | Color) => string` | `data-color-wall-page-root="https://site.com/color-wall/"` | `colorWallPageRoot="https://site.com/color-wall/"` | Defines the URL path used to link with color wall page. |
+| colorWallPageRoot | `string` or `(string/Color) => string` | `data-color-wall-page-root="https://site.com/color-wall/"` | `colorWallPageRoot="https://site.com/color-wall/"` | Defines the URL path used to link with color wall page. |
 | defaultSection | `string` | `data-default-section` | `defaultSection` | Overrides default section to show when Facet mounts. |
 | displayAddButton | `boolean` | `data-display-add-button` | `displayAddButton` | Shows an add button on active color swatches. |
 | displayAddButtonText | `boolean` | `data-display-add-button-text` | `displayAddButtonText` | Shows an add button on active color swatches. |
