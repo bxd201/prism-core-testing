@@ -1,6 +1,6 @@
 // @flow
 import React, { useRef, useState } from 'react'
-import { CircleLoader } from '../../../../ToolkitLoaders'
+import { CircleLoader } from '../../../../ToolkitComponents'
 
 import { type SegmentationResults } from 'src/shared/hooks/useDeepLabModelForSegmentation'
 

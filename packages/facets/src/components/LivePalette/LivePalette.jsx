@@ -12,8 +12,7 @@ import update from 'immutability-helper'
 import LivePaletteModal from './LivePaletteModal'
 import store from '../../store/store'
 import { LP_MAX_COLORS_ALLOWED, MIN_COMPARE_COLORS_ALLOWED } from 'constants/configurations'
-import { DndProvider } from 'react-dnd-cjs'
-import HTML5Backend from 'react-dnd-html5-backend-cjs'
+import { dragDropManager, DndProvider } from '../../shared/utils/dnd'
 import InfoButton from 'src/components/InfoButton/InfoButton'
 
 import { activate, reorder, toggleCompareColor, deactivateTemporaryColor, empty } from '../../store/actions/live-palette'
@@ -171,7 +170,7 @@ export class LivePalette extends PureComponent<Props, State> {
     const ADD_COLOR_TEXT = IS_EMPTY ? 'FIND_COLORS_IN_CW' : 'ADD_A_COLOR'
 
     return (
-      <DndProvider backend={HTML5Backend}>
+      <DndProvider manager={dragDropManager}>
         <div className={baseClass}>
           <LivePaletteModal cancel={deactivateTemporaryColor} empty={empty} isActive={temporaryActiveColor !== null} />
           <div className={`${baseClass}__header`}>

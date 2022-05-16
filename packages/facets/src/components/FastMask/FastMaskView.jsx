@@ -2,7 +2,7 @@
 // @todo this comp needs to be rewritten when we start masking multiple surfaces. -RS
 /* global FormData */
 import React, { useEffect, useState } from 'react'
-import { CircleLoader } from '../ToolkitLoaders'
+import { CircleLoader } from '../ToolkitComponents'
 import SingleTintableSceneView from '../SingleTintableSceneView/SingleTintableSceneView'
 import { useIntl } from 'react-intl'
 import { createUniqueSceneId } from '../../shared/utils/legacyProfileFormatUtil'

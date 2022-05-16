@@ -3,7 +3,7 @@
  */
 // @flow
 import React, { useEffect, useRef, useState } from 'react'
-import { CircleLoader } from '../ToolkitLoaders'
+import { CircleLoader } from '../ToolkitComponents'
 import ColorPinsGenerationByHue from './workers/colorPinsGenerationByHue.worker'
 import PrismImage from '../PrismImage/PrismImage'
 import type { Color } from '../../shared/types/Colors'
