@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { CSSProperties, useEffect, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearchMinus } from '@fortawesome/pro-solid-svg-icons'
 import { faPlusCircle, faMinusCircle } from '@fortawesome/pro-light-svg-icons'
@@ -120,35 +120,45 @@ const ColorFilter = ({
     setManuallyFilteredInColors((oldArr) => oldArr.filter((colorObj) => colorObj !== color))
   }
 
-  interface SwatchProps {
+  interface SwatchRendererProps {
+    active: boolean,
     color: Color
     filteredOutColumn?: boolean
     onClick: () => void
-    style: any
+    style: CSSProperties
   }
 
-  const Swatch = ({ color, style, onClick, filteredOutColumn }: SwatchProps): JSX.Element => {
+  const SwatchRenderer = ({ active, color, style, onClick, filteredOutColumn }: SwatchRendererProps): JSX.Element => {
     const manuallyFilteredColors = manuallyFilteredOutColors.concat(manuallyFilteredInColors)
 
     return (
       <ColorSwatch
-        buttonRenderer={() => (
-          <div className='flex w-full justify-between items-center focus:outline-none'>
-            <button
-              aria-label={filteredOutColumn !== undefined ? 'filterin' : 'filterout'}
-              onClick={() => moveColor(color, filteredOutColumn)}
-            >
-              <FontAwesomeIcon icon={filteredOutColumn !== undefined ? faPlusCircle : faMinusCircle} className='mb-0.5' />
-            </button>
-            {manuallyFilteredColors.filter((colorObj) => colorObj.colorNumber === color.colorNumber).length > 0 && (
-              <button aria-label='reset' className='text-xs opacity-90 mr-1' onClick={() => resetColor(color)}>
-                Reset
-              </button>
-            )}
-          </div>
-        )}
+        active={active}
+        aria-label={`${color.brandKey} ${color.colorNumber} ${color.name}`}
+        className='border-white border-1 ring-primary focus:outline-none focus:ring-2'
         color={color}
         onClick={onClick}
+        renderer={() => (
+          <div className='absolute p-2' style={{ top: '-85%', left: '-85%', width: '270%', height: '270%', transform: 'scale(0.37)' }}>
+            <div className='relative'>
+              <p className='text-sm'>{`${color.brandKey} ${color.colorNumber}`}</p>
+              <p className='font-bold'>{color.name}</p>
+            </div>
+            <div className='flex justify-between items-end absolute left-0 bottom-0 w-full p-2.5 focus:outline-none'>
+              <button
+                aria-label={filteredOutColumn !== undefined ? 'filterin' : 'filterout'}
+                onClick={() => moveColor(color, filteredOutColumn)}
+              >
+                <FontAwesomeIcon icon={filteredOutColumn !== undefined ? faPlusCircle : faMinusCircle} />
+              </button>
+              {manuallyFilteredColors.filter((colorObj) => colorObj.colorNumber === color.colorNumber).length > 0 && (
+                <button aria-label='reset' className='text-xs opacity-90 mr-1' onClick={() => resetColor(color)}>
+                  Reset
+                </button>
+              )}
+            </div>
+          </div>
+        )}
         style={style}
       />
     )
@@ -193,7 +203,7 @@ const ColorFilter = ({
             chunkWidth={26}
             colors={[unfiltered, manuallyFilteredOutColors]}
             gridWidth={1}
-            swatchRenderer={(defaultProps) => <Swatch {...defaultProps} filteredOutColumn />}
+            swatchRenderer={(defaultProps) => <SwatchRenderer {...defaultProps} filteredOutColumn />}
             zoomOutButtonRenderer={zoomOutBtn}
             wrappingEnabled={false}
           />
@@ -204,7 +214,7 @@ const ColorFilter = ({
             chunkWidth={26}
             colors={[filtered, manuallyFilteredInColors]}
             gridWidth={1}
-            swatchRenderer={(defaultProps) => <Swatch {...defaultProps} />}
+            swatchRenderer={(defaultProps) => <SwatchRenderer {...defaultProps} />}
             zoomOutButtonRenderer={zoomOutBtn}
             wrappingEnabled={false}
           />

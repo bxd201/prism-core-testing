@@ -40,18 +40,30 @@ const Template = (args): JSX.Element => {
           <FontAwesomeIcon icon={faSearchMinus} size='lg' />
         </button>
       )}
-      swatchRenderer={(defaultProps) => (
-        // @ts-ignore
-        <ColorSwatch
-          {...defaultProps}
-          buttonRenderer={() => (
-            <button className='flex items-center focus:outline-none'>
-              <FontAwesomeIcon icon={faPlusCircle} className='mb-0.5' />
-              <p className='text-xs opacity-90 ml-2'>Add to Palette</p>
-            </button>
-          )}
-        />
-      )}
+      swatchRenderer={(defaultProps) => {
+        const { color }  = defaultProps
+
+        return (
+          <ColorSwatch
+            {...defaultProps}
+            className='border-white border-1 ring-primary focus:outline-none focus:ring-2'
+            renderer={() => (
+              <div className='absolute p-2' style={{ top: '-85%', left: '-85%', width: '270%', height: '270%', transform: 'scale(0.37)' }}>
+                <div className='relative'>
+                  <p className='text-sm'>{`${color.brandKey} ${color.colorNumber}`}</p>
+                  <p className='font-bold'>{color.name}</p>
+                </div>
+                <div className='flex justify-between w-full p-2.5 absolute left-0 bottom-0'>
+                  <button className='flex items-center ring-primary focus:outline-none focus:ring-2'>
+                    <FontAwesomeIcon icon={faPlusCircle} className='mb-0.5' />
+                    <p className='text-xs opacity-90 ml-2'>Add to Palette</p>
+                  </button>
+                </div>
+              </div>
+            )}
+          />
+        )
+      }}
     />
   )
 }

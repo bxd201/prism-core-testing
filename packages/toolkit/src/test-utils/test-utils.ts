@@ -10,8 +10,8 @@ import colors from './mocked-endpoints/colors.json'
  * @returns { [key: string]: Color } object of all colors (example: { 'A La Mode': Color, ... })
  */
 export const colorOptions: { [key: string]: Color } = colors.reduce(
-  (map, { id, hex, brandKey, colorNumber, name, coordinatingColors }: Color) => {
-    map[`${name}`] = { id, hex, brandKey, colorNumber, coordinatingColors, name }
+  (map, { id, hex, brandKey, colorNumber, name, coordinatingColors, isDark }: Color) => {
+    map[`${name}`] = { id, hex, brandKey, colorNumber, coordinatingColors, name, isDark }
     return map
   },
   {}

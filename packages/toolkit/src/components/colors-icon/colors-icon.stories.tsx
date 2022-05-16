@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faInfo } from '@fortawesome/pro-solid-svg-icons'
 import ColorsIcon from './colors-icon'
 import colors from '../../test-utils/mocked-endpoints/colors.json'
-import { getColorContrast } from '../../utils/utils'
 import { colorOptions, getRandomColorName } from '../../test-utils/test-utils'
 import { filter, values } from 'lodash'
 
@@ -26,7 +25,7 @@ const Template = (args: { colorName: string, size: number }): JSX.Element => {
             style={{ width: `${args.size}px`, height: `${args.size}px` }}
           />
         ) : (
-          <FontAwesomeIcon aria-label='info' icon={faInfo} style={{ color: getColorContrast(color.hex) }} />
+          <FontAwesomeIcon aria-label='info' icon={faInfo} style={{ color: color.isDark ? 'white' : 'black' }} />
         )}
       </button>
     </div>

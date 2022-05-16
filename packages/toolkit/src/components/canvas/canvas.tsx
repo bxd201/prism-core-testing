@@ -37,14 +37,13 @@ const Canvas = forwardRef<HTMLCanvasElement, CanvasPropsT>(({ src, onLoad, ...ot
     <>
       <canvas {...otherProps} ref={ref} />
       <img
-        className="invisible"
+        className='invisible'
         src={src}
         ref={imgRef}
         onLoad={() => {
-          if (imgRef.current?.complete) {
+          imgRef.current.crossOrigin = 'Anonymous'
             drawImageToCanvas()
-            onLoad?.()
-          }
+            setTimeout(onLoad, 500)
         }}
       />
     </>

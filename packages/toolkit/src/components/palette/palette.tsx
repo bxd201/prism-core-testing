@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { getTWColorContrast } from '../../utils/utils'
 import { Color } from '../../types'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import { without, range } from 'lodash'
@@ -49,6 +48,7 @@ const Palette = ({
   const activeSlotWidth: number = width < 768 ? inActiveSlotWidth : inActiveSlotWidth * 2.5
 
   const activeColor = colors[activeIndex] ?? colors[colors.length - 1]
+  const textColor = activeColor.isDark ? 'text-white' : 'text-black'
 
   return (
     <div {...otherProps} ref={ref} className={`w-full h-20 ${otherProps.className ?? ''}`}>
@@ -57,7 +57,7 @@ const Palette = ({
           className='md:hidden flex items-center justify-between flex-1 w-full mb-1 p-1'
           style={{ backgroundColor: activeColor?.hex }}
         >
-          <div className={`text-xs ml-1.5 ${getTWColorContrast(activeColor.hex)}`} style={{ lineHeight: '.9rem' }}>
+          <div className={`text-xs ml-1.5 ${textColor}`} style={{ lineHeight: '.9rem' }}>
             <p>{`${activeColor.brandKey} ${activeColor.colorNumber}`}</p>
             <p>{activeColor.name}</p>
           </div>
@@ -81,7 +81,7 @@ const Palette = ({
             <ul ref={innerRef} className='flex w-full h-1/2 md:h-full' {...droppableProps}>
               {colors.slice(0, Math.min(maxSlots, colors.length)).map((color, i) => {
                 const isActive = activeColor.id === color.id
-                const textColor = getTWColorContrast(color.hex)
+
                 return (
                   <Draggable key={color.id} draggableId={color.id.toString()} index={i}>
                     {({ innerRef, draggableProps, dragHandleProps }) => (

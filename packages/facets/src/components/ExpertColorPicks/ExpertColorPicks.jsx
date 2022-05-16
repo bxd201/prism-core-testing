@@ -7,15 +7,16 @@ import ExpertColorDetails from './ExpertColorDetails'
 import ColorStripButton from 'src/components/ColorStripButton/ColorStripButton'
 import Carousel from '../Carousel/Carousel'
 import ColorCollectionsTab from '../Shared/ColorCollectionsTab'
-import ColorSwatch from '../Facets/ColorWall/ColorSwatch/ColorSwatch'
+import { ColorSwatch } from '@prism/toolkit'
+import { colorSwatchCommonProps } from '../ColorSwatchContent/ColorSwatchContent'
 import { loadExpertColorPicks } from 'src/store/actions/expertColorPicks'
 import { fullColorNumber, getContrastYIQ } from 'src/shared/helpers/ColorUtils'
 import { useIntl } from 'react-intl'
 import at from 'lodash/at'
 import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
-import ColorWallContext from '../Facets/ColorWall/ColorWallContext'
 import './ExpertColorPicks.scss'
 import '../ColorStripButton/ColorStripButton.scss'
+import '../ColorSwatchContent/ColorSwatchContent.scss'
 
 const ExpertColorPicks = () => {
   const dispatch = useDispatch()
@@ -100,35 +101,26 @@ const ColorStripButtonWrapper = (props: any) => {
 
 const ColorSwatchWrapper = ({ data, width }: any) => {
   const color = data.colorDefs[0]
-  const { colorWall: { colorSwatch = {} } }: ConfigurationContextType = useContext(ConfigurationContext)
+  const { brandKeyNumberSeparator, colorWall: { colorSwatch = {} } }: ConfigurationContextType = useContext(ConfigurationContext)
   const { houseShaped = false } = colorSwatch
   const baseClass = houseShaped ? 'color-strip-button--house-shaped' : 'color-strip-button'
   const smallScreen = width < 768
 
   return (
-    <ColorWallContext.Provider value={{ displayAddButton: true, displayInfoButton: true }}>
-      <div className={baseClass}>
-        <div className={`${baseClass}__swatch`} role='button' tabIndex='0'>
-          <ColorSwatch
-            color={color}
-            contentRenderer={(defaultContent) => houseShaped ? <>
-              <div className='color-swatch-house-shaped__btns' style={{ marginTop: smallScreen ? '122px' : '166px' }}>{defaultContent[1]}</div>
-              <div className='color-swatch-house-shaped__label'>{defaultContent[0]}</div>
-              <div className={`${baseClass}__desc`}>{data.description}</div>
-            </> : <>{defaultContent}</>}
-            gap={houseShaped ? 10 : undefined}
-            isClickable={!houseShaped}
-            outline={false}
-            showContents
-            style={houseShaped
-              ? smallScreen ? { top: '5%', height: '102px' } : { top: '17%', height: '115px' }
-              : { position: 'absolute', width: '100%', height: '100px' }
-            }
-          />
-        </div>
-        {!houseShaped && <div className={`${baseClass}__desc`}>{data.description}</div>}
+    <div className={baseClass}>
+      <div className={`${baseClass}__item`} tabIndex='0'>
+        <ColorSwatch
+          {...colorSwatchCommonProps({ brandKeyNumberSeparator, color })}
+          activeFocus={false}
+          className={`${baseClass}__swatch`}
+          style={houseShaped
+            ? smallScreen ? { height: '102px' } : { height: '115px' }
+            : { height: '100px' }
+          }
+        />
+        <div className={`${baseClass}__desc`}>{data.description}</div>
       </div>
-    </ColorWallContext.Provider>
+    </div>
   )
 }
 

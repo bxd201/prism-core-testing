@@ -5,7 +5,6 @@ import { faPlusCircle } from '@fortawesome/pro-light-svg-icons'
 import ColorsIcon from '../colors-icon/colors-icon'
 import Palette from './palette'
 import colorsData from '../../test-utils/mocked-endpoints/colors.json'
-import { getColorContrast } from '../../utils/utils'
 import { colorOptions } from '../../test-utils/test-utils'
 import { filter, shuffle, values } from 'lodash'
 import { Color } from '../../types';
@@ -30,16 +29,16 @@ const Template = (args): JSX.Element => {
           <FontAwesomeIcon icon={faPlusCircle} size='lg' />
         </div>
       )}
-      deleteButtonRenderer={({ name, hex }, onClick) => (
+      deleteButtonRenderer={({ name, isDark }, onClick) => (
         <button className='md:ml-1 ring-primary focus:outline-none focus-visible:ring-2' onClick={onClick}>
           <FontAwesomeIcon
             aria-label={`Remove color ${name} from live palette`}
             icon={faTrash}
-            style={{ color: getColorContrast(hex) }}
+            style={{ color: isDark ? 'white' : 'black' }}
           />
         </button>
       )}
-      detailsButtonRenderer={({ coordinatingColors, hex, name }) => (
+      detailsButtonRenderer={({ coordinatingColors, hex, name, isDark }) => (
         <button
           className='mx-0.5 ring-primary focus:outline-none focus-visible:ring-2'
           onClick={args.onDetailsButtonTriggered}
@@ -51,7 +50,7 @@ const Template = (args): JSX.Element => {
               hexes={filter(colorsData, (c) => values(coordinatingColors).some((id) => id === c.id)).map((c) => c.hex)}
             />
           ) : (
-            <FontAwesomeIcon icon={faInfo} style={{ color: getColorContrast(hex), margin: '0 0.25rem' }} />
+            <FontAwesomeIcon icon={faInfo} style={{ color: isDark ? 'white' : 'black', margin: '0 0.25rem' }} />
           )}
         </button>
       )}

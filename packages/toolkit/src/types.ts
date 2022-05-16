@@ -16,4 +16,5 @@ export interface Color {
   saturation: number
   lightness: number
   ignore: boolean
+  isDark: boolean
 }

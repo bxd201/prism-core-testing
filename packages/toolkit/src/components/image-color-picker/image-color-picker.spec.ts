@@ -26,7 +26,10 @@ describe('ImageColorPicker', () => {
     })
 
     it('New pin can be created', () => {
-      cy.get('canvas').click('center',{ force: true })
+      cy.get('canvas').click('center') // Lazy build on server
+      // eslint-disable-next-line
+      cy.wait(500) // Lazy build on server
+      cy.get('canvas').click('center')
       cy.findByLabelText('Venture Violet')
     })
 

@@ -9,7 +9,6 @@ import colors from '../../test-utils/mocked-endpoints/colors.json'
 import landscape from '../../test-utils/images/landscape.png'
 // @ts-ignore
 import portrait from '../../test-utils/images/portrait.jpeg'
-import { getColorContrast } from '../../utils/utils'
 import { Color } from '../../types'
 
 const Template = (args): JSX.Element => {
@@ -31,7 +30,7 @@ const Template = (args): JSX.Element => {
             <FontAwesomeIcon
               aria-label={isColorAdded(color) ? 'added' : 'add'}
               icon={isColorAdded(color) ? faCheckCircle : faPlusCircle}
-              style={{ color: getColorContrast(color.hex) }}
+              style={{ color: color.isDark ? 'white' : 'black' }}
             />
           )}
           isColorAdded={isColorAdded}

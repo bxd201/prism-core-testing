@@ -20,7 +20,7 @@ export interface ColorWallProps {
   swatchSize?: { MIN: number; MAX: number; ZOOMED: number }
   wrappingEnabled?: boolean
   colors: Color[][]
-  swatchRenderer: (swatch: { color: Color; style: {}; onClick: () => void; key: number | string }) => JSX.Element
+  swatchRenderer: (swatch: { active: boolean, color: Color; style: {}; onClick: () => void; key: number | string }) => JSX.Element
   zoomOutButtonRenderer: (callbacK: () => void) => JSX.Element
 }
 
@@ -165,6 +165,7 @@ const ColorWall = ({
                       return (
                         color !== undefined &&
                         swatchRenderer({
+                          active: color.id === activeColor?.id,
                           color,
                           style: { ...style, ...styles[rowIndex][columnIndex] },
                           onClick: () => setActiveColor(color),

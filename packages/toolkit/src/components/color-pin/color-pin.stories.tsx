@@ -2,8 +2,6 @@ import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheckCircle } from '@fortawesome/pro-solid-svg-icons'
 import { faPlusCircle } from '@fortawesome/pro-light-svg-icons'
-
-import { getColorContrast } from '../../utils/utils'
 import { colorOptions, getRandomColorName } from '../../test-utils/test-utils'
 import ColorPin from './color-pin'
 
@@ -18,7 +16,7 @@ const Template = (args: { colorName: string, expandsLeft: boolean, isColorAdded:
         <FontAwesomeIcon
           aria-label={isColorAdded ? 'added' : 'add'}
           icon={isColorAdded ? faCheckCircle : faPlusCircle}
-          style={{ color: getColorContrast(color.hex) }}
+          style={{ color: color.isDark ? 'white' : 'black' }}
         />
       }
       color={color}
