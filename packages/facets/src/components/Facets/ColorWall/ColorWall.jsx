@@ -323,15 +323,13 @@ const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: 
 
   const selectedColor = colorMap[params.colorId || '']
 
-  if (!section) return null
-
   return (
     <CSSTransition in={isZoomedIn} timeout={200}>
       <div className='color-wall'>
-        {chunkMiniMap && (
+        {chunkMiniMap && sectionOverride && (
           <div className='color-wall-section-label__minimap'>
-            {(sectionsShortLabel && sectionsShortLabel[section]) ?? sectionLabels[section]}
-            <div className='color-wall-section-label__minimap--image' style={{ backgroundImage: `url(${minimapDict[`${brandId}${leftHandDisplay ? 'LeftHand' : ''}`][section]})` }} />
+            {(sectionsShortLabel && sectionsShortLabel[sectionOverride]) ?? sectionLabels[sectionOverride]}
+            <div className='color-wall-section-label__minimap--image' style={{ backgroundImage: `url(${minimapDict[`${brandId}${leftHandDisplay ? 'LeftHand' : ''}`][sectionOverride]})` }} />
           </div>
         )}
         {params.colorId && (
