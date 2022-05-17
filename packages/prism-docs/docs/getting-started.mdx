@@ -1,0 +1,66 @@
+---
+sidebar_position: 1
+---
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Getting Started
+
+Let's discover a **PRISM Facet in less than 5 minutes**.
+
+## Installation
+
+Get started with **manual configuration** (if you need to leverage our embed API options).
+
+Or **get set up Immediately** with **automatic configuration**.
+
+In the following examples we show you how to implement the **Color Wall Facet**, however the `data-prism-facet` attribute can be set to any of our available facets! See a full list **here TODO**
+
+<Tabs>
+<TabItem value="automatic" label="Automatic" default>
+Paste the following code inline with yours, where you would like the facet to appear:
+
+```html title="index.html"
+<div prism-auto-embed
+     data-prism-facet="ColorWallFacet"
+     data-language="en-US"></div>
+
+<script>
+    (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "https://prism.sherwin-williams.com/2.4.2/embed.js";
+    fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'prism-widget'));
+</script>
+```
+</TabItem>
+
+<TabItem value="manual" label="Manual">
+The following script needs to be placed before your application's scripts, likely in the head.
+
+```html title="head.html"
+<script src='https://prism.sherwin-williams.com/2.4.2/embed.js'></script>
+```
+
+Paste the following code inline with yours, where you would like the facet to appear:
+
+```html title="index.html"
+<div id="prism-embed-root" data-prism-facet="ColorWallFacet"></div>
+```
+
+To embed the facet, use the PRISM embed API. Below is an example of using the API to load the facet into the specified container. See embed documentation **here TODO**
+```javascript title="index.js"
+  (() => {
+    window.PRISM.embed(document.getElementById( 'prism-embed-root' ), {
+        // additional configuration properties would go here
+    })
+  })()
+```
+
+
+</TabItem>
+</Tabs>
+
+
