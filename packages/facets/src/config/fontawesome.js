@@ -46,6 +46,8 @@ import { faUpload } from '@fortawesome/pro-solid-svg-icons/faUpload'
 import { faAlignJustify as falAlignJustify } from '@fortawesome/pro-light-svg-icons/faAlignJustify'
 import { faAngleLeft as falAngleLeft } from '@fortawesome/pro-light-svg-icons/faAngleLeft'
 import { faCircle as falCircle } from '@fortawesome/pro-light-svg-icons/faCircle'
+import { faChevronCircleLeft as falChevronCircleLeft } from '@fortawesome/pro-light-svg-icons/faChevronCircleLeft'
+import { faChevronCircleRight as falChevronCircleRight } from '@fortawesome/pro-light-svg-icons/faChevronCircleRight'
 import { faClone as falClone } from '@fortawesome/pro-light-svg-icons/faClone'
 import { faCompressAlt as falCompressAlt } from '@fortawesome/pro-light-svg-icons/faCompressAlt'
 import { faDownload as falDownload } from '@fortawesome/pro-light-svg-icons/faDownload'
@@ -129,6 +131,8 @@ const faIcons = [
   falAlignJustify,
   falAngleLeft,
   falCircle,
+  falChevronCircleLeft,
+  falChevronCircleRight,
   falClone,
   falCompressAlt,
   falDownload,

@@ -8,7 +8,7 @@
  * @todo how do we select the scenes? Should we limit the surfaces painted via a flag? -RS
  * How do we associate tabs to scenes?
  */
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { type FacetPubSubMethods } from 'src/facetSupport/facetPubSub'
 import SingleTintableSceneView from '../SingleTintableSceneView/SingleTintableSceneView'
 import uniqueId from 'lodash/uniqueId'
@@ -38,6 +38,9 @@ import { SV_COLOR_UPDATE } from '../../constants/pubSubEventsLabels'
 import { createMiniColorFromColor } from '../SingleTintableSceneView/util'
 import type { FacetBinderMethods } from '../../facetSupport/facetInstance'
 import DayNightToggleV2 from '../SingleTintableSceneView/DayNightToggleV2'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import debounce from 'lodash/debounce'
+import { isDarkColor } from 'is-dark-color/dist/isDarkColor'
 
 type TabbedSceneVisualizerFacetProps = FacetPubSubMethods & FacetBinderMethods & {
   groupNames: string[],
@@ -45,8 +48,13 @@ type TabbedSceneVisualizerFacetProps = FacetPubSubMethods & FacetBinderMethods &
 }
 
 const baseFacetClassName = 'tabbed-scene-visualizer'
+const wrapper = `${baseFacetClassName}__wrapper`
 const tabClassName = `${baseFacetClassName}__tabs`
 const tabItemClassName = `${tabClassName}__item`
+const tabItemBtnClassname = `${tabItemClassName}__btn`
+const mobileNavClassName = `${baseFacetClassName}__mobile_nav`
+const mobileNavBtnClassName = `${mobileNavClassName}__btn`
+const mobileNavWrapper = `${mobileNavBtnClassName}__wrapper`
 
 const shouldUseActiveColor = (defColors: any[], activeColor, hasAccess) => {
   return !defColors && activeColor && hasAccess
@@ -87,6 +95,28 @@ export function TabbedSceneVisualizerFacet (props: TabbedSceneVisualizerFacetPro
   // it will only be triggered once the active color has been changed by value at least once.
   const [initialActiveColor, setInitialActiveColor] = useState(null)
   const [activeColorHasBeenChanged, setActiveColorHasBeenChanged] = useState(false)
+  const tabItemListRef = useRef(null)
+  const [tabItemListScrollOffset, setTabItemListScrollOffset] = useState(0)
+  const [showNav, setShowNav] = useState({
+    left: false,
+    right: false
+  })
+
+  function checkShouldShowNav () {
+    if (!tabItemListRef.current) {
+      return
+    }
+
+    const { scrollLeft, clientWidth, scrollWidth } = tabItemListRef.current
+
+    // bc math is hard and browsers will calculate things differently,
+    // use a trivial amount of space to determine if you should be allowed to programmatically scroll.
+    const padding = 5
+    setShowNav({
+      left: scrollLeft > padding,
+      right: scrollLeft + clientWidth + padding < scrollWidth
+    })
+  }
 
   useEffect(() => {
     // Listen for color updates
@@ -97,6 +127,16 @@ export function TabbedSceneVisualizerFacet (props: TabbedSceneVisualizerFacetPro
         setIncomingColors(inboundColors)
       }
     })
+
+    function _resizeHandler (e: SyntheticEvent) {
+      checkShouldShowNav()
+    }
+
+    const resizeHandler = debounce(_resizeHandler, 300)
+
+    window.addEventListener('resize', resizeHandler)
+
+    return () => window.removeEventListener('resize', resizeHandler)
   }, [])
 
   // This ensures that useSceneDataCVW hook is only called once
@@ -107,7 +147,9 @@ export function TabbedSceneVisualizerFacet (props: TabbedSceneVisualizerFacetPro
   }, [fetchCalled])
 
   useEffect(() => {
-
+    if (localError) {
+      console.error(localError)
+    }
   }, [localError])
 
   const handleBlobLoaderInit = () => {
@@ -151,6 +193,14 @@ export function TabbedSceneVisualizerFacet (props: TabbedSceneVisualizerFacetPro
       setLocalSurfaceColors(newColors)
     }
   }, [colors, incomingColors, initialColors])
+
+  useEffect(() => {
+    checkShouldShowNav()
+    // Do this bc Firefox centers the div scroll
+    if (tabItemListRef.current) {
+      tabItemListRef.current.scrollLeft = 0
+    }
+  }, [categories])
 
   // This callback initializes all of the scene data for cvw
   const handleSceneSurfacesLoaded = (variants) => {
@@ -209,9 +259,20 @@ export function TabbedSceneVisualizerFacet (props: TabbedSceneVisualizerFacetPro
     setLocalSelectedSceneUid(uid)
   }
 
+  // @todo is this localized by config or do we use the category as a key to select the correct string?
   const createTabs = (data: any, index: number) => {
-    // @todo is this localized by config or do we use the category as a key to select the correct string?
-    return <li className={`${tabItemClassName}${index ? '' : '--first'}`} key={data.sceneUid}><button onClick={(e: SyntheticEvent) => changeScene(e, data.sceneUid)}>{data.label}</button></li>
+    const isHighlighted = localSelectedSceneUid === data.sceneUid
+    const isDark = localSurfaceColors[0] ? isDarkColor(localSurfaceColors[0].hex) : false
+
+    return <li style={{
+      backgroundColor: isHighlighted ? localSurfaceColors[0]?.hex : null
+    }} className={`${tabItemClassName}${index ? '' : '--first'}`} key={data.sceneUid}>
+      <button style={{ textDecoration: isHighlighted ? 'underline' : null,
+        color: isDark && isHighlighted ? '#ffffff' : '#000000',
+        textDecorationColor: isHighlighted ? 'rgba(0, 0, 0, 0.45)' : null,
+        textUnderlineOffset: '6px' }} className={tabItemBtnClassname} onClick={(e: SyntheticEvent) => changeScene(e, data.sceneUid)}>{data.label}
+      </button>
+    </li>
   }
 
   const renderCustomToggle = (variantIndex: number, variantList: any[], handler: Function, metaData: any) => {
@@ -225,6 +286,43 @@ export function TabbedSceneVisualizerFacet (props: TabbedSceneVisualizerFacetPro
         changeHandler={handler}
       />
     )
+  }
+
+  function scrollNavLeft (e: SytheticEvent) {
+    scrollNav(e, false)
+  }
+
+  function scrollNavRight (e: SyntheticEvent) {
+    scrollNav(e, true)
+  }
+
+  function scrollNav (e: SyntheticEvent, shouldScrollLeft = false) {
+    e.preventDefault()
+
+    const scrollAmount = tabItemListRef.current.scrollWidth / categories.length
+
+    const _newOffset = shouldScrollLeft ? scrollAmount : scrollAmount * -1
+    const newOffset = tabItemListScrollOffset + _newOffset
+    // work around/ fallback for bug: https://bugs.webkit.org/show_bug.cgi?id=238497
+    const checkIsSafari = () => {
+      const ua = window.navigator.userAgent.toLowerCase()
+      return ua.indexOf('chrome') === -1 && ua.indexOf('safari') > -1
+    }
+
+    if (!checkIsSafari()) {
+      tabItemListRef.current.scrollTo({
+        top: 0,
+        left: newOffset,
+        behavior: 'smooth'
+      })
+    } else {
+      tabItemListRef.current.scrollLeft = newOffset
+    }
+
+    setTabItemListScrollOffset(newOffset)
+    setTimeout(() => {
+      checkShouldShowNav()
+    }, 300)
   }
 
   return (
@@ -252,7 +350,15 @@ export function TabbedSceneVisualizerFacet (props: TabbedSceneVisualizerFacetPro
             </div>
           )
         }) : null}
-        {categories ? <div><ul className={tabClassName}>{categories ? categories.map(createTabs) : null}</ul></div> : null }
+        {categories ? <div className={wrapper}>
+          <div className={mobileNavClassName}>
+            <div className={`${mobileNavWrapper}--left`} style={{ visibility: showNav.left ? 'visible' : 'hidden' }} >
+              <button onClick={scrollNavLeft} className={`${mobileNavBtnClassName}--left`}><FontAwesomeIcon icon={['fal', 'chevron-circle-left']} size='lg' /></button></div>
+            <div className={`${mobileNavWrapper}--right`} style={{ visibility: showNav.right ? 'visible' : 'hidden' }}>
+              <button onClick={scrollNavRight} className={`${mobileNavBtnClassName}--right`}><FontAwesomeIcon icon={['fal', 'chevron-circle-right']} size='lg' /></button></div>
+          </div>
+          <ul ref={tabItemListRef} className={tabClassName}>{categories ? categories.map(createTabs) : null}</ul>
+        </div> : null }
       </div>
     </>
   )
