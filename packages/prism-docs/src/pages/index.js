@@ -11,7 +11,7 @@ function HomepageHeader() {
     <header className={clsx('hero hero--primary', styles.heroBanner)}>
       <div className="container">
         <h1 className="hero__title">{siteConfig.title}</h1>
-        <p className="hero__subtitle">{siteConfig.tagline}</p>
+          <img src="img/dct_logo.png" style={{ width: '200px', marginBottom: '1em' }}></img>
         <div className={styles.buttons}>
             <p>We exist to develop innovative ways to instill color confidence.
                 The Digital Color Team combines emerging digital capabilities with the world-class expertise of Sherwin-Williams to make color decisions easier for our customers.
@@ -27,7 +27,7 @@ export default function Home() {
   const {siteConfig} = useDocusaurusContext();
   return (
     <Layout
-      title={`Hello from ${siteConfig.title}`}
+      title={`Explore ${siteConfig.title}`}
       description="Description will go into a meta tag in <head />">
       <HomepageHeader />
       <main>
