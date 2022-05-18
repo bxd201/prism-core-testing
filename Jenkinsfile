@@ -89,7 +89,7 @@ pipeline {
         stash includes: 'dist/**/*', name: 'static'
       }
     }
-    stage('s3-upload') {
+    stage('s3-version-upload') {
       when {
           expression { BRANCH_NAME ==~ /^(develop|hotfix|integration|qa|release|docusaurus)$/ }
         }
@@ -104,6 +104,23 @@ pipeline {
 
         sh """
         aws s3 cp dist/packages/facets/dist s3://sw-prism-web/"${S3_FOLDER_NAME}"/ --recursive
+        """
+      }
+   }
+   stage('s3-sites-upload') {
+      when {
+          expression { BRANCH_NAME ==~ /^(develop)$/ }
+        }
+      agent {
+        docker {
+          image 'docker.artifactory.sherwin.com/amazon/aws-cli:2.1.26'
+          args "--entrypoint=''"
+        }
+      }
+      steps {
+        unstash 'static'
+
+        sh """
         aws s3 cp dist/packages/facets/dist/storybook s3://sw-prism-web/storybook/facets --recursive
         aws s3 cp dist/packages/toolkit/public s3://sw-prism-web/storybook/toolkit --recursive
         aws s3 cp dist/packages/prism-docs/build s3://sw-prism-web/docs --recursive
