@@ -300,7 +300,7 @@ pipeline {
         script{
             sh """
               cp \$SECRET /root/.edgerc
-              akamai purge invalidate https://prism.sherwin-williams.com/"${S3_FOLDER_NAME}"/embed.js https://prism.sherwin-williams.com/storybook/toolkit/index.html https://prism.sherwin-williams.com/storybook/facets/index.html
+              akamai purge invalidate https://prism.sherwin-williams.com/"${S3_FOLDER_NAME}"/embed.js https://prism.sherwin-williams.com/storybook/toolkit/index.html https://prism.sherwin-williams.com/storybook/facets/index.html https://prism.sherwin-williams.com/docs/index.html
             """
           }
         }
