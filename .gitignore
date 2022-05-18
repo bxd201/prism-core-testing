@@ -27,6 +27,7 @@ flow-typed/npm
 
 # Static files for mock api calls
 public
+!packages/prism-demo/public
 yarn-error.log
 
 # Yarn

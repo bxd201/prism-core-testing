@@ -23,6 +23,7 @@ version's code in it's `develop` variant in S3.
 1. Update the version in the root of the project. 
 2. Update the version in each package's `package.json`
 3. Ensure/update the version of `@prism/toolkit` in each package's `package.json` to ensure it aligns with the current version.
+4. Ensure/update the version of `@prism/demo` in each package's `package.json` to ensure it aligns with the current version.
 
 ## Legacy Documentation
 Migrating up the legacy documentation for `prism-lib` and `prism-core` up to the top level is still in a work in progress.

@@ -1,8 +1,8 @@
 import React, { useRef, useEffect, HTMLAttributes, forwardRef, RefObject, Ref } from 'react'
 
-export interface CanvasPropsT extends HTMLAttributes<HTMLCanvasElement>{
-  src: string,
-  ref: Ref<HTMLCanvasElement>,
+export interface CanvasPropsT extends HTMLAttributes<HTMLCanvasElement> {
+  src: string
+  ref: Ref<HTMLCanvasElement>
   onLoad?: () => void
 }
 
@@ -21,16 +21,18 @@ const Canvas = forwardRef<HTMLCanvasElement, CanvasPropsT>(({ src, onLoad, ...ot
 
   const drawImageToCanvas = (): void => {
     const canvasRef = ref as RefObject<HTMLCanvasElement>
-    if ((canvasRef.current != null) && (imgRef.current != null)) {
+    if (canvasRef.current != null && imgRef.current != null) {
       canvasRef.current.width = imgRef.current?.width
       canvasRef.current.height = imgRef.current?.height
-      canvasRef?.current?.getContext('2d')?.drawImage(imgRef.current, 0, 0, imgRef.current?.width, imgRef.current?.height)
+      canvasRef?.current
+        ?.getContext('2d')
+        ?.drawImage(imgRef.current, 0, 0, imgRef.current?.width, imgRef.current?.height)
     }
   }
 
   // redraw image to canvas when component is resized
   useEffect(() => {
-    (imgRef.current != null) && new ResizeObserver(drawImageToCanvas).observe(imgRef.current)
+    imgRef.current != null && new ResizeObserver(drawImageToCanvas).observe(imgRef.current)
   }, [])
 
   return (
@@ -42,8 +44,8 @@ const Canvas = forwardRef<HTMLCanvasElement, CanvasPropsT>(({ src, onLoad, ...ot
         ref={imgRef}
         onLoad={() => {
           imgRef.current.crossOrigin = 'Anonymous'
-            drawImageToCanvas()
-            setTimeout(onLoad, 500)
+          drawImageToCanvas()
+          setTimeout(onLoad, 500)
         }}
       />
     </>
