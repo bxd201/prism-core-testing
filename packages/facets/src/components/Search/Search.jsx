@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Grid, AutoSizer } from 'react-virtualized'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { loadSearchResults } from 'src/store/actions/loadSearchResults'
-import { ColorSwatch } from '@prism/toolkit'
+import Prism, { ColorSwatch } from '@prism/toolkit'
 import { colorSwatchCommonProps } from 'src/components/ColorSwatchContent/ColorSwatchContent'
 import GenericMessage from '../Messages/GenericMessage'
 import TextButton from '../GeneralButtons/TextButton/TextButton'
@@ -48,43 +48,45 @@ const Search = ({ closeSearch = () => {}, contain = false, crossSearch, isChipLo
     if (!result) return
 
     return (
-      <ColorSwatch
-        {...colorSwatchCommonProps({ brandKeyNumberSeparator, color: result })}
-        className={swatchClass}
-        key={key}
-        {...(isChipLocator ? {
-          renderer: () => (
-            <div className={`${baseClass}__chip-locator`}>
-              <div className={`${swatchClass}__label swatch-content${colorNumOnBottom ? '__name-number' : '__number-name'}`}>
-                <p className={`${swatchClass}__label--number`}>{fullColorNumber(result.brandKey, result.colorNumber, brandKeyNumberSeparator)}</p>
-                <p className={`${swatchClass}__label--name`}>{result.name}</p>
+      <Prism>
+        <ColorSwatch
+          {...colorSwatchCommonProps({ brandKeyNumberSeparator, color: result })}
+          className={swatchClass}
+          key={key}
+          {...(isChipLocator ? {
+            renderer: () => (
+              <div className={`${baseClass}__chip-locator`}>
+                <div className={`${swatchClass}__label swatch-content${colorNumOnBottom ? '__name-number' : '__number-name'}`}>
+                  <p className={`${swatchClass}__label--number`}>{fullColorNumber(result.brandKey, result.colorNumber, brandKeyNumberSeparator)}</p>
+                  <p className={`${swatchClass}__label--name`}>{result.name}</p>
+                </div>
+                <div className={`${baseClass}__chip-locator--buttons`}>
+                  <button
+                    className={`${baseClass}__chip-locator--buttons__button ${result.isDark ? 'dark-color' : ''}`}
+                    onClick={() => {
+                      GA.event({ category: 'QR Color Wall Search', action: 'Find Chip', label: `${result.name} - ${result.colorNumber}` }, GA_TRACKER_NAME_BRAND[brandId])
+                      window.location.href = crossSearch && crossSearch.searching ? crossSearch.onClickFindChip(result) : colorWallPageRoot?.(result)
+                      closeSearch()
+                    }}
+                  >
+                    Find Chip
+                  </button>
+                  <button
+                    className={`${baseClass}__chip-locator--buttons__button ${result.isDark ? 'dark-color' : ''}`}
+                    onClick={() => {
+                      GA.event({ category: 'QR Color Wall Search', action: 'View Color', label: `${result.name} - ${result.colorNumber}` }, GA_TRACKER_NAME_BRAND[brandId])
+                      window.location.href = crossSearch && crossSearch.searching ? crossSearch.onClickViewColor(result) : colorDetailPageRoot?.(result)
+                    }}
+                  >
+                    View Color
+                  </button>
+                </div>
               </div>
-              <div className={`${baseClass}__chip-locator--buttons`}>
-                <button
-                  className={`${baseClass}__chip-locator--buttons__button ${result.isDark ? 'dark-color' : ''}`}
-                  onClick={() => {
-                    GA.event({ category: 'QR Color Wall Search', action: 'Find Chip', label: `${result.name} - ${result.colorNumber}` }, GA_TRACKER_NAME_BRAND[brandId])
-                    window.location.href = crossSearch && crossSearch.searching ? crossSearch.onClickFindChip(result) : colorWallPageRoot?.(result)
-                    closeSearch()
-                  }}
-                >
-                  Find Chip
-                </button>
-                <button
-                  className={`${baseClass}__chip-locator--buttons__button ${result.isDark ? 'dark-color' : ''}`}
-                  onClick={() => {
-                    GA.event({ category: 'QR Color Wall Search', action: 'View Color', label: `${result.name} - ${result.colorNumber}` }, GA_TRACKER_NAME_BRAND[brandId])
-                    window.location.href = crossSearch && crossSearch.searching ? crossSearch.onClickViewColor(result) : colorDetailPageRoot?.(result)
-                  }}
-                >
-                  View Color
-                </button>
-              </div>
-            </div>
-          )
-        } : null)}
-        style={_style}
-      />
+            )
+          } : null)}
+          style={_style}
+        />
+      </Prism>
     )
   }
 

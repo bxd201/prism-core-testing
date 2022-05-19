@@ -2,7 +2,7 @@
 import React, { useContext } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { add } from 'src/store/actions/live-palette'
-import { ColorPin, ImageColorPicker } from '@prism/toolkit'
+import Prism, { ColorPin, ImageColorPicker } from '@prism/toolkit'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { fullColorNumber, getContrastYIQ } from 'src/shared/helpers/ColorUtils'
 import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
@@ -22,7 +22,7 @@ const InspiredScene = ({ data: { img, initPins } }: InspiredSceneProps) => {
   const isColorAdded = ({ colorNumber }): boolean => livePaletteColors.some((c) => c.colorNumber === colorNumber)
 
   return (
-    <div style={{ padding: '0 0.125rem' }}>
+    <Prism style={{ padding: '0 0.125rem' }}>
       {colors && (
         <ImageColorPicker
           colors={colors}
@@ -52,7 +52,7 @@ const InspiredScene = ({ data: { img, initPins } }: InspiredSceneProps) => {
           }
         />
       )}
-    </div>
+    </Prism>
   )
 }
 
