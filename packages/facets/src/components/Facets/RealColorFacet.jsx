@@ -131,7 +131,9 @@ export function RealColorFacet (props: RealColorFacetProps) {
     // @todo wrap this in an if statement and use facet prop to determine if initial images needs to be cropped.  Pre cropping loads A LOT faster.
     cropDefaultImage(defaultImage, maxSceneHeight, forceSquare, imageScaleCallback)
     // ref dims should be the same as parent...
-    cropDefaultImage(defaultMask, maxSceneHeight, forceSquare, (data) => setInitialMaskImageUrl(data.url))
+    if (defaultMask) {
+      cropDefaultImage(defaultMask, maxSceneHeight, forceSquare, (data) => setInitialMaskImageUrl(data.url))
+    }
   }, [])
 
   useEffect(() => {
@@ -193,7 +195,6 @@ export function RealColorFacet (props: RealColorFacetProps) {
       {
         !loadingConfiguration &&
       initialImageUrl &&
-      initialMaskImageUrl &&
       initialUploadedImageRefDims &&
       tintColor
           ? <SceneVisualizerContent
@@ -201,7 +202,7 @@ export function RealColorFacet (props: RealColorFacetProps) {
             initUpload={initUpload}
             uploadInitiated={uploadInitiated}
             uploadButtonText={uploadButtonText}
-            tinter={<SimpleTintableScene
+            tinter={defaultMask ? <SimpleTintableScene
               spinner={<BallSpinner />}
               sceneType={SCENE_TYPES.ROOM}
               sceneName={sceneName}
@@ -210,7 +211,17 @@ export function RealColorFacet (props: RealColorFacetProps) {
               surfaceIds={[facetId]}
               surfaceColors={[tintColor]}
               width={initialUploadedImageRefDims.imageWidth}
-              height={initialUploadedImageRefDims.imageHeight} />} /> : null}</div>
+              height={initialUploadedImageRefDims.imageHeight} />
+              : <RealColorView
+                key={uploadId}
+                activeColor={tintColor}
+                spinner={<BallSpinner />}
+                imageOpacity={0.5}
+                waitMessage={waitMessage}
+                handlerError={handleRealColorError}
+                handleUpdate={handleRealColorUpdates}
+                cleanupCallback={handleRealColorCleanup}
+                imageUrl={initialImageUrl} />} /> : null}</div>
     <div className={shouldShowInitialImage ? 'scene-visualizer--hidden' : 'scene-visualizer'}>{
       uploadedImage &&
       uploadedImageRefDims &&
