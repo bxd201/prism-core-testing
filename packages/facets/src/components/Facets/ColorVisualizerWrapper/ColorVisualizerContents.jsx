@@ -398,6 +398,8 @@ const CVW = (props: CVWPropsType) => {
     dispatch(setFastMaskIsPolluted(!!fastMaskImageUrl))
   }
 
+  const isInspire = history.location?.pathname === ROUTES_ENUM.INSPIRATION
+
   return (
     <>
       <>
@@ -419,7 +421,7 @@ const CVW = (props: CVWPropsType) => {
             selectedSceneUid={selectedSceneUid}
             selectedVariantName={selectedVariantName} />}
         </div>
-        <div style={{ display: toggleCompareColorFlag ? 'none' : 'block' }} className={`cvw__root-wrapper${colorDetailsModalShowing ? ' hide-on-small-screens' : ''}`} ref={wrapperRef}>
+        <div style={{ display: toggleCompareColorFlag ? 'none' : 'block', minHeight: isInspire ? '500px' : null }} className={`cvw__root-wrapper${colorDetailsModalShowing ? ' hide-on-small-screens' : ''}`} ref={wrapperRef}>
           <ColorVisualizerNav />
           <Switch>
             {/* this redirects from legacy Angular-style CVW /!/<route> paths */}
