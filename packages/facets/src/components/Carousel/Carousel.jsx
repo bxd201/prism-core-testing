@@ -61,7 +61,7 @@ export default (props: ComponentProps) => {
   } = props
   const [position, setPosition] = useState(initPosition || 0)
   const [focusIndex, setCurrentFocusItem] = useState(1)
-  const { cvw } = useContext<ConfigurationContextType>(ConfigurationContext)
+  const { cvw = {} } = useContext<ConfigurationContextType>(ConfigurationContext)
   const { carouselBtn = {} } = cvw
   // tracks the previous position
   const prevPositionRef = useRef()
