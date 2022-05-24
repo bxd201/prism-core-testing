@@ -15,5 +15,8 @@ export const received = (data: any) => {
 }
 
 export const loadInspirationalPhotos = (brandId: string, options?: {}) => {
-  return (dispatch: Function) => axios.get(generateBrandedEndpoint(INSPIRATIONAL_PHOTOS_ENDPOINT, brandId, options)).then(res => { dispatch(received(res.data)) })
+  return (dispatch: Function) => {
+    axios.get(generateBrandedEndpoint(INSPIRATIONAL_PHOTOS_ENDPOINT, brandId, options))
+      .then(res => { dispatch(received(res.data)) })
+  }
 }
