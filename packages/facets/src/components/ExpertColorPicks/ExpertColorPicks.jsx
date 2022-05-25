@@ -7,7 +7,7 @@ import ExpertColorDetails from './ExpertColorDetails'
 import ColorStripButton from 'src/components/ColorStripButton/ColorStripButton'
 import Carousel from '../Carousel/Carousel'
 import ColorCollectionsTab from '../Shared/ColorCollectionsTab'
-import { ColorSwatch } from '@prism/toolkit'
+import Prism, { ColorSwatch } from '@prism/toolkit'
 import { colorSwatchCommonProps } from '../ColorSwatchContent/ColorSwatchContent'
 import { loadExpertColorPicks } from 'src/store/actions/expertColorPicks'
 import { fullColorNumber, getContrastYIQ } from 'src/shared/helpers/ColorUtils'
@@ -109,15 +109,17 @@ const ColorSwatchWrapper = ({ data, width }: any) => {
   return (
     <div className={baseClass}>
       <div className={`${baseClass}__item`} tabIndex='0'>
-        <ColorSwatch
-          {...colorSwatchCommonProps({ brandKeyNumberSeparator, color })}
-          activeFocus={false}
-          className={`${baseClass}__swatch`}
-          style={houseShaped
-            ? smallScreen ? { height: '102px' } : { height: '115px' }
-            : { height: '100px' }
-          }
-        />
+        <Prism>
+          <ColorSwatch
+            {...colorSwatchCommonProps({ brandKeyNumberSeparator, color })}
+            activeFocus={false}
+            className={`${baseClass}__swatch`}
+            style={houseShaped
+              ? smallScreen ? { height: '102px' } : { height: '115px' }
+              : { height: '100px' }
+            }
+          />
+        </Prism>
         <div className={`${baseClass}__desc`}>{data.description}</div>
       </div>
     </div>

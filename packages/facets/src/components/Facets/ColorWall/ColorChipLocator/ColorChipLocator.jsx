@@ -7,7 +7,7 @@ import { type ColorsStateItems } from 'src/shared/types/Actions.js.flow'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import ColorWallContext, { type ColorWallContextProps } from '../ColorWallContext'
 import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
-import { ColorSwatch } from '@prism/toolkit'
+import Prism, { ColorSwatch } from '@prism/toolkit'
 import { colorSwatchCommonProps } from 'src/components/ColorSwatchContent/ColorSwatchContent'
 import { fullColorNumber } from 'src/shared/helpers/ColorUtils'
 import * as GA from 'src/analytics/GoogleAnalytics'
@@ -66,13 +66,13 @@ const ColorChipLocator = ({ color = undefined }: ColorChipLocatorProps) => {
         onClick={() => { history.push(`/color-locator/${arrowColor.brandKey.toLowerCase()}-${arrowColor.colorNumber}`) }}
         style={{ backgroundColor: arrowColor ? `${arrowColor.hex}` : 'none' }}
       >
-        <FontAwesomeIcon style={{ color: arrowColor ? arrowColor.isDark ? 'white' : 'black' : 'lightgray' }} icon={['fas', `caret-${arrow[direction]}`]} size='2x' />
+        <FontAwesomeIcon style={{ color: arrowColor ? arrowColor.isDark ? 'white' : 'black' : 'lightgray', display: 'inline' }} icon={['fas', `caret-${arrow[direction]}`]} size='2x' />
       </button>
     )
   }
 
   return (
-    <div className='chip-locator'>
+    <Prism className='chip-locator'>
       <NavigatorArrow colors={navigator} direction={'top'} />
       <NavigatorArrow colors={navigator} direction={'right'} />
       <NavigatorArrow colors={navigator} direction={'bottom'} />
@@ -100,7 +100,7 @@ const ColorChipLocator = ({ color = undefined }: ColorChipLocatorProps) => {
         )}
         style={{ gridColumn: '2', gridRow: '2' }}
       />
-    </div>
+    </Prism>
   )
 }
 

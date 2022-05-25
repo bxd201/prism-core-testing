@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 import { useRouteMatch } from 'react-router-dom'
 import ColorWallPropsContext from '../ColorWallPropsContext'
 import { computeChunk } from '../sharedReducersAndComputers'
-import { ColorSwatch } from '@prism/toolkit'
+import Prism, { ColorSwatch } from '@prism/toolkit'
 import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import { type ColorsState } from 'src/shared/types/Actions.js.flow'
 import isSomething from 'src/shared/utils/isSomething.util'
@@ -100,23 +100,25 @@ function Chunk ({ data = {}, id = '', updateHeight, updateWidth }: ChunkProps) {
             const perimeterLevel = getPerimeterLevel(childId)
 
             return (
-              <ColorSwatch
-                active={active}
-                activeFocus={!houseShaped}
-                aria-label={fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator)}
-                color={color}
-                className={`${swatchClass}${active ? ` ${swatchClass}--active${houseShaped ? ` ${swatchClass}--house-shaped` : ''}` : ''}${perimeterLevel > 0 ? ` ${swatchClass}--perimeter ${swatchClass}--perimeter--${perimeterLevel}` : ''}`}
-                id={childId}
-                key={`${i}_${ii}`}
-                onClick={() => {
-                  setActiveSwatchId(childId)
-                  swatchContentRefs.current = []
-                  GA.event({ category: 'Color Wall', action: 'Color Swatch Click', label: fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator) }, GA_TRACKER_NAME_BRAND[brandId])
-                }}
-                ref={_el => addToSwatchRefs({ current: [_el, ...swatchContentRefs.current] }, childId)}
-                renderer={swatchRenderer}
-                style={{ height: swatchHeight, width: swatchWidth }}
-              />
+              <Prism>
+                <ColorSwatch
+                  active={active}
+                  activeFocus={!houseShaped}
+                  aria-label={fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator)}
+                  color={color}
+                  className={`${swatchClass}${active ? ` ${swatchClass}--active${houseShaped ? ` ${swatchClass}--house-shaped` : ''}` : ''}${perimeterLevel > 0 ? ` ${swatchClass}--perimeter ${swatchClass}--perimeter--${perimeterLevel}` : ''}`}
+                  id={childId}
+                  key={`${i}_${ii}`}
+                  onClick={() => {
+                    setActiveSwatchId(childId)
+                    swatchContentRefs.current = []
+                    GA.event({ category: 'Color Wall', action: 'Color Swatch Click', label: fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator) }, GA_TRACKER_NAME_BRAND[brandId])
+                  }}
+                  ref={_el => addToSwatchRefs({ current: [_el, ...swatchContentRefs.current] }, childId)}
+                  renderer={swatchRenderer}
+                  style={{ height: swatchHeight, width: swatchWidth }}
+                />
+              </Prism>
             )
           })}
         </div>

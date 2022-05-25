@@ -2,7 +2,7 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 // $FlowIgnore -- no defs for react-virtualized
 import { Grid, AutoSizer } from 'react-virtualized'
-import { ColorSwatch } from '@prism/toolkit'
+import Prism, { ColorSwatch } from '@prism/toolkit'
 import { colorSwatchCommonProps } from '../ColorSwatchContent/ColorSwatchContent'
 import ColorWallContext, { colorWallContextDefault } from '../Facets/ColorWall/ColorWallContext'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -62,13 +62,13 @@ const CollectionDetail = ({ addToLivePalette, collectionDetailData }: Props) => 
       ? { ...style, width: `calc(${pctW}% - 10px)`, left: `${pctW * columnIndex}%`, padding: '5px' }
       : { ...style, width: `${pctW}%`, left: `${pctW * columnIndex}%` }
 
-    return color && <div key={key}>
+    return color && <Prism key={key}>
       <ColorSwatch
         {...colorSwatchCommonProps({ brandKeyNumberSeparator, color })}
         className={swatchClass}
         style={_style}
       />
-    </div>
+    </Prism>
   }
 
   const verticalScroll = (_gridWrapperRef, direction, gridHeight, _cellSize) => {
