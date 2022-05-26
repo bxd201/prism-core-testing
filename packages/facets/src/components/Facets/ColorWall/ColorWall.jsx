@@ -328,7 +328,7 @@ const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: 
       <div className='color-wall'>
         {chunkMiniMap && sectionOverride && (
           <div className='color-wall-section-label__minimap'>
-            {(sectionsShortLabel && sectionsShortLabel[sectionOverride]) ?? sectionLabels[sectionOverride]}
+            <p className='color-wall-section-label__minimap--text'>{(sectionsShortLabel && sectionsShortLabel[sectionOverride]) ?? sectionLabels[sectionOverride]}</p>
             <div className='color-wall-section-label__minimap--image' style={{ backgroundImage: `url(${minimapDict[`${brandId}${leftHandDisplay ? 'LeftHand' : ''}`][sectionOverride]})` }} />
           </div>
         )}
