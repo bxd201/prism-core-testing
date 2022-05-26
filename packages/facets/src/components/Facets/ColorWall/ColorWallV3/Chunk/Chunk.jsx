@@ -2,7 +2,7 @@
 import React, { useContext, useState, useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import { useRouteMatch } from 'react-router-dom'
-import ColorWallPropsContext from '../ColorWallPropsContext'
+import { ColorWallPropsContext, ColorWallStructuralPropsContext } from '../ColorWallPropsContext'
 import { computeChunk } from '../sharedReducersAndComputers'
 import Prism, { ColorSwatch } from '@prism/toolkit'
 import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
@@ -24,6 +24,7 @@ type ChunkProps = {
 
 function Chunk ({ data = {}, id = '', updateHeight, updateWidth }: ChunkProps) {
   const ctx = useContext(ColorWallPropsContext)
+  const structuralCtx = useContext(ColorWallStructuralPropsContext)
   const { brandId, brandKeyNumberSeparator, colorWall: { colorSwatch = {} } }: ConfigurationContextType = useContext(ConfigurationContext)
   const { houseShaped = false } = colorSwatch
   const { items: { colorMap } }: ColorsState = useSelector(state => state.colors)
@@ -40,7 +41,7 @@ function Chunk ({ data = {}, id = '', updateHeight, updateWidth }: ChunkProps) {
   const swatchRefsMap = useRef({})
 
   useEffect(() => {
-    const results = computeChunk(data, ctx)
+    const results = computeChunk(data, structuralCtx)
 
     if (results) {
       const {
@@ -63,7 +64,7 @@ function Chunk ({ data = {}, id = '', updateHeight, updateWidth }: ChunkProps) {
       setHeight(innerHeight)
       updateHeight(outerHeight)
     }
-  }, [data, ctx])
+  }, [data, structuralCtx])
 
   useEffect(() => {
     addChunk({

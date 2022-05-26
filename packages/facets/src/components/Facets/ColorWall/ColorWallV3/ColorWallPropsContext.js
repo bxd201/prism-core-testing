@@ -13,17 +13,22 @@ export const MIN_BASE_SIZE = 14
 export const MAX_BASE_SIZE = 33
 export const ZOOMED_BASE_SIZE = 50
 
+export const SWATCH_WIDTH_WRAP_THRESHOLD = 20 // will prefer wrapped view if unwrapped view target swatch size falls below threshold value
+
 export const colorWallPropsDefault = {
   activeSwatchId: null,
   addChunk: noop,
   display: true,
   hostHasFocus: false,
   isZoomed: false,
-  scale: 1,
   swatchContentRefs: { current: [] },
   swatchRenderer: noop
 }
 
-const ColorWallPropsContext = React.createContext<Object>(colorWallPropsDefault)
+export const colorWallStructuralPropsDefault = {
+  scale: 1,
+  isWrapped: false
+}
 
-export default ColorWallPropsContext
+export const ColorWallPropsContext = React.createContext<Object>(colorWallPropsDefault)
+export const ColorWallStructuralPropsContext = React.createContext<Object>(colorWallStructuralPropsDefault)

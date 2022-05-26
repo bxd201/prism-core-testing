@@ -1,14 +1,15 @@
+/* eslint-disable */
 // @flow
 import React, { useState, useRef, useMemo, useEffect, useCallback, useContext } from 'react'
 import { useSelector } from 'react-redux'
-import ColorWallPropsContext, { BASE_SWATCH_SIZE, colorWallPropsDefault, MAX_SCROLLER_HEIGHT, MAX_SWATCH_SIZE, MIN_SCROLLER_HEIGHT, OUTER_SPACING, MIN_BASE_SIZE, MAX_BASE_SIZE } from '../ColorWallPropsContext'
+import { ColorWallPropsContext, ColorWallStructuralPropsContext, BASE_SWATCH_SIZE, colorWallPropsDefault, MAX_SCROLLER_HEIGHT, MAX_SWATCH_SIZE, MIN_SCROLLER_HEIGHT, OUTER_SPACING, MIN_BASE_SIZE, MAX_BASE_SIZE, colorWallStructuralPropsDefault, SWATCH_WIDTH_WRAP_THRESHOLD } from '../ColorWallPropsContext'
 import ColorSwatchContent from 'src/components/ColorSwatchContent/ColorSwatchContent'
 import Column from '../Column/Column'
 import noop from 'lodash/noop'
-import { AutoSizer } from 'react-virtualized'
+import AutoSizer from 'react-virtualized-auto-sizer'
 import { computeWall } from '../sharedReducersAndComputers'
 import useEffectAfterMount from 'src/shared/hooks/useEffectAfterMount'
-import { findPositionInChunks, getInitialSwatchInChunk, getInTabOrder, getPerimiterLevelTest, getProximalChunksBySwatchId, getProximalSwatchesBySwatchId } from './wallUtils'
+import { determineScaleForAvailableWidth, findPositionInChunks, getInitialSwatchInChunk, getInTabOrder, getPerimiterLevelTest, getProximalChunksBySwatchId, getProximalSwatchesBySwatchId, needsToWrap } from './wallUtils'
 import getElementRelativeOffset from 'get-element-relative-offset'
 import isSomething from 'src/shared/utils/isSomething.util'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -38,21 +39,23 @@ import 'src/scss/externalComponentSupport/AutoSizer.scss'
 // [ ] make swatchRenderer a prop, which will allow us to externalize rendering, link-building, and even color data
 
 type WallProps = {
-  structure: any,
   activeColorId: number | string | typeof undefined,
+  height?: number,
+  initialFocusId: number | string | typeof undefined,
   onActivateColor: () => void,
-  height?: number
+  structure: any
 }
 
 function Wall (props: WallProps) {
-  const { activeColorId: dirtyActiveColorId, height, onActivateColor = noop, structure } = props
+  const { activeColorId: dirtyActiveColorId, height, onActivateColor = noop, structure = {} } = props
+  const { children: wallChildren = [], props: wallProps = {} } = structure
+  const { wrap } = wallProps
   // this ensures numeric IDs are numeric (so '42' becomes 42), and string IDs remain strings
   const activeColorId = typeof dirtyActiveColorId === 'string' && !isNaN(+dirtyActiveColorId) ? +dirtyActiveColorId : dirtyActiveColorId
   const { colorWallBgColor }: ColorWallContextProps = useContext(ColorWallContext)
   const { colorWall: { bloomEnabled, colorSwatch = {} } }: ConfigurationContextType = useContext(ConfigurationContext)
   const { houseShaped = false } = colorSwatch
   const { items: { colorMap } }: ColorsState = useSelector(state => state.colors)
-  const livePaletteColors = useSelector(store => store.lp.colors)
   const [hasFocus, setHasFocus] = useState(false)
   const wallContentsRef = useRef()
   const focusOutStartHelper = useRef()
@@ -64,7 +67,13 @@ function Wall (props: WallProps) {
   const [shouldRender, setShouldRender] = useState(false)
   const [containerWidth, setContainerWidth] = useState(0)
   const [defaultDimensions, setDefaultDimensions] = useState()
-  const [defaultScale, setDefaultScale] = useState(1)
+  const [scaleUnwrapped, setScaleUnwrapped] = useState(1)
+  const [defaultWrappedDimensions, setDefaultWrappedDimensions] = useState()
+  const [scaleWrapped, setScaleWrapped] = useState(1)
+  const [isInWrappedView, setIsInWrappedView] = useState(false) // this will get toggled depending on the width of the wall container vs min width of unwrapped view
+  const wrapThisWall = isInWrappedView && wrap
+  const wallW = (wrapThisWall ? defaultWrappedDimensions?.outerWidth : defaultDimensions?.outerWidth) ?? 0
+  const wallH = (wrapThisWall ? defaultWrappedDimensions?.outerHeight : defaultDimensions?.outerHeight) ?? 0
 
   const setFocusAndScrollTo = useCallback((props = {}) => {
     setTopFocusData(props)
@@ -137,11 +146,32 @@ function Wall (props: WallProps) {
 
   const [forceRerender, setForceRerender] = useState(false)
 
-  const wallProps = useMemo(() => {
+  const wallCtx = useMemo(() => {
     const isZoomed = isSomething(activeColorId)
     const { current } = findPositionInChunks(chunks.current, activeColorId) // eslint-disable-line
     const getPerimeterLevel = getPerimiterLevelTest(current?.data?.children, activeColorId, bloomEnabled ? 2 : 0) // eslint-disable-line
 
+    return {
+      ...colorWallPropsDefault,
+      addChunk: chunk => chunks.current?.add(chunk),
+      activeSwatchId: activeColorId,
+      getPerimeterLevel,
+      hostHasFocus: hasFocus,
+      isZoomed,
+      setActiveSwatchId: id => handleMakeActiveSwatchId(id),
+      swatchRenderer: ({ id }) => ( // eslint-disable-line
+        <ColorSwatchContent
+          className={`${houseShaped ? 'swatch-content--house-shaped' : 'swatch-content-size'}`}
+          color={colorMap[id]}
+        />
+      )
+    }
+  }, [activeColorId, hasFocus, shouldRender, forceRerender])
+
+  // NOTE: this must remain after wallProps is defined
+  const { isZoomed } = wallCtx
+
+  const structuralWallCtx = useMemo(() => {
     // kind of a hack
     // should render being true for the first time AND no chunks means the wall is about to visibly render for the first time
     // we need it to render once in order to have chunks.current.data.children defined, and we need THAT in order to perform blooming
@@ -151,22 +181,13 @@ function Wall (props: WallProps) {
     }
 
     return {
-      ...colorWallPropsDefault,
-      addChunk: chunk => chunks.current?.add(chunk),
-      activeSwatchId: activeColorId,
-      getPerimeterLevel,
-      hostHasFocus: hasFocus,
-      isZoomed,
-      scale: isZoomed ? MAX_SWATCH_SIZE / BASE_SWATCH_SIZE : defaultScale,
-      setActiveSwatchId: id => handleMakeActiveSwatchId(id),
-      swatchRenderer: ({ id }) => ( // eslint-disable-line
-        <ColorSwatchContent
-          className={`${houseShaped ? 'swatch-content--house-shaped' : 'swatch-content-size'}`}
-          color={colorMap[id]}
-        />
-      )
+      ...colorWallStructuralPropsDefault,
+      isWrapped: isInWrappedView, // TODO: toggle this based on whether or not we break under our min unwrapped width
+      scale: isZoomed ? MAX_SWATCH_SIZE / BASE_SWATCH_SIZE : (isInWrappedView ? scaleWrapped : scaleUnwrapped)
     }
-  }, [activeColorId, hasFocus, defaultScale, livePaletteColors, shouldRender, forceRerender])
+  }, [isZoomed, shouldRender, scaleUnwrapped, scaleWrapped, forceRerender, isInWrappedView])
+
+  const { scale } = structuralWallCtx
 
   useEffect(() => {
     // if shouldRender is not true, there will be nothing rendered to scroll to
@@ -222,21 +243,31 @@ function Wall (props: WallProps) {
     setHasFocus(true)
   }
 
+  const computedWallUnwrapped = useRef()
+  const computedWallWrapped = useRef()
+
   useEffectAfterMount(() => {
     if (containerWidth > 0 && structure) {
-      const { width, height, widths, heights } = computeWall(structure) ?? {}
+      if (!computedWallUnwrapped.current) {
+        computedWallUnwrapped.current = computedWallUnwrapped.current || computeWall(structure, { ...colorWallStructuralPropsDefault, isWrapped: false })
+        setDefaultDimensions({ outerWidth: computedWallUnwrapped.current.outerWidth, outerHeight: computedWallUnwrapped.current.outerHeight, widths: computedWallUnwrapped.current.widths, heights: computedWallUnwrapped.current.heights })
+      }
 
-      if (!isNaN(width) && !isNaN(height)) {
-        const initScale = containerWidth / (width + OUTER_SPACING * 2)
-        const initSwatchSize = initScale * BASE_SWATCH_SIZE
-        const initSwatchSizeConstrained = Math.min(Math.max(initSwatchSize, MIN_BASE_SIZE), MAX_BASE_SIZE)
-        const initScaleConstrained = initSwatchSizeConstrained / initSwatchSize * initScale
+      if (!computedWallWrapped.current) {
+        computedWallWrapped.current = computedWallWrapped.current || computeWall(structure, { ...colorWallStructuralPropsDefault, isWrapped: true })
+        setDefaultWrappedDimensions({ outerWidth: computedWallWrapped.current.outerWidth, outerHeight: computedWallWrapped.current.outerHeight, widths: computedWallWrapped.current.widths, heights: computedWallWrapped.current.heights })
+      }
 
-        setDefaultScale(initScaleConstrained)
-        setDefaultDimensions({ width, height, widths, heights })
+      if (computedWallUnwrapped.current && computedWallWrapped.current) {
+        const newScaleUnwrapped = determineScaleForAvailableWidth(computedWallUnwrapped.current.outerWidth, containerWidth)
+        const shouldWrap = needsToWrap(newScaleUnwrapped)
+        setScaleUnwrapped(newScaleUnwrapped)
+        setIsInWrappedView(shouldWrap)
+
+        const newScaleWrapped = determineScaleForAvailableWidth(computedWallWrapped.current.outerWidth, containerWidth)
+        setScaleWrapped(newScaleWrapped)
+
         setShouldRender(true)
-      } else {
-        throw Error('Wall width/height must be numeric.')
       }
     }
   }, [structure, shouldRender, containerWidth])
@@ -381,62 +412,65 @@ function Wall (props: WallProps) {
     }
   }, [hasFocus])
 
-  // NOTE: this must remain after wallProps is defined
-  const { scale, isZoomed } = wallProps
+  const handleViewportResize = useCallback(({ width: thisWidth }) => {
+    setContainerWidth(thisWidth)
+  }, [])
 
-  return <ColorWallPropsContext.Provider value={wallProps}>
-    <div ref={wallRef} className='cwv3__wall'>
-      {!hasFocus
-        ? <button aria-hidden className='visually-hidden' onFocus={handleTabInBeginning} />
-        : <button aria-hidden className='visually-hidden' ref={focusOutStartHelper} onFocus={e => e.target.blur()} />}
-      <AutoSizer disableHeight style={{ width: '100%' }} onResize={({ width: thisWidth }) => setContainerWidth(thisWidth)}>{noop}</AutoSizer>
-      {shouldRender ? (
-        <>
-          {isZoomed ? <button onClick={() => onActivateColor()} className='zoom-out-btn' title={messages.ZOOM_OUT}>
-            <FontAwesomeIcon icon='search-minus' size='lg' />
-          </button> : null}
-          <div className='cwv3__wall-scroller' ref={wallContentsRef} style={{
-            backgroundColor: colorWallBgColor,
-            height: isNaN(height) ? (defaultDimensions?.height + OUTER_SPACING * 2) * scale : height,
-            maxHeight: isZoomed && MAX_SCROLLER_HEIGHT,
-            minHeight: !isZoomed && MIN_SCROLLER_HEIGHT
-          }}>
-            <div style={{
-              padding: OUTER_SPACING * scale,
-              position: 'relative',
-              margin: 'auto',
-              width: (defaultDimensions?.width + OUTER_SPACING * 2) * scale,
-              height: (defaultDimensions?.height + OUTER_SPACING * 2) * scale
+  return <ColorWallPropsContext.Provider value={wallCtx}>
+    <ColorWallStructuralPropsContext.Provider value={structuralWallCtx}>
+      <div ref={wallRef} className='cwv3__wall'>
+        {!hasFocus
+          ? <button aria-hidden className='visually-hidden' onFocus={handleTabInBeginning} />
+          : <button aria-hidden className='visually-hidden' ref={focusOutStartHelper} onFocus={e => e.target.blur()} />}
+        <AutoSizer disableHeight style={{ width: '100%' }} onResize={handleViewportResize}>{noop}</AutoSizer>
+        {shouldRender ? (
+          <>
+            {isZoomed ? <button onClick={() => onActivateColor()} className='zoom-out-btn' title={messages.ZOOM_OUT}>
+              <FontAwesomeIcon icon='search-minus' size='lg' />
+            </button> : null}
+            <div className='cwv3__wall-scroller' ref={wallContentsRef} style={{
+              backgroundColor: colorWallBgColor,
+              height: isNaN(height) ? (wallH + OUTER_SPACING * 2) * scale : height,
+              maxHeight: isZoomed && MAX_SCROLLER_HEIGHT,
+              minHeight: !isZoomed && MIN_SCROLLER_HEIGHT
             }}>
-              <div
-                className='cwv3__wall-col'
-                style={{
-                  width: (defaultDimensions?.width ?? 0) * scale,
-                  height: (defaultDimensions?.height ?? 0) * scale,
-                  top: OUTER_SPACING * scale,
-                  left: OUTER_SPACING * scale
-                }}
-              >
-                {/* $FlowIgnore */}
-                {structure?.children?.map((child, i) => {
-                  return (
-                    <Column
-                      key={i}
-                      id={i}
-                      data={child}
-                      updateWidth={noop}
-                      updateHeight={noop} />
-                  )
-                })}
+              <div style={{
+                padding: OUTER_SPACING * scale,
+                position: 'relative',
+                margin: 'auto',
+                width: (wallW + OUTER_SPACING * 2) * scale,
+                height: (wallH + OUTER_SPACING * 2) * scale
+              }}>
+                <div
+                  className={`cwv3__wall-row ${wrapThisWall ? 'cwv3__wall-row--wrapped' : ''}`}
+                  style={{
+                    width: (wallW ?? 0) * scale,
+                    height: (wallH ?? 0) * scale,
+                    top: OUTER_SPACING * scale,
+                    left: OUTER_SPACING * scale
+                  }}
+                >
+                  {/* $FlowIgnore */}
+                  {wallChildren && wallChildren.map((child, i) => {
+                    return (
+                      <Column
+                        key={i}
+                        id={i}
+                        data={child}
+                        updateWidth={noop}
+                        updateHeight={noop} />
+                    )
+                  })}
+                </div>
               </div>
             </div>
-          </div>
-        </>
-      ) : null}
-      {!hasFocus
-        ? <button aria-hidden className='visually-hidden' onFocus={handleTabInEnd} />
-        : <button aria-hidden className='visually-hidden' ref={focusOutEndHelper} onFocus={e => e.target.blur()} />}
-    </div>
+          </>
+        ) : null}
+        {!hasFocus
+          ? <button aria-hidden className='visually-hidden' onFocus={handleTabInEnd} />
+          : <button aria-hidden className='visually-hidden' ref={focusOutEndHelper} onFocus={e => e.target.blur()} />}
+      </div>
+    </ColorWallStructuralPropsContext.Provider>
   </ColorWallPropsContext.Provider>
 }
 

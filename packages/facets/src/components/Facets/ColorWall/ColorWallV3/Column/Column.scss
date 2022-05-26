@@ -5,4 +5,17 @@
   justify-content: space-between;
   align-items: stretch;
   position: relative;
+
+  &--align-start {
+    justify-content: flex-start;
+  }
+  &--align-justify {
+    justify-content: space-between;
+  }
+  &--align-center {
+    justify-content: center;
+  }
+  &--align-end {
+    justify-content: flex-end;
+  }
 }

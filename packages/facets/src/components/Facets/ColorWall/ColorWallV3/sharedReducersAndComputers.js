@@ -1,8 +1,8 @@
-import { colorWallPropsDefault, BASE_SWATCH_SIZE } from './ColorWallPropsContext'
+import { colorWallStructuralPropsDefault, BASE_SWATCH_SIZE } from './ColorWallPropsContext'
 
 export const initialState = { outerWidth: 0, outerHeight: 0, widths: {}, heights: {} }
 
-export function computeChunk (data = {}, ctx = colorWallPropsDefault) {
+export function computeChunk (data = {}, ctx = colorWallStructuralPropsDefault) {
   const { props: selfProps = {}, childProps = {}, children } = data
   const { spaceH = 0, spaceV = 0 } = selfProps
   const { height: swatchHeightScale = 1, width: swatchWidthScale = 1 } = childProps
@@ -36,22 +36,28 @@ export function computeChunk (data = {}, ctx = colorWallPropsDefault) {
   return null
 }
 
-export function reducerColumn (state, { type, amt, index }) {
+export function reducerColumn (state, stuff) {
+  const { type, amt, index } = stuff
+
   switch (type) {
+    case 'reset':
+      return initialState
     case 'width': {
       const newWidths = { ...state.widths, [index]: amt }
+      const width = Math.max.apply(undefined, Object.keys(newWidths).map(key => newWidths[key]))
       const newState = {
         ...state,
-        outerWidth: Math.max.apply(undefined, Object.keys(newWidths).map(key => newWidths[key])),
+        outerWidth: width,
         widths: newWidths
       }
       return newState
     }
     case 'height': {
       const newHeights = { ...state.heights, [index]: amt }
+      const height = Object.keys(newHeights).map(key => newHeights[key]).reduce((accum, next) => accum + next, 0)
       const newState = {
         ...state,
-        outerHeight: Object.keys(newHeights).map(key => newHeights[key]).reduce((accum, next) => accum + next, 0),
+        outerHeight: height,
         heights: newHeights
       }
       return newState
@@ -61,42 +67,59 @@ export function reducerColumn (state, { type, amt, index }) {
   }
 }
 
-export function computeColumn (data) {
-  if (data.children) {
-    const childrenDims = data.children.map((child, i) => {
+export function computeColumn (data = {}, ctx = colorWallStructuralPropsDefault) {
+  const { scale } = ctx
+  const { children, props = {} } = data
+  const { spaceH = 0, spaceV = 0 } = props
+
+  if (children) {
+    const childrenDims = children.map((child, i) => {
       if (child.type === 'CHUNK') {
-        return computeChunk(child)
+        return computeChunk(child, ctx)
       } else if (child.type === 'ROW') {
-        return computeRow(child)
+        return computeRow(child, ctx)
       }
       return null
     }).filter(Boolean)
 
+    const padH = scale * BASE_SWATCH_SIZE * spaceH
+    const padV = scale * BASE_SWATCH_SIZE * spaceV
     const state1 = childrenDims.map((child, i) => ({ type: 'width', amt: child.outerWidth, index: i })).reduce(reducerColumn, initialState)
     const state2 = childrenDims.map((child, i) => ({ type: 'height', amt: child.outerHeight, index: i })).reduce(reducerColumn, state1)
+    const state3 = {
+      ...state2,
+      outerWidth: state2.outerWidth + (padH * 2),
+      outerHeight: state2.outerHeight + (padV * 2)
+    }
 
-    return state2
+    return state3
   }
 
   return null
 }
 
-export function reducerRow (state, { type, amt, index }) {
+export function reducerRow (state, stuff) {
+  const { type, amt, index } = stuff
+
   switch (type) {
+    case 'reset':
+      return initialState
     case 'width': {
       const newWidths = { ...state.widths, [index]: amt }
+      const width = Object.keys(newWidths).map(key => newWidths[key]).reduce((accum, next) => accum + next, 0)
       const newState = {
         ...state,
-        outerWidth: Object.keys(newWidths).map(key => newWidths[key]).reduce((accum, next) => accum + next, 0),
+        outerWidth: width,
         widths: newWidths
       }
       return newState
     }
     case 'height': {
       const newHeights = { ...state.heights, [index]: amt }
+      const height = Math.max.apply(undefined, Object.keys(newHeights).map(key => newHeights[key]))
       const newState = {
         ...state,
-        outerHeight: Math.max.apply(undefined, Object.keys(newHeights).map(key => newHeights[key])),
+        outerHeight: height,
         heights: newHeights
       }
       return newState
@@ -106,66 +129,53 @@ export function reducerRow (state, { type, amt, index }) {
   }
 }
 
-export function computeRow (data) {
-  if (data.children) {
-    const childrenDims = data.children.map((child, i) => {
+export function computeRow (data = {}, ctx = colorWallStructuralPropsDefault) {
+  const { scale, isWrapped } = ctx
+  const { children, props = {} } = data
+  const { spaceH = 0, spaceV = 0, wrap } = props
+  const appropriateReducer = isWrapped && wrap ? reducerColumn : reducerRow
+
+  if (children) {
+    const childrenDims = children.map((child, i) => {
       if (child.type === 'CHUNK') {
-        return computeChunk(child)
+        return computeChunk(child, ctx)
       } else if (child.type === 'COLUMN') {
-        return computeColumn(child)
+        return computeColumn(child, ctx)
+      }
+      return null
+    }).filter(Boolean)
+
+    const padH = scale * BASE_SWATCH_SIZE * spaceH
+    const padV = scale * BASE_SWATCH_SIZE * spaceV
+    const state1 = childrenDims.map((child, i) => ({ type: 'width', amt: child.outerWidth, index: i })).reduce(appropriateReducer, initialState)
+    const state2 = childrenDims.map((child, i) => ({ type: 'height', amt: child.outerHeight, index: i })).reduce(appropriateReducer, state1)
+    const state3 = {
+      ...state2,
+      outerWidth: state2.outerWidth + (padH * 2),
+      outerHeight: state2.outerHeight + (padV * 2)
+    }
+
+    return state3
+  }
+
+  return null
+}
+
+export function computeWall (data, ctx = colorWallStructuralPropsDefault) {
+  const { children, props = {},  } = data // eslint-disable-line
+
+  if (children) {
+    const childrenDims = children.map((child, i) => {
+      if (child.type === 'CHUNK') {
+        return computeChunk(child, ctx)
+      } else if (child.type === 'COLUMN') {
+        return computeColumn(child, ctx)
       }
       return null
     }).filter(Boolean)
 
     const state1 = childrenDims.map((child, i) => ({ type: 'width', amt: child.outerWidth, index: i })).reduce(reducerRow, initialState)
     const state2 = childrenDims.map((child, i) => ({ type: 'height', amt: child.outerHeight, index: i })).reduce(reducerRow, state1)
-
-    return state2
-  }
-
-  return null
-}
-
-export function reducerWall (state, { type, amt, index }) {
-  switch (type) {
-    case 'reset':
-      return initialState
-    case 'width': {
-      const newWidths = { ...state.widths, [index]: amt }
-      const newState = {
-        ...state,
-        width: Object.keys(newWidths).map(key => newWidths[key]).reduce((accum, next) => accum + next, 0),
-        widths: newWidths
-      }
-      return newState
-    }
-    case 'height': {
-      const newHeights = { ...state.heights, [index]: amt }
-      const newState = {
-        ...state,
-        height: Math.max.apply(undefined, Object.keys(newHeights).map(key => newHeights[key])),
-        heights: newHeights
-      }
-      return newState
-    }
-    default:
-      throw new Error()
-  }
-}
-
-export function computeWall (data) {
-  if (data.children) {
-    const childrenDims = data.children.map((child, i) => {
-      if (child.type === 'CHUNK') {
-        return computeChunk(child)
-      } else if (child.type === 'COLUMN') {
-        return computeColumn(child)
-      }
-      return null
-    }).filter(Boolean)
-
-    const state1 = childrenDims.map((child, i) => ({ type: 'width', amt: child.outerWidth, index: i })).reduce(reducerWall, initialState)
-    const state2 = childrenDims.map((child, i) => ({ type: 'height', amt: child.outerHeight, index: i })).reduce(reducerWall, state1)
 
     return state2
   }
