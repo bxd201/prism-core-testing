@@ -48,11 +48,10 @@ const Search = ({ closeSearch = () => {}, contain = false, crossSearch, isChipLo
     if (!result) return
 
     return (
-      <Prism>
+      <Prism key={key}>
         <ColorSwatch
           {...colorSwatchCommonProps({ brandKeyNumberSeparator, color: result })}
           className={swatchClass}
-          key={key}
           {...(isChipLocator ? {
             renderer: () => (
               <div className={`${baseClass}__chip-locator`}>
