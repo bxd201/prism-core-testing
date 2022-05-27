@@ -28,6 +28,8 @@ import { hasGroupAccess } from '../../shared/utils/featureSwitch.util'
 import BallSpinner from '../BallSpinner/BallSpinner'
 import RealColorView from '../RealColor/RealColorView'
 
+import 'src/providers/fontawesome/fontawesome'
+
 type RealColorFacetProps = FacetPubSubMethods & FacetBinderMethods & {
   groupNames: string[],
   maxSceneHeight: number,
