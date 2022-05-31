@@ -100,7 +100,7 @@ function Chunk ({ data = {}, id = '', updateHeight, updateWidth }: ChunkProps) {
             const perimeterLevel = getPerimeterLevel(childId)
 
             return (
-              <Prism>
+              <Prism key={`${i}_${ii}`}>
                 <ColorSwatch
                   active={active}
                   activeFocus={!houseShaped}
@@ -108,7 +108,6 @@ function Chunk ({ data = {}, id = '', updateHeight, updateWidth }: ChunkProps) {
                   color={color}
                   className={`${swatchClass}${active ? ` ${swatchClass}--active${houseShaped ? ` ${swatchClass}--house-shaped` : ''}` : ''}${perimeterLevel > 0 ? ` ${swatchClass}--perimeter ${swatchClass}--perimeter--${perimeterLevel}` : ''}`}
                   id={childId}
-                  key={`${i}_${ii}`}
                   onClick={() => {
                     setActiveSwatchId(childId)
                     swatchContentRefs.current = []

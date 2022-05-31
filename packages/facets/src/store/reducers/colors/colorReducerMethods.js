@@ -16,7 +16,7 @@ export const initialState: ColorsState = {
   items: {},
   layouts: void (0),
   unChunkedChunks: [],
-  chunkGridParams: { gridWidth: 7 },
+  chunkGridParams: void (0),
   structure: [],
   sections: [],
   section: void (0),
@@ -38,7 +38,14 @@ export const initialState: ColorsState = {
   colorDetailsModal: {
     showing: false,
     color: undefined
-  }
+  },
+  cwv3: false, // TODO: eventually default this to true
+  shapes: [],
+  shape: void (0),
+  groups: [],
+  group: void (0),
+  subgroups: [],
+  subgroup: void (0)
 }
 
 export function getErrorState (state: ColorsState, error?: any) {
@@ -54,51 +61,74 @@ export function getErrorState (state: ColorsState, error?: any) {
   }
 }
 
-export function doReceiveColors (state: ColorsState, { payload: { unorderedColors, colors, brights, sections = [], colorLabels, chunksLayout, wall } }: ReduxAction): ColorsState {
+export function doReceiveColors (state: ColorsState, { payload: { unorderedColors, colors, brights, sections = [], colorLabels, chunksLayout, wall, groups = null, subgroups = null, shapes = null } }: ReduxAction): ColorsState {
   // adding toString methods to all Color objects
   const colorMap = convertUnorderedColorsToColorMap(convertUnorderedColorsToClasses(unorderedColors))
   const transpose = (matrix: any[][]): any[][] => matrix[0].map((_, col) => matrix.map(row => row[col]))
   const primeColorWall = sections.find(section => section.prime)
+  const { cwv3 } = state
 
-  return sections.length
-    ? {
-      ...state,
-      items: { colors, brights, unorderedColors: unorderedColors.map((c: Color) => c.id), sectionLabels: colorLabels, colorMap, chunksLayout, wall },
-      layouts: sections.map(({ name, families, chunkGridParams }) => {
-        const unChunkedChunks = (chunkGridParams.familiesDetermineLayout || !colors[name])
-          ? [
-            // bright chunks go first
-            ...families.flatMap((family: string): string[] => brights[family]),
-            // normal chunks go next but transposed so that each family will be in it's own column
-            ...flatten(transpose(families.map((family: string): string[] => colors[family])))
-          ]
-          : colors[name]
+  // TODO: here, add a check to perform this logic only if we do not have group/subgroup/shape
+  if (cwv3) {
+    return groups.length
+      ? {
+        ...state,
+        groups: groups,
+        items: { colors, brights, unorderedColors: unorderedColors.map((c: Color) => c.id), sectionLabels: colorLabels, colorMap, chunksLayout, wall },
+        layouts: [], // or null
+        status: { ...state.status, activeRequest: false, error: false, loading: false, requestComplete: true },
+        structure: [], // or null
+        sections: [], // or null
+        sectionsShortLabel: [], // or null
+        shapes: shapes,
+        subgroups: subgroups,
+        primeColorWall: groups.filter(({ prime }) => prime)[0]?.name,
+        unorderedColors
+        // TODO: what to do with structure?
+      }
+      : getErrorState(state)
+  } else {
+    return sections.length
+      ? {
+        ...state,
+        items: { colors, brights, unorderedColors: unorderedColors.map((c: Color) => c.id), sectionLabels: colorLabels, colorMap, chunksLayout, wall },
+        layouts: sections.map(({ name, families, chunkGridParams }) => {
+          const unChunkedChunks = (chunkGridParams.familiesDetermineLayout || !colors[name])
+            ? [
+              // bright chunks go first
+              ...families.flatMap((family: string): string[] => brights[family]),
+              // normal chunks go next but transposed so that each family will be in it's own column
+              ...flatten(transpose(families.map((family: string): string[] => colors[family])))
+            ]
+            : colors[name]
 
-        return {
-          name,
-          unChunkedChunks,
-          chunkGridParams,
-          families: families.map(family => ({
-            name: family,
-            unChunkedChunks: chunkGridParams.familiesDetermineLayout
-              ? [...(brights[family] ?? [[]]), ...(colors[family] ?? [[]])]
-              : colors[family],
-            chunkGridParams: chunkGridParams.familiesDetermineLayout
-              ? { gridWidth: 3, chunkWidth: 7, firstRowLength: 1, wrappingEnabled: false }
-              : { ...chunkGridParams, wrappingEnabled: false }
-          }))
-        }
-      }),
-      status: { ...state.status, activeRequest: false, error: false, loading: false, requestComplete: true },
-      structure: sections,
-      sections: sections.map(section => section.name),
-      sectionsShortLabel: sections.filter(({ shortName }) => shortName).length > 0 ? sections.reduce((accum, { name, shortName }) => ({ ...accum, [name]: shortName }), {}) : undefined,
-      primeColorWall: primeColorWall && primeColorWall.name,
-      unorderedColors
-    }
-    : getErrorState(state)
+          return {
+            name,
+            unChunkedChunks,
+            chunkGridParams,
+            families: families.map(family => ({
+              name: family,
+              unChunkedChunks: chunkGridParams.familiesDetermineLayout
+                ? [...(brights[family] ?? [[]]), ...(colors[family] ?? [[]])]
+                : colors[family],
+              chunkGridParams: chunkGridParams.familiesDetermineLayout
+                ? { gridWidth: 3, chunkWidth: 7, firstRowLength: 1, wrappingEnabled: false }
+                : { ...chunkGridParams, wrappingEnabled: false }
+            }))
+          }
+        }),
+        status: { ...state.status, activeRequest: false, error: false, loading: false, requestComplete: true },
+        structure: sections,
+        sections: sections.map(section => section.name),
+        sectionsShortLabel: sections.filter(({ shortName }) => shortName).length > 0 ? sections.reduce((accum, { name, shortName }) => ({ ...accum, [name]: shortName }), {}) : undefined,
+        primeColorWall: primeColorWall && primeColorWall.name,
+        unorderedColors
+      }
+      : getErrorState(state)
+  }
 }
 
+// TODO: make this work with groups when cwv3
 export function doFilterBySection (state: ColorsState, action: ReduxAction) {
   const payloadSection = action.payload.section
 
@@ -118,10 +148,12 @@ export function doFilterBySection (state: ColorsState, action: ReduxAction) {
   }
 
   if (!compareKebabs(state.section, payloadSection)) {
-    const { layouts = [], structure: sections = [] } = state
-    const targetedSection = sections.find(section => compareKebabs(section.name, payloadSection))
+    const { layouts = [], structure: sections = [], groups = [], subgroups = [], cwv3, shapes = [] } = state
+    const targetedSection = cwv3
+      ? groups.find(({ name }) => compareKebabs(name, payloadSection))
+      : sections.find(section => compareKebabs(section.name, payloadSection))
 
-    if (targetedSection && targetedSection.families) {
+    if (!cwv3 && targetedSection && targetedSection.families) {
       const { unChunkedChunks, chunkGridParams } = layouts.filter(l => l.name === targetedSection.name)[0]
 
       return {
@@ -131,6 +163,20 @@ export function doFilterBySection (state: ColorsState, action: ReduxAction) {
         section: targetedSection.name,
         unChunkedChunks,
         chunkGridParams,
+        shape: null,
+        // only reset the relevant initializeWith prop -- we may need to keep the others if initial filters are happening out of sync
+        initializeWith: { ...state.initializeWith, section: initialState.initializeWith.section }
+      }
+    } else if (cwv3 && targetedSection && targetedSection.subgroups) {
+      return {
+        ...state,
+        family: initialState.family, // reset family when section changes
+        families: targetedSection.subgroups.map(id => subgroups.find(group => group.id === id)?.name).filter(Boolean),
+        section: targetedSection.name,
+        group: targetedSection,
+        unChunkedChunks: null,
+        chunkGridParams: null,
+        shape: shapes.find(({ id }) => id === targetedSection.shapeId),
         // only reset the relevant initializeWith prop -- we may need to keep the others if initial filters are happening out of sync
         initializeWith: { ...state.initializeWith, section: initialState.initializeWith.section }
       }
@@ -140,7 +186,8 @@ export function doFilterBySection (state: ColorsState, action: ReduxAction) {
   }
 }
 
-export function doFilterByFamily (state: ColorsState, action: { payload: { family: ?string }}) {
+// TODO: make this work with subgroups when cwv3
+export function doFilterByFamily (state: ColorsState, action: ReduxAction) {
   const payloadFamily = action.payload.family
 
   // if we're currently still loading data...
@@ -150,29 +197,48 @@ export function doFilterByFamily (state: ColorsState, action: { payload: { famil
       ...state,
       initializeWith: {
         ...state.initializeWith,
-        family: kebabCase(payloadFamily)
+        family: kebabCase(payloadFamily),
+        shape: initialState.shape
       }
     }
   }
 
   if (!compareKebabs(state.family, payloadFamily)) {
-    const { families = [], section, layouts = [] } = state
-    const targetedFam = families.find(fam => compareKebabs(fam, payloadFamily))
+    const { layouts = [], families = [], section, subgroups = [], group, cwv3, shapes = [] } = state
+    const targetedFamName = families.find(fam => compareKebabs(fam, payloadFamily))
 
-    if (targetedFam || !payloadFamily) {
-      const layoutSection = layouts.filter(l => l.name === section)[0]
-      const { unChunkedChunks, chunkGridParams } = layoutSection.families.find(({ name }) => name === targetedFam) || layoutSection
+    if (!cwv3) {
+      if (targetedFamName || !payloadFamily) {
+        // LEGACY COLOR WALL V3
+        const layoutSection = layouts.filter(l => l.name === section)[0]
+        const { unChunkedChunks, chunkGridParams } = layoutSection.families.find(({ name }) => name === targetedFamName) || layoutSection
 
-      return {
-        ...state,
-        family: targetedFam || void (0),
-        unChunkedChunks,
-        chunkGridParams,
-        // only reset the relevant initializeWith prop -- we may need to keep the others if initial filters are happening out of sync
-        initializeWith: { ...state.initializeWith, family: initialState.initializeWith.family }
+        return {
+          ...state,
+          family: targetedFamName || void (0),
+          shape: initialState.shape,
+          unChunkedChunks,
+          chunkGridParams,
+          // only reset the relevant initializeWith prop -- we may need to keep the others if initial filters are happening out of sync
+          initializeWith: { ...state.initializeWith, family: initialState.initializeWith.family }
+        }
       }
-    } else {
-      return getErrorState(state)
+    } else if (cwv3) {
+      if (targetedFamName || !payloadFamily) {
+        const shapeId = targetedFamName
+          ? subgroups.find(({ name }) => compareKebabs(name, targetedFamName))?.shapeId
+          : group?.shapeId
+
+        return {
+          ...state,
+          family: targetedFamName || void (0),
+          shape: shapes.find(({ id }) => id === shapeId),
+          unChunkedChunks: initialState.unChunkedChunks,
+          chunkGridParams: initialState.chunkGridParams,
+          // only reset the relevant initializeWith prop -- we may need to keep the others if initial filters are happening out of sync
+          initializeWith: { ...state.initializeWith, family: initialState.initializeWith.family }
+        }
+      }
     }
   }
 }

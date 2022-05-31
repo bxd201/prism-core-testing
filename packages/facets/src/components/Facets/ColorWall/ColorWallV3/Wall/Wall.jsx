@@ -1,11 +1,10 @@
 // @flow
 import React, { useState, useRef, useMemo, useEffect, useCallback, useContext } from 'react'
 import { useSelector } from 'react-redux'
-import ColorWallPropsContext, { BASE_SWATCH_SIZE, colorWallPropsDefault, MIN_SWATCH_SIZE, MAX_SWATCH_SIZE, MAX_SCROLLER_HEIGHT, MIN_SCROLLER_HEIGHT, OUTER_SPACING } from '../ColorWallPropsContext'
+import ColorWallPropsContext, { BASE_SWATCH_SIZE, colorWallPropsDefault, MAX_SCROLLER_HEIGHT, MAX_SWATCH_SIZE, MIN_SCROLLER_HEIGHT, OUTER_SPACING, MIN_BASE_SIZE, MAX_BASE_SIZE } from '../ColorWallPropsContext'
 import ColorSwatchContent from 'src/components/ColorSwatchContent/ColorSwatchContent'
 import Column from '../Column/Column'
 import noop from 'lodash/noop'
-import sortBy from 'lodash/sortBy'
 import { AutoSizer } from 'react-virtualized'
 import { computeWall } from '../sharedReducersAndComputers'
 import useEffectAfterMount from 'src/shared/hooks/useEffectAfterMount'
@@ -46,7 +45,9 @@ type WallProps = {
 }
 
 function Wall (props: WallProps) {
-  const { activeColorId, height, onActivateColor = noop, structure } = props
+  const { activeColorId: dirtyActiveColorId, height, onActivateColor = noop, structure } = props
+  // this ensures numeric IDs are numeric (so '42' becomes 42), and string IDs remain strings
+  const activeColorId = typeof dirtyActiveColorId === 'string' && !isNaN(+dirtyActiveColorId) ? +dirtyActiveColorId : dirtyActiveColorId
   const { colorWallBgColor }: ColorWallContextProps = useContext(ColorWallContext)
   const { colorWall: { bloomEnabled, colorSwatch = {} } }: ConfigurationContextType = useContext(ConfigurationContext)
   const { houseShaped = false } = colorSwatch
@@ -60,12 +61,17 @@ function Wall (props: WallProps) {
   const wallRef = useRef()
   const [topFocusData, setTopFocusData] = useState()
   const { messages = {} } = useIntl()
+  const [shouldRender, setShouldRender] = useState(false)
+  const [containerWidth, setContainerWidth] = useState(0)
+  const [defaultDimensions, setDefaultDimensions] = useState()
+  const [defaultScale, setDefaultScale] = useState(1)
 
-  const setFocusAndScrollTo = useCallback((props) => {
+  const setFocusAndScrollTo = useCallback((props = {}) => {
     setTopFocusData(props)
 
     if (!props) return
 
+    // if this is empty/0, then we haven't rendered yet
     const swatchRefs = Array.from(chunks.current).map(chunk => chunk.swatchesRef?.current ?? []).filter(arr => arr.length)
     const result = (() => {
       try {
@@ -121,21 +127,28 @@ function Wall (props: WallProps) {
         }
       }, undefined)
 
-      if (ctas) {
-        if (ctas.length === 1) {
-          ctas[0].focus()
-        } else if (ctas.length > 1) {
-          sortBy(ctas, el => el.tabIndex)[0].focus()
-        }
+      const ctasInOrder = getInTabOrder(ctas) // eslint-disable-line
+
+      if (ctasInOrder && ctasInOrder.length > 0) {
+        ctasInOrder[0].focus()
       }
     }, 100)
   }
 
-  const [defaultScale, setDefaultScale] = useState(1)
+  const [forceRerender, setForceRerender] = useState(false)
+
   const wallProps = useMemo(() => {
     const isZoomed = isSomething(activeColorId)
     const { current } = findPositionInChunks(chunks.current, activeColorId) // eslint-disable-line
     const getPerimeterLevel = getPerimiterLevelTest(current?.data?.children, activeColorId, bloomEnabled ? 2 : 0) // eslint-disable-line
+
+    // kind of a hack
+    // should render being true for the first time AND no chunks means the wall is about to visibly render for the first time
+    // we need it to render once in order to have chunks.current.data.children defined, and we need THAT in order to perform blooming
+    // this will ONLY run if blooming is enabled
+    if (chunks.current.size === 0 && shouldRender && bloomEnabled) {
+      setTimeout(() => setForceRerender(true), 0)
+    }
 
     return {
       ...colorWallPropsDefault,
@@ -153,21 +166,17 @@ function Wall (props: WallProps) {
         />
       )
     }
-  }, [activeColorId, hasFocus, defaultScale, livePaletteColors])
-
-  const { scale, isZoomed } = wallProps
-  const [shouldRender, setShouldRender] = useState(false)
-  const [containerWidth, setContainerWidth] = useState(0)
-  const [defaultDimensions, setDefaultDimensions] = useState()
+  }, [activeColorId, hasFocus, defaultScale, livePaletteColors, shouldRender, forceRerender])
 
   useEffect(() => {
-    if (isSomething(activeColorId)) {
+    // if shouldRender is not true, there will be nothing rendered to scroll to
+    if (isSomething(activeColorId) && shouldRender) {
       setFocusAndScrollTo({
         swatchId: activeColorId,
         chunkId: getProximalChunksBySwatchId(chunks.current, activeColorId)?.current?.id
       })
     }
-  }, [activeColorId])
+  }, [activeColorId, shouldRender])
 
   const handleTabInBeginning = (e) => {
     const { first } = getProximalChunksBySwatchId(chunks.current)
@@ -214,13 +223,13 @@ function Wall (props: WallProps) {
   }
 
   useEffectAfterMount(() => {
-    if (!shouldRender && containerWidth > 0 && structure) {
+    if (containerWidth > 0 && structure) {
       const { width, height, widths, heights } = computeWall(structure) ?? {}
 
       if (!isNaN(width) && !isNaN(height)) {
         const initScale = containerWidth / (width + OUTER_SPACING * 2)
         const initSwatchSize = initScale * BASE_SWATCH_SIZE
-        const initSwatchSizeConstrained = Math.min(Math.max(initSwatchSize, MIN_SWATCH_SIZE), MAX_SWATCH_SIZE)
+        const initSwatchSizeConstrained = Math.min(Math.max(initSwatchSize, MIN_BASE_SIZE), MAX_BASE_SIZE)
         const initScaleConstrained = initSwatchSizeConstrained / initSwatchSize * initScale
 
         setDefaultScale(initScaleConstrained)
@@ -371,6 +380,9 @@ function Wall (props: WallProps) {
       wallRef?.current?.removeEventListener('click', handleWallClick) // eslint-disable-line
     }
   }, [hasFocus])
+
+  // NOTE: this must remain after wallProps is defined
+  const { scale, isZoomed } = wallProps
 
   return <ColorWallPropsContext.Provider value={wallProps}>
     <div ref={wallRef} className='cwv3__wall'>

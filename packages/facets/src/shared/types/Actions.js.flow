@@ -58,11 +58,29 @@ export type Layout = {
   families: { name: string, unChunkedChunks: number[][], chunkGridParams: ChunkGridParams }[]
 }
 
+export type Group = {
+  default: boolean,
+  id: string,
+  shapeId: string,
+  name: string,
+  prime: boolean,
+  subgroups: string[]
+}
+
+export type Subgroup = {
+  id: string,
+  shapeId: string,
+  name: string,
+}
+
 export type ColorsState = {
-  chunkGridParams: ChunkGridParams,
+  chunkGridParams: ChunkGridParams | void,
+  cwv3: boolean,
   emitColor?: { color: Color, timestamp: number },
   families?: string[],
-  family?: string,
+  family?: string, // currently-shown family/subgroup
+  group?: Group | void,
+  groups?: Group[],
   initializeWith: { family?: string, section?: string },
   items: ColorsStateItems,
   layouts?: Layout[],
@@ -76,10 +94,14 @@ export type ColorsState = {
     results?: ColorList,
     suggestions?: string[]
   },
-  section?: string,
+  section?: string, // currently-shown section/group
   sections?: string[],
   sectionsShortLabel?: { [key: string]: ?string },
+  shapes?: any[],
+  shape?: any,
   status: ColorsStateStatus,
   structure?: FamilyStructure,
+  subgroups?: Subgroup[],
+  subgroup?: Subgroup | void,
   unChunkedChunks: number[][]
 }

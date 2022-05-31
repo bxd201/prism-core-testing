@@ -68,7 +68,7 @@ const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: 
 
   const history = useHistory()
   const { messages = {} } = useIntl()
-  const { chunkGridParams, family, items: { colorMap = {}, colorStatuses = {}, sectionLabels: _sectionLabels = {} }, primeColorWall, section = '', sectionsShortLabel, unChunkedChunks }: ColorsState = useSelector(state => state.colors)
+  const { chunkGridParams = {}, family, items: { colorMap = {}, colorStatuses = {}, sectionLabels: _sectionLabels = {} }, primeColorWall, section = '', sectionsShortLabel, unChunkedChunks }: ColorsState = useSelector(state => state.colors)
   // if a family is selected, NEVER return section labels (they're only for sections)
   const sectionLabels = useMemo(() => {
     return family ? {} : _sectionLabels
@@ -127,7 +127,10 @@ const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: 
     }
   },
   [compareKebabs(params.section, section)])
-  useEffect(() => { dispatch(filterByFamily(params.family)) }, [compareKebabs(params.family, family)])
+
+  useEffect(() => {
+    dispatch(filterByFamily(params.family))
+  }, [compareKebabs(params.family, family)])
 
   // build the chunkGrid based on color wall container width
   useEffect(() => {

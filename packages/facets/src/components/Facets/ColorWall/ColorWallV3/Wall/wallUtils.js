@@ -157,7 +157,7 @@ export const getProximalChunksBySwatchId = (chunksSet, swatchId) => {
 }
 
 export const getInTabOrder = (list = []) => {
-  return sortBy(list.filter(Boolean).filter(el => el.tabIndex !== -1), el => el.tabIndex)
+  return sortBy(uniq(list.filter(Boolean)).filter(el => el.tabIndex !== -1), el => el.tabIndex)
 }
 
 export const getInitialSwatchInChunk = (chunk = {}, activeColorId) => {

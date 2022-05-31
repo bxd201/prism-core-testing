@@ -50,6 +50,7 @@ export type EmbeddedConfiguration = {
   brand?: string,
   colorDetailsAddColor?: boolean,
   colorDetailPageRoot?: string,
+  cwv3?: Boolean,
   defaultRoute?: string,
   displayAddButton?: boolean,
   displayDetailsLink?: boolean,

@@ -165,11 +165,12 @@ export const loadSavedScenes = (brandId: string, exclusions: string[]) => {
 export const loadSavedSceneFromFirebase = (brandId: string, exclusions: string[], dispatch: Function, getState: Function) => {
   const user = firebase.auth().currentUser
   const colorsHaveLoaded = checkColorsHaveLoaded(getState())
+  const { cwv3 } = getState().colors
 
   if (colorsHaveLoaded) {
     getSavedScenesFromFirebase(!!user, exclusions, dispatch, getState)
   } else {
-    const colorsRequests = getColorsRequests(brandId)
+    const colorsRequests = getColorsRequests(brandId, { cwv3 })
 
     Promise.all(colorsRequests).then(responses => {
       const colorData = mapResponsesToColorData(responses)
@@ -212,7 +213,8 @@ const getSavedScenesFromFirebase = (isLoggedIn: boolean, exclusions: string[], d
 export const loadSavedScenesFromMySherwin = (brandId: string, dispatch: Function, getState: Function) => {
   // @todo - implement this when real endpoints are available -RS
   const colorsHaveLoaded = checkColorsHaveLoaded(getState())
-  axios.all(getInitialRequestsForMySherwin(colorsHaveLoaded, brandId))
+  const { cwv3 } = getState().colors
+  axios.all(getInitialRequestsForMySherwin(colorsHaveLoaded, brandId, { cwv3 }))
     .then(responses => {
       dispatch({
         type: LOADED_SAVED_SCENES_METADATA,
