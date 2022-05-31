@@ -42,6 +42,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import debounce from 'lodash/debounce'
 import { isDarkColor } from 'is-dark-color/dist/isDarkColor'
 
+import 'src/providers/fontawesome/fontawesome'
+
 type TabbedSceneVisualizerFacetProps = FacetPubSubMethods & FacetBinderMethods & {
   groupNames: string[],
   defaultColors: string[],
