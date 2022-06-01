@@ -6,13 +6,20 @@ import Prism, { ColorPin, ImageColorPicker } from '@prism/toolkit'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { fullColorNumber, getContrastYIQ } from 'src/shared/helpers/ColorUtils'
 import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
+import useColors from '../../shared/hooks/useColors'
 
 type InspiredSceneProps = {
   data: { img: string, initPins: { x: number, y: number }[] }
 }
 
 const InspiredScene = ({ data: { img, initPins } }: InspiredSceneProps) => {
-  const colors = useSelector((store) => store.colors.unorderedColors)
+  // We call useColor to load the colors for cases where loadColor has not already been called.
+  // we don't use the colors from what is returned bc the data type for unorderedColors (sting[]) is much thinner in the hook
+  // than what is in redux (Color[])
+  // We consume the colors from the redux store, since it's a bit redundant to recreate what we already have access to
+  // eslint-disable-next-line no-unused-vars
+  const [colors] = useColors()
+  const unorderedColors = useSelector(store => store.colors?.unorderedColors)
   const dispatch = useDispatch()
   const livePaletteColors = useSelector((store) => store.lp.colors)
   const { brandKeyNumberSeparator, colorWall: { colorSwatch = {} } } = useContext<ConfigurationContextType>(ConfigurationContext)
@@ -23,13 +30,13 @@ const InspiredScene = ({ data: { img, initPins } }: InspiredSceneProps) => {
 
   return (
     <Prism style={{ padding: '0 0.125rem' }}>
-      {colors && (
+      {unorderedColors && (
         <ImageColorPicker
-          colors={colors}
+          colors={unorderedColors}
           imgSrc={img}
           initialPinLocations={initPins.map((pin) => ({ x: pin.x * 100, y: pin.y * 100 }))}
-          pinRenderer={(props) => (
-            <ColorPin
+          pinRenderer={(props) => {
+            return <ColorPin
               {...props}
               buttonContent={(color) => (
                 <FontAwesomeIcon
@@ -46,7 +53,7 @@ const InspiredScene = ({ data: { img, initPins } }: InspiredSceneProps) => {
               )}
               onColorAdded={(color) => dispatch(add(color))}
             />
-          )}
+          }}
           removeButtonContent={
             <FontAwesomeIcon aria-label='remove' icon={['fa', 'trash']} style={{ display: 'inline-block' }} />
           }
