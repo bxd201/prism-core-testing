@@ -398,7 +398,16 @@ const CVW = (props: CVWPropsType) => {
     dispatch(setFastMaskIsPolluted(!!fastMaskImageUrl))
   }
 
-  const isInspire = history.location?.pathname === ROUTES_ENUM.INSPIRATION
+  // @todo this is a workaround for a structural bug in the CVW, ideally,
+  //  the height of the nav dropdown should be self determining, that is a much BIGGER fix -RS
+  function shouldSetDropDownMinHeight () {
+    const loc = history.location?.pathname
+    if (loc === ROUTES_ENUM.ACTIVE_COLORS || loc === ROUTES_ENUM.INSPIRATION || loc === ROUTES_ENUM.SCENES) {
+      return '500px'
+    }
+
+    return null
+  }
 
   return (
     <>
@@ -421,7 +430,7 @@ const CVW = (props: CVWPropsType) => {
             selectedSceneUid={selectedSceneUid}
             selectedVariantName={selectedVariantName} />}
         </div>
-        <div style={{ display: toggleCompareColorFlag ? 'none' : 'block', minHeight: isInspire ? '500px' : null }} className={`cvw__root-wrapper${colorDetailsModalShowing ? ' hide-on-small-screens' : ''}`} ref={wrapperRef}>
+        <div style={{ display: toggleCompareColorFlag ? 'none' : 'block', minHeight: shouldSetDropDownMinHeight() }} className={`cvw__root-wrapper${colorDetailsModalShowing ? ' hide-on-small-screens' : ''}`} ref={wrapperRef}>
           <ColorVisualizerNav />
           <Switch>
             {/* this redirects from legacy Angular-style CVW /!/<route> paths */}
