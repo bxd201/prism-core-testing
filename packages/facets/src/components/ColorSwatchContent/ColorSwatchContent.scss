@@ -1,5 +1,5 @@
 .swatch-content {
-  border: 1px solid white;
+  border: 1px solid white !important;
 
   &-size {
     // Sizes to be revisited/adjusted when replacing ColorWallV1
@@ -71,8 +71,8 @@
       padding: 0.75rem 0.75rem 0.6rem;
       width: 100%;
       background: white;
-      border: 1px solid lightgray;
-      border-top: none;
+      border: 1px solid lightgray !important;
+      border-top: none !important;
       text-align: center;
       line-height: 1.3rem;
 
