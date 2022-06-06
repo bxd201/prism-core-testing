@@ -2,6 +2,7 @@
   "name": "@prism/prism-demo",
   "version": "3.0.0",
   "private": true,
+  "homepage": "https://prism.sherwin-williams.com/demo",
   "dependencies": {
     "@headlessui/react": "^1.6.4",
     "@heroicons/react": "^1.0.6",
