@@ -61,6 +61,11 @@ const config = {
             label: 'Documentation',
           },
           {
+            href: 'https://prism.sherwin-williams.com/demo/index.html',
+            position: 'right',
+            label: 'Demo',
+          },
+          {
             href: 'https://github.sherwin.com/SherwinWilliams/prism-core',
             label: 'GitHub',
             position: 'right',

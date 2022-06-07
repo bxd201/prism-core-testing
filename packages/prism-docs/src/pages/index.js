@@ -28,7 +28,7 @@ export default function Home() {
   return (
     <Layout
       title={`Explore ${siteConfig.title}`}
-      description="Description will go into a meta tag in <head />">
+      description="PRISM Digital Color Tools">
       <HomepageHeader />
       <main>
         <HomepageFeatures />
