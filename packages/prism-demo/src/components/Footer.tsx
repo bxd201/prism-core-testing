@@ -86,6 +86,15 @@ export default function Footer() {
           ))}
         </div>
         <p className='mt-8 text-center text-base text-gray-400'>&copy; 2022 The Sherwin-Williams Company.</p>
+        <p className='mt-2 text-center text-base text-gray-400'>
+          Powered by{' '}
+          <a
+            className='mt-2 text-center text-base text-gray-400'
+            href='https://prism.sherwin-williams.com/docs/index.html'
+          >
+            PRISM
+          </a>
+        </p>
       </div>
     </footer>
   )
