@@ -48,7 +48,7 @@ const Palette = ({
   const activeSlotWidth: number = width < 768 ? inActiveSlotWidth : inActiveSlotWidth * 2.5
 
   const activeColor = colors[activeIndex] ?? colors[colors.length - 1]
-  const textColor = activeColor.isDark ? 'text-white' : 'text-black'
+  const textColor = activeColor?.isDark ? 'text-white' : 'text-black'
 
   return (
     <div {...otherProps} ref={ref} className={`w-full h-20 ${otherProps.className ?? ''}`}>
