@@ -79,6 +79,8 @@ pipeline {
 
         mkdir dist
         docker cp ${IMAGE_NAME}-build-${BUILD_NUMBER}:/app/dist.tgz ./
+        docker cp ${IMAGE_NAME}-build-${BUILD_NUMBER}:/app/node_modules ./
+        docker cp ${IMAGE_NAME}-build-${BUILD_NUMBER}:/app/packages/toolkit/node_modules/ packages/toolkit/
         tar zxf dist.tgz -C dist
         rm dist.tgz
         echo "$PRISM_VERSION" > dist/VERSION
@@ -87,8 +89,39 @@ pipeline {
         docker rm -f ${IMAGE_NAME}-build-${BUILD_NUMBER}
         """
         stash includes: 'dist/**/*', name: 'static'
+        stash includes: 'node_modules/**/*', name: 'node'
+        stash includes: 'packages/**/*', name: 'toolkit'
       }
     }
+
+    stage('Yarn-publish') {
+      when {
+          expression { BRANCH_NAME ==~ /^(develop|release)$/ }
+        }
+        environment {
+            ARTIFACTORY = credentials("YARN_PUBLISH")
+        }
+      agent {
+        docker {
+          image 'docker.artifactory.sherwin.com/ecomm/utils/node:16'
+        }
+      }
+      steps {
+        unstash 'node'
+        unstash 'static'
+        unstash 'toolkit'
+
+        sh """
+        cp \$ARTIFACTORY .yarnrc.yml
+        sed -i "s/sherwin-npm-virtual/sherwin-npm-local/g" packages/toolkit/package.json
+        chmod +x ci/scripts/update-version.sh
+        if [ "${BRANCH_NAME}" = "develop" ]; then
+           ./ci/scripts/update-version.sh packages/toolkit/package.json rc.${BUILD_NUMBER}
+        fi
+        yarn publish
+        """
+      }
+   }
     stage('s3-version-upload') {
       when {
           expression { BRANCH_NAME ==~ /^(develop|hotfix|integration|qa|release|docusaurus)$/ }
