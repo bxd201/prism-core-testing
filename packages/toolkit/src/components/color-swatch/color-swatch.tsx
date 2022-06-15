@@ -2,13 +2,13 @@ import React, { CSSProperties, forwardRef, ForwardedRef, useEffect, useState } f
 import { Color } from '../../types'
 
 export interface ColorSwatchProps {
-  active?: boolean,
-  activeFocus?: boolean,
-  "aria-label"?: string,
-  className?: string,
-  color: Color,
-  id?: number,
-  onClick?: () => void,
+  active?: boolean
+  activeFocus?: boolean
+  "aria-label"?: string
+  className?: string
+  color: Color
+  id?: number
+  onClick?: () => void
   renderer?: ({ id, ref }: { id?: number, ref?: ForwardedRef<HTMLButtonElement & HTMLDivElement> }) => JSX.Element
   style?: CSSProperties
 }

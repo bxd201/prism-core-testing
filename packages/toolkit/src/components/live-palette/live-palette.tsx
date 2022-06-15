@@ -4,41 +4,45 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import { without, range } from 'lodash'
 import { useContainerSize } from '../../hooks'
 
-export interface PaletteProps {
-  initialActiveIndex?: number
-  initialColors?: Color[]
+export interface LivePaletteProps {
+  activeIndex?: number
   addButtonRenderer?: (color: Color[]) => JSX.Element
+  colors?: Color[]
+  className?: string
   deleteButtonRenderer?: (color: Color, callback?: () => void) => JSX.Element
   detailsButtonRenderer?: (color: Color, callback?: () => void) => JSX.Element
   emptySlotRenderer?: () => JSX.Element
+  labelRenderer?: (color: Color) => JSX.Element
   maxSlots?: number
   onColorActivated?: (color: Color) => void
   onColorsChanged?: (colors: Color[]) => void
-  className?: string
+  slotAriaLabel?: (color: Color) => string
 }
 
-const Palette = ({
-  initialActiveIndex = 0,
-  initialColors = [],
+const LivePalette = ({
+  activeIndex = 0,
   addButtonRenderer,
+  colors = [],
   deleteButtonRenderer,
   detailsButtonRenderer,
   emptySlotRenderer,
+  labelRenderer,
   maxSlots = 8,
   onColorActivated,
   onColorsChanged,
+  slotAriaLabel,
   ...otherProps
-}: PaletteProps): JSX.Element => {
-  const [colors, setColors] = useState(initialColors ?? [])
-  const [activeIndex, setActiveIndex] = useState<number>(initialActiveIndex)
+}: LivePaletteProps): JSX.Element => {
+  const [lpColors, setLpColors] = useState(colors ?? [])
+  const [lpActiveIndex, setLpActiveIndex] = useState<number>(activeIndex)
 
   // callbacks called on state change
-  useEffect(() => onColorsChanged?.(colors), [colors])
-  useEffect(() => onColorActivated?.(colors[activeIndex]), [activeIndex])
+  useEffect(() => onColorsChanged?.(lpColors), [lpColors])
+  useEffect(() => onColorActivated?.(lpColors[lpActiveIndex]), [lpActiveIndex])
 
   // re-initialize state when it's initializer prop is changed
-  useEffect(() => setColors(initialColors), [initialColors])
-  useEffect(() => setActiveIndex(initialActiveIndex), [initialActiveIndex])
+  useEffect(() => setLpColors(colors), [colors])
+  useEffect(() => setLpActiveIndex(activeIndex), [activeIndex])
 
   // calculate slot widths from current palette's width
   const ref = useRef<HTMLDivElement>(null)
@@ -46,40 +50,37 @@ const Palette = ({
 
   const inActiveSlotWidth: number = (width * (width < 768 ? 0.92 : 0.75)) / maxSlots
   const activeSlotWidth: number = width < 768 ? inActiveSlotWidth : inActiveSlotWidth * 2.5
+  const activeColor = lpColors[lpActiveIndex] ?? lpColors[lpColors.length - 1]
 
-  const activeColor = colors[activeIndex] ?? colors[colors.length - 1]
-  const textColor = activeColor?.isDark ? 'text-white' : 'text-black'
+  const textColor = (color): string => color?.isDark ? 'text-white' : 'text-black'
 
   return (
     <div {...otherProps} ref={ref} className={`w-full h-20 ${otherProps.className ?? ''}`}>
-      {colors.length > 0 && maxSlots > 0 && (
+      {lpColors.length > 0 && maxSlots > 0 && (
         <div
-          className='md:hidden flex items-center justify-between flex-1 w-full mb-1 p-1'
+          className={`md:hidden flex items-center justify-between flex-1 w-full mb-1 p-1 ${textColor(activeColor)}`}
           style={{ backgroundColor: activeColor?.hex }}
         >
-          <div className={`text-xs ml-1.5 ${textColor}`} style={{ lineHeight: '.9rem' }}>
-            <p>{`${activeColor.brandKey} ${activeColor.colorNumber}`}</p>
-            <p>{activeColor.name}</p>
-          </div>
+          {labelRenderer?.(activeColor)}
           <div className='flex mr-2'>{detailsButtonRenderer?.(activeColor)}</div>
         </div>
       )}
       <DragDropContext
         onDragEnd={({ source, destination }) => {
-          const items = Array.from(colors)
+          const items = Array.from(lpColors)
           const [reorderedItem] = items.splice(source.index, 1)
           if (destination != null) {
             items.splice(destination.index, 0, reorderedItem)
           }
-          setColors(items)
+          setLpColors(items)
           // index of active color may have changed, re-calculate it's index in the new order
-          setActiveIndex(items.findIndex(({ id }) => activeColor.id === id))
+          setLpActiveIndex(items.findIndex(({ id }) => activeColor.id === id))
         }}
       >
         <Droppable droppableId='colorSlots' direction='horizontal'>
           {({ innerRef, droppableProps, placeholder }) => (
             <ul ref={innerRef} className='flex w-full h-1/2 md:h-full' {...droppableProps}>
-              {colors.slice(0, Math.min(maxSlots, colors.length)).map((color, i) => {
+              {lpColors.slice(0, Math.min(maxSlots, lpColors.length)).map((color, i) => {
                 const isActive = activeColor.id === color.id
 
                 return (
@@ -94,10 +95,10 @@ const Palette = ({
                       >
                         <div
                           role='button'
-                          aria-label={`Expand option for ${color.name} color`}
+                          aria-label={slotAriaLabel?.(color)}
                           className='ring-primary focus:outline-none focus-visible:ring-2 relative flex flex-wrap h-full cursor-auto transition-width duration-500 ease-out'
-                          onClick={() => setActiveIndex(i)}
-                          onKeyDown={(e) => e.keyCode !== 9 && setActiveIndex(i)}
+                          onClick={() => setLpActiveIndex(i)}
+                          onKeyDown={(e) => e.keyCode !== 9 && setLpActiveIndex(i)}
                           style={{
                             backgroundColor: color.hex,
                             boxShadow: isActive && width <= 768 ? `0px -6px ${color.hex}` : '',
@@ -107,19 +108,19 @@ const Palette = ({
                         >
                           {isActive && (
                             <div className='md:m-2 relative w-full overflow-hidden'>
-                              <div className={`hidden md:block text-xs leading-4 ${textColor}`}>
-                                <p className='whitespace-nowrap'>{`${color.brandKey} ${color.colorNumber}`}</p>
-                                <p className='whitespace-nowrap font-bold'>{color.name}</p>
+                              <div className={`hidden md:block ${textColor(color)}`}>
+                                {labelRenderer?.(activeColor)}
                               </div>
-                              <div className='relative md:absolute top-0 md:top-0.5 right-0 md:right-0.5 flex h-full items-center md:items-start justify-center'>
+                              <div className={`relative md:absolute top-0 md:top-0.5 right-0 md:right-0.5 flex h-full items-center md:items-start justify-center ${textColor(color)}`}>
                                 <div className='hidden md:flex'>{detailsButtonRenderer?.(color)}</div>
-                                {deleteButtonRenderer?.(color, () => setColors(without(colors, color)))}
+                                {deleteButtonRenderer?.(color, () => setLpColors(without(lpColors, color)))}
                               </div>
                             </div>
                           )}
                           <svg
                             aria-label={`Drag color ${color.name}`}
-                            className={`hidden md:flex absolute bottom-0 right-0 stroke-current m-0.5 w-5 h-5 ${textColor}`}
+                            className={`hidden md:flex absolute bottom-0 right-0 stroke-current w-5 h-5 ${textColor(color)}`}
+                            style={{ margin: '5px' }}
                           >
                             <line strokeWidth='1px' x1='20' y1='0' x2='0' y2='20' />
                             <line strokeWidth='1px' x1='20' y1='6' x2='6' y2='20' />
@@ -132,14 +133,14 @@ const Palette = ({
                 )
               })}
               {placeholder}
-              {range(Math.max(maxSlots - colors.length, 0)).map((i) => (
+              {range(Math.max(maxSlots - lpColors.length, 0)).map((i) => (
                 <li
                   aria-label='Empty slot'
                   key={i}
                   className='m-0.5'
-                  style={{ width: `${colors.length === 0 && i === 0 ? activeSlotWidth : inActiveSlotWidth}px` }}
+                  style={{ width: `${lpColors.length === 0 && i === 0 ? activeSlotWidth : inActiveSlotWidth}px` }}
                 >
-                  {i === 0 ? addButtonRenderer?.(colors) : emptySlotRenderer?.()}
+                  {i === 0 ? addButtonRenderer?.(lpColors) : emptySlotRenderer?.()}
                 </li>
               ))}
             </ul>
@@ -150,4 +151,4 @@ const Palette = ({
   )
 }
 
-export default Palette
+export default LivePalette
