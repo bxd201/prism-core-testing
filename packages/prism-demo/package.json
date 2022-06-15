@@ -1,12 +1,12 @@
 {
   "name": "@prism/prism-demo",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "private": true,
   "homepage": "https://prism.sherwin-williams.com/demo",
   "dependencies": {
     "@headlessui/react": "^1.6.4",
     "@heroicons/react": "^1.0.6",
-    "@prism/toolkit": "3.0.0",
+    "@prism/toolkit": "3.1.0",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^13.5.0",

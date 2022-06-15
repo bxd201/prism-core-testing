@@ -1,6 +1,6 @@
 {
   "name": "@prism/facets",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "scripts": {
     "create-empty-prism-manifest": "yarn node build-scripts/utilities/create-empty-prism-manifest.js",
     "create-empty-embed-file": "yarn node build-scripts/utilities/create-empty-embed-file.js",
