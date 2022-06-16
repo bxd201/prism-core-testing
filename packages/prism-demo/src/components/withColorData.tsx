@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { ComponentType, useEffect, useState } from 'react'
 import axios from 'axios'
 import Prism, { Color } from '@prism/toolkit'
 
-//@ts-ignore
-export function withColorData(WrappedComponent) {
+export function withColorData(WrappedComponent: ComponentType) {
   const WithColorData = (props: any) => {
-    const [sherwinColors, setSherwinColors] = useState<Color | []>([])
+    const [sherwinColors, setSherwinColors] = useState<Color[]>([])
 
     useEffect(() => {
       axios

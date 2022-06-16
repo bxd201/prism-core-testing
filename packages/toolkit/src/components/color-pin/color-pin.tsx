@@ -3,14 +3,14 @@ import React, { memo, ReactNode } from 'react'
 import { Color } from '../../types'
 
 export interface ColorPinProps {
-  buttonContent?: ReactNode | ((color: Color) => ReactNode),
-  color: Color,
-  expandsLeft?: boolean,
-  isColorAdded?: boolean | ((color: Color) => boolean),
-  isOpen?: boolean,
-  labelContent?: ReactNode | ((Color) => ReactNode),
-  onColorAdded?: (Color) => void,
-  style?: { top: string, left: string, size?: string }
+  buttonContent?: ReactNode | ((color: Color) => ReactNode)
+  color: Color | null
+  expandsLeft?: boolean
+  isColorAdded?: boolean | ((color: Color) => boolean)
+  isOpen?: boolean
+  labelContent?: ReactNode | ((Color) => ReactNode)
+  onColorAdded?: (Color) => void
+  style?: { top: string; left: string; size?: string }
 }
 
 const ColorPin = ({

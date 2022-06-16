@@ -43,10 +43,14 @@ const config = {
       }),
     ],
   ],
+  plugins: ['@docusaurus/theme-live-codeblock'],
 
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
+      liveCodeBlock: {
+        playgroundPosition: 'top', //top | bottom
+      },
       navbar: {
         title: 'PRISM',
         logo: {

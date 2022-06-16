@@ -1,0 +1,78 @@
+---
+sidebar_position: 6
+---
+# Image Color Picker
+
+## Summary
+The image color picker allows users to discover a color(s) in an image simply by clicking on it. The image can either be static or the component can be paired with an image uploader, so that a user may provide their own image. The colors that will be available to the user, are supplied by the developer in order to accurately represent the brand's color offerings.
+
+## Example
+
+
+```typescript live
+function SingleImageColorPicker() {
+  const [sherwinColors, setSherwinColors] = useState([])
+  const img = 'https://sherwin.scene7.com/is/image/sw/prism-cvw-lowes-nav-color-collections?fmt=jpg&qlt=95'
+
+    /* Due to the amount of available colors, we make an axios request to get all of our Color data, to pass to the ImageColorPicker.
+       However this can also be provided as an array of objects, similar to the following:
+      [
+        {
+          "colorNumber": "6840",
+          "description": [
+             "Fairly Colorful",
+             "Moderately Colorful",
+             "Fairly Bright"
+          ],
+          "id": "bright-2527",
+          "name": "Exuberant Pink",
+          "brandKey": "SW",
+          "hex": "#b54d7f",
+        },
+       ]
+    */
+
+  useEffect(() => {
+    axios
+      .get('https://api.sherwin-williams.com/prism/v1/colors/sherwin')
+      .then((r) => r.data)
+      .then((colors) => setSherwinColors(colors))
+  }, [])
+
+  return (
+    <Prism>
+      <ImageColorPicker
+        imgSrc={img}
+        colors={sherwinColors}
+        pinRenderer={(props) => (
+          <ColorPin
+            {...props}
+            labelContent={(color) => (
+              <>
+                <p style={{ lineHeight: '1.1rem', whiteSpace: 'nowrap' }}>
+                {`${color.brandKey} ${color.colorNumber}`}
+                </p>
+                <p style={{ fontWeight: 700, whiteSpace: 'nowrap' }}>
+                {color.name}
+                </p>
+              </>
+            )}
+          />
+        )}
+        removeButtonContent={<FontAwesomeIcon aria-label='remove' icon={faTrash} style={{ display: 'inline-block' }} />}
+      />
+    </Prism>
+  )
+}
+```
+
+## Available props
+
+| Prop                | Type                                | Description                                                                     |  |
+|---------------------|-------------------------------------|---------------------------------------------------------------------------------|----------|
+| colors              | `Color[]`                           | An array of color objects, used to define the colors available.                 | Required |
+| imgSrc              | `string`                            | The image that will be displayed in the ImageColorPicker.                       | Required |
+| pinRenderer         | `pin`                               | Required to render pin on the image, see PinRender for more information. //TODO | Optional |
+| initialPinLocations | `Array<{ x: number; y: number }>`   | Default location of pin.                                                        | Optional |
+| onColorSelected     | `(color: Color OR null) => void`    | Callback to be called on color selected.                                        | Optional |
+| removeButtonContent | `JSX.Element`                       | Content to be displayed in the remove button.                                   | Optional |`json<br>{<br>  <br>"firstName"<br>: <br>"John"<br>,<br>  <br>"lastName"<br>: <br>"Smith"<br>,<br>  <br>"age"<br>: <br>25<br><br>}<br>``` | Defines text shown with add button on color swatches. Any instances of the `{name}` keyword in this property will be replaced with the name of the associated color. |

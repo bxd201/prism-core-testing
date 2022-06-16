@@ -24,12 +24,23 @@
   "devDependencies": {
     "@commitlint/cli": "13.1.0",
     "@commitlint/config-conventional": "13.1.0",
-    "husky": "7.0.0"
+    "autoprefixer": "^10.4.7",
+    "husky": "7.0.0",
+    "postcss": ">=7.0.35",
+    "postcss-focus-visible": "6.0.3",
+    "prettier": "^2.6.2"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "1.2.36",
+    "@fortawesome/pro-light-svg-icons": "5.15.4",
+    "@fortawesome/pro-regular-svg-icons": "5.15.4",
+    "@fortawesome/pro-solid-svg-icons": "5.15.4",
+    "@fortawesome/react-fontawesome": "0.1.16",
+    "@prism/toolkit": "3.1.0",
+    "axios": "^0.27.2",
     "ejs": "2",
-    "prettier": "^2.6.2",
-    "react": "16",
-    "react-dom": "16"
+    "react": "^16.10.0",
+    "react-dom": "^16.10.0",
+    "tailwindcss": "^3.0.24"
   }
 }
