@@ -14,15 +14,16 @@ const Template = (args): JSX.Element => {
     <LivePalette
       {...args}
       addButtonRenderer={(colors: Color[]) => (
-        <button className='w-full h-full' onClick={args.onAddButtonTriggered}>
-          <div className={`flex justify-center items-center ${colors.length === 0 ? '' : 'flex-col ml-1'}`}>
+        <button className='h-full' onClick={args.onAddButtonTriggered} style={{ width: 'inherit' }}>
+          <div className={`flex justify-center items-center ${colors.length === 0 ? '' : 'flex-col'}`}>
             <FontAwesomeIcon icon={faPlusCircle} size='lg' />
-            <p className={`hidden md:block ${colors.length === 0 ? 'm-1.5' : 'm-1'} text-2xs text-left`}>
+            <p className={`hidden md:block ${colors.length === 0 ? 'm-1.5 text-left' : 'm-1'} text-2xs`}>
               {colors.length === 0 ? <>FIND COLORS IN<br /> THE DIGITAL COLOR WALL</> : 'ADD A COLOR'}
             </p>
           </div>
         </button>
       )}
+      className='xl:w-3/5'
       colors={(args.colors ?? []).map((colorName) => colorOptions[colorName])}
       deleteButtonRenderer={({ name }, onClick) => (
         <button className='md:ml-1 ring-primary focus:outline-none focus-visible:ring-2' onClick={onClick}>
@@ -49,7 +50,10 @@ const Template = (args): JSX.Element => {
         </button>
       )}
       emptySlotRenderer={() => (
-        <div className='flex w-full h-full items-center justify-center opacity-60 bg-light cursor-default'>
+        <div
+          className='flex h-full items-center justify-center opacity-60 bg-light cursor-default'
+          style={{ width: 'inherit' }}
+        >
           <FontAwesomeIcon icon={faPlusCircle} size='lg' />
         </div>
       )}

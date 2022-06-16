@@ -1,5 +1,5 @@
 describe('LivePalette', () => {
-  const initialColors = [
+  const colors = [
     {
       blue: 51,
       brandKey: 'SW',
@@ -44,7 +44,7 @@ describe('LivePalette', () => {
       red: 126
     }
   ]
-  const [firstColor, secondColor, thirdColor] = initialColors
+  const [firstColor, secondColor, thirdColor] = colors
   const colorSlot = (colorName?: string): string | RegExp => (colorName !== undefined ? `Expand option for ${colorName} color` : /Expand option for/)
   const emptySlot = 'Empty slot'
   const colorBrandKey = (colorNumber: string): string => `SW ${colorNumber}`
@@ -67,8 +67,8 @@ describe('LivePalette', () => {
   context('Color slots', () => {
     beforeEach(() =>
       cy.changeArg(
-        'initialColors',
-        initialColors.map((color) => color.name)
+        'colors',
+        colors.map((color) => color.name)
       )
     )
 

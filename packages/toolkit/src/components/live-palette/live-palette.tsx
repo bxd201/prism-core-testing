@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { Color } from '../../types'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import { without, range } from 'lodash'
-import { useContainerSize } from '../../hooks'
+import { useContainerSize, useWindowSize } from '../../hooks'
 
 export interface LivePaletteProps {
   activeIndex?: number
@@ -47,9 +47,11 @@ const LivePalette = ({
   // calculate slot widths from current palette's width
   const ref = useRef<HTMLDivElement>(null)
   const { width } = useContainerSize(ref)
+  const { width: windowWidth } = useWindowSize()
+  const widthDimension = width < 640 || windowWidth < 768
 
-  const inActiveSlotWidth: number = (width * (width < 768 ? 0.92 : 0.75)) / maxSlots
-  const activeSlotWidth: number = width < 768 ? inActiveSlotWidth : inActiveSlotWidth * 2.5
+  const inActiveSlotWidth: number = width * (widthDimension ? 0.92 : maxSlots / 9.72) / maxSlots
+  const activeSlotWidth: number = widthDimension ? inActiveSlotWidth : inActiveSlotWidth * 2.5
   const activeColor = lpColors[lpActiveIndex] ?? lpColors[lpColors.length - 1]
 
   const textColor = (color): string => color?.isDark ? 'text-white' : 'text-black'
@@ -101,7 +103,7 @@ const LivePalette = ({
                           onKeyDown={(e) => e.keyCode !== 9 && setLpActiveIndex(i)}
                           style={{
                             backgroundColor: color.hex,
-                            boxShadow: isActive && width <= 768 ? `0px -6px ${color.hex}` : '',
+                            boxShadow: isActive && widthDimension ? `0px -6px ${color.hex}` : '',
                             width: `${isActive ? activeSlotWidth : inActiveSlotWidth}px`
                           }}
                           tabIndex={isActive ? -1 : 0}
