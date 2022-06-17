@@ -15,6 +15,7 @@ export { default as SpinnerLoader } from './components/spinner-loader/spinner-lo
 // ----- future component exports -----
 export { default as ColorStripButton } from './components/color-strip-button/color-strip-button'
 export { default as ColorWall } from './components/color-wall/color-wall'
+export * from './types'
 
 interface PrismProps {
   children: JSX.Element
