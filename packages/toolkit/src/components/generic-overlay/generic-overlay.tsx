@@ -1,11 +1,11 @@
-import React, { CSSProperties } from 'react'
+import React, {CSSProperties, ReactNode} from 'react'
 import classnames from 'classnames'
 import CircleLoader from '../circle-loader/circle-loader'
 
 type DisplayType = 'LOADING' | 'ERROR' | 'MESSAGE' | string
 
 export interface GenericOverlayProps {
-  children?: any,
+  children?: ReactNode,
   type: DisplayType,
   message?: string,
   fillVertical?: boolean,
@@ -80,7 +80,7 @@ const StyledContent = ({children}: JSX.ElementChildrenAttribute): JSX.Element =>
     margin: '2px 0', // something truly small, just so things aren't touching
   }
 
-  return <span className={className} style={style}>{children}</span>
+  return <span className={className} style={style}>children</span>
 }
 
 function GenericOverlay(props: GenericOverlayProps): JSX.Element {

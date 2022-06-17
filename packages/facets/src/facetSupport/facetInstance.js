@@ -1,5 +1,5 @@
 // @flow
-import { unmountComponentAtNode } from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import memoizee from 'memoizee'
 import noop from 'lodash/noop'
 
@@ -104,6 +104,7 @@ export const getInstance = memoizee((seekingEl: HTMLElement): Promise<Instance> 
 export const unmount = memoizee((el: HTMLElement) => {
   return !el ? noop : () => {
     unsubscribeFromAllEvents(el)()
-    return unmountComponentAtNode(el)
+    const root = createRoot(el)
+    return root.unmount()
   }
 })

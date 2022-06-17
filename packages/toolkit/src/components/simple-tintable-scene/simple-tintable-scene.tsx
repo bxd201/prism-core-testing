@@ -8,12 +8,8 @@ import TintableSceneSVGDefs from './tintable-scene-svg-defs'
 import SimpleTintableSceneHitArea from './simple-tintable-scene-hit-area'
 import { getFilterId, getMaskId } from '../../utils/tintable-scene'
 import GenericOverlay from '../generic-overlay/generic-overlay'
-import {
-  DndProvider,
-  DragDropManager,
-  dragDropManager as defaultDragDropManager
-} from '../../utils/dnd'
 import InlineStyleTransition from '../inline-style-transition/inline-style-transition'
+import { DndProvider } from 'react-dnd'
 
 export interface SimpleTintableSceneProps {
   sceneType: string,
@@ -21,7 +17,6 @@ export interface SimpleTintableSceneProps {
   background: string,
   surfaceUrls: string[],
   surfaceIds: number[],
-  dragDropManager?: DragDropManager,
   surfaceHitAreas?: string[],
   highlights?: any[],
   shadows?: any[],
@@ -32,12 +27,12 @@ export interface SimpleTintableSceneProps {
   handleSurfaceInteraction?: Function,
   handleColorDrop?: Function,
   surfaceColors?: Color[],
-  adjustSvgHeight?: boolean
+  adjustSvgHeight?: boolean,
+  dndBackend?: any
 }
 
 const SimpleTintableScene = (props: SimpleTintableSceneProps): JSX.Element => {
   const {
-    dragDropManager,
     sceneType,
     background,
     sceneName,
@@ -53,7 +48,8 @@ const SimpleTintableScene = (props: SimpleTintableSceneProps): JSX.Element => {
     handleColorDrop,
     handleSurfaceInteraction,
     surfaceColors,
-    adjustSvgHeight
+    adjustSvgHeight,
+    dndBackend
   } = props
   const [instanceId] = useState(uniqueId('TS'))
   const [hitAreaLoadingCount, setHitAreaLoadingCount] = useState(0)
@@ -75,7 +71,7 @@ const SimpleTintableScene = (props: SimpleTintableSceneProps): JSX.Element => {
   }
 
   return (
-    <DndProvider manager={dragDropManager || defaultDragDropManager}>
+    <DndProvider backend={dndBackend}>
       {/* The transitions group will assume the calculated height of the ROOT DIV and not necessarily the specified height of the parent div */}
       <div>
         <img className={`block w-full relative h-auto`} src={background} alt={sceneName} />

@@ -18,3 +18,5 @@ export interface Color {
   ignore: boolean
   isDark: boolean
 }
+
+

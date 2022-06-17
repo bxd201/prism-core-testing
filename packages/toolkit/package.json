@@ -25,21 +25,23 @@
   },
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.4",
+    "@types/react": "18.0.14",
+    "@types/react-dom": "18.0.5",
     "classnames": "^2.3.1",
     "lodash": "4.17.21",
     "memoizee": "0.4.14",
     "react-aria-live": "2.0.5",
     "react-aria-menubutton": "7.0.2",
     "react-beautiful-dnd": "13.1.0",
-    "react-dnd-cjs": "9.5.1",
-    "react-dnd-html5-backend-cjs": "9.5.1",
+    "react-dnd-html5-backend": "16.0.1",
     "react-inlinesvg": "0.8.4",
     "react-transition-group": "4.3.0",
     "react-virtualized": "9.22.3"
   },
   "peerDependencies": {
-    "react": ">=16.10.0",
-    "react-dom": ">=16.10.0"
+    "react": "18.2.0",
+    "react-dnd": "16.0.1",
+    "react-dom": "18.2.0"
   },
   "devDependencies": {
     "@babel/cli": "7.16.8",
@@ -72,7 +74,6 @@
     "@testing-library/react": "12.1.4",
     "@types/jest": "28.1.2",
     "@types/lodash": "4.14.178",
-    "@types/react": "17.0.38",
     "@types/react-aria-menubutton": "6.2.9",
     "@types/react-beautiful-dnd": "13.1.2",
     "@types/react-virtualized": "9.21.20",

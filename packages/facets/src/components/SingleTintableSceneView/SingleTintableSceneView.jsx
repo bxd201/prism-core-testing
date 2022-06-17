@@ -18,7 +18,7 @@ import BatchImageLoader from '../MergeCanvas/BatchImageLoader'
 import type { FlatScene, FlatVariant } from '../../shared/types/Scene'
 import { copySurfaceColors, createMiniColorFromColor } from './util'
 import Propper from '../Propper/Propper'
-import { dragDropManager } from '../../shared/utils/dnd'
+import { HTML5Backend } from 'react-dnd-html5-backend'
 
 export type SingleTintableSceneViewProps = {
   surfaceColorsFromParents: [],
@@ -150,7 +150,6 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
     const activeColorId = lpColors?.activeColor?.id
     return (
       <SimpleTintableScene
-        dragDropManager={dragDropManager}
         sceneType={variant.sceneType}
         background={backgroundImageUrl}
         surfaceColors={surfaceColors}
@@ -168,6 +167,7 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
         handleSurfaceInteraction={handleSurfaceInteraction}
         handleColorDrop={handleColorDrop}
         adjustSvgHeight={adjustSvg}
+        dndBackend={HTML5Backend}
       />
     )
   }
