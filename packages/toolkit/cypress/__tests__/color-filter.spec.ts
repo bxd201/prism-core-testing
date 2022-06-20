@@ -1,4 +1,4 @@
-import colorsSample from '../../test-utils/mocked-endpoints/colors-sample.json'
+import colorsSample from '../../src/test-utils/mocked-endpoints/colors-sample.json'
 
 describe('ColorFilter', () => {
   before(cy.visitStorybook)

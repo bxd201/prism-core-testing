@@ -13,8 +13,8 @@ Currently we have two instances of storybook due to the nature migrating `@prism
 
 To run the the relative instances of storybook..
 ```
-yarn storybook:facets
-yarn storybook:toolkit
+yarn facets:storybook
+yarn toolkit:storybook
 ```
 
 ## Versioning Steps

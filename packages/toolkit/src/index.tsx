@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import React, { CSSProperties } from 'react'
 import './styles.css'
 

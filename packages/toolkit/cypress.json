@@ -1,6 +1,6 @@
 {
   "baseUrl": "http://localhost:6006",
-  "integrationFolder": "src/components",
+  "integrationFolder": "cypress/__tests__",
   "screenshotOnRunFailure": false,
   "testFiles": "**/*.spec.ts",
   "videoCompression": false,
