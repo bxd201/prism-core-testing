@@ -66,11 +66,11 @@
     margin-top: 0.75rem !important;
     margin-bottom: 1rem !important;
     padding: 0.4rem !important;
-    border: 1px solid black;
+    border: 1px solid black !important;
     border-radius: 15px;
     font-size: 1rem;
     font-weight: 500;
   }
 
-  .dark-color { border-color: white; }
+  .dark-color { border-color: white !important }
 }
