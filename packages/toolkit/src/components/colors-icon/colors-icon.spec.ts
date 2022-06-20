@@ -30,14 +30,15 @@ describe('ColorsIcon', () => {
     })
   })
 
-  it('renders info icon for undefined coordinating colors', () => {
-    cy.changeArg('colorName', colorNoCoordinatingColors.name)
-    cy.findByLabelText('background').should('have.css', 'background-color', hex2rgb(colorNoCoordinatingColors.hex))
-    cy.findByLabelText('info')
-  })
-
   it('changes icon size', () => {
     cy.changeArg('size', 20)
     cy.findByLabelText(ariaLabel).should('have.css', 'width', '20px')
+  })
+
+  it('renders info icon for undefined coordinating colors', () => {
+    cy.loadStory('ColorsIcon', 'UndefinedCoordinatingColors')
+    cy.changeArg('colorName', colorNoCoordinatingColors.name)
+    cy.findByLabelText('background').should('have.css', 'background-color', hex2rgb(colorNoCoordinatingColors.hex))
+    cy.findByLabelText('info')
   })
 })

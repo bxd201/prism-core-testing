@@ -1,7 +1,7 @@
 // @flow
 import React, { useState, useEffect } from 'react'
 import FastMask from 'src/components/FastMask/FastMask'
-import SimpleLivePalette from 'src/components/LivePalette/SimpleLivePalette'
+import LivePaletteWrapper from 'src/components/LivePalette/LivePaletteWrapper'
 import { useDispatch, useSelector } from 'react-redux'
 import startCase from 'lodash/startCase'
 import flatten from 'lodash/flatten'
@@ -141,7 +141,7 @@ function ResultsPage (props: ResultsPageProps) {
       </div>
       <div className='JSFCommon__band'>
         <div className='JSFCommon__content'>
-          <SimpleLivePalette />
+          <LivePaletteWrapper simple />
         </div>
       </div>
       <div className='JSFCommon__band JSFCommon__band--pad'>

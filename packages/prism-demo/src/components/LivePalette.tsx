@@ -4,10 +4,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faInfo, faTrash } from '@fortawesome/pro-solid-svg-icons'
 import { faPlusCircle } from '@fortawesome/pro-light-svg-icons'
 import { filter, values } from 'lodash'
+import { withColorData } from './withColorData'
+import { Color } from '../types'
 import Context from "../context"
 
-const LivePaletteWrapper = () => {
-  const { colors, lpColors, resetLpColors } = useContext(Context)
+const LivePaletteWrapper = ({ colors }: { colors: Color[]}) => {
+  const { lpColors, resetLpColors } = useContext(Context)
 
   return (
     <Prism>
@@ -26,22 +28,19 @@ const LivePaletteWrapper = () => {
         colors={lpColors}
         deleteButtonRenderer={({ name }, onClick) => (
           <button className='md:ml-1 ring-primary focus:outline-none focus-visible:ring-2' onClick={onClick}>
-            <FontAwesomeIcon icon={faTrash} />
+            <FontAwesomeIcon icon={faTrash} style={{ fontSize: '20px'}} />
           </button>
         )}
-        detailsButtonRenderer={({ coordinatingColors, hex, name }) => (
+        detailsButtonRenderer={({ coordinatingColors, name }) => (
           <button
             className='mx-0.5 ring-primary focus:outline-none focus-visible:ring-2'
             onClick={() => { console.log('Details button triggered') }}
           >
-            {coordinatingColors ? (
-              <ColorsIcon
-                className='w-5 h-5'
-                hexes={filter(colors, (c) => values(coordinatingColors).some((id) => id === c.id)).map((c) => c.hex)}
-              />
-            ) : (
-              <FontAwesomeIcon icon={faInfo} style={{ margin: '0 0.25rem' }} />
-            )}
+            <ColorsIcon
+              className='w-5 h-5'
+              hexes={filter(colors, (c) => values(coordinatingColors).some((id) => id === c.id)).map((c) => c.hex)}
+              infoIcon={<FontAwesomeIcon icon={faInfo} style={{ margin: '0 0.25rem' }} />}
+            />
           </button>
         )}
         emptySlotRenderer={() => (
@@ -61,4 +60,4 @@ const LivePaletteWrapper = () => {
   )
 }
 
-export default LivePaletteWrapper
+export default withColorData(LivePaletteWrapper)

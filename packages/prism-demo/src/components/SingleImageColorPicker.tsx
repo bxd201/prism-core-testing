@@ -4,9 +4,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheckCircle, faTrash } from '@fortawesome/pro-solid-svg-icons'
 import { faPlusCircle } from '@fortawesome/pro-light-svg-icons'
 import { withColorData } from './withColorData'
+import { Color } from '../types'
 import Context from "../context"
 
-export function SingleImageColorPicker({ colors }: any) {
+export function SingleImageColorPicker({ colors }: { colors: Color[]}) {
   const { addLpColor, lpColors } = useContext(Context)
   const isColorAdded = ({ colorNumber }): boolean => lpColors.some((c) => c.colorNumber === colorNumber)
   const img = 'https://sherwin.scene7.com/is/image/sw/prism-cvw-lowes-nav-color-collections?fmt=jpg&qlt=95'
@@ -15,6 +16,7 @@ export function SingleImageColorPicker({ colors }: any) {
     <Prism>
       <ImageColorPicker
         imgSrc={img}
+        // @ts-ignore
         colors={colors}
         pinRenderer={(props) => (
           <ColorPin

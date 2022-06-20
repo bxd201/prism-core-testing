@@ -1,26 +1,17 @@
-import React, { useEffect, useState } from 'react'
-import axios from 'axios'
+import React, { useState } from 'react'
 import LivePaletteWrapper from './LivePalette'
 import SingleImageColorPicker from './SingleImageColorPicker'
 import Context from '../context'
 import { Color } from '../types'
 
 const Visualizer = () => {
-  const [colors, setColors] = useState<Color[]>()
   const [lpColors, setLpColors] = useState<Color[]>()
-
-  useEffect(() => {
-    axios
-      .get('https://api.sherwin-williams.com/prism/v1/colors/sherwin')
-      .then((r) => r.data)
-      .then((colors) => setColors(colors))
-  }, [])
 
   const addLpColor = color => { setLpColors([...lpColors, color]) }
   const resetLpColors = colors => { setLpColors(colors) }
 
   return (
-    <Context.Provider value={{ addLpColor, colors, lpColors, resetLpColors }}>
+    <Context.Provider value={{ addLpColor, lpColors, resetLpColors }}>
       <div className='container flex flex-col justify-center mx-auto mt-10 sm:px-6 lg:px-8'>
         <div className='flex justify-center align-middle shadow-black drop-shadow-xl w-full'>
           <div>
@@ -43,9 +34,9 @@ const Visualizer = () => {
             <SingleImageColorPicker />
           </div>
         </div>
-        <div className='flex-1 w-full lg:w-3/4 mx-auto mt-10 pl-0.5 pr-2.5 md:border'>
-          <LivePaletteWrapper />
-        </div>
+      </div>
+      <div className='w-auto mt-10 sm:mx-2 md:p-1 md:border lg:w-3/4 lg:mx-auto'>
+        <LivePaletteWrapper />
       </div>
     </Context.Provider>
   )

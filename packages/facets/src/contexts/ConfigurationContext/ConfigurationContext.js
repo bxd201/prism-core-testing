@@ -212,6 +212,7 @@ export type ConfigurationContextType = {
     navThumbMyPhotos?: string,
     palette?: {
       title?: string,
+      compare?: string,
       downloadBtn?: {
         title?: string,
         icon?: string

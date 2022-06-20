@@ -16,17 +16,14 @@ const Template = (args: { colorName: string, size: number }): JSX.Element => {
       style={{ backgroundColor: color.hex }}
     >
       <button className='ring-primary focus:outline-none focus-visible:ring-2'>
-        {color.coordinatingColors ? (
-          <ColorsIcon
-            aria-label={`${color.name} color details`}
-            hexes={filter(colors, (c) => values(color.coordinatingColors).some((id) => id === c.id)).map((c) => c.hex)}
-            /* @ts-ignore */
-            onClick={() => {}}
-            style={{ width: `${args.size}px`, height: `${args.size}px` }}
-          />
-        ) : (
-          <FontAwesomeIcon aria-label='info' icon={faInfo} style={{ color: color.isDark ? 'white' : 'black' }} />
-        )}
+        <ColorsIcon
+          aria-label={`${color.name} color details`}
+          hexes={filter(colors, (c) => values(color.coordinatingColors).some((id) => id === c.id)).map((c) => c.hex)}
+          infoIcon={<FontAwesomeIcon aria-label='info' icon={faInfo} style={{ color: color.isDark ? 'white' : 'black' }} />}
+          /* @ts-ignore */
+          onClick={() => {}}
+          style={{ width: `${args.size}px`, height: `${args.size}px` }}
+        />
       </button>
     </div>
   )
@@ -35,16 +32,12 @@ const Template = (args: { colorName: string, size: number }): JSX.Element => {
 export const CoordinatingColors = Template.bind({})
 CoordinatingColors.args = { colorName: getRandomColorName(), size: 40 }
 
+export const UndefinedCoordinatingColors = Template.bind({})
+UndefinedCoordinatingColors.args = { colorName: 'White Snow', size: 30 }
+
 export default {
   title: 'ColorsIcon',
   component: ColorsIcon,
-  parameters: {
-    docs: {
-      description: {
-        component: 'If coordinating colors are undefined, it displays an info icon'
-      }
-    }
-  },
   argTypes: {
     className: { table: { disable: true } },
     colorName: {
@@ -55,6 +48,10 @@ export default {
     hexes: {
       control: false,
       description: 'coordinating hexes colors of color selected'
+    },
+    infoIcon: {
+      control: false,
+      description: 'info icon for when hexes colors are undefined'
     },
     otherProps: {
       control: false,

@@ -3,7 +3,6 @@ import { Color } from './types'
 
 export interface IContext {
   addLpColor: (color: Color) => void
-  colors: Color[],
   lpColors?: Color[],
   resetLpColors: (colors: Color[]) => void
 }

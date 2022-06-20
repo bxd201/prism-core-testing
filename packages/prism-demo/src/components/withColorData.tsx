@@ -1,6 +1,7 @@
 import React, { ComponentType, useEffect, useState } from 'react'
 import axios from 'axios'
-import Prism, { Color } from '@prism/toolkit'
+import Prism from '@prism/toolkit'
+import { Color } from '../types'
 
 export function withColorData(WrappedComponent: ComponentType) {
   const WithColorData = (props: any) => {

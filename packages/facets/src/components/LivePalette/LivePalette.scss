@@ -1,15 +1,16 @@
 .prism-live-palette {
-  max-width: 100%;
   display: flex;
-  overflow: hidden;
   background-color: var(getThemeColor('white'));
   padding: $livePalette__chip-side-margin;
-  flex-direction: column;
   font-family: var(getVarName('typography.titleFontFamily'));
   @include respond-above(sm) {
     border: 1px solid $color-grey;
-    flex-direction: row;
   }
+
+  &-simple {
+    border: none;
+  }
+
   &__header {
     display: flex;
     flex-direction: column;
@@ -50,222 +51,63 @@
     }
   }
 
-  &__active-color {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    z-index: 100;
-    margin-bottom: 4px;
+  &__height {
     @include respond-above(sm) {
-      display: none;
+      height: 4rem !important;
     }
-    &__details {
-      display: block;
-      font-size: .8rem;
-      line-height: 1.2em;
-      padding: 0.5em;
-      &--dark {
-        color: var(getThemeColor('white'));
-      }
+    @include respond-above(md) {
+      height: 4.625rem !important;
     }
-    &__info-button {
-      padding: 0.5em;
-      display: flex;
-      align-items: center;
-
-      &--dark { color: var(getThemeColor('primary.contrast.trans')) }
-    }
-    &__color-number {
-      display: block;
-      font-weight: normal;
-    }
-    &__color-name {
-      display: block;
-    }
-  }
-
-  &__list {
-    display: flex;
-    flex-grow: 1;
-    margin: 0;
   }
 
   &__slot {
     $lp-icon-size: 24px;
 
-    @include chip-attributes($distribution: even);
-    background-color: var(getThemeColor('light'));
-    position: relative;
-    transition: width .4s ease-out, opacity .1s ease-out;
-    height: 0;
-    overflow: inherit;
-    outline: none;
+    width: inherit;
+    height: 100%;
+
     &:focus {
       outline-style: solid;
       outline-color: var(getThemeColor('secondary'));
       outline-width: 2px;
     }
-    @include respond-above(sm) {
-      overflow: hidden;
-    }
 
     &--empty {
-      cursor: default;
-    }
-
-    &--add-big,
-    &--add {
-      cursor: pointer;
-      font-family: var(getVarName('typography.titleFontFamily'));
-
-      &:focus {
-        outline-style: solid;
-        outline-color: var(getThemeColor('secondary'));
-        outline-width: 2px;
-        z-index: 100;
-      }
-    }
-
-    &--add {
-      background-color: var(getThemeColor('white'));
-    }
-
-    &--add-big {
-      // this is what shows when LP has no colors at all
-      background-color: var(getThemeColor('white'));
-
-      @include respond-above(sm) {
-        background-color: var(getThemeColor('light'));
-        width: 30%;
-      }
-    }
-
-    &--active {
-      opacity: 1;
-      position: relative;
-      &:before {
-        background: inherit;
-        content: '';
-        display: block;
-        position: absolute;
-        width: 100%;
-        height: 6px;
-        top: -4px;
-      }
-      @include respond-above(sm) {
-        width: 30%; // TODO: calculate actual width
-        &:before {
-          display: none;
-        }
-      }
-
-      .prism-live-palette__color-details {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        align-items: center;
-
-        position: absolute;
-        height: 100%;
-        width: 100%;
-
-        @include respond-above(sm) {
-          position: static;
-          justify-content: space-between;
-          height: auto;
-        }
-
-        .prism-live-palette__button-group {
-          position: relative;
-          display: flex;
-          width: auto;
-          justify-content: space-between;
-          padding: 0px;
-          opacity: 0;
-          animation: fadeIn 1s forwards;
-          margin: auto auto;
-
-          @include respond-above(sm) {
-            padding: 0 0 5px 5px;
-            margin: 0 0 auto auto;
-          }
-        }
-      }
-    }
-
-    &--removing {
-      opacity: 0.01;
-      transition: 700ms;
-    }
-
-    &__guts {
-      top: 50%;
-      transform: translateY(-50%);
-      width: 100%;
       display: flex;
-      flex-direction: column;
-      align-items: center;
       justify-content: center;
-      position: absolute;
-      padding: 3px;
-
-      &--hrzntl {
-        @include respond-above(sm) {
-          flex-direction: row;
-          justify-content: flex-start;
-        }
-      }
+      align-items: center;
+      width: inherit;
+      height: 100%;
+      cursor: default;
+      background-color: var(getThemeColor('light'));
     }
 
-    &__copy {
-      bottom: 0;
+    &__label {
       display: none;
       font-size: #{(9/16)}rem;
       text-align: center;
 
-      @include respond-above(sm) {
+      @include respond-above(md) {
         display: block;
       }
 
-      &--right {
-        text-align: left;
-
-        &-text {
-          width: 9rem;
-          margin: 0.2rem;
-          font-family: var(getVarName('typography.bodyFontFamily'));
-          font-style: var(getVarName('typography.titleFontStyle'));
-          font-size: .875rem;
-          line-height: 1.2rem;
-        }
+      &--text {
+        width: 9rem;
+        margin: 0.2rem;
+        font-family: var(getVarName('typography.bodyFontFamily'));
+        font-style: var(getVarName('typography.titleFontStyle'));
+        font-size: .875rem;
+        line-height: 1.2rem;
       }
     }
 
     &__icon {
-      color: var(getThemeColor('light.contrast'));
-      opacity: .3;
-      // transform: translateX(-50%) translateY(-50%);
       width: $lp-icon-size !important;
       height: $lp-icon-size !important;
       margin: 5px;
-      flex: 0 0 auto;
+      color: var(getThemeColor('light.contrast'));
 
-      &--left,
-      &--top {
-        opacity: 1;
-      }
-
-      &--left {
-        @include respond-above(sm) {
-          left: 3px;
-        }
-      }
-
-      &--top {
-        @include respond-above(sm) {
-          top: 33%;
-        }
-      }
+      &--empty { opacity: .3 }
     }
 
     &__button {
@@ -275,95 +117,64 @@
       transform: translate(-50%, -50%);
       outline:none;
     }
-
-    &__drag-icon-wrapper{
-      position: absolute;
-      width: 20px;
-      height: 20px;
-      right: 5px;
-      bottom: 5px;
-      overflow:hidden;
-      &--show{
-        display: none;
-        @include respond-above(sm) {
-          display: block;
-        }
-      }
-      &--hide{
-        display: none;
-      }
-      &:hover{
-        cursor: grab;
-      }
-    }
   }
 
-  &__info-button {
-    display: none;
-    @include respond-above(sm) {
-      display: flex;
-    }
-  }
+  &__info {
+    margin: 0 .125rem !important;
+    font-size: 1.4rem !important;
 
-  &__trash {
-    position: relative;
-    display: flex;
-    width: 100%;
-    color: inherit;
-    background: inherit;
-    border: none;
-    box-shadow: none;
-    font-size: 20px;
-    @include respond-above(sm) {
+    &--outlined {
       display: flex;
-      flex-direction: column;
-      width: 16px;
-      height: 20px;
-      margin-left: 4px;
+      justify-content: center;
+      align-items: center;
+      width: 1rem;
+      height: 1rem;
+      outline: 2px solid;
+
+      &-icon { font-size: .8rem !important }
     }
+
     &:focus {
       outline-style: solid;
       outline-color: var(getThemeColor('secondary'));
       outline-width: 2px;
-      z-index: 100;
     }
   }
 
-  &__color-details {
-    height: auto;
-    position: static;
-    padding: 0em;
-    display: none;
+  &__trash {
     @include respond-above(sm) {
-      padding: 0.5em;
+      margin-left: .25rem !important;
     }
 
-    &--dark {
-      color: var(getThemeColor('white'));
+    &:focus {
+      outline-style: solid;
+      outline-color: var(getThemeColor('secondary'));
+      outline-width: 2px;
     }
+
+    &--icon { font-size: 20px }
+  }
+
+  &__name-number {
+    display: flex;
+    flex-direction: column-reverse;
   }
 
   &__color-number {
-    font-size: 0.8rem;
-    display: none;
+    display: block;
+    font-size: .8rem;
     font-weight: normal;
     color: inherit;
-    @include respond-above(sm) {
-      display: block;
-    }
+    white-space: nowrap;
   }
 
   &__color-name {
-    font-size: 0.8rem;
-    font-weight: 600;
-    display: none;
+    display: block;
+    font-size: .8rem;
     color: inherit;
+    white-space: nowrap;
     @include respond-above(sm) {
-      display: block;
-      width: 4em;
-    }
-    @include respond-above(md) {
-      width: auto;
+      font-weight: 600;
     }
   }
 
@@ -380,48 +191,27 @@
   }
 
   &-house-shaped {
-    &__active-color__name-number {
-      display: flex;
-      flex-direction: column-reverse;
-      padding: 0.5em;
-      font-size: .875rem;
-      line-height: 1.2em;
-    }
-
-    &__active-color__color-name {
-      font-family: var(getVarName('typography.bodyFontFamily'));
-      font-size: 1rem;
-      font-style: italic;
-    }
-
     &__name-number {
       display: flex;
       flex-direction: column-reverse;
-      padding: 0;
+      line-height: 1.2rem;
     }
 
     &__color-name {
       font-family: var(getVarName('typography.bodyFontFamily'));
       font-style: italic;
-      display: none;
-      color: inherit;
-      line-height: 1.2rem;
-      @include respond-above(sm) {
-        display: block;
-        width: 4em;
-      }
-      @include respond-above(md) {
-        width: auto;
-      }
+      white-space: nowrap;
     }
 
     &__color-number {
       font-size: .875rem;
-      display: none;
-      font-weight: normal;
-      color: inherit;
-      @include respond-above(sm) {
-        display: block;
+      line-height: .9rem;
+      white-space: nowrap;
+    }
+
+    &__height {
+      @include respond-below(sm) {
+        height: 5.6rem !important;
       }
     }
   }
