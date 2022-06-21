@@ -5,7 +5,10 @@ LABEL maintainer="Justis Estell <justis.f.estell@sherwin.com>"
 ENV API_URL="$API_URL"
 ENV WEB_URL="$WEB_URL"
 
-COPY dist /usr/share/nginx/html
+COPY dist/packages/facets/dist/storybook /usr/share/nginx/html
+COPY dist/packages/toolkit/public /usr/share/nginx/html
+COPY dist/packages/prism-docs/build /usr/share/nginx/html
+COPY dist/packages/prism-demo/build /usr/share/nginx/html
 COPY ci/nginx/docroot /usr/share/nginx/html
 COPY ci/nginx/conf.d /etc/nginx/conf.d
 COPY ci/scripts/entrypoint.sh /entrypoint.sh
