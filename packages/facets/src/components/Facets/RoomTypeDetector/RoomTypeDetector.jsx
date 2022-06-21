@@ -3,10 +3,9 @@ import React, { useState, useCallback, createContext, useMemo } from 'react'
 import { useDispatch } from 'react-redux'
 import { FormattedMessage, useIntl } from 'react-intl'
 import uniqueId from 'lodash/uniqueId'
-import { CircleLoader } from '../../ToolkitLoaders'
+import { CircleLoader, GenericOverlay } from '../../ToolkitComponents'
 
 import FileInput from '../../FileInput/FileInput'
-import GenericOverlay from '../../Overlays/GenericOverlay/GenericOverlay'
 
 import facetBinder from 'src/facetSupport/facetBinder'
 import GenericMessage from '../../Messages/GenericMessage'

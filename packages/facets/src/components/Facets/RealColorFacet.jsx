@@ -23,7 +23,7 @@ import {
 import useColors from '../../shared/hooks/useColors'
 import { getColorByBrandAndColorNumber } from '../../shared/helpers/ColorDataUtils'
 import SceneVisualizerContent from './SceneVisualizerContent'
-import SimpleTintableScene from '../SimpleTintableScene/SimpleTintableScene'
+import { SimpleTintableScene } from '../ToolkitComponents'
 import { hasGroupAccess } from '../../shared/utils/featureSwitch.util'
 import BallSpinner from '../BallSpinner/BallSpinner'
 import RealColorView from '../RealColor/RealColorView'

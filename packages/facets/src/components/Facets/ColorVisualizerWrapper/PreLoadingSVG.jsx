@@ -1,6 +1,6 @@
 // @flow
 import React from 'react'
-import { CircleLoader, SpinnerLoader } from '../../ToolkitLoaders'
+import { CircleLoader, SpinnerLoader } from '../../ToolkitComponents'
 import HeroLoaderExpanded from '../../Loaders/HeroLoader/HeroLoaderExpanded'
 import lowesLogo from '../../../images/cbg/lowes-app-logo.png'
 

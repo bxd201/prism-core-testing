@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useIntl, FormattedMessage } from 'react-intl'
-import { CircleLoader } from '../ToolkitLoaders'
+import { CircleLoader } from '../ToolkitComponents'
 import { selectSavedScene, loadSavedScenes, SCENE_TYPE, ANON_SCENE_TYPES } from '../../store/actions/persistScene'
 import { updateLivePalette, selectedSavedLivePalette } from '../../store/actions/saveLivePalette'
 import SavedScene from './SavedScene'

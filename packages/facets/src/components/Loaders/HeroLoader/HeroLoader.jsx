@@ -1,6 +1,6 @@
 // @flow
 import React, { useMemo } from 'react'
-import { CircleLoader, SpinnerLoader } from '../../ToolkitLoaders'
+import { CircleLoader, SpinnerLoader } from '../../ToolkitComponents'
 import CSSVariableApplicator from '../../../helpers/CSSVariableApplicator'
 import at from 'lodash/at'
 import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'

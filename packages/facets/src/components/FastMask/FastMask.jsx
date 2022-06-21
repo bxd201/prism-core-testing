@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux'
 
+import { GenericOverlay } from '../ToolkitComponents'
+
 import FastMaskSVGDef from './FastMaskSVGDef'
 import TotalImageWorker from './workers/TotalImage/totalImage.worker'
 
@@ -14,7 +16,6 @@ import './FastMask.scss'
 import { useIntl } from 'react-intl'
 import FileInput from '../FileInput/FileInput'
 import uniqueId from 'lodash/uniqueId'
-import GenericOverlay from '../Overlays/GenericOverlay/GenericOverlay'
 import getImageDataFromImage from 'src/shared/utils/image/getImageDataFromImage.util'
 import loadImage from 'src/shared/utils/image/loadImage.util'
 

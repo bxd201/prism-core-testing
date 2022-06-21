@@ -6,13 +6,10 @@
  */
 
 import React, { useEffect, useState, ComponentType } from 'react'
-import { CircleLoader } from '../ToolkitLoaders'
+import { CircleLoader, SimpleTintableScene } from '../ToolkitComponents'
 import type { Color } from '../../shared/types/Colors'
-import SimpleTintableScene from '../SimpleTintableScene/SimpleTintableScene'
 import MultipleVariantSwitch from '../VariantSwitcher/MultipleVariantSwitch'
 import { useSelector } from 'react-redux'
-import { DndProvider } from 'react-dnd-cjs'
-import HTML5Backend from 'react-dnd-html5-backend-cjs'
 import { FormattedMessage } from 'react-intl'
 import './SingleTinatbleSceneView.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -21,6 +18,7 @@ import BatchImageLoader from '../MergeCanvas/BatchImageLoader'
 import type { FlatScene, FlatVariant } from '../../shared/types/Scene'
 import { copySurfaceColors, createMiniColorFromColor } from './util'
 import Propper from '../Propper/Propper'
+import { dragDropManager } from '../../shared/utils/dnd'
 
 export type SingleTintableSceneViewProps = {
   surfaceColorsFromParents: [],
@@ -152,6 +150,7 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
     const activeColorId = lpColors?.activeColor?.id
     return (
       <SimpleTintableScene
+        dragDropManager={dragDropManager}
         sceneType={variant.sceneType}
         background={backgroundImageUrl}
         surfaceColors={surfaceColors}
@@ -215,7 +214,7 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
   }
 
   return (
-    <DndProvider backend={HTML5Backend}>
+    <>
       <div className={`${tintableViewBaseClassName}__wrapper`}>
         <BatchImageLoader key={selectedSceneUid} urls={backgroundUrls} handleImagesLoaded={handleImagesLoaded} />
         {backgroundLoaded
@@ -229,7 +228,7 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
         </button> : null}
         {backgroundLoaded ? getCustomButtons(customButton, customToggle, (allowVariantSwitch && sceneVariants?.length > 1), sceneVariants, selectedVariantIndex, buttonPosition) : null}
       </div>
-    </DndProvider>
+    </>
   )
 }
 

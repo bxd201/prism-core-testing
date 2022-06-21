@@ -3,16 +3,9 @@
 
 import type { BlankColor } from '../shared/types/Colors.js.flow'
 
-export const DRAG_TYPES = Object.freeze({
-  SWATCH: 'SWATCH'
-})
+import { SCENE_TYPES } from '@prism/toolkit'
 
-export const SCENE_TYPES = Object.freeze({
-  OBJECT: 'objects',
-  ROOM: 'rooms',
-  AUTOMOTIVE: 'automotive',
-  FAST_MASK: 'fastmask'
-})
+export { SCENE_TYPES, DRAG_TYPES } from '@prism/toolkit'
 
 // There are scene types that don't originate from the api.
 export const FRONT_END_SCENE_TYPES = [SCENE_TYPES.FAST_MASK]
