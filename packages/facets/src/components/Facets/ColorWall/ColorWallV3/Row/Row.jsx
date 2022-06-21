@@ -1,16 +1,25 @@
-/* eslint-disable */
-import React, { useReducer, useContext, useCallback } from 'react'
+// @flow
+import React, { useReducer, useContext } from 'react'
 import Column from '../Column/Column'
 import Chunk from '../Chunk/Chunk'
+import Titles, { getOuterHeightAll } from '../Title/Title'
 import useEffectAfterMount from 'src/shared/hooks/useEffectAfterMount'
 import { initialState, reducerRow, reducerColumn } from '../sharedReducersAndComputers'
-import { BASE_SWATCH_SIZE, ColorWallStructuralPropsContext } from '../ColorWallPropsContext'
+import { ColorWallStructuralPropsContext } from '../ColorWallPropsContext'
+import { BASE_SWATCH_SIZE } from '../constants'
 import { getAlignment } from '../cwv3Utils'
 import './Row.scss'
 
-function Row (props) {
+type RowProps = {
+  data: any,
+  updateWidth: (number) => void,
+  updateHeight: (number) => void,
+  id: string
+}
+
+function Row (props: RowProps) {
   const { data = {}, updateWidth, updateHeight, id = '' } = props
-  const { children, props: colProps = {} } = data
+  const { children, props: colProps = {}, titles = [] } = data
   const { spaceH = 0, spaceV = 0, align, wrap } = colProps
   const { scale, isWrapped } = useContext(ColorWallStructuralPropsContext)
   const [{ outerWidth, outerHeight }, dispatch] = useReducer(reducerRow, initialState)
@@ -19,7 +28,7 @@ function Row (props) {
   const padV = scale * BASE_SWATCH_SIZE * spaceV
   const wrapThisRow = isWrapped && wrap
 
-  function doDispatch(dispatchedData) {
+  function doDispatch (dispatchedData) {
     if (wrapThisRow) {
       dispatchWrapped(dispatchedData)
     } else {
@@ -36,10 +45,11 @@ function Row (props) {
   }, [outerWidth, outerWidthWrapped, padH, wrapThisRow])
 
   useEffectAfterMount(() => {
+    const titlesHeight = getOuterHeightAll(titles.map(({ level }) => level), scale)
     if (!wrapThisRow && !isNaN(outerHeight)) {
-      updateHeight(outerHeight + (2 * padV))
+      updateHeight(outerHeight + titlesHeight + (2 * padV))
     } else if (wrapThisRow && !isNaN(outerHeightWrapped)) {
-      updateHeight(outerHeightWrapped + (2 * padV))
+      updateHeight(outerHeightWrapped + titlesHeight + (2 * padV))
     }
   }, [outerHeight, outerHeightWrapped, padV, wrapThisRow])
 
@@ -52,7 +62,10 @@ function Row (props) {
       height: wrapThisRow ? outerHeightWrapped : null,
       padding: `${padV}px ${padH}px`
     }}>
-    {children?.map((child, i) => {
+    {titles && titles.length
+      ? <Titles data={titles} referenceScale={scale} />
+      : null}
+    {children && children.length && children.map((child, i) => {
       if (child.type === 'ROW') {
         return <Column
           data={child}

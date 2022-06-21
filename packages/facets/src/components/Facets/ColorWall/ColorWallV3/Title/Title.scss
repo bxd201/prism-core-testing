@@ -1,0 +1,16 @@
+.cwv3__title {
+  width: 100%;
+  overflow: hidden;
+  cursor: pointer;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  // TODO: word wrap configuration
+  line-height: 1em;
+  letter-spacing: -.05em;
+  color: rgba(black, .8);
+
+  &--lvl2,
+  &--lvl3 {
+    font-weight: bold;
+  }
+}

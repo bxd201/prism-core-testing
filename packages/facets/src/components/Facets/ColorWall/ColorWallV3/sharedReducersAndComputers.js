@@ -1,9 +1,12 @@
-import { colorWallStructuralPropsDefault, BASE_SWATCH_SIZE } from './ColorWallPropsContext'
+// @flow
+import { colorWallStructuralPropsDefault } from './ColorWallPropsContext'
+import { BASE_SWATCH_SIZE } from './constants'
+import { getOuterHeightAll } from './Title/Title'
 
 export const initialState = { outerWidth: 0, outerHeight: 0, widths: {}, heights: {} }
 
 export function computeChunk (data = {}, ctx = colorWallStructuralPropsDefault) {
-  const { props: selfProps = {}, childProps = {}, children } = data
+  const { props: selfProps = {}, childProps = {}, children, titles = [] } = data
   const { spaceH = 0, spaceV = 0 } = selfProps
   const { height: swatchHeightScale = 1, width: swatchWidthScale = 1 } = childProps
   const { scale } = ctx
@@ -17,9 +20,11 @@ export function computeChunk (data = {}, ctx = colorWallStructuralPropsDefault) 
     const sHeight = swatchHeightScale * BASE_SWATCH_SIZE * scale
     const thisVertSpace = spaceV * BASE_SWATCH_SIZE * scale
 
+    const titlesHeight = getOuterHeightAll(titles.map(({ level }) => level), scale)
+
     const _height = children.map(c => {
       return c.reduce((accum, next) => Math.max(accum, sHeight), 0)
-    }).reduce((accum, next) => accum + next, 0)
+    }).reduce((accum, next) => accum + next, 0) + titlesHeight
 
     return {
       swatchWidth: sWidth,
@@ -36,8 +41,8 @@ export function computeChunk (data = {}, ctx = colorWallStructuralPropsDefault) 
   return null
 }
 
-export function reducerColumn (state, stuff) {
-  const { type, amt, index } = stuff
+export function reducerColumn (state, action) {
+  const { type, amt, index } = action
 
   switch (type) {
     case 'reset':
@@ -69,7 +74,7 @@ export function reducerColumn (state, stuff) {
 
 export function computeColumn (data = {}, ctx = colorWallStructuralPropsDefault) {
   const { scale } = ctx
-  const { children, props = {} } = data
+  const { children, props = {}, titles = [] } = data
   const { spaceH = 0, spaceV = 0 } = props
 
   if (children) {
@@ -82,6 +87,7 @@ export function computeColumn (data = {}, ctx = colorWallStructuralPropsDefault)
       return null
     }).filter(Boolean)
 
+    const titlesHeight = getOuterHeightAll(titles.map(({ level }) => level), scale)
     const padH = scale * BASE_SWATCH_SIZE * spaceH
     const padV = scale * BASE_SWATCH_SIZE * spaceV
     const state1 = childrenDims.map((child, i) => ({ type: 'width', amt: child.outerWidth, index: i })).reduce(reducerColumn, initialState)
@@ -89,7 +95,7 @@ export function computeColumn (data = {}, ctx = colorWallStructuralPropsDefault)
     const state3 = {
       ...state2,
       outerWidth: state2.outerWidth + (padH * 2),
-      outerHeight: state2.outerHeight + (padV * 2)
+      outerHeight: state2.outerHeight + titlesHeight + (padV * 2)
     }
 
     return state3
@@ -98,8 +104,8 @@ export function computeColumn (data = {}, ctx = colorWallStructuralPropsDefault)
   return null
 }
 
-export function reducerRow (state, stuff) {
-  const { type, amt, index } = stuff
+export function reducerRow (state, action) {
+  const { type, amt, index } = action
 
   switch (type) {
     case 'reset':
@@ -131,7 +137,7 @@ export function reducerRow (state, stuff) {
 
 export function computeRow (data = {}, ctx = colorWallStructuralPropsDefault) {
   const { scale, isWrapped } = ctx
-  const { children, props = {} } = data
+  const { children, props = {}, titles = [] } = data
   const { spaceH = 0, spaceV = 0, wrap } = props
   const appropriateReducer = isWrapped && wrap ? reducerColumn : reducerRow
 
@@ -145,6 +151,7 @@ export function computeRow (data = {}, ctx = colorWallStructuralPropsDefault) {
       return null
     }).filter(Boolean)
 
+    const titlesHeight = getOuterHeightAll(titles.map(({ level }) => level), scale)
     const padH = scale * BASE_SWATCH_SIZE * spaceH
     const padV = scale * BASE_SWATCH_SIZE * spaceV
     const state1 = childrenDims.map((child, i) => ({ type: 'width', amt: child.outerWidth, index: i })).reduce(appropriateReducer, initialState)
@@ -152,7 +159,7 @@ export function computeRow (data = {}, ctx = colorWallStructuralPropsDefault) {
     const state3 = {
       ...state2,
       outerWidth: state2.outerWidth + (padH * 2),
-      outerHeight: state2.outerHeight + (padV * 2)
+      outerHeight: state2.outerHeight + titlesHeight + (padV * 2)
     }
 
     return state3
@@ -162,7 +169,10 @@ export function computeRow (data = {}, ctx = colorWallStructuralPropsDefault) {
 }
 
 export function computeWall (data, ctx = colorWallStructuralPropsDefault) {
-  const { children, props = {},  } = data // eslint-disable-line
+  const { children, props = {} } = data
+  const { wrap } = props
+  const { isWrapped } = ctx
+  const appropriateReducer = isWrapped && wrap ? reducerColumn : reducerRow
 
   if (children) {
     const childrenDims = children.map((child, i) => {
@@ -174,8 +184,8 @@ export function computeWall (data, ctx = colorWallStructuralPropsDefault) {
       return null
     }).filter(Boolean)
 
-    const state1 = childrenDims.map((child, i) => ({ type: 'width', amt: child.outerWidth, index: i })).reduce(reducerRow, initialState)
-    const state2 = childrenDims.map((child, i) => ({ type: 'height', amt: child.outerHeight, index: i })).reduce(reducerRow, state1)
+    const state1 = childrenDims.map((child, i) => ({ type: 'width', amt: child.outerWidth, index: i })).reduce(appropriateReducer, initialState)
+    const state2 = childrenDims.map((child, i) => ({ type: 'height', amt: child.outerHeight, index: i })).reduce(appropriateReducer, state1)
 
     return state2
   }

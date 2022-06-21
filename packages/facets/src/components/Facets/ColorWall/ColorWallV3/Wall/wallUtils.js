@@ -1,9 +1,10 @@
+// @flow
 import flattenDeep from 'lodash/flattenDeep'
 import chunk from 'lodash/chunk'
 import isSomething from 'src/shared/utils/isSomething.util'
 import sortBy from 'lodash/sortBy'
 import uniq from 'lodash/uniq'
-import { BASE_SWATCH_SIZE, MAX_BASE_SIZE, MIN_BASE_SIZE, OUTER_SPACING, SWATCH_WIDTH_WRAP_THRESHOLD } from '../ColorWallPropsContext'
+import { BASE_SWATCH_SIZE, MAX_BASE_SIZE, MIN_BASE_SIZE, OUTER_SPACING, SWATCH_WIDTH_WRAP_THRESHOLD } from '../constants'
 
 // TODO: this should actually return a memoized function which will return the perimeter level when provided an ID
 export function getPerimiterLevelTest (chunkChildren, id, levels = 0) {
@@ -83,6 +84,10 @@ export function getProximalSwatchesBySwatchId (chunksSet, chunkId, swatchId) {
         const coordsR = [Math.min(coords[0] + 1, children[0]?.length - 1), coords[1]]
 
         return {
+          current: {
+            id: btnRefs[coords[1]]?.[coords[0]]?.id ?? null,
+            ref: btnRefs[coords[1]]?.[coords[0]]?.el ?? null
+          },
           up: {
             id: btnRefs[coordsUp[1]]?.[coordsUp[0]]?.id ?? null,
             ref: btnRefs[coordsUp[1]]?.[coordsUp[0]]?.el ?? null
@@ -177,7 +182,7 @@ export function getInitialSwatchInChunk (chunk = {}, activeColorId) {
   }
 }
 
-export function needsToWrap (targetScale) {
+export function needsToWrap (targetScale: number): boolean {
   if (!isNaN(targetScale)) {
     return BASE_SWATCH_SIZE * targetScale < SWATCH_WIDTH_WRAP_THRESHOLD
   }
@@ -185,7 +190,7 @@ export function needsToWrap (targetScale) {
   throw Error('targetScale must be numeric')
 }
 
-export function determineScaleForAvailableWidth (wallWidth = 0, containerWidth = 0) {
+export function determineScaleForAvailableWidth (wallWidth: number = 0, containerWidth: number = 0): number {
   if (!isNaN(wallWidth)) {
     const scaleTarget = containerWidth / (wallWidth + OUTER_SPACING * 2)
     const swatchSizeTarget = scaleTarget * BASE_SWATCH_SIZE

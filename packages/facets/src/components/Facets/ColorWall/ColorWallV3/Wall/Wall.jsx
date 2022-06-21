@@ -1,8 +1,8 @@
-/* eslint-disable */
 // @flow
 import React, { useState, useRef, useMemo, useEffect, useCallback, useContext } from 'react'
 import { useSelector } from 'react-redux'
-import { ColorWallPropsContext, ColorWallStructuralPropsContext, BASE_SWATCH_SIZE, colorWallPropsDefault, MAX_SCROLLER_HEIGHT, MAX_SWATCH_SIZE, MIN_SCROLLER_HEIGHT, OUTER_SPACING, MIN_BASE_SIZE, MAX_BASE_SIZE, colorWallStructuralPropsDefault, SWATCH_WIDTH_WRAP_THRESHOLD } from '../ColorWallPropsContext'
+import { ColorWallPropsContext, ColorWallStructuralPropsContext, colorWallPropsDefault, colorWallStructuralPropsDefault } from '../ColorWallPropsContext'
+import { BASE_SWATCH_SIZE, MAX_SCROLLER_HEIGHT, MAX_SWATCH_SIZE, MIN_SCROLLER_HEIGHT, OUTER_SPACING } from '../constants'
 import ColorSwatchContent from 'src/components/ColorSwatchContent/ColorSwatchContent'
 import Column from '../Column/Column'
 import noop from 'lodash/noop'
@@ -47,7 +47,7 @@ type WallProps = {
 }
 
 function Wall (props: WallProps) {
-  const { activeColorId: dirtyActiveColorId, height, onActivateColor = noop, structure = {} } = props
+  const { activeColorId: dirtyActiveColorId, height, onActivateColor = noop, structure = {}, initialFocusId } = props
   const { children: wallChildren = [], props: wallProps = {} } = structure
   const { wrap } = wallProps
   // this ensures numeric IDs are numeric (so '42' becomes 42), and string IDs remain strings
@@ -62,6 +62,7 @@ function Wall (props: WallProps) {
   const focusOutEndHelper = useRef()
   const chunks = useRef(new Set())
   const wallRef = useRef()
+  const initialFocusRef = useRef(initialFocusId) // we only use this on init, so we'll keep it in a ref we can clear out
   const [topFocusData, setTopFocusData] = useState()
   const { messages = {} } = useIntl()
   const [shouldRender, setShouldRender] = useState(false)
@@ -147,7 +148,7 @@ function Wall (props: WallProps) {
   const [forceRerender, setForceRerender] = useState(false)
 
   const wallCtx = useMemo(() => {
-    const isZoomed = isSomething(activeColorId)
+    const isZoomed = isSomething(activeColorId) || isSomething(initialFocusRef.current)
     const { current } = findPositionInChunks(chunks.current, activeColorId) // eslint-disable-line
     const getPerimeterLevel = getPerimiterLevelTest(current?.data?.children, activeColorId, bloomEnabled ? 2 : 0) // eslint-disable-line
 
@@ -191,11 +192,22 @@ function Wall (props: WallProps) {
 
   useEffect(() => {
     // if shouldRender is not true, there will be nothing rendered to scroll to
-    if (isSomething(activeColorId) && shouldRender) {
+    if ((isSomething(activeColorId) || isSomething(initialFocusRef.current)) && shouldRender) {
+      const goingTo = isSomething(initialFocusRef.current) ? initialFocusRef.current : activeColorId
       setFocusAndScrollTo({
-        swatchId: activeColorId,
-        chunkId: getProximalChunksBySwatchId(chunks.current, activeColorId)?.current?.id
+        swatchId: goingTo,
+        chunkId: getProximalChunksBySwatchId(chunks.current, goingTo)?.current?.id
       })
+
+      if (isSomething(initialFocusRef.current)) {
+        // get this chunk based on the swatch ID...
+        const { current } = getProximalChunksBySwatchId(chunks.current, goingTo)
+        // ... get this swatch ref based on found chunk and swatch ID...
+        const { current: currentSwatch } = getProximalSwatchesBySwatchId(chunks.current, current?.id, goingTo)
+        setHasFocus(true)
+        initialFocusRef.current = null // clear out once we use it 1 time
+        setTimeout(() => currentSwatch?.ref?.current?.[0].focus?.(), 100)
+      }
     }
   }, [activeColorId, shouldRender])
 
@@ -304,7 +316,7 @@ function Wall (props: WallProps) {
               }
             }, undefined)
 
-            if (availableCTAs.length) {
+            if (availableCTAs && availableCTAs.length) {
               // $FlowIgnore
               e.preventDefault?.() // eslint-disable-line
 
