@@ -1,8 +1,11 @@
 .cwv3__chunk {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: stretch;
-  align-items: space-between;
+  // flex-wrap: wrap;
+  // justify-content: stretch;
+  align-items: stretch;
+  position: relative;
+  flex-direction: column;
+  justify-content: space-between;
   position: relative;
 
   &--focus, &:focus-within {
@@ -55,19 +58,19 @@
     box-shadow: $swatch-white-border, 0 0 2px 0 rgba(black, .25);
 
     &--1 {
-      @include bloom(2, 2.36, 108);
+      @include bloom(2, 2.36, 958);
     }
 
     &--2 {
-      @include bloom(2, 2.08, 107);
+      @include bloom(2, 2.08, 957);
     }
 
     &--3 {
-      @include bloom(1.41, 1.74, 106);
+      @include bloom(1.41, 1.74, 956);
     }
 
     &--4 {
-      @include bloom(1.30, 1.41, 105);
+      @include bloom(1.30, 1.41, 955);
     }
   }
 

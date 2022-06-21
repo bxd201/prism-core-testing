@@ -16,12 +16,17 @@
     position: relative;
   }
 
-  &__wall-col {
+  &__wall-row {
     display: flex;
     flex-wrap: nowrap;
     justify-content: center;
     align-items: stretch;
     position: absolute;
     flex-direction: row;
+
+    // TODO: should this become a column when wrapping? or just change nowrap to wrap? that might make more sense
+    &--wrapped {
+      flex-wrap: wrap;
+    }
   }
 }

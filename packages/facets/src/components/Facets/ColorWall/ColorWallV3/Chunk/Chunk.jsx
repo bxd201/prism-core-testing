@@ -2,7 +2,7 @@
 import React, { useContext, useState, useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import { useRouteMatch } from 'react-router-dom'
-import ColorWallPropsContext from '../ColorWallPropsContext'
+import { ColorWallPropsContext, ColorWallStructuralPropsContext } from '../ColorWallPropsContext'
 import { computeChunk } from '../sharedReducersAndComputers'
 import Prism, { ColorSwatch } from '@prism/toolkit'
 import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
@@ -12,18 +12,27 @@ import { fullColorName } from 'src/shared/helpers/ColorUtils'
 import './Chunk.scss'
 import * as GA from 'src/analytics/GoogleAnalytics'
 import { GA_TRACKER_NAME_BRAND } from 'src/constants/globals'
+import Titles from '../Title/Title'
 
 const swatchClass = 'cwv3__swatch'
 
 type ChunkProps = {
-  data: { children: any },
+  data: {
+    children: any,
+    titles: any,
+    props: any,
+    childProps: any
+  },
   id: string,
   updateHeight: any => void,
   updateWidth: any => void,
 }
 
 function Chunk ({ data = {}, id = '', updateHeight, updateWidth }: ChunkProps) {
+  const { titles } = data
   const ctx = useContext(ColorWallPropsContext)
+  const structuralCtx = useContext(ColorWallStructuralPropsContext)
+  const { scale } = structuralCtx
   const { brandId, brandKeyNumberSeparator, colorWall: { colorSwatch = {} } }: ConfigurationContextType = useContext(ConfigurationContext)
   const { houseShaped = false } = colorSwatch
   const { items: { colorMap } }: ColorsState = useSelector(state => state.colors)
@@ -40,7 +49,7 @@ function Chunk ({ data = {}, id = '', updateHeight, updateWidth }: ChunkProps) {
   const swatchRefsMap = useRef({})
 
   useEffect(() => {
-    const results = computeChunk(data, ctx)
+    const results = computeChunk(data, structuralCtx)
 
     if (results) {
       const {
@@ -63,7 +72,7 @@ function Chunk ({ data = {}, id = '', updateHeight, updateWidth }: ChunkProps) {
       setHeight(innerHeight)
       updateHeight(outerHeight)
     }
-  }, [data, ctx])
+  }, [data, structuralCtx])
 
   useEffect(() => {
     addChunk({
@@ -88,9 +97,12 @@ function Chunk ({ data = {}, id = '', updateHeight, updateWidth }: ChunkProps) {
   return (
     <div
       ref={thisEl}
-      className={`cwv3__chunk${houseShaped && isZoomed ? ' cwv3__chunk--no-focus' : ''}`}
+      className={`cwv3__chunk ${houseShaped && isZoomed ? 'cwv3__chunk--no-focus' : ''}`}
       style={{ padding: `${vertSpace}px ${horzSpace}px` }}
     >
+      {titles && titles.length
+        ? <Titles data={titles} referenceScale={scale} />
+        : null}
       {data.children.map((row, i) => (
         // TODO: remove dependence on route matching; all display variation should be handled through the API and data
         <div className={`cwv3__chunk__row${params.family ? ' cwv3__chunk__row__family' : ''}`} key={i}>
