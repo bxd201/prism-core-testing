@@ -5,10 +5,16 @@ LABEL maintainer="Justis Estell <justis.f.estell@sherwin.com>"
 ENV API_URL="$API_URL"
 ENV WEB_URL="$WEB_URL"
 
-COPY dist/packages/facets/dist/storybook /usr/share/nginx/html
-COPY dist/packages/toolkit/public /usr/share/nginx/html
-COPY dist/packages/prism-docs/build /usr/share/nginx/html
-COPY dist/packages/prism-demo/build /usr/share/nginx/html
+RUN mkdir -p /usr/share/nginx/html/storybook/facets
+RUN mkdir -p /usr/share/nginx/html/storybook/toolkit
+RUN mkdir -p /usr/share/nginx/html/docs
+RUN mkdir -p /usr/share/nginx/html/demo
+
+COPY dist/packages/facets/dist/storybook /usr/share/nginx/html/storybook/facets
+COPY dist/packages/toolkit/public /usr/share/nginx/html/storybook/toolkit
+COPY dist/packages/prism-docs/build /usr/share/nginx/html/docs
+COPY dist/packages/prism-demo/build /usr/share/nginx/html/demo
+
 COPY ci/nginx/docroot /usr/share/nginx/html
 COPY ci/nginx/conf.d /etc/nginx/conf.d
 COPY ci/scripts/entrypoint.sh /entrypoint.sh
