@@ -1,7 +1,7 @@
 // @flow strict
 import React, { useContext, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { CircleLoader } from '../ToolkitLoaders'
+import { CircleLoader } from '../ToolkitComponents'
 import Jimp from 'jimp'
 import { generateImage } from '../../shared/services/sceneDownload'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'

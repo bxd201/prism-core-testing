@@ -18,6 +18,7 @@ module.exports = {
       animation: {
         fadeIn: 'fadeIn 0.2s ease-in-out',
         'fadeIn-1': 'fadeIn 1s ease-in-out',
+        'delayedFadeIn': 'delayedFadeIn .2s ease-in-out'
       },
       backgroundPosition: {
         'bottom-0': '0 -100%',
@@ -52,6 +53,11 @@ module.exports = {
           '0%': { opacity: 0, transform: 'scale(0.9)' },
           '100%': { opacity: 1, transform: 'scale(1)' }
         },
+        delayedFadeIn: {
+          '0%': { opacity: 0 },
+          '25%': { opacity: 0 },
+          '100%': { opacity: 1 },
+        }
       },
       margin: {
         4.5: '1.125rem'

@@ -1,11 +1,13 @@
+// @flow
 import flattenDeep from 'lodash/flattenDeep'
 import chunk from 'lodash/chunk'
 import isSomething from 'src/shared/utils/isSomething.util'
 import sortBy from 'lodash/sortBy'
 import uniq from 'lodash/uniq'
+import { BASE_SWATCH_SIZE, MAX_BASE_SIZE, MIN_BASE_SIZE, OUTER_SPACING, SWATCH_WIDTH_WRAP_THRESHOLD } from '../constants'
 
 // TODO: this should actually return a memoized function which will return the perimeter level when provided an ID
-export const getPerimiterLevelTest = (chunkChildren, id, levels = 0) => {
+export function getPerimiterLevelTest (chunkChildren, id, levels = 0) {
   if (chunkChildren && isSomething(id)) {
     if (levels === 0) {
       return () => 0
@@ -52,7 +54,7 @@ export const getPerimiterLevelTest = (chunkChildren, id, levels = 0) => {
   return () => 0
 }
 
-export const getIdCoordsInChunk = (id, chunk = [[]]) => {
+export function getIdCoordsInChunk (id, chunk = [[]]) {
   const coords = chunk.reduce((accum, next, y) => {
     if (accum) return accum
 
@@ -66,7 +68,7 @@ export const getIdCoordsInChunk = (id, chunk = [[]]) => {
   return coords
 }
 
-export const getProximalSwatchesBySwatchId = (chunksSet, chunkId, swatchId) => {
+export function getProximalSwatchesBySwatchId (chunksSet, chunkId, swatchId) {
   if (chunksSet && chunksSet.size > 0 && chunkId !== null && isSomething(swatchId)) {
     const hostChunk = Array.from(chunksSet).filter(({ id }) => id === chunkId)?.[0]
     const children = hostChunk?.data?.children
@@ -82,6 +84,10 @@ export const getProximalSwatchesBySwatchId = (chunksSet, chunkId, swatchId) => {
         const coordsR = [Math.min(coords[0] + 1, children[0]?.length - 1), coords[1]]
 
         return {
+          current: {
+            id: btnRefs[coords[1]]?.[coords[0]]?.id ?? null,
+            ref: btnRefs[coords[1]]?.[coords[0]]?.el ?? null
+          },
           up: {
             id: btnRefs[coordsUp[1]]?.[coordsUp[0]]?.id ?? null,
             ref: btnRefs[coordsUp[1]]?.[coordsUp[0]]?.el ?? null
@@ -111,7 +117,7 @@ export const getProximalSwatchesBySwatchId = (chunksSet, chunkId, swatchId) => {
   }
 }
 
-export const findPositionInChunks = (chunks, swatchId) => {
+export function findPositionInChunks (chunks, swatchId) {
   if (chunks?.size && isSomething(swatchId)) {
     const _chunks = Array.from(chunks)
     const b = _chunks.map(({ data }) => data)
@@ -134,7 +140,7 @@ export const findPositionInChunks = (chunks, swatchId) => {
   }
 }
 
-export const getProximalChunksBySwatchId = (chunksSet, swatchId) => {
+export function getProximalChunksBySwatchId (chunksSet, swatchId) {
   if (chunksSet && chunksSet.size > 0) {
     const chunkArray = Array.from(chunksSet)
     const first = chunkArray[0]
@@ -156,11 +162,11 @@ export const getProximalChunksBySwatchId = (chunksSet, swatchId) => {
   }
 }
 
-export const getInTabOrder = (list = []) => {
+export function getInTabOrder (list = []) {
   return sortBy(uniq(list.filter(Boolean)).filter(el => el.tabIndex !== -1), el => el.tabIndex)
 }
 
-export const getInitialSwatchInChunk = (chunk = {}, activeColorId) => {
+export function getInitialSwatchInChunk (chunk = {}, activeColorId) {
   const chunkKids = chunk.data?.children
 
   if (chunkKids && chunkKids.length) {
@@ -173,5 +179,26 @@ export const getInitialSwatchInChunk = (chunk = {}, activeColorId) => {
         id: newId
       }
     }
+  }
+}
+
+export function needsToWrap (targetScale: number): boolean {
+  if (!isNaN(targetScale)) {
+    return BASE_SWATCH_SIZE * targetScale < SWATCH_WIDTH_WRAP_THRESHOLD
+  }
+
+  throw Error('targetScale must be numeric')
+}
+
+export function determineScaleForAvailableWidth (wallWidth: number = 0, containerWidth: number = 0): number {
+  if (!isNaN(wallWidth)) {
+    const scaleTarget = containerWidth / (wallWidth + OUTER_SPACING * 2)
+    const swatchSizeTarget = scaleTarget * BASE_SWATCH_SIZE
+    const swatchSizeConstrained = Math.min(Math.max(swatchSizeTarget, MIN_BASE_SIZE), MAX_BASE_SIZE)
+    const scaleConstrained = swatchSizeConstrained / swatchSizeTarget * scaleTarget
+
+    return scaleConstrained
+  } else {
+    throw Error('Wall width must be numeric.')
   }
 }
