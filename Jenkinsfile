@@ -163,12 +163,9 @@ pipeline {
    }
     stage('build') {
       when {
-        not {
-          expression { BRANCH_NAME ==~ /^(qa|release)$/ }
-        }
+          expression { BRANCH_NAME ==~ /^(develop)$/ }
       }
       steps {
-
         unstash 'static'
         sh """
         # Clean up any old image archive files

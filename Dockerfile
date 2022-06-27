@@ -2,9 +2,6 @@ FROM docker.artifactory.sherwin.com/ecomm/utils/moldy-nginx:latest
 
 LABEL maintainer="Justis Estell <justis.f.estell@sherwin.com>"
 
-ENV API_URL="$API_URL"
-ENV WEB_URL="$WEB_URL"
-
 RUN mkdir -p /usr/share/nginx/html/storybook/facets
 RUN mkdir -p /usr/share/nginx/html/storybook/toolkit
 RUN mkdir -p /usr/share/nginx/html/docs
