@@ -3,7 +3,9 @@ image:
 
 ingress:
   host: develop-prism-web.ebus.swaws
-
+  annotations:
+    # Public domains
+    nginx.ingress.kubernetes.io/server-alias: internal-prism.sherwin-williams.com
 env:
   API_URL: "https://develop-prism-api.ebus.swaws"
   WEB_URL: "https://develop-prism-web.ebus.swaws"

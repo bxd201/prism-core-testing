@@ -163,12 +163,9 @@ pipeline {
    }
     stage('build') {
       when {
-        not {
-          expression { BRANCH_NAME ==~ /^(qa|release)$/ }
-        }
+          expression { BRANCH_NAME ==~ /^(develop)$/ }
       }
       steps {
-
         unstash 'static'
         sh """
         # Clean up any old image archive files
@@ -299,6 +296,47 @@ pipeline {
       }
     }
 
+    stage('Deploy') {
+      when {
+        expression { BRANCH_NAME ==~ /^(develop)$/ }
+      }
+      agent {
+        docker {
+            image 'docker.cpartdc01.sherwin.com/ecomm/utils/buoy:latest'
+            reuseNode true
+            alwaysPull true
+            args '-u buoy'
+        }
+      }
+      environment {
+        RANCHER_PROD_CLUSTER = "prod"
+        RANCHER_NONPROD_CLUSTER = "nonprod"
+        RANCHER_PROJECT = "TAG"
+
+        VERIFY_SECRETS="ebus"
+
+        CHART = "nginx-custom-chart"
+        CHART_REPO = "helm-virtual"
+
+        CHART_VERSION="1.x.x"
+
+        IS_IMAGE_UNIQUE_TAG="true"
+
+        ENVSUBST_VARIABLES='$BRANCH_NAME:$IMAGE_NAME:$IMAGE_UNIQUE_TAG'
+
+        IS_ROLLBACK_ENABLED="true"
+      }
+      steps {
+        withCredentials([
+          string(credentialsId: 'jenkins_rancher2_bearerToken', variable: 'RANCHER_TOKEN'),
+          usernameColonPassword(credentialsId: 'artifactory_credentials', variable: 'ARTIFACTORY_CREDENTIALS'),
+        ]) {
+          sh "/buoy/float.sh"
+
+          archiveArtifacts artifacts: "deploy.tgz", fingerprint: true
+        }
+      }
+    }
     stage('security') {
       when {
         branch 'develop'
