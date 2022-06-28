@@ -1,17 +1,12 @@
 import React, { useState } from 'react'
 import LivePaletteWrapper from './LivePalette'
 import SingleImageColorPicker from './SingleImageColorPicker'
-import Context from '../context'
-import { Color } from '../types'
 
 const Visualizer = () => {
-  const [lpColors, setLpColors] = useState<Color[]>()
-
-  const addLpColor = color => { setLpColors([...lpColors, color]) }
-  const resetLpColors = colors => { setLpColors(colors) }
+  const [lpColors, setLpColors] = useState()
 
   return (
-    <Context.Provider value={{ addLpColor, lpColors, resetLpColors }}>
+    <>
       <div className='container flex flex-col justify-center mx-auto mt-10 sm:px-6 lg:px-8'>
         <div className='flex justify-center align-middle shadow-black drop-shadow-xl w-full'>
           <div>
@@ -31,14 +26,14 @@ const Visualizer = () => {
                 </button>
               </div>
             </div>
-            <SingleImageColorPicker />
+            <SingleImageColorPicker lpColors={lpColors} setLpColors={setLpColors} />
           </div>
         </div>
       </div>
       <div className='w-auto mt-10 sm:mx-2 md:p-1 md:border lg:w-3/4 lg:mx-auto'>
-        <LivePaletteWrapper />
+        <LivePaletteWrapper lpColors={lpColors} setLpColors={setLpColors} />
       </div>
-    </Context.Provider>
+    </>
   )
 }
 

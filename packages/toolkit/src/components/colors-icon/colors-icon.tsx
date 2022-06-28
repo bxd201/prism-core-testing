@@ -1,9 +1,11 @@
-import React, { ReactNode } from 'react'
+import React, { CSSProperties, ReactNode } from 'react'
 
 export interface ColorsIconProps {
+  "aria-label"?: string
   className?: string
   hexes: string[]
   infoIcon?: ReactNode
+  style?: CSSProperties
 }
 
 const ColorsIcon = ({ className = '', hexes, infoIcon = 'i', ...otherProps }: ColorsIconProps): JSX.Element => (

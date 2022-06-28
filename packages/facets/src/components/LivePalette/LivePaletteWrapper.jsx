@@ -8,7 +8,7 @@ import { activate, deactivateTemporaryColor, empty, replaceLpColors, toggleCompa
 import { setNavigationIntent, setNavigationIntentWithReturn } from '../../store/actions/navigation'
 import { loadColors, showColorDetailsModal } from '../../store/actions/loadColors'
 import storageAvailable from '../../shared/utils/browserStorageCheck.util'
-import Prism, { LivePalette, ColorsIcon } from '@prism/toolkit'
+import Prism, { ColorsIcon, LivePalette } from '@prism/toolkit'
 import LivePaletteModal from './LivePaletteModal'
 import ConfigurationContext, { type ConfigurationContextType } from '../../contexts/ConfigurationContext/ConfigurationContext'
 import filter from 'lodash/filter'

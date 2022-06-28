@@ -20,8 +20,6 @@ const Template = (args: { colorName: string, size: number }): JSX.Element => {
           aria-label={`${color.name} color details`}
           hexes={filter(colors, (c) => values(color.coordinatingColors).some((id) => id === c.id)).map((c) => c.hex)}
           infoIcon={<FontAwesomeIcon aria-label='info' icon={faInfo} style={{ color: color.isDark ? 'white' : 'black' }} />}
-          /* @ts-ignore */
-          onClick={() => {}}
           style={{ width: `${args.size}px`, height: `${args.size}px` }}
         />
       </button>
@@ -55,7 +53,7 @@ export default {
     },
     otherProps: {
       control: false,
-      description: 'optional props like `aria-label`, `className`, `onClick`, `style`, and others'
+      description: 'optional props like `aria-label`, `className`, `style`, and others'
     },
     size: {
       control: { type: 'number', min: 10 },
