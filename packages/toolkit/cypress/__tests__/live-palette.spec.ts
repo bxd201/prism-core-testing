@@ -45,12 +45,14 @@ describe('LivePalette', () => {
     }
   ]
   const [firstColor, secondColor, thirdColor] = colors
-  const colorSlot = (colorName?: string): string | RegExp => (colorName !== undefined ? `Expand option for ${colorName} color` : /Expand option for/)
+  const colorSlot = (colorName?: string): string | RegExp =>
+    colorName !== undefined ? `Expand option for ${colorName} color` : /Expand option for/
   const emptySlot = 'Empty slot'
   const colorBrandKey = (colorNumber: string): string => `SW ${colorNumber}`
   const colorDetailsButton = (colorName: string): string => `${colorName} color details`
   const removeColorButton = (colorName: string): string => `Remove color ${colorName} from live palette`
-  const dragColorButton = (colorName?: string): string | RegExp => (colorName !== undefined ? `Drag color ${colorName}` : /Drag color/)
+  const dragColorButton = (colorName?: string): string | RegExp =>
+    colorName !== undefined ? `Drag color ${colorName}` : /Drag color/
   const addColorButton = 'ADD A COLOR'
 
   before(cy.visitStorybook)

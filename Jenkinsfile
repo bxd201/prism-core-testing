@@ -140,27 +140,6 @@ pipeline {
         """
       }
    }
-   stage('s3-sites-upload') {
-      when {
-          expression { BRANCH_NAME ==~ /^(develop)$/ }
-        }
-      agent {
-        docker {
-          image 'docker.artifactory.sherwin.com/amazon/aws-cli:2.1.26'
-          args "--entrypoint=''"
-        }
-      }
-      steps {
-        unstash 'static'
-
-        sh """
-        aws s3 cp dist/packages/facets/dist/storybook s3://sw-prism-web/storybook/facets --recursive
-        aws s3 cp dist/packages/toolkit/public s3://sw-prism-web/storybook/toolkit --recursive
-        aws s3 cp dist/packages/prism-docs/build s3://sw-prism-web/docs --recursive
-        aws s3 cp dist/packages/prism-demo/build s3://sw-prism-web/demo --recursive
-        """
-      }
-   }
     stage('build') {
       when {
           expression { BRANCH_NAME ==~ /^(develop)$/ }
@@ -372,7 +351,7 @@ pipeline {
         script{
             sh """
               cp \$SECRET /root/.edgerc
-              akamai purge invalidate https://prism.sherwin-williams.com/"${S3_FOLDER_NAME}"/embed.js https://prism.sherwin-williams.com/storybook/toolkit/index.html https://prism.sherwin-williams.com/storybook/facets/index.html https://prism.sherwin-williams.com/docs/index.html https://prism.sherwin-williams.com/demo/index.html https://prism.sherwin-williams.com/demo/asset-manifest.json https://prism.sherwin-williams.com/demo/manifest.json
+              akamai purge invalidate https://prism.sherwin-williams.com/"${S3_FOLDER_NAME}"/embed.js
             """
           }
         }

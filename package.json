@@ -7,19 +7,19 @@
     ]
   },
   "scripts": {
-    "prepare": "husky install",
+    "postinstall": "husky install",
     "start": "yarn workspace @prism/toolkit build-rollup && yarn workspace @prism/facets start",
     "build": "yarn workspace @prism/toolkit build-rollup && yarn workspace @prism/facets build && yarn workspace @prism/toolkit build && yarn docs:build && yarn demo:build",
-    "storybook:facets": "yarn workspace @prism/facets storybook",
-    "storybook:toolkit": "yarn workspace @prism/toolkit start",
+    "publish": "yarn workspace @prism/toolkit build-rollup && cd packages/toolkit && yarn npm publish",
     "docs:start": "yarn workspace @prism/prism-docs start",
     "docs:build": "yarn workspace @prism/prism-docs build",
     "demo:start": "yarn workspace @prism/prism-demo start",
     "demo:build": "yarn workspace @prism/prism-demo build",
-    "test:facets": "yarn workspace @prism/facets test",
-    "test:toolkit": "yarn workspace @prism/toolkit test",
-    "cypress:toolkit": "yarn workspace @prism/toolkit cypress",
-    "publish": "yarn workspace @prism/toolkit build-rollup && cd packages/toolkit && yarn npm publish"
+    "facets:storybook": "yarn workspace @prism/facets storybook",
+    "facets:test": "yarn workspace @prism/facets test",
+    "toolkit:storybook": "yarn workspace @prism/toolkit start",
+    "toolkit:test": "yarn workspace @prism/toolkit test",
+    "toolkit:cypress": "yarn workspace @prism/toolkit test:cypress"
   },
   "devDependencies": {
     "@commitlint/cli": "13.1.0",

@@ -1,4 +1,4 @@
-import colors from '../../test-utils/mocked-endpoints/colors.json'
+import colors from '../../src/test-utils/mocked-endpoints/colors.json'
 import { filter, values } from 'lodash'
 
 describe('ColorsIcon', () => {

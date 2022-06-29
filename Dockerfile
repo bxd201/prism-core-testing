@@ -6,11 +6,13 @@ RUN mkdir -p /usr/share/nginx/html/storybook/facets
 RUN mkdir -p /usr/share/nginx/html/storybook/toolkit
 RUN mkdir -p /usr/share/nginx/html/docs
 RUN mkdir -p /usr/share/nginx/html/demo
+RUN mkdir -p /usr/share/nginx/html/coverage
 
 COPY dist/packages/facets/dist/storybook /usr/share/nginx/html/storybook/facets
 COPY dist/packages/toolkit/public /usr/share/nginx/html/storybook/toolkit
 COPY dist/packages/prism-docs/build /usr/share/nginx/html/docs
 COPY dist/packages/prism-demo/build /usr/share/nginx/html/demo
+COPY dist/packages/toolkit/coverage/lcov-report /usr/share/nginx/html/coverage
 
 COPY ci/nginx/docroot /usr/share/nginx/html
 COPY ci/nginx/conf.d /etc/nginx/conf.d
