@@ -106,7 +106,7 @@ const LivePaletteWrapper = ({ simple = false }: { simple?: boolean }) => {
             )
           }}
           colors={lpColors}
-          className={houseShaped ? `${baseClass}-house-shaped__height` : `${baseClass}__height`}
+          className={`${baseClass}__height${houseShaped ? ` ${baseClass}-house-shaped__height` : ''}`}
           deleteButtonRenderer={({ name }, onClick) => colorMap && !simple && (
             <button
               aria-label={formatMessage({ id: 'LIVE_PALETTE_REMOVE' }, { colorName: name })}
