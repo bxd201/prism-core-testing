@@ -3,11 +3,9 @@ import React, { useContext, useEffect, useState } from 'react'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FormattedMessage, useIntl } from 'react-intl'
-import store from '../../store/store'
 import { activate, deactivateTemporaryColor, empty, replaceLpColors, toggleCompareColor } from '../../store/actions/live-palette'
 import { setNavigationIntent, setNavigationIntentWithReturn } from '../../store/actions/navigation'
 import { loadColors, showColorDetailsModal } from '../../store/actions/loadColors'
-import storageAvailable from '../../shared/utils/browserStorageCheck.util'
 import Prism, { ColorsIcon, LivePalette } from '@prism/toolkit'
 import LivePaletteModal from './LivePaletteModal'
 import ConfigurationContext, { type ConfigurationContextType } from '../../contexts/ConfigurationContext/ConfigurationContext'
@@ -43,18 +41,9 @@ const LivePaletteWrapper = ({ simple = false }: { simple?: boolean }) => {
   useEffect(() => {
     loadColors(brandId)(dispatch)
 
-    const pathName = window.location.pathname
-    if (pathName.split('/').slice(-1)[0] === PATH__NAME) {
+    if (window.location.pathname.split('/').slice(-1)[0] === PATH__NAME) {
       setIsFastMaskPage(true)
     }
-    // FIXME: Store should never be subscribed to by a component like this, it's non-uni-directional data flow.
-    // FIXME: middleware can be used to respond to actions, specifically something testable like redux-saga
-    store.subscribe(() => {
-      const { lp } = store.getState()
-      if (storageAvailable('localStorage')) {
-        window.localStorage.setItem('lp', JSON.stringify(lp))
-      }
-    })
   }, [])
 
   const setNavigationIntents = (shouldGoTo: string, shouldReturnTo?: string) => {
