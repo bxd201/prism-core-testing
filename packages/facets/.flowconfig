@@ -10,17 +10,17 @@ src/shared/types/lib
 [lints]
 
 [options]
-module.name_mapper.extension='css' -> '<PROJECT_ROOT>/src/shared/types/CSSFlowStub.js'
-module.name_mapper.extension='scss' -> '<PROJECT_ROOT>/src/shared/types/CSSFlowStub.js'
-module.name_mapper='^constants\/\(.*\)$' -> '<PROJECT_ROOT>/src/constants/\1'
-module.name_mapper='^config\/\(.*\)$' -> '<PROJECT_ROOT>/src/config/\1'
-module.name_mapper='^variables$' -> '<PROJECT_ROOT>/src/shared/variableDefs.js'
-module.name_mapper='^src\/\(.*\)$' -> '<PROJECT_ROOT>/src/\1'
-module.name_mapper='^srcEmbed\/\(.*\)$' -> '<PROJECT_ROOT>/src-embed/\1'
-module.name_mapper='^srcTemplates\/\(.*\)$' -> '<PROJECT_ROOT>/src-templates/\1'
-module.name_mapper='^embedOuput\/\(.*\)$' -> '<PROJECT_ROOT>/embed-output/\1'
-module.name_mapper='^embedWorking\/\(.*\)$' -> '<PROJECT_ROOT>/embed-working/\1'
-module.name_mapper='^__mocks__\/\(.*\)$' -> '<PROJECT_ROOT>/__mocks__/\1'
+module.name_mapper.extension='css' -> '<PROJECT_ROOT>/packages/facets/src/shared/types/CSSFlowStub.js'
+module.name_mapper.extension='scss' -> '<PROJECT_ROOT>/packages/facets/src/shared/types/CSSFlowStub.js'
+module.name_mapper='^constants\/\(.*\)$' -> '<PROJECT_ROOT>/packages/facets/src/constants/\1'
+module.name_mapper='^config\/\(.*\)$' -> '<PROJECT_ROOT>/packages/facets/src/config/\1'
+module.name_mapper='^variables$' -> '<PROJECT_ROOT>/packages/facets/src/shared/variableDefs.js'
+module.name_mapper='^src\/\(.*\)$' -> '<PROJECT_ROOT>/packages/facets/src/\1'
+module.name_mapper='^srcEmbed\/\(.*\)$' -> '<PROJECT_ROOT>/packages/facets/src-embed/\1'
+module.name_mapper='^srcTemplates\/\(.*\)$' -> '<PROJECT_ROOT>/packages/facets/src-templates/\1'
+module.name_mapper='^embedOuput\/\(.*\)$' -> '<PROJECT_ROOT>/packages/facets/embed-output/\1'
+module.name_mapper='^embedWorking\/\(.*\)$' -> '<PROJECT_ROOT>/packages/facets/embed-working/\1'
+module.name_mapper='^__mocks__\/\(.*\)$' -> '<PROJECT_ROOT>/packages/facets/__mocks__/\1'
 suppress_comment= \\(.\\|\n\\)*\\$FlowIgnore
 esproposal.optional_chaining=enable
 

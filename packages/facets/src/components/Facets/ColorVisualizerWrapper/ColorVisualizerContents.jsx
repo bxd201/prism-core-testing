@@ -9,7 +9,7 @@ import { ColorWallPage } from '../ColorWallFacet'
 import ColorDetails from '../ColorDetails/ColorDetails'
 import CompareColor from '../../CompareColor/CompareColor'
 import InspiredScene from '../../InspirationPhotos/InspiredSceneNavigator'
-import LivePalette from '../../LivePalette/LivePalette'
+import LivePaletteWrapper from '../../LivePalette/LivePaletteWrapper'
 import ColorVisualizerNav from './ColorVisualizerNav/ColorVisualizerNav'
 import SampleScenesWrapper from '../../SampleScenes/SampleScenes'
 import { hideGlobalModal, setModalThumbnailColor } from '../../../store/actions/globalModal'
@@ -494,7 +494,7 @@ const CVW = (props: CVWPropsType) => {
         isShowFooter && <div className={`cvw__root-container__footer`}>
           {colorDetailsModalShowing && <div className='cvw__root-container__footer--overlay' />}
           <div className='cvw__root-container__footer--priority'>
-            <LivePalette />
+            <LivePaletteWrapper />
           </div>
           <div className={`cvw__root-container__footer--secondary${colorDetailsModalShowing ? ' hide-on-small-screens' : ''}`}>
             {title && <div className='cvw__root-container__footer--secondary--title'>{title}</div>}

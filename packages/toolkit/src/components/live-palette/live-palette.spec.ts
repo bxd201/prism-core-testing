@@ -1,5 +1,5 @@
-describe('Palette', () => {
-  const initialColors = [
+describe('LivePalette', () => {
+  const colors = [
     {
       blue: 51,
       brandKey: 'SW',
@@ -44,7 +44,7 @@ describe('Palette', () => {
       red: 126
     }
   ]
-  const [firstColor, secondColor, thirdColor] = initialColors
+  const [firstColor, secondColor, thirdColor] = colors
   const colorSlot = (colorName?: string): string | RegExp => (colorName !== undefined ? `Expand option for ${colorName} color` : /Expand option for/)
   const emptySlot = 'Empty slot'
   const colorBrandKey = (colorNumber: string): string => `SW ${colorNumber}`
@@ -55,7 +55,7 @@ describe('Palette', () => {
 
   before(cy.visitStorybook)
 
-  beforeEach(() => cy.loadStory('Palette', 'ThreeColors'))
+  beforeEach(() => cy.loadStory('LivePalette', 'ThreeColors'))
 
   it('sets 8 slots and renders three slot colors', () => {
     cy.changeArg('maxSlots', 8)
@@ -67,8 +67,8 @@ describe('Palette', () => {
   context('Color slots', () => {
     beforeEach(() =>
       cy.changeArg(
-        'initialColors',
-        initialColors.map((color) => color.name)
+        'colors',
+        colors.map((color) => color.name)
       )
     )
 
@@ -120,7 +120,7 @@ describe('Palette', () => {
 
   context('Empty slots', () => {
     it('renders empty palette', () => {
-      cy.loadStory('Palette', 'EmptyPalette')
+      cy.loadStory('LivePalette', 'EmptyPalette')
       cy.findAllByLabelText(colorSlot()).should('not.exist')
       cy.findAllByLabelText(emptySlot).should('have.length', 8)
       cy.findByText('FIND COLORS IN THE DIGITAL COLOR WALL')

@@ -1,7 +1,7 @@
 // @flow
 import React, { useEffect } from 'react'
 import FastMask from '../../FastMask/FastMask'
-import LivePalette from '../../LivePalette/LivePalette'
+import LivePaletteWrapper from '../../LivePalette/LivePaletteWrapper'
 import { add } from 'src/store/actions/live-palette'
 import facetBinder from 'src/facetSupport/facetBinder'
 import ColorDataWrapper from 'src/helpers/ColorDataWrapper/ColorDataWrapper'
@@ -41,7 +41,7 @@ function FastMaskSimpleFacet (props: Props) {
         <div className='FastMaskSimple__fm-wrap'>
           <FastMask />
         </div>
-        <LivePalette />
+        <LivePaletteWrapper />
       </div>
     </>
   )
