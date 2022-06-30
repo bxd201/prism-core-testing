@@ -46,13 +46,11 @@
 
     &__minimap {
       display: flex;
-      align-items: flex-start;
+      align-items: flex-end;
       justify-content: space-between;
       font-size: 1.1em;
       font-weight: 500;
       margin: .8em .8em 0 .9em;
-
-      &--text { margin-top: 0.5rem }
 
       &--image {
         width: 162px;
@@ -103,6 +101,10 @@
   &:active {
     color: var(getThemeColor('buttonActiveColor'));
     background: var(getThemeColor('buttonActiveBgColor'));
+  }
+
+  &--minimap {
+    top: 5.65rem;
   }
 }
 
