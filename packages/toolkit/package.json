@@ -106,6 +106,7 @@
     "postcss-nested": "5.0.6",
     "prettier": "2.5.1",
     "prettier-config-standard": "4.0.0",
+    "react-beautiful-dnd-tester": "0.0.10",
     "react-scripts": "5.0.0",
     "regenerator-runtime": "0.13.9",
     "rollup": "2.64.0",
