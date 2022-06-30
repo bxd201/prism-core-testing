@@ -331,12 +331,12 @@ const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: 
       <div className='color-wall'>
         {chunkMiniMap && sectionOverride && (
           <div className='color-wall-section-label__minimap'>
-            <p className='color-wall-section-label__minimap--text'>{(sectionsShortLabel && sectionsShortLabel[sectionOverride]) ?? sectionLabels[sectionOverride]}</p>
+            <p>{(sectionsShortLabel && sectionsShortLabel[sectionOverride]) ?? sectionLabels[sectionOverride]}</p>
             <div className='color-wall-section-label__minimap--image' style={{ backgroundImage: `url(${minimapDict[`${brandId}${leftHandDisplay ? 'LeftHand' : ''}`][sectionOverride]})` }} />
           </div>
         )}
         {params.colorId && (
-          <button onClick={() => createInactiveColorRoute.current(selectedColor)} className='zoom-out-btn' style={{ top: chunkMiniMap ? '3.8rem' : 0 }} title={messages.ZOOM_OUT}>
+          <button onClick={() => createInactiveColorRoute.current(selectedColor)} className={`zoom-out-btn${chunkMiniMap ? ' zoom-out-btn--minimap' : ''}`} title={messages.ZOOM_OUT}>
             <FontAwesomeIcon icon='search-minus' size='lg' />
           </button>
         )}
