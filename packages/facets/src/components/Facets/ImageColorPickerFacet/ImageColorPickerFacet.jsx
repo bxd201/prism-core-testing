@@ -13,7 +13,11 @@ import useColors from '../../../shared/hooks/useColors'
 
 import type { Color } from 'src/shared/types/Colors.js.flow'
 
-export function ImageColorPickerFacet () {
+type ImageColorPickerFacetProps = {
+  imageSrcUrl?: string
+}
+
+export function ImageColorPickerFacet ({ imageSrcUrl }: ImageColorPickerFacetProps) {
   const [colors] = useColors()
   const { publish, subscribe, unsubscribe } = useContext(PubSubCtx)
   const { brandKeyNumberSeparator } = useContext<ConfigurationContextType>(ConfigurationContext)
@@ -23,7 +27,11 @@ export function ImageColorPickerFacet () {
   const onColorSelected = (color: Color) => {
     publish(IMAGE_COLOR_PICKER_COLOR_SELECTED, color)
   }
-
+  useEffect(() => {
+    if (imageSrcUrl) {
+      setImg(imageSrcUrl)
+    }
+  }, [])
   useEffect(() => {
     subscribe('IMAGE_COLOR_PICKER_IMAGE_UPLOAD', (data) => {
       const imgUrl = URL.createObjectURL(data.data)
