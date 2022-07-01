@@ -71,7 +71,7 @@
     "@storybook/react": "6.4.19",
     "@storybook/storybook-deployer": "2.8.10",
     "@testing-library/cypress": "8.0.2",
-    "@testing-library/react": "12.1.4",
+    "@testing-library/react": "^13.3.0",
     "@types/jest": "28.1.2",
     "@types/lodash": "4.14.178",
     "@types/react-aria-menubutton": "6.2.9",
