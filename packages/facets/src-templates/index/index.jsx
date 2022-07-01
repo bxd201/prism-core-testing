@@ -1,6 +1,6 @@
 // @flow
 import React, { Fragment } from 'react'
-import { render } from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import set from 'lodash/set'
 import flatten from 'lodash/flatten'
 import isArray from 'lodash/isArray'
@@ -92,4 +92,6 @@ function stripExtension (file: string): string {
 }
 
 // $FlowIgnore -- flow doesn't know document exists
-render(<Index />, document.querySelector('#template-index'))
+const container = document.querySelector('#template-index')
+const root = createRoot(container)
+root.render(<Index />)

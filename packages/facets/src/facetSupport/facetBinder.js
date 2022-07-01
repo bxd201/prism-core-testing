@@ -3,7 +3,7 @@ import './facetPolyfills'
 
 import React, { useMemo } from 'react'
 
-import { render } from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import mapValues from 'lodash/mapValues'
 import at from 'lodash/at'
 
@@ -102,7 +102,8 @@ const renderAppInElement = (el: HTMLElement, explicitProps: Object = {}, App) =>
 
   const Component = facetMasterWrapper(facetPubSub(App))
 
-  render(<Component {...props} {...bindProps} />, el)
+  const root = createRoot(el)
+  root.render(<Component {...props} {...bindProps} />)
 
   el.classList.add(HAS_BOUND_CLASS)
 }
