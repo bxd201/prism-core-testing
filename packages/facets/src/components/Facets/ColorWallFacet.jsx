@@ -35,7 +35,8 @@ type Props = FacetPubSubMethods & FacetBinderMethods & {
   displayInfoButton?: boolean,
   displayAddButtonText?: boolean,
   displayDetailsLink?: boolean,
-  hiddenSections?: string | string[] // as string, "section name 1" or "section name 1|section name 2|etc" will be parsed into an array
+  hiddenSections?: string | string[], // as string, "section name 1" or "section name 1|section name 2|etc" will be parsed into an array
+  initialFocusId?: string | number
 }
 
 export const EVENTS = {
@@ -73,6 +74,7 @@ export const ColorWallPage = (props: Props) => {
     alwaysShowColorFamilies,
     colorDetailPageRoot,
     colorWallBgColor,
+    initialFocusId,
     defaultSection,
     displayAddButton = false,
     displayAddButtonText,
@@ -155,12 +157,13 @@ export const ColorWallPage = (props: Props) => {
     addButtonText,
     colorDetailPageRoot,
     colorWallBgColor,
+    initialFocusId: !isNaN(initialFocusId) ? Number(initialFocusId) : undefined,
     displayAddButton: translateBooleanFlexibly(displayAddButton),
     displayInfoButton: translateBooleanFlexibly(displayInfoButton),
     displayAddButtonText: translateBooleanFlexibly(displayAddButtonText),
     displayDetailsLink: translateBooleanFlexibly(displayDetailsLink),
     hiddenSections: processedHiddenSections
-  }), [addButtonText, colorDetailPageRoot, colorWallBgColor, displayAddButton, displayAddButtonText, displayDetailsLink])
+  }), [addButtonText, colorDetailPageRoot, colorWallBgColor, displayAddButton, displayAddButtonText, displayDetailsLink, initialFocusId])
 
   // -----------------------------------------------------
   // handle unmounting
