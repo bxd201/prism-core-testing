@@ -1,6 +1,8 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
+const pkg = require('./package.json')
+
 const lightCodeTheme = require('prism-react-renderer/themes/github');
 const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
@@ -72,6 +74,11 @@ const config = {
           {
             href: 'https://github.sherwin.com/SherwinWilliams/prism-core',
             label: 'GitHub',
+            position: 'right',
+          },
+          {
+            href: `https://prism.sherwin-williams.com/${pkg.version}-develop/index.html`,
+            label: `v${pkg.version}`,
             position: 'right',
           },
         ],
