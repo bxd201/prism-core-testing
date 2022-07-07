@@ -66,7 +66,7 @@ function Row (props: RowProps) {
       ? <Titles data={titles} referenceScale={scale} />
       : null}
     {children && children.length && children.map((child, i) => {
-      if (child.type === 'ROW') {
+      if (child.type === 'COLUMN') {
         return <Column
           data={child}
           id={`${id}_${i}`}
