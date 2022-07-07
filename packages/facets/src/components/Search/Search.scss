@@ -11,6 +11,17 @@
 
     @include respond-above(sm) { min-height: 66vh; }
 
+    &__subtitle {
+      color: #404040;
+      margin: 1rem 1rem 0;
+      text-align: left;
+      line-height: 1.1rem;
+
+      &--link {
+        text-decoration: underline;
+      }
+    }
+
     &__swatches {
       align-self: flex-start;
       width: 100%;

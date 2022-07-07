@@ -128,6 +128,11 @@ const Search = ({ closeSearch = () => {}, contain = false, crossSearch, isChipLo
           </GenericMessage>
         ) : (
           <div className={`${baseClass}__results-pane__swatches ${contain ? `${baseClass}__results-pane__swatches--cover` : ''}`}>
+            {crossSearch && <p className={`${baseClass}__results-pane__subtitle`}>
+              Looking for more colors? <a className={`${baseClass}__results-pane__subtitle--link`} href={crossSearch.colorWallPageRoot} target='_blank'>
+                {`Search ${crossSearch.brand.name} colors.`}
+              </a>
+            </p>}
             <AutoSizer disableHeight={!contain}>
               {({ height = 0, width }) => {
                 const gridWidth = width - (EDGE_SIZE * (houseShaped ? 0.7 : 2))
