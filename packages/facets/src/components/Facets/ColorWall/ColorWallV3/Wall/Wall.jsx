@@ -139,7 +139,7 @@ function Wall (props: WallProps) {
 
       const ctasInOrder = getInTabOrder(ctas) // eslint-disable-line
 
-      if (ctasInOrder && ctasInOrder.length > 0) {
+      if (ctasInOrder && ctasInOrder.length > 0 && !houseShaped) {
         ctasInOrder[0].focus()
       }
     }, 100)
