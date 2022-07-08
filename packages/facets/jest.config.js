@@ -5,8 +5,7 @@ module.exports = {
   ],
   testPathIgnorePatterns: [
     '<rootDir>/__tests__/unit/components/MatchPhoto',
-    '<rootDir>/__tests__/unit/components/SceneManager',
-    '<rootDir>/__tests__/advanced'
+    '<rootDir>/__tests__/unit/components/SceneManager'
   ],
   moduleNameMapper: {
     '^dnd-core$': 'dnd-core/dist/cjs',
