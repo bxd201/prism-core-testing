@@ -35,7 +35,7 @@ import { user } from './user'
 import { paintSceneWorkspace } from './paintSceneWorkspace'
 // eslint-disable-next-line no-unused-vars
 import { reducerWithLocalStorage } from '../withStorage'
-import { SCENE_METADATA } from '../storageProperties'
+import { LIVEPALETTE, SCENE_METADATA } from '../storageProperties'
 import { systemMessages } from './systemMessages'
 import { initializingFacetId, maxSceneHeight } from './system'
 import {
@@ -56,7 +56,7 @@ export default combineReducers({
   expertColorPicks,
   inspirationalPhotos,
   language,
-  lp,
+  lp: reducerWithLocalStorage(lp, LIVEPALETTE),
   uploads,
   savingMasks,
   legacySavedScenesMetadata,
