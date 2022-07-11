@@ -16,10 +16,23 @@
   &__row {
     display: flex;
     flex-wrap: nowrap;
-    justify-content: space-between;
+    justify-content: start;
     align-items: center;
     width: 100%;
     position: relative;
+
+    &--align-start {
+      justify-content: flex-start;
+    }
+    &--align-justify {
+      justify-content: space-between;
+    }
+    &--align-center {
+      justify-content: center;
+    }
+    &--align-end {
+      justify-content: flex-end;
+    }
 
     // TODO: remove this when everything can be handled through data
     &__family {

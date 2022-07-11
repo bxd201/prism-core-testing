@@ -9,6 +9,7 @@ import ConfigurationContext, { type ConfigurationContextType } from 'src/context
 import { type ColorsState } from 'src/shared/types/Actions.js.flow'
 import isSomething from 'src/shared/utils/isSomething.util'
 import { fullColorName } from 'src/shared/helpers/ColorUtils'
+import { getAlignment } from '../cwv3Utils'
 import './Chunk.scss'
 import * as GA from 'src/analytics/GoogleAnalytics'
 import { GA_TRACKER_NAME_BRAND } from 'src/constants/globals'
@@ -29,7 +30,8 @@ type ChunkProps = {
 }
 
 function Chunk ({ data = {}, id = '', updateHeight, updateWidth }: ChunkProps) {
-  const { titles } = data
+  const { titles, props: colProps = {} } = data
+  const { align } = colProps
   const ctx = useContext(ColorWallPropsContext)
   const structuralCtx = useContext(ColorWallStructuralPropsContext)
   const { scale } = structuralCtx
@@ -105,7 +107,7 @@ function Chunk ({ data = {}, id = '', updateHeight, updateWidth }: ChunkProps) {
         : null}
       {data.children.map((row, i) => (
         // TODO: remove dependence on route matching; all display variation should be handled through the API and data
-        <div className={`cwv3__chunk__row${params.family ? ' cwv3__chunk__row__family' : ''}`} key={i}>
+        <div className={`cwv3__chunk__row ${getAlignment('cwv3__chunk__row', align)} ${params.family ? 'cwv3__chunk__row__family' : ''}`} key={i}>
           {row.map((childId, ii) => {
             const active = activeSwatchId === childId
             const color = colorMap[childId]
