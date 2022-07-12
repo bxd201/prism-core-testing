@@ -1,5 +1,5 @@
 export interface Color {
-  id: number
+  id: string
   hex: string
   brandKey: string
   colorNumber: string
@@ -18,5 +18,3 @@ export interface Color {
   ignore: boolean
   isDark: boolean
 }
-
-
