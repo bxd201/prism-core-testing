@@ -21,7 +21,12 @@ describe('LivePalette Component', () => {
       hex: '#8ab733',
       id: '2608',
       name: 'Outrageous Green',
-      red: 138
+      red: 138,
+      hue: 0.22348484848484848,
+      saturation: 0.564102564102564,
+      lightness: 0.45882352941176474,
+      ignore: false,
+      isDark: false
     },
     {
       blue: 161,
@@ -36,7 +41,12 @@ describe('LivePalette Component', () => {
       hex: '#6a8ea1',
       id: '2202',
       name: 'Leisure Blue',
-      red: 106
+      red: 106,
+      hue: 0.5575757575757575,
+      saturation: 0.22633744855967075,
+      lightness: 0.5235294117647059,
+      ignore: false,
+      isDark: false
     },
     {
       blue: 27,
@@ -50,7 +60,12 @@ describe('LivePalette Component', () => {
       hex: '#7e191b',
       id: '3068',
       name: 'Vermilion',
-      red: 126
+      red: 126,
+      hue: 0.9966996699669967,
+      saturation: 0.6688741721854305,
+      lightness: 0.296078431372549,
+      ignore: false,
+      isDark: true
     }
   ]
   const [firstColor, secondColor, thirdColor] = colors
@@ -90,7 +105,7 @@ describe('LivePalette Component', () => {
         )}
         colors={colors}
         maxSlots={8}
-        slotAriaLabel={({ name }) => colorSlot(name)}
+        slotAriaLabel={({ name }) => colorSlot(name).toString()}
       />
     )
 
@@ -111,7 +126,7 @@ describe('LivePalette Component', () => {
           </button>
         )}
         labelRenderer={labelRenderer}
-        slotAriaLabel={({ name }) => colorSlot(name)}
+        slotAriaLabel={({ name }) => colorSlot(name).toString()}
       />
     )
 
@@ -134,7 +149,7 @@ describe('LivePalette Component', () => {
       <LivePalette
         colors={colors}
         labelRenderer={labelRenderer}
-        slotAriaLabel={({ name }) => colorSlot(name)}
+        slotAriaLabel={({ name }) => colorSlot(name).toString()}
       />
     )
 
@@ -150,7 +165,7 @@ describe('LivePalette Component', () => {
         colors={colors}
         deleteButtonRenderer={deleteButtonRenderer}
         labelRenderer={labelRenderer}
-        slotAriaLabel={({ name }) => colorSlot(name)}
+        slotAriaLabel={({ name }) => colorSlot(name).toString()}
       />
     )
 
@@ -167,7 +182,7 @@ describe('LivePalette Component', () => {
       <LivePalette
         colors={colors}
         labelRenderer={labelRenderer}
-        slotAriaLabel={({ name }) => colorSlot(name)}
+        slotAriaLabel={({ name }) => colorSlot(name).toString()}
       />
     )
 

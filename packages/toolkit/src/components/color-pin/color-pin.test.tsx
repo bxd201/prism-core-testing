@@ -4,7 +4,7 @@ import { fireEvent, render, screen } from '@testing-library/react'
 import ColorPin from './color-pin'
 
 const color = {
-  id: 1234,
+  id: '1234',
   brandKey: 'SW',
   coordinatingColors: {},
   colorNumber: '1234',
