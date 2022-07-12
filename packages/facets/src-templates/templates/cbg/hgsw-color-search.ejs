@@ -36,6 +36,7 @@
         colorWallPageRoot: ({ brandKey, colorNumber }) => `${baseHostUrl}/prism-templates/templates/cbg/hgsw-qr-color-wall.html#/color-locator/${brandKey}${colorNumber}`,
         crossSearchChipLocator: {
           brand: { id: 'valspar', name: 'Valspar' },
+          colorWallPageRoot: 'https://lowes.valspar.com/inspiration/color-wall',
           onClickFindChip: ({ brandKey, colorNumber }) => `${baseHostUrl}/prism-templates/templates/cbg/valspar-qr-color-wall.html#/color-locator/${brandKey}${colorNumber}`,
           onClickViewColor: (color) => `${baseHostUrl}/inspiration/colors/${color.colorFamilyNames[0]}/${kebabCase(color.name)}-${color.colorNumber}`.toLowerCase(), // example
           text: 'Looking for Valspar colors at Lowe’s?'

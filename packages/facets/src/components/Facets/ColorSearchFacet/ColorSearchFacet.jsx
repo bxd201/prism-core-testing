@@ -20,6 +20,7 @@ import type { Color } from 'src/shared/types/Colors.js.flow'
 
 export type CrossSearch = {
   brand: { id: string, name: string },
+  colorWallPageRoot: string,
   onClickFindChip: (Color) => string,
   onClickViewColor: (Color) => string,
   text: string
