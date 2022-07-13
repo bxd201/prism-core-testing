@@ -18,6 +18,7 @@ export const colors = (state: ColorsState = initialState, action: ReduxAction) =
       }
     }
 
+    // @todo we should refactor to flatten, we also need a way to describe that all things have loaded since we have added additional data calls -RS
     case REQUEST_COLORS: {
       return {
         ...state,

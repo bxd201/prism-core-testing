@@ -95,7 +95,7 @@ export const mapColorDataToPayload = (colorData: Object) => ({
 })
 
 // TODO: modify this to only perform cwv3-related requests if option is toggled on in config
-export const getColorsRequests = (brandId: string, options?: any = {}) => {
+export const getColorsRequests = (brandId: string, options?: any) => {
   const { cwv3, ...otherOptions } = options
 
   return [
