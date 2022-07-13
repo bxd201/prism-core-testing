@@ -213,7 +213,6 @@
     "redux-mock-store": "1.5.3",
     "regenerator-runtime": "^0.13.9",
     "require-context": "1.1.0",
-    "resemblejs": "3.2.4",
     "sass": "1.32.13",
     "sass-loader": "8.0.0",
     "sass-math-pow": "0.1.5",
