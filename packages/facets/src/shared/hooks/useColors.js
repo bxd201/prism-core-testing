@@ -10,7 +10,7 @@ type Response = [
 ]
 
 function useColors (): Response {
-  const { items, status } = useSelector(state => state.colors)
+  const { items, status, shape } = useSelector(state => state.colors)
   const { brandId } = useContext(ConfigurationContext)
   const dispatch = useDispatch()
 
@@ -20,7 +20,8 @@ function useColors (): Response {
     }
   }, [brandId])
 
-  return [ items, status ]
+  // @todo we should refactor this api to be more comprehensive -RS
+  return [ items, status, shape ]
 }
 
 export default useColors

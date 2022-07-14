@@ -51,6 +51,9 @@ function Wall (props: WallProps) {
   const { children: wallChildren = [], props: wallProps = {} } = structure
   const { wrap } = wallProps
   // this ensures numeric IDs are numeric (so '42' becomes 42), and string IDs remain strings
+  /** @todo refactor to push implicit conversion up stack to strongly type internally, we should avoid coersion
+   * the ternary still make the later code type check, we could reduce complexity by enforcing type higher up -RS
+   */
   const activeColorId = typeof dirtyActiveColorId === 'string' && !isNaN(+dirtyActiveColorId) ? +dirtyActiveColorId : dirtyActiveColorId
   const { colorWallBgColor }: ColorWallContextProps = useContext(ColorWallContext)
   const { colorWall: { bloomEnabled, colorSwatch = {} } }: ConfigurationContextType = useContext(ConfigurationContext)
@@ -261,6 +264,7 @@ function Wall (props: WallProps) {
   useEffectAfterMount(() => {
     if (containerWidth > 0 && structure) {
       if (!computedWallUnwrapped.current) {
+        // @todo we should probably make structure a hard dependency to render since it breaks if it is malformed or absent -RS
         computedWallUnwrapped.current = computedWallUnwrapped.current || computeWall(structure, { ...colorWallStructuralPropsDefault, isWrapped: false })
         setDefaultDimensions({ outerWidth: computedWallUnwrapped.current.outerWidth, outerHeight: computedWallUnwrapped.current.outerHeight, widths: computedWallUnwrapped.current.widths, heights: computedWallUnwrapped.current.heights })
       }
