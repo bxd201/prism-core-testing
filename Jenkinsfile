@@ -216,27 +216,6 @@ pipeline {
         archiveArtifacts artifacts: "prism-core.tgz", fingerprint: true
       }
     }
-    stage('image-testing') {
-      when {
-        not {
-          expression { BRANCH_NAME ==~ /^(qa|release|PR-.+)$/ }
-        }
-      }
-      agent {
-        docker {
-          image 'docker.artifactory.sherwin.com/ecomm/utils/docker_rspec'
-          args '-u root'
-          reuseNode true
-        }
-      }
-      steps {
-        sh """
-        cp ci/Gemfile ./
-        bundle install
-        bundle exec rspec
-        """
-      }
-    }
     stage('Sonar Scan') {
       when {
         not {
