@@ -1,10 +1,9 @@
 // @flow
 import React, { useContext, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 // $FlowIgnore -- no defs for react-virtualized
 import { Grid, AutoSizer } from 'react-virtualized'
-import { FormattedMessage, useIntl } from 'react-intl'
-import { loadSearchResults } from 'src/store/actions/loadSearchResults'
+import { FormattedMessage } from 'react-intl'
 import Prism, { ColorSwatch } from '@prism/toolkit'
 import { GenericOverlay } from '../ToolkitComponents'
 import { colorSwatchCommonProps } from 'src/components/ColorSwatchContent/ColorSwatchContent'
@@ -33,8 +32,6 @@ const Search = ({ closeSearch = () => {}, contain = false, crossSearch, isChipLo
   const { brandId, brandKeyNumberSeparator, colorWall: { colorSwatch = {} } }: ConfigurationContextType = useContext(ConfigurationContext)
   const { colorNumOnBottom = false, houseShaped = false } = colorSwatch
   const [hasSearched, updateHasSearched] = useState(typeof count !== 'undefined')
-  const dispatch = useDispatch()
-  const { locale } = useIntl()
 
   useEffectAfterMount(() => { updateHasSearched(true) }, [count, results, loading])
 
@@ -119,10 +116,7 @@ const Search = ({ closeSearch = () => {}, contain = false, crossSearch, isChipLo
             ) : null}
             {crossSearch && !crossSearch.searching ? (
               <strong>
-                {crossSearch.text} <TextButton onClick={() => {
-                  crossSearch.query && dispatch(loadSearchResults(crossSearch.brand.id, { language: locale }, crossSearch.query))
-                  crossSearch.onSearch()
-                }}>Click here</TextButton>.
+                {crossSearch.text} <a className={`${baseClass}__results-pane__subtitle--link`} href={crossSearch.colorWallPageRoot} target='_blank'>Click Here</a>
               </strong>
             ) : null}
           </GenericMessage>
