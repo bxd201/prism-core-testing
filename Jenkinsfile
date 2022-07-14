@@ -48,7 +48,7 @@ pipeline {
   stages {
     stage('builder') {
       when {
-          expression { BRANCH_NAME ==~ /^(PR-.+|develop|integration|hotfix|qa|release|docusaurus)$/ }
+          expression { BRANCH_NAME ==~ /^(develop|integration|hotfix|qa|release)$/ }
         }
       steps {
 
@@ -94,7 +94,43 @@ pipeline {
       }
     }
 
-    stage('Yarn-publish') {
+    stage('pr-validate') {
+      when {
+        expression { BRANCH_NAME ==~ /^(PR-.+)$/ }
+      }
+      steps {
+        sh """
+        #!/bin/bash
+
+        # Build the builder image
+        docker build --no-cache --pull -t ${IMAGE_NAME}-build -f ci/Dockerfile.build .
+        """
+
+        sh """
+        #!/bin/bash
+
+        # Clean up any old image archive files
+        rm -rf dist
+
+        # Make sure the build container has been removed
+        docker stop ${IMAGE_NAME}-build-${BUILD_NUMBER} || true
+        docker rm ${IMAGE_NAME}-build-${BUILD_NUMBER} || true
+
+        # Mount the volumes from Jenkins and run the deploy
+        docker run \
+          -e WEB_URL=https://prism.sherwin-williams.com/${S3_FOLDER_NAME} \
+          --env API_URL="$API_URL" \
+          --env ML_API_URL="$ML_API_URL" \
+          --name ${IMAGE_NAME}-build-${BUILD_NUMBER} \
+          ${IMAGE_NAME}-build:latest
+
+        # Remove the build container
+        docker rm -f ${IMAGE_NAME}-build-${BUILD_NUMBER}
+        """
+      }
+    }
+
+    stage('yarn-publish') {
       when {
           expression { BRANCH_NAME ==~ /^(develop|release)$/ }
         }
@@ -124,7 +160,7 @@ pipeline {
    }
     stage('s3-version-upload') {
       when {
-          expression { BRANCH_NAME ==~ /^(develop|hotfix|integration|qa|release|docusaurus)$/ }
+          expression { BRANCH_NAME ==~ /^(develop|hotfix|integration|qa|release)$/ }
         }
       agent {
         docker {
@@ -183,7 +219,7 @@ pipeline {
     stage('image-testing') {
       when {
         not {
-          expression { BRANCH_NAME ==~ /^(qa|release)$/ }
+          expression { BRANCH_NAME ==~ /^(qa|release|PR-.+)$/ }
         }
       }
       agent {
@@ -204,7 +240,7 @@ pipeline {
     stage('Sonar Scan') {
       when {
         not {
-            expression { BRANCH_NAME ==~ /^(qa|release)$/ }
+            expression { BRANCH_NAME ==~ /^(qa|release|PR-.+)$/ }
         }
       }
       agent {
@@ -230,7 +266,7 @@ pipeline {
     stage('Security Scan') {
     when {
       not {
-        expression { BRANCH_NAME ==~ /^(qa|release)$/ }
+        expression { BRANCH_NAME ==~ /^(qa|release|PR-.+)$/ }
       }
     }
       agent {
@@ -257,7 +293,7 @@ pipeline {
     stage('publish') {
     when {
       not {
-          expression { BRANCH_NAME ==~ /^(qa|release)$/ }
+          expression { BRANCH_NAME ==~ /^(qa|release|PR-.+)$/ }
       }
     }
       agent {
@@ -372,41 +408,6 @@ pipeline {
         }
       }
     }
-    /*
-    stage('Shepherd') {
-      when {
-        expression { BRANCH_NAME ==~ /^(develop|qa|release|replatform)$/ }
-      }
-      agent {
-        docker {
-          image 'docker.artifactory.sherwin.com/ecomm/utils/shepherd:latest'
-          reuseNode true
-          alwaysPull true
-        }
-      }
-      environment {
-        LINKS_FILE = "ci/shepherd/links"
-        TRUST_CERT = "true"
-      }
-      steps {
-        sh """
-          export DOMAIN = "https://prism.sherwin-williams.com/${S3_FOLDER_NAME}/index.html"
-          shepherd
-        """
-
-        archiveArtifacts artifacts: "report/report.*", fingerprint: true
-
-        publishHTML([
-            reportDir: "report",
-            reportName: 'Shepherd Report',
-            reportFiles: 'report.html',
-            allowMissing: false,
-            alwaysLinkToLastBuild: true,
-            keepAll: true
-        ])
-      }
-    }
-    */
     stage('trigger_smoke_job') {
       steps {
           trigger_smoke_job(BRANCH_NAME)

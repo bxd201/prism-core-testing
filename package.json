@@ -9,6 +9,7 @@
   "scripts": {
     "postinstall": "husky install",
     "start": "yarn workspace @prism/toolkit build-rollup && yarn workspace @prism/facets start",
+    "test": "yarn toolkit:test",
     "build": "yarn workspace @prism/toolkit build-rollup && yarn workspace @prism/facets build && yarn workspace @prism/toolkit build && yarn docs:build && yarn demo:build",
     "publish": "yarn workspace @prism/toolkit build-rollup && cd packages/toolkit && yarn npm publish",
     "docs:start": "yarn workspace @prism/prism-docs start",
