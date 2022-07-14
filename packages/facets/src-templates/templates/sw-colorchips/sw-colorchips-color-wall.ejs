@@ -11,13 +11,14 @@
 
 <body>
 
-  <div prism-auto-embed
+  <div id="prism-embed-root"
     data-prism-facet="ColorWallFacet"
     data-color-wall-bg-color="#f9f9f9"
-    data-display-add-button
-    data-add-button-text="Add to cart"
+    data-display-add-button="true"
+    data-display-info-button="false"
+    data-add-button-text="Order samples"
     data-display-details-link="false"
-    data-hidden-sections="Peel & Stick"
+    data-hidden-sections=""
     data-language="en-US"
     data-route-type="memory"
     data-brand="cscc"
@@ -27,14 +28,15 @@
     data-cwv3
   ></div>
 
+  <script src='<%= BASE_PATH %>/embed.js'></script>
   <script>
-    (function(d, s, id) {
-      var js, fjs = d.getElementsByTagName(s)[0];
-      if (d.getElementById(id)) return;
-      js = d.createElement(s); js.id = id;
-      js.src = "<%= BASE_PATH %>/embed.js";
-      fjs.parentNode.insertBefore(js, fjs);
-    }(document, "script", "prism-widget"));
+    (() => {
+      window.PRISM.embed(document.getElementById( 'prism-embed-root' ), {
+        bindCallback: ({ publish, subscribe }) => {
+          subscribe('PRISM/out/emitColor', (color) => console.log(color))
+        }
+      })
+    })()
   </script>
 
 </body>
