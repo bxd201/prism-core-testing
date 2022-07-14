@@ -50,6 +50,10 @@
     padding: 0.6rem;
     font-size: 13px;
 
+    &--xs {
+      font-size: 11px;
+    }
+
     button {
       display: flex;
       align-items: center;

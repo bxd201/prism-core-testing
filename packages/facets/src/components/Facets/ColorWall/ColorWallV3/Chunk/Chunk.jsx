@@ -4,18 +4,13 @@ import { useSelector } from 'react-redux'
 import { useRouteMatch } from 'react-router-dom'
 import { ColorWallPropsContext, ColorWallStructuralPropsContext } from '../ColorWallPropsContext'
 import { computeChunk } from '../sharedReducersAndComputers'
-import Prism, { ColorSwatch } from '@prism/toolkit'
 import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import { type ColorsState } from 'src/shared/types/Actions.js.flow'
-import isSomething from 'src/shared/utils/isSomething.util'
-import { fullColorName } from 'src/shared/helpers/ColorUtils'
 import { getAlignment } from '../cwv3Utils'
 import './Chunk.scss'
-import * as GA from 'src/analytics/GoogleAnalytics'
-import { GA_TRACKER_NAME_BRAND } from 'src/constants/globals'
 import Titles from '../Title/Title'
-
-const swatchClass = 'cwv3__swatch'
+import Swatch from '../Swatch/Swatch'
+import isSomething from '../../../../../shared/utils/isSomething.util'
 
 type ChunkProps = {
   data: {
@@ -35,15 +30,13 @@ function Chunk ({ data = {}, id = '', updateHeight, updateWidth }: ChunkProps) {
   const ctx = useContext(ColorWallPropsContext)
   const structuralCtx = useContext(ColorWallStructuralPropsContext)
   const { scale } = structuralCtx
-  const { brandId, brandKeyNumberSeparator, colorWall: { colorSwatch = {} } }: ConfigurationContextType = useContext(ConfigurationContext)
+  const { colorWall: { colorSwatch = {} } }: ConfigurationContextType = useContext(ConfigurationContext)
   const { houseShaped = false } = colorSwatch
   const { items: { colorMap } }: ColorsState = useSelector(state => state.colors)
   const { params } = useRouteMatch()
-  const { addChunk, activeSwatchId, getPerimeterLevel, isZoomed, setActiveSwatchId, swatchContentRefs, swatchRenderer } = ctx
+  const { addChunk, activeSwatchId, isZoomed, swatchContentRefs } = ctx
   const [ , setWidth ] = useState(0)
   const [ , setHeight ] = useState(0)
-  const [ swatchWidth, setSwatchWidth ] = useState(0)
-  const [ swatchHeight, setSwatchHeight ] = useState(0)
   const [ horzSpace, setHorzSpace ] = useState(0)
   const [ vertSpace, setVertSpace ] = useState(0)
   const thisEl = useRef()
@@ -60,14 +53,9 @@ function Chunk ({ data = {}, id = '', updateHeight, updateWidth }: ChunkProps) {
         innerWidth,
         outerHeight,
         outerWidth,
-        swatchHeight,
-        swatchWidth,
         verticalSpace
       } = results
-
-      setSwatchWidth(swatchWidth)
       setHorzSpace(horizontalSpace)
-      setSwatchHeight(swatchHeight)
       setVertSpace(verticalSpace)
       setWidth(innerWidth)
       updateWidth(outerWidth)
@@ -111,27 +99,18 @@ function Chunk ({ data = {}, id = '', updateHeight, updateWidth }: ChunkProps) {
           {row.map((childId, ii) => {
             const active = activeSwatchId === childId
             const color = colorMap[childId]
-            const perimeterLevel = getPerimeterLevel(childId)
 
             return (
-              <Prism key={`${i}_${ii}`}>
-                <ColorSwatch
-                  active={active}
-                  activeFocus={!houseShaped}
-                  aria-label={fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator)}
-                  color={color}
-                  className={`${swatchClass}${active ? ` ${swatchClass}--active${houseShaped ? ` ${swatchClass}--house-shaped` : ''}` : ''}${perimeterLevel > 0 ? ` ${swatchClass}--perimeter ${swatchClass}--perimeter--${perimeterLevel}` : ''}`}
-                  id={childId}
-                  onClick={() => {
-                    setActiveSwatchId(childId)
-                    swatchContentRefs.current = []
-                    GA.event({ category: 'Color Wall', action: 'Color Swatch Click', label: fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator) }, GA_TRACKER_NAME_BRAND[brandId])
-                  }}
-                  ref={_el => addToSwatchRefs({ current: [_el, ...swatchContentRefs.current] }, childId)}
-                  renderer={swatchRenderer}
-                  style={{ height: swatchHeight, width: swatchWidth }}
-                />
-              </Prism>
+              <Swatch
+                key={`${i}_${ii}`}
+                active={active}
+                houseShaped={houseShaped}
+                data={data}
+                color={color}
+                id={childId}
+                onRef={_el => addToSwatchRefs({ current: [_el, ...swatchContentRefs.current] }, childId)}
+                style={{ padding: `${vertSpace}px ${horzSpace}px` }}
+              />
             )
           })}
         </div>
