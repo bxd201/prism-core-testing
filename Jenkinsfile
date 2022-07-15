@@ -121,6 +121,12 @@ pipeline {
           -e WEB_URL=https://prism.sherwin-williams.com/${S3_FOLDER_NAME} \
           --env API_URL="$API_URL" \
           --env ML_API_URL="$ML_API_URL" \
+          --env DANGER_MANUAL_CI="Docker" \
+          --env DANGER_GITHUB_API_BASE_URL="https://api.github.sherwin.com" \
+          --env DANGER_GITHUB_API_TOKEN="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" \
+          --env DANGER_MANUAL_CI="true" \
+          --env DANGER_MANUAL_GH_REPO="SherwinWilliams/prism-core" \
+          --env DANGER_MANUAL_PR_NUM="$CHANGE_ID" \
           --name ${IMAGE_NAME}-build-${BUILD_NUMBER} \
           ${IMAGE_NAME}-build:latest
 
