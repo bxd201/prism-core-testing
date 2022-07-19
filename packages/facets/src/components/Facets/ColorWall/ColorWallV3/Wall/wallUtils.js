@@ -83,26 +83,29 @@ export function getProximalSwatchesBySwatchId (chunksSet, chunkId, swatchId) {
         const coordsL = [Math.max(coords[0] - 1, 0), coords[1]]
         const coordsR = [Math.min(coords[0] + 1, children[0]?.length - 1), coords[1]]
 
+        const currId = btnRefs[coords[1]]?.[coords[0]]?.id ?? null
+        const currRef = btnRefs[coords[1]]?.[coords[0]]?.el ?? null
+
         return {
           current: {
-            id: btnRefs[coords[1]]?.[coords[0]]?.id ?? null,
-            ref: btnRefs[coords[1]]?.[coords[0]]?.el ?? null
+            id: currId,
+            ref: currRef
           },
           up: {
-            id: btnRefs[coordsUp[1]]?.[coordsUp[0]]?.id ?? null,
-            ref: btnRefs[coordsUp[1]]?.[coordsUp[0]]?.el ?? null
+            id: btnRefs[coordsUp[1]]?.[coordsUp[0]]?.id ?? currId,
+            ref: btnRefs[coordsUp[1]]?.[coordsUp[0]]?.el ?? currRef
           },
           down: {
-            id: btnRefs[coordsDn[1]]?.[coordsDn[0]]?.id ?? null,
-            ref: btnRefs[coordsDn[1]]?.[coordsDn[0]]?.el ?? null
+            id: btnRefs[coordsDn[1]]?.[coordsDn[0]]?.id ?? currId,
+            ref: btnRefs[coordsDn[1]]?.[coordsDn[0]]?.el ?? currRef
           },
           left: {
-            id: btnRefs[coordsL[1]]?.[coordsL[0]]?.id ?? null,
-            ref: btnRefs[coordsL[1]]?.[coordsL[0]]?.el ?? null
+            id: btnRefs[coordsL[1]]?.[coordsL[0]]?.id ?? currId,
+            ref: btnRefs[coordsL[1]]?.[coordsL[0]]?.el ?? currRef
           },
           right: {
-            id: btnRefs[coordsR[1]]?.[coordsR[0]]?.id ?? null,
-            ref: btnRefs[coordsR[1]]?.[coordsR[0]]?.el ?? null
+            id: btnRefs[coordsR[1]]?.[coordsR[0]]?.id ?? currId,
+            ref: btnRefs[coordsR[1]]?.[coordsR[0]]?.el ?? currRef
           }
         }
       }
@@ -110,6 +113,7 @@ export function getProximalSwatchesBySwatchId (chunksSet, chunkId, swatchId) {
   }
 
   return {
+    current: null,
     up: null,
     down: null,
     left: null,
