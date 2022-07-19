@@ -41,13 +41,12 @@ import 'src/scss/externalComponentSupport/AutoSizer.scss'
 type WallProps = {
   activeColorId: number | string | typeof undefined,
   height?: number,
-  initialFocusId: number | string | typeof undefined,
   onActivateColor: () => void,
   structure: any
 }
 
 function Wall (props: WallProps) {
-  const { activeColorId: dirtyActiveColorId, height, onActivateColor = noop, structure = {}, initialFocusId } = props
+  const { activeColorId: dirtyActiveColorId, height, onActivateColor = noop, structure = {} } = props
   const { children: wallChildren = [], props: wallProps = {} } = structure
   const { wrap } = wallProps
   // this ensures numeric IDs are numeric (so '42' becomes 42), and string IDs remain strings
@@ -55,7 +54,7 @@ function Wall (props: WallProps) {
    * the ternary still make the later code type check, we could reduce complexity by enforcing type higher up -RS
    */
   const activeColorId = typeof dirtyActiveColorId === 'string' && !isNaN(+dirtyActiveColorId) ? +dirtyActiveColorId : dirtyActiveColorId
-  const { colorWallBgColor }: ColorWallContextProps = useContext(ColorWallContext)
+  const { colorWallBgColor, initialFocusId }: ColorWallContextProps = useContext(ColorWallContext)
   const { colorWall: { bloomEnabled, colorSwatch = {} } }: ConfigurationContextType = useContext(ConfigurationContext)
   const { houseShaped = false } = colorSwatch
   const { items: { colorMap } }: ColorsState = useSelector(state => state.colors)
