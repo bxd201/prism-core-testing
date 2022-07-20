@@ -46,7 +46,8 @@ export const EVENTS = {
   selectedGroup: 'PRISM/out/selectedGroup',
   selectGroup: 'PRISM/in/selectGroup',
   clearSection: 'PRISM/in/clearSection',
-  loading: 'PRISM/in/loading'
+  loading: 'PRISM/in/loading',
+  initialFocusId: 'PRISM/in/initialFocusId'
 }
 
 const SearchBarNoLabel = () => {
@@ -138,6 +139,13 @@ export const ColorWallPage = (props: Props) => {
     })
   }, [])
 
+  const [focusColorId, updateFocusColorId] = useState(!isNaN(initialFocusId) ? Number(initialFocusId) : undefined)
+  useEffect(() => {
+    subscribe(EVENTS.initialFocusId, focusId => {
+      updateFocusColorId(!isNaN(focusId) ? Number(focusId) : undefined)
+    })
+  }, [])
+
   // -----------------------------------------------------
   // handle hidden sections
   const processedHiddenSections = useMemo(() => {
@@ -157,13 +165,13 @@ export const ColorWallPage = (props: Props) => {
     addButtonText,
     colorDetailPageRoot,
     colorWallBgColor,
-    initialFocusId: !isNaN(initialFocusId) ? Number(initialFocusId) : undefined,
+    initialFocusId: focusColorId,
     displayAddButton: translateBooleanFlexibly(displayAddButton),
     displayInfoButton: translateBooleanFlexibly(displayInfoButton),
     displayAddButtonText: translateBooleanFlexibly(displayAddButtonText),
     displayDetailsLink: translateBooleanFlexibly(displayDetailsLink),
     hiddenSections: processedHiddenSections
-  }), [addButtonText, colorDetailPageRoot, colorWallBgColor, displayAddButton, displayAddButtonText, displayDetailsLink, initialFocusId])
+  }), [addButtonText, colorDetailPageRoot, colorWallBgColor, displayAddButton, displayAddButtonText, displayDetailsLink, focusColorId])
 
   // -----------------------------------------------------
   // handle unmounting
