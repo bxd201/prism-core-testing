@@ -2,6 +2,11 @@
 
 mkdir packages/toolkit/dev-public || exit $?
 yarn install || exit $?
+
+if [ -n "$DANGER_MANUAL_PR_NUM" ]; then
+  yarn danger ci
+fi
+
 NODE_ENV=test yarn test || exit $?
 yarn run build || exit $?
 
