@@ -7,12 +7,12 @@ import { colorOptions, getRandomColorName } from '../../test-utils/test-utils'
 import { Color } from '../../types'
 
 interface ControlArgs {
-  colorName: string,
-  buttonText?: string,
-  buttonType?: string,
-  height: number,
-  onSwatchClick: () => void,
-  onSwatchButtonClick: () => void,
+  colorName: string
+  buttonText?: string
+  buttonType?: string
+  height: number
+  onSwatchClick: () => void
+  onSwatchButtonClick: () => void
   width: number
 }
 
@@ -35,10 +35,17 @@ const Template = (args: ColorSwatchProps & ControlArgs): JSX.Element => {
             <p className='font-bold'>{color.name}</p>
           </div>
           <div className='flex justify-between w-full p-2.5 absolute left-0 bottom-0'>
-            <button className='flex items-center ring-primary focus:outline-none focus:ring-2' onClick={args.onSwatchButtonClick}>
+            <button
+              className='flex items-center ring-primary focus:outline-none focus:ring-2'
+              onClick={args.onSwatchButtonClick}
+            >
               {buttonType !== 'Just Text' && <FontAwesomeIcon className='text-xl' icon={iconType[buttonType]} />}
               {buttonText && (
-                <p className={`${buttonText.length > 12 ? 'text-xs' : 'text-sm'} ${buttonType === 'Just Text' ? 'hover:underline' : 'ml-2'}`}>
+                <p
+                  className={`${buttonText.length > 12 ? 'text-xs' : 'text-sm'} ${
+                    buttonType === 'Just Text' ? 'hover:underline' : 'ml-2'
+                  }`}
+                >
                   {buttonText}
                 </p>
               )}
@@ -52,16 +59,44 @@ const Template = (args: ColorSwatchProps & ControlArgs): JSX.Element => {
 }
 
 export const AddToCart = Template.bind({})
-AddToCart.args = { active: true, buttonText: 'Add to Cart', buttonType: 'Add', colorName: getRandomColorName(), height: 160, width: 160 }
+AddToCart.args = {
+  active: true,
+  buttonText: 'Add to Cart',
+  buttonType: 'Add',
+  colorName: getRandomColorName(),
+  height: 160,
+  width: 160
+}
 
 export const Info = Template.bind({})
-Info.args = { active: true, buttonText: '', buttonType: 'Info', colorName: getRandomColorName(), height: 145, width: 145 }
+Info.args = {
+  active: true,
+  buttonText: '',
+  buttonType: 'Info',
+  colorName: getRandomColorName(),
+  height: 145,
+  width: 145
+}
 
 export const OnlyLabel = Template.bind({})
-OnlyLabel.args = { active: true, buttonText: '', buttonType: 'Just Text', colorName: getRandomColorName(), height: 120, width: 120 }
+OnlyLabel.args = {
+  active: true,
+  buttonText: '',
+  buttonType: 'Just Text',
+  colorName: getRandomColorName(),
+  height: 120,
+  width: 120
+}
 
 export const ShowDetails = Template.bind({})
-ShowDetails.args = { active: true, buttonText: 'Show Details', buttonType: 'Just Text', colorName: getRandomColorName(), height: 200, width: 200 }
+ShowDetails.args = {
+  active: true,
+  buttonText: 'Show Details',
+  buttonType: 'Just Text',
+  colorName: getRandomColorName(),
+  height: 200,
+  width: 200
+}
 
 export default {
   title: 'ColorSwatch',
