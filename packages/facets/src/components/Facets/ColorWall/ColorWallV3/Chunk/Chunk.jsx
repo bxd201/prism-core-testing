@@ -104,7 +104,6 @@ function Chunk ({ data = {}, id = '', updateHeight, updateWidth }: ChunkProps) {
               <Swatch
                 key={`${i}_${ii}`}
                 active={active}
-                houseShaped={houseShaped}
                 data={data}
                 color={color}
                 id={childId}

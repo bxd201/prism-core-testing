@@ -3,6 +3,7 @@ import React, { useContext, useState, useEffect } from 'react'
 import { ColorWallPropsContext, ColorWallStructuralPropsContext } from '../ColorWallPropsContext'
 import { computeChunk } from '../sharedReducersAndComputers'
 import Prism, { ColorSwatch } from '@prism/toolkit'
+import ColorSwatchContent from 'src/components/ColorSwatchContent/ColorSwatchContent'
 import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import {
   cleanColorNameForURL,
@@ -25,7 +26,6 @@ const swatchClass = 'cwv3__swatch'
 
 type SwatchProps = {
   active: any,
-  houseShaped: any,
   color: any,
   data: {
     children: any,
@@ -112,11 +112,11 @@ export const SwatchContent = ({ color, style, isOnlyUsedforSearch = false }: Swa
   )
 }
 
-export function Swatch ({ data, id, active, houseShaped, color, onRef }: SwatchProps) {
+export function Swatch ({ data, id, active, color, onRef }: SwatchProps) {
   const ctx = useContext(ColorWallPropsContext)
   const structuralCtx = useContext(ColorWallStructuralPropsContext)
-  const { brandId, brandKeyNumberSeparator }: ConfigurationContextType = useContext(ConfigurationContext)
-
+  const { brandId, brandKeyNumberSeparator, colorWall: { colorSwatch = {} } }: ConfigurationContextType = useContext(ConfigurationContext)
+  const { houseShaped = false } = colorSwatch
   const { getPerimeterLevel, setActiveSwatchId, swatchContentRefs } = ctx
   const perimeterLevel = getPerimeterLevel(id)
   const [ swatchWidth, setSwatchWidth ] = useState(0)
@@ -151,7 +151,9 @@ export function Swatch ({ data, id, active, houseShaped, color, onRef }: SwatchP
           GA.event({ category: 'Color Wall', action: 'Color Swatch Click', label: fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator) }, GA_TRACKER_NAME_BRAND[brandId])
         }}
         ref={onRef}
-        renderer={() => <SwatchContent color={color} />}
+        renderer={() => houseShaped
+          ? <ColorSwatchContent className='swatch-content--house-shaped' color={color} />
+          : <SwatchContent color={color} />}
         style={{ height: swatchHeight, width: swatchWidth }}
       />
     </Prism>
