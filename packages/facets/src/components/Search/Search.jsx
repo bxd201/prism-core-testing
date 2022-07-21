@@ -20,6 +20,7 @@ import ConfigurationContext, { type ConfigurationContextType } from 'src/context
 import type { CrossSearch } from '../Facets/ColorSearchFacet/ColorSearchFacet'
 import * as GA from 'src/analytics/GoogleAnalytics'
 import { GA_TRACKER_NAME_BRAND } from 'src/constants/globals'
+import { SwatchContent } from '../Facets/ColorWall/ColorWallV3/Swatch/Swatch'
 
 const baseClass = 'Search'
 const EDGE_SIZE = 15
@@ -79,7 +80,7 @@ const Search = ({ closeSearch = () => {}, contain = false, crossSearch, isChipLo
                 </div>
               </div>
             )
-          } : null)}
+          } : { renderer: () => <SwatchContent color={result} isOnlyUsedforSearch /> })}
           style={_style}
         />
       </Prism>

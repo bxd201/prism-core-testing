@@ -39,10 +39,14 @@ type SwatchProps = {
 
 type SwatchContentProps = {
   color: any,
-  style?: {}
+  style?: {},
+  isOnlyUsedforSearch: boolean
 }
 
-const SwatchContent = ({ color, style }: SwatchContentProps) => {
+// TODO:
+// isOnlyUsedforSearch is a temporory fix to handle the different styles
+// needed between the search feature and standard colorWall, this will be removed during the CWV3 migration
+export const SwatchContent = ({ color, style, isOnlyUsedforSearch = false }: SwatchContentProps) => {
   const dispatch = useDispatch()
   const { messages = {} } = useIntl()
 
@@ -53,7 +57,7 @@ const SwatchContent = ({ color, style }: SwatchContentProps) => {
   const title = (addButtonText || at(messages, 'ADD_TO_PALETTE')[0] || '').replace('{name}', fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator))
 
   return (
-    <div className='swatch-content-size'>
+    <div className={!isOnlyUsedforSearch ? 'swatch-content-size' : null}>
       <div className='swatch-content__btns'>
         <div className='swatch-content__button-group swatch-content__button-group--xs' style={style}>
           {displayAddButton &&
@@ -108,7 +112,7 @@ const SwatchContent = ({ color, style }: SwatchContentProps) => {
   )
 }
 
-function Swatch ({ data, id, active, houseShaped, color, onRef }: SwatchProps) {
+export function Swatch ({ data, id, active, houseShaped, color, onRef }: SwatchProps) {
   const ctx = useContext(ColorWallPropsContext)
   const structuralCtx = useContext(ColorWallStructuralPropsContext)
   const { brandId, brandKeyNumberSeparator }: ConfigurationContextType = useContext(ConfigurationContext)
@@ -153,5 +157,3 @@ function Swatch ({ data, id, active, houseShaped, color, onRef }: SwatchProps) {
     </Prism>
   )
 }
-
-export default Swatch
