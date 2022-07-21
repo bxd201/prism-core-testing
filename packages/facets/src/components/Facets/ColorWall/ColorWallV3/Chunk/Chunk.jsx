@@ -9,7 +9,7 @@ import { type ColorsState } from 'src/shared/types/Actions.js.flow'
 import { getAlignment } from '../cwv3Utils'
 import './Chunk.scss'
 import Titles from '../Title/Title'
-import Swatch from '../Swatch/Swatch'
+import { Swatch } from '../Swatch/Swatch'
 import isSomething from '../../../../../shared/utils/isSomething.util'
 
 type ChunkProps = {
@@ -25,8 +25,8 @@ type ChunkProps = {
 }
 
 function Chunk ({ data = {}, id = '', updateHeight, updateWidth }: ChunkProps) {
-  const { titles, props: colProps = {} } = data
-  const { align } = colProps
+  const { titles, props: chunkProps = {} } = data
+  const { align } = chunkProps
   const ctx = useContext(ColorWallPropsContext)
   const structuralCtx = useContext(ColorWallStructuralPropsContext)
   const { scale } = structuralCtx
