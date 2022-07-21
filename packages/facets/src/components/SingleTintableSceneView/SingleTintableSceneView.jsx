@@ -148,6 +148,7 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
 
     const { width, height, description } = scene
     const activeColorId = lpColors?.activeColor?.id
+
     return (
       <SimpleTintableScene
         sceneType={variant.sceneType}
