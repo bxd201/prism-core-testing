@@ -1,9 +1,11 @@
 import React, { useRef, CSSProperties, useEffect } from 'react'
 import SpinnerLoader from '../spinner-loader/spinner-loader'
-import { dashAdjust, circleColor } from './animation';
+import { dashAdjust, circleColor } from './animation'
 
 const SIZE = 100
 const DEFAULT_STROKE_WIDTH = 6
+export const TEST_ID_OUTER = 'circle-loader'
+export const TEST_ID_INNER = 'circle-loader-circle'
 
 export interface CircleLoaderProps {
   brandId?: string
@@ -20,8 +22,9 @@ function CircleLoader (props: CircleLoaderProps): JSX.Element {
 
   useEffect(() => {
     if (circleRef.current) {
-      circleRef.current.animate(dashAdjust.keyframes, dashAdjust.properties)
-      circleRef.current.animate(circleColor.keyframes, circleColor.properties)
+      // the animate API isn't available in jest's browser sim
+      circleRef.current.animate?.(dashAdjust.keyframes, dashAdjust.properties)
+      circleRef.current.animate?.(circleColor.keyframes, circleColor.properties)
     }
   }, [circleRef])
 
@@ -50,7 +53,7 @@ function CircleLoader (props: CircleLoaderProps): JSX.Element {
       xmlns='http://www.w3.org/2000/svg'
       viewBox={`0 0 ${SIZE} ${SIZE}`}
       preserveAspectRatio='xMidYMid'
-      data-testid='circle-loader'
+      data-testid={TEST_ID_OUTER}
     >
       <circle
         ref={circleRef}
@@ -61,6 +64,7 @@ function CircleLoader (props: CircleLoaderProps): JSX.Element {
         strokeWidth={strokeWidth}
         r={radius}
         strokeDasharray='164.93361431346415 56.97787143782138'
+        data-testid={TEST_ID_INNER}
       />
     </svg>
   )
