@@ -4,14 +4,10 @@
     "standard",
     "standard-react",
     "plugin:flowtype/recommended",
+    "prettier"
   ],
-  "plugins": [
-    "flowtype",
-    "react-hooks",
-    "jest",
-    "formatjs"
-  ],
-  "globals" : {
+  "plugins": ["flowtype", "react-hooks", "jest", "formatjs"],
+  "globals": {
     "API_PATH": "readonly",
     "APP_VERSION": "readonly",
     "BASE_PATH": "readonly",
