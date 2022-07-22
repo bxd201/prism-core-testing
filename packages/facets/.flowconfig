@@ -10,6 +10,7 @@ src/shared/types/lib
 [lints]
 
 [options]
+react.runtime=automatic
 module.name_mapper.extension='css' -> '<PROJECT_ROOT>/packages/facets/src/shared/types/CSSFlowStub.js'
 module.name_mapper.extension='scss' -> '<PROJECT_ROOT>/packages/facets/src/shared/types/CSSFlowStub.js'
 module.name_mapper='^constants\/\(.*\)$' -> '<PROJECT_ROOT>/packages/facets/src/constants/\1'
@@ -21,7 +22,5 @@ module.name_mapper='^srcTemplates\/\(.*\)$' -> '<PROJECT_ROOT>/packages/facets/s
 module.name_mapper='^embedOuput\/\(.*\)$' -> '<PROJECT_ROOT>/packages/facets/embed-output/\1'
 module.name_mapper='^embedWorking\/\(.*\)$' -> '<PROJECT_ROOT>/packages/facets/embed-working/\1'
 module.name_mapper='^__mocks__\/\(.*\)$' -> '<PROJECT_ROOT>/packages/facets/__mocks__/\1'
-suppress_comment= \\(.\\|\n\\)*\\$FlowIgnore
-esproposal.optional_chaining=enable
 
 [strict]
