@@ -2,7 +2,7 @@ import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSun, faMoonStars } from '@fortawesome/pro-solid-svg-icons'
 import { render, fireEvent, screen } from '@testing-library/react'
-// import '@testing-library/jest-dom'
+
 import Toggle from './toggle'
 
 describe('Toggle Component', () => {

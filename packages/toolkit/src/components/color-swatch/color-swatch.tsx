@@ -4,14 +4,16 @@ import { Color } from '../../types'
 export interface ColorSwatchProps {
   active?: boolean
   activeFocus?: boolean
-  "aria-label"?: string
+  'aria-label'?: string
   className?: string
   color: Color
   id?: number
   onClick?: () => void
-  renderer?: ({ id, ref }: { id?: number, ref?: ForwardedRef<HTMLButtonElement & HTMLDivElement> }) => JSX.Element
+  renderer?: ({ id, ref }: { id?: number; ref?: ForwardedRef<HTMLButtonElement & HTMLDivElement> }) => JSX.Element
   style?: CSSProperties
 }
+
+export const TEST_ID_INNER_SWATCH = 'inner-swatch'
 
 /**
  * Renders swatch.
@@ -29,7 +31,7 @@ export interface ColorSwatchProps {
  *     <ColorSwatch active style={{ height: 160, width: 160 }} />
  * ```
  */
- const ColorSwatch = forwardRef<HTMLButtonElement & HTMLDivElement, ColorSwatchProps>(
+const ColorSwatch = forwardRef<HTMLButtonElement & HTMLDivElement, ColorSwatchProps>(
   ({ active, activeFocus = true, className, color, id, onClick, renderer, ...otherProps }, ref): JSX.Element => {
     const [fadeContent, setFadeContent] = useState(false)
 
@@ -48,11 +50,10 @@ export interface ColorSwatchProps {
         />
         {active && (
           <div
-            className={
-              `absolute h-full w-full p-2.5 ${color.isDark ? 'text-white' : 'text-black'}
+            data-testid={TEST_ID_INNER_SWATCH}
+            className={`absolute h-full w-full p-2.5 ${color.isDark ? 'text-white' : 'text-black'}
               ${fadeContent ? 'opacity-1' : 'opacity-0'} transition-opacity duration-200
-              ${className}`
-            }
+              ${className}`}
             ref={ref}
             style={activeFocus ? {} : { outline: 'none' }}
             tabIndex={activeFocus ? 0 : -1}
