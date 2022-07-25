@@ -5,12 +5,14 @@ interface SpinnerLoaderProps {
   inheritSize?: boolean
 }
 
+export const TEST_ID = 'spinner-loader'
+
 const SpinnerLoader = ({ inheritSize = false }: SpinnerLoaderProps): JSX.Element => {
   const svgRef = useRef(null)
 
   useEffect(() => {
     if (svgRef.current)
-      svgRef.current.animate(animation.keyframes, animation.properties)
+      svgRef.current.animate?.(animation.keyframes, animation.properties)
   }, [svgRef])
 
   return (<svg
@@ -23,7 +25,7 @@ const SpinnerLoader = ({ inheritSize = false }: SpinnerLoaderProps): JSX.Element
     xmlns='http://www.w3.org/2000/svg'
     x='0px' y='0px'
     viewBox='0 0 40 40'
-    data-testid='spinner-loader'
+    data-testid={TEST_ID}
   >
     <g stroke='none'>
       <path style={{ fill: '#E7E7E7' }}
