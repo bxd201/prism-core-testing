@@ -10,13 +10,13 @@
   background-position: 0 -102%; // vertical offset of >100% to make sure there are no rendering issues with <1px pct issues
   color: var(getThemeColor('menuTxt'));
   font-family: inherit;
-  transition: background-position 0.2s, background-color .2s;
+  transition: background-position 0.2s, background-color 0.2s;
   margin-right: 0;
-  padding: 0 .5em;
+  padding: 0 0.5em;
   text-align: left;
 
   @include respond-above(xs) {
-    padding: 0 1.4em 0 .7em;
+    padding: 0 1.4em 0 0.7em;
   }
   @include respond-above(sm) {
     padding-left: 1em;
@@ -27,7 +27,7 @@
 
   &:hover {
     color: var(getThemeColor('menuTxtHover'));
-    background-position: 0 -80%;
+    background-position: 0 -95%;
   }
 
   &--active {
@@ -51,10 +51,18 @@
     background-color: inherit;
     display: none !important;
     margin-right: 1em;
-    svg { background-color: inherit; }
-    .fa-square-full.fa-sm { margin-right: -1px; }
-    .fa-square-full.fa-xs { margin-right: -3px; }
-    &--brush { margin-left: -22px; }
+    svg {
+      background-color: inherit;
+    }
+    .fa-square-full.fa-sm {
+      margin-right: -1px;
+    }
+    .fa-square-full.fa-xs {
+      margin-right: -3px;
+    }
+    &--brush {
+      margin-left: -22px;
+    }
 
     @include respond-above(sm) {
       display: inline-block !important;
