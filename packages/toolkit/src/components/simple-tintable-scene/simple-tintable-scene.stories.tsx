@@ -26,9 +26,9 @@ Default.args = {
     3
   ],
   surfaceHitAreas: [
-    "https://localhost:8080/prism/images/scenes/rooms/livingroom/main.svg",
-    "https://localhost:8080/prism/images/scenes/rooms/livingroom/accent.svg",
-    "https://localhost:8080/prism/images/scenes/rooms/livingroom/trim.svg"
+    "https://prism.sherwin-williams.com/prism/images/scenes/rooms/livingroom/main.svg",
+    "https://prism.sherwin-williams.com/prism/images/scenes/rooms/livingroom/accent.svg",
+    "https://prism.sherwin-williams.com/prism/images/scenes/rooms/livingroom/trim.svg"
   ],
   surfaceUrls: [
     "https://sherwin.scene7.com/is/image/sw?src=ir(swRender/hd_livingroom6_day?wid=1311&req=object&opac=100&fmt=png8&object=wall&color=000000)&fmt=png8&bgColor=FFFFFF&op_invert=1",
@@ -49,7 +49,7 @@ Default.args = {
   ],
   width: 1311,
   height: 792,
-  interactive: false,
+  interactive: true,
 }
 
 export default {

@@ -6959,7 +6959,6 @@ __metadata:
     react-dropzone: 11.0.3
     react-ga: 2.7.0
     react-hooks-testing-library: 0.6.0
-    react-inlinesvg: 3.0.0
     react-intl: 3.10.0
     react-redux: 7.1.1
     react-router-dom: 5.1.2
@@ -7106,6 +7105,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": 4.33.0
     "@typescript-eslint/parser": 4.33.0
     autoprefixer: 10.4.2
+    axios: ^0.27.2
     babel-loader: 8.2.3
     babel-preset-react-app: 10.0.1
     classnames: ^2.3.1
@@ -7139,8 +7139,8 @@ __metadata:
     react-aria-menubutton: 7.0.2
     react-beautiful-dnd: 13.1.0
     react-beautiful-dnd-tester: 0.0.10
+    react-dnd: ^16.0.1
     react-dnd-html5-backend: 16.0.1
-    react-inlinesvg: 3.0.0
     react-scripts: 5.0.0
     react-transition-group: 4.3.0
     react-virtualized: 9.22.3
@@ -7155,7 +7155,6 @@ __metadata:
     webpack: 5.66.0
   peerDependencies:
     react: 18.2.0
-    react-dnd: 16.0.1
     react-dom: 18.2.0
   languageName: unknown
   linkType: soft
@@ -20451,13 +20450,6 @@ __metadata:
   dependencies:
     pify: ^2.2.0
   checksum: f01927ce59bccec804e171bf859a26e362c1f50aa9ebc69f7cafdcce3859d29d4b6267fd47237c18b0a1830614bd3f0ee14b7380d9bad18a4e7af9b5f0b6984f
-  languageName: node
-  linkType: hard
-
-"exenv@npm:^1.2.2":
-  version: 1.2.2
-  resolution: "exenv@npm:1.2.2"
-  checksum: a894f3b60ab8419e0b6eec99c690a009c8276b4c90655ccaf7d28faba2de3a6b93b3d92210f9dc5efd36058d44f04098f6bbccef99859151104bfd49939904dc
   languageName: node
   linkType: hard
 
@@ -34495,7 +34487,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dnd@npm:16.0.1":
+"react-dnd@npm:16.0.1, react-dnd@npm:^16.0.1":
   version: 16.0.1
   resolution: "react-dnd@npm:16.0.1"
   dependencies:
@@ -34629,15 +34621,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-from-dom@npm:^0.6.2":
-  version: 0.6.2
-  resolution: "react-from-dom@npm:0.6.2"
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-  checksum: 5d66b0c1eb591247a73bed9487a04e390abb4ad6c65e6cea7bfdd35070685b90a5da720de30915b963aba3f4628135d6db4c93da40cd5114c8bbe34a9725a83e
-  languageName: node
-  linkType: hard
-
 "react-ga@npm:2.7.0":
   version: 2.7.0
   resolution: "react-ga@npm:2.7.0"
@@ -34673,18 +34656,6 @@ __metadata:
     react: ^16.8.0
     react-test-renderer: ^16.8.0
   checksum: 01ef520cf816f625ad332c5832c2b9bd66ce21c8891d626335206cd4d49655202029badc79c7926df8a3a9f31a76c9938ddb908ded8f85a80d30d682eefa04eb
-  languageName: node
-  linkType: hard
-
-"react-inlinesvg@npm:3.0.0":
-  version: 3.0.0
-  resolution: "react-inlinesvg@npm:3.0.0"
-  dependencies:
-    exenv: ^1.2.2
-    react-from-dom: ^0.6.2
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-  checksum: ceb34c4c5494e4992a1949c7e6166f373858a40215a8e900f360ce60053b19dd6da8637ca87770b953c449ddfa48c52ec288e09978660de92f51aac25b110a71
   languageName: node
   linkType: hard
 

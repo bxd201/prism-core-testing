@@ -17,8 +17,6 @@ export interface TintableSceneSurfaceProps {
 }
 
 function TintableSceneSurface(props: TintableSceneSurfaceProps): JSX.Element {
-  // const baseClass = 'simple-tintable-scene__scene__surface'
-
   const getSvgContents = (): JSX.Element => {
     const { image, maskId, filterId, type } = props
     const baseUrl = getBeforeHash(window.location.href)

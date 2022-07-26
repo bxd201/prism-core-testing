@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { LiveMessage } from 'react-aria-live'
 import uniqueId from 'lodash/uniqueId'
 import { TransitionGroup } from 'react-transition-group'
@@ -9,7 +9,6 @@ import SimpleTintableSceneHitArea from './simple-tintable-scene-hit-area'
 import { getFilterId, getMaskId } from '../../utils/tintable-scene'
 import GenericOverlay from '../generic-overlay/generic-overlay'
 import InlineStyleTransition from '../inline-style-transition/inline-style-transition'
-import { DndProvider } from 'react-dnd'
 
 export interface SimpleTintableSceneProps {
   sceneType: string,
@@ -25,10 +24,8 @@ export interface SimpleTintableSceneProps {
   imageValueCurve?: any,
   interactive?: boolean,
   handleSurfaceInteraction?: Function,
-  handleColorDrop?: Function,
   surfaceColors?: Color[],
   adjustSvgHeight?: boolean,
-  dndBackend?: any
 }
 
 const SimpleTintableScene = (props: SimpleTintableSceneProps): JSX.Element => {
@@ -45,20 +42,18 @@ const SimpleTintableScene = (props: SimpleTintableSceneProps): JSX.Element => {
     shadows,
     surfaceHitAreas,
     interactive,
-    handleColorDrop,
     handleSurfaceInteraction,
     surfaceColors,
-    adjustSvgHeight,
-    dndBackend
+    adjustSvgHeight
   } = props
   const [instanceId] = useState(uniqueId('TS'))
-  const [hitAreaLoadingCount, setHitAreaLoadingCount] = useState(0)
+  const hitAreaLoadingCount = useRef(0)
   const [hitAreaError, setHitAreaError] = useState(false)
   const [hitAreaLoaded, setHitAreaLoaded] = useState(props.surfaceUrls.length === 0)
 
   const handleHitAreaLoadingSuccess = (): void => {
-    setHitAreaLoadingCount(hitAreaLoadingCount + 1)
-    if (hitAreaLoadingCount <= 0) {
+    hitAreaLoadingCount.current++
+    if (hitAreaLoadingCount.current === props.surfaceUrls.length) {
       setHitAreaLoaded(true)
     }
   }
@@ -71,7 +66,7 @@ const SimpleTintableScene = (props: SimpleTintableSceneProps): JSX.Element => {
   }
 
   return (
-    <DndProvider backend={dndBackend}>
+    <>
       {/* The transitions group will assume the calculated height of the ROOT DIV and not necessarily the specified height of the parent div */}
       <div>
         <img className={`block w-full relative h-auto`} src={background} alt={sceneName} />
@@ -135,22 +130,18 @@ const SimpleTintableScene = (props: SimpleTintableSceneProps): JSX.Element => {
           }) }
         </TransitionGroup>
       </div>
-
-      {interactive && (
         <div className={`absolute left-0 top-0 w-full h-full`}>
-          {surfaceHitAreas?.map((surface, i) => (
+          {interactive ? surfaceHitAreas?.map((surface, i) => (
             // @ts-ignore
             <SimpleTintableSceneHitArea
               key={surface}
               surfaceIndex={i}
-              onDrop={handleColorDrop}
               onLoadingSuccess={handleHitAreaLoadingSuccess}
               onLoadingError={handleHitAreaLoadingError}
               interactionHandler={() => handleClickSurface(i)}
               svgSource={surface} />
-          ))}
+          )): null}
         </div>
-      )}
 
       {hitAreaError ? (
         <GenericOverlay type={GenericOverlay.TYPES.ERROR} message='Error loading paintable surfaces' />
@@ -159,7 +150,7 @@ const SimpleTintableScene = (props: SimpleTintableSceneProps): JSX.Element => {
       ) : null}
 
       {sceneName && (<LiveMessage message={`${sceneName} scene has been loaded`} aria-live='polite' />)}
-    </DndProvider>
+    </>
   )
 }
 

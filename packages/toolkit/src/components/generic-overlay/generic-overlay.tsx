@@ -68,7 +68,7 @@ const StyledContainer = ({type, semitransparent, fillVertical, fillHorizontal, c
   return <div className={containerClass} style={style}>{children}</div>
 }
 
-const StyledContent = ({children}: JSX.ElementChildrenAttribute): JSX.Element => {
+const StyledContent = ({children}: any): JSX.Element => {
   const className = classnames(
     'text-inherit',
     'font-bold',
@@ -80,7 +80,7 @@ const StyledContent = ({children}: JSX.ElementChildrenAttribute): JSX.Element =>
     margin: '2px 0', // something truly small, just so things aren't touching
   }
 
-  return <span className={className} style={style}>children</span>
+  return <span className={className} style={style}>{children}</span>
 }
 
 function GenericOverlay(props: GenericOverlayProps): JSX.Element {
