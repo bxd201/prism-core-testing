@@ -23,7 +23,7 @@ function validateCommitMessages () {
 function validatePullRequestTitle () {
   if (shouldNotRunOnThisBaseBranch()) return
   
-  if (!danger.github.pr.title.match(/^DCT-\d* | '/g)) {
+  if (!danger.github.pr.title.match(/^[A-Z]+-\d* | '/g)) {
     warn('Pull request title does not match the format of `DCT-1234 | Message`')
   }
 }
