@@ -1,5 +1,5 @@
 // @flow
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 // $FlowIgnore -- no defs for react-virtualized
 import { Grid, AutoSizer } from 'react-virtualized'
@@ -16,7 +16,9 @@ import './Search.scss'
 import '../ColorSwatchContent/ColorSwatchContent.scss'
 import 'src/scss/externalComponentSupport/AutoSizer.scss'
 import omitPrefix from 'src/shared/utils/omitPrefix.util'
-import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
+import ConfigurationContext, {
+  type ConfigurationContextType
+} from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import type { CrossSearch } from '../Facets/ColorSearchFacet/ColorSearchFacet'
 import * as GA from 'src/analytics/GoogleAnalytics'
 import { GA_TRACKER_NAME_BRAND } from 'src/constants/globals'
@@ -25,19 +27,37 @@ import { SwatchContent } from '../Facets/ColorWall/ColorWallV3/Swatch/Swatch'
 const baseClass = 'Search'
 const EDGE_SIZE = 15
 
-type SearchProps = { closeSearch?: () => void, contain?: boolean, crossSearch?: { query?: string, searching: boolean, onSearch: () => void } & CrossSearch, isChipLocator?: boolean }
+type SearchProps = {
+  closeSearch?: () => void,
+  contain?: boolean,
+  crossSearch?: { query?: string, searching: boolean, onSearch: () => void } & CrossSearch,
+  isChipLocator?: boolean
+}
 
 const Search = ({ closeSearch = () => {}, contain = false, crossSearch, isChipLocator }: SearchProps) => {
-  const { results, count, suggestions, loading } = useSelector(state => state.colors.search)
-  const { colorDetailPageRoot, colorWallBgColor, colorWallPageRoot, routeType }: ColorWallContextProps = useContext(ColorWallContext)
-  const { brandId, brandKeyNumberSeparator, colorWall: { colorSwatch = {} } }: ConfigurationContextType = useContext(ConfigurationContext)
+  const { results, count, suggestions, loading, query } = useSelector((state) => state.colors.search)
+  const { colorDetailPageRoot, colorWallBgColor, colorWallPageRoot, routeType }: ColorWallContextProps =
+    useContext(ColorWallContext)
+  const {
+    brandId,
+    brandKeyNumberSeparator,
+    colorWall: { colorSwatch = {} }
+  }: ConfigurationContextType = useContext(ConfigurationContext)
   const { colorNumOnBottom = false, houseShaped = false } = colorSwatch
   const [hasSearched, updateHasSearched] = useState(typeof count !== 'undefined')
 
-  useEffectAfterMount(() => { updateHasSearched(true) }, [count, results, loading])
+  useEffectAfterMount(() => {
+    updateHasSearched(true)
+  }, [count, results, loading])
+
+  useEffect(() => {
+    if (!query.length) {
+      updateHasSearched(false)
+    }
+  }, [query])
 
   const cellRenderer = ({ columnIndex, isScrolling, isVisible, key, parent, rowIndex, style }: any) => {
-    const result = results && results[columnIndex + (rowIndex * parent.props.columnCount)]
+    const result = results && results[columnIndex + rowIndex * parent.props.columnCount]
     const swatchClass = houseShaped ? 'Search--house-shaped' : 'swatch-content'
     const _style = houseShaped
       ? { ...style, width: style.width - 20, padding: '10px', textAlign: 'start' }
@@ -50,37 +70,65 @@ const Search = ({ closeSearch = () => {}, contain = false, crossSearch, isChipLo
         <ColorSwatch
           {...colorSwatchCommonProps({ brandKeyNumberSeparator, color: result })}
           className={swatchClass}
-          {...(isChipLocator ? {
-            renderer: () => (
-              <div className={`${baseClass}__chip-locator`}>
-                <div className={`${swatchClass}__label swatch-content${colorNumOnBottom ? '__name-number' : '__number-name'}`}>
-                  <p className={`${swatchClass}__label--number`}>{fullColorNumber(result.brandKey, result.colorNumber, brandKeyNumberSeparator)}</p>
-                  <p className={`${swatchClass}__label--name`}>{result.name}</p>
-                </div>
-                <div className={`${baseClass}__chip-locator--buttons`}>
-                  <button
-                    className={`${baseClass}__chip-locator--buttons__button ${result.isDark ? 'dark-color' : ''}`}
-                    onClick={() => {
-                      GA.event({ category: 'QR Color Wall Search', action: 'Find Chip', label: `${result.name} - ${result.colorNumber}` }, GA_TRACKER_NAME_BRAND[brandId])
-                      window.location.href = crossSearch && crossSearch.searching ? crossSearch.onClickFindChip(result) : colorWallPageRoot?.(result)
-                      closeSearch()
-                    }}
-                  >
-                    Find Chip
-                  </button>
-                  <button
-                    className={`${baseClass}__chip-locator--buttons__button ${result.isDark ? 'dark-color' : ''}`}
-                    onClick={() => {
-                      GA.event({ category: 'QR Color Wall Search', action: 'View Color', label: `${result.name} - ${result.colorNumber}` }, GA_TRACKER_NAME_BRAND[brandId])
-                      window.location.href = crossSearch && crossSearch.searching ? crossSearch.onClickViewColor(result) : colorDetailPageRoot?.(result)
-                    }}
-                  >
-                    View Color
-                  </button>
-                </div>
-              </div>
-            )
-          } : { renderer: () => <SwatchContent color={result} isOnlyUsedforSearch /> })}
+          {...(isChipLocator
+            ? {
+                renderer: () => (
+                  <div className={`${baseClass}__chip-locator`}>
+                    <div
+                      className={`${swatchClass}__label swatch-content${
+                        colorNumOnBottom ? '__name-number' : '__number-name'
+                      }`}
+                    >
+                      <p className={`${swatchClass}__label--number`}>
+                        {fullColorNumber(result.brandKey, result.colorNumber, brandKeyNumberSeparator)}
+                      </p>
+                      <p className={`${swatchClass}__label--name`}>{result.name}</p>
+                    </div>
+                    <div className={`${baseClass}__chip-locator--buttons`}>
+                      <button
+                        className={`${baseClass}__chip-locator--buttons__button ${result.isDark ? 'dark-color' : ''}`}
+                        onClick={() => {
+                          GA.event(
+                            {
+                              category: 'QR Color Wall Search',
+                              action: 'Find Chip',
+                              label: `${result.name} - ${result.colorNumber}`
+                            },
+                            GA_TRACKER_NAME_BRAND[brandId]
+                          )
+                          window.location.href =
+                            crossSearch && crossSearch.searching
+                              ? crossSearch.onClickFindChip(result)
+                              : colorWallPageRoot?.(result)
+                          closeSearch()
+                        }}
+                      >
+                        Find Chip
+                      </button>
+                      <button
+                        className={`${baseClass}__chip-locator--buttons__button ${result.isDark ? 'dark-color' : ''}`}
+                        onClick={() => {
+                          GA.event(
+                            {
+                              category: 'QR Color Wall Search',
+                              action: 'View Color',
+                              label: `${result.name} - ${result.colorNumber}`
+                            },
+                            GA_TRACKER_NAME_BRAND[brandId]
+                          )
+                          window.location.href =
+                            crossSearch && crossSearch.searching
+                              ? crossSearch.onClickViewColor(result)
+                              : colorDetailPageRoot?.(result)
+                        }}
+                      >
+                        View Color
+                      </button>
+                    </div>
+                  </div>
+                )
+              }
+            : { renderer: () => <SwatchContent color={result} isOnlyUsedforSearch /> })}
           style={_style}
         />
       </Prism>
@@ -102,40 +150,66 @@ const Search = ({ closeSearch = () => {}, contain = false, crossSearch, isChipLo
           <GenericMessage type={GenericMessage.TYPES.WARNING}>
             <FormattedMessage id='SEARCH.NO_RESULTS' />
             {suggestions && suggestions.length ? (
-              <FormattedMessage id='SEARCH.SUGGESTIONS' values={{ suggestions: (
-                <>
-                  {suggestions.map((suggestion, i, arr) =>
-                    <React.Fragment key={i}>
-                      <TextButton className={routeType === 'memory' ? 'no-underline' : undefined} to={routeType === 'memory' ? undefined : `./${omitPrefix(suggestion)}`}>
-                        {omitPrefix(suggestion)}
-                      </TextButton>
-                      {i < arr.length - 1 && ', '}
-                    </React.Fragment>
-                  )}
-                </>
-              ) }} />
+              <FormattedMessage
+                id='SEARCH.SUGGESTIONS'
+                values={{
+                  suggestions: (
+                    <>
+                      {suggestions.map((suggestion, i, arr) => (
+                        <React.Fragment key={i}>
+                          <TextButton
+                            className={routeType === 'memory' ? 'no-underline' : undefined}
+                            to={routeType === 'memory' ? undefined : `./${omitPrefix(suggestion)}`}
+                          >
+                            {omitPrefix(suggestion)}
+                          </TextButton>
+                          {i < arr.length - 1 && ', '}
+                        </React.Fragment>
+                      ))}
+                    </>
+                  )
+                }}
+              />
             ) : null}
             {crossSearch && !crossSearch.searching ? (
               <strong>
-                {crossSearch.text} <a className={`${baseClass}__results-pane__subtitle--link`} href={crossSearch.colorWallPageRoot} target='_blank'>Click Here</a>
+                {crossSearch.text}{' '}
+                <a
+                  className={`${baseClass}__results-pane__subtitle--link`}
+                  href={crossSearch.colorWallPageRoot}
+                  target='_blank'
+                >
+                  Click Here
+                </a>
               </strong>
             ) : null}
           </GenericMessage>
         ) : (
-          <div className={`${baseClass}__results-pane__swatches ${contain ? `${baseClass}__results-pane__swatches--cover` : ''}`}>
-            {crossSearch && <p className={`${baseClass}__results-pane__subtitle`}>
-              Looking for more colors? <a className={`${baseClass}__results-pane__subtitle--link`} href={crossSearch.colorWallPageRoot} target='_blank'>
-                {`Search ${crossSearch.brand.name} colors.`}
-              </a>
-            </p>}
-            <AutoSizer disableHeight={!contain}>
+          <div
+            className={`${baseClass}__results-pane__swatches ${
+              contain ? `${baseClass}__results-pane__swatches--cover` : ''
+            }`}
+          >
+            {crossSearch && (
+              <p className={`${baseClass}__results-pane__subtitle`}>
+                Looking for more colors?{' '}
+                <a
+                  className={`${baseClass}__results-pane__subtitle--link`}
+                  href={crossSearch.colorWallPageRoot}
+                  target='_blank'
+                >
+                  {`Search ${crossSearch.brand.name} colors.`}
+                </a>
+              </p>
+            )}
+            <AutoSizer className={`${baseClass}__results-grid`} disableHeight={!contain}>
               {({ height = 0, width }) => {
-                const gridWidth = width - (EDGE_SIZE * (houseShaped ? 0.7 : 2))
+                const gridWidth = width - EDGE_SIZE * (houseShaped ? 0.7 : 2)
                 const columnCount = Math.max(1, Math.round(gridWidth / 175))
                 const newSize = gridWidth / columnCount
                 const rowHeight = houseShaped ? 245 : newSize
                 const rowCount = Math.ceil(results.length / columnCount)
-                const gridHeight = contain ? height : Math.max(height, rowCount * newSize + (EDGE_SIZE * 2))
+                const gridHeight = contain ? height : Math.max(height, rowCount * newSize + EDGE_SIZE * 2)
 
                 return (
                   <Grid

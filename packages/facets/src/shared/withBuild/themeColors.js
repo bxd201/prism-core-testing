@@ -25,6 +25,7 @@ const defaultThemeColors = {
   tertiaryBg: '#000', // tertiary background color
   primaryBorder: '#fff', // main border color
   secondaryBorder: 'none', // secondary border color
+  primaryPlaceholder: '#464E5F',
   success: '#1fce6d', // success color (usually green)
   warning: '#f2c500', // warning color (usually orange or yellow)
   white: '#FFF', // #FFF,

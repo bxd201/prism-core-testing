@@ -12,7 +12,7 @@ import uniqueId from 'lodash/uniqueId'
 import debounce from 'lodash/debounce'
 import './SearchBar.scss'
 import 'src/scss/convenience/visually-hidden.scss'
-import { loadSearchResults, MIN_SEARCH_LENGTH } from 'src/store/actions/loadSearchResults'
+import { clearSearch, loadSearchResults, MIN_SEARCH_LENGTH } from 'src/store/actions/loadSearchResults'
 import { compareKebabs } from 'src/shared/helpers/StringUtils'
 import recursiveDecodeURIComponent from 'src/shared/utils/recursiveDecodeURIComponent.util'
 import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
@@ -51,7 +51,7 @@ const SearchBar = (props: Props) => {
   const [newSearchParam, setNewSearchParam] = useState<string>('')
   const { locale } = useIntl()
   const { section, family, query = '' } = useParams()
-  const { structure } = useSelector(state => state.colors)
+  const { structure } = useSelector((state) => state.colors)
   const currentSearchParam = useRef('')
   const dispatch = useDispatch()
   const history = useHistory()
@@ -63,7 +63,9 @@ const SearchBar = (props: Props) => {
     subscribe('prism-focus-color-search-bar', () => {
       isIOS
         ? inputRef.current && inputRef.current.focus()
-        : setTimeout(() => { inputRef.current && inputRef.current.focus() }, 150)
+        : setTimeout(() => {
+            inputRef.current && inputRef.current.focus()
+          }, 150)
     })
   }, [])
 
@@ -81,47 +83,59 @@ const SearchBar = (props: Props) => {
     }
   }, [inputValue])
 
-  const checkIfSearchableInput = useCallback(debounce((value: string | null = '', abort: boolean = false) => {
-    const _current = currentSearchParam.current || ''
-    const _value = value || ''
+  const checkIfSearchableInput = useCallback(
+    debounce((value: string | null = '', abort: boolean = false) => {
+      const _current = currentSearchParam.current || ''
+      const _value = value || ''
 
-    // this is for "cancelling" the debounced method if we unmount before execution
-    if (abort || typeof value !== 'string' || _current === _value) { return }
+      // this is for "cancelling" the debounced method if we unmount before execution
+      if (abort || typeof value !== 'string' || _current === _value) {
+        return
+      }
 
-    // NOTE: must check for intentional emptiness from clearing a search before subsequent checks
-    // for no-value string or too-short searches in order to maintain this functionality
+      // NOTE: must check for intentional emptiness from clearing a search before subsequent checks
+      // for no-value string or too-short searches in order to maintain this functionality
 
-    // if value is empty AND our previous search is a non-empty string  ...
-    if (_value === '' && _current.length > 0) {
-      // this means we've cleared a search and should return out
-      history.push('./')
-      return
-    }
+      // if value is empty AND our previous search is a non-empty string  ...
+      if (_value === '' && _current.length > 0) {
+        // this means we've cleared a search and should return out
+        dispatch(clearSearch())
+        history.push('./')
+        return
+      }
 
-    // if input is just a bunch of spaces... return out
-    if (_value.trim() === '') { return }
+      // if input is just a bunch of spaces... return out
+      if (_value.trim() === '') {
+        return
+      }
 
-    // if value doe not meet minimum searchable length... return out
-    if (_value.length < MIN_SEARCH_LENGTH) { return }
+      // if value doe not meet minimum searchable length... return out
+      if (_value.length < MIN_SEARCH_LENGTH) {
+        return
+      }
 
-    // IMPORTANT: need to double encode in order to preserve encoding in URL
-    // if we do NOT do this, we run into decoding issues when retrieving the URL via react router
-    history.push(encodeURIComponent(encodeURIComponent(_value)))
+      // IMPORTANT: need to double encode in order to preserve encoding in URL
+      // if we do NOT do this, we run into decoding issues when retrieving the URL via react router
+      history.push(encodeURIComponent(encodeURIComponent(_value)))
 
-    // set ref for current search that we can use to prevent duplicate searches
-    currentSearchParam.current = _value
+      // set ref for current search that we can use to prevent duplicate searches
+      currentSearchParam.current = _value
 
-    // set new search param which we will actually perform a search on
-    setNewSearchParam(_value)
+      // set new search param which we will actually perform a search on
+      setNewSearchParam(_value)
 
-    onSearchQuery && onSearchQuery(_value)
+      onSearchQuery && onSearchQuery(_value)
 
-    GA.event({ category: 'Color Wall Search', action: 'Search Query', label: _value }, GA_TRACKER_NAME_BRAND[brandId])
-  }, 500), [])
+      GA.event({ category: 'Color Wall Search', action: 'Search Query', label: _value }, GA_TRACKER_NAME_BRAND[brandId])
+    }, 500),
+    []
+  )
 
   useEffect(() => {
     // if the new search param is empty, do not proceed
-    if (typeof newSearchParam !== 'string' || newSearchParam.trim().length === 0) { return }
+    if (typeof newSearchParam !== 'string' || newSearchParam.trim().length === 0) {
+      return
+    }
 
     // at this point we're now sending off the search based on a set of conditions
     if (limitSearchToFamily) {
@@ -131,7 +145,7 @@ const SearchBar = (props: Props) => {
       }
 
       if (section) {
-        const familiesFromSection = structure.filter(v => compareKebabs(v.name, section)).map(v => v.families)
+        const familiesFromSection = structure.filter((v) => compareKebabs(v.name, section)).map((v) => v.families)
 
         if (familiesFromSection && familiesFromSection.length === 1) {
           dispatch(loadSearchResults(brandId, { language: locale }, newSearchParam, familiesFromSection[0]))
@@ -143,12 +157,14 @@ const SearchBar = (props: Props) => {
     dispatch(loadSearchResults(brandId, { language: locale }, newSearchParam))
   }, [newSearchParam, family, section, limitSearchToFamily])
 
-  const getClassName = (name, subClass) => name ? name + subClass : ''
+  const getClassName = (name, subClass) => (name ? name + subClass : '')
 
   return (
     <div className={`SearchBar ${getClassName(className, '')}`}>
-      <form onSubmit={e => e.preventDefault()} className='SearchBar__search-form'>
-        <label className={`SearchBar__label ${!showLabel ? 'visually-hidden' : ''}`} htmlFor={id}>{label}</label>
+      <form onSubmit={(e) => e.preventDefault()} className='SearchBar__search-form'>
+        <label className={`SearchBar__label ${!showLabel ? 'visually-hidden' : ''}`} htmlFor={id}>
+          {label}
+        </label>
         <div className='SearchBar__inner'>
           {showBackButton && (
             <button type='button' className={`${getClassName(className, '__back')}`} onClick={onClickBackButton}>
@@ -160,32 +176,50 @@ const SearchBar = (props: Props) => {
               <FontAwesomeIcon icon={['fal', 'search']} size='lg' />
             </label>
           )}
-          <div className={`SearchBar__wrapper SearchBar__wrapper--with${query ? '-outline' : 'out-outline'} ${getClassName(className, '__wrapper')}`}>
+          <div
+            className={`SearchBar__wrapper SearchBar__wrapper--with${query ? '-outline' : 'out-outline'} ${getClassName(
+              className,
+              '__wrapper'
+            )}`}
+          >
             <input
               // eslint-disable-next-line jsx-a11y/no-autofocus
               autoFocus
               className={`SearchBar__input ${getClassName(className, '__input')}`}
               id={id}
-              onChange={e => setInputValue(e.target.value)}
+              onChange={(e) => setInputValue(e.target.value)}
               placeholder={placeholder}
               ref={inputRef}
               value={inputValue}
             />
-            {inputValue.length > 0 &&
-              <button type='button' className='SearchBar__clean' onClick={() => {
-                setInputValue('')
-                inputRef.current && inputRef.current.focus()
-              }}>
+            {inputValue.length > 0 && (
+              <button
+                type='button'
+                className='SearchBar__clean'
+                onClick={() => {
+                  dispatch(clearSearch())
+                  setInputValue('')
+                  inputRef.current && inputRef.current.focus()
+                }}
+              >
                 <FontAwesomeIcon icon={['fal', 'times']} />
-              </button>}
+              </button>
+            )}
           </div>
-          {showCancelButton && <div className='SearchBar__cancel-button'>
-            <ButtonBar.Bar>
-              <ButtonBar.Button to='../'>
-                <FormattedMessage id='CANCEL' />
-              </ButtonBar.Button>
-            </ButtonBar.Bar>
-          </div>}
+          {showCancelButton && (
+            <div className='SearchBar__cancel-button'>
+              <ButtonBar.Bar>
+                <ButtonBar.Button
+                  to='../'
+                  onClick={() => {
+                    dispatch(clearSearch())
+                  }}
+                >
+                  <FormattedMessage id='CANCEL' />
+                </ButtonBar.Button>
+              </ButtonBar.Bar>
+            </div>
+          )}
         </div>
       </form>
     </div>

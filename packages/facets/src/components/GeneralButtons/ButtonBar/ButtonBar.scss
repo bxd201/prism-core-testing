@@ -14,7 +14,7 @@ $btn-border-thickness: 1px;
   border: $btn-border-thickness solid var(getThemeColor('buttonBorder'));
   background: $btn-bg;
   font-size: 1em;
-  padding: .25em .75em;
+  padding: 0.25em 0.75em;
   color: $btn-text-color;
   text-decoration: none;
   text-align: center;
@@ -36,7 +36,7 @@ $btn-border-thickness: 1px;
   }
 
   &[disabled] {
-    opacity: .3;
+    opacity: 0.3;
   }
 
   &:focus {
@@ -111,13 +111,13 @@ $btn-border-thickness: 1px;
 
       &__btn {
         @extend %color-wall-mode-btns-btn;
+        gap: 10px;
         min-height: $btn-height--mobile - ($btn-border-thickness * 2);
         border: none;
         border-radius: 0;
 
         @include respond-below(xs) {
           display: flex;
-          flex-direction: column;
           justify-content: space-around;
           white-space: normal;
         }

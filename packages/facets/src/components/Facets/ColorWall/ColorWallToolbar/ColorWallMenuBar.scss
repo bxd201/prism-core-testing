@@ -90,11 +90,14 @@ $menu-bar-width: 27em;
     .menu-bar__button {
       color: var(getThemeColor('dark'));
 
-      &, &:hover, &:active {
+      &,
+      &:hover,
+      &:active {
         background: transparent;
       }
 
-      &:hover, &:active {
+      &:hover,
+      &:active {
         color: var(getThemeColor('dark.lighter'));
       }
     }
@@ -186,7 +189,7 @@ $menu-bar-width: 27em;
     height: auto;
     opacity: 0.95;
     &--active {
-      opacity: 1.0;
+      opacity: 1;
       background: var(getThemeColor('buttonActiveBgColor')) !important;
       color: var(getThemeColor('buttonActiveColor')) !important;
     }
@@ -233,7 +236,11 @@ $menu-bar-width: 27em;
 
 .color-wall-mode-btns__col {
   padding: $ui-spacing;
+  gap: 13px;
   .color-wall-mode-btns__cell {
     margin: 0;
+    @include respond-below(xs) {
+      flex-grow: 1;
+    }
   }
 }
