@@ -29,7 +29,7 @@ type SearchProps = { closeSearch?: () => void, contain?: boolean, crossSearch?: 
 
 const Search = ({ closeSearch = () => {}, contain = false, crossSearch, isChipLocator }: SearchProps) => {
   const { results, count, suggestions, loading } = useSelector(state => state.colors.search)
-  const { addButtonText, colorDetailPageRoot, colorWallBgColor, colorWallPageRoot, routeType }: ColorWallContextProps = useContext(ColorWallContext)
+  const { addButtonText, colorDetailPageRoot, colorWallBgColor, colorWallPageRoot, displayDetailsLink, routeType }: ColorWallContextProps = useContext(ColorWallContext)
   const { brandId, brandKeyNumberSeparator, colorWall: { colorSwatch = {} } }: ConfigurationContextType = useContext(ConfigurationContext)
   const { colorNumOnBottom = false, houseShaped = false } = colorSwatch
   const [hasSearched, updateHasSearched] = useState(typeof count !== 'undefined')
@@ -81,8 +81,8 @@ const Search = ({ closeSearch = () => {}, contain = false, crossSearch, isChipLo
                   </div>
                 </div>
               )
-            } // colorchips color wall
-            : addButtonText ? { renderer: () => <SwatchContent color={result} isOnlyUsedforSearch /> } : null)
+            } // colorchips color wall || canada
+            : addButtonText || displayDetailsLink ? { renderer: () => <SwatchContent color={result} isOnlyUsedforSearch /> } : null)
           }
           style={_style}
         />
