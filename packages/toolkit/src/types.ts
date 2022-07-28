@@ -18,3 +18,17 @@ export interface Color {
   ignore: boolean
   isDark: boolean
 }
+
+export interface ProcessedImageMetadata {
+  imageHeight?: number
+  imageWidth?: number
+  isPortrait?: boolean
+  landscapeHeight: number
+  landscapeWidth: number
+  originalImageHeight: number
+  originalImageWidth: number
+  originalIsPortrait: boolean
+  portraitHeight: number
+  portraitWidth: number
+  url: string
+}
