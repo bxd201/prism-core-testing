@@ -1,6 +1,6 @@
 import React, { createContext, RefObject, ReactNode, useContext, useEffect, useRef, useState } from 'react'
 import { useContainerSize } from '../../hooks'
-import { getTransformParams } from '../../utils/image-rotator'
+import { getCanvasTransformParams } from '../../utils/utils'
 import { ProcessedImageMetadata } from '../../types'
 
 interface ChildrenProp { children?: ReactNode }
@@ -41,7 +41,7 @@ const Button = ({ children, className, disabled, onClick }: ButtonProps & Childr
   const getRotatedImageMetaData = (): ProcessedImageMetadata => {
     const imageWidth = rotatedImageMetadata.isPortrait ? rotatedImageMetadata.portraitWidth : rotatedImageMetadata.landscapeWidth
     const imageHeight = rotatedImageMetadata.isPortrait ? rotatedImageMetadata.portraitHeight : rotatedImageMetadata.landscapeHeight
-    const { canvasWidth, canvasHeight, vScale, hScale, vSkew, hSkew, hTrans, vTrans, rotation } = getTransformParams(angle, imageWidth, imageHeight)
+    const { canvasHeight, canvasWidth, hScale, hSkew, hTrans, rotation, vScale, vSkew, vTrans } = getCanvasTransformParams(angle, imageWidth, imageHeight)
     const canvas = document.createElement('canvas')
     canvas.width = imageWidth
     canvas.height = imageHeight

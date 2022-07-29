@@ -29,10 +29,10 @@ const Template = (args): JSX.Element => {
           {(onRotateLeftClick, onRotateRightClick) => (
             <>
               <button aria-label='anticlockwise' onClick={onRotateLeftClick}>
-                <FontAwesomeIcon className="text-4xl mr-1.5" icon={faUndo} />
+                <FontAwesomeIcon className='text-4xl mr-1.5' icon={faUndo} />
               </button>
               <button aria-label='clockwise' onClick={onRotateRightClick}>
-                <FontAwesomeIcon className="text-4xl ml-1.5" icon={faRedo} />
+                <FontAwesomeIcon className='text-4xl ml-1.5' icon={faRedo} />
               </button>
             </>
           )}
@@ -51,7 +51,7 @@ const Template = (args): JSX.Element => {
         }
         <div className='flex gap-3'>
           {modalView && <ImageRotator.Button
-            className={`mb-5 px-5 py-2 text-sm border border-black uppercase`}
+            className='mb-5 px-5 py-2 text-sm border border-black uppercase'
             onClick={args['ImageRotator.Button (onClick)']}
           >
             cancel
