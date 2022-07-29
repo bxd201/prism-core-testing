@@ -283,14 +283,14 @@ pipeline {
     }
       agent {
         docker {
-          image 'docker.artifactory.sherwin.com/ecomm/utils/barge'
+          image 'docker.artifactory.sherwin.com/ecomm/utils/barge:artifactory'
           args "-u barge"
           alwaysPull true
           reuseNode true
         }
       }
       steps {
-        withCredentials([usernamePassword(credentialsId: 'artifactory_credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+        withCredentials([usernamePassword(credentialsId: 'artifactory_credentials_v2', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
           sh "barge in"
         }
       }
@@ -302,7 +302,7 @@ pipeline {
       }
       agent {
         docker {
-            image 'docker.cpartdc01.sherwin.com/ecomm/utils/buoy:latest'
+            image 'docker.artifactory.sherwin.com/ecomm/utils/buoy:artifactory'
             reuseNode true
             alwaysPull true
             args '-u buoy'
@@ -329,7 +329,7 @@ pipeline {
       steps {
         withCredentials([
           string(credentialsId: 'jenkins_rancher2_bearerToken', variable: 'RANCHER_TOKEN'),
-          usernameColonPassword(credentialsId: 'artifactory_credentials', variable: 'ARTIFACTORY_CREDENTIALS'),
+          usernameColonPassword(credentialsId: 'artifactory_credentials_v2', variable: 'ARTIFACTORY_CREDENTIALS'),
         ]) {
           sh "/buoy/float.sh"
 
