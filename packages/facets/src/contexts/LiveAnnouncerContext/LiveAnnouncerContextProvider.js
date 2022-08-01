@@ -34,7 +34,7 @@ function LiveAnnouncerContextProvider (props: Props) {
         announcePoliteOriginal(msg, id)
       }, 100)
     }
-  }), [ announceAssertiveOriginal, announcePoliteOriginal ])
+  }), [announceAssertiveOriginal, announcePoliteOriginal])
 
   return (
     <LiveAnnouncerContext.Provider value={ctx}>

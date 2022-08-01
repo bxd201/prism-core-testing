@@ -412,12 +412,14 @@ const CVW = (props: CVWPropsType) => {
   return (
     <>
       <>
-        {scenes ? <SceneBlobLoader
+        {scenes
+          ? <SceneBlobLoader
           scenes={scenes}
           variants={variants}
           initHandler={handleBlobLoaderInit}
           handleBlobsLoaded={handleSceneSurfacesLoaded}
-          handleError={handleSceneBlobLoaderError} /> : null}
+          handleError={handleSceneBlobLoaderError} />
+          : null}
         <CVWModalManager />
         <ColorDetailsModal />
         <div style={{ display: toggleCompareColorFlag ? 'block' : 'none' }}>
@@ -491,7 +493,7 @@ const CVW = (props: CVWPropsType) => {
         </div>
       </>
       {
-        isShowFooter && <div className={`cvw__root-container__footer`}>
+        isShowFooter && <div className={'cvw__root-container__footer'}>
           {colorDetailsModalShowing && <div className='cvw__root-container__footer--overlay' />}
           <div className='cvw__root-container__footer--priority'>
             <LivePaletteWrapper />

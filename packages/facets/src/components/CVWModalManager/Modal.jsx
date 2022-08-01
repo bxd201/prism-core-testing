@@ -119,14 +119,16 @@ export const Modal = (props: ModalProps) => {
           <div className={`${globalModalInnerClassName}__content`}>
             {title ? <div className={globalModalTitleClassName}>{title}</div> : null}
             {description ? <div className={globalModalDescriptionClassName}>{description}</div> : null}
-            {allowInput ? <div className={globalModalInputWrapperClassName}><input className={`${globalModalTextInputClassName}`} onChange={setInputVal} value={inputValue} />
+            {allowInput
+              ? <div className={globalModalInputWrapperClassName}><input className={`${globalModalTextInputClassName}`} onChange={setInputVal} value={inputValue} />
               <label aria-label='clear text' className={`${globalModalInputLabelClassName}`} tabIndex='0' role='button' htmlFor='clearModalInput' onClick={clearInputVal} onKeyDown={clearInputVal} onMouseDown={(e: SyntheticEvent) => e.preventDefault()}>
                 <div>
                   <input id='clearModalInput' tabIndex='-1' className='visually-hidden' />
-                  <FontAwesomeIcon size='xs' className={``} icon={['fa', 'times']} />
+                  <FontAwesomeIcon size='xs' className={''} icon={['fa', 'times']} />
                 </div>
               </label>
-            </div> : null}
+            </div>
+              : null}
             {loadingMode ? <CircleLoader /> : null}
             {disabledSave && <div className={globalModalEmptyInputClassName}>{intl.formatMessage({ id: 'SAVE_SCENE_MODAL.EMPTY_INPUT' })}</div>}
             <div className={globalModalButtonsClassName}>

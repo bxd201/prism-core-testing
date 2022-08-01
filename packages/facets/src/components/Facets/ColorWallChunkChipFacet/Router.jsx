@@ -22,7 +22,7 @@ export default ({ children, redirect = true, defaultSection }: Props) => {
   useEffect(() => {
     if (!locale || !brandId) return
     dispatch(loadColors(brandId, { language: locale }))
-  }, [ locale, brandId ])
+  }, [locale, brandId])
 
   return (reduxSection
     ? (
@@ -30,9 +30,9 @@ export default ({ children, redirect = true, defaultSection }: Props) => {
         <Route path={'/color-chunk/:section'}>{children}</Route>
         <Route path={'/color-locator/:colorNumber'}>{children}</Route>
         <Route path={'/color-locator/'}>{children}</Route>
-        {redirect && <Redirect to={`/color-locator/`} />}
+        {redirect && <Redirect to={'/color-locator/'} />}
       </Switch>
-    )
+      )
     : <Propper vPosition={Propper.V_POSITION.CENTER} propSize={`${proppingPct}%`}>
       <HeroLoaderExpanded />
     </Propper>

@@ -39,7 +39,7 @@ function PaletteSuggester (props: Props) {
           const isColorAdded = some(addColors, color)
           return (
             <div className={`${baseClass}__container`} key={id}>
-              <button tabIndex={`${(!isColorAdded && isShowSlider) ? `0` : `-1`}`} aria-label={`${intl.formatMessage({ id: 'ADD_COLOR_TO_PALETTE' }, { colorName: color.name })}`} className={`${baseClass}__container__button ${baseClass}__container__button--focus`} onMouseDown={(e) => e.preventDefault()} onClick={() => handleClick(isColorAdded, isShowSlider, color, props)}>
+              <button tabIndex={`${(!isColorAdded && isShowSlider) ? '0' : '-1'}`} aria-label={`${intl.formatMessage({ id: 'ADD_COLOR_TO_PALETTE' }, { colorName: color.name })}`} className={`${baseClass}__container__button ${baseClass}__container__button--focus`} onMouseDown={(e) => e.preventDefault()} onClick={() => handleClick(isColorAdded, isShowSlider, color, props)}>
                 <div className={`${baseClass}__${displayArea}
                     ${isColorAdded ? `${baseClass}__${displayArea}--active` : `${baseClass}__${displayArea}--unactive`}
                     ${isShowSlider ? `${baseClass}__${displayArea}--show` : `${baseClass}__${displayArea}--hide`}`

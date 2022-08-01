@@ -204,7 +204,8 @@ export function RealColorFacet (props: RealColorFacetProps) {
             initUpload={initUpload}
             uploadInitiated={uploadInitiated}
             uploadButtonText={uploadButtonText}
-            tinter={defaultMask ? <SimpleTintableScene
+            tinter={defaultMask
+              ? <SimpleTintableScene
               spinner={<BallSpinner />}
               sceneType={SCENE_TYPES.ROOM}
               sceneName={sceneName}
@@ -223,7 +224,8 @@ export function RealColorFacet (props: RealColorFacetProps) {
                 handlerError={handleRealColorError}
                 handleUpdate={handleRealColorUpdates}
                 cleanupCallback={handleRealColorCleanup}
-                imageUrl={initialImageUrl} />} /> : null}</div>
+                imageUrl={initialImageUrl} />} />
+          : null}</div>
     <div className={shouldShowInitialImage ? 'scene-visualizer--hidden' : 'scene-visualizer'}>{
       uploadedImage &&
       uploadedImageRefDims &&
@@ -244,7 +246,8 @@ export function RealColorFacet (props: RealColorFacetProps) {
             handlerError={handleRealColorError}
             handleUpdate={handleRealColorUpdates}
             cleanupCallback={handleRealColorCleanup}
-            imageUrl={uploadedImage} />} /> : null}</div>
+            imageUrl={uploadedImage} />} />
+        : null}</div>
   </>)
 }
 

@@ -58,7 +58,7 @@ const ColorSwatchContent = ({ className, color }: { className?: string, color: C
               >
                 <FontAwesomeIcon className='add-icon' icon={['fal', 'plus-circle']} size='2x' />
               </button>
-            )
+              )
           }
           <InfoButton
             ref={el => swatchContentRefs.current.push(el)}

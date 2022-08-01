@@ -53,14 +53,16 @@ const MyIdeasContainer = (props: MyIdeasContainerProps) => {
   return (
     <CardMenu menuTitle={at(messages, 'MY_IDEAS.MY_IDEAS_HEADER')[0]}>
       {(setCardShowing, setCardTitle) => (
-        <div ref={wrapperRef} className={`my-ideas-container__wrapper`}>
-          {FIREBASE_AUTH_ENABLED && !isLoggedIn ? <AnonLogin />
-            : isLoggedIn ? <MyIdeas brandId={props.config.brandId} setCardTitle={setCardTitle} />
-              : <div className={`my-ideas-container__content`}>
-                <div className={`my-ideas-container__description`}>
+        <div ref={wrapperRef} className={'my-ideas-container__wrapper'}>
+          {FIREBASE_AUTH_ENABLED && !isLoggedIn
+            ? <AnonLogin />
+            : isLoggedIn
+              ? <MyIdeas brandId={props.config.brandId} setCardTitle={setCardTitle} />
+              : <div className={'my-ideas-container__content'}>
+                <div className={'my-ideas-container__description'}>
                   <FormattedMessage id='MY_IDEAS.MY_IDEAS_CONTENT' />
                 </div>
-                <div className={`my-ideas-container__buttons`}>
+                <div className={'my-ideas-container__buttons'}>
                   <button><FormattedMessage id='REGISTER' /></button>
                   <div><Login /></div>
                 </div>

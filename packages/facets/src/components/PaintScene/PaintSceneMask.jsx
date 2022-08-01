@@ -60,7 +60,7 @@ const PaintSceneMasking = forwardRef((props: paintSceneMaskingProps, ref) => {
   const canvasRef = useRef()
   const mergeCanvasRef = useRef()
   const imageRef = useRef()
-  let mergeCtx = useRef()
+  const mergeCtx = useRef()
   const paintSceneWorkspace = useSelector(store => store.paintSceneWorkspace)
   const [thumbnailListInfo, setThumbnailList] = useState([])
   const [paintSceneWorkspaceState, setPaintSceneWorkspaceState] = useState(paintSceneWorkspace)
@@ -182,7 +182,7 @@ const ThumbnailsList = ({ thumbnailList, swichImage, workspace }: thumbnailsList
   const greyScaleBackground = (imageDataList) => {
     return imageDataList.map((imageData) => {
       for (let i = 0; i < imageData.data.length; i += 4) {
-        let pixel = (imageData.data[i] !== 0 || imageData.data[i + 1] !== 0 || imageData.data[i + 2] !== 0) ? 255 : 0
+        const pixel = (imageData.data[i] !== 0 || imageData.data[i + 1] !== 0 || imageData.data[i + 2] !== 0) ? 255 : 0
         imageData.data[i] = pixel
         imageData.data[i + 1] = pixel
         imageData.data[i + 2] = pixel

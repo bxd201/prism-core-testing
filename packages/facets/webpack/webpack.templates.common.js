@@ -11,7 +11,6 @@ const flags = require('./constants')
 const templateConstants = require('./constants.templates')
 const requireContext = require('require-context')
 const alias = require('./partial.resolve.alias')
-const stats = require('./partial.stats')
 const optimization = require('./partial.optimization')
 const moduleRuleJsx = require('./partial.module.rules.jsx')
 
@@ -48,7 +47,6 @@ const DEFINED_VARS = {
 
 module.exports = {
   name: 'prismTemplates',
-  stats: stats,
   target: 'web',
   watch: false,
   cache: !flags.production,
@@ -82,44 +80,38 @@ module.exports = {
           {
             loader: 'postcss-loader',
             options: {
-              plugins: [
-                require('autoprefixer')()
-              ]
+              postcssOptions: {
+                plugins: [
+                  require('autoprefixer')()
+                ]
+              }
             }
           },
           'sass-loader'
         ]
       },
-      moduleRuleJsx,
-      {
-        test: /\.ejs$/,
-        use: [
-          'html-loader',
-          {
-            loader: 'ejs-html-loader',
-            options: DEFINED_VARS
-          }
-        ]
-      }
+      moduleRuleJsx
     ]
   },
   optimization: optimization,
   plugins: [
+    new webpack.DefinePlugin(Object.entries(DEFINED_VARS).reduce((last, next) => ({ ...last, [next[0]]: JSON.stringify(next[1]) }), {})),
     new HtmlWebpackPlugin({
       inject: true,
       template: path.resolve(templateConstants.srcTemplatesPath, 'index/index.ejs'),
-      filename: path.resolve(flags.distPath, 'index.html')
+      filename: path.resolve(flags.distPath, 'index.html'),
+      templateParameters: DEFINED_VARS
     }),
     ...allTemplates.map(template => {
       return new HtmlWebpackPlugin({
         inject: false,
         filename: `${template.output}`,
-        template: `${template.input}`
+        template: `${template.input}`,
+        templateParameters: DEFINED_VARS
       })
     }),
     new MiniCssExtractPlugin({
       filename: flags.production ? 'prism-templates/css/[name].[contenthash].css' : 'prism-templates/css/[name].css'
-    }),
-    new webpack.DefinePlugin(Object.entries(DEFINED_VARS).reduce((last, next) => ({ ...last, [next[0]]: JSON.stringify(next[1]) }), {}))
+    })
   ].filter(p => p)
 }

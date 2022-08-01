@@ -2,13 +2,11 @@ FROM docker.artifactory.sherwin.com/ecomm/utils/moldy-nginx:latest
 
 LABEL maintainer="Justis Estell <justis.f.estell@sherwin.com>"
 
-RUN mkdir -p /usr/share/nginx/html/storybook/facets
 RUN mkdir -p /usr/share/nginx/html/storybook/toolkit
 RUN mkdir -p /usr/share/nginx/html/docs
 RUN mkdir -p /usr/share/nginx/html/demo
 RUN mkdir -p /usr/share/nginx/html/coverage
 
-COPY dist/packages/facets/dist/storybook /usr/share/nginx/html/storybook/facets
 COPY dist/packages/toolkit/public /usr/share/nginx/html/storybook/toolkit
 COPY dist/packages/prism-docs/build /usr/share/nginx/html/docs
 COPY dist/packages/prism-demo/build /usr/share/nginx/html/demo

@@ -102,9 +102,11 @@ export const getInstance = memoizee((seekingEl: HTMLElement): Promise<Instance> 
 })
 
 export const unmount = memoizee((el: HTMLElement) => {
-  return !el ? noop : () => {
-    unsubscribeFromAllEvents(el)()
-    const root = createRoot(el)
-    return root.unmount()
-  }
+  return !el
+    ? noop
+    : () => {
+        unsubscribeFromAllEvents(el)()
+        const root = createRoot(el)
+        return root.unmount()
+      }
 })

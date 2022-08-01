@@ -116,7 +116,8 @@ const CollectionDetail = ({ addToLivePalette, collectionDetailData }: Props) => 
               <a className={`${collectionButton}`} href={getEnvUrl(collectionDetailData.pdfUrl)} target='_blank'>
                 Download PDF
               </a>
-            </div> : null}
+            </div>
+            : null}
         </div>
         <div className={`${collectionColorList}`} style={houseShaped ? { height: '630px' } : {}}>
           <div ref={_gridWrapperRef} className={`${collectionColorListVertical}`}>
@@ -148,10 +149,10 @@ const CollectionDetail = ({ addToLivePalette, collectionDetailData }: Props) => 
           </div>
           {showScrollArrows && <>
             {showTopScrollControl && <div role='presentation' onClick={() => verticalScroll(_gridWrapperRef, 'top', gridHeight, _cellSize)} className={`${verticalControlsTrigger} ${triggerPrevious}`}>
-              <FontAwesomeIcon className={``} icon={['fa', 'angle-up']} />
+              <FontAwesomeIcon className={''} icon={['fa', 'angle-up']} />
             </div>}
             {showBottomScrollControl && <div role='presentation' onClick={() => verticalScroll(_gridWrapperRef, 'bottom', gridHeight, _cellSize)} className={`${verticalControlsTrigger} ${triggerNext}`}>
-              <FontAwesomeIcon className={``} icon={['fa', 'angle-down']} />
+              <FontAwesomeIcon className={''} icon={['fa', 'angle-down']} />
             </div>}
           </>}
         </div>

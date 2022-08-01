@@ -31,7 +31,7 @@ function HeroLoader (props: Props) {
       [varNames.loaders.hero.color4]: colors[3],
       [varNames.loaders.hero.color5]: colors[4]
     }
-  }, [ finalColor ])
+  }, [finalColor])
 
   return (
     <CSSVariableApplicator variables={cssVars}>

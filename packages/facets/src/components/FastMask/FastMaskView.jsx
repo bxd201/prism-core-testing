@@ -240,7 +240,7 @@ const FastMaskView = (props: FastMaskProps) => {
             } catch {
               handleSceneBlobLoaderError({
                 type: SYSTEM_ERROR,
-                err: `Blob urls not created for fast mask error`
+                err: 'Blob urls not created for fast mask error'
               })
             }
           } else {
@@ -294,7 +294,8 @@ const FastMaskView = (props: FastMaskProps) => {
   }, [variantsCollection, imageProcessed])
 
   return (<>
-    {imageProcessed && variantsCollection.length && !showSpinner ? <div className={isForCVW ? cvwBaseClassName : baseClassName}>
+    {imageProcessed && variantsCollection.length && !showSpinner
+      ? <div className={isForCVW ? cvwBaseClassName : baseClassName}>
       <div className={tintWrapperClassName}>
         <SingleTintableSceneView
           spinner={spinner}
@@ -304,14 +305,17 @@ const FastMaskView = (props: FastMaskProps) => {
           scenesCollection={scenesCollection}
           variantsCollection={variantsCollection} />
       </div>
-    </div> : <div className={baseClassName}>
+    </div>
+      : <div className={baseClassName}>
       <div className={isForCVW ? cvwBackgroundWrapperClassName : backgroundWrapperClassName}>
         {imageUrl && <img src={imageUrl} className={backgroundImageClassName} alt={intl.formatMessage({ id: 'USER_UPLOAD' })} />}
         <div className={loaderWrapperClassName}>
           {spinner ? <div className={altSpinnerClassName}>{spinner}</div> : <CircleLoader />}
-          {loadingMessage?.length ? <div className={loadingMessageWrapperClassName}>{loadingMessage.map(msg => {
-            return (<div className={loadingMessageItemsClassName} key={msg}>{msg}</div>)
-          })}</div> : null}
+          {loadingMessage?.length
+            ? <div className={loadingMessageWrapperClassName}>{loadingMessage.map(msg => {
+              return (<div className={loadingMessageItemsClassName} key={msg}>{msg}</div>)
+            })}</div>
+            : null}
         </div>
       </div>
     </div>}

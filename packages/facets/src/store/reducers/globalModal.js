@@ -34,7 +34,8 @@ export const modalInfo = (state: Object | null = null, action: { type: string, p
         layers
       } = action.payload
 
-      return { ...initialState,
+      return {
+        ...initialState,
         uid,
         actions,
         shouldDisplayModal,

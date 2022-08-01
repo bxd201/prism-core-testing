@@ -36,7 +36,7 @@ const ConfirmationModal = ({ onClickNo }: Props) => {
         <p className={`${contentClass}`}>
           <FormattedMessage id='CONFIRMATION_DIALOG_MATCH_A_PHOTO_EXIT' />
         </p>
-        <Link tabIndex='-1' to={`/active`}>
+        <Link tabIndex='-1' to={'/active'}>
           <button ref={btnYesRef} onBlur={() => blurHandler(btnYesRef)} className={`${buttonClass}`} onClick={() => history.push('/active')}>
             <FormattedMessage id='YES' />
           </button>

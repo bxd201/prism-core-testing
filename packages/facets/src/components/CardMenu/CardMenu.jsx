@@ -39,7 +39,7 @@ const CardMenu = ({ children, menuTitle = '', showBackByDefault = false, backPat
           if (showBackByDefault && !cardShowing) backPath && history.push(backPath)
         }}>
           <div>
-            <FontAwesomeIcon size='lg' className={``} icon={['fa', 'angle-left']} />
+            <FontAwesomeIcon size='lg' className={''} icon={['fa', 'angle-left']} />
             &nbsp;<span className='card-menu__button-left-text'><FormattedMessage id='BACK' /></span>
           </div>
         </button>}

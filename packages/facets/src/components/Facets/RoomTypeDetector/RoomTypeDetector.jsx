@@ -79,22 +79,29 @@ const RoomTypeDetector = () => {
       <FileInput onChange={handleChange} disabled={false} id={FILE_UPLOAD_ID} placeholder={uploadedImage ? `${formatMessage({ id: 'SELECT_NEW_IMAGE' })}` : `${formatMessage({ id: 'SELECT_IMAGE' })}`} />
 
       <div className='RoomTypeDetector__side-by-side'>
-        {uploadedImage ? <>
+        {uploadedImage
+          ? <>
           <div className='RoomTypeDetector__side-by-side__side'>
             <Card title={`${formatMessage({ id: 'ORIGINAL_IMAGE' })}`} image={!segmentationLoading ? uploadedImage : undefined} omitShim={segmentationProcessing}>
-              {segmentationLoading ? (
+              {segmentationLoading
+                ? (
                 <CircleLoader />
-              ) : segmentationProcessing ? (
+                  )
+                : segmentationProcessing
+                  ? (
                 <GenericOverlay type={GenericOverlay.TYPES.LOADING} message={`${formatMessage({ id: 'DETECTING' })}...`} semitransparent />
-              ) : null}
+                    )
+                  : null}
             </Card>
           </div>
 
           <div className='RoomTypeDetector__side-by-side__side'>
             <Card title={`${formatMessage({ id: 'DETECTED_REGIONS' })}`} image={segmentationMapImagePath}>
-              {segmentationLoading || segmentationProcessing ? (
+              {segmentationLoading || segmentationProcessing
+                ? (
                 <CircleLoader />
-              ) : null}
+                  )
+                : null}
             </Card>
           </div>
 
@@ -103,10 +110,12 @@ const RoomTypeDetector = () => {
               <FastMask hideUploadBtn />
             </Card>
           </div>
-        </> : null}
+        </>
+          : null}
       </div>
 
-      {segmentationSuccess && relevantLabels.length ? (
+      {segmentationSuccess && relevantLabels.length
+        ? (
         <ul className='RoomTypeDetector__labels'>
           {relevantLabels.map((l, i) => {
             return (
@@ -116,9 +125,11 @@ const RoomTypeDetector = () => {
             )
           })}
         </ul>
-      ) : null}
+          )
+        : null}
 
-      {segmentationSuccess && roomPieces && roomPieces.length ? (
+      {segmentationSuccess && roomPieces && roomPieces.length
+        ? (
         <div className='RoomTypeDetector__found-pieces'>
           {roomPieces.map((piece, index) => <div key={piece.label} className='RoomTypeDetector__found-pieces__piece'>
             <RoomPiece label={piece.label}
@@ -130,7 +141,8 @@ const RoomTypeDetector = () => {
               swRecommendations={piecesData[index].recurringCoordinatingColors} />
           </div>)}
         </div>
-      ) : null}
+          )
+        : null}
     </ColorCollector.Provider>
   )
 }

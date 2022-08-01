@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/label-has-for */
 // @flow
 import React, { useState, useRef, useEffect, useContext } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -73,7 +72,7 @@ const ImageRotateTerms = ({ rotateImage, imageData, handleDismiss }: Props) => {
 
   return (
     <div className={`${wrapperClass}`}>
-      <div className={`${wrapperContainerClass} ${hideModal ? `${wrapperContainerInactiveClass}` : ``}`}>
+      <div className={`${wrapperContainerClass} ${hideModal ? `${wrapperContainerInactiveClass}` : ''}`}>
         <div className={`${wrapperToolsClass}`}>
           <div className={`${wrapperToolsMessageClass}`}>
             <FormattedMessage id='PREVIEW_ROTATE_SCALE' />
@@ -103,7 +102,8 @@ const ImageRotateTerms = ({ rotateImage, imageData, handleDismiss }: Props) => {
                 onKeyDown={keyDownHandler}
                 tabIndex='0' className={`${wrapperAgreeTermsCheckboxLabelClass}`}>
                 {
-                  (acceptTerms) ? <FontAwesomeIcon icon={['fa', 'dot-circle']} style={{ color: '#2cabe1' }} size='lg' />
+                  (acceptTerms)
+                    ? <FontAwesomeIcon icon={['fa', 'dot-circle']} style={{ color: '#2cabe1' }} size='lg' />
                     : <FontAwesomeIcon icon={['fa', 'dot-circle']} style={{ color: '#e5e5e5' }} size='lg' />
                 }
                 <input tabIndex='-1' className='visually-hidden' type='checkbox' value='terms' checked={acceptTerms} onChange={handleChange} />
@@ -118,7 +118,7 @@ const ImageRotateTerms = ({ rotateImage, imageData, handleDismiss }: Props) => {
           disabled={!acceptTerms}
           aria-label={acceptTerms ? 'done' : ''}
           tabIndex={acceptTerms ? '0' : '-1'}
-          className={`${wrapperAgreeTermsAcceptClass} ${acceptTerms ? `${wrapperAgreeTermsAcceptActiveClass}` : ``}`}
+          className={`${wrapperAgreeTermsAcceptClass} ${acceptTerms ? `${wrapperAgreeTermsAcceptActiveClass}` : ''}`}
           onClick={handleDismiss}><FormattedMessage id='DONE' /></button>
       </div>
       { hideModal && <div className={`${wrapperLoaderClass}`}><CircleLoader /></div> }

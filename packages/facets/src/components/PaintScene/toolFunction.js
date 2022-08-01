@@ -1,5 +1,6 @@
 // @flow
-import { copyImageList, getColorAtPixel, getSelectArea,
+import {
+  copyImageList, getColorAtPixel, getSelectArea,
   edgeDetect, getActiveColorRGB, hexToRGB,
   floodFillScanLineStack, drawImagePixelByPath, getImageCoordinateByPixel,
   eraseIntersection, getPaintAreaPath, updateDeleteAreaList, createPolygon,
@@ -28,7 +29,7 @@ export const bucketPaint = (e, state, props, ref) => {
   const mergeContext = mergeCanvasRef.current.getContext('2d')
   const imageData = mergeContext.getImageData(0, 0, mergeContext.canvas.width, mergeContext.canvas.height)
 
-  let copyImagePathList = copyImageList(imagePathList)
+  const copyImagePathList = copyImageList(imagePathList)
   const RGB = getActiveColorRGB(hexToRGB(lpActiveColor.hex))
   const ctx = CFICanvas2.current.getContext('2d')
   const performance = window.performance.now()
@@ -46,7 +47,8 @@ export const bucketPaint = (e, state, props, ref) => {
     pixelIndexAlphaMap: pixelIndexAlphaMap,
     isEnabled: true,
     linkedOperation: null,
-    siblingOperations: null })
+    siblingOperations: null
+  })
   return {
     imagePathList: copyImagePathList,
     undoIsEnabled: checkUndoIsEnabled(copyImagePathList),
@@ -95,7 +97,7 @@ export const selectArea = (e, state, ref) => {
       let hasAdd = false
       for (let i = 0; i < groupSelectList.length; i++) {
         if (groupSelectList[i].selectPath.includes(index)) {
-          let toggleSelectId = groupSelectList[i].id
+          const toggleSelectId = groupSelectList[i].id
           newImagePathList = newImagePathList.map((item) => item.id === toggleSelectId ? { ...item, isEnabled: false } : item)
           newImagePathList.push({
             type: 'unselect-group',
@@ -105,7 +107,8 @@ export const selectArea = (e, state, ref) => {
             toggleSelectId: toggleSelectId,
             isEnabled: true,
             linkedOperation: null,
-            siblingOperations: null })
+            siblingOperations: null
+          })
           groupSelectList.splice(i, 1)
           tmpSelectPath = null
           tmpEdgeArea = null
@@ -122,7 +125,8 @@ export const selectArea = (e, state, ref) => {
           linkGroupId: tmplinkGroupId
         })
         newImagePathList.push(
-          { type: 'select-group',
+          {
+            type: 'select-group',
             data: tmpEdgeArea,
             redoPath: tmpSelectPath,
             color: [255, 255, 255, 255],
@@ -131,7 +135,8 @@ export const selectArea = (e, state, ref) => {
             ancestorId: ancestorId,
             isEnabled: true,
             linkedOperation: null,
-            siblingOperations: null })
+            siblingOperations: null
+          })
       }
       return { groupSelectList, imagePathList: newImagePathList }
     }
@@ -153,7 +158,8 @@ export const selectArea = (e, state, ref) => {
               toggleSelectId: linkId,
               isEnabled: true,
               linkedOperation: null,
-              siblingOperations: null })
+              siblingOperations: null
+            })
             selectedArea.splice(i, 1)
             break
           }
@@ -170,16 +176,19 @@ export const selectArea = (e, state, ref) => {
             selectPath: imagePath
           })
           newImagePathList.push(
-            { type: 'select',
+            {
+              type: 'select',
               data: edge,
               redoPath: imagePath,
               color: [255, 255, 255, 255],
               id: linkId,
               isEnabled: true,
               linkedOperation: null,
-              siblingOperations: null })
+              siblingOperations: null
+            })
         }
-        return { selectedArea,
+        return {
+          selectedArea,
           imagePathList: newImagePathList,
           undoIsEnabled: checkUndoIsEnabled(newImagePathList),
           redoPathList: [],
@@ -196,14 +205,16 @@ export const selectArea = (e, state, ref) => {
           selectPath: imagePath
         })
         newImagePathList.push(
-          { type: 'select',
+          {
+            type: 'select',
             data: edge,
             redoPath: imagePath,
             color: [255, 255, 255, 255],
             id: linkId,
             isEnabled: true,
             linkedOperation: null,
-            siblingOperations: null })
+            siblingOperations: null
+          })
         return {
           selectedArea,
           imagePathList: newImagePathList,
@@ -217,12 +228,12 @@ export const selectArea = (e, state, ref) => {
 }
 
 export const group = (state) => {
-  let newGroupSelectList = []
+  const newGroupSelectList = []
   const { selectedArea, groupSelectList, groupAreaList, imagePathList, groupIds } = state
-  let copyImagePathList = copyImageList(imagePathList)
+  const copyImagePathList = copyImageList(imagePathList)
   let newImagePathList
-  let newGroupIds = [...groupIds]
-  let newGroupAreaList = [...groupAreaList]
+  const newGroupIds = [...groupIds]
+  const newGroupAreaList = [...groupAreaList]
   let groupAreaPath = []
   let groupEdgeList = []
   let linkGroupId = []
@@ -306,7 +317,7 @@ export const group = (state) => {
 
 export const ungroup = (state) => {
   const { groupSelectList, groupAreaList, imagePathList } = state
-  let copyImagePathList = copyImageList(imagePathList)
+  const copyImagePathList = copyImageList(imagePathList)
   let newGroupIds = []
   let removedIds = []
   let newImagePathList
@@ -377,7 +388,7 @@ export const ungroup = (state) => {
 
 export const deleteGroup = (state) => {
   const { imagePathList, groupSelectList, selectedArea, groupIds, groupAreaList, deleteAreaList } = state
-  let updateImagePathList = copyImageList(imagePathList)
+  const updateImagePathList = copyImageList(imagePathList)
   let newGroupIds = []
   const deleteId = uniqueId()
   selectedArea.forEach(selectArea => {
@@ -446,7 +457,8 @@ export const deleteGroup = (state) => {
     groupSelectList: [],
     groupAreaList: newGroupAreaList,
     deletAreaList: deleteAreaList,
-    groupIds: newGroupIds }
+    groupIds: newGroupIds
+  }
 }
 
 export const createOrDeletePolygon = (isAddArea, state, props, ref) => {
@@ -492,14 +504,14 @@ export const createPolygonPin = (e, state, props, ref, coordinate, pointList) =>
   const { clientX, clientY } = e
   const { BeginPointList, lineStart } = state
   const { CFICanvas4, CFICanvasContextPaint, CFICanvasContext4, canvasOffsetWidth, canvasOffsetHeight, CFIWrapper } = ref
-  let ctxDraw = CFICanvas4.current.getContext('2d')
+  const ctxDraw = CFICanvas4.current.getContext('2d')
   CFICanvasContextPaint.clearRect(0, 0, canvasOffsetWidth, canvasOffsetHeight)
   CFICanvasContext4.clearRect(0, 0, canvasOffsetWidth, canvasOffsetHeight)
   pointList.length > 2 && repaintCircleLine(ctxDraw, BeginPointList, pointList.slice(1, -1))
   const canvasWrapperOffset = getCanvasWrapperOffset(CFIWrapper)
   const leftOffset = clientX - canvasWrapperOffset.x
   const topOffset = clientY - canvasWrapperOffset.y
-  let newState = dropPin(leftOffset, topOffset, BeginPointList.length > 0)
+  const newState = dropPin(leftOffset, topOffset, BeginPointList.length > 0)
   if (lineStart.length > 0) {
     ctxDraw.beginPath()
     const end = [...coordinate]
@@ -536,7 +548,7 @@ export const eraseOrPaintMouseUp = (state, props, ref) => {
   if (activeTool === toolNames.ERASE && prevPoint !== null) {
     const RGB = getActiveColorRGB({ red: 255, blue: 255, green: 255 })
     const erasePathWithAlpha = getImageCoordinateByPixel(CFICanvasPaint, RGB, canvasOffsetWidth, canvasOffsetHeight, true)
-    let erasePath = []
+    const erasePath = []
     Object.keys(erasePathWithAlpha[1]).forEach(key => {
       if (erasePathWithAlpha[1][key] > 126) {
         erasePath.push(parseInt(key))
@@ -550,7 +562,8 @@ export const eraseOrPaintMouseUp = (state, props, ref) => {
     repaintImageByPath(newImagePathList, CFICanvas2, canvasOffsetWidth, canvasOffsetHeight, true)
   }
   CFICanvasContextPaint.clearRect(0, 0, canvasOffsetWidth, canvasOffsetHeight)
-  return { isDragging: false,
+  return {
+    isDragging: false,
     imagePathList: newImagePathList,
     groupAreaList: newGroupAreaList,
     deletAreaList: newDeleteAreaList,
@@ -590,7 +603,7 @@ export const eraseOrPaintMouseDown = (e, state, props, ref) => {
   const { lpActiveColor } = props
   const { CFICanvas2, canvasOriginalDimensions, CFICanvasContextPaint } = ref
   if ((lpActiveColor === null || (lpActiveColor.constructor === Object && Object.keys(lpActiveColor).length === 0)) && activeTool === toolNames.PAINTBRUSH) return
-  const lpActiveColorRGB = (activeTool === toolNames.ERASE) ? `rgba(255, 255, 255, 1)` : `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})`
+  const lpActiveColorRGB = (activeTool === toolNames.ERASE) ? 'rgba(255, 255, 255, 1)' : `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})`
   const { clientX, clientY } = e
   const canvasDims = CFICanvas2.current.getBoundingClientRect()
   const currentPoint = getTranslatedCoords(canvasDims, canvasOriginalDimensions.width, canvasOriginalDimensions.height, clientX, clientY)
@@ -701,7 +714,7 @@ export const getActiveGroupTool = (state: Object) => {
 }
 
 export const panMove = (event, state, ref, context) => {
-  let { canvasOriginalDimensions, wrapperOriginalDimensions } = ref
+  const { canvasOriginalDimensions, wrapperOriginalDimensions } = ref
   const { canvasZoom, canvasMouseDown } = state
   if (canvasZoom <= 1 || canvasZoom >= 8) return
   if (!canvasMouseDown) return
@@ -748,14 +761,15 @@ export const getDefinedPolygon = (e, state, props, ref, isAddArea, clearCanvasCa
   }
   if (isBackToStart) {
     clearCanvasCallback()
-    let newState = createOrDeletePolygon(isAddArea, state, props, ref)
+    const newState = createOrDeletePolygon(isAddArea, state, props, ref)
     clearCanvasCallback()
     CFICanvasContext4.clearRect(0, 0, canvasOffsetWidth, canvasOffsetHeight)
     repaintImageByPath(newState.imagePathList, CFICanvas2, canvasOffsetWidth, canvasOffsetHeight)
     return newState
   } else {
-    let newState = createPolygonPin(e, state, props, ref, [X, Y], presentPoly)
-    return { ...newState,
+    const newState = createPolygonPin(e, state, props, ref, [X, Y], presentPoly)
+    return {
+      ...newState,
       lineStart: [X, Y],
       polyList: poly,
       presentPolyList: presentPoly
@@ -788,7 +802,7 @@ export const handleMouseMove = (e, state, props, ref) => {
   paintCursorRef.current && ref.paintCursorRef.current.handleMouseMove(clientX, clientY)
   if ((lpActiveColor === null || (lpActiveColor.constructor === Object && Object.keys(lpActiveColor).length === 0)) && activeTool === toolNames.PAINTBRUSH) return
   if ((lpActiveColor && activeTool === toolNames.PAINTBRUSH) || activeTool === toolNames.ERASE) {
-    const lpActiveColorRGB = (activeTool === toolNames.ERASE) ? `rgba(255, 255, 255, 1)` : `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})`
+    const lpActiveColorRGB = (activeTool === toolNames.ERASE) ? 'rgba(255, 255, 255, 1)' : `rgb(${lpActiveColor.red}, ${lpActiveColor.green}, ${lpActiveColor.blue})`
     if (isDragging) {
       const currentPoint = getTranslatedCoords(canvasDims, canvasOriginalDimensions.width, canvasOriginalDimensions.height, clientX, clientY)
       if ((activeTool === toolNames.PAINTBRUSH) || (activeTool === toolNames.ERASE)) {

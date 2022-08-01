@@ -13,7 +13,7 @@ import { KEY_CODES } from 'src/constants/globals'
 import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import '../SingleTintableSceneView/SceneSelectorNavButton.scss'
 
-const baseClass = `cvw-help`
+const baseClass = 'cvw-help'
 const wrapper = `${baseClass}__wrapper`
 const tabsContainer = `${baseClass}__tabs-container`
 const contentWrapper = `${baseClass}__content-wrapper`
@@ -156,7 +156,8 @@ const HelpItemContent = forwardRef((props: HelpItemContentProps, ref) => {
     </div>
     <div className={`${contentDetails}`}>
       {
-        (tabContent) ? <ul className={`${helpIcons}`}>
+        (tabContent)
+          ? <ul className={`${helpIcons}`}>
           {
             tabContent && tabContent.map((tab: Object, index: number) => {
               const iconProps = {}
@@ -169,7 +170,7 @@ const HelpItemContent = forwardRef((props: HelpItemContentProps, ref) => {
               const sectionItem = help[getDataElement(data.header)]?.[getDataElement(tab.iconInfoName)]
               return (tab.iconInfoContent[0] || sectionItem) && (
                 <li key={`li-${index}`}>
-                  <div className={`${iconWrap} ${(tab.isUndoRedo) ? `${iconWrapUndoRedo}` : ``}`}>
+                  <div className={`${iconWrap} ${(tab.isUndoRedo) ? `${iconWrapUndoRedo}` : ''}`}>
                     {
                       (Array.isArray(tab.fontAwesomeIcon))
                         ? tab.fontAwesomeIcon.map((fontIcon, index) => {
@@ -181,11 +182,11 @@ const HelpItemContent = forwardRef((props: HelpItemContentProps, ref) => {
                           }
                           return sectionItem?.icon
                             ? <Iconography name={sectionItem?.icon} index={index} key={`icon-${index}`} />
-                            : <FontAwesomeIcon key={`icon-${index}`} className={`${(index > 0 && !tab.isUndoRedo) ? secondIcon : ``}`} icon={[fontIcon.variant, fontIcon.icon]} size='lg' transform={fontIcon.rotate ? { rotate: fontIcon.rotate } : {}} {...iconProps} />
+                            : <FontAwesomeIcon key={`icon-${index}`} className={`${(index > 0 && !tab.isUndoRedo) ? secondIcon : ''}`} icon={[fontIcon.variant, fontIcon.icon]} size='lg' transform={fontIcon.rotate ? { rotate: fontIcon.rotate } : {}} {...iconProps} />
                         })
                         : sectionItem?.icon
                           ? <Iconography name={sectionItem?.icon} style={{ position: 'relative', float: 'left', backgroundColor: 'white' }} />
-                          : <FontAwesomeIcon className={``} icon={[tab.fontAwesomeIcon.variant, tab.fontAwesomeIcon.icon]} size='lg' transform={tab.fontAwesomeIcon.rotate ? { rotate: tab.fontAwesomeIcon.rotate } : {}} {...iconProps} />
+                          : <FontAwesomeIcon className={''} icon={[tab.fontAwesomeIcon.variant, tab.fontAwesomeIcon.icon]} size='lg' transform={tab.fontAwesomeIcon.rotate ? { rotate: tab.fontAwesomeIcon.rotate } : {}} {...iconProps} />
                     }
                   </div>
                   <div className={`${iconInfo}`}>
@@ -200,13 +201,16 @@ const HelpItemContent = forwardRef((props: HelpItemContentProps, ref) => {
               )
             })
           }
-        </ul> : (imageList) ? <ul className={`${helpImages}`}>
+        </ul>
+          : (imageList)
+              ? <ul className={`${helpImages}`}>
           {
             imageList && imageList.map((item, index) => <li key={`li-${index}`} className={`${helpImages}__cell ${(index > 0) ? `${helpImages}__cell--overlay ${helpImages}__cell--${index}` : `${helpImages}__cell--base`}`}>
               {help ? <img className={`${helpImages}__i`} src={help[item.imagePathKey]} alt={item.alt ? formatMessage({ id: item.alt }) : ''} /> : null}
             </li>)
           }
-        </ul> : ''
+        </ul>
+              : ''
       }
       {
         imageListMobile && <ul className={`${helpImagesMobile}`}>

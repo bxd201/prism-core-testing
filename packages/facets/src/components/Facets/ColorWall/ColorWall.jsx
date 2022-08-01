@@ -151,7 +151,7 @@ const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: 
       const [cellRow: number, cellColumn: number] = getCoords(chunk, focusedCell.current)
 
       ;({
-        '9': () => {
+        9: () => {
           // use default tab behavior when focused on bloomed cell
           if (params.colorId && document.activeElement === cellRefs.current[params.colorId] && !e.shiftKey) { return }
 
@@ -181,17 +181,17 @@ const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: 
             focusedCell.current = null
           }
         },
-        '13': () => {
+        13: () => {
           // directly modifing params.colorId instead of calling history.push will make the react-test-renderer not run the useEffect that depends on params.colorId
           focusedCell.current && createActiveColorRoute.current()
         },
-        '27': () => {
+        27: () => {
           focusedCell.current && createInactiveColorRoute.current(colorMap[focusedCell.current])
         },
-        '37': () => { cellColumn > 0 && cellRefs.current[chunk[cellRow][cellColumn - 1]].focus() },
-        '38': () => { cellRow > 0 && cellRefs.current[chunk[cellRow - 1][cellColumn]].focus() },
-        '39': () => { cellColumn < chunk[cellRow].length - 1 && cellRefs.current[chunk[cellRow][cellColumn + 1]].focus() },
-        '40': () => { cellRow < chunk.length - 1 && cellRefs.current[chunk[cellRow + 1][cellColumn]].focus() }
+        37: () => { cellColumn > 0 && cellRefs.current[chunk[cellRow][cellColumn - 1]].focus() },
+        38: () => { cellRow > 0 && cellRefs.current[chunk[cellRow - 1][cellColumn]].focus() },
+        39: () => { cellColumn < chunk[cellRow].length - 1 && cellRefs.current[chunk[cellRow][cellColumn + 1]].focus() },
+        40: () => { cellRow < chunk.length - 1 && cellRefs.current[chunk[cellRow + 1][cellColumn]].focus() }
       }[e.keyCode] || (() => {}))()
     }
 
@@ -242,14 +242,16 @@ const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: 
     const lengthOfLongestRow: number = getLongestArrayIn2dArray(chunk)
     const containsBloomedCell: boolean = getCoords(chunk, params.colorId)[0] !== -1
     const isLargeLabel: boolean = cellSize * lengthOfLongestRow > 255 // magic number breakpoint for choosing between small and large font
-    const chunkClickableProps = chunkClickable && params.section === kebabCase(primeColorWall) ? {
-      onClick: () => {
-        window.location.href = colorWallPageRoot?.(sectionLabels[section][chunkNum] || '')
-        GA.event({ category: 'Color Wall', action: 'Color Family', label: sectionLabels[section][chunkNum] }, GA_TRACKER_NAME_BRAND[brandId])
-      },
-      role: 'button',
-      tabIndex: 0
-    } : null
+    const chunkClickableProps = chunkClickable && params.section === kebabCase(primeColorWall)
+      ? {
+          onClick: () => {
+            window.location.href = colorWallPageRoot?.(sectionLabels[section][chunkNum] || '')
+            GA.event({ category: 'Color Wall', action: 'Color Family', label: sectionLabels[section][chunkNum] }, GA_TRACKER_NAME_BRAND[brandId])
+          },
+          role: 'button',
+          tabIndex: 0
+        }
+      : null
 
     return (flatten(chunk).some(cell => cell !== undefined) &&
       <div
@@ -294,7 +296,8 @@ const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: 
                 key={key}
                 style={style}
                 color={color}
-                contentRenderer={(defaultContent) => isChipLocator ? (
+                contentRenderer={(defaultContent) => isChipLocator
+                  ? (
                   <div className='color-swatch__chip-locator'>
                     {defaultContent[0]}
                     <div className='color-swatch__chip-locator__location'>
@@ -302,12 +305,15 @@ const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: 
                       <p className='color-swatch__chip-locator__col-row'>Col: {color.column}&nbsp;&nbsp;Row: {color.row}</p>
                     </div>
                   </div>
-                ) : houseShaped ? (
+                    )
+                  : houseShaped
+                    ? (
                   <>
                     <div className='color-swatch-house-shaped__btns'>{defaultContent[1]}</div>
                     <div className='color-swatch-house-shaped__label'>{defaultContent[0]}</div>
                   </>
-                ) : <>{defaultContent}</>}
+                      )
+                    : <>{defaultContent}</>}
                 level={levelMap[colorId]}
                 status={colorStatuses[colorId]}
               />

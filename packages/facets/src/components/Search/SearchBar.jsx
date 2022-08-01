@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/label-has-for */
 // @flow
 import React, { useState, useEffect, useCallback, useRef, useContext } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
@@ -162,7 +161,6 @@ const SearchBar = (props: Props) => {
           )}
           <div className={`SearchBar__wrapper SearchBar__wrapper--with${query ? '-outline' : 'out-outline'} ${getClassName(className, '__wrapper')}`}>
             <input
-              // eslint-disable-next-line jsx-a11y/no-autofocus
               autoFocus
               className={`SearchBar__input ${getClassName(className, '__input')}`}
               id={id}

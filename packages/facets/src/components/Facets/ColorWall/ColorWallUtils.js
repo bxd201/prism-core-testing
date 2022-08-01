@@ -41,7 +41,7 @@ export const getLevelMap = memoizee((chunkGrid: string[][][][], bloomEnabled: bo
     const [row: number, column: number] = getCoords(chunk, centerId)
     if (row === -1) { continue }
 
-    let levelMap: { [string]: number } = {}
+    const levelMap: { [string]: number } = {}
 
     const setLevels = (level: number, indexes: [number, number][]) => {
       indexes.forEach(([row, column]: [number, number]) => chunk[row] && chunk[row][column] !== undefined && (levelMap[chunk[row][column]] = level))

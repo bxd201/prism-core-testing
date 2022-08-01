@@ -151,7 +151,7 @@ export default (props: ComponentProps) => {
         </div>
         <div className={`${contentWrapper}__list__wrapper ${isInfinity ? `${contentWrapper}__list__wrapper--loop` : ''}`}>
           <div
-            className={`collection-list__container  ${nonTransition ? `collection-list__container--non-transition` : ''}`}
+            className={`collection-list__container  ${nonTransition ? 'collection-list__container--non-transition' : ''}`}
             style={{ transform: `translateX(-${pageNumber * 100}%)` }}
           >
             {slideList && slideList.map((slide: any, index: number) => {
@@ -186,7 +186,8 @@ export default (props: ComponentProps) => {
               )
             })}
           </div>
-          {showPageIndicators && slideList && slideList.length > 1 ? (
+          {showPageIndicators && slideList && slideList.length > 1
+            ? (
             <div className={indicators}>
               {slideList.map((slide, i: number) => {
                 if (tabMap.length > 0) {
@@ -209,7 +210,8 @@ export default (props: ComponentProps) => {
                 }
               })}
             </div>
-          ) : null}
+              )
+            : null}
         </div>
         <div className={`${contentWrapper}__next-btn__wrapper`}>
           {(isInfinity || position + defaultItemsPerView < data.length) && <button className={`${contentWrapper}__buttons`} onClick={handleNext} aria-label={formatMessage({ id: 'NEXT' })}>

@@ -16,13 +16,13 @@ export type RealColorPayload = {
 
 const extractPayload = (response: any, color: Mini) => {
   // @todo - Standardize internal type for all fastmask request, pull all into hooks. -RS
-  const payload = response.data?.['per_img_resp']?.[0]?.[0]?.payload
+  const payload = response.data?.per_img_resp?.[0]?.[0]?.payload
 
   return {
-    originalImage: payload?.['orig_path'],
-    mask: payload?.['mask_path0'],
-    tintedImage: payload?.['tinted_path'],
-    realColorId: payload?.['id'],
+    originalImage: payload?.orig_path,
+    mask: payload?.mask_path0,
+    tintedImage: payload?.tinted_path,
+    realColorId: payload?.id,
     color: { ...color } // pass the color back to make data self-referential, use brandkey as an id to cache
   }
 }

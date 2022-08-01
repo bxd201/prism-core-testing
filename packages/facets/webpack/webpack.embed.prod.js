@@ -1,24 +1,18 @@
 const common = require('./webpack.embed.common.js')
 const flags = require('./constants')
-const merge = require('webpack-merge')
+const { merge } = require('webpack-merge')
 const TerserPlugin = require('terser-webpack-plugin')
-const webpack = require('webpack')
 
-module.exports = merge.smart(
+module.exports = merge(
   common,
   {
     mode: flags.mode,
-    devtool: 'cheap-source-map',
-    plugins: [
-      new webpack.HashedModuleIdsPlugin()
-    ],
+    devtool: 'nosources-source-map',
     optimization: {
       minimizer: [
         new TerserPlugin({
-          cache: true,
           parallel: true,
           extractComments: true,
-          sourceMap: true, // Must be set to true if using source-maps in production
           terserOptions: {
             warnings: false,
             parse: {},

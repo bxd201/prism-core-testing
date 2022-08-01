@@ -38,7 +38,7 @@ const RadioButton = React.forwardRef((props: Props, ref) => {
 
   return (<div>
     <label ref={ref} aria-label={props.ariaLabel} aria-checked={props.isSelected} onKeyDown={keyDownHandler} tabIndex={props.isSelected ? '0' : '-1'} className={props.className} htmlFor={props.id} role='radio' onClick={clickHandler}>
-      <input name={`${props.brushTypeName}brush`} tabIndex='-1' className={`visually-hidden`} id={props.id} onChange={changeHandler} value={props.value} type='radio' checked={props.isSelected} />
+      <input name={`${props.brushTypeName}brush`} tabIndex='-1' className={'visually-hidden'} id={props.id} onChange={changeHandler} value={props.value} type='radio' checked={props.isSelected} />
     </label>
   </div>)
 })

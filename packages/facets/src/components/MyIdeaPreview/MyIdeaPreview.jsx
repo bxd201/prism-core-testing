@@ -88,14 +88,16 @@ const MyIdeaPreview = ({ openScene, maxSceneHeight }: MyIdeaPreviewProps) => {
         const livePaletteColorsIdArray = (expectedStockData.hasOwnProperty('livePaletteColorsIdArray')) ? expectedStockData.livePaletteColorsIdArray : null
         const colorInstances = getColorInstances(palette, livePaletteColorsIdArray, colorMap)
         const surfaceColors = expectedStockData.scene.surfaceColors
-        return { name: expectedStockData.name,
+        return {
+          name: expectedStockData.name,
           palette: colorInstances,
           savedSceneType: SCENE_TYPE.anonStock,
           scene: expectedStockScene,
           variant: expectedVariant,
           expectedStockData:
           expectedStockData,
-          surfaceColors }
+          surfaceColors
+        }
       }
     }
     if (store.selectedSavedSceneId) {
@@ -204,7 +206,8 @@ const MyIdeaPreview = ({ openScene, maxSceneHeight }: MyIdeaPreviewProps) => {
     dispatch(unsetSelectedScenePaletteLoaded())
     if (selectedScene.savedSceneType === SCENE_TYPE.anonCustom) {
       dispatch(setLayersForPaintScene(backgroundCanvasRef.current.toDataURL(), openPaintedProject
-        ? layersRef.current : null, selectedScene.palette, initialWidth, initialHeight, WORKSPACE_TYPES.savedScene))
+        ? layersRef.current
+        : null, selectedScene.palette, initialWidth, initialHeight, WORKSPACE_TYPES.savedScene))
     } else if (selectedScene.savedSceneType === SCENE_TYPE.anonStock) {
       selectedScene.openUnpaintedStockScene = !openPaintedProject
       const surfaceColors = openPaintedProject ? selectedScene.surfaceColors : selectedScene.surfaceColors.map(color => null)
@@ -255,7 +258,8 @@ const MyIdeaPreview = ({ openScene, maxSceneHeight }: MyIdeaPreviewProps) => {
               <span className={addAllText}><FormattedMessage id='ADD_ALL' /></span>
               <FontAwesomeIcon icon={['fal', 'plus-circle']} size='1x' />
             </button>}
-            {(selectedScene && selectedScene.savedSceneType === SCENE_TYPE.anonCustom) ? <MergeColors
+            {(selectedScene && selectedScene.savedSceneType === SCENE_TYPE.anonCustom)
+              ? <MergeColors
               imageDataList={selectedScene.surfaceMasks.surfaces.map(surface => surface.surfaceMaskImageData)}
               handleImagesMerged={loadMergedImage}
               width={initialWidth}
@@ -264,36 +268,44 @@ const MyIdeaPreview = ({ openScene, maxSceneHeight }: MyIdeaPreviewProps) => {
               colors={selectedScene.palette.map(color => {
                 return { r: color.red, g: color.green, b: color.blue }
               })}
-              preserveLayers /> : null}
-            {(selectedScene && selectedScene.savedSceneType === SCENE_TYPE.anonCustom) ? <div className={canvasOverlayWrapper}>
+              preserveLayers />
+              : null}
+            {(selectedScene && selectedScene.savedSceneType === SCENE_TYPE.anonCustom)
+              ? <div className={canvasOverlayWrapper}>
               <canvas ref={foregroundCanvasRef} width={initialWidth} height={initialHeight} style={{ width, height }} className={overlayedCanvas} />
               <canvas ref={backgroundCanvasRef} width={initialWidth} height={initialHeight} style={{ width, height, opacity: 0.8 }} />
               <canvas ref={utilityCanvasRef} width={initialWidth} height={initialHeight} style={{ width, height, opacity: 0, visibility: 'hidden', display: 'none' }} />
-            </div> : (selectedScene &&
+            </div>
+              : (selectedScene &&
             (selectedScene.variant))
-              ? <SingleTintableSceneView
+                  ? <SingleTintableSceneView
                 adjustSvgHeight
                 scenesCollection={[selectedScene.scene]}
                 selectedSceneUid={selectedScene.scene.uid}
                 surfaceColorsFromParents={selectedScene.surfaceColors}
                 variantsCollection={[selectedScene.variant]}
-              /> : null}
-            {backgroundImageSrc ? <PrismImage
+              />
+                  : null}
+            {backgroundImageSrc
+              ? <PrismImage
               ref={backgroundImageRef}
               source={backgroundImageSrc}
               loadedCallback={handleBackgroundImageLoaded}
               scalingWidth={initialWidth}
               width={initialWidth}
               height={initialHeight}
-            /> : null}
-            {foregroundImageUrl ? <PrismImage
+            />
+              : null}
+            {foregroundImageUrl
+              ? <PrismImage
               ref={foregroundImageRef}
               source={foregroundImageUrl}
               loadedCallback={handleForegroundImageLoaded}
               scalingWidth={initialWidth}
               width={initialWidth}
               height={initialHeight}
-            /> : null}
+            />
+              : null}
             {selectedScene && selectedScene.savedSceneType !== SCENE_TYPE.livePalette && <div className={actionButtonWrapperClassName}>
               <div className={actionButtonInnerWrapperClassName}>
                 <button data-buttonid='painted' className={buttonClassName} onClick={openProject}>{formatMessage({ id: 'MY_IDEAS.OPEN_PROJECT' }).toUpperCase()}</button>

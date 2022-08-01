@@ -6,12 +6,12 @@ import { FlatVariant } from '../../store/actions/loadScenes'
 
 export const groupScenesByCategory = (data: Array<Object>): Object => {
   if (data) {
-    let categoryHashMap = {}
-    let startIndexHashMap = {}
-    let tmpHashMap = {}
-    let groupScenes = []
-    let collectionTabs = []
-    let tabMap = []
+    const categoryHashMap = {}
+    const startIndexHashMap = {}
+    const tmpHashMap = {}
+    const groupScenes = []
+    const collectionTabs = []
+    const tabMap = []
     let index = 0
     for (let i = 0; i < data.length; i++) {
       const category = data[i].categories || data[i].category
@@ -64,7 +64,7 @@ export const groupVariantsByCarouselTabs = (data: FlatVariant[]): CarouselVarian
         tabName: category.toUpperCase()
       }
     })
-    const tabMap = collectionTabs?.length && data && data.map((scene) => find(collectionTabs, { 'tabName': scene?.sceneCategories[0].toUpperCase() }).id)
+    const tabMap = collectionTabs?.length && data && data.map((scene) => find(collectionTabs, { tabName: scene?.sceneCategories[0].toUpperCase() }).id)
     return {
       collectionTabs,
       tabMap

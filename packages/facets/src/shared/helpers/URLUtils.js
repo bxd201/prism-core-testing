@@ -14,28 +14,36 @@ function URLWorker () {
     switch (routeParam) {
       case ROUTE_PARAMS.SECTION: {
         const res = new RegExp(`(/${ROUTE_PARAMS.SECTION})/([^/]*)`).exec(url)
-        return res ? {
-          [ROUTE_PARAM_NAMES.SECTION]: res[2]
-        } : {}
+        return res
+          ? {
+              [ROUTE_PARAM_NAMES.SECTION]: res[2]
+            }
+          : {}
       }
       case ROUTE_PARAMS.FAMILY: {
         const res = new RegExp(`(/${ROUTE_PARAMS.FAMILY})/([^/]*)`).exec(url)
-        return res ? {
-          [ROUTE_PARAM_NAMES.FAMILY]: res[2]
-        } : {}
+        return res
+          ? {
+              [ROUTE_PARAM_NAMES.FAMILY]: res[2]
+            }
+          : {}
       }
       case ROUTE_PARAMS.COLOR: {
         const res = new RegExp(`(/${ROUTE_PARAMS.COLOR})/([^/]*)/([^/]*)`).exec(url)
-        return res ? {
-          [ROUTE_PARAM_NAMES.COLOR_ID]: res[2],
-          [ROUTE_PARAM_NAMES.COLOR_SEO]: res[3]
-        } : {}
+        return res
+          ? {
+              [ROUTE_PARAM_NAMES.COLOR_ID]: res[2],
+              [ROUTE_PARAM_NAMES.COLOR_SEO]: res[3]
+            }
+          : {}
       }
       case ROUTE_PARAMS.SEARCH: {
         const res = new RegExp(`(/${ROUTE_PARAMS.SEARCH})/([^/]*)`).exec(url)
-        return res ? {
-          [ROUTE_PARAM_NAMES.SEARCH]: res[2]
-        } : {}
+        return res
+          ? {
+              [ROUTE_PARAM_NAMES.SEARCH]: res[2]
+            }
+          : {}
       }
     }
 
@@ -45,8 +53,8 @@ function URLWorker () {
   const _setUsing = (routeParam: string, values: string | string[]) => (url: string) => {
     const _url = trimTrailingSlashes(url)
     const _values = typeof values === 'string' ? [values] : values
-    const regexString = `(/${routeParam}/)` + _values.map(() => `([^/]*)`).join('/')
-    const replacementString = `$1` + _values.join('/')
+    const regexString = `(/${routeParam}/)` + _values.map(() => '([^/]*)').join('/')
+    const replacementString = '$1' + _values.join('/')
     const regex = new RegExp(regexString)
 
     // if we can find a match for our replacement regex in the URL
@@ -59,7 +67,7 @@ function URLWorker () {
 
   const _removeFrom = (routeParam: string, valueCount: number) => (url: string) => {
     const _url = trimTrailingSlashes(url)
-    const regexString = `/${routeParam}/` + Array.from(new Array(valueCount)).map(() => `([^/]*)`).join('/')
+    const regexString = `/${routeParam}/` + Array.from(new Array(valueCount)).map(() => '([^/]*)').join('/')
     const regex = new RegExp(regexString)
 
     if (_url.match(regex)) {

@@ -39,7 +39,7 @@ export default ({ children, redirect = true, defaultSection }: Props) => {
   useEffect(() => {
     if (!locale || !brandId) return
     dispatch(loadColors(brandId, { language: locale }))
-  }, [ locale, brandId ])
+  }, [locale, brandId])
 
   // STEP 1 -- finds default section based on data or props override for redirect section
   useEffect(() => {
@@ -71,7 +71,7 @@ export default ({ children, redirect = true, defaultSection }: Props) => {
         <Route path={ROUTES_ENUM.COLOR_WALL + '/section/:section'}>{children}</Route>
         {redirect && <Redirect to={ROUTES_ENUM.COLOR_WALL + `/section/${redirectSection}`} />}
       </Switch>
-    )
+      )
     : <Propper vPosition={Propper.V_POSITION.CENTER} propSize={`${proppingPct}%`}>
       <HeroLoaderExpanded />
     </Propper>

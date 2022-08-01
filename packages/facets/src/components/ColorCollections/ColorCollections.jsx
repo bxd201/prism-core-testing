@@ -31,10 +31,12 @@ export function ColorCollections () {
   useEffect(() => {
     if (typeof tabId !== 'undefined') {
       const category = categories.data.filter(({ id }) => `${id}` === `${tabId}`)[0]
-      const collectionData = colorMap && category ? category.summaryIds.map(summaryId => {
-        const { name, coverUrl, thumbUrl, description, colorIds, pdfUrl } = summaries.data[summaries.idToIndexHash[summaryId]]
-        return { description, coverUrl, thumbUrl, name, collections: colorIds.map(id => colorMap[id]), pdfUrl }
-      }) : []
+      const collectionData = colorMap && category
+        ? category.summaryIds.map(summaryId => {
+          const { name, coverUrl, thumbUrl, description, colorIds, pdfUrl } = summaries.data[summaries.idToIndexHash[summaryId]]
+          return { description, coverUrl, thumbUrl, name, collections: colorIds.map(id => colorMap[id]), pdfUrl }
+        })
+        : []
       setCollectionData(collectionData)
     }
   }, [tabId, colorMap])
@@ -83,7 +85,7 @@ const ColorStripButtonWrapper = (props: any) => {
   let imgAltText = `${data.name}.`
 
   if (colors.length > 0) {
-    imgAltText += ` Color group includes `
+    imgAltText += ' Color group includes '
     colors.map((color, index) => {
       imgAltText += (colors.length === index + 1) ? `${color.name}.` : `${color.name}, `
     })

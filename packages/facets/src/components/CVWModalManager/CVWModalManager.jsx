@@ -204,7 +204,7 @@ export const CVWModalManager = () => {
   }
 
   const saveLivePaletteColorsFromModal = (e: SyntheticEvent, inputValue: string) => {
-    let livePaletteColorsIdArray = []
+    const livePaletteColorsIdArray = []
     lpColors && lpColors.map(color => {
       livePaletteColorsIdArray.push(color.id)
     })
@@ -386,7 +386,8 @@ export const CVWModalManager = () => {
             scenes={storeScenes}
             selectedSceneUid={selectedSceneUid}
             selectedVariantName={selectedVariantName}
-          /> : null}
+          />
+          : null}
         styleType={modalInfo.styleType}
         title={modalInfo.title}
         description={modalInfo.description}

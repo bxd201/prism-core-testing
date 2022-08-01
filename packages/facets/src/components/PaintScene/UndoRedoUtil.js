@@ -7,7 +7,7 @@ export const undo = (state: Object) => {
   }
 
   const lastItem = imagePathList[imagePathList.length - 1]
-  let relatedRedoOps = []
+  const relatedRedoOps = []
   const { undoOperations, redos, newGroupSelectList, updateGroupAreaList, updateGroupIds, updateSelectArea } = handleUndo(lastItem.id, relatedRedoOps, imagePathList, selectedArea, groupSelectList, groupAreaList, groupIds, deleteAreaList)
   redos.forEach(redoItem => redoPathList.push(redoItem))
   const redoOperations = [...redoPathList]
@@ -25,7 +25,7 @@ export const undo = (state: Object) => {
 
 const handleUndo = (itemId, redos, imagePathList, selectedArea, groupSelectList, groupAreaList, groupIds, deleteAreaList) => {
   let history = copyImageList(imagePathList)
-  let redoList = copyImageList(redos)
+  const redoList = copyImageList(redos)
   let updateSelectArea = copyImageList(selectedArea)
   let updateGroupAreaList = copyImageList(groupAreaList)
   let newGroupSelectList = copyImageList(groupSelectList)
@@ -199,9 +199,9 @@ export const redo = (state: Object) => {
 }
 
 const handleRedo = (itemId, redoPathList, imagePathList, selectedArea, groupSelectList, groupAreaList, groupIds, deleteAreaList) => {
-  let history = copyImageList(imagePathList)
+  const history = copyImageList(imagePathList)
   let redoList = copyImageList(redoPathList)
-  let newGroupSelectList = copyImageList(groupSelectList)
+  const newGroupSelectList = copyImageList(groupSelectList)
   let updateGroupAreaList = copyImageList(groupAreaList)
   let updateGroupIds = [...groupIds]
 

@@ -11,14 +11,13 @@ require('./partial.setup.defineLocalPaths.templates')
 
 console.assert(process.env[envVars.PRISM_LOCAL_ORIGIN] !== process.env[envVars.EMBED_LOCAL_ORIGIN], 'ERROR: Prism and Prism Embed local dev servers must not be identical.')
 
-const merge = require('webpack-merge')
+const { merge } = require('webpack-merge')
 const flags = require('./constants')
 const webpack = require('webpack')
 const common = require('./webpack.prism.common.js')
 
-module.exports = merge.smart(common, {
+module.exports = merge(common, {
   mode: flags.mode,
-  stats: 'errors-warnings',
   plugins: [
     require('./partial.plugins.analyzeBundle').analyzeBundle,
     new webpack.EvalSourceMapDevToolPlugin({
@@ -44,8 +43,10 @@ module.exports = merge.smart(common, {
       'Access-Control-Allow-Origin': '*'
     },
     compress: true,
-    writeToDisk: true,
-    disableHostCheck: true,
+    devMiddleware: {
+      index: true,
+      writeToDisk: true
+    },
     proxy: [{
       context: () => true,
       target: 'http://localhost:3000',
@@ -82,9 +83,6 @@ module.exports = merge.smart(common, {
 
         return req.url
       }
-    }],
-    stats: {
-      ...require('./partial.devServer.stats')
-    }
+    }]
   }
 })

@@ -66,6 +66,7 @@ export class ZoomTool extends PureComponent<ComponentProps, ComponentState> {
     this.zoomSliderCircleMouseX = e.clientX - sliderCircleClientOffset.left
     this.setState({ isMouseDown: true })
   }
+
   /*:: dragStartHandler: (e: Object) => void */
   dragStartHandler (e: Object) {
     e.stopPropagation()
@@ -111,6 +112,7 @@ export class ZoomTool extends PureComponent<ComponentProps, ComponentState> {
       sliderWidth
     })
   }, 10)
+
   /*:: handleDragStop: (e: Object) => void */
   handleDragStop (e: Object) {
     this.setState({ isMouseDown: false })
