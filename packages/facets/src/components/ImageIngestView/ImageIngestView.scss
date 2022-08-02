@@ -1,87 +1,53 @@
 @mixin hover-style {
   background: var(getThemeColor('buttonHoverBgColor'));
   border-color: var(getThemeColor('buttonHoverBorder'));
-  cursor: pointer;
   color: var(getThemeColor('buttonHoverColor'));
 }
 
 @mixin focus-style {
-  outline-style: solid;
   outline-color: var(getThemeColor('secondary'));
+  outline-style: solid;
   outline-width: 2px;
 }
 
 .image-ingest-view {
   &__wrapper {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    height: 100%;
-    margin: 0 auto;
-    // max-width: 1050px;
-    overflow: hidden;
-    /*padding: 3em 0;*/
-    width: 100%;
-    font-family: var(getVarName('typography.titleFontFamily'));
-    @include respond-above(sm) {
-      padding: 0em;
-    }
+    border: 1px solid transparent;
+    font-family: var(getVarName('typography.titleFontFamily')) !important;
   }
-  &__container {
-    display: block;
-    min-height: 100%;
-    position: relative;
-    width: 100%;
-  }
-  &__canvas {
-    margin: 0 auto;
-    text-align: center;
-    display: block;
-    min-height: 14.3rem;
-  }
+
+  &__container { min-height: 15rem }
+
   &__header {
     display: block;
     position: relative;
   }
-  &__button {
-     background: var(getThemeColor('buttonBgColor'));
-     border: 1px solid var(getThemeColor('buttonBorder'));
-     color: var(getThemeColor('buttonColor'));
-     cursor: pointer;
-     display: flex;
-     fill: currentColor;
-     font-family: inherit;
-     outline: none;
-     position: absolute;
-     text-align: center;
-     top: .35rem;
-     width: auto;
-     z-index: 1001;
-     padding: .45em;
 
-     &:focus {
-       @include focus-style
-     }
-     &:hover {
-       @include hover-style
-     }
-     &--left {
-       left: .35rem;
-     }
-     &--right {
-       right: .35rem;
-     }
-     @include respond-above(sm) {
+  &__button {
+    background: var(getThemeColor('buttonBgColor'));
+    border: 1px solid var(getThemeColor('buttonBorder'));
+    color: var(getThemeColor('buttonColor'));
+    display: flex;
+    font-family: inherit;
+    position: absolute;
+    top: .35rem;
+    z-index: 1001;
+    padding: .45em;
+
+    &:focus { @include focus-style }
+    &:hover { @include hover-style }
+
+    &--left { left: .35rem }
+    &--right { right: .35rem }
+
+    @include respond-above(sm) {
       padding: .75em 1.75em;
       top: .875rem;
-      &--left {
-        left: .875rem;
-      }
-      &--right {
-        right: .875rem;
-      }
-     }
+      &--left { left: .875rem }
+      &--right { right: .875rem }
+    }
    }
+
   &__button-left-text {
     display: none;
     margin-left: .4rem;
@@ -90,6 +56,7 @@
       display: inline-block;
     }
   }
+
   &__close {
     display: none;
     text-transform: uppercase;
@@ -100,10 +67,75 @@
       margin-left: .4rem;
     }
   }
+
   &__cancel {
     display: block;
     @include respond-above(sm) {
       display: none;
+    }
+  }
+
+  &__image-rotator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &__modal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: var(getThemeColor('primaryBg'));
+  }
+
+  &__controls {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  &__rotate-arrow {
+    font-size: 2.25rem !important;
+    padding: .375rem !important;
+
+    &:focus { @include focus-style }
+  }
+
+  &__agree-terms {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 1.125rem;
+
+    &--checkbox-label {
+      cursor: pointer;
+
+      &:focus { @include focus-style }
+    }
+
+    &--text {
+      margin-left: .5rem;
+
+      a {
+        text-decoration: underline !important;
+        color: var(getThemeColor('primary')) !important;
+      }
+    }
+  }
+
+  &--done {
+    font-size: small !important;
+    margin-bottom: 1.25rem !important;
+    padding: .75rem 1.4rem !important;
+    background: var(getThemeColor('buttonBgColor')) !important;;
+    border: 1px solid var(getThemeColor('light')) !important;
+    color: var(getThemeColor('light')) !important;
+
+    &-active {
+      border: 1px solid var(getThemeColor('buttonBorder')) !important;
+      color: var(getThemeColor('buttonColor')) !important;
+
+      &:focus { @include focus-style }
     }
   }
 }
