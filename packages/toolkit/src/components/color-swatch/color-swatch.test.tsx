@@ -1,9 +1,11 @@
 import React from 'react'
 import { render, fireEvent, screen } from '@testing-library/react'
-
-import ColorSwatch, { TEST_ID_INNER_SWATCH } from './color-swatch'
-
+import ColorSwatch from './color-swatch'
 import { Color } from '../../types'
+import '@testing-library/jest-dom'
+
+const ID = 11331
+const TEST_ID_INNER_SWATCH = `inner-swatch-${ID}`
 
 describe('Color Swatch Component', () => {
   // @ts-ignore
@@ -22,7 +24,7 @@ describe('Color Swatch Component', () => {
   }
 
   test('The active attribute toggles the contents of the swatch', async () => {
-    const { rerender } = render(<ColorSwatch active color={colorObj} />)
+    const { rerender } = render(<ColorSwatch active color={colorObj} id={ID} />)
     expect(screen.getByText('Daphne')).toBeInTheDocument()
 
     rerender(<ColorSwatch active={false} color={colorObj} />)
@@ -30,29 +32,29 @@ describe('Color Swatch Component', () => {
   })
 
   test('Renderer content is displayed when passed into the component', () => {
-    render(<ColorSwatch active color={colorObj} renderer={() => <div>Test Text</div>} />)
+    render(<ColorSwatch active color={colorObj} id={11331} renderer={() => <div>Test Text</div>} />)
     expect(screen.getByText('Test Text')).toBeInTheDocument()
   })
 
   test('Inactive swatch click callback is called when clicking on the swatch', () => {
     const onSwatchButtonClick = jest.fn()
-    render(<ColorSwatch active={false} color={colorObj} onClick={onSwatchButtonClick} />)
+    render(<ColorSwatch active={false} color={colorObj} onClick={onSwatchButtonClick} id={ID} />)
     const button = screen.getByRole('button')
     fireEvent.click(button)
     expect(onSwatchButtonClick).toHaveBeenCalled()
   })
 
   test('Setting the activeFocus to false removes the outline from the swatch', () => {
-    render(<ColorSwatch active={true} color={colorObj} activeFocus={false} />)
+    render(<ColorSwatch active={true} color={colorObj} activeFocus={false} id={ID} />)
     expect(screen.getByTestId(TEST_ID_INNER_SWATCH)).toHaveStyle('outline: none')
   })
 
   test('Swatch text is light or dark depending on if color is dark or light', () => {
     const { rerender } = render(
-      <ColorSwatch active={true} color={{ ...colorObj, isDark: false }} activeFocus={false} />
+      <ColorSwatch active={true} color={{ ...colorObj, isDark: false }} activeFocus={false} id={ID} />
     )
     expect(screen.getByTestId(TEST_ID_INNER_SWATCH)).toHaveClass('text-black')
-    rerender(<ColorSwatch active={true} color={{ ...colorObj, isDark: true }} activeFocus={false} />)
+    rerender(<ColorSwatch active={true} color={{ ...colorObj, isDark: true }} activeFocus={false} id={ID} />)
     expect(screen.getByTestId(TEST_ID_INNER_SWATCH)).toHaveClass('text-white')
   })
 })

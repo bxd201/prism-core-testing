@@ -9,7 +9,15 @@ export interface ColorSwatchProps {
   color: Color
   id?: number
   onClick?: () => void
-  renderer?: ({ id, ref }: { id?: number; ref?: ForwardedRef<HTMLButtonElement & HTMLDivElement> }) => JSX.Element
+  onRefSwatch?: any
+  perimeterLevel?: number
+  renderer?: ({
+    id,
+    ref
+  }: {
+    id: number | string
+    ref?: ForwardedRef<HTMLButtonElement & HTMLDivElement>
+  }) => JSX.Element
   style?: CSSProperties
 }
 
@@ -32,25 +40,30 @@ export const TEST_ID_INNER_SWATCH = 'inner-swatch'
  * ```
  */
 const ColorSwatch = forwardRef<HTMLButtonElement & HTMLDivElement, ColorSwatchProps>(
-  ({ active, activeFocus = true, className, color, id, onClick, renderer, ...otherProps }, ref): JSX.Element => {
+  (
+    { active, activeFocus = true, className, color, id, onClick, renderer, onRefSwatch, perimeterLevel, ...otherProps },
+    ref
+  ): JSX.Element => {
     const [fadeContent, setFadeContent] = useState(false)
 
     useEffect(() => {
       setFadeContent(active)
     }, [active])
-
     return (
       <div className='relative' tabIndex={-1} {...otherProps}>
         <button
           className={`absolute h-full w-full ${className}`}
           disabled={active}
-          onClick={onClick}
+          data-testid={`wall-color-swatch-${id}`}
+          onClick={() => {
+            onClick()
+          }}
           ref={!active ? ref : null}
           style={{ background: color.hex }}
         />
         {active && (
           <div
-            data-testid={TEST_ID_INNER_SWATCH}
+            data-testid={`inner-swatch-${id}`}
             className={`absolute h-full w-full p-2.5 ${color.isDark ? 'text-white' : 'text-black'}
               ${fadeContent ? 'opacity-1' : 'opacity-0'} transition-opacity duration-200
               ${className}`}
