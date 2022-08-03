@@ -4,6 +4,7 @@ const ESLintPlugin = require('eslint-webpack-plugin')
 const path = require('path')
 const webpack = require('webpack')
 const isEmpty = require('lodash/isEmpty')
+const sortBy = require('lodash/sortBy')
 const omit = require('lodash/omit')
 const WebpackBar = require('webpackbar')
 const { WebpackManifestPlugin } = require('webpack-manifest-plugin')
@@ -331,7 +332,15 @@ module.exports = {
             name: depName,
             main: depName === flags.mainEntryPointName, // flags the main bundle in case we need to identify it
             // exclude any sourcemap (.map) files
-            dependencies: entrypoints[depName].filter((filename) => !filename.match(/\.map$/))
+            dependencies: sortBy(entrypoints[depName]
+              .filter((filename) => !filename.match(/\.map$/))
+              .map(v => {
+                return {
+                  sort: v.indexOf('toolkit') >= 0 ? 1 : 0,
+                  value: v
+                }
+              }), v => v.sort)
+              .map(v => v.value)
           })
         )
       }
