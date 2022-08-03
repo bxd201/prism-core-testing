@@ -32,7 +32,7 @@
         flex:3;
       }
       &.primary {
-        background-color: var(getThemeColor('light.lightest'));
+        background-color: var(getThemeColor('secondaryBg'));
         color: var(getThemeColor('light.lightest.contrast'));
       }
       &.secondary {
@@ -125,6 +125,7 @@
         text-transform: capitalize;
         font-weight: 600;
         margin: 0 0.4rem;
+        font-family: var(getVarName('typography.titleFontFamily'));
         &:focus {
           outline-style: solid;
           outline-color: var(getThemeColor('secondary'));

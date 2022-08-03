@@ -198,6 +198,9 @@ export type ConfigurationContextType = {
         useOurPhotos?: MenuItem
       }
     },
+    modal?: {
+      danger?: boolean
+    },
     navColorCollections?: string,
     navExpertColorPicks?: string,
     navExploreColor?: string,

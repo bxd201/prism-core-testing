@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useContext, useEffect, useState, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useIntl, FormattedMessage } from 'react-intl'
 import { CircleLoader } from '../ToolkitComponents'
@@ -17,6 +17,8 @@ import { getColorInstances } from '../LivePalette/livePaletteUtility'
 import EditColorPalette from '../MyIdeaPreview/EditColorPalette'
 import { createDeleteMyIdeasModal } from '../CVWModalManager/createModal'
 import type { FlatScene, FlatVariant } from '../../shared/types/Scene'
+import ConfigurationContext, { type ConfigurationContextType } from '../../contexts/ConfigurationContext/ConfigurationContext'
+import { DANGER, MODAL_TYPE_ENUM, PRIMARY } from '../CVWModalManager/constants'
 
 const baseClassName = 'myideas-wrapper'
 const buttonClassName = `${baseClassName}__button`
@@ -43,6 +45,9 @@ const MyIdeas = (props: MyIdeasProps) => {
   const sceneMetadata = useSelector(state => state.sceneMetadata)
   const isLoadingSavedScenes = useSelector(state => state.isLoadingSavedScene)
   const colorMap = useSelector(state => state.colors.items.colorMap)
+  const { cvw = {} } = useContext<ConfigurationContextType>(ConfigurationContext)
+  const { modal = {} } = cvw
+  const { danger = true } = modal
   const dispatch = useDispatch()
   const { formatMessage } = useIntl()
   const intl = useIntl()
@@ -95,7 +100,7 @@ const MyIdeas = (props: MyIdeasProps) => {
   }
 
   const showDeleteConfirm = (sceneId: string | number, sceneType: string) => {
-    dispatch(createDeleteMyIdeasModal(intl, 'EMPTY_SCENE', { sceneType, sceneId: sceneId }))
+    dispatch(createDeleteMyIdeasModal(intl, 'EMPTY_SCENE', { sceneType, sceneId: sceneId }, danger ? DANGER : PRIMARY))
   }
 
   const isReadyToRender = (sceneMetadata: Object[], customSceneData, stockScenesLoaded, isLoadingSavedScenes) => {
