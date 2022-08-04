@@ -78,7 +78,7 @@ const ColorPalette = ({ palette, isMyIdeaLivePalette, isMyIdeaPreview, isMyIdeaP
   }
 
   return (
-    <div className={`${wrapper} ${isMyIdeaLivePalette ? `${wrapperLivePalette}` : ``} ${isEditName ? `${wrapperEditLp}` : ``}`}>
+    <div className={`${wrapper} ${isMyIdeaLivePalette ? `${wrapperLivePalette}` : ''} ${isEditName ? `${wrapperEditLp}` : ''}`}>
       <div className={`${container}`}>
         {editEnabled
           ? <div className={deleteLivePalette}>
@@ -87,15 +87,14 @@ const ColorPalette = ({ palette, isMyIdeaLivePalette, isMyIdeaPreview, isMyIdeaP
                 icon={['fal', 'trash-alt']}
                 size='sm' />
             </button>
-          </div> : null}
-        {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex */}
-        {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role */}
-        {palette && <ul role='button' tabIndex={isMyIdeaLivePalette ? '0' : '-1'} className={`${colorsUl} ${isMyIdeaLivePalette ? `${colorsUlLivePalette}` : ``} ${isMyIdeaPreview ? `${colorsUlPreview}` : ``} ${isMyIdeaPreviewLp ? `${colorsUlPreviewLp}` : ``}`} onClick={selectLivePaletteIdeaWrapper} onKeyDown={keyDownHandler}>
+          </div>
+          : null}
+        {palette && <ul role='button' tabIndex={isMyIdeaLivePalette ? '0' : '-1'} className={`${colorsUl} ${isMyIdeaLivePalette ? `${colorsUlLivePalette}` : ''} ${isMyIdeaPreview ? `${colorsUlPreview}` : ''} ${isMyIdeaPreviewLp ? `${colorsUlPreviewLp}` : ''}`} onClick={selectLivePaletteIdeaWrapper} onKeyDown={keyDownHandler}>
           {
             palette.map((color: Object, index: number) => {
               return (
                 <li className={`${colorLi}`} key={`color-${index}`} style={{ backgroundColor: `rgb(${color.red},${color.green},${color.blue})` }}>
-                  {!isMyIdeaLivePalette && <div className={`${colorInfo} ${color.isDark ? `${colorInfoDark}` : ``}`}>
+                  {!isMyIdeaLivePalette && <div className={`${colorInfo} ${color.isDark ? `${colorInfoDark}` : ''}`}>
                     <span className={`${colorInfoNumber}`}>{color.brandKey} {color.colorNumber}</span>
                     <span className={`${colorInfoName}`}>{color.brandKey} {color.name}</span>
                   </div>}

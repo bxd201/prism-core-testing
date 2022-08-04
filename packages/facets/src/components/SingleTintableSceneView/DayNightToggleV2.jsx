@@ -37,7 +37,6 @@ function DayNightToggleV2 (props: DayNightToggleV2Props) {
   }, [variantName])
 
   return (<div className={baseClassName}>
-    {/* eslint-disable-next-line jsx-a11y/label-has-for */}
     <label
       className={toggleLabel}
       htmlFor={toggleName}

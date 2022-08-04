@@ -30,7 +30,7 @@ const ColorDetailsScene = (props: Props) => {
   const colorDetailsPageColor = props.color || globalCDPColor
   const isMaximized = props.isMaximized
   const [selectedSceneId, setSelectedSceneSceneId] = useState(() => scenesCollection.filter(scene => scene.sceneType === SCENE_TYPES.ROOM)[0].uid)
-  const livePaletteColors = useSelector(state => state['lp'])
+  const livePaletteColors = useSelector(state => state.lp)
   const activatedSceneVariants = useMemo(() => variantsCollection.filter((sceneVariants) => sceneVariants.sceneUid === selectedSceneId), [selectedSceneId])
   const selectedVariantName = useSelector(store => store.selectedVariantName)
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(activatedSceneVariants.findIndex(variant => variant.variantName === selectedVariantName))
@@ -132,12 +132,14 @@ const ColorDetailsScene = (props: Props) => {
       {!isMaximized &&
         <div className={`${baseClass}__block ${baseClass}__block--tabs`} role='radiogroup' aria-label='scene selector'>
           {colorDetailSceneList.map((scene, index) => {
-            const activeMarker = activatedSceneVariants[selectedVariantIndex].sceneUid === scene.sceneUid ? (
+            const activeMarker = activatedSceneVariants[selectedVariantIndex].sceneUid === scene.sceneUid
+              ? (
               <FontAwesomeIcon
                 icon={['fa', 'check']}
                 className={`${baseClass}__flag`}
               />
-            ) : null
+                )
+              : null
             return (
               <button
                 key={scene.sceneUid}

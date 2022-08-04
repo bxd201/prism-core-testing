@@ -118,7 +118,7 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
   getToolBarItemClassName (tool: Object): string {
     const { showTooltip, tooltipToolActiveNumber, isHidePaint } = this.state
     const { activeTool, undoIsEnabled, redoIsEnabled } = this.props
-    let itemClassName = `${toolbarButtonClass} ${((!showTooltip && activeTool === tool.name && tool.name !== toolNames.UNDO && tool.name !== toolNames.REDO) || (showTooltip && tooltipToolActiveNumber === tool.id) || (isHidePaint && tool.name === toolNames.HIDEPAINT)) ? `${toolbarButtonActiveClass}` : ``}`
+    let itemClassName = `${toolbarButtonClass} ${((!showTooltip && activeTool === tool.name && tool.name !== toolNames.UNDO && tool.name !== toolNames.REDO) || (showTooltip && tooltipToolActiveNumber === tool.id) || (isHidePaint && tool.name === toolNames.HIDEPAINT)) ? `${toolbarButtonActiveClass}` : ''}`
 
     if (tool.name === toolNames.UNDO && !undoIsEnabled && (!showTooltip || (showTooltip && tooltipToolActiveNumber !== toolNumbers.UNDO))) {
       itemClassName += ` ${toolbarButtonDisabledClass}`
@@ -275,7 +275,7 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
         <FontAwesomeIcon title={intl.formatMessage({ id: `PAINT_TOOLS.${tool.name.toUpperCase()}` })} className={`${toolIconClass}`} icon={[tool.fontAwesomeIcon.variant, tool.fontAwesomeIcon.icon]} size='lg' transform={{ rotate: tool.fontAwesomeIcon.rotate }} {...iconProps} />
         {tool.name === toolNames.DEFINEAREA && <FontAwesomeIcon className={`${toolIconClass} ${toolIconSecondIconClass}`} icon={['fal', 'plus']} size='xs' />}
         {tool.name === toolNames.REMOVEAREA && <FontAwesomeIcon className={`${toolIconClass} ${toolIconSecondIconClass}`} icon={['fal', 'minus']} size='xs' />}
-        <span className={`${toolNameClass} ${(activeTool === tool.name && !showTooltip) || (showTooltip && tooltipToolActiveNumber === tool.id) || (isHidePaint && tool.name === toolNames.HIDEPAINT) ? `${toolNameActiveClass}` : ``}`}>{intl.formatMessage({ id: `PAINT_TOOLS.TOOLS_NAME.${tool.name.toUpperCase()}` })}</span>
+        <span className={`${toolNameClass} ${(activeTool === tool.name && !showTooltip) || (showTooltip && tooltipToolActiveNumber === tool.id) || (isHidePaint && tool.name === toolNames.HIDEPAINT) ? `${toolNameActiveClass}` : ''}`}>{intl.formatMessage({ id: `PAINT_TOOLS.TOOLS_NAME.${tool.name.toUpperCase()}` })}</span>
       </button>{renderBrushTypes}</React.Fragment>
     })
 
@@ -330,7 +330,7 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
         onMouseDown={(e) => e.preventDefault()}
       >
         <FontAwesomeIcon title={intl.formatMessage({ id: `PAINT_TOOLS.${tool.name.toUpperCase()}` })} className={`${toolIconClass}`} icon={[tool.fontAwesomeIcon.variant, tool.fontAwesomeIcon.icon]} size='lg' transform={{ rotate: tool.fontAwesomeIcon.rotate }} />
-        <span className={`${toolNameClass} ${this.checkButtonIfDisable(tool) ? '' : toolNameDisabledClass} ${activeTool === toolNames.SELECTAREA || tooltipToolActiveNumber === toolNumbers.SELECTAREA ? `${toolNameActiveClass}` : ``}`}>{tool.displayName}</span>
+        <span className={`${toolNameClass} ${this.checkButtonIfDisable(tool) ? '' : toolNameDisabledClass} ${activeTool === toolNames.SELECTAREA || tooltipToolActiveNumber === toolNumbers.SELECTAREA ? `${toolNameActiveClass}` : ''}`}>{tool.displayName}</span>
       </button>
     })
     return groupTools
@@ -377,20 +377,24 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
   render () {
     const { showToolBar, showPaintBrushTypes, showEraseBrushTypes, showTooltip, tooltipToolActiveNumber, zoomSliderHide } = this.state
     const { activeTool, paintBrushShape, paintBrushWidth, eraseBrushShape, eraseBrushWidth, setBrushShapeSize, applyZoom, intl, containerWidth, zoomValue } = this.props
-    const paintBrushTypesRender = (!showTooltip && (activeTool === toolNames.PAINTBRUSH && showPaintBrushTypes)) ? <div
+    const paintBrushTypesRender = (!showTooltip && (activeTool === toolNames.PAINTBRUSH && showPaintBrushTypes))
+      ? <div
       onMouseLeave={this.hidePaintBrushTypes}
       className={`${brushTypesClass} ${(!showTooltip && (activeTool === toolNames.PAINTBRUSH && showPaintBrushTypes)) ? `${brushTypesShowClass}` : `${brushTypesHideClass}`} ${brushTypesPaintClass} ${showToolBar ? `${brushTypesShowByOpacityClass}` : `${brushTypesHideByOpacityClass}`} `}
     >
       <BrushTypes activeWidth={paintBrushWidth} activeShape={paintBrushShape} setBrushShapeSize={setBrushShapeSize} brushTypeName='paint' />
-    </div> : ''
+    </div>
+      : ''
 
-    const eraseBrushTypesRender = (!showTooltip && (activeTool === toolNames.ERASE && showEraseBrushTypes)) ? <div
+    const eraseBrushTypesRender = (!showTooltip && (activeTool === toolNames.ERASE && showEraseBrushTypes))
+      ? <div
       onMouseLeave={this.hideEraseBrushTypes}
       className={`${brushTypesClass} ${(!showTooltip && (activeTool === toolNames.ERASE && showEraseBrushTypes)) ? `${brushTypesShowClass}` : `${brushTypesHideClass}`} ${brushTypesEraseClass} ${showToolBar ? `${brushTypesShowByOpacityClass}` : `${brushTypesHideByOpacityClass}`} `}
     >
       <BrushTypes activeWidth={eraseBrushWidth} activeShape={eraseBrushShape} setBrushShapeSize={setBrushShapeSize} brushTypeName='erase' />
       {(activeTool === toolNames.ERASE) && <button className={`${clearAllButtonClass}`} onClick={this.clearAllClickHandler}><FormattedMessage id='CLEAR_ALL' /></button>}
-    </div> : ''
+    </div>
+      : ''
 
     return (
       <>
@@ -412,7 +416,7 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
             />}
           </div>
           <div ref={this.tooltipDivRef} onMouseEnter={this.tooltipDivMouseEnterHandler} onMouseLeave={this.tooltipDivMouseLeaveHandler} className={`${wrapperClass}`}>
-            <div aria-label={`${(showToolBar) ? 'Tools container' : 'Tools container hidden'}`} className={`${containerClass} ${(!showToolBar) ? `${containerHideClass}` : ``}`}>
+            <div aria-label={`${(showToolBar) ? 'Tools container' : 'Tools container hidden'}`} className={`${containerClass} ${(!showToolBar) ? `${containerHideClass}` : ''}`}>
               { this.generateTools(paintBrushTypesRender, eraseBrushTypesRender) }
               {showTooltip && tooltipToolActiveNumber < addColorsTooltipNumber && <div className={`${paintTooltipClass} ${paintTooltipActiveClass}`}>
                 <PaintToolTip
@@ -427,7 +431,7 @@ export class PaintToolBar extends PureComponent<ComponentProps, ComponentState> 
                   hideTooltipContentByZindex={this.hideTooltipContentByZindex}
                   parentDivRef={this.tooltipDivRef} />
               </div>}
-              <div className={`${zoomToolClass} ${activeTool === toolNames.ZOOM && !showTooltip && zoomSliderHide === -1 ? `${zoomToolShowClass}` : activeTool !== toolNames.ZOOM ? `${zoomToolHideClass}` : ``} ${activeTool === toolNames.ZOOM && zoomSliderHide === 0 && !showTooltip ? `${zoomToolShowByOpacityClass}` : activeTool === toolNames.ZOOM && zoomSliderHide === 1 && !showTooltip ? `${zoomToolHideByOpacityClass}` : ``}`}>
+              <div className={`${zoomToolClass} ${activeTool === toolNames.ZOOM && !showTooltip && zoomSliderHide === -1 ? `${zoomToolShowClass}` : activeTool !== toolNames.ZOOM ? `${zoomToolHideClass}` : ''} ${activeTool === toolNames.ZOOM && zoomSliderHide === 0 && !showTooltip ? `${zoomToolShowByOpacityClass}` : activeTool === toolNames.ZOOM && zoomSliderHide === 1 && !showTooltip ? `${zoomToolHideByOpacityClass}` : ''}`}>
                 <ZoomTool applyZoom={applyZoom} containerWidth={containerWidth} zoomValue={zoomValue} />
               </div>
             </div>

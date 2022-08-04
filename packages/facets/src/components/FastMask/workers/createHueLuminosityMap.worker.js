@@ -24,10 +24,10 @@ function createLuminosityMap (imageRGBAdata, imageMaskRgbaData) {
 
   for (var i = 0; i < imageRGBAdata.length; i += 4) {
     if (imageMaskRgbaData[i + 3] > alphaInclusionThreshold) {
-      let thisHueSatLumin = tinycolor(imageRGBAdata[i], imageRGBAdata[i + 1], imageRGBAdata[i + 2]).toHsl()
-      let thisHue = thisHueSatLumin.h
-      let thisSaturation = thisHueSatLumin.s
-      let thisLum = thisHueSatLumin.l
+      const thisHueSatLumin = tinycolor(imageRGBAdata[i], imageRGBAdata[i + 1], imageRGBAdata[i + 2]).toHsl()
+      const thisHue = thisHueSatLumin.h
+      const thisSaturation = thisHueSatLumin.s
+      const thisLum = thisHueSatLumin.l
 
       imageHueMap[entireImageIndex] = thisHue
       tintPlaneHueValues[tintPlaneIndex] = thisHue
@@ -118,7 +118,7 @@ function drawShadowsHighlights (imageAlphaMap, imageRGBAdata, imageHueMap2, imag
 
   for (var arrayIndex = 0; arrayIndex < pixelCount; arrayIndex += 4) {
     if (imageAlphaMap[pixelIndex] > 0) {
-      let pixelRGBA = tinycolor(`"hsl(${imageHueMap2[pixelIndex]}, ${imageSaturationMap2[pixelIndex]}%, ${imageLuminMap2[pixelIndex]}%)"`).toRgb()
+      const pixelRGBA = tinycolor(`"hsl(${imageHueMap2[pixelIndex]}, ${imageSaturationMap2[pixelIndex]}%, ${imageLuminMap2[pixelIndex]}%)"`).toRgb()
       // if (pixelIndex > 20000 && pixelIndex < 20099) {
       //   console.log(imageHueMap2[pixelIndex])
       //   console.log(`hsl ${imageHueMap2[pixelIndex]}, ${imageSaturationMap2[pixelIndex]}, ${imageLuminMap2[pixelIndex]}`)

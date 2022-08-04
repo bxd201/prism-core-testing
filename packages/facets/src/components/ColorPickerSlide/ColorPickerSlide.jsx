@@ -69,7 +69,7 @@ function ColorPickerSlide (props: SummaryProps) {
 
   return (
     <React.Fragment>
-      <button className={`${slideHeader}__mobile-toggle-arrow ${isShowSlider ? `${slideHeader}__mobile-toggle-arrow--up` : ``}`} onClick={() => { handleSlideShow(!isShowSlider) }} onMouseDown={(e) => e.preventDefault()} />
+      <button className={`${slideHeader}__mobile-toggle-arrow ${isShowSlider ? `${slideHeader}__mobile-toggle-arrow--up` : ''}`} onClick={() => { handleSlideShow(!isShowSlider) }} onMouseDown={(e) => e.preventDefault()} />
       <div ref={wrapperRef} className={`${baseClass}__wrapper ${isShowSlider ? `${baseClass}__wrapper--show` : `${baseClass}__wrapper--hide`}`}>
         <div className={`${slideHeader} ${isShowSlider ? `${slideHeader}--show` : `${slideHeader}--hide`}`}>
           {isShowSlider && <span><FormattedMessage id='EXPERT_COLOR_PICKS' /></span>}

@@ -40,7 +40,7 @@ function WallRenderer ({ maxWidth = Infinity, maxHeight = Infinity }: WallRender
   useEffect(() => {
     if (!locale || !brandId) return
     dispatch(loadColors(brandId, { language: locale }))
-  }, [ locale, brandId ])
+  }, [locale, brandId])
 
   useEffect(() => {
     if (!colorMap || !chunksLayout) return
@@ -51,13 +51,15 @@ function WallRenderer ({ maxWidth = Infinity, maxHeight = Infinity }: WallRender
 
     const getValsparColRowsByChunkId = (columnIndex: number, columnPad: boolean, gridWidth: number, gridHeight: number) => (
       new Col(chunkIdsLayout.map(cols => cols[columnIndex].map(rows => (
-        new Row(rows.length > 1 ? rows.map(row => (
-          new Col([
+        new Row(rows.length > 1
+          ? rows.map(row => (
+            new Col([
+              new Chunk(makeGrid(gridWidth, gridHeight, (x, y, color) => new Swatch(undefined, color, swatchPropsRef), chunks[row].chunk[0].map(id => colorMap[id])), null, () => onChunkClicked(colorMap[chunks[row].chunk[0][0]]))
+            ], null, true, swatchPropsRef)
+          ))
+          : rows.map(row => (
             new Chunk(makeGrid(gridWidth, gridHeight, (x, y, color) => new Swatch(undefined, color, swatchPropsRef), chunks[row].chunk[0].map(id => colorMap[id])), null, () => onChunkClicked(colorMap[chunks[row].chunk[0][0]]))
-          ], null, true, swatchPropsRef)
-        )) : rows.map(row => (
-          new Chunk(makeGrid(gridWidth, gridHeight, (x, y, color) => new Swatch(undefined, color, swatchPropsRef), chunks[row].chunk[0].map(id => colorMap[id])), null, () => onChunkClicked(colorMap[chunks[row].chunk[0][0]]))
-        )), null, true, swatchPropsRef)
+          )), null, true, swatchPropsRef)
       )
       ))[0], null, columnPad, swatchPropsRef)
     )

@@ -58,7 +58,7 @@ export const ColorWallChunkChipFacet = (props: Props) => {
     if (!locale || !brandId) return
     // @todo we could refactor so that comps rely on useColor hook -RS
     dispatch(loadColors(brandId, { language: locale }))
-  }, [ locale, brandId ])
+  }, [locale, brandId])
 
   return (
     <ColorWallContext.Provider value={cwContext}>

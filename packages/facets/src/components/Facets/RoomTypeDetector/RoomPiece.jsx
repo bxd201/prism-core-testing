@@ -43,35 +43,43 @@ const RoomPiece = (props: Props) => {
       setImageBg(color)
       update(color)
     }
-  }, [ imageBg ])
+  }, [imageBg])
 
   return (
     <>
-      {!image ? <Card title={label}><CircleLoader inheritSize /></Card> : (
+      {!image
+        ? <Card title={label}><CircleLoader inheritSize /></Card>
+        : (
         <Card title={label} image={image} imageBg={imageBg} titleBg={`rgb(${legendColor.join(',')})`}>
-          {swRecommendations && swRecommendations.length ? (
+          {swRecommendations && swRecommendations.length
+            ? (
             <ColorMatches title={`SW ${formatMessage({ id: 'RECOMMENDATIONS' })}`}>
               {swRecommendations.map((color: Color, i) => {
                 return <Swatch key={i} color={color.hex} name={color.name} onClick={() => handleSetColor(color.hex)} />
               })}
             </ColorMatches>
-          ) : null}
-          {suggestedColors && suggestedColors.length ? (
+              )
+            : null}
+          {suggestedColors && suggestedColors.length
+            ? (
             <ColorMatches title={`SW ${formatMessage({ id: 'RECOMMENDATIONS' })}`}>
               {suggestedColors.map((color: Color, i) => {
                 return <Swatch key={i} color={color.hex} name={color.name} onClick={() => handleSetColor(color)} />
               })}
             </ColorMatches>
-          ) : null}
-          {palette && palette.length ? (
+              )
+            : null}
+          {palette && palette.length
+            ? (
             <ColorMatches title={`SW ${formatMessage({ id: 'IDENTIFIED_COLORS' })} , SW ${formatMessage({ id: 'MATCHES' })}`}>
               {palette.map((color, i) => {
                 return <SWMatchSwatch key={i} color={color} swPalette={swPalette[i]} />
               })}
             </ColorMatches>
-          ) : null}
+              )
+            : null}
         </Card>
-      )}
+          )}
     </>
 
   )

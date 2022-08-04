@@ -157,7 +157,7 @@ export const ColorWallPage = (props: Props) => {
     }
 
     return []
-  }, [ hiddenSections ])
+  }, [hiddenSections])
 
   // -----------------------------------------------------
   // build color wall context and a11y state

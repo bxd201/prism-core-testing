@@ -97,7 +97,7 @@ export const lp = (state: any = initialState, action: any) => {
         return (color.id === action.payload.colorId)
       })
 
-      let diff = difference(state.colors, colors)
+      const diff = difference(state.colors, colors)
 
       return Object.assign({}, state, {
         colors: [
@@ -143,9 +143,9 @@ export const lp = (state: any = initialState, action: any) => {
 
     case EDIT_LP_COMPARE_COLOR:
       const originCompareId = state.colors.map((colors) => colors.id)
-      let compareColorsId = state.compareColorsId ? state.compareColorsId : originCompareId
+      const compareColorsId = state.compareColorsId ? state.compareColorsId : originCompareId
       const editId = action.payload.colorId
-      let removedCompareColors = [...compareColorsId]
+      const removedCompareColors = [...compareColorsId]
       const idx = removedCompareColors.indexOf(editId)
       if (idx !== -1) {
         removedCompareColors.splice(idx, 1)
@@ -173,15 +173,15 @@ export const lp = (state: any = initialState, action: any) => {
         let activeColor = action.payload.length ? { ...action.payload[0] } : null
 
         const mergedColors = [...newColors, ...state.colors]
-        let uniqueColorIds = new Set()
+        const uniqueColorIds = new Set()
         mergedColors && mergedColors.map(color => {
           uniqueColorIds.add(color.id)
         })
         const uniqueMergedColors = []
-        for (let colorId of uniqueColorIds) {
+        for (const colorId of uniqueColorIds) {
           uniqueMergedColors.push(mergedColors.find(color => color.id === colorId))
         }
-        let _activeColor = uniqueMergedColors.filter(color => !!color.isActive)
+        const _activeColor = uniqueMergedColors.filter(color => !!color.isActive)
 
         if (_activeColor.length) {
           activeColor = { ..._activeColor[0] }

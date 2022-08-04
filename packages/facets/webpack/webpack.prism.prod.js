@@ -5,25 +5,22 @@
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const common = require('./webpack.prism.common.js')
 const flags = require('./constants')
-const merge = require('webpack-merge')
+const { merge } = require('webpack-merge')
 const TerserPlugin = require('terser-webpack-plugin')
-const webpack = require('webpack')
 
-module.exports = merge.smart(
+module.exports = merge(
   common,
   {
     mode: flags.mode,
-    devtool: 'cheap-source-map',
+    devtool: 'nosources-source-map',
     plugins: [
       new CleanWebpackPlugin()
     ],
     optimization: {
       minimizer: [
         new TerserPlugin({
-          cache: true,
           parallel: true,
           extractComments: true,
-          sourceMap: true, // Must be set to true if using source-maps in production
           terserOptions: {
             warnings: false,
             parse: {},

@@ -59,7 +59,8 @@ const createColors = (sceneData: any, sceneType: string, colorMap: ColorMap) => 
   const colors = getColorsBySceneType(sceneData, sceneType)
   const livePaletteColorsIdArray = (sceneData.sceneMetadata && sceneData.sceneMetadata.hasOwnProperty('livePaletteColorsIdArray'))
     ? sceneData.sceneMetadata.livePaletteColorsIdArray
-    : sceneData.hasOwnProperty('livePaletteColorsIdArray') ? sceneData.livePaletteColorsIdArray
+    : sceneData.hasOwnProperty('livePaletteColorsIdArray')
+      ? sceneData.livePaletteColorsIdArray
       : null
 
   const colorInstances = getColorInstances(colors, livePaletteColorsIdArray, colorMap)
@@ -174,15 +175,18 @@ const SavedScene = (props: SavedSceneProps, ref: RefObject | null) => {
 
   return (
     <div className={`${sceneClassName} ${(props.isImgWidthPixel) ? sceneIndividual : sceneCarousel}`}>
-      {backgroundImageSrc && !useTintableScene ? <PrismImage
+      {backgroundImageSrc && !useTintableScene
+        ? <PrismImage
         ref={imageRef}
         source={backgroundImageSrc}
         loadedCallback={handleBackgroundImageLoaded}
         shouldResample={false}
         scalingWidth={width}
         width={width}
-        height={height} /> : null}
-      {backgroundImageData && !useTintableScene ? <MergeColors
+        height={height} />
+        : null}
+      {backgroundImageData && !useTintableScene
+        ? <MergeColors
         shouldTint
         colorOpacity={0.8}
         imageDataList={[backgroundImageData, ...props.sceneData.surfaceMasks.surfaces.map(surface => surface.surfaceMaskImageData)]}
@@ -191,7 +195,8 @@ const SavedScene = (props: SavedSceneProps, ref: RefObject | null) => {
         })}
         handleImagesMerged={loadThumbnail}
         width={width}
-        height={height} /> : null}
+        height={height} />
+        : null}
       <div className={`${sceneFrameWrapper}`}>
         {props.editEnabled
           ? <div className={editButtonClassName}>
@@ -201,13 +206,17 @@ const SavedScene = (props: SavedSceneProps, ref: RefObject | null) => {
                 icon={['fal', 'trash-alt']}
                 size='sm' />
             </button>
-          </div> : null}
+          </div>
+          : null}
         <div aria-label={`${props.editEnabled ? intl.formatMessage({ id: 'RENAME' }) : intl.formatMessage({ id: 'SHOW' })}${getSceneName(props.sceneData, props.sceneType)}`} ref={ref} role='button' tabIndex='0' className={sceneFrameClassName} onClick={selectScene} onKeyDown={handleKeyDown} onMouseDown={mouseDownHandler} >
           <div className={paneClassName}>
-            {!useTintableScene ? <div className={thumbnailClassName} style={{ width: `${props.width || FIXED_WIDTH}${props.isImgWidthPixel ? `px` : `%`}`, height: `${props.height || FIXED_HEIGHT}px` }}>
-              {thumbnailUrl ? <img style={{ width: `${props.width || FIXED_WIDTH}${props.isImgWidthPixel ? `px` : `%`}` }} src={thumbnailUrl} alt={`${intl.formatMessage({ id: 'MY_IDEAS.PREVIEW' })}: ${props.sceneData.name}`} /> : <CircleLoader />}
-            </div> : null}
-            {useTintableScene && (props.sceneData?.variant || fastMaskSceneAndVariant?.variant) ? <div className={thumbnailClassName} style={{ width: `${props.width || FIXED_WIDTH}${props.isImgWidthPixel ? `px` : `%`}`, height: `${props.height || FIXED_HEIGHT}px` }}>
+            {!useTintableScene
+              ? <div className={thumbnailClassName} style={{ width: `${props.width || FIXED_WIDTH}${props.isImgWidthPixel ? 'px' : '%'}`, height: `${props.height || FIXED_HEIGHT}px` }}>
+              {thumbnailUrl ? <img style={{ width: `${props.width || FIXED_WIDTH}${props.isImgWidthPixel ? 'px' : '%'}` }} src={thumbnailUrl} alt={`${intl.formatMessage({ id: 'MY_IDEAS.PREVIEW' })}: ${props.sceneData.name}`} /> : <CircleLoader />}
+            </div>
+              : null}
+            {useTintableScene && (props.sceneData?.variant || fastMaskSceneAndVariant?.variant)
+              ? <div className={thumbnailClassName} style={{ width: `${props.width || FIXED_WIDTH}${props.isImgWidthPixel ? 'px' : '%'}`, height: `${props.height || FIXED_HEIGHT}px` }}>
               <SingleTintableSceneView
                 surfaceColorsFromParents={props.sceneType === SCENE_TYPE.anonStock ? props.sceneData.sceneMetadata.scene.surfaceColors : props.sceneData.palette}
                 selectedSceneUid={props.sceneType === SCENE_TYPE.anonStock ? props.sceneData.variant.sceneUid : fastMaskSceneAndVariant.scene.uid}
@@ -215,15 +224,18 @@ const SavedScene = (props: SavedSceneProps, ref: RefObject | null) => {
                 variantsCollection={props.sceneType === SCENE_TYPE.anonStock ? [props.sceneData.variant] : [fastMaskSceneAndVariant.variant]}
                 showThumbnail
               />
-            </div> : null}
+            </div>
+              : null}
             <div className={colorsClassName}>
               {createColors(props.sceneData, props.sceneType, colorMap)}
             </div>
           </div>
         </div>
-        {!props.hideSceneName ? <div className={sceneLabelClassName}>
+        {!props.hideSceneName
+          ? <div className={sceneLabelClassName}>
           {getSceneName(props.sceneData, props.sceneType)}
-        </div> : null}
+        </div>
+          : null}
       </div>
     </div>
   )

@@ -19,7 +19,7 @@ import { createMiniColorFromColor } from '../../components/SingleTintableSceneVi
 import type { Surface } from '../types/Scene'
 
 function ColorInstance (color: Object | Color) {
-  for (let prop in color) {
+  for (const prop in color) {
     if (color.hasOwnProperty(prop)) {
       this[prop] = color[prop]
     }
@@ -188,7 +188,7 @@ export function convertCategorizedColorsToIds (colorData: CategorizedColorGrid):
 }
 
 export function convertUnorderedColorsToColorMap (colorData: ColorList): ColorMap {
-  let colorMap = {}
+  const colorMap = {}
 
   flattenDeep(colorData).forEach((color: ProbablyColor) => {
     if (color) {
@@ -200,7 +200,7 @@ export function convertUnorderedColorsToColorMap (colorData: ColorList): ColorMa
 }
 
 export function convertCategorizedColorsToColorMap (colorData: CategorizedColorGrid): ColorMap {
-  let colorMap = {}
+  const colorMap = {}
   const data = keys(colorData).map(key => {
     return colorData[key]
   })

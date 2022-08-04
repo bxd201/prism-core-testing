@@ -55,7 +55,7 @@ export const Content = ({ msg, color, style }: ContentProps) => {
               <FontAwesomeIcon className='add-icon' icon={['fal', 'plus-circle']} size='2x' />
               {addButtonText && <span className='OmniButton__content'>{title}</span>}
             </button>
-          )
+            )
         )
       }
       {displayInfoButton && <InfoButton color={color} />}
@@ -69,7 +69,7 @@ export const Content = ({ msg, color, style }: ContentProps) => {
             >
               {at(messages, 'VIEW_DETAILS')[0]}
             </a>
-          )
+            )
           : (
             <Link
               to={generateColorDetailsPageUrl(color)}
@@ -78,7 +78,7 @@ export const Content = ({ msg, color, style }: ContentProps) => {
             >
               {at(messages, 'VIEW_DETAILS')[0]}
             </Link>
-          )
+            )
       )}
     </div>
   )
@@ -122,14 +122,14 @@ const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, co
         onClick={!isClickable || (chunkClickable && section === kebabCase(primeColorWall))
           ? noop
           : () => {
-            GA.event({ category: 'Color Wall', action: 'Color Swatch Click', label: fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator) }, GA_TRACKER_NAME_BRAND[brandId])
-            if (activeColorRouteBuilderRef && activeColorRouteBuilderRef.current) {
-              activeColorRouteBuilderRef.current(color)
-            } else {
+              GA.event({ category: 'Color Wall', action: 'Color Swatch Click', label: fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator) }, GA_TRACKER_NAME_BRAND[brandId])
+              if (activeColorRouteBuilderRef && activeColorRouteBuilderRef.current) {
+                activeColorRouteBuilderRef.current(color)
+              } else {
               // TODO: refactor this to use context as well
-              history.push(generateColorWallPageUrl(section, family, color.id, fullColorName(color.brandKey, color.colorNumber, color.name)) + (url.endsWith('family/') ? 'family/' : url.endsWith('search/') ? 'search/' : ''))
+                history.push(generateColorWallPageUrl(section, family, color.id, fullColorName(color.brandKey, color.colorNumber, color.name)) + (url.endsWith('family/') ? 'family/' : url.endsWith('search/') ? 'search/' : ''))
+              }
             }
-          }
         }
         aria-label={fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator)}
       >
@@ -144,17 +144,19 @@ const ColorSwatch = React.forwardRef<ColorSwatchProps, HTMLElement>(({ color, co
         style={houseShaped && gap ? { ...style, marginLeft: gap + 1 + 'px', marginRight: gap + 1 + 'px' } : style}
       >
         {contentRenderer([
-          colorNumOnBottom ? (
+          colorNumOnBottom
+            ? (
             <div key='0'>
               <p className={`${baseClass}__${colorNumOnBottomClass}__name`}>{color.name}</p>
               <p className={`${baseClass}__${colorNumOnBottomClass}__number`}>{fullColorNumber(color.brandKey, color.colorNumber, brandKeyNumberSeparator)}</p>
             </div>
-          ) : (
+              )
+            : (
             <div key='0'>
               <p className='color-swatch__content__number'>{fullColorNumber(color.brandKey, color.colorNumber, brandKeyNumberSeparator)}</p>
               <p className='color-swatch__content__name'>{color.name}</p>
             </div>
-          ),
+              ),
           <Content msg={at(status, 'message')[0]} color={color} key='1' />
         ])}
       </section>)}

@@ -156,13 +156,17 @@ export function FastMask ({ color, uploadImage, uploads, hideUploadBtn = false, 
             </React.Fragment>
           ) : null}
 
-          {isProcessing || isUploading ? (
+          {isProcessing || isUploading
+            ? (
             <GenericOverlay type={GenericOverlay.TYPES.LOADING} message={isUploading ? `${formatMessage({ id: 'LOADING' })}...` : `${formatMessage({ id: 'PROCESSING' })} ${parseInt(pctComplete * 100, 10)}%`} semitransparent />
-          ) : null}
+              )
+            : null}
 
-          {error ? (
+          {error
+            ? (
             <GenericOverlay type={GenericOverlay.TYPES.ERROR} message={`${formatMessage({ id: 'ERROR_ENCOUNTERED' })}`} semitransparent />
-          ) : null}
+              )
+            : null}
         </div>
       )}
     </div>

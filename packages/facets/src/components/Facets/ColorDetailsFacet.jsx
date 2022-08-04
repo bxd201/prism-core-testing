@@ -114,8 +114,10 @@ export const ColorDetailsPage = function ColorDetailsPage (props: Props) {
         handleBlobsLoaded={handleSceneSurfacesLoaded}
         handleError={handleSceneBlobLoaderError}
         initHandler={handleBlobLoaderInit} />}
-      {!colorMap || !selectedSceneUid ? <HeroLoader /> : (colorId && color
-        ? (
+      {!colorMap || !selectedSceneUid
+        ? <HeroLoader />
+        : (colorId && color
+            ? (
           <>
             {hasInitNav && (
               <Route path={`${colorDetailsBaseUrl}/:${ROUTE_PARAM_NAMES.COLOR_ID}/:${ROUTE_PARAM_NAMES.COLOR_SEO}`}>
@@ -133,13 +135,13 @@ export const ColorDetailsPage = function ColorDetailsPage (props: Props) {
               </Route>
             )}
           </>
-        )
-        : (
+              )
+            : (
           <GenericMessage type={GenericMessage.TYPES.ERROR}>
             <FormattedMessage id='UNSPECIFIED_COLOR' />
           </GenericMessage>
-        )
-      )}
+              )
+          )}
     </>
   )
 }

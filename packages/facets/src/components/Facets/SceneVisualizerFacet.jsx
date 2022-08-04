@@ -207,7 +207,8 @@ export function SceneVisualizerFacet (props: SceneVisualizerProps) {
               surfaceIds={[facetId]}
               surfaceColors={[tintColor]}
               width={initialUploadedImageRefDims.imageWidth}
-              height={initialUploadedImageRefDims.imageHeight} />} /> : null}</div>
+              height={initialUploadedImageRefDims.imageHeight} />} />
+          : null}</div>
     <div className={shouldShowInitialImage ? 'scene-visualizer--hidden' : 'scene-visualizer'}>{
       uploadedImage &&
       uploadedImageRefDims &&
@@ -236,7 +237,8 @@ export function SceneVisualizerFacet (props: SceneVisualizerProps) {
               intl.formatMessage({ id: 'SCENE_VISUALIZER.FASTMASK_LOADING_MSG_1' }),
               intl.formatMessage({ id: 'SCENE_VISUALIZER.FASTMASK_LOADING_MSG_2' })
             ]}
-          />} /> : null}</div>
+          />} />
+        : null}</div>
   </>)
 }
 

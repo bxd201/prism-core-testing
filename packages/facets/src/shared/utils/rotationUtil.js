@@ -4,10 +4,10 @@ import { TAU } from '../../constants/globals'
 export const getTransformParams = (angle: number = 0, width: number, height: number): Object => {
   let rotation = (angle * TAU) / 360
 
-  let hScale = 1
-  let vScale = 1
-  let vSkew = 0
-  let hSkew = 0
+  const hScale = 1
+  const vScale = 1
+  const vSkew = 0
+  const hSkew = 0
   let hTrans = 0
   let vTrans = 0
 

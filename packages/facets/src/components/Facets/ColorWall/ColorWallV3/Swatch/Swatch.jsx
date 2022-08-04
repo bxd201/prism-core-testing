@@ -78,7 +78,7 @@ export const SwatchContent = ({ color, style, isOnlyUsedforSearch = false }: Swa
                   <FontAwesomeIcon className='add-icon' icon={['fal', 'plus-circle']} size='2x' />
                   {addButtonText && <span className='OmniButton__content'>{title}</span>}
                 </button>
-              )
+                )
             )
           }
           {displayInfoButton && <InfoButton color={color} />}
@@ -92,7 +92,7 @@ export const SwatchContent = ({ color, style, isOnlyUsedforSearch = false }: Swa
                 >
                   {at(messages, 'VIEW_DETAILS')[0]}
                 </a>
-              )
+                )
               : (
                 <Link
                   to={generateColorDetailsPageUrl(color)}
@@ -101,7 +101,7 @@ export const SwatchContent = ({ color, style, isOnlyUsedforSearch = false }: Swa
                 >
                   {at(messages, 'VIEW_DETAILS')[0]}
                 </Link>
-              )
+                )
           )}
         </div>
       </div>
@@ -119,8 +119,8 @@ export function Swatch ({ data, id, active, color, onRef }: SwatchProps) {
   const { houseShaped = false } = colorSwatch
   const { getPerimeterLevel, setActiveSwatchId, swatchContentRefs } = ctx
   const perimeterLevel = getPerimeterLevel(id)
-  const [ swatchWidth, setSwatchWidth ] = useState(0)
-  const [ swatchHeight, setSwatchHeight ] = useState(0)
+  const [swatchWidth, setSwatchWidth] = useState(0)
+  const [swatchHeight, setSwatchHeight] = useState(0)
 
   useEffect(() => {
     const results = computeChunk(data, structuralCtx)

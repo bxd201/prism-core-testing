@@ -37,16 +37,20 @@ const SceneVisualizerContent = (props: SceneVisualizerContentProps) => {
   return (<>
     <div className={FAST_MASK_WRAPPER}>
       {tinter}
-      {tinterRendered && handleFastMaskClose ? <div className={FAST_MASK_CLOSE_BTN}>
+      {tinterRendered && handleFastMaskClose
+        ? <div className={FAST_MASK_CLOSE_BTN}>
         <button onClick={handleFastMaskClose}>
           <FontAwesomeIcon className={SCENE_BTN_WRAPPER_BTN_ICON} icon={['fal', 'times']} size='2x' />
         </button>
-      </div> : null}
-      {tinterRendered ? <div className={SCENE_BTN_WRAPPER}><button onClick={initUpload} className={SCENE_BTN_WRAPPER_BTN} disabled={uploadInitiated}>
+      </div>
+        : null}
+      {tinterRendered
+        ? <div className={SCENE_BTN_WRAPPER}><button onClick={initUpload} className={SCENE_BTN_WRAPPER_BTN} disabled={uploadInitiated}>
         {uploadButtonText ? <div className={CUSTOM_ICON}><PhUploadIcon classNames={ICON_SVG} /></div> : <FontAwesomeIcon className={SCENE_BTN_WRAPPER_BTN_ICON} icon={['fal', 'upload']} size='1x' />}
         {uploadButtonText ? <div>{uploadButtonText}</div> : <FormattedMessage id='SCENE_VISUALIZER.UPLOAD_PHOTO' />}
       </button>
-      </div> : null}
+      </div>
+        : null}
     </div>
   </>)
 }

@@ -46,7 +46,7 @@ const EditColorPalette = ({ children, defaultInput, saveName }: editColorPalette
         <label aria-label='clear text' className={`${inputLabel}`} tabIndex='0' role='button' htmlFor='clearPaletteName' onClick={clearName} onKeyDown={clearName} onMouseDown={(e: SyntheticEvent) => e.preventDefault()}>
           <div>
             <input id='clearPaletteName' tabIndex='-1' className='visually-hidden' />
-            <FontAwesomeIcon size='xs' className={``} icon={['fa', 'times']} />
+            <FontAwesomeIcon size='xs' className={''} icon={['fa', 'times']} />
           </div>
         </label>
         {inputText && <button className={`${saveButton}`} onClick={clickHandler}><FormattedMessage id='SAVE_MASKS' /></button>}

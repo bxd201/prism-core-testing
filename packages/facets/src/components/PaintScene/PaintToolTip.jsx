@@ -49,20 +49,20 @@ export function PaintToolTip ({ tooltipToolActiveName, closeTooltip, backButtonC
   const downPointerTranslateValue = downPointerDivTranslateFactor + (tooltipToolActiveNumber * downPointerDivTranslateMultiplie)
 
   const wrapperStyle = (window.outerWidth < varValues.slick.tablet && tooltipToolActiveNumber === addColorsTooltipNumber)
-    ? { transform: `translate(0px, 150px)` }
+    ? { transform: 'translate(0px, 150px)' }
     : (tooltipToolActiveNumber === addColorsTooltipNumber)
-      ? { transform: `translate(0px, 150px)` }
-      : (window.outerWidth >= varValues.slick.tablet)
-        ? { transform: `translate(${divTranslateValue}px)` }
-        : { transform: `translate(0px)` }
+        ? { transform: 'translate(0px, 150px)' }
+        : (window.outerWidth >= varValues.slick.tablet)
+            ? { transform: `translate(${divTranslateValue}px)` }
+            : { transform: 'translate(0px)' }
 
   const downPointerStyle = (window.outerWidth < varValues.slick.tablet && tooltipToolActiveNumber === addColorsTooltipNumber)
     ? { top: '-6px', borderBottomColor: '#2cabe2', borderBottomStyle: 'solid', borderTopStyle: 'none' }
     : (tooltipToolActiveNumber === addColorsTooltipNumber)
-      ? { top: '-6px', borderBottomColor: '#2cabe2', borderBottomStyle: 'solid', borderTopStyle: 'none' }
-      : (window.outerWidth >= varValues.slick.tablet)
-        ? { transform: `translate(0px)` }
-        : { transform: `translate(${downPointerTranslateValue}px)` }
+        ? { top: '-6px', borderBottomColor: '#2cabe2', borderBottomStyle: 'solid', borderTopStyle: 'none' }
+        : (window.outerWidth >= varValues.slick.tablet)
+            ? { transform: 'translate(0px)' }
+            : { transform: `translate(${downPointerTranslateValue}px)` }
 
   return (
     <React.Fragment>
@@ -72,7 +72,7 @@ export function PaintToolTip ({ tooltipToolActiveName, closeTooltip, backButtonC
             <FontAwesomeIcon title={intl.formatMessage({ id: 'PAINT_TOOLS.CLOSE' })} className={`${closeButtonSvgClass}`} icon={['fal', 'times']} size='lg' />
           </button>
           <div className={`${headerClass}`}>
-            <FontAwesomeIcon className={``} icon={['fal', 'info-circle']} size='1x' />&nbsp;<span><FormattedMessage id='TOOL_TIPS' /></span>
+            <FontAwesomeIcon className={''} icon={['fal', 'info-circle']} size='1x' />&nbsp;<span><FormattedMessage id='TOOL_TIPS' /></span>
           </div>
           <div className={`${toolNameClass}`}>{tooltipToolActiveName}</div>
           <div className={`${tooltipContentClass}`}>
@@ -87,19 +87,19 @@ export function PaintToolTip ({ tooltipToolActiveName, closeTooltip, backButtonC
               {(tooltipToolActiveNumber < toolsCount)
                 ? <><span><FormattedMessage id='NEXT' /></span>&nbsp;<FontAwesomeIcon title={intl.formatMessage({ id: 'PAINT_TOOLS.FORWARD' })} icon={['fa', 'chevron-right']} /></>
                 : (tooltipToolActiveNumber === addColorsTooltipNumber)
-                  ? <span><FormattedMessage id='START_PAINTING' /></span>
-                  : ''}
+                    ? <span><FormattedMessage id='START_PAINTING' /></span>
+                    : ''}
             </button>
           </div>
         </div>
-        <div className={`${downPointerClass} ${tooltipToolActiveNumber === hidePaintTooltipNumber ? `${downPointerHidePaintClass}` : ``} ${tooltipToolActiveNumber === hintsTooltipNumber ? `${downPointerHintsClass}` : ``}`} style={downPointerStyle} />
+        <div className={`${downPointerClass} ${tooltipToolActiveNumber === hidePaintTooltipNumber ? `${downPointerHidePaintClass}` : ''} ${tooltipToolActiveNumber === hintsTooltipNumber ? `${downPointerHintsClass}` : ''}`} style={downPointerStyle} />
       </div>}
       {isSelectGroup && <div data-testid='wrapper-select' onMouseEnter={() => showTooltipContentByZindex(parentDivRef)} onMouseLeave={() => hideTooltipContentByZindex(parentDivRef)} className={`${wrapperClass} ${selectGroup}`}>
         <button className={`${closeButtonClass}`} onClick={closeTooltip}>
           <FontAwesomeIcon title={intl.formatMessage({ id: 'PAINT_TOOLS.CLOSE' })} className={`${closeButtonSvgClass}`} icon={['fal', 'times']} size='lg' />
         </button>
         <div className={`${headerClass}`}>
-          <FontAwesomeIcon title={intl.formatMessage({ id: 'PAINT_TOOLS.INFO' })} className={``} icon={['fal', 'info-circle']} size='1x' />&nbsp;<FormattedMessage id='TOOL_TIPS' />
+          <FontAwesomeIcon title={intl.formatMessage({ id: 'PAINT_TOOLS.INFO' })} className={''} icon={['fal', 'info-circle']} size='1x' />&nbsp;<FormattedMessage id='TOOL_TIPS' />
         </div>
         <div className={`${toolNameClass}`}>{tooltipToolActiveName}</div>
         <div className={`${tooltipContentClass}`}>

@@ -97,11 +97,13 @@ export default (props: Props) => {
 
   return (
     <ul>
-      {isCreatingDownload ? (
+      {isCreatingDownload
+        ? (
         <li style={{ display: 'inline-block' }}>
           <CircleLoader color='#0069af' />
         </li>
-      ) : (
+          )
+        : (
         <li style={{ display: 'inline-block', verticalAlign: 'top' }}>
           <ul>
             <button onClick={onDownloadClick} disabled={isCreatingDownload} style={{ flexDirection: 'column' }}>
@@ -120,7 +122,7 @@ export default (props: Props) => {
             </button>
           </ul>
         </li>
-      )}
+          )}
     </ul>
   )
 }

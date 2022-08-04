@@ -127,15 +127,17 @@ const MergeColors = (props: MergeColorsProps) => {
   }
   return (
     <>
-      {imageUrls.length && (props.height && props.width) ? imageUrls.map((src, i) => {
-        return (<img
+      {imageUrls.length && (props.height && props.width)
+        ? imageUrls.map((src, i) => {
+          return (<img
           className={'merge-canvas-image-comp'}
           src={src}
           key={`${i}`}
           onLoad={(e) => handleImageLoad(e, i)}
           alt={intl.formatMessage({ id: 'IMAGE_INVISIBLE' })}
         />)
-      }) : null}
+        })
+        : null}
       <canvas
         className={'merge-canvas-image-comp'}
         ref={canvasRef}

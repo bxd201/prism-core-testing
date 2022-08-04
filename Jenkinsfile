@@ -99,40 +99,42 @@ pipeline {
         expression { BRANCH_NAME ==~ /^(PR-.+)$/ }
       }
       steps {
-        sh """
-        #!/bin/bash
+        withCredentials([string(credentialsId: 'Github_token_prismcore', variable: 'token_prismcore')]){
+          sh """
+          #!/bin/bash
 
-        # Build the builder image
-        docker build --no-cache --pull -t ${IMAGE_NAME}-build -f ci/Dockerfile.build .
-        """
+          # Build the builder image
+          docker build --no-cache --pull -t ${IMAGE_NAME}-build -f ci/Dockerfile.build .
+          """
 
-        sh """
-        #!/bin/bash
+          sh """
+          #!/bin/bash
 
-        # Clean up any old image archive files
-        rm -rf dist
+          # Clean up any old image archive files
+          rm -rf dist
 
-        # Make sure the build container has been removed
-        docker stop ${IMAGE_NAME}-build-${BUILD_NUMBER} || true
-        docker rm ${IMAGE_NAME}-build-${BUILD_NUMBER} || true
+          # Make sure the build container has been removed
+          docker stop ${IMAGE_NAME}-build-${BUILD_NUMBER} || true
+          docker rm ${IMAGE_NAME}-build-${BUILD_NUMBER} || true
 
-        # Mount the volumes from Jenkins and run the deploy
-        docker run \
-          -e WEB_URL=https://prism.sherwin-williams.com/${S3_FOLDER_NAME} \
-          --env API_URL="$API_URL" \
-          --env ML_API_URL="$ML_API_URL" \
-          --env DANGER_MANUAL_CI="Docker" \
-          --env DANGER_GITHUB_API_BASE_URL="https://api.github.sherwin.com" \
-          --env DANGER_GITHUB_API_TOKEN="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" \
-          --env DANGER_MANUAL_CI="true" \
-          --env DANGER_MANUAL_GH_REPO="SherwinWilliams/prism-core" \
-          --env DANGER_MANUAL_PR_NUM="$CHANGE_ID" \
-          --name ${IMAGE_NAME}-build-${BUILD_NUMBER} \
-          ${IMAGE_NAME}-build:latest
+          # Mount the volumes from Jenkins and run the deploy
+          docker run \
+            -e WEB_URL=https://prism.sherwin-williams.com/${S3_FOLDER_NAME} \
+            --env API_URL="$API_URL" \
+            --env ML_API_URL="$ML_API_URL" \
+            --env DANGER_MANUAL_CI="Docker" \
+            --env DANGER_GITHUB_API_BASE_URL="https://api.github.sherwin.com" \
+            --env DANGER_GITHUB_API_TOKEN="${token_prismcore}" \
+            --env DANGER_MANUAL_CI="true" \
+            --env DANGER_MANUAL_GH_REPO="SherwinWilliams/prism-core" \
+            --env DANGER_MANUAL_PR_NUM="$CHANGE_ID" \
+            --name ${IMAGE_NAME}-build-${BUILD_NUMBER} \
+            ${IMAGE_NAME}-build:latest
 
-        # Remove the build container
-        docker rm -f ${IMAGE_NAME}-build-${BUILD_NUMBER}
-        """
+          # Remove the build container
+          docker rm -f ${IMAGE_NAME}-build-${BUILD_NUMBER}
+          """
+        }
       }
     }
 
@@ -283,14 +285,14 @@ pipeline {
     }
       agent {
         docker {
-          image 'docker.artifactory.sherwin.com/ecomm/utils/barge'
+          image 'docker.artifactory.sherwin.com/ecomm/utils/barge:artifactory'
           args "-u barge"
           alwaysPull true
           reuseNode true
         }
       }
       steps {
-        withCredentials([usernamePassword(credentialsId: 'artifactory_credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+        withCredentials([usernamePassword(credentialsId: 'artifactory_credentials_v2', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
           sh "barge in"
         }
       }
@@ -302,7 +304,7 @@ pipeline {
       }
       agent {
         docker {
-            image 'docker.cpartdc01.sherwin.com/ecomm/utils/buoy:latest'
+            image 'docker.artifactory.sherwin.com/ecomm/utils/buoy:artifactory'
             reuseNode true
             alwaysPull true
             args '-u buoy'
@@ -329,7 +331,7 @@ pipeline {
       steps {
         withCredentials([
           string(credentialsId: 'jenkins_rancher2_bearerToken', variable: 'RANCHER_TOKEN'),
-          usernameColonPassword(credentialsId: 'artifactory_credentials', variable: 'ARTIFACTORY_CREDENTIALS'),
+          usernameColonPassword(credentialsId: 'artifactory_credentials_v2', variable: 'ARTIFACTORY_CREDENTIALS'),
         ]) {
           sh "/buoy/float.sh"
 

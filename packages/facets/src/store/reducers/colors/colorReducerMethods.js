@@ -72,58 +72,58 @@ export function doReceiveColors (state: ColorsState, { payload: { unorderedColor
   if (cwv3) {
     return groups.length
       ? {
-        ...state,
-        groups: groups,
-        items: { colors, brights, unorderedColors: unorderedColors.map((c: Color) => c.id), sectionLabels: colorLabels, colorMap, chunksLayout, wall },
-        layouts: [], // or null
-        status: { ...state.status, activeRequest: false, error: false, loading: false, requestComplete: true },
-        structure: [], // or null
-        sections: [], // or null
-        sectionsShortLabel: [], // or null
-        shapes: shapes,
-        subgroups: subgroups,
-        primeColorWall: groups.filter(({ prime }) => prime)[0]?.name,
-        unorderedColors
+          ...state,
+          groups: groups,
+          items: { colors, brights, unorderedColors: unorderedColors.map((c: Color) => c.id), sectionLabels: colorLabels, colorMap, chunksLayout, wall },
+          layouts: [], // or null
+          status: { ...state.status, activeRequest: false, error: false, loading: false, requestComplete: true },
+          structure: [], // or null
+          sections: [], // or null
+          sectionsShortLabel: [], // or null
+          shapes: shapes,
+          subgroups: subgroups,
+          primeColorWall: groups.filter(({ prime }) => prime)[0]?.name,
+          unorderedColors
         // TODO: what to do with structure?
-      }
+        }
       : getErrorState(state)
   } else {
     return sections.length
       ? {
-        ...state,
-        items: { colors, brights, unorderedColors: unorderedColors.map((c: Color) => c.id), sectionLabels: colorLabels, colorMap, chunksLayout, wall },
-        layouts: sections.map(({ name, families, chunkGridParams }) => {
-          const unChunkedChunks = (chunkGridParams.familiesDetermineLayout || !colors[name])
-            ? [
-              // bright chunks go first
-              ...families.flatMap((family: string): string[] => brights[family]),
-              // normal chunks go next but transposed so that each family will be in it's own column
-              ...flatten(transpose(families.map((family: string): string[] => colors[family])))
-            ]
-            : colors[name]
+          ...state,
+          items: { colors, brights, unorderedColors: unorderedColors.map((c: Color) => c.id), sectionLabels: colorLabels, colorMap, chunksLayout, wall },
+          layouts: sections.map(({ name, families, chunkGridParams }) => {
+            const unChunkedChunks = (chunkGridParams.familiesDetermineLayout || !colors[name])
+              ? [
+                  // bright chunks go first
+                  ...families.flatMap((family: string): string[] => brights[family]),
+                  // normal chunks go next but transposed so that each family will be in it's own column
+                  ...flatten(transpose(families.map((family: string): string[] => colors[family])))
+                ]
+              : colors[name]
 
-          return {
-            name,
-            unChunkedChunks,
-            chunkGridParams,
-            families: families.map(family => ({
-              name: family,
-              unChunkedChunks: chunkGridParams.familiesDetermineLayout
-                ? [...(brights[family] ?? [[]]), ...(colors[family] ?? [[]])]
-                : colors[family],
-              chunkGridParams: chunkGridParams.familiesDetermineLayout
-                ? { gridWidth: 3, chunkWidth: 7, firstRowLength: 1, wrappingEnabled: false }
-                : { ...chunkGridParams, wrappingEnabled: false }
-            }))
-          }
-        }),
-        status: { ...state.status, activeRequest: false, error: false, loading: false, requestComplete: true },
-        structure: sections,
-        sections: sections.map(section => section.name),
-        sectionsShortLabel: sections.filter(({ shortName }) => shortName).length > 0 ? sections.reduce((accum, { name, shortName }) => ({ ...accum, [name]: shortName }), {}) : undefined,
-        primeColorWall: primeColorWall && primeColorWall.name,
-        unorderedColors
-      }
+            return {
+              name,
+              unChunkedChunks,
+              chunkGridParams,
+              families: families.map(family => ({
+                name: family,
+                unChunkedChunks: chunkGridParams.familiesDetermineLayout
+                  ? [...(brights[family] ?? [[]]), ...(colors[family] ?? [[]])]
+                  : colors[family],
+                chunkGridParams: chunkGridParams.familiesDetermineLayout
+                  ? { gridWidth: 3, chunkWidth: 7, firstRowLength: 1, wrappingEnabled: false }
+                  : { ...chunkGridParams, wrappingEnabled: false }
+              }))
+            }
+          }),
+          status: { ...state.status, activeRequest: false, error: false, loading: false, requestComplete: true },
+          structure: sections,
+          sections: sections.map(section => section.name),
+          sectionsShortLabel: sections.filter(({ shortName }) => shortName).length > 0 ? sections.reduce((accum, { name, shortName }) => ({ ...accum, [name]: shortName }), {}) : undefined,
+          primeColorWall: primeColorWall && primeColorWall.name,
+          unorderedColors
+        }
       : getErrorState(state)
   }
 }

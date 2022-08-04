@@ -29,7 +29,7 @@ const generateImage = async (data: any, surfaceColors: MiniColor[], config: Obje
   const coloredSurfaces = !isPaintScene && surfaceColors
   const blackFontsArray: boolean[] = swatchColors.map(color => useBlackText(color.hex))
 
-  let blackFonts = {
+  const blackFonts = {
     regular: undefined,
     small: smallBlackFont,
     bold: undefined,

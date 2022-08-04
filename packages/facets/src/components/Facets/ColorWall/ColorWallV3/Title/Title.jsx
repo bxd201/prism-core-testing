@@ -32,11 +32,13 @@ function Title ({ data = {}, referenceScale }: TitleProps) {
   const containerSize = getOuterHeight(level, referenceScale)
 
   return (
-    value ? (
+    value
+      ? (
       <div className={`${titleClass} ${titleClass}--lvl${level}`} style={{ fontSize: `${size}px`, height: `${containerSize}px` }}>
         {value}
       </div>
-    ) : null
+        )
+      : null
   )
 }
 

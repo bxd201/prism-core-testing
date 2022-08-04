@@ -91,7 +91,7 @@ const extractThemeData = (obj) => {
   return Object.keys(obj).map(name => {
     const data = obj[name]
 
-    let returner = []
+    const returner = []
 
     if (typeof data === 'object') {
       // $FlowIgnore

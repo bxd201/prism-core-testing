@@ -6,7 +6,7 @@ import { SCENE_VARIANTS } from '../../constants/globals'
 
 import './DayNightToggle.scss'
 
-const baseClassName = `day-night-toggle`
+const baseClassName = 'day-night-toggle'
 const checkBoxClassName = `${baseClassName}__input visually-hidden`
 const wrapperClassName = `${baseClassName}__wrapper`
 const dayClassName = `${baseClassName}__day`
@@ -30,7 +30,6 @@ function DayNightToggle (props: DayNightToggleProps) {
 
   return (<FormattedMessage id={isDay ? 'TO_NIGHT_VIEW' : 'TO_DAY_VIEW'}>
     {(txt: string) => <>
-      {/* eslint-disable-next-line jsx-a11y/label-has-for */}
       <label
         className={`${baseClassName} ${!isDay ? `${baseClassName}--night` : ''}`}
         title={txt}

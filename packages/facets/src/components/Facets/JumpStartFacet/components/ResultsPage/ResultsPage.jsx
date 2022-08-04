@@ -133,9 +133,11 @@ function ResultsPage (props: ResultsPageProps) {
         <div className='JSFCommon__content'>
           <div style={{ position: 'relative', overflow: 'hidden' }}>
             <FastMask hideUploadBtn onProcessingComplete={() => setFastMaskComplete(true)} />
-            {isFastMaskComplete && roomObjects ? roomObjects.map((piece: Piece, i) => <div key={i} className={`JSFResultsPage__pin JSFResultsPage__pin--${i}`} style={{ left: `${piece.posX * 100}%`, top: `${piece.posY * 100}%` }}>
+            {isFastMaskComplete && roomObjects
+              ? roomObjects.map((piece: Piece, i) => <div key={i} className={`JSFResultsPage__pin JSFResultsPage__pin--${i}`} style={{ left: `${piece.posX * 100}%`, top: `${piece.posY * 100}%` }}>
               {piece.label}
-            </div>) : null}
+            </div>)
+              : null}
           </div>
         </div>
       </div>

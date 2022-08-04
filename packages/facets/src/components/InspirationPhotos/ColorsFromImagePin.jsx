@@ -197,7 +197,7 @@ export default (props: Props) => {
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchStop}
-            className={`pin__chip ${(color.isActiveFlag) ? `pin__chip--active` : ''}`}
+            className={`pin__chip ${(color.isActiveFlag) ? 'pin__chip--active' : ''}`}
             style={{ background: color.rgbValue }}
           >
             <input
@@ -212,12 +212,12 @@ export default (props: Props) => {
             {(isColorAdded && !color.isActiveFlag) && (<FontAwesomeIcon style={{ color: getContrastYIQ(color.hex) }} icon={['fa', 'check-circle']} size='1x' />)}
           </div>
           <div className={`pin__content ${color.isContentLeft ? 'pin__content--left' : ''}`}>
-            <div className={`pin__name__wrapper ${color.isActiveFlag ? `pin__name__wrapper--active` : `pin__name__wrapper--inactive`}`}>
+            <div className={`pin__name__wrapper ${color.isActiveFlag ? 'pin__name__wrapper--active' : 'pin__name__wrapper--inactive'}`}>
               <span className='pin__copy pin__number'>{(color.colorNumber) ? `${color.brandKey}${color.colorNumber}` : ''}</span>
               <span className='pin__copy pin__name'>{color.name}</span>
             </div>
             <div
-              className={`pin__wrapper__pin-add ${color.isContentLeft ? 'pin__wrapper__pin-add--left' : ''} ${color.isActiveFlag ? `pin__wrapper__pin-add--active` : ''}`}
+              className={`pin__wrapper__pin-add ${color.isContentLeft ? 'pin__wrapper__pin-add--left' : ''} ${color.isActiveFlag ? 'pin__wrapper__pin-add--active' : ''}`}
               style={{ background: color.rgbValue }}
             >
               <div className={`pin__wrapper__pin-add-icon ${color.isContentLeft ? 'pin__wrapper__pin-add-icon--left' : ''}`}>
@@ -225,8 +225,8 @@ export default (props: Props) => {
                   ? (<FontAwesomeIcon style={{ color: getContrastYIQ(color.hex) }} icon={['fa', 'check-circle']} size='2x' />)
                   : (
                     <button
-                      tabIndex={(color.isActiveFlag) ? `0` : `-1`}
-                      className={`pin__wrapper__pin-add-button`}
+                      tabIndex={(color.isActiveFlag) ? '0' : '-1'}
+                      className={'pin__wrapper__pin-add-button'}
                       onClick={(e) => {
                         e.stopPropagation()
                         dispatch(add(color))
@@ -234,7 +234,7 @@ export default (props: Props) => {
                     >
                       <FontAwesomeIcon tabIndex='-1' style={{ color: getContrastYIQ(color.hex) }} icon={['fal', 'plus-circle']} size='2x' />
                     </button>
-                  )
+                    )
                 }
               </div>
             </div>

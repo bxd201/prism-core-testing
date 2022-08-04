@@ -12,9 +12,9 @@ export const ZOOMED_BASE_SIZE = 50
 export const SWATCH_WIDTH_WRAP_THRESHOLD = 20 // will prefer wrapped view if unwrapped view target swatch size falls below threshold value
 
 export const TITLE_SIZE_RATIOS = {
-  '1': 0.4, // l1 should be styled regular weight
-  '2': 0.4, // l2 should be styled bold weight
-  '3': 0.5 // l3 should be styled bold weight, and is larger than l1 and l2
+  1: 0.4, // l1 should be styled regular weight
+  2: 0.4, // l2 should be styled bold weight
+  3: 0.5 // l3 should be styled bold weight, and is larger than l1 and l2
 }
 
 export const TITLE_SIZE_MIN = 10

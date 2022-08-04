@@ -350,7 +350,7 @@ const getColorById = (colorId: number, colors: Object) => {
 // @todo this may not be needed depending on how the API is designed, I'd like to get rid of it -RS
 // eslint-disable-next-line no-unused-vars
 const createImageUploadPayload = (imageDataUrl: string, uniqueSceneId: string) => {
-  return JSON.stringify({ 'image': imageDataUrl.split(',')[1], uniqueSceneId })
+  return JSON.stringify({ image: imageDataUrl.split(',')[1], uniqueSceneId })
 }
 
 // This method should only be used inside of the firebase.auth onchange method

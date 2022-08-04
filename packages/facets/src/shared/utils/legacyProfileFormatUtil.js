@@ -114,7 +114,7 @@ const unpackAndColorizeMask = (surface: any, sceneData: Object[], colors: Object
   const { sceneColorPalette: { regionColorMap } } = sceneData
   // eslint-disable-next-line no-unused-vars
   const surfaceInfo = []
-  for (let surfaceNameKey in regionColorMap) {
+  for (const surfaceNameKey in regionColorMap) {
     // Get color using region name
     if (surfaceNameKey.indexOf('_') > -1) {
       const surfaceNameParts = surfaceNameKey.split('_')
@@ -173,7 +173,7 @@ export const imageDataToSurfacesXML = (surfaceData: any[] | null, metaData: Obje
 
   if (surfaceData) {
     surfaceData.forEach((item, i) => {
-      let surface = createSurfaceFromImageData(item, width, height, i, doc)
+      const surface = createSurfaceFromImageData(item, width, height, i, doc)
       surfaces.appendChild(surface)
     })
   }

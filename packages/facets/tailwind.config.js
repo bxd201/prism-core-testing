@@ -2,11 +2,10 @@ module.exports = {
   corePlugins: {
     preflight: false
   },
-  purge: [
+  content: [
     './src/**/*.jsx',
     './src/**/*.html'
   ],
-  darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {}
   },

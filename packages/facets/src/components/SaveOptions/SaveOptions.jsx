@@ -136,23 +136,28 @@ const SaveOptions = (props: SaveOptionsProps) => {
     <div className={saveOptionsBaseClassName}>
       {shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.download)
         ? (activeSceneLabel === ACTIVE_SCENE_LABELS_ENUM.PAINT_SCENE
-          ? <div>
-            {cvwFromConfig ? <SceneDownload
+            ? <div>
+            {cvwFromConfig
+              ? <SceneDownload
               buttonCaption={'DOWNLOAD_MASK'}
               getFlatImage={getFlatImage}
               activeComponent={activeSceneLabel}
-              config={getDownloadStaticResourcesPath(cvwFromConfig)} /> : <CircleLoader />}
+              config={getDownloadStaticResourcesPath(cvwFromConfig)} />
+              : <CircleLoader />}
           </div>
-          : <div>
-            {cvwFromConfig ? <SceneDownload
+            : <div>
+            {cvwFromConfig
+              ? <SceneDownload
               selectedSceneUid={selectedSceneUid}
               variantsCollection={variantsCollection}
               selectedVariantName={selectedVariantName}
               surfaceColors={surfaceColors}
               buttonCaption={'DOWNLOAD_MASK'}
               activeComponent={activeSceneLabel}
-              config={getDownloadStaticResourcesPath(cvwFromConfig)} /> : <CircleLoader />}
-          </div>) : null}
+              config={getDownloadStaticResourcesPath(cvwFromConfig)} />
+              : <CircleLoader />}
+          </div>)
+        : null}
       { shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.documentSaving)
         ? <button onClick={handleSave}>
           <div className={saveOptionsItemsClassName}>
@@ -164,7 +169,8 @@ const SaveOptions = (props: SaveOptionsProps) => {
             </div>
             <div className={`${saveOptionsItemsClassName}--title`}><FormattedMessage id='SAVE_MASKS' /></div>
           </div>
-        </button> : null}
+        </button>
+        : null}
     </div>
   )
 }

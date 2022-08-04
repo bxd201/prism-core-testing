@@ -9,7 +9,7 @@ export function createPrismEmbedScript (callback, version) {
 
 export function handlePromptForPRISMVersion (defaultVersion) {
   console.log(
-    `%c To change PRISM version open an incognito window and paste window.localStorage.setItem('devOptions', JSON.stringify({ promptForPRISMVersion: true })) and then refresh the page.`,
+    '%c To change PRISM version open an incognito window and paste window.localStorage.setItem(\'devOptions\', JSON.stringify({ promptForPRISMVersion: true })) and then refresh the page.',
     'color: #ffff; background: #4B0082')
   const devOptions = JSON.parse(window.localStorage.getItem('devOptions'))
 

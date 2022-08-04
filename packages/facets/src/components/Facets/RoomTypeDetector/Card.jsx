@@ -30,24 +30,29 @@ const Card = (props: Props) => {
 
   const titleColor = useMemo(() => {
     if (titleBg) {
-      return mostReadable(titleBg, [ 'white', 'black' ])
+      return mostReadable(titleBg, ['white', 'black'])
     }
 
     return 'white'
-  }, [ titleBg ])
+  }, [titleBg])
 
   return (
     <div className='Card'>
       <h3 className='Card__title' style={{ background: titleBg, color: titleColor }}>{title}</h3>
-      {image ? (
+      {image
+        ? (
         <TransImage src={image} alt={imageAlt || title} color={imageBg} />
-      ) : null}
+          )
+        : null}
       {children
-        ? omitShim ? children : (
+        ? omitShim
+          ? children
+          : (
           <div className={`Card__body ${omitBodyPadding ? 'Card__body--no-padding' : ''}`}>
             {children}
           </div>
-        ) : null
+            )
+        : null
       }
     </div>
   )

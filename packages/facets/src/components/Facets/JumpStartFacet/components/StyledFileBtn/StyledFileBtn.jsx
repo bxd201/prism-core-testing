@@ -16,7 +16,6 @@ const StyledFileBtn = (props: StyleFileBtn) => {
 
   return (
     <>
-      {/* eslint-disable-next-line jsx-a11y/label-has-for */}
       <label htmlFor={id}
         tabIndex='-1'
         className={`${baseClass} clickable`}>

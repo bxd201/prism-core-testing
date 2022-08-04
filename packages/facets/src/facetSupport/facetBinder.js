@@ -36,8 +36,10 @@ const renderAppInElement = (el: HTMLElement, explicitProps: Object = {}, App) =>
 
   const getArrayFromString = (value: any) => {
     if (value?.length > 1 && value[0] === '[' && value[value.length - 1] === ']') {
-      return value.length > 2 ? value.substring(1, value.length - 1)
-        .split(',').map(item => typeof item === 'string' ? item.trim() : item) : []
+      return value.length > 2
+        ? value.substring(1, value.length - 1)
+          .split(',').map(item => typeof item === 'string' ? item.trim() : item)
+        : []
     }
     return value
   }

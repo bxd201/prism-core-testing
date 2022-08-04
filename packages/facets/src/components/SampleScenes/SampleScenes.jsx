@@ -92,8 +92,8 @@ const TintSceneWrapper = ({ data, isColorTinted, handleSelectedSceneUid, isActiv
       </div>
       <button tabIndex={(isActivedPage) ? '0' : '-1'} className='static__scene__paint__btn' onClick={() => handleSelectedSceneUid(data?.sceneUid)}>
         {cvw.scene?.paintThisSceneBtn?.showIcon && <>
-          <FontAwesomeIcon className={`cvw__btn-overlay__svg`} size='lg' icon={['fal', 'square-full']} />
-          <FontAwesomeIcon className={`cvw__btn-overlay__svg cvw__btn-overlay__svg--brush`} icon={['fa', 'brush']} size='lg' transform={{ rotate: 320 }} style={{ transform: 'translateX(-10px)' }} />
+          <FontAwesomeIcon className={'cvw__btn-overlay__svg'} size='lg' icon={['fal', 'square-full']} />
+          <FontAwesomeIcon className={'cvw__btn-overlay__svg cvw__btn-overlay__svg--brush'} icon={['fa', 'brush']} size='lg' transform={{ rotate: 320 }} style={{ transform: 'translateX(-10px)' }} />
         </>}
         <span className='static__scene__paint__btn__contents'>{intl.formatMessage({ id: 'PAINT_THIS_SCENE' })}</span>
       </button>
