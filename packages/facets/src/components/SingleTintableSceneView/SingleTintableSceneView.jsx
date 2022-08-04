@@ -18,7 +18,6 @@ import BatchImageLoader from '../MergeCanvas/BatchImageLoader'
 import type { FlatScene, FlatVariant } from '../../shared/types/Scene'
 import { copySurfaceColors, createMiniColorFromColor } from './util'
 import Propper from '../Propper/Propper'
-import { HTML5Backend } from 'react-dnd-html5-backend'
 
 export type SingleTintableSceneViewProps = {
   surfaceColorsFromParents: [],
@@ -170,7 +169,6 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
         handleSurfaceInteraction={handleSurfaceInteraction}
         handleColorDrop={handleColorDrop}
         adjustSvgHeight={adjustSvg}
-        dndBackend={HTML5Backend}
       />
     )
   }

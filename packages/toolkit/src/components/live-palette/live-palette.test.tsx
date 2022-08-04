@@ -1,6 +1,5 @@
 import React from 'react'
 import { fireEvent, render, screen } from '@testing-library/react'
-import { horizontalDrag } from 'react-beautiful-dnd-tester'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faInfo, faTrash } from '@fortawesome/pro-solid-svg-icons'
 import { faPlusCircle } from '@fortawesome/pro-light-svg-icons'
@@ -75,8 +74,6 @@ describe('LivePalette Component', () => {
   const colorBrandKey = (colorNumber: string): string => `SW ${colorNumber}`
   const colorDetailsButton = (colorName: string): string => `${colorName} color details`
   const removeColorButton = (colorName: string): string => `Remove color ${colorName} from live palette`
-  const dragColorButton = (colorName?: string): string | RegExp =>
-    colorName !== undefined ? `Drag color ${colorName}` : /Drag color/
   const addColorButton = 'ADD A COLOR'
 
   const deleteButtonRenderer = ({ name }, onClick): JSX.Element => (
@@ -110,7 +107,6 @@ describe('LivePalette Component', () => {
     )
 
     expect(screen.getAllByLabelText(colorSlot())).toHaveLength(3)
-    expect(screen.getAllByLabelText(dragColorButton())).toHaveLength(3)
     expect(screen.getAllByLabelText(emptySlot)).toHaveLength(5)
     expect(screen.getByText(addColorButton)).toBeInTheDocument()
   })
@@ -175,24 +171,6 @@ describe('LivePalette Component', () => {
     expect(screen.getAllByText(colorBrandKey(secondColor.colorNumber))[1]).toBeInTheDocument()
     expect(screen.getAllByText(secondColor.name)[1]).toBeInTheDocument()
     expect(screen.getAllByLabelText(emptySlot)).toHaveLength(6)
-  })
-
-  test('When third slot is dragged and dropped over second slot', () => {
-    render(
-      <LivePalette
-        colors={colors}
-        labelRenderer={labelRenderer}
-        slotAriaLabel={({ name }) => colorSlot(name).toString()}
-      />
-    )
-
-    horizontalDrag(screen.getByLabelText(colorSlot(thirdColor.name)))
-      .inFrontOf(screen.getByLabelText(colorSlot(secondColor.name)))
-
-    expect(screen.getAllByLabelText(colorSlot())[1])
-      .toHaveStyle(`background-color: rgb(${thirdColor.red}, ${thirdColor.green}, ${thirdColor.blue})`)
-    expect(screen.getAllByLabelText(colorSlot())[2])
-      .toHaveStyle(`background-color: rgb(${secondColor.red}, ${secondColor.green}, ${secondColor.blue})`)
   })
 
   test('Palette with empty slots', () => {
