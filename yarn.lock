@@ -6396,6 +6396,7 @@ __metadata:
     eslint-plugin-promise: 6.0.0
     eslint-plugin-react: 7.28.0
     eslint-plugin-react-hooks: 4.3.0
+    heic2any: 0.0.3
     husky: 7.0.4
     jest: 28.1.1
     jest-canvas-mock: 2.4.0
@@ -18674,6 +18675,13 @@ __metadata:
   bin:
     he: bin/he
   checksum: 3d4d6babccccd79c5c5a3f929a68af33360d6445587d628087f39a965079d84f18ce9c3d3f917ee1e3978916fc833bb8b29377c3b403f919426f91bc6965e7a7
+  languageName: node
+  linkType: hard
+
+"heic2any@npm:0.0.3":
+  version: 0.0.3
+  resolution: "heic2any@npm:0.0.3"
+  checksum: 83624b7c1664edbae29872bab8f7f916f8695b1d94ed2881e18b0a70e31be266ff4b07ddb539a6849f5a1a6dca418c95b8138b9f35275112ef7bebb33c7bdda8
   languageName: node
   linkType: hard
 

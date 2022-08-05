@@ -23,12 +23,12 @@ export interface ProcessedImageMetadata {
   imageHeight?: number
   imageWidth?: number
   isPortrait?: boolean
-  landscapeHeight: number
-  landscapeWidth: number
+  landscapeHeight?: number
+  landscapeWidth?: number
   originalImageHeight: number
   originalImageWidth: number
   originalIsPortrait: boolean
-  portraitHeight: number
-  portraitWidth: number
+  portraitHeight?: number
+  portraitWidth?: number
   url: string
 }
