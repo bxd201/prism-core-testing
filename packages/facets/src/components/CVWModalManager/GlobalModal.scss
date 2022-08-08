@@ -33,7 +33,7 @@
       }
       &.primary {
         background-color: var(getThemeColor('secondaryBg'));
-        color: var(getThemeColor('light.lightest.contrast'));
+        color: var(getThemeColor('secondaryBg.contrast'));
       }
       &.secondary {
 
