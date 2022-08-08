@@ -15,8 +15,9 @@ module.exports = merge(common, {
     new WebpackBar()
   ].filter(Boolean),
   devServer: {
+    allowedHosts: 'all',
     host: process.env[envVars.TEMPLATES_LOCAL_HOST],
-    https: process.env[envVars.TEMPLATES_LOCAL_PROTOCOL] === 'https',
+    server: process.env[envVars.TEMPLATES_LOCAL_PROTOCOL] ?? 'https',
     port: process.env[envVars.TEMPLATES_LOCAL_PORT],
     headers: {
       'Access-Control-Allow-Origin': '*'
