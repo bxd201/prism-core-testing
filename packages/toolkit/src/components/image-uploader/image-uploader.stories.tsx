@@ -15,7 +15,7 @@ const Template = (args): JSX.Element => {
       <ImageUploader
         {...args}
         className='flex justify-center items-center absolute top-0 right-4 bottom-4 left-0 w-full h-full z-10'
-        imageProcessLoader={<CircleLoader />}
+        imageProcessLoader={<CircleLoader aria-label='loader' />}
         processedImageMetadata={imageMetadata => {
           args.processedImageMetadata(imageMetadata)
           setImage(imageMetadata)
