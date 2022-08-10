@@ -46,7 +46,6 @@ const ImageUploader = forwardRef<HTMLInputElement, ImageUploaderProps>(
         const imageFile = files[0]
         // check file ext as a fallback for machines that may not have HEIC file types registered
         if (imageFile.type === 'image/heic' || hasHEICExt(imageFile.name)) {
-          /* istanbul ignore next */ // heic2any doesn't support method for tests
           convertImage(imageFile)
             .then(imageBlob => {
               handleImageMetadata(URL.createObjectURL(imageBlob))

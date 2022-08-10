@@ -2,11 +2,11 @@ import heic2any from 'heic2any'
 import { ProcessedImageMetadata } from '../../types'
 
 export const convertImage = async (file: File): Promise<Blob> => (
-  await (heic2any({
-      blob: file,
-      toType: 'image/jpeg',
-      quality: 1,
-    }) as Promise<Blob>)
+  await heic2any({
+    blob: file,
+    toType: 'image/jpeg',
+    quality: 1
+  })
 )
 
 interface setImageMetadataReturn {

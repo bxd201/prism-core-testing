@@ -17,8 +17,19 @@ describe('ImageUploader Component', () => {
 
     fireEvent.change(upload)
 
-    expect(screen.getByText('loading...')).toBeInTheDocument()
-
     expect(mockProcessedImageMetadataCallBack).toHaveBeenCalled()
+  })
+
+  test('heic image upload and if it displays the loader when image is being processed', () => {
+    render(<ImageUploader processedImageMetadata={() => {}} />)
+
+    const upload = screen.getByTestId('input')
+    const file = new File(['image'], 'landscape.jpg', { type: 'image/heic' })
+
+    Object.defineProperty(upload, 'files', { value: [file] })
+
+    fireEvent.change(upload)
+
+    expect(screen.getByText('loading...')).toBeInTheDocument()
   })
 })
