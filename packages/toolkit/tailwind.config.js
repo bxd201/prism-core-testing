@@ -30,6 +30,7 @@ module.exports = {
       colors: {
         primary: 'var(--prism-theme-color-primary, #0069af)',
         secondary: 'var(--prism-theme-color-secondary, #2CABE2)',
+        primaryBg: 'var(--prism-theme-color-primary-bg, #fafafa)',
         black: 'var(--prism-theme-color-black, #000)',
         danger: 'var(--prism-theme-color-danger, #E94b35)',
         error: 'var(--prism-theme-color-error, #e94b35)',

@@ -93,6 +93,7 @@
     "eslint-plugin-react-hooks": "4.3.0",
     "husky": "7.0.4",
     "jest": "28.1.1",
+    "jest-canvas-mock": "2.4.0",
     "jest-environment-jsdom": "28.1.1",
     "lint-staged": "12.1.7",
     "mochawesome": "7.0.1",
