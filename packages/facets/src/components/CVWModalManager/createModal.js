@@ -8,14 +8,13 @@ import {
   HANDLE_DIRTY_NAVIGATION_INTENT_CANCEL,
   HANDLE_SELECT_PALETTE_CONFIRM,
   HIDE_MODAL,
-  DANGER,
   PRIMARY,
   MODAL_TYPE_ENUM
 } from './constants.js'
 import uniqueId from 'lodash/uniqueId'
 
 // @todo these methods can be refactored to be more generic -RS
-export const createNavigationWarningModal = (intl, modalType, isDirtyNavigation) => {
+export const createNavigationWarningModal = (intl, modalType, isDirtyNavigation, styleType) => {
   const CONFIRM_CALLBACK = isDirtyNavigation ? HANDLE_DIRTY_NAVIGATION_INTENT_CONFIRM : HANDLE_NAVIGATION_INTENT_CONFIRM
   const CANCEL_CALLBACK = isDirtyNavigation ? HANDLE_DIRTY_NAVIGATION_INTENT_CANCEL : HANDLE_NAVIGATION_INTENT_CANCEL
   return setModalInfo({
@@ -27,12 +26,12 @@ export const createNavigationWarningModal = (intl, modalType, isDirtyNavigation)
     ],
     allowInput: false,
     modalType: modalType,
-    styleType: DANGER,
+    styleType,
     uid: uniqueId('modal-')
   })
 }
 
-export const createMatchPhotoNavigationWarningModal = (intl, isDirtyNavigation) => {
+export const createMatchPhotoNavigationWarningModal = (intl, isDirtyNavigation, styleType) => {
   const CONFIRM_CALLBACK = isDirtyNavigation ? HANDLE_DIRTY_NAVIGATION_INTENT_CONFIRM : HANDLE_NAVIGATION_INTENT_CONFIRM
   const CANCEL_CALLBACK = isDirtyNavigation ? HANDLE_DIRTY_NAVIGATION_INTENT_CANCEL : HANDLE_NAVIGATION_INTENT_CANCEL
 
@@ -45,7 +44,7 @@ export const createMatchPhotoNavigationWarningModal = (intl, isDirtyNavigation) 
     ],
     allowInput: false,
     modalType: MODAL_TYPE_ENUM.MATCH_PHOTO,
-    styleType: DANGER,
+    styleType,
     uid: uniqueId('modal-')
   })
 }
@@ -120,7 +119,7 @@ export const createSelectPaletteModal = (intl, modalType) => {
   })
 }
 
-export const createDeleteMyIdeasModal = (intl, modalType, params) => {
+export const createDeleteMyIdeasModal = (intl, modalType, params, styleType) => {
   return setModalInfo({
     shouldDisplayModal: true,
     description: intl.formatMessage({ id: 'MY_IDEAS.DELETE_CONFIRM' }),
@@ -130,7 +129,7 @@ export const createDeleteMyIdeasModal = (intl, modalType, params) => {
     ],
     allowInput: false,
     modalType: modalType,
-    styleType: DANGER,
+    styleType,
     uid: uniqueId('modal-')
   })
 }

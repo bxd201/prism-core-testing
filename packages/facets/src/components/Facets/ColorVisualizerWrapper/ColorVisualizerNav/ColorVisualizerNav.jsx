@@ -21,7 +21,7 @@ import {
   ACTIVE_SCENE_LABELS_ENUM, setIsColorWallModallyPresented, clearNavigationIntent
 } from 'src/store/actions/navigation'
 import { ROUTES_ENUM } from '../routeValueCollections'
-import { MODAL_TYPE_ENUM } from 'src/components/CVWModalManager/constants'
+import { DANGER, MODAL_TYPE_ENUM, PRIMARY } from '../../../CVWModalManager/constants'
 import { triggerPaintSceneLayerPublish } from 'src/store/actions/paintScene'
 import { DEFAULT_NAV_STRUCTURE } from './navStructure'
 import { CVWNavBtn } from '../CVWNavBtn/CVWNavBtn'
@@ -115,7 +115,9 @@ export const DropDownMenu = ({ title, subtitle, items }: DropDownMenuProps) => {
 }
 
 const ColorVisualizerNav = () => {
-  const { featureExclusions, cvw, brand, brandId } = useContext<ConfigurationContextType>(ConfigurationContext)
+  const { featureExclusions, cvw = {}, brand, brandId } = useContext<ConfigurationContextType>(ConfigurationContext)
+  const { modal = {} } = cvw
+  const { danger = true } = modal
   const { exploreColors, getInspired, help, paintAPhoto } = cvw?.menu ?? {}
   const { navStructure = DEFAULT_NAV_STRUCTURE } = cvw ?? {}
   const [isLoadingCVWConfig, setIsLoadingCVWConfig] = useState(isEmpty(cvw))
@@ -137,6 +139,7 @@ const ColorVisualizerNav = () => {
   const [dropDownItemsForGetInspired, setDropDownItemsForGetInspired] = useState([])
   const [dropDownItemsForPaintAPhoto, setDropDownItemsForPaintAPhoto] = useState([])
   const doAfterSelectFile = useRef()
+  const modalStyleType = danger ? DANGER : PRIMARY
 
   const setGAEvent = (props: { category?: string, action?: string, label: any }) => {
     const { category = 'Color Visualizer Menu', action = 'Menu Click', label } = props
@@ -376,13 +379,13 @@ const ColorVisualizerNav = () => {
       if (activeSceneLabel === MODAL_TYPE_ENUM.PAINT_SCENE) {
         dispatch(triggerPaintSceneLayerPublish(true))
       }
-      dispatch(createNavigationWarningModal(intl, modalType, false))
+      dispatch(createNavigationWarningModal(intl, modalType, false, modalStyleType))
       return
     }
     // Match photo should show help modally... BUT this is a BIG exception to the rule that only "active scenes" allow this.
     if (matchPhotoShown) {
       dispatch(setNavigationIntent(urlFrag))
-      dispatch(createMatchPhotoNavigationWarningModal(intl, false))
+      dispatch(createMatchPhotoNavigationWarningModal(intl, false, modalStyleType))
       return
     }
     // default action
