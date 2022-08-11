@@ -9,14 +9,10 @@ describe('ImageRotator Component', () => {
     originalImageHeight: 725,
     originalImageWidth: 1200,
     originalIsPortrait: false,
-    portraitHeight: 640,
-    portraitWidth: 387,
     url: 'https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom2?wid=1200}&qlt=92'
   }
 
   const portraitImageMetadata = {
-    landscapeHeight: 640,
-    landscapeWidth: 926,
     originalImageHeight: 800,
     originalImageWidth: 553,
     originalIsPortrait: true,
