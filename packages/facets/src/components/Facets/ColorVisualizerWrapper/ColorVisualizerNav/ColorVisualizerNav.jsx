@@ -6,6 +6,7 @@ import { Switch, Route, useHistory, useLocation } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { isMobileOnly, isTablet, isIOS } from 'react-device-detect'
+import Prism, { CircleLoader, ImageUploader } from '@prism/toolkit'
 import { queueImageUpload, setIngestedImage } from 'src/store/actions/user-uploads'
 import './ColorVisualizerNav.scss'
 import { FEATURE_EXCLUSIONS } from 'src/constants/configurations'
@@ -25,6 +26,7 @@ import { DANGER, MODAL_TYPE_ENUM, PRIMARY } from '../../../CVWModalManager/const
 import { triggerPaintSceneLayerPublish } from 'src/store/actions/paintScene'
 import { DEFAULT_NAV_STRUCTURE } from './navStructure'
 import { CVWNavBtn } from '../CVWNavBtn/CVWNavBtn'
+import { varValues } from 'src/shared/withBuild/variableDefs'
 import * as GA from 'src/analytics/GoogleAnalytics'
 import { GA_TRACKER_NAME_BRAND } from 'src/constants/globals'
 
@@ -114,7 +116,7 @@ export const DropDownMenu = ({ title, subtitle, items }: DropDownMenuProps) => {
   )
 }
 
-const ColorVisualizerNav = () => {
+const ColorVisualizerNav = ({ maxSceneHeight }: { maxSceneHeight: number }) => {
   const { featureExclusions, cvw = {}, brand, brandId } = useContext<ConfigurationContextType>(ConfigurationContext)
   const { modal = {} } = cvw
   const { danger = true } = modal
@@ -401,21 +403,25 @@ const ColorVisualizerNav = () => {
   // @todo refactor buttons into their own component -RS
   return (
     <nav className='cvw-navigation-wrapper' ref={navRef}>
-      <input ref={hiddenImageUploadInput} style={{ display: 'none' }} type='file' accept={'.jpeg, .jpg, .png'} onChange={e => {
-        // If you are looking to clear the uploaded image here, do not, you will face very strange render bugs.
-        const userImg = e.target.files && e.target.files.length ? e.target.files[0] : null
-        if (userImg) {
+       <ImageUploader
+        imageProcessLoader={
+          <div className='cvw-navigation-wrapper__image-uploader-loader'>
+            <CircleLoader className='cvw-navigation-wrapper__image-uploader-loader--edge' />
+          </div>
+        }
+        maxHeight={window.innerWidth <= parseFloat(varValues.breakpoints.xs) ? maxSceneHeight / 1.8 : maxSceneHeight}
+        processedImageMetadata={imageMetadata => {
           if (shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.fastMask)) {
-            dispatch(queueImageUpload(userImg))
+            dispatch(queueImageUpload(imageMetadata))
           }
-          const imageUrl = URL.createObjectURL(userImg)
-          dispatch(setIngestedImage(imageUrl))
+          dispatch(setIngestedImage(imageMetadata))
           if (doAfterSelectFile.current) {
             doAfterSelectFile.current()
             doAfterSelectFile.current = null
           }
-        }
-      }} />
+        }}
+        ref={hiddenImageUploadInput}
+      />
       <ul className='cvw-navigation-wrapper__structure cvw-navigation-wrapper__structure--center' role='presentation'>
         { dropDownItemsForExploreColors.length && shouldAllowFeature(featureExclusions, FEATURE_EXCLUSIONS.exploreColors)
           ? <li>

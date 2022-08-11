@@ -101,7 +101,7 @@ const Image = ({ className, fitContainer }: ClassNameProp & ImageProps): JSX.Ele
       crossOrigin='anonymous'
       ref={imageRef}
       src={url}
-      style={{ ...transform, maxHeight: isPortrait ? rotatedImageMetadata.portraitHeight : rotatedImageMetadata.landscapeHeight }}
+      style={{ ...transform, maxHeight: originalIsPortrait ? rotatedImageMetadata.portraitHeight : rotatedImageMetadata.landscapeHeight }}
     />
   )
 }

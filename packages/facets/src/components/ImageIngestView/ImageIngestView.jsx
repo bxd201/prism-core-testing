@@ -5,6 +5,7 @@
 // @flow
 
 import React, { useContext, useEffect, useRef, useState } from 'react'
+import { useSelector } from 'react-redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Link, useHistory } from 'react-router-dom'
@@ -12,15 +13,13 @@ import { AutoSizer } from 'react-virtualized'
 import Prism, { ImageRotator } from '@prism/toolkit'
 import PrismImage from '../PrismImage/PrismImage'
 import Iconography from '../Iconography/Iconography'
-import { calcOrientationDimensions } from '../../shared/utils/scale.util'
 import ConfigurationContext, { type ConfigurationContextType } from '../../contexts/ConfigurationContext/ConfigurationContext'
 import { LiveMessage } from 'react-aria-live'
 import { KEY_CODES } from '../../constants/globals'
 import './ImageIngestView.scss'
 
 type ImageIngestViewProps = {
-  cleanupCallback?: Function,
-  imageUrl: string,
+  cleanupCallback?: (imageUrl: string) => void,
   maxSceneHeight: number,
   handleDismissCallback: Function,
   closeLink: string
@@ -29,36 +28,20 @@ type ImageIngestViewProps = {
 const baseClassName = 'image-ingest-view'
 
 const ImageIngestView = (props: ImageIngestViewProps) => {
-  const { imageUrl, maxSceneHeight, handleDismissCallback, cleanupCallback, closeLink } = props
-  const imageRef = useRef<?HTMLImageElement>(null)
-  const wrapperRef = useRef<?HTMLDivElement>(null)
-  const wrapperDims = wrapperRef.current?.getBoundingClientRect()
+  const { maxSceneHeight, handleDismissCallback, cleanupCallback, closeLink } = props
+  const { ingestedImageMetadata } = useSelector(store => store)
   const { cvw = {} } = useContext<ConfigurationContextType>(ConfigurationContext)
   const { backBtn, closeBtn = {}, termsOfUseLink = 'https://www.sherwin-williams.com/terms-of-use' } = cvw
   const { showArrow: closeBtnShowArrow = true, text: closeBtnText = <FormattedMessage id='CLOSE' /> } = closeBtn
   const [acceptTerms, setAcceptTerms] = useState(false)
-  const [hasLoaded, setHasLoaded] = useState(false)
   const [rotateLiveMessage, setRotateLiveMessage] = useState('')
   const [mouseDown, setMouseDown] = useState(false)
-  const [orientationDimensions, setOrientationDimensions] = useState({
-    portraitWidth: 0,
-    portraitHeight: 0,
-    landscapeWidth: 0,
-    landscapeHeight: 0,
-    originalImageWidth: 0,
-    originalImageHeight: 0
-  })
-  const [scalingWidth, setScalingWidth] = useState(0)
   const { formatMessage } = useIntl()
   const history = useHistory()
 
   useEffect(() => {
-    setScalingWidth(wrapperDims?.width)
-
     return () => {
-      if (cleanupCallback) {
-        cleanupCallback()
-      }
+      cleanupCallback?.(ingestedImageMetadata?.url)
     }
   }, [])
 
@@ -71,16 +54,6 @@ const ImageIngestView = (props: ImageIngestViewProps) => {
     handleDismissCallback()
   }
 
-  const handleImageLoaded = payload => {
-    const image = imageRef.current
-    if (image && wrapperDims) {
-      const dimensions = calcOrientationDimensions(image.width, image.height, payload.isPortrait, wrapperDims.width, maxSceneHeight)
-      // This hasLoaded flag stops the prismimage comp from continually resampling the image
-      setHasLoaded(true)
-      setOrientationDimensions(dimensions)
-    }
-  }
-
   const handleLiveMessage = (direction: string) => {
     setRotateLiveMessage(`Image rotated 90 degree ${direction}`)
     const startOverLM = setTimeout(() => { setRotateLiveMessage('') }, 250)
@@ -89,8 +62,7 @@ const ImageIngestView = (props: ImageIngestViewProps) => {
   }
 
   return (
-    <div className={`${baseClassName}__wrapper`} ref={wrapperRef}>
-      {imageUrl ? <PrismImage ref={imageRef} source={imageUrl} loadedCallback={handleImageLoaded} shouldResample={hasLoaded} scalingWidth={scalingWidth} /> : null}
+    <div className={`${baseClassName}__wrapper`}>
       <div className={`${baseClassName}__container`} style={{ maxHeight: maxSceneHeight }}>
         <div className={`${baseClassName}__header`}>
           <button className={`${baseClassName}__button ${baseClassName}__button--left`} onClick={() => history.goBack()}>
@@ -108,9 +80,9 @@ const ImageIngestView = (props: ImageIngestViewProps) => {
           {({ width }) => {
             const smallScreen = width <= 576
 
-            return hasLoaded && (
+            return ingestedImageMetadata && (
               <Prism>
-                <ImageRotator className={`${baseClassName}__image-rotator`} imageMetadata={{ ...orientationDimensions, url: imageUrl }}>
+                <ImageRotator className={`${baseClassName}__image-rotator`} imageMetadata={ingestedImageMetadata}>
                   {!smallScreen && <ImageRotator.Image />}
                   <div className={`${baseClassName}__modal ${!smallScreen ? ' absolute' : ''}`}>
                     {smallScreen && <div className='m-7 mb-0'><ImageRotator.Image fitContainer /></div>}
