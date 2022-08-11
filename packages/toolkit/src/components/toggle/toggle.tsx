@@ -1,73 +1,77 @@
-import React, { useState, useEffect, CSSProperties } from 'react'
-import { getLuminosity } from '../../utils/utils'
+// @flow
+import React, { useState } from 'react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import uniqueId from 'lodash/uniqueId'
+import { CustomIcon } from '../../types'
 
-export interface ToggleProps {
-  uncheckedOptionRenderer: () => JSX.Element
-  checkedOptionRenderer: () => JSX.Element
-  onToggle?: (boolean: boolean) => void
-  initialChecked?: boolean
-  style?: CSSProperties
-  className?: string
+export interface ToggleSwitchProps {
+  isOnInitial?: boolean // 0 means first element selected, 1 means the second is selected
+  handleToggle: (isOn: number) => void
+  currentColor?: string
+  itemList: [CustomIcon, CustomIcon]
+  textColor?: string
 }
 
-/**
- * An accessible Toggle.
- *
- * @param {() => JSX.Element} uncheckedOptionRenderer - renderer function for the option selected when toggle is unchecked
- * @param {() => JSX.Element} checkedOptionRenderer - renderer function for the option selected when toggle is checked
- * @param {(boolean) => void} onToggle - optional callback, when defined it will be called every time the toggle gets toggled
- * @param {boolean} initialChecked - optional prop to set the initial state of the toggle
- */
-const Toggle = ({
-  uncheckedOptionRenderer,
-  checkedOptionRenderer,
-  onToggle,
-  initialChecked = false,
-  ...otherProps
-}: ToggleProps): JSX.Element => {
-  const [checked, setChecked] = useState(initialChecked)
-  useEffect(() => setChecked(initialChecked), [initialChecked])
+export const TEST_ID = 'toggle-test'
+export const TEST_ID_ICON_0 = `${TEST_ID}_ICON_0`
+export const TEST_ID_ICON_1 = `${TEST_ID}_ICON_1`
+export const TEST_ID_CHECK = `${TEST_ID}_CHECK`
+export const TEST_ID_CHECK_LABEL = `${TEST_ID_CHECK}_LABEL`
 
-  useEffect(() => onToggle?.(checked), [checked])
+function Toggle(props: ToggleSwitchProps): JSX.Element {
+  const { isOnInitial, handleToggle, currentColor, itemList, textColor } = props
+  const [checkboxName] = useState(uniqueId('toggle-switch'))
+  const [isOn, setIsOn] = useState(isOnInitial ? 1 : 0)
 
-  // classNames must be spelled out so that tailwind does not purge them during a production build
-  const hex = otherProps?.style?.backgroundColor ?? '#ffffff'
-  const backgroundColorSet: boolean = hex !== '#ffffff'
-  const contrastingColor = getLuminosity(hex) < 200 ? 'white' : 'black'
-  const contrastingBorder = getLuminosity(hex) < 200 ? 'border-white' : 'border-black'
-  const contrastingBackground = getLuminosity(hex) < 200 ? 'bg-white' : 'bg-black'
-  const contrastingText = getLuminosity(hex) < 200 ? 'text-white' : 'text-black'
+  const handleChange = (e: React.FormEvent<HTMLInputElement>): void => {
+    const toggleState = isOn === 0 ? 1 : 0
+    setIsOn(toggleState)
+    handleToggle(toggleState)
+  }
 
   return (
     <div
-      {...otherProps}
-      className={`flex justify-between py-1.5 px-4 rounded-lg w-48 ${backgroundColorSet ? '' : 'border border-black'} ${
-        otherProps?.className ?? ''
-      }`}
+      data-testid={TEST_ID}
+      className='flex pt-[6px] pr-[15px] pb-[6px] pl-[15px] text-black bg-white mt-[0] mr-[4px] mb-[0] ml-[4px]'
+      style={currentColor && textColor ? { background: currentColor, color: `${textColor}` } : null}
     >
-      <label htmlFor='variant-toggle' className={`${contrastingText}`}>
-        {uncheckedOptionRenderer()}
-      </label>
-      <button
-        id='variant-toggle'
-        className={`relative flex items-center w-12 h-7 rounded-full m-auto border ${contrastingBorder} ${
-          checked ? 'bg-transparent' : contrastingBackground
-        }`}
-        role='switch'
-        aria-checked={checked}
-        onClick={() => setChecked(!checked)}
+      <div data-testid={TEST_ID_ICON_0} className='flex flex-col items-center m-auto pr-[10px]'>
+        {itemList[0].icon ? (
+          <FontAwesomeIcon icon={itemList[0].icon} size='lg' style={textColor ? { color: `${textColor}` } : null} />
+        ) : null}
+        {itemList[0]?.label}
+      </div>
+      <input
+        data-testid={TEST_ID_CHECK}
+        checked={!!isOn}
+        onChange={handleChange}
+        className='h-0 w-0 invisible'
+        name={checkboxName}
+        id={checkboxName}
+        type='checkbox'
+        aria-label='toggle-switch-label'
+      />
+      <label
+        data-testid={TEST_ID_CHECK_LABEL}
+        className='flex items-center justify-between cursor-pointer w-[45px] min-w-[45px] h-[27px] m-auto bg-white border border-b rounded-[100px] relative transition background-color duration-500'
+        title='toggle-switch-label'
+        aria-label='toggle-switch-label'
+        style={{ background: !isOnInitial ? currentColor : textColor, borderColor: textColor }}
+        htmlFor={checkboxName}
       >
-        <div
-          className='absolute h-6 w-6 left-0.5 rounded-full transition-transform'
-          style={{
-            transform: checked && 'translateX(calc(100% - 0.25rem))',
-            backgroundColor: checked ? contrastingColor : hex
-          }}
+        <span
+          className={`absolute top-[1px]  ${
+            isOn ? 'left-[calc(50%_-_3px)]' : 'left-[1px]'
+          } w-[24px] h-[23px] bg-white border border-b rounded-[100px] shadow-[0_0_10px_0_rgba(10, 10, 10, 0.29)] transition duration-500`}
+          style={currentColor && textColor ? { background: currentColor, color: `${textColor}` } : null}
         />
-      </button>
-      <label htmlFor='variant-toggle' className={`${contrastingText}`}>
-        {checkedOptionRenderer()}
       </label>
+      <div data-testid={TEST_ID_ICON_1} className='flex flex-col items-center m-auto pl-[10px]'>
+        {itemList[1].icon ? (
+          <FontAwesomeIcon icon={itemList[1].icon} size='lg' style={textColor ? { color: `${textColor}` } : null} />
+        ) : null}
+        {itemList[1]?.label}
+      </div>
     </div>
   )
 }

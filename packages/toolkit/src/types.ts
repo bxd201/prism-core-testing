@@ -1,4 +1,5 @@
 import { ColorId } from './components/color-wall/types'
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 
 export interface Color {
   blue: number
@@ -26,6 +27,11 @@ export interface Color {
   saturation: number
   similarColors?: string[]
   storeStripLocator?: string
+}
+
+export interface CustomIcon {
+  icon?: IconDefinition
+  label?: string
 }
 
 export interface ProcessedImageMetadata {
