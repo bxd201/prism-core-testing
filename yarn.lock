@@ -6384,7 +6384,7 @@ __metadata:
     babel-preset-react-app: 10.0.1
     classnames: 2.3.1
     cli-progress: 3.10.0
-    cypress: 9.2.1
+    cypress: 9.3.0
     cypress-storybook: 0.5.1
     eslint: 7.32.0
     eslint-config-prettier: 8.3.0
@@ -6396,6 +6396,7 @@ __metadata:
     eslint-plugin-promise: 6.0.0
     eslint-plugin-react: 7.28.0
     eslint-plugin-react-hooks: 4.3.0
+    heic2any: 0.0.2
     husky: 7.0.4
     jest: 28.1.1
     jest-canvas-mock: 2.4.0
@@ -8981,10 +8982,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^14.0.10, @types/node@npm:^14.14.31":
+"@types/node@npm:^14.0.10":
   version: 14.18.21
   resolution: "@types/node@npm:14.18.21"
   checksum: 4ed35b76609647a4e36a194702e31cdda9ed42174ddaf7937bc5498984e98a99e8a42ea895ea17dd9c5ec18080112c29ab670c34f90eb9f7a4703b85b31e34fa
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^14.14.31":
+  version: 14.18.23
+  resolution: "@types/node@npm:14.18.23"
+  checksum: 119d5ab18426694ade0d3feefbdb42afc5a47b9144e523293f1554f9d34b41c7f21eafc9d0f1295db5700d134aa74e7fd37556e9438f6d64dbeddf791527e1e4
   languageName: node
   linkType: hard
 
@@ -9260,10 +9268,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/sinonjs__fake-timers@npm:^6.0.2":
-  version: 6.0.4
-  resolution: "@types/sinonjs__fake-timers@npm:6.0.4"
-  checksum: 200cb24235409964269465e8a94ad735ec8bab98f3b2405cd6351fa6f6399be268cbbd4e824c9d361d9431ae11070cff4c3b6400b18aff03cb7933985853c0c9
+"@types/sinonjs__fake-timers@npm:8.1.1":
+  version: 8.1.1
+  resolution: "@types/sinonjs__fake-timers@npm:8.1.1"
+  checksum: ca09d54d47091d87020824a73f026300fa06b17cd9f2f9b9387f28b549364b141ef194ee28db762f6588de71d8febcd17f753163cb7ea116b8387c18e80ebd5c
   languageName: node
   linkType: hard
 
@@ -11764,7 +11772,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bluebird@npm:3.7.2, bluebird@npm:^3.5.5":
+"bluebird@npm:3.7.2, bluebird@npm:^3.5.5, bluebird@npm:^3.7.2":
   version: 3.7.2
   resolution: "bluebird@npm:3.7.2"
   checksum: 869417503c722e7dc54ca46715f70e15f4d9c602a423a02c825570862d12935be59ed9c7ba34a9b31f186c017c23cac6b54e35446f8353059c101da73eac22ef
@@ -12133,7 +12141,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"buffer@npm:^5.2.0, buffer@npm:^5.2.1":
+"buffer@npm:^5.2.0, buffer@npm:^5.2.1, buffer@npm:^5.6.0":
   version: 5.7.1
   resolution: "buffer@npm:5.7.1"
   dependencies:
@@ -14125,18 +14133,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cypress@npm:9.2.1":
-  version: 9.2.1
-  resolution: "cypress@npm:9.2.1"
+"cypress@npm:9.3.0":
+  version: 9.3.0
+  resolution: "cypress@npm:9.3.0"
   dependencies:
     "@cypress/request": ^2.88.10
     "@cypress/xvfb": ^1.2.4
     "@types/node": ^14.14.31
-    "@types/sinonjs__fake-timers": ^6.0.2
+    "@types/sinonjs__fake-timers": 8.1.1
     "@types/sizzle": ^2.3.2
     arch: ^2.2.0
     blob-util: ^2.0.2
-    bluebird: 3.7.2
+    bluebird: ^3.7.2
+    buffer: ^5.6.0
     cachedir: ^2.3.0
     chalk: ^4.1.0
     check-more-types: ^2.24.0
@@ -14172,7 +14181,7 @@ __metadata:
     yauzl: ^2.10.0
   bin:
     cypress: bin/cypress
-  checksum: 9d8d6ea74f92088d11261b8879154a063a041f77eac54c7a2ab11f16c35aa586e48f411f465049dd17b5f63f9dd9893d4c4c77007b099d51d3887f6fd9ea1c6c
+  checksum: a40009b3dcb4c269f7d935b6c5a9c77feab1bb96e79d59684f153a3a53a1c059af60f5ca117438afb3812006c8914b8890d05541621dce494dfae141217a99ce
   languageName: node
   linkType: hard
 
@@ -14239,9 +14248,9 @@ __metadata:
   linkType: hard
 
 "dayjs@npm:^1.10.4":
-  version: 1.11.3
-  resolution: "dayjs@npm:1.11.3"
-  checksum: c87e06b562a51ae6568cc5b840c7579d82a0f8af7163128c858fe512d3d71d07bd8e8e464b8cc41b8698a9e26b80ab2c082d14a1cd4c33df5692d77ccdfc5a43
+  version: 1.11.4
+  resolution: "dayjs@npm:1.11.4"
+  checksum: 478c8a2db9e3fc752db9f02ef23f00e12308eebbeb85569913731ea78e8d5616f2335e14f25af48e9f16bbcbd796653092eca4d2f42c0218a948402c31735f59
   languageName: node
   linkType: hard
 
@@ -16424,9 +16433,9 @@ __metadata:
   linkType: hard
 
 "eventemitter2@npm:^6.4.3":
-  version: 6.4.6
-  resolution: "eventemitter2@npm:6.4.6"
-  checksum: 1ede7ce0c01298fa3bc1998b34857c2acd0e73a1d7406e37b9127a84712762cf303a46add62943ae6944cd806bdd29ff542344c727a012b2ea6fd3c90f059367
+  version: 6.4.7
+  resolution: "eventemitter2@npm:6.4.7"
+  checksum: 1b36a77e139d6965ebf3a36c01fa00c089ae6b80faa1911e52888f40b3a7057b36a2cc45dcd1ad87cda3798fe7b97a0aabcbb8175a8b96092a23bb7d0f039e66
   languageName: node
   linkType: hard
 
@@ -18674,6 +18683,13 @@ __metadata:
   bin:
     he: bin/he
   checksum: 3d4d6babccccd79c5c5a3f929a68af33360d6445587d628087f39a965079d84f18ce9c3d3f917ee1e3978916fc833bb8b29377c3b403f919426f91bc6965e7a7
+  languageName: node
+  linkType: hard
+
+"heic2any@npm:0.0.2":
+  version: 0.0.2
+  resolution: "heic2any@npm:0.0.2"
+  checksum: f3e89a348214526e64278612982a15df2fd8f61fc537738f10fa44a1bc08985d3afd9a31428306d9f1b392d25bbff15d3129d8e293ead933268dd7f58c179753
   languageName: node
   linkType: hard
 
@@ -26918,7 +26934,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"psl@npm:^1.1.28, psl@npm:^1.1.33":
+"psl@npm:^1.1.28":
+  version: 1.9.0
+  resolution: "psl@npm:1.9.0"
+  checksum: 20c4277f640c93d393130673f392618e9a8044c6c7bf61c53917a0fddb4952790f5f362c6c730a9c32b124813e173733f9895add8d26f566ed0ea0654b2e711d
+  languageName: node
+  linkType: hard
+
+"psl@npm:^1.1.33":
   version: 1.8.0
   resolution: "psl@npm:1.8.0"
   checksum: 6150048ed2da3f919478bee8a82f3828303bc0fc730fb015a48f83c9977682c7b28c60ab01425a72d82a2891a1681627aa530a991d50c086b48a3be27744bde7
