@@ -20,8 +20,9 @@
     "predeploy": "npm run build && npm run testtab",
     "deploy": "storybook-to-ghpages -e ./public",
     "build": "build-storybook -o ./public",
-    "build-rollup": "rollup -c",
-    "ci": "start-storybook -p 6006 --ci & sleep 60 && cypress run && node .storybook/addons/testTab/getTestReports.js",
+    "build-rollup-facets": "rollup -c rollup.config.facets.js",
+    "build-rollup-protected": "rollup -c rollup.config.protected.js",
+    "ci": "start-storybook -p 6006 --ci & sleep 60 && cypress run && node .storybook/addons/testTab/getTestReports.js"
     "check-types": "tsc --noEmit --pretty"
   },
   "dependencies": {

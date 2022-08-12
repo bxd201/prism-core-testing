@@ -1,0 +1,8 @@
+/**
+ * INTERNAL STYLES CONSUMED BY PRISM FACETS
+ * No protection prefixes applied when used internally because facets injects its own protection prefixes.
+ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

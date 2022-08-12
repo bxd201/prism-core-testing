@@ -1,0 +1,11 @@
+/**
+ * EXTERNAL USE STYLES, NOT USED BY PRISM FACETS
+ * Prefix all styles with .p3m-p7d (.prism-protected) to prevent them from being applied outside of a div.p3m-p7d context
+ * Also builds in some higher specificity
+ */
+
+.p3m-p7d {
+    @tailwind base;
+    @tailwind components;
+    @tailwind utilities;
+}

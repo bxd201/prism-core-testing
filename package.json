@@ -8,7 +8,7 @@
   },
   "scripts": {
     "postinstall": "husky install",
-    "start": "yarn toolkit:compile && yarn workspace @prism/facets start",
+    "start": "yarn toolkit:compile-facets && yarn workspace @prism/facets start",
     "test": "yarn toolkit:test",
     "build": "yarn toolkit:build && yarn workspace @prism/facets build && yarn docs:build && yarn demo:build",
     "publish": "yarn toolkit:publish",
@@ -17,10 +17,11 @@
     "demo:start": "yarn workspace @prism/prism-demo start",
     "demo:build": "yarn workspace @prism/prism-demo build",
     "facets:test": "yarn workspace @prism/facets test",
-    "toolkit:compile": "yarn workspace @prism/toolkit build-rollup",
+    "toolkit:compile-facets": "yarn workspace @prism/toolkit build-rollup-facets",
+    "toolkit:compile-protected": "yarn workspace @prism/toolkit build-rollup-protected",
     "toolkit:storybook-build": "yarn workspace @prism/toolkit build",
-    "toolkit:build": "yarn toolkit:compile && yarn toolkit:storybook-build",
-    "toolkit:publish": "yarn toolkit:compile && cd packages/toolkit && yarn npm publish",
+    "toolkit:build": "yarn toolkit:compile-facets && yarn toolkit:storybook-build",
+    "toolkit:publish": "yarn toolkit:compile-protected && cd packages/toolkit && yarn npm publish",
     "toolkit:storybook": "yarn workspace @prism/toolkit start",
     "toolkit:test": "yarn workspace @prism/toolkit test",
     "toolkit:cypress": "yarn workspace @prism/toolkit test:cypress"

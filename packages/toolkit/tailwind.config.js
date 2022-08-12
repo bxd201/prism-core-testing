@@ -1,5 +1,4 @@
 module.exports = {
-  important: '.prism',
   content: ['./src/**/*.tsx', './src/**/*.ts'],
   variants: {
     extend: {
