@@ -74,7 +74,7 @@ const Template = (args): JSX.Element => {
 
 export const AllColors = Template.bind({})
 AllColors.args = {}
-
+// TODO Create additional stories
 // export const SherwinWilliamsColors = Template.bind({})
 // SherwinWilliamsColors.args = {
 //   chunkWidth: 7,

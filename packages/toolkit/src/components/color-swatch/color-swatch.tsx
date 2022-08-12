@@ -21,8 +21,6 @@ export interface ColorSwatchProps {
   style?: CSSProperties
 }
 
-export const TEST_ID_INNER_SWATCH = 'inner-swatch'
-
 /**
  * Renders swatch.
  *

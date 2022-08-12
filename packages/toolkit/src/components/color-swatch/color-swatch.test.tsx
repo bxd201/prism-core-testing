@@ -32,7 +32,7 @@ describe('Color Swatch Component', () => {
   })
 
   test('Renderer content is displayed when passed into the component', () => {
-    render(<ColorSwatch active color={colorObj} id={11331} renderer={() => <div>Test Text</div>} />)
+    render(<ColorSwatch active color={colorObj} id={ID} renderer={() => <div>Test Text</div>} />)
     expect(screen.getByText('Test Text')).toBeInTheDocument()
   })
 

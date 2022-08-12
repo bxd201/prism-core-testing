@@ -42,7 +42,7 @@ export interface WallProps {
   onActivateColor?: (id?: number | string) => void
   shape: WallShape
   swatchRenderer: SwatchRenderer
-  colorWallConfig: ColorWallConfig
+  colorWallConfig?: ColorWallConfig
   width?: number
 }
 

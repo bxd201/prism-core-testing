@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react'
 import { LiveMessage } from 'react-aria-live'
 import uniqueId from 'lodash/uniqueId'
 import { TransitionGroup } from 'react-transition-group'
-import type { Color } from '../../interfaces/colors'
+import type { Color } from '../../types'
 import TintableSceneSurface from './tintable-scene-surface'
 import TintableSceneSVGDefs from './tintable-scene-svg-defs'
 import SimpleTintableSceneHitArea from './simple-tintable-scene-hit-area'
@@ -11,21 +11,21 @@ import GenericOverlay from '../generic-overlay/generic-overlay'
 import InlineStyleTransition from '../inline-style-transition/inline-style-transition'
 
 export interface SimpleTintableSceneProps {
-  sceneType: string,
-  sceneName: string,
-  background: string,
-  surfaceUrls: string[],
-  surfaceIds: number[],
-  surfaceHitAreas?: string[],
-  highlights?: any[],
-  shadows?: any[],
-  width: number,
-  height: number,
-  imageValueCurve?: any,
-  interactive?: boolean,
-  handleSurfaceInteraction?: Function,
-  surfaceColors?: Color[],
-  adjustSvgHeight?: boolean,
+  sceneType: string
+  sceneName: string
+  background: string
+  surfaceUrls: string[]
+  surfaceIds: number[]
+  surfaceHitAreas?: string[]
+  highlights?: any[]
+  shadows?: any[]
+  width: number
+  height: number
+  imageValueCurve?: any
+  interactive?: boolean
+  handleSurfaceInteraction?: Function
+  surfaceColors?: Color[]
+  adjustSvgHeight?: boolean
 }
 
 const SimpleTintableScene = (props: SimpleTintableSceneProps): JSX.Element => {
@@ -57,7 +57,9 @@ const SimpleTintableScene = (props: SimpleTintableSceneProps): JSX.Element => {
       setHitAreaLoaded(true)
     }
   }
-  const handleHitAreaLoadingError = (): void => { setHitAreaError(true) }
+  const handleHitAreaLoadingError = (): void => {
+    setHitAreaError(true)
+  }
 
   const handleClickSurface = (surfaceIndex: number): void => {
     if (handleSurfaceInteraction) {
@@ -87,7 +89,7 @@ const SimpleTintableScene = (props: SimpleTintableSceneProps): JSX.Element => {
                   entering={{
                     zIndex: 1,
                     opacity: 1,
-                    backfaceVisibility: 'hidden',
+                    backfaceVisibility: 'hidden'
                   }}
                   entered={{
                     zIndex: 1,
@@ -97,13 +99,14 @@ const SimpleTintableScene = (props: SimpleTintableSceneProps): JSX.Element => {
                   }}
                   exiting={{
                     opacity: 0,
-                    backfaceVisibility: 'hidden',
+                    backfaceVisibility: 'hidden'
                   }}
                   exited={{
                     opacity: 0,
-                    backfaceVisibility: 'hidden',
+                    backfaceVisibility: 'hidden'
                   }}
-                  timeout={1}>
+                  timeout={1}
+                >
                   <TintableSceneSurface
                     adjustSvgHeight={adjustSvgHeight}
                     type={sceneType}
@@ -111,7 +114,8 @@ const SimpleTintableScene = (props: SimpleTintableSceneProps): JSX.Element => {
                     width={width}
                     height={height}
                     maskId={getMaskId(instanceId, surfaceIds[i], tintColor.hex)}
-                    filterId={getFilterId(instanceId, surfaceIds[i], tintColor.hex)} >
+                    filterId={getFilterId(instanceId, surfaceIds[i], tintColor.hex)}
+                  >
                     <TintableSceneSVGDefs
                       type={sceneType}
                       highlightMap={highlight}
@@ -120,36 +124,40 @@ const SimpleTintableScene = (props: SimpleTintableSceneProps): JSX.Element => {
                       filterColor={tintColor.hex}
                       filterImageValueCurve={imageValueCurve}
                       maskId={getMaskId(instanceId, surfaceIds[i], tintColor.hex)}
-                      maskImage={surface} />
+                      maskImage={surface}
+                    />
                   </TintableSceneSurface>
                 </InlineStyleTransition>
               )
             }
 
             return null
-          }) }
+          })}
         </TransitionGroup>
       </div>
-        <div className={`absolute left-0 top-0 w-full h-full`}>
-          {interactive ? surfaceHitAreas?.map((surface, i) => (
-            // @ts-ignore
-            <SimpleTintableSceneHitArea
-              key={surface}
-              surfaceIndex={i}
-              onLoadingSuccess={handleHitAreaLoadingSuccess}
-              onLoadingError={handleHitAreaLoadingError}
-              interactionHandler={() => handleClickSurface(i)}
-              svgSource={surface} />
-          )): null}
-        </div>
+      <div className={`absolute left-0 top-0 w-full h-full`}>
+        {interactive
+          ? surfaceHitAreas?.map((surface, i) => (
+              // @ts-ignore
+              <SimpleTintableSceneHitArea
+                key={surface}
+                surfaceIndex={i}
+                onLoadingSuccess={handleHitAreaLoadingSuccess}
+                onLoadingError={handleHitAreaLoadingError}
+                interactionHandler={() => handleClickSurface(i)}
+                svgSource={surface}
+              />
+            ))
+          : null}
+      </div>
 
       {hitAreaError ? (
         <GenericOverlay type={GenericOverlay.TYPES.ERROR} message='Error loading paintable surfaces' />
-      ) : (interactive && !hitAreaLoaded) ? (
+      ) : interactive && !hitAreaLoaded ? (
         <GenericOverlay type={GenericOverlay.TYPES.LOADING} />
       ) : null}
 
-      {sceneName && (<LiveMessage message={`${sceneName} scene has been loaded`} aria-live='polite' />)}
+      {sceneName && <LiveMessage message={`${sceneName} scene has been loaded`} aria-live='polite' />}
     </>
   )
 }

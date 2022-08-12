@@ -85,25 +85,11 @@ describe('Color Wall', () => {
     jest.resetAllMocks()
   })
 
-  test('should zoom out if escape is pressed and focus is off of active swatch', async () => {
-    const user = userEvent.setup()
-    // ARRANGE
-    const { getByTestId } = render(<ColorWall {...wallProps} />)
-
-    // ACT
-    const button = getByTestId('wall-color-swatch-11346')
-    await user.click(button)
-    await user.keyboard('{Tab>2/}{Escape}')
-
-    // ASSERT
-    expect(setActiveColorId).toHaveBeenLastCalledWith(null)
-  })
-
   test('should render the correct amount of columns, rows, chunks and titles', async () => {
     // ARRANGE
     const { getAllByTestId } = await render(<ColorWall {...wallProps} />)
-    // ACT
 
+    // ACT
     const column = getAllByTestId('wall-column')
     const row = getAllByTestId('wall-row')
     const chunk = getAllByTestId('wall-chunk')
@@ -119,8 +105,10 @@ describe('Color Wall', () => {
   test('should have the correct user defined styles', async () => {
     // ARRANGE
     const { getAllByTestId } = await render(<ColorWall {...wallProps} height={100} />)
+
     // ACT
     const div = getAllByTestId('wall-height-div')[0]
+
     // ASSERT
     expect(div).toHaveStyle({ height: '100px', 'background-color': 'blue' })
   })
@@ -128,9 +116,11 @@ describe('Color Wall', () => {
   test('should call the user defined function when a swatch is clicked (onActivateColor)', async () => {
     // ARRANGE
     const { getByTestId } = await render(<ColorWall {...wallProps} />)
+
     // ACT
     const button = getByTestId('wall-color-swatch-11346')
     fireEvent.click(button)
+
     // ASSERT
     expect(button)
     expect(setActiveColorId).toHaveBeenCalledWith(11346)
@@ -139,6 +129,7 @@ describe('Color Wall', () => {
   test('should activate the correct swatch if an initialActiveColorId is passed in', () => {
     // ARRANGE
     const { getByTestId } = render(<ColorWall {...wallProps} activeColorId={11348} />)
+
     // ACT
     const activeSwatch = getByTestId('inner-swatch-11348')
 
@@ -162,7 +153,6 @@ describe('Color Wall', () => {
 
     // ASSERT
     expect(zoomButton).toHaveAttribute('title', 'Zoom out')
-
     rerender(<ColorWall {...zoomProps} />)
     zoomButton = getByTestId('wall-zoom-btn')
     expect(zoomButton).toHaveAttribute('title', 'helloWorld')
@@ -180,9 +170,23 @@ describe('Color Wall', () => {
     expect(setActiveColorId).toHaveBeenCalledWith(11346)
   })
 
-  test('should shift tab into the last swatch and activate on enter', async () => {
+  test('should zoom out if escape is pressed and focus is off of active swatch', async () => {
     const user = userEvent.setup()
     // ARRANGE
+    const { getByTestId } = render(<ColorWall {...wallProps} />)
+
+    // ACT
+    const button = getByTestId('wall-color-swatch-11346')
+    await user.click(button)
+    await user.keyboard('{Tab>2/}{Escape}')
+
+    // ASSERT
+    expect(setActiveColorId).toHaveBeenLastCalledWith(null)
+  })
+
+  test('should shift tab into the last swatch and activate on enter', async () => {
+    // ARRANGE
+    const user = userEvent.setup()
     const { getByTestId } = render(<ColorWall {...wallProps} />)
 
     // ACT
@@ -194,8 +198,8 @@ describe('Color Wall', () => {
   })
 
   test('Tabbing should take the user to the next chunk', async () => {
-    const user = userEvent.setup()
     // ARRANGE
+    const user = userEvent.setup()
     render(<ColorWall {...wallProps} />)
 
     // ACT
@@ -206,8 +210,8 @@ describe('Color Wall', () => {
   })
 
   test('Tabbing at the last Chunk should take focus out of the wall', async () => {
-    const user = userEvent.setup()
     // ARRANGE
+    const user = userEvent.setup()
     const { getByTestId } = render(<ColorWall {...wallProps} />)
 
     // ACT
@@ -215,8 +219,7 @@ describe('Color Wall', () => {
     const hiddenButton = getByTestId('wall-focusOutEndHelper-btn')
     expect(hiddenButton)
     getByTestId('wall-color-swatch-30040')
-    // Tabbing all the way out
-    await user.keyboard('{Tab>9/}')
+    await user.keyboard('{Tab>9/}') // Tabbing all the way out
     const hiddenButton2 = getByTestId('wall-handleTabInEnd-btn')
 
     // ASSERT
@@ -238,11 +241,13 @@ describe('Color Wall', () => {
   test('should click in to the wall', async () => {
     // ARRANGE
     const { getByTestId } = await render(<ColorWall {...wallProps} />)
+
     // ACT
     const hiddenButton = getByTestId('wall-handleTabInEnd-btn')
     expect(hiddenButton)
     const button = getByTestId('wall-color-swatch-11346')
     fireEvent.click(button)
+
     // ASSERT
     expect(button)
     const hiddenButton2 = getByTestId('wall-focusOutEndHelper-btn')
@@ -256,8 +261,8 @@ describe('Color Wall', () => {
       shape: mockColWithChunksShape
     }
     const { getAllByTestId } = render(<ColorWall {...colProps} />)
-    // ACT
 
+    // ACT
     const column = getAllByTestId('wall-column')
     const row = getAllByTestId('wall-row')
     const chunk = getAllByTestId('wall-chunk')
@@ -273,8 +278,10 @@ describe('Color Wall', () => {
   test('should render nothing if no children are passed', () => {
     // ARRANGE
     const { getByTestId } = render(<Column id={1} data={mockColWithNoChildShape} />)
+
     // ACT
     const column = getByTestId('wall-column')
+
     // ASSERT
     expect(column.childElementCount).toEqual(0)
   })
