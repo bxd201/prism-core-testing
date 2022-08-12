@@ -6407,13 +6407,14 @@ __metadata:
     postcss: 8.4.5
     postcss-focus-visible: 6.0.3
     postcss-nested: 5.0.6
+    postcss-simple-vars: 6.0.3
     prettier: 2.5.1
     prettier-config-standard: 4.0.0
     react-aria-live: 2.0.5
     react-aria-menubutton: 7.0.2
     react-beautiful-dnd-tester: 0.0.10
     react-dnd: 16.0.1
-    react-dom: ^18.2.0
+    react-dom: 18.2.0
     react-scripts: 5.0.0
     react-transition-group: 4.3.0
     react-virtualized: 9.22.3
@@ -12023,7 +12024,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"browserslist@npm:^4.0.0, browserslist@npm:^4.12.0, browserslist@npm:^4.14.5, browserslist@npm:^4.16.6, browserslist@npm:^4.18.1, browserslist@npm:^4.19.1, browserslist@npm:^4.20.2, browserslist@npm:^4.20.3, browserslist@npm:^4.21.0":
+"browserslist@npm:^4.0.0, browserslist@npm:^4.12.0, browserslist@npm:^4.14.5, browserslist@npm:^4.16.6, browserslist@npm:^4.18.1, browserslist@npm:^4.20.2, browserslist@npm:^4.20.3, browserslist@npm:^4.21.0":
   version: 4.21.1
   resolution: "browserslist@npm:4.21.1"
   dependencies:
@@ -12034,6 +12035,20 @@ __metadata:
   bin:
     browserslist: cli.js
   checksum: 4904a9ded0702381adc495e003e7f77970abb7f8c8b8edd9e54f026354b5a96b1bddc26e6d9a7df9f043e468ecd2fcff2c8f40fc489909a042880117c2aca8ff
+  languageName: node
+  linkType: hard
+
+"browserslist@npm:^4.19.1":
+  version: 4.21.3
+  resolution: "browserslist@npm:4.21.3"
+  dependencies:
+    caniuse-lite: ^1.0.30001370
+    electron-to-chromium: ^1.4.202
+    node-releases: ^2.0.6
+    update-browserslist-db: ^1.0.5
+  bin:
+    browserslist: cli.js
+  checksum: ff512a7bcca1c530e2854bbdfc7be2791d0fb524097a6340e56e1d5924164c7e4e0a9b070de04cdc4c149d15cb4d4275cb7c626ebbce954278a2823aaad2452a
   languageName: node
   linkType: hard
 
@@ -12422,10 +12437,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"caniuse-lite@npm:^1.0.0, caniuse-lite@npm:^1.0.30001109, caniuse-lite@npm:^1.0.30001297, caniuse-lite@npm:^1.0.30001335, caniuse-lite@npm:^1.0.30001359":
+"caniuse-lite@npm:^1.0.0, caniuse-lite@npm:^1.0.30001109, caniuse-lite@npm:^1.0.30001335, caniuse-lite@npm:^1.0.30001359":
   version: 1.0.30001361
   resolution: "caniuse-lite@npm:1.0.30001361"
   checksum: 3b56c9b4edf8f0b4a1891b0883f6fc7ab758858f4018d4c98aae474d235405cc2271b83c01af856add322a85df6f748514a7db020cade873ad6356e0a80b940c
+  languageName: node
+  linkType: hard
+
+"caniuse-lite@npm:^1.0.30001297, caniuse-lite@npm:^1.0.30001370":
+  version: 1.0.30001375
+  resolution: "caniuse-lite@npm:1.0.30001375"
+  checksum: 6ed9cf7a3f80f5880cb021105864b869dddfdda8490559aa623e77feeca5ce8958a3b7c1cf37322e519176dcb488c99e6358b8c2de2aa4a0e08846ac122c4e75
   languageName: node
   linkType: hard
 
@@ -14253,9 +14275,9 @@ __metadata:
   linkType: hard
 
 "dayjs@npm:^1.10.4":
-  version: 1.11.4
-  resolution: "dayjs@npm:1.11.4"
-  checksum: 478c8a2db9e3fc752db9f02ef23f00e12308eebbeb85569913731ea78e8d5616f2335e14f25af48e9f16bbcbd796653092eca4d2f42c0218a948402c31735f59
+  version: 1.11.5
+  resolution: "dayjs@npm:1.11.5"
+  checksum: e3bbaa7b4883b31be4bf75a181f1447fbb19800c29b332852125aab96baeff3ac232dcba8b88c4ea17d3b636c99dac5fb9d1af4bb6ae26615698bbc4a852dffb
   languageName: node
   linkType: hard
 
@@ -15141,6 +15163,13 @@ __metadata:
   version: 1.4.196
   resolution: "electron-to-chromium@npm:1.4.196"
   checksum: 78348c1694aff2bf7c09a28afaebe385061e1adbbeea20c4e22a39c50a8204bce7e7ca11af3e085fe681cdc11d1521d87a05d997411edc8a1e1bebc4b92dacba
+  languageName: node
+  linkType: hard
+
+"electron-to-chromium@npm:^1.4.202":
+  version: 1.4.217
+  resolution: "electron-to-chromium@npm:1.4.217"
+  checksum: 1902170384200c8f4bc4aa430503c527e6b8d06a63b8c604b5ede566c151c7001d93ebd1ad3d62acf2a872cbc2c8501d63fe9f99ff3b5ec84769bbbb2b36545d
   languageName: node
   linkType: hard
 
@@ -26503,6 +26532,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"postcss-simple-vars@npm:6.0.3":
+  version: 6.0.3
+  resolution: "postcss-simple-vars@npm:6.0.3"
+  peerDependencies:
+    postcss: ^8.2.1
+  checksum: 66fd71dc8fc76fc994595132d3476ab37e8c691b69730b117bbd89e0a4c92ee195328f02f1fe3ca7019f413c4b53a1ef30108c802190f6b572e78c55cb9ee349
+  languageName: node
+  linkType: hard
+
 "postcss-sort-media-queries@npm:^4.2.1":
   version: 4.2.1
   resolution: "postcss-sort-media-queries@npm:4.2.1"
@@ -29113,7 +29151,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rxjs@npm:^7.1.0, rxjs@npm:^7.5.1, rxjs@npm:^7.5.4":
+"rxjs@npm:^7.1.0, rxjs@npm:^7.5.4":
   version: 7.5.5
   resolution: "rxjs@npm:7.5.5"
   dependencies:
@@ -29122,7 +29160,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rxjs@npm:^7.5.5":
+"rxjs@npm:^7.5.1, rxjs@npm:^7.5.5":
   version: 7.5.6
   resolution: "rxjs@npm:7.5.6"
   dependencies:
@@ -32378,6 +32416,20 @@ __metadata:
   bin:
     browserslist-lint: cli.js
   checksum: 7c7da28d0fc733b17e01c8fa9385ab909eadce64b8ea644e9603867dc368c2e2a6611af8247e72612b23f9e7cb87ac7c7585a05ff94e1759e9d646cbe9bf49a7
+  languageName: node
+  linkType: hard
+
+"update-browserslist-db@npm:^1.0.5":
+  version: 1.0.5
+  resolution: "update-browserslist-db@npm:1.0.5"
+  dependencies:
+    escalade: ^3.1.1
+    picocolors: ^1.0.0
+  peerDependencies:
+    browserslist: ">= 4.21.0"
+  bin:
+    browserslist-lint: cli.js
+  checksum: 7e425fe5dbbebdccf72a84ce70ec47fc74dce561d28f47bc2b84a1c2b84179a862c2261b18ab66a5e73e261c7e2ef9e11c6129112989d4d52e8f75a56bb923f8
   languageName: node
   linkType: hard
 
