@@ -16,10 +16,8 @@ export const CircleLoader = ({ wrapperClassname, ...rest }: Props) => <Prism cla
   <ToolkitCircleLoader {...rest} />
 </Prism>
 
-export function withPrism (Component: JSX.Element, prismProps: PrismProps) {
-  return (props: {}): JSX.Element => <Prism {...prismProps}>
-    <Component {...props} />
-  </Prism>
+export function withPrism (Component: JSX.Element) {
+  return (props: {}): JSX.Element => <Component {...props} />
 }
 
 export const SpinnerLoader = withPrism(ToolkitSpinnerLoader)
