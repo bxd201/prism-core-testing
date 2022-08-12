@@ -1,13 +1,70 @@
-// @flow
 import flattenDeep from 'lodash/flattenDeep'
 import chunk from 'lodash/chunk'
-import isSomething from 'src/shared/utils/isSomething.util'
+import isSomething from '../../utils/isSomething'
 import sortBy from 'lodash/sortBy'
 import uniq from 'lodash/uniq'
-import { BASE_SWATCH_SIZE, MAX_BASE_SIZE, MIN_BASE_SIZE, OUTER_SPACING, SWATCH_WIDTH_WRAP_THRESHOLD } from '../constants'
+import {
+  BASE_SWATCH_SIZE,
+  MAX_BASE_SIZE,
+  MIN_BASE_SIZE,
+  OUTER_SPACING,
+  SWATCH_WIDTH_WRAP_THRESHOLD,
+  TITLE_SIZE_MAX,
+  TITLE_SIZE_MIN,
+  TITLE_SIZE_RATIOS
+} from './constants'
+import { ChunkData } from './types'
+import { MutableRefObject } from 'react'
+
+interface ChunkPositions {
+  current?: ChunkData
+  first?: ChunkData
+  last?: ChunkData
+  next?: ChunkData
+  previous?: ChunkData
+}
+
+interface ProximalSwatch {
+  current: {
+    id: number
+    ref: MutableRefObject<HTMLButtonElement>
+  }
+  up: {
+    id: number
+    ref: MutableRefObject<HTMLButtonElement>
+  }
+  down: {
+    id: number
+    ref: MutableRefObject<HTMLButtonElement>
+  }
+  left: {
+    id: number
+    ref: MutableRefObject<HTMLButtonElement>
+  }
+  right: {
+    id: number
+    ref: MutableRefObject<HTMLButtonElement>
+  }
+}
+
+export function getHeight(level: number = 1, scale: number = 1): number {
+  const sizeMultiplier = TITLE_SIZE_RATIOS[level]
+  const targetSize = BASE_SWATCH_SIZE * scale * sizeMultiplier
+  const minSize = Math.max(TITLE_SIZE_MIN, targetSize)
+  const maxSize = Math.min(TITLE_SIZE_MAX, minSize)
+  return maxSize
+}
+
+export function getOuterHeight(level: number = 1, scale: number = 1): number {
+  return getHeight(level, scale) * 2.5
+}
+
+export function getOuterHeightAll(levels: number[] = [], scale: number = 1): number {
+  return levels.reduce((prev, next) => prev + getOuterHeight(next, scale), 0)
+}
 
 // TODO: this should actually return a memoized function which will return the perimeter level when provided an ID
-export function getPerimiterLevelTest (chunkChildren, id, levels = 0) {
+export function getPerimeterLevelTest(chunkChildren, id, levels = 0): (id: any) => number {
   if (chunkChildren && isSomething(id)) {
     if (levels === 0) {
       return () => 0
@@ -28,21 +85,23 @@ export function getPerimiterLevelTest (chunkChildren, id, levels = 0) {
         const east = chunkChildren[coords[1]]?.[coords[0] + curLevel] ?? null
         const west = chunkChildren[coords[1]]?.[coords[0] - curLevel] ?? null
 
-        perimeterArray[curLevel * 2 - 1] = uniq([north, south, east, west].filter(v => v !== null))
-        perimeterArray[curLevel * 2] = uniq([
-          chunkChildren[coords[1] - curLevel]?.[coords[0] - 1] ?? null,
-          chunkChildren[coords[1] - curLevel]?.[coords[0] + 1] ?? null,
-          chunkChildren[coords[1] + curLevel]?.[coords[0] - 1] ?? null,
-          chunkChildren[coords[1] + curLevel]?.[coords[0] + 1] ?? null,
-          chunkChildren[coords[1] + 1]?.[coords[0] + curLevel] ?? null,
-          chunkChildren[coords[1] - 1]?.[coords[0] + curLevel] ?? null,
-          chunkChildren[coords[1] + 1]?.[coords[0] - curLevel] ?? null,
-          chunkChildren[coords[1] - 1]?.[coords[0] - curLevel] ?? null
-        ].filter(v => v !== null))
+        perimeterArray[curLevel * 2 - 1] = uniq([north, south, east, west].filter((v) => v !== null))
+        perimeterArray[curLevel * 2] = uniq(
+          [
+            chunkChildren[coords[1] - curLevel]?.[coords[0] - 1] ?? null,
+            chunkChildren[coords[1] - curLevel]?.[coords[0] + 1] ?? null,
+            chunkChildren[coords[1] + curLevel]?.[coords[0] - 1] ?? null,
+            chunkChildren[coords[1] + curLevel]?.[coords[0] + 1] ?? null,
+            chunkChildren[coords[1] + 1]?.[coords[0] + curLevel] ?? null,
+            chunkChildren[coords[1] - 1]?.[coords[0] + curLevel] ?? null,
+            chunkChildren[coords[1] + 1]?.[coords[0] - curLevel] ?? null,
+            chunkChildren[coords[1] - 1]?.[coords[0] - curLevel] ?? null
+          ].filter((v) => v !== null)
+        )
       }
 
-      return function findPerimeterLevelById (id) {
-        for (const i in perimeterArray) {
+      return function findPerimeterLevelById(id) {
+        for (let i = 1; i < perimeterArray.length; i++) {
           if (perimeterArray[i].indexOf(id) > -1) {
             return i
           }
@@ -54,21 +113,28 @@ export function getPerimiterLevelTest (chunkChildren, id, levels = 0) {
   return () => 0
 }
 
-export function getIdCoordsInChunk (id, chunk = [[]]) {
+export function getIdCoordsInChunk(id: string | number, chunk: number[][]): number[] {
   const coords = chunk.reduce((accum, next, y) => {
-    if (accum) return accum
+    if (accum) {
+      return accum
+    }
 
-    const x = next.indexOf(id)
+    const x = next.indexOf(id as number)
 
     if (x >= 0) {
       return [x, y]
     }
+    return null
   }, undefined)
 
   return coords
 }
 
-export function getProximalSwatchesBySwatchId (chunksSet, chunkId, swatchId) {
+export function getProximalSwatchesBySwatchId(
+  chunksSet: Set<ChunkData>,
+  chunkId: string | number,
+  swatchId: string | number
+): ProximalSwatch {
   if (chunksSet && chunksSet.size > 0 && chunkId !== null && isSomething(swatchId)) {
     const hostChunk = Array.from(chunksSet).filter(({ id }) => id === chunkId)?.[0]
     const children = hostChunk?.data?.children
@@ -121,20 +187,21 @@ export function getProximalSwatchesBySwatchId (chunksSet, chunkId, swatchId) {
   }
 }
 
-export function findPositionInChunks (chunks, swatchId) {
-  if (chunks?.size && isSomething(swatchId)) {
-    const _chunks = Array.from(chunks)
+export function findPositionInChunks(chunkSet: Set<ChunkData>, swatchId): ChunkPositions {
+  if (chunkSet?.size && isSomething(swatchId)) {
+    const _chunks = Array.from(chunkSet)
     const b = _chunks.map(({ data }) => data)
     const c = b.map(({ children }) => children)
-    const d = c.map(children => flattenDeep(children))
-    const f = d.map((children, i) => children.indexOf(swatchId) >= 0 ? i : -1)
+    const d = c.map((children) => flattenDeep(children))
+    const f = d.map((children, i) => (children.includes(swatchId) ? i : -1))
     const g = f.reduce((accum, next) => Math.max(accum, next))
 
-    return {
+    const stuff = {
       current: _chunks[g] ?? null,
       next: _chunks[g + 1] ?? null,
       previous: _chunks[g - 1] ?? null
     }
+    return stuff
   }
 
   return {
@@ -144,7 +211,7 @@ export function findPositionInChunks (chunks, swatchId) {
   }
 }
 
-export function getProximalChunksBySwatchId (chunksSet, swatchId) {
+export function getProximalChunksBySwatchId(chunksSet: Set<ChunkData>, swatchId?: string | number): ChunkPositions {
   if (chunksSet && chunksSet.size > 0) {
     const chunkArray = Array.from(chunksSet)
     const first = chunkArray[0]
@@ -166,15 +233,18 @@ export function getProximalChunksBySwatchId (chunksSet, swatchId) {
   }
 }
 
-export function getInTabOrder (list = []) {
-  return sortBy(uniq(list.filter(Boolean)).filter(el => el.tabIndex !== -1), el => el.tabIndex)
+export function getInTabOrder(list = []): any[] {
+  return sortBy(
+    uniq(list.filter(Boolean)).filter((el) => el.tabIndex !== -1),
+    (el) => el.tabIndex
+  )
 }
 
-export function getInitialSwatchInChunk (chunk = {}, activeColorId) {
+export function getInitialSwatchInChunk(chunk, activeColorId): { el: HTMLButtonElement; id: number } {
   const chunkKids = chunk.data?.children
 
-  if (chunkKids && chunkKids.length) {
-    const newId = flattenDeep(chunkKids).indexOf(activeColorId) > -1 ? activeColorId : chunkKids[0]?.[0] ?? null
+  if (chunkKids?.length) {
+    const newId = flattenDeep(chunkKids).includes(activeColorId) ? activeColorId : chunkKids[0]?.[0] ?? null
     const foundSwatch = chunk.swatchesRef?.current?.filter?.(({ id }) => id === newId)?.[0] // eslint-disable-line
 
     if (foundSwatch) {
@@ -186,7 +256,7 @@ export function getInitialSwatchInChunk (chunk = {}, activeColorId) {
   }
 }
 
-export function needsToWrap (targetScale: number): boolean {
+export function needsToWrap(targetScale: number): boolean {
   if (!isNaN(targetScale)) {
     return BASE_SWATCH_SIZE * targetScale < SWATCH_WIDTH_WRAP_THRESHOLD
   }
@@ -194,15 +264,30 @@ export function needsToWrap (targetScale: number): boolean {
   throw Error('targetScale must be numeric')
 }
 
-export function determineScaleForAvailableWidth (wallWidth: number = 0, containerWidth: number = 0): number {
+export function determineScaleForAvailableWidth(wallWidth: number = 0, containerWidth: number = 0): number {
   if (!isNaN(wallWidth)) {
     const scaleTarget = containerWidth / (wallWidth + OUTER_SPACING * 2)
     const swatchSizeTarget = scaleTarget * BASE_SWATCH_SIZE
     const swatchSizeConstrained = Math.min(Math.max(swatchSizeTarget, MIN_BASE_SIZE), MAX_BASE_SIZE)
-    const scaleConstrained = swatchSizeConstrained / swatchSizeTarget * scaleTarget
+    const scaleConstrained = (swatchSizeConstrained / swatchSizeTarget) * scaleTarget
 
     return scaleConstrained
   } else {
     throw Error('Wall width must be numeric.')
   }
+}
+
+export function getAlignment(type): string {
+  switch (type) {
+    case 'start':
+      return 'justify-start'
+    case 'end':
+      return 'justify-end'
+    case 'center':
+      return 'justify-center'
+    case 'justify':
+      return 'justify-between'
+  }
+
+  return 'justify-start'
 }
