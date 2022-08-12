@@ -25,8 +25,6 @@ describe('ImageRotator', () => {
   })
 
   it('rotates image', () => {
-    cy.findByLabelText('anticlockwise').click() // cleaning state cache
-    cy.findByLabelText('clockwise').click() // cleaning state cache
     cy.findByLabelText('clockwise').click()
     cy.findByRole('img').should(img => expect(img[0].style.transform).to.match(rotateAngle(90)))
     cy.findByLabelText('anticlockwise').click()

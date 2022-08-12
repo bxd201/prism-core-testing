@@ -71,8 +71,8 @@ const Image = ({ className, fitContainer }: ClassNameProp & ImageProps): JSX.Ele
     const scale = rotatedImageMetadata.originalIsPortrait
       ? rotatedImageMetadata.isPortrait ? 1 : (fitContainer ? width / height : height / width)
       : rotatedImageMetadata.isPortrait ? height / width : 1
-    setTransform({ transform: `rotate(${angle}deg) scale(${scale}`})
-  }, [angle])
+    setTransform({ transform: `rotate(${angle}deg) scale(${scale})`})
+  }, [angle, height, width])
 
   return (
     <img
