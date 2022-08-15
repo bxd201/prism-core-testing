@@ -1,20 +1,26 @@
-# Prism Library &nbsp; [![release](https://img.shields.io/badge/release-v2.1.4-blue)]()
+# Prism Toolkit &nbsp; [![release](https://img.shields.io/badge/release-v3.2.0-blue)]()
 
-React components styled with [tailwind](https://tailwindcss.com/). See available components [here](https://develop-prism-lib.ebus.swaws/)
+React components styled with [tailwind](https://tailwindcss.com/). See available components [here](https://internal-prism.sherwin-williams.com/storybook/toolkit/)
 
+### NPM
 ```bash
-yarn add @prism/toolkit
+npm install @prism/toolkit --registry=https://artifactory.sherwin.com/artifactory/api/npm/sherwin-npm-virtual/
+```
+
+### Yarn
+```bash
+yarn add @prism/toolkit --registry=https://artifactory.sherwin.com/artifactory/api/npm/sherwin-npm-virtual/
 ```
 
 <!-- registry=https://artifactory.sherwin.com/artifactory/api/npm/sherwin-npm-virtual/ -->
 
-## How to use in tailwind projects
+## How to use in Tailwind projects
 
-Add `node_modules/prism-lib/index.js` to the list of purged files in your `tailwind.config.js`
+Add `node_modules/@prism/toolkit/index.js` to the list of purged files in your `tailwind.config.js`
 
 ```JSX
 import react from 'react'
-import { Component } from 'prism-lib'
+import { Component } from '@prism/toolkit'
 
 export default () => <Component {...} />
 ```
@@ -23,7 +29,7 @@ To override the default prism [theme](#available-theme-variables) you can place 
 
 ```JSX
 import react from 'react'
-import { Component } from 'prism-lib'
+import { Component } from '@prism/toolkit'
 
 export default () => (
   <Prism
@@ -37,19 +43,19 @@ export default () => (
 )
 ```
 
-## How to use outside of tailwind projects
+## How to use outside of Tailwind projects
 
 To use prism-lib outside of a tailwind project you must import the prism-lib css file somewhere in your project
 
 ```js
-import 'prism-lib/dist/index.css'
+import '@prism/toolkit/dist/index.css'
 ```
 
 All styles are prefixed with `.prism` to avoid collisions outside of prism components so every component must have a `div.prism` higher up in the component hiearchy. We recommend wrapping components with the `Prism` component to automatically do this for you.
 
 ```JSX
 import react from 'react'
-import Prism, { Component } from 'prism-lib'
+import Prism, { Component } from '@prism/toolkit'
 
 export default () => (
   <Prism>
@@ -62,7 +68,7 @@ To provide your own [theme](#available-theme-variables) you can pass a theme obj
 
 ```JSX
 import react from 'react'
-import Prism, { Component } from 'prism-lib'
+import Prism, { Component } from '@prism/toolkit'
 
 export default () => (
   <Prism
@@ -100,7 +106,7 @@ Your project's global styles may be overriden inside of a `Prism` context. So if
 
 # Contributing
 
-Welcome to prism-lib development! Thanks in advance for your contributions.
+Welcome to PRISM Toolkit development! Thanks in advance for your contributions.
 
 ### How to report a bug or request a feature
 
@@ -121,8 +127,3 @@ Welcome to prism-lib development! Thanks in advance for your contributions.
 - Create tests based on [documentation / best practices](https://sherwin-williams.atlassian.net/wiki/spaces/ECOMM/pages/763789617/PRISM2+Testing).
 - Test report: `yarn test`.
 - Debug failing tests and see Cypress UI by running: `yarn run cypress`.
-
-### Release
-
-- Increment release version string in package.json and readme.md ([semantic versioning](https://semver.org/)).
-- Merge develop branch into npm_publish branch and create new release (target branch: npm_publish).
