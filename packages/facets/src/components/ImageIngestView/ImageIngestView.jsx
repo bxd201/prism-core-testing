@@ -14,22 +14,23 @@ import Prism, { ImageRotator } from '@prism/toolkit'
 import PrismImage from '../PrismImage/PrismImage'
 import Iconography from '../Iconography/Iconography'
 import ConfigurationContext, { type ConfigurationContextType } from '../../contexts/ConfigurationContext/ConfigurationContext'
+import { type ProcessedImageMetadata } from '../../shared/types/Scene.js.flow'
 import { LiveMessage } from 'react-aria-live'
 import { KEY_CODES } from '../../constants/globals'
 import './ImageIngestView.scss'
 
 type ImageIngestViewProps = {
-  cleanupCallback?: (imageUrl: string) => void,
-  maxSceneHeight: number,
+  cleanupCallback?: Function,
+  closeLink: string,
   handleDismissCallback: Function,
-  closeLink: string
+  imageMetadata: ProcessedImageMetadata,
+  maxSceneHeight: number
 }
 
 const baseClassName = 'image-ingest-view'
 
 const ImageIngestView = (props: ImageIngestViewProps) => {
-  const { maxSceneHeight, handleDismissCallback, cleanupCallback, closeLink } = props
-  const { ingestedImageMetadata } = useSelector(store => store)
+  const { cleanupCallback, closeLink, handleDismissCallback, imageMetadata, maxSceneHeight } = props
   const { cvw = {} } = useContext<ConfigurationContextType>(ConfigurationContext)
   const { backBtn, closeBtn = {}, termsOfUseLink = 'https://www.sherwin-williams.com/terms-of-use' } = cvw
   const { showArrow: closeBtnShowArrow = true, text: closeBtnText = <FormattedMessage id='CLOSE' /> } = closeBtn
@@ -41,7 +42,7 @@ const ImageIngestView = (props: ImageIngestViewProps) => {
 
   useEffect(() => {
     return () => {
-      cleanupCallback?.(ingestedImageMetadata?.url)
+      cleanupCallback?.()
     }
   }, [])
 
@@ -80,9 +81,9 @@ const ImageIngestView = (props: ImageIngestViewProps) => {
           {({ width }) => {
             const smallScreen = width <= 576
 
-            return ingestedImageMetadata && (
+            return imageMetadata && (
               <Prism>
-                <ImageRotator className={`${baseClassName}__image-rotator`} imageMetadata={ingestedImageMetadata}>
+                <ImageRotator className={`${baseClassName}__image-rotator`} imageMetadata={imageMetadata}>
                   {!smallScreen && <ImageRotator.Image />}
                   <div className={`${baseClassName}__modal ${!smallScreen ? ' absolute' : ''}`}>
                     {smallScreen && <div className='m-7 mb-0'><ImageRotator.Image fitContainer /></div>}

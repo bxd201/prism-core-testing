@@ -105,6 +105,7 @@ const CVW = (props: CVWPropsType) => {
   const { title } = palette
   const activeSceneLabel = useSelector(store => store.activeSceneLabel)
   const wrapperRef = useRef()
+  const { ingestedImageMetadata } = useSelector(store => store)
   const shouldShowGlobalDestroyWarning = useSelector(store => store.shouldShowGlobalDestroyWarning)
   const paintSceneWorkspace = useSelector(store => store.paintSceneWorkspace)
   const activeColor = useSelector(store => store.lp.activeColor)
@@ -246,6 +247,7 @@ const CVW = (props: CVWPropsType) => {
     navigationReturnIntent,
     activeSceneLabel,
     shouldShowGlobalDestroyWarning,
+    ingestedImageMetadata,
     allowNavigateToIntendedDestination,
     isColorwallModallyPresented,
     isMatchPhotoPresented,
@@ -348,9 +350,9 @@ const CVW = (props: CVWPropsType) => {
     history.push(ROUTES_ENUM.ACTIVE_MATCH_PHOTO)
   }
 
-  const cleanupStaleIngestedImage = (ingestedImageUrl: string) => {
+  const cleanupStaleIngestedImage = () => {
     try {
-      URL.revokeObjectURL(ingestedImageUrl)
+      URL.revokeObjectURL(ingestedImageMetadata?.url)
       setImageForMatchPhoto()
       dispatch(setIngestedImage())
     } catch (e) {
@@ -441,9 +443,9 @@ const CVW = (props: CVWPropsType) => {
             <Route path={ROUTES_ENUM.COLOR_DETAILS} render={() => <ColorDetails />} />
             <Route path={`${ROUTES_ENUM.COLOR_WALL}(/.*)?`} render={() => <ColorWallPage alwaysShowColorFamilies={alwaysShowColorFamilies} colorWallBgColor={colorWallBgColor} displayAddButton displayInfoButton displayDetailsLink={false} />} />
             <Route path={ROUTES_ENUM.COLOR_COLLECTION} render={() => <ColorCollections isExpertColor={false} {...location.state} />} />
-            <Route path={ROUTES_ENUM.UPLOAD_FAST_MASK} render={() => <ImageIngestView cleanupCallback={cleanupStaleIngestedImage} handleDismissCallback={goToFastMask} maxSceneHeight={maxSceneHeight} closeLink={ROUTES_ENUM.ACTIVE} />} />
-            <Route path={ROUTES_ENUM.UPLOAD_MATCH_PHOTO} render={() => <ImageIngestView cleanupCallback={cleanupStaleIngestedImage} handleDismissCallback={goToMatchPhoto} maxSceneHeight={maxSceneHeight} closeLink={ROUTES_ENUM.ACTIVE} />} />
-            <Route path={ROUTES_ENUM.UPLOAD_PAINT_SCENE} render={() => <ImageIngestView cleanupCallback={cleanupStaleIngestedImage} handleDismissCallback={goToPaintScene} maxSceneHeight={maxSceneHeight} closeLink={ROUTES_ENUM.ACTIVE} />} />
+            <Route path={ROUTES_ENUM.UPLOAD_FAST_MASK} render={() => <ImageIngestView cleanupCallback={cleanupStaleIngestedImage} handleDismissCallback={goToFastMask} imageMetadata={ingestedImageMetadata} maxSceneHeight={maxSceneHeight} closeLink={ROUTES_ENUM.ACTIVE} />} />
+            <Route path={ROUTES_ENUM.UPLOAD_MATCH_PHOTO} render={() => <ImageIngestView cleanupCallback={cleanupStaleIngestedImage} handleDismissCallback={goToMatchPhoto} imageMetadata={ingestedImageMetadata} maxSceneHeight={maxSceneHeight} closeLink={ROUTES_ENUM.ACTIVE} />} />
+            <Route path={ROUTES_ENUM.UPLOAD_PAINT_SCENE} render={() => <ImageIngestView cleanupCallback={cleanupStaleIngestedImage} handleDismissCallback={goToPaintScene} imageMetadata={ingestedImageMetadata} maxSceneHeight={maxSceneHeight} closeLink={ROUTES_ENUM.ACTIVE} />} />
             <Route path={ROUTES_ENUM.ACTIVE_MATCH_PHOTO} render={() => <MatchPhotoContainer colors={unorderedColors} imageUrl={matchPhotoImage} imageDims={matchPhotoImageDims} maxSceneHeight={maxSceneHeight} scalingWidth={wrapperDims.width} />} />
             <Route path={ROUTES_ENUM.USE_OUR_IMAGE} render={() => <SampleScenesWrapper activateScene={handleSceneSelection} />} />
             <Route path={ROUTES_ENUM.EXPERT_COLORS} render={() => <ExpertColorPicks isExpertColor />} />

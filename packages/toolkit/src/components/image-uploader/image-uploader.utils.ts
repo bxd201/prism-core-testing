@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+// Functions not really testable
 import heic2any from 'heic2any'
 import { ProcessedImageMetadata } from '../../types'
 

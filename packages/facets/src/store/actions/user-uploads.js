@@ -2,20 +2,7 @@
 /* global FormData */
 import axios from 'axios'
 import at from 'lodash/at'
-
-export type ProcessedImageMetadata = {
-  imageHeight?: number,
-  imageWidth?: number,
-  isPortrait?: boolean,
-  landscapeHeight?: number,
-  landscapeWidth?: number,
-  originalImageHeight: number,
-  originalImageWidth: number,
-  originalIsPortrait: boolean,
-  portraitHeight?: number,
-  portraitWidth?: number,
-  url: string
-}
+import { type ProcessedImageMetadata } from '../../shared/types/Scene.js.flow'
 
 export const START_UPLOADING = 'START_UPLOADING'
 const startUploading = () => {

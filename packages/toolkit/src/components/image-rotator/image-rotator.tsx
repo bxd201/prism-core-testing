@@ -93,7 +93,7 @@ const Image = ({ className, fitContainer }: ClassNameProp & ImageProps): JSX.Ele
       ? isPortrait ? 1 : (fitContainer ? width / height : height / width)
       : isPortrait ? height / width : 1
     setTransform({ transform: `rotate(${angle}deg) scale(${scale}`})
-  }, [angle])
+  }, [angle, height, width])
 
   return (
     <img

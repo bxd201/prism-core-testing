@@ -9,9 +9,9 @@ import {
   IRIS_PROCESSING_BEGIN,
   IRIS_LOADING_BEGIN,
   IRIS_LOADING_COMPLETE,
-  INGESTED_IMAGE_URL,
-  ProcessedImageMetadata
+  INGESTED_IMAGE_URL
 } from '../actions/user-uploads'
+import { type ProcessedImageMetadata } from '../../shared/types/Scene.js.flow'
 
 const initialState: Object = {
   uploading: false,
