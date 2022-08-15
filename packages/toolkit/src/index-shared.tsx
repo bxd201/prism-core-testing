@@ -13,11 +13,10 @@ export { default as ImageRotator } from './components/image-rotator/image-rotato
 export { default as ImageUploader } from './components/image-uploader/image-uploader'
 export { default as Menu } from './components/menu/menu'
 export { default as LivePalette } from './components/live-palette/live-palette'
-export { default as Select } from './components/select/select'
-export { default as Toggle } from './components/toggle/toggle'
 export { default as SpinnerLoader } from './components/spinner-loader/spinner-loader'
 export { default as GenericOverlay } from './components/generic-overlay/generic-overlay'
 export { default as SimpleTintableScene } from './components/simple-tintable-scene/simple-tintable-scene'
+export { default as Toggle } from './components/toggle/toggle'
 // ----- future component exports -----
 export { default as ColorStripButton } from './components/color-strip-button/color-strip-button'
 export { default as ColorWall } from './components/color-wall/color-wall'
