@@ -88,7 +88,6 @@
     "jest": "28.1.1",
     "jest-canvas-mock": "2.4.0",
     "jest-environment-jsdom": "28.1.1",
-    "lint-staged": "12.1.7",
     "mochawesome-merge": "4.2.1",
     "postcss": "8.4.5",
     "postcss-focus-visible": "6.0.3",
