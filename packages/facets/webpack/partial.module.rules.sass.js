@@ -61,9 +61,9 @@ const getVarGenerator = (function () {
   }, { primitive: true, length: 1 })
 
   function processVarData (data) {
-    var type = typeof data
+    let type = typeof data
 
-    var returner
+    let returner
 
     // Convert to SassDimension if dimenssion
     if (type === 'number') {
@@ -83,7 +83,7 @@ const getVarGenerator = (function () {
 
   return function getVarGenerator (values) {
     const getVarInternal_memoized = memoizee(function getVarInternal (keys) {
-      var _keys = keys.split('.'); var returner; var i
+      let _keys = keys.split('.'); let returner; let i
 
       returner = Object.assign({}, values)
 
@@ -133,9 +133,26 @@ const getCssRules = (cssLoaderOpts = {}) => {
               }
             ]),
             autoprefixer(),
-            PrefixWrap(`.${flags.prismWrappingClass}.${flags.cleanslateWrappingClass}`, {
-              ignoredSelectors: [/^:root/],
-              blacklist: [flags.cleanslateEntryPointName]
+            // these wrap all prism styles
+            PrefixWrap(`.${flags.prismWrappingClass}.${flags.prismWrappingClass}`, {
+              ignoredSelectors: [
+                /^:root/,
+                new RegExp(`^[.]${flags.prismWrappingClass}[.]${flags.prismWrappingClass}`)
+              ],
+              blacklist: [flags.cleanslateEntryPointName, 'toolkit']
+            }),
+            // these wrap all imported cleanslate styles
+            PrefixWrap(`.${flags.cleanslateWrappingClass}`, {
+              ignoredSelectors: [
+                /^:root/,
+                new RegExp(`^[.]${flags.cleanslateWrappingClass}`)
+              ],
+              whitelist: [flags.cleanslateEntryPointName]
+            }),
+            // these wrap all imported toolkit component styles
+            PrefixWrap(`.${flags.toolkitWrappingClass}.${flags.toolkitWrappingClass}`, {
+              ignoredSelectors: [new RegExp(`^[.]${flags.toolkitWrappingClass}[.]${flags.toolkitWrappingClass}`)],
+              whitelist: ['toolkit']
             })
           ]
         }

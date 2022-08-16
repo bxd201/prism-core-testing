@@ -7,18 +7,18 @@
 
 .#{$cleanslateWrappingClass} {
   font-family: var(getVarName('typography.bodyFontFamily'));
+}
 
-  a {
-    &, &:hover, &:visited, &:active {
-      color: inherit;
-    }
+a {
+  &, &:hover, &:visited, &:active {
+    color: inherit;
   }
+}
 
-  button, input[type=submit] {
-    font-family: var(getVarName('typography.bodyFontFamily'));
-  }
+button, input[type=submit] {
+  font-family: var(getVarName('typography.bodyFontFamily'));
+}
 
-  h1 {
-    color: inherit !important
-  }
+h1 {
+  color: inherit !important;
 }

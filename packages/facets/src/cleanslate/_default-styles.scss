@@ -10,7 +10,3 @@
   #{getVarName('typography.bodyFontFamily')}: getVar('typography.bodyFontFamily');
   #{getVarName('typography.titleFontFamily')}: getVar('typography.titleFontFamily');
 }
-
-.#{$cleanslateWrappingClass}.#{$prismWrappingClass} {
-  display: block;
-}

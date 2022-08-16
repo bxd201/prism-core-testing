@@ -21,9 +21,10 @@ import AuthObserver from '../components/AuthObserver/AuthObserver'
 import 'src/cleanslate/cleanslate.scss'
 import 'src/cleanslate/_default-styles.scss'
 import 'src/cleanslate/_cleanslate-overrides.scss'
+import './styles/embed-override.scss'
 
-import '@prism/toolkit/dist/index.css'
 import 'tailwindcss/tailwind.css'
+import '@prism/toolkit/dist/index.css'
 
 // wraps a react component with the required PRISM HOCs
 export const facetMasterWrapper = (Component: ComponentType<any>) => {
@@ -37,9 +38,12 @@ export const facetMasterWrapper = (Component: ComponentType<any>) => {
     // checks if a default routing type is set, if not we'll use hash routing
     const routeType = props.routeType || 'hash'
 
-    const routerProps = useMemo(() => ({
-      basename: pageRoot
-    }), [pageRoot])
+    const routerProps = useMemo(
+      () => ({
+        basename: pageRoot
+      }),
+      [pageRoot]
+    )
 
     const configurationProps = {
       ...props,
@@ -48,23 +52,30 @@ export const facetMasterWrapper = (Component: ComponentType<any>) => {
       routeType
     }
 
-    const { b: BrowserRouterRender, h: HashRouterRender, m: MemoryRouterRender } = useMemo(() => ({
-      b: (
-        <BrowserRouter {...routerProps}>
-          <Component {...props} />
-        </BrowserRouter>
-      ),
-      h: (
-        <HashRouter {...routerProps}>
-          <Component {...props} />
-        </HashRouter>
-      ),
-      m: (
-        <MemoryRouter {...routerProps}>
-          <Component {...props} />
-        </MemoryRouter>
-      )
-    }), [routerProps, props])
+    const {
+      b: BrowserRouterRender,
+      h: HashRouterRender,
+      m: MemoryRouterRender
+    } = useMemo(
+      () => ({
+        b: (
+          <BrowserRouter {...routerProps}>
+            <Component {...props} />
+          </BrowserRouter>
+        ),
+        h: (
+          <HashRouter {...routerProps}>
+            <Component {...props} />
+          </HashRouter>
+        ),
+        m: (
+          <MemoryRouter {...routerProps}>
+            <Component {...props} />
+          </MemoryRouter>
+        )
+      }),
+      [routerProps, props]
+    )
 
     const RouterRender = useMemo(() => {
       switch (routeType) {
@@ -95,17 +106,27 @@ export const facetMasterWrapper = (Component: ComponentType<any>) => {
     return (
       <div lang={language}>
         <ErrorBoundary translated={false}>
-          <IntlProvider locale={language} defaultLocale={language} messages={flatLanguages} textComponent={React.Fragment}>
+          <IntlProvider
+            locale={language}
+            defaultLocale={language}
+            messages={flatLanguages}
+            textComponent={React.Fragment}
+          >
             <ErrorBoundary>
               <Provider store={store}>
                 <ConfigurationContextProvider {...configurationProps}>
                   <LiveAnnouncer>
                     <LiveMessenger>
                       {({ announcePolite, announceAssertive }) => {
-                        return <LiveAnnouncerContextProvider announcePolite={announcePolite} announceAssertive={announceAssertive}>
-                          <AuthObserver />
-                          { RouterRender }
-                        </LiveAnnouncerContextProvider>
+                        return (
+                          <LiveAnnouncerContextProvider
+                            announcePolite={announcePolite}
+                            announceAssertive={announceAssertive}
+                          >
+                            <AuthObserver />
+                            {RouterRender}
+                          </LiveAnnouncerContextProvider>
+                        )
                       }}
                     </LiveMessenger>
                   </LiveAnnouncer>
