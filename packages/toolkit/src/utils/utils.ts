@@ -1,4 +1,4 @@
-import { Color } from '../types'
+import { Color, MiniColor } from '../types'
 
 // code lifted from https://github.com/antimatter15/rgb-lab/blob/master/color.js
 export function deltaE(labA: [number, number, number], labB: [number, number, number]): number {
@@ -20,7 +20,7 @@ export function deltaE(labA: [number, number, number], labB: [number, number, nu
   return i < 0 ? 0 : Math.sqrt(i)
 }
 
-export const findClosestColor = (targetRGB?: Uint8ClampedArray, colors: Color[] = []): Color | null => (
+export const findClosestColor = (targetRGB?: Uint8ClampedArray, colors: Color[] = []): Color | null =>
   targetRGB !== undefined
     ? colors.reduce(
         (acc: { color: Color | null; distance: number }, color: Color) => {
@@ -33,9 +33,12 @@ export const findClosestColor = (targetRGB?: Uint8ClampedArray, colors: Color[] 
         { color: null, distance: 9999 }
       ).color
     : null
-)
 
-export const getCanvasTransformParams = (angle: number = 0, width: number, height: number): { [key: string]: number } => {
+export const getCanvasTransformParams = (
+  angle: number = 0,
+  width: number,
+  height: number
+): { [key: string]: number } => {
   let canvasHeight = 0
   let canvasWidth = 0
   const hScale = 1
@@ -76,11 +79,6 @@ export const getCanvasTransformParams = (angle: number = 0, width: number, heigh
 }
 
 /**
- * @file functions to be used by components, everything in this file could end up in the production bundle.
- * for util functions only used by tests or stories, use `src/test-utils/test-utils`
- */
-
-/**
  * @description Measures the luminosity of a hex color
  * @param {string} hex # + hex color
  * @returns {number} Range between 0 and 255
@@ -117,4 +115,75 @@ export function rgb2lab(rgb: Uint8ClampedArray): [number, number, number] {
   z = z > 0.008856 ? Math.pow(z, 1 / 3) : 7.787 * z + 16 / 116
 
   return [116 * y - 16, 500 * (x - y), 200 * (y - z)]
+}
+
+export function primeImage(baseImage: string, surface: string, callback: Function): void {
+  function handleSurfaceLoaded(e: Event): void {
+    const canvas = document.createElement('canvas')
+    const img = e.target as HTMLImageElement
+    const width = img.naturalWidth
+    const height = img.naturalHeight
+    canvas.width = width
+    canvas.height = height
+    const ctx = canvas.getContext('2d')
+    ctx.drawImage(backgroundImage, 0, 0)
+    ctx.save()
+
+    const workingCanvas = document.createElement('canvas')
+    workingCanvas.width = width
+    workingCanvas.height = height
+    const workingCtx = workingCanvas.getContext('2d')
+    workingCtx.drawImage(img, 0, 0)
+
+    const baseData = ctx.getImageData(0, 0, width, height)
+    const { data: maskData } = workingCtx.getImageData(0, 0, width, height)
+
+    for (let i = 0; i < maskData.length; i += 4) {
+      // use any completely non-transparent pixel from the mask to desaturate the base image
+      if (maskData[i] && maskData[i + 1] && maskData[i + 2] && maskData[i + 3]) {
+        // get grayscale value
+        const grayVal = baseData.data[i] * 0.299 + baseData.data[i + 1] * 0.587 + baseData.data[i + 2] * 0.114
+
+        baseData.data[i] = grayVal
+        baseData.data[i + 1] = grayVal
+        baseData.data[i + 2] = grayVal
+      }
+    }
+
+    ctx.clearRect(0, 0, width, height)
+    ctx.putImageData(baseData, 0, 0)
+    ctx.save()
+
+    ctx.globalAlpha = 0.73
+    ctx.globalCompositeOperation = 'overlay'
+    ctx.drawImage(img, 0, 0)
+    ctx.restore()
+
+    const primedImage = canvas.toDataURL()
+    callback(primedImage, width, height)
+
+    img.removeEventListener('load', handleSurfaceLoaded)
+  }
+
+  function handleBgLoaded(e: Event): void {
+    const surfaceImage = document.createElement('img')
+    surfaceImage.addEventListener('load', handleSurfaceLoaded)
+    surfaceImage.src = surface
+
+    e.target.removeEventListener('load', handleBgLoaded)
+  }
+
+  const backgroundImage = document.createElement('img')
+  backgroundImage.addEventListener('load', handleBgLoaded)
+  backgroundImage.src = baseImage
+}
+
+export function copySurfaceColors(surfaceColors: MiniColor[] | null): MiniColor[] | null {
+  if (surfaceColors?.length) {
+    return surfaceColors.map((color) => {
+      return color ? { ...color } : null
+    })
+  }
+
+  return null
 }

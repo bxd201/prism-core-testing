@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react'
 import { LiveMessage } from 'react-aria-live'
 import uniqueId from 'lodash/uniqueId'
 import { TransitionGroup } from 'react-transition-group'
-import type { Color } from '../../types'
+import type { Color, MiniColor } from '../../types'
 import TintableSceneSurface from './tintable-scene-surface'
 import TintableSceneSVGDefs from './tintable-scene-svg-defs'
 import SimpleTintableSceneHitArea from './simple-tintable-scene-hit-area'
@@ -24,7 +24,8 @@ export interface SimpleTintableSceneProps {
   imageValueCurve?: any
   interactive?: boolean
   handleSurfaceInteraction?: Function
-  surfaceColors?: Color[]
+  // This is a sparse array
+  surfaceColors?: Array<Color | MiniColor | null>
   adjustSvgHeight?: boolean
 }
 
@@ -76,7 +77,7 @@ const SimpleTintableScene = (props: SimpleTintableSceneProps): JSX.Element => {
           {surfaceUrls.map((surface: string, i): JSX.Element => {
             const highlight: string = highlights && surfaceUrls.length === highlights.length ? highlights[i] : null
             const shadow: string = shadows && surfaceUrls.length === shadows.length ? shadows[i] : null
-            const tintColor: Color = surfaceColors[i]
+            const tintColor: Color | MiniColor | null = surfaceColors[i]
             if (tintColor) {
               return (
                 <InlineStyleTransition
