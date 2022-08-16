@@ -20,10 +20,10 @@
 /* == BLANKET RESET RULES == */
 
 /* HTML 4.01 */
-.#{$cleanslateWrappingClass}, .#{$cleanslateWrappingClass} h1, .#{$cleanslateWrappingClass} h2, .#{$cleanslateWrappingClass} h3, .#{$cleanslateWrappingClass} h4, .#{$cleanslateWrappingClass} h5, .#{$cleanslateWrappingClass} h6, .#{$cleanslateWrappingClass} p, .#{$cleanslateWrappingClass} td, .#{$cleanslateWrappingClass} dl, .#{$cleanslateWrappingClass} tr, .#{$cleanslateWrappingClass} dt, .#{$cleanslateWrappingClass} ol, .#{$cleanslateWrappingClass} form, .#{$cleanslateWrappingClass} select, .#{$cleanslateWrappingClass} option, .#{$cleanslateWrappingClass} pre, .#{$cleanslateWrappingClass} div, .#{$cleanslateWrappingClass} table,  .#{$cleanslateWrappingClass} th, .#{$cleanslateWrappingClass} tbody, .#{$cleanslateWrappingClass} tfoot, .#{$cleanslateWrappingClass} caption, .#{$cleanslateWrappingClass} thead, .#{$cleanslateWrappingClass} ul, .#{$cleanslateWrappingClass} li, .#{$cleanslateWrappingClass} address, .#{$cleanslateWrappingClass} blockquote, .#{$cleanslateWrappingClass} dd, .#{$cleanslateWrappingClass} fieldset, .#{$cleanslateWrappingClass} li, .#{$cleanslateWrappingClass} iframe, .#{$cleanslateWrappingClass} strong, .#{$cleanslateWrappingClass} legend, .#{$cleanslateWrappingClass} em, .#{$cleanslateWrappingClass} summary, .#{$cleanslateWrappingClass} cite, .#{$cleanslateWrappingClass} span, .#{$cleanslateWrappingClass} input, .#{$cleanslateWrappingClass} sup, .#{$cleanslateWrappingClass} label, .#{$cleanslateWrappingClass} dfn, .#{$cleanslateWrappingClass} object, .#{$cleanslateWrappingClass} big, .#{$cleanslateWrappingClass} q, .#{$cleanslateWrappingClass} samp, .#{$cleanslateWrappingClass} acronym, .#{$cleanslateWrappingClass} small, .#{$cleanslateWrappingClass} img, .#{$cleanslateWrappingClass} strike, .#{$cleanslateWrappingClass} code, .#{$cleanslateWrappingClass} sub, .#{$cleanslateWrappingClass} ins, .#{$cleanslateWrappingClass} textarea, .#{$cleanslateWrappingClass} button, .#{$cleanslateWrappingClass} var, .#{$cleanslateWrappingClass} a, .#{$cleanslateWrappingClass} abbr, .#{$cleanslateWrappingClass} applet, .#{$cleanslateWrappingClass} del, .#{$cleanslateWrappingClass} kbd, .#{$cleanslateWrappingClass} tt, .#{$cleanslateWrappingClass} b, .#{$cleanslateWrappingClass} i, .#{$cleanslateWrappingClass} hr,
+.#{$cleanslateWrappingClass}, h1, h2, h3, h4, h5, h6, p, td, dl, tr, dt, ol, form, select, option, pre, div, table,  th, tbody, tfoot, caption, thead, ul, li, address, blockquote, dd, fieldset, li, iframe, strong, legend, em, summary, cite, span, input, sup, label, dfn, object, big, q, samp, acronym, small, img, strike, code, sub, ins, textarea, button, var, a, abbr, applet, del, kbd, tt, b, i, hr,
 
 /* HTML5 - Sept 2013 taken from MDN https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5/HTML5_element_list */
-.#{$cleanslateWrappingClass} article, .#{$cleanslateWrappingClass} aside, .#{$cleanslateWrappingClass} figure, .#{$cleanslateWrappingClass} figcaption, .#{$cleanslateWrappingClass} footer, .#{$cleanslateWrappingClass} header, .#{$cleanslateWrappingClass} menu, .#{$cleanslateWrappingClass} nav, .#{$cleanslateWrappingClass} section, .#{$cleanslateWrappingClass} time, .#{$cleanslateWrappingClass} mark, .#{$cleanslateWrappingClass} audio, .#{$cleanslateWrappingClass} video, .#{$cleanslateWrappingClass} abbr, .#{$cleanslateWrappingClass} address, .#{$cleanslateWrappingClass} area, .#{$cleanslateWrappingClass} blockquote, .#{$cleanslateWrappingClass} canvas, .#{$cleanslateWrappingClass} caption, .#{$cleanslateWrappingClass} cite, .#{$cleanslateWrappingClass} code, .#{$cleanslateWrappingClass} colgroup, .#{$cleanslateWrappingClass} col, .#{$cleanslateWrappingClass} datalist, .#{$cleanslateWrappingClass} fieldset, .#{$cleanslateWrappingClass} main, .#{$cleanslateWrappingClass} map, .#{$cleanslateWrappingClass} meta, .#{$cleanslateWrappingClass} optgroup, .#{$cleanslateWrappingClass} output, .#{$cleanslateWrappingClass} progress, .#{$cleanslateWrappingClass} svg {
+article, aside, figure, figcaption, footer, header, menu, nav, section, time, mark, audio, video, abbr, address, area, blockquote, canvas, caption, cite, code, colgroup, col, datalist, fieldset, main, map, meta, optgroup, output, progress, svg {
     background-attachment:scroll;
     background-color:transparent;
     background-image:none; /* This rule affects the use of pngfix JavaScript http://dillerdesign.com/experiment/DD_BelatedPNG for IE6, which is used to force the browser to recognise alpha-transparent PNGs files that replace the IE6 lack of PNG transparency. (The rule overrides the VML image that is used to replace the given CSS background-image). If you don't know what that means, then you probably haven't used the pngfix script, and this comment may be ignored :) */
@@ -161,14 +161,14 @@
     word-break: normal;
 }
 
-.#{$cleanslateWrappingClass}.#{$prismWrappingClass} {
+.#{$cleanslateWrappingClass} {
     display: block;
     position: relative;
     z-index: 0;
     overflow: hidden;
 }
 
-.#{$cleanslateWrappingClass} svg {
+svg {
     /* leaving this as cursor: auto from the above would block buttons containing SVGs from displaying the pointer */
     cursor: inherit;
     width: 1em;
@@ -177,132 +177,132 @@
     stroke: currentColor;
 }
 
-.#{$cleanslateWrappingClass}::before, .#{$cleanslateWrappingClass} h1::before, .#{$cleanslateWrappingClass} h2::before, .#{$cleanslateWrappingClass} h3::before, .#{$cleanslateWrappingClass} h4::before, .#{$cleanslateWrappingClass} h5::before, .#{$cleanslateWrappingClass} h6::before, .#{$cleanslateWrappingClass} p::before, .#{$cleanslateWrappingClass} td::before, .#{$cleanslateWrappingClass} dl::before, .#{$cleanslateWrappingClass} tr::before, .#{$cleanslateWrappingClass} dt::before, .#{$cleanslateWrappingClass} ol::before, .#{$cleanslateWrappingClass} form::before, .#{$cleanslateWrappingClass} select::before, .#{$cleanslateWrappingClass} option::before, .#{$cleanslateWrappingClass} pre::before, .#{$cleanslateWrappingClass} div::before, .#{$cleanslateWrappingClass} table::before,  .#{$cleanslateWrappingClass} th::before, .#{$cleanslateWrappingClass} tbody::before, .#{$cleanslateWrappingClass} tfoot::before, .#{$cleanslateWrappingClass} caption::before, .#{$cleanslateWrappingClass} thead::before, .#{$cleanslateWrappingClass} ul::before, .#{$cleanslateWrappingClass} li::before, .#{$cleanslateWrappingClass} address::before, .#{$cleanslateWrappingClass} blockquote::before, .#{$cleanslateWrappingClass} dd::before, .#{$cleanslateWrappingClass} fieldset::before, .#{$cleanslateWrappingClass} li::before, .#{$cleanslateWrappingClass} iframe::before, .#{$cleanslateWrappingClass} strong::before, .#{$cleanslateWrappingClass} legend::before, .#{$cleanslateWrappingClass} em::before, .#{$cleanslateWrappingClass} summary::before, .#{$cleanslateWrappingClass} cite::before, .#{$cleanslateWrappingClass} span::before, .#{$cleanslateWrappingClass} input::before, .#{$cleanslateWrappingClass} sup::before, .#{$cleanslateWrappingClass} label::before, .#{$cleanslateWrappingClass} dfn::before, .#{$cleanslateWrappingClass} object::before, .#{$cleanslateWrappingClass} big::before, .#{$cleanslateWrappingClass} q::before, .#{$cleanslateWrappingClass} samp::before, .#{$cleanslateWrappingClass} acronym::before, .#{$cleanslateWrappingClass} small::before, .#{$cleanslateWrappingClass} img::before, .#{$cleanslateWrappingClass} strike::before, .#{$cleanslateWrappingClass} code::before, .#{$cleanslateWrappingClass} sub::before, .#{$cleanslateWrappingClass} ins::before, .#{$cleanslateWrappingClass} textarea::before, .#{$cleanslateWrappingClass} button::before, .#{$cleanslateWrappingClass} var::before, .#{$cleanslateWrappingClass} a::before, .#{$cleanslateWrappingClass} abbr::before, .#{$cleanslateWrappingClass} applet::before, .#{$cleanslateWrappingClass} del::before, .#{$cleanslateWrappingClass} kbd::before, .#{$cleanslateWrappingClass} tt::before, .#{$cleanslateWrappingClass} b::before, .#{$cleanslateWrappingClass} i::before, .#{$cleanslateWrappingClass} hr::before,
-.#{$cleanslateWrappingClass} article::before, .#{$cleanslateWrappingClass} aside::before, .#{$cleanslateWrappingClass} figure::before, .#{$cleanslateWrappingClass} figcaption::before, .#{$cleanslateWrappingClass} footer::before, .#{$cleanslateWrappingClass} header::before, .#{$cleanslateWrappingClass} menu::before, .#{$cleanslateWrappingClass} nav::before, .#{$cleanslateWrappingClass} section::before, .#{$cleanslateWrappingClass} time::before, .#{$cleanslateWrappingClass} mark::before, .#{$cleanslateWrappingClass} audio::before, .#{$cleanslateWrappingClass} video::before, .#{$cleanslateWrappingClass} abbr::before, .#{$cleanslateWrappingClass} address::before, .#{$cleanslateWrappingClass} area::before, .#{$cleanslateWrappingClass} blockquote::before, .#{$cleanslateWrappingClass} canvas::before, .#{$cleanslateWrappingClass} caption::before, .#{$cleanslateWrappingClass} cite::before, .#{$cleanslateWrappingClass} code::before, .#{$cleanslateWrappingClass} colgroup::before, .#{$cleanslateWrappingClass} col::before, .#{$cleanslateWrappingClass} datalist::before, .#{$cleanslateWrappingClass} fieldset::before, .#{$cleanslateWrappingClass} main::before, .#{$cleanslateWrappingClass} map::before, .#{$cleanslateWrappingClass} meta::before, .#{$cleanslateWrappingClass} optgroup::before, .#{$cleanslateWrappingClass} output::before, .#{$cleanslateWrappingClass} progress::before,
-.#{$cleanslateWrappingClass}::after, .#{$cleanslateWrappingClass} h1::after, .#{$cleanslateWrappingClass} h2::after, .#{$cleanslateWrappingClass} h3::after, .#{$cleanslateWrappingClass} h4::after, .#{$cleanslateWrappingClass} h5::after, .#{$cleanslateWrappingClass} h6::after, .#{$cleanslateWrappingClass} p::after, .#{$cleanslateWrappingClass} td::after, .#{$cleanslateWrappingClass} dl::after, .#{$cleanslateWrappingClass} tr::after, .#{$cleanslateWrappingClass} dt::after, .#{$cleanslateWrappingClass} ol::after, .#{$cleanslateWrappingClass} form::after, .#{$cleanslateWrappingClass} select::after, .#{$cleanslateWrappingClass} option::after, .#{$cleanslateWrappingClass} pre::after, .#{$cleanslateWrappingClass} div::after, .#{$cleanslateWrappingClass} table::after,  .#{$cleanslateWrappingClass} th::after, .#{$cleanslateWrappingClass} tbody::after, .#{$cleanslateWrappingClass} tfoot::after, .#{$cleanslateWrappingClass} caption::after, .#{$cleanslateWrappingClass} thead::after, .#{$cleanslateWrappingClass} ul::after, .#{$cleanslateWrappingClass} li::after, .#{$cleanslateWrappingClass} address::after, .#{$cleanslateWrappingClass} blockquote::after, .#{$cleanslateWrappingClass} dd::after, .#{$cleanslateWrappingClass} fieldset::after, .#{$cleanslateWrappingClass} li::after, .#{$cleanslateWrappingClass} iframe::after, .#{$cleanslateWrappingClass} strong::after, .#{$cleanslateWrappingClass} legend::after, .#{$cleanslateWrappingClass} em::after, .#{$cleanslateWrappingClass} summary::after, .#{$cleanslateWrappingClass} cite::after, .#{$cleanslateWrappingClass} span::after, .#{$cleanslateWrappingClass} input::after, .#{$cleanslateWrappingClass} sup::after, .#{$cleanslateWrappingClass} label::after, .#{$cleanslateWrappingClass} dfn::after, .#{$cleanslateWrappingClass} object::after, .#{$cleanslateWrappingClass} big::after, .#{$cleanslateWrappingClass} q::after, .#{$cleanslateWrappingClass} samp::after, .#{$cleanslateWrappingClass} acronym::after, .#{$cleanslateWrappingClass} small::after, .#{$cleanslateWrappingClass} img::after, .#{$cleanslateWrappingClass} strike::after, .#{$cleanslateWrappingClass} code::after, .#{$cleanslateWrappingClass} sub::after, .#{$cleanslateWrappingClass} ins::after, .#{$cleanslateWrappingClass} textarea::after, .#{$cleanslateWrappingClass} button::after, .#{$cleanslateWrappingClass} var::after, .#{$cleanslateWrappingClass} a::after, .#{$cleanslateWrappingClass} abbr::after, .#{$cleanslateWrappingClass} applet::after, .#{$cleanslateWrappingClass} del::after, .#{$cleanslateWrappingClass} kbd::after, .#{$cleanslateWrappingClass} tt::after, .#{$cleanslateWrappingClass} b::after, .#{$cleanslateWrappingClass} i::after, .#{$cleanslateWrappingClass} hr::after,
-.#{$cleanslateWrappingClass} article::after, .#{$cleanslateWrappingClass} aside::after, .#{$cleanslateWrappingClass} figure::after, .#{$cleanslateWrappingClass} figcaption::after, .#{$cleanslateWrappingClass} footer::after, .#{$cleanslateWrappingClass} header::after, .#{$cleanslateWrappingClass} menu::after, .#{$cleanslateWrappingClass} nav::after, .#{$cleanslateWrappingClass} section::after, .#{$cleanslateWrappingClass} time::after, .#{$cleanslateWrappingClass} mark::after, .#{$cleanslateWrappingClass} audio::after, .#{$cleanslateWrappingClass} video::after, .#{$cleanslateWrappingClass} abbr::after, .#{$cleanslateWrappingClass} address::after, .#{$cleanslateWrappingClass} area::after, .#{$cleanslateWrappingClass} blockquote::after, .#{$cleanslateWrappingClass} canvas::after, .#{$cleanslateWrappingClass} caption::after, .#{$cleanslateWrappingClass} cite::after, .#{$cleanslateWrappingClass} code::after, .#{$cleanslateWrappingClass} colgroup::after, .#{$cleanslateWrappingClass} col::after, .#{$cleanslateWrappingClass} datalist::after, .#{$cleanslateWrappingClass} fieldset::after, .#{$cleanslateWrappingClass} main::after, .#{$cleanslateWrappingClass} map::after, .#{$cleanslateWrappingClass} meta::after, .#{$cleanslateWrappingClass} optgroup::after, .#{$cleanslateWrappingClass} output::after, .#{$cleanslateWrappingClass} progress::before {
+::before, h1::before, h2::before, h3::before, h4::before, h5::before, h6::before, p::before, td::before, dl::before, tr::before, dt::before, ol::before, form::before, select::before, option::before, pre::before, div::before, table::before,  th::before, tbody::before, tfoot::before, caption::before, thead::before, ul::before, li::before, address::before, blockquote::before, dd::before, fieldset::before, li::before, iframe::before, strong::before, legend::before, em::before, summary::before, cite::before, span::before, input::before, sup::before, label::before, dfn::before, object::before, big::before, q::before, samp::before, acronym::before, small::before, img::before, strike::before, code::before, sub::before, ins::before, textarea::before, button::before, var::before, a::before, abbr::before, applet::before, del::before, kbd::before, tt::before, b::before, i::before, hr::before,
+article::before, aside::before, figure::before, figcaption::before, footer::before, header::before, menu::before, nav::before, section::before, time::before, mark::before, audio::before, video::before, abbr::before, address::before, area::before, blockquote::before, canvas::before, caption::before, cite::before, code::before, colgroup::before, col::before, datalist::before, fieldset::before, main::before, map::before, meta::before, optgroup::before, output::before, progress::before,
+::after, h1::after, h2::after, h3::after, h4::after, h5::after, h6::after, p::after, td::after, dl::after, tr::after, dt::after, ol::after, form::after, select::after, option::after, pre::after, div::after, table::after,  th::after, tbody::after, tfoot::after, caption::after, thead::after, ul::after, li::after, address::after, blockquote::after, dd::after, fieldset::after, li::after, iframe::after, strong::after, legend::after, em::after, summary::after, cite::after, span::after, input::after, sup::after, label::after, dfn::after, object::after, big::after, q::after, samp::after, acronym::after, small::after, img::after, strike::after, code::after, sub::after, ins::after, textarea::after, button::after, var::after, a::after, abbr::after, applet::after, del::after, kbd::after, tt::after, b::after, i::after, hr::after,
+article::after, aside::after, figure::after, figcaption::after, footer::after, header::after, menu::after, nav::after, section::after, time::after, mark::after, audio::after, video::after, abbr::after, address::after, area::after, blockquote::after, canvas::after, caption::after, cite::after, code::after, colgroup::after, col::after, datalist::after, fieldset::after, main::after, map::after, meta::after, optgroup::after, output::after, progress::before {
     display: none;
 }
 
 /* == BLOCK-LEVEL == */
 /* Actually, some of these should be inline-block and other values, but block works fine (TODO: rigorously verify this) */
 /* HTML 4.01 */
-.#{$cleanslateWrappingClass}, .#{$cleanslateWrappingClass} h3, .#{$cleanslateWrappingClass} h5, .#{$cleanslateWrappingClass} p, .#{$cleanslateWrappingClass} h1, .#{$cleanslateWrappingClass} dl, .#{$cleanslateWrappingClass} dt, .#{$cleanslateWrappingClass} h6, .#{$cleanslateWrappingClass} ol, .#{$cleanslateWrappingClass} form, .#{$cleanslateWrappingClass} option, .#{$cleanslateWrappingClass} pre, .#{$cleanslateWrappingClass} div, .#{$cleanslateWrappingClass} h2, .#{$cleanslateWrappingClass} caption, .#{$cleanslateWrappingClass} h4, .#{$cleanslateWrappingClass} ul, .#{$cleanslateWrappingClass} address, .#{$cleanslateWrappingClass} blockquote, .#{$cleanslateWrappingClass} dd, .#{$cleanslateWrappingClass} fieldset, .#{$cleanslateWrappingClass} hr,
+.#{$cleanslateWrappingClass}, h3, h5, p, h1, dl, dt, h6, ol, form, option, pre, div, h2, caption, h4, ul, address, blockquote, dd, fieldset, hr,
 
 /* HTML5 new elements */
-.#{$cleanslateWrappingClass} article, .#{$cleanslateWrappingClass} dialog, .#{$cleanslateWrappingClass} figure, .#{$cleanslateWrappingClass} footer, .#{$cleanslateWrappingClass} header, .#{$cleanslateWrappingClass} hgroup, .#{$cleanslateWrappingClass} menu, .#{$cleanslateWrappingClass} nav, .#{$cleanslateWrappingClass} section, .#{$cleanslateWrappingClass} audio, .#{$cleanslateWrappingClass} video, .#{$cleanslateWrappingClass} address, .#{$cleanslateWrappingClass} blockquote, .#{$cleanslateWrappingClass} colgroup, .#{$cleanslateWrappingClass} main, .#{$cleanslateWrappingClass} progress, .#{$cleanslateWrappingClass} summary {
+article, dialog, figure, footer, header, hgroup, menu, nav, section, audio, video, address, blockquote, colgroup, main, progress, summary {
     display:block;
 }
-.#{$cleanslateWrappingClass} h1, .#{$cleanslateWrappingClass} h2, .#{$cleanslateWrappingClass} h3, .#{$cleanslateWrappingClass} h4, .#{$cleanslateWrappingClass} h5, .#{$cleanslateWrappingClass} h6 {
+h1, h2, h3, h4, h5, h6 {
     font-weight: bold;
 }
-.#{$cleanslateWrappingClass} h1 {
+h1 {
     font-size: 2em;
     padding: .67em 0;
 }
-.#{$cleanslateWrappingClass} h2 {
+h2 {
     font-size: 1.5em;
     padding: .83em 0;
 }
-.#{$cleanslateWrappingClass} h3 {
+h3 {
     font-size: 1.17em;
     padding: .83em 0;
 }
-.#{$cleanslateWrappingClass} h4 {
+h4 {
     font-size: 1em;
 }
-.#{$cleanslateWrappingClass} h5 {
+h5 {
     font-size: .83em;
 }
-.#{$cleanslateWrappingClass} p {
+p {
     margin: 0;
 }
-.#{$cleanslateWrappingClass} table {
+table {
     display: table;
 }
-.#{$cleanslateWrappingClass} thead {
+thead {
     display: table-header-group;
 }
-.#{$cleanslateWrappingClass} tbody {
+tbody {
     display: table-row-group;
 }
-.#{$cleanslateWrappingClass} tfoot {
+tfoot {
     display: table-footer-group;
 }
-.#{$cleanslateWrappingClass} tr {
+tr {
     display: table-row;
 }
-.#{$cleanslateWrappingClass} th, .#{$cleanslateWrappingClass} td {
+th, td {
     display: table-cell;
     padding: 2px;
 }
 
 /* == SPECIFIC ELEMENTS == */
 /* Some of these are browser defaults; some are just useful resets */
-.#{$cleanslateWrappingClass} ol, .#{$cleanslateWrappingClass} ul {
+ol, ul {
     margin: 0;
 }
-.#{$cleanslateWrappingClass} ul li, .#{$cleanslateWrappingClass} ul ul li, .#{$cleanslateWrappingClass} ul ul ul li, .#{$cleanslateWrappingClass} ol li, .#{$cleanslateWrappingClass} ol ol li, .#{$cleanslateWrappingClass} ol ol ol li, .#{$cleanslateWrappingClass} ul ol ol li, .#{$cleanslateWrappingClass} ul ul ol li, .#{$cleanslateWrappingClass} ol ul ul li, .#{$cleanslateWrappingClass} ol ol ul li {
+ul li, ul ul li, ul ul ul li, ol li, ol ol li, ol ol ol li, ul ol ol li, ul ul ol li, ol ul ul li, ol ol ul li {
     list-style-position: inside;
     margin-top: 0;
 }
-.#{$cleanslateWrappingClass} ol ol, .#{$cleanslateWrappingClass} ol ol ol, .#{$cleanslateWrappingClass} ul ul, .#{$cleanslateWrappingClass} ul ul ul, .#{$cleanslateWrappingClass} ol ul, .#{$cleanslateWrappingClass} ol ul ul, .#{$cleanslateWrappingClass} ol ol ul, .#{$cleanslateWrappingClass} ul ol, .#{$cleanslateWrappingClass} ul ol ol, .#{$cleanslateWrappingClass} ul ul ol {
+ol ol, ol ol ol, ul ul, ul ul ul, ol ul, ol ul ul, ol ol ul, ul ol, ul ol ol, ul ul ol {
     padding-left: 0;
     margin: 0;
 }
 /* helper for general navigation */
-.#{$cleanslateWrappingClass} nav ul, .#{$cleanslateWrappingClass} nav ol {
+nav ul, nav ol {
     list-style-type:none;
 
 }
-.#{$cleanslateWrappingClass} ul, .#{$cleanslateWrappingClass} menu {
+ul, menu {
     list-style-type:disc;
 }
-.#{$cleanslateWrappingClass} ol {
+ol {
     list-style-type:decimal;
 }
-.#{$cleanslateWrappingClass} ol ul, .#{$cleanslateWrappingClass} ul ul, .#{$cleanslateWrappingClass} menu ul, .#{$cleanslateWrappingClass} ol menu, .#{$cleanslateWrappingClass} ul menu, .#{$cleanslateWrappingClass} menu menu {
+ol ul, ul ul, menu ul, ol menu, ul menu, menu menu {
     list-style-type:circle;
 }
-.#{$cleanslateWrappingClass} ol ol ul, .#{$cleanslateWrappingClass} ol ul ul, .#{$cleanslateWrappingClass} ol menu ul, .#{$cleanslateWrappingClass} ol ol menu, .#{$cleanslateWrappingClass} ol ul menu, .#{$cleanslateWrappingClass} ol menu menu, .#{$cleanslateWrappingClass} ul ol ul, .#{$cleanslateWrappingClass} ul ul ul, .#{$cleanslateWrappingClass} ul menu ul, .#{$cleanslateWrappingClass} ul ol menu, .#{$cleanslateWrappingClass} ul ul menu, .#{$cleanslateWrappingClass} ul menu menu, .#{$cleanslateWrappingClass} menu ol ul, .#{$cleanslateWrappingClass} menu ul ul, .#{$cleanslateWrappingClass} menu menu ul, .#{$cleanslateWrappingClass} menu ol menu, .#{$cleanslateWrappingClass} menu ul menu, .#{$cleanslateWrappingClass} menu menu menu {
+ol ol ul, ol ul ul, ol menu ul, ol ol menu, ol ul menu, ol menu menu, ul ol ul, ul ul ul, ul menu ul, ul ol menu, ul ul menu, ul menu menu, menu ol ul, menu ul ul, menu menu ul, menu ol menu, menu ul menu, menu menu menu {
     list-style-type:square;
 }
-.#{$cleanslateWrappingClass} li {
+li {
     display:list-item;
     /* Fixes IE7 issue with positioning of nested bullets */
     min-height:auto;
     min-width:auto;
     padding-left: 0; /* replace -webkit-padding-start: 40px; */
 }
-.#{$cleanslateWrappingClass} strong {
+strong {
     font-weight:bold;
 }
-.#{$cleanslateWrappingClass} em {
+em {
     font-style:italic;
 }
-.#{$cleanslateWrappingClass} kbd, .#{$cleanslateWrappingClass} samp, .#{$cleanslateWrappingClass} code, .#{$cleanslateWrappingClass} pre {
+kbd, samp, code, pre {
   font-family:monospace;
 }
-.#{$cleanslateWrappingClass} a {
+a {
     color: blue;
 }
-.#{$cleanslateWrappingClass} a:active,
-.#{$cleanslateWrappingClass} a:focus,
-.#{$cleanslateWrappingClass} a:hover {
+a:active,
+a:focus,
+a:hover {
     text-decoration: underline;
 }
 
-.#{$cleanslateWrappingClass} a:active,
-.#{$cleanslateWrappingClass} a:focus {
+a:active,
+a:focus {
     @include browser-highlight();
 }
-.#{$cleanslateWrappingClass} a:visited {
+a:visited {
     color: blueviolet;
 }
-.#{$cleanslateWrappingClass} a, .#{$cleanslateWrappingClass} a *, .#{$cleanslateWrappingClass} input[type=submit], .#{$cleanslateWrappingClass} input[type=button], .#{$cleanslateWrappingClass} input[type=radio], .#{$cleanslateWrappingClass} input[type=checkbox], .#{$cleanslateWrappingClass} select, .#{$cleanslateWrappingClass} button {
+a, a *, input[type=submit], input[type=button], input[type=radio], input[type=checkbox], select, button {
     cursor:pointer;
 }
-.#{$cleanslateWrappingClass} button, .#{$cleanslateWrappingClass} input[type=submit] {
+button, input[type=submit] {
     text-align: center;
     padding: 0;
     border-radius: 0;
@@ -322,14 +322,14 @@
         @include browser-highlight(); /* appears to kill :focus outline in desktop Chrome */
     }
 }
-.#{$cleanslateWrappingClass} button:active, .#{$cleanslateWrappingClass} input[type=submit]:active, .#{$cleanslateWrappingClass} input[type=button]:active, .#{$cleanslateWrappingClass} button:active {
+button:active, input[type=submit]:active, input[type=button]:active, button:active {
 	background: none; /* W3C */
 }
-.#{$cleanslateWrappingClass} input[type=hidden] {
+input[type=hidden] {
     display:none;
 }
 /* restore form defaults */
-.#{$cleanslateWrappingClass} textarea {
+textarea {
     -webkit-appearance: textarea;
     background: white;
     padding: 2px;
@@ -341,134 +341,135 @@
     line-height: 13px;
     resize: both;
 }
-.#{$cleanslateWrappingClass} select, .#{$cleanslateWrappingClass} textarea, .#{$cleanslateWrappingClass} input {
+select, textarea, input {
     border:1px solid #ccc;
 }
-.#{$cleanslateWrappingClass} select {
+select {
     font-size: 11px;
     font-family: sans-serif;
     display: inline-block;
 }
-.#{$cleanslateWrappingClass} textarea:focus, .#{$cleanslateWrappingClass} input:focus {
+textarea:focus, input:focus {
     /* outline: auto 5px -webkit-focus-ring-color; */
     @include browser-highlight(); /* appears to kill :focus outline in desktop Chrome */
 }
-.#{$cleanslateWrappingClass} input[type=text] {
+input[type=text] {
     background: white;
     padding: 1px;
     font-family: initial;
     font-size: small;
 }
-.#{$cleanslateWrappingClass} input[type=checkbox], .#{$cleanslateWrappingClass} input[type=radio] {
+input[type=checkbox], input[type=radio] {
     border: 1px #2b2b2b solid;
     border-radius: 4px;
 }
- .#{$cleanslateWrappingClass} input[type=checkbox], .#{$cleanslateWrappingClass} input[type=radio] {
+ input[type=checkbox], input[type=radio] {
     @include browser-highlight(); //appears to kill :focus outline in desktop Chrome
 }
-.#{$cleanslateWrappingClass} input[type=radio] {
+input[type=radio] {
     margin: 2px 2px 3px 2px;
 }
-.#{$cleanslateWrappingClass} abbr[title], .#{$cleanslateWrappingClass} acronym[title], .#{$cleanslateWrappingClass} dfn[title] {
+abbr[title], acronym[title], dfn[title] {
     cursor:help;
     border-bottom-width:1px;
     border-bottom-style:dotted;
 }
-.#{$cleanslateWrappingClass} ins {
+ins {
     background-color:#ff9;
     color:black;
 }
-.#{$cleanslateWrappingClass} del {
+del {
     text-decoration: line-through;
 }
-.#{$cleanslateWrappingClass} blockquote, .#{$cleanslateWrappingClass} q  {
+blockquote, q  {
     quotes:none; /* HTML5 */
 }
-.#{$cleanslateWrappingClass} blockquote:before, .#{$cleanslateWrappingClass} blockquote:after, .#{$cleanslateWrappingClass} q:before, .#{$cleanslateWrappingClass} q:after, .#{$cleanslateWrappingClass} li:before, .#{$cleanslateWrappingClass} li:after  {
+blockquote:before, blockquote:after, q:before, q:after, li:before, li:after  {
     content:"";
 }
-.#{$cleanslateWrappingClass} input, .#{$cleanslateWrappingClass} select {
+input, select {
     vertical-align:middle;
 }
 
-.#{$cleanslateWrappingClass} table {
+table {
     border-collapse:collapse;
     border-spacing:0;
 }
-.#{$cleanslateWrappingClass} hr {
+hr {
     display:block;
     height:0px;
     border:0;
     border-top:1px solid #ccc;
     margin:1em 0;
 }
-.#{$cleanslateWrappingClass} *[dir=rtl] {
+*[dir=rtl] {
     direction: rtl;
 }
 
-.#{$cleanslateWrappingClass} mark {
+mark {
     background-color:#ff9;
     color:black;
     font-style:italic;
     font-weight:bold;
 }
-.#{$cleanslateWrappingClass} menu {
+menu {
     padding-left: 40px;
     padding-top: 8px;
 }
 
 /* additional helpers */
-.#{$cleanslateWrappingClass} [hidden],
-.#{$cleanslateWrappingClass} template {
+[hidden],
+template {
     display: none;
 }
-.#{$cleanslateWrappingClass} abbr[title] {
+abbr[title] {
     border-bottom: 1px dotted;
 }
-.#{$cleanslateWrappingClass} sub, .#{$cleanslateWrappingClass} sup {
+sub, sup {
     font-size: 75%;
     line-height: 0;
     position: relative;
     vertical-align: baseline;
 }
-.#{$cleanslateWrappingClass} sup {
+sup {
     top: -0.5em;
 }
-.#{$cleanslateWrappingClass} sub {
+sub {
     bottom: -0.25em;
 }
-.#{$cleanslateWrappingClass} img {
+img {
     border: 0;
 }
-.#{$cleanslateWrappingClass} figure {
+figure {
     margin: 0;
 }
-.#{$cleanslateWrappingClass} textarea {
+textarea {
     overflow: auto;
     vertical-align: top;
+}
+
+pre {
+    white-space:pre;
+}
+
+button[disabled], input[disabled], select[disabled] {
+    cursor: auto;
 }
 
 /* == ROOT CONTAINER ELEMENT == */
 /* This contains default values for child elements to inherit  */
 .#{$cleanslateWrappingClass} {
-    font-size: medium;
-    line-height: 1;
-    direction:ltr;
-    text-align: left; /* for IE, Opera */
-    text-align: start; /* recommended W3C Spec */
-    font-family: sans-serif; /* Override this with whatever font-family is required */
     color: black;
+    cursor: auto;
+    direction:ltr;
+    display: block;
+    font-family: sans-serif; /* Override this with whatever font-family is required */
+    font-size: medium;
     font-style:normal;
     font-weight:normal;
-    text-decoration:none;
+    line-height: 1;
     list-style-type:disc;
-    cursor: auto;
-}
-
-.#{$cleanslateWrappingClass} pre {
-    white-space:pre;
-}
-
-.#{$cleanslateWrappingClass} button[disabled], input[disabled], select[disabled] {
-    cursor: auto;
+    text-align: left; /* for IE, Opera */
+    text-align: start; /* recommended W3C Spec */
+    text-decoration:none;
 }

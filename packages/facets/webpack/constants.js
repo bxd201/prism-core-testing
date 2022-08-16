@@ -9,6 +9,7 @@ const production = mode === 'production'
 // wrapping classes
 const cleanslateWrappingClass = 'c8e'
 const prismWrappingClass = 'p3m'
+const toolkitWrappingClass = 't5t'
 
 // dir names
 const dirNameDist = 'dist'
@@ -69,6 +70,7 @@ const facetEntryPoints = {
 }
 
 module.exports = {
+  // exportEntryPointName,
   appIndexPath,
   authorEntryPointName,
   authorPath,
@@ -83,7 +85,6 @@ module.exports = {
   embedOutputPath,
   embedPath,
   embedWorkingPath,
-  // exportEntryPointName,
   facetEntryPoints,
   mainEntryPointName,
   mainEntryPoints,
@@ -97,5 +98,6 @@ module.exports = {
   rootPath,
   runtimeNamePrism,
   srcEmbedPath,
-  srcPath
+  srcPath,
+  toolkitWrappingClass
 }

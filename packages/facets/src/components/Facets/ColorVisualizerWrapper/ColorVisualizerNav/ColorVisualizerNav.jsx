@@ -87,21 +87,21 @@ export const DropDownMenu = ({ title, subtitle, items }: DropDownMenuProps) => {
     <>
       <button className='overlay' onClick={() => history.push(ROUTES_ENUM.ACTIVE)} />
       <div className='cvw-dashboard-submenu' ref={submenu}>
-        <button className='cvw-dashboard-submenu__close' onClick={handleClose}>
+        <button className='text-xs cvw-dashboard-submenu__close' onClick={handleClose}>
           {closeBtnText ?? <FormattedMessage id='CLOSE' />}{closeBtnShowArrow && <FontAwesomeIcon className='cvw-dashboard-submenu__close__ico' icon={['fa', 'chevron-up']} />}
         </button>
-        <h1 className='cvw-dashboard-submenu__header'>{title}</h1>
+        <h1 className='cvw-dashboard-submenu__header font-bold'>{title}</h1>
         {subtitle && <p className='cvw-dashboard-submenu__subtitle'>{subtitle}</p>}
         <ul className='cvw-dashboard-submenu__content'>
           {items.map(({ img, imgiPhone, imgiPad, imgAndroid, title, titleMobile, content, contentAndroid, contentiPhone, description, onClick }, i, arr) => {
-            const Wrapper = ({ children }: WrapperProps) => <button className={`${onClick ? 'cvw-dashboard-submenu__content__btn' : ''}`} disabled={!onClick} onClick={onClick}>{children}</button>
+            const Wrapper = ({ children }: WrapperProps) => <button className={`text-sm ${onClick ? 'cvw-dashboard-submenu__content__btn ' : ''}`} disabled={!onClick} onClick={onClick}>{children}</button>
             const isWide = (arr.length > 2 && i === 0)
             return (
               <li key={i} className={`cvw-dashboard-submenu__content__item ${isWide ? 'cvw-dashboard-submenu__content__item--wide' : ''}`}>
                 <Wrapper>
                   {img ? <div className={`cvw-dashboard-submenu__content__image ${isWide ? 'cvw-dashboard-submenu__content__image--wide' : ''}`} style={{ backgroundImage: `url(${brandId === 'sherwin' ? selectDevice(img, imgiPhone, imgAndroid, imgiPad) : img})` }} alt='' /> : null}
                   <div className='cvw-dashboard-submenu__content__label'>
-                    <h3 className='cvw-dashboard-submenu__content__label--title'>{brandId === 'sherwin' ? selectDevice(title, titleMobile) : title}</h3>
+                    <h3 className='font-bold cvw-dashboard-submenu__content__label--title'>{brandId === 'sherwin' ? selectDevice(title, titleMobile) : title}</h3>
                     <p className='cvw-dashboard-submenu__content__label--content'>{brandId === 'sherwin' ? selectDevice(content, contentiPhone, contentAndroid) : content}</p>
                     {description && <p className='cvw-dashboard-submenu__content__label--tip'>{description}</p>}
                     {title === 'UPLOAD YOUR PHOTO' && <p className='cvw-dashboard-submenu__content__label--tip'>Please select a PNG or JPG file</p>}

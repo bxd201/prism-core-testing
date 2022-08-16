@@ -106,7 +106,7 @@ export default (props: Props) => {
         : (
         <li style={{ display: 'inline-block', verticalAlign: 'top' }}>
           <ul>
-            <button onClick={onDownloadClick} disabled={isCreatingDownload} style={{ flexDirection: 'column' }}>
+            <button onClick={onDownloadClick} className='text-xs' disabled={isCreatingDownload} style={{ flexDirection: 'column' }}>
               <div className='save-options__items'>
                 <div>
                   <FontAwesomeIcon

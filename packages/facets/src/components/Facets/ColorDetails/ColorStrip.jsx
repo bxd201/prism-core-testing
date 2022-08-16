@@ -27,13 +27,13 @@ export function ColorStrip ({ color, onColorChanged }: Props) {
         return (
           <li key={i} className='color-info__strip-color' style={{ backgroundColor: stripColor.hex }}>
             <button
-              className={`color-info__strip-color-info${active ? ' color-info__strip-color-info--active' : ''}`}
+              className={`text-sm color-info__strip-color-info ${active ? 'color-info__strip-color-info--active' : ''}`}
               onClick={() => {
                 onColorChanged(stripColor)
                 GA.event({ category: 'Color Detail / Swatch Chip List', action: 'View Swatch Chip Color', label: stripColor.name }, GA_TRACKER_NAME_BRAND[brandId])
               }}
             >
-              <span className={`color-info__strip-color-name${stripColor.isDark ? ' color-info__strip-color-name--dark-color' : ''}${!active ? ' visually-hidden' : ''}`}>
+              <span className={`color-info__strip-color-name ${stripColor.isDark ? 'color-info__strip-color-name--dark-color' : ''} ${!active ? 'visually-hidden' : ''}`}>
                 {stripColor.name}
               </span>
             </button>
