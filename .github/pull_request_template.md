@@ -2,7 +2,7 @@
 
 ## Issue ticket number and link
 
-## Checklist before requesting a review
+## PR Checklist
 - [ ] Have you rebased with develop?
 - [ ] Have you squashed relevant commits?
 - [ ] Have you written new/updated tests for Toolkit changes, as applicable?
