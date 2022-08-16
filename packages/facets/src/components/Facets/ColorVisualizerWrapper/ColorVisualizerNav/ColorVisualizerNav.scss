@@ -32,6 +32,23 @@
     }
   }
 
+  &__image-uploader-loader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: $cvw-nav-btn-height;
+    width: 100%;
+    height: calc(100% - #{$cvw-nav-btn-height});
+    z-index: 10002;
+
+    &--edge {
+      background-color: white;
+      border-radius: 1rem;
+      box-shadow: 0 0 0 1rem white;
+    }
+  }
+
   .overlay {
     position: absolute;
     top: $cvw-nav-btn-height;

@@ -39,8 +39,19 @@ const Button = ({ children, className, disabled, onClick }: ButtonProps & Childr
   const { angle, imageRef, rotatedImageMetadata } = useContext(ImageRotatorContext)
 
   const getRotatedImageMetaData = (): ProcessedImageMetadata => {
-    const imageWidth = rotatedImageMetadata.isPortrait ? rotatedImageMetadata.portraitWidth : rotatedImageMetadata.landscapeWidth
-    const imageHeight = rotatedImageMetadata.isPortrait ? rotatedImageMetadata.portraitHeight : rotatedImageMetadata.landscapeHeight
+    const { isPortrait, originalImageHeight, originalImageWidth, originalIsPortrait } = rotatedImageMetadata
+    const {
+      landscapeHeight = originalImageHeight,
+      landscapeWidth = originalImageWidth,
+      portraitHeight = originalImageHeight,
+      portraitWidth = originalImageWidth
+    } = rotatedImageMetadata
+    const rotatedPortraitHeight = Math.floor(portraitHeight / portraitWidth * portraitHeight)
+    const rotatedlandscapeHeight = Math.ceil(landscapeHeight / landscapeWidth * landscapeHeight)
+    const imageWidth = originalIsPortrait
+      ? isPortrait ? portraitWidth : rotatedPortraitHeight
+      : isPortrait ? rotatedlandscapeHeight : landscapeWidth
+    const imageHeight = originalIsPortrait ? portraitHeight : landscapeHeight
     const { canvasHeight, canvasWidth, hScale, hSkew, hTrans, rotation, vScale, vSkew, vTrans } = getCanvasTransformParams(angle, imageWidth, imageHeight)
     const canvas = document.createElement('canvas')
     canvas.width = imageWidth
@@ -50,7 +61,16 @@ const Button = ({ children, className, disabled, onClick }: ButtonProps & Childr
     ctx.rotate(rotation)
     ctx.drawImage(imageRef.current, 0, 0, canvasWidth, canvasHeight)
 
-    return ({ ...rotatedImageMetadata, imageHeight, imageWidth, url: canvas.toDataURL() })
+    return ({
+      ...rotatedImageMetadata,
+      imageHeight,
+      imageWidth,
+      landscapeWidth: originalIsPortrait ? rotatedPortraitHeight : landscapeWidth,
+      landscapeHeight: imageHeight,
+      portraitHeight: imageHeight,
+      portraitWidth: originalIsPortrait ? portraitWidth : rotatedlandscapeHeight,
+      url: canvas.toDataURL()
+    })
   }
 
   return (
@@ -66,12 +86,13 @@ const Image = ({ className, fitContainer }: ClassNameProp & ImageProps): JSX.Ele
   const { angle, imageRef, rotatedImageMetadata } = useContext(ImageRotatorContext)
   const { height, width } = useContainerSize(imageRef)
   const [transform, setTransform] = useState<{ transform: string }>()
+  const { isPortrait, originalIsPortrait, url } = rotatedImageMetadata
 
   useEffect(() => {
-    const scale = rotatedImageMetadata.originalIsPortrait
-      ? rotatedImageMetadata.isPortrait ? 1 : (fitContainer ? width / height : height / width)
-      : rotatedImageMetadata.isPortrait ? height / width : 1
-    setTransform({ transform: `rotate(${angle}deg) scale(${scale})`})
+    const scale = originalIsPortrait
+      ? isPortrait ? 1 : (fitContainer ? width / height : height / width)
+      : isPortrait ? height / width : 1
+    setTransform({ transform: `rotate(${angle}deg) scale(${scale}`})
   }, [angle, height, width])
 
   return (
@@ -79,8 +100,8 @@ const Image = ({ className, fitContainer }: ClassNameProp & ImageProps): JSX.Ele
       className={className}
       crossOrigin='anonymous'
       ref={imageRef}
-      src={rotatedImageMetadata.url}
-      style={{ ...transform, maxHeight: rotatedImageMetadata.landscapeHeight }}
+      src={url}
+      style={{ ...transform, maxHeight: originalIsPortrait ? rotatedImageMetadata.portraitHeight : rotatedImageMetadata.landscapeHeight }}
     />
   )
 }
