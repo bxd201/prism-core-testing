@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <base href="/">
+  <title>Sherwin-Williams Digital Color Wall (en-CA)</title>
+</head>
+
+<body>
+
+  <div id="prism-embed-root"
+    data-prism-facet="ColorWallFacet"
+    data-color-wall-bg-color="#f9f9f9"
+    data-display-add-button="true"
+    data-display-info-button="false"
+    data-add-button-text="Order samples"
+    data-display-details-link="false"
+    data-hidden-sections="Peel & Stick"
+    data-language="en-CA"
+    data-route-type="memory"
+    data-brand="cscc"
+    data-swatch-should-emit
+    data-ui-style="minimal"
+    data-cwv3
+  ></div>
+
+  <script src='<%= BASE_PATH %>/embed.js'></script>
+  <script>
+    (() => {
+      window.PRISM.embed(document.getElementById( 'prism-embed-root' ), {
+        bindCallback: ({ publish, subscribe }) => {
+          subscribe('PRISM/out/emitColor', (color) => console.log(color))
+        }
+      })
+    })()
+  </script>
+
+</body>
+
+</html>
