@@ -7,7 +7,7 @@ import {
   scenesCollection, variantsCollection, variantsLoading, selectedSceneUid,
   selectedVariantName, activeSceneKey, globalColorDetailColor
 } from './scenes'
-import { ingestedImageUrl, queuedImageUpload, uploads } from './uploads'
+import { ingestedImageMetadata, queuedImageUpload, uploads } from './uploads'
 import collectionSummaries from './collectionSummaries'
 import expertColorPicks from './expertColorPicks'
 import inspirationalPhotos from './inspirationalPhotos'
@@ -98,7 +98,7 @@ export default combineReducers({
   variantsLoading,
   variantsCollection,
   selectedSceneUid,
-  ingestedImageUrl,
+  ingestedImageMetadata,
   forwardIntent,
   modalInfo,
   modalThumbnailColor,

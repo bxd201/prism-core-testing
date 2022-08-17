@@ -1,20 +1,49 @@
+import { ColorId } from './components/color-wall/types'
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core'
+
 export interface Color {
-  id: string
-  hex: string
+  blue: number
   brandKey: string
+  colorFamilyNames?: string[]
   colorNumber: string
   coordinatingColors: {
-    coord1ColorId?: string
-    coord2ColorId?: string
-    whiteColorId?: string
+    coord1ColorId?: number | string
+    coord2ColorId?: number | string
+    whiteColorId?: number | string
   }
+  cssrgb?: string
+  description?: string[]
+  green: number
+  hex: string
+  hue: number
+  id: ColorId
+  isDark: boolean
+  isExterior?: boolean
+  isInterior?: boolean
+  lightness: number
   name: string
   red: number
-  green: number
-  blue: number
-  hue: number
+  rgb?: number
   saturation: number
-  lightness: number
-  ignore: boolean
-  isDark: boolean
+  similarColors?: string[]
+  storeStripLocator?: string
+}
+
+export interface CustomIcon {
+  icon?: IconDefinition
+  label?: string
+}
+
+export interface ProcessedImageMetadata {
+  imageHeight?: number
+  imageWidth?: number
+  isPortrait?: boolean
+  landscapeHeight?: number
+  landscapeWidth?: number
+  originalImageHeight: number
+  originalImageWidth: number
+  originalIsPortrait: boolean
+  portraitHeight?: number
+  portraitWidth?: number
+  url: string
 }

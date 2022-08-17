@@ -1,6 +1,6 @@
 import memoize from 'lodash/memoize'
 import dedupePatternedString from 'src/shared/utils/dedupePatternedString.util'
-import { CLEANSLATE_CLASS, PRISM_CLASS, TO_BIND_CLASS } from '../facetConstants'
+import { CLEANSLATE_CLASS, PRISM_CLASS, TO_BIND_CLASS, TOOLKIT_CLASS } from '../facetConstants'
 
 export default memoize((prismRoot) => {
   const prismDefaultSettings = {
@@ -15,7 +15,7 @@ export default memoize((prismRoot) => {
     }
   })
 
-  prismRoot.className = dedupePatternedString(`${prismRoot.className} ${TO_BIND_CLASS} ${CLEANSLATE_CLASS} ${PRISM_CLASS}`, ' ')
+  prismRoot.className = dedupePatternedString(`${prismRoot.className} ${TO_BIND_CLASS} ${CLEANSLATE_CLASS} ${TOOLKIT_CLASS} ${PRISM_CLASS}`, ' ')
 
   return prismRoot
 })

@@ -1,5 +1,4 @@
 module.exports = {
-  important: '.prism',
   content: ['./src/**/*.tsx', './src/**/*.ts'],
   variants: {
     extend: {
@@ -18,7 +17,7 @@ module.exports = {
       animation: {
         fadeIn: 'fadeIn 0.2s ease-in-out',
         'fadeIn-1': 'fadeIn 1s ease-in-out',
-        'delayedFadeIn': 'delayedFadeIn .2s ease-in-out'
+        delayedFadeIn: 'delayedFadeIn .2s ease-in-out'
       },
       backgroundPosition: {
         'bottom-0': '0 -100%',
@@ -27,10 +26,20 @@ module.exports = {
       borderWidth: {
         1: '1px'
       },
+      boxShadow: {
+        swatch: 'inset 0 0 0 1px white,0 0 2px 0 rgba(0,0,0,0.25)'
+      },
       colors: {
         primary: 'var(--prism-theme-color-primary, #0069af)',
         secondary: 'var(--prism-theme-color-secondary, #2CABE2)',
+        primaryBg: 'var(--prism-theme-color-primary-bg, #fafafa)',
         black: 'var(--prism-theme-color-black, #000)',
+        buttonColor: 'var(--prism-theme-button-color, #0069af)',
+        buttonBgColor: 'var(--prism-theme-button-bg-color, #FFF)',
+        buttonHoverColor: 'var(--prism-theme-button-hover-color, #0069af)',
+        buttonHoverBgColor: 'var(--prism-theme-button-hover-bg-color, #F2F2F2)',
+        buttonActiveColor: 'var(--prism-theme-button-active-color, #FFF)',
+        buttonActiveBgColor: 'var(--prism-theme-button-active-bg-color, #0069af)',
         danger: 'var(--prism-theme-color-danger, #E94b35)',
         error: 'var(--prism-theme-color-error, #e94b35)',
         grey: 'var(--prism-theme-color-grey, #cccccc)',
@@ -56,7 +65,7 @@ module.exports = {
         delayedFadeIn: {
           '0%': { opacity: 0 },
           '25%': { opacity: 0 },
-          '100%': { opacity: 1 },
+          '100%': { opacity: 1 }
         }
       },
       margin: {

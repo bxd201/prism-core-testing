@@ -8,19 +8,22 @@
   },
   "scripts": {
     "postinstall": "husky install",
-    "start": "yarn toolkit:compile && yarn workspace @prism/facets start",
+    "start": "yarn toolkit:compile-facets && yarn workspace @prism/facets start",
     "test": "yarn toolkit:test",
-    "build": "yarn toolkit:build && yarn workspace @prism/facets build && yarn docs:build && yarn demo:build",
+    "build:facets": "yarn toolkit:compile-facets && yarn workspace @prism/facets build",
+    "build:other": "yarn toolkit:compile-protected && yarn toolkit:storybook-build && yarn docs:build && yarn demo:build",
+    "build": "yarn build:facets && yarn build:other",
     "publish": "yarn toolkit:publish",
     "docs:start": "yarn workspace @prism/prism-docs start",
     "docs:build": "yarn workspace @prism/prism-docs build",
     "demo:start": "yarn workspace @prism/prism-demo start",
     "demo:build": "yarn workspace @prism/prism-demo build",
     "facets:test": "yarn workspace @prism/facets test",
-    "toolkit:compile": "yarn workspace @prism/toolkit build-rollup",
+    "toolkit:compile-facets": "yarn workspace @prism/toolkit build-rollup-facets",
+    "toolkit:compile-protected": "yarn workspace @prism/toolkit build-rollup-protected",
     "toolkit:storybook-build": "yarn workspace @prism/toolkit build",
-    "toolkit:build": "yarn toolkit:compile && yarn toolkit:storybook-build",
-    "toolkit:publish": "yarn toolkit:compile && cd packages/toolkit && yarn npm publish",
+    "toolkit:build": "yarn toolkit:compile-facets && yarn toolkit:storybook-build",
+    "toolkit:publish": "yarn toolkit:compile-protected && cd packages/toolkit && yarn npm publish",
     "toolkit:storybook": "yarn workspace @prism/toolkit start",
     "toolkit:test": "yarn workspace @prism/toolkit test",
     "toolkit:cypress": "yarn workspace @prism/toolkit test:cypress"
@@ -28,28 +31,12 @@
   "devDependencies": {
     "@commitlint/cli": "13.1.0",
     "@commitlint/config-conventional": "13.1.0",
-    "autoprefixer": "10.4.7",
-    "danger": "11.1.1",
-    "danger-plugin-simple-collection": "0.0.23",
-    "danger-plugin-wordcheck": "0.0.3",
-    "husky": "7.0.0",
-    "postcss": ">=7.0.35",
-    "postcss-focus-visible": "6.0.3",
-    "prettier": "2.6.2"
+    "husky": "^8.0.1",
+    "lint-staged": "^13.0.3",
+    "prettier": "^2.7.1",
+    "prettier-config-standard": "^5.0.0"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "1.2.36",
-    "@fortawesome/pro-light-svg-icons": "5.15.4",
-    "@fortawesome/pro-regular-svg-icons": "5.15.4",
-    "@fortawesome/pro-solid-svg-icons": "5.15.4",
-    "@fortawesome/react-fontawesome": "0.1.16",
-    "@prism/toolkit": "3.2.0",
-    "@types/react": "18.0.14",
-    "@types/react-dom": "18.0.5",
-    "axios": "^0.27.2",
-    "ejs": "2",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "tailwindcss": "3.0.24"
+    "react": "18.2.0"
   }
 }

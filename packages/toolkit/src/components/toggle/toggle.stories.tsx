@@ -1,53 +1,27 @@
 import React from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSun, faMoonStars } from '@fortawesome/pro-solid-svg-icons'
-import Toggle from './toggle'
-import { getLuminosity } from '../../utils/utils'
-import { colorOptions, getRandomColorName } from '../../test-utils/test-utils'
+import Toggle, { ToggleSwitchProps } from './toggle'
+import { faSun, faMoon } from '@fortawesome/pro-solid-svg-icons'
 
-interface TemplateProps {
-  backgroundColor: string
-  onToggle: (boolean) => void
-  initialChecked: boolean
+const Template = (args: ToggleSwitchProps): JSX.Element => {
+  const { handleToggle, isOnInitial, itemList } = args
+  return <Toggle isOnInitial={isOnInitial} handleToggle={handleToggle} itemList={itemList} />
 }
 
-const Template = ({ backgroundColor, ...otherProps }: TemplateProps): JSX.Element => {
-  const Option = ({ icon, label }: any): JSX.Element => (
-    <span className='flex flex-col items-center'>
-      <FontAwesomeIcon icon={icon} size='lg' />
-      {label}
-    </span>
-  )
+export const Default = Template.bind({})
 
-  return (
-    <Toggle
-      {...otherProps}
-      uncheckedOptionRenderer={() => <Option icon={faSun} label='day' />}
-      checkedOptionRenderer={() => <Option icon={faMoonStars} label='night' />}
-      // pass-through props
-      className={`${getLuminosity(backgroundColor) > 55 ? 'text-white' : 'text-black'}`}
-      style={{ backgroundColor }}
-    />
-  )
+Default.args = {
+  isOnInitial: false,
+  itemList: [
+    { icon: faSun, label: 'day' },
+    { icon: faMoon, label: 'night' }
+  ],
+  handleToggle: (isOn: number) => console.log(`Toggle is: ${isOn ? 'NIGHT' : 'DAY'}`)
 }
-
-export const WithBackgroundColor = Template.bind({})
-WithBackgroundColor.args = {
-  backgroundColor: (colorOptions[getRandomColorName()] || colorOptions['A La Mode']).hex,
-  initialChecked: false
-}
-
-export const WithoutBackgroundColor = Template.bind({})
 
 export default {
   title: 'Toggle',
   component: Toggle,
   argTypes: {
-    // actual props
-    backgroundColor: { control: 'color' },
-    uncheckedOptionRenderer: { table: { disable: true } },
-    checkedOptionRenderer: { table: { disable: true } },
-    // actions
-    onToggle: { action: 'toggle', table: { disable: true } }
+    isOnInitial: { control: 'boolean' }
   }
 }

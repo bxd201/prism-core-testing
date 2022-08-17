@@ -90,7 +90,7 @@ const TintSceneWrapper = ({ data, isColorTinted, handleSelectedSceneUid, isActiv
       <div className='static__scene__image__wrapper' ref={sceneWrapperRef}>
         <SingleTintableSceneView surfaceColorsFromParents={surfaceColors} selectedSceneUid={data?.sceneUid} variantsCollection={variantsCollection} scenesCollection={scenesCollection} allowVariantSwitch={false} interactive={false} />
       </div>
-      <button tabIndex={(isActivedPage) ? '0' : '-1'} className='static__scene__paint__btn' onClick={() => handleSelectedSceneUid(data?.sceneUid)}>
+      <button tabIndex={(isActivedPage) ? '0' : '-1'} className='text-sm static__scene__paint__btn' onClick={() => handleSelectedSceneUid(data?.sceneUid)}>
         {cvw.scene?.paintThisSceneBtn?.showIcon && <>
           <FontAwesomeIcon className={'cvw__btn-overlay__svg'} size='lg' icon={['fal', 'square-full']} />
           <FontAwesomeIcon className={'cvw__btn-overlay__svg cvw__btn-overlay__svg--brush'} icon={['fa', 'brush']} size='lg' transform={{ rotate: 320 }} style={{ transform: 'translateX(-10px)' }} />

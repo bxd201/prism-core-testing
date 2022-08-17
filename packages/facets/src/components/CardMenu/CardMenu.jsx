@@ -33,7 +33,7 @@ const CardMenu = ({ children, menuTitle = '', showBackByDefault = false, backPat
     <div className='card-menu__wrapper'>
       <div className='card-menu__header'>
         <div className='card-menu__heading'>{cardTitle}</div>
-        {(cardShowing || showBackByDefault) && <button className='card-menu__button card-menu__button--left' onClick={() => {
+        {(cardShowing || showBackByDefault) && <button className='text-xs card-menu__button card-menu__button--left' onClick={() => {
           setCardShowing(null)
           setCardTitle(menuTitle)
           if (showBackByDefault && !cardShowing) backPath && history.push(backPath)
@@ -43,7 +43,7 @@ const CardMenu = ({ children, menuTitle = '', showBackByDefault = false, backPat
             &nbsp;<span className='card-menu__button-left-text'><FormattedMessage id='BACK' /></span>
           </div>
         </button>}
-        <button className='card-menu__button card-menu__button--right' onClick={() => history.push('/active')}>
+        <button className='text-xs card-menu__button card-menu__button--right' onClick={() => history.push('/active')}>
           <div className='card-menu__close'>
             {closeBtnText ?? <FormattedMessage id='CLOSE' />}{closeBtnShowArrow && <FontAwesomeIcon className='card-menu__close--icon' icon={['fa', 'chevron-up']} />}
           </div>

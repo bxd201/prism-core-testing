@@ -8,8 +8,10 @@ import {
   IRIS_PROCESSING_COMPLETE,
   IRIS_PROCESSING_BEGIN,
   IRIS_LOADING_BEGIN,
-  IRIS_LOADING_COMPLETE, INGESTED_IMAGE_URL
+  IRIS_LOADING_COMPLETE,
+  INGESTED_IMAGE_URL
 } from '../actions/user-uploads'
+import { type ProcessedImageMetadata } from '../../shared/types/Scene.js.flow'
 
 const initialState: Object = {
   uploading: false,
@@ -76,7 +78,7 @@ export const queuedImageUpload = (state: File | null = null, action: {type: stri
   return state
 }
 
-export const ingestedImageUrl = (state: string = '', action: { type: string, payload: string }) => {
+export const ingestedImageMetadata = (state: ProcessedImageMetadata | null = null, action: { type: string, payload: ProcessedImageMetadata | null }) => {
   if (action.type === INGESTED_IMAGE_URL) {
     return action.payload
   }

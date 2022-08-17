@@ -2,6 +2,7 @@
 /* global FormData */
 import axios from 'axios'
 import at from 'lodash/at'
+import { type ProcessedImageMetadata } from '../../shared/types/Scene.js.flow'
 
 export const START_UPLOADING = 'START_UPLOADING'
 const startUploading = () => {
@@ -140,11 +141,11 @@ export const uploadImage = (file: File) => {
 
 // @todo check to see if we need the queuing logic. I think this is related to fast mask old way. new way is simpler.
 export const QUEUE_IMAGE_UPLOAD = 'QUEUE_IMAGE_UPLOAD'
-export const queueImageUpload = (file: File) => {
+export const queueImageUpload = (imageMetadata: ProcessedImageMetadata) => {
   return (dispatch: Function) => {
     dispatch({
       type: QUEUE_IMAGE_UPLOAD,
-      payload: file
+      payload: imageMetadata
     })
   }
 }
@@ -220,9 +221,9 @@ export const uploadIrisImage = (file: File) => {
 
 // @todo I suspect this can be removed to, this me thinks is related to the old fast mask
 export const INGESTED_IMAGE_URL = 'INGESTED_IMAGE_URL'
-export const setIngestedImage = (imageUrl: string = '') => {
+export const setIngestedImage = (imageMetadata?: ProcessedImageMetadata) => {
   return {
     type: INGESTED_IMAGE_URL,
-    payload: imageUrl
+    payload: imageMetadata
   }
 }

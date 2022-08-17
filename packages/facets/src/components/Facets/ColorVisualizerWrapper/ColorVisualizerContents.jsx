@@ -23,7 +23,7 @@ import './ColorVisualizer.scss'
 import PaintSceneMaskingWrapper from 'src/components/PaintScene/PaintSceneMask'
 import { shouldAllowFeature } from '../../../shared/utils/featureSwitch.util'
 import { FEATURE_EXCLUSIONS } from '../../../constants/configurations'
-import ConfigurationContext from 'src/contexts/ConfigurationContext/ConfigurationContext'
+import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
 import { setMaxSceneHeight } from '../../../store/actions/system'
 import { SCENE_TYPES } from '../../../constants/globals'
 import {
@@ -60,7 +60,7 @@ import {
   createSavedNotificationModal
 } from '../../CVWModalManager/createModal'
 import { useIntl } from 'react-intl'
-import { MODAL_TYPE_ENUM } from '../../CVWModalManager/constants'
+import { DANGER, MODAL_TYPE_ENUM, PRIMARY } from '../../CVWModalManager/constants'
 import { hydrateStockSceneFromSavedData } from '../../../store/actions/stockScenes'
 import { setActiveSceneKey } from '../../../store/actions/scenes'
 import { toggleCompareColor } from '../../../store/actions/live-palette'
@@ -99,11 +99,13 @@ const CVW = (props: CVWPropsType) => {
   const scenes = useSelector(store => store.scenesCollection)
   const variants = useSelector(store => store.variantsCollection)
   const isShowFooter = pathname.match(/active\/masking$/) === null
-  const { brandId, cvw, featureExclusions } = useContext(ConfigurationContext)
-  const { title } = cvw?.palette ?? {}
+  const { brandId, cvw = {}, featureExclusions } = useContext<ConfigurationContextType>(ConfigurationContext)
+  const { palette = {}, modal = {} } = cvw
+  const { danger = true } = modal
+  const { title } = palette
   const activeSceneLabel = useSelector(store => store.activeSceneLabel)
   const wrapperRef = useRef()
-  const ingestedImageUrl = useSelector(store => store.ingestedImageUrl)
+  const { ingestedImageMetadata } = useSelector(store => store)
   const shouldShowGlobalDestroyWarning = useSelector(store => store.shouldShowGlobalDestroyWarning)
   const paintSceneWorkspace = useSelector(store => store.paintSceneWorkspace)
   const activeColor = useSelector(store => store.lp.activeColor)
@@ -131,6 +133,7 @@ const CVW = (props: CVWPropsType) => {
   const fastMaskOpenCache = useSelector(store => store.fastMaskOpenCache)
   const dirtyNavigationIntent = useSelector(store => store.dirtyNavigationIntent)
   const isFastMaskPolluted = useSelector(store => store.fastMaskIsPolluted)
+  const modalStyleType = danger ? DANGER : PRIMARY
 
   const getAndSetWrapperDims = () => {
     const dims = wrapperRef.current.getBoundingClientRect()
@@ -168,7 +171,7 @@ const CVW = (props: CVWPropsType) => {
   useEffect(() => {
     if (isFastMaskPolluted) {
       if (navigationIntent === ROUTES_ENUM.COLOR_WALL) {
-        dispatch(createNavigationWarningModal(intl, MODAL_TYPE_ENUM.FAST_MASK, false))
+        dispatch(createNavigationWarningModal(intl, MODAL_TYPE_ENUM.FAST_MASK, false, modalStyleType))
       }
       return
     }
@@ -183,7 +186,7 @@ const CVW = (props: CVWPropsType) => {
     if (isActiveScenePolluted) {
       // This prevents unimpeded navigation when the colorwall is modally presented over a polluted scene.
       if (dirtyNavigationIntent) {
-        dispatch(createNavigationWarningModal(intl, MODAL_TYPE_ENUM.NULL, true))
+        dispatch(createNavigationWarningModal(intl, MODAL_TYPE_ENUM.NULL, true, modalStyleType))
         return
       }
       // We can only programmatically navigate if we are going to the colorwall... when scene is polluted
@@ -194,7 +197,7 @@ const CVW = (props: CVWPropsType) => {
     // This covers when add a color is clicked from match photo
     if (isMatchPhotoPresented && navigationIntent) {
       dispatch(setNavigationIntent(navigationIntent))
-      dispatch(createMatchPhotoNavigationWarningModal(intl, false))
+      dispatch(createMatchPhotoNavigationWarningModal(intl, false, modalStyleType))
       return
     }
 
@@ -244,7 +247,7 @@ const CVW = (props: CVWPropsType) => {
     navigationReturnIntent,
     activeSceneLabel,
     shouldShowGlobalDestroyWarning,
-    ingestedImageUrl,
+    ingestedImageMetadata,
     allowNavigateToIntendedDestination,
     isColorwallModallyPresented,
     isMatchPhotoPresented,
@@ -292,7 +295,7 @@ const CVW = (props: CVWPropsType) => {
   const navigateToSceneSelector = (e: SyntheticEvent) => {
     if (isActiveScenePolluted) {
       dispatch(setNavigationIntent(ROUTES_ENUM.USE_OUR_IMAGE))
-      dispatch(createNavigationWarningModal(intl, MODAL_TYPE_ENUM.STOCK_SCENE, false))
+      dispatch(createNavigationWarningModal(intl, MODAL_TYPE_ENUM.STOCK_SCENE, false, modalStyleType))
       return
     }
 
@@ -349,7 +352,7 @@ const CVW = (props: CVWPropsType) => {
 
   const cleanupStaleIngestedImage = () => {
     try {
-      URL.revokeObjectURL(ingestedImageUrl)
+      URL.revokeObjectURL(ingestedImageMetadata?.url)
       setImageForMatchPhoto()
       dispatch(setIngestedImage())
     } catch (e) {
@@ -433,16 +436,16 @@ const CVW = (props: CVWPropsType) => {
             selectedVariantName={selectedVariantName} />}
         </div>
         <div style={{ display: toggleCompareColorFlag ? 'none' : 'block', minHeight: shouldSetDropDownMinHeight() }} className={`cvw__root-wrapper${colorDetailsModalShowing ? ' hide-on-small-screens' : ''}`} ref={wrapperRef}>
-          <ColorVisualizerNav />
+          <ColorVisualizerNav maxSceneHeight={maxSceneHeight} />
           <Switch>
             {/* this redirects from legacy Angular-style CVW /!/<route> paths */}
             <Route path={'/!/'} render={() => <Redirect to={location.pathname.replace(new RegExp('^/!/'), '/')} />} />
             <Route path={ROUTES_ENUM.COLOR_DETAILS} render={() => <ColorDetails />} />
             <Route path={`${ROUTES_ENUM.COLOR_WALL}(/.*)?`} render={() => <ColorWallPage alwaysShowColorFamilies={alwaysShowColorFamilies} colorWallBgColor={colorWallBgColor} displayAddButton displayInfoButton displayDetailsLink={false} />} />
             <Route path={ROUTES_ENUM.COLOR_COLLECTION} render={() => <ColorCollections isExpertColor={false} {...location.state} />} />
-            <Route path={ROUTES_ENUM.UPLOAD_FAST_MASK} render={() => <ImageIngestView cleanupCallback={cleanupStaleIngestedImage} handleDismissCallback={goToFastMask} imageUrl={ingestedImageUrl} maxSceneHeight={maxSceneHeight} closeLink={ROUTES_ENUM.ACTIVE} />} />
-            <Route path={ROUTES_ENUM.UPLOAD_MATCH_PHOTO} render={() => <ImageIngestView cleanupCallback={cleanupStaleIngestedImage} handleDismissCallback={goToMatchPhoto} imageUrl={ingestedImageUrl} maxSceneHeight={maxSceneHeight} closeLink={ROUTES_ENUM.ACTIVE} />} />
-            <Route path={ROUTES_ENUM.UPLOAD_PAINT_SCENE} render={() => <ImageIngestView cleanupCallback={cleanupStaleIngestedImage} handleDismissCallback={goToPaintScene} imageUrl={ingestedImageUrl} maxSceneHeight={maxSceneHeight} closeLink={ROUTES_ENUM.ACTIVE} />} />
+            <Route path={ROUTES_ENUM.UPLOAD_FAST_MASK} render={() => <ImageIngestView cleanupCallback={cleanupStaleIngestedImage} handleDismissCallback={goToFastMask} imageMetadata={ingestedImageMetadata} maxSceneHeight={maxSceneHeight} closeLink={ROUTES_ENUM.ACTIVE} />} />
+            <Route path={ROUTES_ENUM.UPLOAD_MATCH_PHOTO} render={() => <ImageIngestView cleanupCallback={cleanupStaleIngestedImage} handleDismissCallback={goToMatchPhoto} imageMetadata={ingestedImageMetadata} maxSceneHeight={maxSceneHeight} closeLink={ROUTES_ENUM.ACTIVE} />} />
+            <Route path={ROUTES_ENUM.UPLOAD_PAINT_SCENE} render={() => <ImageIngestView cleanupCallback={cleanupStaleIngestedImage} handleDismissCallback={goToPaintScene} imageMetadata={ingestedImageMetadata} maxSceneHeight={maxSceneHeight} closeLink={ROUTES_ENUM.ACTIVE} />} />
             <Route path={ROUTES_ENUM.ACTIVE_MATCH_PHOTO} render={() => <MatchPhotoContainer colors={unorderedColors} imageUrl={matchPhotoImage} imageDims={matchPhotoImageDims} maxSceneHeight={maxSceneHeight} scalingWidth={wrapperDims.width} />} />
             <Route path={ROUTES_ENUM.USE_OUR_IMAGE} render={() => <SampleScenesWrapper activateScene={handleSceneSelection} />} />
             <Route path={ROUTES_ENUM.EXPERT_COLORS} render={() => <ExpertColorPicks isExpertColor />} />

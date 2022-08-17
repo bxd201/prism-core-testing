@@ -124,7 +124,7 @@ pipeline {
             --env ML_API_URL="$ML_API_URL" \
             --env DANGER_MANUAL_CI="Docker" \
             --env DANGER_GITHUB_API_BASE_URL="https://api.github.sherwin.com" \
-            --env DANGER_GITHUB_API_TOKEN="${token_prismcore}" \
+            --env DANGER_GITHUB_API_TOKEN="$token_prismcore" \
             --env DANGER_MANUAL_CI="true" \
             --env DANGER_MANUAL_GH_REPO="SherwinWilliams/prism-core" \
             --env DANGER_MANUAL_PR_NUM="$CHANGE_ID" \

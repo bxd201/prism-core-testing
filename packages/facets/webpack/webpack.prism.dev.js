@@ -30,9 +30,10 @@ module.exports = merge(common, {
     })
   ].filter(Boolean),
   devServer: {
+    allowedHosts: 'all',
     host: process.env[envVars.PRISM_LOCAL_HOST],
     port: process.env[envVars.PRISM_LOCAL_PORT],
-    https: process.env[envVars.PRISM_LOCAL_PROTOCOL] === 'https',
+    server: process.env[envVars.PRISM_LOCAL_PROTOCOL] ?? 'https',
     historyApiFallback: {
       rewrites: [
         { from: /^\/$/, to: '/index/' },
