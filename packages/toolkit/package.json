@@ -96,7 +96,7 @@
     "postcss-simple-vars": "6.0.3",
     "prettier": "2.5.1",
     "prettier-config-standard": "4.0.0",
-    "react-dom": "^18.2.0",
+    "react-dom": "18.2.0",
     "react-scripts": "5.0.0",
     "rollup": "2.64.0",
     "rollup-plugin-peer-deps-external": "2.2.4",
