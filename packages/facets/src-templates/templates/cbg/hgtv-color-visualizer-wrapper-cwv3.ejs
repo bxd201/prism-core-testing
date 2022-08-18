@@ -31,7 +31,7 @@
           console.info({ event: 'prism-new-color', data: color })
           publish('PRISM/in/update-color-ctas', [{
             text: 'buy this paint',
-            link: '#prism-develop-test-link::::to-be-set-by-the-host',
+            link: `https://www.lowes.com/configure/paint/${color.legacyColor.name}/${color.brandKey}${color.legacyColor.colorNumber}?paintType=Interior&sheenType=Satin&sizeType=1-gallon`,
             attributes: {
               target: '_blank'
             }
