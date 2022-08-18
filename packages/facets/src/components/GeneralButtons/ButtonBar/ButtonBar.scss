@@ -111,13 +111,13 @@ $btn-border-thickness: 1px;
 
       &__btn {
         @extend %color-wall-mode-btns-btn;
-        gap: 10px;
         min-height: $btn-height--mobile - ($btn-border-thickness * 2);
         border: none;
         border-radius: 0;
 
         @include respond-below(xs) {
           display: flex;
+          flex-direction: column;
           justify-content: space-around;
           white-space: normal;
         }
@@ -130,6 +130,23 @@ $btn-border-thickness: 1px;
           @extend %color-wall-mode-btns-btn--active;
         }
       }
+    }
+  }
+}
+
+// CBG only
+.buttons--cbg {
+  .color-wall-mode-btns__cell {
+    min-width: 90px;
+  }
+
+  .button-bar__options__option__btn {
+    .color-wall-mode-btns__descendant {
+      margin-right: 10px;
+    }
+
+    @include respond-below(xs) {
+      flex-direction: row;
     }
   }
 }

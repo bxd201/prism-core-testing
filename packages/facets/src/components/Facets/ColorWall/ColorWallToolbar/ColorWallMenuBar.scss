@@ -236,11 +236,17 @@ $menu-bar-width: 27em;
 
 .color-wall-mode-btns__col {
   padding: $ui-spacing;
-  gap: 13px;
   .color-wall-mode-btns__cell {
     margin: 0;
-    @include respond-below(xs) {
-      flex-grow: 1;
+  }
+
+  // CBG houseShaped
+  &.buttons--cbg {
+    .color-wall-mode-btns__cell {
+      margin-right: 13px;
+      @include respond-below(xs) {
+        flex-grow: 1;
+      }
     }
   }
 }

@@ -98,7 +98,7 @@ const SearchBar = (props: Props) => {
       // if value is empty AND our previous search is a non-empty string  ...
       if (_value === '' && _current.length > 0) {
         // this means we've cleared a search and should return out
-        dispatch(clearSearch())
+        resetSearch()
         history.push('./')
         return
       }
@@ -156,6 +156,13 @@ const SearchBar = (props: Props) => {
     dispatch(loadSearchResults(brandId, { language: locale }, newSearchParam))
   }, [newSearchParam, family, section, limitSearchToFamily])
 
+  const resetSearch = () => {
+    currentSearchParam.current = ''
+    dispatch(clearSearch())
+    setNewSearchParam('')
+    setInputValue('')
+  }
+
   const getClassName = (name, subClass) => (name ? name + subClass : '')
 
   return (
@@ -195,8 +202,7 @@ const SearchBar = (props: Props) => {
                 type='button'
                 className='SearchBar__clean'
                 onClick={() => {
-                  dispatch(clearSearch())
-                  setInputValue('')
+                  resetSearch()
                   inputRef.current && inputRef.current.focus()
                 }}
               >

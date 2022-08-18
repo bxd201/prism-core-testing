@@ -26,6 +26,7 @@ import omitPrefix from 'src/shared/utils/omitPrefix.util'
 import * as GA from 'src/analytics/GoogleAnalytics'
 import { GA_TRACKER_NAME_BRAND } from 'src/constants/globals'
 import useGroupsAndSubgroups from 'src/shared/hooks/useGroupsAndSubgroups'
+import { SearchButton } from './ColorWallButtons'
 
 const PATH_END_FAMILY = 'family/'
 const menuBarPrefix = 'menu-bar'
@@ -150,6 +151,7 @@ const ColorWallToolbar = () => {
   const history = useHistory()
   const isFamilyView: boolean = !!family || path.endsWith(PATH_END_FAMILY)
   const visibleSections: string[] = sections
+  const isHouseShaped = colorWall?.colorSwatch?.houseShaped ?? false
 
   // This should have been set by staging action...
   const shouldShowCloseButton = useSelector((store) => store.isColorwallModallyPresented)
@@ -163,15 +165,6 @@ const ColorWallToolbar = () => {
       dispatch(filterByFamily(family))
     }
   }, [])
-
-  const searchColorBtn: Element<any> = (
-    <ButtonBar.Button to={`${generateColorWallPageUrl(section, family)}search/`}>
-      <span className={MODE_CLASS_NAMES.DESC}>
-        {colorWall.searchColor ?? <FormattedMessage id='SEARCH.SEARCH_COLOR' />}
-      </span>
-      <FontAwesomeIcon className='color-families-svg' icon={['fa', 'search']} pull='left' />
-    </ButtonBar.Button>
-  )
 
   const colorFamilyMenu = useRef(null)
 
@@ -222,7 +215,7 @@ const ColorWallToolbar = () => {
     <AutoSizer disableHeight style={{ width: '100%' }}>
       {({ width }) => (
         <div className={MODE_CLASS_NAMES.BASE}>
-          <div className={MODE_CLASS_NAMES.COL}>
+          <div className={`${MODE_CLASS_NAMES.COL} ${isHouseShaped ? 'buttons--cbg' : ''}`}>
             {/* Search and Family Buttons */}
             <div className={MODE_CLASS_NAMES.CELL}>
               <ButtonBar.Bar style={alwaysShowColorFamilies ? { borderRadius: '0' } : {}}>
@@ -235,7 +228,7 @@ const ColorWallToolbar = () => {
                   </ButtonBar.Button>
                 ) : (
                   <>
-                    {searchColorBtn}
+                    <SearchButton to={`${generateColorWallPageUrl(section, family)}search/`} />
                     {!alwaysShowColorFamilies && families.length > 0 && (
                       <ButtonBar.Button
                         disabled={families.length <= 1}
