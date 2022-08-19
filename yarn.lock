@@ -4830,6 +4830,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@fortawesome/fontawesome-common-types@npm:6.1.2":
+  version: 6.1.2
+  resolution: "@fortawesome/fontawesome-common-types@npm:6.1.2::__archiveUrl=https%3A%2F%2Fnpm.fontawesome.com%2F%40fortawesome%2Ffontawesome-common-types%2F-%2F6.1.2%2Ffontawesome-common-types-6.1.2.tgz"
+  checksum: 16ba97f73256adef5cd680a027e6dbd3e76f34ba9227f7bd9e8c372cb4f337c7ccbf41f35dcfbc22b11320bbb579d01daccf1aa7ae47df5d0b17260c0097bb30
+  languageName: node
+  linkType: hard
+
 "@fortawesome/fontawesome-common-types@npm:^0.2.36":
   version: 0.2.36
   resolution: "@fortawesome/fontawesome-common-types@npm:0.2.36::__archiveUrl=https%3A%2F%2Fnpm.fontawesome.com%2F%40fortawesome%2Ffontawesome-common-types%2F-%2F0.2.36%2Ffontawesome-common-types-0.2.36.tgz"
@@ -4852,6 +4859,15 @@ __metadata:
   dependencies:
     "@fortawesome/fontawesome-common-types": ^0.2.36
   checksum: 1025470fd5df1e857ff12671c66b969ae5b8d3d789684eb5477d5da236919b368ca601c3792d14bbda554e1c814cf831033f3b29040576e8ca4d423a41b84bfd
+  languageName: node
+  linkType: hard
+
+"@fortawesome/pro-light-svg-icons@npm:6.1.2":
+  version: 6.1.2
+  resolution: "@fortawesome/pro-light-svg-icons@npm:6.1.2::__archiveUrl=https%3A%2F%2Fnpm.fontawesome.com%2F%40fortawesome%2Fpro-light-svg-icons%2F-%2F6.1.2%2Fpro-light-svg-icons-6.1.2.tgz"
+  dependencies:
+    "@fortawesome/fontawesome-common-types": 6.1.2
+  checksum: b128b0fe5b1706859dfa0f669fa1af1ee8e9ae3957547e00aeab8e95e41c5d057cf31dedc7e583b43bc3cf2eab2a96ba30e18884f3a10836ca638b037fdc6c4e
   languageName: node
   linkType: hard
 
@@ -7289,6 +7305,7 @@ __metadata:
     "@docusaurus/preset-classic": 2.0.1
     "@docusaurus/theme-live-codeblock": 2.0.1
     "@fortawesome/fontawesome-svg-core": 1.2.36
+    "@fortawesome/pro-light-svg-icons": 6.1.2
     "@fortawesome/pro-solid-svg-icons": 5.15.4
     "@fortawesome/react-fontawesome": 0.1.16
     "@prism/toolkit": 3.3.0
