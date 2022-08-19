@@ -16,7 +16,7 @@ yarn add @prism/toolkit --registry=https://artifactory.sherwin.com/artifactory/a
 
 ## How to use in Tailwind projects
 
-Add `node_modules/@prism/toolkit/index.js` to the list of purged files in your `tailwind.config.js`
+Add `node_modules/@prism/toolkit/index.js` to the list of purged files in your `tailwind.config.shared.js`
 
 ```JSX
 import react from 'react'

@@ -7,5 +7,11 @@
 .p3m-p7d {
     @tailwind base;
     @tailwind components;
-    @tailwind utilities;
 }
+
+/**
+ * Unbelievably, these need to be prefixed via the tailwind config or many classes will be left out.
+ * For that reason, please do _not_ move this into the above class prefixing block to avoid
+ * double-prefixing things.
+ */
+@tailwind utilities;
