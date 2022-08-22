@@ -6142,7 +6142,7 @@ __metadata:
     react-aria-live: 2.0.5
     react-aria-menubutton: 6.2.0
     react-device-detect: 1.11.14
-    react-dom: ^18.2.0
+    react-dom: 18.2.0
     react-dropzone: 11.0.3
     react-ga: 2.7.0
     react-intl: 3.10.0
@@ -6186,7 +6186,6 @@ __metadata:
   dependencies:
     "@fortawesome/fontawesome-svg-core": 1.2.36
     "@fortawesome/pro-light-svg-icons": 5.15.4
-    "@fortawesome/pro-regular-svg-icons": 5.15.4
     "@fortawesome/pro-solid-svg-icons": 5.15.4
     "@fortawesome/react-fontawesome": 0.1.16
     "@headlessui/react": ^1.6.4
@@ -6194,22 +6193,20 @@ __metadata:
     "@prism/toolkit": 3.3.0
     "@testing-library/jest-dom": ^5.16.4
     "@testing-library/react": ^13.3.0
-    "@testing-library/user-event": ^13.5.0
     "@types/jest": ^27.5.1
     "@types/node": ^16.7.13
     "@types/react": 18.0.14
     "@types/react-dom": 18.0.5
     autoprefixer: ^10.4.7
     axios: ^0.27.2
-    postcss: ^8.4.14
     prettier: 2.5.1
     prettier-config-standard: 4.0.0
-    react: 18.2.0
-    react-dom: 18.2.0
     react-scripts: 5.0.1
     tailwindcss: ^3.0.24
     typescript: ^4.6.4
-    web-vitals: ^2.1.4
+  peerDependencies:
+    react: 18.2.0
+    react-dom: 18.2.0
   languageName: unknown
   linkType: soft
 
@@ -6218,15 +6215,11 @@ __metadata:
   resolution: "@prism/prism-docs@workspace:packages/prism-docs"
   dependencies:
     "@docusaurus/core": 2.0.1
-    "@docusaurus/module-type-aliases": 2.0.1
     "@docusaurus/preset-classic": 2.0.1
     "@docusaurus/theme-live-codeblock": 2.0.1
     "@fortawesome/fontawesome-svg-core": 1.2.36
-    "@fortawesome/pro-light-svg-icons": 5.15.4
-    "@fortawesome/pro-regular-svg-icons": 5.15.4
     "@fortawesome/pro-solid-svg-icons": 5.15.4
     "@fortawesome/react-fontawesome": 0.1.16
-    "@mdx-js/react": ^1.6.22
     "@prism/toolkit": 3.3.0
     "@types/react": 18.0.14
     "@types/react-dom": 18.0.5
@@ -8310,17 +8303,6 @@ __metadata:
   peerDependencies:
     "@testing-library/dom": ">=7.21.4"
   checksum: 852c48ea6db1c9471b18276617c84fec4320771e466cd58339a732ca3fd73ad35e5a43ae14f51af51a8d0a150dcf60fcaab049ef367871207bea8f92c4b8195e
-  languageName: node
-  linkType: hard
-
-"@testing-library/user-event@npm:^13.5.0":
-  version: 13.5.0
-  resolution: "@testing-library/user-event@npm:13.5.0"
-  dependencies:
-    "@babel/runtime": ^7.12.5
-  peerDependencies:
-    "@testing-library/dom": ">=7.21.4"
-  checksum: 16319de685fbb7008f1ba667928f458b2d08196918002daca56996de80ef35e6d9de26e9e1ece7d00a004692b95a597cf9142fff0dc53f2f51606a776584f549
   languageName: node
   linkType: hard
 
@@ -26151,6 +26133,7 @@ __metadata:
     prettier: ^2.7.1
     prettier-config-standard: ^5.0.0
     react: 18.2.0
+    react-dom: 18.2.0
   languageName: unknown
   linkType: soft
 
@@ -26836,7 +26819,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:18.2.0, react-dom@npm:^18.2.0":
+"react-dom@npm:18.2.0":
   version: 18.2.0
   resolution: "react-dom@npm:18.2.0"
   dependencies:
@@ -32064,13 +32047,6 @@ __metadata:
   version: 1.1.4
   resolution: "web-namespaces@npm:1.1.4"
   checksum: 5149842ccbfbc56fe4f8758957b3f8c8616a281874a5bb84aa1b305e4436a9bad853d21c629a7b8f174902449e1489c7a6c724fccf60965077c5636bd8aed42b
-  languageName: node
-  linkType: hard
-
-"web-vitals@npm:^2.1.4":
-  version: 2.1.4
-  resolution: "web-vitals@npm:2.1.4"
-  checksum: 03d3f47dbf55c3dce07beb0ff5de8ddd52e2d0a53a8df5c84e7a16dda93543341d67231fa79b1d9772b091419af4ec0fd395b8bcf451a0e26846e3f76b3d0efc
   languageName: node
   linkType: hard
 
