@@ -10,7 +10,11 @@
 </head>
 
 <body>
-
+  <div>
+    <label>
+      <input type="checkbox" id="toggle" /> Toggle Peel & Stick Colors
+    </label>
+  </div>
   <div id="prism-embed-root"
     data-prism-facet="ColorWallFacet"
     data-color-wall-bg-color="#f9f9f9"
@@ -34,6 +38,12 @@
       window.PRISM.embed(document.getElementById( 'prism-embed-root' ), {
         bindCallback: ({ publish, subscribe }) => {
           subscribe('PRISM/out/emitColor', (color) => console.log(color))
+
+          const togglePS = document.getElementById('toggle')
+          togglePS.addEventListener('change', e => {
+            const published = e.currentTarget.checked ? 'Peel & Stick' : 'Sherwin-Williams Colors'
+            publish('PRISM/in/selectGroup', { section: published })
+          })
         }
       })
     })()
