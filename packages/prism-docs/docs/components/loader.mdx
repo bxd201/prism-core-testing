@@ -1,0 +1,39 @@
+---
+sidebar_position: 7
+---
+
+# Loader
+
+## Summary
+
+The loader can be used as a suspense for any element that has not yet been rendered. It's available in two formats circle and spinner. The developer can customize their styles or leave them by inheritance.
+
+## Example
+
+```typescript live
+function DefaultCircleLoader() {
+  return (
+    <Prism>
+      <CircleLoader />
+    </Prism>
+  )
+}
+```
+
+```typescript live
+function DefaultSpinnerLoader() {
+  return (
+    <Prism>
+      <SpinnerLoader />
+    </Prism>
+  )
+}
+```
+
+## Available props
+
+| Prop        | Type             | Description                                                 | Default |          |
+| ----------- | ---------------- | ----------------------------------------------------------- | ------- | -------- |
+| inheritSize | `boolean`        | Set loader size by inheritance (`font-size`).               | `false` | Optional |
+| strokeWidth | `number`         | Circle stroke width (available only for CircleLoader).      | `6`     | Optional |
+| otherProps  | `HTMLAttributes` | Optional props like `aria-label`, `className`, and `style`. |         | Optional |
