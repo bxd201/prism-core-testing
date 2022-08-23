@@ -1,0 +1,68 @@
+---
+sidebar_position: 5
+---
+
+# Image Uploader
+
+## Summary
+
+The image uploader allows users to upload .heic, .jpeg, .jpg, and .png images. The developer can use the loader component for imageProcessLoader prop, resize the image by setting maxHeight prop, and use the returned processed image metadata properties to render the image.
+
+## Example
+
+```typescript live
+/* This example is using the framework TailwindCSS on classNames. */
+function DefaultImageUploader() {
+  const imageUploadRef = useRef()
+  const [image, setImage] = useState()
+
+  return (
+    <Prism style={{ position: 'relative', overflow: 'scroll' }}>
+      <button className='relative px-6 py-3 border border-black z-10' onClick={() => imageUploadRef.current.click()}>
+        Upload
+      </button>
+      <ImageUploader
+        className='flex items-center absolute top-0 left-0 w-full h-full'
+        imageProcessLoader={<CircleLoader />}
+        maxHeight={300}
+        processedImageMetadata={(imageMetadata) => {
+          /* imageMetadata is an object with the following properties type:
+            ProcessedImageMetadata = {
+              imageHeight: number,
+              imageWidth: number,
+              isPortrait: boolean,
+              landscapeHeight?: number,
+              landscapeWidth?: number,
+              originalImageHeight: number,
+              originalImageWidth: number,
+              originalIsPortrait: boolean,
+              portraitHeight?: number,
+              portraitWidth?: number,
+              url: string
+            }
+          */
+          setImage(imageMetadata)
+        }}
+        ref={imageUploadRef}
+      />
+      {image && (
+        <img
+          className='relative mt-4'
+          src={image.url}
+          style={{ minWidth: `${image.imageWidth}px`, height: `${image.imageHeight}px` }}
+        />
+      )}
+    </Prism>
+  )
+}
+```
+
+## Available props
+
+| Prop                   | Type                                              | Description                                                 | Default           |          |
+| ---------------------- | ------------------------------------------------- | ----------------------------------------------------------- | ----------------- | -------- |
+| imageProcessLoader     | `JSX.Element`                                     | Image process loader.                                       | `<>loading...</>` | Optional |
+| maxHeight              | `number`                                          | Constrained height of the image uploaded.                   |                   | Optional |
+| otherProps             | `HTMLAttributes`                                  | Optional props like `aria-label`, `className`, and `style`. |                   | Optional |
+| processedImageMetadata | `(imageMetadata: ProcessedImageMetadata) => void` | Processed image metadata callback function.                 |                   | Required |
+| ref                    | `(e: SyntheticEvent<HTMLInputElement>) => void`   | Input element reference, used to start upload `click()`.    |                   | Optional |
