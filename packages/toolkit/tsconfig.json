@@ -12,7 +12,9 @@
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
+    "skipLibCheck": true,
+    "types": ["cypress", "@testing-library/cypress", "cypress-storybook/cypress", "node"]
   },
-  "include": ["src/**/*", "cypress/__tests__/**/*"],
-  "exclude": ["*.js", ]
+  "include": ["src", "cypress/__tests__/**/*"],
+  "exclude": ["./node_modules/**/*"]
 }

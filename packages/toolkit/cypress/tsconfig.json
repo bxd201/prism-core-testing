@@ -1,14 +1,9 @@
 {
   "extends": "../tsconfig.json",
-  "include": [
-    "../node_modules/cypress",
-    "../node_modules/cypress-storybook",
-    "../node_modules/@testing-library/cypress",
-    "./__tests__/**/*.ts",
-    "./__tests__/**/*.tsx"
-  ],
   "compilerOptions": {
-    "noEmit": false
+    "noEmit": false,
+    "skipLibCheck": true,
+    "types": ["cypress", "@testing-library/cypress", "cypress-storybook/cypress"]
   },
-  "types": ["cypress", "@testing-library/cypress", "cypress-storybook/cypress"]
+  "include": ["./__tests__/**/*.ts", "./__tests__/**/*.tsx"]
 }
