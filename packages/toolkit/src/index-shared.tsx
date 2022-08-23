@@ -17,6 +17,11 @@ export { default as SpinnerLoader } from './components/spinner-loader/spinner-lo
 export { default as GenericOverlay } from './components/generic-overlay/generic-overlay'
 export { default as SimpleTintableScene } from './components/simple-tintable-scene/simple-tintable-scene'
 export { default as Toggle } from './components/toggle/toggle'
+export { default as Propper } from './components/propper/propper'
+export { default as ImageQueue } from './components/image-queue/image-queue'
+export { default as BatchImageLoader } from './components/batch-image-loader/batch-image-loader'
+export { default as SceneView } from './components/scene-view/scene-view'
+export { default as FastMaskView } from './components/fast-mask/fast-mask'
 // ----- future component exports -----
 export { default as ColorStripButton } from './components/color-strip-button/color-strip-button'
 export { default as ColorWall } from './components/color-wall/color-wall'

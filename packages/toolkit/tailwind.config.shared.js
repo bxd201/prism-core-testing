@@ -52,6 +52,9 @@ module.exports = {
         light: '#DDD',
         dark: '#2E2E2E'
       },
+      fontFamily: {
+        title: 'var(--prism-typography-title-font-style)'
+      },
       fontSize: {
         '2xs': ['10px', '12px'],
         '1.5xs': ['.8125rem', '1.3125rem'],
