@@ -19,15 +19,10 @@ yarn facets:storybook
 yarn toolkit:storybook
 ```
 
-## Versioning Steps
+## Release Steps
 
-After `develop` code freeze is over, we need to increment the versions of the application in order to preserve the previous
-version's code in it's `develop` variant in S3.
-
-1. Update the version in the root of the project.
-2. Update the version in each package's `package.json`
-3. Ensure/update the version of `@prism/toolkit` in each package's `package.json` to ensure it aligns with the current version.
-4. Ensure/update the version of `@prism/demo` in each package's `package.json` to ensure it aligns with the current version.
+1. Run `changeset version`
+2. TBD...
 
 ## Legacy Documentation
 
