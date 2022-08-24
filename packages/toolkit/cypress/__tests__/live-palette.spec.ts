@@ -44,15 +44,13 @@ describe('LivePalette', () => {
       red: 126
     }
   ]
-  const [firstColor, secondColor, thirdColor] = colors
+  const [firstColor, secondColor] = colors
   const colorSlot = (colorName?: string): string | RegExp =>
     colorName !== undefined ? `Expand option for ${colorName} color` : /Expand option for/
   const emptySlot = 'Empty slot'
   const colorBrandKey = (colorNumber: string): string => `SW ${colorNumber}`
   const colorDetailsButton = (colorName: string): string => `${colorName} color details`
   const removeColorButton = (colorName: string): string => `Remove color ${colorName} from live palette`
-  const dragColorButton = (colorName?: string): string | RegExp =>
-    colorName !== undefined ? `Drag color ${colorName}` : /Drag color/
   const addColorButton = 'ADD A COLOR'
 
   before(cy.visitStorybook)
@@ -84,7 +82,6 @@ describe('LivePalette', () => {
       cy.findByText(colorBrandKey(firstColor.colorNumber)).should('not.exist')
       cy.findByLabelText(colorDetailsButton(firstColor.name)).should('not.exist')
       cy.findByLabelText(removeColorButton(firstColor.name)).should('not.exist')
-      cy.findAllByLabelText(dragColorButton()).should('have.length', 3)
     })
 
     it('deletes first color slot', () => {
@@ -95,27 +92,12 @@ describe('LivePalette', () => {
       cy.findAllByLabelText(emptySlot).should('have.length', 6)
     })
 
-    it('drags third slot and drops over second slot', () => {
-      cy.findByLabelText(colorSlot(thirdColor.name))
-        .trigger('keydown', { keyCode: 32 })
-        .trigger('keydown', { keyCode: 37, force: true })
-        .trigger('keydown', { keyCode: 32, force: true })
-      cy.findByLabelText(colorSlot(firstColor.name)).click() // resetting initial active color
-      cy.findAllByLabelText(colorSlot())
-        .eq(1)
-        .should('have.css', 'background-color', `rgb(${thirdColor.red}, ${thirdColor.green}, ${thirdColor.blue})`)
-      cy.findAllByLabelText(colorSlot())
-        .eq(2)
-        .should('have.css', 'background-color', `rgb(${secondColor.red}, ${secondColor.green}, ${secondColor.blue})`)
-    })
-
     it('renders on mobile', () => {
       cy.viewport('iphone-x')
       cy.findAllByText(colorBrandKey(firstColor.colorNumber))
       cy.findAllByText(firstColor.name)
       cy.findAllByLabelText(colorDetailsButton(firstColor.name))
       cy.findByLabelText(removeColorButton(firstColor.name)).should('have.length', 1)
-      cy.findAllByLabelText(dragColorButton()).should('not.be.visible')
       cy.findByText(addColorButton).should('not.be.visible')
     })
   })

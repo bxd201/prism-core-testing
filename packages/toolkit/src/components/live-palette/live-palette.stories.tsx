@@ -7,7 +7,7 @@ import LivePalette from './live-palette'
 import colorsData from '../../test-utils/mocked-endpoints/colors.json'
 import { colorOptions } from '../../test-utils/test-utils'
 import { filter, shuffle, values } from 'lodash'
-import { Color } from '../../types';
+import { Color } from '../../types'
 
 const Template = (args): JSX.Element => (
   <LivePalette
@@ -70,7 +70,7 @@ const Template = (args): JSX.Element => (
 export const EmptyPalette = Template.bind({})
 
 export const SimplePalette = Template.bind({})
-SimplePalette.args = { colors: shuffle(Object.keys(colorOptions)).filter((c, i) => i < 3), draggable: false, simple: true }
+SimplePalette.args = { colors: shuffle(Object.keys(colorOptions)).filter((c, i) => i < 3), simple: true }
 
 export const ThreeColors = Template.bind({})
 ThreeColors.args = { colors: shuffle(Object.keys(colorOptions)).filter((c, i) => i < 3) }
@@ -87,23 +87,18 @@ export default {
     },
     deleteButtonRenderer: { control: false, description: 'renderer function for the delete button' },
     detailsButtonRenderer: { control: false, description: 'renderer function for the details button' },
-    draggable: {
-      control: { type: 'boolean' },
-      description: 'enables drag and drop on color slots',
-      table: { defaultValue: { summary: `true` } }
-    },
-    emptySlotRenderer: { control: false, description: 'renderer function for the empty slot'},
+    emptySlotRenderer: { control: false, description: 'renderer function for the empty slot' },
     labelRenderer: { control: false, description: 'renderer function for the text label' },
     maxSlots: { control: { type: 'range', min: 2, max: 10 }, description: 'maximum number of slots' },
-    onAddButtonTriggered: { action: 'add button triggered' },
+    onAddButtonTriggered: { action: 'add button triggered', description: '`storybook args only`' },
     onColorActivated: { action: 'new color activated', description: 'fired when a new color becomes active' },
     onColorsChanged: {
       action: 'colors changed',
-      description: 'fired when colors are changed using drag and drop or delete'
+      description: 'fired when colors are changed or deleted'
     },
-    onDetailsButtonTriggered: { action: 'details button triggered' },
+    onDetailsButtonTriggered: { action: 'details button triggered', description: '`storybook args only`' },
     otherProps: { control: false, description: 'optional props like `className` and `style`' },
     simple: { table: { disable: true } },
-    slotAriaLabel: { control: false, description: 'slot aria-label' }
+    slotAriaLabel: { control: false, description: 'slot `aria-label`' }
   }
 }
