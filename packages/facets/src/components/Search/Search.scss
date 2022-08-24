@@ -9,7 +9,9 @@
     position: relative;
     text-align: center;
 
-    @include respond-above(sm) { min-height: 66vh; }
+    @include respond-above(sm) {
+      min-height: 66vh;
+    }
 
     &__subtitle {
       color: #404040;
@@ -35,13 +37,13 @@
   }
 
   &__chip-locator {
-    margin: .1rem;
+    margin: 0.1rem;
     font-size: 1rem;
     line-height: 1.3rem;
 
     &--buttons {
       position: absolute;
-      bottom: .8rem;
+      bottom: 0.8rem;
       width: 120px;
 
       &__button {
@@ -55,7 +57,9 @@
         line-height: 1.1rem;
       }
 
-      .dark-color { border-color: white }
+      .dark-color {
+        border-color: white;
+      }
     }
   }
 
@@ -80,5 +84,11 @@
     }
   }
 
-  .ReactVirtualized__Grid__innerScrollContainer { margin: auto; }
+  .ReactVirtualized__Grid__innerScrollContainer {
+    margin: auto;
+  }
+
+  .ReactVirtualized__Grid {
+    overflow-x: hidden !important;
+  }
 }

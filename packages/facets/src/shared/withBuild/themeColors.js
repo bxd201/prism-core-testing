@@ -25,6 +25,7 @@ const defaultThemeColors = {
   tertiaryBg: '#000', // tertiary background color
   primaryBorder: '#fff', // main border color
   secondaryBorder: 'none', // secondary border color
+  primaryPlaceholder: '#757575',
   success: '#1fce6d', // success color (usually green)
   warning: '#f2c500', // warning color (usually orange or yellow)
   white: '#FFF', // #FFF,
@@ -52,12 +53,27 @@ const getOneThemeColorObj = (name = '', color = undefined, injectTransparent = f
   }
 
   if (injectContrast) {
-    obj.contrast = getOneThemeColorObj(`${modName}-contrast`, color ? mostReadable(color, ['#000', '#FFF']).toHexString() : undefined, true, false)
+    obj.contrast = getOneThemeColorObj(
+      `${modName}-contrast`,
+      color ? mostReadable(color, ['#000', '#FFF']).toHexString() : undefined,
+      true,
+      false
+    )
   }
 
   if (injectTransparent) {
-    obj.trans = getOneThemeColorObj(`${modName}-trans`, color ? tinycolor(color).setAlpha(0.9).toRgbString() : undefined, false, false)
-    obj.transer = getOneThemeColorObj(`${modName}-transer`, color ? tinycolor(color).setAlpha(0.6).toRgbString() : undefined, false, false)
+    obj.trans = getOneThemeColorObj(
+      `${modName}-trans`,
+      color ? tinycolor(color).setAlpha(0.9).toRgbString() : undefined,
+      false,
+      false
+    )
+    obj.transer = getOneThemeColorObj(
+      `${modName}-transer`,
+      color ? tinycolor(color).setAlpha(0.6).toRgbString() : undefined,
+      false,
+      false
+    )
   }
 
   return obj
@@ -65,29 +81,57 @@ const getOneThemeColorObj = (name = '', color = undefined, injectTransparent = f
 
 const getThemeColorsObj = (colorNames, colorValuesObj = {}) => {
   if (colorNames) {
-    return colorNames.map((colorName) => {
-      const color = colorValuesObj[colorName]
-      const maybeTc = color ? tinycolor(color) : undefined
-      const modName = `${themeColorPrefix}${kebabCase(colorName)}`
+    return colorNames
+      .map((colorName) => {
+        const color = colorValuesObj[colorName]
+        const maybeTc = color ? tinycolor(color) : undefined
+        const modName = `${themeColorPrefix}${kebabCase(colorName)}`
 
-      return [colorName, {
-        ...getOneThemeColorObj(modName, color || undefined, true, true),
-        darker: getOneThemeColorObj(`${modName}-darker`, maybeTc ? maybeTc.shade(15).toHexString() : undefined, true, true),
-        darkest: getOneThemeColorObj(`${modName}-darkest`, maybeTc ? maybeTc.shade(85).toHexString() : undefined, true, true),
-        lighter: getOneThemeColorObj(`${modName}-lighter`, maybeTc ? maybeTc.tint(15).toHexString() : undefined, true, true),
-        lightest: getOneThemeColorObj(`${modName}-lightest`, maybeTc ? maybeTc.tint(85).toHexString() : undefined, true, true)
-      }]
-    }).reduce((accum, [colorName, colorObj]) => ({
-      ...accum,
-      [colorName]: colorObj
-    }), {})
+        return [
+          colorName,
+          {
+            ...getOneThemeColorObj(modName, color || undefined, true, true),
+            darker: getOneThemeColorObj(
+              `${modName}-darker`,
+              maybeTc ? maybeTc.shade(15).toHexString() : undefined,
+              true,
+              true
+            ),
+            darkest: getOneThemeColorObj(
+              `${modName}-darkest`,
+              maybeTc ? maybeTc.shade(85).toHexString() : undefined,
+              true,
+              true
+            ),
+            lighter: getOneThemeColorObj(
+              `${modName}-lighter`,
+              maybeTc ? maybeTc.tint(15).toHexString() : undefined,
+              true,
+              true
+            ),
+            lightest: getOneThemeColorObj(
+              `${modName}-lightest`,
+              maybeTc ? maybeTc.tint(85).toHexString() : undefined,
+              true,
+              true
+            )
+          }
+        ]
+      })
+      .reduce(
+        (accum, [colorName, colorObj]) => ({
+          ...accum,
+          [colorName]: colorObj
+        }),
+        {}
+      )
   }
 
   return {}
 }
 
 const extractThemeData = (obj) => {
-  return Object.keys(obj).map(name => {
+  return Object.keys(obj).map((name) => {
     const data = obj[name]
 
     const returner = []
@@ -105,10 +149,14 @@ const extractThemeData = (obj) => {
   })
 }
 
-const mapVarsToColors = baseColors => flattenDeep(extractThemeData(baseColors)).reduce((accum, { prop, color }) => ({
-  ...accum,
-  [prop]: color
-}), {})
+const mapVarsToColors = (baseColors) =>
+  flattenDeep(extractThemeData(baseColors)).reduce(
+    (accum, { prop, color }) => ({
+      ...accum,
+      [prop]: color
+    }),
+    {}
+  )
 
 module.exports = {
   defaultThemeColors,
