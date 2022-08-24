@@ -98,7 +98,7 @@ export default {
   component: ImageRotator,
   argTypes: {
     className: { control: false },
-    imageMetadata: { description: 'Processed image metadata with url and its dimensions' },
+    imageMetadata: { description: 'Processed image metadata with url and their dimensions' },
     'ImageRotator.Button': { description: 'compound component for interaction button (props: `className`, `disabled`, and `onClick` )' },
     'ImageRotator.Button (onClick)': {
       action: 'ImageRotator.Button (onClick)',
