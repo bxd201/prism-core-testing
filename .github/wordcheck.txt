@@ -1,2 +1,2 @@
-z[aeiou]+ng
+z(o|a|oi|u)ng
 debugger
