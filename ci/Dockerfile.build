@@ -4,8 +4,10 @@ ENV NODE_ENV=production
 
 RUN apt-get update \
     && apt-get upgrade -y \
-    && apt-get install \
+    && apt-get install -y \
        git bash python ca-certificates openssl make gcc g++  \
+       libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 \
+       libnss3 libxss1 libasound2 libxtst6 xauth xvfb \
     && apt-get clean
 
 RUN npm install -g yarn@2 --force
