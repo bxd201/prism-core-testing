@@ -10,7 +10,8 @@ RUN apt-get update \
        libnss3 libxss1 libasound2 libxtst6 xauth xvfb \
     && apt-get clean
 
-RUN npm install -g yarn@2 --force
+# enable yarn
+RUN corepack enable
 
 COPY . /app
 
