@@ -2124,6 +2124,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/plugin-transform-react-jsx@npm:7.18.10":
+  version: 7.18.10
+  resolution: "@babel/plugin-transform-react-jsx@npm:7.18.10"
+  dependencies:
+    "@babel/helper-annotate-as-pure": ^7.18.6
+    "@babel/helper-module-imports": ^7.18.6
+    "@babel/helper-plugin-utils": ^7.18.9
+    "@babel/plugin-syntax-jsx": ^7.18.6
+    "@babel/types": ^7.18.10
+  peerDependencies:
+    "@babel/core": ^7.0.0-0
+  checksum: 1aacfb0286d5b95c45bbda6cf026f9e81a261298b5921cd55b357581c9b3681fe70ba56846fae86cf63908ea8e07d0e3dd8192d663d6bddd75a7fe4c091cd724
+  languageName: node
+  linkType: hard
+
 "@babel/plugin-transform-react-jsx@npm:^7.12.12, @babel/plugin-transform-react-jsx@npm:^7.16.7, @babel/plugin-transform-react-jsx@npm:^7.18.6":
   version: 7.18.6
   resolution: "@babel/plugin-transform-react-jsx@npm:7.18.6"
@@ -2136,21 +2151,6 @@ __metadata:
   peerDependencies:
     "@babel/core": ^7.0.0-0
   checksum: 46129eaf1ab7a7a73e3e8c9d9859b630f5b381c5e19fb1559e2db7b943a7825b6715ad950623fb03fe7bd31ed618ce1d0bd539b13fa030a50c39d5a873a5ba00
-  languageName: node
-  linkType: hard
-
-"@babel/plugin-transform-react-jsx@npm:^7.18.10":
-  version: 7.18.10
-  resolution: "@babel/plugin-transform-react-jsx@npm:7.18.10"
-  dependencies:
-    "@babel/helper-annotate-as-pure": ^7.18.6
-    "@babel/helper-module-imports": ^7.18.6
-    "@babel/helper-plugin-utils": ^7.18.9
-    "@babel/plugin-syntax-jsx": ^7.18.6
-    "@babel/types": ^7.18.10
-  peerDependencies:
-    "@babel/core": ^7.0.0-0
-  checksum: 1aacfb0286d5b95c45bbda6cf026f9e81a261298b5921cd55b357581c9b3681fe70ba56846fae86cf63908ea8e07d0e3dd8192d663d6bddd75a7fe4c091cd724
   languageName: node
   linkType: hard
 
@@ -7172,7 +7172,7 @@ __metadata:
     "@babel/plugin-transform-classes": 7.18.9
     "@babel/plugin-transform-flow-strip-types": 7.18.9
     "@babel/plugin-transform-object-assign": 7.18.6
-    "@babel/plugin-transform-react-jsx": ^7.18.10
+    "@babel/plugin-transform-react-jsx": 7.18.10
     "@babel/plugin-transform-template-literals": 7.18.9
     "@babel/preset-env": 7.18.9
     "@babel/preset-flow": 7.18.6
@@ -7203,13 +7203,13 @@ __metadata:
     core-js: 2.6.5
     cross-env: 7.0.3
     css-loader: 6.7.1
-    cypress: ^10.6.0
+    cypress: 10.6.0
     delta-e: 0.0.7
     eslint: 8.20.0
     eslint-config-prettier: 8.5.0
     eslint-config-standard: 17.0.0
     eslint-config-standard-react: 11.0.1
-    eslint-plugin-cypress: ^2.12.1
+    eslint-plugin-cypress: 2.12.1
     eslint-plugin-flowtype: 8.0.3
     eslint-plugin-formatjs: 2.3.13
     eslint-plugin-import: 2.26.0
@@ -7268,7 +7268,7 @@ __metadata:
     sass-resources-loader: 2.2.5
     scroll: 3.0.1
     standard: 17.0.0
-    start-server-and-test: ^1.14.0
+    start-server-and-test: 1.14.0
     tailwindcss: 3.1.6
     terser-webpack-plugin: 5.3.1
     url-loader: 4.1.1
@@ -15980,6 +15980,58 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cypress@npm:10.6.0":
+  version: 10.6.0
+  resolution: "cypress@npm:10.6.0"
+  dependencies:
+    "@cypress/request": ^2.88.10
+    "@cypress/xvfb": ^1.2.4
+    "@types/node": ^14.14.31
+    "@types/sinonjs__fake-timers": 8.1.1
+    "@types/sizzle": ^2.3.2
+    arch: ^2.2.0
+    blob-util: ^2.0.2
+    bluebird: ^3.7.2
+    buffer: ^5.6.0
+    cachedir: ^2.3.0
+    chalk: ^4.1.0
+    check-more-types: ^2.24.0
+    cli-cursor: ^3.1.0
+    cli-table3: ~0.6.1
+    commander: ^5.1.0
+    common-tags: ^1.8.0
+    dayjs: ^1.10.4
+    debug: ^4.3.2
+    enquirer: ^2.3.6
+    eventemitter2: ^6.4.3
+    execa: 4.1.0
+    executable: ^4.1.1
+    extract-zip: 2.0.1
+    figures: ^3.2.0
+    fs-extra: ^9.1.0
+    getos: ^3.2.1
+    is-ci: ^3.0.0
+    is-installed-globally: ~0.4.0
+    lazy-ass: ^1.6.0
+    listr2: ^3.8.3
+    lodash: ^4.17.21
+    log-symbols: ^4.0.0
+    minimist: ^1.2.6
+    ospath: ^1.2.2
+    pretty-bytes: ^5.6.0
+    proxy-from-env: 1.0.0
+    request-progress: ^3.0.0
+    semver: ^7.3.2
+    supports-color: ^8.1.1
+    tmp: ~0.2.1
+    untildify: ^4.0.0
+    yauzl: ^2.10.0
+  bin:
+    cypress: bin/cypress
+  checksum: 53993d2d712222df13ef4802db051fee8a7ac59b180ed11b22e6f10d36f5d9b2c2622f1bbfa012f61c7756139287a976abd075275ddd37191b13f40ec8deaa85
+  languageName: node
+  linkType: hard
+
 "cypress@npm:9.3.0":
   version: 9.3.0
   resolution: "cypress@npm:9.3.0"
@@ -16029,58 +16081,6 @@ __metadata:
   bin:
     cypress: bin/cypress
   checksum: a40009b3dcb4c269f7d935b6c5a9c77feab1bb96e79d59684f153a3a53a1c059af60f5ca117438afb3812006c8914b8890d05541621dce494dfae141217a99ce
-  languageName: node
-  linkType: hard
-
-"cypress@npm:^10.6.0":
-  version: 10.6.0
-  resolution: "cypress@npm:10.6.0"
-  dependencies:
-    "@cypress/request": ^2.88.10
-    "@cypress/xvfb": ^1.2.4
-    "@types/node": ^14.14.31
-    "@types/sinonjs__fake-timers": 8.1.1
-    "@types/sizzle": ^2.3.2
-    arch: ^2.2.0
-    blob-util: ^2.0.2
-    bluebird: ^3.7.2
-    buffer: ^5.6.0
-    cachedir: ^2.3.0
-    chalk: ^4.1.0
-    check-more-types: ^2.24.0
-    cli-cursor: ^3.1.0
-    cli-table3: ~0.6.1
-    commander: ^5.1.0
-    common-tags: ^1.8.0
-    dayjs: ^1.10.4
-    debug: ^4.3.2
-    enquirer: ^2.3.6
-    eventemitter2: ^6.4.3
-    execa: 4.1.0
-    executable: ^4.1.1
-    extract-zip: 2.0.1
-    figures: ^3.2.0
-    fs-extra: ^9.1.0
-    getos: ^3.2.1
-    is-ci: ^3.0.0
-    is-installed-globally: ~0.4.0
-    lazy-ass: ^1.6.0
-    listr2: ^3.8.3
-    lodash: ^4.17.21
-    log-symbols: ^4.0.0
-    minimist: ^1.2.6
-    ospath: ^1.2.2
-    pretty-bytes: ^5.6.0
-    proxy-from-env: 1.0.0
-    request-progress: ^3.0.0
-    semver: ^7.3.2
-    supports-color: ^8.1.1
-    tmp: ~0.2.1
-    untildify: ^4.0.0
-    yauzl: ^2.10.0
-  bin:
-    cypress: bin/cypress
-  checksum: 53993d2d712222df13ef4802db051fee8a7ac59b180ed11b22e6f10d36f5d9b2c2622f1bbfa012f61c7756139287a976abd075275ddd37191b13f40ec8deaa85
   languageName: node
   linkType: hard
 
@@ -18038,7 +18038,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-cypress@npm:2.12.1, eslint-plugin-cypress@npm:^2.12.1":
+"eslint-plugin-cypress@npm:2.12.1":
   version: 2.12.1
   resolution: "eslint-plugin-cypress@npm:2.12.1"
   dependencies:
@@ -35178,7 +35178,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"start-server-and-test@npm:1.14.0, start-server-and-test@npm:^1.14.0":
+"start-server-and-test@npm:1.14.0":
   version: 1.14.0
   resolution: "start-server-and-test@npm:1.14.0"
   dependencies:
