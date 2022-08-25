@@ -8,7 +8,8 @@ RUN apt-get update \
        git bash python ca-certificates openssl make gcc g++  \
     && apt-get clean
 
-RUN npm install -g yarn@2 --force
+# enable yarn
+RUN corepack enable
 
 COPY . /app
 
