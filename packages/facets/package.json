@@ -84,7 +84,7 @@
     "@prism/toolkit": "3.3.0",
     "@tensorflow-models/deeplab": "0.1.1",
     "@tensorflow/tfjs": "1.5.2",
-    "axios": "0.27.2",
+    "axios": "0.19.0",
     "color-space": "1.16.0",
     "color-util": "2.2.3",
     "core-js": "2.6.5",
