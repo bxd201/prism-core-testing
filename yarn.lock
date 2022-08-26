@@ -7341,6 +7341,25 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@prism/repository@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "@prism/repository@workspace:."
+  dependencies:
+    "@changesets/cli": 2.24.3
+    "@commitlint/cli": 13.1.0
+    "@commitlint/config-conventional": 13.1.0
+    danger: 11.1.2
+    danger-plugin-simple-collection: 0.0.23
+    danger-plugin-wordcheck: 0.0.3
+    husky: ^8.0.1
+    lint-staged: ^13.0.3
+    prettier: ^2.7.1
+    prettier-config-standard: ^5.0.0
+    react: 18.2.0
+    react-dom: 18.2.0
+  languageName: unknown
+  linkType: soft
+
 "@prism/toolkit@3.3.0, @prism/toolkit@workspace:packages/toolkit":
   version: 0.0.0-use.local
   resolution: "@prism/toolkit@workspace:packages/toolkit"
@@ -31381,25 +31400,6 @@ __metadata:
   checksum: c18806dcbc4c0b4fd6fd15bd06b4f7c0a6da98d93af235c3e970854994eb9b59e23315abb6cfc29e69da26d36709a47e25da85ab27fed81b6812f0a52caf6dfa
   languageName: node
   linkType: hard
-
-"prism@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "prism@workspace:."
-  dependencies:
-    "@changesets/cli": 2.24.3
-    "@commitlint/cli": 13.1.0
-    "@commitlint/config-conventional": 13.1.0
-    danger: 11.1.2
-    danger-plugin-simple-collection: 0.0.23
-    danger-plugin-wordcheck: 0.0.3
-    husky: ^8.0.1
-    lint-staged: ^13.0.3
-    prettier: ^2.7.1
-    prettier-config-standard: ^5.0.0
-    react: 18.2.0
-    react-dom: 18.2.0
-  languageName: unknown
-  linkType: soft
 
 "prismjs@npm:^1.21.0, prismjs@npm:^1.28.0":
   version: 1.28.0
