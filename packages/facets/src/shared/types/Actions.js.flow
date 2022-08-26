@@ -73,8 +73,16 @@ export type Subgroup = {
   name: string,
 }
 
+export type ColorStatus = {
+  status: number,
+  message: string
+}
+
 export type ColorsState = {
   chunkGridParams: ChunkGridParams | void,
+  colorStatuses: {
+    [key: string]: ColorStatus
+  },
   cwv3: boolean,
   emitColor?: { color: Color, timestamp: number },
   families?: string[],

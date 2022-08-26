@@ -19,6 +19,8 @@ import startCase from 'lodash/startCase'
 import InfoButton from '../../../../InfoButton/InfoButton'
 import { Link } from 'react-router-dom'
 import './Swatch.scss'
+import 'src/components/ColorSwatchContent/ColorSwatchContent.scss'
+import type { ColorWallContextProps } from '../../ColorWallContext'
 
 const swatchClass = 'cwv3__swatch'
 
@@ -32,7 +34,9 @@ type SwatchProps = {
     props: any,
     childProps: any
   },
+  enabled: boolean,
   id: string,
+  message?: string,
   onRefSwatch: any,
   perimeterLevel: number,
   onClick: any,
@@ -42,12 +46,20 @@ type SwatchProps = {
 type SwatchContentProps = {
   color: any,
   style?: {},
-  isOnlyUsedforSearch?: boolean
+  isOnlyUsedforSearch?: boolean,
+  message?: string,
+  enabled?: boolean
 }
 
 // TODO:
 // isOnlyUsedforSearch should be refactored when swatch contents are merged together
-export const SwatchContent = ({ color, style, isOnlyUsedforSearch = false }: SwatchContentProps) => {
+export const SwatchContent = ({
+  color,
+  style,
+  message,
+  isOnlyUsedforSearch = false,
+  enabled = true
+}: SwatchContentProps) => {
   const dispatch = useDispatch()
   const { messages = {} } = useIntl()
 
@@ -73,7 +85,8 @@ export const SwatchContent = ({ color, style, isOnlyUsedforSearch = false }: Swa
     <div className={!isOnlyUsedforSearch ? 'swatch-content-size' : null}>
       <div className='swatch-content__btns'>
         <div className='swatch-content__button-group swatch-content__button-group--xs' style={style}>
-          {displayAddButton &&
+          {enabled &&
+            displayAddButton &&
             (colorIsInLivePalette ? (
               <FontAwesomeIcon className='check-icon' icon={['fa', 'check-circle']} size='2x' />
             ) : (
@@ -97,8 +110,9 @@ export const SwatchContent = ({ color, style, isOnlyUsedforSearch = false }: Swa
                 {addButtonText && <span className='OmniButton__content'>{title}</span>}
               </button>
             ))}
-          {displayInfoButton && <InfoButton color={color} />}
-          {displayDetailsLink &&
+          {enabled && displayInfoButton && <InfoButton color={color} />}
+          {enabled &&
+            displayDetailsLink &&
             (colorDetailPageRoot ? (
               <a
                 href={`${colorDetailPageRoot}/${color.brandKey}${color.colorNumber}-${cleanColorNameForURL(
@@ -127,11 +141,23 @@ export const SwatchContent = ({ color, style, isOnlyUsedforSearch = false }: Swa
         <p className='swatch-content__label--number'>{`${color.brandKey} ${color.colorNumber}`}</p>
         <p className='swatch-content__label--name'>{color.name}</p>
       </div>
+      {message ? <div className={'color-swatch__content-message'}>{message}</div> : null}
     </div>
   )
 }
 
-export function Swatch({ color, style, id, onRefSwatch, active, activeFocus, perimeterLevel, onClick }: SwatchProps) {
+export function Swatch({
+  color,
+  style,
+  id,
+  onRefSwatch,
+  active,
+  activeFocus,
+  perimeterLevel,
+  onClick,
+  enabled = true,
+  message
+}: SwatchProps) {
   const {
     brandId,
     brandKeyNumberSeparator,
@@ -145,6 +171,7 @@ export function Swatch({ color, style, id, onRefSwatch, active, activeFocus, per
       activeFocus={activeFocus}
       aria-label={fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator)}
       color={color}
+      flagged={!enabled}
       className={`${swatchClass}${
         active ? ` ${swatchClass}--active${houseShaped ? ` ${swatchClass}--house-shaped` : ''}` : ''
       }${perimeterLevel > 0 ? ` ${swatchClass}--perimeter ${swatchClass}--perimeter--${perimeterLevel}` : ''}`}
@@ -163,9 +190,14 @@ export function Swatch({ color, style, id, onRefSwatch, active, activeFocus, per
       ref={onRefSwatch}
       renderer={() =>
         houseShaped ? (
-          <ColorSwatchContent className='swatch-content--house-shaped' color={color} />
+          <ColorSwatchContent
+            className='swatch-content--house-shaped'
+            color={color}
+            enabled={enabled}
+            message={message}
+          />
         ) : (
-          <SwatchContent color={color} />
+          <SwatchContent color={color} enabled={enabled} message={message} />
         )
       }
       style={style}
