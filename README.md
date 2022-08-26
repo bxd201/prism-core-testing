@@ -1,4 +1,4 @@
-#PRISM
+# PRISM
 
 ## Getting Started
 
@@ -22,7 +22,7 @@ yarn toolkit:storybook
 ## Release Steps
 
 1. Run `changeset version`
-2. TBD...
+2. Update the root `package.json` version to the new version that was set in Step 1.
 
 ## Legacy Documentation
 
@@ -30,3 +30,25 @@ Migrating up the legacy documentation for `prism-lib` and `prism-core` up to the
 
 [@prism/facets (formerly known as prism-core) documentation](packages/facets/README.md)<br />
 [@prism/toolkit (formerly known as prism-lib) documentation](packages/toolkit/README.md)
+
+## Issues
+
+### Yarn keeps failing
+
+Inspect the log file that the yarn failure is outputting. If it looks something like this...
+
+```
+----------
+
+URL: https://download.cypress.io/desktop/10.6.0?platform=darwin&arch=x64
+Error: self signed certificate in certificate chain
+
+----------
+```
+
+That means zscaler is blocking the download and installation of Cypress. To resolve...
+
+1. Download Cypress directly https://download.cypress.io/desktop/10.6.0?platform=darwin&arch=x64
+2. Create Cypress dir `mkdir ~/Library/Caches/Cypress/10.6.0`
+3. Open that directory `open ~/Library/Caches/Cypress/10.6.0`
+4. Unzip the Cypress app from zip file that was downloaded in step 1 into that directory
