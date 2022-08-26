@@ -1,5 +1,5 @@
 import React from 'react'
-import Prism, { ColorPin, ColorsIcon, ImageColorPicker, LivePalette } from '@prism/toolkit'
+import Prism, { CircleLoader, ColorPin, ColorsIcon, ImageColorPicker, ImageUploader, LivePalette } from '@prism/toolkit'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faInfo, faTrash } from '@fortawesome/pro-solid-svg-icons'
 import { faPlusCircle } from '@fortawesome/pro-light-svg-icons'
@@ -26,9 +26,11 @@ const mockedEndpointsImports = {
 }
 
 const prismToolkitImports = {
+  CircleLoader,
   ColorPin,
   ColorsIcon,
   ImageColorPicker,
+  ImageUploader,
   LivePalette,
   Prism
 }
