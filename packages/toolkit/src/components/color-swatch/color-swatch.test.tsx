@@ -6,6 +6,7 @@ import '@testing-library/jest-dom'
 
 const ID = 11331
 const TEST_ID_INNER_SWATCH = `inner-swatch-${ID}`
+const TEST_ID_MARKER = `wall-color-swatch-flag-${ID}`
 
 describe('Color Swatch Component', () => {
   // @ts-ignore
@@ -56,5 +57,28 @@ describe('Color Swatch Component', () => {
     expect(screen.getByTestId(TEST_ID_INNER_SWATCH)).toHaveClass('text-black')
     rerender(<ColorSwatch active={true} color={{ ...colorObj, isDark: true }} activeFocus={false} id={ID} />)
     expect(screen.getByTestId(TEST_ID_INNER_SWATCH)).toHaveClass('text-white')
+  })
+
+  describe('Setting flagged', () => {
+    describe('to true', () => {
+      test('on an inactive swatch renders a marker', () => {
+        render(<ColorSwatch active={false} flagged color={colorObj} id={ID} />)
+        expect(screen.queryByTestId(TEST_ID_MARKER)).toBeInTheDocument()
+      })
+      test('on an active swatch renders a marker', () => {
+        render(<ColorSwatch active={true} flagged color={colorObj} id={ID} />)
+        expect(screen.queryByTestId(TEST_ID_MARKER)).toBeInTheDocument()
+      })
+    })
+    describe('to false', () => {
+      test('on an inactive swatch DOES NOT render a marker', () => {
+        render(<ColorSwatch active={false} flagged={false} color={colorObj} id={ID} />)
+        expect(screen.queryByTestId(TEST_ID_MARKER)).not.toBeInTheDocument()
+      })
+      test('on an active swatch DOES NOT render a marker', () => {
+        render(<ColorSwatch active={true} flagged={false} color={colorObj} id={ID} />)
+        expect(screen.queryByTestId(TEST_ID_MARKER)).not.toBeInTheDocument()
+      })
+    })
   })
 })

@@ -7,6 +7,7 @@ export interface ColorSwatchProps {
   'aria-label'?: string
   className?: string
   color: Color
+  flagged?: boolean
   id?: number
   onClick?: () => void
   onRefSwatch?: any
@@ -26,6 +27,7 @@ export interface ColorSwatchProps {
  *
  * @param {boolean} active - optional swatch active
  * @param {boolean} activeFocus - optional active swatch focus
+ * @param {boolean} flagged - is the inactive swatch marked
  * @param {Color} color - swatch background color
  * @param {number} id - optional swatch id
  * @param {() => void} onClick - optional action when swatch is clicked
@@ -39,7 +41,19 @@ export interface ColorSwatchProps {
  */
 const ColorSwatch = forwardRef<HTMLButtonElement & HTMLDivElement, ColorSwatchProps>(
   (
-    { active, activeFocus = true, className, color, id, onClick, renderer, onRefSwatch, perimeterLevel, ...otherProps },
+    {
+      active,
+      flagged = false,
+      activeFocus = true,
+      className,
+      color,
+      id,
+      onClick,
+      renderer,
+      onRefSwatch,
+      perimeterLevel,
+      ...otherProps
+    },
     ref
   ): JSX.Element => {
     const [fadeContent, setFadeContent] = useState(false)
@@ -58,7 +72,16 @@ const ColorSwatch = forwardRef<HTMLButtonElement & HTMLDivElement, ColorSwatchPr
           }}
           ref={!active ? ref : null}
           style={{ background: color.hex }}
-        />
+        >
+          {flagged ? (
+            <div
+              data-testid={`wall-color-swatch-flag-${id}`}
+              className={
+                'pointer-events-none border-3 border-white border-solid border-r-transparent border-b-transparent w-0 h-0 absolute top-0 left-0'
+              }
+            />
+          ) : null}
+        </button>
         {active && (
           <div
             data-testid={`inner-swatch-${id}`}
