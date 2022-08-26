@@ -9,5 +9,6 @@ fi
 
 NODE_ENV=test yarn test || exit $?
 yarn run build || exit $?
+yarn facets:cypress || exit $?
 
 tar zcf dist.tgz packages/facets/dist packages/toolkit/dist packages/toolkit/public packages/prism-docs/build packages/prism-demo/build packages/toolkit/coverage/lcov-report

@@ -4,6 +4,7 @@ import React, { CSSProperties } from 'react'
 export * from './constants'
 
 export { default as Canvas } from './components/canvas/canvas'
+export { default as Carousel } from './components/carousel/carousel'
 export { default as CircleLoader } from './components/circle-loader/circle-loader'
 export { default as ColorPin } from './components/color-pin/color-pin'
 export { default as ColorsIcon } from './components/colors-icon/colors-icon'

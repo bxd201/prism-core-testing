@@ -1,6 +1,7 @@
 .merge-canvas-image-comp {
-  visibility: hidden;
-  display: none;
+  // !important is added to fix Toolkit overriding these properties
+  visibility: hidden !important;
+  display: none !important;
 }
 
 .merge-canvas {

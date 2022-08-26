@@ -1,5 +1,5 @@
 {
-  "name": "prism",
+  "name": "@prism/repository",
   "version": "3.3.0",
   "workspaces": {
     "packages": [
@@ -19,6 +19,7 @@
     "demo:start": "yarn workspace @prism/prism-demo start",
     "demo:build": "yarn workspace @prism/prism-demo build",
     "facets:test": "yarn workspace @prism/facets test",
+    "facets:cypress": "yarn workspace @prism/facets cypress:test",
     "toolkit:compile-facets": "yarn workspace @prism/toolkit build-rollup-facets",
     "toolkit:compile-protected": "yarn workspace @prism/toolkit build-rollup-protected",
     "toolkit:storybook-build": "yarn workspace @prism/toolkit build",
@@ -29,6 +30,7 @@
     "toolkit:cypress": "yarn workspace @prism/toolkit test:cypress"
   },
   "devDependencies": {
+    "@changesets/cli": "2.24.3",
     "@commitlint/cli": "13.1.0",
     "@commitlint/config-conventional": "13.1.0",
     "danger": "11.1.2",
@@ -40,7 +42,6 @@
     "prettier-config-standard": "^5.0.0"
   },
   "dependencies": {
-    "@changesets/cli": "2.24.3",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   }

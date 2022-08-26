@@ -1,5 +1,5 @@
 import React from 'react'
-import Prism, { CircleLoader, ColorsIcon, ColorPin, ImageColorPicker, LivePalette, SpinnerLoader } from '@prism/toolkit'
+import Prism, { CircleLoader, ColorsIcon, ColorPin, ImageColorPicker, LivePalette, ImageUploader, SpinnerLoader } from '@prism/toolkit'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faInfo, faTrash } from '@fortawesome/pro-solid-svg-icons'
 import { faPlusCircle } from '@fortawesome/pro-light-svg-icons'
@@ -30,6 +30,7 @@ const prismToolkitImports = {
   ColorsIcon,
   ColorPin,
   ImageColorPicker,
+  ImageUploader,
   LivePalette,
   SpinnerLoader,
   Prism
