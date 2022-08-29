@@ -10,6 +10,7 @@ const ImageQueue = (props: ImageQueueProps): JSX.Element => {
     return dataUrls.map((dataUrl, i: number) => {
       return (
         <img
+          aria-hidden='true'
           crossOrigin={'anonymous'}
           src={dataUrl}
           key={`${i}`}

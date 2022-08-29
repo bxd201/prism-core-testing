@@ -1,5 +1,5 @@
 import React from 'react'
-import { fireEvent, render, screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import FastMaskView, {
   TEST_ID_1,
   TEST_ID_1_CHILD,
