@@ -11,15 +11,23 @@ The Simple Tintable Scene component allows for rendering an image with painted s
 ## Example
 
 ```typescript live
-/*
- * This example is using the frameworks:
- * - TailwindCSS on classNames;
- * - Lodash methods (shuffle).
- */
+/* This example is using the framework Lodash method shuffle. */
 function SimpleTintableSceneExample() {
+  /* colorsData can be provided as an array of objects, similar to the following:
+    [
+      {
+        "brandKey": "SW",
+        "colorNumber": "6840",
+        "hex": "#b54d7f",
+        "id": "bright-2527",
+        "name": "Exuberant Pink"
+      },
+    ]
+  */
   const args = {
     sceneType: 'rooms',
     background: 'https://sherwin.scene7.com/is/image/sw?src=ir(swRender/hd_livingroom6_day?wid=1311)&qlt=92',
+    surfaceColors: shuffle(colorsData).filter((c, i) => i < 3),
     surfaceIds: [1, 2, 3],
     surfaceHitAreas: [
       'https://prism.sherwin-williams.com/prism/images/scenes/rooms/livingroom/main.svg',
@@ -40,34 +48,9 @@ function SimpleTintableSceneExample() {
     interactive: false
   }
 
-  /* colorsData can be provided as an array of objects, similar to the following:
-    [
-      {
-        "brandKey": "SW",
-        "colorNumber": "6840",
-        "coordinatingColors": {
-          "coord2ColorId": "11335",
-          "coord1ColorId": "11364",
-          "whiteColorId": "2681"
-        },
-        "hex": "#b54d7f",
-        "id": "bright-2527",
-        "isDark": true
-        "name": "Exuberant Pink"
-      },
-    ]
-  */
-  const colorOptions = colorsData.reduce(
-    (map, { id, hex, brandKey, colorNumber, name, coordinatingColors, isDark }) => {
-      map[`${name}`] = { id, hex, brandKey, colorNumber, coordinatingColors, name, isDark }
-      return map
-    },
-    {}
-  )
-
   return (
-    <Prism>
-      <SimpleTintableScene {...args} surfaceColors={colorOptions} />
+    <Prism style={{ position: 'relative' }}>
+      <SimpleTintableScene {...args} />
     </Prism>
   )
 }
