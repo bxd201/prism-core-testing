@@ -1,0 +1,94 @@
+---
+sidebar_position: 8
+---
+
+# Simple Tintable Scene
+
+## Summary
+
+The Simple Tintable Scene component allows for rendering an image with painted surfaces. This experience can be interactive, allowing users to click on individually defined surfaces. This component is also used to render a scene (eg: 'kitchen') with defined colors in a static representation.
+
+## Example
+
+```typescript live
+/*
+ * This example is using the frameworks:
+ * - TailwindCSS on classNames;
+ * - Lodash methods (shuffle).
+ */
+function SimpleTintableSceneExample() {
+  const args = {
+    sceneType: 'rooms',
+    background: 'https://sherwin.scene7.com/is/image/sw?src=ir(swRender/hd_livingroom6_day?wid=1311)&qlt=92',
+    surfaceIds: [1, 2, 3],
+    surfaceHitAreas: [
+      'https://prism.sherwin-williams.com/prism/images/scenes/rooms/livingroom/main.svg',
+      'https://prism.sherwin-williams.com/prism/images/scenes/rooms/livingroom/accent.svg',
+      'https://prism.sherwin-williams.com/prism/images/scenes/rooms/livingroom/trim.svg'
+    ],
+    surfaceUrls: [
+      'https://sherwin.scene7.com/is/image/sw?src=ir(swRender/hd_livingroom6_day?wid=1311&req=object&opac=100&fmt=png8&object=wall&color=000000)&fmt=png8&bgColor=FFFFFF&op_invert=1',
+      'https://sherwin.scene7.com/is/image/sw?src=ir(swRender/hd_livingroom6_day?wid=1311&req=object&opac=100&fmt=png8&object=accent&color=000000)&fmt=png8&bgColor=FFFFFF&op_invert=1',
+      'https://sherwin.scene7.com/is/image/sw?src=ir(swRender/hd_livingroom6_day?wid=1311&req=object&opac=100&fmt=png8&object=trim&color=000000)&fmt=png8&bgColor=FFFFFF&op_invert=1'
+    ],
+    highlights: [null, null, null],
+    imageValueCurve: '0 0.1 0.15 0.25 0.4 0.5 0.6 0.7 0.84 0.955 1',
+    activeColorId: '2906',
+    shadows: [null, null, null],
+    width: 1311,
+    height: 792,
+    interactive: false
+  }
+
+  /* colorsData can be provided as an array of objects, similar to the following:
+    [
+      {
+        "brandKey": "SW",
+        "colorNumber": "6840",
+        "coordinatingColors": {
+          "coord2ColorId": "11335",
+          "coord1ColorId": "11364",
+          "whiteColorId": "2681"
+        },
+        "hex": "#b54d7f",
+        "id": "bright-2527",
+        "isDark": true
+        "name": "Exuberant Pink"
+      },
+    ]
+  */
+  const colorOptions = colorsData.reduce(
+    (map, { id, hex, brandKey, colorNumber, name, coordinatingColors, isDark }) => {
+      map[`${name}`] = { id, hex, brandKey, colorNumber, coordinatingColors, name, isDark }
+      return map
+    },
+    {}
+  )
+
+  return (
+    <Prism>
+      <SimpleTintableScene {...args} surfaceColors={colorOptions} />
+    </Prism>
+  )
+}
+```
+
+## Available props
+
+| Prop                     | Type                             | Description                                                  |          |
+| ------------------------ | -------------------------------- | ------------------------------------------------------------ | -------- |
+| width                    | `number`                         | Width of scene                                               | Required |
+| height                   | `number`                         | Height of scene                                              | Required |
+| sceneType                | `string`                         | A value from SCENE_TYPE (defined in constants)               | Required |
+| sceneName                | `string`                         | ADA representation of the scene                              | Required |
+| background               | `string`                         | Image src to be rendered behind the surface areas            | Required |
+| surfaceUrls              | `string[]`                       | Array of masks to render surfaces.                           | Required |
+| surfaceIds               | `number[]`                       | Array of filter Ids for rendered surfaces.                   | Required |
+| surfaceHitAreas          | `string[]`                       | Array of masks which are clickable                           | Optional |
+| highlights               | `string[]`                       | Array of highlights to render per surface                    | Optional |
+| shadows                  | `string[]`                       | Array of shadows to render per surface                       | Optional |
+| imageValueCurve          | `string`                         | SVG RGB color adjustment applied as an SVG filter            | Optional |
+| interactive              | `boolean`                        | Whether or not hit areas are activated. Defaults to `false`  | Optional |
+| handleSurfaceInteraction | `(surfaceIndex: number) => void` | Callback fired when a hit area is clicked                    | Optional |
+| surfaceColors            | `Color[]`                        | Array of colors to render on surfaces                        | Optional |
+| adjustSvgHeight          | `boolean`                        | Whether or not to automatically adjust height based on width | Optional |
