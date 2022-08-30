@@ -1,5 +1,12 @@
 # PRISM Contribution Guide (WIP)
 
+- [Git Process](#git-process)
+- [Changeset](#changeset)
+  - [Creating a Changeset](#creating-a-changeset)
+- [Testing](#testing)
+- [Icons](#icons)
+
+
 ## Git Process
 
 WIP
@@ -21,3 +28,21 @@ and should be part of the final pull request.
 ## Testing
 
 WIP
+
+## Icons
+
+We use [FontAwesome Icons Pro](https://fontawesome.com/icons) across PRISM packages. Within facets (currently) all new icons needs to be added to the library in order to be 
+used. Within Toolkit, we're able to leverage dynamic imports. 
+
+To use FontAwesome Icons in Toolkit, we are leveraging dynamic imports. Example of dynamic imports below.
+
+**Note: Not all components have been migrated to use dynamic imports yet, all new development should be using dynamic imports.**  
+
+```javascript
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { solid, regular, brands } from '@fortawesome/fontawesome-svg-core/import.macro' // <-- import styles to be used
+
+<FontAwesomeIcon icon={solid('user-secret') />
+<FontAwesomeIcon icon={regular('coffee')} />
+<FontAwesomeIcon icon={brands('twitter')} />
+```

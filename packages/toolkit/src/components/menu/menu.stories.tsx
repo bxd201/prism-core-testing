@@ -1,7 +1,6 @@
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChevronUp, faBrush } from '@fortawesome/pro-solid-svg-icons'
-import { faLightbulb, faPlusCircle, faSquareFull } from '@fortawesome/pro-light-svg-icons'
+import { light, solid } from '@fortawesome/fontawesome-svg-core/import.macro'
 import Menu, { Tab, TabItem } from './menu'
 
 const Template = (args: { featureExclusions?: string[] }): JSX.Element => {
@@ -31,20 +30,25 @@ const Template = (args: { featureExclusions?: string[] }): JSX.Element => {
       content: (
         <>
           <span className='fa-layers fa-fw mr-3' style={{ backgroundColor: 'inherit' }}>
-            <FontAwesomeIcon icon={faSquareFull} size='xs' transform={{ rotate: 10 }} style={{ marginRight: '-3px' }} />
             <FontAwesomeIcon
-              icon={faSquareFull}
+              icon={light('square-full')}
+              size='xs'
+              transform={{ rotate: 10 }}
+              style={{ marginRight: '-3px' }}
+            />
+            <FontAwesomeIcon
+              icon={light('square-full')}
               size='sm'
               transform={{ rotate: 0 }}
               style={{ marginRight: '-1px', backgroundColor: 'inherit' }}
             />
             <FontAwesomeIcon
-              icon={faSquareFull}
+              icon={light('square-full')}
               size='1x'
               transform={{ rotate: 350 }}
               style={{ backgroundColor: 'inherit' }}
             />
-            <FontAwesomeIcon icon={faPlusCircle} size='xs' />
+            <FontAwesomeIcon icon={light('plus-circle')} size='xs' />
           </span>
           Explore Colors
         </>
@@ -56,7 +60,7 @@ const Template = (args: { featureExclusions?: string[] }): JSX.Element => {
     {
       content: (
         <>
-          <FontAwesomeIcon className='inline-block mb-0.5 mr-3' icon={faLightbulb} size='1x' />
+          <FontAwesomeIcon className='inline-block mb-0.5 mr-3' icon={light('lightbulb')} size='1x' />
           Get Inspired
         </>
       ),
@@ -84,8 +88,8 @@ const Template = (args: { featureExclusions?: string[] }): JSX.Element => {
       content: (
         <>
           <span className='fa-layers fa-fw mr-3'>
-            <FontAwesomeIcon icon={faSquareFull} />
-            <FontAwesomeIcon icon={faBrush} size='sm' transform={{ rotate: 320 }} />
+            <FontAwesomeIcon icon={light('square-full')} />
+            <FontAwesomeIcon icon={solid('brush')} size='sm' transform={{ rotate: 320 }} />
           </span>
           Paint a Photo
         </>
@@ -142,7 +146,7 @@ const Template = (args: { featureExclusions?: string[] }): JSX.Element => {
           className={`${defaultProps.className} px-5 py-1.5 sm:py-2 bg-white border border-solid border-black text-1.5xs hover:border-secondary ring-secondary focus:outline-none focus-visible:ring-2`}
         >
           CLOSE
-          <FontAwesomeIcon icon={faChevronUp} className='inline-block mb-1 ml-1.5' />
+          <FontAwesomeIcon icon={solid('chevron-up')} className='inline-block mb-1 ml-1.5' />
         </button>
       )}
       itemRenderer={(tabItems: TabItem) => (
