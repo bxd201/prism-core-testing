@@ -29,6 +29,11 @@ export interface SimpleTintableSceneProps {
   adjustSvgHeight?: boolean
 }
 
+export const TEST_ID = {
+  SURFACES_CONTAINER: 'SURFACES_CONTAINER',
+  HIT_AREA_CONTAINER: 'HIT_AREA_CONTAINER'
+}
+
 const SimpleTintableScene = (props: SimpleTintableSceneProps): JSX.Element => {
   const {
     sceneType,
@@ -71,7 +76,7 @@ const SimpleTintableScene = (props: SimpleTintableSceneProps): JSX.Element => {
   return (
     <>
       {/* The transitions group will assume the calculated height of the ROOT DIV and not necessarily the specified height of the parent div */}
-      <div>
+      <div data-testid={TEST_ID.SURFACES_CONTAINER}>
         <img className={`block w-full relative h-auto`} src={background} alt={sceneName} />
         <TransitionGroup className={`absolute top-0 h-full w-full`}>
           {surfaceUrls.map((surface: string, i): JSX.Element => {
@@ -136,7 +141,7 @@ const SimpleTintableScene = (props: SimpleTintableSceneProps): JSX.Element => {
           })}
         </TransitionGroup>
       </div>
-      <div className={`absolute left-0 top-0 w-full h-full`}>
+      <div className={`absolute left-0 top-0 w-full h-full`} data-testid={TEST_ID.HIT_AREA_CONTAINER}>
         {interactive
           ? surfaceHitAreas?.map((surface, i) => (
               // @ts-ignore

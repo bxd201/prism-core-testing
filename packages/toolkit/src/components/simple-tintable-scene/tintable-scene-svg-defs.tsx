@@ -2,18 +2,27 @@ import React from 'react'
 
 import { SCENE_TYPES } from '../../constants'
 
-export interface TintableSceneSurfaceProps {
-  maskImage: string,
-  maskId: string,
-  filterId: string,
-  type: string,
-  filterColor?: string,
-  highlightMap?: string,
-  shadowMap?: string,
+export interface TintableSceneSVGDefsProps {
+  maskImage: string
+  maskId: string
+  filterId: string
+  type: string
+  filterColor?: string
+  highlightMap?: string
+  shadowMap?: string
   filterImageValueCurve?: string
 }
 
-function TintableSceneSurface(props: TintableSceneSurfaceProps): JSX.Element {
+export const TEST_ID = {
+  CONTAINER: 'DEFS_CONTAINER',
+  FILTER_ROOM: 'FILTER_ROOM',
+  FILTER_AUTOMOTIVE: 'FILTER_AUTOMOTIVE',
+  CURVE_FUNC: 'CURVE_FUNC',
+  HIGHLIGHT_MAP: 'HIGHLIGHT_MAP',
+  SHADOW_MAP: 'SHADOW_MAP'
+}
+
+function TintableSceneSVGDefs(props: TintableSceneSVGDefsProps): JSX.Element {
   const { filterId, maskId, maskImage, filterColor, type, highlightMap, shadowMap, filterImageValueCurve } = props
   let content: JSX.Element = null
 
@@ -22,13 +31,25 @@ function TintableSceneSurface(props: TintableSceneSurfaceProps): JSX.Element {
     case SCENE_TYPES.ROOM: {
       content = (
         <>
-          <filter id={filterId} x='0' y='0' width='100%' height='100%' filterUnits='objectBoundingBox' primitiveUnits='objectBoundingBox' colorInterpolationFilters='sRGB'>
+          <filter
+            id={filterId}
+            x='0'
+            y='0'
+            width='100%'
+            height='100%'
+            filterUnits='objectBoundingBox'
+            primitiveUnits='objectBoundingBox'
+            colorInterpolationFilters='sRGB'
+            data-testid={TEST_ID.FILTER_ROOM}
+          >
             <feComponentTransfer in='SourceGraphic' result='adjustedHistogram'>
-              {filterImageValueCurve ? <>
-                <feFuncR type='table' tableValues={filterImageValueCurve} />
-                <feFuncG type='table' tableValues={filterImageValueCurve} />
-                <feFuncB type='table' tableValues={filterImageValueCurve} />
-              </> : null}
+              {filterImageValueCurve ? (
+                <>
+                  <feFuncR type='table' tableValues={filterImageValueCurve} data-testid={TEST_ID.CURVE_FUNC} />
+                  <feFuncG type='table' tableValues={filterImageValueCurve} data-testid={TEST_ID.CURVE_FUNC} />
+                  <feFuncB type='table' tableValues={filterImageValueCurve} data-testid={TEST_ID.CURVE_FUNC} />
+                </>
+              ) : null}
             </feComponentTransfer>
 
             <feFlood floodColor={filterColor} result='tintHue' />
@@ -45,13 +66,39 @@ function TintableSceneSurface(props: TintableSceneSurfaceProps): JSX.Element {
     case SCENE_TYPES.OBJECT: {
       content = (
         <>
-          <filter id={filterId} x='0' y='0' width='100%' height='100%' filterUnits='objectBoundingBox' primitiveUnits='objectBoundingBox' colorInterpolationFilters='sRGB'>
+          <filter
+            id={filterId}
+            x='0'
+            y='0'
+            width='100%'
+            height='100%'
+            filterUnits='objectBoundingBox'
+            primitiveUnits='objectBoundingBox'
+            colorInterpolationFilters='sRGB'
+            data-testid={TEST_ID.FILTER_AUTOMOTIVE}
+          >
             <feFlood floodColor={filterColor} result='tintHue' />
             {highlightMap ? (
-              <feImage xlinkHref={highlightMap} x='0' y='0' width='100%' height='100%' result='highlight-map' />
+              <feImage
+                xlinkHref={highlightMap}
+                x='0'
+                y='0'
+                width='100%'
+                height='100%'
+                result='highlight-map'
+                data-testid={TEST_ID.HIGHLIGHT_MAP}
+              />
             ) : null}
             {shadowMap ? (
-              <feImage xlinkHref={shadowMap} x='0' y='0' width='100%' height='100%' result='shadow-map' />
+              <feImage
+                xlinkHref={shadowMap}
+                x='0'
+                y='0'
+                width='100%'
+                height='100%'
+                result='shadow-map'
+                data-testid={TEST_ID.SHADOW_MAP}
+              />
             ) : null}
             <feBlend mode='screen' in2='highlight-map' in='tintHue' result='tint-highlight-blend' />
             <feBlend mode='multiply' in='shadow-map' in2='tint-highlight-blend' result='finished-tint' />
@@ -66,11 +113,7 @@ function TintableSceneSurface(props: TintableSceneSurfaceProps): JSX.Element {
     }
   }
 
-  return (
-    <defs>
-      {content}
-    </defs>
-  )
+  return <defs data-testid={TEST_ID.CONTAINER}>{content}</defs>
 }
 
-export default TintableSceneSurface
+export default TintableSceneSVGDefs
