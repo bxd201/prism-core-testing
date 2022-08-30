@@ -24,7 +24,10 @@ module.exports = {
         'bottom-20': '0 -80%'
       },
       borderWidth: {
-        1: '1px'
+        1: '1px',
+        3: '3px',
+        5: '5px',
+        6: '6px'
       },
       boxShadow: {
         swatch: 'inset 0 0 0 1px white,0 0 2px 0 rgba(0,0,0,0.25)'

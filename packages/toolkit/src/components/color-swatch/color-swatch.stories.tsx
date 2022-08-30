@@ -7,6 +7,7 @@ import { colorOptions, getRandomColorName } from '../../test-utils/test-utils'
 import { Color } from '../../types'
 
 interface ControlArgs {
+  flagged: boolean
   colorName: string
   buttonText?: string
   buttonType?: string
@@ -17,17 +18,18 @@ interface ControlArgs {
 }
 
 const Template = (args: ColorSwatchProps & ControlArgs): JSX.Element => {
-  const { buttonText, buttonType, height, width } = args
+  const { buttonText, buttonType, height, width, flagged, active, onSwatchButtonClick, onSwatchClick } = args
   const color: Color = colorOptions[args.colorName] || colorOptions['A La Mode']
   const iconType = { Add: faPlusCircle, Check: faCheckCircle, Info: faInfo }
 
   return (
     <ColorSwatch
-      active={args.active}
+      active={active}
+      flagged={flagged}
       aria-label={`${color.brandKey} ${color.colorNumber} ${color.name}`}
       color={color}
       className='border-white border-2 ring-primary focus:outline-none focus:ring-2'
-      onClick={args.onSwatchClick}
+      onClick={onSwatchClick}
       renderer={() => (
         <>
           <div className='relative'>
@@ -37,7 +39,7 @@ const Template = (args: ColorSwatchProps & ControlArgs): JSX.Element => {
           <div className='flex justify-between w-full p-2.5 absolute left-0 bottom-0'>
             <button
               className='flex items-center ring-primary focus:outline-none focus:ring-2'
-              onClick={args.onSwatchButtonClick}
+              onClick={onSwatchButtonClick}
             >
               {buttonType !== 'Just Text' && <FontAwesomeIcon className='text-xl' icon={iconType[buttonType]} />}
               {buttonText && (
@@ -58,44 +60,55 @@ const Template = (args: ColorSwatchProps & ControlArgs): JSX.Element => {
   )
 }
 
+const defaultArgs = {
+  active: true,
+  colorName: getRandomColorName(),
+  flagged: false
+}
+
 export const AddToCart = Template.bind({})
 AddToCart.args = {
-  active: true,
+  ...defaultArgs,
   buttonText: 'Add to Cart',
   buttonType: 'Add',
-  colorName: getRandomColorName(),
   height: 160,
   width: 160
 }
 
 export const Info = Template.bind({})
 Info.args = {
-  active: true,
+  ...defaultArgs,
   buttonText: '',
   buttonType: 'Info',
-  colorName: getRandomColorName(),
   height: 145,
   width: 145
 }
 
 export const OnlyLabel = Template.bind({})
 OnlyLabel.args = {
-  active: true,
+  ...defaultArgs,
   buttonText: '',
   buttonType: 'Just Text',
-  colorName: getRandomColorName(),
   height: 120,
   width: 120
 }
 
 export const ShowDetails = Template.bind({})
 ShowDetails.args = {
-  active: true,
+  ...defaultArgs,
   buttonText: 'Show Details',
   buttonType: 'Just Text',
-  colorName: getRandomColorName(),
   height: 200,
   width: 200
+}
+
+export const InactiveFlagged = Template.bind({})
+InactiveFlagged.args = {
+  ...defaultArgs,
+  flagged: true,
+  active: false,
+  height: 20,
+  width: 20
 }
 
 export default {
@@ -106,6 +119,9 @@ export default {
       control: false,
       description: 'active swatch focus',
       table: { defaultValue: { summary: `true` } }
+    },
+    flagged: {
+      description: 'whether or not inactive swatches are visibly marked, no effect on active swatches'
     },
     buttonText: { description: 'text displayed as part of the swatch button <br /> `storybook args only`' },
     buttonType: {
