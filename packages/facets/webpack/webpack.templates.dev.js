@@ -1,5 +1,4 @@
 const envVars = require('./constants.env-vars')
-require('dotenv').config()
 
 // define templates dev server origin
 require('./partial.setup.defineLocalPaths.templates')
@@ -11,7 +10,10 @@ const common = require('./webpack.templates.common.js')
 
 module.exports = merge(common, {
   mode: flags.mode,
-  plugins: [require('./partial.plugins.analyzeBundle').analyzeBundle, new WebpackBar()].filter(Boolean),
+  plugins: [
+    require('./partial.plugins.analyzeBundle').analyzeBundle,
+    new WebpackBar()
+  ].filter(Boolean),
   devServer: {
     allowedHosts: 'all',
     host: process.env[envVars.TEMPLATES_LOCAL_HOST],
