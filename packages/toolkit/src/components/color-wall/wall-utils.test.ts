@@ -2,11 +2,12 @@ import {
   determineScaleForAvailableWidth,
   findPositionInChunks,
   getAlignment,
-  getHeight,
+  getCumulativeTitleContainerSize,
   getIdCoordsInChunk,
   getInitialSwatchInChunk,
-  getOuterHeightAll,
   getPerimeterLevelTest,
+  getTitleContainerSize,
+  getTitleFontSize,
   getProximalSwatchesBySwatchId,
   needsToWrap
 } from './wall-utils'
@@ -18,16 +19,43 @@ describe('wall utilities', () => {
   beforeEach(() => {
     jest.clearAllMocks()
   })
-  test('getOuterHeight', () => {
-    const expected = 10
-    const result = getHeight(1, 1)
-    expect(result).toEqual(expected)
+
+  test('getTitleFontSize', () => {
+    expect(getTitleFontSize(1, 1)).toEqual(6)
+    expect(getTitleFontSize(2, 1)).toEqual(6)
+    expect(getTitleFontSize(3, 1)).toEqual(7.5)
+    expect(getTitleFontSize(1, 2)).toEqual(12)
+    expect(getTitleFontSize(2, 2)).toEqual(12)
+    expect(getTitleFontSize(3, 2)).toEqual(15)
+    expect(getTitleFontSize(1, 3)).toEqual(18)
+    expect(getTitleFontSize(2, 3)).toEqual(18)
+    expect(getTitleFontSize(3, 3)).toEqual(22.5)
+
+    // when constrained, title font size will be limited to 12-16px
+    expect(getTitleFontSize(1, 1, true)).toEqual(12)
+    expect(getTitleFontSize(2, 1, true)).toEqual(12)
+    expect(getTitleFontSize(3, 1, true)).toEqual(12)
+    expect(getTitleFontSize(1, 2, true)).toEqual(12)
+    expect(getTitleFontSize(2, 2, true)).toEqual(12)
+    expect(getTitleFontSize(3, 2, true)).toEqual(15)
+    expect(getTitleFontSize(1, 3, true)).toEqual(16)
+    expect(getTitleFontSize(2, 3, true)).toEqual(16)
+    expect(getTitleFontSize(3, 3, true)).toEqual(16)
   })
 
-  test('getOuterHeightAll', () => {
-    const expected = 28.5
-    const result = getOuterHeightAll([1], 1.9)
-    expect(result).toEqual(expected)
+  test('getTitleContainerSize', () => {
+    expect(getTitleContainerSize(1, 1)).toEqual(16.5)
+    expect(getTitleContainerSize(2, 1)).toEqual(16.5)
+    expect(getTitleContainerSize(3, 1)).toEqual(20.625)
+    expect(getTitleContainerSize(1, 2)).toEqual(33)
+    expect(getTitleContainerSize(2, 2)).toEqual(33)
+    expect(getTitleContainerSize(3, 2)).toEqual(41.25)
+  })
+
+  test('getCumulativeTitleContainerSize', () => {
+    expect(getCumulativeTitleContainerSize([1], 1)).toEqual(16.5)
+    expect(getCumulativeTitleContainerSize([2, 1], 1)).toEqual(33)
+    expect(getCumulativeTitleContainerSize([3, 2, 1], 1)).toEqual(53.625)
   })
 
   test('getPerimeterLevelTest', () => {

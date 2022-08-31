@@ -16,5 +16,5 @@ export const TITLE_SIZE_RATIOS = {
   3: 0.5 // l3 should be styled bold weight, and is larger than l1 and l2
 }
 
-export const TITLE_SIZE_MIN = 10
+export const TITLE_SIZE_MIN = 12
 export const TITLE_SIZE_MAX = 16

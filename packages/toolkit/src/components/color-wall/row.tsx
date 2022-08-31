@@ -6,7 +6,7 @@ import useEffectAfterMount from '../../hooks/useEffectAfterMount'
 import { initialState, reducerRow, reducerColumn } from './shared-reducers-and-computers'
 import { ColorWallStructuralPropsContext } from './color-wall-props-context'
 import { BASE_SWATCH_SIZE } from './constants'
-import { getOuterHeightAll, getAlignment } from './wall-utils'
+import { getCumulativeTitleContainerSize, getAlignment } from './wall-utils'
 import { RowShape } from './types'
 
 interface RowProps {
@@ -45,8 +45,9 @@ function Row(props: RowProps): JSX.Element {
       updateWidth(outerWidthWrapped + 2 * padH)
     }
   }, [outerWidth, outerWidthWrapped, padH, wrapThisRow])
+
   useEffectAfterMount(() => {
-    const titlesHeight = getOuterHeightAll(
+    const titlesHeight = getCumulativeTitleContainerSize(
       titles.map(({ level }) => level),
       scale
     )
@@ -57,8 +58,9 @@ function Row(props: RowProps): JSX.Element {
       updateHeight(outerHeightWrapped + titlesHeight + 2 * padV)
     }
   }, [outerHeight, outerHeightWrapped, padV, wrapThisRow])
+
   return (
-    <div
+    <section
       className={`flex flex-row items-stretch relative ${getAlignment(align)} ${
         wrapThisRow ? 'flex-wrap' : 'flex-nowrap'
       }`}
@@ -121,7 +123,7 @@ function Row(props: RowProps): JSX.Element {
             )
           }
         })}
-    </div>
+    </section>
   )
 }
 

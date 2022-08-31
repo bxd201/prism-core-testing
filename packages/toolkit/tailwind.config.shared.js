@@ -75,7 +75,9 @@ module.exports = {
         }
       },
       margin: {
-        4.5: '1.125rem'
+        4.5: '1.125rem',
+        'em-0.5': '0.5em',
+        'em-1': '1em'
       },
       padding: {
         '2/4': '50%',
