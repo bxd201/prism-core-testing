@@ -20,15 +20,15 @@ import { copySurfaceColors, createMiniColorFromColor } from './util'
 import Propper from '../Propper/Propper'
 
 export type SingleTintableSceneViewProps = {
-  surfaceColorsFromParents: [],
+  surfaceColorsFromParents: Array<Color | null>,
   showClearButton?: boolean,
   customButton?: ComponentType,
   handleSurfacePaintedState?: Function,
   allowVariantSwitch?: boolean,
   interactive?: boolean,
   selectedSceneUid: string,
-  scenesCollection: FlatScene,
-  variantsCollection: FlatVariant,
+  scenesCollection: Array<FlatScene | void>,
+  variantsCollection: Array<FlatVariant | void>,
   // This prop will only show the named variant here.
   selectedVariantName?: string,
   showThumbnail?: boolean,
@@ -44,21 +44,35 @@ const tintableViewBaseClassName = 'tintable-view'
 
 const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
   const {
-    showClearButton, customButton, handleSurfacePaintedState, allowVariantSwitch, interactive,
-    surfaceColorsFromParents, selectedSceneUid, scenesCollection, variantsCollection, selectedVariantName, showThumbnail,
-    adjustSvgHeight, buttonPosition, customToggle, spinner
+    showClearButton,
+    customButton,
+    handleSurfacePaintedState,
+    allowVariantSwitch,
+    interactive,
+    surfaceColorsFromParents,
+    selectedSceneUid,
+    scenesCollection,
+    variantsCollection,
+    selectedVariantName,
+    showThumbnail,
+    adjustSvgHeight,
+    buttonPosition,
+    customToggle,
+    spinner
   } = props
   const [selectedScene, setSelectedScene] = useState(null)
   const [sceneDims, setSceneDims] = useState({ sceneWidth: 1200, sceneHeight: 725 })
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0)
   const [sceneVariants, setSceneVariants] = useState([])
   const [backgroundLoaded, setBackgroundLoaded] = useState(false)
-  const [surfaceColors, setSurfaceColors] = useState(surfaceColorsFromParents?.map(color => {
-    return color ? { ...color } : null
-  }) || [])
+  const [surfaceColors, setSurfaceColors] = useState(
+    surfaceColorsFromParents?.map((color) => {
+      return color ? { ...color } : null
+    }) || []
+  )
 
   const [backgroundUrls, setBackgroundUrls] = useState([])
-  const livePaletteColors = useSelector(state => state.lp)
+  const livePaletteColors = useSelector((state) => state.lp)
   const isScenePolluted = (paintedSurfaces) => {
     return !!paintedSurfaces.reduce((acc, curr) => (curr ? 1 : 0) + acc, 0)
   }
@@ -76,19 +90,23 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
     // Init component internal state
     if (selectedSceneUid && variantsCollection && !backgroundUrls.length) {
       setBackgroundLoaded(false)
-      let variants = variantsCollection.filter(variant => variant.sceneUid === selectedSceneUid)
+      let variants = variantsCollection.filter((variant) => variant.sceneUid === selectedSceneUid)
       if (selectedVariantName) {
-        variants = variantsCollection.filter(variant => variant.sceneUid === selectedSceneUid && variant.variantName === selectedVariantName)
+        variants = variantsCollection.filter(
+          (variant) => variant.sceneUid === selectedSceneUid && variant.variantName === selectedVariantName
+        )
       }
       const { surfaces } = variants[selectedVariantIndex]
-      setSelectedScene(scenesCollection.find(scene => scene.uid === selectedSceneUid))
+      setSelectedScene(scenesCollection.find((scene) => scene.uid === selectedSceneUid))
       setSceneVariants(variants)
       if (surfaceColors.length) {
         setSurfaceColors(surfaceColorsFromParents)
       } else {
         setSurfaceColors(surfaces.map((surface, i) => null))
       }
-      const imageUrls = showThumbnail ? variants.map(variant => variant.thumb) : variants.map(variant => variant.image)
+      const imageUrls = showThumbnail
+        ? variants.map((variant) => variant.thumb)
+        : variants.map((variant) => variant.image)
       setBackgroundUrls(imageUrls)
     }
   }, [scenesCollection, variantsCollection, selectedSceneUid])
@@ -106,14 +124,21 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
     }
   }, [surfaceColors, sceneVariants, selectedSceneUid, selectedVariantIndex])
 
-  const getTintableScene = (backgroundImageUrl: string, variant: FlatVariant, scene: FlatScene, colors: Color[], lpColors, adjustSvg: boolean) => {
+  const getTintableScene = (
+    backgroundImageUrl: string,
+    variant: FlatVariant,
+    scene: FlatScene,
+    colors: Color[],
+    lpColors,
+    adjustSvg: boolean
+  ) => {
     const surfaceUrls = []
     const surfaceIds = []
     const highlights = []
     const shadows = []
     const surfaceHitAreas = []
 
-    variant.surfaces.forEach(surface => {
+    variant.surfaces.forEach((surface) => {
       const { surfaceBlobUrl, id, highlight, hitArea, shadow } = surface
       surfaceUrls.push(surfaceBlobUrl || null)
       surfaceIds.push(id || null)
@@ -176,7 +201,7 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
   const clearSurfaces = (e: SyntheticEvent) => {
     e.preventDefault()
     e.stopPropagation()
-    setSurfaceColors(sceneVariants[selectedVariantIndex].surfaces.map(surface => null))
+    setSurfaceColors(sceneVariants[selectedVariantIndex].surfaces.map((surface) => null))
   }
 
   const changeVariant = (e: SyntheticEvent) => {
@@ -186,8 +211,15 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
     return setSelectedVariantIndex(0)
   }
 
-  const getCustomButtons = (btn: Component, toggle: Function, shouldShowVariants, variants: FlatVariant[], variantIndex: number, position: string = BUTTON_POSITIONS.BOTTOM) => {
-    const variantsList = variants.map(variant => {
+  const getCustomButtons = (
+    btn: Component,
+    toggle: Function,
+    shouldShowVariants,
+    variants: FlatVariant[],
+    variantIndex: number,
+    position: string = BUTTON_POSITIONS.BOTTOM
+  ) => {
+    const variantsList = variants.map((variant) => {
       return {
         icon: variant.variantName === SCENE_VARIANTS.DAY ? 'sun' : 'moon-stars'
       }
@@ -196,21 +228,32 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
     const thisVariant = variants?.length ? variants[variantIndex] : null
     const metadata = { sceneUid: thisVariant?.sceneUid, currentVariant: thisVariant?.variantName }
 
-    const getToggle = (vIndex: number, vList: {icon: string}[], vHandler: Function, metadata: any) => {
+    const getToggle = (vIndex: number, vList: { icon: string }[], vHandler: Function, metadata: any) => {
       if (customToggle) {
         return customToggle(vIndex, vList, vHandler, metadata)
       }
 
-      return <MultipleVariantSwitch onChange={vHandler} activeVariantIndex={variantIndex} iconType={'fa'} variantsList={variantsList} />
+      return (
+        <MultipleVariantSwitch
+          onChange={vHandler}
+          activeVariantIndex={variantIndex}
+          iconType={'fa'}
+          variantsList={variantsList}
+        />
+      )
     }
     return (
-      <div className={`${tintableViewBaseClassName}__custom-btn${position === BUTTON_POSITIONS.BOTTOM ? '--bottom' : '--top'}`}>
+      <div
+        className={`${tintableViewBaseClassName}__custom-btn${
+          position === BUTTON_POSITIONS.BOTTOM ? '--bottom' : '--top'
+        }`}
+      >
         {shouldShowVariants ? getToggle(variantIndex, variantsList, changeVariant, metadata) : null}
         {btn}
       </div>
     )
   }
-  const handleImagesLoaded = imageRefs => {
+  const handleImagesLoaded = (imageRefs) => {
     setBackgroundLoaded(true)
   }
 
@@ -218,18 +261,43 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
     <>
       <div className={`${tintableViewBaseClassName}__wrapper`}>
         <BatchImageLoader key={selectedSceneUid} urls={backgroundUrls} handleImagesLoaded={handleImagesLoaded} />
-        {backgroundLoaded
-          ? getTintableScene(backgroundUrls[selectedVariantIndex], sceneVariants[selectedVariantIndex], selectedScene, surfaceColors, livePaletteColors, adjustSvgHeight)
-          : <Propper vPosition={Propper.V_POSITION.CENTER} propSize={`${sceneDims.sceneHeight / sceneDims.sceneWidth * 100}%`}>
+        {backgroundLoaded ? (
+          getTintableScene(
+            backgroundUrls[selectedVariantIndex],
+            sceneVariants[selectedVariantIndex],
+            selectedScene,
+            surfaceColors,
+            livePaletteColors,
+            adjustSvgHeight
+          )
+        ) : (
+          <Propper
+            vPosition={Propper.V_POSITION.CENTER}
+            propSize={`${(sceneDims.sceneHeight / sceneDims.sceneWidth) * 100}%`}
+          >
             {spinner || <CircleLoader />}
-          </Propper>}
-        {backgroundLoaded && showClearButton && isScenePolluted(surfaceColors)
-          ? <button className={`${tintableViewBaseClassName}__clear-areas-btn`} onClick={clearSurfaces}>
-          <div className={`${tintableViewBaseClassName}__clear-areas-btn__icon`}><FontAwesomeIcon size='lg' icon={['fa', 'eraser']} /></div>
-          <div className={`${tintableViewBaseClassName}__clear-areas-btn__text`}><FormattedMessage id='CLEAR_AREAS' /></div>
-        </button>
+          </Propper>
+        )}
+        {backgroundLoaded && showClearButton && isScenePolluted(surfaceColors) ? (
+          <button className={`${tintableViewBaseClassName}__clear-areas-btn`} onClick={clearSurfaces}>
+            <div className={`${tintableViewBaseClassName}__clear-areas-btn__icon`}>
+              <FontAwesomeIcon size='lg' icon={['fa', 'eraser']} />
+            </div>
+            <div className={`${tintableViewBaseClassName}__clear-areas-btn__text`}>
+              <FormattedMessage id='CLEAR_AREAS' />
+            </div>
+          </button>
+        ) : null}
+        {backgroundLoaded
+          ? getCustomButtons(
+              customButton,
+              customToggle,
+              allowVariantSwitch && sceneVariants?.length > 1,
+              sceneVariants,
+              selectedVariantIndex,
+              buttonPosition
+            )
           : null}
-        {backgroundLoaded ? getCustomButtons(customButton, customToggle, (allowVariantSwitch && sceneVariants?.length > 1), sceneVariants, selectedVariantIndex, buttonPosition) : null}
       </div>
     </>
   )

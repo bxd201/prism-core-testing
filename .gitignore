@@ -33,3 +33,6 @@ yarn-error.log
 # Yarn
 .yarn/cache
 .yarn/install-state.gz
+
+# Env
+.env
