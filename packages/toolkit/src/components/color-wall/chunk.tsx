@@ -37,6 +37,7 @@ function Chunk({ data, id = '', updateHeight, updateWidth }: ChunkProps): JSX.El
   const thisEl = useRef()
   const swatchRefs = useRef([])
   const swatchRefsMap = useRef({})
+
   useEffect(() => {
     const results = computeChunk(data, structuralCtx)
 
@@ -61,6 +62,7 @@ function Chunk({ data, id = '', updateHeight, updateWidth }: ChunkProps): JSX.El
       setSwatchWidth(swatchWidth)
     }
   }, [data, structuralCtx])
+
   useEffect(() => {
     addChunk({
       chunkRef: thisEl,
@@ -89,7 +91,7 @@ function Chunk({ data, id = '', updateHeight, updateWidth }: ChunkProps): JSX.El
   }
 
   return (
-    <div
+    <section
       ref={thisEl}
       className={`flex flex-col items-stretch justify-between ${isZoomed ? 'focus-within:outline-none' : ''}`}
       data-testid='wall-chunk'
@@ -128,7 +130,7 @@ function Chunk({ data, id = '', updateHeight, updateWidth }: ChunkProps): JSX.El
           })}
         </div>
       ))}
-    </div>
+    </section>
   )
 }
 

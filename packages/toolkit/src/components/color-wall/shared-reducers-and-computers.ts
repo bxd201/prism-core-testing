@@ -1,6 +1,6 @@
 import { colorWallStructuralPropsDefault } from './color-wall-props-context'
 import { BASE_SWATCH_SIZE } from './constants'
-import { getOuterHeightAll } from './wall-utils'
+import { getCumulativeTitleContainerSize } from './wall-utils'
 import { Dimensions } from './types'
 
 export const initialState = {
@@ -35,7 +35,7 @@ export function computeChunk(data, ctx = colorWallStructuralPropsDefault): Chunk
 
     const sHeight = swatchHeightScale * BASE_SWATCH_SIZE * scale
     const thisVertSpace = spaceV * BASE_SWATCH_SIZE * scale
-    const titlesHeight = getOuterHeightAll(
+    const titlesHeight = getCumulativeTitleContainerSize(
       titles.map(({ level }) => level),
       scale
     )
@@ -88,7 +88,7 @@ export function reducerColumn(state, action): Dimensions {
     }
 
     default:
-      throw new Error()
+      throw new Error('No type provided to reducerColumn')
   }
 }
 export function computeColumn(data, ctx = colorWallStructuralPropsDefault): Dimensions {
@@ -108,7 +108,7 @@ export function computeColumn(data, ctx = colorWallStructuralPropsDefault): Dime
         return null
       })
       .filter(Boolean)
-    const titlesHeight = getOuterHeightAll(
+    const titlesHeight = getCumulativeTitleContainerSize(
       titles.map(({ level }) => level),
       scale
     )
@@ -133,6 +133,7 @@ export function computeColumn(data, ctx = colorWallStructuralPropsDefault): Dime
       outerWidth: state2.outerWidth + padH * 2,
       outerHeight: state2.outerHeight + titlesHeight + padV * 2
     }
+
     return state3
   }
 
@@ -165,7 +166,7 @@ export function reducerRow(state, action): Dimensions {
     }
 
     default:
-      throw new Error()
+      throw new Error('No type provided to reducerRow')
   }
 }
 export function computeRow(data, ctx = colorWallStructuralPropsDefault): Dimensions {
@@ -188,7 +189,7 @@ export function computeRow(data, ctx = colorWallStructuralPropsDefault): Dimensi
       return null
     })
     .filter(Boolean)
-  const titlesHeight = getOuterHeightAll(
+  const titlesHeight = getCumulativeTitleContainerSize(
     titles.map(({ level }) => level),
     scale
   )

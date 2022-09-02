@@ -47,20 +47,26 @@ interface ProximalSwatch {
   }
 }
 
-export function getHeight(level: number = 1, scale: number = 1): number {
+export function getTitleFontSize(level: number = 1, scale: number = 1, constrained: boolean = false): number {
   const sizeMultiplier = TITLE_SIZE_RATIOS[level]
   const targetSize = BASE_SWATCH_SIZE * scale * sizeMultiplier
+
+  if (!constrained) {
+    return targetSize
+  }
+
+  // limit our font size to a max of TITLE_SIZE_MAX
   const minSize = Math.max(TITLE_SIZE_MIN, targetSize)
   const maxSize = Math.min(TITLE_SIZE_MAX, minSize)
   return maxSize
 }
 
-export function getOuterHeight(level: number = 1, scale: number = 1): number {
-  return getHeight(level, scale) * 2.5
+export function getTitleContainerSize(level: number = 1, scale: number = 1): number {
+  return getTitleFontSize(level, scale, false) * 2.75
 }
 
-export function getOuterHeightAll(levels: number[] = [], scale: number = 1): number {
-  return levels.reduce((prev, next) => prev + getOuterHeight(next, scale), 0)
+export function getCumulativeTitleContainerSize(levels: number[] = [], scale: number = 1): number {
+  return levels.reduce((prev, next) => prev + getTitleContainerSize(next, scale), 0)
 }
 
 // TODO: this should actually return a memoized function which will return the perimeter level when provided an ID

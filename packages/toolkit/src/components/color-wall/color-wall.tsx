@@ -432,7 +432,7 @@ function ColorWall(props: WallProps): JSX.Element {
   return (
     <ColorWallPropsContext.Provider value={wallCtx}>
       <ColorWallStructuralPropsContext.Provider value={structuralWallCtx}>
-        <div ref={wallRef} className='relative block'>
+        <section ref={wallRef} className='relative block'>
           {!hasFocus ? (
             <button aria-hidden className='sr-only' onFocus={handleTabInBeginning} />
           ) : (
@@ -483,6 +483,7 @@ function ColorWall(props: WallProps): JSX.Element {
                     className={`flex flex-row justify-center items-stretch absolute ${
                       wrapThisWall ? 'flex-wrap' : 'flex-nowrap'
                     }`}
+                    data-testid='wall-first-column-container'
                     style={{
                       width: (wallW ?? 0) * scale,
                       height: (wallH ?? 0) * scale,
@@ -496,7 +497,6 @@ function ColorWall(props: WallProps): JSX.Element {
                           key={i}
                           id={i}
                           data={child}
-                          data-testid='wall-column'
                           updateWidth={noop}
                           updateHeight={noop}
                         />
@@ -518,7 +518,7 @@ function ColorWall(props: WallProps): JSX.Element {
               onFocus={(e) => e.target.blur()}
             />
           )}
-        </div>
+        </section>
       </ColorWallStructuralPropsContext.Provider>
     </ColorWallPropsContext.Provider>
   )

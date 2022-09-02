@@ -6,8 +6,9 @@ import useEffectAfterMount from '../../hooks/useEffectAfterMount'
 import { initialState, reducerColumn } from './shared-reducers-and-computers'
 import { ColorWallStructuralPropsContext } from './color-wall-props-context'
 import { BASE_SWATCH_SIZE } from './constants'
-import { getOuterHeightAll, getAlignment } from './wall-utils'
+import { getCumulativeTitleContainerSize, getAlignment } from './wall-utils'
 import { ColumnShape } from './types'
+
 
 interface ColProps {
   data: ColumnShape
@@ -24,13 +25,15 @@ function Column(props: ColProps): JSX.Element {
   const [{ outerWidth, outerHeight }, dispatch] = useReducer(reducerColumn, initialState)
   const padH = scale * BASE_SWATCH_SIZE * spaceH
   const padV = scale * BASE_SWATCH_SIZE * spaceV
+
   useEffectAfterMount(() => {
     if (!isNaN(outerWidth)) {
       updateWidth(outerWidth + 2 * padH)
     }
   }, [outerWidth, padH])
+
   useEffectAfterMount(() => {
-    const titlesHeight = getOuterHeightAll(
+    const titlesHeight = getCumulativeTitleContainerSize(
       titles.map(({ level }) => level),
       scale
     )
@@ -39,8 +42,9 @@ function Column(props: ColProps): JSX.Element {
       updateHeight(outerHeight + titlesHeight + 2 * padV)
     }
   }, [outerHeight, padV])
+
   return (
-    <div
+    <section
       className={`flex flex-col flex-nowrap items-stretch relative ${getAlignment(align)}`}
       data-testid='wall-column'
       style={{
@@ -88,18 +92,18 @@ function Column(props: ColProps): JSX.Element {
                     index: i
                   })
                 }
-                updateHeight={(v) =>
+                updateHeight={(v) => {
                   dispatch({
                     type: 'height',
                     amt: v,
                     index: i
                   })
-                }
+                }}
               />
             )
           }
         })}
-    </div>
+    </section>
   )
 }
 

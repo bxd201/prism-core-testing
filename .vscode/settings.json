@@ -58,5 +58,9 @@
     "**/dist/**": true,
     "**/flow-typed/**": true
   },
-  "eslint.workingDirectories": ["packages/facets", "packages/toolkit", "packages/prism-demo", "packages/prism-docs"]
+  "eslint.workingDirectories": ["packages/facets", "packages/toolkit", "packages/prism-demo", "packages/prism-docs"],
+  "search.exclude": {
+    "**/coverage/**": true,
+    "**/dist/**": true,
+  },
 }
