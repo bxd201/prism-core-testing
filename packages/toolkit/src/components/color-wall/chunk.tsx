@@ -18,7 +18,6 @@ function Chunk({ data, id = '', updateHeight, updateWidth }: ChunkProps): JSX.El
   const { align = 'start' } = chunkProps
   const ctx = useContext(ColorWallPropsContext)
   const structuralCtx = useContext(ColorWallStructuralPropsContext)
-  const { scale } = structuralCtx
   const {
     addChunk,
     activeSwatchId,
@@ -99,7 +98,7 @@ function Chunk({ data, id = '', updateHeight, updateWidth }: ChunkProps): JSX.El
         padding: `${vertSpace}px ${horzSpace}px`
       }}
     >
-      {titles?.length ? <Titles data={titles} referenceScale={scale} /> : null}
+      {titles?.length ? <Titles data={titles} /> : null}
       {data.children.map((row, i: number) => (
         <div
           className={`flex flex-nowrap items-center w-full relative ${getAlignment(align)}`}

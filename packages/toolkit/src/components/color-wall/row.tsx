@@ -73,7 +73,7 @@ function Row(props: RowProps): JSX.Element {
         padding: `${padV}px ${padH}px`
       }}
     >
-      {titles?.length ? <Titles data={titles} referenceScale={scale} /> : null}
+      {titles?.length ? <Titles data={titles} /> : null}
       {children?.length &&
         // eslint-disable-next-line array-callback-return
         children.map((child, i: number) => {

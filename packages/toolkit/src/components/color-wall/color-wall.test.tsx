@@ -76,7 +76,7 @@ const wallProps = {
   activeColorId: null,
   onActivateColor: (id) => setActiveColorId(id),
   key: 1,
-  width: 1
+  width: 1000
 }
 
 describe('Color Wall', () => {
@@ -85,7 +85,7 @@ describe('Color Wall', () => {
     jest.resetAllMocks()
   })
 
-  test('should render the correct amount of columns, rows, chunks and titles', async () => {
+  test('should render the correct amount of columns, rows, chunks and titles when rendered at desktop size', async () => {
     // ARRANGE
     const { getAllByTestId } = await render(<ColorWall {...wallProps} />)
 
@@ -100,6 +100,23 @@ describe('Color Wall', () => {
     expect(row).toHaveLength(10)
     expect(chunk).toHaveLength(9)
     expect(title).toHaveLength(11)
+  })
+
+  test('should render the correct amount of columns, rows, chunks and titles when rendered at narrow size', async () => {
+    // ARRANGE
+    const { getAllByTestId } = await render(<ColorWall {...wallProps} width={320} />)
+
+    // ACT
+    const column = getAllByTestId('wall-column')
+    const row = getAllByTestId('wall-row')
+    const chunk = getAllByTestId('wall-chunk')
+    const title = getAllByTestId('wall-title')
+
+    // ASSERT
+    expect(column).toHaveLength(5)
+    expect(row).toHaveLength(10)
+    expect(chunk).toHaveLength(9)
+    expect(title).toHaveLength(10)
   })
 
   test('should have the correct user defined styles', async () => {

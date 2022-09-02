@@ -352,7 +352,8 @@ export const mockWallShape: WallShape = {
                 {
                   align: 'left',
                   level: 1,
-                  value: '   '
+                  value: '   ',
+                  hideWhenWrapped: true
                 }
               ],
               childProps: {}
