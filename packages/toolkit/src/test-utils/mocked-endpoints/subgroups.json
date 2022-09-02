@@ -1,0 +1,42 @@
+[
+  {
+    "id": "sg8",
+    "shapeId": "sg8",
+    "name": "Red"
+  },
+  {
+    "id": "sg9",
+    "shapeId": "sg9",
+    "name": "Orange"
+  },
+  {
+    "id": "sg10",
+    "shapeId": "sg10",
+    "name": "Yellow"
+  },
+  {
+    "id": "sg11",
+    "shapeId": "sg11",
+    "name": "Green"
+  },
+  {
+    "id": "sg12",
+    "shapeId": "sg12",
+    "name": "Blue"
+  },
+  {
+    "id": "sg13",
+    "shapeId": "sg13",
+    "name": "Purple"
+  },
+  {
+    "id": "sg14",
+    "shapeId": "sg14",
+    "name": "Neutral"
+  },
+  {
+    "id": "sg15",
+    "shapeId": "sg15",
+    "name": "White & Pastel"
+  }
+]

@@ -1,0 +1,66 @@
+[
+  {
+    "default": false,
+    "id": "g13",
+    "shapeId": "g13",
+    "name": "Top 50 Colors",
+    "prime": false,
+    "subgroups": []
+  },
+  {
+    "default": false,
+    "id": "g14",
+    "shapeId": "g14",
+    "name": "Emerald Designer Edition",
+    "prime": false,
+    "subgroups": []
+  },
+  {
+    "default": false,
+    "id": "g15",
+    "shapeId": "g15",
+    "name": "Living Well Colors",
+    "prime": false,
+    "subgroups": []
+  },
+  {
+    "default": false,
+    "id": "g16",
+    "shapeId": "g16",
+    "name": "Color Forecast",
+    "prime": false,
+    "subgroups": []
+  },
+  {
+    "default": false,
+    "id": "g17",
+    "shapeId": "g17",
+    "name": "Color ID",
+    "prime": false,
+    "subgroups": []
+  },
+  {
+    "default": false,
+    "id": "g18",
+    "shapeId": "g18",
+    "name": "Historic Colors",
+    "prime": false,
+    "subgroups": []
+  },
+  {
+    "default": true,
+    "id": "g19",
+    "shapeId": "g19",
+    "name": "Sherwin-Williams Colors",
+    "prime": true,
+    "subgroups": ["sg20", "sg21", "sg22", "sg23", "sg24", "sg25", "sg26", "sg27"]
+  },
+  {
+    "default": false,
+    "id": "g28",
+    "shapeId": "g28",
+    "name": "Timeless Colors",
+    "prime": false,
+    "subgroups": []
+  }
+]

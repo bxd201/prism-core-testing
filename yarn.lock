@@ -7446,6 +7446,7 @@ __metadata:
     "@testing-library/jest-dom": 5.16.4
     "@testing-library/react": 13.3.0
     "@testing-library/user-event": 14.4.3
+    "@thoughtbot/tailwindcss-aria-attributes": 0.2.0
     "@types/jest": 28.1.2
     "@types/lodash": 4.14.178
     "@types/node": 18.7.6
@@ -9594,6 +9595,13 @@ __metadata:
   peerDependencies:
     "@testing-library/dom": ">=7.21.4"
   checksum: 852c48ea6db1c9471b18276617c84fec4320771e466cd58339a732ca3fd73ad35e5a43ae14f51af51a8d0a150dcf60fcaab049ef367871207bea8f92c4b8195e
+  languageName: node
+  linkType: hard
+
+"@thoughtbot/tailwindcss-aria-attributes@npm:0.2.0":
+  version: 0.2.0
+  resolution: "@thoughtbot/tailwindcss-aria-attributes@npm:0.2.0"
+  checksum: 97a81633974bead3d1edf791eb65808d8f92c98a3d7074a222bee8c788dbf1bcd8477d567351e3ec8bb7501adc7efc286793785aee79adcf67d9831afb5f0e9e
   languageName: node
   linkType: hard
 
