@@ -1,5 +1,6 @@
 const path = require('path')
 const envVars = require('./constants.env-vars')
+require('dotenv').config()
 
 // flags
 const mode = process.env[envVars.NODE_ENV] || 'development'
