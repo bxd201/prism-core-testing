@@ -23,7 +23,7 @@ export function computeChunk(data, ctx = colorWallStructuralPropsDefault): Chunk
   const { props: selfProps = {}, childProps = {}, children, titles = [] } = data
   const { spaceH = 0, spaceV = 0 } = selfProps
   const { height: swatchHeightScale = 1, width: swatchWidthScale = 1 } = childProps
-  const { scale } = ctx
+  const { scale, isWrapped } = ctx
 
   if (children.length && swatchWidthScale > 0 && swatchHeightScale > 0 && BASE_SWATCH_SIZE > 0 && scale > 0) {
     const sWidth = swatchWidthScale * BASE_SWATCH_SIZE * scale
@@ -36,7 +36,7 @@ export function computeChunk(data, ctx = colorWallStructuralPropsDefault): Chunk
     const sHeight = swatchHeightScale * BASE_SWATCH_SIZE * scale
     const thisVertSpace = spaceV * BASE_SWATCH_SIZE * scale
     const titlesHeight = getCumulativeTitleContainerSize(
-      titles.map(({ level }) => level),
+      titles.filter(titleFilterGenerator(isWrapped)).map(({ level }) => level),
       scale
     )
 
@@ -92,7 +92,7 @@ export function reducerColumn(state, action): Dimensions {
   }
 }
 export function computeColumn(data, ctx = colorWallStructuralPropsDefault): Dimensions {
-  const { scale } = ctx
+  const { scale, isWrapped } = ctx
   const { children, props = {}, titles = [] } = data
   const { spaceH = 0, spaceV = 0 } = props
 
@@ -109,7 +109,7 @@ export function computeColumn(data, ctx = colorWallStructuralPropsDefault): Dime
       })
       .filter(Boolean)
     const titlesHeight = getCumulativeTitleContainerSize(
-      titles.map(({ level }) => level),
+      titles.filter(titleFilterGenerator(isWrapped)).map(({ level }) => level),
       scale
     )
     const padH = scale * BASE_SWATCH_SIZE * spaceH
@@ -190,7 +190,7 @@ export function computeRow(data, ctx = colorWallStructuralPropsDefault): Dimensi
     })
     .filter(Boolean)
   const titlesHeight = getCumulativeTitleContainerSize(
-    titles.map(({ level }) => level),
+    titles.filter(titleFilterGenerator(isWrapped)).map(({ level }) => level),
     scale
   )
   const padH = scale * BASE_SWATCH_SIZE * spaceH
@@ -252,4 +252,14 @@ export function computeWall(data, ctx = colorWallStructuralPropsDefault): Dimens
   }
 
   return null
+}
+
+function titleFilterGenerator(isWrapped: boolean) {
+  return function titleFilter(title) {
+    const { hideWhenWrapped = false } = title
+    if (hideWhenWrapped && isWrapped) {
+      return false
+    }
+    return true
+  }
 }

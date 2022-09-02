@@ -9,7 +9,6 @@ import { BASE_SWATCH_SIZE } from './constants'
 import { getCumulativeTitleContainerSize, getAlignment } from './wall-utils'
 import { ColumnShape } from './types'
 
-
 interface ColProps {
   data: ColumnShape
   updateWidth?: (width: number) => void
@@ -53,7 +52,7 @@ function Column(props: ColProps): JSX.Element {
         padding: `${padV}px ${padH}px`
       }}
     >
-      {titles?.length ? <Titles data={titles} referenceScale={scale} /> : null}
+      {titles?.length ? <Titles data={titles} /> : null}
       {children?.length &&
         // eslint-disable-next-line array-callback-return
         children.map((child, i: number) => {

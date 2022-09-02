@@ -37,6 +37,7 @@ export interface TitleShape {
   align: 'left' | 'center' | 'right'
   level: 1 | 2 | 3
   value: string
+  hideWhenWrapped?: boolean
 }
 
 export type Items = number[]
