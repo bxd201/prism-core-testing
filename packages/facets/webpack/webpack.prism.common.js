@@ -16,6 +16,7 @@ const moduleRuleJsx = require('./partial.module.rules.jsx')
 const { cssModuleRules, cssRules, sassModuleRules, sassRules } = require('./partial.module.rules.sass')
 const envVars = require('./constants.env-vars')
 const { contractString } = require('./utils')
+require('dotenv').config()
 
 // create constants that correlate to environment variables to be injected
 const APP_VERSION = process.env.npm_package_version
@@ -332,15 +333,17 @@ module.exports = {
             name: depName,
             main: depName === flags.mainEntryPointName, // flags the main bundle in case we need to identify it
             // exclude any sourcemap (.map) files
-            dependencies: sortBy(entrypoints[depName]
-              .filter((filename) => !filename.match(/\.map$/))
-              .map(v => {
-                return {
-                  sort: v.indexOf('toolkit') >= 0 ? 1 : 0,
-                  value: v
-                }
-              }), v => v.sort)
-              .map(v => v.value)
+            dependencies: sortBy(
+              entrypoints[depName]
+                .filter((filename) => !filename.match(/\.map$/))
+                .map((v) => {
+                  return {
+                    sort: v.indexOf('toolkit') >= 0 ? 1 : 0,
+                    value: v
+                  }
+                }),
+              (v) => v.sort
+            ).map((v) => v.value)
           })
         )
       }
