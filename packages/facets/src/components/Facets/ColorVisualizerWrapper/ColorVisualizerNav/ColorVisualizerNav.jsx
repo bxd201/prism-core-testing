@@ -57,7 +57,8 @@ type WrapperProps = {
 export const DropDownMenu = ({ title, subtitle, items }: DropDownMenuProps) => {
   const submenu = useRef(null)
   const history = useHistory()
-  const { cvw = {}, brandId } = useContext<ConfigurationContextType>(ConfigurationContext)
+  const { defaultRoute } = useSelector(state => state)
+  const { brandId, cvw = {} } = useContext<ConfigurationContextType>(ConfigurationContext)
   const { closeBtn = {} } = cvw
   const { showArrow: closeBtnShowArrow = true, text: closeBtnText = <FormattedMessage id='CLOSE' /> } = closeBtn
   const rootContainer = document.querySelector('.cvw__root-container')
@@ -80,7 +81,7 @@ export const DropDownMenu = ({ title, subtitle, items }: DropDownMenuProps) => {
 
   const handleClose = (e: SyntheticEvent) => {
     e.preventDefault()
-    history.push(ROUTES_ENUM.ACTIVE)
+    history.push(defaultRoute)
   }
 
   return (

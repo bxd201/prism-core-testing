@@ -4,7 +4,7 @@ import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { activate, deactivateTemporaryColor, empty, replaceLpColors, toggleCompareColor } from '../../store/actions/live-palette'
-import { setNavigationIntent, setNavigationIntentWithReturn } from '../../store/actions/navigation'
+import { navigateToIntendedDestination, setNavigationIntent, setNavigationIntentWithReturn } from '../../store/actions/navigation'
 import { loadColors, showColorDetailsModal } from '../../store/actions/loadColors'
 import Prism, { ColorsIcon, LivePalette } from '@prism/toolkit'
 import LivePaletteModal from './LivePaletteModal'
@@ -29,7 +29,6 @@ const LivePaletteWrapper = ({ simple = false }: { simple?: boolean }) => {
   const dispatch = useDispatch()
   const colorMap = useSelector(state => state.colors.items.colorMap, shallowEqual)
   const { activeColor, colors: lpColors, temporaryActiveColor } = useSelector(state => state.lp)
-  const isFastMaskPolluted = useSelector(store => store.fastMaskIsPolluted)
   const { brandId, brandKeyNumberSeparator, colorWall: { colorSwatch = {} }, cvw = {} } = useContext<ConfigurationContextType>(ConfigurationContext)
   const { colorNumOnBottom = false, houseShaped = false, infoBtn = {} } = colorSwatch
   const { compare, firstEmptySlot, title } = cvw.palette ?? {}
@@ -40,6 +39,8 @@ const LivePaletteWrapper = ({ simple = false }: { simple?: boolean }) => {
 
   useEffect(() => {
     loadColors(brandId)(dispatch)
+    // Resets navigation intended destination
+    dispatch(navigateToIntendedDestination())
 
     if (window.location.pathname.split('/').slice(-1)[0] === PATH__NAME) {
       setIsFastMaskPage(true)
@@ -86,9 +87,9 @@ const LivePaletteWrapper = ({ simple = false }: { simple?: boolean }) => {
               <button
                 className={slotClass}
                 onClick={() => {
-                  window.location.pathname.indexOf(ROUTES_ENUM.COLOR_WALL) === -1 && isFastMaskPolluted
-                    ? setNavigationIntents(ROUTES_ENUM.COLOR_WALL)
-                    : setNavigationIntents(ROUTES_ENUM.COLOR_WALL, ROUTES_ENUM.ACTIVE)
+                  window.location.hash.split('/').pop() === ROUTES_ENUM.ACTIVE.substr(1)
+                    ? setNavigationIntents(ROUTES_ENUM.COLOR_WALL, ROUTES_ENUM.ACTIVE)
+                    : setNavigationIntents(ROUTES_ENUM.COLOR_WALL)
                 }}
               >
                 <div className={`flex justify-center items-center ${IS_EMPTY ? '' : 'flex-col'}`}>

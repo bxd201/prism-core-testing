@@ -1,21 +1,21 @@
 // @flow
 import React, { useContext } from 'react'
 import type { Node } from 'react'
-import { FormattedMessage } from 'react-intl'
+import { useIntl } from 'react-intl'
 import { helpImages } from './constants'
 import ConfigurationContext, {
   type ConfigurationContextType,
 } from 'src/contexts/ConfigurationContext/ConfigurationContext'
 
 type HelpImageListProps = {
-  data: Object,
+  data: Object[]
 }
 
 const HelpImageList = ({ data }: HelpImageListProps): Node => {
-  const { cvw = {} }: ConfigurationContextType =
-    useContext(ConfigurationContext)
+  const { cvw = {} }: ConfigurationContextType = useContext(ConfigurationContext)
   const { help = {} } = cvw
-  const imageList = data.imageList
+  const { formatMessage } = useIntl()
+  const imageList = data
 
   return (
     <ul className={`${helpImages}`}>
@@ -33,7 +33,7 @@ const HelpImageList = ({ data }: HelpImageListProps): Node => {
               <img
                 className={`${helpImages}__i`}
                 src={help[item.imagePathKey]}
-                alt={item.alt ? FormattedMessage({ id: item.alt }) : ''}
+                alt={item.alt ? formatMessage({ id: item.alt }) : ''}
               />
             ) : null}
           </li>

@@ -134,6 +134,8 @@ $menu-bar-width: 27em;
   }
 
   &__button-close {
+    display: flex;
+    align-items: center;
     border-radius: 4px;
     background-color: var(getThemeColor('primary'));
     color: var(getThemeColor('primary.contrast'));

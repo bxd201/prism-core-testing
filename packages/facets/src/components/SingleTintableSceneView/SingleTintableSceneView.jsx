@@ -279,7 +279,7 @@ const SingleTintableSceneView = (props: SingleTintableSceneViewProps) => {
           </Propper>
         )}
         {backgroundLoaded && showClearButton && isScenePolluted(surfaceColors) ? (
-          <button className={`${tintableViewBaseClassName}__clear-areas-btn`} onClick={clearSurfaces}>
+          <button className={`text-sm ${tintableViewBaseClassName}__clear-areas-btn`} onClick={clearSurfaces}>
             <div className={`${tintableViewBaseClassName}__clear-areas-btn__icon`}>
               <FontAwesomeIcon size='lg' icon={['fa', 'eraser']} />
             </div>

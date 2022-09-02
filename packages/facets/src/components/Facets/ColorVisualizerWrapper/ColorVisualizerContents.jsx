@@ -24,6 +24,7 @@ import PaintSceneMaskingWrapper from 'src/components/PaintScene/PaintSceneMask'
 import { shouldAllowFeature } from '../../../shared/utils/featureSwitch.util'
 import { FEATURE_EXCLUSIONS } from '../../../constants/configurations'
 import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
+import { setDefaultRoute } from '../../../store/actions/defaultRoute'
 import { setMaxSceneHeight } from '../../../store/actions/system'
 import { SCENE_TYPES } from '../../../constants/globals'
 import {
@@ -149,6 +150,7 @@ const CVW = (props: CVWPropsType) => {
     dispatch(setMaxSceneHeight(maxSceneHeight))
     dispatch(setActiveSceneLabel(ACTIVE_SCENE_LABELS_ENUM.STOCK_SCENE))
     fetchRemoteScenes(brandId, { language }, SCENES_ENDPOINT, handleScenesFetchedForCVW, handleScenesFetchErrorForCVW, dispatch)
+    defaultRoute && dispatch(setDefaultRoute(defaultRoute))
 
     // handle resize for components that need to manually scale/resize elements
     window.addEventListener('resize', resizeHandler)
@@ -329,7 +331,7 @@ const CVW = (props: CVWPropsType) => {
 
   const goToPaintScene = (imageUrl: string, width: number, height: number, refDims: ReferenceDimensions) => {
     if (!imageUrl) {
-      history.push(ROUTES_ENUM.ACTIVE)
+      history.push(defaultRoute ?? ROUTES_ENUM.ACTIVE)
       return
     }
 
@@ -340,7 +342,7 @@ const CVW = (props: CVWPropsType) => {
 
   const goToMatchPhoto = (imageUrl: string, width: number, height: number, refDims: ReferenceDimensions) => {
     if (!imageUrl) {
-      history.push(ROUTES_ENUM.ACTIVE)
+      history.push(defaultRoute ?? ROUTES_ENUM.ACTIVE)
       return
     }
 

@@ -327,7 +327,7 @@ const ColorWallToolbar = () => {
             )}
             {shouldShowCloseButton && (!isFamilyView || alwaysShowColorFamilies) && (
               <button
-                className='menu-bar__button-close'
+                className='text-xs menu-bar__button-close'
                 onClick={(e) => {
                   e.preventDefault()
                   dispatch(setIsColorWallModallyPresented())
