@@ -74,55 +74,56 @@ function Row(props: RowProps): JSX.Element {
       }}
     >
       {titles?.length ? <Titles data={titles} /> : null}
-      {children?.length &&
-        // eslint-disable-next-line array-callback-return
-        children.map((child, i: number) => {
-          if (child.type === 'COLUMN') {
-            return (
-              <Column
-                data={child}
-                id={`${id}_${i}`}
-                key={i}
-                updateWidth={(v) =>
-                  doDispatch({
-                    type: 'width',
-                    amt: v,
-                    index: i
-                  })
-                }
-                updateHeight={(v) =>
-                  doDispatch({
-                    type: 'height',
-                    amt: v,
-                    index: i
-                  })
-                }
-              />
-            )
-          } else if (child.type === 'CHUNK') {
-            return (
-              <Chunk
-                data={child}
-                id={`${id}_${i}`}
-                key={i}
-                updateWidth={(v) =>
-                  doDispatch({
-                    type: 'width',
-                    amt: v,
-                    index: i
-                  })
-                }
-                updateHeight={(v) =>
-                  doDispatch({
-                    type: 'height',
-                    amt: v,
-                    index: i
-                  })
-                }
-              />
-            )
-          }
-        })}
+      {children?.length
+        ? // eslint-disable-next-line array-callback-return
+          children.map((child, i: number) => {
+            if (child.type === 'COLUMN') {
+              return (
+                <Column
+                  data={child}
+                  id={`${id}_${i}`}
+                  key={i}
+                  updateWidth={(v) =>
+                    doDispatch({
+                      type: 'width',
+                      amt: v,
+                      index: i
+                    })
+                  }
+                  updateHeight={(v) =>
+                    doDispatch({
+                      type: 'height',
+                      amt: v,
+                      index: i
+                    })
+                  }
+                />
+              )
+            } else if (child.type === 'CHUNK') {
+              return (
+                <Chunk
+                  data={child}
+                  id={`${id}_${i}`}
+                  key={i}
+                  updateWidth={(v) =>
+                    doDispatch({
+                      type: 'width',
+                      amt: v,
+                      index: i
+                    })
+                  }
+                  updateHeight={(v) =>
+                    doDispatch({
+                      type: 'height',
+                      amt: v,
+                      index: i
+                    })
+                  }
+                />
+              )
+            }
+          })
+        : null}
     </section>
   )
 }

@@ -11,14 +11,21 @@ export const mockWallShape: WallShape = {
       props: {
         align: 'start'
       },
-      titles: [
-        {
-          value: 'Top Colors',
-          align: 'left',
-          level: 2
-        }
-      ],
       children: [
+        {
+          type: 'ROW',
+          children: [],
+          props: {
+            spaceH: 0.25
+          },
+          titles: [
+            {
+              value: 'Top Colors',
+              align: 'left',
+              level: 2
+            }
+          ]
+        },
         {
           type: 'ROW',
           children: [
@@ -321,14 +328,21 @@ export const mockWallShape: WallShape = {
       props: {
         align: 'start'
       },
-      titles: [
-        {
-          value: 'Emerald Designer Edition Colors',
-          align: 'left',
-          level: 2
-        }
-      ],
       children: [
+        {
+          type: 'ROW',
+          children: [],
+          props: {
+            spaceH: 0.25
+          },
+          titles: [
+            {
+              value: 'Emerald Designer Edition Colors',
+              align: 'left',
+              level: 2
+            }
+          ]
+        },
         {
           type: 'ROW',
           children: [

@@ -18,7 +18,7 @@ export interface ColumnShape {
 export interface RowShape {
   type: 'ROW'
   children: Array<ColumnShape | ChunkShape>
-  titles: TitleShape[]
+  titles?: TitleShape[]
   props?: { spaceH?: number; spaceV?: number; wrap?: boolean; align?: string }
 }
 
