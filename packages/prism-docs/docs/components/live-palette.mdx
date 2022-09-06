@@ -71,7 +71,7 @@ function ThreeColorsLivePalette() {
                 className='w-5 h-5'
                 aria-label={`${name} color details`}
                 hexes={filter(colorsData, c =>
-                  values(color.coordinatingColors).some(id => id === c.id)
+                  values(coordinatingColors).some(id => id === c.id)
                 ).map(c => c.hex)}
               />
             ) : (
