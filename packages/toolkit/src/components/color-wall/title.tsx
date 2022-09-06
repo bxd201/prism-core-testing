@@ -50,20 +50,31 @@ function Titles({ data = [] }: TitlesProps): JSX.Element {
 
 export default Titles
 
-function QuickHeading(lvl = 1, props = {}, content): JSX.Element {
+interface QuickHeadingProps {
+  className?: string
+  [key: string]: any // to allow pass-thru of HTML attrs onto H1
+}
+function QuickHeading(lvl: number = 1, props: QuickHeadingProps = {}, content: JSX.Element): JSX.Element {
+  const { className, ...otherProps } = props
+
+  const newProps = {
+    className: `p-0 ${className ?? ''}`,
+    ...otherProps
+  }
+
   switch (lvl) {
     case 1:
-      return <h1 {...props}>{content}</h1>
+      return <h1 {...newProps}>{content}</h1>
     case 2:
-      return <h2 {...props}>{content}</h2>
+      return <h2 {...newProps}>{content}</h2>
     case 3:
-      return <h3 {...props}>{content}</h3>
+      return <h3 {...newProps}>{content}</h3>
     case 4:
-      return <h4 {...props}>{content}</h4>
+      return <h4 {...newProps}>{content}</h4>
     case 5:
-      return <h5 {...props}>{content}</h5>
+      return <h5 {...newProps}>{content}</h5>
     case 6:
     default:
-      return <h6 {...props}>{content}</h6>
+      return <h6 {...newProps}>{content}</h6>
   }
 }
