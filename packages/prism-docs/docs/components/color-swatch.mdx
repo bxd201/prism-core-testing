@@ -1,0 +1,88 @@
+---
+sidebar_position: 1
+---
+
+# Color Swatch
+
+## Summary
+
+The color swatch allows users to view a color properties and interact with it. The developer can fully customize the swatch content and their styles. The color that will be available to the user is supplied by the developer in order to accurately represent the brand's color offerings.
+
+## Example
+
+```typescript live
+/*
+ * This example is using the frameworks:
+ * - TailwindCSS on classNames;
+ * - Lodash methods (filter, shuffle, and values).
+ */
+function AddInfoColorSwatch() {
+  /* color can be provided as an object, similar to the following:
+    {
+      "brandKey": "SW",
+      "colorNumber": "6840",
+      "coordinatingColors": {
+        "coord2ColorId": "11335",
+        "coord1ColorId": "11364",
+        "whiteColorId": "2681"
+      },
+      "hex": "#b54d7f",
+      "id": "bright-2527",
+      "isDark": true
+      "name": "Exuberant Pink"
+    }
+  */
+  const color = shuffle(colorsData).pop()
+
+  return (
+    <Prism>
+      <ColorSwatch
+        active
+        className='border-white border-2 ring-primary focus:outline-none focus:ring-2'
+        color={color}
+        onClick={() => {}}
+        renderer={() => (
+          <>
+            <div className='relative'>
+              <p className='text-sm'>{`${color.brandKey} ${color.colorNumber}`}</p>
+              <p className='font-bold'>{color.name}</p>
+            </div>
+            <div className='flex justify-between w-full p-2.5 absolute left-0 bottom-0'>
+              <button className='flex items-center'>
+                <FontAwesomeIcon className='text-xl' icon={faPlusCircle} />
+              </button>
+              <button>
+                {color.coordinatingColors ? (
+                  <ColorsIcon
+                    className='w-5 h-5'
+                    hexes={filter(colorsData, c =>
+                      values(color.coordinatingColors).some(id => id === c.id)
+                    ).map(c => c.hex)}
+                  />
+                ) : (
+                  <FontAwesomeIcon icon={faInfo} style={{ margin: '0 0.25rem' }} />
+                )}
+              </button>
+            </div>
+          </>
+        )}
+        style={{ height: 150, width: 150 }}
+      />
+    </Prism>
+  )
+}
+```
+
+## Available props
+
+| Prop           | Type                                                                                                    | Description                                                 | Default |          |
+| -------------- | ------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- | ------- | -------- |
+| active         | `boolean`                                                                                               | Activates swatch (displays swatch content).                 |         | Optional |
+| activeFocus    | `boolean`                                                                                               | Allows select focus on swatch.                              | `true`  | Optional |
+| color          | `Color`                                                                                                 | Color object filling the swatch.                            |         | Required |
+| id             | `number`                                                                                                | Swatch identification number.                               |         | Optional |
+| onClick        | `() => void`                                                                                            | Fired when swatch is clicked.                               |         | Optional |
+| otherProps     | `HTMLAttributes`                                                                                        | Optional props like `aria-label`, `className`, and `style`. |         | Optional |
+| perimeterLevel | `number`                                                                                                | Swatch perimeter level position.                            |         | Optional |
+| ref            | `(el: HTMLButtonElement & HTMLDivElement) => void`                                                      | Swatch and swatch content elements reference.               |         | Optional |
+| renderer       | `({ id, ref }: { id?: number, ref?: ForwardedRef<HTMLButtonElement & HTMLDivElement> }) => JSX.Element` | Renderer callback function of swatch content.               |         | Optional |
