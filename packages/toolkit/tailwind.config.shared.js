@@ -9,6 +9,7 @@ module.exports = {
       textDecoration: ['focus-visible']
     }
   },
+  plugins: [require('@thoughtbot/tailwindcss-aria-attributes')],
   theme: {
     fontFamily: {
       sans: "var(--prism-typography-body-font-family, 'Open Sans', sans-serif)"
@@ -39,6 +40,7 @@ module.exports = {
         black: 'var(--prism-theme-color-black, #000)',
         buttonColor: 'var(--prism-theme-button-color, #0069af)',
         buttonBgColor: 'var(--prism-theme-button-bg-color, #FFF)',
+        buttonBorderColor: 'var(--prism-theme-button-hover-color, #0069af)',
         buttonHoverColor: 'var(--prism-theme-button-hover-color, #0069af)',
         buttonHoverBgColor: 'var(--prism-theme-button-hover-bg-color, #F2F2F2)',
         buttonActiveColor: 'var(--prism-theme-button-active-color, #FFF)',
@@ -61,7 +63,8 @@ module.exports = {
       fontSize: {
         '2xs': ['10px', '12px'],
         '1.5xs': ['.8125rem', '1.3125rem'],
-        '2.5xl': ['1.7rem', '2.2rem']
+        '2.5xl': ['1.7rem', '2.2rem'],
+        tb: ['17px', '24px']
       },
       keyframes: {
         fadeIn: {
@@ -84,7 +87,8 @@ module.exports = {
         '3/4': '75%'
       },
       screens: {
-        xs: '475px'
+        xs: '475px',
+        tb: { max: '473px' }
       },
       transitionProperty: {
         'background-position': 'background-position',
