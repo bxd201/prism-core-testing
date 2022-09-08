@@ -7409,10 +7409,10 @@ __metadata:
     danger: 11.1.2
     danger-plugin-simple-collection: 0.0.23
     danger-plugin-wordcheck: 0.0.3
-    husky: ^8.0.1
-    lint-staged: ^13.0.3
-    prettier: ^2.7.1
-    prettier-config-standard: ^5.0.0
+    husky: 8.0.1
+    lint-staged: 13.0.3
+    prettier: 2.7.1
+    prettier-config-standard: 5.0.0
     react: 18.2.0
     react-dom: 18.2.0
   languageName: unknown
@@ -21945,6 +21945,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"husky@npm:8.0.1":
+  version: 8.0.1
+  resolution: "husky@npm:8.0.1"
+  bin:
+    husky: lib/bin.js
+  checksum: 943a73a13d0201318fd30e83d299bb81d866bd245b69e6277804c3b462638dc1921694cb94c2b8c920a4a187060f7d6058d3365152865406352e934c5fff70dc
+  languageName: node
+  linkType: hard
+
 "husky@npm:^0.13.3":
   version: 0.13.4
   resolution: "husky@npm:0.13.4"
@@ -21954,15 +21963,6 @@ __metadata:
     is-ci: ^1.0.9
     normalize-path: ^1.0.0
   checksum: 8b20dd63e770b2e7dd50f40d7046831766e13097465bf162834451d2dab73fb59884bda8665c710f2a9664b2b60aca27f031518a2edb45ad77f55ee1cda523c5
-  languageName: node
-  linkType: hard
-
-"husky@npm:^8.0.1":
-  version: 8.0.1
-  resolution: "husky@npm:8.0.1"
-  bin:
-    husky: lib/bin.js
-  checksum: 943a73a13d0201318fd30e83d299bb81d866bd245b69e6277804c3b462638dc1921694cb94c2b8c920a4a187060f7d6058d3365152865406352e934c5fff70dc
   languageName: node
   linkType: hard
 
@@ -26262,7 +26262,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lint-staged@npm:^13.0.3":
+"lint-staged@npm:13.0.3":
   version: 13.0.3
   resolution: "lint-staged@npm:13.0.3"
   dependencies:
@@ -31323,7 +31323,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier-config-standard@npm:^5.0.0":
+"prettier-config-standard@npm:5.0.0":
   version: 5.0.0
   resolution: "prettier-config-standard@npm:5.0.0"
   peerDependencies:
@@ -31341,7 +31341,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:2.7.1, prettier@npm:^2.5.1, prettier@npm:^2.7.1":
+"prettier@npm:2.7.1, prettier@npm:^2.5.1":
   version: 2.7.1
   resolution: "prettier@npm:2.7.1"
   bin:

@@ -1,7 +1,8 @@
 import React, { useRef } from 'react'
 import { Menu, MenuItem, Wrapper, Button } from 'react-aria-menubutton'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { light, solid } from '@fortawesome/fontawesome-svg-core/import.macro'
+import { faSearch } from '@fortawesome/pro-light-svg-icons'
+import { faAngleDown } from '@fortawesome/pro-solid-svg-icons'
 import { AutoSizer } from 'react-virtualized'
 import ButtonBar from './button-bar'
 
@@ -63,7 +64,7 @@ const Select = ({
       <span className={`h-auto text-tb normal-case font-semibold aria-disabled:opacity-20`}>
         {omitPrefix(placeholderText)}
       </span>
-      <FontAwesomeIcon className='!w-[10px] text-base' icon={solid('angle-down')} pull='right' />
+      <FontAwesomeIcon className='!w-[10px] text-base' icon={faAngleDown} pull='right' />
     </Button>
     <Menu
       className={`w-full h-auto z-50 top-12 mt-0.5 absolute shadow-[0_2px_5px_-1px_rgba(black,0.65)] shadow-black xs:top-11 xs:left-0`}
@@ -213,7 +214,7 @@ const ColorWallToolbar = ({
             onClick={onSearchBtnClick}
             data-testid={TEST_ID_SEARCH}
           >
-            <FontAwesomeIcon icon={light('search')} size='lg' />
+            <FontAwesomeIcon icon={faSearch} size='lg' />
             <span
               style={{
                 opacity: '0.5',
