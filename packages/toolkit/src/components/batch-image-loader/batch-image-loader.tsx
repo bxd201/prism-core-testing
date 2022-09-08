@@ -4,9 +4,14 @@
 import React, { useRef, useState, useEffect, SyntheticEvent } from 'react'
 import ImageQueue from '../image-queue/image-queue'
 
+export interface OrderedImageItem {
+  index: number
+  target: HTMLImageElement
+}
+export type BatchImageLoaderCallback = (images: OrderedImageItem[]) => void
 export interface BatchImageLoaderProps {
   urls: string[]
-  handleImagesLoaded: (images: HTMLImageElement[]) => void
+  handleImagesLoaded: BatchImageLoaderCallback
 }
 
 const BatchImageLoader = (props: BatchImageLoaderProps): JSX.Element => {
@@ -16,11 +21,11 @@ const BatchImageLoader = (props: BatchImageLoaderProps): JSX.Element => {
   useEffect(() => {
     if (imageRefs.current.length && imageRefs.current.length === urls.length) {
       const sortedImages = imageRefs.current.sort((a, b) => {
-        if (a > b) {
+        if (a.index > b.index) {
           return 1
         }
 
-        if (a < b) {
+        if (a.index < b.index) {
           return -1
         }
 
