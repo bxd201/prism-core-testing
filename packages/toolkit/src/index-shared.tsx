@@ -26,6 +26,7 @@ export { default as FastMaskView } from './components/fast-mask/fast-mask'
 // ----- future component exports -----
 export { default as ColorStripButton } from './components/color-strip-button/color-strip-button'
 export { default as ColorWall } from './components/color-wall/color-wall'
+export { default as ColorWallToolBar } from './components/color-wall-toolbar/color-wall-toolbar'
 export * from './types'
 
 export interface PrismProps {
