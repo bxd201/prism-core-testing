@@ -1,0 +1,49 @@
+{
+  "plugins": ["simple-import-sort", "unused-imports"],
+  "rules": {
+    "import/prefer-default-export": "off",
+    "simple-import-sort/imports": "warn",
+    "simple-import-sort/exports": "warn",
+    "unused-imports/no-unused-imports": "error"
+  },
+  "overrides": [
+    {
+      "files": ["*.js", "*.jsx"],
+      "rules": {
+        "react/jsx-uses-react": 1,
+        "react/jsx-uses-vars": 1
+      }
+    },
+    // override "simple-import-sort" config
+    {
+      "files": ["*.js", "*.jsx", "*.ts", "*.tsx"],
+      "rules": {
+        "simple-import-sort/imports": [
+          "warn",
+          {
+            "groups": [
+              [
+                // Packages. `react` related packages come first.
+                "^react",
+                "^@?\\w",
+                // Internal packages.
+                "^(components|hooks|shared|utils|contexts|helpers|store)(/.*|$)",
+                // Side effect imports.
+                "^\\u0000",
+                // Parent imports. Put `..` last.
+                "^\\.\\.(?!/?$)",
+                "^\\.\\./?$",
+                // Other relative imports. Put same-folder imports and `.` last.
+                "^\\./(?=.*/)(?!/?$)",
+                "^\\.(?!/?$)",
+                "^\\./?$",
+                // Style imports.
+                "^.+\\.s?css$"
+              ]
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

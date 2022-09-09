@@ -59,8 +59,9 @@
     "**/flow-typed/**": true
   },
   "eslint.workingDirectories": ["packages/facets", "packages/toolkit", "packages/prism-demo", "packages/prism-docs"],
+  "editor.codeActionsOnSave": ["source.addMissingImports", "source.fixAll.eslint"],
   "search.exclude": {
     "**/coverage/**": true,
-    "**/dist/**": true,
-  },
+    "**/dist/**": true
+  }
 }
