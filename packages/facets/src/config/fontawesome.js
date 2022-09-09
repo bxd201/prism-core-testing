@@ -9,15 +9,16 @@ import { faAngleLeft } from '@fortawesome/pro-solid-svg-icons/faAngleLeft'
 import { faAngleUp } from '@fortawesome/pro-solid-svg-icons/faAngleUp'
 import { faBrush } from '@fortawesome/pro-solid-svg-icons/faBrush'
 import { faCaretDown } from '@fortawesome/pro-solid-svg-icons/faCaretDown'
-import { faCaretUp } from '@fortawesome/pro-solid-svg-icons/faCaretUp'
-import { faCaretRight } from '@fortawesome/pro-solid-svg-icons/faCaretRight'
 import { faCaretLeft } from '@fortawesome/pro-solid-svg-icons/faCaretLeft'
+import { faCaretRight } from '@fortawesome/pro-solid-svg-icons/faCaretRight'
+import { faCaretUp } from '@fortawesome/pro-solid-svg-icons/faCaretUp'
 import { faCheck } from '@fortawesome/pro-solid-svg-icons/faCheck'
 import { faCheckCircle } from '@fortawesome/pro-solid-svg-icons/faCheckCircle'
 import { faChevronLeft } from '@fortawesome/pro-solid-svg-icons/faChevronLeft'
 import { faChevronRight } from '@fortawesome/pro-solid-svg-icons/faChevronRight'
 import { faChevronUp } from '@fortawesome/pro-solid-svg-icons/faChevronUp'
 import { faCircle } from '@fortawesome/pro-solid-svg-icons/faCircle'
+import { faCode } from '@fortawesome/pro-solid-svg-icons/faCode'
 import { faDotCircle } from '@fortawesome/pro-solid-svg-icons/faDotCircle'
 import { faEraser } from '@fortawesome/pro-solid-svg-icons/faEraser'
 import { faEye } from '@fortawesome/pro-solid-svg-icons/faEye'
@@ -26,6 +27,8 @@ import { faHome } from '@fortawesome/pro-solid-svg-icons/faHome'
 import { faImage } from '@fortawesome/pro-solid-svg-icons/faImage'
 import { faInfo } from '@fortawesome/pro-solid-svg-icons/faInfo'
 import { faInfoCircle } from '@fortawesome/pro-solid-svg-icons/faInfoCircle'
+import { faLongArrowLeft } from '@fortawesome/pro-solid-svg-icons/faLongArrowLeft'
+import { faLongArrowRight } from '@fortawesome/pro-solid-svg-icons/faLongArrowRight'
 import { faMoon } from '@fortawesome/pro-solid-svg-icons/faMoon'
 import { faMoonStars } from '@fortawesome/pro-solid-svg-icons/faMoonStars'
 import { faMousePointer } from '@fortawesome/pro-solid-svg-icons/faMousePointer'
@@ -38,16 +41,17 @@ import { faSearchMinus } from '@fortawesome/pro-solid-svg-icons/faSearchMinus'
 import { faSun } from '@fortawesome/pro-solid-svg-icons/faSun'
 import { faTimes } from '@fortawesome/pro-solid-svg-icons/faTimes'
 import { faTrash } from '@fortawesome/pro-solid-svg-icons/faTrash'
+import { faTypewriter } from '@fortawesome/pro-solid-svg-icons/faTypewriter'
 import { faUndoAlt } from '@fortawesome/pro-solid-svg-icons/faUndoAlt'
-import { faWindowClose } from '@fortawesome/pro-solid-svg-icons/faWindowClose'
 import { faUpload } from '@fortawesome/pro-solid-svg-icons/faUpload'
+import { faWindowClose } from '@fortawesome/pro-solid-svg-icons/faWindowClose'
 
 // lights
 import { faAlignJustify as falAlignJustify } from '@fortawesome/pro-light-svg-icons/faAlignJustify'
 import { faAngleLeft as falAngleLeft } from '@fortawesome/pro-light-svg-icons/faAngleLeft'
-import { faCircle as falCircle } from '@fortawesome/pro-light-svg-icons/faCircle'
 import { faChevronCircleLeft as falChevronCircleLeft } from '@fortawesome/pro-light-svg-icons/faChevronCircleLeft'
 import { faChevronCircleRight as falChevronCircleRight } from '@fortawesome/pro-light-svg-icons/faChevronCircleRight'
+import { faCircle as falCircle } from '@fortawesome/pro-light-svg-icons/faCircle'
 import { faClone as falClone } from '@fortawesome/pro-light-svg-icons/faClone'
 import { faCompressAlt as falCompressAlt } from '@fortawesome/pro-light-svg-icons/faCompressAlt'
 import { faDownload as falDownload } from '@fortawesome/pro-light-svg-icons/faDownload'
@@ -80,10 +84,10 @@ import { faUpload as falUpload } from '@fortawesome/pro-light-svg-icons/faUpload
 
 // regulars
 // import { fa??? as far??? } from '@fortawesome/pro-regular-svg-icons/fa???'
-import { faPlusCircle as farPlusCircle } from '@fortawesome/pro-regular-svg-icons/faPlusCircle'
-import { faCode } from '@fortawesome/pro-solid-svg-icons/faCode'
-import { faTypewriter } from '@fortawesome/pro-solid-svg-icons/faTypewriter'
 import { faArrowToBottom as farArrowToBottom } from '@fortawesome/pro-regular-svg-icons/faArrowToBottom'
+import { faLongArrowLeft as farLongArrowLeft } from '@fortawesome/pro-regular-svg-icons/faLongArrowLeft'
+import { faLongArrowRight as farLongArrowRight } from '@fortawesome/pro-regular-svg-icons/faLongArrowRight'
+import { faPlusCircle as farPlusCircle } from '@fortawesome/pro-regular-svg-icons/faPlusCircle'
 
 // populate with all the FontAwesome svg icons we want to use
 const faIcons = [
@@ -93,9 +97,9 @@ const faIcons = [
   faAngleUp,
   faBrush,
   faCaretDown,
-  faCaretUp,
-  faCaretRight,
   faCaretLeft,
+  faCaretRight,
+  faCaretUp,
   faCheck,
   faCheckCircle,
   faChevronLeft,
@@ -112,6 +116,8 @@ const faIcons = [
   faInfo,
   faInfoCircle,
   falExpandAlt,
+  faLongArrowLeft,
+  faLongArrowRight,
   faMoon,
   faMoonStars,
   faMousePointer,
@@ -125,14 +131,14 @@ const faIcons = [
   faTimes,
   faTypewriter,
   faUndoAlt,
-  faWindowClose,
   faUpload,
+  faWindowClose,
   // -------- LIGHTS ---------
   falAlignJustify,
   falAngleLeft,
-  falCircle,
   falChevronCircleLeft,
   falChevronCircleRight,
+  falCircle,
   falClone,
   falCompressAlt,
   falDownload,
@@ -161,10 +167,12 @@ const faIcons = [
   falTrashAlt,
   falTrashAlt,
   falUndo,
-  faTrash,
   falUpload,
+  faTrash,
   // -------- REGULARS ---------
   farArrowToBottom,
+  farLongArrowLeft,
+  farLongArrowRight,
   farPlusCircle
 ]
 library.add(...faIcons)

@@ -204,14 +204,14 @@ export class CompareColor extends React.Component<CompareColorProps, CompareColo
             <div className={`${prevBtnWrapperClass}`}>
               {
                 <button className={`${buttonsClass} ${isHidePrevButton ? `${buttonsVisibleClass}` : ''}`} onClick={this.handlePrev}>
-                  <FontAwesomeIcon icon={['fa', 'chevron-left']} />
+                  <FontAwesomeIcon icon={houseShaped ? ['far', 'long-arrow-left'] : ['fa', 'chevron-left']} />
                 </button>}
             </div>
             {content}
             <div className={`${nextBtnWrapperClass}`}>
               {
                 <button className={`${buttonsClass} ${isHideNextButton ? `${buttonsVisibleClass}` : ''}`} onClick={this.handleNext}>
-                  <FontAwesomeIcon icon={['fa', 'chevron-right']} />
+                  <FontAwesomeIcon icon={houseShaped ? ['far', 'long-arrow-right'] : ['fa', 'chevron-right']} />
                 </button>
               }
             </div>
