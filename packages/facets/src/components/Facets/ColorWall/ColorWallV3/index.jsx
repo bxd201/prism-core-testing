@@ -1,5 +1,5 @@
 // @flow
-import React, { useCallback } from 'react'
+import React, { useCallback, useContext } from 'react'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import { fullColorName, generateColorWallPageUrl } from 'src/shared/helpers/ColorUtils'
 import WallRouteReduxConnector from './WallRouteReduxConnector'
@@ -7,6 +7,8 @@ import useColors from '../../../../shared/hooks/useColors'
 import Prism, { ColorWall } from '@prism/toolkit'
 import { Swatch } from './Swatch/Swatch'
 import type { ColorsState } from '../../../../shared/types/Actions'
+import ConfigurationContext, { type ConfigurationContextType } from '../../../../contexts/ConfigurationContext/ConfigurationContext'
+import ColorWallContext, { type ColorWallContextProps } from '../../ColorWall/ColorWallContext'
 import { useSelector } from 'react-redux'
 
 const WALL_HEIGHT = 475
@@ -18,6 +20,8 @@ function ColorWallV3() {
   const {
     items: { colorStatuses = {} }
   }: ColorsState = useSelector((state) => state.colors)
+  const { colorWallBgColor }: ColorWallContextProps = useContext(ColorWallContext)
+  const { colorWall: { bloomEnabled = true } }: ConfigurationContextType = useContext(ConfigurationContext)
   const { push } = useHistory()
   const { params } = useRouteMatch()
   const { colorId, family, section } = params
@@ -45,7 +49,8 @@ function ColorWallV3() {
     )
   }
   const colorWallConfig = {
-    bloomEnabled: true
+    bloomEnabled,
+    colorWallBgColor
   }
   return (
     <div style={{ height: WALL_HEIGHT }}>
