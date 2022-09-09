@@ -12,7 +12,7 @@ import { copySurfaceColors } from '../../utils/utils'
 import SimpleTintableScene from '../simple-tintable-scene/simple-tintable-scene'
 import { faSun, faMoonStars, faEraser } from '@fortawesome/pro-solid-svg-icons'
 import Toggle from '../toggle/toggle'
-import BatchImageLoader from '../batch-image-loader/batch-image-loader'
+import BatchImageLoader, { OrderedImageItem } from '../batch-image-loader/batch-image-loader'
 import Propper, { ProperPosition } from '../propper/propper'
 import CircleLoader from '../circle-loader/circle-loader'
 
@@ -254,7 +254,7 @@ export default function SceneView(props: SceneViewProps): JSX.Element {
       </div>
     )
   }
-  const handleImagesLoaded = (imageRefs): void => {
+  const handleImagesLoaded = (images: OrderedImageItem[]): void => {
     setBackgroundLoaded(true)
   }
 
