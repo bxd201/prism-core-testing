@@ -3,14 +3,14 @@ import { cleanup, render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom'
 import mockGroupData from '../../test-utils/mocked-endpoints/groups.json'
-import ColorWallToolbar, { TEST_ID_SEARCH, TEST_ID_VIEWALL } from './color-wall-toolbar'
+import ColorWallToolbar, { IColorWallToolbarProps, TEST_ID_SEARCH, TEST_ID_VIEWALL } from './color-wall-toolbar'
 
 const onGroupBtnClick = jest.fn()
 const onSubGroupBtnClick = jest.fn()
 const onShowAllBtnClick = jest.fn()
 const onSearchBtnClick = jest.fn()
 
-const toolBarProps = {
+const toolBarProps: IColorWallToolbarProps = {
   uiStyle: 'minimal',
   onSearchBtnClick: onSearchBtnClick,
   onSubGroupBtnClick: onSubGroupBtnClick,
