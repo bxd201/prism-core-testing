@@ -97,7 +97,7 @@ describe('Color Wall', () => {
 
     // ASSERT
     expect(column).toHaveLength(5)
-    expect(row).toHaveLength(10)
+    expect(row).toHaveLength(12)
     expect(chunk).toHaveLength(9)
     expect(title).toHaveLength(11)
   })
@@ -114,9 +114,9 @@ describe('Color Wall', () => {
 
     // ASSERT
     expect(column).toHaveLength(5)
-    expect(row).toHaveLength(10)
+    expect(row).toHaveLength(12)
     expect(chunk).toHaveLength(9)
-    expect(title).toHaveLength(10)
+    expect(title).toHaveLength(10) // one less title on wrapped view, since we're hiding one title there
   })
 
   test('should have the correct user defined styles', async () => {
