@@ -1,6 +1,6 @@
 import 'cypress-storybook/react'
 
-import Prism from '../src/index-facets'
+import Prism from '../src/index'
 
 export const decorators = [
   (Story) => (
