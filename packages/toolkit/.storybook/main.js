@@ -1,4 +1,4 @@
-const generatePostcssOptions = require('../postcss.config')
+const postCssConfig = require('../postcss.config')
 
 module.exports = {
   stories: ['../src/components/**/*.stories.tsx'],
@@ -11,9 +11,7 @@ module.exports = {
         {
           loader: 'postcss-loader',
           options: {
-            postcssOptions: {
-              ...generatePostcssOptions({ options: { tailwindConfig: './tailwind.config.facets.js' } })
-            }
+            postcssOptions: postCssConfig
           }
         }
       ]
