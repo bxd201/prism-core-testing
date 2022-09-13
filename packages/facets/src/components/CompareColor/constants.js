@@ -1,0 +1,11 @@
+export const baseClass = 'color__comparison'
+export const containerClass = `${baseClass}__container`
+export const containerHeaderClass = `${baseClass}__container__header`
+export const containerHeaderButtonClass = `${baseClass}__container__header__button`
+export const wrapperClass = `${baseClass}__wrapper`
+export const prevBtnWrapperClass = `${baseClass}__prev-btn__wrapper`
+export const buttonsClass = `${baseClass}__buttons`
+export const buttonsVisibleClass = `${baseClass}__buttons--visible`
+export const nextBtnWrapperClass = `${baseClass}__next-btn__wrapper`
+export const backgroundColorClass = `${baseClass}__background__color`
+export const queueWrapperClass = `${baseClass}__queue__wrapper`
