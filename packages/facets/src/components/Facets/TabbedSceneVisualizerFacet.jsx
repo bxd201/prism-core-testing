@@ -24,9 +24,7 @@ import {
 } from '../../store/actions/loadScenes'
 import { BUTTON_POSITIONS, GROUP_NAMES, SCENE_TYPES } from '../../constants/globals'
 import { mapItemsToList } from '../../shared/utils/tintableSceneUtils'
-import {
-  getMiniColorForSurfacesFromColorStrings
-} from '../../shared/helpers/ColorDataUtils'
+import { getMiniColorForSurfacesFromColorStrings } from '../../shared/helpers/ColorDataUtils'
 import useColors from '../../shared/hooks/useColors'
 import { hasGroupAccess } from '../../shared/utils/featureSwitch.util'
 import facetBinder from '../../facetSupport/facetBinder'
@@ -44,10 +42,11 @@ import { isDarkColor } from 'is-dark-color/dist/isDarkColor'
 
 import 'src/providers/fontawesome/fontawesome'
 
-type TabbedSceneVisualizerFacetProps = FacetPubSubMethods & FacetBinderMethods & {
-  groupNames: string[],
-  defaultColors: string[],
-}
+type TabbedSceneVisualizerFacetProps = FacetPubSubMethods &
+  FacetBinderMethods & {
+    groupNames: string[],
+    defaultColors: string[]
+  }
 
 const baseFacetClassName = 'tabbed-scene-visualizer'
 const wrapper = `${baseFacetClassName}__wrapper`
@@ -62,23 +61,27 @@ const shouldUseActiveColor = (defColors: any[], activeColor, hasAccess) => {
   return !defColors && activeColor && hasAccess
 }
 
-export function TabbedSceneVisualizerFacet (props: TabbedSceneVisualizerFacetProps) {
+export function TabbedSceneVisualizerFacet(props: TabbedSceneVisualizerFacetProps) {
   const dispatch = useDispatch()
   const { groupNames, defaultColors, subscribe } = props
   const { brandId, language } = useContext(ConfigurationContext)
   const [sceneFetchCalled, setSceneFetchCalled] = useState(false)
   const [facetId] = useState(uniqueId('tsv-facet_'))
-  const initializingFacetId = useSelector(store => store.initializingFacetId)
+  const initializingFacetId = useSelector((store) => store.initializingFacetId)
   const fetchCalled = useSceneDataCVW(
     initializingFacetId,
-    (groupNames?.indexOf(GROUP_NAMES.SCENES) > -1 ? facetId : null),
+    groupNames?.indexOf(GROUP_NAMES.SCENES) > -1 ? facetId : null,
     sceneFetchCalled,
     brandId,
     language
   )
   const [colors] = useColors()
-  const activeColor = useSelector(store => store.lp.activeColor)
-  const [variantsCollection, scenesCollection] = useSelector(store => [store.variantsCollection, store.scenesCollection, store.selectedSceneUid])
+  const activeColor = useSelector((store) => store.lp.activeColor)
+  const [variantsCollection, scenesCollection] = useSelector((store) => [
+    store.variantsCollection,
+    store.scenesCollection,
+    store.selectedSceneUid
+  ])
   const [localSurfaceColors, setLocalSurfaceColors] = useState(null)
   const [localSelectedSceneUid, setLocalSelectedSceneUid] = useState(null)
   const [localScenesCollection, setLocalScenesCollection] = useState(null)
@@ -104,7 +107,7 @@ export function TabbedSceneVisualizerFacet (props: TabbedSceneVisualizerFacetPro
     right: false
   })
 
-  function checkShouldShowNav () {
+  function checkShouldShowNav() {
     if (!tabItemListRef.current) {
       return
     }
@@ -130,7 +133,7 @@ export function TabbedSceneVisualizerFacet (props: TabbedSceneVisualizerFacetPro
       }
     })
 
-    function _resizeHandler (e: SyntheticEvent) {
+    function _resizeHandler(e: SyntheticEvent) {
       checkShouldShowNav()
     }
 
@@ -167,16 +170,23 @@ export function TabbedSceneVisualizerFacet (props: TabbedSceneVisualizerFacetPro
     }
 
     if (initialActiveColor && activeColor && !activeColorHasBeenChanged) {
-      if (`${initialActiveColor.brandKey}-${initialActiveColor.colorNumber}` !== `${activeColor.brandKey}-${activeColor.colorNumber}`) {
+      if (
+        `${initialActiveColor.brandKey}-${initialActiveColor.colorNumber}` !==
+        `${activeColor.brandKey}-${activeColor.colorNumber}`
+      ) {
         setActiveColorHasBeenChanged(true)
       }
     }
 
-    const variants = variantsCollection ? variantsCollection.filter(variant => variant.sceneType === SCENE_TYPES.ROOM) : []
-    const surfaces = variants.length ? variants[0].surfaces.map(surface => null) : null
+    const variants = variantsCollection
+      ? variantsCollection.filter((variant) => variant.sceneType === SCENE_TYPES.ROOM)
+      : []
+    const surfaces = variants.length ? variants[0].surfaces.map((surface) => null) : null
     const hasAccess = hasGroupAccess(groupNames, GROUP_NAMES.COLORS)
-    if ((surfaces && activeColor && hasAccess && activeColorHasBeenChanged) ||
-      (!initialColors && activeColor && surfaces && hasAccess)) {
+    if (
+      (surfaces && activeColor && hasAccess && activeColorHasBeenChanged) ||
+      (!initialColors && activeColor && surfaces && hasAccess)
+    ) {
       const newColors = mapItemsToList([createMiniColorFromColor(activeColor)], surfaces)
       setLocalSurfaceColors(newColors)
     }
@@ -207,7 +217,7 @@ export function TabbedSceneVisualizerFacet (props: TabbedSceneVisualizerFacetPro
   // This callback initializes all of the scene data for cvw
   const handleSceneSurfacesLoaded = (variants) => {
     // @todo Default to the first room type for the CVW, we many need a way to ovveride this via facet props
-    const variant = variants.filter(variant => variant.sceneType === SCENE_TYPES.ROOM)[0]
+    const variant = variants.filter((variant) => variant.sceneType === SCENE_TYPES.ROOM)[0]
     const { sceneUid, variantName, surfaces } = variant
 
     // if there are no default colors there will be a sparse array
@@ -216,7 +226,8 @@ export function TabbedSceneVisualizerFacet (props: TabbedSceneVisualizerFacetPro
     const newSurfaceColors = !shouldUseActiveColor(
       defaultColors,
       activeColor,
-      hasGroupAccess(groupNames, GROUP_NAMES.COLORS))
+      hasGroupAccess(groupNames, GROUP_NAMES.COLORS)
+    )
       ? defSurfaceColors
       : mapItemsToList([createMiniColorFromColor(activeColor)], surfaces)
 
@@ -231,14 +242,16 @@ export function TabbedSceneVisualizerFacet (props: TabbedSceneVisualizerFacetPro
     // copy scenes and variants we need and keep state local.
     setLocalScenesCollection(cloneDeep(scenesCollection))
     // get sceneuids for each room type by getting first of kind, use this array to get all variants
-    const sceneUids = variants.filter(variant => variant.isFirstOfKind).map(variant => variant.sceneUid)
-    const categories = scenesCollection.filter(scene => sceneUids.indexOf(scene.uid) > -1).map(scene => {
-      return {
-        label: scene.categories[0],
-        sceneUid: scene.uid
-      }
-    })
-    const filteredVariants = variants.filter(variant => sceneUids.indexOf(variant.sceneUid) > -1)
+    const sceneUids = variants.filter((variant) => variant.isFirstOfKind).map((variant) => variant.sceneUid)
+    const categories = scenesCollection
+      .filter((scene) => sceneUids.indexOf(scene.uid) > -1)
+      .map((scene) => {
+        return {
+          label: scene.categories[0],
+          sceneUid: scene.uid
+        }
+      })
+    const filteredVariants = variants.filter((variant) => sceneUids.indexOf(variant.sceneUid) > -1)
     if (filteredVariants.length) {
       const variantName = filteredVariants[0].variantName
       setLocalVariantName(variantName)
@@ -266,42 +279,48 @@ export function TabbedSceneVisualizerFacet (props: TabbedSceneVisualizerFacetPro
   const createTabs = (data: any, index: number) => {
     const isHighlighted = localSelectedSceneUid === data.sceneUid
     const isDark = localSurfaceColors[0] ? isDarkColor(localSurfaceColors[0].hex) : false
+    const underlineStyle = isDark ? 'rgba(255, 255, 255, 0.45)' : 'rgba(0, 0, 0, 0.45)'
 
-    return <li style={{
-      backgroundColor: isHighlighted ? localSurfaceColors[0]?.hex : null
-    }} className={`${tabItemClassName}${index ? '' : '--first'}`} key={data.sceneUid}>
-      <button style={{
-        textDecoration: isHighlighted ? 'underline' : null,
-        color: isDark && isHighlighted ? '#ffffff' : '#000000',
-        textDecorationColor: isHighlighted ? 'rgba(0, 0, 0, 0.45)' : null,
-        textUnderlineOffset: '6px'
-      }} className={tabItemBtnClassname} onClick={(e: SyntheticEvent) => changeScene(e, data.sceneUid)}>{data.label}
-      </button>
-    </li>
+    return (
+      <li
+        style={{
+          backgroundColor: isHighlighted ? localSurfaceColors[0]?.hex : null
+        }}
+        className={`${tabItemClassName}${index ? '' : '--first'}`}
+        key={data.sceneUid}
+      >
+        <button
+          style={{
+            textDecoration: isHighlighted ? 'underline' : null,
+            color: isDark && isHighlighted ? '#ffffff' : '#000000',
+            textDecorationColor: isHighlighted ? underlineStyle : null,
+            textUnderlineOffset: '6px'
+          }}
+          className={tabItemBtnClassname}
+          onClick={(e: SyntheticEvent) => changeScene(e, data.sceneUid)}
+        >
+          {data.label}
+        </button>
+      </li>
+    )
   }
 
   const renderCustomToggle = (variantIndex: number, variantList: any[], handler: Function, metaData: any) => {
     // eslint-disable-next-line no-unused-vars
     const { sceneUid, currentVariant } = metaData
 
-    return (
-      <DayNightToggleV2
-        sceneUid={sceneUid}
-        variantName={currentVariant}
-        changeHandler={handler}
-      />
-    )
+    return <DayNightToggleV2 sceneUid={sceneUid} variantName={currentVariant} changeHandler={handler} />
   }
 
-  function scrollNavLeft (e: SytheticEvent) {
+  function scrollNavLeft(e: SytheticEvent) {
     scrollNav(e, false)
   }
 
-  function scrollNavRight (e: SyntheticEvent) {
+  function scrollNavRight(e: SyntheticEvent) {
     scrollNav(e, true)
   }
 
-  function scrollNav (e: SyntheticEvent, shouldScrollLeft = false) {
+  function scrollNav(e: SyntheticEvent, shouldScrollLeft = false) {
     e.preventDefault()
 
     const scrollAmount = tabItemListRef.current.scrollWidth / categories.length
@@ -331,43 +350,61 @@ export function TabbedSceneVisualizerFacet (props: TabbedSceneVisualizerFacetPro
   }
 
   return (
-    <>{scenesCollection && colors?.colorMap
-      ? <SceneBlobLoader
-      scenes={scenesCollection}
-      variants={variantsCollection}
-      initHandler={handleBlobLoaderInit}
-      handleBlobsLoaded={handleSceneSurfacesLoaded}
-      handleError={handleSceneBlobLoaderError} />
-      : null}
+    <>
+      {scenesCollection && colors?.colorMap ? (
+        <SceneBlobLoader
+          scenes={scenesCollection}
+          variants={variantsCollection}
+          initHandler={handleBlobLoaderInit}
+          handleBlobsLoaded={handleSceneSurfacesLoaded}
+          handleError={handleSceneBlobLoaderError}
+        />
+      ) : null}
       <div className={baseFacetClassName}>
-        {categories ? categories.map(category => {
-          const { sceneUid } = category
-          return (
-            <div key={sceneUid} style={sceneUid !== localSelectedSceneUid ? { visibility: 'hidden', display: 'none' } : null}>
-              <SingleTintableSceneView
-                surfaceColorsFromParents={localSurfaceColors}
-                selectedSceneUid={sceneUid}
-                scenesCollection={localScenesCollection}
-                variantsCollection={localVariantsCollection}
-                /* selectedVariantName={localVariantName} //this will only show the selected variant */
-                buttonPosition={BUTTON_POSITIONS.TOP}
-                allowVariantSwitch
-                customToggle={renderCustomToggle}
-              />
-            </div>
-          )
-        }) : null}
         {categories
-          ? <div className={wrapper}>
-          <div className={mobileNavClassName}>
-            <div className={`${mobileNavWrapper}--left`} style={{ visibility: showNav.left ? 'visible' : 'hidden' }} >
-              <button onClick={scrollNavLeft} className={`${mobileNavBtnClassName}--left`}><FontAwesomeIcon icon={['fal', 'chevron-circle-left']} size='lg' /></button></div>
-            <div className={`${mobileNavWrapper}--right`} style={{ visibility: showNav.right ? 'visible' : 'hidden' }}>
-              <button onClick={scrollNavRight} className={`${mobileNavBtnClassName}--right`}><FontAwesomeIcon icon={['fal', 'chevron-circle-right']} size='lg' /></button></div>
+          ? categories.map((category) => {
+              const { sceneUid } = category
+              return (
+                <div
+                  key={sceneUid}
+                  style={sceneUid !== localSelectedSceneUid ? { visibility: 'hidden', display: 'none' } : null}
+                >
+                  <SingleTintableSceneView
+                    surfaceColorsFromParents={localSurfaceColors}
+                    selectedSceneUid={sceneUid}
+                    scenesCollection={localScenesCollection}
+                    variantsCollection={localVariantsCollection}
+                    /* selectedVariantName={localVariantName} //this will only show the selected variant */
+                    buttonPosition={BUTTON_POSITIONS.TOP}
+                    allowVariantSwitch
+                    customToggle={renderCustomToggle}
+                  />
+                </div>
+              )
+            })
+          : null}
+        {categories ? (
+          <div className={wrapper}>
+            <div className={mobileNavClassName}>
+              <div className={`${mobileNavWrapper}--left`} style={{ visibility: showNav.left ? 'visible' : 'hidden' }}>
+                <button onClick={scrollNavLeft} className={`${mobileNavBtnClassName}--left`}>
+                  <FontAwesomeIcon icon={['fal', 'chevron-circle-left']} size='lg' />
+                </button>
+              </div>
+              <div
+                className={`${mobileNavWrapper}--right`}
+                style={{ visibility: showNav.right ? 'visible' : 'hidden' }}
+              >
+                <button onClick={scrollNavRight} className={`${mobileNavBtnClassName}--right`}>
+                  <FontAwesomeIcon icon={['fal', 'chevron-circle-right']} size='lg' />
+                </button>
+              </div>
+            </div>
+            <ul ref={tabItemListRef} className={tabClassName}>
+              {categories ? categories.map(createTabs) : null}
+            </ul>
           </div>
-          <ul ref={tabItemListRef} className={tabClassName}>{categories ? categories.map(createTabs) : null}</ul>
-        </div>
-          : null }
+        ) : null}
       </div>
     </>
   )
