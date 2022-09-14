@@ -10,3 +10,9 @@ export const decorators = [
     </Prism>
   )
 ]
+
+export const parameters = {
+  backgrounds: {
+    default: 'light'
+  }
+}

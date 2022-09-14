@@ -16,6 +16,9 @@ export default {
     },
     fillParent: {
       type: 'boolean'
+    },
+    className: {
+      type: 'string'
     }
   }
 }
