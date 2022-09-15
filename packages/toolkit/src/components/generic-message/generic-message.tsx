@@ -26,7 +26,6 @@ const GenericMessage = (props: GenericMessageProps): JSX.Element => {
     [MessageTypes.ERROR]: `bg-error`,
     [MessageTypes.SUCCESS]: `bg-success`
   }
-  console.log(children)
 
   const constructChildren = (children: React.ReactNode): React.ReactNode => {
     // if children is a string, wrap in a paragraph and style with default styles
