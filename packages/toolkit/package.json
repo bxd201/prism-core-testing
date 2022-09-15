@@ -10,7 +10,7 @@
     "dist"
   ],
   "scripts": {
-    "start": "start-storybook -p 6006",
+    "start": "TOOLKIT_PROTECT_CLASS=p3m-p7d start-storybook -p 6006",
     "lint": "eslint src --cache",
     "cleancache": "start-storybook --ci --no-manager-cache &> /dev/null & exit 1 & echo cache cleaned",
     "test": "jest",
@@ -19,10 +19,10 @@
     "testtab": "start-server-and-test 'start-storybook -p 6006 --ci &> /dev/null' 6006 'node .storybook/addons/testTab/getTestReports.js'",
     "predeploy": "npm run build && npm run testtab",
     "deploy": "storybook-to-ghpages -e ./public",
-    "build": "build-storybook -o ./public",
+    "build": "TOOLKIT_PROTECT_CLASS=p3m-p7d build-storybook -o ./public",
     "build-rollup-facets": "rollup -c rollup.config.js",
     "build-rollup-protected": "TOOLKIT_PROTECT_CLASS=p3m-p7d rollup -c rollup.config.js",
-    "ci": "start-storybook -p 6006 --ci & sleep 60 && cypress run && node .storybook/addons/testTab/getTestReports.js",
+    "ci": "TOOLKIT_PROTECT_CLASS=p3m-p7d start-storybook -p 6006 --ci & sleep 60 && cypress run && node .storybook/addons/testTab/getTestReports.js",
     "check-types": "tsc --noEmit --pretty"
   },
   "dependencies": {
@@ -33,6 +33,7 @@
     "@fortawesome/pro-solid-svg-icons": "6.1.2",
     "@fortawesome/pro-thin-svg-icons": "6.1.2",
     "@fortawesome/react-fontawesome": "0.2.0",
+    "@rollup/plugin-replace": "4.0.0",
     "@testing-library/jest-dom": "5.16.4",
     "@thoughtbot/tailwindcss-aria-attributes": "0.2.0",
     "axios": "0.27.2",
