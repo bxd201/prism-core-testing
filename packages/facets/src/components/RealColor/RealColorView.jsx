@@ -9,6 +9,7 @@ import getTintedImage, { EMPTY_RESPONSE_ERR, getVariantTintedImage } from './Rea
 import type { RealColorPayload } from './RealColorService'
 import type { MiniColor } from '../../shared/types/Scene'
 import cloneDeep from 'lodash/cloneDeep'
+import { exception, getRealColorException } from '../../analytics/GoogleAnalytics'
 
 type RealColorViewProps = {
   imageUrl: string,
@@ -30,17 +31,9 @@ const waitTextClassName = `${baseClassName}__wait-text`
 
 const getColorBrandKey = (color: MiniColor) => `${color.brandKey}-${color.colorNumber}`
 
-export default function RealColorView (props: RealColorViewProps) {
-  const {
-    imageUrl,
-    spinner,
-    imageOpacity,
-    activeColor,
-    handlerError,
-    cleanupCallback,
-    handleUpdate,
-    waitMessage
-  } = props
+export default function RealColorView(props: RealColorViewProps) {
+  const { imageUrl, spinner, imageOpacity, activeColor, handlerError, cleanupCallback, handleUpdate, waitMessage } =
+    props
 
   const [showSpinner, setShowSpinner] = useState<boolean>(true)
   const [displayImage, setDisplayImage] = useState<string>(imageUrl)
@@ -67,21 +60,35 @@ export default function RealColorView (props: RealColorViewProps) {
     handleUpdate()
   }
 
+  const clockId = useRef(null)
+  const requestClock = useRef(0)
+
   useEffect(() => {
     // This is the initializer, it should only run for the first color,
     // retryCount drives this hook to be called until it succeeds or hits the retry limit.
     // the retry limit is enforced by the error handling useEffect
-    if (!realColorId.current && retryCountShadow.current <= RETRY_LIMIT) { // this means the get tint has not succeeded
+    if (!realColorId.current && retryCountShadow.current <= RETRY_LIMIT) {
+      // this means the get tint has not succeeded
       const color = createMiniColorFromColor(activeColor)
-      getTintedImage(
-        color,
-        imageUrl,
-        realColorId.current,
-        handleRealColorUpdate)
+
+      // Reset error clock
+      if (clockId.current !== null) {
+        window.clearInterval(clockId.current)
+        requestClock.current = 0
+      }
+
+      clockId.current = setInterval(() => {
+        requestClock.current++
+      }, 1000)
+
+      getTintedImage(color, imageUrl, realColorId.current, handleRealColorUpdate)
     }
 
     return () => {
       console.log('Cleaning up real color...')
+      if (clockId.current) {
+        window.clearInterval(clockId.current)
+      }
       cleanupCallback()
     }
   }, [retryCount])
@@ -89,6 +96,12 @@ export default function RealColorView (props: RealColorViewProps) {
   useEffect(() => {
     // Handle new tinted images
     if (realColorPayload) {
+      // clear log counter
+      if (clockId.current) {
+        window.clearInterval(clockId.current)
+        requestClock.current = 0
+        clockId.current = null
+      }
       const { tintedImage, realColorId: id, color } = realColorPayload
       realColorId.current = id
       const brandColorKey = getColorBrandKey(color)
@@ -117,12 +130,22 @@ export default function RealColorView (props: RealColorViewProps) {
 
     if (realColorId.current && retryCountShadow.current <= RETRY_LIMIT) {
       setShowSpinner(true)
+
+      // start clock to log error
+      clockId.current = setInterval(() => {
+        requestClock.current++
+      }, 1000)
+
       getVariantTintedImage(color, realColorId.current, handleRealColorUpdate)
     }
   }, [activeColor, retryCount])
 
   useEffect(() => {
     if (realColorError) {
+      // log real color error
+      exception(getRealColorException(requestClock.current))
+      requestClock.current = 0
+
       if (realColorError?.message === EMPTY_RESPONSE_ERR && retryCountShadow.current === 0) {
         // Added retry logic to call the api again if a 502 or empty response comes back
         console.log('Retrying realcolor request...')
@@ -133,21 +156,31 @@ export default function RealColorView (props: RealColorViewProps) {
       }
       console.log('Handling real color error...')
       // Errors are handled up the hierarchy and the parent will resolve, probably by rerendering
+      if (retryCount === RETRY_LIMIT) {
+        if (clockId.current) {
+          window.clearInterval(clockId.current)
+          clockId.current = null
+          requestClock.current = 0
+        }
+      }
       handlerError(realColorError, retryCount)
     }
   }, [realColorError])
 
-  return <div className={realColorWrapperClassName}>
-    <img
-      style={showSpinner ? { opacity: imageOpacity ?? 0.74 } : null}
-      className={imageClassName}
-      src={displayImage}
-      alt={intl.formatMessage({ id: 'USER_UPLOAD' })} />
-    {showSpinner
-      ? <div className={spinnerWrapperClassName}>
-      {waitMessage ? <div className={waitTextClassName}>{waitMessage}</div> : null}
-      <div className={spinnerClassName}>{spinner || <CircleLoader />}</div>
+  return (
+    <div className={realColorWrapperClassName}>
+      <img
+        style={showSpinner ? { opacity: imageOpacity ?? 0.74 } : null}
+        className={imageClassName}
+        src={displayImage}
+        alt={intl.formatMessage({ id: 'USER_UPLOAD' })}
+      />
+      {showSpinner ? (
+        <div className={spinnerWrapperClassName}>
+          {waitMessage ? <div className={waitTextClassName}>{waitMessage}</div> : null}
+          <div className={spinnerClassName}>{spinner || <CircleLoader />}</div>
+        </div>
+      ) : null}
     </div>
-      : null}
-  </div>
+  )
 }
