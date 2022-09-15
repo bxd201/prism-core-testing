@@ -1,5 +1,5 @@
 // @flow
-import React, { useState, Dispatch, SetStateAction } from 'react'
+import { Dispatch, SetStateAction, useState } from 'react'
 import type { Color } from '../shared/types/Colors.js.flow'
 
 type CompareColorCarousel = {

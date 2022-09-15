@@ -16,7 +16,9 @@
     font-family: var(getVarName('typography.titleFontFamily')) !important;
   }
 
-  &__container { min-height: 15rem }
+  &__container {
+    min-height: 15rem;
+  }
 
   &__header {
     display: block;
@@ -30,27 +32,39 @@
     display: flex;
     font-family: inherit;
     position: absolute;
-    top: .35rem;
+    top: 0.35rem;
     z-index: 1001;
-    padding: .45em;
+    padding: 0.45em;
 
-    &:focus { @include focus-style }
-    &:hover { @include hover-style }
+    &:focus {
+      @include focus-style;
+    }
+    &:hover {
+      @include hover-style;
+    }
 
-    &--left { left: .35rem }
-    &--right { right: .35rem }
+    &--left {
+      left: 0.35rem;
+    }
+    &--right {
+      right: 0.35rem;
+    }
 
     @include respond-above(sm) {
-      padding: .75em 1.75em;
-      top: .875rem;
-      &--left { left: .875rem }
-      &--right { right: .875rem }
+      padding: 0.75em 1.75em;
+      top: 0.875rem;
+      &--left {
+        left: 0.875rem;
+      }
+      &--right {
+        right: 0.875rem;
+      }
     }
-   }
+  }
 
   &__button-left-text {
     display: none;
-    margin-left: .4rem;
+    margin-left: 0.4rem;
     text-transform: uppercase;
     @include respond-above(sm) {
       display: inline-block;
@@ -64,7 +78,7 @@
       display: block;
     }
     &--icon {
-      margin-left: .4rem;
+      margin-left: 0.4rem;
     }
   }
 
@@ -96,9 +110,11 @@
 
   &__rotate-arrow {
     font-size: 2.25rem !important;
-    padding: .375rem !important;
+    padding: 0.375rem !important;
 
-    &:focus { @include focus-style }
+    &:focus {
+      @include focus-style;
+    }
   }
 
   &__agree-terms {
@@ -110,14 +126,17 @@
     &--checkbox-label {
       cursor: pointer;
 
-      &:focus { @include focus-style }
+      &:focus {
+        @include focus-style;
+      }
     }
 
     &--text {
-      margin-left: .5rem;
+      margin-left: 0.5rem;
 
       a {
         text-decoration: underline !important;
+        text-decoration-color: var(getThemeColor('buttonBorder')) !important;
         color: var(getThemeColor('primary')) !important;
       }
     }
@@ -126,8 +145,8 @@
   &--done {
     font-size: small !important;
     margin-bottom: 1.25rem !important;
-    padding: .75rem 1.4rem !important;
-    background: var(getThemeColor('buttonBgColor')) !important;;
+    padding: 0.75rem 1.4rem !important;
+    background: var(getThemeColor('buttonBgColor')) !important;
     border: 1px solid var(getThemeColor('light')) !important;
     color: var(getThemeColor('light')) !important;
 
@@ -135,7 +154,9 @@
       border: 1px solid var(getThemeColor('buttonBorder')) !important;
       color: var(getThemeColor('buttonColor')) !important;
 
-      &:focus { @include focus-style }
+      &:focus {
+        @include focus-style;
+      }
     }
   }
 }
