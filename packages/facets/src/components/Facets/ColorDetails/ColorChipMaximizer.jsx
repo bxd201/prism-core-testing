@@ -1,110 +1,87 @@
 // @flow
-import React, { type Element, useContext, useEffect, useState } from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import 'src/providers/fontawesome/fontawesome'
-import { FormattedMessage, injectIntl } from 'react-intl'
+import type { Node } from 'react'
+import React, { type Element, createRef, useContext, useEffect, useState } from 'react'
 import { LiveMessage } from 'react-aria-live'
-import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as GA from 'src/analytics/GoogleAnalytics'
 import { GA_TRACKER_NAME_BRAND } from 'src/constants/globals'
+import ConfigurationContext, {
+  type ConfigurationContextType
+} from 'src/contexts/ConfigurationContext/ConfigurationContext'
+import 'src/providers/fontawesome/fontawesome'
+import useChipMaximizer, { BASE_CLASS } from '../../../hooks/useChipMaximizer'
 import { type Color } from '../../../shared/types/Colors.js.flow'
-import { varValues } from 'src/shared/withBuild/variableDefs'
 import 'src/scss/convenience/visually-hidden.scss'
 
-const BASE_CLASS = 'color-info'
-
 type Props = {
-  addColorBtn: ({}) => Element<any>,
+  addColorBtn: ({ style: $Shape<CSSStyleDeclaration> }) => Element<any>,
   color: Color,
-  intl: any,
-  onToggle?: boolean => void,
+  onToggle?: (boolean) => void,
   isMaximized: boolean,
-  setMaximized: boolean => void
+  setMaximized: (boolean) => void
 }
 
-export function ColorChipMaximizer ({ addColorBtn, color, intl, onToggle, isMaximized, setMaximized }: Props) {
+const ColorChipMaximizer = ({ addColorBtn, color, onToggle, isMaximized, setMaximized }: Props): Node => {
   const { brandId }: ConfigurationContextType = useContext(ConfigurationContext)
   const [liveRegionMessage, setLiveRegionMessage] = useState('')
+  const { formatMessage, locale } = useIntl()
+  const { styles, contrastingTextColor } = useChipMaximizer({ isDark: color.isDark, isMaximized })
 
-  const maximizeChipBtn = React.createRef()
-  const minimizeChipBtn = React.createRef()
+  const toggleMaximizedBtn = createRef()
 
-  const toggleChipMaximized = e => {
+  const toggleChipMaximized = (e) => {
     setLiveRegionMessage('')
     setMaximized(!isMaximized)
   }
 
-  const contrastingTextColor = (color.isDark) ? varValues._colors.white : varValues._colors.black
-
-  const CHIP_CLASS = [
-    `${BASE_CLASS}__max-chip`
-  ]
-  const SWATCH_SIZE_WRAPPER_CLASSES = [
-    `${BASE_CLASS}__display-toggles-wrapper`,
-    `${BASE_CLASS}__display-toggles-wrapper--swatch-size`
-  ]
-  const SWATCH_SIZE_TOGGLE_BUTTON_CLASSES = [
-    `${BASE_CLASS}__display-toggle-button`,
-    `${BASE_CLASS}__swatch-size-toggle-button`
-  ]
-  const ALT_SWATCH_SIZE_TOGGLE_BUTTON_CLASSES = [
-    `${BASE_CLASS}__display-toggle-button`,
-    `${BASE_CLASS}__swatch-size-toggle-button`,
-    `${BASE_CLASS}__display-toggle-button--alt`
-  ]
-
-  if (isMaximized) {
-    CHIP_CLASS.push(`${BASE_CLASS}__max-chip--maximized`)
-    SWATCH_SIZE_WRAPPER_CLASSES.push(`${BASE_CLASS}__display-toggles-wrapper--chip-maximized`)
-    SWATCH_SIZE_TOGGLE_BUTTON_CLASSES.push(`${BASE_CLASS}__display-toggle-button--active`)
-    SWATCH_SIZE_WRAPPER_CLASSES.push(`${BASE_CLASS}__display-toggles-wrapper--chip-maximized`)
-    ALT_SWATCH_SIZE_TOGGLE_BUTTON_CLASSES.push(`${BASE_CLASS}__display-toggle-button--active`)
-  }
-
-  if (color.isDark) {
-    CHIP_CLASS.push(`${BASE_CLASS}__max-chip--dark-color`)
-    ALT_SWATCH_SIZE_TOGGLE_BUTTON_CLASSES.push(`${BASE_CLASS}__display-toggle-button--dark-color`)
-    SWATCH_SIZE_TOGGLE_BUTTON_CLASSES.push(`${BASE_CLASS}__display-toggle-button--dark-color`)
-    SWATCH_SIZE_WRAPPER_CLASSES.push(`${BASE_CLASS}__display-toggles-wrapper--dark-color`)
-  }
-
   useEffect(() => {
     onToggle && onToggle(isMaximized)
-    if (isMaximized === true) {
-      minimizeChipBtn.current && minimizeChipBtn.current.focus()
+    if (isMaximized) {
+      toggleMaximizedBtn.current && toggleMaximizedBtn.current.focus()
       setTimeout(() => {
-        setLiveRegionMessage(intl.formatMessage({ id: 'CHIP_MAXIMIZED' }))
+        setLiveRegionMessage(formatMessage({ id: 'CHIP_MAXIMIZED' }))
       }, 500)
-      GA.event({
-        category: 'Color Detail',
-        action: 'Maximize Swatch',
-        label: 'Maximize Swatch'
-      }, GA_TRACKER_NAME_BRAND[brandId])
+      GA.event(
+        {
+          category: 'Color Detail',
+          action: 'Maximize Swatch',
+          label: 'Maximize Swatch'
+        },
+        GA_TRACKER_NAME_BRAND[brandId]
+      )
     }
-    if (isMaximized === false) {
-      maximizeChipBtn.current && maximizeChipBtn.current.focus()
+    if (!isMaximized) {
+      toggleMaximizedBtn.current && toggleMaximizedBtn.current.focus()
       setTimeout(() => {
-        setLiveRegionMessage(intl.formatMessage({ id: 'CHIP_MAXIMIZED' }))
+        setLiveRegionMessage(formatMessage({ id: 'CHIP_MINIMIZED' }))
       }, 500)
     }
   }, [isMaximized])
 
   return (
     <>
-      <div className={CHIP_CLASS.join(' ')} style={{ backgroundColor: color.hex, zIndex: isMaximized ? 3 : 0 }}>
-        {addColorBtn(isMaximized ? {} : { display: 'none' })}
+      <div className={styles.chip} style={{ backgroundColor: color.hex, zIndex: isMaximized ? 3 : 0 }}>
+        {addColorBtn(isMaximized ? {} : { style: { display: 'none' } })}
       </div>
-      <div className={SWATCH_SIZE_WRAPPER_CLASSES.join(' ')}>
-        <button className={SWATCH_SIZE_TOGGLE_BUTTON_CLASSES.join(' ')} onClick={toggleChipMaximized} ref={maximizeChipBtn}>
-          <FontAwesomeIcon className={`${BASE_CLASS}__display-toggles-icon`} icon={['fal', 'expand-alt']} color={contrastingTextColor} size={'2x'} />
+      <div className={styles.wrapper}>
+        <button
+          className={isMaximized ? styles.alt : styles.swatch}
+          onClick={toggleChipMaximized}
+          ref={toggleMaximizedBtn}
+        >
+          <FontAwesomeIcon
+            className={`${BASE_CLASS}__display-toggles-icon`}
+            icon={isMaximized ? ['fal', 'compress-alt'] : ['fal', 'expand-alt']}
+            color={contrastingTextColor}
+            size={'2x'}
+          />
           <div className={`${BASE_CLASS}__scene-toggle-copy visually-hidden`}>
-            <FormattedMessage id='MAXIMIZE_COLOR_SWATCH' />
-          </div>
-        </button>
-        <button className={ALT_SWATCH_SIZE_TOGGLE_BUTTON_CLASSES.join(' ')} onClick={toggleChipMaximized} ref={minimizeChipBtn}>
-          <FontAwesomeIcon className={`${BASE_CLASS}__display-toggles-icon`} icon={['fal', 'compress-alt']} color={contrastingTextColor} size={'2x'} />
-          <div className={`${BASE_CLASS}__scene-toggle-copy visually-hidden`}>
-            <FormattedMessage id='RESTORE_COLOR_SWATCH_TO_DEFAULT_SIZE' />
+            {isMaximized ? (
+              <FormattedMessage id='RESTORE_COLOR_SWATCH_TO_DEFAULT_SIZE' />
+            ) : (
+              <FormattedMessage id='MAXIMIZE_COLOR_SWATCH' />
+            )}
           </div>
         </button>
       </div>
@@ -114,4 +91,4 @@ export function ColorChipMaximizer ({ addColorBtn, color, intl, onToggle, isMaxi
   )
 }
 
-export default injectIntl(ColorChipMaximizer)
+export default ColorChipMaximizer

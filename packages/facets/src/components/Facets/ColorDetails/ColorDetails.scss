@@ -4,7 +4,7 @@ $neutral-foreground-color: var(getThemeColor('dark'));
 $strip-chip-size: 2rem;
 $strip-chip-margin: $strip-chip-size * 0.1;
 $width-thin: 0.125rem;
-$width-small: 0.250rem;
+$width-small: 0.25rem;
 $width-medium: 1rem;
 $tab-set-padding: 0 0.25rem;
 $tab-btn-height: strip-units(32px / 16px) * 1rem;
@@ -115,18 +115,18 @@ $details-tab-padding: 1rem;
 
     &__number {
       display: block;
-      font-size: .875rem;
+      font-size: 0.875rem;
       line-height: 1.4rem;
     }
 
     &__coord-color-name {
       font-style: italic;
-      font-size: .8125rem;
+      font-size: 0.8125rem;
     }
 
     &__coord-color-number {
       font-family: var(getVarName('typography.titleFontFamily'));
-      font-size: .75rem;
+      font-size: 0.75rem;
     }
   }
 
@@ -181,9 +181,9 @@ $details-tab-padding: 1rem;
 
   &__rack-location,
   &__type {
-    font-size: .8em;
+    font-size: 0.8em;
     font-weight: 400;
-    margin: .25em 0 0 0;
+    margin: 0.25em 0 0 0;
     opacity: $color-near-opacity;
     padding: 0;
   }
@@ -301,9 +301,9 @@ $details-tab-padding: 1rem;
     width: 40%;
 
     &--scene#{$top-level-class-string}__display-toggles-icon.svg-inline--fa {
-    height: 100%;
-    width: 100%;
-  }
+      height: 100%;
+      width: 100%;
+    }
   }
 
   &__display-toggle-button {
@@ -346,6 +346,7 @@ $details-tab-padding: 1rem;
     height: 1.5rem;
     width: 2rem;
     transform: rotate(90deg);
+    outline: none;
   }
 
   &__tab-list {
@@ -372,7 +373,7 @@ $details-tab-padding: 1rem;
     overflow: hidden;
     padding: $tab-set-padding;
     text-align: center;
-    border-right: $width-thin solid #FFF;
+    border-right: $width-thin solid #fff;
     width: percentage(3/1);
     border-bottom: none;
 
@@ -404,7 +405,7 @@ $details-tab-padding: 1rem;
   }
 
   &__tab-copy {
-    font-size: .8em;
+    font-size: 0.8em;
     font-weight: 600;
     line-height: 1;
     text-transform: uppercase;
@@ -456,7 +457,7 @@ $details-tab-padding: 1rem;
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-    font-size: .8rem;
+    font-size: 0.8rem;
     justify-content: center;
     line-height: 1.3;
     padding: $width-medium;
@@ -535,7 +536,7 @@ $details-tab-padding: 1rem;
   &__similar-color-info {
     display: block;
     height: 100%;
-    transition: transform 0.3s, z-index .3s;
+    transition: transform 0.3s, z-index 0.3s;
     width: 100%;
     z-index: 1;
     position: absolute;
