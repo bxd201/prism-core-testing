@@ -40,7 +40,7 @@ export interface PrismProps {
 }
 
 const Prism = ({ children, theme = {}, className, style, ...other }: PrismProps): JSX.Element => (
-  <div className={`${process.env.TOOLKIT_PROTECT_CLASS} ${className ?? ''}`} style={{ ...theme, ...style }} {...other}>
+  <div className={`${TOOLKIT_PROTECT_CLASS} ${className ?? ''}`} style={{ ...theme, ...style }} {...other}>
     {children}
   </div>
 )

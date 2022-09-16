@@ -1,5 +1,3 @@
-const postCssConfig = require('../postcss.config')
-
 module.exports = {
   stories: ['../src/components/**/*.stories.tsx'],
   // Add any Storybook addons you want here: https://storybook.js.org/addons/
@@ -9,10 +7,7 @@ module.exports = {
       test: /\.css$/,
       use: [
         {
-          loader: 'postcss-loader',
-          options: {
-            postcssOptions: postCssConfig
-          }
+          loader: 'postcss-loader'
         }
       ]
     })

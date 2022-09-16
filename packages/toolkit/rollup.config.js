@@ -4,6 +4,7 @@ import pkg from './package.json'
 import postcss from 'rollup-plugin-postcss'
 import resolve from '@rollup/plugin-node-resolve'
 import typescript from 'rollup-plugin-typescript2'
+import replace from '@rollup/plugin-replace'
 
 export default {
   input: 'src/index.tsx',
@@ -23,6 +24,9 @@ export default {
   ],
   external: [/@babel\/runtime/, /lodash*/, ...Object.keys(pkg.peerDependencies), ...Object.keys(pkg.dependencies)],
   plugins: [
+    replace({
+      'TOOLKIT_PROTECT_CLASS': JSON.stringify(process.env.TOOLKIT_PROTECT_CLASS || '')
+    }),
     peerDepsExternal(),
     resolve(),
     commonjs(),
