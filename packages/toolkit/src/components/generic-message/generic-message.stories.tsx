@@ -17,6 +17,9 @@ export default {
     fillParent: {
       type: 'boolean'
     },
+    center: {
+      type: 'boolean'
+    },
     className: {
       type: 'string'
     }

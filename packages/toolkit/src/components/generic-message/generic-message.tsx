@@ -1,4 +1,4 @@
-import React, { Children } from 'react'
+import React from 'react'
 
 export enum MessageTypes {
   ERROR = 'ERROR',
@@ -12,13 +12,13 @@ export interface GenericMessageProps {
   type?: MessageTypes
   className?: string
   fillParent?: boolean
+  center?: boolean
 }
 
 const GenericMessage = (props: GenericMessageProps): JSX.Element => {
-  const { className, children, type = MessageTypes.NORMAL, fillParent } = props
-  const multiChildren = Children.count(children) > 1
+  const { className, children, type = MessageTypes.NORMAL, fillParent, center = false } = props
 
-  const mainClasses = `p-4 ${multiChildren ? 'text-left' : 'text-center'} ${fillParent ? 'w-full' : 'w-fit'}`
+  const mainClasses = `p-4 ${center ? 'text-center' : 'text-left'} ${fillParent ? 'w-full' : 'w-fit'}`
 
   const containerClasses = {
     [MessageTypes.NORMAL]: `bg-white`,
