@@ -1,70 +1,19 @@
 // @flow
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import { Switch, Route, Redirect, useLocation, useHistory } from 'react-router-dom'
-import { ColorCollections } from '../../ColorCollections/ColorCollections'
-import ExpertColorPicks from '../../ExpertColorPicks/ExpertColorPicks'
-import Help from '../../Help/Help'
-import { ColorWallPage } from '../ColorWallFacet'
-import ColorDetails from '../ColorDetails/ColorDetails'
-import CompareColor from '../../CompareColor/CompareColor'
-import InspiredScene from '../../InspirationPhotos/InspiredSceneNavigator'
-import LivePaletteWrapper from '../../LivePalette/LivePaletteWrapper'
-import ColorVisualizerNav from './ColorVisualizerNav/ColorVisualizerNav'
-import SampleScenesWrapper from '../../SampleScenes/SampleScenes'
-import { hideGlobalModal, setModalThumbnailColor } from '../../../store/actions/globalModal'
-import MyIdeasContainer from '../../MyIdeasContainer/MyIdeasContainer'
-import MyIdeaPreview from '../../MyIdeaPreview/MyIdeaPreview'
-import SaveOptions from '../../SaveOptions/SaveOptions'
-import ColorDetailsModal from './ColorDetailsModal/ColorDetailsModal'
-import LandingPage from '../../LandingPage/LandingPage'
-import { CVWModalManager } from '../../CVWModalManager/CVWModalManager'
-import './ColorVisualizer.scss'
-import PaintSceneMaskingWrapper from 'src/components/PaintScene/PaintSceneMask'
-import { shouldAllowFeature } from '../../../shared/utils/featureSwitch.util'
-import { FEATURE_EXCLUSIONS } from '../../../constants/configurations'
-import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
-import { setDefaultRoute } from '../../../store/actions/defaultRoute'
-import { setMaxSceneHeight } from '../../../store/actions/system'
-import { SCENE_TYPES } from '../../../constants/globals'
-import {
-  ACTIVE_SCENE_LABELS_ENUM,
-  setActiveSceneLabel,
-  setIsColorWallModallyPresented,
-  setIsScenePolluted,
-  stageNavigationReturnIntent,
-  setNavigationIntent, clearNavigationIntent, setIsMatchPhotoPresented, cacheCarousel
-} from '../../../store/actions/navigation'
-import { ROUTES_ENUM, SHOW_ACTIVE_SCENE } from './routeValueCollections'
-import SceneBlobLoader from '../../SceneBlobLoader/SceneBlobLoader'
-import {
-  fetchRemoteScenes, handleScenesFetchedForCVW, handleScenesFetchErrorForCVW,
-  setSelectedSceneUid,
-  setVariantsCollection,
-  setSelectedVariantName,
-  setVariantsLoading
-} from '../../../store/actions/loadScenes'
-import SingleTintableSceneView from '../../SingleTintableSceneView/SingleTintableSceneView'
-import SceneSelectorNavButton from '../../SingleTintableSceneView/SceneSelectorNavButton'
-import { SCENES_ENDPOINT } from '../../../constants/endpoints'
-import ImageIngestView from '../../ImageIngestView/ImageIngestView'
-import PaintScene from '../../PaintScene/PaintScene'
-import { setLayersForPaintScene, WORKSPACE_TYPES } from '../../../store/actions/paintScene'
-import type { MiniColor, ReferenceDimensions } from '../../../shared/types/Scene'
-import MatchPhotoContainer from '../../MatchPhoto/MatchPhotoContainer'
-import { setImageForMatchPhoto, setImageDimsForMatchPhoto } from '../../../store/actions/matchPhoto'
-import { setIngestedImage } from '../../../store/actions/user-uploads'
-import { SCENE_TYPE } from '../../../store/actions/persistScene'
-import {
-  createMatchPhotoNavigationWarningModal,
-  createNavigationWarningModal,
-  createSavedNotificationModal
-} from '../../CVWModalManager/createModal'
 import { useIntl } from 'react-intl'
-import { DANGER, MODAL_TYPE_ENUM, PRIMARY } from '../../CVWModalManager/constants'
-import { hydrateStockSceneFromSavedData } from '../../../store/actions/stockScenes'
-import { setActiveSceneKey } from '../../../store/actions/scenes'
-import { toggleCompareColor } from '../../../store/actions/live-palette'
+import { useDispatch,useSelector } from 'react-redux'
+import { Redirect, Route, Switch, useHistory, useLocation } from 'react-router-dom'
+import debounce from 'lodash/debounce'
+import * as GA from 'src/analytics/GoogleAnalytics'
+import PaintSceneMaskingWrapper from 'src/components/PaintScene/PaintSceneMask'
+import { GA_TRACKER_NAME_BRAND } from 'src/constants/globals'
+import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
+import { FEATURE_EXCLUSIONS } from '../../../constants/configurations'
+import { SCENES_ENDPOINT } from '../../../constants/endpoints'
+import { SCENE_TYPES } from '../../../constants/globals'
+import type { MiniColor, ReferenceDimensions } from '../../../shared/types/Scene'
+import { shouldAllowFeature } from '../../../shared/utils/featureSwitch.util'
+import { setDefaultRoute } from '../../../store/actions/defaultRoute'
 import {
   setFastMaskIsPolluted,
   setFastMaskOpenCache,
@@ -72,22 +21,79 @@ import {
   setImageForFastMask,
   setRefsDimsForFastMask
 } from '../../../store/actions/fastMask'
-import FastMaskView from '../../FastMask/FastMaskView'
+import { hideGlobalModal, setModalThumbnailColor } from '../../../store/actions/globalModal'
+import { toggleCompareColor } from '../../../store/actions/live-palette'
+import {
+  fetchRemoteScenes,
+  handleScenesFetchedForCVW,
+  handleScenesFetchErrorForCVW,
+  setSelectedSceneUid,
+  setSelectedVariantName,
+  setVariantsCollection,
+  setVariantsLoading
+} from '../../../store/actions/loadScenes'
+import { setImageDimsForMatchPhoto,setImageForMatchPhoto } from '../../../store/actions/matchPhoto'
+import {
+  ACTIVE_SCENE_LABELS_ENUM,
+  cacheCarousel,
+  clearNavigationIntent,
+  setActiveSceneLabel,
+  setIsColorWallModallyPresented,
+  setIsMatchPhotoPresented,
+  setIsScenePolluted,
+  setNavigationIntent,
+  stageNavigationReturnIntent
+} from '../../../store/actions/navigation'
+import { setLayersForPaintScene, WORKSPACE_TYPES } from '../../../store/actions/paintScene'
+import { SCENE_TYPE } from '../../../store/actions/persistScene'
+import { setActiveSceneKey } from '../../../store/actions/scenes'
+import { hydrateStockSceneFromSavedData } from '../../../store/actions/stockScenes'
+import { setMaxSceneHeight } from '../../../store/actions/system'
+import { setIngestedImage } from '../../../store/actions/user-uploads'
+import { ColorCollections } from '../../ColorCollections/ColorCollections'
+import CompareColor from '../../CompareColor/CompareColor'
+import { DANGER, MODAL_TYPE_ENUM, PRIMARY } from '../../CVWModalManager/constants'
+import {
+  createMatchPhotoNavigationWarningModal,
+  createNavigationWarningModal,
+  createSavedNotificationModal
+} from '../../CVWModalManager/createModal'
+import { CVWModalManager } from '../../CVWModalManager/CVWModalManager'
+import ExpertColorPicks from '../../ExpertColorPicks/ExpertColorPicks'
 import type { FastMaskWorkspace } from '../../FastMask/FastMaskView'
-import debounce from 'lodash/debounce'
-import * as GA from 'src/analytics/GoogleAnalytics'
-import { GA_TRACKER_NAME_BRAND } from 'src/constants/globals'
+import FastMaskView from '../../FastMask/FastMaskView'
+import Help from '../../Help/Help'
+import ImageIngestView from '../../ImageIngestView/ImageIngestView'
+import InspiredScene from '../../InspirationPhotos/InspiredSceneNavigator'
+import LandingPage from '../../LandingPage/LandingPage'
+import LivePaletteWrapper from '../../LivePalette/LivePaletteWrapper'
+import MatchPhotoContainer from '../../MatchPhoto/MatchPhotoContainer'
+import MyIdeaPreview from '../../MyIdeaPreview/MyIdeaPreview'
+import MyIdeasContainer from '../../MyIdeasContainer/MyIdeasContainer'
+import PaintScene from '../../PaintScene/PaintScene'
+import SampleScenesWrapper from '../../SampleScenes/SampleScenes'
+import SaveOptions from '../../SaveOptions/SaveOptions'
+import SceneBlobLoader from '../../SceneBlobLoader/SceneBlobLoader'
+import SceneSelectorNavButton from '../../SingleTintableSceneView/SceneSelectorNavButton'
+import SingleTintableSceneView from '../../SingleTintableSceneView/SingleTintableSceneView'
+import ColorDetails from '../ColorDetails/ColorDetails'
+import { ColorWallPage } from '../ColorWallFacet'
+import ColorDetailsModal from './ColorDetailsModal/ColorDetailsModal'
+import ColorVisualizerNav from './ColorVisualizerNav/ColorVisualizerNav'
+import { ROUTES_ENUM, SHOW_ACTIVE_SCENE } from './routeValueCollections'
+import './ColorVisualizer.scss'
 
 export type CVWPropsType = {
   alwaysShowColorFamilies?: boolean,
   colorWallBgColor?: string,
   defaultRoute?: string,
   language: string,
-  maxSceneHeight: number
+  maxSceneHeight: number,
+  routeType: string
 }
 
 const CVW = (props: CVWPropsType) => {
-  const { alwaysShowColorFamilies, colorWallBgColor, defaultRoute, language, maxSceneHeight } = props
+  const { alwaysShowColorFamilies, colorWallBgColor, defaultRoute, language, maxSceneHeight, routeType } = props
   const dispatch = useDispatch()
   const location = useLocation()
   const { pathname } = location
@@ -501,7 +507,7 @@ const CVW = (props: CVWPropsType) => {
         isShowFooter && <div className={'cvw__root-container__footer'}>
           {colorDetailsModalShowing && <div className='cvw__root-container__footer--overlay' />}
           <div className='cvw__root-container__footer--priority'>
-            <LivePaletteWrapper />
+            <LivePaletteWrapper routeType={routeType} />
           </div>
           <div className={`cvw__root-container__footer--secondary${colorDetailsModalShowing ? ' hide-on-small-screens' : ''}`}>
             {title && <div className='cvw__root-container__footer--secondary--title'>{title}</div>}
