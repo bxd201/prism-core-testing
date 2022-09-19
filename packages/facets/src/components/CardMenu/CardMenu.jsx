@@ -1,5 +1,6 @@
 // @flow
 import React, { type Node, useContext, useState } from 'react'
+import { useSelector } from 'react-redux'
 import './CardMenu.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'src/providers/fontawesome/fontawesome'
@@ -25,6 +26,7 @@ const CardMenu = ({ children, menuTitle = '', showBackByDefault = false, backPat
   const [cardShowing: Node, setCardShowing: (Node) => void] = useState(null)
   const [cardTitle: string, setCardTitle] = useState(menuTitle)
   const history = useHistory()
+  const { defaultRoute } = useSelector(state => state)
   const { cvw = {} } = useContext<ConfigurationContextType>(ConfigurationContext)
   const { closeBtn = {} } = cvw
   const { showArrow: closeBtnShowArrow = true, text: closeBtnText = <FormattedMessage id='CLOSE' /> } = closeBtn
@@ -43,7 +45,7 @@ const CardMenu = ({ children, menuTitle = '', showBackByDefault = false, backPat
             &nbsp;<span className='card-menu__button-left-text'><FormattedMessage id='BACK' /></span>
           </div>
         </button>}
-        <button className='text-xs card-menu__button card-menu__button--right' onClick={() => history.push('/active')}>
+        <button className='text-xs card-menu__button card-menu__button--right' onClick={() => history.push(defaultRoute)}>
           <div className='card-menu__close'>
             {closeBtnText ?? <FormattedMessage id='CLOSE' />}{closeBtnShowArrow && <FontAwesomeIcon className='card-menu__close--icon' icon={['fa', 'chevron-up']} />}
           </div>

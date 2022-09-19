@@ -30,6 +30,7 @@
     border: 1px solid var(getThemeColor('buttonBorder'));
     color: var(getThemeColor('buttonColor'));
     display: flex;
+    align-items: center;
     font-family: inherit;
     position: absolute;
     top: 0.35rem;
@@ -84,6 +85,7 @@
 
   &__cancel {
     display: block;
+    line-height: .5rem;
     @include respond-above(sm) {
       display: none;
     }

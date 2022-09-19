@@ -4,11 +4,17 @@ import { configurations } from './configurations'
 import { lp } from './live-palette'
 import { language } from './language'
 import {
-  scenesCollection, variantsCollection, variantsLoading, selectedSceneUid,
-  selectedVariantName, activeSceneKey, globalColorDetailColor
+  scenesCollection,
+  variantsCollection,
+  variantsLoading,
+  selectedSceneUid,
+  selectedVariantName,
+  activeSceneKey,
+  globalColorDetailColor
 } from './scenes'
 import { ingestedImageMetadata, queuedImageUpload, uploads } from './uploads'
 import collectionSummaries from './collectionSummaries'
+import defaultRoute from './defaultRoute'
 import expertColorPicks from './expertColorPicks'
 import inspirationalPhotos from './inspirationalPhotos'
 import { savingMasks } from './masks'
@@ -29,7 +35,9 @@ import {
   selectedSavedLivePaletteId,
   colorsForSurfacesFromSavedScene,
   shouldTriggerPaintScenePublishLayers,
-  paintSceneLayersForSave, shouldShowPaintSceneSavedModal, variantStockSceneNameFromSave
+  paintSceneLayersForSave,
+  shouldShowPaintSceneSavedModal,
+  variantStockSceneNameFromSave
 } from './savedScenes'
 import { user } from './user'
 import { paintSceneWorkspace } from './paintSceneWorkspace'
@@ -40,10 +48,18 @@ import { systemMessages } from './systemMessages'
 import { initializingFacetId, maxSceneHeight } from './system'
 import {
   activeSceneLabel,
-  allowNavigateToIntendedDestination, dirtyNavigationIntent, imageRotateBypass, isColorwallModallyPresented,
-  navigationIntent, navigationReturnIntent,
-  paintSceneCache, carouselCache,
-  scenePolluted, shouldShowGlobalDestroyWarning, forwardIntent, isMatchPhotoPresented
+  allowNavigateToIntendedDestination,
+  dirtyNavigationIntent,
+  imageRotateBypass,
+  isColorwallModallyPresented,
+  navigationIntent,
+  navigationReturnIntent,
+  paintSceneCache,
+  carouselCache,
+  scenePolluted,
+  shouldShowGlobalDestroyWarning,
+  forwardIntent,
+  isMatchPhotoPresented
 } from './navigation'
 import { modalInfo, modalThumbnailColor } from './globalModal'
 import { matchPhotoImage, matchPhotoImageDims } from './matchPhoto'
@@ -53,6 +69,7 @@ export default combineReducers({
   collectionSummaries,
   colors,
   configurations,
+  defaultRoute,
   expertColorPicks,
   inspirationalPhotos,
   language,

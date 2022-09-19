@@ -70,11 +70,11 @@ const ImageIngestView = (props: ImageIngestViewProps) => {
       <div className={`${baseClassName}__container`} style={{ maxHeight: maxSceneHeight }}>
         <div className={`${baseClassName}__header`}>
           <button
-            className={`${baseClassName}__button ${baseClassName}__button--left`}
+            className={`text-xs ${baseClassName}__button ${baseClassName}__button--left`}
             onClick={() => history.goBack()}
           >
             {backBtn?.icon ? (
-              <Iconography name={backBtn?.icon} style={{ width: '.85rem', height: '.85rem' }} />
+              <Iconography name={backBtn?.icon} style={{ width: '.85rem', height: '.75rem' }} />
             ) : (
               <FontAwesomeIcon icon={['fa', 'angle-left']} />
             )}
@@ -85,7 +85,7 @@ const ImageIngestView = (props: ImageIngestViewProps) => {
           <Link to={closeLink} tabIndex='-1'>
             <button
               onClick={handleCloseButton}
-              className={`${baseClassName}__button ${baseClassName}__button--right dark-button`}
+              className={`text-xs ${baseClassName}__button ${baseClassName}__button--right dark-button`}
             >
               <div className={`${baseClassName}__close`}>
                 {closeBtnText ?? <FormattedMessage id='CLOSE' />}

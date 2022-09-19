@@ -1,35 +1,34 @@
 // @flow
 import React, { useContext, useEffect, useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { FormattedMessage, useIntl } from 'react-intl'
-import { activate, deactivateTemporaryColor, empty, replaceLpColors, toggleCompareColor } from '../../store/actions/live-palette'
-import { setNavigationIntent, setNavigationIntentWithReturn } from '../../store/actions/navigation'
-import { loadColors, showColorDetailsModal } from '../../store/actions/loadColors'
 import Prism, { ColorsIcon, LivePalette } from '@prism/toolkit'
-import LivePaletteModal from './LivePaletteModal'
-import ConfigurationContext, { type ConfigurationContextType } from '../../contexts/ConfigurationContext/ConfigurationContext'
 import filter from 'lodash/filter'
 import isEqual from 'lodash/isEqual'
 import startCase from 'lodash/startCase'
 import values from 'lodash/values'
-import { fullColorName, fullColorNumber } from '../../shared/helpers/ColorUtils'
-import { LP_MAX_COLORS_ALLOWED, MIN_COMPARE_COLORS_ALLOWED } from '../../constants/configurations'
-import { ROUTES_ENUM } from '../Facets/ColorVisualizerWrapper/routeValueCollections'
-import * as GA from '../../analytics/GoogleAnalytics'
-import { GA_TRACKER_NAME_BRAND, HASH_CATEGORIES } from '../../constants/globals'
 import '../../providers/fontawesome/fontawesome'
+import * as GA from '../../analytics/GoogleAnalytics'
+import { LP_MAX_COLORS_ALLOWED, MIN_COMPARE_COLORS_ALLOWED } from '../../constants/configurations'
+import { GA_TRACKER_NAME_BRAND, HASH_CATEGORIES } from '../../constants/globals'
+import ConfigurationContext, { type ConfigurationContextType } from '../../contexts/ConfigurationContext/ConfigurationContext'
+import { fullColorName, fullColorNumber } from '../../shared/helpers/ColorUtils'
+import { activate, deactivateTemporaryColor, empty, replaceLpColors, toggleCompareColor } from '../../store/actions/live-palette'
+import { loadColors, showColorDetailsModal } from '../../store/actions/loadColors'
+import { navigateToIntendedDestination, setNavigationIntent, setNavigationIntentWithReturn } from '../../store/actions/navigation'
+import { ROUTES_ENUM } from '../Facets/ColorVisualizerWrapper/routeValueCollections'
+import LivePaletteModal from './LivePaletteModal'
 import './LivePalette.scss'
 
 const PATH__NAME = 'fast-mask-simple.html'
 const baseClass = 'prism-live-palette'
 const slotClass = `${baseClass}__slot`
 
-const LivePaletteWrapper = ({ simple = false }: { simple?: boolean }) => {
+const LivePaletteWrapper = ({ routeType, simple = false }: { routeType?: string, simple?: boolean }) => {
   const dispatch = useDispatch()
   const colorMap = useSelector(state => state.colors.items.colorMap, shallowEqual)
   const { activeColor, colors: lpColors, temporaryActiveColor } = useSelector(state => state.lp)
-  const isFastMaskPolluted = useSelector(store => store.fastMaskIsPolluted)
   const { brandId, brandKeyNumberSeparator, colorWall: { colorSwatch = {} }, cvw = {} } = useContext<ConfigurationContextType>(ConfigurationContext)
   const { colorNumOnBottom = false, houseShaped = false, infoBtn = {} } = colorSwatch
   const { compare, firstEmptySlot, title } = cvw.palette ?? {}
@@ -40,6 +39,8 @@ const LivePaletteWrapper = ({ simple = false }: { simple?: boolean }) => {
 
   useEffect(() => {
     loadColors(brandId)(dispatch)
+    // Resets navigation intended destination
+    dispatch(navigateToIntendedDestination())
 
     if (window.location.pathname.split('/').slice(-1)[0] === PATH__NAME) {
       setIsFastMaskPage(true)
@@ -86,9 +87,9 @@ const LivePaletteWrapper = ({ simple = false }: { simple?: boolean }) => {
               <button
                 className={slotClass}
                 onClick={() => {
-                  window.location.pathname.indexOf(ROUTES_ENUM.COLOR_WALL) === -1 && isFastMaskPolluted
-                    ? setNavigationIntents(ROUTES_ENUM.COLOR_WALL)
-                    : setNavigationIntents(ROUTES_ENUM.COLOR_WALL, ROUTES_ENUM.ACTIVE)
+                  window.location[routeType === 'browser' ? 'pathname' : 'hash'].split('/').pop() === ROUTES_ENUM.ACTIVE.substr(1)
+                    ? setNavigationIntents(ROUTES_ENUM.COLOR_WALL, ROUTES_ENUM.ACTIVE)
+                    : setNavigationIntents(ROUTES_ENUM.COLOR_WALL)
                 }}
               >
                 <div className={`flex justify-center items-center ${IS_EMPTY ? '' : 'flex-col'}`}>

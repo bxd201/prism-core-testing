@@ -73,7 +73,7 @@ const CompareColor = ({
         <span>
           <FormattedMessage id='COMPARE_COLORS' />
         </span>
-        <button className={`${style.containerHeaderButtonClass}`} onClick={toggleCompareColor}>
+        <button className={`text-xs ${style.containerHeaderButtonClass}`} onClick={toggleCompareColor}>
           {closeBtnText ?? <FormattedMessage id='CLOSE' />}
           {closeBtnShowArrow && (
             <FontAwesomeIcon className={`${style.containerHeaderClass}--icon`} icon={['fa', 'chevron-up']} />

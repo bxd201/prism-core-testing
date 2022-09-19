@@ -28,8 +28,7 @@ export const HelpItemContent: AbstractComponent<
   HTMLDivElement
 > = forwardRef((props: HelpItemContentProps, ref) => {
   const { data } = props
-  const { cvw = {} }: ConfigurationContextType =
-    useContext(ConfigurationContext)
+  const { cvw = {} }: ConfigurationContextType = useContext(ConfigurationContext)
   const { help = {} } = cvw
 
   const tabContent = data.content
@@ -58,11 +57,11 @@ export const HelpItemContent: AbstractComponent<
         {tabContent ? (
           <HelpIcons data={data} />
         ) : imageList ? (
-          <HelpImageList />
+          <HelpImageList data={imageList} />
         ) : (
           ''
         )}
-        {imageListMobile && <HelpImageListMobile />}
+        {imageListMobile && <HelpImageListMobile data={imageListMobile} />}
       </div>
       {tabSubContent &&
         tabSubContent.map((content, index) => {
