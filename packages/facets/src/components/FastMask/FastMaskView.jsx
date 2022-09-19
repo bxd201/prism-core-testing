@@ -108,7 +108,7 @@ const FastMaskView = (props: FastMaskProps) => {
       description: ''
     }
 
-    const variants = assets.map(asset => {
+    const variants = assets.map((asset) => {
       const variant = {
         sceneType,
         sceneId,
@@ -140,7 +140,7 @@ const FastMaskView = (props: FastMaskProps) => {
       surfaces: assets.slice(1),
       width,
       height,
-      surfaceColors: surfaceColors.map(color => {
+      surfaceColors: surfaceColors.map((color) => {
         return { ...color }
       }),
       variantName,
@@ -154,9 +154,17 @@ const FastMaskView = (props: FastMaskProps) => {
       // theres only 1 variant for fast mask
       const { width: sceneWidth, height: sceneHeight } = scenesCollection[0]
       const variant = variantsCollection[0]
-      const newSurfaceColors = variant.surfaces.map(surface => newColor)
+      const newSurfaceColors = variant.surfaces.map((surface) => newColor)
       setSurfaceColors(newSurfaceColors)
-      props.handleUpdates(prepareData([variant.image, ...variant.surfaces], sceneWidth, sceneHeight, newSurfaceColors, variant.variantName))
+      props.handleUpdates(
+        prepareData(
+          [variant.image, ...variant.surfaces],
+          sceneWidth,
+          sceneHeight,
+          newSurfaceColors,
+          variant.variantName
+        )
+      )
     }
     setTintingColor(newColor)
   }, [activeColor, variantsCollection, scenesCollection])
@@ -171,7 +179,8 @@ const FastMaskView = (props: FastMaskProps) => {
       setHeight(refDims.isPortrait ? refDims.portraitHeight : refDims.landscapeHeight)
     }
 
-    if (savedData) { // This view handles
+    if (savedData) {
+      // This view handles
       const { width: sceneWidth, height: sceneHeight } = savedData.scene
       setWidth(sceneWidth)
       setHeight(sceneHeight)
@@ -181,10 +190,12 @@ const FastMaskView = (props: FastMaskProps) => {
       setVariantsCollection([cloneDeep(savedData.variant)])
     } else {
       // convert base 64 from possible rotation into a blob for upload to nanonets
-      axios.get(imageUrl, { responseType: 'blob' }).then(res => {
-        setBlobData(res.data)
-      })
-        .catch(err => console.warn(`Error loading user image ${err}`))
+      axios
+        .get(imageUrl, { responseType: 'blob' })
+        .then((res) => {
+          setBlobData(res.data)
+        })
+        .catch((err) => console.warn(`Error loading user image ${err}`))
     }
     return () => props.cleanupCallback()
   }, [])
@@ -198,8 +209,14 @@ const FastMaskView = (props: FastMaskProps) => {
 
       axios
         .post(`${ML_API_URL}/prism-ml/`, uploadForm, {})
-        .then(res => at(res, 'data.per_img_resp[0][0].payload')[0] || (() => { throw new Error('No relevant data in response') })())
-        .then(data => {
+        .then(
+          (res) =>
+            at(res, 'data.per_img_resp[0][0].payload')[0] ||
+            (() => {
+              throw new Error('No relevant data in response')
+            })()
+        )
+        .then((data) => {
           // eslint-disable-next-line camelcase
           const { mask_path0, original_img_path } = data
           // eslint-disable-next-line camelcase
@@ -208,30 +225,32 @@ const FastMaskView = (props: FastMaskProps) => {
           const originalImage = original_img_path
 
           // Load mask and background
-          return Promise.all([originalImage, mask].map((url, index) => {
-            // THIS IS A WORKAROUND FOR THE MISSING original_img_path, since we have it in memory still lets just use it.
-            if (index === 0 && !url) {
-              const bgImagePromise = new Promise((resolve, reject) => {
-                // Wrap the blob in an object that mimics the axios response.
-                // The createScenesAndVariants function expects this form.
-                resolve({ data: blobData })
-              })
+          return Promise.all(
+            [originalImage, mask].map((url, index) => {
+              // THIS IS A WORKAROUND FOR THE MISSING original_img_path, since we have it in memory still lets just use it.
+              if (index === 0 && !url) {
+                const bgImagePromise = new Promise((resolve, reject) => {
+                  // Wrap the blob in an object that mimics the axios response.
+                  // The createScenesAndVariants function expects this form.
+                  resolve({ data: blobData })
+                })
 
-              return bgImagePromise
-            }
-            return axios.get(url, {
-              responseType: 'blob'
+                return bgImagePromise
+              }
+              return axios.get(url, {
+                responseType: 'blob'
+              })
             })
-          }))
+          )
         })
         .then((resp) => {
           // save mask and background as blobs in the browser
           if (isLive) {
             try {
-              const blobUrls = resp.map(r => URL.createObjectURL(r.data))
+              const blobUrls = resp.map((r) => URL.createObjectURL(r.data))
               const { sceneUid, scenes, variants } = createScenesAndVariants([blobUrls], width, height)
               // There is only one variant for fast mask, the main one.
-              const colors = variants[0].surfaces.map(surface => tintingColor)
+              const colors = variants[0].surfaces.map((surface) => tintingColor)
               setBlobUrls(blobUrls)
               setSceneUid(sceneUid)
               setScenesCollection(scenes)
@@ -247,7 +266,7 @@ const FastMaskView = (props: FastMaskProps) => {
             console.warn('User interrupted the promise resolution.')
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.error('issue with segmentation: ', err)
           if (props.handleError) {
             props.handleError(err)
@@ -262,7 +281,7 @@ const FastMaskView = (props: FastMaskProps) => {
   useEffect(() => {
     return () => {
       if (blobUrls.length) {
-        blobUrls.forEach(url => {
+        blobUrls.forEach((url) => {
           URL.revokeObjectURL(url)
         })
       }
@@ -283,7 +302,6 @@ const FastMaskView = (props: FastMaskProps) => {
         setVariantsCollection(updatedVariantCollection)
       }
 
-      console.table(variantsCollection)
       const { image, surfaces } = variantsCollection[0]
       primeImage(image, surfaces[0].surfaceBlobUrl, handleImagePrimed)
     }
@@ -293,33 +311,50 @@ const FastMaskView = (props: FastMaskProps) => {
     }
   }, [variantsCollection, imageProcessed])
 
-  return (<>
-    {imageProcessed && variantsCollection.length && !showSpinner
-      ? <div className={isForCVW ? cvwBaseClassName : baseClassName}>
-      <div className={tintWrapperClassName}>
-        <SingleTintableSceneView
-          spinner={spinner}
-          key={sceneUid}
-          surfaceColorsFromParents={surfaceColors}
-          selectedSceneUid={sceneUid}
-          scenesCollection={scenesCollection}
-          variantsCollection={variantsCollection} />
-      </div>
-    </div>
-      : <div className={baseClassName}>
-      <div className={isForCVW ? cvwBackgroundWrapperClassName : backgroundWrapperClassName}>
-        {imageUrl && <img src={imageUrl} className={backgroundImageClassName} alt={intl.formatMessage({ id: 'USER_UPLOAD' })} />}
-        <div className={loaderWrapperClassName}>
-          {spinner ? <div className={altSpinnerClassName}>{spinner}</div> : <CircleLoader />}
-          {loadingMessage?.length
-            ? <div className={loadingMessageWrapperClassName}>{loadingMessage.map(msg => {
-              return (<div className={loadingMessageItemsClassName} key={msg}>{msg}</div>)
-            })}</div>
-            : null}
+  return (
+    <>
+      {imageProcessed && variantsCollection.length && !showSpinner ? (
+        <div className={isForCVW ? cvwBaseClassName : baseClassName}>
+          <div className={tintWrapperClassName}>
+            <SingleTintableSceneView
+              spinner={spinner}
+              key={sceneUid}
+              surfaceColorsFromParents={surfaceColors}
+              selectedSceneUid={sceneUid}
+              scenesCollection={scenesCollection}
+              variantsCollection={variantsCollection}
+            />
+          </div>
         </div>
-      </div>
-    </div>}
-  </>)
+      ) : (
+        <div className={baseClassName}>
+          <div className={isForCVW ? cvwBackgroundWrapperClassName : backgroundWrapperClassName}>
+            {imageUrl && (
+              <img
+                src={imageUrl}
+                className={backgroundImageClassName}
+                alt={intl.formatMessage({ id: 'USER_UPLOAD' })}
+              />
+            )}
+            <div className={loaderWrapperClassName}>
+              {spinner ? <div className={altSpinnerClassName}>{spinner}</div> : <CircleLoader />}
+              {loadingMessage?.length ? (
+                <div className={loadingMessageWrapperClassName}>
+                  {loadingMessage.map((msg) => {
+                    return (
+                      <div className={loadingMessageItemsClassName} key={msg}>
+                        {msg}
+                      </div>
+                    )
+                  })}
+                </div>
+              ) : null}
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  )
 }
 
 export default FastMaskView
