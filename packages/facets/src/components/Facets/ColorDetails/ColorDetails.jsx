@@ -1,39 +1,41 @@
 // @flow
 import React, { useContext, useEffect, useState } from 'react'
-import 'src/providers/fontawesome/fontawesome'
-import { useDispatch } from 'react-redux'
-import ColorWallContext from 'src/components/Facets/ColorWall/ColorWallContext'
-import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import { FormattedMessage } from 'react-intl'
+import { useDispatch } from 'react-redux'
+import { Tab, TabList, TabPanel, Tabs } from 'react-tabs'
+import { cloneDeep } from 'lodash/lang'
 import * as GA from 'src/analytics/GoogleAnalytics'
+import ColorWallContext from 'src/components/Facets/ColorWall/ColorWallContext'
+import HeroLoader from 'src/components/Loaders/HeroLoader/HeroLoader'
 import { GA_TRACKER_NAME_BRAND } from 'src/constants/globals'
+import ConfigurationContext, {
+  type ConfigurationContextType
+} from 'src/contexts/ConfigurationContext/ConfigurationContext'
+import ColorDataWrapper from 'src/helpers/ColorDataWrapper/ColorDataWrapper'
+import type { SceneStatus } from 'src/shared/types/Scene'
+import 'src/providers/fontawesome/fontawesome'
+import type { Color } from '../../../shared/types/Colors.js.flow'
+import { toggleColorDetailsPage } from '../../../store/actions/scenes'
+import { Content } from '../ColorWall/ColorSwatch/ColorSwatch'
 import ColorChipMaximizer from './ColorChipMaximizer'
-import ColorViewer from './ColorViewer'
-import ColorStrip from './ColorStrip'
+import { type ColorDetailsCTAData, ColorDetailsCTAs } from './ColorDetailsCTAs'
 import ColorDetailsScenes from './ColorDetailsScenes'
 import ColorInfo from './ColorInfo'
+import ColorStrip from './ColorStrip'
+import ColorViewer from './ColorViewer'
 import CoordinatingColors from './CoordinatingColors'
 import SimilarColors from './SimilarColors'
-import { Content } from '../ColorWall/ColorSwatch/ColorSwatch'
-import { toggleColorDetailsPage } from '../../../store/actions/scenes'
-import type { Color } from '../../../shared/types/Colors.js.flow'
-import type { SceneStatus } from 'src/shared/types/Scene'
 import 'src/scss/convenience/visually-hidden.scss'
 import './ColorDetails.scss'
-import ColorDataWrapper from 'src/helpers/ColorDataWrapper/ColorDataWrapper'
-import HeroLoader from 'src/components/Loaders/HeroLoader/HeroLoader'
-import { ColorDetailsCTAs, type ColorDetailsCTAData } from './ColorDetailsCTAs'
-import { cloneDeep } from 'lodash/lang'
 
 const baseClass = 'color-info'
 const mainInfoClass = `${baseClass}__main-info`
 
 type Props = {
-  onColorChanged?: Color => void,
-  onSceneChanged?: SceneStatus => void,
-  onVariantChanged?: string => void,
-  onColorChipToggled?: boolean => void,
+  onColorChanged?: (Color) => void,
+  onSceneChanged?: (SceneStatus) => void,
+  onVariantChanged?: (string) => void,
+  onColorChipToggled?: (boolean) => void,
   familyLink?: string,
   loading?: boolean,
   colorFromParent?: Color,
@@ -46,10 +48,20 @@ type ColorMessage = {
   doNotBroadcast?: boolean
 }
 
-export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged, onColorChipToggled, familyLink, loading, colorFromParent = {}, initialVariantName, callsToAction = [] }: Props) => {
+export const ColorDetails = ({
+  onColorChanged,
+  onSceneChanged,
+  onVariantChanged,
+  onColorChipToggled,
+  familyLink,
+  loading,
+  colorFromParent = {},
+  initialVariantName,
+  callsToAction = []
+}: Props) => {
   const dispatch = useDispatch()
   const { brandId }: ConfigurationContextType = useContext(ConfigurationContext)
-  const [color, setColor] = useState<ColorMessage>(colorFromParent)// in some case we add an extra prop to a color obj that tells the pub method to not fire
+  const [color, setColor] = useState<ColorMessage>(colorFromParent) // in some case we add an extra prop to a color obj that tells the pub method to not fire
   const [tabIndex, setTabIndex] = useState<number>(0)
   const [isMaximized, setMaximized] = useState(false)
 
@@ -63,7 +75,9 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
 
   useEffect(() => {
     dispatch(toggleColorDetailsPage())
-    return () => { dispatch(toggleColorDetailsPage()) }
+    return () => {
+      dispatch(toggleColorDetailsPage())
+    }
   }, [])
 
   useEffect(() => {
@@ -77,16 +91,18 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
     color.coordinatingColors || setTabIndex(0)
   }, [color])
 
-  const AddColorBtn = ({ style }: { style?: {} }) => {
+  const AddColorBtn = ({ style }: { style?: $Shape<CSSStyleDeclaration> }) => {
     const { colorDetailsAddColor } = useContext<ConfigurationContextType>(ConfigurationContext)
 
     if (!colorDetailsAddColor) return null
 
-    return <div className={`${mainInfoClass}--add`} style={style}>
-      <ColorWallContext.Provider value={{ displayAddButton: true }}>
-        <Content msg='' color={color} isMaximized={isMaximized} style={{ position: 'relative' }} />
-      </ColorWallContext.Provider>
-    </div>
+    return (
+      <div className={`${mainInfoClass}--add`} style={style}>
+        <ColorWallContext.Provider value={{ displayAddButton: true }}>
+          <Content msg='' color={color} isMaximized={isMaximized} style={{ position: 'relative' }} />
+        </ColorWallContext.Provider>
+      </div>
+    )
   }
 
   if (loading) {
@@ -96,42 +112,66 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
   return (
     <>
       <div className='color-detail-view'>
-        <ColorChipMaximizer addColorBtn={(style) => <AddColorBtn style={style} isMaximized={isMaximized} />} color={color} isMaximized={isMaximized} setMaximized={setMaximized} onToggle={onColorChipToggled} />
+        <ColorChipMaximizer
+          addColorBtn={(style) => <AddColorBtn style={style} isMaximized={isMaximized} />}
+          color={color}
+          isMaximized={isMaximized}
+          setMaximized={setMaximized}
+          onToggle={onColorChipToggled}
+        />
         <div className={'color-detail__scene-wrapper color-detail__scene-wrapper--displayed'}>
           <ColorDetailsScenes color={color} isMaximized={isMaximized} intitialVariantName={initialVariantName} />
         </div>
         <div className='color-detail__info-wrapper'>
-          <div className={`${mainInfoClass}${color.isDark ? ` ${mainInfoClass}--dark-color` : ''}`} style={{ backgroundColor: color.hex }}>
+          <div
+            className={`${mainInfoClass}${color.isDark ? ` ${mainInfoClass}--dark-color` : ''}`}
+            style={{ backgroundColor: color.hex }}
+          >
             <ColorViewer color={color} />
             <ColorStrip key={color.id} color={color} onColorChanged={setColor} />
             {!isMaximized ? <AddColorBtn /> : null}
           </div>
 
-          {callsToAction?.length ? <ColorDetailsCTAs className='color-detail__ctas color-detail__ctas--mobile' data={callsToAction} /> : null}
+          {callsToAction?.length ? (
+            <ColorDetailsCTAs className='color-detail__ctas color-detail__ctas--mobile' data={callsToAction} />
+          ) : null}
 
           <div className={`${baseClass}__additional-info`}>
             <Tabs
               selectedIndex={tabIndex}
-              onSelect={index => {
+              onSelect={(index) => {
                 const tabNames = ['View Coord Color Section', 'View Similar Color Section', 'View Color Info Section']
-                GA.event({ category: 'Color Detail', action: tabNames[index], label: tabNames[index] }, GA_TRACKER_NAME_BRAND[brandId])
+                GA.event(
+                  { category: 'Color Detail', action: tabNames[index], label: tabNames[index] },
+                  GA_TRACKER_NAME_BRAND[brandId]
+                )
                 setTabIndex(index)
               }}
             >
               <TabList className={`${baseClass}__tab-list`} style={{ backgroundColor: color.hex }}>
                 {color?.coordinatingColors?.coord1ColorId && (
-                  <Tab className={`coordinating-colors-tab ${baseClass}__tab ${color.isDark ? `${baseClass}__tab--dark-color` : ''}`}>
+                  <Tab
+                    className={`coordinating-colors-tab ${baseClass}__tab ${
+                      color.isDark ? `${baseClass}__tab--dark-color` : ''
+                    }`}
+                  >
                     <div className={`${baseClass}__tab-copy`}>
                       <FormattedMessage id='COORDINATING_COLORS' />
                     </div>
                   </Tab>
                 )}
-                <Tab className={`similar-colors-tab ${baseClass}__tab ${color.isDark ? `${baseClass}__tab--dark-color` : ''}`}>
+                <Tab
+                  className={`similar-colors-tab ${baseClass}__tab ${
+                    color.isDark ? `${baseClass}__tab--dark-color` : ''
+                  }`}
+                >
                   <div className={`${baseClass}__tab-copy`}>
                     <FormattedMessage id='SIMILAR_COLORS' />
                   </div>
                 </Tab>
-                <Tab className={`color-info-tab ${baseClass}__tab ${color.isDark ? `${baseClass}__tab--dark-color` : ''}`}>
+                <Tab
+                  className={`color-info-tab ${baseClass}__tab ${color.isDark ? `${baseClass}__tab--dark-color` : ''}`}
+                >
                   <div className={`${baseClass}__tab-copy`}>
                     <FormattedMessage id='DETAILS' />
                   </div>
@@ -153,7 +193,9 @@ export const ColorDetails = ({ onColorChanged, onSceneChanged, onVariantChanged,
         </div>
       </div>
 
-      {callsToAction?.length ? <ColorDetailsCTAs className='color-detail__ctas color-detail__ctas--desktop' data={callsToAction} /> : null}
+      {callsToAction?.length ? (
+        <ColorDetailsCTAs className='color-detail__ctas color-detail__ctas--desktop' data={callsToAction} />
+      ) : null}
     </>
   )
 }
