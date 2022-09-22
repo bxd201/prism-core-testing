@@ -17,6 +17,7 @@ export { default as ImageUploader } from './components/image-uploader/image-uplo
 export { default as Menu } from './components/menu/menu'
 export { default as LivePalette } from './components/live-palette/live-palette'
 export { default as SpinnerLoader } from './components/spinner-loader/spinner-loader'
+export { default as GenericMessage } from './components/generic-message/generic-message'
 export { default as GenericOverlay } from './components/generic-overlay/generic-overlay'
 export { default as SimpleTintableScene } from './components/simple-tintable-scene/simple-tintable-scene'
 export { default as Toggle } from './components/toggle/toggle'
