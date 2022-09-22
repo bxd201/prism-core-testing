@@ -1,14 +1,14 @@
 // @flow
 import React, { useContext } from 'react'
+import { useIntl } from 'react-intl'
+import { Route, Switch, useLocation,useParams } from 'react-router-dom'
+import { CSSTransition, SwitchTransition } from 'react-transition-group'
+import { ColorDetailsPage } from 'src/components/Facets/ColorDetailsFacet'
 import facetBinder from 'src/facetSupport/facetBinder'
-import { Switch, Route, useParams, useLocation } from 'react-router-dom'
+import ConfigurationContext from '../../../contexts/ConfigurationContext/ConfigurationContext'
 import { ColorWallPage } from '../ColorWallFacet'
 import BackToColorWall from './BackToColorWall'
-import { ColorDetailsPage } from 'src/components/Facets/ColorDetailsFacet'
-import { CSSTransition, SwitchTransition } from 'react-transition-group'
 import './ColorListingPage.scss'
-import ConfigurationContext from '../../../contexts/ConfigurationContext/ConfigurationContext'
-import { useIntl } from 'react-intl'
 
 const ColorWallCDP = () => {
   const { locale } = useIntl()
