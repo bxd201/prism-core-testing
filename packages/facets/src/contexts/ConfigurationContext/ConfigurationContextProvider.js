@@ -1,20 +1,16 @@
 // @flow
 import React, { useEffect, useMemo } from 'react'
 import { connect } from 'react-redux'
+import { tinycolor } from '@ctrl/tinycolor'
 import toLower from 'lodash/toLower'
-
-import { loadConfiguration } from '../../store/actions/configurations'
-
-import CSSVariableApplicator from '../../helpers/CSSVariableApplicator'
-import { varNames } from 'src/shared/withBuild/variableDefs'
-import { getThemeColorsObj, themeColors, defaultThemeColors, mapVarsToColors } from 'src/shared/withBuild/themeColors'
-
-import ConfigurationContext from './ConfigurationContext'
-
-import { type Configuration, type EmbeddedConfiguration } from '../../shared/types/Configuration'
 import * as GA from 'src/analytics/GoogleAnalytics'
 import { GA_TRACKER_NAME_BRAND } from 'src/constants/globals'
-import { tinycolor } from '@ctrl/tinycolor'
+import { defaultThemeColors, getThemeColorsObj, mapVarsToColors,themeColors } from 'src/shared/withBuild/themeColors'
+import { varNames } from 'src/shared/withBuild/variableDefs'
+import CSSVariableApplicator from '../../helpers/CSSVariableApplicator'
+import { type Configuration, type EmbeddedConfiguration } from '../../shared/types/Configuration'
+import { loadConfiguration } from '../../store/actions/configurations'
+import ConfigurationContext from './ConfigurationContext'
 
 type ReduxStateProps = {
   fetchedConfig: Configuration
@@ -158,7 +154,7 @@ function ConfigurationContextProvider (props: Props) {
 
   // add brand to the configuration object
   // TODO: remove this when we have moved the data around in the database to be returned by the brandId
-  const brandId = useMemo(() => (toLower(userBrand) === 'sw-ca') ? 'sherwin' : toLower(userBrand), [userBrand])
+  const brandId = useMemo(() => toLower(userBrand).indexOf('sw-') > -1 ? 'sherwin' : toLower(userBrand), [userBrand])
   const config = useMemo(() => ({
     brandId,
     ...otherEmbeddedConfig,
