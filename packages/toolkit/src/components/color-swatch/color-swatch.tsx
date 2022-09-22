@@ -1,4 +1,4 @@
-import React, { CSSProperties, forwardRef, ForwardedRef, useEffect, useState } from 'react'
+import React, { CSSProperties, ForwardedRef, forwardRef, useEffect, useState } from 'react'
 import { Color } from '../../types'
 
 export interface ColorSwatchProps {
@@ -87,7 +87,7 @@ const ColorSwatch = forwardRef<HTMLButtonElement & HTMLDivElement, ColorSwatchPr
             data-testid={`inner-swatch-${id}`}
             className={`absolute h-full w-full p-2.5 ${color.isDark ? 'text-white' : 'text-black'}
               ${fadeContent ? 'opacity-1' : 'opacity-0'} transition-opacity duration-200
-              ${className}`}
+              ${className} inner-swatch`}
             ref={ref}
             style={activeFocus ? {} : { outline: 'none' }}
             tabIndex={activeFocus ? 0 : -1}

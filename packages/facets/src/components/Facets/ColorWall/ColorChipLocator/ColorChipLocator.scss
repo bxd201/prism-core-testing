@@ -2,7 +2,7 @@
   position: relative;
   display: grid;
   grid-template-columns: 40px auto 40px;
-  grid-template-rows: 40px 195px 40px;
+  grid-template-rows: 40px minmax(195px, auto) 40px;
   gap: 2px;
   margin: 1rem;
 
@@ -72,5 +72,11 @@
     font-weight: 500;
   }
 
-  .dark-color { border-color: white !important }
+  .dark-color {
+    border-color: white !important;
+  }
+
+  .inner-swatch {
+    position: relative !important;
+  }
 }
