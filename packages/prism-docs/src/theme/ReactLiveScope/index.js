@@ -9,7 +9,8 @@ import Prism, {
   ImageUploader,
   LivePalette,
   SpinnerLoader,
-  SimpleTintableScene
+  SimpleTintableScene,
+  FastMaskView
 } from '@prism/toolkit'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faDotCircle, faInfo, faTrash } from '@fortawesome/pro-solid-svg-icons'
@@ -55,7 +56,8 @@ const prismToolkitImports = {
   LivePalette,
   Prism,
   SpinnerLoader,
-  SimpleTintableScene
+  SimpleTintableScene,
+  FastMaskView
 }
 
 // Add react-live imports you need here
