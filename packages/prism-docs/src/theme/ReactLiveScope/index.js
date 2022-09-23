@@ -1,5 +1,6 @@
 import React from 'react'
 import Prism, {
+  Carousel,
   CircleLoader,
   ColorPin,
   ColorsIcon,
@@ -45,6 +46,7 @@ const mockedEndpointsImports = {
 }
 
 const prismToolkitImports = {
+  Carousel,
   CircleLoader,
   ColorPin,
   ColorsIcon,
