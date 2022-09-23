@@ -1,49 +1,53 @@
 // @flow
-import React, { useContext, useEffect, useState, useCallback, useMemo } from 'react'
-import { Switch, Route, useHistory } from 'react-router-dom'
-import { useSelector, useDispatch } from 'react-redux'
-import { GenericOverlay } from '../ToolkitComponents'
-import ColorWallRouter from './ColorWall/ColorWallRouter'
-import Search from 'src/components/Search/Search'
-import SearchBar from 'src/components/Search/SearchBar'
-import ColorWall from './ColorWall/ColorWall'
-import ColorWallToolbar from './ColorWall/ColorWallToolbar/ColorWallToolbar'
-import facetBinder from 'src/facetSupport/facetBinder'
-import ColorWallContext, { colorWallContextDefault } from 'src/components/Facets/ColorWall/ColorWallContext'
-import { type FacetPubSubMethods, facetPubSubDefaultProps } from 'src/facetSupport/facetPubSub'
-import { type ColorsState } from 'src/shared/types/Actions.js.flow'
-import extendIfDefined from 'src/shared/helpers/extendIfDefined'
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { useIntl } from 'react-intl'
+import { useDispatch, useSelector } from 'react-redux'
+import { Route, Switch, useHistory } from 'react-router-dom'
 import at from 'lodash/at'
 import isArray from 'lodash/isArray'
+import ColorWallContext, { colorWallContextDefault } from 'src/components/Facets/ColorWall/ColorWallContext'
+import Search from 'src/components/Search/Search'
+import SearchBar from 'src/components/Search/SearchBar'
+import ConfigurationContext, {
+  type ConfigurationContextType
+} from 'src/contexts/ConfigurationContext/ConfigurationContext'
+import facetBinder from 'src/facetSupport/facetBinder'
+import { type FacetBinderMethods, facetBinderDefaultProps } from 'src/facetSupport/facetInstance'
+import { type FacetPubSubMethods, facetPubSubDefaultProps } from 'src/facetSupport/facetPubSub'
+import { fullColorName, generateColorWallPageUrl } from 'src/shared/helpers/ColorUtils'
+import extendIfDefined from 'src/shared/helpers/extendIfDefined'
 import useEffectAfterMount from 'src/shared/hooks/useEffectAfterMount'
-import { updateColorStatuses } from 'src/store/actions/loadColors'
-import { facetBinderDefaultProps, type FacetBinderMethods } from 'src/facetSupport/facetInstance'
-import { useIntl } from 'react-intl'
+import { type ColorsState } from 'src/shared/types/Actions.js.flow'
 import translateBooleanFlexibly from 'src/shared/utils/translateBooleanFlexibly.util'
-import { generateColorWallPageUrl } from 'src/shared/helpers/ColorUtils'
+import { updateColorStatuses } from 'src/store/actions/loadColors'
 import { setIsColorWallModallyPresented } from '../../store/actions/navigation'
-import ConfigurationContext, { type ConfigurationContextType } from 'src/contexts/ConfigurationContext/ConfigurationContext'
+import { GenericOverlay } from '../ToolkitComponents'
+import ColorWall from './ColorWall/ColorWall'
+import ColorWallRouter from './ColorWall/ColorWallRouter'
+import ColorWallToolbar from './ColorWall/ColorWallToolbar/ColorWallToolbar'
 import ColorWallV3 from './ColorWall/ColorWallV3'
 
-type Props = FacetPubSubMethods & FacetBinderMethods & {
-  addButtonText?: string,
-  alwaysShowColorFamilies?: boolean,
-  colorDetailPageRoot?: string,
-  colorWallBgColor?: string,
-  defaultSection?: string,
-  displayAddButton?: boolean,
-  displayInfoButton?: boolean,
-  displayAddButtonText?: boolean,
-  displayDetailsLink?: boolean,
-  hiddenSections?: string | string[], // as string, "section name 1" or "section name 1|section name 2|etc" will be parsed into an array
-  initialFocusId?: string | number
-}
+type Props = FacetPubSubMethods &
+  FacetBinderMethods & {
+    addButtonText?: string,
+    alwaysShowColorFamilies?: boolean,
+    colorDetailPageRoot?: string,
+    colorWallBgColor?: string,
+    defaultSection?: string,
+    displayAddButton?: boolean,
+    displayInfoButton?: boolean,
+    displayAddButtonText?: boolean,
+    displayDetailsLink?: boolean,
+    hiddenSections?: string | string[], // as string, "section name 1" or "section name 1|section name 2|etc" will be parsed into an array
+    initialFocusId?: string | number
+  }
 
 export const EVENTS = {
   colorsLoaded: 'PRISM/out/colorsLoaded',
   decorateColors: 'PRISM/in/decorateColors',
   emitColor: 'PRISM/out/emitColor',
   selectedGroup: 'PRISM/out/selectedGroup',
+  selectGroupAndColor: 'PRISM/in/selectGroupAndColor',
   selectGroup: 'PRISM/in/selectGroup',
   clearSection: 'PRISM/in/clearSection',
   loading: 'PRISM/in/loading',
@@ -88,19 +92,22 @@ export const ColorWallPage = (props: Props) => {
   } = props
   const dispatch = useDispatch()
   const history = useHistory()
-  const { cwv3 } = useSelector<ColorsState>(state => state.colors)
+  const { cwv3 } = useSelector<ColorsState>((state) => state.colors)
+  const { brandKeyNumberSeparator }: ConfigurationContextType = useContext(ConfigurationContext)
 
   // -----------------------------------------------------
   // accept and process color decoration from host
   useEffect(() => subscribe(EVENTS.decorateColors, handleColorDecoration), [])
   const handleColorDecoration = useCallback((decoratedColors) => dispatch(updateColorStatuses(decoratedColors)), [])
-  const colorMap = useSelector(state => at(state, 'colors.items.colorMap')[0])
-  const { section, family } = useSelector(state => at(state, 'colors')[0])
-  useEffect(() => { colorMap && publish(EVENTS.colorsLoaded, colorMap) }, [colorMap])
+  const colorMap = useSelector((state) => at(state, 'colors.items.colorMap')[0])
+  const { section, family } = useSelector((state) => at(state, 'colors')[0])
+  useEffect(() => {
+    colorMap && publish(EVENTS.colorsLoaded, colorMap)
+  }, [colorMap])
 
   // -----------------------------------------------------
   // handle emitting selected color to host
-  const emitColor = useSelector(state => at(state, 'colors.emitColor')[0])
+  const emitColor = useSelector((state) => at(state, 'colors.emitColor')[0])
   // on color select AFTER initial mount
   useEffectAfterMount(() => {
     const color = emitColor && emitColor.color
@@ -108,7 +115,7 @@ export const ColorWallPage = (props: Props) => {
       // resetWall(true)
       publish(EVENTS.emitColor, color)
     }
-  }, [(emitColor && emitColor.timestamp)])
+  }, [emitColor && emitColor.timestamp])
 
   useEffect(() => {
     publish(EVENTS.selectedGroup, { family: family, section: section })
@@ -132,6 +139,22 @@ export const ColorWallPage = (props: Props) => {
   }, [])
 
   // -----------------------------------------------------
+  // handle host changing section/family/color after initial load
+  useEffect(() => {
+    subscribe(EVENTS.selectGroupAndColor, ({ section, family, color }) => {
+      history.push(
+        generateColorWallPageUrl(
+          section,
+          family,
+          color.id,
+          fullColorName(color.brandKey, color.colorNumber, color.name, brandKeyNumberSeparator)
+        )
+      )
+    })
+    return unsubscribeAll
+  }, [])
+
+  // -----------------------------------------------------
   // handle reseting section/family to defaults
   useEffect(() => {
     subscribe(EVENTS.clearSection, () => {
@@ -141,7 +164,7 @@ export const ColorWallPage = (props: Props) => {
 
   const [focusColorId, updateFocusColorId] = useState(!isNaN(initialFocusId) ? Number(initialFocusId) : undefined)
   useEffect(() => {
-    subscribe(EVENTS.initialFocusId, focusId => {
+    subscribe(EVENTS.initialFocusId, (focusId) => {
       updateFocusColorId(!isNaN(focusId) ? Number(focusId) : undefined)
     })
   }, [])
@@ -161,25 +184,40 @@ export const ColorWallPage = (props: Props) => {
 
   // -----------------------------------------------------
   // build color wall context and a11y state
-  const cwContext = useMemo(() => extendIfDefined({}, colorWallContextDefault, {
-    addButtonText,
-    colorDetailPageRoot,
-    colorWallBgColor,
-    initialFocusId: focusColorId,
-    displayAddButton: translateBooleanFlexibly(displayAddButton),
-    displayInfoButton: translateBooleanFlexibly(displayInfoButton),
-    displayAddButtonText: translateBooleanFlexibly(displayAddButtonText),
-    displayDetailsLink: translateBooleanFlexibly(displayDetailsLink),
-    hiddenSections: processedHiddenSections
-  }), [addButtonText, colorDetailPageRoot, colorWallBgColor, displayAddButton, displayAddButtonText, displayDetailsLink, focusColorId])
+  const cwContext = useMemo(
+    () =>
+      extendIfDefined({}, colorWallContextDefault, {
+        addButtonText,
+        colorDetailPageRoot,
+        colorWallBgColor,
+        initialFocusId: focusColorId,
+        displayAddButton: translateBooleanFlexibly(displayAddButton),
+        displayInfoButton: translateBooleanFlexibly(displayInfoButton),
+        displayAddButtonText: translateBooleanFlexibly(displayAddButtonText),
+        displayDetailsLink: translateBooleanFlexibly(displayDetailsLink),
+        hiddenSections: processedHiddenSections
+      }),
+    [
+      addButtonText,
+      colorDetailPageRoot,
+      colorWallBgColor,
+      displayAddButton,
+      displayAddButtonText,
+      displayDetailsLink,
+      focusColorId
+    ]
+  )
 
   // -----------------------------------------------------
   // handle unmounting
-  useEffect(() => () => {
-    // unsubscribe from everything on unmount
-    dispatch(setIsColorWallModallyPresented())
-    unsubscribeAll()
-  }, [])
+  useEffect(
+    () => () => {
+      // unsubscribe from everything on unmount
+      dispatch(setIsColorWallModallyPresented())
+      unsubscribeAll()
+    },
+    []
+  )
 
   const CWToolbar = () => (
     <div className='color-wall-wrap__chunk'>

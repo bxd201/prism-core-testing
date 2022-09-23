@@ -1,15 +1,17 @@
 // @flow
 import React, { useCallback, useContext } from 'react'
-import { useHistory, useRouteMatch } from 'react-router-dom'
-import { fullColorName, generateColorWallPageUrl } from 'src/shared/helpers/ColorUtils'
-import WallRouteReduxConnector from './WallRouteReduxConnector'
-import useColors from '../../../../shared/hooks/useColors'
-import Prism, { ColorWall } from '@prism/toolkit'
-import { Swatch } from './Swatch/Swatch'
-import type { ColorsState } from '../../../../shared/types/Actions'
-import ConfigurationContext, { type ConfigurationContextType } from '../../../../contexts/ConfigurationContext/ConfigurationContext'
-import ColorWallContext, { type ColorWallContextProps } from '../../ColorWall/ColorWallContext'
 import { useSelector } from 'react-redux'
+import { useHistory, useRouteMatch } from 'react-router-dom'
+import Prism, { ColorWall } from '@prism/toolkit'
+import { fullColorName, generateColorWallPageUrl } from 'src/shared/helpers/ColorUtils'
+import ConfigurationContext, {
+  type ConfigurationContextType
+} from '../../../../contexts/ConfigurationContext/ConfigurationContext'
+import useColors from '../../../../shared/hooks/useColors'
+import type { ColorsState } from '../../../../shared/types/Actions'
+import ColorWallContext, { type ColorWallContextProps } from '../../ColorWall/ColorWallContext'
+import { Swatch } from './Swatch/Swatch'
+import WallRouteReduxConnector from './WallRouteReduxConnector'
 
 const WALL_HEIGHT = 475
 function ColorWallV3() {
@@ -21,15 +23,24 @@ function ColorWallV3() {
     items: { colorStatuses = {} }
   }: ColorsState = useSelector((state) => state.colors)
   const { colorWallBgColor }: ColorWallContextProps = useContext(ColorWallContext)
-  const { colorWall: { bloomEnabled = true } }: ConfigurationContextType = useContext(ConfigurationContext)
+  const {
+    colorWall: { bloomEnabled = true },
+    brandKeyNumberSeparator
+  }: ConfigurationContextType = useContext(ConfigurationContext)
   const { push } = useHistory()
   const { params } = useRouteMatch()
   const { colorId, family, section } = params
-
   const handleActiveColorId = useCallback(
     (id) => {
       const { brandKey, colorNumber, name } = colors.colorMap[id] || {}
-      push(generateColorWallPageUrl(section, family, id, fullColorName(brandKey, colorNumber, name)))
+      push(
+        generateColorWallPageUrl(
+          section,
+          family,
+          id,
+          fullColorName(brandKey, colorNumber, name, brandKeyNumberSeparator)
+        )
+      )
     },
     [section, family, colors.colorMap]
   )

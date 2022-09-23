@@ -1,15 +1,20 @@
-import React, { useState, useRef, useMemo, useEffect, useCallback } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import AutoSizer from 'react-virtualized-auto-sizer'
+import { faSearchMinus } from '@fortawesome/pro-regular-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import getElementRelativeOffset from 'get-element-relative-offset'
+import noop from 'lodash/noop'
+import isSomething from '../../utils/isSomething'
 import {
   ColorWallPropsContext,
-  ColorWallStructuralPropsContext,
   colorWallPropsDefault,
+  ColorWallStructuralPropsContext,
   colorWallStructuralPropsDefault
 } from './color-wall-props-context'
-import { BASE_SWATCH_SIZE, MAX_SCROLLER_HEIGHT, MAX_SWATCH_SIZE, MIN_SCROLLER_HEIGHT, OUTER_SPACING } from './constants'
 import Column from './column'
-import noop from 'lodash/noop'
-import AutoSizer from 'react-virtualized-auto-sizer'
+import { BASE_SWATCH_SIZE, MAX_SCROLLER_HEIGHT, MAX_SWATCH_SIZE, MIN_SCROLLER_HEIGHT, OUTER_SPACING } from './constants'
 import { computeWall } from './shared-reducers-and-computers'
+import { ChunkData, Dimensions, SwatchRenderer, WallShape } from './types'
 import {
   determineScaleForAvailableWidth,
   findPositionInChunks,
@@ -20,11 +25,6 @@ import {
   getProximalSwatchesBySwatchId,
   needsToWrap
 } from './wall-utils'
-import getElementRelativeOffset from 'get-element-relative-offset'
-import isSomething from '../../utils/isSomething'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { ChunkData, Dimensions, SwatchRenderer, WallShape } from './types'
-import { faSearchMinus } from '@fortawesome/pro-regular-svg-icons'
 
 // TODO LOW PRIORITY TODOS, NOT NECESSARY RIGHT AWAY
 // [ ] immediate-scroll to focused swatch when zooming in and out instead of smooth scroll to prevent jank
@@ -90,53 +90,68 @@ function ColorWall(props: WallProps): JSX.Element {
   const wrapThisWall = isInWrappedView && wrap
   const wallW = (wrapThisWall ? defaultWrappedDimensions?.outerWidth : defaultDimensions?.outerWidth) ?? 0
   const wallH = (wrapThisWall ? defaultWrappedDimensions?.outerHeight : defaultDimensions?.outerHeight) ?? 0
-  const setFocusAndScrollTo = useCallback((props: { chunkId?: string; swatchId?: string | number } = {}) => {
-    setTopFocusData(props)
-    if (!props) return
-    // if this is empty/0, then we haven't rendered yet
-    const swatchRefs = Array.from(chunks.current)
-      .map((chunk) => chunk.swatchesRef?.current ?? [])
-      .filter((arr) => arr.length)
 
-    const result = (() => {
-      try {
-        for (let i = swatchRefs.length - 1; i >= 0; i--) {
-          for (let ii = swatchRefs[i].length - 1; ii >= 0; ii--) {
-            if (swatchRefs[i][ii].id === props.swatchId) {
-              return swatchRefs[i][ii].el
+  const activeIdRecord = useRef([null])
+  useEffect(() => {
+    if (activeColorId && activeIdRecord.current[0] !== activeColorId) {
+      activeIdRecord.current.unshift(activeColorId)
+    } else if (!activeColorId && activeIdRecord.current[0] !== null) {
+      activeIdRecord.current.unshift(null)
+    }
+
+    activeIdRecord.current = activeIdRecord.current.slice(0, 10) // keep most current 10 records
+  }, [activeColorId])
+
+  const setFocusAndScrollTo = useCallback(
+    (props: { chunkId?: string; swatchId?: string | number; instant?: boolean } = {}) => {
+      setTopFocusData(props)
+      if (!props) return
+      // if this is empty/0, then we haven't rendered yet
+      const swatchRefs = Array.from(chunks.current)
+        .map((chunk) => chunk.swatchesRef?.current ?? [])
+        .filter((arr) => arr.length)
+
+      const result = (() => {
+        try {
+          for (let i = swatchRefs.length - 1; i >= 0; i--) {
+            for (let ii = swatchRefs[i].length - 1; ii >= 0; ii--) {
+              if (swatchRefs[i][ii].id === props.swatchId) {
+                return swatchRefs[i][ii].el
+              }
             }
           }
+        } catch (err) {
+          return // eslint-disable-line
         }
-      } catch (err) {
-        return // eslint-disable-line
-      }
-    })()?.current?.[0]
+      })()?.current?.[0]
 
-    // putting scrolling behavior into a timeout to move it out of the current computational area
-    // this helps preserve scrolling smoothness
-    setTimeout(() => {
-      if (result) {
-        if (!wallContentsRef.current) return
-        const { top = 0, left = 0 } = getElementRelativeOffset(result, (v) => v === wallContentsRef.current)
-        const newTop = (top as number) + wallContentsRef.current.clientHeight / -2
-        const newLeft = (left as number) + wallContentsRef.current.clientWidth / -2
+      // putting scrolling behavior into a timeout to move it out of the current computational area
+      // this helps preserve scrolling smoothness
+      setTimeout(() => {
+        if (result) {
+          if (!wallContentsRef.current) return
+          const { top = 0, left = 0 } = getElementRelativeOffset(result, (v) => v === wallContentsRef.current)
+          const newTop = (top as number) + wallContentsRef.current.clientHeight / -2
+          const newLeft = (left as number) + wallContentsRef.current.clientWidth / -2
 
-        if (typeof wallContentsRef.current.scrollTo === 'function') {
-          wallContentsRef.current?.scrollTo?.({
-            // eslint-disable-line
-            top: newTop,
-            left: newLeft,
-            behavior: 'smooth'
-          })
-        } else {
-          // just for IE and old browser support
-          wallContentsRef.current.scrollTop = newTop // eslint-disable-line
+          if (!!activeIdRecord.current[1] && typeof wallContentsRef.current.scrollTo === 'function') {
+            wallContentsRef.current?.scrollTo?.({
+              // eslint-disable-line
+              top: newTop,
+              left: newLeft,
+              behavior: 'smooth'
+            })
+          } else {
+            // just for IE and old browser support
+            wallContentsRef.current.scrollTop = newTop // eslint-disable-line
 
-          wallContentsRef.current.scrollLeft = newLeft // eslint-disable-line
+            wallContentsRef.current.scrollLeft = newLeft // eslint-disable-line
+          }
         }
-      }
-    }, 0)
-  }, [])
+      }, 0)
+    },
+    []
+  )
 
   // this is fired from within swatchRenderer to activate a swatch
   const handleMakeActiveSwatchId = (id): void => {
@@ -180,8 +195,10 @@ function ColorWall(props: WallProps): JSX.Element {
       swatchRenderer: swatchRenderer
     }
   }, [activeColorId, hasFocus, shouldRender, forceRerender])
+
   // NOTE: this must remain after wallProps is defined
   const { isZoomed } = wallCtx
+
   const structuralWallCtx = useMemo(() => {
     // kind of a hack
     // should render being true for the first time AND no chunks means the wall is about to visibly render for the first time
@@ -492,15 +509,7 @@ function ColorWall(props: WallProps): JSX.Element {
                     }}
                   >
                     {wallChildren?.map((child, i) => {
-                      return (
-                        <Column
-                          key={i}
-                          id={i}
-                          data={child}
-                          updateWidth={noop}
-                          updateHeight={noop}
-                        />
-                      )
+                      return <Column key={i} id={i} data={child} updateWidth={noop} updateHeight={noop} />
                     })}
                   </div>
                 </div>
