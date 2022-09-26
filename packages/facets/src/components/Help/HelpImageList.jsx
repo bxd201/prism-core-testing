@@ -1,11 +1,11 @@
 // @flow
-import React, { useContext } from 'react'
 import type { Node } from 'react'
+import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
-import { helpImages } from './constants'
 import ConfigurationContext, {
   type ConfigurationContextType,
 } from 'src/contexts/ConfigurationContext/ConfigurationContext'
+import { helpImages } from './constants'
 
 type HelpImageListProps = {
   data: Object[]
@@ -29,7 +29,7 @@ const HelpImageList = ({ data }: HelpImageListProps): Node => {
                 : `${helpImages}__cell--base`
             }`}
           >
-            {help ? (
+            {help[item.imagePathKey] ? (
               <img
                 className={`${helpImages}__i`}
                 src={help[item.imagePathKey]}
