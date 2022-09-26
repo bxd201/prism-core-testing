@@ -221,7 +221,7 @@ export const ColorWallPage = (props: Props) => {
 
   const CWToolbar = () => (
     <div className='color-wall-wrap__chunk'>
-      <ColorWallToolbar alwaysShowColorFamilies={alwaysShowColorFamilies} />
+      <ColorWallToolbar />
     </div>
   )
 

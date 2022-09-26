@@ -1,11 +1,11 @@
 // @flow
-import memoizee from 'memoizee'
-import flatten from 'lodash/flatten'
 import chunk from 'lodash/chunk'
-import take from 'lodash/take'
-import drop from 'lodash/drop'
 import clamp from 'lodash/clamp'
+import drop from 'lodash/drop'
+import flatten from 'lodash/flatten'
 import rangeRight from 'lodash/rangeRight'
+import take from 'lodash/take'
+import memoizee from 'memoizee'
 import { type ChunkGridParams, type ScrollPosition } from 'src/shared/types/Actions.js.flow'
 
 // returns coordinates of a value in a balanced multi-dimensional array
@@ -96,7 +96,7 @@ export const getTotalGridWidth = (grid: string[][][][], paddingBetweenChunks: nu
 // return scroll offsets (in pixels) for a specific grid, color, and container dimensions
 export const computeFinalScrollPosition = (
   grid: string[][][][],
-  color: string,
+  color: ?(string | number),
   containerWidth: number,
   containerHeight: number,
   labels: (?string)[],

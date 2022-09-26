@@ -197,7 +197,7 @@ const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: 
 
       ;((
         {
-          9: () => {
+          '9': () => {
             // use default tab behavior when focused on bloomed cell
             if (params.colorId && document.activeElement === cellRefs.current[params.colorId] && !e.shiftKey) {
               return
@@ -237,23 +237,23 @@ const ColorWall = ({ section: sectionOverride, family: familyOverride, colorId: 
               focusedCell.current = null
             }
           },
-          13: () => {
+          '13': () => {
             // directly modifing params.colorId instead of calling history.push will make the react-test-renderer not run the useEffect that depends on params.colorId
             focusedCell.current && createActiveColorRoute.current()
           },
-          27: () => {
+          '27': () => {
             focusedCell.current && createInactiveColorRoute.current(colorMap[focusedCell.current])
           },
-          37: () => {
+          '37': () => {
             cellColumn > 0 && cellRefs.current[chunk[cellRow][cellColumn - 1]].focus()
           },
-          38: () => {
+          '38': () => {
             cellRow > 0 && cellRefs.current[chunk[cellRow - 1][cellColumn]].focus()
           },
-          39: () => {
+          '39': () => {
             cellColumn < chunk[cellRow].length - 1 && cellRefs.current[chunk[cellRow][cellColumn + 1]].focus()
           },
-          40: () => {
+          '40': () => {
             cellRow < chunk.length - 1 && cellRefs.current[chunk[cellRow + 1][cellColumn]].focus()
           }
         }[e.keyCode] || (() => {})
