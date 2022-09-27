@@ -1,5 +1,5 @@
 /**
- * TODO: Clean this up and make PR against 
+ * TODO: Clean this up and make PR against
  */
 
 declare type HSLInput = {
@@ -94,36 +94,41 @@ declare class TinyColor {
 
 declare class TinyColorStatic {
   (color: string): TinyColor;
-  fromRatio(ratio: RGBInput | HSVInput | HSLInput ): TinyColor;
+  fromRatio(ratio: RGBInput | HSVInput | HSLInput): TinyColor;
   equals(
-    color1: RGBInput | HSVInput | HSLInput | TinyColor | string, 
-    color2: RGBInput | HSVInput | HSLInput | TinyColor | string): boolean;
+    color1: RGBInput | HSVInput | HSLInput | TinyColor | string,
+    color2: RGBInput | HSVInput | HSLInput | TinyColor | string
+  ): boolean;
   mix(
-    color1: RGBInput | HSVInput | HSLInput | TinyColor | string, 
-    color2: RGBInput | HSVInput | HSLInput | TinyColor | string, 
-    amount: number): TinyColor;
+    color1: RGBInput | HSVInput | HSLInput | TinyColor | string,
+    color2: RGBInput | HSVInput | HSLInput | TinyColor | string,
+    amount: number
+  ): TinyColor;
   random(): TinyColor;
   readability(
-    color1: RGBInput | HSVInput | HSLInput | TinyColor | string, 
-    color2: RGBInput | HSVInput | HSLInput | TinyColor | string, 
-    amount: number): number;
+    color1: RGBInput | HSVInput | HSLInput | TinyColor | string,
+    color2: RGBInput | HSVInput | HSLInput | TinyColor | string,
+    amount: number
+  ): number;
   isReadable(
-    color1: RGBInput | HSVInput | HSLInput | TinyColor | string, 
-    color2: RGBInput | HSVInput | HSLInput | TinyColor | string, 
+    color1: RGBInput | HSVInput | HSLInput | TinyColor | string,
+    color2: RGBInput | HSVInput | HSLInput | TinyColor | string,
     options?: {
       level: string,
       size: string
-    }): boolean;
+    }
+  ): boolean;
   mostReadable(
-    color1: RGBInput | HSVInput | HSLInput | TinyColor | string, 
-    colorX: Array<RGBInput | HSVInput | HSLInput | TinyColor | string>, 
+    color1: RGBInput | HSVInput | HSLInput | TinyColor | string,
+    colorX: Array<RGBInput | HSVInput | HSLInput | TinyColor | string>,
     options?: {
       level: 'AA' | 'AAA',
       size: string,
       includeFallbackColors?: boolean
-    }): TinyColor;
+    }
+  ): TinyColor;
 }
 
-declare module "@ctrl/tinycolor" {
-  declare module.exports: TinyColorStatic;
+declare module '@ctrl/tinycolor' {
+  declare module.exports: TinyColorStatic
 }

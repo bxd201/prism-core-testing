@@ -14,7 +14,7 @@
  */
 
 declare module '@tensorflow-models/coco-ssd' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 /**
@@ -23,52 +23,52 @@ declare module '@tensorflow-models/coco-ssd' {
  * needed.
  */
 declare module '@tensorflow-models/coco-ssd/dist/classes' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module '@tensorflow-models/coco-ssd/dist/coco-ssd.esm' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module '@tensorflow-models/coco-ssd/dist/coco-ssd' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module '@tensorflow-models/coco-ssd/dist/coco-ssd.min' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module '@tensorflow-models/coco-ssd/dist/index' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module '@tensorflow-models/coco-ssd/dist/version' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module '@tensorflow-models/coco-ssd/rollup.config' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 // Filename aliases
 declare module '@tensorflow-models/coco-ssd/dist/classes.js' {
-  declare module.exports: $Exports<'@tensorflow-models/coco-ssd/dist/classes'>;
+  declare module.exports: $Exports<'@tensorflow-models/coco-ssd/dist/classes'>
 }
 declare module '@tensorflow-models/coco-ssd/dist/coco-ssd.esm.js' {
-  declare module.exports: $Exports<'@tensorflow-models/coco-ssd/dist/coco-ssd.esm'>;
+  declare module.exports: $Exports<'@tensorflow-models/coco-ssd/dist/coco-ssd.esm'>
 }
 declare module '@tensorflow-models/coco-ssd/dist/coco-ssd.js' {
-  declare module.exports: $Exports<'@tensorflow-models/coco-ssd/dist/coco-ssd'>;
+  declare module.exports: $Exports<'@tensorflow-models/coco-ssd/dist/coco-ssd'>
 }
 declare module '@tensorflow-models/coco-ssd/dist/coco-ssd.min.js' {
-  declare module.exports: $Exports<'@tensorflow-models/coco-ssd/dist/coco-ssd.min'>;
+  declare module.exports: $Exports<'@tensorflow-models/coco-ssd/dist/coco-ssd.min'>
 }
 declare module '@tensorflow-models/coco-ssd/dist/index.js' {
-  declare module.exports: $Exports<'@tensorflow-models/coco-ssd/dist/index'>;
+  declare module.exports: $Exports<'@tensorflow-models/coco-ssd/dist/index'>
 }
 declare module '@tensorflow-models/coco-ssd/dist/version.js' {
-  declare module.exports: $Exports<'@tensorflow-models/coco-ssd/dist/version'>;
+  declare module.exports: $Exports<'@tensorflow-models/coco-ssd/dist/version'>
 }
 declare module '@tensorflow-models/coco-ssd/rollup.config.js' {
-  declare module.exports: $Exports<'@tensorflow-models/coco-ssd/rollup.config'>;
+  declare module.exports: $Exports<'@tensorflow-models/coco-ssd/rollup.config'>
 }

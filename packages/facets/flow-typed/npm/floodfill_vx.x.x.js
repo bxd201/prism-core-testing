@@ -14,7 +14,7 @@
  */
 
 declare module 'floodfill' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 /**
@@ -23,17 +23,17 @@ declare module 'floodfill' {
  * needed.
  */
 declare module 'floodfill/floodfill' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'floodfill/floodfill.min' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 // Filename aliases
 declare module 'floodfill/floodfill.js' {
-  declare module.exports: $Exports<'floodfill/floodfill'>;
+  declare module.exports: $Exports<'floodfill/floodfill'>
 }
 declare module 'floodfill/floodfill.min.js' {
-  declare module.exports: $Exports<'floodfill/floodfill.min'>;
+  declare module.exports: $Exports<'floodfill/floodfill.min'>
 }

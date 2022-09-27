@@ -14,7 +14,7 @@
  */
 
 declare module 'sassyjson' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 /**
@@ -23,10 +23,10 @@ declare module 'sassyjson' {
  * needed.
  */
 declare module 'sassyjson/Gruntfile' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 // Filename aliases
 declare module 'sassyjson/Gruntfile.js' {
-  declare module.exports: $Exports<'sassyjson/Gruntfile'>;
+  declare module.exports: $Exports<'sassyjson/Gruntfile'>
 }

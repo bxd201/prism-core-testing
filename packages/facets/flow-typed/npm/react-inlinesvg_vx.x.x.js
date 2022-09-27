@@ -14,7 +14,7 @@
  */
 
 declare module 'react-inlinesvg' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 /**
@@ -23,54 +23,54 @@ declare module 'react-inlinesvg' {
  * needed.
  */
 declare module 'react-inlinesvg/es' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-inlinesvg/es/utils' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-inlinesvg/lib' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-inlinesvg/lib/utils' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-inlinesvg/src' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'react-inlinesvg/src/utils' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 // Filename aliases
 declare module 'react-inlinesvg/es/index' {
-  declare module.exports: $Exports<'react-inlinesvg/es'>;
+  declare module.exports: $Exports<'react-inlinesvg/es'>
 }
 declare module 'react-inlinesvg/es/index.js' {
-  declare module.exports: $Exports<'react-inlinesvg/es'>;
+  declare module.exports: $Exports<'react-inlinesvg/es'>
 }
 declare module 'react-inlinesvg/es/utils.js' {
-  declare module.exports: $Exports<'react-inlinesvg/es/utils'>;
+  declare module.exports: $Exports<'react-inlinesvg/es/utils'>
 }
 declare module 'react-inlinesvg/lib/index' {
-  declare module.exports: $Exports<'react-inlinesvg/lib'>;
+  declare module.exports: $Exports<'react-inlinesvg/lib'>
 }
 declare module 'react-inlinesvg/lib/index.js' {
-  declare module.exports: $Exports<'react-inlinesvg/lib'>;
+  declare module.exports: $Exports<'react-inlinesvg/lib'>
 }
 declare module 'react-inlinesvg/lib/utils.js' {
-  declare module.exports: $Exports<'react-inlinesvg/lib/utils'>;
+  declare module.exports: $Exports<'react-inlinesvg/lib/utils'>
 }
 declare module 'react-inlinesvg/src/index' {
-  declare module.exports: $Exports<'react-inlinesvg/src'>;
+  declare module.exports: $Exports<'react-inlinesvg/src'>
 }
 declare module 'react-inlinesvg/src/index.js' {
-  declare module.exports: $Exports<'react-inlinesvg/src'>;
+  declare module.exports: $Exports<'react-inlinesvg/src'>
 }
 declare module 'react-inlinesvg/src/utils.js' {
-  declare module.exports: $Exports<'react-inlinesvg/src/utils'>;
+  declare module.exports: $Exports<'react-inlinesvg/src/utils'>
 }

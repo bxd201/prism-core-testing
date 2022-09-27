@@ -14,5 +14,5 @@
  */
 
 declare module 'jest-puppeteer' {
-  declare module.exports: any;
+  declare module.exports: any
 }

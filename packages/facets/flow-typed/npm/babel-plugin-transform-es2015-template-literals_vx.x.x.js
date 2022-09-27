@@ -14,7 +14,7 @@
  */
 
 declare module 'babel-plugin-transform-es2015-template-literals' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 /**
@@ -23,13 +23,13 @@ declare module 'babel-plugin-transform-es2015-template-literals' {
  * needed.
  */
 declare module 'babel-plugin-transform-es2015-template-literals/lib' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 // Filename aliases
 declare module 'babel-plugin-transform-es2015-template-literals/lib/index' {
-  declare module.exports: $Exports<'babel-plugin-transform-es2015-template-literals/lib'>;
+  declare module.exports: $Exports<'babel-plugin-transform-es2015-template-literals/lib'>
 }
 declare module 'babel-plugin-transform-es2015-template-literals/lib/index.js' {
-  declare module.exports: $Exports<'babel-plugin-transform-es2015-template-literals/lib'>;
+  declare module.exports: $Exports<'babel-plugin-transform-es2015-template-literals/lib'>
 }

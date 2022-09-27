@@ -14,7 +14,7 @@
  */
 
 declare module 'babel-jest' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 /**
@@ -23,13 +23,13 @@ declare module 'babel-jest' {
  * needed.
  */
 declare module 'babel-jest/build' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 // Filename aliases
 declare module 'babel-jest/build/index' {
-  declare module.exports: $Exports<'babel-jest/build'>;
+  declare module.exports: $Exports<'babel-jest/build'>
 }
 declare module 'babel-jest/build/index.js' {
-  declare module.exports: $Exports<'babel-jest/build'>;
+  declare module.exports: $Exports<'babel-jest/build'>
 }

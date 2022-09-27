@@ -14,7 +14,7 @@
  */
 
 declare module 'flow' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 /**
@@ -23,45 +23,45 @@ declare module 'flow' {
  * needed.
  */
 declare module 'flow/examples/keystore' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'flow/examples/multi' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'flow/examples/serialForEach' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'flow/examples/simple' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'flow/flow' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'flow/tests' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 // Filename aliases
 declare module 'flow/examples/keystore.js' {
-  declare module.exports: $Exports<'flow/examples/keystore'>;
+  declare module.exports: $Exports<'flow/examples/keystore'>
 }
 declare module 'flow/examples/multi.js' {
-  declare module.exports: $Exports<'flow/examples/multi'>;
+  declare module.exports: $Exports<'flow/examples/multi'>
 }
 declare module 'flow/examples/serialForEach.js' {
-  declare module.exports: $Exports<'flow/examples/serialForEach'>;
+  declare module.exports: $Exports<'flow/examples/serialForEach'>
 }
 declare module 'flow/examples/simple.js' {
-  declare module.exports: $Exports<'flow/examples/simple'>;
+  declare module.exports: $Exports<'flow/examples/simple'>
 }
 declare module 'flow/flow.js' {
-  declare module.exports: $Exports<'flow/flow'>;
+  declare module.exports: $Exports<'flow/flow'>
 }
 declare module 'flow/tests.js' {
-  declare module.exports: $Exports<'flow/tests'>;
+  declare module.exports: $Exports<'flow/tests'>
 }

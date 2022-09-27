@@ -14,7 +14,7 @@
  */
 
 declare module 'react-testing-library' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 /**
@@ -23,11 +23,10 @@ declare module 'react-testing-library' {
  * needed.
  */
 
-
 // Filename aliases
 declare module 'react-testing-library/index' {
-  declare module.exports: $Exports<'react-testing-library'>;
+  declare module.exports: $Exports<'react-testing-library'>
 }
 declare module 'react-testing-library/index.js' {
-  declare module.exports: $Exports<'react-testing-library'>;
+  declare module.exports: $Exports<'react-testing-library'>
 }

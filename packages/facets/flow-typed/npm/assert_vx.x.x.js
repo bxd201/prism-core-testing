@@ -14,7 +14,7 @@
  */
 
 declare module 'assert' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 /**
@@ -23,31 +23,31 @@ declare module 'assert' {
  * needed.
  */
 declare module 'assert/build/assert' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'assert/build/internal/assert/assertion_error' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'assert/build/internal/errors' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'assert/build/internal/util/comparisons' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 // Filename aliases
 declare module 'assert/build/assert.js' {
-  declare module.exports: $Exports<'assert/build/assert'>;
+  declare module.exports: $Exports<'assert/build/assert'>
 }
 declare module 'assert/build/internal/assert/assertion_error.js' {
-  declare module.exports: $Exports<'assert/build/internal/assert/assertion_error'>;
+  declare module.exports: $Exports<'assert/build/internal/assert/assertion_error'>
 }
 declare module 'assert/build/internal/errors.js' {
-  declare module.exports: $Exports<'assert/build/internal/errors'>;
+  declare module.exports: $Exports<'assert/build/internal/errors'>
 }
 declare module 'assert/build/internal/util/comparisons.js' {
-  declare module.exports: $Exports<'assert/build/internal/util/comparisons'>;
+  declare module.exports: $Exports<'assert/build/internal/util/comparisons'>
 }

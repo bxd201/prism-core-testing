@@ -14,7 +14,7 @@
  */
 
 declare module 'ml5' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 /**
@@ -23,10 +23,10 @@ declare module 'ml5' {
  * needed.
  */
 declare module 'ml5/dist/ml5.min' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 // Filename aliases
 declare module 'ml5/dist/ml5.min.js' {
-  declare module.exports: $Exports<'ml5/dist/ml5.min'>;
+  declare module.exports: $Exports<'ml5/dist/ml5.min'>
 }

@@ -14,7 +14,7 @@
  */
 
 declare module 'uglifyjs-webpack-plugin' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 /**
@@ -23,41 +23,41 @@ declare module 'uglifyjs-webpack-plugin' {
  * needed.
  */
 declare module 'uglifyjs-webpack-plugin/dist/cjs' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'uglifyjs-webpack-plugin/dist' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'uglifyjs-webpack-plugin/dist/minify' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'uglifyjs-webpack-plugin/dist/TaskRunner' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'uglifyjs-webpack-plugin/dist/worker' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 // Filename aliases
 declare module 'uglifyjs-webpack-plugin/dist/cjs.js' {
-  declare module.exports: $Exports<'uglifyjs-webpack-plugin/dist/cjs'>;
+  declare module.exports: $Exports<'uglifyjs-webpack-plugin/dist/cjs'>
 }
 declare module 'uglifyjs-webpack-plugin/dist/index' {
-  declare module.exports: $Exports<'uglifyjs-webpack-plugin/dist'>;
+  declare module.exports: $Exports<'uglifyjs-webpack-plugin/dist'>
 }
 declare module 'uglifyjs-webpack-plugin/dist/index.js' {
-  declare module.exports: $Exports<'uglifyjs-webpack-plugin/dist'>;
+  declare module.exports: $Exports<'uglifyjs-webpack-plugin/dist'>
 }
 declare module 'uglifyjs-webpack-plugin/dist/minify.js' {
-  declare module.exports: $Exports<'uglifyjs-webpack-plugin/dist/minify'>;
+  declare module.exports: $Exports<'uglifyjs-webpack-plugin/dist/minify'>
 }
 declare module 'uglifyjs-webpack-plugin/dist/TaskRunner.js' {
-  declare module.exports: $Exports<'uglifyjs-webpack-plugin/dist/TaskRunner'>;
+  declare module.exports: $Exports<'uglifyjs-webpack-plugin/dist/TaskRunner'>
 }
 declare module 'uglifyjs-webpack-plugin/dist/worker.js' {
-  declare module.exports: $Exports<'uglifyjs-webpack-plugin/dist/worker'>;
+  declare module.exports: $Exports<'uglifyjs-webpack-plugin/dist/worker'>
 }

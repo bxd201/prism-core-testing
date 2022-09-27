@@ -14,7 +14,7 @@
  */
 
 declare module 'postcss-wrapper-loader-w-exclude' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 /**
@@ -23,11 +23,10 @@ declare module 'postcss-wrapper-loader-w-exclude' {
  * needed.
  */
 
-
 // Filename aliases
 declare module 'postcss-wrapper-loader-w-exclude/index' {
-  declare module.exports: $Exports<'postcss-wrapper-loader-w-exclude'>;
+  declare module.exports: $Exports<'postcss-wrapper-loader-w-exclude'>
 }
 declare module 'postcss-wrapper-loader-w-exclude/index.js' {
-  declare module.exports: $Exports<'postcss-wrapper-loader-w-exclude'>;
+  declare module.exports: $Exports<'postcss-wrapper-loader-w-exclude'>
 }

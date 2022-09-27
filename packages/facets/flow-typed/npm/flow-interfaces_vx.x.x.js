@@ -14,7 +14,7 @@
  */
 
 declare module 'flow-interfaces' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 /**
@@ -23,234 +23,234 @@ declare module 'flow-interfaces' {
  * needed.
  */
 declare module 'flow-interfaces/interfaces/action.d' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'flow-interfaces/interfaces/autobind-decorator.d' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'flow-interfaces/interfaces/axios.d' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'flow-interfaces/interfaces/bluebird.d' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'flow-interfaces/interfaces/chartist.d' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'flow-interfaces/interfaces/classnames.d' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'flow-interfaces/interfaces/CSSModule.d' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'flow-interfaces/interfaces/dropzone.d' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'flow-interfaces/interfaces/eventemitter3.d' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'flow-interfaces/interfaces/globals.d' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'flow-interfaces/interfaces/i18next.d' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'flow-interfaces/interfaces/immutable.d' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'flow-interfaces/interfaces/invariant.d' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'flow-interfaces/interfaces/lodash.d' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'flow-interfaces/interfaces/moment.d' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'flow-interfaces/interfaces/notifyjs.d' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'flow-interfaces/interfaces/radium.d' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'flow-interfaces/interfaces/react-addons-css-transition-group.d' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'flow-interfaces/interfaces/react-dnd.d' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'flow-interfaces/interfaces/react-dom.d' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'flow-interfaces/interfaces/react-redux.d' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'flow-interfaces/interfaces/react-router-redux.d' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'flow-interfaces/interfaces/react-router.d' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'flow-interfaces/interfaces/redux-actions.d' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'flow-interfaces/interfaces/redux.d' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'flow-interfaces/interfaces/reselect.d' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'flow-interfaces/interfaces/sanitize-html.d' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'flow-interfaces/interfaces/shallowequal.d' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'flow-interfaces/interfaces/stardust.d' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'flow-interfaces/interfaces/string.d' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'flow-interfaces/interfaces/ta-redux-crud' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'flow-interfaces/interfaces/uuid-js.d' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 declare module 'flow-interfaces/interfaces/warning.d' {
-  declare module.exports: any;
+  declare module.exports: any
 }
 
 // Filename aliases
 declare module 'flow-interfaces/interfaces/action.d.js' {
-  declare module.exports: $Exports<'flow-interfaces/interfaces/action.d'>;
+  declare module.exports: $Exports<'flow-interfaces/interfaces/action.d'>
 }
 declare module 'flow-interfaces/interfaces/autobind-decorator.d.js' {
-  declare module.exports: $Exports<'flow-interfaces/interfaces/autobind-decorator.d'>;
+  declare module.exports: $Exports<'flow-interfaces/interfaces/autobind-decorator.d'>
 }
 declare module 'flow-interfaces/interfaces/axios.d.js' {
-  declare module.exports: $Exports<'flow-interfaces/interfaces/axios.d'>;
+  declare module.exports: $Exports<'flow-interfaces/interfaces/axios.d'>
 }
 declare module 'flow-interfaces/interfaces/bluebird.d.js' {
-  declare module.exports: $Exports<'flow-interfaces/interfaces/bluebird.d'>;
+  declare module.exports: $Exports<'flow-interfaces/interfaces/bluebird.d'>
 }
 declare module 'flow-interfaces/interfaces/chartist.d.js' {
-  declare module.exports: $Exports<'flow-interfaces/interfaces/chartist.d'>;
+  declare module.exports: $Exports<'flow-interfaces/interfaces/chartist.d'>
 }
 declare module 'flow-interfaces/interfaces/classnames.d.js' {
-  declare module.exports: $Exports<'flow-interfaces/interfaces/classnames.d'>;
+  declare module.exports: $Exports<'flow-interfaces/interfaces/classnames.d'>
 }
 declare module 'flow-interfaces/interfaces/CSSModule.d.js' {
-  declare module.exports: $Exports<'flow-interfaces/interfaces/CSSModule.d'>;
+  declare module.exports: $Exports<'flow-interfaces/interfaces/CSSModule.d'>
 }
 declare module 'flow-interfaces/interfaces/dropzone.d.js' {
-  declare module.exports: $Exports<'flow-interfaces/interfaces/dropzone.d'>;
+  declare module.exports: $Exports<'flow-interfaces/interfaces/dropzone.d'>
 }
 declare module 'flow-interfaces/interfaces/eventemitter3.d.js' {
-  declare module.exports: $Exports<'flow-interfaces/interfaces/eventemitter3.d'>;
+  declare module.exports: $Exports<'flow-interfaces/interfaces/eventemitter3.d'>
 }
 declare module 'flow-interfaces/interfaces/globals.d.js' {
-  declare module.exports: $Exports<'flow-interfaces/interfaces/globals.d'>;
+  declare module.exports: $Exports<'flow-interfaces/interfaces/globals.d'>
 }
 declare module 'flow-interfaces/interfaces/i18next.d.js' {
-  declare module.exports: $Exports<'flow-interfaces/interfaces/i18next.d'>;
+  declare module.exports: $Exports<'flow-interfaces/interfaces/i18next.d'>
 }
 declare module 'flow-interfaces/interfaces/immutable.d.js' {
-  declare module.exports: $Exports<'flow-interfaces/interfaces/immutable.d'>;
+  declare module.exports: $Exports<'flow-interfaces/interfaces/immutable.d'>
 }
 declare module 'flow-interfaces/interfaces/invariant.d.js' {
-  declare module.exports: $Exports<'flow-interfaces/interfaces/invariant.d'>;
+  declare module.exports: $Exports<'flow-interfaces/interfaces/invariant.d'>
 }
 declare module 'flow-interfaces/interfaces/lodash.d.js' {
-  declare module.exports: $Exports<'flow-interfaces/interfaces/lodash.d'>;
+  declare module.exports: $Exports<'flow-interfaces/interfaces/lodash.d'>
 }
 declare module 'flow-interfaces/interfaces/moment.d.js' {
-  declare module.exports: $Exports<'flow-interfaces/interfaces/moment.d'>;
+  declare module.exports: $Exports<'flow-interfaces/interfaces/moment.d'>
 }
 declare module 'flow-interfaces/interfaces/notifyjs.d.js' {
-  declare module.exports: $Exports<'flow-interfaces/interfaces/notifyjs.d'>;
+  declare module.exports: $Exports<'flow-interfaces/interfaces/notifyjs.d'>
 }
 declare module 'flow-interfaces/interfaces/radium.d.js' {
-  declare module.exports: $Exports<'flow-interfaces/interfaces/radium.d'>;
+  declare module.exports: $Exports<'flow-interfaces/interfaces/radium.d'>
 }
 declare module 'flow-interfaces/interfaces/react-addons-css-transition-group.d.js' {
-  declare module.exports: $Exports<'flow-interfaces/interfaces/react-addons-css-transition-group.d'>;
+  declare module.exports: $Exports<'flow-interfaces/interfaces/react-addons-css-transition-group.d'>
 }
 declare module 'flow-interfaces/interfaces/react-dnd.d.js' {
-  declare module.exports: $Exports<'flow-interfaces/interfaces/react-dnd.d'>;
+  declare module.exports: $Exports<'flow-interfaces/interfaces/react-dnd.d'>
 }
 declare module 'flow-interfaces/interfaces/react-dom.d.js' {
-  declare module.exports: $Exports<'flow-interfaces/interfaces/react-dom.d'>;
+  declare module.exports: $Exports<'flow-interfaces/interfaces/react-dom.d'>
 }
 declare module 'flow-interfaces/interfaces/react-redux.d.js' {
-  declare module.exports: $Exports<'flow-interfaces/interfaces/react-redux.d'>;
+  declare module.exports: $Exports<'flow-interfaces/interfaces/react-redux.d'>
 }
 declare module 'flow-interfaces/interfaces/react-router-redux.d.js' {
-  declare module.exports: $Exports<'flow-interfaces/interfaces/react-router-redux.d'>;
+  declare module.exports: $Exports<'flow-interfaces/interfaces/react-router-redux.d'>
 }
 declare module 'flow-interfaces/interfaces/react-router.d.js' {
-  declare module.exports: $Exports<'flow-interfaces/interfaces/react-router.d'>;
+  declare module.exports: $Exports<'flow-interfaces/interfaces/react-router.d'>
 }
 declare module 'flow-interfaces/interfaces/redux-actions.d.js' {
-  declare module.exports: $Exports<'flow-interfaces/interfaces/redux-actions.d'>;
+  declare module.exports: $Exports<'flow-interfaces/interfaces/redux-actions.d'>
 }
 declare module 'flow-interfaces/interfaces/redux.d.js' {
-  declare module.exports: $Exports<'flow-interfaces/interfaces/redux.d'>;
+  declare module.exports: $Exports<'flow-interfaces/interfaces/redux.d'>
 }
 declare module 'flow-interfaces/interfaces/reselect.d.js' {
-  declare module.exports: $Exports<'flow-interfaces/interfaces/reselect.d'>;
+  declare module.exports: $Exports<'flow-interfaces/interfaces/reselect.d'>
 }
 declare module 'flow-interfaces/interfaces/sanitize-html.d.js' {
-  declare module.exports: $Exports<'flow-interfaces/interfaces/sanitize-html.d'>;
+  declare module.exports: $Exports<'flow-interfaces/interfaces/sanitize-html.d'>
 }
 declare module 'flow-interfaces/interfaces/shallowequal.d.js' {
-  declare module.exports: $Exports<'flow-interfaces/interfaces/shallowequal.d'>;
+  declare module.exports: $Exports<'flow-interfaces/interfaces/shallowequal.d'>
 }
 declare module 'flow-interfaces/interfaces/stardust.d.js' {
-  declare module.exports: $Exports<'flow-interfaces/interfaces/stardust.d'>;
+  declare module.exports: $Exports<'flow-interfaces/interfaces/stardust.d'>
 }
 declare module 'flow-interfaces/interfaces/string.d.js' {
-  declare module.exports: $Exports<'flow-interfaces/interfaces/string.d'>;
+  declare module.exports: $Exports<'flow-interfaces/interfaces/string.d'>
 }
 declare module 'flow-interfaces/interfaces/ta-redux-crud.js' {
-  declare module.exports: $Exports<'flow-interfaces/interfaces/ta-redux-crud'>;
+  declare module.exports: $Exports<'flow-interfaces/interfaces/ta-redux-crud'>
 }
 declare module 'flow-interfaces/interfaces/uuid-js.d.js' {
-  declare module.exports: $Exports<'flow-interfaces/interfaces/uuid-js.d'>;
+  declare module.exports: $Exports<'flow-interfaces/interfaces/uuid-js.d'>
 }
 declare module 'flow-interfaces/interfaces/warning.d.js' {
-  declare module.exports: $Exports<'flow-interfaces/interfaces/warning.d'>;
+  declare module.exports: $Exports<'flow-interfaces/interfaces/warning.d'>
 }
