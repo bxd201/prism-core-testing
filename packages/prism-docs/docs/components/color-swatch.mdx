@@ -1,5 +1,4 @@
 ---
-sidebar_position: 1
 ---
 
 # Color Swatch
@@ -55,9 +54,9 @@ function AddInfoColorSwatch() {
                 {color.coordinatingColors ? (
                   <ColorsIcon
                     className='w-5 h-5'
-                    hexes={filter(colorsData, c =>
-                      values(color.coordinatingColors).some(id => id === c.id)
-                    ).map(c => c.hex)}
+                    hexes={filter(colorsData, (c) => values(color.coordinatingColors).some((id) => id === c.id)).map(
+                      (c) => c.hex
+                    )}
                   />
                 ) : (
                   <FontAwesomeIcon icon={faInfo} style={{ margin: '0 0.25rem' }} />

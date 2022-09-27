@@ -1,0 +1,95 @@
+---
+---
+
+# Fast Mask
+
+## Summary
+
+The Fast Mask component allows for rendering an image with painted surfaces. This component is tightly coupled to the data provided by the return from the supplied `apiUrl` prop. This component uses the `SceneView` component under the hood, but derives the passed props from the data returned from the API.
+
+## Example
+
+```typescript live
+function FastMaskExample() {
+  const color1 = {
+    colorNumber: '6787',
+    coordinatingColors: {
+      coord1ColorId: '2837',
+      coord2ColorId: '11280',
+      whiteColorId: '2471'
+    },
+    description: ['Soft', 'Fairly Bright'],
+    id: '2474',
+    isExterior: true,
+    isInterior: true,
+    name: 'Fountain',
+    lrv: 39.448,
+    brandedCollectionNames: [],
+    colorFamilyNames: ['Blue'],
+    brandKey: 'SW',
+    red: 86,
+    green: 181,
+    blue: 202,
+    hue: 0.5301724137931034,
+    saturation: 0.5225225225225224,
+    lightness: 0.5647058823529412,
+    hex: '#56b5ca',
+    isDark: false,
+    storeStripLocator: '167-C4',
+    similarColors: ['2467', '11228', '2481', '2639', '2461', '2460', '2468', '2180', '2636', '2635'],
+    ignore: false,
+    archived: false,
+    lab: {
+      L: 68.96002878880431,
+      A: -21.95795490141206,
+      B: -19.13408386294475
+    }
+  }
+
+  const args = {
+    apiUrl: 'https://develop-prism-ml-api.ebus.swaws/prism-ml/',
+    handleSceneBlobLoaderError: (err) => console.error(err),
+    refDims: null,
+    imageUrl: 'https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom2?wid=1200}&qlt=92',
+    // fyi maskUrl: 'https://sherwin.scene7.com/is/image/sw?src=ir{swRender/hd_livingroom2?wid=1200&req=object&opac=100&fmt=png8&object=wall&color=000000}&fmt=png8&bgColor=FFFFFF&op_invert=1'
+    activeColor: color1,
+    handleUpdates: (metadata) => console.log('Fastmask update', metadata),
+    cleanupCallback: () => console.log('Cleaning up fastmask'),
+    handleError: (err) => console.error(err),
+    content: {
+      userUploadAlt: 'The user uploaded this image',
+      sceneView: {
+        clearAreaText: 'Wipe Out'
+      }
+    },
+    shouldPrimeImage: true
+  }
+
+  return (
+    <Prism style={{ position: 'relative' }}>
+      <FastMaskView {...args} />
+    </Prism>
+  )
+}
+```
+
+## Available props
+
+| Prop                       | Type                                      | Description                                                                                     |          |
+| -------------------------- | ----------------------------------------- | ----------------------------------------------------------------------------------------------- | -------- |
+| activeColor                | `Color`                                   | Color to paint the scene with                                                                   | Required |
+| apiUrl                     | `string`                                  | API URL to provide data for scenes/variants                                                     | Required |
+| cleanupCallback            | `() => void`                              | Callback which is called as the component is unmounting (React lifecycle)                       | Required |
+| content                    | `FastMaskContent`                         | Content which is passed to the underlying `SceneView` component                                 | Required |
+| handleSceneBlobLoaderError | `({type: string, error: string}) => void` | Callback which is called when blobs urls were not created                                       | Required |
+| handleUpdates              | `(surface: PreparedSurface) => void`      | Callback which is called when `activeColor`, `variantsCollection`, or `scenesCollection` change | Required |
+| imageUrl                   | `string`                                  | Image URL for the scene. This is also preloaded to retrieve dimenstions                         | Required |
+| handleError                | `(error: string) => void`                 | Callback which is called when there is an issue with segmentation while parsing API data        | Optional |
+| initHandler                | `() => void`                              | Callback which is called after the component is unmounted (React lifecycle)                     | Optional |
+| isForCVW                   | `boolean`                                 | Applies conditional styling whether or not this is being rendered for CVW                       | Optional |
+| loadingMessage             | `string`                                  | Message to display while loading spinner is active                                              | Optional |
+| refDims                    | `ReferenceDimensions`                     | Optional dimensions to constrain height/width, including for landscape/portait                  | Optional |
+| savedData                  | `FastMaskOpenCache`                       | Optionally use this cache object instead of preloading `imageUrl`                               | Optional |
+| shouldPrimeImage           | `boolean`                                 | Optionally bypass image processing logic                                                        | Optional |
+| showSpinner                | `boolean`                                 | True when spinner should be displayed while data is being fetched                               | Optional |
+| spinner                    | `JSX.Element`                             | Optionally override the loading spinner used while retreiving data                              | Optional |
