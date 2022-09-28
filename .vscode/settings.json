@@ -1,6 +1,6 @@
 {
   "javascript.validate.enable": false,
-  "typescript.validate.enable": false,
+  "typescript.validate.enable": true,
   "flow.useNPMPackagedFlow": true,
   "files.trimTrailingWhitespace": true,
   "todo-tree.general.tags": ["TODO", "FIXME", "HACK", "@todo", "@fixme", "@hack"],
