@@ -13,12 +13,13 @@ import { GROUP_NAMES, SCENE_TYPES } from '../../constants/globals'
 import { useIntl } from 'react-intl'
 
 import './SceneVisualizerFacet.scss'
-import { extractRefDimensions, scaleAndCropImageToSquare, scaleImage } from '../../shared/helpers/imageTools'
+import { extractRefDimensions, resizeAndCropImageWithCanvas } from '../../shared/helpers/imageTools'
 import {
   SV_COLOR_UPDATE,
   SV_ERROR,
   SV_NEW_IMAGE_UPLOAD,
-  SV_TRIGGER_IMAGE_UPLOAD
+  SV_TRIGGER_IMAGE_UPLOAD,
+  SV_SERVICE_UPDATE
 } from '../../constants/pubSubEventsLabels'
 import useColors from '../../shared/hooks/useColors'
 import { getColorByBrandAndColorNumber } from '../../shared/helpers/ColorDataUtils'
@@ -33,10 +34,10 @@ import 'src/providers/fontawesome/fontawesome'
 type RealColorFacetProps = FacetPubSubMethods &
   FacetBinderMethods & {
     groupNames: string[],
-    maxSceneHeight: number,
+    sceneHeight: number,
+    sceneWidth: number,
     defaultImage: string,
     defaultMask: string,
-    forceSquare?: number,
     defaultColor: string,
     sceneName: string,
     uploadButtonText: string,
@@ -82,12 +83,10 @@ export function RealColorFacet(props: RealColorFacetProps) {
 
   const getEventId = () => uniqueId('sv_event_id_')
 
-  const loadAndCrop = (payload: any, toHeight: number, makeSquare?: number) => {
+  const loadAndCrop = (payload: any, w: number, h: number) => {
     const { data: image, eventId } = payload
     const imageBlobUrl = URL.createObjectURL(image)
-    const imagePromise = makeSquare
-      ? scaleAndCropImageToSquare(imageBlobUrl, makeSquare)
-      : scaleImage(imageBlobUrl, toHeight)
+    const imagePromise = resizeAndCropImageWithCanvas(imageBlobUrl, w, h)
     imagePromise
       .then((data) => {
         setUploadedImage(data.url)
@@ -106,21 +105,15 @@ export function RealColorFacet(props: RealColorFacetProps) {
     setTinterRendered(true)
   }
 
-  const cropDefaultImage = (imageUrl: string, toHeight: number, makeSquare?: number, callback: Function) => {
+  const cropDefaultImage = (imageUrl: string, w: number, h: number, callback: Function) => {
     // crop image
-    if (makeSquare) {
-      scaleAndCropImageToSquare(imageUrl, makeSquare)
-        .then(callback)
-        .catch((err) => setError(err))
-    } else {
-      scaleImage(imageUrl, toHeight)
-        .then(callback)
-        .catch((err) => setError(err))
-    }
+    resizeAndCropImageWithCanvas(imageUrl, w, h)
+      .then(callback)
+      .catch((err) => setError(err))
   }
 
   useEffect(() => {
-    const { forceSquare, defaultImage, subscribe } = props
+    const { defaultImage, subscribe } = props
     // Listen for color updates
     subscribe(SV_COLOR_UPDATE, (payload: any) => {
       setColorName(payload.data)
@@ -130,14 +123,13 @@ export function RealColorFacet(props: RealColorFacetProps) {
       setUploadInitiated(false)
       if (payload.data) {
         setFastMaskLoading(true)
-        loadAndCrop(payload, props.maxSceneHeight, forceSquare)
+        loadAndCrop(payload, props.sceneWidth, props.sceneHeight)
       }
     })
-    // @todo wrap this in an if statement and use facet prop to determine if initial images needs to be cropped.  Pre cropping loads A LOT faster.
-    cropDefaultImage(defaultImage, maxSceneHeight, forceSquare, imageScaleCallback)
+    cropDefaultImage(defaultImage, props.sceneWidth, props.sceneHeight, imageScaleCallback)
     // ref dims should be the same as parent...
     if (defaultMask) {
-      cropDefaultImage(defaultMask, maxSceneHeight, forceSquare, (data) => setInitialMaskImageUrl(data.url))
+      cropDefaultImage(defaultMask, props.sceneWidth, props.sceneHeight, (data) => setInitialMaskImageUrl(data.url))
     }
   }, [])
 
@@ -186,6 +178,7 @@ export function RealColorFacet(props: RealColorFacetProps) {
 
   const handleRealColorUpdates = (data: any) => {
     setTinterRendered(true)
+    props.publish(SV_SERVICE_UPDATE, data)
   }
 
   const handleRealColorClose = (e: SyntheticEvent) => {

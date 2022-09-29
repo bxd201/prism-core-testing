@@ -57,7 +57,7 @@ export default function RealColorView(props: RealColorViewProps) {
 
     setRealColorPayload(cloneDeep(data))
     console.log('Handling real color update...')
-    handleUpdate()
+    handleUpdate(cloneDeep(data))
   }
 
   const clockId = useRef(null)
