@@ -104,7 +104,7 @@ function ConfigurationContextProvider (props: Props) {
         menuTxtHover: theme.secondary,
         buttonBgColor: theme.white,
         buttonBorder: theme.grey,
-        buttonBorderRadius: '4px',
+        buttonBorderRadius: '0',
         buttonColor: theme.primary,
         buttonHoverBgColor: '#F2F2F2',
         buttonHoverBorder: theme.grey,

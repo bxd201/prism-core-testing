@@ -28,6 +28,7 @@
   &__button {
     background: var(getThemeColor('buttonBgColor'));
     border: 1px solid var(getThemeColor('buttonBorder'));
+    border-radius: var(getThemeColor('buttonBorderRadius'));
     color: var(getThemeColor('buttonColor'));
     display: flex;
     align-items: center;
@@ -150,6 +151,7 @@
     padding: 0.75rem 1.4rem !important;
     background: var(getThemeColor('buttonBgColor')) !important;
     border: 1px solid var(getThemeColor('light')) !important;
+    border-radius: var(getThemeColor('buttonBorderRadius'));
     color: var(getThemeColor('light')) !important;
 
     &-active {

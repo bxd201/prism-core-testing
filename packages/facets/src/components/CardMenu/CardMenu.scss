@@ -73,6 +73,7 @@
       color: var(getThemeColor('buttonColor'));
       background-color: var(getThemeColor('buttonBgColor'));
       border: 1px solid var(getThemeColor('buttonBorder'));
+      border-radius: var(getThemeColor('buttonBorderRadius'));
       padding: .75em 1.75em;
 
       &--left {
