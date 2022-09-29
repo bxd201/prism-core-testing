@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FormattedMessage } from 'react-intl'
 
 import './SceneVisualizerFacet.scss'
-import PhUploadIcon from '../CustomIcons/PhUploadIcon'
+import AEMUploadIcon from '../Iconography/AEMUploadIcon'
 
 const FACET_CLASS_BASE = 'scene-visualizer'
 const SCENE_BTN_WRAPPER = `${FACET_CLASS_BASE}__btn-wrapper`
@@ -25,34 +25,40 @@ type SceneVisualizerContentProps = {
 }
 
 const SceneVisualizerContent = (props: SceneVisualizerContentProps) => {
-  const {
-    tinterRendered,
-    handleFastMaskClose,
-    initUpload,
-    uploadInitiated,
-    tinter,
-    uploadButtonText
-  } = props
+  const { tinterRendered, handleFastMaskClose, initUpload, uploadInitiated, tinter, uploadButtonText } = props
 
-  return (<>
-    <div className={FAST_MASK_WRAPPER}>
-      {tinter}
-      {tinterRendered && handleFastMaskClose
-        ? <div className={FAST_MASK_CLOSE_BTN}>
-        <button onClick={handleFastMaskClose}>
-          <FontAwesomeIcon className={SCENE_BTN_WRAPPER_BTN_ICON} icon={['fal', 'times']} size='2x' />
-        </button>
+  return (
+    <>
+      <div className={FAST_MASK_WRAPPER}>
+        {tinter}
+        {tinterRendered && handleFastMaskClose ? (
+          <div className={FAST_MASK_CLOSE_BTN}>
+            <button onClick={handleFastMaskClose}>
+              <FontAwesomeIcon className={SCENE_BTN_WRAPPER_BTN_ICON} icon={['fal', 'times']} size='2x' />
+            </button>
+          </div>
+        ) : null}
+        {tinterRendered ? (
+          <div className={SCENE_BTN_WRAPPER}>
+            <button onClick={initUpload} className={SCENE_BTN_WRAPPER_BTN} disabled={uploadInitiated}>
+              {uploadButtonText ? (
+                <div className={CUSTOM_ICON}>
+                  <AEMUploadIcon />
+                </div>
+              ) : (
+                <FontAwesomeIcon className={SCENE_BTN_WRAPPER_BTN_ICON} icon={['fal', 'upload']} size='1x' />
+              )}
+              {uploadButtonText ? (
+                <div>{uploadButtonText}</div>
+              ) : (
+                <FormattedMessage id='SCENE_VISUALIZER.UPLOAD_PHOTO' />
+              )}
+            </button>
+          </div>
+        ) : null}
       </div>
-        : null}
-      {tinterRendered
-        ? <div className={SCENE_BTN_WRAPPER}><button onClick={initUpload} className={SCENE_BTN_WRAPPER_BTN} disabled={uploadInitiated}>
-        {uploadButtonText ? <div className={CUSTOM_ICON}><PhUploadIcon classNames={ICON_SVG} /></div> : <FontAwesomeIcon className={SCENE_BTN_WRAPPER_BTN_ICON} icon={['fal', 'upload']} size='1x' />}
-        {uploadButtonText ? <div>{uploadButtonText}</div> : <FormattedMessage id='SCENE_VISUALIZER.UPLOAD_PHOTO' />}
-      </button>
-      </div>
-        : null}
-    </div>
-  </>)
+    </>
+  )
 }
 
 export default SceneVisualizerContent
