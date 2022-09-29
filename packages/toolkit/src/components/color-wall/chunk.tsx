@@ -1,10 +1,10 @@
-import React, { useContext, useState, useEffect, useRef } from 'react'
+import React, { useContext, useEffect, useRef,useState } from 'react'
+import isSomething from '../../utils/isSomething'
 import { ColorWallPropsContext, ColorWallStructuralPropsContext } from './color-wall-props-context'
 import { computeChunk } from './shared-reducers-and-computers'
-import { getAlignment } from './wall-utils'
 import Titles from './title'
-import isSomething from '../../utils/isSomething'
 import { ChunkShape } from './types'
+import { getAlignment } from './wall-utils'
 
 interface ChunkProps {
   data: ChunkShape
@@ -92,7 +92,7 @@ function Chunk({ data, id = '', updateHeight, updateWidth }: ChunkProps): JSX.El
   return (
     <section
       ref={thisEl}
-      className={`flex flex-col items-stretch justify-between ${isZoomed ? 'focus-within:outline-none' : ''}`}
+      className={`flex flex-col items-stretch ${isZoomed ? 'focus-within:outline-none' : ''}`}
       data-testid='wall-chunk'
       style={{
         padding: `${vertSpace}px ${horzSpace}px`
